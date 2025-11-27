@@ -1,0 +1,10 @@
+{
+  "title": "Snowflake Index",
+  "router": {
+    "messageBoard": "Message Board",
+    "image": "Image Processing",
+    "resume": "Resume Generator",
+    "2048": "2048 Game"
+  },
+  "moreTools": "More Tools"
+}

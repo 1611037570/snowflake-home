@@ -1,0 +1,18 @@
+/* Element Plus 全局样式定制：主题变量与交互优化 */
+@use 'element-plus/theme-chalk/src/dark/css-vars.scss';
+:root {
+  /* 映射项目主题色到 Element Plus 主色 */
+  --el-color-primary: var(--sf-theme);
+}
+:focus-visible {
+  outline: none;
+}
+/* 下拉弹层背景色：与项目主题保持一致 */
+.el-dropdown__popper.el-popper {
+  background: var(--sf-primary) !important;
+}
+
+/* Anchor 组件背景：透明，避免遮挡内容或产生多余底色 */
+.el-anchor {
+  --el-anchor-bg-color: transparent !important;
+}

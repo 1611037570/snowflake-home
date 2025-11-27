@@ -1,0 +1,23 @@
+{
+  // 推荐安装的VSCode扩展列表
+  "recommendations": [
+    // Vue3开发支持
+    "Vue.volar",
+    // ESLint代码质量检查
+    "dbaeumer.vscode-eslint",
+    // 编辑器配置一致性
+    "EditorConfig.EditorConfig",
+    // 高性能JavaScript/TypeScript编译器
+    "oxc.oxc-vscode",
+    // Prettier代码格式化
+    "esbenp.prettier-vscode",
+    // Tailwind CSS智能提示
+    "bradlc.vscode-tailwindcss",
+    // Iconify图标智能提示
+    "iconify.iconify-intellisense",
+    // 代码拼写检查器
+    "streetsidesoftware.code-spell-checker",
+    // i18n Ally 国际化插件
+    "lokalise.i18n-ally"
+  ]
+}

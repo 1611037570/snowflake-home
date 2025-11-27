@@ -1,0 +1,12 @@
+html,
+body,
+#app {
+  width: 100%;
+  height: 100%;
+  /* font-family: 'Alibaba PuHuiTi Regular', 'Alibaba PuHuiTi Medium', 'Alibaba PuHuiTi Bold'; */
+  color: var(--color-sf-text);
+}
+body {
+  font-size: 16px;
+  user-select: none;
+}

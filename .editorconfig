@@ -1,0 +1,23 @@
+# 适用于所有指定的文件类型
+[*.{js,jsx,mjs,cjs,ts,tsx,mts,cts,vue,css,scss,sass,less,styl}]
+
+# 文件编码格式
+charset = utf-8
+
+# 缩进大小（2个空格）
+indent_size = 2
+
+# 缩进样式（使用空格）
+indent_style = space
+
+# 文件末尾添加换行符
+insert_final_newline = true
+
+# 删除行尾空白字符
+trim_trailing_whitespace = true
+
+# 行尾格式（使用LF）
+end_of_line = lf
+
+# 最大行长度（100个字符）
+max_line_length = 100

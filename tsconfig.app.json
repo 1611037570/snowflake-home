@@ -1,0 +1,25 @@
+{
+  // 继承Vue官方的DOM环境TypeScript配置
+  "extends": "@vue/tsconfig/tsconfig.dom.json",
+
+  // 包含的文件范围
+  "include": ["env.d.ts", "src/**/*", "src/**/*.vue"],
+
+  // 排除的文件范围
+  "exclude": ["src/**/__tests__/*"],
+
+  "compilerOptions": {
+    // TypeScript构建信息缓存文件路径
+    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
+
+    // 路径别名配置
+    "paths": {
+      // @/* 别名指向 src 目录
+      "@/*": ["./src/*"],
+      // @components/* 别名指向 src/components 目录
+      "@components/*": ["./src/components/*"],
+      // @views/* 别名指向 src/views 目录
+      "@views/*": ["./src/views/*"]
+    }
+  }
+}

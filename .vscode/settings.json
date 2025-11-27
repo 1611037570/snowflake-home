@@ -1,0 +1,92 @@
+{
+  // 强制当前项目中所有文件默认使用 LF 换行符
+  "files.eol": "\n",
+  // 可选：禁止自动检测换行符（避免 VS Code 自动切换为 CRLF）
+  "files.autoGuessEncoding": false,
+  // 指定文件编码为 UTF-8
+  "files.encoding": "utf8",
+  // 允许 JSON 文件使用注释
+  "files.associations": {
+    "*.json": "jsonc"
+  },
+  // 关闭文件夹自动折叠（紧凑文件夹）功能
+  "explorer.compactFolders": false,
+  // 文件嵌套设置
+  "explorer.fileNesting.enabled": true,
+  "explorer.fileNesting.patterns": {
+    // 嵌套 tsconfig 相关文件
+    "tsconfig.json": "tsconfig.*.json, env.d.ts",
+    // 嵌套 vite 相关配置文件
+    "vite.config.*": "jsconfig*, vitest.config.*, cypress.config.*, playwright.config.*",
+    // 嵌套 package.json 相关文件
+    "package.json": "package-lock.json, pnpm*, .yarnrc*, yarn*, .eslint*, eslint*, .oxlint*, oxlint*, .prettier*, prettier*, .editorconfig, lint-staged.config.js, commitlint.config.js, .pnpmrc",
+    // 嵌套 env 相关文件
+    ".env": ".env.development, .env.production"
+  },
+
+  // 保存时代码操作
+  "editor.codeActionsOnSave": {
+    // 自动修复所有问题
+    "source.fixAll": "explicit",
+    // 自动组织导入语句
+    "source.organizeImports": "explicit",
+    // 额外：自动修复 ESLint 可修复的错误（如变量未使用等）
+    "source.fixAll.eslint": "explicit"
+  },
+
+  // 自动格式化设置
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+
+  // 文件类型格式化工具
+  "[javascript]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
+  "[typescript]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
+  "[vue]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
+  "[json]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
+  "[jsonc]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
+  "[markdown]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
+  "[css]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
+  "[less]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
+  "[scss]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[html]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+
+  // i18n Ally 配置
+  // 语言文件路径
+  "i18n-ally.localesPaths": ["src/locales"],
+  // 键值对样式
+  "i18n-ally.keystyle": "nested",
+  //启用框架
+  "i18n-ally.enabledFrameworks": ["vue", "vscode"],
+  //自动解析路径
+  "i18n-ally.enabledParsers": ["ts", "json"],
+  // 源语言
+  "i18n-ally.sourceLanguage": "zh",
+  // 显示语言
+  "i18n-ally.displayLanguage": "zh-CN",
+
+  // Prettier 配置
+  "prettier.enable": true,
+  "prettier.useEditorConfig": true,
+  "prettier.resolveGlobalModules": false,
+
+  // 禁用内置格式化工具（避免冲突）
+  "typescript.format.enable": false,
+  "javascript.format.enable": false,
+  "html.format.enable": false,
+  "cSpell.words": [
+    "Addtional",
+    "datas",
+    "iconify",
+    "Persistedstate",
+    "pinia",
+    "Stylesheet",
+    "Trae",
+    "unplugin",
+    "Vite",
+    "vueuse"
+  ]
+}

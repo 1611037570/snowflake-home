@@ -1,0 +1,10 @@
+{
+  "title": "雪花索引",
+  "router": {
+    "messageBoard": "留言板",
+    "image": "图片处理",
+    "resume": "简历生成",
+    "2048": "2048 游戏"
+  },
+  "moreTools": "更多工具"
+}

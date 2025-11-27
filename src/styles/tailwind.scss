@@ -1,0 +1,86 @@
+@import 'tailwindcss';
+
+/* Tailwind CSS 4 自定义配置 */
+@theme inline {
+  /* 基本色 */
+  --color-sf-base: var(--sf-base);
+  /* 主题色 */
+  --color-sf-theme: var(--sf-theme);
+  /* 主题的hover颜色 */
+  --color-sf-theme-hover: var(--sf-theme-hover);
+  /* 主要色 */
+  --color-sf-primary: var(--sf-primary);
+  /* 主要色的hover颜色 */
+  --color-sf-primary-hover: var(--sf-primary-hover);
+  /* 文本色 */
+  --color-sf-text: var(--sf-text);
+  /* 文本色-2 */
+  --color-sf-text-2: var(--sf-text-2);
+  /* 文本色-3 */
+  --color-sf-text-3: var(--sf-text-3);
+  /* 禁用文本色 */
+  --color-sf-text-disabled: var(--sf-text-disabled);
+  /* 弹窗色 */
+  --color-sf-modal: var(--sf-modal);
+  /* 常规透明色 */
+  --color-sf-transparent: var(--sf-transparent);
+  /* 常规透明色-2 */
+  --color-sf-transparent-2: var(--sf-transparent-2);
+  /* 常规透明色-3 */
+  --color-sf-transparent-3: var(--sf-transparent-3);
+  /* 常规透明色-4 */
+  --color-sf-transparent-4: var(--sf-transparent-4);
+  /* 边框基础色 */
+  --color-sf-border-base: var(--sf-border-base);
+}
+
+/* 亮色模式 */
+:root {
+  --sf-base: rgba(0, 0, 0, 1);
+  --sf-theme: #50a2ff;
+  --sf-theme-hover: oklch(88.2% 0.059 254.128);
+  --sf-primary: rgba(255, 255, 255, 1);
+  --sf-primary-hover: #d1d1d6;
+  --sf-text: #303133;
+  --sf-text-2: #606266;
+  --sf-text-3: #909399;
+  --sf-text-disabled: #c0c4cc;
+  --sf-modal: #f2f2f7;
+  --sf-transparent: color-mix(in oklab, oklch(97% 0.014 254.604) 80%, transparent);
+  --sf-transparent-2: color-mix(in oklab, oklch(97% 0.014 254.604) 60%, transparent);
+  --sf-transparent-3: color-mix(in oklab, oklch(97% 0.014 254.604) 40%, transparent);
+  --sf-transparent-4: color-mix(in oklab, oklch(97% 0.014 254.604) 20%, transparent);
+  --sf-border-base: rgba(0, 0, 0, 0.1);
+}
+
+/* 深色模式 */
+.dark {
+  --sf-theme: #50a2ff;
+  --sf-theme-hover: oklch(88.2% 0.059 254.128);
+  --sf-base: rgba(255, 255, 255, 1);
+  --sf-text: #e5eaf3;
+  --sf-text-2: #cfd3dc;
+  --sf-text-3: #a3a6ad;
+  --sf-text-disabled: #6c6e72;
+  --sf-modal: rgba(0, 0, 0, 1);
+  --sf-primary: #1c1c1e;
+  --sf-primary-hover: #3a3a3c;
+  --sf-transparent: rgba(0, 0, 0, 0.85);
+  --sf-transparent-2: rgba(0, 0, 0, 0.6);
+  --sf-transparent-3: rgba(0, 0, 0, 0.4);
+  --sf-transparent-4: rgba(0, 0, 0, 0.2);
+  --sf-border-base: rgba(255, 255, 255, 0.1);
+}
+
+/* 自定义工具类 */
+@layer utilities {
+  .flex-c {
+    @apply flex items-center justify-center;
+  }
+  .sf-theme-element {
+    @apply cursor-pointer bg-sf-theme text-sf-primary hover:bg-sf-theme-hover hover:text-sf-theme;
+  }
+  .sf-primary {
+    @apply bg-sf-primary text-sf-text hover:bg-sf-primary-hover;
+  }
+}
