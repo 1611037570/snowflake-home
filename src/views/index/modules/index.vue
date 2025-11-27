@@ -2,7 +2,7 @@
 
 <template>
   <div class="w-dwh flex-c min-h-dvh flex-col">
-    <div class="sf-text-glow text-7xl text-sf-transparent transition-all duration-300">
+    <div class="sf-text-glow text-7xl text-sf-text transition-all duration-300">
       代码与光影的创造者
     </div>
     <div class="mt-8 mb-6 h-1 w-24 rounded-[4px] bg-sf-theme shadow-xl"></div>

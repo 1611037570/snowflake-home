@@ -1,6 +1,6 @@
 <template>
   <ElDropdown trigger="hover">
-    <SfIcon icon="ion:language" size="8" class="text-sf-primary" />
+    <SfIcon icon="ion:language" size="8" class="text-sf-base" />
     <template #dropdown>
       <el-dropdown-menu>
         <div
@@ -8,7 +8,7 @@
           :key="item.key"
           :divided="index > 0 && index !== langList.length"
           @click="handleClick(item)"
-          :class="[item.key == currentLocale ? 'text-sf-theme' : 'text-sf-text']"
+          :class="[item.key == currentLocale ? 'text-sf-theme' : 'text-sf-base']"
           class="flex-c relative mx-1 h-8 cursor-pointer rounded-xl px-6 hover:bg-sf-theme-hover"
         >
           <div

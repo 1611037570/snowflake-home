@@ -50,7 +50,7 @@ const togglePlay = () => {
   <SfTooltip :content="isPlaying ? '暂停' : '播放'" placement="top">
     <div
       @click="togglePlay"
-      class="flex h-8 w-8 cursor-pointer items-center justify-center rounded-full bg-white/80 p-2 backdrop-blur-sm transition-all duration-300 hover:bg-white"
+      class="flex h-8 w-8 cursor-pointer items-center justify-center rounded-full bg-sf-base p-2 backdrop-blur-sm"
     >
       <SfIcon
         size="7"

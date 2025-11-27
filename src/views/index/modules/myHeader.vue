@@ -17,7 +17,11 @@ const navList = [
     href: 'contact',
   },
 ]
-const bgColor = ref('transparent')
+const opacity = ref(0)
+const bgColor = computed(() => {
+  const rgbColor = themeMode.value === 'dark' ? '0, 0, 0' : '255, 255, 255'
+  return `rgba(${rgbColor}, ${opacity.value})`
+})
 const customClass = ref('')
 // 滚动事件处理
 const diff = 100
@@ -31,9 +35,8 @@ const handleScroll = () => {
   customClass.value = 'header'
   const solidThreshold = 800
   // 计算透明度
-  const opacity = Math.min(scrollPosition - diff / solidThreshold, 0.8)
-  const rgbColor = themeMode.value === 'dark' ? '255, 255, 255' : '0, 0, 0'
-  bgColor.value = `rgba(${rgbColor}, ${opacity})`
+  const currentOpacity = Math.min(scrollPosition - diff / solidThreshold, 0.8)
+  opacity.value = currentOpacity
 
   //   // 回到顶部按钮显示/隐藏
   //   showBackToTop.value = scrollPosition > 500
@@ -67,7 +70,7 @@ function handleClick(e) {
   >
     <div
       id="logoText"
-      class="text-shadow text-2xl font-bold text-sf-primary transition-colors duration-300"
+      class="text-shadow text-2xl font-bold text-sf-text transition-colors duration-300"
     >
       小羊
     </div>
@@ -75,14 +78,14 @@ function handleClick(e) {
     <div class="flex-c h-20 gap-8">
       <el-anchor direction="horizontal" class="h-full" :offset="80" @click="handleClick">
         <el-anchor-link :href="`#${item.href}`" v-for="item in navList" :key="item.href">
-          <div class="nav-link flex-c h-20 text-lg !text-sf-primary transition-colors duration-300">
+          <div class="nav-link flex-c h-20 text-lg text-sf-base transition-colors duration-300">
             {{ item.name }}
           </div>
         </el-anchor-link>
       </el-anchor>
       <SfLocale />
-      <SfTheme />
       <Music />
+      <SfTheme />
     </div>
   </header>
 </template>

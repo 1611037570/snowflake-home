@@ -2,6 +2,10 @@
 
 /* Tailwind CSS 4 自定义配置 */
 @theme inline {
+  --color-sf-success: var(--sf-success);
+  --color-sf-warning: var(--sf-warning);
+  --color-sf-error: var(--sf-error);
+  --color-sf-info: var(--sf-info);
   /* 基本色 */
   --color-sf-base: var(--sf-base);
   /* 主题色 */
@@ -36,14 +40,19 @@
 
 /* 亮色模式 */
 :root {
+  --sf-success: color-mix(in oklab, #67c23a 100%, transparent);
+  --sf-warning: color-mix(in oklab, #e6a23c 100%, transparent);
+  --sf-error: color-mix(in oklab, #f56c6c 100%, transparent);
+  --sf-info: color-mix(in oklab, #909399 100%, transparent);
+
   --sf-base: rgba(0, 0, 0, 1);
   --sf-theme: #50a2ff;
   --sf-theme-hover: oklch(88.2% 0.059 254.128);
   --sf-primary: rgba(255, 255, 255, 1);
   --sf-primary-hover: #d1d1d6;
-  --sf-text: #303133;
-  --sf-text-2: #606266;
-  --sf-text-3: #909399;
+  --sf-text: color-mix(in oklab, oklch(0% 0 0) 80%, transparent);
+  --sf-text-2: color-mix(in oklab, oklch(0% 0 0) 60%, transparent);
+  --sf-text-3: color-mix(in oklab, oklch(0% 0 0) 40%, transparent);
   --sf-text-disabled: #c0c4cc;
   --sf-modal: #f2f2f7;
   --sf-transparent: color-mix(in oklab, oklch(97% 0.014 254.604) 80%, transparent);
@@ -58,9 +67,10 @@
   --sf-theme: #50a2ff;
   --sf-theme-hover: oklch(88.2% 0.059 254.128);
   --sf-base: rgba(255, 255, 255, 1);
-  --sf-text: #e5eaf3;
-  --sf-text-2: #cfd3dc;
-  --sf-text-3: #a3a6ad;
+
+  --sf-text: color-mix(in oklab, oklch(100% 0 0) 80%, transparent);
+  --sf-text-2: color-mix(in oklab, oklch(100% 0 0) 60%, transparent);
+  --sf-text-3: color-mix(in oklab, oklch(100% 0 0) 40%, transparent);
   --sf-text-disabled: #6c6e72;
   --sf-modal: rgba(0, 0, 0, 1);
   --sf-primary: #1c1c1e;

@@ -46,6 +46,11 @@ const routes = [
     name: 'bubbleSort',
     component: () => import('@views/sort/bubble.vue'),
   },
+  {
+    path: '/color',
+    name: 'color',
+    component: () => import('@views/color/index.vue'),
+  },
   // 捕获所有不存在的路由并重定向到主页
   {
     path: '/:pathMatch(.*)*',

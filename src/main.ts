@@ -13,6 +13,7 @@ import App from './App.vue'
 import router from './routers'
 // 导入全局样式
 import './styles/index.scss'
+import './styles/tailwind.css'
 
 // 创建 Vue 应用实例
 const app = createApp(App)
