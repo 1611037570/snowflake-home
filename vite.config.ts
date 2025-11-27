@@ -123,6 +123,7 @@ export default ({ mode }: { mode: string }) => {
 
     // 构建配置
     build: {
+      outDir: 'dist', // 项目打包根目录
       chunkSizeWarningLimit: 500, // 警告阈值
       // Rollup配置
       rollupOptions: {
@@ -130,7 +131,7 @@ export default ({ mode }: { mode: string }) => {
         plugins: [
           // 包大小可视化
           visualizer({
-            // filename: './node_modules/.cache/visualizer/stats.html',
+            filename: './dist/stats.html', // 打包分析报告路径
             open: true, // 自动打开报告
             gzipSize: true, // 显示gzip压缩后的大小
             brotliSize: true, // 显示brotli压缩后的大小
