@@ -59,7 +59,7 @@ export default {
         value: 'refactor',
         name: 'refactor: 代码重构（不包括 bug 修复、功能新增）',
       },
-      { value: 'perf', name: 'perf:     性能优化' },
+      { value: 'perf', name: 'perf:     代码优化' },
       { value: 'test', name: 'test:     测试相关' },
       {
         value: 'build',

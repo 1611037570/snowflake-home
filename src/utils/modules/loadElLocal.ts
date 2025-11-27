@@ -1,4 +1,5 @@
 import i18n from '@/locales'
+import('element-plus/es/locale/lang/zh-cn')
 export function getCurrentLocale() {
   const currentLocale: any = ref({})
   watch(
@@ -12,10 +13,6 @@ export function getCurrentLocale() {
 }
 
 export async function loadElLocale() {
-  const map: Record<string, any> = {
-    zh: await import('element-plus/es/locale/lang/zh-cn'),
-    en: await import('element-plus/es/locale/lang/en'),
-  }
   const currentLocale: any = getCurrentLocale()
-  return currentLocale.value ? map[currentLocale.value] : map['zh']
+  return currentLocale.value
 }
