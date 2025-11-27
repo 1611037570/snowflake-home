@@ -132,7 +132,7 @@ export default ({ mode }: { mode: string }) => {
           // 包大小可视化
           visualizer({
             filename: './dist/stats.html', // 打包分析报告路径
-            open: true, // 自动打开报告
+            open: false, // 自动打开报告
             gzipSize: true, // 显示gzip压缩后的大小
             brotliSize: true, // 显示brotli压缩后的大小
           }),
