@@ -18,43 +18,32 @@ const navList = [
   },
 ]
 const opacity = ref(0)
+const backTop = ref(false)
 const bgColor = computed(() => {
   const rgbColor = themeMode.value === 'dark' ? '0, 0, 0' : '255, 255, 255'
   return `rgba(${rgbColor}, ${opacity.value})`
 })
-const customClass = ref('')
+const customClass = computed(() => {
+  return backTop.value ? 'header' : ''
+})
 // 滚动事件处理
 const diff = 100
+const solidThreshold = 800
 const handleScroll = () => {
   const scrollPosition = window.scrollY
   if (scrollPosition < diff) {
-    bgColor.value = 'transparent'
-    customClass.value = ''
+    opacity.value = 0
     return
   }
-  customClass.value = 'header'
-  const solidThreshold = 800
   // 计算透明度
   const currentOpacity = Math.min(scrollPosition - diff / solidThreshold, 0.8)
   opacity.value = currentOpacity
-
-  //   // 回到顶部按钮显示/隐藏
-  //   showBackToTop.value = scrollPosition > 500
-
-  //   // 触发滚动动画
-  //   triggerScrollReveal()
+  // 回到顶部按钮显示/隐藏
+  backTop.value = scrollPosition > solidThreshold
 }
 
-// 生命周期钩子
-onMounted(() => {
-  window.addEventListener('scroll', handleScroll)
-  // 初始化时触发一次滚动事件
-  handleScroll()
-})
+useEventListener(window, 'scroll', handleScroll)
 
-onUnmounted(() => {
-  window.removeEventListener('scroll', handleScroll)
-})
 function handleClick(e) {
   e.preventDefault()
   e.stopPropagation()
@@ -95,5 +84,6 @@ function handleClick(e) {
   backdrop-filter: saturate(200%) blur(30px);
   -webkit-backdrop-filter: saturate(200%) blur(30px);
   box-shadow: var(--sf-border-base) 0 5px 30px;
+  border-bottom: 1px solid var(--sf-border-base);
 }
 </style>

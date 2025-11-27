@@ -1,10 +1,12 @@
 <template>
-  <div class="mb-3 flex w-full rounded-xl bg-sf-primary-hover/50 p-2">
+  <div class="mb-3 flex w-full rounded-xl bg-sf-bg p-2">
     <div
       v-for="tab in tabs"
       :key="tab.name"
       class="flex-c h-8 flex-1 cursor-pointer rounded-xl text-sm"
-      :class="mode === tab.value ? 'bg-sf-primary shadow' : 'text-sf-secondary hover:bg-sf-primary'"
+      :class="
+        mode === tab.value ? 'bg-sf-primary shadow' : 'text-sf-secondary hover:bg-sf-bg-hover'
+      "
       @click="mode = tab.value"
     >
       {{ tab.name }}

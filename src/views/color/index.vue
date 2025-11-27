@@ -55,6 +55,23 @@ const list = [
       },
     ],
   },
+  {
+    name: '背景色',
+    list: [
+      {
+        name: '主要背景色',
+        class: 'bg-sf-bg',
+      },
+      {
+        name: '次要背景色',
+        class: 'bg-sf-bg-2',
+      },
+      {
+        name: '第三背景色',
+        class: 'bg-sf-bg-3',
+      },
+    ],
+  },
 ]
 </script>
 
@@ -67,7 +84,7 @@ const list = [
         style="backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px)"
       >
         <div v-for="data in item.list" class="rounded-xl p-4 shadow-2xl" :key="data.class">
-          <div class="mb-2 h-24 w-[200px] rounded-xl" :class="data.class"></div>
+          <div class="mb-2 h-18 w-[160px] rounded-xl" :class="data.class"></div>
           <div class="text-sm">
             {{ data.name }}
           </div>
