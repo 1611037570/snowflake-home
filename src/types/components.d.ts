@@ -10,8 +10,10 @@ declare module 'vue' {
   export interface GlobalComponents {
     ElAnchor: typeof import('element-plus/es')['ElAnchor']
     ElAnchorLink: typeof import('element-plus/es')['ElAnchorLink']
+    ElButton: typeof import('element-plus/es')['ElButton']
     ElConfigProvider: typeof import('element-plus/es')['ElConfigProvider']
     ElDropdown: typeof import('element-plus/es')['ElDropdown']
+    ElDropdownItem: typeof import('element-plus/es')['ElDropdownItem']
     ElDropdownMenu: typeof import('element-plus/es')['ElDropdownMenu']
     ElImage: typeof import('element-plus/es')['ElImage']
     ElTooltip: typeof import('element-plus/es')['ElTooltip']
@@ -21,5 +23,6 @@ declare module 'vue' {
     SfLocale: typeof import('@components/locale/index.vue')['default']
     SfTheme: typeof import('@components/theme/index.vue')['default']
     SfTooltip: typeof import('@components/tooltip/index.vue')['default']
+    SfViewContainer: typeof import('@components/viewContainer/index.vue')['default']
   }
 }
