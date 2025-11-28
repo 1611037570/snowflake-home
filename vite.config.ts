@@ -26,7 +26,7 @@ import vconsole from 'vite-plugin-vconsole'
 // Vue DevTools 调试工具
 import vueDevTools from 'vite-plugin-vue-devtools'
 // 自定义组件解析器
-import { SnowFlakeComponentResolver } from './src/components/componentsResolver'
+import { dynamicComponentResolver } from './src/components'
 
 // 样式导入插件
 import { createStyleImportPlugin, ElementPlusResolve } from 'vite-plugin-style-import'
@@ -80,7 +80,7 @@ export default ({ mode }: { mode: string }) => {
       }),
       // 组件自动注册配置
       Components({
-        resolvers: [ElementPlusResolver(), SnowFlakeComponentResolver()], // 组件解析器列表
+        resolvers: [ElementPlusResolver(), dynamicComponentResolver()], // 组件解析器列表
         dts: 'src/types/components.d.ts', // 类型声明文件路径
         dirs: ['src/components'], // 要搜索组件的目录
         extensions: ['.vue'], // 要处理的组件文件扩展名

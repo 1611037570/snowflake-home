@@ -18,7 +18,6 @@ const router = createRouter({
 })
 
 router.beforeEach(async (to, from, next) => {
-  console.log('路由切换', to)
   const pageName = to.name as string
   if (pageName) {
     // 路由切换时，加载当前页面的语言包（等待加载完成再进入页面）

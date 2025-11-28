@@ -1,6 +1,6 @@
 <template>
   <ElImage v-if="type === 'img'" :src="value" :style="autoImgStyle" />
-  <SfIcon v-else-if="type === 'icon'" :icon="value" :style="autoImgStyle" />
+  <BaseIcon v-else-if="type === 'icon'" :icon="value" :style="autoImgStyle" />
   <div v-else-if="type === 'str'" :style="autoImgStyle" class="flex-c">
     {{ (value && value[0]) || '' }}
   </div>

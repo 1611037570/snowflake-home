@@ -1,7 +1,7 @@
 v
 <template>
   <h3 class="group flex-c my-5 text-lg font-semibold">
-    <SfIcon
+    <BaseIcon
       size="5"
       icon="lucide:briefcase"
       class="mr-2 text-sf-theme transition-transform duration-300 group-hover:rotate-[-12deg]"

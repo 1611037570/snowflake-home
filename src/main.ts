@@ -15,8 +15,13 @@ import router from './routers'
 import './styles/index.scss'
 import './styles/tailwind.css'
 
+// 导入全局组件安装器
+import { globalComponentInstaller } from './components/index'
+
 // 创建 Vue 应用实例
 const app = createApp(App)
+// 注册全局组件安装器
+app.use(globalComponentInstaller)
 // 注册 i18n 插件
 app.use(i18n)
 // 创建 Pinia 实例

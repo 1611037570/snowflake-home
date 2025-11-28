@@ -16,7 +16,7 @@
             : '按tab或点击锁定，计算结果将持续显示'
         "
       >
-        <SfIcon
+        <BaseIcon
           @click="expressionsLock = !expressionsLock"
           size="6"
           :icon="expressionsLock ? 'stash:lock-closed' : 'stash:lock-opened'"
@@ -52,14 +52,14 @@
       class="absolute top-1/2 right-3 z-10 flex -translate-y-1/2 items-center"
     >
       <SfTooltip content="按del或点击删除内容" v-if="handleValue" class="mr-1">
-        <SfIcon icon="carbon:close-outline" size="6" @click.stop="clearSearch" />
+        <BaseIcon icon="carbon:close-outline" size="6" @click.stop="clearSearch" />
       </SfTooltip>
 
       <SfTooltip
         v-if="expressionsVisible && handleValue"
         :content="expressionsLock ? '按回车或点击复制结果' : '按回车或点击搜索内容'"
       >
-        <SfIcon
+        <BaseIcon
           icon="famicons:copy-outline"
           class="hover:text-sf-theme"
           size="6"
@@ -70,7 +70,7 @@
         v-else-if="!expressionsVisible"
         :content="expressionsLock ? '按回车或点击搜索内容' : '按回车或点击复制结果'"
       >
-        <SfIcon icon="mynaui:search" class="hover:text-sf-theme" size="7" @click="getResult" />
+        <BaseIcon icon="mynaui:search" class="hover:text-sf-theme" size="7" @click="getResult" />
       </SfTooltip>
     </div>
     <SfInput

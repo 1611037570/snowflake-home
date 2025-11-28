@@ -1,3 +1,6 @@
+// 系统相关store
+export * from './modules/system'
+
 // 游戏相关store
 export * from './modules/game'
 

@@ -5,7 +5,7 @@
         <div class="flex w-full items-center justify-between pr-4">
           <div class="flex items-center gap-2">
             <span class="text-sm font-medium">{{ $t('image.sizeAdjust') }}</span>
-            <SfIcon
+            <BaseIcon
               icon="material-symbols:restart-alt"
               size="5"
               class="hover:text-sf-theme"

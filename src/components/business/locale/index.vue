@@ -1,6 +1,6 @@
 <template>
   <ElDropdown trigger="hover">
-    <SfIcon icon="ion:language" size="8" class="text-sf-base" />
+    <BaseIcon icon="ion:language" size="8" class="text-sf-base" />
     <template #dropdown>
       <el-dropdown-menu>
         <div

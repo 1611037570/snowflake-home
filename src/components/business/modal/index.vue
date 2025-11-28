@@ -33,7 +33,7 @@
 <script setup>
 import { onMounted, ref } from 'vue'
 import { onKeyStroke } from '@vueuse/core'
-const props = defineProps({
+defineProps({
   title: {
     type: String,
     default: '',

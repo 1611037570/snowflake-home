@@ -90,7 +90,7 @@
           <div
             class="flex items-center gap-2 rounded-lg border border-sf-theme-hover bg-sf-primary px-4 py-3 text-sf-base shadow-lg"
           >
-            <SfIcon
+            <BaseIcon
               name="line-md:loading-twotone-loop"
               class="animate-spin text-xl text-sf-theme"
             />

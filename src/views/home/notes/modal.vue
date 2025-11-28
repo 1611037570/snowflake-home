@@ -76,7 +76,7 @@ const noteStatusList = computed(() => {
       <div class="flex flex-1 flex-col" v-if="currentIndex != -1">
         <div class="mb-3 flex gap-3">
           <SfTooltip :content="item.info" v-for="item in noteStatusList" :key="item.info">
-            <SfIcon
+            <BaseIcon
               :icon="item.icon"
               size="5"
               @click="item.fn()"

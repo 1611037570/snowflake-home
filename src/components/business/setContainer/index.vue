@@ -31,7 +31,7 @@ const handleClick = (item) => {
           placeholder-class="text-sf-primary"
         >
           <template #prefix>
-            <SfIcon icon="fluent:search-24-regular" class="h-4 w-4" size="4" />
+            <BaseIcon icon="fluent:search-24-regular" class="h-4 w-4" size="4" />
           </template>
         </SfInput>
       </div>

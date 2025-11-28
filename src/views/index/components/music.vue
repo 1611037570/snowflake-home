@@ -52,7 +52,7 @@ const togglePlay = () => {
       @click="togglePlay"
       class="flex h-8 w-8 cursor-pointer items-center justify-center rounded-full bg-sf-base p-2 backdrop-blur-sm"
     >
-      <SfIcon
+      <BaseIcon
         size="7"
         :icon="isPlaying ? 'lucide:pause' : 'lucide:play'"
         class="text-sf-primary transition-colors duration-300 hover:text-sf-theme"

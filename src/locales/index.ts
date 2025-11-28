@@ -58,7 +58,6 @@ let pageName = ''
 export const loadPageLang = async (name: string) => {
   pageName = name
   const langKey = i18n.global.locale.value
-  console.log(' i18n.global.locale.value', i18n.global.locale)
 
   // 动态导入页面专属语言包（打包时拆分为独立 chunk）
   try {

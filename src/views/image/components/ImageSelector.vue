@@ -5,7 +5,7 @@
     :class="{ 'border-sf-theme bg-sf-theme/20': isOverDropZone }"
     @click="handleClick"
   >
-    <SfIcon icon="material-symbols:image-outline" class="mb-2 text-3xl text-sf-text" />
+    <BaseIcon icon="material-symbols:image-outline" class="mb-2 text-3xl text-sf-text" />
     <div class="text-sf-secondary">{{ $t('image.selectorHint') }}</div>
   </div>
 </template>
