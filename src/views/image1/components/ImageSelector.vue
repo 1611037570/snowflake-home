@@ -5,7 +5,7 @@
     :class="{ 'border-sf-theme bg-sf-theme/20': isOverDropZone }"
     @click="handleClick"
   >
-    <BaseIcon icon="material-symbols:image-outline" class="mb-2 text-3xl text-sf-text" />
+    <SfIcon icon="material-symbols:image-outline" class="mb-2 text-3xl text-sf-text" />
     <div class="text-sf-secondary">点击或拖拽图片到此</div>
   </div>
 </template>

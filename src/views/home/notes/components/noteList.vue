@@ -10,7 +10,7 @@
     >
       <div class="flex">
         <div class="flex h-5 items-center">
-          <BaseIcon
+          <SfIcon
             icon="pajamas:todo-done"
             size="4"
             class="mr-1"

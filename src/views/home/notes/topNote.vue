@@ -39,7 +39,7 @@ const select = (item) => {
       class="w-[240px] cursor-pointer rounded-lg bg-white p-3"
       @click="select(item)"
     >
-      <BaseIcon
+      <SfIcon
         v-if="item.todo"
         icon="pajamas:todo-done"
         size="5"

@@ -21,7 +21,7 @@ const baseMap = ['icon', 'footer']
 export const dynamicComponentResolver = (): ComponentResolver => {
   return (componentName: string) => {
     function isBaseComponent(name: string) {
-      return baseMap.includes(name.slice(2))
+      return baseMap.includes(name.slice(2).toLowerCase())
     }
     if (componentName.startsWith('Sf') && !isBaseComponent(componentName)) {
       const name = componentName.slice(2)
@@ -29,7 +29,7 @@ export const dynamicComponentResolver = (): ComponentResolver => {
       return {
         // importName: name,
         path,
-        name,
+        name: componentName,
         from: path,
       }
     }

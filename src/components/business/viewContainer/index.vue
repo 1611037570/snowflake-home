@@ -4,7 +4,7 @@
       class="flex-c relative h-14 border-b-[0.5px] border-sf-text-3 bg-sf-primary p-3 text-sf-base"
     >
       <div class="flex-c absolute top-1/2 left-3 -translate-y-1/2 cursor-pointer" @click="back">
-        <BaseIcon icon="famicons:chevron-back" size="5" />
+        <SfIcon icon="famicons:chevron-back" size="5" />
         返回主站
       </div>
       <div class="flex items-center gap-2">
@@ -39,7 +39,7 @@
     <main class="w-full flex-1 overflow-hidden">
       <slot />
     </main>
-    <BaseFooter />
+    <SfFooter />
   </div>
 </template>
 

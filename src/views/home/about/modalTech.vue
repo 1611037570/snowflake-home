@@ -10,7 +10,7 @@
         class="flex flex-col items-center justify-center rounded-lg bg-white p-4 text-center shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:bg-blue-50 hover:shadow-md"
       >
         <div class="mb-2 text-3xl text-blue-700">
-          <BaseIcon :icon="tech.icon" />
+          <SfIcon :icon="tech.icon" />
         </div>
         <div class="font-medium text-blue-800">{{ tech.name }}</div>
         <!-- 版本信息 -->

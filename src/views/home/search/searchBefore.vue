@@ -53,7 +53,7 @@ function open() {
     >
       <div class="mb-2 flex items-center justify-between">
         <h3 class="flex items-center text-sm font-medium text-sf-text">
-          <BaseIcon icon="fa-solid:chart-line" class="mr-1.5 text-sf-theme" size="3.5" />
+          <SfIcon icon="fa-solid:chart-line" class="mr-1.5 text-sf-theme" size="3.5" />
           <span>上证指数</span>
         </h3>
         <span class="rounded-full bg-sf-theme/5 px-2 py-0.5 text-[10px] font-medium text-sf-theme"
@@ -67,7 +67,7 @@ function open() {
         <span
           class="text-danger flex items-center text-xs font-medium transition-transform hover:scale-105"
         >
-          <BaseIcon icon="fa-solid:caret-down" class="mr-1" size="2.5" />
+          <SfIcon icon="fa-solid:caret-down" class="mr-1" size="2.5" />
           <span>0.07%</span>
         </span>
       </div>
@@ -80,7 +80,7 @@ function open() {
     >
       <div class="mb-2 flex items-center justify-between">
         <h3 class="flex items-center text-sm font-medium text-sf-text">
-          <BaseIcon icon="fa-solid:chart-line" class="mr-1.5 text-sf-theme" size="3.5" />
+          <SfIcon icon="fa-solid:chart-line" class="mr-1.5 text-sf-theme" size="3.5" />
           <span>深证成指</span>
         </h3>
         <span class="rounded-full bg-sf-theme/5 px-2 py-0.5 text-[10px] font-medium text-sf-theme"
@@ -94,7 +94,7 @@ function open() {
         <span
           class="text-success flex items-center text-xs font-medium transition-transform hover:scale-105"
         >
-          <BaseIcon icon="fa-solid:caret-up" class="mr-1" size="2.5" />
+          <SfIcon icon="fa-solid:caret-up" class="mr-1" size="2.5" />
           <span>0.15%</span>
         </span>
       </div>
@@ -105,7 +105,7 @@ function open() {
     <search-title title="搜索历史" icon="tabler:history" iconClass="text-sf-theme">
       <template #right>
         <div @click.stop="clearHistory" class="flex items-center">
-          <BaseIcon icon="material-symbols:delete-outline" class="mr-1.5" size="4" />
+          <SfIcon icon="material-symbols:delete-outline" class="mr-1.5" size="4" />
           清空全部
         </div>
       </template>
@@ -117,7 +117,7 @@ function open() {
         </div>
 
         <template #right>
-          <BaseIcon
+          <SfIcon
             icon="formkit:close"
             class="ml-1.5 hover:text-red-500"
             size="4"

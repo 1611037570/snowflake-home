@@ -2,7 +2,7 @@
   <div class="">
     <ElTooltip :effect="themeMode" :content="content" placement="top">
       <slot>
-        <BaseIcon icon="mingcute:question-line" size="4" />
+        <SfIcon icon="mingcute:question-line" size="4" />
       </slot>
     </ElTooltip>
   </div>
