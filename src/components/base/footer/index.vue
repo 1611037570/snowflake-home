@@ -55,7 +55,7 @@ function goMy() {
   routerNavigation('/')
 }
 function goRepo() {
-  urlNavigation('https://github.com/1611037570')
+  urlNavigation('https://github.com/1611037570/snowflake-index')
 }
 </script>
 

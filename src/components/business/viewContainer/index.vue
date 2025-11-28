@@ -1,7 +1,7 @@
 <template>
   <div class="flex h-full w-full flex-col">
     <header
-      class="flex-c relative h-14 border-b-[0.5px] border-sf-text-3 bg-sf-primary p-3 text-sf-base"
+      class="flex-c relative h-14 border-b-[0.5px] border-sf-border-base bg-sf-primary p-3 text-sf-base"
     >
       <div class="flex-c absolute top-1/2 left-3 -translate-y-1/2 cursor-pointer" @click="back">
         <SfIcon icon="famicons:chevron-back" size="5" />
