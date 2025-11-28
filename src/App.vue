@@ -1,6 +1,9 @@
 <script setup lang="ts">
+import { useSystemStore } from '@/stores/modules/system'
 import { loadElLocale, loadTheme } from '@/utils'
 import LoadingComponent from '@views/status/loading.vue'
+const systemStore = useSystemStore()
+const { monitorWatch } = storeToRefs(systemStore)
 // 加载主题
 loadTheme()
 // 加载element-plus的locale
@@ -19,6 +22,7 @@ loadDefaultEvent()
 </script>
 <template>
   <ElConfigProvider :locale="currentElLocale">
+    <SfMonitor v-if="monitorWatch" />
     <Suspense>
       <!-- 默认插槽 -->
       <template #default>

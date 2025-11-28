@@ -71,6 +71,9 @@ const list = computed(() => {
 function handleClick(item) {
   router.push(item.url)
 }
+function back() {
+  router.push('/home')
+}
 </script>
 
 <style scoped></style>

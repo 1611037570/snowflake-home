@@ -35,6 +35,7 @@ declare module 'vue' {
     SfMenu: typeof import('@components/business/menu/index.vue')['default']
     SfMixImg: typeof import('@components/business/mixImg/index.vue')['default']
     SfModal: typeof import('@components/business/modal/index.vue')['default']
+    SfMonitor: typeof import('@components/business/monitor/index.vue')['default']
     SfSetBox: typeof import('@components/business/setBox/index.vue')['default']
     SfSetContainer: typeof import('@components/business/setContainer/index.vue')['default']
     SfSetItem: typeof import('@components/business/setItem/index.vue')['default']
