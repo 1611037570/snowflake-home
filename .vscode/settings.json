@@ -74,9 +74,9 @@
   "prettier.resolveGlobalModules": false,
 
   // 禁用内置格式化工具（避免冲突）
-  "typescript.format.enable": false,
-  "javascript.format.enable": false,
-  "html.format.enable": false,
+  // "typescript.format.enable": false,
+  // "javascript.format.enable": false,
+  // "html.format.enable": false,
   "cSpell.words": [
     "Addtional",
     "datas",
