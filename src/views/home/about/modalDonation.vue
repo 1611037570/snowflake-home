@@ -1,10 +1,10 @@
 <template>
-  <div class="mx-auto flex max-w-md flex-col items-center p-6">
+  <div class="mx-auto flex max-w-md flex-col items-center p-6 text-sf-text">
     <!-- 标题 -->
-    <h3 class="mb-4 text-center text-xl font-semibold text-blue-600">支持项目发展</h3>
+    <h3 class="mb-4 text-center text-xl font-semibold text-sf-theme">支持项目发展</h3>
 
     <!-- 描述 -->
-    <div class="mb-6 text-center leading-relaxed text-gray-700">
+    <div class="text-center leading-relaxed">
       如果您也喜欢我的项目，简单的捐赠就是对我最大的物质和精神支持。
     </div>
 
@@ -25,15 +25,14 @@
             class="h-full w-full cursor-pointer p-4 transition-transform duration-200 hover:scale-[1.02]"
           />
         </div>
-        <span
-          class="mt-3 font-medium text-gray-600 transition-colors duration-200 group-hover:text-blue-600"
-          >{{ item.name }}</span
-        >
+        <span class="mt-3 font-medium transition-colors duration-200 group-hover:text-blue-600">{{
+          item.name
+        }}</span>
       </div>
     </div>
 
     <!-- 感谢语 -->
-    <div class="mt-4 text-center text-blue-500 italic">感谢您的支持！</div>
+    <div class="mt-4 text-center text-sf-theme-hover italic">感谢您的支持！</div>
   </div>
 </template>
 
