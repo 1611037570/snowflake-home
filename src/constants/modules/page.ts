@@ -8,8 +8,21 @@ interface PageItem {
   type: PageType
   version?: string
 }
-
-export const PAGE_LIST = computed<PageItem[]>(() => {
+export const BASE_LIST = computed<PageItem[]>(() => {
+  return [
+    {
+      name: $t('router.index'),
+      url: '/',
+      type: 'base',
+    },
+    {
+      name: $t('router.home'),
+      url: '/home',
+      type: 'base',
+    },
+  ]
+})
+export const PROJECT_LIST = computed<PageItem[]>(() => {
   return [
     {
       name: $t('router.image'),
@@ -33,14 +46,12 @@ export const PAGE_LIST = computed<PageItem[]>(() => {
       type: 'project',
     },
     {
-      name: $t('router.color'),
-      url: '/color',
-      type: 'base',
-    },
-    {
-      name: $t('router.icon'),
-      url: '/icon',
-      type: 'base',
+      name: $t('router.reborn'),
+      url: '/reborn',
+      type: 'project',
     },
   ]
+})
+export const PAGE_LIST = computed<PageItem[]>(() => {
+  return [...BASE_LIST.value, ...PROJECT_LIST.value]
 })

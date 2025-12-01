@@ -34,11 +34,11 @@ const routes = [
     name: 'messageBoard',
     component: () => import('@views/messageBoard/index.vue'),
   },
-  // 21天计划
+  // 重启人生
   {
-    path: '/21days',
-    name: '21days',
-    component: () => import('@views/21days/index.vue'),
+    path: '/reborn',
+    name: 'reborn',
+    component: () => import('@views/reborn/index.vue'),
   },
   // 冒泡排序
   {

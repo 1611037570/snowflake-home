@@ -7,7 +7,7 @@ const { memory, isSupported } = useMemory({ interval: 1000 })
 const usedMB = computed(() => {
   const m = memory.value
   if (!m) return 0
-  return m.usedJSHeapSize / 1048576
+  return m.usedJSHeapSize / 1024 / 1024
 })
 const remainingMB = computed(() => {
   const m = memory.value
