@@ -46,11 +46,19 @@ const routes = [
     name: 'bubbleSort',
     component: () => import('@views/sort/bubble.vue'),
   },
+  // 颜色选择器
   {
     path: '/color',
     name: 'color',
     component: () => import('@views/color/index.vue'),
   },
+  // 图标库
+  {
+    path: '/icon',
+    name: 'icon',
+    component: () => import('@views/icon/index.vue'),
+  },
+  // 404 错误页
   {
     path: '/error',
     name: 'error',
