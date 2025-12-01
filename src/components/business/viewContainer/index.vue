@@ -44,7 +44,7 @@
 </template>
 
 <script setup>
-import { PAGE_LIST } from '@/components'
+import { PAGE_LIST } from '@/constants'
 
 const router = useRouter()
 const route = useRoute()
