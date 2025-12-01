@@ -1,17 +1,23 @@
-<script setup lang="ts">
+<script setup>
 import { useSystemStore } from '@/stores/modules/system'
 import { loadElLocale, loadTheme } from '@/utils'
 import LoadingComponent from '@views/status/loading.vue'
+import { useMagicKeys, whenever } from '@vueuse/core'
+
 const systemStore = useSystemStore()
 const { monitorWatch } = storeToRefs(systemStore)
 // 加载主题
 loadTheme()
+const keys = useMagicKeys()
 // 加载element-plus的locale
-const currentElLocale: any = loadElLocale()
+const currentElLocale = loadElLocale()
 // 加载默认事件
 function loadDefaultEvent() {
   document.addEventListener('contextmenu', (e) => {
     e.preventDefault() // 阻止默认右键行为
+  })
+  whenever(keys.ctrl_space, () => {
+    monitorWatch.value = !monitorWatch.value
   })
 }
 // 调用加载默认事件函数
