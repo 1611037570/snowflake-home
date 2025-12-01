@@ -30,5 +30,4 @@ coverage
 *.tsbuildinfo
 
 # HTML 文件
-*.html
 stats.html
