@@ -14,7 +14,7 @@
 </template>
 
 <script setup lang="ts">
-import { DEFAULT_ICON } from '@/constants/icon'
+import { ICON_LIST } from '@/constants'
 import { Icon, loadIcon } from '@iconify/vue'
 
 export interface IconProps {
@@ -50,7 +50,7 @@ const props = withDefaults(defineProps<IconProps>(), {
 })
 const emit = defineEmits(['success', 'fail'])
 function init() {
-  const item = DEFAULT_ICON[props.icon]
+  const item = ICON_LIST[props.icon]
   if (!item) {
     emit('fail')
     return
