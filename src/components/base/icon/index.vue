@@ -14,6 +14,7 @@
 </template>
 
 <script setup lang="ts">
+import { DEFAULT_ICON } from '@/constants/icon'
 import { Icon, loadIcon } from '@iconify/vue'
 
 export interface IconProps {
@@ -48,24 +49,25 @@ const props = withDefaults(defineProps<IconProps>(), {
   flip: 'horizontal',
 })
 const emit = defineEmits(['success', 'fail'])
-const iconify = useTemplateRef('iconify')
-loadIcon(props.icon)
-  .then(() => {
-    emit('success')
-  })
-  .catch(() => {
+function init() {
+  const item = DEFAULT_ICON[props.icon]
+  if (!item) {
     emit('fail')
-  })
+    return
+  }
+  loadIcon(item.icon)
+    .then(() => {
+      emit('success')
+    })
+    .catch(() => {
+      emit('fail')
+    })
+}
+init()
 const iconStyle = computed(() => {
   return {
     fontSize: `calc(var(--spacing) * ${props.size})`,
   }
 })
 </script>
-<style scoped>
-.iconify-icon {
-  display: inline-block;
-  width: 1em;
-  height: 1em;
-}
-</style>
+<style scoped></style>
