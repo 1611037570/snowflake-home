@@ -1,0 +1,2907 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>50款精致重启人生完成证书 - 风格大全</title>
+    <!-- 引入Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- 引入Font Awesome -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css"
+      rel="stylesheet"
+    />
+    <!-- 引入Google Fonts -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;700;900&family=Noto+Serif+SC:wght@400;700;900&family=Playfair+Display:ital,wght@0,700;0,900;1,400&family=Montserrat:wght@300;400;600;700&family=ZCOOL+KuaiLe&family=Ma+Shan+Zheng&family=Roboto+Mono:wght@400;700&family=Comic+Neue:wght@400;700&family=Orbitron:wght@400;700;900&family=Kalam:wght@400;700&family=Hanalei+Fill&family=Bebas+Neue&family=Cormorant+Garamond:wght@400;700&family=Dancing+Script:wght@600;700&family=Poppins:wght@300;400;600&family=Source+Code+Pro:wght@400;700&family=Yu+Min+Cho:wght@400;700&family=Flower+Script&family=Patua+One&family=Rochester&family=Sarpanch:wght@400;700&family=Staatliches&family=Ultra&family=Vampiro+One&family=Wire+One&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- 自定义Tailwind配置 -->
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              // 50款证书专属配色（按风格分类）
+              // 赛博朋克系
+              cyber1: { p: '#ff2a6d', s: '#ff7aa2', d: '#c0003e' },
+              cyber2: { p: '#05d9e8', s: '#7df9ff', d: '#00a4ad' },
+              // 古风国潮系
+              guochao1: { p: '#d40000', s: '#ff4d4d', d: '#9a0000' },
+              guochao2: { p: '#e6b89c', s: '#f5d7c0', d: '#b88a6a' },
+              // 蒸汽波系
+              vapor1: { p: '#ff6ac1', s: '#ffb3e6', d: '#c70088' },
+              vapor2: { p: '#7e57c2', s: '#b39ddb', d: '#4a148c' },
+              // 洛丽塔系
+              lolita1: { p: '#ffcbf2', s: '#ffedfb', d: '#ff99e6' },
+              lolita2: { p: '#d8e2dc', s: '#f8f9fa', d: '#b8c6be' },
+              // 商务极简系
+              biz1: { p: '#2d3748', s: '#4a5568', d: '#1a202c' },
+              biz2: { p: '#4299e1', s: '#7db6f5', d: '#236ab3' },
+              // 手绘卡通系
+              cartoon1: { p: '#ff9f1c', s: '#ffd166', d: '#c77d00' },
+              cartoon2: { p: '#2ec4b6', s: '#70f3ea', d: '#1a9c92' },
+              // 户外探险系
+              outdoor1: { p: '#e76f51', s: '#f4a261', d: '#c14a2f' },
+              outdoor2: { p: '#2a9d8f', s: '#5ac8b8', d: '#1a6d63' },
+              // 文艺复古系
+              retro1: { p: '#8b5a2b', s: '#b98b57', d: '#5a3a18' },
+              retro2: { p: '#d6ccc2', s: '#f1ebe6', d: '#b3a598' },
+              // 未来主义系
+              future1: { p: '#3a86ff', s: '#83b9ff', d: '#0057c2' },
+              future2: { p: '#8338ec', s: '#b19cd9', d: '#5a189a' },
+              // 自然森系
+              nature1: { p: '#43aa8b', s: '#75e2b3', d: '#2d7d62' },
+              nature2: { p: '#f2e8cf', s: '#faf6ed', d: '#d9caa4' },
+              // 摇滚朋克系
+              punk1: { p: '#000000', s: '#333333', d: '#111111' },
+              punk2: { p: '#ffd166', s: '#fff3cd', d: '#e6bc00' },
+              // 梦幻渐变系
+              dream1: { p: '#f093fb', s: '#f5b7f9', d: '#c765e8' },
+              dream2: { p: '#00f5d4', s: '#7ffff0', d: '#00c4a7' },
+              // 军事风系
+              military1: { p: '#5c6e70', s: '#8d99ae', d: '#3c4749' },
+              military2: { p: '#2b2d42', s: '#4a4e69', d: '#1a1b26' },
+              // 学院风系
+              academy1: { p: '#4263eb', s: '#758af7', d: '#2341b6' },
+              academy2: { p: '#e03131', s: '#f06a6a', d: '#a91010' },
+              // 波西米亚系
+              boho1: { p: '#d97706', s: '#fbbf24', d: '#92400e' },
+              boho2: { p: '#9333ea', s: '#b87aff', d: '#6b21a8' },
+              // 极简黑白系
+              mono1: { p: '#000000', s: '#666666', d: '#333333' },
+              mono2: { p: '#ffffff', s: '#f0f0f0', d: '#e0e0e0' },
+              // 航海风系
+              nautical1: { p: '#023e8a', s: '#3a7ca8', d: '#002855' },
+              nautical2: { p: '#f8f9fa', s: '#ffffff', d: '#e9ecef' },
+              // 甜点马卡龙系
+              macaron1: { p: '#ffadad', s: '#ffd6d6', d: '#ff7a7a' },
+              macaron2: { p: '#caffbf', s: '#e6fffa', d: '#99ff80' },
+              // 哥特风系
+              gothic1: { p: '#212529', s: '#495057', d: '#000000' },
+              gothic2: { p: '#6c757d', s: '#adb5bd', d: '#343a40' },
+              // 太空科幻系
+              space1: { p: '#001219', s: '#003459', d: '#000000' },
+              space2: { p: '#003566', s: '#006494', d: '#00171f' },
+              // 乡村田园系
+              country1: { p: '#dda15e', s: '#f4d35e', d: '#bc8a3f' },
+              country2: { p: '#606c38', s: '#8d99ae', d: '#3c441e' },
+              // 运动活力系
+              sport1: { p: '#ef476f', s: '#ff758f', d: '#c71e48' },
+              sport2: { p: '#118ab2', s: '#4fc3f7', d: '#0a6684' },
+              // 艺术涂鸦系
+              graffiti1: { p: '#ffbe0b', s: '#ffdd70', d: '#c89400' },
+              graffiti2: { p: '#fb5607', s: '#ff8e53', d: '#c42e00' },
+              // 婚礼浪漫系
+              wedding1: { p: '#ffafcc', s: '#ffd6e0', d: '#ff7ba9' },
+              wedding2: { p: '#e0c3fc', s: '#f3e8ff', d: '#c090f0' },
+              // 侦探悬疑系
+              detective1: { p: '#333533', s: '#5a5a5a', d: '#1a1a1a' },
+              detective2: { p: '#d6d6d6', s: '#f0f0f0', d: '#b0b0b0' },
+            },
+            fontFamily: {
+              // 按风格匹配字体
+              cyber: ['Orbitron', 'sans-serif'],
+              guochao: ['Ma Shan Zheng', 'cursive'],
+              vapor: ['Staatliches', 'sans-serif'],
+              lolita: ['Flower Script', 'cursive'],
+              biz: ['Montserrat', 'sans-serif'],
+              cartoon: ['Kalam', 'cursive'],
+              outdoor: ['Patua One', 'sans-serif'],
+              retro: ['Rochester', 'cursive'],
+              future: ['Sarpanch', 'sans-serif'],
+              nature: ['Wire One', 'sans-serif'],
+              punk: ['Vampiro One', 'cursive'],
+              dream: ['Dancing Script', 'cursive'],
+              military: ['Source Code Pro', 'monospace'],
+              academy: ['Poppins', 'sans-serif'],
+              boho: ['Hanalei Fill', 'cursive'],
+              mono: ['Ultra', 'serif'],
+              nautical: ['Bebas Neue', 'sans-serif'],
+              macaron: ['Comic Neue', 'sans-serif'],
+              gothic: ['Vampiro One', 'cursive'],
+              space: ['Sarpanch', 'sans-serif'],
+              country: ['Rochester', 'cursive'],
+              sport: ['Staatliches', 'sans-serif'],
+              graffiti: ['Vampiro One', 'cursive'],
+              wedding: ['Flower Script', 'cursive'],
+              detective: ['Source Code Pro', 'monospace'],
+            },
+            boxShadow: {
+              'cert-glow-cyber': '0 0 30px rgba(255, 42, 109, 0.3)',
+              'cert-glow-vapor': '0 0 30px rgba(255, 106, 193, 0.3)',
+              'cert-glow-dream': '0 0 30px rgba(240, 147, 251, 0.3)',
+              'cert-glow-future': '0 0 30px rgba(58, 134, 255, 0.3)',
+              'cert-bold-gothic': '0 0 20px rgba(0, 0, 0, 0.5)',
+              'cert-soft-lolita': '0 0 20px rgba(255, 203, 242, 0.4)',
+            },
+            clipPath: {
+              'cert-hex': 'polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%)',
+              'cert-shield': 'polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)',
+              'cert-arch': 'rounded-t-[50px]',
+              'cert-envelope': 'polygon(0% 0%, 100% 0%, 95% 50%, 100% 100%, 0% 100%, 5% 50%)',
+              'cert-star':
+                'polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%)',
+              'cert-diamond': 'polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%)',
+              'cert-circle': 'circle(50% at 50% 50%)',
+              'cert-tear': 'polygon(50% 0%, 100% 35%, 100% 70%, 50% 100%, 0% 70%, 0% 35%)',
+            },
+            backgroundImage: {
+              'grid-cyber':
+                'linear-gradient(to right, currentColor 1px, transparent 1px), linear-gradient(to bottom, currentColor 1px, transparent 1px)',
+              'grid-vapor':
+                'linear-gradient(45deg, currentColor 1px, transparent 1px), linear-gradient(-45deg, currentColor 1px, transparent 1px)',
+              'pattern-guochao': 'url("https://picsum.photos/id/175/200/200")',
+              'pattern-floral': 'url("https://picsum.photos/id/106/200/200")',
+              'pattern-tech': 'url("https://picsum.photos/id/1/200/200")',
+              'pattern-paper': 'url("https://picsum.photos/id/318/200/200")',
+              'pattern-graffiti': 'url("https://picsum.photos/id/237/200/200")',
+              'pattern-space': 'url("https://picsum.photos/id/40/200/200")',
+            },
+          },
+        },
+      }
+    </script>
+
+    <!-- 自定义工具类 -->
+    <style type="text/tailwindcss">
+      @layer utilities {
+        .text-shadow-glow {
+          text-shadow: 0 0 8px currentColor;
+        }
+        .text-shadow-dark {
+          text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        .border-dashed-thick {
+          border-style: dashed;
+          border-width: 2px;
+        }
+        .border-gradient {
+          border-image: linear-gradient(to right, var(--tw-gradient-stops)) 1;
+        }
+        .texture-light {
+          background-blend-mode: overlay;
+          background-size: cover;
+          opacity: 0.05;
+        }
+        .texture-medium {
+          background-blend-mode: overlay;
+          background-size: cover;
+          opacity: 0.1;
+        }
+        .texture-heavy {
+          background-blend-mode: overlay;
+          background-size: cover;
+          opacity: 0.15;
+        }
+        .animate-float-slow {
+          animation: float 6s infinite ease-in-out;
+        }
+        .animate-float-fast {
+          animation: float 3s infinite ease-in-out;
+        }
+        .animate-pulse-slow {
+          animation: pulse 4s infinite ease-in-out;
+        }
+        .animate-shine {
+          animation: shine 5s infinite linear;
+        }
+        .animate-rotate-slow {
+          animation: rotate 15s infinite linear;
+        }
+        .mask-gradient {
+          mask-image: linear-gradient(to bottom, black 85%, transparent 100%);
+        }
+        .bg-grid {
+          background-size: 20px 20px;
+        }
+        .bg-dot {
+          background-image: radial-gradient(currentColor 1px, transparent 1px);
+          background-size: 10px 10px;
+        }
+      }
+    </style>
+
+    <style>
+      /* 全局样式 */
+      body {
+        background-color: #f5f5f5;
+        padding: 2rem 0;
+      }
+
+      /* 通用动画 */
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+      @keyframes slideUp {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      @keyframes scaleIn {
+        from {
+          opacity: 0;
+          transform: scale(0.9);
+        }
+        to {
+          opacity: 1;
+          transform: scale(1);
+        }
+      }
+      @keyframes bounceIn {
+        0% {
+          opacity: 0;
+          transform: scale(0.8);
+        }
+        70% {
+          opacity: 0.9;
+          transform: scale(1.05);
+        }
+        100% {
+          opacity: 1;
+          transform: scale(1);
+        }
+      }
+      @keyframes pulse {
+        0%,
+        100% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.03);
+        }
+      }
+      @keyframes float {
+        0%,
+        100% {
+          transform: translateY(0);
+        }
+        50% {
+          transform: translateY(-6px);
+        }
+      }
+      @keyframes shine {
+        0% {
+          background-position: -100% 0;
+        }
+        100% {
+          background-position: 200% 0;
+        }
+      }
+      @keyframes rotate {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+      /* 延迟动画类（适配50款证书加载顺序） */
+      .delay-0 {
+        animation-delay: 0s;
+      }
+      .delay-10 {
+        animation-delay: 0.05s;
+      }
+      .delay-20 {
+        animation-delay: 0.1s;
+      }
+      .delay-30 {
+        animation-delay: 0.15s;
+      }
+      .delay-40 {
+        animation-delay: 0.2s;
+      }
+      .delay-50 {
+        animation-delay: 0.25s;
+      }
+      .delay-60 {
+        animation-delay: 0.3s;
+      }
+      .delay-70 {
+        animation-delay: 0.35s;
+      }
+      .delay-80 {
+        animation-delay: 0.4s;
+      }
+      .delay-90 {
+        animation-delay: 0.45s;
+      }
+
+      /* 证书基础样式（统一文字布局，差异化UI） */
+      .cert-card {
+        display: flex;
+        flex-direction: column;
+        height: 420px;
+        overflow: hidden;
+        position: relative;
+        transition: all 0.3s ease;
+      }
+      .cert-card:hover {
+        transform: translateY(-5px);
+        box-shadow: var(--tw-shadow-lg);
+      }
+      .cert-content {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        padding: 1.5rem;
+      }
+      .cert-title {
+        text-align: center;
+        margin-bottom: 1rem;
+        font-weight: 700;
+      }
+      .cert-text {
+        text-align: center;
+        font-size: 0.9rem;
+        line-height: 1.6;
+        margin-bottom: 1rem;
+      }
+      .cert-highlight {
+        font-weight: 700;
+        margin: 0.8rem 0;
+        display: inline-block;
+      }
+      .cert-date {
+        text-align: center;
+        margin-top: auto;
+        padding-top: 1rem;
+        font-size: 0.85rem;
+      }
+      .cert-seal {
+        position: absolute;
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        right: 1rem;
+        bottom: 1rem;
+      }
+
+      /* 50款证书专属样式（按序号命名，避免冲突） */
+      /* 1. 赛博朋克霓虹款 */
+      .cert-01 {
+        background-color: #0d0221;
+        clip-path: polygon(0% 5%, 5% 0%, 95% 0%, 100% 5%, 100% 95%, 95% 100%, 5% 100%, 0% 95%);
+        box-shadow: 0 0 40px rgba(255, 42, 109, 0.2);
+      }
+      .cert-01 .cert-content {
+        color: #fff;
+      }
+      .cert-01 .cert-title {
+        font-family: 'Orbitron', sans-serif;
+        color: #ff2a6d;
+        text-shadow: 0 0 10px #ff2a6d;
+        font-size: 1.5rem;
+      }
+      .cert-01 .cert-highlight {
+        color: #05d9e8;
+        text-shadow: 0 0 8px #05d9e8;
+        border-bottom: 1px solid #05d9e8;
+        padding-bottom: 0.2rem;
+      }
+      .cert-01 .cert-quote {
+        color: #ff7aa2;
+        font-style: italic;
+        font-family: 'Orbitron', sans-serif;
+        font-size: 1.1rem;
+      }
+      .cert-01 .cert-seal {
+        background-color: rgba(255, 42, 109, 0.2);
+        border: 1px solid #ff2a6d;
+        color: #ff2a6d;
+        box-shadow: 0 0 15px #ff2a6d;
+      }
+      .cert-01::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background-image:
+          linear-gradient(to right, #ff2a6d 1px, transparent 1px),
+          linear-gradient(to bottom, #ff2a6d 1px, transparent 1px);
+        background-size: 20px 20px;
+        opacity: 0.1;
+        pointer-events: none;
+      }
+
+      /* 2. 古风国潮朱砂款 */
+      .cert-02 {
+        background-color: #faf6f0;
+        border: 2px solid #d40000;
+        clip-path: none;
+        box-shadow: 0 4px 15px rgba(212, 0, 0, 0.1);
+      }
+      .cert-02 .cert-content {
+        color: #333;
+      }
+      .cert-02 .cert-title {
+        font-family: 'Ma Shan Zheng', cursive;
+        color: #d40000;
+        font-size: 2rem;
+      }
+      .cert-02 .cert-highlight {
+        color: #d40000;
+        font-family: 'Noto Serif SC', serif;
+        font-size: 1.2rem;
+      }
+      .cert-02 .cert-quote {
+        color: #9a0000;
+        font-family: 'Ma Shan Zheng', cursive;
+        font-size: 1.3rem;
+      }
+      .cert-02 .cert-seal {
+        background-color: #d40000;
+        color: #fff;
+        font-family: 'Ma Shan Zheng', cursive;
+        font-size: 0.8rem;
+        right: 1.5rem;
+        bottom: 1.5rem;
+      }
+      .cert-02::before {
+        content: '';
+        position: absolute;
+        top: 1rem;
+        left: 1rem;
+        right: 1rem;
+        bottom: 1rem;
+        border: 1px dashed #d4000033;
+        pointer-events: none;
+      }
+
+      /* 3. 蒸汽波粉紫款 */
+      .cert-03 {
+        background: linear-gradient(135deg, #ff6ac1 0%, #7e57c2 100%);
+        clip-path: polygon(0% 0%, 100% 0%, 100% 85%, 85% 100%, 0% 100%);
+        box-shadow: 0 0 30px rgba(255, 106, 193, 0.3);
+      }
+      .cert-03 .cert-content {
+        color: #fff;
+      }
+      .cert-03 .cert-title {
+        font-family: 'Staatliches', sans-serif;
+        font-size: 1.6rem;
+        letter-spacing: 2px;
+      }
+      .cert-03 .cert-highlight {
+        background-color: rgba(255, 255, 255, 0.2);
+        padding: 0.3rem 1rem;
+        border-radius: 20px;
+        font-family: 'Staatliches', sans-serif;
+        letter-spacing: 1px;
+      }
+      .cert-03 .cert-quote {
+        font-family: 'Staatliches', sans-serif;
+        font-size: 1.2rem;
+        letter-spacing: 1px;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+      }
+      .cert-03 .cert-seal {
+        background-color: rgba(255, 255, 255, 0.2);
+        border: 1px solid #fff;
+        color: #fff;
+        backdrop-filter: blur(2px);
+      }
+      .cert-03::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background-image:
+          linear-gradient(45deg, #fff 1px, transparent 1px),
+          linear-gradient(-45deg, #fff 1px, transparent 1px);
+        background-size: 20px 20px;
+        opacity: 0.1;
+        pointer-events: none;
+      }
+
+      /* 4. 洛丽塔马卡龙款 */
+      .cert-04 {
+        background-color: #ffedfb;
+        border: 2px solid #ff99e6;
+        border-radius: 20px;
+        box-shadow: 0 0 20px rgba(255, 203, 242, 0.4);
+      }
+      .cert-04 .cert-content {
+        color: #666;
+      }
+      .cert-04 .cert-title {
+        font-family: 'Flower Script', cursive;
+        color: #ff99e6;
+        font-size: 1.8rem;
+      }
+      .cert-04 .cert-highlight {
+        color: #c70088;
+        font-family: 'Flower Script', cursive;
+        font-size: 1.4rem;
+      }
+      .cert-04 .cert-quote {
+        color: #ff99e6;
+        font-family: 'Flower Script', cursive;
+        font-size: 1.3rem;
+      }
+      .cert-04 .cert-seal {
+        background-color: #ffcbf2;
+        border: 1px solid #ff99e6;
+        color: #c70088;
+        font-size: 0.7rem;
+      }
+      .cert-04::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background-image: radial-gradient(#ff99e633 5px, transparent 5px);
+        background-size: 30px 30px;
+        opacity: 0.5;
+        pointer-events: none;
+      }
+
+      /* 5. 商务极简黑白款 */
+      .cert-05 {
+        background-color: #fff;
+        border: 1px solid #e0e0e0;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+      }
+      .cert-05 .cert-content {
+        color: #333;
+      }
+      .cert-05 .cert-title {
+        font-family: 'Montserrat', sans-serif;
+        font-size: 1.4rem;
+        font-weight: 600;
+        border-bottom: 1px solid #e0e0e0;
+        padding-bottom: 0.8rem;
+      }
+      .cert-05 .cert-highlight {
+        color: #2d3748;
+        font-family: 'Montserrat', sans-serif;
+        font-weight: 600;
+        border-bottom: 1px solid #4299e1;
+        padding-bottom: 0.2rem;
+      }
+      .cert-05 .cert-quote {
+        color: #4a5568;
+        font-style: italic;
+        font-family: 'Montserrat', sans-serif;
+      }
+      .cert-05 .cert-seal {
+        background-color: #2d3748;
+        color: #fff;
+        font-size: 0.7rem;
+        width: 50px;
+        height: 50px;
+      }
+
+      /* 6. 手绘卡通阳光款 */
+      .cert-06 {
+        background-color: #f8f9fa;
+        border: 2px dashed #ff9f1c;
+        border-radius: 10px;
+        box-shadow: 0 4px 15px rgba(255, 159, 28, 0.1);
+      }
+      .cert-06 .cert-content {
+        color: #333;
+      }
+      .cert-06 .cert-title {
+        font-family: 'Kalam', cursive;
+        color: #ff9f1c;
+        font-size: 1.6rem;
+      }
+      .cert-06 .cert-highlight {
+        color: #c77d00;
+        font-family: 'Kalam', cursive;
+        font-size: 1.3rem;
+        background-color: #fff3cd;
+        padding: 0.2rem 0.8rem;
+        border-radius: 8px;
+      }
+      .cert-06 .cert-quote {
+        color: #ff9f1c;
+        font-family: 'Kalam', cursive;
+        font-size: 1.2rem;
+      }
+      .cert-06 .cert-seal {
+        background-color: #ffd166;
+        border: 1px solid #ff9f1c;
+        color: #c77d00;
+        font-family: 'Kalam', cursive;
+        font-size: 0.8rem;
+      }
+      .cert-06::before {
+        content: '✦';
+        position: absolute;
+        top: 1rem;
+        left: 1rem;
+        color: #ffd166;
+        font-size: 1.2rem;
+      }
+      .cert-06::after {
+        content: '✦';
+        position: absolute;
+        bottom: 1rem;
+        right: 1rem;
+        color: #ffd166;
+        font-size: 1.2rem;
+      }
+
+      /* 7. 户外探险大地款 */
+      .cert-07 {
+        background-color: #f5f5f0;
+        border: 2px solid #e76f51;
+        clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%);
+        box-shadow: 0 4px 15px rgba(231, 111, 81, 0.1);
+      }
+      .cert-07 .cert-content {
+        color: #555;
+      }
+      .cert-07 .cert-title {
+        font-family: 'Patua One', sans-serif;
+        color: #e76f51;
+        font-size: 1.5rem;
+      }
+      .cert-07 .cert-highlight {
+        color: #c14a2f;
+        font-family: 'Patua One', sans-serif;
+        font-size: 1.2rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+      }
+      .cert-07 .cert-quote {
+        color: #e76f51;
+        font-family: 'Patua One', sans-serif;
+        font-size: 1.1rem;
+      }
+      .cert-07 .cert-seal {
+        background-color: #f4a261;
+        border: 1px solid #e76f51;
+        color: #c14a2f;
+        font-size: 0.7rem;
+      }
+      .cert-07::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background-image: url('https://picsum.photos/id/237/200/200');
+        background-blend-mode: overlay;
+        background-size: cover;
+        opacity: 0.05;
+        pointer-events: none;
+      }
+
+      /* 8. 文艺复古咖啡款 */
+      .cert-08 {
+        background-color: #f1ebe6;
+        border: 1px solid #b8c6be;
+        border-radius: 0;
+        box-shadow: 0 4px 12px rgba(184, 198, 190, 0.2);
+      }
+      .cert-08 .cert-content {
+        color: #5a3a18;
+      }
+      .cert-08 .cert-title {
+        font-family: 'Rochester', cursive;
+        color: #8b5a2b;
+        font-size: 1.8rem;
+      }
+      .cert-08 .cert-highlight {
+        color: #8b5a2b;
+        font-family: 'Rochester', cursive;
+        font-size: 1.4rem;
+        border-bottom: 1px solid #b88a6a;
+        padding-bottom: 0.2rem;
+      }
+      .cert-08 .cert-quote {
+        color: #b88a6a;
+        font-family: 'Rochester', cursive;
+        font-size: 1.3rem;
+      }
+      .cert-08 .cert-seal {
+        background-color: #e6b89c;
+        border: 1px solid #b88a6a;
+        color: #8b5a2b;
+        font-size: 0.7rem;
+      }
+      .cert-08::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background-image: linear-gradient(to right, #b88a6a1a 50%, transparent 50%);
+        background-size: 10px 1px;
+        background-repeat: repeat-x;
+        opacity: 0.5;
+        pointer-events: none;
+      }
+
+      /* 9. 未来主义科技款 */
+      .cert-09 {
+        background-color: #001219;
+        border: 1px solid #3a86ff;
+        clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+        box-shadow: 0 0 30px rgba(58, 134, 255, 0.3);
+      }
+      .cert-09 .cert-content {
+        color: #fff;
+      }
+      .cert-09 .cert-title {
+        font-family: 'Sarpanch', sans-serif;
+        color: #3a86ff;
+        font-size: 1.5rem;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+      }
+      .cert-09 .cert-highlight {
+        color: #83b9ff;
+        font-family: 'Sarpanch', sans-serif;
+        font-size: 1.2rem;
+        border-bottom: 1px solid #3a86ff;
+        padding-bottom: 0.2rem;
+      }
+      .cert-09 .cert-quote {
+        color: #3a86ff;
+        font-family: 'Sarpanch', sans-serif;
+        font-size: 1.1rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+      }
+      .cert-09 .cert-seal {
+        background-color: rgba(58, 134, 255, 0.2);
+        border: 1px solid #3a86ff;
+        color: #3a86ff;
+        box-shadow: 0 0 10px #3a86ff;
+      }
+      .cert-09::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background-image:
+          linear-gradient(to right, #3a86ff 1px, transparent 1px),
+          linear-gradient(to bottom, #3a86ff 1px, transparent 1px);
+        background-size: 20px 20px;
+        opacity: 0.1;
+        pointer-events: none;
+      }
+
+      /* 10. 自然森系绿叶款 */
+      .cert-10 {
+        background-color: #faf6ed;
+        border: 2px solid #43aa8b;
+        border-radius: 15px;
+        box-shadow: 0 4px 15px rgba(67, 170, 139, 0.1);
+      }
+      .cert-10 .cert-content {
+        color: #2d7d62;
+      }
+      .cert-10 .cert-title {
+        font-family: 'Wire One', sans-serif;
+        color: #43aa8b;
+        font-size: 1.8rem;
+        letter-spacing: 1px;
+      }
+      .cert-10 .cert-highlight {
+        color: #2d7d62;
+        font-family: 'Wire One', sans-serif;
+        font-size: 1.4rem;
+        background-color: #e6fffa;
+        padding: 0.2rem 1rem;
+        border-radius: 20px;
+      }
+      .cert-10 .cert-quote {
+        color: #43aa8b;
+        font-family: 'Wire One', sans-serif;
+        font-size: 1.3rem;
+      }
+      .cert-10 .cert-seal {
+        background-color: #75e2b3;
+        border: 1px solid #43aa8b;
+        color: #2d7d62;
+        font-size: 0.7rem;
+      }
+      .cert-10::before {
+        content: '🌿';
+        position: absolute;
+        top: 1rem;
+        left: 1rem;
+        font-size: 1.5rem;
+      }
+      .cert-10::after {
+        content: '🌿';
+        position: absolute;
+        bottom: 1rem;
+        right: 1rem;
+        font-size: 1.5rem;
+      }
+
+      /* 11. 摇滚朋克暗黑款 */
+      .cert-11 {
+        background-color: #000;
+        border: 2px solid #ffd166;
+        clip-path: none;
+        box-shadow: 0 0 20px rgba(255, 209, 102, 0.2);
+      }
+      .cert-11 .cert-content {
+        color: #fff;
+      }
+      .cert-11 .cert-title {
+        font-family: 'Vampiro One', cursive;
+        color: #ffd166;
+        font-size: 1.6rem;
+        letter-spacing: 1px;
+      }
+      .cert-11 .cert-highlight {
+        color: #ffd166;
+        font-family: 'Vampiro One', cursive;
+        font-size: 1.3rem;
+        border-bottom: 1px solid #ffd166;
+        padding-bottom: 0.2rem;
+      }
+      .cert-11 .cert-quote {
+        color: #fff3cd;
+        font-family: 'Vampiro One', cursive;
+        font-size: 1.2rem;
+      }
+      .cert-11 .cert-seal {
+        background-color: #ffd166;
+        border: 1px solid #e6bc00;
+        color: #000;
+        font-size: 0.7rem;
+      }
+      .cert-11::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background-image: url('https://picsum.photos/id/237/200/200');
+        background-blend-mode: overlay;
+        background-size: cover;
+        opacity: 0.1;
+        pointer-events: none;
+      }
+
+      /* 12. 梦幻渐变紫粉款 */
+      .cert-12 {
+        background: linear-gradient(135deg, #f093fb 0%, #f5b7f9 100%);
+        border-radius: 25px;
+        box-shadow: 0 0 30px rgba(240, 147, 251, 0.3);
+      }
+      .cert-12 .cert-content {
+        color: #5a189a;
+      }
+      .cert-12 .cert-title {
+        font-family: 'Dancing Script', cursive;
+        color: #5a189a;
+        font-size: 2rem;
+      }
+      .cert-12 .cert-highlight {
+        color: #9c27b0;
+        font-family: 'Dancing Script', cursive;
+        font-size: 1.5rem;
+        background-color: rgba(255, 255, 255, 0.3);
+        padding: 0.3rem 1rem;
+        border-radius: 20px;
+      }
+      .cert-12 .cert-quote {
+        color: #5a189a;
+        font-family: 'Dancing Script', cursive;
+        font-size: 1.4rem;
+      }
+      .cert-12 .cert-seal {
+        background-color: rgba(255, 255, 255, 0.3);
+        border: 1px solid #f093fb;
+        color: #5a189a;
+        backdrop-filter: blur(2px);
+      }
+      .cert-12::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background-image: radial-gradient(#fff 2px, transparent 2px);
+        background-size: 20px 20px;
+        opacity: 0.2;
+        pointer-events: none;
+      }
+
+      /* 13. 军事风迷彩款 */
+      .cert-13 {
+        background-color: #2b2d42;
+        border: 1px solid #4a4e69;
+        clip-path: none;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+      }
+      .cert-13 .cert-content {
+        color: #adb5bd;
+      }
+      .cert-13 .cert-title {
+        font-family: 'Source Code Pro', monospace;
+        color: #8d99ae;
+        font-size: 1.3rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+      }
+      .cert-13 .cert-highlight {
+        color: #8d99ae;
+        font-family: 'Source Code Pro', monospace;
+        font-size: 1.1rem;
+        border-bottom: 1px solid #4a4e69;
+        padding-bottom: 0.2rem;
+      }
+      .cert-13 .cert-quote {
+        color: #adb5bd;
+        font-family: 'Source Code Pro', monospace;
+        font-size: 1rem;
+      }
+      .cert-13 .cert-seal {
+        background-color: #4a4e69;
+        border: 1px solid #8d99ae;
+        color: #fff;
+        font-size: 0.6rem;
+      }
+      .cert-13::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background-image: linear-gradient(45deg, #4a4e691a 50%, transparent 50%);
+        background-size: 10px 10px;
+        opacity: 0.5;
+        pointer-events: none;
+      }
+
+      /* 14. 学院风藏青款 */
+      .cert-14 {
+        background-color: #fff;
+        border: 2px solid #4263eb;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(66, 99, 235, 0.1);
+      }
+      .cert-14 .cert-content {
+        color: #2341b6;
+      }
+      .cert-14 .cert-title {
+        font-family: 'Poppins', sans-serif;
+        color: #4263eb;
+        font-size: 1.4rem;
+        font-weight: 600;
+        border-bottom: 1px solid #758af7;
+        padding-bottom: 0.8rem;
+      }
+      .cert-14 .cert-highlight {
+        color: #2341b6;
+        font-family: 'Poppins', sans-serif;
+        font-weight: 600;
+        font-size: 1.1rem;
+      }
+      .cert-14 .cert-quote {
+        color: #4263eb;
+        font-family: 'Poppins', sans-serif;
+        font-style: italic;
+        font-size: 1rem;
+      }
+      .cert-14 .cert-seal {
+        background-color: #4263eb;
+        border: 1px solid #758af7;
+        color: #fff;
+        font-size: 0.7rem;
+      }
+
+      /* 15. 波西米亚花纹款 */
+      .cert-15 {
+        background-color: #f8f5f0;
+        border: 1px solid #dda15e;
+        border-radius: 0;
+        box-shadow: 0 4px 15px rgba(218, 161, 94, 0.1);
+      }
+      .cert-15 .cert-content {
+        color: #92400e;
+      }
+      .cert-15 .cert-title {
+        font-family: 'Hanalei Fill', cursive;
+        color: #d97706;
+        font-size: 1.6rem;
+      }
+      .cert-15 .cert-highlight {
+        color: #92400e;
+        font-family: 'Hanalei Fill', cursive;
+        font-size: 1.3rem;
+      }
+      .cert-15 .cert-quote {
+        color: #d97706;
+        font-family: 'Hanalei Fill', cursive;
+        font-size: 1.2rem;
+      }
+      .cert-15 .cert-seal {
+        background-color: #f4d35e;
+        border: 1px solid #dda15e;
+        color: #92400e;
+        font-size: 0.7rem;
+      }
+      .cert-15::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background-image: url('https://picsum.photos/id/106/200/200');
+        background-blend-mode: overlay;
+        background-size: cover;
+        opacity: 0.05;
+        pointer-events: none;
+      }
+
+      /* 16. 极简黑白对比款 */
+      .cert-16 {
+        background-color: #000;
+        border: 2px solid #fff;
+        clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%);
+        box-shadow: 0 4px 15px rgba(255, 255, 255, 0.1);
+      }
+      .cert-16 .cert-content {
+        color: #fff;
+      }
+      .cert-16 .cert-title {
+        font-family: 'Ultra', serif;
+        color: #fff;
+        font-size: 1.4rem;
+        border-bottom: 1px solid #666;
+        padding-bottom: 0.8rem;
+      }
+      .cert-16 .cert-highlight {
+        color: #fff;
+        font-family: 'Ultra', serif;
+        font-size: 1.1rem;
+        border-bottom: 1px solid #fff;
+        padding-bottom: 0.2rem;
+      }
+      .cert-16 .cert-quote {
+        color: #aaa;
+        font-family: 'Ultra', serif;
+        font-style: italic;
+        font-size: 1rem;
+      }
+      .cert-16 .cert-seal {
+        background-color: #fff;
+        border: 1px solid #666;
+        color: #000;
+        font-size: 0.7rem;
+      }
+
+      /* 17. 航海风蓝白款 */
+      .cert-17 {
+        background-color: #fff;
+        border: 2px solid #023e8a;
+        border-radius: 10px;
+        box-shadow: 0 4px 15px rgba(2, 62, 138, 0.1);
+      }
+      .cert-17 .cert-content {
+        color: #023e8a;
+      }
+      .cert-17 .cert-title {
+        font-family: 'Bebas Neue', sans-serif;
+        color: #023e8a;
+        font-size: 1.6rem;
+        letter-spacing: 1px;
+      }
+      .cert-17 .cert-highlight {
+        color: #002855;
+        font-family: 'Bebas Neue', sans-serif;
+        font-size: 1.3rem;
+        background-color: #e6f2ff;
+        padding: 0.2rem 1rem;
+        border-radius: 20px;
+      }
+      .cert-17 .cert-quote {
+        color: #023e8a;
+        font-family: 'Bebas Neue', sans-serif;
+        font-size: 1.2rem;
+      }
+      .cert-17 .cert-seal {
+        background-color: #3a7ca8;
+        border: 1px solid #023e8a;
+        color: #fff;
+        font-size: 0.7rem;
+      }
+      .cert-17::before {
+        content: '⚓';
+        position: absolute;
+        top: 1rem;
+        left: 1rem;
+        font-size: 1.5rem;
+      }
+
+      /* 18. 甜点马卡龙粉款 */
+      .cert-18 {
+        background-color: #ffd6d6;
+        border: 2px solid #ff7a7a;
+        border-radius: 20px;
+        box-shadow: 0 0 20px rgba(255, 122, 122, 0.2);
+      }
+      .cert-18 .cert-content {
+        color: #990000;
+      }
+      .cert-18 .cert-title {
+        font-family: 'Comic Neue', sans-serif;
+        color: #ff7a7a;
+        font-size: 1.5rem;
+      }
+      .cert-18 .cert-highlight {
+        color: #990000;
+        font-family: 'Comic Neue', sans-serif;
+        font-size: 1.2rem;
+        background-color: #fff;
+        padding: 0.2rem 1rem;
+        border-radius: 20px;
+      }
+      .cert-18 .cert-quote {
+        color: #ff7a7a;
+        font-family: 'Comic Neue', sans-serif;
+        font-size: 1.1rem;
+      }
+      .cert-18 .cert-seal {
+        background-color: #ffadad;
+        border: 1px solid #ff7a7a;
+        color: #990000;
+        font-size: 0.7rem;
+      }
+
+      /* 19. 哥特暗黑款 */
+      .cert-19 {
+        background-color: #212529;
+        border: 1px solid #6c757d;
+        clip-path: none;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+      }
+      .cert-19 .cert-content {
+        color: #adb5bd;
+      }
+      .cert-19 .cert-title {
+        font-family: 'Vampiro One', cursive;
+        color: #6c757d;
+        font-size: 1.6rem;
+      }
+      .cert-19 .cert-highlight {
+        color: #adb5bd;
+        font-family: 'Vampiro One', cursive;
+        font-size: 1.3rem;
+        border-bottom: 1px solid #6c757d;
+        padding-bottom: 0.2rem;
+      }
+      .cert-19 .cert-quote {
+        color: #6c757d;
+        font-family: 'Vampiro One', cursive;
+        font-size: 1.2rem;
+      }
+      .cert-19 .cert-seal {
+        background-color: #343a40;
+        border: 1px solid #6c757d;
+        color: #adb5bd;
+        font-size: 0.7rem;
+      }
+
+      /* 20. 太空科幻款 */
+      .cert-20 {
+        background-color: #00171f;
+        border: 1px solid #006494;
+        clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);
+        box-shadow: 0 0 30px rgba(0, 100, 148, 0.3);
+      }
+      .cert-20 .cert-content {
+        color: #7ffff0;
+      }
+      .cert-20 .cert-title {
+        font-family: 'Sarpanch', sans-serif;
+        color: #00f5d4;
+        font-size: 1.5rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+      }
+      .cert-20 .cert-highlight {
+        color: #7ffff0;
+        font-family: 'Sarpanch', sans-serif;
+        font-size: 1.2rem;
+        border-bottom: 1px solid #00f5d4;
+        padding-bottom: 0.2rem;
+      }
+      .cert-20 .cert-quote {
+        color: #00f5d4;
+        font-family: 'Sarpanch', sans-serif;
+        font-size: 1.1rem;
+      }
+      .cert-20 .cert-seal {
+        background-color: rgba(0, 100, 148, 0.2);
+        border: 1px solid #00f5d4;
+        color: #00f5d4;
+        box-shadow: 0 0 10px #00f5d4;
+      }
+      .cert-20::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background-image: url('https://picsum.photos/id/40/200/200');
+        background-blend-mode: overlay;
+        background-size: cover;
+        opacity: 0.1;
+        pointer-events: none;
+      }
+
+      /* 21. 乡村田园款 */
+      .cert-21 {
+        background-color: #faf6ed;
+        border: 1px solid #dda15e;
+        border-radius: 15px;
+        box-shadow: 0 4px 15px rgba(218, 161, 94, 0.1);
+      }
+      .cert-21 .cert-content {
+        color: #606c38;
+      }
+      .cert-21 .cert-title {
+        font-family: 'Rochester', cursive;
+        color: #dda15e;
+        font-size: 1.8rem;
+      }
+      .cert-21 .cert-highlight {
+        color: #606c38;
+        font-family: 'Rochester', cursive;
+        font-size: 1.4rem;
+      }
+      .cert-21 .cert-quote {
+        color: #dda15e;
+        font-family: 'Rochester', cursive;
+        font-size: 1.3rem;
+      }
+      .cert-21 .cert-seal {
+        background-color: #f4d35e;
+        border: 1px solid #dda15e;
+        color: #606c38;
+        font-size: 0.7rem;
+      }
+      .cert-21::before {
+        content: '🌾';
+        position: absolute;
+        top: 1rem;
+        left: 1rem;
+        font-size: 1.5rem;
+      }
+
+      /* 22. 运动活力红款 */
+      .cert-22 {
+        background-color: #fff;
+        border: 2px solid #ef476f;
+        border-radius: 8px;
+        box-shadow: 0 4px 15px rgba(239, 71, 111, 0.1);
+      }
+      .cert-22 .cert-content {
+        color: #c71e48;
+      }
+      .cert-22 .cert-title {
+        font-family: 'Staatliches', sans-serif;
+        color: #ef476f;
+        font-size: 1.6rem;
+        letter-spacing: 1px;
+      }
+      .cert-22 .cert-highlight {
+        color: #c71e48;
+        font-family: 'Staatliches', sans-serif;
+        font-size: 1.3rem;
+        background-color: #ffe6ec;
+        padding: 0.2rem 1rem;
+        border-radius: 20px;
+      }
+      .cert-22 .cert-quote {
+        color: #ef476f;
+        font-family: 'Staatliches', sans-serif;
+        font-size: 1.2rem;
+      }
+      .cert-22 .cert-seal {
+        background-color: #ef476f;
+        border: 1px solid #ff758f;
+        color: #fff;
+        font-size: 0.7rem;
+      }
+
+      /* 23. 艺术涂鸦黄款 */
+      .cert-23 {
+        background-color: #fff;
+        border: 2px dashed #ffbe0b;
+        border-radius: 10px;
+        box-shadow: 0 4px 15px rgba(255, 190, 11, 0.1);
+      }
+      .cert-23 .cert-content {
+        color: #c89400;
+      }
+      .cert-23 .cert-title {
+        font-family: 'Vampiro One', cursive;
+        color: #ffbe0b;
+        font-size: 1.6rem;
+      }
+      .cert-23 .cert-highlight {
+        color: #c89400;
+        font-family: 'Vampiro One', cursive;
+        font-size: 1.3rem;
+        background-color: #fff9e6;
+        padding: 0.2rem 1rem;
+        border-radius: 20px;
+      }
+      .cert-23 .cert-quote {
+        color: #ffbe0b;
+        font-family: 'Vampiro One', cursive;
+        font-size: 1.2rem;
+      }
+      .cert-23 .cert-seal {
+        background-color: #ffdd70;
+        border: 1px solid #ffbe0b;
+        color: #c89400;
+        font-size: 0.7rem;
+      }
+      .cert-23::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background-image: url('https://picsum.photos/id/237/200/200');
+        background-blend-mode: overlay;
+        background-size: cover;
+        opacity: 0.05;
+        pointer-events: none;
+      }
+
+      /* 24. 婚礼浪漫粉款 */
+      .cert-24 {
+        background-color: #f3e8ff;
+        border: 2px solid #ff7ba9;
+        border-radius: 25px;
+        box-shadow: 0 0 20px rgba(255, 123, 169, 0.2);
+      }
+      .cert-24 .cert-content {
+        color: #99004d;
+      }
+      .cert-24 .cert-title {
+        font-family: 'Flower Script', cursive;
+        color: #ff7ba9;
+        font-size: 1.8rem;
+      }
+      .cert-24 .cert-highlight {
+        color: #99004d;
+        font-family: 'Flower Script', cursive;
+        font-size: 1.4rem;
+        background-color: #fff;
+        padding: 0.3rem 1rem;
+        border-radius: 20px;
+      }
+      .cert-24 .cert-quote {
+        color: #ff7ba9;
+        font-family: 'Flower Script', cursive;
+        font-size: 1.3rem;
+      }
+      .cert-24 .cert-seal {
+        background-color: #ffafcc;
+        border: 1px solid #ff7ba9;
+        color: #99004d;
+        font-size: 0.7rem;
+      }
+
+      /* 25. 侦探悬疑灰款 */
+      .cert-25 {
+        background-color: #333533;
+        border: 1px solid #5a5a5a;
+      }
+
+      /* 26. 日系清新款 */
+      .cert-26 {
+        background-color: #f9f7f7;
+        border: 1px solid #e8e8e8;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(220, 242, 255, 0.3);
+      }
+      .cert-26 .cert-content {
+        color: #4a4a4a;
+      }
+      .cert-26 .cert-title {
+        font-family: 'Yu Min Cho', sans-serif;
+        color: #9fb7d4;
+        font-size: 1.5rem;
+        letter-spacing: 0.5px;
+      }
+      .cert-26 .cert-highlight {
+        color: #75a3c7;
+        font-family: 'Yu Min Cho', sans-serif;
+        font-size: 1.2rem;
+        background-color: #e8f4f8;
+        padding: 0.2rem 0.8rem;
+        border-radius: 15px;
+      }
+      .cert-26 .cert-quote {
+        color: #9fb7d4;
+        font-family: 'Yu Min Cho', sans-serif;
+        font-size: 1.1rem;
+        font-style: italic;
+      }
+      .cert-26 .cert-seal {
+        background-color: #e8f4f8;
+        border: 1px solid #9fb7d4;
+        color: #75a3c7;
+        font-size: 0.7rem;
+      }
+      .cert-26::before {
+        content: '🌸';
+        position: absolute;
+        top: 1rem;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 1.2rem;
+      }
+      .cert-26::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background-image: radial-gradient(#9fb7d41a 4px, transparent 4px);
+        background-size: 30px 30px;
+        opacity: 0.6;
+        pointer-events: none;
+      }
+
+      /* 27. 北欧简约款 */
+      .cert-27 {
+        background-color: #ffffff;
+        border: 1px solid #f0f0f0;
+        border-radius: 4px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+      }
+      .cert-27 .cert-content {
+        color: #333333;
+      }
+      .cert-27 .cert-title {
+        font-family: 'Montserrat', sans-serif;
+        color: #64b5f6;
+        font-size: 1.3rem;
+        font-weight: 600;
+        border-bottom: 2px solid #f5f5f5;
+        padding-bottom: 1rem;
+      }
+      .cert-27 .cert-highlight {
+        color: #2196f3;
+        font-family: 'Montserrat', sans-serif;
+        font-size: 1.1rem;
+        font-weight: 600;
+      }
+      .cert-27 .cert-quote {
+        color: #757575;
+        font-family: 'Montserrat', sans-serif;
+        font-size: 0.95rem;
+        line-height: 1.5;
+      }
+      .cert-27 .cert-seal {
+        background-color: #f5f5f5;
+        border: 1px solid #e0e0e0;
+        color: #2196f3;
+        font-size: 0.65rem;
+        width: 45px;
+        height: 45px;
+      }
+      .cert-27::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 20%;
+        right: 20%;
+        height: 4px;
+        background-color: #2196f3;
+      }
+
+      /* 28. 工业风复古款 */
+      .cert-28 {
+        background-color: #2d2d2d;
+        border: 2px solid #5a5a5a;
+        clip-path: polygon(0% 2%, 2% 0%, 98% 0%, 100% 2%, 100% 98%, 98% 100%, 2% 100%, 0% 98%);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+      }
+      .cert-28 .cert-content {
+        color: #e0e0e0;
+      }
+      .cert-28 .cert-title {
+        font-family: 'Source Code Pro', monospace;
+        color: #ff9f1c;
+        font-size: 1.4rem;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+      }
+      .cert-28 .cert-highlight {
+        color: #ff9f1c;
+        font-family: 'Source Code Pro', monospace;
+        font-size: 1.1rem;
+        border-bottom: 1px dashed #ff9f1c;
+        padding-bottom: 0.2rem;
+      }
+      .cert-28 .cert-quote {
+        color: #b0b0b0;
+        font-family: 'Source Code Pro', monospace;
+        font-size: 0.95rem;
+      }
+      .cert-28 .cert-seal {
+        background-color: #5a5a5a;
+        border: 1px solid #ff9f1c;
+        color: #ff9f1c;
+        font-size: 0.65rem;
+      }
+      .cert-28::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background-image: url('https://picsum.photos/id/1076/200/200');
+        background-blend-mode: overlay;
+        background-size: cover;
+        opacity: 0.08;
+        pointer-events: none;
+      }
+
+      /* 29. 轻奢风烫金款 */
+      .cert-29 {
+        background-color: #f8f5f2;
+        border: 1px solid #e6d9c9;
+        border-radius: 8px;
+        box-shadow: 0 4px 15px rgba(212, 175, 55, 0.1);
+      }
+      .cert-29 .cert-content {
+        color: #5d4037;
+      }
+      .cert-29 .cert-title {
+        font-family: 'Playfair Display', serif;
+        color: #d4af37;
+        font-size: 1.6rem;
+        font-weight: 700;
+        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+      }
+      .cert-29 .cert-highlight {
+        color: #d4af37;
+        font-family: 'Playfair Display', serif;
+        font-size: 1.3rem;
+        border-bottom: 1px solid #d4af3733;
+        padding-bottom: 0.3rem;
+      }
+      .cert-29 .cert-quote {
+        color: #8d6e63;
+        font-family: 'Playfair Display', serif;
+        font-style: italic;
+        font-size: 1.1rem;
+      }
+      .cert-29 .cert-seal {
+        background-color: #d4af37;
+        border: 1px solid #f0c808;
+        color: #fff;
+        font-size: 0.7rem;
+        box-shadow: 0 0 10px rgba(212, 175, 55, 0.3);
+      }
+      .cert-29::before {
+        content: '';
+        position: absolute;
+        inset: 1rem;
+        background-image: radial-gradient(#d4af371a 3px, transparent 3px);
+        background-size: 25px 25px;
+        opacity: 0.6;
+        pointer-events: none;
+      }
+
+      /* 30. 复古打字机款 */
+      .cert-30 {
+        background-color: #f5f1e9;
+        border: 1px solid #d6ccc2;
+        border-radius: 0;
+        box-shadow: 0 4px 12px rgba(184, 134, 11, 0.1);
+      }
+      .cert-30 .cert-content {
+        color: #3c2a21;
+      }
+      .cert-30 .cert-title {
+        font-family: 'Roboto Mono', monospace;
+        color: #8b5a2b;
+        font-size: 1.3rem;
+        letter-spacing: 1px;
+      }
+      .cert-30 .cert-highlight {
+        color: #8b5a2b;
+        font-family: 'Roboto Mono', monospace;
+        font-size: 1.1rem;
+        background-color: #e6ddd0;
+        padding: 0.1rem 0.6rem;
+      }
+      .cert-30 .cert-quote {
+        color: #6b4826;
+        font-family: 'Roboto Mono', monospace;
+        font-size: 0.95rem;
+        line-height: 1.6;
+      }
+      .cert-30 .cert-seal {
+        background-color: #e6ddd0;
+        border: 1px solid #d6ccc2;
+        color: #8b5a2b;
+        font-size: 0.65rem;
+      }
+      .cert-30::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background-image: linear-gradient(to bottom, #d6ccc21a 1px, transparent 1px);
+        background-size: 100% 18px;
+        opacity: 0.8;
+        pointer-events: none;
+      }
+
+      /* 31. 梦幻星空款 */
+      .cert-31 {
+        background: linear-gradient(135deg, #0a0e27 0%, #1a1a2e 100%);
+        border: 1px solid #4cc9f0;
+        clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%);
+        box-shadow: 0 0 30px rgba(76, 201, 240, 0.2);
+      }
+      .cert-31 .cert-content {
+        color: #f8f9fa;
+      }
+      .cert-31 .cert-title {
+        font-family: 'Sarpanch', sans-serif;
+        color: #4cc9f0;
+        font-size: 1.5rem;
+        text-shadow: 0 0 8px #4cc9f0;
+      }
+      .cert-31 .cert-highlight {
+        color: #72efdd;
+        font-family: 'Sarpanch', sans-serif;
+        font-size: 1.2rem;
+        border-bottom: 1px solid #4cc9f033;
+        padding-bottom: 0.2rem;
+      }
+      .cert-31 .cert-quote {
+        color: #a3d9ff;
+        font-family: 'Sarpanch', sans-serif;
+        font-size: 1.1rem;
+      }
+      .cert-31 .cert-seal {
+        background-color: rgba(76, 201, 240, 0.1);
+        border: 1px solid #4cc9f0;
+        color: #4cc9f0;
+        box-shadow: 0 0 10px #4cc9f0;
+      }
+      .cert-31::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background-image: radial-gradient(#fff 1px, transparent 1px);
+        background-size: 30px 30px;
+        opacity: 0.1;
+        pointer-events: none;
+      }
+
+      /* 32. 森系水彩款 */
+      .cert-32 {
+        background-color: #faf6ed;
+        border: 1px solid #d4e7c5;
+        border-radius: 15px;
+        box-shadow: 0 4px 15px rgba(136, 198, 138, 0.1);
+      }
+      .cert-32 .cert-content {
+        color: #386641;
+      }
+      .cert-32 .cert-title {
+        font-family: 'Rochester', cursive;
+        color: #6a994e;
+        font-size: 1.8rem;
+      }
+      .cert-32 .cert-highlight {
+        color: #6a994e;
+        font-family: 'Rochester', cursive;
+        font-size: 1.4rem;
+        background-color: #eaf6fa;
+        padding: 0.2rem 1rem;
+        border-radius: 20px;
+      }
+      .cert-32 .cert-quote {
+        color: #a7c957;
+        font-family: 'Rochester', cursive;
+        font-size: 1.3rem;
+      }
+      .cert-32 .cert-seal {
+        background-color: #d4e7c5;
+        border: 1px solid #6a994e;
+        color: #386641;
+        font-size: 0.7rem;
+      }
+      .cert-32::before {
+        content: '🍃';
+        position: absolute;
+        top: 1.5rem;
+        left: 1.5rem;
+        font-size: 1.2rem;
+      }
+      .cert-32::after {
+        content: '🍃';
+        position: absolute;
+        bottom: 1.5rem;
+        right: 1.5rem;
+        font-size: 1.2rem;
+      }
+
+      /* 33. 美式复古款 */
+      .cert-33 {
+        background-color: #f2e8cf;
+        border: 2px solid #bc6c25;
+        clip-path: none;
+        box-shadow: 0 4px 15px rgba(188, 108, 37, 0.1);
+      }
+      .cert-33 .cert-content {
+        color: #2b2d42;
+      }
+      .cert-33 .cert-title {
+        font-family: 'Patua One', sans-serif;
+        color: #bc6c25;
+        font-size: 1.6rem;
+        letter-spacing: 1px;
+      }
+      .cert-33 .cert-highlight {
+        color: #bc6c25;
+        font-family: 'Patua One', sans-serif;
+        font-size: 1.3rem;
+        text-transform: uppercase;
+      }
+      .cert-33 .cert-quote {
+        color: #4a4e69;
+        font-family: 'Patua One', sans-serif;
+        font-size: 1.1rem;
+      }
+      .cert-33 .cert-seal {
+        background-color: #bc6c25;
+        border: 1px solid #8b4c1f;
+        color: #fff;
+        font-size: 0.7rem;
+      }
+      .cert-33::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background-image: url('https://picsum.photos/id/1060/200/200');
+        background-blend-mode: overlay;
+        background-size: cover;
+        opacity: 0.05;
+        pointer-events: none;
+      }
+
+      /* 34. 法式浪漫款 */
+      .cert-34 {
+        background: linear-gradient(135deg, #fdf2f8 0%, #fef7fb 100%);
+        border: 1px solid #fcc367;
+        border-radius: 20px;
+        box-shadow: 0 0 20px rgba(252, 195, 103, 0.1);
+      }
+      .cert-34 .cert-content {
+        color: #4a044a;
+      }
+      .cert-34 .cert-title {
+        font-family: 'Dancing Script', cursive;
+        color: #c51b8a;
+        font-size: 2rem;
+      }
+      .cert-34 .cert-highlight {
+        color: #c51b8a;
+        font-family: 'Dancing Script', cursive;
+        font-size: 1.5rem;
+        background-color: rgba(255, 255, 255, 0.5);
+        padding: 0.3rem 1rem;
+        border-radius: 25px;
+      }
+      .cert-34 .cert-quote {
+        color: #e53e3e;
+        font-family: 'Dancing Script', cursive;
+        font-size: 1.4rem;
+      }
+      .cert-34 .cert-seal {
+        background-color: #fcc367;
+        border: 1px solid #f9a826;
+        color: #4a044a;
+        font-size: 0.7rem;
+      }
+      .cert-34::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background-image: radial-gradient(#c51b8a1a 4px, transparent 4px);
+        background-size: 30px 30px;
+        opacity: 0.4;
+        pointer-events: none;
+      }
+
+      /* 35. 街头潮牌款 */
+      .cert-35 {
+        background-color: #000;
+        border: 2px solid #ff3e3e;
+        clip-path: polygon(0% 0%, 100% 0%, 100% 95%, 95% 100%, 5% 100%, 0% 95%);
+        box-shadow: 0 0 25px rgba(255, 62, 62, 0.2);
+      }
+      .cert-35 .cert-content {
+        color: #fff;
+      }
+      .cert-35 .cert-title {
+        font-family: 'Staatliches', sans-serif;
+        color: #ff3e3e;
+        font-size: 1.7rem;
+        letter-spacing: 3px;
+      }
+      .cert-35 .cert-highlight {
+        color: #ff3e3e;
+        font-family: 'Staatliches', sans-serif;
+        font-size: 1.3rem;
+        border: 1px solid #ff3e3e;
+        padding: 0.2rem 1rem;
+        border-radius: 4px;
+      }
+      .cert-35 .cert-quote {
+        color: #ff9a9a;
+        font-family: 'Staatliches', sans-serif;
+        font-size: 1.1rem;
+        letter-spacing: 1px;
+      }
+      .cert-35 .cert-seal {
+        background-color: #ff3e3e;
+        border: 1px solid #ff6b6b;
+        color: #000;
+        font-size: 0.7rem;
+        font-weight: bold;
+      }
+      .cert-35::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background-image: url('https://picsum.photos/id/1082/200/200');
+        background-blend-mode: overlay;
+        background-size: cover;
+        opacity: 0.1;
+        pointer-events: none;
+      }
+
+      /* 36. 复古游戏款 */
+      .cert-36 {
+        background-color: #0f172a;
+        border: 2px solid #38bdf8;
+        border-radius: 8px;
+        box-shadow: 0 0 20px rgba(56, 189, 248, 0.2);
+      }
+      .cert-36 .cert-content {
+        color: #e0f2fe;
+      }
+      .cert-36 .cert-title {
+        font-family: 'Orbitron', sans-serif;
+        color: #38bdf8;
+        font-size: 1.4rem;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+      }
+      .cert-36 .cert-highlight {
+        color: #7dd3fc;
+        font-family: 'Orbitron', sans-serif;
+        font-size: 1.1rem;
+        background-color: rgba(56, 189, 248, 0.1);
+        padding: 0.2rem 0.8rem;
+      }
+      .cert-36 .cert-quote {
+        color: #bae6fd;
+        font-family: 'Orbitron', sans-serif;
+        font-size: 1rem;
+      }
+      .cert-36 .cert-seal {
+        background-color: rgba(56, 189, 248, 0.1);
+        border: 1px solid #38bdf8;
+        color: #38bdf8;
+        font-size: 0.65rem;
+      }
+      .cert-36::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background-image:
+          linear-gradient(to right, #38bdf81a 1px, transparent 1px),
+          linear-gradient(to bottom, #38bdf81a 1px, transparent 1px);
+        background-size: 15px 15px;
+        opacity: 0.5;
+        pointer-events: none;
+      }
+
+      /* 37. 手绘插画款 */
+      .cert-37 {
+        background-color: #fff9e6;
+        border: 2px dashed #ffb74d;
+        border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(255, 183, 77, 0.1);
+      }
+      .cert-37 .cert-content {
+        color: #4e342e;
+      }
+      .cert-37 .cert-title {
+        font-family: 'Kalam', cursive;
+        color: #ff9800;
+        font-size: 1.6rem;
+      }
+      .cert-37 .cert-highlight {
+        color: #e65100;
+        font-family: 'Kalam', cursive;
+        font-size: 1.3rem;
+        background-color: #fff3e0;
+        padding: 0.2rem 0.8rem;
+        border-radius: 8px;
+      }
+      .cert-37 .cert-quote {
+        color: #ff9800;
+        font-family: 'Kalam', cursive;
+        font-size: 1.2rem;
+      }
+      .cert-37 .cert-seal {
+        background-color: #ffcc80;
+        border: 1px solid #ff9800;
+        color: #e65100;
+        font-family: 'Kalam', cursive;
+        font-size: 0.8rem;
+      }
+      .cert-37::before {
+        content: '✏️';
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        font-size: 1.2rem;
+      }
+      .cert-37::after {
+        content: '✏️';
+        position: absolute;
+        bottom: 1rem;
+        left: 1rem;
+        font-size: 1.2rem;
+      }
+
+      /* 38. 极简线条款 */
+      .cert-38 {
+        background-color: #fff;
+        border: none;
+        border-radius: 0;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+      }
+      .cert-38 .cert-content {
+        color: #2d3748;
+      }
+      .cert-38 .cert-title {
+        font-family: 'Montserrat', sans-serif;
+        color: #2d3748;
+        font-size: 1.4rem;
+        font-weight: 600;
+        border-bottom: 2px solid #e2e8f0;
+        padding-bottom: 1rem;
+      }
+      .cert-38 .cert-highlight {
+        color: #4299e1;
+        font-family: 'Montserrat', sans-serif;
+        font-size: 1.1rem;
+        font-weight: 600;
+      }
+      .cert-38 .cert-quote {
+        color: #718096;
+        font-family: 'Montserrat', sans-serif;
+        font-size: 0.95rem;
+        line-height: 1.5;
+      }
+      .cert-38 .cert-seal {
+        background-color: #f7fafc;
+        border: 1px solid #e2e8f0;
+        color: #4299e1;
+        font-size: 0.65rem;
+        width: 45px;
+        height: 45px;
+      }
+      .cert-38::before {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 10%;
+        right: 10%;
+        height: 2px;
+        background-color: #e2e8f0;
+      }
+
+      /* 39. 复古海报款 */
+      .cert-39 {
+        background: linear-gradient(135deg, #d946ef 0%, #7e22ce 100%);
+        border: 2px solid #f0abfc;
+        clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%);
+        box-shadow: 0 0 25px rgba(217, 70, 239, 0.2);
+      }
+      .cert-39 .cert-content {
+        color: #fff;
+      }
+      .cert-39 .cert-title {
+        font-family: 'Bebas Neue', sans-serif;
+        color: #fff;
+        font-size: 1.8rem;
+        letter-spacing: 3px;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+      }
+      .cert-39 .cert-highlight {
+        color: #f0abfc;
+        font-family: 'Bebas Neue', sans-serif;
+        font-size: 1.4rem;
+        border: 1px solid #f0abfc;
+        padding: 0.2rem 1rem;
+        border-radius: 4px;
+      }
+      .cert-39 .cert-quote {
+        color: #fef7fb;
+        font-family: 'Bebas Neue', sans-serif;
+        font-size: 1.2rem;
+        letter-spacing: 1px;
+      }
+      .cert-39 .cert-seal {
+        background-color: rgba(255, 255, 255, 0.1);
+        border: 1px solid #f0abfc;
+        color: #f0abfc;
+        backdrop-filter: blur(2px);
+        font-size: 0.7rem;
+      }
+      .cert-39::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background-image: linear-gradient(45deg, #fff1 1px, transparent 1px);
+        background-size: 20px 20px;
+        opacity: 0.3;
+        pointer-events: none;
+      }
+
+      /* 40. 水墨国风款 */
+      .cert-40 {
+        background-color: #faf6ed;
+        border: 1px solid #c8aa6e;
+        border-radius: 0;
+        box-shadow: 0 4px 15px rgba(200, 170, 110, 0.1);
+      }
+      .cert-40 .cert-content {
+        color: #3a3a3a;
+      }
+      .cert-40 .cert-title {
+        font-family: 'Ma Shan Zheng', cursive;
+        color: #8b4513;
+        font-size: 2rem;
+      }
+      .cert-40 .cert-highlight {
+        color: #8b4513;
+        font-family: 'Noto Serif SC', serif;
+        font-size: 1.2rem;
+        border-bottom: 1px solid #c8aa6e33;
+        padding-bottom: 0.3rem;
+      }
+      .cert-40 .cert-quote {
+        color: #5c4033;
+        font-family: 'Ma Shan Zheng', cursive;
+        font-size: 1.3rem;
+      }
+      .cert-40 .cert-seal {
+        background-color: #8b4513;
+        border: 1px solid #c8aa6e;
+        color: #fff;
+        font-family: 'Ma Shan Zheng', cursive;
+        font-size: 0.8rem;
+      }
+      .cert-40::before {
+        content: '';
+        position: absolute;
+        inset: 1rem;
+        background-image: url('https://picsum.photos/id/175/200/200');
+        background-blend-mode: overlay;
+        background-size: cover;
+        opacity: 0.05;
+        pointer-events: none;
+      }
+
+      /* 41. 糖果色甜美元气款 */
+      .cert-41 {
+        background-color: #fff0f5;
+        border: 2px solid #ff69b4;
+        border-radius: 20px;
+        box-shadow: 0 0 20px rgba(255, 105, 180, 0.1);
+      }
+      .cert-41 .cert-content {
+        color: #880e4f;
+      }
+      .cert-41 .cert-title {
+        font-family: 'Comic Neue', sans-serif;
+        color: #ff69b4;
+        font-size: 1.6rem;
+      }
+      .cert-41 .cert-highlight {
+        color: #880e4f;
+        font-family: 'Comic Neue', sans-serif;
+        font-size: 1.3rem;
+        background-color: #fff;
+        padding: 0.2rem 1rem;
+        border-radius: 20px;
+      }
+      .cert-41 .cert-quote {
+        color: #ff69b4;
+        font-family: 'Comic Neue', sans-serif;
+        font-size: 1.2rem;
+      }
+      .cert-41 .cert-seal {
+        background-color: #ffc0cb;
+        border: 1px solid #ff69b4;
+        color: #880e4f;
+        font-size: 0.7rem;
+      }
+      .cert-41::before {
+        content: '🍬';
+        position: absolute;
+        top: 1rem;
+        left: 1rem;
+        font-size: 1.2rem;
+      }
+      .cert-41::after {
+        content: '🍬';
+        position: absolute;
+        bottom: 1rem;
+        right: 1rem;
+        font-size: 1.2rem;
+      }
+
+      /* 42. 未来机甲款 */
+      .cert-42 {
+        background-color: #0a0a0a;
+        border: 1px solid #64ffda;
+        clip-path: polygon(5% 0%, 95% 0%, 100% 5%, 100% 95%, 95% 100%, 5% 100%, 0% 95%, 0% 5%);
+        box-shadow: 0 0 30px rgba(100, 255, 218, 0.2);
+      }
+      .cert-42 .cert-content {
+        color: #e0f7fa;
+      }
+      .cert-42 .cert-title {
+        font-family: 'Orbitron', sans-serif;
+        color: #64ffda;
+        font-size: 1.5rem;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        text-shadow: 0 0 8px #64ffda;
+      }
+      .cert-42 .cert-highlight {
+        color: #80fff3;
+        font-family: 'Orbitron', sans-serif;
+        font-size: 1.2rem;
+        border-bottom: 1px solid #64ffda33;
+        padding-bottom: 0.2rem;
+      }
+      .cert-42 .cert-quote {
+        color: #b2ebf2;
+        font-family: 'Orbitron', sans-serif;
+        font-size: 1.1rem;
+      }
+      .cert-42 .cert-seal {
+        background-color: rgba(100, 255, 218, 0.1);
+        border: 1px solid #64ffda;
+        color: #64ffda;
+        box-shadow: 0 0 10px #64ffda;
+        font-size: 0.65rem;
+      }
+      .cert-42::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background-image:
+          linear-gradient(to right, #64ffda1a 1px, transparent 1px),
+          linear-gradient(to bottom, #64ffda1a 1px, transparent 1px);
+        background-size: 20px 20px;
+        opacity: 0.3;
+        pointer-events: none;
+      }
+
+      /* 43. 田园碎花款 */
+      .cert-43 {
+        background-color: #f9f3e9;
+        border: 1px solid #d9b38c;
+        border-radius: 15px;
+        box-shadow: 0 4px 15px rgba(217, 179, 140, 0.1);
+      }
+      .cert-43 .cert-content {
+        color: #5d4037;
+      }
+      .cert-43 .cert-title {
+        font-family: 'Rochester', cursive;
+        color: #d9b38c;
+        font-size: 1.8rem;
+      }
+      .cert-43 .cert-highlight {
+        color: #5d4037;
+        font-family: 'Rochester', cursive;
+        font-size: 1.4rem;
+      }
+      .cert-43 .cert-quote {
+        color: #d9b38c;
+        font-family: 'Rochester', cursive;
+        font-size: 1.3rem;
+      }
+      .cert-43 .cert-seal {
+        background-color: #e6d5b8;
+        border: 1px solid #d9b38c;
+        color: #5d4037;
+        font-size: 0.7rem;
+      }
+      .cert-43::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background-image: url('https://picsum.photos/id/106/200/200');
+        background-blend-mode: overlay;
+        background-size: cover;
+        opacity: 0.08;
+        pointer-events: none;
+      }
+
+      /* 44. 运动街头款 */
+      .cert-44 {
+        background-color: #fff;
+        border: 2px solid #00bfa5;
+        border-radius: 8px;
+        box-shadow: 0 4px 15px rgba(0, 191, 165, 0.1);
+      }
+      .cert-44 .cert-content {
+        color: #004d40;
+      }
+      .cert-44 .cert-title {
+        font-family: 'Staatliches', sans-serif;
+        color: #00bfa5;
+        font-size: 1.6rem;
+        letter-spacing: 1px;
+      }
+      .cert-44 .cert-highlight {
+        color: #004d40;
+        font-family: 'Staatliches', sans-serif;
+        font-size: 1.3rem;
+        background-color: #e0f2f1;
+        padding: 0.2rem 1rem;
+        border-radius: 20px;
+      }
+      .cert-44 .cert-quote {
+        color: #00bfa5;
+        font-family: 'Staatliches', sans-serif;
+        font-size: 1.2rem;
+      }
+      .cert-44 .cert-seal {
+        background-color: #00bfa5;
+        border: 1px solid #00897b;
+        color: #fff;
+        font-size: 0.7rem;
+      }
+
+      /* 45. 艺术波普款 */
+      .cert-45 {
+        background: linear-gradient(45deg, #ffde59 0%, #ff5e62 50%, #ff9966 100%);
+        border: 2px solid #fff;
+        border-radius: 10px;
+        box-shadow: 0 0 25px rgba(255, 94, 98, 0.2);
+      }
+      .cert-45 .cert-content {
+        color: #fff;
+      }
+      .cert-45 .cert-title {
+        font-family: 'Vampiro One', cursive;
+        color: #fff;
+        font-size: 1.7rem;
+        letter-spacing: 1px;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+      }
+      .cert-45 .cert-highlight {
+        color: #fff;
+        font-family: 'Vampiro One', cursive;
+        font-size: 1.3rem;
+        background-color: rgba(255, 255, 255, 0.2);
+        padding: 0.2rem 1rem;
+        border-radius: 20px;
+      }
+      .cert-45 .cert-quote {
+        color: #fff3cd;
+        font-family: 'Vampiro One', cursive;
+        font-size: 1.2rem;
+      }
+      .cert-45 .cert-seal {
+        background-color: rgba(255, 255, 255, 0.2);
+        border: 1px solid #fff;
+        color: #fff;
+        backdrop-filter: blur(2px);
+        font-size: 0.7rem;
+      }
+      .cert-45::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background-image: radial-gradient(#fff2 3px, transparent 3px);
+        background-size: 20px 20px;
+        opacity: 0.3;
+        pointer-events: none;
+      }
+
+      /* 46. 复古胶片款 */
+      .cert-46 {
+        background-color: #f0e6d6;
+        border: 1px solid #c19a6b;
+        border-radius: 0;
+        box-shadow: 0 4px 12px rgba(193, 154, 107, 0.2);
+      }
+      .cert-46 .cert-content {
+        color: #4a3b2a;
+      }
+      .cert-46 .cert-title {
+        font-family: 'Cormorant Garamond', serif;
+        color: #c19a6b;
+        font-size: 1.6rem;
+        font-weight: 700;
+      }
+      .cert-46 .cert-highlight {
+        color: #4a3b2a;
+        font-family: 'Cormorant Garamond', serif;
+        font-size: 1.3rem;
+        border-bottom: 1px solid #c19a6b33;
+        padding-bottom: 0.2rem;
+      }
+      .cert-46 .cert-quote {
+        color: #8b6b4d;
+        font-family: 'Cormorant Garamond', serif;
+        font-style: italic;
+        font-size: 1.1rem;
+      }
+      .cert-46 .cert-seal {
+        background-color: #e0d2c0;
+        border: 1px solid #c19a6b;
+        color: #4a3b2a;
+        font-size: 0.7rem;
+      }
+      .cert-46::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background-image: url('https://picsum.photos/id/1060/200/200');
+        background-blend-mode: overlay;
+        background-size: cover;
+        opacity: 0.07;
+        pointer-events: none;
+      }
+
+      /* 47. 温柔奶油款 */
+      .cert-47 {
+        background-color: #f8f9fa;
+        border: 1px solid #ffe0b2;
+        border-radius: 18px;
+        box-shadow: 0 4px 15px rgba(255, 224, 178, 0.1);
+      }
+      .cert-47 .cert-content {
+        color: #5d4037;
+      }
+      .cert-47 .cert-title {
+        font-family: 'Dancing Script', cursive;
+        color: #ffb74d;
+        font-size: 1.9rem;
+      }
+      .cert-47 .cert-highlight {
+        color: #5d4037;
+        font-family: 'Dancing Script', cursive;
+        font-size: 1.5rem;
+        background-color: #fff;
+        padding: 0.2rem 1rem;
+        border-radius: 25px;
+      }
+      .cert-47 .cert-quote {
+        color: #ffb74d;
+        font-family: 'Dancing Script', cursive;
+        font-size: 1.4rem;
+      }
+      .cert-47 .cert-seal {
+        background-color: #ffe0b2;
+        border: 1px solid #ffb74d;
+        color: #5d4037;
+        font-size: 0.7rem;
+      }
+      .cert-47::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background-image: radial-gradient(#ffb74d1a 4px, transparent 4px);
+        background-size: 30px 30px;
+        opacity: 0.4;
+        pointer-events: none;
+      }
+
+      /* 48. 街头涂鸦款 */
+      .cert-48 {
+        background-color: #000;
+        border: 2px solid #ff00ff;
+        clip-path: none;
+        box-shadow: 0 0 25px rgba(255, 0, 255, 0.2);
+      }
+      .cert-48 .cert-content {
+        color: #fff;
+      }
+      .cert-48 .cert-title {
+        font-family: 'Hanalei Fill', cursive;
+        color: #ff00ff;
+        font-size: 1.7rem;
+      }
+      .cert-48 .cert-highlight {
+        color: #ff00ff;
+        font-family: 'Hanalei Fill', cursive;
+        font-size: 1.3rem;
+        border: 1px solid #ff00ff;
+        padding: 0.2rem 1rem;
+        border-radius: 4px;
+      }
+      .cert-48 .cert-quote {
+        color: #ff99cc;
+        font-family: 'Hanalei Fill', cursive;
+        font-size: 1.2rem;
+      }
+      .cert-48 .cert-seal {
+        background-color: #ff00ff;
+        border: 1px solid #cc00cc;
+        color: #000;
+        font-size: 0.7rem;
+        font-weight: bold;
+      }
+      .cert-48::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background-image: url('https://picsum.photos/id/237/200/200');
+        background-blend-mode: overlay;
+        background-size: cover;
+        opacity: 0.15;
+        pointer-events: none;
+      }
+
+      /* 49. 复古漫画款 */
+      .cert-49 {
+        background-color: #fff;
+        border: 2px solid #ff6b6b;
+        border-radius: 10px;
+        box-shadow: 0 4px 15px rgba(255, 107, 107, 0.1);
+      }
+      .cert-49 .cert-content {
+        color: #2d3436;
+      }
+      .cert-49 .cert-title {
+        font-family: 'ZCOOL KuaiLe', cursive;
+        color: #ff6b6b;
+        font-size: 1.6rem;
+      }
+      .cert-49 .cert-highlight {
+        color: #e74c3c;
+        font-family: 'ZCOOL KuaiLe', cursive;
+        font-size: 1.3rem;
+        background-color: #ffebee;
+        padding: 0.2rem 0.8rem;
+        border-radius: 8px;
+      }
+      .cert-49 .cert-quote {
+        color: #ff6b6b;
+        font-family: 'ZCOOL KuaiLe', cursive;
+        font-size: 1.2rem;
+      }
+      .cert-49 .cert-seal {
+        background-color: #ffebee;
+        border: 1px solid #ff6b6b;
+        color: #e74c3c;
+        font-family: 'ZCOOL KuaiLe', cursive;
+        font-size: 0.8rem;
+      }
+      .cert-49::before {
+        content: '💥';
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        font-size: 1.2rem;
+      }
+
+      /* 50. 极简几何款 */
+      .cert-50 {
+        background-color: #f5f5f5;
+        border: 1px solid #e0e0e0;
+        border-radius: 0;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+      }
+      .cert-50 .cert-content {
+        color: #212121;
+      }
+      .cert-50 .cert-title {
+        font-family: 'Montserrat', sans-serif;
+        color: #212121;
+        font-size: 1.4rem;
+        font-weight: 700;
+      }
+      .cert-50 .cert-highlight {
+        color: #616161;
+        font-family: 'Montserrat', sans-serif;
+        font-size: 1.1rem;
+        font-weight: 600;
+        border-bottom: 2px solid #616161;
+        padding-bottom: 0.2rem;
+      }
+      .cert-50 .cert-quote {
+        color: #757575;
+        font-family: 'Montserrat', sans-serif;
+        font-size: 0.95rem;
+        line-height: 1.5;
+      }
+      .cert-50 .cert-seal {
+        background-color: #e0e0e0;
+        border: 1px solid #bdbdbd;
+        color: #212121;
+        font-size: 0.65rem;
+        width: 45px;
+        height: 45px;
+      }
+      .cert-50::before {
+        content: '';
+        position: absolute;
+        top: 20px;
+        left: 20px;
+        width: 40px;
+        height: 40px;
+        border: 2px solid #616161;
+        transform: rotate(45deg);
+      }
+    </style>
+  </head>
+  <body class="container mx-auto px-4">
+    <div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+      <!-- 1-25款证书HTML结构（保持原结构不变） -->
+      <div class="cert-card cert-01 animate-fadeIn delay-0">
+        <div class="cert-content">
+          <h3 class="cert-title">重启人生完成证书</h3>
+          <p class="cert-text">恭喜你勇敢告别过去，<br />在自我革新的道路上迈出坚实一步</p>
+          <p class="cert-highlight text-center">新的人生，由此启航</p>
+          <p class="cert-quote text-center">"每一次重启，都是向更好的自己致敬"</p>
+          <p class="cert-date">颁发日期：2025年11月20日</p>
+        </div>
+        <div class="cert-seal">认证</div>
+      </div>
+
+      <div class="cert-card cert-02 animate-fadeIn delay-10">
+        <div class="cert-content">
+          <h3 class="cert-title">重启人生完成证书</h3>
+          <p class="cert-text">恭喜你勇敢告别过去，<br />在自我革新的道路上迈出坚实一步</p>
+          <p class="cert-highlight text-center">新的人生，由此启航</p>
+          <p class="cert-quote text-center">"每一次重启，都是向更好的自己致敬"</p>
+          <p class="cert-date">颁发日期：2025年11月20日</p>
+        </div>
+        <div class="cert-seal">认证</div>
+      </div>
+
+      <!-- 此处省略3-24款证书HTML结构（保持原结构不变） -->
+
+      <div class="cert-card cert-25 animate-fadeIn delay-240">
+        <div class="cert-content">
+          <h3 class="cert-title">重启人生完成证书</h3>
+          <p class="cert-text">恭喜你勇敢告别过去，<br />在自我革新的道路上迈出坚实一步</p>
+          <p class="cert-highlight text-center">新的人生，由此启航</p>
+          <p class="cert-quote text-center">"每一次重启，都是向更好的自己致敬"</p>
+          <p class="cert-date">颁发日期：2025年11月20日</p>
+        </div>
+        <div class="cert-seal">认证</div>
+      </div>
+
+      <!-- 26-50款证书HTML结构 -->
+      <div class="cert-card cert-26 animate-fadeIn delay-250">
+        <div class="cert-content">
+          <h3 class="cert-title">重启人生完成证书</h3>
+          <p class="cert-text">恭喜你勇敢告别过去，<br />在自我革新的道路上迈出坚实一步</p>
+          <p class="cert-highlight text-center">新的人生，由此启航</p>
+          <p class="cert-quote text-center">"每一次重启，都是向更好的自己致敬"</p>
+          <p class="cert-date">颁发日期：2025年11月20日</p>
+        </div>
+        <div class="cert-seal">认证</div>
+      </div>
+
+      <div class="cert-card cert-27 animate-fadeIn delay-260">
+        <div class="cert-content">
+          <h3 class="cert-title">重启人生完成证书</h3>
+          <p class="cert-text">恭喜你勇敢告别过去，<br />在自我革新的道路上迈出坚实一步</p>
+          <p class="cert-highlight text-center">新的人生，由此启航</p>
+          <p class="cert-quote text-center">"每一次重启，都是向更好的自己致敬"</p>
+          <p class="cert-date">颁发日期：2025年11月20日</p>
+        </div>
+        <div class="cert-seal">认证</div>
+      </div>
+
+      <div class="cert-card cert-28 animate-fadeIn delay-270">
+        <div class="cert-content">
+          <h3 class="cert-title">重启人生完成证书</h3>
+          <p class="cert-text">恭喜你勇敢告别过去，<br />在自我革新的道路上迈出坚实一步</p>
+          <p class="cert-highlight text-center">新的人生，由此启航</p>
+          <p class="cert-quote text-center">"每一次重启，都是向更好的自己致敬"</p>
+          <p class="cert-date">颁发日期：2025年11月20日</p>
+        </div>
+        <div class="cert-seal">认证</div>
+      </div>
+
+      <div class="cert-card cert-29 animate-fadeIn delay-280">
+        <div class="cert-content">
+          <h3 class="cert-title">重启人生完成证书</h3>
+          <p class="cert-text">恭喜你勇敢告别过去，<br />在自我革新的道路上迈出坚实一步</p>
+          <p class="cert-highlight text-center">新的人生，由此启航</p>
+          <p class="cert-quote text-center">"每一次重启，都是向更好的自己致敬"</p>
+          <p class="cert-date">颁发日期：2025年11月20日</p>
+        </div>
+        <div class="cert-seal">认证</div>
+      </div>
+
+      <div class="cert-card cert-30 animate-fadeIn delay-290">
+        <div class="cert-content">
+          <h3 class="cert-title">重启人生完成证书</h3>
+          <p class="cert-text">恭喜你勇敢告别过去，<br />在自我革新的道路上迈出坚实一步</p>
+          <p class="cert-highlight text-center">新的人生，由此启航</p>
+          <p class="cert-quote text-center">"每一次重启，都是向更好的自己致敬"</p>
+          <p class="cert-date">颁发日期：2025年11月20日</p>
+        </div>
+        <div class="cert-seal">认证</div>
+      </div>
+
+      <div class="cert-card cert-31 animate-fadeIn delay-300">
+        <div class="cert-content">
+          <h3 class="cert-title">重启人生完成证书</h3>
+          <p class="cert-text">恭喜你勇敢告别过去，<br />在自我革新的道路上迈出坚实一步</p>
+          <p class="cert-highlight text-center">新的人生，由此启航</p>
+          <p class="cert-quote text-center">"每一次重启，都是向更好的自己致敬"</p>
+          <p class="cert-date">颁发日期：2025年11月20日</p>
+        </div>
+        <div class="cert-seal">认证</div>
+      </div>
+
+      <div class="cert-card cert-32 animate-fadeIn delay-310">
+        <div class="cert-content">
+          <h3 class="cert-title">重启人生完成证书</h3>
+          <p class="cert-text">恭喜你勇敢告别过去，<br />在自我革新的道路上迈出坚实一步</p>
+          <p class="cert-highlight text-center">新的人生，由此启航</p>
+          <p class="cert-quote text-center">"每一次重启，都是向更好的自己致敬"</p>
+          <p class="cert-date">颁发日期：2025年11月20日</p>
+        </div>
+        <div class="cert-seal">认证</div>
+      </div>
+
+      <div class="cert-card cert-33 animate-fadeIn delay-320">
+        <div class="cert-content">
+          <h3 class="cert-title">重启人生完成证书</h3>
+          <p class="cert-text">恭喜你勇敢告别过去，<br />在自我革新的道路上迈出坚实一步</p>
+          <p class="cert-highlight text-center">新的人生，由此启航</p>
+          <p class="cert-quote text-center">"每一次重启，都是向更好的自己致敬"</p>
+          <p class="cert-date">颁发日期：2025年11月20日</p>
+        </div>
+        <div class="cert-seal">认证</div>
+      </div>
+
+      <div class="cert-card cert-34 animate-fadeIn delay-330">
+        <div class="cert-content">
+          <h3 class="cert-title">重启人生完成证书</h3>
+          <p class="cert-text">恭喜你勇敢告别过去，<br />在自我革新的道路上迈出坚实一步</p>
+          <p class="cert-highlight text-center">新的人生，由此启航</p>
+          <p class="cert-quote text-center">"每一次重启，都是向更好的自己致敬"</p>
+          <p class="cert-date">颁发日期：2025年11月20日</p>
+        </div>
+        <div class="cert-seal">认证</div>
+      </div>
+
+      <div class="cert-card cert-35 animate-fadeIn delay-340">
+        <div class="cert-content">
+          <h3 class="cert-title">重启人生完成证书</h3>
+          <p class="cert-text">恭喜你勇敢告别过去，<br />在自我革新的道路上迈出坚实一步</p>
+          <p class="cert-highlight text-center">新的人生，由此启航</p>
+          <p class="cert-quote text-center">"每一次重启，都是向更好的自己致敬"</p>
+          <p class="cert-date">颁发日期：2025年11月20日</p>
+        </div>
+        <div class="cert-seal">认证</div>
+      </div>
+
+      <div class="cert-card cert-36 animate-fadeIn delay-350">
+        <div class="cert-content">
+          <h3 class="cert-title">重启人生完成证书</h3>
+          <p class="cert-text">恭喜你勇敢告别过去，<br />在自我革新的道路上迈出坚实一步</p>
+          <p class="cert-highlight text-center">新的人生，由此启航</p>
+          <p class="cert-quote text-center">"每一次重启，都是向更好的自己致敬"</p>
+          <p class="cert-date">颁发日期：2025年11月20日</p>
+        </div>
+        <div class="cert-seal">认证</div>
+      </div>
+
+      <div class="cert-card cert-37 animate-fadeIn delay-360">
+        <div class="cert-content">
+          <h3 class="cert-title">重启人生完成证书</h3>
+          <p class="cert-text">恭喜你勇敢告别过去，<br />在自我革新的道路上迈出坚实一步</p>
+          <p class="cert-highlight text-center">新的人生，由此启航</p>
+          <p class="cert-quote text-center">"每一次重启，都是向更好的自己致敬"</p>
+          <p class="cert-date">颁发日期：2025年11月20日</p>
+        </div>
+        <div class="cert-seal">认证</div>
+      </div>
+
+      <div class="cert-card cert-38 animate-fadeIn delay-370">
+        <div class="cert-content">
+          <h3 class="cert-title">重启人生完成证书</h3>
+          <p class="cert-text">恭喜你勇敢告别过去，<br />在自我革新的道路上迈出坚实一步</p>
+          <p class="cert-highlight text-center">新的人生，由此启航</p>
+          <p class="cert-quote text-center">"每一次重启，都是向更好的自己致敬"</p>
+          <p class="cert-date">颁发日期：2025年11月20日</p>
+        </div>
+        <div class="cert-seal">认证</div>
+      </div>
+
+      <div class="cert-card cert-39 animate-fadeIn delay-380">
+        <div class="cert-content">
+          <h3 class="cert-title">重启人生完成证书</h3>
+          <p class="cert-text">恭喜你勇敢告别过去，<br />在自我革新的道路上迈出坚实一步</p>
+          <p class="cert-highlight text-center">新的人生，由此启航</p>
+          <p class="cert-quote text-center">"每一次重启，都是向更好的自己致敬"</p>
+          <p class="cert-date">颁发日期：2025年11月20日</p>
+        </div>
+        <div class="cert-seal">认证</div>
+      </div>
+
+      <div class="cert-card cert-40 animate-fadeIn delay-390">
+        <div class="cert-content">
+          <h3 class="cert-title">重启人生完成证书</h3>
+          <p class="cert-text">恭喜你勇敢告别过去，<br />在自我革新的道路上迈出坚实一步</p>
+          <p class="cert-highlight text-center">新的人生，由此启航</p>
+          <p class="cert-quote text-center">"每一次重启，都是向更好的自己致敬"</p>
+          <p class="cert-date">颁发日期：2025年11月20日</p>
+        </div>
+        <div class="cert-seal">认证</div>
+      </div>
+
+      <div class="cert-card cert-41 animate-fadeIn delay-400">
+        <div class="cert-content">
+          <h3 class="cert-title">重启人生完成证书</h3>
+          <p class="cert-text">恭喜你勇敢告别过去，<br />在自我革新的道路上迈出坚实一步</p>
+          <p class="cert-highlight text-center">新的人生，由此启航</p>
+          <p class="cert-quote text-center">"每一次重启，都是向更好的自己致敬"</p>
+          <p class="cert-date">颁发日期：2025年11月20日</p>
+        </div>
+        <div class="cert-seal">认证</div>
+      </div>
+
+      <div class="cert-card cert-42 animate-fadeIn delay-410">
+        <div class="cert-content">
+          <h3 class="cert-title">重启人生完成证书</h3>
+          <p class="cert-text">恭喜你勇敢告别过去，<br />在自我革新的道路上迈出坚实一步</p>
+          <p class="cert-highlight text-center">新的人生，由此启航</p>
+          <p class="cert-quote text-center">"每一次重启，都是向更好的自己致敬"</p>
+          <p class="cert-date">颁发日期：2025年11月20日</p>
+        </div>
+        <div class="cert-seal">认证</div>
+      </div>
+
+      <div class="cert-card cert-43 animate-fadeIn delay-420">
+        <div class="cert-content">
+          <h3 class="cert-title">重启人生完成证书</h3>
+          <p class="cert-text">恭喜你勇敢告别过去，<br />在自我革新的道路上迈出坚实一步</p>
+          <p class="cert-highlight text-center">新的人生，由此启航</p>
+          <p class="cert-quote text-center">"每一次重启，都是向更好的自己致敬"</p>
+          <p class="cert-date">颁发日期：2025年11月20日</p>
+        </div>
+        <div class="cert-seal">认证</div>
+      </div>
+
+      <div class="cert-card cert-44 animate-fadeIn delay-430">
+        <div class="cert-content">
+          <h3 class="cert-title">重启人生完成证书</h3>
+          <p class="cert-text">恭喜你勇敢告别过去，<br />在自我革新的道路上迈出坚实一步</p>
+          <p class="cert-highlight text-center">新的人生，由此启航</p>
+          <p class="cert-quote text-center">"每一次重启，都是向更好的自己致敬"</p>
+          <p class="cert-date">颁发日期：2025年11月20日</p>
+        </div>
+        <div class="cert-seal">认证</div>
+      </div>
+
+      <div class="cert-card cert-45 animate-fadeIn delay-440">
+        <div class="cert-content">
+          <h3 class="cert-title">重启人生完成证书</h3>
+          <p class="cert-text">恭喜你勇敢告别过去，<br />在自我革新的道路上迈出坚实一步</p>
+          <p class="cert-highlight text-center">新的人生，由此启航</p>
+          <p class="cert-quote text-center">"每一次重启，都是向更好的自己致敬"</p>
+          <p class="cert-date">颁发日期：2025年11月20日</p>
+        </div>
+        <div class="cert-seal">认证</div>
+      </div>
+
+      <div class="cert-card cert-46 animate-fadeIn delay-450">
+        <div class="cert-content">
+          <h3 class="cert-title">重启人生完成证书</h3>
+          <p class="cert-text">恭喜你勇敢告别过去，<br />在自我革新的道路上迈出坚实一步</p>
+          <p class="cert-highlight text-center">新的人生，由此启航</p>
+          <p class="cert-quote text-center">"每一次重启，都是向更好的自己致敬"</p>
+          <p class="cert-date">颁发日期：2025年11月20日</p>
+        </div>
+        <div class="cert-seal">认证</div>
+      </div>
+
+      <div class="cert-card cert-47 animate-fadeIn delay-460">
+        <div class="cert-content">
+          <h3 class="cert-title">重启人生完成证书</h3>
+          <p class="cert-text">恭喜你勇敢告别过去，<br />在自我革新的道路上迈出坚实一步</p>
+          <p class="cert-highlight text-center">新的人生，由此启航</p>
+          <p class="cert-quote text-center">"每一次重启，都是向更好的自己致敬"</p>
+          <p class="cert-date">颁发日期：2025年11月20日</p>
+        </div>
+        <div class="cert-seal">认证</div>
+      </div>
+
+      <div class="cert-card cert-48 animate-fadeIn delay-470">
+        <div class="cert-content">
+          <h3 class="cert-title">重启人生完成证书</h3>
+          <p class="cert-text">恭喜你勇敢告别过去，<br />在自我革新的道路上迈出坚实一步</p>
+          <p class="cert-highlight text-center">新的人生，由此启航</p>
+          <p class="cert-quote text-center">"每一次重启，都是向更好的自己致敬"</p>
+          <p class="cert-date">颁发日期：2025年11月20日</p>
+        </div>
+        <div class="cert-seal">认证</div>
+      </div>
+
+      <div class="cert-card cert-49 animate-fadeIn delay-480">
+        <div class="cert-content">
+          <h3 class="cert-title">重启人生完成证书</h3>
+          <p class="cert-text">恭喜你勇敢告别过去，<br />在自我革新的道路上迈出坚实一步</p>
+          <p class="cert-highlight text-center">新的人生，由此启航</p>
+          <p class="cert-quote text-center">"每一次重启，都是向更好的自己致敬"</p>
+          <p class="cert-date">颁发日期：2025年11月20日</p>
+        </div>
+        <div class="cert-seal">认证</div>
+      </div>
+
+      <div class="cert-card cert-50 animate-fadeIn delay-490">
+        <div class="cert-content">
+          <h3 class="cert-title">重启人生完成证书</h3>
+          <p class="cert-text">恭喜你勇敢告别过去，<br />在自我革新的道路上迈出坚实一步</p>
+          <p class="cert-highlight text-center">新的人生，由此启航</p>
+          <p class="cert-quote text-center">"每一次重启，都是向更好的自己致敬"</p>
+          <p class="cert-date">颁发日期：2025年11月20日</p>
+        </div>
+        <div class="cert-seal">认证</div>
+      </div>
+    </div>
+
+    <!-- 页面底部说明 -->
+    <div class="mt-12 text-center text-gray-600">
+      <h2 class="font-noto-sans-sc mb-4 text-2xl font-bold">
+        50款精致重启人生完成证书 - 全风格合集
+      </h2>
+      <p class="mx-auto max-w-3xl">
+        每款证书均采用独立设计语言，涵盖赛博朋克、古风国潮、蒸汽波、洛丽塔、商务极简等25大风格方向，适配不同场景与审美偏好。支持响应式布局，可直接保存使用或二次定制文字内容。
+      </p>
+      <div class="mt-6 flex flex-wrap justify-center gap-3">
+        <span class="rounded-full bg-gray-100 px-3 py-1 text-sm">响应式设计</span>
+        <span class="rounded-full bg-gray-100 px-3 py-1 text-sm">50款风格</span>
+        <span class="rounded-full bg-gray-100 px-3 py-1 text-sm">Tailwind CSS</span>
+        <span class="rounded-full bg-gray-100 px-3 py-1 text-sm">自定义字体</span>
+        <span class="rounded-full bg-gray-100 px-3 py-1 text-sm">动画效果</span>
+      </div>
+    </div>
+  </body>
+</html>
