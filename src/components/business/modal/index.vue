@@ -9,7 +9,7 @@
       <div
         id="element"
         ref="elementRef"
-        class="shadow-4xl z-80 flex flex-col rounded-3xl border bg-sf-modal p-3"
+        class="shadow-4xl z-80 flex flex-col rounded-3xl border-1 border-sf-border-base bg-sf-bg p-3"
         :style="transformStyle"
         @mouseenter="handleMouseEnter"
         @mouseleave="handleMouseLeave"
@@ -18,10 +18,10 @@
         <div class="relative mb-3 flex items-center justify-between">
           <div class="w-full text-center text-2xl font-bold">{{ title }}</div>
           <div
-            class="absolute top-1/2 right-0 -translate-y-1/2 transform cursor-pointer"
+            class="group flex-c absolute top-1 right-1 z-2 h-9 w-9 transform cursor-pointer rounded-xl duration-300 hover:bg-sf-bg-hover"
             @click="modeValue = false"
           >
-            关闭
+            <SfIcon icon="carbon:close-outline" size="6" class="group-hover:text-sf-theme" />
           </div>
         </div>
         <slot></slot>
