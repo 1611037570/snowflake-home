@@ -1,4 +1,8 @@
-export const DEFAULT_ICON: Record<string, { icon: string }> = {
+interface IconItem {
+  icon: string
+}
+
+export const DEFAULT_ICON: Record<string, IconItem> = {
   'lucide:code': {
     icon: 'lucide:code',
   },

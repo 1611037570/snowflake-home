@@ -34,7 +34,7 @@
     <!-- 项目经历 -->
     <SmallTitle title="个人项目" />
     <div class="grid grid-cols-2 gap-6">
-      <ProjectCard v-for="(item, index) in pageList" :key="index" :data="item" />
+      <ProjectCard v-for="(item, index) in PAGE_LIST" :key="index" :data="item" />
     </div>
     <SmallTitle title="参与开发" />
     <div class="grid grid-cols-2 gap-6">
@@ -44,7 +44,7 @@
 </template>
 
 <script setup>
-import { pageList } from '@/datas/page.data'
+import { PAGE_LIST } from '@/components'
 import { urlNavigation } from '@/utils'
 import ProjectCard from '../components/projectCard.vue'
 import SmallTitle from '../components/smallTitle.vue'
