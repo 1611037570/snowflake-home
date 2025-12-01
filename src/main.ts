@@ -6,15 +6,14 @@ import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
 import { createApp } from 'vue'
 // 导入 i18n 配置
 import i18n from './locales'
-
 // 导入根组件
 import App from './App.vue'
 // 导入路由配置
 import router from './routers'
 // 导入全局样式
 import './styles/index.scss'
+// 导入 Tailwind CSS 样式
 import './styles/tailwind.css'
-
 // 导入全局组件安装器
 import { globalComponentInstaller } from './components/index'
 

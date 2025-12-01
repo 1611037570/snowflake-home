@@ -6,12 +6,13 @@
   --color-sf-warning: var(--sf-warning);
   --color-sf-error: var(--sf-error);
   --color-sf-info: var(--sf-info);
-  /* 基本色 */
-  --color-sf-base: var(--sf-base);
   /* 主题色 */
   --color-sf-theme: var(--sf-theme);
   /* 主题的hover颜色 */
   --color-sf-theme-hover: var(--sf-theme-hover);
+  --color-sf-theme-text: #fff;
+  /* 基本色 */
+  --color-sf-base: var(--sf-base);
   /* 主要色 */
   --color-sf-primary: var(--sf-primary);
   /* 主要色的hover颜色 */
@@ -91,7 +92,7 @@
   --sf-transparent-2: rgba(0, 0, 0, 0.6);
   --sf-transparent-3: rgba(0, 0, 0, 0.4);
   --sf-transparent-4: rgba(0, 0, 0, 0.2);
-  --sf-border-base: rgba(255, 255, 255, 0.1);
+  --sf-border-base: rgba(255, 255, 255, 0.9);
 }
 
 /* 自定义工具类 */

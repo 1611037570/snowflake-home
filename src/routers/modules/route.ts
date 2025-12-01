@@ -51,10 +51,15 @@ const routes = [
     name: 'color',
     component: () => import('@views/color/index.vue'),
   },
+  {
+    path: '/error',
+    name: 'error',
+    component: () => import('@views/status/error.vue'),
+  },
   // 捕获所有不存在的路由并重定向到主页
   {
     path: '/:pathMatch(.*)*',
-    redirect: '/',
+    redirect: '/error',
   },
 ]
 export default routes
