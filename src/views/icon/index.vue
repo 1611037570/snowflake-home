@@ -1,6 +1,6 @@
 <script setup>
-import { DEFAULT_ICON } from '@/constants/icon'
-const icons = Object.values(DEFAULT_ICON)
+import { ICON_LIST } from '@/constants'
+const icons = Object.values(ICON_LIST)
 </script>
 
 <template>

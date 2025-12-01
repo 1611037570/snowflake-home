@@ -2,7 +2,7 @@ interface IconItem {
   icon: string
 }
 
-export const DEFAULT_ICON: Record<string, IconItem> = {
+export const ICON_LIST: Record<string, IconItem> = {
   'lucide:code': {
     icon: 'lucide:code',
   },

@@ -4,7 +4,9 @@
     "messageBoard": "Message Board",
     "image": "Image Processing",
     "resume": "Resume Generator",
-    "2048": "2048 Game"
+    "2048": "2048 Game",
+    "icon": "Icon Library",
+    "color": "Color Library"
   },
   "moreTools": "More Tools"
 }
