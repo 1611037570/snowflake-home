@@ -53,6 +53,11 @@ const routes = [
     name: 'icon',
     component: () => import('@views/icon/index.vue'),
   },
+  {
+    path: '/bubble',
+    name: 'bubble',
+    component: () => import('@views/sort/bubble.vue'),
+  },
   // 404 错误页
   {
     path: '/error',
