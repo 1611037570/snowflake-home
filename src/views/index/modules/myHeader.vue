@@ -1,5 +1,7 @@
 <script setup>
 import { useThemeStore } from '@/stores'
+import { userInfo } from '@/views/index/data'
+
 import Music from '../components/music.vue'
 const themeStore = useThemeStore()
 const { themeMode } = storeToRefs(themeStore)
@@ -61,7 +63,7 @@ function handleClick(e) {
       id="logoText"
       class="text-shadow text-2xl font-bold text-sf-text shadow-2xl transition-colors duration-300"
     >
-      小羊
+      {{ userInfo.name }}
     </div>
 
     <div class="flex-c h-20 gap-8">
