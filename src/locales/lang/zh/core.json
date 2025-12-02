@@ -3,12 +3,19 @@
   "router": {
     "messageBoard": "留言板",
     "image": "图片处理",
+    "imageDesc": "一键压缩且保留细节图片处理工具",
     "resume": "简历生成",
+    "resumeDesc": "快速生成精美简历",
     "2048": "2048 游戏",
+    "2048Desc": "2048 游戏，简单而有趣的益智游戏",
+    "sort": "算法可视化",
+    "sortDesc": "可视化展示排序过程",
     "icon": "图标资源",
     "color": "颜色资源",
     "reborn": "重启人生",
-    "home": "雪花起始页"
+    "rebornDesc": "21天重启人生，git新技能",
+    "home": "雪花起始页",
+    "homeDesc": "浏览器起始页"
   },
   "moreTools": "更多工具"
 }
