@@ -85,6 +85,7 @@
   --sf-text-3: color-mix(in oklab, oklch(100% 0 0) 40%, transparent);
   --sf-background: #1c1c1e;
   --sf-background-hover: #2c2c2e;
+  --sf-background-2: #3a3a3c;
   --sf-modal: rgba(0, 0, 0, 1);
   --sf-primary: rgba(0, 0, 0, 1);
   --sf-primary-hover: #3a3a3c;
