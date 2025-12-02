@@ -1,24 +1,33 @@
 <template>
   <div class="">
-    <ElTooltip :effect="themeMode" :content="content" placement="top">
-      <slot>
-        <SfIcon icon="mingcute:question-line" size="4" />
-      </slot>
-    </ElTooltip>
+    <Component
+      :effect="themeMode"
+      :is="h(ElTooltip, { placement: 'top', ...$attrs, ref: changeRef }, $slots)"
+    >
+      <template #default>
+        <slot>
+          <SfIcon icon="mingcute:question-line" size="4" />
+        </slot>
+      </template>
+    </Component>
   </div>
 </template>
 
 <script setup lang="ts">
 import { useThemeStore } from '@/stores'
+import { ElTooltip } from 'element-plus'
+import type { ComponentInstance } from 'vue'
+import { getCurrentInstance, h } from 'vue'
+
 const themeStore = useThemeStore()
 const { themeMode } = storeToRefs(themeStore)
 
-defineProps({
-  content: {
-    type: String,
-    default: '',
-  },
-})
+const vm: any = getCurrentInstance()
+
+function changeRef(exports: any) {
+  vm.exposed = exports
+}
+defineExpose({} as ComponentInstance<typeof ElTooltip>)
 </script>
 
 <style lang="scss" scoped></style>
