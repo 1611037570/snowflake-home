@@ -19,6 +19,7 @@ const navList = [
     href: 'project',
   },
 ]
+console.log(userInfo)
 const opacity = ref(0)
 const backTop = ref(false)
 const bgColor = computed(() => {
@@ -59,19 +60,14 @@ function handleClick(e) {
     :class="customClass"
     style="transition: background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1)"
   >
-    <div
-      id="logoText"
-      class="text-shadow text-2xl font-bold text-sf-text shadow-2xl transition-colors duration-300"
-    >
-      {{ userInfo.name }}
+    <div class="text-shadow text-2xl font-bold text-sf-base shadow-2xl">
+      {{ userInfo.name ? userInfo.name : '' }}
     </div>
 
     <div class="flex-c h-20 gap-8">
       <el-anchor direction="horizontal" class="h-14" :offset="0" @click="handleClick">
         <el-anchor-link :href="`#${item.href}`" v-for="item in navList" :key="item.href">
-          <div
-            class="nav-link flex-c h-14 text-lg font-bold text-sf-base transition-colors duration-300"
-          >
+          <div class="nav-link flex-c h-14 text-lg font-bold text-sf-base">
             {{ item.name }}
           </div>
         </el-anchor-link>
