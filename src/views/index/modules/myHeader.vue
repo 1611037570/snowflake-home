@@ -1,10 +1,10 @@
 <script setup>
 import { useThemeStore } from '@/stores'
 import { userInfo } from '@/views/index/data'
-
 import Music from '../components/music.vue'
 const themeStore = useThemeStore()
 const { themeMode } = storeToRefs(themeStore)
+
 const navList = [
   {
     name: '关于',
