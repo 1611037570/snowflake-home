@@ -53,10 +53,17 @@ const routes = [
     name: 'icon',
     component: () => import('@views/icon/index.vue'),
   },
+  // 排序算法
   {
-    path: '/bubble',
-    name: 'bubble',
-    component: () => import('@views/sort/bubble.vue'),
+    path: '/sort',
+    name: 'sort',
+    component: () => import('@views/sort/index.vue'),
+  },
+  // 2048 游戏
+  {
+    path: '/2048',
+    name: '2048',
+    component: () => import('@views/2048/index.vue'),
   },
   // 404 错误页
   {
