@@ -8,7 +8,13 @@
     "icon": "Icon Resource",
     "color": "Color Resource",
     "reborn": "Reborn Life",
-    "home": "Snowflake Page"
+    "home": "Snowflake Page",
+    "rebornDesc": "21 days to reborn your life, git new skills",
+    "homeDesc": "Browser start page",
+    "2048Desc": "2048 game, a simple and fun puzzle game",
+    "sort": "Sort Visualizer",
+    "sortDesc": "Visualize the sorting process, such as bubble sort, quick sort, etc.",
+    "resumeDesc": "Quickly generate beautiful resumes"
   },
   "moreTools": "More Tools"
 }

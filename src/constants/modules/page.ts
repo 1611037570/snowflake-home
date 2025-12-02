@@ -11,6 +11,11 @@ interface PageItem {
 export const BASE_LIST = computed<PageItem[]>(() => {
   return [
     {
+      name: $t('router.messageBoard'),
+      url: '/messageBoard',
+      type: 'project',
+    },
+    {
       name: $t('router.index'),
       url: '/',
       type: 'base',
@@ -39,26 +44,38 @@ export const PROJECT_LIST = computed<PageItem[]>(() => {
       url: '/image',
       version: '1.0.0',
       type: 'project',
+      desc: $t('router.imageDesc'),
     },
     {
       name: $t('router.resume'),
       url: '/resume',
       type: 'project',
+      desc: $t('router.resumeDesc'),
     },
-    {
-      name: $t('router.messageBoard'),
-      url: '/messageBoard',
-      type: 'project',
-    },
+
     {
       name: $t('router.home'),
       url: '/home',
       type: 'project',
+      desc: $t('router.homeDesc'),
     },
     {
       name: $t('router.reborn'),
       url: '/reborn',
       type: 'project',
+      desc: $t('router.rebornDesc'),
+    },
+    {
+      name: $t('router.2048'),
+      url: '/2048',
+      type: 'project',
+      desc: $t('router.2048Desc'),
+    },
+    {
+      name: $t('router.sort'),
+      url: '/sort',
+      type: 'project',
+      desc: $t('router.sortDesc'),
     },
   ]
 })
