@@ -10,10 +10,8 @@
       <div
         v-for="(item, idx) in drawn"
         :key="idx"
-        class="cursor-pointer rounded px-2 py-1"
-        :class="[
-          item.selected ? 'bg-gray-200 text-blue-600' : 'hover:bg-gray-100 hover:text-blue-600',
-        ]"
+        class="cursor-pointer rounded px-1 py-1"
+        :class="[item.selected ? '  bg-sf-bg-hover text-sf-theme' : '']"
         @click="toggle(idx)"
       >
         {{ item.text }}
