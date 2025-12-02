@@ -1,4 +1,11 @@
-<script setup></script>
+<script setup>
+import { userInfo } from '@/views/index/data'
+import dayjs from 'dayjs'
+const now = dayjs()
+
+const devYears = now.diff(dayjs(userInfo.devYears), 'year')
+const shootYears = now.diff(dayjs(userInfo.shootYears), 'year')
+</script>
 
 <template>
   <div
@@ -13,21 +20,23 @@
       class="breath breath-delayed absolute -bottom-10 -left-10 h-32 w-32 rounded-full bg-sf-theme-hover blur-2xl will-change-transform"
     ></div>
     <div class="relative h-[200px] rounded-xl border border-sf-theme-hover bg-sf-theme-hover p-4">
-      <div class="text-7xl">Hi~ 我是<span class="pl-4 text-sf-theme">小羊</span></div>
-      <div class="flex">
-        现居：乌镇的
-        <div class="text-3xl">前端开发 & 人像摄影师</div>
+      <div class="text-7xl">
+        Hi~ 我是<span class="pl-4 text-sf-theme">{{ userInfo.name }}</span>
+      </div>
+      <div class="flex items-center">
+        现居：<span class="text-xl"> {{ userInfo.location }} </span>的
+        <div class="text-3xl">{{ userInfo.job }}</div>
       </div>
       <div
         class="flex-c absolute -right-12 -bottom-12 z-10 h-22 w-22 rotate-3 flex-col rounded-xl bg-sf-theme shadow-2xl transition-all duration-300 hover:scale-105 hover:rotate-0 hover:shadow-sf-theme/20"
       >
-        <div class="text-3xl font-bold">7 <span class="text-xl">年</span></div>
+        <div class="text-3xl font-bold">{{ devYears }} <span class="text-xl">年</span></div>
         <div class="mt-1 text-sm">开发经验</div>
       </div>
       <div
         class="flex-c absolute right-6 -bottom-12 z-10 h-22 w-22 rotate-3 flex-col rounded-xl bg-sf-theme shadow-2xl transition-all duration-300 hover:scale-105 hover:rotate-0 hover:shadow-sf-theme/20"
       >
-        <div class="text-3xl font-bold">4 <span class="text-xl">年</span></div>
+        <div class="text-3xl font-bold">{{ shootYears }} <span class="text-xl">年</span></div>
         <div class="mt-1 text-sm">摄影经验</div>
       </div>
     </div>

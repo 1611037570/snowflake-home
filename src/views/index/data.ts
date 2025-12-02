@@ -1,0 +1,7 @@
+export const userInfo = {
+  name: '小羊',
+  location: '乌镇',
+  job: '前端开发 & 人像摄影师',
+  devYears: '2023-06-02',
+  shootYears: '2019-11-11',
+}
