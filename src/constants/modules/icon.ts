@@ -85,4 +85,5 @@ export const ICON_LIST: Record<string, IconItem> = {
   'fa6-solid:snowflake': { icon: 'fa6-solid:snowflake' },
   'mdi:github': { icon: 'mdi:github' },
   'tabler:external-link': { icon: 'tabler:external-link' },
+  'mingcute:up-line': { icon: 'mingcute:up-line' },
 }
