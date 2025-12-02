@@ -6,6 +6,7 @@
     <Shoot />
     <Project />
     <Background />
+    <SfBacktop />
   </div>
 </template>
 

@@ -10,20 +10,18 @@ declare module 'vue' {
   export interface GlobalComponents {
     ElAnchor: typeof import('element-plus/es')['ElAnchor']
     ElAnchorLink: typeof import('element-plus/es')['ElAnchorLink']
-    ElButton: typeof import('element-plus/es')['ElButton']
+    ElBacktop: typeof import('element-plus/es')['ElBacktop']
     ElConfigProvider: typeof import('element-plus/es')['ElConfigProvider']
     ElDropdown: typeof import('element-plus/es')['ElDropdown']
-    ElDropdownItem: typeof import('element-plus/es')['ElDropdownItem']
     ElDropdownMenu: typeof import('element-plus/es')['ElDropdownMenu']
     ElImage: typeof import('element-plus/es')['ElImage']
     ElTooltip: typeof import('element-plus/es')['ElTooltip']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    SfBacktop: typeof import('@components/business/backtop/index.vue')['default']
     SfLocale: typeof import('@components/business/locale/index.vue')['default']
-    SfModal: typeof import('@components/business/modal/index.vue')['default']
     SfMonitor: typeof import('@components/business/monitor/index.vue')['default']
     SfTheme: typeof import('@components/business/theme/index.vue')['default']
     SfTooltip: typeof import('@components/business/tooltip/index.vue')['default']
-    SfViewContainer: typeof import('@components/business/viewContainer/index.vue')['default']
   }
 }
