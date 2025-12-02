@@ -1,106 +1,110 @@
 <template>
-  <div class="w-full max-w-4xl">
-    <div
-      class="overflow-hidden rounded-2xl border border-white/20 bg-white/10 shadow-2xl backdrop-blur-lg"
-    >
-      <div class="border-b border-white/10 bg-gradient-to-r from-blue-800/30 to-purple-800/30 p-6">
-        <h1 class="text-center text-3xl font-bold text-white">冒泡排序可视化</h1>
-        <p class="mt-2 text-center text-blue-100">可视化展示冒泡排序算法的工作原理</p>
-      </div>
-
-      <div class="border-b border-white/10 p-6">
-        <div class="mb-4 flex flex-wrap justify-center gap-3">
-          <button @click="toggleSorting" :disabled="isCompleted" :class="btnClass">
-            <i :class="isSorting && !isPaused ? 'fas fa-pause' : 'fas fa-play'"></i>
-            {{ isSorting && !isPaused ? '暂停' : isPaused ? '继续' : '开始' }}
-          </button>
-
-          <button
-            @click="nextStep"
-            :disabled="!isPaused || isCompleted || isAnimating"
-            class="flex items-center gap-2 rounded-lg bg-yellow-500 px-5 py-3 font-semibold text-white transition-colors duration-300 hover:bg-yellow-600 disabled:cursor-not-allowed disabled:bg-gray-400"
-          >
-            <i class="fas fa-step-forward"></i>
-            下一步
-          </button>
-
-          <button
-            @click="resetSorting"
-            :disabled="isAnimating"
-            class="flex items-center gap-2 rounded-lg bg-blue-500 px-5 py-3 font-semibold text-white transition-colors duration-300 hover:bg-blue-600 disabled:cursor-not-allowed disabled:bg-gray-400"
-          >
-            <i class="fas fa-redo"></i>
-            重置
-          </button>
+  <SfViewContainer>
+    <div class="w-full max-w-4xl">
+      <div
+        class="overflow-hidden rounded-2xl border border-white/20 bg-white/10 shadow-2xl backdrop-blur-lg"
+      >
+        <div
+          class="border-b border-white/10 bg-gradient-to-r from-blue-800/30 to-purple-800/30 p-6"
+        >
+          <h1 class="text-center text-3xl font-bold text-white">冒泡排序可视化</h1>
+          <p class="mt-2 text-center text-blue-100">可视化展示冒泡排序算法的工作原理</p>
         </div>
 
-        <div class="mt-6 grid grid-cols-2 gap-4 md:grid-cols-4">
-          <div
-            v-for="(item, key) in stats"
-            :key="key"
-            class="rounded-lg bg-black/20 p-4 text-center"
-          >
-            <p class="text-sm text-blue-200">{{ item.label }}</p>
-            <p class="text-lg font-bold text-white">{{ item.value }}</p>
+        <div class="border-b border-white/10 p-6">
+          <div class="mb-4 flex flex-wrap justify-center gap-3">
+            <button @click="toggleSorting" :disabled="isCompleted" :class="btnClass">
+              <i :class="isSorting && !isPaused ? 'fas fa-pause' : 'fas fa-play'"></i>
+              {{ isSorting && !isPaused ? '暂停' : isPaused ? '继续' : '开始' }}
+            </button>
+
+            <button
+              @click="nextStep"
+              :disabled="!isPaused || isCompleted || isAnimating"
+              class="flex items-center gap-2 rounded-lg bg-yellow-500 px-5 py-3 font-semibold text-white transition-colors duration-300 hover:bg-yellow-600 disabled:cursor-not-allowed disabled:bg-gray-400"
+            >
+              <i class="fas fa-step-forward"></i>
+              下一步
+            </button>
+
+            <button
+              @click="resetSorting"
+              :disabled="isAnimating"
+              class="flex items-center gap-2 rounded-lg bg-blue-500 px-5 py-3 font-semibold text-white transition-colors duration-300 hover:bg-blue-600 disabled:cursor-not-allowed disabled:bg-gray-400"
+            >
+              <i class="fas fa-redo"></i>
+              重置
+            </button>
+          </div>
+
+          <div class="mt-6 grid grid-cols-2 gap-4 md:grid-cols-4">
+            <div
+              v-for="(item, key) in stats"
+              :key="key"
+              class="rounded-lg bg-black/20 p-4 text-center"
+            >
+              <p class="text-sm text-blue-200">{{ item.label }}</p>
+              <p class="text-lg font-bold text-white">{{ item.value }}</p>
+            </div>
           </div>
         </div>
-      </div>
 
-      <div class="px-6 pt-4">
-        <div class="h-2 overflow-hidden rounded-full bg-black/20">
-          <div
-            class="h-full rounded-full bg-gradient-to-r from-blue-500 to-purple-500 transition-all duration-500"
-            :style="{ width: progressPercentage + '%' }"
-          ></div>
-        </div>
-      </div>
-
-      <div
-        class="m-6 rounded-lg bg-gradient-to-r from-blue-800/40 to-purple-800/40 p-4 text-center text-xl font-bold text-white transition-all duration-300"
-        :class="comparisonClass"
-      >
-        {{ comparisonText }}
-      </div>
-
-      <div class="p-6">
-        <div class="flex h-64 items-end justify-center space-x-2 rounded-xl bg-black/20 p-4">
-          <div
-            v-for="(item, index) in data"
-            :key="index"
-            class="flex flex-col items-center transition-all duration-1000"
-            :class="{
-              'scale-105 transform': index === currentIndex || index === currentIndex + 1,
-              'z-10': index === currentIndex || index === currentIndex + 1,
-            }"
-          >
+        <div class="px-6 pt-4">
+          <div class="h-2 overflow-hidden rounded-full bg-black/20">
             <div
-              class="relative w-12 rounded-t-lg transition-all duration-1000"
-              :style="{ height: (item / maxValue) * 200 + 'px' }"
-              :class="getBarClass(index)"
+              class="h-full rounded-full bg-gradient-to-r from-blue-500 to-purple-500 transition-all duration-500"
+              :style="{ width: progressPercentage + '%' }"
+            ></div>
+          </div>
+        </div>
+
+        <div
+          class="m-6 rounded-lg bg-gradient-to-r from-blue-800/40 to-purple-800/40 p-4 text-center text-xl font-bold text-white transition-all duration-300"
+          :class="comparisonClass"
+        >
+          {{ comparisonText }}
+        </div>
+
+        <div class="p-6">
+          <div class="flex h-64 items-end justify-center space-x-2 rounded-xl bg-black/20 p-4">
+            <div
+              v-for="(item, index) in data"
+              :key="index"
+              class="flex flex-col items-center transition-all duration-1000"
+              :class="{
+                'scale-105 transform': index === currentIndex || index === currentIndex + 1,
+                'z-10': index === currentIndex || index === currentIndex + 1,
+              }"
             >
               <div
-                class="absolute -top-8 left-1/2 -translate-x-1/2 transform text-sm font-bold text-white"
+                class="relative w-12 rounded-t-lg transition-all duration-1000"
+                :style="{ height: (item / maxValue) * 200 + 'px' }"
+                :class="getBarClass(index)"
               >
-                {{ index === currentIndex || index === currentIndex + 1 ? item : '' }}
+                <div
+                  class="absolute -top-8 left-1/2 -translate-x-1/2 transform text-sm font-bold text-white"
+                >
+                  {{ index === currentIndex || index === currentIndex + 1 ? item : '' }}
+                </div>
               </div>
-            </div>
-            <div class="mt-2 font-medium text-white">
-              {{ item }}
+              <div class="mt-2 font-medium text-white">
+                {{ item }}
+              </div>
             </div>
           </div>
         </div>
-      </div>
 
-      <div class="border-t border-white/10 p-6">
-        <div class="flex flex-wrap justify-center gap-6">
-          <div v-for="(item, index) in legendItems" :key="index" class="flex items-center gap-2">
-            <div class="h-5 w-5 rounded" :class="item.color"></div>
-            <span class="text-sm text-white">{{ item.label }}</span>
+        <div class="border-t border-white/10 p-6">
+          <div class="flex flex-wrap justify-center gap-6">
+            <div v-for="(item, index) in legendItems" :key="index" class="flex items-center gap-2">
+              <div class="h-5 w-5 rounded" :class="item.color"></div>
+              <span class="text-sm text-white">{{ item.label }}</span>
+            </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
+  </SfViewContainer>
 </template>
 
 <script setup>
@@ -190,9 +194,9 @@ const getBarClass = (index) => {
   return 'bg-gradient-to-b from-blue-500 to-blue-700'
 }
 
-// 修复：检查并设置完成状态
+// 修复：检查并设置完成状态 - 仅在轮次完成时检查
 const checkAndSetCompletion = () => {
-  // 如果当前轮次已经达到最大轮次，排序完成
+  // 只有轮次达到上限才完成
   if (currentRound.value >= data.value.length - 1) {
     isSorting.value = false
     isCompleted.value = true
@@ -203,13 +207,14 @@ const checkAndSetCompletion = () => {
   return false
 }
 
-// 处理轮次完成
+// 修复：处理轮次完成 - 只在需要时重置变量
 const handleRoundCompletion = () => {
   // 首先检查是否完成
   if (checkAndSetCompletion()) return true
 
-  // 如果本轮没有发生交换，排序完成
-  if (!swappedInRound.value) {
+  // 检查本轮是否有交换
+  if (!swappedInRound.value && currentRound.value > 0) {
+    // 如果本轮没有交换且不是第0轮，排序完成
     isSorting.value = false
     isCompleted.value = true
     comparisonText.value = '排序完成！'
@@ -225,15 +230,16 @@ const handleRoundCompletion = () => {
   return false
 }
 
-// 检查边界并处理
+// 修复：检查边界并处理
 const checkBoundaryAndHandle = () => {
+  // 注意：当前轮次为n时，需要比较到 data.length - n - 1
   if (currentIndex.value >= data.value.length - 1 - currentRound.value) {
     return handleRoundCompletion()
   }
   return false
 }
 
-// 核心排序逻辑
+// 修复：核心排序逻辑
 const performSortAnimation = async () => {
   isAnimating.value = true
 
@@ -247,7 +253,7 @@ const performSortAnimation = async () => {
   isComparing.value = false
   isSwapping.value = false
 
-  // 起始坐标++
+  // 步骤1：起始坐标++
   currentIndex.value++
 
   // 再次检查边界
@@ -308,9 +314,12 @@ const toggleSorting = () => {
   if (isCompleted.value) return
 
   if (!isSorting.value) {
-    // 开始排序，重置交换标志
+    // 开始排序，重置所有状态
     isSorting.value = true
     isPaused.value = false
+    isCompleted.value = false
+    currentIndex.value = -1
+    currentRound.value = 0
     swappedInRound.value = false
     performSortAnimation()
   } else if (isPaused.value) {
