@@ -87,7 +87,7 @@ function handleClick(e) {
 .header {
   backdrop-filter: saturate(200%) blur(30px);
   -webkit-backdrop-filter: saturate(200%) blur(30px);
-  box-shadow: var(--sf-border-base) 0 5px 30px;
-  border-bottom: 1px solid var(--sf-border-base);
+  // box-shadow: var(--sf-border-base) 0 1px 5px;
+  border-bottom: 0.5px solid var(--sf-border-base);
 }
 </style>
