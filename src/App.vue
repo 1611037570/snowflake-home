@@ -17,6 +17,7 @@ function loadDefaultEvent() {
     e.preventDefault() // 阻止默认右键行为
   })
   whenever(keys.ctrl_space, () => {
+    console.log('ctrl_space')
     monitorWatch.value = !monitorWatch.value
   })
 }

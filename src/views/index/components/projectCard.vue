@@ -1,23 +1,23 @@
 <template>
   <div
-    class="scroll-reveal w-[300px] overflow-hidden rounded-xl bg-white shadow-md transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
+    class="flex w-[300px] cursor-pointer flex-col overflow-hidden rounded-xl bg-sf-primary text-sf-text shadow-md transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
     @click="handleClick"
   >
-    <div class="h-36 overflow-hidden">
-      <ElImage
-        src="https://picsum.photos/id/180/800/500"
-        :alt="data.name"
-        class="h-full w-full object-cover transition-transform duration-500 hover:scale-105"
-      />
-    </div>
+    <ElImage
+      src="https://picsum.photos/id/180/800/500"
+      :alt="data.name"
+      class="h-38 w-full overflow-hidden object-cover"
+    />
     <div class="p-3">
-      <h3 class="text-dark mb-2 text-sm font-bold">{{ data.name }}</h3>
-      <p class="mb-3 text-xs text-gray-600" v-if="data.desc">
+      <div class="flex items-center justify-between">
+        <h3 class="text-base font-bold">{{ data.name }}</h3>
+        <div class="flex items-center text-sm text-sf-text-3">
+          查看详情 <i class="fa fa-arrow-right ml-2"></i>
+        </div>
+      </div>
+      <p class="mt-3 text-xs text-sf-text-2" v-if="data.desc">
         {{ data.desc }}
       </p>
-      <div class="text-primary hover:text-primary/80 inline-flex items-center font-medium">
-        查看详情 <i class="fa fa-arrow-right ml-2"></i>
-      </div>
     </div>
   </div>
 </template>
