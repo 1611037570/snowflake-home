@@ -19,9 +19,9 @@ const router = createRouter({
 
 router.beforeEach(async (to, from, next) => {
   const pageName = to.name as string
+
   if (pageName) {
-    // 路由切换时，加载当前页面的语言包（等待加载完成再进入页面）
-    await loadPageLang(pageName)
+    loadPageLang(pageName)
   }
   next() // 加载完成后放行路由
 })

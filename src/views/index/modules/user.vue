@@ -1,10 +1,15 @@
 <script setup>
 import { userInfo } from '@/views/index/data'
 import dayjs from 'dayjs'
+import { computed } from 'vue'
 const now = dayjs()
 
-const devYears = now.diff(dayjs(userInfo.devYears), 'year')
-const shootYears = now.diff(dayjs(userInfo.shootYears), 'year')
+const devYears = computed(() => {
+  return now.diff(dayjs(userInfo.value.devYears), 'year')
+})
+const shootYears = computed(() => {
+  return now.diff(dayjs(userInfo.value.shootYears), 'year')
+})
 </script>
 
 <template>
