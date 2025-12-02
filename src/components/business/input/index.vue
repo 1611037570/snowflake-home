@@ -10,9 +10,9 @@
 import { ElInput } from 'element-plus'
 import type { ComponentInstance } from 'vue'
 import { getCurrentInstance, h } from 'vue'
-const vm = getCurrentInstance()
+const vm: any = getCurrentInstance()
 
-function changeRef(exports) {
+function changeRef(exports: any) {
   vm.exposed = exports
 }
 defineExpose({} as ComponentInstance<typeof ElInput>)

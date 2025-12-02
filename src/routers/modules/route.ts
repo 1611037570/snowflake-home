@@ -23,11 +23,6 @@ const routes = [
     name: 'image',
     component: () => import('@views/image/index.vue'),
   },
-  {
-    path: '/image1',
-    name: 'image1',
-    component: () => import('@views/image1/index.vue'),
-  },
   // 留言板
   {
     path: '/messageBoard',
