@@ -8,14 +8,14 @@ export const useSystemStore = defineStore(
     // 项目运行时间
     const runTime = ref<number>(dayjs().diff(dayjs(start), 'day'))
     // 性能监控
-    const monitorWatch = ref<boolean>(true)
+    const monitorWatch = ref<boolean>(false)
 
     return { runTime, monitorWatch }
   },
   {
     persist: {
       storage: localStorage,
-      pick: [''],
+      pick: ['monitorWatch'],
     },
   },
 )
