@@ -1,9 +1,17 @@
 <script setup>
 import { ICON_LIST } from '@/constants'
+import { useClipboard } from '@vueuse/core'
+import { ElMessage } from 'element-plus'
 import { ref } from 'vue'
 const icons = Object.values(ICON_LIST)
 const successIcons = ref([])
 const failedIcons = ref([])
+const { copy } = useClipboard()
+function handleCopy(icon) {
+  copy(icon)
+    .then(() => ElMessage.success(`已复制: ${icon}`))
+    .catch(() => ElMessage.error('复制失败'))
+}
 function onSuccess(icon) {
   if (!successIcons.value.includes(icon)) successIcons.value.push(icon)
   const i = failedIcons.value.indexOf(icon)
@@ -35,9 +43,10 @@ function onFail(icon) {
           v-for="icon in successIcons"
           :key="'succ-' + icon"
           :icon="icon"
-          class="rounded-xl bg-sf-primary text-sf-text ring-2 ring-green-500"
+          class="cursor-pointer rounded-xl bg-sf-primary text-sf-text ring-2 ring-green-500"
           size="9"
           boxSize="12"
+          @click="handleCopy(icon)"
         />
       </div>
     </div>
