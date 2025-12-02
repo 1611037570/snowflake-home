@@ -1,4 +1,6 @@
 <script setup>
+import { useClipboard } from '@vueuse/core'
+import { ElMessage } from 'element-plus'
 const list = [
   {
     name: '主题色',
@@ -11,11 +13,6 @@ const list = [
         name: '次要色',
         class: 'bg-sf-theme-hover',
       },
-    ],
-  },
-  {
-    name: '状态色',
-    list: [
       {
         name: '成功',
         class: 'bg-sf-success',
@@ -73,6 +70,12 @@ const list = [
     ],
   },
 ]
+const { copy } = useClipboard()
+function copyClass(cls) {
+  copy(cls)
+    .then(() => ElMessage.success(`已复制类名: ${cls}`))
+    .catch(() => ElMessage.error('复制失败'))
+}
 </script>
 
 <template>
@@ -80,11 +83,15 @@ const list = [
     <template v-for="item in list" :key="item.name">
       <h1 class="p-4 text-2xl font-bold">{{ item.name }}</h1>
       <div
-        class="flex flex-wrap gap-4 rounded-xl bg-sf-primary p-3"
+        class="flex flex-wrap gap-4 rounded-xl p-3"
         style="backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px)"
       >
         <div v-for="data in item.list" class="rounded-xl p-4 shadow-2xl" :key="data.class">
-          <div class="mb-2 h-18 w-[160px] rounded-xl" :class="data.class"></div>
+          <div
+            class="mb-2 h-18 w-[160px] cursor-pointer rounded-xl transition active:scale-[.99]"
+            :class="data.class"
+            @click="copyClass(data.class)"
+          ></div>
           <div class="text-sm">
             {{ data.name }}
           </div>
