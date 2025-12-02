@@ -29,6 +29,10 @@ const list = [
         name: '信息',
         class: 'bg-sf-info',
       },
+      {
+        name: '文字',
+        class: 'bg-sf-theme-text',
+      },
     ],
   },
   {

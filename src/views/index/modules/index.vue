@@ -1,7 +1,8 @@
 <script setup></script>
 
 <template>
-  <div class="w-dwh flex-c min-h-dvh flex-col">
+  <div class="w-dwh flex-c min-h-dvh flex-col"></div>
+  <div class="w-dwh flex-c fixed inset-0 -z-1 min-h-dvh flex-col">
     <div class="sf-text-glow text-7xl text-sf-text transition-all duration-300">
       代码与光影的创造者
     </div>
