@@ -1,7 +1,10 @@
 <script setup></script>
 
 <template>
-  <div class="w-dwh flex-c relative min-h-dvh overflow-hidden bg-sf-bg text-sf-theme-text">
+  <div
+    class="w-dwh flex-c relative min-h-dvh overflow-hidden bg-sf-bg text-sf-theme-text"
+    id="about"
+  >
     <!-- 背景装饰 -->
     <div
       class="breath absolute -top-10 -right-10 h-50 w-50 rounded-full bg-sf-theme-hover blur-3xl will-change-transform"

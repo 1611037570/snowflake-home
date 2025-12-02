@@ -9,12 +9,12 @@ const navList = [
     href: 'about',
   },
   {
-    name: '作品',
-    href: 'work',
+    name: '摄影',
+    href: 'shoot',
   },
   {
-    name: '联系我',
-    href: 'contact',
+    name: '项目',
+    href: 'project',
   },
 ]
 const opacity = ref(0)
@@ -59,15 +59,17 @@ function handleClick(e) {
   >
     <div
       id="logoText"
-      class="text-shadow text-2xl font-bold text-sf-text transition-colors duration-300"
+      class="text-shadow text-2xl font-bold text-sf-text shadow-2xl transition-colors duration-300"
     >
       小羊
     </div>
 
     <div class="flex-c h-20 gap-8">
-      <el-anchor direction="horizontal" class="h-full" :offset="80" @click="handleClick">
+      <el-anchor direction="horizontal" class="h-14" :offset="0" @click="handleClick">
         <el-anchor-link :href="`#${item.href}`" v-for="item in navList" :key="item.href">
-          <div class="nav-link flex-c h-20 text-lg text-sf-base transition-colors duration-300">
+          <div
+            class="nav-link flex-c h-14 text-lg font-bold text-sf-base transition-colors duration-300"
+          >
             {{ item.name }}
           </div>
         </el-anchor-link>
