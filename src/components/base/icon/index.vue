@@ -4,9 +4,11 @@
     :style="{
       width: `calc(var(--spacing) * ${boxSize || size})`,
       height: `calc(var(--spacing) * ${boxSize || size})`,
+      minHeight: `calc(var(--spacing) * ${boxSize || size})`,
+      minWidth: `calc(var(--spacing) * ${boxSize || size})`,
     }"
   >
-    <Icon ref="iconify" :icon="icon" :style="iconStyle" />
+    <Icon ref="iconify" :icon="icon" :style="iconStyle" class="bg-transparent" />
   </div>
   <!-- class="iconify-icon"
      :rotate="rotate"

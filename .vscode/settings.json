@@ -87,6 +87,7 @@
     "Trae",
     "unplugin",
     "Vite",
-    "vueuse"
+    "vueuse",
+    "backtop"
   ]
 }
