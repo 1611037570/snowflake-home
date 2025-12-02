@@ -20,6 +20,16 @@ export const BASE_LIST = computed<PageItem[]>(() => {
       url: '/home',
       type: 'base',
     },
+    {
+      name: $t('router.icon'),
+      url: '/icon',
+      type: 'base',
+    },
+    {
+      name: $t('router.color'),
+      url: '/color',
+      type: 'base',
+    },
   ]
 })
 export const PROJECT_LIST = computed<PageItem[]>(() => {
