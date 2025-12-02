@@ -18,8 +18,6 @@ function onFail(icon) {
 
 <template>
   <SfViewContainer>
-    <h1 class="p-4 text-2xl font-bold">图标示例</h1>
-
     <div v-show="false">
       <SfIcon
         v-for="item in icons"

@@ -36,7 +36,7 @@
         </ElDropdown>
       </div>
     </header>
-    <main class="w-full flex-1 overflow-hidden">
+    <main class="w-full flex-1 overflow-hidden bg-sf-bg">
       <slot />
     </main>
     <SfFooter />
