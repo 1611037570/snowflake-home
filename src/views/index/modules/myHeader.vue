@@ -4,7 +4,6 @@ import { userInfo } from '@/views/index/data'
 import Music from '../components/music.vue'
 const themeStore = useThemeStore()
 const { themeMode } = storeToRefs(themeStore)
-
 const navList = [
   {
     name: '关于',
@@ -61,7 +60,7 @@ function handleClick(e) {
     style="transition: background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1)"
   >
     <div class="text-shadow text-2xl font-bold text-sf-base shadow-2xl">
-      {{ userInfo.name ? userInfo.name : '' }}
+      {{ userInfo.name }}
     </div>
 
     <div class="flex-c h-20 gap-8">
