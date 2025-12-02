@@ -10,3 +10,35 @@ body {
   font-size: 16px;
   user-select: none;
 }
+
+/* ========== 全局滚动条（所有页面） ========== */
+/* 1. 滚动条整体（宽/高决定滚动条大小） */
+::-webkit-scrollbar {
+  width: 8px; /* 垂直滚动条宽度 */
+  height: 8px; /* 水平滚动条高度 */
+}
+
+/* 2. 滚动条轨道 */
+::-webkit-scrollbar-track {
+  background: var(--sf-background-2); /* 轨道底色 */
+  border-radius: 4px; /* 轨道圆角 */
+}
+/* 5. 滚动条角落（垂直+水平滚动条交汇区） */
+::-webkit-scrollbar-corner {
+  background: var(--sf-background-2); /* 和轨道底色一致 */
+}
+
+/* 3. 滚动条滑块 */
+::-webkit-scrollbar-thumb {
+  background: var(--sf-background); /* 滑块默认颜色 */
+  border-radius: 4px; /* 滑块圆角（和轨道一致更美观） */
+  transition: background 0.2s; /* hover 过渡 */
+}
+
+/* 4. 滑块 hover/active 状态 */
+::-webkit-scrollbar-thumb:hover {
+  background: var(--sf-theme); /* hover 加深 */
+}
+::-webkit-scrollbar-thumb:active {
+  background: var(--sf-theme); /* 点击加深 */
+}
