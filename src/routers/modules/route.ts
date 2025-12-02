@@ -59,6 +59,12 @@ const routes = [
     name: 'sort',
     component: () => import('@views/sort/index.vue'),
   },
+  // 人生已完成清单
+  {
+    path: '/checklist',
+    name: 'checklist',
+    component: () => import('@views/checklist/index.vue'),
+  },
   // 2048 游戏
   {
     path: '/2048',

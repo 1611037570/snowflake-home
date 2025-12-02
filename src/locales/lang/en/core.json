@@ -14,7 +14,9 @@
     "2048Desc": "2048 game, a simple and fun puzzle game",
     "sort": "Sort Visualizer",
     "sortDesc": "Visualize the sorting process, such as bubble sort, quick sort, etc.",
-    "resumeDesc": "Quickly generate beautiful resumes"
+    "resumeDesc": "Quickly generate beautiful resumes",
+    "checklist": "Life Checklist",
+    "checklistDesc": "Record the events you have completed in your life"
   },
   "moreTools": "More Tools"
 }

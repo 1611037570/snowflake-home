@@ -77,6 +77,12 @@ export const PROJECT_LIST = computed<PageItem[]>(() => {
       type: 'project',
       desc: $t('router.sortDesc'),
     },
+    {
+      name: $t('router.checklist'),
+      url: '/checklist',
+      type: 'project',
+      desc: $t('router.checklistDesc'),
+    },
   ]
 })
 export const PAGE_LIST = computed<PageItem[]>(() => {
