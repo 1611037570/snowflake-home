@@ -1,14 +1,9 @@
 <template>
   <div
     class="flex-c relative cursor-pointer overflow-hidden transition-all duration-300"
-    :style="{
-      width: `calc(var(--spacing) * ${boxSize || size})`,
-      height: `calc(var(--spacing) * ${boxSize || size})`,
-      minHeight: `calc(var(--spacing) * ${boxSize || size})`,
-      minWidth: `calc(var(--spacing) * ${boxSize || size})`,
-    }"
+    :class="boxSizeClass"
   >
-    <Icon ref="iconify" :icon="icon" :style="iconStyle" class="bg-transparent" />
+    <Icon ref="iconify" :icon="icon" class="bg-transparent" :class="iconClass" />
   </div>
   <!-- class="iconify-icon"
      :rotate="rotate"
@@ -43,7 +38,15 @@ export interface IconProps {
    */
   flip?: 'horizontal' | 'vertical'
 }
-
+function sizeConvert(size: number | string) {
+  const res = Number(size)
+  const defaultSize = res - 4 >= 4 ? res - 4 : 4
+  const mdSize = res
+  return `min-w-${defaultSize} min-h-${defaultSize} w-${defaultSize} h-${defaultSize} md:w-${mdSize} md:h-${mdSize}`
+}
+const boxSizeClass = computed(() => {
+  return sizeConvert(props.boxSize || props.size)
+})
 const props = withDefaults(defineProps<IconProps>(), {
   icon: 'fa6-solid:snowflake',
   size: 16,
@@ -66,10 +69,8 @@ function init() {
     })
 }
 init()
-const iconStyle = computed(() => {
-  return {
-    fontSize: `calc(var(--spacing) * ${props.size})`,
-  }
+const iconClass = computed(() => {
+  return sizeConvert(props.size)
 })
 </script>
 <style scoped></style>
