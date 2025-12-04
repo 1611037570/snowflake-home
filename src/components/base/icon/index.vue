@@ -38,11 +38,27 @@ export interface IconProps {
    */
   flip?: 'horizontal' | 'vertical'
 }
+const SIZES: any = {
+  base: { offset: 3, min: 3 },
+  sm: { offset: 2, min: 4 },
+  md: { offset: 1, min: 5 },
+  lg: { offset: 0, min: 0 },
+}
+
 function sizeConvert(size: number | string) {
   const res = Number(size)
-  const defaultSize = res - 4 >= 4 ? res - 4 : 4
-  const mdSize = res
-  return `min-w-${defaultSize} min-h-${defaultSize} w-${defaultSize} h-${defaultSize} md:w-${mdSize} md:h-${mdSize}`
+  const getSize = (type: string) => Math.max(res - SIZES[type].offset, SIZES[type].min)
+  const baseSize = getSize('base')
+  const smSize = getSize('sm')
+  const mdSize = getSize('md')
+  const lgSize = getSize('lg')
+  return `
+  min-w-${baseSize} min-h-${baseSize}
+  w-${baseSize} h-${baseSize} 
+  md:w-${mdSize} md:h-${mdSize}
+  sm:w-${smSize} sm:h-${smSize}
+  lg:w-${lgSize} lg:h-${lgSize}
+  `
 }
 const boxSizeClass = computed(() => {
   return sizeConvert(props.boxSize || props.size)

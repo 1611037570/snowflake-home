@@ -1,6 +1,10 @@
 @import 'tailwindcss';
+@source inline('{sm:,}w-{1,{1..20},20}');
 @source inline('{md:,}w-{1,{1..20},20}');
+@source inline('{lg:,}w-{1,{1..20},20}');
+@source inline('{sm:,}h-{1,{1..20},20}');
 @source inline('{md:,}h-{1,{1..20},20}');
+@source inline('{lg:,}h-{1,{1..20},20}');
 @source inline('{md:,}text-{1,{1..20},20}');
 /* Tailwind CSS 4 自定义配置 */
 @theme inline {

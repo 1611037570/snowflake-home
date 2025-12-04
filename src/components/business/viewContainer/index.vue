@@ -1,7 +1,7 @@
 <template>
   <div class="flex h-full w-full flex-col">
     <header
-      class="relative flex h-14 items-center justify-start border-b-[0.5px] border-sf-border-base bg-sf-primary p-3 text-sf-base md:justify-center"
+      class="relative flex h-12 items-center justify-start border-b-[0.5px] border-sf-border-base bg-sf-primary p-3 text-sf-base sm:h-14 md:justify-center"
     >
       <div
         class="flex-c top-1/2 left-3 mr-3 cursor-pointer text-xs md:absolute md:-translate-y-1/2 md:text-base"
@@ -9,7 +9,7 @@
       >
         <SfIcon icon="famicons:chevron-back" size="5" />
       </div>
-      <div class="flex items-center gap-2">
+      <div class="flex items-center gap-1 md:gap-2">
         <div class="text-xm font-bold md:text-2xl">{{ title }}</div>
         <div
           v-if="version"
@@ -18,10 +18,10 @@
           v{{ version }}
         </div>
       </div>
-      <div class="flex-c absolute top-1/2 right-3 -translate-y-1/2">
+      <div class="flex-c absolute top-1/2 right-3 -translate-y-1/2 gap-1 md:gap-3">
         <slot name="right"></slot>
-        <SfTheme class="mx-3" />
-        <SfLocale class="mr-3" />
+        <SfTheme />
+        <SfLocale />
         <ElDropdown>
           <ElButton> {{ $t('moreTools') }} </ElButton>
           <template #dropdown>
