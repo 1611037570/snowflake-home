@@ -33,6 +33,9 @@ pinia.use(piniaPluginPersistedstate)
 app.use(pinia)
 // 注册路由
 app.use(router)
+// 注册全局函数 $s
+import { $s } from './utils/modules/sizeConvert'
+app.config.globalProperties.$s = $s
 
 // 挂载应用到 DOM
 app.mount('#app')

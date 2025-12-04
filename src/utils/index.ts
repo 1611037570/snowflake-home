@@ -4,6 +4,7 @@ export * from './modules/getUUID'
 export * from './modules/imageUtils'
 export * from './modules/loadElLocal'
 export * from './modules/loadTheme'
+export * from './modules/sizeConvert'
 export * from './modules/url'
 
 export const getRandomItem = (list: any[]) => {
