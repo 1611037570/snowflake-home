@@ -48,17 +48,14 @@ const togglePlay = () => {
     @loadeddata="onAudioLoaded"
   ></audio>
   <SfTooltip :content="isPlaying ? '暂停' : '播放'" placement="top">
-    <div
+    <SfIcon
       @click="togglePlay"
-      class="flex h-8 w-8 cursor-pointer items-center justify-center rounded-full bg-sf-base p-2 backdrop-blur-sm"
-    >
-      <SfIcon
-        size="7"
-        :icon="isPlaying ? 'lucide:pause' : 'lucide:play'"
-        class="text-sf-primary transition-colors duration-300 hover:text-sf-theme"
-        :class="isPlaying ? 'animate-spin' : ''"
-      />
-    </div>
+      size="6"
+      boxSize="9"
+      :icon="isPlaying ? 'lucide:pause' : 'lucide:play'"
+      class="rounded-full bg-sf-base text-sf-primary transition-colors duration-300 hover:text-sf-theme"
+      :class="isPlaying ? 'animate-spin' : ''"
+    />
   </SfTooltip>
 </template>
 

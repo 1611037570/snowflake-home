@@ -11,6 +11,40 @@ body {
   user-select: none;
 }
 
+@for $i from 1 through 50 {
+  .text-#{$i} {
+    font-size: calc(var(--spacing) * #{$i});
+  }
+  .sm\:text-#{$i} {
+    @media (width >= 40rem) {
+      font-size: calc(var(--spacing) * #{$i});
+    }
+  }
+  .md\:text-#{$i} {
+    @media (width >= 48rem) {
+      font-size: calc(var(--spacing) * #{$i});
+    }
+  }
+  .lg\:text-#{$i} {
+    @media (width >= 64rem) {
+      font-size: calc(var(--spacing) * #{$i});
+    }
+  }
+}
+
+// @each $prefix, $width in $breakpoints {
+//   @media (width >= #{$width}) {
+//     @for $i from 1 through 10 {
+//       // 关键：用 \\ 转义前缀，确保数字开头的 2xl 被正确解析
+//       .#{$prefix}\\text-#{$i} {
+//         font-size: calc(var(--spacing) * #{$i});
+//       }
+
+//       // 如果你想保留原类名格式（- 分隔，而非 :），也可以这样写：
+//       // .#{'\\' + $prefix}-text-#{$i} { ... }
+//     }
+//   }
+// }
 /* ========== 全局滚动条（所有页面） ========== */
 /* 1. 滚动条整体（宽/高决定滚动条大小） */
 ::-webkit-scrollbar {
