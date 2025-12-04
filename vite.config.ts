@@ -73,7 +73,7 @@ export default ({ mode }: { mode: string }) => {
           'pinia',
           {
             '@/locales': ['$t'],
-            '@/utils': ['routerNavigation', 'urlNavigation'],
+            '@/utils': ['routerNavigation', 'urlNavigation', '$s'],
           },
         ], // 自动导入模块
         dts: 'src/types/autoImports.d.ts', // 类型声明文件路径
