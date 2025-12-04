@@ -6,13 +6,22 @@ const SIZES: any = {
 }
 
 export function $s(size: string | number, type = 'text') {
-  const res = Number(size)
-  const b = res > 10 ? 3 : 1
-  const getSize = (type: string) => Math.max(res - SIZES[type].offset * b, SIZES[type].min)
-  const baseSize = getSize('base')
-  const smSize = getSize('sm')
-  const mdSize = getSize('md')
-  const lgSize = getSize('lg')
+  // 转换并处理尺寸值（确保为数字）
+  const baseValue = Number(size)
+  // 语义化命名：偏移乘数（替代原无意义的b）
+  const offsetMultiplier = baseValue > 10 ? 3 : 1
+
+  // 封装尺寸计算逻辑（内聚核心计算规则）
+  const calculateSize = (key: keyof typeof SIZES): number => {
+    const { offset, min } = SIZES[key]
+    return Math.max(baseValue - offset * offsetMultiplier, min)
+  }
+
+  // 计算不同尺寸值
+  const baseSize = calculateSize('base')
+  const smSize = calculateSize('sm')
+  const mdSize = calculateSize('md')
+  const lgSize = baseSize
   return `${type}-${baseSize} md:${type}-${mdSize} sm:${type}-${smSize} lg:${type}-${lgSize}
     `
 }
