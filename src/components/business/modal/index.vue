@@ -18,7 +18,7 @@
         <div class="relative mb-3 flex items-center justify-between">
           <div class="w-full text-center text-2xl font-bold">{{ title }}</div>
           <div
-            class="group flex-c absolute top-1 right-1 z-2 h-9 w-9 transform cursor-pointer rounded-xl duration-300 hover:bg-sf-bg-hover"
+            class="group flex-c absolute top-1 right-1 z-2 h-9 w-9 cursor-pointer rounded-xl duration-300 hover:bg-sf-bg-hover"
             @click="modeValue = false"
           >
             <SfIcon icon="carbon:close-outline" size="6" class="group-hover:text-sf-theme" />

@@ -19,30 +19,37 @@ const shootYears = computed(() => {
   >
     <!-- 背景装饰 -->
     <div
-      class="breath absolute -top-10 -right-10 h-50 w-50 rounded-full bg-sf-theme-hover blur-3xl will-change-transform"
+      class="breath absolute -top-20 -right-20 rounded-full bg-sf-theme-hover blur-3xl will-change-transform"
+      :class="[$s(60, 'w'), $s(60, 'h')]"
     ></div>
     <div
-      class="breath breath-delayed absolute -bottom-10 -left-10 h-32 w-32 rounded-full bg-sf-theme-hover blur-2xl will-change-transform"
+      class="breath breath-delayed absolute -bottom-10 -left-10 rounded-full bg-sf-theme-hover blur-2xl will-change-transform"
+      :class="[$s(42, 'w'), $s(42, 'h')]"
     ></div>
-    <div class="relative h-[200px] rounded-xl border border-sf-theme-hover bg-sf-theme-hover p-4">
-      <div class="text-7xl">
+    <div
+      class="relative rounded-xl border border-sf-theme-hover bg-sf-theme-hover"
+      :class="[$s(4, 'p')]"
+    >
+      <div :class="$s(16)">
         Hi~ 我是<span class="pl-4 text-sf-theme">{{ userInfo.name }}</span>
       </div>
-      <div class="flex items-center">
-        现居：<span class="text-xl"> {{ userInfo.location }} </span>的
-        <div class="text-3xl">{{ userInfo.job }}</div>
+      <div class="flex items-center" :class="$s(11)">
+        现居：<span> {{ userInfo.location }} </span>的
+        <span>{{ userInfo.job }}</span>
       </div>
       <div
-        class="flex-c absolute -right-12 -bottom-12 z-10 h-22 w-22 rotate-3 flex-col rounded-xl bg-sf-theme shadow-2xl transition-all duration-300 hover:scale-105 hover:rotate-0 hover:shadow-sf-theme/20"
+        :class="[$s(4, 'p')]"
+        class="flex-c absolute -right-12 -bottom-12 z-10 rotate-3 flex-col rounded-xl bg-sf-theme shadow-2xl transition-all duration-300 hover:scale-105 hover:rotate-0 hover:shadow-sf-theme/20"
       >
-        <div class="text-3xl font-bold">{{ devYears }} <span class="text-xl">年</span></div>
-        <div class="mt-1 text-sm">开发经验</div>
+        <div class="font-bold" :class="$s(7)">{{ devYears }} <span class="text-xl">年</span></div>
+        <div class="mt-1" :class="$s(3)">开发经验</div>
       </div>
       <div
-        class="flex-c absolute right-6 -bottom-12 z-10 h-22 w-22 rotate-3 flex-col rounded-xl bg-sf-theme shadow-2xl transition-all duration-300 hover:scale-105 hover:rotate-0 hover:shadow-sf-theme/20"
+        :class="[$s(4, 'p')]"
+        class="flex-c absolute right-6 -bottom-12 z-10 rotate-3 flex-col rounded-xl bg-sf-theme shadow-2xl transition-all duration-300 hover:scale-105 hover:rotate-0 hover:shadow-sf-theme/20"
       >
-        <div class="text-3xl font-bold">{{ shootYears }} <span class="text-xl">年</span></div>
-        <div class="mt-1 text-sm">摄影经验</div>
+        <div class="font-bold" :class="$s(7)">{{ shootYears }} <span class="text-xl">年</span></div>
+        <div class="mt-1" :class="$s(3)">摄影经验</div>
       </div>
     </div>
     <div class="flex-c absolute bottom-12 left-0 w-full text-4xl text-sf-base">v</div>

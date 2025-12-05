@@ -1,7 +1,8 @@
 <template>
   <div
-    class="flex w-[300px] cursor-pointer flex-col overflow-hidden rounded-xl bg-sf-primary text-sf-text shadow-md transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
+    class="flex cursor-pointer flex-col overflow-hidden rounded-xl bg-sf-primary text-sf-text shadow-md transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
     @click="handleClick"
+    :class="$s(75, 'w')"
   >
     <ElImage
       src="https://picsum.photos/id/180/800/500"
