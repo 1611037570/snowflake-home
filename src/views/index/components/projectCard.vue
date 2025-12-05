@@ -7,16 +7,17 @@
     <ElImage
       src="https://picsum.photos/id/180/800/500"
       :alt="data.name"
-      class="h-38 w-full overflow-hidden object-cover"
+      class="w-full overflow-hidden object-cover"
+      :class="$s(38, 'h')"
     />
-    <div class="p-3">
+    <div :class="$s(3, 'p')">
       <div class="flex items-center justify-between">
-        <h3 class="text-base font-bold">{{ data.name }}</h3>
-        <div class="flex items-center text-sm text-sf-text-3">
+        <h3 class="font-bold" :class="$s(5)">{{ data.name }}</h3>
+        <div class="flex items-center text-sf-text-3" :class="$s(4)">
           查看详情 <i class="fa fa-arrow-right ml-2"></i>
         </div>
       </div>
-      <p class="mt-3 text-xs text-sf-text-2" v-if="data.desc">
+      <p class="mt-3 text-sf-text-2" v-if="data.desc" :class="$s(4)">
         {{ data.desc }}
       </p>
     </div>

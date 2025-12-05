@@ -51,7 +51,7 @@ const togglePlay = () => {
     <SfIcon
       @click="togglePlay"
       size="6"
-      boxSize="9"
+      boxSize="8"
       :icon="isPlaying ? 'lucide:pause' : 'lucide:play'"
       class="rounded-full bg-sf-base text-sf-primary transition-colors duration-300 hover:text-sf-theme"
       :class="isPlaying ? 'animate-spin' : ''"
