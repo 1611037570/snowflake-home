@@ -12,13 +12,23 @@ body {
 }
 
 @for $i from 1 through 50 {
+  $target-value: $i + 0.5;
+
   .text-#{$i} {
     font-size: calc(var(--spacing) * #{$i});
+  }
+  .text-#{$i}\.5 {
+    font-size: calc(var(--spacing) * #{$target-value});
   }
   // sm 断点：40rem (640px) ~ 48rem (768px)
   .sm\:text-#{$i} {
     @media (min-width: 40rem) and (max-width: calc(48rem - 1px)) {
       font-size: calc(var(--spacing) * #{$i});
+    }
+  }
+  .sm\:text-#{$i}\.5 {
+    @media (min-width: 40rem) and (max-width: calc(48rem - 1px)) {
+      font-size: calc(var(--spacing) * #{$target-value});
     }
   }
 
@@ -28,6 +38,11 @@ body {
       font-size: calc(var(--spacing) * #{$i});
     }
   }
+  .md\:text-#{$i}\.5 {
+    @media (min-width: 48rem) and (max-width: calc(64rem - 1px)) {
+      font-size: calc(var(--spacing) * #{$target-value});
+    }
+  }
 
   // lg 断点：64rem (1024px) 及以上
   .lg\:text-#{$i} {
@@ -35,21 +50,12 @@ body {
       font-size: calc(var(--spacing) * #{$i});
     }
   }
+  .lg\:text-#{$i}\.5 {
+    @media (min-width: 64rem) {
+      font-size: calc(var(--spacing) * #{$target-value});
+    }
+  }
 }
-
-// @each $prefix, $width in $breakpoints {
-//   @media (width >= #{$width}) {
-//     @for $i from 1 through 10 {
-//       // 关键：用 \\ 转义前缀，确保数字开头的 2xl 被正确解析
-//       .#{$prefix}\\text-#{$i} {
-//         font-size: calc(var(--spacing) * #{$i});
-//       }
-
-//       // 如果你想保留原类名格式（- 分隔，而非 :），也可以这样写：
-//       // .#{'\\' + $prefix}-text-#{$i} { ... }
-//     }
-//   }
-// }
 /* ========== 全局滚动条（所有页面） ========== */
 /* 1. 滚动条整体（宽/高决定滚动条大小） */
 ::-webkit-scrollbar {
