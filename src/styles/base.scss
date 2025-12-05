@@ -15,18 +15,23 @@ body {
   .text-#{$i} {
     font-size: calc(var(--spacing) * #{$i});
   }
+  // sm 断点：40rem (640px) ~ 48rem (768px)
   .sm\:text-#{$i} {
-    @media (width >= 40rem) {
+    @media (min-width: 40rem) and (max-width: calc(48rem - 1px)) {
       font-size: calc(var(--spacing) * #{$i});
     }
   }
+
+  // md 断点：48rem (768px) ~ 64rem (1024px)
   .md\:text-#{$i} {
-    @media (width >= 48rem) {
+    @media (min-width: 48rem) and (max-width: calc(64rem - 1px)) {
       font-size: calc(var(--spacing) * #{$i});
     }
   }
+
+  // lg 断点：64rem (1024px) 及以上
   .lg\:text-#{$i} {
-    @media (width >= 64rem) {
+    @media (min-width: 64rem) {
       font-size: calc(var(--spacing) * #{$i});
     }
   }
