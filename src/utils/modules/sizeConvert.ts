@@ -6,9 +6,9 @@ interface SizeConfig {
 
 // 尺寸配置表（精确类型）
 const SIZES: Record<'base' | 'sm' | 'md' | 'lg', SizeConfig> = {
-  base: { offset: 3, min: 1 },
+  base: { offset: 1.5, min: 1 },
   sm: { offset: 2, min: 2 },
-  md: { offset: 1, min: 3 },
+  md: { offset: 2.5, min: 3 },
   lg: { offset: 0, min: 0 },
 }
 
@@ -48,9 +48,9 @@ export function $s(size: string | number, type = 'text'): string {
   }
 
   // 计算各尺寸值（通过封装函数简化，逻辑更清晰）
-  const baseSize = getSizeValue('base', 40, 45)
-  const smSize = getSizeValue('sm', 60, 65)
-  const mdSize = getSizeValue('md', 80, 85)
+  const baseSize = getSizeValue('base', 35, 45)
+  const smSize = getSizeValue('sm', 55, 65)
+  const mdSize = getSizeValue('md', 75, 85)
   const lgSize = calculateSize('lg')
 
   // 清理多余空格/换行，保持返回字符串整洁
