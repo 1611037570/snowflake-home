@@ -63,9 +63,10 @@ function handleClick(e) {
       class="mx-auto flex h-full max-w-[1200px] items-center justify-between"
       :class="$s(7, 'px')"
     >
-      <div class="text-shadow text-2xl font-bold text-sf-base shadow-2xl" :class="$s(7)">
+      <div class="text-shadow font-bold text-sf-base shadow-2xl" :class="$s(7)">
         {{ userInfo.name }}
       </div>
+
       <div class="flex-c h-full" :class="$s(6, 'gap')">
         <el-anchor direction="horizontal" :class="$s(14, 'h')" :offset="0" @click="handleClick">
           <el-anchor-link :href="`#${item.href}`" v-for="item in navList" :key="item.href">
