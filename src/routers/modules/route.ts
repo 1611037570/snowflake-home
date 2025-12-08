@@ -35,12 +35,6 @@ const routes = [
     name: 'reborn',
     component: () => import('@views/reborn/index.vue'),
   },
-  // 冒泡排序
-  {
-    path: '/bubbleSort',
-    name: 'bubbleSort',
-    component: () => import('@views/sort/bubble.vue'),
-  },
   // 颜色选择器
   {
     path: '/color',
