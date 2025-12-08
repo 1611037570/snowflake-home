@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import Bubble from './bubble.vue'
+import Bubble from './bubble/index.vue'
 </script>
 
 <template>
