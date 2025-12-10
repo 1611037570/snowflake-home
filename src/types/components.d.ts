@@ -11,10 +11,8 @@ declare module 'vue' {
     ElAnchor: typeof import('element-plus/es')['ElAnchor']
     ElAnchorLink: typeof import('element-plus/es')['ElAnchorLink']
     ElBacktop: typeof import('element-plus/es')['ElBacktop']
-    ElButton: typeof import('element-plus/es')['ElButton']
     ElConfigProvider: typeof import('element-plus/es')['ElConfigProvider']
     ElDropdown: typeof import('element-plus/es')['ElDropdown']
-    ElDropdownItem: typeof import('element-plus/es')['ElDropdownItem']
     ElDropdownMenu: typeof import('element-plus/es')['ElDropdownMenu']
     ElImage: typeof import('element-plus/es')['ElImage']
     RouterLink: typeof import('vue-router')['RouterLink']
@@ -25,6 +23,5 @@ declare module 'vue' {
     SfMonitor: typeof import('@components/business/monitor/index.vue')['default']
     SfTheme: typeof import('@components/business/theme/index.vue')['default']
     SfTooltip: typeof import('@components/business/tooltip/index.vue')['default']
-    SfViewContainer: typeof import('@components/business/viewContainer/index.vue')['default']
   }
 }
