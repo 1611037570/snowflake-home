@@ -30,6 +30,7 @@ import { dynamicComponentResolver } from './src/components'
 
 // 样式导入插件
 import { createStyleImportPlugin, ElementPlusResolve } from 'vite-plugin-style-import'
+import { pwaPlugin } from './pwa.config'
 
 // Vite配置导出
 export default ({ mode }: { mode: string }) => {
@@ -52,6 +53,8 @@ export default ({ mode }: { mode: string }) => {
       vue(),
       // Tailwind CSS插件配置
       tailwindcss(),
+      // PWA 插件配置
+      pwaPlugin(),
       // HTML插件配置
       createHtmlPlugin({
         minify: true, // 开启HTML压缩
@@ -135,7 +138,7 @@ export default ({ mode }: { mode: string }) => {
             open: false, // 自动打开报告
             gzipSize: true, // 显示gzip压缩后的大小
             brotliSize: true, // 显示brotli压缩后的大小
-          }),
+          }) as any,
           // 资源压缩配置
           viteCompression({
             verbose: false, // 输出压缩日志

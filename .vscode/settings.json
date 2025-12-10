@@ -21,7 +21,8 @@
     // 嵌套 package.json 相关文件
     "package.json": "package-lock.json, pnpm*, .yarnrc*, yarn*, .eslint*, eslint*, .oxlint*, oxlint*, .prettier*, prettier*, .editorconfig, lint-staged.config.js, commitlint.config.js, .pnpmrc",
     // 嵌套 env 相关文件
-    ".env": ".env.development, .env.production"
+    ".env": ".env.development, .env.production",
+    "pwa.config.ts": "manifest.ts, workbox.ts"
   },
 
   // 保存时代码操作

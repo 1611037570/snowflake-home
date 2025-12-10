@@ -79,6 +79,7 @@
     "vite": "7.1.9",
     "vite-plugin-compression": "0.5.1",
     "vite-plugin-html": "3.2.2",
+    "vite-plugin-pwa": "^1.2.0",
     "vite-plugin-restart": "1.0.0",
     "vite-plugin-style-import": "^2.0.0",
     "vite-plugin-vconsole": "2.1.1",
