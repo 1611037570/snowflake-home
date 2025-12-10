@@ -39,3 +39,7 @@ app.config.globalProperties.$s = $s
 
 // 挂载应用到 DOM
 app.mount('#app')
+
+import { registerPWA } from './utils'
+// 注册 PWA
+registerPWA()
