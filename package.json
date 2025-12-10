@@ -16,6 +16,7 @@
     "lint:eslint": "eslint . --fix",
     "lint": "run-s lint:*",
     "lint:lint-staged": "lint-staged",
+    "test:unit": "vitest",
     "format": "prettier --write src/",
     "commit": "git-cz",
     "prepare": "husky"
@@ -53,10 +54,12 @@
     "@prettier/plugin-oxc": "0.0.4",
     "@tailwindcss/vite": "4.1.14",
     "@tsconfig/node22": "22.0.2",
+    "@types/jsdom": "^27.0.0",
     "@types/node": "22.18.9",
     "@vitejs/plugin-vue": "6.0.1",
     "@vue/eslint-config-prettier": "10.2.0",
     "@vue/eslint-config-typescript": "14.6.0",
+    "@vue/test-utils": "^2.4.6",
     "@vue/tsconfig": "0.8.1",
     "commitizen": "4.3.1",
     "commitlint": "20.1.0",
@@ -64,9 +67,11 @@
     "eslint": "9.37.0",
     "eslint-plugin-oxlint": "1.11.2",
     "eslint-plugin-vue": "10.4.0",
+    "@vitest/eslint-plugin": "^1.5.0",
     "husky": "9.1.7",
     "jiti": "2.6.1",
     "lint-staged": "16.2.3",
+    "jsdom": "^27.2.0",
     "npm-run-all2": "8.0.4",
     "oxlint": "1.11.2",
     "prettier": "3.6.2",
@@ -84,6 +89,7 @@
     "vite-plugin-style-import": "^2.0.0",
     "vite-plugin-vconsole": "2.1.1",
     "vite-plugin-vue-devtools": "8.0.2",
+    "vitest": "^4.0.14",
     "vue-tsc": "3.1.1"
   }
 }
