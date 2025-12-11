@@ -1,9 +1,9 @@
 // 导入 Vue Router 核心函数
 import { createRouter, createWebHashHistory, createWebHistory } from 'vue-router'
 // 导入路由配置
+import { beforeEachGuard } from './guards'
 import routes from './modules/route'
-// 导入语言包加载函数
-import { loadPageLang } from '@/locales'
+
 // 根据环境变量确定路由模式
 const routerMode = import.meta.env.VITE_ROUTER_MODE
 // 动态选择创建历史记录的方法
@@ -17,14 +17,7 @@ const router = createRouter({
   routes,
 })
 
-router.beforeEach(async (to, from, next) => {
-  const pageName = to.name as string
-
-  if (pageName) {
-    loadPageLang(pageName)
-  }
-  next() // 加载完成后放行路由
-})
+router.beforeEach(beforeEachGuard)
 
 // 导出路由实例
 export default router
