@@ -19,7 +19,9 @@
     "test:unit": "vitest",
     "format": "prettier --write src/",
     "commit": "git-cz",
-    "prepare": "husky"
+    "prepare": "husky",
+    "preview:test": "vite preview --outDir test",
+    "vitest:ui": "vitest --ui"
   },
   "config": {
     "commitizen": {
@@ -57,6 +59,9 @@
     "@types/jsdom": "^27.0.0",
     "@types/node": "22.18.9",
     "@vitejs/plugin-vue": "6.0.1",
+    "@vitest/coverage-v8": "^4.0.15",
+    "@vitest/eslint-plugin": "^1.5.0",
+    "@vitest/ui": "^4.0.15",
     "@vue/eslint-config-prettier": "10.2.0",
     "@vue/eslint-config-typescript": "14.6.0",
     "@vue/test-utils": "^2.4.6",
@@ -67,11 +72,10 @@
     "eslint": "9.37.0",
     "eslint-plugin-oxlint": "1.11.2",
     "eslint-plugin-vue": "10.4.0",
-    "@vitest/eslint-plugin": "^1.5.0",
     "husky": "9.1.7",
     "jiti": "2.6.1",
-    "lint-staged": "16.2.3",
     "jsdom": "^27.2.0",
+    "lint-staged": "16.2.3",
     "npm-run-all2": "8.0.4",
     "oxlint": "1.11.2",
     "prettier": "3.6.2",
