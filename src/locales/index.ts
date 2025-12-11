@@ -92,5 +92,7 @@ export const changeLanguage = async (key: string) => {
 interface Translation {
   (key: string): string
 }
+// 导出翻译函数
 export const $t = i18n.global.t as Translation
+// 导出 i18n 实例
 export default i18n

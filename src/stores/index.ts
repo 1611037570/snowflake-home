@@ -8,7 +8,7 @@ const pinia = createPinia()
 
 // 注册持久化插件
 pinia.use(piniaPluginPersistedstate)
-
+// 导出 Pinia 实例
 export default pinia
 
 // 系统相关store
