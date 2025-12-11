@@ -1,7 +1,11 @@
 const routes = [
-  // 首页 个人简历
   {
     path: '/',
+    redirect: '/home',
+  },
+  // 个人简历
+  {
+    path: '/index',
     name: 'index',
     component: () => import('@views/index/index.vue'),
   },
@@ -71,7 +75,7 @@ const routes = [
     name: 'error',
     component: () => import('@views/status/error.vue'),
   },
-  // 捕获所有不存在的路由并重定向到主页
+  // 捕获所有不存在的路由并重定向
   {
     path: '/:pathMatch(.*)*',
     redirect: '/error',
