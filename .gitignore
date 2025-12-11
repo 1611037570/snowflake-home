@@ -19,6 +19,7 @@ test
 /cypress/videos/
 /cypress/screenshots/
 
+.trae/documents
 # 编辑器文件
 .idea
 *.suo
