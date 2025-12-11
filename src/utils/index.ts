@@ -5,7 +5,7 @@ export * from './modules/imageUtils'
 export * from './modules/loadElLocal'
 export * from './modules/loadEvent'
 export * from './modules/loadTheme'
-export * from './modules/registerPWA'
+// export * from './modules/registerPWA'
 export * from './modules/sizeConvert'
 export * from './modules/url'
 

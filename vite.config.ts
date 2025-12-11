@@ -30,7 +30,6 @@ import { dynamicComponentResolver } from './src/components'
 
 // 样式导入插件
 import { createStyleImportPlugin, ElementPlusResolve } from 'vite-plugin-style-import'
-import { pwaPlugin } from './pwa.config'
 
 // Vite配置导出
 export default ({ mode }: { mode: string }) => {
@@ -54,7 +53,7 @@ export default ({ mode }: { mode: string }) => {
       // Tailwind CSS插件配置
       tailwindcss(),
       // PWA 插件配置
-      pwaPlugin(),
+      // pwaPlugin(),
       // HTML插件配置
       createHtmlPlugin({
         minify: true, // 开启HTML压缩
