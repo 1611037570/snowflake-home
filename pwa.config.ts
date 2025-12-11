@@ -7,5 +7,5 @@ export const pwaPlugin = () =>
     registerType: 'autoUpdate',
     includeAssets: ['favicon.ico', 'logo.svg'],
     manifest: manifestConfig,
-    workbox: workboxConfig,
+    // workbox: workboxConfig,
   })
