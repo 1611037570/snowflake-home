@@ -16,10 +16,10 @@
     "lint:eslint": "eslint . --fix",
     "lint": "run-s lint:*",
     "lint:lint-staged": "lint-staged",
-    "test:unit": "vitest",
     "format": "prettier --write src/",
     "commit": "git-cz",
     "prepare": "husky",
+    "test:unit": "vitest",
     "preview:test": "vite preview --outDir test",
     "vitest:ui": "vitest --ui"
   },

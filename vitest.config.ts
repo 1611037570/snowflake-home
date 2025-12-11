@@ -27,8 +27,12 @@ export default mergeConfig(
       coverage: {
         provider: 'v8', // 使用 v8 引擎计算覆盖率
         enabled: true, // 启用覆盖率
-        reporter: ['text', 'json', 'html'], // 覆盖率报告格式
-        reportsDirectory: './test/coverage',
+        reporter: [
+          // 'text',
+          // 'json',
+          'html',
+        ], // 覆盖率报告格式
+        reportsDirectory: './test/coverage', // 覆盖率报告输出目录
       },
     },
   }),
