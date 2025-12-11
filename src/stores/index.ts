@@ -1,3 +1,16 @@
+// 导入 Pinia 状态管理
+import { createPinia } from 'pinia'
+// 导入 Pinia 持久化插件
+import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
+
+// 创建 Pinia 实例
+const pinia = createPinia()
+
+// 注册持久化插件
+pinia.use(piniaPluginPersistedstate)
+
+export default pinia
+
 // 系统相关store
 export * from './modules/system'
 
