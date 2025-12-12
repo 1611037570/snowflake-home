@@ -30,7 +30,6 @@ import { dynamicComponentResolver } from './src/components'
 
 // 样式导入插件
 import { createStyleImportPlugin, ElementPlusResolve } from 'vite-plugin-style-import'
-
 // Vite配置导出
 export default ({ mode }: { mode: string }) => {
   // 从环境文件加载环境变量
@@ -126,9 +125,16 @@ export default ({ mode }: { mode: string }) => {
     // 构建配置
     build: {
       outDir: 'dist', // 项目打包根目录
+      assetsDir: 'assets', // 静态资源目录
       chunkSizeWarningLimit: 500, // 警告阈值
+      minify: false, // 代码压缩
       // Rollup配置
       rollupOptions: {
+        // input: {
+        //   popup: './public/popup.html', // 关联Vite打包后的popup.html（Vue页面）
+        //   'content-script': './src/extension/content-script.ts', // 关联Vite打包后的content-script.js（内容脚本）
+        //   // index: './index.html',
+        // },
         experimentalLogSideEffects: false, // 实验性日志副作用
         plugins: [
           // 包大小可视化
@@ -149,7 +155,12 @@ export default ({ mode }: { mode: string }) => {
           }),
         ],
         output: {
-          manualChunks: () => {},
+          manualChunks: (id) => {
+            // 这里打包content-script.ts为content-script.js
+            if (id.includes('content-script')) {
+              return 'content-script'
+            }
+          },
         },
       },
     },

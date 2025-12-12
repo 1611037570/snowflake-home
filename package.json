@@ -21,7 +21,8 @@
     "prepare": "husky",
     "test:unit": "vitest",
     "preview:test": "vite preview --outDir test",
-    "vitest:ui": "vitest --ui"
+    "vitest:ui": "vitest --ui",
+    "build:ext": "vite build --mode extension"
   },
   "config": {
     "commitizen": {

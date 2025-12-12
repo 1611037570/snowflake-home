@@ -13,7 +13,7 @@ import './styles/index.scss'
 // 导入 Tailwind CSS 样式
 import './styles/tailwind.css'
 // 导入全局组件安装器
-import { globalComponentInstaller } from './components/index'
+import { globalComponentInstaller } from './components'
 
 // 创建 Vue 应用实例
 const app = createApp(App)
