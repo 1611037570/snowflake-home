@@ -1,7 +1,7 @@
 import dayjs from 'dayjs'
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
-const start = '2019-11-22'
+const start = '2020-09-03'
 export const useSystemStore = defineStore(
   'system',
   () => {
