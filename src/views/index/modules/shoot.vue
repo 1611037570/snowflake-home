@@ -33,7 +33,7 @@
         class="group relative flex overflow-hidden rounded-xl border border-sf-theme-hover/20 bg-white p-4 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-sf-theme/30 hover:bg-sf-theme/5 hover:shadow-md"
       >
         <SfIcon
-          :icon="index === 0 ? 'simple-icons:xiaohongshu' : 'simple-icons:tiktok'"
+          :icon="index === 0 ? 'simple-icons:xiaohongshu' : 'logos:tiktok-icon'"
           class="mr-3 h-5 w-5 text-sf-theme transition-all duration-300 group-hover:scale-110"
         />
         <span
