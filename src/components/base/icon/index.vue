@@ -1,7 +1,14 @@
 <template>
   <div
     class="flex-c relative cursor-pointer overflow-hidden transition-all duration-300"
-    :class="[$s(boxSize || size, 'w'), $s(boxSize || size, 'h')]"
+    :class="[
+      $s(boxSize || size, 'w', {
+        auto,
+      }),
+      $s(boxSize || size, 'h', {
+        auto,
+      }),
+    ]"
   >
     <Icon ref="iconify" :icon="icon" class="bg-transparent" :class="[$s(size)]" />
   </div>
@@ -29,7 +36,10 @@ export interface IconProps {
    * 图标盒子大小
    */
   boxSize?: number | string
-
+  /**
+   * 是否自动适配大小
+   */
+  auto?: boolean
   /**
    * 图标旋转角度
    */
@@ -45,6 +55,7 @@ const props = withDefaults(defineProps<IconProps>(), {
   size: 16,
   rotate: 180,
   flip: 'vertical',
+  auto: true,
 })
 const emit = defineEmits(['success', 'fail'])
 function init() {
