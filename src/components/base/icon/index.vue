@@ -8,6 +8,7 @@
       $s(boxSize || size, 'h', {
         auto,
       }),
+      iconClass,
     ]"
   >
     <Icon ref="iconify" :icon="icon" class="bg-transparent" :class="[$s(size)]" />
@@ -58,12 +59,14 @@ const props = withDefaults(defineProps<IconProps>(), {
   auto: true,
 })
 const emit = defineEmits(['success', 'fail'])
+const iconClass = ref('')
 function init() {
   const item = ICON_LIST[props.icon]
   if (!item) {
     emit('fail')
     return
   }
+  iconClass.value = item.color || ''
   loadIcon(item.icon)
     .then(() => {
       emit('success')
