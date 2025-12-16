@@ -1,6 +1,6 @@
 <template>
   <!-- 摄影社交平台 -->
-  <div class="w-dwh flex-c z-10 min-h-dvh flex-col bg-sf-primary py-24" id="shoot">
+  <div class="w-dwh flex-c relative z-10 min-h-dvh flex-col bg-sf-primary py-24" id="shoot">
     <h4 class="group mb-3 flex items-center justify-center text-base font-medium text-sf-text">
       <SfIcon
         icon="lucide:camera"
@@ -49,19 +49,11 @@
 </template>
 
 <script setup>
+import { SHOOT_ACCOUNT } from '@/constants'
 import { urlNavigation } from '@/utils'
 const shoot = {
   name: '摄影',
-  list: [
-    {
-      name: '小红书',
-      url: 'https://www.xiaohongshu.com/user/profile/6772591e00000000180175f9',
-    },
-    {
-      name: '抖音',
-      url: 'https://www.douyin.com/user/MS4wLjABAAAA2ZiMi4shkb1NyOFV-2DhkMCEUirye08iiO5tO1gq6a5RHwszFi_OdZ_ssU0B3N-u?from_tab_name=main',
-    },
-  ],
+  list: SHOOT_ACCOUNT,
 }
 const city = [
   {

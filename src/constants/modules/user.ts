@@ -1,4 +1,4 @@
-export const devAccount = [
+export const DEV_ACCOUNT = [
   [
     {
       name: 'gitHub',
@@ -10,7 +10,7 @@ export const devAccount = [
     },
   ],
 ]
-export const shootAccount = [
+export const SHOOT_ACCOUNT = [
   {
     name: '抖音',
     url: 'https://www.douyin.com/user/MS4wLjABAAAA2ZiMi4shkb1NyOFV-2DhkMCEUirye08iiO5tO1gq6a5RHwszFi_OdZ_ssU0B3N-u',
