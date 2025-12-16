@@ -15,10 +15,12 @@
         @mouseleave="handleMouseLeave"
       >
         <!-- 标题和关闭按钮 -->
-        <div class="relative mb-3 flex items-center justify-between">
-          <div class="w-full text-center text-2xl font-bold">{{ title }}</div>
+        <div class="relative flex items-center justify-between">
+          <div class="mb-3 w-full text-center text-2xl font-bold" v-if="title" :class="titleClass">
+            {{ title }}
+          </div>
           <div
-            class="group flex-c absolute top-1 right-1 z-2 h-9 w-9 cursor-pointer rounded-xl duration-300 hover:bg-sf-bg-hover"
+            class="group flex-c absolute top-0 right-0 z-2 h-9 w-9 cursor-pointer rounded-xl duration-300 hover:bg-sf-bg-hover"
             @click="modeValue = false"
           >
             <SfIcon icon="carbon:close-outline" size="6" class="group-hover:text-sf-theme" />
@@ -38,6 +40,7 @@ defineProps({
     type: String,
     default: '',
   },
+  titleClass: { type: String, default: '' },
 })
 
 const mask = useTemplateRef('mask')
