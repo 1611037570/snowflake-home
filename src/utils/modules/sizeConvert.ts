@@ -18,7 +18,8 @@ function calculatePercentage(total: number, percent: number): number {
   return Math.floor(result)
 }
 
-export function $s(size: string | number, type = 'text'): string {
+export function $s(size: string | number, type = 'text', options = { auto: true }): string {
+  const { auto = true } = options
   // 转换基础尺寸值
   const baseValue = Number(size)
 
@@ -48,11 +49,14 @@ export function $s(size: string | number, type = 'text'): string {
   }
 
   // 计算各尺寸值（通过封装函数简化，逻辑更清晰）
+  const lgSize = calculateSize('lg')
+  if (!auto) {
+    return `${type}-${lgSize}`
+  }
   const baseSize = getSizeValue('base', 35, 45)
   const smSize = getSizeValue('sm', 55, 65)
   const mdSize = getSizeValue('md', 75, 85)
-  const lgSize = calculateSize('lg')
 
   // 清理多余空格/换行，保持返回字符串整洁
-  return `${type}-${baseSize} sm:${type}-${smSize} md:${type}-${mdSize} lg:${type}-${lgSize} transition-${type} duration-300`
+  return `${type}-${baseSize} sm:${type}-${smSize} md:${type}-${mdSize} lg:${type}-${lgSize}`
 }
