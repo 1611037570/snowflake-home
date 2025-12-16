@@ -6,7 +6,7 @@
     <Shoot />
     <Project />
     <Background />
-    <SfFooter :gap="5" class="bg-sf-bg py-24" :banner="false" />
+    <SfFooter :gap="5" class="relative z-10 bg-sf-bg py-24" :banner="false" />
     <SfBacktop />
   </div>
 </template>
