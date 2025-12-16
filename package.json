@@ -45,6 +45,7 @@
     "pinia": "3.0.3",
     "pinia-plugin-persistedstate": "^4.5.0",
     "pinyin": "4.0.0",
+    "qrcode": "^1.5.4",
     "sass": "^1.94.1",
     "vue": "3.5.22",
     "vue-draggable-plus": "^0.6.0",
