@@ -1,5 +1,5 @@
 <template>
-  <div class="w-dwh flex-c min-h-dvh flex-col bg-sf-bg py-24" id="project">
+  <div class="w-dwh flex-c z-10 min-h-dvh flex-col bg-sf-bg py-24" id="project">
     <!-- 技术社交平台 -->
     <section class="mb-8">
       <h4 class="group mb-3 flex items-center text-base font-medium text-sf-text">
