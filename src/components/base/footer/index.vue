@@ -9,10 +9,7 @@
           XiaoYang</span
         >
       </div>
-      <div class="flex">
-        运行时长：
-        {{ runTime }}天
-      </div>
+
       <div>
         服务支持：
         <span @click="back" class="cursor-pointer font-medium hover:text-sf-theme">雪花起始页</span>
@@ -24,8 +21,11 @@
       <div @click="donationVisible = true" class="cursor-pointer font-medium hover:text-sf-theme">
         捐赠我
       </div>
+      <div @click="aboutVisible = true" class="cursor-pointer font-medium hover:text-sf-theme">
+        关于项目
+      </div>
       <div
-        class="group text-sf flex cursor-pointer items-center gap-1 hover:text-sf-theme"
+        class="group flex cursor-pointer items-center gap-1 text-sf hover:text-sf-theme"
         @click="goRepo"
       >
         项目仓库
@@ -33,11 +33,12 @@
     </div>
     <Donation v-model="donationVisible" v-if="donationVisible" />
     <Banner v-if="banner" />
+    <About v-if="aboutVisible" v-model="aboutVisible" />
   </footer>
 </template>
 
 <script setup lang="ts">
-import { useSystemStore } from '@/stores'
+import About from './about.vue'
 import Banner from './banner.vue'
 import Donation from './donation.vue'
 const props = defineProps({
@@ -53,10 +54,9 @@ const props = defineProps({
 const gapClass = computed(() => {
   return `gap-${props.gap}`
 })
-const systemStore = useSystemStore()
-const { runTime } = storeToRefs(systemStore)
 
 const donationVisible = ref(false)
+const aboutVisible = ref(false)
 
 function back() {
   routerNavigation('home')
