@@ -89,7 +89,7 @@ import { urlNavigation } from '@/utils'
 import dayjs from 'dayjs'
 
 function goMe() {
-  urlNavigation('/my')
+  urlNavigation('/index')
 }
 
 // 项目开始时间
