@@ -1,18 +1,19 @@
 interface IconItem {
   icon: string
+  color?: string
 }
 
 export const ICON_LIST: Record<string, IconItem> = {
   'lucide:code': {
     icon: 'lucide:code',
   },
-  'simple-icons:juejin': { icon: 'simple-icons:juejin' },
+  'simple-icons:juejin': { icon: 'simple-icons:juejin', color: 'text-blue-500' },
   'simple-icons:github': { icon: 'simple-icons:github' },
   'lucide:camera': {
     icon: 'lucide:camera',
   },
-  'simple-icons:xiaohongshu': { icon: 'simple-icons:xiaohongshu' },
-  'simple-icons:tiktok': { icon: 'simple-icons:tiktok' },
+  'simple-icons:xiaohongshu': { icon: 'simple-icons:xiaohongshu', color: 'text-red-500' },
+  'logos:tiktok-icon': { icon: 'logos:tiktok-icon' },
   'lucide:pause': { icon: 'lucide:pause' },
   'lucide:play': { icon: 'lucide:play' },
   'lucide:briefcase': { icon: 'lucide:briefcase' },
@@ -86,4 +87,5 @@ export const ICON_LIST: Record<string, IconItem> = {
   'mdi:github': { icon: 'mdi:github' },
   'tabler:external-link': { icon: 'tabler:external-link' },
   'mingcute:up-line': { icon: 'mingcute:up-line' },
+  'fa7-solid:qrcode': { icon: 'fa7-solid:qrcode' },
 }
