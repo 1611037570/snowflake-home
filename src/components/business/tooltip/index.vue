@@ -9,6 +9,9 @@
           <SfIcon icon="mingcute:question-line" size="4" />
         </slot>
       </template>
+      <template #content>
+        <slot name="content"> </slot>
+      </template>
     </Component>
   </div>
 </template>
