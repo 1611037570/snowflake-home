@@ -6,11 +6,59 @@
       left: 0;
       width: 100%;
       height: 100%;
-      z-index: -100;
-      background-image: radial-gradient(var(--sf-base) 1px, var(--sf-primary) 3px);
-      background-size: 80px 80px;
-      /* background-image: url(https://assets.maorx.cn/home-background.jpg); */
-      /* background-image: url(https://picsum.photos/id/1048/1920/1080); */
+      z-index: 1;
+      background-image: radial-gradient(var(--sf-base) 1px, var(--sf-primary) 1px);
     "
-  ></div>
+  >
+    <!-- 背景装饰元素 -->
+    <div class="bg-blur bg-1" :class="[$s(100, 'w'), $s(100, 'h')]"></div>
+    <div class="bg-blur bg-2" :class="[$s(60, 'w'), $s(60, 'h')]"></div>
+    <div class="bg-blur bg-3" :class="[$s(80, 'w'), $s(80, 'h')]"></div>
+  </div>
 </template>
+<style lang="scss" scoped>
+/* 装饰性背景元素 */
+.bg-blur {
+  position: fixed;
+  animation: float 12s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  border-radius: 50%;
+  filter: blur(100px);
+  opacity: 0.7;
+  z-index: 100;
+}
+
+.bg-1 {
+  background: #7c3aed;
+  top: 10%;
+  left: 5%;
+}
+
+.bg-2 {
+  background: #10b981;
+  bottom: 1%;
+  right: 5%;
+}
+
+.bg-3 {
+  background: #f59e0b;
+  bottom: 24%;
+  right: 16%;
+
+  animation-delay: 1s;
+}
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0) translateX(0);
+  }
+  25% {
+    transform: translateY(-80px) translateX(60px);
+  }
+  50% {
+    transform: translateY(0) translateX(120px);
+  }
+  75% {
+    transform: translateY(80px) translateX(60px);
+  }
+}
+</style>
