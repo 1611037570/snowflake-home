@@ -8,7 +8,7 @@ export const ICON_LIST: Record<string, IconItem> = {
     icon: 'lucide:code',
   },
   'simple-icons:juejin': { icon: 'simple-icons:juejin', color: 'text-blue-500' },
-  'simple-icons:github': { icon: 'simple-icons:github' },
+  'simple-icons:github': { icon: 'simple-icons:github', color: 'text-black' },
   'lucide:camera': {
     icon: 'lucide:camera',
   },
@@ -87,5 +87,7 @@ export const ICON_LIST: Record<string, IconItem> = {
   'mdi:github': { icon: 'mdi:github' },
   'tabler:external-link': { icon: 'tabler:external-link' },
   'mingcute:up-line': { icon: 'mingcute:up-line' },
+  'mingcute:down-line': { icon: 'mingcute:down-line' },
   'fa7-solid:qrcode': { icon: 'fa7-solid:qrcode' },
+  'basil:file-user-solid': { icon: 'basil:file-user-solid', color: 'text-blue-500' },
 }
