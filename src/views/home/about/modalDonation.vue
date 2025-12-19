@@ -18,7 +18,7 @@
         <div
           class="h-64 w-48 overflow-hidden rounded-lg bg-white shadow-md transition-shadow duration-300 group-hover:shadow-xl"
         >
-          <ElImage
+          <SfImg
             :src="item.value"
             :alt="item.name"
             fit="contain"
@@ -40,7 +40,6 @@
 // 导入支付图片
 import aliPay from '@/assets/images/aliPay.jpg'
 import weChatPay from '@/assets/images/weChatPay.jpg'
-import { ElImage } from 'element-plus'
 
 // 支付方式列表
 const list = [

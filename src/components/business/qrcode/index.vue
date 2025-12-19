@@ -55,7 +55,7 @@ watch(
 </script>
 
 <template>
-  <ElImage v-if="qrUrl" :src="qrUrl" :alt="'QR Code for ' + value" class="h-full w-full" />
+  <SfImg v-if="qrUrl" :src="qrUrl" :alt="'QR Code for ' + value" class="h-full w-full" />
 </template>
 
 <style lang="scss" scoped>

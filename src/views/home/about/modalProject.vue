@@ -65,7 +65,7 @@
 
           <!-- 图片展示 -->
           <div v-if="item.img && item.img.length" class="mt-4">
-            <ElImage
+            <SfImg
               v-for="(img, imgIndex) in item.img"
               :key="imgIndex"
               :src="img"

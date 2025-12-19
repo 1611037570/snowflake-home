@@ -2,7 +2,7 @@
   <SfModal v-model="modalValue" title="关于项目">
     <div class="w-100">
       <div class="flex-c">
-        <ElImage
+        <SfImg
           :src="snowIcon"
           class="h-7.5 w-7.5 transition-all duration-200 hover:rotate-180"
           fit="contain"
