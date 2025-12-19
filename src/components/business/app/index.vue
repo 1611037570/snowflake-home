@@ -4,7 +4,7 @@
     class="flex cursor-pointer flex-col items-center justify-center"
     @click="handleClick"
   >
-    <!-- <ElImage
+    <!-- <SfImg
       class="rounded-xl"
       v-if="item && item.img"
       :src="item.img"

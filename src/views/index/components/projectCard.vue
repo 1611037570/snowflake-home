@@ -4,7 +4,7 @@
     @click="handleClick"
     :class="$s(75, 'w')"
   >
-    <ElImage
+    <SfImg
       src="https://picsum.photos/id/180/800/500"
       :alt="data.name"
       class="w-full overflow-hidden object-cover"

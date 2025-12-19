@@ -11,7 +11,7 @@
     </h4>
     <div class="flex flex-wrap items-center justify-center gap-2 md:gap-3">
       <template v-for="item in [...imgList].reverse()" :key="item.id">
-        <ElImage
+        <SfImg
           :src="item.img"
           alt=""
           class="h-[240px] w-[160px] rounded-xl md:h-[300px] md:w-[200px]"

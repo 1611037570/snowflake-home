@@ -32,7 +32,7 @@
         </div>
       </div>
 
-      <ElImage
+      <SfImg
         :preview-src-list="[props.data.url]"
         show-progress
         v-if="props.data.url"
