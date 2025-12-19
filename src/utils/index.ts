@@ -6,11 +6,6 @@ export * from './modules/loadElLocal'
 export * from './modules/loadEvent'
 export * from './modules/loadTheme'
 // export * from './modules/registerPWA'
+export * from './modules/getRandomItem'
 export * from './modules/sizeConvert'
 export * from './modules/url'
-
-export const getRandomItem = (list: any[]) => {
-  const randomIndex = Math.floor(Math.random() * list.length)
-  const item = list[randomIndex]
-  return item
-}
