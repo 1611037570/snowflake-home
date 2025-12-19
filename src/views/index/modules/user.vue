@@ -34,28 +34,21 @@ const shootYears = computed(() => {
       class="relative rounded-xl border border-sf-theme-hover bg-sf-theme-hover"
       :class="[$s(4, 'p')]"
     >
-      <SfIcon v-for="item in DEV_ACCOUNT" :key="item.name" :icon="item.icon" />
-
       <div :class="$s(16)">
         Hi~ 我是<span class="pl-4 text-sf-theme">{{ userInfo.name }}</span>
       </div>
-      <div class="flex items-center" :class="$s(11)">
-        现居：<span> {{ userInfo.location }} </span>的
+      <div class="flex items-center" :class="$s(9)">
+        现居：<span> {{ userInfo.location }} </span>
+      </div>
+      <div :class="$s(9)">
         <span>{{ userInfo.job }}</span>
       </div>
-      <div
-        :class="[$s(2, 'p')]"
-        class="flex-c absolute top-2 right-0 z-20 translate-x-full flex-col rounded-xl bg-sf-theme shadow-2xl transition-all duration-300 hover:shadow-sf-theme/20"
-      >
-        <div class="absolute top-0 left-0 z-10 flex -translate-x-full">
-          <QrIcon
-            v-for="item in SHOOT_ACCOUNT"
-            :key="item.name"
-            :icon="item.icon"
-            :name="item.name"
-          />
-        </div>
-        <div class="" :class="$s(3)">摄影号</div>
+      <div class="flex-c gap-2">
+        <QrIcon v-for="item in SHOOT_ACCOUNT" :key="item.name" :item="item" /><QrIcon
+          v-for="item in DEV_ACCOUNT"
+          :key="item.name"
+          :item="item"
+        />
       </div>
       <div
         :class="[$s(4, 'p')]"
@@ -72,7 +65,6 @@ const shootYears = computed(() => {
         <div class="mt-1" :class="$s(3)">摄影经验</div>
       </div>
     </div>
-    <div class="flex-c absolute bottom-12 left-0 w-full text-4xl text-sf-base">v</div>
   </div>
 </template>
 
