@@ -18,7 +18,6 @@ const navList = [
     href: 'project',
   },
 ]
-console.log(userInfo)
 const opacity = ref(0)
 const backTop = ref(false)
 const bgColor = computed(() => {
@@ -29,23 +28,20 @@ const customClass = computed(() => {
   return backTop.value ? 'header' : ''
 })
 // 滚动事件处理
-const diff = 100
+const { height } = useWindowSize()
 const solidThreshold = 800
-const handleScroll = () => {
-  const scrollPosition = window.scrollY
-  if (scrollPosition < diff) {
+const scrollTop = inject('scrollTop')
+watch(scrollTop, (newValue) => {
+  if (newValue < height.value) {
     opacity.value = 0
     return
   }
   // 计算透明度
-  const currentOpacity = Math.min(scrollPosition - diff / solidThreshold, 0.8)
+  const currentOpacity = Math.min(newValue - height.value / solidThreshold, 0.8)
   opacity.value = currentOpacity
   // 回到顶部按钮显示/隐藏
-  backTop.value = scrollPosition > solidThreshold
-}
-
-useEventListener(window, 'scroll', handleScroll)
-
+  backTop.value = newValue > solidThreshold
+})
 function handleClick(e) {
   e.preventDefault()
   e.stopPropagation()
@@ -63,7 +59,7 @@ function handleClick(e) {
       class="mx-auto flex h-full max-w-[1200px] items-center justify-between"
       :class="$s(7, 'px')"
     >
-      <div class="text-shadow font-bold text-sf-base shadow-2xl" :class="$s(7)">
+      <div class="text-shadow font-bold text-sf-base" :class="$s(7)">
         {{ userInfo.name }}
       </div>
 
