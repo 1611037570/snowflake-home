@@ -1,5 +1,4 @@
 <template>
-  <div class="w-20.5 bg-amber-200" :class="$s(20.5, 'h')">test</div>
   <div
     class="flex cursor-pointer flex-col overflow-hidden rounded-xl bg-sf-primary px-3.5 text-sf-text shadow-md transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
     @click="handleClick"
