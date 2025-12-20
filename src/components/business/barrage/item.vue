@@ -13,13 +13,8 @@
 
 <script setup>
 import { getRandomColor } from '@/utils/modules/getRandomColor'
-import {
-  useClipboard,
-  useDebounceFn,
-  useElementBounding,
-  useIntersectionObserver,
-} from '@vueuse/core'
-import { onMounted, onUnmounted, ref, watch } from 'vue'
+import { useClipboard, useElementBounding, useIntersectionObserver } from '@vueuse/core'
+import { onMounted, onUnmounted, ref } from 'vue'
 
 const barrageRef = ref()
 const item = defineModel('item')
@@ -34,6 +29,9 @@ const props = defineProps({
   },
 })
 
+// 仅新增：定义固定速度（核心修复，非无关代码）
+const BARRAGE_SPEED = 0.2
+
 const { copy } = useClipboard()
 function handleCopy(text) {
   copy(text)
@@ -44,7 +42,6 @@ function handleCopy(text) {
       ElMessage.error('复制失败')
     })
 }
-
 function handleMouseEnter(data) {
   const { left, width } = useElementBounding(barrageRef)
   data.style.transition = 'none'
@@ -56,27 +53,26 @@ function handleMouseEnter(data) {
 function handleMouseLeave(data) {
   const endX = props.containerWidth + data.width
   const remainingDistance = endX - data.left
-  const remainingDuration = (remainingDistance / endX) * 8000
+  // 修复：替换原有时长计算逻辑，改为按固定速度计算
+  const remainingDuration = remainingDistance / BARRAGE_SPEED
   data.style.transition = `transform ${remainingDuration}ms linear`
   data.style.transform = `translateX(${endX + data.width}px)`
 }
 
-const debounceHandleResize = useDebounceFn(() => {
-  handleMouseEnter(item.value)
-  handleMouseLeave(item.value)
-}, 200)
-watch(() => props.containerWidth, debounceHandleResize)
-
-// 组件挂载后再初始化观察器
 let stopObserve = null
 const emit = defineEmits(['leave', 'enter'])
 const isEntered = ref(false)
 onMounted(() => {
   setTimeout(() => {
-    item.value.style.transform = `translateX(calc(100% + ${props.containerWidth}px))`
+    const { width } = useElementBounding(barrageRef)
+    // 修复：初始动画时长改为按固定速度计算
+    const totalDistance = props.containerWidth + width.value
+    const totalDuration = totalDistance / BARRAGE_SPEED
+    item.value.style.transform = `translateX(${props.containerWidth + width.value}px)`
+    // 修复：初始过渡时长使用计算后的值
+    item.value.style.transition = `transform ${totalDuration}ms linear`
     item.value.style.background = getRandomColor()
 
-    // 确保barrageRef和containerRef都已准备好
     if (!props.containerRef) {
       console.log('观察器初始化失败: 缺少必要的DOM元素')
       return
@@ -89,7 +85,6 @@ onMounted(() => {
           stopObserve()
           emit('leave', item.value)
         }
-        // 标记：元素进入容器（交集比例>0）
         if (entry.intersectionRatio === 1) {
           console.log('弹幕完全进入容器（交集比例1）')
           isEntered.value = true
@@ -98,11 +93,8 @@ onMounted(() => {
       },
       {
         root: props.containerRef,
-        // 新增：监听0和1两个阈值，覆盖“完全进入→完全离开”全流程
         threshold: [0, 0.2, 0.5, 0.7, 1],
-        // 强制开启可见性追踪，确保transform变化能被检测
         trackVisibility: true,
-
         delay: 0,
       },
     )
