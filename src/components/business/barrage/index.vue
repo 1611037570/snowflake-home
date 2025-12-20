@@ -21,19 +21,26 @@ const props = defineProps({
   list: {
     type: Array,
     default: () => [
+      // 1
+      { text: '落魄谷中寒风吹 春秋蝉鸣少年归' },
+      { text: '荡魂山处石人泪 定仙游走魔向北' },
+      { text: '逆流河上万仙退 爱情不敌坚持泪' },
+      { text: '宿命天成命中败 仙尊悔而我不悔' },
+      // 2
       { text: '早岁已知世事艰 仍许飞鸿荡云间' },
       { text: '一路寒风身如絮 命海沉浮客独行' },
       { text: '千磨万击心铸铁 殚精竭虑铸一剑' },
       { text: '今朝剑指叠云处 炼蛊炼人还炼天' },
-      { text: '宿命天成命中败 仙尊悔而我不悔' },
+      // 3
+      { text: '些许风霜些许愁 无足之鸟不回头' },
+      { text: '二十七步天注定 逆流河上任我行' },
+
+      // 4
+      { text: '朝如青丝暮成雪 是非成败转头空' },
       { text: '水中有明月 碎碎圆圆' },
       { text: '心中有良人 平平安安' },
-      { text: '主播太厉害了吧！' },
-      { text: '666666' },
-      { text: '打卡签到～' },
     ],
   },
-  duration: { type: Number, default: 10 },
   itemHeight: { type: Number, default: 40 },
   spacing: { type: Number, default: 10 },
   topMargin: { type: Number, default: 80 },
@@ -41,7 +48,6 @@ const props = defineProps({
   loop: { type: Boolean, default: true },
 })
 
-// 核心状态（直接合并：tracks里存「轨道位置+占用它的弹幕ID」，删掉itemTrackMap）
 const containerElement = ref(null)
 const { width: containerWidth, height: containerHeight } = useElementSize(containerElement)
 const showList = ref({})
