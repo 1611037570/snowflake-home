@@ -22,7 +22,7 @@
         <slot name="right"></slot>
         <SfTheme />
         <SfLocale />
-        <ElDropdown>
+        <SfDropdown>
           <ElButton> {{ $t('moreTools') }} </ElButton>
           <template #dropdown>
             <el-dropdown-menu>
@@ -35,13 +35,13 @@
               >
             </el-dropdown-menu>
           </template>
-        </ElDropdown>
+        </SfDropdown>
       </div>
     </header>
     <main class="w-full flex-1 overflow-hidden bg-sf-bg">
       <slot />
     </main>
-    <SfFooter />
+    <SfFooter class="text-xs" />
   </div>
 </template>
 
