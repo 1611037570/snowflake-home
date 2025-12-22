@@ -1,6 +1,7 @@
 <template>
   <SfViewContainer>
     <div class="relative flex h-full w-full bg-sf-modal py-2">
+      {{ originalParamsHash }} —————— {{ convertedParamsHash }}
       <div class="flex h-full flex-1 overflow-hidden" v-if="selectedFile">
         <el-splitter class="flex h-full flex-1 overflow-hidden">
           <el-splitter-panel :size="previewVisible ? '50%' : '100%'" min="20%">
@@ -162,13 +163,13 @@ const isSaving = ref(false)
 const original = ref(emptyImageData())
 const converted = ref(emptyImageData())
 
+const initParamsHash = (data) => `${data.width}-${data.height}-${data.format}-${data.quality}`
+// 原始图片参数哈希（基于原始图片参数动态生成）
+const originalParamsHash = ref('')
 // 当前转换参数哈希（基于转换参数动态生成）
-const currentParamsHash = computed(
-  () =>
-    `${converted.value.width}-${converted.value.height}-${converted.value.format}-${converted.value.quality}`,
-)
-const processedParamsHash = ref('')
-const needsProcess = computed(() => currentParamsHash.value !== processedParamsHash.value)
+const convertedParamsHash = computed(() => initParamsHash(converted.value))
+// 是否需要处理（转换参数与原始参数不同）
+const needsProcess = computed(() => convertedParamsHash.value !== originalParamsHash.value)
 // 设置原始图片数据（加载图片并获取元信息）
 const setOriginalImageData = (file) => {
   // 如果没有文件，则返回 false
@@ -192,16 +193,11 @@ const setOriginalImageData = (file) => {
       url, // 图片预览URL
     }
     converted.value = {
-      width: img.naturalWidth, // 默认使用原始宽度
-      height: img.naturalHeight, // 默认使用原始高度
-      size: file.size || 0, // 默认使用原始大小
-      quality: 1, // 默认质量
-      format, // 默认使用原始格式
-      url, // 默认使用原始URL
+      ...original.value,
       blob: selectedFile.value, // 转换后的 Blob 对象（用于下载）
     }
     converted.value.quality = 1
-    processedParamsHash.value = currentParamsHash.value
+    originalParamsHash.value = initParamsHash(original.value)
   }
 
   // 图片加载失败时的回调
@@ -227,7 +223,6 @@ const setConvertImageData = async () => {
     converted.value.url = URL.createObjectURL(blob)
     converted.value.blob = blob
     converted.value.size = blob.size
-    processedParamsHash.value = currentParamsHash.value
     isConverting.value = false
   } catch (err) {
     console.log('setConvertImageData err', err)
@@ -281,13 +276,21 @@ const picaInstance = pica({
 // 图片处理函数（核心处理逻辑）
 const processImage = async (file) => {
   // 如果原始图片和转换后图片相同，则直接返回原始图片URL
-  if (!needsProcess.value) return selectedFile.value
+  if (!needsProcess.value) {
+    console.log('原图返回')
+
+    return selectedFile.value
+  }
   const w = converted.value.width
   const h = converted.value.height
   const quality = converted.value.quality
   const format = converted.value.format
+  console.log('参数', w, h, quality, format)
+
   const mime = toMime(format)
   if (mode.value === 'presets') {
+    console.log('预设模式')
+
     // 创建目标画布
     const dst = document.createElement('canvas')
     // 创建图像位图（高性能图像处理）
@@ -315,9 +318,10 @@ const processImage = async (file) => {
     bitmap.close()
     return res
   } else if (mode.value === 'custom') {
+    console.log('自定义模式')
     return await imageCompression(file, {
-      resizeWidth: w,
-      resizeHeight: h,
+      maxWidth: w,
+      maxHeight: h,
       fileType: mime, // 文件类型
       initialQuality: quality, // 初始质量
       useWebWorker: true, // 使用 Web Worker
@@ -364,14 +368,14 @@ const save = async () => {
 
     // 撤销对象 URL（释放内存）
     URL.revokeObjectURL(url)
-    processedParamsHash.value = currentParamsHash.value
+    originalParamsHash.value = convertedParamsHash.value
   } finally {
     isSaving.value = false
   }
 }
 
 // 开启实时预览时，如已有参数变化则立即触发一次
-watch([live, needsProcess], () => {
+watch([live, convertedParamsHash], () => {
   const currentLive = live.value
   // 关闭实时预览时，清除转换后的图片数据
   if (!currentLive) {
@@ -382,8 +386,10 @@ watch([live, needsProcess], () => {
   if (!selectedFile.value) {
     return
   }
-
-  setConvertImageData()
+  if (needsProcess.value) {
+    console.log('实时预览', convertedParamsHash.value)
+    setConvertImageData()
+  }
 })
 onBeforeUnmount(() => {
   clearImageData('all')
