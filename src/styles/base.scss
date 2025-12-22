@@ -11,11 +11,10 @@ body {
   user-select: none;
 }
 $transition-duration: 0.3s;
-.tr {
-  transition: font-size $transition-duration inherit;
-  transition: width $transition-duration inherit;
-}
 
+:focus-visible {
+  outline: none;
+}
 @for $i from 1 through 50 {
   $target-value: $i + 0.5;
 

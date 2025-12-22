@@ -4,12 +4,16 @@
   /* 映射项目主题色到 Element Plus 主色 */
   --el-color-primary: var(--sf-theme);
 }
-:focus-visible {
-  outline: none;
-}
+
 /* 下拉弹层背景色：与项目主题保持一致 */
 .el-dropdown__popper.el-popper {
-  background: var(--sf-primary) !important;
+  background: var(--sf-modal) !important;
+  border: none !important;
+  border-radius: 8px !important;
+}
+.el-popper__arrow {
+  --el-bg-color-overlay: var(--sf-modal) !important;
+  --el-text-color-primary: var(--sf-modal) !important;
 }
 /* 取消 Anchor 组件链接的内边距，避免点击区域偏移 */
 .el-anchor__link {
