@@ -8,7 +8,10 @@
       class="flex-c relative mx-1 h-8 rounded-xl"
     >
       <slot :item="item">
-        {{ item.name }}
+        <SfIcon size="4" :icon="item.icon" class="mr-1" v-if="item.icon" />
+        <span>
+          {{ item.name }}
+        </span>
       </slot>
       <div
         v-if="activeKey && item[activeKey] == activeValue"
@@ -39,7 +42,7 @@ const props = defineProps({
 const emit = defineEmits(['onClick'])
 function handleClick(item, index) {
   if (item.fn) item.fn()
-  emit('onClick', index)
+  emit('onClick', item, index)
 }
 /**
  * 激活项的类名
@@ -58,7 +61,7 @@ function activeClass(item) {
  * 悬停项的类名
  */
 function hoverClass(item) {
-  const name = 'hover:bg-sf-theme-hover cursor-pointer'
+  const name = 'hover:bg-sf-theme-hover cursor-pointer hover:text-sf-theme-text'
   if (typeof item.hover == 'boolean') {
     return item.hover ? name : ''
   }
