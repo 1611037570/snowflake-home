@@ -47,11 +47,7 @@
           </button>
         </div>
         <Tabs v-model="mode">
-          <div
-            v-if="original.url && mode === 'custom'"
-            class="flex flex-col gap-3 text-sf-base"
-            :key="fileKey"
-          >
+          <div v-if="original.url && mode === 'custom'" class="flex flex-col gap-3 text-sf-base">
             <SizeAdjust
               :initial-w="original.width"
               :initial-h="original.height"
@@ -65,7 +61,6 @@
             v-if="original.url && mode === 'presets'"
             :initial-w="original.width"
             :initial-h="original.height"
-            :key="fileKey"
             @apply="handleApplyPreset"
           />
         </Tabs>
@@ -104,7 +99,7 @@
 
 <script setup>
 // 导入自 '@/utils' 的辅助函数
-import { getFormat, getUUID, toMime } from '@/utils'
+import { getFormat, toMime } from '@/utils'
 // 导入 pica 库，用于高质量的图片缩放和格式转换
 import pica from 'pica'
 // 导入 FormatAdjust.vue 子组件 - 格式调整组件
@@ -123,6 +118,10 @@ import Intro from './components/intro.vue'
 import Presets from './components/presets.vue'
 // 导入 Tabs.vue 子组件 - 选项卡组件
 import Tabs from './components/tabs.vue'
+// 导入 emptyImageData 函数 - 空图片数据对象模板
+import { emptyImageData } from './data'
+// 导入 'browser-image-compression' 库，用于图片压缩
+import imageCompression from 'browser-image-compression'
 // 从 '@vueuse/core' 导入 useFileDialog，用于文件选择对话框
 const { open, onChange } = useFileDialog()
 
@@ -139,7 +138,6 @@ const handleFileSelected = (file) => {
 
   // 设置当前选择的文件
   selectedFile.value = file
-  fileKey.value = getUUID()
   // 清除已转换的图片数据（避免显示旧的转换结果）
   clearImageData('converted')
   // 重置转换状态为未转换
@@ -160,17 +158,6 @@ onChange((f) => {
 const isConverting = ref(false)
 // 创建一个 ref 来跟踪图片是否正在保存（用于UI状态显示）
 const isSaving = ref(false)
-
-// 返回一个空的图片数据对象模板
-const emptyImageData = () => ({
-  width: 0,
-  height: 0,
-  size: 0,
-  format: '',
-  url: '',
-  blob: null,
-  quality: 1,
-})
 
 const original = ref(emptyImageData())
 const converted = ref(emptyImageData())
@@ -234,12 +221,14 @@ const setConvertImageData = async () => {
   try {
     const file = selectedFile.value
     const blob = await processImage(file)
+    console.log('blob', blob)
     // 释放旧资源
     clearImageData('converted')
     converted.value.url = URL.createObjectURL(blob)
     converted.value.blob = blob
     converted.value.size = blob.size
     processedParamsHash.value = currentParamsHash.value
+    isConverting.value = false
   } catch (err) {
     console.log('setConvertImageData err', err)
   } finally {
@@ -275,9 +264,6 @@ const clearImageData = (type = 'all') => {
 // 控制是否启用实时预览功能
 const enableRealtime = ref(false)
 
-// 文件唯一标识：选择文件时生成一次随机ID
-const fileKey = ref('none')
-
 // 计算属性：判断预览是否可见
 // 需要同时满足：启用实时预览、显示转换后图片、转换后图片URL存在
 const previewVisible = computed(() => enableRealtime.value && !!converted.value.url)
@@ -292,53 +278,52 @@ const picaInstance = pica({
   idleTimeout: 3000, // WebWorker 空闲超时时间（毫秒）
 })
 
-// 统一的图片处理函数（核心处理逻辑）
+// 图片处理函数（核心处理逻辑）
 const processImage = async (file) => {
+  // 如果原始图片和转换后图片相同，则直接返回原始图片URL
+  if (!needsProcess.value) return selectedFile.value
   const w = converted.value.width
   const h = converted.value.height
   const quality = converted.value.quality
   const format = converted.value.format
-  console.log('w', w, 'h', h)
   const mime = toMime(format)
-  // 创建目标画布
-  const dst = document.createElement('canvas')
+  if (mode.value === 'presets') {
+    // 创建目标画布
+    const dst = document.createElement('canvas')
+    // 创建图像位图（高性能图像处理）
+    const bitmap = await createImageBitmap(file)
+    // 设置目标画布尺寸
+    dst.width = w
+    dst.height = h
+    // 使用 pica 进行高质量缩放
+    await picaInstance.resize(
+      bitmap, // 源图像
+      dst, // 目标画布
+      {
+        filter: 'lanczos3', // 使用 lanczos3 滤波器（高质量）
+        // alpha: format !== 'image/jpeg', // 注释：仅非jpeg格式启用透明通道
+        // 锐化参数（增强图像清晰度）
+        unsharpAmount: 120, // 锐化力度（120表示中等锐化）
+        unsharpRadius: 1, // 锐化半径（1像素）
+        unsharpThreshold: 2, // 锐化阈值（避免过度锐化平滑区域）
+      },
+    )
 
-  // 如果设置了尺寸（需要缩放）
-
-  // 创建图像位图（高性能图像处理）
-  const bitmap = await createImageBitmap(file)
-  // 设置目标画布尺寸
-  dst.width = w
-  dst.height = h
-
-  // 使用 pica 进行高质量缩放
-  await picaInstance.resize(
-    bitmap, // 源图像
-    dst, // 目标画布
-    {
-      filter: 'lanczos3', // 使用 lanczos3 滤波器（高质量）
-      // alpha: format !== 'image/jpeg', // 注释：仅非jpeg格式启用透明通道
-      // 锐化参数（增强图像清晰度）
-      unsharpAmount: 120, // 锐化力度（120表示中等锐化）
-      unsharpRadius: 1, // 锐化半径（1像素）
-      unsharpThreshold: 2, // 锐化阈值（避免过度锐化平滑区域）
-    },
-  )
-
-  // 将画布转换为指定格式和质量的Blob
-  const res = await picaInstance.toBlob(dst, mime, quality)
-  // 释放位图资源（优化内存占用）
-  bitmap.close()
-  return res
-  // 如果没有设置尺寸，直接返回原始文件（理论上不会执行到这里）
-  // return file
+    // 将画布转换为指定格式和质量的Blob
+    const res = await picaInstance.toBlob(dst, mime, quality)
+    // 释放位图资源（优化内存占用）
+    bitmap.close()
+    return res
+  } else if (mode.value === 'custom') {
+    return await imageCompression(file, {
+      resizeWidth: w,
+      resizeHeight: h,
+      fileType: mime, // 文件类型
+      initialQuality: quality, // 初始质量
+      useWebWorker: true, // 使用 Web Worker
+    })
+  }
 }
-// 处理推荐设置的应用
-// const recommendedOptions = {
-//   quality: 1,
-//   format: 'webp',
-//   size: { w: 0, h: 0 },
-// }
 const handleApplyPreset = (options) => {
   const { quality, format, size } = options
   converted.value.quality = quality
