@@ -91,3 +91,24 @@ $transition-duration: 0.3s;
 ::-webkit-scrollbar-thumb:active {
   background: var(--sf-theme); /* 点击加深 */
 }
+
+// @use 'sass:math'; // 引入math模块
+// :root {
+//   $colors: (
+//     'primary': #409eff,
+//     'success': #67c23a,
+//     'warn': #e6a23c,
+//     'danger': #f56c6c,
+//     'info': #909399
+//   );
+//   @each $key, $val in $colors {
+//     --sl-color-#{$key}: #{$val};
+
+//     @for $i from 1 through 9 {
+//       @if $i % 2 != 0 {
+//         $alpha: math.div($i, 10);
+//         $light-color: rgba($val, $alpha);
+//         --sl-color-#{$key}-#{$i}: #{$light-color};
+//       }
+//     }
+//   }

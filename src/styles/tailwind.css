@@ -15,6 +15,7 @@
 @source inline('{sm:,md:,lg:,}m-{1..40}');
 /* 间距 */
 @source inline('{sm:,md:,lg:,}gap-{1..20}');
+@source inline('{sm:,md:,lg:,}gap-{1,{1..20}}.{5..50..50}');
 @source inline('transition-{gap,p,py,px,text,w,h,all}');
 @source inline('duration-300');
 
