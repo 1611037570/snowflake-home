@@ -24,7 +24,7 @@ function handleClick() {
       placement="bottom"
     >
       <SfIcon
-        class="z-200 rounded-xl bg-sf-transparent"
+        class="z-200 rounded-xl bg-sf-theme-hover"
         boxSize="10"
         size="8"
         icon="mingcute:up-line"
