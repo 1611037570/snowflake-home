@@ -6,7 +6,7 @@
     <Shoot />
     <Project />
     <Background />
-    <SfFooter :gap="5" class="relative z-10 bg-sf-bg py-24" :banner="false" />
+    <Thank />
     <SfBacktop />
   </div>
 </template>
@@ -17,6 +17,7 @@ import Index from './modules/index.vue'
 import MyHeader from './modules/myHeader.vue'
 import Project from './modules/project.vue'
 import Shoot from './modules/shoot.vue'
+import Thank from './modules/thank.vue'
 import User from './modules/user.vue'
 
 const scrollTop = ref(0)
