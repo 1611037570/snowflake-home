@@ -1,5 +1,5 @@
 <template>
-  <ElDropdown trigger="hover">
+  <SfDropdown>
     <SfIcon icon="ion:language" size="8" class="text-sf-base" />
     <template #dropdown>
       <el-dropdown-menu>
@@ -13,7 +13,7 @@
         </SfList>
       </el-dropdown-menu>
     </template>
-  </ElDropdown>
+  </SfDropdown>
 </template>
 
 <script setup>
