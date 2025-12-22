@@ -1,4 +1,4 @@
-import { getRandomItem } from './getRandomItem'
+import { getRandomItem } from '@/utils'
 export const colors = [
   '#ffe0e0', // 柔绯红（红系）
   '#ffe6c7', // 柔暖橙（橙系）
