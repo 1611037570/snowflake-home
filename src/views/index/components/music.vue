@@ -2,18 +2,18 @@
 import { ref } from 'vue'
 const musicList = [
   {
-    name: '主角',
-    singer: '马里奥',
-    songName: '主角-马里奥.aac',
-    url: import('@/assets/audios/主角-马里奥.aac'),
-    lrc: import('@/assets/audios/主角-马里奥.lrc?raw'),
-  },
-  {
     name: '送你一朵小红花(Live)',
     singer: '易烊千玺',
     songName: '送你一朵小红花(Live)-易烊千玺.m4a',
     url: import('@/assets/audios/送你一朵小红花(Live)-易烊千玺.m4a'),
     lrc: import('@/assets/audios/送你一朵小红花(Live)-易烊千玺.lrc?raw'),
+  },
+  {
+    name: '主角',
+    singer: '马里奥',
+    songName: '主角-马里奥.aac',
+    url: import('@/assets/audios/主角-马里奥.aac'),
+    lrc: import('@/assets/audios/主角-马里奥.lrc?raw'),
   },
   {
     name: '夜空最亮的星',
@@ -95,14 +95,17 @@ const list = computed(() => {
     },
     {
       name: isPlaying.value ? '暂停播放' : '开始播放',
+      icon: isPlaying.value ? 'lucide:pause' : 'lucide:play',
       fn: togglePlay,
     },
     {
       name: '换一首',
+      icon: 'tabler:switch-3',
       fn: changeCurrentMusic,
     },
     {
       name: '下载',
+      icon: 'material-symbols:download',
       fn: downloadMusic,
     },
   ]
@@ -121,20 +124,14 @@ const list = computed(() => {
     @ended="changeCurrentMusic"
     @loadeddata="onAudioLoaded"
   ></audio>
-  <ElDropdown trigger="hover">
-    <SfIcon
-      size="6"
-      boxSize="8"
-      :icon="isPlaying ? 'lucide:pause' : 'lucide:play'"
-      class="rounded-full bg-sf-base text-sf-primary transition-colors duration-300 hover:bg-sf-theme"
-      :class="isPlaying ? 'animate-spin' : ''"
-    />
+  <SfDropdown>
+    <SfIcon size="8" icon="majesticons:music" class="rounded-full text-sf-base" />
     <template #dropdown>
       <el-dropdown-menu>
         <SfList class="w-[200px]" :list="list"> </SfList>
       </el-dropdown-menu>
     </template>
-  </ElDropdown>
+  </SfDropdown>
 </template>
 
 <style scoped></style>
