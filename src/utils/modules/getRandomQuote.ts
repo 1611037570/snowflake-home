@@ -1,7 +1,6 @@
+import { getRandomItem } from '@/utils'
 const getRandomQuote = () => {
-  const randomIndex = Math.floor(Math.random() * quotes.length)
-  const quote = quotes[randomIndex]
-  return quote
+  return getRandomItem(quotes)
 }
 const quotes = [
   '愿此行，终抵群星。',
