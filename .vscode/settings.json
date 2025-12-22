@@ -80,6 +80,7 @@
   // "html.format.enable": false,
   "cSpell.words": [
     "Addtional",
+    "backtop",
     "datas",
     "iconify",
     "Persistedstate",
@@ -89,6 +90,6 @@
     "unplugin",
     "Vite",
     "vueuse",
-    "backtop"
+    "yyqx"
   ]
 }
