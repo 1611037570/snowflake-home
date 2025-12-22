@@ -76,6 +76,9 @@ const imgList = ref([
     id: 4,
   },
   {
+    id: 6,
+  },
+  {
     id: 7,
   },
   {
@@ -83,6 +86,9 @@ const imgList = ref([
   },
   {
     id: 11,
+  },
+  {
+    id: 12,
   },
   {
     id: 15,

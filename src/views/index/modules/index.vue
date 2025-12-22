@@ -28,14 +28,14 @@ function togglePlay() {
   >
     <SfBarrage />
     <div
-      class="sf-text-glow font-semibold text-sf-text transition-all duration-300 ease-out"
-      :class="$s(18)"
+      class="sf-text-glow text-yyqx font-semibold text-sf-text transition-all duration-300 ease-out"
+      :class="$s(22)"
       :style="{
         opacity: showContent ? 1 : 0,
         transform: showContent ? 'translateY(0)' : 'translateY(20px)',
       }"
     >
-      代码与光影的创造者
+      代码与光影
     </div>
     <div
       class="h-1 w-24 rounded-full bg-sf-theme-hover shadow-xl"
@@ -43,7 +43,7 @@ function togglePlay() {
       :style="{ opacity: showContent ? 1 : 0, width: showContent ? '6rem' : '0' }"
     ></div>
     <div
-      class="text-sf-text-2 transition-all duration-300 ease-out"
+      class="text-yyqx text-sf-text-2 transition-all duration-300 ease-out"
       :class="$s(7)"
       :style="{
         opacity: showContent ? 1 : 0,
