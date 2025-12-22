@@ -1,6 +1,6 @@
 <template>
   <div
-    class="flex-c absolute left-0 h-10 cursor-pointer rounded-xl bg-sf-bg px-3 py-1.5 text-base text-black"
+    class="flex-c absolute left-0 z-4 h-10 cursor-pointer rounded-xl bg-sf-bg px-3 py-1.5 text-base text-black"
     ref="barrageRef"
     @mouseenter="handleMouseEnter(item)"
     @mouseleave="handleMouseLeave(item)"
