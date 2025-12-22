@@ -1,13 +1,12 @@
 <template>
   <footer
-    class="flex-c relative overflow-hidden bg-sf-primary px-3 py-1 text-xs text-sf-text backdrop-blur-sm"
+    class="flex-c relative overflow-hidden bg-sf-primary px-3 py-1 text-sf-text backdrop-blur-sm"
+    :class="gapClass"
   >
-    <div class="flex w-[300px] flex-col" :class="gapClass">
+    <div class="flex min-w-[200px] flex-col" :class="gapClass">
       <div class="flex items-center">
         © 2019-2025
-        <span @click="goMy" class="ml-2 cursor-pointer font-medium hover:text-sf-theme">
-          XiaoYang</span
-        >
+        <span @click="goMy" class="ml-2 cursor-pointer font-medium hover:text-sf-theme"> 小羊</span>
       </div>
 
       <div>
@@ -18,18 +17,16 @@
 
     <div class="flex flex-col" :class="gapClass">
       <div class="cursor-pointer font-medium hover:text-sf-theme">版权声明</div>
+      <div @click="aboutVisible = true" class="cursor-pointer font-medium hover:text-sf-theme">
+        关于网站
+      </div>
       <div @click="donationVisible = true" class="cursor-pointer font-medium hover:text-sf-theme">
         捐赠我
       </div>
-      <div @click="aboutVisible = true" class="cursor-pointer font-medium hover:text-sf-theme">
-        关于项目
-      </div>
-      <div
-        class="group flex cursor-pointer items-center gap-1 text-sf hover:text-sf-theme"
-        @click="goRepo"
-      >
+
+      <!-- <div class="group flex cursor-pointer items-center hover:text-sf-theme" @click="goRepo">
         项目仓库
-      </div>
+      </div> -->
     </div>
     <Donation v-model="donationVisible" v-if="donationVisible" />
     <Banner v-if="banner" />
@@ -64,9 +61,9 @@ function back() {
 function goMy() {
   routerNavigation('/')
 }
-function goRepo() {
-  urlNavigation('https://github.com/1611037570/snowflake-index')
-}
+// function goRepo() {
+//   urlNavigation('https://github.com/1611037570/snowflake-index')
+// }
 </script>
 
 <style lang="scss" scoped></style>
