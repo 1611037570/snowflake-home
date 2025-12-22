@@ -1,9 +1,9 @@
 <script setup>
+import nnLogo from '@/assets/images/userLogo.png'
 import { useThemeStore } from '@/stores'
-import { userInfo } from '@/views/index/data'
 import Music from '../components/music.vue'
 const themeStore = useThemeStore()
-const { themeMode } = storeToRefs(themeStore)
+const { theme } = storeToRefs(themeStore)
 const navList = [
   {
     name: '关于',
@@ -19,9 +19,11 @@ const navList = [
   },
 ]
 const opacity = ref(0)
-const backTop = ref(false)
+const backTop = computed(() => {
+  return scrollTop.value > solidThreshold
+})
 const bgColor = computed(() => {
-  const rgbColor = themeMode.value === 'dark' ? '0, 0, 0' : '255, 255, 255'
+  const rgbColor = theme.value === 'dark' ? '0, 0, 0' : '255, 255, 255'
   return `rgba(${rgbColor}, ${opacity.value})`
 })
 const customClass = computed(() => {
@@ -39,18 +41,12 @@ watch(scrollTop, (newValue) => {
   // 计算透明度
   const currentOpacity = Math.min(newValue - height.value / solidThreshold, 0.8)
   opacity.value = currentOpacity
-  // 回到顶部按钮显示/隐藏
-  backTop.value = newValue > solidThreshold
 })
-function handleClick(e) {
-  e.preventDefault()
-  e.stopPropagation()
-}
 </script>
 
 <template>
   <header
-    class="fixed top-0 left-0 z-50 box-border w-full text-2xl text-sf"
+    class="fixed top-0 left-0 z-50 box-border w-full px-1 text-2xl text-sf"
     :style="{ backgroundColor: bgColor }"
     :class="[customClass, $s(20, 'h')]"
     style="transition: background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1)"
@@ -59,18 +55,23 @@ function handleClick(e) {
       class="mx-auto flex h-full max-w-[1200px] items-center justify-between"
       :class="$s(7, 'px')"
     >
-      <div class="text-shadow font-bold text-sf-base" :class="$s(7)">
-        {{ userInfo.name }}
+      <div class="text-shadow text-yyqx flex items-center font-bold text-sf-base" :class="$s(9)">
+        <SfImg :src="nnLogo" class="h-10 w-10 md:h-20 md:w-20" />
+        <!-- {{ userInfo.name }} -->
       </div>
 
       <div class="flex-c h-full" :class="$s(6, 'gap')">
-        <el-anchor direction="horizontal" :class="$s(14, 'h')" :offset="0" @click="handleClick">
-          <el-anchor-link :href="`#${item.href}`" v-for="item in navList" :key="item.href">
-            <div class="nav-link flex-c font-bold text-sf-base" :class="[$s(14, 'h'), $s(6)]">
-              {{ item.name }}
-            </div>
-          </el-anchor-link>
-        </el-anchor>
+        <div :class="$s(13, 'h')" class="flex items-center gap-4">
+          <div
+            class="nav-link flex-c text-sf-base"
+            style="font-weight: 500"
+            :class="[$s(13, 'h'), $s(6)]"
+            :key="item.href"
+            v-for="item in navList"
+          >
+            {{ item.name }}
+          </div>
+        </div>
         <SfLocale />
         <Music />
         <SfTheme />
