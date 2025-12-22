@@ -19,7 +19,14 @@ export const DEV_ACCOUNT = [
     url: getBaseUrl() + '/resume?id=1611037570',
     icon: 'basil:file-user-solid',
     qrcode: false,
-    type: 'shoot',
+    type: 'dev',
+  },
+  {
+    name: '我的邮箱',
+    url: 'mailto:1611037570@qq.com',
+    icon: 'clarity:email-solid',
+    qrcode: false,
+    type: 'dev',
   },
 ]
 export const SHOOT_ACCOUNT = [
