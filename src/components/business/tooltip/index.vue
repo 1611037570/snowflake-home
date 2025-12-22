@@ -1,7 +1,7 @@
 <template>
   <div class="">
     <Component
-      :effect="themeMode"
+      :effect="theme"
       :is="h(ElTooltip, { placement: 'top', ...$attrs, ref: changeRef }, $slots)"
     >
       <template #default>
@@ -23,7 +23,7 @@ import type { ComponentInstance } from 'vue'
 import { getCurrentInstance, h } from 'vue'
 
 const themeStore = useThemeStore()
-const { themeMode } = storeToRefs(themeStore)
+const { theme } = storeToRefs(themeStore)
 
 const vm: any = getCurrentInstance()
 
