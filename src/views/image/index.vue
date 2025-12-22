@@ -69,7 +69,7 @@
           class="mb-3 flex items-center justify-between rounded-lg bg-sf-primary-hover/50 px-3 py-2 transition-colors duration-200 hover:bg-sf-primary-hover"
         >
           <span class="text-sm font-medium">{{ $t('image.realtimePreview') }}</span>
-          <ElSwitch v-model="enableRealtime" />
+          <ElSwitch v-model="live" />
         </div>
 
         <ElButton
@@ -213,7 +213,7 @@ const setOriginalImageData = (file) => {
 }
 // 实时预览转换：统一入口，含错误兜底与状态复位
 const setConvertImageData = async () => {
-  if (!enableRealtime.value || !selectedFile.value) return
+  if (!live.value || !selectedFile.value) return
   if (isConverting.value) return
 
   isConverting.value = true
@@ -262,11 +262,11 @@ const clearImageData = (type = 'all') => {
 }
 
 // 控制是否启用实时预览功能
-const enableRealtime = ref(false)
+const live = ref(false)
 
 // 计算属性：判断预览是否可见
 // 需要同时满足：启用实时预览、显示转换后图片、转换后图片URL存在
-const previewVisible = computed(() => enableRealtime.value && !!converted.value.url)
+const previewVisible = computed(() => live.value && !!converted.value.url)
 
 // 获取目标格式（直接从转换选项中获取）
 // 返回：目标格式字符串（如 'jpg', 'png' 等）
@@ -370,45 +370,22 @@ const save = async () => {
   }
 }
 
-// 实时预览触发：防抖并按需处理
-const runRealtime = useDebounceFn(() => {
-  if (enableRealtime.value && selectedFile.value && needsProcess.value) {
-    setConvertImageData()
-  }
-}, 300)
-
-// 监听核心参数变化：统一走防抖触发
-watch(
-  () => currentParamsHash.value,
-  () => {
-    if (needsProcess.value) {
-      console.log('实时预览触发：防抖并按需处理')
-      runRealtime()
-    }
-  },
-)
-
 // 开启实时预览时，如已有参数变化则立即触发一次
-watch(enableRealtime, (on) => {
-  console.log('enableRealtime', selectedFile.value, needsProcess.value)
-  if (on && selectedFile.value && needsProcess.value) {
-    console.log('开启实时预览时，如已有参数变化则立即触发一次')
-    setConvertImageData()
-    return
-  }
-  if (!on) {
+watch([live, needsProcess], () => {
+  const currentLive = live.value
+  // 关闭实时预览时，清除转换后的图片数据
+  if (!currentLive) {
     clearImageData('converted')
     return
   }
-  if (selectedFile.value && on) {
-    setConvertImageData()
+  // 如果没有选择文件，则不处理
+  if (!selectedFile.value) {
+    return
   }
+
+  setConvertImageData()
 })
 onBeforeUnmount(() => {
   clearImageData('all')
 })
 </script>
-<!--
-// 以下为注释掉的旧代码（使用 browser-image-compression 的方案） // const blob = await
-imageCompression(file, { // fileType: mime, // alwaysKeepResolution: true, // initialQuality:
-quality, // useWebWorker: true, // }) -->
