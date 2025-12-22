@@ -5,7 +5,7 @@
     :class="$s(75, 'w')"
   >
     <SfImg
-      src="https://picsum.photos/id/180/800/500"
+      src=""
       :alt="data.name"
       class="w-full overflow-hidden object-cover"
       :class="$s(38, 'h')"
