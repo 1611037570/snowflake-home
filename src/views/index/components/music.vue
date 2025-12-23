@@ -7,6 +7,7 @@ const musicList = [
     songName: '送你一朵小红花(Live)-易烊千玺.m4a',
     url: import('@/assets/audios/送你一朵小红花(Live)-易烊千玺.m4a'),
     lrc: import('@/assets/audios/送你一朵小红花(Live)-易烊千玺.lrc?raw'),
+    img: import('@/assets/images/audios/送你一朵小红花(Live)-易烊千玺.webp'),
   },
   {
     name: '主角',
@@ -14,6 +15,7 @@ const musicList = [
     songName: '主角-马里奥.aac',
     url: import('@/assets/audios/主角-马里奥.aac'),
     lrc: import('@/assets/audios/主角-马里奥.lrc?raw'),
+    img: import('@/assets/images/audios/主角-马里奥.webp'),
   },
   {
     name: '夜空最亮的星',
@@ -21,6 +23,7 @@ const musicList = [
     songName: '夜空最亮的星-邓紫棋.m4a',
     url: import('@/assets/audios/夜空最亮的星-邓紫棋.m4a'),
     lrc: import('@/assets/audios/夜空最亮的星-邓紫棋.lrc?raw'),
+    img: import('@/assets/images/audios/夜空最亮的星-邓紫棋.webp'),
   },
   {
     name: '骄傲(Live)',
@@ -28,6 +31,7 @@ const musicList = [
     songName: '骄傲(Live)-王源&陈芃瑄.m4a',
     url: import('@/assets/audios/骄傲(Live)-王源&陈芃瑄.m4a'),
     lrc: import('@/assets/audios/骄傲(Live)-王源&陈芃瑄.lrc?raw'),
+    img: import('@/assets/images/audios/骄傲(Live)-王源&陈芃瑄.webp'),
   },
 ]
 const currentIndex = ref(0)
@@ -42,9 +46,10 @@ const loadAudio = async (index) => {
     console.log('歌词资源加载成功:', module.default)
     audioLrc.value = module.default
   })
-  // const response = await fetch(audio.lrc)
-  // const lrc = await response.text()
-  // console.log('歌词资源加载成功:', lrc)
+  audio.img.then((module) => {
+    console.log('图片资源加载成功:', module.default)
+    audioImg.value = module.default
+  })
 }
 // 更换当前歌曲
 const changeCurrentMusic = () => {
@@ -58,6 +63,7 @@ const isPlaying = ref(false)
 const audioPlayer = ref(null)
 const audioUrl = ref('')
 const audioLrc = ref('')
+const audioImg = ref('')
 // 加载音频文件
 const togglePlay = () => {
   if (isPlaying.value) {
@@ -127,9 +133,20 @@ const list = computed(() => {
   <SfDropdown>
     <SfIcon size="8" icon="majesticons:music" class="rounded-full text-sf-base" />
     <template #dropdown>
-      <el-dropdown-menu>
+      <div class="w-[230px] p-3">
+        <div
+          class="mb-2 h-[200px] w-[200px] overflow-hidden rounded-full border-24 border-sf-theme-hover"
+        >
+          <SfImg
+            :src="audioImg"
+            class="h-full w-full object-cover"
+            :style="{
+              animation: isPlaying ? 'spin 5s linear infinite' : 'none',
+            }"
+          />
+        </div>
         <SfList class="w-[200px]" :list="list"> </SfList>
-      </el-dropdown-menu>
+      </div>
     </template>
   </SfDropdown>
 </template>
