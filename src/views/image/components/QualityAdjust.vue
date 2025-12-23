@@ -1,25 +1,21 @@
 <template>
-  <div
-    class="flex flex-col rounded-lg bg-sf-primary-hover/50 px-3 py-2 transition-colors duration-200 hover:bg-sf-primary-hover hover:shadow-sm"
-  >
-    <div class="flex items-center justify-between">
-      <span class="text-sm font-medium">{{ $t('image.qualityAdjust') }}</span>
-      <ElSwitch v-model="enabled" />
-    </div>
-    <ElSelect
-      v-if="enabled"
-      v-model="modelValue"
-      :placeholder="$t('image.qualitySelectPlaceholder')"
-      class="w-full"
-    >
-      <ElOption
-        v-for="opt in qualityOptions"
-        :key="opt.value"
-        :label="opt.label"
-        :value="opt.value"
-      />
-    </ElSelect>
+  <div class="flex items-center">
+    <span class="text-sm font-medium">{{ $t('image.qualityAdjust') }}</span>
+    <SfIcon
+      icon="material-symbols:restart-alt"
+      size="5"
+      class="hover:text-sf-theme"
+      @click.stop="resetToOriginal"
+    />
   </div>
+  <ElSelect v-model="modelValue" :placeholder="$t('image.qualitySelectPlaceholder')" class="w-full">
+    <ElOption
+      v-for="opt in qualityOptions"
+      :key="opt.value"
+      :label="opt.label"
+      :value="opt.value"
+    />
+  </ElSelect>
 </template>
 
 <script setup>
@@ -29,14 +25,10 @@ const props = defineProps({ defaultQuality: { type: Number, default: 1 } })
 // 使用 defineModel 创建双向绑定的质量值
 const modelValue = defineModel('modelValue', { default: 1 })
 
-// 控制质量调整功能的启用状态
-const enabled = ref(true)
-
-// 监听启用状态变化，自动设置合适的质量值
-watch(enabled, (on) => {
-  // 启用时：使用当前值或默认值；禁用时：恢复为默认质量
-  modelValue.value = on ? (modelValue.value ?? props.defaultQuality) : props.defaultQuality
-})
+// 重置到默认质量值
+const resetToOriginal = () => {
+  modelValue.value = props.defaultQuality
+}
 
 // 质量选项配置
 const qualityOptions = [

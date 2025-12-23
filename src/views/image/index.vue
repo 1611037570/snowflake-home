@@ -1,28 +1,18 @@
 <template>
   <SfViewContainer>
     <div class="relative flex h-full w-full bg-sf-modal py-2">
-      {{ originalParamsHash }} —————— {{ convertedParamsHash }}
-      <div class="flex h-full flex-1 overflow-hidden" v-if="selectedFile">
-        <el-splitter class="flex h-full flex-1 overflow-hidden">
-          <el-splitter-panel :size="previewVisible ? '50%' : '100%'" min="20%">
-            <Preview :data="original" :label="$t('image.original')" />
-          </el-splitter-panel>
-          <el-splitter-panel
-            :size="previewVisible ? '50%' : '0%'"
-            :resizable="previewVisible"
-            min="20%"
-          >
-            <Preview :data="converted" v-if="previewVisible" :label="$t('image.previewLabel')" />
-          </el-splitter-panel>
-        </el-splitter>
-
-        <!-- <div :class="paneClass">
+      <el-splitter class="flex h-full flex-1 overflow-hidden" v-if="selectedFile">
+        <el-splitter-panel :size="previewVisible ? '50%' : '100%'" min="20%">
           <Preview :data="original" :label="$t('image.original')" />
-        </div>
-        <div v-if="previewVisible" :class="paneClass">
-          <Preview :data="converted" :label="$t('image.previewLabel')" />
-        </div> -->
-      </div>
+        </el-splitter-panel>
+        <el-splitter-panel
+          :size="previewVisible ? '50%' : '0%'"
+          :resizable="previewVisible"
+          min="20%"
+        >
+          <Preview :data="converted" v-if="previewVisible" :label="$t('image.previewLabel')" />
+        </el-splitter-panel>
+      </el-splitter>
       <ImageSelector
         v-else
         @file-selected="handleFileSelected"
@@ -47,24 +37,21 @@
             <span>{{ $t('image.changeImage') }}</span>
           </button>
         </div>
-        <Tabs v-model="mode">
-          <div v-if="original.url && mode === 'custom'" class="flex flex-col gap-3 text-sf-base">
-            <SizeAdjust
-              :initial-w="original.width"
-              :initial-h="original.height"
-              v-model="converted"
-            />
-            <FormatAdjust :original-format="original.format" v-model="converted.format" />
-
-            <QualityAdjust v-model="converted.quality" />
-          </div>
+        <template v-if="original.url">
+          <!-- 推荐设置 -->
           <Presets
-            v-if="original.url && mode === 'presets'"
             :initial-w="original.width"
             :initial-h="original.height"
             @apply="handleApplyPreset"
           />
-        </Tabs>
+          <SizeAdjust
+            :initial-w="original.width"
+            :initial-h="original.height"
+            v-model="converted"
+          />
+          <FormatAdjust :original-format="original.format" v-model="converted.format" />
+          <QualityAdjust v-model="converted.quality" />
+        </template>
 
         <div
           class="mb-3 flex items-center justify-between rounded-lg bg-sf-primary-hover/50 px-3 py-2 transition-colors duration-200 hover:bg-sf-primary-hover"
@@ -118,19 +105,15 @@ import Intro from './components/intro.vue'
 // 导入 Presets.vue 子组件 - 推荐设置组件
 import Presets from './components/presets.vue'
 // 导入 Tabs.vue 子组件 - 选项卡组件
-import Tabs from './components/tabs.vue'
 // 导入 emptyImageData 函数 - 空图片数据对象模板
 import { emptyImageData } from './data'
 // 导入 'browser-image-compression' 库，用于图片压缩
-import imageCompression from 'browser-image-compression'
+// import imageCompression from 'browser-image-compression'
 // 从 '@vueuse/core' 导入 useFileDialog，用于文件选择对话框
 const { open, onChange } = useFileDialog()
 
 // 创建一个 ref 来存储当前选择的文件对象
 const selectedFile = ref(null)
-
-// 控制当前模式：'custom' 自定义模式 或 'presets' 推荐模式
-const mode = ref('presets')
 
 // 处理文件选择事件
 const handleFileSelected = (file) => {
@@ -215,8 +198,7 @@ const setConvertImageData = async () => {
   isConverting.value = true
 
   try {
-    const file = selectedFile.value
-    const blob = await processImage(file)
+    const blob = await processImage()
     console.log('blob', blob)
     // 释放旧资源
     clearImageData('converted')
@@ -274,12 +256,12 @@ const picaInstance = pica({
 })
 
 // 图片处理函数（核心处理逻辑）
-const processImage = async (file) => {
+const processImage = async () => {
+  const file = selectedFile.value
   // 如果原始图片和转换后图片相同，则直接返回原始图片URL
   if (!needsProcess.value) {
     console.log('原图返回')
-
-    return selectedFile.value
+    return file
   }
   const w = converted.value.width
   const h = converted.value.height
@@ -288,45 +270,44 @@ const processImage = async (file) => {
   console.log('参数', w, h, quality, format)
 
   const mime = toMime(format)
-  if (mode.value === 'presets') {
-    console.log('预设模式')
-
-    // 创建目标画布
-    const dst = document.createElement('canvas')
-    // 创建图像位图（高性能图像处理）
-    const bitmap = await createImageBitmap(file)
-    // 设置目标画布尺寸
-    dst.width = w
-    dst.height = h
-    // 使用 pica 进行高质量缩放
-    await picaInstance.resize(
-      bitmap, // 源图像
-      dst, // 目标画布
-      {
-        filter: 'lanczos3', // 使用 lanczos3 滤波器（高质量）
-        // alpha: format !== 'image/jpeg', // 注释：仅非jpeg格式启用透明通道
-        // 锐化参数（增强图像清晰度）
-        unsharpAmount: 120, // 锐化力度（120表示中等锐化）
-        unsharpRadius: 1, // 锐化半径（1像素）
-        unsharpThreshold: 2, // 锐化阈值（避免过度锐化平滑区域）
-      },
-    )
-
-    // 将画布转换为指定格式和质量的Blob
-    const res = await picaInstance.toBlob(dst, mime, quality)
-    // 释放位图资源（优化内存占用）
-    bitmap.close()
-    return res
-  } else if (mode.value === 'custom') {
-    console.log('自定义模式')
-    return await imageCompression(file, {
-      maxWidth: w,
-      maxHeight: h,
-      fileType: mime, // 文件类型
-      initialQuality: quality, // 初始质量
-      useWebWorker: true, // 使用 Web Worker
-    })
-  }
+  // 创建目标画布
+  let dst = document.createElement('canvas')
+  // 创建图像位图（高性能图像处理）
+  const bitmap = await createImageBitmap(file)
+  // 设置目标画布尺寸
+  dst.width = w
+  dst.height = h
+  // 使用 pica 进行高质量缩放
+  const res1 = await picaInstance.resize(
+    bitmap, // 源图像
+    dst, // 目标画布
+    {
+      filter: 'lanczos3', // 使用 lanczos3 滤波器（高质量）
+      // alpha: format !== 'image/jpeg', // 注释：仅非jpeg格式启用透明通道
+      // 锐化参数（增强图像清晰度）
+      unsharpAmount: 120, // 锐化力度（120表示中等锐化）
+      unsharpRadius: 1, // 锐化半径（1像素）
+      unsharpThreshold: 2, // 锐化阈值（避免过度锐化平滑区域）
+    },
+  )
+  // 将画布转换为指定格式和质量的Blob
+  const res = await picaInstance.toBlob(res1, mime, quality)
+  // 释放位图资源（优化内存占用）
+  bitmap.close()
+  dst.width = 0
+  dst.height = 0
+  dst = null
+  return res
+  // } else if (mode.value === 'custom') {
+  //   console.log('自定义模式 大小没压下去 需要继续优化')
+  //   return await imageCompression(file, {
+  //     maxWidth: w,
+  //     maxHeight: h,
+  //     fileType: mime, // 文件类型
+  //     initialQuality: quality, // 初始质量
+  //     useWebWorker: true, // 使用 Web Worker
+  //   })
+  // }
 }
 const handleApplyPreset = (options) => {
   const { quality, format, size } = options
@@ -348,8 +329,9 @@ const save = async () => {
     // 获取目标格式
     const fmt = getTargetFormat()
     let blob
-    // 如果参数没有变化，直接返回
-    if (needsProcess.value) blob = await processImage(file)
+    // 如果不是实时预览，需要处理图片
+    if (!live.value) blob = await processImage()
+    // 如果是实时预览，直接使用转换后的图片Blob
     else blob = converted.value.blob
 
     const name =
