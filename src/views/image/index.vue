@@ -154,41 +154,25 @@ const convertedParamsHash = computed(() => initParamsHash(converted.value))
 // 是否需要处理（转换参数与原始参数不同）
 const needsProcess = computed(() => convertedParamsHash.value !== originalParamsHash.value)
 // 设置原始图片数据（加载图片并获取元信息）
-const setOriginalImageData = (file) => {
-  // 如果没有文件，则返回 false
-  if (!file) return false
-
+const setOriginalImageData = async (file) => {
   // 为文件创建一个对象 URL（用于预览）
   const url = URL.createObjectURL(file)
-  // 创建一个新的 Image 对象用于获取图片尺寸等信息
-  const img = new Image()
   // 获取文件格式
   const format = getFormat(file)
-  // 图片加载成功时的回调
-  img.onload = () => {
-    // 设置原始图片数据
-    original.value = {
-      width: img.naturalWidth, // 图片原始宽度
-      height: img.naturalHeight, // 图片原始高度
-      size: file.size || 0, // 图片文件大小
-      quality: 1, // 默认质量
-      format, // 图片格式
-      url, // 图片预览URL
-    }
-    converted.value = {
-      ...original.value,
-      blob: selectedFile.value, // 转换后的 Blob 对象（用于下载）
-    }
-    converted.value.quality = 1
-    originalParamsHash.value = initParamsHash(original.value)
+  const img = await createImageBitmap(file)
+  original.value = {
+    width: img.width, // 图片原始宽度
+    height: img.height, // 图片原始高度
+    size: file.size, // 图片文件大小
+    quality: 1, // 默认质量
+    format, // 图片格式
+    url, // 图片预览URL
   }
-
-  // 图片加载失败时的回调
-  img.onerror = () => {
-    URL.revokeObjectURL(url)
-    clearImageData('all')
+  converted.value = {
+    ...original.value,
+    blob: selectedFile.value,
   }
-  img.src = url
+  originalParamsHash.value = initParamsHash(original.value)
 }
 // 实时预览转换：统一入口，含错误兜底与状态复位
 const setConvertImageData = async () => {
@@ -274,6 +258,7 @@ const processImage = async () => {
   let dst = document.createElement('canvas')
   // 创建图像位图（高性能图像处理）
   const bitmap = await createImageBitmap(file)
+  console.log('bitmap', bitmap)
   // 设置目标画布尺寸
   dst.width = w
   dst.height = h
