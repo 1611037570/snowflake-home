@@ -8,8 +8,9 @@
 /* 下拉弹层背景色：与项目主题保持一致 */
 .el-dropdown__popper.el-popper {
   background: var(--sf-modal) !important;
-  border: none !important;
+  // border: none !important;
   border-radius: 8px !important;
+  overflow: hidden;
 }
 .el-popper__arrow {
   --el-bg-color-overlay: var(--sf-modal) !important;
