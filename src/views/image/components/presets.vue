@@ -1,5 +1,5 @@
 <template>
-  <div class="w-full gap-3" v-if="init && options.length">
+  <div class="flex w-full gap-3" v-if="init && options.length">
     <template v-for="opt in options" :key="opt.value">
       <div
         v-if="opt.value <= maxSize"
