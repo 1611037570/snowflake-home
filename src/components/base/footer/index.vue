@@ -5,8 +5,10 @@
   >
     <div class="flex min-w-[200px] flex-col" :class="gapClass">
       <div class="flex items-center">
-        © 2019-2025
+        Copyright © 2019-2025 .
         <span @click="goMy" class="ml-2 cursor-pointer font-medium hover:text-sf-theme"> 小羊</span>
+        <span class="px-1">.</span>
+        All Rights Reserved.
       </div>
 
       <div>
