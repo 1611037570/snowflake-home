@@ -30,6 +30,10 @@
         }}</span>
       </div>
     </div>
+    <div>其他支持方式</div>
+    <div>除了资金赞助，您还可以通过以下方式支持项目：</div>
+    <div>Star 项目：在 GitHub 上给项目点 Star</div>
+    <div>分享推广：向朋友和同事推荐</div>
 
     <!-- 感谢语 -->
     <div class="mt-4 text-center text-sf-theme-hover italic">感谢您的支持！</div>
