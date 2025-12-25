@@ -8,7 +8,6 @@ onMounted(() => {
 })
 function togglePlay() {
   // 获取目标元素
-  console.log('about', document.getElementById('about'))
   const targetElement = document.getElementById('about')
   if (targetElement) {
     // 平滑滚动到目标元素
