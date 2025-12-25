@@ -23,7 +23,7 @@
         关于网站
       </div>
       <div @click="donationVisible = true" class="cursor-pointer font-medium hover:text-sf-theme">
-        捐赠我
+        赞助支持
       </div>
 
       <!-- <div class="group flex cursor-pointer items-center hover:text-sf-theme" @click="goRepo">
