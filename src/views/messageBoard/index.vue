@@ -54,12 +54,12 @@ import { getRandomItem, getUUID } from '@/utils'
 import { useElementSize } from '@vueuse/core'
 
 // Vue API：异步刷新、响应式引用、浅响应列表、生命周期
-import { nextTick, ref, shallowRef, onMounted } from 'vue'
+import { nextTick, onMounted, ref, shallowRef } from 'vue'
 // 组件与配置：卡片组件与布局/交互相关常量
 import Card from './card.vue'
 import { BATCH_SIZE, CARD_HEIGHT, CARD_WIDTH, MAX_ROTATE_ANGLE, TOTAL_CARDS } from './config'
 // 数据池：颜色集合、固定文案、随机文案
-import { colors, fixedList, list } from './data'
+import { colors, fixedList, list } from '../../datas'
 
 // 帧等待：等待浏览器下一帧，确保 DOM 已绘制，便于后续过渡生效
 const waitForNextFrame = () => new Promise((resolve) => requestAnimationFrame(resolve))
