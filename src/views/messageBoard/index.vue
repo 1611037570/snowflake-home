@@ -59,7 +59,7 @@ import { nextTick, onMounted, ref, shallowRef } from 'vue'
 import Card from './card.vue'
 import { BATCH_SIZE, CARD_HEIGHT, CARD_WIDTH, MAX_ROTATE_ANGLE, TOTAL_CARDS } from './config'
 // 数据池：颜色集合、固定文案、随机文案
-import { colors, fixedList, list } from '../../datas'
+import { colors, fixed, sentences } from '@/datas'
 
 // 帧等待：等待浏览器下一帧，确保 DOM 已绘制，便于后续过渡生效
 const waitForNextFrame = () => new Promise((resolve) => requestAnimationFrame(resolve))
@@ -152,15 +152,15 @@ onMounted(async () => {
 
 // 内容选择：先用固定内容，耗尽后按需从随机池取值
 const nextContent = () => {
-  if (contentIdx < fixedList.length) {
-    return { content: fixedList[contentIdx++], type: 'fixed' }
+  if (contentIdx < fixed.length) {
+    return { content: fixed[contentIdx++], type: 'fixed' }
   }
-  const i = contentIdx - fixedList.length
-  if (i < list.length) {
+  const i = contentIdx - fixed.length
+  if (i < sentences.length) {
     contentIdx++
-    return { content: list[i], type: 'random' }
+    return { content: sentences[i], type: 'random' }
   }
-  return { content: getRandomItem(list), type: 'random' }
+  return { content: getRandomItem(sentences), type: 'random' }
 }
 
 // 批量生成：在当前列表基础上避让，生成一批目标位置与内容
