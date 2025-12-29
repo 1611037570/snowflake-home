@@ -1,4 +1,4 @@
-<template>
+<template v-if="init">
   <div class="flex w-full">
     <div class="flex w-full items-center justify-between">
       <div class="flex flex-1">
@@ -78,10 +78,16 @@ const sizeList = [
 ]
 // 定义组件属性：初始宽度和高度
 const props = defineProps({
-  initialW: { type: Number, default: 0 },
-  initialH: { type: Number, default: 0 },
+  initialW: {
+    type: Number,
+    default: 100,
+  },
+  initialH: {
+    type: Number,
+    default: 100,
+  },
 })
-
+const init = ref(false)
 // 使用 defineModel 创建双向绑定的尺寸对象 { width, height }
 const modelValue = defineModel('modelValue')
 
@@ -94,6 +100,9 @@ const percent = ref(100)
 // 本地编辑值（失焦后统一提交到父组件）
 const localW = ref(modelValue.value?.width || 0)
 const localH = ref(modelValue.value?.height || 0)
+onMounted(() => {
+  init.value = true
+})
 // 同步标记，避免联动往返触发
 const isSyncing = ref(false)
 

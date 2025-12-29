@@ -1,5 +1,5 @@
 <template>
-  <div class="flex w-full gap-3" v-if="init && options.length">
+  <div class="flex w-full gap-3" v-if="options.length">
     <template v-for="opt in options" :key="opt.value">
       <div
         v-if="opt.value <= maxSize"
@@ -38,11 +38,6 @@ const maxSize = computed(() => {
   return Math.max(props.initialW, props.initialH)
 })
 const selected = ref('')
-const init = ref(false)
-onMounted(async () => {
-  await nextTick()
-  init.value = true
-})
 
 // 应用推荐设置：抖音高清优化方案
 const applyRecommendation = (size) => {

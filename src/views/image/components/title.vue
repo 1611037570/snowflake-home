@@ -1,7 +1,7 @@
 <template>
   <div class="flex w-full items-center justify-between">
-    <div class="flex flex-1">
-      <span class="text-sm font-medium"></span>
+    <div class="flex flex-1 items-center">
+      <span class="text-base font-bold">{{ name }}</span>
       <SfIcon
         icon="material-symbols:restart-alt"
         size="5"
