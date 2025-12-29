@@ -20,11 +20,12 @@
       />
       <ElScrollbar
         v-if="selectedFile"
-        class="relative mr-2 h-full w-[250px] flex-col gap-4 overflow-hidden rounded-xl border border-sf-theme-hover bg-sf-primary p-3 shadow-md transition-all hover:border-sf-theme hover:shadow-xl"
+        class="relative mr-2 h-full w-[300px] flex-col gap-4 overflow-hidden rounded-xl border border-sf-theme-hover bg-sf-primary p-3 shadow-md transition-all hover:border-sf-theme hover:shadow-xl"
       >
         <!-- 已选择图片时的状态 -->
         <div class="mb-3 rounded-lg bg-sf-primary-hover/50 p-3 text-center">
           <div
+            v-if="selectedFile"
             class="mb-2 max-w-full truncate text-sm font-medium text-sf-base"
             :title="selectedFile.name"
           >
@@ -37,21 +38,19 @@
             <span>{{ $t('image.changeImage') }}</span>
           </button>
         </div>
-        <template v-if="original.url">
-          <!-- 推荐设置 -->
-          <Presets
-            :initial-w="original.width"
-            :initial-h="original.height"
-            @apply="handleApplyPreset"
-          />
-          <SizeAdjust
-            :initial-w="original.width"
-            :initial-h="original.height"
-            v-model="converted"
-          />
-          <FormatAdjust :original-format="original.format" v-model="converted.format" />
-          <QualityAdjust v-model="converted.quality" />
-        </template>
+        <!-- 推荐设置 -->
+        <Presets
+          :initial-w="original.width"
+          :initial-h="original.height"
+          @apply="handleApplyPreset"
+        />
+        <SizeAdjust :initial-w="original.width" :initial-h="original.height" v-model="converted" />
+        <FormatAdjust
+          :default-format="original.format"
+          :default-quality="original.quality"
+          v-model:format="converted.format"
+          v-model:quality="converted.quality"
+        />
 
         <div
           class="mb-3 flex items-center justify-between rounded-lg bg-sf-primary-hover/50 px-3 py-2 transition-colors duration-200 hover:bg-sf-primary-hover"
@@ -67,7 +66,7 @@
         >
         <Intro />
         <div
-          v-if="isSaving || isConverting"
+          v-if="isConverting"
           class="absolute inset-0 z-10 flex items-center justify-center rounded-xl bg-black/30 backdrop-blur-md"
         >
           <div
@@ -96,8 +95,6 @@ import FormatAdjust from './components/formatAdjust.vue'
 import ImageSelector from './components/imageSelector.vue'
 // 导入 Preview.vue 子组件 - 图片预览组件
 import Preview from './components/preview.vue'
-// 导入 QualityAdjust.vue 子组件 - 质量调整组件
-import QualityAdjust from './components/qualityAdjust.vue'
 // 导入 SizeAdjust.vue 子组件 - 尺寸调整组件
 import SizeAdjust from './components/sizeAdjust.vue'
 // 导入 Intro.vue 子组件 - 介绍说明组件
@@ -140,8 +137,6 @@ onChange((f) => {
 
 // 创建一个 ref 来跟踪图片是否正在转换（用于UI状态显示）
 const isConverting = ref(false)
-// 创建一个 ref 来跟踪图片是否正在保存（用于UI状态显示）
-const isSaving = ref(false)
 
 const original = ref(emptyImageData())
 const converted = ref(emptyImageData())
@@ -178,8 +173,6 @@ const setOriginalImageData = async (file) => {
 const setConvertImageData = async () => {
   if (!live.value || !selectedFile.value) return
   if (isConverting.value) return
-
-  isConverting.value = true
 
   try {
     const blob = await processImage()
@@ -241,48 +234,54 @@ const picaInstance = pica({
 
 // 图片处理函数（核心处理逻辑）
 const processImage = async () => {
-  const file = selectedFile.value
-  // 如果原始图片和转换后图片相同，则直接返回原始图片URL
-  if (!needsProcess.value) {
-    console.log('原图返回')
-    return file
+  try {
+    isConverting.value = true
+    const file = selectedFile.value
+    // 如果原始图片和转换后图片相同，则直接返回原始图片URL
+    if (!needsProcess.value) {
+      console.log('原图返回')
+      return file
+    }
+    const w = converted.value.width
+    const h = converted.value.height
+    const quality = converted.value.quality
+    const format = converted.value.format
+    const mime = toMime(format)
+    // 创建目标画布
+    // 创建图像位图（高性能图像处理）
+    const bitmap = await createImageBitmap(file)
+    console.log('bitmap', bitmap)
+    // 设置目标画布尺寸
+    let dst = document.createElement('canvas')
+    dst.width = w
+    dst.height = h
+    // 使用 pica 进行高质量缩放
+    const res1 = await picaInstance.resize(
+      bitmap, // 源图像
+      dst, // 目标画布
+      {
+        filter: 'lanczos3', // 使用 lanczos3 滤波器（高质量）
+        // alpha: format !== 'image/jpeg', // 注释：仅非jpeg格式启用透明通道
+        // 锐化参数（增强图像清晰度）
+        unsharpAmount: 120, // 锐化力度（120表示中等锐化）
+        unsharpRadius: 1, // 锐化半径（1像素）
+        unsharpThreshold: 2, // 锐化阈值（避免过度锐化平滑区域）
+      },
+    )
+    // 将画布转换为指定格式和质量的Blob
+    const res = await picaInstance.toBlob(res1, mime, quality)
+    // 释放位图资源（优化内存占用）
+    bitmap.close()
+    dst.width = 0
+    dst.height = 0
+    dst = null
+    return res
+  } catch (err) {
+    console.log('processImage err', err)
+  } finally {
+    isConverting.value = false
   }
-  const w = converted.value.width
-  const h = converted.value.height
-  const quality = converted.value.quality
-  const format = converted.value.format
-  console.log('参数', w, h, quality, format)
 
-  const mime = toMime(format)
-  // 创建目标画布
-  let dst = document.createElement('canvas')
-  // 创建图像位图（高性能图像处理）
-  const bitmap = await createImageBitmap(file)
-  console.log('bitmap', bitmap)
-  // 设置目标画布尺寸
-  dst.width = w
-  dst.height = h
-  // 使用 pica 进行高质量缩放
-  const res1 = await picaInstance.resize(
-    bitmap, // 源图像
-    dst, // 目标画布
-    {
-      filter: 'lanczos3', // 使用 lanczos3 滤波器（高质量）
-      // alpha: format !== 'image/jpeg', // 注释：仅非jpeg格式启用透明通道
-      // 锐化参数（增强图像清晰度）
-      unsharpAmount: 120, // 锐化力度（120表示中等锐化）
-      unsharpRadius: 1, // 锐化半径（1像素）
-      unsharpThreshold: 2, // 锐化阈值（避免过度锐化平滑区域）
-    },
-  )
-  // 将画布转换为指定格式和质量的Blob
-  const res = await picaInstance.toBlob(res1, mime, quality)
-  // 释放位图资源（优化内存占用）
-  bitmap.close()
-  dst.width = 0
-  dst.height = 0
-  dst = null
-  return res
   // } else if (mode.value === 'custom') {
   //   console.log('自定义模式 大小没压下去 需要继续优化')
   //   return await imageCompression(file, {
@@ -306,19 +305,16 @@ const handleApplyPreset = (options) => {
 
 // 保存文件函数（处理并下载转换后的图片）
 const save = async () => {
-  isSaving.value = true
-
   try {
-    // 获取当前选择的文件
-    const file = selectedFile.value
-    // 获取目标格式
-    const fmt = getTargetFormat()
     let blob
     // 如果不是实时预览，需要处理图片
     if (!live.value) blob = await processImage()
     // 如果是实时预览，直接使用转换后的图片Blob
     else blob = converted.value.blob
-
+    // 获取当前选择的文件
+    const file = selectedFile.value
+    // 获取目标格式
+    const fmt = getTargetFormat()
     const name =
       fmt && fmt !== getFormat(file.name) ? file.name.replace(/\.\w+$/, `.${fmt}`) : file.name
 
@@ -337,7 +333,6 @@ const save = async () => {
     URL.revokeObjectURL(url)
     originalParamsHash.value = convertedParamsHash.value
   } finally {
-    isSaving.value = false
   }
 }
 
