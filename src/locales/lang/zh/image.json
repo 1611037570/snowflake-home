@@ -1,6 +1,6 @@
 {
   "image": {
-    "name": "图片处理",
+    "name": "图片处理工具",
     "previewLabel": "预览图",
     "changeImage": "更换图片",
     "custom": "自定义",
@@ -15,16 +15,16 @@
     "rec2k": "2K 高清",
     "rec1080p": "1080P 高清",
     "noRecommendation": "暂无推荐",
-    "formatAdjust": "转换格式",
+    "adjust": "格式与质量",
     "formatSelectPlaceholder": "选择转换类型",
     "qualityAdjust": "调整质量",
     "qualitySelectPlaceholder": "选择质量",
     "quality": {
       "lossless": "无损",
-      "high": "高质量",
-      "medium": "中质量",
-      "low": "低质量",
-      "veryLow": "超低质量"
+      "high": "高",
+      "medium": "中",
+      "low": "低",
+      "veryLow": "超低"
     },
     "sizeAdjust": "尺寸调整",
     "pixel": "像素",
