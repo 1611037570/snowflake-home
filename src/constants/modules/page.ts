@@ -5,6 +5,7 @@ type PageType = 'project' | 'base'
 interface PageItem {
   name: string
   url: string
+  desc?: string
   type: PageType
   version?: string
 }
@@ -17,7 +18,7 @@ export const BASE_LIST = computed<PageItem[]>(() => {
     },
     {
       name: $t('router.index'),
-      url: '/',
+      url: '/index',
       type: 'base',
     },
     {
