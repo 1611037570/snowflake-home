@@ -1,23 +1,23 @@
 <template>
-  <div class="flex w-full items-center justify-between">
+  <div class="mb-3 flex w-full items-center justify-between">
     <div class="flex flex-1 items-center">
-      <span class="text-base font-bold">{{ name }}</span>
+      <span class="text-xl font-bold">{{ name }}</span>
       <SfIcon
+        v-if="reset"
         icon="material-symbols:restart-alt"
-        size="5"
+        size="8"
         class="hover:text-sf-theme"
-        @click.stop="reset"
+        @click.stop="resetClick"
       />
     </div>
-
-    <!-- <div class="flex items-center gap-1 text-xs">
-        <span class="text-xs">{{ $t('image.keepAspect') }}</span>
-        <ElSwitch v-model="keepAspectRatio" />
-      </div> -->
+    <slot name="right"></slot>
   </div>
 </template>
 
 <script setup>
-defineProps({ name: { type: String, default: '' } })
-function reset() {}
+const emit = defineEmits(['reset'])
+defineProps({ name: { type: String, default: '' }, reset: { type: Boolean, default: false } })
+function resetClick() {
+  emit('reset')
+}
 </script>

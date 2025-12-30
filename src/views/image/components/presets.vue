@@ -1,9 +1,10 @@
 <template>
+  <Title name="一键推荐" />
   <div class="flex w-full gap-3" v-if="options.length">
     <template v-for="opt in options" :key="opt.value">
       <div
         v-if="opt.value <= maxSize"
-        class="mb-3 flex w-full items-center justify-between rounded-lg bg-sf-theme px-4 py-3 text-sm font-semibold text-sf-primary shadow-md transition-all hover:shadow-lg active:scale-[0.98]"
+        class="mb-3 flex items-center justify-between rounded-lg bg-sf-theme px-4 py-3 text-sm font-semibold text-sf-primary shadow-md transition-all hover:shadow-lg active:scale-[0.98]"
         :class="
           selected === opt.name
             ? 'hover:bg-sf-theme-hover'
@@ -15,10 +16,10 @@
       </div>
     </template>
   </div>
-  <div v-else class="flex-c">{{ $t('image.noRecommendation') }}</div>
 </template>
 
 <script setup>
+import Title from './title.vue'
 // 定义组件属性：初始宽度和高度
 const props = defineProps({
   initialW: { type: Number },
