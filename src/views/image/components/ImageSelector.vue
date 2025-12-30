@@ -1,12 +1,29 @@
 <template>
   <div
     ref="dropZoneRef"
-    class="flex-c border-sf-primary-theme relative mr-3 h-full flex-1 cursor-pointer flex-col overflow-hidden rounded-xl border-2 border-dashed border-sf-text-2 bg-sf-primary transition-all hover:border-sf-theme-hover hover:bg-sf-theme/10 hover:shadow-md"
+    class="flex-c border-sf-primary-theme relative h-full flex-1 cursor-pointer flex-col overflow-hidden rounded-xl border-2 border-dashed border-sf-bg bg-sf-primary transition-all hover:border-sf-theme-hover hover:bg-sf-theme/10 hover:shadow-md"
     :class="{ 'border-sf-theme bg-sf-theme/20': isOverDropZone }"
     @click="handleClick"
   >
-    <SfIcon icon="material-symbols:image-outline" class="mb-2 text-3xl text-sf-text" />
-    <div class="text-sf-secondary">{{ $t('image.selectorHint') }}</div>
+    <SfIcon icon="material-symbols:image-outline" size="34" class="mb-3 text-sf-theme" />
+    <div class="text-base text-sf-theme">{{ $t('image.selectorHint') }}</div>
+    <div class="flex gap-2">
+      <span>支持JPG、PNG、WebP、SVG，建议大小≤60MB。</span>
+    </div>
+
+    <div class="flex-c flex-col p-3 text-sm">
+      <h3 class="mb-1 flex items-center gap-2 font-semibold">功能简介</h3>
+      <div class="flex gap-2">
+        <span>支持裁切、压缩、转换类型。</span>
+      </div>
+      <div class="flex gap-2">
+        <span>本地处理，无泄漏隐私。</span>
+      </div>
+
+      <div class="flex gap-2">
+        <span>完全免费，免注册登录。</span>
+      </div>
+    </div>
   </div>
 </template>
 

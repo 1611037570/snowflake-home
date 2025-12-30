@@ -1,7 +1,7 @@
 <template>
-  <div class="h-full w-full px-2">
+  <div class="h-full w-full">
     <div
-      class="flex-c relative h-full w-full rounded-xl border border-sf-theme-hover bg-sf-primary transition-all hover:border-sf-theme hover:shadow-sm"
+      class="flex-c relative h-full w-full rounded-xl border border-sf-theme-hover bg-sf-primary transition-all hover:border-sf-theme hover:shadow-xl"
       ref="containerRef"
     >
       <div
