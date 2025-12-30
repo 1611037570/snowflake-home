@@ -63,8 +63,6 @@ const version = computed(() => {
   return currentItem?.version || ''
 })
 
-// 更新HTML标题
-useTitle(title)
 const list = computed(() => {
   // 过滤当前路由匹配的菜单项
   return PAGE_LIST.value.filter((item) => route.path !== item.url)

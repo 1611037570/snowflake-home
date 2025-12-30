@@ -37,7 +37,7 @@ import { computed, ref } from 'vue'
 // 定义组件接收的props
 const { list } = defineProps<{
   // Tab列表数据
-  list: string[]
+  list: any[]
   // 默认选中的下标
   activeIndex?: number
 }>()
@@ -61,11 +61,13 @@ const handleMouseEnter = (index: number) => {
 const handleMouseLeave = () => {
   hoverIndex.value = null
 }
-
+const emit = defineEmits(['change'])
 // 处理点击事件
 const handleClick = (index: number) => {
   currentActiveIndex.value = index
   modelValue.value = list[index].value
+  console.log('modelValue.value', index, modelValue.value)
+  emit('change', modelValue.value, index)
 }
 const isMouseDown = ref(false)
 const handleMouseDown = () => {
