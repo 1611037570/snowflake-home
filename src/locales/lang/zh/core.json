@@ -2,8 +2,8 @@
   "title": "雪花索引",
   "router": {
     "messageBoard": "留言板",
-    "image": "图片处理",
-    "imageDesc": "一键压缩且保留细节图片处理工具",
+    "image": "图片处理工具",
+    "imageDesc": "简洁高效的本地化图片编辑工具",
     "resume": "简历生成",
     "resumeDesc": "快速生成精美简历",
     "2048": "2048 游戏",
