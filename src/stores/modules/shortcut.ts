@@ -1,4 +1,4 @@
-import { default_data, default_list } from '@/datas/home.data'
+import { default_data, default_list } from '@/constants'
 import { getUUID } from '@/utils'
 import { defineStore } from 'pinia'
 
