@@ -34,7 +34,7 @@ function togglePlay() {
         transform: showContent ? 'translateY(0)' : 'translateY(20px)',
       }"
     >
-      代码与光影
+      逆转时空的公式
     </div>
     <div
       class="h-1 w-24 rounded-full bg-sf-theme-hover shadow-xl"
@@ -42,14 +42,13 @@ function togglePlay() {
       :style="{ opacity: showContent ? 1 : 0, width: showContent ? '6rem' : '0' }"
     ></div>
     <div
-      class="text-yyqx text-sf-text-2 transition-all duration-300 ease-out"
-      :class="$s(7)"
+      class="text-yyqx text-4xl text-sf-theme-hover transition-all duration-300 ease-out"
       :style="{
         opacity: showContent ? 1 : 0,
         transform: showContent ? 'translateY(0)' : 'translateY(20px)',
       }"
     >
-      用代码创造数字世界，用镜头记录美好瞬间。
+      就是珍惜当下
     </div>
     <div class="flex-c absolute bottom-2 left-0 w-full text-sf-base">
       <SfTooltip>
