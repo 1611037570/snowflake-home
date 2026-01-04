@@ -18,6 +18,18 @@ const navList = [
     href: 'project',
   },
 ]
+function togglePlay(href) {
+  // 获取目标元素
+  const targetElement = document.getElementById(href)
+  if (targetElement) {
+    // 平滑滚动到目标元素
+    targetElement.scrollIntoView({
+      behavior: 'smooth', // 平滑滚动
+      block: 'start', // 对齐到区块顶部
+      duration: 10,
+    })
+  }
+}
 const opacity = ref(0)
 const backTop = computed(() => {
   return scrollTop.value > solidThreshold
@@ -57,15 +69,15 @@ watch(scrollTop, (newValue) => {
     >
       <div class="text-shadow text-yyqx flex items-center font-bold text-sf-base" :class="$s(9)">
         <SfImg :src="nnLogo" class="h-10 w-10 md:h-20 md:w-20" />
-        <!-- {{ userInfo.name }} -->
       </div>
 
       <div class="flex-c h-full" :class="$s(6, 'gap')">
         <div :class="$s(13, 'h')" class="flex items-center gap-4">
           <div
-            class="nav-link flex-c text-sf-base"
+            class="nav-link flex-c cursor-pointer text-sf-base"
             style="font-weight: 500"
             :class="[$s(13, 'h'), $s(6)]"
+            @click="togglePlay(item.href)"
             :key="item.href"
             v-for="item in navList"
           >
