@@ -18,6 +18,11 @@ function togglePlay() {
     })
   }
 }
+
+import { da_ai_xian_zun, fixed } from '@/datas'
+const list = [...fixed, ...da_ai_xian_zun].map((item) => ({
+  text: item.value,
+}))
 </script>
 
 <template>
@@ -25,7 +30,7 @@ function togglePlay() {
   <div
     class="w-dwh flex-c data-barrage-container fixed inset-0 z-10 min-h-dvh flex-col overflow-hidden"
   >
-    <SfBarrage />
+    <SfBarrage :list="list" />
     <div
       class="sf-text-glow text-yyqx font-semibold text-sf-text transition-all duration-300 ease-out"
       :class="$s(22)"
