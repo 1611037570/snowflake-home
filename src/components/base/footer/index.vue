@@ -1,31 +1,31 @@
 <template>
   <footer
-    class="flex-c relative overflow-hidden bg-sf-primary px-3 py-1 text-sf-text backdrop-blur-sm"
+    class="flex-c relative flex-col overflow-hidden bg-sf-primary px-3 py-1 text-sf-text backdrop-blur-sm"
     :class="gapClass"
   >
-    <div class="flex min-w-[200px] flex-col" :class="gapClass">
+    <div class="flex items-center gap-3">
       <div class="flex items-center">
         Copyright © 2019-2025 .
         <span @click="goMy" class="ml-2 cursor-pointer font-medium hover:text-sf-theme"> 小羊</span>
         <span class="px-1">.</span>
         All Rights Reserved.
       </div>
-
+      <div @click="aboutVisible = true" class="cursor-pointer font-medium hover:text-sf-theme">
+        关于网站
+      </div>
+      <div class="cursor-pointer font-medium hover:text-sf-theme">版权声明</div>
+    </div>
+    <div class="flex min-w-[200px] items-center" :class="gapClass">
       <div>
         服务支持：
         <span @click="back" class="cursor-pointer font-medium hover:text-sf-theme">雪花起始页</span>
       </div>
-    </div>
-
-    <div class="flex flex-col" :class="gapClass">
-      <div class="cursor-pointer font-medium hover:text-sf-theme">版权声明</div>
-      <div @click="aboutVisible = true" class="cursor-pointer font-medium hover:text-sf-theme">
-        关于网站
-      </div>
       <div @click="donationVisible = true" class="cursor-pointer font-medium hover:text-sf-theme">
         赞助支持
       </div>
+    </div>
 
+    <div class="flex flex-col" :class="gapClass">
       <!-- <div class="group flex cursor-pointer items-center hover:text-sf-theme" @click="goRepo">
         项目仓库
       </div> -->
