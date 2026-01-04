@@ -3,7 +3,7 @@
     <div class="py-12">时光轴</div>
 
     <el-scrollbar>
-      <div class="mb-6 flex flex-row gap-4">
+      <div class="mb-16 flex flex-row gap-4">
         <!-- 内部子元素3 -->
         <div
           class="flex-c w-fit max-w-[260px] flex-shrink-0 flex-col rounded-lg bg-sf-bg-hover px-2 py-1 shadow-sm"
@@ -18,20 +18,47 @@
               {{ item.desc }}
             </span>
             <span
-              class="bg-sf-secondary self-start rounded-full px-2 py-1 text-xs whitespace-nowrap"
+              class="bg-sf-secondary cursor-pointer self-start rounded-full px-2 py-1 text-xs whitespace-nowrap text-sf-theme"
               v-if="item.img"
+              @click="previewImg(item.img)"
             >
               查看图片
+            </span>
+            <span
+              class="bg-sf-secondary cursor-pointer self-start rounded-full px-2 py-1 text-xs whitespace-nowrap text-sf-theme"
+              v-if="item.url"
+            >
+              前去体验
             </span>
           </div>
         </div>
       </div>
     </el-scrollbar>
+    <teleport to="body">
+      <div class="fixed inset-0 z-60 bg-black/50" v-if="imgVisible">
+        <SfIcon
+          icon="mingcute:close-line"
+          size="24"
+          class="absolute top-4 right-4 text-sf-text"
+          @click="imgVisible = false"
+        />
+        <SfImg
+          :src="imgUrl"
+          class="absolute top-1/2 left-1/2 max-h-[90%] max-w-[90%] -translate-x-1/2 -translate-y-1/2"
+        />
+      </div>
+    </teleport>
   </div>
 </template>
 
 <script setup>
 import { historyList } from './data'
+const imgVisible = ref(false)
+const imgUrl = ref('')
+const previewImg = (img) => {
+  imgVisible.value = true
+  imgUrl.value = img
+}
 </script>
 
 <style lang="scss" scoped></style>

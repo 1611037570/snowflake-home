@@ -9,26 +9,30 @@ export const historyList = [
     desc: '未完待续',
   },
   {
-    time: '2025-07-18',
-    desc: '新增简历系统，快速制作属于自己的简历。',
+    time: '2025-11-22',
+    desc: '整合项目，使用vue3 + vite + typescript 全面重构。',
   },
   {
     time: '2024-11-22',
-    desc: '项目使用vue3 + vite + typescript 重构',
+    desc: '新增简历生成器，快速制作属于自己的简历。',
   },
   {
-    time: '2023-07-18',
-    desc: '上线修图',
+    time: '2023-11-22',
+    desc: '新增图片处理工具',
+  },
+  {
+    time: '2022-11-22',
+    desc: '个人主页上线',
   },
   {
     time: '2021-11-22',
     img: version2,
-    desc: 'UI苹果化',
+    desc: '雪花起始页2.0上线',
   },
   {
     time: '2020-11-22',
     img: version1,
-    desc: '雪花起始页1.0正式上线',
+    desc: '雪花起始页1.0正式发布',
   },
   {
     time: '2020-9-3',
