@@ -1,6 +1,14 @@
 <template>
   <SfViewContainer>
     <div class="relative flex h-full w-full items-center justify-center bg-sf-modal p-2">
+      <!-- <Crop v-if="cropVisible" /> -->
+      <ConvertSVG />
+      <!-- <svg
+        id="svgPreview"
+        class="svg-preview"
+        v-html="svgPreviewContent"
+        v-show="!showCanvasPreview && svgContent"
+      ></svg> -->
       <el-splitter
         class="mr-2! h-full flex-1"
         v-if="selectedFile"
@@ -23,46 +31,10 @@
         @file-selected="handleFileSelected"
         @select-click="open({ accept: 'image/*', multiple: false })"
       />
-      <ElScrollbar
+      <div
         v-if="!loading"
-        class="relative h-full min-w-75 flex-col gap-4 overflow-hidden rounded-xl border border-sf-theme-hover bg-sf-primary p-3 transition-all hover:border-sf-theme hover:shadow-xl"
+        class="relative flex h-full w-95 rounded-xl border border-sf-theme-hover bg-sf-primary p-3 transition-all hover:border-sf-theme hover:shadow-xl"
       >
-        <!-- 已选择图片时的状态 -->
-        <div class="mb-3 rounded-lg bg-sf-primary-hover/50 p-3 text-center">
-          <div
-            class="mb-2 max-w-full truncate text-sm font-medium text-sf-base"
-            :title="selectedFile.name"
-          >
-            {{ selectedFile.name }}
-          </div>
-          <button
-            class="inline-flex cursor-pointer items-center gap-1 rounded-md bg-sf-theme-hover/10 px-2.5 py-1 text-xs font-semibold text-sf-theme transition-colors hover:bg-sf-theme-hover/20"
-            @click="open({ accept: 'image/*', multiple: false })"
-          >
-            <span>{{ $t('image.changeImage') }}</span>
-          </button>
-        </div>
-        <!-- 推荐设置 -->
-        <Presets
-          :initial-w="original.width"
-          :initial-h="original.height"
-          @apply="handleApplyPreset"
-        />
-        <SizeAdjust
-          :initial-w="original.width"
-          :initial-h="original.height"
-          v-model:width="converted.width"
-          v-model:height="converted.height"
-        />
-        <FormatAdjust
-          :default-format="original.format"
-          :default-quality="original.quality"
-          v-model:format="converted.format"
-          v-model:quality="converted.quality"
-        />
-
-        <Worktop @save="save" v-model:show="show" v-model:live="live" />
-        <Intro />
         <div
           v-if="isConverting"
           class="absolute inset-0 z-10 flex items-center justify-center rounded-xl bg-black/30 backdrop-blur-md"
@@ -77,7 +49,62 @@
             <span class="text-sm font-medium">{{ $t('image.processing') }}</span>
           </div>
         </div>
-      </ElScrollbar>
+        <ElScrollbar class="relative h-full flex-1 flex-col gap-4 overflow-hidden pr-3">
+          <div v-if="page === 'adjust'" key="adjust">
+            <!-- 已选择图片时的状态 -->
+            <div class="mb-3 rounded-lg bg-sf-primary-hover/50 p-3 text-center">
+              <div
+                class="mb-2 max-w-full truncate text-sm font-medium text-sf-base"
+                :title="selectedFile.name"
+              >
+                {{ selectedFile.name }}
+              </div>
+              <button
+                class="inline-flex cursor-pointer items-center gap-1 rounded-md bg-sf-theme-hover/10 px-2.5 py-1 text-xs font-semibold text-sf-theme transition-colors hover:bg-sf-theme-hover/20"
+                @click="open({ accept: 'image/*', multiple: false })"
+              >
+                <span>{{ $t('image.changeImage') }}</span>
+              </button>
+            </div>
+            <!-- 推荐设置 -->
+            <Presets
+              :initial-w="original.width"
+              :initial-h="original.height"
+              @apply="handleApplyPreset"
+            />
+            <Adjust
+              :initial-w="original.width"
+              :initial-h="original.height"
+              v-model:width="converted.width"
+              v-model:height="converted.height"
+            />
+            <FormatAdjust
+              :default-format="original.format"
+              :default-quality="original.quality"
+              v-model:format="converted.format"
+              v-model:quality="converted.quality"
+            />
+            <Worktop
+              @save="save"
+              v-model:show="show"
+              v-model:live="live"
+              v-model:crop="cropVisible"
+            />
+          </div>
+          <Intro v-else-if="page === 'intro'" key="intro" />
+        </ElScrollbar>
+        <div class="flex flex-col border-l border-sf-theme-hover pl-3">
+          <div
+            class="flex-c mb-2 flex flex-col"
+            v-for="item in rightList"
+            :key="item.name"
+            @click="item.fn"
+          >
+            <SfIcon :name="item.icon" size="9" class="m-1 hover:bg-sf-bg" />
+            <div>{{ item.name }}</div>
+          </div>
+        </div>
+      </div>
     </div>
   </SfViewContainer>
 </template>
@@ -93,8 +120,8 @@ import FormatAdjust from './components/formatAdjust.vue'
 import ImageSelector from './components/imageSelector.vue'
 // 导入 Preview.vue 子组件 - 图片预览组件
 import Preview from './components/preview.vue'
-// 导入 SizeAdjust.vue 子组件 - 尺寸调整组件
-import SizeAdjust from './components/sizeAdjust.vue'
+// 导入 Adjust.vue 子组件 - 尺寸调整组件
+import Adjust from './components/adjust.vue'
 // 导入 Worktop.vue 子组件 - 工作顶部组件
 import Worktop from './components/worktop.vue'
 // 导入 Intro.vue 子组件 - 介绍说明组件
@@ -102,15 +129,41 @@ import Intro from './components/intro.vue'
 // 导入 Presets.vue 子组件 - 推荐设置组件
 import Presets from './components/presets.vue'
 // 导入 emptyImageData 函数 - 空图片数据对象模板
-import { emptyImageData } from './data'
-// 导入 'browser-image-compression' 库，用于图片压缩
-// import imageCompression from 'browser-image-compression'
-// 从 '@vueuse/core' 导入 useFileDialog，用于文件选择对话框
 import { useClipboard } from '@vueuse/core'
+import ConvertSVG from './components/convertSVG.vue'
+import { emptyImageData } from './data'
 const { copy } = useClipboard()
-
+const page = ref('adjust')
+const rightList = ref([
+  {
+    name: '调整',
+    icon: 'line-md:save',
+    fn: () => {
+      page.value = 'adjust'
+    },
+  },
+  {
+    name: '裁切',
+    icon: 'line-md:save',
+    fn: () => {
+      page.value = 'crop'
+    },
+  },
+  {
+    name: '导出',
+    icon: 'line-md:save',
+  },
+  {
+    name: '关于',
+    icon: 'line-md:save',
+    fn: () => {
+      page.value = 'intro'
+    },
+  },
+])
 const { open, onChange } = useFileDialog()
-
+// 裁切弹窗是否可见
+// const cropVisible = ref(false)
 // 创建一个 ref 来存储当前选择的文件对象
 const selectedFile = ref(null)
 const show = ref(false)
@@ -128,12 +181,79 @@ const handleFileSelected = (file) => {
   isConverting.value = false
   console.log('file', file)
   if (file.type == 'image/svg+xml') {
-    setSvgImage(file)
+    // 创建 FileReader 读取文件内容
+    const reader = new FileReader()
+    reader.onload = (e) => {
+      setSvgImage(e.target.result)
+    }
+
+    // 读取文件为文本
+    reader.readAsText(file)
     return
   }
   // 设置原始图片数据（加载图片信息）
   setOriginalImageData(file)
 }
+// const convertSVG = async (svgContent) => {
+//   try {
+//     // 创建一个临时的 div 来解析 SVG
+//     const tempDiv = document.createElement('div')
+//     tempDiv.innerHTML = svgContent
+//     const svgElement = tempDiv.querySelector('svg')
+//     // 获取 Canvas 元素和上下文
+//     const canvas = document.getElementById('canvasPreview')
+//     const ctx = canvas.getContext('2d')
+
+//     // 设置 Canvas 尺寸
+//     canvas.width = width.value
+//     canvas.height = height.value
+
+//     // 创建 Image 对象
+//     const img = new Image()
+
+//     // 将 SVG 内容转换为 Data URL
+//     const svgBlob = new Blob([svgContent], { type: 'image/svg+xml;charset=utf-8' })
+//     const url = URL.createObjectURL(svgBlob)
+
+//     // 等待图片加载完成
+//     await new Promise((resolve, reject) => {
+//       img.onload = resolve
+//       img.onerror = reject
+//       img.src = url
+//     })
+
+//     // 清空画布（PNG 支持透明背景）
+//     ctx.clearRect(0, 0, canvas.width, canvas.height)
+
+//     // 绘制 SVG 到 Canvas
+//     ctx.drawImage(img, 0, 0, canvas.width, canvas.height)
+
+//     // 显示 Canvas 预览
+//     showCanvasPreview.value = true
+
+//     // 将 Canvas 转换为 PNG Blob（质量固定为100%）
+//     const blob = await new Promise((resolve) => {
+//       canvas.toBlob(resolve, 'image/png')
+//     })
+
+//     // 计算文件大小
+//     const sizeInKB = (blob.size / 1024).toFixed(1)
+//     fileSize.value = `${sizeInKB} KB`
+
+//     // 创建下载链接
+//     downloadUrl.value = URL.createObjectURL(blob)
+//     downloadFileName.value = `${currentFileName.value}_${width.value}x${height.value}.png`
+
+//     // 显示下载信息
+//     showDownloadInfo.value = true
+
+//     // 清理 SVG URL 对象
+//     URL.revokeObjectURL(url)
+//   } catch (error) {
+//     console.error('转换失败:', error)
+//     alert(`转换失败: ${error.message}`)
+//   }
+// }
 // 极简版：仅核心逻辑，无多余校验（确认已拿到合法SVG文件时用）
 async function setSvgImage(file) {
   // 1. 读取SVG文件内容为文本
