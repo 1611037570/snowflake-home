@@ -11,7 +11,11 @@ const ctrlZXC = keys['Ctrl+Z+X+C'] // Ctrl+Z+X+C 组合键引用
 // 加载默认事件：初始化右键禁用与组合键监听（产生全局副作用）
 function loadEvent() {
   const systemStore = useSystemStore()
+  const { updateWindowSize } = systemStore
   const { monitorWatch } = storeToRefs(systemStore)
+
+  // 初始化窗口大小
+  updateWindowSize()
 
   // 禁用默认右键菜单
   document.addEventListener('contextmenu', (e) => {
