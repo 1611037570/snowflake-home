@@ -16,7 +16,8 @@
     "sortDesc": "Visualize the sorting process, such as bubble sort, quick sort, etc.",
     "resumeDesc": "Quickly generate beautiful resumes",
     "checklist": "Life Checklist",
-    "checklistDesc": "Record the events you have completed in your life"
+    "checklistDesc": "Record the events you have completed in your life",
+    "index": "Yang"
   },
   "moreTools": "More"
 }
