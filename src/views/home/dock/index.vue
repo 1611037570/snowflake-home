@@ -25,13 +25,13 @@
   </div>
 </template>
 <script setup>
-import { useEventListener, useThrottleFn, useWindowSize } from '@vueuse/core'
+import { useEventListener, useThrottleFn } from '@vueuse/core'
 import { storeToRefs } from 'pinia'
 import { computed, onMounted, ref } from 'vue'
 
-import { useHomeStore } from '@/stores'
+import { systemStore, useHomeStore } from '@/stores'
 import list from './dock.data'
-
+const { windowSize } = storeToRefs(systemStore)
 // 原始样式相关状态保留
 const init = ref(false)
 
@@ -46,7 +46,7 @@ const menuRef = ref(null)
 const homeStore = useHomeStore()
 const { autoHideDock } = storeToRefs(homeStore)
 const dockVisible = ref(false)
-const { height: windowHeight } = useWindowSize()
+const { height: windowHeight } = windowSize.value
 
 // 原始dockClass计算逻辑保留
 const dockClass = computed(() => {
