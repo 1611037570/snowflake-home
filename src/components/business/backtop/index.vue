@@ -1,6 +1,6 @@
 <script setup>
-import { useWindowSize } from '@vueuse/core'
-const { height } = useWindowSize()
+import { systemStore } from '@/stores'
+const { windowSize } = storeToRefs(systemStore)
 const trigger = ref('hover')
 const tooltipRef = useTemplateRef('tooltipRef')
 function handleClick() {
@@ -12,7 +12,7 @@ function handleClick() {
   <ElBacktop
     :bottom="50"
     :right="50"
-    :visibility-height="height - 50"
+    :visibility-height="windowSize.height - 50"
     style="z-index: 200"
     class="z-200"
   >
