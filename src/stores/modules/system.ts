@@ -9,8 +9,17 @@ export const useSystemStore = defineStore(
     const runTime = ref<number>(dayjs().diff(dayjs(start), 'day'))
     // 性能监控
     const monitorWatch = ref<boolean>(false)
+    // 窗口大小
+    const windowSize = ref<{ width: number; height: number }>({
+      width: window.innerWidth,
+      height: window.innerHeight,
+    })
+    function updateWindowSize() {
+      const size = useWindowSize()
+      windowSize.value = size
+    }
 
-    return { runTime, monitorWatch }
+    return { runTime, monitorWatch, windowSize, updateWindowSize }
   },
   {
     persist: {
