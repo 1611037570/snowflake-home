@@ -29,8 +29,10 @@ import { useEventListener, useThrottleFn } from '@vueuse/core'
 import { storeToRefs } from 'pinia'
 import { computed, onMounted, ref } from 'vue'
 
-import { systemStore, useHomeStore } from '@/stores'
+import { useHomeStore, useSystemStore } from '@/stores'
 import list from './dock.data'
+
+const systemStore = useSystemStore()
 const { windowSize } = storeToRefs(systemStore)
 // 原始样式相关状态保留
 const init = ref(false)

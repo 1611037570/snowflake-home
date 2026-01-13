@@ -11,9 +11,18 @@ export const useSystemStore = defineStore(
     // 性能监控
     const monitorWatch = ref<boolean>(false)
     // 窗口大小
-    const windowSize = useWindowSize()
+    const windowSize = ref<{
+      width: number | unknown
+      height: number | unknown
+    }>({
+      width: window.innerWidth,
+      height: window.innerHeight,
+    })
+    function updateWindowSize() {
+      windowSize.value = useWindowSize()
+    }
 
-    return { runTime, monitorWatch, windowSize }
+    return { runTime, monitorWatch, windowSize, updateWindowSize }
   },
   {
     persist: {
