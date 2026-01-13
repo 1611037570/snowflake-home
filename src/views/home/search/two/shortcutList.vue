@@ -1,11 +1,11 @@
 <script setup>
 import { useSearchStore, useShortcutStore } from '@/stores'
 import { getStrMatch } from '@/utils'
-import Item from './item.vue'
-import SearchTitle from './searchTitle.vue'
+import Item from '../item.vue'
+import SearchTitle from '../searchTitle.vue'
 const shortcutStore = useShortcutStore()
 const searchStore = useSearchStore()
-const { shortcutVisible, searchValue, h } = storeToRefs(searchStore)
+const { shortcutVisible, searchValue } = storeToRefs(searchStore)
 const { shortcutList } = storeToRefs(shortcutStore)
 const { open } = searchStore
 // 匹配的快捷键
@@ -27,7 +27,7 @@ const matchShortcut = computed(() => {
 
 <template>
   <SearchTitle
-    v-if="shortcutVisible"
+    v-if="matchShortcut.length && shortcutVisible"
     title="快捷方式"
     info="快捷方式已添加的网站链接，支持输入拼音、名称查找。"
     icon="material-symbols:article-shortcut-rounded"
@@ -38,7 +38,6 @@ const matchShortcut = computed(() => {
       {{ item.name }}
     </Item>
   </div>
-  <div v-else-if="shortcutVisible" class="mb-3 text-center text-sm">暂无匹配的快捷方式</div>
 </template>
 
 <style lang="scss" scoped></style>

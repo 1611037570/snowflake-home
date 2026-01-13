@@ -1,47 +1,4 @@
-<script setup>
-import { useSearchStore } from '@/stores'
-import { storeToRefs } from 'pinia'
-import FixedList from './fixedList.vue'
-import Item from './item.vue'
-import SearchList from './searchList.vue'
-import SearchTitle from './searchTitle.vue'
-
-const searchStore = useSearchStore()
-const { searchHistory, searchHistoryVisible, openMode, hotSource, hotSourceVisible } =
-  storeToRefs(searchStore)
-const openHistory = (item) => {
-  window.open(item.url, openMode.value)
-}
-
-const removeHistory = (index) => {
-  searchStore.removeSearchHistory(index)
-}
-// 清空搜索历史
-const clearHistory = () => {
-  searchStore.clearSearchHistory()
-}
-
-const hotList = [
-  {
-    name: '百度',
-    value: '百度',
-  },
-  {
-    name: '抖音',
-    value: '抖音',
-  },
-  {
-    name: '微博',
-    value: '微博',
-  },
-]
-function open() {
-  window.open('https://gushitong.baidu.com/index/ab-000001', openMode.value)
-}
-</script>
-
 <template>
-  <FixedList />
   <SearchTitle title="市场行情" icon="tabler:history" iconClass="text-sf-theme" />
 
   <div class="flex gap-3 pb-2">
@@ -101,41 +58,14 @@ function open() {
       <p class="text-sf-text-secondary text-xs">+42.18 · 成交量 3.65亿</p>
     </div>
   </div>
-  <template v-if="searchHistoryVisible && searchHistory.length">
-    <search-title title="搜索历史" icon="tabler:history" iconClass="text-sf-theme">
-      <template #right>
-        <div @click.stop="clearHistory" class="flex items-center">
-          <SfIcon icon="material-symbols:delete-outline" class="mr-1.5" size="4" />
-          清空全部
-        </div>
-      </template>
-    </search-title>
-    <div class="mb-3 flex flex-wrap gap-2">
-      <Item @click="openHistory(item)" v-for="(item, index) in searchHistory" :key="index">
-        <div class="flex-1 overflow-hidden text-ellipsis text-sf-text">
-          {{ item.value }}
-        </div>
-
-        <template #right>
-          <SfIcon
-            icon="formkit:close"
-            class="ml-1.5 hover:text-red-500"
-            size="4"
-            @click.stop="removeHistory(index)"
-          />
-        </template>
-      </Item>
-    </div>
-  </template>
-
-  <SearchTitle title="热门搜索" icon="bxs:hot" iconClass="text-red-400" v-if="hotSourceVisible">
-    <template #right>
-      <SfTab :list="hotList" v-model="hotSource" />
-    </template>
-  </SearchTitle>
-  <SearchList v-if="hotSourceVisible" />
 </template>
 
-<style scoped>
-/* Tailwind CSS is used for styling */
-</style>
+<script setup>
+import SearchTitle from '../searchTitle.vue'
+
+function open() {
+  window.open('https://gushitong.baidu.com/index/ab-000001')
+}
+</script>
+
+<style lang="scss" scoped></style>

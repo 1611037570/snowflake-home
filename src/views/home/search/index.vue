@@ -4,9 +4,9 @@ import { onClickOutside } from '@vueuse/core'
 import { storeToRefs } from 'pinia'
 import { computed, ref } from 'vue'
 import CurrentTime from './currentTime.vue'
-import SearchBefore from './searchBefore.vue'
+import One from './one/index.vue'
 import SearchInput from './searchInput.vue'
-import SearchRecommend from './searchRecommend.vue'
+import SearchTwo from './two/index.vue'
 import WebSourceList from './webSourceList.vue'
 
 const searchStore = useSearchStore()
@@ -66,10 +66,9 @@ onClickOutside(searchContainer, () => {
         </div>
       </template>
       <!-- 搜索建议 -->
-      <SearchRecommend v-else-if="handleValue" />
+      <SearchTwo v-else-if="handleValue" />
       <!-- 搜索历史 -->
-      <SearchBefore v-else />
-      <div class="mt-3 text-center text-xs">了解搜索框功能</div>
+      <One v-else />
     </div>
   </div>
 </template>
