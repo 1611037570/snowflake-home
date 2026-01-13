@@ -34,6 +34,7 @@ import { createStyleImportPlugin, ElementPlusResolve } from 'vite-plugin-style-i
 export default ({ mode }: { mode: string }) => {
   // 从环境文件加载环境变量
   const env = loadEnv(mode, process.cwd())
+  const isProd = mode === 'production'
   // 从环境变量中提取配置项
   const { VITE_PORT, VITE_BASE_URL, VITE_APP_TITLE, VITE_DEFAULT_LANG } = env
   return defineConfig({
@@ -55,7 +56,7 @@ export default ({ mode }: { mode: string }) => {
       // pwaPlugin(),
       // HTML插件配置
       createHtmlPlugin({
-        minify: true, // 开启HTML压缩
+        minify: isProd, // 开启HTML压缩
         // 注入 HTML 变量（HTML 中通过 <%= 变量名 %> 使用）
         inject: {
           data: {
@@ -92,8 +93,9 @@ export default ({ mode }: { mode: string }) => {
         resolves: [ElementPlusResolve()], // 样式解析器
       }),
       // 仅在开发环境启用
-      ...(mode === 'development'
-        ? [
+      ...(isProd
+        ? []
+        : [
             // Vue DevTools调试
             vueDevTools(),
             // 移动端调试工具
@@ -104,8 +106,7 @@ export default ({ mode }: { mode: string }) => {
             ViteRestart({
               restart: ['vite.config.ts'], // 监听这些文件的变化，触发服务器重启
             }),
-          ]
-        : []),
+          ]),
     ],
     // 路径解析配置
     resolve: {
@@ -119,15 +120,15 @@ export default ({ mode }: { mode: string }) => {
 
     // esbuild配置
     esbuild: {
-      drop: mode === 'production' ? ['console', 'debugger'] : [], // 移除打印信息
+      drop: isProd ? ['console', 'debugger'] : [], // 移除打印信息
     },
 
     // 构建配置
     build: {
       outDir: 'dist', // 项目打包根目录
       assetsDir: 'assets', // 静态资源目录
-      chunkSizeWarningLimit: 500, // 警告阈值
-      minify: false, // 代码压缩
+      chunkSizeWarningLimit: 1000, // 警告阈值
+      // minify: 'terser', // 代码压缩
       // Rollup配置
       rollupOptions: {
         // input: {
@@ -147,7 +148,7 @@ export default ({ mode }: { mode: string }) => {
           // 资源压缩配置
           viteCompression({
             verbose: false, // 输出压缩日志
-            disable: mode === 'production' ? false : true, // 生产环境启用
+            disable: isProd ? false : true, // 生产环境启用
             threshold: 10240, // 文件大小阈值
             algorithm: 'brotliCompress', // 压缩算法
             ext: '.gz', // 压缩文件扩展名
