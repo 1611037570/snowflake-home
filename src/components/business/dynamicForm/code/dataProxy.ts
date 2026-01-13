@@ -45,23 +45,15 @@ class DataProxy<T> {
     return result
   }
   private select(options: { keys: Keys; value?: any; index?: number }): any {
-    const { keys, value = undefined, index = 0 } = options
-
+    const { keys, value, index = 0 } = options
+    const keyPath = Array.isArray(keys) ? keys : [keys]
     const keysLength = keys.length
     let current: any = this.data
-    for (let i = 0; i < keysLength; i++) {
+
+    const lastIndex = keyPath.length - 1
+    for (let i = 0; i < lastIndex; i++) {
       const key: any = keys[i]
 
-      // 最后一个键
-      if (i === keysLength - 1) {
-        // 设置值（如果有）
-        if (value !== undefined) {
-          current[key] = value
-        } else if (!current.hasOwnProperty(key)) {
-          current[key] = ''
-        }
-        return current[key]
-      }
       // 移动到下一级
       if (key == '?') {
         current = current[index] ?? (current[index] = {})
@@ -76,6 +68,17 @@ class DataProxy<T> {
       current[key] = nextKey === '?' ? [] : {}
       current = current[key]
     }
+
+    // 最后一个键
+    const lastKey: any = keyPath[lastIndex]
+
+    // 设置值（如果有）
+    if (value !== undefined) {
+      current[lastKey] = value
+    } else if (!current.hasOwnProperty(lastKey)) {
+      current[lastKey] = ''
+    }
+    return current[lastKey]
   }
 
   constructor(data: any, emit: any) {
