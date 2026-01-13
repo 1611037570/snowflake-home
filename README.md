@@ -29,6 +29,10 @@ pnpm dev
 pnpm build
 ```
 
+## 📄 开源协议
+
+本项目采用 [AGPL 3.0 License](LICENSE) 开源协议。
+
 ## ❄️小雪又至，六载前端路。
 
 回望过去，是**上万次 Commit** 的沉淀，是数不清多次 **console.log**的坚持，也是渴望拥有**代表作**的念想。
