@@ -1,6 +1,8 @@
 <script setup>
-import { systemStore } from '@/stores'
+import { useSystemStore } from '@/stores'
+const systemStore = useSystemStore()
 const { windowSize } = storeToRefs(systemStore)
+
 const trigger = ref('hover')
 const tooltipRef = useTemplateRef('tooltipRef')
 function handleClick() {

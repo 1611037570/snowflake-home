@@ -33,7 +33,7 @@ function togglePlay(href) {
   }
 }
 const solidThreshold = computed(() => {
-  return windowSize.value.height
+  return windowSize.value?.height
 })
 const opacity = ref(0)
 
