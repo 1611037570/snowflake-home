@@ -1,27 +1,35 @@
 <template>
   <!-- 容器 - 固定定位 -->
-  <div class="fixed top-1/2 bottom-0 left-0 z-20 w-48">
-    <div v-if="tabIndex == 1 || 1" class="fixed bottom-12 left-12 z-20" style="zoom: 0.8">
+  <div
+    class="fixed top-1/2 bottom-0 left-0 z-50 h-auto w-68 transition-transform duration-300"
+    :class="[containerClasses]"
+    @mouseenter="expand = true"
+    @mousemove="expand = true"
+    @mouseleave="expand = false"
+  >
+    <div style="zoom: 0.8" class="flex flex-col items-center justify-center gap-6">
       <!-- 冥想组件 -->
-      <Meditation class="mt-12"></Meditation>
+      <Meditation></Meditation>
       <!-- 幸运转盘组件 -->
-      <LuckyWheel class="mt-12"></LuckyWheel>
+      <LuckyWheel></LuckyWheel>
       <!-- 收入组件 -->
-      <Income class="mt-12"></Income>
+      <Income></Income>
       <!-- 木鱼组件 -->
-      <WoodenFish class="mt-12"></WoodenFish>
+      <WoodenFish></WoodenFish>
     </div>
   </div>
 </template>
 
 <script setup>
-import { useHomeStore } from '@/stores'
 import Income from './income.vue'
 import LuckyWheel from './luckyWheel.vue'
 import Meditation from './meditation.vue'
 import WoodenFish from './woodenFish.vue'
-const homeStore = useHomeStore()
-const { tabIndex } = storeToRefs(homeStore)
+const expand = ref(false)
+
+const containerClasses = computed(() => {
+  return expand.value ? 'translate-x-[0%]' : 'translate-x-[-48%]'
+})
 </script>
 
 <style scoped></style>
