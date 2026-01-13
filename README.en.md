@@ -29,6 +29,10 @@ pnpm dev
 pnpm build
 ```
 
+## 📄 License
+
+This project is licensed under the [AGPL 3.0 License](LICENSE).
+
 ## ❄️ First Snow Again, Six Years of Frontend
 
 Looking back, it is the sediment of tens of thousands of commits,
