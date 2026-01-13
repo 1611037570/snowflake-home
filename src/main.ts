@@ -14,21 +14,28 @@ import './styles/index.scss'
 import './styles/tailwind.css'
 // 导入全局组件安装器
 import { globalComponentInstaller } from './components'
-
+// 导入默认事件加载器
+import { loadEvent, loadTheme } from './utils'
 // 创建 Vue 应用实例
 const app = createApp(App)
-// 注册全局组件安装器
-app.use(globalComponentInstaller)
+
 // 注册 i18n 插件
 app.use(i18n)
 // 注册 Pinia 状态管理
 app.use(pinia)
 // 注册路由
 app.use(router)
+// 加载主题
+loadTheme()
+// 加载默认事件
+loadEvent()
+
 // 注册全局函数 $s
 import { $s } from './utils/modules/sizeConvert'
 app.config.globalProperties.$s = $s
 
+// 注册全局组件安装器
+app.use(globalComponentInstaller)
 // 挂载应用到 DOM
 app.mount('#app')
 
