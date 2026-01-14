@@ -52,6 +52,15 @@ export default defineConfigWithVueTs(
       'vue/multi-word-component-names': 'off',
       // 允许使用 any 类型
       '@typescript-eslint/no-explicit-any': 'off',
+      // 允许短路求值写法：a && b()
+      'no-unused-expressions': 'off',
+      '@typescript-eslint/no-unused-expressions': [
+        'error',
+        {
+          allowShortCircuit: true, // 允许短路求值
+          allowTernary: true, // 允许三元表达式
+        },
+      ],
     },
   },
 )
