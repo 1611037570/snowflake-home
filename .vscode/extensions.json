@@ -18,6 +18,8 @@
     // 代码拼写检查器
     "streetsidesoftware.code-spell-checker",
     // i18n Ally 国际化插件
-    "lokalise.i18n-ally"
+    "lokalise.i18n-ally",
+    // 中文语言包
+    "ms-vscode.vscode-language-pack-zh-hans"
   ]
 }
