@@ -1,7 +1,7 @@
 <template>
   <SfViewContainer>
     <div class="relative flex h-full w-full items-center justify-center bg-sf-modal p-2">
-      <!-- <Crop v-if="cropVisible" /> -->
+      <Crop v-if="page === 'crop'" :src="original.url" />
       <ConvertSVG />
       <!-- <svg
         id="svgPreview"
@@ -131,6 +131,7 @@ import Presets from './components/presets.vue'
 // 导入 emptyImageData 函数 - 空图片数据对象模板
 import { useClipboard } from '@vueuse/core'
 import ConvertSVG from './components/convertSVG.vue'
+import Crop from './components/crop.vue'
 import { emptyImageData } from './data'
 const { copy } = useClipboard()
 const page = ref('adjust')
