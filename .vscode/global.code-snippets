@@ -1,0 +1,27 @@
+{
+  // 片段1：快速生成console.log
+  "Console Log": {
+    "scope": "javascript,typescript,vue,html",
+    "prefix": "clo", // 触发关键词：输入log按Tab
+    "body": [
+      // 代码内容（数组每一项是一行）
+      "console.log('$1:>> ', $1);", // $1是光标默认位置，可Tab切换
+      "$2", // $2是第二个光标位置
+    ],
+    "description": "快速打印变量到控制台", // 片段描述（提示时显示）
+  },
+  //  vue3模板
+  "Vue3模板": {
+    "prefix": "v3",
+    "body": [
+      "<script setup>",
+      "</script>",
+      "",
+      "<template><div></div></template>",
+      "",
+      "<style lang='scss' scoped>",
+      "</style>",
+    ],
+    "description": "vue3模板",
+  },
+}
