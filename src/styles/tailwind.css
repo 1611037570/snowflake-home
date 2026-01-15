@@ -69,16 +69,16 @@
   --color-sf-border-base: var(--sf-border-base);
 }
 
-/* 亮色模式 */
+/* 默认：亮色模式 */
 :root {
   --sf-success: color-mix(in oklab, #67c23a 100%, transparent);
   --sf-warning: color-mix(in oklab, #e6a23c 100%, transparent);
   --sf-error: color-mix(in oklab, #f56c6c 100%, transparent);
   --sf-info: color-mix(in oklab, #909399 100%, transparent);
-
-  --sf-base: rgba(0, 0, 0, 1);
   --sf-theme: #50a2ff;
   --sf-theme-hover: oklch(88.2% 0.059 254.128);
+
+  --sf-base: rgba(0, 0, 0, 1);
   --sf-primary: rgba(255, 255, 255, 1);
   --sf-primary-hover: #d1d1d6;
   --sf-text: color-mix(in oklab, oklch(0% 0 0) 80%, transparent);
@@ -99,8 +99,6 @@
 
 /* 深色模式 */
 .dark {
-  --sf-theme: #50a2ff;
-  --sf-theme-hover: oklch(88.2% 0.059 254.128);
   --sf-base: rgba(255, 255, 255, 1);
   --sf-text: color-mix(in oklab, oklch(100% 0 0) 80%, transparent);
   --sf-text-2: color-mix(in oklab, oklch(100% 0 0) 60%, transparent);

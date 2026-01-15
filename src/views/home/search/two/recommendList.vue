@@ -4,7 +4,7 @@
 </template>
 
 <script setup>
-import { appSource } from '@/datas/search.data'
+import { appSource } from '@/@/constants'
 import SearchList from '../searchList.vue'
 import SearchTitle from '../searchTitle.vue'
 </script>

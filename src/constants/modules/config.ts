@@ -1,4 +1,12 @@
 /**
+ * 系统主题色
+ */
+export const THEME_COLOR = '#50a2ff'
+/**
+ * 系统主题色-悬停
+ */
+export const THEME_COLOR_HOVER = 'oklch(88.2% 0.059 254.128)'
+/**
  * 基础页面
  * 用于展示项目的图标、主题样式资源
  */

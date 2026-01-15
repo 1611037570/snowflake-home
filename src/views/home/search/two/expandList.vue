@@ -14,7 +14,7 @@
 </template>
 
 <script setup>
-import { appSource } from '@/datas/search.data'
+import { appSource } from '@/@/constants'
 import { useSearchStore } from '@/stores'
 import Item from '../item.vue'
 import SearchTitle from '../searchTitle.vue'
