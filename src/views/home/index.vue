@@ -30,9 +30,9 @@
   <!-- 游戏组件 -->
   <Game />
   <!-- 置顶便签组件 -->
-  <TopNote />
+  <NoteHomeTop />
   <!-- 便签组件 -->
-  <Notes />
+  <NoteHomeModal />
   <SettingModal />
 </template>
 
@@ -51,9 +51,8 @@ const Quote = defineAsyncComponent(() => import('./components/quote.vue'))
 const SettingModal = defineAsyncComponent(() => import('./setting/modal.vue'))
 const Game = defineAsyncComponent(() => import('./games/index.vue'))
 const Shortcut = defineAsyncComponent(() => import('./shortcut/index.vue'))
-const TopNote = defineAsyncComponent(() => import('./notes/topNote.vue'))
-const Notes = defineAsyncComponent(() => import('./notes/modal.vue'))
-
+const NoteHomeModal = defineAsyncComponent(() => import('@views/note/homeModal.vue'))
+const NoteHomeTop = defineAsyncComponent(() => import('@views/note/homeTop.vue'))
 const homeStore = useHomeStore()
 const { tabIndex } = storeToRefs(homeStore)
 const searchStore = useSearchStore()
