@@ -1,7 +1,8 @@
 import { ALL_PAGE_LIST, DEFAULT_PAGE } from '@/constants/modules/config'
+import { type RouteRecordRaw } from 'vue-router'
 
 // 路由数组，通过模块加载路由
-const routes: any[] = [
+const routes: RouteRecordRaw[] = [
   // 默认路由，重定向到起始页
   {
     path: '/',
@@ -19,21 +20,25 @@ const routes: any[] = [
     redirect: '/error',
   },
 ]
-// 动态导入所有视图组件
-const components = import.meta.glob('@/views/*/index.vue', { eager: false })
-// 获取组件函数，根据组件名称动态导入组件
-function getComponent(name: string) {
-  return components[`/src/views/${name}/index.vue`]
-}
+
+// 动态导入所有视图组件，优化路径匹配
+const componentModules = import.meta.glob('@/views/*/index.vue', { eager: false })
+
 // 添加路由函数，根据组件名称动态创建路由
-function addRoute(name: string) {
+function generateRoute(name: string): RouteRecordRaw {
+  // 动态生成组件导入路径，确保正确匹配
+  const componentPath = `/src/views/${name}/index.vue`
+  const component = componentModules[componentPath]
+
   return {
     path: `/${name}`,
-    name: name,
-    component: getComponent(name),
+    name,
+    component: component ? component : () => import('@views/status/error.vue'),
   }
 }
-// 按需加载路由
-routes.push(...ALL_PAGE_LIST.map((name) => addRoute(name)))
+
+// 生成并添加所有页面路由
+const generatedRoutes = ALL_PAGE_LIST.map(generateRoute)
+routes.push(...generatedRoutes)
 
 export default routes
