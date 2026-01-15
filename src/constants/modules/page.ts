@@ -1,5 +1,5 @@
 import { $t } from '@/locales'
-import { PAGE_BASE_LIST, PAGE_PROJECT_LIST } from './config'
+import { BASE_PAG_LIST, PROJECT_PAGE_LIST } from './config'
 type PageType = 'project' | 'base'
 
 interface PageItem {
@@ -10,7 +10,7 @@ interface PageItem {
   version?: string
 }
 export const BASE_LIST = computed<PageItem[]>(() => {
-  const list = PAGE_BASE_LIST.map((item) => ({
+  const list = BASE_PAG_LIST.map((item) => ({
     name: $t(`router.${item}`),
     url: `/${item}`,
     type: 'base' as PageType,
@@ -18,7 +18,7 @@ export const BASE_LIST = computed<PageItem[]>(() => {
   return list
 })
 export const PROJECT_LIST = computed<PageItem[]>(() => {
-  const list = PAGE_PROJECT_LIST.map((item) => ({
+  const list = PROJECT_PAGE_LIST.map((item) => ({
     name: $t(`router.${item}`),
     url: `/${item}`,
     type: 'project' as PageType,

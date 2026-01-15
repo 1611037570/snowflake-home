@@ -2,12 +2,12 @@
  * 基础页面
  * 用于展示项目的图标、主题样式资源
  */
-export const PAGE_BASE_LIST = ['messageBoard', 'icon', 'color']
+export const BASE_PAG_LIST = ['messageBoard', 'icon', 'color']
 /**
  * 项目页面
  * 用于加载所需要的项目
  */
-export const PAGE_PROJECT_LIST = [
+export const PROJECT_PAGE_LIST = [
   'image',
   'resume',
   'index',
@@ -16,9 +16,15 @@ export const PAGE_PROJECT_LIST = [
   '2048',
   'sort',
   'checklist',
+  'note',
+  'passwordBox',
 ]
 /**
  * 所有页面
- * 包含基础页面和项目页面（路由通过 PAGE_ALL_LIST 配置）
+ * 包含基础页面和项目页面（路由通过 ALL_PAGE_LIST 配置）
  */
-export const PAGE_ALL_LIST = [...PAGE_BASE_LIST, ...PAGE_PROJECT_LIST]
+export const ALL_PAGE_LIST = [...BASE_PAG_LIST, ...PROJECT_PAGE_LIST]
+/**
+ * 默认页面
+ */
+export const DEFAULT_PAGE = 'home'
