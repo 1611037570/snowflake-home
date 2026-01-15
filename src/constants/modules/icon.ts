@@ -1,19 +1,24 @@
 interface IconItem {
   icon: string
   color?: string
+  name?: string
 }
 
 export const ICON_LIST: Record<string, IconItem> = {
   'lucide:code': {
     icon: 'lucide:code',
   },
-  'simple-icons:juejin': { icon: 'simple-icons:juejin', color: 'text-blue-500' },
-  'simple-icons:github': { icon: 'simple-icons:github', color: 'text-black' },
+  'simple-icons:juejin': { icon: 'simple-icons:juejin', color: 'text-blue-500', name: '稀土掘金' },
+  'simple-icons:github': { icon: 'simple-icons:github', color: 'text-black', name: 'GitHub' },
   'lucide:camera': {
     icon: 'lucide:camera',
   },
-  'simple-icons:xiaohongshu': { icon: 'simple-icons:xiaohongshu', color: 'text-red-500' },
-  'logos:tiktok-icon': { icon: 'logos:tiktok-icon' },
+  'simple-icons:xiaohongshu': {
+    icon: 'simple-icons:xiaohongshu',
+    color: 'text-red-500',
+    name: '小红书',
+  },
+  'logos:tiktok-icon': { icon: 'logos:tiktok-icon', name: '抖音' },
   'lucide:pause': { icon: 'lucide:pause' },
   'lucide:play': { icon: 'lucide:play' },
   'lucide:briefcase': { icon: 'lucide:briefcase' },
@@ -33,7 +38,7 @@ export const ICON_LIST: Record<string, IconItem> = {
   'fa-solid:chart-line': { icon: 'fa-solid:chart-line' },
   'fa-solid:caret-down': { icon: 'fa-solid:caret-down' },
   'fa-solid:caret-up': { icon: 'fa-solid:caret-up' },
-  'material-symbols:delete-outline': { icon: 'material-symbols:delete-outline' },
+  'material-symbols:delete-outline': { icon: 'material-symbols:delete-outline', name: '删除' },
   'formkit:close': { icon: 'formkit:close' },
   'bxs:hot': { icon: 'bxs:hot' },
   'fluent:apps-24-filled': { icon: 'fluent:apps-24-filled' },
@@ -53,12 +58,12 @@ export const ICON_LIST: Record<string, IconItem> = {
   'ri:moon-clear-fill': { icon: 'ri:moon-clear-fill' },
   'fluent:search-24-regular': { icon: 'fluent:search-24-regular' },
   'ion:language': { icon: 'ion:language' },
-  'ic:round-push-pin': { icon: 'ic:round-push-pin' },
+  'ic:round-push-pin': { icon: 'ic:round-push-pin', name: '置顶' },
   'pajamas:todo-add': { icon: 'pajamas:todo-add' },
   'ph:file-md-duotone': { icon: 'ph:file-md-duotone' },
   'fluent-mdl2:color-solid': { icon: 'fluent-mdl2:color-solid' },
   'icon-park-outline:send-one': { icon: 'icon-park-outline:send-one' },
-  'ic:round-delete': { icon: 'ic:round-delete' },
+  'ic:round-delete': { icon: 'ic:round-delete', name: '删除' },
   'logos:vue': { icon: 'logos:vue' },
   'logos:typescript-icon': { icon: 'logos:typescript-icon' },
   'logos:vitejs': { icon: 'logos:vitejs' },
