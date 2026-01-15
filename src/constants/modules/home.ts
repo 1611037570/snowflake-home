@@ -67,7 +67,7 @@ export const default_list: ShortcutItem[] = [
   },
 ]
 
-export const webSource = ref([
+export const DEFAULT_WEB_SOURCE = ref([
   {
     type: '百度',
     url: 'https://www.baidu.com/s?ie=utf-8&word=%s',
@@ -90,7 +90,7 @@ export const webSource = ref([
   },
 ])
 // 应用搜索源
-export const appSource = ref([
+export const DEFAULT_APP_SOURCE = [
   {
     type: '百度翻译',
     url: 'https://fanyi.baidu.com/mtpe-individual/transText?query=%s&lang=en2zh#/',
@@ -124,4 +124,4 @@ export const appSource = ref([
     type: '稀土掘金',
     url: 'https://juejin.cn/search?query=%s',
   },
-])
+]

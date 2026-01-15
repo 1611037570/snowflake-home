@@ -1,3 +1,4 @@
+import { DEFAULT_APP_SOURCE, DEFAULT_WEB_SOURCE } from '@/constants'
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 
@@ -30,6 +31,9 @@ export const useSearchStore = defineStore(
     const currentIndex = ref(-1)
     // 当前热门搜索源
     const hotSource = ref('百度')
+    const appSource = ref(DEFAULT_APP_SOURCE)
+    // web搜索源
+    const webSource = ref(DEFAULT_WEB_SOURCE)
 
     // 表达式标记
     const expressionsFlag = ref(false)
@@ -126,6 +130,8 @@ export const useSearchStore = defineStore(
       searchHistoryVisible,
       hotSourceVisible,
       openMode,
+      appSource,
+      webSource,
       appSourceVisible,
       shortcutVisible,
       currentIndex,

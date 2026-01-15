@@ -14,14 +14,13 @@
 </template>
 
 <script setup>
-import { appSource } from '@/@/constants'
 import { useSearchStore } from '@/stores'
 import Item from '../item.vue'
 import SearchTitle from '../searchTitle.vue'
 
 const searchStore = useSearchStore()
 const { search } = searchStore
-const { appSourceVisible } = storeToRefs(searchStore)
+const { appSourceVisible, appSource } = storeToRefs(searchStore)
 </script>
 
 <style lang="scss" scoped></style>
