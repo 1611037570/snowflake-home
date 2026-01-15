@@ -19,7 +19,7 @@ function togglePlay() {
   }
 }
 
-import { da_ai_xian_zun, fixed } from '@/datas'
+import { da_ai_xian_zun, fixed } from '@/constants'
 const list = [...fixed, ...da_ai_xian_zun].map((item) => ({
   text: item.value,
 }))

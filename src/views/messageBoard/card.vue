@@ -15,7 +15,7 @@
 <script setup>
 import { getRandomItem } from '@/utils'
 import { useId } from 'vue'
-import { colors } from '@/datas'
+import { colors } from '@/constants'
 const id = useId()
 const topId = defineModel('topId')
 function handleClick() {

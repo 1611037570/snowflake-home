@@ -25,7 +25,7 @@
 </template>
 
 <script setup>
-import { webSource } from '@/datas/search.data'
+import { webSource } from '@/@/constants'
 import { useSearchStore } from '@/stores'
 import { onClickOutside } from '@vueuse/core'
 
