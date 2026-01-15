@@ -75,6 +75,18 @@ const routes = [
     name: 'error',
     component: () => import('@views/status/error.vue'),
   },
+  // 密码箱
+  {
+    path: '/passwordBox',
+    name: 'passwordBox',
+    component: () => import('@views/passwordBox/index.vue'),
+  },
+  // 便签
+  {
+    path: '/note',
+    name: 'note',
+    component: () => import('@views/note/index.vue'),
+  },
   // 捕获所有不存在的路由并重定向
   {
     path: '/:pathMatch(.*)*',
