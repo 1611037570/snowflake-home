@@ -35,4 +35,4 @@ export const ALL_PAGE_LIST = [...BASE_PAG_LIST, ...PROJECT_PAGE_LIST]
 /**
  * 默认页面
  */
-export const DEFAULT_PAGE = 'home'
+export const DEFAULT_PAGE = '/home'

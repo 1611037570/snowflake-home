@@ -6,7 +6,7 @@ const routes: RouteRecordRaw[] = [
   // 默认路由，重定向到起始页
   {
     path: '/',
-    redirect: `/${DEFAULT_PAGE}`,
+    redirect: DEFAULT_PAGE,
   },
   // 404 错误页
   {
