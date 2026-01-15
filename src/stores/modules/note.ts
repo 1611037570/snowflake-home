@@ -31,7 +31,6 @@ export const useNoteStore = defineStore(
     const noteList = ref<NoteItem[]>([])
     // 当前选中的便签索引
     const currentIndex = ref<number>(-1)
-
     // 置顶列表：同时包含置顶项和待办项，待办项排在最前面
     const topNoteList = computed(() => {
       const list = noteList.value
@@ -49,15 +48,22 @@ export const useNoteStore = defineStore(
     })
     // 添加便签
     function addNote() {
+      currentIndex.value = -1
       noteList.value.push({
         ...note_data,
         id: getUUID(),
       })
     }
     function delNote() {
-      const index = currentIndex.value
-      currentIndex.value = -1
-      noteList.value.splice(index, 1)
+      ElMessageBox.confirm('该操作将永久删除当前便签，是否继续？', '删除当前便签', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning',
+      }).then(() => {
+        const index = currentIndex.value
+        currentIndex.value = -1
+        noteList.value.splice(index, 1)
+      })
     }
     return {
       noteList,
