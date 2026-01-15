@@ -1,5 +1,5 @@
 import { $t } from '@/locales'
-
+import { PAGE_BASE_LIST, PAGE_PROJECT_LIST } from './config'
 type PageType = 'project' | 'base'
 
 interface PageItem {
@@ -10,81 +10,21 @@ interface PageItem {
   version?: string
 }
 export const BASE_LIST = computed<PageItem[]>(() => {
-  return [
-    {
-      name: $t('router.messageBoard'),
-      url: '/messageBoard',
-      type: 'project',
-    },
-    {
-      name: $t('router.index'),
-      url: '/index',
-      type: 'base',
-    },
-    {
-      name: $t('router.home'),
-      url: '/home',
-      type: 'base',
-    },
-    {
-      name: $t('router.icon'),
-      url: '/icon',
-      type: 'base',
-    },
-    {
-      name: $t('router.color'),
-      url: '/color',
-      type: 'base',
-    },
-  ]
+  const list = PAGE_BASE_LIST.map((item) => ({
+    name: $t(`router.${item}`),
+    url: `/${item}`,
+    type: 'base' as PageType,
+  }))
+  return list
 })
 export const PROJECT_LIST = computed<PageItem[]>(() => {
-  return [
-    {
-      name: $t('router.image'),
-      url: '/image',
-      version: '1.0.0',
-      type: 'project',
-      desc: $t('router.imageDesc'),
-    },
-    {
-      name: $t('router.resume'),
-      url: '/resume',
-      type: 'project',
-      desc: $t('router.resumeDesc'),
-    },
-
-    {
-      name: $t('router.home'),
-      url: '/home',
-      type: 'project',
-      desc: $t('router.homeDesc'),
-    },
-    {
-      name: $t('router.reborn'),
-      url: '/reborn',
-      type: 'project',
-      desc: $t('router.rebornDesc'),
-    },
-    {
-      name: $t('router.2048'),
-      url: '/2048',
-      type: 'project',
-      desc: $t('router.2048Desc'),
-    },
-    {
-      name: $t('router.sort'),
-      url: '/sort',
-      type: 'project',
-      desc: $t('router.sortDesc'),
-    },
-    {
-      name: $t('router.checklist'),
-      url: '/checklist',
-      type: 'project',
-      desc: $t('router.checklistDesc'),
-    },
-  ]
+  const list = PAGE_PROJECT_LIST.map((item) => ({
+    name: $t(`router.${item}`),
+    url: `/${item}`,
+    type: 'project' as PageType,
+    desc: $t(`router.${item}Desc`),
+  }))
+  return list
 })
 export const PAGE_LIST = computed<PageItem[]>(() => {
   return [...BASE_LIST.value, ...PROJECT_LIST.value]
