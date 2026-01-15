@@ -1,31 +1,43 @@
-// 组合键事件与默认行为控制：禁用右键、监听 Ctrl+Z+X+C 切换监控
-
-// 状态管理：系统监控开关
+import { THEME_COLOR, THEME_COLOR_HOVER } from '@/constants'
 import { useSystemStore } from '@/stores/modules/system'
 // 组合键监听
-import { useMagicKeys } from '@vueuse/core'
+import { useCssVar, useMagicKeys } from '@vueuse/core'
 
-const keys: any = useMagicKeys()
-const ctrlZXC = keys['Ctrl+Z+X+C'] // Ctrl+Z+X+C 组合键引用
-
-// 加载默认事件：初始化右键禁用与组合键监听（产生全局副作用）
+// 加载默认事件
 function loadEvent() {
-  const systemStore = useSystemStore()
-  const { updateWindowSize } = systemStore
-  const { monitorWatch } = storeToRefs(systemStore)
-
+  // 加载默认主题色
+  loadDefaultTheme()
   // 初始化窗口大小
-  updateWindowSize()
-
+  useSystemStore().updateWindowSize()
   // 禁用默认右键菜单
+  stopContextmenuEvent()
+  // 监听组合键
+  watchKey()
+}
+// 禁用右键菜单默认事件
+function stopContextmenuEvent() {
   document.addEventListener('contextmenu', (e) => {
     e.preventDefault()
   })
-
-  // 监听 Ctrl+Z+X+C 组合键，切换监视开关
+}
+// 监听组合键
+function watchKey() {
+  const keys: any = useMagicKeys()
+  const ctrlZXC = keys['Ctrl+Z+X+C'] // Ctrl+Z+X+C 组合键引用
+  const systemStore = useSystemStore()
+  const { monitorWatch } = storeToRefs(systemStore)
+  // 监听 Ctrl+Z+X+C 组合键
   watch(ctrlZXC, (newVal /* 组合键状态 */) => {
     if (!newVal) return
-    monitorWatch.value = !monitorWatch.value // 切换监视开关
+    // 切换监视开关
+    monitorWatch.value = !monitorWatch.value
   })
+}
+// 加载默认主题色
+function loadDefaultTheme() {
+  const theme = useCssVar('--sf-theme')
+  theme.value = THEME_COLOR
+  const themeHover = useCssVar('--sf-theme-hover')
+  themeHover.value = THEME_COLOR_HOVER
 }
 export { loadEvent }
