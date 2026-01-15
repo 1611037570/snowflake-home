@@ -28,7 +28,7 @@ import WoodenFish from './woodenFish.vue'
 const expand = ref(false)
 
 const containerClasses = computed(() => {
-  return expand.value ? 'translate-x-[0%]' : 'translate-x-[-48%]'
+  return expand.value ? 'translate-x-[-24%]' : 'translate-x-[-50%]'
 })
 </script>
 
