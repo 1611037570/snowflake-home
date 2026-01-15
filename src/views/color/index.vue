@@ -84,6 +84,7 @@ function copyClass(cls) {
 
 <template>
   <SfViewContainer>
+    样式定义：src\styles\tailwind.css（展示页会因更新不及时，导致不一致，以样式文件为准）
     <template v-for="item in list" :key="item.name">
       <h1 class="p-4 text-2xl font-bold">{{ item.name }}</h1>
       <div

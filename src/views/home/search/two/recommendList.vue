@@ -4,9 +4,11 @@
 </template>
 
 <script setup>
-import { appSource } from '@/@/constants'
+import { useSearchStore } from '@/stores'
 import SearchList from '../searchList.vue'
 import SearchTitle from '../searchTitle.vue'
+const searchStore = useSearchStore()
+const { appSource } = storeToRefs(searchStore)
 </script>
 
 <style lang="scss" scoped></style>

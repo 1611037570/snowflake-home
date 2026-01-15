@@ -25,6 +25,10 @@
   </transition>
 </template>
 
-<script setup></script>
+<script setup>
+import { useSearchStore } from '@/stores'
+const searchStore = useSearchStore()
+const { webSource } = storeToRefs(searchStore)
+</script>
 
 <style lang="scss" scoped></style>

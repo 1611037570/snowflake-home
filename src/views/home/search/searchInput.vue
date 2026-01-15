@@ -88,7 +88,6 @@
 </template>
 
 <script setup>
-import { webSource } from '@/@/constants'
 import { useSearchStore } from '@/stores'
 import { onKeyStroke } from '@vueuse/core'
 
@@ -108,6 +107,7 @@ const {
   expressionsLock,
   expressionsVisible,
   webSourceListVisible,
+  webSource,
 } = storeToRefs(searchStore)
 
 // 表达式计算
