@@ -75,8 +75,6 @@
   --sf-warning: color-mix(in oklab, #e6a23c 100%, transparent);
   --sf-error: color-mix(in oklab, #f56c6c 100%, transparent);
   --sf-info: color-mix(in oklab, #909399 100%, transparent);
-  --sf-theme: #50a2ff;
-  --sf-theme-hover: oklch(88.2% 0.059 254.128);
 
   --sf-base: rgba(0, 0, 0, 1);
   --sf-primary: rgba(255, 255, 255, 1);
