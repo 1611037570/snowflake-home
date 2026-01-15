@@ -34,6 +34,7 @@
   <!-- 便签组件 -->
   <NoteHomeModal />
   <SettingModal />
+  <PasswordHomeModal />
 </template>
 
 <script setup>
@@ -53,6 +54,8 @@ const Game = defineAsyncComponent(() => import('./games/index.vue'))
 const Shortcut = defineAsyncComponent(() => import('./shortcut/index.vue'))
 const NoteHomeModal = defineAsyncComponent(() => import('@views/note/homeModal.vue'))
 const NoteHomeTop = defineAsyncComponent(() => import('@views/note/homeTop.vue'))
+
+const PasswordHomeModal = defineAsyncComponent(() => import('@/views/passwordBox/homeModal.vue'))
 const homeStore = useHomeStore()
 const { tabIndex } = storeToRefs(homeStore)
 const searchStore = useSearchStore()
