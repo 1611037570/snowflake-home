@@ -2,7 +2,7 @@
 import { userInfo } from '@/views/index/data'
 import dayjs from 'dayjs'
 
-import { DEV_ACCOUNT, SHOOT_ACCOUNT } from '@/constants/modules/user'
+import { DEV_ACCOUNT, SHOOT_ACCOUNT } from '@/constants'
 import { computed } from 'vue'
 import QrIcon from '../components/qrIcon.vue'
 const now = dayjs()
