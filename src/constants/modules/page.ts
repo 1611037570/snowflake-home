@@ -1,5 +1,5 @@
 import { $t } from '@/locales'
-import { BASE_PAG_LIST, PROJECT_PAGE_LIST } from './config'
+import { BASE_PAG_LIST, PROJECT_PAGE_LIST } from '../config'
 type PageType = 'project' | 'base'
 
 interface PageItem {

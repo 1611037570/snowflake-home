@@ -1,4 +1,4 @@
-import { ALL_PAGE_LIST, DEFAULT_PAGE } from '@/constants/modules/config'
+import { ALL_PAGE_LIST, DEFAULT_PAGE } from '@/constants'
 import { type RouteRecordRaw } from 'vue-router'
 
 // 路由数组，通过模块加载路由
