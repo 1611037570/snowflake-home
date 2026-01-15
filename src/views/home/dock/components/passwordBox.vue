@@ -4,12 +4,10 @@
     @click="openNote"
   >
     密码箱
-    <HomeModal />
   </div>
 </template>
 
 <script setup>
-import HomeModal from '@/views/passwordBox/homeModal.vue'
 import { usePasswordStore } from '@/stores/modules/password'
 const passwordStore = usePasswordStore()
 const { homeModalVisible } = storeToRefs(passwordStore)
