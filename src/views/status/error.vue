@@ -7,10 +7,11 @@
 </template>
 
 <script setup>
+import { DEFAULT_PAGE } from '@/constants'
 import { useIntervalFn } from '@vueuse/core'
 const count = ref(3)
 const router = useRouter()
-const target = '/home'
+const target = DEFAULT_PAGE
 
 const jump = () => router.push(target)
 
