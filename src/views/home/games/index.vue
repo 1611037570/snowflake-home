@@ -1,7 +1,7 @@
 <template>
   <!-- 容器 - 固定定位 -->
   <div
-    class="fixed top-1/2 bottom-0 left-0 z-50 h-auto w-68 transition-transform duration-300"
+    class="fixed bottom-12 left-0 z-50 h-auto w-68 transition-transform duration-300"
     :class="[containerClasses]"
     @mouseenter="expand = true"
     @mousemove="expand = true"
