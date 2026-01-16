@@ -1,9 +1,8 @@
 <script setup>
-import { ICON_LIST } from '@/constants'
+import { ALL_PAGE, ICON_LIST } from '@/constants'
 const iconLength = Object.keys(ICON_LIST).length
 // 所有视图组件
-const view = import.meta.glob('@/views/*/index.vue', { eager: false })
-const viewLength = Object.keys(view).length
+const viewLength = ALL_PAGE.value.length
 // 所有基础组件
 const baseComponent = import.meta.glob('@/components/base/*/index.vue', { eager: false })
 const baseComponentLength = Object.keys(baseComponent).length
