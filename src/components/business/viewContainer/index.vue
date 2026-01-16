@@ -5,7 +5,7 @@
     >
       <div
         class="flex-c top-1/2 left-3 mr-3 cursor-pointer text-xs md:absolute md:-translate-y-1/2 md:text-base"
-        @click="back"
+        @click="defaultNavigation"
       >
         <SfIcon icon="famicons:chevron-back" size="5" />
       </div>
@@ -47,6 +47,7 @@
 
 <script setup>
 import { PAGE_LIST } from '@/constants'
+import { defaultNavigation } from '@/utils'
 
 const router = useRouter()
 const route = useRoute()
@@ -70,9 +71,6 @@ const list = computed(() => {
 
 function handleClick(item) {
   router.push(item.url)
-}
-function back() {
-  router.push('/home')
 }
 </script>
 
