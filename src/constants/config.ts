@@ -13,7 +13,7 @@ export const THEME_COLOR_HOVER = 'oklch(88.2% 0.059 254.128)'
  * 基础页面
  * 用于展示项目的图标、主题样式资源
  */
-export const BASE_PAG_LIST = ['messageBoard', 'icon', 'color', 'components']
+export const BASE_PAG_LIST = ['messageBoard', 'icon', 'color', 'components', 'data']
 /**
  * 项目页面
  * 用于加载所需要的项目
