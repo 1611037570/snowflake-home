@@ -1,4 +1,4 @@
-import { ALL_PAGE_LIST, DEFAULT_PAGE } from '@/constants'
+import { ALL_PAGE_LIST, DEFAULT_ROUTE } from '@/constants'
 import { type RouteRecordRaw } from 'vue-router'
 
 // 路由数组，通过模块加载路由
@@ -6,7 +6,7 @@ const routes: RouteRecordRaw[] = [
   // 默认路由，重定向到起始页
   {
     path: '/',
-    redirect: DEFAULT_PAGE,
+    redirect: DEFAULT_ROUTE,
   },
   // 404 错误页
   {
