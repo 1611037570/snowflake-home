@@ -20,14 +20,11 @@ export const useThemeStore = defineStore(
     // 获取并应用系统主题
     const applySystemTheme = () => {
       const isDark = mediaQueryList.matches
-      console.log('isDark', isDark)
-
       applyTheme(isDark ? 'dark' : 'light')
     }
 
     // 切换主题模式
     const setTheme = (mode: 'light' | 'dark' | 'system') => {
-      console.log('切换主题模式 → 新模式：', mode)
       themeMode.value = mode
 
       // 先移除之前的系统主题监听（核心修复点2：避免重复监听）
@@ -46,7 +43,6 @@ export const useThemeStore = defineStore(
 
     // 初始化主题
     const initTheme = () => {
-      console.log('初始化主题 → 当前模式：', themeMode.value)
       setTheme(themeMode.value)
     }
 
