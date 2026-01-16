@@ -6,7 +6,9 @@
     <div class="flex items-center gap-3">
       <div class="flex items-center">
         Copyright © 2019-2025 .
-        <span @click="goMy" class="ml-2 cursor-pointer font-medium hover:text-sf-theme"> 小羊</span>
+        <span @click="userNavigation" class="ml-2 cursor-pointer font-medium hover:text-sf-theme">
+          小羊</span
+        >
         <span class="px-1">.</span>
         All Rights Reserved.
       </div>
@@ -18,7 +20,9 @@
     <div class="flex min-w-[200px] items-center" :class="gapClass">
       <div>
         服务支持：
-        <span @click="back" class="cursor-pointer font-medium hover:text-sf-theme">雪花起始页</span>
+        <span @click="defaultNavigation" class="cursor-pointer font-medium hover:text-sf-theme"
+          >雪花起始页</span
+        >
       </div>
       <div @click="donationVisible = true" class="cursor-pointer font-medium hover:text-sf-theme">
         赞助支持
@@ -37,6 +41,7 @@
 </template>
 
 <script setup lang="ts">
+import { defaultNavigation, userNavigation } from '@/utils'
 import About from './about.vue'
 import Banner from './banner.vue'
 import Donation from './donation.vue'
@@ -57,12 +62,6 @@ const gapClass = computed(() => {
 const donationVisible = ref(false)
 const aboutVisible = ref(false)
 
-function back() {
-  routerNavigation('home')
-}
-function goMy() {
-  routerNavigation('/')
-}
 // function goRepo() {
 //   urlNavigation('https://github.com/1611037570/snowflake-index')
 // }
