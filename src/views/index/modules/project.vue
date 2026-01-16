@@ -3,7 +3,7 @@
     <!-- 项目经历 -->
     <SmallTitle title="个人项目" />
     <div class="grid grid-cols-2 gap-6">
-      <ProjectCard v-for="(item, index) in PROJECT_LIST" :key="index" :data="item" />
+      <ProjectCard v-for="(item, index) in PROJECT_PAGE" :key="index" :data="item" />
     </div>
     <SmallTitle title="参与开发" />
     <div class="grid grid-cols-2 gap-6">
@@ -13,7 +13,7 @@
 </template>
 
 <script setup>
-import { PROJECT_LIST } from '@/constants'
+import { PROJECT_PAGE } from '@/constants'
 import ProjectCard from '../components/projectCard.vue'
 import SmallTitle from '../components/smallTitle.vue'
 

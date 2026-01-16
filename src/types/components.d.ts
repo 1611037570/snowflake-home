@@ -8,18 +8,25 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    ElBacktop: typeof import('element-plus/es')['ElBacktop']
     ElButton: typeof import('element-plus/es')['ElButton']
     ElConfigProvider: typeof import('element-plus/es')['ElConfigProvider']
     ElDropdown: typeof import('element-plus/es')['ElDropdown']
+    ElDropdownItem: typeof import('element-plus/es')['ElDropdownItem']
     ElDropdownMenu: typeof import('element-plus/es')['ElDropdownMenu']
     ElImage: typeof import('element-plus/es')['ElImage']
+    ElInputNumber: typeof import('element-plus/es')['ElInputNumber']
     ElOption: typeof import('element-plus/es')['ElOption']
     ElScrollbar: typeof import('element-plus/es')['ElScrollbar']
     ElSelect: typeof import('element-plus/es')['ElSelect']
+    ElSplitter: typeof import('element-plus/es')['ElSplitter']
+    ElSplitterPanel: typeof import('element-plus/es')['ElSplitterPanel']
     ElSwitch: typeof import('element-plus/es')['ElSwitch']
     ElTimePicker: typeof import('element-plus/es')['ElTimePicker']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    SfBacktop: typeof import('@components/business/backtop/index.vue')['default']
+    SfBarrage: typeof import('@components/business/barrage/index.vue')['default']
     SfDropdown: typeof import('@components/business/dropdown/index.vue')['default']
     SfImg: typeof import('@components/business/img/index.vue')['default']
     SfInput: typeof import('@components/business/input/index.vue')['default']
@@ -28,6 +35,8 @@ declare module 'vue' {
     SfMixImg: typeof import('@components/business/mixImg/index.vue')['default']
     SfModal: typeof import('@components/business/modal/index.vue')['default']
     SfMonitor: typeof import('@components/business/monitor/index.vue')['default']
+    SfQrcode: typeof import('@components/business/qrcode/index.vue')['default']
+    SfScrollbarTab: typeof import('@components/business/scrollbarTab/index.vue')['default']
     SfSetBox: typeof import('@components/business/setBox/index.vue')['default']
     SfSetContainer: typeof import('@components/business/setContainer/index.vue')['default']
     SfSetItem: typeof import('@components/business/setItem/index.vue')['default']
@@ -35,5 +44,6 @@ declare module 'vue' {
     SfTab: typeof import('@components/business/tab/index.vue')['default']
     SfTheme: typeof import('@components/business/theme/index.vue')['default']
     SfTooltip: typeof import('@components/business/tooltip/index.vue')['default']
+    SfViewContainer: typeof import('@components/business/viewContainer/index.vue')['default']
   }
 }

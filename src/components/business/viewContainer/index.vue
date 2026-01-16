@@ -46,7 +46,7 @@
 </template>
 
 <script setup>
-import { PAGE_LIST } from '@/constants'
+import { ALL_PAGE } from '@/constants'
 import { defaultNavigation } from '@/utils'
 
 const router = useRouter()
@@ -54,19 +54,19 @@ const route = useRoute()
 
 // 从items数组中获取当前路由的标题
 const title = computed(() => {
-  const currentItem = PAGE_LIST.value.find((item) => item.url === route.path)
+  const currentItem = ALL_PAGE.value.find((item) => item.url === route.path)
   return currentItem?.name || ''
 })
 
 // 获取当前路由的版本号
 const version = computed(() => {
-  const currentItem = PAGE_LIST.value.find((item) => item.url === route.path)
+  const currentItem = ALL_PAGE.value.find((item) => item.url === route.path)
   return currentItem?.version || ''
 })
 
 const list = computed(() => {
   // 过滤当前路由匹配的菜单项
-  return PAGE_LIST.value.filter((item) => route.path !== item.url)
+  return ALL_PAGE.value.filter((item) => route.path !== item.url)
 })
 
 function handleClick(item) {

@@ -1,8 +1,8 @@
 // 权限检查函数
-import { ALL_PAGE_LIST } from '@/constants'
+import { ALL_ROUTES } from '@/constants'
 export function checkPermission(permission: string) {
   // 检查用户是否拥有指定权限
-  return ALL_PAGE_LIST.includes(permission)
+  return ALL_ROUTES.includes(permission)
 }
 
 /**
