@@ -17,7 +17,7 @@ export const globalComponentInstaller = {
   },
 }
 
-const baseMap = ['icon', 'footer']
+const baseMap = ['icon', 'footer', 'permission']
 export const dynamicComponentResolver = (): ComponentResolver => {
   return (componentName: string) => {
     function isBaseComponent(name: string) {
