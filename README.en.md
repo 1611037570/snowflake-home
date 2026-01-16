@@ -4,9 +4,10 @@
 
 ## 📌 Project Background
 
-This project was open-sourced on November 22, 2025.
-Through this project, you can learn to build with modern frontend technologies such as Vue 3, TypeScript, and Vite.
-It also integrates foundational features including PWA, i18n, persisted state, theme switching, and responsive design.
+The project was launched on September 3, 2020, and open-sourced on November 22, 2025.
+The main body of the project is the Snowflake Start Page, which has expanded to include personal homepage, resume generator, image processing tools, and other small utilities.
+It also integrates foundational features including multi-language support, persistence, theme switching, and responsive design.
+Through this project, you can learn to develop with modern frontend technologies such as Vue 3, TypeScript, and Vite.
 
 ## 🔗 Live Demo
 
@@ -16,7 +17,7 @@ You can access the deployed project via the link below
 
 ## 🚀 Install & Run
 
-VS Code is recommended as the development environment. With its workspace configuration, it provides a better developer experience.
+VS Code or Trae is recommended as the development environment. The project provides .vscode configuration files, which can bring a better development experience.
 
 ```bash
 # Install dependencies
