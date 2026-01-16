@@ -3,7 +3,11 @@
     <!-- 项目经历 -->
     <SmallTitle title="个人项目" />
     <div class="grid grid-cols-2 gap-6">
-      <ProjectCard v-for="(item, index) in PROJECT_PAGE" :key="index" :data="item" />
+      <ProjectCard
+        v-for="(item, index) in PROJECT_PAGE.filter((item) => item.url != '/index')"
+        :key="index"
+        :data="item"
+      />
     </div>
     <SmallTitle title="参与开发" />
     <div class="grid grid-cols-2 gap-6">
