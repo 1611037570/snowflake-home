@@ -25,9 +25,22 @@
         <SfDropdown>
           <ElButton> {{ $t('moreTools') }} </ElButton>
           <template #dropdown>
+            <!-- 基础页面 -->
+            基础页面
             <el-dropdown-menu>
               <el-dropdown-item
-                v-for="(item, index) in list"
+                v-for="(item, index) in baseList"
+                :key="item.url"
+                :divided="index > 0 && index !== list.length"
+                @click="handleClick(item)"
+                >{{ item.name }}</el-dropdown-item
+              >
+            </el-dropdown-menu>
+            <!-- 项目页面 -->
+            项目页面
+            <el-dropdown-menu>
+              <el-dropdown-item
+                v-for="(item, index) in projectList"
                 :key="item.url"
                 :divided="index > 0 && index !== list.length"
                 @click="handleClick(item)"
@@ -46,7 +59,7 @@
 </template>
 
 <script setup>
-import { ALL_PAGE } from '@/constants'
+import { ALL_PAGE, BASE_PAGE, PROJECT_PAGE } from '@/constants'
 import { defaultNavigation } from '@/utils'
 
 const router = useRouter()
@@ -67,6 +80,12 @@ const version = computed(() => {
 const list = computed(() => {
   // 过滤当前路由匹配的菜单项
   return ALL_PAGE.value.filter((item) => route.path !== item.url)
+})
+const baseList = computed(() => {
+  return BASE_PAGE.value.filter((item) => route.path !== item.url)
+})
+const projectList = computed(() => {
+  return PROJECT_PAGE.value.filter((item) => route.path !== item.url)
 })
 
 function handleClick(item) {
