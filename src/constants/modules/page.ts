@@ -1,7 +1,7 @@
 import { $t } from '@/locales'
 import pageConfig from '@/locales/lang/zh/core.json'
 import { computed } from 'vue'
-import { BASE_PAG_LIST, PROJECT_PAGE_LIST } from '../config'
+import { BASE_ROUTES, PROJECT_ROUTES } from '../config'
 type PageType = 'project' | 'base'
 
 interface PageItem {
@@ -28,15 +28,15 @@ const getRouterInfo = (item: string) => {
   }
 }
 
-export const BASE_LIST = computed<PageItem[]>(() => {
-  const list = BASE_PAG_LIST.map((item) => ({
+export const BASE_PAGE = computed<PageItem[]>(() => {
+  const list = BASE_ROUTES.map((item) => ({
     type: 'base' as PageType,
     ...getRouterInfo(item),
   }))
   return list
 })
-export const PROJECT_LIST = computed<PageItem[]>(() => {
-  const list = PROJECT_PAGE_LIST.map((item) => {
+export const PROJECT_PAGE = computed<PageItem[]>(() => {
+  const list = PROJECT_ROUTES.map((item) => {
     const pageItem: PageItem = {
       ...getRouterInfo(item),
       type: 'project' as PageType,
@@ -46,6 +46,6 @@ export const PROJECT_LIST = computed<PageItem[]>(() => {
   return list
 })
 
-export const PAGE_LIST = computed<PageItem[]>(() => {
-  return [...BASE_LIST.value, ...PROJECT_LIST.value]
+export const ALL_PAGE = computed<PageItem[]>(() => {
+  return [...BASE_PAGE.value, ...PROJECT_PAGE.value]
 })

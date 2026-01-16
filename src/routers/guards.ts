@@ -1,5 +1,5 @@
 // 导入依赖
-import { PAGE_LIST } from '@/constants'
+import { ALL_PAGE } from '@/constants'
 import { loadPageLang } from '@/locales'
 import { useTitle } from '@vueuse/core'
 
@@ -14,7 +14,7 @@ export async function beforeEachGuard(to: any, from: any, next: any) {
 
   await loadPageLang(pageName)
   // 查找匹配的页面配置
-  const pageConfig = PAGE_LIST.value.find((item) => item.url === to.path)
+  const pageConfig = ALL_PAGE.value.find((item) => item.url === to.path)
 
   if (pageConfig) {
     // 异步加载页面语言包

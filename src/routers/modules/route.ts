@@ -1,4 +1,4 @@
-import { ALL_PAGE_LIST, DEFAULT_ROUTE } from '@/constants'
+import { ALL_ROUTES, DEFAULT_ROUTE } from '@/constants'
 import { type RouteRecordRaw } from 'vue-router'
 
 // 路由数组，通过模块加载路由
@@ -38,7 +38,7 @@ function generateRoute(name: string): RouteRecordRaw {
 }
 
 // 生成并添加所有页面路由
-const generatedRoutes = ALL_PAGE_LIST.map(generateRoute)
+const generatedRoutes = ALL_ROUTES.map(generateRoute)
 routes.push(...generatedRoutes)
 
 export default routes
