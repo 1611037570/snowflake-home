@@ -34,6 +34,7 @@ function delNote(item) {
 }
 </script>
 <template>
+  <!-- 置顶便签组件111111111111 -->
   <div
     class="fixed top-0 left-0 z-50 flex w-[340px] transform flex-col gap-3 py-20 pl-12 transition-all duration-300"
     :class="[containerClasses]"
