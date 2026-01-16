@@ -29,23 +29,27 @@
   <Dock />
   <!-- 游戏组件 -->
   <Game />
-  <!-- 置顶便签组件 -->
-  <NoteHomeTop />
-  <!-- 便签组件 -->
-  <NoteHomeModal />
-  <SettingModal />
+  <SfPermission permission="note">
+    <!-- 置顶便签组件 -->
+    <NoteHomeTop />
+    <!-- 便签组件 -->
+    <NoteHomeModal />
+  </SfPermission>
   <PasswordHomeModal />
+  <SettingModal />
 </template>
 
 <script setup>
 import { useHomeStore, useSearchStore, useShortcutStore } from '@/stores'
+import { permissionAsyncComponent } from '@/utils'
 import { storeToRefs } from 'pinia'
-
 // 基础组件 - 页面加载时需要的组件
-import Background from './components/background.vue'
+
 import Dock from './dock/index.vue'
 import MenuBar from './menuBar/index.vue'
 import Search from './search/index.vue'
+
+const Background = defineAsyncComponent(() => import('./components/background.vue'))
 
 // 按需加载组件 - 使用动态导入
 const Quote = defineAsyncComponent(() => import('./components/quote.vue'))
@@ -55,7 +59,10 @@ const Shortcut = defineAsyncComponent(() => import('./shortcut/index.vue'))
 const NoteHomeModal = defineAsyncComponent(() => import('@views/note/homeModal.vue'))
 const NoteHomeTop = defineAsyncComponent(() => import('@views/note/homeTop.vue'))
 
-const PasswordHomeModal = defineAsyncComponent(() => import('@/views/passwordBox/homeModal.vue'))
+const PasswordHomeModal = permissionAsyncComponent(
+  'passwordBox',
+  () => import('@/views/passwordBox/homeModal.vue'),
+)
 const homeStore = useHomeStore()
 const { tabIndex } = storeToRefs(homeStore)
 const searchStore = useSearchStore()
