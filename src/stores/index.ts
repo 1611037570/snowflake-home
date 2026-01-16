@@ -42,3 +42,5 @@ export * from './modules/note'
 
 // 用户相关store
 export * from './modules/user'
+// 密码相关store
+export * from './modules/password'
