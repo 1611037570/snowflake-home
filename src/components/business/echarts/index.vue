@@ -1,5 +1,6 @@
 <script setup>
-import echarts from './echarts'
+import useEcharts from './core/useEcharts'
+const echarts = useEcharts()
 console.log('echarts:>> ', echarts)
 </script>
 
