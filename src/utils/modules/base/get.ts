@@ -1,5 +1,3 @@
-// export const isArray =
-
 /**
  *  获取指定范围的随机数
  * @param min 最小值
