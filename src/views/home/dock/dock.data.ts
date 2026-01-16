@@ -1,6 +1,5 @@
-import { ALL_PAGE_LIST } from '@/constants'
+import { checkPermission } from '@/utils'
 import { defineAsyncComponent } from 'vue'
-
 const list = [
   {
     name: '启动台',
@@ -57,16 +56,14 @@ const list = [
     page: 'passwordBox',
   },
 ]
-function hasRoute(page: string) {
-  return ALL_PAGE_LIST.includes(page)
-}
+
 const showList = list.filter((item: any) => {
   if (item.type == 'system') {
     return true
   }
 
   // 校验 page 是否在权限白名单中
-  return hasRoute(item.page)
+  return checkPermission(item.page)
 })
 
 export default showList
