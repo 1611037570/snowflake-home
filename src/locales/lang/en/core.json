@@ -17,7 +17,13 @@
     "resumeDesc": "Quickly generate beautiful resumes",
     "checklist": "Life Checklist",
     "checklistDesc": "Record the events you have completed in your life",
-    "index": "Yang"
+    "index": "Yang",
+    "data": "Data Visualizer",
+    "dataDesc": "Visualize project data",
+    "note": "Note",
+    "noteDesc": "Record and share personal notes",
+    "passwordBox": "Password Box",
+    "passwordBoxDesc": "Securely store and manage passwords"
   },
   "moreTools": "More"
 }

@@ -18,7 +18,13 @@
     "rebornDesc": "21天重启人生，git新技能",
     "home": "雪花起始页",
     "homeDesc": "浏览器起始页",
-    "index": "小羊"
+    "index": "小羊",
+    "data": "数据大屏",
+    "dataDesc": "将项目数据可视化",
+    "note": "笔记",
+    "noteDesc": "记录和分享个人笔记",
+    "passwordBox": "密码箱",
+    "passwordBoxDesc": "安全存储和管理密码"
   },
   "moreTools": "更多"
 }
