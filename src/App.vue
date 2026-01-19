@@ -15,18 +15,9 @@ const currentElLocale = loadElLocale()
 <template>
   <ElConfigProvider :locale="currentElLocale">
     <SfMonitor v-if="monitorWatch" />
-    <Suspense>
-      <!-- 默认插槽 -->
-      <template #default>
-        <RouterView v-slot="{ Component }">
-          <Component :is="Component || LoadingComponent" />
-        </RouterView>
-      </template>
-      <!-- 占位插槽 -->
-      <template #fallback>
-        <LoadingComponent />
-      </template>
-    </Suspense>
+    <RouterView v-slot="{ Component }">
+      <Component :is="Component || LoadingComponent" />
+    </RouterView>
   </ElConfigProvider>
 </template>
 
