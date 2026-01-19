@@ -54,7 +54,7 @@ export const default_list: ShortcutItem[] = [
     imgValue: 'https://v.qq.com/favicon.ico',
     id: '28d6de41-b69d-4f75-bda6-01b7f8ea3a1c',
     pinyin: 'tengxunshipin',
-    top: false,
+    top: true,
   },
   {
     name: 'element-plus',
@@ -63,6 +63,12 @@ export const default_list: ShortcutItem[] = [
     imgType: 'icon',
     imgValue: 'logos:element',
     pinyin: 'element-plus',
+    top: false,
+  },
+  {
+    name: 'deepseek',
+    url: 'https://chat.deepseek.com/',
+    pinyin: 'deepseek',
     top: false,
   },
 ]
