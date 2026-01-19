@@ -1,5 +1,5 @@
 <script setup>
-import { BASE_PAGE, PROJECT_PAGE } from '@/constants'
+import { BASE_PAGE, LIGHT_PAGE, PROJECT_PAGE } from '@/constants'
 
 const router = useRouter()
 const route = useRoute()
@@ -10,13 +10,20 @@ const filterMenuItems = (item) => {
   return route.path !== item.url && item.url !== '/index'
 }
 
-const baseList = computed(() => {
-  return BASE_PAGE.value.filter(filterMenuItems)
-})
-const projectList = computed(() => {
-  return PROJECT_PAGE.value.filter(filterMenuItems)
-})
-
+const list = shallowRef([
+  {
+    name: '基础页面',
+    routers: BASE_PAGE.value.filter(filterMenuItems),
+  },
+  {
+    name: '项目页面',
+    routers: PROJECT_PAGE.value.filter(filterMenuItems),
+  },
+  {
+    name: '轻页面',
+    routers: LIGHT_PAGE.value.filter(filterMenuItems),
+  },
+])
 function handleClick(item) {
   router.push(item.url)
 }
@@ -28,34 +35,17 @@ function handleClick(item) {
     <template #dropdown>
       <div class="w-48 px-2 py-1">
         <!-- 基础页面 -->
-        <div class="text-sf-text-secondary mb-1 px-2 text-xs font-semibold">
-          {{ $t('basePage') || '基础页面' }}
-        </div>
-        <el-dropdown-menu class="mb-2 rounded-lg border border-sf-border shadow-md">
-          <el-dropdown-item
-            v-for="(item, index) in baseList"
-            :key="item.url"
-            :divided="index > 0"
-            class="hover:bg-sf-hover px-4 py-1.5 text-sm"
-            @click="handleClick(item)"
-            >{{ item.name }}</el-dropdown-item
-          >
-        </el-dropdown-menu>
-
-        <!-- 项目页面 -->
-        <div class="text-sf-text-secondary mb-1 px-2 text-xs font-semibold">
-          {{ $t('projectPage') || '项目页面' }}
-        </div>
-        <el-dropdown-menu class="rounded-lg border border-sf-border shadow-md">
-          <el-dropdown-item
-            v-for="(item, index) in projectList"
-            :key="item.url"
-            :divided="index > 0"
-            class="hover:bg-sf-hover px-4 py-1.5 text-sm"
-            @click="handleClick(item)"
-            >{{ item.name }}</el-dropdown-item
-          >
-        </el-dropdown-menu>
+        <template v-for="item in list" :key="item.name">
+          <div class="text-sf-text-secondary mb-1 px-2 text-xs font-semibold">{{ item.name }}</div>
+          <div class="mb-2 rounded-lg border border-sf-border shadow-md">
+            <SfList
+              :list="item.routers"
+              activeKey="url"
+              activeValue="url"
+              @onClick="handleClick"
+            ></SfList>
+          </div>
+        </template>
       </div>
     </template>
   </SfDropdown>
