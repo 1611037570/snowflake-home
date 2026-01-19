@@ -1,7 +1,7 @@
 <template>
   <div class="flex h-full w-full flex-col">
     <header
-      class="relative flex h-12 items-center justify-start border-b-[0.5px] border-sf-border-base bg-sf-primary p-3 text-sf-base sm:h-14 md:justify-center"
+      class="relative flex h-12 items-center justify-start border-b-[0.5px] border-sf-border bg-sf-primary p-3 text-sf-base sm:h-14 md:justify-center"
     >
       <div
         class="flex-c top-1/2 left-3 mr-3 cursor-pointer text-xs md:absolute md:-translate-y-1/2 md:text-base"
@@ -30,7 +30,7 @@
               <div class="text-sf-text-secondary mb-1 px-2 text-xs font-semibold">
                 {{ $t('basePage') || '基础页面' }}
               </div>
-              <el-dropdown-menu class="mb-2 rounded-lg border border-sf-border-base shadow-md">
+              <el-dropdown-menu class="mb-2 rounded-lg border border-sf-border shadow-md">
                 <el-dropdown-item
                   v-for="(item, index) in baseList"
                   :key="item.url"
@@ -45,7 +45,7 @@
               <div class="text-sf-text-secondary mb-1 px-2 text-xs font-semibold">
                 {{ $t('projectPage') || '项目页面' }}
               </div>
-              <el-dropdown-menu class="rounded-lg border border-sf-border-base shadow-md">
+              <el-dropdown-menu class="rounded-lg border border-sf-border shadow-md">
                 <el-dropdown-item
                   v-for="(item, index) in projectList"
                   :key="item.url"

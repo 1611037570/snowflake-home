@@ -1,5 +1,5 @@
 <template>
-  <div class="border-sf-b w-[220px] overflow-hidden rounded-xl border bg-sf-bg p-2">
+  <div class="w-[220px] overflow-hidden rounded-xl border border-sf-border bg-sf-bg p-2">
     <div
       v-for="(item, index) in list"
       :key="index"

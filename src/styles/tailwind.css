@@ -66,7 +66,7 @@
   /* 常规透明色-4 */
   --color-sf-transparent-4: var(--sf-transparent-4);
   /* 边框基础色 */
-  --color-sf-border-base: var(--sf-border-base);
+  --color-sf-border: var(--sf-border);
 }
 
 /* 默认：亮色模式 */
@@ -92,7 +92,7 @@
   --sf-transparent-2: color-mix(in oklab, oklch(97% 0.014 254.604) 60%, transparent);
   --sf-transparent-3: color-mix(in oklab, oklch(97% 0.014 254.604) 40%, transparent);
   --sf-transparent-4: color-mix(in oklab, oklch(97% 0.014 254.604) 20%, transparent);
-  --sf-border-base: rgba(0, 0, 0, 0.1);
+  --sf-border: rgba(0, 0, 0, 0.1);
 }
 
 /* 深色模式 */
@@ -111,7 +111,7 @@
   --sf-transparent-2: rgba(0, 0, 0, 0.6);
   --sf-transparent-3: rgba(0, 0, 0, 0.4);
   --sf-transparent-4: rgba(0, 0, 0, 0.2);
-  --sf-border-base: rgba(255, 255, 255, 0.3);
+  --sf-border: rgba(255, 255, 255, 0.3);
 }
 
 /* 自定义工具类 */
