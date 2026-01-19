@@ -5,13 +5,13 @@ export interface ShortcutItem {
   // 链接
   url: string
   // 图标类型
-  imgType: 'img' | 'icon'
+  imgType?: 'img' | 'icon'
   // 图标值
-  imgValue: string
+  imgValue?: string
   // 唯一标识
-  id: string
+  id?: string
   // 拼音
-  pinyin: string
+  pinyin?: string
   // 是否置顶
   top: boolean
 }
