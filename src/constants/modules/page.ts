@@ -1,8 +1,8 @@
 import { $t } from '@/locales'
 import pageConfig from '@/locales/lang/zh/core.json'
 import { computed } from 'vue'
-import { BASE_ROUTES, PROJECT_ROUTES } from '../config'
-type PageType = 'project' | 'base'
+import { BASE_ROUTES, LIGHT_ROUTES, PROJECT_ROUTES } from '../config'
+type PageType = 'project' | 'base' | 'light'
 
 interface PageItem {
   name: string
@@ -27,7 +27,10 @@ const getRouterInfo = (item: string) => {
     url: `/${item}`,
   }
 }
-
+/**
+ * 基础路由页面列表
+ * 包含所有基础路由的页面信息
+ */
 export const BASE_PAGE = computed<PageItem[]>(() => {
   const list = BASE_ROUTES.map((item) => ({
     type: 'base' as PageType,
@@ -35,6 +38,10 @@ export const BASE_PAGE = computed<PageItem[]>(() => {
   }))
   return list
 })
+/**
+ * 项目路由页面列表
+ * 包含所有项目路由的页面信息
+ */
 export const PROJECT_PAGE = computed<PageItem[]>(() => {
   const list = PROJECT_ROUTES.map((item) => {
     const pageItem: PageItem = {
@@ -45,7 +52,18 @@ export const PROJECT_PAGE = computed<PageItem[]>(() => {
   })
   return list
 })
+/**
+ * 轻量级路由页面列表
+ * 包含所有轻量级路由的页面信息
+ */
+export const LIGHT_PAGE = computed<PageItem[]>(() => {
+  const list = LIGHT_ROUTES.map((item) => ({
+    type: 'light' as PageType,
+    ...getRouterInfo(item),
+  }))
+  return list
+})
 
 export const ALL_PAGE = computed<PageItem[]>(() => {
-  return [...BASE_PAGE.value, ...PROJECT_PAGE.value]
+  return [...BASE_PAGE.value, ...PROJECT_PAGE.value, ...LIGHT_PAGE.value]
 })

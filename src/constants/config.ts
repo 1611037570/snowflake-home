@@ -1,45 +1,41 @@
 /**
  * 系统主题色
- * 用于系统中主要的交互元素
+ * 用于系统中主要交互元素的主色调
  */
 export const THEME_COLOR = '#50a2ff'
 /**
- * 系统主题色-悬停
- * 用于系统中交互元素的悬停状态
+ * 系统主题色-悬停状态
+ * 用于系统中交互元素的悬停效果
  */
 export const THEME_COLOR_HOVER = 'oklch(88.2% 0.059 254.128)'
 
 /**
- * 基础页面
- * 用于展示项目的图标、主题样式资源
+ * 基础路由列表
+ * 包含项目的基础设施
  */
-export const BASE_ROUTES = ['messageBoard', 'icon', 'color', 'components', 'data']
+export const BASE_ROUTES = ['messageBoard', 'icon', 'color', 'components', 'data', 'index']
 /**
- * 项目页面
- * 用于加载所需要的项目
+ * 项目路由列表
+ * 包含企业级应用项目路由
  */
-export const PROJECT_ROUTES = [
-  'image',
-  'resume',
-  'index',
-  'home',
-  'reborn',
-  '2048',
-  'sort',
-  'checklist',
-  'note',
-  'passwordBox',
-]
+export const PROJECT_ROUTES = ['image', 'resume', 'home']
 /**
- * 所有路由
- * 用于展示所有项目页面和基础页面
+ * 轻量级路由列表
+ * 包含简单小游戏和实用工具路由
  */
-export const ALL_ROUTES = [...BASE_ROUTES, ...PROJECT_ROUTES]
+export const LIGHT_ROUTES = ['2048', 'sort', 'checklist', 'note', 'passwordBox', 'reborn', 'time']
 /**
- * 默认路由
+ * 基础与项目路由组合列表
+ * 包含所有基础路由、项目路由和轻量级路由，用于导航和权限控制
+ */
+export const ALL_ROUTES = [...BASE_ROUTES, ...PROJECT_ROUTES, ...LIGHT_ROUTES]
+/**
+ * 默认路由地址
+ * 系统启动时默认跳转的路由
  */
 export const DEFAULT_ROUTE = '/home'
 /**
- * 链接打开方式
+ * 外部链接打开方式
+ * 系统中所有外部链接的默认打开方式
  */
 export const URL_OPEN_TYPE = '_blank'
