@@ -1,5 +1,6 @@
 <template>
   <div class="flex h-full w-full flex-col">
+    <!-- 标题栏 -->
     <header
       class="relative flex h-12 items-center justify-start border-b-[0.5px] border-sf-border bg-sf-primary p-3 text-sf-base sm:h-14 md:justify-center"
     >
@@ -60,7 +61,8 @@
         </SfDropdown>
       </div>
     </header>
-    <main class="w-full flex-1 overflow-hidden bg-sf-bg">
+    <!-- 主内容区域 -->
+    <main class="w-full flex-1 overflow-hidden bg-sf-bg-hover">
       <slot />
     </main>
     <SfFooter class="text-xs" />
