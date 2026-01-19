@@ -7,14 +7,17 @@
 </template>
 
 <script setup>
-import { defaultNavigation } from '@/utils'
+import { DEFAULT_ROUTE } from '@/constants'
 import { useIntervalFn } from '@vueuse/core'
+import { useRouter } from 'vue-router'
+const router = useRouter()
 const count = ref(3)
 function jump() {
-  defaultNavigation()
+  router.push(DEFAULT_ROUTE)
 }
 const { pause, resume } = useIntervalFn(() => {
   count.value -= 1
+
   if (count.value <= 0) {
     pause()
     jump()
