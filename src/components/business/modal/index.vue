@@ -9,7 +9,7 @@
       <div
         id="element"
         ref="elementRef"
-        class="shadow-4xl z-80 flex flex-col rounded-3xl border-1 border-sf-border-base bg-sf-bg p-3"
+        class="shadow-4xl z-80 flex flex-col rounded-3xl border border-sf-border bg-sf-bg p-3"
         :style="transformStyle"
         @mouseenter="handleMouseEnter"
         @mouseleave="handleMouseLeave"
