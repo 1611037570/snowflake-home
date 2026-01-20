@@ -28,7 +28,6 @@ const {
   beforeCreateFn = () => true,
   menuContainerStyle = {},
   nameKey = 'name',
-  fnKey = 'fn',
 } = defineProps<MenuProps>()
 
 // 菜单元素
@@ -65,8 +64,6 @@ const down = (event: any) => {
 }
 const { clientX, clientY } = useClick(menuContainer, model, down)
 const select = (item: any) => {
-  // 触发点击绑定事件
-  item[fnKey]?.()
   // 选中后回调
   emit('onSelected', item)
   end()
