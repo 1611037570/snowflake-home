@@ -1,5 +1,5 @@
 <script setup>
-import { BASE_PAGE, LIGHT_PAGE, PROJECT_PAGE } from '@/constants'
+import { BASE_PAGE, MUSE_PAGE, PROJECT_PAGE } from '@/constants'
 
 const router = useRouter()
 const route = useRoute()
@@ -12,16 +12,16 @@ const filterMenuItems = (item) => {
 
 const list = shallowRef([
   {
-    name: '基础页面',
+    name: '基建',
     routers: BASE_PAGE.value.filter(filterMenuItems),
   },
   {
-    name: '项目页面',
+    name: '项目',
     routers: PROJECT_PAGE.value.filter(filterMenuItems),
   },
   {
-    name: '轻页面',
-    routers: LIGHT_PAGE.value.filter(filterMenuItems),
+    name: '小灵光',
+    routers: MUSE_PAGE.value.filter(filterMenuItems),
   },
 ])
 function handleClick(item) {
@@ -30,10 +30,10 @@ function handleClick(item) {
 </script>
 
 <template>
-  <SfDropdown>
+  <SfDropdown trigger="click">
     <ElButton> {{ $t('moreTools') }} </ElButton>
     <template #dropdown>
-      <div class="w-48 px-2 py-1">
+      <div class="w-48 bg-sf-bg px-2 py-1">
         <!-- 基础页面 -->
         <template v-for="item in list" :key="item.name">
           <div class="text-sf-text-secondary mb-1 px-2 text-xs font-semibold">{{ item.name }}</div>
