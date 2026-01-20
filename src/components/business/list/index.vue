@@ -1,23 +1,24 @@
 <template>
-  <div class="flex flex-col" v-if="list.length">
-    <div
-      v-for="(item, index) in list"
-      :key="index"
-      @click="handleClick(item, index)"
-      :class="[activeClass(item), hoverClass(item)]"
-      class="flex-c relative mx-1 h-8 rounded-xl"
-    >
-      <slot :item="item">
-        <SfIcon size="4" :icon="item.icon" class="mr-1" v-if="item.icon" />
-        <span>
-          {{ item.name }}
-        </span>
-      </slot>
+  <div class="flex flex-col p-1" v-if="list.length">
+    <template v-for="(item, index) in list" :key="index">
+      <div class="my-1 border-t-[0.5px] border-sf-border" v-if="index > 0"></div>
       <div
-        v-if="activeKey && item[activeKey] == activeValue"
-        class="absolute top-1/2 left-3 h-1.5 w-1.5 -translate-y-1/2 rounded-full bg-sf-theme"
-      ></div>
-    </div>
+        @click="handleClick(item, index)"
+        :class="[activeClass(item), hoverClass(item)]"
+        class="flex-c relative h-8 rounded-xl"
+      >
+        <slot :item="item">
+          <SfIcon size="4" :icon="item.icon" class="mr-1" v-if="item.icon" />
+          <span>
+            {{ item.name }}
+          </span>
+        </slot>
+        <div
+          v-if="activeKey && item[activeKey] == activeValue"
+          class="absolute top-1/2 left-3 h-1.5 w-1.5 -translate-y-1/2 rounded-full bg-sf-theme"
+        ></div>
+      </div>
+    </template>
   </div>
 </template>
 
