@@ -1,9 +1,9 @@
 <template>
   <div class="flex flex-col p-1" v-if="list.length">
     <template v-for="(item, index) in list" :key="index">
-      <div class="my-1 border-t-[0.5px] border-sf-border" v-if="index > 0"></div>
+      <div class="my-1 border-t-[0.5px] border-sf-border" v-if="index > 0 && border"></div>
       <div
-        @click="handleClick(item, index)"
+        @mousedown="handleClick($event, item, index)"
         :class="[activeClass(item), hoverClass(item)]"
         class="flex-c relative h-8 rounded-xl"
       >
@@ -39,10 +39,19 @@ const props = defineProps({
    * 激活项的值
    */
   activeValue: {},
+  /**
+   * 是否开启边框
+   */
+  border: {
+    type: Boolean,
+    default: true,
+  },
 })
 const emit = defineEmits(['onClick'])
-function handleClick(item, index) {
+function handleClick(event, item, index) {
   if (item.fn) item.fn()
+  event.stopPropagation()
+  event.preventDefault()
   emit('onClick', item, index)
 }
 /**
