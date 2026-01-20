@@ -23,12 +23,12 @@ export const PROJECT_ROUTES = ['image', 'resume', 'home']
  * 轻量级路由列表
  * 包含简单小游戏和实用工具路由
  */
-export const LIGHT_ROUTES = ['2048', 'sort', 'checklist', 'note', 'passwordBox', 'reborn', 'time']
+export const MUSE_ROUTES = ['2048', 'sort', 'checklist', 'note', 'passwordBox', 'reborn', 'time']
 /**
  * 基础与项目路由组合列表
  * 包含所有基础路由、项目路由和轻量级路由，用于导航和权限控制
  */
-export const ALL_ROUTES = [...BASE_ROUTES, ...PROJECT_ROUTES, ...LIGHT_ROUTES]
+export const ALL_ROUTES = [...BASE_ROUTES, ...PROJECT_ROUTES, ...MUSE_ROUTES]
 /**
  * 默认路由地址
  * 系统启动时默认跳转的路由
