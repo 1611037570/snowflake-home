@@ -1,7 +1,7 @@
 import { $t } from '@/locales'
 import pageConfig from '@/locales/lang/zh/core.json'
 import { computed } from 'vue'
-import { BASE_ROUTES, LIGHT_ROUTES, PROJECT_ROUTES } from '../config'
+import { BASE_ROUTES, MUSE_ROUTES, PROJECT_ROUTES } from '../config'
 type PageType = 'project' | 'base' | 'light'
 
 interface PageItem {
@@ -56,8 +56,8 @@ export const PROJECT_PAGE = computed<PageItem[]>(() => {
  * 轻量级路由页面列表
  * 包含所有轻量级路由的页面信息
  */
-export const LIGHT_PAGE = computed<PageItem[]>(() => {
-  const list = LIGHT_ROUTES.map((item) => ({
+export const MUSE_PAGE = computed<PageItem[]>(() => {
+  const list = MUSE_ROUTES.map((item) => ({
     type: 'light' as PageType,
     ...getRouterInfo(item),
   }))
@@ -65,5 +65,5 @@ export const LIGHT_PAGE = computed<PageItem[]>(() => {
 })
 
 export const ALL_PAGE = computed<PageItem[]>(() => {
-  return [...BASE_PAGE.value, ...PROJECT_PAGE.value, ...LIGHT_PAGE.value]
+  return [...BASE_PAGE.value, ...PROJECT_PAGE.value, ...MUSE_PAGE.value]
 })
