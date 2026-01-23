@@ -6,6 +6,7 @@ import { BarChart } from 'echarts/charts'
 import {
   DatasetComponent,
   GridComponent,
+  LegendComponent,
   TitleComponent,
   TooltipComponent,
   TransformComponent,
@@ -24,6 +25,7 @@ echarts.use([
   TransformComponent,
   BarChart,
   LabelLayout,
+  LegendComponent,
   UniversalTransition,
   CanvasRenderer,
 ])
