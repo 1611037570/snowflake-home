@@ -3,7 +3,7 @@
     <!-- 标题栏 -->
     <Header />
     <!-- 主内容区域 -->
-    <main class="w-full flex-1 overflow-hidden bg-sf-bg-hover">
+    <main class="w-full flex-1 overflow-hidden bg-sf-bg-hover p-3">
       <slot />
     </main>
     <SfFooter class="text-xs" />
