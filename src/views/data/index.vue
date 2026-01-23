@@ -11,11 +11,27 @@ const businessComponent = import.meta.glob('@/components/business/*/index.vue', 
 const businessComponentLength = Object.keys(businessComponent).length
 // 所有组件
 const componentLength = baseComponentLength + businessComponentLength
+
+const data = {
+  title: {
+    text: '基建产物',
+  },
+  xAxis: {
+    type: 'category',
+    data: ['页面', '组件', '图标'],
+  },
+  series: [
+    {
+      type: 'bar',
+      data: [viewLength, componentLength, iconLength],
+    },
+  ],
+}
 </script>
 
 <template>
   <SfViewContainer>
-    已加载 {{ viewLength }} 个视图, {{ componentLength }} 个组件, {{ iconLength }} 个图标
+    <SfEcharts :options="data"></SfEcharts>
   </SfViewContainer>
 </template>
 
