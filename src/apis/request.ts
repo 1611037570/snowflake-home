@@ -2,17 +2,27 @@ import type { AxiosRequestConfig } from 'axios'
 import axios from 'axios'
 // 自定义拦截器类型
 export interface XyRequestInterceptors {
-  requestInterceptor?: (config: AxiosRequestConfig) => any // 请求成功拦截
-  requestInterceptorCatch?: (error: any) => any // 请求失败拦截
-  responseInterceptor?: (response: any) => any // 响应成功拦截
-  responseInterceptorCatch?: (error: any) => any // 响应失败拦截
+  request?: (config: AxiosRequestConfig) => any // 请求成功拦截
+  requestCatch?: (error: any) => any // 请求失败拦截
+  response?: (response: any) => any // 响应成功拦截
+  responseCatch?: (error: any) => any // 响应失败拦截
 }
+
+export interface XyStatus {
+  success: number | number[] // 可以支持多个成功码
+  unauthorized?: number | number[] // 未授权码，如401
+  forbidden?: number | number[] // 禁止访问码，如403
+  notFound?: number | number[] // 资源不存在，如404
+  serverError?: number | number[] // 服务器错误，如500
+}
+
 // 扩展默认类型
 export interface XyRequestConfig extends AxiosRequestConfig {
   interceptors?: XyRequestInterceptors
-  fixedData?: Record<string, any> // 新增固定参数配置项
+  status?: XyStatus
+  debug?: boolean
 }
-const default_config = {
+const default_config: XyRequestConfig = {
   // 超时时间
   timeout: 10000,
   headers: {
@@ -20,66 +30,96 @@ const default_config = {
     'Content-type': 'application/json;charset=UTF-8',
   },
 }
+// 默认状态码配置
+const defaultStatus: XyStatus = {
+  success: 200,
+  unauthorized: 401,
+  forbidden: 403,
+  notFound: 404,
+  serverError: 500,
+}
+
+const debug = true
 /**
  * 自定义Axios请求类
  */
 class XyRequest {
-  instance
-
+  // 实例
+  instance: any
+  // 拦截器
   interceptors
+  // 状态码
+  status: XyStatus
+  // 调试模式
+  debug?: boolean
 
+  // 构造函数
   constructor(config: XyRequestConfig) {
+    // 创建实例
     this.instance = axios.create({ ...default_config, ...config })
-    this.interceptors = config.interceptors
+    // 初始化拦截器
+    this.interceptors = config?.interceptors || {}
+    // 初始化状态码
+    this.status = { ...defaultStatus, ...config?.status }
+    // 调试模式
+    this.debug = config?.debug || debug
     this.alone()
-    this.all()
+    // 注册请求拦截
+    this.requestInterceptors()
+    // 注册响应拦截
+    this.responseInterceptors()
   }
-  // 单例拦截
-  alone() {
-    // 注册单例请求拦截
-    this.instance.interceptors.request.use(
-      this.interceptors?.requestInterceptor,
-      this.interceptors?.requestInterceptorCatch,
-    )
-    // 注册单例响应拦截
-    this.instance.interceptors.response.use(
-      this.interceptors?.responseInterceptor,
-      this.interceptors?.responseInterceptorCatch,
-    )
+  // 检查是否是成功码
+  private isSuccessCode(code: number): boolean {
+    const successCodes = this.status.success
+    if (Array.isArray(successCodes)) {
+      return successCodes.includes(code)
+    }
+    return code === successCodes
   }
-  // 全局拦截
-  all() {
-    // 注册全局请求拦截
+
+  private alone() {
+    const interceptors = this.interceptors
+    this.instance.interceptors.request.use(interceptors?.request, interceptors?.requestCatch)
+    this.instance.interceptors.response.use(interceptors?.response, interceptors?.responseCatch)
+  }
+  private requestInterceptors() {
     this.instance.interceptors.request.use(
       (config: any) => {
-        if (!config.fixedData) {
-          return config
-        }
-
-        // 根据请求方法决定参数添加位置
-        const target = config.method?.toLowerCase() === 'get' ? 'params' : 'data'
-        config[target] = {
-          ...config[target],
-          ...config.fixedData,
-        }
-
         return config
       },
-      (err) => err,
+      (err: any) => {
+        if (this.debug) {
+          console.error('请求拦截器错误:', err)
+        }
+        return err
+      },
     )
-    // 注册全局响应拦截
+  }
+  private responseInterceptors() {
     this.instance.interceptors.response.use(
       (res: any) => {
-        console.log('res', res)
+        if (this.debug) {
+          console.log('res:>> ', res)
+        }
+        const { status } = res
+        // HTTP状态码
+        if (status !== 200) {
+          return res
+        }
+
         const { code, data } = res.data
-        if (code !== 200 && code !== 1) {
-          console.error('请求失败', res)
-          return
+        // 业务状态码
+        if (this.isSuccessCode(code)) {
+          return data
         }
 
         return data
       },
-      (err) => {
+      (err: any) => {
+        if (this.debug) {
+          console.error('响应拦截器错误:', err)
+        }
         return err
       },
     )
@@ -87,25 +127,7 @@ class XyRequest {
 
   // 网络请求
   request<T = any>(config: XyRequestConfig): Promise<T> {
-    return new Promise((resolve, reject) => {
-      // 单独请求拦截
-      config = config.interceptors?.requestInterceptor
-        ? config.interceptors.requestInterceptor(config)
-        : config
-      // 确保链式调用是一个完整的表达式
-      return this.instance
-        .request<T, any>(config)
-        .then((res) => {
-          // 单独响应拦截
-          res = config.interceptors?.responseInterceptor
-            ? config.interceptors.responseInterceptor(res)
-            : res
-          resolve(res)
-        })
-        .catch((err) => {
-          reject(err)
-        })
-    })
+    return this.instance.request(config)
   }
 
   get<T = any>(config: XyRequestConfig): Promise<T> {
