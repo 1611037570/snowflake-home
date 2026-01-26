@@ -1,0 +1,7 @@
+{
+  "error": {
+    "loadFailed": "Load failed, please try again later",
+    "autoRedirect": "Auto redirect in {count}s",
+    "redirectNow": "Redirect now"
+  }
+}

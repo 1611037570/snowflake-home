@@ -1,0 +1,7 @@
+{
+  "error": {
+    "loadFailed": "加载失败，请稍后重试！",
+    "autoRedirect": "{count}秒 后自动跳转！",
+    "redirectNow": "立即跳转"
+  }
+}

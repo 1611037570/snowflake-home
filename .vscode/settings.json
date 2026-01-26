@@ -56,8 +56,8 @@
   },
 
   // i18n Ally 配置
-  // 语言文件路径
-  "i18n-ally.localesPaths": ["src/locales"],
+  // 语言文件路径（指向具体的语言文件目录）
+  "i18n-ally.localesPaths": ["src/locales/lang"],
   // 键值对样式
   "i18n-ally.keystyle": "nested",
   //启用框架
