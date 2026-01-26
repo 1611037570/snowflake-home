@@ -17,31 +17,16 @@ Through this project, you can learn the practical application of modern frontend
 - 🎨 **Image Processing Tool**：Lightweight image suite covering common functions such as compression, cropping, and format conversion (http://nannan.work/#/image)
 - 👤 **Personal Homepage**：Author's personal showcase page (http://nannan.work/#/index)
 
-## 🔧 Core Technical Capabilities
+## 🔧 Core Infrastructure Features
 
-### 🔥 Core Technology Stack
-
-| Technical Area    | Implementation Solution                                              | Technical Features                                                                  |
-| ----------------- | -------------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
-| **Cache Mgmt**    | 📥 LFU-R strategy cache manager based on **Pinia**                   | Supports custom expiration, automatic elimination when expired/over-limit           |
-| **Request Mgmt**  | 🚀 Request class based on **Axios**                                  | Supports multiple instances, custom interceptors, unified request/response handling |
-| **Route Mgmt**    | 🛣️ Automatic registration based on **VueRouter**                     | Supports dynamic generation, view lazy loading, error page redirection              |
-| **Style Mgmt**    | 🎨 Themed CSS color variable system based on **TailwindCSS**         | Supports day/night mode switching                                                   |
-| **Language Mgmt** | 🌐 Route-level multi-language support based on **i18n**              | Supports Chinese/English switching and extensibility                                |
-| **Component Lib** | 🧩 Project-specific style component library based on **ElementPlus** | Supports on-demand/global import                                                    |
-| **Tool Lib**      | 🛠️ Integrates multiple commonly used small tools from **VueUse**     | Provides rich frontend utility functions                                            |
-
-### 🛠️ Development Technology Stack
-
-**Frontend Framework & Language**: **Vue 3** + **TypeScript**  
-**Build Tool**: **Vite**  
-**State Management**: **Pinia**  
-**UI Component Library**: **ElementPlus**  
-**Style Solution**: **TailwindCSS**  
-**Route Management**: **VueRouter**  
-**HTTP Client**: **Axios**  
-**Internationalization**: **i18n**  
-**Utility Library**: **VueUse**
+- 🎮 **Command Tool**：Interactive command menu based on **Node.js**；supports up/down arrow navigation, quick execution with enter key
+- 📥 **Cache Management**：LFU-R strategy cache manager based on **Pinia**；supports custom expiration configuration, automatic elimination when expired/over-limit
+- 🚀 **Request Management**：Request class based on **Axios**；supports multiple instances, custom interceptors, unified request/response handling mechanism
+- 🛣️ **Route Management**：Automatic registration based on **VueRouter**；supports dynamic generation, view lazy loading, and error page redirection mechanism
+- 🎨 **Style Management**：Themed CSS color variable system based on **TailwindCSS**；supports day/night mode switching
+- 🌐 **Language Management**：Route-level multi-language support based on **i18n**；supports Chinese/English switching, extensible
+- 🧩 **Component Library**：Project-specific style component library based on **ElementPlus**；supports on-demand/global import
+- 🛠️ **Tool Library**：Project-specific style tool library based on **VueUse**
 
 ---
 
