@@ -5,15 +5,31 @@
 ## 📌 Project Background
 
 The project was launched on September 3, 2020, and open-sourced on November 22, 2025.
-The main body of the project is the Snowflake Start Page, which has expanded to include personal homepage, resume generator, image processing tools, and other small utilities.
-It also integrates foundational features including multi-language support, persistence, theme switching, and responsive design.
-Through this project, you can learn to develop with modern frontend technologies such as Vue 3, TypeScript, and Vite.
+The main body is the Snowflake Start Page, which has expanded to include multiple small tools based on the start page; it also integrates multiple infrastructure features.
+It can help you learn the practical application of modern frontend technologies such as Vue3, TypeScript, and Vite.
+
+## 🎯 Core Product Modules
+
+✨ [Snowflake Start Page](http://nannan.work)：Core project carrier, providing a personalized and customizable website start page
+📄 [Resume Generator](http://nannan.work/#/resume)：Visual resume editing tool that supports template selection, content customization, and one-click export
+🎨 [Image Processing Tool](http://nannan.work/#/image)：Lightweight image suite covering common functions such as compression, cropping, and format conversion
+👤 [Personal Homepage](http://nannan.work/#/index)：Author's personal page
+
+## 🔧 Core Technical Capabilities
+
+📥**Cache**：LFU-R strategy cache manager based on Pinia; supports custom expiration configuration, automatic elimination when expired/over-limit.
+🚀**Request Management**：Request class based on Axios; supports multiple instances, custom interceptors, and unified request/response processing mechanism.
+🛣️**Route Management**：Automatic registration based on VueRouter; supports dynamic generation, view lazy loading, and error page redirection mechanism.
+🎨**Style Management**：Themed CSS color variable system based on TailwindCSS; supports day/night mode switching.
+🌐**Language Management**：Route-level multi-language support based on i18n; supports Chinese/English switching and is extensible.
+**Component Library**：Project-specific style component library based on ElementPlus; supports on-demand/global import.
+**Tool Library**：Integrates multiple commonly used small tools from VueUse.
 
 ## 🔗 Live Demo
 
 You can access the deployed project via the link below
 
-**Website**: <http://nannan.work/#/home>
+**Website**: <http://nannan.work>
 
 ## 🚀 Install & Run
 
