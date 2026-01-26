@@ -5,7 +5,7 @@
       <el-dropdown-menu>
         <SfList
           class="w-30"
-          :list="langList"
+          :list="LANG_LIST.filter((item) => item.name)"
           activeKey="key"
           :activeValue="currentLocale"
           @onClick="handleClick"
@@ -17,7 +17,7 @@
 </template>
 
 <script setup>
-import { changeLanguage, langList } from '@/locales'
+import { changeLanguage, LANG_LIST } from '@/locales'
 import { getCurrentLocale } from '@/utils'
 const currentLocale = getCurrentLocale()
 const handleClick = async (item) => {
