@@ -1,3 +1,6 @@
+// 导入依赖
+import { ALL_PAGE } from '@/constants'
+import { useTitle } from '@vueuse/core'
 import type { I18n, I18nOptions } from 'vue-i18n'
 import { createI18n } from 'vue-i18n' // 从 vue-i18n 导入创建实例的方法
 interface LangItem {
@@ -25,7 +28,7 @@ function getLangKey(lang: string): string {
 // 获取默认语言
 const getDefaultLocale = () => {
   // 优先读本地存储
-  const savedLangKey = getLangKey(localStorage.getItem('appLanguage') || '')
+  const savedLangKey = getLangKey(localStorage.getItem('snowflakeLanguage') || '')
   if (savedLangKey) {
     return savedLangKey
   }
@@ -57,36 +60,52 @@ const i18nOptions: I18nOptions = {
   fallbackWarn: false, // 关闭后备键警告
 }
 const i18n: I18n = createI18n(i18nOptions)
-let pageName = ''
-export const loadPageLang = async (name: string) => {
-  pageName = name
-  const langKey = i18n.global.locale.value
-
+const pageName = ''
+async function dynamicLoadPageLang(name: string, langKey: string) {
   // 动态导入页面专属语言包（打包时拆分为独立 chunk）
   try {
-    const pageLangModule = await import(`./lang/${langKey}/${pageName}.json`)
+    const pageLangModule = await import(`./lang/${langKey}/${name}.json`)
     const pageLang = pageLangModule.default
     // 合并到全局
     i18n.global.mergeLocaleMessage(langKey, pageLang)
+
+    return pageLang
   } catch (error) {
-    console.error(`加载页面语言包 ${pageName}/${langKey} 失败:`, error)
+    console.error(`加载页面语言包 ${name}/${langKey} 失败:`, error)
     return
   }
 }
-// 8. 语言切换函数（优化：切换后自动重新加载当前页面语言包）
-export const changeLanguage = async (key: string) => {
-  const langKey = getLangKey(key)
-  if (!messages[langKey]) {
-    loadPageLang('core')
-  }
-  i18n.global.locale.value = langKey
-  localStorage.setItem('appLanguage', langKey)
 
-  if (pageName) {
-    loadPageLang(pageName)
-  }
+function loadDefaultTitle() {
+  useTitle(import.meta.env.VITE_APP_TITLE)
 }
-changeLanguage(DEFAULT_LANG_KEY)
+async function dynamicLoadPageTitle(pageName: string) {
+  const pageConfig: any = ALL_PAGE.value.find((item) => item.url === `/${pageName}`)
+  if (!pageConfig) {
+    loadDefaultTitle()
+    return
+  }
+  let title = pageConfig?.name.startsWith('router.') ? '' : pageConfig.name
+  console.log('title:>> ', title)
+  if (!title) {
+    loadDefaultTitle()
+    return
+  }
+  title += pageConfig?.desc?.startsWith('router.') ? '' : ` - ${pageConfig.desc}`
+  useTitle(title)
+}
+export const loadPageLang = async (name: string, langKey?: string) => {
+  langKey = (langKey || i18n.global.locale.value) as string
+  // 更新语言
+  i18n.global.locale.value = langKey
+  localStorage.setItem('snowflakeLanguage', langKey)
+  // 加载核心语言包
+  await dynamicLoadPageLang('core', langKey)
+  // 加载标题
+  await dynamicLoadPageTitle(name)
+  // 加载页面专属语言包
+  await dynamicLoadPageLang(name, langKey)
+}
 interface Translation {
   (key: string): string
 }

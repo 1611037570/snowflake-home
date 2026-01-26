@@ -60,7 +60,6 @@ export default ({ mode }: { mode: string }) => {
         // 注入 HTML 变量（HTML 中通过 <%= 变量名 %> 使用）
         inject: {
           data: {
-            title: VITE_APP_TITLE, // 静态变量
             defaultLang: VITE_DEFAULT_LANG, // 默认语言
           },
         },

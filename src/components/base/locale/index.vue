@@ -17,11 +17,15 @@
 </template>
 
 <script setup>
-import { changeLanguage, LANG_LIST } from '@/locales'
+import { LANG_LIST, loadPageLang } from '@/locales'
+import { useRouter } from 'vue-router'
+const router = useRouter()
+const currentPageName = computed(() => router.currentRoute.value.name)
+
 import { getCurrentLocale } from '@/utils'
 const currentLocale = getCurrentLocale()
 const handleClick = async (item) => {
-  await changeLanguage(item.key)
+  await loadPageLang(currentPageName.value, item.key)
 }
 </script>
 
