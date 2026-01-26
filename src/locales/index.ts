@@ -1,22 +1,28 @@
 import type { I18n, I18nOptions } from 'vue-i18n'
 import { createI18n } from 'vue-i18n' // 从 vue-i18n 导入创建实例的方法
-/**
- * 获取默认语言（优先级：本地存储 > 浏览器默认）
- * @returns 语言标识（zh 或 en）
- */
-const LANG_MAP: Record<string, any> = {
-  // 主标识项：带 name（用于页面显示，如下拉框）
-  zh: { key: 'zh', name: '简体中文' },
-  en: { key: 'en', name: 'English' },
+interface LangItem {
+  // 最终要使用的语言
+  key: string
+  // 语言显示名称
+  name?: string
+  // 语言匹配值
+  value: string
+}
+export const LANG_LIST: LangItem[] = [
+  { key: 'zh', name: '简体中文', value: 'zh' },
+  { key: 'en', name: 'English', value: 'en' },
   // 别名标识项：不带 name（仅用于映射到同一核心语言）
-  'zh-CN': { key: 'zh' },
-  'zh-TW': { key: 'zh' },
-  'en-US': { key: 'en' },
+  { key: 'zh', value: 'zh-CN' },
+  { key: 'zh', value: 'zh-TW' },
+  { key: 'en', value: 'en-US' },
+]
+
+function getLangKey(lang: string): string {
+  // 直接查找value匹配的项，拿到对应的核心key
+  const matchItem = LANG_LIST.find((item) => item.value === lang)
+  return matchItem?.key || ''
 }
-export const langList = Object.values(LANG_MAP).filter((item) => item.name)
-function getLangKey(lang: string) {
-  return LANG_MAP[lang]?.key || ''
-}
+// 获取默认语言
 const getDefaultLocale = () => {
   // 优先读本地存储
   const savedLangKey = getLangKey(localStorage.getItem('appLanguage') || '')
@@ -38,9 +44,6 @@ const getDefaultLocale = () => {
 const DEFAULT_LANG_KEY = getDefaultLocale()
 // 构建语言包映射
 const messages: any = {}
-const langModule = await import(`./lang/${DEFAULT_LANG_KEY}/core.json`)
-messages[DEFAULT_LANG_KEY] = langModule.default
-
 // 创建 I18n 实例
 /**
  * i18n 配置选项
@@ -66,7 +69,7 @@ export const loadPageLang = async (name: string) => {
     // 合并到全局
     i18n.global.mergeLocaleMessage(langKey, pageLang)
   } catch (error) {
-    // console.error(`加载页面语言包 ${pageName}/${langKey} 失败:`, error)
+    console.error(`加载页面语言包 ${pageName}/${langKey} 失败:`, error)
     return
   }
 }
@@ -74,13 +77,7 @@ export const loadPageLang = async (name: string) => {
 export const changeLanguage = async (key: string) => {
   const langKey = getLangKey(key)
   if (!messages[langKey]) {
-    try {
-      const langModule = await import(`./lang/${langKey}/core.json`)
-      messages[langKey] = langModule.default
-    } catch (error) {
-      console.error(`加载语言包 ${langKey} 失败:`, error)
-      return
-    }
+    loadPageLang('core')
   }
   i18n.global.locale.value = langKey
   localStorage.setItem('appLanguage', langKey)
@@ -89,6 +86,7 @@ export const changeLanguage = async (key: string) => {
     loadPageLang(pageName)
   }
 }
+changeLanguage(DEFAULT_LANG_KEY)
 interface Translation {
   (key: string): string
 }
