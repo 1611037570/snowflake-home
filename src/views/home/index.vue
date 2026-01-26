@@ -1,42 +1,44 @@
 <template>
-  <!-- 背景组件 -->
-  <Background> </Background>
-  <!-- 菜单组件 -->
-  <MenuBar></MenuBar>
-  <!-- 搜索组件 -->
-  <Search></Search>
+  <div class="relative h-full w-full">
+    <!-- 背景组件 -->
+    <Background> </Background>
+    <!-- 菜单组件 -->
+    <MenuBar></MenuBar>
+    <!-- 搜索组件 -->
+    <Search></Search>
 
-  <Transition
-    enter-active-class="transition-all duration-300 linear"
-    leave-active-class="transition-all duration-300 linear"
-    enter-from-class="opacity-0"
-    leave-to-class="opacity-0"
-  >
-    <!-- 快捷方式组件 -->
-    <Shortcut v-if="tabIndex == 1"></Shortcut>
-  </Transition>
-  <!-- 文案组件 -->
-  <Transition
-    enter-active-class="transition-all duration-300 linear"
-    leave-active-class="transition-all duration-300 linear"
-    enter-from-class="opacity-0"
-    leave-to-class="opacity-0"
-  >
-    <Quote v-if="searchFocus"></Quote>
-  </Transition>
+    <Transition
+      enter-active-class="transition-all duration-300 linear"
+      leave-active-class="transition-all duration-300 linear"
+      enter-from-class="opacity-0"
+      leave-to-class="opacity-0"
+    >
+      <!-- 快捷方式组件 -->
+      <Shortcut v-if="tabIndex == 1"></Shortcut>
+    </Transition>
+    <!-- 文案组件 -->
+    <Transition
+      enter-active-class="transition-all duration-300 linear"
+      leave-active-class="transition-all duration-300 linear"
+      enter-from-class="opacity-0"
+      leave-to-class="opacity-0"
+    >
+      <Quote v-if="searchFocus"></Quote>
+    </Transition>
 
-  <!-- dock组件 -->
-  <Dock />
-  <!-- 游戏组件 -->
-  <Game />
-  <SfPermission permission="note">
-    <!-- 置顶便签组件 -->
-    <NoteHomeTop />
-    <!-- 便签组件 -->
-    <NoteHomeModal />
-  </SfPermission>
-  <PasswordHomeModal />
-  <SettingModal />
+    <!-- dock组件 -->
+    <Dock />
+    <!-- 游戏组件 -->
+    <Game />
+    <SfPermission permission="note">
+      <!-- 置顶便签组件 -->
+      <NoteHomeTop />
+      <!-- 便签组件 -->
+      <NoteHomeModal />
+    </SfPermission>
+    <PasswordHomeModal />
+    <SettingModal />
+  </div>
 </template>
 
 <script setup>
