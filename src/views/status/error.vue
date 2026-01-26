@@ -1,20 +1,26 @@
 <template>
   <div class="flex-c min-h-screen flex-col bg-sf-primary">
-    <div class="text-lg font-medium text-sf-text">加载失败，请稍后重试</div>
-    <div class="mt-2 text-sf-text">{{ count }}s 后自动跳转</div>
-    <button class="sf-theme-element mt-4 rounded px-4 py-2" @click="jump">立即跳转</button>
+    <div class="text-lg font-medium text-sf-text">{{ $t('error.loadFailed') }}</div>
+    <div class="mt-2 text-sf-text">{{ $t('error.autoRedirect', { count }) }}</div>
+    <button class="sf-theme-element mt-4 rounded px-4 py-2" @click="jump">
+      {{ $t('error.redirectNow') }}
+    </button>
   </div>
 </template>
 
 <script setup>
 import { DEFAULT_ROUTE } from '@/constants'
 import { useIntervalFn } from '@vueuse/core'
+import { onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
+
 const router = useRouter()
 const count = ref(3)
+
 function jump() {
   router.push(DEFAULT_ROUTE)
 }
+
 const { pause, resume } = useIntervalFn(() => {
   count.value -= 1
 
@@ -24,7 +30,7 @@ const { pause, resume } = useIntervalFn(() => {
   }
 }, 1000)
 
-onMounted(() => {
+onMounted(async () => {
   resume()
 })
 </script>
