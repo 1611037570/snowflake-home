@@ -1,39 +1,61 @@
-# Snowflake Start Page — Browser Start Page, Multi-Tools
+# Snowflake Start Page — Localized Browser Start Page
 
 [Simplified Chinese](README.md) | [English](README.en.md)
 
-## 📌 Project Background
+## 📌 Project Introduction
 
 The project was launched on September 3, 2020, and open-sourced on November 22, 2025.
+
 The main body is the Snowflake Start Page, which has expanded to include multiple small tools based on the start page; it also integrates multiple infrastructure features.
-It can help you learn the practical application of modern frontend technologies such as Vue3, TypeScript, and Vite.
+
+Through this project, you can learn the practical application of modern frontend technologies such as **Vue3**, **TypeScript**, and **Vite**.
 
 ## 🎯 Core Product Modules
 
-✨ [Snowflake Start Page](http://nannan.work)：Core project carrier, providing a personalized and customizable website start page
-📄 [Resume Generator](http://nannan.work/#/resume)：Visual resume editing tool that supports template selection, content customization, and one-click export
-🎨 [Image Processing Tool](http://nannan.work/#/image)：Lightweight image suite covering common functions such as compression, cropping, and format conversion
-👤 [Personal Homepage](http://nannan.work/#/index)：Author's personal page
+- ✨ **Snowflake Start Page**：Core project carrier, providing a personalized and customizable website start page (http://nannan.work)
+- 📄 **Resume Generator**：Visual resume editing tool that supports template selection, content customization, and one-click export (http://nannan.work/#/resume)
+- 🎨 **Image Processing Tool**：Lightweight image suite covering common functions such as compression, cropping, and format conversion (http://nannan.work/#/image)
+- 👤 **Personal Homepage**：Author's personal showcase page (http://nannan.work/#/index)
 
 ## 🔧 Core Technical Capabilities
 
-📥**Cache**：LFU-R strategy cache manager based on Pinia; supports custom expiration configuration, automatic elimination when expired/over-limit.
-🚀**Request Management**：Request class based on Axios; supports multiple instances, custom interceptors, and unified request/response processing mechanism.
-🛣️**Route Management**：Automatic registration based on VueRouter; supports dynamic generation, view lazy loading, and error page redirection mechanism.
-🎨**Style Management**：Themed CSS color variable system based on TailwindCSS; supports day/night mode switching.
-🌐**Language Management**：Route-level multi-language support based on i18n; supports Chinese/English switching and is extensible.
-**Component Library**：Project-specific style component library based on ElementPlus; supports on-demand/global import.
-**Tool Library**：Integrates multiple commonly used small tools from VueUse.
+### 🔥 Core Technology Stack
+
+| Technical Area    | Implementation Solution                                              | Technical Features                                                                  |
+| ----------------- | -------------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
+| **Cache Mgmt**    | 📥 LFU-R strategy cache manager based on **Pinia**                   | Supports custom expiration, automatic elimination when expired/over-limit           |
+| **Request Mgmt**  | 🚀 Request class based on **Axios**                                  | Supports multiple instances, custom interceptors, unified request/response handling |
+| **Route Mgmt**    | 🛣️ Automatic registration based on **VueRouter**                     | Supports dynamic generation, view lazy loading, error page redirection              |
+| **Style Mgmt**    | 🎨 Themed CSS color variable system based on **TailwindCSS**         | Supports day/night mode switching                                                   |
+| **Language Mgmt** | 🌐 Route-level multi-language support based on **i18n**              | Supports Chinese/English switching and extensibility                                |
+| **Component Lib** | 🧩 Project-specific style component library based on **ElementPlus** | Supports on-demand/global import                                                    |
+| **Tool Lib**      | 🛠️ Integrates multiple commonly used small tools from **VueUse**     | Provides rich frontend utility functions                                            |
+
+### 🛠️ Development Technology Stack
+
+**Frontend Framework & Language**: **Vue 3** + **TypeScript**  
+**Build Tool**: **Vite**  
+**State Management**: **Pinia**  
+**UI Component Library**: **ElementPlus**  
+**Style Solution**: **TailwindCSS**  
+**Route Management**: **VueRouter**  
+**HTTP Client**: **Axios**  
+**Internationalization**: **i18n**  
+**Utility Library**: **VueUse**
+
+---
 
 ## 🔗 Live Demo
 
-You can access the deployed project via the link below
+You can access the deployed project via the link below:
 
 **Website**: <http://nannan.work>
 
+---
+
 ## 🚀 Install & Run
 
-VS Code or Trae is recommended as the development environment. The project provides .vscode configuration files, which can bring a better development experience.
+**VS Code** or **Trae** is recommended as the development environment. The project provides `.vscode` configuration files, which can bring a better development experience.
 
 ```bash
 # Install dependencies
@@ -46,9 +68,13 @@ pnpm dev
 pnpm build
 ```
 
+---
+
 ## 📄 License
 
 This project is licensed under the [AGPL 3.0 License](LICENSE).
+
+---
 
 ## ❄️ First Snow Again, Six Years of Frontend
 
