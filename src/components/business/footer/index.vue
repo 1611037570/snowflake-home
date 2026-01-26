@@ -5,7 +5,7 @@
   >
     <div class="flex items-center gap-3">
       <div class="flex items-center">
-        Copyright © 2019-2025 .
+        Copyright © 2019-{{ currentYear }} .
         <span @click="userNavigation" class="ml-2 cursor-pointer font-medium hover:text-sf-theme">
           小羊</span
         >
@@ -42,6 +42,8 @@
 
 <script setup lang="ts">
 import { defaultNavigation, userNavigation } from '@/utils'
+import dayjs from 'dayjs'
+import { computed, ref } from 'vue'
 import About from './about.vue'
 import Banner from './banner.vue'
 import Donation from './donation.vue'
@@ -57,6 +59,10 @@ const props = defineProps({
 })
 const gapClass = computed(() => {
   return `gap-${props.gap}`
+})
+
+const currentYear = computed(() => {
+  return dayjs().year()
 })
 
 const donationVisible = ref(false)
