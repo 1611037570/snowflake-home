@@ -203,3 +203,5 @@ export const quotations = [
   { value: '咱们这一辈子若是一直往回看，那这日子就没法过了' },
   { value: '朝如青丝暮成雪是非成败转头空' },
 ]
+
+export const ALL_CONTENT = [...fixed, ...da_ai_xian_zun, ...jian_lai, ...sentences, ...quotations]
