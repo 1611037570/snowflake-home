@@ -33,19 +33,22 @@ const options = computed(() => {
     grid: {
       left: 0, // 左偏移设为0
       right: 2, // 右偏移设为0
-      top: 40, // 顶部留少量空间给标题（如果不需要标题，设为0）
-      bottom: 0,
+      top: 80, // 顶部留少量空间给标题（如果不需要标题，设为0）
+      bottom: 12,
       containLabel: false, // 关键：让grid包含坐标轴标签，避免标签溢出后自动留白
+    },
+    legend: {
+      top: 36,
     },
     title: {
       text: 'ECharts 入门示例',
       top: 0,
+      left: 'center',
       textStyle: {
         color: '#50a2ff',
       },
     },
     tooltip: {},
-    legend: {},
     xAxis: {
       data: ['组件', '页面', '图标'],
     },

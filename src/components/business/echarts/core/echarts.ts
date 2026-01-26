@@ -16,8 +16,15 @@ import { LabelLayout, UniversalTransition } from 'echarts/features'
 // 引入 Canvas 渲染器，注意引入 CanvasRenderer 或者 SVGRenderer 是必须的一步
 import { CanvasRenderer } from 'echarts/renderers'
 
+// 2. 导入需要的图表模块（解决Pie饼图报错）
+import { PieChart } from 'echarts/charts'
+
+// 3. 导入需要的组件模块（解决Toolbox工具箱报错）
+import { ToolboxComponent } from 'echarts/components'
 // 注册必须的组件
 echarts.use([
+  PieChart,
+  ToolboxComponent,
   TitleComponent,
   TooltipComponent,
   GridComponent,
