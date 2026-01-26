@@ -13,13 +13,16 @@ const currentElLocale = loadElLocale()
 // https://www.jsdelivr.com/?query=vue
 </script>
 <template>
+  <!-- 应用根元素 -->
   <ElConfigProvider :locale="currentElLocale">
+    <!-- 监控器 -->
     <SfMonitor v-if="monitorWatch" />
-    <Transition name="page-transition" mode="out-in">
-      <RouterView v-slot="{ Component }">
+    <!-- 路由视图 -->
+    <RouterView v-slot="{ Component }">
+      <Transition name="page-transition" mode="out-in">
         <Component :is="Component || LoadingComponent" />
-      </RouterView>
-    </Transition>
+      </Transition>
+    </RouterView>
   </ElConfigProvider>
 </template>
 
