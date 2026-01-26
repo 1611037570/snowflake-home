@@ -15,10 +15,22 @@ const currentElLocale = loadElLocale()
 <template>
   <ElConfigProvider :locale="currentElLocale">
     <SfMonitor v-if="monitorWatch" />
-    <RouterView v-slot="{ Component }">
-      <Component :is="Component || LoadingComponent" />
-    </RouterView>
+    <Transition name="page-transition" mode="out-in">
+      <RouterView v-slot="{ Component }">
+        <Component :is="Component || LoadingComponent" />
+      </RouterView>
+    </Transition>
   </ElConfigProvider>
 </template>
 
-<style></style>
+<style>
+.page-transition-enter-active,
+.page-transition-leave-active {
+  transition: opacity 0.3s ease;
+}
+
+.page-transition-enter-from,
+.page-transition-leave-to {
+  opacity: 0;
+}
+</style>
