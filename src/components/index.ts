@@ -1,31 +1,52 @@
-// 自定义组件解析器
+/**
+ * 组件注册器
+ * 其实一个动态注册就够用啦
+ * 写全局和动态是为了学习记录使用的~
+ */
+import fs from 'fs'
+import path from 'path'
 import type { ComponentResolver } from 'unplugin-vue-components'
 import { defineAsyncComponent, type App } from 'vue'
-
+// 通过import.meta.glob获取基础组件
+function getGlobalBaseComponent() {
+  const Components = Object.entries(import.meta.glob('./base/*/index.vue'))
+  const list = Components.map(([path, fn]) => {
+    return {
+      fn,
+      name: path.replace('./', '').split('/')[1],
+    }
+  })
+  return list
+}
 export const globalComponentInstaller = {
   install(app: App) {
-    // 1、获取当前路径下所有文件中的index.vue
-    const components = import.meta.glob('./base/*/index.vue')
-
-    // 2、遍历组件模块
-    for (const [path, fn] of Object.entries(components) as any) {
-      const name = path.replace('./', '').split('/')[1]
+    const baseList: any = getGlobalBaseComponent()
+    for (const { name, fn } of baseList) {
       const componentName = 'Sf' + name.charAt(0).toUpperCase() + name.slice(1)
-      // 3、进行注册
       app.component(componentName, defineAsyncComponent(fn))
     }
   },
 }
+// 通过fs获取基础组件
+function getDynamicBaseComponent() {
+  const baseDir = path.join(__dirname, 'base')
+  const entries = fs.readdirSync(baseDir, { withFileTypes: true })
+  return entries.filter((entry) => entry.isDirectory()).map((entry) => entry.name)
+}
 
-const baseMap = ['icon', 'footer', 'permission']
 export const dynamicComponentResolver = (): ComponentResolver => {
   return (componentName: string) => {
+    const baseMap = getDynamicBaseComponent()
+
+    const name = componentName.slice(2).replace(/^./, (c) => c.toLowerCase())
     function isBaseComponent(name: string) {
-      return baseMap.includes(name.slice(2).toLowerCase())
+      return baseMap.includes(name.toLowerCase())
     }
-    if (componentName.startsWith('Sf') && !isBaseComponent(componentName)) {
-      const name = componentName.slice(2)
-      const path = `@components/business/${name.charAt(0).toLowerCase() + name.slice(1)}/index.vue`
+    if (isBaseComponent(name)) {
+      return
+    }
+    if (componentName.startsWith('Sf')) {
+      const path = `@components/business/${name}/index.vue`
       return {
         // importName: name,
         path,
