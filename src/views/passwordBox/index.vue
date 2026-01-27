@@ -1,5 +1,5 @@
 <script setup>
-import { useCopy } from '@/hooks/modules/useCopy'
+import { useCopy } from '@/hooks'
 import { usePasswordStore } from '@/stores'
 import { storeToRefs } from 'pinia'
 import { computed, ref } from 'vue'
