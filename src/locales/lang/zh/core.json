@@ -1,5 +1,4 @@
 {
-  "title": "雪花索引",
   "router": {
     "messageBoard": "留言板",
     "image": "图片处理工具",
@@ -32,5 +31,8 @@
     "system": "跟随系统",
     "dark": "暗黑模式",
     "light": "白天模式"
-  }
+  },
+  "userName": "小羊",
+  "copyright": "版权所有",
+  "allRightsReserved": "保留所有权利"
 }
