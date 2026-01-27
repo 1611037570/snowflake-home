@@ -1,16 +1,10 @@
-// 导入依赖
 import { ALL_PAGE } from '@/constants'
 import { useTitle } from '@vueuse/core'
 import type { I18n, I18nOptions } from 'vue-i18n'
 import { createI18n } from 'vue-i18n' // 从 vue-i18n 导入创建实例的方法
-interface LangItem {
-  // 最终要使用的语言
-  key: string
-  // 语言显示名称
-  name?: string
-  // 语言匹配值
-  value: string
-}
+
+import type { LangItem, Translation } from './types'
+
 export const LANG_LIST: LangItem[] = [
   { key: 'zh', name: '简体中文', value: 'zh' },
   { key: 'en', name: 'English', value: 'en' },
@@ -19,7 +13,6 @@ export const LANG_LIST: LangItem[] = [
   { key: 'zh', value: 'zh-TW' },
   { key: 'en', value: 'en-US' },
 ]
-
 function getLangKey(lang: string): string {
   // 直接查找value匹配的项，拿到对应的核心key
   const matchItem = LANG_LIST.find((item) => item.value === lang)
@@ -47,7 +40,7 @@ const getDefaultLocale = () => {
 const DEFAULT_LANG_KEY = getDefaultLocale()
 // 构建语言包映射
 const messages: any = {}
-// 创建 I18n 实例
+
 /**
  * i18n 配置选项
  */
@@ -60,18 +53,16 @@ const i18nOptions: I18nOptions = {
   fallbackWarn: false, // 关闭后备键警告
 }
 const i18n: I18n = createI18n(i18nOptions)
-const pageName = ''
+
 async function dynamicLoadPageLang(name: string, langKey: string) {
-  // 动态导入页面专属语言包（打包时拆分为独立 chunk）
   try {
     const pageLangModule = await import(`./lang/${langKey}/${name}.json`)
     const pageLang = pageLangModule.default
     // 合并到全局
     i18n.global.mergeLocaleMessage(langKey, pageLang)
-
     return pageLang
   } catch (error) {
-    console.error(`加载页面语言包 ${name}/${langKey} 失败:`, error)
+    console.error(`加载 ${name}的${langKey} 包失败:`, error)
     return
   }
 }
@@ -85,13 +76,14 @@ async function dynamicLoadPageTitle(pageName: string) {
     loadDefaultTitle()
     return
   }
-  let title = pageConfig?.name.startsWith('router.') ? '' : pageConfig.name
-  console.log('title:>> ', title)
+  const name = pageConfig.name
+  let title = name && !name.startsWith('router.') ? name : ''
   if (!title) {
     loadDefaultTitle()
     return
   }
-  title += pageConfig?.desc?.startsWith('router.') ? '' : ` - ${pageConfig.desc}`
+  const desc = pageConfig.desc
+  title += desc && !desc.startsWith('router.') ? ` - ${desc}` : ''
   useTitle(title)
 }
 export const loadPageLang = async (name: string, langKey?: string) => {
@@ -106,10 +98,9 @@ export const loadPageLang = async (name: string, langKey?: string) => {
   // 加载页面专属语言包
   await dynamicLoadPageLang(name, langKey)
 }
-interface Translation {
-  (key: string): string
-}
+
 // 导出翻译函数
 export const $t = i18n.global.t as Translation
+
 // 导出 i18n 实例
 export default i18n
