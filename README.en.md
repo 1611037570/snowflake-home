@@ -20,6 +20,7 @@ Through this project, you can learn the practical application of modern frontend
 ## 🔧 Core Infrastructure Features
 
 - 🎮 **Command Tool**：Interactive command menu based on **Node.js**；supports up/down arrow navigation, quick execution with enter key
+- 📋 **Form System**：Dynamic form component based on **ElementPlus**；supports object/array type fields, configuration-driven, two-way data binding
 - 📥 **Cache Management**：LFU-R strategy cache manager based on **Pinia**；supports custom expiration configuration, automatic elimination when expired/over-limit
 - 🚀 **Request Management**：Request class based on **Axios**；supports multiple instances, custom interceptors, unified request/response handling mechanism
 - 🛣️ **Route Management**：Automatic registration based on **VueRouter**；supports dynamic generation, view lazy loading, and error page redirection mechanism
