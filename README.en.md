@@ -4,24 +4,24 @@
 
 ## 📌 Project Introduction
 
-The project was launched on September 3, 2020, and open-sourced on November 22, 2025.
-
 The main body is the Snowflake Start Page, which has expanded to include multiple small tools based on the start page; it also integrates multiple infrastructure features.
 
 Through this project, you can learn the practical application of modern frontend technologies such as **Vue3**, **TypeScript**, and **Vite**.
+
+The project was launched on September 3, 2020, and began reconstruction and open-sourcing on November 22, 2025.
 
 ## 🎯 Core Product Modules
 
 - ✨ **Snowflake Start Page**：Core project carrier, providing a personalized and customizable website start page (http://nannan.work)
 - 📄 **Resume Generator**：Visual resume editing tool that supports template selection, content customization, and one-click export (http://nannan.work/#/resume)
-- 🎨 **Image Processing Tool**：Lightweight image suite covering common functions such as compression, cropping, and format conversion (http://nannan.work/#/image)
+- 🛣️ **Image Processing Tool**：Lightweight image suite covering common functions such as compression, cropping, and format conversion (http://nannan.work/#/image)
 - 👤 **Personal Homepage**：Author's personal showcase page (http://nannan.work/#/index)
 
 ## 🔧 Core Infrastructure Features
 
 - 🎮 **Command Tool**：Interactive command menu based on **Node.js**；supports up/down arrow navigation, quick execution with enter key
 - 📋 **Form System**：Dynamic form component based on **ElementPlus**；supports object/array type fields, configuration-driven, two-way data binding
-- 📥 **Cache Management**：LFU-R strategy cache manager based on **Pinia**；supports custom expiration configuration, automatic elimination when expired/over-limit
+- 📥 **Cache Management**：LFU-R strategy cache manager based on Pinia；supports custom expiration configuration, automatic elimination when expired/over-limit
 - 🚀 **Request Management**：Request class based on **Axios**；supports multiple instances, custom interceptors, unified request/response handling mechanism
 - 🛣️ **Route Management**：Automatic registration based on **VueRouter**；supports dynamic generation, view lazy loading, and error page redirection mechanism
 - 🎨 **Style Management**：Themed CSS color variable system based on **TailwindCSS**；supports day/night mode switching
