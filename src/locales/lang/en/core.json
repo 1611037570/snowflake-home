@@ -1,5 +1,4 @@
 {
-  "title": "Snowflake Index",
   "router": {
     "messageBoard": "Message Board",
     "image": "Image Processing",
@@ -31,5 +30,8 @@
     "system": "Follow System",
     "dark": "Dark Mode",
     "light": "Light Mode"
-  }
+  },
+  "userName": "Yang",
+  "copyright": "Copyright",
+  "allRightsReserved": "All Rights Reserved"
 }
