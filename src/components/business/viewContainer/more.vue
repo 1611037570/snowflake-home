@@ -10,20 +10,22 @@ const filterMenuItems = (item) => {
   return route.path !== item.url && item.url !== '/index'
 }
 
-const list = shallowRef([
-  {
-    name: '基建',
-    routers: BASE_PAGE.value.filter(filterMenuItems),
-  },
-  {
-    name: '项目',
-    routers: PROJECT_PAGE.value.filter(filterMenuItems),
-  },
-  {
-    name: '小灵光',
-    routers: MUSE_PAGE.value.filter(filterMenuItems),
-  },
-])
+const list = computed(() => {
+  return [
+    {
+      name: '基建',
+      routers: BASE_PAGE.value.filter(filterMenuItems),
+    },
+    {
+      name: '项目',
+      routers: PROJECT_PAGE.value.filter(filterMenuItems),
+    },
+    {
+      name: '小灵光',
+      routers: MUSE_PAGE.value.filter(filterMenuItems),
+    },
+  ]
+})
 function handleClick(item) {
   router.push(item.url)
 }
@@ -36,7 +38,7 @@ function handleClick(item) {
       <div class="w-48 bg-sf-bg px-2 py-1">
         <!-- 基础页面 -->
         <template v-for="item in list" :key="item.name">
-          <div class="text-sf-text-secondary mb-1 px-2 text-xs font-semibold">{{ item.name }}</div>
+          <div class="mb-1 px-2 text-xs font-semibold text-sf-base">{{ item.name }}</div>
           <div class="mb-2 rounded-lg border border-sf-border shadow-md">
             <SfList
               :list="item.routers"
