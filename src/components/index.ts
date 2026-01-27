@@ -7,23 +7,48 @@ import fs from 'fs'
 import path from 'path'
 import type { ComponentResolver } from 'unplugin-vue-components'
 import { defineAsyncComponent, type App } from 'vue'
-// 通过import.meta.glob获取基础组件
-function getGlobalBaseComponent() {
-  const Components = Object.entries(import.meta.glob('./base/*/index.vue'))
-  const list = Components.map(([path, fn]) => {
-    return {
-      fn,
-      name: path.replace('./', '').split('/')[1],
+
+function getAllBaseComponent() {
+  const baseComponent: any = import.meta.glob('./base/*/index.vue', { eager: true })
+  const list = Object.entries(baseComponent)
+  const components: any = {}
+  list.forEach(([path, fn]) => {
+    const name: any = path.replace('./', '').split('/')[1]
+    components[name] = {
+      component: fn.default,
+      name,
     }
   })
-  return list
+  return {
+    length: list.length,
+    components,
+  }
+}
+
+// 所有业务组件
+export const getAllBusinessComponent = () => {
+  const businessComponent = import.meta.glob('./business/*/index.vue', { eager: false })
+  const components: any = {}
+  const list = Object.entries(businessComponent)
+  list.forEach(([path, fn]) => {
+    const name: any = path.replace('./', '').split('/')[1]
+    components[name] = {
+      component: defineAsyncComponent(fn),
+      name,
+    }
+  })
+
+  return {
+    length: list.length,
+    components,
+  }
 }
 export const globalComponentInstaller = {
   install(app: App) {
-    const baseList: any = getGlobalBaseComponent()
-    for (const { name, fn } of baseList) {
+    const { components }: any = getAllBaseComponent()
+    for (const { name, component } of Object.values(components)) {
       const componentName = 'Sf' + name.charAt(0).toUpperCase() + name.slice(1)
-      app.component(componentName, defineAsyncComponent(fn))
+      app.component(componentName, component)
     }
   },
 }
