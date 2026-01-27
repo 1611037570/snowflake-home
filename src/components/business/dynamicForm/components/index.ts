@@ -1,14 +1,9 @@
-import { defineAsyncComponent } from 'vue'
+import { getAllBusinessComponent } from '@/components'
 
-const components: any = import.meta.glob('./*', { eager: false })
-
+const { components } = getAllBusinessComponent()
 const getComponent = (name: string) => {
   if (!name) return
-
-  for (const key in components) {
-    const currentName = key.slice(2, -4).toLocaleLowerCase()
-    if (currentName !== name) continue
-    return defineAsyncComponent(components[key])
-  }
+  if (!components[name]) return
+  return components[name]?.component
 }
 export { getComponent }
