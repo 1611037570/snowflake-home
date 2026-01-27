@@ -26,5 +26,10 @@
     "passwordBoxDesc": "Securely store and manage passwords"
   },
   "moreTools": "More Tools",
-  "load": "The formula for reversing time and space is to cherish the present"
+  "load": "The formula for reversing time and space is to cherish the present",
+  "theme": {
+    "system": "Follow System",
+    "dark": "Dark Mode",
+    "light": "Light Mode"
+  }
 }
