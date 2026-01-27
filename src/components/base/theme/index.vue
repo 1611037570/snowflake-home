@@ -1,12 +1,5 @@
 <template>
   <div class="text-sf-text" @click="toggleTheme">
-    <!-- <SfTooltip :content="theme === 'dark' ? '切换为浅色主题' : '切换为暗黑主题'">
-      <SfIcon
-        :icon="theme === 'dark' ? 'twemoji:sun' : 'ri:moon-clear-fill'"
-        size="8"
-        style="color: #f3d776"
-      />
-    </SfTooltip> -->
     <ElDropdown trigger="hover">
       <SfIcon
         :icon="theme === 'dark' ? 'twemoji:sun' : 'ri:moon-clear-fill'"
@@ -40,12 +33,14 @@ const { theme, themeMode } = storeToRefs(themeStore)
 const toggleTheme = () => {
   setTheme(theme.value)
 }
-// // 主题选项
-const list = ref([
-  { name: '跟随系统', value: 'system' },
-  { name: '暗黑模式', value: 'dark' },
-  { name: '白天模式', value: 'light' },
-])
+// 主题选项
+const list = computed(() => {
+  return [
+    { name: $t('theme.system'), value: 'system' },
+    { name: $t('theme.light'), value: 'light' },
+    { name: $t('theme.dark'), value: 'dark' },
+  ]
+})
 
 function handleClick(item) {
   setTheme(item.value)

@@ -27,5 +27,10 @@
     "passwordBoxDesc": "安全存储和管理密码"
   },
   "moreTools": "更多工具",
-  "load": "逆转时空的公式就是珍惜现在"
+  "load": "逆转时空的公式就是珍惜现在",
+  "theme": {
+    "system": "跟随系统",
+    "dark": "暗黑模式",
+    "light": "白天模式"
+  }
 }
