@@ -14,22 +14,8 @@ interface DataProxyOption {
 
 // 创建一个类
 class DataProxy<T> {
-  private data: Record<string, T>
-  private emit: (event: string, value: T, ...args: T[]) => void
-
-  private getDataCallback: (item: DataProxyOption) => T
-  private setDataCallback: (item: DataProxyOption) => (newValue: T) => void
-  private setEventCallback: (item: DataProxyOption) => (newValue: T, ...args: T[]) => void
-
-  private handleGetData(item: DataProxyOption) {
-    return this.getData(item.key)
-  }
-  private handleSetData<T>(item: DataProxyOption) {
-    return (newValue: T, index?: number) => this.setData(item.key, newValue, index)
-  }
-  private handleSetEvent(item: DataProxyOption) {
-    return (newValue: T, ...args: T[]) => this.emit(item.name, newValue, ...args)
-  }
+  private modelValue: any
+  private emit: (event: string, value: any, ...args: any[]) => void
 
   // 通用的数据代理辅助方法
   private createDataProxyHelper(
@@ -37,7 +23,7 @@ class DataProxy<T> {
     callback: any,
     name: string = '',
   ) {
-    const result: any = Object.create(null)
+    const result: any = {}
     const optionsArray = Array.isArray(options) ? options : [options]
     for (const item of optionsArray) {
       result[name + item.name] = callback(item)
@@ -47,8 +33,9 @@ class DataProxy<T> {
   private select(options: { keys: Keys; value?: any; index?: number }): any {
     const { keys, value, index = 0 } = options
     const keyPath = Array.isArray(keys) ? keys : [keys]
-    const keysLength = keys.length
-    let current: any = this.data
+    // 获取响应式数据的实际值
+    const dataValue = this.modelValue.value || this.modelValue
+    let current: any = dataValue
 
     const lastIndex = keyPath.length - 1
     for (let i = 0; i < lastIndex; i++) {
@@ -72,46 +59,55 @@ class DataProxy<T> {
     // 最后一个键
     const lastKey: any = keyPath[lastIndex]
 
-    // 设置值（如果有）
-    if (value !== undefined) {
-      current[lastKey] = value
-    } else if (!current.hasOwnProperty(lastKey)) {
+    // 当前key不存在
+    if (!current.hasOwnProperty(lastKey)) {
       current[lastKey] = ''
+    }
+    // 设置值（如果有）
+    if (options.hasOwnProperty('value')) {
+      current[lastKey] = value
+      // 如果是响应式数据，确保更新会触发响应
+      if (this.modelValue.value !== undefined) {
+        // 触发响应式更新
+        this.modelValue.value = { ...dataValue }
+      }
     }
     return current[lastKey]
   }
 
   constructor(data: any, emit: any) {
-    this.data = data
+    this.modelValue = data
     this.emit = emit
-
-    // 绑定this
-    this.getDataCallback = this.handleGetData.bind(this)
-    this.setDataCallback = this.handleSetData.bind(this)
-    this.setEventCallback = this.handleSetEvent.bind(this)
-  }
-  // 获取数据
-  getData(keys: Keys) {
-    return this.select({ keys })
   }
 
   // 获取数据代理
   getDataProxy(options: DataProxyOption | DataProxyOption[]) {
-    return this.createDataProxyHelper(options, this.getDataCallback)
-  }
-
-  // 设置数据
-  setData(keys: Keys, value: any, index?: number) {
-    this.select({ keys, value, index })
+    return this.createDataProxyHelper(options, (item: DataProxyOption) =>
+      this.select({ keys: item.key }),
+    )
   }
 
   // 设置数据代理
   setDataProxy(options: DataProxyOption | DataProxyOption[]) {
-    return this.createDataProxyHelper(options, this.setDataCallback, 'update:')
+    const result: any = {}
+    const optionsArray = Array.isArray(options) ? options : [options]
+    for (const item of optionsArray) {
+      result['update:' + item.name] = (newValue: T, index?: number) => {
+        this.select({ keys: item.key, value: newValue, index })
+      }
+    }
+    return result
   }
 
   setEventProxy(options: DataProxyOption | DataProxyOption[]) {
-    return this.createDataProxyHelper(options, this.setEventCallback)
+    return this.createDataProxyHelper(options, (item: DataProxyOption) => {
+      return (newValue: T, ...args: T[]) => this.emit(item.name, newValue, ...args)
+    })
+  }
+
+  // 获取当前数据
+  get data() {
+    return this.modelValue.value || this.modelValue
   }
 }
 export default DataProxy
