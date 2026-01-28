@@ -6,7 +6,10 @@
 
 <script setup>
 import { useUserStore } from '@/stores'
+import { storeToRefs } from 'pinia'
 import PrivacyAuthorization from './privacyAuthorization.vue'
+
+defineOptions({ name: 'SfLogin' })
 
 const userStore = useUserStore()
 const { loginVisible } = storeToRefs(userStore)

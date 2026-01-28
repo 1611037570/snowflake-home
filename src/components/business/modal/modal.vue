@@ -33,8 +33,11 @@
 </template>
 
 <script setup>
-import { onMounted, ref } from 'vue'
-import { onKeyStroke } from '@vueuse/core'
+import { computed, onMounted, ref, useTemplateRef } from 'vue'
+import { onKeyStroke, useElementBounding } from '@vueuse/core'
+
+defineOptions({ name: 'SfModal' })
+
 defineProps({
   title: {
     type: String,

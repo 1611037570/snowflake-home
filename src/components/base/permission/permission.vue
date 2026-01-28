@@ -1,5 +1,8 @@
 <script setup>
 import { checkPermission } from '@/utils'
+
+defineOptions({ name: 'SfPermission' })
+
 defineProps({
   permission: {
     type: String,

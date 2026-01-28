@@ -1,4 +1,6 @@
 <script setup>
+defineOptions({ name: 'SfSetContainer' })
+
 defineProps({
   list: {
     type: Array,

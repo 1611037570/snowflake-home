@@ -34,6 +34,9 @@ import { computed, ref } from 'vue'
 import About from './about.vue'
 import Banner from './banner.vue'
 import Donation from './donation.vue'
+
+defineOptions({ name: 'SfFooter' })
+
 defineProps({
   banner: {
     type: Boolean,

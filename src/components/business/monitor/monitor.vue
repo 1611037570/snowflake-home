@@ -4,6 +4,8 @@
 import { useDraggable, useFps, useMemory, usePerformanceObserver } from '@vueuse/core'
 import { computed, ref, useTemplateRef } from 'vue'
 
+defineOptions({ name: 'SfMonitor' })
+
 const fps = useFps({ interval: 500 })
 const { memory, isSupported } = useMemory({ interval: 1000 })
 const usedMB = computed(() => {

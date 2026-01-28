@@ -6,6 +6,9 @@
 import { ElImage } from 'element-plus'
 import type { ComponentInstance } from 'vue'
 import { getCurrentInstance, h } from 'vue'
+
+defineOptions({ name: 'SfImg' })
+
 const vm: any = getCurrentInstance()
 
 function changeRef(exports: any) {

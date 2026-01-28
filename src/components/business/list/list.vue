@@ -23,6 +23,9 @@
 </template>
 
 <script setup>
+defineOptions({
+  name: 'SfList',
+})
 const props = defineProps({
   list: {
     type: Array,

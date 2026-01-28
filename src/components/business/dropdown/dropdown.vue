@@ -16,11 +16,13 @@
 <script setup lang="ts">
 import { ElDropdown } from 'element-plus'
 import type { ComponentInstance } from 'vue'
-import { getCurrentInstance, h } from 'vue'
+import { getCurrentInstance, h, ref } from 'vue'
 
 import { useThemeStore } from '@/stores'
 import { storeToRefs } from 'pinia'
 const trigger = ref('hover')
+
+defineOptions({ name: 'SfDropdown' })
 const themeStore = useThemeStore()
 const { theme } = storeToRefs(themeStore)
 

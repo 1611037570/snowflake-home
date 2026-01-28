@@ -16,6 +16,8 @@
 </template>
 
 <script setup>
+defineOptions({ name: 'SfWaterPipple' })
+
 defineProps({
   width: { type: Number, default: 100 },
   height: { type: Number, default: 100 },

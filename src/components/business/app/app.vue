@@ -32,6 +32,8 @@
 import { useSearchStore, useShortcutStore } from '@/stores'
 import { storeToRefs } from 'pinia'
 
+defineOptions({ name: 'SfApp' })
+
 const searchStore = useSearchStore()
 const shortcutStore = useShortcutStore()
 const { shortcutList } = storeToRefs(shortcutStore)

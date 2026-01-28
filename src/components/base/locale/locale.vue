@@ -19,6 +19,9 @@
 <script setup>
 import { LANG_LIST, loadPageLang } from '@/locales'
 import { useRouter } from 'vue-router'
+
+defineOptions({ name: 'SfLocale' })
+
 const router = useRouter()
 const currentPageName = computed(() => router.currentRoute.value.name)
 

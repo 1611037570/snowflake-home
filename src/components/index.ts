@@ -9,7 +9,7 @@ import type { ComponentResolver } from 'unplugin-vue-components'
 import { defineAsyncComponent, type App } from 'vue'
 
 function getAllBaseComponent() {
-  const baseComponent: any = import.meta.glob('./base/*/index.vue', { eager: true })
+  const baseComponent: any = import.meta.glob('./base/*/index.ts', { eager: true })
   const list = Object.entries(baseComponent)
   const components: any = {}
   list.forEach(([path, fn]) => {
@@ -27,7 +27,7 @@ function getAllBaseComponent() {
 
 // 所有业务组件
 export const getAllBusinessComponent = () => {
-  const businessComponent = import.meta.glob('./business/*/index.vue', { eager: false })
+  const businessComponent = import.meta.glob('./business/*/index.ts', { eager: false })
   const components: any = {}
   const list = Object.entries(businessComponent)
   list.forEach(([path, fn]) => {
