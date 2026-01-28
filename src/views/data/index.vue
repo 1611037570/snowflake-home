@@ -1,14 +1,13 @@
 <script setup>
+import { getAllBaseComponent, getAllBusinessComponent } from '@/components'
 import { ALL_CONTENT, ALL_PAGE, ICON_LIST } from '@/constants'
 const iconLength = Object.keys(ICON_LIST).length
 // 所有视图组件
 const viewLength = ALL_PAGE.value.length
 // 所有基础组件
-const baseComponent = import.meta.glob('@/components/base/*/index.vue', { eager: false })
-const baseComponentLength = Object.keys(baseComponent).length
+const { length: baseComponentLength } = getAllBaseComponent()
 // 所有业务组件
-const businessComponent = import.meta.glob('@/components/business/*/index.vue', { eager: false })
-const businessComponentLength = Object.keys(businessComponent).length
+const { length: businessComponentLength } = getAllBusinessComponent()
 // 所有组件
 const componentLength = baseComponentLength + businessComponentLength
 // 文案长度
