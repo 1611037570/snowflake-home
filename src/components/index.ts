@@ -8,7 +8,7 @@ import path from 'path'
 import type { ComponentResolver } from 'unplugin-vue-components'
 import { defineAsyncComponent, type App } from 'vue'
 
-function getAllBaseComponent() {
+export function getAllBaseComponent() {
   const baseComponent: any = import.meta.glob('./base/*/index.ts', { eager: true })
   const list = Object.entries(baseComponent)
   const components: any = {}
