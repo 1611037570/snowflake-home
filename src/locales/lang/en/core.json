@@ -22,7 +22,9 @@
     "note": "Note",
     "noteDesc": "Record and share personal notes",
     "passwordBox": "Password Box",
-    "passwordBoxDesc": "Securely store and manage passwords"
+    "passwordBoxDesc": "Securely store and manage passwords",
+    "form": "Form Generator",
+    "formDesc": "Quickly generate forms"
   },
   "moreTools": "More Tools",
   "load": "The formula for reversing time and space is to cherish the present",
