@@ -1,4 +1,6 @@
-<script setup></script>
+<script setup>
+defineOptions({ name: 'SfAppCenter' })
+</script>
 
 <template>
   <SfModal>12312312</SfModal>

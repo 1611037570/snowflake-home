@@ -1,9 +1,11 @@
 <script setup lang="ts">
-import { ref, useTemplateRef } from 'vue'
+import { computed, ref, useTemplateRef } from 'vue'
 import MenuList from './MenuList.vue'
 import useClick from './hooks/useClick'
 import useWindowSize from './hooks/useWindowSize'
 import type { MenuEmits, MenuProps } from './types'
+
+defineOptions({ name: 'SfMenu' })
 // emit 事件
 const emit = defineEmits<MenuEmits>()
 // props 数据

@@ -1,7 +1,10 @@
 <script setup>
 import { useSystemStore } from '@/stores'
+import { storeToRefs } from 'pinia'
 const systemStore = useSystemStore()
 const { windowSize } = storeToRefs(systemStore)
+
+defineOptions({ name: 'SfBacktop' })
 
 const trigger = ref('hover')
 const tooltipRef = useTemplateRef('tooltipRef')

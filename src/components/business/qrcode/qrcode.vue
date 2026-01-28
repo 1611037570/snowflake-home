@@ -2,6 +2,8 @@
 import QRCode from 'qrcode'
 import { onMounted, ref, watch } from 'vue'
 
+defineOptions({ name: 'SfQrcode' })
+
 // 接收要生成二维码的数据
 const props = defineProps({
   value: {

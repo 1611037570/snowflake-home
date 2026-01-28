@@ -11,6 +11,8 @@
 </template>
 
 <script setup>
+defineOptions({ name: 'SfViewContainer' })
+
 import Header from './header.vue'
 </script>
 

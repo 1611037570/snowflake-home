@@ -10,6 +10,9 @@
 import { ElInput } from 'element-plus'
 import type { ComponentInstance } from 'vue'
 import { getCurrentInstance, h } from 'vue'
+
+defineOptions({ name: 'SfInput' })
+
 const vm: any = getCurrentInstance()
 
 function changeRef(exports: any) {

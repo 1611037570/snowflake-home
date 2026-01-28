@@ -18,9 +18,12 @@
 
 <script setup lang="ts">
 import { useThemeStore } from '@/stores'
+import { storeToRefs } from 'pinia'
 import { ElTooltip } from 'element-plus'
 import type { ComponentInstance } from 'vue'
 import { getCurrentInstance, h } from 'vue'
+
+defineOptions({ name: 'SfTooltip' })
 
 const themeStore = useThemeStore()
 const { theme } = storeToRefs(themeStore)

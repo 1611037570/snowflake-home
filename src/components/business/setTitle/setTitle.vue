@@ -3,6 +3,8 @@
 </template>
 
 <script setup>
+defineOptions({ name: 'SfSetTitle' })
+
 defineProps({
   title: {
     type: String,

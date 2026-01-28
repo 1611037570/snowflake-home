@@ -17,6 +17,9 @@ import ContainerObject from './base/containerObject.vue'
 import DataProxy from './code/dataProxy'
 import useConfigProxy from './code/useConfigProxy'
 import { DEFAULT_CONFIG, DEFAULT_DATA } from './config'
+
+defineOptions({ name: 'SfDynamicForm' })
+
 const instance = getCurrentInstance()
 const { emit } = instance
 

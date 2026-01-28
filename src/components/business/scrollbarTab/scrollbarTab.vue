@@ -1,4 +1,6 @@
 <script setup>
+defineOptions({ name: 'SfScrollbarTab' })
+
 defineProps({
   list: {
     type: Array,

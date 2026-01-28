@@ -16,6 +16,8 @@ import { useElementSize } from '@vueuse/core'
 import { computed, nextTick, onMounted, ref } from 'vue'
 import Item from './item.vue'
 
+defineOptions({ name: 'SfBarrage' })
+
 // Props
 const props = defineProps({
   list: {

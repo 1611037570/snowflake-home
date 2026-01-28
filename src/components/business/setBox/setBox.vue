@@ -4,6 +4,8 @@
   </div>
 </template>
 
-<script setup></script>
+<script setup>
+defineOptions({ name: 'SfSetBox' })
+</script>
 
 <style lang="scss" scoped></style>

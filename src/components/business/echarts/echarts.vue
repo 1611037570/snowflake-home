@@ -1,11 +1,15 @@
 <script setup>
 import useEcharts from './core/useEcharts'
+import { computed, useId } from 'vue'
+
 const props = defineProps({
   options: {
     default: () => {},
   },
 })
 const id = useId()
+
+defineOptions({ name: 'SfEcharts' })
 // const echartsRef = useTemplateRef('echartsRef')
 // 度合并函数
 const deepMerge = (target, source) => {

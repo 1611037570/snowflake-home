@@ -39,6 +39,8 @@
 </template>
 
 <script setup>
+defineOptions({ name: 'SfSetItem' })
+
 const emits = defineEmits(['onChange', 'onClick'])
 const props = defineProps({
   title: {

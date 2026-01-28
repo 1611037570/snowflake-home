@@ -32,7 +32,9 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
+
+defineOptions({ name: 'SfTab' })
 
 // 定义组件接收的props
 const { list } = defineProps<{

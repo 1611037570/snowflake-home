@@ -23,6 +23,8 @@
 import { ICON_LIST } from '@/constants'
 import { Icon, loadIcon } from '@iconify/vue'
 
+defineOptions({ name: 'SfIcon' })
+
 export interface IconProps {
   /**
    * Iconify 图标名称

@@ -27,6 +27,9 @@
 
 <script setup>
 import { useThemeStore } from '@/stores'
+
+defineOptions({ name: 'SfTheme' })
+
 const themeStore = useThemeStore()
 const { setTheme } = themeStore
 const { theme, themeMode } = storeToRefs(themeStore)

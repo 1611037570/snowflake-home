@@ -7,6 +7,10 @@
 </template>
 
 <script setup>
+import { computed } from 'vue'
+
+defineOptions({ name: 'SfMixImg' })
+
 const { size } = defineProps({
   /**
    * 图片类型
