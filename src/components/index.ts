@@ -70,14 +70,17 @@ export const dynamicComponentResolver = (): ComponentResolver => {
     if (isBaseComponent(name)) {
       return
     }
-    if (componentName.startsWith('Sf')) {
-      const path = `@components/business/${name}/index.vue`
-      return {
-        // importName: name,
-        path,
-        name: componentName,
-        from: path,
-      }
+    if (!componentName.startsWith('Sf')) {
+      return
+    }
+
+    const path = `@components/business/${name}/index.ts`
+
+    return {
+      // importName: name,
+      path,
+      name: componentName,
+      from: path,
     }
   }
 }
