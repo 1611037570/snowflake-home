@@ -1,13 +1,24 @@
 import { getUUID } from '@/utils'
-import { computed } from 'vue'
 const useConfigProxy = (config: any) => {
-  return computed(() => {
-    return config.value.map((item: any) => {
-      return {
-        ...item,
-        id: item.id || getUUID(),
-      }
-    })
-  })
+  const configProxy = ref()
+  watch(
+    () => config,
+    (newValue) => {
+      console.log('newValue:>> ', newValue)
+
+      configProxy.value = newValue.value.map((item: any) => {
+        if (item?.id) {
+          return item
+        }
+        return {
+          ...item,
+          id: item.id || getUUID(),
+        }
+      })
+    },
+    { deep: true, immediate: true },
+  )
+
+  return configProxy
 }
 export default useConfigProxy

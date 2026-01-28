@@ -81,18 +81,18 @@ class DataProxy<T> {
   }
 
   // 获取数据代理
-  getDataProxy(options: DataProxyOption | DataProxyOption[]) {
+  getDataProxy(options: DataProxyOption | DataProxyOption[], index: number = 0) {
     return this.createDataProxyHelper(options, (item: DataProxyOption) =>
-      this.select({ keys: item.key }),
+      this.select({ keys: item.key, index }),
     )
   }
 
   // 设置数据代理
-  setDataProxy(options: DataProxyOption | DataProxyOption[]) {
+  setDataProxy(options: DataProxyOption | DataProxyOption[], index: number) {
     const result: any = {}
     const optionsArray = Array.isArray(options) ? options : [options]
     for (const item of optionsArray) {
-      result['update:' + item.name] = (newValue: T, index?: number) => {
+      result['update:' + item.name] = (newValue: T) => {
         this.select({ keys: item.key, value: newValue, index })
       }
     }
