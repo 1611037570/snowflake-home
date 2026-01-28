@@ -1,4 +1,5 @@
 <template>
+  {{ configProxy }}
   <el-form ref="dynamicForm" :model="data" label-width="auto" style="max-width: 700px">
     <el-row :gutter="20" style="margin-right: 0; margin-left: 0">
       <el-col :span="item.span || 12" v-for="(item, index) in configProxy" :key="item.id || index">
@@ -27,6 +28,7 @@ const dataProxy = new DataProxy(data, emit)
 
 const configProxy = useConfigProxy(config)
 provide('dataProxy', dataProxy)
+provide('configProxy', configProxy)
 onMounted(() => {
   setTimeout(() => {
     config.value.push({
