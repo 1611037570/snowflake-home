@@ -1,4 +1,3 @@
-import { useWindowSize } from '@vueuse/core'
 import dayjs from 'dayjs'
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
@@ -18,11 +17,9 @@ export const useSystemStore = defineStore(
       width: window.innerWidth,
       height: window.innerHeight,
     })
-    function updateWindowSize() {
-      windowSize.value = useWindowSize()
-    }
+    const browserInfo = ref()
 
-    return { runTime, monitorWatch, windowSize, updateWindowSize }
+    return { runTime, monitorWatch, windowSize, browserInfo }
   },
   {
     persist: {
