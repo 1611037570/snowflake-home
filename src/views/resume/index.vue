@@ -18,11 +18,9 @@
 </template>
 
 <script setup>
-import { defineAsyncComponent, ref } from 'vue'
-
-// 懒加载组件
-const Builder = defineAsyncComponent(() => import('./builder.vue'))
-const Preview = defineAsyncComponent(() => import('./preview.vue'))
+import { ref } from 'vue'
+import Builder from './builder.vue'
+import Preview from './preview/index.vue'
 
 // 表单容器引用
 const formContainer = ref(null)
@@ -69,6 +67,7 @@ const printPDF = async () => {
     tempContainer.style.padding = '0mm'
     tempContainer.style.backgroundColor = '#ffffff'
     tempContainer.style.pageBreakInside = 'avoid'
+    tempContainer.style.color = '#000000' // 临时设置文本颜色为黑色，避免oklab颜色函数问题
     document.body.appendChild(tempContainer)
 
     // 为每个元素设置分页保护样式
@@ -77,9 +76,11 @@ const printPDF = async () => {
         element,
         pageBreakInside: element.style.pageBreakInside,
         pageBreakAfter: element.style.pageBreakAfter,
+        color: element.style.color,
       })
       element.style.pageBreakInside = 'avoid'
       element.style.pageBreakAfter = 'auto'
+      element.style.color = '#000000' // 临时设置文本颜色为黑色，避免oklab颜色函数问题
     })
 
     // 处理单页内容的函数
@@ -87,7 +88,11 @@ const printPDF = async () => {
       // 清空并填充临时容器
       tempContainer.innerHTML = ''
       pageElements.forEach((el) => {
-        tempContainer.appendChild(el.cloneNode(true))
+        // 克隆元素
+        const clone = el.cloneNode(true)
+        // 确保克隆的元素使用黑色文本，避免oklab颜色函数问题
+        clone.style.color = '#000000'
+        tempContainer.appendChild(clone)
       })
 
       // 渲染到canvas，优化样式和清晰度
@@ -100,6 +105,14 @@ const printPDF = async () => {
         allowTaint: true, // 允许渲染所有内容
         imageTimeout: 15000, // 增加图片加载超时时间
         removeContainer: false, // 手动管理容器移除
+        // 自定义样式处理，避免oklab颜色函数问题
+        onclone: (clonedDoc) => {
+          // 遍历所有元素，确保使用黑色文本
+          const allElements = clonedDoc.querySelectorAll('*')
+          allElements.forEach((element) => {
+            element.style.color = '#000000'
+          })
+        },
       })
 
       // 添加到PDF
@@ -185,6 +198,7 @@ const printPDF = async () => {
     originalStyles.forEach((styleInfo) => {
       styleInfo.element.style.pageBreakInside = styleInfo.pageBreakInside
       styleInfo.element.style.pageBreakAfter = styleInfo.pageBreakAfter
+      styleInfo.element.style.color = styleInfo.color
     })
 
     // 保存PDF文件
