@@ -1,10 +1,27 @@
 <template>
-  {{ configProxy }}
-  <el-form ref="dynamicForm" :model="data" label-width="auto" style="max-width: 700px">
-    <el-row :gutter="20" style="margin-right: 0; margin-left: 0">
-      <el-col :span="item.span || 12" v-for="(item, index) in configProxy" :key="item.id || index">
-        <ContainerObject v-if="item.type === 'object'" :config="item" />
-        <ContainerArray v-else-if="item.type === 'array'" :config="item" />
+  <el-form
+    ref="dynamicForm"
+    :model="data"
+    label-width="auto"
+    style="max-width: 700px"
+    class="flex flex-col"
+  >
+    <el-row
+      :gutter="20"
+      style="margin-right: 0; margin-left: 0"
+      class="border border-solid border-gray-300"
+    >
+      <el-col
+        class="w-full border border-red-400"
+        :span="item.span"
+        v-for="(item, index) in configProxy"
+        :key="item.id || index"
+      >
+        <template v-if="checkConfig(item)">
+          <ContainerObject v-if="item.type === 'object'" :config="item" />
+          <ContainerArray v-else-if="item.type === 'array'" :config="item" />
+        </template>
+        <template v-else> 数据错误：{{ item }} </template>
       </el-col>
     </el-row>
   </el-form>
@@ -19,6 +36,31 @@ import useConfigProxy from './code/useConfigProxy'
 import { DEFAULT_CONFIG, DEFAULT_DATA } from './config'
 
 defineOptions({ name: 'SfDynamicForm' })
+function checkObjectConfig(config) {
+  const { component, data } = config
+  if (!component || !data) {
+    return false
+  }
+  const { key, name } = data
+  if (!key || !name) {
+    return false
+  }
+  return true
+}
+function checkConfig(config) {
+  const { type } = config
+  if (!type) {
+    return false
+  }
+  if (type === 'object') {
+    return checkObjectConfig(config)
+  }
+  const { path, component } = config
+  if (!path || !component) {
+    return false
+  }
+  return true
+}
 
 const instance = getCurrentInstance()
 const { emit } = instance
