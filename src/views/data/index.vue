@@ -1,6 +1,9 @@
 <script setup>
 import { getAllBaseComponent, getAllBusinessComponent } from '@/components'
 import { ALL_CONTENT, ALL_PAGE, ICON_LIST } from '@/constants'
+import { useSystemStore } from '@/stores'
+const systemStore = useSystemStore()
+const { browserInfo } = storeToRefs(systemStore)
 const iconLength = Object.keys(ICON_LIST).length
 // 所有视图组件
 const viewLength = ALL_PAGE.value.length
@@ -58,6 +61,9 @@ const data = {
 <template>
   <SfViewContainer>
     <SfEcharts :options="data"></SfEcharts>
+    <div class="mt-3">设备类型：{{ browserInfo.deviceType }}</div>
+    <div class="mt-3">浏览器类型：{{ browserInfo.type }}</div>
+    <div class="mt-3">平台：{{ browserInfo.plat }}</div>
   </SfViewContainer>
 </template>
 
