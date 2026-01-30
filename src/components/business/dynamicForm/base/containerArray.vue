@@ -2,6 +2,7 @@
   <FormItem :config="config">
     <div v-for="(obj, i) in config.data" :key="i">
       <component
+        :key="obj.id"
         :is="component"
         v-bind="dataProxy.getDataProxy(obj, i)"
         v-on="dataProxy.setDataProxy(obj, i)"
@@ -17,6 +18,7 @@
 </template>
 
 <script setup>
+import { getUUID } from '@/utils'
 import { computed, inject, onMounted } from 'vue'
 import { getComponent } from '../components'
 import FormItem from './formItem.vue'
@@ -28,7 +30,17 @@ defineProps({
 })
 const config = defineModel('config')
 const dataProxy = inject('dataProxy')
-
+onMounted(() => {
+  config.value.data = config.value.data.map((item) => {
+    if (!item?.id) {
+      return {
+        ...item,
+        id: item.id || getUUID(),
+      }
+    }
+    return item
+  })
+})
 const length = computed(() => config.value.data.length)
 const component = getComponent(config.value.component)
 const moveUp = (index) => {
@@ -48,7 +60,9 @@ const remove = (index) => {
 }
 const add = (index) => {
   const newItem = JSON.parse(JSON.stringify(config.value.data[index]))
+  newItem.id = getUUID()
   config.value.data.splice(index + 1, 0, newItem)
+  dataProxy.addArrayItem(keyPath, index + 1, newDataItem)
 }
 onMounted(() => {})
 </script>

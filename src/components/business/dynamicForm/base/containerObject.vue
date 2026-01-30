@@ -2,7 +2,10 @@
   <FormItem :config="config">
     <component
       :is="component"
-      v-bind="dataProxy.getDataProxy(config.data)"
+      v-bind="{
+        ...dataProxy.getDataProxy(config.data),
+        ...config.props,
+      }"
       v-on="dataProxy.setDataProxy(config.data)"
     ></component>
   </FormItem>
