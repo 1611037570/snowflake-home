@@ -19,7 +19,7 @@ const data = {
   },
   xAxis: {
     type: 'category',
-    data: ['基建类型'],
+    data: ['数量'],
   },
   // 仅补充必须的Y轴（避免报错，无额外配置）
   yAxis: {
