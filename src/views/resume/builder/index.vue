@@ -1,6 +1,10 @@
 <script setup>
+import { useResumeStore } from '@/stores'
 import { ref } from 'vue'
+import Sidebar from './sidebar.vue'
 import Title from './title.vue'
+const resumeStore = useResumeStore()
+const { currentResume } = storeToRefs(resumeStore)
 
 import TitleEditor from '../components/TitleEditor.vue'
 import { userConfig } from './config'
@@ -28,7 +32,7 @@ function handleEditTitle() {
       </div>
       <ElScrollbar class="flex-1">
         <Title title="个人信息" />
-        <SfDynamicForm :config="userConfig" :data="currentResume" class="w-120"></SfDynamicForm>
+        <SfDynamicForm :config="userConfig" :data="currentResume"></SfDynamicForm>
         <SfCollapse>
           <el-collapse-item name="1">
             <template #title>
