@@ -28,9 +28,8 @@ export function getAllBaseComponent() {
 // 所有业务组件
 export const getAllBusinessComponent = () => {
   const businessComponent = import.meta.glob('./business/*/index.ts', { eager: false })
-  const elComponent = import.meta.glob('./el/*/index.ts', { eager: false })
   const components: any = {}
-  const list = Object.entries({ ...businessComponent, ...elComponent })
+  const list = Object.entries(businessComponent)
   list.forEach(([path, fn]) => {
     const name: any = path.replace('./', '').split('/')[1]
     components[name] = {
@@ -44,6 +43,40 @@ export const getAllBusinessComponent = () => {
     components,
   }
 }
+
+export const getAllElComponent = () => {
+  const elComponent = import.meta.glob('./el/*/index.ts', { eager: false })
+  const components: any = {}
+  const list = Object.entries(elComponent)
+  list.forEach(([path, fn]) => {
+    const name: any = path.replace('./', '').split('/')[1]
+    components[name] = {
+      component: defineAsyncComponent(fn),
+      name,
+    }
+  })
+
+  return {
+    length: list.length,
+    components,
+  }
+}
+
+export const getAllComponent = () => {
+  const { components: baseComponents, length: baseLength } = getAllBaseComponent()
+  const { components: businessComponents, length: businessLength } = getAllBusinessComponent()
+  const { components: elComponents, length: elLength } = getAllElComponent()
+  const components = {
+    ...baseComponents,
+    ...businessComponents,
+    ...elComponents,
+  }
+  const length = baseLength + businessLength + elLength
+  return {
+    length,
+    components,
+  }
+}
 export const globalComponentInstaller = {
   install(app: App) {
     const { components }: any = getAllBaseComponent()
@@ -54,19 +87,15 @@ export const globalComponentInstaller = {
   },
 }
 // 通过fs获取基础组件
-function getDynamicBaseComponent() {
-  const baseDir = path.join(__dirname, 'base')
+function getDynamicComponent(str: string) {
+  const baseDir = path.join(__dirname, str)
   const entries = fs.readdirSync(baseDir, { withFileTypes: true })
   return entries.filter((entry) => entry.isDirectory()).map((entry) => entry.name)
 }
-function getElComponent() {
-  const baseDir = path.join(__dirname, 'el')
-  const entries = fs.readdirSync(baseDir, { withFileTypes: true })
-  return entries.filter((entry) => entry.isDirectory()).map((entry) => entry.name)
-}
+
 export const dynamicComponentResolver = (): ComponentResolver => {
   return (componentName: string) => {
-    const baseMap = getDynamicBaseComponent()
+    const baseMap = getDynamicComponent('base')
 
     const name = componentName.slice(2).replace(/^./, (c) => c.toLowerCase())
     function isBaseComponent(name: string) {
@@ -78,7 +107,7 @@ export const dynamicComponentResolver = (): ComponentResolver => {
     if (!componentName.startsWith('Sf')) {
       return
     }
-    const elMap = getElComponent()
+    const elMap = getDynamicComponent('el')
     const fileName = elMap.includes(name) ? 'el' : 'business'
     const path = `@components/${fileName}/${name}/index.ts`
     return {

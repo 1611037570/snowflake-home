@@ -1,6 +1,6 @@
-import { getAllBusinessComponent } from '@/components'
+import { getAllComponent } from '@/components'
 
-const { components } = getAllBusinessComponent()
+const { components } = getAllComponent()
 const getComponent = (name: string) => {
   if (!name) return
   if (!components[name]) return
