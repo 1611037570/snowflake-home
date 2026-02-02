@@ -1,5 +1,5 @@
 <template>
-  <el-form-item :label="config.label" :prop="config.data.key">
+  <el-form-item :label="config.label" :prop="config.data.path">
     <template #label>
       <div class="flex h-full w-full items-center font-bold">{{ config.label }}</div>
     </template>

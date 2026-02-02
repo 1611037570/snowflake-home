@@ -1,20 +1,17 @@
 <template>
-  <FormItem :config="config">
-    <component
-      :is="component"
-      v-bind="{
-        ...dataProxy.getDataProxy(config.data),
-        ...config.props,
-      }"
-      v-on="dataProxy.setDataProxy(config.data)"
-    ></component>
-  </FormItem>
+  <component
+    :is="component"
+    v-bind="{
+      ...dataProxy.getDataProxy(config.data),
+      ...config.props,
+    }"
+    v-on="dataProxy.setDataProxy(config.data)"
+  ></component>
 </template>
 
 <script setup>
 import { inject, onMounted } from 'vue'
 import { getComponent } from '../components'
-import FormItem from './formItem.vue'
 
 const { config } = defineProps({
   index: {

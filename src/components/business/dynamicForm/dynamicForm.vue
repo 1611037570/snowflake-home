@@ -1,4 +1,5 @@
 <template>
+  {{ data }}
   <el-form
     ref="dynamicForm"
     :model="data"
@@ -13,23 +14,24 @@
     >
       <el-col
         class="w-full border border-red-400"
-        :span="item.span"
+        :span="item.span || 12"
         v-for="(item, index) in configProxy"
         :key="item.id || index"
       >
-        <template v-if="checkConfig(item)">
+        <FormItem v-if="checkConfig(item)" :config="item" label-position="top">
           <ContainerObject v-if="item.type === 'object'" :config="item" />
           <ContainerArray v-else-if="item.type === 'array'" :config="item" />
-        </template>
+        </FormItem>
         <template v-else> 数据错误：{{ item }} </template>
       </el-col>
     </el-row>
   </el-form>
 </template>
 <script setup>
-import { getCurrentInstance, onMounted, provide } from 'vue'
+import { getCurrentInstance, provide } from 'vue'
 import ContainerArray from './base/containerArray.vue'
 import ContainerObject from './base/containerObject.vue'
+import FormItem from './base/formItem.vue'
 
 import DataProxy from './code/dataProxy'
 import useConfigProxy from './code/useConfigProxy'
@@ -41,8 +43,8 @@ function checkObjectConfig(config) {
   if (!component || !data) {
     return false
   }
-  const { key, name } = data
-  if (!key || !name) {
+  const { path, key } = data
+  if (!path || !key) {
     return false
   }
   return true
@@ -55,10 +57,7 @@ function checkConfig(config) {
   if (type === 'object') {
     return checkObjectConfig(config)
   }
-  const { path, component } = config
-  if (!path || !component) {
-    return false
-  }
+
   return true
 }
 
@@ -74,19 +73,6 @@ const dataProxy = new DataProxy(data, emit)
 const configProxy = useConfigProxy(config)
 provide('dataProxy', dataProxy)
 provide('configProxy', configProxy)
-onMounted(() => {
-  setTimeout(() => {
-    config.value.push({
-      type: 'object',
-      label: 'input',
-      component: 'input',
-      data: {
-        key: ['name'],
-        name: 'modelValue',
-      },
-    })
-  }, 100)
-})
 </script>
 
 <style scoped></style>

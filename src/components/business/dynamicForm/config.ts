@@ -4,8 +4,8 @@ const DEFAULT_CONFIG = [
     label: 'input',
     component: 'input',
     data: {
-      key: ['name'],
-      name: 'modelValue',
+      path: ['name'],
+      key: 'modelValue',
     },
   },
   {
@@ -13,8 +13,8 @@ const DEFAULT_CONFIG = [
     label: 'input',
     component: 'input',
     data: {
-      key: ['info', 'like'],
-      name: 'modelValue',
+      path: ['info', 'like'],
+      key: 'modelValue',
     },
   },
   {
@@ -22,8 +22,8 @@ const DEFAULT_CONFIG = [
     label: 'input',
     component: 'input',
     data: {
-      key: ['info', 'like'],
-      name: 'modelValue',
+      path: ['info', 'like'],
+      key: 'modelValue',
     },
   },
   {
@@ -31,8 +31,8 @@ const DEFAULT_CONFIG = [
     label: 'input',
     component: 'input',
     data: {
-      key: ['info', 'like'],
-      name: 'modelValue',
+      path: ['info', 'like'],
+      key: 'modelValue',
     },
   },
   {
@@ -41,16 +41,16 @@ const DEFAULT_CONFIG = [
     component: 'input',
     data: [
       {
-        key: ['test', '?', 'like'],
-        name: 'modelValue',
+        path: ['test', '?', 'like'],
+        key: 'modelValue',
       },
       {
-        key: ['test', '?', 'name'],
-        name: 'modelValue',
+        path: ['test', '?', 'name'],
+        key: 'modelValue',
       },
       {
-        key: ['test', '?', 'age'],
-        name: 'modelValue',
+        path: ['test', '?', 'age'],
+        key: 'modelValue',
       },
     ],
   },
