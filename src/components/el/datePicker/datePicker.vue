@@ -8,6 +8,8 @@
 
 <script setup lang="ts">
 import { ElDatePicker } from 'element-plus'
+// 动态导入不生效，手动导入
+import 'element-plus/theme-chalk/el-date-picker-panel.css'
 import type { ComponentInstance } from 'vue'
 import { getCurrentInstance, h } from 'vue'
 
