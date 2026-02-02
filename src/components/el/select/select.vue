@@ -1,13 +1,11 @@
 <template>
-  <div>
-    <Component
-      v-model="value"
-      :is="h(ElSelect, { ...$attrs, ref: changeRef }, $slots)"
-      class="rounded-b-md bg-sf-primary text-sf-base"
-    >
-      <ElOption v-for="item in list" :key="item.value" :label="item.name" :value="item.value" />
-    </Component>
-  </div>
+  <Component
+    v-model="value"
+    :is="h(ElSelect, { ...$attrs, ref: changeRef }, $slots)"
+    class="rounded-b-md bg-sf-primary text-sf-base"
+  >
+    <ElOption v-for="item in list" :key="item.value" :label="item.name" :value="item.value" />
+  </Component>
 </template>
 
 <script setup lang="ts">
@@ -33,12 +31,4 @@ function changeRef(exports: any) {
 defineExpose({} as ComponentInstance<typeof ElSelect>)
 </script>
 
-<style scoped>
-.el-select {
-  --el-select-width: 100%;
-  /* width: auto !important; */
-}
-:deep(.el-select__wrapper) {
-  box-shadow: none !important;
-}
-</style>
+<style scoped></style>

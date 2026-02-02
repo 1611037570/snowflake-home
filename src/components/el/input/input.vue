@@ -1,6 +1,6 @@
 <template>
   <Component
-    class="text-sf-text"
+    class="rounded-xl bg-sf-primary text-sf-text"
     spellcheck="false"
     :is="h(ElInput, { ...$attrs, ref: changeRef }, $slots)"
   />
