@@ -1,15 +1,15 @@
-type Keys = string | string[]
+type Path = string | string[]
 // 定义数据代理选项类型
 interface DataProxyOption {
   /**
    * 数据键路径
    */
-  key: Keys
+  path: Path
 
   /**
    * 属性名称
    */
-  name: string
+  key: string
 }
 
 // 创建一个类
@@ -26,20 +26,20 @@ class DataProxy<T> {
     const result: any = {}
     const optionsArray = Array.isArray(options) ? options : [options]
     for (const item of optionsArray) {
-      result[name + item.name] = callback(item)
+      result[name + item.key] = callback(item)
     }
     return result
   }
-  private select(options: { keys: Keys; value?: any; index?: number }): any {
-    const { keys, value, index = 0 } = options
-    const keyPath = Array.isArray(keys) ? keys : [keys]
+  private select(options: { path: Path; value?: any; index?: number }): any {
+    const { path, value, index = 0 } = options
+    const keyPath = Array.isArray(path) ? path : [path]
     // 获取响应式数据的实际值
     const dataValue = this.modelValue.value || this.modelValue
     let current: any = dataValue
 
     const lastIndex = keyPath.length - 1
     for (let i = 0; i < lastIndex; i++) {
-      const key: any = keys[i]
+      const key: any = path[i]
 
       // 移动到下一级
       if (key == '?') {
@@ -51,7 +51,7 @@ class DataProxy<T> {
         current = current[key]
         continue
       }
-      const nextKey = keys[i + 1]
+      const nextKey = path[i + 1]
       current[key] = nextKey === '?' ? [] : {}
       current = current[key]
     }
@@ -83,7 +83,7 @@ class DataProxy<T> {
   // 获取数据代理
   getDataProxy(options: DataProxyOption | DataProxyOption[], index: number = 0) {
     return this.createDataProxyHelper(options, (item: DataProxyOption) =>
-      this.select({ keys: item.key, index }),
+      this.select({ path: item.path, index }),
     )
   }
 
@@ -92,8 +92,8 @@ class DataProxy<T> {
     const result: any = {}
     const optionsArray = Array.isArray(options) ? options : [options]
     for (const item of optionsArray) {
-      result['update:' + item.name] = (newValue: T) => {
-        this.select({ keys: item.key, value: newValue, index })
+      result['update:' + item.key] = (newValue: T) => {
+        this.select({ path: item.path, value: newValue, index })
       }
     }
     return result
@@ -101,7 +101,7 @@ class DataProxy<T> {
 
   setEventProxy(options: DataProxyOption | DataProxyOption[]) {
     return this.createDataProxyHelper(options, (item: DataProxyOption) => {
-      return (newValue: T, ...args: T[]) => this.emit(item.name, newValue, ...args)
+      return (newValue: T, ...args: T[]) => this.emit(item.key, newValue, ...args)
     })
   }
 
