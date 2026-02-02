@@ -25,3 +25,25 @@
 .el-anchor {
   --el-anchor-bg-color: transparent !important;
 }
+
+// 日期组件开始
+.el-date-editor {
+  --el-date-editor-width: 100%;
+}
+.el-input__wrapper {
+  box-shadow: none;
+  &:hover {
+    box-shadow: none;
+  }
+}
+
+// 日期组件结束
+// 选择组件开始
+.el-select {
+  --el-select-width: 100%;
+  border-radius: 12px;
+}
+.el-select__wrapper {
+  box-shadow: none !important;
+}
+// 选择组件结束
