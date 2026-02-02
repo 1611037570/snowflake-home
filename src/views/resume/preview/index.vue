@@ -50,24 +50,27 @@ const user = {
 const paddingList = [
   {
     name: '紧凑',
-    value: 'p-1',
+    value: 'p-3',
   },
   {
     name: '适中',
-    value: 'p-4',
+    value: 'p-5',
   },
   {
     name: '宽松',
-    value: 'p-7',
+    value: 'p-8',
   },
 ]
+
+const paddingValue = ref(paddingList[1].value)
 </script>
 
 <template>
-  <SfSelect :list="paddingList" placeholder="请选择间距" class="w-[200px]" />
+  <SfSelect :list="paddingList" placeholder="请选择间距" class="w-[100px]" v-model="paddingValue" />
   <div
-    class="flex h-[1000px] w-[740px] flex-col rounded-lg bg-white p-4 text-sf-primary"
+    class="flex h-[1123px] w-[794px] flex-col rounded-lg bg-white text-sf-primary"
     style="zoom: 0.8"
+    :class="paddingValue"
   >
     <div class="flex flex-1 flex-col text-sm">
       <!-- 信息模块 -->
