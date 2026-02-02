@@ -9,7 +9,6 @@ function loadEvent() {
   // 加载默认主题色
   loadDefaultTheme()
   // 初始化窗口大小
-
   updateWindowSize()
   // 禁用默认右键菜单
   stopContextmenuEvent()
