@@ -1,10 +1,11 @@
 <template>
   <SfViewContainer title="在线简历制作">
     <div class="flex h-full w-full">
-      <div class="h-full w-1/2 bg-amber-100">
+      <div class="h-full w-1/2">
         <Builder />
       </div>
       <div class="h-full w-1/2 bg-amber-400">
+        <SfInput />
         <ElButton type="primary" @click="printPDF" :loading="isLoading" icon="el-icon-download">
           打印表单PDF
         </ElButton>
@@ -18,15 +19,21 @@
 </template>
 
 <script setup>
+import { useResumeStore } from '@/stores'
 import { ref } from 'vue'
-import Builder from './builder.vue'
+import Builder from './builder/index.vue'
 import Preview from './preview/index.vue'
+
+const resumeStore = useResumeStore()
 
 // 表单容器引用
 const formContainer = ref(null)
 // 加载状态
 const isLoading = ref(false)
 
+const { currentResume } = storeToRefs(resumeStore)
+
+provide('currentResume', currentResume.value)
 /**
  * 将表单打印为PDF文件 - 延迟加载PDF相关库以优化初始加载性能
  */
