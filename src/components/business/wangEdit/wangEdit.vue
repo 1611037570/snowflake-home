@@ -1,15 +1,15 @@
 <template>
   <div style="" class="">
     <Toolbar
-      class="rounded-t-xl"
-      style="border-bottom: 1px solid #ccc"
+      class="border-sf-b border-b"
       :editor="editorRef"
       :defaultConfig="toolbarConfig"
       :mode="mode"
     />
     <Editor
       class="rounded-b-xl"
-      style="height: 500px; overflow-y: hidden"
+      style="overflow-y: hidden"
+      :style="{ height: height }"
       v-model="valueHtml"
       :defaultConfig="editorConfig"
       :mode="mode"
@@ -23,7 +23,12 @@ import '@wangeditor-next/editor/dist/css/style.css' // 引入 css
 
 import { Editor, Toolbar } from '@wangeditor-next/editor-for-vue'
 import { onBeforeUnmount, onMounted, shallowRef } from 'vue'
-
+defineProps({
+  height: {
+    type: String,
+    default: '300px',
+  },
+})
 // 编辑器实例，必须用 shallowRef
 const editorRef = shallowRef()
 
@@ -69,5 +74,23 @@ const handleCreated = (editor) => {
   color: var(--color-sf-base);
   border-top-left-radius: 12px;
   border-top-right-radius: 12px;
+}
+
+:deep(.w-e-bar-item button:hover) {
+  svg {
+    fill: var(--color-sf-theme) !important;
+  }
+  background: var(--color-sf-theme-hover);
+}
+:deep(.w-e-menu-tooltip-v5) {
+  color: red;
+  &::before {
+    color: var(--color-sf-base);
+    background: var(--color-sf-modal);
+    border: var(--color-sf-border) 1px solid;
+  }
+  &:after {
+    border: none !important;
+  }
 }
 </style>
