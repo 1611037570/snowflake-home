@@ -28,7 +28,7 @@
 
 // 日期组件开始
 .el-date-editor {
-  --el-date-editor-width: 100%;
+  --el-date-editor-width: 100% !important;
 }
 .el-input__wrapper {
   box-shadow: none;
