@@ -1,3 +1,4 @@
+export const DEFAULT_LANGUAGE = import.meta.env.VITE_DEFAULT_LANGUAGE
 /**
  * 系统主题色
  * 用于系统中主要交互元素的主色调
@@ -23,7 +24,17 @@ export const PROJECT_ROUTES = ['image', 'resume', 'home', 'form']
  * 轻量级路由列表
  * 包含简单小游戏和实用工具路由
  */
-export const MUSE_ROUTES = ['2048', 'sort', 'checklist', 'note', 'passwordBox', 'reborn', 'time']
+export const MUSE_ROUTES = [
+  '2048',
+  'sort',
+  'checklist',
+  'note',
+  'passwordBox',
+  'reborn',
+  'time',
+  'ai',
+  'test',
+]
 /**
  * 基础与项目路由组合列表
  * 包含所有基础路由、项目路由和轻量级路由，用于导航和权限控制

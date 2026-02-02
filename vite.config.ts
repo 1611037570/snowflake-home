@@ -36,7 +36,7 @@ export default ({ mode }: { mode: string }) => {
   const env = loadEnv(mode, process.cwd())
   const isProd = mode === 'production'
   // 从环境变量中提取配置项
-  const { VITE_PORT, VITE_BASE_URL, VITE_APP_TITLE, VITE_DEFAULT_LANG } = env
+  const { VITE_PORT, VITE_BASE_URL, VITE_APP_TITLE, VITE_DEFAULT_LANGUAGE } = env
   return defineConfig({
     // 基础路径配置
     base: VITE_BASE_URL,
@@ -60,7 +60,7 @@ export default ({ mode }: { mode: string }) => {
         // 注入 HTML 变量（HTML 中通过 <%= 变量名 %> 使用）
         inject: {
           data: {
-            defaultLang: VITE_DEFAULT_LANG, // 默认语言
+            defaultLang: VITE_DEFAULT_LANGUAGE, // 默认语言
           },
         },
       }),
