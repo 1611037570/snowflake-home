@@ -99,8 +99,9 @@ export const dynamicComponentResolver = (): ComponentResolver => {
 
     const name = componentName.slice(2).replace(/^./, (c) => c.toLowerCase())
     function isBaseComponent(name: string) {
-      return baseMap.includes(name.toLowerCase())
+      return baseMap.includes(name)
     }
+
     if (isBaseComponent(name)) {
       return
     }
