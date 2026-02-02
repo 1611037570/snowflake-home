@@ -30,9 +30,9 @@
     // 自动修复所有问题
     "source.fixAll": "explicit",
     // 自动组织导入语句
-    "source.organizeImports": "explicit",
+    "source.organizeImports": "explicit"
     // 额外：自动修复 ESLint 可修复的错误（如变量未使用等）
-    "source.fixAll.eslint": "explicit"
+    // "source.fixAll.eslint": "explicit"
   },
 
   // 自动格式化设置
