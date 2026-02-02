@@ -47,3 +47,8 @@
   box-shadow: none !important;
 }
 // 选择组件结束
+
+// 折叠组件开始
+.el-collapse-item__header {
+  background-color: transparent !important;
+}
