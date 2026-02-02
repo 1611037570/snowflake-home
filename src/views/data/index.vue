@@ -1,5 +1,5 @@
 <script setup>
-import { getAllBaseComponent, getAllBusinessComponent } from '@/components'
+import { getAllComponent } from '@/components'
 import { ALL_CONTENT, ALL_PAGE, ICON_LIST } from '@/constants'
 import { useSystemStore } from '@/stores'
 const systemStore = useSystemStore()
@@ -7,12 +7,9 @@ const { browserInfo } = storeToRefs(systemStore)
 const iconLength = Object.keys(ICON_LIST).length
 // 所有视图组件
 const viewLength = ALL_PAGE.value.length
-// 所有基础组件
-const { length: baseComponentLength } = getAllBaseComponent()
 // 所有业务组件
-const { length: businessComponentLength } = getAllBusinessComponent()
+const { length: componentLength } = getAllComponent()
 // 所有组件
-const componentLength = baseComponentLength + businessComponentLength
 // 文案长度
 const contentLength = ALL_CONTENT.length
 
