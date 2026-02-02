@@ -33,7 +33,7 @@ const getDefaultLocale = () => {
   }
 
   // 兜底返回默认语言
-  const defaultLang = import.meta.env.VITE_DEFAULT_LANG
+  const defaultLang = import.meta.env.VITE_DEFAULT_LANGUAGE
   return getLangKey(defaultLang)
 }
 
