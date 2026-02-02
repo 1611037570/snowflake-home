@@ -1,5 +1,5 @@
 <template>
-  <div style="" class="mb-3">
+  <div style="" class="">
     <Toolbar
       class="rounded-t-xl"
       style="border-bottom: 1px solid #ccc"
@@ -54,23 +54,20 @@ const handleCreated = (editor) => {
 }
 </script>
 
-<style scoped>
-/* 自定义工具栏图标样式 */
-:deep(.w-e-menu-bold .w-e-icon) {
-  /* 隐藏默认图标 */
-  display: none;
+<style scoped lang="scss">
+/* 修改编辑器文本容器样式 */
+:deep(.w-e-text-container) {
+  background: var(--color-sf-primary);
+  color: var(--color-sf-base);
 }
-
-:deep(.w-e-menu-bold::before) {
-  /* 添加自定义图标 */
-  /* content: 'B'; */
-  font-weight: bold;
-  font-size: 16px;
-  line-height: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  height: 100%;
+:deep(.w-e-bar svg) {
+  fill: var(--color-sf-base);
+}
+/* 修改工具栏样式 */
+:deep(.w-e-bar) {
+  background: var(--color-sf-primary);
+  color: var(--color-sf-base);
+  border-top-left-radius: 12px;
+  border-top-right-radius: 12px;
 }
 </style>
