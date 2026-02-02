@@ -75,13 +75,14 @@ const handleCreated = (editor) => {
   border-top-left-radius: 12px;
   border-top-right-radius: 12px;
 }
-
+// 修改工具栏按钮hover样式
 :deep(.w-e-bar-item button:hover) {
   svg {
     fill: var(--color-sf-theme) !important;
   }
-  background: var(--color-sf-theme-hover);
+  background: none;
 }
+// 修改工具栏按钮下拉菜单hover样式
 :deep(.w-e-menu-tooltip-v5) {
   color: red;
   &::before {
