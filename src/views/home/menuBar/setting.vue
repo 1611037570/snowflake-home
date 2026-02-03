@@ -2,7 +2,7 @@
   <sf-icon
     icon="iconamoon:settings-fill"
     size="8"
-    class="text-sf-base transition-all duration-200 hover:rotate-180"
+    class="text-sf-primary transition-all duration-200 hover:rotate-180"
     @click="openSet"
   />
 </template>

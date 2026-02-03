@@ -1,6 +1,6 @@
 <template>
   <SfDropdown>
-    <SfIcon icon="ion:language" size="8" class="text-sf-base" />
+    <SfIcon icon="ion:language" size="8" :class="color" />
     <template #dropdown>
       <el-dropdown-menu>
         <SfList
@@ -20,6 +20,7 @@
 import { LANG_LIST, loadPageLang } from '@/locales'
 import { useRouter } from 'vue-router'
 
+const color = inject('color', 'text-sf-base')
 defineOptions({ name: 'SfLocale' })
 
 const router = useRouter()
