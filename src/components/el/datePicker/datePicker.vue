@@ -2,7 +2,8 @@
   <Component
     v-model="value"
     :is="h(ElDatePicker, { ...$attrs, ref: changeRef }, $slots)"
-    class="w-full rounded-xl border-none bg-sf-primary text-sf-text"
+    class="w-full rounded-xl border-none text-sf-text"
+    :class="bg"
   />
 </template>
 
@@ -14,6 +15,8 @@ import type { ComponentInstance } from 'vue'
 import { getCurrentInstance, h } from 'vue'
 
 defineOptions({ name: 'SfDatePicker' })
+
+const bg = inject('bg')
 
 const vm: any = getCurrentInstance()
 const value = defineModel('modelValue')

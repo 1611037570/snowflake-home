@@ -2,7 +2,8 @@
   <Component
     v-model="value"
     :is="h(ElSelect, { ...$attrs, ref: changeRef }, $slots)"
-    class="rounded-b-md bg-sf-primary text-sf-base"
+    class="rounded-b-md text-sf-base"
+    :class="bg"
   >
     <ElOption v-for="item in list" :key="item.value" :label="item.name" :value="item.value" />
   </Component>
@@ -14,6 +15,8 @@ import type { ComponentInstance } from 'vue'
 import { getCurrentInstance, h } from 'vue'
 
 defineOptions({ name: 'SfSelect' })
+
+const bg = inject('bg')
 
 defineProps({
   list: {
