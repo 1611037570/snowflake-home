@@ -52,3 +52,19 @@
 .el-collapse-item__header {
   background-color: transparent !important;
 }
+// 折叠组件结束
+// 分割线组件开始
+.el-splitter-bar__dragger {
+  &::before {
+    background-color: var(--color-sf-theme-hover) !important;
+    width: 4px !important;
+  }
+  /* 选中时 */
+  &:hover::before {
+    background-color: var(--color-sf-theme) !important;
+  }
+  &:active::before {
+    background-color: var(--color-sf-theme) !important;
+  }
+}
+// 分割线组件结束
