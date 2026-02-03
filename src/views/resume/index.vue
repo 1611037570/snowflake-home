@@ -1,20 +1,21 @@
 <template>
   <SfViewContainer title="在线简历制作">
-    <div class="flex h-full w-full">
-      <div class="h-full w-1/2">
+    <SfSplitter>
+      <SfSplitterPanel max="600" min="450" size="600">
         <Builder />
-      </div>
-      <div class="h-full w-1/2 bg-amber-400">
-        <SfInput />
-        <ElButton type="primary" @click="printPDF" :loading="isLoading" icon="el-icon-download">
-          打印表单PDF
-        </ElButton>
-        <!-- 表单容器 -->
-        <div ref="formContainer">
-          <Preview />
+      </SfSplitterPanel>
+      <SfSplitterPanel>
+        <div class="flex h-full flex-1 flex-col items-center bg-amber-400">
+          <ElButton type="primary" @click="printPDF" :loading="isLoading" icon="el-icon-download">
+            打印表单PDF
+          </ElButton>
+          <!-- 表单容器 -->
+          <div ref="formContainer">
+            <Preview />
+          </div>
         </div>
-      </div>
-    </div>
+      </SfSplitterPanel>
+    </SfSplitter>
   </SfViewContainer>
 </template>
 
@@ -222,3 +223,5 @@ const printPDF = async () => {
 </script>
 
 <style scoped></style>
+
+<style></style>
