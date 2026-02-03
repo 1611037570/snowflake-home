@@ -50,6 +50,7 @@ import { storeToRefs } from 'pinia'
 import Dock from './dock/index.vue'
 import MenuBar from './menuBar/index.vue'
 import Search from './search/index.vue'
+provide('color', 'text-sf-primary')
 
 const Background = defineAsyncComponent(() => import('./components/background.vue'))
 

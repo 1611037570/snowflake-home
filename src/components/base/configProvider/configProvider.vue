@@ -1,16 +1,12 @@
 <script setup>
-import { DEFAULT_LANGUAGE } from '@/constants'
+import { DEFAULT_BACKGROUND, DEFAULT_COLOR, DEFAULT_LANGUAGE } from '@/constants'
 import { loadElLocale } from '@/utils'
 
 import en from 'element-plus/es/locale/lang/en'
 import zhCn from 'element-plus/es/locale/lang/zh-cn'
-const props = defineProps({
-  bg: {
-    type: String,
-    default: 'bg-sf-primary',
-  },
-})
-provide('bg', props.bg)
+
+provide('bg', DEFAULT_BACKGROUND)
+provide('color', DEFAULT_COLOR)
 
 // 加载element-plus的locale
 onMounted(async () => {
