@@ -1,6 +1,7 @@
 <template>
   <Component
-    class="rounded-xl bg-sf-primary text-sf-text"
+    class="rounded-xl text-sf-text"
+    :class="bg"
     spellcheck="false"
     :is="h(ElInput, { ...$attrs, ref: changeRef }, $slots)"
   />
@@ -13,6 +14,7 @@ import { getCurrentInstance, h } from 'vue'
 
 defineOptions({ name: 'SfInput' })
 
+const bg = inject('bg')
 const vm: any = getCurrentInstance()
 
 function changeRef(exports: any) {
