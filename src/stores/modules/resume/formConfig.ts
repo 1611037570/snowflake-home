@@ -1,4 +1,4 @@
-export interface FormConfigItem {
+export interface FormItem {
   type: string
   label: string
   component: string
@@ -10,7 +10,7 @@ export interface FormConfigItem {
 }
 
 // 个人信息表单配置
-export const userConfig: FormConfigItem[] = [
+export const userForm: FormItem[] = [
   {
     type: 'object',
     label: '姓名',

@@ -1,12 +1,14 @@
 import { getUUID } from '@/utils'
-const useConfigProxy = (config: any) => {
-  const configProxy = ref()
+import { ref, watch } from 'vue'
+
+const useFormProxy = (form: any) => {
+  const formProxy = ref()
   watch(
-    () => config,
+    () => form,
     (newValue) => {
       console.log('newValue:>> ', newValue)
 
-      configProxy.value = newValue.value.map((item: any) => {
+      formProxy.value = newValue.value.map((item: any) => {
         if (item?.id) {
           return item
         }
@@ -19,6 +21,6 @@ const useConfigProxy = (config: any) => {
     { deep: true, immediate: true },
   )
 
-  return configProxy
+  return formProxy
 }
-export default useConfigProxy
+export default useFormProxy
