@@ -1,9 +1,10 @@
 import { defineStore } from 'pinia'
 import { computed, ref } from 'vue'
-import { defaultData, type ResumeData } from './dataConfig'
+import { userData, type UserData } from './dataConfig'
+import { userForm } from './formConfig'
 
 export interface ResumeItem {
-  data: ResumeData
+  data: UserData
   config: any // 暂时使用 any，或者根据需要定义配置类型
 }
 
@@ -27,8 +28,8 @@ export const useResumeStore = defineStore(
     // 新增简历
     const addResume = () => {
       list.value.push({
-        data: structuredClone(defaultData),
-        config: {},
+        data: structuredClone(userData),
+        config: [userForm],
       })
       currentIndex.value = list.value.length - 1
     }
@@ -40,7 +41,7 @@ export const useResumeStore = defineStore(
         const oldData = item.data ? item.data : item
         const oldConfig = item.config ? item.config : {}
 
-        const baseData = structuredClone(defaultData)
+        const baseData = structuredClone(userData)
 
         return {
           data: {

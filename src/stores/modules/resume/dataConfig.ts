@@ -1,4 +1,4 @@
-export interface ResumeData {
+export interface UserData {
   user: {
     name: string
     birthday: string
@@ -9,8 +9,8 @@ export interface ResumeData {
   }
 }
 
-// 默认简历数据
-export const defaultData: ResumeData = {
+// 默认用户数据
+export const userData: UserData = {
   user: {
     name: '',
     birthday: '',
