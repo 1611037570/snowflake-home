@@ -66,7 +66,7 @@ const noteStatusList = computed(() => {
 <template>
   <div class="flex h-[500px] w-[600px]">
     <NoteList />
-    <div class="border-sf-border flex flex-1 flex-col border border-sf-theme">
+    <div class="flex flex-1 flex-col border border-sf-theme">
       <template v-if="currentIndex != -1">
         <div class="mb-3 flex gap-3">
           <SfTooltip :content="item.info" v-for="item in noteStatusList" :key="item.info">
