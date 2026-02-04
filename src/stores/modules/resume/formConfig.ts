@@ -1,4 +1,16 @@
-export const userConfig = [
+export interface FormConfigItem {
+  type: string
+  label: string
+  component: string
+  data: {
+    path: string[]
+    key: string
+  }
+  props: Record<string, any>
+}
+
+// 个人信息表单配置
+export const userConfig: FormConfigItem[] = [
   {
     type: 'object',
     label: '姓名',
