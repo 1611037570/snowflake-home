@@ -1,2 +1,2 @@
-import ScrollbarTab from './scrollbarTab.vue'
-export default ScrollbarTab
+import Scrollbar from './scrollbar.vue'
+export default Scrollbar
