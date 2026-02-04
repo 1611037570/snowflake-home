@@ -1,4 +1,4 @@
-const DEFAULT_CONFIG = [
+const DEFAULT_FORM = [
   {
     type: 'object',
     label: 'input',
@@ -68,4 +68,4 @@ const DEFAULT_DATA = {
     },
   ],
 }
-export { DEFAULT_CONFIG, DEFAULT_DATA }
+export { DEFAULT_FORM, DEFAULT_DATA }

@@ -2,10 +2,10 @@
   <component
     :is="component"
     v-bind="{
-      ...dataProxy.getDataProxy(config.data),
-      ...config.props,
+      ...dataProxy.getDataProxy(form.data),
+      ...form.props,
     }"
-    v-on="dataProxy.setDataProxy(config.data)"
+    v-on="dataProxy.setDataProxy(form.data)"
   ></component>
 </template>
 
@@ -13,17 +13,17 @@
 import { inject, onMounted } from 'vue'
 import { getComponent } from '../components'
 
-const { config } = defineProps({
+const { form } = defineProps({
   index: {
     type: Number,
   },
-  config: {
+  form: {
     type: Object,
   },
 })
 const dataProxy = inject('dataProxy')
 
-const component = getComponent(config.component)
+const component = getComponent(form.component)
 onMounted(() => {})
 </script>
 

@@ -1,15 +1,15 @@
 <template>
-  <el-form-item :label="config.label" :prop="config.data.path">
+  <el-form-item :label="form.label" :prop="form.data.path">
     <template #label>
-      <div class="flex h-full w-full items-center font-bold">{{ config.label }}</div>
+      <div class="flex h-full w-full items-center font-bold">{{ form.label }}</div>
     </template>
     <slot />
   </el-form-item>
 </template>
 
 <script setup>
-const { config } = defineProps({
-  config: {
+const { form } = defineProps({
+  form: {
     type: Object,
   },
 })
