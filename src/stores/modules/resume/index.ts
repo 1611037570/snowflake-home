@@ -5,7 +5,7 @@ import { userForm } from './formConfig'
 
 export interface ResumeItem {
   data: UserData
-  config: any // 暂时使用 any，或者根据需要定义配置类型
+  form: any // 暂时使用 any，或者根据需要定义配置类型
 }
 
 export const useResumeStore = defineStore(
@@ -22,14 +22,14 @@ export const useResumeStore = defineStore(
     // 获取当前选中的简历数据
     const currentData = computed(() => list.value[currentIndex.value]?.data)
 
-    // 获取当前选中的简历配置
-    const currentConfig = computed(() => list.value[currentIndex.value]?.config)
+    // 获取当前选中的表单配置
+    const currentForm = computed(() => list.value[currentIndex.value]?.form)
 
     // 新增简历
     const addResume = () => {
       list.value.push({
         data: structuredClone(userData),
-        config: [userForm],
+        form: [userForm],
       })
       currentIndex.value = list.value.length - 1
     }
@@ -39,7 +39,7 @@ export const useResumeStore = defineStore(
       list.value = list.value.map((item: any) => {
         // 如果是老版本数据（没有 data 字段），则进行转换
         const oldData = item.data ? item.data : item
-        const oldConfig = item.config ? item.config : {}
+        const oldForm = item.form ? item.form : item.config ? item.config : []
 
         const baseData = structuredClone(userData)
 
@@ -52,14 +52,12 @@ export const useResumeStore = defineStore(
               ...oldData.user,
             },
           },
-          config: {
-            ...oldConfig,
-          },
+          form: oldForm,
         }
       })
     }
 
-    return { indexVisible, list, currentIndex, currentData, currentConfig, addResume, init }
+    return { indexVisible, list, currentIndex, currentData, currentForm, addResume, init }
   },
   {
     persist: {
