@@ -1,5 +1,5 @@
 <template>
-  <div v-for="(obj, i) in config.data" :key="i">
+  <div v-for="(obj, i) in form.data" :key="i">
     <component
       :key="obj.id"
       :is="component"
@@ -25,10 +25,10 @@ defineProps({
     type: Number,
   },
 })
-const config = defineModel('config')
+const form = defineModel('form')
 const dataProxy = inject('dataProxy')
 onMounted(() => {
-  config.value.data = config.value.data.map((item) => {
+  form.value.data = form.value.data.map((item) => {
     if (!item?.id) {
       return {
         ...item,
@@ -38,27 +38,27 @@ onMounted(() => {
     return item
   })
 })
-const length = computed(() => config.value.data.length)
-const component = getComponent(config.value.component)
+const length = computed(() => form.value.data.length)
+const component = getComponent(form.value.component)
 const moveUp = (index) => {
   if (index === 0) return
-  const obj = config.value.data[index]
-  config.value.data[index] = config.value.data[index - 1]
-  config.value.data[index - 1] = obj
+  const obj = form.value.data[index]
+  form.value.data[index] = form.value.data[index - 1]
+  form.value.data[index - 1] = obj
 }
 const moveDown = (index) => {
   if (index === length.value - 1) return
-  const obj = config.value.data[index]
-  config.value.data[index] = config.value.data[index + 1]
-  config.value.data[index + 1] = obj
+  const obj = form.value.data[index]
+  form.value.data[index] = form.value.data[index + 1]
+  form.value.data[index + 1] = obj
 }
 const remove = (index) => {
-  config.value.data.splice(index, 1)
+  form.value.data.splice(index, 1)
 }
 const add = (index) => {
-  const newItem = JSON.parse(JSON.stringify(config.value.data[index]))
+  const newItem = JSON.parse(JSON.stringify(form.value.data[index]))
   newItem.id = getUUID()
-  config.value.data.splice(index + 1, 0, newItem)
+  form.value.data.splice(index + 1, 0, newItem)
 }
 onMounted(() => {})
 </script>

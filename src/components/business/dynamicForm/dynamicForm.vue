@@ -15,12 +15,12 @@
       <el-col
         class="w-full border border-red-400"
         :span="item.span || 12"
-        v-for="(item, index) in configProxy"
+        v-for="(item, index) in formProxy"
         :key="item.id || index"
       >
-        <FormItem v-if="checkConfig(item)" :config="item" label-position="top">
-          <ContainerObject v-if="item.type === 'object'" :config="item" />
-          <ContainerArray v-else-if="item.type === 'array'" :config="item" />
+        <FormItem v-if="checkForm(item)" :form="item" label-position="top">
+          <ContainerObject v-if="item.type === 'object'" :form="item" />
+          <ContainerArray v-else-if="item.type === 'array'" :form="item" />
         </FormItem>
         <template v-else> 数据错误：{{ item }} </template>
       </el-col>
@@ -34,12 +34,12 @@ import ContainerObject from './base/containerObject.vue'
 import FormItem from './base/formItem.vue'
 
 import DataProxy from './code/dataProxy'
-import useConfigProxy from './code/useConfigProxy'
-import { DEFAULT_CONFIG, DEFAULT_DATA } from './config'
+import useFormProxy from './code/useFormProxy'
+import { DEFAULT_FORM, DEFAULT_DATA } from './config'
 
 defineOptions({ name: 'SfDynamicForm' })
-function checkObjectConfig(config) {
-  const { component, data } = config
+function checkObjectForm(form) {
+  const { component, data } = form
   if (!component || !data) {
     return false
   }
@@ -49,13 +49,13 @@ function checkObjectConfig(config) {
   }
   return true
 }
-function checkConfig(config) {
-  const { type } = config
+function checkForm(form) {
+  const { type } = form
   if (!type) {
     return false
   }
   if (type === 'object') {
-    return checkObjectConfig(config)
+    return checkObjectForm(form)
   }
 
   return true
@@ -64,15 +64,15 @@ function checkConfig(config) {
 const instance = getCurrentInstance()
 const { emit } = instance
 
-const config = defineModel('config', {
-  default: DEFAULT_CONFIG,
+const form = defineModel('config', {
+  default: DEFAULT_FORM,
 })
 const data = defineModel('data', { default: DEFAULT_DATA })
 const dataProxy = new DataProxy(data, emit)
 
-const configProxy = useConfigProxy(config)
+const formProxy = useFormProxy(form)
 provide('dataProxy', dataProxy)
-provide('configProxy', configProxy)
+provide('formProxy', formProxy)
 </script>
 
 <style scoped></style>
