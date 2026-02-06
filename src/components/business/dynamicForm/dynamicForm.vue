@@ -35,7 +35,7 @@ import FormItem from './base/formItem.vue'
 
 import DataProxy from './code/dataProxy'
 import useFormProxy from './code/useFormProxy'
-import { DEFAULT_FORM, DEFAULT_DATA } from './config'
+import { DEFAULT_DATA, DEFAULT_FORM } from './config'
 
 defineOptions({ name: 'SfDynamicForm' })
 function checkObjectForm(form) {
@@ -64,7 +64,7 @@ function checkForm(form) {
 const instance = getCurrentInstance()
 const { emit } = instance
 
-const form = defineModel('config', {
+const form = defineModel('form', {
   default: DEFAULT_FORM,
 })
 const data = defineModel('data', { default: DEFAULT_DATA })
