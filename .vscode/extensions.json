@@ -1,5 +1,5 @@
 {
-  // 推荐安装的VSCode扩展列表
+  // 强烈推荐安装的VSCode扩展列表
   "recommendations": [
     // Vue3开发支持
     "Vue.volar",
@@ -20,6 +20,8 @@
     // i18n Ally 国际化插件
     "lokalise.i18n-ally",
     // 中文语言包
-    "ms-vscode.vscode-language-pack-zh-hans"
+    "ms-vscode.vscode-language-pack-zh-hans",
+    // 路径别名智能提示
+    "eamodio.tsl-problem-matcher"
   ]
 }
