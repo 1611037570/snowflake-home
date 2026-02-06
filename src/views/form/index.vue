@@ -1,5 +1,5 @@
 <script setup>
-const config = [
+const form = [
   {
     type: 'object',
     component: 'setItem',
@@ -30,7 +30,7 @@ const config = [
 
 <template>
   <SfViewContainer>
-    <SfDynamicForm :config="config" class="w-100"></SfDynamicForm>
+    <SfDynamicForm :form="form" class="w-100"></SfDynamicForm>
   </SfViewContainer>
 </template>
 

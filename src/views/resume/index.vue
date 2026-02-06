@@ -32,10 +32,9 @@ const formContainer = ref(null)
 // 加载状态
 const isLoading = ref(false)
 
-const { currentData, currentForm } = storeToRefs(resumeStore)
+const { currentResume } = storeToRefs(resumeStore)
 
-provide('currentData', currentData)
-provide('currentForm', currentForm)
+provide('currentResume', currentResume.value)
 /**
  * 将表单打印为PDF文件 - 延迟加载PDF相关库以优化初始加载性能
  */
