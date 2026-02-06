@@ -92,5 +92,9 @@
     "Vite",
     "vueuse",
     "yyqx"
-  ]
+  ],
+
+  // 路径别名智能提示配置
+  "aliasFiles.configPath": ".vscode/alias_config.json",
+  "aliasFiles.maxDisplayLength": 0
 }
