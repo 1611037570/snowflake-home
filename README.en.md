@@ -58,7 +58,7 @@ pnpm build
 
 ## 📄 License
 
-This project is licensed under the [AGPL 3.0 License](LICENSE).
+This project is licensed under the [MIT License](LICENSE).
 
 ---
 
