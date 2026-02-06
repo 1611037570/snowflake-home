@@ -1,0 +1,212 @@
+{
+  "node_modules": "Node.js 依赖模块目录",
+  "dist": "项目构建产物目录",
+  ".git": "Git 版本控制目录",
+  ".husky": {
+    "commit-msg": "Git 提交信息校验钩子",
+    "pre-commit": "Git 提交前检查钩子"
+  },
+  ".trae": {
+    "rules": {
+      "project_rules.md": "项目开发规范文档"
+    },
+    "skills": {
+      "项目别名生成器": "项目目录别名自动化生成工具"
+    },
+    ".ignore": "Trae 忽略配置文件"
+  },
+  ".vscode": {
+    "alias_config.json": "项目别名映射配置文件",
+    "extensions.json": "VS Code 推荐扩展配置",
+    "global.code-snippets": "全局代码片段定义",
+    "settings.json": "工作区编辑器个性化设置"
+  },
+  "knowledges": {
+    "README.md": "知识库阅读指南",
+    "url.md": "常用链接与资源导航",
+    "开发文档.md": "项目核心技术开发手册",
+    "颜色主题使用规范.md": "Snowflake 主题色彩与设计规范"
+  },
+  "public": {
+    "favicon.ico": "浏览器标签页图标",
+    "logo.svg": "项目矢量 Logo",
+    "manifest.json": "Web 应用清单文件",
+    "popup.html": "浏览器扩展弹窗入口"
+  },
+  "scripts": {
+    "deploy.sh": "项目自动化部署脚本",
+    "snow.js": "项目构建辅助脚本"
+  },
+  "src": {
+    "apis": {
+      "modules": "业务接口模块化定义目录",
+      "index.ts": "API 接口统一导出入口",
+      "request.ts": "Axios 请求拦截与封装工具"
+    },
+    "assets": {
+      "audios": "项目音频媒体资源",
+      "fonts": "项目定制字体文件",
+      "images": "静态图片与图标资源"
+    },
+    "components": {
+      "base": {
+        "configProvider": "全局配置注入组件",
+        "globalController": "全局控制器组件",
+        "icon": "图标渲染组件",
+        "locale": "多语言切换组件",
+        "permission": "权限控制组件",
+        "theme": "主题切换组件"
+      },
+      "business": {
+        "app": "应用基础框架组件",
+        "appCenter": "应用中心业务组件",
+        "barrage": "弹幕功能组件",
+        "dropdown": "下拉菜单组件",
+        "dynamicForm": "动态表单引擎",
+        "echarts": "图表可视化组件",
+        "footer": "通用页脚组件",
+        "list": "通用列表组件",
+        "login": "登录与授权组件",
+        "menu": "系统菜单组件",
+        "mixImg": "图片混合处理组件",
+        "modal": "通用模态框组件",
+        "monitor": "监控看板组件",
+        "qrcode": "二维码生成组件",
+        "scrollbarTab": "滚动条标签页",
+        "setBox": "设置盒子组件",
+        "setContainer": "设置容器组件",
+        "setItem": "设置项组件",
+        "setTitle": "设置标题组件",
+        "tab": "标签页组件",
+        "tooltip": "文字提示组件",
+        "viewContainer": "视图容器组件",
+        "wangEdit": "富文本编辑器集成",
+        "waterPipple": "水波纹特效组件"
+      },
+      "el": {
+        "backtop": "回到顶部组件",
+        "collapse": "折叠面板组件",
+        "datePicker": "日期选择器组件",
+        "img": "图片加载组件",
+        "input": "输入框组件",
+        "scrollbar": "滚动条组件",
+        "select": "选择器组件",
+        "splitter": "面板分割组件",
+        "splitterPanel": "分割面板组件"
+      },
+      "index.ts": "通用组件库统一导出入口"
+    },
+    "constants": {
+      "modules": "业务常量定义模块",
+      "config.ts": "全局基础配置常量",
+      "index.ts": "常量统一导出入口",
+      "user.ts": "用户相关常量定义",
+      "version.ts": "项目版本信息常量"
+    },
+    "directives": {
+      "modules": "自定义指令逻辑目录",
+      "index.ts": "Vue 指令全局注册入口"
+    },
+    "extension": {
+      "content-script.ts": "扩展注入脚本逻辑",
+      "popup.ts": "扩展弹窗交互逻辑"
+    },
+    "hooks": {
+      "modules": "组合式 API 函数模块",
+      "index.ts": "Hooks 函数统一导出入口"
+    },
+    "locales": {
+      "lang": "多语言翻译资源目录",
+      "index.ts": "I18n 国际化配置入口",
+      "types.ts": "语言包类型定义"
+    },
+    "monitors": {
+      "modules": "性能与异常监控模块",
+      "index.ts": "前端监控初始化入口"
+    },
+    "routers": {
+      "modules": "路由配置模块",
+      "guards.ts": "路由守卫与权限拦截",
+      "index.ts": "Vue Router 路由实例配置"
+    },
+    "services": {
+      "modules": "复杂业务逻辑服务层",
+      "baseService.ts": "业务服务基础抽象类",
+      "index.ts": "Service 层统一导出入口"
+    },
+    "stores": {
+      "modules": "Pinia 状态管理模块",
+      "index.ts": "Pinia Store 初始化入口"
+    },
+    "styles": {
+      "base.scss": "基础全局样式",
+      "el.scss": "Element Plus 样式覆盖",
+      "fonts.scss": "字体相关样式",
+      "index.scss": "样式系统总入口",
+      "tailwind.css": "Tailwind CSS 引入文件"
+    },
+    "types": {
+      "autoImports.d.ts": "自动导入类型声明",
+      "components.d.ts": "组件自动注册类型声明",
+      "note.ts": "笔记业务类型定义",
+      "shims-vue.d.ts": "Vue 文件 TS 支持声明",
+      "shortcut.ts": "快捷键相关类型定义"
+    },
+    "utils": {
+      "modules": "通用工具函数模块",
+      "index.ts": "工具函数统一导出入口"
+    },
+    "views": {
+      "2048": "2048 游戏页面",
+      "ai": "AI 助手对话页面",
+      "checklist": "清单任务页面",
+      "color": "色彩工具页面",
+      "components": "组件示例页面",
+      "data": "数据展示页面",
+      "form": "表单配置页面",
+      "home": "项目主控台首页",
+      "icon": "图标搜索页面",
+      "image": "图片处理页面",
+      "index": "引导入口页面",
+      "messageBoard": "留言板页面",
+      "note": "笔记管理页面",
+      "passwordBox": "密码箱页面",
+      "reborn": "重生模拟器页面",
+      "resume": "简历制作页面",
+      "sort": "排序算法可视化",
+      "status": "状态监控页面",
+      "test": "实验室测试页面",
+      "time": "时间工具页面"
+    },
+    "App.vue": "Vue 应用根组件",
+    "main.ts": "项目运行时初始化入口"
+  },
+  ".editorconfig": "代码格式一致性配置文件",
+  ".env": "通用环境变量配置",
+  ".env.development": "开发环境专属变量配置",
+  ".env.production": "生产环境专属变量配置",
+  ".gitattributes": "Git 属性配置文件",
+  ".gitignore": "Git 版本控制忽略规则",
+  ".pnpmrc": "pnpm 包管理器配置",
+  ".prettierrc.json": "Prettier 代码格式化规则",
+  "commitlint.config.js": "Git 提交规范校验配置",
+  "env.d.ts": "环境变量 TS 类型支持",
+  "eslint.config.ts": "ESLint 代码质量检查配置",
+  "index.html": "单页面应用主 HTML 入口",
+  "LICENSE": "项目开源许可证文件",
+  "lint-staged.config.js": "暂存区文件 Lint 任务配置",
+  "manifest.ts": "浏览器插件/PWA 清单配置",
+  "package.json": "项目元数据与依赖管理文件",
+  "pnpm-lock.yaml": "pnpm 依赖版本锁定文件",
+  "pwa.config.ts": "PWA 渐进式应用功能配置",
+  "README.en.md": "项目英文版使用说明",
+  "README.md": "项目中文版核心说明",
+  "SECURITY.md": "项目安全政策说明",
+  "tsconfig.app.json": "前端应用代码 TS 编译配置",
+  "tsconfig.json": "TypeScript 编译配置主入口",
+  "tsconfig.node.json": "Node 环境工具链 TS 配置",
+  "tsconfig.vitest.json": "Vitest 单元测试 TS 配置",
+  "vite.config.ts": "Vite 构建工具核心配置文件",
+  "vitest.config.ts": "Vitest 单元测试环境配置",
+  "workbox.ts": "Service Worker 缓存策略配置"
+}
