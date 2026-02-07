@@ -40,6 +40,6 @@ defineExpose({} as ComponentInstance<typeof ElInput>)
 /* 输入框占位符 */
 :deep(.el-input__inner::placeholder) {
   /* 更改占位符颜色 */
-  color: var(--color-sf-text);
+  /* color: var(--color-sf-text); */
 }
 </style>
