@@ -19,6 +19,7 @@ The project was launched on September 3, 2020, and began reconstruction and open
 
 ## 🔧 Core Infrastructure Features
 
+- 🤖 **AI Infrastructure**: Intelligent development workflow based on **Trae** IDE; supports rules and skills, enabling rapid development of project-style code
 - 🎮 **Command Tool**：Interactive command menu based on **Node.js**；supports up/down arrow navigation, quick execution with enter key
 - 📋 **Form System**：Dynamic form component based on **ElementPlus**；supports object/array type fields, configuration-driven, two-way data binding
 - 📥 **Cache Management**：LFU-R strategy cache manager based on Pinia；supports custom expiration configuration, automatic elimination when expired/over-limit
