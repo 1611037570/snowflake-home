@@ -19,9 +19,6 @@
 ## 🎨 Vue 开发规范
 
 1. Vue 文件的 script 部分必须使用 setup 语法糖
-2. Vue 文件的样式必须使用 Tailwind CSS 写法
-3. Vue 文件的 template 避免多重 div 嵌套
-4. 使用自定义 Snowflake 主题色类名，参考知识库开发文档中的主题色彩章节
 
 ## 🧩 组件规范
 
