@@ -1,10 +1,10 @@
 <script setup>
+import { DEV_ACCOUNT, SHOOT_ACCOUNT } from '@/constants'
 import { userInfo } from '@/views/index/data'
 import dayjs from 'dayjs'
-
-import { DEV_ACCOUNT, SHOOT_ACCOUNT } from '@/constants'
 import { computed } from 'vue'
 import QrIcon from '../components/qrIcon.vue'
+
 const now = dayjs()
 
 const devYears = computed(() => {
@@ -17,52 +17,77 @@ const shootYears = computed(() => {
 
 <template>
   <div
-    class="w-dwh flex-c relative z-10 min-h-dvh overflow-hidden bg-sf-bg text-sf-theme-text"
+    class="w-dwh flex-c relative z-10 min-h-dvh overflow-hidden bg-sf-bg text-sf-text"
     id="about"
   >
     <!-- 背景装饰 -->
     <div
-      class="breath absolute -top-20 -right-20 rounded-full bg-sf-theme-hover blur-3xl will-change-transform"
+      class="breath absolute -top-20 -right-20 rounded-full bg-sf-theme/30 blur-[100px] will-change-transform"
+      :class="[$s(80, 'w'), $s(80, 'h')]"
+    ></div>
+    <div
+      class="breath breath-delayed absolute -bottom-10 -left-10 rounded-full bg-sf-primary/20 blur-[80px] will-change-transform"
       :class="[$s(60, 'w'), $s(60, 'h')]"
     ></div>
+
+    <!-- 主卡片 -->
     <div
-      class="breath breath-delayed absolute -bottom-10 -left-10 rounded-full bg-sf-theme-hover blur-2xl will-change-transform"
-      :class="[$s(42, 'w'), $s(42, 'h')]"
-    ></div>
-    <!-- 信息区 -->
-    <div
-      class="relative rounded-xl border border-sf-theme-hover bg-sf-theme-hover"
-      :class="[$s(4, 'p')]"
+      class="relative flex flex-col items-center justify-center rounded-3xl border border-sf-border/50 bg-sf-bg-2/60 shadow-2xl backdrop-blur-xl transition-all hover:border-sf-theme/50 hover:shadow-sf-theme/10"
+      :class="[$s(10, 'p'), $s(6, 'gap')]"
     >
-      <div :class="$s(16)">
-        Hi~ 我是<span class="pl-4 text-sf-theme">{{ userInfo.name }}</span>
+      <!-- 个人信息 -->
+      <div class="flex flex-col items-center text-center">
+        <div class="mb-2 font-medium text-sf-text-2" :class="$s(5)">Hi~ 我是</div>
+        <div class="font-black text-sf-theme" :class="$s(14)">
+          {{ userInfo.name }}
+        </div>
+
+        <!-- 标签信息 -->
+        <div class="mt-6 flex items-center justify-center gap-4 text-sf-text-2">
+          <div
+            class="flex items-center gap-1.5 rounded-full bg-sf-bg/50 px-3 py-1 text-sm shadow-sm backdrop-blur-sm transition-transform hover:scale-105"
+          >
+            <span>📍</span>
+            <span>{{ userInfo.location }}</span>
+          </div>
+          <div
+            class="flex items-center gap-1.5 rounded-full bg-sf-bg/50 px-3 py-1 text-sm shadow-sm backdrop-blur-sm transition-transform hover:scale-105"
+          >
+            <span>💻</span>
+            <span>{{ userInfo.job }}</span>
+          </div>
+        </div>
       </div>
-      <div class="flex items-center" :class="$s(9)">
-        现居：<span> {{ userInfo.location }} </span>
+
+      <!-- 社交账号 -->
+      <div class="mt-2 flex flex-wrap justify-center gap-4">
+        <QrIcon v-for="item in SHOOT_ACCOUNT" :key="item.name" :item="item" />
+        <div class="mx-2 h-8 w-px self-center bg-sf-border/50"></div>
+        <QrIcon v-for="item in DEV_ACCOUNT" :key="item.name" :item="item" />
       </div>
-      <div :class="$s(9)">
-        <span>{{ userInfo.job }}</span>
-      </div>
-      <div class="flex-c gap-2">
-        <QrIcon v-for="item in SHOOT_ACCOUNT" :key="item.name" :item="item" /><QrIcon
-          v-for="item in DEV_ACCOUNT"
-          :key="item.name"
-          :item="item"
-        />
-      </div>
+
+      <!-- 悬浮经验卡片 - 开发 -->
       <div
-        :class="[$s(4, 'p')]"
-        class="flex-c absolute -right-12 -bottom-12 z-10 rotate-3 flex-col rounded-xl bg-sf-theme shadow-2xl transition-all duration-300 hover:scale-105 hover:rotate-0 hover:shadow-sf-theme/20"
+        class="absolute top-8 -right-16 rotate-12 transform cursor-default rounded-xl border border-sf-border/50 bg-sf-bg/80 p-4 shadow-lg backdrop-blur-md transition-all duration-300 hover:scale-110 hover:rotate-0 hover:border-sf-theme hover:shadow-sf-theme/20"
       >
-        <div class="font-bold" :class="$s(7)">{{ devYears }} <span class="text-xl">年</span></div>
-        <div class="mt-1" :class="$s(3)">开发经验</div>
+        <div class="flex flex-col items-center">
+          <div class="font-bold text-sf-theme" :class="$s(8)">
+            {{ devYears }}<span class="ml-1 text-sm text-sf-text-2">年</span>
+          </div>
+          <div class="text-xs font-medium text-sf-text-2">开发经验</div>
+        </div>
       </div>
+
+      <!-- 悬浮经验卡片 - 摄影 -->
       <div
-        :class="[$s(4, 'p')]"
-        class="flex-c absolute right-6 -bottom-12 z-10 rotate-3 flex-col rounded-xl bg-sf-theme shadow-2xl transition-all duration-300 hover:scale-105 hover:rotate-0 hover:shadow-sf-theme/20"
+        class="absolute bottom-8 -left-12 -rotate-12 transform cursor-default rounded-xl border border-sf-border/50 bg-sf-bg/80 p-4 shadow-lg backdrop-blur-md transition-all duration-300 hover:scale-110 hover:rotate-0 hover:border-sf-theme hover:shadow-sf-theme/20"
       >
-        <div class="font-bold" :class="$s(7)">{{ shootYears }} <span class="text-xl">年</span></div>
-        <div class="mt-1" :class="$s(3)">摄影经验</div>
+        <div class="flex flex-col items-center">
+          <div class="font-bold text-sf-theme" :class="$s(8)">
+            {{ shootYears }}<span class="ml-1 text-sm text-sf-text-2">年</span>
+          </div>
+          <div class="text-xs font-medium text-sf-text-2">摄影经验</div>
+        </div>
       </div>
     </div>
   </div>
@@ -70,25 +95,20 @@ const shootYears = computed(() => {
 
 <style lang="scss" scoped>
 .breath {
-  animation: breath 4s ease-in-out infinite;
+  animation: breath 8s ease-in-out infinite;
 }
 .breath-delayed {
-  animation-delay: 2s;
+  animation-delay: 4s;
 }
 @keyframes breath {
   0%,
   100% {
-    transform: scale(1);
-    opacity: 0.85;
+    transform: scale(1) translate(0, 0);
+    opacity: 0.3;
   }
   50% {
-    transform: scale(1.08);
-    opacity: 1;
+    transform: scale(1.2) translate(10px, -10px);
+    opacity: 0.6;
   }
-}
-
-// 标签hover时的全局过渡优化
-:deep(.hover\:scale-102) {
-  transform: scale(1.02);
 }
 </style>

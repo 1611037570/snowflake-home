@@ -1,123 +1,119 @@
 <script setup>
 import nnLogo from '@/assets/images/userLogo.png'
 import { useSystemStore, useThemeStore } from '@/stores'
+import { storeToRefs } from 'pinia'
+import { computed, inject, ref, watch } from 'vue'
 import Music from '../components/music.vue'
+
 const systemStore = useSystemStore()
 const { windowSize } = storeToRefs(systemStore)
 const themeStore = useThemeStore()
 const { theme } = storeToRefs(themeStore)
-const navList = [
-  {
-    name: '关于',
-    href: 'about',
-  },
-  {
-    name: '摄影',
-    href: 'shoot',
-  },
-  {
-    name: '项目',
-    href: 'project',
-  },
+
+// 导航配置
+const NAV_ITEMS = [
+  { name: '关于', key: 'about' },
+  { name: '摄影', key: 'shoot' },
+  { name: '项目', key: 'project' },
 ]
-function togglePlay(href) {
-  // 获取目标元素
-  const targetElement = document.getElementById(href)
+
+/**
+ * 处理锚点滚动
+ * @param {string} targetId 目标元素ID
+ */
+function handleAnchorScroll(targetId) {
+  const targetElement = document.getElementById(targetId)
   if (targetElement) {
-    // 平滑滚动到目标元素
     targetElement.scrollIntoView({
-      behavior: 'smooth', // 平滑滚动
-      block: 'start', // 对齐到区块顶部
+      behavior: 'smooth',
+      block: 'start',
       duration: 10,
     })
   }
 }
-const solidThreshold = computed(() => {
-  return windowSize.value?.height
-})
-const opacity = ref(0)
 
-const bgColor = computed(() => {
-  const rgbColor = theme.value === 'dark' ? '0, 0, 0' : '255, 255, 255'
-  return `rgba(${rgbColor}, ${opacity.value})`
+// 滚动交互逻辑
+const scrollTop = inject('scrollTop', ref(0))
+const headerOpacity = ref(0)
+const scrollThreshold = computed(() => windowSize.value?.height || 0)
+
+// 动态计算 Header 样式
+const headerStyle = computed(() => {
+  const isDark = theme.value === 'dark'
+  const rgbValue = isDark ? '0, 0, 0' : '255, 255, 255'
+
+  return {
+    backgroundColor: `rgba(${rgbValue}, ${headerOpacity.value})`,
+    borderBottom:
+      headerOpacity.value > 0.8 ? '0.5px solid var(--sf-border-base)' : '0.5px solid transparent',
+  }
 })
-const customClass = computed(() => {
-  return scrollTop.value > solidThreshold.value + 160 ? 'header' : ''
-})
-// 滚动事件处理
-const scrollTop = inject('scrollTop')
-watch(scrollTop, (newValue) => {
-  if (newValue < solidThreshold.value) {
-    opacity.value = 0
+
+// 监听滚动更新透明度
+watch(scrollTop, (val) => {
+  const threshold = scrollThreshold.value
+  if (val < threshold) {
+    headerOpacity.value = 0
     return
   }
-  // 计算透明度：滚动超过阈值后，根据滚动距离逐渐增加透明度，最大0.8
-  const scrollOffset = newValue - solidThreshold.value
-  const currentOpacity = Math.min(scrollOffset / 400, 0.8)
-  opacity.value = currentOpacity
+  // 超过阈值后，根据滚动距离计算透明度，最大 0.8
+  const offset = val - threshold
+  headerOpacity.value = Math.min(offset / 400, 0.8)
 })
+
+const isHeaderActive = computed(() => headerOpacity.value > 0)
 </script>
 
 <template>
   <header
-    class="fixed top-0 left-0 z-50 box-border h-20 w-full px-2 text-2xl text-sf"
-    :style="{ backgroundColor: bgColor }"
-    :class="[customClass]"
-    style="
-      transition: background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      border-bottom: 0.5px solid none;
-    "
+    class="fixed top-0 left-0 z-50 h-20 w-full transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)]"
+    :class="{ 'shadow-sm backdrop-blur-md': isHeaderActive }"
+    :style="headerStyle"
   >
-    <div class="mx-auto flex h-full max-w-[1200px] items-center justify-between">
-      <div class="text-shadow text-yyqx flex items-center font-bold text-sf-base">
-        <SfImg :src="nnLogo" class="h-15 w-15 md:h-20 md:w-20" />
+    <div class="mx-auto flex h-full max-w-[1200px] items-center justify-between px-4 sm:px-6">
+      <!-- Logo 区域 -->
+      <div class="flex items-center">
+        <SfImg
+          :src="nnLogo"
+          class="h-15 w-15 object-contain transition-transform duration-300 hover:scale-105 md:h-20 md:w-20"
+        />
       </div>
-      <div class="flex-c h-full gap-5">
-        <div class="flex h-full items-center gap-4">
-          <div
-            class="nav-link flex-c cursor-pointer py-2 text-base text-sf-base md:text-xl"
-            v-for="item in navList"
-            :key="item.href"
-            style="font-weight: 500"
-            @click="togglePlay(item.href)"
+
+      <!-- 右侧功能区 -->
+      <div class="flex items-center gap-6 md:gap-8">
+        <!-- 导航菜单 -->
+        <nav class="flex items-center gap-6">
+          <a
+            v-for="item in NAV_ITEMS"
+            :key="item.key"
+            class="nav-item group relative cursor-pointer py-2 text-base font-medium text-sf-base transition-colors hover:text-sf-theme"
+            @click="handleAnchorScroll(item.key)"
           >
             {{ item.name }}
-          </div>
+            <!-- 悬停下划线动画 -->
+            <span
+              class="absolute bottom-0 left-1/2 h-0.5 w-0 -translate-x-1/2 rounded-full bg-sf-theme transition-all duration-300 ease-out group-hover:w-full"
+            ></span>
+          </a>
+        </nav>
+
+        <!-- 分割线 (仅在大屏显示) -->
+        <div class="hidden h-5 w-px bg-sf-border md:block"></div>
+
+        <!-- 工具图标 -->
+        <div class="flex items-center gap-4">
+          <SfLocale class="cursor-pointer text-sf-base transition-colors hover:text-sf-theme" />
+          <Music class="cursor-pointer text-sf-base transition-colors hover:text-sf-theme" />
+          <SfTheme class="cursor-pointer text-sf-base transition-colors hover:text-sf-theme" />
         </div>
-        <SfLocale />
-        <Music />
-        <SfTheme />
       </div>
     </div>
   </header>
 </template>
 
 <style lang="scss" scoped>
-.header {
-  backdrop-filter: saturate(200%) blur(30px);
-  -webkit-backdrop-filter: saturate(200%) blur(30px);
-  // box-shadow: var(--sf-border-base) 0 1px 5px;
-  border-bottom: 0.5px solid var(--sf-border-base) !important;
-}
-
-.nav-link {
-  position: relative;
+// 自定义变量
+:deep(.sf-icon) {
   transition: color 0.3s ease;
-
-  &::after,
-  &::active {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 50%;
-    width: 0;
-    height: 2px;
-    background-color: var(--sf-theme);
-    transition:
-      width 0.3s ease,
-      transform 0.3s ease;
-    border-radius: 2px;
-    transform: translateX(-50%);
-  }
 }
 </style>

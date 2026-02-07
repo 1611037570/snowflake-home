@@ -1,17 +1,32 @@
 <template>
-  <div class="w-dwh flex-c relative z-10 min-h-dvh flex-col bg-sf-bg py-24" id="project">
+  <div
+    class="w-dwh relative z-10 flex min-h-dvh flex-col items-center bg-sf-bg px-4 py-24 md:px-8 lg:px-12"
+    id="project"
+  >
     <!-- 项目经历 -->
-    <SmallTitle title="个人项目" />
-    <div class="grid grid-cols-2 gap-6">
-      <ProjectCard
-        v-for="(item, index) in PROJECT_PAGE.filter((item) => item.url != '/index')"
-        :key="index"
-        :data="item"
-      />
+    <div class="mb-20 w-full max-w-7xl">
+      <div class="mb-8 flex items-center">
+        <SmallTitle title="个人项目" />
+        <div class="ml-6 h-[1px] flex-1 bg-gradient-to-r from-sf-border/50 to-transparent"></div>
+      </div>
+      <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
+        <ProjectCard
+          v-for="(item, index) in PROJECT_PAGE.filter((item) => item.url != '/index')"
+          :key="index"
+          :data="item"
+        />
+      </div>
     </div>
-    <SmallTitle title="参与开发" />
-    <div class="grid grid-cols-2 gap-6">
-      <ProjectCard v-for="(item, index) in projectList" :key="index" :data="item" />
+
+    <!-- 参与开发 -->
+    <div class="w-full max-w-7xl">
+      <div class="mb-8 flex items-center">
+        <SmallTitle title="参与开发" />
+        <div class="ml-6 h-[1px] flex-1 bg-gradient-to-r from-sf-border/50 to-transparent"></div>
+      </div>
+      <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
+        <ProjectCard v-for="(item, index) in projectList" :key="index" :data="item" />
+      </div>
     </div>
   </div>
 </template>
