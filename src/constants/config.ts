@@ -65,4 +65,4 @@ export const DEFAULT_COLOR = 'text-sf-base'
  * 默认背景颜色
  * 系统中所有组件的默认背景颜色
  */
-export const DEFAULT_BACKGROUND = 'text-sf-primary'
+export const DEFAULT_BACKGROUND = 'bg-sf-primary'
