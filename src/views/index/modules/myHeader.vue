@@ -18,6 +18,16 @@ const NAV_ITEMS = [
 ]
 
 /**
+ * 回到顶部
+ */
+function scrollToTop() {
+  window.scrollTo({
+    top: 0,
+    behavior: 'smooth',
+  })
+}
+
+/**
  * 处理锚点滚动
  * @param {string} targetId 目标元素ID
  */
@@ -75,7 +85,8 @@ const isHeaderActive = computed(() => headerOpacity.value > 0)
       <div class="flex items-center">
         <SfImg
           :src="nnLogo"
-          class="h-15 w-15 object-contain transition-transform duration-300 hover:scale-105 md:h-20 md:w-20"
+          class="h-15 w-15 cursor-pointer object-contain transition-transform duration-300 hover:scale-105 md:h-20 md:w-20"
+          @click="scrollToTop"
         />
       </div>
 
@@ -86,7 +97,7 @@ const isHeaderActive = computed(() => headerOpacity.value > 0)
           <a
             v-for="item in NAV_ITEMS"
             :key="item.key"
-            class="nav-item group relative cursor-pointer py-2 text-base font-medium text-sf-base transition-colors hover:text-sf-theme"
+            class="nav-item group relative cursor-pointer py-2 text-xl font-medium text-sf-base transition-colors hover:text-sf-theme"
             @click="handleAnchorScroll(item.key)"
           >
             {{ item.name }}

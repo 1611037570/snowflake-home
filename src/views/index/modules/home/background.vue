@@ -1,14 +1,7 @@
 <template>
   <div
-    style="
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      z-index: 1;
-      background-image: radial-gradient(var(--sf-base) 1px, var(--sf-primary) 1px);
-    "
+    class="fixed inset-0 z-10 min-h-dvh w-full"
+    style="background-image: radial-gradient(var(--sf-base) 1px, var(--sf-primary) 1px)"
   >
     <!-- 背景装饰元素 -->
     <div class="bg-blur bg-1" :class="[$s(100, 'w'), $s(100, 'h')]"></div>
@@ -19,7 +12,7 @@
 <style lang="scss" scoped>
 /* 装饰性背景元素 */
 .bg-blur {
-  position: fixed;
+  position: absolute;
   animation: float 12s cubic-bezier(0.4, 0, 0.2, 1) infinite;
   border-radius: 50%;
   filter: blur(100px);
