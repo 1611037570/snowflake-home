@@ -3,20 +3,26 @@ import { ref, watch } from 'vue'
 
 const useFormProxy = (form: any) => {
   const formProxy = ref()
+
+  const processItems = (items: any[]) => {
+    return items.map((item: any) => {
+      const newItem = {
+        ...item,
+        id: item.id || getUUID(),
+      }
+      if (Array.isArray(newItem.children)) {
+        newItem.children = processItems(newItem.children)
+      }
+      return newItem
+    })
+  }
+
   watch(
     () => form,
     (newValue) => {
-      console.log('newValue:>> ', newValue)
-
-      formProxy.value = newValue.value.map((item: any) => {
-        if (item?.id) {
-          return item
-        }
-        return {
-          ...item,
-          id: item.id || getUUID(),
-        }
-      })
+      if (newValue?.value) {
+        formProxy.value = processItems(newValue.value)
+      }
     },
     { deep: true, immediate: true },
   )

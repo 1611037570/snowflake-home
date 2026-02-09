@@ -9,22 +9,18 @@
   ></component>
 </template>
 
-<script setup>
-import { inject, onMounted } from 'vue'
+<script setup lang="ts">
+import { inject } from 'vue'
 import { getComponent } from '../components'
 
-const { form } = defineProps({
-  index: {
-    type: Number,
-  },
-  form: {
-    type: Object,
-  },
-})
-const dataProxy = inject('dataProxy')
+const props = defineProps<{
+  index?: number
+  form: any
+}>()
 
-const component = getComponent(form.component)
-onMounted(() => {})
+const dataProxy = inject<any>('dataProxy')
+
+const component = getComponent(props.form?.component)
 </script>
 
 <style scoped></style>
