@@ -1,7 +1,11 @@
 <script setup>
 import { useResumeStore } from '@/stores'
+import { userForm } from '@/stores/modules/resume/formConfig'
+import { storeToRefs } from 'pinia'
 import { ref } from 'vue'
-import Sidebar from './sidebar.vue'
+import AddModule from './components/AddModule.vue'
+import ResumeActions from './components/ResumeActions.vue'
+import Sidebar from './Sidebar.vue'
 import Title from './title.vue'
 const resumeStore = useResumeStore()
 const { currentData } = storeToRefs(resumeStore)
@@ -20,7 +24,9 @@ function handleEditTitle() {
     <!-- 左侧栏 -->
     <Sidebar />
     <!-- 右侧内容 -->
-    <div class="flex flex-1 flex-col p-4">
+    <div class="relative flex flex-1 flex-col p-4">
+      <ResumeActions />
+
       <TitleEditor v-model="title" ref="titleEditorRef" />
       <div
         class="flex cursor-pointer items-center hover:text-sf-theme-hover"
@@ -40,6 +46,7 @@ function handleEditTitle() {
             <SfWangEdit />
           </el-collapse-item>
         </SfCollapse>
+        <AddModule />
       </ElScrollbar>
     </div>
   </div>

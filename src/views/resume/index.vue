@@ -10,7 +10,7 @@
             打印表单PDF
           </ElButton>
           <!-- 表单容器 -->
-          <div ref="formContainer">
+          <div ref="formContainer" class="w-full flex-1">
             <Preview />
           </div>
         </div>
@@ -26,15 +26,22 @@ import Builder from './builder/index.vue'
 import Preview from './preview/index.vue'
 
 const resumeStore = useResumeStore()
+const { list } = storeToRefs(resumeStore)
+function init() {
+  if (list.value.length) {
+    return
+  }
+  resumeStore.addResume()
+}
+onMounted(() => {
+  init()
+})
 
 // 表单容器引用
 const formContainer = ref(null)
 // 加载状态
 const isLoading = ref(false)
 
-const { currentResume } = storeToRefs(resumeStore)
-
-provide('currentResume', currentResume.value)
 /**
  * 将表单打印为PDF文件 - 延迟加载PDF相关库以优化初始加载性能
  */
