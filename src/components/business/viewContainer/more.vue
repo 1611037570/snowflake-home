@@ -3,6 +3,7 @@ import { BASE_PAGE, MUSE_PAGE, PROJECT_PAGE } from '@/constants'
 
 const router = useRouter()
 const route = useRoute()
+const showMore = ref(false)
 
 // 过滤菜单项的条件函数
 const filterMenuItems = (item) => {
@@ -32,25 +33,22 @@ function handleClick(item) {
 </script>
 
 <template>
-  <SfDropdown trigger="click">
-    <ElButton> {{ $t('moreTools') }} </ElButton>
-    <template #dropdown>
-      <div class="w-48 bg-sf-bg px-2 py-1">
-        <!-- 基础页面 -->
-        <template v-for="item in list" :key="item.name">
-          <div class="mb-1 px-2 text-xs font-semibold text-sf-base">{{ item.name }}</div>
-          <div class="mb-2 rounded-lg border border-sf-border shadow-md">
-            <SfList
-              :list="item.routers"
-              activeKey="url"
-              activeValue="url"
-              @onClick="handleClick"
-            ></SfList>
-          </div>
-        </template>
-      </div>
-    </template>
-  </SfDropdown>
+  <ElButton @click="showMore = true"> {{ $t('moreTools') }} </ElButton>
+  <SfModal v-model="showMore" :title="$t('moreTools')">
+    <div class="w-48 bg-sf-bg px-2 py-1">
+      <template v-for="item in list" :key="item.name">
+        <div class="mb-1 px-2 text-xs font-semibold text-sf-base">{{ item.name }}</div>
+        <div class="mb-2 rounded-lg border border-sf-border shadow-md">
+          <SfList
+            :list="item.routers"
+            activeKey="url"
+            activeValue="url"
+            @onClick="handleClick"
+          ></SfList>
+        </div>
+      </template>
+    </div>
+  </SfModal>
 </template>
 
 <style lang="scss" scoped></style>
