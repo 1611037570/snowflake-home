@@ -1,5 +1,5 @@
 ﻿<template>
-  <div style="" class="">
+  <div style="" class="w-full">
     <Toolbar
       class="border-sf-b border-b"
       :editor="editorRef"
