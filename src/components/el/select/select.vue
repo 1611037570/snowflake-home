@@ -2,7 +2,7 @@
   <Component
     v-model="value"
     :is="h(ElSelect, { ...$attrs, ref: changeRef }, $slots)"
-    class="rounded-b-md text-sf-base"
+    class="text-sf-base"
     :class="bg"
   >
     <ElOption v-for="item in list" :key="item.value" :label="item.name" :value="item.value" />
