@@ -67,4 +67,28 @@
     background-color: var(--color-sf-theme) !important;
   }
 }
+
+.el-collapse-item__content {
+  padding: 0 !important;
+}
 // 分割线组件结束
+// 表单组件开始
+.el-form-item {
+  margin-bottom: 0 !important;
+}
+// 表单组件结束
+// 日期输入组件开始
+.el-input__wrapper {
+  border-radius: 12px;
+}
+// 日期输入组件结束
+// 选择输入组件开始
+.el-select__wrapper {
+  border-radius: 12px !important;
+}
+// 选择输入组件结束
+// 表单项标签开始
+.el-form-item__label {
+  margin-bottom: 0 !important;
+}
+// 表单项标签结束
