@@ -1,4 +1,9 @@
 <script setup>
+import { useResumeStore } from '@/stores'
+import dayjs from 'dayjs'
+import { storeToRefs } from 'pinia'
+import { computed } from 'vue'
+
 defineProps({
   data: {
     type: Object,
@@ -13,23 +18,99 @@ defineProps({
     }),
   },
 })
+const resumeStore = useResumeStore()
+const { currentData } = storeToRefs(resumeStore)
+
+// 计算年龄
+const age = computed(() => {
+  // 获取用户生日，无则直接返回0（避免返回undefined导致渲染异常）
+  const birthday = currentData.value.user?.birthday
+  if (!birthday) return 0
+
+  // 解析生日日期并校验有效性（避免格式错误的日期导致计算异常）
+  const birthdayDate = dayjs(birthday)
+  if (!birthdayDate.isValid()) return 0
+
+  // 统一时间基准，避免重复调用dayjs()
+  const currentDate = dayjs()
+
+  // 计算周岁差（dayjs.diff('year')默认向下取整，符合“不四舍五入”要求）
+  const ageDiff = currentDate.diff(birthdayDate, 'year')
+
+  // 处理未来生日的异常场景（如填错成未到的日期，返回0）
+  return ageDiff < 0 ? 0 : ageDiff
+})
+
+// 计算工作年限（规则：不足1年按0年算，满5个月不满1年按1年算，以此类推）
+const workYears = computed(() => {
+  // 2. 解构并校验核心数据：获取用户入职时间，无则返回0（避免返回undefined导致后续渲染问题）
+  const workTime = currentData.value.user?.workTime
+  if (!workTime) return 0
+
+  // 3. 校验日期有效性：避免无效日期（如格式错误、空字符串）导致dayjs计算异常
+  const startDate = dayjs(workTime)
+  if (!startDate.isValid()) return 0
+
+  // 4. 获取当前日期（统一时间基准，避免重复调用dayjs()）
+  const currentDate = dayjs()
+
+  // 5. 计算入职时间与当前时间的月份差（处理未来日期：若入职时间在未来，月份差为负，返回0）
+  const diffInMonths = currentDate.diff(startDate, 'month')
+  if (diffInMonths < 0) return 0
+
+  // 6. 计算完整年数和剩余月份
+  const fullYears = Math.floor(diffInMonths / 12) // 完整的年数（向下取整）
+  const remainingMonths = diffInMonths % 12 // 剩余不足1年的月份
+
+  // 7. 业务规则：剩余月份≥5个月则进1年，否则取完整年数
+  return remainingMonths >= 5 ? fullYears + 1 : fullYears
+})
+// 电话
+const phone = computed(() => {
+  return currentData.value.user?.phone || ''
+})
+
+// 邮箱
+const email = computed(() => {
+  return currentData.value.user?.email || ''
+})
 </script>
 
 <template>
-  <div class="mr-3 mb-3 flex items-center gap-4">
-    <span class="text-2xl font-bold"> {{ data.name }} </span>
-    <span> {{ data.sex }} </span> <span> {{ data.age }}岁 </span><span> {{ data.exp }}年经验 </span>
-  </div>
-  <div class="mb-3 flex flex-col gap-3">
-    <div class="flex gap-3">
-      <span>电话：{{ data.phone }} </span> <span>邮箱：{{ data.email }}</span>
-    </div>
-    <template v-if="data.link && data.link.length">
-      <div class="flex items-center text-sm" v-for="(item, index) in data.link" :key="index">
-        <div>{{ item.name }}：</div>
-        <div>{{ item.url }}</div>
+  <div class="mb-6 flex flex-col gap-4 border-b border-sf-border">
+    <!-- 头部基本信息 -->
+    <div class="flex items-end justify-between">
+      <div class="flex items-center gap-4">
+        <h1 class="text-3xl font-bold tracking-wide">{{ data.name }}</h1>
+        <div class="flex items-center gap-3 text-sm opacity-80">
+          <span v-if="data.sex">{{ data.sex }}</span>
+          <span v-if="data.sex && data.age" class="h-3 w-[1px] bg-current opacity-50"></span>
+          <span v-if="age">{{ age }}岁</span>
+          <span v-if="age && workYears" class="h-3 w-[1px] bg-current opacity-50"></span>
+          <span v-if="workYears">{{ workYears }}年经验</span>
+        </div>
       </div>
-    </template>
+    </div>
+
+    <!-- 联系方式 -->
+    <div class="flex flex-wrap gap-x-6 gap-y-2 text-sm">
+      <div class="flex items-center gap-2" v-if="phone">
+        <span class="opacity-70">电话：</span>
+        <span class="font-medium">{{ phone }}</span>
+      </div>
+      <div class="flex items-center gap-2" v-if="email">
+        <span class="opacity-70">邮箱：</span>
+        <span class="font-medium">{{ email }}</span>
+      </div>
+    </div>
+
+    <!-- 社交链接 -->
+    <div class="flex flex-col gap-2 text-sm" v-if="data.link && data.link.length">
+      <div v-for="(item, index) in data.link" :key="index" class="flex items-center gap-2">
+        <span class="opacity-70">{{ item.name }}：</span>
+        <a :href="item.url" target="_blank" class="font-medium hover:underline">{{ item.url }}</a>
+      </div>
+    </div>
   </div>
 </template>
 
