@@ -15,52 +15,58 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { getUUID } from '@/utils'
 import { computed, inject, onMounted } from 'vue'
 import { getComponent } from '../components'
 
-defineProps({
-  index: {
-    type: Number,
-  },
-})
-const form = defineModel('form')
-const dataProxy = inject('dataProxy')
+defineProps<{
+  index?: number
+}>()
+
+const form = defineModel<any>('form')
+const dataProxy = inject<any>('dataProxy')
+
 onMounted(() => {
-  form.value.data = form.value.data.map((item) => {
-    if (!item?.id) {
-      return {
-        ...item,
-        id: item.id || getUUID(),
+  if (form.value?.data) {
+    form.value.data = form.value.data.map((item: any) => {
+      if (!item?.id) {
+        return {
+          ...item,
+          id: item.id || getUUID(),
+        }
       }
-    }
-    return item
-  })
+      return item
+    })
+  }
 })
-const length = computed(() => form.value.data.length)
-const component = getComponent(form.value.component)
-const moveUp = (index) => {
+
+const length = computed(() => form.value?.data?.length || 0)
+const component = getComponent(form.value?.component)
+
+const moveUp = (index: number) => {
   if (index === 0) return
   const obj = form.value.data[index]
   form.value.data[index] = form.value.data[index - 1]
   form.value.data[index - 1] = obj
 }
-const moveDown = (index) => {
+
+const moveDown = (index: number) => {
   if (index === length.value - 1) return
   const obj = form.value.data[index]
   form.value.data[index] = form.value.data[index + 1]
   form.value.data[index + 1] = obj
 }
-const remove = (index) => {
+
+const remove = (index: number) => {
   form.value.data.splice(index, 1)
 }
-const add = (index) => {
+
+const add = (index: number) => {
   const newItem = JSON.parse(JSON.stringify(form.value.data[index]))
   newItem.id = getUUID()
   form.value.data.splice(index + 1, 0, newItem)
 }
-onMounted(() => {})
 </script>
 
 <style scoped></style>

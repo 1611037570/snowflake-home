@@ -1,5 +1,5 @@
 <template>
-  <el-form-item :label="form.label" :prop="form.data.path">
+  <el-form-item :label="form.label" :prop="form.data?.path">
     <template #label>
       <div class="flex h-full w-full items-center font-bold">{{ form.label }}</div>
     </template>
@@ -7,12 +7,10 @@
   </el-form-item>
 </template>
 
-<script setup>
-const { form } = defineProps({
-  form: {
-    type: Object,
-  },
-})
+<script setup lang="ts">
+defineProps<{
+  form: any
+}>()
 </script>
 
 <style scoped>
