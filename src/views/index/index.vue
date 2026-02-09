@@ -7,15 +7,13 @@
     <Project />
     <History />
     <Thank />
-    <Background />
     <SfBacktop />
   </div>
 </template>
 
 <script setup>
-import Background from './components/background.vue'
 import History from './modules/history.vue'
-import Home from './modules/home.vue'
+import Home from './modules/home/index.vue'
 import MyHeader from './modules/myHeader.vue'
 import Project from './modules/project.vue'
 import Shoot from './modules/shoot.vue'
