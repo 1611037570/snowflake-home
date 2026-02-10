@@ -1,12 +1,15 @@
 <template>
-  <el-row
+  <VueDraggable
+    v-model="items"
+    :animation="150"
+    tag="el-row"
     :gutter="20"
-    style=""
     class="m-0! w-full border border-solid border-gray-300"
     :style="{ backgroundColor: getBackgroundColor(level) }"
+    :disabled="!draggable"
   >
     <el-col
-      v-for="item in validatedItems"
+      v-for="(item, index) in validatedItems"
       :key="item.id"
       :span="item.span || 24"
       class="w-full p-0!"
@@ -20,10 +23,19 @@
             :is="getComponent(item.component)"
             v-bind="item.props || {}"
           >
-            <FormRenderer :items="item.children" :level="level + 1" />
+            <FormRenderer
+              v-model:items="items[index].children"
+              :level="level + 1"
+              :draggable="draggable"
+            />
           </component>
           <!-- 纯逻辑分组 -->
-          <FormRenderer v-else :items="item.children" :level="level + 1" />
+          <FormRenderer
+            v-else
+            v-model:items="items[index].children"
+            :level="level + 1"
+            :draggable="draggable"
+          />
         </template>
         <!-- 叶子节点 -->
         <template v-else>
@@ -35,36 +47,38 @@
       <!-- 校验失败：展示友好的错误提示 -->
       <FormError v-else :error-msg="item.errorMsg" :raw="item.raw" />
     </el-col>
-  </el-row>
+  </VueDraggable>
 </template>
 
 <script setup lang="ts">
 import { computed } from 'vue'
+import { VueDraggable } from 'vue-draggable-plus'
 import { checkForm } from '../code/checkForm'
 import { getComponent } from '../components'
 import ContainerArray from './containerArray.vue'
 import ContainerObject from './containerObject.vue'
 import FormError from './formError.vue'
 import FormItem from './formItem.vue'
-
 defineOptions({ name: 'FormRenderer' })
 
-const props = withDefaults(
+withDefaults(
   defineProps<{
-    items: any[]
     level?: number
+    draggable?: boolean
   }>(),
   {
-    items: () => [],
     level: 0,
+    draggable: false,
   },
 )
-
+const items = defineModel<any[]>('items', {
+  default: () => [],
+})
 /**
  * 预处理数据：计算校验结果，避免模板中多次调用函数
  */
 const validatedItems = computed(() => {
-  return props.items.map((item, index) => {
+  return items.value.map((item, index) => {
     const checkResult = checkForm(item)
     return {
       ...item,
