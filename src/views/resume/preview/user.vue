@@ -24,7 +24,7 @@ const { currentData } = storeToRefs(resumeStore)
 // 计算年龄
 const age = computed(() => {
   // 获取用户生日，无则直接返回0（避免返回undefined导致渲染异常）
-  const birthday = currentData.value.user?.birthday
+  const birthday = currentData.value?.user?.birthday
   if (!birthday) return 0
 
   // 解析生日日期并校验有效性（避免格式错误的日期导致计算异常）
@@ -44,7 +44,7 @@ const age = computed(() => {
 // 计算工作年限（规则：不足1年按0年算，满5个月不满1年按1年算，以此类推）
 const workYears = computed(() => {
   // 2. 解构并校验核心数据：获取用户入职时间，无则返回0（避免返回undefined导致后续渲染问题）
-  const workTime = currentData.value.user?.workTime
+  const workTime = currentData.value?.user?.workTime
   if (!workTime) return 0
 
   // 3. 校验日期有效性：避免无效日期（如格式错误、空字符串）导致dayjs计算异常
@@ -67,12 +67,12 @@ const workYears = computed(() => {
 })
 // 电话
 const phone = computed(() => {
-  return currentData.value.user?.phone || ''
+  return currentData.value?.user?.phone || ''
 })
 
 // 邮箱
 const email = computed(() => {
-  return currentData.value.user?.email || ''
+  return currentData.value?.user?.email || ''
 })
 </script>
 
