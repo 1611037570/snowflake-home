@@ -1,13 +1,12 @@
 <template>
-  {{ data }}
   <el-form
     ref="dynamicForm"
     :model="data"
     label-width="auto"
     style="max-width: 700px"
-    class="flex flex-col p-3"
+    class="flex w-full flex-col p-3"
   >
-    <FormRenderer :items="formProxy" />
+    <FormRenderer v-model:items="formProxy" :draggable="draggable" />
   </el-form>
 </template>
 <script setup lang="ts">
@@ -19,6 +18,15 @@ import useFormProxy from './code/useFormProxy'
 import { DEFAULT_DATA, DEFAULT_FORM } from './config'
 
 defineOptions({ name: 'SfDynamicForm' })
+
+withDefaults(
+  defineProps<{
+    draggable?: boolean
+  }>(),
+  {
+    draggable: false,
+  },
+)
 
 const instance = getCurrentInstance()
 const emit = instance?.emit
