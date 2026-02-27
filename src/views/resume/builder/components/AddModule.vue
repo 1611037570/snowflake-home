@@ -1,6 +1,6 @@
 <script setup>
 import { useResumeStore } from '@/stores'
-import { allForm } from '@/stores/modules/resume/formConfig'
+import { allConfig } from '@/stores/modules/resume/formConfig'
 import { storeToRefs } from 'pinia'
 import { computed, ref } from 'vue'
 const resumeStore = useResumeStore()
@@ -34,8 +34,8 @@ const filteredPresets = computed(() => {
 
 const handleAdd = (module) => {
   const key = module.value
-  if (key in allForm) {
-    currentConfig.value.push(allForm[key])
+  if (key in allConfig) {
+    currentConfig.value.push(allConfig[key])
   }
 }
 </script>
