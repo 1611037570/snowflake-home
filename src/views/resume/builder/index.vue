@@ -1,6 +1,5 @@
 <script setup>
 import { useResumeStore } from '@/stores'
-import { userForm } from '@/stores/modules/resume/formConfig'
 import { storeToRefs } from 'pinia'
 import { ref } from 'vue'
 import AddModule from './components/AddModule.vue'
@@ -8,7 +7,7 @@ import ResumeActions from './components/ResumeActions.vue'
 import Sidebar from './Sidebar.vue'
 import Title from './title.vue'
 const resumeStore = useResumeStore()
-const { currentData } = storeToRefs(resumeStore)
+const { currentData, currentConfig } = storeToRefs(resumeStore)
 
 import TitleEditor from '../components/TitleEditor.vue'
 
@@ -36,16 +35,10 @@ function handleEditTitle() {
         <SfIcon name="arrow-right" class="ml-2" size="5" />
       </div>
       <ElScrollbar class="flex-1">
-        <Title title="个人信息" />
-        <SfDynamicForm :form="userForm" :data="currentData"></SfDynamicForm>
-        <SfCollapse>
-          <el-collapse-item name="1">
-            <template #title>
-              <Title title="专业技能" />
-            </template>
-            <SfWangEdit />
-          </el-collapse-item>
-        </SfCollapse>
+        <template v-for="item in currentConfig" :key="item.key">
+          <Title :title="item.key" />
+          <SfDynamicForm :form="item.form" :data="currentData"></SfDynamicForm>
+        </template>
         <AddModule />
       </ElScrollbar>
     </div>
