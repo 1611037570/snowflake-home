@@ -1,7 +1,7 @@
 <script setup>
-import Educational from './educational.vue'
-import Skill from './skill.vue'
-import User from './user.vue'
+import Educational from './modules/educational.vue'
+import ResumeModule from './modules/index.vue'
+import Skill from './modules/skill.vue'
 
 defineOptions({ name: 'ResumePage' })
 
@@ -28,7 +28,8 @@ defineProps({
   >
     <div class="flex flex-1 flex-col text-sm">
       <!-- 信息模块 -->
-      <User :data="user" />
+      <ResumeModule :data="user" name="user" />
+
       <!-- 教育经历 -->
       <Educational />
 
