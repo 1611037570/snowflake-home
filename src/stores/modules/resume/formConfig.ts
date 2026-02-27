@@ -97,3 +97,31 @@ export const userForm: FormItem[] = [
     },
   },
 ]
+export const userConfig = {
+  form: userForm,
+  key: 'user',
+}
+
+export const skillForm: FormItem[] = [
+  {
+    type: 'object',
+    label: '专业技能',
+    component: 'input',
+    data: {
+      path: ['skill'],
+      key: 'modelValue',
+    },
+    props: {
+      placeholder: '请输入专业技能',
+    },
+  },
+]
+export const skillConfig = {
+  form: skillForm,
+  key: 'skill',
+}
+
+export const allForm = {
+  skill: skillForm,
+  user: userForm,
+}
