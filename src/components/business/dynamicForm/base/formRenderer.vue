@@ -11,7 +11,7 @@
     <el-col
       v-for="(item, index) in validatedItems"
       :key="item.id"
-      :span="item.span || 24"
+      :span="item.span || defaultSpan"
       class="w-full p-0!"
     >
       <!-- 校验通过：渲染表单项 -->
@@ -27,6 +27,7 @@
               v-model:items="items[index].children"
               :level="level + 1"
               :draggable="draggable"
+              :default-span="defaultSpan"
             />
           </component>
           <!-- 纯逻辑分组 -->
@@ -35,6 +36,7 @@
             v-model:items="items[index].children"
             :level="level + 1"
             :draggable="draggable"
+            :default-span="defaultSpan"
           />
         </template>
         <!-- 叶子节点 -->
@@ -65,10 +67,12 @@ withDefaults(
   defineProps<{
     level?: number
     draggable?: boolean
+    defaultSpan?: number
   }>(),
   {
     level: 0,
     draggable: false,
+    defaultSpan: 24,
   },
 )
 const items = defineModel<any[]>('items', {
@@ -92,7 +96,7 @@ const validatedItems = computed(() => {
 
 // 预定义一组背景色，按层级循环使用
 const backgroundColors = [
-  '#e3e3e3', // 0层：白色
+  '#', // 0层：白色
   '#f0f9eb', // 1层 : 浅绿
   '#ecf5ff', // 2层 : 浅蓝
   '#fdf6ec', // 3层 : 浅橙

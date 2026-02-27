@@ -6,7 +6,7 @@
     style="max-width: 700px"
     class="flex w-full flex-col p-3"
   >
-    <FormRenderer v-model:items="formProxy" :draggable="draggable" />
+    <FormRenderer v-model:items="formProxy" :draggable="draggable" :default-span="defaultSpan" />
   </el-form>
 </template>
 <script setup lang="ts">
@@ -22,9 +22,11 @@ defineOptions({ name: 'SfDynamicForm' })
 withDefaults(
   defineProps<{
     draggable?: boolean
+    defaultSpan?: number
   }>(),
   {
     draggable: false,
+    defaultSpan: 24,
   },
 )
 
