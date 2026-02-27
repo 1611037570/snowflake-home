@@ -4,7 +4,7 @@ import { allForm } from '@/stores/modules/resume/formConfig'
 import { storeToRefs } from 'pinia'
 import { computed, ref } from 'vue'
 const resumeStore = useResumeStore()
-const { currentForm } = storeToRefs(resumeStore)
+const { currentConfig } = storeToRefs(resumeStore)
 defineOptions({ name: 'AddModule' })
 
 // 预设模块列表
@@ -23,10 +23,10 @@ const presets = ref([
 
 // 过滤后的预设模块：只显示尚未添加到当前表单中的模块
 const filteredPresets = computed(() => {
-  if (!currentForm.value) return presets.value
+  if (!currentConfig.value) return presets.value
   return presets.value.filter((item) => {
     // 检查当前表单配置中是否已存在该模块（通过比对模块名称与表单首项的 label）
-    return !currentForm.value.some((form) => form[0]?.label === item.name)
+    return !currentConfig.value.some((form) => form.key === item.value)
   })
 })
 
@@ -35,7 +35,7 @@ const filteredPresets = computed(() => {
 const handleAdd = (module) => {
   const key = module.value
   if (key in allForm) {
-    currentForm.value.push(allForm[key])
+    currentConfig.value.push(allForm[key])
   }
 }
 </script>

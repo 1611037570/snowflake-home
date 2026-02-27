@@ -102,18 +102,35 @@ export const userConfig = {
   key: 'user',
 }
 
-export const skillForm: FormItem[] = [
+export const skillForm: any = [
   {
-    type: 'object',
-    label: '专业技能',
-    component: 'input',
-    data: {
-      path: ['skill'],
-      key: 'modelValue',
-    },
+    component: 'collapse',
     props: {
-      placeholder: '请输入专业技能',
+      modelValue: ['1'],
+      accordion: true,
+      title: '专业技能',
     },
+    children: [
+      // 这里的内容会被放入 collapse 的默认插槽中
+      {
+        component: 'collapseItem',
+        props: {
+          title: '基础信息',
+          name: '1',
+        },
+        children: [
+          {
+            type: 'object',
+            component: 'wangEdit',
+            data: {
+              path: ['skill'],
+
+              key: 'modelValue',
+            },
+          },
+        ],
+      },
+    ],
   },
 ]
 export const skillConfig = {
@@ -121,7 +138,7 @@ export const skillConfig = {
   key: 'skill',
 }
 
-export const allForm = {
-  skill: skillForm,
-  user: userForm,
+export const allConfig = {
+  skill: skillConfig,
+  user: userConfig,
 }
