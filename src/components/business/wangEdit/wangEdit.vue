@@ -1,11 +1,6 @@
 ﻿<template>
   <div style="" class="w-full">
-    <Toolbar
-      class="border-sf-b border-b"
-      :editor="editorRef"
-      :defaultConfig="toolbarConfig"
-      :mode="mode"
-    />
+    <Toolbar :editor="editorRef" :defaultConfig="toolbarConfig" :mode="mode" />
     <Editor
       class="rounded-b-xl"
       style="overflow-y: hidden"
