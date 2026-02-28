@@ -53,6 +53,9 @@
   background-color: transparent !important;
   color: var(--sf-base) !important;
 }
+.el-collapse-item__wrap {
+  background: none !important;
+}
 // 折叠组件结束
 // 分割线组件开始
 .el-splitter-bar__dragger {
