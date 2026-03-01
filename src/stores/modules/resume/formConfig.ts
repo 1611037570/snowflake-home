@@ -9,7 +9,7 @@ export interface FormItem {
   props: Record<string, any>
 }
 
-// 个人信息表单配置
+// 用户信息
 export const userForm: FormItem[] = [
   {
     type: 'object',
@@ -99,23 +99,33 @@ export const userForm: FormItem[] = [
 ]
 export const userConfig = {
   form: userForm,
-  key: 'user',
+  type: 'user',
 }
-
+// 专业技能
 export const skillForm: any = [
   {
-    component: 'collapse',
-    props: {
-      modelValue: ['1'],
-      accordion: true,
-      title: '专业技能',
+    type: 'object',
+    component: 'skill',
+    data: {
+      path: ['skill'],
+      key: 'skill',
     },
+  },
+]
+export const skillConfig = {
+  form: skillForm,
+  type: 'skill',
+}
+
+// 个人优势
+export const advantageForm: any = [
+  {
+    component: 'collapse',
     children: [
-      // 这里的内容会被放入 collapse 的默认插槽中
       {
         component: 'collapseItem',
         props: {
-          title: '基础信息',
+          title: '个人优势',
           name: '1',
         },
         children: [
@@ -123,8 +133,7 @@ export const skillForm: any = [
             type: 'object',
             component: 'wangEdit',
             data: {
-              path: ['skill'],
-
+              path: ['advantage'],
               key: 'modelValue',
             },
           },
@@ -133,12 +142,119 @@ export const skillForm: any = [
     ],
   },
 ]
-export const skillConfig = {
-  form: skillForm,
-  key: 'skill',
+export const advantageConfig = {
+  form: advantageForm,
+  type: 'advantage',
+}
+// 工作经历
+export const workForm: any = [
+  {
+    component: 'work',
+    type: 'array',
+    list: [
+      {
+        data: [
+          {
+            path: ['work', '?', 'name'],
+            key: 'name',
+          },
+          {
+            path: ['work', '?', 'post'],
+            key: 'post',
+          },
+          {
+            path: ['work', '?', 'time'],
+            key: 'time',
+          },
+          {
+            path: ['work', '?', 'content'],
+            key: 'content',
+          },
+        ],
+      },
+    ],
+  },
+]
+export const workConfig = {
+  form: workForm,
+  type: 'work',
 }
 
+// 项目经历
+export const projectForm: any = [
+  {
+    component: 'work',
+    type: 'array',
+    list: [
+      {
+        data: [
+          {
+            path: ['project', '?', 'name'],
+            key: 'name',
+          },
+          {
+            path: ['project', '?', 'post'],
+            key: 'post',
+          },
+          {
+            path: ['project', '?', 'time'],
+            key: 'time',
+          },
+          {
+            path: ['project', '?', 'content'],
+            key: 'content',
+          },
+        ],
+      },
+    ],
+  },
+]
+export const projectConfig = {
+  form: projectForm,
+  type: 'project',
+}
+// 教育经历
+export const educationForm: any = [
+  {
+    component: 'education',
+    type: 'array',
+    list: [
+      {
+        data: [
+          {
+            path: ['education', '?', 'name'],
+            key: 'name',
+          },
+          {
+            path: ['education', '?', 'education'],
+            key: 'education',
+          },
+          {
+            path: ['education', '?', 'post'],
+            key: 'post',
+          },
+          {
+            path: ['education', '?', 'time'],
+            key: 'time',
+          },
+          {
+            path: ['education', '?', 'content'],
+            key: 'content',
+          },
+        ],
+      },
+    ],
+  },
+]
+export const educationConfig = {
+  form: educationForm,
+  type: 'education',
+}
 export const allConfig = {
   skill: skillConfig,
   user: userConfig,
+  advantage: advantageConfig,
+  education: educationConfig,
+  work: workConfig,
+  project: projectConfig,
 }
