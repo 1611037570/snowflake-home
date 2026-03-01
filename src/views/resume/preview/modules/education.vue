@@ -1,43 +1,37 @@
 <script setup>
 import { useResumeStore } from '@/stores'
+import { storeToRefs } from 'pinia'
+import { computed } from 'vue'
+import Content from '../theme/content.vue'
+import Title from '../theme/title.vue'
+
+import { getTime } from './utils'
 
 const resumeStore = useResumeStore()
 const { currentData } = storeToRefs(resumeStore)
 const education = computed(() => currentData.value.education || [])
-// 校验经历
-const hasEducation = (education) => {
-  if (education == '<p><br></p>') {
-    return
-  }
-  return true
-}
 </script>
 
 <template>
-  <div class="mb-6 flex flex-col gap-3">
+  <div class="flex flex-col">
     <!-- 标题栏 -->
-    <div class="flex items-center gap-2 border-b border-sf-border pb-1">
-      <div class="h-4 w-1 rounded-full bg-sf-theme"></div>
-      <h2 class="text-lg font-bold tracking-wide">教育经历</h2>
-    </div>
-
+    <Title title="教育经历"></Title>
     <!-- 内容区 -->
-    <div v-for="(item, index) in education" :key="index" class="flex flex-col gap-1 px-1">
+    <div v-for="(item, index) in education" :key="index" class="mb-3">
       <div class="flex items-center justify-between">
         <div class="flex items-baseline gap-4">
-          <span class="text-base font-bold">{{ item.school }}</span>
-          <div class="flex items-center gap-2 text-sm">
-            <span>{{ item.degree }}</span>
-            <span v-if="item.degree && item.major" class="h-3 w-[1px] bg-sf-border"></span>
-            <span>{{ item.major }}</span>
-          </div>
+          <span class="text-base font-bold">{{ item.name }}</span>
+          <span>
+            {{ item.education }}
+          </span>
+          <span>{{ item.post }}</span>
         </div>
-        <span class="font-mono text-sm font-medium">{{ item.time }}</span>
+        <div class="flex items-center gap-2 text-sm">
+          <span>{{ getTime(item.time) }}</span>
+        </div>
       </div>
       <!-- 补充描述/经历 -->
-      <div v-if="hasEducation(item.experience)" class="text-sf-desc text-sm whitespace-pre-wrap">
-        {{ item.experience }}
-      </div>
+      <Content :content="item.content" />
     </div>
   </div>
 </template>
