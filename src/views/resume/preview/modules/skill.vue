@@ -1,7 +1,21 @@
-<script setup></script>
+<script setup>
+import { useResumeStore } from '@/stores'
+import { storeToRefs } from 'pinia'
+import { computed } from 'vue'
+import Content from '../theme/content.vue'
+import Title from '../theme/title.vue'
+
+const resumeStore = useResumeStore()
+const { currentData } = storeToRefs(resumeStore)
+
+const skill = computed(() => currentData.value.skill || '')
+</script>
 
 <template>
-  <div><div class="mb-3 text-lg font-bold">专业技能</div></div>
+  <div class="flex flex-col">
+    <Title title="专业技能" />
+    <Content :content="skill" />
+  </div>
 </template>
 
 <style lang="scss" scoped></style>
