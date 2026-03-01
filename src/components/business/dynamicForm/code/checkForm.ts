@@ -11,13 +11,13 @@ function checkObjectForm(form: any) {
   if (!data) {
     errors.push('data')
   } else {
-    const { path, key } = data
-    if (!path) {
-      errors.push('data.path')
-    }
-    if (!key) {
-      errors.push('data.key')
-    }
+    // const { path, key } = data
+    // if (!path) {
+    //   errors.push('data.path')
+    // }
+    // if (!key) {
+    //   errors.push('data.key')
+    // }
   }
 
   if (errors.length > 0) {
@@ -31,15 +31,15 @@ function checkObjectForm(form: any) {
  * @param form 表单项配置
  */
 function checkArrayForm(form: any) {
-  const { component, data } = form
+  const { component, list } = form
   const errors = []
   if (!component) {
     errors.push('component')
   }
-  if (!data) {
-    errors.push('data')
-  } else if (!Array.isArray(data)) {
-    errors.push('data 必须是数组')
+  if (!list) {
+    errors.push('list')
+  } else if (!Array.isArray(list)) {
+    errors.push('list 必须是数组')
   }
 
   if (errors.length > 0) {
