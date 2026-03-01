@@ -1,11 +1,16 @@
 import { defineStore } from 'pinia'
 import { computed, ref } from 'vue'
 import { userData, type UserData } from './dataConfig'
-import { skillConfig, userConfig } from './formConfig'
+import { userConfig } from './formConfig'
 
 export interface ResumeItem {
   data: UserData
   config: any // 暂时使用 any，或者根据需要定义配置类型
+  ui: {
+    paddingIndex: number
+    fontIndex: number
+    lineHeightIndex: number
+  }
 }
 
 export const useResumeStore = defineStore(
@@ -32,11 +37,34 @@ export const useResumeStore = defineStore(
       },
     })
 
+    // 获取当前选中的UI配置
+    const currentUI = computed({
+      get() {
+        return (
+          list.value[currentIndex.value]?.ui || {
+            paddingIndex: 1,
+            fontIndex: 1,
+            lineHeightIndex: 1,
+          }
+        )
+      },
+      set(newUI) {
+        if (list.value[currentIndex.value]) {
+          list.value[currentIndex.value].ui = newUI
+        }
+      },
+    })
+
     // 新增简历
     const addResume = () => {
       list.value.push({
         data: structuredClone(userData),
-        config: [userConfig, skillConfig],
+        config: [userConfig],
+        ui: {
+          paddingIndex: 1,
+          fontIndex: 1,
+          lineHeightIndex: 1,
+        },
       })
       currentIndex.value = list.value.length - 1
     }
@@ -47,6 +75,7 @@ export const useResumeStore = defineStore(
         // 如果是老版本数据（没有 data 字段），则进行转换
         const oldData = item.data ? item.data : item
         const oldConfig = item.config ? item.config : []
+        const oldUI = item.ui ? item.ui : { paddingIndex: 1, fontIndex: 1, lineHeightIndex: 1 }
 
         const baseData = structuredClone(userData)
 
@@ -60,6 +89,7 @@ export const useResumeStore = defineStore(
             },
           },
           config: oldConfig,
+          ui: oldUI,
         }
       })
     }
@@ -70,6 +100,7 @@ export const useResumeStore = defineStore(
       currentIndex,
       currentData,
       currentConfig,
+      currentUI,
       addResume,
       init,
     }
