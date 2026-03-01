@@ -10,9 +10,17 @@ const resumeStore = useResumeStore()
 const { currentData, currentConfig } = storeToRefs(resumeStore)
 
 import TitleEditor from '../components/TitleEditor.vue'
+import Education from './components/education/education.vue'
+import Work from './components/work/work.vue'
 
 const title = ref('小羊-本科-前端开发-3年经验')
 const titleEditorRef = ref(null)
+
+// 注入到动态表单的自定义组件库
+const dynamicComponents = {
+  work: Work,
+  education: Education,
+}
 function handleEditTitle() {
   titleEditorRef.value?.openModal()
 }
@@ -37,7 +45,11 @@ function handleEditTitle() {
       <ElScrollbar class="flex-1">
         <template v-for="item in currentConfig" :key="item.key">
           <Title :title="item.key" />
-          <SfDynamicForm :form="item.form" :data="currentData"></SfDynamicForm>
+          <SfDynamicForm
+            :form="item.form"
+            :data="currentData"
+            :components="dynamicComponents"
+          ></SfDynamicForm>
         </template>
         <AddModule />
       </ElScrollbar>
