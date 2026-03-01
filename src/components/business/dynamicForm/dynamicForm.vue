@@ -19,14 +19,25 @@ import { DEFAULT_DATA, DEFAULT_FORM } from './config'
 
 defineOptions({ name: 'SfDynamicForm' })
 
-withDefaults(
+const props = withDefaults(
   defineProps<{
+    /**
+     * 是否开启拖拽功能
+     */
     draggable?: boolean
+    /**
+     * 默认的表单域宽度 (24 栅格)
+     */
     defaultSpan?: number
+    /**
+     * 自定义组件注册表
+     */
+    components?: Record<string, any>
   }>(),
   {
     draggable: false,
     defaultSpan: 24,
+    components: () => ({}),
   },
 )
 
@@ -40,6 +51,10 @@ const data = defineModel<any>('data', { default: DEFAULT_DATA })
 const dataProxy = new DataProxy(data, emit)
 
 const formProxy = useFormProxy(form)
+
+// 注入实例自定义组件库
+provide('instanceComponents', props.components || {})
+// 注入数据代理和表单代理
 provide('dataProxy', dataProxy)
 provide('formProxy', formProxy)
 </script>
