@@ -4,23 +4,8 @@ import dayjs from 'dayjs'
 import { storeToRefs } from 'pinia'
 import { computed } from 'vue'
 
-defineProps({
-  data: {
-    type: Object,
-    default: () => ({
-      name: '',
-      sex: '',
-      age: '',
-      exp: '',
-      phone: '',
-      email: '',
-      link: [],
-    }),
-  },
-})
 const resumeStore = useResumeStore()
 const { currentData } = storeToRefs(resumeStore)
-
 // 计算年龄
 const age = computed(() => {
   // 获取用户生日，无则直接返回0（避免返回undefined导致渲染异常）
@@ -40,11 +25,13 @@ const age = computed(() => {
   // 处理未来生日的异常场景（如填错成未到的日期，返回0）
   return ageDiff < 0 ? 0 : ageDiff
 })
-
+const user = computed(() => {
+  return currentData.value?.user
+})
 // 计算工作年限（规则：不足1年按0年算，满5个月不满1年按1年算，以此类推）
 const workYears = computed(() => {
   // 2. 解构并校验核心数据：获取用户入职时间，无则返回0（避免返回undefined导致后续渲染问题）
-  const workTime = currentData.value?.user?.workTime
+  const workTime = user.value?.workTime
   if (!workTime) return 0
 
   // 3. 校验日期有效性：避免无效日期（如格式错误、空字符串）导致dayjs计算异常
@@ -67,33 +54,32 @@ const workYears = computed(() => {
 })
 // 电话
 const phone = computed(() => {
-  return currentData.value?.user?.phone || ''
+  return user.value?.phone || ''
 })
 
 // 邮箱
 const email = computed(() => {
-  return currentData.value?.user?.email || ''
+  return user.value?.email || ''
 })
 </script>
 
 <template>
-  <div class="mb-6 flex flex-col gap-4 border-b border-sf-border">
+  <div class="flex flex-col">
+    123
     <!-- 头部基本信息 -->
-    <div class="flex items-end justify-between">
-      <div class="flex items-center gap-4">
-        <h1 class="text-3xl font-bold tracking-wide">{{ data.name }}</h1>
-        <div class="flex items-center gap-3 text-sm opacity-80">
-          <span v-if="data.sex">{{ data.sex }}</span>
-          <span v-if="data.sex && data.age" class="h-3 w-[1px] bg-current opacity-50"></span>
-          <span v-if="age">{{ age }}岁</span>
-          <span v-if="age && workYears" class="h-3 w-[1px] bg-current opacity-50"></span>
-          <span v-if="workYears">{{ workYears }}年经验</span>
-        </div>
+    <div class="flex items-center pb-3">
+      <h1 class="text-3xl font-bold tracking-wide">{{ user.name }}</h1>
+      <div class="ml-4 flex items-center gap-3 text-sm opacity-80">
+        <span v-if="user.sex">{{ user.sex }}</span>
+        <span v-if="user.sex && user.age" class="h-3 w-px bg-current opacity-50"></span>
+        <span v-if="age">{{ age }}岁</span>
+        <span v-if="age && workYears" class="h-3 w-px bg-current opacity-50"></span>
+        <span v-if="workYears">{{ workYears }}年经验</span>
       </div>
     </div>
 
     <!-- 联系方式 -->
-    <div class="flex flex-wrap gap-x-6 gap-y-2 text-sm">
+    <div class="flex flex-wrap gap-x-6 pb-3 text-sm" v-if="phone || email">
       <div class="flex items-center gap-2" v-if="phone">
         <span class="opacity-70">电话：</span>
         <span class="font-medium">{{ phone }}</span>
@@ -105,8 +91,8 @@ const email = computed(() => {
     </div>
 
     <!-- 社交链接 -->
-    <div class="flex flex-col gap-2 text-sm" v-if="data.link && data.link.length">
-      <div v-for="(item, index) in data.link" :key="index" class="flex items-center gap-2">
+    <div class="flex flex-col gap-2 pb-4 text-sm" v-if="user.link && user.link.length">
+      <div v-for="(item, index) in user.link" :key="index" class="flex items-center gap-2">
         <span class="opacity-70">{{ item.name }}：</span>
         <a :href="item.url" target="_blank" class="font-medium hover:underline">{{ item.url }}</a>
       </div>
