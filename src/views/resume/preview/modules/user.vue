@@ -65,7 +65,6 @@ const email = computed(() => {
 
 <template>
   <div class="flex flex-col">
-    123
     <!-- 头部基本信息 -->
     <div class="flex items-center pb-3">
       <h1 class="text-3xl font-bold tracking-wide">{{ user.name }}</h1>
