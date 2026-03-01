@@ -1,10 +1,10 @@
 <template>
-  <div v-for="(obj, i) in form.data" :key="i">
+  <div v-for="(obj, i) in form.list" :key="i" class="w-full">
     <component
       :key="obj.id"
       :is="component"
-      v-bind="dataProxy.getDataProxy(obj, i)"
-      v-on="dataProxy.setDataProxy(obj, i)"
+      v-bind="dataProxy.getDataProxy(obj.data, i)"
+      v-on="dataProxy.setDataProxy(obj.data, i)"
     ></component>
     <div class="flex">
       <el-button @click="moveUp(i)" :disabled="i === 0">上移</el-button>
@@ -64,6 +64,8 @@ const remove = (index: number) => {
 
 const add = (index: number) => {
   const newItem = JSON.parse(JSON.stringify(form.value.data[index]))
+  console.log('newItem:>> ', newItem)
+
   newItem.id = getUUID()
   form.value.data.splice(index + 1, 0, newItem)
 }
