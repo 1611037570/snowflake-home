@@ -1,55 +1,29 @@
 <script setup>
-// 学校
-const school = defineModel('school', {
-  type: String,
-  default: '',
-})
-// 学位列表
-const degreeList = [
-  {
-    name: '高中',
-    value: '高中',
-  },
-  {
-    name: '大专',
-    value: '大专',
-  },
-  {
-    name: '本科',
-    value: '本科',
-  },
-  {
-    name: '硕士',
-    value: '硕士',
-  },
-  {
-    name: '博士',
-    value: '博士',
-  },
-]
-// 学位
-const degree = defineModel('degree', {
-  type: String,
-  default: '',
-})
-// 经历
-const experience = defineModel('experience', {
-  type: String,
-  default: '',
-})
-// 专业
-const major = defineModel('major', {
+// 公司
+const name = defineModel('name', {
   type: String,
   default: '',
 })
 const title = computed(() => {
-  return school.value ? school.value : '未填写学校名称'
+  return name.value ? name.value : '未填写公司名称'
 })
+// 岗位
+const post = defineModel('post', {
+  type: String,
+  default: '',
+})
+// 内容
+const content = defineModel('content', {
+  type: String,
+  default: '',
+})
+// 时间
+const time = defineModel('time', {})
 </script>
 
 <template>
   <SfCollapse>
-    <SfCollapseItem title="教育经历">
+    <SfCollapseItem title="工作经历">
       <div class="flex flex-col gap-4">
         <div>
           <div class="flex items-center">
@@ -58,14 +32,21 @@ const title = computed(() => {
           </div>
         </div>
         <div class="flex w-full gap-3">
-          <SfInput placeholder="学校" v-model="school" />
-          <SfSelect placeholder="学位" v-model="degree" :list="degreeList" />
+          <SfInput placeholder="公司" v-model="name" />
+          <SfInput placeholder="岗位" v-model="post" />
         </div>
         <div class="flex w-full gap-3">
-          <SfSelect placeholder="学位" v-model="degree" :list="degreeList" />
-          <SfInput placeholder="专业" v-model="major" />
+          <SfDatePicker
+            type="daterange"
+            placeholder="时间"
+            v-model="time"
+            value-format="YYYY.MM.DD"
+            start-placeholder="开始时间"
+            end-placeholder="结束时间"
+          />
+          <div class="w-full"></div>
         </div>
-        <SfWangEdit v-model="experience"></SfWangEdit>
+        <SfWangEdit v-model="content"></SfWangEdit>
       </div>
     </SfCollapseItem>
   </SfCollapse>
