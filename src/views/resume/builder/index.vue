@@ -11,6 +11,7 @@ const { currentData, currentConfig } = storeToRefs(resumeStore)
 
 import TitleEditor from '../components/TitleEditor.vue'
 import Education from './components/education/education.vue'
+import Skill from './components/skill.vue'
 import Work from './components/work/work.vue'
 
 const title = ref('小羊-本科-前端开发-3年经验')
@@ -20,6 +21,7 @@ const titleEditorRef = ref(null)
 const dynamicComponents = {
   work: Work,
   education: Education,
+  skill: Skill,
 }
 function handleEditTitle() {
   titleEditorRef.value?.openModal()
