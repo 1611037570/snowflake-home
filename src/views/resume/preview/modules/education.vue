@@ -1,4 +1,17 @@
-<script setup></script>
+<script setup>
+import { useResumeStore } from '@/stores'
+
+const resumeStore = useResumeStore()
+const { currentData } = storeToRefs(resumeStore)
+const education = computed(() => currentData.value.education || [])
+// 校验经历
+const hasEducation = (education) => {
+  if (education == '<p><br></p>') {
+    return
+  }
+  return true
+}
+</script>
 
 <template>
   <div class="mb-6 flex flex-col gap-3">
@@ -9,16 +22,22 @@
     </div>
 
     <!-- 内容区 -->
-    <div class="flex items-center justify-between px-1">
-      <div class="flex items-baseline gap-4">
-        <span class="text-base font-bold text-sf-text">柳州工学院</span>
-        <div class="flex items-center gap-2 text-sm">
-          <span>全日制本科</span>
-          <span class="h-3 w-[1px] bg-sf-border"></span>
-          <span>计算机科学与技术</span>
+    <div v-for="(item, index) in education" :key="index" class="flex flex-col gap-1 px-1">
+      <div class="flex items-center justify-between">
+        <div class="flex items-baseline gap-4">
+          <span class="text-base font-bold">{{ item.school }}</span>
+          <div class="flex items-center gap-2 text-sm">
+            <span>{{ item.degree }}</span>
+            <span v-if="item.degree && item.major" class="h-3 w-[1px] bg-sf-border"></span>
+            <span>{{ item.major }}</span>
+          </div>
         </div>
+        <span class="font-mono text-sm font-medium">{{ item.time }}</span>
       </div>
-      <span class="font-mono text-sm font-medium">2021-2023</span>
+      <!-- 补充描述/经历 -->
+      <div v-if="hasEducation(item.experience)" class="text-sf-desc text-sm whitespace-pre-wrap">
+        {{ item.experience }}
+      </div>
     </div>
   </div>
 </template>
