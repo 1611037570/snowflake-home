@@ -23,7 +23,14 @@ export const useResumeStore = defineStore(
     const currentData = computed(() => list.value[currentIndex.value]?.data)
 
     // 获取当前选中的表单配置
-    const currentConfig = computed(() => list.value[currentIndex.value]?.config)
+    const currentConfig = computed({
+      get() {
+        return list.value[currentIndex.value]?.config
+      },
+      set(newConfig) {
+        list.value[currentIndex.value].config = newConfig
+      },
+    })
 
     // 新增简历
     const addResume = () => {
