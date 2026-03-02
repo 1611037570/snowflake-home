@@ -2,13 +2,13 @@
 import { useResumeStore } from '@/stores'
 import { storeToRefs } from 'pinia'
 import { ref } from 'vue'
-import AddModule from './components/AddModule.vue'
-import ResumeActions from './components/ResumeActions.vue'
+import TitleEditor from '../../../components/TitleEditor.vue'
+import AddModule from '../../components/AddModule.vue'
+import Education from '../../components/education/education.vue'
+import ResumeActions from '../../components/ResumeActions.vue'
+import Skill from '../../components/skill.vue'
+import Work from '../../components/work/work.vue'
 import Title from './title.vue'
-import TitleEditor from '../components/TitleEditor.vue'
-import Education from './components/education/education.vue'
-import Skill from './components/skill.vue'
-import Work from './components/work/work.vue'
 
 const resumeStore = useResumeStore()
 const { currentData, currentConfig } = storeToRefs(resumeStore)

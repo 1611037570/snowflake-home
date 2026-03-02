@@ -7,17 +7,21 @@ import {
   themeColors,
 } from '@/stores/modules/resume/uiConfig'
 import { storeToRefs } from 'pinia'
-import ConfigItem from './components/ConfigItem.vue'
+import ConfigItem from './configItem.vue'
 
 const resumeStore = useResumeStore()
 const { currentUI } = storeToRefs(resumeStore)
 </script>
 
 <template>
-  <div class="flex flex-1 flex-col gap-6 p-6">
-    <div class="text-lg font-bold text-sf-primary">页面配置</div>
+  <div class="flex flex-1 flex-col">
+    <div
+      class="mb-4 flex h-[60px] items-center border-b-[0.1px] border-sf-border px-6 text-lg font-bold text-sf-base"
+    >
+      页面配置
+    </div>
 
-    <div class="flex flex-col gap-6">
+    <div class="flex flex-col gap-6 px-6">
       <ConfigItem
         label="页边距"
         leftLabel="窄"
@@ -40,22 +44,20 @@ const { currentUI } = storeToRefs(resumeStore)
         v-model="currentUI.lineHeightIndex"
       />
       <!-- 主题色 -->
-      <div class="flex flex-col gap-3">
-        <div class="text-base font-bold">主题色</div>
-        <div class="flex flex-wrap gap-4">
-          <div
-            v-for="(color, index) in themeColors"
-            :key="color.value"
-            class="h-8 w-8 cursor-pointer rounded-full transition-all duration-200 hover:scale-110"
-            :class="{
-              'ring-2': currentUI.colorIndex === index,
-            }"
-            :style="{
-              backgroundColor: color.value,
-            }"
-            @click="currentUI.colorIndex = index"
-          ></div>
-        </div>
+      <div class="mb-2 text-base font-bold text-sf-text">主题色</div>
+      <div class="flex flex-wrap gap-4">
+        <div
+          v-for="(color, index) in themeColors"
+          :key="color.value"
+          class="h-8 w-8 cursor-pointer rounded-full transition-all duration-200 hover:scale-110"
+          :class="{
+            'border-2 border-sf-base': currentUI.colorIndex == index,
+          }"
+          :style="{
+            backgroundColor: color.value,
+          }"
+          @click="currentUI.colorIndex = index"
+        ></div>
       </div>
     </div>
   </div>
