@@ -23,7 +23,7 @@ export const useResumeStore = defineStore(
     const list = ref<ResumeItem[]>([])
 
     // 当前选中的下标
-    const currentIndex = ref(0)
+    const currentIndex = ref(-1)
 
     // 获取当前选中的简历数据
     const currentData = computed(() => list.value[currentIndex.value]?.data)
