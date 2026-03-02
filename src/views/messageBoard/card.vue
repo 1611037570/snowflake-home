@@ -15,7 +15,7 @@
 <script setup>
 import { getRandomItem } from '@/utils'
 import { useId } from 'vue'
-import { colors } from '@/constants'
+import { lightThemeColors } from '@/constants'
 const id = useId()
 const topId = defineModel('topId')
 function handleClick() {
@@ -33,7 +33,7 @@ const props = defineProps({
 })
 
 const zIndex = Math.floor(Math.random() * 10)
-const backgroundColor = getRandomItem(colors)
+const backgroundColor = getRandomItem(lightThemeColors).value
 const cardStyle1 = computed(() => {
   return {
     background: props.item.type === 'fixed' ? 'red' : backgroundColor,
