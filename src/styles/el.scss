@@ -61,14 +61,16 @@
 .el-splitter-bar__dragger {
   &::before {
     background-color: var(--color-sf-theme-hover) !important;
-    width: 4px !important;
+    width: 2px !important;
   }
   /* 选中时 */
   &:hover::before {
     background-color: var(--color-sf-theme) !important;
+    width: 4px !important;
   }
   &:active::before {
     background-color: var(--color-sf-theme) !important;
+    width: 4px !important;
   }
 }
 
