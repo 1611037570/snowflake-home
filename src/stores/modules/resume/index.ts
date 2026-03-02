@@ -10,6 +10,7 @@ export interface ResumeItem {
     paddingIndex: number
     fontIndex: number
     lineHeightIndex: number
+    colorIndex: number
   }
 }
 
@@ -40,13 +41,7 @@ export const useResumeStore = defineStore(
     // 获取当前选中的UI配置
     const currentUI = computed({
       get() {
-        return (
-          list.value[currentIndex.value]?.ui || {
-            paddingIndex: 1,
-            fontIndex: 1,
-            lineHeightIndex: 1,
-          }
-        )
+        return list.value[currentIndex.value]?.ui
       },
       set(newUI) {
         if (list.value[currentIndex.value]) {
@@ -64,6 +59,7 @@ export const useResumeStore = defineStore(
           paddingIndex: 1,
           fontIndex: 1,
           lineHeightIndex: 1,
+          colorIndex: 0,
         },
       })
       currentIndex.value = list.value.length - 1
@@ -75,7 +71,9 @@ export const useResumeStore = defineStore(
         // 如果是老版本数据（没有 data 字段），则进行转换
         const oldData = item.data ? item.data : item
         const oldConfig = item.config ? item.config : []
-        const oldUI = item.ui ? item.ui : { paddingIndex: 1, fontIndex: 1, lineHeightIndex: 1 }
+        const oldUI = item.ui
+          ? item.ui
+          : { paddingIndex: 1, fontIndex: 1, lineHeightIndex: 1, colorIndex: 0 }
 
         const baseData = structuredClone(userData)
 
@@ -89,7 +87,13 @@ export const useResumeStore = defineStore(
             },
           },
           config: oldConfig,
-          ui: oldUI,
+          ui: {
+            paddingIndex: 1,
+            fontIndex: 1,
+            lineHeightIndex: 1,
+            colorIndex: 0,
+            ...oldUI,
+          },
         }
       })
     }
