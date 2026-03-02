@@ -3,6 +3,7 @@ import Title from '../theme/title.vue'
 
 import { useResumeStore } from '@/stores'
 import { storeToRefs } from 'pinia'
+import { computed, inject } from 'vue'
 import Content from '../theme/content.vue'
 
 import { getTime } from './utils'
@@ -10,15 +11,18 @@ import { getTime } from './utils'
 const resumeStore = useResumeStore()
 const { currentData } = storeToRefs(resumeStore)
 
+const fontValue = inject('fontValue')
+const lineHeightValue = inject('lineHeightValue')
+
 const workList = computed(() => currentData.value.work || [])
 </script>
 
 <template>
-  <div class="flex flex-col">
+  <div class="flex flex-col" :style="[fontValue(), lineHeightValue()]">
     <Title title="工作经历" />
     <template v-if="workList.length">
-      <template :key="index" v-for="(item, index) in workList">
-        <div class="mb-3 flex items-center justify-between">
+      <div class="mb-3 flex flex-col" :key="index" v-for="(item, index) in workList">
+        <div class="flex items-center justify-between">
           <div class="flex items-center gap-4">
             <div class="text-lg font-bold">{{ item.name }}</div>
             <div>{{ item.post }}</div>
@@ -27,7 +31,7 @@ const workList = computed(() => currentData.value.work || [])
           <!-- 补充描述/经历 -->
         </div>
         <Content :content="item.content" />
-      </template>
+      </div>
     </template>
   </div>
 </template>
