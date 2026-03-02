@@ -1,34 +1,24 @@
 <script setup>
 import { useResumeStore } from '@/stores'
+import { inject } from 'vue'
 import ResumeModule from './modules/index.vue'
 
 defineOptions({ name: 'ResumePage' })
 
-defineProps({
-  user: {
-    type: Object,
-    default: () => ({}),
-  },
-  workList: {
-    type: Object,
-    default: () => ({}),
-  },
-  paddingClass: {
-    type: String,
-    default: 'p-5',
-  },
-})
-
 const resumeStore = useResumeStore()
 const { currentData, currentConfig } = storeToRefs(resumeStore)
+
+const paddingValue = inject('paddingValue')
+const fontValue = inject('fontValue')
+const lineHeightValue = inject('lineHeightValue')
 </script>
 
 <template>
   <div
-    class="flex h-[1123px] w-[794px] flex-col rounded-lg bg-white text-black"
-    :class="paddingClass"
+    class="flex h-[1123px] w-[794px] flex-col rounded-lg bg-white text-black shadow-lg"
+    :style="paddingValue()"
   >
-    <div class="flex flex-1 flex-col text-sm">
+    <div class="flex flex-1 flex-col" :style="[fontValue(), lineHeightValue()]">
       <template v-for="item in currentConfig" :key="item.type">
         <ResumeModule :data="currentData" :name="item.type" />
       </template>
