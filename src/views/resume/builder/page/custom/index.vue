@@ -44,20 +44,22 @@ const { currentUI } = storeToRefs(resumeStore)
         v-model="currentUI.lineHeightIndex"
       />
       <!-- 主题色 -->
-      <div class="mb-2 text-base font-bold text-sf-text">主题色</div>
-      <div class="flex flex-wrap gap-4">
-        <div
-          v-for="(color, index) in themeColors"
-          :key="color.value"
-          class="h-8 w-8 cursor-pointer rounded-full transition-all duration-200 hover:scale-110"
-          :class="{
-            'border-2 border-sf-base': currentUI.colorIndex == index,
-          }"
-          :style="{
-            backgroundColor: color.value,
-          }"
-          @click="currentUI.colorIndex = index"
-        ></div>
+      <div>
+        <div class="mb-4 text-base font-bold text-sf-text">主题色</div>
+        <div class="flex flex-wrap gap-4">
+          <div
+            v-for="(color, index) in themeColors"
+            :key="color.value"
+            class="h-8 w-8 cursor-pointer rounded-full transition-all duration-200 hover:scale-110"
+            :class="{
+              'border-2 border-sf-base': currentUI.colorIndex == index,
+            }"
+            :style="{
+              backgroundColor: color.value,
+            }"
+            @click="currentUI.colorIndex = index"
+          ></div>
+        </div>
       </div>
     </div>
   </div>
