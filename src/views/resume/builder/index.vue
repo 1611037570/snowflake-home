@@ -1,8 +1,8 @@
 <script setup>
 import { markRaw, ref } from 'vue'
-import Custom from './Custom.vue'
-import Resume from './Resume.vue'
-import Template from './Template.vue'
+import Custom from './page/custom/index.vue'
+import Resume from './page/resume/index.vue'
+import Template from './page/template/index.vue'
 
 // 菜单配置
 const menuList = [
@@ -55,9 +55,9 @@ function handleMenuClick(index) {
     </div>
 
     <!-- 右侧内容 -->
-    <div class="relative flex flex-1 flex-col overflow-hidden">
+    <SfScrollbar class="flex-1">
       <component :is="menuList[activeIndex].component" />
-    </div>
+    </SfScrollbar>
   </div>
 </template>
 
