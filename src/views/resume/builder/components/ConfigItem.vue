@@ -22,10 +22,10 @@ const modelValue = defineModel()
 </script>
 
 <template>
-  <div class="flex w-full flex-col gap-2 text-sf-primary">
-    <div class="text-xs font-bold opacity-60">{{ label }}</div>
+  <div class="flex w-full flex-col gap-2">
+    <div class="mb-2 text-base font-bold opacity-60">{{ label }}</div>
     <SfSlider :show-tooltip="false" show-stops :max="max" v-model="modelValue" />
-    <div class="flex items-center justify-between text-xs opacity-60">
+    <div class="mt-2 flex items-center justify-between text-xs opacity-60">
       <div>{{ leftLabel }}</div>
       <div>{{ rightLabel }}</div>
     </div>
