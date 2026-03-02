@@ -1,25 +1,29 @@
 <script setup>
 import { useResumeStore } from '@/stores'
 import { storeToRefs } from 'pinia'
-import { computed } from 'vue'
+import { computed, inject } from 'vue'
 import Content from '../theme/content.vue'
 import Title from '../theme/title.vue'
 import { getTime } from './utils'
 
 const resumeStore = useResumeStore()
 const { currentData } = storeToRefs(resumeStore)
+
+const fontValue = inject('fontValue')
+const lineHeightValue = inject('lineHeightValue')
+
 const projectList = computed(() => currentData.value.project || [])
 </script>
 
 <template>
-  <div class="flex flex-col">
+  <div class="flex flex-col" :style="[fontValue(), lineHeightValue()]">
     <!-- 标题栏 -->
     <Title title="项目经历"></Title>
     <!-- 内容区 -->
     <div v-for="(item, index) in projectList" :key="index" class="mb-3 flex flex-col">
       <div class="flex items-center justify-between">
         <div class="flex items-center gap-4">
-          <div class="text-lg font-bold">{{ item.name }}</div>
+          <div class="font-bold" :style="[fontValue(3)]">{{ item.name }}</div>
           <div>{{ item.post }}</div>
         </div>
         <div class="flex items-center">{{ getTime(item.time) }}</div>

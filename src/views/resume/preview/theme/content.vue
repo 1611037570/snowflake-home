@@ -1,10 +1,16 @@
 <script setup>
+import { inject } from 'vue'
+
 defineProps({
   content: {
     type: String,
     default: '',
   },
 })
+
+const fontValue = inject('fontValue')
+const lineHeightValue = inject('lineHeightValue')
+
 function hasContent(content) {
   if (!content) {
     return false
@@ -19,7 +25,8 @@ function hasContent(content) {
 <template>
   <div
     v-if="hasContent(content)"
-    class="text-sf-desc mb-3 text-sm whitespace-pre-wrap"
+    class="whitespace-pre-wrap"
+    :style="[fontValue(), lineHeightValue()]"
     v-html="content"
   ></div>
 </template>
