@@ -19,6 +19,22 @@ export const paddingList = [
 // 主题色配置
 export const themeColors = [...darkThemeColors]
 
+// 字体类型配置
+export const fontFamilyList = [
+  {
+    name: '阿里普惠体',
+    value: 'text-puhui',
+  },
+  {
+    name: '汉仪易烊千玺体',
+    value: 'text-yyqx',
+  },
+  {
+    name: '跟随系统',
+    value: '',
+  },
+]
+
 // 字体大小配置
 export const fontList = [
   {
