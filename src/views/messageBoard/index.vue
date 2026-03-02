@@ -59,7 +59,7 @@ import { nextTick, onMounted, ref, shallowRef } from 'vue'
 import Card from './card.vue'
 import { BATCH_SIZE, CARD_HEIGHT, CARD_WIDTH, MAX_ROTATE_ANGLE, TOTAL_CARDS } from './config'
 // 数据池：颜色集合、固定文案、随机文案
-import { colors, fixed, sentences } from '@/constants'
+import { lightThemeColors, fixed, sentences } from '@/constants'
 
 // 帧等待：等待浏览器下一帧，确保 DOM 已绘制，便于后续过渡生效
 const waitForNextFrame = () => new Promise((resolve) => requestAnimationFrame(resolve))
@@ -179,7 +179,7 @@ const createBatchCards = (
       ...createSingleCard(centerX, centerY),
       ...getSafeCardPosition(),
       content,
-      color: getRandomItem(colors),
+      color: getRandomItem(lightThemeColors).value,
       type,
     })
   }
