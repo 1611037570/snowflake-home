@@ -5,9 +5,6 @@ interface IconItem {
 }
 
 export const ICON_LIST: Record<string, IconItem> = {
-  'lucide:code': {
-    icon: 'lucide:code',
-  },
   'simple-icons:juejin': { icon: 'simple-icons:juejin', color: 'text-blue-500', name: '稀土掘金' },
   'simple-icons:github': { icon: 'simple-icons:github', color: 'text-black', name: 'GitHub' },
   'lucide:camera': {
@@ -81,7 +78,6 @@ export const ICON_LIST: Record<string, IconItem> = {
   'mdi:translate': { icon: 'mdi:translate' },
   'logos:element': { icon: 'logos:element' },
   'fa6-solid:snowflake': { icon: 'fa6-solid:snowflake' },
-  'mdi:github': { icon: 'mdi:github' },
   'tabler:external-link': { icon: 'tabler:external-link' },
   'mingcute:up-line': { icon: 'mingcute:up-line' },
   'mingcute:down-line': { icon: 'mingcute:down-line' },
@@ -91,4 +87,7 @@ export const ICON_LIST: Record<string, IconItem> = {
   'material-symbols:download': { icon: 'material-symbols:download' },
   'tabler:switch-3': { icon: 'tabler:switch-3' },
   'clarity:email-solid': { icon: 'clarity:email-solid', color: 'text-sf-theme' },
+  'lucide:file-text': { icon: 'lucide:file-text' },
+  'lucide:layout-template': { icon: 'lucide:layout-template' },
+  'lucide:palette': { icon: 'lucide:palette' },
 }
