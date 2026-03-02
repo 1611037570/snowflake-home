@@ -1,6 +1,6 @@
 <template>
-  <SfViewContainer title="在线简历制作">
-    <SfSplitter>
+  <SfViewContainer>
+    <SfSplitter v-if="currentIndex >= 0">
       <SfSplitterPanel max="600" min="450" size="600">
         <Builder />
       </SfSplitterPanel>
@@ -26,12 +26,12 @@ import Builder from './builder/index.vue'
 import Preview from './preview/index.vue'
 
 const resumeStore = useResumeStore()
-const { list } = storeToRefs(resumeStore)
+const { list, currentIndex } = storeToRefs(resumeStore)
 function init() {
-  if (list.value.length) {
-    return
+  if (!list.value.length) {
+    resumeStore.addResume()
   }
-  resumeStore.addResume()
+  currentIndex.value = 0
 }
 onMounted(() => {
   init()
