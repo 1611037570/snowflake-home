@@ -26,7 +26,7 @@ function hasContent(content) {
   <div
     v-if="hasContent(content)"
     class="whitespace-pre-wrap"
-    :style="[fontValue(), lineHeightValue()]"
+    :style="[fontValue(-3), lineHeightValue(-3)]"
     v-html="content"
   ></div>
 </template>
