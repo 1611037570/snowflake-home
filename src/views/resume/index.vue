@@ -1,22 +1,20 @@
 <template>
-  <SfViewContainer>
-    <SfSplitter v-if="currentIndex >= 0">
-      <SfSplitterPanel max="600" min="450" size="600">
-        <Builder />
-      </SfSplitterPanel>
-      <SfSplitterPanel>
-        <div class="flex h-full flex-1 flex-col items-center bg-amber-400">
-          <ElButton type="primary" @click="printPDF" :loading="isLoading" icon="el-icon-download">
-            打印表单PDF
-          </ElButton>
-          <!-- 表单容器 -->
-          <div ref="formContainer" class="w-full flex-1">
-            <Preview />
-          </div>
+  <SfSplitter v-if="currentIndex >= 0">
+    <SfSplitterPanel max="900" min="550" size="600">
+      <Builder />
+    </SfSplitterPanel>
+    <SfSplitterPanel>
+      <div class="flex h-full flex-1 flex-col items-center bg-amber-400">
+        <ElButton type="primary" @click="printPDF" :loading="isLoading" icon="el-icon-download">
+          打印表单PDF
+        </ElButton>
+        <!-- 表单容器 -->
+        <div ref="formContainer" class="w-full flex-1">
+          <Preview />
         </div>
-      </SfSplitterPanel>
-    </SfSplitter>
-  </SfViewContainer>
+      </div>
+    </SfSplitterPanel>
+  </SfSplitter>
 </template>
 
 <script setup>
