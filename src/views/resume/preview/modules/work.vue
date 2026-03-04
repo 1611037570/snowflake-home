@@ -24,7 +24,7 @@ const workList = computed(() => currentData.value.work || [])
       <div class="mb-3 flex flex-col" :key="index" v-for="(item, index) in workList">
         <div class="flex items-center justify-between">
           <div class="flex items-center gap-4">
-            <div class="text-lg font-bold">{{ item.name }}</div>
+            <div class="font-bold" :style="[fontValue(3)]">{{ item.name }}</div>
             <div>{{ item.post }}</div>
           </div>
           <div class="flex items-center">{{ getTime(item.time) }}</div>

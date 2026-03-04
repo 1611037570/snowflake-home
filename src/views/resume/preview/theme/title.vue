@@ -1,6 +1,6 @@
 <script setup>
 import { useResumeStore } from '@/stores'
-import { themeColors } from '@/stores/modules/resume/uiConfig'
+
 const resumeStore = useResumeStore()
 const { currentUI } = storeToRefs(resumeStore)
 defineProps({
@@ -11,7 +11,7 @@ defineProps({
 })
 const fontValue = inject('fontValue')
 const lineHeightValue = inject('lineHeightValue')
-const themeColor = computed(() => themeColors[currentUI.value.colorIndex]?.value)
+const themeColor = computed(() => currentUI.value.color)
 </script>
 
 <template>
