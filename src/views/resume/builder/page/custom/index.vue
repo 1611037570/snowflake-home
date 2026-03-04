@@ -1,11 +1,13 @@
 <script setup>
 import { useResumeStore } from '@/stores'
 import {
+  fontFamilyList,
   fontList,
   lineHeightList,
   paddingList,
   themeColors,
 } from '@/stores/modules/resume/uiConfig'
+import Header from '@/views/resume/builder/components/header.vue'
 import { storeToRefs } from 'pinia'
 import ConfigItem from './configItem.vue'
 
@@ -15,49 +17,61 @@ const { currentUI } = storeToRefs(resumeStore)
 
 <template>
   <div class="flex flex-1 flex-col">
-    <div
-      class="mb-4 flex h-[60px] items-center border-b-[0.1px] border-sf-border px-6 text-lg font-bold text-sf-base"
-    >
-      页面配置
-    </div>
+    <Header>页面配置</Header>
 
     <div class="flex flex-col gap-6 px-6">
+      <div>
+        <div class="mb-4 text-base font-bold text-sf-text">字体</div>
+        <div class="flex gap-4">
+          <div
+            v-for="item in fontFamilyList"
+            :key="item.value"
+            class="hover:bg-sf-hover flex-1 cursor-pointer rounded-md border border-sf-border py-2 text-center text-sm transition-all"
+            :class="{
+              'border-sf-theme-hover bg-sf-theme text-sf-base': currentUI.fontFamily === item.value,
+            }"
+            @click="currentUI.fontFamily = item.value"
+          >
+            {{ item.name }}
+          </div>
+        </div>
+      </div>
       <ConfigItem
         label="页边距"
         leftLabel="窄"
         rightLabel="宽"
-        :max="paddingList.length - 1"
-        v-model="currentUI.paddingIndex"
+        :list="paddingList"
+        v-model="currentUI.padding"
       />
       <ConfigItem
         label="字体大小"
         leftLabel="小"
         rightLabel="大"
-        :max="fontList.length - 1"
-        v-model="currentUI.fontIndex"
+        :list="fontList"
+        v-model="currentUI.fontSize"
       />
       <ConfigItem
         label="行间距"
         leftLabel="密"
         rightLabel="疏"
-        :max="lineHeightList.length - 1"
-        v-model="currentUI.lineHeightIndex"
+        :list="lineHeightList"
+        v-model="currentUI.lineHeight"
       />
       <!-- 主题色 -->
-      <div>
+      <div class="mb-6 flex flex-col">
         <div class="mb-4 text-base font-bold text-sf-text">主题色</div>
         <div class="flex flex-wrap gap-4">
           <div
-            v-for="(color, index) in themeColors"
-            :key="color.value"
+            v-for="colorItem in themeColors"
+            :key="colorItem.value"
             class="h-8 w-8 cursor-pointer rounded-full transition-all duration-200 hover:scale-110"
             :class="{
-              'border-2 border-sf-base': currentUI.colorIndex == index,
+              'border-2 border-sf-base': currentUI.color === colorItem.value,
             }"
             :style="{
-              backgroundColor: color.value,
+              backgroundColor: colorItem.value,
             }"
-            @click="currentUI.colorIndex = index"
+            @click="currentUI.color = colorItem.value"
           ></div>
         </div>
       </div>
