@@ -40,12 +40,13 @@ const handleDelete = (type) => {
 
 <template>
   <!-- 右上角固定按钮组 -->
-  <div class="absolute top-6 right-6 z-50 flex flex-col gap-3">
+  <div class="absolute top-15 right-0 z-50 flex flex-col">
     <div
-      class="flex-c shadow-sf group h-12 w-12 cursor-pointer rounded-2xl border border-sf-border bg-sf-bg duration-300 hover:scale-110 hover:border-sf-theme"
+      class="flex-c group cursor-pointer border border-sf-border bg-sf-bg p-1 text-sm hover:border-sf-theme"
       @click="handleButtonClick"
     >
-      <SfIcon icon="ic:round-add" size="6" class="group-hover:text-sf-theme" />
+      <SfIcon icon="ic:round-add" size="4" class="group-hover:text-sf-theme" />
+      模块管理
     </div>
 
     <!-- 使用 SfModal 组件 -->
@@ -59,7 +60,7 @@ const handleDelete = (type) => {
             class="flex items-center gap-3 rounded-xl border border-sf-border bg-sf-bg-hover p-3 opacity-80"
           >
             <SfIcon :icon="item.icon || 'basil:file-user-solid'" size="5" class="text-sf-theme" />
-            <span class="font-medium text-sf-base">{{ item.type }}</span>
+            <span class="font-medium text-sf-base">{{ item.name }}</span>
           </div>
         </div>
 
@@ -79,8 +80,7 @@ const handleDelete = (type) => {
               <SfIcon icon="mdi:drag-variant" size="5" class="text-sf-secondary" />
             </div>
             <SfIcon :icon="item.icon" size="5" class="text-sf-theme" />
-            <span class="font-medium text-sf-base">{{ item.type }}</span>
-
+            <span class="font-medium text-sf-base">{{ item.name }}</span>
             <!-- 删除按钮 -->
             <div
               class="flex-c text-sf-secondary hover:bg-sf-danger/10 hover:text-sf-danger ml-auto h-8 w-8 cursor-pointer rounded-lg transition-colors"
@@ -100,8 +100,4 @@ const handleDelete = (type) => {
   </div>
 </template>
 
-<style scoped>
-.shadow-sf {
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
-}
-</style>
+<style scoped></style>

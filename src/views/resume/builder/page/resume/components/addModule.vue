@@ -47,8 +47,8 @@ const handleAdd = (module) => {
 </script>
 
 <template>
-  <div class="mt-8 flex flex-col gap-4 pb-10">
-    <div class="text-lg font-bold text-sf-base">增加模块</div>
+  <div class="flex flex-col">
+    <div class="mb-3 text-lg font-bold text-sf-base">增加模块</div>
 
     <div class="grid grid-cols-2 gap-4">
       <!-- 预设模块 -->
