@@ -6,7 +6,7 @@ import ResumeModule from './modules/index.vue'
 defineOptions({ name: 'ResumePage' })
 
 const resumeStore = useResumeStore()
-const { currentData, currentConfig } = storeToRefs(resumeStore)
+const { currentData, currentConfig, currentUI } = storeToRefs(resumeStore)
 
 const paddingValue = inject('paddingValue')
 const fontValue = inject('fontValue')
@@ -16,6 +16,7 @@ const lineHeightValue = inject('lineHeightValue')
 <template>
   <div
     class="flex h-[1123px] w-[794px] flex-col rounded-lg bg-white text-black shadow-lg"
+    :class="currentUI.fontFamily"
     :style="paddingValue()"
   >
     <div class="flex flex-1 flex-col" :style="[fontValue(), lineHeightValue()]">
