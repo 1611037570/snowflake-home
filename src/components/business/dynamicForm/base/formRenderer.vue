@@ -1,48 +1,64 @@
+<!-- eslint-disable vue/valid-v-model -->
 <template>
   <VueDraggable
     v-model="items"
     :animation="150"
     tag="el-row"
-    :gutter="20"
-    class="m-0! w-full border border-solid border-gray-300"
-    :style="{ backgroundColor: getBackgroundColor(level) }"
+    class="m-0! w-full"
+    :style="
+      !isSlot
+        ? {
+            border: `1px solid ${getBackgroundColor(level)}`,
+          }
+        : {}
+    "
     :disabled="!draggable"
   >
-    <template v-for="item in validatedItems" :key="item.id">
-      <el-col :span="item._span" class="w-full p-0!">
-        <!-- 校验通过：渲染表单项 -->
-        <FormItem v-if="item.isValid" :form="item" label-position="top">
-          <template v-if="item.children?.length">
-            <!-- 容器组件包裹 -->
-            <component v-if="item.component" :is="getComponent(item.component)" v-bind="item.props">
-              <template #[item._slot]>
-                <FormRenderer
-                  v-model:items="item.children"
-                  :level="level + 1"
-                  :draggable="draggable"
-                  :default-span="defaultSpan"
-                />
-              </template>
-            </component>
-            <!-- 纯逻辑分组 -->
-            <FormRenderer
+    <el-row :gutter="12">
+      <template v-for="(item, index) in items" :key="item.id">
+        <el-col :span="getSpan(item.span)" :class="{ 'mb-3': !isLastRow(index) }">
+          <!-- 校验通过：渲染表单项 -->
+          <FormItem v-if="checkForm(item)" :form="item" label-position="top">
+            <template v-if="item.children?.length">
+              <!-- 容器组件包裹 -->
+              <component
+                v-if="item.component"
+                :is="getComponent(item.component)"
+                v-bind="item.props"
+              >
+                <template #[getSlot(item.slot)]>
+                  <FormRenderer
+                    v-model:items="item.children"
+                    :level="level + 1"
+                    :draggable="draggable"
+                    :default-span="defaultSpan"
+                    :is-slot="true"
+                  />
+                </template>
+              </component>
+              <!-- 纯逻辑分组 -->
+              <FormRenderer
+                v-else
+                v-model:items="item.children"
+                :level="level + 1"
+                :draggable="draggable"
+                :default-span="defaultSpan"
+                :is-slot="true"
+              />
+            </template>
+            <!-- 叶子节点 -->
+            <component
               v-else
-              v-model:items="item.children"
-              :level="level + 1"
-              :draggable="draggable"
-              :default-span="defaultSpan"
+              :is="item.type === 'object' ? ContainerObject : ContainerArray"
+              :form="item"
+              @update:form="updateItem(index, $event)"
             />
-          </template>
-          <!-- 叶子节点 -->
-          <template v-else>
-            <ContainerObject v-if="item.type === 'object'" :form="item" />
-            <ContainerArray v-else-if="item.type === 'array'" :form="item" />
-          </template>
-        </FormItem>
-        <!-- 校验失败：展示友好的错误提示 -->
-        <FormError v-else :error-msg="item.errorMsg" :raw="item.raw" />
-      </el-col>
-    </template>
+          </FormItem>
+          <!-- 校验失败：展示友好的错误提示 -->
+          <FormError v-else :error-msg="item.errorMsg" :raw="item.raw" />
+        </el-col>
+      </template>
+    </el-row>
   </VueDraggable>
 </template>
 
@@ -63,11 +79,13 @@ const props = withDefaults(
     level?: number
     draggable?: boolean
     defaultSpan?: number
+    isSlot?: boolean
   }>(),
   {
     level: 0,
     draggable: false,
     defaultSpan: 24,
+    isSlot: false,
   },
 )
 // 处理插槽名称
@@ -92,6 +110,15 @@ const getSpan = (span: number | string | undefined) => {
 const items = defineModel<any[]>('items', {
   default: () => [],
 })
+
+/**
+ * 更新指定索引的表单项数据
+ */
+const updateItem = (index: number, newForm: any) => {
+  if (items.value[index]) {
+    items.value[index] = { ...items.value[index], ...newForm }
+  }
+}
 /**
  * 预处理数据：计算校验结果，避免模板中多次调用函数
  */
@@ -117,7 +144,7 @@ const validatedItems = computed(() => {
 
 // 预定义一组背景色，按层级循环使用
 const backgroundColors = [
-  '#', // 0层：白色
+  '#ffffff', // 0层：白色
   '#f0f9eb', // 1层 : 浅绿
   '#ecf5ff', // 2层 : 浅蓝
   '#fdf6ec', // 3层 : 浅橙
@@ -126,6 +153,31 @@ const backgroundColors = [
 
 function getBackgroundColor(level: number) {
   return backgroundColors[level % backgroundColors.length]
+}
+
+/**
+ * 判断是否为最后一排
+ */
+const lastRowIndices = computed(() => {
+  let currentRowSpan = 0
+  let currentRowIndices: number[] = []
+
+  validatedItems.value.forEach((item, index) => {
+    const span = item._span
+    // 如果当前行加上这个项超过 24，则开启新的一行
+    if (currentRowSpan + span > 24) {
+      currentRowIndices = [index]
+      currentRowSpan = span
+    } else {
+      currentRowIndices.push(index)
+      currentRowSpan += span
+    }
+  })
+  return currentRowIndices
+})
+
+const isLastRow = (index: number) => {
+  return lastRowIndices.value.includes(index)
 }
 </script>
 
