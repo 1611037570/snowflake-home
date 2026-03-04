@@ -1,11 +1,5 @@
 <template>
-  <el-form
-    ref="dynamicForm"
-    :model="data"
-    label-width="auto"
-    style="max-width: 700px"
-    class="flex w-full flex-col p-3"
-  >
+  <el-form ref="dynamicForm" :model="data" label-width="auto" class="flex w-full flex-col">
     <FormRenderer v-model:items="formProxy" :draggable="draggable" :default-span="defaultSpan" />
   </el-form>
 </template>
@@ -49,7 +43,6 @@ const form = defineModel<any[]>('form', {
 })
 const data = defineModel<any>('data', { default: DEFAULT_DATA })
 const dataProxy = new DataProxy(data, emit)
-
 const formProxy = useFormProxy(form)
 
 // 注入实例自定义组件库
