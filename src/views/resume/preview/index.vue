@@ -1,6 +1,5 @@
 <script setup>
 import { useResumeStore } from '@/stores'
-import { fontList, lineHeightList, paddingList } from '@/stores/modules/resume/uiConfig'
 import { storeToRefs } from 'pinia'
 import { computed, provide } from 'vue'
 import ResumePage from './page.vue'
@@ -10,13 +9,13 @@ const resumeStore = useResumeStore()
 const { currentUI } = storeToRefs(resumeStore)
 
 const paddingValue = computed(() => (offset = 0) => ({
-  padding: `${paddingList[currentUI.value.paddingIndex].value + offset}px`,
+  padding: `${currentUI.value.padding + offset}px`,
 }))
 const fontValue = computed(() => (offset = 0) => ({
-  fontSize: `${fontList[currentUI.value.fontIndex].value + offset}px`,
+  fontSize: `${currentUI.value.fontSize + offset}px`,
 }))
 const lineHeightValue = computed(() => (offset = 0) => ({
-  lineHeight: `${lineHeightList[currentUI.value.lineHeightIndex].value + offset}px`,
+  lineHeight: `${currentUI.value.lineHeight + offset}px`,
 }))
 
 provide('paddingValue', paddingValue)
