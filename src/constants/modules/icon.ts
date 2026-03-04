@@ -61,6 +61,7 @@ export const ICON_LIST: Record<string, IconItem> = {
   'fluent-mdl2:color-solid': { icon: 'fluent-mdl2:color-solid' },
   'icon-park-outline:send-one': { icon: 'icon-park-outline:send-one' },
   'ic:round-delete': { icon: 'ic:round-delete', name: '删除' },
+  'icon-park:drag': { icon: 'icon-park:drag', name: '拖动' },
   'logos:vue': { icon: 'logos:vue' },
   'logos:typescript-icon': { icon: 'logos:typescript-icon' },
   'logos:vitejs': { icon: 'logos:vitejs' },
