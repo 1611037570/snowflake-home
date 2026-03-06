@@ -1,6 +1,6 @@
 <template>
   <el-form ref="dynamicForm" :model="data" label-width="auto" class="flex w-full flex-col">
-    <FormRenderer v-model:items="formProxy" :draggable="draggable" :default-span="defaultSpan" />
+    <FormRenderer v-model:items="form" />
   </el-form>
 </template>
 <script setup lang="ts">
@@ -12,25 +12,11 @@ import useFormProxy from './code/useFormProxy'
 import { DEFAULT_DATA, DEFAULT_FORM } from './config'
 
 defineOptions({ name: 'SfDynamicForm' })
-
 const props = withDefaults(
   defineProps<{
-    /**
-     * 是否开启拖拽功能
-     */
-    draggable?: boolean
-    /**
-     * 默认的表单域宽度 (24 栅格)
-     */
-    defaultSpan?: number
-    /**
-     * 自定义组件注册表
-     */
     components?: Record<string, any>
   }>(),
   {
-    draggable: false,
-    defaultSpan: 24,
     components: () => ({}),
   },
 )
@@ -38,7 +24,7 @@ const props = withDefaults(
 const instance = getCurrentInstance()
 const emit = instance?.emit
 
-const form = defineModel<any[]>('form', {
+const form = defineModel<any>('form', {
   default: DEFAULT_FORM,
 })
 const data = defineModel<any>('data', { default: DEFAULT_DATA })
