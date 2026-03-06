@@ -11,15 +11,15 @@ const isModalVisible = ref(false)
 
 // 用户配置（不参与排序和删除）
 const userConfigs = computed(() => {
-  return currentConfig.value.filter((item) => item.type === 'user')
+  return currentConfig.value.fields.filter((item) => item.type === 'user')
 })
 
 // 其他配置（参与排序和删除）
 const otherConfigs = computed({
-  get: () => currentConfig.value.filter((item) => item.type !== 'user'),
+  get: () => currentConfig.value.fields.filter((item) => item.type !== 'user'),
   set: (val) => {
     // 保持 userConfigs 在最前面，合并排序后的 otherConfigs
-    currentConfig.value = [...userConfigs.value, ...val]
+    currentConfig.value.fields = [...userConfigs.value, ...val]
     return currentConfig.value
   },
 })
@@ -30,10 +30,10 @@ const handleButtonClick = () => {
 }
 
 // 处理删除模块
-const handleDelete = (type) => {
-  const index = currentConfig.value.findIndex((item) => item.type === type)
+const handleDelete = (key) => {
+  const index = currentConfig.value.fields.findIndex((item) => item.key === key)
   if (index !== -1) {
-    currentConfig.value.splice(index, 1)
+    currentConfig.value.fields.splice(index, 1)
   }
 }
 </script>
@@ -73,7 +73,7 @@ const handleDelete = (type) => {
         >
           <div
             v-for="item in otherConfigs"
-            :key="item.type"
+            :key="item.key"
             class="flex items-center gap-3 rounded-xl border border-sf-border bg-sf-primary p-3 transition-all hover:border-sf-theme-hover"
           >
             <div class="drag-handle flex-c h-8 w-8 cursor-move rounded-lg hover:bg-sf-bg-hover">
@@ -84,7 +84,7 @@ const handleDelete = (type) => {
             <!-- 删除按钮 -->
             <div
               class="flex-c text-sf-secondary hover:bg-sf-danger/10 hover:text-sf-danger ml-auto h-8 w-8 cursor-pointer rounded-lg transition-colors"
-              @click.stop="handleDelete(item.type)"
+              @click.stop="handleDelete(item.key)"
             >
               <SfIcon icon="lucide:trash-2" size="4" />
             </div>

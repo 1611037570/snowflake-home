@@ -1,11 +1,10 @@
 <script setup>
-import { defineAsyncComponent, computed } from 'vue'
+import { computed, defineAsyncComponent } from 'vue'
 
 // 定义属性，接收 key 参数
 const props = defineProps({
   name: {
     type: String,
-    required: true,
   },
 })
 
@@ -19,6 +18,9 @@ const components = import.meta.glob('./*.vue')
  * 根据传入的 name 动态计算并加载对应的组件
  */
 const dynamicComponent = computed(() => {
+  if (!props.name) {
+    return
+  }
   const filePath = `./${props.name}.vue`
 
   // 检查请求的组件是否存在于导入的模块中

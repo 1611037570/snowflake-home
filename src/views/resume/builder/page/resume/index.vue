@@ -45,14 +45,12 @@ function handleEditTitle() {
       </div>
     </Header>
     <ElScrollbar class="w-full flex-1 px-6">
-      <template v-for="item in currentConfig" :key="item.key">
-        <SfDynamicForm
-          v-model:form="item.form"
-          v-model:data="currentData"
-          :components="dynamicComponents"
-          class="mb-3"
-        ></SfDynamicForm>
-      </template>
+      <SfDynamicForm
+        v-model:form="currentConfig"
+        v-model:data="currentData"
+        :components="dynamicComponents"
+        class="mb-3"
+      />
       <AddModule />
     </ElScrollbar>
   </div>
