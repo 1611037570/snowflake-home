@@ -66,15 +66,46 @@ class DataProxy<T> {
     // 设置值（如果有）
     if (options.hasOwnProperty('value')) {
       current[lastKey] = value
-      // 如果是响应式数据，确保更新会触发响应
-      if (this.modelValue.value !== undefined) {
-        // 触发响应式更新
-        this.modelValue.value = { ...dataValue }
-      }
     }
     return current[lastKey]
   }
+  // 获取数组路径（截取 '?' 之前的部分）
+  getPath(options: DataProxyOption | DataProxyOption[] /* 数据配置 */) {
+    const optionsArray: any = Array.isArray(options) ? options : [options]
+    const path = optionsArray[0].path
+    const index = path.indexOf('?')
+    return path.slice(0, index)
+  }
+  move(path: any, oldIndex: number, newIndex: number) {
+    const currentPath = this.getPath(path[oldIndex].data)
+    if (!currentPath) return
 
+    let current = this.data
+    for (const key of currentPath) {
+      if (current && current[key] !== undefined) {
+        current = current[key]
+      } else {
+        return
+      }
+    }
+
+    if (Array.isArray(current)) {
+      const [removed] = current.splice(oldIndex, 1)
+      current.splice(newIndex, 0, removed)
+    }
+  }
+
+  remove(path: any, index: number) {
+    const currentPath = this.getPath(path[index].data)
+    if (!currentPath) return
+
+    let current = this.data
+    for (const key of currentPath) {
+      current = current[key]
+    }
+
+    current.splice(index, 1)
+  }
   constructor(data: any, emit: any) {
     this.modelValue = data
     this.emit = emit
