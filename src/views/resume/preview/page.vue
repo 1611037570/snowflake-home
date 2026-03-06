@@ -20,8 +20,8 @@ const lineHeightValue = inject('lineHeightValue')
     :style="paddingValue()"
   >
     <div class="flex flex-1 flex-col" :style="[fontValue(), lineHeightValue()]">
-      <template v-for="item in currentConfig" :key="item.type">
-        <ResumeModule :data="currentData" :name="item.type" />
+      <template v-for="item in currentConfig.fields" :key="item.key">
+        <ResumeModule :data="currentData" :name="item.key" />
       </template>
     </div>
     <div class="mt-auto text-center text-xs">第 1 页，共 1 页</div>

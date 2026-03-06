@@ -13,9 +13,9 @@ const presets = ref([
     name: '教育经历',
     value: 'education',
   },
-  { name: '项目经历', value: 'project' },
-  { name: '工作经历', value: 'work' },
   { name: '专业技能', value: 'skill' },
+  { name: '工作经历', value: 'work' },
+  { name: '项目经历', value: 'project' },
   { name: '个人优势', value: 'advantage' },
   { name: '兴趣爱好', value: 'hobbies' },
   { name: '图片作品', value: 'images' },
@@ -32,16 +32,14 @@ const filteredPresets = computed(() => {
   if (!currentConfig.value) return presets.value
   return presets.value.filter((item) => {
     // 检查当前表单配置中是否已存在该模块（通过比对模块名称与表单首项的 label）
-    return !currentConfig.value.some((form) => form.type === item.value)
+    return !currentConfig.value.fields.some((form) => form.key === item.value)
   })
 })
-
-// const emit = defineEmits(['add'])
 
 const handleAdd = (module) => {
   const type = module.value
   if (type in allConfig) {
-    currentConfig.value.push(allConfig[type])
+    currentConfig.value.fields.push(allConfig[type])
   }
 }
 </script>
