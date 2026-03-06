@@ -7,7 +7,7 @@
         v-bind="dataProxy.getDataProxy(item.data, index)"
         v-on="dataProxy.setDataProxy(item.data, index)"
       ></component>
-      <div class="flex" v-if="0">
+      <div class="flex" v-if="item.ui">
         <el-button @click="moveUp(index)" :disabled="index === 0">上移</el-button>
         <el-button @click="moveDown(index)" :disabled="index === length - 1">下移</el-button>
         <el-button @click="add(index)">添加</el-button>
@@ -51,13 +51,10 @@ useDraggable(row, form.value.list, {
 onMounted(() => {
   if (form.value?.list) {
     form.value.list = form.value.list.map((item: any) => {
-      if (!item?.id) {
-        return {
-          ...item,
-          id: item.id || getUUID(),
-        }
+      return {
+        ...item,
+        id: item.id || getUUID(),
       }
-      return item
     })
   }
 })
