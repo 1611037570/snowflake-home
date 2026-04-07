@@ -136,6 +136,19 @@ const actionButtons = [
 
     <!-- 消息内容区域 (对齐位置同步调整至 13.5 [头像 10 + 间距 3 + 微调 0.5]) -->
     <div class="flex w-full flex-col gap-1.5 pr-1 pl-13">
+      <!-- AI Loading 状态 (当既没有思考内容也没有回复内容时显示) -->
+      <div
+        v-if="!msg.thought && !msg.content"
+        class="flex h-10 w-16 items-center justify-center gap-1.5 rounded-2xl rounded-tl-sm border border-sf-border/30 bg-sf-bg-2 shadow-xs"
+      >
+        <span
+          v-for="i in 3"
+          :key="i"
+          class="h-1.5 w-1.5 animate-bounce rounded-full bg-sf-theme opacity-80"
+          :style="`animation-delay: ${(i - 1) * 150}ms`"
+        ></span>
+      </div>
+
       <!-- AI 思考过程内容 (折叠部分) -->
       <template v-if="msg.thought && !msg.thoughtCollapsed">
         <div
@@ -154,19 +167,6 @@ const actionButtons = [
 
       <!-- 正式回复内容 -->
       <template v-if="!msg.collapsed">
-        <!-- AI Loading 状态 -->
-        <div
-          v-if="msg.loading && !msg.thought && !msg.content"
-          class="flex h-10 w-16 items-center justify-center gap-1.5 rounded-2xl rounded-tl-sm border border-sf-border/30 bg-sf-bg-2 shadow-xs"
-        >
-          <span
-            v-for="i in 3"
-            :key="i"
-            class="h-1.5 w-1.5 animate-bounce rounded-full bg-sf-theme opacity-80"
-            :style="`animation-delay: ${(i - 1) * 150}ms`"
-          ></span>
-        </div>
-
         <!-- AI 消息 (Markdown 渲染) -->
         <div class="relative w-full min-w-0">
           <MdPreview

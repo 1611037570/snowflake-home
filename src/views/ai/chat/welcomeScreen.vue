@@ -1,23 +1,48 @@
 <script setup>
+import { useAiStore } from '@/stores'
 import { userInfo } from '@/views/index/data'
 import { computed } from 'vue'
 
 const emit = defineEmits(['suggest'])
 
+const aiStore = useAiStore()
+const { addMessage } = aiStore
+
+/**
+ * 处理点击建议卡片
+ * @param card 建议卡片数据
+ */
+const handleSuggest = (card) => {
+  addMessage({
+    role: 'system',
+    content: card.prompt,
+    typing: false,
+  })
+
+  addMessage({
+    role: 'user',
+    content: card.title,
+    typing: false,
+  })
+
+  // 3. 触发父组件请求
+  emit('suggest')
+}
+
 const suggestCards = computed(() => {
-  console.log(userInfo.value)
   const list = [
     {
       icon: 'ph:user-circle-duotone',
       title: '作者简介',
-      desc: '了解关于作者 ' + userInfo.value.name + ' 的开发与摄影生活',
-      prompt: `请详细介绍一下本站作者${userInfo.value.name}。基本信息如下：姓名：${userInfo.value.name}；坐标：${userInfo.value.location}；职业：${userInfo.value.job}；开发起航：${userInfo.value.devYears}；摄影记录：${userInfo.value.shootYears}。`,
-    },
-    {
-      icon: 'ph:lightbulb-duotone',
-      title: '创意策划',
-      desc: '为一个科技产品发布会构思五个创意主题',
-      prompt: '请为一个全新的 AI 科技产品发布会构思 5 个创意主题，并简要说明理由。',
+      desc: '了解作者' + userInfo.value.name,
+      prompt: `请详细介绍一下本站作者${userInfo.value.name}。基本信息如下：
+      姓名：${userInfo.value.name}；
+      坐标：${userInfo.value.location}；
+      职业：${userInfo.value.job}；
+      开发经验：${userInfo.value.devYears}；
+      摄影经验：${userInfo.value.shootYears}。
+      个人主页:http://nannan.work/#/index
+      `,
     },
   ]
   return list
@@ -26,7 +51,7 @@ const suggestCards = computed(() => {
 
 <template>
   <div
-    class="animate-fade-in-up flex h-full min-h-full w-full min-w-full flex-col items-center justify-center gap-8 px-4"
+    class="animate-fade-in-up mt-26 flex h-full min-h-full w-full min-w-full flex-col items-center justify-center gap-8 px-4"
   >
     <!-- 欢迎页头部：简化结构 -->
     <div class="flex flex-col items-center gap-4 text-center">
@@ -41,12 +66,12 @@ const suggestCards = computed(() => {
     </div>
 
     <!-- 建议卡片：限制宽度并简化结构 -->
-    <div class="grid w-full max-w-xl grid-cols-1 gap-3 md:grid-cols-2">
+    <div class="grid w-full max-w-xl grid-cols-1 gap-3">
       <button
         v-for="card in suggestCards"
         :key="card.title"
         class="group flex cursor-pointer items-start gap-3 rounded-xl border border-sf-border bg-sf-bg-2 p-3 text-left transition-all duration-300 hover:-translate-y-0.5 hover:border-sf-theme hover:shadow-md active:scale-[0.98]"
-        @click="emit('suggest', card.prompt)"
+        @click="handleSuggest(card)"
       >
         <div
           class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-sf-bg text-sf-text-3 transition-colors duration-300 group-hover:bg-sf-theme/10 group-hover:text-sf-theme"
