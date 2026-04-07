@@ -18,7 +18,7 @@ function del() {}
             {{ title }}
           </div>
           <SfIcon
-            @click="del"
+            @click.stop="del"
             icon="material-symbols:delete-outline"
             size="4"
             class="mr-3 hover:text-sf-theme"

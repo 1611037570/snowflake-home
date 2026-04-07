@@ -8,17 +8,17 @@ import Template from './page/template/index.vue'
 const menuList = [
   {
     name: '简历',
-    icon: 'document',
+    icon: 'lucide:file-text',
     component: markRaw(Resume),
   },
   {
     name: '模板',
-    icon: 'template',
+    icon: 'lucide:layout-template',
     component: markRaw(Template),
   },
   {
     name: '自定义',
-    icon: 'settings',
+    icon: 'lucide:palette',
     component: markRaw(Custom),
   },
 ]
@@ -35,21 +35,22 @@ function handleMenuClick(index) {
 <template>
   <div class="flex h-full w-full bg-sf-bg text-sf-base">
     <!-- 左侧栏 -->
-    <div class="relative w-12 shrink-0">
+    <div class="relative w-15 shrink-0">
       <div
-        class="sidebar absolute top-0 left-0 z-10 h-full w-full overflow-hidden bg-sf-primary text-sf-base transition-all duration-300 ease-in-out hover:w-30"
+        class="sidebar group absolute top-0 left-0 z-10 flex h-full w-full flex-col gap-3 overflow-hidden bg-sf-primary text-sf-base transition-[width] duration-300 hover:w-30"
       >
-        <div class="flex h-full flex-col space-y-4 p-2">
-          <div
-            v-for="(item, index) in menuList"
-            :key="item.name"
-            class="flex cursor-pointer items-center space-x-2 rounded-lg p-2 transition-colors hover:bg-white/10"
-            :class="{ 'bg-white/20': activeIndex === index }"
-            @click="handleMenuClick(index)"
+        <div
+          v-for="(item, index) in menuList"
+          :key="item.name"
+          class="mx-2 flex cursor-pointer items-center justify-center rounded-lg p-2 hover:bg-sf-bg-hover"
+          :class="{ 'bg-sf-bg-hover': activeIndex === index }"
+          @click="handleMenuClick(index)"
+        >
+          <SfIcon :icon="item.icon" size="6" />
+          <span
+            class="max-w-0 overflow-hidden text-sm font-medium whitespace-nowrap opacity-0 transition-all duration-300 group-hover:ml-2 group-hover:max-w-xs group-hover:opacity-100"
+            >{{ item.name }}</span
           >
-            <SfIcon :name="item.icon" size="6" class="shrink-0" />
-            <span class="text-sm font-medium whitespace-nowrap">{{ item.name }}</span>
-          </div>
         </div>
       </div>
     </div>

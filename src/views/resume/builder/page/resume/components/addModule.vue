@@ -37,10 +37,37 @@ const filteredPresets = computed(() => {
 })
 
 const handleAdd = (module) => {
+  console.log('module:>> ', module)
+
   const type = module.value
+  if (type === 'custom') {
+    console.log('allConfig[type]:>> ', allConfig[type])
+    showModal.value = true
+    return
+  }
   if (type in allConfig) {
     currentConfig.value.fields.push(allConfig[type])
   }
+}
+
+const showModal = ref(false)
+const customModuleName = ref('')
+
+const handleConfirm = () => {
+  if (!customModuleName.value) return
+  const config = JSON.parse(JSON.stringify(allConfig.custom))
+  config.name = customModuleName.value
+  config.props.title = customModuleName.value
+  // 返回名字，后续操作由用户定义
+  console.log('自定义模块名称:', config)
+  // currentConfig.value.fields.push(config)
+
+  handleCancel()
+}
+
+const handleCancel = () => {
+  showModal.value = false
+  customModuleName.value = ''
 }
 </script>
 
@@ -65,7 +92,7 @@ const handleAdd = (module) => {
       <!-- 自定义添加 -->
       <div
         class="group flex h-10 cursor-pointer items-center justify-center gap-2 rounded-xl bg-sf-primary transition-all duration-300 hover:bg-sf-theme hover:text-sf-primary hover:shadow-lg"
-        @click="handleAdd({ name: '自定义模块' })"
+        @click="handleAdd({ value: 'custom' })"
       >
         <SfIcon icon="ic:round-add" size="5" class="text-sf-text-3 group-hover:text-sf-primary" />
         <span class="text-sm font-medium text-sf-text-2 group-hover:text-sf-primary"
@@ -73,6 +100,18 @@ const handleAdd = (module) => {
         >
       </div>
     </div>
+
+    <SfModal v-model="showModal" title="自定义模块">
+      <div class="flex w-80 flex-col gap-4 p-5">
+        <SfInput v-model="customModuleName" placeholder="请输入模块名称" />
+        <div class="flex justify-end gap-3">
+          <el-button @click="handleCancel">取消</el-button>
+          <el-button type="primary" :disabled="!customModuleName" @click="handleConfirm"
+            >保存</el-button
+          >
+        </div>
+      </div>
+    </SfModal>
   </div>
 </template>
 

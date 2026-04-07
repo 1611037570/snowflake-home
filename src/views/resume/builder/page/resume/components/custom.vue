@@ -1,12 +1,11 @@
 <script setup>
 import ItemCollapse from './itemCollapse.vue'
-// 公司
 const name = defineModel('name', {
   type: String,
   default: '',
 })
 const title = computed(() => {
-  return name.value ? name.value : '未填写公司名称'
+  return name.value ? name.value : '未填写名称'
 })
 // 岗位
 const post = defineModel('post', {
@@ -20,19 +19,14 @@ const content = defineModel('content', {
 })
 // 时间
 const time = defineModel('time', {})
-// 业绩
-const result = defineModel('result', {
-  type: String,
-  default: '',
-})
 </script>
 
 <template>
   <ItemCollapse :title="title">
     <div class="flex flex-col gap-4">
       <div class="flex w-full gap-3">
-        <SfInput placeholder="公司" v-model="name" />
-        <SfInput placeholder="岗位" v-model="post" />
+        <SfInput placeholder="名称" v-model="name" />
+        <SfInput placeholder="职位" v-model="post" />
       </div>
       <div class="flex w-full gap-3">
         <SfDatePicker
@@ -46,8 +40,6 @@ const result = defineModel('result', {
         <div class="w-full"></div>
       </div>
       <SfWangEdit v-model="content"></SfWangEdit>
-      <div>成绩：</div>
-      <SfWangEdit v-model="result"></SfWangEdit>
     </div>
   </ItemCollapse>
 </template>

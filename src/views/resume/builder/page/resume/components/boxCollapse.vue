@@ -5,6 +5,7 @@ defineProps({
     default: '未填写',
   },
 })
+function del() {}
 </script>
 
 <template>
@@ -15,7 +16,12 @@ defineProps({
           <div class="flex items-center text-lg font-bold">
             {{ title }}
           </div>
-          <!-- <SfIcon name="arrow-down" size="4" class="mr-3" /> -->
+          <SfIcon
+            @click.stop="del"
+            icon="material-symbols:delete-outline"
+            size="4"
+            class="mr-3 hover:text-sf-theme"
+          />
         </div>
       </template>
       <template #default>
