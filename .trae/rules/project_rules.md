@@ -25,8 +25,3 @@
 1. 优先使用 `knowledges\components` 目录下的定义好的组件、不存在时使用ElementPlus组件
 2. 组件导入和使用时，必须使用大驼峰命名法
 3. ElementPlus 组件已全局挂载，直接使用无需导入
-
-## 🎯 图标规范
-
-1. 图标名称必须使用 @iconify/vue 图标库
-2. 图标渲染统一使用 SfIcon 组件，该组件已全局挂载，无需导入
