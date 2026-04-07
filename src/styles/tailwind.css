@@ -52,8 +52,10 @@
   --color-sf-bg-hover: var(--sf-background-hover);
   /* 背景色-2 */
   --color-sf-bg-2: var(--sf-background-2);
+  --color-sf-bg-2-hover: var(--sf-background-2-hover);
   /* 背景色-3 */
   --color-sf-bg-3: var(--sf-background-3);
+  --color-sf-bg-3-hover: var(--sf-background-3-hover);
 
   /* 弹窗色 */
   --color-sf-modal: var(--sf-modal);
@@ -83,9 +85,11 @@
   --sf-text-2: color-mix(in oklab, oklch(0% 0 0) 60%, transparent);
   --sf-text-3: color-mix(in oklab, oklch(0% 0 0) 40%, transparent);
   --sf-background: #f2f2f7;
-  --sf-background-hover: #e8e8ef;
-  --sf-background-2: #d0d0d0;
-  --sf-background-3: #e0e0e0;
+  --sf-background-hover: #e5e5ea;
+  --sf-background-2: #e5e5ea;
+  --sf-background-2-hover: #d1d1d6;
+  --sf-background-3: #d1d1d6;
+  --sf-background-3-hover: #c7c7cc;
   --sf-text-disabled: #c0c4cc;
   --sf-modal: #f2f2f7;
   --sf-transparent: color-mix(in oklab, oklch(97% 0.014 254.604) 80%, transparent);
@@ -104,6 +108,9 @@
   --sf-background: #1c1c1e;
   --sf-background-hover: #2c2c2e;
   --sf-background-2: #3a3a3c;
+  --sf-background-2-hover: #48484a;
+  --sf-background-3: #48484a;
+  --sf-background-3-hover: #636366;
   --sf-modal: rgba(0, 0, 0, 1);
   --sf-primary: rgba(0, 0, 0, 1);
   --sf-primary-hover: #3a3a3c;
