@@ -20,6 +20,11 @@ const content = defineModel('content', {
 })
 // 时间
 const time = defineModel('time', {})
+// 业绩
+const result = defineModel('result', {
+  type: String,
+  default: '',
+})
 </script>
 
 <template>
@@ -41,6 +46,8 @@ const time = defineModel('time', {})
         <div class="w-full"></div>
       </div>
       <SfWangEdit v-model="content"></SfWangEdit>
+      <div>成绩：</div>
+      <SfWangEdit v-model="result"></SfWangEdit>
     </div>
   </ItemCollapse>
 </template>
