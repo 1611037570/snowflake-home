@@ -1,6 +1,6 @@
 <script setup>
+import ChatModal from '@views/ai/chatModal.vue'
 import LoadingComponent from '@views/status/loading.vue'
-
 // https://cdn.jsdelivr.net/npm/pinyin@4.0.0/lib/umd/pinyin.min.js
 // https://www.bootcdn.cn/
 // https://www.jsdelivr.com/?query=vue
@@ -11,6 +11,7 @@ import LoadingComponent from '@views/status/loading.vue'
     <!-- 全局控制器 -->
     <SfGlobalController />
     <!-- 路由视图 -->
+    <ChatModal />
     <RouterView v-slot="{ Component }">
       <Transition name="page-transition" mode="out-in">
         <Component :is="Component || LoadingComponent" />

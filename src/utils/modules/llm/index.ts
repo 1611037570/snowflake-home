@@ -1,5 +1,5 @@
-import { LLM } from './core'
 import { ark } from '@/configs/ai'
+import { LLM } from './core'
 
 const getToken = () => {
   return 'c15973e5-8397-422f-9c86-a12df469d452'

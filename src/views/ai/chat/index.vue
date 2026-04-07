@@ -1,7 +1,7 @@
 <script setup>
 import { useAiSettings } from '@/hooks'
 import { useAiStore } from '@/stores'
-import { arkLLM } from '@/utils/modules/llm'
+import { arkLLM } from '@/utils'
 import { useScroll } from '@vueuse/core'
 import { storeToRefs } from 'pinia'
 import { computed, nextTick, ref, watch } from 'vue'
