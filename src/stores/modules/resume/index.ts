@@ -1,16 +1,17 @@
 import { defineStore } from 'pinia'
 import { computed, ref } from 'vue'
 import { userData, type UserData } from './dataConfig'
-import { userConfig } from './formConfig'
+import { userForm } from './formConfig'
 
 export interface ResumeItem {
   data: UserData
   config: any // 暂时使用 any，或者根据需要定义配置类型
   ui: {
-    paddingIndex: number
-    fontIndex: number
-    lineHeightIndex: number
-    colorIndex: number
+    padding: number
+    fontSize: number
+    lineHeight: number
+    color: string
+    fontFamily: string
   }
 }
 
@@ -20,7 +21,7 @@ export const useResumeStore = defineStore(
     const indexVisible = ref(false)
 
     // 简历列表
-    const list = ref<ResumeItem[]>([])
+    const list = ref<any[]>([])
 
     // 当前选中的下标
     const currentIndex = ref(-1)
@@ -34,7 +35,9 @@ export const useResumeStore = defineStore(
         return list.value[currentIndex.value]?.config
       },
       set(newConfig) {
-        list.value[currentIndex.value].config = newConfig
+        if (list.value[currentIndex.value]) {
+          list.value[currentIndex.value].config = newConfig
+        }
       },
     })
 
@@ -54,49 +57,23 @@ export const useResumeStore = defineStore(
     const addResume = () => {
       list.value.push({
         data: structuredClone(userData),
-        config: [userConfig],
+        config: {
+          drag: true,
+          fields: [...userForm],
+        },
         ui: {
-          paddingIndex: 1,
-          fontIndex: 1,
-          lineHeightIndex: 1,
-          colorIndex: 0,
+          padding: 24,
+          fontSize: 12,
+          lineHeight: 24,
+          color: '#ff4d4f',
+          fontFamily: 'font-alipu',
         },
       })
       currentIndex.value = list.value.length - 1
     }
 
     // 初始化数据合并，防止版本更新导致字段缺失
-    const init = () => {
-      list.value = list.value.map((item: any) => {
-        // 如果是老版本数据（没有 data 字段），则进行转换
-        const oldData = item.data ? item.data : item
-        const oldConfig = item.config ? item.config : []
-        const oldUI = item.ui
-          ? item.ui
-          : { paddingIndex: 1, fontIndex: 1, lineHeightIndex: 1, colorIndex: 0 }
-
-        const baseData = structuredClone(userData)
-
-        return {
-          data: {
-            ...baseData,
-            ...oldData,
-            user: {
-              ...baseData.user,
-              ...oldData.user,
-            },
-          },
-          config: oldConfig,
-          ui: {
-            paddingIndex: 1,
-            fontIndex: 1,
-            lineHeightIndex: 1,
-            colorIndex: 0,
-            ...oldUI,
-          },
-        }
-      })
-    }
+    const init = () => {}
 
     return {
       indexVisible,
