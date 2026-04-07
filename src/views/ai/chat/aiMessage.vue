@@ -62,7 +62,7 @@ const actionButtons = [
           <SfIcon icon="ph:snowflake-duotone" size="6" />
         </div>
         <div class="flex flex-col gap-0.5 leading-tight">
-          <span class="text-[15px] font-black tracking-wider text-sf-text">小雪</span>
+          <span class="text-[15px] font-black tracking-wider text-sf-text">小羊</span>
           <div class="flex items-center gap-2">
             <time v-if="msg.time" class="text-[11px] font-bold tabular-nums opacity-40">{{
               msg.time

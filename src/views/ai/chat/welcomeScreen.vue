@@ -32,7 +32,7 @@ const suggestCards = computed(() => {
     <div class="flex flex-col items-center gap-4 text-center">
       <div class="space-y-1">
         <h1 class="text-xl font-black tracking-tight text-sf-text">
-          你好！我是 <span class="text-sf-theme">小雪</span>
+          你好！我是 <span class="text-sf-theme">小羊</span>
         </h1>
         <p class="text-sm font-medium text-sf-text-3 opacity-80">
           我可以帮你写代码、解答问题、或者进行创意写作。

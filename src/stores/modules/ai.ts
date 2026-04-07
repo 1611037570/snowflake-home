@@ -4,103 +4,77 @@ import { ElMessageBox } from 'element-plus'
 import { defineStore } from 'pinia'
 import { computed, ref } from 'vue'
 
+const DEFAULT_SYSTEM_PROMPT =
+  '你的设置是：名字叫小羊，性别男，巨蟹座，2000年生，工作是前端工程师，擅长vue typescript，说话直接清爽，不拖沓、不矫情，回答简洁准确。回答以这个设定为基础。'
+const DEFAULT_CHAT_TITLE = '新对话'
+
 export const useAiStore = defineStore(
   'ai',
   () => {
-    // 侧边栏折叠状态
     const sidebarCollapsed = ref(false)
-
-    // 会话列表
     const chatList = ref([])
-    // 当前选中的会话 ID
     const currentChatId = ref('')
 
-    // 当前选中的会话对象
-    const currentChat = computed(() => {
-      return chatList.value.find((chat) => chat.id === currentChatId.value)
-    })
+    const currentChat = computed(() => chatList.value.find((c) => c.id === currentChatId.value))
 
-    // 当前会话的消息列表
     const currentMessages = computed({
       get: () => currentChat.value?.messages || [],
       set: (val) => {
-        if (currentChat.value) {
-          currentChat.value.messages = val
-        }
+        if (currentChat.value) currentChat.value.messages = val
       },
     })
 
-    // 准备新建会话 (进入待新建状态)
     function prepareNewChat() {
       currentChatId.value = 'new-chat-temp'
     }
 
-    // 新建并添加会话到列表
     function addChat() {
       const newChat = {
         id: getUUID(),
-        title: '新对话',
+        title: DEFAULT_CHAT_TITLE,
         createTime: Date.now(),
         updateTime: Date.now(),
-        messages: [
-          {
-            role: 'system',
-            content:
-              '你的设置是：名字叫小羊，性别男，巨蟹座，2000年生，工作是前端工程师，擅长vue typescript，说话直接清爽，不拖沓、不矫情，回答简洁准确。回答以这个设定为基础。',
-          },
-        ],
+        messages: [{ role: 'system', content: DEFAULT_SYSTEM_PROMPT }],
       }
       chatList.value.unshift(newChat)
       currentChatId.value = newChat.id
       return newChat
     }
 
-    // 切换会话
     function switchChat(id) {
       currentChatId.value = id
     }
 
-    // 删除会话
     function delChat(id) {
       ElMessageBox.confirm('确定要删除该对话记录吗？此操作不可恢复。', '删除对话', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
         type: 'warning',
       })
         .then(() => {
-          const index = chatList.value.findIndex((chat) => chat.id === id)
+          const index = chatList.value.findIndex((c) => c.id === id)
           if (index > -1) {
             chatList.value.splice(index, 1)
-            // 如果删除的是当前选中的会话，则清空当前选中状态或选中第一个
             if (currentChatId.value === id) {
-              currentChatId.value = chatList.value.length > 0 ? chatList.value[0].id : ''
+              currentChatId.value = chatList.value[0]?.id || ''
             }
           }
         })
         .catch(() => {})
     }
 
-    // 更新当前会话标题 (基于第一条用户消息)
     function updateChatTitle() {
-      if (
-        currentChat.value &&
-        currentChat.value.messages.length > 0 &&
-        currentChat.value.title === '新对话'
-      ) {
-        const firstUserMsg = currentChat.value.messages.find((m) => m.role === 'user')
-        if (firstUserMsg) {
-          // 截取前 15 个字符作为标题
-          currentChat.value.title =
-            firstUserMsg.content.slice(0, 15) + (firstUserMsg.content.length > 15 ? '...' : '')
-        }
+      const chat = currentChat.value
+      if (!chat || chat.title !== DEFAULT_CHAT_TITLE) return
+
+      const firstUserMsg = chat.messages.find((m) => m.role === 'user')
+      if (firstUserMsg) {
+        const content = firstUserMsg.content
+        chat.title = content.length > 15 ? `${content.slice(0, 15)}...` : content
       }
     }
 
-    // 向当前会话添加消息
     function addMessage(msg) {
-      if (!currentChat.value) {
-        addChat()
-      }
+      if (!currentChat.value) addChat()
+
       currentChat.value.messages.push({
         ...msg,
         time: msg.time || dayjs().format('HH:mm'),
