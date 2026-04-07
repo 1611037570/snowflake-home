@@ -12,6 +12,7 @@ export const useAiStore = defineStore(
   'ai',
   () => {
     const sidebarCollapsed = ref(false)
+    const sidebarMode = ref('float') // 'dock' or 'float'
     const chatList = ref([])
     const currentChatId = ref('')
 
@@ -85,6 +86,7 @@ export const useAiStore = defineStore(
 
     return {
       sidebarCollapsed,
+      sidebarMode,
       chatList,
       currentChatId,
       currentChat,
@@ -99,7 +101,7 @@ export const useAiStore = defineStore(
   {
     persist: {
       storage: localStorage,
-      pick: ['sidebarCollapsed', 'chatList', 'currentChatId'],
+      pick: ['sidebarCollapsed', 'sidebarMode', 'chatList', 'currentChatId'],
     },
   },
 )

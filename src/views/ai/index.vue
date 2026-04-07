@@ -7,8 +7,15 @@ import ChatList from './chatlist/chatList.vue'
 import SettingsDrawer from './chatlist/settingsDrawer.vue'
 
 const aiStore = useAiStore()
-const { sidebarCollapsed, currentChat, currentChatId } = storeToRefs(aiStore)
+const { sidebarCollapsed, sidebarMode, currentChat, currentChatId } = storeToRefs(aiStore)
 const { prepareNewChat } = aiStore
+
+/**
+ * 切换侧边栏模式
+ */
+const toggleSidebarMode = () => {
+  sidebarMode.value = sidebarMode.value === 'dock' ? 'float' : 'dock'
+}
 
 // 设置弹窗状态
 const showSettings = ref(false)
@@ -20,10 +27,9 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="flex h-full w-full bg-sf-bg">
+  <div class="relative flex h-full w-full bg-sf-bg">
     <!-- 侧边栏 -->
     <ChatList />
-
     <!-- 主聊天区域 -->
     <div class="relative flex h-full flex-1 flex-col overflow-hidden bg-sf-bg">
       <!-- 头部区域 -->
@@ -39,6 +45,19 @@ onMounted(() => {
               @click="sidebarCollapsed = !sidebarCollapsed"
             >
               <SfIcon icon="ph:list-duotone" size="4.5" />
+            </div>
+          </SfTooltip>
+
+          <!-- 侧边栏模式切换按钮 -->
+          <SfTooltip :content="sidebarMode === 'dock' ? '切换为浮动模式' : '切换为固定模式'">
+            <div
+              class="flex h-8 w-8 cursor-pointer items-center justify-center rounded-lg text-sf-text-2 transition-colors duration-300 hover:bg-sf-bg-3 hover:text-sf-text"
+              @click="toggleSidebarMode"
+            >
+              <SfIcon
+                :icon="sidebarMode === 'dock' ? 'ph:push-pin-light' : 'ph:push-pin-fill'"
+                size="4"
+              />
             </div>
           </SfTooltip>
 
