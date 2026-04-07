@@ -48,7 +48,7 @@ let abortRequest = null
 // 是否正在生成中（包含发送中、打字中或加载中状态）
 const isGenerating = computed(() => {
   const lastMsg = currentMessages.value.at(-1)
-  return isSending.value || lastMsg?.typing || lastMsg?.loading
+  return isSending.value || lastMsg?.typing
 })
 
 // 设置数据
@@ -82,9 +82,10 @@ watch(
 /**
  * 点击提示词卡片
  */
-const handleSuggest = (prompt) => {
-  inputMessage.value = prompt
-  handleSend()
+const handleSuggest = () => {
+  isSending.value = true
+  scrollToBottom()
+  handleAIResponse()
 }
 
 /**
@@ -96,12 +97,11 @@ const stopGenerating = () => {
     abortRequest()
     abortRequest = null
   }
-  // 确保所有消息的加载/打字状态都重置
+  // 确保所有消息的打字状态都重置
   currentMessages.value.forEach((msg) => {
     if (msg.typing) {
       msg.typing = false
     }
-    msg.loading = false
   })
 }
 
@@ -109,20 +109,20 @@ const stopGenerating = () => {
  * 处理 AI 回复的真实请求
  */
 const handleAIResponse = async () => {
-  const lastMsg = currentMessages.value[currentMessages.value.length - 1]
-  if (!lastMsg || lastMsg.role !== 'assistant' || !lastMsg.loading) {
-    isSending.value = false
-    return
-  }
-
+  let lastMsg = null
   try {
-    // 准备发送给 AI 的消息列表（不包含当前的 loading 消息）
-    const messages = currentMessages.value
-      .filter((m) => !m.loading)
-      .map((m) => ({
-        role: m.role,
-        content: m.content,
-      }))
+    // 准备发送给 AI 的消息列表
+    const messages = currentMessages.value.map((m) => ({
+      role: m.role,
+      content: m.content,
+    }))
+
+    addMessage({
+      role: 'assistant',
+      content: '',
+      typing: true,
+    })
+    lastMsg = currentMessages.value[currentMessages.value.length - 1]
 
     const { sendFn, abortFn } = await arkLLM.request({
       options: {
@@ -135,12 +135,6 @@ const handleAIResponse = async () => {
       stream: true,
       isJson: false,
       onEvent: (type, data) => {
-        // 将 loading 状态转为打字状态
-        if (lastMsg.loading) {
-          lastMsg.loading = false
-          lastMsg.typing = true
-        }
-
         if (type === 'reasoning') {
           if (lastMsg.thought === undefined) {
             lastMsg.thought = ''
@@ -157,7 +151,6 @@ const handleAIResponse = async () => {
       },
       onFail: (error) => {
         lastMsg.content = `请求出错: ${error.message || '未知错误'}`
-        lastMsg.loading = false
         lastMsg.typing = false
         isSending.value = false
       },
@@ -170,7 +163,7 @@ const handleAIResponse = async () => {
   } finally {
     isSending.value = false
     abortRequest = null
-    if (lastMsg.typing) {
+    if (lastMsg?.typing) {
       lastMsg.typing = false
     }
     if (currentChat.value) {
@@ -198,16 +191,8 @@ const handleSend = async () => {
     scrollToBottom()
     nextTick(() => chatInputRef.value?.focus())
 
-    // 模拟网络延迟后显示 loading 状态
-    await new Promise((resolve) => setTimeout(resolve, 100))
-    if (!isSending.value) return // 已经被 stopGenerating 停止
+    // 立即添加一个空的助手消息用于展示 Loading 状态
 
-    addMessage({
-      role: 'assistant',
-      content: '',
-      typing: false,
-      loading: true,
-    })
     scrollToBottom()
 
     // 触发真实请求
