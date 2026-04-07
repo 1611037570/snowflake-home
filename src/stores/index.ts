@@ -44,3 +44,6 @@ export * from './modules/note'
 export * from './modules/user'
 // 密码相关store
 export * from './modules/password'
+
+// 智能助手相关store
+export * from './modules/ai'
