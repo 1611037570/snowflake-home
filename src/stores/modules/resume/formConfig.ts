@@ -154,6 +154,11 @@ export const educationForm: any = {
                 path: ['education', '?', 'content'],
                 key: 'content',
               },
+              // 学制
+              {
+                path: ['education', '?', 'mode'],
+                key: 'mode',
+              },
             ],
             component: 'education',
             span: 24,
@@ -179,6 +184,11 @@ export const educationForm: any = {
               {
                 path: ['education', '?', 'content'],
                 key: 'content',
+              },
+              // 学制
+              {
+                path: ['education', '?', 'mode'],
+                key: 'mode',
               },
             ],
             component: 'education',

@@ -51,6 +51,26 @@ const time = defineModel('time', {
 const title = computed(() => {
   return name.value ? name.value : '未填写学校名称'
 })
+
+const mode = defineModel('mode', {
+  type: String,
+  default: '',
+})
+
+const modeList = [
+  {
+    name: '全日制',
+    value: '全日制',
+  },
+  {
+    name: '非全日制',
+    value: '非全日制',
+  },
+  {
+    name: '不填写',
+    value: ' ',
+  },
+]
 </script>
 
 <template>
@@ -70,6 +90,9 @@ const title = computed(() => {
           end-placeholder="结束时间"
         />
         <SfInput placeholder="专业" v-model="post" />
+      </div>
+      <div class="flex w-full gap-3">
+        <SfSelect placeholder="学制" v-model="mode" :list="modeList" />
       </div>
       <SfWangEdit v-model="content"></SfWangEdit>
     </div>

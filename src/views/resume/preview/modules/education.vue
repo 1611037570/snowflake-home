@@ -13,7 +13,14 @@ const { currentData } = storeToRefs(resumeStore)
 const fontValue = inject('fontValue')
 const lineHeightValue = inject('lineHeightValue')
 
-const education = computed(() => currentData.value.education || [])
+const education = computed(() => {
+  return (currentData.value.education || []).map((item) => ({
+    ...item,
+    infoList: [item.post, item.education, item.mode].filter(
+      (v) => v && typeof v === 'string' && v.trim(),
+    ),
+  }))
+})
 </script>
 
 <template>
@@ -25,14 +32,16 @@ const education = computed(() => currentData.value.education || [])
       <div class="flex items-center justify-between">
         <div class="flex items-baseline gap-4">
           <span class="font-bold" :style="[fontValue(3)]">{{ item.name }}</span>
-          <span>
-            {{ item.education }}
-          </span>
-          <span>{{ item.post }}</span>
         </div>
         <div class="flex items-center gap-2">
           <span>{{ getTime(item.time) }}</span>
         </div>
+      </div>
+      <div class="flex items-center gap-2">
+        <template v-for="(field, i) in item.infoList" :key="i">
+          <span>{{ field }}</span>
+          <div v-if="i < item.infoList.length - 1" class="h-1 w-1 rounded-full bg-black"></div>
+        </template>
       </div>
       <!-- 补充描述/经历 -->
       <Content :content="item.content" />
