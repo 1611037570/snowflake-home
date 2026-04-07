@@ -15,10 +15,10 @@ dist-ssr
 coverage
 *.local
 test
+.pnpm-store
 # 测试产物
 /cypress/videos/
 /cypress/screenshots/
-
 .trae/documents
 # 编辑器文件
 .idea
