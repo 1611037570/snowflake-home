@@ -6,7 +6,7 @@
       <div class="flex items-center">
         {{ $t('copyright') }} © 2019-{{ currentYear }}
         <span @click="userNavigation" class="mx-1 cursor-pointer font-medium hover:text-sf-theme">
-          {{ $t('userName') }}
+          {{ $t('user.name') }}
         </span>
         {{ $t('allRightsReserved') }}
       </div>

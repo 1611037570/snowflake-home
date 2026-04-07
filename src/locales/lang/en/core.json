@@ -33,7 +33,13 @@
     "dark": "Dark Mode",
     "light": "Light Mode"
   },
-  "userName": "Yang",
+  "user": {
+    "name": "XiaoYang",
+    "location": "Wuzhen",
+    "job": "Front-end Developer & Portrait Photographer",
+    "devYears": "2023-06-02",
+    "shootYears": "2019-11-22"
+  },
   "copyright": "Copyright",
   "allRightsReserved": "All Rights Reserved"
 }

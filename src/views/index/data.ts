@@ -1,10 +1,10 @@
 import { $t } from '@/locales'
 export const userInfo = computed(() => {
   return {
-    name: $t('index.name'),
-    location: $t('index.location'),
-    job: $t('index.job'),
-    devYears: $t('index.devYears'),
-    shootYears: $t('index.shootYears'),
+    name: $t('user.name'),
+    location: $t('user.location'),
+    job: $t('user.job'),
+    devYears: $t('user.devYears'),
+    shootYears: $t('user.shootYears'),
   }
 })
