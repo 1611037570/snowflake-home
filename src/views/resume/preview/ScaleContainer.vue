@@ -38,7 +38,7 @@ useResizeObserver(containerRef, (entries) => {
   <!-- 测量容器：relative + overflow-y-auto 允许垂直滚动 -->
   <div ref="containerRef" class="relative h-full w-full overflow-y-auto bg-sf-bg">
     <!-- 展示容器：absolute + flex 居中 -->
-    <div class="absolute inset-x-0 top-0 flex flex-col items-center py-10">
+    <div class="absolute inset-x-0 top-0 flex flex-col items-center py-3">
       <div
         :style="{
           zoom: scale,
