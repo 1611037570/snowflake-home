@@ -12,28 +12,23 @@ const resumeStore = useResumeStore()
 const { currentData } = storeToRefs(resumeStore)
 
 const fontValue = inject('fontValue')
-const lineHeightValue = inject('lineHeightValue')
 
 const workList = computed(() => currentData.value.work || [])
 </script>
 
 <template>
-  <div class="flex flex-col" :style="[fontValue(), lineHeightValue()]">
-    <Title title="工作经历" />
-    <template v-if="workList.length">
-      <div class="mb-3 flex flex-col" :key="index" v-for="(item, index) in workList">
-        <div class="flex items-center justify-between">
-          <div class="flex items-center gap-4">
-            <div class="font-bold" :style="[fontValue(3)]">{{ item.name }}</div>
-            <div>{{ item.post }}</div>
-          </div>
-          <div class="flex items-center">{{ getTime(item.time) }}</div>
-          <!-- 补充描述/经历 -->
-        </div>
-        <Content :content="item.content" />
+  <Title title="工作经历" />
+  <template v-for="(item, index) in workList" :key="index">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center gap-4">
+        <div class="font-bold" :style="[fontValue(3)]">{{ item.name }}</div>
+        <div>{{ item.post }}</div>
       </div>
-    </template>
-  </div>
+      <div class="flex items-center">{{ getTime(item.time) }}</div>
+      <!-- 补充描述/经历 -->
+    </div>
+    <Content :content="item.content" />
+  </template>
 </template>
 
 <style lang="scss" scoped></style>

@@ -1,4 +1,5 @@
-import { onMounted, onUpdated, ref, watch } from 'vue'
+import { useResizeObserver } from '@vueuse/core'
+import { nextTick, onMounted, ref, watch, type Ref } from 'vue'
 
 /**
  * 为根div的一级div子元素绑定唯一ID和高度属性的Hooks
@@ -6,9 +7,9 @@ import { onMounted, onUpdated, ref, watch } from 'vue'
  * @param {String} idPrefix - ID前缀（可选，默认：row-item）
  * @returns {Object} 包含行信息、总高度的响应式数据和方法
  */
-export function useRowInfo(rootRef: Ref<HTMLDivElement>, idPrefix = 'row-item') {
+export function useRowInfo(rootRef: Ref<HTMLDivElement | null>, idPrefix = 'row-item') {
   // 存储一级div的信息（ID、高度、DOM元素）
-  const rowList: any = ref([])
+  const rowList = ref<any[]>([])
   // 新增：总高度（响应式，初始值0）
   const totalHeight = ref(0)
 
@@ -18,13 +19,12 @@ export function useRowInfo(rootRef: Ref<HTMLDivElement>, idPrefix = 'row-item') 
     if (!rootRef.value) {
       rowList.value = []
       totalHeight.value = 0 // 新增：无容器时总高度置0
-      console.warn('根容器ref不存在，请检查ref绑定')
       return
     }
 
-    // 关键：仅获取根容器下的一级div（> div 选择器限定直接子元素，不递归）
-    const firstLevelDivs = rootRef.value.querySelectorAll('> div')
-    const rows: { id: string; height: string; element: HTMLDivElement; index: number }[] = []
+    // 关键：仅获取根容器下的一级div（使用 :scope > div 确保只选直接子元素）
+    const firstLevelDivs = rootRef.value.querySelectorAll(':scope > div')
+    const rows: { id: string; height: number; element: HTMLDivElement; index: number }[] = []
     // 新增：临时变量存储总高度累加值
     let sumHeight = 0
 
@@ -49,9 +49,16 @@ export function useRowInfo(rootRef: Ref<HTMLDivElement>, idPrefix = 'row-item') 
       sumHeight += rowHeight
     })
 
-    rowList.value = rows
-    // 新增：把累加的总高度赋值给响应式变量
-    totalHeight.value = sumHeight
+    // 只有在数据真正发生变化时才更新，避免递归触发
+    // 允许 1px 的高度误差，防止浮点数渲染抖动导致的循环
+    const isChanged =
+      rows.length !== rowList.value.length ||
+      rows.some((row, i) => Math.abs(row.height - (rowList.value[i]?.height || 0)) > 1)
+
+    if (isChanged) {
+      rowList.value = rows
+      totalHeight.value = sumHeight
+    }
   }
 
   // 初始化：DOM挂载完成后执行一次
@@ -60,12 +67,12 @@ export function useRowInfo(rootRef: Ref<HTMLDivElement>, idPrefix = 'row-item') 
     handleRowInfo()
   })
 
-  // 更新：DOM更新后重新计算（比如数据变化导致div高度/数量变化）
-  onUpdated(() => {
+  // 使用 ResizeObserver 监听容器大小变化，这比 onUpdated 更精确且能避免非相关的更新导致的递归
+  useResizeObserver(rootRef, () => {
     handleRowInfo()
   })
 
-  // 监听根ref变化（可选，防止ref动态绑定）
+  // 监听根ref变化
   watch(
     rootRef,
     () => {

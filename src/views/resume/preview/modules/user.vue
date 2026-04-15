@@ -67,37 +67,43 @@ const email = computed(() => {
 </script>
 
 <template>
-  <div class="flex flex-col" :style="[fontValue()]">
-    <!-- 头部基本信息 -->
-    <div class="mb-3 flex items-center" :style="lineHeightValue(14)">
-      <h1 class="font-bold tracking-wide" :style="[fontValue(14)]">{{ user.name }}</h1>
-      <div class="ml-4 flex items-center gap-3 opacity-80">
-        <span v-if="user.sex">{{ user.sex }}</span>
-        <span v-if="user.sex && age" class="h-3 w-px bg-current opacity-50"></span>
-        <span v-if="age">{{ age }}岁</span>
-        <span v-if="age && workYears" class="h-3 w-px bg-current opacity-50"></span>
-        <span v-if="workYears">{{ workYears }}年经验</span>
-      </div>
+  <!-- 头部基本信息 -->
+  <div class="mb-3 flex items-center" :style="[lineHeightValue(22)]">
+    <h1 class="font-bold tracking-wide" :style="[fontValue(14)]">{{ user.name }}</h1>
+    <div class="ml-4 flex items-center gap-3 opacity-80" :style="[fontValue(2)]">
+      <span v-if="user.sex">{{ user.sex }}</span>
+      <span v-if="user.sex && age" class="h-3 w-px bg-current opacity-50"></span>
+      <span v-if="age">{{ age }}岁</span>
+      <span v-if="age && workYears" class="h-3 w-px bg-current opacity-50"></span>
+      <span v-if="workYears">{{ workYears }}年经验</span>
     </div>
+  </div>
 
-    <!-- 联系方式 -->
-    <div class="mb-3 flex flex-wrap gap-x-6" :style="lineHeightValue()" v-if="phone || email">
-      <div class="flex items-center gap-2" v-if="phone">
-        <span class="opacity-70">电话：</span>
-        <span class="font-medium">{{ phone }}</span>
-      </div>
-      <div class="flex items-center gap-2" v-if="email">
-        <span class="opacity-70">邮箱：</span>
-        <span class="font-medium">{{ email }}</span>
-      </div>
+  <!-- 联系方式 -->
+  <div
+    class="mb-3 flex flex-wrap gap-x-6"
+    :style="(lineHeightValue(14), fontValue())"
+    v-if="phone || email"
+  >
+    <div class="flex items-center gap-2" v-if="phone">
+      <span class="opacity-70">电话：</span>
+      <span class="font-medium">{{ phone }}</span>
     </div>
+    <div class="flex items-center gap-2" v-if="email">
+      <span class="opacity-70">邮箱：</span>
+      <span class="font-medium">{{ email }}</span>
+    </div>
+  </div>
 
-    <!-- 社交链接 -->
-    <div class="flex flex-col gap-2 pb-4" v-if="user.link && user.link.length">
-      <div v-for="(item, index) in user.link" :key="index" class="flex items-center gap-2">
-        <span class="opacity-70">{{ item.name }}：</span>
-        <a :href="item.url" target="_blank" class="font-medium hover:underline">{{ item.url }}</a>
-      </div>
+  <!-- 社交链接 -->
+  <div
+    class="flex flex-col gap-2 pb-4"
+    :style="(lineHeightValue(), fontValue())"
+    v-if="user.link && user.link.length"
+  >
+    <div v-for="(item, index) in user.link" :key="index" class="flex items-center gap-2">
+      <span class="opacity-70">{{ item.name }}：</span>
+      <a :href="item.url" target="_blank" class="font-medium hover:underline">{{ item.url }}</a>
     </div>
   </div>
 </template>

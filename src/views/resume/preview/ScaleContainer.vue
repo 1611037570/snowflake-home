@@ -8,7 +8,6 @@ const containerRef = ref(null)
 const scale = ref(1)
 
 const TARGET_WIDTH = 794
-const TARGET_HEIGHT = 1123
 const PADDING = 40
 
 useResizeObserver(containerRef, (entries) => {
@@ -27,19 +26,19 @@ useResizeObserver(containerRef, (entries) => {
     return
   }
 
+  // 只根据宽度计算缩放比例，让内容在垂直方向可以滚动
   const scaleX = availableWidth / TARGET_WIDTH
-  const scaleY = availableHeight / TARGET_HEIGHT
 
-  // 取较小的缩放比例，且最大不超过 1
-  scale.value = Math.min(scaleX, scaleY, 1)
+  // 取缩放比例，且最大不超过 1
+  scale.value = Math.min(scaleX, 1)
 })
 </script>
 
 <template>
-  <!-- 测量容器：relative + overflow-hidden 确保尺寸仅由父级决定 -->
-  <div ref="containerRef" class="relative h-full w-full overflow-hidden bg-sf-bg">
-    <!-- 展示容器：absolute + flex 居中，隔离内部布局变化对测量容器的影响 -->
-    <div class="absolute inset-0 flex items-center justify-center">
+  <!-- 测量容器：relative + overflow-y-auto 允许垂直滚动 -->
+  <div ref="containerRef" class="relative h-full w-full overflow-y-auto bg-sf-bg">
+    <!-- 展示容器：absolute + flex 居中 -->
+    <div class="absolute inset-x-0 top-0 flex flex-col items-center py-10">
       <div
         :style="{
           zoom: scale,

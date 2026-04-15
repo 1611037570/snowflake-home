@@ -15,10 +15,8 @@ const skill = computed(() => currentData.value.skill || '')
 </script>
 
 <template>
-  <div class="flex flex-col" :style="[fontValue(), lineHeightValue()]">
-    <Title title="专业技能" />
-    <Content :content="skill" />
-  </div>
+  <Title title="专业技能" :style="[fontValue(), lineHeightValue()]" />
+  <Content :content="skill" :style="[fontValue(), lineHeightValue()]" />
 </template>
 
 <style lang="scss" scoped></style>
