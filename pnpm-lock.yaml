@@ -50,6 +50,9 @@ importers:
       md-editor-v3:
         specifier: ^6.3.1
         version: 6.3.1(vue@3.5.22(typescript@5.9.3))
+      mitt:
+        specifier: ^3.0.1
+        version: 3.0.1
       pica:
         specifier: ^9.0.1
         version: 9.0.1
