@@ -31,7 +31,8 @@
   --el-date-editor-width: 100% !important;
 }
 .el-input__wrapper {
-  box-shadow: none;
+  box-shadow: none !important;
+
   &:hover {
     box-shadow: none;
   }
