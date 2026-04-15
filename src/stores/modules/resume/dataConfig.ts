@@ -14,6 +14,7 @@ export interface UserData {
     post: string
     time: [string, string]
     content: string
+    mode: string
   }[]
   work?: {
     name: string
@@ -29,7 +30,46 @@ export interface UserData {
   }[]
 }
 
-// 默认用户数据
+// 默认空数据
+export const DEFAULT_USER_DATA: UserData = {
+  user: {
+    name: '',
+    birthday: '',
+    phone: '',
+    email: '',
+    workTime: '',
+    sex: '',
+  },
+  skill: '',
+  education: [
+    {
+      name: '',
+      education: '',
+      post: '',
+      time: ['', ''],
+      content: '',
+      mode: '',
+    },
+  ],
+  work: [
+    {
+      name: '',
+      post: '',
+      time: ['', ''],
+      content: '',
+    },
+  ],
+  project: [
+    {
+      name: '',
+      post: '',
+      time: ['', ''],
+      content: '',
+    },
+  ],
+}
+
+// 默认用户数据 (示例数据)
 export const userData: UserData = {
   user: {
     name: '小羊',
@@ -46,15 +86,9 @@ export const userData: UserData = {
       name: '***工学院',
       education: '本科',
       post: '计算机科学与技术',
-      time: ['2019.09.01', '2023.06.30'],
+      time: ['2021.09.01', '2023.06.30'],
       content: '<p><br></p>',
-    },
-    {
-      name: '****职业学院',
-      education: '大专',
-      post: '计算机网络',
-      time: ['2018.09.01', '2021.06.30'],
-      content: '<p><br></p>',
+      mode: '全日制',
     },
   ],
   work: [
