@@ -56,9 +56,9 @@ function handleMenuClick(index) {
     </div>
 
     <!-- 右侧内容 -->
-    <SfScrollbar class="flex-1">
-      <component :is="menuList[activeIndex].component" />
-    </SfScrollbar>
+    <div class="flex min-h-0 flex-1 flex-col overflow-hidden">
+      <component :is="menuList[activeIndex].component" class="h-full overflow-hidden" />
+    </div>
   </div>
 </template>
 

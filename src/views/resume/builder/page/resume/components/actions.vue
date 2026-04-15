@@ -5,23 +5,18 @@ import { computed, ref } from 'vue'
 import { VueDraggable } from 'vue-draggable-plus'
 
 const resumeStore = useResumeStore()
-const { currentConfig } = storeToRefs(resumeStore)
+const { currentConfig, currentFixedConfig } = storeToRefs(resumeStore)
 // 定义弹窗显示状态
 const isModalVisible = ref(false)
 
 // 用户配置（不参与排序和删除）
 const userConfigs = computed(() => {
-  return currentConfig.value.fields.filter((item) => item.type === 'user')
+  return currentFixedConfig.value.fields
 })
 
 // 其他配置（参与排序和删除）
-const otherConfigs = computed({
-  get: () => currentConfig.value.fields.filter((item) => item.type !== 'user'),
-  set: (val) => {
-    // 保持 userConfigs 在最前面，合并排序后的 otherConfigs
-    currentConfig.value.fields = [...userConfigs.value, ...val]
-    return currentConfig.value
-  },
+const otherConfigs = computed(() => {
+  return currentConfig.value
 })
 
 // 处理按钮点击
@@ -31,9 +26,9 @@ const handleButtonClick = () => {
 
 // 处理删除模块
 const handleDelete = (key) => {
-  const index = currentConfig.value.fields.findIndex((item) => item.key === key)
+  const index = currentConfig.value.findIndex((item) => item.key === key)
   if (index !== -1) {
-    currentConfig.value.fields.splice(index, 1)
+    currentConfig.value.splice(index, 1)
   }
 }
 </script>
@@ -65,6 +60,7 @@ const handleDelete = (key) => {
         </div>
 
         <VueDraggable
+          v-if="otherConfigs.length > 0"
           v-model="otherConfigs"
           class="flex flex-col gap-2"
           animation="150"

@@ -7,12 +7,13 @@ import ResumeActions from './components/actions.vue'
 import AddModule from './components/addModule.vue'
 import BoxCollapse from './components/boxCollapse.vue'
 import Education from './components/education.vue'
+import ItemCollapse from './components/itemCollapse.vue'
 import Project from './components/project.vue'
 import TitleEditor from './components/titleEditor.vue'
 import Work from './components/work.vue'
 
 const resumeStore = useResumeStore()
-const { currentData, currentConfig } = storeToRefs(resumeStore)
+const { currentData, currentConfig, currentFixedConfig } = storeToRefs(resumeStore)
 
 const title = ref('小羊-本科-前端开发-3年经验')
 const titleEditorRef = ref(null)
@@ -23,6 +24,7 @@ const dynamicComponents = {
   education: Education,
   project: Project,
   boxCollapse: BoxCollapse,
+  itemCollapse: ItemCollapse,
 }
 
 function handleEditTitle() {
@@ -31,9 +33,8 @@ function handleEditTitle() {
 </script>
 
 <template>
-  <div class="relative flex flex-1 flex-col">
+  <div class="relative flex h-full flex-col overflow-hidden">
     <ResumeActions />
-
     <TitleEditor v-model="title" ref="titleEditorRef" />
     <Header>
       <div
@@ -44,14 +45,22 @@ function handleEditTitle() {
         <SfIcon name="arrow-right" class="ml-2" size="5" />
       </div>
     </Header>
-    <ElScrollbar class="w-full flex-1 px-6">
-      <SfDynamicForm
-        v-model:form="currentConfig"
-        v-model:data="currentData"
-        :components="dynamicComponents"
-        class="mb-3"
-      />
-      <AddModule />
+    <ElScrollbar class="w-full flex-1">
+      <div class="px-3">
+        <SfDynamicForm
+          v-model:form="currentFixedConfig"
+          v-model:data="currentData"
+          :components="dynamicComponents"
+          class="mb-3"
+        />
+        <SfDynamicForm
+          v-model:form="currentConfig"
+          v-model:data="currentData"
+          :components="dynamicComponents"
+          class="mb-3"
+        />
+        <AddModule />
+      </div>
     </ElScrollbar>
   </div>
 </template>

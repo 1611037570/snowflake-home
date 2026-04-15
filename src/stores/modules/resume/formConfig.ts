@@ -110,7 +110,7 @@ export const userForm = [
         },
       },
     ],
-    drag: true,
+    drag: false,
     type: 'array',
     key: 'user',
     name: '用户信息',

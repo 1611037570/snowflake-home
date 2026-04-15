@@ -40,7 +40,17 @@ export const useResumeStore = defineStore(
         }
       },
     })
-
+    // 获取当前选中的固定配置
+    const currentFixedConfig = computed({
+      get() {
+        return list.value[currentIndex.value]?.fixedConfig
+      },
+      set(newFixedConfig) {
+        if (list.value[currentIndex.value]) {
+          list.value[currentIndex.value].fixedConfig = newFixedConfig
+        }
+      },
+    })
     // 获取当前选中的UI配置
     const currentUI = computed({
       get() {
@@ -57,9 +67,13 @@ export const useResumeStore = defineStore(
     const addResume = () => {
       list.value.push({
         data: structuredClone(userData),
+        fixedConfig: {
+          drag: false,
+          fields: [...userForm],
+        },
         config: {
           drag: true,
-          fields: [...userForm],
+          fields: [],
         },
         ui: {
           padding: 24,
@@ -81,6 +95,7 @@ export const useResumeStore = defineStore(
       currentIndex,
       currentData,
       currentConfig,
+      currentFixedConfig,
       currentUI,
       addResume,
       init,
