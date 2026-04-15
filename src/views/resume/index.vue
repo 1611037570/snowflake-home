@@ -7,12 +7,23 @@
           <Builder />
         </SfSplitterPanel>
         <SfSplitterPanel>
-          <div class="flex h-full flex-1 flex-col items-center bg-amber-400">
-            <ElButton type="primary" @click="printPDF" :loading="isLoading" icon="el-icon-download">
-              打印表单PDF
-            </ElButton>
+          <div class="bg-sf-bg-soft flex h-full flex-1 flex-col items-center overflow-hidden p-4">
+            <div class="mb-4 flex w-full max-w-[794px] items-center justify-between">
+              <div class="text-sm font-medium text-sf-text-2">简历预览</div>
+              <ElButton
+                type="primary"
+                @click="printPDF"
+                :loading="isLoading"
+                class="!h-9 !rounded-lg !border-none !bg-sf-theme !px-5 !font-medium hover:!opacity-90 active:!scale-95"
+              >
+                <template #icon>
+                  <SfIcon icon="material-symbols:download" size="4.5" class="mr-1" />
+                </template>
+                导出 PDF
+              </ElButton>
+            </div>
             <!-- 表单容器 -->
-            <div ref="formContainer" class="w-full flex-1">
+            <div ref="formContainer" class="scrollbar-hide w-full flex-1 overflow-y-auto">
               <Preview />
             </div>
           </div>
@@ -27,7 +38,8 @@
 
 <script setup>
 import { useResumeStore } from '@/stores'
-import { ref } from 'vue'
+import { storeToRefs } from 'pinia'
+import { onMounted, ref } from 'vue'
 import Assistant from './assistant/index.vue'
 import Builder from './builder/index.vue'
 import Header from './components/header.vue'
@@ -35,12 +47,14 @@ import Preview from './preview/index.vue'
 
 const resumeStore = useResumeStore()
 const { list, currentIndex } = storeToRefs(resumeStore)
+
 function init() {
   if (!list.value.length) {
     resumeStore.addResume()
   }
   currentIndex.value = 0
 }
+
 onMounted(() => {
   init()
 })
@@ -51,7 +65,8 @@ const formContainer = ref(null)
 const isLoading = ref(false)
 
 /**
- * 将表单打印为PDF文件 - 延迟加载PDF相关库以优化初始加载性能
+ * 将简历预览导出为PDF文件
+ * 利用 ResumePage 已生成的分页结构直接导出
  */
 const printPDF = async () => {
   if (!formContainer.value) {
@@ -66,169 +81,79 @@ const printPDF = async () => {
     const { default: html2canvas } = await import('html2canvas')
     const { default: jsPDF } = await import('jspdf')
 
-    // 创建PDF文档
+    // 查找所有已分页的页面元素
+    const pages = formContainer.value.querySelectorAll('.resume-page-item')
+    if (pages.length === 0) {
+      console.error('未找到可打印的简历页面')
+      return
+    }
+
+    // 创建PDF文档 (A4尺寸)
     const pdf = new jsPDF({
       orientation: 'portrait',
       unit: 'mm',
       format: 'a4',
     })
 
-    // 计算A4尺寸（mm）
     const pageWidth = 210
     const pageHeight = 297
-    const margin = 5 // 减小边距，使其更接近原始页面
 
-    // 获取所有子元素
-    const elements = Array.from(formContainer.value.children)
-    const originalStyles = [] // 保存原始样式
-
-    // 临时创建一个容器用于测量和渲染
+    // 创建隐藏的临时容器用于渲染 (防止缩放干扰)
     const tempContainer = document.createElement('div')
     tempContainer.style.position = 'absolute'
     tempContainer.style.top = '-9999px'
-    tempContainer.style.width = `${pageWidth}mm`
-    tempContainer.style.padding = '0mm'
-    tempContainer.style.backgroundColor = '#ffffff'
-    tempContainer.style.pageBreakInside = 'avoid'
-    tempContainer.style.color = '#000000' // 临时设置文本颜色为黑色，避免oklab颜色函数问题
+    tempContainer.style.left = '-9999px'
+    tempContainer.style.width = '794px' // A4 96dpi 宽度
     document.body.appendChild(tempContainer)
 
-    // 为每个元素设置分页保护样式
-    elements.forEach((element) => {
-      originalStyles.push({
-        element,
-        pageBreakInside: element.style.pageBreakInside,
-        pageBreakAfter: element.style.pageBreakAfter,
-        color: element.style.color,
-      })
-      element.style.pageBreakInside = 'avoid'
-      element.style.pageBreakAfter = 'auto'
-      element.style.color = '#000000' // 临时设置文本颜色为黑色，避免oklab颜色函数问题
-    })
+    for (let i = 0; i < pages.length; i++) {
+      const pageEl = pages[i]
 
-    // 处理单页内容的函数
-    const processPage = async (pageElements) => {
-      // 清空并填充临时容器
-      tempContainer.innerHTML = ''
-      pageElements.forEach((el) => {
-        // 克隆元素
-        const clone = el.cloneNode(true)
-        // 确保克隆的元素使用黑色文本，避免oklab颜色函数问题
-        clone.style.color = '#000000'
-        tempContainer.appendChild(clone)
-      })
+      // 克隆页面并清除可能干扰渲染的样式 (如阴影、圆角)
+      const clone = pageEl.cloneNode(true)
+      clone.style.boxShadow = 'none'
+      clone.style.borderRadius = '0'
+      clone.style.margin = '0'
+      clone.style.transform = 'none'
+      clone.style.zoom = '1'
 
-      // 渲染到canvas，优化样式和清晰度
-      const canvas = await html2canvas(tempContainer, {
-        scale: 2.5, // 提高清晰度，使PDF输出更细腻
-        useCORS: true, // 允许跨域图片
-        logging: false, // 禁用日志
-        backgroundColor: '#ffffff', // 设置背景色
-        letterRendering: true, // 优化文字渲染
-        allowTaint: true, // 允许渲染所有内容
-        imageTimeout: 15000, // 增加图片加载超时时间
-        removeContainer: false, // 手动管理容器移除
-        // 自定义样式处理，避免oklab颜色函数问题
-        onclone: (clonedDoc) => {
-          // 遍历所有元素，确保使用黑色文本
-          const allElements = clonedDoc.querySelectorAll('*')
-          allElements.forEach((element) => {
-            element.style.color = '#000000'
-          })
-        },
-      })
-
-      // 添加到PDF
-      const imgData = canvas.toDataURL('image/png')
-      const imgWidth = pageWidth // 使用完整页面宽度
-      const imgHeight = (canvas.height * imgWidth) / canvas.width
-
-      pdf.addImage(imgData, 'PNG', 0, 0, pageWidth, imgHeight) // 从页面左上角开始
-    }
-
-    // 逐元素测量并智能分页
-    let currentPageElements = []
-    let currentPageHeight = 0
-    const safetyMargin = 2 // 额外的安全边界
-
-    for (let i = 0; i < elements.length; i++) {
-      const element = elements[i]
-
-      // 创建元素克隆并测量其高度
-      const clone = element.cloneNode(true)
       tempContainer.innerHTML = ''
       tempContainer.appendChild(clone)
 
-      // 转换px到mm（假设96dpi）
-      const elementHeight = (clone.offsetHeight / 96) * 25.4
+      // 渲染页面为 Canvas
+      const canvas = await html2canvas(clone, {
+        scale: 2, // 提高清晰度
+        useCORS: true,
+        backgroundColor: '#ffffff',
+        logging: false,
+        width: 794,
+        height: 1123,
+      })
 
-      // 预测下一个元素的高度（如果有的话）
-      let nextElementHeight = 0
-      if (i + 1 < elements.length) {
-        const nextClone = elements[i + 1].cloneNode(true)
-        tempContainer.innerHTML = ''
-        tempContainer.appendChild(nextClone)
-        nextElementHeight = (nextClone.offsetHeight / 96) * 25.4
+      if (!canvas || canvas.width === 0 || canvas.height === 0) {
+        console.error(`第 ${i + 1} 页渲染失败`)
+        continue
       }
 
-      // 检查添加当前元素后是否会导致下一个元素放不下
-      if (
-        currentPageHeight + elementHeight + nextElementHeight + safetyMargin >
-          pageHeight - margin &&
-        i + 1 < elements.length
-      ) {
-        // 将当前元素放到新页面，确保下一个元素不会被分割
-        if (currentPageElements.length > 0) {
-          await processPage(currentPageElements)
-          pdf.addPage()
-          currentPageElements = []
-          currentPageHeight = 0
-        }
-      }
+      const imgData = canvas.toDataURL('image/png')
 
-      // 如果元素本身太大，需要单独一页
-      if (elementHeight > pageHeight - margin * 2) {
-        if (currentPageElements.length > 0) {
-          await processPage(currentPageElements)
-          pdf.addPage()
-          currentPageElements = []
-          currentPageHeight = 0
-        }
-      }
-
-      // 添加元素到当前页
-      currentPageElements.push(element)
-      currentPageHeight += elementHeight
-
-      // 如果当前页已满，处理并创建新页
-      if (currentPageHeight > pageHeight - margin) {
-        await processPage(currentPageElements)
+      // 如果不是第一页，添加新页面
+      if (i > 0) {
         pdf.addPage()
-        currentPageElements = []
-        currentPageHeight = 0
       }
+
+      // 将图片填满整个PDF页面
+      pdf.addImage(imgData, 'PNG', 0, 0, pageWidth, pageHeight, undefined, 'FAST')
     }
 
-    // 处理最后一页
-    if (currentPageElements.length > 0) {
-      await processPage(currentPageElements)
-    }
-
-    // 清理
+    // 清理临时容器
     document.body.removeChild(tempContainer)
 
-    // 恢复原始样式
-    originalStyles.forEach((styleInfo) => {
-      styleInfo.element.style.pageBreakInside = styleInfo.pageBreakInside
-      styleInfo.element.style.pageBreakAfter = styleInfo.pageBreakAfter
-      styleInfo.element.style.color = styleInfo.color
-    })
+    // 保存PDF
+    const timestamp = new Date().toISOString().replace(/[:.]/g, '-')
+    pdf.save(`简历导出-${timestamp}.pdf`)
 
-    // 保存PDF文件
-    const fileName = `表单-${new Date().toISOString().split('T')[0]}.pdf`
-    pdf.save(fileName)
-
-    console.log('PDF生成成功，实现了逐行分页，确保文字不会被分割在两页之间')
+    console.log(`成功导出 ${pages.length} 页 PDF`)
   } catch (error) {
     console.error('生成PDF失败:', error)
   } finally {
