@@ -1,26 +1,36 @@
 <template>
-  <SfSplitter v-if="currentIndex >= 0">
-    <SfSplitterPanel max="900" min="550" size="600">
-      <Builder />
-    </SfSplitterPanel>
-    <SfSplitterPanel>
-      <div class="flex h-full flex-1 flex-col items-center bg-amber-400">
-        <ElButton type="primary" @click="printPDF" :loading="isLoading" icon="el-icon-download">
-          打印表单PDF
-        </ElButton>
-        <!-- 表单容器 -->
-        <div ref="formContainer" class="w-full flex-1">
-          <Preview />
-        </div>
-      </div>
-    </SfSplitterPanel>
-  </SfSplitter>
+  <div class="flex h-full w-full flex-col">
+    <Header />
+    <div class="w-full flex-1 overflow-hidden">
+      <SfSplitter v-if="currentIndex >= 0">
+        <SfSplitterPanel max="600" min="400">
+          <Builder />
+        </SfSplitterPanel>
+        <SfSplitterPanel>
+          <div class="flex h-full flex-1 flex-col items-center bg-amber-400">
+            <ElButton type="primary" @click="printPDF" :loading="isLoading" icon="el-icon-download">
+              打印表单PDF
+            </ElButton>
+            <!-- 表单容器 -->
+            <div ref="formContainer" class="w-full flex-1">
+              <Preview />
+            </div>
+          </div>
+        </SfSplitterPanel>
+        <SfSplitterPanel max="400" min="400">
+          <Assistant />
+        </SfSplitterPanel>
+      </SfSplitter>
+    </div>
+  </div>
 </template>
 
 <script setup>
 import { useResumeStore } from '@/stores'
 import { ref } from 'vue'
+import Assistant from './assistant/index.vue'
 import Builder from './builder/index.vue'
+import Header from './components/header.vue'
 import Preview from './preview/index.vue'
 
 const resumeStore = useResumeStore()
