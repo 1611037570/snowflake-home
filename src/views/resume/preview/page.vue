@@ -22,7 +22,8 @@ const allModules = computed(() => [
   ...currentFixedConfig.value.fields,
   ...currentConfig.value.fields,
 ])
-
+const WIDTH = 794
+const HEIGHT = 1123
 // 使用 useRowInfo 获取每个模块的高度
 const { rowList } = useRowInfo(measureRef)
 
@@ -32,34 +33,26 @@ const pages = computed(() => {
   let currentPage = []
   let currentHeight = 0
 
-  // A4 总高度 1123px
-  // 减去内边距 (上下) 和 页码区域高度
   const padding = currentUI.value.padding || 0
-  const footerHeight = 45 // 进一步增加预留给页码的高度，更安全
-  const maxContentHeight = 1123 - padding * 2 - footerHeight - 10 // 额外减少 10px 缓冲
+  const maxContentHeight = HEIGHT - padding * 2 - 32 // 减去内边距和页脚空间
 
   rowList.value.forEach((row) => {
-    // 如果加上当前模块高度超过一页，且当前页已有内容，则开启新的一页
+    // 若当前行加入后超出单页高度，且当前页已有内容，则存入结果并重置
     if (currentHeight + row.height > maxContentHeight && currentPage.length > 0) {
       result.push(currentPage)
       currentPage = []
       currentHeight = 0
     }
 
-    // 存储 HTML 字符串以便渲染
     currentPage.push({
-      html: row.element.outerHTML,
+      html: row.html,
     })
     currentHeight += row.height
   })
 
-  if (currentPage.length > 0) {
+  // 补录最后一页
+  if (currentPage.length > 0 || result.length === 0) {
     result.push(currentPage)
-  }
-
-  // 如果没有任何模块，默认显示一页
-  if (result.length === 0) {
-    result.push([])
   }
 
   return result
@@ -71,7 +64,7 @@ const pages = computed(() => {
     <!-- 隐藏的测量容器：用于 useRowInfo 读取高度 -->
     <div
       class="pointer-events-none absolute -z-10 opacity-0"
-      :style="[paddingValue(), { width: '794px' }]"
+      :style="[paddingValue(), { width: `${WIDTH}px` }]"
     >
       <div ref="measureRef" class="flex flex-col" :style="[fontValue(), lineHeightValue()]">
         <ResumeModule
@@ -86,12 +79,19 @@ const pages = computed(() => {
     <!-- 实际渲染的分页内容 -->
     <template v-for="(pageRows, pageIndex) in pages" :key="pageIndex">
       <div
-        class="resume-page-item flex h-[1123px] w-[794px] flex-col rounded-lg bg-white text-black shadow-lg"
+        class="resume-page-item flex flex-col rounded-lg bg-white text-black shadow-lg"
         :class="currentUI.fontFamily"
-        :style="[paddingValue(), fontValue(), lineHeightValue()]"
+        :style="[
+          paddingValue(),
+          fontValue(),
+          lineHeightValue(),
+          { width: `${WIDTH}px`, height: `${HEIGHT}px` },
+        ]"
       >
-        <div v-for="(row, idx) in pageRows" :key="idx" v-html="row.html"></div>
-        <div class="mt-auto text-center text-xs opacity-50">
+        <div class="flex flex-1 flex-col overflow-hidden">
+          <div v-for="(row, idx) in pageRows" :key="idx" v-html="row.html"></div>
+        </div>
+        <div class="pt-3 text-center text-xs opacity-50">
           第 {{ pageIndex + 1 }} 页，共 {{ pages.length }} 页
         </div>
       </div>
