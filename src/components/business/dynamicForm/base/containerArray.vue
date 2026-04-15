@@ -1,6 +1,12 @@
 <template>
   <el-row class="m-0! w-full" :gutter="12" ref="row" v-if="form.list.length">
-    <FormItem :form="item" v-for="(item, index) in form.list" :span="item.span" :key="item.id">
+    <FormItem
+      :form="item"
+      v-for="(item, index) in form.list"
+      :span="item.span"
+      :key="item.id"
+      class="p-0!"
+    >
       <component
         :key="item.id"
         :is="getComponent(item?.component)"
