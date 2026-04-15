@@ -258,58 +258,60 @@ export const workForm: any = {
     title: '工作经历',
   },
   slot: true,
-  children: [
-    {
-      type: 'array',
-      drag: true,
-      list: [
-        {
-          component: 'work',
-          span: 24,
-          data: [
-            {
-              path: ['work', '?', 'name'],
-              key: 'name',
-            },
-            {
-              path: ['work', '?', 'post'],
-              key: 'post',
-            },
-            {
-              path: ['work', '?', 'time'],
-              key: 'time',
-            },
-            {
-              path: ['work', '?', 'content'],
-              key: 'content',
-            },
-          ],
-        },
-        {
-          component: 'work',
-          span: 24,
-          data: [
-            {
-              path: ['work', '?', 'name'],
-              key: 'name',
-            },
-            {
-              path: ['work', '?', 'post'],
-              key: 'post',
-            },
-            {
-              path: ['work', '?', 'time'],
-              key: 'time',
-            },
-            {
-              path: ['work', '?', 'content'],
-              key: 'content',
-            },
-          ],
-        },
-      ],
-    },
-  ],
+  children: {
+    fields: [
+      {
+        type: 'array',
+        drag: true,
+        list: [
+          {
+            component: 'work',
+            span: 24,
+            data: [
+              {
+                path: ['work', '?', 'name'],
+                key: 'name',
+              },
+              {
+                path: ['work', '?', 'post'],
+                key: 'post',
+              },
+              {
+                path: ['work', '?', 'time'],
+                key: 'time',
+              },
+              {
+                path: ['work', '?', 'content'],
+                key: 'content',
+              },
+            ],
+          },
+          {
+            component: 'work',
+            span: 24,
+            data: [
+              {
+                path: ['work', '?', 'name'],
+                key: 'name',
+              },
+              {
+                path: ['work', '?', 'post'],
+                key: 'post',
+              },
+              {
+                path: ['work', '?', 'time'],
+                key: 'time',
+              },
+              {
+                path: ['work', '?', 'content'],
+                key: 'content',
+              },
+            ],
+          },
+        ],
+      },
+    ],
+  },
 }
 // 项目经历
 export const projectForm: any = {
@@ -322,58 +324,60 @@ export const projectForm: any = {
   },
   drag: true,
   slot: true,
-  children: [
-    {
-      type: 'array',
-      drag: true,
-      list: [
-        {
-          component: 'project',
-          span: 24,
-          data: [
-            {
-              path: ['project', '?', 'name'],
-              key: 'name',
-            },
-            {
-              path: ['project', '?', 'post'],
-              key: 'post',
-            },
-            {
-              path: ['project', '?', 'time'],
-              key: 'time',
-            },
-            {
-              path: ['project', '?', 'content'],
-              key: 'content',
-            },
-          ],
-        },
-        {
-          component: 'project',
-          span: 24,
-          data: [
-            {
-              path: ['project', '?', 'name'],
-              key: 'name',
-            },
-            {
-              path: ['project', '?', 'post'],
-              key: 'post',
-            },
-            {
-              path: ['project', '?', 'time'],
-              key: 'time',
-            },
-            {
-              path: ['project', '?', 'content'],
-              key: 'content',
-            },
-          ],
-        },
-      ],
-    },
-  ],
+  children: {
+    fields: [
+      {
+        type: 'array',
+        drag: true,
+        list: [
+          {
+            component: 'project',
+            span: 24,
+            data: [
+              {
+                path: ['project', '?', 'name'],
+                key: 'name',
+              },
+              {
+                path: ['project', '?', 'post'],
+                key: 'post',
+              },
+              {
+                path: ['project', '?', 'time'],
+                key: 'time',
+              },
+              {
+                path: ['project', '?', 'content'],
+                key: 'content',
+              },
+            ],
+          },
+          {
+            component: 'project',
+            span: 24,
+            data: [
+              {
+                path: ['project', '?', 'name'],
+                key: 'name',
+              },
+              {
+                path: ['project', '?', 'post'],
+                key: 'post',
+              },
+              {
+                path: ['project', '?', 'time'],
+                key: 'time',
+              },
+              {
+                path: ['project', '?', 'content'],
+                key: 'content',
+              },
+            ],
+          },
+        ],
+      },
+    ],
+  },
 }
 
 // 自定义经历
@@ -386,40 +390,42 @@ export const customForm: any = {
     title: '',
   },
   slot: true,
-  children: [
-    {
-      type: 'array',
-      drag: true,
-      list: [
-        {
-          component: 'custom',
-          span: 24,
-          data: [
-            {
-              path: ['custom', '?', 'name'],
-              key: 'name',
-            },
-            {
-              path: ['custom', '?', 'education'],
-              key: 'education',
-            },
-            {
-              path: ['custom', '?', 'post'],
-              key: 'post',
-            },
-            {
-              path: ['custom', '?', 'time'],
-              key: 'time',
-            },
-            {
-              path: ['custom', '?', 'content'],
-              key: 'content',
-            },
-          ],
-        },
-      ],
-    },
-  ],
+  children: {
+    fields: [
+      {
+        type: 'array',
+        drag: true,
+        list: [
+          {
+            component: 'custom',
+            span: 24,
+            data: [
+              {
+                path: ['custom', '?', 'name'],
+                key: 'name',
+              },
+              {
+                path: ['custom', '?', 'education'],
+                key: 'education',
+              },
+              {
+                path: ['custom', '?', 'post'],
+                key: 'post',
+              },
+              {
+                path: ['custom', '?', 'time'],
+                key: 'time',
+              },
+              {
+                path: ['custom', '?', 'content'],
+                key: 'content',
+              },
+            ],
+          },
+        ],
+      },
+    ],
+  },
 }
 
 export const allConfig = {
