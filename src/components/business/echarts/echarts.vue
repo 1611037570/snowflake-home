@@ -1,13 +1,13 @@
 <script setup>
+import { computed } from 'vue'
 import useEcharts from './core/useEcharts'
-import { computed, useId } from 'vue'
 
 const props = defineProps({
   options: {
     default: () => {},
   },
 })
-const id = useId()
+const id = `echarts-${Math.random().toString(36).slice(2, 9)}`
 
 defineOptions({ name: 'SfEcharts' })
 // const echartsRef = useTemplateRef('echartsRef')
@@ -52,17 +52,6 @@ const options = computed(() => {
         color: '#50a2ff',
       },
     },
-    tooltip: {},
-    xAxis: {
-      data: ['组件', '页面', '图标'],
-    },
-    yAxis: {},
-    series: [
-      {
-        type: 'bar',
-        data: [10, 35, 20],
-      },
-    ],
   }
 
   // 深度合并：传入的配置优先，保留默认未被覆盖的属性
