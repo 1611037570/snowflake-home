@@ -4,7 +4,10 @@
       <component
         :key="item.id"
         :is="getComponent(item?.component)"
-        v-bind="dataProxy.getDataProxy(item.data, index)"
+        v-bind="{
+          ...dataProxy.getDataProxy(item.data, index),
+          ...item.props,
+        }"
         v-on="dataProxy.setDataProxy(item.data, index)"
       ></component>
       <div class="flex" v-if="item.ui">

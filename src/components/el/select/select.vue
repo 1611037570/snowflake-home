@@ -11,7 +11,7 @@
 
 <script setup lang="ts">
 import { ElSelect } from 'element-plus'
-import type { ComponentInstance } from 'vue'
+import type { ComponentInstance, PropType } from 'vue'
 import { getCurrentInstance, h } from 'vue'
 
 defineOptions({ name: 'SfSelect' })
@@ -20,7 +20,7 @@ const bg = inject('bg')
 
 defineProps({
   list: {
-    type: Array,
+    type: Array as PropType<{ value: string; name: string }[]>,
     default: () => [],
   },
 })
