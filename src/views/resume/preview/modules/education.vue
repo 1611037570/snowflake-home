@@ -11,7 +11,6 @@ const resumeStore = useResumeStore()
 const { currentData } = storeToRefs(resumeStore)
 
 const fontValue = inject('fontValue')
-const lineHeightValue = inject('lineHeightValue')
 
 const education = computed(() => {
   return (currentData.value.education || []).map((item) => ({
@@ -24,28 +23,26 @@ const education = computed(() => {
 </script>
 
 <template>
-  <div class="flex flex-col" :style="[fontValue(), lineHeightValue()]">
-    <!-- 标题栏 -->
-    <Title title="教育经历"></Title>
-    <!-- 内容区 -->
-    <div v-for="(item, index) in education" :key="index" class="mb-3">
-      <div class="flex items-center justify-between">
-        <div class="flex items-baseline gap-4">
-          <span class="font-bold" :style="[fontValue(3)]">{{ item.name }}</span>
-        </div>
-        <div class="flex items-center gap-2">
-          <span>{{ getTime(item.time) }}</span>
-        </div>
+  <!-- 标题栏 -->
+  <Title title="教育经历"></Title>
+  <!-- 内容区 -->
+  <div v-for="(item, index) in education" :key="index" class="mb-3">
+    <div class="flex items-center justify-between">
+      <div class="flex items-baseline gap-4">
+        <span class="font-bold" :style="[fontValue(3)]">{{ item.name }}</span>
       </div>
       <div class="flex items-center gap-2">
-        <template v-for="(field, i) in item.infoList" :key="i">
-          <span>{{ field }}</span>
-          <div v-if="i < item.infoList.length - 1" class="h-1 w-1 rounded-full bg-black"></div>
-        </template>
+        <span>{{ getTime(item.time) }}</span>
       </div>
-      <!-- 补充描述/经历 -->
-      <Content :content="item.content" />
     </div>
+    <div class="flex items-center gap-2">
+      <template v-for="(field, i) in item.infoList" :key="i">
+        <span>{{ field }}</span>
+        <div v-if="i < item.infoList.length - 1" class="h-1 w-1 rounded-full bg-black"></div>
+      </template>
+    </div>
+    <!-- 补充描述/经历 -->
+    <Content :content="item.content" />
   </div>
 </template>
 

@@ -10,27 +10,24 @@ const resumeStore = useResumeStore()
 const { currentData } = storeToRefs(resumeStore)
 
 const fontValue = inject('fontValue')
-const lineHeightValue = inject('lineHeightValue')
 
 const projectList = computed(() => currentData.value.project || [])
 </script>
 
 <template>
-  <div class="flex flex-col" :style="[fontValue(), lineHeightValue()]">
-    <!-- 标题栏 -->
-    <Title title="项目经历"></Title>
-    <!-- 内容区 -->
-    <div v-for="(item, index) in projectList" :key="index" class="mb-3 flex flex-col">
-      <div class="flex items-center justify-between">
-        <div class="flex items-center gap-4">
-          <div class="font-bold" :style="[fontValue(3)]">{{ item.name }}</div>
-          <div>{{ item.post }}</div>
-        </div>
-        <div class="flex items-center">{{ getTime(item.time) }}</div>
+  <!-- 标题栏 -->
+  <Title title="项目经历"></Title>
+  <!-- 内容区 -->
+  <div v-for="(item, index) in projectList" :key="index" class="mb-3 flex flex-col">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center gap-4">
+        <div class="font-bold" :style="[fontValue(3)]">{{ item.name }}</div>
+        <div>{{ item.post }}</div>
       </div>
-      <!-- 补充描述/经历 -->
-      <Content :content="item.content" />
+      <div class="flex items-center">{{ getTime(item.time) }}</div>
     </div>
+    <!-- 补充描述/经历 -->
+    <Content :content="item.content" />
   </div>
 </template>
 
