@@ -30,9 +30,10 @@ loadTheme()
 // 加载默认事件
 loadEvent()
 
-// 注册全局函数 $s
-import { $s } from './utils/modules/sizeConvert'
+// 注册全局函数 $s 和 $bus
+import { $s, eventBus } from './utils'
 app.config.globalProperties.$s = $s
+app.config.globalProperties.$bus = eventBus
 
 // 注册全局组件安装器
 app.use(globalComponentInstaller)
