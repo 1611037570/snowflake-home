@@ -115,6 +115,17 @@ export const userForm = [
     key: 'user',
     name: '用户信息',
   },
+  {
+    component: 'socialAccount',
+    span: 24,
+    type: 'object',
+    data: [
+      {
+        path: ['user', 'link'],
+        key: 'modelValue',
+      },
+    ],
+  },
 ]
 // 教育经历
 export const educationForm: any = {
