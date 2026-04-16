@@ -7,21 +7,7 @@
           <Builder />
         </SfSplitterPanel>
         <SfSplitterPanel>
-          <div class="bg-sf-bg-soft flex h-full flex-1 flex-col items-center overflow-hidden p-4">
-            <div class="mb-4 flex w-full max-w-[794px] items-center justify-between">
-              <div class="text-sm font-medium text-sf-text-2">简历预览</div>
-              <ElButton
-                type="primary"
-                @click="printPDF"
-                :loading="isLoading"
-                class="!h-9 !rounded-lg !border-none !bg-sf-theme !px-5 !font-medium hover:!opacity-90 active:!scale-95"
-              >
-                <template #icon>
-                  <SfIcon icon="material-symbols:download" size="4.5" class="mr-1" />
-                </template>
-                导出 PDF
-              </ElButton>
-            </div>
+          <div class="bg-sf-bg-soft flex h-full flex-1 flex-col items-center overflow-hidden">
             <!-- 表单容器 -->
             <div ref="formContainer" class="scrollbar-hide w-full flex-1 overflow-y-auto">
               <Preview />
@@ -38,8 +24,9 @@
 
 <script setup>
 import { useResumeStore } from '@/stores'
+import eventBus from '@/utils/modules/eventBus'
 import { storeToRefs } from 'pinia'
-import { onMounted, ref } from 'vue'
+import { onMounted, onUnmounted, ref } from 'vue'
 import Assistant from './assistant/index.vue'
 import Builder from './builder/index.vue'
 import Header from './components/header.vue'
@@ -57,6 +44,11 @@ function init() {
 
 onMounted(() => {
   init()
+  eventBus.on('resume-print-pdf', printPDF)
+})
+
+onUnmounted(() => {
+  eventBus.off('resume-print-pdf', printPDF)
 })
 
 // 表单容器引用
@@ -78,7 +70,7 @@ const printPDF = async () => {
 
   try {
     // 动态导入PDF相关库
-    const { default: html2canvas } = await import('html2canvas')
+    const { snapdom } = await import('@zumer/snapdom')
     const { default: jsPDF } = await import('jspdf')
 
     // 查找所有已分页的页面元素
@@ -121,11 +113,9 @@ const printPDF = async () => {
       tempContainer.appendChild(clone)
 
       // 渲染页面为 Canvas
-      const canvas = await html2canvas(clone, {
+      const canvas = await snapdom.toCanvas(clone, {
         scale: 2, // 提高清晰度
-        useCORS: true,
         backgroundColor: '#ffffff',
-        logging: false,
         width: 794,
         height: 1123,
       })
