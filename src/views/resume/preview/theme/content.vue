@@ -34,10 +34,11 @@ const splitBlocks = computed(() => {
 
 <template>
   <template v-if="hasContent(content)">
+    <div class="mt-1 w-full"></div>
     <div
       v-for="(block, idx) in splitBlocks"
       :key="idx"
-      class="paginatable-item whitespace-pre-wrap"
+      class="whitespace-pre-wrap"
       :style="[fontValue(-3), lineHeightValue(-3)]"
       v-html="block"
     ></div>
