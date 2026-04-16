@@ -18,8 +18,8 @@ const projectList = computed(() => currentData.value.project || [])
   <!-- 标题栏 -->
   <Title title="项目经历"></Title>
   <!-- 内容区 -->
-  <div v-for="(item, index) in projectList" :key="index" class="mb-3 flex flex-col">
-    <div class="flex items-center justify-between">
+  <template v-for="item in projectList" :key="item.name">
+    <div class="mb-3 flex items-center justify-between">
       <div class="flex items-center gap-4">
         <div class="font-bold" :style="[fontValue(3)]">{{ item.name }}</div>
         <div>{{ item.post }}</div>
@@ -28,7 +28,7 @@ const projectList = computed(() => currentData.value.project || [])
     </div>
     <!-- 补充描述/经历 -->
     <Content :content="item.content" />
-  </div>
+  </template>
 </template>
 
 <style lang="scss" scoped></style>
