@@ -12,6 +12,7 @@ const resumeStore = useResumeStore()
 const { currentData } = storeToRefs(resumeStore)
 
 const fontValue = inject('fontValue')
+const lineHeightValue = inject('lineHeightValue')
 
 const workList = computed(() => currentData.value.work || [])
 </script>
@@ -19,7 +20,7 @@ const workList = computed(() => currentData.value.work || [])
 <template>
   <Title title="工作经历" />
   <template v-for="(item, index) in workList" :key="index">
-    <div class="flex items-center justify-between">
+    <div class="flex items-center justify-between" :style="[lineHeightValue(3)]">
       <div class="flex items-center gap-4">
         <div class="font-bold" :style="[fontValue(3)]">{{ item.name }}</div>
         <div>{{ item.post }}</div>

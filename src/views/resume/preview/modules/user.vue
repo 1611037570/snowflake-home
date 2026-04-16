@@ -81,7 +81,7 @@ const email = computed(() => {
   <!-- 联系方式 -->
   <div
     class="mt-1 flex flex-wrap gap-x-6"
-    :style="(lineHeightValue(14), fontValue())"
+    :style="[lineHeightValue(14), fontValue()]"
     v-if="phone || email"
   >
     <div class="flex items-center" v-if="phone">
@@ -93,14 +93,12 @@ const email = computed(() => {
       <div class="font-medium">{{ email }}</div>
     </div>
   </div>
-
   <!-- 社交链接 -->
-
   <div
     v-for="(item, index) in user.link"
     :key="index"
     class="mt-1 flex items-center gap-2"
-    :style="(lineHeightValue(), fontValue())"
+    :style="[lineHeightValue(), fontValue()]"
   >
     <div class="pr-1">{{ item.name }}：</div>
     <a :href="item.url" target="_blank" class="font-medium hover:underline">{{ item.url }}</a>
