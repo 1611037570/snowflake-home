@@ -68,7 +68,7 @@ const email = computed(() => {
 
 <template>
   <!-- 头部基本信息 -->
-  <div class="mb-3 flex items-center" :style="[lineHeightValue(22)]">
+  <div class="flex items-center" :style="[lineHeightValue(22)]">
     <h1 class="font-bold tracking-wide" :style="[fontValue(14)]">{{ user.name }}</h1>
     <div class="ml-4 flex items-center gap-3 opacity-80" :style="[fontValue(2)]">
       <span v-if="user.sex">{{ user.sex }}</span>
@@ -78,33 +78,32 @@ const email = computed(() => {
       <span v-if="workYears">{{ workYears }}年经验</span>
     </div>
   </div>
-
   <!-- 联系方式 -->
   <div
-    class="mb-3 flex flex-wrap gap-x-6"
+    class="mt-1 flex flex-wrap gap-x-6"
     :style="(lineHeightValue(14), fontValue())"
     v-if="phone || email"
   >
-    <div class="flex items-center gap-2" v-if="phone">
-      <span class="opacity-70">电话：</span>
-      <span class="font-medium">{{ phone }}</span>
+    <div class="flex items-center" v-if="phone">
+      <div class="pr-1">电话：</div>
+      <div class="font-medium">{{ phone }}</div>
     </div>
-    <div class="flex items-center gap-2" v-if="email">
-      <span class="opacity-70">邮箱：</span>
-      <span class="font-medium">{{ email }}</span>
+    <div class="flex items-center" v-if="email">
+      <div class="pr-1">邮箱：</div>
+      <div class="font-medium">{{ email }}</div>
     </div>
   </div>
 
   <!-- 社交链接 -->
+
   <div
-    class="flex flex-col gap-2 pb-4"
+    v-for="(item, index) in user.link"
+    :key="index"
+    class="mt-1 flex items-center gap-2"
     :style="(lineHeightValue(), fontValue())"
-    v-if="user.link && user.link.length"
   >
-    <div v-for="(item, index) in user.link" :key="index" class="flex items-center gap-2">
-      <span class="opacity-70">{{ item.name }}：</span>
-      <a :href="item.url" target="_blank" class="font-medium hover:underline">{{ item.url }}</a>
-    </div>
+    <div class="pr-1">{{ item.name }}：</div>
+    <a :href="item.url" target="_blank" class="font-medium hover:underline">{{ item.url }}</a>
   </div>
 </template>
 

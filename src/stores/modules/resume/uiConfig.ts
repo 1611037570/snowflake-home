@@ -43,19 +43,19 @@ export const fontList = [
   },
   {
     name: '小',
-    value: 12,
-  },
-  {
-    name: '中',
     value: 14,
   },
   {
-    name: '大',
+    name: '中',
     value: 16,
   },
   {
+    name: '大',
+    value: 18,
+  },
+  {
     name: '特大',
-    value: 20,
+    value: 22,
   },
 ]
 
