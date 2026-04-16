@@ -1,6 +1,11 @@
 <script setup>
+import { useResumeStore } from '@/stores'
 import eventBus from '@/utils/modules/eventBus'
+import { storeToRefs } from 'pinia'
 import { ref } from 'vue'
+
+const resumeStore = useResumeStore()
+const { isPrinting } = storeToRefs(resumeStore)
 
 const activeLayout = ref('middle') // 'left', 'middle', 'right'
 
@@ -9,6 +14,7 @@ const setLayout = (layout) => {
 }
 
 const handleDownload = () => {
+  if (isPrinting.value) return
   eventBus.emit('resume-print-pdf')
 }
 </script>
@@ -80,12 +86,13 @@ const handleDownload = () => {
 
         <el-button
           @click="handleDownload"
+          :loading="isPrinting"
           class="!h-9 !rounded-lg !border-sf-border !bg-sf-primary !px-4 !font-medium !text-sf-text-2 hover:!border-sf-theme hover:!text-sf-theme"
         >
-          <template #icon>
+          <template #icon v-if="!isPrinting">
             <SfIcon icon="material-symbols:download" size="4.5" class="mr-1" />
           </template>
-          下载
+          {{ isPrinting ? '生成中...' : '下载' }}
         </el-button>
 
         <el-button

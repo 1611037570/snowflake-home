@@ -19,6 +19,7 @@ export const useResumeStore = defineStore(
   'resume',
   () => {
     const indexVisible = ref(false)
+    const isPrinting = ref(false)
 
     // 简历列表
     const list = ref<any[]>([])
@@ -80,7 +81,7 @@ export const useResumeStore = defineStore(
           fontSize: 12,
           lineHeight: 24,
           color: '#ff4d4f',
-          fontFamily: 'font-alipu',
+          fontFamily: 'text-puhui',
         },
       })
       currentIndex.value = list.value.length - 1
@@ -97,6 +98,7 @@ export const useResumeStore = defineStore(
       currentConfig,
       currentFixedConfig,
       currentUI,
+      isPrinting,
       addResume,
       init,
     }
