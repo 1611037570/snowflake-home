@@ -33,7 +33,7 @@ import Header from './components/header.vue'
 import Preview from './preview/index.vue'
 
 const resumeStore = useResumeStore()
-const { list, currentIndex } = storeToRefs(resumeStore)
+const { list, currentIndex, isPrinting } = storeToRefs(resumeStore)
 
 function init() {
   if (!list.value.length) {
@@ -53,8 +53,6 @@ onUnmounted(() => {
 
 // 表单容器引用
 const formContainer = ref(null)
-// 加载状态
-const isLoading = ref(false)
 
 /**
  * 将简历预览导出为PDF文件
@@ -66,9 +64,12 @@ const printPDF = async () => {
     return
   }
 
-  isLoading.value = true
+  isPrinting.value = true
 
   try {
+    // 确保字体加载完成
+    await document.fonts.ready
+
     // 动态导入PDF相关库
     const { snapdom } = await import('@zumer/snapdom')
     const { default: jsPDF } = await import('jspdf')
@@ -77,6 +78,7 @@ const printPDF = async () => {
     const pages = formContainer.value.querySelectorAll('.resume-page-item')
     if (pages.length === 0) {
       console.error('未找到可打印的简历页面')
+      isPrinting.value = false
       return
     }
 
@@ -147,7 +149,7 @@ const printPDF = async () => {
   } catch (error) {
     console.error('生成PDF失败:', error)
   } finally {
-    isLoading.value = false
+    isPrinting.value = false
   }
 }
 </script>
