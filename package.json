@@ -36,6 +36,7 @@
     "@vueuse/core": "13.9.0",
     "@wangeditor-next/editor": "^5.6.49",
     "@wangeditor-next/editor-for-vue": "^5.1.14",
+    "@zumer/snapdom": "^2.8.0",
     "axios": "^1.12.2",
     "chinese-workday": "^1.10.1",
     "cropperjs": "^2.1.0",
