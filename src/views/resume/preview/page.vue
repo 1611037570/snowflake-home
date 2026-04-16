@@ -89,7 +89,7 @@ const pages = computed(() => {
         ]"
       >
         <div class="flex flex-1 flex-col overflow-hidden">
-          <div v-for="(row, idx) in pageRows" :key="idx" v-html="row.html"></div>
+          <div v-for="(row, idx) in pageRows" :key="idx" v-html="row.html" class="w-full"></div>
         </div>
         <div class="pt-3 text-center text-xs opacity-50">
           第 {{ pageIndex + 1 }} 页，共 {{ pages.length }} 页

@@ -9,6 +9,7 @@ import BoxCollapse from './components/boxCollapse.vue'
 import Education from './components/education.vue'
 import ItemCollapse from './components/itemCollapse.vue'
 import Project from './components/project.vue'
+import SocialAccount from './components/socialAccount.vue'
 import TitleEditor from './components/titleEditor.vue'
 import Work from './components/work.vue'
 
@@ -25,6 +26,7 @@ const dynamicComponents = {
   project: Project,
   boxCollapse: BoxCollapse,
   itemCollapse: ItemCollapse,
+  socialAccount: SocialAccount,
 }
 
 function handleEditTitle() {
