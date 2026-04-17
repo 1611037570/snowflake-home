@@ -1,7 +1,7 @@
 <script setup>
 import { markRaw, ref } from 'vue'
 import Custom from './page/custom/index.vue'
-import Resume from './page/resume/index.vue'
+import Editor from './page/editor/index.vue'
 import Template from './page/template/index.vue'
 
 // 菜单配置
@@ -9,7 +9,7 @@ const menuList = [
   {
     name: '简历',
     icon: 'lucide:file-text',
-    component: markRaw(Resume),
+    component: markRaw(Editor),
   },
   {
     name: '模板',
