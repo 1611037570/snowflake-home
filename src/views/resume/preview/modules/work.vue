@@ -18,18 +18,19 @@ const workList = computed(() => currentData.value.work || [])
 </script>
 
 <template>
-  <Title title="工作经历" />
-  <template v-for="(item, index) in workList" :key="index">
-    <div class="flex items-center justify-between" :style="[lineHeightValue(3)]">
-      <div class="flex items-center gap-4">
-        <div class="font-bold" :style="[fontValue(3)]">{{ item.name }}</div>
-        <div>{{ item.post }}</div>
+  <div class="resume-row" data-module="work">
+    <Title title="工作经历" />
+    <template v-for="(item, index) in workList" :key="index">
+      <div class="flex items-center justify-between" :style="[lineHeightValue(3)]">
+        <div class="flex items-center gap-4">
+          <div class="font-bold" :style="[fontValue(3)]">{{ item.name }}</div>
+          <div>{{ item.post }}</div>
+        </div>
+        <div class="flex items-center">{{ getTime(item.time) }}</div>
       </div>
-      <div class="flex items-center">{{ getTime(item.time) }}</div>
-      <!-- 补充描述/经历 -->
-    </div>
-    <Content :content="item.content" />
-  </template>
+      <Content :content="item.content" />
+    </template>
+  </div>
 </template>
 
 <style lang="scss" scoped></style>

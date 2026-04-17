@@ -45,9 +45,9 @@ setTimeout(() => {
 </script>
 
 <template>
-  <div :style="[lineHeightValue()]">
+  <div :style="[lineHeightValue()]" class="resume-row">
     <!-- 头部基本信息 -->
-    <div class="resume-row flex items-center" data-module="user" :style="[lineHeightValue(22)]">
+    <div class="flex items-center" data-module="user" :style="[lineHeightValue(22)]">
       <h1 class="font-bold tracking-wide" :style="[fontValue(14)]">
         <Text v-model:value="user.name" v-model:newValue="user.newName" />
       </h1>

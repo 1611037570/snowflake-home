@@ -23,31 +23,33 @@ const education = computed(() => {
 </script>
 
 <template>
-  <!-- 标题栏 -->
-  <Title title="教育经历"></Title>
-  <!-- 内容区 -->
-  <template v-for="(item, index) in education" :key="index">
-    <div
-      class="mt-2 flex items-center justify-between"
-      :style="[lineHeightValue(3)]"
-      v-if="item.name || getTime(item.time)"
-    >
-      <div class="flex items-baseline gap-4">
-        <span class="font-bold" :style="[fontValue(3)]">{{ item.name }}</span>
+  <div class="resume-row" data-module="education">
+    <!-- 标题栏 -->
+    <Title title="教育经历"></Title>
+    <!-- 内容区 -->
+    <template v-for="(item, index) in education" :key="index">
+      <div
+        class="mt-2 flex items-center justify-between"
+        :style="[lineHeightValue(3)]"
+        v-if="item.name || getTime(item.time)"
+      >
+        <div class="flex items-baseline gap-4">
+          <span class="font-bold" :style="[fontValue(3)]">{{ item.name }}</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <span>{{ getTime(item.time) }}</span>
+        </div>
       </div>
-      <div class="flex items-center gap-2">
-        <span>{{ getTime(item.time) }}</span>
+      <div class="mt-1 flex items-center gap-2">
+        <template v-for="(field, i) in item.infoList" :key="i">
+          <span>{{ field }}</span>
+          <div v-if="i < item.infoList.length - 1" class="h-1 w-1 rounded-full bg-black"></div>
+        </template>
       </div>
-    </div>
-    <div class="mt-1 flex items-center gap-2">
-      <template v-for="(field, i) in item.infoList" :key="i">
-        <span>{{ field }}</span>
-        <div v-if="i < item.infoList.length - 1" class="h-1 w-1 rounded-full bg-black"></div>
-      </template>
-    </div>
-    <!-- 补充描述/经历 -->
-    <Content :content="item.content" />
-  </template>
+      <!-- 补充描述/经历 -->
+      <Content :content="item.content" />
+    </template>
+  </div>
 </template>
 
 <style lang="scss" scoped></style>
