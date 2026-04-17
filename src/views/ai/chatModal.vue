@@ -1,8 +1,16 @@
 <script setup>
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
+import { useRoute } from 'vue-router'
 import Index from './index.vue'
 
 const isVisible = ref(false)
+const route = useRoute()
+
+// 判断当前路由是否包含 'resume' 或 'ai'，如果包含则不显示
+const shouldShow = computed(() => {
+  const path = route.path.toLowerCase()
+  return !path.includes('/resume') && !path.includes('/ai')
+})
 
 const toggleChat = () => {
   isVisible.value = !isVisible.value
@@ -10,7 +18,7 @@ const toggleChat = () => {
 </script>
 
 <template>
-  <div class="fixed right-8 bottom-8 z-9999 flex flex-col items-end gap-4">
+  <div v-if="shouldShow" class="fixed right-8 bottom-8 z-9999 flex flex-col items-end gap-4">
     <!-- 聊天窗口：带展开动画 -->
     <Transition
       enter-active-class="transition duration-300 ease-out"
