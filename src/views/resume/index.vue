@@ -136,6 +136,25 @@ const printPDF = async () => {
 
       // 将图片填满整个PDF页面
       pdf.addImage(imgData, 'PNG', 0, 0, pageWidth, pageHeight, undefined, 'FAST')
+
+      // 提取并添加超链接
+      const cloneRect = clone.getBoundingClientRect()
+      const links = clone.querySelectorAll('a')
+      const scaleFactor = pageWidth / 794
+
+      links.forEach((link) => {
+        const linkRect = link.getBoundingClientRect()
+        const href = link.getAttribute('href')
+        if (href) {
+          pdf.link(
+            (linkRect.left - cloneRect.left) * scaleFactor,
+            (linkRect.top - cloneRect.top) * scaleFactor,
+            linkRect.width * scaleFactor,
+            linkRect.height * scaleFactor,
+            { url: href },
+          )
+        }
+      })
     }
 
     // 清理临时容器
