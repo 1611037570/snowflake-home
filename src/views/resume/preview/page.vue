@@ -51,7 +51,7 @@ const pages = computed(() => {
     }
 
     currentPage.push({
-      html: row.html,
+      module: allModules.value[row.index - 1],
     })
     currentHeight += row.height
   })
@@ -73,12 +73,9 @@ const pages = computed(() => {
       :style="[paddingValue(), { width: `${WIDTH}px` }]"
     >
       <div ref="measureRef" class="flex flex-col" :style="[fontValue(), lineHeightValue()]">
-        <ResumeModule
-          v-for="item in allModules"
-          :key="item.key"
-          :data="currentData"
-          :name="item.key"
-        />
+        <div v-for="item in allModules" :key="item.key">
+          <ResumeModule :data="currentData" :name="item.key" />
+        </div>
       </div>
     </div>
 
@@ -94,10 +91,14 @@ const pages = computed(() => {
           { width: `${WIDTH}px`, height: `${HEIGHT}px` },
         ]"
       >
-        <div
-          class="flex flex-1 flex-col overflow-hidden"
-          v-html="pageRows.map((row) => row.html).join('')"
-        ></div>
+        <div class="flex flex-1 flex-col">
+          <ResumeModule
+            v-for="(row, i) in pageRows"
+            :key="row.module.key + i"
+            :data="currentData"
+            :name="row.module.key"
+          />
+        </div>
         <div class="pt-3 text-center text-xs opacity-50">
           第 {{ pageIndex + 1 }} 页，共 {{ pages.length }} 页
         </div>
