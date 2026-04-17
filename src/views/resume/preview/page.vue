@@ -13,7 +13,6 @@ const { currentData, currentConfig, currentUI, currentFixedConfig } = storeToRef
 const paddingValue = inject('paddingValue')
 const fontValue = inject('fontValue')
 const lineHeightValue = inject('lineHeightValue')
-
 // 测量容器引用
 const measureRef = ref(null)
 
@@ -24,8 +23,15 @@ const allModules = computed(() => [
 ])
 const WIDTH = 794
 const HEIGHT = 1123
+const o = computed(() => {
+  return {
+    paddingValue: paddingValue.value(),
+    fontValue: fontValue.value(),
+    lineHeightValue: lineHeightValue.value(),
+  }
+})
 // 使用 useRowInfo 获取每个模块的高度
-const { rowList } = useRowInfo(measureRef)
+const { rowList } = useRowInfo(measureRef, o)
 
 // 分页逻辑
 const pages = computed(() => {
@@ -88,9 +94,10 @@ const pages = computed(() => {
           { width: `${WIDTH}px`, height: `${HEIGHT}px` },
         ]"
       >
-        <div class="flex flex-1 flex-col overflow-hidden">
-          <div v-for="(row, idx) in pageRows" :key="idx" v-html="row.html" class="w-full"></div>
-        </div>
+        <div
+          class="flex flex-1 flex-col overflow-hidden"
+          v-html="pageRows.map((row) => row.html).join('')"
+        ></div>
         <div class="pt-3 text-center text-xs opacity-50">
           第 {{ pageIndex + 1 }} 页，共 {{ pages.length }} 页
         </div>
