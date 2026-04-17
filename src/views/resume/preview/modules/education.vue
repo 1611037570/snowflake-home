@@ -5,7 +5,7 @@ import { computed, inject } from 'vue'
 import Content from '../theme/content.vue'
 import Title from '../theme/title.vue'
 
-import { getTime } from './utils'
+import { getTime } from '../../utils'
 
 const resumeStore = useResumeStore()
 const { currentData } = storeToRefs(resumeStore)

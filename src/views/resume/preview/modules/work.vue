@@ -6,7 +6,7 @@ import { storeToRefs } from 'pinia'
 import { computed, inject } from 'vue'
 import Content from '../theme/content.vue'
 
-import { getTime } from './utils'
+import { getTime } from '../../utils'
 
 const resumeStore = useResumeStore()
 const { currentData } = storeToRefs(resumeStore)
