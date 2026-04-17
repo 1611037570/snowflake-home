@@ -18,6 +18,9 @@ const handleDownload = () => {
   if (isPrinting.value) return
   eventBus.emit('resume-print-pdf')
 }
+const back = () => {
+  defaultNavigation()
+}
 </script>
 
 <template>
@@ -26,8 +29,18 @@ const handleDownload = () => {
   >
     <!-- 左侧占位 -->
     <div class="flex flex-1 items-center gap-6">
-      <SfIcon size="5" class="cursor-pointer transition-colors hover:text-sf-theme" />
-      <div>AI简历</div>
+      <SfIcon
+        size="5"
+        icon="famicons:chevron-back"
+        class="cursor-pointer transition-colors hover:text-sf-theme"
+        @click="back"
+      />
+      <div
+        class="flex items-center gap-1.5 rounded-full bg-sf-theme/10 px-3 py-1 text-sf-theme transition-all hover:bg-sf-theme/20"
+      >
+        <SfIcon icon="lucide:sparkles" size="3.5" class="animate-pulse" />
+        <span class="text-sm font-bold tracking-wide">AI 简历</span>
+      </div>
       <Title />
     </div>
 

@@ -16,17 +16,19 @@ export const ICON_LIST: Record<string, IconItem> = {
     name: '小红书',
   },
   'logos:tiktok-icon': { icon: 'logos:tiktok-icon', name: '抖音' },
-  'lucide:pause': { icon: 'lucide:pause' },
-  'lucide:play': { icon: 'lucide:play' },
+  'lucide:pause': { icon: 'lucide:pause', name: '暂停' },
+  'lucide:play': { icon: 'lucide:play', name: '播放' },
   'lucide:briefcase': { icon: 'lucide:briefcase' },
   'material-symbols:image-outline': {
     icon: 'material-symbols:image-outline',
   },
   'material-symbols:restart-alt': {
     icon: 'material-symbols:restart-alt',
+    name: '刷新',
   },
   'mynaui:search': {
     icon: 'mynaui:search',
+    name: '搜索',
   },
   'carbon:close-outline': { icon: 'carbon:close-outline' },
   'stash:lock-closed': { icon: 'stash:lock-closed' },
@@ -50,7 +52,7 @@ export const ICON_LIST: Record<string, IconItem> = {
   'lucide:refresh-cw': { icon: 'lucide:refresh-cw' },
   'lucide:heart': { icon: 'lucide:heart' },
   'mingcute:question-line': { icon: 'mingcute:question-line' },
-  'famicons:chevron-back': { icon: 'famicons:chevron-back' },
+  'famicons:chevron-back': { icon: 'famicons:chevron-back', name: '返回' },
   'twemoji:sun': { icon: 'twemoji:sun' },
   'ri:moon-clear-fill': { icon: 'ri:moon-clear-fill' },
   'fluent:search-24-regular': { icon: 'fluent:search-24-regular' },
@@ -82,6 +84,7 @@ export const ICON_LIST: Record<string, IconItem> = {
   'tabler:external-link': { icon: 'tabler:external-link' },
   'mingcute:up-line': { icon: 'mingcute:up-line' },
   'mingcute:down-line': { icon: 'mingcute:down-line' },
+
   'fa7-solid:qrcode': { icon: 'fa7-solid:qrcode' },
   'basil:file-user-solid': { icon: 'basil:file-user-solid', color: 'text-blue-500' },
   'majesticons:music': { icon: 'majesticons:music' },
