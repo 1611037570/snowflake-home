@@ -6,13 +6,13 @@
     >
       <div
         class="flex h-full cursor-pointer items-center rounded border-none bg-[#2e7d32] px-1.5 text-[11px] text-white"
-        @click="handleSave"
+        @click.stop="handleSave"
       >
         保留
       </div>
       <div
         class="flex h-full cursor-pointer items-center rounded border-none bg-[#999] px-1.5 text-[11px] text-white"
-        @click="handleCancel"
+        @click.stop="handleCancel"
       >
         放弃
       </div>
