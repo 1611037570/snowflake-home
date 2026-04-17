@@ -96,7 +96,7 @@ export const useResumeStore = defineStore(
         // 固定配置
         fixedConfig: {
           drag: false,
-          fields: [structuredClone(DEFAULT_USER_FORM)],
+          fields: [...structuredClone(DEFAULT_USER_FORM)],
         },
         // 表单配置
         config: {

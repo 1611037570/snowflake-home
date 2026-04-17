@@ -1,8 +1,8 @@
 <template>
-  <el-row class="m-0! w-full" :gutter="0" ref="row" v-if="form.list.length">
+  <el-row class="m-0! w-full" :gutter="0" ref="row" v-if="form?.list.length">
     <FormItem
       :form="item"
-      v-for="(item, index) in form.list"
+      v-for="(item, index) in form?.list"
       :span="item.span"
       :key="item.id"
       :class="getItemClass(index)"
@@ -24,6 +24,7 @@
       </div>
     </FormItem>
   </el-row>
+  <div v-else>数据为空或者配置错误</div>
 </template>
 
 <script setup lang="ts">
