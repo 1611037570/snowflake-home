@@ -1,5 +1,5 @@
 // 用户信息
-export const userForm = [
+export const DEFAULT_USER_FORM = [
   {
     type: 'object',
     component: 'title',
@@ -15,9 +15,26 @@ export const userForm = [
   },
   {
     list: [
+      // 求职岗位
+      {
+        type: 'object',
+        label: '求职岗位',
+        tip: '你求职的岗位，必填',
+        component: 'input',
+        span: 24,
+        data: {
+          path: ['user', 'position'],
+          key: 'modelValue',
+        },
+        props: {
+          placeholder: '请输入求职岗位',
+          clearable: true,
+        },
+      },
       {
         type: 'object',
         label: '姓名',
+        tip: '你的姓名，必填',
         component: 'input',
         span: 12,
         data: {
@@ -31,7 +48,8 @@ export const userForm = [
       },
       {
         type: 'object',
-        label: '生日',
+        label: '出生日期',
+        tip: '你的出生日期，必填',
         component: 'datePicker',
         span: 12,
         data: {
@@ -39,13 +57,14 @@ export const userForm = [
           key: 'modelValue',
         },
         props: {
-          placeholder: '请输入生日',
+          placeholder: '请输入出生日期',
           type: 'month',
         },
       },
       {
         type: 'object',
         label: '电话',
+        tip: '用于联系你的手机号，必填',
         component: 'input',
         span: 12,
         data: {
@@ -60,6 +79,7 @@ export const userForm = [
       {
         type: 'object',
         label: '邮箱',
+        tip: '用于联系你的邮箱',
         component: 'input',
         span: 12,
         data: {
@@ -74,6 +94,7 @@ export const userForm = [
       {
         type: 'object',
         label: '参加工作时间',
+        tip: '你参加工作时间',
         component: 'datePicker',
         span: 12,
         data: {
@@ -88,6 +109,7 @@ export const userForm = [
       {
         type: 'object',
         label: '性别',
+        tip: '你的性别',
         component: 'select',
         span: 12,
         data: {
@@ -128,7 +150,7 @@ export const userForm = [
   },
 ]
 // 教育经历
-export const educationForm: any = {
+export const DEFAULT_EDUCATION_FORM = {
   type: 'object',
   key: 'education',
   name: '教育经历',
@@ -174,37 +196,6 @@ export const educationForm: any = {
             component: 'education',
             span: 24,
           },
-          {
-            data: [
-              {
-                path: ['education', '?', 'name'],
-                key: 'name',
-              },
-              {
-                path: ['education', '?', 'education'],
-                key: 'education',
-              },
-              {
-                path: ['education', '?', 'post'],
-                key: 'post',
-              },
-              {
-                path: ['education', '?', 'time'],
-                key: 'time',
-              },
-              {
-                path: ['education', '?', 'content'],
-                key: 'content',
-              },
-              // 学制
-              {
-                path: ['education', '?', 'mode'],
-                key: 'mode',
-              },
-            ],
-            component: 'education',
-            span: 24,
-          },
         ],
       },
     ],
@@ -212,7 +203,7 @@ export const educationForm: any = {
   },
 }
 // 专业技能
-export const skillForm: any = {
+export const DEFAULT_SKILL_FORM = {
   type: 'object',
   component: 'boxCollapse',
   key: 'skill',
@@ -234,9 +225,8 @@ export const skillForm: any = {
     ],
   },
 }
-
 // 个人优势
-export const advantageForm: any = {
+export const DEFAULT_ADVANTAGE_FORM = {
   type: 'object',
   component: 'boxCollapse',
   key: 'advantage',
@@ -258,9 +248,8 @@ export const advantageForm: any = {
     ],
   },
 }
-
 // 工作经历
-export const workForm: any = {
+export const DEFAULT_WORK_FORM = {
   type: 'object',
   key: 'work',
   name: '工作经历',
@@ -297,35 +286,13 @@ export const workForm: any = {
               },
             ],
           },
-          {
-            component: 'work',
-            span: 24,
-            data: [
-              {
-                path: ['work', '?', 'name'],
-                key: 'name',
-              },
-              {
-                path: ['work', '?', 'post'],
-                key: 'post',
-              },
-              {
-                path: ['work', '?', 'time'],
-                key: 'time',
-              },
-              {
-                path: ['work', '?', 'content'],
-                key: 'content',
-              },
-            ],
-          },
         ],
       },
     ],
   },
 }
 // 项目经历
-export const projectForm: any = {
+export const DEFAULT_PROJECT_FORM = {
   type: 'object',
   key: 'project',
   name: '项目经历',
@@ -390,9 +357,8 @@ export const projectForm: any = {
     ],
   },
 }
-
 // 自定义经历
-export const customForm: any = {
+export const DEFAULT_CUSTOM_FORM = {
   type: 'object',
   key: 'custom',
   name: '',
@@ -440,11 +406,11 @@ export const customForm: any = {
 }
 
 export const allConfig = {
-  skill: skillForm,
-  user: userForm,
-  advantage: advantageForm,
-  education: educationForm,
-  work: workForm,
-  project: projectForm,
-  custom: customForm,
+  skill: DEFAULT_SKILL_FORM,
+  user: DEFAULT_USER_FORM,
+  advantage: DEFAULT_ADVANTAGE_FORM,
+  education: DEFAULT_EDUCATION_FORM,
+  work: DEFAULT_WORK_FORM,
+  project: DEFAULT_PROJECT_FORM,
+  custom: DEFAULT_CUSTOM_FORM,
 }

@@ -1,11 +1,19 @@
 import { defineStore } from 'pinia'
 import { computed, ref } from 'vue'
-import { userData, type UserData } from './dataConfig'
-import { userForm } from './formConfig'
+import { DEFAULT_DATA } from './dataConfig'
+import { DEFAULT_USER_FORM } from './formConfig'
+import { type Data } from './types'
+import {
+  defaultColor,
+  defaultFontFamily,
+  defaultFontSize,
+  defaultLineHeight,
+  defaultPadding,
+} from './uiConfig'
 
 export interface ResumeItem {
-  data: UserData
-  config: any // 暂时使用 any，或者根据需要定义配置类型
+  data: Data
+  config: any
   ui: {
     padding: number
     fontSize: number
@@ -18,73 +26,102 @@ export interface ResumeItem {
 export const useResumeStore = defineStore(
   'resume',
   () => {
+    // 索引是否可见
     const indexVisible = ref(false)
+    // 是否正在打印
     const isPrinting = ref(false)
-
     // 简历列表
     const list = ref<any[]>([])
-
-    // 当前选中的下标
+    // 当前选中的简历下标
     const currentIndex = ref(-1)
 
+    // 获取当前选中的简历项
+    const getCurrentResumeItem = () => {
+      return list.value[currentIndex.value]
+    }
+
     // 获取当前选中的简历数据
-    const currentData = computed(() => list.value[currentIndex.value]?.data)
+    const currentData = computed(() => {
+      const item = getCurrentResumeItem()
+      return item ? item.data : undefined
+    })
 
     // 获取当前选中的表单配置
     const currentConfig = computed({
       get() {
-        return list.value[currentIndex.value]?.config
+        const item = getCurrentResumeItem()
+        return item ? item.config : undefined
       },
-      set(newConfig) {
-        if (list.value[currentIndex.value]) {
-          list.value[currentIndex.value].config = newConfig
+      set(newConfig: any) {
+        const item = getCurrentResumeItem()
+        if (item) {
+          item.config = newConfig
         }
       },
     })
     // 获取当前选中的固定配置
     const currentFixedConfig = computed({
       get() {
-        return list.value[currentIndex.value]?.fixedConfig
+        const item = getCurrentResumeItem()
+        return item ? item.fixedConfig : undefined
       },
-      set(newFixedConfig) {
-        if (list.value[currentIndex.value]) {
-          list.value[currentIndex.value].fixedConfig = newFixedConfig
+      set(newFixedConfig: any) {
+        const item = getCurrentResumeItem()
+        if (item) {
+          item.fixedConfig = newFixedConfig
         }
       },
     })
     // 获取当前选中的UI配置
     const currentUI = computed({
       get() {
-        return list.value[currentIndex.value]?.ui
+        const item = getCurrentResumeItem()
+        return item ? item.ui : undefined
       },
-      set(newUI) {
-        if (list.value[currentIndex.value]) {
-          list.value[currentIndex.value].ui = newUI
+      set(newUI: any) {
+        const item = getCurrentResumeItem()
+        if (item) {
+          item.ui = newUI
         }
       },
     })
 
     // 新增简历
     const addResume = () => {
-      list.value.push({
-        data: structuredClone(userData),
+      const res = {
+        // 简历ID
+        id: '',
+        // 简历数据
+        data: structuredClone(DEFAULT_DATA),
+        // 固定配置
         fixedConfig: {
           drag: false,
-          fields: [...userForm],
+          fields: [structuredClone(DEFAULT_USER_FORM)],
         },
+        // 表单配置
         config: {
           drag: true,
           fields: [],
         },
+        // UI配置
         ui: {
-          padding: 24,
-          fontSize: 12,
-          lineHeight: 24,
-          color: '#ff4d4f',
-          fontFamily: 'text-puhui',
+          padding: defaultPadding,
+          fontSize: defaultFontSize,
+          lineHeight: defaultLineHeight,
+          color: defaultColor,
+          fontFamily: defaultFontFamily,
         },
-      })
+      }
+      list.value.push(res)
       currentIndex.value = list.value.length - 1
+    }
+    // 删除简历
+    const deleteResume = () => {
+      if (currentIndex.value == -1) {
+        return
+      }
+      list.value.splice(currentIndex.value, 1)
+      currentIndex.value = -1
     }
 
     // 初始化数据合并，防止版本更新导致字段缺失
@@ -100,6 +137,7 @@ export const useResumeStore = defineStore(
       currentUI,
       isPrinting,
       addResume,
+      deleteResume,
       init,
     }
   },
