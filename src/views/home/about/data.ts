@@ -78,9 +78,9 @@ const techStackList = [
       { name: 'axios', version: '^1.12.2', description: 'HTTP客户端', icon: 'logos:axios' },
       { name: 'dayjs', version: '^1.11.18', description: '日期处理', icon: 'logos:dayjs' },
       {
-        name: 'html2canvas',
-        version: '1.4.1',
-        description: 'HTML转Canvas',
+        name: '@zumer/snapdom',
+        version: '^2.8.0',
+        description: '高性能 DOM 捕获',
         icon: 'mdi:image-plus',
       },
       { name: 'jspdf', version: '3.0.3', description: 'PDF生成', icon: 'mdi:file-pdf-box' },

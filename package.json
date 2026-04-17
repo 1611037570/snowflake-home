@@ -43,7 +43,6 @@
     "dayjs": "^1.11.18",
     "echarts": "^6.0.0",
     "element-plus": "2.13.7",
-    "html2canvas": "1.4.1",
     "jspdf": "3.0.3",
     "mathjs": "^15.1.0",
     "md-editor-v3": "^6.3.1",

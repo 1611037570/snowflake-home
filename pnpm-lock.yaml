@@ -41,9 +41,6 @@ importers:
       element-plus:
         specifier: 2.13.7
         version: 2.13.7(typescript@5.9.3)(vue@3.5.22(typescript@5.9.3))
-      html2canvas:
-        specifier: 1.4.1
-        version: 1.4.1
       jspdf:
         specifier: 3.0.3
         version: 3.0.3
@@ -8793,7 +8790,8 @@ snapshots:
 
   balanced-match@4.0.4: {}
 
-  base64-arraybuffer@1.0.2: {}
+  base64-arraybuffer@1.0.2:
+    optional: true
 
   base64-js@1.5.1: {}
 
@@ -9164,6 +9162,7 @@ snapshots:
   css-line-break@2.1.0:
     dependencies:
       utrie: 1.0.2
+    optional: true
 
   css-select@4.3.0:
     dependencies:
@@ -10022,6 +10021,7 @@ snapshots:
     dependencies:
       css-line-break: 2.1.0
       text-segmentation: 1.0.3
+    optional: true
 
   http-proxy-agent@7.0.2:
     dependencies:
@@ -11660,6 +11660,7 @@ snapshots:
   text-segmentation@1.0.3:
     dependencies:
       utrie: 1.0.2
+    optional: true
 
   through@2.3.8: {}
 
@@ -11893,6 +11894,7 @@ snapshots:
   utrie@1.0.2:
     dependencies:
       base64-arraybuffer: 1.0.2
+    optional: true
 
   vite-dev-rpc@1.1.0(vite@7.1.9(@types/node@22.18.9)(jiti@2.6.1)(lightningcss@1.30.1)(sass@1.94.2)(terser@5.46.1)(yaml@2.8.1)):
     dependencies:
