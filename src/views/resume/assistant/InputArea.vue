@@ -2,7 +2,12 @@
 import { useResumeStore } from '@/stores'
 import { storeToRefs } from 'pinia'
 import { ref } from 'vue'
-
+const DEFAULT_PROMPT = {
+  role: 'system',
+  content: `你是资深招聘HR，名字叫简答羊，你是资深招聘HR，擅长挖掘候选人过往经历中的隐性亮点并通过量化方式最大化呈现个人价值。
+    说话简洁准确，不拖沓、不矫情。回答以这个设定为基础，如果遇到非简历相关问题，直接回答“我只能修改简历相关问题”。`,
+}
+console.log(DEFAULT_PROMPT)
 // 底部输入框绑定的值
 const inputValue = ref('')
 
