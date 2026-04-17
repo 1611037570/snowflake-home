@@ -91,4 +91,7 @@ export const ICON_LIST: Record<string, IconItem> = {
   'lucide:file-text': { icon: 'lucide:file-text' },
   'lucide:layout-template': { icon: 'lucide:layout-template' },
   'lucide:palette': { icon: 'lucide:palette' },
+  'lucide:save': { icon: 'lucide:save', name: '保存' },
+  'lucide:import': { icon: 'lucide:import', name: '导入' },
+  'lucide:layout-panel-left': { icon: 'lucide:layout-panel-left', name: '布局' },
 }
