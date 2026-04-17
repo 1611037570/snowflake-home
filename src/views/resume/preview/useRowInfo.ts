@@ -7,7 +7,8 @@ import { nextTick, onMounted, ref, watch, type Ref } from 'vue'
  * @param {String} idPrefix - ID前缀（可选，默认：row-item）
  * @returns {Object} 包含行信息、总高度的响应式数据和方法
  */
-export function useRowInfo(rootRef: Ref<HTMLDivElement | null>, idPrefix = 'row-item') {
+export function useRowInfo(rootRef: Ref<HTMLDivElement | null>, watchOptions: any) {
+  const idPrefix = 'row-item'
   // 存储一级div的信息（ID、高度、DOM元素）
   const rowList = ref<any[]>([])
   // 新增：总高度（响应式，初始值0）
@@ -106,6 +107,16 @@ export function useRowInfo(rootRef: Ref<HTMLDivElement | null>, idPrefix = 'row-
       handleRowInfo()
     },
     { immediate: false },
+  )
+  watch(
+    watchOptions,
+    () => {
+      console.log(watchOptions)
+      handleRowInfo()
+    },
+    {
+      deep: true,
+    },
   )
 
   // 对外暴露：新增 totalHeight 响应式变量

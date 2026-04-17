@@ -2,7 +2,7 @@
 import { useResumeStore } from '@/stores'
 import {
   fontFamilyList,
-  fontList,
+  fontSizeList,
   lineHeightList,
   paddingList,
   themeColors,
@@ -49,7 +49,7 @@ const { currentUI } = storeToRefs(resumeStore)
           label="字体大小"
           leftLabel="小"
           rightLabel="大"
-          :list="fontList"
+          :list="fontSizeList"
           v-model="currentUI.fontSize"
         />
         <ConfigItem
