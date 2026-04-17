@@ -14,9 +14,7 @@
             </div>
           </div>
         </SfSplitterPanel>
-        <SfSplitterPanel max="400" min="400">
-          <Assistant />
-        </SfSplitterPanel>
+        <Assistant />
       </SfSplitter>
     </div>
   </div>
