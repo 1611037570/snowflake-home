@@ -2,20 +2,42 @@ import { getParser } from './parser/index'
 
 // 定义自定义错误类
 export class StreamError extends Error {
-  constructor(message, code = -1) {
+  code: number
+  name: string
+  constructor(message: string, code = -1) {
     super(message)
     this.code = code
     this.name = 'StreamError'
   }
 }
 
+export function processJson(jsonStr: string, debug: boolean) {
+  // 入参终极防护：处理 null/undefined/非字符串，统一转为安全字符串
+  let rawStr = String(jsonStr ?? '')
+  // 统一清洗：移除 data: 前缀 + 去除首尾空格
+  rawStr = rawStr.replace(/^data:/i, '').trim()
+  // 检查是否为空字符串
+  if (!rawStr) return ''
+
+  // 校验标准JSON对象格式（必须{}包裹）
+  if (!rawStr.startsWith('{') || !rawStr.endsWith('}')) {
+    debug && console.warn('非标准JSON对象格式：', rawStr)
+    return ''
+  }
+  try {
+    return JSON.parse(rawStr)
+  } catch (error) {
+    if (debug) console.warn(`解析失败: ${rawStr}`, error)
+    throw new Error('解析失败！')
+  }
+}
 // 错误码常量
 export const ERROR_CODES = {
   NETWORK_ERROR: 0, // 网络/请求级错误
   BUSINESS_ERROR: -1, // 业务逻辑/参数错误
 }
 
-export function processOption({ options }) {
+export function processOption({ options }: any) {
   const data = JSON.stringify({
     ...options,
     stream: true, // 强制开启流式响应
@@ -25,17 +47,17 @@ export function processOption({ options }) {
 }
 
 // 处理token
-export function processToken(token) {
+export function processToken(token: string) {
   return `Bearer ${token}`
 }
 
 // 创建流式解析器
-export function createStreamParser({ onEvent, debug, provider }) {
+export function createStreamParser({ onEvent, debug, provider }: any) {
   let buffer = ''
   console.log('provider', provider)
 
   // 根据 provider 选择解析函数
-  const params = (line) => {
+  const params = (line: string) => {
     const options = { onEvent, debug }
     const parser = getParser({ provider, isStream: true })
 
@@ -48,7 +70,7 @@ export function createStreamParser({ onEvent, debug, provider }) {
     return parser(line, options)
   }
 
-  return function (chunk) {
+  return function (chunk: string) {
     let currentBatchContent = ''
     let currentBatchUsage = null
 
@@ -83,7 +105,7 @@ export function createStreamParser({ onEvent, debug, provider }) {
 }
 
 // 处理最终结果
-export function processResult({ text, isJson = true, debug }) {
+export function processResult({ text, isJson = true, debug }: any) {
   let result = ''
   try {
     if (typeof text !== 'string' || !text.length) {
@@ -96,7 +118,7 @@ export function processResult({ text, isJson = true, debug }) {
       console.log('流式传输完成，最终结果:', result)
     }
     return result
-  } catch (err) {
+  } catch (err: any) {
     if (err instanceof StreamError) {
       throw err
     }
@@ -108,7 +130,7 @@ export function processResult({ text, isJson = true, debug }) {
 }
 
 // 处理错误信息
-export function processError(e) {
+export function processError(e: any) {
   let error = e
 
   if (e instanceof StreamError) {
@@ -148,7 +170,7 @@ export function processError(e) {
  * @param {Function} params.onRetry 重试回调函数
  * @returns {Promise<{retried: boolean, result?: any}>}
  */
-export async function handleRetry({ code, currentRetryCount, retryCount, debug, onRetry }) {
+export async function handleRetry({ code, currentRetryCount, retryCount, debug, onRetry }: any) {
   if (code === 0 && currentRetryCount < retryCount) {
     const delay = 1000 * (currentRetryCount + 1)
     if (debug) {
