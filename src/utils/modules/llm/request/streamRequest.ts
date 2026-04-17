@@ -1,13 +1,13 @@
 import {
   createStreamParser,
+  ERROR_CODES,
   processResult,
   processToken,
   StreamError,
-  ERROR_CODES,
 } from '../stream-utils'
 
-export function streamRequest(token) {
-  let controller
+export function streamRequest(token: string) {
+  let controller: AbortController | null = null
 
   function abort() {
     if (controller) {
@@ -15,7 +15,23 @@ export function streamRequest(token) {
       controller = null
     }
   }
-  async function send({ url, method, data, isJson, onEvent, debug, provider }) {
+  async function send({
+    url,
+    method,
+    data,
+    isJson,
+    onEvent,
+    debug,
+    provider,
+  }: {
+    url: string
+    method: string
+    data: string
+    isJson: boolean
+    onEvent: any
+    debug: boolean
+    provider: string
+  }) {
     abort()
     try {
       controller = new AbortController()

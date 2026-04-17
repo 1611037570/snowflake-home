@@ -1,4 +1,3 @@
-import { notStreamRequest } from './request/notStreamRequest'
 import { streamRequest } from './request/streamRequest'
 
 import { handleRetry, processError, processOption } from './stream-utils'
@@ -84,7 +83,7 @@ class LLM {
       showToast = true,
       path = '',
     } = config
-    const token = this.getToken?.()
+    const token = this.getToken?.() || ''
     if (debug) {
       console.log('请求配置 :>> ', config)
     }
@@ -92,7 +91,7 @@ class LLM {
     // 统一事件处理
     const handleEvent =
       onEvent ||
-      ((type, data) => {
+      ((type: string, data: any) => {
         if (type === 'content') onProgress?.(data)
         if (type === 'reasoning') onReasoningProgress?.(data)
       })
@@ -121,15 +120,16 @@ class LLM {
           const { send, abort } = streamRequest(token)
           requestHandler = send
           abortFn = abort
-        } else {
-          streamConfig = {
-            ...streamConfig,
-            data: options,
-          }
-          const { send, abort } = notStreamRequest(token)
-          requestHandler = send
-          abortFn = abort
         }
+        // else {
+        //   streamConfig = {
+        //     ...streamConfig,
+        //     data: options,
+        //   }
+        //   const { send, abort } = notStreamRequest(token)
+        //   requestHandler = send
+        //   abortFn = abort
+        // }
         const res = await requestHandler(streamConfig)
         onSuccess?.(res)
         return res

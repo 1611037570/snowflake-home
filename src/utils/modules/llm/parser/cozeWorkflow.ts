@@ -1,12 +1,7 @@
-export const cozeWorkflowStreamParser = (line, { onEvent, debug }) => {
-  line = line.trim()
-  if (!line) return ''
+import { processJson } from '../stream-utils'
+export const cozeWorkflowStreamParser = (line: string, { onEvent, debug }: any) => {
+  const jsonObj = processJson(line, debug)
   try {
-    const cleanJsonStr = line.replace(/^data:/i, '').trim()
-    if (!cleanJsonStr || !cleanJsonStr.startsWith('{') || !cleanJsonStr.endsWith('}')) {
-      return ''
-    }
-    const jsonObj = JSON.parse(cleanJsonStr)
     if (debug) console.log('CozeWorkflow JSON', jsonObj)
 
     const { content_type = '', content = '' } = jsonObj
