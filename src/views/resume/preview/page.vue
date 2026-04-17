@@ -158,14 +158,13 @@ const pages = computed(() => {
         <div
           v-for="slice in pageSlices"
           :key="slice.moduleKey"
-          class="resume-module-wrapper group relative cursor-pointer rounded transition-all duration-300 hover:bg-indigo-50/30 hover:ring-2 hover:ring-indigo-300"
+          class="resume-module-wrapper group relative rounded transition-all duration-300 hover:bg-indigo-50/30 hover:ring-2 hover:ring-indigo-300"
           :class="{ 'bg-blue-50/10 ring-2 ring-blue-500': selectedModuleKeys.has(slice.moduleKey) }"
           :data-module="slice.moduleKey"
-          @click="handleModuleClick(slice)"
         >
           <!-- 右上角的操作按钮（默认隐藏，hover时显示） -->
           <div
-            class="absolute -top-2 -right-2 z-10 hidden items-center justify-center rounded-full bg-blue-500 p-1.5 text-white shadow group-hover:flex hover:bg-blue-600"
+            class="absolute -top-2 -right-2 z-10 hidden cursor-pointer items-center justify-center rounded-full bg-blue-500 p-1.5 text-white shadow group-hover:flex hover:bg-blue-600"
             @click.stop="handleModuleClick(slice)"
             title="选择该模块"
           >
