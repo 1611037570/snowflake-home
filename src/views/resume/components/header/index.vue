@@ -3,6 +3,7 @@ import { useResumeStore } from '@/stores'
 import eventBus from '@/utils/modules/eventBus'
 import { storeToRefs } from 'pinia'
 import { ref } from 'vue'
+import Title from './title.vue'
 
 const resumeStore = useResumeStore()
 const { isPrinting } = storeToRefs(resumeStore)
@@ -24,7 +25,11 @@ const handleDownload = () => {
     class="flex h-12 items-center justify-between border-b border-sf-border bg-sf-primary px-6 shadow-sm"
   >
     <!-- 左侧占位 -->
-    <div class="flex-1"></div>
+    <div class="flex flex-1 items-center gap-6">
+      <SfIcon size="5" class="cursor-pointer transition-colors hover:text-sf-theme" />
+      <div>AI简历</div>
+      <Title />
+    </div>
 
     <!-- 右侧工具栏 -->
     <div class="flex items-center gap-6">

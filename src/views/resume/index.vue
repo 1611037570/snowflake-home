@@ -27,7 +27,7 @@ import { storeToRefs } from 'pinia'
 import { onMounted, onUnmounted, ref } from 'vue'
 import Assistant from './assistant/index.vue'
 import Builder from './builder/index.vue'
-import Header from './components/header.vue'
+import Header from './components/header/index.vue'
 import Preview from './preview/index.vue'
 
 const resumeStore = useResumeStore()
