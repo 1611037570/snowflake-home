@@ -27,7 +27,11 @@ const education = computed(() => {
   <Title title="教育经历"></Title>
   <!-- 内容区 -->
   <template v-for="(item, index) in education" :key="index">
-    <div class="mt-2 flex items-center justify-between" :style="[lineHeightValue(3)]">
+    <div
+      class="mt-2 flex items-center justify-between"
+      :style="[lineHeightValue(3)]"
+      v-if="item.name || getTime(item.time)"
+    >
       <div class="flex items-baseline gap-4">
         <span class="font-bold" :style="[fontValue(3)]">{{ item.name }}</span>
       </div>
