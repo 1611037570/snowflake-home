@@ -1,98 +1,21 @@
 <script setup>
-import { useResumeStore } from '@/stores'
-import { storeToRefs } from 'pinia'
-import { computed } from 'vue'
+import { ref } from 'vue'
+import Score from './Score.vue'
 
-const resumeStore = useResumeStore()
-const { currentData } = storeToRefs(resumeStore)
-
-function calculateScore(obj) {
-  if (!obj) return 0
-  const keys = Object.keys(obj)
-  const totalFields = keys.length
-  if (totalFields === 0) return 0
-  const singleScore = 10 / totalFields
-  let totalScore = 0
-
-  for (const key of keys) {
-    const value = obj[key]
-    const hasContent = value != null && String(value).trim() !== ''
-    if (hasContent) totalScore += singleScore
-  }
-  return Math.round(totalScore)
-}
-
-// 数组评分函数（完美复用）
-function calculateListScore(list) {
-  if (!Array.isArray(list) || list.length === 0) return 0
-  let totalScore = 0
-  for (const item of list) {
-    totalScore += calculateScore(item) // 🔥 复用原函数
-  }
-  const finalScore = totalScore / list.length
-  return Math.round(finalScore)
-}
-
-const userScore = computed(() => calculateScore(currentData.value?.user || {}))
-const educationScore = computed(() => calculateListScore(currentData.value?.education || []))
-const skillScore = computed(() => (currentData.value?.skill?.trim() ? 10 : 0))
-const workScore = computed(() => calculateListScore(currentData.value?.work || []))
-const projectScore = computed(() => calculateListScore(currentData.value?.project || []))
-
-const a = computed(() => ({
-  title: {
-    text: '能力评估',
-  },
-  radar: {
-    indicator: [
-      { name: '用户信息', max: 10 },
-      { name: '教育经历', max: 10 },
-      { name: '专业技能', max: 10 },
-      { name: '工作经历', max: 10 },
-      { name: '项目经历', max: 10 },
-    ],
-  },
-  series: [
-    {
-      type: 'radar',
-      data: [
-        {
-          value: [
-            userScore.value,
-            educationScore.value,
-            skillScore.value,
-            workScore.value,
-            projectScore.value,
-          ],
-          areaStyle: {
-            color: 'rgba(54, 162, 235, 0.3)',
-          },
-          lineStyle: {
-            color: 'rgba(54, 162, 235, 1)',
-            width: 2,
-          },
-          itemStyle: {
-            color: 'rgba(54, 162, 235, 1)',
-          },
-        },
-      ],
-    },
-  ],
-}))
+// 底部输入框绑定的值
+const inputValue = ref('')
 </script>
 
 <template>
   <div class="flex h-full w-full flex-col bg-amber-100 p-4">
-    <div class="flex h-[400px] w-full items-center justify-center">
-      <SfEcharts :options="a" />
+    <!-- 上方：简历打分组件区，占据剩余空间并支持滚动 -->
+    <div class="flex-1 overflow-y-auto">
+      <Score />
     </div>
-    <div class="mt-4 space-y-2 rounded-xl bg-white/50 p-4">
-      <div class="font-bold">评分详情：</div>
-      <div>用户信息评分：{{ userScore }}</div>
-      <div>教育经历评分：{{ educationScore }}</div>
-      <div>专业技能评分：{{ skillScore }}</div>
-      <div>工作经历评分：{{ workScore }}</div>
-      <div>项目经历评分：{{ projectScore }}</div>
+
+    <!-- 下方：输入框 -->
+    <div class="mt-4 shrink-0">
+      <el-input v-model="inputValue" placeholder="请输入..." clearable />
     </div>
   </div>
 </template>
