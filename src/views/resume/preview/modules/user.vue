@@ -4,6 +4,7 @@ import dayjs from 'dayjs'
 import { storeToRefs } from 'pinia'
 import { computed, inject } from 'vue'
 import Text from './text.vue'
+import { workYears } from './utils'
 
 const resumeStore = useResumeStore()
 const { currentData } = storeToRefs(resumeStore)
@@ -19,16 +20,6 @@ const age = computed(() => {
   if (!birthday || !dayjs(birthday).isValid()) return 0
   const ageDiff = dayjs().diff(dayjs(birthday), 'year')
   return Math.max(0, ageDiff)
-})
-
-// 计算工作年限（规则：不足1年按0年算，满5个月不满1年按1年算，以此类推）
-const workYears = computed(() => {
-  const workTime = user.value?.workTime
-  if (!workTime || !dayjs(workTime).isValid()) return 0
-  const diffInMonths = dayjs().diff(dayjs(workTime), 'month')
-  if (diffInMonths < 0) return 0
-  const fullYears = Math.floor(diffInMonths / 12)
-  return diffInMonths % 12 >= 5 ? fullYears + 1 : fullYears
 })
 
 // 联系方式列表 (电话、邮箱)
