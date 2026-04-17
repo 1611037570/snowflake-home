@@ -30,6 +30,8 @@ export const useResumeStore = defineStore(
     const indexVisible = ref(false)
     // 是否正在打印
     const isPrinting = ref(false)
+    // 当前选中的模块 keys (Set)
+    const selectedModuleKeys = ref<Set<string>>(new Set())
     // 简历列表
     const list = ref<any[]>([])
     // 当前选中的简历下标
@@ -136,6 +138,7 @@ export const useResumeStore = defineStore(
       currentFixedConfig,
       currentUI,
       isPrinting,
+      selectedModuleKeys,
       addResume,
       deleteResume,
       init,
