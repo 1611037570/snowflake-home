@@ -8,7 +8,8 @@ import { useRowInfo } from './useRowInfo'
 defineOptions({ name: 'ResumePage' })
 
 const resumeStore = useResumeStore()
-const { currentData, currentConfig, currentUI, currentFixedConfig } = storeToRefs(resumeStore)
+const { currentData, currentConfig, currentUI, currentFixedConfig, selectedModuleKeys } =
+  storeToRefs(resumeStore)
 
 const paddingValue = inject('paddingValue')
 const fontValue = inject('fontValue')
@@ -35,7 +36,13 @@ const { moduleList } = useRowInfo(measureRef, o, { selector: '.resume-module-wra
 // 点击获取模块信息
 const handleModuleClick = (slice) => {
   console.log('当前选中的模块信息：', slice)
-  // TODO: 后续可以根据业务需求处理这些信息，比如弹出配置面板、高亮当前编辑项等
+  const key = slice.moduleKey
+  // 存在则删除，不存在则添加 (实现 toggle)
+  if (selectedModuleKeys.value.has(key)) {
+    selectedModuleKeys.value.delete(key)
+  } else {
+    selectedModuleKeys.value.add(key)
+  }
 }
 
 // 分页逻辑
@@ -151,7 +158,8 @@ const pages = computed(() => {
         <div
           v-for="slice in pageSlices"
           :key="slice.moduleKey"
-          class="resume-module-wrapper group relative cursor-pointer rounded transition-all duration-300 hover:bg-blue-50/20 hover:ring-2 hover:ring-blue-400"
+          class="resume-module-wrapper group relative cursor-pointer rounded transition-all duration-300 hover:bg-indigo-50/30 hover:ring-2 hover:ring-indigo-300"
+          :class="{ 'bg-blue-50/10 ring-2 ring-blue-500': selectedModuleKeys.has(slice.moduleKey) }"
           :data-module="slice.moduleKey"
           @click="handleModuleClick(slice)"
         >
