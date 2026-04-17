@@ -32,6 +32,12 @@ const o = computed(() => {
 })
 const { moduleList } = useRowInfo(measureRef, o, { selector: '.resume-module-wrapper' })
 
+// 点击获取模块信息
+const handleModuleClick = (slice) => {
+  console.log('当前选中的模块信息：', slice)
+  // TODO: 后续可以根据业务需求处理这些信息，比如弹出配置面板、高亮当前编辑项等
+}
+
 // 分页逻辑
 const pages = computed(() => {
   const result = []
@@ -129,35 +135,55 @@ const pages = computed(() => {
     </div>
 
     <!-- 实际渲染的分页内容 -->
-    <template v-for="(pageSlices, pageIndex) in pages" :key="pageIndex">
-      <div
-        class="resume-page-item flex flex-col rounded-lg bg-white text-black shadow-lg"
-        :class="[currentUI.fontFamily, `page-${pageIndex}`]"
-        :style="[
-          paddingValue(),
-          fontValue(),
-          lineHeightValue(),
-          { width: `${WIDTH}px`, height: `${HEIGHT}px` },
-        ]"
-      >
-        <div class="flex flex-1 flex-col">
+    <div
+      v-for="(pageSlices, pageIndex) in pages"
+      :key="pageIndex"
+      class="resume-page-item flex flex-col rounded-lg bg-white text-black shadow-lg"
+      :class="[currentUI.fontFamily, `page-${pageIndex}`]"
+      :style="[
+        paddingValue(),
+        fontValue(),
+        lineHeightValue(),
+        { width: `${WIDTH}px`, height: `${HEIGHT}px` },
+      ]"
+    >
+      <div class="flex flex-1 flex-col">
+        <div
+          v-for="slice in pageSlices"
+          :key="slice.moduleKey"
+          class="resume-module-wrapper group relative cursor-pointer rounded transition-all duration-300 hover:bg-blue-50/20 hover:ring-2 hover:ring-blue-400"
+          :data-module="slice.moduleKey"
+          @click="handleModuleClick(slice)"
+        >
+          <!-- 右上角的操作按钮（默认隐藏，hover时显示） -->
           <div
-            v-for="slice in pageSlices"
-            :key="slice.moduleKey"
-            class="resume-module-wrapper"
-            :data-module="slice.moduleKey"
+            class="absolute -top-2 -right-2 z-10 hidden items-center justify-center rounded-full bg-blue-500 p-1.5 text-white shadow group-hover:flex hover:bg-blue-600"
+            @click.stop="handleModuleClick(slice)"
+            title="选择该模块"
           >
-            <ResumeModule :data="currentData" :name="slice.moduleKey" />
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M12 20h9"></path>
+              <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
+            </svg>
           </div>
-        </div>
-        <div class="pt-3 text-center text-xs opacity-50">
-          第 {{ pageIndex + 1 }} 页，共 {{ pages.length }} 页
+          <ResumeModule :data="currentData" :name="slice.moduleKey" />
         </div>
       </div>
-    </template>
+      <div class="pt-3 text-center text-xs opacity-50">
+        第 {{ pageIndex + 1 }} 页，共 {{ pages.length }} 页
+      </div>
 
-    <component :is="'style'">
-      <template v-for="(pageSlices, pageIndex) in pages" :key="'style-page-' + pageIndex">
+      <component :is="'style'">
         <template v-for="slice in pageSlices" :key="'style-slice-' + slice.moduleKey">
           .page-{{ pageIndex }} .resume-module-wrapper[data-module="{{ slice.moduleKey }}"] > div >
           div:not(
@@ -166,8 +192,8 @@ const pages = computed(() => {
           </template>
           ) { display: none !important; }
         </template>
-      </template>
-    </component>
+      </component>
+    </div>
   </div>
 </template>
 
