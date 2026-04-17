@@ -4,13 +4,13 @@ export const DEFAULT_USER_FORM = [
     type: 'object',
     component: 'title',
     props: {
-      name: '用户信息',
+      modelValue: '个人信息',
     },
     data: [
-      {
-        path: ['user', 'name'],
-        key: 'modelValue',
-      },
+      // {
+      //   path: ['user', 'name'],
+      //   key: 'modelValue',
+      // },
     ],
   },
   {
@@ -58,6 +58,7 @@ export const DEFAULT_USER_FORM = [
         },
         props: {
           placeholder: '请输入出生日期',
+          valueFormat: 'YYYY.MM',
           type: 'month',
         },
       },
@@ -103,6 +104,7 @@ export const DEFAULT_USER_FORM = [
         },
         props: {
           placeholder: '请输入参加工作时间',
+          valueFormat: 'YYYY.MM',
           type: 'month',
         },
       },
