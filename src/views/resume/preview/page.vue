@@ -30,8 +30,7 @@ const o = computed(() => {
     lineHeightValue: lineHeightValue.value(),
   }
 })
-// 使用 useRowInfo 获取每个模块的高度
-const { rowList } = useRowInfo(measureRef, o)
+const { moduleList } = useRowInfo(measureRef, o, { selector: '.resume-module-wrapper' })
 
 // 分页逻辑
 const pages = computed(() => {
@@ -42,18 +41,64 @@ const pages = computed(() => {
   const padding = currentUI.value.padding || 0
   const maxContentHeight = HEIGHT - padding * 2 - 32 // 减去内边距和页脚空间
 
-  rowList.value.forEach((row) => {
-    // 若当前行加入后超出单页高度，且当前页已有内容，则存入结果并重置
-    if (currentHeight + row.height > maxContentHeight && currentPage.length > 0) {
-      result.push(currentPage)
-      currentPage = []
-      currentHeight = 0
-    }
+  moduleList.value.forEach((group) => {
+    const groupHeight = group.rows.reduce((sum, row) => sum + row.height, 0)
 
-    currentPage.push({
-      module: allModules.value[row.index - 1],
-    })
-    currentHeight += row.height
+    // 如果整个组（模块）能完全放入当前页，就整个放入
+    if (currentHeight + groupHeight <= maxContentHeight) {
+      currentPage.push({
+        moduleKey: group.moduleKey,
+        visibleRowIndexes: group.rows.map((r) => r.index),
+      })
+      currentHeight += groupHeight
+    } else {
+      // 模块放不下，需要把内部的行拆分
+      const remainingRows = [...group.rows]
+
+      while (remainingRows.length > 0) {
+        let sliceHeight = 0
+        const sliceRows = []
+
+        // 在当前页尽可能多地塞入行
+        while (
+          remainingRows.length > 0 &&
+          currentHeight + sliceHeight + remainingRows[0].height <= maxContentHeight
+        ) {
+          const row = remainingRows.shift()
+          sliceRows.push(row)
+          sliceHeight += row.height
+        }
+
+        // 如果一行都没塞进去，说明这一行的高度比剩余空间大
+        if (sliceRows.length === 0) {
+          if (currentHeight > 0) {
+            // 当前页已经有其他内容，翻页后再试
+            result.push(currentPage)
+            currentPage = []
+            currentHeight = 0
+            continue
+          } else {
+            // 当前页是空的，这一行比整页都高，只能硬塞进去
+            const row = remainingRows.shift()
+            sliceRows.push(row)
+            sliceHeight += row.height
+          }
+        }
+
+        currentPage.push({
+          moduleKey: group.moduleKey,
+          visibleRowIndexes: sliceRows.map((r) => r.index),
+        })
+        currentHeight += sliceHeight
+
+        // 如果还有剩余行，说明当前页满了，需要翻页
+        if (remainingRows.length > 0) {
+          result.push(currentPage)
+          currentPage = []
+          currentHeight = 0
+        }
+      }
+    }
   })
 
   // 补录最后一页
@@ -69,21 +114,25 @@ const pages = computed(() => {
   <div class="flex flex-col gap-4">
     <!-- 隐藏的测量容器：用于 useRowInfo 读取高度 -->
     <div
-      class="pointer-events-none absolute -z-10 opacity-0"
+      class="pointer-events-none absolute -z-10 flex flex-col opacity-0"
+      ref="measureRef"
       :style="[paddingValue(), { width: `${WIDTH}px` }]"
     >
-      <div ref="measureRef" class="flex flex-col" :style="[fontValue(), lineHeightValue()]">
-        <div v-for="item in allModules" :key="item.key">
-          <ResumeModule :data="currentData" :name="item.key" />
-        </div>
+      <div
+        v-for="item in allModules"
+        :key="item.key"
+        :data-module="item.key"
+        class="resume-module-wrapper"
+      >
+        <ResumeModule :data="currentData" :name="item.key" />
       </div>
     </div>
 
     <!-- 实际渲染的分页内容 -->
-    <template v-for="(pageRows, pageIndex) in pages" :key="pageIndex">
+    <template v-for="(pageSlices, pageIndex) in pages" :key="pageIndex">
       <div
         class="resume-page-item flex flex-col rounded-lg bg-white text-black shadow-lg"
-        :class="currentUI.fontFamily"
+        :class="[currentUI.fontFamily, `page-${pageIndex}`]"
         :style="[
           paddingValue(),
           fontValue(),
@@ -92,18 +141,33 @@ const pages = computed(() => {
         ]"
       >
         <div class="flex flex-1 flex-col">
-          <ResumeModule
-            v-for="(row, i) in pageRows"
-            :key="row.module.key + i"
-            :data="currentData"
-            :name="row.module.key"
-          />
+          <div
+            v-for="slice in pageSlices"
+            :key="slice.moduleKey"
+            class="resume-module-wrapper"
+            :data-module="slice.moduleKey"
+          >
+            <ResumeModule :data="currentData" :name="slice.moduleKey" />
+          </div>
         </div>
         <div class="pt-3 text-center text-xs opacity-50">
           第 {{ pageIndex + 1 }} 页，共 {{ pages.length }} 页
         </div>
       </div>
     </template>
+
+    <component :is="'style'">
+      <template v-for="(pageSlices, pageIndex) in pages" :key="'style-page-' + pageIndex">
+        <template v-for="slice in pageSlices" :key="'style-slice-' + slice.moduleKey">
+          .page-{{ pageIndex }} .resume-module-wrapper[data-module="{{ slice.moduleKey }}"] > div >
+          div:not(
+          <template v-for="(idx, i) in slice.visibleRowIndexes" :key="idx">
+            :nth-child({{ idx + 1 }}){{ i < slice.visibleRowIndexes.length - 1 ? ',' : '' }}
+          </template>
+          ) { display: none !important; }
+        </template>
+      </template>
+    </component>
   </div>
 </template>
 

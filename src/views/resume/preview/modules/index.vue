@@ -34,7 +34,6 @@ const dynamicComponent = computed(() => {
 </script>
 
 <template>
-  <!-- 渲染动态组件，并透传所有属性和事件 -->
   <component :is="dynamicComponent" v-if="dynamicComponent" v-bind="$attrs" />
 </template>
 
