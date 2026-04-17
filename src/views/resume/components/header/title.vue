@@ -1,6 +1,7 @@
 <script setup>
 import { useResumeStore } from '@/stores'
 import { computed, ref } from 'vue'
+import { workYears } from '../../utils'
 import TitleEditor from './titleEditor.vue'
 
 // 简历 Store
@@ -13,8 +14,7 @@ const title = computed(() => {
   const name = user?.name || ''
   const edu = education?.[0]?.education || ''
   const position = user?.position || ''
-  const workTime = user?.workTime || ''
-  return [name, edu, position, workTime].filter(Boolean).join('-') || '未命名简历'
+  return [name, edu, position, workYears.value].filter(Boolean).join('-') || '未命名简历'
 })
 // 标题编辑器引用
 const titleEditorRef = ref(null)
