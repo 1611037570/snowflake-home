@@ -7,8 +7,13 @@ import { nextTick, onMounted, ref, watch, type Ref } from 'vue'
  * @param {String} idPrefix - ID前缀（可选，默认：row-item）
  * @returns {Object} 包含行信息、总高度的响应式数据和方法
  */
-export function useRowInfo(rootRef: Ref<HTMLDivElement | null>, watchOptions: any) {
+export function useRowInfo(
+  rootRef: Ref<HTMLDivElement | null>,
+  watchOptions: any,
+  options?: { selector?: string },
+) {
   const idPrefix = 'row-item'
+  const selector = options?.selector || ':scope > div'
   // 存储一级div的信息（ID、高度、DOM元素）
   const rowList = ref<any[]>([])
   // 新增：总高度（响应式，初始值0）
@@ -23,19 +28,20 @@ export function useRowInfo(rootRef: Ref<HTMLDivElement | null>, watchOptions: an
       return
     }
 
-    // 关键：仅获取根容器下的一级div（使用 :scope > div 确保只选直接子元素）
-    const firstLevelDivs = rootRef.value.querySelectorAll(':scope > div')
+    // 关键：获取目标元素
+    const firstLevelDivs = rootRef.value.querySelectorAll(selector)
     const rows: {
       id: string
       height: number
       element: HTMLDivElement
       index: number
       html: string
+      dataset: Record<string, string | undefined>
     }[] = []
     // 新增：临时变量存储总高度累加值
     let sumHeight = 0
 
-    // 遍历每个一级div，绑定ID和高度属性
+    // 遍历每个元素，绑定ID和高度属性
     Array.from(firstLevelDivs).forEach((div: any, index: number) => {
       // 1. 绑定唯一ID（前缀+索引，方便获取）
       const rowId = `${idPrefix}-${index + 1}` // 比如 row-item-1、row-item-2
@@ -54,6 +60,7 @@ export function useRowInfo(rootRef: Ref<HTMLDivElement | null>, watchOptions: an
         element: div,
         index: index + 1,
         html: div.outerHTML, // 存储 HTML 内容用于检测变化
+        dataset: { ...div.dataset }, // 提取自定义属性（如 data-module）以便外部使用
       })
 
       // 新增：累加当前div的高度到总高度
