@@ -5,6 +5,7 @@ defineProps({
     default: '未填写',
   },
 })
+function add() {}
 function del() {}
 </script>
 
@@ -26,6 +27,10 @@ function del() {}
       </template>
       <template #default>
         <slot />
+        <div class="flex cursor-pointer items-center gap-1 text-sf-theme" @click="add">
+          <SfIcon icon="ic:round-add" size="4" />
+          <span> 增加{{ title }} </span>
+        </div>
       </template>
     </SfCollapseItem>
   </SfCollapse>
