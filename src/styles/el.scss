@@ -30,11 +30,12 @@
 .el-date-editor {
   --el-date-editor-width: 100% !important;
 }
-.el-input__wrapper {
+.el-input__wrapper,
+.el-textarea__inner {
   box-shadow: none !important;
 
   &:hover {
-    box-shadow: none;
+    box-shadow: none !important;
   }
 }
 
