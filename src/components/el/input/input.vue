@@ -23,7 +23,7 @@ function changeRef(exports: any) {
 defineExpose({} as ComponentInstance<typeof ElInput>)
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 /* 输入框容器 */
 :deep(.el-input__wrapper) {
   /* 移除阴影 */
