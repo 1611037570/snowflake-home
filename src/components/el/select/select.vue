@@ -34,4 +34,11 @@ function changeRef(exports: any) {
 defineExpose({} as ComponentInstance<typeof ElSelect>)
 </script>
 
-<style scoped></style>
+<style scoped lang="scss">
+:deep(.el-select__wrapper) {
+  /* 移除阴影 */
+  box-shadow: none;
+  /* 移除背景 */
+  background-color: transparent;
+}
+</style>

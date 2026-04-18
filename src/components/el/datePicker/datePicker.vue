@@ -25,3 +25,12 @@ function changeRef(exports: any) {
 }
 defineExpose({} as ComponentInstance<typeof ElDatePicker>)
 </script>
+
+<style lang="scss">
+:deep(.el-input__wrapper) {
+  /* 移除阴影 */
+  box-shadow: none;
+  /* 移除背景 */
+  background-color: transparent !important;
+}
+</style>
