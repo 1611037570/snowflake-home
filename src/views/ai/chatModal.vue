@@ -8,6 +8,7 @@ const route = useRoute()
 
 // 判断当前路由是否包含 'resume' 或 'ai'，如果包含则不显示
 const shouldShow = computed(() => {
+  if (route.path === '/') return false
   const path = route.path.toLowerCase()
   return !path.includes('/resume') && !path.includes('/ai')
 })
