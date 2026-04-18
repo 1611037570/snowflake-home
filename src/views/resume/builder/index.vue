@@ -33,7 +33,7 @@ function handleMenuClick(index) {
 </script>
 
 <template>
-  <div class="flex h-full w-full bg-sf-bg text-sf-base">
+  <div class="flex h-full w-[460px] border-r border-sf-border bg-sf-primary-hover text-sf-base">
     <!-- 左侧栏 -->
     <div class="relative w-15 shrink-0">
       <div

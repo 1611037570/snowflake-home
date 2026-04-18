@@ -14,14 +14,16 @@ function switchToJd() {
 </script>
 
 <template>
-  <div class="flex h-full max-w-[400px] min-w-[400px] flex-col p-4">
-    <div class="flex-1 overflow-y-auto">
-      <Score v-if="currentView === 'score'" />
-      <JdInput v-else />
-    </div>
+  <div class="box-border h-full max-w-[400px] min-w-[400px] bg-sf-bg py-3 pr-3">
+    <div class="flex h-full flex-col rounded-xl border bg-sf-primary p-3">
+      <div class="flex-1 overflow-y-auto">
+        <Score v-if="currentView === 'score'" />
+        <JdInput v-else />
+      </div>
 
-    <!-- 下方：输入框组件 -->
-    <InputArea @switch-jd="switchToJd" />
+      <!-- 下方：输入框组件 -->
+      <InputArea @switch-jd="switchToJd" />
+    </div>
   </div>
 </template>
 

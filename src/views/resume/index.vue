@@ -1,16 +1,12 @@
 <template>
   <div class="flex h-full w-full flex-col">
     <Header />
-    <div class="w-full flex-1 overflow-hidden">
-      <SfSplitter v-if="currentIndex >= 0">
-        <SfSplitterPanel max="600" min="400">
-          <Builder />
-        </SfSplitterPanel>
-        <SfSplitterPanel>
-          <Preview />
-        </SfSplitterPanel>
-        <Assistant />
-      </SfSplitter>
+    <div class="flex w-full flex-1 overflow-hidden" v-if="currentIndex >= 0">
+      <Builder />
+      <div class="flex-1 overflow-hidden">
+        <Preview />
+      </div>
+      <Assistant />
     </div>
   </div>
 </template>

@@ -134,20 +134,20 @@ function send() {
 
 <template>
   <!-- AI 快捷操作按钮 -->
-  <div class="flex gap-3">
+  <div class="flex gap-2">
     <div
       v-for="action in quickActions"
       :key="action.name"
-      class="group flex flex-1 cursor-pointer items-center justify-center gap-2 rounded-lg text-[12px] font-medium transition-all active:scale-[0.98]"
+      class="group flex flex-1 cursor-pointer items-center justify-center gap-1 rounded-lg p-1 text-[11px] font-medium transition-all active:scale-[0.98]"
       :class="activeMode === action.name ? 'bg-blue-500 text-white' : 'bg-gray-100 text-gray-700'"
       @click="toggleMode(action.type)"
     >
-      <SfIcon :icon="action.icon" :size="4" class="transition-transform" />
+      <SfIcon :icon="action.icon" :size="3" class="transition-transform" />
       {{ action.name }}
     </div>
   </div>
   <div
-    class="mt-1 flex shrink-0 flex-col gap-1 rounded-2xl border border-sf-border bg-sf-primary p-3 shadow-sm"
+    class="mt-1 flex shrink-0 flex-col gap-3 rounded-2xl border border-sf-border bg-sf-primary p-3 shadow-sm"
   >
     <!-- 选中的模块 tags -->
     <div v-if="selectedModuleKeys.size > 0" class="mt-1 flex items-start gap-2 rounded-lg">
@@ -173,12 +173,11 @@ function send() {
       <sf-input
         v-model="inputValue"
         :placeholder="inputPlaceholder"
-        class="w-full"
+        class="w-full p-0!"
         type="textarea"
         rows="1"
         resize="none"
         :autosize="{ minRows: 1, maxRows: 5 }"
-        @keydown.enter="send"
       />
       <!-- 发送按钮 -->
       <button
@@ -192,4 +191,10 @@ function send() {
   </div>
 </template>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+:deep(.el-textarea__inner) {
+  padding: 0 !important;
+  min-height: 21px;
+  height: 21px;
+}
+</style>

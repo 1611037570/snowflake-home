@@ -54,12 +54,8 @@ const back = () => {
           class="cursor-pointer transition-colors hover:text-sf-theme"
           title="历史记录"
         />
-        <SfIcon
-          icon="basil:file-user-solid"
-          size="5"
-          class="cursor-pointer transition-colors hover:text-sf-theme"
-          title="个人信息"
-        />
+        <SfLocale />
+        <SfTheme />
       </div>
 
       <!-- 分隔线 -->
@@ -94,15 +90,6 @@ const back = () => {
       <!-- 操作按钮组 -->
       <div class="flex items-center gap-2.5">
         <el-button
-          class="!h-9 !rounded-lg !border-sf-border !bg-sf-primary !px-4 !font-medium !text-sf-text-2 hover:!border-sf-theme hover:!text-sf-theme"
-        >
-          <template #icon>
-            <SfIcon icon="lucide:import" size="4.5" class="mr-1" />
-          </template>
-          同步
-        </el-button>
-
-        <el-button
           @click="handleDownload"
           :loading="isPrinting"
           class="!h-9 !rounded-lg !border-sf-border !bg-sf-primary !px-4 !font-medium !text-sf-text-2 hover:!border-sf-theme hover:!text-sf-theme"
@@ -111,15 +98,6 @@ const back = () => {
             <SfIcon icon="material-symbols:download" size="4.5" class="mr-1" />
           </template>
           {{ isPrinting ? '生成中...' : '下载' }}
-        </el-button>
-
-        <el-button
-          class="!h-9 !rounded-lg !border-none !bg-sf-success !px-5 !font-medium !text-white hover:!opacity-90 active:!scale-95"
-        >
-          <template #icon>
-            <SfIcon icon="lucide:save" size="4.5" class="mr-1" />
-          </template>
-          保存
         </el-button>
       </div>
     </div>
