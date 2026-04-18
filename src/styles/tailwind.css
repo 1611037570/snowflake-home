@@ -80,11 +80,11 @@
 
   --sf-base: rgba(0, 0, 0, 1);
   --sf-primary: rgba(255, 255, 255, 1);
-  --sf-primary-hover: #d1d1d6;
+  --sf-primary-hover: #f1f1f8;
   --sf-text: color-mix(in oklab, oklch(0% 0 0) 80%, transparent);
   --sf-text-2: color-mix(in oklab, oklch(0% 0 0) 60%, transparent);
   --sf-text-3: color-mix(in oklab, oklch(0% 0 0) 40%, transparent);
-  --sf-background: #f2f2f7;
+  --sf-background: #f3f3f7;
   --sf-background-hover: #e5e5ea;
   --sf-background-2: #e5e5ea;
   --sf-background-2-hover: #d1d1d6;
