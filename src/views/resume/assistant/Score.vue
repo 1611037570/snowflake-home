@@ -1,45 +1,5 @@
 <script setup>
-import { useResumeStore } from '@/stores'
-import { storeToRefs } from 'pinia'
-import { computed } from 'vue'
-
-const resumeStore = useResumeStore()
-const { currentData } = storeToRefs(resumeStore)
-
-// 计算单个对象得分
-function calculateScore(obj) {
-  if (!obj) return 0
-  const keys = Object.keys(obj)
-  const totalFields = keys.length
-  if (totalFields === 0) return 0
-  const singleScore = 10 / totalFields
-  let totalScore = 0
-
-  for (const key of keys) {
-    const value = obj[key]
-    const hasContent = value != null && String(value).trim() !== ''
-    if (hasContent) totalScore += singleScore
-  }
-  return Math.round(totalScore)
-}
-
-// 数组评分函数（完美复用）
-function calculateListScore(list) {
-  if (!Array.isArray(list) || list.length === 0) return 0
-  let totalScore = 0
-  for (const item of list) {
-    totalScore += calculateScore(item) // 🔥 复用原函数
-  }
-  const finalScore = totalScore / list.length
-  return Math.round(finalScore)
-}
-
-// 计算各项得分
-const userScore = computed(() => calculateScore(currentData.value?.user || {}))
-const educationScore = computed(() => calculateListScore(currentData.value?.education || []))
-const skillScore = computed(() => (currentData.value?.skill?.trim() ? 10 : 0))
-const workScore = computed(() => calculateListScore(currentData.value?.work || []))
-const projectScore = computed(() => calculateListScore(currentData.value?.project || []))
+import { userScore, educationScore, skillScore, workScore, projectScore } from '../utils'
 
 // 雷达图配置
 const a = computed(() => ({
