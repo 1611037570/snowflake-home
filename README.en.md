@@ -2,24 +2,17 @@
 
 [Simplified Chinese](README.md) | [English](README.en.md)
 
----
-
 ## 📌 Project Introduction
 
 The main body of the project is the Snowflake Start Page, with several small tools extended based on it; it also integrates multiple infrastructure features.
 Launched on September 3, 2020, reconstructed and open-sourced on November 22, 2025.
 Through this project, you can learn the practical applications of modern frontend technologies such as **Vue3**, **TypeScript**, and **Vite**.
 
----
-
 ## 🎯 Core Product Modules
 
 - ✨ **Snowflake Start Page**: Core project carrier, providing a personalized and customizable website start page (http://nannan.work)
 - 📄 **Resume Generator**: Visual resume editing tool, supporting template selection, content customization, and one-click export (http://nannan.work/#/resume)
 - 🛣️ **Image Processing Tool**: Lightweight image suite, covering common functions such as compression, cropping, and format conversion (http://nannan.work/#/image)
-- 👤 **Personal Homepage**: Author's personal showcase page (http://nannan.work/#/index)
-
----
 
 ## 🔧 Core Infrastructure Features
 
@@ -34,15 +27,11 @@ Through this project, you can learn the practical applications of modern fronten
 - 🧩 **Component Library**: Project-specific style component library based on **ElementPlus**; supports on-demand/global import
 - 🛠️ **Tool Library**: Project-specific style tool library based on **VueUse**
 
----
-
 ## 🔗 Live Demo
 
 You can experience the deployed project through the link below:
 
 **Website**: <http://nannan.work>
-
----
 
 ## 🚀 Install & Run
 
@@ -59,15 +48,13 @@ pnpm dev
 pnpm build
 ```
 
----
-
 ## 📄 License
 
 This project is licensed under the [MIT License](LICENSE).
 
----
-
 ## Author's Murmurs
+
+👤 Personal Page (http://nannan.work/#/index)
 
 ### ❄️ First Snow Again, Six Years of Frontend.
 
