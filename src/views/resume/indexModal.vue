@@ -1,7 +1,6 @@
 <template>
   <SfModal v-if="indexVisible" v-model="indexVisible">
     <div v-if="list.length"></div>
-
     <div
       v-else
       class="relative flex min-h-[450px] w-full flex-col items-center justify-center p-10"
@@ -35,7 +34,6 @@
         <p class="mb-10 max-w-[280px] text-base leading-relaxed text-slate-500">
           你还没有创建过简历。现在只需几分钟，即可生成一份令 HR 眼前一亮的专业简历。
         </p>
-
         <div class="w-full max-w-[240px]">
           <ElButton
             type="primary"

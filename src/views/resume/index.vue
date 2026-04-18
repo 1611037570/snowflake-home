@@ -7,12 +7,7 @@
           <Builder />
         </SfSplitterPanel>
         <SfSplitterPanel>
-          <div class="bg-sf-bg-soft flex h-full flex-1 flex-col items-center overflow-hidden">
-            <!-- 表单容器 -->
-            <div ref="formContainer" class="scrollbar-hide w-full flex-1 overflow-y-auto">
-              <Preview />
-            </div>
-          </div>
+          <Preview />
         </SfSplitterPanel>
         <Assistant />
       </SfSplitter>
@@ -22,16 +17,15 @@
 
 <script setup>
 import { useResumeStore } from '@/stores'
-import eventBus from '@/utils/modules/eventBus'
 import { storeToRefs } from 'pinia'
-import { onMounted, onUnmounted, ref } from 'vue'
+import { onMounted } from 'vue'
 import Assistant from './assistant/index.vue'
 import Builder from './builder/index.vue'
 import Header from './components/header/index.vue'
 import Preview from './preview/index.vue'
 
 const resumeStore = useResumeStore()
-const { list, currentIndex, isPrinting } = storeToRefs(resumeStore)
+const { list, currentIndex } = storeToRefs(resumeStore)
 
 function init() {
   if (!list.value.length) {
@@ -42,135 +36,7 @@ function init() {
 
 onMounted(() => {
   init()
-  eventBus.on('resume-print-pdf', printPDF)
 })
-
-onUnmounted(() => {
-  eventBus.off('resume-print-pdf', printPDF)
-})
-
-// 表单容器引用
-const formContainer = ref(null)
-
-/**
- * 将简历预览导出为PDF文件
- * 利用 ResumePage 已生成的分页结构直接导出
- */
-const printPDF = async () => {
-  if (!formContainer.value) {
-    console.error('表单容器未找到')
-    return
-  }
-
-  isPrinting.value = true
-
-  try {
-    // 确保字体加载完成
-    await document.fonts.ready
-
-    // 动态导入PDF相关库
-    const { snapdom } = await import('@zumer/snapdom')
-    const { default: jsPDF } = await import('jspdf')
-
-    // 查找所有已分页的页面元素
-    const pages = formContainer.value.querySelectorAll('.resume-page-item')
-    if (pages.length === 0) {
-      console.error('未找到可打印的简历页面')
-      isPrinting.value = false
-      return
-    }
-
-    // 创建PDF文档 (A4尺寸)
-    const pdf = new jsPDF({
-      orientation: 'portrait',
-      unit: 'mm',
-      format: 'a4',
-    })
-
-    const pageWidth = 210
-    const pageHeight = 297
-
-    // 创建隐藏的临时容器用于渲染 (防止缩放干扰)
-    const tempContainer = document.createElement('div')
-    tempContainer.style.position = 'absolute'
-    tempContainer.style.top = '-9999px'
-    tempContainer.style.left = '-9999px'
-    tempContainer.style.width = '794px' // A4 96dpi 宽度
-    document.body.appendChild(tempContainer)
-
-    for (let i = 0; i < pages.length; i++) {
-      const pageEl = pages[i]
-
-      // 克隆页面并清除可能干扰渲染的样式 (如阴影、圆角)
-      const clone = pageEl.cloneNode(true)
-      clone.style.boxShadow = 'none'
-      clone.style.borderRadius = '0'
-      clone.style.margin = '0'
-      clone.style.transform = 'none'
-      clone.style.zoom = '1'
-
-      tempContainer.innerHTML = ''
-      tempContainer.appendChild(clone)
-
-      // 渲染页面为 Canvas
-      const canvas = await snapdom.toCanvas(clone, {
-        scale: 2, // 提高清晰度
-        backgroundColor: '#ffffff',
-        width: 794,
-        height: 1123,
-      })
-
-      if (!canvas || canvas.width === 0 || canvas.height === 0) {
-        console.error(`第 ${i + 1} 页渲染失败`)
-        continue
-      }
-
-      const imgData = canvas.toDataURL('image/png')
-
-      // 如果不是第一页，添加新页面
-      if (i > 0) {
-        pdf.addPage()
-      }
-
-      // 将图片填满整个PDF页面
-      pdf.addImage(imgData, 'PNG', 0, 0, pageWidth, pageHeight, undefined, 'FAST')
-
-      // 提取并添加超链接
-      const cloneRect = clone.getBoundingClientRect()
-      const links = clone.querySelectorAll('a')
-      const scaleFactor = pageWidth / 794
-
-      links.forEach((link) => {
-        const linkRect = link.getBoundingClientRect()
-        const href = link.getAttribute('href')
-        if (href) {
-          pdf.link(
-            (linkRect.left - cloneRect.left) * scaleFactor,
-            (linkRect.top - cloneRect.top) * scaleFactor,
-            linkRect.width * scaleFactor,
-            linkRect.height * scaleFactor,
-            { url: href },
-          )
-        }
-      })
-    }
-
-    // 清理临时容器
-    document.body.removeChild(tempContainer)
-
-    // 保存PDF
-    const timestamp = new Date().toISOString().replace(/[:.]/g, '-')
-    pdf.save(`简历导出-${timestamp}.pdf`)
-
-    console.log(`成功导出 ${pages.length} 页 PDF`)
-  } catch (error) {
-    console.error('生成PDF失败:', error)
-  } finally {
-    isPrinting.value = false
-  }
-}
 </script>
 
 <style scoped></style>
-
-<style></style>
