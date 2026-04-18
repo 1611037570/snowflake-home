@@ -14,8 +14,6 @@ export const arkParser = (res: any) => {
 
 export const arkStreamParser = (line: string, { onEvent, debug }: any) => {
   const data = processJson(line, debug)
-
-  // 5. 匹配豆包流的核心增量事件类型
   const { type, delta } = data
 
   let currentOutputContent = '' // 最终输出给用户的内容

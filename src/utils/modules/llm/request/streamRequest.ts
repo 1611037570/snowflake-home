@@ -6,14 +6,25 @@ import {
   StreamError,
 } from '../stream-utils'
 
+type StreamRequestConfig = {
+  url: string
+  method: string
+  data: string
+  isJson: boolean
+  onEvent: any
+  debug: boolean
+  provider: string
+  timeout?: number
+}
 export function streamRequest(token: string) {
   let controller: AbortController | null = null
 
   function abort() {
-    if (controller) {
-      controller.abort()
-      controller = null
+    if (!controller) {
+      return
     }
+    controller.abort()
+    controller = null
   }
   async function send({
     url,
@@ -23,19 +34,18 @@ export function streamRequest(token: string) {
     onEvent,
     debug,
     provider,
-  }: {
-    url: string
-    method: string
-    data: string
-    isJson: boolean
-    onEvent: any
-    debug: boolean
-    provider: string
-  }) {
+    timeout = 60000,
+  }: StreamRequestConfig) {
     abort()
+    let timeoutId: ReturnType<typeof setTimeout> | null = null
+    let isTimeoutAbort = false
     try {
       controller = new AbortController()
       const signal = controller.signal
+      timeoutId = setTimeout(() => {
+        isTimeoutAbort = true
+        controller?.abort()
+      }, timeout)
       // 发送流式请求
       const response = await fetch(url, {
         signal,
@@ -85,15 +95,21 @@ export function streamRequest(token: string) {
           finalUsage = usage
         }
       }
-    } catch (error) {
+    } catch (error: any) {
       // 检查是否为主动取消
       if (error.name === 'AbortError') {
+        if (isTimeoutAbort) {
+          throw new StreamError(`请求超时（${timeout}ms）`, ERROR_CODES.NETWORK_ERROR)
+        }
         if (debug) console.log('请求被主动取消')
         return { aborted: true }
       }
       throw error
     } finally {
-      controller = null
+      if (timeoutId) {
+        clearTimeout(timeoutId)
+      }
+      abort()
     }
   }
 
