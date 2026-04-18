@@ -1,5 +1,5 @@
 <script setup>
-import { userScore, educationScore, skillScore, workScore, projectScore } from '../utils'
+import { educationScore, projectScore, skillScore, userScore, workScore } from '../utils'
 
 // 雷达图配置
 const a = computed(() => ({
@@ -45,8 +45,8 @@ const a = computed(() => ({
 </script>
 
 <template>
-  <div class="flex flex-col">
-    <div class="flex h-[400px] w-full items-center justify-center">
+  <div class="flex w-full flex-col">
+    <div class="flex h-[400px] w-full items-center justify-center overflow-hidden">
       <SfEcharts :options="a" />
     </div>
     <div class="mt-4 space-y-2 rounded-xl bg-white/50 p-4">

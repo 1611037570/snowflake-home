@@ -35,7 +35,7 @@ const handleDelete = (key) => {
 
 <template>
   <!-- 右上角固定按钮组 -->
-  <div class="absolute top-15 right-0 z-50 flex flex-col">
+  <div class="absolute top-0 right-0 z-50 flex flex-col">
     <div
       class="flex-c group cursor-pointer border border-sf-border bg-sf-bg p-1 text-sm hover:border-sf-theme"
       @click="handleButtonClick"
