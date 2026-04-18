@@ -163,7 +163,6 @@ onMounted(() => {
 /* 覆盖 el-input textarea 默认样式，使其融入容器 */
 :deep(.ai-input .el-textarea__inner) {
   border: none !important;
-  box-shadow: none !important;
   background-color: transparent !important;
   padding: 0.5rem 0.75rem;
   font-size: 0.95rem;
