@@ -5,6 +5,7 @@ import { useResumeStore } from '@/stores'
 import { storeToRefs } from 'pinia'
 import { computed, inject } from 'vue'
 import Content from '../theme/content.vue'
+import Text from './text.vue'
 
 import { getTime } from '../../utils'
 
@@ -18,15 +19,21 @@ const workList = computed(() => currentData.value.work || [])
 </script>
 
 <template>
-  <div class="resume-row" data-module="work">
+  <div class="resume-row" data-module="work" :style="[lineHeightValue(), fontValue()]">
     <Title title="工作经历" />
     <template v-for="(item, index) in workList" :key="index">
       <div class="flex items-center justify-between" :style="[lineHeightValue(3)]">
         <div class="flex items-center gap-4">
-          <div class="font-bold" :style="[fontValue(3)]">{{ item.name }}</div>
-          <div>{{ item.post }}</div>
+          <div class="font-bold" :style="[fontValue(3)]">
+            <Text v-model:value="item.name" v-model:newValue="item.newName" />
+          </div>
+          <div>
+            <Text v-model:value="item.post" v-model:newValue="item.newPost" />
+          </div>
         </div>
-        <div class="flex items-center">{{ getTime(item.time) }}</div>
+        <div class="flex items-center">
+          <Text :value="getTime(item.time)" v-model:newValue="item.newTime" />
+        </div>
       </div>
       <Content :content="item.content" />
     </template>

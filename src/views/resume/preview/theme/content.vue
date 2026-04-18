@@ -11,15 +11,15 @@ const props = defineProps({
 const fontValue = inject('fontValue')
 const lineHeightValue = inject('lineHeightValue')
 
-function hasContent(content) {
-  if (!content) {
+const hasContent = computed(() => {
+  if (!props.content) {
     return false
   }
-  if (content == '<p><br></p>') {
+  if (props.content == '<p><br></p>') {
     return false
   }
   return true
-}
+})
 
 // 将内容按块拆分，以便分页逻辑可以更细粒度地处理
 const splitBlocks = computed(() => {
@@ -33,7 +33,7 @@ const splitBlocks = computed(() => {
 </script>
 
 <template>
-  <template v-if="hasContent(content)">
+  <template v-if="hasContent">
     <div class="mt-1 w-full"></div>
     <div
       v-for="(block, idx) in splitBlocks"
