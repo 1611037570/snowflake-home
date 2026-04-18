@@ -20,8 +20,8 @@
     <div
       class="w-full"
       :class="newValue ? displayClass + ' cursor-pointer' : ''"
-      @mouseenter="isHovered = true"
-      @mouseleave="isHovered = false"
+      @mouseenter="handleMouseEnter"
+      @mouseleave="handleMouseLeave"
     >
       {{ newValue ? displayValue : value }}
     </div>
@@ -29,9 +29,9 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { computed, ref } from 'vue'
 
-// 定义模型
+// 定义变量
 const value = defineModel('value', { default: '' })
 const newValue = defineModel('newValue', { default: '' })
 
@@ -57,5 +57,21 @@ const handleSave = () => {
 // 放弃修改
 const handleCancel = () => {
   newValue.value = ''
+}
+
+// 鼠标进入事件
+const handleMouseEnter = () => {
+  // 只有当有旧数据时才显示悬停效果
+  if (value.value) {
+    isHovered.value = true
+  }
+}
+
+// 鼠标离开事件
+const handleMouseLeave = () => {
+  // 只有当有旧数据时才重置悬停状态
+  if (value.value) {
+    isHovered.value = false
+  }
 }
 </script>

@@ -4,6 +4,7 @@ import { storeToRefs } from 'pinia'
 import { computed, inject } from 'vue'
 import Content from '../theme/content.vue'
 import Title from '../theme/title.vue'
+import Text from './text.vue'
 
 import { getTime } from '../../utils'
 
@@ -23,7 +24,7 @@ const education = computed(() => {
 </script>
 
 <template>
-  <div class="resume-row" data-module="education">
+  <div class="resume-row" data-module="education" :style="[lineHeightValue(), fontValue()]">
     <!-- 标题栏 -->
     <Title title="教育经历"></Title>
     <!-- 内容区 -->
@@ -34,17 +35,17 @@ const education = computed(() => {
         v-if="item.name || getTime(item.time)"
       >
         <div class="flex items-baseline gap-4">
-          <span class="font-bold" :style="[fontValue(3)]">{{ item.name }}</span>
+          <div class="font-bold" :style="[fontValue(3)]">
+            <Text v-model:value="item.name" v-model:newValue="item.newName" />
+          </div>
         </div>
         <div class="flex items-center gap-2">
-          <span>{{ getTime(item.time) }}</span>
+          <Text :value="getTime(item.time)" v-model:newValue="item.newTime" />
         </div>
       </div>
-      <div class="mt-1 flex items-center gap-2">
-        <template v-for="(field, i) in item.infoList" :key="i">
-          <span>{{ field }}</span>
-          <div v-if="i < item.infoList.length - 1" class="h-1 w-1 rounded-full bg-black"></div>
-        </template>
+      <div class="mt-1 flex items-center gap-2" v-for="(field, i) in item.infoList" :key="i">
+        <Text :value="field" v-model:newValue="item[`newField${i}`]" />
+        <div v-if="i < item.infoList.length - 1" class="h-1 w-1 rounded-full bg-black"></div>
       </div>
       <!-- 补充描述/经历 -->
       <Content :content="item.content" />

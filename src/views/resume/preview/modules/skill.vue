@@ -15,9 +15,9 @@ const skill = computed(() => currentData.value.skill || '')
 </script>
 
 <template>
-  <div class="resume-row" data-module="skill">
-    <Title title="专业技能" :style="[fontValue(), lineHeightValue()]" />
-    <Content :content="skill" :style="[fontValue(), lineHeightValue()]" />
+  <div class="resume-row" data-module="skill" :style="[lineHeightValue(), fontValue()]">
+    <Title title="专业技能" />
+    <Content :content="skill" />
   </div>
 </template>
 

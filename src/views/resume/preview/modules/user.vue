@@ -36,9 +36,9 @@ setTimeout(() => {
 </script>
 
 <template>
-  <div :style="[lineHeightValue()]" class="resume-row">
+  <div :style="[lineHeightValue(), fontValue()]" class="resume-row" data-module="user">
     <!-- 头部基本信息 -->
-    <div class="flex items-center" data-module="user" :style="[lineHeightValue(22)]">
+    <div class="flex items-center" :style="[lineHeightValue(22)]">
       <h1 class="font-bold tracking-wide" :style="[fontValue(14)]">
         <Text v-model:value="user.name" v-model:newValue="user.newName" />
       </h1>
@@ -51,12 +51,7 @@ setTimeout(() => {
       </div>
     </div>
     <!-- 联系方式 -->
-    <div
-      class="resume-row mt-1 flex flex-wrap gap-x-6"
-      data-module="user"
-      :style="[lineHeightValue(), fontValue()]"
-      v-if="contactList.length"
-    >
+    <div class="mt-1 flex flex-wrap gap-x-6" data-module="user" v-if="contactList.length">
       <div v-for="item in contactList" :key="item.label" class="flex items-center">
         <div class="pr-1">{{ item.label }}：</div>
         <div class="font-medium">{{ item.value }}</div>
@@ -66,9 +61,8 @@ setTimeout(() => {
     <div
       v-for="(item, index) in user.link"
       :key="index"
-      class="resume-row mt-1 flex items-center gap-2"
+      class="mt-1 flex items-center gap-2"
       data-module="user"
-      :style="[lineHeightValue(), fontValue()]"
     >
       <Text v-model:value="item.name" v-model:newValue="item.newName" />
       <span v-if="item.name && item.url" class="pr-1">：</span>
