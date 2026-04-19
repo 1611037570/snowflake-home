@@ -71,10 +71,13 @@ const modeList = [
     value: ' ',
   },
 ]
+const currentIndex = inject('currentIndex')
+console.log('currentIndex:>> ', currentIndex)
 </script>
 
 <template>
-  <ItemCollapse :title="title">
+  currentIndex::{{ currentIndex }}
+  <ItemCollapse :title="title" :index="currentIndex">
     <div class="flex flex-col gap-4">
       <div class="flex w-full gap-3">
         <SfInput placeholder="学校" v-model="name" />

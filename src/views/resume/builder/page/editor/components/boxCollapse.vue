@@ -1,12 +1,29 @@
 <script setup>
-defineProps({
+const props = defineProps({
   title: {
     type: String,
     default: '未填写',
   },
+  add: {
+    type: Boolean,
+    default: true,
+  },
+  addConfig: {
+    type: Object,
+    default: () => {},
+  },
 })
-function add() {}
-function del() {}
+const currentForm = inject('currentForm')
+const currentIndex = inject('currentIndex')
+const formProxy = inject('formProxy')
+
+function handleAdd() {
+  currentForm.value.children.fields[0].list.push(props.addConfig)
+}
+function del() {
+  console.log('currentIndex:>> ', currentIndex.value)
+  formProxy.value.fields.splice(currentIndex.value, 1)
+}
 </script>
 
 <template>
@@ -27,7 +44,11 @@ function del() {}
       </template>
       <template #default>
         <slot />
-        <div class="flex cursor-pointer items-center gap-1 text-sf-theme" @click="add">
+        <div
+          class="flex cursor-pointer items-center gap-1 text-sf-theme"
+          @click="handleAdd"
+          v-if="add"
+        >
           <SfIcon icon="ic:round-add" size="4" />
           <span> 增加{{ title }} </span>
         </div>

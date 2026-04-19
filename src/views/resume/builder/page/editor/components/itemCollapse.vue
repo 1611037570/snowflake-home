@@ -1,11 +1,14 @@
 <script setup>
-defineProps({
+const props = defineProps({
   title: {
     type: String,
     default: '未填写',
   },
+  index: {},
 })
-function del() {}
+function del() {
+  console.log('currentIndex:>> ', props.index)
+}
 </script>
 
 <template>
