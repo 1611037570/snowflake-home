@@ -30,10 +30,12 @@ loadTheme()
 // 加载默认事件
 loadEvent()
 
-// 注册全局函数 $s 和 $bus
+// 注册全局函数 $s、$bus 和 $confirm
+import confirm from './components/business/confirm'
 import { $s, eventBus } from './utils'
 app.config.globalProperties.$s = $s
 app.config.globalProperties.$bus = eventBus
+app.config.globalProperties.$confirm = confirm
 
 // 注册全局组件安装器
 app.use(globalComponentInstaller)
