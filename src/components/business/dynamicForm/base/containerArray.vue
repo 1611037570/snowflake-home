@@ -1,46 +1,40 @@
 <template>
-  <el-row class="m-0! w-full" :gutter="0" ref="row" v-if="form?.list.length">
+  <el-row class="m-0! w-full" :gutter="0" ref="row">
     <FormItem
       :form="item"
-      v-for="(item, index) in form?.list"
+      v-for="(item, itemIndex) in form.list"
       :span="item.span"
       :key="item.id"
-      :class="getItemClass(index)"
+      :class="getItemClass(Number(itemIndex))"
     >
-      <component
-        :key="item.id"
-        :is="getComponent(item?.component)"
-        v-bind="{
-          ...dataProxy.getDataProxy(item.data, index),
-          ...item.props,
-        }"
-        v-on="dataProxy.setDataProxy(item.data, index)"
-      ></component>
+      itemIndex: {{ itemIndex }}
+      <ContainerObject :index="itemIndex" :form="item" />
       <div class="flex" v-if="item.ui">
-        <el-button @click="moveUp(index)" :disabled="index === 0">上移</el-button>
-        <el-button @click="moveDown(index)" :disabled="index === length - 1">下移</el-button>
-        <el-button @click="add(index)">添加</el-button>
-        <el-button @click="remove(index)">删除</el-button>
+        <el-button @click="moveUp(itemIndex)" :disabled="itemIndex === 0">上移</el-button>
+        <el-button @click="moveDown(itemIndex)" :disabled="itemIndex === length - 1"
+          >下移</el-button
+        >
+        <el-button @click="add()">添加</el-button>
+        <el-button @click="remove(itemIndex)">删除</el-button>
       </div>
     </FormItem>
   </el-row>
-  <div v-else>数据为空或者配置错误</div>
 </template>
 
 <script setup lang="ts">
 import { getUUID } from '@/utils'
 import { computed, inject, onMounted } from 'vue'
 import { useDraggable } from 'vue-draggable-plus'
-import { getComponent } from '../components'
+import ContainerObject from './containerObject.vue'
 import FormItem from './formItem.vue'
 const row: any = useTemplateRef('row')
 
 defineProps<{
-  index?: number
+  index?: any
 }>()
 
 const form = defineModel<any>('form')
-
+provide('currentForm', form)
 const dataProxy = inject<any>('dataProxy')
 
 useDraggable(row, form.value.list, {
@@ -130,21 +124,21 @@ const getItemClass = (index: number) => {
   return classList.join(' ')
 }
 
-const moveUp = (index: number) => {
+const moveUp = (index: any) => {
   if (index === 0) return
   const [item] = form.value.list.splice(index, 1)
   form.value.list.splice(index - 1, 0, item)
   dataProxy.move(form.value.list, index, index - 1)
 }
 
-const moveDown = (index: number) => {
+const moveDown = (index: any) => {
   if (index === length.value - 1) return
   const [item] = form.value.list.splice(index, 1)
   form.value.list.splice(index + 1, 0, item)
   dataProxy.move(form.value.list, index, index + 1)
 }
 
-const remove = (index: number) => {
+const remove = (index: any) => {
   console.log('orm.value.list:>> ', form.value.list)
 
   dataProxy.remove(form.value.list, index)
