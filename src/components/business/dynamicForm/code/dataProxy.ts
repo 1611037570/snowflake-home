@@ -100,7 +100,7 @@ class DataProxy<T> {
     }
   }
   // 删除数组元素
-  removeArray(payload: any, index: number) {
+  removeItem(payload: any, index: number) {
     const currentPath = this.getPath(payload[index].model)
     if (!currentPath) return
 
@@ -123,10 +123,14 @@ class DataProxy<T> {
     for (const path of deletePaths) {
       let target = this.data
       for (let i = 0; i < path.length; i++) {
-        target = target[path[i]]
+        if (path.length - 1 == i) {
+          // 删除最后一级属性
+          delete target[path[i]]
+          break
+        } else {
+          target = target[path[i]]
+        }
       }
-      // 删除最后一级属性
-      delete target?.[path.at(-1)]
     }
   }
   constructor(data: any, emit: any) {
