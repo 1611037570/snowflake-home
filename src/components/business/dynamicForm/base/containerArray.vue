@@ -7,7 +7,6 @@
       :key="item.id"
       :class="getItemClass(Number(itemIndex))"
     >
-      itemIndex: {{ itemIndex }}
       <ContainerObject :index="itemIndex" :form="item" />
       <div class="flex" v-if="item.ui">
         <el-button @click="moveUp(itemIndex)" :disabled="itemIndex === 0">上移</el-button>
@@ -139,12 +138,10 @@ const moveDown = (index: any) => {
 }
 
 const remove = (index: any) => {
-  console.log('orm.value.list:>> ', form.value.list)
-
   dataProxy.remove(form.value.list, index)
   form.value.list.splice(index, 1)
 }
-
+provide('arrayRemove', remove)
 const add = () => {}
 </script>
 
