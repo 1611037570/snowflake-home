@@ -3,20 +3,20 @@
  * @param form 表单项配置
  */
 function checkObjectForm(form: any) {
-  const { component, data } = form
+  const { component, model } = form
   const errors = []
   if (!component) {
     errors.push('component')
   }
-  if (!data) {
-    errors.push('data')
+  if (!model) {
+    errors.push('model')
   } else {
-    // const { path, key } = data
+    // const { path, key } = model
     // if (!path) {
-    //   errors.push('data.path')
+    //   errors.push('model.path')
     // }
     // if (!key) {
-    //   errors.push('data.key')
+    //   errors.push('model.key')
     // }
   }
 

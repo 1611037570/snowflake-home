@@ -1,6 +1,6 @@
 <template>
   <el-col :span="getSpan(form.span)">
-    <el-form-item :label="form.label" :prop="form.data?.path" label-position="top">
+    <el-form-item :label="form.label" :prop="form.model?.path" label-position="top">
       <template #label>
         <div class="flex h-full w-full items-center font-bold">{{ form.label }}</div>
       </template>
