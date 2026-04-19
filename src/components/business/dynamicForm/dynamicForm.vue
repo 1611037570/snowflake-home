@@ -33,7 +33,7 @@ const formProxy = ref(form)
 provide('instanceComponents', props.components || {})
 // 注入数据代理和表单代理
 provide('dataProxy', dataProxy)
-// provide('formProxy', formProxy)
+provide('formProxy', formProxy)
 </script>
 
 <style scoped></style>

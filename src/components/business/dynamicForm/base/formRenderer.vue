@@ -1,38 +1,24 @@
 <template>
   <el-row ref="row" :gutter="12" :key="items.id" v-if="init">
-    <FormItem :form="item" v-for="item in items.fields" :key="item.id">
+    <FormItem :form="item" v-for="(item, index) in items.fields" :key="item.id">
       <!-- 校验失败：展示友好的错误提示 -->
       <FormError v-if="!checkForm(item)" :error-msg="item.errorMsg" :raw="item.raw" />
-      <!-- 校验通过：渲染表单项 -->
-      <template v-if="item.children">
-        <!-- 容器组件包裹 -->
-        <component
-          v-if="item.component && getSlot(item.slot)"
-          :is="getComponent(item.component)"
-          v-bind="item.props"
-        >
-          <template #[getSlot(item.slot)]>
-            <FormRenderer v-model:items="item.children" />
-          </template>
-        </component>
-        <!-- 纯逻辑分组 -->
-        <FormRenderer v-else v-model:items="item.children" />
-      </template>
-      <!-- 叶子节点 -->
+      <Container :form="item" v-if="item.type === 'container'" :currentIndex="index" />
       <component
         v-else
         :is="item.type === 'object' ? ContainerObject : ContainerArray"
         :form="item"
+        :currentIndex="index"
       />
     </FormItem>
   </el-row>
 </template>
 
 <script setup lang="ts">
-import { getUUID, isString } from '@/utils'
+import { getUUID } from '@/utils'
 import { useDraggable } from 'vue-draggable-plus'
 import { checkForm } from '../code/checkForm'
-import { getComponent } from '../components'
+import Container from './container.vue'
 import ContainerArray from './containerArray.vue'
 import ContainerObject from './containerObject.vue'
 import FormError from './formError.vue'
@@ -40,16 +26,6 @@ import FormItem from './formItem.vue'
 defineOptions({ name: 'FormRenderer' })
 
 const row: any = useTemplateRef('row')
-// 处理插槽名称
-function getSlot(slot: string | boolean | undefined) {
-  if (typeof slot == 'boolean' && slot === true) {
-    return 'default'
-  }
-  if (isString(slot) && slot.length) {
-    return slot
-  }
-  return false
-}
 
 const items = defineModel<any>('items', {})
 const init = ref(false)
