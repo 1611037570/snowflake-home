@@ -146,60 +146,71 @@ export const DEFAULT_USER_FORM = [
     ],
   },
 ]
+// 用户信息的配置
+export const DEFAULT_USER_CONFIG = {
+  // 是否可拖动
+  drag: false,
+  // 表单中所渲染的组件的字段
+  fields: structuredClone(DEFAULT_USER_FORM),
+}
 // 教育经历
 export const DEFAULT_EDUCATION_FORM = {
-  type: 'container',
-  key: 'education',
   name: '教育经历',
+  key: 'education',
+  // 表单中所渲染的类型
+  type: 'container',
+  // 表单中所渲染的组件
   component: 'boxCollapse',
+  // 表单中所渲染的组件的属性
   props: {
     title: '教育经历',
     add: true,
-    addConfig: {
-      model: [
-        {
-          path: ['education', '?', 'name'],
-          key: 'name',
-        },
-        {
-          path: ['education', '?', 'education'],
-          key: 'education',
-        },
-        {
-          path: ['education', '?', 'post'],
-          key: 'post',
-        },
-        {
-          path: ['education', '?', 'time'],
-          key: 'time',
-        },
-        {
-          path: ['education', '?', 'content'],
-          key: 'content',
-        },
-        // 学制
-        {
-          path: ['education', '?', 'mode'],
-          key: 'mode',
-        },
-      ],
-      component: 'education',
-      span: 24,
-    },
   },
-  model: [
-    {
-      // 实际未使用，这里绑定为了方便删除
-      path: ['education'],
-      key: 'modelValue',
-    },
-  ],
+
+  // 表单中所渲染的组件的双向绑定的模型
+  model: {
+    // 实际未使用，这里绑定为了方便删除
+    path: ['education'],
+    key: 'modelValue',
+  },
+  // 表单中所渲染的组件的子组件
   children: {
     fields: [
       {
         type: 'array',
         drag: true,
         list: [],
+        addConfig: {
+          model: [
+            {
+              path: ['education', '?', 'name'],
+              key: 'name',
+            },
+            {
+              path: ['education', '?', 'education'],
+              key: 'education',
+            },
+            {
+              path: ['education', '?', 'post'],
+              key: 'post',
+            },
+            {
+              path: ['education', '?', 'time'],
+              key: 'time',
+            },
+            {
+              path: ['education', '?', 'content'],
+              key: 'content',
+            },
+            // 学制
+            {
+              path: ['education', '?', 'mode'],
+              key: 'mode',
+            },
+          ],
+          component: 'education',
+          span: 24,
+        },
       },
     ],
     drag: true,

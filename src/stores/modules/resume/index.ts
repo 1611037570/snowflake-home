@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 import { computed, ref } from 'vue'
 import { DEFAULT_DATA } from './dataConfig'
-import { DEFAULT_USER_FORM } from './formConfig'
+import { DEFAULT_USER_CONFIG } from './formConfig'
 import { type Data } from './types'
 import {
   defaultColor,
@@ -96,10 +96,7 @@ export const useResumeStore = defineStore(
         // 简历数据
         data: structuredClone(DEFAULT_DATA),
         // 固定配置
-        fixedConfig: {
-          drag: false,
-          fields: structuredClone(DEFAULT_USER_FORM),
-        },
+        fixedConfig: DEFAULT_USER_CONFIG,
         // 表单配置
         config: {
           drag: true,
