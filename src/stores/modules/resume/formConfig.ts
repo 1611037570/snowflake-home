@@ -187,6 +187,13 @@ export const DEFAULT_EDUCATION_FORM = {
       span: 24,
     },
   },
+  data: [
+    {
+      // 实际未使用，这里绑定为了方便删除
+      path: ['education'],
+      key: 'modelValue',
+    },
+  ],
   children: {
     fields: [
       {
@@ -208,7 +215,10 @@ export const DEFAULT_SKILL_FORM = {
     title: '专业技能',
     add: false,
   },
-
+  data: {
+    path: ['skill'],
+    key: 'modelValue',
+  },
   children: {
     fields: [
       {
@@ -232,7 +242,10 @@ export const DEFAULT_ADVANTAGE_FORM = {
     title: '个人优势',
     add: false,
   },
-
+  data: {
+    path: ['advantage'],
+    key: 'modelValue',
+  },
   children: {
     fields: [
       {
@@ -278,7 +291,10 @@ export const DEFAULT_WORK_FORM = {
       ],
     },
   },
-
+  data: {
+    path: ['work'],
+    key: 'modelValue',
+  },
   children: {
     fields: [
       {
@@ -320,6 +336,10 @@ export const DEFAULT_PROJECT_FORM = {
         },
       ],
     },
+  },
+  data: {
+    path: ['project'],
+    key: 'modelValue',
   },
   drag: true,
   children: {
@@ -373,6 +393,10 @@ export const DEFAULT_CUSTOM_FORM = {
         },
       ],
     },
+  },
+  data: {
+    path: ['custom'],
+    key: 'modelValue',
   },
   children: {
     fields: [],

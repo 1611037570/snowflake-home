@@ -71,11 +71,10 @@ const modeList = [
     value: ' ',
   },
 ]
-const currentIndex = inject('currentIndex')
+const currentIndex = inject('df/current/index')
 </script>
 
 <template>
-  currentIndex::{{ currentIndex }}
   <ItemCollapse :title="title" :index="currentIndex">
     <div class="flex flex-col gap-4">
       <div class="flex w-full gap-3">

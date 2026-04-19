@@ -15,10 +15,10 @@ const props = defineProps({
     default: () => {},
   },
 })
-const currentForm = inject('currentForm')
-const currentIndex = inject('currentIndex')
-const formProxy = inject('formProxy')
-
+const currentForm = inject('df/current/form')
+const currentIndex = inject('df/current/index')
+const rootData = inject('df/root/data')
+const objectRemove = inject('df/remove')
 function handleAdd() {
   currentForm.value.children.fields[0].list.push(props.addConfig)
 }
@@ -30,7 +30,11 @@ function del() {
     })
     .then(() => {
       console.log('currentIndex:>> ', currentIndex.value)
-      formProxy.value.fields.splice(currentIndex.value, 1)
+      if (1) {
+        objectRemove(null)
+      } else {
+        rootData.value.fields.splice(currentIndex.value, 1)
+      }
     })
 }
 </script>
