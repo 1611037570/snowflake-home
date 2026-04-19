@@ -1,5 +1,4 @@
 <template>
-  {{ form?.component }}
   <component
     :is="component"
     v-bind="{

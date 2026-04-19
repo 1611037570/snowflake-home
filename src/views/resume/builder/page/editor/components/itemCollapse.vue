@@ -1,4 +1,5 @@
 <script setup>
+const { proxy } = getCurrentInstance()
 const props = defineProps({
   title: {
     type: String,
@@ -6,8 +7,19 @@ const props = defineProps({
   },
   index: {},
 })
+// const currentForm = inject('currentForm')
+const arrayRemove = inject('arrayRemove')
+
 function del() {
-  console.log('currentIndex:>> ', props.index)
+  proxy
+    .$confirm('确定要删除当前内容吗？', '删除确认', {
+      confirmText: '确定删除',
+      cancelText: '取消操作',
+    })
+    .then(() => {
+      // currentForm.value.list.splice(props.index, 1)
+      arrayRemove(props.index)
+    })
 }
 </script>
 
