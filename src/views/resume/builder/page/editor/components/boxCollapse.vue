@@ -17,11 +17,7 @@ defineProps({
 })
 // const currentForm = inject('df/current/form')
 const objectRemove = inject('df/remove')
-const addFn = inject('df/add')
-function handleAdd() {
-  addFn()
-  // currentForm.value.children.fields[0].list.push(props.addConfig)
-}
+
 function del() {
   proxy
     .$confirm('确定要删除当前内容吗？', '删除确认', {
@@ -51,15 +47,7 @@ function del() {
         </div>
       </template>
       <template #default>
-        <slot />
-        <div
-          class="flex cursor-pointer items-center gap-1 text-sf-theme"
-          @click="handleAdd"
-          v-if="add"
-        >
-          <SfIcon icon="ic:round-add" size="4" />
-          <span> 增加{{ title }} </span>
-        </div>
+        <slot :add="add" :containerTitle="title" />
       </template>
     </SfCollapseItem>
   </SfCollapse>

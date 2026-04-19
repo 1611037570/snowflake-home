@@ -5,6 +5,10 @@ const name = defineModel('name', {
   type: String,
   default: '',
 })
+defineProps({
+  add: {},
+  containerTitle: {},
+})
 const title = computed(() => {
   return name.value ? name.value : '未填写公司名称'
 })
@@ -25,10 +29,11 @@ const result = defineModel('result', {
   type: String,
   default: '',
 })
+const currentIndex = inject('df/current/index')
 </script>
 
 <template>
-  <ItemCollapse :title="title">
+  <ItemCollapse :title="title" :index="currentIndex" :add="add" :containerTitle="containerTitle">
     <div class="flex flex-col gap-4">
       <div class="flex w-full gap-3">
         <SfInput placeholder="公司" v-model="name" />
