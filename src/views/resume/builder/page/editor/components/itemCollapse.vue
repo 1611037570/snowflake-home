@@ -6,8 +6,11 @@ const props = defineProps({
     default: '未填写',
   },
   index: {},
+  add: {},
+  containerTitle: {},
 })
-const arrayRemove = inject('df/remove')
+const removeItem = inject('df/removeItem')
+const length = inject('df/current/length')
 
 function del() {
   proxy
@@ -16,9 +19,12 @@ function del() {
       cancelText: '取消操作',
     })
     .then(() => {
-      // currentForm.value.list.splice(props.index, 1)
-      arrayRemove(props.index)
+      removeItem(props.index)
     })
+}
+const addFn = inject('df/add')
+function handleAdd() {
+  addFn()
 }
 </script>
 
@@ -44,6 +50,14 @@ function del() {
       </template>
     </SfCollapseItem>
   </SfCollapse>
+  <div
+    class="flex cursor-pointer items-center gap-1 text-sf-theme"
+    @click="handleAdd"
+    v-if="length - 1 == index && add"
+  >
+    <SfIcon icon="ic:round-add" size="4" />
+    <span> 增加{{ containerTitle }} </span>
+  </div>
 </template>
 
 <style lang="scss" scoped></style>
