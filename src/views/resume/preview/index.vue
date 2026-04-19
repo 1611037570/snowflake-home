@@ -24,7 +24,6 @@ const fontValue = computed(() => (offset = 0) => ({
 //
 const lineHeightValue = computed(() => (offset = 0) => {
   const indexOffset = (fontSizeIndex.value - 2) * 3
-  console.log('indexOffset', indexOffset)
   return {
     lineHeight: `${currentUI.value.lineHeight + offset + indexOffset}px`,
   }

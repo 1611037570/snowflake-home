@@ -14,6 +14,7 @@
         :is="item.type === 'object' ? ContainerObject : ContainerArray"
         :form="item"
         :currentIndex="index"
+        @remove="remove"
       />
     </FormItem>
   </el-row>
@@ -32,7 +33,7 @@ defineOptions({ name: 'FormRenderer' })
 const rootData = inject<any>('df/root/data')
 
 function remove(index: number) {
-  rootData.objectRemove(items.value.fields[index])
+  rootData.removeObject(items.value.fields[index])
   items.value.fields.splice(index, 1)
   return
 }

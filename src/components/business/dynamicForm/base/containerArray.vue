@@ -33,7 +33,6 @@ defineProps<{
 }>()
 
 const form = defineModel<any>('form')
-provide('df/current/form', form)
 const rootData = inject<any>('df/root/data')
 
 useDraggable(row, form.value.list, {
@@ -42,9 +41,8 @@ useDraggable(row, form.value.list, {
   ghostClass: 'ghost',
   disabled: !form.value?.drag,
   onEnd(data: any) {
+    // 获取旧索引和新索引
     const { oldIndex, newIndex } = data
-    console.log('oldIndex:>> ', oldIndex)
-    console.log('newIndex:>> ', newIndex)
     if (oldIndex === newIndex) return
     const [item] = form.value.list.splice(oldIndex, 1)
     form.value.list.splice(newIndex, 0, item)
@@ -123,26 +121,37 @@ const getItemClass = (index: number) => {
   return classList.join(' ')
 }
 
+// 上移
 const moveUp = (index: any) => {
   if (index === 0) return
   const [item] = form.value.list.splice(index, 1)
   form.value.list.splice(index - 1, 0, item)
   rootData.move(form.value.list, index, index - 1)
 }
-
+// 下移
 const moveDown = (index: any) => {
   if (index === length.value - 1) return
   const [item] = form.value.list.splice(index, 1)
   form.value.list.splice(index + 1, 0, item)
   rootData.move(form.value.list, index, index + 1)
 }
-
+// 删除
 const remove = (index: any) => {
-  rootData.remove(form.value.list, index)
+  rootData.removeArray(form.value.list, index)
   form.value.list.splice(index, 1)
 }
+// 添加
+const add = () => {
+  console.log('添加')
+}
+// 提供当前容器的表单数据
+provide('df/current/form', form)
+// 提供当前容器的类型
+provide('df/current/type', 'array')
+// 提供添加方法
+provide('df/add', add)
+// 提供删除方法
 provide('df/remove', remove)
-const add = () => {}
 </script>
 
 <style scoped>

@@ -14,8 +14,7 @@ import FormRenderer from './formRenderer.vue'
 
 const form = defineModel<any>('form')
 const currentIndex = defineModel<any>('currentIndex')
-provide('df/current/form', form)
-provide('df/current/index', currentIndex)
+
 // 处理插槽名称
 function getSlot() {
   const slotName = form.value?.slot
@@ -28,7 +27,14 @@ const emit = defineEmits(['remove'])
 function remove() {
   emit('remove', currentIndex.value)
 }
+// 提供当前容器的表单数据
+provide('df/current/form', form)
+// 提供当前容器的索引
+provide('df/current/index', currentIndex)
+// 提供删除方法
 provide('df/remove', remove)
+// 提供当前容器的类型
+provide('df/current/type', 'container')
 </script>
 
 <style scoped></style>
