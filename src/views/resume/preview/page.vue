@@ -19,10 +19,11 @@ const lineHeightValue = inject('lineHeightValue')
 const measureRef = ref(null)
 
 // 合并所有模块字段
-const allModules = computed(() => [
-  ...currentFixedConfig.value.fields,
-  ...currentConfig.value.fields,
-])
+const allModules = computed(() => {
+  const fixedModules = currentFixedConfig.value.fields
+  const configModules = currentConfig.value.fields
+  return [...fixedModules, ...configModules]
+})
 const WIDTH = 794
 const HEIGHT = 1123
 const o = computed(() => {
@@ -250,8 +251,8 @@ onUnmounted(() => {
       <ResumeModule
         :data="currentData"
         :name="item.key"
-        v-for="item in allModules"
-        :key="item.key"
+        v-for="(item, index) in allModules"
+        :key="index"
         :data-module="item.key"
         class="resume-module-wrapper"
       />
