@@ -33,8 +33,8 @@ defineProps<{
 }>()
 
 const form = defineModel<any>('form')
-provide('currentForm', form)
-const dataProxy = inject<any>('dataProxy')
+provide('df/current/form', form)
+const rootData = inject<any>('df/root/data')
 
 useDraggable(row, form.value.list, {
   handle: form.value?.dragClass || '',
@@ -48,7 +48,7 @@ useDraggable(row, form.value.list, {
     if (oldIndex === newIndex) return
     const [item] = form.value.list.splice(oldIndex, 1)
     form.value.list.splice(newIndex, 0, item)
-    dataProxy.move(form.value.list, oldIndex, newIndex)
+    rootData.move(form.value.list, oldIndex, newIndex)
   },
 })
 onMounted(() => {
@@ -127,21 +127,21 @@ const moveUp = (index: any) => {
   if (index === 0) return
   const [item] = form.value.list.splice(index, 1)
   form.value.list.splice(index - 1, 0, item)
-  dataProxy.move(form.value.list, index, index - 1)
+  rootData.move(form.value.list, index, index - 1)
 }
 
 const moveDown = (index: any) => {
   if (index === length.value - 1) return
   const [item] = form.value.list.splice(index, 1)
   form.value.list.splice(index + 1, 0, item)
-  dataProxy.move(form.value.list, index, index + 1)
+  rootData.move(form.value.list, index, index + 1)
 }
 
 const remove = (index: any) => {
-  dataProxy.remove(form.value.list, index)
+  rootData.remove(form.value.list, index)
   form.value.list.splice(index, 1)
 }
-provide('arrayRemove', remove)
+provide('df/remove', remove)
 const add = () => {}
 </script>
 
