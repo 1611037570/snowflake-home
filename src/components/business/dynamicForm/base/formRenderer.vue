@@ -3,18 +3,20 @@
     <FormItem :form="item" v-for="(item, index) in items.fields" :key="item.id">
       <!-- 校验失败：展示友好的错误提示 -->
       <FormError v-if="!checkForm(item)" :error-msg="item.errorMsg" :raw="item.raw" />
+      <!-- v-bind="$attrs" -->
       <Container
         :form="item"
         v-if="item.type === 'container'"
         :currentIndex="index"
-        @remove="remove"
+        @removeObject="removeObject"
       />
       <component
         v-else
         :is="item.type === 'object' ? ContainerObject : ContainerArray"
         :form="item"
         :currentIndex="index"
-        @remove="remove"
+        @removeObject="removeObject"
+        @removeItem="removeItem"
       />
     </FormItem>
   </el-row>
@@ -32,10 +34,13 @@ import FormItem from './formItem.vue'
 defineOptions({ name: 'FormRenderer' })
 const rootData = inject<any>('df/root/data')
 
-function remove(index: number) {
+function removeObject(index: number) {
   rootData.removeObject(items.value.fields[index])
   items.value.fields.splice(index, 1)
-  return
+}
+function removeItem(index: number) {
+  rootData.removeItem(items.value.list[index])
+  items.value.list.splice(index, 1)
 }
 const row: any = useTemplateRef('row')
 

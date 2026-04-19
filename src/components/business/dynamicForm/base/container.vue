@@ -2,6 +2,7 @@
   <!-- 容器组件包裹 -->
   <component :is="getComponent(form.component)" v-bind="form.props">
     <template #[getSlot()]>
+      <!-- ="slotProps" v-bind="slotProps" -->
       <FormRenderer v-model:items="form.children" />
     </template>
   </component>
@@ -23,9 +24,9 @@ function getSlot() {
   }
   return 'default'
 }
-const emit = defineEmits(['remove'])
+const emit = defineEmits(['removeObject'])
 function remove() {
-  emit('remove', currentIndex.value)
+  emit('removeObject', currentIndex.value)
 }
 // 提供当前容器的表单数据
 provide('df/current/form', form)

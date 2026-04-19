@@ -2,10 +2,11 @@
   <component
     :is="component"
     v-bind="{
-      ...rootData.getDataProxy(form.model),
+      ...rootData.getDataProxy(form.model, props.currentIndex),
       ...form.props,
+      // ...$attrs,
     }"
-    v-on="rootData.setDataProxy(form.model)"
+    v-on="rootData.setDataProxy(form.model, props.currentIndex)"
   ></component>
 </template>
 
@@ -21,10 +22,10 @@ const props = defineProps<{
 const rootData = inject<any>('df/root/data')
 
 const component = getComponent(props.form?.component)
-const emit = defineEmits(['remove'])
+const emit = defineEmits(['removeObject'])
 
 function remove() {
-  emit('remove', props.currentIndex)
+  emit('removeObject', props.currentIndex)
 }
 // 提供当前容器的索引
 provide('df/current/index', props.currentIndex)
