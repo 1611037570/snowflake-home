@@ -7,16 +7,19 @@
       :key="item.id"
       :class="getItemClass(Number(itemIndex))"
     >
-      <ContainerObject :index="itemIndex" :form="item" />
+      <!-- v-bind="$attrs"  -->
+      <ContainerObject :currentIndex="itemIndex" :form="item" />
       <div class="flex" v-if="item.ui">
         <el-button @click="moveUp(itemIndex)" :disabled="itemIndex === 0">上移</el-button>
         <el-button @click="moveDown(itemIndex)" :disabled="itemIndex === length - 1"
           >下移</el-button
         >
-        <el-button @click="add()">添加</el-button>
+
         <el-button @click="remove(itemIndex)">删除</el-button>
       </div>
     </FormItem>
+
+    <el-button @click="add()" v-if="0">添加</el-button>
   </el-row>
 </template>
 
@@ -137,13 +140,17 @@ const moveDown = (index: any) => {
 }
 // 删除
 const remove = (index: any) => {
-  rootData.removeArray(form.value.list, index)
+  rootData.removeItem(form.value.list, index)
   form.value.list.splice(index, 1)
 }
 // 添加
 const add = () => {
-  console.log('添加')
+  const addConfig = form.value.addConfig
+  if (!addConfig) return
+  form.value.list.push(addConfig)
 }
+// 提供当前容器的长度
+provide('df/current/length', length)
 // 提供当前容器的表单数据
 provide('df/current/form', form)
 // 提供当前容器的类型
@@ -151,7 +158,7 @@ provide('df/current/type', 'array')
 // 提供添加方法
 provide('df/add', add)
 // 提供删除方法
-provide('df/remove', remove)
+provide('df/removeItem', remove)
 </script>
 
 <style scoped>
