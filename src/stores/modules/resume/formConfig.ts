@@ -6,12 +6,7 @@ export const DEFAULT_USER_FORM = [
     props: {
       modelValue: '个人信息',
     },
-    data: [
-      // {
-      //   path: ['user', 'name'],
-      //   key: 'modelValue',
-      // },
-    ],
+    data: [],
   },
   {
     list: [
@@ -153,52 +148,51 @@ export const DEFAULT_USER_FORM = [
 ]
 // 教育经历
 export const DEFAULT_EDUCATION_FORM = {
-  type: 'object',
+  type: 'container',
   key: 'education',
   name: '教育经历',
   component: 'boxCollapse',
   props: {
     title: '教育经历',
+    add: true,
+    addConfig: {
+      data: [
+        {
+          path: ['education', '?', 'name'],
+          key: 'name',
+        },
+        {
+          path: ['education', '?', 'education'],
+          key: 'education',
+        },
+        {
+          path: ['education', '?', 'post'],
+          key: 'post',
+        },
+        {
+          path: ['education', '?', 'time'],
+          key: 'time',
+        },
+        {
+          path: ['education', '?', 'content'],
+          key: 'content',
+        },
+        // 学制
+        {
+          path: ['education', '?', 'mode'],
+          key: 'mode',
+        },
+      ],
+      component: 'education',
+      span: 24,
+    },
   },
-  slot: true,
   children: {
     fields: [
       {
         type: 'array',
         drag: true,
-        list: [
-          {
-            data: [
-              {
-                path: ['education', '?', 'name'],
-                key: 'name',
-              },
-              {
-                path: ['education', '?', 'education'],
-                key: 'education',
-              },
-              {
-                path: ['education', '?', 'post'],
-                key: 'post',
-              },
-              {
-                path: ['education', '?', 'time'],
-                key: 'time',
-              },
-              {
-                path: ['education', '?', 'content'],
-                key: 'content',
-              },
-              // 学制
-              {
-                path: ['education', '?', 'mode'],
-                key: 'mode',
-              },
-            ],
-            component: 'education',
-            span: 24,
-          },
-        ],
+        list: [],
       },
     ],
     drag: true,
@@ -206,14 +200,15 @@ export const DEFAULT_EDUCATION_FORM = {
 }
 // 专业技能
 export const DEFAULT_SKILL_FORM = {
-  type: 'object',
+  type: 'container',
   component: 'boxCollapse',
   key: 'skill',
   name: '专业技能',
   props: {
     title: '专业技能',
+    add: false,
   },
-  slot: true,
+
   children: {
     fields: [
       {
@@ -229,14 +224,15 @@ export const DEFAULT_SKILL_FORM = {
 }
 // 个人优势
 export const DEFAULT_ADVANTAGE_FORM = {
-  type: 'object',
+  type: 'container',
   component: 'boxCollapse',
   key: 'advantage',
   name: '个人优势',
   props: {
     title: '个人优势',
+    add: false,
   },
-  slot: true,
+
   children: {
     fields: [
       {
@@ -252,158 +248,134 @@ export const DEFAULT_ADVANTAGE_FORM = {
 }
 // 工作经历
 export const DEFAULT_WORK_FORM = {
-  type: 'object',
+  type: 'container',
   key: 'work',
   name: '工作经历',
   component: 'boxCollapse',
   props: {
     title: '工作经历',
+    add: true,
+    addConfig: {
+      component: 'work',
+      span: 24,
+      data: [
+        {
+          path: ['work', '?', 'name'],
+          key: 'name',
+        },
+        {
+          path: ['work', '?', 'post'],
+          key: 'post',
+        },
+        {
+          path: ['work', '?', 'time'],
+          key: 'time',
+        },
+        {
+          path: ['work', '?', 'content'],
+          key: 'content',
+        },
+      ],
+    },
   },
-  slot: true,
+
   children: {
     fields: [
       {
         type: 'array',
         drag: true,
-        list: [
-          {
-            component: 'work',
-            span: 24,
-            data: [
-              {
-                path: ['work', '?', 'name'],
-                key: 'name',
-              },
-              {
-                path: ['work', '?', 'post'],
-                key: 'post',
-              },
-              {
-                path: ['work', '?', 'time'],
-                key: 'time',
-              },
-              {
-                path: ['work', '?', 'content'],
-                key: 'content',
-              },
-            ],
-          },
-        ],
+        list: [],
       },
     ],
   },
 }
 // 项目经历
 export const DEFAULT_PROJECT_FORM = {
-  type: 'object',
+  type: 'container',
   key: 'project',
   name: '项目经历',
   component: 'boxCollapse',
   props: {
     title: '项目经历',
+    add: true,
+    addConfig: {
+      component: 'project',
+      span: 24,
+      data: [
+        {
+          path: ['project', '?', 'name'],
+          key: 'name',
+        },
+        {
+          path: ['project', '?', 'post'],
+          key: 'post',
+        },
+        {
+          path: ['project', '?', 'time'],
+          key: 'time',
+        },
+        {
+          path: ['project', '?', 'content'],
+          key: 'content',
+        },
+      ],
+    },
   },
   drag: true,
-  slot: true,
   children: {
     fields: [
       {
         type: 'array',
         drag: true,
-        list: [
-          {
-            component: 'project',
-            span: 24,
-            data: [
-              {
-                path: ['project', '?', 'name'],
-                key: 'name',
-              },
-              {
-                path: ['project', '?', 'post'],
-                key: 'post',
-              },
-              {
-                path: ['project', '?', 'time'],
-                key: 'time',
-              },
-              {
-                path: ['project', '?', 'content'],
-                key: 'content',
-              },
-            ],
-          },
-          {
-            component: 'project',
-            span: 24,
-            data: [
-              {
-                path: ['project', '?', 'name'],
-                key: 'name',
-              },
-              {
-                path: ['project', '?', 'post'],
-                key: 'post',
-              },
-              {
-                path: ['project', '?', 'time'],
-                key: 'time',
-              },
-              {
-                path: ['project', '?', 'content'],
-                key: 'content',
-              },
-            ],
-          },
-        ],
+        list: [],
       },
     ],
   },
 }
 // 自定义经历
 export const DEFAULT_CUSTOM_FORM = {
-  type: 'object',
+  type: 'container',
   key: 'custom',
   name: '',
   component: 'boxCollapse',
   props: {
     title: '',
+    add: true,
+    addConfig: {
+      type: 'array',
+      drag: true,
+      list: [
+        {
+          component: 'custom',
+          span: 24,
+          data: [
+            {
+              path: ['custom', '?', 'name'],
+              key: 'name',
+            },
+            {
+              path: ['custom', '?', 'education'],
+              key: 'education',
+            },
+            {
+              path: ['custom', '?', 'post'],
+              key: 'post',
+            },
+            {
+              path: ['custom', '?', 'time'],
+              key: 'time',
+            },
+            {
+              path: ['custom', '?', 'content'],
+              key: 'content',
+            },
+          ],
+        },
+      ],
+    },
   },
-  slot: true,
   children: {
-    fields: [
-      {
-        type: 'array',
-        drag: true,
-        list: [
-          {
-            component: 'custom',
-            span: 24,
-            data: [
-              {
-                path: ['custom', '?', 'name'],
-                key: 'name',
-              },
-              {
-                path: ['custom', '?', 'education'],
-                key: 'education',
-              },
-              {
-                path: ['custom', '?', 'post'],
-                key: 'post',
-              },
-              {
-                path: ['custom', '?', 'time'],
-                key: 'time',
-              },
-              {
-                path: ['custom', '?', 'content'],
-                key: 'content',
-              },
-            ],
-          },
-        ],
-      },
-    ],
+    fields: [],
   },
 }
 
