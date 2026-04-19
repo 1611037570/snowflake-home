@@ -1,4 +1,6 @@
 <script setup>
+const { proxy } = getCurrentInstance()
+
 const props = defineProps({
   title: {
     type: String,
@@ -21,8 +23,15 @@ function handleAdd() {
   currentForm.value.children.fields[0].list.push(props.addConfig)
 }
 function del() {
-  console.log('currentIndex:>> ', currentIndex.value)
-  formProxy.value.fields.splice(currentIndex.value, 1)
+  proxy
+    .$confirm('确定要删除当前内容吗？', '删除确认', {
+      confirmText: '确定删除',
+      cancelText: '取消操作',
+    })
+    .then(() => {
+      console.log('currentIndex:>> ', currentIndex.value)
+      formProxy.value.fields.splice(currentIndex.value, 1)
+    })
 }
 </script>
 

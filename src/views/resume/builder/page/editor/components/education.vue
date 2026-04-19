@@ -72,7 +72,6 @@ const modeList = [
   },
 ]
 const currentIndex = inject('currentIndex')
-console.log('currentIndex:>> ', currentIndex)
 </script>
 
 <template>
