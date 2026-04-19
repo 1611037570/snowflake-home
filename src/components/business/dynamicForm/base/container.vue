@@ -14,8 +14,8 @@ import FormRenderer from './formRenderer.vue'
 
 const form = defineModel<any>('form')
 const currentIndex = defineModel<any>('currentIndex')
-provide('currentForm', form)
-provide('currentIndex', currentIndex)
+provide('df/current/form', form)
+provide('df/current/index', currentIndex)
 // 处理插槽名称
 function getSlot() {
   const slotName = form.value?.slot
@@ -24,6 +24,11 @@ function getSlot() {
   }
   return 'default'
 }
+const emit = defineEmits(['remove'])
+function remove() {
+  emit('remove', currentIndex.value)
+}
+provide('df/remove', remove)
 </script>
 
 <style scoped></style>

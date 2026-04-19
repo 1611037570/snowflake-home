@@ -32,8 +32,8 @@ const formProxy = ref(form)
 // 注入实例自定义组件库
 provide('instanceComponents', props.components || {})
 // 注入数据代理和表单代理
-provide('dataProxy', dataProxy)
-provide('formProxy', formProxy)
+provide('df/root/data', dataProxy)
+provide('df/root/form', formProxy)
 </script>
 
 <style scoped></style>

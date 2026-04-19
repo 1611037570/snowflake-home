@@ -3,7 +3,12 @@
     <FormItem :form="item" v-for="(item, index) in items.fields" :key="item.id">
       <!-- 校验失败：展示友好的错误提示 -->
       <FormError v-if="!checkForm(item)" :error-msg="item.errorMsg" :raw="item.raw" />
-      <Container :form="item" v-if="item.type === 'container'" :currentIndex="index" />
+      <Container
+        :form="item"
+        v-if="item.type === 'container'"
+        :currentIndex="index"
+        @remove="remove"
+      />
       <component
         v-else
         :is="item.type === 'object' ? ContainerObject : ContainerArray"
@@ -24,15 +29,23 @@ import ContainerObject from './containerObject.vue'
 import FormError from './formError.vue'
 import FormItem from './formItem.vue'
 defineOptions({ name: 'FormRenderer' })
+const rootData = inject<any>('df/root/data')
 
+function remove(index: number) {
+  rootData.objectRemove(items.value.fields[index])
+  items.value.fields.splice(index, 1)
+  return
+}
 const row: any = useTemplateRef('row')
 
 const items = defineModel<any>('items', {})
 const init = ref(false)
 onMounted(async () => {
+  await nextTick()
   if (!items.value.id) {
     items.value.id = getUUID()
   }
+  // 监听 fields 变化，为每个 item 生成 id
   watch(
     items.value.fields,
     () => {
@@ -50,7 +63,8 @@ onMounted(async () => {
   )
 
   init.value = true
-  await nextTick()
+
+  // 初始化拖拽
   useDraggable(row, items.value.fields, {
     animation: 150,
     ghostClass: 'ghost',
@@ -58,27 +72,6 @@ onMounted(async () => {
     disabled: !items.value?.drag,
   })
 })
-
-// /**
-//  * 判断是否为最后一排
-//  */
-// const lastRowIndices = computed(() => {
-//   let currentRowSpan = 0
-//   let currentRowIndices: number[] = []
-
-//   validatedItems.value.forEach((item, index) => {
-//     const span = item._span
-//     // 如果当前行加上这个项超过 24，则开启新的一行
-//     if (currentRowSpan + span > 24) {
-//       currentRowIndices = [index]
-//       currentRowSpan = span
-//     } else {
-//       currentRowIndices.push(index)
-//       currentRowSpan += span
-//     }
-//   })
-//   return currentRowIndices
-// })
 </script>
 
 <style scoped>

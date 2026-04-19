@@ -2,10 +2,10 @@
   <component
     :is="component"
     v-bind="{
-      ...dataProxy.getDataProxy(form.data, index),
+      ...rootData.getDataProxy(form.data, index),
       ...form.props,
     }"
-    v-on="dataProxy.setDataProxy(form.data, index)"
+    v-on="rootData.setDataProxy(form.data, index)"
   ></component>
 </template>
 
@@ -17,8 +17,8 @@ const props = defineProps<{
   index?: any
   form: any
 }>()
-provide('currentIndex', props.index)
-const dataProxy = inject<any>('dataProxy')
+provide('df/current/index', props.index)
+const rootData = inject<any>('df/root/data')
 
 const component = getComponent(props.form?.component)
 </script>
