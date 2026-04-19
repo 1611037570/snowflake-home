@@ -51,3 +51,4 @@ export const xiaoYangData: Data = {
     },
   ],
 }
+export const xiaoYangForm = {}

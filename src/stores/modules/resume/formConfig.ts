@@ -6,7 +6,7 @@ export const DEFAULT_USER_FORM = [
     props: {
       modelValue: '个人信息',
     },
-    data: [],
+    model: [],
   },
   {
     list: [
@@ -17,7 +17,7 @@ export const DEFAULT_USER_FORM = [
         tip: '你求职的岗位，必填',
         component: 'input',
         span: 24,
-        data: {
+        model: {
           path: ['user', 'position'],
           key: 'modelValue',
         },
@@ -32,7 +32,7 @@ export const DEFAULT_USER_FORM = [
         tip: '你的姓名，必填',
         component: 'input',
         span: 12,
-        data: {
+        model: {
           path: ['user', 'name'],
           key: 'modelValue',
         },
@@ -47,7 +47,7 @@ export const DEFAULT_USER_FORM = [
         tip: '你的出生日期，必填',
         component: 'datePicker',
         span: 12,
-        data: {
+        model: {
           path: ['user', 'birthday'],
           key: 'modelValue',
         },
@@ -63,7 +63,7 @@ export const DEFAULT_USER_FORM = [
         tip: '用于联系你的手机号，必填',
         component: 'input',
         span: 12,
-        data: {
+        model: {
           path: ['user', 'phone'],
           key: 'modelValue',
         },
@@ -78,7 +78,7 @@ export const DEFAULT_USER_FORM = [
         tip: '用于联系你的邮箱',
         component: 'input',
         span: 12,
-        data: {
+        model: {
           path: ['user', 'email'],
           key: 'modelValue',
         },
@@ -93,7 +93,7 @@ export const DEFAULT_USER_FORM = [
         tip: '你参加工作时间',
         component: 'datePicker',
         span: 12,
-        data: {
+        model: {
           path: ['user', 'workTime'],
           key: 'modelValue',
         },
@@ -109,7 +109,7 @@ export const DEFAULT_USER_FORM = [
         tip: '你的性别',
         component: 'select',
         span: 12,
-        data: {
+        model: {
           path: ['user', 'sex'],
           key: 'modelValue',
         },
@@ -138,7 +138,7 @@ export const DEFAULT_USER_FORM = [
     component: 'socialAccount',
     span: 24,
     type: 'object',
-    data: [
+    model: [
       {
         path: ['user', 'link'],
         key: 'modelValue',
@@ -156,7 +156,7 @@ export const DEFAULT_EDUCATION_FORM = {
     title: '教育经历',
     add: true,
     addConfig: {
-      data: [
+      model: [
         {
           path: ['education', '?', 'name'],
           key: 'name',
@@ -187,7 +187,7 @@ export const DEFAULT_EDUCATION_FORM = {
       span: 24,
     },
   },
-  data: [
+  model: [
     {
       // 实际未使用，这里绑定为了方便删除
       path: ['education'],
@@ -215,7 +215,7 @@ export const DEFAULT_SKILL_FORM = {
     title: '专业技能',
     add: false,
   },
-  data: {
+  model: {
     path: ['skill'],
     key: 'modelValue',
   },
@@ -224,7 +224,7 @@ export const DEFAULT_SKILL_FORM = {
       {
         type: 'object',
         component: 'wangEdit',
-        data: {
+        model: {
           path: ['skill'],
           key: 'modelValue',
         },
@@ -242,7 +242,7 @@ export const DEFAULT_ADVANTAGE_FORM = {
     title: '个人优势',
     add: false,
   },
-  data: {
+  model: {
     path: ['advantage'],
     key: 'modelValue',
   },
@@ -251,7 +251,7 @@ export const DEFAULT_ADVANTAGE_FORM = {
       {
         type: 'object',
         component: 'wangEdit',
-        data: {
+        model: {
           path: ['advantage'],
           key: 'modelValue',
         },
@@ -271,7 +271,7 @@ export const DEFAULT_WORK_FORM = {
     addConfig: {
       component: 'work',
       span: 24,
-      data: [
+      model: [
         {
           path: ['work', '?', 'name'],
           key: 'name',
@@ -291,7 +291,7 @@ export const DEFAULT_WORK_FORM = {
       ],
     },
   },
-  data: {
+  model: {
     path: ['work'],
     key: 'modelValue',
   },
@@ -317,7 +317,7 @@ export const DEFAULT_PROJECT_FORM = {
     addConfig: {
       component: 'project',
       span: 24,
-      data: [
+      model: [
         {
           path: ['project', '?', 'name'],
           key: 'name',
@@ -337,10 +337,11 @@ export const DEFAULT_PROJECT_FORM = {
       ],
     },
   },
-  data: {
+  model: {
     path: ['project'],
     key: 'modelValue',
   },
+  // modal
   drag: true,
   children: {
     fields: [
@@ -368,7 +369,7 @@ export const DEFAULT_CUSTOM_FORM = {
         {
           component: 'custom',
           span: 24,
-          data: [
+          model: [
             {
               path: ['custom', '?', 'name'],
               key: 'name',
@@ -394,7 +395,7 @@ export const DEFAULT_CUSTOM_FORM = {
       ],
     },
   },
-  data: {
+  model: {
     path: ['custom'],
     key: 'modelValue',
   },

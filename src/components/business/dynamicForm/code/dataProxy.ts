@@ -82,7 +82,7 @@ class DataProxy<T> {
     return path.slice(0, index)
   }
   move(path: any, oldIndex: number, newIndex: number) {
-    const currentPath = this.getPath(path[oldIndex].data)
+    const currentPath = this.getPath(path[oldIndex].model)
     if (!currentPath) return
 
     let current = this.data
@@ -101,7 +101,7 @@ class DataProxy<T> {
   }
   // 删除数组元素
   removeArray(payload: any, index: number) {
-    const currentPath = this.getPath(payload[index].data)
+    const currentPath = this.getPath(payload[index].model)
     if (!currentPath) return
 
     let current = this.data
@@ -114,7 +114,7 @@ class DataProxy<T> {
   // 删除对象元素
   removeObject(payload: any) {
     // 标准化路径：统一转为 路径对象数组，精简冗余变量
-    const pathItems = this.ensureArray(payload.data)
+    const pathItems = this.ensureArray(payload.model)
     // 提取所有待删除的路径数组（如 [['a','b'], ['c','d']]）
     const deletePaths = pathItems.map((item: any) => item.path)
 

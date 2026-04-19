@@ -1,7 +1,7 @@
 <script setup>
 const { proxy } = getCurrentInstance()
 
-const props = defineProps({
+defineProps({
   title: {
     type: String,
     default: '未填写',
@@ -15,12 +15,12 @@ const props = defineProps({
     default: () => {},
   },
 })
-const currentForm = inject('df/current/form')
-const currentIndex = inject('df/current/index')
-const rootData = inject('df/root/data')
+// const currentForm = inject('df/current/form')
 const objectRemove = inject('df/remove')
+const addFn = inject('df/add')
 function handleAdd() {
-  currentForm.value.children.fields[0].list.push(props.addConfig)
+  addFn()
+  // currentForm.value.children.fields[0].list.push(props.addConfig)
 }
 function del() {
   proxy
@@ -29,12 +29,7 @@ function del() {
       cancelText: '取消操作',
     })
     .then(() => {
-      console.log('currentIndex:>> ', currentIndex.value)
-      if (1) {
-        objectRemove(null)
-      } else {
-        rootData.value.fields.splice(currentIndex.value, 1)
-      }
+      objectRemove()
     })
 }
 </script>

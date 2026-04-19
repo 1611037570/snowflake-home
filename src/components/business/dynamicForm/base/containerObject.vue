@@ -2,10 +2,10 @@
   <component
     :is="component"
     v-bind="{
-      ...rootData.getDataProxy(form.data),
+      ...rootData.getDataProxy(form.model),
       ...form.props,
     }"
-    v-on="rootData.setDataProxy(form.data)"
+    v-on="rootData.setDataProxy(form.model)"
   ></component>
 </template>
 
