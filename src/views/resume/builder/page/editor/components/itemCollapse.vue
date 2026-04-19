@@ -7,8 +7,7 @@ const props = defineProps({
   },
   index: {},
 })
-// const currentForm = inject('currentForm')
-const arrayRemove = inject('arrayRemove')
+const arrayRemove = inject('df/remove')
 
 function del() {
   proxy
