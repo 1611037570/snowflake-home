@@ -80,7 +80,7 @@ const currentIndex = inject('df/current/index')
 
 <template>
   <ItemCollapse :title="title" :index="currentIndex" :add="add" :containerTitle="containerTitle">
-    <div class="flex flex-col gap-4">
+    <div class="flex flex-col gap-3">
       <div class="flex w-full gap-3">
         <SfInput placeholder="学校" v-model="name" />
         <SfSelect placeholder="学位" v-model="education" :list="educationList" />
@@ -90,7 +90,7 @@ const currentIndex = inject('df/current/index')
           type="daterange"
           placeholder="时间"
           v-model="time"
-          value-format="YYYY.MM.DD"
+          value-format="YYYY.MM"
           start-placeholder="开始时间"
           end-placeholder="结束时间"
         />
