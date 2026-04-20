@@ -27,7 +27,12 @@ function del() {
       <template #title>
         <div class="flex h-full w-full items-center justify-between">
           <div class="flex items-center">
-            <SfIcon icon="icon-park:drag" size="4" class="item-drag mr-1 cursor-move!" />
+            <SfIcon
+              icon="icon-park:drag"
+              size="4"
+              class="item-drag mr-1 cursor-move!"
+              @click.stop=""
+            />
             {{ title }}
           </div>
           <SfIcon
