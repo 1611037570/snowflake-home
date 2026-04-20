@@ -56,8 +56,12 @@ onMounted(async () => {
   watch(
     items.value.fields,
     (newV) => {
-      console.log('newV:>> ', newV)
-      return
+      if (!newV) return
+      newV.forEach((item: any) => {
+        if (!item.id) {
+          item.id = getUUID()
+        }
+      })
     },
     {
       immediate: true,
