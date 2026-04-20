@@ -18,8 +18,8 @@ export const DEFAULT_USER_FORM = [
         component: 'input',
         span: 24,
         model: {
-          path: ['user', 'position'],
-          key: 'modelValue',
+          source: ['user', 'position'],
+          prop: 'modelValue',
         },
         props: {
           placeholder: '请输入求职岗位',
@@ -33,8 +33,8 @@ export const DEFAULT_USER_FORM = [
         component: 'input',
         span: 12,
         model: {
-          path: ['user', 'name'],
-          key: 'modelValue',
+          source: ['user', 'name'],
+          prop: 'modelValue',
         },
         props: {
           placeholder: '请输入姓名',
@@ -48,8 +48,8 @@ export const DEFAULT_USER_FORM = [
         component: 'datePicker',
         span: 12,
         model: {
-          path: ['user', 'birthday'],
-          key: 'modelValue',
+          source: ['user', 'birthday'],
+          prop: 'modelValue',
         },
         props: {
           placeholder: '请输入出生日期',
@@ -64,8 +64,8 @@ export const DEFAULT_USER_FORM = [
         component: 'input',
         span: 12,
         model: {
-          path: ['user', 'phone'],
-          key: 'modelValue',
+          source: ['user', 'phone'],
+          prop: 'modelValue',
         },
         props: {
           placeholder: '请输入电话',
@@ -79,8 +79,8 @@ export const DEFAULT_USER_FORM = [
         component: 'input',
         span: 12,
         model: {
-          path: ['user', 'email'],
-          key: 'modelValue',
+          source: ['user', 'email'],
+          prop: 'modelValue',
         },
         props: {
           placeholder: '请输入邮箱',
@@ -94,8 +94,8 @@ export const DEFAULT_USER_FORM = [
         component: 'datePicker',
         span: 12,
         model: {
-          path: ['user', 'workTime'],
-          key: 'modelValue',
+          source: ['user', 'workTime'],
+          prop: 'modelValue',
         },
         props: {
           placeholder: '请输入参加工作时间',
@@ -110,8 +110,8 @@ export const DEFAULT_USER_FORM = [
         component: 'select',
         span: 12,
         model: {
-          path: ['user', 'sex'],
-          key: 'modelValue',
+          source: ['user', 'sex'],
+          prop: 'modelValue',
         },
         props: {
           placeholder: '请输入性别',
@@ -131,7 +131,7 @@ export const DEFAULT_USER_FORM = [
     ],
     drag: false,
     type: 'array',
-    key: 'user',
+    prop: 'user',
     name: '用户信息',
   },
   {
@@ -140,8 +140,8 @@ export const DEFAULT_USER_FORM = [
     type: 'object',
     model: [
       {
-        path: ['user', 'link'],
-        key: 'modelValue',
+        source: ['user', 'link'],
+        prop: 'modelValue',
       },
     ],
   },
@@ -156,7 +156,7 @@ export const DEFAULT_USER_CONFIG = {
 // 教育经历
 export const DEFAULT_EDUCATION_FORM = {
   name: '教育经历',
-  key: 'education',
+  prop: 'education',
   // 表单中所渲染的类型
   type: 'container',
   // 表单中所渲染的组件
@@ -166,69 +166,66 @@ export const DEFAULT_EDUCATION_FORM = {
     title: '教育经历',
     add: true,
   },
-
   // 表单中所渲染的组件的双向绑定的模型
   model: {
     // 实际未使用，这里绑定为了方便删除
-    path: ['education'],
-    key: 'modelValue',
+    source: ['education'],
+    prop: 'modelValue',
   },
   // 表单中所渲染的组件的子组件
-  children: {
-    fields: [
-      {
-        type: 'array',
-        drag: true,
-        list: [],
-        addConfig: {
-          model: [
-            {
-              path: ['education', '?', 'name'],
-              key: 'name',
-            },
-            {
-              path: ['education', '?', 'education'],
-              key: 'education',
-            },
-            {
-              path: ['education', '?', 'post'],
-              key: 'post',
-            },
-            {
-              path: ['education', '?', 'time'],
-              key: 'time',
-            },
-            {
-              path: ['education', '?', 'content'],
-              key: 'content',
-            },
-            // 学制
-            {
-              path: ['education', '?', 'mode'],
-              key: 'mode',
-            },
-          ],
-          component: 'education',
-          span: 24,
-        },
+  fields: [
+    {
+      type: 'array',
+      drag: true,
+      list: [],
+      addConfig: {
+        model: [
+          {
+            source: ['education', '?', 'name'],
+            prop: 'name',
+          },
+          {
+            source: ['education', '?', 'education'],
+            prop: 'education',
+          },
+          {
+            source: ['education', '?', 'post'],
+            prop: 'post',
+          },
+          {
+            source: ['education', '?', 'time'],
+            prop: 'time',
+          },
+          {
+            source: ['education', '?', 'content'],
+            prop: 'content',
+          },
+          // 学制
+          {
+            source: ['education', '?', 'mode'],
+            prop: 'mode',
+          },
+        ],
+        component: 'education',
+        span: 24,
       },
-    ],
-    drag: true,
-  },
+    },
+  ],
+  drag: true,
 }
 // 专业技能
 export const DEFAULT_SKILL_FORM = {
   type: 'container',
   component: 'boxCollapse',
-  key: 'skill',
+  prop: 'skill',
   name: '专业技能',
   props: {
     title: '专业技能',
     add: false,
   },
   model: {
-    path: ['skill'],
-    key: 'modelValue',
+    source: ['skill'],
+    prop: 'modelValue',
   },
   children: {
     fields: [
@@ -236,8 +233,8 @@ export const DEFAULT_SKILL_FORM = {
         type: 'object',
         component: 'wangEdit',
         model: {
-          path: ['skill'],
-          key: 'modelValue',
+          source: ['skill'],
+          prop: 'modelValue',
         },
       },
     ],
@@ -247,33 +244,31 @@ export const DEFAULT_SKILL_FORM = {
 export const DEFAULT_ADVANTAGE_FORM = {
   type: 'container',
   component: 'boxCollapse',
-  key: 'advantage',
+  prop: 'advantage',
   name: '个人优势',
   props: {
     title: '个人优势',
     add: false,
   },
   model: {
-    path: ['advantage'],
-    key: 'modelValue',
+    source: ['advantage'],
+    prop: 'modelValue',
   },
-  children: {
-    fields: [
-      {
-        type: 'object',
-        component: 'wangEdit',
-        model: {
-          path: ['advantage'],
-          key: 'modelValue',
-        },
+  fields: [
+    {
+      type: 'object',
+      component: 'wangEdit',
+      model: {
+        source: ['advantage'],
+        prop: 'modelValue',
       },
-    ],
-  },
+    },
+  ],
 }
 // 工作经历
 export const DEFAULT_WORK_FORM = {
   type: 'container',
-  key: 'work',
+  prop: 'work',
   name: '工作经历',
   component: 'boxCollapse',
   props: {
@@ -284,42 +279,40 @@ export const DEFAULT_WORK_FORM = {
       span: 24,
       model: [
         {
-          path: ['work', '?', 'name'],
-          key: 'name',
+          source: ['work', '?', 'name'],
+          prop: 'name',
         },
         {
-          path: ['work', '?', 'post'],
-          key: 'post',
+          source: ['work', '?', 'post'],
+          prop: 'post',
         },
         {
-          path: ['work', '?', 'time'],
-          key: 'time',
+          source: ['work', '?', 'time'],
+          prop: 'time',
         },
         {
-          path: ['work', '?', 'content'],
-          key: 'content',
+          source: ['work', '?', 'content'],
+          prop: 'content',
         },
       ],
     },
   },
   model: {
-    path: ['work'],
-    key: 'modelValue',
+    source: ['work'],
+    prop: 'modelValue',
   },
-  children: {
-    fields: [
-      {
-        type: 'array',
-        drag: true,
-        list: [],
-      },
-    ],
-  },
+  fields: [
+    {
+      type: 'array',
+      drag: true,
+      list: [],
+    },
+  ],
 }
 // 项目经历
 export const DEFAULT_PROJECT_FORM = {
   type: 'container',
-  key: 'project',
+  prop: 'project',
   name: '项目经历',
   component: 'boxCollapse',
   props: {
@@ -330,44 +323,42 @@ export const DEFAULT_PROJECT_FORM = {
       span: 24,
       model: [
         {
-          path: ['project', '?', 'name'],
-          key: 'name',
+          source: ['project', '?', 'name'],
+          prop: 'name',
         },
         {
-          path: ['project', '?', 'post'],
-          key: 'post',
+          source: ['project', '?', 'post'],
+          prop: 'post',
         },
         {
-          path: ['project', '?', 'time'],
-          key: 'time',
+          source: ['project', '?', 'time'],
+          prop: 'time',
         },
         {
-          path: ['project', '?', 'content'],
-          key: 'content',
+          source: ['project', '?', 'content'],
+          prop: 'content',
         },
       ],
     },
   },
   model: {
-    path: ['project'],
-    key: 'modelValue',
+    source: ['project'],
+    prop: 'modelValue',
   },
   // modal
   drag: true,
-  children: {
-    fields: [
-      {
-        type: 'array',
-        drag: true,
-        list: [],
-      },
-    ],
-  },
+  fields: [
+    {
+      type: 'array',
+      drag: true,
+      list: [],
+    },
+  ],
 }
 // 自定义经历
 export const DEFAULT_CUSTOM_FORM = {
   type: 'container',
-  key: 'custom',
+  prop: 'custom',
   name: '',
   component: 'boxCollapse',
   props: {
@@ -382,24 +373,24 @@ export const DEFAULT_CUSTOM_FORM = {
           span: 24,
           model: [
             {
-              path: ['custom', '?', 'name'],
-              key: 'name',
+              source: ['custom', '?', 'name'],
+              prop: 'name',
             },
             {
-              path: ['custom', '?', 'education'],
-              key: 'education',
+              source: ['custom', '?', 'education'],
+              prop: 'education',
             },
             {
-              path: ['custom', '?', 'post'],
-              key: 'post',
+              source: ['custom', '?', 'post'],
+              prop: 'post',
             },
             {
-              path: ['custom', '?', 'time'],
-              key: 'time',
+              source: ['custom', '?', 'time'],
+              prop: 'time',
             },
             {
-              path: ['custom', '?', 'content'],
-              key: 'content',
+              source: ['custom', '?', 'content'],
+              prop: 'content',
             },
           ],
         },
@@ -407,12 +398,10 @@ export const DEFAULT_CUSTOM_FORM = {
     },
   },
   model: {
-    path: ['custom'],
-    key: 'modelValue',
+    source: ['custom'],
+    prop: 'modelValue',
   },
-  children: {
-    fields: [],
-  },
+  fields: [],
 }
 
 export const allConfig = {
