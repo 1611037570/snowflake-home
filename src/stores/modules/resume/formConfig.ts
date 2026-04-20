@@ -213,7 +213,6 @@ export const DEFAULT_EDUCATION_FORM = {
       },
     },
   ],
-  drag: true,
 }
 // 专业技能
 export const DEFAULT_SKILL_FORM = {
@@ -324,8 +323,6 @@ export const DEFAULT_PROJECT_FORM = {
     source: ['project'],
     prop: 'modelValue',
   },
-  // modal
-  drag: true,
   fields: [
     {
       type: 'array',
@@ -371,12 +368,11 @@ export const DEFAULT_CUSTOM_FORM = {
     source: ['custom'],
     prop: 'modelValue',
   },
-  drag: true,
-  dragClass: '.item-drag',
   fields: [],
   addConfig: {
     type: 'array',
     drag: true,
+    dragClass: '.item-drag',
     list: [
       {
         component: 'custom',
@@ -410,7 +406,8 @@ export const DEFAULT_CUSTOM_FORM = {
 //
 export const DEFAULT_CONFIG = {
   // 是否可拖动
-  drag: false,
+  drag: true,
+  dragClass: '.container-drag',
   // 表单中所渲染的组件的字段
   fields: [],
 }

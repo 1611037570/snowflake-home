@@ -48,13 +48,17 @@ onMounted(async () => {
     })
   }
   watch(
-    form.value?.drag,
+    () => form.value?.drag,
     (newValue) => {
+      console.log('newValue:>> ', newValue)
+
       draggable?.destroy()
       draggable = null
       if (!newValue) {
         return
       }
+      console.log('222:>> ', 222)
+
       draggable = useDraggable(row, form.value.list, {
         handle: form.value?.dragClass || '',
         animation: 150,
