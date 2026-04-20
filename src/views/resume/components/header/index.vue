@@ -2,17 +2,10 @@
 import { useResumeStore } from '@/stores'
 import eventBus from '@/utils/modules/eventBus'
 import { storeToRefs } from 'pinia'
-import { ref } from 'vue'
 import Title from './title.vue'
 
 const resumeStore = useResumeStore()
-const { isPrinting } = storeToRefs(resumeStore)
-
-const activeLayout = ref('middle') // 'left', 'middle', 'right'
-
-const setLayout = (layout) => {
-  activeLayout.value = layout
-}
+const { isPrinting, layout } = storeToRefs(resumeStore)
 
 const handleDownload = () => {
   if (isPrinting.value) return
@@ -20,6 +13,26 @@ const handleDownload = () => {
 }
 const back = () => {
   defaultNavigation()
+}
+const layoutList = [
+  {
+    name: '列表布局',
+    value: 'list',
+    icon: 'fluent:align-left-24-filled',
+  },
+  {
+    name: '三栏布局',
+    value: 'three',
+    icon: 'lucide:layout-panel-left',
+  },
+  {
+    name: 'AI布局',
+    value: 'ai',
+    icon: 'tabler:switch-3',
+  },
+]
+const handleLayoutClick = (item) => {
+  resumeStore.setLayout(item.value)
 }
 </script>
 
@@ -63,30 +76,17 @@ const back = () => {
 
       <!-- 布局切换器 -->
       <div class="flex items-center gap-1 rounded-lg bg-sf-bg-hover p-1">
-        <button
-          v-for="layout in ['left', 'middle', 'right']"
-          :key="layout"
-          @click="setLayout(layout)"
-          class="flex h-8 w-8 items-center justify-center rounded-md transition-all duration-200"
-          :class="[
-            activeLayout === layout
-              ? 'bg-sf-primary text-sf-theme shadow-sm'
-              : 'text-sf-text-3 hover:text-sf-text-2',
-          ]"
-        >
-          <SfIcon
-            :icon="
-              layout === 'left'
-                ? 'lucide:layout-panel-left'
-                : layout === 'middle'
-                  ? 'lucide:layout-columns'
-                  : 'lucide:layout-panel-right'
-            "
-            size="4.5"
-          />
-        </button>
+        <SfTooltip v-for="item in layoutList" :key="item.value" :content="item.name">
+          <button
+            type="button"
+            class="flex-c h-8 w-8 rounded-md text-sf-text-2 transition-all hover:bg-sf-primary hover:text-sf-theme"
+            :class="{ 'bg-sf-primary text-sf-theme shadow-sm': layout === item.value }"
+            @click="handleLayoutClick(item)"
+          >
+            <SfIcon :icon="item.icon" size="4.5" />
+          </button>
+        </SfTooltip>
       </div>
-
       <!-- 操作按钮组 -->
       <div class="flex items-center gap-2.5">
         <el-button

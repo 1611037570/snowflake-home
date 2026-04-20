@@ -22,6 +22,7 @@ export interface ResumeItem {
     fontFamily: string
   }
 }
+export type ResumeLayout = 'list' | 'three' | 'ai'
 
 export const useResumeStore = defineStore(
   'resume',
@@ -36,6 +37,7 @@ export const useResumeStore = defineStore(
     const list = ref<any[]>([])
     // 当前选中的简历下标
     const currentIndex = ref(-1)
+    const layout = ref<ResumeLayout>('three')
 
     // 获取当前选中的简历项
     const getCurrentResumeItem = () => {
@@ -119,6 +121,9 @@ export const useResumeStore = defineStore(
       list.value.splice(currentIndex.value, 1)
       currentIndex.value = -1
     }
+    const setLayout = (value: ResumeLayout) => {
+      layout.value = value
+    }
 
     // 初始化数据合并，防止版本更新导致字段缺失
     const init = () => {}
@@ -127,6 +132,7 @@ export const useResumeStore = defineStore(
       indexVisible,
       list,
       currentIndex,
+      layout,
       currentData,
       currentConfig,
       currentFixedConfig,
@@ -135,6 +141,7 @@ export const useResumeStore = defineStore(
       selectedModuleKeys,
       addResume,
       deleteResume,
+      setLayout,
       init,
     }
   },
