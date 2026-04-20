@@ -3,6 +3,7 @@ import { useResumeStore } from '@/stores'
 import eventBus from '@/utils/modules/eventBus'
 import { storeToRefs } from 'pinia'
 import { computed, inject, onMounted, onUnmounted, ref } from 'vue'
+import { resumeTitle } from '../utils'
 import ResumeModule from './modules/index.vue'
 import { useRowInfo } from './useRowInfo'
 
@@ -131,6 +132,7 @@ const printPDF = async () => {
   try {
     // 确保DOM已渲染完成
     await nextTick()
+    await document.fonts?.ready
     // 动态导入PDF相关库
     const { snapdom } = await import('@zumer/snapdom')
     const { default: jsPDF } = await import('jspdf')
@@ -178,6 +180,7 @@ const printPDF = async () => {
       const canvas = await snapdom.toCanvas(clone, {
         scale: 2, // 提高清晰度
         backgroundColor: '#ffffff',
+        embedFonts: true,
         width: 794,
         height: 1123,
       })
@@ -221,8 +224,7 @@ const printPDF = async () => {
     document.body.removeChild(tempContainer)
 
     // 保存PDF
-    const resumeTitle = resumeTitle()
-    pdf.save(`${resumeTitle}.pdf`)
+    pdf.save(`${resumeTitle.value}.pdf`)
 
     console.log(`成功导出 ${pages.length} 页 PDF`)
   } catch (error) {

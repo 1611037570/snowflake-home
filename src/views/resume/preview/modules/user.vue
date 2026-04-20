@@ -53,8 +53,12 @@ setTimeout(() => {
     <!-- 联系方式 -->
     <div class="mt-1 flex flex-wrap gap-x-6" data-module="user" v-if="contactList.length">
       <div v-for="item in contactList" :key="item.label" class="flex items-center">
-        <div class="pr-1">{{ item.label }}：</div>
-        <div class="font-medium">{{ item.value }}</div>
+        <div class="pr-1">
+          <Text v-model:value="item.label" v-model:newValue="item.newLabel" />：
+        </div>
+        <div class="font-medium">
+          <Text v-model:value="item.value" v-model:newValue="item.newValue" />
+        </div>
       </div>
     </div>
     <!-- 社交链接 -->
