@@ -28,8 +28,13 @@ class DataProxy<T> {
     }
     return result
   }
-  private select(options: { source: Path; value?: any; index?: number }): any {
-    const { source, value, index = 0 } = options
+  private select(options: {
+    source: Path
+    value?: any
+    index?: number
+    defaultValue?: string
+  }): any {
+    const { source, value, index = 0, defaultValue = '' } = options
     const keyPath = this.ensureArray(source)
     // 获取响应式数据的实际值
     const dataValue = this.modelValue.value || this.modelValue
@@ -59,7 +64,7 @@ class DataProxy<T> {
 
     // 当前key不存在
     if (!current.hasOwnProperty(lastKey)) {
-      current[lastKey] = ''
+      current[lastKey] = defaultValue
     }
     // 设置值（如果有）
     if (options.hasOwnProperty('value')) {
