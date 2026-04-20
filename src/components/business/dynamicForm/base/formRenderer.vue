@@ -46,6 +46,7 @@ const row: any = useTemplateRef('row')
 
 const items = defineModel<any>('items', {})
 const init = ref(false)
+let draggable: ReturnType<typeof useDraggable> | null = null
 onMounted(async () => {
   await nextTick()
   if (!items.value.id) {
@@ -65,14 +66,30 @@ onMounted(async () => {
   )
 
   init.value = true
-
-  // 初始化拖拽
-  useDraggable(row, items.value.fields, {
-    animation: 150,
-    ghostClass: 'ghost',
-    handle: items.value?.dragClass || '',
-    disabled: !items.value?.drag,
-  })
+  watch(
+    () => items.value?.drag,
+    (newV) => {
+      draggable?.destroy()
+      draggable = null
+      if (!newV) {
+        return
+      }
+      // 初始化拖拽
+      draggable = useDraggable(row, items.value.fields, {
+        animation: 150,
+        ghostClass: 'ghost',
+        handle: items.value?.dragClass || '',
+      })
+    },
+    {
+      immediate: true,
+      deep: true,
+    },
+  )
+})
+onUnmounted(() => {
+  draggable?.destroy()
+  draggable = null
 })
 </script>
 

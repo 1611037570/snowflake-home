@@ -14,11 +14,9 @@
         <el-button @click="moveDown(itemIndex)" :disabled="itemIndex === length - 1"
           >下移</el-button
         >
-
         <el-button @click="remove(itemIndex)">删除</el-button>
       </div>
     </FormItem>
-
     <el-button @click="add()" v-if="0">添加</el-button>
   </el-row>
 </template>
@@ -30,6 +28,7 @@ import { useDraggable } from 'vue-draggable-plus'
 import ContainerObject from './containerObject.vue'
 import FormItem from './formItem.vue'
 const row: any = useTemplateRef('row')
+let draggable: ReturnType<typeof useDraggable> | null = null
 
 defineProps<{
   index?: any
@@ -38,21 +37,8 @@ defineProps<{
 const form = defineModel<any>('form')
 const rootData = inject<any>('df/root/data')
 
-useDraggable(row, form.value.list, {
-  handle: form.value?.dragClass || '',
-  animation: 150,
-  ghostClass: 'ghost',
-  disabled: !form.value?.drag,
-  onEnd(data: any) {
-    // 获取旧索引和新索引
-    const { oldIndex, newIndex } = data
-    if (oldIndex === newIndex) return
-    const [item] = form.value.list.splice(oldIndex, 1)
-    form.value.list.splice(newIndex, 0, item)
-    rootData.move(form.value.list, oldIndex, newIndex)
-  },
-})
-onMounted(() => {
+onMounted(async () => {
+  await nextTick(() => {})
   if (form.value?.list) {
     form.value.list = form.value.list.map((item: any) => {
       return {
@@ -61,6 +47,33 @@ onMounted(() => {
       }
     })
   }
+  watch(
+    form.value?.drag,
+    (newValue) => {
+      draggable?.destroy()
+      draggable = null
+      if (!newValue) {
+        return
+      }
+      draggable = useDraggable(row, form.value.list, {
+        handle: form.value?.dragClass || '',
+        animation: 150,
+        ghostClass: 'ghost',
+        onEnd(data: any) {
+          // 获取旧索引和新索引
+          const { oldIndex, newIndex } = data
+          if (oldIndex === newIndex) return
+          const [item] = form.value.list.splice(oldIndex, 1)
+          form.value.list.splice(newIndex, 0, item)
+          rootData.move(form.value.list, oldIndex, newIndex)
+        },
+      })
+    },
+    {
+      immediate: true,
+      deep: true,
+    },
+  )
 })
 
 const length = computed(() => form.value?.list?.length || 0)
@@ -164,6 +177,6 @@ provide('df/removeItem', remove)
 <style scoped>
 .ghost {
   opacity: 0.5;
-  background: #c8ebfb;
+  background: yellow;
 }
 </style>
