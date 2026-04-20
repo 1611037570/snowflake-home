@@ -1,4 +1,4 @@
-import { useMutationObserver, useResizeObserver } from '@vueuse/core'
+import { useDebounceFn, useMutationObserver, useResizeObserver } from '@vueuse/core'
 import { nextTick, onMounted, ref, watch, type Ref } from 'vue'
 
 interface RowInfo {
@@ -102,23 +102,24 @@ export function useRowInfo(
       totalHeight.value = sumHeight
     }
   }
+  const debouncedHandleRowInfo = useDebounceFn(handleRowInfo, 100)
 
   onMounted(async () => {
     await nextTick()
-    handleRowInfo()
+    debouncedHandleRowInfo()
   })
 
-  useResizeObserver(rootRef, handleRowInfo)
+  useResizeObserver(rootRef, debouncedHandleRowInfo)
 
-  useMutationObserver(rootRef, handleRowInfo, {
+  useMutationObserver(rootRef, debouncedHandleRowInfo, {
     childList: true,
     subtree: true,
     characterData: true,
   })
 
-  watch(rootRef, handleRowInfo, { immediate: false })
+  watch(rootRef, debouncedHandleRowInfo, { immediate: false })
 
-  watch(watchOptions, handleRowInfo, { deep: true })
+  watch(watchOptions, debouncedHandleRowInfo, { deep: true })
 
   return {
     moduleList,
