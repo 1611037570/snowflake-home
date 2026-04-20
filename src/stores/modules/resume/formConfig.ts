@@ -131,7 +131,7 @@ export const DEFAULT_USER_FORM = [
     ],
     drag: false,
     type: 'array',
-    prop: 'user',
+    key: 'user',
     name: '用户信息',
   },
   {
@@ -156,7 +156,7 @@ export const DEFAULT_USER_CONFIG = {
 // 教育经历
 export const DEFAULT_EDUCATION_FORM = {
   name: '教育经历',
-  prop: 'education',
+  key: 'education',
   // 表单中所渲染的类型
   type: 'container',
   // 表单中所渲染的组件
@@ -217,7 +217,7 @@ export const DEFAULT_EDUCATION_FORM = {
 export const DEFAULT_SKILL_FORM = {
   type: 'container',
   component: 'boxCollapse',
-  prop: 'skill',
+  key: 'skill',
   name: '专业技能',
   props: {
     title: '专业技能',
@@ -227,24 +227,22 @@ export const DEFAULT_SKILL_FORM = {
     source: ['skill'],
     prop: 'modelValue',
   },
-  children: {
-    fields: [
-      {
-        type: 'object',
-        component: 'wangEdit',
-        model: {
-          source: ['skill'],
-          prop: 'modelValue',
-        },
+  fields: [
+    {
+      type: 'object',
+      component: 'wangEdit',
+      model: {
+        source: ['skill'],
+        prop: 'modelValue',
       },
-    ],
-  },
+    },
+  ],
 }
 // 个人优势
 export const DEFAULT_ADVANTAGE_FORM = {
   type: 'container',
   component: 'boxCollapse',
-  prop: 'advantage',
+  key: 'advantage',
   name: '个人优势',
   props: {
     title: '个人优势',
@@ -268,7 +266,7 @@ export const DEFAULT_ADVANTAGE_FORM = {
 // 工作经历
 export const DEFAULT_WORK_FORM = {
   type: 'container',
-  prop: 'work',
+  key: 'work',
   name: '工作经历',
   component: 'boxCollapse',
   props: {
@@ -312,7 +310,7 @@ export const DEFAULT_WORK_FORM = {
 // 项目经历
 export const DEFAULT_PROJECT_FORM = {
   type: 'container',
-  prop: 'project',
+  key: 'project',
   name: '项目经历',
   component: 'boxCollapse',
   props: {
@@ -358,7 +356,7 @@ export const DEFAULT_PROJECT_FORM = {
 // 自定义经历
 export const DEFAULT_CUSTOM_FORM = {
   type: 'container',
-  prop: 'custom',
+  key: 'custom',
   name: '',
   component: 'boxCollapse',
   props: {

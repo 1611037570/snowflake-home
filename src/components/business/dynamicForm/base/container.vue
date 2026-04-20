@@ -3,7 +3,7 @@
   <component :is="getComponent(form.component)" v-bind="form.props">
     <template #[getSlot()]>
       <!-- ="slotProps" v-bind="slotProps" -->
-      <FormRenderer v-model:items="form.children" />
+      <FormRenderer v-model:items="form" />
     </template>
   </component>
 </template>
