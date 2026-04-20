@@ -35,10 +35,8 @@ provide('lineHeightValue', lineHeightValue)
 </script>
 
 <template>
-  <div
-    class="bg-sf-bg-soft scrollbar-hide flex h-full flex-col items-center overflow-hidden overflow-y-auto"
-  >
-    <ScaleContainer class="min-h-0 w-full flex-1">
+  <div class="scrollbar-hide flex h-full flex-1 flex-col items-center overflow-y-auto">
+    <ScaleContainer>
       <ResumePage />
     </ScaleContainer>
   </div>
