@@ -153,6 +153,7 @@ export const DEFAULT_USER_CONFIG = {
   // 表单中所渲染的组件的字段
   fields: structuredClone(DEFAULT_USER_FORM),
 }
+
 // 教育经历
 export const DEFAULT_EDUCATION_FORM = {
   name: '教育经历',
@@ -177,6 +178,7 @@ export const DEFAULT_EDUCATION_FORM = {
     {
       type: 'array',
       drag: true,
+      dragClass: '.item-drag',
       list: [],
       addConfig: {
         model: [
@@ -272,28 +274,6 @@ export const DEFAULT_WORK_FORM = {
   props: {
     title: '工作经历',
     add: true,
-    addConfig: {
-      component: 'work',
-      span: 24,
-      model: [
-        {
-          source: ['work', '?', 'name'],
-          prop: 'name',
-        },
-        {
-          source: ['work', '?', 'post'],
-          prop: 'post',
-        },
-        {
-          source: ['work', '?', 'time'],
-          prop: 'time',
-        },
-        {
-          source: ['work', '?', 'content'],
-          prop: 'content',
-        },
-      ],
-    },
   },
   model: {
     source: ['work'],
@@ -303,7 +283,30 @@ export const DEFAULT_WORK_FORM = {
     {
       type: 'array',
       drag: true,
+      dragClass: '.item-drag',
       list: [],
+      addConfig: {
+        component: 'work',
+        span: 24,
+        model: [
+          {
+            source: ['work', '?', 'name'],
+            prop: 'name',
+          },
+          {
+            source: ['work', '?', 'post'],
+            prop: 'post',
+          },
+          {
+            source: ['work', '?', 'time'],
+            prop: 'time',
+          },
+          {
+            source: ['work', '?', 'content'],
+            prop: 'content',
+          },
+        ],
+      },
     },
   ],
 }
@@ -316,28 +319,6 @@ export const DEFAULT_PROJECT_FORM = {
   props: {
     title: '项目经历',
     add: true,
-    addConfig: {
-      component: 'project',
-      span: 24,
-      model: [
-        {
-          source: ['project', '?', 'name'],
-          prop: 'name',
-        },
-        {
-          source: ['project', '?', 'post'],
-          prop: 'post',
-        },
-        {
-          source: ['project', '?', 'time'],
-          prop: 'time',
-        },
-        {
-          source: ['project', '?', 'content'],
-          prop: 'content',
-        },
-      ],
-    },
   },
   model: {
     source: ['project'],
@@ -349,9 +330,32 @@ export const DEFAULT_PROJECT_FORM = {
     {
       type: 'array',
       drag: true,
+      dragClass: '.item-drag',
       list: [],
     },
   ],
+  addConfig: {
+    component: 'project',
+    span: 24,
+    model: [
+      {
+        source: ['project', '?', 'name'],
+        prop: 'name',
+      },
+      {
+        source: ['project', '?', 'post'],
+        prop: 'post',
+      },
+      {
+        source: ['project', '?', 'time'],
+        prop: 'time',
+      },
+      {
+        source: ['project', '?', 'content'],
+        prop: 'content',
+      },
+    ],
+  },
 }
 // 自定义经历
 export const DEFAULT_CUSTOM_FORM = {
@@ -362,46 +366,54 @@ export const DEFAULT_CUSTOM_FORM = {
   props: {
     title: '',
     add: true,
-    addConfig: {
-      type: 'array',
-      drag: true,
-      list: [
-        {
-          component: 'custom',
-          span: 24,
-          model: [
-            {
-              source: ['custom', '?', 'name'],
-              prop: 'name',
-            },
-            {
-              source: ['custom', '?', 'education'],
-              prop: 'education',
-            },
-            {
-              source: ['custom', '?', 'post'],
-              prop: 'post',
-            },
-            {
-              source: ['custom', '?', 'time'],
-              prop: 'time',
-            },
-            {
-              source: ['custom', '?', 'content'],
-              prop: 'content',
-            },
-          ],
-        },
-      ],
-    },
   },
   model: {
     source: ['custom'],
     prop: 'modelValue',
   },
+  drag: true,
+  dragClass: '.item-drag',
+  fields: [],
+  addConfig: {
+    type: 'array',
+    drag: true,
+    list: [
+      {
+        component: 'custom',
+        span: 24,
+        model: [
+          {
+            source: ['custom', '?', 'name'],
+            prop: 'name',
+          },
+          {
+            source: ['custom', '?', 'education'],
+            prop: 'education',
+          },
+          {
+            source: ['custom', '?', 'post'],
+            prop: 'post',
+          },
+          {
+            source: ['custom', '?', 'time'],
+            prop: 'time',
+          },
+          {
+            source: ['custom', '?', 'content'],
+            prop: 'content',
+          },
+        ],
+      },
+    ],
+  },
+}
+//
+export const DEFAULT_CONFIG = {
+  // 是否可拖动
+  drag: false,
+  // 表单中所渲染的组件的字段
   fields: [],
 }
-
 export const allConfig = {
   skill: DEFAULT_SKILL_FORM,
   user: DEFAULT_USER_FORM,

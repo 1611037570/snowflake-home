@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 import { computed, ref } from 'vue'
 import { DEFAULT_DATA } from './dataConfig'
-import { DEFAULT_USER_CONFIG } from './formConfig'
+import { DEFAULT_CONFIG, DEFAULT_USER_CONFIG } from './formConfig'
 import { type Data } from './types'
 import {
   defaultColor,
@@ -98,10 +98,7 @@ export const useResumeStore = defineStore(
         // 固定配置
         fixedConfig: DEFAULT_USER_CONFIG,
         // 表单配置
-        config: {
-          drag: true,
-          fields: [],
-        },
+        config: DEFAULT_CONFIG,
         // UI配置
         ui: {
           padding: defaultPadding,
