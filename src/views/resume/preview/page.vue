@@ -242,8 +242,11 @@ onUnmounted(() => {
 <template>
   <div class="flex flex-col gap-4">
     <!-- 隐藏的测量容器：用于 useRowInfo 读取高度 -->
-    <!-- class="absolute -z-10 flex flex-col opacity-0" -->
-    <div ref="measureRef" :style="[paddingValue(), { width: `${WIDTH}px` }]">
+    <div
+      class="absolute -z-10 flex flex-col opacity-0"
+      ref="measureRef"
+      :style="[paddingValue(), { width: `${WIDTH}px` }]"
+    >
       <ResumeModule
         :data="currentData"
         :name="item.key"

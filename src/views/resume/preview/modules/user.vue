@@ -47,7 +47,7 @@ setTimeout(() => {
         <span v-if="user.sex && (age || workYears)" class="h-3 w-px bg-current opacity-50"></span>
         <Text v-if="age" :value="age + '岁'" v-model:newValue="user.newAge" />
         <span v-if="age && workYears" class="h-3 w-px bg-current opacity-50"></span>
-        <Text v-if="workYears" :value="workYears + '经验'" v-model:newValue="user.newWorkYears" />
+        <Text v-if="workYears" :value="workYears" v-model:newValue="user.newWorkYears" />
       </div>
     </div>
     <!-- 联系方式 -->
