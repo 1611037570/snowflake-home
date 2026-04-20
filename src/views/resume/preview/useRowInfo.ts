@@ -55,16 +55,10 @@ export function useRowInfo(
     wrapper: HTMLElement,
   ): { moduleKey: string; rows: RowInfo[]; height: number } => {
     const moduleKey = wrapper.dataset.module || ''
-    const innerDivs = wrapper.children || []
-
-    const rows: RowInfo[] = []
-    let height = 0
-
-    Array.from(innerDivs).forEach((div: HTMLElement, index: number) => {
-      const rowInfo = createRowInfo(div, moduleKey, index)
-      rows.push(rowInfo)
-      height += rowInfo.height
-    })
+    const rows = Array.from(wrapper.children, (div, index) =>
+      createRowInfo(div as HTMLElement, moduleKey, index),
+    )
+    const height = rows.reduce((sum, row) => sum + row.height, 0)
 
     return { moduleKey, rows, height }
   }
@@ -114,37 +108,17 @@ export function useRowInfo(
     handleRowInfo()
   })
 
-  useResizeObserver(rootRef, () => {
-    handleRowInfo()
+  useResizeObserver(rootRef, handleRowInfo)
+
+  useMutationObserver(rootRef, handleRowInfo, {
+    childList: true,
+    subtree: true,
+    characterData: true,
   })
 
-  useMutationObserver(
-    rootRef,
-    () => {
-      handleRowInfo()
-    },
-    {
-      childList: true,
-      subtree: true,
-      characterData: true,
-    },
-  )
+  watch(rootRef, handleRowInfo, { immediate: false })
 
-  watch(
-    rootRef,
-    () => {
-      handleRowInfo()
-    },
-    { immediate: false },
-  )
-
-  watch(
-    watchOptions,
-    () => {
-      handleRowInfo()
-    },
-    { deep: true },
-  )
+  watch(watchOptions, handleRowInfo, { deep: true })
 
   return {
     moduleList,
