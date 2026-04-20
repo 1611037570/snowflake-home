@@ -42,6 +42,7 @@ function handleAdd() {
       <template #title>
         <div class="flex h-full w-full items-center justify-between">
           <div class="flex items-center text-lg font-bold">
+            <SfIcon icon="icon-park:drag" size="4" class="container-drag mr-1 cursor-move!" />
             {{ title }}
           </div>
           <SfIcon
