@@ -10,12 +10,8 @@ defineProps({
     type: Boolean,
     default: true,
   },
-  addConfig: {
-    type: Object,
-    default: () => {},
-  },
 })
-// const currentForm = inject('df/current/form')
+const currentForm = inject('df/current/form')
 const objectRemove = inject('df/remove')
 
 function del() {
@@ -27,6 +23,16 @@ function del() {
     .then(() => {
       objectRemove()
     })
+}
+function handleAdd() {
+  /**
+   * 错误的写法，原则上应该通过 inject('df/add')
+   * 但是数据是绑定在list上的，如果通过list会有空数组未渲染的情况，如果新增组件，又得处理不需要拖拽的元素
+   * 所以直接偷懒了
+   */
+  const currentFields = currentForm.value.fields[0]
+  const { addConfig, list } = currentFields
+  list.push(addConfig)
 }
 </script>
 
@@ -47,7 +53,15 @@ function del() {
         </div>
       </template>
       <template #default>
-        <slot :add="add" :containerTitle="title" />
+        <slot />
+        <div
+          class="flex cursor-pointer items-center gap-1 text-sf-theme"
+          @click="handleAdd"
+          v-if="add"
+        >
+          <SfIcon icon="ic:round-add" size="4" />
+          <span> 增加{{ title }} </span>
+        </div>
       </template>
     </SfCollapseItem>
   </SfCollapse>
