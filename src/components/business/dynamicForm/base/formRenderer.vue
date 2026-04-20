@@ -54,13 +54,9 @@ onMounted(async () => {
   // 监听 fields 变化，为每个 item 生成 id
   watch(
     items.value.fields,
-    () => {
-      items.value.fields.map((item: any) => {
-        return {
-          ...item,
-          id: item.id || getUUID(),
-        }
-      })
+    (newV) => {
+      console.log('newV:>> ', newV)
+      return
     },
     {
       immediate: true,

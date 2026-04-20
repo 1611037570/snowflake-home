@@ -37,7 +37,6 @@ const { moduleList } = useRowInfo(measureRef, o, { selector: '.resume-module-wra
 
 // 点击获取模块信息
 const handleModuleClick = (slice) => {
-  console.log('当前选中的模块信息：', slice)
   const key = slice.moduleKey
   // 存在则删除，不存在则添加 (实现 toggle)
   if (selectedModuleKeys.value.has(key)) {
@@ -243,11 +242,8 @@ onUnmounted(() => {
 <template>
   <div class="flex flex-col gap-4">
     <!-- 隐藏的测量容器：用于 useRowInfo 读取高度 -->
-    <div
-      class="absolute -z-10 flex flex-col opacity-0"
-      ref="measureRef"
-      :style="[paddingValue(), { width: `${WIDTH}px` }]"
-    >
+    <!-- class="absolute -z-10 flex flex-col opacity-0" -->
+    <div ref="measureRef" :style="[paddingValue(), { width: `${WIDTH}px` }]">
       <ResumeModule
         :data="currentData"
         :name="item.key"

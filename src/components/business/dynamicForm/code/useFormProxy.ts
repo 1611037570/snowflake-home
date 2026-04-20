@@ -11,8 +11,8 @@ const useFormProxy = (form: any) => {
         ...item,
         id: item.id || getUUID(),
       }
-      if (Array.isArray(newItem.children)) {
-        newItem.children = processItems(newItem.children)
+      if (Array.isArray(newItem.fields)) {
+        newItem.fields = processItems(newItem.fields)
       }
       return newItem
     })

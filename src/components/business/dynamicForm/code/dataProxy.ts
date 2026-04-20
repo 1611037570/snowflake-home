@@ -1,15 +1,8 @@
 type Path = string | string[]
 // 定义数据代理选项类型
 interface DataProxyOption {
-  /**
-   * 数据键路径
-   */
-  path: Path
-
-  /**
-   * 属性名称
-   */
-  key: string
+  source: Path
+  prop: string
 }
 
 // 创建一个类
@@ -31,20 +24,20 @@ class DataProxy<T> {
     const result: any = {}
     const optionsArray = this.ensureArray(options)
     for (const item of optionsArray) {
-      result[name + item.key] = callback(item)
+      result[name + item.prop] = callback(item)
     }
     return result
   }
-  private select(options: { path: Path; value?: any; index?: number }): any {
-    const { path, value, index = 0 } = options
-    const keyPath = this.ensureArray(path)
+  private select(options: { source: Path; value?: any; index?: number }): any {
+    const { source, value, index = 0 } = options
+    const keyPath = this.ensureArray(source)
     // 获取响应式数据的实际值
     const dataValue = this.modelValue.value || this.modelValue
     let current: any = dataValue
 
     const lastIndex = keyPath.length - 1
     for (let i = 0; i < lastIndex; i++) {
-      const key: any = path[i]
+      const key: any = source[i]
 
       // 移动到下一级
       if (key == '?') {
@@ -56,7 +49,7 @@ class DataProxy<T> {
         current = current[key]
         continue
       }
-      const nextKey = path[i + 1]
+      const nextKey = source[i + 1]
       current[key] = nextKey === '?' ? [] : {}
       current = current[key]
     }
@@ -77,9 +70,9 @@ class DataProxy<T> {
   // 获取数组路径（截取 '?' 之前的部分）
   getPath(options: DataProxyOption | DataProxyOption[] /* 数据配置 */) {
     const optionsArray: any = this.ensureArray(options)
-    const path = optionsArray[0].path
-    const index = path.indexOf('?')
-    return path.slice(0, index)
+    const source = optionsArray[0].source
+    const index = source.indexOf('?')
+    return source.slice(0, index)
   }
   move(path: any, oldIndex: number, newIndex: number) {
     const currentPath = this.getPath(path[oldIndex].model)
@@ -116,19 +109,19 @@ class DataProxy<T> {
     // 标准化路径：统一转为 路径对象数组，精简冗余变量
     const pathItems = this.ensureArray(payload.model)
     // 提取所有待删除的路径数组（如 [['a','b'], ['c','d']]）
-    const deletePaths = pathItems.map((item: any) => item.path)
+    const deletePaths = pathItems.map((item: any) => item.source)
 
     if (!deletePaths) return
     // 遍历所有待删除的路径数组
-    for (const path of deletePaths) {
+    for (const source of deletePaths) {
       let target = this.data
-      for (let i = 0; i < path.length; i++) {
-        if (path.length - 1 == i) {
+      for (let i = 0; i < source.length; i++) {
+        if (source.length - 1 == i) {
           // 删除最后一级属性
-          delete target[path[i]]
+          delete target[source[i]]
           break
         } else {
-          target = target[path[i]]
+          target = target[source[i]]
         }
       }
     }
@@ -143,7 +136,7 @@ class DataProxy<T> {
   // 获取数据代理
   getDataProxy(options: DataProxyOption | DataProxyOption[], index: number = 0) {
     return this.createDataProxyHelper(options, (item: DataProxyOption) =>
-      this.select({ path: item.path, index }),
+      this.select({ source: item.source, index }),
     )
   }
 
@@ -152,8 +145,8 @@ class DataProxy<T> {
     const result: any = {}
     const optionsArray = this.ensureArray(options)
     for (const item of optionsArray) {
-      result['update:' + item.key] = (newValue: T) => {
-        this.select({ path: item.path, value: newValue, index })
+      result['update:' + item.prop] = (newValue: T) => {
+        this.select({ source: item.source, value: newValue, index })
       }
     }
     return result
@@ -161,7 +154,7 @@ class DataProxy<T> {
 
   setEventProxy(options: DataProxyOption | DataProxyOption[]) {
     return this.createDataProxyHelper(options, (item: DataProxyOption) => {
-      return (newValue: T, ...args: T[]) => this.emit(item.key, newValue, ...args)
+      return (newValue: T, ...args: T[]) => this.emit(item.prop, newValue, ...args)
     })
   }
 

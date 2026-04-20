@@ -53,9 +53,9 @@ function checkArrayForm(form: any) {
  * @param form 表单项配置
  */
 export function checkForm(form: any) {
-  const { type, children } = form
+  const { type, fields } = form
   // 如果有 children，认为是一个容器，校验通过
-  if (Array.isArray(children) && children.length > 0) {
+  if (Array.isArray(fields) && fields.length > 0) {
     return true
   }
   // 否则必须有类型
