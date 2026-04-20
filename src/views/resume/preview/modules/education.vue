@@ -24,7 +24,7 @@ const education = computed(() => {
 </script>
 
 <template>
-  <div class="resume-row" data-module="education" :style="[lineHeightValue(), fontValue()]">
+  <div class="resume-row w-full" data-module="education" :style="[lineHeightValue(), fontValue()]">
     <!-- 标题栏 -->
     <Title title="教育经历"></Title>
     <!-- 内容区 -->
@@ -43,9 +43,11 @@ const education = computed(() => {
           <Text :value="getTime(item.time)" v-model:newValue="item.newTime" />
         </div>
       </div>
-      <div class="mt-1 flex items-center gap-2" v-for="(field, i) in item.infoList" :key="i">
-        <Text :value="field" v-model:newValue="item[`newField${i}`]" />
-        <div v-if="i < item.infoList.length - 1" class="h-1 w-1 rounded-full bg-black"></div>
+      <div class="mt-1 flex items-center gap-2" v-if="item.infoList">
+        <template v-for="(field, i) in item.infoList" :key="i">
+          <Text :value="field" v-model:newValue="item[`newField${i}`]" />
+          <div v-if="i < item.infoList.length - 1" class="h-1 w-1 rounded-full bg-black"></div>
+        </template>
       </div>
       <!-- 补充描述/经历 -->
       <Content :content="item.content" />
