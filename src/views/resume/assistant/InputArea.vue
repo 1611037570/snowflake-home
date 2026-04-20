@@ -3,6 +3,7 @@ import { useResumeStore } from '@/stores'
 import { storeToRefs } from 'pinia'
 import { computed, ref } from 'vue'
 import { educationScore, projectScore, skillScore, userScore, workScore } from '../utils'
+import { quickActions } from './data'
 const DEFAULT_PROMPT = {
   role: 'system',
   content: `你是资深招聘HR，名字叫简答羊，你是资深招聘HR，擅长挖掘候选人过往经历中的隐性亮点并通过量化方式最大化呈现个人价值。
@@ -61,65 +62,28 @@ const hasRequiredFields = computed(() => {
   }
 })
 
-const emit = defineEmits(['switch-jd', 'switch-mode'])
-
-// 当前选中模式
-const activeMode = ref('')
-
-// 快捷操作配置
-const quickActions = [
-  {
-    name: 'AI 生成',
-    type: 'generate',
-    icon: 'ph:magic-wand-duotone',
-    placeholder: '告诉 AI 你想生成什么内容...',
-    prompt: {
-      role: 'system',
-      content: '',
-    },
+const emit = defineEmits(['switch-jd', 'switch-mode', 'update:activeMode'])
+const props = defineProps({
+  activeMode: {
+    type: String,
+    default: '',
   },
-  {
-    name: 'AI 润色',
-    type: 'polish',
-    icon: 'ph:magic-wand-duotone',
-    placeholder: '告诉 AI 你想润色哪部分内容...',
-    prompt: {
-      role: 'system',
-      content: '',
-    },
-  },
-  {
-    name: 'AI 评分',
-    type: 'score',
-    icon: 'ph:stethoscope-duotone',
-    placeholder: '告诉 AI 你想评分...',
-    prompt: {
-      role: 'system',
-      content: '',
-    },
-  },
-  {
-    name: '对标 JD 优化',
-    type: 'jd',
-    icon: 'ph:stethoscope-duotone',
-    placeholder: '粘贴目标岗位的 JD 内容...',
-    prompt: {
-      role: 'system',
-      content: '',
-    },
-  },
-]
+})
 
 // 切换模式
 function toggleMode(type) {
   const action = quickActions.find((a) => a.type === type)
-  activeMode.value = action?.name === activeMode.value ? '' : action?.name || ''
-  emit('switch-mode', type)
+  const nextMode = action?.name === props.activeMode ? '' : action?.name || ''
+  emit('update:activeMode', nextMode)
+  emit('switch-mode', nextMode ? type : '')
+  if (type === 'jd' && nextMode) {
+    emit('switch-jd')
+  }
 }
 
 // 输入框 placeholder
 const inputPlaceholder = computed(() => {
-  const action = quickActions.find((a) => a.name === activeMode.value)
+  const action = quickActions.find((a) => a.name === props.activeMode)
   return action ? action.placeholder : '告诉 AI 你的需求...'
 })
 
@@ -134,12 +98,14 @@ function send() {
 
 <template>
   <!-- AI 快捷操作按钮 -->
-  <div class="flex gap-2">
+  <div class="flex items-center gap-2" v-if="props.activeMode">
     <div
       v-for="action in quickActions"
       :key="action.name"
-      class="group flex flex-1 cursor-pointer items-center justify-center gap-1 rounded-lg p-1 text-[11px] font-medium transition-all active:scale-[0.98]"
-      :class="activeMode === action.name ? 'bg-blue-500 text-white' : 'bg-gray-100 text-gray-700'"
+      class="group flex flex-1 cursor-pointer items-center justify-center gap-1 rounded-lg py-1 text-[11px] font-medium transition-all active:scale-[0.98]"
+      :class="
+        props.activeMode === action.name ? 'bg-blue-500 text-white' : 'bg-gray-100 text-gray-700'
+      "
       @click="toggleMode(action.type)"
     >
       <SfIcon :icon="action.icon" :size="3" class="transition-transform" />
@@ -147,7 +113,8 @@ function send() {
     </div>
   </div>
   <div
-    class="mt-1 flex shrink-0 flex-col gap-3 rounded-2xl border border-sf-border bg-sf-primary p-3 shadow-sm"
+    v-if="props.activeMode"
+    class="mt-3 flex shrink-0 flex-col gap-3 rounded-2xl border border-sf-border bg-sf-primary p-3 shadow-sm"
   >
     <!-- 选中的模块 tags -->
     <div v-if="selectedModuleKeys.size > 0" class="mt-1 flex items-start gap-2 rounded-lg">
