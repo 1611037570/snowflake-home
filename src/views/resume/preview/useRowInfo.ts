@@ -55,8 +55,7 @@ export function useRowInfo(
     wrapper: HTMLElement,
   ): { moduleKey: string; rows: RowInfo[]; height: number } => {
     const moduleKey = wrapper.dataset.module || ''
-    const componentRoot = wrapper.children[0] as HTMLElement
-    const innerDivs = componentRoot?.children || []
+    const innerDivs = wrapper.children || []
 
     const rows: RowInfo[] = []
     let height = 0
