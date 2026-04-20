@@ -5,9 +5,8 @@
       <Transition name="resume-builder">
         <Builder v-if="layout !== 'ai'" />
       </Transition>
-      <div class="flex-1 overflow-hidden">
-        <Preview />
-      </div>
+
+      <Preview />
       <Transition name="resume-assistant">
         <Assistant v-if="layout !== 'list'" />
       </Transition>
