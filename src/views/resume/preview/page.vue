@@ -124,6 +124,17 @@ const pages = computed(() => {
   return result
 })
 
+const getPageStyle = (pageSlices, pageIndex) => {
+  return pageSlices
+    .map((slice) => {
+      const visibleSelectors = slice.visibleRowIndexes
+        .map((idx) => `:nth-child(${idx + 1})`)
+        .join(',')
+      return `.page-${pageIndex} .resume-module-wrapper[data-module="${slice.moduleKey}"] > div > div:not(${visibleSelectors}) { display: none !important; }`
+    })
+    .join('\n')
+}
+
 /**
  * 将简历预览导出为PDF文件
  * 利用 ResumePage 已生成的分页结构直接导出
@@ -308,16 +319,7 @@ onUnmounted(() => {
         第 {{ pageIndex + 1 }} 页，共 {{ pages.length }} 页
       </div>
 
-      <component :is="'style'">
-        <template v-for="slice in pageSlices" :key="'style-slice-' + slice.moduleKey">
-          .page-{{ pageIndex }} .resume-module-wrapper[data-module="{{ slice.moduleKey }}"] > div >
-          div:not(
-          <template v-for="(idx, i) in slice.visibleRowIndexes" :key="idx">
-            :nth-child({{ idx + 1 }}){{ i < slice.visibleRowIndexes.length - 1 ? ',' : '' }}
-          </template>
-          ) { display: none !important; }
-        </template>
-      </component>
+      <component :is="'style'">{{ getPageStyle(pageSlices, pageIndex) }}</component>
     </div>
   </div>
 </template>
