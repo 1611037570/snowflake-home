@@ -23,12 +23,14 @@
 
 <script setup lang="ts">
 import { getUUID } from '@/utils'
-import { computed, inject, onMounted } from 'vue'
+import { computed, inject, onMounted, onUnmounted } from 'vue'
 import { useDraggable } from 'vue-draggable-plus'
 import ContainerObject from './containerObject.vue'
 import FormItem from './formItem.vue'
 const row: any = useTemplateRef('row')
 let draggable: ReturnType<typeof useDraggable> | null = null
+let stopDragWatch: (() => void) | null = null
+let isUnmounted = false
 
 defineProps<{
   index?: any
@@ -39,6 +41,7 @@ const rootData = inject<any>('df/root/data')
 
 onMounted(async () => {
   await nextTick(() => {})
+  if (isUnmounted) return
   if (form.value?.list) {
     form.value.list = form.value.list.map((item: any) => {
       return {
@@ -47,7 +50,7 @@ onMounted(async () => {
       }
     })
   }
-  watch(
+  stopDragWatch = watch(
     () => form.value?.drag,
     (newValue) => {
       draggable?.destroy()
@@ -75,6 +78,13 @@ onMounted(async () => {
       deep: true,
     },
   )
+})
+onUnmounted(() => {
+  isUnmounted = true
+  stopDragWatch?.()
+  stopDragWatch = null
+  draggable?.destroy()
+  draggable = null
 })
 
 const length = computed(() => form.value?.list?.length || 0)

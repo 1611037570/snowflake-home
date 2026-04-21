@@ -47,13 +47,17 @@ const row: any = useTemplateRef('row')
 const items = defineModel<any>('items', {})
 const init = ref(false)
 let draggable: ReturnType<typeof useDraggable> | null = null
+let stopFieldsWatch: (() => void) | null = null
+let stopDragWatch: (() => void) | null = null
+let isUnmounted = false
 onMounted(async () => {
   await nextTick()
+  if (isUnmounted) return
   if (!items.value.id) {
     items.value.id = getUUID()
   }
   // 监听 fields 变化，为每个 item 生成 id
-  watch(
+  stopFieldsWatch = watch(
     items.value.fields,
     (newV) => {
       if (!newV) return
@@ -70,7 +74,7 @@ onMounted(async () => {
   )
 
   init.value = true
-  watch(
+  stopDragWatch = watch(
     () => items.value?.drag,
     (newV) => {
       draggable?.destroy()
@@ -92,6 +96,11 @@ onMounted(async () => {
   )
 })
 onUnmounted(() => {
+  isUnmounted = true
+  stopFieldsWatch?.()
+  stopFieldsWatch = null
+  stopDragWatch?.()
+  stopDragWatch = null
   draggable?.destroy()
   draggable = null
 })
