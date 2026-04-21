@@ -47,25 +47,24 @@ const row: any = useTemplateRef('row')
 const items = defineModel<any>('items', {})
 const init = ref(false)
 let draggable: ReturnType<typeof useDraggable> | null = null
+function ensureFieldIds(fields: any[]) {
+  if (!fields) return
+  fields.forEach((item: any) => {
+    if (!item.id) {
+      item.id = getUUID()
+    }
+  })
+}
 onMounted(async () => {
   await nextTick()
   if (!items.value.id) {
     items.value.id = getUUID()
   }
-  // 监听 fields 变化，为每个 item 生成 id
+  ensureFieldIds(items.value.fields)
   watch(
-    items.value.fields,
-    (newV) => {
-      if (!newV) return
-      newV.forEach((item: any) => {
-        if (!item.id) {
-          item.id = getUUID()
-        }
-      })
-    },
-    {
-      immediate: true,
-      deep: true,
+    () => [items.value?.fields, items.value?.fields?.length],
+    () => {
+      ensureFieldIds(items.value?.fields)
     },
   )
 
