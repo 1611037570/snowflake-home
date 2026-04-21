@@ -1,13 +1,5 @@
 <template>
-  <component
-    :is="component"
-    v-bind="{
-      ...rootData.getDataProxy(form.model, props.currentIndex),
-      ...form.props,
-      // ...$attrs,
-    }"
-    v-on="rootData.setDataProxy(form.model, props.currentIndex)"
-  ></component>
+  <component :is="component" v-bind="bindProps" v-on="bindEvent"></component>
 </template>
 
 <script setup lang="ts">
@@ -18,7 +10,16 @@ const props = defineProps<{
   currentIndex?: any
   form: any
 }>()
-
+const bindProps = computed(() => {
+  return {
+    ...rootData.getDataProxy(props.form.model, props.currentIndex),
+    ...props.form.props,
+    // ...$attrs,
+  }
+})
+const bindEvent = computed(() => {
+  return rootData.setDataProxy(props.form.model, props.currentIndex)
+})
 const rootData = inject<any>('df/root/data')
 
 const component = getComponent(props.form?.component)

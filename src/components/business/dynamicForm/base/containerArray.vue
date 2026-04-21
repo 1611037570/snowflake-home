@@ -29,8 +29,6 @@ import ContainerObject from './containerObject.vue'
 import FormItem from './formItem.vue'
 const row: any = useTemplateRef('row')
 let draggable: ReturnType<typeof useDraggable> | null = null
-let stopDragWatch: (() => void) | null = null
-let isUnmounted = false
 
 defineProps<{
   index?: any
@@ -41,7 +39,6 @@ const rootData = inject<any>('df/root/data')
 
 onMounted(async () => {
   await nextTick(() => {})
-  if (isUnmounted) return
   if (form.value?.list) {
     form.value.list = form.value.list.map((item: any) => {
       return {
@@ -50,39 +47,25 @@ onMounted(async () => {
       }
     })
   }
-  stopDragWatch = watch(
-    () => form.value?.drag,
-    (newValue) => {
-      draggable?.destroy()
-      draggable = null
-      if (!newValue) {
-        return
-      }
+  if (!form.value?.drag) {
+    return
+  }
 
-      draggable = useDraggable(row, form.value.list, {
-        handle: form.value?.dragClass || '',
-        animation: 150,
-        ghostClass: 'ghost',
-        onEnd(data: any) {
-          // 获取旧索引和新索引
-          const { oldIndex, newIndex } = data
-          if (oldIndex === newIndex) return
-          // const [item] = form.value.list.splice(oldIndex, 1)
-          // form.value.list.splice(newIndex, 0, item)
-          rootData.move(form.value.list, oldIndex, newIndex)
-        },
-      })
+  draggable = useDraggable(row, form.value.list, {
+    handle: form.value?.dragClass || '',
+    animation: 150,
+    ghostClass: 'ghost',
+    onEnd(data: any) {
+      // 获取旧索引和新索引
+      const { oldIndex, newIndex } = data
+      if (oldIndex === newIndex) return
+      // const [item] = form.value.list.splice(oldIndex, 1)
+      // form.value.list.splice(newIndex, 0, item)
+      rootData.move(form.value.list, oldIndex, newIndex)
     },
-    {
-      immediate: true,
-      deep: true,
-    },
-  )
+  })
 })
 onUnmounted(() => {
-  isUnmounted = true
-  stopDragWatch?.()
-  stopDragWatch = null
   draggable?.destroy()
   draggable = null
 })
