@@ -28,6 +28,7 @@ const allModules = computed(() => {
 })
 const WIDTH = 794
 const HEIGHT = 1123
+const MODULE_GAP = 12
 const o = computed(() => {
   return {
     paddingValue: paddingValue.value(),
@@ -58,7 +59,9 @@ const pages = computed(() => {
   const maxContentHeight = HEIGHT - padding * 2 - 32 // 减去内边距和页脚空间
 
   moduleList.value.forEach((group) => {
-    const groupHeight = group.rows.reduce((sum, row) => sum + row.height, 0)
+    const groupHeight =
+      group.rows.reduce((sum, row) => sum + row.height, 0) +
+      (currentPage.length > 0 ? MODULE_GAP : 0)
 
     // 如果整个组（模块）能完全放入当前页，就整个放入
     if (currentHeight + groupHeight <= maxContentHeight) {
@@ -74,11 +77,12 @@ const pages = computed(() => {
       while (remainingRows.length > 0) {
         let sliceHeight = 0
         const sliceRows = []
+        const sliceGapHeight = currentPage.length > 0 ? MODULE_GAP : 0
 
         // 在当前页尽可能多地塞入行
         while (
           remainingRows.length > 0 &&
-          currentHeight + sliceHeight + remainingRows[0].height <= maxContentHeight
+          currentHeight + sliceGapHeight + sliceHeight + remainingRows[0].height <= maxContentHeight
         ) {
           const row = remainingRows.shift()
           sliceRows.push(row)
@@ -105,7 +109,7 @@ const pages = computed(() => {
           moduleKey: group.moduleKey,
           visibleRowIndexes: sliceRows.map((r) => r.index),
         })
-        currentHeight += sliceHeight
+        currentHeight += sliceGapHeight + sliceHeight
 
         // 如果还有剩余行，说明当前页满了，需要翻页
         if (remainingRows.length > 0) {
@@ -131,7 +135,7 @@ const getPageStyle = (pageSlices, pageIndex) => {
       const visibleSelectors = slice.visibleRowIndexes
         .map((idx) => `:nth-child(${idx + 1})`)
         .join(',')
-      return `.page-${pageIndex} .resume-module-wrapper[data-module="${slice.moduleKey}"] > div > div:not(${visibleSelectors}) { display: none !important; }`
+      return `.page-${pageIndex} .resume-module-wrapper[data-module="${slice.moduleKey}"] > .resume-row > :not(${visibleSelectors}) { display: none !important; }`
     })
     .join('\n')
 }
@@ -284,7 +288,7 @@ onUnmounted(() => {
         { width: `${WIDTH}px`, height: `${HEIGHT}px` },
       ]"
     >
-      <div class="flex flex-1 flex-col">
+      <div class="flex flex-1 flex-col gap-3">
         <div
           v-for="slice in pageSlices"
           :key="slice.moduleKey"
