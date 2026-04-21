@@ -1,3 +1,6 @@
+const DEFAULT_META = {
+  version: '1.0.0',
+}
 // 用户信息
 export const DEFAULT_USER_FORM = [
   {
@@ -14,7 +17,7 @@ export const DEFAULT_USER_FORM = [
       {
         type: 'object',
         label: '求职岗位',
-        tip: '你求职的岗位，必填',
+        tip: '目标岗位，必填',
         component: 'input',
         span: 24,
         model: {
@@ -29,7 +32,7 @@ export const DEFAULT_USER_FORM = [
       {
         type: 'object',
         label: '姓名',
-        tip: '你的姓名，必填',
+        tip: '真实姓名，必填',
         component: 'input',
         span: 12,
         model: {
@@ -44,7 +47,7 @@ export const DEFAULT_USER_FORM = [
       {
         type: 'object',
         label: '出生日期',
-        tip: '你的出生日期，必填',
+        tip: '出生年月，必填',
         component: 'datePicker',
         span: 12,
         model: {
@@ -60,7 +63,7 @@ export const DEFAULT_USER_FORM = [
       {
         type: 'object',
         label: '电话',
-        tip: '用于联系你的手机号，必填',
+        tip: '常用手机号，必填',
         component: 'input',
         span: 12,
         model: {
@@ -75,7 +78,7 @@ export const DEFAULT_USER_FORM = [
       {
         type: 'object',
         label: '邮箱',
-        tip: '用于联系你的邮箱',
+        tip: '常用邮箱',
         component: 'input',
         span: 12,
         model: {
@@ -90,7 +93,7 @@ export const DEFAULT_USER_FORM = [
       {
         type: 'object',
         label: '参加工作时间',
-        tip: '你参加工作时间',
+        tip: '首次工作年月',
         component: 'datePicker',
         span: 12,
         model: {
@@ -106,7 +109,7 @@ export const DEFAULT_USER_FORM = [
       {
         type: 'object',
         label: '性别',
-        tip: '你的性别',
+        tip: '选择性别',
         component: 'select',
         span: 12,
         model: {
@@ -148,6 +151,7 @@ export const DEFAULT_USER_FORM = [
 ]
 // 用户信息的配置
 export const DEFAULT_USER_CONFIG = {
+  meta: DEFAULT_META,
   // 是否可拖动
   drag: false,
   // 表单中所渲染的组件的字段
@@ -159,7 +163,7 @@ export const DEFAULT_EDUCATION_FORM = {
   name: '教育经历',
   key: 'education',
   // 表单中所渲染的类型
-  type: 'container',
+  type: 'object',
   // 表单中所渲染的组件
   component: 'boxCollapse',
   // 表单中所渲染的组件的属性
@@ -173,6 +177,8 @@ export const DEFAULT_EDUCATION_FORM = {
     source: ['education'],
     prop: 'modelValue',
   },
+  slot: true,
+  slotName: 'default',
   // 表单中所渲染的组件的子组件
   fields: [
     {
@@ -216,7 +222,7 @@ export const DEFAULT_EDUCATION_FORM = {
 }
 // 专业技能
 export const DEFAULT_SKILL_FORM = {
-  type: 'container',
+  type: 'object',
   component: 'boxCollapse',
   key: 'skill',
   name: '专业技能',
@@ -228,6 +234,8 @@ export const DEFAULT_SKILL_FORM = {
     source: ['skill'],
     prop: 'modelValue',
   },
+  slot: true,
+  slotName: 'default',
   fields: [
     {
       type: 'object',
@@ -241,7 +249,7 @@ export const DEFAULT_SKILL_FORM = {
 }
 // 个人优势
 export const DEFAULT_ADVANTAGE_FORM = {
-  type: 'container',
+  type: 'object',
   component: 'boxCollapse',
   key: 'advantage',
   name: '个人优势',
@@ -253,6 +261,8 @@ export const DEFAULT_ADVANTAGE_FORM = {
     source: ['advantage'],
     prop: 'modelValue',
   },
+  slot: true,
+  slotName: 'default',
   fields: [
     {
       type: 'object',
@@ -266,7 +276,7 @@ export const DEFAULT_ADVANTAGE_FORM = {
 }
 // 工作经历
 export const DEFAULT_WORK_FORM = {
-  type: 'container',
+  type: 'object',
   key: 'work',
   name: '工作经历',
   component: 'boxCollapse',
@@ -278,6 +288,8 @@ export const DEFAULT_WORK_FORM = {
     source: ['work'],
     prop: 'modelValue',
   },
+  slot: true,
+  slotName: 'default',
   fields: [
     {
       type: 'array',
@@ -311,7 +323,7 @@ export const DEFAULT_WORK_FORM = {
 }
 // 项目经历
 export const DEFAULT_PROJECT_FORM = {
-  type: 'container',
+  type: 'object',
   key: 'project',
   name: '项目经历',
   component: 'boxCollapse',
@@ -323,6 +335,8 @@ export const DEFAULT_PROJECT_FORM = {
     source: ['project'],
     prop: 'modelValue',
   },
+  slot: true,
+  slotName: 'default',
   fields: [
     {
       type: 'array',
@@ -356,7 +370,7 @@ export const DEFAULT_PROJECT_FORM = {
 }
 // 自定义经历
 export const DEFAULT_CUSTOM_FORM = {
-  type: 'container',
+  type: 'object',
   key: 'custom',
   name: '',
   component: 'boxCollapse',
@@ -368,6 +382,8 @@ export const DEFAULT_CUSTOM_FORM = {
     source: ['custom'],
     prop: 'modelValue',
   },
+  slot: true,
+  slotName: 'default',
   fields: [],
   addConfig: {
     type: 'array',
@@ -405,9 +421,9 @@ export const DEFAULT_CUSTOM_FORM = {
 }
 //
 export const DEFAULT_CONFIG = {
-  // 是否可拖动
+  meta: DEFAULT_META,
   drag: true,
-  dragClass: '.container-drag',
+  dragClass: '.object-drag',
   // 表单中所渲染的组件的字段
   fields: [],
 }
