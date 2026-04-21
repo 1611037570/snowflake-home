@@ -24,7 +24,9 @@ function switchMode(type) {
 
 <template>
   <div class="box-border h-full max-w-[410px] min-w-[410px] bg-sf-bg py-3 pr-3">
-    <div class="flex h-full flex-col rounded-xl border-[0.1px] bg-sf-primary p-3">
+    <div
+      class="flex h-full flex-col rounded-xl border border-sf-border/40 bg-sf-primary p-3 shadow-sm"
+    >
       <div class="flex-1 overflow-y-auto">
         <EmptyState v-if="!activeMode" @switch-mode="switchMode" />
         <Score v-else-if="currentView === 'score'" />
