@@ -1,7 +1,7 @@
 <script setup>
 const { proxy } = getCurrentInstance()
 
-defineProps({
+const props = defineProps({
   title: {
     type: String,
     default: '未填写',
@@ -15,14 +15,9 @@ const currentForm = inject('df/current/form')
 const objectRemove = inject('df/remove')
 
 function del() {
-  proxy
-    .$confirm('确定要删除当前内容吗？', '删除确认', {
-      confirmText: '确定删除',
-      cancelText: '取消操作',
-    })
-    .then(() => {
-      objectRemove()
-    })
+  proxy.$confirm(`确定要删除${props.title}模块吗？`, '删除确认').then(() => {
+    objectRemove()
+  })
 }
 function handleAdd() {
   /**
