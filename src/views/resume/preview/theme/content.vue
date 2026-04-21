@@ -24,24 +24,42 @@ const hasContent = computed(() => {
 // 将内容按块拆分，以便分页逻辑可以更细粒度地处理
 const splitBlocks = computed(() => {
   if (!props.content) return []
-  // 匹配常见的块级标签或换行符
-  // 这里采用正则匹配的方式，将 <p>...</p> 或 <div>...</div> 或 <br> 作为独立块
-  const blocks = props.content.match(/<p>[\s\S]*?<\/p>|<div[\s\S]*?<\/div>|<br\s*\/?>|[^<]+/gi)
-  if (!blocks) return [props.content]
-  return blocks.filter((block) => block.trim() && block !== '<p><br></p>')
+  const template = document.createElement('template')
+  template.innerHTML = props.content
+  return Array.from(template.content.childNodes)
+    .map((node) => {
+      if (node.nodeType === 3 && node.textContent.trim()) {
+        return {
+          tag: 'span',
+          attrs: {},
+          html: node.textContent,
+        }
+      }
+      if (node.nodeType !== 1) return null
+      return {
+        tag: node.tagName.toLowerCase(),
+        attrs: Object.fromEntries(
+          Array.from(node.attributes).map(({ name, value }) => [name, value]),
+        ),
+        html: node.innerHTML,
+      }
+    })
+    .filter((block) => block && block.html.trim())
 })
 </script>
 
 <template>
   <template v-if="hasContent">
     <div class="mt-1 w-full"></div>
-    <div
+    <component
       v-for="(block, idx) in splitBlocks"
       :key="idx"
+      :is="block.tag"
+      v-bind="block.attrs"
       class="whitespace-pre-wrap"
       :style="[fontValue(-3), lineHeightValue(-3)]"
-      v-html="block"
-    ></div>
+      :innerHTML="block.html"
+    ></component>
   </template>
 </template>
 
