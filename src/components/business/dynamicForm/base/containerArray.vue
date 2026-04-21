@@ -67,8 +67,8 @@ onMounted(async () => {
           // 获取旧索引和新索引
           const { oldIndex, newIndex } = data
           if (oldIndex === newIndex) return
-          const [item] = form.value.list.splice(oldIndex, 1)
-          form.value.list.splice(newIndex, 0, item)
+          // const [item] = form.value.list.splice(oldIndex, 1)
+          // form.value.list.splice(newIndex, 0, item)
           rootData.move(form.value.list, oldIndex, newIndex)
         },
       })

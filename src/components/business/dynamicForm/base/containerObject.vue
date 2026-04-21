@@ -11,7 +11,7 @@
 </template>
 
 <script setup lang="ts">
-import { inject } from 'vue'
+import { inject, toRef } from 'vue'
 import { getComponent } from '../components'
 
 const props = defineProps<{
@@ -28,7 +28,7 @@ function remove() {
   emit('removeObject', props.currentIndex)
 }
 // 提供当前容器的索引
-provide('df/current/index', props.currentIndex)
+provide('df/current/index', toRef(props, 'currentIndex'))
 // 提供当前容器的表单数据
 provide('df/current/form', props.form)
 // 提供当前容器的类型
