@@ -177,8 +177,7 @@ export const DEFAULT_EDUCATION_FORM = {
     source: ['education'],
     prop: 'modelValue',
   },
-  slot: true,
-  slotName: 'default',
+  slot: 'default',
   // 表单中所渲染的组件的子组件
   fields: [
     {
@@ -234,8 +233,7 @@ export const DEFAULT_SKILL_FORM = {
     source: ['skill'],
     prop: 'modelValue',
   },
-  slot: true,
-  slotName: 'default',
+  slot: 'default',
   fields: [
     {
       type: 'object',
@@ -261,8 +259,7 @@ export const DEFAULT_ADVANTAGE_FORM = {
     source: ['advantage'],
     prop: 'modelValue',
   },
-  slot: true,
-  slotName: 'default',
+  slot: 'default',
   fields: [
     {
       type: 'object',
@@ -288,8 +285,7 @@ export const DEFAULT_WORK_FORM = {
     source: ['work'],
     prop: 'modelValue',
   },
-  slot: true,
-  slotName: 'default',
+  slot: 'default',
   fields: [
     {
       type: 'array',
@@ -335,8 +331,7 @@ export const DEFAULT_PROJECT_FORM = {
     source: ['project'],
     prop: 'modelValue',
   },
-  slot: true,
-  slotName: 'default',
+  slot: 'default',
   fields: [
     {
       type: 'array',
@@ -382,8 +377,7 @@ export const DEFAULT_CUSTOM_FORM = {
     source: ['custom'],
     prop: 'modelValue',
   },
-  slot: true,
-  slotName: 'default',
+  slot: 'default',
   fields: [],
   addConfig: {
     type: 'array',
@@ -423,7 +417,7 @@ export const DEFAULT_CUSTOM_FORM = {
 export const DEFAULT_CONFIG = {
   meta: DEFAULT_META,
   drag: true,
-  dragClass: '.object-drag',
+  dragClass: '.container-drag',
   // 表单中所渲染的组件的字段
   fields: [],
 }

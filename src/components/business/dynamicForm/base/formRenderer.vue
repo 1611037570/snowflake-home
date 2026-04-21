@@ -6,7 +6,7 @@
       <!-- v-bind="$attrs" -->
       <Container
         :form="item"
-        v-if="item.type === 'container'"
+        v-else-if="item.slot"
         :currentIndex="index"
         @removeObject="removeObject"
       />
