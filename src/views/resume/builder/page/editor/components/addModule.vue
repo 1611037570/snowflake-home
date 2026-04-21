@@ -80,7 +80,7 @@ const handleCancel = () => {
 </script>
 
 <template>
-  <header class="flex items-center text-lg font-bold text-sf-base">
+  <header class="mb-2 flex items-center text-lg font-bold text-sf-base">
     <SfIcon icon="ic:round-add" size="5" />
     <div>增加模块</div>
   </header>
