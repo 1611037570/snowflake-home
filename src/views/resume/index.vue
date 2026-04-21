@@ -1,5 +1,5 @@
 <template>
-  <div class="flex h-full w-full flex-col">
+  <div class="flex h-full w-full flex-col bg-sf-bg">
     <Header />
     <div class="flex w-full flex-1 overflow-hidden" v-if="currentIndex >= 0">
       <Transition name="resume-builder">

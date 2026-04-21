@@ -9,52 +9,58 @@ const resumeStore = useResumeStore()
 const { currentConfig, currentFixedConfig, selectedModuleKeys } = storeToRefs(resumeStore)
 
 const moduleNames = computed(() => {
-  const moduleMap = [
+  const fields = [
     ...(currentFixedConfig.value?.fields || []),
     ...(currentConfig.value?.fields || []),
-  ].reduce((map, item) => {
-    if (item.key) {
-      map[item.key] = item.name
-    }
-    return map
-  }, {})
-  const moduleNames = Array.from(selectedModuleKeys.value).map((key) => moduleMap[key] || key)
-  if (moduleNames.length) {
-    return moduleNames
-  }
-  return ['整个简历']
+  ]
+  const names = Array.from(
+    selectedModuleKeys.value,
+    (key) => fields.find((item) => item.key === key)?.name || key,
+  )
+  return names.length ? names : ['整个简历']
 })
 </script>
 
 <template>
-  <div class="flex h-full flex-col items-center justify-center gap-4 text-center">
+  <div class="flex h-full flex-col items-center justify-center gap-5 px-5 text-center">
+    <div class="flex h-12 w-12 items-center justify-center rounded-lg bg-sf-theme/10 text-sf-theme">
+      <SfIcon icon="lucide:sparkles" size="6" />
+    </div>
+
     <div class="space-y-2">
-      <div class="text-2xl font-bold text-sf-base">
+      <div class="text-xl font-bold text-sf-base">
         你好，我是 <span class="text-sf-theme">简答羊</span>
       </div>
-    </div>
-    <div class="flex items-center justify-center gap-2 text-base font-medium text-sf-base">
-      我可以帮助你根据
       <div
-        v-for="item in moduleNames"
-        :key="item"
-        class="rounded-xl bg-sf-theme p-1 text-sf-primary"
+        class="flex flex-wrap items-center justify-center gap-1.5 text-sm font-medium text-sf-base"
       >
-        {{ item }}
+        <span>我可以根据你的</span>
+        <span
+          v-for="item in moduleNames"
+          :key="item"
+          class="rounded-full bg-sf-theme/10 px-2.5 py-0.5 text-sf-theme ring-1 ring-sf-theme/10"
+        >
+          {{ item }}
+        </span>
+        <span>进行以下操作</span>
       </div>
-      优化
     </div>
-    <div class="mt-2 grid grid-cols-2 gap-2">
-      <div
+
+    <div class="grid w-full max-w-[300px] grid-cols-2 gap-2.5">
+      <button
         v-for="action in quickActions"
         :key="action.name"
         type="button"
-        class="flex cursor-pointer items-center justify-center gap-1 rounded-lg border border-transparent bg-white p-2 py-2 text-base font-medium text-sf-base shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-sf-theme hover:text-sf-theme hover:shadow-md active:scale-95 active:shadow-sm"
+        class="group flex h-20 cursor-pointer flex-col items-center justify-center gap-2 rounded-lg border border-sf-border bg-white px-3 text-sm font-medium text-sf-base shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-sf-theme/40 hover:bg-sf-theme/5 hover:text-sf-theme hover:shadow-md active:scale-[0.98] active:shadow-sm"
         @click="emit('switch-mode', action.type)"
       >
-        <SfIcon :icon="action.icon" :size="3" />
-        {{ action.name }}
-      </div>
+        <span
+          class="flex h-8 w-8 items-center justify-center rounded-md bg-sf-bg text-sf-theme transition-colors group-hover:bg-sf-theme/10"
+        >
+          <SfIcon :icon="action.icon" size="4" />
+        </span>
+        <span>{{ action.name }}</span>
+      </button>
     </div>
   </div>
 </template>
