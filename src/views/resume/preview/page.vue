@@ -4,6 +4,7 @@ import eventBus from '@/utils/modules/eventBus'
 import { storeToRefs } from 'pinia'
 import { computed, inject, onMounted, onUnmounted, ref } from 'vue'
 import { resumeTitle } from '../utils'
+import ModuleActions from './components/moduleActions.vue'
 import ResumeModule from './modules/index.vue'
 import { useRowInfo } from './useRowInfo'
 
@@ -287,31 +288,18 @@ onUnmounted(() => {
         <div
           v-for="slice in pageSlices"
           :key="slice.moduleKey"
-          class="resume-module-wrapper group relative rounded transition-all duration-300 hover:bg-indigo-50/30 hover:ring-2 hover:ring-indigo-300"
-          :class="{ 'bg-blue-50/10 ring-2 ring-blue-500': selectedModuleKeys.has(slice.moduleKey) }"
+          class="resume-module-wrapper group relative rounded hover:outline-2 hover:outline-gray-300 hover:outline-dashed"
+          :class="{
+            'bg-sf-theme-hover/10 outline-2 outline-sf-theme-hover outline-dashed hover:outline-sf-theme-hover':
+              selectedModuleKeys.has(slice.moduleKey),
+          }"
           :data-module="slice.moduleKey"
         >
-          <!-- 右上角的操作按钮（默认隐藏，hover时显示） -->
-          <div
-            class="absolute -top-2 -right-2 z-10 hidden cursor-pointer items-center justify-center rounded-full bg-blue-500 p-1.5 text-white shadow group-hover:flex hover:bg-blue-600"
-            @click.stop="handleModuleClick(slice)"
-            title="选择该模块"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="14"
-              height="14"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
-              <path d="M12 20h9"></path>
-              <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
-            </svg>
-          </div>
+          <!-- 操作按钮 -->
+          <ModuleActions
+            :selected="selectedModuleKeys.has(slice.moduleKey)"
+            @select="handleModuleClick(slice)"
+          />
           <ResumeModule :data="currentData" :name="slice.moduleKey" />
         </div>
       </div>
