@@ -34,13 +34,11 @@ const dynamicComponents = {
           v-model:form="currentFixedConfig"
           v-model:data="currentData"
           :components="dynamicComponents"
-          class="mb-3"
         />
         <SfDynamicForm
           v-model:form="currentConfig"
           v-model:data="currentData"
           :components="dynamicComponents"
-          class="mb-3"
         />
         <AddModule />
       </div>
