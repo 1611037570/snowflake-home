@@ -50,14 +50,11 @@ onMounted(async () => {
   watch(
     () => form.value?.drag,
     (newValue) => {
-      console.log('newValue:>> ', newValue)
-
       draggable?.destroy()
       draggable = null
       if (!newValue) {
         return
       }
-      console.log('222:>> ', 222)
 
       draggable = useDraggable(row, form.value.list, {
         handle: form.value?.dragClass || '',
@@ -83,62 +80,46 @@ onMounted(async () => {
 const length = computed(() => form.value?.list?.length || 0)
 
 // 动态计算类名算法：实现第一个左边距0，最后一个右边距0，其他左右各6
-const getItemClass = (index: number) => {
-  const list = form.value.list
+const itemClassList = computed(() => {
+  const list = form.value?.list || []
   let currentAccumulatedSpan = 0
-  let isFirstInRow = false
-  let isLastInRow = false
 
-  // 计算当前元素在第几行，以及行首行尾状态
-  for (let i = 0; i < list.length; i++) {
-    const span = Number(list[i].span) || 24
+  return list.map((item: any, index: number) => {
+    const span = Number(item.span) || 24
     if (currentAccumulatedSpan + span > 24) {
       currentAccumulatedSpan = 0
     }
 
-    if (i === index) {
-      isFirstInRow = currentAccumulatedSpan === 0
-
-      const nextItem = list[i + 1]
-      const nextSpan = nextItem ? Number(nextItem.span) || 24 : 0
-      isLastInRow =
-        currentAccumulatedSpan + span === 24 ||
-        (nextItem && currentAccumulatedSpan + span + nextSpan > 24) ||
-        i === list.length - 1
-    }
+    const isFirstInRow = currentAccumulatedSpan === 0
+    const nextItem = list[index + 1]
+    const nextSpan = nextItem ? Number(nextItem.span) || 24 : 0
+    const isLastInRow =
+      currentAccumulatedSpan + span === 24 ||
+      (!!nextItem && currentAccumulatedSpan + span + nextSpan > 24) ||
+      index === list.length - 1
 
     currentAccumulatedSpan += span
     if (currentAccumulatedSpan >= 24) {
       currentAccumulatedSpan = 0
     }
-  }
 
-  // 再次计算总行数，用于判断是否为最后一行
-  let totalAccumulatedSpan = 0
-  for (let i = 0; i < list.length; i++) {
-    const span = Number(list[i].span) || 24
-    if (totalAccumulatedSpan + span > 24) {
-      totalAccumulatedSpan = 0
-    }
-    totalAccumulatedSpan += span
-    if (totalAccumulatedSpan >= 24) {
-      totalAccumulatedSpan = 0
-    }
-  }
+    const classList = []
 
-  const classList = []
+    // 水平边距逻辑：
+    // 1. 如果既是行首又是行尾（span=24），左右边距都是0
+    // 2. 如果只是行首，左边距0，右边距6
+    // 3. 如果只是行尾，右边距0，左边距6
+    // 4. 中间元素，左右都是6
+    if (isFirstInRow && isLastInRow) classList.push('px-0 pb-[6px]')
+    else if (isFirstInRow) classList.push('pl-0 pr-[6px] pb-[6px]')
+    else if (isLastInRow) classList.push('pr-0 pl-[6px] pb-[6px]')
+    else classList.push('px-[6px] ')
 
-  // 水平边距逻辑：
-  // 1. 如果既是行首又是行尾（span=24），左右边距都是0
-  // 2. 如果只是行首，左边距0，右边距6
-  // 3. 如果只是行尾，右边距0，左边距6
-  // 4. 中间元素，左右都是6
-  if (isFirstInRow && isLastInRow) classList.push('px-0 pb-[6px]')
-  else if (isFirstInRow) classList.push('pl-0 pr-[6px] pb-[6px]')
-  else if (isLastInRow) classList.push('pr-0 pl-[6px] pb-[6px]')
-  else classList.push('px-[6px] ')
-
-  return classList.join(' ')
+    return classList.join(' ')
+  })
+})
+const getItemClass = (index: number) => {
+  return itemClassList.value[index] || ''
 }
 
 // 上移
