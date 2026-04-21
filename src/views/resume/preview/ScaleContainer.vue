@@ -32,14 +32,13 @@ useResizeObserver(containerRef, updateScale)
 
 <template>
   <!-- 测量容器：relative + overflow-y-auto 允许垂直滚动 -->
-  <div ref="containerRef" class="relative h-full w-full overflow-y-auto bg-sf-bg">
+  <div ref="containerRef" class="relative h-full w-full overflow-y-auto">
     <!-- 展示容器：absolute + flex 居中 -->
     <div class="absolute inset-x-0 top-0 flex flex-col items-center py-3">
       <div
         :style="{
           zoom: scale,
         }"
-        class="flex-shrink-0 shadow-2xl transition-transform duration-200"
       >
         <slot></slot>
       </div>
