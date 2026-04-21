@@ -10,14 +10,9 @@ const props = defineProps({
 const removeItem = inject('df/removeItem')
 
 function del() {
-  proxy
-    .$confirm('确定要删除当前内容吗？', '删除确认', {
-      confirmText: '确定删除',
-      cancelText: '取消操作',
-    })
-    .then(() => {
-      removeItem(props.index)
-    })
+  proxy.$confirm(`确定要删除${props.title}吗？`, '删除确认').then(() => {
+    removeItem(props.index)
+  })
 }
 </script>
 

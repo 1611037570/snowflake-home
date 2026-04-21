@@ -1,4 +1,8 @@
 <script setup>
+import { getCurrentInstance } from 'vue'
+
+const { proxy } = getCurrentInstance()
+
 // 社交账号列表数据
 const accounts = defineModel('modelValue', {
   type: Array,
@@ -18,7 +22,9 @@ const addAccount = () => {
 
 // 删除社交账号
 const removeAccount = (index) => {
-  accounts.value.splice(index, 1)
+  proxy.$confirm('确定要删除当前内容吗？', '删除确认').then(() => {
+    accounts.value.splice(index, 1)
+  })
 }
 </script>
 
@@ -28,18 +34,22 @@ const removeAccount = (index) => {
       <SfIcon icon="ic:round-add" size="4" />
       <span> 增加社交账号 </span>
     </div>
-    <div class="flex flex-col gap-2">
-      <div v-for="(item, index) in accounts" :key="index" class="flex items-center gap-4">
+    <div class="flex flex-col gap-3">
+      <div v-for="(item, index) in accounts" :key="index" class="flex items-center gap-3">
         <!-- 第一个是平台 -->
-        <SfInput v-model="item.name" placeholder="平台" />
+        <div class="min-w-0 flex-1">
+          <SfInput v-model="item.name" placeholder="平台" />
+        </div>
         <!-- 第二个是网址 -->
-        <SfInput v-model="item.url" placeholder="网址" />
+        <div class="min-w-0 flex-1">
+          <SfInput v-model="item.url" placeholder="网址" />
+        </div>
         <!-- 删除按钮 -->
         <SfIcon
           icon="ic:round-delete"
           size="5"
           boxSize="8"
-          class="cursor-pointer rounded-lg hover:bg-sf-bg-hover hover:text-sf-theme"
+          class="hover:bg-sf-danger/10 hover:text-sf-danger shrink-0 cursor-pointer rounded-lg text-sf-text-3 transition-colors"
           @click="removeAccount(index)"
         />
       </div>
