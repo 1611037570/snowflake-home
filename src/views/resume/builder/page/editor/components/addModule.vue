@@ -36,6 +36,14 @@ const filteredPresets = computed(() => {
   })
 })
 
+const moduleOptions = computed(() => [
+  ...filteredPresets.value,
+  {
+    name: '自定义模块',
+    value: 'custom',
+  },
+])
+
 const handleAdd = (module) => {
   console.log('module:>> ', module)
 
@@ -72,47 +80,37 @@ const handleCancel = () => {
 </script>
 
 <template>
-  <div class="flex flex-col">
-    <div class="mb-3 text-lg font-bold text-sf-base">增加模块</div>
+  <header class="flex items-center text-lg font-bold text-sf-base">
+    <SfIcon icon="ic:round-add" size="5" />
+    <div>增加模块</div>
+  </header>
 
-    <div class="grid grid-cols-2 gap-4">
-      <!-- 预设模块 -->
-      <div
-        v-for="item in filteredPresets"
-        :key="item.name"
-        class="group flex h-10 cursor-pointer items-center justify-center gap-2 rounded-xl bg-sf-primary transition-all duration-300 hover:bg-sf-theme hover:text-sf-primary hover:shadow-lg"
-        @click="handleAdd(item)"
-      >
-        <SfIcon icon="ic:round-add" size="5" class="text-sf-text-3 group-hover:text-sf-primary" />
-        <span class="text-sm font-medium text-sf-text-2 group-hover:text-sf-primary">
-          {{ item.name }}
-        </span>
-      </div>
-
-      <!-- 自定义添加 -->
-      <div
-        class="group flex h-10 cursor-pointer items-center justify-center gap-2 rounded-xl bg-sf-primary transition-all duration-300 hover:bg-sf-theme hover:text-sf-primary hover:shadow-lg"
-        @click="handleAdd({ value: 'custom' })"
-      >
-        <SfIcon icon="ic:round-add" size="5" class="text-sf-text-3 group-hover:text-sf-primary" />
-        <span class="text-sm font-medium text-sf-text-2 group-hover:text-sf-primary"
-          >自定义模块</span
-        >
-      </div>
-    </div>
-
-    <SfModal v-model="showModal" title="自定义模块">
-      <div class="flex w-80 flex-col gap-4 p-5">
-        <SfInput v-model="customModuleName" placeholder="请输入模块名称" />
-        <div class="flex justify-end gap-3">
-          <el-button @click="handleCancel">取消</el-button>
-          <el-button type="primary" :disabled="!customModuleName" @click="handleConfirm"
-            >保存</el-button
-          >
-        </div>
-      </div>
-    </SfModal>
+  <div class="grid grid-cols-2 gap-2">
+    <button
+      v-for="item in moduleOptions"
+      :key="item.name"
+      type="button"
+      class="group flex h-10 cursor-pointer items-center justify-center gap-2 rounded-lg border border-sf-border bg-sf-primary px-3 text-sm font-medium text-sf-text-2 transition-all duration-200 hover:border-sf-theme hover:bg-sf-theme hover:text-sf-primary hover:shadow-sm"
+      @click="handleAdd(item)"
+    >
+      <SfIcon icon="ic:round-add" size="5" class="text-sf-text-3 group-hover:text-sf-primary" />
+      <span class="truncate group-hover:text-sf-primary">
+        {{ item.name }}
+      </span>
+    </button>
   </div>
+
+  <SfModal v-model="showModal" title="自定义模块">
+    <form class="flex w-80 flex-col gap-4 p-5" @submit.prevent="handleConfirm">
+      <SfInput v-model="customModuleName" placeholder="请输入模块名称" />
+      <footer class="flex justify-end gap-3">
+        <el-button @click="handleCancel">取消</el-button>
+        <el-button type="primary" :disabled="!customModuleName" @click="handleConfirm"
+          >保存</el-button
+        >
+      </footer>
+    </form>
+  </SfModal>
 </template>
 
 <style scoped></style>
