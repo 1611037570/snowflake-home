@@ -1,9 +1,9 @@
 <template>
   <el-col :span="getSpan(form.span)">
-    <el-form-item :label="form.label" :prop="form.model?.path" label-position="top">
-      <template #label>
-        <div class="flex h-full w-full items-center font-bold text-sf-base" @click.stop="">
-          <span class="">
+    <el-form-item class="w-full" :label="form.label" :prop="form.model?.path" label-position="top">
+      <template #label v-if="form.label">
+        <div class="mb-1 flex h-5 w-full items-center font-bold text-sf-base" @click.stop="">
+          <span class="pr-1">
             {{ form.label }}
           </span>
           <sf-tooltip :content="form.tip" v-if="form.tip" />
