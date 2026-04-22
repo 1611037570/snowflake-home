@@ -1,9 +1,9 @@
 <template>
-  <el-row class="m-0! w-full" :gutter="0" ref="row">
+  <el-row class="m-0! w-full" :gutter="0" ref="row" v-if="init">
     <FormItem
       :form="item"
       v-for="(item, itemIndex) in form.list"
-      :span="item.span"
+      :span="item?.span || 24"
       :key="item.id"
       :class="getItemClass(Number(itemIndex))"
     >
@@ -36,17 +36,19 @@ defineProps<{
 
 const form = defineModel<any>('form')
 const rootData = inject<any>('df/root/data')
-
+const init = ref(false)
 onMounted(async () => {
   await nextTick(() => {})
   if (form.value?.list) {
     form.value.list = form.value.list.map((item: any) => {
       return {
         ...item,
-        id: item.id || getUUID(),
+        id: item?.id || getUUID(),
       }
     })
+    console.log('form.value.list:>> ', form.value.list)
   }
+  init.value = true
   if (!form.value?.drag) {
     return
   }
@@ -75,7 +77,25 @@ const length = computed(() => form.value?.list?.length || 0)
 // 动态计算类名算法：实现第一个左边距0，最后一个右边距0，其他左右各6
 const itemClassList = computed(() => {
   const list = form.value?.list || []
+  let lastRowStartIndex = 0
+  let accumulatedSpan = 0
   let currentAccumulatedSpan = 0
+
+  list.forEach((item: any, index: number) => {
+    const span = Number(item.span) || 24
+    if (accumulatedSpan + span > 24) {
+      lastRowStartIndex = index
+      accumulatedSpan = 0
+    }
+
+    accumulatedSpan += span
+    if (accumulatedSpan >= 24) {
+      accumulatedSpan = 0
+      if (index < list.length - 1) {
+        lastRowStartIndex = index + 1
+      }
+    }
+  })
 
   return list.map((item: any, index: number) => {
     const span = Number(item.span) || 24
@@ -97,16 +117,17 @@ const itemClassList = computed(() => {
     }
 
     const classList = []
+    const bottomClass = index >= lastRowStartIndex ? '' : ' pb-[6px]'
 
     // 水平边距逻辑：
     // 1. 如果既是行首又是行尾（span=24），左右边距都是0
     // 2. 如果只是行首，左边距0，右边距6
     // 3. 如果只是行尾，右边距0，左边距6
     // 4. 中间元素，左右都是6
-    if (isFirstInRow && isLastInRow) classList.push('px-0 pb-[6px]')
-    else if (isFirstInRow) classList.push('pl-0 pr-[6px] pb-[6px]')
-    else if (isLastInRow) classList.push('pr-0 pl-[6px] pb-[6px]')
-    else classList.push('px-[6px] ')
+    if (isFirstInRow && isLastInRow) classList.push(`px-0${bottomClass}`)
+    else if (isFirstInRow) classList.push(`pl-0 pr-[3px]${bottomClass}`)
+    else if (isLastInRow) classList.push(`pr-0 pl-[3px]${bottomClass}`)
+    else classList.push('px-[3px] ')
 
     return classList.join(' ')
   })
