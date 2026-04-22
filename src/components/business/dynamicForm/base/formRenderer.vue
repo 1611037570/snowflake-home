@@ -5,8 +5,8 @@
       <FormError v-if="!checkForm(item)" :error-msg="item.errorMsg" :raw="item.raw" />
       <!-- v-bind="$attrs" -->
       <Container
-        :currentForm="item"
         v-else-if="item.slot"
+        :currentForm="item"
         :currentIndex="index"
         @removeObject="removeObject"
       />
@@ -48,7 +48,7 @@ function removeObject(index: number) {
 }
 // 移除数组项
 function removeItem(index: number) {
-  rootData.removeItem(items.value.list[index])
+  rootData.removeItem(items.value.list[index], index)
   items.value.list.splice(index, 1)
 }
 

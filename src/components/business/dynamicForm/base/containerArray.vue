@@ -1,8 +1,8 @@
 <template>
   <el-row class="m-0! w-full" :gutter="0" ref="row" v-if="init">
     <FormItem
-      :currentForm="item.item"
       v-for="item in formListWithStyle"
+      :currentForm="item.item"
       :key="item.item.id"
       :style="item.style"
     >
@@ -30,7 +30,7 @@ const row: any = useTemplateRef('row')
 let draggable: ReturnType<typeof useDraggable> | null = null
 
 defineProps<{
-  index?: any
+  currentIndex?: any
 }>()
 const currentForm = defineModel<any>('currentForm')
 const rootData = inject<any>('df/root/data')
@@ -72,7 +72,7 @@ onUnmounted(() => {
 const length = computed(() => currentForm.value?.list?.length || 0)
 
 // 动态计算样式算法：实现第一个左边距0，最后一个右边距0，其他左右各6
-const itemStyleList = computed(() => {
+const formListWithStyle = computed(() => {
   const list = currentForm.value?.list || []
   let lastRowStartIndex = 0
   let accumulatedSpan = 0
@@ -121,25 +121,31 @@ const itemStyleList = computed(() => {
     // 3. 如果只是行尾，右边距0，左边距6
     // 4. 中间元素，左右都是6
     if (isFirstInRow && isLastInRow) {
-      return { paddingLeft: '0', paddingRight: '0', paddingBottom: bottomStyle }
+      return {
+        item,
+        index,
+        style: { paddingLeft: '0', paddingRight: '0', paddingBottom: bottomStyle },
+      }
     } else if (isFirstInRow) {
-      return { paddingLeft: '0', paddingRight: '3px', paddingBottom: bottomStyle }
+      return {
+        item,
+        index,
+        style: { paddingLeft: '0', paddingRight: '3px', paddingBottom: bottomStyle },
+      }
     } else if (isLastInRow) {
-      return { paddingLeft: '3px', paddingRight: '0', paddingBottom: bottomStyle }
+      return {
+        item,
+        index,
+        style: { paddingLeft: '3px', paddingRight: '0', paddingBottom: bottomStyle },
+      }
     } else {
-      return { paddingLeft: '3px', paddingRight: '3px' }
+      return {
+        item,
+        index,
+        style: { paddingLeft: '3px', paddingRight: '3px' },
+      }
     }
   })
-})
-const getItemStyle = (index: number) => {
-  return itemStyleList.value[index] || {}
-}
-const formListWithStyle = computed(() => {
-  return (currentForm.value?.list || []).map((item: any, index: number) => ({
-    item,
-    index,
-    style: getItemStyle(index),
-  }))
 })
 
 // 上移

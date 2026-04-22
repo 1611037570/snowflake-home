@@ -42,7 +42,7 @@ class DataProxy<T> {
 
     const lastIndex = keyPath.length - 1
     for (let i = 0; i < lastIndex; i++) {
-      const key: any = source[i]
+      const key: any = keyPath[i]
 
       // 移动到下一级
       if (key == '?') {
@@ -54,7 +54,7 @@ class DataProxy<T> {
         current = current[key]
         continue
       }
-      const nextKey = source[i + 1]
+      const nextKey = keyPath[i + 1]
       current[key] = nextKey === '?' ? [] : {}
       current = current[key]
     }
@@ -99,7 +99,7 @@ class DataProxy<T> {
   }
   // 删除数组元素
   removeItem(payload: any, index: number) {
-    const currentPath = this.getPath(payload[index].model)
+    const currentPath = this.getPath(payload[0].model)
     if (!currentPath) return
 
     let current = this.data

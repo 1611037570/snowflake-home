@@ -22,7 +22,7 @@ const bindEvent = computed(() => {
 })
 const rootData = inject<any>('df/root/data')
 
-const component = getComponent(props.currentForm?.component)
+const component = computed(() => getComponent(props.currentForm?.component))
 const emit = defineEmits(['removeObject'])
 
 function remove() {
