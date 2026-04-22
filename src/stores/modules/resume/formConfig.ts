@@ -338,30 +338,30 @@ export const DEFAULT_PROJECT_FORM = {
       drag: true,
       dragClass: '.item-drag',
       list: [],
+      addConfig: {
+        component: 'project',
+        span: 24,
+        model: [
+          {
+            source: ['project', '?', 'name'],
+            prop: 'name',
+          },
+          {
+            source: ['project', '?', 'post'],
+            prop: 'post',
+          },
+          {
+            source: ['project', '?', 'time'],
+            prop: 'time',
+          },
+          {
+            source: ['project', '?', 'content'],
+            prop: 'content',
+          },
+        ],
+      },
     },
   ],
-  addConfig: {
-    component: 'project',
-    span: 24,
-    model: [
-      {
-        source: ['project', '?', 'name'],
-        prop: 'name',
-      },
-      {
-        source: ['project', '?', 'post'],
-        prop: 'post',
-      },
-      {
-        source: ['project', '?', 'time'],
-        prop: 'time',
-      },
-      {
-        source: ['project', '?', 'content'],
-        prop: 'content',
-      },
-    ],
-  },
 }
 // 自定义经历
 export const DEFAULT_CUSTOM_FORM = {
@@ -378,13 +378,13 @@ export const DEFAULT_CUSTOM_FORM = {
     prop: 'modelValue',
   },
   slot: 'default',
-  fields: [],
-  addConfig: {
-    type: 'array',
-    drag: true,
-    dragClass: '.item-drag',
-    list: [
-      {
+  fields: [
+    {
+      type: 'array',
+      drag: true,
+      dragClass: '.item-drag',
+      list: [],
+      addConfig: {
         component: 'custom',
         span: 24,
         model: [
@@ -410,8 +410,8 @@ export const DEFAULT_CUSTOM_FORM = {
           },
         ],
       },
-    ],
-  },
+    },
+  ],
 }
 //
 export const DEFAULT_CONFIG = {
