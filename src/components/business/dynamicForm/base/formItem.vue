@@ -1,12 +1,17 @@
 <template>
-  <el-col :span="getSpan(form.span)">
-    <el-form-item class="w-full" :label="form.label" :prop="form.model?.path" label-position="top">
-      <template #label v-if="form.label">
+  <el-col :span="getSpan(currentForm.span)">
+    <el-form-item
+      class="w-full"
+      :label="currentForm.label"
+      :prop="currentForm.model?.path"
+      label-position="top"
+    >
+      <template #label v-if="currentForm.label">
         <div class="mb-1 flex h-5 w-full items-center font-bold text-sf-base" @click.stop="">
           <span class="pr-1">
-            {{ form.label }}
+            {{ currentForm.label }}
           </span>
-          <sf-tooltip :content="form.tip" v-if="form.tip" />
+          <sf-tooltip :content="currentForm.tip" v-if="currentForm.tip" />
         </div>
       </template>
       <slot />
@@ -16,7 +21,7 @@
 
 <script setup lang="ts">
 defineProps<{
-  form: any
+  currentForm: any
 }>()
 const DEFAULT_SPAN = 24
 // 处理span值
