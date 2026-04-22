@@ -1,11 +1,11 @@
 <template>
   <el-row ref="row" :gutter="12" :key="items.id" v-if="init">
-    <FormItem :form="item" v-for="(item, index) in items.fields" :key="item.id">
+    <FormItem :currentForm="item" v-for="(item, index) in items.fields" :key="item.id">
       <!-- 校验失败：展示友好的错误提示 -->
       <FormError v-if="!checkForm(item)" :error-msg="item.errorMsg" :raw="item.raw" />
       <!-- v-bind="$attrs" -->
       <Container
-        :form="item"
+        :currentForm="item"
         v-else-if="item.slot"
         :currentIndex="index"
         @removeObject="removeObject"
@@ -13,7 +13,7 @@
       <component
         v-else
         :is="item.type === 'object' ? ContainerObject : ContainerArray"
-        :form="item"
+        :currentForm="item"
         :currentIndex="index"
         @removeObject="removeObject"
         @removeItem="removeItem"
@@ -31,22 +31,27 @@ import ContainerArray from './containerArray.vue'
 import ContainerObject from './containerObject.vue'
 import FormError from './formError.vue'
 import FormItem from './formItem.vue'
+
 defineOptions({ name: 'FormRenderer' })
 const rootData = inject<any>('df/root/data')
+const row: any = useTemplateRef('row')
+// 表单数据
+const items = defineModel<any>('items', {})
+const init = ref(false)
+// 拖拽实例
+let draggable: ReturnType<typeof useDraggable> | null = null
 
+// 移除对象
 function removeObject(index: number) {
   rootData.removeObject(items.value.fields[index])
   items.value.fields.splice(index, 1)
 }
+// 移除数组项
 function removeItem(index: number) {
   rootData.removeItem(items.value.list[index])
   items.value.list.splice(index, 1)
 }
-const row: any = useTemplateRef('row')
 
-const items = defineModel<any>('items', {})
-const init = ref(false)
-let draggable: ReturnType<typeof useDraggable> | null = null
 function ensureFieldIds(fields: any[]) {
   if (!fields) return
   fields.forEach((item: any) => {

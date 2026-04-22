@@ -1,19 +1,19 @@
 <template>
   <el-row class="m-0! w-full" :gutter="0" ref="row" v-if="init">
     <FormItem
-      :form="itemInfo.item"
-      v-for="itemInfo in formListWithStyle"
-      :key="itemInfo.item.id"
-      :style="itemInfo.style"
+      :currentForm="item.item"
+      v-for="item in formListWithStyle"
+      :key="item.item.id"
+      :style="item.style"
     >
       <!-- v-bind="$attrs"  -->
-      <ContainerObject :currentIndex="itemInfo.index" :form="itemInfo.item" />
-      <div class="flex" v-if="itemInfo.item.ui">
-        <el-button @click="moveUp(itemInfo.index)" :disabled="itemInfo.index === 0">上移</el-button>
-        <el-button @click="moveDown(itemInfo.index)" :disabled="itemInfo.index === length - 1"
+      <ContainerObject :currentIndex="item.index" :currentForm="item.item" />
+      <div class="flex" v-if="item.item.ui">
+        <el-button @click="moveUp(item.index)" :disabled="item.index === 0">上移</el-button>
+        <el-button @click="moveDown(item.index)" :disabled="item.index === length - 1"
           >下移</el-button
         >
-        <el-button @click="remove(itemInfo.index)">删除</el-button>
+        <el-button @click="remove(item.index)">删除</el-button>
       </div>
     </FormItem>
     <el-button @click="add()" v-if="0">添加</el-button>
@@ -32,36 +32,35 @@ let draggable: ReturnType<typeof useDraggable> | null = null
 defineProps<{
   index?: any
 }>()
-const form = defineModel<any>('form')
+const currentForm = defineModel<any>('currentForm')
 const rootData = inject<any>('df/root/data')
 const init = ref(false)
 onMounted(async () => {
   await nextTick(() => {})
-  if (form.value?.list) {
-    form.value.list = form.value.list.map((item: any) => {
+  if (currentForm.value?.list) {
+    currentForm.value.list = currentForm.value.list.map((item: any) => {
       return {
         ...item,
         id: item?.id || getUUID(),
       }
     })
-    console.log('form.value.list:>> ', form.value.list)
   }
   init.value = true
-  if (!form.value?.drag) {
+  if (!currentForm.value?.drag) {
     return
   }
 
-  draggable = useDraggable(row, form.value.list, {
-    handle: form.value?.dragClass || '',
+  draggable = useDraggable(row, currentForm.value.list, {
+    handle: currentForm.value?.dragClass || '',
     animation: 150,
     ghostClass: 'ghost',
     onEnd(data: any) {
       // 获取旧索引和新索引
       const { oldIndex, newIndex } = data
       if (oldIndex === newIndex) return
-      // const [item] = form.value.list.splice(oldIndex, 1)
-      // form.value.list.splice(newIndex, 0, item)
-      rootData.move(form.value.list, oldIndex, newIndex)
+      // const [item] = currentForm.value.list.splice(oldIndex, 1)
+      // currentForm.value.list.splice(newIndex, 0, item)
+      rootData.move(currentForm.value.list, oldIndex, newIndex)
     },
   })
 })
@@ -70,11 +69,11 @@ onUnmounted(() => {
   draggable = null
 })
 
-const length = computed(() => form.value?.list?.length || 0)
+const length = computed(() => currentForm.value?.list?.length || 0)
 
 // 动态计算样式算法：实现第一个左边距0，最后一个右边距0，其他左右各6
 const itemStyleList = computed(() => {
-  const list = form.value?.list || []
+  const list = currentForm.value?.list || []
   let lastRowStartIndex = 0
   let accumulatedSpan = 0
   let currentAccumulatedSpan = 0
@@ -136,7 +135,7 @@ const getItemStyle = (index: number) => {
   return itemStyleList.value[index] || {}
 }
 const formListWithStyle = computed(() => {
-  return (form.value?.list || []).map((item: any, index: number) => ({
+  return (currentForm.value?.list || []).map((item: any, index: number) => ({
     item,
     index,
     style: getItemStyle(index),
@@ -146,32 +145,32 @@ const formListWithStyle = computed(() => {
 // 上移
 const moveUp = (index: any) => {
   if (index === 0) return
-  const [item] = form.value.list.splice(index, 1)
-  form.value.list.splice(index - 1, 0, item)
-  rootData.move(form.value.list, index, index - 1)
+  const [item] = currentForm.value.list.splice(index, 1)
+  currentForm.value.list.splice(index - 1, 0, item)
+  rootData.move(currentForm.value.list, index, index - 1)
 }
 // 下移
 const moveDown = (index: any) => {
   if (index === length.value - 1) return
-  const [item] = form.value.list.splice(index, 1)
-  form.value.list.splice(index + 1, 0, item)
-  rootData.move(form.value.list, index, index + 1)
+  const [item] = currentForm.value.list.splice(index, 1)
+  currentForm.value.list.splice(index + 1, 0, item)
+  rootData.move(currentForm.value.list, index, index + 1)
 }
 // 删除
 const remove = (index: any) => {
-  rootData.removeItem(form.value.list, index)
-  form.value.list.splice(index, 1)
+  rootData.removeItem(currentForm.value.list, index)
+  currentForm.value.list.splice(index, 1)
 }
 // 添加
 const add = () => {
-  const addConfig = form.value.addConfig
+  const addConfig = currentForm.value.addConfig
   if (!addConfig) return
-  form.value.list.push(addConfig)
+  currentForm.value.list.push(addConfig)
 }
 // 提供当前容器的长度
 provide('df/current/length', length)
 // 提供当前容器的表单数据
-provide('df/current/form', form)
+provide('df/current/form', currentForm)
 // 提供当前容器的类型
 provide('df/current/type', 'array')
 // 提供添加方法
