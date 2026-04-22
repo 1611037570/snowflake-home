@@ -1,20 +1,19 @@
 <template>
   <el-row class="m-0! w-full" :gutter="0" ref="row" v-if="init">
     <FormItem
-      :form="item"
-      v-for="(item, itemIndex) in form.list"
-      :span="item?.span || 24"
-      :key="item.id"
-      :class="getItemClass(Number(itemIndex))"
+      :form="itemInfo.item"
+      v-for="itemInfo in formListWithStyle"
+      :key="itemInfo.item.id"
+      :style="itemInfo.style"
     >
       <!-- v-bind="$attrs"  -->
-      <ContainerObject :currentIndex="itemIndex" :form="item" />
-      <div class="flex" v-if="item.ui">
-        <el-button @click="moveUp(itemIndex)" :disabled="itemIndex === 0">上移</el-button>
-        <el-button @click="moveDown(itemIndex)" :disabled="itemIndex === length - 1"
+      <ContainerObject :currentIndex="itemInfo.index" :form="itemInfo.item" />
+      <div class="flex" v-if="itemInfo.item.ui">
+        <el-button @click="moveUp(itemInfo.index)" :disabled="itemInfo.index === 0">上移</el-button>
+        <el-button @click="moveDown(itemInfo.index)" :disabled="itemInfo.index === length - 1"
           >下移</el-button
         >
-        <el-button @click="remove(itemIndex)">删除</el-button>
+        <el-button @click="remove(itemInfo.index)">删除</el-button>
       </div>
     </FormItem>
     <el-button @click="add()" v-if="0">添加</el-button>
@@ -33,7 +32,6 @@ let draggable: ReturnType<typeof useDraggable> | null = null
 defineProps<{
   index?: any
 }>()
-
 const form = defineModel<any>('form')
 const rootData = inject<any>('df/root/data')
 const init = ref(false)
@@ -74,8 +72,8 @@ onUnmounted(() => {
 
 const length = computed(() => form.value?.list?.length || 0)
 
-// 动态计算类名算法：实现第一个左边距0，最后一个右边距0，其他左右各6
-const itemClassList = computed(() => {
+// 动态计算样式算法：实现第一个左边距0，最后一个右边距0，其他左右各6
+const itemStyleList = computed(() => {
   const list = form.value?.list || []
   let lastRowStartIndex = 0
   let accumulatedSpan = 0
@@ -116,25 +114,34 @@ const itemClassList = computed(() => {
       currentAccumulatedSpan = 0
     }
 
-    const classList = []
-    const bottomClass = index >= lastRowStartIndex ? '' : ' pb-[6px]'
+    const bottomStyle = index >= lastRowStartIndex ? '' : '6px'
 
     // 水平边距逻辑：
     // 1. 如果既是行首又是行尾（span=24），左右边距都是0
     // 2. 如果只是行首，左边距0，右边距6
     // 3. 如果只是行尾，右边距0，左边距6
     // 4. 中间元素，左右都是6
-    if (isFirstInRow && isLastInRow) classList.push(`px-0${bottomClass}`)
-    else if (isFirstInRow) classList.push(`pl-0 pr-[3px]${bottomClass}`)
-    else if (isLastInRow) classList.push(`pr-0 pl-[3px]${bottomClass}`)
-    else classList.push('px-[3px] ')
-
-    return classList.join(' ')
+    if (isFirstInRow && isLastInRow) {
+      return { paddingLeft: '0', paddingRight: '0', paddingBottom: bottomStyle }
+    } else if (isFirstInRow) {
+      return { paddingLeft: '0', paddingRight: '3px', paddingBottom: bottomStyle }
+    } else if (isLastInRow) {
+      return { paddingLeft: '3px', paddingRight: '0', paddingBottom: bottomStyle }
+    } else {
+      return { paddingLeft: '3px', paddingRight: '3px' }
+    }
   })
 })
-const getItemClass = (index: number) => {
-  return itemClassList.value[index] || ''
+const getItemStyle = (index: number) => {
+  return itemStyleList.value[index] || {}
 }
+const formListWithStyle = computed(() => {
+  return (form.value?.list || []).map((item: any, index: number) => ({
+    item,
+    index,
+    style: getItemStyle(index),
+  }))
+})
 
 // 上移
 const moveUp = (index: any) => {
