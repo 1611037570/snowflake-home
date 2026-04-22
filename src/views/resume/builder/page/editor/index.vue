@@ -4,6 +4,7 @@ import { storeToRefs } from 'pinia'
 import ResumeActions from './components/actions.vue'
 import AddModule from './components/addModule.vue'
 import BoxCollapse from './components/boxCollapse.vue'
+import Custom from './components/custom.vue'
 import Education from './components/education.vue'
 import ItemCollapse from './components/itemCollapse.vue'
 import Project from './components/project.vue'
@@ -18,6 +19,7 @@ const dynamicComponents = {
   work: Work,
   education: Education,
   project: Project,
+  custom: Custom,
   boxCollapse: BoxCollapse,
   itemCollapse: ItemCollapse,
   socialAccount: SocialAccount,

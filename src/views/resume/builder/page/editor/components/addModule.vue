@@ -60,15 +60,21 @@ const handleAdd = (module) => {
 
 const showModal = ref(false)
 const customModuleName = ref('')
-
+const randomLetters = Array.from({ length: 4 }, () =>
+  String.fromCharCode(97 + Math.floor(Math.random() * 26)),
+).join('')
 const handleConfirm = () => {
   if (!customModuleName.value) return
-  const config = JSON.parse(JSON.stringify(allConfig.custom))
+  const config = structuredClone(allConfig.custom)
   config.name = customModuleName.value
   config.props.title = customModuleName.value
-  // 返回名字，后续操作由用户定义
-  console.log('自定义模块名称:', config)
-  // currentConfig.value.fields.push(config)
+
+  config.key = randomLetters
+  config.model.source = [randomLetters]
+  config.fields[0].addConfig.model.forEach((item) => {
+    item.source[0] = randomLetters
+  })
+  currentConfig.value.fields.push(structuredClone(config))
 
   handleCancel()
 }
