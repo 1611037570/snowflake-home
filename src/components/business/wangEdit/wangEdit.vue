@@ -55,11 +55,7 @@ const handleCreated = (editor) => {
 </script>
 
 <style scoped lang="scss">
-/* 修改编辑器文本容器样式 */
-:deep(.w-e-text-container) {
-  background: var(--color-sf-primary);
-  color: var(--color-sf-base);
-}
+// ——————工具栏样式开始——————
 :deep(.w-e-bar svg) {
   fill: var(--color-sf-base);
 }
@@ -69,6 +65,7 @@ const handleCreated = (editor) => {
   color: var(--color-sf-base);
   border-top-left-radius: 12px;
   border-top-right-radius: 12px;
+  padding: 0 !important;
 }
 // 修改工具栏按钮hover样式
 :deep(.w-e-bar-item button:hover) {
@@ -89,4 +86,18 @@ const handleCreated = (editor) => {
     border: none !important;
   }
 }
+// ——————工具栏样式结束——————
+
+// ——————编辑器样式开始——————
+/* 修改编辑器文本容器样式 */
+:deep(.w-e-text-container) {
+  background: var(--color-sf-primary);
+  color: var(--color-sf-base);
+}
+// 修改段落样式
+:deep(.w-e-text-container p) {
+  margin: 0 !important;
+  margin-bottom: 10px !important;
+}
+// ——————编辑器样式结束——————
 </style>
