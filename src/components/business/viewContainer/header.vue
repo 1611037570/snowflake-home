@@ -1,13 +1,9 @@
 <script setup>
-import { ALL_PAGE, DEFAULT_ROUTE } from '@/constants'
+import { ALL_PAGE } from '@/constants'
 import More from './more.vue'
 
-const router = useRouter()
 const route = useRoute()
 
-function back() {
-  router.push(DEFAULT_ROUTE)
-}
 // 从items数组中获取当前路由的标题
 const title = computed(() => {
   const currentItem = ALL_PAGE.value.find((item) => item.url === route.path)
@@ -29,9 +25,7 @@ const version = computed(() => {
       class="flex-c top-1/2 left-3 mr-3 cursor-pointer text-xs md:absolute md:-translate-y-1/2 md:text-base"
       @click="back"
     >
-      <SfTooltip content="返回起始页">
-        <SfIcon icon="famicons:chevron-back" size="6" />
-      </SfTooltip>
+      <SfBackHome />
     </div>
     <div
       class="absolute top-1/2 left-10 flex -translate-y-1/2 items-center gap-1 transition-all duration-300 md:left-1/2 md:-translate-x-1/2 md:gap-2"
