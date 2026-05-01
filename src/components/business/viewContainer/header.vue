@@ -25,7 +25,7 @@ const version = computed(() => {
       class="flex-c top-1/2 left-3 mr-3 cursor-pointer text-xs md:absolute md:-translate-y-1/2 md:text-base"
       @click="back"
     >
-      <SfBackHome />
+      <SfBack />
     </div>
     <div
       class="absolute top-1/2 left-10 flex -translate-y-1/2 items-center gap-1 transition-all duration-300 md:left-1/2 md:-translate-x-1/2 md:gap-2"
