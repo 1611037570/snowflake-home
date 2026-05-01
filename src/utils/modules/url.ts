@@ -1,4 +1,4 @@
-import { DEFAULT_ROUTE, URL_OPEN_TYPE, USER_ROUTE } from '@/constants'
+import { URL_OPEN_TYPE, USER_ROUTE } from '@/constants'
 
 // 获取基础路径
 export function getBaseUrl() {
@@ -25,8 +25,4 @@ export function urlNavigation(url: string) {
 // 路由跳转-用户路由
 export function userNavigation() {
   routerNavigation(USER_ROUTE)
-}
-// 路由跳转-默认路由
-export function defaultNavigation() {
-  routerNavigation(DEFAULT_ROUTE)
 }

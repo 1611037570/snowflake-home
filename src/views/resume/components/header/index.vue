@@ -11,9 +11,7 @@ const handleDownload = () => {
   if (isPrinting.value) return
   eventBus.emit('resume-print-pdf')
 }
-const back = () => {
-  defaultNavigation()
-}
+
 const layoutList = [
   {
     name: '列表布局',
@@ -42,12 +40,7 @@ const handleLayoutClick = (item) => {
   >
     <!-- 左侧占位 -->
     <div class="flex flex-1 items-center gap-6">
-      <SfIcon
-        size="5"
-        icon="famicons:chevron-back"
-        class="cursor-pointer transition-colors hover:text-sf-theme"
-        @click="back"
-      />
+      <SfBackHome />
       <div
         class="flex items-center gap-1.5 rounded-full bg-sf-theme/10 px-3 py-1 text-sf-theme transition-all hover:bg-sf-theme/20"
       >
