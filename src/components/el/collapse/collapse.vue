@@ -17,4 +17,16 @@ function changeRef(exports: any) {
 defineExpose({} as ComponentInstance<typeof ElCollapse>)
 </script>
 
-<style scoped></style>
+<style scoped lang="scss">
+//
+.el-collapse {
+  border: none !important;
+}
+:deep(.el-collapse-item__header) {
+  border: none !important;
+}
+//
+:deep(.el-collapse-item__wrap) {
+  border: none !important;
+}
+</style>
