@@ -1,6 +1,7 @@
 <script setup>
 import { useResumeStore } from '@/stores'
 import { storeToRefs } from 'pinia'
+import Account from './components/account.vue'
 import ResumeActions from './components/actions.vue'
 import AddModule from './components/addModule.vue'
 import BoxCollapse from './components/boxCollapse.vue'
@@ -8,7 +9,6 @@ import Custom from './components/custom.vue'
 import Education from './components/education.vue'
 import ItemCollapse from './components/itemCollapse.vue'
 import Project from './components/project.vue'
-import SocialAccount from './components/socialAccount.vue'
 import Work from './components/work.vue'
 
 const resumeStore = useResumeStore()
@@ -22,7 +22,7 @@ const dynamicComponents = {
   custom: Custom,
   boxCollapse: BoxCollapse,
   itemCollapse: ItemCollapse,
-  socialAccount: SocialAccount,
+  account: Account,
 }
 </script>
 

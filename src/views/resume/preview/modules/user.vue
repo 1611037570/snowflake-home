@@ -59,19 +59,6 @@ setTimeout(() => {
         </div>
       </div>
     </div>
-    <!-- 社交链接 -->
-    <div
-      v-for="(item, index) in user.link"
-      :key="index"
-      class="mt-1 flex items-center gap-2"
-      data-module="user"
-    >
-      <Text v-model:value="item.name" v-model:newValue="item.newName" />
-      <span v-if="item.name && item.url" class="pr-1">：</span>
-      <a :href="item.url" target="_blank" class="font-medium hover:underline">
-        <Text v-model:value="item.url" v-model:newValue="item.newUrl" />
-      </a>
-    </div>
   </div>
 </template>
 

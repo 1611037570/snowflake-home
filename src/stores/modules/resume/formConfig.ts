@@ -137,17 +137,6 @@ export const DEFAULT_USER_FORM = [
     key: 'user',
     name: '用户信息',
   },
-  {
-    component: 'socialAccount',
-    span: 24,
-    type: 'object',
-    model: [
-      {
-        source: ['user', 'link'],
-        prop: 'modelValue',
-      },
-    ],
-  },
 ]
 // 用户信息的配置
 export const DEFAULT_USER_CONFIG = {
@@ -157,10 +146,45 @@ export const DEFAULT_USER_CONFIG = {
   // 表单中所渲染的组件的字段
   fields: structuredClone(DEFAULT_USER_FORM),
 }
-
+// 社交账号
+export const DEFAULT_ACCOUNT_FORM = {
+  type: 'object',
+  key: 'account',
+  name: '社交账号',
+  span: 24,
+  model: [
+    {
+      source: ['account'],
+      prop: 'modelValue',
+    },
+  ],
+  component: 'boxCollapse',
+  props: {
+    title: '社交账号',
+    add: false,
+  },
+  slot: 'default',
+  fields: [
+    {
+      type: 'array',
+      drag: true,
+      dragClass: '.item-drag',
+      list: [
+        {
+          type: 'object',
+          component: 'account',
+          model: {
+            source: ['account'],
+            prop: 'modelValue',
+          },
+        },
+      ],
+    },
+  ],
+}
 // 教育经历
 export const DEFAULT_EDUCATION_FORM = {
-  name: '教育经历',
+  name: '社交账号',
   key: 'education',
   // 表单中所渲染的类型
   type: 'object',
@@ -426,6 +450,7 @@ export const allConfig = {
   user: DEFAULT_USER_FORM,
   advantage: DEFAULT_ADVANTAGE_FORM,
   education: DEFAULT_EDUCATION_FORM,
+  account: DEFAULT_ACCOUNT_FORM,
   work: DEFAULT_WORK_FORM,
   project: DEFAULT_PROJECT_FORM,
   custom: DEFAULT_CUSTOM_FORM,

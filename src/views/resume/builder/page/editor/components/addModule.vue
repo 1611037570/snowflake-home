@@ -13,6 +13,10 @@ const presets = ref([
     name: '教育经历',
     value: 'education',
   },
+  {
+    name: '社交账号',
+    value: 'account',
+  },
   { name: '专业技能', value: 'skill' },
   { name: '工作经历', value: 'work' },
   { name: '项目经历', value: 'project' },
