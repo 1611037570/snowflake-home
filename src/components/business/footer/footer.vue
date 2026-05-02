@@ -16,12 +16,10 @@
       <div class="cursor-pointer font-medium hover:text-sf-theme">版权声明</div>
     </div>
     <div class="flex items-center gap-3">
-      <div @click="donationVisible = true" class="cursor-pointer font-medium hover:text-sf-theme">
-        支持项目
-      </div>
+      <SfDonation>
+        <div class="cursor-pointer font-medium hover:text-sf-theme">支持项目</div>
+      </SfDonation>
     </div>
-
-    <Donation v-model="donationVisible" v-if="donationVisible" />
     <Banner v-if="banner" />
     <About v-if="aboutVisible" v-model="aboutVisible" />
   </footer>
@@ -33,7 +31,6 @@ import dayjs from 'dayjs'
 import { computed, ref } from 'vue'
 import About from './about.vue'
 import Banner from './banner.vue'
-import Donation from './donation.vue'
 
 defineOptions({ name: 'SfFooter' })
 
@@ -48,7 +45,6 @@ const currentYear = computed(() => {
   return dayjs().year()
 })
 
-const donationVisible = ref(false)
 const aboutVisible = ref(false)
 </script>
 
