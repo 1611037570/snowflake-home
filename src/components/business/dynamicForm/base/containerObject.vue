@@ -1,5 +1,13 @@
 <template>
-  <component :is="component" v-bind="bindProps" v-on="bindEvent"></component>
+  <component
+    :is="component"
+    v-bind="{
+      ...rootData.getDataProxy(currentForm.model, currentIndex),
+      ...currentForm.props,
+      // ...$attrs,
+    }"
+    v-on="bindEvent"
+  ></component>
 </template>
 
 <script setup lang="ts">
@@ -10,13 +18,7 @@ const props = defineProps<{
   currentIndex?: any
   currentForm: any
 }>()
-const bindProps = computed(() => {
-  return {
-    ...rootData.getDataProxy(props.currentForm.model, props.currentIndex),
-    ...props.currentForm.props,
-    // ...$attrs,
-  }
-})
+
 const bindEvent = computed(() => {
   return rootData.setDataProxy(props.currentForm.model, props.currentIndex)
 })

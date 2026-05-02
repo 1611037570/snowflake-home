@@ -15,7 +15,6 @@ const props = defineProps({
 })
 const currentForm = inject('df/current/form')
 const objectRemove = inject('df/remove')
-const rootData = inject('df/root/data')
 
 function del() {
   proxy.$confirm(`确定要删除${props.title}模块吗？`, '删除确认').then(() => {
@@ -34,8 +33,6 @@ function handleAdd() {
     console.log('addConfig:>> ', addConfig)
     return
   }
-  rootData.getDataProxy(addConfig.model, list.length)
-
   list.push({
     ...addConfig,
     id: getUUID(),
