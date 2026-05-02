@@ -46,7 +46,7 @@ const currentIndex = inject('df/current/index')
         />
         <div class="w-full"></div>
       </div>
-      <SfWangEdit v-model="content"></SfWangEdit>
+      <SfWangEditor v-model="content"></SfWangEditor>
     </div>
   </ItemCollapse>
 </template>

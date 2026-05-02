@@ -113,7 +113,7 @@ const form = [
         children: [
           {
             type: 'object',
-            component: 'wangEdit',
+            component: 'wangEditor',
             data: {
               path: ['nested', 'field2'],
               key: 'modelValue',
