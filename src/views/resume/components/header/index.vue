@@ -16,17 +16,17 @@ const layoutList = [
   {
     name: '列表布局',
     value: 'list',
-    icon: 'fluent:align-left-24-filled',
+    icon: 'fluent:layout-column-one-third-left-24-regular',
   },
   {
     name: '三栏布局',
     value: 'three',
-    icon: 'lucide:layout-panel-left',
+    icon: 'fluent:layout-column-three-24-regular',
   },
   {
     name: 'AI布局',
     value: 'ai',
-    icon: 'tabler:switch-3',
+    icon: 'fluent:layout-column-one-third-right-24-regular',
   },
 ]
 const handleLayoutClick = (item) => {
@@ -54,12 +54,7 @@ const handleLayoutClick = (item) => {
     <div class="flex items-center gap-6">
       <!-- 快捷图标 -->
       <div class="flex items-center gap-5 text-sf-text-2">
-        <SfIcon
-          icon="tabler:history"
-          size="5"
-          class="cursor-pointer transition-colors hover:text-sf-theme"
-          title="历史记录"
-        />
+        <SfDonation />
         <SfLocale />
         <SfTheme />
       </div>
