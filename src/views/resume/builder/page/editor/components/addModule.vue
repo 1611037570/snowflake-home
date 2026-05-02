@@ -58,7 +58,7 @@ const handleAdd = (module) => {
     return
   }
   if (type in allConfig) {
-    currentConfig.value.fields.push(allConfig[type])
+    currentConfig.value.fields.push(structuredClone(allConfig[type]))
   }
 }
 
