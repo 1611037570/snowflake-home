@@ -108,7 +108,7 @@ onUnmounted(() => {
 .ghost {
   opacity: 0.5;
   background: #c8ebfb;
-  border-radius: 12px;
+  border-radius: 20px;
 }
 .drag-container-active {
   position: relative;
