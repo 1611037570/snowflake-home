@@ -7,17 +7,17 @@ import Template from './page/template/index.vue'
 // 菜单配置
 const menuList = [
   {
-    name: '简历',
+    name: '简历编辑',
     icon: 'lucide:file-text',
     component: markRaw(Editor),
   },
   {
-    name: '模板',
+    name: '简历模板',
     icon: 'lucide:layout-template',
     component: markRaw(Template),
   },
   {
-    name: '自定义',
+    name: '页面布局',
     icon: 'lucide:palette',
     component: markRaw(Custom),
   },
@@ -43,15 +43,12 @@ provide('bg', 'bg-sf-bg')
       <div
         v-for="(item, index) in menuList"
         :key="item.name"
-        class="mx-2 flex cursor-pointer items-center justify-center rounded-lg p-2 hover:bg-sf-bg-hover"
-        :class="{ 'bg-sf-bg-hover': activeIndex === index }"
+        class="mx-2 flex cursor-pointer items-center justify-center rounded-4xl p-2 hover:bg-sf-bg-hover"
+        :class="{ 'bg-sf-theme text-sf-primary': activeIndex === index }"
         @click="handleMenuClick(index)"
       >
-        <SfIcon :icon="item.icon" size="6" />
-        <span
-          class="max-w-0 overflow-hidden text-sm font-medium whitespace-nowrap opacity-0 transition-all duration-300 group-hover:ml-2 group-hover:max-w-xs group-hover:opacity-100"
-          >{{ item.name }}</span
-        >
+        <SfIcon :icon="item.icon" size="5" />
+        <span class="pl-2 text-sm font-medium whitespace-nowrap">{{ item.name }}</span>
       </div>
     </div>
     <div

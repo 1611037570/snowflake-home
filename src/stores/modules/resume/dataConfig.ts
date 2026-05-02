@@ -9,8 +9,8 @@ export const DEFAULT_DATA: Data = {
     email: '',
     workTime: '',
     sex: '',
-    social: [],
   },
+  account: [],
   skill: '',
   education: [
     {

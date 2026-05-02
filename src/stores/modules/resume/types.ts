@@ -16,16 +16,16 @@ export interface Data {
     workTime?: string
     // 性别
     sex?: string
-    // 社交账号
-    social?: {
-      // 名称
-      name?: string
-      // 链接
-      url?: string
-    }[]
   }
   // 技能
   skill?: string
+  // 账号
+  account?: {
+    // 名称
+    name?: string
+    // 链接
+    url?: string
+  }[]
   // 教育经历
   education?: {
     // 学校名称

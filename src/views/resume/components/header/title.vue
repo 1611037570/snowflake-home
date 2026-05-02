@@ -10,9 +10,14 @@ function handleEditTitle() {
 </script>
 
 <template>
-  <div class="flex cursor-pointer items-center hover:text-sf-theme-hover" @click="handleEditTitle">
+  <div class="flex items-center">
     {{ resumeTitle }}
-    <SfIcon name="arrow-right" class="ml-2" size="5" />
+    <SfIcon
+      icon="lucide:pencil"
+      class="ml-2 hover:text-sf-theme-hover"
+      size="5"
+      @click="handleEditTitle"
+    />
   </div>
   <TitleEditor v-model="title" ref="titleEditorRef" />
 </template>
