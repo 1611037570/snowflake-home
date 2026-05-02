@@ -1,4 +1,6 @@
 <script setup>
+import { getUUID } from '@/utils'
+
 const { proxy } = getCurrentInstance()
 
 const props = defineProps({
@@ -27,7 +29,15 @@ function handleAdd() {
    */
   const currentFields = currentForm.value.fields[0]
   const { addConfig, list } = currentFields
-  list.push(addConfig)
+  if (!addConfig) {
+    console.log('addConfig:>> ', addConfig)
+    return
+  }
+  const addConfigRaw = markRaw(addConfig)
+  list.push({
+    ...addConfigRaw,
+    id: getUUID(),
+  })
 }
 </script>
 

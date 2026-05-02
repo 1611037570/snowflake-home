@@ -98,9 +98,9 @@ export const useResumeStore = defineStore(
         // 简历数据
         data: structuredClone(DEFAULT_DATA),
         // 固定配置
-        fixedConfig: DEFAULT_USER_CONFIG,
+        fixedConfig: structuredClone(DEFAULT_USER_CONFIG),
         // 表单配置
-        config: DEFAULT_CONFIG,
+        config: structuredClone(DEFAULT_CONFIG),
         // UI配置
         ui: {
           padding: defaultPadding,
