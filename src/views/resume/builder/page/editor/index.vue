@@ -35,7 +35,6 @@ const dynamicComponents = {
       v-model:data="currentData"
       :components="dynamicComponents"
     />
-    <div class="pt-3"></div>
     <SfDynamicForm
       v-model:form="currentConfig"
       v-model:data="currentData"
