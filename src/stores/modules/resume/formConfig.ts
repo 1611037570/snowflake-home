@@ -161,7 +161,7 @@ export const DEFAULT_ACCOUNT_FORM = {
   component: 'boxCollapse',
   props: {
     title: '社交账号',
-    add: false,
+    add: true,
   },
   slot: 'default',
   fields: [
@@ -169,16 +169,23 @@ export const DEFAULT_ACCOUNT_FORM = {
       type: 'array',
       drag: true,
       dragClass: '.item-drag',
-      list: [
-        {
-          type: 'object',
-          component: 'account',
-          model: {
-            source: ['account'],
-            prop: 'modelValue',
+      list: [],
+      addConfig: {
+        model: [
+          {
+            source: ['account', '?', 'name'],
+            defaultValue: '',
+            prop: 'name',
           },
-        },
-      ],
+          {
+            source: ['account', '?', 'url'],
+            defaultValue: '',
+            prop: 'url',
+          },
+        ],
+        type: 'object',
+        component: 'account',
+      },
     },
   ],
 }
