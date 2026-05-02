@@ -279,7 +279,7 @@ onUnmounted(() => {
     <div
       v-for="(pageSlices, pageIndex) in pages"
       :key="pageIndex"
-      class="resume-page-item flex flex-col rounded-lg bg-white text-black shadow-lg"
+      class="resume-page-item flex flex-col rounded-xl bg-white text-black shadow-lg"
       :class="[currentUI.fontFamily, `page-${pageIndex}`]"
       :style="[
         paddingValue(),
@@ -292,9 +292,9 @@ onUnmounted(() => {
         <div
           v-for="slice in pageSlices"
           :key="slice.moduleKey"
-          class="resume-module-wrapper group relative rounded hover:outline-2 hover:outline-gray-300 hover:outline-dashed"
+          class="resume-module-wrapper group relative rounded-xl hover:outline-2 hover:outline-gray-300 hover:outline-dashed"
           :class="{
-            'bg-sf-theme-hover/10 outline-2 outline-sf-theme-hover outline-dashed hover:outline-sf-theme-hover':
+            'rounded-xl bg-sf-theme-hover/10 outline-2 outline-sf-theme-hover outline-dashed hover:outline-sf-theme-hover':
               selectedModuleKeys.has(slice.moduleKey),
           }"
           :data-module="slice.moduleKey"

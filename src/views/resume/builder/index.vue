@@ -36,7 +36,7 @@ provide('bg', 'bg-sf-bg')
 
 <template>
   <div class="py-3 pl-3">
-    <div class="flex h-full w-[460px] rounded-xl bg-sf-primary py-3 text-sf-base shadow-sm">
+    <div class="flex h-full w-[400px] rounded-xl bg-sf-primary py-3 text-sf-base shadow-sm">
       <!-- 左侧栏 -->
       <div class="relative w-15 shrink-0" v-if="0">
         <div

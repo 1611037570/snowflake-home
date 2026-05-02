@@ -36,7 +36,7 @@ const handleLayoutClick = (item) => {
 
 <template>
   <header
-    class="flex h-12 items-center justify-between border-b border-sf-border bg-sf-primary px-6 shadow-sm"
+    class="flex h-12 items-center justify-between border-b border-sf-border bg-sf-primary px-6"
   >
     <!-- 左侧占位 -->
     <div class="flex flex-1 items-center gap-6">

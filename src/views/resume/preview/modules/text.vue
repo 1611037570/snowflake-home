@@ -18,7 +18,7 @@
       </div>
     </div>
     <div
-      class="w-full"
+      class="w-full rounded-xl"
       :class="newValue ? displayClass + ' cursor-pointer' : ''"
       @mouseenter="handleMouseEnter"
       @mouseleave="handleMouseLeave"
