@@ -52,26 +52,16 @@ const handleLayoutClick = (item) => {
 
     <!-- 右侧工具栏 -->
     <div class="flex items-center gap-6">
-      <!-- 快捷图标 -->
-      <div class="flex items-center gap-5 text-sf-text-2">
-        <SfDonation />
-        <SfLocale />
-        <SfTheme />
-      </div>
-
-      <!-- 分隔线 -->
-      <div class="h-4 w-px bg-sf-border"></div>
-
       <!-- 布局切换器 -->
-      <div class="flex items-center gap-1 rounded-lg bg-sf-bg-hover p-1">
+      <div class="flex items-center gap-1 rounded-xl bg-sf-bg-hover p-1">
         <SfTooltip v-for="item in layoutList" :key="item.value" :content="item.name">
           <button
             type="button"
-            class="flex-c h-8 w-8 rounded-md text-sf-text-2 transition-all hover:bg-sf-primary hover:text-sf-theme"
+            class="flex-c h-7 w-7 rounded-lg text-sf-text-2 transition-all hover:bg-sf-primary hover:text-sf-theme"
             :class="{ 'bg-sf-primary text-sf-theme shadow-sm': layout === item.value }"
             @click="handleLayoutClick(item)"
           >
-            <SfIcon :icon="item.icon" size="4.5" />
+            <SfIcon :icon="item.icon" size="5.5" />
           </button>
         </SfTooltip>
       </div>
@@ -87,6 +77,15 @@ const handleLayoutClick = (item) => {
           </template>
           {{ isPrinting ? '生成中...' : '下载' }}
         </el-button>
+      </div>
+
+      <!-- 分隔线 -->
+      <div class="h-4 w-px bg-sf-border"></div>
+      <!-- 快捷图标 -->
+      <div class="flex items-center gap-5 text-sf-text-2">
+        <SfDonation />
+        <SfLocale />
+        <SfTheme />
       </div>
     </div>
   </header>
