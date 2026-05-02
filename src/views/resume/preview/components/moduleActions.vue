@@ -28,8 +28,8 @@ defineEmits(['discard', 'accept', 'select'])
     </button>
     <button
       type="button"
-      class="cursor-pointer items-center justify-center rounded-full bg-blue-500 p-1.5 text-white shadow hover:bg-blue-600"
-      :class="selected ? 'flex' : 'hidden group-hover:flex'"
+      class="cursor-pointer items-center justify-center rounded-full p-1.5 text-white shadow hover:bg-sf-theme-hover"
+      :class="selected ? 'flex bg-sf-theme ' : 'hidden bg-sf-info group-hover:flex '"
       title="选择该模块"
       @click.stop="$emit('select')"
     >
