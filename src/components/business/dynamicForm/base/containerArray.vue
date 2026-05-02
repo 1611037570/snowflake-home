@@ -5,9 +5,6 @@
     :gutter="0"
     ref="row"
     v-if="init"
-    @pointerdown.stop
-    @mousedown.stop
-    @touchstart.stop
   >
     <FormItem
       v-for="item in formListWithStyle"
@@ -18,8 +15,12 @@
       <!-- v-bind="$attrs"  -->
       <ContainerObject :currentIndex="item.index" :currentForm="item.item" />
       <div class="flex" v-if="item.item.ui">
-        <el-button @click="moveUp(item.index)" :disabled="item.index === 0">上移</el-button>
-        <el-button @click="moveDown(item.index)" :disabled="item.index === length - 1"
+        <el-button @click="moveItem(item.index, item.index - 1)" :disabled="item.index === 0"
+          >上移</el-button
+        >
+        <el-button
+          @click="moveItem(item.index, item.index + 1)"
+          :disabled="item.index === length - 1"
           >下移</el-button
         >
         <el-button @click="remove(item.index)">删除</el-button>
@@ -87,6 +88,12 @@ onUnmounted(() => {
 })
 
 const length = computed(() => currentForm.value?.list?.length || 0)
+const getSpan = (item: any) => Number(item.span) || 24
+const getItemStyle = (isFirstInRow: boolean, isLastInRow: boolean, bottomStyle: string) => ({
+  paddingLeft: isFirstInRow ? '0' : '3px',
+  paddingRight: isLastInRow ? '0' : '3px',
+  ...(isFirstInRow || isLastInRow ? { paddingBottom: bottomStyle } : {}),
+})
 
 // 动态计算样式算法：实现第一个左边距0，最后一个右边距0，其他左右各6
 const formListWithStyle = computed(() => {
@@ -96,7 +103,7 @@ const formListWithStyle = computed(() => {
   let currentAccumulatedSpan = 0
 
   list.forEach((item: any, index: number) => {
-    const span = Number(item.span) || 24
+    const span = getSpan(item)
     if (accumulatedSpan + span > 24) {
       lastRowStartIndex = index
       accumulatedSpan = 0
@@ -112,14 +119,14 @@ const formListWithStyle = computed(() => {
   })
 
   return list.map((item: any, index: number) => {
-    const span = Number(item.span) || 24
+    const span = getSpan(item)
     if (currentAccumulatedSpan + span > 24) {
       currentAccumulatedSpan = 0
     }
 
     const isFirstInRow = currentAccumulatedSpan === 0
     const nextItem = list[index + 1]
-    const nextSpan = nextItem ? Number(nextItem.span) || 24 : 0
+    const nextSpan = nextItem ? getSpan(nextItem) : 0
     const isLastInRow =
       currentAccumulatedSpan + span === 24 ||
       (!!nextItem && currentAccumulatedSpan + span + nextSpan > 24) ||
@@ -137,47 +144,20 @@ const formListWithStyle = computed(() => {
     // 2. 如果只是行首，左边距0，右边距6
     // 3. 如果只是行尾，右边距0，左边距6
     // 4. 中间元素，左右都是6
-    if (isFirstInRow && isLastInRow) {
-      return {
-        item,
-        index,
-        style: { paddingLeft: '0', paddingRight: '0', paddingBottom: bottomStyle },
-      }
-    } else if (isFirstInRow) {
-      return {
-        item,
-        index,
-        style: { paddingLeft: '0', paddingRight: '3px', paddingBottom: bottomStyle },
-      }
-    } else if (isLastInRow) {
-      return {
-        item,
-        index,
-        style: { paddingLeft: '3px', paddingRight: '0', paddingBottom: bottomStyle },
-      }
-    } else {
-      return {
-        item,
-        index,
-        style: { paddingLeft: '3px', paddingRight: '3px' },
-      }
+    return {
+      item,
+      index,
+      style: getItemStyle(isFirstInRow, isLastInRow, bottomStyle),
     }
   })
 })
 
 // 上移
-const moveUp = (index: any) => {
-  if (index === 0) return
+const moveItem = (index: any, targetIndex: any) => {
+  if (targetIndex < 0 || targetIndex >= length.value) return
   const [item] = currentForm.value.list.splice(index, 1)
-  currentForm.value.list.splice(index - 1, 0, item)
-  rootData.move(currentForm.value.list, index, index - 1)
-}
-// 下移
-const moveDown = (index: any) => {
-  if (index === length.value - 1) return
-  const [item] = currentForm.value.list.splice(index, 1)
-  currentForm.value.list.splice(index + 1, 0, item)
-  rootData.move(currentForm.value.list, index, index + 1)
+  currentForm.value.list.splice(targetIndex, 0, item)
+  rootData.move(currentForm.value.list, index, targetIndex)
 }
 // 删除
 const remove = (index: any) => {
