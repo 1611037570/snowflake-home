@@ -27,23 +27,27 @@ const updateScale = useDebounceFn(([entry]) => {
   scale.value = Math.min((width - PADDING) / TARGET_WIDTH, 1)
 }, 100)
 
-useResizeObserver(containerRef, updateScale)
+useResizeObserver(() => containerRef.value?.wrapRef, updateScale)
 </script>
 
 <template>
   <!-- 测量容器：relative + overflow-y-auto 允许垂直滚动 -->
-  <div ref="containerRef" class="relative h-full w-full overflow-y-auto">
+  <SfScrollbar
+    ref="containerRef"
+    class="relative h-full w-full"
+    height="100%"
+    view-class="relative min-h-full w-full"
+  >
     <!-- 展示容器：absolute + flex 居中 -->
-    <div class="absolute inset-x-0 top-0 flex flex-col items-center py-3">
-      <div
-        :style="{
-          zoom: scale,
-        }"
-      >
-        <slot></slot>
-      </div>
+    <div
+      class="absolute inset-x-0 top-3 flex flex-col items-center"
+      :style="{
+        zoom: scale,
+      }"
+    >
+      <slot></slot>
     </div>
-  </div>
+  </SfScrollbar>
 </template>
 
 <style scoped></style>
