@@ -3,6 +3,7 @@ type Path = string | string[]
 interface DataProxyOption {
   source: Path
   prop: string
+  defaultValue?: string
 }
 
 // 创建一个类
@@ -141,7 +142,7 @@ class DataProxy<T> {
   // 获取数据代理
   getDataProxy(options: DataProxyOption | DataProxyOption[], index: number = 0) {
     return this.createDataProxyHelper(options, (item: DataProxyOption) =>
-      this.select({ source: item.source, index }),
+      this.select({ source: item.source, index, defaultValue: item.defaultValue }),
     )
   }
 
