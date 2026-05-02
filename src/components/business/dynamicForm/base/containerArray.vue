@@ -1,5 +1,14 @@
 <template>
-  <el-row class="m-0! w-full" :gutter="0" ref="row" v-if="init">
+  <el-row
+    class="m-0! w-full"
+    :class="{ 'drag-array-active': isDragging }"
+    :gutter="0"
+    ref="row"
+    v-if="init"
+    @pointerdown.stop
+    @mousedown.stop
+    @touchstart.stop
+  >
     <FormItem
       v-for="item in formListWithStyle"
       :currentForm="item.item"
@@ -35,6 +44,7 @@ defineProps<{
 const currentForm = defineModel<any>('currentForm')
 const rootData = inject<any>('df/root/data')
 const init = ref(false)
+const isDragging = ref(false)
 onMounted(async () => {
   await nextTick(() => {})
   if (currentForm.value?.list) {
@@ -54,7 +64,14 @@ onMounted(async () => {
     handle: currentForm.value?.dragClass || '',
     animation: 150,
     ghostClass: 'ghost',
+    onStart: (e) => {
+      console.log('e:>> ', e)
+
+      e.stopPropagation()
+      isDragging.value = true
+    },
     onEnd(data: any) {
+      isDragging.value = false
       // 获取旧索引和新索引
       const { oldIndex, newIndex } = data
       if (oldIndex === newIndex) return
@@ -189,5 +206,20 @@ provide('df/removeItem', remove)
 .ghost {
   opacity: 0.5;
   background: yellow;
+  border-radius: 12px;
+}
+.drag-array-active {
+  position: relative;
+  border-radius: 12px;
+}
+.drag-array-active::after {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  box-sizing: border-box;
+  border: 1px dashed var(--color-sf-theme);
+  border-radius: 12px;
+  pointer-events: none;
+  content: '';
 }
 </style>
