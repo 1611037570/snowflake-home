@@ -32,7 +32,7 @@ function del() {
           </div>
           <SfIcon
             @click.stop="del"
-            icon="material-symbols:delete-outline"
+            icon="ic:round-delete"
             size="4"
             class="mr-3 hover:text-sf-theme"
           />

@@ -7,7 +7,7 @@
   >
     <template #right>
       <div @click.stop="clearHistory" class="flex items-center">
-        <SfIcon icon="material-symbols:delete-outline" class="mr-1.5" size="4" />
+        <SfIcon icon="ic:round-delete" class="mr-1.5" size="4" />
         清空全部
       </div>
     </template>
