@@ -80,7 +80,7 @@ export const ICON_LIST: Record<string, IconItem> = {
   'basil:file-user-solid': { icon: 'basil:file-user-solid', color: 'text-blue-500' },
   'majesticons:music': { icon: 'majesticons:music' },
   'material-symbols:download': { icon: 'material-symbols:download' },
-  'tabler:switch-3': { icon: 'tabler:switch-3' },
+  'tabler:switch-3': { icon: 'tabler:switch-3', name: '切换' },
   'clarity:email-solid': { icon: 'clarity:email-solid', color: 'text-sf-theme' },
   'lucide:file-text': { icon: 'lucide:file-text' },
   'lucide:layout-template': { icon: 'lucide:layout-template' },
