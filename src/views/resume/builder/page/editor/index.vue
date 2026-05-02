@@ -30,21 +30,18 @@ const dynamicComponents = {
   <div class="relative flex h-full flex-col overflow-hidden">
     <ResumeActions />
 
-    <ElScrollbar class="w-full flex-1">
-      <div class="px-3">
-        <SfDynamicForm
-          v-model:form="currentFixedConfig"
-          v-model:data="currentData"
-          :components="dynamicComponents"
-        />
-        <SfDynamicForm
-          v-model:form="currentConfig"
-          v-model:data="currentData"
-          :components="dynamicComponents"
-        />
-        <AddModule />
-      </div>
-    </ElScrollbar>
+    <SfDynamicForm
+      v-model:form="currentFixedConfig"
+      v-model:data="currentData"
+      :components="dynamicComponents"
+    />
+    <div class="pt-3"></div>
+    <SfDynamicForm
+      v-model:form="currentConfig"
+      v-model:data="currentData"
+      :components="dynamicComponents"
+    />
+    <AddModule />
   </div>
 </template>
 

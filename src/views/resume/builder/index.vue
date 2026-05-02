@@ -30,34 +30,39 @@ const activeIndex = ref(0)
 function handleMenuClick(index) {
   activeIndex.value = index
 }
+
+provide('bg', 'bg-sf-bg')
 </script>
 
 <template>
-  <div class="flex h-full w-[460px] border-r border-sf-border bg-sf-primary-hover text-sf-base">
-    <!-- 左侧栏 -->
-    <div class="relative w-15 shrink-0">
-      <div
-        class="sidebar group absolute top-0 left-0 z-10 flex h-full w-full flex-col gap-3 overflow-hidden bg-sf-primary text-sf-base transition-[width] duration-300 hover:w-30"
-      >
+  <div class="py-3 pl-3">
+    <div class="flex h-full w-[460px] rounded-xl bg-sf-primary py-3 text-sf-base shadow-sm">
+      <!-- 左侧栏 -->
+      <div class="relative w-15 shrink-0" v-if="0">
         <div
-          v-for="(item, index) in menuList"
-          :key="item.name"
-          class="mx-2 flex cursor-pointer items-center justify-center rounded-lg p-2 hover:bg-sf-bg-hover"
-          :class="{ 'bg-sf-bg-hover': activeIndex === index }"
-          @click="handleMenuClick(index)"
+          class="sidebar group absolute top-0 left-0 z-10 flex h-full w-full flex-col gap-3 overflow-hidden bg-sf-primary text-sf-base transition-[width] duration-300 hover:w-30"
         >
-          <SfIcon :icon="item.icon" size="6" />
-          <span
-            class="max-w-0 overflow-hidden text-sm font-medium whitespace-nowrap opacity-0 transition-all duration-300 group-hover:ml-2 group-hover:max-w-xs group-hover:opacity-100"
-            >{{ item.name }}</span
+          <div
+            v-for="(item, index) in menuList"
+            :key="item.name"
+            class="mx-2 flex cursor-pointer items-center justify-center rounded-lg p-2 hover:bg-sf-bg-hover"
+            :class="{ 'bg-sf-bg-hover': activeIndex === index }"
+            @click="handleMenuClick(index)"
           >
+            <SfIcon :icon="item.icon" size="6" />
+            <span
+              class="max-w-0 overflow-hidden text-sm font-medium whitespace-nowrap opacity-0 transition-all duration-300 group-hover:ml-2 group-hover:max-w-xs group-hover:opacity-100"
+              >{{ item.name }}</span
+            >
+          </div>
         </div>
       </div>
-    </div>
-
-    <!-- 右侧内容 -->
-    <div class="flex min-h-0 flex-1 flex-col overflow-hidden">
-      <component :is="menuList[activeIndex].component" class="h-full overflow-hidden" />
+      <ElScrollbar class="flex min-h-0 w-full flex-1 flex-col overflow-hidden">
+        <div class="px-3">
+          <!-- 右侧内容 -->
+          <component :is="menuList[activeIndex].component" class="h-full overflow-hidden" />
+        </div>
+      </ElScrollbar>
     </div>
   </div>
 </template>
