@@ -13,7 +13,7 @@
       :style="item.style"
     >
       <!-- v-bind="$attrs"  -->
-      <ContainerObject :currentIndex="item.index" :currentForm="item.item" />
+      <ContainerObject :currentIndex="item.index" :currentForm="item.item" :key="item.item.id" />
       <div class="flex" v-if="item.item.ui">
         <el-button @click="moveItem(item.index, item.index - 1)" :disabled="item.index === 0"
           >上移</el-button
@@ -168,7 +168,10 @@ const remove = (index: any) => {
 const add = () => {
   const addConfig = currentForm.value.addConfig
   if (!addConfig) return
-  currentForm.value.list.push(addConfig)
+  currentForm.value.list.push({
+    ...structuredClone(addConfig),
+    id: getUUID(),
+  })
 }
 // 提供当前容器的长度
 provide('df/current/length', length)
