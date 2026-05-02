@@ -169,8 +169,6 @@ const add = () => {
   // 检查是否有添加配置
   const addConfig = currentForm.value.addConfig
   if (!addConfig) return
-  // 更新数据代理
-  rootData.getDataProxy(addConfig.model, currentForm.value.list.length)
   // 添加到列表
   currentForm.value.list.push({
     ...addConfig,
