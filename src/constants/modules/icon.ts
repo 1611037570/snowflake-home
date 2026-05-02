@@ -37,7 +37,6 @@ export const ICON_LIST: Record<string, IconItem> = {
   'fa-solid:chart-line': { icon: 'fa-solid:chart-line' },
   'fa-solid:caret-down': { icon: 'fa-solid:caret-down' },
   'fa-solid:caret-up': { icon: 'fa-solid:caret-up' },
-  'material-symbols:delete-outline': { icon: 'material-symbols:delete-outline', name: '删除' },
   'formkit:close': { icon: 'formkit:close' },
   'bxs:hot': { icon: 'bxs:hot' },
   'fluent:apps-24-filled': { icon: 'fluent:apps-24-filled' },
@@ -84,7 +83,6 @@ export const ICON_LIST: Record<string, IconItem> = {
   'tabler:external-link': { icon: 'tabler:external-link' },
   'mingcute:up-line': { icon: 'mingcute:up-line' },
   'mingcute:down-line': { icon: 'mingcute:down-line' },
-
   'fa7-solid:qrcode': { icon: 'fa7-solid:qrcode' },
   'basil:file-user-solid': { icon: 'basil:file-user-solid', color: 'text-blue-500' },
   'majesticons:music': { icon: 'majesticons:music' },
