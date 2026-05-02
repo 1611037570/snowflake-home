@@ -50,9 +50,9 @@ const currentIndex = inject('df/current/index')
         />
         <div class="w-full"></div>
       </div>
-      <SfWangEdit v-model="content"></SfWangEdit>
+      <SfWangEditor v-model="content"></SfWangEditor>
       <div>成绩：</div>
-      <SfWangEdit v-model="result"></SfWangEdit>
+      <SfWangEditor v-model="result"></SfWangEditor>
     </div>
   </ItemCollapse>
 </template>

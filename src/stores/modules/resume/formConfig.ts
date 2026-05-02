@@ -237,7 +237,7 @@ export const DEFAULT_SKILL_FORM = {
   fields: [
     {
       type: 'object',
-      component: 'wangEdit',
+      component: 'wangEditor',
       model: {
         source: ['skill'],
         prop: 'modelValue',
@@ -263,7 +263,7 @@ export const DEFAULT_ADVANTAGE_FORM = {
   fields: [
     {
       type: 'object',
-      component: 'wangEdit',
+      component: 'wangEditor',
       model: {
         source: ['advantage'],
         prop: 'modelValue',

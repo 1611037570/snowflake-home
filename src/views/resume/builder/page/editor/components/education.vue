@@ -99,7 +99,7 @@ const currentIndex = inject('df/current/index')
       <div class="flex w-full gap-3">
         <SfSelect placeholder="学制" v-model="mode" :list="modeList" />
       </div>
-      <SfWangEdit v-model="content"></SfWangEdit>
+      <SfWangEditor v-model="content"></SfWangEditor>
     </div>
   </ItemCollapse>
 </template>
