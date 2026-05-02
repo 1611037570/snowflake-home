@@ -30,10 +30,8 @@ const removeAccount = (index) => {
 
 <template>
   <div class="flex w-full flex-col">
-    <div class="flex cursor-pointer items-center gap-1 text-sf-theme" @click="addAccount">
-      <SfIcon icon="ic:round-add" size="4" />
-      <span> 增加社交账号 </span>
-    </div>
+    <header class="flex items-center text-lg font-bold">社交账号</header>
+
     <div class="flex flex-col gap-3">
       <div v-for="(item, index) in accounts" :key="index" class="flex items-center gap-3">
         <!-- 第一个是平台 -->
@@ -49,10 +47,14 @@ const removeAccount = (index) => {
           icon="ic:round-delete"
           size="5"
           boxSize="8"
-          class="hover:bg-sf-danger/10 hover:text-sf-danger shrink-0 cursor-pointer rounded-lg text-sf-text-3 transition-colors"
+          class="shrink-0 cursor-pointer rounded-lg transition-colors hover:text-sf-theme"
           @click="removeAccount(index)"
         />
       </div>
+    </div>
+    <div class="flex cursor-pointer items-center gap-1 text-sf-theme" @click="addAccount">
+      <SfIcon icon="ic:round-add" size="4" />
+      <span> 增加社交账号 </span>
     </div>
   </div>
 </template>
