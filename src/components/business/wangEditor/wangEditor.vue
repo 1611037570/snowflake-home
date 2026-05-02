@@ -1,5 +1,5 @@
 ﻿<template>
-  <div style="" class="w-full">
+  <div style="" class="w-full rounded-xl" :class="bg">
     <Toolbar :editor="editorRef" :defaultConfig="toolbarConfig" :mode="mode" />
     <Editor
       class="rounded-b-xl"
@@ -26,7 +26,7 @@ defineProps({
 })
 // 编辑器实例，必须用 shallowRef
 const editorRef = shallowRef()
-
+const bg = inject('bg', 'var(--color-sf-primary)')
 // 内容 HTML
 const valueHtml = defineModel('modelValue', {
   default: '<p>欢迎体验 雪花浏览器</p>',
@@ -61,7 +61,7 @@ const handleCreated = (editor) => {
 }
 /* 修改工具栏样式 */
 :deep(.w-e-bar) {
-  background: var(--color-sf-primary);
+  background: transparent;
   color: var(--color-sf-base);
   border-top-left-radius: 12px;
   border-top-right-radius: 12px;
@@ -76,7 +76,6 @@ const handleCreated = (editor) => {
 }
 // 修改工具栏按钮下拉菜单hover样式
 :deep(.w-e-menu-tooltip-v5) {
-  color: red;
   &::before {
     color: var(--color-sf-base);
     background: var(--color-sf-modal);
@@ -91,8 +90,12 @@ const handleCreated = (editor) => {
 // ——————编辑器样式开始——————
 /* 修改编辑器文本容器样式 */
 :deep(.w-e-text-container) {
-  background: var(--color-sf-primary);
+  background: transparent;
   color: var(--color-sf-base);
+}
+//
+:deep(.w-e-text-placeholder) {
+  top: -5px !important;
 }
 // 修改段落样式
 :deep(.w-e-text-container p) {
