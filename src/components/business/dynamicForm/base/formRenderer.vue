@@ -111,8 +111,17 @@ onUnmounted(() => {
   border-radius: 12px;
 }
 .drag-container-active {
-  outline: 1px dashed var(--color-sf-theme);
-  outline-offset: 1px;
+  position: relative;
   border-radius: 12px;
+}
+.drag-container-active::after {
+  position: absolute;
+  inset: 0 6px;
+  z-index: 1;
+  box-sizing: border-box;
+  border: 1px dashed var(--color-sf-theme);
+  border-radius: 12px;
+  pointer-events: none;
+  content: '';
 }
 </style>
