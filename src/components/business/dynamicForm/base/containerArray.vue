@@ -170,10 +170,7 @@ const add = () => {
   const addConfig = currentForm.value.addConfig
   if (!addConfig) return
   // 添加到列表
-  currentForm.value.list.push({
-    ...addConfig,
-    id: getUUID(),
-  })
+  currentForm.value.list.push(addConfig)
 }
 // 提供当前容器的长度
 provide('df/current/length', length)
