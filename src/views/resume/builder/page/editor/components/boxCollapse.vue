@@ -1,6 +1,4 @@
 <script setup>
-import { getUUID } from '@/utils'
-
 const { proxy } = getCurrentInstance()
 
 const props = defineProps({
@@ -33,10 +31,7 @@ function handleAdd() {
     console.log('addConfig:>> ', addConfig)
     return
   }
-  list.push({
-    ...addConfig,
-    id: getUUID(),
-  })
+  list.push(addConfig)
 }
 </script>
 
