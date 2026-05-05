@@ -33,6 +33,7 @@
   },
   "dependencies": {
     "@iconify/vue": "5.0.0",
+    "@types/lodash-es": "^4.17.12",
     "@vueuse/core": "13.9.0",
     "@wangeditor-next/editor": "^5.6.49",
     "@wangeditor-next/editor-for-vue": "^5.1.14",
@@ -44,6 +45,7 @@
     "echarts": "^6.0.0",
     "element-plus": "2.13.7",
     "jspdf": "3.0.3",
+    "lodash-es": "^4.18.1",
     "mathjs": "^15.1.0",
     "md-editor-v3": "^6.3.1",
     "mitt": "^3.0.1",
