@@ -2,6 +2,8 @@
 import { useResumeStore } from '@/stores'
 
 const resumeStore = useResumeStore()
+const navList = ['首页', '简历模板', '简历分析', '我的简历', '发现']
+const activeNavIndex = ref(0)
 
 function handleCreate() {
   resumeStore.addResume()
@@ -24,39 +26,23 @@ function handleCreate() {
             class="absolute top-0.5 right-0 h-[18px] w-[22px] skew-x-[-18deg] rounded-[8px_2px_8px_2px] bg-[linear-gradient(135deg,#15d1dc,#8059ff)]"
           ></div>
         </div>
-        <span>直聘简历</span>
+        <span>小羊简历</span>
       </div>
 
       <nav class="flex items-center gap-[30px] max-[1180px]:gap-5 max-[900px]:hidden">
         <button
+          v-for="(item, index) in navList"
+          :key="item"
           type="button"
-          class="relative border-0 bg-transparent p-0 text-[15px] font-extrabold text-white after:absolute after:right-0 after:bottom-[-10px] after:left-0 after:h-[5px] after:rounded-full after:bg-[#9ef153] after:shadow-[0_0_12px_rgba(158,241,83,0.68)] after:content-['']"
+          @click="activeNavIndex = index"
+          class="cursor-pointer border-0 bg-transparent p-0 text-[15px] font-extrabold"
+          :class="
+            index === activeNavIndex
+              ? `relative text-white after:absolute after:right-0 after:bottom-[-10px] after:left-0 after:h-[5px] after:rounded-full after:bg-[#9ef153] after:shadow-[0_0_12px_rgba(158,241,83,0.68)] after:content-['']`
+              : 'text-white/88'
+          "
         >
-          首页
-        </button>
-        <button
-          type="button"
-          class="border-0 bg-transparent p-0 text-[15px] font-extrabold text-white/88"
-        >
-          简历模板
-        </button>
-        <button
-          type="button"
-          class="border-0 bg-transparent p-0 text-[15px] font-extrabold text-white/88"
-        >
-          简历分析
-        </button>
-        <button
-          type="button"
-          class="border-0 bg-transparent p-0 text-[15px] font-extrabold text-white/88"
-        >
-          我的简历
-        </button>
-        <button
-          type="button"
-          class="border-0 bg-transparent p-0 text-[15px] font-extrabold text-white/88"
-        >
-          发现
+          {{ item }}
         </button>
       </nav>
 
@@ -97,40 +83,42 @@ function handleCreate() {
         class="absolute top-1/2 left-1/2 z-2 h-[526px] w-[736px] -translate-x-1/2 -translate-y-1/2 transform opacity-[0.58]"
       >
         <div
-          class="relative h-full w-full rounded-[34px_34px_8px_8px] bg-[#c2c966] shadow-[0_30px_80px_rgba(0,0,0,0.2)]"
+          class="relative h-full w-full overflow-hidden rounded-[34px_34px_8px_8px] bg-[#c2c966] shadow-[0_30px_80px_rgba(0,0,0,0.2)]"
         >
           <div
             class="absolute top-[182px] left-[124px] h-[146px] w-[270px] rounded-2xl bg-[#00a9a4]"
           ></div>
-          <!--  -->
+
           <div
-            class="absolute right-0 bottom-0 left-0 h-[80%] bg-[rgba(222,226,129,1)] [clip-path:polygon(0_0,50%_58%,100%_0,100%_100%,0_100%)]"
+            class="absolute right-8 bottom-0 left-8 z-3 h-[420px] bg-[rgba(222,226,129,1)] [clip-path:polygon(0_0,50%_58%,100%_0,100%_100%,0_100%)]"
           ></div>
+          <div class="absolute right-0 bottom-0 h-[420px] w-[33px] bg-[rgba(222,226,129,1)]"></div>
+          <div class="absolute bottom-0 left-0 h-[420px] w-[33px] bg-[rgba(222,226,129,1)]"></div>
         </div>
 
         <div
-          class="absolute top-24 left-[45px] z-4 h-[122px] w-[122px] rotate-[-30deg] rounded-xl bg-[#7775b8]"
+          class="absolute -top-16 left-[45px] z-4 h-[122px] w-[122px] rotate-[-30deg] rounded-xl bg-[#7775b8]"
         >
           <i
-            class="absolute top-12 left-8 h-2 w-[70px] rounded-full bg-[rgba(235,234,203,0.64)]"
+            class="absolute top-12 right-6 left-6 h-2 rounded-full bg-[rgba(235,234,203,0.64)]"
           ></i>
           <i
-            class="absolute top-[76px] left-8 h-2 w-[70px] rounded-full bg-[rgba(235,234,203,0.64)]"
+            class="absolute top-[76px] right-6 left-6 h-2 rounded-full bg-[rgba(235,234,203,0.64)]"
           ></i>
         </div>
         <div
-          class="absolute top-[190px] right-1 z-4 h-[122px] w-[122px] rotate-12 rounded-xl bg-[#7775b8]"
+          class="absolute top-[120px] right-22 z-1 h-[122px] w-[122px] rotate-12 rounded-xl bg-[#7775b8]"
         >
           <i
-            class="absolute top-12 left-8 h-2 w-[70px] rounded-full bg-[rgba(235,234,203,0.64)]"
+            class="absolute top-12 right-6 left-6 h-2 rounded-full bg-[rgba(235,234,203,0.64)]"
           ></i>
           <i
-            class="absolute top-[76px] left-8 h-2 w-[70px] rounded-full bg-[rgba(235,234,203,0.64)]"
+            class="absolute top-[76px] right-6 left-6 h-2 rounded-full bg-[rgba(235,234,203,0.64)]"
           ></i>
         </div>
 
         <div
-          class="absolute top-[16px] right-[205px] z-3 flex h-[92px] w-[360px] rotate-[-5deg] items-center gap-[18px] rounded-[18px] bg-[#e9ecef] px-7 text-[38px] font-black text-[#4d5968]"
+          class="absolute top-[16px] left-1/2 z-3 flex h-[92px] -translate-x-1/2 rotate-[-5deg] items-center gap-[18px] rounded-[18px] bg-[#e9ecef] px-7 text-[38px] font-black text-[#4d5968]"
         >
           <span>MESSAGE</span>
           <SfIcon icon="lucide:check" size="7" class="text-[#119aa5]" />
@@ -141,10 +129,19 @@ function handleCreate() {
           JIANLI TOUDI
         </div>
         <div
-          class="absolute top-[218px] right-[-64px] h-24 w-[22px] rotate-[42deg] rounded-full bg-[#008bb2]"
+          class="absolute -top-10 right-[-64px] h-22 w-6 rotate-38 rounded-full bg-[#008bb2]"
         ></div>
         <div
-          class="absolute top-[252px] right-[-100px] h-[82px] w-5 rotate-[74deg] rounded-full bg-[#008bb2]"
+          class="absolute top-[0px] right-[-100px] h-24 w-6 rotate-72 rounded-full bg-[#008bb2]"
+        ></div>
+        <div
+          class="absolute top-[48px] right-[-110px] h-24 w-6 rotate-90 rounded-full bg-[#008bb2]"
+        ></div>
+        <div
+          class="absolute top-[100px] right-[-100px] h-24 w-6 rotate-116 rounded-full bg-[#008bb2]"
+        ></div>
+        <div
+          class="absolute top-[140px] right-[-74px] h-22 w-6 rotate-128 rounded-full bg-[#008bb2]"
         ></div>
       </div>
 
