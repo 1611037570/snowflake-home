@@ -65,10 +65,7 @@ const activeValue = computed(() => {
         >
           AI简历助手
         </button>
-        <button
-          type="button"
-          class="border-0 bg-transparent p-0 text-[15px] font-extrabold text-sf-text max-[1180px]:hidden"
-        >
+        <button type="button" class="border-0 bg-transparent p-0 text-[15px] font-extrabold">
           关于我们
         </button>
       </div>
