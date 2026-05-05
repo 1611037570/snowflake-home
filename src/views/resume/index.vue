@@ -17,21 +17,36 @@
 <script setup>
 import { useResumeStore } from '@/stores'
 import { storeToRefs } from 'pinia'
+import { useRouter } from 'vue-router'
 import Assistant from './assistant/index.vue'
 import Builder from './builder/index.vue'
 import Header from './components/header/index.vue'
 import Preview from './preview/index.vue'
 
+const router = useRouter()
+
 const resumeStore = useResumeStore()
-const { currentIndex, layout, list } = storeToRefs(resumeStore)
+const { currentIndex, layout, list, currentUsage } = storeToRefs(resumeStore)
+let useTimeTimer = null
 
 onMounted(() => {
-  if (currentIndex.value !== -1) return
-  if (list.value.length) {
-    currentIndex.value = 0
+  if (currentIndex.value !== -1) {
+    router.push(`/resumeMain`)
     return
   }
-  resumeStore.addResume()
+  if (list.value.length) {
+    router.push(`/resumeMain`)
+    return
+  }
+  useTimeTimer = setInterval(() => {
+    currentUsage.value.lastUseTime = Date.now()
+  }, 10000)
+})
+
+onUnmounted(() => {
+  if (useTimeTimer) {
+    clearInterval(useTimeTimer)
+  }
 })
 </script>
 
