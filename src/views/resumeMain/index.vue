@@ -35,7 +35,7 @@ const activeValue = computed(() => {
   <ResumeEditor v-if="currentIndex !== -1" />
   <main
     v-else
-    class="relative flex min-h-screen w-full flex-col bg-sf-bg bg-[linear-gradient(90deg,rgba(15,37,60,0.42),rgba(15,37,60,0.18)),linear-gradient(118deg,#194f72_0%,#29377e_48%,#435c80_100%)] text-white before:absolute before:inset-0 before:z-1 before:bg-[rgba(10,28,45,0.46)]"
+    class="relative flex min-h-screen w-full flex-col bg-[linear-gradient(90deg,rgba(15,37,60,0.42),rgba(15,37,60,0.18)),linear-gradient(118deg,#194f72_0%,#29377e_48%,#435c80_100%)] text-white"
   >
     <header
       class="relative z-5 mx-auto flex h-16 w-full max-w-[1280px] items-center gap-6 font-extrabold"
@@ -85,10 +85,10 @@ const activeValue = computed(() => {
       </div>
     </header>
 
-    <section class="relative flex w-full flex-1 items-center justify-center">
+    <div class="flex h-full w-full flex-1! flex-col">
       <Main v-if="activeValue == 'home'" />
       <Mine v-else-if="activeValue == 'mine'" />
-    </section>
+    </div>
   </main>
 </template>
 
