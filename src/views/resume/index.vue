@@ -30,11 +30,11 @@ const { currentIndex, layout, list, currentUsage } = storeToRefs(resumeStore)
 let useTimeTimer = null
 
 onMounted(() => {
-  if (currentIndex.value !== -1) {
+  if (currentIndex.value == -1) {
     router.push(`/resumeMain`)
     return
   }
-  if (list.value.length) {
+  if (!list.value.length) {
     router.push(`/resumeMain`)
     return
   }
