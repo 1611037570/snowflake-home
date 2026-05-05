@@ -1,11 +1,8 @@
 <script setup>
 import { useResumeStore } from '@/stores'
-import { useRouter } from 'vue-router'
-const router = useRouter()
 const resumeStore = useResumeStore()
 function handleCreate() {
   resumeStore.addResume()
-  router.push('/resume')
 }
 </script>
 
