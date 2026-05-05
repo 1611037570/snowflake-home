@@ -5,7 +5,6 @@ import { defineStore } from 'pinia'
 import { computed, ref } from 'vue'
 import { DEFAULT_DATA } from './dataConfig'
 import { DEFAULT_CONFIG, DEFAULT_USER_CONFIG } from './formConfig'
-import { type Data } from './types'
 import {
   defaultColor,
   defaultFontFamily,
@@ -13,19 +12,42 @@ import {
   defaultLineHeight,
   defaultPadding,
 } from './uiConfig'
-export interface ResumeItem {
-  data: Data
-  config: any
-  ui: {
-    padding: number
-    fontSize: number
-    lineHeight: number
-    color: string
-    fontFamily: string
-  }
-}
-export type ResumeLayout = 'list' | 'three' | 'ai'
 
+import { merge } from 'lodash-es'
+export type ResumeLayout = 'list' | 'three' | 'ai'
+// 默认简历项
+const DEFAULT_RESUME_ITEM = {
+  // 简历ID
+  id: getUUID(),
+  // 简历数据
+  data: structuredClone(DEFAULT_DATA),
+  // 固定配置
+  fixedConfig: structuredClone(DEFAULT_USER_CONFIG),
+  // 表单配置
+  config: structuredClone(DEFAULT_CONFIG),
+  // UI配置
+  ui: {
+    // 页边距
+    padding: defaultPadding,
+    // 字体大小
+    fontSize: defaultFontSize,
+    // 行高
+    lineHeight: defaultLineHeight,
+    // 字体颜色
+    color: defaultColor,
+    // 字体类型
+    fontFamily: defaultFontFamily,
+  },
+  // 使用信息
+  usage: {
+    // 是否自定义标题
+    customTitle: '',
+    // 最后使用时间
+    lastUseTime: Date.now(),
+    // 创建时间
+    createTime: Date.now(),
+  },
+}
 export const useResumeStore = defineStore(
   'resume',
   () => {
@@ -98,39 +120,14 @@ export const useResumeStore = defineStore(
       return item ? item.usage : undefined
     })
     // 新增简历
-    const addResume = () => {
+    const addResume = (config: any) => {
       if (list.value.length >= maxCount) {
         confirm(`请前往我的简历管理删除后再新建。`, '容量已满').then(() => {
           router.push(`/resumeMain?type=mine&t=${Date.now()}`)
         })
         return
       }
-      const res = {
-        // 简历ID
-        id: getUUID(),
-        // 简历数据
-        data: structuredClone(DEFAULT_DATA),
-        // 固定配置
-        fixedConfig: structuredClone(DEFAULT_USER_CONFIG),
-        // 表单配置
-        config: structuredClone(DEFAULT_CONFIG),
-        // UI配置
-        ui: {
-          padding: defaultPadding,
-          fontSize: defaultFontSize,
-          lineHeight: defaultLineHeight,
-          color: defaultColor,
-          fontFamily: defaultFontFamily,
-        },
-        usage: {
-          // 是否自定义标题
-          customTitle: '',
-          // 最后使用时间
-          lastUseTime: Date.now(),
-          // 创建时间
-          createTime: Date.now(),
-        },
-      }
+      const res = config ? mergeResumeItem(config) : DEFAULT_RESUME_ITEM
       list.value.push(res)
       currentIndex.value = list.value.length - 1
       router.push('/resume')
@@ -146,9 +143,16 @@ export const useResumeStore = defineStore(
     const setLayout = (value: ResumeLayout) => {
       layout.value = value
     }
-
+    const mergeResumeItem = (item: any) => {
+      return merge(DEFAULT_RESUME_ITEM, item)
+    }
     // 初始化数据合并，防止版本更新导致字段缺失
-    const init = () => {}
+    const init = () => {
+      list.value = list.value.map(mergeResumeItem)
+    }
+    const addTemplate = (template: any) => {
+      list.value.push(mergeResumeItem(template))
+    }
 
     return {
       indexVisible,
