@@ -23,7 +23,7 @@ export const BASE_ROUTES = ['messageBoard', 'icon', 'color', 'components', 'data
  * 项目路由列表
  * 包含企业级应用项目路由
  */
-export const PROJECT_ROUTES = ['image', 'resume', 'home', 'form']
+export const PROJECT_ROUTES = ['image', 'resume', 'home', 'form', 'resumeMain']
 /**
  * 轻量级路由列表
  * 包含简单小游戏和实用工具路由

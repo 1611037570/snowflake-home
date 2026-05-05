@@ -28,21 +28,10 @@ const componentModules = import.meta.glob('@/views/*/index.vue', { eager: false 
  * @property {string} path 路由路径
  * @property {string} value 组件文件名
  */
-const map = [
-  {
-    path: 'resume',
-    value: 'resumeMain',
-  },
-  {
-    path: 'resumeEditor',
-    value: 'resume',
-  },
-]
 // 添加路由函数，根据组件名称动态创建路由
 function generateRoute(name: string): RouteRecordRaw {
   // 动态生成组件导入路径，确保正确匹配
-  const componentName = map.find((item) => item.path === name)?.value ?? name
-  const componentPath = `/src/views/${componentName}/index.vue`
+  const componentPath = `/src/views/${name}/index.vue`
   const component = componentModules[componentPath]
 
   return {
@@ -51,9 +40,8 @@ function generateRoute(name: string): RouteRecordRaw {
     component: component ? component : () => import('@views/status/error.vue'),
   }
 }
-
 // 生成并添加所有页面路由
-const generatedRoutes = ALL_ROUTES.map(generateRoute)
-routes.push(...generatedRoutes)
+const list = ALL_ROUTES.map((item) => generateRoute(item))
+routes.push(...list)
 
 export default routes
