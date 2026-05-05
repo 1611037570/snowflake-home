@@ -23,11 +23,26 @@ const routes: RouteRecordRaw[] = [
 
 // 动态导入所有视图组件，优化路径匹配
 const componentModules = import.meta.glob('@/views/*/index.vue', { eager: false })
-
+/**
+ * 路由映射表
+ * @property {string} path 路由路径
+ * @property {string} value 组件文件名
+ */
+const map = [
+  {
+    path: 'resume',
+    value: 'resumeMain',
+  },
+  {
+    path: 'resumeEditor',
+    value: 'resume',
+  },
+]
 // 添加路由函数，根据组件名称动态创建路由
 function generateRoute(name: string): RouteRecordRaw {
   // 动态生成组件导入路径，确保正确匹配
-  const componentPath = `/src/views/${name}/index.vue`
+  const componentName = map.find((item) => item.path === name)?.value ?? name
+  const componentPath = `/src/views/${componentName}/index.vue`
   const component = componentModules[componentPath]
 
   return {
