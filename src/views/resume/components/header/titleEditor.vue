@@ -16,7 +16,8 @@ const custom = ref(currentUsage.value?.customTitle || false)
 const tempTitle = ref(props.defaultTitle)
 
 function handleEditTitle() {
-  currentUsage.value.customTitle = custom.value ? tempTitle.value : ''
+  const customValue = tempTitle.value.trim()
+  currentUsage.value.customTitle = custom.value ? customValue : ''
   editTitleVisible.value = !editTitleVisible.value
 }
 
@@ -29,6 +30,7 @@ function handleResetTitle() {
 }
 
 function openModal() {
+  tempTitle.value = props.defaultTitle
   editTitleVisible.value = true
 }
 
