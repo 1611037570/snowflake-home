@@ -1,16 +1,7 @@
 <script setup>
-import { useResumeStore } from '@/stores'
-import { storeToRefs } from 'pinia'
-
-import ResumeEditor from '../resume/index.vue'
 import Main from './main.vue'
 import Mine from './mine.vue'
 
-const resumeStore = useResumeStore()
-const { currentIndex } = storeToRefs(resumeStore)
-onUpdated(() => {
-  currentIndex.value = -1
-})
 const navList = [
   {
     name: '首页',
@@ -32,9 +23,7 @@ const activeValue = computed(() => {
 </script>
 
 <template>
-  <ResumeEditor v-if="currentIndex !== -1" />
   <main
-    v-else
     class="relative flex min-h-screen w-full flex-col bg-[linear-gradient(90deg,rgba(15,37,60,0.42),rgba(15,37,60,0.18)),linear-gradient(118deg,#194f72_0%,#29377e_48%,#435c80_100%)] text-white"
   >
     <header
