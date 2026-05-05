@@ -2,6 +2,7 @@
 import { useRoute } from 'vue-router'
 import Main from './main.vue'
 import Mine from './mine.vue'
+import Template from './template.vue'
 
 const navList = [
   {
@@ -88,6 +89,7 @@ const activeValue = computed(() => {
 
     <div class="flex h-full w-full flex-1! flex-col">
       <Main v-if="activeValue == 'home'" />
+      <Template v-else-if="activeValue == 'template'" />
       <Mine v-else-if="activeValue == 'mine'" />
     </div>
   </main>
