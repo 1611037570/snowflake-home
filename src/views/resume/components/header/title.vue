@@ -25,7 +25,7 @@ function handleEditTitle() {
       @click="handleEditTitle"
     />
   </div>
-  <TitleEditor :default-title="resumeTitle" ref="titleEditorRef" />
+  <TitleEditor :default-title="title" ref="titleEditorRef" />
 </template>
 
 <style lang="scss" scoped></style>
