@@ -1,5 +1,6 @@
 <script setup>
 import { useResumeStore } from '@/stores'
+import dayjs from 'dayjs'
 import { getAllScores, getResumeTitle } from '../resume/utils'
 import { storeToRefs } from 'pinia'
 import { useRouter } from 'vue-router'
@@ -12,6 +13,9 @@ const { maxCount } = resumeStore
 const { proxy } = getCurrentInstance()
 const getResumePosition = (item) => {
   return item?.data?.user?.position || '未填写求职岗位'
+}
+const getLastUseTime = (item) => {
+  return item?.usage?.lastUseTime ? dayjs(item.usage.lastUseTime).format('YYYY-MM-DD HH:mm') : '--'
 }
 const getProgressClass = (progress) => {
   if (progress < 40) return 'bg-sf-error'
@@ -69,6 +73,7 @@ const handleCreate = () => {
           <div class="relative z-1 mb-5 flex items-center justify-between">
             <div class="relative z-1 text-sm font-bold text-sf-text-2">
               {{ getResumePosition(item) }}
+              <div class="mt-1 text-xs">最后使用：{{ getLastUseTime(item) }}</div>
             </div>
             <div class="flex items-center gap-2">
               <span

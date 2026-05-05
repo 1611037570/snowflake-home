@@ -125,6 +125,10 @@ export const useResumeStore = defineStore(
         usage: {
           // 是否自定义标题
           customTitle: '',
+          // 最后使用时间
+          lastUseTime: Date.now(),
+          // 创建时间
+          createTime: Date.now(),
         },
       }
       list.value.push(res)
