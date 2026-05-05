@@ -38,6 +38,12 @@
   // 自动格式化设置
   "editor.formatOnSave": true,
   "editor.defaultFormatter": "esbenp.prettier-vscode",
+  // 自动换行设置
+  "editor.wordWrap": "bounded",
+  // 自动换行列数
+  "editor.wordWrapColumn": 100,
+  // 自动换行缩进
+  "editor.wrappingIndent": "indent",
 
   // 文件类型格式化工具
   "[javascript]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
