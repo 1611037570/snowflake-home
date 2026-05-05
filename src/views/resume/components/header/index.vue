@@ -40,7 +40,7 @@ const handleLayoutClick = (item) => {
   >
     <!-- 左侧占位 -->
     <div class="flex flex-1 items-center gap-6">
-      <SfBack />
+      <SfBack url="/resumeMain" tip="简历首页" />
       <div
         class="flex items-center gap-1.5 rounded-full bg-sf-theme/10 px-3 py-1 text-sf-theme transition-all hover:bg-sf-theme/20"
       >

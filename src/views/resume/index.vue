@@ -1,5 +1,5 @@
 <template>
-  <div class="flex h-full w-full flex-col bg-sf-bg">
+  <div class="flex h-full w-full flex-col bg-sf-bg" v-if="currentIndex != -1">
     <Header />
     <div class="flex w-full flex-1 overflow-hidden" v-if="currentIndex >= 0">
       <Transition name="resume-builder">
@@ -23,7 +23,16 @@ import Header from './components/header/index.vue'
 import Preview from './preview/index.vue'
 
 const resumeStore = useResumeStore()
-const { currentIndex, layout } = storeToRefs(resumeStore)
+const { currentIndex, layout, list } = storeToRefs(resumeStore)
+
+onMounted(() => {
+  if (currentIndex.value !== -1) return
+  if (list.value.length) {
+    currentIndex.value = 0
+    return
+  }
+  resumeStore.addResume()
+})
 </script>
 
 <style scoped>
