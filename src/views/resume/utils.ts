@@ -82,12 +82,62 @@ export function calculateListScore(list: any[]) {
 }
 
 // 用户信息得分
-export const userScore = computed(() => calculateScore(currentData.value?.user || {}))
+const getUserScore = (data: any) => {
+  const user = data?.user || {}
+  return calculateScore(user)
+}
+export const userScore = computed(() => getUserScore(currentData.value))
+
 // 教育经历得分
-export const educationScore = computed(() => calculateListScore(currentData.value?.education || []))
+const getEducationScore = (data: any) => {
+  const list = data?.education || []
+  return calculateListScore(list)
+}
+export const educationScore = computed(() => getEducationScore(currentData.value))
+
 // 技能得分
-export const skillScore = computed(() => (currentData.value?.skill?.trim() ? 10 : 0))
+const getSkillScore = (data: any) => {
+  const skill = data?.skill?.trim() || ''
+  return skill ? 10 : 0
+}
+export const skillScore = computed(() => getSkillScore(currentData.value))
+
 // 工作经历得分
-export const workScore = computed(() => calculateListScore(currentData.value?.work || []))
+const getWorkScore = (data: any) => {
+  const list = data?.work || []
+  return calculateListScore(list)
+}
+export const workScore = computed(() => getWorkScore(currentData.value))
+
 // 项目经历得分
-export const projectScore = computed(() => calculateListScore(currentData.value?.project || []))
+const getProjectScore = (data: any) => {
+  const list = data?.project || []
+  return calculateListScore(list)
+}
+export const projectScore = computed(() => getProjectScore(currentData.value))
+
+// 全部成绩汇总：求和 + 总分进度（5项 每项满分10，总分满分50）
+export const getAllScores = (data: any) => {
+  const user = getUserScore(data)
+  const education = getEducationScore(data)
+  const skill = getSkillScore(data)
+  const work = getWorkScore(data)
+  const project = getProjectScore(data)
+
+  // 5项，每项满分10
+  const totalScore = user + education + skill + work + project
+  const totalFull = 50
+  // 进度百分比 保留2位小数
+  const progress = Number(((totalScore / totalFull) * 100).toFixed(2))
+
+  return {
+    userScore: user,
+    educationScore: education,
+    skillScore: skill,
+    workScore: work,
+    projectScore: project,
+    totalScore,
+    totalFull,
+    progress,
+  }
+}

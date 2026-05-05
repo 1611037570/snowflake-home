@@ -1,6 +1,6 @@
 <script setup>
 import { useResumeStore } from '@/stores'
-import { getResumeTitle } from '../resume/utils'
+import { getAllScores, getResumeTitle } from '../resume/utils'
 import { storeToRefs } from 'pinia'
 import { useRouter } from 'vue-router'
 
@@ -12,6 +12,11 @@ const { maxCount } = resumeStore
 const { proxy } = getCurrentInstance()
 const getResumePosition = (item) => {
   return item?.data?.user?.position || '未填写求职岗位'
+}
+const getProgressClass = (progress) => {
+  if (progress < 40) return 'bg-sf-error'
+  if (progress < 60) return 'bg-sf-warning'
+  return 'bg-sf-theme'
 }
 
 const handleEdit = (index) => {
@@ -82,7 +87,11 @@ const handleCreate = () => {
           </div>
 
           <div class="relative z-1 mt-5 h-1.5 w-full rounded-full bg-sf-bg-2">
-            <div class="h-full w-1/3 rounded-full bg-sf-theme"></div>
+            <div
+              class="h-full rounded-full"
+              :class="getProgressClass(getAllScores(item.data).progress)"
+              :style="{ width: `${getAllScores(item.data).progress}%` }"
+            ></div>
           </div>
         </div>
       </div>
