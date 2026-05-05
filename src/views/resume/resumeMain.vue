@@ -10,10 +10,10 @@ function handleCreate() {
 
 <template>
   <main
-    class="relative min-h-screen overflow-hidden bg-[linear-gradient(90deg,rgba(15,37,60,0.42),rgba(15,37,60,0.18)),linear-gradient(118deg,#194f72_0%,#29377e_48%,#435c80_100%)] text-white before:absolute before:inset-0 before:z-1 before:bg-[rgba(10,28,45,0.46)] before:content-[''] after:absolute after:right-0 after:bottom-0 after:left-0 after:z-1 after:h-[34%] after:bg-[linear-gradient(180deg,transparent,rgba(9,24,40,0.22))] after:content-['']"
+    class="relative flex min-h-screen flex-col overflow-hidden bg-[linear-gradient(90deg,rgba(15,37,60,0.42),rgba(15,37,60,0.18)),linear-gradient(118deg,#194f72_0%,#29377e_48%,#435c80_100%)] text-white before:absolute before:inset-0 before:z-1 before:bg-[rgba(10,28,45,0.46)] before:content-[''] after:absolute after:right-0 after:bottom-0 after:left-0 after:z-1 after:h-[34%] after:bg-[linear-gradient(180deg,transparent,rgba(9,24,40,0.22))] after:content-['']"
   >
     <header
-      class="relative z-5 flex h-16 items-center gap-9 px-[8vw] font-extrabold max-[1180px]:gap-6 max-[1180px]:px-7 max-[900px]:justify-between"
+      class="relative z-5 mx-auto flex h-16 w-full max-w-[1280px] items-center gap-6 font-extrabold"
     >
       <div class="flex shrink-0 items-center gap-2.5 text-[17px] whitespace-nowrap">
         <div class="relative h-[22px] w-[34px]">
@@ -73,41 +73,28 @@ function handleCreate() {
         >
           关于我们
         </button>
-        <button
-          type="button"
-          class="h-[38px] w-[38px] overflow-hidden rounded-full border-2 border-white/75 bg-white p-0"
-        >
-          <img src="@/assets/images/userLogo.png" alt="" class="h-full w-full object-cover" />
-        </button>
       </div>
     </header>
 
-    <section
-      class="relative z-2 flex min-h-[calc(100vh-64px)] items-center justify-center px-6 pt-[70px] pb-32 max-[900px]:px-5 max-[900px]:pt-16 max-[900px]:pb-24"
-    >
-      <div
-        aria-hidden="true"
-        class="pointer-events-none absolute bottom-[-6px] left-[-56px] z-2 h-[660px] w-[390px] opacity-[0.58] max-[900px]:hidden"
-      >
+    <section class="relative flex w-full flex-1 items-center justify-center">
+      <div class="absolute bottom-0 left-0 z-2 h-[600px]">
         <div
-          class="absolute bottom-0 left-[106px] h-[586px] w-[285px] rounded-[0_18px_18px_0] bg-[rgba(47,60,70,0.35)] shadow-[22px_28px_52px_rgba(0,0,0,0.22)]"
+          class="absolute top-15 bottom-2 left-[100px] w-[140px] rounded-[0_18px_18px_0] bg-[rgba(47,60,70,1)] shadow-[22px_28px_52px_rgba(0,0,0,0.22)]"
+        ></div>
+        <div class="absolute top-20 bottom-6 left-20 w-[130px] rounded-xl bg-sf-theme-hover"></div>
+        <div
+          class="absolute bottom-0 left-0 flex h-[550px] w-[180px] items-end justify-center rounded-[0_18px_18px_0] bg-[#75878a] pb-[120px] shadow-[22px_28px_52px_rgba(0,0,0,0.22)]"
         ></div>
         <div
-          class="absolute bottom-0 left-20 h-[592px] w-[285px] rounded-[0_18px_18px_0] bg-[#6b868a] shadow-[22px_28px_52px_rgba(0,0,0,0.22)]"
-        ></div>
-        <div
-          class="absolute bottom-0 left-0 flex h-[610px] w-[285px] items-end justify-center rounded-[0_18px_18px_0] bg-[#75878a] pb-[120px] shadow-[22px_28px_52px_rgba(0,0,0,0.22)]"
+          class="absolute right-0 bottom-[150px] left-0 z-1 flex h-[78px] w-[210px] items-center justify-end bg-[linear-gradient(90deg,#24324b,#00c5b8)] p-3 text-[34px] font-black"
         >
-          <div
-            class="absolute right-0 bottom-[150px] left-0 h-[78px] bg-[linear-gradient(90deg,#24324b,#00c5b8)]"
-          ></div>
-          <span class="relative z-1 text-[34px] font-black">RESUME</span>
+          RESUME
         </div>
       </div>
 
       <div
         aria-hidden="true"
-        class="pointer-events-none absolute top-[14%] left-1/2 z-2 h-[min(650px,47vw)] w-[min(800px,55vw)] -translate-x-[36%] opacity-[0.58] max-[900px]:top-[19%] max-[900px]:h-[520px] max-[900px]:w-[650px] max-[900px]:-translate-x-1/2"
+        class="pointer-events-none absolute top-[14%] left-1/2 z-2 h-[min(650px,47vw)] -translate-x-[36%] opacity-[0.58] max-[900px]:top-[19%] max-[900px]:h-[520px] max-[900px]:w-[650px] max-[900px]:-translate-x-1/2"
       >
         <div
           class="absolute inset-[118px_24px_0_34px] rounded-[34px_34px_8px_8px] bg-[#c2c966] shadow-[0_30px_80px_rgba(0,0,0,0.2)]"
@@ -153,7 +140,7 @@ function handleCreate() {
         <div
           class="absolute right-[-142px] bottom-[126px] z-4 w-[370px] rotate-[-12deg] bg-[#1886a3] px-[30px] py-4 text-[34px] font-black"
         >
-          BOSS ZHIPIN
+          JIANLI TOUDI
         </div>
         <div
           class="absolute top-[218px] right-[-64px] h-24 w-[22px] rotate-[42deg] rounded-full bg-[#008bb2]"
