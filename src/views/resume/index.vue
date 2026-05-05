@@ -10,10 +10,8 @@ const { currentIndex } = storeToRefs(resumeStore)
 </script>
 
 <template>
-  <div>
-    <ResumeEditor v-if="currentIndex" />
-    <ResumeMain v-else />
-  </div>
+  <ResumeEditor v-if="currentIndex !== -1" />
+  <ResumeMain v-else />
 </template>
 
 <style lang="scss" scoped></style>
