@@ -1,4 +1,5 @@
 <script setup>
+import { useRoute } from 'vue-router'
 import Main from './main.vue'
 import Mine from './mine.vue'
 
@@ -16,7 +17,21 @@ const navList = [
     value: 'mine',
   },
 ]
+const route = useRoute()
 const activeNavIndex = ref(0)
+watch(
+  () => route.fullPath,
+  () => {
+    const type = route.query.type
+    const value = Array.isArray(type) ? type[0] : type
+    const index = navList.findIndex((item) => item.value === value)
+
+    if (index !== -1) {
+      activeNavIndex.value = index
+    }
+  },
+  { immediate: true },
+)
 const activeValue = computed(() => {
   return navList[activeNavIndex.value].value
 })

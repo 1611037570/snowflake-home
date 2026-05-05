@@ -98,7 +98,7 @@ export const useResumeStore = defineStore(
     const addResume = () => {
       if (list.value.length >= maxCount) {
         confirm(`请前往我的简历管理删除后再新建。`, '容量已满').then(() => {
-          router.push('/resumeMain?type=mine')
+          router.push(`/resumeMain?type=mine&t=${Date.now()}`)
         })
         return
       }
