@@ -10,7 +10,7 @@ function handleCreate() {
 
 <template>
   <main
-    class="relative flex min-h-screen flex-col overflow-hidden bg-[linear-gradient(90deg,rgba(15,37,60,0.42),rgba(15,37,60,0.18)),linear-gradient(118deg,#194f72_0%,#29377e_48%,#435c80_100%)] text-white before:absolute before:inset-0 before:z-1 before:bg-[rgba(10,28,45,0.46)] before:content-[''] after:absolute after:right-0 after:bottom-0 after:left-0 after:z-1 after:h-[34%] after:bg-[linear-gradient(180deg,transparent,rgba(9,24,40,0.22))] after:content-['']"
+    class="relative flex min-h-screen w-full flex-col bg-[linear-gradient(90deg,rgba(15,37,60,0.42),rgba(15,37,60,0.18)),linear-gradient(118deg,#194f72_0%,#29377e_48%,#435c80_100%)] text-white before:absolute before:inset-0 before:z-1 before:bg-[rgba(10,28,45,0.46)]"
   >
     <header
       class="relative z-5 mx-auto flex h-16 w-full max-w-[1280px] items-center gap-6 font-extrabold"
@@ -94,19 +94,17 @@ function handleCreate() {
 
       <div
         aria-hidden="true"
-        class="pointer-events-none absolute top-[14%] left-1/2 z-2 h-[min(650px,47vw)] -translate-x-[36%] opacity-[0.58] max-[900px]:top-[19%] max-[900px]:h-[520px] max-[900px]:w-[650px] max-[900px]:-translate-x-1/2"
+        class="absolute top-1/2 left-1/2 z-2 h-[526px] w-[736px] -translate-x-1/2 -translate-y-1/2 transform opacity-[0.58]"
       >
         <div
-          class="absolute inset-[118px_24px_0_34px] rounded-[34px_34px_8px_8px] bg-[#c2c966] shadow-[0_30px_80px_rgba(0,0,0,0.2)]"
+          class="relative h-full w-full rounded-[34px_34px_8px_8px] bg-[#c2c966] shadow-[0_30px_80px_rgba(0,0,0,0.2)]"
         >
-          <div
-            class="absolute top-0 right-0 left-0 h-[56%] rounded-[34px_34px_0_0] bg-[#b6bf60] [clip-path:polygon(0_0,50%_72%,100%_0,100%_100%,0_100%)]"
-          ></div>
           <div
             class="absolute top-[182px] left-[124px] h-[146px] w-[270px] rounded-2xl bg-[#00a9a4]"
           ></div>
+          <!--  -->
           <div
-            class="absolute right-0 bottom-0 left-0 h-[56%] bg-[rgba(222,226,129,0.75)] [clip-path:polygon(0_0,50%_58%,100%_0,100%_100%,0_100%)]"
+            class="absolute right-0 bottom-0 left-0 h-[80%] bg-[rgba(222,226,129,1)] [clip-path:polygon(0_0,50%_58%,100%_0,100%_100%,0_100%)]"
           ></div>
         </div>
 
@@ -132,7 +130,7 @@ function handleCreate() {
         </div>
 
         <div
-          class="absolute top-[116px] left-[305px] z-3 flex h-[92px] w-[360px] rotate-[-5deg] items-center gap-[18px] rounded-[18px] bg-[#e9ecef] px-7 text-[38px] font-black text-[#4d5968]"
+          class="absolute top-[16px] right-[205px] z-3 flex h-[92px] w-[360px] rotate-[-5deg] items-center gap-[18px] rounded-[18px] bg-[#e9ecef] px-7 text-[38px] font-black text-[#4d5968]"
         >
           <span>MESSAGE</span>
           <SfIcon icon="lucide:check" size="7" class="text-[#119aa5]" />
@@ -150,32 +148,19 @@ function handleCreate() {
         ></div>
       </div>
 
-      <div class="relative z-4 flex w-[min(1080px,100%)] flex-col items-center text-center">
-        <h1
-          class="m-0 flex flex-col gap-[clamp(22px,2.7vw,34px)] text-[clamp(64px,7.2vw,128px)] leading-[0.92] font-black max-[900px]:text-[clamp(48px,13vw,72px)]"
-        >
-          <span class="text-white drop-shadow-[0_10px_28px_rgba(0,0,0,0.22)]">找工作</span>
-          <strong
-            class="bg-[linear-gradient(90deg,#ffe5f0_0%,#fff7b7_47%,#dfff63_100%)] bg-clip-text text-transparent not-italic"
-          >
-            从一份好简历开始
-          </strong>
-        </h1>
-        <p
-          class="mt-11 text-[clamp(17px,1.25vw,23px)] font-extrabold text-white/86 max-[900px]:mt-[30px]"
-        >
-          打动HR的专业简历，抓住每一个高薪机会
-        </p>
+      <div class="relative z-4 flex flex-col items-center gap-2 text-[78px] font-black">
+        <div class="text-white drop-shadow-[0_10px_28px_rgba(0,0,0,0.22)]">找工作</div>
         <div
-          class="mt-[68px] flex items-center gap-8 max-[900px]:mt-11 max-[900px]:flex-col max-[900px]:gap-[18px]"
+          class="bg-[linear-gradient(90deg,#ffe5f0_0%,#fff7b7_47%,#dfff63_100%)] bg-clip-text text-transparent not-italic"
         >
-          <button
-            type="button"
-            class="h-[68px] min-w-[168px] cursor-pointer rounded-full border-0 bg-[linear-gradient(90deg,#bdff62,#27dccb)] px-[34px] text-[22px] font-black text-[#081716] shadow-[0_18px_42px_rgba(50,219,185,0.22)] transition-[transform,box-shadow] duration-200 hover:-translate-y-0.5 max-[900px]:w-[188px]"
-            @click="handleCreate"
-          >
-            立即制作
-          </button>
+          从一份好简历开始
+        </div>
+        <div class="text-xl font-extrabold text-white/86">打动HR的专业简历，抓住每一个高薪机会</div>
+        <div
+          class="flex h-[58px] w-[168px] cursor-pointer items-center justify-center rounded-full border-0 bg-[linear-gradient(90deg,#bdff62,#27dccb)] text-[22px] font-black text-[#081716] shadow-[0_18px_42px_rgba(50,219,185,0.22)] transition-all duration-200 hover:-translate-y-0.5 max-[900px]:w-[188px]"
+          @click="handleCreate"
+        >
+          立即制作
         </div>
       </div>
     </section>
