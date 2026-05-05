@@ -12,7 +12,7 @@ export function getAllBaseComponent() {
   const baseComponent: any = import.meta.glob('./base/*/index.ts', { eager: true })
   const list = Object.entries(baseComponent)
   const components: any = {}
-  list.forEach(([path, fn]) => {
+  list.forEach(([path, fn]: any) => {
     const name: any = path.replace('./', '').split('/')[1]
     components[name] = {
       component: fn.default,
@@ -30,7 +30,7 @@ export const getAllBusinessComponent = () => {
   const businessComponent = import.meta.glob('./business/*/index.ts', { eager: false })
   const components: any = {}
   const list = Object.entries(businessComponent)
-  list.forEach(([path, fn]) => {
+  list.forEach(([path, fn]: any) => {
     const name: any = path.replace('./', '').split('/')[1]
     components[name] = {
       component: defineAsyncComponent(fn),
@@ -48,7 +48,7 @@ export const getAllElComponent = () => {
   const elComponent = import.meta.glob('./el/*/index.ts', { eager: false })
   const components: any = {}
   const list = Object.entries(elComponent)
-  list.forEach(([path, fn]) => {
+  list.forEach(([path, fn]: any) => {
     const name: any = path.replace('./', '').split('/')[1]
     components[name] = {
       component: defineAsyncComponent(fn),
@@ -80,7 +80,8 @@ export const getAllComponent = () => {
 export const globalComponentInstaller = {
   install(app: App) {
     const { components }: any = getAllBaseComponent()
-    for (const { name, component } of Object.values(components)) {
+    const componentList: any = Object.values(components)
+    for (const { name, component } of componentList) {
       const componentName = 'Sf' + name.charAt(0).toUpperCase() + name.slice(1)
       app.component(componentName, component)
     }
