@@ -1,3 +1,5 @@
+import confirm from '@/components/business/confirm'
+import router from '@/routers'
 import { getUUID } from '@/utils'
 import { defineStore } from 'pinia'
 import { computed, ref } from 'vue'
@@ -11,7 +13,6 @@ import {
   defaultLineHeight,
   defaultPadding,
 } from './uiConfig'
-
 export interface ResumeItem {
   data: Data
   config: any
@@ -36,6 +37,8 @@ export const useResumeStore = defineStore(
     const selectedModuleKeys = ref<Set<string>>(new Set())
     // 简历列表
     const list = ref<any[]>([])
+    // 最大简历数量
+    const maxCount = 5
     // 当前选中的简历下标
     const currentIndex = ref(-1)
     const layout = ref<ResumeLayout>('three')
@@ -93,6 +96,12 @@ export const useResumeStore = defineStore(
 
     // 新增简历
     const addResume = () => {
+      if (list.value.length >= maxCount) {
+        confirm(`请前往我的简历管理删除后再新建。`, '容量已满').then(() => {
+          router.push('/resumeMain?type=mine')
+        })
+        return
+      }
       const res = {
         // 简历ID
         id: getUUID(),
@@ -113,6 +122,7 @@ export const useResumeStore = defineStore(
       }
       list.value.push(res)
       currentIndex.value = list.value.length - 1
+      router.push('/resume')
     }
     // 删除简历
     const deleteResume = () => {
@@ -132,6 +142,7 @@ export const useResumeStore = defineStore(
     return {
       indexVisible,
       list,
+      maxCount,
       currentIndex,
       layout,
       currentData,
