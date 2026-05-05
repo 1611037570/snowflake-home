@@ -32,20 +32,25 @@ export const getTime = (time: any) => {
   if (time.length === 1) return time[0]
   return `${time[0]} - ${time[1]}`
 }
-
-/**
- * 生成简历标题
- * @returns 简历标题字符串
- */
-export const resumeTitle = computed(() => {
+export function getResumeTitle(data: any) {
   const defaultName = '未命名简历'
-  const data = currentData.value
-  if (!data) return defaultName
+  if (!data) {
+    console.log('22222222:>> ', 22222222)
+    return defaultName
+  }
   const { user, education } = data
   const name = user?.name || ''
   const edu = education?.[0]?.education || ''
   const position = user?.position || ''
   return [name, edu, position, workYears.value].filter(Boolean).join('-') || defaultName
+}
+/**
+ * 生成简历标题
+ * @returns 简历标题字符串
+ */
+export const resumeTitle = computed(() => {
+  const data = currentData.value
+  return getResumeTitle(data)
 })
 
 // 计算单个对象得分

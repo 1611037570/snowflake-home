@@ -93,7 +93,10 @@ export const useResumeStore = defineStore(
         }
       },
     })
-
+    const currentUsage = computed(() => {
+      const item = getCurrentResumeItem()
+      return item ? item.usage : undefined
+    })
     // 新增简历
     const addResume = () => {
       if (list.value.length >= maxCount) {
@@ -118,6 +121,10 @@ export const useResumeStore = defineStore(
           lineHeight: defaultLineHeight,
           color: defaultColor,
           fontFamily: defaultFontFamily,
+        },
+        usage: {
+          // 是否自定义标题
+          customTitle: '',
         },
       }
       list.value.push(res)
@@ -149,6 +156,7 @@ export const useResumeStore = defineStore(
       currentConfig,
       currentFixedConfig,
       currentUI,
+      currentUsage,
       isPrinting,
       selectedModuleKeys,
       addResume,
