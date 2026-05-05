@@ -17,25 +17,13 @@
 <script setup>
 import { useResumeStore } from '@/stores'
 import { storeToRefs } from 'pinia'
-import { onMounted } from 'vue'
 import Assistant from './assistant/index.vue'
 import Builder from './builder/index.vue'
 import Header from './components/header/index.vue'
 import Preview from './preview/index.vue'
 
 const resumeStore = useResumeStore()
-const { list, currentIndex, layout } = storeToRefs(resumeStore)
-
-function init() {
-  if (!list.value.length) {
-    resumeStore.addResume()
-  }
-  currentIndex.value = 0
-}
-
-onMounted(() => {
-  init()
-})
+const { currentIndex, layout } = storeToRefs(resumeStore)
 </script>
 
 <style scoped>

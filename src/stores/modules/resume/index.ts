@@ -1,3 +1,4 @@
+import { getUUID } from '@/utils'
 import { defineStore } from 'pinia'
 import { computed, ref } from 'vue'
 import { DEFAULT_DATA } from './dataConfig'
@@ -94,7 +95,7 @@ export const useResumeStore = defineStore(
     const addResume = () => {
       const res = {
         // 简历ID
-        id: '',
+        id: getUUID(),
         // 简历数据
         data: structuredClone(DEFAULT_DATA),
         // 固定配置
