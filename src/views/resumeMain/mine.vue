@@ -11,6 +11,9 @@ const resumeStore = useResumeStore()
 const { list, currentIndex } = storeToRefs(resumeStore)
 const { maxCount } = resumeStore
 const { proxy } = getCurrentInstance()
+const sortedList = computed(() => {
+  return [...list.value].sort((a, b) => (b?.usage?.lastUseTime || 0) - (a?.usage?.lastUseTime || 0))
+})
 const getResumePosition = (item) => {
   return item?.data?.user?.position || '未填写求职岗位'
 }
@@ -57,9 +60,9 @@ const handleCreate = () => {
       </button>
     </div>
 
-    <div v-if="list.length" class="grid grid-cols-3 gap-6 max-[900px]:grid-cols-1">
+    <div v-if="sortedList.length" class="grid grid-cols-3 gap-6 max-[900px]:grid-cols-1">
       <div
-        v-for="(item, index) in list"
+        v-for="(item, index) in sortedList"
         :key="item.id || index"
         class="group relative flex cursor-pointer flex-col overflow-hidden rounded-lg border border-sf-border bg-sf-primary/96 text-left text-sf-text shadow-[0_24px_54px_rgba(0,0,0,0.2)] transition-all duration-200 hover:-translate-y-1 hover:border-sf-theme hover:shadow-[0_30px_70px_rgba(0,0,0,0.26)]"
         @click="handleEdit(index)"
