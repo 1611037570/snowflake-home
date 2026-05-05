@@ -1,6 +1,9 @@
 <script setup>
 import { useResumeStore } from '@/stores'
 import { storeToRefs } from 'pinia'
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
 
 const resumeStore = useResumeStore()
 const { list, currentIndex } = storeToRefs(resumeStore)
@@ -17,6 +20,7 @@ const getResumePosition = (item) => {
 
 const handleEdit = (index) => {
   currentIndex.value = index
+  router.push(`/resume`)
 }
 
 const handleDelete = (index) => {

@@ -51,7 +51,7 @@ const activeValue = computed(() => {
           :class="
             index === activeNavIndex
               ? `relative text-sf-theme after:absolute after:right-0 after:bottom-[-10px] after:left-0 after:h-[5px] after:rounded-full after:bg-sf-theme after:content-['']`
-              : 'text-sf-text'
+              : ' text-white'
           "
         >
           {{ item.name }}
