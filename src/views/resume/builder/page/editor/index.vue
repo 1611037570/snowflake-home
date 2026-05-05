@@ -2,7 +2,6 @@
 import { useResumeStore } from '@/stores'
 import { storeToRefs } from 'pinia'
 import Account from './components/account.vue'
-import ResumeActions from './components/actions.vue'
 import AddModule from './components/addModule.vue'
 import BoxCollapse from './components/boxCollapse.vue'
 import Custom from './components/custom.vue'
@@ -28,8 +27,6 @@ const dynamicComponents = {
 
 <template>
   <div class="relative flex h-full flex-col overflow-hidden">
-    <ResumeActions />
-
     <SfDynamicForm
       v-model:form="currentFixedConfig"
       v-model:data="currentData"
