@@ -1,5 +1,6 @@
 <script setup>
 import { useResumeStore } from '@/stores'
+import { getResumeTitle } from '../resume/utils'
 import { storeToRefs } from 'pinia'
 import { useRouter } from 'vue-router'
 
@@ -9,11 +10,6 @@ const resumeStore = useResumeStore()
 const { list, currentIndex } = storeToRefs(resumeStore)
 const { maxCount } = resumeStore
 const { proxy } = getCurrentInstance()
-
-const getResumeTitle = (item, index) => {
-  return item?.data?.user?.name || `我的简历 ${index + 1}`
-}
-
 const getResumePosition = (item) => {
   return item?.data?.user?.position || '未填写求职岗位'
 }
@@ -40,25 +36,15 @@ const handleCreate = () => {
 
 <template>
   <div class="relative z-4 mx-auto flex w-full max-w-[1120px] flex-col gap-8 px-8 py-10">
-    <div
-      class="flex items-end justify-between rounded-lg border border-sf-border bg-sf-primary/90 p-6 text-sf-text shadow-[0_24px_60px_rgba(0,0,0,0.18)] backdrop-blur-md"
-    >
-      <div>
-        <h2 class="text-[34px] font-black text-sf-text drop-shadow-[0_8px_22px_rgba(0,0,0,0.2)]">
-          我的简历
-        </h2>
-        <p class="mt-2 text-sm font-bold text-sf-text-2">
-          已创建 {{ list.length }} / {{ maxCount }}
-        </p>
-      </div>
+    <div class="flex items-center justify-between">
+      <h2 class="text-[20px] font-black text-sf-theme">简历草稿</h2>
       <button
         type="button"
-        class="flex h-11 items-center gap-2 rounded-full border border-sf-theme bg-sf-theme px-6 text-sm font-black text-sf-theme-text shadow-lg shadow-sf-theme/25 transition-all duration-200 hover:-translate-y-0.5 hover:bg-sf-theme-hover disabled:cursor-not-allowed disabled:opacity-45"
+        class="flex h-11 items-center gap-2 rounded-full border border-sf-theme bg-sf-theme px-10 text-sm font-black text-sf-theme-text shadow-lg shadow-sf-theme/25 transition-all duration-200 hover:-translate-y-0.5 hover:bg-sf-theme-hover disabled:cursor-not-allowed disabled:opacity-45"
         :disabled="list.length >= maxCount"
         @click="handleCreate"
       >
-        <SfIcon icon="lucide:plus" size="4" />
-        新建简历
+        新建简历（{{ list.length }}/{{ maxCount }}）
       </button>
     </div>
 
@@ -66,41 +52,38 @@ const handleCreate = () => {
       <div
         v-for="(item, index) in list"
         :key="item.id || index"
-        class="group relative flex h-[230px] cursor-pointer flex-col overflow-hidden rounded-lg border border-sf-border bg-sf-primary/96 p-5 text-left text-sf-text shadow-[0_24px_54px_rgba(0,0,0,0.2)] transition-all duration-200 hover:-translate-y-1 hover:border-sf-theme hover:shadow-[0_30px_70px_rgba(0,0,0,0.26)]"
+        class="group relative flex cursor-pointer flex-col overflow-hidden rounded-lg border border-sf-border bg-sf-primary/96 text-left text-sf-text shadow-[0_24px_54px_rgba(0,0,0,0.2)] transition-all duration-200 hover:-translate-y-1 hover:border-sf-theme hover:shadow-[0_30px_70px_rgba(0,0,0,0.26)]"
         @click="handleEdit(index)"
       >
-        <div class="absolute top-0 right-0 h-24 w-24 rounded-bl-[60px] bg-sf-theme/10"></div>
-        <div class="relative z-1 mb-5 flex items-center justify-between">
-          <span class="rounded-full bg-sf-theme/10 px-3 py-1 text-xs font-black text-sf-theme">
-            简历
-          </span>
-          <div class="flex items-center gap-2">
-            <span
-              class="flex h-8 w-8 items-center justify-center rounded-full bg-sf-theme/10 text-sf-theme"
-            >
-              <SfIcon icon="lucide:edit-3" size="4" />
-            </span>
-            <button
-              type="button"
-              class="flex h-8 w-8 items-center justify-center rounded-full bg-sf-error/10 text-sf-error transition-colors duration-200 hover:bg-sf-error/20"
-              @click.stop="handleDelete(index)"
-            >
-              <SfIcon icon="lucide:trash-2" size="4" />
-            </button>
-          </div>
-        </div>
-        <div class="relative z-1 text-2xl font-black">{{ getResumeTitle(item, index) }}</div>
-        <div class="relative z-1 mt-2 text-sm font-bold text-sf-text-2">
-          {{ getResumePosition(item) }}
-        </div>
-        <div class="relative z-1 mt-5 h-1.5 w-full rounded-full bg-sf-bg-2">
-          <div class="h-full w-1/3 rounded-full bg-sf-theme"></div>
-        </div>
         <div
-          class="relative z-1 mt-auto flex items-center justify-between text-sm font-black text-sf-theme"
+          class="mr-5 flex h-20 items-center rounded-br-[60px] bg-sf-theme/10 p-5 text-base font-black"
         >
-          <span>继续编辑</span>
-          <SfIcon icon="lucide:arrow-right" size="5" />
+          {{ getResumeTitle(item.data) }}
+        </div>
+        <div class="p-5">
+          <div class="relative z-1 mb-5 flex items-center justify-between">
+            <div class="relative z-1 text-sm font-bold text-sf-text-2">
+              {{ getResumePosition(item) }}
+            </div>
+            <div class="flex items-center gap-2">
+              <span
+                class="flex h-8 w-8 items-center justify-center rounded-full bg-sf-theme/10 text-sf-theme"
+              >
+                <SfIcon icon="lucide:edit-3" size="4" />
+              </span>
+              <button
+                type="button"
+                class="flex h-8 w-8 items-center justify-center rounded-full bg-sf-error/10 text-sf-error transition-colors duration-200 hover:bg-sf-error/20"
+                @click.stop="handleDelete(index)"
+              >
+                <SfIcon icon="lucide:trash-2" size="4" />
+              </button>
+            </div>
+          </div>
+
+          <div class="relative z-1 mt-5 h-1.5 w-full rounded-full bg-sf-bg-2">
+            <div class="h-full w-1/3 rounded-full bg-sf-theme"></div>
+          </div>
         </div>
       </div>
     </div>

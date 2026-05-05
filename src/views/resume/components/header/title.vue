@@ -1,9 +1,15 @@
 <script setup>
-import { ref } from 'vue'
+import { useResumeStore } from '@/stores'
+import { storeToRefs } from 'pinia'
+import { computed, ref } from 'vue'
 import { resumeTitle } from '../../utils'
 import TitleEditor from './titleEditor.vue'
 // 标题编辑器引用
 const titleEditorRef = ref(null)
+const resumeStore = useResumeStore()
+const { currentUsage } = storeToRefs(resumeStore)
+
+const title = computed(() => currentUsage.value?.customTitle || resumeTitle.value)
 function handleEditTitle() {
   titleEditorRef.value?.openModal()
 }
@@ -11,7 +17,7 @@ function handleEditTitle() {
 
 <template>
   <div class="flex items-center">
-    {{ resumeTitle }}
+    {{ title }}
     <SfIcon
       icon="lucide:pencil"
       class="ml-2 hover:text-sf-theme-hover"
@@ -19,7 +25,7 @@ function handleEditTitle() {
       @click="handleEditTitle"
     />
   </div>
-  <TitleEditor v-model="title" ref="titleEditorRef" />
+  <TitleEditor :default-title="resumeTitle" ref="titleEditorRef" />
 </template>
 
 <style lang="scss" scoped></style>
