@@ -1,9 +1,9 @@
 <script setup>
 import { useResumeStore } from '@/stores'
 import dayjs from 'dayjs'
-import { getAllScores, getResumeTitle } from '../resume/utils'
 import { storeToRefs } from 'pinia'
 import { useRouter } from 'vue-router'
+import { getAllScores, getResumeTitle } from '../resume/utils'
 
 const router = useRouter()
 
@@ -47,7 +47,7 @@ const handleCreate = () => {
 </script>
 
 <template>
-  <div class="relative z-4 mx-auto flex w-full max-w-[1120px] flex-col gap-8 px-8 py-10">
+  <div class="relative z-4 mx-auto flex w-[1120px] flex-col gap-8">
     <div class="flex items-center justify-between">
       <h2 class="text-[20px] font-black text-sf-theme">简历草稿</h2>
       <button
