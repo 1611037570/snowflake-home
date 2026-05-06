@@ -12,6 +12,7 @@
     >
       <template v-for="(i, index) in list" :key="i.name">
         <div class="menu-item">
+          <div class="menu-item-name">{{ i.name }}</div>
           <Component
             v-if="i.component"
             :is="i.component"
@@ -135,10 +136,24 @@ const handleMouseLeave = () => {
 
 <style scoped>
 .menu-item {
+  position: relative;
   min-width: calc(var(--base-i) * 40px);
   min-height: calc(var(--base-i) * 40px);
   margin-bottom: calc(var(--base-i) * 15px - 15px);
   backface-visibility: hidden;
+}
+
+.menu-item-name {
+  position: absolute;
+  bottom: calc(100% + 10px);
+  left: 50%;
+  display: none;
+  white-space: nowrap;
+  transform: translateX(-50%);
+}
+
+.menu-item:hover .menu-item-name {
+  display: block;
 }
 
 .gap {
