@@ -3,13 +3,21 @@
  * 包含项目的基础设施
  */
 
-export const BASE_ROUTES = ['messageBoard', 'icon', 'color', 'components', 'data', 'index']
+export const BASE_ROUTES = [
+  { name: 'messageBoard' },
+  { name: 'icon' },
+  { name: 'color' },
+  { name: 'components' },
+  { name: 'data' },
+  { name: 'index' },
+]
 /**
  * 项目路由列表
  * 包含企业级应用项目路由
  */
 
 import ResumeLogo from '@/views/resumeMain/logo.vue'
+import ImageLogo from '@/views/image/logo.vue'
 import HomeIcon from '../../assets/images/snow.svg'
 export const PROJECT_ROUTES = [
   {
@@ -24,7 +32,8 @@ export const PROJECT_ROUTES = [
   },
   {
     name: 'image',
-    icon: '',
+    icon: ImageLogo,
+    iconType: 'component',
   },
   {
     name: 'resume',
@@ -37,15 +46,15 @@ export const PROJECT_ROUTES = [
  * 包含简单小游戏和实用工具路由
  */
 export const MUSE_ROUTES = [
-  '2048',
-  'sort',
-  'checklist',
-  'note',
-  'passwordBox',
-  'reborn',
-  'time',
-  'ai',
-  'test',
+  { name: '2048' },
+  { name: 'sort' },
+  { name: 'checklist' },
+  { name: 'note' },
+  { name: 'passwordBox' },
+  { name: 'reborn' },
+  { name: 'time' },
+  { name: 'ai' },
+  { name: 'test' },
 ]
 /**
  * 基础与项目路由组合列表
