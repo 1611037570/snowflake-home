@@ -3,8 +3,8 @@ import snowIcon from '@/assets/images/snow.svg'
 
 defineProps({
   size: {
-    type: String,
-    default: '7.5',
+    type: Number,
+    default: 7.5,
   },
 })
 </script>

@@ -3,12 +3,12 @@ import { computed } from 'vue'
 
 const props = defineProps({
   size: {
-    type: Number,
+    type: Number || String,
     default: 7.5,
   },
 })
 
-const logoSize = computed(() => props.size * 4)
+const logoSize = computed(() => Number(props.size) * 4)
 
 const logoStyle = computed(() => ({
   width: `${logoSize.value}px`,

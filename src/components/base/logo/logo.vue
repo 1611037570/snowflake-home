@@ -1,7 +1,7 @@
 <script setup>
 defineProps({
   size: {
-    type: String,
+    type: String || Number,
     default: '7.5',
   },
   name: {
@@ -18,7 +18,7 @@ const map = {
 </script>
 
 <template>
-  <Component :is="map[name]" :size="size" />
+  <Component :is="map[name]" :size="Number(size)" />
 </template>
 
 <style lang="scss" scoped></style>

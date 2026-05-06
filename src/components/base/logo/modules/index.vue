@@ -3,8 +3,8 @@ import nnLogo from '@/assets/images/userLogo.png'
 
 defineProps({
   size: {
-    type: String,
-    default: '7.5',
+    type: Number || String,
+    default: 7.5,
   },
 })
 </script>
