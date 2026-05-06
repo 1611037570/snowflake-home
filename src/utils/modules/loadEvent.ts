@@ -1,13 +1,10 @@
-import { THEME_COLOR, THEME_COLOR_HOVER } from '@/constants'
 import { useSystemStore } from '@/stores/modules/system'
 // 组合键监听
-import { useCssVar, useMagicKeys } from '@vueuse/core'
+import { useMagicKeys } from '@vueuse/core'
 import { getBrowser } from './base'
 
 // 加载默认事件
 function loadEvent() {
-  // 加载默认主题色
-  loadDefaultTheme()
   // 初始化窗口大小
   updateWindowSize()
   // 禁用默认右键菜单
@@ -46,11 +43,5 @@ function watchKey() {
     monitorWatch.value = !monitorWatch.value
   })
 }
-// 加载默认主题色
-function loadDefaultTheme() {
-  const theme = useCssVar('--sf-theme')
-  theme.value = THEME_COLOR
-  const themeHover = useCssVar('--sf-theme-hover')
-  themeHover.value = THEME_COLOR_HOVER
-}
+
 export { loadEvent }

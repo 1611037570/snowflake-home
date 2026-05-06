@@ -7,6 +7,11 @@ const list = [
     type: 'system',
   },
   {
+    name: '关于',
+    component: defineAsyncComponent(() => import('./components/about.vue')),
+    type: 'system',
+  },
+  {
     name: '图片处理',
     component: defineAsyncComponent(() => import('./components/image.vue')),
     type: 'system',
@@ -21,11 +26,7 @@ const list = [
     component: defineAsyncComponent(() => import('./components/sendResume.vue')),
     type: 'system',
   },
-  {
-    name: '关于',
-    component: defineAsyncComponent(() => import('./components/about.vue')),
-    type: 'system',
-  },
+
   {
     name: '设置',
     component: defineAsyncComponent(() => import('./components/setting.vue')),
