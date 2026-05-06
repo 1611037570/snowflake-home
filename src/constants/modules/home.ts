@@ -1,3 +1,7 @@
+/**
+ * 首页快捷方式列表
+ */
+
 // 从types目录导入ShortcutItem接口
 import type { ShortcutItem } from '@/types/shortcut'
 

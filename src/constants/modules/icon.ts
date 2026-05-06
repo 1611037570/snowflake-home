@@ -1,3 +1,8 @@
+/**
+ * 图标列表
+ * 记录项目所有图标的信息，包括图标名称、颜色和名称
+ */
+
 interface IconItem {
   icon: string
   color?: string
