@@ -273,7 +273,7 @@ onUnmounted(() => {
     <div
       v-for="(pageSlices, pageIndex) in pages"
       :key="pageIndex"
-      class="resume-page-item mb-3 flex flex-col rounded-xl bg-white text-black shadow-lg"
+      class="resume-page-item mt-3 mb-3 flex flex-col rounded-xl bg-white text-black shadow-lg"
       :class="[currentUI.fontFamily, `page-${pageIndex}`]"
       :style="[
         paddingValue(),
