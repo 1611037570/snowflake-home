@@ -81,13 +81,17 @@ export function useRowInfo(
   }
 
   const handleRowInfo = () => {
-    if (!rootRef.value) {
+    const root = (
+      rootRef.value instanceof HTMLElement ? rootRef.value : (rootRef.value as any)?.$el
+    ) as HTMLElement | null
+
+    if (!root) {
       moduleList.value = []
       totalHeight.value = 0
       return
     }
 
-    const wrappers = rootRef.value.querySelectorAll(selector)
+    const wrappers = root.querySelectorAll(selector)
     const modules: ModuleInfo[] = []
     let sumHeight = 0
 
