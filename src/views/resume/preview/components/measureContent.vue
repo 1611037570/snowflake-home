@@ -14,12 +14,14 @@ defineProps({
 </script>
 
 <template>
-  <ResumeModule
-    :data="currentData"
-    :name="item.key"
-    v-for="(item, index) in allModules"
-    :key="index"
-    :data-module="item.key"
-    class="resume-module-wrapper"
-  />
+  <div class="flex flex-col">
+    <ResumeModule
+      :data="currentData"
+      :name="item.key"
+      v-for="(item, index) in allModules"
+      :key="index"
+      :data-module="item.key"
+      class="resume-module-wrapper"
+    />
+  </div>
 </template>
