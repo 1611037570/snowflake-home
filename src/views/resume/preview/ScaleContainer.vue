@@ -5,7 +5,6 @@ import { computed, ref } from 'vue'
 defineOptions({ name: 'ScaleContainer' })
 
 const containerRef = ref(null)
-const autoScale = ref(1)
 const manualScale = ref(1)
 const maxScale = ref(1)
 const scaleMode = ref('auto')
@@ -16,21 +15,21 @@ const PADDING = 40
 const MIN_SCALE = 0.5
 const SCALE_LIST = [0.5, 0.7, 0.9, 1]
 
-const scale = computed(() => (scaleMode.value === 'auto' ? autoScale.value : manualScale.value))
+const percent = (value) => `${Math.round(value * 100)}%`
+const close = () => (isOpen.value = false)
+const scale = computed(() => (scaleMode.value === 'auto' ? maxScale.value : manualScale.value))
 const transitionScale = useTransition(scale, {
   duration: 200,
   transition: TransitionPresets.easeOutCubic,
 })
-const scaleText = computed(() => `${Math.round(transitionScale.value * 100)}%`)
+const scaleText = computed(() => percent(transitionScale.value))
 const scaleLabel = computed(() => (scaleMode.value === 'auto' ? '适合屏幕' : scaleText.value))
 const minScale = computed(() => Math.min(MIN_SCALE, maxScale.value))
 const isMinScale = computed(() => scale.value <= minScale.value)
 const isMaxScale = computed(() => scale.value >= maxScale.value)
 
 const isManualScaleSelected = (value) => {
-  return (
-    scaleMode.value === 'manual' && Math.round(manualScale.value * 100) === Math.round(value * 100)
-  )
+  return scaleMode.value === 'manual' && percent(manualScale.value) === percent(value)
 }
 
 const clampScale = (value) => {
@@ -40,20 +39,16 @@ const clampScale = (value) => {
 const setManualScale = (value) => {
   scaleMode.value = 'manual'
   manualScale.value = clampScale(value)
-  isOpen.value = false
+  close()
 }
 
 const setAutoScale = () => {
   scaleMode.value = 'auto'
-  isOpen.value = false
+  close()
 }
 
-const decreaseScale = () => {
-  setManualScale(Math.max(MIN_SCALE, Number((scale.value - 0.1).toFixed(1))))
-}
-
-const increaseScale = () => {
-  setManualScale(Math.min(maxScale.value, Number((scale.value + 0.1).toFixed(1))))
+const stepScale = (value) => {
+  setManualScale(Number((scale.value + value).toFixed(1)))
 }
 
 const updateScale = useDebounceFn(([entry]) => {
@@ -64,7 +59,6 @@ const updateScale = useDebounceFn(([entry]) => {
 
   // 防止除以0或负数
   if (width <= PADDING || height <= PADDING) {
-    autoScale.value = 0.1
     maxScale.value = 0.1
     return
   }
@@ -72,7 +66,6 @@ const updateScale = useDebounceFn(([entry]) => {
   // 只根据宽度计算缩放比例，让内容在垂直方向可以滚动
   // 取缩放比例，且最大不超过 1
   maxScale.value = (width - PADDING) / TARGET_WIDTH
-  autoScale.value = maxScale.value
   manualScale.value = clampScale(manualScale.value)
 }, 100)
 
@@ -115,7 +108,7 @@ useResizeObserver(() => containerRef.value?.wrapRef, updateScale)
             :disabled="item > maxScale"
             @click="setManualScale(item)"
           >
-            {{ Math.round(item * 100) }}%
+            {{ percent(item) }}
           </button>
         </div>
         <button
@@ -134,7 +127,7 @@ useResizeObserver(() => containerRef.value?.wrapRef, updateScale)
         <button
           class="px-1 text-lg leading-none text-[#999] disabled:text-[#ddd]"
           :disabled="isMinScale"
-          @click="decreaseScale"
+          @click="stepScale(-0.1)"
         >
           −
         </button>
@@ -144,7 +137,7 @@ useResizeObserver(() => containerRef.value?.wrapRef, updateScale)
         <button
           class="px-1 text-lg leading-none text-[#999] disabled:text-[#ddd]"
           :disabled="isMaxScale"
-          @click="increaseScale"
+          @click="stepScale(0.1)"
         >
           ＋
         </button>
