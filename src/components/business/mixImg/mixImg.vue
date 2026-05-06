@@ -1,6 +1,6 @@
 <template>
   <!-- 图片类型 -->
-  <SfImg v-if="type === 'img'" :size="size" :src="value" />
+  <SfImg v-if="type === 'img'" :size="size" :src="value" :style="autoImgStyle" />
   <!-- 图标类型 -->
   <SfIcon v-else-if="type === 'icon'" :size="size" :icon="value" />
   <!-- 组件类型 -->
