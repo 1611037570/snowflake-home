@@ -259,7 +259,7 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div class="flex flex-col gap-3">
+  <div class="mb-3 flex flex-col">
     <!-- 隐藏的测量容器：用于 useRowInfo 读取高度 -->
     <MeasureContent
       class="absolute -z-10 opacity-0"
@@ -273,7 +273,7 @@ onUnmounted(() => {
     <div
       v-for="(pageSlices, pageIndex) in pages"
       :key="pageIndex"
-      class="resume-page-item mt-3 mb-3 flex flex-col rounded-xl bg-white text-black shadow-lg"
+      class="resume-page-item mt-3 flex flex-col rounded-xl bg-white text-black shadow-lg"
       :class="[currentUI.fontFamily, `page-${pageIndex}`]"
       :style="[
         paddingValue(),
