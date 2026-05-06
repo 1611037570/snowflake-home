@@ -28,10 +28,11 @@ const lineHeightValue = computed(() => (offset = 0) => {
     lineHeight: `${currentUI.value.lineHeight + offset + indexOffset}px`,
   }
 })
-
+const themeColor = computed(() => currentUI.value.themeColor)
 provide('paddingValue', paddingValue)
 provide('fontValue', fontValue)
 provide('lineHeightValue', lineHeightValue)
+provide('themeColor', themeColor)
 </script>
 
 <template>
