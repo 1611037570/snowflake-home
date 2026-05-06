@@ -40,7 +40,7 @@ useResizeObserver(() => containerRef.value?.wrapRef, updateScale)
   >
     <!-- 展示容器：absolute + flex 居中 -->
     <div
-      class="absolute inset-x-0 top-3 flex flex-col items-center"
+      class="absolute inset-x-0 top-0 flex flex-col items-center"
       :style="{
         zoom: scale,
       }"

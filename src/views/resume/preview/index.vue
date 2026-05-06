@@ -29,14 +29,16 @@ const lineHeightValue = computed(() => (offset = 0) => {
   }
 })
 const themeColor = computed(() => currentUI.value.themeColor)
+const themeStyle = computed(() => currentUI.value.themeStyle)
 provide('paddingValue', paddingValue)
 provide('fontValue', fontValue)
 provide('lineHeightValue', lineHeightValue)
 provide('themeColor', themeColor)
+provide('themeStyle', themeStyle)
 </script>
 
 <template>
-  <div class="scrollbar-hide flex h-full flex-1 flex-col items-center overflow-y-auto">
+  <div class="scrollbar-hide flex h-full flex-1 flex-col items-center overflow-y-auto pt-3">
     <ScaleContainer>
       <ResumePage />
     </ScaleContainer>
