@@ -4,23 +4,14 @@
     @click="openResume"
   >
     写简历
-    <indexModal v-if="indexVisible" />
   </div>
 </template>
 
 <script setup>
-import { useResumeStore } from '@/stores'
-import { storeToRefs } from 'pinia'
-import { defineAsyncComponent } from 'vue'
-
-// 异步导入模态框组件
-const indexModal = defineAsyncComponent(() => import('@/views/resume/indexModal.vue'))
-
-const resumeStore = useResumeStore()
-const { indexVisible } = storeToRefs(resumeStore)
-
+import { useRouter } from 'vue-router'
+const router = useRouter()
 const openResume = () => {
-  indexVisible.value = true
+  router.push({ name: 'resumeMain' })
 }
 </script>
 
