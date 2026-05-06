@@ -2,7 +2,7 @@
 import { ALL_ROUTES } from '@/constants'
 export function checkPermission(permission: string) {
   // 检查用户是否拥有指定权限
-  return ALL_ROUTES.includes(permission)
+  return ALL_ROUTES.includes({ name: permission })
 }
 
 /**

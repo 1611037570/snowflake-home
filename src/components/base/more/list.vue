@@ -24,11 +24,11 @@ const filterMenuItems = (item) => {
       {{ data.name }}
       <SfTooltip v-if="data.tip" :content="data.tip" class="ml-2" />
     </div>
-    <div class="grid w-full grid-cols-2">
+    <div class="grid w-full grid-cols-2 gap-1">
       <template v-for="item in data.routers" :key="item.url">
         <div
           v-if="!item.hidden"
-          class="cursor-pointer rounded-lg p-2 transition hover:bg-sf-bg-hover"
+          class="cursor-pointer rounded-xl p-2 transition hover:bg-sf-bg-hover"
           @click="handleClick(item)"
         >
           <div class="mb-1 flex items-center font-medium text-sf-base">
