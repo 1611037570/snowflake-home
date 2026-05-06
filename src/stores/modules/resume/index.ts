@@ -54,8 +54,6 @@ const DEFAULT_RESUME_ITEM = {
 export const useResumeStore = defineStore(
   'resume',
   () => {
-    // 索引是否可见
-    const indexVisible = ref(false)
     // 是否正在打印
     const isPrinting = ref(false)
     // 当前选中的模块 keys (Set)
@@ -158,7 +156,6 @@ export const useResumeStore = defineStore(
     }
 
     return {
-      indexVisible,
       list,
       maxCount,
       currentIndex,
