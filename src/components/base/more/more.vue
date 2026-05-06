@@ -6,7 +6,7 @@ const showMore = ref(false)
 const list = computed(() => {
   return [
     {
-      name: '项目级模块',
+      name: '个人项目',
       tip: '完整可用的功能项目',
       routers: PROJECT_PAGE.value,
     },
