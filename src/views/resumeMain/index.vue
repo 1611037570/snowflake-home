@@ -72,14 +72,7 @@ const activeValue = computed(() => {
         <button type="button" class="border-0 bg-transparent p-0 text-[15px] font-extrabold">
           关于我们
         </button>
-        <SfMore>
-          <button
-            type="button"
-            class="h-8 cursor-pointer rounded-full border-2 border-sf-theme bg-sf-theme/10 px-[18px] text-sm font-black text-sf-theme"
-          >
-            更多工具
-          </button>
-        </SfMore>
+        <SfMore> </SfMore>
       </div>
     </header>
 
