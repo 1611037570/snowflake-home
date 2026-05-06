@@ -1,17 +1,10 @@
 <template>
   <div
     class="flex-c relative cursor-pointer overflow-hidden transition-all duration-300"
-    :class="[
-      $s(boxSize || size, 'w', {
-        auto,
-      }),
-      $s(boxSize || size, 'h', {
-        auto,
-      }),
-      iconClass,
-    ]"
+    :class="[iconClass]"
+    :style="boxIconStyle"
   >
-    <Icon ref="iconify" :icon="icon" class="bg-transparent" :class="[$s(size)]" />
+    <Icon ref="iconify" :icon="icon" class="bg-transparent" :style="iconStyle" />
   </div>
   <!-- class="iconify-icon"
          :rotate="rotate"
@@ -40,10 +33,6 @@ export interface IconProps {
    */
   boxSize?: number | string
   /**
-   * 是否自动适配大小
-   */
-  auto?: boolean
-  /**
    * 图标旋转角度
    */
   rotate?: number
@@ -59,6 +48,20 @@ const props = withDefaults(defineProps<IconProps>(), {
   rotate: 180,
   flip: 'vertical',
   auto: true,
+})
+const boxIconStyle = computed(() => {
+  const size = Number(props.boxSize || props.size) * 4
+  return {
+    width: `${size}px`,
+    height: `${size}px`,
+  }
+})
+const iconStyle = computed(() => {
+  const size = Number(props.size) * 4
+  return {
+    width: `${size}px`,
+    height: `${size}px`,
+  }
 })
 const emit = defineEmits(['success', 'fail'])
 const iconClass = ref('')
