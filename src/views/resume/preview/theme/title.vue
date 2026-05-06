@@ -11,7 +11,7 @@ defineProps({
 })
 const fontValue = inject('fontValue')
 const lineHeightValue = inject('lineHeightValue')
-const themeColor = computed(() => currentUI.value.color)
+const themeColor = computed(() => currentUI.value.themeColor)
 </script>
 
 <template>

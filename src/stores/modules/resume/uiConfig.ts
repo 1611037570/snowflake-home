@@ -86,8 +86,16 @@ export const lineHeightList = [
     value: 32,
   },
 ]
+
+// 主题样式列表
+export const themeStyleList = [
+  {
+    name: '默认',
+    value: 'default',
+  },
+]
 // ===========默认值=====================
-export const defaultColor = themeColors[0].value
+export const defaultThemeColor = themeColors[0].value
 // 默认页边距
 export const defaultPadding = paddingList[2].value
 // 默认字体类型
@@ -96,3 +104,5 @@ export const defaultFontFamily = fontFamilyList[0].value
 export const defaultFontSize = fontSizeList[2].value
 // 默认行间距
 export const defaultLineHeight = lineHeightList[2].value
+// 默认主题样式
+export const defaultThemeStyle = themeStyleList[0].value
