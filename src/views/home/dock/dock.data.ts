@@ -7,12 +7,12 @@ const list = [
     type: 'system',
   },
   {
-    name: '图片',
+    name: '图片处理',
     component: defineAsyncComponent(() => import('./components/image.vue')),
     type: 'system',
   },
   {
-    name: '写简历',
+    name: '小羊简历',
     component: defineAsyncComponent(() => import('./components/writeResume.vue')),
     type: 'system',
   },
