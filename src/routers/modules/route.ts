@@ -29,7 +29,8 @@ const componentModules = import.meta.glob('@/views/*/index.vue', { eager: false 
  * @property {string} value 组件文件名
  */
 // 添加路由函数，根据组件名称动态创建路由
-function generateRoute(name: string): RouteRecordRaw {
+function generateRoute(item: any): RouteRecordRaw {
+  const name = item.name
   // 动态生成组件导入路径，确保正确匹配
   const componentPath = `/src/views/${name}/index.vue`
   const component = componentModules[componentPath]

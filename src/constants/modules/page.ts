@@ -1,7 +1,7 @@
 import { $t } from '@/locales'
 import pageConfig from '@/locales/lang/zh/core.json'
 import { computed } from 'vue'
-import { BASE_ROUTES, MUSE_ROUTES, PROJECT_ROUTES } from '../config'
+import { BASE_ROUTES, MUSE_ROUTES, PROJECT_ROUTES } from './routes'
 type PageType = 'project' | 'base' | 'light'
 
 interface PageItem {
@@ -10,6 +10,8 @@ interface PageItem {
   desc?: string
   type: PageType
   version?: string
+  icon?: any
+  iconType?: string
 }
 
 /**
@@ -17,14 +19,16 @@ interface PageItem {
  * @param item 页面名称
  * @returns 是否存在描述字段
  */
-const getRouterInfo = (item: string) => {
+const getRouterInfo = (item: any) => {
   const router: any = pageConfig.router
-  const desc = router[`${item}Desc`]
-  const name = router[`${item}`]
+  const itemName = item.name
+  const desc = router[`${itemName}Desc`]
+  const name = router[`${itemName}`]
   return {
-    desc: desc ? $t(`router.${item}Desc`) : undefined,
-    name: name ? $t(`router.${item}`) : item,
-    url: `/${item}`,
+    ...item,
+    desc: desc ? $t(`router.${itemName}Desc`) : undefined,
+    name: name ? $t(`router.${itemName}`) : itemName,
+    url: `/${itemName}`,
   }
 }
 /**
