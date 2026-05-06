@@ -1,8 +1,4 @@
 <script setup>
-import { useResumeStore } from '@/stores'
-
-const resumeStore = useResumeStore()
-const { currentUI } = storeToRefs(resumeStore)
 defineProps({
   title: {
     type: String,
@@ -11,7 +7,7 @@ defineProps({
 })
 const fontValue = inject('fontValue')
 const lineHeightValue = inject('lineHeightValue')
-const themeColor = computed(() => currentUI.value.themeColor)
+const themeColor = inject('themeColor')
 </script>
 
 <template>
