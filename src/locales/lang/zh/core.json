@@ -30,7 +30,7 @@
     "form": "表单生成器",
     "formDesc": "快速生成表单"
   },
-  "moreTools": "更多工具",
+  "moreTools": "更多内容",
   "load": "逆转时空的公式就是珍惜现在",
   "theme": {
     "system": "跟随系统",
@@ -40,9 +40,7 @@
   "user": {
     "name": "小羊",
     "location": "乌镇",
-    "job": "前端开发 & 人像摄影师",
-    "devYears": "2023-06-02",
-    "shootYears": "2019-11-22"
+    "job": "前端开发 & 人像摄影师"
   },
   "copyright": "版权所有",
   "allRightsReserved": "保留所有权利"
