@@ -17,10 +17,11 @@ export const BASE_ROUTES = [
 export const PROJECT_ROUTES = [
   {
     name: 'home',
-    icon: 'name',
+    icon: 'home',
   },
   {
     name: 'resumeMain',
+    icon: 'resumeMain',
   },
   {
     name: 'image',
