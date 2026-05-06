@@ -47,7 +47,7 @@ const activeValue = computed(() => {
       class="relative z-5 mx-auto flex h-16 w-full max-w-[1280px] items-center gap-6 font-extrabold"
     >
       <div class="flex shrink-0 items-center gap-2.5 text-[17px] whitespace-nowrap">
-        <Logo size="34" />
+        <Logo :size="8.5" />
         <span>小羊简历</span>
       </div>
 

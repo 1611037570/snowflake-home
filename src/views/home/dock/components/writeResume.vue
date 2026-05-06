@@ -3,7 +3,7 @@
     class="flex h-10 w-10 items-center justify-center rounded-lg bg-white/80 text-[10px] backdrop-blur-md transition-all duration-200"
     @click="openResume"
   >
-    <ResumeLogo size="30" />
+    <ResumeLogo :size="7.5" />
   </div>
 </template>
 
