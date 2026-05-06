@@ -36,11 +36,10 @@ const filterMenuItems = (item) => {
               v-if="item.icon"
               :type="item.iconType"
               :value="item.icon"
-              :size="24"
+              :size="5"
               class="mr-2 shrink-0"
             />
             <div class="truncate" :class="{ 'text-sf-theme': filterMenuItems(item) }">
-              {{ filterMenuItems(item) }}
               {{ item.name }}
             </div>
           </div>

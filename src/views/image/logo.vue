@@ -5,15 +5,17 @@ import { routerNavigation } from '@/utils'
 const props = defineProps({
   size: {
     type: Number,
-    default: 40,
+    default: 7.5,
   },
 })
 
+const logoSize = computed(() => props.size * 4)
+
 const logoStyle = computed(() => ({
-  width: `${props.size}px`,
-  height: `${props.size}px`,
-  fontSize: `${props.size / 10}px`,
-  borderRadius: `${props.size * 0.2}px`,
+  width: `${logoSize.value}px`,
+  height: `${logoSize.value}px`,
+  fontSize: `${logoSize.value / 10}px`,
+  borderRadius: `${logoSize.value * 0.2}px`,
   backdropFilter: 'blur(10px) saturate(1.5)',
 }))
 

@@ -4,19 +4,21 @@ import { computed } from 'vue'
 const props = defineProps({
   size: {
     type: Number,
-    default: 16,
+    default: 7.5,
   },
 })
 
+const logoSize = computed(() => props.size * 4)
+
 const logoStyle = computed(() => ({
-  width: `${props.size}px`,
-  height: `${props.size}px`,
+  width: `${logoSize.value}px`,
+  height: `${logoSize.value}px`,
 }))
 
 const shapeStyle = computed(() => ({
-  width: `${(props.size * 22) / 34}px`,
-  height: `${(props.size * 18) / 34}px`,
-  borderRadius: `${(props.size * 8) / 34}px ${(props.size * 2) / 34}px ${(props.size * 8) / 34}px ${(props.size * 2) / 34}px`,
+  width: `${(logoSize.value * 22) / 34}px`,
+  height: `${(logoSize.value * 18) / 34}px`,
+  borderRadius: `${(logoSize.value * 8) / 34}px ${(logoSize.value * 2) / 34}px ${(logoSize.value * 8) / 34}px ${(logoSize.value * 2) / 34}px`,
 }))
 </script>
 
