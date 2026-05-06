@@ -15,8 +15,7 @@ const list = [
   {
     name: '写简历',
     component: defineAsyncComponent(() => import('./components/writeResume.vue')),
-    type: 'page',
-    page: 'resume',
+    type: 'system',
   },
   {
     name: '投简历',
