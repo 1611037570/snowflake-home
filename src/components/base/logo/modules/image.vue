@@ -16,7 +16,6 @@ const logoStyle = computed(() => ({
   height: `${logoSize.value}px`,
   fontSize: `${logoSize.value / 10}px`,
   borderRadius: `${logoSize.value * 0.2}px`,
-  backdropFilter: 'blur(10px) saturate(1.5)',
 }))
 
 function goImage() {
@@ -39,22 +38,29 @@ function goImage() {
 
 <style scoped>
 .image-logo {
+  /* position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%,-50%); */
   position: relative;
   z-index: 2;
   display: flex;
+  align-items: center;
   justify-content: center;
   box-sizing: border-box;
-  padding: 1em;
   --icon-color: 1;
+  transform-origin: center;
 }
 
 .image-logo span {
   position: absolute;
+  top: 50%;
+  left: 50%;
   width: 22.5%;
-  height: 37.5%;
+  height: 44.5%;
   border-radius: 50% / 30%;
   transform-origin: center 105%;
-  transform: rotate(calc((var(--n) - 1) * 45deg));
+  transform: translate(-50%, -105%) rotate(calc((var(--n) - 1) * 45deg));
   background-color: var(--c);
   mix-blend-mode: multiply;
   z-index: 10;
@@ -66,11 +72,11 @@ function goImage() {
 
 @keyframes rotating {
   from {
-    transform: rotate(0deg);
+    transform: translate(-50%, -105%) rotate(0deg);
   }
 
   to {
-    transform: rotate(calc((var(--n) - 1) * 45deg));
+    transform: translate(-50%, -105%) rotate(calc((var(--n) - 1) * 45deg));
   }
 }
 

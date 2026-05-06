@@ -9,36 +9,32 @@ export const BASE_ROUTES = [
   { name: 'color' },
   { name: 'components' },
   { name: 'data' },
-  { name: 'index' },
 ]
 /**
  * 项目路由列表
  * 包含企业级应用项目路由
  */
-
-import ResumeLogo from '@/views/resumeMain/logo.vue'
-import ImageLogo from '@/views/image/logo.vue'
-import HomeIcon from '../../assets/images/snow.svg'
 export const PROJECT_ROUTES = [
   {
     name: 'home',
-    icon: HomeIcon,
-    iconType: 'img',
+    icon: 'name',
   },
   {
     name: 'resumeMain',
-    icon: ResumeLogo,
-    iconType: 'component',
   },
   {
     name: 'image',
-    icon: ImageLogo,
-    iconType: 'component',
+    icon: 'image',
   },
   {
     name: 'resume',
     hidden: true,
     icon: '',
+  },
+  {
+    name: 'index',
+    iconType: 'component',
+    icon: 'index',
   },
 ]
 /**

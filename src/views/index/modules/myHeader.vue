@@ -85,7 +85,8 @@ const isHeaderActive = computed(() => headerOpacity.value > 0)
       <div class="flex items-center">
         <SfImg
           :src="nnLogo"
-          class="h-15 w-15 cursor-pointer object-contain transition-transform duration-300 hover:scale-105 md:h-20 md:w-20"
+          size="15"
+          class="cursor-pointer object-contain transition-transform duration-300 hover:scale-105 md:h-20 md:w-20"
           @click="scrollToTop"
         />
       </div>

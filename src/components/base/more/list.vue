@@ -32,13 +32,7 @@ const filterMenuItems = (item) => {
           @click="handleClick(item)"
         >
           <div class="mb-1 flex items-center font-medium text-sf-base">
-            <SfMixImg
-              v-if="item.icon"
-              :type="item.iconType"
-              :value="item.icon"
-              :size="5"
-              class="mr-2 shrink-0"
-            />
+            <SfLogo v-if="item.icon" :name="item.name" :size="5" class="mr-2 shrink-0" />
             <div class="truncate" :class="{ 'text-sf-theme': filterMenuItems(item) }">
               {{ item.name }}
             </div>
