@@ -1,59 +1,46 @@
 <script setup>
 import { BASE_PAGE, MUSE_PAGE, PROJECT_PAGE } from '@/constants'
+import MoreList from './list.vue'
 
-const router = useRouter()
-const route = useRoute()
 const showMore = ref(false)
-
-// 过滤菜单项的条件函数
-const filterMenuItems = (item) => {
-  // 过滤当前路由和 index 页面
-  return route.path !== item.url && item.url !== '/index'
-}
-
 const list = computed(() => {
   return [
     {
-      name: '项目',
-      routers: PROJECT_PAGE.value.filter(filterMenuItems),
+      name: '项目级模块',
+      tip: '完整可用的功能项目',
+      routers: PROJECT_PAGE.value,
     },
     {
-      name: '基建',
-      routers: BASE_PAGE.value.filter(filterMenuItems),
+      name: '项目基建',
+      tip: '支撑网站的基础模块',
+      routers: BASE_PAGE.value,
     },
 
     {
       name: '小灵光',
-      routers: MUSE_PAGE.value.filter(filterMenuItems),
+      tip: '创意实验的半成品~',
+      routers: MUSE_PAGE.value,
     },
   ]
 })
-function handleClick(item) {
-  router.push(item.url)
-}
 </script>
 
 <template>
   <div @click="showMore = true">
     <slot>
-      <ElButton> {{ $t('moreTools') }} </ElButton>
+      <button
+        type="button"
+        class="h-8 cursor-pointer rounded-full border-2 border-sf-theme bg-sf-theme/10 px-[18px] text-sm font-black text-sf-theme"
+      >
+        {{ $t('moreTools') }}
+      </button>
     </slot>
+    <SfModal v-model="showMore" :title="$t('moreTools')">
+      <div class="flex w-[460px] flex-col">
+        <MoreList v-for="item in list" :key="item.name" :data="item" @onClick="handleClick" />
+      </div>
+    </SfModal>
   </div>
-  <SfModal v-model="showMore" :title="$t('moreTools')">
-    <div class="w-48 bg-sf-bg px-2 py-1">
-      <template v-for="item in list" :key="item.name">
-        <div class="mb-1 px-2 text-xs font-semibold text-sf-base">{{ item.name }}</div>
-        <div class="mb-2 rounded-lg border border-sf-border shadow-md">
-          <SfList
-            :list="item.routers"
-            activeKey="url"
-            activeValue="url"
-            @onClick="handleClick"
-          ></SfList>
-        </div>
-      </template>
-    </div>
-  </SfModal>
 </template>
 
 <style lang="scss" scoped></style>
