@@ -1,5 +1,6 @@
 <script setup>
 import { useRoute } from 'vue-router'
+import Logo from './logo.vue'
 import Main from './main/index.vue'
 import Mine from './mine.vue'
 import Template from './template.vue'
@@ -46,14 +47,7 @@ const activeValue = computed(() => {
       class="relative z-5 mx-auto flex h-16 w-full max-w-[1280px] items-center gap-6 font-extrabold"
     >
       <div class="flex shrink-0 items-center gap-2.5 text-[17px] whitespace-nowrap">
-        <div class="relative h-[22px] w-[34px]">
-          <div
-            class="absolute top-0.5 left-0 h-[18px] w-[22px] rounded-[8px_2px_8px_2px] bg-sf-theme"
-          ></div>
-          <div
-            class="absolute top-0.5 right-0 h-[18px] w-[22px] skew-x-[-18deg] rounded-[8px_2px_8px_2px] bg-sf-theme-hover"
-          ></div>
-        </div>
+        <Logo />
         <span>小羊简历</span>
       </div>
 
