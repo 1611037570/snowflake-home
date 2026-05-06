@@ -4,7 +4,7 @@ export const userInfo = computed(() => {
     name: $t('user.name'),
     location: $t('user.location'),
     job: $t('user.job'),
-    devYears: $t('user.devYears'),
-    shootYears: $t('user.shootYears'),
+    devYears: '2019-11-22',
+    shootYears: '2023-06-02',
   }
 })
