@@ -4,6 +4,7 @@ import eventBus from '@/utils/modules/eventBus'
 import { storeToRefs } from 'pinia'
 import { computed, inject, onMounted, onUnmounted, ref } from 'vue'
 import { resumeTitle } from '../utils'
+import MeasureContent from './components/measureContent.vue'
 import ModuleActions from './components/moduleActions.vue'
 import ResumeModule from './modules/index.vue'
 import { useRowInfo } from './useRowInfo'
@@ -265,21 +266,14 @@ onUnmounted(() => {
       ref="measureRef"
       :style="[paddingValue(), { width: `${WIDTH}px` }]"
     >
-      <ResumeModule
-        :data="currentData"
-        :name="item.key"
-        v-for="(item, index) in allModules"
-        :key="index"
-        :data-module="item.key"
-        class="resume-module-wrapper"
-      />
+      <MeasureContent :current-data="currentData" :all-modules="allModules" />
     </div>
 
     <!-- 实际渲染的分页内容 -->
     <div
       v-for="(pageSlices, pageIndex) in pages"
       :key="pageIndex"
-      class="resume-page-item flex flex-col rounded-xl bg-white text-black shadow-lg"
+      class="resume-page-item mb-3 flex flex-col rounded-xl bg-white text-black shadow-lg"
       :class="[currentUI.fontFamily, `page-${pageIndex}`]"
       :style="[
         paddingValue(),
