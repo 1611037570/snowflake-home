@@ -12,3 +12,6 @@ export * from './modules/page'
 export * from './modules/theme'
 export * from './modules/user'
 export * from './user'
+
+// 路由列表
+export * from './modules/routes'
