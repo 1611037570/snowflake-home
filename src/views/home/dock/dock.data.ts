@@ -9,8 +9,7 @@ const list = [
   {
     name: '图片',
     component: defineAsyncComponent(() => import('./components/image.vue')),
-    type: 'page',
-    page: 'image',
+    type: 'system',
   },
   {
     name: '写简历',
