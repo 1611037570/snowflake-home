@@ -1,6 +1,5 @@
 <script setup>
 import { useRoute } from 'vue-router'
-import Logo from './logo.vue'
 import Main from './main/index.vue'
 import Mine from './mine.vue'
 import Template from './template.vue'
@@ -47,7 +46,7 @@ const activeValue = computed(() => {
       class="relative z-5 mx-auto flex h-16 w-full max-w-[1280px] items-center gap-6 font-extrabold"
     >
       <div class="flex shrink-0 items-center gap-2.5 text-[17px] whitespace-nowrap">
-        <Logo :size="8.5" />
+        <SfLogo :size="8.5" name="resumeMain" />
         <span>小羊简历</span>
       </div>
 
