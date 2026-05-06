@@ -47,12 +47,12 @@ const handleCreate = () => {
 </script>
 
 <template>
-  <div class="relative z-4 mx-auto flex w-[1120px] flex-col gap-8">
-    <div class="flex items-center justify-between">
+  <div class="relative z-4 mx-auto flex w-[1120px] flex-col gap-4">
+    <div class="flex h-8 items-center justify-between">
       <h2 class="text-[20px] font-black text-sf-theme">简历草稿</h2>
       <button
         type="button"
-        class="flex h-11 items-center gap-2 rounded-full border border-sf-theme bg-sf-theme px-10 text-sm font-black text-sf-theme-text shadow-lg shadow-sf-theme/25 transition-all duration-200 hover:-translate-y-0.5 hover:bg-sf-theme-hover disabled:cursor-not-allowed disabled:opacity-45"
+        class="flex h-8 items-center gap-2 rounded-full border border-sf-theme bg-sf-theme px-4 text-sm font-black text-sf-theme-text shadow-lg shadow-sf-theme/25 transition-all duration-200 hover:-translate-y-0.5 hover:bg-sf-theme-hover disabled:cursor-not-allowed disabled:opacity-45"
         :disabled="list.length >= maxCount"
         @click="handleCreate"
       >
