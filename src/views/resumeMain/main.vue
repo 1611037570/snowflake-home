@@ -1,8 +1,8 @@
 <script setup>
-import { useResumeStore } from '@/stores'
-const resumeStore = useResumeStore()
+import { useRouter } from 'vue-router'
+const router = useRouter()
 function handleCreate() {
-  resumeStore.addResume()
+  router.push(`/resumeMain?type=template&t=${Date.now()}`)
 }
 </script>
 

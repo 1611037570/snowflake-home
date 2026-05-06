@@ -18,7 +18,7 @@ const getResumePosition = (item) => {
   return item?.data?.user?.position || '未填写求职岗位'
 }
 const getLastUseTime = (item) => {
-  return item?.usage?.lastUseTime ? dayjs(item.usage.lastUseTime).format('YYYY-MM-DD HH:mm') : '--'
+  return item?.usage?.lastUseTime ? dayjs(item.usage.lastUseTime).format('YYYY.MM.DD HH:mm') : '--'
 }
 const getProgressClass = (progress) => {
   if (progress < 40) return 'bg-sf-error'
