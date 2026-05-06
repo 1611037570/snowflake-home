@@ -1,6 +1,6 @@
 <script setup>
 import { useRoute } from 'vue-router'
-import Main from './main.vue'
+import Main from './main/index.vue'
 import Mine from './mine.vue'
 import Template from './template.vue'
 
