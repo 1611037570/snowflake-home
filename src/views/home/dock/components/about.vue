@@ -3,7 +3,7 @@
     class="flex h-10 w-10 items-center justify-center rounded-lg bg-white/80 backdrop-blur-md"
     @click="openAbout"
   >
-    <Logo />
+    <SfLogo name="home" />
     <Modal v-if="aboutVisible" />
   </div>
 </template>
@@ -11,7 +11,6 @@
 <script setup>
 import { useHomeStore } from '@/stores'
 import Modal from '@/views/home/about/modal.vue'
-import Logo from '@/views/home/logo.vue'
 const homeStore = useHomeStore()
 const { aboutVisible } = storeToRefs(homeStore)
 

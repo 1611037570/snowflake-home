@@ -1,14 +1,13 @@
 <template>
   <div
-    class="flex h-10 w-10 items-center justify-center rounded-lg bg-white/80 text-[10px] backdrop-blur-md transition-all duration-200"
+    class="flex h-10 w-10 items-center justify-center rounded-lg bg-white/80 text-[10px]"
     @click="openResume"
   >
-    <ResumeLogo :size="7.5" />
+    <SfLogo :size="7.5" name="resumeMain" />
   </div>
 </template>
 
 <script setup>
-import ResumeLogo from '@/views/resumeMain/logo.vue'
 import { useRouter } from 'vue-router'
 const router = useRouter()
 const openResume = () => {
