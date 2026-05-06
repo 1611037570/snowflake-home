@@ -1,6 +1,5 @@
 <script setup>
 import { ALL_PAGE } from '@/constants'
-import More from './more.vue'
 
 const route = useRoute()
 
@@ -42,7 +41,7 @@ const version = computed(() => {
       <slot name="right"></slot>
       <SfTheme />
       <SfLocale />
-      <More />
+      <SfMore />
     </div>
   </header>
 </template>

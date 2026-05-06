@@ -74,16 +74,18 @@ const activeValue = computed(() => {
         </button>
       </nav>
 
-      <div class="ml-auto flex items-center gap-[18px] max-[900px]:hidden">
-        <button
-          type="button"
-          class="h-8 rounded-full border-2 border-sf-theme bg-sf-theme/10 px-[18px] text-sm font-black text-sf-theme"
-        >
-          AI简历助手
-        </button>
+      <div class="ml-auto flex items-center gap-[18px]">
         <button type="button" class="border-0 bg-transparent p-0 text-[15px] font-extrabold">
           关于我们
         </button>
+        <SfMore>
+          <button
+            type="button"
+            class="h-8 cursor-pointer rounded-full border-2 border-sf-theme bg-sf-theme/10 px-[18px] text-sm font-black text-sf-theme"
+          >
+            更多工具
+          </button>
+        </SfMore>
       </div>
     </header>
 

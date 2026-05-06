@@ -14,13 +14,14 @@ const filterMenuItems = (item) => {
 const list = computed(() => {
   return [
     {
-      name: '基建',
-      routers: BASE_PAGE.value.filter(filterMenuItems),
-    },
-    {
       name: '项目',
       routers: PROJECT_PAGE.value.filter(filterMenuItems),
     },
+    {
+      name: '基建',
+      routers: BASE_PAGE.value.filter(filterMenuItems),
+    },
+
     {
       name: '小灵光',
       routers: MUSE_PAGE.value.filter(filterMenuItems),
@@ -33,7 +34,11 @@ function handleClick(item) {
 </script>
 
 <template>
-  <ElButton @click="showMore = true"> {{ $t('moreTools') }} </ElButton>
+  <div @click="showMore = true">
+    <slot>
+      <ElButton> {{ $t('moreTools') }} </ElButton>
+    </slot>
+  </div>
   <SfModal v-model="showMore" :title="$t('moreTools')">
     <div class="w-48 bg-sf-bg px-2 py-1">
       <template v-for="item in list" :key="item.name">
