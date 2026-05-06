@@ -6,11 +6,12 @@ import { computed, ref } from 'vue'
 import { DEFAULT_DATA } from './dataConfig'
 import { DEFAULT_CONFIG, DEFAULT_USER_CONFIG } from './formConfig'
 import {
-  defaultColor,
   defaultFontFamily,
   defaultFontSize,
   defaultLineHeight,
   defaultPadding,
+  defaultThemeColor,
+  defaultThemeStyle,
 } from './uiConfig'
 
 import { merge } from 'lodash-es'
@@ -33,8 +34,10 @@ const DEFAULT_RESUME_ITEM = {
     fontSize: defaultFontSize,
     // 行高
     lineHeight: defaultLineHeight,
-    // 字体颜色
-    color: defaultColor,
+    // 主题颜色
+    color: defaultThemeColor,
+    // 主题样式
+    themeStyle: defaultThemeStyle,
     // 字体类型
     fontFamily: defaultFontFamily,
   },

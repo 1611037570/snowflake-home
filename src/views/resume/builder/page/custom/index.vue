@@ -67,12 +67,12 @@ const { currentUI } = storeToRefs(resumeStore)
               :key="colorItem.value"
               class="h-8 w-8 cursor-pointer rounded-full transition-all duration-200 hover:scale-110"
               :class="{
-                'border-2 border-sf-base': currentUI.color === colorItem.value,
+                'border-2 border-sf-base': currentUI.themeColor === colorItem.value,
               }"
               :style="{
                 backgroundColor: colorItem.value,
               }"
-              @click="currentUI.color = colorItem.value"
+              @click="currentUI.themeColor = colorItem.value"
             ></div>
           </div>
         </div>
