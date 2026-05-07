@@ -11,7 +11,7 @@ const DEFAULT_CHAT_TITLE = '新对话'
 export const useAiStore = defineStore(
   'ai',
   () => {
-    const sidebarCollapsed = ref(false)
+    const sidebarCollapsed = ref(true)
     const sidebarMode = ref('float') // 'dock' or 'float'
     const chatList = ref([])
     const currentChatId = ref('')
@@ -101,7 +101,7 @@ export const useAiStore = defineStore(
   {
     persist: {
       storage: localStorage,
-      pick: ['sidebarCollapsed', 'sidebarMode', 'chatList', 'currentChatId'],
+      pick: ['sidebarMode', 'chatList', 'currentChatId'],
     },
   },
 )
