@@ -39,13 +39,13 @@ const handleLayoutClick = (item) => {
     class="flex h-12 items-center justify-between border-b border-sf-border bg-sf-primary px-6"
   >
     <!-- 左侧占位 -->
-    <div class="flex flex-1 items-center gap-6">
+    <div class="flex flex-1 items-center gap-4">
       <SfBack url="/resumeMain" tip="简历首页" />
       <div
-        class="flex items-center gap-1.5 rounded-full bg-sf-theme/10 px-3 py-1 text-sf-theme transition-all hover:bg-sf-theme/20"
+        class="flex items-center gap-1.5 rounded-full px-3 py-1 text-sf-theme transition-all hover:bg-sf-theme/20"
       >
-        <SfIcon icon="lucide:sparkles" size="3.5" class="animate-pulse" />
-        <span class="text-sm font-bold tracking-wide">AI 简历</span>
+        <SfLogo size="5.5" class="animate-pulse" name="resumeMain" />
+        <span class="text-sm font-bold tracking-wide">小羊简历</span>
       </div>
       <Title />
     </div>
