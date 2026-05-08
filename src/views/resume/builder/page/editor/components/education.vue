@@ -90,6 +90,7 @@ const currentIndex = inject('df/current/index')
           type="daterange"
           placeholder="时间"
           v-model="time"
+          format="YYYY.MM"
           value-format="YYYY.MM"
           start-placeholder="开始时间"
           end-placeholder="结束时间"
