@@ -37,7 +37,7 @@ const currentIndex = inject('df/current/index')
       </div>
       <div class="flex w-full gap-3">
         <SfDatePicker
-          type="daterange"
+          type="monthrange"
           placeholder="时间"
           v-model="time"
           format="YYYY.MM"
