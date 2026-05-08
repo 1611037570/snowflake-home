@@ -142,7 +142,7 @@ function send() {
         :placeholder="inputPlaceholder"
         class="w-full p-0!"
         type="textarea"
-        rows="1"
+        :rows="1"
         resize="none"
         :autosize="{ minRows: 1, maxRows: 5 }"
       />
