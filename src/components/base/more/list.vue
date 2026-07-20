@@ -19,26 +19,39 @@ const filterMenuItems = (item) => {
 </script>
 
 <template>
-  <div>
-    <div class="mb-2 flex items-center px-2 text-sm font-bold text-sf-base">
+  <div class="mb-4">
+    <div class="mb-2 flex items-center justify-center text-xs font-black text-sf-text-2">
       {{ data.name }}
       <SfTooltip v-if="data.tip" :content="data.tip" class="ml-2" />
     </div>
-    <div class="grid w-full grid-cols-2 gap-1">
+    <div class="grid w-full grid-cols-2 gap-2">
       <template v-for="item in data.routers" :key="item.url">
-        <div
+        <button
           v-if="!item.hidden"
-          class="cursor-pointer rounded-xl p-2 transition hover:bg-sf-bg-hover"
+          type="button"
+          class="flex cursor-pointer items-center rounded-xl border p-2 text-left transition hover:bg-sf-bg-hover"
+          :class="
+            filterMenuItems(item)
+              ? 'border-sf-theme bg-sf-theme/10'
+              : 'border-sf-border bg-sf-primary'
+          "
           @click="handleClick(item)"
         >
-          <div class="mb-1 flex items-center font-medium text-sf-base">
-            <SfLogo v-if="item.icon" :name="item.icon" :size="5" class="mr-2 shrink-0" />
-            <div class="truncate" :class="{ 'text-sf-theme': filterMenuItems(item) }">
+          <div class="mr-2 flex h-7 w-7 shrink-0 items-center justify-center">
+            <SfLogo v-if="item.icon" :name="item.icon" :size="6" />
+          </div>
+          <div class="min-w-0 flex-1">
+            <div
+              class="truncate text-sm font-bold text-sf-base"
+              :class="{ 'text-sf-theme': filterMenuItems(item) }"
+            >
               {{ item.name }}
             </div>
+            <div class="mt-0.5 line-clamp-2 text-xs text-sf-text-2" v-if="item.desc">
+              {{ item.desc }}
+            </div>
           </div>
-          <div class="text-sm text-sf-text-2" v-if="item.desc">{{ item.desc }}</div>
-        </div>
+        </button>
       </template>
     </div>
   </div>
