@@ -46,7 +46,7 @@ const activeValue = computed(() => {
       class="relative z-5 mx-auto flex h-16 w-full max-w-[1280px] items-center gap-6 font-extrabold"
     >
       <div class="flex shrink-0 items-center gap-2.5 text-[17px] whitespace-nowrap">
-        <SfLogo :size="8.5" name="resumeMain" />
+        <SfLogo size="8.5" name="resumeMain" />
         <span>小羊简历</span>
       </div>
 
@@ -68,9 +68,7 @@ const activeValue = computed(() => {
       </nav>
 
       <div class="ml-auto flex items-center gap-[18px]">
-        <button type="button" class="border-0 bg-transparent p-0 text-[15px] font-extrabold">
-          关于我们
-        </button>
+        <SfAbout />
         <SfMore> </SfMore>
       </div>
     </header>
