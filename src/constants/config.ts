@@ -3,11 +3,13 @@
  * 系统启动时默认使用的语言
  */
 export const DEFAULT_LANGUAGE = import.meta.env.VITE_DEFAULT_LANGUAGE
+
 /**
  * 默认路由地址
  * 系统启动时默认跳转的路由
  */
-export const DEFAULT_ROUTE = '/home'
+const currentRoute = localStorage.getItem('snowflakeRoute') || '/init'
+export const DEFAULT_ROUTE = currentRoute
 /**
  * 外部链接打开方式
  * 系统中所有外部链接的默认打开方式

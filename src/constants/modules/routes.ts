@@ -9,7 +9,7 @@ export const BASE_ROUTES = [
   { name: 'color' },
   { name: 'components' },
   { name: 'data' },
-  { name: 'init' },
+  { name: 'init', hidden: true },
 ]
 /**
  * 项目路由列表
