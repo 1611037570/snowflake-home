@@ -7,18 +7,18 @@ const router = useRouter()
 const list = computed(() => {
   return [
     {
-      name: '个人项目',
+      name: '项目',
       tip: '完整可用的功能项目',
       routers: PROJECT_PAGE.value,
     },
     {
-      name: '项目基建',
+      name: '基建内容',
       tip: '支撑网站的基础模块',
       routers: BASE_PAGE.value,
     },
 
     {
-      name: '小灵光',
+      name: '灵光一现',
       tip: '创意实验的半成品~',
       routers: MUSE_PAGE.value,
     },
