@@ -29,14 +29,10 @@ export const useSystemStore = defineStore(
      */
     const getVersion = async (): Promise<string> => {
       try {
-        // 带时间戳请求version.ts，防止缓存
         const timestamp = new Date().getTime()
-
-        // 动态导入version模块
-        const module: any = await fetch(`@/constants/version?t=${timestamp}`)
-        const { version } = await import(`@/constants/version?t=${timestamp}`)
-        console.log('module:>> ', version)
-        return module.version
+        const res = await fetch(`${import.meta.env.BASE_URL}version.json?t=${timestamp}`)
+        const data = await res.json()
+        return data.version
       } catch (error) {
         console.error('获取版本号失败:', error)
         throw error

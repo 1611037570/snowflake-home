@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "Vue3+Vite Chrome插件示例",
+  "name": "雪花起始页",
   "version": "1.0.0",
-  "description": "基于Vue3+Vite改造的Chrome插件",
+  "description": "雪花起始页",
   "action": {
     "default_popup": "popup.html",
     "default_title": "Vue Chrome插件"
