@@ -37,8 +37,8 @@ const filterMenuItems = (item) => {
           "
           @click="handleClick(item)"
         >
-          <div class="mr-2 flex h-7 w-7 shrink-0 items-center justify-center">
-            <SfLogo v-if="item.icon" :name="item.icon" :size="6" />
+          <div v-if="item.icon" class="mr-2 flex h-7 w-7 shrink-0 items-center justify-center">
+            <SfLogo :name="item.icon" :size="6" />
           </div>
           <div class="min-w-0 flex-1">
             <div
