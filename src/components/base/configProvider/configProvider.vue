@@ -4,10 +4,6 @@ import { getElLocale } from '@/utils'
 
 provide('bg', DEFAULT_BACKGROUND)
 provide('color', DEFAULT_COLOR)
-
-// https://cdn.jsdelivr.net/npm/pinyin@4.0.0/lib/umd/pinyin.min.js
-// https://www.bootcdn.cn/
-// https://www.jsdelivr.com/?query=vue
 </script>
 
 <template>
