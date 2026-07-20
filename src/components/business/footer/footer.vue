@@ -1,7 +1,5 @@
 <template>
-  <footer
-    class="flex-c relative flex-col overflow-hidden bg-sf-primary px-3 py-1 text-sf-text backdrop-blur-sm"
-  >
+  <footer class="flex-c relative flex-col overflow-hidden px-3 py-1 text-sf-text backdrop-blur-sm">
     <div class="flex items-center gap-3">
       <div class="flex items-center">
         {{ $t('copyright') }} © 2019-{{ currentYear }}
