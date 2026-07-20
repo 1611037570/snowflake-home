@@ -18,7 +18,7 @@ const map = {
 </script>
 
 <template>
-  <Component :is="map[name]" :size="Number(size)" />
+  <Component :is="map[name]" :size="size" />
 </template>
 
 <style lang="scss" scoped></style>

@@ -16,9 +16,10 @@ const props = defineProps({
   },
 })
 const getSizeStyle = computed(() => {
+  const size = Number(props.size)
   return {
-    width: `${props.size * 4}px`,
-    height: `${props.size * 4}px`,
+    width: `${size * 4}px`,
+    height: `${size * 4}px`,
   }
 })
 const vm: any = getCurrentInstance()
