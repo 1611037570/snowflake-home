@@ -131,8 +131,13 @@
 
 /* 自定义工具类 */
 @layer utilities {
+  /* 居中对齐 */
   .flex-c {
     @apply flex items-center justify-center;
+  }
+  /* 自动换行 */
+  .text-auto {
+    @apply w-full truncate;
   }
   .sf-theme-element {
     @apply cursor-pointer bg-sf-theme text-sf-primary hover:bg-sf-theme-hover hover:text-sf-theme;
