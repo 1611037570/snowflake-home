@@ -28,7 +28,8 @@
     "passwordBox": "密码箱",
     "passwordBoxDesc": "安全存储和管理密码",
     "form": "表单生成器",
-    "formDesc": "快速生成表单"
+    "formDesc": "快速生成表单",
+    "init": "初始化"
   },
   "moreTools": "更多内容",
   "load": "逆转时空的公式就是珍惜现在",
