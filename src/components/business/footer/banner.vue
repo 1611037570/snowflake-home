@@ -5,6 +5,7 @@ const [active, toggle] = useToggle(false)
 
 <template>
   <button
+    v-if="0"
     class="fixed right-4 bottom-4 z-150 rounded bg-sf-theme px-3 py-1 text-white transition-all duration-300"
     @click="toggle()"
   >
