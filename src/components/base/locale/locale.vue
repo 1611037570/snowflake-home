@@ -26,8 +26,8 @@ defineOptions({ name: 'SfLocale' })
 const router = useRouter()
 const currentPageName = computed(() => router.currentRoute.value.name)
 
-import { getCurrentLocale } from '@/utils'
-const currentLocale = getCurrentLocale()
+import { language } from '@/utils'
+const currentLocale = computed(() => language.value)
 const handleClick = async (item) => {
   await loadPageLang(currentPageName.value, item.key)
 }
