@@ -8,6 +8,10 @@ import { useSystemStore } from '@/stores'
  * @param next 路由放行函数
  */
 export async function beforeEachGuard(to: any, from: any, next: any) {
+  // 根据当前页面加载对应语言包，路由名称不存在时使用默认起始页兜底
+  const pageName = to.name
+  await loadPageLang(pageName)
+
   // 用户未设置默认起始页时，先进入初始化页进行选择
   const defaultRoute = localStorage.getItem('snowflakeRoute')
   if (!defaultRoute) {
@@ -23,10 +27,6 @@ export async function beforeEachGuard(to: any, from: any, next: any) {
   // 每次进入页面前检查系统版本状态
   const systemStore = useSystemStore()
   systemStore.checkVersionUpdate()
-
-  // 根据当前页面加载对应语言包，路由名称不存在时使用默认起始页兜底
-  const pageName = to.name || defaultRoute
-  await loadPageLang(pageName)
 
   // 放行路由
   next()
