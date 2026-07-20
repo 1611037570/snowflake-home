@@ -1,7 +1,7 @@
 <script setup>
 defineProps({
   size: {
-    type: String || Number,
+    type: [String, Number],
     default: '7.5',
   },
   name: {
