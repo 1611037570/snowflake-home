@@ -26,6 +26,7 @@ function handleConfirm() {
     <div class="flex w-full max-w-2xl items-center justify-end gap-5">
       <SfTheme />
       <SfLocale />
+      <SfDonation />
     </div>
     <div class="flex w-full max-w-2xl flex-1 flex-col items-center justify-center">
       <div class="mb-2 flex flex-col items-center justify-center">

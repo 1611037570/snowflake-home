@@ -18,7 +18,7 @@ const sendMail = () => {
     </div>
     <SfFooter
       :gap="1"
-      class="absolute bottom-full z-10 w-full bg-sf-bg pt-2 text-[14px] md:text-[16px]"
+      class="absolute bottom-full z-10 w-full pt-2 text-[14px] md:text-[16px]"
       :banner="false"
     />
   </div>
