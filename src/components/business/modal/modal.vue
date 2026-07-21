@@ -1,11 +1,10 @@
 <template>
   <Teleport to="body">
-    <!-- 用一个容器包裹背景和内容，并应用过渡 -->
     <Transition name="fade">
       <div
         v-if="modeValue"
-        class="modal-container fixed top-0 right-0 bottom-0 left-0 z-80 flex items-center justify-center bg-sf-transparent-4"
         ref="mask"
+        class="modal-container fixed top-0 right-0 bottom-0 left-0 z-80 flex items-center justify-center bg-sf-transparent-4"
         style="backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px)"
         @mousemove="handleMouseMove"
       >
@@ -41,7 +40,7 @@
 </template>
 
 <script setup>
-import { onKeyStroke, useElementBounding } from '@vueuse/core'
+import { onKeyStroke } from '@vueuse/core'
 import { computed, ref, useTemplateRef } from 'vue'
 
 defineOptions({ name: 'SfModal' })
@@ -58,7 +57,6 @@ onKeyStroke('Escape', () => {
   if (modeValue.value) modeValue.value = false
 })
 
-const { x, y, width, height } = useElementBounding(mask) // 容器全屏，left/top 为 0
 const multiple = 55
 const elementRef = ref(null)
 const isMouseOverCard = ref(false)
@@ -73,15 +71,23 @@ function transformElement(clientX, clientY) {
   if (isMouseOverCard.value) return
   const element = elementRef.value
   if (!element) return
-  const calcX = -(clientY - y.value - height.value / 2) / multiple
-  const calcY = (clientX - x.value - width.value / 2) / multiple
+
+  // 直接获取实时边界，避免响应式开销
+  const rect = mask.value.getBoundingClientRect()
+  const centerX = rect.left + rect.width / 2
+  const centerY = rect.top + rect.height / 2
+
+  const calcX = -(clientY - centerY) / multiple
+  const calcY = (clientX - centerX) / multiple
   const num = 14
   rx.value = Math.max(-num, Math.min(num, calcX))
   ry.value = Math.max(-num, Math.min(num, calcY))
 }
 
 function handleMouseMove(e) {
-  requestAnimationFrame(() => transformElement(e.clientX, e.clientY))
+  requestAnimationFrame(() => {
+    transformElement(e.clientX, e.clientY)
+  })
 }
 function handleMouseEnter() {
   isMouseOverCard.value = true
@@ -94,23 +100,25 @@ function handleMouseLeave() {
 </script>
 
 <style>
-/* 容器提供透视，内容自身过渡保持旋转平滑 */
 .modal-container {
   perspective: 1300px;
+  will-change: transform, opacity;
 }
 
 #element {
-  transition: transform 0.3s;
+  transition: transform 0.15s ease-out;
+  will-change: transform;
 }
 
-/* 整体淡入淡出 + 缩放动画 */
 .fade-enter-active,
 .fade-leave-active {
-  transition: all 0.3s ease;
+  transition:
+    opacity 0.3s ease,
+    transform 0.3s ease;
 }
 .fade-enter-from,
 .fade-leave-to {
   opacity: 0;
-  transform: scale(0.2);
+  transform: scale(0.9);
 }
 </style>
