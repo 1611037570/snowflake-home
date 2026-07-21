@@ -5,12 +5,13 @@ import Index from './index.vue'
 
 const isVisible = ref(false)
 const route = useRoute()
-
-// 判断当前路由是否包含 'resume' 或 'ai'，如果包含则不显示
+const excludePaths = ['/resume', '/ai', '/init']
+// 判断当前路由是否包含指定路径，如果包含则不显示
 const shouldShow = computed(() => {
   if (route.path === '/') return false
   const path = route.path.toLowerCase()
-  return !path.includes('/resume') && !path.includes('/ai')
+
+  return !excludePaths.some((item) => path.includes(item))
 })
 
 const toggleChat = () => {
