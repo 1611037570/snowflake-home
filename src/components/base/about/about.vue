@@ -14,7 +14,7 @@ const handleClick = () => {
         关于我
       </button>
     </slot>
-    <SfModal v-if="visible" v-model="visible" title="关于" width="500px">
+    <SfModal v-model="visible" title="关于网站" width="500px">
       <SfScrollbar height="500px">
         <Info />
         <History />

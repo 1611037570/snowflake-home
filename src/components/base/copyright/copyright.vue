@@ -15,7 +15,7 @@ const currentYear = new Date().getFullYear()
         版权声明
       </button>
     </slot>
-    <SfModal v-if="visible" v-model="visible" title="版权声明" width="500px">
+    <SfModal v-model="visible" title="版权声明" width="500px">
       <SfScrollbar height="400px">
         <div class="w-[500px] space-y-4 p-6 text-sm leading-relaxed text-sf-text-2">
           <h3 class="text-sf-text-1 text-center text-base font-medium">MIT License</h3>
