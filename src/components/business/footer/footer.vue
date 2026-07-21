@@ -1,5 +1,5 @@
 <template>
-  <footer class="flex-c relative flex-col overflow-hidden px-3 py-1 text-sf-text backdrop-blur-sm">
+  <footer class="flex-c relative flex-col overflow-hidden px-3 py-1 text-sf-text">
     <div class="flex items-center gap-3">
       <div class="flex items-center">
         {{ $t('copyright') }} © 2019-{{ currentYear }}
@@ -11,12 +11,9 @@
       <div @click="aboutVisible = true" class="cursor-pointer font-medium hover:text-sf-theme">
         关于网站
       </div>
-      <div class="cursor-pointer font-medium hover:text-sf-theme">版权声明</div>
-    </div>
-    <div class="flex items-center gap-3">
-      <SfDonation>
-        <div class="cursor-pointer font-medium hover:text-sf-theme">支持项目</div>
-      </SfDonation>
+      <SfCopyright>
+        <div class="cursor-pointer font-medium hover:text-sf-theme">版权声明</div>
+      </SfCopyright>
     </div>
     <Banner v-if="banner" />
     <About v-if="aboutVisible" v-model="aboutVisible" />

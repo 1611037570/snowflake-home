@@ -41,6 +41,7 @@ const version = computed(() => {
       <slot name="right"></slot>
       <SfTheme />
       <SfLocale />
+      <SfDonation />
       <SfMore />
     </div>
   </header>
