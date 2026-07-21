@@ -5,6 +5,7 @@
         :icon="theme === 'dark' ? 'twemoji:sun' : 'ri:moon-clear-fill'"
         size="8"
         style="color: #f3d776"
+        class="transition-all duration-300 hover:scale-120"
       />
       <template #dropdown>
         <el-dropdown-menu>
