@@ -15,3 +15,5 @@ export * from './user'
 
 // 路由列表
 export * from './modules/routes'
+// 历史记录
+export * from './modules/history'

@@ -1,10 +1,9 @@
 <script setup>
-import { historyList } from './data'
+import { historyList } from '@/constants/modules/history'
 </script>
 
 <template>
   <div class="p-6">
-    <h3 class="mb-3 text-center text-base font-medium text-sf-text-2">发展历程</h3>
     <p class="mb-6 text-center text-sm text-sf-text-2">记录每一个重要时刻</p>
     <div class="space-y-4">
       <div v-for="(item, index) in historyList" :key="item.time" class="group relative pl-6">
