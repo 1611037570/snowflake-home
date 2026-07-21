@@ -18,7 +18,7 @@
         @click.stop="toggleFavorite"
       >
         <sf-icon
-          :icon="isFavorite ? 'lucide:heart' : 'lucide:heart'"
+          :icon="isFavorite ? 'solar:heart-bold' : 'solar:heart-bold'"
           class="h-4 w-4"
           :class="isFavorite ? 'fill-red-500 text-red-500' : ''"
         />
