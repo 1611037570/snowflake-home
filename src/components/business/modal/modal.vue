@@ -1,11 +1,19 @@
 <template>
   <Teleport to="body">
+    <!-- 背景模糊层 -->
+    <Transition name="mask">
+      <div
+        v-if="modeValue"
+        class="fixed top-0 right-0 bottom-0 left-0 z-80 bg-sf-transparent-4"
+        style="backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px)"
+      ></div>
+    </Transition>
+    <!-- 弹窗内容 -->
     <Transition name="fade">
       <div
         v-if="modeValue"
         ref="mask"
-        class="modal-container fixed top-0 right-0 bottom-0 left-0 z-80 flex items-center justify-center bg-sf-transparent-4"
-        style="backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px)"
+        class="modal-container fixed top-0 right-0 bottom-0 left-0 z-80 flex items-center justify-center"
         @mousemove="handleMouseMove"
       >
         <div
@@ -16,7 +24,7 @@
           @mouseenter="handleMouseEnter"
           @mouseleave="handleMouseLeave"
         >
-          <!-- 标题和关闭按钮（不变） -->
+          <!-- 标题和关闭按钮 -->
           <div class="relative flex items-center justify-between">
             <div
               class="mb-3 w-full text-center text-2xl font-bold"
@@ -32,6 +40,7 @@
               <SfIcon icon="carbon:close-outline" size="6" class="group-hover:text-sf-theme" />
             </div>
           </div>
+          <!-- 内容区域 -->
           <slot></slot>
         </div>
       </div>
@@ -119,6 +128,17 @@ function handleMouseLeave() {
 .fade-enter-from,
 .fade-leave-to {
   opacity: 0;
-  transform: scale(0.9);
+  transform: scale(0.3);
+}
+
+.mask-enter-active,
+.mask-leave-active {
+  transition:
+    opacity 0.1s ease,
+    transform 0.1s ease;
+}
+.mask-enter-from,
+.mask-leave-to {
+  opacity: 0;
 }
 </style>

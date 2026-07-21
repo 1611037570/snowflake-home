@@ -1,5 +1,5 @@
 <template>
-  <SfModal v-if="systemVisible" v-model="systemVisible" title="系统设置">
+  <SfModal v-model="systemVisible" title="系统设置">
     <SfSetContainer :list="list" v-model="currentTab" width="500px" height="600px">
       <template v-if="currentTab === 'default'">
         <SfSetBox>
