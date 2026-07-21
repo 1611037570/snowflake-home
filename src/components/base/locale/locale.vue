@@ -1,6 +1,11 @@
 <template>
   <SfDropdown>
-    <SfIcon icon="ion:language" size="8" :class="color" />
+    <SfIcon
+      icon="ion:language"
+      size="8"
+      :class="color"
+      class="transition-all duration-300 hover:scale-120"
+    />
     <template #dropdown>
       <el-dropdown-menu>
         <SfList
