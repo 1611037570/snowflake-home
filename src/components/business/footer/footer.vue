@@ -8,23 +8,22 @@
         </span>
         {{ $t('allRightsReserved') }}
       </div>
-      <div @click="aboutVisible = true" class="cursor-pointer font-medium hover:text-sf-theme">
-        关于网站
-      </div>
+
+      <SfAbout>
+        <div class="cursor-pointer font-medium hover:text-sf-theme">关于网站</div>
+      </SfAbout>
       <SfCopyright>
         <div class="cursor-pointer font-medium hover:text-sf-theme">版权声明</div>
       </SfCopyright>
     </div>
     <Banner v-if="banner" />
-    <About v-if="aboutVisible" v-model="aboutVisible" />
   </footer>
 </template>
 
 <script setup lang="ts">
 import { userNavigation } from '@/utils'
 import dayjs from 'dayjs'
-import { computed, ref } from 'vue'
-import About from './about.vue'
+import { computed } from 'vue'
 import Banner from './banner.vue'
 
 defineOptions({ name: 'SfFooter' })
@@ -39,8 +38,6 @@ defineProps({
 const currentYear = computed(() => {
   return dayjs().year()
 })
-
-const aboutVisible = ref(false)
 </script>
 
 <style lang="scss" scoped></style>

@@ -119,8 +119,8 @@
 </template>
 
 <script setup lang="ts">
+import { historyList } from '@/constants/modules/history'
 import { ref } from 'vue'
-import { historyList } from './data'
 
 const imgVisible = ref(false)
 const imgUrl = ref('')
