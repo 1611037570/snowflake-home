@@ -10,6 +10,8 @@ export const useSystemStore = defineStore(
     const runTime = ref<number>(dayjs().diff(dayjs(start), 'day'))
     // 性能监控
     const monitorWatch = ref<boolean>(false)
+    // 性能模式
+    const performanceMode = ref<boolean>(false)
     // 窗口大小
     const windowSize = ref<{
       width: number | unknown
@@ -81,6 +83,7 @@ export const useSystemStore = defineStore(
       windowSize,
       browserInfo,
       currentVersion,
+      performanceMode,
       getVersion,
       checkVersionUpdate,
       initVersion,
@@ -89,7 +92,7 @@ export const useSystemStore = defineStore(
   {
     persist: {
       storage: localStorage,
-      pick: ['monitorWatch', 'currentVersion'],
+      pick: ['monitorWatch', 'currentVersion', 'performanceMode'],
     },
   },
 )
