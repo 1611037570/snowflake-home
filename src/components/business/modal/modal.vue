@@ -101,7 +101,11 @@ const ry = ref(0)
  */
 const backgroundStyle = computed(() => {
   if (performanceMode.value) {
-    return { backdropFilter: 'none', WebkitBackdropFilter: 'none' }
+    return {
+      backdropFilter: 'none',
+      WebkitBackdropFilter: 'none',
+      backgroundColor: 'var(--sf-transparent)',
+    }
   }
   return { backdropFilter: 'blur(10px)', WebkitBackdropFilter: 'blur(10px)' }
 })
