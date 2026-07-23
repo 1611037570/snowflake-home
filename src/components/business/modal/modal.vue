@@ -48,11 +48,12 @@
     </Transition>
   </Teleport>
 </template>
+
 <script setup>
 import { useSystemStore } from '@/stores/modules/system'
 import { onKeyStroke } from '@vueuse/core'
 import { storeToRefs } from 'pinia'
-import { computed, ref, useTemplateRef } from 'vue'
+import { computed, onUnmounted, ref, useTemplateRef, watch } from 'vue'
 
 defineOptions({ name: 'SfModal' })
 
@@ -75,9 +76,37 @@ const mask = useTemplateRef('mask')
 const modeValue = defineModel()
 
 // ==================== 键盘事件 ====================
-/** 按下 ESC 键关闭弹窗 */
-onKeyStroke('Escape', () => {
-  if (modeValue.value) modeValue.value = false
+/** ESC 键监听器的停止函数，用于按需注册/移除 */
+let stopKeyStroke = null
+
+/**
+ * 动态注册/移除 ESC 监听，只在弹窗显示时生效
+ * - 弹窗打开 → 注册监听
+ * - 弹窗关闭 → 移除监听，节省性能
+ */
+watch(
+  modeValue,
+  (val) => {
+    if (val) {
+      stopKeyStroke = onKeyStroke('Escape', () => {
+        modeValue.value = false
+      })
+    } else {
+      if (stopKeyStroke) {
+        stopKeyStroke()
+        stopKeyStroke = null
+      }
+    }
+  },
+  { immediate: true },
+)
+
+/** 组件卸载时确保移除监听，避免内存泄漏 */
+onUnmounted(() => {
+  if (stopKeyStroke) {
+    stopKeyStroke()
+    stopKeyStroke = null
+  }
 })
 
 // ==================== 3D 视差倾斜核心逻辑 ====================
@@ -191,6 +220,7 @@ function handleMouseLeave() {
   will-change: transform;
 }
 
+/* ========== 弹窗淡入淡出动画 ========== */
 .fade-enter-active,
 .fade-leave-active {
   transition:
@@ -203,6 +233,7 @@ function handleMouseLeave() {
   transform: scale(0.3);
 }
 
+/* ========== 遮罩层淡入淡出动画 ========== */
 .mask-enter-active,
 .mask-leave-active {
   transition:
