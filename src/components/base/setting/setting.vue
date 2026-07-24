@@ -9,18 +9,17 @@
     />
   </SfTooltip>
 
-  <SfModal v-model="visible" title="系统设置" width="500px">
-    <SfScrollbar height="500px">
-      <div class="w-[500px]">
-        <SfSetBox>
-          <SfSetItem
-            title="性能模式"
-            info="开启后会优化性能，但会减少功能支持"
-            v-model="performanceMode"
-            type="switch"
-          />
-        </SfSetBox>
-      </div>
+  <SfModal v-model="visible" title="系统设置">
+    <SfScrollbar height="500px" class="w-[500px]">
+      <SfSetBox>
+        <SfSetItem
+          title="性能模式"
+          info="开启后会优化性能，但会减少功能支持"
+          v-model="performanceMode"
+          type="switch"
+          :divider="false"
+        />
+      </SfSetBox>
     </SfScrollbar>
   </SfModal>
 </template>
