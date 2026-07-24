@@ -1,13 +1,16 @@
 <template>
-  <SfTooltip content="系统设置">
-    <SfIcon
-      icon="iconamoon:settings-fill"
-      size="8"
-      :class="color"
-      @click="handleClick"
-      class="transition-all duration-300 hover:scale-120"
-    />
-  </SfTooltip>
+  <div @click="handleClick">
+    <slot>
+      <SfTooltip content="系统设置">
+        <SfIcon
+          icon="iconamoon:settings-fill"
+          size="8"
+          :class="color"
+          class="transition-all duration-300 hover:scale-120"
+        />
+      </SfTooltip>
+    </slot>
+  </div>
 
   <SfModal v-model="visible" title="系统设置">
     <SfScrollbar height="500px" class="w-[500px]">
