@@ -42,6 +42,7 @@ const version = computed(() => {
       <SfTheme />
       <SfLocale />
       <SfDonation />
+      <SfSetting />
       <SfMore />
     </div>
   </header>
