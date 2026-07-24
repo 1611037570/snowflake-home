@@ -1,7 +1,7 @@
 <template>
   <!-- 外层容器：整合布局与分割线，减少一层嵌套 -->
   <div
-    class="mx-4 flex h-12 items-center justify-between bg-sf-primary py-3 text-sf-text"
+    class="flex items-center justify-between rounded-xl bg-sf-primary p-3 text-sf-text"
     :class="{ 'border-b border-gray-200': divider }"
   >
     <div class="flex flex-col gap-1">
@@ -54,7 +54,7 @@ const props = defineProps({
   type: {
     type: String,
     default: 'switch',
-    validator: (val) => ['switch', 'button', 'select'].includes(val),
+    validator: (val) => ['switch', 'button', 'select', 'time'].includes(val),
   },
   config: {
     type: Object,

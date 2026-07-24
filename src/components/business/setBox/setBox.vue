@@ -1,5 +1,5 @@
 <template>
-  <div class="w-[450px] rounded-xl bg-sf-primary">
+  <div class="w-full min-w-[450px] rounded-xl bg-sf-primary">
     <slot></slot>
   </div>
 </template>
