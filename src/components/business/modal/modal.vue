@@ -51,7 +51,7 @@
 
 <script setup>
 import { useSystemStore } from '@/stores/modules/system'
-import { onKeyStroke } from '@vueuse/core'
+import { onKeyStroke, useScrollLock } from '@vueuse/core'
 import { storeToRefs } from 'pinia'
 import { computed, onUnmounted, ref, useTemplateRef, watch } from 'vue'
 
@@ -74,6 +74,8 @@ const { performanceMode } = storeToRefs(systemStore)
 const mask = useTemplateRef('mask')
 /** 双向绑定弹窗显隐状态 */
 const modeValue = defineModel()
+/** 锁定背景滚动 */
+const isLocked = useScrollLock(document.body)
 
 // ==================== 键盘事件 ====================
 /** ESC 键监听器的停止函数，用于按需注册/移除 */
@@ -87,6 +89,7 @@ let stopKeyStroke = null
 watch(
   modeValue,
   (val) => {
+    isLocked.value = val
     if (val) {
       stopKeyStroke = onKeyStroke('Escape', () => {
         modeValue.value = false
@@ -107,6 +110,7 @@ onUnmounted(() => {
     stopKeyStroke()
     stopKeyStroke = null
   }
+  isLocked.value = false
 })
 
 // ==================== 3D 视差倾斜核心逻辑 ====================
