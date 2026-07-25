@@ -3,8 +3,8 @@
     <MyHeader />
     <Home />
     <User />
-    <Shoot />
     <Project />
+    <Shoot />
     <History />
     <Thank />
     <SfBacktop />
