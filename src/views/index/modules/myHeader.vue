@@ -114,10 +114,11 @@ const isHeaderActive = computed(() => headerOpacity.value > 0)
 
         <!-- 工具图标 -->
         <div class="flex items-center gap-4">
-          <SfDonation class="cursor-pointer text-sf-base transition-colors hover:text-sf-theme" />
-          <SfLocale class="cursor-pointer text-sf-base transition-colors hover:text-sf-theme" />
-          <Music class="cursor-pointer text-sf-base transition-colors hover:text-sf-theme" />
-          <SfTheme class="cursor-pointer text-sf-base transition-colors hover:text-sf-theme" />
+          <SfDonation />
+          <SfLocale />
+          <Music />
+          <SfSetting />
+          <SfTheme />
         </div>
       </div>
     </div>
