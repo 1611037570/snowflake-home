@@ -1,4 +1,6 @@
 <script setup>
+defineOptions({ name: 'SfBack' })
+
 const props = defineProps({
   tip: {
     type: String,

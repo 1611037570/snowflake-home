@@ -13,7 +13,7 @@
   </div>
 
   <SfModal v-model="visible" title="系统设置">
-    <SfScrollbar height="500px" class="w-[500px]">
+    <SfScrollbar height="500px" class="w-[400px]">
       <SfSetBox>
         <SfSetItem
           title="性能模式"

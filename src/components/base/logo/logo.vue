@@ -1,4 +1,5 @@
 <script setup>
+defineOptions({ name: 'SfLogo' })
 defineProps({
   size: {
     type: [String, Number],
