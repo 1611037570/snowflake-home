@@ -16,10 +16,7 @@ const shootYears = computed(() => {
 </script>
 
 <template>
-  <div
-    class="w-dwh flex-c relative z-10 min-h-dvh overflow-hidden bg-sf-bg text-sf-text"
-    id="about"
-  >
+  <div class="w-dwh flex-c relative z-10 overflow-hidden bg-sf-bg py-36 text-sf-text" id="about">
     <!-- 背景装饰 -->
     <div
       class="breath absolute -top-20 -right-20 rounded-full bg-sf-theme/30 blur-[100px] will-change-transform"

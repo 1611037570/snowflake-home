@@ -1,9 +1,10 @@
 <template>
   <div
-    class="w-dwh relative z-10 flex flex-col overflow-hidden bg-sf-primary px-4 py-12 md:px-12 md:py-20"
+    class="w-dwh relative z-10 flex flex-col overflow-hidden bg-sf-primary px-12 py-36"
+    id="history"
   >
     <!-- 标题区域 -->
-    <div class="mb-10 flex flex-col items-start space-y-2 px-4">
+    <div class="mb-10 flex flex-col items-center space-y-2 px-4">
       <h2 class="text-3xl font-bold text-sf-text">时光轴</h2>
       <p class="text-sf-text-2">记录每一个重要的时刻与里程碑</p>
     </div>
@@ -37,46 +38,11 @@
           <div
             class="flex h-full flex-col overflow-hidden rounded-xl border border-sf-border/50 bg-sf-bg-2 p-4 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
           >
-            <!-- 图片区域 -->
-            <div
-              v-if="item.img"
-              class="group/img relative mb-3 h-40 w-full overflow-hidden rounded-lg bg-sf-bg"
-            >
-              <SfImg
-                :src="item.img"
-                class="h-full w-full object-cover transition-transform duration-500 group-hover/img:scale-110"
-              />
-              <!-- 图片遮罩与按钮 -->
-              <div
-                class="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 transition-opacity duration-300 group-hover/img:opacity-100"
-              >
-                <button
-                  @click="previewImg(item.img)"
-                  class="flex items-center gap-1 rounded-full bg-sf-theme px-3 py-1.5 text-xs text-white shadow-md hover:bg-sf-theme-hover"
-                >
-                  <SfIcon icon="mingcute:eye-line" size="14" />
-                  <span>查看大图</span>
-                </button>
-              </div>
-            </div>
-
             <!-- 文字描述 -->
             <div class="flex flex-1 flex-col justify-between">
-              <p class="mb-3 text-sm leading-relaxed text-sf-text-2">
+              <p class="text-sm leading-relaxed text-sf-text-2">
                 {{ item.desc }}
               </p>
-
-              <!-- 底部操作栏 -->
-              <div v-if="item.url" class="mt-2 flex justify-end">
-                <a
-                  :href="item.url"
-                  target="_blank"
-                  class="flex items-center gap-1 text-xs font-medium text-sf-theme transition-colors hover:text-sf-theme-hover"
-                >
-                  <span>前去体验</span>
-                  <SfIcon icon="mingcute:arrow-right-line" size="12" />
-                </a>
-              </div>
             </div>
           </div>
         </div>
@@ -124,11 +90,6 @@ import { ref } from 'vue'
 
 const imgVisible = ref(false)
 const imgUrl = ref('')
-
-const previewImg = (img: string) => {
-  imgVisible.value = true
-  imgUrl.value = img
-}
 
 // 简单的日期格式化，如果 time 是时间戳
 const formatTime = (time: string | number) => {

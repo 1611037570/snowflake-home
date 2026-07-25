@@ -13,8 +13,9 @@ const { theme } = storeToRefs(themeStore)
 // 导航配置
 const NAV_ITEMS = [
   { name: '关于', key: 'about' },
-  { name: '摄影', key: 'shoot' },
   { name: '项目', key: 'project' },
+  { name: '摄影', key: 'shoot' },
+  { name: '日志', key: 'history' },
 ]
 
 /**
