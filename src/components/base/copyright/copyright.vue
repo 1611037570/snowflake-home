@@ -1,6 +1,6 @@
 <script setup>
 import { ref } from 'vue'
-
+defineOptions({ name: 'SfCopyright' })
 const visible = ref(false)
 const handleClick = () => {
   visible.value = true

@@ -1,6 +1,8 @@
 <script setup>
 import History from './history.vue'
 import Info from './info.vue'
+
+defineOptions({ name: 'SfAbout' })
 const visible = ref(false)
 const handleClick = () => {
   visible.value = true

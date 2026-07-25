@@ -1,3 +1,11 @@
+<script setup>
+defineOptions({ name: 'SfDonation' })
+import Donation from '@/views/home/about/modalDonation.vue'
+const modalValue = defineModel()
+
+const color = inject('color', 'text-sf-base')
+</script>
+
 <template>
   <div class="flex items-center" @click="modalValue = true">
     <slot>
@@ -15,9 +23,3 @@
     </SfModal>
   </div>
 </template>
-<script setup>
-import Donation from '@/views/home/about/modalDonation.vue'
-const modalValue = defineModel()
-
-const color = inject('color', 'text-sf-base')
-</script>

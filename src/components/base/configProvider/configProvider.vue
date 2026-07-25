@@ -5,6 +5,8 @@
 import { DEFAULT_BACKGROUND, DEFAULT_COLOR } from '@/constants'
 import { getElLocale } from '@/utils'
 
+defineOptions({ name: 'SfConfigProvider' })
+
 provide('bg', DEFAULT_BACKGROUND)
 provide('color', DEFAULT_COLOR)
 </script>
