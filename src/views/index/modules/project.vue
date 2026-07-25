@@ -1,5 +1,5 @@
 <template>
-  <div class="w-dwh relative z-10 flex flex-col items-center bg-sf-bg py-36" id="project">
+  <div class="w-dwh relative z-10 flex flex-col items-center bg-sf-primary py-36" id="project">
     <!-- 项目经历 -->
     <div class="mb-20 w-full max-w-7xl">
       <div class="mb-8 flex items-center">
