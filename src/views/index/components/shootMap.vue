@@ -31,46 +31,6 @@ let chartInstance = null
 const currentMap = ref('china')
 const mapFeatures = ref([])
 
-// 城市坐标映射表
-const cityCoords = {
-  杭州: [120.15507, 30.274084],
-  嘉兴: [120.755486, 30.746129],
-  绍兴: [120.58023, 30.03267],
-  上海: [121.473701, 31.230416],
-  苏州: [120.585315, 31.298886],
-  贵阳: [106.630153, 26.647661],
-  福州: [119.296494, 26.074508],
-  深圳: [114.057868, 22.543099],
-  长沙: [112.938814, 28.228209],
-  柳州: [109.411703, 24.314617],
-  南昌: [115.85794, 28.68202],
-  重庆: [106.551556, 29.563009],
-  温州: [119.296494, 26.074508],
-  南宁: [102.02, 22.62],
-  来宾: [102.02, 22.62],
-  黔南布依族苗族自治州: [107.52, 26.26],
-}
-
-// 映射城市到省份
-const cityToProvince = {
-  杭州: '浙江省',
-  嘉兴: '浙江省',
-  绍兴: '浙江省',
-  上海: '上海市',
-  苏州: '江苏省',
-  贵阳: '贵州省',
-  福州: '福建省',
-  深圳: '广东省',
-  长沙: '湖南省',
-  柳州: '广西壮族自治区',
-  南昌: '江西省',
-  重庆: '重庆市',
-  温州: '浙江省',
-  南宁: '广西壮族自治区',
-  来宾: '广西壮族自治区',
-  黔南布依族苗族自治州: '贵州省',
-}
-
 const initChart = async () => {
   if (!chartRef.value) return
   chartInstance = echarts.init(chartRef.value)
@@ -124,28 +84,27 @@ const updateChart = () => {
 
   props.cityList.forEach((item) => {
     const cityName = item.name
-    if (cityCoords[cityName]) {
+    const provinceName = item.province
+    if (item.coord) {
       scatterData.push({
         name: cityName,
-        value: [...cityCoords[cityName], 1],
+        value: [...item.coord, 1],
       })
     }
 
-    const provinceName = cityToProvince[cityName]
     if (provinceName) {
       provinceMap[provinceName] = true
     }
 
     const fullName =
-      cityName.endsWith('市') || cityName.endsWith('区') || cityName.endsWith('县')
+      cityName.endsWith('市') ||
+      cityName.endsWith('区') ||
+      cityName.endsWith('县') ||
+      cityName.endsWith('州')
         ? cityName
         : `${cityName}市`
 
-    if (['桐乡', '海盐', '嘉善'].includes(cityName)) {
-      cityMap['嘉兴市'] = true
-    } else {
-      cityMap[fullName] = true
-    }
+    cityMap[fullName] = true
   })
 
   let mapData = []
@@ -154,12 +113,18 @@ const updateChart = () => {
   } else {
     // 下钻到省份时，只传入属于当前省份的有足迹城市，避免数据污染其它区域
     mapData = Object.keys(cityMap)
-      .filter(
-        (cityName) =>
-          cityToProvince[cityName.replace(/市$/, '')] === currentMap.value ||
-          cityToProvince[cityName] === currentMap.value ||
-          currentMap.value === '重庆市',
-      )
+      .filter((cityName) => {
+        // 从原始数据列表中查找匹配的城市，确认其所属省份
+        const originCity = props.cityList.find(
+          (c) =>
+            c.name === cityName ||
+            `${c.name}市` === cityName ||
+            c.name === cityName.replace(/市$/, ''),
+        )
+        return (
+          originCity && (originCity.province === currentMap.value || currentMap.value === '重庆市')
+        )
+      })
       .map((name) => ({ name, value: 1 }))
   }
 
