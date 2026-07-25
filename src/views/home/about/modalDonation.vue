@@ -46,10 +46,14 @@
         <span class="text-sf-theme">⭐</span>
         <span>Star 项目：在 GitHub 上给项目点 Star</span>
         <span
-          class="ml-auto cursor-pointer rounded-full bg-sf-theme/10 px-4 py-1 font-medium text-sf-theme transition-all duration-200 hover:bg-sf-theme hover:text-white"
-          @click="goGitHub"
+          class="ml-auto cursor-pointer rounded-full font-medium text-sf-theme transition-all duration-200"
         >
-          点我 Star
+          <img
+            @click="goGitHub"
+            src="https://img.shields.io/github/stars/1611037570/snowflake-home.svg"
+            alt="GitHub Stars"
+            class="h-6 w-18"
+          />
         </span>
       </div>
       <div class="flex items-center gap-2 transition-all duration-200 hover:text-sf-theme/90">
