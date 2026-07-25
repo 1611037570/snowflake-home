@@ -1,6 +1,6 @@
 <template>
   <!-- 摄影社交平台 -->
-  <div class="w-dwh flex-c relative z-10 flex-col bg-sf-primary py-36" id="shoot">
+  <div class="w-dwh flex-c relative z-10 flex-col bg-sf-bg py-36" id="shoot">
     <h4 class="group mb-3 flex items-center justify-center text-base font-medium text-sf-text">
       <SfIcon
         icon="lucide:camera"

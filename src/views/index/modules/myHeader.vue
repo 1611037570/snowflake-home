@@ -96,18 +96,14 @@ const isHeaderActive = computed(() => headerOpacity.value > 0)
       <div class="flex items-center gap-6 md:gap-8">
         <!-- 导航菜单 -->
         <nav class="flex items-center gap-6">
-          <a
+          <SfSpan
             v-for="item in NAV_ITEMS"
-            :key="item.key"
-            class="nav-item group relative cursor-pointer py-2 text-xl font-medium text-sf-base transition-colors hover:text-sf-theme"
+            class="nav-item py-2 text-xl font-medium text-sf-base"
             @click="handleAnchorScroll(item.key)"
+            :key="item.key"
           >
             {{ item.name }}
-            <!-- 悬停下划线动画 -->
-            <span
-              class="absolute bottom-0 left-1/2 h-0.5 w-0 -translate-x-1/2 rounded-full bg-sf-theme transition-all duration-300 ease-out group-hover:w-full"
-            ></span>
-          </a>
+          </SfSpan>
         </nav>
 
         <!-- 分割线 (仅在大屏显示) -->
