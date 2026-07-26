@@ -6,11 +6,23 @@ import ScrollGuide from './scroll-guide.vue'
 
 const showContent = ref(false)
 const isHoveredFormula = ref(false) // 控制第二行文字悬停状态
+const stars = ref([])
 
 onMounted(() => {
   setTimeout(() => {
     showContent.value = true
   }, 300)
+
+  // 生成星星数据（固定，避免重绘）
+  stars.value = Array.from({ length: 60 }, () => ({
+    left: Math.random() * 100 + '%',
+    top: Math.random() * 100 + '%',
+    width: Math.random() * 3 + 1 + 'px',
+    height: Math.random() * 3 + 1 + 'px',
+    animationDelay: Math.random() * 5 + 's',
+    animationDuration: Math.random() * 3 + 2 + 's',
+    opacity: Math.random() * 0.6 + 0.2,
+  }))
 })
 
 const list = [...fixed, ...da_ai_xian_zun].map((item) => ({
@@ -32,6 +44,22 @@ const list = [...fixed, ...da_ai_xian_zun].map((item) => ({
     <div
       class="pointer-events-none absolute inset-0 z-0 bg-[radial-gradient(ellipse_at_center,transparent_10%,var(--sf-background)_100%)]"
     ></div>
+    <div class="stars pointer-events-none absolute inset-0 z-0">
+      <span
+        class="star"
+        v-for="star in stars"
+        :key="`star-${star.left}-${star.top}`"
+        :style="{
+          left: star.left,
+          top: star.top,
+          width: star.width,
+          height: star.height,
+          animationDelay: star.animationDelay,
+          animationDuration: star.animationDuration,
+          opacity: star.opacity,
+        }"
+      ></span>
+    </div>
 
     <!-- 内容区域 -->
     <div class="z-10 flex flex-col items-center gap-12 select-none">
@@ -105,5 +133,28 @@ const list = [...fixed, ...da_ai_xian_zun].map((item) => ({
   display: inline-block;
   clip-path: inset(0 50% 0 50%);
   animation: unfold 0.8s ease forwards;
+}
+
+/* 4. 星星粒子 */
+.stars {
+  overflow: hidden;
+}
+.star {
+  position: absolute;
+  border-radius: 50%;
+  background: var(--sf-theme-hover);
+  animation: starTwinkle ease-in-out infinite alternate;
+  opacity: 0.6;
+  box-shadow: 0 0 4px var(--sf-theme);
+}
+@keyframes starTwinkle {
+  0% {
+    opacity: 0.2;
+    transform: scale(0.8);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1.2);
+  }
 }
 </style>
