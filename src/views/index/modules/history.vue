@@ -9,8 +9,16 @@
       <p class="text-sf-text-2">记录每一个重要的时刻与里程碑</p>
     </div>
 
-    <el-scrollbar>
-      <div class="flex min-w-full flex-row items-start gap-8 px-4 pt-4 pb-12">
+    <el-scrollbar class="relative mx-auto max-w-[1200px]">
+      <!-- 左侧边缘虚化 -->
+      <div
+        class="pointer-events-none absolute top-0 bottom-0 left-0 z-10 w-26 bg-linear-to-r from-[var(--sf-primary)] to-transparent"
+      ></div>
+      <!-- 右侧边缘虚化 -->
+      <div
+        class="pointer-events-none absolute top-0 right-0 bottom-0 z-10 w-26 bg-linear-to-l from-[var(--sf-primary)] to-transparent"
+      ></div>
+      <div class="flex flex-row items-start gap-8 px-4 pt-4 pb-12">
         <div
           v-for="(item, index) in historyList"
           :key="item.time"
@@ -51,45 +59,11 @@
         <div class="w-8 flex-shrink-0"></div>
       </div>
     </el-scrollbar>
-
-    <!-- 图片预览弹窗 -->
-    <teleport to="body">
-      <transition
-        enter-active-class="transition duration-300 ease-out"
-        enter-from-class="opacity-0"
-        enter-to-class="opacity-100"
-        leave-active-class="transition duration-200 ease-in"
-        leave-from-class="opacity-100"
-        leave-to-class="opacity-0"
-      >
-        <div
-          v-if="imgVisible"
-          class="fixed inset-0 z-[9999] flex items-center justify-center bg-black/80 backdrop-blur-sm"
-          @click="imgVisible = false"
-        >
-          <!-- 关闭按钮 -->
-          <button
-            class="absolute top-6 right-6 rounded-full bg-white/10 p-2 text-white transition-colors hover:bg-white/20"
-            @click.stop="imgVisible = false"
-          >
-            <SfIcon icon="mingcute:close-line" size="24" />
-          </button>
-
-          <div class="relative max-h-[90vh] max-w-[90vw]" @click.stop>
-            <SfImg :src="imgUrl" class="max-h-[85vh] max-w-[85vw] rounded-lg shadow-2xl" />
-          </div>
-        </div>
-      </transition>
-    </teleport>
   </div>
 </template>
 
 <script setup lang="ts">
 import { historyList } from '@/constants/modules/history'
-import { ref } from 'vue'
-
-const imgVisible = ref(false)
-const imgUrl = ref('')
 
 // 简单的日期格式化，如果 time 是时间戳
 const formatTime = (time: string | number) => {
