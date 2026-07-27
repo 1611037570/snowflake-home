@@ -7,6 +7,7 @@ export const useThemeStore = defineStore(
     // 主题模式：light | dark | system
     const themeMode = ref<'light' | 'dark' | 'system'>('system')
     const theme = ref<'light' | 'dark'>('light')
+    const isDark = computed(() => theme.value === 'dark')
     // 保存媒体查询对象引用，用于后续移除监听（核心修复点1）
     const mediaQueryList = window.matchMedia('(prefers-color-scheme: dark)')
 
@@ -46,7 +47,7 @@ export const useThemeStore = defineStore(
       setTheme(themeMode.value)
     }
 
-    return { themeMode, theme, setTheme, initTheme }
+    return { themeMode, theme, isDark, setTheme, initTheme }
   },
   {
     persist: { storage: localStorage, pick: ['themeMode'] },
