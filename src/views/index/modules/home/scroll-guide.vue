@@ -25,7 +25,7 @@ function scrollToAbout() {
 <template>
   <!-- 底部引导 -->
   <div
-    class="group absolute bottom-12 z-20 flex cursor-pointer flex-col items-center gap-4 transition-all delay-1000 duration-1000"
+    class="group absolute bottom-8 z-20 flex cursor-pointer flex-col items-center gap-4 transition-all delay-1000 duration-1000"
     :class="show ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'"
     @click="scrollToAbout"
   >
@@ -36,7 +36,7 @@ function scrollToAbout() {
     </span>
     <SfIcon
       icon="mingcute:down-line"
-      size="28"
+      size="24"
       class="animate-bounce cursor-pointer text-sf-text-2 transition-all duration-300 group-hover:scale-125 group-hover:text-sf-theme"
     />
   </div>

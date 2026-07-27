@@ -12,7 +12,7 @@
       </h4>
 
       <div class="mb-12 flex flex-wrap items-center justify-center gap-4 md:gap-6">
-        <template v-for="item in [...imgList].reverse()" :key="item.id">
+        <template v-for="item in imgList" :key="item.id">
           <div
             class="group overflow-hidden rounded-2xl shadow-sm transition-all duration-500 hover:-translate-y-2 hover:shadow-xl"
           >
@@ -66,52 +66,18 @@ import { urlNavigation } from '@/utils'
 import ShootMap from '../components/shootMap.vue'
 const components = import.meta.glob('../../../assets/images/shoot/*', { eager: true })
 
-function getImg(id) {
-  for (const key of Object.keys(components)) {
-    const matchNum = key.match(/(\d+)/)
-    if (matchNum && Number(matchNum[1]) === id) {
-      return components[key].default
-    }
+const imgMap = new Map()
+for (const key in components) {
+  const matchNum = key.match(/(\d+)/)
+  if (matchNum) {
+    imgMap.set(Number(matchNum[1]), components[key].default)
   }
 }
-const imgList = ref([
-  {
-    id: 1,
-  },
-  {
-    id: 2,
-  },
-  {
-    id: 4,
-  },
-  {
-    id: 6,
-  },
-  {
-    id: 7,
-  },
-  {
-    id: 10,
-  },
-  {
-    id: 11,
-  },
-  {
-    id: 12,
-  },
-  {
-    id: 15,
-  },
-])
-const init = ref(false)
 
-function initImgList() {
-  for (const item of imgList.value) {
-    item.img = getImg(item.id)
-  }
-  init.value = true
-}
-initImgList()
+const imgList = [15, 12, 11, 10, 7, 6, 4, 2, 1].map((id) => ({
+  id,
+  img: imgMap.get(id),
+}))
 const city = [
   { name: '杭州', province: '浙江省', coord: [120.15507, 30.274084] },
   { name: '嘉兴', province: '浙江省', coord: [120.755486, 30.746129] },

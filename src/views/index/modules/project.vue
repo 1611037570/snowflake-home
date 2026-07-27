@@ -22,14 +22,7 @@ import { PROJECT_PAGE } from '@/constants'
 import SmallTitle from '../components/smallTitle.vue'
 import ProjectCard from './projectCard.vue'
 const list = computed(() => {
-  return PROJECT_PAGE.value.filter((item) => {
-    if (item.hidden) {
-      return false
-    }
-    if (item.url != '/index') {
-      return item
-    }
-  })
+  return PROJECT_PAGE.value.filter((item) => !item.hidden && item.url !== '/index')
 })
 // 项目经历数据
 const projectList = [

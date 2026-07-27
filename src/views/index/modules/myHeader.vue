@@ -2,7 +2,7 @@
 import nnLogo from '@/assets/images/userLogo.png'
 import { useSystemStore, useThemeStore } from '@/stores'
 import { storeToRefs } from 'pinia'
-import { computed, inject, ref, watch } from 'vue'
+import { computed, inject, onMounted, ref, watch } from 'vue'
 import Music from '../components/music.vue'
 
 const systemStore = useSystemStore()
@@ -60,16 +60,45 @@ const headerStyle = computed(() => {
   }
 })
 
-// 监听滚动更新透明度
+// 监听滚动更新透明度和激活的导航项
+const activeKey = ref('')
+
+let navElements = []
+const getNavElements = () =>
+  NAV_ITEMS.map((item) => ({ key: item.key, el: document.getElementById(item.key) }))
+
+const updateActiveKey = useThrottleFn(() => {
+  if (!navElements.length) navElements = getNavElements()
+  let currentActive = ''
+  const triggerLine = (windowSize.value?.height || window.innerHeight) / 3
+
+  for (const item of navElements) {
+    if (item.el) {
+      const rect = item.el.getBoundingClientRect()
+      if (rect.top <= triggerLine && rect.bottom > triggerLine) {
+        currentActive = item.key
+        break
+      }
+    }
+  }
+  activeKey.value = currentActive
+}, 100)
+
 watch(scrollTop, (val) => {
   const threshold = scrollThreshold.value
   if (val < threshold) {
     headerOpacity.value = 0
-    return
+  } else {
+    // 超过阈值后，根据滚动距离计算透明度，最大 0.8
+    const offset = val - threshold
+    headerOpacity.value = Math.min(offset / 400, 0.8)
   }
-  // 超过阈值后，根据滚动距离计算透明度，最大 0.8
-  const offset = val - threshold
-  headerOpacity.value = Math.min(offset / 400, 0.8)
+
+  updateActiveKey()
+})
+
+onMounted(() => {
+  updateActiveKey()
 })
 
 const isHeaderActive = computed(() => headerOpacity.value > 0)
@@ -98,7 +127,8 @@ const isHeaderActive = computed(() => headerOpacity.value > 0)
         <nav class="flex items-center gap-6">
           <SfSpan
             v-for="item in NAV_ITEMS"
-            class="nav-item py-2 text-xl font-medium text-sf-base"
+            class="nav-item cursor-pointer py-2 text-xl font-medium transition-colors"
+            :class="activeKey === item.key ? 'font-bold text-sf-theme' : 'text-sf-base'"
             @click="handleAnchorScroll(item.key)"
             :key="item.key"
           >
