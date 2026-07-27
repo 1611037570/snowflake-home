@@ -19,14 +19,14 @@ import { useThemeStore } from '@/stores' // 新增：引入主题
 import { useSystemStore } from '@/stores/modules/system'
 import { useEventListener, useIntervalFn } from '@vueuse/core'
 import { storeToRefs } from 'pinia'
-import { computed, onMounted, ref, watch } from 'vue'
+import { computed, onMounted, ref, shallowRef, watch } from 'vue'
 
 const systemStore = useSystemStore()
 const themeStore = useThemeStore()
 const { performanceMode } = storeToRefs(systemStore)
 const { isDark } = storeToRefs(themeStore) // 响应式主题
 
-const stars = ref([])
+const stars = shallowRef([])
 
 // 根据性能模式动态计算需要渲染的星星
 const displayedStars = computed(() => {
@@ -193,6 +193,7 @@ function updateStarsTheme() {
     star.style.boxShadow = newStyle.boxShadow
     star.style.opacity = newStyle.opacity
   })
+  triggerRef(stars)
 }
 
 // ---------- 生成或重置星星数组 ----------
@@ -203,13 +204,18 @@ function generateStars() {
 
 // ---------- 星星生命周期更新 ----------
 function updateStarsLife() {
+  let changed = false
   for (let i = 0; i < stars.value.length; i++) {
     const star = stars.value[i]
     star.life -= 0.1
     if (star.life <= 0) {
       star.alive = !star.alive
       star.life = Math.random() * (STAR_CONFIG.maxLife - STAR_CONFIG.minLife) + STAR_CONFIG.minLife
+      changed = true
     }
+  }
+  if (changed) {
+    triggerRef(stars)
   }
 }
 
@@ -233,6 +239,7 @@ watch(
       }
       starContainerStyle.value.transform =
         'rotateX(0deg) rotateY(0deg) translateX(0px) translateY(0px)'
+      triggerRef(stars)
     } else {
       resume()
     }
