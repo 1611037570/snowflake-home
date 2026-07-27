@@ -1,12 +1,12 @@
 <template>
   <!-- 背景渐变容器（含过渡动画） -->
   <div
-    class="fixed inset-0 z-10 min-h-dvh w-full transition-colors duration-700 ease-out"
+    class="fixed inset-0 z-10 min-h-dvh w-full transition-colors duration-1000 ease-out"
     :style="{
       background: `radial-gradient(ellipse at 50% 50%, ${bgGradientStart}, ${bgGradientEnd})`,
     }"
   >
-    <!-- 三个独立路径浮动的光晕球体 -->
+    <!-- 四个独立路径浮动的光晕球体 -->
     <div
       v-for="(ball, index) in balls"
       :key="index"
@@ -18,8 +18,8 @@
         left: ball.left,
         right: ball.right,
         bottom: ball.bottom,
-        filter: 'blur(90px)',
-        opacity: isDark ? 0.55 : 0.85,
+        filter: `blur(${ball.blur}px)`,
+        opacity: ball.opacity,
         zIndex: 2,
         animationName: `float${index + 1}`,
         animationDuration: `${ball.duration}s`,
@@ -27,30 +27,49 @@
         animationIterationCount: 'infinite',
         animationTimingFunction: 'cubic-bezier(0.45, 0, 0.55, 1)',
         animationDirection: 'alternate',
+        transform: `scale(${ball.scale})`,
       }"
     />
 
-    <!-- 点阵背景层 -->
+    <!-- 点阵背景层（带径向渐隐） -->
     <div
       class="pointer-events-none absolute inset-0"
       :style="{
         backgroundImage: `radial-gradient(circle at 1px 1px, ${dotColor} 1px, transparent 0)`,
-        backgroundSize: '32px 32px',
+        backgroundSize: '28px 28px',
+        maskImage: 'radial-gradient(ellipse at 50% 50%, black 40%, transparent 85%)',
+        WebkitMaskImage: 'radial-gradient(ellipse at 50% 50%, black 40%, transparent 85%)',
       }"
     />
 
     <!-- 中心环境光晕（增强氛围） -->
     <div
       class="pointer-events-none absolute rounded-full"
-      :class="[$s(120, 'w'), $s(120, 'h')]"
+      :class="[$s(140, 'w'), $s(140, 'h')]"
       :style="{
         background: `radial-gradient(circle, ${envGlow} 0%, transparent 70%)`,
         top: '50%',
         left: '50%',
         transform: 'translate(-50%, -50%)',
-        filter: 'blur(80px)',
-        opacity: 0.5,
+        filter: 'blur(100px)',
+        opacity: 0.6,
         zIndex: 12,
+        willChange: 'transform, filter',
+      }"
+    />
+
+    <!-- 底部微光（增加层次） -->
+    <div
+      class="pointer-events-none absolute rounded-full"
+      :class="[$s(80, 'w'), $s(80, 'h')]"
+      :style="{
+        background: `radial-gradient(circle, ${bottomGlow} 0%, transparent 70%)`,
+        bottom: '-10%',
+        left: '50%',
+        transform: 'translateX(-50%)',
+        filter: 'blur(80px)',
+        opacity: 0.3,
+        zIndex: 1,
         willChange: 'transform, filter',
       }"
     />
@@ -60,157 +79,227 @@
 <script setup>
 import { useThemeStore } from '@/stores'
 import { storeToRefs } from 'pinia'
+import { computed } from 'vue'
 
 const themeStore = useThemeStore()
 const { isDark } = storeToRefs(themeStore)
 
+// ============================================================
 // 背景渐变（带过渡）
-const bgGradientStart = computed(() => (isDark.value ? '#0f172a' : '#f1f5f9'))
-const bgGradientEnd = computed(() => (isDark.value ? '#1e293b' : '#e2e8f0'))
+// ============================================================
+const bgGradientStart = computed(() => (isDark.value ? '#0b1120' : '#faf9f6'))
+const bgGradientEnd = computed(() => (isDark.value ? '#1a1a2e' : '#e8e6e1'))
 
+// ============================================================
 // 点阵颜色
-const dotColor = computed(() => (isDark.value ? 'rgba(255,255,255,0.08)' : 'rgba(148,163,184,0.3)'))
-
-// 环境光晕颜色
-const envGlow = computed(() =>
-  isDark.value ? 'rgba(139, 92, 246, 0.2)' : 'rgba(124, 58, 237, 0.15)',
+// ============================================================
+const dotColor = computed(() =>
+  isDark.value ? 'rgba(255,255,255,0.06)' : 'rgba(148,163,184,0.28)',
 )
 
-// 球体配置（颜色微调，更通透）
-const lightBalls = [
-  {
-    size: 100,
-    top: '10%',
-    left: '5%',
-    right: null,
-    bottom: null,
-    color1: 'rgba(124, 58, 237, 0.65)',
-    color2: 'rgba(139, 92, 246, 0.4)',
-    color3: 'rgba(124, 58, 237, 0)',
-    delay: 0,
-    duration: 14,
-  },
-  {
-    size: 70,
-    top: null,
-    left: null,
-    right: '5%',
-    bottom: '8%',
-    color1: 'rgba(6, 182, 212, 0.55)',
-    color2: 'rgba(34, 211, 238, 0.35)',
-    color3: 'rgba(6, 182, 212, 0)',
-    delay: 2.5,
-    duration: 16,
-  },
-  {
-    size: 80,
-    top: null,
-    left: null,
-    right: '18%',
-    bottom: '28%',
-    color1: 'rgba(236, 72, 153, 0.5)',
-    color2: 'rgba(244, 114, 182, 0.3)',
-    color3: 'rgba(236, 72, 153, 0)',
-    delay: 1.2,
-    duration: 18,
-  },
-]
+// ============================================================
+// 环境光晕颜色
+// ============================================================
+const envGlow = computed(() =>
+  isDark.value ? 'rgba(139, 92, 246, 0.20)' : 'rgba(124, 58, 237, 0.10)',
+)
 
-const darkBalls = [
+const bottomGlow = computed(() =>
+  isDark.value ? 'rgba(34, 211, 238, 0.12)' : 'rgba(6, 182, 212, 0.08)',
+)
+
+// ============================================================
+// 球体配置（4个独立浮动路径）
+// ============================================================
+const ballData = [
   {
-    size: 100,
-    top: '8%',
-    left: '3%',
+    size: 110,
+    top: '5%',
+    left: '2%',
     right: null,
     bottom: null,
-    color1: 'rgba(139, 92, 246, 0.7)',
-    color2: 'rgba(167, 139, 250, 0.35)',
-    color3: 'rgba(139, 92, 246, 0)',
     delay: 0,
-    duration: 14,
+    duration: 16,
+    scale: 1,
+    light: {
+      color1: 'rgba(124, 58, 237, 0.50)',
+      color2: 'rgba(167, 139, 250, 0.30)',
+      color3: 'rgba(124, 58, 237, 0)',
+      blur: 100,
+      opacity: 0.75,
+    },
+    dark: {
+      color1: 'rgba(139, 92, 246, 0.60)',
+      color2: 'rgba(196, 181, 253, 0.25)',
+      color3: 'rgba(139, 92, 246, 0)',
+      blur: 110,
+      opacity: 0.55,
+    },
   },
   {
-    size: 70,
+    size: 75,
     top: null,
     left: null,
-    right: '3%',
-    bottom: '6%',
-    color1: 'rgba(34, 211, 238, 0.5)',
-    color2: 'rgba(103, 232, 249, 0.25)',
-    color3: 'rgba(34, 211, 238, 0)',
-    delay: 2.5,
-    duration: 16,
+    right: '2%',
+    bottom: '5%',
+    delay: 2.8,
+    duration: 18,
+    scale: 1.05,
+    light: {
+      color1: 'rgba(6, 182, 212, 0.45)',
+      color2: 'rgba(103, 232, 249, 0.25)',
+      color3: 'rgba(6, 182, 212, 0)',
+      blur: 85,
+      opacity: 0.7,
+    },
+    dark: {
+      color1: 'rgba(34, 211, 238, 0.45)',
+      color2: 'rgba(103, 232, 249, 0.18)',
+      color3: 'rgba(34, 211, 238, 0)',
+      blur: 90,
+      opacity: 0.5,
+    },
   },
   {
-    size: 80,
+    size: 85,
     top: null,
     left: null,
     right: '16%',
-    bottom: '26%',
-    color1: 'rgba(244, 114, 182, 0.45)',
-    color2: 'rgba(251, 146, 201, 0.2)',
-    color3: 'rgba(244, 114, 182, 0)',
-    delay: 1.2,
-    duration: 18,
+    bottom: '28%',
+    delay: 1.5,
+    duration: 20,
+    scale: 0.95,
+    light: {
+      color1: 'rgba(236, 72, 153, 0.40)',
+      color2: 'rgba(244, 114, 182, 0.20)',
+      color3: 'rgba(236, 72, 153, 0)',
+      blur: 95,
+      opacity: 0.65,
+    },
+    dark: {
+      color1: 'rgba(244, 114, 182, 0.40)',
+      color2: 'rgba(251, 146, 201, 0.15)',
+      color3: 'rgba(244, 114, 182, 0)',
+      blur: 100,
+      opacity: 0.45,
+    },
+  },
+  {
+    size: 60,
+    top: null,
+    left: '22%',
+    right: null,
+    bottom: '18%',
+    delay: 4.2,
+    duration: 15,
+    scale: 1.1,
+    light: {
+      color1: 'rgba(245, 158, 11, 0.35)',
+      color2: 'rgba(252, 211, 77, 0.18)',
+      color3: 'rgba(245, 158, 11, 0)',
+      blur: 75,
+      opacity: 0.85,
+    },
+    dark: {
+      color1: 'rgba(245, 158, 11, 0.35)',
+      color2: 'rgba(252, 211, 77, 0.18)',
+      color3: 'rgba(245, 158, 11, 0)',
+      blur: 80,
+      opacity: 0.6,
+    },
   },
 ]
 
 const balls = computed(() => {
-  const base = isDark.value ? darkBalls : lightBalls
-  return base.map((b) => ({
-    ...b,
-    gradient: `radial-gradient(circle at 40% 35%, ${b.color1} 0%, ${b.color2} 50%, ${b.color3} 100%)`,
-  }))
+  return ballData.map((b) => {
+    const themeParams = isDark.value ? b.dark : b.light
+    return {
+      ...b,
+      ...themeParams,
+      gradient: `radial-gradient(circle at 38% 32%, ${themeParams.color1} 0%, ${themeParams.color2} 55%, ${themeParams.color3} 100%)`,
+    }
+  })
 })
 </script>
 
 <style lang="scss" scoped>
-/* 三个独立的浮动路径，仅变换 translate3d，GPU 加速 */
+/* ============================================================
+   四个独立的浮动路径（GPU 加速）
+   ============================================================ */
+
 @keyframes float1 {
   0%,
   100% {
-    transform: translate3d(0, 0, 0);
+    transform: translate3d(0, 0, 0) scale(1);
   }
-  25% {
-    transform: translate3d(60px, -80px, 0);
+  20% {
+    transform: translate3d(50px, -70px, 0) scale(1.06);
   }
-  50% {
-    transform: translate3d(120px, 0, 0);
+  40% {
+    transform: translate3d(110px, -20px, 0) scale(0.96);
   }
-  75% {
-    transform: translate3d(60px, 80px, 0);
+  60% {
+    transform: translate3d(90px, 60px, 0) scale(1.04);
+  }
+  80% {
+    transform: translate3d(30px, 80px, 0) scale(0.98);
   }
 }
 
 @keyframes float2 {
   0%,
   100% {
-    transform: translate3d(0, 0, 0);
+    transform: translate3d(0, 0, 0) scale(1);
   }
-  25% {
-    transform: translate3d(-70px, -60px, 0);
+  20% {
+    transform: translate3d(-60px, -50px, 0) scale(0.94);
   }
-  50% {
-    transform: translate3d(-130px, 0, 0);
+  40% {
+    transform: translate3d(-120px, 10px, 0) scale(1.08);
   }
-  75% {
-    transform: translate3d(-70px, 60px, 0);
+  60% {
+    transform: translate3d(-100px, 70px, 0) scale(0.96);
+  }
+  80% {
+    transform: translate3d(-40px, 60px, 0) scale(1.02);
   }
 }
 
 @keyframes float3 {
   0%,
   100% {
-    transform: translate3d(0, 0, 0);
+    transform: translate3d(0, 0, 0) scale(1);
   }
-  25% {
-    transform: translate3d(50px, 90px, 0);
+  20% {
+    transform: translate3d(40px, 80px, 0) scale(0.92);
   }
-  50% {
-    transform: translate3d(100px, 0, 0);
+  40% {
+    transform: translate3d(90px, 40px, 0) scale(1.1);
   }
-  75% {
-    transform: translate3d(50px, -90px, 0);
+  60% {
+    transform: translate3d(70px, -60px, 0) scale(0.94);
+  }
+  80% {
+    transform: translate3d(20px, -90px, 0) scale(1.06);
+  }
+}
+
+@keyframes float4 {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  20% {
+    transform: translate3d(-30px, -90px, 0) scale(1.08);
+  }
+  40% {
+    transform: translate3d(-80px, -30px, 0) scale(0.9);
+  }
+  60% {
+    transform: translate3d(-60px, 50px, 0) scale(1.04);
+  }
+  80% {
+    transform: translate3d(-10px, 70px, 0) scale(0.96);
   }
 }
 
@@ -218,6 +307,19 @@ const balls = computed(() => {
   /* 强制合成层，优化模糊滤镜渲染 */
   transform: translateZ(0);
   backface-visibility: hidden;
-  will-change: transform, filter;
+  will-change: transform, filter, opacity;
+
+  /* 边缘柔和过渡，消除硬边 */
+  &::after {
+    content: '';
+    position: absolute;
+    inset: -10%;
+    border-radius: 50%;
+    background: inherit;
+    filter: blur(20px);
+    opacity: 0.3;
+    pointer-events: none;
+    will-change: transform;
+  }
 }
 </style>
