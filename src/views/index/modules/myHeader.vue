@@ -63,18 +63,14 @@ const headerStyle = computed(() => {
 // 监听滚动更新透明度和激活的导航项
 const activeKey = ref('')
 
-let navElements = []
-const getNavElements = () =>
-  NAV_ITEMS.map((item) => ({ key: item.key, el: document.getElementById(item.key) }))
-
 const updateActiveKey = useThrottleFn(() => {
-  if (!navElements.length) navElements = getNavElements()
   let currentActive = ''
   const triggerLine = (windowSize.value?.height || window.innerHeight) / 3
 
-  for (const item of navElements) {
-    if (item.el) {
-      const rect = item.el.getBoundingClientRect()
+  for (const item of NAV_ITEMS) {
+    const el = document.getElementById(item.key)
+    if (el) {
+      const rect = el.getBoundingClientRect()
       if (rect.top <= triggerLine && rect.bottom > triggerLine) {
         currentActive = item.key
         break
