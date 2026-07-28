@@ -3,7 +3,7 @@
   <div
     class="fixed inset-0 z-10 min-h-dvh w-full transition-colors duration-1000 ease-out"
     :style="{
-      background: `radial-gradient(ellipse at 50% 50%, ${bgGradientStart}, ${bgGradientEnd})`,
+      background: `radial-gradient(ellipse at 50% 50%, ${themeVars.bgStart}, ${themeVars.bgEnd})`,
     }"
   >
     <!-- 四个独立路径浮动的光晕球体 -->
@@ -35,7 +35,7 @@
     <div
       class="pointer-events-none absolute inset-0"
       :style="{
-        backgroundImage: `radial-gradient(circle at 1px 1px, ${dotColor} 1px, transparent 0)`,
+        backgroundImage: `radial-gradient(circle at 1px 1px, ${themeVars.dotColor} 1px, transparent 0)`,
         backgroundSize: '28px 28px',
         maskImage: 'radial-gradient(ellipse at 50% 50%, black 40%, transparent 85%)',
         WebkitMaskImage: 'radial-gradient(ellipse at 50% 50%, black 40%, transparent 85%)',
@@ -47,7 +47,7 @@
       class="pointer-events-none absolute rounded-full"
       :class="[$s(140, 'w'), $s(140, 'h')]"
       :style="{
-        background: `radial-gradient(circle, ${envGlow} 0%, transparent 70%)`,
+        background: `radial-gradient(circle, ${themeVars.envGlow} 0%, transparent 70%)`,
         top: '50%',
         left: '50%',
         transform: 'translate(-50%, -50%)',
@@ -63,7 +63,7 @@
       class="pointer-events-none absolute rounded-full"
       :class="[$s(80, 'w'), $s(80, 'h')]"
       :style="{
-        background: `radial-gradient(circle, ${bottomGlow} 0%, transparent 70%)`,
+        background: `radial-gradient(circle, ${themeVars.bottomGlow} 0%, transparent 70%)`,
         bottom: '-10%',
         left: '50%',
         transform: 'translateX(-50%)',
@@ -85,28 +85,18 @@ const themeStore = useThemeStore()
 const { isDark } = storeToRefs(themeStore)
 
 // ============================================================
-// 背景渐变（带过渡）
+// 主题颜色变量统一计算（减少响应式开销和代码冗余）
 // ============================================================
-const bgGradientStart = computed(() => (isDark.value ? '#0b1120' : '#faf9f6'))
-const bgGradientEnd = computed(() => (isDark.value ? '#1a1a2e' : '#e8e6e1'))
-
-// ============================================================
-// 点阵颜色
-// ============================================================
-const dotColor = computed(() =>
-  isDark.value ? 'rgba(255,255,255,0.06)' : 'rgba(148,163,184,0.28)',
-)
-
-// ============================================================
-// 环境光晕颜色
-// ============================================================
-const envGlow = computed(() =>
-  isDark.value ? 'rgba(139, 92, 246, 0.20)' : 'rgba(124, 58, 237, 0.10)',
-)
-
-const bottomGlow = computed(() =>
-  isDark.value ? 'rgba(34, 211, 238, 0.12)' : 'rgba(6, 182, 212, 0.08)',
-)
+const themeVars = computed(() => {
+  const dark = isDark.value
+  return {
+    bgStart: dark ? '#0b1120' : '#faf9f6',
+    bgEnd: dark ? '#1a1a2e' : '#e8e6e1',
+    dotColor: dark ? 'rgba(255,255,255,0.06)' : 'rgba(148,163,184,0.28)',
+    envGlow: dark ? 'rgba(139, 92, 246, 0.20)' : 'rgba(124, 58, 237, 0.10)',
+    bottomGlow: dark ? 'rgba(34, 211, 238, 0.12)' : 'rgba(6, 182, 212, 0.08)',
+  }
+})
 
 // ============================================================
 // 球体配置（4个独立浮动路径）
@@ -211,8 +201,9 @@ const ballData = [
 ]
 
 const balls = computed(() => {
+  const dark = isDark.value
   return ballData.map((b) => {
-    const themeParams = isDark.value ? b.dark : b.light
+    const themeParams = dark ? b.dark : b.light
     return {
       ...b,
       ...themeParams,
