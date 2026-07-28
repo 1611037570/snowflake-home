@@ -3,9 +3,11 @@
     <div class="flex items-center gap-3">
       <div class="flex items-center">
         {{ $t('copyright') }} © 2019-{{ currentYear }}
-        <span @click="userNavigation" class="mx-1 cursor-pointer font-medium hover:text-sf-theme">
-          {{ $t('user.name') }}
-        </span>
+        <SfTooltip content="网站作者">
+          <SfSpan class="mx-1" @click="userNavigation">
+            {{ $t('user.name') }}
+          </SfSpan>
+        </SfTooltip>
         {{ $t('allRightsReserved') }}
       </div>
 
