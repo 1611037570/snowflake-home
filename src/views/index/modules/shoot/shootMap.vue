@@ -78,19 +78,12 @@ const backToChina = () => {
 const updateChart = () => {
   if (!chartInstance) return
 
-  const scatterData = []
   const provinceMap = {}
   const cityMap = {}
 
   props.cityList.forEach((item) => {
     const cityName = item.name
     const provinceName = item.province
-    if (item.coord) {
-      scatterData.push({
-        name: cityName,
-        value: [...item.coord, 1],
-      })
-    }
 
     if (provinceName) {
       provinceMap[provinceName] = true
@@ -132,13 +125,18 @@ const updateChart = () => {
     tooltip: {
       trigger: 'item',
       formatter: function (params) {
-        if (params.seriesType === 'effectScatter') {
-          return `已去过: ${params.name}`
-        }
         // 当 mapData 中有该区域的 value 值时，说明有足迹
         // 同时确保不要在提示框里误报当前没显示的其它省份数据
         if (params.seriesType === 'map' && params.value === 1) {
-          return `${params.name} (有足迹)`
+          if (currentMap.value === 'china') {
+            // 在全国地图上悬停省份时，去数据源中匹配出该省份下真实去过的所有城市
+            const visitedCities = props.cityList
+              .filter((c) => c.province === params.name)
+              .map((c) => c.name)
+              .join('、')
+            return `${params.name}<br/>城市：${visitedCities}`
+          }
+          return `${params.name}`
         }
         return params.name || ''
       },
@@ -186,24 +184,6 @@ const updateChart = () => {
         type: 'map',
         geoIndex: 0,
         data: mapData,
-      },
-      {
-        name: '城市',
-        type: 'effectScatter',
-        coordinateSystem: 'geo',
-        data: scatterData,
-        symbolSize: 8,
-        showEffectOn: 'render',
-        rippleEffect: {
-          brushType: 'stroke',
-          scale: 3,
-        },
-        itemStyle: {
-          color: '#50a2ff',
-          shadowBlur: 10,
-          shadowColor: '#50a2ff',
-        },
-        zlevel: 1,
       },
     ],
   }
