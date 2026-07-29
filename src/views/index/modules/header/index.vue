@@ -3,7 +3,7 @@ import nnLogo from '@/assets/images/userLogo.png'
 import { useSystemStore, useThemeStore } from '@/stores'
 import { storeToRefs } from 'pinia'
 import { computed, inject, onMounted, ref, watch } from 'vue'
-import Music from '../components/music.vue'
+import Music from './music.vue'
 
 const systemStore = useSystemStore()
 const { windowSize } = storeToRefs(systemStore)
