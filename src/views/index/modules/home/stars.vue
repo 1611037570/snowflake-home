@@ -21,7 +21,7 @@
       ></span>
 
       <!-- ========= 巨蟹座星座（永不消失，左上角，可调位置） ========= -->
-      <CancerConstellation style="transform: scale(0.8); left: 5%; top: 5%" />
+      <CancerConstellation style="transform: scale(0.65); left: 5%; top: 5%" />
     </div>
   </div>
 </template>
@@ -254,7 +254,10 @@ function updateStarsTheme() {
   stars.value.forEach((star) => {
     const color = colors[star._colorIndex % colors.length]
     const newStyle = buildStarStyle(color, star._shadowSize, star._opacityBase, dark)
-    star.style = newStyle
+    star.style = {
+      ...star.style,
+      ...newStyle,
+    }
   })
 }
 

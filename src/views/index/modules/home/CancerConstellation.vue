@@ -17,7 +17,6 @@
           <stop offset="100%" stop-color="#aabbff" stop-opacity="0" />
         </radialGradient>
 
-        <!-- 亮星发光渐变 -->
         <radialGradient id="brightStarGlow" cx="50%" cy="50%" r="50%">
           <stop offset="0%" stop-color="#ffffff" stop-opacity="1" />
           <stop offset="15%" stop-color="#ffffff" stop-opacity="0.9" />
@@ -25,14 +24,12 @@
           <stop offset="100%" stop-color="#ccddff" stop-opacity="0" />
         </radialGradient>
 
-        <!-- 深空天体（M44）发光 -->
         <radialGradient id="m44Glow" cx="50%" cy="50%" r="50%">
           <stop offset="0%" stop-color="#88ddff" stop-opacity="0.25" />
           <stop offset="60%" stop-color="#88ddff" stop-opacity="0.05" />
           <stop offset="100%" stop-color="#88ddff" stop-opacity="0" />
         </radialGradient>
 
-        <!-- 银河星云纹理滤镜 -->
         <filter id="galaxyNoise" x="0%" y="0%" width="100%" height="100%">
           <feTurbulence type="fractalNoise" baseFrequency="0.012" numOctaves="4" seed="42" />
           <feColorMatrix
@@ -46,7 +43,6 @@
           <feBlend mode="screen" in="SourceGraphic" in2="SourceGraphic" />
         </filter>
 
-        <!-- 背景微弱星点图案 -->
         <pattern id="starPattern" width="200" height="200" patternUnits="userSpaceOnUse">
           <circle cx="20" cy="30" r="0.5" fill="#ffffff" opacity="0.6" />
           <circle cx="80" cy="15" r="0.8" fill="#ffffff" opacity="0.4" />
@@ -60,11 +56,14 @@
           <circle cx="190" cy="190" r="0.8" fill="#ffffff" opacity="0.3" />
         </pattern>
       </defs>
+
       <!-- M44 - 蜂巢星团 -->
-      <text x="430" y="600" class="dso-label" text-anchor="middle">M44 - 蜂巢星团</text>
+      <text x="570" y="620" class="dso-label" text-anchor="middle">M44 - 蜂巢星团</text>
       <!-- M67 -->
       <text x="180" y="215" class="dso-label" text-anchor="middle">M67</text>
-      <!-- 身体与腿 -->
+
+      <!-- ===== 修正后的连线 ===== -->
+      <!-- 身体与腿（保留原样，合理） -->
       <path
         d="M 400,500 L 460,600 L 380,750 L 500,850 L 440,960"
         class="constellation-line-bright"
@@ -76,15 +75,17 @@
       <path d="M 500,850 L 440,960" class="constellation-line" />
       <path d="M 380,750 L 540,880" class="constellation-line" />
       <path d="M 460,600 L 600,800" class="constellation-line" />
-      <!-- 螯与头 -->
+
+      <!-- 螯与头 —— 修正为 α-ζ-β 和 ζ-γ-δ -->
       <path d="M 400,500 L 320,400 L 180,240" class="constellation-line-bright" />
-      <path d="M 400,500 L 620,260" class="constellation-line-bright" />
-      <path
-        d="M 180,240 L 620,260"
-        class="constellation-line"
-        stroke-dasharray="4,6"
-        stroke-opacity="0.3"
-      />
+      <!-- γ-ζ-α -->
+      <path d="M 320,400 L 620,260" class="constellation-line-bright" />
+      <!-- ζ-β 新增，替换原γ-β -->
+      <!-- 删除原 M 400,500 L 620,260 (γ-β) -->
+      <!-- 删除原 α-β 虚线 -->
+
+      <!-- ===== 恒星标记（保持不变） ===== -->
+
       <!-- 贝塔星 (Tarf) - 右螯 -->
       <circle cx="620" cy="260" r="25" fill="url(#brightStarGlow)" />
       <circle cx="620" cy="260" r="3.5" fill="#ffffff" />
@@ -95,6 +96,7 @@
         opacity="0.8"
       />
       <text x="635" y="255" class="star-label-bright">贝塔星 (Tarf)</text>
+
       <!-- 阿尔法星 (Acubens) - 左螯 -->
       <circle cx="180" cy="240" r="22" fill="url(#brightStarGlow)" />
       <circle cx="180" cy="240" r="3.0" fill="#ffffff" />
@@ -104,7 +106,7 @@
         stroke-width="1.5"
         opacity="0.8"
       />
-      <text x="145" y="235" class="star-label-bright" text-anchor="end">阿尔法星 (Acubens)</text>
+      <text x="245" y="235" class="star-label-bright" text-anchor="end">阿尔法星 (Acubens)</text>
 
       <!-- 泽塔星 (Tegmine) - 头 -->
       <circle cx="320" cy="400" r="20" fill="url(#brightStarGlow)" />
@@ -131,7 +133,7 @@
         stroke-width="1"
         opacity="0.8"
       />
-      <text x="460" y="590" class="star-label" text-anchor="middle">
+      <text x="630" y="590" class="star-label" text-anchor="middle">
         德尔塔星 (Asellus Australis)
       </text>
 
@@ -148,7 +150,7 @@
       <!-- 卡帕星 -->
       <circle cx="500" cy="850" r="14" fill="url(#starGlow)" />
       <circle cx="500" cy="850" r="2.0" fill="#ffffff" />
-      <text x="515" y="845" class="star-label">卡帕星</text>
+      <text x="510" y="845" class="star-label">卡帕星</text>
 
       <!-- 兰布达星 -->
       <circle cx="240" cy="880" r="12" fill="url(#starGlow)" />
@@ -158,7 +160,7 @@
       <!-- 缪星 -->
       <circle cx="540" cy="880" r="12" fill="url(#starGlow)" />
       <circle cx="540" cy="880" r="1.5" fill="#ffffff" />
-      <text x="555" y="875" class="star-label">缪星</text>
+      <text x="555" y="900" class="star-label">缪星</text>
 
       <!-- 纽星 -->
       <circle cx="440" cy="960" r="10" fill="url(#starGlow)" />
@@ -225,20 +227,20 @@
 .star-label {
   fill: #a0b8d8;
   font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-  font-size: 11px;
+  font-size: 20px;
   letter-spacing: 1px;
 }
 .star-label-bright {
   fill: #d0e0ff;
   font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-  font-size: 13px;
+  font-size: 20px;
   font-weight: bold;
   letter-spacing: 1.5px;
 }
 .dso-label {
   fill: #66ccff;
   font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-  font-size: 12px;
+  font-size: 20px;
   font-style: italic;
   letter-spacing: 1px;
 }
