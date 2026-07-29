@@ -123,7 +123,7 @@ const isHeaderActive = computed(() => headerOpacity.value > 0)
         <nav class="flex items-center gap-6">
           <SfSpan
             v-for="item in NAV_ITEMS"
-            class="nav-item cursor-pointer py-2 text-xl font-medium transition-colors"
+            class="nav-item cursor-pointer py-2 text-[12px] font-medium transition-colors sm:text-[20px]"
             :class="activeKey === item.key ? 'font-bold text-sf-theme' : 'text-sf-base'"
             @click="handleAnchorScroll(item.key)"
             :key="item.key"

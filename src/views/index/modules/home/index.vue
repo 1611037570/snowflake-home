@@ -2,12 +2,6 @@
   <div class="w-dwh flex-c relative z-10 min-h-dvh"></div>
   <Background />
   <div class="fixed inset-0 z-10 flex h-dvh w-full flex-col items-center justify-center">
-    <!-- 弹幕层 -->
-    <div
-      class="absolute inset-0 z-0 overflow-hidden opacity-20 transition-opacity duration-1000 hover:opacity-30"
-    >
-      <SfBarrage :list="list" />
-    </div>
     <!-- 星星粒子层 -->
     <Stars />
 
@@ -21,13 +15,13 @@
           ]"
           @mouseleave="isHoveredFormula = false"
         >
-          <span>{{ isHoveredFormula ? '我找到了' : '我会找到' }}</span>
+          <span>{{ isHoveredFormula ? '然后回到' : '我会找到' }}</span>
           <div class="inline-block py-1">
             <span v-if="!isHoveredFormula" class="unfold" @mouseenter="isHoveredFormula = true">
               <span class="text-sf-theme">逆转时间</span>的公式
             </span>
             <div v-else class="unfold flex items-center" @mouseleave="isHoveredFormula = false">
-              其实就是<span class="text-sf-theme">珍惜当下</span>
+              你的<span class="text-sf-theme">身边</span>
             </div>
           </div>
         </div>
@@ -35,7 +29,11 @@
           class="text-xs font-light tracking-[0.6em] text-sf-text-2 transition-all delay-500 duration-1000 ease-out md:text-sm xl:text-base"
           :class="showContent ? 'translate-y-0 opacity-60' : 'translate-y-8 opacity-0'"
         >
-          Then I'll come back to you
+          {{
+            isHoveredFormula
+              ? "Then I'll come back to you"
+              : ' I will find the formula for reversing time.'
+          }}
         </p>
       </div>
     </div>
@@ -45,7 +43,6 @@
 </template>
 
 <script setup>
-import { da_ai_xian_zun, fixed } from '@/constants'
 import { onMounted, ref } from 'vue'
 import Background from './background.vue'
 import ScrollGuide from './scroll-guide.vue'
@@ -61,11 +58,6 @@ onMounted(() => {
     showContent.value = true
   }, 300)
 })
-
-// ---------- 弹幕数据 ----------
-const list = [...fixed, ...da_ai_xian_zun].map((item) => ({
-  text: item.value,
-}))
 </script>
 
 <style scoped>

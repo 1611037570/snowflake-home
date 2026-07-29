@@ -1,5 +1,10 @@
 <script setup>
 import redFlower from '@/assets/images/redFlower.jpg'
+import { da_ai_xian_zun, fixed } from '@/constants'
+// ---------- 弹幕数据 ----------
+const list = [...fixed, ...da_ai_xian_zun].map((item) => ({
+  text: item.value,
+}))
 const sendMail = () => {
   window.location.href = `mailto:1611037570@qq.com`
 }
@@ -7,6 +12,13 @@ const sendMail = () => {
 
 <template>
   <div class="w-dwh flex-c relative z-10 flex-col gap-5 bg-sf-bg py-20">
+    <!-- 弹幕层 -->
+    <div
+      v-if="0"
+      class="data-barrage-container absolute inset-0 z-2 overflow-hidden transition-opacity duration-1000"
+    >
+      <SfBarrage :list="list" />
+    </div>
     <SfImg :src="redFlower" @click="sendMail" style="width: 228px; height: 228px" />
     <div class="space-y-3">
       <h2 class="text-3xl font-bold tracking-wider text-sf-text drop-shadow-sm md:text-4xl">

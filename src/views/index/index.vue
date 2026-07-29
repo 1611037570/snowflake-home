@@ -18,7 +18,7 @@ import History from './modules/history.vue'
 import Home from './modules/home/index.vue'
 import MyHeader from './modules/myHeader.vue'
 import Project from './modules/project.vue'
-import Shoot from './modules/shoot.vue'
+import Shoot from './modules/shoot/index.vue'
 import Thank from './modules/thank.vue'
 import User from './modules/user.vue'
 
