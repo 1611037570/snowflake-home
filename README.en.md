@@ -4,9 +4,18 @@
 
 ## 📌 Project Introduction
 
-The main body of the project is the Snowflake Start Page, with several small tools extended based on it; it also integrates multiple infrastructure features.
-Launched on September 3, 2020, reconstructed and open-sourced on November 22, 2025.
-Through this project, you can learn the practical applications of modern frontend technologies such as **Vue3**, **TypeScript**, and **Vite**.
+The main body of the project is the Snowflake Start Page, with several small tools extended based on it; it also integrates multiple infrastructure features. The project adopts a **Monorepo** architecture for unified management of multiple frontend and backend sub-packages.
+
+Launched on September 3, 2020, reconstructed and open-sourced on November 22, 2025. Monorepo refactoring with AI infrastructure adaptation is expected to be completed by November 22, 2026.
+
+Through this project, you can learn the practical applications of modern frontend and backend technologies such as **Vue3**, **TypeScript**, **Vite**, and **NestJS**.
+
+## 📦 Repository Structure
+
+The project is managed based on **pnpm workspace**, with sub-packages located under the `packages` directory:
+
+- **web**: Frontend application main body (Snowflake Start Page and derived tools, component library, utility library)
+- **server**: Backend service based on NestJS (User, LLM, Utils modules, JWT authentication, Redis, MySQL)
 
 ## 🎯 Core Product Modules
 
@@ -15,6 +24,8 @@ Through this project, you can learn the practical applications of modern fronten
 - 🛣️ **Image Processing Tool**: Lightweight image suite, covering common functions such as compression, cropping, and format conversion (http://nannan.work/#/image)
 
 ## 🔧 Core Infrastructure Features
+
+### Frontend Infrastructure (web)
 
 - 🤖 **AI Infrastructure**: Intelligent development workflow based on **Trae** IDE; supports rules and skills, enabling rapid development of project-style code
 - 🎮 **Command Tool**: Interactive command menu based on **Node.js**; supports up/down arrow navigation, quick execution with enter key
@@ -26,6 +37,12 @@ Through this project, you can learn the practical applications of modern fronten
 - 🌐 **Language Management**: Route-level multi-language support based on **i18n**; supports Chinese/English switching, extensible
 - 🧩 **Component Library**: Project-specific style component library based on **ElementPlus**; supports on-demand/global import
 - 🛠️ **Tool Library**: Project-specific style tool library based on **VueUse**
+- 📈 **Monitoring System**: Behavior, performance, and error monitoring instrumentation with unified reporting
+- 📲 **PWA & Extensions**: Supports PWA offline availability and browser extension builds
+
+### Backend Infrastructure (server)
+
+- ⚙️ **Service Framework**: Modular architecture based on **NestJS**, including business modules such as user, llm, utils, and test
 
 ## 🔗 Live Demo
 
