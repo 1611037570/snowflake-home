@@ -1,5 +1,11 @@
 {
   "name": "snowflake",
   "private": true,
-  "scripts": {}
+  "scripts": {
+    "dev": "pnpm -r --parallel --filter=@snowflake/web --filter=@snowflake/server run dev",
+    "dev:web": "pnpm --filter @snowflake/web dev",
+    "dev:server": "pnpm --filter @snowflake/server dev",
+    "i:web": "pnpm --filter @snowflake/web install",
+    "i:server": "pnpm --filter '@snowflake/server' install"
+  }
 }

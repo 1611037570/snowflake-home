@@ -1,0 +1,35 @@
+# 日志文件
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# 依赖和构建产物
+node_modules
+.DS_Store
+dist
+dist-ssr
+coverage
+*.local
+test
+.pnpm-store
+# 测试产物
+/cypress/videos/
+/cypress/screenshots/
+.trae/documents
+# 编辑器文件
+.idea
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# TypeScript
+*.tsbuildinfo
+
+# HTML 文件
+stats.html
