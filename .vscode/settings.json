@@ -38,5 +38,8 @@
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
 
-  
+  // Prettier 配置
+  "prettier.enable": true,
+  "prettier.useEditorConfig": true,
+  "prettier.resolveGlobalModules": false
 }
