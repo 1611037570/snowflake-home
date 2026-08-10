@@ -11,4 +11,32 @@
   },
   // 关闭文件夹自动折叠（紧凑文件夹）功能
   "explorer.compactFolders": false,
+
+  // 自动格式化设置
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": null,
+  // 自动换行设置
+  "editor.wordWrap": "bounded",
+  // 自动换行列数
+  "editor.wordWrapColumn": 100,
+  // 自动换行缩进
+  "editor.wrappingIndent": "indent",
+
+  // 文件类型格式化工具
+  "[javascript]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
+  "[typescript]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
+  "[vue]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
+  "[json]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
+  "[jsonc]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
+  "[markdown]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
+  "[css]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
+  "[less]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
+  "[scss]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[html]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+
+  
 }
