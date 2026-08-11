@@ -76,7 +76,7 @@ class XyRequest {
 
     // 初始化调试模式
     this.debug = typeof config?.debug === "boolean" ? config.debug : defaultDebug;
-    this.alone();
+    this.customInterceptors();
     // 注册请求拦截
     this.requestInterceptors();
     // 注册响应拦截
@@ -91,14 +91,15 @@ class XyRequest {
     }
     return code === successCodes;
   }
-  private alone() {
+  // 用户自定义拦截器
+  private customInterceptors() {
     const interceptors = this.interceptors;
     // 注册请求拦截器处理逻辑
     this.instance.interceptors.request.use(interceptors?.request, interceptors?.requestCatch);
     // 注册响应拦截器处理逻辑
     this.instance.interceptors.response.use(interceptors?.response, interceptors?.responseCatch);
   }
-  // 请求拦截器
+  // 默认请求拦截器
   private requestInterceptors() {
     // 注册请求拦截器处理逻辑
     this.instance.interceptors.request.use(
@@ -115,7 +116,7 @@ class XyRequest {
       },
     );
   }
-  // 响应拦截器
+  // 默认响应拦截器
   private responseInterceptors() {
     // 注册响应拦截器处理逻辑
     this.instance.interceptors.response.use(

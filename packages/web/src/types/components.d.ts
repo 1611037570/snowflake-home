@@ -23,7 +23,6 @@ declare module 'vue' {
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     SfDropdown: typeof import('@components/business/dropdown/index.ts')['default']
-    SfFooter: typeof import('@components/business/footer/index.ts')['default']
     SfImg: typeof import('@components/el/img/index.ts')['default']
     SfInput: typeof import('@components/el/input/index.ts')['default']
     SfList: typeof import('@components/business/list/index.ts')['default']

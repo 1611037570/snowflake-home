@@ -6,6 +6,6 @@ const request = new XyRequest({
 // 雪花服务Ping
 export const snowflakePing = async () => {
   return request.get({
-    url: "/ping",
+    url: "/",
   });
 };
