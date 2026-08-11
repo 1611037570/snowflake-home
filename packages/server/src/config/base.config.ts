@@ -2,7 +2,7 @@ export const baseConfig = {
   // 应用配置
   app: {
     // 服务名称
-    name: '雪花起始页服务',
+    name: '雪花服务',
     // 端口号
     port: 3000,
     // JSON请求体最大限制
@@ -51,4 +51,4 @@ export const baseConfig = {
     // 过期时间
     expiresIn: '24h',
   },
-};
+}

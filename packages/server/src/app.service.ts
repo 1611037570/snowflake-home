@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common'
-
+import { baseConfig } from './config/base.config'
 @Injectable()
 export class AppService {
-  getHello(): string {
-    return '雪花API服务启动成功'
+  ping(): string {
+    return `${baseConfig.app.name}启动成功`
   }
 }
