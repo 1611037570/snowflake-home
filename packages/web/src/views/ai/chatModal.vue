@@ -2,13 +2,16 @@
 import { computed, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import Index from './index.vue'
+import { useSystemStore } from '@/stores/modules/system'
 
 const isVisible = ref(false)
 const route = useRoute()
+const systemStore = useSystemStore()
 const excludePaths = ['/resume', '/ai', '/init']
 // 判断当前路由是否包含指定路径，如果包含则不显示
 const shouldShow = computed(() => {
-  if (route.path === '/') return false
+  // 根路径或服务器未连接时不显示
+  if (route.path === '/' || !systemStore.isConnected) return false
   const path = route.path.toLowerCase()
 
   return !excludePaths.some((item) => path.includes(item))

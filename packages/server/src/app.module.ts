@@ -1,15 +1,14 @@
-import { Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
-import { TestController } from './modules/test/test.controller';
-import { LLMModule } from './modules/llm/llm.module';
-import { UtilsModule } from './modules/utils/utils.module';
-import { UserModule } from './modules/user/user.module';
-import { RedisModule } from './shared/redis/redis.module';
-import { RsaModule } from './shared/rsa/rsa.module';
-import { baseConfig } from './config/base.config';
+import { Module } from '@nestjs/common'
+import { ConfigModule } from '@nestjs/config'
+import { TypeOrmModule } from '@nestjs/typeorm'
+import { AppController } from './app.controller'
+import { AppService } from './app.service'
+import { LLMModule } from './modules/llm/llm.module'
+import { UtilsModule } from './modules/utils/utils.module'
+import { UserModule } from './modules/user/user.module'
+import { RedisModule } from './shared/redis/redis.module'
+import { RsaModule } from './shared/rsa/rsa.module'
+import { baseConfig } from './config/base.config'
 
 @Module({
   imports: [
@@ -24,7 +23,7 @@ import { baseConfig } from './config/base.config';
     UtilsModule,
     // UserModule
   ],
-  controllers: [AppController, TestController],
+  controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule { }
+export class AppModule {}
