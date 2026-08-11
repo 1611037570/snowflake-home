@@ -24,6 +24,8 @@ export const useSystemStore = defineStore(
     const browserInfo = ref()
     // 当前版本
     const currentVersion = ref(version)
+    // 服务器连接状态
+    const isConnected = ref<boolean>(false)
 
     /**
      * 获取最新版本号
@@ -84,6 +86,7 @@ export const useSystemStore = defineStore(
       browserInfo,
       currentVersion,
       performanceMode,
+      isConnected,
       getVersion,
       checkVersionUpdate,
       initVersion,
