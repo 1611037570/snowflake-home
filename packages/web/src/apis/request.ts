@@ -56,11 +56,21 @@ class XyRequest {
   // 构造函数
   constructor(config: XyRequestConfig) {
     // 创建实例
+    if (config && typeof config !== "object") {
+      console.warn("config 参数必须为对象");
+      config = {};
+    }
     this.instance = axios.create({ ...default_config, ...config });
     // 初始化拦截器
     this.interceptors = config?.interceptors || {};
     // 初始化状态码
-    this.status = { ...defaultStatus, ...config?.status };
+    let status: any = config?.status;
+    // 检查状态码是否为对象
+    if (!status && typeof status !== "object") {
+      console.warn("status 参数必须为对象");
+      status = {};
+    }
+    this.status = { ...defaultStatus, ...status };
     // 调试模式
     this.debug = config?.debug || debug;
     this.alone();
@@ -71,24 +81,29 @@ class XyRequest {
   }
   // 检查是否是成功码
   private isSuccessCode(code: number): boolean {
+    // 检查是否是成功码
     const successCodes = this.status.success;
     if (Array.isArray(successCodes)) {
       return successCodes.includes(code);
     }
     return code === successCodes;
   }
-
   private alone() {
     const interceptors = this.interceptors;
+    // 注册请求拦截器处理逻辑
     this.instance.interceptors.request.use(interceptors?.request, interceptors?.requestCatch);
+    // 注册响应拦截器处理逻辑
     this.instance.interceptors.response.use(interceptors?.response, interceptors?.responseCatch);
   }
   // 请求拦截器
   private requestInterceptors() {
+    // 注册请求拦截器处理逻辑
     this.instance.interceptors.request.use(
+      // 请求成功拦截
       (config: any) => {
         return config;
       },
+      // 请求失败拦截
       (err: any) => {
         if (this.debug) {
           console.error("请求拦截器错误:", err);
@@ -99,7 +114,9 @@ class XyRequest {
   }
   // 响应拦截器
   private responseInterceptors() {
+    // 注册响应拦截器处理逻辑
     this.instance.interceptors.response.use(
+      // 响应成功拦截
       (res: any) => {
         if (this.debug) {
           console.log("res:>> ", res);
@@ -122,6 +139,7 @@ class XyRequest {
 
         return data;
       },
+      // 响应失败拦截
       (err: any) => {
         if (this.debug) {
           console.error("响应拦截器错误:", err);
