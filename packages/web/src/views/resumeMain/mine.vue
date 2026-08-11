@@ -1,49 +1,51 @@
 <script setup>
-import { useResumeStore } from '@/stores'
-import dayjs from 'dayjs'
-import { storeToRefs } from 'pinia'
-import { useRouter } from 'vue-router'
-import { getAllScores, getResumeTitle } from '../resume/utils'
+import { useResumeStore } from "@/stores";
+import dayjs from "dayjs";
+import { storeToRefs } from "pinia";
+import { useRouter } from "vue-router";
+import { getAllScores, getResumeTitle } from "../resume/utils";
 
-const router = useRouter()
+const router = useRouter();
 
-const resumeStore = useResumeStore()
-const { list, currentIndex } = storeToRefs(resumeStore)
-const { maxCount } = resumeStore
-const { proxy } = getCurrentInstance()
+const resumeStore = useResumeStore();
+const { list, currentIndex } = storeToRefs(resumeStore);
+const { maxCount } = resumeStore;
+const { proxy } = getCurrentInstance();
 const sortedList = computed(() => {
-  return [...list.value].sort((a, b) => (b?.usage?.lastUseTime || 0) - (a?.usage?.lastUseTime || 0))
-})
+  return [...list.value].sort(
+    (a, b) => (b?.usage?.lastUseTime || 0) - (a?.usage?.lastUseTime || 0),
+  );
+});
 const getResumePosition = (item) => {
-  return item?.data?.user?.position || '未填写求职岗位'
-}
+  return item?.data?.user?.position || "未填写求职岗位";
+};
 const getLastUseTime = (item) => {
-  return item?.usage?.lastUseTime ? dayjs(item.usage.lastUseTime).format('YYYY.MM.DD HH:mm') : '--'
-}
+  return item?.usage?.lastUseTime ? dayjs(item.usage.lastUseTime).format("YYYY.MM.DD HH:mm") : "--";
+};
 const getProgressClass = (progress) => {
-  if (progress < 40) return 'bg-sf-error'
-  if (progress < 60) return 'bg-sf-warning'
-  return 'bg-sf-theme'
-}
+  if (progress < 40) return "bg-sf-error";
+  if (progress < 60) return "bg-sf-warning";
+  return "bg-sf-theme";
+};
 
 const handleEdit = (index) => {
-  currentIndex.value = index
-  router.push(`/resume`)
-}
+  currentIndex.value = index;
+  router.push({ path: "/resume", query: { id: list.value[index].id } });
+};
 
 const handleDelete = (index) => {
-  proxy.$confirm('确定要删除当前简历吗？', '删除确认').then(() => {
-    currentIndex.value = index
-    resumeStore.deleteResume()
-  })
-}
+  proxy.$confirm("确定要删除当前简历吗？", "删除确认").then(() => {
+    currentIndex.value = index;
+    resumeStore.deleteResume();
+  });
+};
 
 const handleCreate = () => {
   if (list.value.length >= maxCount) {
-    return
+    return;
   }
-  resumeStore.addResume()
-}
+  resumeStore.addResume();
+};
 </script>
 
 <template>
