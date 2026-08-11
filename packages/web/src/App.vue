@@ -3,7 +3,7 @@
 import LoadingComponent from "@views/status/loading.vue";
 // 聊天弹窗
 import ChatModal from "@views/ai/chatModal.vue";
-import { getSnowflakeMessage } from "@/apis/modules/snowflake";
+import { snowflakePing } from "@/apis/modules/snowflake";
 import { useSystemStore } from "@/stores/modules/system";
 
 const systemStore = useSystemStore();
@@ -11,13 +11,11 @@ const systemStore = useSystemStore();
 // 检测服务器连接状态
 const checkConnection = async () => {
   try {
-    const res = await getSnowflakeMessage();
-    console.log(1111111111, res);
+    await snowflakePing();
     systemStore.isConnected = true;
-  } catch (error) {
+  } catch {
     systemStore.isConnected = false;
   }
-  console.log(systemStore.isConnected);
 };
 
 checkConnection();
