@@ -39,7 +39,8 @@ const defaultStatus: XyStatus = {
   serverError: 500,
 };
 
-const debug = true;
+// 默认调试模式
+const defaultDebug = true;
 /**
  * 自定义Axios请求类
  */
@@ -55,24 +56,26 @@ class XyRequest {
 
   // 构造函数
   constructor(config: XyRequestConfig) {
-    // 创建实例
+    // 检查状态码是否为对象
+    let status: any = config?.status;
+    if (status && typeof status !== "object") {
+      console.warn("status 参数必须为对象");
+      status = {};
+    }
+    // 初始化状态码
+    this.status = { ...defaultStatus, ...status };
+
     if (config && typeof config !== "object") {
       console.warn("config 参数必须为对象");
       config = {};
     }
+    // 初始化实例
     this.instance = axios.create({ ...default_config, ...config });
     // 初始化拦截器
     this.interceptors = config?.interceptors || {};
-    // 初始化状态码
-    let status: any = config?.status;
-    // 检查状态码是否为对象
-    if (!status && typeof status !== "object") {
-      console.warn("status 参数必须为对象");
-      status = {};
-    }
-    this.status = { ...defaultStatus, ...status };
-    // 调试模式
-    this.debug = config?.debug || debug;
+
+    // 初始化调试模式
+    this.debug = typeof config?.debug === "boolean" ? config.debug : defaultDebug;
     this.alone();
     // 注册请求拦截
     this.requestInterceptors();
@@ -122,7 +125,7 @@ class XyRequest {
           console.log("res:>> ", res);
         }
         const { status } = res;
-        // HTTP状态码
+        // 判断HTTP状态码
         if (status !== 200) {
           return res;
         }
@@ -137,7 +140,7 @@ class XyRequest {
           return data;
         }
 
-        return data;
+        return res.data;
       },
       // 响应失败拦截
       (err: any) => {
