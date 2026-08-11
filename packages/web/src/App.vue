@@ -3,7 +3,7 @@
 import LoadingComponent from "@views/status/loading.vue";
 // 聊天弹窗
 import ChatModal from "@views/ai/chatModal.vue";
-import { snowflakePing } from "@/apis/modules/snowflake";
+import { snowflakePing } from "@/apis";
 import { useSystemStore } from "@/stores/modules/system";
 
 const systemStore = useSystemStore();
