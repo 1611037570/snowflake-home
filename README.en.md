@@ -4,45 +4,24 @@
 
 ## 📌 Project Introduction
 
-The main body of the project is the Snowflake Start Page, with several small tools extended based on it; it also integrates multiple infrastructure features. The project adopts a **Monorepo** architecture for unified management of multiple frontend and backend sub-packages.
+The main body of the project is the Snowflake Start Page, with several small tools extended based on it; it also integrates multiple infrastructure features.
 
-Launched on September 3, 2020, reconstructed and open-sourced on November 22, 2025. Monorepo refactoring with AI infrastructure adaptation is expected to be completed by November 22, 2026.
+Launched on September 3, 2020, reconstructed and open-sourced on November 22, 2025.
 
 Through this project, you can learn the practical applications of modern frontend and backend technologies such as **Vue3**, **TypeScript**, **Vite**, and **NestJS**.
 
 ## 📦 Repository Structure
 
-The project is managed based on **pnpm workspace**, with sub-packages located under the `packages` directory:
+The project is managed based on **pnpm monorepo**, with sub-packages located under the `packages` directory:
 
-- **web**: Frontend application main body (Snowflake Start Page and derived tools, component library, utility library)
-- **server**: Backend service based on NestJS (User, LLM, Utils modules, JWT authentication, Redis, MySQL)
+- **web**: Main body of the project, developed and maintained by the author
+- **server**: Backend service, developed and maintained by AI
 
 ## 🎯 Core Product Modules
 
 - ✨ **Snowflake Start Page**: Core project carrier, providing a personalized and customizable website start page (http://nannan.work)
 - 📄 **Resume Generator**: Visual resume editing tool, supporting template selection, content customization, and one-click export (http://nannan.work/#/resume)
 - 🛣️ **Image Processing Tool**: Lightweight image suite, covering common functions such as compression, cropping, and format conversion (http://nannan.work/#/image)
-
-## 🔧 Core Infrastructure Features
-
-### Frontend Infrastructure (web)
-
-- 🤖 **AI Infrastructure**: Intelligent development workflow based on **Trae** IDE; supports rules and skills, enabling rapid development of project-style code
-- 🎮 **Command Tool**: Interactive command menu based on **Node.js**; supports up/down arrow navigation, quick execution with enter key
-- 📋 **Form System**: Dynamic form component based on **ElementPlus**; supports object/array type fields, configuration-driven, two-way data binding
-- 📥 **Cache Management**: LFU-R strategy cache manager based on Pinia; supports custom expiration configuration, automatic elimination when expired/over-limit
-- 🚀 **Request Management**: Request class based on **Axios**; supports multiple instances, custom interceptors, unified request/response handling mechanism
-- 🛣️ **Route Management**: Automatic registration based on **VueRouter**; supports dynamic generation, view lazy loading, and error page redirection mechanism
-- 🎨 **Style Management**: Themed CSS color variable system based on **TailwindCSS**; supports day/night mode switching
-- 🌐 **Language Management**: Route-level multi-language support based on **i18n**; supports Chinese/English switching, extensible
-- 🧩 **Component Library**: Project-specific style component library based on **ElementPlus**; supports on-demand/global import
-- 🛠️ **Tool Library**: Project-specific style tool library based on **VueUse**
-- 📈 **Monitoring System**: Behavior, performance, and error monitoring instrumentation with unified reporting
-- 📲 **PWA & Extensions**: Supports PWA offline availability and browser extension builds
-
-### Backend Infrastructure (server)
-
-- ⚙️ **Service Framework**: Modular architecture based on **NestJS**, including business modules such as user, llm, utils, and test
 
 ## 🔗 Live Demo
 
@@ -52,7 +31,7 @@ You can experience the deployed project through the link below:
 
 ## 🚀 Install & Run
 
-**VS Code** or **Trae** is recommended as the development environment. The project provides `.vscode` configuration files, which can bring a better development experience.
+**VS Code** is recommended as the development environment. The project provides `.vscode` configuration files, which can bring a better development experience.
 
 ```bash
 # Install dependencies
@@ -60,9 +39,6 @@ pnpm install
 
 # Run in development
 pnpm dev
-
-# Build for production
-pnpm build
 ```
 
 ## 📄 License
@@ -82,3 +58,4 @@ Until one late night of study, I suddenly realized: every line written with care
 With the first snow falling, I bid farewell to these six years and open a new chapter. See you next spring.
 
 > #### **November 22, 2025**
+```
