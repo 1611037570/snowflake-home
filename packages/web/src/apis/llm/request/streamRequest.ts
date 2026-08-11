@@ -4,7 +4,7 @@ import {
   processResult,
   processToken,
   StreamError,
-} from "../stream-utils";
+} from "./stream-utils";
 
 type StreamRequestConfig = {
   url: string;
