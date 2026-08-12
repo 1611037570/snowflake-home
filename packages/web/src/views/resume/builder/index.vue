@@ -35,7 +35,7 @@ provide("bg", "bg-sf-bg");
 </script>
 
 <template>
-  <div class="flex h-full w-[380px] flex-col py-3 pl-3">
+  <div class="flex h-full w-[360px] flex-col py-3 pl-3">
     <!-- 左侧栏 -->
     <div
       class="relative mb-3 flex w-full items-center justify-around rounded-2xl bg-sf-primary p-1"
