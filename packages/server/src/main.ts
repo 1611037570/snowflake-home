@@ -5,17 +5,7 @@ import { ExpressAdapter } from '@nestjs/platform-express'
 import { AppModule } from './app.module'
 import { json } from 'express' // 引入express
 import { baseConfig } from './config/base.config'
-import { exec } from 'node:child_process'
 
-function openBrowser(url: string) {
-  const cmd =
-    process.platform === 'win32'
-      ? `start "" "${url}"`
-      : process.platform === 'darwin'
-        ? `open "${url}"`
-        : `xdg-open "${url}"`
-  exec(cmd)
-}
 async function bootstrap() {
   console.log(`🚀 ${baseConfig.app.name}启动中`)
 
@@ -32,8 +22,6 @@ async function bootstrap() {
   // 打印日志
   console.log(`✅ ${baseConfig.app.name}启动成功`)
   console.log(`🔗 服务地址: http://localhost:${baseConfig.app.port}`)
-  // 打开浏览器
-  openBrowser(`http://localhost:${baseConfig.app.port}`)
 }
 // 启动应用
 bootstrap()
