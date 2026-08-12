@@ -1,10 +1,10 @@
 <script setup>
-import { useThemeStore } from '@/stores'
-import { useClipboard } from '@vueuse/core'
-import { ElMessage } from 'element-plus'
-import { MdPreview } from 'md-editor-v3'
-import 'md-editor-v3/lib/preview.css'
-import { storeToRefs } from 'pinia'
+import { useThemeStore } from "@/stores";
+import { useClipboard } from "@vueuse/core";
+import { ElMessage } from "element-plus";
+import { MdPreview } from "md-editor-v3";
+import "md-editor-v3/lib/preview.css";
+import { storeToRefs } from "pinia";
 
 const props = defineProps({
   msg: {
@@ -15,36 +15,32 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
-  settings: {
-    type: Object,
-    required: true,
-  },
-})
+});
 
-const themeStore = useThemeStore()
-const { theme } = storeToRefs(themeStore)
-const { copy, isSupported } = useClipboard()
+const themeStore = useThemeStore();
+const { theme } = storeToRefs(themeStore);
+const { copy, isSupported } = useClipboard();
 
-const emit = defineEmits(['toggleThought', 'toggleCollapsed'])
+const emit = defineEmits(["toggleThought", "toggleCollapsed"]);
 
 const handleCopy = async (text) => {
   if (!isSupported.value) {
-    ElMessage.error('当前浏览器不支持复制')
-    return
+    ElMessage.error("当前浏览器不支持复制");
+    return;
   }
-  await copy(text)
-  ElMessage.success('复制成功')
-}
+  await copy(text);
+  ElMessage.success("复制成功");
+};
 
 // 操作按钮配置
 const actionButtons = [
   {
-    icon: 'ph:copy-duotone',
-    tooltip: '复制',
+    icon: "ph:copy-duotone",
+    tooltip: "复制",
     onClick: () => handleCopy(props.msg.content),
   },
-  { icon: 'ph:arrows-clockwise-duotone', tooltip: '重新生成' },
-]
+  { icon: "ph:arrows-clockwise-duotone", tooltip: "重新生成" },
+];
 </script>
 
 <template>
@@ -245,7 +241,7 @@ const actionButtons = [
 /* 将光标附着在预览内容最后一行（兼容段落、列表、代码块等） */
 :deep(.typing-active .md-editor-preview > *:last-child)::after,
 :deep(.typing-active .md-editor-preview > *:last-child li:last-child)::after {
-  content: '';
+  content: "";
   display: inline-block;
   width: 2px;
   height: 1.1em;

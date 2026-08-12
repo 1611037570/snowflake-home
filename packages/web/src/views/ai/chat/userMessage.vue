@@ -8,17 +8,9 @@ defineProps({
     type: Number,
     required: true,
   },
-  isLastFew: {
-    type: Boolean,
-    default: false,
-  },
-  settings: {
-    type: Object,
-    required: true,
-  },
-})
+});
 
-const emit = defineEmits(['recall', 'toggleCollapsed'])
+const emit = defineEmits(["recall", "toggleCollapsed"]);
 </script>
 
 <template>
@@ -49,7 +41,7 @@ const emit = defineEmits(['recall', 'toggleCollapsed'])
           v-if="msg.content"
           class="flex cursor-pointer items-center gap-1.5 rounded-full border px-2.5 py-1 text-[11px] font-bold transition-all hover:shadow-xs active:scale-95"
           :class="
-            !msg.collapsed
+            !msg.contentCollapsed
               ? 'border-sf-theme/20 bg-sf-theme/10 text-sf-theme'
               : 'border-sf-border/10 bg-sf-bg-3 text-sf-text-3 hover:border-sf-border/30 hover:text-sf-text'
           "
@@ -59,14 +51,14 @@ const emit = defineEmits(['recall', 'toggleCollapsed'])
             icon="ph:user-duotone"
             size="3"
             class="transition-colors"
-            :class="!msg.collapsed ? 'text-sf-theme' : 'text-sf-text-3'"
+            :class="!msg.contentCollapsed ? 'text-sf-theme' : 'text-sf-text-3'"
           />
           <span class="tracking-tight">我的消息</span>
           <SfIcon
             icon="ph:caret-down-bold"
             size="2"
             class="opacity-40 transition-transform duration-300"
-            :class="{ '-rotate-180 opacity-80': !msg.collapsed }"
+            :class="{ '-rotate-180 opacity-80': !msg.contentCollapsed }"
           />
         </button>
       </div>
@@ -75,7 +67,7 @@ const emit = defineEmits(['recall', 'toggleCollapsed'])
     <!-- 消息内容区域 (对齐位置同步调整) -->
     <div class="flex w-full flex-col items-end gap-1.5 pr-13 pl-1">
       <!-- 消息内容 -->
-      <template v-if="!msg.collapsed">
+      <template v-if="!msg.contentCollapsed">
         <!-- 用户消息气泡 -->
         <div
           class="max-w-full min-w-0 overflow-hidden text-[14px] leading-relaxed whitespace-pre-wrap transition-all"
