@@ -1,29 +1,50 @@
 <script setup>
-import { useAiStore } from '@/stores'
-import { storeToRefs } from 'pinia'
-import { onMounted, ref } from 'vue'
-import Chat from './chat/index.vue'
-import ChatList from './chatlist/chatList.vue'
-import SettingsDrawer from './chatlist/settingsDrawer.vue'
+import { useAiStore } from "@/stores";
+import { storeToRefs } from "pinia";
+import { computed, onMounted, ref, watch } from "vue";
+import Chat from "./chat/index.vue";
+import ChatList from "./chatlist/chatList.vue";
+import SettingsDrawer from "./chatlist/settingsDrawer.vue";
 
-const aiStore = useAiStore()
-const { sidebarCollapsed, sidebarMode, currentChat, currentChatId } = storeToRefs(aiStore)
-const { prepareNewChat } = aiStore
+const aiStore = useAiStore();
+const { sidebarCollapsed, sidebarMode, currentChat, currentChatId, chatList } =
+  storeToRefs(aiStore);
+const { prepareNewChat, createChat } = aiStore;
+
+// 临时 chat 引用：当 currentChat 不存在时使用
+const pendingChat = ref(createChat());
+
+// 实际传给子组件的 chat：优先使用 store 的 currentChat，否则用 pendingChat
+const chatProp = computed(() => currentChat.value || pendingChat.value);
+
+// 监听：当用户在临时 chat 中发送了消息（messages 超过 1 条即含 system+用户消息），将其持久化到 store
+watch(
+  () => chatProp.value?.messages?.length ?? 0,
+  (len) => {
+    if (chatProp.value === pendingChat.value && len > 1) {
+      // 将临时 chat 加入 chatList，并设置为当前对话
+      chatList.value.unshift(pendingChat.value);
+      currentChatId.value = pendingChat.value.id;
+      // 准备下一个空的临时 chat 以供下次新建对话
+      pendingChat.value = createChat();
+    }
+  },
+);
 
 /**
  * 切换侧边栏模式
  */
 const toggleSidebarMode = () => {
-  sidebarMode.value = sidebarMode.value === 'dock' ? 'float' : 'dock'
-}
+  sidebarMode.value = sidebarMode.value === "dock" ? "float" : "dock";
+};
 
 // 设置弹窗状态
-const showSettings = ref(false)
+const showSettings = ref(false);
 
 // 每次挂载时重置当前会话 ID，回到初始欢迎状态
 onMounted(() => {
-  currentChatId.value = ''
-})
+  currentChatId.value = "";
+});
 </script>
 
 <template>
@@ -75,7 +96,7 @@ onMounted(() => {
         <!-- 中间标题 (居中且自动适应剩余宽度) -->
         <div class="flex min-w-0 items-center justify-center gap-2 px-4">
           <span class="truncate font-medium tracking-wide text-sf-text">
-            {{ currentChat?.title || '新对话' }}
+            {{ currentChat?.title || "新对话" }}
           </span>
         </div>
 
@@ -94,7 +115,7 @@ onMounted(() => {
 
       <!-- 独立抽离的聊天窗口组件 -->
       <div class="relative h-full flex-1 overflow-hidden">
-        <Chat :chatId="currentChatId" :key="currentChatId" />
+        <Chat :chat="chatProp" :key="chatProp.id" />
       </div>
     </div>
   </div>

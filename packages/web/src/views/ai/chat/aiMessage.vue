@@ -21,7 +21,7 @@ const themeStore = useThemeStore();
 const { theme } = storeToRefs(themeStore);
 const { copy, isSupported } = useClipboard();
 
-const emit = defineEmits(["toggleThought", "toggleCollapsed"]);
+const emit = defineEmits(["updateCollapsedStatus"]);
 
 const handleCopy = async (text) => {
   if (!isSupported.value) {
@@ -76,7 +76,7 @@ const actionButtons = [
                 ? 'border-sf-theme/20 bg-sf-theme/10 text-sf-theme'
                 : 'border-sf-border/10 bg-sf-bg-3 text-sf-text-3 hover:border-sf-border/30 hover:text-sf-text'
             "
-            @click="emit('toggleThought')"
+            @click="emit('updateCollapsedStatus', index, 'thought')"
           >
             <SfIcon
               icon="ph:brain-duotone"
@@ -98,11 +98,11 @@ const actionButtons = [
             v-if="msg.content"
             class="flex cursor-pointer items-center gap-1.5 rounded-full border px-2.5 py-1 text-[11px] font-bold transition-all hover:shadow-xs active:scale-95"
             :class="
-              !msg.collapsed
+              !msg.contentCollapsed
                 ? 'border-sf-theme/20 bg-sf-theme/10 text-sf-theme'
                 : 'border-sf-border/10 bg-sf-bg-3 text-sf-text-3 hover:border-sf-border/30 hover:text-sf-text'
             "
-            @click="emit('toggleCollapsed')"
+            @click="emit('updateCollapsedStatus', index, 'content')"
           >
             <SfIcon
               icon="ph:chat-teardrop-dots-duotone"

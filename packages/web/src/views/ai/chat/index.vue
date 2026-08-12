@@ -1,26 +1,60 @@
 <script setup>
 import { useAiSettings } from "@/hooks";
-import { useAiStore } from "@/stores";
 import { arkLLM } from "@/apis";
 import { useScroll } from "@vueuse/core";
-import { storeToRefs } from "pinia";
 import { computed, nextTick, ref, watch } from "vue";
 
-import AiMessage from "./aiMessage.vue";
 import ChatInput from "./chatInput.vue";
-import UserMessage from "./userMessage.vue";
+import MessageList from "./messageList.vue";
 import WelcomeScreen from "./welcomeScreen.vue";
 
 const props = defineProps({
-  chatId: {
-    type: String,
+  chat: {
     required: true,
   },
 });
 
-const aiStore = useAiStore();
-const { currentMessages, currentChat } = storeToRefs(aiStore);
-const { addMessage } = aiStore;
+// 默认对话记录标题
+const DEFAULT_CHAT_TITLE = "新对话";
+
+// currentChat 直接指向传入的 chat 对象
+const currentChat = computed(() => props.chat);
+
+// currentMessages：从 chat.messages 派生，支持写入（写回 chat.messages）
+const currentMessages = computed({
+  get: () => props.chat.messages,
+  set: (val) => {
+    props.chat.messages = val;
+  },
+});
+
+/**
+ * 向当前对话追加一条消息
+ */
+function addMessage(msg) {
+  const chat = props.chat;
+  chat.messages.push({
+    createTime: Date.now(),
+    typing: false,
+    ...msg,
+  });
+  chat.updateTime = Date.now();
+  updateChatTitle();
+}
+
+/**
+ * 根据首条用户消息自动更新对话标题
+ */
+function updateChatTitle() {
+  const chat = props.chat;
+  if (!chat || chat.title !== DEFAULT_CHAT_TITLE) return;
+
+  const firstUserMsg = chat.messages.find((m) => m.role === "user");
+  if (firstUserMsg) {
+    const content = firstUserMsg.content;
+    chat.title = content.length > 15 ? `${content.slice(0, 15)}...` : content;
+  }
+}
 
 // 输入框内容
 const inputMessage = ref("");
@@ -54,11 +88,6 @@ const isGenerating = computed(() => {
 // 设置数据
 const settings = useAiSettings();
 
-// 过滤掉 system 消息后的显示列表
-const displayMessages = computed(() => {
-  return currentMessages.value.filter((m) => m.role !== "system");
-});
-
 /**
  * 滚动到底部
  */
@@ -69,9 +98,9 @@ const scrollToBottom = async () => {
   }
 };
 
-// 监听 chatId 变化时滚动到底部并聚焦
+// 监听 chat 变化时滚动到底部并聚焦
 watch(
-  () => props.chatId,
+  () => props.chat.id,
   () => {
     scrollToBottom();
     nextTick(() => chatInputRef.value?.focus());
@@ -109,46 +138,57 @@ const stopGenerating = () => {
  * 处理 AI 回复的真实请求
  */
 const handleAIResponse = async () => {
+  // 保存最后一条消息的引用，用于流式更新内容
   let lastMsg = null;
   try {
-    // 准备发送给 AI 的消息列表
+    // 从当前消息列表中提取 role 和 content，组装成发送给 AI 的请求消息
     const messages = currentMessages.value.map((m) => ({
       role: m.role,
       content: m.content,
     }));
 
+    // 先添加一条空的助手消息，用于展示打字中状态和流式内容
     addMessage({
       role: "assistant",
       content: "",
       typing: true,
     });
+    // 获取刚添加的这条助手消息引用
     lastMsg = currentMessages.value[currentMessages.value.length - 1];
 
+    // 调用豆包大模型流式接口
     const { sendFn, abortFn } = await arkLLM.request({
       options: {
         input: messages,
         model: "doubao-seed-2-0-mini-260215",
         thinking: {
+          // 根据设置控制深度思考模式
           type: settings.value.thinkMode === "deep" ? "enabled" : "disabled",
         }, // 👈 这个就是【深度思考开关】
       },
-      stream: true,
+      stream: true, // 开启流式响应
       isJson: false,
+      // 流式事件回调
       onEvent: (type, data) => {
         if (type === "reasoning") {
+          // 思考内容事件：首次收到时初始化 thought 字段
           if (lastMsg.thought === undefined) {
             lastMsg.thought = "";
             lastMsg.thoughtCollapsed = false;
           }
+          // 追加思考内容并滚动到底部
           lastMsg.thought += data;
           scrollToBottom();
         } else if (type === "content") {
+          // 回复正文事件：逐字追加内容并滚动到底部
           lastMsg.content += data;
           scrollToBottom();
         } else if (type === "total_tokens") {
+          // token 统计事件：保存本次消耗的 token 数
           lastMsg.total_tokens = data;
         }
       },
+      // 请求失败回调
       onFail: (error) => {
         lastMsg.content = `请求出错: ${error.message || "未知错误"}`;
         lastMsg.typing = false;
@@ -156,16 +196,22 @@ const handleAIResponse = async () => {
       },
     });
 
+    // 保存中止函数，供外部停止生成时调用
     abortRequest = abortFn;
+    // 执行发送请求
     await sendFn();
   } catch (error) {
+    // 捕获异常并打印
     console.error("AI 请求异常:", error);
   } finally {
+    // 无论成功失败，统一清理状态
     isSending.value = false;
     abortRequest = null;
+    // 确保打字状态被关闭
     if (lastMsg?.typing) {
       lastMsg.typing = false;
     }
+    // 更新对话的最后修改时间
     if (currentChat.value) {
       currentChat.value.updateTime = Date.now();
     }
@@ -239,23 +285,8 @@ const handleRecall = (msg) => {
 <template>
   <div class="relative flex h-full w-full flex-col select-text">
     <SfScrollbar ref="chatContainer" class="h-full w-full flex-1">
-      <WelcomeScreen v-if="currentMessages.length === 0" @suggest="handleSuggest" />
-      <template v-else>
-        <div class="flex h-full flex-col items-center p-3">
-          <component
-            :is="msg.role === 'user' ? UserMessage : AiMessage"
-            v-for="(msg, index) in displayMessages"
-            :key="index"
-            :msg="msg"
-            :index="index"
-            :settings="settings"
-            :is-last-few="index >= displayMessages.length - 2"
-            @recall="handleRecall(msg)"
-            @toggle-thought="msg.thoughtCollapsed = !msg.thoughtCollapsed"
-            @toggle-collapsed="msg.collapsed = !msg.collapsed"
-          />
-        </div>
-      </template>
+      <WelcomeScreen v-if="currentMessages.length === 1" @suggest="handleSuggest" />
+      <MessageList v-else :messages="currentMessages" @recall="handleRecall" />
     </SfScrollbar>
 
     <!-- 滚动到底部按钮 -->

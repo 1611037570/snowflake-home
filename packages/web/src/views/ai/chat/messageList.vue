@@ -3,19 +3,22 @@ import { computed } from "vue";
 import AiMessage from "./aiMessage.vue";
 import UserMessage from "./userMessage.vue";
 
-const props = defineProps({
-  messages: {
-    type: Array,
-    required: true,
-  },
-});
-
+const messages = defineModel("messages");
 // 过滤掉 system 消息后的显示列表
 const displayMessages = computed(() => {
-  return props.messages.filter((m) => m.role !== "system");
+  return messages.value.filter((m) => m.role !== "system");
 });
 
 const emit = defineEmits(["recall"]);
+
+function updateCollapsedStatus(index, type) {
+  console.log(displayMessages.value[index][`${type}Collapsed`], `${type}Collapsed`);
+  if (type === "content") {
+    displayMessages.value[index][`${type}Collapsed`] =
+      !displayMessages.value[index][`${type}Collapsed`];
+  }
+  console.log(displayMessages.value[index]);
+}
 </script>
 
 <template>
@@ -26,10 +29,8 @@ const emit = defineEmits(["recall"]);
       :key="index"
       :msg="msg"
       :index="index"
-      :is-last-few="index >= displayMessages.length - 2"
       @recall="emit('recall', msg)"
-      @toggle-thought="msg.thoughtCollapsed = !msg.thoughtCollapsed"
-      @toggle-collapsed="msg.collapsed = !msg.collapsed"
+      @updateCollapsedStatus="updateCollapsedStatus"
     />
   </div>
 </template>
