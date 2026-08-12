@@ -2,11 +2,13 @@
   <div class="flex h-full w-full flex-col bg-sf-bg" v-if="currentIndex != -1">
     <Header />
     <div class="flex w-full flex-1 overflow-hidden" v-if="currentIndex >= 0">
+      <!-- 左侧操作栏 -->
       <Transition name="resume-builder">
         <Builder v-if="layout !== 'ai'" />
       </Transition>
-
+      <!-- 中间预览栏 -->
       <Preview />
+      <!-- 右侧AI助手栏 -->
       <Transition name="resume-assistant">
         <Assistant v-if="layout !== 'list'" />
       </Transition>
@@ -15,43 +17,43 @@
 </template>
 
 <script setup>
-import { useResumeStore } from '@/stores'
-import { storeToRefs } from 'pinia'
-import { useRoute, useRouter } from 'vue-router'
-import Assistant from './assistant/index.vue'
-import Builder from './builder/index.vue'
-import Header from './components/header/index.vue'
-import Preview from './preview/index.vue'
+import { useResumeStore } from "@/stores";
+import { storeToRefs } from "pinia";
+import { useRoute, useRouter } from "vue-router";
+import Assistant from "./assistant/index.vue";
+import Builder from "./builder/index.vue";
+import Header from "./components/header/index.vue";
+import Preview from "./preview/index.vue";
 
-const router = useRouter()
-const route = useRoute()
+const router = useRouter();
+const route = useRoute();
 
-const resumeStore = useResumeStore()
-const { currentIndex, layout, list, currentUsage } = storeToRefs(resumeStore)
-let useTimeTimer = null
+const resumeStore = useResumeStore();
+const { currentIndex, layout, list, currentUsage } = storeToRefs(resumeStore);
+let useTimeTimer = null;
 
 onMounted(() => {
-  const id = route.query.id
+  const id = route.query.id;
   if (!id) {
-    router.push(`/resumeMain`)
-    return
+    router.push(`/resumeMain`);
+    return;
   }
-  const index = list.value.findIndex((item) => item.id === id)
+  const index = list.value.findIndex((item) => item.id === id);
   if (index == -1) {
-    router.push(`/resumeMain`)
-    return
+    router.push(`/resumeMain`);
+    return;
   }
-  currentIndex.value = index
+  currentIndex.value = index;
   useTimeTimer = setInterval(() => {
-    currentUsage.value.lastUseTime = Date.now()
-  }, 10000)
-})
+    currentUsage.value.lastUseTime = Date.now();
+  }, 10000);
+});
 
 onUnmounted(() => {
   if (useTimeTimer) {
-    clearInterval(useTimeTimer)
+    clearInterval(useTimeTimer);
   }
-})
+});
 </script>
 
 <style scoped>
