@@ -1,87 +1,147 @@
-import { getUUID } from '@/utils'
-import dayjs from 'dayjs'
-import { ElMessageBox } from 'element-plus'
-import { defineStore } from 'pinia'
-import { computed, ref } from 'vue'
-
+import { getUUID } from "@/utils";
+import { ElMessageBox } from "element-plus";
+import { defineStore } from "pinia";
+import { computed, ref } from "vue";
+export type Chat = {
+  // 对话记录id
+  id: string;
+  // 对话记录标题
+  title: string;
+  // 创建时间
+  createTime: number;
+  // 更新时间
+  updateTime: number;
+  // 消息列表
+  messages: Message[];
+};
+export type Message = {
+  // 创建时间
+  createTime: number;
+  // 角色
+  role: string;
+  // 消息内容
+  content: string;
+  // 是否正在输入中
+  typing: boolean;
+  // 思考内容
+  thought: string;
+  // 思考内容是否折叠
+  thoughtCollapsed: boolean;
+  // 总token数
+  total_tokens: number;
+  // 内容是否折叠
+  contentCollapsed: boolean;
+};
+// 默认对话记录标题
+const DEFAULT_CHAT_TITLE = "新对话";
+// 默认系统提示
 const DEFAULT_SYSTEM_PROMPT =
-  '你的设置是：名字叫小羊，性别男，巨蟹座，2000年生，工作是前端工程师，擅长vue typescript，说话直接清爽，不拖沓、不矫情，回答简洁准确。回答以这个设定为基础。'
-const DEFAULT_CHAT_TITLE = '新对话'
+  "你的设置是：名字叫小羊，性别男，巨蟹座，2000年生，工作是前端工程师，擅长vue typescript，说话直接清爽，不拖沓、不矫情，回答简洁准确。回答以这个设定为基础。";
 
 export const useAiStore = defineStore(
-  'ai',
+  "ai",
   () => {
-    const sidebarCollapsed = ref(true)
-    const sidebarMode = ref('float') // 'dock' or 'float'
-    const chatList = ref([])
-    const currentChatId = ref('')
+    const sidebarCollapsed = ref(true);
+    const sidebarMode = ref("float"); // 'dock' or 'float'
+    const chatList = ref<Chat[]>([]);
+    const currentChatId = ref<string>("");
 
-    const currentChat = computed(() => chatList.value.find((c) => c.id === currentChatId.value))
+    const currentChat = computed(() => chatList.value.find((c) => c.id === currentChatId.value));
 
     const currentMessages = computed({
       get: () => currentChat.value?.messages || [],
       set: (val) => {
-        if (currentChat.value) currentChat.value.messages = val
+        if (currentChat.value) currentChat.value.messages = val;
       },
-    })
+    });
 
     function prepareNewChat() {
-      currentChatId.value = 'new-chat-temp'
+      currentChatId.value = "new-chat-temp";
     }
-
-    function addChat() {
-      const newChat = {
-        id: getUUID(),
+    // 创建新对话
+    function createChat(): Chat {
+      // 当前时间戳
+      const now = Date.now();
+      // 新对话记录
+      const msg = createChatMessage();
+      const newChat: Chat = {
+        id: getUUID().substring(0, 8),
         title: DEFAULT_CHAT_TITLE,
+        createTime: now,
+        updateTime: now,
+        messages: [
+          {
+            ...msg,
+            createTime: now,
+            role: "system",
+            content: DEFAULT_SYSTEM_PROMPT,
+            typing: false,
+          },
+        ],
+      };
+      return newChat;
+    }
+    // 创建新消息
+    function createChatMessage() {
+      const message: Message = {
         createTime: Date.now(),
-        updateTime: Date.now(),
-        messages: [{ role: 'system', content: DEFAULT_SYSTEM_PROMPT }],
-      }
-      chatList.value.unshift(newChat)
-      currentChatId.value = newChat.id
-      return newChat
+        contentCollapsed: false,
+        thoughtCollapsed: false,
+        total_tokens: 0,
+        thought: "",
+        content: "",
+        typing: false,
+        role: "",
+      };
+      return message;
+    }
+    function addChat() {
+      const newChat = createChat();
+      chatList.value.unshift(newChat);
+      currentChatId.value = newChat.id;
+      return newChat;
     }
 
-    function switchChat(id) {
-      currentChatId.value = id
+    function switchChat(id: string) {
+      currentChatId.value = id;
     }
 
-    function delChat(id) {
-      ElMessageBox.confirm('确定要删除该对话记录吗？此操作不可恢复。', '删除对话', {
-        type: 'warning',
+    function delChat(id: string) {
+      ElMessageBox.confirm("确定要删除该对话记录吗？此操作不可恢复。", "删除对话", {
+        type: "warning",
       })
         .then(() => {
-          const index = chatList.value.findIndex((c) => c.id === id)
+          const index = chatList.value.findIndex((c) => c.id === id);
           if (index > -1) {
-            chatList.value.splice(index, 1)
+            chatList.value.splice(index, 1);
             if (currentChatId.value === id) {
-              currentChatId.value = chatList.value[0]?.id || ''
+              currentChatId.value = chatList.value[0]?.id || "";
             }
           }
         })
-        .catch(() => {})
+        .catch(() => {});
     }
 
     function updateChatTitle() {
-      const chat = currentChat.value
-      if (!chat || chat.title !== DEFAULT_CHAT_TITLE) return
+      const chat = currentChat.value;
+      if (!chat || chat.title !== DEFAULT_CHAT_TITLE) return;
 
-      const firstUserMsg = chat.messages.find((m) => m.role === 'user')
+      const firstUserMsg = chat.messages.find((m) => m.role === "user");
       if (firstUserMsg) {
-        const content = firstUserMsg.content
-        chat.title = content.length > 15 ? `${content.slice(0, 15)}...` : content
+        const content = firstUserMsg.content;
+        chat.title = content.length > 15 ? `${content.slice(0, 15)}...` : content;
       }
     }
 
-    function addMessage(msg) {
-      if (!currentChat.value) addChat()
-
-      currentChat.value.messages.push({
+    function addMessage(msg: any) {
+      if (!currentChat.value) addChat();
+      const defaultMessage = createChatMessage();
+      currentChat.value!.messages.push({
+        ...defaultMessage,
         ...msg,
-        time: msg.time || dayjs().format('HH:mm'),
-      })
-      currentChat.value.updateTime = Date.now()
-      updateChatTitle()
+      });
+      currentChat.value!.updateTime = Date.now();
+      updateChatTitle();
     }
 
     return {
@@ -91,17 +151,18 @@ export const useAiStore = defineStore(
       currentChatId,
       currentChat,
       currentMessages,
+      createChat,
       addChat,
       prepareNewChat,
       switchChat,
       delChat,
       addMessage,
-    }
+    };
   },
   {
     persist: {
       storage: localStorage,
-      pick: ['sidebarMode', 'chatList', 'currentChatId'],
+      pick: ["sidebarMode", "chatList", "currentChatId"],
     },
   },
-)
+);
