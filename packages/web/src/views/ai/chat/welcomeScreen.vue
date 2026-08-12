@@ -1,12 +1,12 @@
 <script setup>
-import { useAiStore } from '@/stores'
-import { userInfo } from '@/views/index/data'
-import { computed } from 'vue'
+import { useAiStore } from "@/stores";
+import { userInfo } from "@/views/index/data";
+import { computed } from "vue";
 
-const emit = defineEmits(['suggest'])
+const emit = defineEmits(["suggest"]);
 
-const aiStore = useAiStore()
-const { addMessage } = aiStore
+const aiStore = useAiStore();
+const { addMessage } = aiStore;
 
 /**
  * 处理点击建议卡片
@@ -14,27 +14,27 @@ const { addMessage } = aiStore
  */
 const handleSuggest = (card) => {
   addMessage({
-    role: 'system',
+    role: "system",
     content: card.prompt,
     typing: false,
-  })
+  });
 
   addMessage({
-    role: 'user',
+    role: "user",
     content: card.title,
     typing: false,
-  })
+  });
 
   // 3. 触发父组件请求
-  emit('suggest')
-}
+  emit("suggest");
+};
 
 const suggestCards = computed(() => {
   const list = [
     {
-      icon: 'ph:user-circle-duotone',
-      title: '作者简介',
-      desc: '了解作者' + userInfo.value.name,
+      icon: "ph:user-circle-duotone",
+      title: "作者简介",
+      desc: "了解作者" + userInfo.value.name,
       prompt: `请详细介绍一下本站作者${userInfo.value.name}。基本信息如下：
       姓名：${userInfo.value.name}；
       坐标：${userInfo.value.location}；
@@ -44,9 +44,9 @@ const suggestCards = computed(() => {
       个人主页:http://nannan.work/#/index
       `,
     },
-  ]
-  return list
-})
+  ];
+  return list;
+});
 </script>
 
 <template>

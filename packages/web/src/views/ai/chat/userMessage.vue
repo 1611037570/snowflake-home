@@ -10,10 +10,11 @@ defineProps({
   },
 });
 
-const emit = defineEmits(["recall", "toggleCollapsed"]);
+const emit = defineEmits(["recall", "updateCollapsedStatus"]);
 </script>
 
 <template>
+  {{ msg }}
   <!-- 消息主体 -->
   <article class="group flex w-full min-w-0 flex-col items-end gap-1.5 transition-all duration-300">
     <!-- 用户名与时间 -->
@@ -45,7 +46,7 @@ const emit = defineEmits(["recall", "toggleCollapsed"]);
               ? 'border-sf-theme/20 bg-sf-theme/10 text-sf-theme'
               : 'border-sf-border/10 bg-sf-bg-3 text-sf-text-3 hover:border-sf-border/30 hover:text-sf-text'
           "
-          @click="emit('toggleCollapsed')"
+          @click="emit('updateCollapsedStatus', index, 'content')"
         >
           <SfIcon
             icon="ph:user-duotone"
@@ -82,7 +83,7 @@ const emit = defineEmits(["recall", "toggleCollapsed"]);
         class="flex items-center opacity-0 transition-opacity duration-300 group-hover:opacity-100"
       >
         <SfTooltip content="撤回并重新编辑">
-          <button class="action-btn" @click="emit('recall', index)">
+          <button class="action-btn" @click="emit('recall', index, 'content')">
             <SfIcon icon="ph:arrow-u-up-left-duotone" size="3.5" />
           </button>
         </SfTooltip>
