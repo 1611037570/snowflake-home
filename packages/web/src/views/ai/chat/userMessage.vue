@@ -14,7 +14,6 @@ const emit = defineEmits(["recall", "updateCollapsedStatus"]);
 </script>
 
 <template>
-  {{ msg }}
   <!-- 消息主体 -->
   <article class="group flex w-full min-w-0 flex-col items-end gap-1.5 transition-all duration-300">
     <!-- 用户名与时间 -->
@@ -22,12 +21,6 @@ const emit = defineEmits(["recall", "updateCollapsedStatus"]);
       class="flex w-full flex-row-reverse items-center justify-between gap-3 px-1 select-none"
     >
       <div class="flex flex-row-reverse items-center gap-3">
-        <!-- 唯一头像 Icon (进一步调大) -->
-        <div
-          class="flex h-10 w-10 items-center justify-center rounded-xl bg-linear-to-tr from-sf-theme/20 via-sf-theme/10 to-sf-theme/20 text-sf-theme shadow-md ring-1 ring-sf-theme/10 transition-transform hover:-rotate-12"
-        >
-          <SfIcon icon="ph:user-duotone" size="6" />
-        </div>
         <div class="flex flex-col items-end gap-0.5 leading-tight">
           <span class="text-[15px] font-black tracking-wider text-sf-text">我</span>
           <div class="flex flex-row-reverse items-center gap-2">
@@ -48,12 +41,6 @@ const emit = defineEmits(["recall", "updateCollapsedStatus"]);
           "
           @click="emit('updateCollapsedStatus', index, 'content')"
         >
-          <SfIcon
-            icon="ph:user-duotone"
-            size="3"
-            class="transition-colors"
-            :class="!msg.contentCollapsed ? 'text-sf-theme' : 'text-sf-text-3'"
-          />
           <span class="tracking-tight">我的消息</span>
           <SfIcon
             icon="ph:caret-down-bold"
