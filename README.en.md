@@ -14,14 +14,14 @@ Through this project, you can learn the practical applications of modern fronten
 
 The project is managed based on **pnpm monorepo**, with sub-packages located under the `packages` directory:
 
-- **web**: Main body of the project, developed and maintained by the author
-- **server**: Backend service, developed and maintained by AI
+- **web**: Main body of the project, developed and maintained by the author ![Author-led](https://img.shields.io/badge/Maintenance-Author--led-blue)
+- **server**: Backend service, developed and maintained by AI ![AI-led](https://img.shields.io/badge/Maintenance-AI--led-purple)
 
 ## 🎯 Core Product Modules
 
-- ✨ **Snowflake Start Page**: Core project carrier, providing a personalized and customizable website start page (http://nannan.work)
-- 📄 **Resume Generator**: Visual resume editing tool, supporting template selection, content customization, and one-click export (http://nannan.work/#/resume)
-- 🛣️ **Image Processing Tool**: Lightweight image suite, covering common functions such as compression, cropping, and format conversion (http://nannan.work/#/image)
+- ✨ **Snowflake Start Page**: Core project carrier, providing a personalized and customizable website start page (http://nannan.work) ![Discontinued](https://img.shields.io/badge/Status-Discontinued-lightgrey)
+- 📄 **Resume Generator**: Visual resume editing tool, supporting template selection, content customization, and one-click export (http://nannan.work/#/resume) ![Active Maintenance](https://img.shields.io/badge/Status-Active%20Maintenance-brightgreen)
+- 🛣️ **Image Processing Tool**: Lightweight image suite, covering common functions such as compression, cropping, and format conversion (http://nannan.work/#/image) ![Discontinued](https://img.shields.io/badge/Status-Discontinued-lightgrey)
 
 ## 🔗 Live Demo
 
@@ -58,4 +58,3 @@ Until one late night of study, I suddenly realized: every line written with care
 With the first snow falling, I bid farewell to these six years and open a new chapter. See you next spring.
 
 > #### **November 22, 2025**
-```
