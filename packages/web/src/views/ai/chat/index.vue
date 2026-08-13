@@ -163,19 +163,19 @@ const handleAIResponse = async () => {
     // 先添加一条空的助手消息，用于展示打字中状态和流式内容
     addMessage({
       role: "assistant",
-      content: "1111111111",
+      content: "",
       typing: true,
     });
 
     // 获取刚添加的这条助手消息引用
     lastMsg = currentMessages.value[currentMessages.value.length - 1];
-    console.log("las:>> ", lastMsg);
-
+    // 思考状态，初始为 false
+    let thoughtStatus = false;
     // 调用豆包大模型流式接口
     const { sendFn, abortFn } = await arkLLM.request({
       options: {
         input: messages,
-        model: "doubao-seed-2-0-mini-260215",
+        model: "deepseek-v4-flash-ga-260731",
         thinking: {
           // 根据设置控制深度思考模式
           type: settings.value.thinkMode === "deep" ? "enabled" : "disabled",
@@ -190,6 +190,11 @@ const handleAIResponse = async () => {
           lastMsg.thought += data;
           scrollToBottom();
         } else if (type === "content") {
+          // 思考展开，并且首次收到回复内容，标记为完成。
+          if (!lastMsg.thoughtCollapsed && !thoughtStatus) {
+            thoughtStatus = true;
+            lastMsg.thoughtCollapsed = true;
+          }
           // 回复正文事件：逐字追加内容并滚动到底部
           lastMsg.content += data;
           scrollToBottom();
@@ -203,6 +208,7 @@ const handleAIResponse = async () => {
         lastMsg.content = `请求出错: ${error.message || "未知错误"}`;
         lastMsg.typing = false;
         isSending.value = false;
+        lastMsg.requestStatus = "error";
       },
     });
 

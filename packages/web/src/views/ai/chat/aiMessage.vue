@@ -11,6 +11,10 @@ const props = defineProps({
     type: Object,
     required: true,
   },
+  index: {
+    type: Number,
+    required: true,
+  },
   isLastFew: {
     type: Boolean,
     default: false,
@@ -44,7 +48,6 @@ const actionButtons = [
 </script>
 
 <template>
-  2222222222
   <!-- 消息主体 -->
   <article
     class="group flex w-full min-w-0 flex-col items-start gap-1.5 transition-all duration-300"
@@ -52,12 +55,6 @@ const actionButtons = [
     <!-- 用户名与时间 -->
     <header class="flex w-full flex-row items-center justify-between gap-3 px-1 select-none">
       <div class="flex items-center gap-3">
-        <!-- 唯一头像 Icon (同步用户侧精致风格) -->
-        <div
-          class="flex h-10 w-10 items-center justify-center rounded-xl bg-linear-to-tr from-sf-theme/20 via-sf-theme/10 to-sf-theme/20 text-sf-theme shadow-md ring-1 ring-sf-theme/10 transition-transform hover:rotate-12"
-        >
-          <SfIcon icon="ph:snowflake-duotone" size="6" />
-        </div>
         <div class="flex flex-col gap-0.5 leading-tight">
           <span class="text-[15px] font-black tracking-wider text-sf-text">小羊</span>
           <div class="flex items-center gap-2">
@@ -79,13 +76,7 @@ const actionButtons = [
             "
             @click="emit('updateCollapsedStatus', index, 'thought')"
           >
-            <SfIcon
-              icon="ph:brain-duotone"
-              size="3"
-              class="transition-colors"
-              :class="!msg.thoughtCollapsed ? 'text-sf-theme' : 'text-sf-text-3'"
-            />
-            <span class="tracking-tight">思考过程</span>
+            <span class="tracking-tight">{{ msg.content ? "已完成思考" : "思考中" }}</span>
             <SfIcon
               icon="ph:caret-down-bold"
               size="2"
@@ -105,12 +96,6 @@ const actionButtons = [
             "
             @click="emit('updateCollapsedStatus', index, 'content')"
           >
-            <SfIcon
-              icon="ph:chat-teardrop-dots-duotone"
-              size="3"
-              class="transition-colors"
-              :class="!msg.contentCollapsed ? 'text-sf-theme' : 'text-sf-text-3'"
-            />
             <span class="tracking-tight">回复内容</span>
             <SfIcon
               icon="ph:caret-down-bold"
