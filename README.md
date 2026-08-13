@@ -4,40 +4,39 @@
 
 ## 📌 项目介绍
 
-项目主体为雪花起始页，基于起始页衍生拓展了多个小工具；同时集成了多项基建功能。
+项目主体为雪花起始页，基于起始页衍生拓展很多小项目以及基建。
+
+通过本项目，您可以学习 **Vue3**、**Vite**、**NestJS** 等现代前后端技术的实战应用。
 
 于2020年9月3日上线，2025年11月22日开始重构并开源。
-
-通过本项目，您可以学习 **Vue3**、**TypeScript**、**Vite**、**NestJS** 等现代前后端技术的实战应用。
 
 ## 📦 仓库结构
 
 项目基于 **pnpm monorepo** 管理，子包位于 `packages` 目录下：
 
-- **web**：项目主体 作者主导开发维护
-- **server**：后端服务 AI主导开发维护
+- **web**：项目主体 作者主导开发维护 ![作者主导](https://img.shields.io/badge/维护-作者主导-blue)
+- **server**：后端服务 AI主导开发维护 ![AI主导](https://img.shields.io/badge/维护-AI主导-purple)
 
-## 🎯 核心产品模块
+## 🔗 在线体验
 
-- ✨ **雪花起始页**：项目核心载体，提供个性化自定义的网站起始页 （http://nannan.work）
-- 📄 **简历生成器**：可视化简历编辑工具，支持模板选择、内容自定义、一键导出 （http://nannan.work/#/resume）
-- 🛣️ **图片处理工具**：轻量级图片套件，涵盖压缩、裁剪、格式转换等常用功能 （http://nannan.work/#/image）
+您可以通过链接在线体验已部署的项目：<http://nannan.work> 
 
-## �🔗 在线体验
+## 🎯 核心项目
 
-您可以通过以下链接在线体验已部署的项目：
-
-**官网**：<http://nannan.work>
+- 📄 **简历生成器**：对标BOSS直聘，AI辅助编写、可视化编辑、PDF导出等 （http://nannan.work/#/resume） ![维护中](https://img.shields.io/badge/状态-维护中-brightgreen)
+- 🛣️ **图片处理工具**：轻量级图片套件，涵盖压缩、裁剪、格式转换等常用功能 （http://nannan.work/#/image） ![停止维护](https://img.shields.io/badge/状态-停止维护-lightgrey)
+- ✨ **雪花起始页**：项目核心载体，提供个性化自定义的网站起始页 （http://nannan.work） ![停止维护](https://img.shields.io/badge/状态-停止维护-lightgrey)
 
 ## 🚀 安装与运行
 
 推荐使用 **VS Code** 作为开发环境，项目提供了 `.vscode` 配置文件，能够带来更好的开发体验。
 
-```bash
-# 安装依赖
+### 安装依赖
+
 pnpm install
 
-# 开发环境运行
+### 开发环境运行
+
 pnpm dev
 
 ## 📄 开源协议
@@ -57,4 +56,3 @@ pnpm dev
 初雪落下，与这六年告别，新篇开启。待下个春天见。
 
 > #### **2025年11月22日**
-```
