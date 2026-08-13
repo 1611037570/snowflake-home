@@ -12,12 +12,8 @@ const displayMessages = computed(() => {
 const emit = defineEmits(["recall"]);
 
 function updateCollapsedStatus(index, type) {
-  console.log(displayMessages.value[index][`${type}Collapsed`], `${type}Collapsed`);
-  if (type === "content") {
-    displayMessages.value[index][`${type}Collapsed`] =
-      !displayMessages.value[index][`${type}Collapsed`];
-  }
-  console.log(displayMessages.value[index]);
+  displayMessages.value[index][`${type}Collapsed`] =
+    !displayMessages.value[index][`${type}Collapsed`];
 }
 </script>
 

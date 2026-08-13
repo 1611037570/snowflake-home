@@ -115,7 +115,7 @@ onMounted(() => {
 
       <!-- 独立抽离的聊天窗口组件 -->
       <div class="relative h-full flex-1 overflow-hidden">
-        <Chat :chat="chatProp" :key="chatProp.id" />
+        <Chat v-model:chat="chatProp" :key="chatProp.id" />
       </div>
     </div>
   </div>
