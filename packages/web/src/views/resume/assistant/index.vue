@@ -6,7 +6,7 @@ import InputArea from "./InputArea.vue";
 import JdInput from "./JdInput.vue";
 import Score from "./Score.vue";
 import { useAiStore } from "@/stores/modules/ai";
-import ChatItem from "@/views/ai/chatlist/chatItem.vue";
+import Chat from "@/views/ai/chat/index.vue";
 
 // AI 对话
 const aiStore = useAiStore();
@@ -26,24 +26,27 @@ function switchMode(type) {
   activeMode.value = action?.name || "";
   currentView.value = type;
 }
+
+function clearChat() {
+  activeMode.value = "";
+}
 </script>
 
 <template>
   <div class="box-border h-full w-[360px] bg-sf-bg py-3 pr-3">
-    <div
-      class="flex h-full flex-col rounded-xl border border-sf-border/40 bg-sf-primary p-3 shadow-sm"
-    >
+    <div class="flex h-full flex-col rounded-xl border border-sf-border/40 bg-sf-primary shadow-sm">
       <div class="flex-1 overflow-y-auto">
         <EmptyState v-if="!activeMode" @switch-mode="switchMode" />
         <Score v-else-if="currentView === 'score'" />
         <JdInput v-else-if="currentView === 'jd'" />
       </div>
-
       <!-- AI 对话项 -->
-      <ChatItem :chat="chat" />
+      <div class="cursor-pointer" @click="clearChat">清空对话</div>
+      <Chat :chat="chat" v-if="activeMode" />
 
       <!-- 下方：输入框组件 -->
       <InputArea
+        v-if="0"
         v-model:active-mode="activeMode"
         @switch-jd="switchToJd"
         @switch-mode="switchMode"
