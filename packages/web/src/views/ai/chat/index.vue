@@ -1,5 +1,6 @@
 <script setup>
 import { useAiSettings } from "@/hooks";
+import { useAiStore } from "@/stores";
 import { arkLLM } from "@/apis";
 import { useScroll } from "@vueuse/core";
 import { computed, nextTick, ref, watch } from "vue";
@@ -8,23 +9,23 @@ import ChatInput from "./chatInput.vue";
 import MessageList from "./messageList.vue";
 import WelcomeScreen from "./welcomeScreen.vue";
 
-const props = defineProps({
-  chat: {
-    required: true,
-  },
+const { createChatMessage } = useAiStore();
+
+const chat = defineModel("chat", {
+  required: true,
 });
 
 // 默认对话记录标题
 const DEFAULT_CHAT_TITLE = "新对话";
 
 // currentChat 直接指向传入的 chat 对象
-const currentChat = computed(() => props.chat);
+const currentChat = computed(() => chat.value);
 
 // currentMessages：从 chat.messages 派生，支持写入（写回 chat.messages）
 const currentMessages = computed({
-  get: () => props.chat.messages,
+  get: () => chat.value?.messages ?? [],
   set: (val) => {
-    props.chat.messages = val;
+    if (chat.value) chat.value.messages = val;
   },
 });
 
@@ -32,27 +33,25 @@ const currentMessages = computed({
  * 向当前对话追加一条消息
  */
 function addMessage(msg) {
-  const chat = props.chat;
-  chat.messages.push({
-    createTime: Date.now(),
-    typing: false,
+  chat.value.messages.push({
+    ...createChatMessage(),
     ...msg,
   });
-  chat.updateTime = Date.now();
+  chat.value.updateTime = Date.now();
   updateChatTitle();
 }
 
 /**
  * 根据首条用户消息自动更新对话标题
  */
-function updateChatTitle() {
-  const chat = props.chat;
-  if (!chat || chat.title !== DEFAULT_CHAT_TITLE) return;
 
-  const firstUserMsg = chat.messages.find((m) => m.role === "user");
+function updateChatTitle() {
+  if (!chat.value || chat.value.title !== DEFAULT_CHAT_TITLE) return;
+
+  const firstUserMsg = chat.value.messages.find((m) => m.role === "user");
   if (firstUserMsg) {
     const content = firstUserMsg.content;
-    chat.title = content.length > 15 ? `${content.slice(0, 15)}...` : content;
+    chat.value.title = content.length > 15 ? `${content.slice(0, 15)}...` : content;
   }
 }
 
@@ -100,7 +99,7 @@ const scrollToBottom = async () => {
 
 // 监听 chat 变化时滚动到底部并聚焦
 watch(
-  () => props.chat.id,
+  () => chat.value?.id,
   () => {
     scrollToBottom();
     nextTick(() => chatInputRef.value?.focus());
@@ -111,7 +110,22 @@ watch(
 /**
  * 点击提示词卡片
  */
-const handleSuggest = () => {
+const handleSuggest = (payload) => {
+  // 使用本地 addMessage，直接写入 defineModel 传入的 chat.messages
+  if (payload?.prompt) {
+    addMessage({
+      role: "system",
+      content: payload.prompt,
+      typing: false,
+    });
+  }
+  if (payload?.userContent) {
+    addMessage({
+      role: "user",
+      content: payload.userContent,
+      typing: false,
+    });
+  }
   isSending.value = true;
   scrollToBottom();
   handleAIResponse();
@@ -146,15 +160,16 @@ const handleAIResponse = async () => {
       role: m.role,
       content: m.content,
     }));
-
     // 先添加一条空的助手消息，用于展示打字中状态和流式内容
     addMessage({
       role: "assistant",
-      content: "",
+      content: "1111111111",
       typing: true,
     });
+
     // 获取刚添加的这条助手消息引用
     lastMsg = currentMessages.value[currentMessages.value.length - 1];
+    console.log("las:>> ", lastMsg);
 
     // 调用豆包大模型流式接口
     const { sendFn, abortFn } = await arkLLM.request({
@@ -171,11 +186,6 @@ const handleAIResponse = async () => {
       // 流式事件回调
       onEvent: (type, data) => {
         if (type === "reasoning") {
-          // 思考内容事件：首次收到时初始化 thought 字段
-          if (lastMsg.thought === undefined) {
-            lastMsg.thought = "";
-            lastMsg.thoughtCollapsed = false;
-          }
           // 追加思考内容并滚动到底部
           lastMsg.thought += data;
           scrollToBottom();

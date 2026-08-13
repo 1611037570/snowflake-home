@@ -1,32 +1,19 @@
 <script setup>
-import { useAiStore } from "@/stores";
 import { userInfo } from "@/views/index/data";
 import { computed } from "vue";
 
 const emit = defineEmits(["suggest"]);
-
-const aiStore = useAiStore();
-const { addMessage } = aiStore;
 
 /**
  * 处理点击建议卡片
  * @param card 建议卡片数据
  */
 const handleSuggest = (card) => {
-  addMessage({
-    role: "system",
-    content: card.prompt,
-    typing: false,
+  emit("suggest", {
+    card,
+    prompt: card.prompt,
+    userContent: card.title,
   });
-
-  addMessage({
-    role: "user",
-    content: card.title,
-    typing: false,
-  });
-
-  // 3. 触发父组件请求
-  emit("suggest");
 };
 
 const suggestCards = computed(() => {

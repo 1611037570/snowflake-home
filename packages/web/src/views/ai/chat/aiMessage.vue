@@ -44,6 +44,7 @@ const actionButtons = [
 </script>
 
 <template>
+  2222222222
   <!-- 消息主体 -->
   <article
     class="group flex w-full min-w-0 flex-col items-start gap-1.5 transition-all duration-300"
@@ -108,14 +109,14 @@ const actionButtons = [
               icon="ph:chat-teardrop-dots-duotone"
               size="3"
               class="transition-colors"
-              :class="!msg.collapsed ? 'text-sf-theme' : 'text-sf-text-3'"
+              :class="!msg.contentCollapsed ? 'text-sf-theme' : 'text-sf-text-3'"
             />
             <span class="tracking-tight">回复内容</span>
             <SfIcon
               icon="ph:caret-down-bold"
               size="2"
               class="opacity-40 transition-transform duration-300"
-              :class="{ '-rotate-180 opacity-80': !msg.collapsed }"
+              :class="{ '-rotate-180 opacity-80': !msg.contentCollapsed }"
             />
           </button>
         </div>
@@ -162,7 +163,7 @@ const actionButtons = [
       </template>
 
       <!-- 正式回复内容 -->
-      <template v-if="!msg.collapsed">
+      <template v-if="!msg.contentCollapsed">
         <!-- AI 消息 (Markdown 渲染) -->
         <div class="relative w-full min-w-0">
           <MdPreview
