@@ -53,7 +53,7 @@ const emit = defineEmits(["recall", "updateCollapsedStatus"]);
     </header>
 
     <!-- 消息内容区域 (对齐位置同步调整) -->
-    <div class="flex w-full flex-col items-end gap-1.5 pr-13 pl-1">
+    <div class="flex w-full flex-col items-end gap-1.5 pr-6 pl-1">
       <!-- 消息内容 -->
       <template v-if="!msg.contentCollapsed">
         <!-- 用户消息气泡 -->
@@ -65,10 +65,7 @@ const emit = defineEmits(["recall", "updateCollapsedStatus"]);
       </template>
 
       <!-- 用户操作 -->
-      <nav
-        v-if="msg.content"
-        class="flex items-center opacity-0 transition-opacity duration-300 group-hover:opacity-100"
-      >
+      <nav v-if="msg.content" class="flex items-center transition-opacity duration-300">
         <SfTooltip content="撤回并重新编辑">
           <button class="action-btn" @click="emit('recall', index, 'content')">
             <SfIcon icon="ph:arrow-u-up-left-duotone" size="3.5" />

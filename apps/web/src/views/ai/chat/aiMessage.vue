@@ -165,7 +165,7 @@ const actionButtons = [
       <!-- AI 操作区域 -->
       <nav
         v-if="msg.content && !msg.typing"
-        class="flex items-center gap-1 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+        class="flex items-center gap-1 transition-opacity duration-300"
       >
         <template v-for="(btn, idx) in actionButtons" :key="idx">
           <SfTooltip :content="btn.tooltip">
