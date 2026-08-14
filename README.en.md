@@ -29,11 +29,15 @@ The project is managed based on **pnpm monorepo**, with sub-packages located und
 
 ### Install Dependencies
 
+```bash
 pnpm install
+```
 
 ### Run in Development
 
+```bash
 pnpm dev
+```
 
 ## Author's Murmurs
 
