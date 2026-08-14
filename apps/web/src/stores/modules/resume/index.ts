@@ -62,6 +62,7 @@ export const useResumeStore = defineStore(
     const maxCount = 5;
     // 当前选中的简历下标
     const currentIndex = ref(-1);
+    // 当前布局
     const layout = ref<ResumeLayout>("three");
     // 是否正在打印
     const isPrinting = ref(false);
@@ -187,7 +188,7 @@ export const useResumeStore = defineStore(
   },
   {
     persist: {
-      pick: ["list"],
+      pick: ["list", "layout"],
     },
   },
 );

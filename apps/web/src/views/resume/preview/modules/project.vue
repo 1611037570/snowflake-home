@@ -1,19 +1,18 @@
 <script setup>
-import { useResumeStore } from "@/stores";
-import { storeToRefs } from "pinia";
 import { computed, inject } from "vue";
 import { getTime } from "../../utils";
 import Content from "../theme/content.vue";
 import Title from "../theme/title.vue";
 import Text from "./text.vue";
 
-const resumeStore = useResumeStore();
-const { currentData } = storeToRefs(resumeStore);
+// 从上层注入获取代理后的预览数据
+const previewData = inject("previewData");
 
 const fontValue = inject("fontValue");
 const lineHeightValue = inject("lineHeightValue");
 
-const projectList = computed(() => currentData.value.project || []);
+// 代理数据解包访问数组
+const projectList = computed(() => previewData.value?.project || []);
 </script>
 
 <template>
@@ -21,22 +20,22 @@ const projectList = computed(() => currentData.value.project || []);
     <!-- 标题栏 -->
     <Title title="项目经历"></Title>
     <!-- 内容区 -->
-    <template v-for="item in projectList" :key="item.name">
+    <template v-for="(item, index) in projectList" :key="index">
       <div class="mb-3 flex items-center justify-between" :style="[lineHeightValue(3)]">
         <div class="flex items-center gap-4">
           <div class="font-bold" :style="[fontValue(3)]">
-            <Text v-model:value="item.name" v-model:newValue="item.newName" />
+            <Text v-model="item.name" />
           </div>
           <div>
-            <Text v-model:value="item.post" v-model:newValue="item.newPost" />
+            <Text v-model="item.post" />
           </div>
         </div>
         <div class="flex items-center">
-          <Text :value="getTime(item.time)" v-model:newValue="item.newTime" />
+          <Text v-model="item.time" :display-value="getTime(item.time?.value)" />
         </div>
       </div>
       <!-- 补充描述/经历 -->
-      <Content :content="item.content" />
+      <Content :content="item.content?.value ?? ''" />
     </template>
   </div>
 </template>

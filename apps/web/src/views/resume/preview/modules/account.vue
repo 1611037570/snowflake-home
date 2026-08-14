@@ -1,16 +1,15 @@
 <script setup>
-import { useResumeStore } from "@/stores";
-import { storeToRefs } from "pinia";
 import { computed, inject } from "vue";
 import Text from "./text.vue";
 
-const resumeStore = useResumeStore();
-const { currentData } = storeToRefs(resumeStore);
+// 从上层注入获取代理后的预览数据
+const previewData = inject("previewData");
 
 const fontValue = inject("fontValue");
 const lineHeightValue = inject("lineHeightValue");
 
-const account = computed(() => currentData.value.account || []);
+// 代理数据解包访问数组
+const account = computed(() => previewData.value?.account || []);
 </script>
 
 <template>
@@ -22,10 +21,10 @@ const account = computed(() => currentData.value.account || []);
       class="mt-1 flex items-center gap-2"
       data-module="user"
     >
-      <Text v-model:value="item.name" v-model:newValue="item.newName" />
-      <span v-if="item.name && item.url" class="pr-1">：</span>
-      <a :href="item.url" target="_blank" class="font-medium hover:underline">
-        <Text v-model:value="item.url" v-model:newValue="item.newUrl" />
+      <Text v-model="item.name" />
+      <span v-if="item.name?.value && item.url?.value" class="pr-1">：</span>
+      <a :href="item.url?.value" target="_blank" class="font-medium hover:underline">
+        <Text v-model="item.url" />
       </a>
     </div>
   </div>

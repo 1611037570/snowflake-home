@@ -4,7 +4,7 @@
 
 // 从types目录导入ShortcutItem接口
 import type { ShortcutItem } from "@/types/shortcut";
-
+// pinyin-match 下次更换这个拼音库
 export const default_data: ShortcutItem = {
   name: "",
   url: "",
@@ -73,6 +73,12 @@ export const default_list: ShortcutItem[] = [
     name: "deepseek",
     url: "https://chat.deepseek.com/",
     pinyin: "deepseek",
+    top: false,
+  },
+  {
+    name: "职决",
+    url: "https://www.deephire.cn/jobseeker/home",
+    pinyin: "zhijie",
     top: false,
   },
 ];
