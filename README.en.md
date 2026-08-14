@@ -12,9 +12,12 @@ Launched on September 3, 2020, reconstructed and open-sourced on November 22, 20
 
 ## 🔗 Live Demo
 
-- 📄 **Resume Generator**: Benchmarking BOSS Zhipin, with AI-assisted writing, visual editing, PDF export, etc. (http://nannan.work/#/resume) ![Under Maintenance](https://img.shields.io/badge/Status-Under%20Maintenance-brightgreen)
-- ✨ **Snowflake Start Page**: Core project carrier, providing a personalized and customizable website start page (http://nannan.work) ![Under Maintenance](https://img.shields.io/badge/Status-Under%20Maintenance-brightgreen)
-- 🛣️ **Image Processing Tool**: Lightweight image suite, covering common functions such as compression, cropping, and format conversion (http://nannan.work/#/image) ![Discontinued](https://img.shields.io/badge/Status-Discontinued-lightgrey)
+- 📄 **Resume Generator**: Benchmarking BOSS Zhipin, with AI-assisted writing, visual editing, PDF export, etc. ![Under Maintenance](https://img.shields.io/badge/Status-Under%20Maintenance-brightgreen)
+  Preview: http://nannan.work/#/resume
+- ✨ **Snowflake Start Page**: Core project carrier, providing a personalized and customizable website start page ![Under Maintenance](https://img.shields.io/badge/Status-Under%20Maintenance-brightgreen)
+  Preview: http://nannan.work
+- 🛣️ **Image Processing Tool**: Lightweight image suite, covering common functions such as compression, cropping, and format conversion ![Discontinued](https://img.shields.io/badge/Status-Discontinued-lightgrey)
+  Preview: http://nannan.work/#/image
 
 ## 📦 Repository Structure
 
