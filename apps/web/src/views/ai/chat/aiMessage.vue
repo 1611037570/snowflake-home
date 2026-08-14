@@ -53,71 +53,68 @@ const actionButtons = [
     class="group flex w-full min-w-0 flex-col items-start gap-1.5 transition-all duration-300"
   >
     <!-- 用户名与时间 -->
-    <header class="flex w-full flex-row items-center justify-between gap-3 px-1 select-none">
-      <div class="flex items-center gap-3">
+    <header class="flex w-full flex-row items-center justify-between gap-1 px-1 select-none">
+      <div class="flex items-center gap-1">
         <div class="flex flex-col gap-0.5 leading-tight">
           <span class="text-[12px] font-black tracking-wider text-sf-text">小羊</span>
-          <div class="flex items-center gap-2">
+          <div class="flex items-center gap-1">
             <time v-if="msg.time" class="text-[11px] font-bold tabular-nums opacity-40">{{
               msg.time
             }}</time>
           </div>
         </div>
 
-        <div class="flex items-center gap-2">
-          <!-- 思考过程切换 (美化后的胶囊风格) -->
-          <button
-            v-if="msg.thought"
-            class="flex cursor-pointer items-center gap-1.5 rounded-full border px-2 py-0.5 text-sf font-bold transition-all"
-            :class="
-              !msg.thoughtCollapsed
-                ? 'border-sf-theme/20 bg-sf-theme/10 text-sf-theme'
-                : 'border-sf-border/10 bg-sf-bg-3 text-sf-text-3'
-            "
-            @click="emit('updateCollapsedStatus', index, 'thought')"
-          >
-            <span class="tracking-tight">{{ msg.content ? "已完成思考" : "思考中" }}</span>
-            <SfIcon
-              icon="ph:caret-down-bold"
-              size="2"
-              class="transition-transform duration-300"
-              :class="{ '-rotate-180 opacity-80': !msg.thoughtCollapsed }"
-            />
-          </button>
+        <!-- 思考过程切换 (美化后的胶囊风格) -->
+        <button
+          v-if="msg.thought"
+          class="flex cursor-pointer items-center gap-1.5 rounded-full border px-2 py-0.5 text-sf font-bold transition-all"
+          :class="
+            !msg.thoughtCollapsed
+              ? 'border-sf-theme/20 bg-sf-theme/10 text-sf-theme'
+              : 'border-sf-border/10 bg-sf-bg-3 text-sf-text-3'
+          "
+          @click="emit('updateCollapsedStatus', index, 'thought')"
+        >
+          <span class="tracking-tight">{{ msg.content ? "已完成思考" : "思考中" }}</span>
+          <SfIcon
+            icon="ph:caret-down-bold"
+            size="2"
+            class="transition-transform duration-300"
+            :class="{ '-rotate-180 opacity-80': !msg.thoughtCollapsed }"
+          />
+        </button>
 
-          <!-- 回复内容切换 (美化后的胶囊风格) -->
-          <button
-            v-if="msg.content"
-            class="flex cursor-pointer items-center gap-1.5 rounded-full border px-2 py-0.5 text-sf font-bold transition-all"
-            :class="
-              !msg.contentCollapsed
-                ? 'border-sf-theme/20 bg-sf-theme/10 text-sf-theme'
-                : 'border-sf-border/10 bg-sf-bg-3 text-sf-text-3'
-            "
-            @click="emit('updateCollapsedStatus', index, 'content')"
-          >
-            <span class="tracking-tight">回复内容</span>
-            <SfIcon
-              icon="ph:caret-down-bold"
-              size="2"
-              class="transition-transform duration-300"
-              :class="{ '-rotate-180 opacity-80': !msg.contentCollapsed }"
-            />
-          </button>
-        </div>
+        <!-- 回复内容切换 (美化后的胶囊风格) -->
+        <button
+          v-if="msg.content"
+          class="flex cursor-pointer items-center gap-1.5 rounded-full border px-2 py-0.5 text-sf font-bold transition-all"
+          :class="
+            !msg.contentCollapsed
+              ? 'border-sf-theme/20 bg-sf-theme/10 text-sf-theme'
+              : 'border-sf-border/10 bg-sf-bg-3 text-sf-text-3'
+          "
+          @click="emit('updateCollapsedStatus', index, 'content')"
+        >
+          <span class="tracking-tight">回复内容</span>
+          <SfIcon
+            icon="ph:caret-down-bold"
+            size="2"
+            class="transition-transform duration-300"
+            :class="{ '-rotate-180 opacity-80': !msg.contentCollapsed }"
+          />
+        </button>
       </div>
 
       <div
         v-if="msg.total_tokens"
-        class="flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-[11px] font-black text-sf-text-3"
+        class="flex items-center gap-1 text-[11px] font-black text-sf-text-3"
       >
         <SfIcon icon="ph:lightning-duotone" size="4" class="animate-pulse text-amber-500" />
         <span class="opacity-70">{{ msg.total_tokens }} tokens</span>
       </div>
     </header>
 
-    <!-- 消息内容区域 (对齐位置同步调整至 13.5 [头像 10 + 间距 3 + 微调 0.5]) -->
-    <div class="flex w-full flex-col gap-1.5 pr-1 pl-13">
+    <div class="flex w-full flex-col gap-1 pr-1">
       <!-- AI Loading 状态 (当既没有思考内容也没有回复内容时显示) -->
       <div
         v-if="!msg.thought && !msg.content"
