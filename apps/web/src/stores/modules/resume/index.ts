@@ -54,8 +54,6 @@ const DEFAULT_RESUME_ITEM = {
 export const useResumeStore = defineStore(
   "resume",
   () => {
-    // 是否正在打印
-    const isPrinting = ref(false);
     // 当前选中的模块 keys (Set)
     const selectedModuleKeys = ref<Set<string>>(new Set());
     // 简历列表
@@ -65,7 +63,15 @@ export const useResumeStore = defineStore(
     // 当前选中的简历下标
     const currentIndex = ref(-1);
     const layout = ref<ResumeLayout>("three");
-
+    // 是否正在打印
+    const isPrinting = ref(false);
+    // 是否AI生成中
+    const isGenerating = ref(false);
+    // 初始化状态
+    function initStatus() {
+      isPrinting.value = false;
+      isGenerating.value = false;
+    }
     // 获取当前选中的简历项
     const getCurrentResumeItem = () => {
       return list.value[currentIndex.value];
@@ -144,6 +150,9 @@ export const useResumeStore = defineStore(
     const setLayout = (value: ResumeLayout) => {
       layout.value = value;
     };
+    const setGenerating = (val: boolean) => {
+      isGenerating.value = val;
+    };
     const mergeResumeItem = (item: any) => {
       return merge(DEFAULT_RESUME_ITEM, item);
     };
@@ -160,6 +169,9 @@ export const useResumeStore = defineStore(
       maxCount,
       currentIndex,
       layout,
+      isGenerating,
+      setGenerating,
+      initStatus,
       currentData,
       currentConfig,
       currentFixedConfig,
