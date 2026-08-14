@@ -19,17 +19,10 @@
     "lint": "run-s lint:*",
     "lint:lint-staged": "lint-staged",
     "format": "prettier --write src/",
-    "commit": "git-cz",
-    "prepare": "husky",
     "test:unit": "vitest",
     "preview:test": "vite preview --outDir test",
     "vitest:ui": "vitest --ui",
     "build:ext": "vite build --mode extension"
-  },
-  "config": {
-    "commitizen": {
-      "path": "node_modules/cz-git"
-    }
   },
   "dependencies": {
     "@iconify/vue": "5.0.0",
@@ -61,8 +54,6 @@
     "vue-router": "4.5.1"
   },
   "devDependencies": {
-    "@commitlint/cli": "20.1.0",
-    "@commitlint/config-conventional": "20.0.0",
     "@prettier/plugin-oxc": "0.0.4",
     "@tailwindcss/vite": "4.1.14",
     "@tsconfig/node22": "22.0.2",
@@ -76,13 +67,9 @@
     "@vue/eslint-config-typescript": "14.6.0",
     "@vue/test-utils": "^2.4.6",
     "@vue/tsconfig": "0.8.1",
-    "commitizen": "4.3.1",
-    "commitlint": "20.1.0",
-    "cz-git": "1.12.0",
     "eslint": "catalog:",
     "eslint-plugin-oxlint": "1.11.2",
     "eslint-plugin-vue": "10.4.0",
-    "husky": "9.1.7",
     "jiti": "2.6.1",
     "jsdom": "^27.2.0",
     "lint-staged": "16.2.3",
