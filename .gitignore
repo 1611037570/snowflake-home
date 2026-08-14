@@ -16,6 +16,7 @@ coverage
 *.local
 test
 .pnpm-store
+.turbo
 # 测试产物
 /cypress/videos/
 /cypress/screenshots/
