@@ -18,7 +18,7 @@ Launched on September 3, 2020, reconstructed and open-sourced on November 22, 20
 
 ## 📦 Repository Structure
 
-The project is managed based on **pnpm monorepo**, with sub-packages located under the `packages` directory:
+The project is managed based on **pnpm monorepo**, with sub-packages located under the `apps` directory:
 
 - **web**: Main body of the project, developed and maintained by the author ![Author-led](https://img.shields.io/badge/Maintenance-Author--led-blue)
 - **server**: Backend service, developed and maintained by AI ![AI-led](https://img.shields.io/badge/Maintenance-AI--led-purple)
