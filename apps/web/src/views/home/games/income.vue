@@ -49,7 +49,7 @@
 
 <script setup>
 import { useCountdown } from '@/hooks'
-import ww from 'chinese-workday'
+import * as ww from 'chinese-workday'
 import dayjs from 'dayjs'
 import isBetween from 'dayjs/plugin/isBetween'
 import { computed, ref } from 'vue'
