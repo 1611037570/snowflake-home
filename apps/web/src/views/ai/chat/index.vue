@@ -9,7 +9,7 @@ import ChatInput from "./chatInput.vue";
 import MessageList from "./messageList.vue";
 import WelcomeScreen from "./welcomeScreen.vue";
 
-const { createChatMessage } = useAiStore();
+const { createDefaultMessage } = useAiStore();
 
 const chat = defineModel("chat", {
   required: true,
@@ -34,7 +34,7 @@ const currentMessages = computed({
  */
 function addMessage(msg) {
   chat.value.messages.push({
-    ...createChatMessage(),
+    ...createDefaultMessage(),
     ...msg,
   });
   chat.value.updateTime = Date.now();

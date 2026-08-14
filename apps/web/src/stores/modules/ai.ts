@@ -60,12 +60,12 @@ export const useAiStore = defineStore(
     function prepareNewChat() {
       currentChatId.value = "new-chat-temp";
     }
-    // 创建新对话
-    function createChat(): Chat {
+    // 创建默认对话
+    function createDefaultChat(): Chat {
       // 当前时间戳
       const now = Date.now();
-      // 新对话记录
-      const msg = createChatMessage();
+      // 默认对话记录
+      const msg = createDefaultMessage();
       const newChat: Chat = {
         id: getUUID().substring(0, 8),
         title: DEFAULT_CHAT_TITLE,
@@ -83,8 +83,8 @@ export const useAiStore = defineStore(
       };
       return newChat;
     }
-    // 创建新消息
-    function createChatMessage() {
+    // 创建默认消息
+    function createDefaultMessage() {
       const message: Message = {
         createTime: Date.now(),
         contentCollapsed: false,
@@ -99,7 +99,7 @@ export const useAiStore = defineStore(
       return message;
     }
     function addChat() {
-      const newChat = createChat();
+      const newChat = createDefaultChat();
       chatList.value.unshift(newChat);
       currentChatId.value = newChat.id;
       return newChat;
@@ -138,7 +138,7 @@ export const useAiStore = defineStore(
 
     function addMessage(msg: any) {
       if (!currentChat.value) addChat();
-      const defaultMessage = createChatMessage();
+      const defaultMessage = createDefaultMessage();
       currentChat.value!.messages.push({
         ...defaultMessage,
         ...msg,
@@ -154,8 +154,8 @@ export const useAiStore = defineStore(
       currentChatId,
       currentChat,
       currentMessages,
-      createChat,
-      createChatMessage,
+      createDefaultChat,
+      createDefaultMessage,
       addChat,
       prepareNewChat,
       switchChat,
