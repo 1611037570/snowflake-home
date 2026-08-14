@@ -13,8 +13,8 @@ Launched on September 3, 2020, reconstructed and open-sourced on November 22, 20
 ## 🔗 Live Demo
 
 - 📄 **Resume Generator**: Benchmarking BOSS Zhipin, with AI-assisted writing, visual editing, PDF export, etc. (http://nannan.work/#/resume) ![Under Maintenance](https://img.shields.io/badge/Status-Under%20Maintenance-brightgreen)
+- ✨ **Snowflake Start Page**: Core project carrier, providing a personalized and customizable website start page (http://nannan.work) ![Under Maintenance](https://img.shields.io/badge/Status-Under%20Maintenance-brightgreen)
 - 🛣️ **Image Processing Tool**: Lightweight image suite, covering common functions such as compression, cropping, and format conversion (http://nannan.work/#/image) ![Discontinued](https://img.shields.io/badge/Status-Discontinued-lightgrey)
-- ✨ **Snowflake Start Page**: Core project carrier, providing a personalized and customizable website start page (http://nannan.work) ![Discontinued](https://img.shields.io/badge/Status-Discontinued-lightgrey)
 
 ## 📦 Repository Structure
 
@@ -34,10 +34,6 @@ pnpm install
 ### Run in Development
 
 pnpm dev
-
-## 📄 License
-
-This project is licensed under the [MIT License](LICENSE).
 
 ## Author's Murmurs
 
