@@ -10,22 +10,18 @@
 
 于2020年9月3日上线，2025年11月22日开始重构并开源。
 
+## 🔗 在线体验
+
+- 📄 **简历生成器**：对标BOSS直聘，AI辅助编写、可视化编辑、PDF导出等 （http://nannan.work/#/resume） ![维护中](https://img.shields.io/badge/状态-维护中-brightgreen)
+- 🛣️ **图片处理工具**：轻量级图片套件，涵盖压缩、裁剪、格式转换等常用功能 （http://nannan.work/#/image） ![停止维护](https://img.shields.io/badge/状态-停止维护-lightgrey)
+- ✨ **雪花起始页**：项目核心载体，提供个性化自定义的网站起始页 （http://nannan.work） ![停止维护](https://img.shields.io/badge/状态-停止维护-lightgrey)
+
 ## 📦 仓库结构
 
 项目基于 **pnpm monorepo** 管理，子包位于 `packages` 目录下：
 
 - **web**：项目主体 作者主导开发维护 ![作者主导](https://img.shields.io/badge/维护-作者主导-blue)
 - **server**：后端服务 AI主导开发维护 ![AI主导](https://img.shields.io/badge/维护-AI主导-purple)
-
-## 🔗 在线体验
-
-您可以通过链接在线体验已部署的项目：<http://nannan.work> 
-
-## 🎯 核心项目
-
-- 📄 **简历生成器**：对标BOSS直聘，AI辅助编写、可视化编辑、PDF导出等 （http://nannan.work/#/resume） ![维护中](https://img.shields.io/badge/状态-维护中-brightgreen)
-- 🛣️ **图片处理工具**：轻量级图片套件，涵盖压缩、裁剪、格式转换等常用功能 （http://nannan.work/#/image） ![停止维护](https://img.shields.io/badge/状态-停止维护-lightgrey)
-- ✨ **雪花起始页**：项目核心载体，提供个性化自定义的网站起始页 （http://nannan.work） ![停止维护](https://img.shields.io/badge/状态-停止维护-lightgrey)
 
 ## 🚀 安装与运行
 
@@ -45,9 +41,7 @@ pnpm dev
 
 ## 作者碎碎念
 
-👤个人页面 （http://nannan.work/#/index）
-
-### ❄️小雪又至，六载前端路。
+❄️小雪又至，六载前端路。
 
 回望过去，是**上万次 Commit** 的沉淀，是数不清多次 **console.log**的坚持，也是渴望拥有**代表作**的念想。
 
