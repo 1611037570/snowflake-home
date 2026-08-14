@@ -22,6 +22,8 @@
     // 中文语言包
     "ms-vscode.vscode-language-pack-zh-hans",
     // 路径别名智能提示
-    "eamodio.tsl-problem-matcher"
+    "eamodio.tsl-problem-matcher",
+    // GitLens — Git 仓库管理插件
+    "eamodio.gitlens"
   ]
 }
