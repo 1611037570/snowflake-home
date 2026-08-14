@@ -29,11 +29,15 @@
 
 ### 安装依赖
 
+```bash
 pnpm install
+```
 
 ### 开发环境运行
 
+```bash
 pnpm dev
+```
 
 ## 作者碎碎念
 
