@@ -9,10 +9,10 @@ import SettingsDrawer from "./chatlist/settingsDrawer.vue";
 const aiStore = useAiStore();
 const { sidebarCollapsed, sidebarMode, currentChat, currentChatId, chatList } =
   storeToRefs(aiStore);
-const { prepareNewChat, createChat } = aiStore;
+const { prepareNewChat, createDefaultChat } = aiStore;
 
 // 临时 chat 引用：当 currentChat 不存在时使用
-const pendingChat = ref(createChat());
+const pendingChat = ref(createDefaultChat());
 
 // 实际传给子组件的 chat：优先使用 store 的 currentChat，否则用 pendingChat
 const chatProp = computed(() => currentChat.value || pendingChat.value);
@@ -26,7 +26,7 @@ watch(
       chatList.value.unshift(pendingChat.value);
       currentChatId.value = pendingChat.value.id;
       // 准备下一个空的临时 chat 以供下次新建对话
-      pendingChat.value = createChat();
+      pendingChat.value = createDefaultChat();
     }
   },
 );

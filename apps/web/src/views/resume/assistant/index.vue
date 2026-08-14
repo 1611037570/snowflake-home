@@ -10,7 +10,7 @@ import Chat from "@/views/ai/chat/index.vue";
 
 // AI 对话
 const aiStore = useAiStore();
-const chat = aiStore.createChat();
+const chat = aiStore.createDefaultChat();
 
 // 当前视图：score | jd
 const currentView = ref("score");
