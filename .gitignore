@@ -29,6 +29,10 @@ test
 *.sln
 *.sw?
 
+
+# VS Code Counter 插件生成物
+.VSCodeCounter
+
 # TypeScript
 *.tsbuildinfo
 
