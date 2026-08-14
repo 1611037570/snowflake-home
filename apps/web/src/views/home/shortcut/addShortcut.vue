@@ -1,23 +1,23 @@
 <script setup>
-import { useShortcutStore } from '@/stores'
+import { useShortcutStore } from "@/stores";
 
-const shortcutStore = useShortcutStore()
+const shortcutStore = useShortcutStore();
 
-const name = ref('')
-const url = ref('')
+const name = ref("");
+const url = ref("");
 const add = () => {
   if (!name.value || !url.value) {
-    ElMessage.error('请输入应用名称和URL')
-    return
+    ElMessage.error("请输入应用名称和URL");
+    return;
   }
-  console.log('name', shortcutStore.addShortcut)
+  console.log("name", shortcutStore.addShortcut);
   shortcutStore.addShortcut({
     name: name.value,
     url: url.value,
-  })
-  name.value = ''
-  url.value = ''
-}
+  });
+  name.value = "";
+  url.value = "";
+};
 </script>
 
 <template>

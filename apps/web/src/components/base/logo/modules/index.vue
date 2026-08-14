@@ -1,12 +1,12 @@
 <script setup>
-import nnLogo from '@/assets/images/userLogo.png'
+import nnLogo from "@/assets/images/userLogo.png";
 
 defineProps({
   size: {
     type: Number || String,
     default: 7.5,
   },
-})
+});
 </script>
 
 <template>

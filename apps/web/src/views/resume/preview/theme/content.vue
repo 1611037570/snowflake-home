@@ -1,51 +1,51 @@
 <script setup>
-import { computed, inject } from 'vue'
+import { computed, inject } from "vue";
 
 const props = defineProps({
   content: {
     type: String,
-    default: '',
+    default: "",
   },
-})
+});
 
-const fontValue = inject('fontValue')
-const lineHeightValue = inject('lineHeightValue')
+const fontValue = inject("fontValue");
+const lineHeightValue = inject("lineHeightValue");
 
 const hasContent = computed(() => {
   if (!props.content) {
-    return false
+    return false;
   }
-  if (props.content == '<p><br></p>') {
-    return false
+  if (props.content == "<p><br></p>") {
+    return false;
   }
-  return true
-})
+  return true;
+});
 
 // 将内容按块拆分，以便分页逻辑可以更细粒度地处理
 const splitBlocks = computed(() => {
-  if (!props.content) return []
-  const template = document.createElement('template')
-  template.innerHTML = props.content
+  if (!props.content) return [];
+  const template = document.createElement("template");
+  template.innerHTML = props.content;
   return Array.from(template.content.childNodes)
     .map((node) => {
       if (node.nodeType === 3 && node.textContent.trim()) {
         return {
-          tag: 'span',
+          tag: "span",
           attrs: {},
           html: node.textContent,
-        }
+        };
       }
-      if (node.nodeType !== 1) return null
+      if (node.nodeType !== 1) return null;
       return {
         tag: node.tagName.toLowerCase(),
         attrs: Object.fromEntries(
           Array.from(node.attributes).map(({ name, value }) => [name, value]),
         ),
         html: node.innerHTML,
-      }
+      };
     })
-    .filter((block) => block && block.html.trim())
-})
+    .filter((block) => block && block.html.trim());
+});
 </script>
 
 <template>

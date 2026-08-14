@@ -7,14 +7,14 @@
   <component v-else-if="type === 'component'" :size="size" :is="value" />
   <!-- 字符串类型 -->
   <div v-else-if="type === 'str'" :style="autoImgStyle" class="flex-c">
-    {{ (value && value[0]) || '' }}
+    {{ (value && value[0]) || "" }}
   </div>
 </template>
 
 <script setup>
-import { computed } from 'vue'
+import { computed } from "vue";
 
-defineOptions({ name: 'SfMixImg' })
+defineOptions({ name: "SfMixImg" });
 
 const { size } = defineProps({
   /**
@@ -22,23 +22,23 @@ const { size } = defineProps({
    */
   type: {
     type: String,
-    default: 'img',
+    default: "img",
   },
   /**
    * 图片值
    */
   value: {
     type: [String, Object, Function],
-    default: '',
+    default: "",
   },
   size: {
     type: Number,
     default: 24,
   },
-})
+});
 const autoImgStyle = computed(() => ({
   width: `${size}px`,
   height: `${size}px`,
   fontSize: `${size * 0.8}px`,
-}))
+}));
 </script>

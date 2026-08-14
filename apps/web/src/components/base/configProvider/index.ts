@@ -1,3 +1,3 @@
-import ConfigProvider from './configProvider.vue'
+import ConfigProvider from "./configProvider.vue";
 
-export default ConfigProvider
+export default ConfigProvider;

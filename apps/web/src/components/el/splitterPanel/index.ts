@@ -1,3 +1,3 @@
-import SplitterPanel from './splitterPanel.vue'
+import SplitterPanel from "./splitterPanel.vue";
 
-export default SplitterPanel
+export default SplitterPanel;

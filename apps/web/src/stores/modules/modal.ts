@@ -1,16 +1,16 @@
-import { defineStore } from 'pinia'
-import { ref } from 'vue'
+import { defineStore } from "pinia";
+import { ref } from "vue";
 
 export const useModalStore = defineStore(
-  'modal',
+  "modal",
   () => {
-    const modalVisible = ref(false)
+    const modalVisible = ref(false);
 
-    return { modalVisible }
+    return { modalVisible };
   },
   {
     persist: {
       storage: localStorage,
     },
   },
-)
+);

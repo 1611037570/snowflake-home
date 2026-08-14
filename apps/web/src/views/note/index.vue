@@ -1,5 +1,5 @@
 <script setup>
-import Note from './note.vue'
+import Note from "./note.vue";
 </script>
 
 <template>

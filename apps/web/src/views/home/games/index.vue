@@ -21,15 +21,15 @@
 </template>
 
 <script setup>
-import Income from './income.vue'
-import LuckyWheel from './luckyWheel.vue'
-import Meditation from './meditation.vue'
-import WoodenFish from './woodenFish.vue'
-const expand = ref(false)
+import Income from "./income.vue";
+import LuckyWheel from "./luckyWheel.vue";
+import Meditation from "./meditation.vue";
+import WoodenFish from "./woodenFish.vue";
+const expand = ref(false);
 
 const containerClasses = computed(() => {
-  return expand.value ? 'translate-x-[-24%]' : 'translate-x-[-50%]'
-})
+  return expand.value ? "translate-x-[-24%]" : "translate-x-[-50%]";
+});
 </script>
 
 <style scoped></style>

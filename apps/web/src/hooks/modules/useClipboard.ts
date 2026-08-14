@@ -1,5 +1,5 @@
-import { ref } from 'vue'
-import { ElMessage } from 'element-plus'
+import { ref } from "vue";
+import { ElMessage } from "element-plus";
 
 /**
  * 复制文本到剪贴板的Hook
@@ -8,9 +8,9 @@ import { ElMessage } from 'element-plus'
  */
 export function useClipboard() {
   // 复制成功状态
-  const isCopied = ref(false)
+  const isCopied = ref(false);
   // 复制错误信息
-  const error = ref<string | null>(null)
+  const error = ref<string | null>(null);
 
   /**
    * 复制文本到剪贴板
@@ -20,57 +20,57 @@ export function useClipboard() {
   const copyToClipboard = async (text: string): Promise<boolean> => {
     try {
       // 重置状态
-      isCopied.value = false
-      error.value = null
+      isCopied.value = false;
+      error.value = null;
 
       // 使用现代的Clipboard API
-      await navigator.clipboard.writeText(text)
+      await navigator.clipboard.writeText(text);
 
       // 设置复制成功状态
-      isCopied.value = true
+      isCopied.value = true;
 
       // 使用Element Plus的成功消息提示
       ElMessage({
-        message: '复制成功',
-        type: 'success',
+        message: "复制成功",
+        type: "success",
         duration: 3000,
-      })
+      });
 
       // 3秒后重置复制成功状态，方便用户进行多次复制操作
       setTimeout(() => {
-        isCopied.value = false
-      }, 3000)
+        isCopied.value = false;
+      }, 3000);
 
-      return true
+      return true;
     } catch (err) {
       // 捕获并记录错误
-      const errorMessage = err instanceof Error ? err.message : '复制失败'
-      error.value = errorMessage
+      const errorMessage = err instanceof Error ? err.message : "复制失败";
+      error.value = errorMessage;
 
       // 使用Element Plus的错误消息提示
       ElMessage({
         message: errorMessage,
-        type: 'error',
+        type: "error",
         duration: 3000,
-      })
+      });
 
-      console.error('复制到剪贴板失败:', err)
-      return false
+      console.error("复制到剪贴板失败:", err);
+      return false;
     }
-  }
+  };
 
   /**
    * 重置复制状态
    */
   const reset = () => {
-    isCopied.value = false
-    error.value = null
-  }
+    isCopied.value = false;
+    error.value = null;
+  };
 
   return {
     copyToClipboard,
     isCopied,
     error,
     reset,
-  }
+  };
 }

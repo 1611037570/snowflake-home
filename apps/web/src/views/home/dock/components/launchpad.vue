@@ -23,10 +23,10 @@
 </template>
 
 <script setup>
-import { useHomeStore } from '@/stores'
-const homeStore = useHomeStore()
-const { switchTab } = homeStore
-const { tabIndex } = storeToRefs(homeStore)
+import { useHomeStore } from "@/stores";
+const homeStore = useHomeStore();
+const { switchTab } = homeStore;
+const { tabIndex } = storeToRefs(homeStore);
 </script>
 
 <style scoped></style>

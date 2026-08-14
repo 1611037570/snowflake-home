@@ -1,18 +1,18 @@
 <script setup>
-import { DEV_ACCOUNT, SHOOT_ACCOUNT } from '@/constants'
-import { userInfo } from '@/views/index/data'
-import dayjs from 'dayjs'
-import { computed } from 'vue'
-import QrIcon from '../components/qrIcon.vue'
+import { DEV_ACCOUNT, SHOOT_ACCOUNT } from "@/constants";
+import { userInfo } from "@/views/index/data";
+import dayjs from "dayjs";
+import { computed } from "vue";
+import QrIcon from "../components/qrIcon.vue";
 
-const now = dayjs()
+const now = dayjs();
 
 const devYears = computed(() => {
-  return now.diff(dayjs(userInfo.value.devYears), 'year')
-})
+  return now.diff(dayjs(userInfo.value.devYears), "year");
+});
 const shootYears = computed(() => {
-  return now.diff(dayjs(userInfo.value.shootYears), 'year')
-})
+  return now.diff(dayjs(userInfo.value.shootYears), "year");
+});
 </script>
 
 <template>

@@ -1,9 +1,9 @@
 <script setup>
-import { useAiStore } from '@/stores'
-import { storeToRefs } from 'pinia'
+import { useAiStore } from "@/stores";
+import { storeToRefs } from "pinia";
 
-const aiStore = useAiStore()
-const { sidebarCollapsed } = storeToRefs(aiStore)
+const aiStore = useAiStore();
+const { sidebarCollapsed } = storeToRefs(aiStore);
 </script>
 
 <template>

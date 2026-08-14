@@ -61,39 +61,39 @@
 </template>
 
 <script setup>
-import { SHOOT_ACCOUNT } from '@/constants'
-import { urlNavigation } from '@/utils'
-import ShootMap from './shootMap.vue'
-const components = import.meta.glob('../../../assets/images/shoot/*', { eager: true })
+import { SHOOT_ACCOUNT } from "@/constants";
+import { urlNavigation } from "@/utils";
+import ShootMap from "./shootMap.vue";
+const components = import.meta.glob("../../../assets/images/shoot/*", { eager: true });
 
-const imgMap = new Map()
+const imgMap = new Map();
 for (const key in components) {
-  const matchNum = key.match(/(\d+)/)
+  const matchNum = key.match(/(\d+)/);
   if (matchNum) {
-    imgMap.set(Number(matchNum[1]), components[key].default)
+    imgMap.set(Number(matchNum[1]), components[key].default);
   }
 }
 
 const imgList = [15, 12, 11, 10, 7, 6, 4, 2, 1].map((id) => ({
   id,
   img: imgMap.get(id),
-}))
+}));
 const city = [
-  { name: '杭州', province: '浙江省' },
-  { name: '嘉兴', province: '浙江省' },
-  { name: '绍兴', province: '浙江省' },
-  { name: '上海', province: '上海市' },
-  { name: '苏州', province: '江苏省' },
-  { name: '贵阳', province: '贵州省' },
-  { name: '福州', province: '福建省' },
-  { name: '深圳', province: '广东省' },
-  { name: '长沙', province: '湖南省' },
-  { name: '柳州', province: '广西壮族自治区' },
-  { name: '南昌', province: '江西省' },
-  { name: '重庆', province: '重庆市' },
-  { name: '温州', province: '浙江省' },
-  { name: '南宁', province: '广西壮族自治区' },
-  { name: '来宾', province: '广西壮族自治区' },
-  { name: '黔南布依族苗族自治州', province: '贵州省' },
-]
+  { name: "杭州", province: "浙江省" },
+  { name: "嘉兴", province: "浙江省" },
+  { name: "绍兴", province: "浙江省" },
+  { name: "上海", province: "上海市" },
+  { name: "苏州", province: "江苏省" },
+  { name: "贵阳", province: "贵州省" },
+  { name: "福州", province: "福建省" },
+  { name: "深圳", province: "广东省" },
+  { name: "长沙", province: "湖南省" },
+  { name: "柳州", province: "广西壮族自治区" },
+  { name: "南昌", province: "江西省" },
+  { name: "重庆", province: "重庆市" },
+  { name: "温州", province: "浙江省" },
+  { name: "南宁", province: "广西壮族自治区" },
+  { name: "来宾", province: "广西壮族自治区" },
+  { name: "黔南布依族苗族自治州", province: "贵州省" },
+];
 </script>

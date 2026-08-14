@@ -1,7 +1,7 @@
-import { quotations } from '@/constants'
-import { getRandomItem } from '@/utils'
+import { quotations } from "@/constants";
+import { getRandomItem } from "@/utils";
 const getRandomQuote = () => {
-  return getRandomItem(quotations)
-}
+  return getRandomItem(quotations);
+};
 
-export { getRandomQuote }
+export { getRandomQuote };

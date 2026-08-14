@@ -14,7 +14,7 @@
 </template>
 
 <script setup>
-const aboutVisible = ref(false)
+const aboutVisible = ref(false);
 </script>
 
 <style lang="scss" scoped></style>

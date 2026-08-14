@@ -1,19 +1,19 @@
 <script setup>
-import { useResumeStore } from '@/stores'
-import { storeToRefs } from 'pinia'
-import { computed, inject } from 'vue'
-import { getTime } from '../../utils'
-import Content from '../theme/content.vue'
-import Title from '../theme/title.vue'
-import Text from './text.vue'
+import { useResumeStore } from "@/stores";
+import { storeToRefs } from "pinia";
+import { computed, inject } from "vue";
+import { getTime } from "../../utils";
+import Content from "../theme/content.vue";
+import Title from "../theme/title.vue";
+import Text from "./text.vue";
 
-const resumeStore = useResumeStore()
-const { currentData } = storeToRefs(resumeStore)
+const resumeStore = useResumeStore();
+const { currentData } = storeToRefs(resumeStore);
 
-const fontValue = inject('fontValue')
-const lineHeightValue = inject('lineHeightValue')
+const fontValue = inject("fontValue");
+const lineHeightValue = inject("lineHeightValue");
 
-const projectList = computed(() => currentData.value.project || [])
+const projectList = computed(() => currentData.value.project || []);
 </script>
 
 <template>

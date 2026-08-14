@@ -16,7 +16,7 @@
         class="relative flex flex-col items-center justify-center overflow-hidden rounded-b-lg p-4 text-sf-base"
       >
         <div v-if="item.type" class="absolute top-0 right-0 rounded-bl-md bg-sf-theme px-1.5">
-          {{ item.type === 'dev' ? '开发' : '摄影' }}
+          {{ item.type === "dev" ? "开发" : "摄影" }}
         </div>
         <div class="text-base font-bold text-sf-theme">
           {{ item.name }}
@@ -40,15 +40,15 @@
 </template>
 
 <script setup>
-import { urlNavigation } from '@/utils'
+import { urlNavigation } from "@/utils";
 defineProps({
   item: {
     type: Object,
     default: () => ({}),
   },
-})
+});
 function goUrl(url) {
-  urlNavigation(url)
+  urlNavigation(url);
 }
 </script>
 

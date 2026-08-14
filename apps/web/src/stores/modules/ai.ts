@@ -31,6 +31,8 @@ export type Message = {
   total_tokens: number;
   // 内容是否折叠
   contentCollapsed: boolean;
+  // 请求状态
+  requestStatus: string;
 };
 // 默认对话记录标题
 const DEFAULT_CHAT_TITLE = "新对话";
@@ -92,6 +94,7 @@ export const useAiStore = defineStore(
         content: "",
         typing: false,
         role: "",
+        requestStatus: "success",
       };
       return message;
     }
@@ -152,6 +155,7 @@ export const useAiStore = defineStore(
       currentChat,
       currentMessages,
       createChat,
+      createChatMessage,
       addChat,
       prepareNewChat,
       switchChat,

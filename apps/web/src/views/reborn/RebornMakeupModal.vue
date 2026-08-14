@@ -45,6 +45,6 @@
 </template>
 
 <script setup>
-defineProps({ visible: Boolean, missedDays: Array, selectedMakeupDay: [Number, null] })
-defineEmits(['update:visible', 'update:selectedMakeupDay', 'confirm'])
+defineProps({ visible: Boolean, missedDays: Array, selectedMakeupDay: [Number, null] });
+defineEmits(["update:visible", "update:selectedMakeupDay", "confirm"]);
 </script>

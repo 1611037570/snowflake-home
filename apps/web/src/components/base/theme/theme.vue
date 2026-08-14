@@ -27,27 +27,27 @@
 </template>
 
 <script setup>
-import { useThemeStore } from '@/stores'
+import { useThemeStore } from "@/stores";
 
-defineOptions({ name: 'SfTheme' })
+defineOptions({ name: "SfTheme" });
 
-const themeStore = useThemeStore()
-const { setTheme } = themeStore
-const { theme, themeMode } = storeToRefs(themeStore)
+const themeStore = useThemeStore();
+const { setTheme } = themeStore;
+const { theme, themeMode } = storeToRefs(themeStore);
 const toggleTheme = () => {
-  setTheme(theme.value)
-}
+  setTheme(theme.value);
+};
 // 主题选项
 const list = computed(() => {
   return [
-    { name: $t('theme.system'), value: 'system' },
-    { name: $t('theme.light'), value: 'light' },
-    { name: $t('theme.dark'), value: 'dark' },
-  ]
-})
+    { name: $t("theme.system"), value: "system" },
+    { name: $t("theme.light"), value: "light" },
+    { name: $t("theme.dark"), value: "dark" },
+  ];
+});
 
 function handleClick(item) {
-  setTheme(item.value)
+  setTheme(item.value);
 }
 </script>
 

@@ -1,2 +1,2 @@
-import List from './list.vue'
-export default List
+import List from "./list.vue";
+export default List;

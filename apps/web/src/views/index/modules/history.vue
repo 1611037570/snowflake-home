@@ -63,17 +63,17 @@
 </template>
 
 <script setup lang="ts">
-import { historyList } from '@/constants/modules/history'
+import { historyList } from "@/constants/modules/history";
 
 // 简单的日期格式化，如果 time 是时间戳
 const formatTime = (time: string | number) => {
-  if (typeof time === 'number') {
+  if (typeof time === "number") {
     // 假设是时间戳，这里简单处理，或者直接返回
     // 如果是 '未完待续' 这种字符串，直接返回
-    return new Date(time).toLocaleDateString()
+    return new Date(time).toLocaleDateString();
   }
-  return time
-}
+  return time;
+};
 </script>
 
 <style lang="scss" scoped>

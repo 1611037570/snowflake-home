@@ -1,2 +1,2 @@
-import SetTitle from './setTitle.vue'
-export default SetTitle
+import SetTitle from "./setTitle.vue";
+export default SetTitle;

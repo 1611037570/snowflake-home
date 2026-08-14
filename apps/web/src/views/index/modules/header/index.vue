@@ -1,22 +1,22 @@
 <script setup>
-import nnLogo from '@/assets/images/userLogo.png'
-import { useSystemStore, useThemeStore } from '@/stores'
-import { storeToRefs } from 'pinia'
-import { computed, inject, onMounted, ref, watch } from 'vue'
-import Music from './music.vue'
+import nnLogo from "@/assets/images/userLogo.png";
+import { useSystemStore, useThemeStore } from "@/stores";
+import { storeToRefs } from "pinia";
+import { computed, inject, onMounted, ref, watch } from "vue";
+import Music from "./music.vue";
 
-const systemStore = useSystemStore()
-const { windowSize } = storeToRefs(systemStore)
-const themeStore = useThemeStore()
-const { theme } = storeToRefs(themeStore)
+const systemStore = useSystemStore();
+const { windowSize } = storeToRefs(systemStore);
+const themeStore = useThemeStore();
+const { theme } = storeToRefs(themeStore);
 
 // 导航配置
 const NAV_ITEMS = [
-  { name: '关于', key: 'about' },
-  { name: '项目', key: 'project' },
-  { name: '摄影', key: 'shoot' },
-  { name: '日志', key: 'history' },
-]
+  { name: "关于", key: "about" },
+  { name: "项目", key: "project" },
+  { name: "摄影", key: "shoot" },
+  { name: "日志", key: "history" },
+];
 
 /**
  * 回到顶部
@@ -24,8 +24,8 @@ const NAV_ITEMS = [
 function scrollToTop() {
   window.scrollTo({
     top: 0,
-    behavior: 'smooth',
-  })
+    behavior: "smooth",
+  });
 }
 
 /**
@@ -33,71 +33,71 @@ function scrollToTop() {
  * @param {string} targetId 目标元素ID
  */
 function handleAnchorScroll(targetId) {
-  const targetElement = document.getElementById(targetId)
+  const targetElement = document.getElementById(targetId);
   if (targetElement) {
     targetElement.scrollIntoView({
-      behavior: 'smooth',
-      block: 'start',
+      behavior: "smooth",
+      block: "start",
       duration: 10,
-    })
+    });
   }
 }
 
 // 滚动交互逻辑
-const scrollTop = inject('scrollTop', ref(0))
-const headerOpacity = ref(0)
-const scrollThreshold = computed(() => windowSize.value?.height || 0)
+const scrollTop = inject("scrollTop", ref(0));
+const headerOpacity = ref(0);
+const scrollThreshold = computed(() => windowSize.value?.height || 0);
 
 // 动态计算 Header 样式
 const headerStyle = computed(() => {
-  const isDark = theme.value === 'dark'
-  const rgbValue = isDark ? '0, 0, 0' : '255, 255, 255'
+  const isDark = theme.value === "dark";
+  const rgbValue = isDark ? "0, 0, 0" : "255, 255, 255";
 
   return {
     backgroundColor: `rgba(${rgbValue}, ${headerOpacity.value})`,
     borderBottom:
-      headerOpacity.value > 0.8 ? '0.5px solid var(--sf-border-base)' : '0.5px solid transparent',
-  }
-})
+      headerOpacity.value > 0.8 ? "0.5px solid var(--sf-border-base)" : "0.5px solid transparent",
+  };
+});
 
 // 监听滚动更新透明度和激活的导航项
-const activeKey = ref('')
+const activeKey = ref("");
 
 const updateActiveKey = useThrottleFn(() => {
-  let currentActive = ''
-  const triggerLine = (windowSize.value?.height || window.innerHeight) / 3
+  let currentActive = "";
+  const triggerLine = (windowSize.value?.height || window.innerHeight) / 3;
 
   for (const item of NAV_ITEMS) {
-    const el = document.getElementById(item.key)
+    const el = document.getElementById(item.key);
     if (el) {
-      const rect = el.getBoundingClientRect()
+      const rect = el.getBoundingClientRect();
       if (rect.top <= triggerLine && rect.bottom > triggerLine) {
-        currentActive = item.key
-        break
+        currentActive = item.key;
+        break;
       }
     }
   }
-  activeKey.value = currentActive
-}, 100)
+  activeKey.value = currentActive;
+}, 100);
 
 watch(scrollTop, (val) => {
-  const threshold = scrollThreshold.value
+  const threshold = scrollThreshold.value;
   if (val < threshold) {
-    headerOpacity.value = 0
+    headerOpacity.value = 0;
   } else {
     // 超过阈值后，根据滚动距离计算透明度，最大 0.8
-    const offset = val - threshold
-    headerOpacity.value = Math.min(offset / 400, 0.8)
+    const offset = val - threshold;
+    headerOpacity.value = Math.min(offset / 400, 0.8);
   }
 
-  updateActiveKey()
-})
+  updateActiveKey();
+});
 
 onMounted(() => {
-  updateActiveKey()
-})
+  updateActiveKey();
+});
 
-const isHeaderActive = computed(() => headerOpacity.value > 0)
+const isHeaderActive = computed(() => headerOpacity.value > 0);
 </script>
 
 <template>

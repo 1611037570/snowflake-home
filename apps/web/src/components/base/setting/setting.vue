@@ -28,17 +28,17 @@
 </template>
 
 <script setup>
-import { useSystemStore } from '@/stores/modules/system'
-const color = inject('color', 'text-sf-base')
-defineOptions({ name: 'SfSetting' })
-const visible = ref(false)
+import { useSystemStore } from "@/stores/modules/system";
+const color = inject("color", "text-sf-base");
+defineOptions({ name: "SfSetting" });
+const visible = ref(false);
 const handleClick = () => {
-  visible.value = true
-}
+  visible.value = true;
+};
 
-const systemStore = useSystemStore()
+const systemStore = useSystemStore();
 /** 性能模式：开启后禁用所有动效（毛玻璃、3D倾斜、过渡动画） */
-const { performanceMode } = storeToRefs(systemStore)
+const { performanceMode } = storeToRefs(systemStore);
 </script>
 
 <style scoped></style>

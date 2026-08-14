@@ -56,63 +56,63 @@
 </template>
 
 <script setup>
-import { computed, ref } from 'vue'
+import { computed, ref } from "vue";
 
 // 接收外部传入的奖项数组
 const props = defineProps({
   items: {
     type: Array,
-    default: () => ['螺蛳粉', '猪脚饭', '麻辣烫', '烧烤', '火锅', '炒饭', '汉堡'],
+    default: () => ["螺蛳粉", "猪脚饭", "麻辣烫", "烧烤", "火锅", "炒饭", "汉堡"],
   },
-})
+});
 
 // 状态管理
-const rotation = ref(0) // 旋转角度
-const isSpinning = ref(false) // 是否正在旋转
-const result = ref('') // 旋转结果
-const spinEnded = ref(false) // 旋转结束标记
-const resultTimer = ref(null) // 结果自动消失定时器
-const isHovered = ref(false) // 是否鼠标悬停
+const rotation = ref(0); // 旋转角度
+const isSpinning = ref(false); // 是否正在旋转
+const result = ref(""); // 旋转结果
+const spinEnded = ref(false); // 旋转结束标记
+const resultTimer = ref(null); // 结果自动消失定时器
+const isHovered = ref(false); // 是否鼠标悬停
 
 // 计算扇区总数和单个扇区角度（固定值，无随机）
-const sectorCount = computed(() => props.items.length)
-const anglePerSector = computed(() => 360 / sectorCount.value) // 单个扇区的角度
+const sectorCount = computed(() => props.items.length);
+const anglePerSector = computed(() => 360 / sectorCount.value); // 单个扇区的角度
 
 // 生成扇区颜色（循环使用预设色）
 const getSectorColor = (index) => {
   const colors = [
-    '#ef4444',
-    '#f97316',
-    '#f59e0b',
-    '#84cc16',
-    '#10b981',
-    '#06b6d4',
-    '#0ea5e9',
-    '#3b82f6',
-    '#6366f1',
-    '#8b5cf6',
-    '#a855f7',
-    '#ec4899',
-  ]
-  return colors[index % colors.length]
-}
+    "#ef4444",
+    "#f97316",
+    "#f59e0b",
+    "#84cc16",
+    "#10b981",
+    "#06b6d4",
+    "#0ea5e9",
+    "#3b82f6",
+    "#6366f1",
+    "#8b5cf6",
+    "#a855f7",
+    "#ec4899",
+  ];
+  return colors[index % colors.length];
+};
 
 // 计算扇形路径（SVG绘图逻辑，不变）
 const getSectorPath = (index) => {
-  if (sectorCount.value === 0) return ''
+  if (sectorCount.value === 0) return "";
 
-  const startAngle = index * anglePerSector.value // 扇区起始角度
-  const endAngle = startAngle + anglePerSector.value // 扇区结束角度
+  const startAngle = index * anglePerSector.value; // 扇区起始角度
+  const endAngle = startAngle + anglePerSector.value; // 扇区结束角度
 
   // 角度转弧度（-90确保从顶部开始绘制）
-  const startRad = (startAngle - 90) * (Math.PI / 180)
-  const endRad = (endAngle - 90) * (Math.PI / 180)
+  const startRad = (startAngle - 90) * (Math.PI / 180);
+  const endRad = (endAngle - 90) * (Math.PI / 180);
 
   // 计算扇区边缘坐标
-  const startX = 50 + 50 * Math.cos(startRad)
-  const startY = 50 + 50 * Math.sin(startRad)
-  const endX = 50 + 50 * Math.cos(endRad)
-  const endY = 50 + 50 * Math.sin(endRad)
+  const startX = 50 + 50 * Math.cos(startRad);
+  const startY = 50 + 50 * Math.sin(startRad);
+  const endX = 50 + 50 * Math.cos(endRad);
+  const endY = 50 + 50 * Math.sin(endRad);
 
   // 生成SVG路径
   return [
@@ -120,47 +120,47 @@ const getSectorPath = (index) => {
     `L ${startX} ${startY}`,
     `A 50 50 0 ${endAngle - startAngle > 180 ? 1 : 0} 1 ${endX} ${endY}`,
     `Z`,
-  ].join(' ')
-}
+  ].join(" ");
+};
 
 // 开始旋转：100%精准落在扇区中心（核心修改）
 const startSpin = () => {
-  if (isSpinning.value || sectorCount.value === 0) return
+  if (isSpinning.value || sectorCount.value === 0) return;
 
   // 清除旧定时器
-  if (resultTimer.value) clearTimeout(resultTimer.value)
+  if (resultTimer.value) clearTimeout(resultTimer.value);
 
-  isSpinning.value = true
-  result.value = ''
-  spinEnded.value = false
+  isSpinning.value = true;
+  result.value = "";
+  spinEnded.value = false;
 
   // 1. 随机选中一个目标扇区（保证随机性）
-  const targetSectorIndex = Math.floor(Math.random() * sectorCount.value)
+  const targetSectorIndex = Math.floor(Math.random() * sectorCount.value);
   // 2. 计算目标扇区的【正中心角度】（关键：彻底消除偏移）
-  const sectorCenterAngle = targetSectorIndex * anglePerSector.value + anglePerSector.value / 2
+  const sectorCenterAngle = targetSectorIndex * anglePerSector.value + anglePerSector.value / 2;
   // 3. 基础旋转：3-5圈（保证动画流畅，不影响精准度）
-  const baseRotation = rotation.value + 360 * (3 + Math.random() * 2)
+  const baseRotation = rotation.value + 360 * (3 + Math.random() * 2);
 
   // 最终角度 = 基础旋转 + 扇区中心角度（100%精准）
-  rotation.value = baseRotation + sectorCenterAngle
-}
+  rotation.value = baseRotation + sectorCenterAngle;
+};
 
 // 旋转结束处理（逻辑不变，结果必然对应中心扇区）
 const handleSpinEnd = () => {
-  if (spinEnded.value || !isSpinning.value) return
+  if (spinEnded.value || !isSpinning.value) return;
 
-  spinEnded.value = true
-  isSpinning.value = false
+  spinEnded.value = true;
+  isSpinning.value = false;
 
   // 计算选中的扇区（因角度精准，结果必然正确）
-  const normalizedRotation = ((rotation.value % 360) + 360) % 360
-  const adjustedRotation = (360 - normalizedRotation + 90) % 360
-  const selectedIndex = Math.floor(adjustedRotation / anglePerSector.value) % sectorCount.value
+  const normalizedRotation = ((rotation.value % 360) + 360) % 360;
+  const adjustedRotation = (360 - normalizedRotation + 90) % 360;
+  const selectedIndex = Math.floor(adjustedRotation / anglePerSector.value) % sectorCount.value;
 
   // 显示结果并3秒后自动消失
-  result.value = props.items[selectedIndex]
+  result.value = props.items[selectedIndex];
   resultTimer.value = setTimeout(() => {
-    result.value = ''
-  }, 3000)
-}
+    result.value = "";
+  }, 3000);
+};
 </script>

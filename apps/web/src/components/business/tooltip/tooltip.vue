@@ -17,23 +17,23 @@
 </template>
 
 <script setup lang="ts">
-import { useThemeStore } from '@/stores'
-import { storeToRefs } from 'pinia'
-import { ElTooltip } from 'element-plus'
-import type { ComponentInstance } from 'vue'
-import { getCurrentInstance, h } from 'vue'
+import { useThemeStore } from "@/stores";
+import { storeToRefs } from "pinia";
+import { ElTooltip } from "element-plus";
+import type { ComponentInstance } from "vue";
+import { getCurrentInstance, h } from "vue";
 
-defineOptions({ name: 'SfTooltip' })
+defineOptions({ name: "SfTooltip" });
 
-const themeStore = useThemeStore()
-const { theme } = storeToRefs(themeStore)
+const themeStore = useThemeStore();
+const { theme } = storeToRefs(themeStore);
 
-const vm: any = getCurrentInstance()
+const vm: any = getCurrentInstance();
 
 function changeRef(exports: any) {
-  vm.exposed = exports
+  vm.exposed = exports;
 }
-defineExpose({} as ComponentInstance<typeof ElTooltip>)
+defineExpose({} as ComponentInstance<typeof ElTooltip>);
 </script>
 
 <style lang="scss" scoped></style>

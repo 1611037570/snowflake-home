@@ -15,7 +15,7 @@
           ]"
           @mouseleave="isHoveredFormula = false"
         >
-          <span>{{ isHoveredFormula ? '然后回到' : '我会找到' }}</span>
+          <span>{{ isHoveredFormula ? "然后回到" : "我会找到" }}</span>
           <div class="inline-block py-1">
             <span v-if="!isHoveredFormula" class="unfold" @mouseenter="isHoveredFormula = true">
               <span class="text-sf-theme">逆转时间</span>的公式
@@ -32,7 +32,7 @@
           {{
             isHoveredFormula
               ? "Then I'll come back to you"
-              : ' I will find the formula for reversing time.'
+              : " I will find the formula for reversing time."
           }}
         </p>
       </div>
@@ -43,21 +43,21 @@
 </template>
 
 <script setup>
-import { onMounted, ref } from 'vue'
-import Background from './background.vue'
-import ScrollGuide from './scroll-guide.vue'
-import Stars from './stars.vue'
+import { onMounted, ref } from "vue";
+import Background from "./background.vue";
+import ScrollGuide from "./scroll-guide.vue";
+import Stars from "./stars.vue";
 
-const showContent = ref(false)
-const isHoveredFormula = ref(false)
+const showContent = ref(false);
+const isHoveredFormula = ref(false);
 
 // ---------- 初始化 ----------
 onMounted(() => {
   // 显示主内容
   setTimeout(() => {
-    showContent.value = true
-  }, 300)
-})
+    showContent.value = true;
+  }, 300);
+});
 </script>
 
 <style scoped>

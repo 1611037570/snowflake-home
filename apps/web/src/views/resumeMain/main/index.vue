@@ -1,7 +1,7 @@
 <script setup>
-import Book from './book.vue'
-import Content from './content.vue'
-import Resume from './resume.vue'
+import Book from "./book.vue";
+import Content from "./content.vue";
+import Resume from "./resume.vue";
 </script>
 
 <template>

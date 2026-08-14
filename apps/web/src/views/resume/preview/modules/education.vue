@@ -1,26 +1,26 @@
 <script setup>
-import { useResumeStore } from '@/stores'
-import { storeToRefs } from 'pinia'
-import { computed, inject } from 'vue'
-import Content from '../theme/content.vue'
-import Title from '../theme/title.vue'
-import Text from './text.vue'
+import { useResumeStore } from "@/stores";
+import { storeToRefs } from "pinia";
+import { computed, inject } from "vue";
+import Content from "../theme/content.vue";
+import Title from "../theme/title.vue";
+import Text from "./text.vue";
 
-import { getTime } from '../../utils'
+import { getTime } from "../../utils";
 
-const resumeStore = useResumeStore()
-const { currentData } = storeToRefs(resumeStore)
+const resumeStore = useResumeStore();
+const { currentData } = storeToRefs(resumeStore);
 
-const fontValue = inject('fontValue')
-const lineHeightValue = inject('lineHeightValue')
+const fontValue = inject("fontValue");
+const lineHeightValue = inject("lineHeightValue");
 const education = computed(() => {
   return (currentData.value.education || []).map((item) => ({
     ...item,
     infoList: [item.post, item.education, item.mode].filter(
-      (v) => v && typeof v === 'string' && v.trim(),
+      (v) => v && typeof v === "string" && v.trim(),
     ),
-  }))
-})
+  }));
+});
 </script>
 
 <template>

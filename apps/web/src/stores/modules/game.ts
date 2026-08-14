@@ -1,17 +1,17 @@
-import { defineStore } from 'pinia'
-import { ref } from 'vue'
+import { defineStore } from "pinia";
+import { ref } from "vue";
 
 export const useGameStore = defineStore(
-  'game',
+  "game",
   () => {
-    const fishCount = ref(0)
+    const fishCount = ref(0);
 
-    return { fishCount }
+    return { fishCount };
   },
   {
     persist: {
       storage: localStorage,
-      pick: ['fishCount'],
+      pick: ["fishCount"],
     },
   },
-)
+);

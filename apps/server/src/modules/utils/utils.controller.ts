@@ -1,5 +1,5 @@
-import { Controller, Get, Query } from '@nestjs/common';
-import { UtilsService } from './utils.service';
+import { Controller, Get, Query } from '@nestjs/common'
+import { UtilsService } from './utils.service'
 
 @Controller('utils')
 export class UtilsController {
@@ -13,10 +13,10 @@ export class UtilsController {
    */
   @Get('pinyin')
   getPinyin(@Query('text') text: string) {
-    const result = this.utilsService.convertToPinyin(text);
+    const result = this.utilsService.convertToPinyin(text)
     return {
       original: text,
       pinyin: result,
-    };
+    }
   }
 }

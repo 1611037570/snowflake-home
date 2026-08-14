@@ -1,5 +1,5 @@
 <script setup>
-import dayjs from 'dayjs'
+import dayjs from "dayjs";
 
 defineProps({
   chat: {
@@ -10,21 +10,21 @@ defineProps({
     type: Boolean,
     default: false,
   },
-})
+});
 
-const emit = defineEmits(['click', 'delete'])
+const emit = defineEmits(["click", "delete"]);
 
 // 格式化时间显示
 const formatTime = (timestamp) => {
-  const date = dayjs(timestamp)
-  if (date.isSame(dayjs(), 'day')) {
-    return date.format('HH:mm')
+  const date = dayjs(timestamp);
+  if (date.isSame(dayjs(), "day")) {
+    return date.format("HH:mm");
   }
-  if (date.isSame(dayjs().subtract(1, 'day'), 'day')) {
-    return '昨天'
+  if (date.isSame(dayjs().subtract(1, "day"), "day")) {
+    return "昨天";
   }
-  return date.format('MM-DD')
-}
+  return date.format("MM-DD");
+};
 </script>
 
 <template>

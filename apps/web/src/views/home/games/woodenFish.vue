@@ -22,7 +22,7 @@
       class="left-1/2-translate-x-1/2 absolute text-xl font-bold text-amber-300 transition-all duration-500 ease-linear"
       :class="showAdd ? 'bottom-12' : 'bottom-0'"
     >
-      {{ showAdd ? '+1' : '' }}
+      {{ showAdd ? "+1" : "" }}
     </div>
     <!-- 木鱼棒 -->
     <div
@@ -38,47 +38,47 @@
 </template>
 
 <script setup>
-import { useGameStore } from '@/stores'
-import { Icon } from '@iconify/vue'
-import { storeToRefs } from 'pinia'
-import { ref } from 'vue'
+import { useGameStore } from "@/stores";
+import { Icon } from "@iconify/vue";
+import { storeToRefs } from "pinia";
+import { ref } from "vue";
 
 // 从游戏状态存储中获取功德计数器
-const gameStore = useGameStore()
-const { fishCount } = storeToRefs(gameStore)
+const gameStore = useGameStore();
+const { fishCount } = storeToRefs(gameStore);
 
 // 敲击状态
-const isKnocking = ref(false)
+const isKnocking = ref(false);
 // 功德+1动画显示状态
-const showAdd = ref(false)
+const showAdd = ref(false);
 
 // 敲击木鱼函数
 function downWoodenFish() {
   // 增加计数
-  fishCount.value++
+  fishCount.value++;
 
   // 设置敲击状态为true
-  isKnocking.value = true
+  isKnocking.value = true;
 
   // 触发功德+1动画
-  showAdd.value = true
+  showAdd.value = true;
   setTimeout(() => {
-    showAdd.value = false
-  }, 501) // 与动画持续时间匹配
+    showAdd.value = false;
+  }, 501); // 与动画持续时间匹配
 
   // 添加document级别的mouseup事件监听器
-  document.addEventListener('mouseup', handleMouseUp)
+  document.addEventListener("mouseup", handleMouseUp);
 
   // 清理函数
   function handleMouseUp() {
-    upWoodenFish()
-    document.removeEventListener('mouseup', handleMouseUp)
+    upWoodenFish();
+    document.removeEventListener("mouseup", handleMouseUp);
   }
 }
 
 // 重置敲击状态函数
 function upWoodenFish() {
-  isKnocking.value = false
+  isKnocking.value = false;
 }
 </script>
 

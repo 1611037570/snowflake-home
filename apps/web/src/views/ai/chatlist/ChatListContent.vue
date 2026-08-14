@@ -1,40 +1,40 @@
 <script setup>
-import { useAiStore } from '@/stores'
-import { storeToRefs } from 'pinia'
-import ChatItem from './chatItem.vue'
+import { useAiStore } from "@/stores";
+import { storeToRefs } from "pinia";
+import ChatItem from "./chatItem.vue";
 
-const aiStore = useAiStore()
-const { chatList, currentChatId, sidebarCollapsed, sidebarMode } = storeToRefs(aiStore)
-const { prepareNewChat, switchChat, delChat } = aiStore
+const aiStore = useAiStore();
+const { chatList, currentChatId, sidebarCollapsed, sidebarMode } = storeToRefs(aiStore);
+const { prepareNewChat, switchChat, delChat } = aiStore;
 
 /**
  * 处理新建对话
  */
 const handlePrepareNewChat = () => {
-  prepareNewChat()
+  prepareNewChat();
   // 浮动模式下，点击新建后自动折叠
-  if (sidebarMode.value === 'float') {
-    sidebarCollapsed.value = true
+  if (sidebarMode.value === "float") {
+    sidebarCollapsed.value = true;
   }
-}
+};
 
 /**
  * 处理切换对话
  */
 const handleSwitchChat = (id) => {
-  switchChat(id)
+  switchChat(id);
   // 浮动模式下，切换后自动折叠
-  if (sidebarMode.value === 'float') {
-    sidebarCollapsed.value = true
+  if (sidebarMode.value === "float") {
+    sidebarCollapsed.value = true;
   }
-}
+};
 
 /**
  * 切换侧边栏模式
  */
 const toggleSidebarMode = () => {
-  sidebarMode.value = sidebarMode.value === 'dock' ? 'float' : 'dock'
-}
+  sidebarMode.value = sidebarMode.value === "dock" ? "float" : "dock";
+};
 </script>
 
 <template>

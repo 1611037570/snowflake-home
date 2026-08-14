@@ -1,37 +1,38 @@
-import { Injectable } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
+import { Injectable } from '@nestjs/common'
+import { ConfigService } from '@nestjs/config'
 
 @Injectable()
 export class LLMService {
-  constructor(private configService: ConfigService) { }
+  constructor(private configService: ConfigService) {}
 
   /**
    * 获取上游 AI 服务的原始响应
    */
   async getUpstreamResponse(data: any) {
-    const apiKey = this.configService.get<string>('OPENAI_API_KEY');
-    const baseURL = this.configService.get<string>('OPENAI_BASE_URL');
-    const url = `${baseURL}`;
-    console.log("url:", url);
-    console.log("data:", data);
+    const apiKey = this.configService.get<string>('OPENAI_API_KEY')
+    const baseURL = this.configService.get<string>('OPENAI_BASE_URL')
+    const url = `${baseURL}`
+    console.log('url:', url)
+    console.log('data:', data)
     const obj = {
-      "model": "doubao-seed-2-0-mini-260215",
-      "stream": true, // 关键：必须告诉上游返回流式数据
-      "input": [
+      model: 'deepseek-v4-flash-ga-260731',
+      stream: true, // 关键：必须告诉上游返回流式数据
+      input: [
         {
-          "role": "user",
-          "content": [
+          role: 'user',
+          content: [
             {
-              "type": "input_image",
-              "image_url": "https://ark-project.tos-cn-beijing.volces.com/doc_image/ark_demo_img_1.png"
+              type: 'input_image',
+              image_url:
+                'https://ark-project.tos-cn-beijing.volces.com/doc_image/ark_demo_img_1.png',
             },
             {
-              "type": "input_text",
-              "text": "你看见了什么？"
-            }
-          ]
-        }
-      ]
+              type: 'input_text',
+              text: '你看见了什么？',
+            },
+          ],
+        },
+      ],
     }
     const response = await fetch(url, {
       method: 'POST',
@@ -43,7 +44,7 @@ export class LLMService {
         ...data,
         stream: true,
       }),
-    });
+    })
     // // 检查HTTP响应状态
     // if (!response.ok) {
     //   throw new Error(`请求失败`);
@@ -62,6 +63,6 @@ export class LLMService {
     //   // res.write(value); // 直接写入原始字节块，不处理数据
     // }
 
-    return response;
+    return response
   }
 }

@@ -39,13 +39,13 @@
 </template>
 
 <script setup>
-defineOptions({ name: 'SfSetItem' })
+defineOptions({ name: "SfSetItem" });
 
-const emits = defineEmits(['onChange', 'onClick'])
+const emits = defineEmits(["onChange", "onClick"]);
 const props = defineProps({
   title: {
     type: String,
-    default: '标题',
+    default: "标题",
   },
   info: {
     type: String,
@@ -53,8 +53,8 @@ const props = defineProps({
   },
   type: {
     type: String,
-    default: 'switch',
-    validator: (val) => ['switch', 'button', 'select', 'time'].includes(val),
+    default: "switch",
+    validator: (val) => ["switch", "button", "select", "time"].includes(val),
   },
   config: {
     type: Object,
@@ -64,16 +64,16 @@ const props = defineProps({
     type: Boolean,
     default: true,
   },
-})
-const modeValue = defineModel()
+});
+const modeValue = defineModel();
 
 const handleChange = (val) => {
-  console.log('val', val)
+  console.log("val", val);
 
-  emits('onChange', val, props.type)
-}
+  emits("onChange", val, props.type);
+};
 const handleClick = (val) => {
-  console.log('val', val)
-  emits('onClick', val, props.type)
-}
+  console.log("val", val);
+  emits("onClick", val, props.type);
+};
 </script>

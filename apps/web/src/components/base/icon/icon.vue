@@ -13,73 +13,73 @@
 </template>
 
 <script setup lang="ts">
-import { ICON_LIST } from '@/constants'
-import { Icon, loadIcon } from '@iconify/vue'
+import { ICON_LIST } from "@/constants";
+import { Icon, loadIcon } from "@iconify/vue";
 
-defineOptions({ name: 'SfIcon' })
+defineOptions({ name: "SfIcon" });
 
 export interface IconProps {
   /**
    * Iconify 图标名称
    */
-  icon?: string
+  icon?: string;
 
   /**
    * 图标大小
    */
-  size?: number | string
+  size?: number | string;
   /**
    * 图标盒子大小
    */
-  boxSize?: number | string
+  boxSize?: number | string;
   /**
    * 图标旋转角度
    */
-  rotate?: number
+  rotate?: number;
   /**
    * 图标翻转方向
    */
-  flip?: 'horizontal' | 'vertical'
+  flip?: "horizontal" | "vertical";
 }
 
 const props = withDefaults(defineProps<IconProps>(), {
-  icon: 'fa6-solid:snowflake',
+  icon: "fa6-solid:snowflake",
   size: 16,
   rotate: 180,
-  flip: 'vertical',
+  flip: "vertical",
   auto: true,
-})
+});
 const boxIconStyle = computed(() => {
-  const size = Number(props.boxSize || props.size) * 4
+  const size = Number(props.boxSize || props.size) * 4;
   return {
     width: `${size}px`,
     height: `${size}px`,
-  }
-})
+  };
+});
 const iconStyle = computed(() => {
-  const size = Number(props.size) * 4
+  const size = Number(props.size) * 4;
   return {
     width: `${size}px`,
     height: `${size}px`,
-  }
-})
-const emit = defineEmits(['success', 'fail'])
-const iconClass = ref('')
+  };
+});
+const emit = defineEmits(["success", "fail"]);
+const iconClass = ref("");
 function init() {
-  const item = ICON_LIST[props.icon]
+  const item = ICON_LIST[props.icon];
   if (!item) {
-    emit('fail')
-    return
+    emit("fail");
+    return;
   }
-  iconClass.value = item.color || ''
+  iconClass.value = item.color || "";
   loadIcon(item.icon)
     .then(() => {
-      emit('success')
+      emit("success");
     })
     .catch(() => {
-      emit('fail')
-    })
+      emit("fail");
+    });
 }
-init()
+init();
 </script>
 <style scoped></style>

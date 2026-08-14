@@ -6,11 +6,11 @@
 
 <script setup>
 defineOptions({
-  name: 'SfTitle',
-})
-const name = defineModel('modelValue', {
-  default: '',
-})
+  name: "SfTitle",
+});
+const name = defineModel("modelValue", {
+  default: "",
+});
 </script>
 
 <style scoped></style>

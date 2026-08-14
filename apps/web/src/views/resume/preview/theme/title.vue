@@ -2,12 +2,12 @@
 defineProps({
   title: {
     type: String,
-    default: '教育经历',
+    default: "教育经历",
   },
-})
-const fontValue = inject('fontValue')
-const lineHeightValue = inject('lineHeightValue')
-const themeColor = inject('themeColor')
+});
+const fontValue = inject("fontValue");
+const lineHeightValue = inject("lineHeightValue");
+const themeColor = inject("themeColor");
 </script>
 
 <template>

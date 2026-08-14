@@ -1,5 +1,5 @@
 <script setup>
-defineOptions({ name: 'SfAppCenter' })
+defineOptions({ name: "SfAppCenter" });
 </script>
 
 <template>

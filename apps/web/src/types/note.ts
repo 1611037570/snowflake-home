@@ -1,21 +1,21 @@
 // 定义笔记数据项接口
 export interface NoteItem {
   // 内容
-  value: string
+  value: string;
   // 创建时间
-  createTime: number
+  createTime: number;
   // 最后修改时间
-  endTime: number
+  endTime: number;
   // 唯一标识
-  id: string
+  id: string;
   // 置顶
-  top: boolean
+  top: boolean;
   // 是否开启md模式
-  md: boolean
+  md: boolean;
   // 是否开启待办模式
-  todo: boolean
+  todo: boolean;
   // 是否完成待办
-  todoDone: boolean
+  todoDone: boolean;
   // 背景色
-  bgColor: string
+  bgColor: string;
 }

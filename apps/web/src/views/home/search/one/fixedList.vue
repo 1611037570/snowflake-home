@@ -1,26 +1,26 @@
 <script setup>
-import { useShortcutStore } from '@/stores'
-import SearchTitle from '../searchTitle.vue'
-const shortcutStore = useShortcutStore()
-const { fixedList } = storeToRefs(shortcutStore)
+import { useShortcutStore } from "@/stores";
+import SearchTitle from "../searchTitle.vue";
+const shortcutStore = useShortcutStore();
+const { fixedList } = storeToRefs(shortcutStore);
 function handleClick(item) {
-  urlNavigation(item.url)
+  urlNavigation(item.url);
 }
 
 // 取消置顶
-const currentItem = ref(null)
+const currentItem = ref(null);
 const list = computed(() => {
   return [
     {
-      name: '取消置顶',
+      name: "取消置顶",
       fn: () => {
-        currentItem.value.top = false
+        currentItem.value.top = false;
       },
     },
-  ]
-})
+  ];
+});
 function updateCurrentItem(item) {
-  currentItem.value = item
+  currentItem.value = item;
 }
 </script>
 

@@ -15,9 +15,9 @@
 </template>
 
 <script setup>
-const emit = defineEmits(['reset'])
-defineProps({ name: { type: String, default: '' }, reset: { type: Boolean, default: false } })
+const emit = defineEmits(["reset"]);
+defineProps({ name: { type: String, default: "" }, reset: { type: Boolean, default: false } });
 function resetClick() {
-  emit('reset')
+  emit("reset");
 }
 </script>

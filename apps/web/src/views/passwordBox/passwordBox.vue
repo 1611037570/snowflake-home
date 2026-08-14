@@ -1,35 +1,35 @@
 <script setup>
-import { useCopy } from '@/hooks'
-import { usePasswordStore } from '@/stores'
-import { storeToRefs } from 'pinia'
-import { computed, ref } from 'vue'
+import { useCopy } from "@/hooks";
+import { usePasswordStore } from "@/stores";
+import { storeToRefs } from "pinia";
+import { computed, ref } from "vue";
 
-const passwordStore = usePasswordStore()
-const { showPassword } = storeToRefs(passwordStore)
+const passwordStore = usePasswordStore();
+const { showPassword } = storeToRefs(passwordStore);
 
 // 模拟数据
 const list = ref([
   {
-    name: '微信',
-    account: '13000000000',
-    password: '123456',
-    url: '',
+    name: "微信",
+    account: "13000000000",
+    password: "123456",
+    url: "",
   },
   {
-    name: 'QQ',
-    account: '13000000000',
-    password: '123456',
-    url: '',
+    name: "QQ",
+    account: "13000000000",
+    password: "123456",
+    url: "",
   },
-])
+]);
 
 // 类型列表 - 只返回第一个唯一类型
 const typeList = computed(() => {
   // 过滤出唯一的类型名称
-  const uniqueTypes = new Set(list.value.map((item) => item.name))
+  const uniqueTypes = new Set(list.value.map((item) => item.name));
   // 如果有类型，只返回第一个
-  return uniqueTypes.size > 0 ? [Array.from(uniqueTypes)[0]] : []
-})
+  return uniqueTypes.size > 0 ? [Array.from(uniqueTypes)[0]] : [];
+});
 </script>
 
 <template>
@@ -51,7 +51,7 @@ const typeList = computed(() => {
       <div class="cursor-pointer" @click="useCopy(item.password)">
         密码：
         <span class="hover:text-sf-theme-hover">
-          {{ showPassword ? item.password : '******' }}
+          {{ showPassword ? item.password : "******" }}
         </span>
       </div>
     </div>

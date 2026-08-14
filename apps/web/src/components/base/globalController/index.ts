@@ -1,3 +1,3 @@
-import GlobalController from './globalController.vue'
+import GlobalController from "./globalController.vue";
 
-export default GlobalController
+export default GlobalController;

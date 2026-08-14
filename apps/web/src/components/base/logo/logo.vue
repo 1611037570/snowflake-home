@@ -1,21 +1,21 @@
 <script setup>
-defineOptions({ name: 'SfLogo' })
+defineOptions({ name: "SfLogo" });
 defineProps({
   size: {
     type: [String, Number],
-    default: '7.5',
+    default: "7.5",
   },
   name: {
     type: String,
-    default: 'image',
+    default: "image",
   },
-})
+});
 const map = {
-  image: defineAsyncComponent(() => import('./modules/image.vue')),
-  index: defineAsyncComponent(() => import('./modules/index.vue')),
-  home: defineAsyncComponent(() => import('./modules/home.vue')),
-  resumeMain: defineAsyncComponent(() => import('./modules/resumeMain.vue')),
-}
+  image: defineAsyncComponent(() => import("./modules/image.vue")),
+  index: defineAsyncComponent(() => import("./modules/index.vue")),
+  home: defineAsyncComponent(() => import("./modules/home.vue")),
+  resumeMain: defineAsyncComponent(() => import("./modules/resumeMain.vue")),
+};
 </script>
 
 <template>

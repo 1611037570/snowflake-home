@@ -1,18 +1,18 @@
 <script setup>
-import { useResumeStore } from '@/stores'
+import { useResumeStore } from "@/stores";
 import {
   fontFamilyList,
   fontSizeList,
   lineHeightList,
   paddingList,
   themeColors,
-} from '@/stores/modules/resume/uiConfig'
-import Header from '@/views/resume/builder/components/header.vue'
-import { storeToRefs } from 'pinia'
-import ConfigItem from './configItem.vue'
+} from "@/stores/modules/resume/uiConfig";
+import Header from "@/views/resume/builder/components/header.vue";
+import { storeToRefs } from "pinia";
+import ConfigItem from "./configItem.vue";
 
-const resumeStore = useResumeStore()
-const { currentUI } = storeToRefs(resumeStore)
+const resumeStore = useResumeStore();
+const { currentUI } = storeToRefs(resumeStore);
 </script>
 
 <template>

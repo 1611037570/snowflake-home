@@ -1,18 +1,18 @@
-import { inject } from 'vue'
-import { componentRegistry } from '../code/componentRegistry'
+import { inject } from "vue";
+import { componentRegistry } from "../code/componentRegistry";
 
-export { componentRegistry }
+export { componentRegistry };
 
 /**
  * 获取组件定义 (支持实例级别注入)
  * 统一通过 ComponentRegistry 进行查找
  */
 export const getComponent = (name: string) => {
-  if (!name) return
+  if (!name) return;
 
   // 1. 优先从实例注入的组件库中查找 (SfDynamicForm 传入的 components prop)
-  const instanceComponents = inject<Record<string, any>>('instanceComponents', {})
+  const instanceComponents = inject<Record<string, any>>("instanceComponents", {});
 
   // 2. 委托给注册中心统一查找
-  return componentRegistry.get(name, instanceComponents)
-}
+  return componentRegistry.get(name, instanceComponents);
+};

@@ -20,59 +20,59 @@
 <script setup>
 // background-image: url('https://cn.bing.com/th?id=OHR.SunbeamsForest_ZH-CN5358008117_1920x1080.jpg&rf=LaDigue_1920x1080.jpg&pid=hp');
 // https://convertio.co/zh/download/f6fd6966623acbcef28ae90b08ca0be62189ed/
-import { useHomeStore, useSearchStore } from '@/stores'
-import { storeToRefs } from 'pinia'
-import { computed, onMounted, ref } from 'vue'
+import { useHomeStore, useSearchStore } from "@/stores";
+import { storeToRefs } from "pinia";
+import { computed, onMounted, ref } from "vue";
 
-const searchStore = useSearchStore()
-const homeStore = useHomeStore()
-const { tabIndex } = storeToRefs(homeStore)
-const { searchFocus } = storeToRefs(searchStore)
+const searchStore = useSearchStore();
+const homeStore = useHomeStore();
+const { tabIndex } = storeToRefs(homeStore);
+const { searchFocus } = storeToRefs(searchStore);
 
 // 背景图片URL，默认为空
-const backgroundUrl = ref('')
+const backgroundUrl = ref("");
 
 // 计算背景图片样式
 const backgroundImage = computed(() => {
-  return backgroundUrl.value ? `url(${backgroundUrl.value})` : 'none'
-})
+  return backgroundUrl.value ? `url(${backgroundUrl.value})` : "none";
+});
 
 onMounted(() => {
   setTimeout(async () => {
-    const bgModule = await import('@/assets/images/background1.webp')
+    const bgModule = await import("@/assets/images/background1.webp");
     // 创建图片对象进行预加载
-    const img = new Image()
+    const img = new Image();
     img.onload = () => {
       // 图片完全加载后再设置为背景图
-      backgroundUrl.value = bgModule.default
-    }
+      backgroundUrl.value = bgModule.default;
+    };
     // img.onerror = (error) => {
     // }
-    img.src = bgModule.default
-  }, 0)
-})
+    img.src = bgModule.default;
+  }, 0);
+});
 
 const handleClick = () => {
   if (tabIndex.value == 0) {
-    return
+    return;
   }
   // 点击搜索框时，不切换
   if (searchFocus.value) {
-    return
+    return;
   }
-  tabIndex.value = 0
-}
+  tabIndex.value = 0;
+};
 
 const handleContextMenu = () => {
   if (tabIndex.value == 1) {
-    return
+    return;
   }
   // 搜索框聚焦时，不切换
   if (searchFocus.value) {
-    return
+    return;
   }
-  tabIndex.value = 1
-}
+  tabIndex.value = 1;
+};
 </script>
 
 <style scoped></style>

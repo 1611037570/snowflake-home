@@ -6,18 +6,18 @@ defineProps({
     type: Boolean,
     default: false,
   },
-})
+});
 
 /**
  * 滚动到关于区域
  */
 function scrollToAbout() {
-  const targetElement = document.getElementById('about')
+  const targetElement = document.getElementById("about");
   if (targetElement) {
     targetElement.scrollIntoView({
-      behavior: 'smooth',
-      block: 'start',
-    })
+      behavior: "smooth",
+      block: "start",
+    });
   }
 }
 </script>

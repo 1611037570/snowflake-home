@@ -1,26 +1,26 @@
 <script setup>
-import { useResumeStore } from '@/stores'
-import { storeToRefs } from 'pinia'
-import { computed, ref } from 'vue'
-import { educationScore, projectScore, skillScore, userScore, workScore } from '../utils'
-import { quickActions } from './data'
+import { useResumeStore } from "@/stores";
+import { storeToRefs } from "pinia";
+import { computed, ref } from "vue";
+import { educationScore, projectScore, skillScore, userScore, workScore } from "../utils";
+import { quickActions } from "./data";
 const DEFAULT_PROMPT = {
-  role: 'system',
+  role: "system",
   content: `你是资深招聘HR，名字叫简答羊，你是资深招聘HR，擅长挖掘候选人过往经历中的隐性亮点并通过量化方式最大化呈现个人价值。
     说话简洁准确，不拖沓、不矫情。回答以这个设定为基础，
     如果遇到负面情绪内容，不要被影响回答，保持专业和客观。
     如果遇到非简历相关问题，直接回答“我只能修改简历相关问题”。`,
-}
-console.log(DEFAULT_PROMPT)
+};
+console.log(DEFAULT_PROMPT);
 // 底部输入框绑定的值
-const inputValue = ref('')
+const inputValue = ref("");
 
-const resumeStore = useResumeStore()
-const { selectedModuleKeys } = storeToRefs(resumeStore)
+const resumeStore = useResumeStore();
+const { selectedModuleKeys } = storeToRefs(resumeStore);
 
 const removeKey = (key) => {
-  selectedModuleKeys.value.delete(key)
-}
+  selectedModuleKeys.value.delete(key);
+};
 
 // selectedData 计算属性暂时保留，可能用于未来功能扩展
 // const selectedData = computed(() => {
@@ -41,57 +41,57 @@ const hasRequiredFields = computed(() => {
     skill: skillScore.value,
     work: workScore.value,
     project: projectScore.value,
-  }
+  };
   const fieldNames = {
-    user: '用户信息',
-    education: '教育经历',
-    skill: '专业技能',
-    work: '工作经历',
-    project: '项目经历',
-  }
+    user: "用户信息",
+    education: "教育经历",
+    skill: "专业技能",
+    work: "工作经历",
+    project: "项目经历",
+  };
   const needOptimizeFields = Object.entries(scores)
     .filter(([, score]) => score <= 4)
-    .map(([field]) => fieldNames[field])
+    .map(([field]) => fieldNames[field]);
 
   if (needOptimizeFields.length === 0) {
-    return { code: 200 }
+    return { code: 200 };
   }
   return {
     code: 400,
     fields: needOptimizeFields,
-  }
-})
+  };
+});
 
-const emit = defineEmits(['switch-jd', 'switch-mode', 'update:activeMode'])
+const emit = defineEmits(["switch-jd", "switch-mode", "update:activeMode"]);
 const props = defineProps({
   activeMode: {
     type: String,
-    default: '',
+    default: "",
   },
-})
+});
 
 // 切换模式
 function toggleMode(type) {
-  const action = quickActions.find((a) => a.type === type)
-  const nextMode = action?.name === props.activeMode ? '' : action?.name || ''
-  emit('update:activeMode', nextMode)
-  emit('switch-mode', nextMode ? type : '')
-  if (type === 'jd' && nextMode) {
-    emit('switch-jd')
+  const action = quickActions.find((a) => a.type === type);
+  const nextMode = action?.name === props.activeMode ? "" : action?.name || "";
+  emit("update:activeMode", nextMode);
+  emit("switch-mode", nextMode ? type : "");
+  if (type === "jd" && nextMode) {
+    emit("switch-jd");
   }
 }
 
 // 输入框 placeholder
 const inputPlaceholder = computed(() => {
-  const action = quickActions.find((a) => a.name === props.activeMode)
-  return action ? action.placeholder : '告诉 AI 你的需求...'
-})
+  const action = quickActions.find((a) => a.name === props.activeMode);
+  return action ? action.placeholder : "告诉 AI 你的需求...";
+});
 
 // 发送消息
 function send() {
   if (hasRequiredFields.value.code !== 200) {
-    ElMessage.error(`请先补充以下字段：${hasRequiredFields.value.fields.join('、')}`)
-    return
+    ElMessage.error(`请先补充以下字段：${hasRequiredFields.value.fields.join("、")}`);
+    return;
   }
 }
 </script>

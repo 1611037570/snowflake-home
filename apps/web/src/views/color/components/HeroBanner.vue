@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { computed } from 'vue'
-import { list } from '../data'
+import { computed } from "vue";
+import { list } from "../data";
 
-const themeGroupCount = computed(() => list.length)
-const totalVariableCount = computed(() => list.reduce((acc, curr) => acc + curr.list.length, 0))
+const themeGroupCount = computed(() => list.length);
+const totalVariableCount = computed(() => list.reduce((acc, curr) => acc + curr.list.length, 0));
 </script>
 
 <template>

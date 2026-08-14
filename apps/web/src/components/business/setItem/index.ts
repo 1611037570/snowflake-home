@@ -1,2 +1,2 @@
-import SetItem from './setItem.vue'
-export default SetItem
+import SetItem from "./setItem.vue";
+export default SetItem;

@@ -1,2 +1,2 @@
-import Monitor from './monitor.vue'
-export default Monitor
+import Monitor from "./monitor.vue";
+export default Monitor;

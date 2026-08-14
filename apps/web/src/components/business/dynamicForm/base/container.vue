@@ -9,33 +9,33 @@
 </template>
 
 <script setup lang="ts">
-import { isString } from '@/utils'
-import { getComponent } from '../components'
-import FormRenderer from './formRenderer.vue'
+import { isString } from "@/utils";
+import { getComponent } from "../components";
+import FormRenderer from "./formRenderer.vue";
 
-const currentForm = defineModel<any>('currentForm')
-const currentIndex = defineModel<any>('currentIndex')
+const currentForm = defineModel<any>("currentForm");
+const currentIndex = defineModel<any>("currentIndex");
 
 // 处理插槽名称
 function getSlot() {
-  const slotName = currentForm.value?.slot
+  const slotName = currentForm.value?.slot;
   if (isString(slotName) && slotName.length) {
-    return slotName
+    return slotName;
   }
-  return 'default'
+  return "default";
 }
-const emit = defineEmits(['removeObject'])
+const emit = defineEmits(["removeObject"]);
 function remove() {
-  emit('removeObject', currentIndex.value)
+  emit("removeObject", currentIndex.value);
 }
 // 提供当前容器的表单数据
-provide('df/current/form', currentForm)
+provide("df/current/form", currentForm);
 // 提供当前容器的索引
-provide('df/current/index', currentIndex)
+provide("df/current/index", currentIndex);
 // 提供删除方法
-provide('df/remove', remove)
+provide("df/remove", remove);
 // 提供当前容器的类型
-provide('df/current/type', 'container')
+provide("df/current/type", "container");
 </script>
 
 <style scoped></style>

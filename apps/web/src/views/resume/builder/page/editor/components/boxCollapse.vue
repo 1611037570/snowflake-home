@@ -1,23 +1,23 @@
 <script setup>
-const { proxy } = getCurrentInstance()
+const { proxy } = getCurrentInstance();
 
 const props = defineProps({
   title: {
     type: String,
-    default: '未填写',
+    default: "未填写",
   },
   add: {
     type: Boolean,
     default: true,
   },
-})
-const currentForm = inject('df/current/form')
-const objectRemove = inject('df/remove')
+});
+const currentForm = inject("df/current/form");
+const objectRemove = inject("df/remove");
 
 function del() {
-  proxy.$confirm(`确定要删除${props.title}模块吗？`, '删除确认').then(() => {
-    objectRemove()
-  })
+  proxy.$confirm(`确定要删除${props.title}模块吗？`, "删除确认").then(() => {
+    objectRemove();
+  });
 }
 function handleAdd() {
   /**
@@ -25,13 +25,13 @@ function handleAdd() {
    * 但是数据是绑定在list上的，如果通过list会有空数组未渲染的情况，如果新增组件，又得处理不需要拖拽的元素
    * 所以直接偷懒了
    */
-  const currentFields = currentForm.value.fields[0]
-  const { addConfig, list } = currentFields
+  const currentFields = currentForm.value.fields[0];
+  const { addConfig, list } = currentFields;
   if (!addConfig) {
-    console.log('addConfig:>> ', addConfig)
-    return
+    console.log("addConfig:>> ", addConfig);
+    return;
   }
-  list.push(addConfig)
+  list.push(addConfig);
 }
 </script>
 

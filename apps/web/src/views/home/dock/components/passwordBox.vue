@@ -8,13 +8,13 @@
 </template>
 
 <script setup>
-import { usePasswordStore } from '@/stores/modules/password'
-const passwordStore = usePasswordStore()
-const { homeModalVisible } = storeToRefs(passwordStore)
+import { usePasswordStore } from "@/stores/modules/password";
+const passwordStore = usePasswordStore();
+const { homeModalVisible } = storeToRefs(passwordStore);
 
 const openNote = () => {
-  homeModalVisible.value = true
-}
+  homeModalVisible.value = true;
+};
 </script>
 
 <style scoped></style>

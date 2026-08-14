@@ -1,92 +1,92 @@
 <script setup>
-import { useResumeStore } from '@/stores'
-import { allConfig } from '@/stores/modules/resume/formConfig'
-import { storeToRefs } from 'pinia'
-import { computed, ref } from 'vue'
-const resumeStore = useResumeStore()
-const { currentConfig } = storeToRefs(resumeStore)
-defineOptions({ name: 'AddModule' })
+import { useResumeStore } from "@/stores";
+import { allConfig } from "@/stores/modules/resume/formConfig";
+import { storeToRefs } from "pinia";
+import { computed, ref } from "vue";
+const resumeStore = useResumeStore();
+const { currentConfig } = storeToRefs(resumeStore);
+defineOptions({ name: "AddModule" });
 
 // 预设模块列表
 const presets = ref([
   {
-    name: '教育经历',
-    value: 'education',
+    name: "教育经历",
+    value: "education",
   },
   {
-    name: '社交账号',
-    value: 'account',
+    name: "社交账号",
+    value: "account",
   },
-  { name: '专业技能', value: 'skill' },
-  { name: '工作经历', value: 'work' },
-  { name: '项目经历', value: 'project' },
-  { name: '个人优势', value: 'advantage' },
-  { name: '兴趣爱好', value: 'hobbies' },
-  { name: '图片作品', value: 'images' },
-  { name: '实习经历', value: 'intern' },
-  { name: '志愿服务经历', value: 'volunteer' },
-  { name: '社团经历', value: 'club' },
-  { name: '荣誉奖项', value: 'awards' },
-  { name: '视频作品', value: 'videos' },
-  { name: '资格证书', value: 'certs' },
-])
+  { name: "专业技能", value: "skill" },
+  { name: "工作经历", value: "work" },
+  { name: "项目经历", value: "project" },
+  { name: "个人优势", value: "advantage" },
+  { name: "兴趣爱好", value: "hobbies" },
+  { name: "图片作品", value: "images" },
+  { name: "实习经历", value: "intern" },
+  { name: "志愿服务经历", value: "volunteer" },
+  { name: "社团经历", value: "club" },
+  { name: "荣誉奖项", value: "awards" },
+  { name: "视频作品", value: "videos" },
+  { name: "资格证书", value: "certs" },
+]);
 
 // 过滤后的预设模块：只显示尚未添加到当前表单中的模块
 const filteredPresets = computed(() => {
-  if (!currentConfig.value) return presets.value
+  if (!currentConfig.value) return presets.value;
   return presets.value.filter((item) => {
     // 检查当前表单配置中是否已存在该模块（通过比对模块名称与表单首项的 label）
-    return !currentConfig.value.fields.some((form) => form.key === item.value)
-  })
-})
+    return !currentConfig.value.fields.some((form) => form.key === item.value);
+  });
+});
 
 const moduleOptions = computed(() => [
   ...filteredPresets.value,
   {
-    name: '自定义模块',
-    value: 'custom',
+    name: "自定义模块",
+    value: "custom",
   },
-])
+]);
 
 const handleAdd = (module) => {
-  console.log('module:>> ', module)
+  console.log("module:>> ", module);
 
-  const type = module.value
-  if (type === 'custom') {
-    console.log('allConfig[type]:>> ', allConfig[type])
-    showModal.value = true
-    return
+  const type = module.value;
+  if (type === "custom") {
+    console.log("allConfig[type]:>> ", allConfig[type]);
+    showModal.value = true;
+    return;
   }
   if (type in allConfig) {
-    currentConfig.value.fields.push(structuredClone(allConfig[type]))
+    currentConfig.value.fields.push(structuredClone(allConfig[type]));
   }
-}
+};
 
-const showModal = ref(false)
-const customModuleName = ref('')
+const showModal = ref(false);
+const customModuleName = ref("");
 const randomLetters = Array.from({ length: 4 }, () =>
   String.fromCharCode(97 + Math.floor(Math.random() * 26)),
-).join('')
+).join("");
 const handleConfirm = () => {
-  if (!customModuleName.value) return
-  const config = structuredClone(allConfig.custom)
-  config.name = customModuleName.value
-  config.props.title = customModuleName.value
+  if (!customModuleName.value) return;
+  const config = structuredClone(allConfig.custom);
+  config.name = customModuleName.value;
+  config.props.title = customModuleName.value;
 
-  config.key = randomLetters
-  config.model.source = [randomLetters]
+  config.key = randomLetters;
+  config.model.source = [randomLetters];
   config.fields[0].addConfig.model.forEach((item) => {
-    item.source[0] = randomLetters
-  })
-  currentConfig.value.fields.push(structuredClone(config))
+    item.source[0] = randomLetters;
+  });
+  currentConfig.value.fields.push(structuredClone(config));
 
-  handleCancel()
-}
+  handleCancel();
+};
 
 const handleCancel = () => {
-  showModal.value = false
-  customModuleName.value = ''
-}
+  showModal.value = false;
+  customModuleName.value = "";
+};
 </script>
 
 <template>

@@ -11,17 +11,17 @@
 </template>
 
 <script setup>
-import { routerNavigation } from '@/utils'
+import { routerNavigation } from "@/utils";
 
 const props = defineProps({
   data: {
     type: Object,
     required: true,
   },
-})
+});
 const open = () => {
-  if (props.data.type && props.data.type === 'project') {
-    routerNavigation(props.data.url)
+  if (props.data.type && props.data.type === "project") {
+    routerNavigation(props.data.url);
   }
-}
+};
 </script>

@@ -5,7 +5,7 @@
 </template>
 
 <script setup>
-defineOptions({ name: 'SfSetBox' })
+defineOptions({ name: "SfSetBox" });
 </script>
 
 <style lang="scss" scoped></style>

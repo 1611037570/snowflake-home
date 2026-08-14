@@ -61,10 +61,10 @@
 </template>
 
 <script setup>
-import SearchTitle from '../searchTitle.vue'
+import SearchTitle from "../searchTitle.vue";
 
 function open() {
-  window.open('https://gushitong.baidu.com/index/ab-000001')
+  window.open("https://gushitong.baidu.com/index/ab-000001");
 }
 </script>
 

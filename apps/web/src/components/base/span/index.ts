@@ -1,3 +1,3 @@
-import Span from './span.vue'
+import Span from "./span.vue";
 
-export default Span
+export default Span;

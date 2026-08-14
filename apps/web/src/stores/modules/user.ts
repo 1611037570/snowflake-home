@@ -1,16 +1,16 @@
-import { defineStore } from 'pinia'
-import { ref } from 'vue'
+import { defineStore } from "pinia";
+import { ref } from "vue";
 
 export const useUserStore = defineStore(
-  'user',
+  "user",
   () => {
-    const loginVisible = ref(false)
+    const loginVisible = ref(false);
 
-    return { loginVisible }
+    return { loginVisible };
   },
   {
     persist: {
       storage: localStorage,
     },
   },
-)
+);

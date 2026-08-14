@@ -1,18 +1,18 @@
 <script setup>
-const { proxy } = getCurrentInstance()
+const { proxy } = getCurrentInstance();
 const props = defineProps({
   title: {
     type: String,
-    default: '未填写',
+    default: "未填写",
   },
   index: {},
-})
-const removeItem = inject('df/removeItem')
+});
+const removeItem = inject("df/removeItem");
 
 function del() {
-  proxy.$confirm(`确定要删除${props.title}吗？`, '删除确认').then(() => {
-    removeItem(props.index)
-  })
+  proxy.$confirm(`确定要删除${props.title}吗？`, "删除确认").then(() => {
+    removeItem(props.index);
+  });
 }
 </script>
 

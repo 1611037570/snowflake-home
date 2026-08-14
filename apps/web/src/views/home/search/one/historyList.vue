@@ -31,23 +31,23 @@
 </template>
 
 <script setup>
-import { useSearchStore } from '@/stores'
-import Item from '../item.vue'
-import SearchTitle from '../searchTitle.vue'
+import { useSearchStore } from "@/stores";
+import Item from "../item.vue";
+import SearchTitle from "../searchTitle.vue";
 
-const searchStore = useSearchStore()
-const { searchHistory, searchHistoryVisible, openMode } = storeToRefs(searchStore)
+const searchStore = useSearchStore();
+const { searchHistory, searchHistoryVisible, openMode } = storeToRefs(searchStore);
 const openHistory = (item) => {
-  window.open(item.url, openMode.value)
-}
+  window.open(item.url, openMode.value);
+};
 
 const removeHistory = (index) => {
-  searchStore.removeSearchHistory(index)
-}
+  searchStore.removeSearchHistory(index);
+};
 // 清空搜索历史
 const clearHistory = () => {
-  searchStore.clearSearchHistory()
-}
+  searchStore.clearSearchHistory();
+};
 </script>
 
 <style lang="scss" scoped></style>

@@ -1,19 +1,19 @@
 <script setup>
-import { ALL_PAGE } from '@/constants'
+import { ALL_PAGE } from "@/constants";
 
-const route = useRoute()
+const route = useRoute();
 
 // 从items数组中获取当前路由的标题
 const title = computed(() => {
-  const currentItem = ALL_PAGE.value.find((item) => item.url === route.path)
-  return currentItem?.name || ''
-})
+  const currentItem = ALL_PAGE.value.find((item) => item.url === route.path);
+  return currentItem?.name || "";
+});
 
 // 获取当前路由的版本号
 const version = computed(() => {
-  const currentItem = ALL_PAGE.value.find((item) => item.url === route.path)
-  return currentItem?.version || ''
-})
+  const currentItem = ALL_PAGE.value.find((item) => item.url === route.path);
+  return currentItem?.version || "";
+});
 </script>
 
 <template>

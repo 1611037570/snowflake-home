@@ -1,25 +1,25 @@
 <script setup>
-defineOptions({ name: 'SfBack' })
+defineOptions({ name: "SfBack" });
 
 const props = defineProps({
   tip: {
     type: String,
-    default: '起始页',
+    default: "起始页",
   },
   url: {
     type: String,
     default: DEFAULT_ROUTE,
   },
-})
+});
 const getContent = computed(() => {
-  return '返回' + props.tip || '起始页'
-})
-import { DEFAULT_ROUTE } from '@/constants'
-import { useRouter } from 'vue-router'
-const router = useRouter()
+  return "返回" + props.tip || "起始页";
+});
+import { DEFAULT_ROUTE } from "@/constants";
+import { useRouter } from "vue-router";
+const router = useRouter();
 const back = () => {
-  router.push(props.url)
-}
+  router.push(props.url);
+};
 </script>
 
 <template>

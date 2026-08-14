@@ -1,42 +1,42 @@
 <script setup>
-import { useResumeStore } from '@/stores'
-import { ref } from 'vue'
-import { resumeTitle } from '../../utils'
-const resumeStore = useResumeStore()
-const { currentUsage } = storeToRefs(resumeStore)
+import { useResumeStore } from "@/stores";
+import { ref } from "vue";
+import { resumeTitle } from "../../utils";
+const resumeStore = useResumeStore();
+const { currentUsage } = storeToRefs(resumeStore);
 const props = defineProps({
   defaultTitle: {
     type: String,
-    default: '',
+    default: "",
   },
-})
+});
 // 编辑标题
-const editTitleVisible = ref(false)
-const custom = ref(currentUsage.value?.customTitle || false)
-const tempTitle = ref(props.defaultTitle)
+const editTitleVisible = ref(false);
+const custom = ref(currentUsage.value?.customTitle || false);
+const tempTitle = ref(props.defaultTitle);
 
 function handleEditTitle() {
-  const customValue = tempTitle.value.trim()
-  currentUsage.value.customTitle = custom.value ? customValue : ''
-  editTitleVisible.value = !editTitleVisible.value
+  const customValue = tempTitle.value.trim();
+  currentUsage.value.customTitle = custom.value ? customValue : "";
+  editTitleVisible.value = !editTitleVisible.value;
 }
 
 function handleInput() {
-  custom.value = true
+  custom.value = true;
 }
 
 function handleResetTitle() {
-  tempTitle.value = resumeTitle.value
+  tempTitle.value = resumeTitle.value;
 }
 
 function openModal() {
-  tempTitle.value = props.defaultTitle
-  editTitleVisible.value = true
+  tempTitle.value = props.defaultTitle;
+  editTitleVisible.value = true;
 }
 
 defineExpose({
   openModal,
-})
+});
 </script>
 
 <template>

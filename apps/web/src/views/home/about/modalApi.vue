@@ -60,57 +60,57 @@
 </template>
 
 <script setup>
-import { urlNavigation } from '@/utils'
+import { urlNavigation } from "@/utils";
 
 // API服务列表数据
 const apiList = [
   {
-    name: '虚拟机',
-    url: 'https://www.3v.do/',
+    name: "虚拟机",
+    url: "https://www.3v.do/",
   },
   {
-    name: 'roll',
-    url: 'https://www.mxnzp.com/doc/list',
+    name: "roll",
+    url: "https://www.mxnzp.com/doc/list",
     support: [
       {
-        name: 'IP信息',
-        url: 'https://www.mxnzp.com/doc/detail?id=4',
+        name: "IP信息",
+        url: "https://www.mxnzp.com/doc/detail?id=4",
       },
       {
-        name: '天气',
-        url: 'https://www.mxnzp.com/doc/detail?id=7',
+        name: "天气",
+        url: "https://www.mxnzp.com/doc/detail?id=7",
       },
     ],
   },
   {
-    name: '夏柔',
-    url: 'https://api.aa1.cn/',
+    name: "夏柔",
+    url: "https://api.aa1.cn/",
     support: [
       {
-        name: '百度关键词',
-        url: 'https://api.aa1.cn/doc/baidu-search.html',
+        name: "百度关键词",
+        url: "https://api.aa1.cn/doc/baidu-search.html",
       },
     ],
   },
   {
-    name: 'Kairoi',
-    url: 'https://api.logoi.cn/',
+    name: "Kairoi",
+    url: "https://api.logoi.cn/",
     support: [
       {
-        name: '聚合搜索',
-        url: 'https://api.logoi.cn/doc/hotlist',
+        name: "聚合搜索",
+        url: "https://api.logoi.cn/doc/hotlist",
       },
     ],
   },
-]
+];
 
 /**
  * 打开API链接
  * @param {string} url - API服务地址
  */
 const openApi = (url) => {
-  urlNavigation(url)
-}
+  urlNavigation(url);
+};
 </script>
 
 <style scoped></style>

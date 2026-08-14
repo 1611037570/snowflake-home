@@ -1,4 +1,4 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get } from '@nestjs/common'
 
 /**
  * 测试控制器
@@ -7,7 +7,7 @@ import { Controller, Get } from '@nestjs/common';
 @Controller('test')
 export class TestController {
   constructor() {
-    console.log('TestController 已加载');
+    console.log('TestController 已加载')
   }
   /**
    * 获取今天的日期
@@ -19,6 +19,6 @@ export class TestController {
     return {
       date: new Date().toISOString().split('T')[0], // 格式：YYYY-MM-DD
       fullDate: new Date().toLocaleString(), // 格式：本地化全日期时间
-    };
+    }
   }
 }

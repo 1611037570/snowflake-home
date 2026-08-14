@@ -1,23 +1,23 @@
 <script setup>
-import { educationScore, projectScore, skillScore, userScore, workScore } from '../utils'
+import { educationScore, projectScore, skillScore, userScore, workScore } from "../utils";
 
 // 雷达图配置
 const a = computed(() => ({
   title: {
-    text: '能力评估',
+    text: "能力评估",
   },
   radar: {
     indicator: [
-      { name: '用户信息', max: 10 },
-      { name: '教育经历', max: 10 },
-      { name: '专业技能', max: 10 },
-      { name: '工作经历', max: 10 },
-      { name: '项目经历', max: 10 },
+      { name: "用户信息", max: 10 },
+      { name: "教育经历", max: 10 },
+      { name: "专业技能", max: 10 },
+      { name: "工作经历", max: 10 },
+      { name: "项目经历", max: 10 },
     ],
   },
   series: [
     {
-      type: 'radar',
+      type: "radar",
       data: [
         {
           value: [
@@ -28,20 +28,20 @@ const a = computed(() => ({
             projectScore.value,
           ],
           areaStyle: {
-            color: 'rgba(54, 162, 235, 0.3)',
+            color: "rgba(54, 162, 235, 0.3)",
           },
           lineStyle: {
-            color: 'rgba(54, 162, 235, 1)',
+            color: "rgba(54, 162, 235, 1)",
             width: 2,
           },
           itemStyle: {
-            color: 'rgba(54, 162, 235, 1)',
+            color: "rgba(54, 162, 235, 1)",
           },
         },
       ],
     },
   ],
-}))
+}));
 </script>
 
 <template>

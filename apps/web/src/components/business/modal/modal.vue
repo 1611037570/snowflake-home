@@ -57,39 +57,39 @@
 </template>
 
 <script setup>
-import { useSystemStore } from '@/stores/modules/system'
-import { onKeyStroke, useScrollLock } from '@vueuse/core'
-import { storeToRefs } from 'pinia'
-import { computed, onUnmounted, ref, useTemplateRef, watch } from 'vue'
+import { useSystemStore } from "@/stores/modules/system";
+import { onKeyStroke, useScrollLock } from "@vueuse/core";
+import { storeToRefs } from "pinia";
+import { computed, onUnmounted, ref, useTemplateRef, watch } from "vue";
 
-defineOptions({ name: 'SfModal' })
+defineOptions({ name: "SfModal" });
 
 // ==================== Props 定义 ====================
 defineProps({
   /** 弹窗标题 */
-  title: { type: String, default: '' },
+  title: { type: String, default: "" },
   /** 弹窗标题自定义类名 */
-  titleClass: { type: String, default: '' },
-})
+  titleClass: { type: String, default: "" },
+});
 
 // ==================== 全局状态 ====================
-const systemStore = useSystemStore()
+const systemStore = useSystemStore();
 /** 性能模式：开启后禁用所有动效（毛玻璃、3D倾斜、过渡动画） */
-const { performanceMode } = storeToRefs(systemStore)
+const { performanceMode } = storeToRefs(systemStore);
 
 // ==================== 弹窗显隐控制 ====================
-const mask = useTemplateRef('mask')
+const mask = useTemplateRef("mask");
 /** 双向绑定弹窗显隐状态 */
-const modeValue = defineModel()
+const modeValue = defineModel();
 /** 锁定背景滚动 */
-const isLocked = useScrollLock(document.body)
+const isLocked = useScrollLock(document.body);
 
 /** 缓存遮罩层边界信息，避免鼠标移动时重复读取 */
-let maskRect = null
+let maskRect = null;
 
 // ==================== 键盘事件 ====================
 /** ESC 键监听器的停止函数，用于按需注册/移除 */
-let stopKeyStroke = null
+let stopKeyStroke = null;
 
 /**
  * 动态注册/移除 ESC 监听，只在弹窗显示时生效
@@ -99,34 +99,34 @@ let stopKeyStroke = null
 watch(
   modeValue,
   async (val) => {
-    isLocked.value = val
+    isLocked.value = val;
     if (val) {
-      stopKeyStroke = onKeyStroke('Escape', () => (modeValue.value = false))
-      await nextTick()
-      maskRect = mask.value?.getBoundingClientRect() || null
+      stopKeyStroke = onKeyStroke("Escape", () => (modeValue.value = false));
+      await nextTick();
+      maskRect = mask.value?.getBoundingClientRect() || null;
     } else {
-      maskRect = null
-      stopKeyStroke?.()
-      stopKeyStroke = null
+      maskRect = null;
+      stopKeyStroke?.();
+      stopKeyStroke = null;
     }
   },
   { immediate: true },
-)
+);
 
 /** 组件卸载时确保移除监听，避免内存泄漏 */
 onUnmounted(() => {
-  stopKeyStroke?.()
-  stopKeyStroke = null
-  isLocked.value = false
-})
+  stopKeyStroke?.();
+  stopKeyStroke = null;
+  isLocked.value = false;
+});
 
 // ==================== 3D 视差倾斜核心逻辑 ====================
 /** 鼠标偏移灵敏度系数（数值越小，倾斜越敏感） */
-const multiple = 55
+const multiple = 55;
 /** 3D 元素 DOM 引用 */
-const elementRef = ref(null)
+const elementRef = ref(null);
 /** 鼠标是否悬浮在卡片上（悬浮时停止倾斜，避免干扰点击） */
-const isMouseOverCard = ref(false)
+const isMouseOverCard = ref(false);
 
 // ---------- 背景模糊样式 ----------
 /**
@@ -137,12 +137,12 @@ const isMouseOverCard = ref(false)
 const backgroundStyle = computed(() =>
   performanceMode.value
     ? {
-        backdropFilter: 'none',
-        WebkitBackdropFilter: 'none',
-        backgroundColor: 'var(--sf-transparent)',
+        backdropFilter: "none",
+        WebkitBackdropFilter: "none",
+        backgroundColor: "var(--sf-transparent)",
       }
-    : { backdropFilter: 'blur(10px)', WebkitBackdropFilter: 'blur(10px)' },
-)
+    : { backdropFilter: "blur(10px)", WebkitBackdropFilter: "blur(10px)" },
+);
 
 // ---------- 弹窗 3D 倾斜样式 ----------
 /**
@@ -152,9 +152,9 @@ const backgroundStyle = computed(() =>
  */
 const elementStyle = computed(() =>
   performanceMode.value
-    ? { transform: 'none', transition: 'none' }
-    : { transition: 'transform 0.15s ease-out' },
-)
+    ? { transform: "none", transition: "none" }
+    : { transition: "transform 0.15s ease-out" },
+);
 
 // ---------- 倾斜计算函数 ----------
 /**
@@ -167,53 +167,53 @@ const elementStyle = computed(() =>
  */
 function transformElement(clientX, clientY) {
   // 鼠标悬停在卡片上时停止倾斜，避免干扰点击操作
-  if (isMouseOverCard.value) return
-  const element = elementRef.value
-  if (!element) return
+  if (isMouseOverCard.value) return;
+  const element = elementRef.value;
+  if (!element) return;
 
   // 使用缓存的遮罩层边界，作为旋转参考中心
-  const { left, top, width, height } = maskRect
-  const centerX = left + width / 2
-  const centerY = top + height / 2
+  const { left, top, width, height } = maskRect;
+  const centerX = left + width / 2;
+  const centerY = top + height / 2;
 
   // 计算偏移量并转换为角度
-  const maxAngle = 14 // 最大倾斜角度限制
-  const rx = Math.max(-maxAngle, Math.min(maxAngle, -(clientY - centerY) / multiple))
-  const ry = Math.max(-maxAngle, Math.min(maxAngle, (clientX - centerX) / multiple))
+  const maxAngle = 14; // 最大倾斜角度限制
+  const rx = Math.max(-maxAngle, Math.min(maxAngle, -(clientY - centerY) / multiple));
+  const ry = Math.max(-maxAngle, Math.min(maxAngle, (clientX - centerX) / multiple));
 
   // 直接操作 DOM，避免高频触发 Vue 响应式更新
-  element.style.transform = `translateZ(0) rotateX(${rx}deg) rotateY(${ry}deg)`
+  element.style.transform = `translateZ(0) rotateX(${rx}deg) rotateY(${ry}deg)`;
 }
 
 // ---------- 鼠标事件处理 ----------
-let ticking = false
+let ticking = false;
 /**
  * 鼠标在遮罩层上移动时触发倾斜效果
  * 使用 requestAnimationFrame 和 ticking 节流，保证每帧只执行一次
  */
 function handleMouseMove(e) {
-  if (performanceMode.value) return
+  if (performanceMode.value) return;
   if (!ticking) {
     requestAnimationFrame(() => {
-      transformElement(e.clientX, e.clientY)
-      ticking = false
-    })
-    ticking = true
+      transformElement(e.clientX, e.clientY);
+      ticking = false;
+    });
+    ticking = true;
   }
 }
 
 /** 鼠标进入弹窗卡片：暂停倾斜并复位角度 */
 function handleMouseEnter() {
-  if (performanceMode.value) return
-  isMouseOverCard.value = true
+  if (performanceMode.value) return;
+  isMouseOverCard.value = true;
   if (elementRef.value) {
-    elementRef.value.style.transform = 'translateZ(0) rotateX(0deg) rotateY(0deg)'
+    elementRef.value.style.transform = "translateZ(0) rotateX(0deg) rotateY(0deg)";
   }
 }
 
 /** 鼠标离开弹窗卡片：恢复倾斜跟踪 */
 function handleMouseLeave() {
-  isMouseOverCard.value = false
+  isMouseOverCard.value = false;
 }
 </script>
 

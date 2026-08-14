@@ -30,71 +30,71 @@
 </template>
 
 <script setup>
-import { onUnmounted, ref } from 'vue'
+import { onUnmounted, ref } from "vue";
 
 // 核心状态管理
-const isActive = ref(false) // 是否正在冥想
-const remainingTime = ref(30) // 剩余时间（秒）
-const breathSize = ref(60) // 呼吸圆圈大小（百分比）
-const breathOpacity = ref(0.6) // 呼吸圆圈透明度
-const breathStatus = ref('准备') // 呼吸状态提示
-let breathInterval = null // 呼吸动画定时器
-let timerInterval = null // 倒计时定时器
+const isActive = ref(false); // 是否正在冥想
+const remainingTime = ref(30); // 剩余时间（秒）
+const breathSize = ref(60); // 呼吸圆圈大小（百分比）
+const breathOpacity = ref(0.6); // 呼吸圆圈透明度
+const breathStatus = ref("准备"); // 呼吸状态提示
+let breathInterval = null; // 呼吸动画定时器
+let timerInterval = null; // 倒计时定时器
 
 // 切换冥想状态（开始/暂停）
 const toggleMeditation = () => {
   if (isActive.value) {
     // 暂停冥想
-    clearInterval(breathInterval)
-    clearInterval(timerInterval)
+    clearInterval(breathInterval);
+    clearInterval(timerInterval);
   } else {
     // 开始冥想
-    startBreathAnimation()
-    startTimer()
+    startBreathAnimation();
+    startTimer();
   }
-  isActive.value = !isActive.value
-}
+  isActive.value = !isActive.value;
+};
 
 // 呼吸动画逻辑（4秒周期：2秒吸气→2秒呼气）
 const startBreathAnimation = () => {
   // 初始状态
-  breathSize.value = 60
-  breathOpacity.value = 0.4
-  breathStatus.value = '吸气'
+  breathSize.value = 60;
+  breathOpacity.value = 0.4;
+  breathStatus.value = "吸气";
 
   breathInterval = setInterval(() => {
     // 吸气阶段（放大+加深）
-    breathSize.value = 100
-    breathOpacity.value = 0.8
-    breathStatus.value = '吸气'
+    breathSize.value = 100;
+    breathOpacity.value = 0.8;
+    breathStatus.value = "吸气";
 
     setTimeout(() => {
       // 呼气阶段（缩小+变浅）
-      breathSize.value = 60
-      breathOpacity.value = 0.4
-      breathStatus.value = '呼气'
-    }, 2000)
-  }, 4000)
-}
+      breathSize.value = 60;
+      breathOpacity.value = 0.4;
+      breathStatus.value = "呼气";
+    }, 2000);
+  }, 4000);
+};
 
 // 30秒倒计时逻辑
 const startTimer = () => {
   timerInterval = setInterval(() => {
-    remainingTime.value -= 0.1
+    remainingTime.value -= 0.1;
     if (remainingTime.value <= 0) {
       // 计时结束自动停止
-      clearInterval(breathInterval)
-      clearInterval(timerInterval)
-      isActive.value = false
-      remainingTime.value = 30
-      breathStatus.value = '完成'
+      clearInterval(breathInterval);
+      clearInterval(timerInterval);
+      isActive.value = false;
+      remainingTime.value = 30;
+      breathStatus.value = "完成";
     }
-  }, 100)
-}
+  }, 100);
+};
 
 // 组件卸载时清理定时器
 onUnmounted(() => {
-  clearInterval(breathInterval)
-  clearInterval(timerInterval)
-})
+  clearInterval(breathInterval);
+  clearInterval(timerInterval);
+});
 </script>

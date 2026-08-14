@@ -1,31 +1,31 @@
 <script setup>
-import ItemCollapse from './itemCollapse.vue'
+import ItemCollapse from "./itemCollapse.vue";
 
 // 公司
-const name = defineModel('name', {
+const name = defineModel("name", {
   type: String,
-  default: '',
-})
+  default: "",
+});
 defineProps({
   add: {},
   containerTitle: {},
-})
+});
 const title = computed(() => {
-  return name.value ? name.value : '未填写公司名称'
-})
+  return name.value ? name.value : "未填写公司名称";
+});
 // 岗位
-const post = defineModel('post', {
+const post = defineModel("post", {
   type: String,
-  default: '',
-})
+  default: "",
+});
 // 内容
-const content = defineModel('content', {
+const content = defineModel("content", {
   type: String,
-  default: '',
-})
+  default: "",
+});
 // 时间
-const time = defineModel('time', {})
-const currentIndex = inject('df/current/index')
+const time = defineModel("time", {});
+const currentIndex = inject("df/current/index");
 </script>
 
 <template>

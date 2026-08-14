@@ -26,11 +26,11 @@
             />
           </div>
           <div class="text-sm leading-5" :class="{ 'line-through': item.todoDone }">
-            {{ item.value || '空便签' }}
+            {{ item.value || "空便签" }}
           </div>
         </div>
         <div class="flex items-center text-sm text-sf-text-2">
-          {{ dayjs(item.endTime).format('YYYY-MM-DD HH:mm') }}
+          {{ dayjs(item.endTime).format("YYYY-MM-DD HH:mm") }}
         </div>
       </div>
     </ElScrollbar>
@@ -38,14 +38,14 @@
 </template>
 
 <script setup>
-import { useNoteStore } from '@/stores'
-import dayjs from 'dayjs'
-const noteStore = useNoteStore()
-const { noteList, currentIndex } = storeToRefs(noteStore)
+import { useNoteStore } from "@/stores";
+import dayjs from "dayjs";
+const noteStore = useNoteStore();
+const { noteList, currentIndex } = storeToRefs(noteStore);
 
 const setCurrentIndex = (index) => {
-  currentIndex.value = index
-}
+  currentIndex.value = index;
+};
 </script>
 
 <style lang="scss" scoped>

@@ -1,2 +1,2 @@
-import Copyright from './copyright.vue'
-export default Copyright
+import Copyright from "./copyright.vue";
+export default Copyright;

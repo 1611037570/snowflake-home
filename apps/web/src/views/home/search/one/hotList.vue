@@ -7,26 +7,26 @@
 </template>
 
 <script setup>
-import SearchTitle from '../searchTitle.vue'
+import SearchTitle from "../searchTitle.vue";
 
-import { useSearchStore } from '@/stores'
-const searchStore = useSearchStore()
-const { hotSource, hotSourceVisible } = storeToRefs(searchStore)
+import { useSearchStore } from "@/stores";
+const searchStore = useSearchStore();
+const { hotSource, hotSourceVisible } = storeToRefs(searchStore);
 
 const hotList = [
   {
-    name: '百度',
-    value: '百度',
+    name: "百度",
+    value: "百度",
   },
   {
-    name: '抖音',
-    value: '抖音',
+    name: "抖音",
+    value: "抖音",
   },
   {
-    name: '微博',
-    value: '微博',
+    name: "微博",
+    value: "微博",
   },
-]
+];
 </script>
 
 <style lang="scss" scoped></style>

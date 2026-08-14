@@ -6,5 +6,5 @@
 </template>
 
 <script setup>
-defineProps({ value: [String, Number], label: String })
+defineProps({ value: [String, Number], label: String });
 </script>

@@ -1,11 +1,11 @@
 <script setup>
-import { useResumeStore } from '@/stores'
-import { xiaoYangResumeItem } from '@/stores/modules/resume/xiaoYangData'
-const resumeStore = useResumeStore()
+import { useResumeStore } from "@/stores";
+import { xiaoYangResumeItem } from "@/stores/modules/resume/xiaoYangData";
+const resumeStore = useResumeStore();
 
 function selectTemplate(templateName) {
-  if (templateName === 'xiaoYang') {
-    resumeStore.addResume(xiaoYangResumeItem)
+  if (templateName === "xiaoYang") {
+    resumeStore.addResume(xiaoYangResumeItem);
   }
 }
 </script>

@@ -105,68 +105,68 @@
 </template>
 
 <script setup>
-import { computed, ref } from 'vue'
+import { computed, ref } from "vue";
 
 // ========== 响应式数据 ==========
 // SVG 文件内容
-const svgContent = ref('')
+const svgContent = ref("");
 
 // 输出尺寸
-const width = ref(800)
-const height = ref(600)
+const width = ref(800);
+const height = ref(600);
 
 // 文件名信息
-const fileName = ref('')
+const fileName = ref("");
 
 // SVG 预览内容
-const svgPreviewContent = ref('')
+const svgPreviewContent = ref("");
 
 // 是否显示 Canvas 预览
-const showCanvasPreview = ref(false)
+const showCanvasPreview = ref(false);
 
 // 是否显示下载信息
-const showDownloadInfo = ref(false)
+const showDownloadInfo = ref(false);
 
 // 下载链接 URL
-const downloadUrl = ref('#')
+const downloadUrl = ref("#");
 
 // 下载文件名
-const downloadFileName = ref('')
+const downloadFileName = ref("");
 
 // 文件大小
-const fileSize = ref('0 KB')
+const fileSize = ref("0 KB");
 
 // ========== DOM 引用（替代 getElementById） ==========
-const fileInputRef = ref(null)
-const svgPreviewRef = ref(null)
-const canvasPreviewRef = ref(null)
+const fileInputRef = ref(null);
+const svgPreviewRef = ref(null);
+const canvasPreviewRef = ref(null);
 
 // ========== 计算属性 ==========
 // 计算当前文件名（不含扩展名）
 const currentFileName = computed(() => {
   // 从文件名中提取不带扩展名的部分
-  const fullName = fileName.value.replace('已选择: ', '').split(' ')[0] || ''
-  return fullName.replace('.svg', '') || 'converted'
-})
+  const fullName = fileName.value.replace("已选择: ", "").split(" ")[0] || "";
+  return fullName.replace(".svg", "") || "converted";
+});
 
 // ========== 方法定义 ==========
 /**
  * 触发文件输入框点击
  */
 const triggerFileInput = () => {
-  fileInputRef.value?.click()
-}
+  fileInputRef.value?.click();
+};
 
 /**
  * 处理文件选择
  * @param {Event} event - 文件选择事件
  */
 const handleFileSelect = (event) => {
-  const file = event.target.files[0]
+  const file = event.target.files[0];
   if (file) {
-    readSVGFile(file)
+    readSVGFile(file);
   }
-}
+};
 
 /**
  * 读取 SVG 文件内容
@@ -175,27 +175,27 @@ const handleFileSelect = (event) => {
 const readSVGFile = (file) => {
   // 检查文件大小（限制 5MB）
   if (file.size > 5 * 1024 * 1024) {
-    alert('文件大小超过 5MB 限制')
-    return
+    alert("文件大小超过 5MB 限制");
+    return;
   }
 
   // 显示文件名和大小
-  fileName.value = `已选择: ${file.name} (${(file.size / 1024).toFixed(1)} KB)`
+  fileName.value = `已选择: ${file.name} (${(file.size / 1024).toFixed(1)} KB)`;
 
   // 创建 FileReader 读取文件内容
-  const reader = new FileReader()
+  const reader = new FileReader();
 
   reader.onload = (e) => {
     // 保存 SVG 内容
-    svgContent.value = e.target.result
+    svgContent.value = e.target.result;
 
     // 预览 SVG
-    previewSVG(svgContent.value)
-  }
+    previewSVG(svgContent.value);
+  };
 
   // 读取文件为文本
-  reader.readAsText(file)
-}
+  reader.readAsText(file);
+};
 
 /**
  * 预览 SVG 内容（优化：精准获取根 SVG 元素）
@@ -204,48 +204,48 @@ const readSVGFile = (file) => {
 const previewSVG = (svgContent) => {
   try {
     // 改用 DOMParser 规范解析 SVG 文档
-    const parser = new DOMParser()
-    const svgDoc = parser.parseFromString(svgContent, 'image/svg+xml')
+    const parser = new DOMParser();
+    const svgDoc = parser.parseFromString(svgContent, "image/svg+xml");
 
     // 检查解析是否出错
-    if (svgDoc.querySelector('parsererror')) {
-      throw new Error('SVG 文件格式错误，解析失败')
+    if (svgDoc.querySelector("parsererror")) {
+      throw new Error("SVG 文件格式错误，解析失败");
     }
 
     // 精准获取根级 SVG 元素（而非第一个 svg 元素）
-    const svgElement = svgDoc.documentElement
-    if (svgElement.tagName !== 'svg') {
-      throw new Error('SVG 文件中未找到根级 <svg> 元素')
+    const svgElement = svgDoc.documentElement;
+    if (svgElement.tagName !== "svg") {
+      throw new Error("SVG 文件中未找到根级 <svg> 元素");
     }
 
     // 尝试获取 SVG 的原始尺寸（处理各种尺寸定义方式）
     const getNumericValue = (attr) => {
-      const value = svgElement.getAttribute(attr)
-      if (!value) return null
+      const value = svgElement.getAttribute(attr);
+      if (!value) return null;
       // 移除单位（如 px、em 等），只保留数字
-      const numericValue = parseFloat(value.replace(/[^\d.]/g, ''))
-      return isNaN(numericValue) ? null : numericValue
-    }
+      const numericValue = parseFloat(value.replace(/[^\d.]/g, ""));
+      return isNaN(numericValue) ? null : numericValue;
+    };
 
-    const originalWidth = getNumericValue('width') || svgElement.viewBox?.split(' ')[2] || 800
-    const originalHeight = getNumericValue('height') || svgElement.viewBox?.split(' ')[3] || 600
+    const originalWidth = getNumericValue("width") || svgElement.viewBox?.split(" ")[2] || 800;
+    const originalHeight = getNumericValue("height") || svgElement.viewBox?.split(" ")[3] || 600;
 
     // 更新宽度和高度输入框的值
-    width.value = parseInt(originalWidth) || 800
-    height.value = parseInt(originalHeight) || 600
+    width.value = parseInt(originalWidth) || 800;
+    height.value = parseInt(originalHeight) || 600;
 
     // 设置 SVG 预览内容（保留根元素的属性）
-    const cloneSvg = svgElement.cloneNode(true)
-    svgPreviewContent.value = cloneSvg.outerHTML
+    const cloneSvg = svgElement.cloneNode(true);
+    svgPreviewContent.value = cloneSvg.outerHTML;
 
     // 重置下载信息和 Canvas 预览
-    showDownloadInfo.value = false
-    showCanvasPreview.value = false
+    showDownloadInfo.value = false;
+    showCanvasPreview.value = false;
   } catch (error) {
-    console.error('SVG 预览失败:', error)
-    alert(`SVG 预览失败: ${error.message}`)
+    console.error("SVG 预览失败:", error);
+    alert(`SVG 预览失败: ${error.message}`);
   }
-}
+};
 
 /**
  * 转换 SVG 为 PNG 格式
@@ -253,102 +253,102 @@ const previewSVG = (svgContent) => {
 const convertSVG = async () => {
   // 检查是否有 SVG 内容
   if (!svgContent.value) {
-    alert('请先上传 SVG 文件')
-    return
+    alert("请先上传 SVG 文件");
+    return;
   }
 
   try {
     // 使用 ref 获取 Canvas 元素（替代 getElementById）
-    const canvas = canvasPreviewRef.value
-    if (!canvas) throw new Error('Canvas 元素未找到')
+    const canvas = canvasPreviewRef.value;
+    if (!canvas) throw new Error("Canvas 元素未找到");
 
-    const ctx = canvas.getContext('2d')
-    if (!ctx) throw new Error('无法获取 Canvas 2D 上下文')
+    const ctx = canvas.getContext("2d");
+    if (!ctx) throw new Error("无法获取 Canvas 2D 上下文");
 
     // 设置 Canvas 尺寸
-    canvas.width = width.value
-    canvas.height = height.value
+    canvas.width = width.value;
+    canvas.height = height.value;
 
     // 创建 Image 对象
-    const img = new Image()
+    const img = new Image();
     // 关闭跨域限制（避免 SVG 内外部资源导致的跨域问题）
-    img.crossOrigin = 'anonymous'
+    img.crossOrigin = "anonymous";
 
     // 将 SVG 内容转换为 Data URL
-    const svgBlob = new Blob([svgContent.value], { type: 'image/svg+xml;charset=utf-8' })
-    const svgUrl = URL.createObjectURL(svgBlob)
+    const svgBlob = new Blob([svgContent.value], { type: "image/svg+xml;charset=utf-8" });
+    const svgUrl = URL.createObjectURL(svgBlob);
 
     // 等待图片加载完成
     await new Promise((resolve, reject) => {
-      img.onload = resolve
-      img.onerror = (err) => reject(new Error(`SVG 图片加载失败: ${err.message}`))
-      img.src = svgUrl
-    })
+      img.onload = resolve;
+      img.onerror = (err) => reject(new Error(`SVG 图片加载失败: ${err.message}`));
+      img.src = svgUrl;
+    });
 
     // 清空画布（PNG 支持透明背景）
-    ctx.clearRect(0, 0, canvas.width, canvas.height)
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     // 绘制 SVG 到 Canvas
-    ctx.drawImage(img, 0, 0, canvas.width, canvas.height)
+    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
 
     // 显示 Canvas 预览
-    showCanvasPreview.value = true
+    showCanvasPreview.value = true;
 
     // 将 Canvas 转换为 PNG Blob（质量固定为100%）
     const blob = await new Promise((resolve) => {
-      canvas.toBlob(resolve, 'image/png', 1.0) // 明确指定质量 1.0
-    })
+      canvas.toBlob(resolve, "image/png", 1.0); // 明确指定质量 1.0
+    });
 
     // 计算文件大小
-    const sizeInKB = (blob.size / 1024).toFixed(1)
-    fileSize.value = `${sizeInKB} KB`
+    const sizeInKB = (blob.size / 1024).toFixed(1);
+    fileSize.value = `${sizeInKB} KB`;
 
     // 创建下载链接（并清理旧的 URL）
-    if (downloadUrl.value !== '#') {
-      URL.revokeObjectURL(downloadUrl.value)
+    if (downloadUrl.value !== "#") {
+      URL.revokeObjectURL(downloadUrl.value);
     }
-    downloadUrl.value = URL.createObjectURL(blob)
-    downloadFileName.value = `${currentFileName.value}_${width.value}x${height.value}.png`
+    downloadUrl.value = URL.createObjectURL(blob);
+    downloadFileName.value = `${currentFileName.value}_${width.value}x${height.value}.png`;
 
     // 显示下载信息
-    showDownloadInfo.value = true
+    showDownloadInfo.value = true;
 
     // 清理 SVG URL 对象
-    URL.revokeObjectURL(svgUrl)
+    URL.revokeObjectURL(svgUrl);
   } catch (error) {
-    console.error('转换失败:', error)
-    alert(`转换失败: ${error.message}`)
+    console.error("转换失败:", error);
+    alert(`转换失败: ${error.message}`);
   }
-}
+};
 
 /**
  * 重置转换器状态
  */
 const resetConverter = () => {
   // 清空所有响应式数据
-  svgContent.value = ''
-  fileName.value = ''
-  svgPreviewContent.value = ''
-  showCanvasPreview.value = false
-  showDownloadInfo.value = false
+  svgContent.value = "";
+  fileName.value = "";
+  svgPreviewContent.value = "";
+  showCanvasPreview.value = false;
+  showDownloadInfo.value = false;
 
   // 清理下载链接 URL
-  if (downloadUrl.value !== '#') {
-    URL.revokeObjectURL(downloadUrl.value)
+  if (downloadUrl.value !== "#") {
+    URL.revokeObjectURL(downloadUrl.value);
   }
-  downloadUrl.value = '#'
-  downloadFileName.value = ''
-  fileSize.value = '0 KB'
+  downloadUrl.value = "#";
+  downloadFileName.value = "";
+  fileSize.value = "0 KB";
 
   // 重置尺寸
-  width.value = 800
-  height.value = 600
+  width.value = 800;
+  height.value = 600;
 
   // 重置文件输入框（使用 ref）
   if (fileInputRef.value) {
-    fileInputRef.value.value = ''
+    fileInputRef.value.value = "";
   }
-}
+};
 </script>
 
 <style lang="scss" scoped>

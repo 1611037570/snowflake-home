@@ -14,44 +14,44 @@
 </template>
 
 <script setup>
-import '@wangeditor-next/editor/dist/css/style.css' // 引入 css
+import "@wangeditor-next/editor/dist/css/style.css"; // 引入 css
 
-import { Editor, Toolbar } from '@wangeditor-next/editor-for-vue'
-import { onBeforeUnmount, onMounted, shallowRef } from 'vue'
+import { Editor, Toolbar } from "@wangeditor-next/editor-for-vue";
+import { onBeforeUnmount, onMounted, shallowRef } from "vue";
 defineProps({
   height: {
     type: String,
-    default: '300px',
+    default: "300px",
   },
-})
+});
 // 编辑器实例，必须用 shallowRef
-const editorRef = shallowRef()
-const bg = inject('bg', 'var(--color-sf-primary)')
+const editorRef = shallowRef();
+const bg = inject("bg", "var(--color-sf-primary)");
 // 内容 HTML
-const valueHtml = defineModel('modelValue', {
-  default: '<p>欢迎体验 雪花浏览器</p>',
-})
+const valueHtml = defineModel("modelValue", {
+  default: "<p>欢迎体验 雪花浏览器</p>",
+});
 
 // 模拟 ajax 异步获取内容
-onMounted(() => {})
+onMounted(() => {});
 
 const toolbarConfig = {
-  toolbarKeys: ['bold', 'italic', 'underline', 'bulletedList', 'numberedList', 'undo', 'redo'],
-}
-const editorConfig = { placeholder: '请输入内容...' }
+  toolbarKeys: ["bold", "italic", "underline", "bulletedList", "numberedList", "undo", "redo"],
+};
+const editorConfig = { placeholder: "请输入内容..." };
 
-const mode = 'simple' // 或 'simple'
+const mode = "simple"; // 或 'simple'
 
 // 组件销毁时，也及时销毁编辑器
 onBeforeUnmount(() => {
-  const editor = editorRef.value
-  if (editor == null) return
-  editor.destroy()
-})
+  const editor = editorRef.value;
+  if (editor == null) return;
+  editor.destroy();
+});
 
 const handleCreated = (editor) => {
-  editorRef.value = editor // 记录 editor 实例，重要！
-}
+  editorRef.value = editor; // 记录 editor 实例，重要！
+};
 </script>
 
 <style scoped lang="scss">

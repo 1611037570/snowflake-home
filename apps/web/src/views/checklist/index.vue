@@ -21,30 +21,30 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
-import { list as source } from './data'
-const result = ref([])
+import { ref } from "vue";
+import { list as source } from "./data";
+const result = ref([]);
 const drawAllRandom = (src) => {
-  const pool = src.slice()
-  result.value = []
+  const pool = src.slice();
+  result.value = [];
   while (pool.length) {
-    const i = Math.floor(Math.random() * pool.length)
-    result.value.push({ text: pool[i], selected: false })
-    pool.splice(i, 1)
+    const i = Math.floor(Math.random() * pool.length);
+    result.value.push({ text: pool[i], selected: false });
+    pool.splice(i, 1);
   }
-  return result.value
-}
+  return result.value;
+};
 
-const drawn = ref(drawAllRandom(source))
+const drawn = ref(drawAllRandom(source));
 
 const redraw = () => {
-  drawn.value = drawAllRandom(source)
-}
+  drawn.value = drawAllRandom(source);
+};
 
 const toggle = (idx) => {
-  const item = drawn.value[idx]
-  if (item) item.selected = !item.selected
-}
+  const item = drawn.value[idx];
+  if (item) item.selected = !item.selected;
+};
 </script>
 
 <style lang="scss" scoped></style>

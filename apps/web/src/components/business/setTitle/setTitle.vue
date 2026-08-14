@@ -3,14 +3,14 @@
 </template>
 
 <script setup>
-defineOptions({ name: 'SfSetTitle' })
+defineOptions({ name: "SfSetTitle" });
 
 defineProps({
   title: {
     type: String,
-    default: '',
+    default: "",
   },
-})
+});
 </script>
 
 <style lang="scss" scoped></style>

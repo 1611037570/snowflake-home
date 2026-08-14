@@ -25,24 +25,24 @@
 </template>
 
 <script setup>
-import { useSearchStore } from '@/stores'
-import { onClickOutside } from '@vueuse/core'
+import { useSearchStore } from "@/stores";
+import { onClickOutside } from "@vueuse/core";
 
-const searchStore = useSearchStore()
-const { webSourceListVisible, currentWebIndex, webSource } = storeToRefs(searchStore)
+const searchStore = useSearchStore();
+const { webSourceListVisible, currentWebIndex, webSource } = storeToRefs(searchStore);
 
 // 切换搜索源
 const changeSource = (source) => {
-  currentWebIndex.value = webSource.value.indexOf(source)
-  webSourceListVisible.value = false
-}
-const sourceDropdown = useTemplateRef('sourceDropdown')
+  currentWebIndex.value = webSource.value.indexOf(source);
+  webSourceListVisible.value = false;
+};
+const sourceDropdown = useTemplateRef("sourceDropdown");
 // 点击外部关闭搜索源列表
 onClickOutside(sourceDropdown, () => {
   setTimeout(() => {
-    webSourceListVisible.value = false
-  }, 10)
-})
+    webSourceListVisible.value = false;
+  }, 10);
+});
 </script>
 
 <style lang="scss" scoped></style>

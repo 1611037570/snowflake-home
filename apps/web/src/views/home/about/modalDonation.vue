@@ -78,24 +78,24 @@
 </template>
 
 <script setup>
-import { useCopy } from '@/hooks'
+import { useCopy } from "@/hooks";
 // 导入支付图片
-import aliPay from '@/assets/images/aliPay.jpg'
-import weChatPay from '@/assets/images/weChatPay.jpg'
+import aliPay from "@/assets/images/aliPay.jpg";
+import weChatPay from "@/assets/images/weChatPay.jpg";
 
 // 支付方式列表
 const list = [
-  { name: '支付宝', value: aliPay },
-  { name: '微信支付', value: weChatPay },
-]
+  { name: "支付宝", value: aliPay },
+  { name: "微信支付", value: weChatPay },
+];
 
 function goGitHub() {
-  urlNavigation('https://github.com/1611037570/snowflake-home')
+  urlNavigation("https://github.com/1611037570/snowflake-home");
 }
 
 function goShare() {
-  const currentUrl = window.location.href
-  const shareText = `${currentUrl}`
-  useCopy(shareText)
+  const currentUrl = window.location.href;
+  const shareText = `${currentUrl}`;
+  useCopy(shareText);
 }
 </script>

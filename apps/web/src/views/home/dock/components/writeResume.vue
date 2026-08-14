@@ -8,11 +8,11 @@
 </template>
 
 <script setup>
-import { useRouter } from 'vue-router'
-const router = useRouter()
+import { useRouter } from "vue-router";
+const router = useRouter();
 const openResume = () => {
-  router.push({ name: 'resumeMain' })
-}
+  router.push({ name: "resumeMain" });
+};
 </script>
 
 <style scoped></style>
