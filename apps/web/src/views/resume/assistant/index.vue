@@ -2,7 +2,6 @@
 import { ref } from "vue";
 import { quickActions } from "./data";
 import EmptyState from "./emptyState.vue";
-import InputArea from "./InputArea.vue";
 import JdInput from "./JdInput.vue";
 import Score from "./Score.vue";
 import { useAiStore } from "@/stores/modules/ai";
@@ -10,19 +9,18 @@ import Chat from "@/views/ai/chat/index.vue";
 
 // AI 对话
 const aiStore = useAiStore();
-const chat = aiStore.createDefaultChat();
+const { createDefaultChat } = aiStore;
+
+// 默认对话
+const chat = ref([]);
 
 // 当前视图：score | jd
 const currentView = ref("score");
 const activeMode = ref("");
 
-// 切换到 JD 对标视图
-function switchToJd() {
-  currentView.value = "jd";
-}
-
 function switchMode(type) {
   const action = quickActions.find((item) => item.type === type);
+  chat.value = createDefaultChat();
   activeMode.value = action?.name || "";
   currentView.value = type;
 }
@@ -43,14 +41,6 @@ function clearChat() {
       <!-- AI 对话项 -->
       <div class="cursor-pointer" @click="clearChat">清空对话</div>
       <Chat :chat="chat" v-if="activeMode" />
-
-      <!-- 下方：输入框组件 -->
-      <InputArea
-        v-if="0"
-        v-model:active-mode="activeMode"
-        @switch-jd="switchToJd"
-        @switch-mode="switchMode"
-      />
     </div>
   </div>
 </template>
