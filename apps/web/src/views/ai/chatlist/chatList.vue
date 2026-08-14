@@ -1,12 +1,12 @@
 <script setup>
-import { useAiStore } from '@/stores'
-import { storeToRefs } from 'pinia'
-import ChatListContent from './ChatListContent.vue'
-import SidebarDock from './SidebarDock.vue'
-import SidebarFloat from './SidebarFloat.vue'
+import { useAiStore } from "@/stores";
+import { storeToRefs } from "pinia";
+import ChatListContent from "./ChatListContent.vue";
+import SidebarDock from "./SidebarDock.vue";
+import SidebarFloat from "./SidebarFloat.vue";
 
-const aiStore = useAiStore()
-const { sidebarMode } = storeToRefs(aiStore)
+const aiStore = useAiStore();
+const { sidebarMode } = storeToRefs(aiStore);
 </script>
 
 <template>

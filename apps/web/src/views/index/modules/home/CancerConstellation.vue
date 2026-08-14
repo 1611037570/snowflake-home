@@ -226,20 +226,20 @@
 }
 .star-label {
   fill: #a0b8d8;
-  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-size: 20px;
   letter-spacing: 1px;
 }
 .star-label-bright {
   fill: #d0e0ff;
-  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-size: 20px;
   font-weight: bold;
   letter-spacing: 1.5px;
 }
 .dso-label {
   fill: #66ccff;
-  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-size: 20px;
   font-style: italic;
   letter-spacing: 1px;

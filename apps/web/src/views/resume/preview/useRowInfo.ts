@@ -1,17 +1,17 @@
-import { useDebounceFn, useMutationObserver, useResizeObserver } from '@vueuse/core'
-import { nextTick, onMounted, ref, watch, type Ref } from 'vue'
+import { useDebounceFn, useMutationObserver, useResizeObserver } from "@vueuse/core";
+import { nextTick, onMounted, ref, watch, type Ref } from "vue";
 
 interface RowInfo {
-  id: string
-  height: number
-  element: HTMLElement
-  index: number
-  html: string
+  id: string;
+  height: number;
+  element: HTMLElement;
+  index: number;
+  html: string;
 }
 
 interface ModuleInfo {
-  moduleKey: string
-  rows: RowInfo[]
+  moduleKey: string;
+  rows: RowInfo[];
 }
 
 /**
@@ -26,107 +26,107 @@ export function useRowInfo(
   watchOptions: any,
   options?: { selector?: string },
 ) {
-  const idPrefix = 'row-item'
-  const selector = options?.selector || '.resume-module-wrapper'
+  const idPrefix = "row-item";
+  const selector = options?.selector || ".resume-module-wrapper";
 
-  const moduleList = ref<ModuleInfo[]>([])
-  const totalHeight = ref(0)
+  const moduleList = ref<ModuleInfo[]>([]);
+  const totalHeight = ref(0);
 
   const getRowHeight = (div: HTMLElement): number => {
-    const style = window.getComputedStyle(div)
-    const marginTop = parseFloat(style.marginTop) || 0
-    const marginBottom = parseFloat(style.marginBottom) || 0
-    return div.offsetHeight + marginTop + marginBottom
-  }
+    const style = window.getComputedStyle(div);
+    const marginTop = parseFloat(style.marginTop) || 0;
+    const marginBottom = parseFloat(style.marginBottom) || 0;
+    return div.offsetHeight + marginTop + marginBottom;
+  };
 
   const createRowInfo = (div: HTMLElement, moduleKey: string, index: number): RowInfo => {
-    const rowId = `${idPrefix}-${moduleKey}-${index + 1}`
-    div.id = rowId
+    const rowId = `${idPrefix}-${moduleKey}-${index + 1}`;
+    div.id = rowId;
     return {
       id: rowId,
       height: getRowHeight(div),
       element: div,
       index,
       html: div.outerHTML,
-    }
-  }
+    };
+  };
 
   const processModule = (
     wrapper: HTMLElement,
   ): { moduleKey: string; rows: RowInfo[]; height: number } => {
-    const moduleKey = wrapper.dataset.module || ''
+    const moduleKey = wrapper.dataset.module || "";
     const rows = Array.from(wrapper.children, (div, index) =>
       createRowInfo(div as HTMLElement, moduleKey, index),
-    )
-    const height = rows.reduce((sum, row) => sum + row.height, 0)
+    );
+    const height = rows.reduce((sum, row) => sum + row.height, 0);
 
-    return { moduleKey, rows, height }
-  }
+    return { moduleKey, rows, height };
+  };
 
   const hasModulesChanged = (newModules: ModuleInfo[]): boolean => {
-    if (newModules.length !== moduleList.value.length) return true
+    if (newModules.length !== moduleList.value.length) return true;
 
     for (let i = 0; i < newModules.length; i++) {
-      const newRows = newModules[i].rows
-      const oldRows = moduleList.value[i]?.rows || []
+      const newRows = newModules[i].rows;
+      const oldRows = moduleList.value[i]?.rows || [];
 
-      if (newRows.length !== oldRows.length) return true
+      if (newRows.length !== oldRows.length) return true;
 
       for (let j = 0; j < newRows.length; j++) {
-        if (newRows[j].height !== oldRows[j]?.height) return true
+        if (newRows[j].height !== oldRows[j]?.height) return true;
       }
     }
 
-    return false
-  }
+    return false;
+  };
 
   const handleRowInfo = () => {
     const root = (
       rootRef.value instanceof HTMLElement ? rootRef.value : (rootRef.value as any)?.$el
-    ) as HTMLElement | null
+    ) as HTMLElement | null;
 
     if (!root) {
-      moduleList.value = []
-      totalHeight.value = 0
-      return
+      moduleList.value = [];
+      totalHeight.value = 0;
+      return;
     }
 
-    const wrappers = root.querySelectorAll(selector)
-    const modules: ModuleInfo[] = []
-    let sumHeight = 0
+    const wrappers = root.querySelectorAll(selector);
+    const modules: ModuleInfo[] = [];
+    let sumHeight = 0;
 
     wrappers.forEach((wrapper: HTMLElement) => {
-      const { moduleKey, rows, height } = processModule(wrapper)
-      modules.push({ moduleKey, rows })
-      sumHeight += height
-    })
+      const { moduleKey, rows, height } = processModule(wrapper);
+      modules.push({ moduleKey, rows });
+      sumHeight += height;
+    });
 
     if (hasModulesChanged(modules)) {
-      moduleList.value = modules
-      totalHeight.value = sumHeight
+      moduleList.value = modules;
+      totalHeight.value = sumHeight;
     }
-  }
-  const debouncedHandleRowInfo = useDebounceFn(handleRowInfo, 100)
+  };
+  const debouncedHandleRowInfo = useDebounceFn(handleRowInfo, 100);
 
   onMounted(async () => {
-    await nextTick()
-    debouncedHandleRowInfo()
-  })
+    await nextTick();
+    debouncedHandleRowInfo();
+  });
 
-  useResizeObserver(rootRef, debouncedHandleRowInfo)
+  useResizeObserver(rootRef, debouncedHandleRowInfo);
 
   useMutationObserver(rootRef, debouncedHandleRowInfo, {
     childList: true,
     subtree: true,
     characterData: true,
-  })
+  });
 
-  watch(rootRef, debouncedHandleRowInfo, { immediate: false })
+  watch(rootRef, debouncedHandleRowInfo, { immediate: false });
 
-  watch(watchOptions, debouncedHandleRowInfo, { deep: true })
+  watch(watchOptions, debouncedHandleRowInfo, { deep: true });
 
   return {
     moduleList,
     totalHeight,
-  }
+  };
 }

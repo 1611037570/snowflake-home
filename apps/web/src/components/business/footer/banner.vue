@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { useToggle } from '@vueuse/core'
-const [active, toggle] = useToggle(false)
+import { useToggle } from "@vueuse/core";
+const [active, toggle] = useToggle(false);
 </script>
 
 <template>

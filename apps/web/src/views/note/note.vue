@@ -1,70 +1,70 @@
 <script setup>
-import { useNoteStore, useThemeStore } from '@/stores'
-import { MdEditor, MdPreview } from 'md-editor-v3'
-import 'md-editor-v3/lib/style.css'
-import NoteList from './components/noteList.vue'
-const noteStore = useNoteStore()
-const themeStore = useThemeStore()
-const { theme } = storeToRefs(themeStore)
-const { delNote } = noteStore
+import { useNoteStore, useThemeStore } from "@/stores";
+import { MdEditor, MdPreview } from "md-editor-v3";
+import "md-editor-v3/lib/style.css";
+import NoteList from "./components/noteList.vue";
+const noteStore = useNoteStore();
+const themeStore = useThemeStore();
+const { theme } = storeToRefs(themeStore);
+const { delNote } = noteStore;
 
-const { noteList, currentIndex } = storeToRefs(noteStore)
+const { noteList, currentIndex } = storeToRefs(noteStore);
 
 function switchStatus(key) {
-  noteList.value[currentIndex.value][key] = !noteList.value[currentIndex.value][key]
+  noteList.value[currentIndex.value][key] = !noteList.value[currentIndex.value][key];
 }
-const currentNote = computed(() => noteList.value[currentIndex.value])
+const currentNote = computed(() => noteList.value[currentIndex.value]);
 
 function del() {
-  delNote()
+  delNote();
 }
 const noteStatusList = computed(() => {
-  console.log('currentIndex.value 1 ', currentIndex.value)
+  console.log("currentIndex.value 1 ", currentIndex.value);
   if (currentIndex.value == -1) {
-    console.log('currentIndex.value 2 ', currentIndex.value)
-    return []
+    console.log("currentIndex.value 2 ", currentIndex.value);
+    return [];
   }
-  const item = currentNote.value
+  const item = currentNote.value;
   return [
     {
-      info: item.top ? '取消置顶' : '固定在起始页',
-      fn: () => switchStatus('top'),
+      info: item.top ? "取消置顶" : "固定在起始页",
+      fn: () => switchStatus("top"),
       value: item.top,
       disabled: item.todo,
-      icon: 'ic:round-push-pin',
+      icon: "ic:round-push-pin",
     },
     {
-      info: item.todo ? '取消待办' : '设为待办',
-      fn: () => switchStatus('todo'),
+      info: item.todo ? "取消待办" : "设为待办",
+      fn: () => switchStatus("todo"),
       value: item.todo,
-      icon: 'pajamas:todo-add',
+      icon: "pajamas:todo-add",
     },
     {
-      info: item.md ? '取消Markdown' : '设为Markdown',
-      fn: () => switchStatus('md'),
+      info: item.md ? "取消Markdown" : "设为Markdown",
+      fn: () => switchStatus("md"),
       value: item.md,
-      icon: 'ph:file-md-duotone',
+      icon: "ph:file-md-duotone",
     },
     {
-      info: '设置背景颜色',
+      info: "设置背景颜色",
       value: item.bgColor,
-      fn: () => switchStatus('bgColor'),
-      icon: 'fluent-mdl2:color-solid',
+      fn: () => switchStatus("bgColor"),
+      icon: "fluent-mdl2:color-solid",
     },
     {
-      info: '分享到便签墙',
+      info: "分享到便签墙",
       value: item.bgColor,
-      fn: () => switchStatus('bgColor'),
-      icon: 'icon-park-outline:send-one',
+      fn: () => switchStatus("bgColor"),
+      icon: "icon-park-outline:send-one",
     },
     {
-      info: '删除',
+      info: "删除",
       value: item.del,
       fn: () => del(),
-      icon: 'ic:round-delete',
+      icon: "ic:round-delete",
     },
-  ]
-})
+  ];
+});
 </script>
 
 <template>

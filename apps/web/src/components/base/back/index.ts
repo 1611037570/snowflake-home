@@ -1,3 +1,3 @@
-import Back from './back.vue'
+import Back from "./back.vue";
 
-export default Back
+export default Back;

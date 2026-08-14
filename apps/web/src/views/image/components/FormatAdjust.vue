@@ -42,33 +42,33 @@
 </template>
 
 <script setup>
-import Title from './title.vue'
+import Title from "./title.vue";
 const props = defineProps({
-  defaultFormat: { type: String, default: '' },
+  defaultFormat: { type: String, default: "" },
   defaultQuality: { type: Number, default: 1 },
-})
+});
 
 // 使用 defineModel 创建双向绑定的质量值
-const quality = defineModel('quality', { default: 1 })
-const format = defineModel('format', { default: '' })
+const quality = defineModel("quality", { default: 1 });
+const format = defineModel("format", { default: "" });
 
 // 重置到默认质量值
 function resetQuality() {
-  quality.value = props.defaultQuality
+  quality.value = props.defaultQuality;
 }
 function resetFormat() {
-  format.value = props.defaultFormat
+  format.value = props.defaultFormat;
 }
 
 // 质量选项配置
 const qualityOptions = [
-  { label: $t('image.quality.lossless'), value: 1 },
-  { label: $t('image.quality.high'), value: 0.8 },
-  { label: $t('image.quality.medium'), value: 0.6 },
-  { label: $t('image.quality.low'), value: 0.4 },
-  { label: $t('image.quality.veryLow'), value: 0.2 },
-]
+  { label: $t("image.quality.lossless"), value: 1 },
+  { label: $t("image.quality.high"), value: 0.8 },
+  { label: $t("image.quality.medium"), value: 0.6 },
+  { label: $t("image.quality.low"), value: 0.4 },
+  { label: $t("image.quality.veryLow"), value: 0.2 },
+];
 
 // 支持的图片格式列表
-const formats = ['jpg', 'png', 'webp']
+const formats = ["jpg", "png", "webp"];
 </script>

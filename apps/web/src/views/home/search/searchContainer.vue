@@ -1,8 +1,8 @@
 <script setup>
-import { useSearchStore } from '@/stores'
-import { storeToRefs } from 'pinia'
-const searchStore = useSearchStore()
-const { searchFocus } = storeToRefs(searchStore)
+import { useSearchStore } from "@/stores";
+import { storeToRefs } from "pinia";
+const searchStore = useSearchStore();
+const { searchFocus } = storeToRefs(searchStore);
 </script>
 
 <template>

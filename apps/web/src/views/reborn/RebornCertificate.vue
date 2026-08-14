@@ -39,7 +39,7 @@
 </template>
 
 <script setup>
-import RebornStatCard from './RebornStatCard.vue'
-defineProps({ appState: Object, completionDateText: String, longestStreak: Number })
-defineEmits(['newJourney', 'shareCertificate'])
+import RebornStatCard from "./RebornStatCard.vue";
+defineProps({ appState: Object, completionDateText: String, longestStreak: Number });
+defineEmits(["newJourney", "shareCertificate"]);
 </script>

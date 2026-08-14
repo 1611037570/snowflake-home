@@ -1,26 +1,26 @@
 <script setup>
-import { getCurrentInstance } from 'vue'
+import { getCurrentInstance } from "vue";
 
-const { proxy } = getCurrentInstance()
+const { proxy } = getCurrentInstance();
 
 // 社交账号列表数据
-const name = defineModel('name', {
+const name = defineModel("name", {
   type: String,
-  default: '',
-})
-const url = defineModel('url', {
+  default: "",
+});
+const url = defineModel("url", {
   type: String,
-  default: '',
-})
-const currentIndex = inject('df/current/index')
-const removeItem = inject('df/removeItem')
+  default: "",
+});
+const currentIndex = inject("df/current/index");
+const removeItem = inject("df/removeItem");
 
 // 删除社交账号
 const removeAccount = (index) => {
-  proxy.$confirm('确定要删除当前内容吗？', '删除确认').then(() => {
-    removeItem(index)
-  })
-}
+  proxy.$confirm("确定要删除当前内容吗？", "删除确认").then(() => {
+    removeItem(index);
+  });
+};
 </script>
 
 <template>

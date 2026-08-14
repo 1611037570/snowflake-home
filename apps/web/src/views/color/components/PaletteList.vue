@@ -1,14 +1,14 @@
 <script setup lang="ts">
-import { useClipboard } from '@vueuse/core'
-import { ElMessage } from 'element-plus'
-import { list } from '../data'
+import { useClipboard } from "@vueuse/core";
+import { ElMessage } from "element-plus";
+import { list } from "../data";
 
-const { copy } = useClipboard()
+const { copy } = useClipboard();
 
 function copyClass(cls: string) {
   copy(cls)
     .then(() => ElMessage.success(`已复制类名: ${cls}`))
-    .catch(() => ElMessage.error('复制失败'))
+    .catch(() => ElMessage.error("复制失败"));
 }
 </script>
 

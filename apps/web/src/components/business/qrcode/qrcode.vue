@@ -1,59 +1,59 @@
 <script setup>
-import QRCode from 'qrcode'
-import { onMounted, ref, watch } from 'vue'
+import QRCode from "qrcode";
+import { onMounted, ref, watch } from "vue";
 
-defineOptions({ name: 'SfQrcode' })
+defineOptions({ name: "SfQrcode" });
 
 // 接收要生成二维码的数据
 const props = defineProps({
   value: {
     type: String,
-    default: '',
+    default: "",
   },
   size: {
     type: Number,
     default: 256,
   },
-})
+});
 
 // 二维码图片URL
-const qrUrl = ref('')
+const qrUrl = ref("");
 
 // 生成二维码
 const generateQRCode = async () => {
-  if (!props.value) return
+  if (!props.value) return;
   try {
     // 使用qrcode库生成二维码
     qrUrl.value = await QRCode.toDataURL(props.value, {
       width: props.size || 256, // 二维码尺寸（像素）
       margin: 1,
-      errorCorrectionLevel: 'H',
-    })
+      errorCorrectionLevel: "H",
+    });
   } catch (error) {
-    console.error('生成二维码失败:', error)
+    console.error("生成二维码失败:", error);
   }
-}
+};
 
 // 组件挂载时生成二维码
 onMounted(() => {
-  generateQRCode()
-})
+  generateQRCode();
+});
 
 // 监听数据变化，重新生成二维码
 watch(
   () => props.value,
   () => {
-    generateQRCode()
+    generateQRCode();
   },
-)
+);
 
 // 监听大小变化，重新生成二维码
 watch(
   () => props.size,
   () => {
-    generateQRCode()
+    generateQRCode();
   },
-)
+);
 </script>
 
 <template>

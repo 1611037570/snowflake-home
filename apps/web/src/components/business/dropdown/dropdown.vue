@@ -14,24 +14,24 @@
 </template>
 
 <script setup lang="ts">
-import { ElDropdown } from 'element-plus'
-import type { ComponentInstance } from 'vue'
-import { getCurrentInstance, h, ref } from 'vue'
+import { ElDropdown } from "element-plus";
+import type { ComponentInstance } from "vue";
+import { getCurrentInstance, h, ref } from "vue";
 
-import { useThemeStore } from '@/stores'
-import { storeToRefs } from 'pinia'
-const trigger = ref('hover')
+import { useThemeStore } from "@/stores";
+import { storeToRefs } from "pinia";
+const trigger = ref("hover");
 
-defineOptions({ name: 'SfDropdown' })
-const themeStore = useThemeStore()
-const { theme } = storeToRefs(themeStore)
+defineOptions({ name: "SfDropdown" });
+const themeStore = useThemeStore();
+const { theme } = storeToRefs(themeStore);
 
-const vm: any = getCurrentInstance()
+const vm: any = getCurrentInstance();
 
 function changeRef(exports: any) {
-  vm.exposed = exports
+  vm.exposed = exports;
 }
-defineExpose({} as ComponentInstance<typeof ElDropdown>)
+defineExpose({} as ComponentInstance<typeof ElDropdown>);
 </script>
 
 <style scoped></style>

@@ -3,27 +3,27 @@
 </template>
 
 <script setup lang="ts">
-import Cropper from 'cropperjs'
-import { onMounted } from 'vue'
+import Cropper from "cropperjs";
+import { onMounted } from "vue";
 
 // 定义props接收图片地址
 const props = defineProps<{
-  src: string
-}>()
+  src: string;
+}>();
 
 onMounted(() => {
-  const image = new Image()
+  const image = new Image();
 
-  image.src = props.src
-  image.alt = 'Picture'
+  image.src = props.src;
+  image.alt = "Picture";
 
   const cropper = new Cropper(image, {
-    container: '.cropper-container',
+    container: ".cropper-container",
     viewMode: 1, // 限制裁切框不超过图片边界
-  })
+  });
 
-  console.log(cropper)
-})
+  console.log(cropper);
+});
 </script>
 
 <style lang="scss" scoped>

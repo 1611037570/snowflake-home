@@ -1,5 +1,5 @@
 <script setup>
-import { computed } from 'vue'
+import { computed } from "vue";
 
 const props = defineProps({
   label: {
@@ -12,24 +12,24 @@ const props = defineProps({
   },
   leftLabel: {
     type: String,
-    default: '小',
+    default: "小",
   },
   rightLabel: {
     type: String,
-    default: '大',
+    default: "大",
   },
-})
+});
 
-const modelValue = defineModel()
+const modelValue = defineModel();
 
 const currentIndex = computed({
   get() {
-    return props.list.findIndex((item) => item.value === modelValue.value)
+    return props.list.findIndex((item) => item.value === modelValue.value);
   },
   set(index) {
-    modelValue.value = props.list[index].value
+    modelValue.value = props.list[index].value;
   },
-})
+});
 </script>
 
 <template>

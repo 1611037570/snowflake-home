@@ -1,8 +1,8 @@
 <script setup>
-import { useNoteStore } from '@/stores'
-import Note from './index.vue'
-const noteStore = useNoteStore()
-const { noteVisible } = storeToRefs(noteStore)
+import { useNoteStore } from "@/stores";
+import Note from "./index.vue";
+const noteStore = useNoteStore();
+const { noteVisible } = storeToRefs(noteStore);
 </script>
 
 <template>

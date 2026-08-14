@@ -1,26 +1,26 @@
 <script setup>
-import { ref, computed } from 'vue'
-import { useRouter } from 'vue-router'
-import { PROJECT_PAGE } from '@/constants'
+import { ref, computed } from "vue";
+import { useRouter } from "vue-router";
+import { PROJECT_PAGE } from "@/constants";
 
-const router = useRouter()
-const currentRoute = ref(localStorage.getItem('snowflakeRoute') || '/home')
+const router = useRouter();
+const currentRoute = ref(localStorage.getItem("snowflakeRoute") || "/home");
 
-const recommendedPage = computed(() => PROJECT_PAGE.value.find((item) => item.url === '/home'))
+const recommendedPage = computed(() => PROJECT_PAGE.value.find((item) => item.url === "/home"));
 const pageList = computed(() =>
   PROJECT_PAGE.value.filter(
-    (item) => !item.hidden && item.url !== '/home' && item.url !== '/index',
+    (item) => !item.hidden && item.url !== "/home" && item.url !== "/index",
   ),
-)
+);
 
 function handleSelect(item) {
-  currentRoute.value = item.url
+  currentRoute.value = item.url;
 }
 
 function handleConfirm() {
-  if (!currentRoute.value) return
-  localStorage.setItem('snowflakeRoute', currentRoute.value)
-  router.push(currentRoute.value)
+  if (!currentRoute.value) return;
+  localStorage.setItem("snowflakeRoute", currentRoute.value);
+  router.push(currentRoute.value);
 }
 </script>
 

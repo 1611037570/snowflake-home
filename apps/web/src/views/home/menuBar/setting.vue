@@ -19,14 +19,14 @@
 </template>
 
 <script setup>
-import { useHomeStore } from '@/stores'
-import { storeToRefs } from 'pinia'
-provide('color', 'text-sf-base')
-const homeStore = useHomeStore()
-const { systemVisible } = storeToRefs(homeStore)
+import { useHomeStore } from "@/stores";
+import { storeToRefs } from "pinia";
+provide("color", "text-sf-base");
+const homeStore = useHomeStore();
+const { systemVisible } = storeToRefs(homeStore);
 const openSet = () => {
-  systemVisible.value = true
-}
+  systemVisible.value = true;
+};
 </script>
 
 <style lang="scss" scoped></style>

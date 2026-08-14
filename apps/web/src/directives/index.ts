@@ -1,1 +1,1 @@
-export * from './modules/classToggle'
+export * from "./modules/classToggle";

@@ -1,11 +1,11 @@
 <script setup>
-import { ref } from 'vue'
-defineOptions({ name: 'SfCopyright' })
-const visible = ref(false)
+import { ref } from "vue";
+defineOptions({ name: "SfCopyright" });
+const visible = ref(false);
 const handleClick = () => {
-  visible.value = true
-}
-const currentYear = new Date().getFullYear()
+  visible.value = true;
+};
+const currentYear = new Date().getFullYear();
 </script>
 
 <template>

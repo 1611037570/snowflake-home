@@ -1,23 +1,23 @@
 <script setup>
-import { ElNotification } from 'element-plus'
-import { onMounted } from 'vue'
-import StepSelectRoute from './StepSelectRoute.vue'
+import { ElNotification } from "element-plus";
+import { onMounted } from "vue";
+import StepSelectRoute from "./StepSelectRoute.vue";
 
 onMounted(() => {
-  const ua = navigator.userAgent.toLowerCase()
+  const ua = navigator.userAgent.toLowerCase();
   // 严格判断是否为谷歌浏览器，排除 Edge, Opera 等基于 Chromium 的浏览器
   const isChrome =
-    ua.includes('chrome') && !ua.includes('edg') && !ua.includes('opr') && !ua.includes('opera')
+    ua.includes("chrome") && !ua.includes("edg") && !ua.includes("opr") && !ua.includes("opera");
 
   if (!isChrome) {
     ElNotification({
-      title: '浏览器建议',
-      message: '为了获得最佳体验，推荐使用谷歌浏览器，其他浏览器可能会遇到兼容性或性能问题。',
-      type: 'warning',
+      title: "浏览器建议",
+      message: "为了获得最佳体验，推荐使用谷歌浏览器，其他浏览器可能会遇到兼容性或性能问题。",
+      type: "warning",
       duration: 0, // 不自动关闭，让用户明确看到
-    })
+    });
   }
-})
+});
 </script>
 
 <template>

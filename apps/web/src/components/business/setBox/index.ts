@@ -1,2 +1,2 @@
-import SetBox from './setBox.vue'
-export default SetBox
+import SetBox from "./setBox.vue";
+export default SetBox;

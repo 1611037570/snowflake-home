@@ -1,3 +1,3 @@
-import Splitter from './splitter.vue'
+import Splitter from "./splitter.vue";
 
-export default Splitter
+export default Splitter;

@@ -3,17 +3,17 @@
 </template>
 
 <script setup lang="ts">
-import { ElCollapseItem } from 'element-plus'
-import type { ComponentInstance } from 'vue'
-import { getCurrentInstance, h } from 'vue'
+import { ElCollapseItem } from "element-plus";
+import type { ComponentInstance } from "vue";
+import { getCurrentInstance, h } from "vue";
 
-defineOptions({ name: 'SfCollapseItem' })
-const vm: any = getCurrentInstance()
+defineOptions({ name: "SfCollapseItem" });
+const vm: any = getCurrentInstance();
 
 function changeRef(exports: any) {
-  vm.exposed = exports
+  vm.exposed = exports;
 }
-defineExpose({} as ComponentInstance<typeof ElCollapseItem>)
+defineExpose({} as ComponentInstance<typeof ElCollapseItem>);
 </script>
 
 <style scoped></style>

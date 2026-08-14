@@ -1,36 +1,36 @@
 <script setup>
-import { useNoteStore } from '@/stores'
-import { computed, ref } from 'vue'
-const noteStore = useNoteStore()
-const { topNoteList, autoCollapse, currentIndex, noteVisible } = storeToRefs(noteStore)
-const expand = ref(false)
+import { useNoteStore } from "@/stores";
+import { computed, ref } from "vue";
+const noteStore = useNoteStore();
+const { topNoteList, autoCollapse, currentIndex, noteVisible } = storeToRefs(noteStore);
+const expand = ref(false);
 
 // 计算卡片容器的位置类
 const containerClasses = computed(() => {
   // 如果启用了自动收缩，根据展开状态决定位置
   if (autoCollapse.value) {
-    return expand.value ? 'translate-x-[0%]' : 'translate-x-[-70%]'
+    return expand.value ? "translate-x-[0%]" : "translate-x-[-70%]";
   }
   // 未启用自动收缩时，始终显示
-  return 'translate-x-[0%]'
-})
+  return "translate-x-[0%]";
+});
 // 选择便签项并保存其索引
 function select(item) {
   // 遍历noteList找到匹配id的项的索引
-  const index = noteStore.noteList.findIndex((note) => note.id === item.id)
+  const index = noteStore.noteList.findIndex((note) => note.id === item.id);
   // 如果找到匹配项，设置currentIndex
   if (index !== -1) {
-    currentIndex.value = index
-    noteVisible.value = true
+    currentIndex.value = index;
+    noteVisible.value = true;
   }
 }
 // 取消置顶
 function cancelTop(item) {
-  item.top = false
+  item.top = false;
 }
 // 删除便签
 function delNote(item) {
-  noteStore.delNote(item)
+  noteStore.delNote(item);
 }
 </script>
 <template>
@@ -61,7 +61,7 @@ function delNote(item) {
         ]"
         class="rounded-lg bg-sf-primary-hover hover:bg-sf-theme-hover hover:text-sf-theme"
       />
-      {{ item.value || '无内容' }}
+      {{ item.value || "无内容" }}
       <div class="flex items-center">
         <SfIcon
           @click.stop="cancelTop(item)"

@@ -1,2 +1,2 @@
-import App from './app.vue'
-export default App
+import App from "./app.vue";
+export default App;

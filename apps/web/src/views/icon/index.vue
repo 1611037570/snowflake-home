@@ -1,26 +1,26 @@
 <script setup>
-import { ICON_LIST } from '@/constants'
-import { useClipboard } from '@vueuse/core'
-import { ElMessage } from 'element-plus'
-import { ref } from 'vue'
-const icons = Object.values(ICON_LIST)
-const successIcons = ref([])
-const failedIcons = ref([])
-const { copy } = useClipboard()
+import { ICON_LIST } from "@/constants";
+import { useClipboard } from "@vueuse/core";
+import { ElMessage } from "element-plus";
+import { ref } from "vue";
+const icons = Object.values(ICON_LIST);
+const successIcons = ref([]);
+const failedIcons = ref([]);
+const { copy } = useClipboard();
 function handleCopy(icon) {
   copy(icon)
     .then(() => ElMessage.success(`已复制: ${icon}`))
-    .catch(() => ElMessage.error('复制失败'))
+    .catch(() => ElMessage.error("复制失败"));
 }
 function onSuccess(icon) {
-  if (!successIcons.value.includes(icon)) successIcons.value.push(icon)
-  const i = failedIcons.value.indexOf(icon)
-  if (i > -1) failedIcons.value.splice(i, 1)
+  if (!successIcons.value.includes(icon)) successIcons.value.push(icon);
+  const i = failedIcons.value.indexOf(icon);
+  if (i > -1) failedIcons.value.splice(i, 1);
 }
 function onFail(icon) {
-  if (!failedIcons.value.includes(icon)) failedIcons.value.push(icon)
-  const i = successIcons.value.indexOf(icon)
-  if (i > -1) successIcons.value.splice(i, 1)
+  if (!failedIcons.value.includes(icon)) failedIcons.value.push(icon);
+  const i = successIcons.value.indexOf(icon);
+  if (i > -1) successIcons.value.splice(i, 1);
 }
 </script>
 

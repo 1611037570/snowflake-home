@@ -1,2 +1,2 @@
-import AppCenter from './appCenter.vue'
-export default AppCenter
+import AppCenter from "./appCenter.vue";
+export default AppCenter;

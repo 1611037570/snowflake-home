@@ -38,7 +38,7 @@
             <div
               class="absolute -top-8 left-1/2 -translate-x-1/2 transform text-sm font-bold text-white"
             >
-              {{ index === state.currentIndex || index === state.currentIndex + 1 ? item : '' }}
+              {{ index === state.currentIndex || index === state.currentIndex + 1 ? item : "" }}
             </div>
           </div>
           <div class="mt-2 font-medium text-white">
@@ -61,7 +61,7 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
+import { computed } from "vue";
 
 const props = defineProps({
   data: {
@@ -76,46 +76,46 @@ const props = defineProps({
     type: Object,
     required: true,
   },
-})
+});
 
-const maxValue = computed(() => Math.max(...props.data))
+const maxValue = computed(() => Math.max(...props.data));
 
 const progressPercentage = computed(() => {
-  if (props.data.length <= 1) return 0
-  return (props.state.currentRound / (props.data.length - 1)) * 100
-})
+  if (props.data.length <= 1) return 0;
+  return (props.state.currentRound / (props.data.length - 1)) * 100;
+});
 
 const comparisonClass = computed(() => {
-  if (props.status.isCompleted) return 'bg-gradient-to-r from-green-800/40 to-teal-800/40'
-  if (props.state.isSwapping) return 'bg-gradient-to-r from-yellow-800/40 to-orange-800/40'
-  if (props.state.isComparing) return 'bg-gradient-to-r from-red-800/40 to-pink-800/40'
-  return 'bg-gradient-to-r from-blue-800/40 to-purple-800/40'
-})
+  if (props.status.isCompleted) return "bg-gradient-to-r from-green-800/40 to-teal-800/40";
+  if (props.state.isSwapping) return "bg-gradient-to-r from-yellow-800/40 to-orange-800/40";
+  if (props.state.isComparing) return "bg-gradient-to-r from-red-800/40 to-pink-800/40";
+  return "bg-gradient-to-r from-blue-800/40 to-purple-800/40";
+});
 
 const legendItems = [
-  { color: 'bg-gradient-to-b from-blue-500 to-blue-700', label: '正常元素' },
-  { color: 'bg-gradient-to-b from-red-500 to-red-700', label: '比较中' },
-  { color: 'bg-gradient-to-b from-yellow-500 to-yellow-700', label: '交换中' },
-  { color: 'bg-gradient-to-b from-green-500 to-green-700', label: '已排序' },
-]
+  { color: "bg-gradient-to-b from-blue-500 to-blue-700", label: "正常元素" },
+  { color: "bg-gradient-to-b from-red-500 to-red-700", label: "比较中" },
+  { color: "bg-gradient-to-b from-yellow-500 to-yellow-700", label: "交换中" },
+  { color: "bg-gradient-to-b from-green-500 to-green-700", label: "已排序" },
+];
 
 const getBarClass = (index) => {
-  if (props.status.isCompleted) return 'bg-gradient-to-b from-green-500 to-green-700'
+  if (props.status.isCompleted) return "bg-gradient-to-b from-green-500 to-green-700";
   if (
     props.state.isSwapping &&
     (index === props.state.currentIndex || index === props.state.currentIndex + 1)
   ) {
-    return 'bg-gradient-to-b from-yellow-500 to-yellow-700'
+    return "bg-gradient-to-b from-yellow-500 to-yellow-700";
   }
   if (
     props.state.isComparing &&
     (index === props.state.currentIndex || index === props.state.currentIndex + 1)
   ) {
-    return 'bg-gradient-to-b from-red-500 to-red-700'
+    return "bg-gradient-to-b from-red-500 to-red-700";
   }
   if (index >= props.data.length - props.state.currentRound) {
-    return 'bg-gradient-to-b from-green-500 to-green-700'
+    return "bg-gradient-to-b from-green-500 to-green-700";
   }
-  return 'bg-gradient-to-b from-blue-500 to-blue-700'
-}
+  return "bg-gradient-to-b from-blue-500 to-blue-700";
+};
 </script>

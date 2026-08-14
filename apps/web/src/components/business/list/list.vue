@@ -24,8 +24,8 @@
 
 <script setup>
 defineOptions({
-  name: 'SfList',
-})
+  name: "SfList",
+});
 const props = defineProps({
   list: {
     type: Array,
@@ -36,7 +36,7 @@ const props = defineProps({
    */
   activeKey: {
     type: String,
-    default: '',
+    default: "",
   },
   /**
    * 激活项的值
@@ -49,36 +49,36 @@ const props = defineProps({
     type: Boolean,
     default: true,
   },
-})
-const emit = defineEmits(['onClick'])
+});
+const emit = defineEmits(["onClick"]);
 function handleClick(event, item, index) {
-  if (item.fn) item.fn()
-  event.stopPropagation()
-  event.preventDefault()
-  emit('onClick', item, index)
+  if (item.fn) item.fn();
+  event.stopPropagation();
+  event.preventDefault();
+  emit("onClick", item, index);
 }
 /**
  * 激活项的类名
  */
 function activeClass(item) {
-  const name = 'text-sf-theme'
+  const name = "text-sf-theme";
   if (item.active) {
-    return name
+    return name;
   }
   if (props.activeKey && item[props.activeKey] == props.activeValue) {
-    return name
+    return name;
   }
-  return 'text-sf-base'
+  return "text-sf-base";
 }
 /**
  * 悬停项的类名
  */
 function hoverClass(item) {
-  const name = 'hover:bg-sf-theme-hover cursor-pointer hover:text-sf-theme-text'
-  if (typeof item.hover == 'boolean') {
-    return item.hover ? name : ''
+  const name = "hover:bg-sf-theme-hover cursor-pointer hover:text-sf-theme-text";
+  if (typeof item.hover == "boolean") {
+    return item.hover ? name : "";
   }
-  return name
+  return name;
 }
 </script>
 

@@ -8,19 +8,19 @@
 </template>
 
 <script setup lang="ts">
-import { ElInput } from 'element-plus'
-import type { ComponentInstance } from 'vue'
-import { getCurrentInstance, h } from 'vue'
+import { ElInput } from "element-plus";
+import type { ComponentInstance } from "vue";
+import { getCurrentInstance, h } from "vue";
 
-defineOptions({ name: 'SfInput' })
+defineOptions({ name: "SfInput" });
 
-const bg = inject('bg')
-const vm: any = getCurrentInstance()
+const bg = inject("bg");
+const vm: any = getCurrentInstance();
 
 function changeRef(exports: any) {
-  vm.exposed = exports
+  vm.exposed = exports;
 }
-defineExpose({} as ComponentInstance<typeof ElInput>)
+defineExpose({} as ComponentInstance<typeof ElInput>);
 </script>
 
 <style scoped lang="scss">

@@ -8,10 +8,10 @@
 </template>
 
 <script setup>
-import { urlNavigation } from '@/utils'
+import { urlNavigation } from "@/utils";
 const openEmail = () => {
-  urlNavigation('https://mail.qq.com/')
-}
+  urlNavigation("https://mail.qq.com/");
+};
 </script>
 
 <style scoped></style>

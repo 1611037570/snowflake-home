@@ -1,2 +1,2 @@
-import Barrage from './barrage.vue'
-export default Barrage
+import Barrage from "./barrage.vue";
+export default Barrage;

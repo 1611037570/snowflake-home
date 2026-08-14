@@ -1,5 +1,5 @@
 <script setup>
-import { historyList } from '@/constants/modules/history'
+import { historyList } from "@/constants/modules/history";
 </script>
 
 <template>

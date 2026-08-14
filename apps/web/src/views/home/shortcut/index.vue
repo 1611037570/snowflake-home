@@ -1,56 +1,56 @@
 <script setup>
-import { useFileDialog } from '@/hooks'
-import { useShortcutStore } from '@/stores'
-import { storeToRefs } from 'pinia'
-import { VueDraggable } from 'vue-draggable-plus'
-import AddShortcut from './addShortcut.vue'
-const { click } = useFileDialog()
-const shortcutStore = useShortcutStore()
-const { shortcutList } = storeToRefs(shortcutStore)
+import { useFileDialog } from "@/hooks";
+import { useShortcutStore } from "@/stores";
+import { storeToRefs } from "pinia";
+import { VueDraggable } from "vue-draggable-plus";
+import AddShortcut from "./addShortcut.vue";
+const { click } = useFileDialog();
+const shortcutStore = useShortcutStore();
+const { shortcutList } = storeToRefs(shortcutStore);
 
 // 拖拽状态
-const isDrag = ref(false)
+const isDrag = ref(false);
 // 缩放比例
-const zoom = ref(1)
+const zoom = ref(1);
 const onStart = (e) => {
-  isDrag.value = true
-  console.log('start', e)
-}
+  isDrag.value = true;
+  console.log("start", e);
+};
 
 const onEnd = (e) => {
-  isDrag.value = false
-  console.log('onEnd', e)
-}
+  isDrag.value = false;
+  console.log("onEnd", e);
+};
 
 const onUpdate = () => {
-  console.log('update')
-}
+  console.log("update");
+};
 
 const handleAdd = () => {
-  addVisible.value = true
-  return
-}
-const addVisible = ref(false)
+  addVisible.value = true;
+  return;
+};
+const addVisible = ref(false);
 
 const menuList = computed(() => [
   {
-    name: '添加',
+    name: "添加",
     fn: () => {},
   },
   {
-    name: '导入',
+    name: "导入",
 
     fn: () => {
       click({
-        accept: '.json',
+        accept: ".json",
         maxCount: 1,
         duplicate: true,
       }).then((res) => {
-        console.log(res)
-      })
+        console.log(res);
+      });
     },
   },
-])
+]);
 </script>
 
 <template>

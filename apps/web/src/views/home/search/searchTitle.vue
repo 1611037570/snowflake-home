@@ -2,21 +2,21 @@
 defineProps({
   title: {
     type: String,
-    default: '搜索历史',
+    default: "搜索历史",
   },
   info: {
     type: String,
-    default: '',
+    default: "",
   },
   icon: {
     type: String,
-    default: '',
+    default: "",
   },
   iconClass: {
     type: String,
-    default: '',
+    default: "",
   },
-})
+});
 </script>
 
 <template>

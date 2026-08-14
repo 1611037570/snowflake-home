@@ -22,15 +22,15 @@
 </template>
 
 <script setup>
-import { computed, reactive } from 'vue'
-import BubbleControls from './BubbleControls.vue'
-import BubbleStats from './BubbleStats.vue'
-import BubbleVisualizer from './BubbleVisualizer.vue'
-import { useBubbleSort } from './useBubbleSort'
-import { useSortControl } from './useSortControl'
+import { computed, reactive } from "vue";
+import BubbleControls from "./BubbleControls.vue";
+import BubbleStats from "./BubbleStats.vue";
+import BubbleVisualizer from "./BubbleVisualizer.vue";
+import { useBubbleSort } from "./useBubbleSort";
+import { useSortControl } from "./useSortControl";
 
 // 1. 初始化算法核心 (Model)
-const { data, status: coreStatus, state, counters, actions: coreActions } = useBubbleSort()
+const { data, status: coreStatus, state, counters, actions: coreActions } = useBubbleSort();
 
 // 2. 初始化控制器 (Controller)
 const { status: controlStatus, actions: controlActions } = useSortControl({
@@ -38,19 +38,19 @@ const { status: controlStatus, actions: controlActions } = useSortControl({
   resetAlgorithm: coreActions.reset,
   isCompleted: computed(() => coreStatus.isCompleted),
   isAnimating: computed(() => coreStatus.isAnimating),
-})
+});
 
 // 3. 组装视图状态 (View Model)
 const combinedStatus = reactive({
   isCompleted: computed(() => coreStatus.isCompleted),
   isAnimating: computed(() => coreStatus.isAnimating),
   statusText: controlStatus.statusText,
-})
+});
 
 const statsList = computed(() => [
-  { label: '当前状态', value: controlStatus.statusText.value },
-  { label: '比较次数', value: counters.comparisonCount },
-  { label: '交换次数', value: counters.swapCount },
-  { label: '当前轮次', value: `${state.currentRound}/${data.value.length - 1}` },
-])
+  { label: "当前状态", value: controlStatus.statusText.value },
+  { label: "比较次数", value: counters.comparisonCount },
+  { label: "交换次数", value: counters.swapCount },
+  { label: "当前轮次", value: `${state.currentRound}/${data.value.length - 1}` },
+]);
 </script>

@@ -1,6 +1,6 @@
 <script setup>
-import Setting from './setting.vue'
-import Tip from './tip.vue'
+import Setting from "./setting.vue";
+import Tip from "./tip.vue";
 </script>
 
 <template>

@@ -9,14 +9,14 @@
 </template>
 
 <script setup>
-import { useHomeStore } from '@/stores'
-import Modal from '@/views/home/about/modal.vue'
-const homeStore = useHomeStore()
-const { aboutVisible } = storeToRefs(homeStore)
+import { useHomeStore } from "@/stores";
+import Modal from "@/views/home/about/modal.vue";
+const homeStore = useHomeStore();
+const { aboutVisible } = storeToRefs(homeStore);
 
 const openAbout = () => {
-  aboutVisible.value = true
-}
+  aboutVisible.value = true;
+};
 </script>
 
 <style scoped>

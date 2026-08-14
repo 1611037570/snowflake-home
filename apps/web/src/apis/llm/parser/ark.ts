@@ -15,6 +15,7 @@ export const arkParser = (res: any) => {
 export const arkStreamParser = (line: string, { onEvent, debug }: any) => {
   const data = processJson(line, debug);
   const { type, delta } = data;
+  console.log("data:>> ", data);
 
   let currentOutputContent = ""; // 最终输出给用户的内容
   let currentReasoningContent = ""; // 模型推理过程内容

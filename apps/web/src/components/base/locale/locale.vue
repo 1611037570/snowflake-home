@@ -22,20 +22,20 @@
 </template>
 
 <script setup>
-import { LANG_LIST, loadPageLang } from '@/locales'
-import { useRouter } from 'vue-router'
+import { LANG_LIST, loadPageLang } from "@/locales";
+import { useRouter } from "vue-router";
 
-const color = inject('color', 'text-sf-base')
-defineOptions({ name: 'SfLocale' })
+const color = inject("color", "text-sf-base");
+defineOptions({ name: "SfLocale" });
 
-const router = useRouter()
-const currentPageName = computed(() => router.currentRoute.value.name)
+const router = useRouter();
+const currentPageName = computed(() => router.currentRoute.value.name);
 
-import { language } from '@/utils'
-const currentLocale = computed(() => language.value)
+import { language } from "@/utils";
+const currentLocale = computed(() => language.value);
 const handleClick = async (item) => {
-  await loadPageLang(currentPageName.value, item.key)
-}
+  await loadPageLang(currentPageName.value, item.key);
+};
 </script>
 
 <style scoped></style>

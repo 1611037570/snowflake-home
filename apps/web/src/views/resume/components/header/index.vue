@@ -1,37 +1,37 @@
 <script setup>
-import { useResumeStore } from '@/stores'
-import eventBus from '@/utils/modules/eventBus'
-import { storeToRefs } from 'pinia'
-import Title from './title.vue'
+import { useResumeStore } from "@/stores";
+import eventBus from "@/utils/modules/eventBus";
+import { storeToRefs } from "pinia";
+import Title from "./title.vue";
 
-const resumeStore = useResumeStore()
-const { isPrinting, layout } = storeToRefs(resumeStore)
+const resumeStore = useResumeStore();
+const { isPrinting, layout } = storeToRefs(resumeStore);
 
 const handleDownload = () => {
-  if (isPrinting.value) return
-  eventBus.emit('resume-print-pdf')
-}
+  if (isPrinting.value) return;
+  eventBus.emit("resume-print-pdf");
+};
 
 const layoutList = [
   {
-    name: '列表布局',
-    value: 'list',
-    icon: 'fluent:layout-column-one-third-left-24-regular',
+    name: "列表布局",
+    value: "list",
+    icon: "fluent:layout-column-one-third-left-24-regular",
   },
   {
-    name: '三栏布局',
-    value: 'three',
-    icon: 'fluent:layout-column-three-24-regular',
+    name: "三栏布局",
+    value: "three",
+    icon: "fluent:layout-column-three-24-regular",
   },
   {
-    name: 'AI布局',
-    value: 'ai',
-    icon: 'fluent:layout-column-one-third-right-24-regular',
+    name: "AI布局",
+    value: "ai",
+    icon: "fluent:layout-column-one-third-right-24-regular",
   },
-]
+];
 const handleLayoutClick = (item) => {
-  resumeStore.setLayout(item.value)
-}
+  resumeStore.setLayout(item.value);
+};
 </script>
 
 <template>
@@ -75,7 +75,7 @@ const handleLayoutClick = (item) => {
           <template #icon v-if="!isPrinting">
             <SfIcon icon="material-symbols:download" size="4.5" class="mr-1" />
           </template>
-          {{ isPrinting ? '生成中...' : '下载' }}
+          {{ isPrinting ? "生成中..." : "下载" }}
         </el-button>
       </div>
 

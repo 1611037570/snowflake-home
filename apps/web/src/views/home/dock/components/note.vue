@@ -8,13 +8,13 @@
 </template>
 
 <script setup>
-import { useNoteStore } from '@/stores'
-const noteStore = useNoteStore()
-const { noteVisible } = storeToRefs(noteStore)
+import { useNoteStore } from "@/stores";
+const noteStore = useNoteStore();
+const { noteVisible } = storeToRefs(noteStore);
 
 const openNote = () => {
-  noteVisible.value = true
-}
+  noteVisible.value = true;
+};
 </script>
 
 <style scoped></style>

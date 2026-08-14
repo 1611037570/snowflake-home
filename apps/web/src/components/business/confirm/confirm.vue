@@ -41,47 +41,47 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue'
-import { DEFAULT_CONFIRM_OPTIONS } from './data'
+import { computed, onMounted, ref } from "vue";
+import { DEFAULT_CONFIRM_OPTIONS } from "./data";
 
 export interface ConfirmProps {
-  title?: string
-  content?: string
-  cancelText?: string | boolean
-  confirmText?: string
-  duration?: string
-  index?: number
-  mask?: boolean
-  maskIndex?: number
-  close?: () => void
-  onConfirm?: () => void
-  onCancel?: () => void
+  title?: string;
+  content?: string;
+  cancelText?: string | boolean;
+  confirmText?: string;
+  duration?: string;
+  index?: number;
+  mask?: boolean;
+  maskIndex?: number;
+  close?: () => void;
+  onConfirm?: () => void;
+  onCancel?: () => void;
 }
 
-const props = withDefaults(defineProps<ConfirmProps>(), DEFAULT_CONFIRM_OPTIONS)
+const props = withDefaults(defineProps<ConfirmProps>(), DEFAULT_CONFIRM_OPTIONS);
 
-const isVisible = ref(false)
-onMounted(() => (isVisible.value = true))
+const isVisible = ref(false);
+onMounted(() => (isVisible.value = true));
 
 // 动画时长
 const animationTime = computed(() => {
-  const num = props.duration?.match(/\d+(\.\d+)?/)?.[0] || '0.3'
-  return `${num}s`
-})
+  const num = props.duration?.match(/\d+(\.\d+)?/)?.[0] || "0.3";
+  return `${num}s`;
+});
 
 // 确认事件
 const handleConfirm = () => {
-  isVisible.value = false
-  setTimeout(() => props.onConfirm?.(), parseFloat(animationTime.value) * 1000)
-}
+  isVisible.value = false;
+  setTimeout(() => props.onConfirm?.(), parseFloat(animationTime.value) * 1000);
+};
 
 // 取消事件
 const handleCancel = () => {
-  isVisible.value = false
-  setTimeout(() => props.onCancel?.(), parseFloat(animationTime.value) * 1000)
-}
+  isVisible.value = false;
+  setTimeout(() => props.onCancel?.(), parseFloat(animationTime.value) * 1000);
+};
 
-defineExpose({ close: handleCancel })
+defineExpose({ close: handleCancel });
 </script>
 
 <style lang="scss" scoped>

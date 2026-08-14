@@ -32,65 +32,67 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue'
+import { computed, onMounted, ref } from "vue";
 
-defineOptions({ name: 'SfTab' })
+defineOptions({ name: "SfTab" });
 
 // 定义组件接收的props
 const { list } = defineProps<{
   // Tab列表数据
-  list: any[]
+  list: any[];
   // 默认选中的下标
-  activeIndex?: number
-}>()
-const modelValue = defineModel('modelValue')
+  activeIndex?: number;
+}>();
+const modelValue = defineModel("modelValue");
 
 // 鼠标悬停的下标
-const hoverIndex = ref<number | null>(null)
+const hoverIndex = ref<number | null>(null);
 
 // 当前激活的下标（使用响应式引用而不是计算属性引用自身）
-const currentActiveIndex = ref(0)
+const currentActiveIndex = ref(0);
 
 onMounted(() => {
-  currentActiveIndex.value = list.findIndex((item) => item.value === modelValue.value)
-})
+  currentActiveIndex.value = list.findIndex((item) => item.value === modelValue.value);
+});
 // 处理鼠标进入事件
 const handleMouseEnter = (index: number) => {
-  hoverIndex.value = index
-}
+  hoverIndex.value = index;
+};
 
 // 处理鼠标离开事件
 const handleMouseLeave = () => {
-  hoverIndex.value = null
-}
-const emit = defineEmits(['change'])
+  hoverIndex.value = null;
+};
+const emit = defineEmits(["change"]);
 // 处理点击事件
 const handleClick = (index: number) => {
-  currentActiveIndex.value = index
-  modelValue.value = list[index].value
-  console.log('modelValue.value', index, modelValue.value)
-  emit('change', modelValue.value, index)
-}
-const isMouseDown = ref(false)
+  currentActiveIndex.value = index;
+  modelValue.value = list[index].value;
+  console.log("modelValue.value", index, modelValue.value);
+  emit("change", modelValue.value, index);
+};
+const isMouseDown = ref(false);
 const handleMouseDown = () => {
-  isMouseDown.value = true
-}
+  isMouseDown.value = true;
+};
 
 // 处理鼠标松开事件
 const handleMouseUp = () => {
   setTimeout(() => {
-    isMouseDown.value = false
-  }, 50)
-}
+    isMouseDown.value = false;
+  }, 50);
+};
 // 判断是否激活
 const isActive = (index: number) => {
-  return hoverIndex.value !== null ? index === hoverIndex.value : index === currentActiveIndex.value
-}
+  return hoverIndex.value !== null
+    ? index === hoverIndex.value
+    : index === currentActiveIndex.value;
+};
 
 // 计算当前背景指示器应该显示的下标
 const currentBackgroundIndex = computed(() => {
-  return hoverIndex.value ?? currentActiveIndex.value
-})
+  return hoverIndex.value ?? currentActiveIndex.value;
+});
 </script>
 
 <style scoped></style>

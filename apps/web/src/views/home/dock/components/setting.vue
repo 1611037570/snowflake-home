@@ -9,14 +9,14 @@
 </template>
 
 <script setup>
-import settingIcon from '@/assets/images/setting.png'
-import { useHomeStore } from '@/stores'
-import { storeToRefs } from 'pinia'
-const homeStore = useHomeStore()
-const { systemVisible } = storeToRefs(homeStore)
+import settingIcon from "@/assets/images/setting.png";
+import { useHomeStore } from "@/stores";
+import { storeToRefs } from "pinia";
+const homeStore = useHomeStore();
+const { systemVisible } = storeToRefs(homeStore);
 const openSet = () => {
-  systemVisible.value = true
-}
+  systemVisible.value = true;
+};
 </script>
 
 <style lang="scss" scoped></style>

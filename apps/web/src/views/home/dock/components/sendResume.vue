@@ -8,10 +8,10 @@
 </template>
 
 <script setup>
-import { urlNavigation } from '@/utils'
+import { urlNavigation } from "@/utils";
 const sendResume = () => {
-  urlNavigation('https://www.zhipin.com/')
-}
+  urlNavigation("https://www.zhipin.com/");
+};
 </script>
 
 <style scoped></style>

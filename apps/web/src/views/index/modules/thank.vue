@@ -1,13 +1,13 @@
 <script setup>
-import redFlower from '@/assets/images/redFlower.jpg'
-import { da_ai_xian_zun, fixed } from '@/constants'
+import redFlower from "@/assets/images/redFlower.jpg";
+import { da_ai_xian_zun, fixed } from "@/constants";
 // ---------- 弹幕数据 ----------
 const list = [...fixed, ...da_ai_xian_zun].map((item) => ({
   text: item.value,
-}))
+}));
 const sendMail = () => {
-  window.location.href = `mailto:1611037570@qq.com`
-}
+  window.location.href = `mailto:1611037570@qq.com`;
+};
 </script>
 
 <template>

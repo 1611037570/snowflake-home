@@ -1,12 +1,12 @@
 <script setup lang="ts">
 const handleAgree = () => {
-  localStorage.setItem('agree', 'true')
-  window.location.reload()
-}
+  localStorage.setItem("agree", "true");
+  window.location.reload();
+};
 const handleDisagree = () => {
-  localStorage.setItem('agree', 'false')
-  window.location.reload()
-}
+  localStorage.setItem("agree", "false");
+  window.location.reload();
+};
 </script>
 
 <template>

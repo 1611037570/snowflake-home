@@ -3,18 +3,18 @@
 </template>
 
 <script setup lang="ts">
-import { ElScrollbar } from 'element-plus'
-import type { ComponentInstance } from 'vue'
-import { getCurrentInstance, h } from 'vue'
+import { ElScrollbar } from "element-plus";
+import type { ComponentInstance } from "vue";
+import { getCurrentInstance, h } from "vue";
 
-defineOptions({ name: 'SfScrollbar' })
+defineOptions({ name: "SfScrollbar" });
 
-const vm: any = getCurrentInstance()
+const vm: any = getCurrentInstance();
 
 function changeRef(exports: any) {
-  vm.exposed = exports
+  vm.exposed = exports;
 }
-defineExpose({} as ComponentInstance<typeof ElScrollbar>)
+defineExpose({} as ComponentInstance<typeof ElScrollbar>);
 </script>
 
 <style scoped></style>

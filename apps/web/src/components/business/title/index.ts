@@ -1,2 +1,2 @@
-import Title from './title.vue'
-export default Title
+import Title from "./title.vue";
+export default Title;

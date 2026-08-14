@@ -49,57 +49,57 @@
 // 模块概述：生成便签卡片并进行位置避让与入场过渡，支持批量渲染与加载提示
 
 // 工具方法：随机取列表元素、生成唯一 ID
-import { getRandomItem, getUUID } from '@/utils'
+import { getRandomItem, getUUID } from "@/utils";
 // 尺寸观察：实时获取并响应容器宽高变化
-import { useElementSize } from '@vueuse/core'
+import { useElementSize } from "@vueuse/core";
 
 // Vue API：异步刷新、响应式引用、浅响应列表、生命周期
-import { nextTick, onMounted, ref, shallowRef } from 'vue'
+import { nextTick, onMounted, ref, shallowRef } from "vue";
 // 组件与配置：卡片组件与布局/交互相关常量
-import Card from './card.vue'
-import { BATCH_SIZE, CARD_HEIGHT, CARD_WIDTH, MAX_ROTATE_ANGLE, TOTAL_CARDS } from './config'
+import Card from "./card.vue";
+import { BATCH_SIZE, CARD_HEIGHT, CARD_WIDTH, MAX_ROTATE_ANGLE, TOTAL_CARDS } from "./config";
 // 数据池：颜色集合、固定文案、随机文案
-import { lightThemeColors, fixed, sentences } from '@/constants'
+import { lightThemeColors, fixed, sentences } from "@/constants";
 
 // 帧等待：等待浏览器下一帧，确保 DOM 已绘制，便于后续过渡生效
-const waitForNextFrame = () => new Promise((resolve) => requestAnimationFrame(resolve))
+const waitForNextFrame = () => new Promise((resolve) => requestAnimationFrame(resolve));
 
 // 页面状态：卡片列表与生成流程控制
-const cards = shallowRef([]) // 卡片集合（浅响应，提升列表操作性能）
-const isGenerating = ref(false) // 是否处于生成流程中
-const showLoading = ref(false) // 是否显示加载指示器
-const loadingText = ref(`生成中... 0/${TOTAL_CARDS}`) // 加载提示文案
-const topId = ref('') // 置顶卡片 ID（由子组件双向绑定维护）
-const noteWallContainer = ref(null) // 便签墙容器引用
-const { width, height } = useElementSize(noteWallContainer) // 容器宽高（响应式 Ref）
+const cards = shallowRef([]); // 卡片集合（浅响应，提升列表操作性能）
+const isGenerating = ref(false); // 是否处于生成流程中
+const showLoading = ref(false); // 是否显示加载指示器
+const loadingText = ref(`生成中... 0/${TOTAL_CARDS}`); // 加载提示文案
+const topId = ref(""); // 置顶卡片 ID（由子组件双向绑定维护）
+const noteWallContainer = ref(null); // 便签墙容器引用
+const { width, height } = useElementSize(noteWallContainer); // 容器宽高（响应式 Ref）
 
 // 内容索引：先固定文案，后随机文案；耗尽后走随机池
-let contentIdx = 0 // 当前消费索引
+let contentIdx = 0; // 当前消费索引
 
 // 视口有效区域：计算卡片可布局范围与中心点
 const getViewportValidArea = () => {
-  const w = width.value
-  const h = height.value
+  const w = width.value;
+  const h = height.value;
   return {
     maxLeft: w - CARD_WIDTH, // 最大左偏移（确保不越界）
     maxTop: h - CARD_HEIGHT, // 最大上偏移（确保不越界）
     centerX: w / 2 - CARD_WIDTH / 2, // 容器中心 X
     centerY: h / 2 - CARD_HEIGHT / 2, // 容器中心 Y
-  }
-}
+  };
+};
 
 // 随机位置：生成目标位置（限制在有效范围内）
 const generateRandomPosition = (maxLeft, maxTop) => ({
   targetLeft: Math.random() * maxLeft,
   targetTop: Math.random() * maxTop,
-})
+});
 
 // 安全位置：随机取点并避让已存在卡片，直到不碰撞或达到最大重试
 const getSafeCardPosition = () => {
-  const { maxLeft, maxTop } = getViewportValidArea()
-  const pos = generateRandomPosition(maxLeft, maxTop)
-  return pos
-}
+  const { maxLeft, maxTop } = getViewportValidArea();
+  const pos = generateRandomPosition(maxLeft, maxTop);
+  return pos;
+};
 
 // 基础卡片：初始位于中心点，后续通过过渡移动到目标位置
 const createSingleCard = (
@@ -113,55 +113,55 @@ const createSingleCard = (
   targetLeft: centerX, // 初始目标与中心一致，便于过渡计算
   targetTop: centerY,
   visible: false, // 初始不可见，插入后再显隐触发过渡
-})
+});
 
 // 主流程：分批生成并插入卡片，插入后一帧再显隐以触发过渡
 const generateCards = async () => {
-  if (isGenerating.value) return // 避免重复触发
+  if (isGenerating.value) return; // 避免重复触发
 
   // 初始化批次状态
-  isGenerating.value = true
-  cards.value = []
-  showLoading.value = true
-  loadingText.value = `生成中... 0/${TOTAL_CARDS}`
-  contentIdx = 0
+  isGenerating.value = true;
+  cards.value = [];
+  showLoading.value = true;
+  loadingText.value = `生成中... 0/${TOTAL_CARDS}`;
+  contentIdx = 0;
 
-  const { centerX, centerY } = getViewportValidArea()
+  const { centerX, centerY } = getViewportValidArea();
   // 分批插入：每批插入后等待一帧再设为可见，触发入场过渡
   for (let startId = 0; startId < TOTAL_CARDS; startId += BATCH_SIZE) {
-    const endId = Math.min(startId + BATCH_SIZE, TOTAL_CARDS)
-    const currentBatch = createBatchCards(startId, endId, centerX, centerY)
+    const endId = Math.min(startId + BATCH_SIZE, TOTAL_CARDS);
+    const currentBatch = createBatchCards(startId, endId, centerX, centerY);
 
-    cards.value = cards.value.concat(currentBatch)
-    await nextTick()
-    await waitForNextFrame()
-    currentBatch.forEach((card) => (card.visible = true))
+    cards.value = cards.value.concat(currentBatch);
+    await nextTick();
+    await waitForNextFrame();
+    currentBatch.forEach((card) => (card.visible = true));
 
-    loadingText.value = `生成中... ${endId}/${TOTAL_CARDS}`
+    loadingText.value = `生成中... ${endId}/${TOTAL_CARDS}`;
   }
-  loadingText.value = `生成完成！共${TOTAL_CARDS}个便签`
-  isGenerating.value = false
-  showLoading.value = false
-}
+  loadingText.value = `生成完成！共${TOTAL_CARDS}个便签`;
+  isGenerating.value = false;
+  showLoading.value = false;
+};
 
 // 首次挂载：等待一轮渲染，再延迟以确保容器尺寸已就绪，然后触发生成
 onMounted(async () => {
-  await nextTick()
-  setTimeout(() => generateCards(), 300)
-})
+  await nextTick();
+  setTimeout(() => generateCards(), 300);
+});
 
 // 内容选择：先用固定内容，耗尽后按需从随机池取值
 const nextContent = () => {
   if (contentIdx < fixed.length) {
-    return { content: fixed[contentIdx++], type: 'fixed' }
+    return { content: fixed[contentIdx++], type: "fixed" };
   }
-  const i = contentIdx - fixed.length
+  const i = contentIdx - fixed.length;
   if (i < sentences.length) {
-    contentIdx++
-    return { content: sentences[i], type: 'random' }
+    contentIdx++;
+    return { content: sentences[i], type: "random" };
   }
-  return { content: getRandomItem(sentences), type: 'random' }
-}
+  return { content: getRandomItem(sentences), type: "random" };
+};
 
 // 批量生成：在当前列表基础上避让，生成一批目标位置与内容
 const createBatchCards = (
@@ -170,10 +170,10 @@ const createBatchCards = (
   centerX, // 布局中心 X
   centerY, // 布局中心 Y
 ) => {
-  const batchCards = []
+  const batchCards = [];
 
   for (let i = startId; i < endId; i++) {
-    const { content, type } = nextContent()
+    const { content, type } = nextContent();
 
     batchCards.push({
       ...createSingleCard(centerX, centerY),
@@ -181,17 +181,17 @@ const createBatchCards = (
       content,
       color: getRandomItem(lightThemeColors).value,
       type,
-    })
+    });
   }
-  return batchCards
-}
+  return batchCards;
+};
 
 // 便签样式：初始缩放/透明，显隐后过渡到目标位置与不透明
 const getCardStyle = (
   card, // 当前卡片数据
 ) => {
-  const offsetX = card.targetLeft - card.centerX
-  const offsetY = card.targetTop - card.centerY
+  const offsetX = card.targetLeft - card.centerX;
+  const offsetY = card.targetTop - card.centerY;
 
   return {
     left: `${card.centerX}px`,
@@ -200,9 +200,9 @@ const getCardStyle = (
     transform: card.visible
       ? `scale(1) rotate(${card.angle}deg) translate(${offsetX}px, ${offsetY}px)`
       : `scale(0.1) rotate(${card.angle}deg)`,
-    transition: 'transform 0.5s ease-out, opacity 0.5s ease-out',
-  }
-}
+    transition: "transform 0.5s ease-out, opacity 0.5s ease-out",
+  };
+};
 </script>
 
 <style scoped></style>

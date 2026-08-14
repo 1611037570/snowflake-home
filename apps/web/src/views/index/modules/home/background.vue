@@ -77,26 +77,26 @@
 </template>
 
 <script setup>
-import { useThemeStore } from '@/stores'
-import { storeToRefs } from 'pinia'
-import { computed } from 'vue'
+import { useThemeStore } from "@/stores";
+import { storeToRefs } from "pinia";
+import { computed } from "vue";
 
-const themeStore = useThemeStore()
-const { isDark } = storeToRefs(themeStore)
+const themeStore = useThemeStore();
+const { isDark } = storeToRefs(themeStore);
 
 // ============================================================
 // 主题颜色变量统一计算（减少响应式开销和代码冗余）
 // ============================================================
 const themeVars = computed(() => {
-  const dark = isDark.value
+  const dark = isDark.value;
   return {
-    bgStart: dark ? '#0b1120' : '#faf9f6',
-    bgEnd: dark ? '#1a1a2e' : '#e8e6e1',
-    dotColor: dark ? 'rgba(255,255,255,0.06)' : 'rgba(148,163,184,0.28)',
-    envGlow: dark ? 'rgba(139, 92, 246, 0.20)' : 'rgba(124, 58, 237, 0.10)',
-    bottomGlow: dark ? 'rgba(34, 211, 238, 0.12)' : 'rgba(6, 182, 212, 0.08)',
-  }
-})
+    bgStart: dark ? "#0b1120" : "#faf9f6",
+    bgEnd: dark ? "#1a1a2e" : "#e8e6e1",
+    dotColor: dark ? "rgba(255,255,255,0.06)" : "rgba(148,163,184,0.28)",
+    envGlow: dark ? "rgba(139, 92, 246, 0.20)" : "rgba(124, 58, 237, 0.10)",
+    bottomGlow: dark ? "rgba(34, 211, 238, 0.12)" : "rgba(6, 182, 212, 0.08)",
+  };
+});
 
 // ============================================================
 // 球体配置（4个独立浮动路径）
@@ -104,24 +104,24 @@ const themeVars = computed(() => {
 const ballData = [
   {
     size: 110,
-    top: '5%',
-    left: '2%',
+    top: "5%",
+    left: "2%",
     right: null,
     bottom: null,
     delay: 0,
     duration: 16,
     scale: 1,
     light: {
-      color1: 'rgba(124, 58, 237, 0.50)',
-      color2: 'rgba(167, 139, 250, 0.30)',
-      color3: 'rgba(124, 58, 237, 0)',
+      color1: "rgba(124, 58, 237, 0.50)",
+      color2: "rgba(167, 139, 250, 0.30)",
+      color3: "rgba(124, 58, 237, 0)",
       blur: 100,
       opacity: 0.75,
     },
     dark: {
-      color1: 'rgba(139, 92, 246, 0.60)',
-      color2: 'rgba(196, 181, 253, 0.25)',
-      color3: 'rgba(139, 92, 246, 0)',
+      color1: "rgba(139, 92, 246, 0.60)",
+      color2: "rgba(196, 181, 253, 0.25)",
+      color3: "rgba(139, 92, 246, 0)",
       blur: 110,
       opacity: 0.55,
     },
@@ -130,22 +130,22 @@ const ballData = [
     size: 75,
     top: null,
     left: null,
-    right: '2%',
-    bottom: '5%',
+    right: "2%",
+    bottom: "5%",
     delay: 2.8,
     duration: 18,
     scale: 1.05,
     light: {
-      color1: 'rgba(6, 182, 212, 0.45)',
-      color2: 'rgba(103, 232, 249, 0.25)',
-      color3: 'rgba(6, 182, 212, 0)',
+      color1: "rgba(6, 182, 212, 0.45)",
+      color2: "rgba(103, 232, 249, 0.25)",
+      color3: "rgba(6, 182, 212, 0)",
       blur: 85,
       opacity: 0.7,
     },
     dark: {
-      color1: 'rgba(34, 211, 238, 0.45)',
-      color2: 'rgba(103, 232, 249, 0.18)',
-      color3: 'rgba(34, 211, 238, 0)',
+      color1: "rgba(34, 211, 238, 0.45)",
+      color2: "rgba(103, 232, 249, 0.18)",
+      color3: "rgba(34, 211, 238, 0)",
       blur: 90,
       opacity: 0.5,
     },
@@ -154,22 +154,22 @@ const ballData = [
     size: 85,
     top: null,
     left: null,
-    right: '16%',
-    bottom: '28%',
+    right: "16%",
+    bottom: "28%",
     delay: 1.5,
     duration: 20,
     scale: 0.95,
     light: {
-      color1: 'rgba(236, 72, 153, 0.40)',
-      color2: 'rgba(244, 114, 182, 0.20)',
-      color3: 'rgba(236, 72, 153, 0)',
+      color1: "rgba(236, 72, 153, 0.40)",
+      color2: "rgba(244, 114, 182, 0.20)",
+      color3: "rgba(236, 72, 153, 0)",
       blur: 95,
       opacity: 0.65,
     },
     dark: {
-      color1: 'rgba(244, 114, 182, 0.40)',
-      color2: 'rgba(251, 146, 201, 0.15)',
-      color3: 'rgba(244, 114, 182, 0)',
+      color1: "rgba(244, 114, 182, 0.40)",
+      color2: "rgba(251, 146, 201, 0.15)",
+      color3: "rgba(244, 114, 182, 0)",
       blur: 100,
       opacity: 0.45,
     },
@@ -177,40 +177,40 @@ const ballData = [
   {
     size: 60,
     top: null,
-    left: '22%',
+    left: "22%",
     right: null,
-    bottom: '18%',
+    bottom: "18%",
     delay: 4.2,
     duration: 15,
     scale: 1.1,
     light: {
-      color1: 'rgba(245, 158, 11, 0.35)',
-      color2: 'rgba(252, 211, 77, 0.18)',
-      color3: 'rgba(245, 158, 11, 0)',
+      color1: "rgba(245, 158, 11, 0.35)",
+      color2: "rgba(252, 211, 77, 0.18)",
+      color3: "rgba(245, 158, 11, 0)",
       blur: 75,
       opacity: 0.85,
     },
     dark: {
-      color1: 'rgba(245, 158, 11, 0.35)',
-      color2: 'rgba(252, 211, 77, 0.18)',
-      color3: 'rgba(245, 158, 11, 0)',
+      color1: "rgba(245, 158, 11, 0.35)",
+      color2: "rgba(252, 211, 77, 0.18)",
+      color3: "rgba(245, 158, 11, 0)",
       blur: 80,
       opacity: 0.6,
     },
   },
-]
+];
 
 const balls = computed(() => {
-  const dark = isDark.value
+  const dark = isDark.value;
   return ballData.map((b) => {
-    const themeParams = dark ? b.dark : b.light
+    const themeParams = dark ? b.dark : b.light;
     return {
       ...b,
       ...themeParams,
       gradient: `radial-gradient(circle at 38% 32%, ${themeParams.color1} 0%, ${themeParams.color2} 55%, ${themeParams.color3} 100%)`,
-    }
-  })
-})
+    };
+  });
+});
 </script>
 
 <style lang="scss" scoped>
@@ -302,7 +302,7 @@ const balls = computed(() => {
 
   /* 边缘柔和过渡，消除硬边 */
   &::after {
-    content: '';
+    content: "";
     position: absolute;
     inset: -10%;
     border-radius: 50%;

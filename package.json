@@ -12,6 +12,7 @@
     "build": "turbo run build",
     "build:web": "pnpm --filter @snowflake/web build-only",
     "build:server": "pnpm --filter @snowflake/server build",
+    "format": "turbo run format",
     "commit": "git-cz",
     "prepare": "husky"
   },

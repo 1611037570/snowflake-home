@@ -1,1 +1,1 @@
-export const USER_ROUTE = '/index'
+export const USER_ROUTE = "/index";

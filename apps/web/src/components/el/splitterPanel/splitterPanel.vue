@@ -3,18 +3,18 @@
 </template>
 
 <script setup lang="ts">
-import { ElSplitterPanel } from 'element-plus'
-import type { ComponentInstance } from 'vue'
-import { getCurrentInstance, h } from 'vue'
+import { ElSplitterPanel } from "element-plus";
+import type { ComponentInstance } from "vue";
+import { getCurrentInstance, h } from "vue";
 
-defineOptions({ name: 'SfSplitterPanel' })
+defineOptions({ name: "SfSplitterPanel" });
 
-const vm: any = getCurrentInstance()
+const vm: any = getCurrentInstance();
 
 function changeRef(exports: any) {
-  vm.exposed = exports
+  vm.exposed = exports;
 }
-defineExpose({} as ComponentInstance<typeof ElSplitterPanel>)
+defineExpose({} as ComponentInstance<typeof ElSplitterPanel>);
 </script>
 
 <style scoped></style>

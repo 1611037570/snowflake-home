@@ -1,47 +1,47 @@
 <script setup>
-import { useAiSettings } from '@/hooks'
+import { useAiSettings } from "@/hooks";
 
 defineProps({
   modelValue: {
     type: Boolean,
     required: true,
   },
-})
+});
 
-const emit = defineEmits(['update:modelValue'])
+const emit = defineEmits(["update:modelValue"]);
 
-const settings = useAiSettings()
+const settings = useAiSettings();
 
 const modelOptions = [
-  { label: 'GPT-3.5 Turbo', value: 'gpt-3.5-turbo' },
-  { label: 'GPT-4', value: 'gpt-4' },
-  { label: 'Claude 3 Opus', value: 'claude-3-opus' },
-  { label: 'Gemini Pro', value: 'gemini-pro' },
-]
+  { label: "GPT-3.5 Turbo", value: "gpt-3.5-turbo" },
+  { label: "GPT-4", value: "gpt-4" },
+  { label: "Claude 3 Opus", value: "claude-3-opus" },
+  { label: "Gemini Pro", value: "gemini-pro" },
+];
 
 const historyOptions = [
-  { label: '0 (无历史记录)', value: 0 },
-  { label: '5条', value: 5 },
-  { label: '10条', value: 10 },
-  { label: '20条', value: 20 },
-  { label: '50条', value: 50 },
-]
+  { label: "0 (无历史记录)", value: 0 },
+  { label: "5条", value: 5 },
+  { label: "10条", value: 10 },
+  { label: "20条", value: 20 },
+  { label: "50条", value: 50 },
+];
 
 const contextLengthOptions = [
-  { label: '2000 Tokens', value: 2000 },
-  { label: '4000 Tokens', value: 4000 },
-  { label: '8000 Tokens', value: 8000 },
-  { label: '16000 Tokens', value: 16000 },
-  { label: '32000 Tokens', value: 32000 },
-]
+  { label: "2000 Tokens", value: 2000 },
+  { label: "4000 Tokens", value: 4000 },
+  { label: "8000 Tokens", value: 8000 },
+  { label: "16000 Tokens", value: 16000 },
+  { label: "32000 Tokens", value: 32000 },
+];
 
 const temperatureOptions = [
-  { label: '0.0 (最精确)', value: 0.0 },
-  { label: '0.3', value: 0.3 },
-  { label: '0.7 (平衡)', value: 0.7 },
-  { label: '1.0 (有创意)', value: 1.0 },
-  { label: '1.2 (非常发散)', value: 1.2 },
-]
+  { label: "0.0 (最精确)", value: 0.0 },
+  { label: "0.3", value: 0.3 },
+  { label: "0.7 (平衡)", value: 0.7 },
+  { label: "1.0 (有创意)", value: 1.0 },
+  { label: "1.2 (非常发散)", value: 1.2 },
+];
 </script>
 
 <template>

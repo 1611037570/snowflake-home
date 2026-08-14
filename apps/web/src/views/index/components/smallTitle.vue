@@ -14,7 +14,7 @@ v
 defineProps({
   title: {
     type: String,
-    default: '项目经历',
+    default: "项目经历",
   },
-})
+});
 </script>

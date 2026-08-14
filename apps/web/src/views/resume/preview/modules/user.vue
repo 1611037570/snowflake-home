@@ -1,38 +1,38 @@
 <script setup>
-import { useResumeStore } from '@/stores'
-import dayjs from 'dayjs'
-import { storeToRefs } from 'pinia'
-import { computed, inject } from 'vue'
-import { workYears } from '../../utils'
-import Text from './text.vue'
+import { useResumeStore } from "@/stores";
+import dayjs from "dayjs";
+import { storeToRefs } from "pinia";
+import { computed, inject } from "vue";
+import { workYears } from "../../utils";
+import Text from "./text.vue";
 
-const resumeStore = useResumeStore()
-const { currentData } = storeToRefs(resumeStore)
+const resumeStore = useResumeStore();
+const { currentData } = storeToRefs(resumeStore);
 
-const fontValue = inject('fontValue')
-const lineHeightValue = inject('lineHeightValue')
+const fontValue = inject("fontValue");
+const lineHeightValue = inject("lineHeightValue");
 
-const user = computed(() => currentData.value?.user || {})
+const user = computed(() => currentData.value?.user || {});
 
 // 计算年龄
 const age = computed(() => {
-  const birthday = user.value?.birthday
-  if (!birthday || !dayjs(birthday).isValid()) return 0
-  const ageDiff = dayjs().diff(dayjs(birthday), 'year')
-  return Math.max(0, ageDiff)
-})
+  const birthday = user.value?.birthday;
+  if (!birthday || !dayjs(birthday).isValid()) return 0;
+  const ageDiff = dayjs().diff(dayjs(birthday), "year");
+  return Math.max(0, ageDiff);
+});
 
 // 联系方式列表 (电话、邮箱)
 const contactList = computed(() => {
-  const list = []
-  if (user.value.phone) list.push({ label: '电话', value: user.value.phone })
-  if (user.value.email) list.push({ label: '邮箱', value: user.value.email })
-  return list
-})
+  const list = [];
+  if (user.value.phone) list.push({ label: "电话", value: user.value.phone });
+  if (user.value.email) list.push({ label: "邮箱", value: user.value.email });
+  return list;
+});
 
 setTimeout(() => {
-  user.value.newName = '123'
-}, 1000)
+  user.value.newName = "123";
+}, 1000);
 </script>
 
 <template>

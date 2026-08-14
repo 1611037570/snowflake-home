@@ -1,5 +1,5 @@
 <script setup>
-import ResumeModule from '../modules/index.vue'
+import ResumeModule from "../modules/index.vue";
 
 defineProps({
   currentData: {
@@ -10,7 +10,7 @@ defineProps({
     type: Array,
     required: true,
   },
-})
+});
 </script>
 
 <template>

@@ -1,17 +1,17 @@
 <script setup>
-import { useResumeStore } from '@/stores'
-import { storeToRefs } from 'pinia'
-import { computed, inject } from 'vue'
-import Content from '../theme/content.vue'
-import Title from '../theme/title.vue'
+import { useResumeStore } from "@/stores";
+import { storeToRefs } from "pinia";
+import { computed, inject } from "vue";
+import Content from "../theme/content.vue";
+import Title from "../theme/title.vue";
 
-const resumeStore = useResumeStore()
-const { currentData } = storeToRefs(resumeStore)
+const resumeStore = useResumeStore();
+const { currentData } = storeToRefs(resumeStore);
 
-const fontValue = inject('fontValue')
-const lineHeightValue = inject('lineHeightValue')
+const fontValue = inject("fontValue");
+const lineHeightValue = inject("lineHeightValue");
 
-const skill = computed(() => currentData.value.skill || '')
+const skill = computed(() => currentData.value.skill || "");
 </script>
 
 <template>

@@ -10,28 +10,28 @@
 </template>
 
 <script setup lang="ts">
-import { ElSelect } from 'element-plus'
-import type { ComponentInstance, PropType } from 'vue'
-import { getCurrentInstance, h } from 'vue'
+import { ElSelect } from "element-plus";
+import type { ComponentInstance, PropType } from "vue";
+import { getCurrentInstance, h } from "vue";
 
-defineOptions({ name: 'SfSelect' })
+defineOptions({ name: "SfSelect" });
 
-const bg = inject('bg')
+const bg = inject("bg");
 
 defineProps({
   list: {
     type: Array as PropType<{ value: string; name: string }[]>,
     default: () => [],
   },
-})
-const value = defineModel('modelValue')
+});
+const value = defineModel("modelValue");
 
-const vm: any = getCurrentInstance()
+const vm: any = getCurrentInstance();
 
 function changeRef(exports: any) {
-  vm.exposed = exports
+  vm.exposed = exports;
 }
-defineExpose({} as ComponentInstance<typeof ElSelect>)
+defineExpose({} as ComponentInstance<typeof ElSelect>);
 </script>
 
 <style scoped lang="scss">

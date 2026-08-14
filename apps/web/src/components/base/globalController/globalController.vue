@@ -1,8 +1,8 @@
 <script setup>
-import { useSystemStore } from '@/stores'
-defineOptions({ name: 'SfGlobalController' })
-const systemStore = useSystemStore()
-const { monitorWatch } = storeToRefs(systemStore)
+import { useSystemStore } from "@/stores";
+defineOptions({ name: "SfGlobalController" });
+const systemStore = useSystemStore();
+const { monitorWatch } = storeToRefs(systemStore);
 </script>
 
 <template>

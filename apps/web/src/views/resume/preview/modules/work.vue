@@ -1,21 +1,21 @@
 <script setup>
-import Title from '../theme/title.vue'
+import Title from "../theme/title.vue";
 
-import { useResumeStore } from '@/stores'
-import { storeToRefs } from 'pinia'
-import { computed, inject } from 'vue'
-import Content from '../theme/content.vue'
-import Text from './text.vue'
+import { useResumeStore } from "@/stores";
+import { storeToRefs } from "pinia";
+import { computed, inject } from "vue";
+import Content from "../theme/content.vue";
+import Text from "./text.vue";
 
-import { getTime } from '../../utils'
+import { getTime } from "../../utils";
 
-const resumeStore = useResumeStore()
-const { currentData } = storeToRefs(resumeStore)
+const resumeStore = useResumeStore();
+const { currentData } = storeToRefs(resumeStore);
 
-const fontValue = inject('fontValue')
-const lineHeightValue = inject('lineHeightValue')
+const fontValue = inject("fontValue");
+const lineHeightValue = inject("lineHeightValue");
 
-const workList = computed(() => currentData.value.work || [])
+const workList = computed(() => currentData.value.work || []);
 </script>
 
 <template>

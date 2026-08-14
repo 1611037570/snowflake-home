@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import ApplicationScenes from './components/ApplicationScenes.vue'
-import HeroBanner from './components/HeroBanner.vue'
-import PaletteList from './components/PaletteList.vue'
+import ApplicationScenes from "./components/ApplicationScenes.vue";
+import HeroBanner from "./components/HeroBanner.vue";
+import PaletteList from "./components/PaletteList.vue";
 </script>
 
 <template>

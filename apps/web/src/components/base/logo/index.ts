@@ -1,2 +1,2 @@
-import Logo from './logo.vue'
-export default Logo
+import Logo from "./logo.vue";
+export default Logo;

@@ -10,21 +10,21 @@
 </template>
 
 <script setup>
-import { useHomeStore } from '@/stores'
-import ModalApi from './modalApi.vue'
-import ModalDonation from './modalDonation.vue'
-import ModalProject from './modalProject.vue'
-import ModalTech from './modalTech.vue'
-const homeStore = useHomeStore()
-const { aboutVisible } = storeToRefs(homeStore)
+import { useHomeStore } from "@/stores";
+import ModalApi from "./modalApi.vue";
+import ModalDonation from "./modalDonation.vue";
+import ModalProject from "./modalProject.vue";
+import ModalTech from "./modalTech.vue";
+const homeStore = useHomeStore();
+const { aboutVisible } = storeToRefs(homeStore);
 
 const list = [
-  { name: '关于项目', value: 'project' },
-  { name: '接口文档', value: 'api' },
-  { name: '技术栈', value: 'tech' },
-  { name: '捐助我', value: 'donation' },
-]
-const activeTab = ref('project')
+  { name: "关于项目", value: "project" },
+  { name: "接口文档", value: "api" },
+  { name: "技术栈", value: "tech" },
+  { name: "捐助我", value: "donation" },
+];
+const activeTab = ref("project");
 </script>
 
 <style lang="scss" scoped></style>

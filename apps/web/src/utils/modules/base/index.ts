@@ -1,3 +1,3 @@
-export * from './get'
-export * from './is'
-export * from './to'
+export * from "./get";
+export * from "./is";
+export * from "./to";

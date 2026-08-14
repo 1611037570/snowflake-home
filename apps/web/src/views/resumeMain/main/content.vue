@@ -1,9 +1,9 @@
 <script setup>
-import { useRouter } from 'vue-router'
+import { useRouter } from "vue-router";
 
-const router = useRouter()
+const router = useRouter();
 function handleCreate() {
-  router.push(`/resumeMain?type=template&t=${Date.now()}`)
+  router.push(`/resumeMain?type=template&t=${Date.now()}`);
 }
 </script>
 

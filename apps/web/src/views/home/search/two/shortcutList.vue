@@ -1,28 +1,28 @@
 <script setup>
-import { useSearchStore, useShortcutStore } from '@/stores'
-import { getStrMatch } from '@/utils'
-import Item from '../item.vue'
-import SearchTitle from '../searchTitle.vue'
-const shortcutStore = useShortcutStore()
-const searchStore = useSearchStore()
-const { shortcutVisible, searchValue } = storeToRefs(searchStore)
-const { shortcutList } = storeToRefs(shortcutStore)
-const { open } = searchStore
+import { useSearchStore, useShortcutStore } from "@/stores";
+import { getStrMatch } from "@/utils";
+import Item from "../item.vue";
+import SearchTitle from "../searchTitle.vue";
+const shortcutStore = useShortcutStore();
+const searchStore = useSearchStore();
+const { shortcutVisible, searchValue } = storeToRefs(searchStore);
+const { shortcutList } = storeToRefs(shortcutStore);
+const { open } = searchStore;
 // 匹配的快捷键
 const matchShortcut = computed(() => {
   // 没有输入内容
-  if (!searchValue.value) return []
+  if (!searchValue.value) return [];
 
   // 找到所有匹配的快捷键
   return shortcutList.value.filter((item) => {
     // 名称匹配
-    const name = getStrMatch(item.name, searchValue.value)
-    if (name) return true
+    const name = getStrMatch(item.name, searchValue.value);
+    if (name) return true;
     // 拼音匹配
-    const pinyin = getStrMatch(item.pinyin, searchValue.value)
-    if (pinyin) return true
-  })
-})
+    const pinyin = getStrMatch(item.pinyin, searchValue.value);
+    if (pinyin) return true;
+  });
+});
 </script>
 
 <template>

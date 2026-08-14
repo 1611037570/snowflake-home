@@ -82,162 +82,162 @@
 </template>
 
 <script setup>
-import startImg from '@/assets/images/start.jpg'
-import version1 from '@/assets/images/version1.webp'
-import version2 from '@/assets/images/version2.webp'
-import { urlNavigation } from '@/utils'
-import dayjs from 'dayjs'
+import startImg from "@/assets/images/start.jpg";
+import version1 from "@/assets/images/version1.webp";
+import version2 from "@/assets/images/version2.webp";
+import { urlNavigation } from "@/utils";
+import dayjs from "dayjs";
 
 function goMe() {
-  urlNavigation('/index')
+  urlNavigation("/index");
 }
 
 // 项目开始时间
-const startTime = '2020-09-03'
+const startTime = "2020-09-03";
 
 // 计算项目运行天数
 const runDays = computed(() => {
-  const start = dayjs(startTime)
-  const now = dayjs()
-  return now.diff(start, 'day')
-})
+  const start = dayjs(startTime);
+  const now = dayjs();
+  return now.diff(start, "day");
+});
 
 // 计算项目运行时间的详细描述
 const runTimeDescription = computed(() => {
-  const start = dayjs(startTime)
-  const now = dayjs()
+  const start = dayjs(startTime);
+  const now = dayjs();
 
-  const years = now.diff(start, 'year')
-  const months = now.diff(start.add(years, 'year'), 'month')
-  const days = now.diff(start.add(years, 'year').add(months, 'month'), 'day')
+  const years = now.diff(start, "year");
+  const months = now.diff(start.add(years, "year"), "month");
+  const days = now.diff(start.add(years, "year").add(months, "month"), "day");
 
-  let description = `${runDays.value}天`
+  let description = `${runDays.value}天`;
 
   // 如果超过一年，显示更详细的信息
   if (years > 0) {
-    description += `（${years}年${months}个月${days}天）`
+    description += `（${years}年${months}个月${days}天）`;
   } else if (months > 0) {
-    description += `（${months}个月${days}天）`
+    description += `（${months}个月${days}天）`;
   }
 
-  return description
-})
+  return description;
+});
 // 项目类型映射，包含名称和颜色方案
 const typeMap = {
   frame: {
-    name: '架构',
-    textColor: 'text-blue-700',
-    bgColor: 'bg-blue-100 hover:bg-blue-200',
-    borderColor: 'border-blue-300',
+    name: "架构",
+    textColor: "text-blue-700",
+    bgColor: "bg-blue-100 hover:bg-blue-200",
+    borderColor: "border-blue-300",
   },
   new: {
-    name: '新增',
-    textColor: 'text-green-700',
-    bgColor: 'bg-green-100 hover:bg-green-200',
-    borderColor: 'border-green-300',
+    name: "新增",
+    textColor: "text-green-700",
+    bgColor: "bg-green-100 hover:bg-green-200",
+    borderColor: "border-green-300",
   },
   optimize: {
-    name: '优化',
-    textColor: 'text-orange-700',
-    bgColor: 'bg-orange-100 hover:bg-orange-200',
-    borderColor: 'border-orange-300',
+    name: "优化",
+    textColor: "text-orange-700",
+    bgColor: "bg-orange-100 hover:bg-orange-200",
+    borderColor: "border-orange-300",
   },
   fix: {
-    name: '修复',
-    textColor: 'text-purple-700',
-    bgColor: 'bg-purple-100 hover:bg-purple-200',
-    borderColor: 'border-purple-300',
+    name: "修复",
+    textColor: "text-purple-700",
+    bgColor: "bg-purple-100 hover:bg-purple-200",
+    borderColor: "border-purple-300",
   },
   del: {
-    name: '删除',
-    textColor: 'text-red-700',
-    bgColor: 'bg-red-100 hover:bg-red-200',
-    borderColor: 'border-red-300',
+    name: "删除",
+    textColor: "text-red-700",
+    bgColor: "bg-red-100 hover:bg-red-200",
+    borderColor: "border-red-300",
   },
-}
+};
 // 项目发展时间线数据
 const timeList = [
   {
-    version: '5.0',
-    time: '2025-11-22',
-    list: [{ desc: 'UI玻璃化', type: 'frame' }],
+    version: "5.0",
+    time: "2025-11-22",
+    list: [{ desc: "UI玻璃化", type: "frame" }],
   },
   {
-    version: '4.2',
-    time: '2025-07-18',
-    list: [{ desc: '新增简历系统，快速制作属于自己的简历。', type: 'frame' }],
+    version: "4.2",
+    time: "2025-07-18",
+    list: [{ desc: "新增简历系统，快速制作属于自己的简历。", type: "frame" }],
   },
   {
-    version: '未标注版本',
-    time: '2024-11-22',
-    list: [{ desc: '项目使用vue3 + vite + typescript 重构', type: 'frame' }],
+    version: "未标注版本",
+    time: "2024-11-22",
+    list: [{ desc: "项目使用vue3 + vite + typescript 重构", type: "frame" }],
   },
   {
-    version: '2.2',
-    time: '2023-07-18',
-    list: [{ desc: '上线修图', type: 'new' }],
+    version: "2.2",
+    time: "2023-07-18",
+    list: [{ desc: "上线修图", type: "new" }],
   },
   {
-    version: '2.2',
-    time: '2022-11-22',
-    list: [{ desc: '上线便利贴，轻松记录。', type: 'new' }],
+    version: "2.2",
+    time: "2022-11-22",
+    list: [{ desc: "上线便利贴，轻松记录。", type: "new" }],
   },
   {
-    version: '2.1',
-    time: '2022-07-18',
-    list: [{ desc: '上线娱乐小组件，摸鱼神器。', type: 'new' }],
+    version: "2.1",
+    time: "2022-07-18",
+    list: [{ desc: "上线娱乐小组件，摸鱼神器。", type: "new" }],
   },
   {
-    version: '2.0',
-    time: '2021-11-22',
+    version: "2.0",
+    time: "2021-11-22",
     img: [version2],
-    list: [{ desc: 'UI苹果化', type: 'optimize' }],
+    list: [{ desc: "UI苹果化", type: "optimize" }],
   },
   {
-    version: '1.1',
-    time: '2020-12-07',
+    version: "1.1",
+    time: "2020-12-07",
     list: [
-      { desc: '快捷方式右键菜单', type: 'new' },
-      { desc: '快捷方式自动获取icon', type: 'new' },
+      { desc: "快捷方式右键菜单", type: "new" },
+      { desc: "快捷方式自动获取icon", type: "new" },
     ],
   },
   {
-    version: '1.0',
-    time: '2020-11-22',
+    version: "1.0",
+    time: "2020-11-22",
     img: [version1],
     list: [
-      { desc: 'UI美化', type: 'optimize' },
-      { desc: '系统设置', type: 'new' },
-      { desc: '搜索栏设置', type: 'new' },
+      { desc: "UI美化", type: "optimize" },
+      { desc: "系统设置", type: "new" },
+      { desc: "搜索栏设置", type: "new" },
     ],
   },
   {
-    version: '0.4',
-    time: '2020-10-30',
+    version: "0.4",
+    time: "2020-10-30",
     list: [
-      { desc: '快捷方式添加', type: 'new' },
-      { desc: '快捷方式拖拽排序', type: 'new' },
+      { desc: "快捷方式添加", type: "new" },
+      { desc: "快捷方式拖拽排序", type: "new" },
     ],
   },
   {
-    version: '0.3',
-    time: '2020-10-08',
-    list: [{ desc: '搜索栏快捷键', type: 'new' }],
+    version: "0.3",
+    time: "2020-10-08",
+    list: [{ desc: "搜索栏快捷键", type: "new" }],
   },
   {
-    version: '0.2',
-    time: '2020-09-30',
+    version: "0.2",
+    time: "2020-09-30",
     list: [
-      { desc: '搜索栏自定义搜索源', type: 'new' },
-      { desc: '搜索栏历史记录', type: 'new' },
-      { desc: '搜索栏一键翻译', type: 'new' },
+      { desc: "搜索栏自定义搜索源", type: "new" },
+      { desc: "搜索栏历史记录", type: "new" },
+      { desc: "搜索栏一键翻译", type: "new" },
     ],
   },
   {
-    version: '0.1',
-    time: '2020-09-03',
+    version: "0.1",
+    time: "2020-09-03",
     img: [startImg],
-    list: [{ desc: '梦开始的地方，[nannan.work]站点启用', type: 'new' }],
+    list: [{ desc: "梦开始的地方，[nannan.work]站点启用", type: "new" }],
   },
-]
+];
 </script>

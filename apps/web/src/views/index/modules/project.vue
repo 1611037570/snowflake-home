@@ -18,38 +18,38 @@
 </template>
 
 <script setup>
-import { PROJECT_PAGE } from '@/constants'
-import SmallTitle from '../components/smallTitle.vue'
-import ProjectCard from './projectCard.vue'
+import { PROJECT_PAGE } from "@/constants";
+import SmallTitle from "../components/smallTitle.vue";
+import ProjectCard from "./projectCard.vue";
 const list = computed(() => {
-  return PROJECT_PAGE.value.filter((item) => !item.hidden && item.url !== '/index')
-})
+  return PROJECT_PAGE.value.filter((item) => !item.hidden && item.url !== "/index");
+});
 // 项目经历数据
 const projectList = [
   {
-    name: '**社区',
-    desc: 'AI驱动的新一代社区平台',
-    urlType: 'web',
+    name: "**社区",
+    desc: "AI驱动的新一代社区平台",
+    urlType: "web",
     // 官网: 'https://osx.aisns.net/',
     // 体验: 'https://h5.opensns.cn/#/',
   },
   {
-    name: '**工作台',
+    name: "**工作台",
     desc: '副屏"操作系统"',
-    urlType: 'web',
+    urlType: "web",
     // 官网: 'https://www.apps.vip/',
     // 体验: 'https://web.apps.vip/',
   },
-]
+];
 
 const sections = computed(() => [
   {
-    title: '个人项目',
+    title: "个人项目",
     list: list.value,
   },
   {
-    title: '参与开发',
+    title: "参与开发",
     list: projectList,
   },
-])
+]);
 </script>

@@ -1,12 +1,12 @@
 export interface LangItem {
   // 最终要使用的语言
-  key: string
+  key: string;
   // 语言显示名称
-  name?: string
+  name?: string;
   // 语言匹配值
-  value: string
+  value: string;
 }
 
 export interface Translation {
-  (key: string): string
+  (key: string): string;
 }

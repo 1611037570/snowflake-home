@@ -1,24 +1,24 @@
 <script setup>
-import { useResumeStore } from '@/stores'
-import { storeToRefs } from 'pinia'
-import { computed } from 'vue'
-import { quickActions } from './data'
+import { useResumeStore } from "@/stores";
+import { storeToRefs } from "pinia";
+import { computed } from "vue";
+import { quickActions } from "./data";
 
-const emit = defineEmits(['switch-mode'])
-const resumeStore = useResumeStore()
-const { currentConfig, currentFixedConfig, selectedModuleKeys } = storeToRefs(resumeStore)
+const emit = defineEmits(["switch-mode"]);
+const resumeStore = useResumeStore();
+const { currentConfig, currentFixedConfig, selectedModuleKeys } = storeToRefs(resumeStore);
 
 const moduleNames = computed(() => {
   const fields = [
     ...(currentFixedConfig.value?.fields || []),
     ...(currentConfig.value?.fields || []),
-  ]
+  ];
   const names = Array.from(
     selectedModuleKeys.value,
     (key) => fields.find((item) => item.key === key)?.name || key,
-  )
-  return names.length ? names : ['整个简历']
-})
+  );
+  return names.length ? names : ["整个简历"];
+});
 </script>
 
 <template>

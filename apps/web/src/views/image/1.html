@@ -21,30 +21,30 @@
         theme: {
           extend: {
             colors: {
-              primary: '#2563eb', // 主色调：沉稳的蓝色
-              secondary: '#4f46e5', // 辅助色
+              primary: "#2563eb", // 主色调：沉稳的蓝色
+              secondary: "#4f46e5", // 辅助色
               neutral: {
-                50: '#f8fafc',
-                100: '#f1f5f9',
-                200: '#e2e8f0',
-                300: '#cbd5e1',
-                700: '#334155',
-                800: '#1e293b',
-                900: '#0f172a',
+                50: "#f8fafc",
+                100: "#f1f5f9",
+                200: "#e2e8f0",
+                300: "#cbd5e1",
+                700: "#334155",
+                800: "#1e293b",
+                900: "#0f172a",
               },
             },
             boxShadow: {
-              card: '0 4px 20px rgba(0, 0, 0, 0.08)',
-              hover: '0 8px 30px rgba(0, 0, 0, 0.12)',
-              input: '0 2px 6px rgba(0, 0, 0, 0.04)',
+              card: "0 4px 20px rgba(0, 0, 0, 0.08)",
+              hover: "0 8px 30px rgba(0, 0, 0, 0.12)",
+              input: "0 2px 6px rgba(0, 0, 0, 0.04)",
             },
             transitionProperty: {
-              height: 'height',
-              spacing: 'margin, padding',
+              height: "height",
+              spacing: "margin, padding",
             },
           },
         },
-      }
+      };
     </script>
 
     <style type="text/tailwindcss">
@@ -77,7 +77,7 @@
         }
         .toggle-slider:before {
           position: absolute;
-          content: '';
+          content: "";
           height: 18px;
           width: 18px;
           left: 3px;
@@ -133,10 +133,14 @@
     <div class="mx-auto w-full max-w-lg">
       <!-- 头部标题：移动端优化间距 -->
       <div class="mb-6 text-center md:mb-8">
-        <h1 class="mb-2 text-[clamp(1.5rem,5vw,2.2rem)] font-bold text-neutral-800">
+        <h1
+          class="mb-2 text-[clamp(1.5rem,5vw,2.2rem)] font-bold text-neutral-800"
+        >
           图片处理工具
         </h1>
-        <p class="text-sm text-neutral-600 md:text-base">本地化操作 · 安全无泄漏 · 完全免费</p>
+        <p class="text-sm text-neutral-600 md:text-base">
+          本地化操作 · 安全无泄漏 · 完全免费
+        </p>
       </div>
 
       <!-- 主卡片：移动端优化圆角和内边距 -->
@@ -150,26 +154,38 @@
           <div
             class="hover:border-primary/50 flex min-h-[180px] cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed border-neutral-200 bg-white py-6 transition-colors duration-300 md:py-8"
           >
-            <i class="fa-solid fa-cloud-upload text-primary/70 mb-3 text-3xl md:text-4xl"></i>
-            <p class="mb-2 font-medium text-neutral-700">已选择：weChatPay.jpg</p>
+            <i
+              class="fa-solid fa-cloud-upload text-primary/70 mb-3 text-3xl md:text-4xl"
+            ></i>
+            <p class="mb-2 font-medium text-neutral-700">
+              已选择：weChatPay.jpg
+            </p>
             <button
               class="text-primary hover:text-primary/80 flex items-center gap-1 px-4 py-2 font-medium transition-colors"
             >
               <i class="fa-solid fa-refresh"></i>
               <span>更换图片</span>
             </button>
-            <p class="mt-3 text-xs text-neutral-500">支持 JPG、PNG、WEBP 格式，最大 10MB</p>
+            <p class="mt-3 text-xs text-neutral-500">
+              支持 JPG、PNG、WEBP 格式，最大 10MB
+            </p>
           </div>
         </div>
 
         <!-- 2. 尺寸调整区域 - 移动端深度优化版 -->
         <div class="border-b border-neutral-200 p-4 md:p-6">
-          <div class="mb-4 flex flex-wrap items-center justify-between gap-2 md:mb-6">
-            <h2 class="flex items-center gap-2 text-base font-semibold text-neutral-800 md:text-lg">
+          <div
+            class="mb-4 flex flex-wrap items-center justify-between gap-2 md:mb-6"
+          >
+            <h2
+              class="flex items-center gap-2 text-base font-semibold text-neutral-800 md:text-lg"
+            >
               <i class="fa-solid fa-ruler-combined text-primary"></i>
               尺寸调整
             </h2>
-            <div class="flex items-center gap-2 rounded-full bg-neutral-50 px-2 py-1">
+            <div
+              class="flex items-center gap-2 rounded-full bg-neutral-50 px-2 py-1"
+            >
               <span class="text-xs text-neutral-600 md:text-sm">等比缩放</span>
               <label class="toggle-switch">
                 <input type="checkbox" checked id="aspectRatioToggle" />
@@ -180,9 +196,15 @@
 
           <!-- 选项卡 - 移动端优化：自适应宽度 -->
           <div class="mb-4 flex overflow-hidden rounded-lg shadow-sm md:mb-6">
-            <button class="tab-btn tab-active rounded-l-lg" data-tab="pixels">像素</button>
-            <button class="tab-btn tab-inactive" data-tab="percent">百分比</button>
-            <button class="tab-btn tab-inactive rounded-r-lg" data-tab="preset">预设</button>
+            <button class="tab-btn tab-active rounded-l-lg" data-tab="pixels">
+              像素
+            </button>
+            <button class="tab-btn tab-inactive" data-tab="percent">
+              百分比
+            </button>
+            <button class="tab-btn tab-inactive rounded-r-lg" data-tab="preset">
+              预设
+            </button>
           </div>
 
           <!-- 尺寸调整内容区 -->
@@ -190,7 +212,9 @@
             <div class="mb-4 grid grid-cols-1 gap-3 md:grid-cols-2 md:gap-4">
               <!-- 宽度 - 移动端触控优化 -->
               <div class="space-y-1">
-                <label class="block text-sm font-medium text-neutral-700">宽度 (px)</label>
+                <label class="block text-sm font-medium text-neutral-700"
+                  >宽度 (px)</label
+                >
                 <div
                   class="focus-within:border-primary focus-within:ring-primary/20 shadow-input flex items-center overflow-hidden rounded-lg border border-neutral-200 transition-all focus-within:ring-1"
                 >
@@ -221,7 +245,9 @@
 
               <!-- 高度 - 移动端触控优化 -->
               <div class="space-y-1">
-                <label class="block text-sm font-medium text-neutral-700">高度 (px)</label>
+                <label class="block text-sm font-medium text-neutral-700"
+                  >高度 (px)</label
+                >
                 <div
                   class="focus-within:border-primary focus-within:ring-primary/20 shadow-input flex items-center overflow-hidden rounded-lg border border-neutral-200 transition-all focus-within:ring-1"
                 >
@@ -247,7 +273,9 @@
                     <i class="fa-solid fa-plus text-sm"></i>
                   </button>
                 </div>
-                <div class="aspect-ratio" id="heightRatio">原始高度：1440px</div>
+                <div class="aspect-ratio" id="heightRatio">
+                  原始高度：1440px
+                </div>
               </div>
             </div>
 
@@ -255,7 +283,11 @@
             <div
               class="mb-2 flex flex-wrap items-center justify-between gap-2 text-sm text-neutral-600"
             >
-              <span>当前比例：<span id="currentRatio">828:1124 (约 1:1.36)</span></span>
+              <span
+                >当前比例：<span id="currentRatio"
+                  >828:1124 (约 1:1.36)</span
+                ></span
+              >
               <button
                 class="text-primary hover:text-primary/80 bg-primary/5 rounded px-2 py-1 text-xs font-medium"
                 id="resetSizeBtn"
@@ -268,7 +300,9 @@
           <!-- 百分比调整区 (默认隐藏) -->
           <div class="tab-content hidden" id="percentContent">
             <div class="mb-4 space-y-1">
-              <label class="block text-sm font-medium text-neutral-700">缩放比例</label>
+              <label class="block text-sm font-medium text-neutral-700"
+                >缩放比例</label
+              >
               <div
                 class="focus-within:border-primary focus-within:ring-primary/20 shadow-input flex items-center overflow-hidden rounded-lg border border-neutral-200 transition-all focus-within:ring-1"
               >
@@ -305,12 +339,22 @@
           <!-- 预设尺寸区 (默认隐藏)：移动端优化布局 -->
           <div class="tab-content hidden" id="presetContent">
             <div class="mb-4 grid grid-cols-2 gap-2">
-              <button class="preset-size-btn" data-size="828,1124">自定义</button>
-              <button class="preset-size-btn" data-size="750,1334">iPhone 8</button>
-              <button class="preset-size-btn" data-size="1125,2436">iPhone X</button>
-              <button class="preset-size-btn" data-size="1080,1920">1080P</button>
+              <button class="preset-size-btn" data-size="828,1124">
+                自定义
+              </button>
+              <button class="preset-size-btn" data-size="750,1334">
+                iPhone 8
+              </button>
+              <button class="preset-size-btn" data-size="1125,2436">
+                iPhone X
+              </button>
+              <button class="preset-size-btn" data-size="1080,1920">
+                1080P
+              </button>
               <button class="preset-size-btn" data-size="720,1280">720P</button>
-              <button class="preset-size-btn" data-size="640,1136">iPhone 5/SE</button>
+              <button class="preset-size-btn" data-size="640,1136">
+                iPhone 5/SE
+              </button>
             </div>
             <div class="mt-2 text-sm text-neutral-600">
               选中尺寸：<span id="presetSize">828px × 1124px</span>
@@ -330,7 +374,9 @@
           <div class="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-6">
             <!-- 转换格式 -->
             <div class="space-y-2">
-              <label class="block text-sm font-medium text-neutral-700">转换格式</label>
+              <label class="block text-sm font-medium text-neutral-700"
+                >转换格式</label
+              >
               <select
                 class="focus:border-primary focus:ring-primary/20 w-full rounded-lg border border-neutral-200 bg-white px-4 py-3 text-base text-neutral-800 transition-all focus:ring-1 focus:outline-none"
               >
@@ -342,7 +388,9 @@
 
             <!-- 调整质量 -->
             <div class="space-y-2">
-              <label class="block text-sm font-medium text-neutral-700">调整质量</label>
+              <label class="block text-sm font-medium text-neutral-700"
+                >调整质量</label
+              >
               <select
                 class="focus:border-primary focus:ring-primary/20 w-full rounded-lg border border-neutral-200 bg-white px-4 py-3 text-base text-neutral-800 transition-all focus:ring-1 focus:outline-none"
               >
@@ -357,12 +405,18 @@
 
         <!-- 4. 操作区域：移动端优化 -->
         <div class="border-b border-neutral-200 p-4 md:p-6">
-          <div class="mb-4 flex flex-wrap items-center justify-between gap-2 md:mb-6">
-            <h2 class="flex items-center gap-2 text-base font-semibold text-neutral-800 md:text-lg">
+          <div
+            class="mb-4 flex flex-wrap items-center justify-between gap-2 md:mb-6"
+          >
+            <h2
+              class="flex items-center gap-2 text-base font-semibold text-neutral-800 md:text-lg"
+            >
               <i class="fa-solid fa-eye text-primary"></i>
               预览与保存
             </h2>
-            <div class="flex items-center gap-2 rounded-full bg-neutral-50 px-2 py-1">
+            <div
+              class="flex items-center gap-2 rounded-full bg-neutral-50 px-2 py-1"
+            >
               <span class="text-xs text-neutral-600 md:text-sm">实时预览</span>
               <label class="toggle-switch">
                 <input type="checkbox" />
@@ -382,7 +436,9 @@
 
         <!-- 5. 功能简介：移动端优化 -->
         <div class="bg-neutral-50 p-4 md:p-6">
-          <h3 class="mb-3 flex items-center gap-2 text-base font-semibold text-neutral-800">
+          <h3
+            class="mb-3 flex items-center gap-2 text-base font-semibold text-neutral-800"
+          >
             <i class="fa-solid fa-info-circle text-primary"></i>
             功能简介
           </h3>
@@ -404,7 +460,9 @@
       </div>
 
       <!-- 底部版权信息：移动端优化 -->
-      <div class="mt-6 px-2 text-center text-xs text-neutral-500 md:mt-8 md:text-sm">
+      <div
+        class="mt-6 px-2 text-center text-xs text-neutral-500 md:mt-8 md:text-sm"
+      >
         © 2025 图片处理工具 - 简洁高效的本地化图片编辑工具
       </div>
     </div>
@@ -412,211 +470,213 @@
     <!-- 增强的交互脚本：适配移动端操作 -->
     <script>
       // 禁止移动端输入框缩放
-      document.addEventListener('DOMContentLoaded', function () {
-        const inputs = document.querySelectorAll('input[type="number"]')
+      document.addEventListener("DOMContentLoaded", function () {
+        const inputs = document.querySelectorAll('input[type="number"]');
         inputs.forEach((input) => {
-          input.addEventListener('touchstart', function (e) {
+          input.addEventListener("touchstart", function (e) {
             // 防止输入框获取焦点时页面缩放
-            this.style.fontSize = '16px'
-          })
-        })
-      })
+            this.style.fontSize = "16px";
+          });
+        });
+      });
 
       // 原始尺寸数据
-      const originalWidth = 1080
-      const originalHeight = 1440
-      let aspectRatio = originalWidth / originalHeight
+      const originalWidth = 1080;
+      const originalHeight = 1440;
+      let aspectRatio = originalWidth / originalHeight;
 
       // 选项卡切换 - 移动端优化
-      const tabButtons = document.querySelectorAll('.tab-btn')
-      const tabContents = document.querySelectorAll('.tab-content')
+      const tabButtons = document.querySelectorAll(".tab-btn");
+      const tabContents = document.querySelectorAll(".tab-content");
 
       tabButtons.forEach((btn) => {
-        btn.addEventListener('click', () => {
+        btn.addEventListener("click", () => {
           // 移除所有激活状态
           tabButtons.forEach((b) => {
-            b.classList.remove('tab-active')
-            b.classList.add('tab-inactive')
-          })
+            b.classList.remove("tab-active");
+            b.classList.add("tab-inactive");
+          });
           // 添加当前激活状态
-          btn.classList.remove('tab-inactive')
-          btn.classList.add('tab-active')
+          btn.classList.remove("tab-inactive");
+          btn.classList.add("tab-active");
 
           // 隐藏所有内容
           tabContents.forEach((content) => {
-            content.classList.add('hidden')
-          })
+            content.classList.add("hidden");
+          });
           // 显示对应内容
-          const tabId = btn.getAttribute('data-tab')
-          document.getElementById(`${tabId}Content`).classList.remove('hidden')
+          const tabId = btn.getAttribute("data-tab");
+          document.getElementById(`${tabId}Content`).classList.remove("hidden");
 
           // 移动端：点击选项卡后滚动到内容区域
           document.getElementById(`${tabId}Content`).scrollIntoView({
-            behavior: 'smooth',
-            block: 'nearest',
-          })
-        })
-      })
+            behavior: "smooth",
+            block: "nearest",
+          });
+        });
+      });
 
       // 数字输入框增减按钮 - 移动端优化
-      const numberButtons = document.querySelectorAll('.input-number-btn')
-      const widthInput = document.getElementById('widthInput')
-      const heightInput = document.getElementById('heightInput')
-      const scaleInput = document.getElementById('scaleInput')
-      const aspectRatioToggle = document.getElementById('aspectRatioToggle')
-      const currentRatioEl = document.getElementById('currentRatio')
-      const scaleSizeEl = document.getElementById('scaleSize')
-      const presetSizeEl = document.getElementById('presetSize')
-      const resetSizeBtn = document.getElementById('resetSizeBtn')
-      const presetButtons = document.querySelectorAll('.preset-size-btn')
+      const numberButtons = document.querySelectorAll(".input-number-btn");
+      const widthInput = document.getElementById("widthInput");
+      const heightInput = document.getElementById("heightInput");
+      const scaleInput = document.getElementById("scaleInput");
+      const aspectRatioToggle = document.getElementById("aspectRatioToggle");
+      const currentRatioEl = document.getElementById("currentRatio");
+      const scaleSizeEl = document.getElementById("scaleSize");
+      const presetSizeEl = document.getElementById("presetSize");
+      const resetSizeBtn = document.getElementById("resetSizeBtn");
+      const presetButtons = document.querySelectorAll(".preset-size-btn");
 
       // 更新比例显示
       function updateRatioDisplay() {
-        const w = parseInt(widthInput.value)
-        const h = parseInt(heightInput.value)
-        const ratio = (w / h).toFixed(2)
-        currentRatioEl.textContent = `${w}:${h} (约 1:${ratio})`
+        const w = parseInt(widthInput.value);
+        const h = parseInt(heightInput.value);
+        const ratio = (w / h).toFixed(2);
+        currentRatioEl.textContent = `${w}:${h} (约 1:${ratio})`;
 
         // 更新缩放比例显示
-        const scale = Math.round((w / originalWidth) * 100)
-        scaleInput.value = scale
-        scaleSizeEl.textContent = `宽度 ${w}px × 高度 ${h}px`
-        presetSizeEl.textContent = `${w}px × ${h}px`
+        const scale = Math.round((w / originalWidth) * 100);
+        scaleInput.value = scale;
+        scaleSizeEl.textContent = `宽度 ${w}px × 高度 ${h}px`;
+        presetSizeEl.textContent = `${w}px × ${h}px`;
       }
 
       // 等比缩放处理
       function handleAspectRatio(isWidthChange) {
-        if (!aspectRatioToggle.checked) return
+        if (!aspectRatioToggle.checked) return;
 
         if (isWidthChange) {
-          const newWidth = parseInt(widthInput.value)
-          heightInput.value = Math.round(newWidth / aspectRatio)
+          const newWidth = parseInt(widthInput.value);
+          heightInput.value = Math.round(newWidth / aspectRatio);
         } else {
-          const newHeight = parseInt(heightInput.value)
-          widthInput.value = Math.round(newHeight * aspectRatio)
+          const newHeight = parseInt(heightInput.value);
+          widthInput.value = Math.round(newHeight * aspectRatio);
         }
-        updateRatioDisplay()
+        updateRatioDisplay();
       }
 
       // 增减按钮点击事件：移动端支持触摸
       numberButtons.forEach((btn) => {
-        btn.addEventListener('click', handleNumberBtnClick)
+        btn.addEventListener("click", handleNumberBtnClick);
         // 移动端触摸结束事件（防止快速点击）
-        btn.addEventListener('touchend', function (e) {
-          e.preventDefault()
-          handleNumberBtnClick.call(this, e)
-        })
-      })
+        btn.addEventListener("touchend", function (e) {
+          e.preventDefault();
+          handleNumberBtnClick.call(this, e);
+        });
+      });
 
       function handleNumberBtnClick(e) {
-        const type = this.getAttribute('data-type')
-        const action = this.getAttribute('data-action')
+        const type = this.getAttribute("data-type");
+        const action = this.getAttribute("data-action");
         let input,
-          step = 1
+          step = 1;
 
         switch (type) {
-          case 'width':
-            input = widthInput
-            step = 10
-            break
-          case 'height':
-            input = heightInput
-            step = 10
-            break
-          case 'scale':
-            input = scaleInput
-            step = 5
-            break
+          case "width":
+            input = widthInput;
+            step = 10;
+            break;
+          case "height":
+            input = heightInput;
+            step = 10;
+            break;
+          case "scale":
+            input = scaleInput;
+            step = 5;
+            break;
           default:
-            return
+            return;
         }
 
-        let value = parseInt(input.value)
-        if (action === 'increase') {
-          input.value = value + step
-        } else if (action === 'decrease' && value > step) {
-          input.value = value - step
+        let value = parseInt(input.value);
+        if (action === "increase") {
+          input.value = value + step;
+        } else if (action === "decrease" && value > step) {
+          input.value = value - step;
         }
 
         // 处理关联更新
-        if (type === 'width') {
-          handleAspectRatio(true)
-        } else if (type === 'height') {
-          handleAspectRatio(false)
-        } else if (type === 'scale') {
+        if (type === "width") {
+          handleAspectRatio(true);
+        } else if (type === "height") {
+          handleAspectRatio(false);
+        } else if (type === "scale") {
           // 缩放比例更新宽高
-          const scale = parseInt(scaleInput.value) / 100
-          widthInput.value = Math.round(originalWidth * scale)
-          heightInput.value = Math.round(originalHeight * scale)
-          updateRatioDisplay()
+          const scale = parseInt(scaleInput.value) / 100;
+          widthInput.value = Math.round(originalWidth * scale);
+          heightInput.value = Math.round(originalHeight * scale);
+          updateRatioDisplay();
         }
       }
 
       // 输入框手动输入事件：移动端优化
-      widthInput.addEventListener('change', () => {
-        handleAspectRatio(true)
-      })
-      widthInput.addEventListener('blur', () => {
-        handleAspectRatio(true)
-      }) // 失去焦点时也触发
+      widthInput.addEventListener("change", () => {
+        handleAspectRatio(true);
+      });
+      widthInput.addEventListener("blur", () => {
+        handleAspectRatio(true);
+      }); // 失去焦点时也触发
 
-      heightInput.addEventListener('change', () => {
-        handleAspectRatio(false)
-      })
-      heightInput.addEventListener('blur', () => {
-        handleAspectRatio(false)
-      })
+      heightInput.addEventListener("change", () => {
+        handleAspectRatio(false);
+      });
+      heightInput.addEventListener("blur", () => {
+        handleAspectRatio(false);
+      });
 
-      scaleInput.addEventListener('change', () => {
-        const scale = parseInt(scaleInput.value) / 100
-        widthInput.value = Math.round(originalWidth * scale)
-        heightInput.value = Math.round(originalHeight * scale)
-        updateRatioDisplay()
-      })
+      scaleInput.addEventListener("change", () => {
+        const scale = parseInt(scaleInput.value) / 100;
+        widthInput.value = Math.round(originalWidth * scale);
+        heightInput.value = Math.round(originalHeight * scale);
+        updateRatioDisplay();
+      });
 
       // 等比缩放开关切换
-      aspectRatioToggle.addEventListener('change', () => {
+      aspectRatioToggle.addEventListener("change", () => {
         // 重新计算当前比例
-        aspectRatio = parseInt(widthInput.value) / parseInt(heightInput.value)
-      })
+        aspectRatio = parseInt(widthInput.value) / parseInt(heightInput.value);
+      });
 
       // 恢复原始尺寸
-      resetSizeBtn.addEventListener('click', () => {
-        widthInput.value = originalWidth
-        heightInput.value = originalHeight
-        aspectRatio = originalWidth / originalHeight
-        updateRatioDisplay()
-      })
+      resetSizeBtn.addEventListener("click", () => {
+        widthInput.value = originalWidth;
+        heightInput.value = originalHeight;
+        aspectRatio = originalWidth / originalHeight;
+        updateRatioDisplay();
+      });
 
       // 预设尺寸按钮：移动端优化触控
       presetButtons.forEach((btn) => {
-        btn.addEventListener('click', () => {
+        btn.addEventListener("click", () => {
           // 移除所有激活状态
           presetButtons.forEach((b) => {
-            b.classList.remove('preset-size-active')
-          })
+            b.classList.remove("preset-size-active");
+          });
           // 添加当前激活状态
-          btn.classList.add('preset-size-active')
+          btn.classList.add("preset-size-active");
 
           // 设置尺寸
-          const size = btn.getAttribute('data-size').split(',')
-          widthInput.value = size[0]
-          heightInput.value = size[1]
-          presetSizeEl.textContent = `${size[0]}px × ${size[1]}px`
-          updateRatioDisplay()
-        })
+          const size = btn.getAttribute("data-size").split(",");
+          widthInput.value = size[0];
+          heightInput.value = size[1];
+          presetSizeEl.textContent = `${size[0]}px × ${size[1]}px`;
+          updateRatioDisplay();
+        });
         // 移动端长按预设按钮高亮
-        btn.addEventListener('touchstart', function () {
-          this.classList.add('preset-size-active')
-        })
-        btn.addEventListener('touchend', function () {
-          presetButtons.forEach((b) => b.classList.remove('preset-size-active'))
-          this.classList.add('preset-size-active')
-        })
-      })
+        btn.addEventListener("touchstart", function () {
+          this.classList.add("preset-size-active");
+        });
+        btn.addEventListener("touchend", function () {
+          presetButtons.forEach((b) =>
+            b.classList.remove("preset-size-active"),
+          );
+          this.classList.add("preset-size-active");
+        });
+      });
 
       // 初始化
-      updateRatioDisplay()
+      updateRatioDisplay();
     </script>
   </body>
 </html>

@@ -3,10 +3,10 @@
  */
 
 // MIME类型到格式映射
-const MIME_TO_FMT = { 'image/jpeg': 'jpg', 'image/png': 'png', 'image/webp': 'webp' }
+const MIME_TO_FMT = { "image/jpeg": "jpg", "image/png": "png", "image/webp": "webp" };
 
 // 文件扩展名到格式映射
-const EXT_TO_FMT = { jpg: 'jpg', jpeg: 'jpg', png: 'png', webp: 'webp' }
+const EXT_TO_FMT = { jpg: "jpg", jpeg: "jpg", png: "png", webp: "webp" };
 
 /**
  * 获取文件格式
@@ -14,13 +14,13 @@ const EXT_TO_FMT = { jpg: 'jpg', jpeg: 'jpg', png: 'png', webp: 'webp' }
  * @returns 文件格式字符串
  */
 export const getFormat = (file: File | null): string => {
-  if (!file) return ''
-  const byMime = MIME_TO_FMT[file.type]
-  if (byMime) return byMime
-  const name = file.name || ''
-  const ext = (name.split('.').pop() || '').toLowerCase()
-  return EXT_TO_FMT[ext] || ''
-}
+  if (!file) return "";
+  const byMime = MIME_TO_FMT[file.type];
+  if (byMime) return byMime;
+  const name = file.name || "";
+  const ext = (name.split(".").pop() || "").toLowerCase();
+  return EXT_TO_FMT[ext] || "";
+};
 
 /**
  * 格式转换为MIME类型
@@ -28,7 +28,7 @@ export const getFormat = (file: File | null): string => {
  * @returns MIME类型字符串
  */
 export const toMime = (fmt: string): string =>
-  ({ jpg: 'image/jpeg', png: 'image/png', webp: 'image/webp' })[fmt] || 'image/webp'
+  ({ jpg: "image/jpeg", png: "image/png", webp: "image/webp" })[fmt] || "image/webp";
 
 /**
  * 重命名文件扩展名
@@ -37,9 +37,9 @@ export const toMime = (fmt: string): string =>
  * @returns 新文件名
  */
 export const renameWithExt = (name: string, fmt: string): string => {
-  const base = name.includes('.') ? name.slice(0, name.lastIndexOf('.')) : name
-  return `${base}.${fmt}`
-}
+  const base = name.includes(".") ? name.slice(0, name.lastIndexOf(".")) : name;
+  return `${base}.${fmt}`;
+};
 
 /**
  * 调整图片大小并转换为Blob
@@ -58,25 +58,25 @@ export const resizeToBlob = (
   q: number,
 ): Promise<Blob> =>
   new Promise((resolve) => {
-    const url = URL.createObjectURL(file)
-    const img = new Image()
+    const url = URL.createObjectURL(file);
+    const img = new Image();
     img.onload = () => {
-      const canvas = document.createElement('canvas')
-      canvas.width = w
-      canvas.height = h
-      const ctx = canvas.getContext('2d')
-      ctx?.drawImage(img, 0, 0, w, h)
+      const canvas = document.createElement("canvas");
+      canvas.width = w;
+      canvas.height = h;
+      const ctx = canvas.getContext("2d");
+      ctx?.drawImage(img, 0, 0, w, h);
       canvas.toBlob(
         (blob) => {
-          URL.revokeObjectURL(url)
-          resolve(blob || file)
+          URL.revokeObjectURL(url);
+          resolve(blob || file);
         },
         mime,
         q,
-      )
-    }
-    img.src = url
-  })
+      );
+    };
+    img.src = url;
+  });
 
 /**
  * 文件大小格式化
@@ -84,9 +84,9 @@ export const resizeToBlob = (
  * @returns 格式化后的文件大小字符串
  */
 export const formatFileSize = (bytes: number): string => {
-  if (bytes === 0) return '0 B'
-  const k = 1024
-  const sizes = ['B', 'KB', 'MB', 'GB']
-  const i = Math.floor(Math.log(bytes) / Math.log(k))
-  return (bytes / Math.pow(k, i)).toFixed(1) + ' ' + sizes[i]
-}
+  if (bytes === 0) return "0 B";
+  const k = 1024;
+  const sizes = ["B", "KB", "MB", "GB"];
+  const i = Math.floor(Math.log(bytes) / Math.log(k));
+  return (bytes / Math.pow(k, i)).toFixed(1) + " " + sizes[i];
+};

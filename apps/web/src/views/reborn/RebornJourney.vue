@@ -113,7 +113,7 @@
 </template>
 
 <script setup>
-import RebornStatCard from './RebornStatCard.vue'
+import RebornStatCard from "./RebornStatCard.vue";
 defineProps({
   appState: Object,
   progressPercent: Number,
@@ -125,12 +125,12 @@ defineProps({
   showMakeup: Boolean,
   dailyMotivationText: String,
   dailyReflection: String,
-})
+});
 defineEmits([
-  'openMakeupModal',
-  'clickDay',
-  'completeDay',
-  'resetJourney',
-  'update:dailyReflection',
-])
+  "openMakeupModal",
+  "clickDay",
+  "completeDay",
+  "resetJourney",
+  "update:dailyReflection",
+]);
 </script>

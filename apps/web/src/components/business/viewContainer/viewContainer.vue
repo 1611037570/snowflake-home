@@ -11,9 +11,9 @@
 </template>
 
 <script setup>
-defineOptions({ name: 'SfViewContainer' })
+defineOptions({ name: "SfViewContainer" });
 
-import Header from './header.vue'
+import Header from "./header.vue";
 </script>
 
 <style scoped></style>

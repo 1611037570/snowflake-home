@@ -1,25 +1,25 @@
 <script setup>
-import { computed } from 'vue'
+import { computed } from "vue";
 
 const props = defineProps({
   size: {
     type: Number || String,
     default: 7.5,
   },
-})
+});
 
-const logoSize = computed(() => Number(props.size) * 4)
+const logoSize = computed(() => Number(props.size) * 4);
 
 const logoStyle = computed(() => ({
   width: `${logoSize.value}px`,
   height: `${logoSize.value}px`,
-}))
+}));
 
 const shapeStyle = computed(() => ({
   width: `${(logoSize.value * 22) / 34}px`,
   height: `${(logoSize.value * 18) / 34}px`,
   borderRadius: `${(logoSize.value * 8) / 34}px ${(logoSize.value * 2) / 34}px ${(logoSize.value * 8) / 34}px ${(logoSize.value * 2) / 34}px`,
-}))
+}));
 </script>
 
 <template>

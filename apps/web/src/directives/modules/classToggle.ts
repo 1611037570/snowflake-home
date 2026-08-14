@@ -1,4 +1,4 @@
-import type { App, Directive, DirectiveBinding } from 'vue'
+import type { App, Directive, DirectiveBinding } from "vue";
 
 /**
  * 自定义指令 v-class-toggle
@@ -11,33 +11,33 @@ import type { App, Directive, DirectiveBinding } from 'vue'
  */
 export const classToggle: Directive = {
   mounted(el: HTMLElement, binding: DirectiveBinding) {
-    updateClass(el, binding)
+    updateClass(el, binding);
   },
   updated(el: HTMLElement, binding: DirectiveBinding) {
-    updateClass(el, binding)
+    updateClass(el, binding);
   },
-}
+};
 
 /**
  * 更新元素类名的辅助函数
  */
 function updateClass(el: HTMLElement, binding: DirectiveBinding): void {
   // 处理对象形式的绑定值
-  if (binding.value && typeof binding.value === 'object') {
+  if (binding.value && typeof binding.value === "object") {
     Object.entries(binding.value).forEach(([className, condition]) => {
       if (condition) {
-        el.classList.add(className)
+        el.classList.add(className);
       } else {
-        el.classList.remove(className)
+        el.classList.remove(className);
       }
-    })
+    });
   } else if (binding.arg) {
     // 处理参数形式的绑定值 v-class-toggle:[className]="condition"
-    const className = binding.arg
+    const className = binding.arg;
     if (binding.value) {
-      el.classList.add(className)
+      el.classList.add(className);
     } else {
-      el.classList.remove(className)
+      el.classList.remove(className);
     }
   }
 }
@@ -46,5 +46,5 @@ function updateClass(el: HTMLElement, binding: DirectiveBinding): void {
  * 注册指令到应用实例
  */
 export function registerClassToggle(app: App): void {
-  app.directive('class-toggle', classToggle)
+  app.directive("class-toggle", classToggle);
 }

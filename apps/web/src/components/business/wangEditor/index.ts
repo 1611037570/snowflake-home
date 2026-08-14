@@ -1,3 +1,3 @@
-import WangEditor from './wangEditor.vue'
+import WangEditor from "./wangEditor.vue";
 
-export default WangEditor
+export default WangEditor;

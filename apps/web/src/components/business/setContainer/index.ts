@@ -1,2 +1,2 @@
-import SetContainer from './setContainer.vue'
-export default SetContainer
+import SetContainer from "./setContainer.vue";
+export default SetContainer;

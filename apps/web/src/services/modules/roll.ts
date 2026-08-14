@@ -2,8 +2,8 @@
  * Roll相关服务层
  * 封装业务逻辑，调用API层，处理数据转换和缓存
  */
-import { getIP, getWeather } from '@/apis'
-import baseService from '@/services/baseService'
+import { getIP, getWeather } from "@/apis";
+import baseService from "@/services/baseService";
 
 /**
  * 获取IP信息，带缓存策略
@@ -11,14 +11,14 @@ import baseService from '@/services/baseService'
  */
 export async function getIPData(refresh: boolean = false) {
   const request = async () => {
-    return await getIP()
-  }
+    return await getIP();
+  };
   const data = baseService({
-    key: 'ip',
+    key: "ip",
     request,
     refresh,
-  })
-  return data
+  });
+  return data;
 }
 
 /**
@@ -28,16 +28,16 @@ export async function getIPData(refresh: boolean = false) {
  */
 export async function getWeatherData(city: string, refresh: boolean = false) {
   const request = async () => {
-    const data = await getIPData()
+    const data = await getIPData();
     if (!data) {
-      return null
+      return null;
     }
-    return await getWeather(data.city)
-  }
+    return await getWeather(data.city);
+  };
   const data = baseService({
     key: `weather`,
     request,
     refresh,
-  })
-  return data
+  });
+  return data;
 }

@@ -25,7 +25,7 @@
 </template>
 
 <script setup>
-import { techStackList } from './data'
+import { techStackList } from "./data";
 </script>
 
 <style scoped></style>

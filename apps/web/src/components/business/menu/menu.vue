@@ -1,118 +1,118 @@
 <script setup lang="ts">
-import { computed, ref, useTemplateRef } from 'vue'
-import MenuList from './MenuList.vue'
-import useClick from './hooks/useClick'
-import useWindowSize from './hooks/useWindowSize'
-import type { MenuEmits, MenuProps } from './types'
+import { computed, ref, useTemplateRef } from "vue";
+import MenuList from "./MenuList.vue";
+import useClick from "./hooks/useClick";
+import useWindowSize from "./hooks/useWindowSize";
+import type { MenuEmits, MenuProps } from "./types";
 
-defineOptions({ name: 'SfMenu' })
+defineOptions({ name: "SfMenu" });
 // emit 事件
-const emit = defineEmits<MenuEmits>()
+const emit = defineEmits<MenuEmits>();
 // props 数据
 const {
   list = () => [
     {
-      name: '下班',
+      name: "下班",
       fn: () => {
-        console.log('我到点下班啦！~ ')
+        console.log("我到点下班啦！~ ");
       },
     },
     {
-      name: '吃啥',
+      name: "吃啥",
       fn: () => {
-        console.log('这餐吃炸鸡~ ')
+        console.log("这餐吃炸鸡~ ");
       },
     },
   ],
-  model = 'contextmenu',
+  model = "contextmenu",
   stopPropagation = true,
   preventDefault = true,
   beforeCreateFn = () => true,
   menuContainerStyle = {},
-  nameKey = 'name',
-} = defineProps<MenuProps>()
+  nameKey = "name",
+} = defineProps<MenuProps>();
 
 // 菜单元素
-const menuContainer = useTemplateRef('menuContainer')
-const { windowWidth, windowHeight } = useWindowSize()
+const menuContainer = useTemplateRef("menuContainer");
+const { windowWidth, windowHeight } = useWindowSize();
 // 菜单大小
-const menuWidth = ref(0)
-const menuHeight = ref(0)
+const menuWidth = ref(0);
+const menuHeight = ref(0);
 
-const open = ref(false)
+const open = ref(false);
 
 const down = (event: any) => {
   // 阻止事件冒泡
   if (stopPropagation) {
-    event.stopPropagation()
+    event.stopPropagation();
   }
   // 阻止默认事件
   if (preventDefault) {
-    event.preventDefault()
+    event.preventDefault();
   }
 
-  if (list.length === 0) return
+  if (list.length === 0) return;
   // 打开前回调
-  emit('onBeforeCreate')
+  emit("onBeforeCreate");
   //打开前事件
   if (!beforeCreateFn()) {
-    return
+    return;
   }
-  open.value = true
+  open.value = true;
   // 打开后回调
-  emit('onMounted')
-  window.addEventListener('click', end, { capture: true })
-  window.addEventListener('contextmenu', end, { capture: true })
-}
-const { clientX, clientY } = useClick(menuContainer, model, down)
+  emit("onMounted");
+  window.addEventListener("click", end, { capture: true });
+  window.addEventListener("contextmenu", end, { capture: true });
+};
+const { clientX, clientY } = useClick(menuContainer, model, down);
 const select = (item: any) => {
   // 选中后回调
-  emit('onSelected', item)
-  end()
-}
+  emit("onSelected", item);
+  end();
+};
 
 const end = () => {
   // 关闭前回调
-  emit('onBeforeUnmount')
+  emit("onBeforeUnmount");
 
-  open.value = false
+  open.value = false;
 
   // 关闭后回调
-  emit('onUnmounted')
+  emit("onUnmounted");
   // // 关闭事件
   // window.removeEventListener('mousedown', end, {
   //   capture: true,
   // })
-  window.removeEventListener('click', end, { capture: true })
-  window.removeEventListener('contextmenu', end, { capture: true })
-}
+  window.removeEventListener("click", end, { capture: true });
+  window.removeEventListener("contextmenu", end, { capture: true });
+};
 
 const menuPositron = computed(() => {
-  const mW = menuWidth.value
-  const cX = clientX.value
-  const mH = menuHeight.value
-  const cY = clientY.value
+  const mW = menuWidth.value;
+  const cX = clientX.value;
+  const mH = menuHeight.value;
+  const cY = clientY.value;
 
-  const positionStyle: any = {}
+  const positionStyle: any = {};
 
   if (cX > windowWidth.value - mW) {
-    positionStyle.right = `${windowWidth.value - cX}px`
-    positionStyle.transformOrigin = 'right'
+    positionStyle.right = `${windowWidth.value - cX}px`;
+    positionStyle.transformOrigin = "right";
   } else {
-    positionStyle.left = `${cX}px`
-    positionStyle.transformOrigin = 'left'
+    positionStyle.left = `${cX}px`;
+    positionStyle.transformOrigin = "left";
   }
 
   if (cY > windowHeight.value - mH) {
-    positionStyle.bottom = `${windowHeight.value - cY}px`
-    positionStyle.transformOrigin += ' bottom'
+    positionStyle.bottom = `${windowHeight.value - cY}px`;
+    positionStyle.transformOrigin += " bottom";
   } else {
-    positionStyle.top = `${cY}px`
-    positionStyle.transformOrigin += ' top'
+    positionStyle.top = `${cY}px`;
+    positionStyle.transformOrigin += " top";
   }
 
-  return positionStyle
-})
+  return positionStyle;
+});
 </script>
 
 <template>

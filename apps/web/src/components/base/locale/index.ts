@@ -1,3 +1,3 @@
-import Locale from './locale.vue'
+import Locale from "./locale.vue";
 
-export default Locale
+export default Locale;

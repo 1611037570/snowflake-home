@@ -1,2 +1,2 @@
-import DynamicForm from './dynamicForm.vue'
-export default DynamicForm
+import DynamicForm from "./dynamicForm.vue";
+export default DynamicForm;

@@ -35,38 +35,38 @@
 </template>
 
 <script setup>
-import { useClipboard } from '@/hooks'
-import { getRandomQuote } from '@/utils'
-import { onMounted, ref } from 'vue'
+import { useClipboard } from "@/hooks";
+import { getRandomQuote } from "@/utils";
+import { onMounted, ref } from "vue";
 
 // 引言内容
-const quote = ref('愿这份简历 能把你带到想去的地方！')
+const quote = ref("愿这份简历 能把你带到想去的地方！");
 // 收藏状态
-const isFavorite = ref(false)
+const isFavorite = ref(false);
 
 // 使用剪贴板钩子
-const { copyToClipboard } = useClipboard()
+const { copyToClipboard } = useClipboard();
 
 // 复制引言到剪贴板
 const copyQuote = () => {
-  copyToClipboard(quote.value)
-}
+  copyToClipboard(quote.value);
+};
 
 // 更新引言的方法
 const updateQuote = () => {
-  quote.value = getRandomQuote()
+  quote.value = getRandomQuote();
   // 切换引言时取消收藏状态
-  isFavorite.value = false
-}
+  isFavorite.value = false;
+};
 
 // 切换收藏状态
 const toggleFavorite = () => {
-  isFavorite.value = !isFavorite.value
-}
+  isFavorite.value = !isFavorite.value;
+};
 
 onMounted(() => {
   // updateQuote()
-})
+});
 </script>
 
 <style scoped></style>

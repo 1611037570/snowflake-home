@@ -16,22 +16,22 @@
 </template>
 
 <script setup>
-import dayjs from 'dayjs'
+import dayjs from "dayjs";
 
 // 项目开始时间
-const startTime = '2020-09-03'
+const startTime = "2020-09-03";
 
 // 计算项目运行天数
 const runDays = computed(() => {
-  const start = dayjs(startTime)
-  const now = dayjs()
-  return now.diff(start, 'day')
-})
+  const start = dayjs(startTime);
+  const now = dayjs();
+  return now.diff(start, "day");
+});
 
 // 计算项目运行时间的详细描述
 const runTimeDescription = computed(() => {
-  const description = `${runDays.value}`
+  const description = `${runDays.value}`;
 
-  return description
-})
+  return description;
+});
 </script>

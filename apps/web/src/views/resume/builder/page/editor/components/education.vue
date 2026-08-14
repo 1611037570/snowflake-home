@@ -1,81 +1,81 @@
 <script setup>
-import ItemCollapse from './itemCollapse.vue'
+import ItemCollapse from "./itemCollapse.vue";
 // 学校
-const name = defineModel('name', {
+const name = defineModel("name", {
   type: String,
-  default: '',
-})
+  default: "",
+});
 defineProps({
   add: {},
   containerTitle: {},
-})
+});
 // 学位列表
 const educationList = [
   {
-    name: '高中',
-    value: '高中',
+    name: "高中",
+    value: "高中",
   },
   {
-    name: '大专',
-    value: '大专',
+    name: "大专",
+    value: "大专",
   },
   {
-    name: '本科',
-    value: '本科',
+    name: "本科",
+    value: "本科",
   },
   {
-    name: '硕士',
-    value: '硕士',
+    name: "硕士",
+    value: "硕士",
   },
   {
-    name: '博士',
-    value: '博士',
+    name: "博士",
+    value: "博士",
   },
-]
+];
 // 学位
-const education = defineModel('education', {
+const education = defineModel("education", {
   type: String,
-  default: '',
-})
+  default: "",
+});
 // 经历
-const content = defineModel('content', {
+const content = defineModel("content", {
   type: String,
-  default: '',
-})
+  default: "",
+});
 // 专业
-const post = defineModel('post', {
+const post = defineModel("post", {
   type: String,
-  default: '',
-})
+  default: "",
+});
 // 时间
-const time = defineModel('time', {
+const time = defineModel("time", {
   type: Array,
   default: () => [],
-})
+});
 const title = computed(() => {
-  return name.value ? name.value : '未填写学校名称'
-})
+  return name.value ? name.value : "未填写学校名称";
+});
 
-const mode = defineModel('mode', {
+const mode = defineModel("mode", {
   type: String,
-  default: '',
-})
+  default: "",
+});
 
 const modeList = [
   {
-    name: '全日制',
-    value: '全日制',
+    name: "全日制",
+    value: "全日制",
   },
   {
-    name: '非全日制',
-    value: '非全日制',
+    name: "非全日制",
+    value: "非全日制",
   },
   {
-    name: '不填写',
-    value: ' ',
+    name: "不填写",
+    value: " ",
   },
-]
-const currentIndex = inject('df/current/index')
+];
+const currentIndex = inject("df/current/index");
 </script>
 
 <template>

@@ -1,7 +1,7 @@
 <script setup>
-import { useNoteStore } from '@/stores'
-const noteStore = useNoteStore()
-const { autoCollapse } = storeToRefs(noteStore)
+import { useNoteStore } from "@/stores";
+const noteStore = useNoteStore();
+const { autoCollapse } = storeToRefs(noteStore);
 </script>
 
 <template>

@@ -14,13 +14,13 @@
 </template>
 
 <script setup>
-import { useSearchStore } from '@/stores'
-import Item from '../item.vue'
-import SearchTitle from '../searchTitle.vue'
+import { useSearchStore } from "@/stores";
+import Item from "../item.vue";
+import SearchTitle from "../searchTitle.vue";
 
-const searchStore = useSearchStore()
-const { search } = searchStore
-const { appSourceVisible, appSource } = storeToRefs(searchStore)
+const searchStore = useSearchStore();
+const { search } = searchStore;
+const { appSourceVisible, appSource } = storeToRefs(searchStore);
 </script>
 
 <style lang="scss" scoped></style>

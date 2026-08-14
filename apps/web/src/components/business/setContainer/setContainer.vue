@@ -1,5 +1,5 @@
 <script setup>
-defineOptions({ name: 'SfSetContainer' })
+defineOptions({ name: "SfSetContainer" });
 
 defineProps({
   list: {
@@ -8,18 +8,18 @@ defineProps({
   },
   width: {
     type: String,
-    default: '500px',
+    default: "500px",
   },
   height: {
     type: String,
-    default: '600px',
+    default: "600px",
   },
-})
-const modelValue = defineModel('modelValue')
-const searchValue = defineModel('searchValue')
+});
+const modelValue = defineModel("modelValue");
+const searchValue = defineModel("searchValue");
 const handleClick = (item) => {
-  modelValue.value = item.value
-}
+  modelValue.value = item.value;
+};
 </script>
 
 <template>

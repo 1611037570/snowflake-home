@@ -1,14 +1,14 @@
 <script setup>
-import { checkPermission } from '@/utils'
+import { checkPermission } from "@/utils";
 
-defineOptions({ name: 'SfPermission' })
+defineOptions({ name: "SfPermission" });
 
 defineProps({
   permission: {
     type: String,
-    default: '',
+    default: "",
   },
-})
+});
 </script>
 
 <template>

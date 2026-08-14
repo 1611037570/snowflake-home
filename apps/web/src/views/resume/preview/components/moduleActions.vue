@@ -4,8 +4,8 @@ defineProps({
     type: Boolean,
     default: false,
   },
-})
-defineEmits(['discard', 'accept', 'select'])
+});
+defineEmits(["discard", "accept", "select"]);
 </script>
 
 <template>

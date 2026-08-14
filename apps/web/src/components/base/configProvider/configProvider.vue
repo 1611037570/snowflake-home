@@ -2,13 +2,13 @@
 /**
  * 配置提供器 提供默认背景颜色和颜色
  */
-import { DEFAULT_BACKGROUND, DEFAULT_COLOR } from '@/constants'
-import { getElLocale } from '@/utils'
+import { DEFAULT_BACKGROUND, DEFAULT_COLOR } from "@/constants";
+import { getElLocale } from "@/utils";
 
-defineOptions({ name: 'SfConfigProvider' })
+defineOptions({ name: "SfConfigProvider" });
 
-provide('bg', DEFAULT_BACKGROUND)
-provide('color', DEFAULT_COLOR)
+provide("bg", DEFAULT_BACKGROUND);
+provide("color", DEFAULT_COLOR);
 </script>
 
 <template>

@@ -1,55 +1,55 @@
-import { defineStore } from 'pinia'
-import { ref } from 'vue'
+import { defineStore } from "pinia";
+import { ref } from "vue";
 
 export const useThemeStore = defineStore(
-  'theme',
+  "theme",
   () => {
     // 主题模式：light | dark | system
-    const themeMode = ref<'light' | 'dark' | 'system'>('system')
-    const theme = ref<'light' | 'dark'>('light')
-    const isDark = computed(() => theme.value === 'dark')
+    const themeMode = ref<"light" | "dark" | "system">("system");
+    const theme = ref<"light" | "dark">("light");
+    const isDark = computed(() => theme.value === "dark");
     // 保存媒体查询对象引用，用于后续移除监听（核心修复点1）
-    const mediaQueryList = window.matchMedia('(prefers-color-scheme: dark)')
+    const mediaQueryList = window.matchMedia("(prefers-color-scheme: dark)");
 
     // 应用主题到DOM
-    const applyTheme = (mode: 'light' | 'dark') => {
-      document.documentElement.classList.remove('light', 'dark')
-      document.documentElement.classList.add(mode)
-      theme.value = mode
-    }
+    const applyTheme = (mode: "light" | "dark") => {
+      document.documentElement.classList.remove("light", "dark");
+      document.documentElement.classList.add(mode);
+      theme.value = mode;
+    };
 
     // 获取并应用系统主题
     const applySystemTheme = () => {
-      const isDark = mediaQueryList.matches
-      applyTheme(isDark ? 'dark' : 'light')
-    }
+      const isDark = mediaQueryList.matches;
+      applyTheme(isDark ? "dark" : "light");
+    };
 
     // 切换主题模式
-    const setTheme = (mode: 'light' | 'dark' | 'system') => {
-      themeMode.value = mode
+    const setTheme = (mode: "light" | "dark" | "system") => {
+      themeMode.value = mode;
 
       // 先移除之前的系统主题监听（核心修复点2：避免重复监听）
-      mediaQueryList.removeEventListener('change', applySystemTheme)
+      mediaQueryList.removeEventListener("change", applySystemTheme);
 
-      if (mode === 'system') {
+      if (mode === "system") {
         // 跟随系统主题
         // 给媒体查询对象添加监听（而非window）
-        mediaQueryList.addEventListener('change', applySystemTheme)
-        applySystemTheme()
+        mediaQueryList.addEventListener("change", applySystemTheme);
+        applySystemTheme();
       } else {
         // 手动设置主题
-        applyTheme(mode)
+        applyTheme(mode);
       }
-    }
+    };
 
     // 初始化主题
     const initTheme = () => {
-      setTheme(themeMode.value)
-    }
+      setTheme(themeMode.value);
+    };
 
-    return { themeMode, theme, isDark, setTheme, initTheme }
+    return { themeMode, theme, isDark, setTheme, initTheme };
   },
   {
-    persist: { storage: localStorage, pick: ['themeMode'] },
+    persist: { storage: localStorage, pick: ["themeMode"] },
   },
-)
+);

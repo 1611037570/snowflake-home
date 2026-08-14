@@ -19,51 +19,51 @@
 </template>
 
 <script setup>
-import Title from './title.vue'
+import Title from "./title.vue";
 // 定义组件属性：初始宽度和高度
 const props = defineProps({
   initialW: { type: Number },
   initialH: { type: Number },
-})
+});
 
 // 定义组件事件：应用推荐设置
-const emit = defineEmits(['apply'])
+const emit = defineEmits(["apply"]);
 
 const options = computed(() => {
   return [
-    { name: $t('image.rec2k'), value: 2560 },
-    { name: $t('image.rec1080p'), value: 1920 },
-  ]
-})
+    { name: $t("image.rec2k"), value: 2560 },
+    { name: $t("image.rec1080p"), value: 1920 },
+  ];
+});
 const maxSize = computed(() => {
-  return Math.max(props.initialW, props.initialH)
-})
-const selected = ref('')
+  return Math.max(props.initialW, props.initialH);
+});
+const selected = ref("");
 
 // 应用推荐设置：抖音高清优化方案
 const applyRecommendation = (size) => {
-  const targetSize = size // 目标最大尺寸（抖音推荐尺寸）
-  const { initialW, initialH } = props
-  const maxDim = Math.max(initialW, initialH) // 获取最大边长
+  const targetSize = size; // 目标最大尺寸（抖音推荐尺寸）
+  const { initialW, initialH } = props;
+  const maxDim = Math.max(initialW, initialH); // 获取最大边长
 
-  let newW = initialW
-  let newH = initialH
+  let newW = initialW;
+  let newH = initialH;
 
   // 仅当最大边超过目标尺寸时才进行缩放（避免小图放大）
   if (maxDim > targetSize) {
-    const ratio = targetSize / maxDim // 计算缩放比例
-    newW = Math.round(initialW * ratio)
-    newH = Math.round(initialH * ratio)
+    const ratio = targetSize / maxDim; // 计算缩放比例
+    newW = Math.round(initialW * ratio);
+    newH = Math.round(initialH * ratio);
   }
 
   // 触发应用事件，传递推荐设置
-  emit('apply', {
+  emit("apply", {
     quality: 1, // 无损质量
-    format: 'webp', // WebP格式（抖音推荐）
+    format: "webp", // WebP格式（抖音推荐）
     size: { w: newW, h: newH }, // 优化后的尺寸
-  })
+  });
 
-  const name = options.value.find((o) => o.value === size).name
-  selected.value = name
-}
+  const name = options.value.find((o) => o.value === size).name;
+  selected.value = name;
+};
 </script>

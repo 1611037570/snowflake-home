@@ -1,38 +1,38 @@
 <script setup>
-import { useHomeStore, useSearchStore } from '@/stores'
-import { onClickOutside } from '@vueuse/core'
-import { storeToRefs } from 'pinia'
-import { computed, ref } from 'vue'
-import CurrentTime from './currentTime.vue'
-import One from './one/index.vue'
-import SearchInput from './searchInput.vue'
-import SearchTwo from './two/index.vue'
-import WebSourceList from './webSourceList.vue'
+import { useHomeStore, useSearchStore } from "@/stores";
+import { onClickOutside } from "@vueuse/core";
+import { storeToRefs } from "pinia";
+import { computed, ref } from "vue";
+import CurrentTime from "./currentTime.vue";
+import One from "./one/index.vue";
+import SearchInput from "./searchInput.vue";
+import SearchTwo from "./two/index.vue";
+import WebSourceList from "./webSourceList.vue";
 
-const searchStore = useSearchStore()
-const homeStore = useHomeStore()
-const { tabIndex } = storeToRefs(homeStore)
+const searchStore = useSearchStore();
+const homeStore = useHomeStore();
+const { tabIndex } = storeToRefs(homeStore);
 
 const { searchFocus, expressionsFlag, expressionsResult, expressionsVisible, handleValue } =
-  storeToRefs(searchStore)
+  storeToRefs(searchStore);
 
 const translateYClass = computed(() => {
   if (!init.value) {
-    return 'translate-y-0'
+    return "translate-y-0";
   }
-  return tabIndex.value === 0 ? 'translate-y-34' : 'translate-y-12'
-})
+  return tabIndex.value === 0 ? "translate-y-34" : "translate-y-12";
+});
 
-const init = ref(false)
+const init = ref(false);
 setTimeout(() => {
-  init.value = true
-}, 1)
+  init.value = true;
+}, 1);
 
-const searchContainer = useTemplateRef('searchContainer')
+const searchContainer = useTemplateRef("searchContainer");
 onClickOutside(searchContainer, () => {
-  console.log('点击了非输入框区域')
-  searchFocus.value = false
-})
+  console.log("点击了非输入框区域");
+  searchFocus.value = false;
+});
 </script>
 
 <template>

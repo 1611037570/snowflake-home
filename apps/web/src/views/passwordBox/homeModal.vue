@@ -1,8 +1,8 @@
 <script setup>
-import { usePasswordStore } from '@/stores/modules/password'
-import PasswordBox from './passwordBox.vue'
-const passwordStore = usePasswordStore()
-const { homeModalVisible } = storeToRefs(passwordStore)
+import { usePasswordStore } from "@/stores/modules/password";
+import PasswordBox from "./passwordBox.vue";
+const passwordStore = usePasswordStore();
+const { homeModalVisible } = storeToRefs(passwordStore);
 </script>
 
 <template>

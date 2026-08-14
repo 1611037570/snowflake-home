@@ -1,12 +1,12 @@
 <script setup>
-import snowIcon from '@/assets/images/snow.svg'
+import snowIcon from "@/assets/images/snow.svg";
 
 defineProps({
   size: {
     type: Number,
     default: 7.5,
   },
-})
+});
 </script>
 
 <template>

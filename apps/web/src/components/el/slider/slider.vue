@@ -3,18 +3,18 @@
 </template>
 
 <script setup lang="ts">
-import { ElSlider } from 'element-plus'
-import type { ComponentInstance } from 'vue'
-import { getCurrentInstance, h } from 'vue'
+import { ElSlider } from "element-plus";
+import type { ComponentInstance } from "vue";
+import { getCurrentInstance, h } from "vue";
 
-defineOptions({ name: 'SfSlider' })
+defineOptions({ name: "SfSlider" });
 
-const vm: any = getCurrentInstance()
+const vm: any = getCurrentInstance();
 
 function changeRef(exports: any) {
-  vm.exposed = exports
+  vm.exposed = exports;
 }
-defineExpose({} as ComponentInstance<typeof ElSlider>)
+defineExpose({} as ComponentInstance<typeof ElSlider>);
 </script>
 
 <style scoped></style>

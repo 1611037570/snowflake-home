@@ -1,3 +1,3 @@
-import Permission from './permission.vue'
+import Permission from "./permission.vue";
 
-export default Permission
+export default Permission;

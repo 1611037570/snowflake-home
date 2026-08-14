@@ -1,12 +1,12 @@
 <script setup>
-defineOptions({ name: 'SfScrollbarTab' })
+defineOptions({ name: "SfScrollbarTab" });
 
 defineProps({
   list: {
     type: Array,
     default: () => [],
   },
-})
+});
 </script>
 
 <template>

@@ -76,56 +76,56 @@
 </template>
 
 <script setup>
-import { useHomeStore, useSearchStore, useShortcutStore } from '@/stores'
-import { storeToRefs } from 'pinia'
-import ModalSearch from './modalSearch.vue'
-import Note from './model/note.vue'
+import { useHomeStore, useSearchStore, useShortcutStore } from "@/stores";
+import { storeToRefs } from "pinia";
+import ModalSearch from "./modalSearch.vue";
+import Note from "./model/note.vue";
 
-const homeStore = useHomeStore()
-const searchStore = useSearchStore()
-const shortcutStore = useShortcutStore()
-const { shortcutList } = storeToRefs(shortcutStore)
+const homeStore = useHomeStore();
+const searchStore = useSearchStore();
+const shortcutStore = useShortcutStore();
+const { shortcutList } = storeToRefs(shortcutStore);
 
-const { systemVisible, autoHideDock } = storeToRefs(homeStore)
-const { openMode } = storeToRefs(searchStore)
+const { systemVisible, autoHideDock } = storeToRefs(homeStore);
+const { openMode } = storeToRefs(searchStore);
 // 导入数据列表
-const importDataList = () => {}
+const importDataList = () => {};
 // 把dataList导出为json文件
 const exportDataList = () => {
-  const json = JSON.stringify(shortcutList.value)
-  const blob = new Blob([json], { type: 'application/json' })
-  const url = URL.createObjectURL(blob)
-  const a = document.createElement('a')
-  a.href = url
-  a.download = 'shortcutList.json'
-  a.click()
-  URL.revokeObjectURL(url)
-}
+  const json = JSON.stringify(shortcutList.value);
+  const blob = new Blob([json], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "shortcutList.json";
+  a.click();
+  URL.revokeObjectURL(url);
+};
 
 const list = [
   {
-    name: '常规',
-    value: 'default',
+    name: "常规",
+    value: "default",
   },
   {
-    name: '搜索栏',
-    value: 'search',
+    name: "搜索栏",
+    value: "search",
   },
   {
-    name: '快捷键',
-    value: 'shortcut',
+    name: "快捷键",
+    value: "shortcut",
   },
   {
-    name: '娱乐',
-    value: 'game',
+    name: "娱乐",
+    value: "game",
   },
   {
-    name: '便签',
-    value: 'note',
+    name: "便签",
+    value: "note",
   },
-]
+];
 
-const currentTab = ref('default')
+const currentTab = ref("default");
 </script>
 
 <style lang="scss" scoped></style>

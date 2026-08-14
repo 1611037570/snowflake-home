@@ -1,5 +1,5 @@
 <script setup>
-defineOptions({ name: 'SfSpan' })
+defineOptions({ name: "SfSpan" });
 </script>
 
 <template>

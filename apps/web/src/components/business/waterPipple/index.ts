@@ -1,2 +1,2 @@
-import WaterPipple from './waterPipple.vue'
-export default WaterPipple
+import WaterPipple from "./waterPipple.vue";
+export default WaterPipple;

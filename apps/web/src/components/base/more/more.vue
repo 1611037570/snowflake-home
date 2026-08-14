@@ -1,34 +1,34 @@
 <script setup>
-import { BASE_PAGE, MUSE_PAGE, PROJECT_PAGE } from '@/constants'
-import MoreList from './list.vue'
+import { BASE_PAGE, MUSE_PAGE, PROJECT_PAGE } from "@/constants";
+import MoreList from "./list.vue";
 
-const showMore = ref(false)
-const router = useRouter()
+const showMore = ref(false);
+const router = useRouter();
 const list = computed(() => {
   return [
     {
-      name: '项目',
-      tip: '完整可用的功能项目',
+      name: "项目",
+      tip: "完整可用的功能项目",
       routers: PROJECT_PAGE.value,
     },
     {
-      name: '基建内容',
-      tip: '支撑网站的基础模块',
+      name: "基建内容",
+      tip: "支撑网站的基础模块",
       routers: BASE_PAGE.value,
     },
 
     {
-      name: '灵光一现',
-      tip: '创意实验的半成品~',
+      name: "灵光一现",
+      tip: "创意实验的半成品~",
       routers: MUSE_PAGE.value,
     },
-  ]
-})
+  ];
+});
 
 function handleReset() {
-  localStorage.removeItem('snowflakeRoute')
-  showMore.value = false
-  router.push('/init')
+  localStorage.removeItem("snowflakeRoute");
+  showMore.value = false;
+  router.push("/init");
 }
 </script>
 
@@ -39,7 +39,7 @@ function handleReset() {
         type="button"
         class="h-8 cursor-pointer rounded-full border-2 border-sf-theme bg-sf-theme/10 px-[18px] text-sm font-black text-sf-theme"
       >
-        {{ $t('moreTools') }}
+        {{ $t("moreTools") }}
       </button>
     </slot>
     <SfModal v-model="showMore" :title="$t('moreTools')">

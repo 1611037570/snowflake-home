@@ -3,31 +3,31 @@
 </template>
 
 <script setup lang="ts">
-import { ElImage } from 'element-plus'
-import type { ComponentInstance } from 'vue'
-import { getCurrentInstance, h } from 'vue'
+import { ElImage } from "element-plus";
+import type { ComponentInstance } from "vue";
+import { getCurrentInstance, h } from "vue";
 
-defineOptions({ name: 'SfImg' })
+defineOptions({ name: "SfImg" });
 
 const props = defineProps({
   size: {
     type: Number,
     default: 0,
   },
-})
+});
 const getSizeStyle = computed(() => {
-  const size = Number(props.size)
+  const size = Number(props.size);
   return {
     width: `${size * 4}px`,
     height: `${size * 4}px`,
-  }
-})
-const vm: any = getCurrentInstance()
+  };
+});
+const vm: any = getCurrentInstance();
 
 function changeRef(exports: any) {
-  vm.exposed = exports
+  vm.exposed = exports;
 }
-defineExpose({} as ComponentInstance<typeof ElImage>)
+defineExpose({} as ComponentInstance<typeof ElImage>);
 </script>
 
 <style scoped></style>

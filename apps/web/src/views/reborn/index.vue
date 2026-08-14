@@ -324,147 +324,148 @@
 </template>
 
 <script setup>
-import { useIntervalFn, useLocalStorage } from '@vueuse/core'
-import { computed, onMounted, ref } from 'vue'
+import { useIntervalFn, useLocalStorage } from "@vueuse/core";
+import { computed, onMounted, ref } from "vue";
 
 const defaultState = {
-  currentPage: 'declaration',
-  goal: '',
-  reason: '',
+  currentPage: "declaration",
+  goal: "",
+  reason: "",
   startDate: null,
   completedDays: [],
   missedDays: [],
   makeupUsed: 0,
   makeupRemaining: 2,
   reflections: {},
-}
+};
 
-const appState = useLocalStorage('rebootLifeState', defaultState)
+const appState = useLocalStorage("rebootLifeState", defaultState);
 
-const goalSelectVal = ref('')
-const isCustomGoal = computed(() => goalSelectVal.value === 'other')
-const customGoal = ref('')
-const reason = ref('')
-const dailyReflection = ref('')
-const makeupModalVisible = ref(false)
-const selectedMakeupDay = ref(null)
-const confettiCount = ref(0)
+const goalSelectVal = ref("");
+const isCustomGoal = computed(() => goalSelectVal.value === "other");
+const customGoal = ref("");
+const reason = ref("");
+const dailyReflection = ref("");
+const makeupModalVisible = ref(false);
+const selectedMakeupDay = ref(null);
+const confettiCount = ref(0);
 
 const motivations = [
-  '第1天：万事开头难，但你已经迈出了最重要的一步！',
-  '第2天：第二天了，继续保持！新的习惯正在形成。',
-  '第3天：三天了！你已经开始建立新的神经通路。',
-  '第4天：坚持下去，习惯正在慢慢变得自然。',
-  '第5天：一周即将过半，你已经超越了最初的困难期！',
-  '第6天：继续保持，你的大脑正在适应新的模式。',
-  '第7天：恭喜完成第一周！这是习惯形成的关键里程碑。',
-  '第8天：第二周开始了，你正在巩固这个新习惯。',
-  '第9天：习惯变得越来越自动化，坚持下去！',
-  '第10天：双位数了！你已经走过了近一半的旅程。',
-  '第11天：继续保持，你正在成为更好的自己。',
-  '第12天：习惯的力量正在显现，坚持下去！',
-  '第13天：你已经超越了60%的尝试者！',
-  '第14天：两周完成！这是习惯形成的关键阶段。',
-  '第15天：最后一周开始了，胜利在望！',
-  '第16天：习惯几乎已经成为你的一部分。',
-  '第17天：继续保持，你离成功只有几步之遥。',
-  '第18天：你正在创造持久的改变！',
-  '第19天：坚持到底，胜利就在眼前！',
-  '第20天：只剩最后一天了，你已经几乎完成了！',
-  '第21天：最后一天！完成它，你将开启全新的人生篇章！',
-]
+  "第1天：万事开头难，但你已经迈出了最重要的一步！",
+  "第2天：第二天了，继续保持！新的习惯正在形成。",
+  "第3天：三天了！你已经开始建立新的神经通路。",
+  "第4天：坚持下去，习惯正在慢慢变得自然。",
+  "第5天：一周即将过半，你已经超越了最初的困难期！",
+  "第6天：继续保持，你的大脑正在适应新的模式。",
+  "第7天：恭喜完成第一周！这是习惯形成的关键里程碑。",
+  "第8天：第二周开始了，你正在巩固这个新习惯。",
+  "第9天：习惯变得越来越自动化，坚持下去！",
+  "第10天：双位数了！你已经走过了近一半的旅程。",
+  "第11天：继续保持，你正在成为更好的自己。",
+  "第12天：习惯的力量正在显现，坚持下去！",
+  "第13天：你已经超越了60%的尝试者！",
+  "第14天：两周完成！这是习惯形成的关键阶段。",
+  "第15天：最后一周开始了，胜利在望！",
+  "第16天：习惯几乎已经成为你的一部分。",
+  "第17天：继续保持，你离成功只有几步之遥。",
+  "第18天：你正在创造持久的改变！",
+  "第19天：坚持到底，胜利就在眼前！",
+  "第20天：只剩最后一天了，你已经几乎完成了！",
+  "第21天：最后一天！完成它，你将开启全新的人生篇章！",
+];
 
 const stories = [
-  '你知道吗？爱因斯坦曾经说过：『复利是世界第八大奇迹』。你的每一个小坚持，都在为未来的自己积累巨大的能量。',
-  '研究表明，养成一个习惯平均需要66天，但21天足以让你跨越最困难的阶段，让新行为变得自然而然。',
-  '像詹姆斯·克利尔在《原子习惯》中说的：『你每个当下的选择，都在投票给你想成为的那个人。』今天的坚持就是为理想中的自己投下宝贵的一票。',
-  '马拉松选手不会一开始就跑42公里，他们从5公里、10公里开始。你的21天挑战也是如此，每一天都是向终点迈进的一步。',
-  '神经元科学表明，重复的行为会加强神经通路，让行动变得越来越容易。你现在的每一次坚持，都在重塑你的大脑。',
-]
+  "你知道吗？爱因斯坦曾经说过：『复利是世界第八大奇迹』。你的每一个小坚持，都在为未来的自己积累巨大的能量。",
+  "研究表明，养成一个习惯平均需要66天，但21天足以让你跨越最困难的阶段，让新行为变得自然而然。",
+  "像詹姆斯·克利尔在《原子习惯》中说的：『你每个当下的选择，都在投票给你想成为的那个人。』今天的坚持就是为理想中的自己投下宝贵的一票。",
+  "马拉松选手不会一开始就跑42公里，他们从5公里、10公里开始。你的21天挑战也是如此，每一天都是向终点迈进的一步。",
+  "神经元科学表明，重复的行为会加强神经通路，让行动变得越来越容易。你现在的每一次坚持，都在重塑你的大脑。",
+];
 
-const completedCount = computed(() => appState.value.completedDays.length)
-const progressPercent = computed(() => (completedCount.value / 21) * 100)
-const progressText = computed(() => `${completedCount.value}/21 天`)
+const completedCount = computed(() => appState.value.completedDays.length);
+const progressPercent = computed(() => (completedCount.value / 21) * 100);
+const progressText = computed(() => `${completedCount.value}/21 天`);
 
 const currentStreak = computed(() => {
-  let streak = 0
+  let streak = 0;
   for (let i = completedCount.value; i > 0; i--) {
-    if (appState.value.completedDays.includes(i)) streak++
-    else break
+    if (appState.value.completedDays.includes(i)) streak++;
+    else break;
   }
-  return streak
-})
+  return streak;
+});
 
-const completionRate = computed(() => Math.round((completedCount.value / 21) * 100))
-const daysRemaining = computed(() => 21 - completedCount.value)
+const completionRate = computed(() => Math.round((completedCount.value / 21) * 100));
+const daysRemaining = computed(() => 21 - completedCount.value);
 
 const currentPhase = computed(() => {
-  if (completedCount.value < 7) return 1
-  if (completedCount.value < 14) return 2
-  return 3
-})
+  if (completedCount.value < 7) return 1;
+  if (completedCount.value < 14) return 2;
+  return 3;
+});
 
 const dailyMotivationText = computed(() => {
-  const day = completedCount.value + 1
-  if (day <= 21) return motivations[day - 1]
-  return stories[Math.floor(Math.random() * stories.length)]
-})
+  const day = completedCount.value + 1;
+  if (day <= 21) return motivations[day - 1];
+  return stories[Math.floor(Math.random() * stories.length)];
+});
 
 const showMakeup = computed(
   () => appState.value.makeupRemaining > 0 && appState.value.missedDays.length > 0,
-)
+);
 
 const completionDateText = computed(() => {
-  const today = new Date()
-  return `完成于 ${today.getFullYear()}年${today.getMonth() + 1}月${today.getDate()}日`
-})
+  const today = new Date();
+  return `完成于 ${today.getFullYear()}年${today.getMonth() + 1}月${today.getDate()}日`;
+});
 
 const longestStreak = computed(() => {
-  let longest = 0
-  let cur = 0
+  let longest = 0;
+  let cur = 0;
   for (let i = 1; i <= 21; i++) {
     if (appState.value.completedDays.includes(i)) {
-      cur++
-      longest = Math.max(longest, cur)
+      cur++;
+      longest = Math.max(longest, cur);
     } else {
-      cur = 0
+      cur = 0;
     }
   }
-  return longest
-})
+  return longest;
+});
 
 function startJourney() {
-  let goal = goalSelectVal.value
-  if (goal === 'other') goal = customGoal.value.trim()
-  const reasonText = reason.value.trim()
+  let goal = goalSelectVal.value;
+  if (goal === "other") goal = customGoal.value.trim();
+  const reasonText = reason.value.trim();
   if (!goal) {
-    window.alert('请选择或输入你的重启目标')
-    return
+    window.alert("请选择或输入你的重启目标");
+    return;
   }
   if (!reasonText) {
-    window.alert('请填写你的重启理由')
-    return
+    window.alert("请填写你的重启理由");
+    return;
   }
-  appState.value.currentPage = 'journey'
-  appState.value.goal = goal
-  appState.value.reason = reasonText
-  appState.value.startDate = new Date().toISOString()
-  appState.value.completedDays = []
-  appState.value.missedDays = []
-  appState.value.makeupUsed = 0
-  appState.value.makeupRemaining = 2
-  appState.value.reflections = {}
+  appState.value.currentPage = "journey";
+  appState.value.goal = goal;
+  appState.value.reason = reasonText;
+  appState.value.startDate = new Date().toISOString();
+  appState.value.completedDays = [];
+  appState.value.missedDays = [];
+  appState.value.makeupUsed = 0;
+  appState.value.makeupRemaining = 2;
+  appState.value.reflections = {};
 }
 
 function completeSpecificDay(day) {
   if (!appState.value.completedDays.includes(day) && !appState.value.missedDays.includes(day)) {
-    appState.value.completedDays.push(day)
-    appState.value.completedDays.sort((a, b) => a - b)
-    if (dailyReflection.value.trim()) appState.value.reflections[day] = dailyReflection.value.trim()
-    dailyReflection.value = ''
+    appState.value.completedDays.push(day);
+    appState.value.completedDays.sort((a, b) => a - b);
+    if (dailyReflection.value.trim())
+      appState.value.reflections[day] = dailyReflection.value.trim();
+    dailyReflection.value = "";
     if (appState.value.completedDays.length === 21) {
-      appState.value.currentPage = 'certificate'
-      createConfetti()
+      appState.value.currentPage = "certificate";
+      createConfetti();
     }
   }
 }
@@ -475,125 +476,125 @@ function clickDay(day) {
     !appState.value.completedDays.includes(day) &&
     !appState.value.missedDays.includes(day)
   ) {
-    completeSpecificDay(day)
+    completeSpecificDay(day);
   }
 }
 
 function completeDay() {
-  const nextDay = appState.value.completedDays.length + 1
-  completeSpecificDay(nextDay)
+  const nextDay = appState.value.completedDays.length + 1;
+  completeSpecificDay(nextDay);
 }
 
 function openMakeupModal() {
   if (appState.value.makeupRemaining <= 0) {
-    window.alert('没有可用的补卡机会了')
-    return
+    window.alert("没有可用的补卡机会了");
+    return;
   }
   if (appState.value.missedDays.length === 0) {
-    window.alert('目前没有遗漏的天数需要补签')
-    return
+    window.alert("目前没有遗漏的天数需要补签");
+    return;
   }
-  selectedMakeupDay.value = null
-  makeupModalVisible.value = true
+  selectedMakeupDay.value = null;
+  makeupModalVisible.value = true;
 }
 
 function confirmMakeup() {
   if (!selectedMakeupDay.value) {
-    window.alert('请选择要补签的日期')
-    return
+    window.alert("请选择要补签的日期");
+    return;
   }
-  const day = Number(selectedMakeupDay.value)
-  appState.value.completedDays.push(day)
-  appState.value.completedDays.sort((a, b) => a - b)
-  const idx = appState.value.missedDays.indexOf(day)
-  if (idx > -1) appState.value.missedDays.splice(idx, 1)
-  appState.value.makeupUsed++
-  appState.value.makeupRemaining--
-  makeupModalVisible.value = false
+  const day = Number(selectedMakeupDay.value);
+  appState.value.completedDays.push(day);
+  appState.value.completedDays.sort((a, b) => a - b);
+  const idx = appState.value.missedDays.indexOf(day);
+  if (idx > -1) appState.value.missedDays.splice(idx, 1);
+  appState.value.makeupUsed++;
+  appState.value.makeupRemaining--;
+  makeupModalVisible.value = false;
   if (appState.value.completedDays.length === 21) {
-    appState.value.currentPage = 'certificate'
-    createConfetti()
+    appState.value.currentPage = "certificate";
+    createConfetti();
   }
 }
 
 function closeMakeupModalFunc() {
-  makeupModalVisible.value = false
+  makeupModalVisible.value = false;
 }
 
 function resetJourney() {
-  if (window.confirm('确定要重新开始吗？当前进度将丢失。')) {
-    appState.value.currentPage = 'declaration'
-    appState.value.goal = ''
-    appState.value.reason = ''
-    appState.value.startDate = null
-    appState.value.completedDays = []
-    appState.value.missedDays = []
-    appState.value.makeupUsed = 0
-    appState.value.makeupRemaining = 2
-    appState.value.reflections = {}
-    goalSelectVal.value = ''
-    customGoal.value = ''
-    reason.value = ''
+  if (window.confirm("确定要重新开始吗？当前进度将丢失。")) {
+    appState.value.currentPage = "declaration";
+    appState.value.goal = "";
+    appState.value.reason = "";
+    appState.value.startDate = null;
+    appState.value.completedDays = [];
+    appState.value.missedDays = [];
+    appState.value.makeupUsed = 0;
+    appState.value.makeupRemaining = 2;
+    appState.value.reflections = {};
+    goalSelectVal.value = "";
+    customGoal.value = "";
+    reason.value = "";
   }
 }
 
 function newJourney() {
-  appState.value.currentPage = 'declaration'
+  appState.value.currentPage = "declaration";
 }
 
 function shareCertificate() {
   if (navigator.share) {
     navigator
       .share({
-        title: '我完成了21天重启人生挑战！',
+        title: "我完成了21天重启人生挑战！",
         text: `我成功坚持了21天，养成了"${appState.value.goal}"的好习惯！`,
         url: window.location.href,
       })
-      .catch(() => {})
+      .catch(() => {});
   } else {
-    window.alert('分享功能在当前浏览器中不可用，你可以截图分享你的成就！')
+    window.alert("分享功能在当前浏览器中不可用，你可以截图分享你的成就！");
   }
 }
 
 function createConfetti() {
-  const colors = ['#2ecc71', '#3498db', '#9b59b6', '#e74c3c', '#f1c40f', '#1abc9c']
-  confettiCount.value = 0
+  const colors = ["#2ecc71", "#3498db", "#9b59b6", "#e74c3c", "#f1c40f", "#1abc9c"];
+  confettiCount.value = 0;
   for (let i = 0; i < 150; i++) {
-    const confetti = document.createElement('div')
-    confetti.className = 'confetti'
-    confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)]
-    confetti.style.left = Math.random() * 100 + 'vw'
-    confetti.style.top = '-10px'
-    confetti.style.transform = `rotate(${Math.random() * 360}deg)`
-    confetti.style.width = Math.random() * 10 + 5 + 'px'
-    confetti.style.height = Math.random() * 10 + 5 + 'px'
-    document.body.appendChild(confetti)
+    const confetti = document.createElement("div");
+    confetti.className = "confetti";
+    confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+    confetti.style.left = Math.random() * 100 + "vw";
+    confetti.style.top = "-10px";
+    confetti.style.transform = `rotate(${Math.random() * 360}deg)`;
+    confetti.style.width = Math.random() * 10 + 5 + "px";
+    confetti.style.height = Math.random() * 10 + 5 + "px";
+    document.body.appendChild(confetti);
     const animation = confetti.animate(
       [
-        { top: '-10px', opacity: 1, transform: `rotate(0deg)` },
-        { top: '100vh', opacity: 0, transform: `rotate(${Math.random() * 360}deg)` },
+        { top: "-10px", opacity: 1, transform: `rotate(0deg)` },
+        { top: "100vh", opacity: 0, transform: `rotate(${Math.random() * 360}deg)` },
       ],
-      { duration: Math.random() * 3000 + 2000, easing: 'cubic-bezier(0.1, 0.8, 0.2, 1)' },
-    )
-    animation.onfinish = () => confetti.remove()
+      { duration: Math.random() * 3000 + 2000, easing: "cubic-bezier(0.1, 0.8, 0.2, 1)" },
+    );
+    animation.onfinish = () => confetti.remove();
   }
 }
 
 function simulateMissedDays() {
   if (appState.value.completedDays.length > 0 && appState.value.completedDays.length < 21) {
-    const randomDay = Math.floor(Math.random() * appState.value.completedDays.length) + 1
+    const randomDay = Math.floor(Math.random() * appState.value.completedDays.length) + 1;
     if (
       !appState.value.completedDays.includes(randomDay) &&
       !appState.value.missedDays.includes(randomDay)
     ) {
-      appState.value.missedDays.push(randomDay)
+      appState.value.missedDays.push(randomDay);
     }
   }
 }
 
-useIntervalFn(simulateMissedDays, 30000)
+useIntervalFn(simulateMissedDays, 30000);
 
-onMounted(() => {})
+onMounted(() => {});
 </script>
 
 <style scoped>

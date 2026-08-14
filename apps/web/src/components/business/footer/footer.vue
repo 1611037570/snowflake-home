@@ -2,13 +2,13 @@
   <footer class="flex-c relative flex-col overflow-hidden px-3 py-1 text-sf-text">
     <div class="flex items-center gap-3">
       <div class="flex items-center">
-        {{ $t('copyright') }} © 2019-{{ currentYear }}
+        {{ $t("copyright") }} © 2019-{{ currentYear }}
         <SfTooltip content="网站作者">
           <SfSpan class="mx-1" @click="userNavigation">
-            {{ $t('user.name') }}
+            {{ $t("user.name") }}
           </SfSpan>
         </SfTooltip>
-        {{ $t('allRightsReserved') }}
+        {{ $t("allRightsReserved") }}
       </div>
 
       <SfAbout>
@@ -23,23 +23,23 @@
 </template>
 
 <script setup lang="ts">
-import { userNavigation } from '@/utils'
-import dayjs from 'dayjs'
-import { computed } from 'vue'
-import Banner from './banner.vue'
+import { userNavigation } from "@/utils";
+import dayjs from "dayjs";
+import { computed } from "vue";
+import Banner from "./banner.vue";
 
-defineOptions({ name: 'SfFooter' })
+defineOptions({ name: "SfFooter" });
 
 defineProps({
   banner: {
     type: Boolean,
     default: true,
   },
-})
+});
 
 const currentYear = computed(() => {
-  return dayjs().year()
-})
+  return dayjs().year();
+});
 </script>
 
 <style lang="scss" scoped></style>

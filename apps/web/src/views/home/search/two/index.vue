@@ -1,7 +1,7 @@
 <script setup>
-import ExpandList from './expandList.vue'
-import RecommendList from './recommendList.vue'
-import ShortcutList from './shortcutList.vue'
+import ExpandList from "./expandList.vue";
+import RecommendList from "./recommendList.vue";
+import ShortcutList from "./shortcutList.vue";
 </script>
 
 <template>

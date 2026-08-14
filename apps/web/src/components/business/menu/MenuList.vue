@@ -12,13 +12,13 @@ defineProps({
   },
   nameKey: {
     type: String,
-    default: 'name',
+    default: "name",
   },
-})
-const emit = defineEmits(['select'])
+});
+const emit = defineEmits(["select"]);
 const select = (item: any) => {
-  emit('select', item)
-}
+  emit("select", item);
+};
 </script>
 
 <style scoped></style>

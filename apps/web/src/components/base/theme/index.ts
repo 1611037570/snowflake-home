@@ -1,3 +1,3 @@
-import Theme from './theme.vue'
+import Theme from "./theme.vue";
 
-export default Theme
+export default Theme;

@@ -10,9 +10,9 @@
 
 <script setup lang="ts">
 defineProps<{
-  errorMsg: string
-  raw: any
-}>()
+  errorMsg: string;
+  raw: any;
+}>();
 </script>
 
 <style scoped></style>

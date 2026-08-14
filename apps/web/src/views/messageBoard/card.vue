@@ -13,14 +13,14 @@
 </template>
 
 <script setup>
-import { getRandomItem } from '@/utils'
-import { useId } from 'vue'
-import { lightThemeColors } from '@/constants'
-const id = useId()
-const topId = defineModel('topId')
+import { getRandomItem } from "@/utils";
+import { useId } from "vue";
+import { lightThemeColors } from "@/constants";
+const id = useId();
+const topId = defineModel("topId");
 function handleClick() {
-  console.log('id:', id, props.item)
-  topId.value = id
+  console.log("id:", id, props.item);
+  topId.value = id;
 }
 const props = defineProps({
   cardStyle: {
@@ -30,16 +30,16 @@ const props = defineProps({
   item: {
     type: Object,
   },
-})
+});
 
-const zIndex = Math.floor(Math.random() * 10)
-const backgroundColor = getRandomItem(lightThemeColors).value
+const zIndex = Math.floor(Math.random() * 10);
+const backgroundColor = getRandomItem(lightThemeColors).value;
 const cardStyle1 = computed(() => {
   return {
-    background: props.item.type === 'fixed' ? 'red' : backgroundColor,
-    zIndex: topId.value === id ? 9999999 : props.item.type === 'fixed' ? 50 : zIndex,
-  }
-})
+    background: props.item.type === "fixed" ? "red" : backgroundColor,
+    zIndex: topId.value === id ? 9999999 : props.item.type === "fixed" ? 50 : zIndex,
+  };
+});
 </script>
 
 <style scoped></style>

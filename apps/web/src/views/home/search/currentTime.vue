@@ -7,21 +7,21 @@
 </template>
 
 <script setup>
-import { useCurrentTime } from '@/hooks'
-import { useHomeStore, useSearchStore } from '@/stores'
-const searchStore = useSearchStore()
-const { searchFocus } = storeToRefs(searchStore)
+import { useCurrentTime } from "@/hooks";
+import { useHomeStore, useSearchStore } from "@/stores";
+const searchStore = useSearchStore();
+const { searchFocus } = storeToRefs(searchStore);
 
-const homeStore = useHomeStore()
-const { time } = useCurrentTime()
-const { switchTab } = homeStore
+const homeStore = useHomeStore();
+const { time } = useCurrentTime();
+const { switchTab } = homeStore;
 
 const updateTab = () => {
   if (searchFocus.value) {
-    return
+    return;
   }
-  switchTab()
-}
+  switchTab();
+};
 </script>
 
 <style lang="scss" scoped></style>

@@ -1,15 +1,15 @@
 <script setup>
-import { useSystemStore } from '@/stores'
-import { storeToRefs } from 'pinia'
-const systemStore = useSystemStore()
-const { windowSize } = storeToRefs(systemStore)
+import { useSystemStore } from "@/stores";
+import { storeToRefs } from "pinia";
+const systemStore = useSystemStore();
+const { windowSize } = storeToRefs(systemStore);
 
-defineOptions({ name: 'SfBacktop' })
+defineOptions({ name: "SfBacktop" });
 
-const trigger = ref('hover')
-const tooltipRef = useTemplateRef('tooltipRef')
+const trigger = ref("hover");
+const tooltipRef = useTemplateRef("tooltipRef");
 function handleClick() {
-  tooltipRef.value.onClose()
+  tooltipRef.value.onClose();
 }
 </script>
 

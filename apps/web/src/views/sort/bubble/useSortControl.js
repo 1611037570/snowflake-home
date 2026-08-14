@@ -1,4 +1,4 @@
-import { computed } from 'vue'
+import { computed } from "vue";
 
 /**
  * 通用排序控制器 Hook
@@ -18,25 +18,25 @@ export function useSortControl({ executeSingleStep, resetAlgorithm, isCompleted,
   // 单步执行
   const nextStep = () => {
     if (!isCompleted.value && !isAnimating.value) {
-      executeSingleStep()
+      executeSingleStep();
     }
-  }
+  };
 
   // 重置所有状态
   const reset = () => {
-    if (isAnimating.value) return
-    resetAlgorithm()
-  }
+    if (isAnimating.value) return;
+    resetAlgorithm();
+  };
 
   // ==========================================
   // 派生状态
   // ==========================================
 
   const statusText = computed(() => {
-    if (isCompleted.value) return '排序完成'
-    if (isAnimating.value) return '动画进行中'
-    return '等待开始'
-  })
+    if (isCompleted.value) return "排序完成";
+    if (isAnimating.value) return "动画进行中";
+    return "等待开始";
+  });
 
   return {
     status: {
@@ -46,5 +46,5 @@ export function useSortControl({ executeSingleStep, resetAlgorithm, isCompleted,
       nextStep,
       reset,
     },
-  }
+  };
 }

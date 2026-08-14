@@ -8,22 +8,22 @@
 </template>
 
 <script setup lang="ts">
-import { ElDatePicker } from 'element-plus'
+import { ElDatePicker } from "element-plus";
 // 动态导入不生效，手动导入
-import 'element-plus/theme-chalk/el-date-picker-panel.css'
-import type { ComponentInstance } from 'vue'
-import { getCurrentInstance, h } from 'vue'
+import "element-plus/theme-chalk/el-date-picker-panel.css";
+import type { ComponentInstance } from "vue";
+import { getCurrentInstance, h } from "vue";
 
-defineOptions({ name: 'SfDatePicker' })
+defineOptions({ name: "SfDatePicker" });
 
-const bg = inject('bg')
+const bg = inject("bg");
 
-const vm: any = getCurrentInstance()
-const value = defineModel('modelValue')
+const vm: any = getCurrentInstance();
+const value = defineModel("modelValue");
 function changeRef(exports: any) {
-  vm.exposed = exports
+  vm.exposed = exports;
 }
-defineExpose({} as ComponentInstance<typeof ElDatePicker>)
+defineExpose({} as ComponentInstance<typeof ElDatePicker>);
 </script>
 
 <style lang="scss">

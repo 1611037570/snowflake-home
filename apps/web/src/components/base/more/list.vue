@@ -1,21 +1,21 @@
 <script setup>
-const router = useRouter()
+const router = useRouter();
 
 defineProps({
   data: {
     type: Object,
     default: () => ({}),
   },
-})
+});
 function handleClick(item) {
-  router.push(item.url)
+  router.push(item.url);
 }
 
-const route = useRoute()
+const route = useRoute();
 
 const filterMenuItems = (item) => {
-  return route.path == item.url
-}
+  return route.path == item.url;
+};
 </script>
 
 <template>

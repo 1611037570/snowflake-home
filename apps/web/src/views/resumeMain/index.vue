@@ -1,41 +1,41 @@
 <script setup>
-import { useRoute } from 'vue-router'
-import Main from './main/index.vue'
-import Mine from './mine.vue'
-import Template from './template.vue'
+import { useRoute } from "vue-router";
+import Main from "./main/index.vue";
+import Mine from "./mine.vue";
+import Template from "./template.vue";
 
 const navList = [
   {
-    name: '首页',
-    value: 'home',
+    name: "首页",
+    value: "home",
   },
   {
-    name: '简历模板',
-    value: 'template',
+    name: "简历模板",
+    value: "template",
   },
   {
-    name: '我的简历',
-    value: 'mine',
+    name: "我的简历",
+    value: "mine",
   },
-]
-const route = useRoute()
-const activeNavIndex = ref(0)
+];
+const route = useRoute();
+const activeNavIndex = ref(0);
 watch(
   () => route.fullPath,
   () => {
-    const type = route.query.type
-    const value = Array.isArray(type) ? type[0] : type
-    const index = navList.findIndex((item) => item.value === value)
+    const type = route.query.type;
+    const value = Array.isArray(type) ? type[0] : type;
+    const index = navList.findIndex((item) => item.value === value);
 
     if (index !== -1) {
-      activeNavIndex.value = index
+      activeNavIndex.value = index;
     }
   },
   { immediate: true },
-)
+);
 const activeValue = computed(() => {
-  return navList[activeNavIndex.value].value
-})
+  return navList[activeNavIndex.value].value;
+});
 </script>
 
 <template>

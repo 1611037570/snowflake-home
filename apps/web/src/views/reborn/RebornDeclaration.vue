@@ -94,6 +94,6 @@ defineProps({
   isCustomGoal: Boolean,
   customGoal: String,
   reason: String,
-})
-defineEmits(['update:goalSelectVal', 'update:customGoal', 'update:reason', 'start'])
+});
+defineEmits(["update:goalSelectVal", "update:customGoal", "update:reason", "start"]);
 </script>
