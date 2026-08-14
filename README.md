@@ -18,7 +18,7 @@
 
 ## 📦 仓库结构
 
-项目基于 **pnpm monorepo** 管理，子包位于 `packages` 目录下：
+项目基于 **pnpm monorepo** 管理，子包位于 `apps` 目录下：
 
 - **web**：项目主体 作者主导开发维护 ![作者主导](https://img.shields.io/badge/维护-作者主导-blue)
 - **server**：后端服务 AI主导开发维护 ![AI主导](https://img.shields.io/badge/维护-AI主导-purple)
