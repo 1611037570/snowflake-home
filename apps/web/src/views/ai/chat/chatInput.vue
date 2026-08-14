@@ -92,7 +92,7 @@ onMounted(() => {
     <div class="relative z-10 w-full max-w-4xl">
       <!-- 主输入容器：增强阴影与圆角细节 -->
       <div
-        class="group hover:border-sf-border-hover relative flex flex-col rounded-3xl border border-sf-border bg-sf-bg-2 p-1.5 shadow-sm transition-all duration-500"
+        class="group hover:border-sf-border-hover relative flex flex-col rounded-2xl border border-sf-border bg-sf-bg p-1 shadow-sm transition-all duration-500"
       >
         <!-- 输入框区域 -->
         <el-input
@@ -109,9 +109,9 @@ onMounted(() => {
         />
 
         <!-- 底部工具栏 -->
-        <div class="flex items-center justify-between px-2 pt-1 pb-1.5">
+        <div class="flex items-center justify-between px-1 pb-1">
           <!-- 左侧：模式切换 -->
-          <div class="flex items-center rounded-xl bg-sf-bg p-1">
+          <div class="flex items-center rounded-xl bg-sf-primary p-1">
             <button
               v-for="mode in thinkModes"
               :key="mode.key"
