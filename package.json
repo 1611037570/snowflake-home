@@ -1,11 +1,19 @@
 {
   "name": "snowflake",
   "private": true,
+  "packageManager": "pnpm@10.34.5",
   "scripts": {
-    "dev": "pnpm -r --parallel --filter=@snowflake/web --filter=@snowflake/server run dev",
+    "dev": "turbo run dev",
     "dev:web": "pnpm --filter @snowflake/web dev",
     "dev:server": "pnpm --filter @snowflake/server dev",
+    "i": "pnpm run i:web && pnpm run i:server",
     "i:web": "pnpm --filter @snowflake/web install",
-    "i:server": "pnpm --filter '@snowflake/server' install"
+    "i:server": "pnpm --filter '@snowflake/server' install",
+    "build": "turbo run build",
+    "build:web": "pnpm --filter @snowflake/web build-only",
+    "build:server": "pnpm --filter @snowflake/server build"
+  },
+  "devDependencies": {
+    "turbo": "^2.10.9"
   }
 }

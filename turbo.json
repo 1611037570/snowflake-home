@@ -1,0 +1,21 @@
+{
+  // Turbo 配置文件的 JSON Schema 地址，用于 IDE 校验和自动补全
+  "$schema": "https://turbo.build/schema.json",
+  // 定义 monorepo 中的任务配置
+  "tasks": {
+    // 构建任务：先构建依赖包（^build 表示先执行上游依赖的 build），产物输出到 dist 目录
+    "build": {
+      "dependsOn": ["^build"],
+      "outputs": ["dist/**"]
+    },
+    // 开发任务：不缓存，长驻进程（persistent 表示持续运行不会被终止）
+    "dev": {
+      "cache": false,
+      "persistent": true
+    },
+    // 代码检查任务：使用默认配置
+    "lint": {},
+    // 测试任务：使用默认配置
+    "test": {}
+  }
+}

@@ -1,4 +1,5 @@
 packages:
+  - 'apps/*'
   - 'packages/*'
 catalog:
   # 语言/工具链
