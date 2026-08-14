@@ -56,7 +56,7 @@ const actionButtons = [
     <header class="flex w-full flex-row items-center justify-between gap-3 px-1 select-none">
       <div class="flex items-center gap-3">
         <div class="flex flex-col gap-0.5 leading-tight">
-          <span class="text-[15px] font-black tracking-wider text-sf-text">小羊</span>
+          <span class="text-[12px] font-black tracking-wider text-sf-text">小羊</span>
           <div class="flex items-center gap-2">
             <time v-if="msg.time" class="text-[11px] font-bold tabular-nums opacity-40">{{
               msg.time
@@ -68,11 +68,11 @@ const actionButtons = [
           <!-- 思考过程切换 (美化后的胶囊风格) -->
           <button
             v-if="msg.thought"
-            class="flex cursor-pointer items-center gap-1.5 rounded-full border px-2.5 py-1 text-[11px] font-bold transition-all hover:shadow-xs active:scale-95"
+            class="flex cursor-pointer items-center gap-1.5 rounded-full border px-2 py-0.5 text-sf font-bold transition-all"
             :class="
               !msg.thoughtCollapsed
                 ? 'border-sf-theme/20 bg-sf-theme/10 text-sf-theme'
-                : 'border-sf-border/10 bg-sf-bg-3 text-sf-text-3 hover:border-sf-border/30 hover:text-sf-text'
+                : 'border-sf-border/10 bg-sf-bg-3 text-sf-text-3'
             "
             @click="emit('updateCollapsedStatus', index, 'thought')"
           >
@@ -80,7 +80,7 @@ const actionButtons = [
             <SfIcon
               icon="ph:caret-down-bold"
               size="2"
-              class="opacity-40 transition-transform duration-300"
+              class="transition-transform duration-300"
               :class="{ '-rotate-180 opacity-80': !msg.thoughtCollapsed }"
             />
           </button>
@@ -88,11 +88,11 @@ const actionButtons = [
           <!-- 回复内容切换 (美化后的胶囊风格) -->
           <button
             v-if="msg.content"
-            class="flex cursor-pointer items-center gap-1.5 rounded-full border px-2.5 py-1 text-[11px] font-bold transition-all hover:shadow-xs active:scale-95"
+            class="flex cursor-pointer items-center gap-1.5 rounded-full border px-2 py-0.5 text-sf font-bold transition-all"
             :class="
               !msg.contentCollapsed
                 ? 'border-sf-theme/20 bg-sf-theme/10 text-sf-theme'
-                : 'border-sf-border/10 bg-sf-bg-3 text-sf-text-3 hover:border-sf-border/30 hover:text-sf-text'
+                : 'border-sf-border/10 bg-sf-bg-3 text-sf-text-3'
             "
             @click="emit('updateCollapsedStatus', index, 'content')"
           >
@@ -100,7 +100,7 @@ const actionButtons = [
             <SfIcon
               icon="ph:caret-down-bold"
               size="2"
-              class="opacity-40 transition-transform duration-300"
+              class="transition-transform duration-300"
               :class="{ '-rotate-180 opacity-80': !msg.contentCollapsed }"
             />
           </button>
