@@ -13,8 +13,8 @@
 ## 🔗 在线体验
 
 - 📄 **简历生成器**：对标BOSS直聘，AI辅助编写、可视化编辑、PDF导出等 （http://nannan.work/#/resume） ![维护中](https://img.shields.io/badge/状态-维护中-brightgreen)
+- ✨ **雪花起始页**：项目核心载体，提供个性化自定义的网站起始页 （http://nannan.work） ![维护中](https://img.shields.io/badge/状态-维护中-brightgreen)
 - 🛣️ **图片处理工具**：轻量级图片套件，涵盖压缩、裁剪、格式转换等常用功能 （http://nannan.work/#/image） ![停止维护](https://img.shields.io/badge/状态-停止维护-lightgrey)
-- ✨ **雪花起始页**：项目核心载体，提供个性化自定义的网站起始页 （http://nannan.work） ![停止维护](https://img.shields.io/badge/状态-停止维护-lightgrey)
 
 ## 📦 仓库结构
 
@@ -34,10 +34,6 @@ pnpm install
 ### 开发环境运行
 
 pnpm dev
-
-## 📄 开源协议
-
-本项目采用 [MIT License](LICENSE) 开源协议。
 
 ## 作者碎碎念
 
