@@ -5,11 +5,14 @@ import EmptyState from "./emptyState.vue";
 import JdInput from "./JdInput.vue";
 import Score from "./Score.vue";
 import { useAiStore } from "@/stores/modules/ai";
+import { useResumeStore } from "@/stores";
 import Chat from "@/views/ai/chat/index.vue";
 
 // AI 对话
 const aiStore = useAiStore();
 const { createDefaultChat } = aiStore;
+const resumeStore = useResumeStore();
+const { setGenerating } = resumeStore;
 
 // 默认对话
 const chat = ref([]);
@@ -39,6 +42,9 @@ function clearChat() {
         <JdInput v-else-if="currentView === 'jd'" />
       </div>
       <!-- AI 对话项 -->
+      <div class="cursor-pointer" @click="setGenerating(!resumeStore.isGenerating)">
+        切换生成状态
+      </div>
       <div class="cursor-pointer" @click="clearChat">清空对话</div>
       <Chat :chat="chat" v-if="activeMode" />
     </div>
