@@ -1,8 +1,14 @@
 <template>
   <!-- 悬浮按钮 -->
-  <el-button class="debug-float-btn" type="primary" circle @click="drawerVisible = !drawerVisible">
-    12323
-  </el-button>
+  <div
+    v-if="debugMode"
+    class="flex-c fixed top-16 right-[18px] z-[9999] h-16 w-16 cursor-pointer rounded-full bg-sf-theme text-sf-theme-text"
+    type="primary"
+    circle
+    @click="drawerVisible = !drawerVisible"
+  >
+    控制台
+  </div>
 
   <!-- 抽屉 -->
   <el-drawer v-model="drawerVisible" title="调试数据" direction="rtl" size="50%">
@@ -13,7 +19,7 @@
           :modelValue="previewMd"
           editorId="debug-preview"
           :codeFoldable="false"
-          class="debug-md bg-transparent! p-0!"
+          class="max-h-[60vh] overflow-auto bg-transparent! p-0!"
         />
       </SfCollapseItem>
       <SfCollapseItem name="raw">
@@ -22,7 +28,7 @@
           :modelValue="rawMd"
           editorId="debug-raw"
           :codeFoldable="false"
-          class="debug-md bg-transparent! p-0!"
+          class="max-h-[60vh] overflow-auto bg-transparent! p-0!"
         />
       </SfCollapseItem>
     </SfCollapse>
@@ -35,6 +41,10 @@ import { MdPreview } from "md-editor-v3";
 import "md-editor-v3/lib/preview.css";
 import { useResumeStore, useThemeStore } from "@/stores";
 import { storeToRefs } from "pinia";
+import { useSystemStore } from "@/stores/modules/system";
+
+const systemStore = useSystemStore();
+const { debugMode } = storeToRefs(systemStore);
 
 const drawerVisible = ref(false);
 const activeNames = ref(["preview", "raw"]);
@@ -90,27 +100,3 @@ const rawMd = computed(() => {
   }
 });
 </script>
-
-<style scoped>
-.debug-float-btn {
-  position: fixed;
-  top: 18px;
-  right: 18px;
-  width: 48px;
-  height: 48px;
-  z-index: 9999;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
-}
-
-.debug-md {
-  max-height: 60vh;
-  overflow: auto;
-}
-:deep(.debug-md .md-editor-preview pre) {
-  margin: 0;
-  border-radius: 4px;
-}
-:deep(.debug-md .md-editor-preview > pre:last-child) {
-  margin-bottom: 0 !important;
-}
-</style>
