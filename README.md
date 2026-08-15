@@ -17,7 +17,7 @@
   对标BOSS直聘和职决，AI辅助编写、可视化编辑、PDF导出等 ![维护中](https://img.shields.io/badge/状态-维护中-brightgreen)
   预览：http://nannan.work/#/resume
 
-- ✨ **雪花起始页** · _如雪纯净的浏览器起点_
+- ❄️ **雪花起始页** · _如雪纯净的浏览器起点_
 
   项目核心载体，提供个性化自定义的网站起始页和项目基建 ![维护中](https://img.shields.io/badge/状态-维护中-brightgreen)
   预览：http://nannan.work
