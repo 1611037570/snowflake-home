@@ -1,11 +1,11 @@
 // 导入 ESLint 配置相关模块
-import pluginVitest from '@vitest/eslint-plugin'
-import { defineConfigWithVueTs, vueTsConfigs } from '@vue/eslint-config-typescript'
-import pluginVue from 'eslint-plugin-vue'
-import { globalIgnores } from 'eslint/config'
+import pluginVitest from "@vitest/eslint-plugin";
+import { defineConfigWithVueTs, vueTsConfigs } from "@vue/eslint-config-typescript";
+import pluginVue from "eslint-plugin-vue";
+import { globalIgnores } from "eslint/config";
 
-import skipFormatting from '@vue/eslint-config-prettier/skip-formatting'
-import pluginOxlint from 'eslint-plugin-oxlint'
+import skipFormatting from "@vue/eslint-config-prettier/skip-formatting";
+import pluginOxlint from "eslint-plugin-oxlint";
 
 // 如需在 .vue 文件中支持更多语言而非仅 'ts'，请取消以下注释：
 // import { configureVueProject } from '@vue/eslint-config-typescript'
@@ -16,29 +16,42 @@ import pluginOxlint from 'eslint-plugin-oxlint'
 export default defineConfigWithVueTs(
   // 配置需要 lint 的文件范围
   {
-    name: 'app/files-to-lint',
-    files: ['**/*.{ts,mts,tsx,vue}'], // 包含 TypeScript 和 Vue 文件
+    name: "app/files-to-lint",
+    files: ["**/*.{ts,mts,tsx,vue}"], // 包含 TypeScript 和 Vue 文件
   },
 
   // 配置全局忽略的文件路径
   globalIgnores([
-    '**/dist/**', // 忽略构建输出目录
-    '**/dist-ssr/**', // 忽略 SSR 构建输出目录
-    '**/coverage/**', // 忽略测试覆盖率报告目录
+    "**/dist/**", // 忽略构建输出目录
+    "**/dist-ssr/**", // 忽略 SSR 构建输出目录
+    "**/coverage/**", // 忽略测试覆盖率报告目录
   ]),
 
   // 启用 Vue 必要的 ESLint 规则
-  pluginVue.configs['flat/essential'],
+  pluginVue.configs["flat/essential"],
 
   // 启用推荐的 TypeScript ESLint 规则
   vueTsConfigs.recommended,
 
+  // 显式指定 TypeScript ESLint parser 的根目录与 tsconfig 列表，
+  // 避免 monorepo 中存在多个 tsconfig 根目录时解析器无法自动选择
+  {
+    name: "app/ts-parser-options",
+    files: ["**/*.{ts,mts,tsx,vue}"],
+    languageOptions: {
+      parserOptions: {
+        tsconfigRootDir: import.meta.dirname,
+        project: ["./tsconfig.app.json", "./tsconfig.node.json", "./tsconfig.vitest.json"],
+      },
+    },
+  },
+
   // 启用推荐的 Oxlint 规则（高性能 ESLint 替代品）
-  ...pluginOxlint.configs['flat/recommended'],
+  ...pluginOxlint.configs["flat/recommended"],
 
   {
     ...pluginVitest.configs.recommended,
-    files: ['src/**/__tests__/*'],
+    files: ["src/**/__tests__/*"],
   },
   // 跳过格式化相关规则（由 Prettier 处理）
   skipFormatting,
@@ -47,15 +60,15 @@ export default defineConfigWithVueTs(
   {
     rules: {
       // 关闭 Vue 块语言检查（允许在 Vue 文件中使用任意语言）
-      'vue/block-lang': 'off',
+      "vue/block-lang": "off",
       // 关闭 Vue 组件名称必须为多单词的检查
-      'vue/multi-word-component-names': 'off',
+      "vue/multi-word-component-names": "off",
       // 允许使用 any 类型
-      '@typescript-eslint/no-explicit-any': 'off',
+      "@typescript-eslint/no-explicit-any": "off",
       // 允许短路求值写法：a && b()
-      'no-unused-expressions': 'off',
-      '@typescript-eslint/no-unused-expressions': [
-        'error',
+      "no-unused-expressions": "off",
+      "@typescript-eslint/no-unused-expressions": [
+        "error",
         {
           allowShortCircuit: true, // 允许短路求值
           allowTernary: true, // 允许三元表达式
@@ -63,4 +76,4 @@ export default defineConfigWithVueTs(
       ],
     },
   },
-)
+);
