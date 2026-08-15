@@ -2,6 +2,7 @@
 import { useResumeStore } from "@/stores";
 import eventBus from "@/utils/modules/eventBus";
 import { storeToRefs } from "pinia";
+import Debug from "./debug.vue";
 import Title from "./title.vue";
 
 const resumeStore = useResumeStore();
@@ -90,6 +91,7 @@ const handleLayoutClick = (item) => {
         <SfLocale />
         <SfTheme />
         <SfSetting />
+        <Debug />
       </div>
     </div>
   </header>
