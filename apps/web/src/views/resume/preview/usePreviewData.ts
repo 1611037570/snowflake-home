@@ -1,201 +1,272 @@
 /**
  * usePreviewData —— 简历预览层的数据代理
- *  收到一个对象 {
- *    user: {
- *      name: "张三",
- *      age: 30,
- *    },
- * }
- * 代理后
+ *
+ * 收到一个对象，例如：
  * {
- *    user: {
- *      name: { value: "张三", newValue: "" },
- *      age: { value: 30, newValue: "" },
- *    },
+ *   user: { name: "张三", age: 30 },
+ *   like: { a: { name: "a", age: 18 } },
+ *   experiences: [ { company: "腾讯", years: 3 } ],
+ *   tags: ["前端", "Vue"]
  * }
- * 背景：
- *   currentData 是简历的真实数据，结构扁平（每个字段就是原值）。
- *   为了支持 AI 对每个字段的"修改建议 → 用户逐字段保留/放弃"，
- *   我们需要在不污染原始数据的前提下，为**每一个叶子字段**附加一个
- *   `{ value, newValue }` 的视图层包装；并提供批量操作能力。
  *
- * 本文件做的事：
- *   1. 用 Proxy 递归包装 currentData，访问任意路径的最终字段时
- *      返回一个"fieldProxy"对象（{ value, newValue }）。
- *   4. 暴露三个批量操作：acceptAll（全部保留写回原值）、
- *      rejectAll（一键清空所有草稿）、applyDiff（把 AI 返回的 JSON
- *      与原值做深度 diff，差异写入各字段 newValue）。
+ * 代理后（逻辑视图）：
+ * {
+ *   user: {                      // ✅ 中间对象保持原样
+ *     name: { value: "张三", newValue: "" },   // ✅ 叶子字段变为双字段
+ *     age: { value: 30, newValue: "" }
+ *   },
+ *   like: {                      // ✅ 中间对象保持原样
+ *     a: {                       // ✅ 中间对象保持原样
+ *       name: { value: "a", newValue: "" },
+ *       age: { value: 18, newValue: "" }
+ *     }
+ *   },
+ *   experiences: [               // ✅ 中间数组保持原样
+ *     {                          // ✅ 数组中的对象（中间节点）保持原样
+ *       company: { value: "腾讯", newValue: "" },
+ *       years: { value: 3, newValue: "" }
+ *     }
+ *   ],
+ *   tags: { value: ["前端", "Vue"], newValue: "" }  // ✅ 原始值数组作为整体叶子
+ * }
  *
- * 使用：
- *   const { previewData, acceptAll, rejectAll, applyDiff } = usePreviewData(currentData);
- *   // previewData.value.user.name  → fieldProxy { value, newValue }
- */
-import { computed, type Ref } from "vue";
+ * 额外约定：用户通过 value setter 修改原值时，若新值与旧值不同，则自动清空该字段的 newValue（草稿）。
+ **/
+import { computed, reactive, watch, type Ref } from "vue";
 
-// 判断是否为普通对象（排除数组、Date 等）
-const isPlainObject = (value: unknown) => {
-  return Object.prototype.toString.call(value) === "[object Object]";
-};
-
-// 判断是否为"对象数组"（数组中至少包含一个普通对象），用于决定是否继续递归代理
-const isObjectArray = (value: unknown) => {
-  if (!Array.isArray(value)) return false;
-  return value.some((item) => isPlainObject(item));
-};
-
-// 首字母大写：用于方案二遗留的字段名拼接（保留不删）
-const upperFirst = (value: string) => {
-  return value ? value.charAt(0).toUpperCase() + value.slice(1) : value;
-};
+// ---------- 工具函数 ----------
 
 /**
- * 简化的 newValue 存储容器
- * 结构：普通对象，以字段路径（如 "user.name" 或 "education[0].school"）为键
- * - 不污染原始 source 的 ownProperty
- * - 路径字符串便于递归时直接存取
+ * 判断一个值是否为普通对象（非数组、非 Date 等）
+ * @param value - 待判断的值
+ * @returns 是否为普通对象
  */
-const newValueStore: Record<string, any> = {};
+const isPlainObject = (value: unknown): boolean =>
+  Object.prototype.toString.call(value) === "[object Object]";
 
-// 生成字段路径
-const makePath = (parent: string, key: string | number) => {
-  return parent ? `${parent}.${key}` : String(key);
-};
+/**
+ * 判断一个值是否为“对象数组”（数组中至少包含一个普通对象）
+ * 用于决定是否需要对数组元素进行递归代理
+ * @param value - 待判断的值
+ * @returns 是否为对象数组
+ */
+const isObjectArray = (value: unknown): boolean =>
+  Array.isArray(value) && value.some(isPlainObject);
 
-// 从 store 读取某路径的新值；不存在时返回空串与 UI 显示默认语义对齐
-const getNewValue = (path: string): any => {
-  return newValueStore[path] ?? "";
-};
+/**
+ * 生成字段路径字符串，用点号连接父路径和键名
+ * @param parent - 父路径，如 "user"
+ * @param key - 当前键，如 "name" 或数字索引
+ * @returns 完整路径，如 "user.name" 或 "education.0.school"
+ */
+const makePath = (parent: string, key: string | number): string =>
+  parent ? `${parent}.${key}` : String(key);
 
-// 写入某路径的新值
-const setNewValue = (path: string, value: any) => {
-  if (value !== undefined && value !== null && value !== "") {
+// ---------- 响应式草稿存储 ----------
+
+/**
+ * 全局存储所有叶子字段的 AI 草稿值（newValue）
+ * 键为字段路径（如 "user.name"），值为 AI 推荐的字符串或任意值
+ * 使用 reactive 确保视图响应式更新
+ */
+const newValueStore = reactive<Record<string, any>>({});
+
+/**
+ * 读取某路径的草稿值
+ * @param path - 字段路径
+ * @returns 草稿值，若不存在则返回空字符串
+ */
+const getNewValue = (path: string): any => newValueStore[path] ?? "";
+
+/**
+ * 写入某路径的草稿值
+ * - 若 value 有效（非 null/undefined/空字符串），则存储
+ * - 否则删除该路径的草稿（视为清空）
+ * @param path - 字段路径
+ * @param value - 要写入的值
+ */
+const setNewValue = (path: string, value: any): void => {
+  if (value != null && value !== "") {
     newValueStore[path] = value;
   } else {
-    // 空值视为删除草稿（与 reject 语义一致）
     delete newValueStore[path];
   }
 };
 
-// 一次性清除所有草稿新值
-const clearAllNewValues = () => {
+/**
+ * 清空所有草稿值
+ */
+const clearAllNewValues = (): void => {
   Object.keys(newValueStore).forEach((k) => delete newValueStore[k]);
 };
 
+// ---------- 字段代理工厂（叶子节点） ----------
+
 /**
- * 为单个叶子字段创建 fieldProxy 视图层包装
- * 对外暴露统一形状：{ value, newValue, __isFieldProxy, __source, __key }
- * - value：直接读写 source 上的真实字段（"保留"时写入这里）
- * - newValue：读写 store 里的 AI 草稿值（不碰原数据）
+ * 为单个叶子字段创建代理对象，暴露 { value, newValue } 双字段
+ * - value：读写原始数据源（source[key]）
+ * - newValue：读写独立存储的草稿（通过路径操作 store）
+ * 若通过 value setter 修改原值，且值发生变化，则自动清空该字段的草稿
+ * @param source - 原始数据对象
+ * @param key - 字段名
+ * @param path - 字段完整路径
+ * @returns 包含 value 和 newValue 的 getter/setter 对象
  */
-const createFieldProxy = (source: Record<string, any>, key: string, path: string) => {
-  return {
-    get value() {
-      return source[key];
-    },
-    set value(v: any) {
+const createFieldProxy = (source: Record<string, any>, key: string, path: string) => ({
+  get value() {
+    return source[key];
+  },
+  set value(v: any) {
+    // 只有值真正变化时才更新，并清空草稿
+    if (v !== source[key]) {
       source[key] = v;
-    },
-    get newValue() {
-      return getNewValue(path);
-    },
-    set newValue(v: any) {
-      setNewValue(path, v);
-    },
-    // 标识位：供 text.vue 自动识别 field 代理模式
-    __isFieldProxy: true,
-    __source: source,
-    __key: key,
-  };
-};
+      setNewValue(path, ""); // 清空该字段的 AI 建议
+    }
+  },
+  get newValue() {
+    return getNewValue(path);
+  },
+  set newValue(v: any) {
+    setNewValue(path, v);
+  },
+});
+
+// ---------- 递归代理创建（带缓存） ----------
 
 /**
- * 递归创建 preview 代理（核心函数）
- * 规则：
- *   - 访问字段的值是对象数组 → 每一项继续 createPreviewProxy（返回 Proxy[]）
- *   - 访问字段的值是普通对象 → 继续 createPreviewProxy（返回子 Proxy）
- *   - 访问字段的值是叶子（string/number/array<string> 等）→ 返回 fieldProxy
- * 补齐的 Proxy trap：set / has / ownKeys / getOwnPropertyDescriptor
- *   保证 Object.keys、for...in、展开运算符、直接赋值等常见操作语义正确
+ * 缓存已创建的 Proxy，避免重复构造相同对象
+ * 键为原始对象引用，值为对应的 Proxy
  */
-const createPreviewProxy = (source: Record<string, any>, parentPath = "") => {
-  return new Proxy(source, {
-    get(_, key) {
-      if (typeof key !== "string") return undefined;
-      // 暴露内部 source，便于外部操作句柄直接访问真实对象
-      if (key === "__source") return source;
+const proxyCache = new WeakMap<object, any>();
 
-      const value = source[key];
+/**
+ * 递归创建预览数据的 Proxy 代理
+ * - 对于普通对象/数组，递归代理其属性/元素
+ * - 对于叶子值（基本类型、字符串数组等），包装为 { value, newValue }
+ * - 不存在的属性返回 undefined，不进行任何代理
+ * @param source - 要代理的原始对象（或数组）
+ * @param parentPath - 当前父路径（用于生成字段路径）
+ * @returns 代理后的对象
+ */
+const createPreviewProxy = (source: Record<string, any>, parentPath = ""): any => {
+  // 非对象/数组直接返回原值（实际不会走到这里）
+  if (!isPlainObject(source) && !Array.isArray(source)) return source;
+
+  // 检查缓存
+  if (proxyCache.has(source)) {
+    return proxyCache.get(source);
+  }
+
+  const proxy = new Proxy(source, {
+    /**
+     * 拦截属性读取
+     */
+    get(target, key: string) {
+      if (typeof key !== "string") return undefined;
+      // 调试通道：暴露原始对象
+      if (key === "__source") return target;
+      // 不存在的属性不处理
+      if (!(key in target)) return undefined;
+
+      const value = target[key];
       const currentPath = makePath(parentPath, key);
 
-      // 对象数组：对子项递归代理
+      // 若是对象数组，递归代理每个元素
       if (isObjectArray(value)) {
-        return value.map((item: Record<string, any>, idx: number) =>
+        return value.map((item: Record<string, any>, idx: string | number) =>
           createPreviewProxy(item, makePath(currentPath, idx)),
         );
       }
-      // 普通对象：递归代理
+      // 若是普通对象，递归代理该对象
       if (isPlainObject(value)) {
         return createPreviewProxy(value, currentPath);
       }
-      // 叶子值：包装为 fieldProxy { value, newValue }
-      return createFieldProxy(source, key, currentPath);
+      // 叶子值：包装为 fieldProxy
+      return createFieldProxy(target, key, currentPath);
     },
-    set(_, key, value) {
+
+    /**
+     * 拦截属性赋值
+     * - 如果赋的值是 fieldProxy 风格对象，则拆解分别设置 value / newValue
+     * - 否则直接赋值给原对象
+     */
+    set(target, key: string, value: any) {
       if (typeof key !== "string") return false;
-      // 直接赋值 fieldProxy 风格对象 → 拆解分别写入 value / newValue
+      // 若赋值的是 { value, newValue } 风格对象
       if (value && typeof value === "object" && ("value" in value || "newValue" in value)) {
-        if ("value" in value) source[key] = value.value;
+        if ("value" in value) target[key] = value.value;
         if ("newValue" in value) {
-          const path = makePath(parentPath, key);
-          setNewValue(path, value.newValue);
+          setNewValue(makePath(parentPath, key), value.newValue);
         }
         return true;
       }
-      // 否则视为直接改原值
-      source[key] = value;
+      target[key] = value;
       return true;
     },
-    has(_, key) {
-      if (typeof key !== "string") return false;
-      return key in source;
+
+    /**
+     * 拦截 in 操作符，保持一致性
+     */
+    has(target, key: string) {
+      return key in target;
     },
-    ownKeys() {
-      return Object.keys(source);
+
+    /**
+     * 拦截 Object.keys 等操作，返回原始键列表
+     */
+    ownKeys(target) {
+      return Reflect.ownKeys(target);
     },
-    getOwnPropertyDescriptor(_, key) {
-      if (typeof key !== "string") return undefined;
-      if (!(key in source)) return undefined;
+
+    /**
+     * 拦截属性描述符，保持枚举性和可配置性
+     * 直接返回原始值，避免触发 get 陷阱
+     */
+    getOwnPropertyDescriptor(target, key: string) {
+      if (!(key in target)) return undefined;
       return {
         configurable: true,
         enumerable: true,
-        value: (this as any)[key],
+        value: target[key],
       };
     },
   });
+
+  // 缓存并返回
+  proxyCache.set(source, proxy);
+  return proxy;
 };
 
+// ---------- 叶子收集（用于 acceptAll） ----------
+
 /**
- * 收集所有叶子字段的 [source, key, path] 元组
- * 供 acceptAll/rejectAll 内部使用
+ * 递归收集所有叶子字段的 { source, key, path } 信息
+ * 用于在 acceptAll 中遍历所有可接受草稿的字段
+ * @param source - 当前处理的对象或数组
+ * @param parentPath - 父路径
+ * @param list - 收集结果数组
+ * @returns 收集结果列表
  */
 const collectLeaves = (
-  source: Record<string, any>,
+  source: any,
   parentPath = "",
   list: Array<{ source: Record<string, any>; key: string; path: string }> = [],
-) => {
+): Array<{ source: Record<string, any>; key: string; path: string }> => {
   if (isObjectArray(source)) {
-    (source as Record<string, any>[]).forEach((item, idx) =>
+    // 数组：递归每个元素
+    source.forEach((item: Record<string, any>, idx: string | number) =>
       collectLeaves(item, makePath(parentPath, idx), list),
     );
-    return list;
-  }
-  if (isPlainObject(source)) {
+  } else if (isPlainObject(source)) {
+    // 对象：遍历所有自有属性
     Object.keys(source).forEach((k) => {
-      const v = (source as Record<string, any>)[k];
+      const v = source[k];
       const path = makePath(parentPath, k);
       if (isObjectArray(v) || isPlainObject(v)) {
+        // 中间节点继续递归
         collectLeaves(v, path, list);
       } else {
+        // 叶子节点：收集
         list.push({ source, key: k, path });
       }
     });
@@ -203,83 +274,95 @@ const collectLeaves = (
   return list;
 };
 
+// ---------- Composable 入口 ----------
+
 /**
- * usePreviewData 对外暴露的三个批量操作句柄类型
+ * usePreviewData 提供的操作接口
  */
 export interface PreviewActions {
-  acceptAll: () => void;
-  rejectAll: () => void;
-  applyDiff: (aiResult: Record<string, any>) => void;
+  acceptAll: () => void; // 接受所有草稿，写入原值
+  rejectAll: () => void; // 拒绝所有草稿，清空
+  applyDiff: (aiResult: Record<string, any>) => void; // 应用 AI 差异
 }
 
 /**
- * composable 入口
- * 入参：store 透出的 currentData Ref（可能是 undefined，未选中简历时）
- * 返回：{ previewData（computed 代理）, acceptAll, rejectAll, applyDiff }
+ * 主要 Composable，接收简历数据 Ref，返回预览代理和操作函数
+ * @param data - 包含简历数据的 Ref，可以是 undefined（未选中）
+ * @returns 预览数据代理和三个批量操作方法
  */
 export const usePreviewData = (data: Ref<Record<string, any> | undefined>) => {
-  // 代理后的预览数据：computed 包一层，currentData 切换时自动重建代理
+  // 切换简历时自动清空所有草稿，避免数据污染
+  watch(data, clearAllNewValues);
+
+  // 计算属性：每次 data 变化时重新创建代理
   const previewData = computed(() => {
     const source = data.value || {};
     return createPreviewProxy(source);
   });
 
-  // rejectAll：清空所有草稿（不碰原值）
-  const rejectAll = () => {
-    clearAllNewValues();
-  };
+  // 拒绝所有：清空草稿
+  const rejectAll = clearAllNewValues;
 
-  // acceptAll：把所有非空 newValue 写回原值，并清空草稿
-  const acceptAll = () => {
+  // 接受所有：将所有非空草稿写入原值，然后清空草稿
+  const acceptAll = (): void => {
     const source = data.value;
     if (!source) return;
     const leaves = collectLeaves(source);
     leaves.forEach(({ source: src, key, path }) => {
       const newVal = newValueStore[path];
-      if (newVal !== undefined && newVal !== null && newVal !== "") {
+      if (newVal != null && newVal !== "") {
         src[key] = newVal;
       }
     });
-    // 全部写入后清空草稿
     clearAllNewValues();
   };
 
   /**
-   * applyDiff：把 AI 返回 JSON（patch）与 source 做深度 diff
-   *   - 数组：按下标逐对递归
-   *   - 对象：按键逐对递归
-   *   - 叶子：值不同则把 AI 值写入对应字段的 newValue
+   * 应用 AI 返回的差异补丁（patch）
+   * - 先清空所有旧草稿
+   * - 递归对比 patch 与 source，若叶子值不同则写入草稿
+   * @param aiResult - AI 返回的完整数据对象（只包含需要更新的字段）
    */
-  const applyDiff = (aiResult: Record<string, any>) => {
+  const applyDiff = (aiResult: Record<string, any>): void => {
     const source = data.value;
     if (!source || !aiResult) return;
 
+    // 清空旧草稿，保证完全替换
+    clearAllNewValues();
+
+    /**
+     * 内部递归 diff 函数
+     * @param src - 当前对比的源对象
+     * @param patch - 当前对比的补丁对象
+     * @param parentPath - 当前父路径
+     */
     const diffInner = (
       src: Record<string, any>,
       patch: Record<string, any>,
       parentPath: string,
-    ) => {
+    ): void => {
       if (!patch || typeof patch !== "object") return;
       Object.keys(patch).forEach((key) => {
-        // source 中不存在的字段直接跳过（保护未知键）
-        if (!(key in src)) return;
+        if (!(key in src)) return; // 忽略源中不存在的字段
         const srcVal = src[key];
         const patchVal = patch[key];
         const path = makePath(parentPath, key);
 
-        // 数组 vs 数组：按索引逐项递归
-        if (isObjectArray(srcVal) && isObjectArray(patchVal) && Array.isArray(srcVal)) {
-          srcVal.forEach((item, idx) => {
-            if (patchVal[idx]) diffInner(item, patchVal[idx], makePath(path, idx));
+        // 若两者都是对象数组，按索引递归比较
+        if (isObjectArray(srcVal) && isObjectArray(patchVal)) {
+          srcVal.forEach((item: Record<string, any>, idx: string | number) => {
+            if (patchVal[idx]) {
+              diffInner(item, patchVal[idx], makePath(path, idx));
+            }
           });
           return;
         }
-        // 对象 vs 对象：按键递归
+        // 若两者都是普通对象，按键递归比较
         if (isPlainObject(srcVal) && isPlainObject(patchVal)) {
-          diffInner(srcVal as Record<string, any>, patchVal as Record<string, any>, path);
+          diffInner(srcVal, patchVal, path);
           return;
         }
-        // 叶子字段：与原值不同则写入 newValue（空字符串不写，与默认空值语义对齐）
+        // 叶子字段：若 patch 值与当前值不同，则写入草稿
         if (patchVal !== undefined && patchVal !== srcVal) {
           setNewValue(path, patchVal);
         }
@@ -290,7 +373,7 @@ export const usePreviewData = (data: Ref<Record<string, any> | undefined>) => {
   };
 
   return {
-    previewData,
+    previewData, // 代理后的预览数据，可直接在模板中绑定
     acceptAll,
     rejectAll,
     applyDiff,
