@@ -1,4 +1,4 @@
-# Snowflake Start Page — Localized Browser Start Page
+# Snowflake Start Page — A pure browsing start like snow
 
 [Simplified Chinese](README.md) | [English](README.en.md)
 
