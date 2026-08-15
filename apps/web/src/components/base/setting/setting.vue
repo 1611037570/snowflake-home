@@ -20,6 +20,12 @@
           info="开启后会优化性能，但会减少功能支持"
           v-model="performanceMode"
           type="switch"
+        />
+        <SfSetItem
+          title="调试模式"
+          info="开启调试模式后，会在部分项目中增加调试内容"
+          v-model="debugMode"
+          type="switch"
           :divider="false"
         />
       </SfSetBox>
@@ -38,7 +44,7 @@ const handleClick = () => {
 
 const systemStore = useSystemStore();
 /** 性能模式：开启后禁用所有动效（毛玻璃、3D倾斜、过渡动画） */
-const { performanceMode } = storeToRefs(systemStore);
+const { performanceMode, debugMode } = storeToRefs(systemStore);
 </script>
 
 <style scoped></style>

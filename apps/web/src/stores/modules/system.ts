@@ -12,6 +12,8 @@ export const useSystemStore = defineStore(
     const monitorWatch = ref<boolean>(false);
     // 性能模式
     const performanceMode = ref<boolean>(false);
+    // 调试模式
+    const debugMode = ref<boolean>(false);
     // 窗口大小
     const windowSize = ref<{
       width: number | unknown;
@@ -82,6 +84,7 @@ export const useSystemStore = defineStore(
     return {
       runTime,
       monitorWatch,
+      debugMode,
       windowSize,
       browserInfo,
       currentVersion,
