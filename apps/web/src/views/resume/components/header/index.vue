@@ -89,6 +89,7 @@ const handleLayoutClick = (item) => {
         <SfDonation />
         <SfLocale />
         <SfTheme />
+        <SfSetting />
       </div>
     </div>
   </header>
