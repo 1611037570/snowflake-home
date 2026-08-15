@@ -29,10 +29,11 @@
       ></div>
     </div>
   </div>
+  <slot></slot>
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref } from "vue";
+import { computed, onMounted, provide, ref } from "vue";
 
 defineOptions({ name: "SfTab" });
 
@@ -54,6 +55,8 @@ const currentActiveIndex = ref(0);
 onMounted(() => {
   currentActiveIndex.value = list.findIndex((item) => item.value === modelValue.value);
 });
+// 透传当前激活值给子组件 SfTabPane
+provide("tabModelValue", modelValue);
 // 处理鼠标进入事件
 const handleMouseEnter = (index: number) => {
   hoverIndex.value = index;
