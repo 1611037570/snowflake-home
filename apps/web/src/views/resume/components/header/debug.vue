@@ -15,21 +15,25 @@
     <SfCollapse v-model="activeNames" v-if="drawerVisible">
       <SfCollapseItem name="preview">
         <template #title>预览数据 (previewData)</template>
-        <MdPreview
-          :modelValue="previewMd"
-          editorId="debug-preview"
-          :codeFoldable="false"
-          class="max-h-[60vh] overflow-auto bg-transparent! p-0!"
-        />
+        <div class="max-h-[50vh] overflow-y-auto">
+          <MdPreview
+            :modelValue="previewMd"
+            editorId="debug-preview"
+            :codeFoldable="false"
+            class="bg-transparent! p-0!"
+          />
+        </div>
       </SfCollapseItem>
       <SfCollapseItem name="raw">
         <template #title>原始数据 (currentData)</template>
-        <MdPreview
-          :modelValue="rawMd"
-          editorId="debug-raw"
-          :codeFoldable="false"
-          class="max-h-[60vh] overflow-auto bg-transparent! p-0!"
-        />
+        <div class="max-h-[50vh] overflow-y-auto">
+          <MdPreview
+            :modelValue="rawMd"
+            editorId="debug-raw"
+            :codeFoldable="false"
+            class="bg-transparent! p-0!"
+          />
+        </div>
       </SfCollapseItem>
     </SfCollapse>
   </el-drawer>
