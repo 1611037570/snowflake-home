@@ -23,27 +23,23 @@ const moduleNames = computed(() => {
 
 <template>
   <div class="flex h-full flex-col items-center justify-center gap-5 px-5 text-center">
-    <div class="flex h-12 w-12 items-center justify-center rounded-lg bg-sf-theme/10 text-sf-theme">
-      <SfIcon icon="lucide:sparkles" size="6" />
+    <div class="flex-c gap-3 text-2xl font-bold text-sf-base">
+      你好，我是 <span class="text-sf-theme">{{ $t("router.resumeAI") }}</span>
+      <SfIcon icon="lucide:sparkles" class="text-sf-theme" size="6" />
     </div>
-
-    <div class="space-y-2">
-      <div class="text-xl font-bold text-sf-base">
-        你好，我是 <span class="text-sf-theme">简答羊</span>
-      </div>
-      <div
-        class="flex flex-wrap items-center justify-center gap-1.5 text-sm font-medium text-sf-base"
+    <div class="text-base text-sf-theme">{{ $t("router.resumeAIDesc") }}</div>
+    <div
+      class="flex flex-wrap items-center justify-center gap-1.5 text-sm font-medium text-sf-base"
+    >
+      <span>我可以根据你的</span>
+      <span
+        v-for="item in moduleNames"
+        :key="item"
+        class="rounded-full bg-sf-theme/10 px-2.5 py-0.5 text-sf-theme ring-1 ring-sf-theme/10"
       >
-        <span>我可以根据你的</span>
-        <span
-          v-for="item in moduleNames"
-          :key="item"
-          class="rounded-full bg-sf-theme/10 px-2.5 py-0.5 text-sf-theme ring-1 ring-sf-theme/10"
-        >
-          {{ item }}
-        </span>
-        <span>进行以下操作</span>
-      </div>
+        {{ item }}
+      </span>
+      <span>进行以下操作</span>
     </div>
 
     <div class="grid w-full max-w-[300px] grid-cols-2 gap-2.5">
