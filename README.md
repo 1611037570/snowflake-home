@@ -12,7 +12,7 @@
 
 ## 🔗 在线体验
 
-- 📄 **轻舟简历** · _以此简历 渡你过万重山_
+- 📄 **轻舟简历** · _以此简历 渡万重山_
 
   对标BOSS直聘和职决，AI辅助编写、可视化编辑、PDF导出等 ![维护中](https://img.shields.io/badge/状态-维护中-brightgreen)
   预览：http://nannan.work/#/resume
