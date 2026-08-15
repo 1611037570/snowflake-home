@@ -9,9 +9,8 @@ function handleCreate() {
 
 <template>
   <div class="hero-copy relative z-4 flex flex-col items-center gap-2 text-[78px] font-black">
-    <div class="text-sf-theme drop-shadow-[0_10px_28px_rgba(0,0,0,0.22)]">找工作</div>
-    <div class="text-sf-theme not-italic">从一份好简历开始</div>
-    <div class="text-xl font-extrabold text-white">打动HR的专业简历，抓住每一个高薪机会</div>
+    <div class="text-sf-theme-text drop-shadow-[0_10px_28px_rgba(0,0,0,0.22)]">以此简历</div>
+    <div class="text-sf-theme-text not-italic">渡你过万重山</div>
     <div
       class="hero-cta mt-3 flex h-[58px] w-[168px] cursor-pointer items-center justify-center rounded-full border-0 bg-sf-theme text-[22px] font-black text-sf-theme-text shadow-lg shadow-sf-theme/25 transition-all duration-200 hover:-translate-y-0.5"
       @click="handleCreate"

@@ -14,8 +14,11 @@ Launched on September 3, 2020, reconstructed and open-sourced on November 22, 20
 
 - 📄 **Resume Generator**: Benchmarking BOSS Zhipin and Zhijue, with AI-assisted writing, visual editing, PDF export, etc. ![Under Maintenance](https://img.shields.io/badge/Status-Under%20Maintenance-brightgreen)
   Preview: http://nannan.work/#/resume
-- ✨ **Snowflake Start Page**: Core project carrier, providing a personalized and customizable website start page ![Under Maintenance](https://img.shields.io/badge/Status-Under%20Maintenance-brightgreen)
+- ✨ **Snowflake Start Page** · _A pure browsing start like snow_
+
+  Core project carrier, providing a personalized and customizable website start page and project infrastructure ![Under Maintenance](https://img.shields.io/badge/Status-Under%20Maintenance-brightgreen)
   Preview: http://nannan.work
+
 - 🛣️ **Image Processing Tool**: Lightweight image suite, covering common functions such as compression, cropping, and format conversion ![Discontinued](https://img.shields.io/badge/Status-Discontinued-lightgrey)
   Preview: http://nannan.work/#/image
 
