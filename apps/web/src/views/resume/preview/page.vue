@@ -296,6 +296,7 @@ onUnmounted(() => {
           <!-- 操作按钮 -->
           <ModuleActions
             :selected="selectedModuleKeys.has(slice.moduleKey)"
+            :name="slice.moduleKey"
             @select="handleModuleClick(slice)"
           />
           <ResumeModule :data="currentData" :name="slice.moduleKey" />

@@ -40,6 +40,7 @@ const { currentIndex, layout, list, currentUsage, isGenerating, currentData } =
 
 // 创建代理后的预览数据及批量操作句柄（AI 助手与预览层共用）
 const { previewData, acceptAll, rejectAll, applyDiff } = usePreviewData(currentData);
+
 // 向下游组件注入代理预览数据
 provide("previewData", previewData);
 // 向下游组件注入：全部保留
