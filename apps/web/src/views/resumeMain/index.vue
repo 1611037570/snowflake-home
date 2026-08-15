@@ -47,7 +47,7 @@ const activeValue = computed(() => {
     >
       <div class="flex shrink-0 items-center gap-2.5 text-[17px] whitespace-nowrap">
         <SfLogo size="8.5" name="resumeMain" />
-        <span>小羊简历</span>
+        <span> {{ $t("router.resumeMain") }}</span>
       </div>
 
       <nav class="flex items-center gap-[30px] max-[1180px]:gap-5 max-[900px]:hidden">

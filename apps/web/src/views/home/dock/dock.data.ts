@@ -17,7 +17,7 @@ const list = [
     type: "system",
   },
   {
-    name: "小羊简历",
+    name: "轻舟简历",
     component: defineAsyncComponent(() => import("./components/writeResume.vue")),
     type: "system",
   },
