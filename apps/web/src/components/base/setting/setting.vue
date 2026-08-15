@@ -17,13 +17,13 @@
       <SfSetBox>
         <SfSetItem
           title="性能模式"
-          info="开启后会优化性能，但会减少功能支持"
+          info="开启性能模式后，部分项目会禁用所有动效"
           v-model="performanceMode"
           type="switch"
         />
         <SfSetItem
           title="调试模式"
-          info="开启调试模式后，会在部分项目中增加调试内容"
+          info="开启调试模式后，部分项目会出现调试内容"
           v-model="debugMode"
           type="switch"
           :divider="false"

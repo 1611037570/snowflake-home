@@ -2,7 +2,7 @@
   <!-- 悬浮按钮 -->
   <div
     v-if="debugMode"
-    class="flex-c fixed top-16 right-[18px] z-[9999] h-16 w-16 cursor-pointer rounded-full bg-sf-theme text-sf-theme-text"
+    class="flex-c h-10 w-16 cursor-pointer rounded-xl bg-sf-theme text-sf-theme-text"
     type="primary"
     circle
     @click="drawerVisible = !drawerVisible"
@@ -11,7 +11,7 @@
   </div>
 
   <!-- 抽屉 -->
-  <el-drawer v-model="drawerVisible" title="调试数据" direction="rtl" size="50%">
+  <el-drawer v-model="drawerVisible" title="控制台" direction="rtl" size="50%">
     <SfCollapse v-model="activeNames" v-if="drawerVisible">
       <SfCollapseItem name="preview">
         <template #title>预览数据 (previewData)</template>
