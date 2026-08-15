@@ -12,9 +12,9 @@
 
 ## 🔗 在线体验
 
-- 📄 **简历生成器**：对标BOSS直聘，AI辅助编写、可视化编辑、PDF导出等 ![维护中](https://img.shields.io/badge/状态-维护中-brightgreen)
+- 📄 **简历生成器**：对标BOSS直聘和职决，AI辅助编写、可视化编辑、PDF导出等 ![维护中](https://img.shields.io/badge/状态-维护中-brightgreen)
   预览：http://nannan.work/#/resume
-- ✨ **雪花起始页**：项目核心载体，提供个性化自定义的网站起始页 ![维护中](https://img.shields.io/badge/状态-维护中-brightgreen)
+- ✨ **雪花起始页**：项目核心载体，提供个性化自定义的网站起始页和项目基建 ![维护中](https://img.shields.io/badge/状态-维护中-brightgreen)
   预览：http://nannan.work
 - 🛣️ **图片处理工具**：轻量级图片套件，涵盖压缩、裁剪、格式转换等常用功能 ![停止维护](https://img.shields.io/badge/状态-停止维护-lightgrey)
   预览：http://nannan.work/#/image

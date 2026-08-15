@@ -12,7 +12,7 @@ Launched on September 3, 2020, reconstructed and open-sourced on November 22, 20
 
 ## 🔗 Live Demo
 
-- 📄 **Resume Generator**: Benchmarking BOSS Zhipin, with AI-assisted writing, visual editing, PDF export, etc. ![Under Maintenance](https://img.shields.io/badge/Status-Under%20Maintenance-brightgreen)
+- 📄 **Resume Generator**: Benchmarking BOSS Zhipin and Zhijue, with AI-assisted writing, visual editing, PDF export, etc. ![Under Maintenance](https://img.shields.io/badge/Status-Under%20Maintenance-brightgreen)
   Preview: http://nannan.work/#/resume
 - ✨ **Snowflake Start Page**: Core project carrier, providing a personalized and customizable website start page ![Under Maintenance](https://img.shields.io/badge/Status-Under%20Maintenance-brightgreen)
   Preview: http://nannan.work
