@@ -301,8 +301,15 @@ const handleRecall = (msg) => {
 <template>
   <div class="relative flex h-full w-full flex-col select-text">
     <SfScrollbar ref="chatContainer" class="h-full w-full flex-1">
-      <WelcomeScreen v-if="currentMessages.length === 1" @suggest="handleSuggest" />
-      <MessageList v-else :messages="currentMessages" @recall="handleRecall" />
+      <slot name="empty" v-if="currentMessages.length === 1">
+        <WelcomeScreen @suggest="handleSuggest" />
+      </slot>
+
+      <MessageList
+        v-if="currentMessages.length > 1"
+        :messages="currentMessages"
+        @recall="handleRecall"
+      />
     </SfScrollbar>
 
     <!-- 滚动到底部按钮 -->
