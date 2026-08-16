@@ -77,6 +77,13 @@ watch(
 );
 
 /**
+ * 点击推荐问题，触发输入框发送
+ */
+const handleSendFollowQuestion = (question) => {
+  chatInputRef.value?.sendQuestion(question);
+};
+
+/**
  * 点击提示词卡片
  */
 const handleSuggest = (payload) => {
@@ -145,6 +152,7 @@ const handleSuggest = (payload) => {
         v-if="currentMessages.length > 1"
         :messages="currentMessages"
         @recall="handleRecall"
+        @sendFollowQuestion="handleSendFollowQuestion"
       />
     </SfScrollbar>
 
@@ -168,7 +176,7 @@ const handleSuggest = (payload) => {
       </div>
     </Transition>
 
-    <ChatInput ref="chatInputRef" @send="handleSend" @stop="stopGenerating" />
+    <ChatInput ref="chatInputRef" />
   </div>
 </template>
 

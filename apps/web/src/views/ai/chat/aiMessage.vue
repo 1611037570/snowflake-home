@@ -22,7 +22,7 @@ const themeStore = useThemeStore();
 const { theme } = storeToRefs(themeStore);
 const { copy, isSupported } = useClipboard();
 
-const emit = defineEmits(["updateCollapsedStatus"]);
+const emit = defineEmits(["updateCollapsedStatus", "sendFollowQuestion"]);
 
 const handleCopy = async (text) => {
   if (!isSupported.value) {
@@ -202,6 +202,7 @@ const resumeShow = computed(() => {
               v-for="(item, index) in resumeContent.followQuestions"
               :key="index"
               class="cursor-pointer rounded-lg border border-sf-border bg-sf-bg-2 px-3 py-2 text-[13px] text-sf-text transition-all duration-200 hover:border-sf-theme hover:bg-sf-bg-hover"
+              @click="emit('sendFollowQuestion', item)"
             >
               {{ item }}
             </div>
