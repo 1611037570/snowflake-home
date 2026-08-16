@@ -9,7 +9,7 @@ const displayMessages = computed(() => {
   return messages.value.filter((m) => m.role !== "system");
 });
 
-const emit = defineEmits(["recall"]);
+const emit = defineEmits(["recall", "sendFollowQuestion"]);
 
 function updateCollapsedStatus(index, type) {
   displayMessages.value[index][`${type}Collapsed`] =
@@ -27,6 +27,7 @@ function updateCollapsedStatus(index, type) {
       :index="index"
       @recall="emit('recall', msg)"
       @updateCollapsedStatus="updateCollapsedStatus"
+      @sendFollowQuestion="emit('sendFollowQuestion', $event)"
     />
   </div>
 </template>

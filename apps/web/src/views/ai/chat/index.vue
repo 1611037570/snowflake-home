@@ -18,6 +18,8 @@ const chat = defineModel("chat", {
   required: true,
 });
 provide("chat", chat);
+// 请求完成事件，转发给父组件
+const emit = defineEmits(["requestComplete"]);
 
 // currentMessages：从 chat.messages 派生，支持写入（写回 chat.messages）
 const currentMessages = computed({
@@ -176,7 +178,7 @@ const handleSuggest = (payload) => {
       </div>
     </Transition>
 
-    <ChatInput ref="chatInputRef" />
+    <ChatInput ref="chatInputRef" @request-complete="emit('requestComplete', $event)" />
   </div>
 </template>
 

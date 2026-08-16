@@ -10,6 +10,9 @@ const aiStore = useAiStore();
 const { thinkMode } = storeToRefs(aiStore);
 const { createDefaultMessage } = useAiStore();
 
+// 请求完成事件，用于把数据回调给父组件
+const emit = defineEmits(["requestComplete"]);
+
 // 从父组件注入当前消息列表
 const currentMessages = inject("currentMessages");
 // 从父组件注入当前对话类型
@@ -217,6 +220,8 @@ const handleAIResponse = async () => {
     if (chat.value) {
       chat.value.updateTime = Date.now();
     }
+    // 请求完成，把最后一条消息数据回调给父组件
+    emit("requestComplete", lastMsg);
   }
 };
 
