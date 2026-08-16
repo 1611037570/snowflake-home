@@ -4,7 +4,6 @@ import { storeToRefs } from "pinia";
 import { computed, onMounted, ref, watch } from "vue";
 import Chat from "./chat/index.vue";
 import ChatList from "./chatlist/chatList.vue";
-import SettingsDrawer from "./chatlist/settingsDrawer.vue";
 
 const aiStore = useAiStore();
 const { sidebarCollapsed, sidebarMode, currentChat, currentChatId, chatList } =
@@ -119,9 +118,6 @@ onMounted(() => {
       </div>
     </div>
   </div>
-
-  <!-- 对话设置侧边栏抽离为独立组件 -->
-  <SettingsDrawer v-model="showSettings" />
 </template>
 
 <style lang="scss" scoped></style>
