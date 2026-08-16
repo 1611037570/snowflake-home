@@ -61,10 +61,6 @@ const actionButtonConfig = computed(() => {
   };
 });
 
-const handleInput = (val) => {
-  modelValue.value = val;
-};
-
 /**
  * 处理发送消息：清空输入框并通知父组件发送
  */
@@ -94,7 +90,11 @@ const handleKeydown = (e) => {
 const focus = () => {
   inputRef.value?.focus();
 };
-defineExpose({ focus });
+// 暴露 setValue 方法，供父组件撤回消息时回填内容
+const setValue = (val) => {
+  modelValue.value = val;
+};
+defineExpose({ focus, setValue });
 
 onMounted(() => {
   focus();
@@ -111,8 +111,7 @@ onMounted(() => {
         <!-- 输入框区域 -->
         <el-input
           ref="inputRef"
-          :model-value="modelValue"
-          @update:model-value="handleInput"
+          v-model="modelValue"
           type="textarea"
           rows="1"
           :autosize="{ minRows: 1, maxRows: 5 }"

@@ -1,6 +1,5 @@
 <script setup>
 import { userInfo } from "@/views/index/data";
-import { computed } from "vue";
 
 const emit = defineEmits(["suggest"]);
 
@@ -16,24 +15,21 @@ const handleSuggest = (card) => {
   });
 };
 
-const suggestCards = computed(() => {
-  const list = [
-    {
-      icon: "ph:user-circle-duotone",
-      title: "作者简介",
-      desc: "了解作者" + userInfo.value.name,
-      prompt: `请详细介绍一下本站作者${userInfo.value.name}。基本信息如下：
-      姓名：${userInfo.value.name}；
-      坐标：${userInfo.value.location}；
-      职业：${userInfo.value.job}；
-      开发经验：${userInfo.value.devYears}；
-      摄影经验：${userInfo.value.shootYears}。
-      个人主页:http://nannan.work/#/index
-      `,
-    },
-  ];
-  return list;
-});
+const suggestCards = [
+  {
+    icon: "ph:user-circle-duotone",
+    title: "作者简介",
+    desc: "了解作者" + userInfo.value.name,
+    prompt: `请详细介绍一下本站作者${userInfo.value.name}。基本信息如下：
+    姓名：${userInfo.value.name}；
+    坐标：${userInfo.value.location}；
+    职业：${userInfo.value.job}；
+    开发经验：${userInfo.value.devYears}；
+    摄影经验：${userInfo.value.shootYears}。
+    个人主页:http://nannan.work/#/index
+    `,
+  },
+];
 </script>
 
 <template>

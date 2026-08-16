@@ -25,7 +25,7 @@ function updateCollapsedStatus(index, type) {
       :key="index"
       :msg="msg"
       :index="index"
-      @recall="emit('recall', msg)"
+      @recall="emit('recall', $event)"
       @updateCollapsedStatus="updateCollapsedStatus"
       @sendFollowQuestion="emit('sendFollowQuestion', $event)"
     />
