@@ -25,9 +25,17 @@
 }
 @theme inline {
   --color-sf-success: var(--sf-success);
+  /* 成功色的hover颜色 */
+  --color-sf-success-hover: var(--sf-success-hover);
   --color-sf-warning: var(--sf-warning);
+  /* 警告色的hover颜色 */
+  --color-sf-warning-hover: var(--sf-warning-hover);
   --color-sf-error: var(--sf-error);
+  /* 错误色的hover颜色 */
+  --color-sf-error-hover: var(--sf-error-hover);
   --color-sf-info: var(--sf-info);
+  /* 信息色的hover颜色 */
+  --color-sf-info-hover: var(--sf-info-hover);
   /* 主题色 */
   --color-sf-theme: var(--sf-theme);
   /* 主题的hover颜色 */
@@ -74,12 +82,20 @@
 :root {
   /* 成功色 */
   --sf-success: color-mix(in oklab, #67c23a 100%, transparent);
+  /* 成功色的hover颜色 */
+  --sf-success-hover: color-mix(in oklab, #67c23a 15%, transparent);
   /* 警告色 */
   --sf-warning: color-mix(in oklab, #e6a23c 100%, transparent);
+  /* 警告色的hover颜色 */
+  --sf-warning-hover: color-mix(in oklab, #e6a23c 15%, transparent);
   /* 错误色 */
   --sf-error: color-mix(in oklab, #f56c6c 100%, transparent);
+  /* 错误色的hover颜色 */
+  --sf-error-hover: color-mix(in oklab, #f56c6c 15%, transparent);
   /* 信息色 */
   --sf-info: color-mix(in oklab, #909399 100%, transparent);
+  /* 信息色的hover颜色 */
+  --sf-info-hover: color-mix(in oklab, #909399 15%, transparent);
   /* 主题色 */
   --sf-theme: #50a2ff;
   /* 主题的hover颜色 */
