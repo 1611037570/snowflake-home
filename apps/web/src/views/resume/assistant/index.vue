@@ -8,7 +8,7 @@ import Setting from "./setting/index.vue";
 import { useAiStore } from "@/stores/modules/ai";
 import { useResumeStore } from "@/stores";
 import Chat from "@/views/ai/chat/index.vue";
-import { defaultMessage } from "./2.ts";
+import { defaultMessage } from "./prompt.ts";
 
 // AI 对话
 const aiStore = useAiStore();
@@ -41,7 +41,7 @@ function onRequestComplete(msg) {
 </script>
 
 <template>
-  <div class="box-border h-full w-[360px] bg-sf-bg py-3 pr-3">
+  <div class="box-border h-full w-[400px] bg-sf-bg py-3 pr-3">
     <div class="flex h-full flex-col rounded-xl border border-sf-border/40 bg-sf-primary shadow-sm">
       <!-- 顶部操作栏 -->
       <div class="flex items-center justify-end gap-2 p-3 pb-0">
