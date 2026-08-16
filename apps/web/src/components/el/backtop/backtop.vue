@@ -29,7 +29,7 @@ function handleClick() {
       placement="bottom"
     >
       <SfIcon
-        class="z-200 rounded-xl bg-sf-theme-hover"
+        class="z-200 rounded-xl bg-sf-theme-2"
         boxSize="10"
         size="8"
         icon="mingcute:up-line"

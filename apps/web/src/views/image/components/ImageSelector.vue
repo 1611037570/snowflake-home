@@ -1,7 +1,7 @@
 <template>
   <div
     ref="dropZoneRef"
-    class="flex-c border-sf-primary-theme relative h-full flex-1 cursor-pointer flex-col overflow-hidden rounded-xl border-2 border-dashed border-sf-bg bg-sf-primary transition-all hover:border-sf-theme-hover hover:bg-sf-theme/10 hover:shadow-md"
+    class="flex-c border-sf-primary-theme relative h-full flex-1 cursor-pointer flex-col overflow-hidden rounded-xl border-2 border-dashed border-sf-bg bg-sf-primary transition-all hover:border-sf-theme-2 hover:bg-sf-theme/10 hover:shadow-md"
     :class="{ 'border-sf-theme bg-sf-theme/20': isOverDropZone }"
     @click="handleClick"
   >

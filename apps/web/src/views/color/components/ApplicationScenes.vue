@@ -85,7 +85,7 @@
 
           <div class="mt-6 flex gap-3">
             <button
-              class="flex-1 rounded-lg bg-sf-theme py-2.5 text-sm font-semibold text-sf-theme-text shadow-md transition-all duration-300 hover:-translate-y-0.5 hover:bg-sf-theme-hover hover:shadow-lg focus:ring-2 focus:ring-sf-theme/50 focus:outline-none"
+              class="flex-1 rounded-lg bg-sf-theme py-2.5 text-sm font-semibold text-sf-theme-text shadow-md transition-all duration-300 hover:-translate-y-0.5 hover:bg-sf-theme-2 hover:shadow-lg focus:ring-2 focus:ring-sf-theme/50 focus:outline-none"
             >
               系统巡检
             </button>
@@ -312,7 +312,7 @@
               >输入消息或指令...</span
             >
             <div
-              class="flex-c h-7 w-7 cursor-pointer rounded-lg bg-sf-theme text-sf-theme-text shadow-sm transition-all duration-300 hover:scale-105 hover:bg-sf-theme-hover hover:shadow-md active:scale-95"
+              class="flex-c h-7 w-7 cursor-pointer rounded-lg bg-sf-theme text-sf-theme-text shadow-sm transition-all duration-300 hover:scale-105 hover:bg-sf-theme-2 hover:shadow-md active:scale-95"
             >
               <SfIcon icon="mdi:arrow-up" size="5" />
             </div>

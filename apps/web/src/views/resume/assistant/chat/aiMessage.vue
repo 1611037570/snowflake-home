@@ -117,7 +117,7 @@ const loadingItems = [..."生成中", "", "", ""];
       <!-- 加载状态 -->
       <div
         v-if="msg.requestStatus === 'loading'"
-        class="flex h-8 w-[50px] items-center justify-center gap-1.5 rounded-xl bg-sf-theme-hover text-sf-theme"
+        class="flex h-8 w-[50px] items-center justify-center gap-1.5 rounded-xl bg-sf-theme-2 text-sf-theme"
       >
         <template v-for="(item, i) in 3" :key="i">
           <span
@@ -129,7 +129,7 @@ const loadingItems = [..."生成中", "", "", ""];
       <!-- 错误状态 -->
       <div
         v-if="msg.requestStatus === 'error'"
-        class="flex h-8 w-[170px] cursor-pointer items-center justify-center gap-1.5 rounded-xl bg-sf-error-hover text-[14px] text-sf-error"
+        class="flex h-8 w-[170px] cursor-pointer items-center justify-center gap-1.5 rounded-xl bg-sf-error-2 text-[14px] text-sf-error"
         @click="retry(msg)"
       >
         生成失败，点击重试!

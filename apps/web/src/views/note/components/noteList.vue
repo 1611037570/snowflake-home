@@ -3,7 +3,7 @@
     <ElScrollbar class="flex h-full flex-col pr-2.5">
       <div
         @click="noteStore.addNote()"
-        class="box cursor-pointer; flex flex-col rounded-xl p-2 transition-all duration-300 hover:bg-sf-theme-hover"
+        class="box cursor-pointer; flex flex-col rounded-xl p-2 transition-all duration-300 hover:bg-sf-theme-2"
         :class="{ 'bg-sf-theme': currentIndex === -1 }"
       >
         新建便签
@@ -12,7 +12,7 @@
         v-for="(item, index) in noteList"
         :key="index"
         @click="setCurrentIndex(index)"
-        class="box cursor-pointer; flex flex-col rounded-xl p-2 transition-all duration-300 hover:bg-sf-theme-hover"
+        class="box cursor-pointer; flex flex-col rounded-xl p-2 transition-all duration-300 hover:bg-sf-theme-2"
         :class="{ 'bg-sf-theme': currentIndex === index }"
       >
         <div class="flex">
@@ -50,6 +50,6 @@ const setCurrentIndex = (index) => {
 
 <style lang="scss" scoped>
 .box {
-  @apply flex cursor-pointer flex-col rounded-xl p-2 transition-all duration-300  hover:bg-sf-theme-hover;
+  @apply flex cursor-pointer flex-col rounded-xl p-2 transition-all duration-300  hover:bg-sf-theme-2;
 }
 </style>

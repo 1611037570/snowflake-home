@@ -56,10 +56,10 @@ function delNote(item) {
         boxSize="8"
         :class="[
           {
-            'bg-sf-theme-hover text-sf-theme': item.todoDone,
+            'bg-sf-theme-2 text-sf-theme': item.todoDone,
           },
         ]"
-        class="rounded-lg bg-sf-primary-hover hover:bg-sf-theme-hover hover:text-sf-theme"
+        class="rounded-lg bg-sf-primary-hover hover:bg-sf-theme-2 hover:text-sf-theme"
       />
       {{ item.value || "无内容" }}
       <div class="flex items-center">
@@ -68,14 +68,14 @@ function delNote(item) {
           icon="ic:round-push-pin"
           size="6"
           boxSize="8"
-          class="rounded-lg bg-sf-theme-hover text-sf-theme opacity-0 group-hover:opacity-100"
+          class="rounded-lg bg-sf-theme-2 text-sf-theme opacity-0 group-hover:opacity-100"
         />
         <SfIcon
           @click.stop="delNote(item)"
           icon="ic:round-delete"
           size="6"
           boxSize="8"
-          class="rounded-lg opacity-0 group-hover:opacity-100 hover:bg-sf-theme-hover hover:text-sf-theme"
+          class="rounded-lg opacity-0 group-hover:opacity-100 hover:bg-sf-theme-2 hover:text-sf-theme"
         />
       </div>
     </div>

@@ -3,7 +3,7 @@ export const list = [
     name: "主题色",
     list: [
       { name: "主题色", class: "bg-sf-theme" },
-      { name: "主题的hover颜色", class: "bg-sf-theme-hover" },
+      { name: "主题的hover颜色", class: "bg-sf-theme-2" },
       { name: "sf-theme-text", class: "bg-sf-theme-text" },
       { name: "基本色", class: "bg-sf-base" },
       { name: "主要色", class: "bg-sf-primary" },

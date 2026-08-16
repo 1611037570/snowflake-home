@@ -47,13 +47,13 @@ const typeList = computed(() => {
             </div>
             <div class="cursor-pointer" @click="useCopy(item.account)">
               账号：
-              <span class="hover:text-sf-theme-hover">
+              <span class="hover:text-sf-theme-2">
                 {{ item.account }}
               </span>
             </div>
             <div class="cursor-pointer" @click="useCopy(item.password)">
               密码：
-              <span class="hover:text-sf-theme-hover">
+              <span class="hover:text-sf-theme-2">
                 {{ showPassword ? item.password : "******" }}
               </span>
             </div>

@@ -288,7 +288,7 @@ onUnmounted(() => {
           :key="slice.moduleKey"
           class="resume-module-wrapper group relative rounded-xl hover:outline-2 hover:outline-gray-300 hover:outline-dashed"
           :class="{
-            'rounded-xl bg-sf-theme-hover/10 outline-2 outline-sf-theme-hover outline-dashed hover:outline-sf-theme-hover':
+            'rounded-xl bg-sf-theme-2/10 outline-2 outline-sf-theme-2 outline-dashed hover:outline-sf-theme-2':
               selectedModuleKeys.has(slice.moduleKey),
           }"
           :data-module="slice.moduleKey"

@@ -74,7 +74,7 @@ function activeClass(item) {
  * 悬停项的类名
  */
 function hoverClass(item) {
-  const name = "hover:bg-sf-theme-hover cursor-pointer hover:text-sf-theme-text";
+  const name = "hover:bg-sf-theme-2 cursor-pointer hover:text-sf-theme-text";
   if (typeof item.hover == "boolean") {
     return item.hover ? name : "";
   }

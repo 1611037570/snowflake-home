@@ -135,7 +135,7 @@ const list = computed(() => {
     <template #dropdown>
       <div class="w-[230px] p-3">
         <div
-          class="mb-2 h-[200px] w-[200px] overflow-hidden rounded-full border-24 border-sf-theme-hover"
+          class="mb-2 h-[200px] w-[200px] overflow-hidden rounded-full border-24 border-sf-theme-2"
         >
           <SfImg
             :src="audioImg"
