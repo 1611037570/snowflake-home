@@ -4,9 +4,11 @@ import { quickActions } from "./data";
 import EmptyState from "./emptyState.vue";
 import JdInput from "./JdInput.vue";
 import Score from "./Score.vue";
+import Setting from "./setting/index.vue";
 import { useAiStore } from "@/stores/modules/ai";
 import { useResumeStore } from "@/stores";
 import Chat from "@/views/ai/chat/index.vue";
+import { defaultMessage } from "./2.ts";
 
 // AI 对话
 const aiStore = useAiStore();
@@ -15,7 +17,7 @@ const resumeStore = useResumeStore();
 const { setGenerating } = resumeStore;
 
 // 默认对话
-const chat = ref([]);
+const chat = ref(createDefaultChat(defaultMessage));
 
 // 当前视图：score | jd
 const currentView = ref("score");
@@ -23,7 +25,7 @@ const activeMode = ref("");
 
 function switchMode(type) {
   const action = quickActions.find((item) => item.type === type);
-  chat.value = createDefaultChat();
+  chat.value = createDefaultChat(defaultMessage);
   activeMode.value = action?.name || "";
   currentView.value = type;
 }
@@ -36,9 +38,12 @@ function clearChat() {
 <template>
   <div class="box-border h-full w-[360px] bg-sf-bg py-3 pr-3">
     <div class="flex h-full flex-col rounded-xl border border-sf-border/40 bg-sf-primary shadow-sm">
+      <!-- 顶部操作栏 -->
+      <div class="flex items-center justify-end gap-2 p-3 pb-0">
+        <Setting />
+      </div>
       <div class="flex-1 overflow-y-auto">
-        <EmptyState v-if="!activeMode" @switch-mode="switchMode" />
-        <Score v-else-if="currentView === 'score'" />
+        <Score v-if="currentView === 'score'" />
         <JdInput v-else-if="currentView === 'jd'" />
       </div>
       <!-- AI 对话项 -->
@@ -46,7 +51,11 @@ function clearChat() {
         切换生成状态
       </div>
       <div class="cursor-pointer" @click="clearChat">清空对话</div>
-      <Chat :chat="chat" v-if="activeMode" />
+      <Chat :chat="chat" type="resume">
+        <template #empty>
+          <EmptyState @switch-mode="switchMode" />
+        </template>
+      </Chat>
     </div>
   </div>
 </template>
