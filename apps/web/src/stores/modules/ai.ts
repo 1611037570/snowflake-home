@@ -43,10 +43,19 @@ const DEFAULT_SYSTEM_PROMPT =
 export const useAiStore = defineStore(
   "ai",
   () => {
+    // 激活的服务
+    const activeService = ref<"snowflake" | "custom">("snowflake");
+    // 自定义模型
+    const customModel = ref<string>("");
+    // 自定义模型API
+    const customModelApi = ref<string>("");
+
     const sidebarCollapsed = ref(true);
     const sidebarMode = ref("float"); // 'dock' or 'float'
     const chatList = ref<Chat[]>([]);
     const currentChatId = ref<string>("");
+    // 是否开启思考模式
+    const thinkMode = ref<boolean>(true);
 
     const currentChat = computed(() => chatList.value.find((c) => c.id === currentChatId.value));
 
@@ -61,7 +70,7 @@ export const useAiStore = defineStore(
       currentChatId.value = "new-chat-temp";
     }
     // 创建默认对话
-    function createDefaultChat(): Chat {
+    function createDefaultChat(message: any): Chat {
       // 当前时间戳
       const now = Date.now();
       // 默认对话记录
@@ -78,6 +87,7 @@ export const useAiStore = defineStore(
             role: "system",
             content: DEFAULT_SYSTEM_PROMPT,
             typing: false,
+            ...message,
           },
         ],
       };
@@ -154,6 +164,10 @@ export const useAiStore = defineStore(
       currentChatId,
       currentChat,
       currentMessages,
+      activeService,
+      customModel,
+      customModelApi,
+      thinkMode,
       createDefaultChat,
       createDefaultMessage,
       addChat,
