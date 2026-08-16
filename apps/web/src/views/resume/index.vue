@@ -13,8 +13,6 @@
         <Assistant v-if="layout !== 'list'" />
       </Transition>
     </div>
-    <!-- 调试面板 -->
-    <Debug />
   </div>
 </template>
 
@@ -25,7 +23,6 @@ import { provide } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import Assistant from "./assistant/index.vue";
 import Builder from "./builder/index.vue";
-import Debug from "./debug/index.vue";
 import Header from "./components/header/index.vue";
 import Preview from "./preview/index.vue";
 // 预览层代理数据及批量操作句柄
