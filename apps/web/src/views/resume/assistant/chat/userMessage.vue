@@ -1,4 +1,6 @@
 <script setup>
+import ToggleButton from "./toggleButton.vue";
+
 defineProps({
   msg: {
     type: Object,
@@ -19,24 +21,13 @@ const emit = defineEmits(["recall", "updateCollapsedStatus"]);
     <!-- 用户名与时间 -->
     <header class="flex w-full items-center justify-end gap-1 px-1 select-none">
       <!-- 我的消息切换 (美化后的胶囊风格) -->
-      <button
+      <ToggleButton
         v-if="msg.content"
-        class="flex cursor-pointer items-center gap-1 rounded-full border px-2 py-0.5 text-sf font-bold transition-all"
-        :class="
-          !msg.contentCollapsed
-            ? 'border-sf-theme/20 bg-sf-theme/10 text-sf-theme'
-            : 'border-sf-border/10 bg-sf-bg-3 text-sf-text-3'
-        "
-        @click="emit('updateCollapsedStatus', index, 'content')"
-      >
-        <span class="tracking-tight">我的消息</span>
-        <SfIcon
-          icon="ph:caret-down-bold"
-          size="2"
-          class="transition-transform duration-300"
-          :class="{ '-rotate-180 opacity-80': !msg.contentCollapsed }"
-        />
-      </button>
+        label="我的消息"
+        :collapsed="msg.contentCollapsed"
+        gap="gap-1"
+        @toggle="emit('updateCollapsedStatus', index, 'content')"
+      />
       <div class="flex flex-col items-end gap-0.5 leading-tight">
         <span class="text-[12px] font-black tracking-wider text-sf-text">我</span>
         <div class="flex flex-row-reverse items-center gap-1">

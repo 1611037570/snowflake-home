@@ -5,6 +5,7 @@ import { ElMessage } from "element-plus";
 import { MdPreview } from "md-editor-v3";
 import "md-editor-v3/lib/preview.css";
 import { storeToRefs } from "pinia";
+import ToggleButton from "./toggleButton.vue";
 
 const props = defineProps({
   msg: {
@@ -17,6 +18,8 @@ const props = defineProps({
   },
 });
 const currentType = inject("type");
+// 重试回调，由 index.vue 通过 provide 注入
+const retry = inject("retry");
 
 const themeStore = useThemeStore();
 const { theme } = storeToRefs(themeStore);
@@ -33,14 +36,6 @@ const handleCopy = async (text) => {
   ElMessage.success("复制成功");
 };
 
-// 操作按钮配置
-const actionButtons = [
-  {
-    icon: "ph:copy-duotone",
-    tooltip: "复制",
-    onClick: () => handleCopy(props.msg.content),
-  },
-];
 const resumeContent = computed(() => {
   if (currentType !== "resume") {
     return "";
@@ -72,7 +67,7 @@ const resumeShow = computed(
     !isResumeMode.value || props.msg.requestStatus === "success",
 );
 // AI 加载动画序列：文字逐字 + 三个圆点，统一按顺序接力跳动
-const loadingItems = [..."生成中 请耐心等待", "", "", ""];
+const loadingItems = [..."生成中", "", "", ""];
 </script>
 
 <template>
@@ -93,44 +88,20 @@ const loadingItems = [..."生成中 请耐心等待", "", "", ""];
         </div>
 
         <!-- 思考过程切换 (美化后的胶囊风格) -->
-        <button
+        <ToggleButton
           v-if="msg.thought && !isResumeMode"
-          class="flex cursor-pointer items-center gap-1.5 rounded-full border px-2 py-0.5 text-sf font-bold transition-all"
-          :class="
-            !msg.thoughtCollapsed
-              ? 'border-sf-theme/20 bg-sf-theme/10 text-sf-theme'
-              : 'border-sf-border/10 bg-sf-bg-3 text-sf-text-3'
-          "
-          @click="emit('updateCollapsedStatus', index, 'thought')"
-        >
-          <span class="tracking-tight">{{ msg.content ? "已完成思考" : "思考中" }}</span>
-          <SfIcon
-            icon="ph:caret-down-bold"
-            size="2"
-            class="transition-transform duration-300"
-            :class="{ '-rotate-180 opacity-80': !msg.thoughtCollapsed }"
-          />
-        </button>
+          :label="msg.content ? '已完成思考' : '思考中'"
+          :collapsed="msg.thoughtCollapsed"
+          @toggle="emit('updateCollapsedStatus', index, 'thought')"
+        />
 
         <!-- 回复内容切换 (美化后的胶囊风格) -->
-        <button
-          v-if="msg.content && resumeShow"
-          class="flex cursor-pointer items-center gap-1.5 rounded-full border px-2 py-0.5 text-sf font-bold transition-all"
-          :class="
-            !msg.contentCollapsed
-              ? 'border-sf-theme/20 bg-sf-theme/10 text-sf-theme'
-              : 'border-sf-border/10 bg-sf-bg-3 text-sf-text-3'
-          "
-          @click="emit('updateCollapsedStatus', index, 'content')"
-        >
-          <span class="tracking-tight">回复内容</span>
-          <SfIcon
-            icon="ph:caret-down-bold"
-            size="2"
-            class="transition-transform duration-300"
-            :class="{ '-rotate-180 opacity-80': !msg.contentCollapsed }"
-          />
-        </button>
+        <ToggleButton
+          v-if="resumeShow"
+          label="回复内容"
+          :collapsed="msg.contentCollapsed"
+          @toggle="emit('updateCollapsedStatus', index, 'content')"
+        />
       </div>
 
       <div
@@ -143,78 +114,74 @@ const loadingItems = [..."生成中 请耐心等待", "", "", ""];
     </header>
 
     <div class="flex w-full flex-col gap-1 pr-1">
-      <!-- AI Loading 状态 (当既没有思考内容也没有回复内容时显示) -->
+      <!-- 加载状态 -->
       <div
-        v-if="currentType === 'resume' ? !resumeShow : !msg.thought && !msg.content"
-        class="flex h-10 w-[220px] items-center justify-center gap-1.5 text-sf-theme"
+        v-if="msg.requestStatus === 'loading'"
+        class="flex h-8 w-[50px] items-center justify-center gap-1.5 rounded-xl bg-sf-theme-hover text-sf-theme"
       >
-        <template v-for="(item, i) in loadingItems" :key="i">
-          <span v-if="item" class="animate-bounce" :style="`animation-delay: ${(i - 1) * 150}ms`">{{
-            item
-          }}</span>
+        <template v-for="(item, i) in 3" :key="i">
           <span
-            v-else
             class="h-1.5 w-1.5 animate-bounce rounded-full bg-sf-theme opacity-80"
             :style="`animation-delay: ${(i - 1) * 150}ms`"
           ></span>
         </template>
       </div>
-
-      <!-- AI 思考过程内容 (折叠部分) -->
-      <template v-if="msg.thought && !msg.thoughtCollapsed && !isResumeMode">
-        <div
-          class="relative border border-sf-border/10 px-4 text-[13.5px] leading-relaxed text-sf-text-3/90"
-        >
-          <div class="absolute top-0 left-0 h-full w-1 bg-sf-theme/20"></div>
-          <MdPreview
-            :modelValue="msg.thought"
-            :theme="theme"
-            editorId="thought-preview"
-            class="bg-transparent! p-0! italic"
-          />
-          <div class="mt-3" v-if="msg.content">已完成</div>
-        </div>
-      </template>
-
-      <!-- 正式回复内容 -->
-      <template
-        v-if="currentType === 'resume' ? msg.requestStatus === 'success' : !msg.contentCollapsed"
+      <!-- 错误状态 -->
+      <div
+        v-if="msg.requestStatus === 'error'"
+        class="flex h-8 w-[170px] cursor-pointer items-center justify-center gap-1.5 rounded-xl bg-sf-error-hover text-[14px] text-sf-error"
+        @click="retry(msg)"
       >
-        <!-- AI 消息 (Markdown 渲染) -->
-        <div class="relative w-full min-w-0">
-          <MdPreview
-            v-if="content"
-            :modelValue="content"
-            :theme="theme"
-            editorId="ai-preview"
-            class="inline-block max-w-full min-w-0 overflow-hidden bg-transparent! p-0! align-bottom text-[14px] leading-relaxed text-sf-text"
-            :class="{ 'typing-active': msg.typing }"
-          />
-          <div v-if="currentType === 'resume'" class="mt-2 flex flex-col gap-2">
-            <div
-              v-for="(item, index) in resumeContent.followQuestions"
-              :key="index"
-              class="cursor-pointer rounded-lg border border-sf-border bg-sf-bg-2 px-3 py-2 text-[13px] text-sf-text transition-all duration-200 hover:border-sf-theme hover:bg-sf-bg-hover"
-              @click="emit('sendFollowQuestion', item)"
-            >
-              {{ item }}
-            </div>
+        生成失败，点击重试!
+      </div>
+      <!-- 思考过程内容 -->
+      <div
+        v-if="msg.thought && !msg.thoughtCollapsed && !isResumeMode"
+        class="relative border border-sf-border/10 px-4 text-[13.5px] leading-relaxed text-sf-text-3/90"
+      >
+        <div class="absolute top-0 left-0 h-full w-1 bg-sf-theme/20"></div>
+        <MdPreview
+          :modelValue="msg.thought"
+          :theme="theme"
+          editorId="thought-preview"
+          class="bg-transparent! p-0! italic"
+        />
+        <div class="mt-3" v-if="msg.content">已完成</div>
+      </div>
+      <!-- 正式回复内容 -->
+      <div
+        class="relative w-full min-w-0"
+        v-if="msg.requestStatus === 'success' && !msg.contentCollapsed"
+      >
+        <MdPreview
+          v-if="content"
+          :modelValue="content"
+          :theme="theme"
+          editorId="ai-preview"
+          class="inline-block max-w-full min-w-0 overflow-hidden bg-transparent! p-0! align-bottom text-[14px] leading-relaxed text-sf-text"
+          :class="{ 'typing-active': msg.typing }"
+        />
+        <div v-if="currentType === 'resume'" class="mt-2 flex flex-col gap-2">
+          <div
+            v-for="(item, index) in resumeContent.followQuestions"
+            :key="index"
+            class="cursor-pointer rounded-lg border border-sf-border bg-sf-bg-2 px-3 py-2 text-[13px] text-sf-text transition-all duration-200 hover:border-sf-theme hover:bg-sf-bg-hover"
+            @click="emit('sendFollowQuestion', item)"
+          >
+            {{ item }}
           </div>
         </div>
-      </template>
-
-      <!-- AI 操作区域 -->
+      </div>
+      <!-- 操作区域 -->
       <nav
         v-if="msg.content && !msg.typing && resumeShow"
         class="flex items-center gap-1 transition-opacity duration-300"
       >
-        <template v-for="(btn, idx) in actionButtons" :key="idx">
-          <SfTooltip :content="btn.tooltip">
-            <button class="action-btn" @click="btn.onClick?.()">
-              <SfIcon :icon="btn.icon" size="3.5" />
-            </button>
-          </SfTooltip>
-        </template>
+        <SfTooltip content="复制">
+          <button class="action-btn" @click="handleCopy(msg.content)">
+            <SfIcon icon="ph:copy-duotone" size="3.5" />
+          </button>
+        </SfTooltip>
       </nav>
     </div>
   </article>
@@ -227,7 +194,9 @@ const loadingItems = [..."生成中 请耐心等待", "", "", ""];
 .action-btn {
   @apply flex h-7 w-7 items-center justify-center rounded-lg text-sf-text-3 transition-colors hover:bg-sf-bg-3 hover:text-sf-text;
 }
-
+:deep(.md-editor-preview h2) {
+  margin: 14px 0 !important;
+}
 /* MdPreview 样式调整 */
 :deep(.md-editor-preview) {
   font-size: inherit;

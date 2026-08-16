@@ -5,8 +5,9 @@ import { computed, nextTick, ref, watch } from "vue";
 import { storeToRefs } from "pinia";
 import { arkLLM } from "@/apis";
 
+import AiMessage from "./aiMessage.vue";
 import ChatInput from "./chatInput.vue";
-import MessageList from "./messageList.vue";
+import UserMessage from "./userMessage.vue";
 import WelcomeScreen from "./welcomeScreen.vue";
 
 const resumeStore = useResumeStore();
@@ -30,6 +31,15 @@ const emit = defineEmits(["requestComplete"]);
 
 // currentMessages：从 chat.messages 派生
 const currentMessages = computed(() => chat.value?.messages ?? []);
+// 过滤掉 system 消息后的显示列表
+const displayMessages = computed(() => {
+  return currentMessages.value.filter((m) => m.role !== "system");
+});
+// 切换消息折叠状态
+function updateCollapsedStatus(index, type) {
+  displayMessages.value[index][`${type}Collapsed`] =
+    !displayMessages.value[index][`${type}Collapsed`];
+}
 /**
  * 向当前对话追加一条消息
  */
@@ -144,7 +154,7 @@ const handleAIResponse = async () => {
       },
       stream: true, // 开启流式响应
       // 简历模式下，需要解析 JSON 字符串
-      isJson: type === "resume" ? true : false,
+      isJson: type === "resume",
       // 流式事件回调
       onEvent: (type, data) => {
         if (type === "reasoning") {
@@ -231,19 +241,42 @@ const handleSendFollowQuestion = (question) => {
 };
 
 /**
+ * 删除消息，count 不传时删除该消息及其后的所有消息；返回是否删除成功
+ */
+function removeMessage(msg, count) {
+  const messages = chat.value?.messages;
+  if (!messages) return false;
+  const index = messages.indexOf(msg);
+  if (index > -1) {
+    messages.splice(index, count ?? messages.length);
+  }
+  return index > -1;
+}
+
+/**
  * 撤回用户消息：删除该消息及其后的所有消息，并将内容回填到输入框
  */
 const handleRecall = (msg) => {
-  const messages = chat.value?.messages;
-  if (!messages) return;
-  const index = messages.indexOf(msg);
-  if (index > -1) {
-    messages.splice(index);
+  // 删除该消息及其后的所有消息
+  if (removeMessage(msg)) {
     chat.value.updateTime = Date.now();
   }
   // 将撤回的内容回填到输入框，便于重新编辑
   chatInputRef.value?.setValue(msg.content);
 };
+
+/**
+ * 重试生成：删除失败消息后重新发起请求
+ */
+const handleRetry = (msg) => {
+  // 仅删除失败的这条消息
+  removeMessage(msg, 1);
+  isSending.value = true;
+  scrollToBottom();
+  handleAIResponse();
+};
+// 通过 provide 注入重试回调，供 aiMessage 直接调用
+provide("retry", handleRetry);
 
 /**
  * 点击提示词卡片
@@ -277,12 +310,18 @@ const handleSuggest = (payload) => {
         <WelcomeScreen @suggest="handleSuggest" />
       </slot>
 
-      <MessageList
-        v-if="currentMessages.length > 1"
-        :messages="currentMessages"
-        @recall="handleRecall"
-        @sendFollowQuestion="handleSendFollowQuestion"
-      />
+      <div v-if="currentMessages.length > 1" class="flex h-full flex-col items-center p-3">
+        <component
+          :is="msg.role === 'user' ? UserMessage : AiMessage"
+          v-for="(msg, index) in displayMessages"
+          :key="index"
+          :msg="msg"
+          :index="index"
+          @recall="handleRecall"
+          @updateCollapsedStatus="updateCollapsedStatus"
+          @sendFollowQuestion="handleSendFollowQuestion"
+        />
+      </div>
     </SfScrollbar>
 
     <!-- 滚动到底部按钮 -->
