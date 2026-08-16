@@ -40,7 +40,6 @@ const actionButtons = [
     tooltip: "复制",
     onClick: () => handleCopy(props.msg.content),
   },
-  { icon: "ph:arrows-clockwise-duotone", tooltip: "重新生成" },
 ];
 const resumeContent = computed(() => {
   if (currentType !== "resume") {
@@ -66,27 +65,17 @@ const content = computed(() => {
   // 普通模式
   return props.msg.content;
 });
-function a() {
-  console.log("resumeContent.value:>> ", resumeContent.value);
-}
 const isResumeMode = computed(() => currentType === "resume");
-const resumeShow = computed(() => {
-  // 非简历模式
-  if (!isResumeMode.value) {
-    return true;
-  }
-  return (
-    // 内容为对象
-    typeof resumeContent.value === "object" &&
-    // 请求状态为成功
-    resumeContent.value.requestStatus === "success"
-  );
-});
+const resumeShow = computed(
+  () =>
+    // 非简历模式直接展示；简历模式需内容为对象且请求成功
+    !isResumeMode.value ||
+    (typeof resumeContent.value === "object" && resumeContent.value.requestStatus === "success"),
+);
 </script>
 
 <template>
   <!-- 消息主体 -->
-  <div @click="a">1111</div>
   <article
     class="group flex w-full min-w-0 flex-col items-start gap-1.5 transition-all duration-300"
   >
@@ -168,7 +157,7 @@ const resumeShow = computed(() => {
       </div>
 
       <!-- AI 思考过程内容 (折叠部分) -->
-      <template v-if="msg.thought && !msg.thoughtCollapsed && currentType !== 'resume'">
+      <template v-if="msg.thought && !msg.thoughtCollapsed && !isResumeMode">
         <div
           class="relative border border-sf-border/10 px-4 text-[13.5px] leading-relaxed text-sf-text-3/90"
         >
@@ -209,7 +198,6 @@ const resumeShow = computed(() => {
           </div>
         </div>
       </template>
-      <div v-else></div>
 
       <!-- AI 操作区域 -->
       <nav

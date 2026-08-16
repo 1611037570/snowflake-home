@@ -26,13 +26,8 @@ const chat = defineModel("chat", {
 // 请求完成事件，转发给父组件
 const emit = defineEmits(["requestComplete"]);
 
-// currentMessages：从 chat.messages 派生，支持写入（写回 chat.messages）
-const currentMessages = computed({
-  get: () => chat.value?.messages ?? [],
-  set: (val) => {
-    if (chat.value) chat.value.messages = val;
-  },
-});
+// currentMessages：从 chat.messages 派生
+const currentMessages = computed(() => chat.value?.messages ?? []);
 /**
  * 向当前对话追加一条消息
  */
@@ -90,15 +85,9 @@ let abortRequest = null;
  */
 const handleSend = (content) => {
   // 确保输入内容不为空
-  if (!content) {
-    console.log("没有内容:>> ");
-    return;
-  }
+  if (!content) return;
   // 确保当前没有正在发送的消息
-  if (isSending.value) {
-    console.log("正在发送:>> ");
-    return;
-  }
+  if (isSending.value) return;
   isSending.value = true;
   addMessage({
     role: "user",
@@ -238,6 +227,21 @@ const stopGenerating = () => {
  */
 const handleSendFollowQuestion = (question) => {
   handleSend(question);
+};
+
+/**
+ * 撤回用户消息：删除该消息及其后的所有消息，并将内容回填到输入框
+ */
+const handleRecall = (msg) => {
+  const messages = chat.value?.messages;
+  if (!messages) return;
+  const index = messages.indexOf(msg);
+  if (index > -1) {
+    messages.splice(index);
+    chat.value.updateTime = Date.now();
+  }
+  // 将撤回的内容回填到输入框，便于重新编辑
+  chatInputRef.value?.setValue(msg.content);
 };
 
 /**

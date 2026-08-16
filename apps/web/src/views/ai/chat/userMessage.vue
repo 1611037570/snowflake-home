@@ -62,7 +62,7 @@ const emit = defineEmits(["recall", "updateCollapsedStatus"]);
       <!-- 用户操作 -->
       <nav v-if="msg.content" class="flex items-center transition-opacity duration-300">
         <SfTooltip content="撤回并重新编辑">
-          <button class="action-btn" @click="emit('recall', index, 'content')">
+          <button class="action-btn" @click="emit('recall', msg)">
             <SfIcon icon="ph:arrow-u-up-left-duotone" size="3.5" />
           </button>
         </SfTooltip>
