@@ -105,28 +105,47 @@ export function createStreamParser({ onEvent, debug, provider }: any) {
 }
 
 // 处理最终结果
-export function processResult({ text, isJson = true, debug }: any) {
-  let result = "";
+function safeJsonParse(str: string) {
   try {
-    if (typeof text !== "string" || !text.length) {
-      throw new StreamError("最终结果为空，无法解析", ERROR_CODES.NETWORK_ERROR);
+    return JSON.parse(str);
+  } catch {
+    // 仅当第一次失败时尝试补全
+    try {
+      const newStr = str + "}";
+      console.log("原始内容:", str);
+      console.log("尝试补全 JSON 字符串:", newStr);
+      return JSON.parse(newStr);
+    } catch {
+      throw new Error(`JSON 解析失败，原始内容: ${str}`);
     }
-    result = text.trim();
-    // 解析最终结果
-    result = isJson ? JSON.parse(result) : result;
-    if (debug) {
-      console.log("流式传输完成，最终结果:", result);
-    }
-    return result;
-  } catch (err: any) {
-    if (err instanceof StreamError) {
-      throw err;
-    }
-    throw new StreamError(
-      `最终结果解析失败: ${err.message}，原始内容: ${text}`,
-      ERROR_CODES.BUSINESS_ERROR,
-    );
   }
+}
+export function processResult({ text, isJson = true, debug }: any) {
+  // 1. 输入校验（立即抛出）
+  if (typeof text !== "string" || !text.length) {
+    throw new StreamError("最终结果为空，无法解析", ERROR_CODES.NETWORK_ERROR);
+  }
+
+  const trimmed = text.trim();
+  let result = trimmed;
+
+  // 2. JSON 解析（独立 try-catch）
+  if (isJson) {
+    try {
+      result = safeJsonParse(trimmed);
+    } catch (err: any) {
+      throw new StreamError(
+        `最终结果解析失败: ${err.message}，原始内容: ${trimmed}`,
+        ERROR_CODES.BUSINESS_ERROR,
+      );
+    }
+  }
+
+  // 3. 调试输出与返回
+  if (debug) {
+    console.log("流式传输完成，最终结果:", result);
+  }
+  return result;
 }
 
 // 处理错误信息

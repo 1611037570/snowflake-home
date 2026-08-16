@@ -1,4 +1,4 @@
-import { streamRequest } from "./streamRequest";
+import { createRequest } from "./request";
 
 import { handleRetry, processError, processOption } from "./stream-utils";
 
@@ -86,51 +86,54 @@ class LLM {
       console.log("请求配置 :>> ", config);
     }
 
-    let abortFn;
+    // 提前创建处理器，确保调用方在 sendFn 执行前即可获取 abort
+    const handler: any = createRequest(token, stream);
+    const send = handler?.send;
+    const abort = handler?.abort;
+
     // 处理请求参数
     const sendFn = async (currentRetryCount = 0) => {
+      // 标记是否正在重试
       let isRetrying = false;
       try {
-        let streamConfig: any = {
+        // 组装请求基础配置
+        const requestConfig = {
           url: this.getUrl(path),
           method,
           debug,
           provider: this.provider,
           timeout,
         };
-        let requestHandler;
 
-        if (stream) {
-          const data = processOption({ options });
-          streamConfig = {
-            ...streamConfig,
-            data,
-            isJson,
-            onEvent,
-          };
-          const { send, abort } = streamRequest(token);
-          requestHandler = send;
-          abortFn = abort;
-        } else {
-          console.log("非流式请求");
-          return;
+        // 流式与非流式请求体不同，分别组装后发送
+        const res = stream
+          ? await send?.({
+              ...requestConfig,
+              data: processOption({ options }),
+              isJson,
+              onEvent,
+            })
+          : await send?.({
+              ...requestConfig,
+              data: JSON.stringify(options),
+            });
+        // 主动中止时不触发成功回调
+        if (!res?.aborted) {
+          onSuccess?.(res);
         }
-        const res = await requestHandler?.(streamConfig);
-        onSuccess?.(res);
         return res;
       } catch (e) {
         const error = processError(e);
-        const code = error?.code;
 
         // 处理重试逻辑
         const { retried, result } = await handleRetry({
-          code,
+          code: error?.code,
           currentRetryCount,
           retryCount,
           debug,
           onRetry: sendFn,
         });
-
+        // 重试后返回结果
         if (retried) {
           isRetrying = true;
           return result;
@@ -147,9 +150,9 @@ class LLM {
         }
       }
     };
-    // return await sendFn();
+
     return {
-      abortFn,
+      abortFn: abort,
       sendFn,
     };
   }
