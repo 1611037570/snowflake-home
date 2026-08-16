@@ -7,7 +7,7 @@ import Score from "./Score.vue";
 import Setting from "./setting/index.vue";
 import { useAiStore } from "@/stores/modules/ai";
 import { useResumeStore } from "@/stores";
-import Chat from "@/views/ai/chat/index.vue";
+import Chat from "./chat/index.vue";
 import { defaultMessage } from "./prompt.ts";
 
 // AI 对话
@@ -30,10 +30,6 @@ function switchMode(type) {
   currentView.value = type;
 }
 
-function clearChat() {
-  activeMode.value = "";
-}
-
 // 请求完成回调，打印数据方便调试
 function onRequestComplete(msg) {
   console.log("请求完成数据:>> ", msg);
@@ -51,11 +47,6 @@ function onRequestComplete(msg) {
         <Score v-if="currentView === 'score'" />
         <JdInput v-else-if="currentView === 'jd'" />
       </div>
-      <!-- AI 对话项 -->
-      <div class="cursor-pointer" @click="setGenerating(!resumeStore.isGenerating)">
-        切换生成状态
-      </div>
-      <div class="cursor-pointer" @click="clearChat">清空对话</div>
       <Chat :chat="chat" type="resume" @request-complete="onRequestComplete">
         <template #empty>
           <EmptyState @switch-mode="switchMode" />
