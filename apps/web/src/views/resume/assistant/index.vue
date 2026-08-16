@@ -33,6 +33,11 @@ function switchMode(type) {
 function clearChat() {
   activeMode.value = "";
 }
+
+// 请求完成回调，打印数据方便调试
+function onRequestComplete(msg) {
+  console.log("请求完成数据:>> ", msg);
+}
 </script>
 
 <template>
@@ -51,7 +56,7 @@ function clearChat() {
         切换生成状态
       </div>
       <div class="cursor-pointer" @click="clearChat">清空对话</div>
-      <Chat :chat="chat" type="resume">
+      <Chat :chat="chat" type="resume" @request-complete="onRequestComplete">
         <template #empty>
           <EmptyState @switch-mode="switchMode" />
         </template>
