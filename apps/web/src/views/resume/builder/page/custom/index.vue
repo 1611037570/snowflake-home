@@ -28,7 +28,7 @@ const { currentUI } = storeToRefs(resumeStore);
               :key="item.value"
               class="hover:bg-sf-hover flex-1 cursor-pointer rounded-md border border-sf-border py-2 text-center text-sm transition-all"
               :class="{
-                'border-sf-theme-hover bg-sf-theme text-sf-base':
+                'border-sf-theme-2 bg-sf-theme text-sf-base':
                   currentUI.fontFamily === item.value,
               }"
               @click="currentUI.fontFamily = item.value"

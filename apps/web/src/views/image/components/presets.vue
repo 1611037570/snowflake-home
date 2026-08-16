@@ -7,8 +7,8 @@
         class="mb-3 flex items-center justify-between rounded-lg bg-sf-theme px-4 py-3 text-sm font-semibold text-sf-primary shadow-md transition-all hover:shadow-lg active:scale-[0.98]"
         :class="
           selected === opt.name
-            ? 'hover:bg-sf-theme-hover'
-            : 'border-l-4 border-sf-primary bg-sf-theme-hover'
+            ? 'hover:bg-sf-theme-2'
+            : 'border-l-4 border-sf-primary bg-sf-theme-2'
         "
         @click="applyRecommendation(opt.value)"
       >

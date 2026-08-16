@@ -15,17 +15,17 @@
   </div>
   <div class="flex">
     <ElButton
-      class="bg-sf-theme py-2.5 font-medium text-sf-primary transition-all duration-200 hover:bg-sf-theme-hover hover:shadow-lg active:scale-[0.99]"
+      class="bg-sf-theme py-2.5 font-medium text-sf-primary transition-all duration-200 hover:bg-sf-theme-2 hover:shadow-lg active:scale-[0.99]"
       @click="save"
       >{{ $t("image.saveImage") }}</ElButton
     >
     <!-- <ElButton
-      class="bg-sf-theme py-2.5 font-medium text-sf-primary transition-all duration-200 hover:bg-sf-theme-hover hover:shadow-lg active:scale-[0.99]"
+      class="bg-sf-theme py-2.5 font-medium text-sf-primary transition-all duration-200 hover:bg-sf-theme-2 hover:shadow-lg active:scale-[0.99]"
       @click="save"
       >保存为svg</ElButton
     > -->
     <ElButton
-      class="bg-sf-theme py-2.5 font-medium text-sf-primary transition-all duration-200 hover:bg-sf-theme-hover hover:shadow-lg active:scale-[0.99]"
+      class="bg-sf-theme py-2.5 font-medium text-sf-primary transition-all duration-200 hover:bg-sf-theme-2 hover:shadow-lg active:scale-[0.99]"
       @click="save('base64')"
       >保存为base64</ElButton
     >

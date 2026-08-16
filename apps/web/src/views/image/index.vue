@@ -33,14 +33,14 @@
       />
       <div
         v-if="!loading"
-        class="relative flex h-full w-95 rounded-xl border border-sf-theme-hover bg-sf-primary p-3 transition-all hover:border-sf-theme hover:shadow-xl"
+        class="relative flex h-full w-95 rounded-xl border border-sf-theme-2 bg-sf-primary p-3 transition-all hover:border-sf-theme hover:shadow-xl"
       >
         <div
           v-if="isConverting"
           class="absolute inset-0 z-10 flex items-center justify-center rounded-xl bg-black/30 backdrop-blur-md"
         >
           <div
-            class="flex items-center gap-2 rounded-lg border border-sf-theme-hover bg-sf-primary px-4 py-3 text-sf-base shadow-lg"
+            class="flex items-center gap-2 rounded-lg border border-sf-theme-2 bg-sf-primary px-4 py-3 text-sf-base shadow-lg"
           >
             <SfIcon
               name="line-md:loading-twotone-loop"
@@ -60,7 +60,7 @@
                 {{ selectedFile.name }}
               </div>
               <button
-                class="inline-flex cursor-pointer items-center gap-1 rounded-md bg-sf-theme-hover/10 px-2.5 py-1 text-xs font-semibold text-sf-theme transition-colors hover:bg-sf-theme-hover/20"
+                class="inline-flex cursor-pointer items-center gap-1 rounded-md bg-sf-theme-2/10 px-2.5 py-1 text-xs font-semibold text-sf-theme transition-colors hover:bg-sf-theme-2/20"
                 @click="open({ accept: 'image/*', multiple: false })"
               >
                 <span>{{ $t("image.changeImage") }}</span>
@@ -93,7 +93,7 @@
           </div>
           <Intro v-else-if="page === 'intro'" key="intro" />
         </ElScrollbar>
-        <div class="flex flex-col border-l border-sf-theme-hover pl-3">
+        <div class="flex flex-col border-l border-sf-theme-2 pl-3">
           <div
             class="flex-c mb-2 flex flex-col"
             v-for="item in rightList"

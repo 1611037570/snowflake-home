@@ -20,7 +20,7 @@ function handleEditTitle() {
     {{ title }}
     <SfIcon
       icon="lucide:pencil"
-      class="ml-2 hover:text-sf-theme-hover"
+      class="ml-2 hover:text-sf-theme-2"
       size="5"
       @click="handleEditTitle"
     />

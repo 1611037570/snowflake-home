@@ -9,7 +9,7 @@
 
         <!-- 内层逆转环：代表逆转时空 -->
         <div
-          class="absolute inset-4 animate-[spin_3s_linear_infinite_reverse] rounded-full border-3 border-sf-theme-hover border-t-sf-theme-hover border-l-transparent"
+          class="absolute inset-4 animate-[spin_3s_linear_infinite_reverse] rounded-full border-3 border-sf-theme-2 border-t-sf-theme-2 border-l-transparent"
         ></div>
 
         <!-- 中心沙漏效果 -->

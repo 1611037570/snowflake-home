@@ -54,7 +54,7 @@ const handleCreate = () => {
       <h2 class="text-[20px] font-black text-sf-theme">简历草稿</h2>
       <button
         type="button"
-        class="flex h-8 items-center gap-2 rounded-full border border-sf-theme bg-sf-theme px-4 text-sm font-black text-sf-theme-text shadow-lg shadow-sf-theme/25 transition-all duration-200 hover:-translate-y-0.5 hover:bg-sf-theme-hover disabled:cursor-not-allowed disabled:opacity-45"
+        class="flex h-8 items-center gap-2 rounded-full border border-sf-theme bg-sf-theme px-4 text-sm font-black text-sf-theme-text shadow-lg shadow-sf-theme/25 transition-all duration-200 hover:-translate-y-0.5 hover:bg-sf-theme-2 disabled:cursor-not-allowed disabled:opacity-45"
         :disabled="list.length >= maxCount"
         @click="handleCreate"
       >
@@ -119,7 +119,7 @@ const handleCreate = () => {
       <div class="text-2xl font-black text-sf-text">还没有简历</div>
       <button
         type="button"
-        class="mt-6 flex h-11 items-center gap-2 rounded-full bg-sf-theme px-7 text-base font-black text-sf-theme-text shadow-lg shadow-sf-theme/25 hover:bg-sf-theme-hover"
+        class="mt-6 flex h-11 items-center gap-2 rounded-full bg-sf-theme px-7 text-base font-black text-sf-theme-text shadow-lg shadow-sf-theme/25 hover:bg-sf-theme-2"
         @click="handleCreate"
       >
         <SfIcon icon="lucide:plus" size="4" />

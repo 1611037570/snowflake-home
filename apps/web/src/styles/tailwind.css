@@ -25,21 +25,17 @@
 }
 @theme inline {
   --color-sf-success: var(--sf-success);
-  /* 成功色的hover颜色 */
-  --color-sf-success-hover: var(--sf-success-hover);
+  --color-sf-success-2: var(--sf-success-2);
   --color-sf-warning: var(--sf-warning);
-  /* 警告色的hover颜色 */
-  --color-sf-warning-hover: var(--sf-warning-hover);
+  --color-sf-warning-2: var(--sf-warning-2);
   --color-sf-error: var(--sf-error);
-  /* 错误色的hover颜色 */
-  --color-sf-error-hover: var(--sf-error-hover);
+  --color-sf-error-2: var(--sf-error-2);
   --color-sf-info: var(--sf-info);
-  /* 信息色的hover颜色 */
-  --color-sf-info-hover: var(--sf-info-hover);
+  --color-sf-info-2: var(--sf-info-2);
   /* 主题色 */
   --color-sf-theme: var(--sf-theme);
-  /* 主题的hover颜色 */
-  --color-sf-theme-hover: var(--sf-theme-hover);
+  /* 主题色-2 */
+  --color-sf-theme-2: var(--sf-theme-2);
   --color-sf-theme-text: #fff;
   /* 基本色 */
   --color-sf-base: var(--sf-base);
@@ -82,24 +78,24 @@
 :root {
   /* 成功色 */
   --sf-success: color-mix(in oklab, #67c23a 100%, transparent);
-  /* 成功色的hover颜色 */
-  --sf-success-hover: color-mix(in oklab, #67c23a 15%, transparent);
+  /* 成功色-2 */
+  --sf-success-2: color-mix(in oklab, #67c23a 15%, transparent);
   /* 警告色 */
   --sf-warning: color-mix(in oklab, #e6a23c 100%, transparent);
-  /* 警告色的hover颜色 */
-  --sf-warning-hover: color-mix(in oklab, #e6a23c 15%, transparent);
+  /* 警告色-2 */
+  --sf-warning-2: color-mix(in oklab, #e6a23c 15%, transparent);
   /* 错误色 */
   --sf-error: color-mix(in oklab, #f56c6c 100%, transparent);
-  /* 错误色的hover颜色 */
-  --sf-error-hover: color-mix(in oklab, #f56c6c 15%, transparent);
+  /* 错误色-2 */
+  --sf-error-2: color-mix(in oklab, #f56c6c 15%, transparent);
   /* 信息色 */
   --sf-info: color-mix(in oklab, #909399 100%, transparent);
-  /* 信息色的hover颜色 */
-  --sf-info-hover: color-mix(in oklab, #909399 15%, transparent);
+  /* 信息色-2 */
+  --sf-info-2: color-mix(in oklab, #909399 15%, transparent);
   /* 主题色 */
   --sf-theme: #50a2ff;
-  /* 主题的hover颜色 */
-  --sf-theme-hover: oklch(88.2% 0.059 254.128);
+  /* 主题色-2 */
+  --sf-theme-2: oklch(88.2% 0.059 254.128);
 }
 /* 默认：亮色模式 */
 .light {
@@ -156,7 +152,7 @@
     @apply w-full truncate;
   }
   .sf-theme-element {
-    @apply cursor-pointer bg-sf-theme text-sf-primary hover:bg-sf-theme-hover hover:text-sf-theme;
+    @apply cursor-pointer bg-sf-theme text-sf-primary hover:bg-sf-theme-2 hover:text-sf-theme;
   }
   .sf-primary {
     @apply bg-sf-primary text-sf-text hover:bg-sf-primary-hover;

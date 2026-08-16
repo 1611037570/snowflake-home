@@ -61,7 +61,7 @@ onKeyStroke("ArrowDown", (event) => {
       <div
         class="mr-3 inline-flex h-6 w-6 items-center justify-center rounded-[6px] text-xs font-bold text-white shadow-xl transition-colors duration-200"
         :style="{
-          background: index < style.length ? style[index] : ' var(--color-sf-theme-hover) ',
+          background: index < style.length ? style[index] : ' var(--color-sf-theme-2) ',
         }"
       >
         {{ index + 1 }}

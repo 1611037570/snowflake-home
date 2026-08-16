@@ -28,7 +28,7 @@ const shapeStyle = computed(() => ({
       <div class="resume-logo-left h-full w-full bg-sf-theme" :style="shapeStyle"></div>
     </div>
     <div class="absolute top-1/2 right-0 -translate-y-1/2 skew-x-[-18deg]" :style="shapeStyle">
-      <div class="resume-logo-right h-full w-full bg-sf-theme-hover" :style="shapeStyle"></div>
+      <div class="resume-logo-right h-full w-full bg-sf-theme-2" :style="shapeStyle"></div>
     </div>
   </div>
 </template>
