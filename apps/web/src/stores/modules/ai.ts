@@ -70,7 +70,7 @@ export const useAiStore = defineStore(
       currentChatId.value = "new-chat-temp";
     }
     // 创建默认对话
-    function createDefaultChat(message: any): Chat {
+    function createDefaultChat(message?: any): Chat {
       // 当前时间戳
       const now = Date.now();
       // 默认对话记录
@@ -104,7 +104,7 @@ export const useAiStore = defineStore(
         content: "",
         typing: false,
         role: "",
-        requestStatus: "success",
+        requestStatus: "loading",
       };
       return message;
     }
