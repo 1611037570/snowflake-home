@@ -253,7 +253,15 @@ const handleKeydown = (e) => {
 const focus = () => {
   inputRef.value?.focus();
 };
-defineExpose({ focus });
+
+/**
+ * 发送推荐问题
+ */
+const sendQuestion = (question) => {
+  modelValue.value = question;
+  handleSend();
+};
+defineExpose({ focus, sendQuestion });
 
 onMounted(() => {
   focus();
