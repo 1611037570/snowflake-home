@@ -263,7 +263,6 @@ onMounted(() => {
 <template>
   <footer class="relative flex w-full flex-col items-center p-3">
     <div class="relative z-10 w-full max-w-4xl">
-      「{{ canSend }}--{{ currentType }}
       <!-- 主输入容器：增强阴影与圆角细节 -->
       <div
         class="group hover:border-sf-border-hover relative flex flex-col rounded-2xl border border-sf-border bg-sf-bg p-1 shadow-sm transition-all duration-500"

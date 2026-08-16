@@ -1,7 +1,7 @@
 <script setup>
 import { useAiStore } from "@/stores";
 import { useScroll } from "@vueuse/core";
-import { computed, nextTick, ref, toRef, watch } from "vue";
+import { computed, nextTick, ref, watch } from "vue";
 
 import ChatInput from "./chatInput.vue";
 import MessageList from "./messageList.vue";
@@ -54,12 +54,6 @@ const showScrollBottom = computed(() => {
 });
 // ChatInput 组件的引用，用于聚焦
 const chatInputRef = ref(null);
-
-// 是否正在生成中（包含发送中、打字中或加载中状态）
-const isGenerating = computed(() => {
-  const lastMsg = currentMessages.value.at(-1);
-  return isSending.value || lastMsg?.typing;
-});
 
 /**
  * 滚动到底部

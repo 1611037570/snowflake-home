@@ -69,6 +69,19 @@ const content = computed(() => {
 function a() {
   console.log("resumeContent.value:>> ", resumeContent.value);
 }
+const isResumeMode = computed(() => currentType === "resume");
+const resumeShow = computed(() => {
+  // 非简历模式
+  if (!isResumeMode.value) {
+    return true;
+  }
+  return (
+    // 内容为对象
+    typeof resumeContent.value === "object" &&
+    // 请求状态为成功
+    resumeContent.value.requestStatus === "success"
+  );
+});
 </script>
 
 <template>
@@ -91,7 +104,7 @@ function a() {
 
         <!-- 思考过程切换 (美化后的胶囊风格) -->
         <button
-          v-if="msg.thought"
+          v-if="msg.thought && !isResumeMode"
           class="flex cursor-pointer items-center gap-1.5 rounded-full border px-2 py-0.5 text-sf font-bold transition-all"
           :class="
             !msg.thoughtCollapsed
@@ -111,7 +124,7 @@ function a() {
 
         <!-- 回复内容切换 (美化后的胶囊风格) -->
         <button
-          v-if="msg.content"
+          v-if="msg.content && resumeShow"
           class="flex cursor-pointer items-center gap-1.5 rounded-full border px-2 py-0.5 text-sf font-bold transition-all"
           :class="
             !msg.contentCollapsed
@@ -142,9 +155,10 @@ function a() {
     <div class="flex w-full flex-col gap-1 pr-1">
       <!-- AI Loading 状态 (当既没有思考内容也没有回复内容时显示) -->
       <div
-        v-if="!msg.thought && !msg.content"
-        class="flex h-10 w-16 items-center justify-center gap-1.5 rounded-2xl rounded-tl-sm border border-sf-border/30 bg-sf-bg-2 shadow-xs"
+        v-if="(!msg.thought && !msg.content) || resumeShow"
+        class="flex h-10 w-[120px] items-center justify-center gap-1.5"
       >
+        加载中
         <span
           v-for="i in 3"
           :key="i"
@@ -154,7 +168,7 @@ function a() {
       </div>
 
       <!-- AI 思考过程内容 (折叠部分) -->
-      <template v-if="msg.thought && !msg.thoughtCollapsed">
+      <template v-if="msg.thought && !msg.thoughtCollapsed && currentType !== 'resume'">
         <div
           class="relative border border-sf-border/10 px-4 text-[13.5px] leading-relaxed text-sf-text-3/90"
         >
@@ -170,10 +184,11 @@ function a() {
       </template>
 
       <!-- 正式回复内容 -->
-      <template v-if="!msg.contentCollapsed">
+      <template
+        v-if="currentType === 'resume' ? msg.requestStatus === 'success' : !msg.contentCollapsed"
+      >
         <!-- AI 消息 (Markdown 渲染) -->
         <div class="relative w-full min-w-0">
-          {{ typeof content }}
           <MdPreview
             v-if="content"
             :modelValue="content"
@@ -197,7 +212,7 @@ function a() {
 
       <!-- AI 操作区域 -->
       <nav
-        v-if="msg.content && !msg.typing"
+        v-if="msg.content && !msg.typing && resumeShow"
         class="flex items-center gap-1 transition-opacity duration-300"
       >
         <template v-for="(btn, idx) in actionButtons" :key="idx">
