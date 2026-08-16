@@ -15,11 +15,8 @@ const props = defineProps({
     type: Number,
     required: true,
   },
-  isLastFew: {
-    type: Boolean,
-    default: false,
-  },
 });
+const currentType = inject("type");
 
 const themeStore = useThemeStore();
 const { theme } = storeToRefs(themeStore);
@@ -45,10 +42,38 @@ const actionButtons = [
   },
   { icon: "ph:arrows-clockwise-duotone", tooltip: "重新生成" },
 ];
+const resumeContent = computed(() => {
+  if (currentType !== "resume") {
+    return "";
+  }
+  const value = props.msg.content;
+  if (typeof value === "string") {
+    try {
+      return JSON.parse(value);
+    } catch {
+      return value;
+    }
+  }
+  return value;
+});
+// 消息内容
+const content = computed(() => {
+  // 简历模式
+  if (currentType === "resume") {
+    // 返回分析结果
+    return resumeContent.value.analysis;
+  }
+  // 普通模式
+  return props.msg.content;
+});
+function a() {
+  console.log("resumeContent.value:>> ", resumeContent.value);
+}
 </script>
 
 <template>
   <!-- 消息主体 -->
+  <div @click="a">1111</div>
   <article
     class="group flex w-full min-w-0 flex-col items-start gap-1.5 transition-all duration-300"
   >
@@ -148,16 +173,27 @@ const actionButtons = [
       <template v-if="!msg.contentCollapsed">
         <!-- AI 消息 (Markdown 渲染) -->
         <div class="relative w-full min-w-0">
+          {{ typeof content }}
           <MdPreview
-            v-if="msg.content"
-            :modelValue="msg.content"
+            v-if="content"
+            :modelValue="content"
             :theme="theme"
             editorId="ai-preview"
             class="inline-block max-w-full min-w-0 overflow-hidden bg-transparent! p-0! align-bottom text-[14px] leading-relaxed text-sf-text"
             :class="{ 'typing-active': msg.typing }"
           />
+          <div v-if="currentType === 'resume'" class="mt-2 flex flex-col gap-2">
+            <div
+              v-for="(item, index) in resumeContent.followQuestions"
+              :key="index"
+              class="cursor-pointer rounded-lg border border-sf-border bg-sf-bg-2 px-3 py-2 text-[13px] text-sf-text transition-all duration-200 hover:border-sf-theme hover:bg-sf-bg-hover"
+            >
+              {{ item }}
+            </div>
+          </div>
         </div>
       </template>
+      <div v-else></div>
 
       <!-- AI 操作区域 -->
       <nav
