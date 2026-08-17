@@ -50,8 +50,8 @@ const activeValue = computed(() => {
     >
       <div class="mx-auto flex h-full w-full max-w-[1280px] items-center gap-6">
         <div class="flex shrink-0 items-center gap-2.5 text-[17px] whitespace-nowrap">
-          <SfLogo size="8.5" name="resumeMain" />
-          <span> {{ $t("router.resumeMain") }}</span>
+          <SfLogo size="8.5" name="resume" />
+          <span> {{ $t("router.resume") }}</span>
         </div>
 
         <nav class="flex items-center gap-[30px] max-[1180px]:gap-5 max-[900px]:hidden">
