@@ -43,7 +43,7 @@ provide("bg", "bg-sf-bg");
       <div
         v-for="(item, index) in menuList"
         :key="item.name"
-        class="flex cursor-pointer items-center justify-center rounded-4xl px-2 py-2 font-bold hover:bg-sf-bg-hover"
+        class="flex cursor-pointer items-center justify-center rounded-4xl px-2 py-2 font-bold hover:bg-sf-bg-2"
         :class="{ 'bg-sf-theme text-sf-primary': activeIndex === index }"
         @click="handleMenuClick(index)"
       >

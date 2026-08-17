@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import ApplicationScenes from "./components/ApplicationScenes.vue";
 import HeroBanner from "./components/HeroBanner.vue";
 import PaletteList from "./components/PaletteList.vue";
 </script>
@@ -9,9 +8,6 @@ import PaletteList from "./components/PaletteList.vue";
     <ElScrollbar>
       <div class="space-y-12 p-6 md:p-8">
         <HeroBanner />
-
-        <ApplicationScenes />
-
         <div class="my-10 flex items-center gap-6 opacity-60">
           <div
             class="h-px flex-1 bg-gradient-to-r from-transparent via-sf-border to-transparent"

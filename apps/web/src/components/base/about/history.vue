@@ -18,7 +18,7 @@ import { historyList } from "@/constants/modules/history";
           class="absolute top-5 left-0 z-1 h-2.5 w-2.5 rounded-full bg-sf-theme transition-transform duration-200 group-hover:scale-125"
         ></div>
         <div
-          class="rounded-lg bg-sf-bg-hover p-2 transition-colors duration-200 group-hover:bg-sf-theme/10"
+          class="rounded-lg bg-sf-bg-2 p-2 transition-colors duration-200 group-hover:bg-sf-theme/10"
         >
           <p class="text-sm leading-6 text-sf-text-2">{{ item.desc }}</p>
         </div>

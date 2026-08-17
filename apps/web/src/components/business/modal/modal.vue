@@ -4,7 +4,7 @@
     <Transition name="mask" :disabled="performanceMode">
       <div
         v-if="modeValue"
-        class="fixed top-0 right-0 bottom-0 left-0 z-80 bg-sf-transparent-4"
+        class="fixed top-0 right-0 bottom-0 left-0 z-80 bg-sf-transparent-3"
         :style="backgroundStyle"
       ></div>
     </Transition>
@@ -36,7 +36,7 @@
               {{ title }}
             </div>
             <div
-              class="group flex-c absolute top-0 right-0 z-2 h-9 w-9 cursor-pointer rounded-xl bg-transparent transition-all duration-300 hover:bg-sf-bg-hover"
+              class="group flex-c absolute top-0 right-0 z-2 h-9 w-9 cursor-pointer rounded-xl bg-transparent transition-all duration-300 hover:bg-sf-bg-2"
               @click="modeValue = false"
             >
               <SfIcon

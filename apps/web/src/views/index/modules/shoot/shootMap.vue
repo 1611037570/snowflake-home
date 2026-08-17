@@ -1,7 +1,7 @@
 <template>
   <div class="relative w-full">
     <div
-      class="relative h-[600px] w-full rounded-3xl bg-sf-bg-3-hover shadow-sm backdrop-blur-sm md:h-[700px]"
+      class="relative h-[600px] w-full rounded-3xl bg-sf-bg-3 shadow-sm backdrop-blur-sm md:h-[700px]"
       ref="chartRef"
     ></div>
     <div

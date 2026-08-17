@@ -34,7 +34,7 @@ function handleConfirm() {
     <button
       v-if="recommendedPage"
       type="button"
-      class="mb-1 flex w-full cursor-pointer items-center rounded-xl border p-3 text-left transition hover:bg-sf-bg-hover"
+      class="mb-1 flex w-full cursor-pointer items-center rounded-xl border p-3 text-left transition hover:bg-sf-bg-2"
       :class="
         currentRoute === recommendedPage.url
           ? 'border-sf-theme bg-sf-theme/10'
@@ -60,7 +60,7 @@ function handleConfirm() {
         v-for="item in pageList"
         :key="item.url"
         type="button"
-        class="flex cursor-pointer items-center rounded-xl border p-3 text-left transition hover:bg-sf-bg-hover"
+        class="flex cursor-pointer items-center rounded-xl border p-3 text-left transition hover:bg-sf-bg-2"
         :class="
           currentRoute === item.url
             ? 'border-sf-theme bg-sf-theme/10'
