@@ -9,7 +9,7 @@
       </p>
       天
     </div>
-    <div class="inline-flex rounded-full bg-sf-bg-hover px-3 py-1 text-sm text-sf-text-2">
+    <div class="inline-flex rounded-full bg-sf-bg-2 px-3 py-1 text-sm text-sf-text-2">
       自 {{ startTime }} 以来
     </div>
   </div>

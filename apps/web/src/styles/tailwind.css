@@ -49,17 +49,12 @@
   --color-sf-text-2: var(--sf-text-2);
   /* 文本色-3 */
   --color-sf-text-3: var(--sf-text-3);
-  /* 禁用文本色 */
-  --color-sf-text-disabled: var(--sf-text-disabled);
   /* 背景色 */
   --color-sf-bg: var(--sf-background);
-  --color-sf-bg-hover: var(--sf-background-hover);
   /* 背景色-2 */
   --color-sf-bg-2: var(--sf-background-2);
-  --color-sf-bg-2-hover: var(--sf-background-2-hover);
   /* 背景色-3 */
   --color-sf-bg-3: var(--sf-background-3);
-  --color-sf-bg-3-hover: var(--sf-background-3-hover);
 
   /* 弹窗色 */
   --color-sf-modal: var(--sf-modal);
@@ -69,8 +64,6 @@
   --color-sf-transparent-2: var(--sf-transparent-2);
   /* 常规透明色-3 */
   --color-sf-transparent-3: var(--sf-transparent-3);
-  /* 常规透明色-4 */
-  --color-sf-transparent-4: var(--sf-transparent-4);
   /* 边框基础色 */
   --color-sf-border: var(--sf-border);
 }
@@ -106,17 +99,12 @@
   --sf-text-2: color-mix(in oklab, oklch(0% 0 0) 60%, transparent);
   --sf-text-3: color-mix(in oklab, oklch(0% 0 0) 40%, transparent);
   --sf-background: #f3f3f7;
-  --sf-background-hover: #e5e5ea;
   --sf-background-2: #e5e5ea;
-  --sf-background-2-hover: #d1d1d6;
   --sf-background-3: #d1d1d6;
-  --sf-background-3-hover: #c7c7cc;
-  --sf-text-disabled: #c0c4cc;
   --sf-modal: #f2f2f7;
   --sf-transparent: color-mix(in oklab, oklch(97% 0.014 254.604) 80%, transparent);
   --sf-transparent-2: color-mix(in oklab, oklch(97% 0.014 254.604) 60%, transparent);
   --sf-transparent-3: color-mix(in oklab, oklch(97% 0.014 254.604) 40%, transparent);
-  --sf-transparent-4: color-mix(in oklab, oklch(97% 0.014 254.604) 20%, transparent);
   --sf-border: rgba(0, 0, 0, 0.1);
 }
 /* 深色模式 */
@@ -126,18 +114,14 @@
   --sf-text-2: color-mix(in oklab, oklch(100% 0 0) 60%, transparent);
   --sf-text-3: color-mix(in oklab, oklch(100% 0 0) 40%, transparent);
   --sf-background: #1c1c1e;
-  --sf-background-hover: #2c2c2e;
   --sf-background-2: #3a3a3c;
-  --sf-background-2-hover: #48484a;
   --sf-background-3: #48484a;
-  --sf-background-3-hover: #636366;
   --sf-modal: rgba(0, 0, 0, 1);
   --sf-primary: rgba(0, 0, 0, 1);
   --sf-primary-hover: #3a3a3c;
   --sf-transparent: rgba(0, 0, 0, 0.85);
   --sf-transparent-2: rgba(0, 0, 0, 0.6);
   --sf-transparent-3: rgba(0, 0, 0, 0.4);
-  --sf-transparent-4: rgba(0, 0, 0, 0.2);
   --sf-border: rgba(255, 255, 255, 0.3);
 }
 

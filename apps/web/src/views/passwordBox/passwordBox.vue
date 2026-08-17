@@ -35,7 +35,7 @@ const typeList = computed(() => {
 <template>
   <h1>密码箱</h1>
   <div>明文显示：<ElSwitch v-model="showPassword" /></div>
-  <SfScrollbarTab :list="typeList" class="bg-sf-bg-hover" />
+  <SfScrollbarTab :list="typeList" class="bg-sf-bg-2" />
   <ElScrollbar>
     <div v-for="(item, index) in list" :key="index" class="mb-2 rounded-xl bg-sf-bg p-1">
       <div class="flex items-center">

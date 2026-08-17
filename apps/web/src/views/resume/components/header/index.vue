@@ -57,7 +57,7 @@ const handleLayoutClick = (item) => {
     <!-- 右侧工具栏 -->
     <div class="flex items-center gap-6">
       <!-- 布局切换器 -->
-      <div class="flex items-center gap-1 rounded-xl bg-sf-bg-hover p-1">
+      <div class="flex items-center gap-1 rounded-xl bg-sf-bg-2 p-1">
         <SfTooltip v-for="item in layoutList" :key="item.value" :content="item.name">
           <button
             type="button"

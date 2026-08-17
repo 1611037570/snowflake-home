@@ -190,7 +190,7 @@ const resumeShow = computed(
             <div
               v-for="(item, index) in resumeContent.followQuestions"
               :key="index"
-              class="cursor-pointer rounded-lg border border-sf-border bg-sf-bg-2 px-3 py-2 text-[13px] text-sf-text transition-all duration-200 hover:border-sf-theme hover:bg-sf-bg-hover"
+              class="cursor-pointer rounded-lg border border-sf-border bg-sf-bg-2 px-3 py-2 text-[13px] text-sf-text transition-all duration-200 hover:border-sf-theme hover:bg-sf-bg-2"
               @click="emit('sendFollowQuestion', item)"
             >
               {{ item }}

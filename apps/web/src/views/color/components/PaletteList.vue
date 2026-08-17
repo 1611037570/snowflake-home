@@ -76,7 +76,7 @@ function copyClass(cls: string) {
 
             <!-- 悬浮复制提示 -->
             <div
-              class="absolute inset-0 z-20 flex items-center justify-center bg-sf-modal opacity-0 backdrop-blur-[3px] transition-all duration-300 group-hover:opacity-100"
+              class="absolute inset-0 z-20 flex items-center justify-center opacity-0 transition-all duration-300 group-hover:opacity-100"
             >
               <span
                 class="flex translate-y-3 transform items-center gap-1.5 rounded-lg border border-sf-border bg-sf-primary/90 px-4 py-2 text-sm font-medium text-sf-text opacity-0 shadow-lg backdrop-blur-md transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100 hover:!bg-sf-theme hover:!text-sf-theme-text"
