@@ -12,7 +12,9 @@ Launched on September 3, 2020, reconstructed and open-sourced on November 22, 20
 
 ## 🔗 Live Demo
 
-- 📄 **Resume Generator**: Benchmarking BOSS Zhipin and Zhijue, with AI-assisted writing, visual editing, PDF export, etc. ![Under Maintenance](https://img.shields.io/badge/Status-Under%20Maintenance-brightgreen)
+- 📄 **Resume Generator** · _With this resume, cross a thousand mountains_
+
+  Benchmarking BOSS Zhipin and Zhijue, with AI-assisted writing, visual editing, PDF export, etc. ![Under Maintenance](https://img.shields.io/badge/Status-Under%20Maintenance-brightgreen)
   Preview: http://nannan.work/#/resume
 - ❄️ **Snowflake Start Page** · _A pure browsing start like snow_
 
@@ -33,16 +35,15 @@ The project is managed based on **pnpm monorepo**, with sub-packages located und
 
 **VS Code** is recommended as the development environment. The project provides `.vscode` configuration files, which can bring a better development experience.
 
-### Install Dependencies
-
 ```bash
+# Install dependencies
 pnpm install
-```
 
-### Run in Development
-
-```bash
+# Run the project
 pnpm dev
+
+# Build the project
+pnpm build
 ```
 
 ## Author's Murmurs
