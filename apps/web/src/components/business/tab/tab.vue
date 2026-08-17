@@ -1,5 +1,5 @@
 <template>
-  <div class="relative overflow-hidden rounded-4xl bg-sf-primary-2 p-1">
+  <div class="bg-sf-page relative overflow-hidden rounded-4xl p-1">
     <!-- Tab列表容器 -->
     <div class="relative z-10 flex" @mouseleave="handleMouseLeave">
       <!-- 循环渲染Tab项 -->

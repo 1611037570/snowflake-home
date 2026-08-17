@@ -7,14 +7,14 @@
 
 /* 下拉弹层背景色：与项目主题保持一致 */
 .el-dropdown__popper.el-popper {
-  background: var(--sf-primary-2) !important;
+  background: var(--sf-page) !important;
   // border: none !important;
   border-radius: 8px !important;
   overflow: hidden;
 }
 .el-popper__arrow {
-  --el-bg-color-overlay: var(--sf-primary-2) !important;
-  --el-text-color-primary: var(--sf-primary-2) !important;
+  --el-bg-color-overlay: var(--sf-page) !important;
+  --el-text-color-primary: var(--sf-page) !important;
 }
 /* 取消 Anchor 组件链接的内边距，避免点击区域偏移 */
 .el-anchor__link {

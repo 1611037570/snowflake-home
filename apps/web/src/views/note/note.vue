@@ -80,7 +80,7 @@ const noteStatusList = computed(() => {
               @click="item.fn()"
               :class="{ 'bg-sf-theme-2 text-sf-theme': item.value }"
               boxSize="8"
-              class="rounded-lg bg-sf-primary-2 hover:bg-sf-theme-2 hover:text-sf-theme"
+              class="bg-sf-page rounded-lg hover:bg-sf-theme-2 hover:text-sf-theme"
             />
           </SfTooltip>
         </div>

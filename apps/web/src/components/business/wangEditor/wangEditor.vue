@@ -78,7 +78,7 @@ const handleCreated = (editor) => {
 :deep(.w-e-menu-tooltip-v5) {
   &::before {
     color: var(--color-sf-base);
-    background: var(--color-sf-primary-2);
+    background: var(--color-sf-page);
     border: var(--color-sf-border) 1px solid;
   }
   &:after {
