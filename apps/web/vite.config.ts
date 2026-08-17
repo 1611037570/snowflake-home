@@ -28,8 +28,8 @@ import vueDevTools from "vite-plugin-vue-devtools";
 // 自定义组件解析器
 import { dynamicComponentResolver } from "./src/components";
 
-// 样式导入插件
-import { createStyleImportPlugin, ElementPlusResolve } from "vite-plugin-style-import";
+// Element Plus 按需样式导入
+import ElementPlus from "unplugin-element-plus/vite";
 // Vite配置导出
 export default ({ mode }: { mode: string }) => {
   // 从环境文件加载环境变量
@@ -87,10 +87,8 @@ export default ({ mode }: { mode: string }) => {
         extensions: [".vue"], // 要处理的组件文件扩展名
         deep: false, // 是否深度搜索子目录
       }),
-      // 样式导入配置
-      createStyleImportPlugin({
-        resolves: [ElementPlusResolve()], // 样式解析器
-      }),
+      // Element Plus 按需样式导入
+      ElementPlus(),
       // 仅在开发环境启用
       ...(isProd
         ? []

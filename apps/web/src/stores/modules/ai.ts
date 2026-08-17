@@ -1,5 +1,6 @@
 import { getUUID } from "@/utils";
 import { ElMessageBox } from "element-plus";
+import { useIDBKeyval } from "@vueuse/integrations/useIDBKeyval";
 import { defineStore } from "pinia";
 import { computed, ref } from "vue";
 export type Chat = {
@@ -52,7 +53,8 @@ export const useAiStore = defineStore(
 
     const sidebarCollapsed = ref(true);
     const sidebarMode = ref("float"); // 'dock' or 'float'
-    const chatList = ref<Chat[]>([]);
+    // 对话列表使用 IndexedDB 持久化，替代 localStorage
+    const { data: chatList } = useIDBKeyval<Chat[]>("chat-list", []);
     const currentChatId = ref<string>("");
     // 是否开启思考模式
     const thinkMode = ref<boolean>(true);
@@ -180,7 +182,7 @@ export const useAiStore = defineStore(
   {
     persist: {
       storage: localStorage,
-      pick: ["sidebarMode", "chatList", "currentChatId"],
+      pick: ["sidebarMode", "currentChatId"],
     },
   },
 );
