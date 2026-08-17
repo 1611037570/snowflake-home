@@ -14,7 +14,7 @@ const map = {
   image: defineAsyncComponent(() => import("./modules/image.vue")),
   index: defineAsyncComponent(() => import("./modules/index.vue")),
   home: defineAsyncComponent(() => import("./modules/home.vue")),
-  resumeMain: defineAsyncComponent(() => import("./modules/resumeMain.vue")),
+  resume: defineAsyncComponent(() => import("./modules/resume.vue")),
 };
 </script>
 
