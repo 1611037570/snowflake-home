@@ -95,19 +95,21 @@ const cards = computed(() => [
     </div>
   </div>
 
-  <el-dialog v-model="editVisible" title="修改开始投递日期" width="360px">
-    <el-date-picker
-      v-model="editDate"
-      type="date"
-      value-format="YYYY-MM-DD"
-      placeholder="请选择开始投递日期"
-      class="w-full"
-    />
-    <template #footer>
-      <el-button @click="editVisible = false">取消</el-button>
-      <el-button type="primary" @click="handleSave">保存</el-button>
-    </template>
-  </el-dialog>
+  <SfModal v-model="editVisible" title="修改开始投递日期">
+    <div class="w-[360px]">
+      <el-date-picker
+        v-model="editDate"
+        type="date"
+        value-format="YYYY-MM-DD"
+        placeholder="请选择开始投递日期"
+        class="w-full"
+      />
+      <div class="mt-4 flex justify-end gap-2">
+        <el-button @click="editVisible = false">取消</el-button>
+        <el-button type="primary" @click="handleSave">保存</el-button>
+      </div>
+    </div>
+  </SfModal>
 </template>
 
 <style lang="scss" scoped></style>
