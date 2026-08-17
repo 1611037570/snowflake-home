@@ -7,7 +7,7 @@ import { useSystemStore } from "@/stores/modules/system";
 const isVisible = ref(false);
 const route = useRoute();
 const systemStore = useSystemStore();
-const excludePaths = ["/resume", "/ai", "/init"];
+const excludePaths = ["/resumeEditor", "/ai", "/init"];
 // 判断当前路由是否包含指定路径，如果包含则不显示
 const shouldShow = computed(() => {
   // 根路径或服务器未连接时不显示

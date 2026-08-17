@@ -138,7 +138,7 @@ export const useResumeStore = defineStore(
       const res = config ? mergeResumeItem(config) : DEFAULT_RESUME_ITEM;
       list.value.push(res);
       currentIndex.value = list.value.length - 1;
-      router.push({ path: "/resume", query: { id: res.id } });
+      router.push({ path: "/resumeEditor", query: { id: res.id } });
     };
     // 删除简历
     const deleteResume = () => {
