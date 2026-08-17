@@ -30,7 +30,7 @@ const getProgressClass = (progress) => {
 
 const handleEdit = (index) => {
   currentIndex.value = index;
-  router.push({ path: "/resume", query: { id: list.value[index].id } });
+  router.push({ path: "/resumeEditor", query: { id: list.value[index].id } });
 };
 
 const handleDelete = (index) => {

@@ -16,7 +16,7 @@ export const DEV_ACCOUNT = [
   },
   {
     name: "我的简历",
-    url: getBaseUrl() + "/resume?id=1611037570",
+    url: getBaseUrl() + "/resumeEditor?id=1611037570",
     icon: "basil:file-user-solid",
     qrcode: false,
     type: "dev",

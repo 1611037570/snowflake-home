@@ -29,7 +29,7 @@ export const PROJECT_ROUTES = [
     icon: "image",
   },
   {
-    name: "resume",
+    name: "resumeEditor",
     hidden: true,
     icon: "",
   },
