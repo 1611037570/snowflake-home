@@ -23,6 +23,13 @@ const routes: RouteRecordRaw[] = [
 
 // 动态导入所有视图组件，优化路径匹配
 const componentModules = import.meta.glob("@/views/*/index.vue", { eager: false });
+// 简历页子路由：顶部导航的四个板块
+const resumeChildren: RouteRecordRaw[] = [
+  { path: "", component: () => import("@/views/resume/main/index.vue") },
+  { path: "template", component: () => import("@/views/resume/template.vue") },
+  { path: "mine", component: () => import("@/views/resume/mine.vue") },
+  { path: "statistics", component: () => import("@/views/resume/statistics/index.vue") },
+];
 /**
  * 路由映射表
  * @property {string} path 路由路径
@@ -39,6 +46,8 @@ function generateRoute(item: any): RouteRecordRaw {
     path: `/${name}`,
     name,
     component: component ? component : () => import("@views/status/error.vue"),
+    // 简历页为布局路由，挂载子路由
+    ...(name === "resume" ? { children: resumeChildren } : {}),
   };
 }
 // 生成并添加所有页面路由
