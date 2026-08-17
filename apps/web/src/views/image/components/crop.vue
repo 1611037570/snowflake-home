@@ -2,14 +2,17 @@
   <div class="cropper-container" />
 </template>
 
-<script setup lang="ts">
+<script setup>
 import Cropper from "cropperjs";
 import { onMounted } from "vue";
 
 // 定义props接收图片地址
-const props = defineProps<{
-  src: string;
-}>();
+const props = defineProps({
+  src: {
+    type: String,
+    required: true,
+  },
+});
 
 onMounted(() => {
   const image = new Image();

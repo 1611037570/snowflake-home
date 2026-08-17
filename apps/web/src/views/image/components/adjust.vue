@@ -66,7 +66,7 @@
   </div>
 </template>
 
-<script setup lang="ts">
+<script setup>
 import { percentPresetList, shapePresetList } from "@/views/image/data";
 import { computed, onMounted, ref } from "vue";
 import Title from "./title.vue";
@@ -75,7 +75,7 @@ import Title from "./title.vue";
 // 当前选择的尺寸模式
 const currentValue = ref("pixel");
 // 预设大小值
-const presetValue = ref<number | undefined>(undefined);
+const presetValue = ref(undefined);
 // 尺寸模式列表（抽离后无冗余）
 const sizeList = [
   { name: "像素", value: "pixel" },
@@ -120,7 +120,7 @@ const clearPresetValue = () => {
 };
 
 /** 计算等比缩放后的尺寸 */
-const calculateAspectRatio = (type: "width" | "height", value: number) => {
+const calculateAspectRatio = (type, value) => {
   if (type === "width") {
     return Math.round((value / props.initialW) * props.initialH);
   }
@@ -128,7 +128,7 @@ const calculateAspectRatio = (type: "width" | "height", value: number) => {
 };
 
 /** 计算百分比（基于初始尺寸和当前值） */
-const calculatePercent = (w: number, h: number) => {
+const calculatePercent = (w, h) => {
   const maxInitial = Math.max(props.initialW, props.initialH);
   const maxCurrent = Math.max(w, h);
   return Math.round((maxCurrent / maxInitial) * 100);
@@ -141,7 +141,7 @@ const handleTabChange = () => {
 };
 
 // 预设值变更处理
-const handlePresetChange = (newPresetValue: number) => {
+const handlePresetChange = (newPresetValue) => {
   presetValue.value = newPresetValue;
 
   // 正方形逻辑（宽高相等）
@@ -165,7 +165,7 @@ const handlePresetChange = (newPresetValue: number) => {
 };
 
 // 百分比变更处理
-const handlePercentChange = (newPercent: number) => {
+const handlePercentChange = (newPercent) => {
   clearPresetValue();
   console.log("newPercent", newPercent);
   localW.value = Math.round((props.initialW * newPercent) / 100);
@@ -175,7 +175,7 @@ const handlePercentChange = (newPercent: number) => {
 };
 
 // 宽度变更处理
-const handleWidthChange = (newWidth: number) => {
+const handleWidthChange = (newWidth) => {
   clearPresetValue();
   localW.value = newWidth;
   width.value = newWidth;
@@ -188,7 +188,7 @@ const handleWidthChange = (newWidth: number) => {
 };
 
 // 高度变更处理
-const handleHeightChange = (newHeight: number) => {
+const handleHeightChange = (newHeight) => {
   clearPresetValue();
   localH.value = newHeight;
   height.value = newHeight;
