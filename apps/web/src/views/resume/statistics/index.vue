@@ -1,13 +1,7 @@
 <script setup>
 // 简历情况统计模块：求职进度看板
-import { useResumeStatisticsStore } from "@/stores";
 import ApplicationList from "./components/applicationList.vue";
 import StatCards from "./components/statCards.vue";
-
-const statisticsStore = useResumeStatisticsStore();
-
-// 首次进入自动初始化开始投递日期
-statisticsStore.initStartDate();
 </script>
 
 <template>
