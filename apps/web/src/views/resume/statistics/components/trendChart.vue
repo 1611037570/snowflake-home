@@ -9,7 +9,11 @@ const { applications } = storeToRefs(statisticsStore);
 
 // 近 7 天日期（含今天，从早到晚）
 const days = computed(() =>
-  Array.from({ length: 7 }, (_, i) => dayjs().subtract(6 - i, "day").format("YYYY-MM-DD")),
+  Array.from({ length: 7 }, (_, i) =>
+    dayjs()
+      .subtract(6 - i, "day")
+      .format("YYYY-MM-DD"),
+  ),
 );
 // 每天的投递数量
 const counts = computed(() =>
@@ -42,7 +46,7 @@ const options = computed(() => ({
 
 <template>
   <div class="rounded-xl border border-sf-border bg-sf-primary p-4 shadow-sm">
-    <SfEcharts :options="options" />
+    <SfEcharts class="h-80" :options="options" />
   </div>
 </template>
 
