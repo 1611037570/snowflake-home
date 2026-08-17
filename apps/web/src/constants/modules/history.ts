@@ -16,7 +16,7 @@ export const historyList = [
   {
     time: "2024-11-22",
     desc: "新增简历生成器，快速制作属于自己的简历。",
-    url: "/resumeMain",
+    url: "/resume",
   },
   {
     time: "2023-11-22",

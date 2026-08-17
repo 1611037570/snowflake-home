@@ -41,13 +41,13 @@ const handleLayoutClick = (item) => {
   >
     <!-- 左侧占位 -->
     <div class="flex flex-1 items-center gap-2">
-      <SfTooltip :content="$t('router.resumeMain')">
+      <SfTooltip :content="$t('router.resume')">
         <div
           class="flex items-center gap-1.5 rounded-full px-3 py-1 text-sf-theme transition-all hover:bg-sf-theme/20"
         >
-          <SfBack url="/resumeMain" />
-          <span class="text-sm font-bold tracking-wide">{{ $t("router.resumeMain") }}</span>
-          <SfLogo size="5.5" class="animate-pulse" name="resumeMain" />
+          <SfBack url="/resume" />
+          <span class="text-sm font-bold tracking-wide">{{ $t("router.resume") }}</span>
+          <SfLogo size="5.5" class="animate-pulse" name="resume" />
         </div>
       </SfTooltip>
 

@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-sf-page flex h-full w-full flex-col" v-if="currentIndex != -1">
+  <div class="flex h-full w-full flex-col bg-sf-page" v-if="currentIndex != -1">
     <Header />
     <div class="flex w-full flex-1 overflow-hidden" v-if="currentIndex >= 0">
       <!-- 左侧操作栏 -->
@@ -52,12 +52,12 @@ let useTimeTimer = null;
 onMounted(() => {
   const id = route.query.id;
   if (!id) {
-    router.push(`/resumeMain`);
+    router.push(`/resume`);
     return;
   }
   const index = list.value.findIndex((item) => item.id === id);
   if (index == -1) {
-    router.push(`/resumeMain`);
+    router.push(`/resume`);
     return;
   }
   currentIndex.value = index;

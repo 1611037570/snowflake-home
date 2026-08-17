@@ -21,8 +21,8 @@ export const PROJECT_ROUTES = [
     icon: "home",
   },
   {
-    name: "resumeMain",
-    icon: "resumeMain",
+    name: "resume",
+    icon: "resume",
   },
   {
     name: "image",
