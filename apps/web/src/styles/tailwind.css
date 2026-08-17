@@ -41,8 +41,8 @@
   --color-sf-base: var(--sf-base);
   /* 主要色 */
   --color-sf-primary: var(--sf-primary);
-  /* 主要色的hover颜色 */
-  --color-sf-primary-hover: var(--sf-primary-hover);
+  /* 主要色-2 */
+  --color-sf-primary-2: var(--sf-primary-2);
   /* 文本色 */
   --color-sf-text: var(--sf-text);
   /* 文本色-2 */
@@ -55,9 +55,6 @@
   --color-sf-bg-2: var(--sf-background-2);
   /* 背景色-3 */
   --color-sf-bg-3: var(--sf-background-3);
-
-  /* 弹窗色 */
-  --color-sf-modal: var(--sf-modal);
   /* 常规透明色 */
   --color-sf-transparent: var(--sf-transparent);
   /* 常规透明色-2 */
@@ -92,16 +89,15 @@
 }
 /* 默认：亮色模式 */
 .light {
-  --sf-base: rgba(0, 0, 0, 1);
-  --sf-primary: rgba(255, 255, 255, 1);
-  --sf-primary-hover: #f1f1f8;
   --sf-text: color-mix(in oklab, oklch(0% 0 0) 80%, transparent);
   --sf-text-2: color-mix(in oklab, oklch(0% 0 0) 60%, transparent);
   --sf-text-3: color-mix(in oklab, oklch(0% 0 0) 40%, transparent);
+  --sf-base: rgba(0, 0, 0, 1);
+  --sf-primary: rgba(255, 255, 255, 1);
+  --sf-primary-2: #f2f1f6;
   --sf-background: #f3f3f7;
   --sf-background-2: #e5e5ea;
   --sf-background-3: #d1d1d6;
-  --sf-modal: #f2f2f7;
   --sf-transparent: color-mix(in oklab, oklch(97% 0.014 254.604) 80%, transparent);
   --sf-transparent-2: color-mix(in oklab, oklch(97% 0.014 254.604) 60%, transparent);
   --sf-transparent-3: color-mix(in oklab, oklch(97% 0.014 254.604) 40%, transparent);
@@ -109,20 +105,19 @@
 }
 /* 深色模式 */
 .dark {
+  --sf-text: color-mix(in oklab, oklch(100% 0 0) 70%, transparent);
+  --sf-text-2: color-mix(in oklab, oklch(100% 0 0) 50%, transparent);
+  --sf-text-3: color-mix(in oklab, oklch(100% 0 0) 30%, transparent);
   --sf-base: rgba(255, 255, 255, 1);
-  --sf-text: color-mix(in oklab, oklch(100% 0 0) 80%, transparent);
-  --sf-text-2: color-mix(in oklab, oklch(100% 0 0) 60%, transparent);
-  --sf-text-3: color-mix(in oklab, oklch(100% 0 0) 40%, transparent);
-  --sf-background: #1c1c1e;
+  --sf-primary: #262525;
+  --sf-primary-2: black;
+  --sf-background: #121214;
   --sf-background-2: #3a3a3c;
   --sf-background-3: #48484a;
-  --sf-modal: rgba(0, 0, 0, 1);
-  --sf-primary: rgba(0, 0, 0, 1);
-  --sf-primary-hover: #3a3a3c;
   --sf-transparent: rgba(0, 0, 0, 0.85);
   --sf-transparent-2: rgba(0, 0, 0, 0.6);
   --sf-transparent-3: rgba(0, 0, 0, 0.4);
-  --sf-border: rgba(255, 255, 255, 0.3);
+  --sf-border: rgba(255, 255, 255, 0.1);
 }
 
 /* 自定义工具类 */
@@ -139,6 +134,6 @@
     @apply cursor-pointer bg-sf-theme text-sf-primary hover:bg-sf-theme-2 hover:text-sf-theme;
   }
   .sf-primary {
-    @apply bg-sf-primary text-sf-text hover:bg-sf-primary-hover;
+    @apply bg-sf-primary text-sf-text hover:bg-sf-primary-2;
   }
 }

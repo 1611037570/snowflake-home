@@ -10,7 +10,7 @@
       >
         <div
           v-if="label"
-          class="flex-c text-sf-basic rounded-full bg-sf-primary-hover px-2 py-0.5 font-bold"
+          class="flex-c text-sf-basic rounded-full bg-sf-primary-2 px-2 py-0.5 font-bold"
         >
           <span>{{ label }}</span>
         </div>

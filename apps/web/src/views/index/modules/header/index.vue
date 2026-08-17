@@ -56,7 +56,7 @@ const headerStyle = computed(() => {
   return {
     backgroundColor: `rgba(${rgbValue}, ${headerOpacity.value})`,
     borderBottom:
-      headerOpacity.value > 0.8 ? "0.5px solid var(--sf-border-base)" : "0.5px solid transparent",
+      headerOpacity.value > 0.8 ? "0.5px solid var(--sf-border)" : "0.5px solid transparent",
   };
 });
 
@@ -103,7 +103,7 @@ const isHeaderActive = computed(() => headerOpacity.value > 0);
 <template>
   <header
     class="fixed top-0 left-0 z-50 h-20 w-full transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)]"
-    :class="{ 'shadow-sm backdrop-blur-md': isHeaderActive }"
+    :class="{ 'shadow-sm backdrop-blur-md dark:shadow-md': isHeaderActive }"
     :style="headerStyle"
   >
     <div class="mx-auto flex h-full max-w-[1200px] items-center justify-between px-4 sm:px-6">

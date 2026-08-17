@@ -1,4 +1,4 @@
-﻿<template>
+<template>
   <div style="" class="w-full rounded-xl" :class="bg">
     <Toolbar :editor="editorRef" :defaultConfig="toolbarConfig" :mode="mode" />
     <Editor
@@ -78,7 +78,7 @@ const handleCreated = (editor) => {
 :deep(.w-e-menu-tooltip-v5) {
   &::before {
     color: var(--color-sf-base);
-    background: var(--color-sf-modal);
+    background: var(--color-sf-primary-2);
     border: var(--color-sf-border) 1px solid;
   }
   &:after {

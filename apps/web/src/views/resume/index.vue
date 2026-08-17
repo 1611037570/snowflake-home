@@ -1,5 +1,5 @@
 <template>
-  <div class="flex h-full w-full flex-col bg-sf-bg" v-if="currentIndex != -1">
+  <div class="flex h-full w-full flex-col bg-sf-primary-2" v-if="currentIndex != -1">
     <Header />
     <div class="flex w-full flex-1 overflow-hidden" v-if="currentIndex >= 0">
       <!-- 左侧操作栏 -->

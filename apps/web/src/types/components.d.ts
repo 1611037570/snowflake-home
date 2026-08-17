@@ -9,6 +9,7 @@ export {}
 declare module 'vue' {
   export interface GlobalComponents {
     ElAlert: typeof import('element-plus/es')['ElAlert']
+    ElBacktop: typeof import('element-plus/es')['ElBacktop']
     ElButton: typeof import('element-plus/es')['ElButton']
     ElCol: typeof import('element-plus/es')['ElCol']
     ElConfigProvider: typeof import('element-plus/es')['ElConfigProvider']
@@ -31,6 +32,8 @@ declare module 'vue' {
     ElTimePicker: typeof import('element-plus/es')['ElTimePicker']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    SfBacktop: typeof import('@components/el/backtop/index.ts')['default']
+    SfBarrage: typeof import('@components/business/barrage/index.ts')['default']
     SfCollapse: typeof import('@components/el/collapse/index.ts')['default']
     SfCollapseItem: typeof import('@components/el/collapseItem/index.ts')['default']
     SfDatePicker: typeof import('@components/el/datePicker/index.ts')['default']
@@ -45,6 +48,7 @@ declare module 'vue' {
     SfMixImg: typeof import('@components/business/mixImg/index.ts')['default']
     SfModal: typeof import('@components/business/modal/index.ts')['default']
     SfMonitor: typeof import('@components/business/monitor/index.ts')['default']
+    SfQrcode: typeof import('@components/business/qrcode/index.ts')['default']
     SfScrollbar: typeof import('@components/el/scrollbar/index.ts')['default']
     SfSelect: typeof import('@components/el/select/index.ts')['default']
     SfSetBox: typeof import('@components/business/setBox/index.ts')['default']

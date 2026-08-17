@@ -1,6 +1,6 @@
 <template>
   <SfViewContainer>
-    <div class="relative flex h-full w-full items-center justify-center bg-sf-modal p-2">
+    <div class="relative flex h-full w-full items-center justify-center bg-sf-primary-2 p-2">
       <Crop v-if="page === 'crop'" :src="original.url" />
       <ConvertSVG />
       <!-- <svg
@@ -52,7 +52,7 @@
         <ElScrollbar class="relative h-full flex-1 flex-col gap-4 overflow-hidden pr-3">
           <div v-if="page === 'adjust'" key="adjust">
             <!-- 已选择图片时的状态 -->
-            <div class="mb-3 rounded-lg bg-sf-primary-hover/50 p-3 text-center">
+            <div class="mb-3 rounded-lg bg-sf-primary-2/50 p-3 text-center">
               <div
                 class="mb-2 max-w-full truncate text-sm font-medium text-sf-base"
                 :title="selectedFile.name"

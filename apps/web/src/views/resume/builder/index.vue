@@ -38,13 +38,13 @@ provide("bg", "bg-sf-bg");
   <div class="flex h-full w-[360px] flex-col py-3 pl-3">
     <!-- 左侧栏 -->
     <div
-      class="relative mb-3 flex w-full items-center justify-around rounded-2xl bg-sf-primary p-1"
+      class="relative mb-3 flex w-full items-center justify-around rounded-2xl border border-sf-border bg-sf-primary p-1"
     >
       <div
         v-for="(item, index) in menuList"
         :key="item.name"
         class="flex cursor-pointer items-center justify-center rounded-4xl px-2 py-2 font-bold hover:bg-sf-bg-2"
-        :class="{ 'bg-sf-theme text-sf-primary': activeIndex === index }"
+        :class="{ 'bg-sf-theme': activeIndex === index }"
         @click="handleMenuClick(index)"
       >
         <SfIcon :icon="item.icon" size="5" />
@@ -52,7 +52,7 @@ provide("bg", "bg-sf-bg");
       </div>
     </div>
     <div
-      class="flex w-full flex-1 flex-col overflow-hidden rounded-xl bg-sf-primary py-3 text-sf-base shadow-sm"
+      class="flex w-full flex-1 flex-col overflow-hidden rounded-xl border border-sf-border bg-sf-primary py-3 text-sf-base"
     >
       <ElScrollbar class="flex min-h-0 w-full flex-1 flex-col overflow-hidden">
         <div class="px-3">
