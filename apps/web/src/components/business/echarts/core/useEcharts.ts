@@ -16,7 +16,7 @@ export default function useEcharts(
   const chart = ref();
   const init = ref(false);
   // 容器尺寸监听停止函数
-  let stopResize: (() => void) | any;
+  let stopResize: (() => void) | undefined;
   async function initChart() {
     await nextTick();
     const dom = unrefElement(el);
@@ -39,7 +39,7 @@ export default function useEcharts(
 
     // 监听容器尺寸变化，容器尺寸改变时自适应调整图表大小
     if (resize && chart.value) {
-      stopResize = useResizeObserver(chart.value.getDom(), resizeChart);
+      stopResize = useResizeObserver(chart.value.getDom(), resizeChart).stop;
     }
 
     watch(
