@@ -44,41 +44,43 @@ const activeValue = computed(() => {
 </script>
 
 <template>
-  <main
-    class="relative flex min-h-screen w-full flex-col bg-[linear-gradient(90deg,rgba(15,37,60,0.42),rgba(15,37,60,0.18)),linear-gradient(118deg,#194f72_0%,#29377e_48%,#435c80_100%)] text-white"
-  >
-    <header
-      class="relative z-5 mx-auto flex h-16 w-full max-w-[1280px] items-center gap-6 font-extrabold"
-    >
-      <div class="flex shrink-0 items-center gap-2.5 text-[17px] whitespace-nowrap">
-        <SfLogo size="8.5" name="resumeMain" />
-        <span> {{ $t("router.resumeMain") }}</span>
-      </div>
+  <main class="relative flex min-h-screen min-w-full flex-col text-white">
+    <header class="fixed top-0 right-0 left-0 z-50 h-16 w-full bg-sf-page font-extrabold">
+      <div class="mx-auto flex h-full w-full max-w-[1280px] items-center gap-6">
+        <div class="flex shrink-0 items-center gap-2.5 text-[17px] whitespace-nowrap">
+          <SfLogo size="8.5" name="resumeMain" />
+          <span> {{ $t("router.resumeMain") }}</span>
+        </div>
 
-      <nav class="flex items-center gap-[30px] max-[1180px]:gap-5 max-[900px]:hidden">
-        <button
-          v-for="(item, index) in navList"
-          :key="item.value"
-          type="button"
-          @click="activeNavIndex = index"
-          class="cursor-pointer border-0 bg-transparent p-0 text-[15px] font-extrabold"
-          :class="
-            index === activeNavIndex
-              ? `relative text-sf-theme after:absolute after:right-0 after:bottom-[-10px] after:left-0 after:h-[5px] after:rounded-full after:bg-sf-theme after:content-['']`
-              : ' text-white'
-          "
-        >
-          {{ item.name }}
-        </button>
-      </nav>
+        <nav class="flex items-center gap-[30px] max-[1180px]:gap-5 max-[900px]:hidden">
+          <button
+            v-for="(item, index) in navList"
+            :key="item.value"
+            type="button"
+            @click="activeNavIndex = index"
+            class="cursor-pointer border-0 bg-transparent p-0 text-[15px] font-extrabold"
+            :class="
+              index === activeNavIndex
+                ? `relative text-sf-theme after:absolute after:right-0 after:bottom-[-10px] after:left-0 after:h-[5px] after:rounded-full after:bg-sf-theme after:content-['']`
+                : ' text-white'
+            "
+          >
+            {{ item.name }}
+          </button>
+        </nav>
 
-      <div class="ml-auto flex items-center gap-[18px]">
-        <SfAbout />
-        <SfMore> </SfMore>
+        <div class="ml-auto flex items-center gap-[18px]">
+          <SfAbout />
+          <SfTheme />
+          <SfLocale />
+          <SfDonation />
+          <SfSetting />
+          <SfMore> </SfMore>
+        </div>
       </div>
     </header>
 
-    <div class="flex h-full w-full flex-1! flex-col">
+    <div class="flex h-full w-full flex-1! flex-col" :class="{ 'pt-20': activeValue !== 'home' }">
       <Main v-if="activeValue == 'home'" />
       <Template v-else-if="activeValue == 'template'" />
       <Mine v-else-if="activeValue == 'mine'" />
