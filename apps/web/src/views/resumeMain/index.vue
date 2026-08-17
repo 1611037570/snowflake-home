@@ -44,8 +44,10 @@ const activeValue = computed(() => {
 </script>
 
 <template>
-  <main class="relative flex min-h-screen min-w-full flex-col text-white">
-    <header class="fixed top-0 right-0 left-0 z-50 h-16 w-full bg-sf-page font-extrabold">
+  <main class="relative flex min-h-screen min-w-full flex-col bg-sf-page">
+    <header
+      class="fixed top-0 right-0 left-0 z-50 h-16 w-full border-b-[0.5px] border-sf-border bg-sf-page font-extrabold text-sf-base"
+    >
       <div class="mx-auto flex h-full w-full max-w-[1280px] items-center gap-6">
         <div class="flex shrink-0 items-center gap-2.5 text-[17px] whitespace-nowrap">
           <SfLogo size="8.5" name="resumeMain" />
@@ -62,7 +64,7 @@ const activeValue = computed(() => {
             :class="
               index === activeNavIndex
                 ? `relative text-sf-theme after:absolute after:right-0 after:bottom-[-10px] after:left-0 after:h-[5px] after:rounded-full after:bg-sf-theme after:content-['']`
-                : ' text-white'
+                : ''
             "
           >
             {{ item.name }}
@@ -80,7 +82,10 @@ const activeValue = computed(() => {
       </div>
     </header>
 
-    <div class="flex h-full w-full flex-1! flex-col" :class="{ 'pt-20': activeValue !== 'home' }">
+    <div
+      class="flex h-full w-full flex-1! flex-col overflow-hidden"
+      :class="{ 'pt-20': activeValue !== 'home' }"
+    >
       <Main v-if="activeValue == 'home'" />
       <Template v-else-if="activeValue == 'template'" />
       <Mine v-else-if="activeValue == 'mine'" />
