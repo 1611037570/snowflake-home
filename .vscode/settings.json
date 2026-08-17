@@ -38,8 +38,26 @@
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
 
-  // Prettier 配置
+  // Prettier插件 格式化
   "prettier.enable": true,
   "prettier.useEditorConfig": true,
-  "prettier.resolveGlobalModules": false
+  "prettier.resolveGlobalModules": false,
+  // cSpell插件 自定义单词列表
+  "cSpell.words": [
+    "Addtional",
+    "backtop",
+    "datas",
+    "daterange",
+    "echarts",
+    "iconify",
+    "Persistedstate",
+    "pinia",
+    "Stylesheet",
+    "Trae",
+    "unplugin",
+    "Vite",
+    "vueuse",
+    "xiao",
+    "yyqx"
+  ]
 }
