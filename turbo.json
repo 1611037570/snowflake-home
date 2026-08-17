@@ -6,7 +6,7 @@
     // 构建任务：先构建依赖包（^build 表示先执行上游依赖的 build），产物输出到 dist 目录
     "build": {
       "dependsOn": ["^build"],
-      "outputs": ["dist/**"]
+      "outputs": ["./dist/**"]
     },
     // 开发任务：不缓存，长驻进程（persistent 表示持续运行不会被终止）
     "dev": {

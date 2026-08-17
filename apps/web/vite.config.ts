@@ -1,42 +1,42 @@
 // 路径处理模块
-import { fileURLToPath, URL } from 'node:url'
+import { fileURLToPath, URL } from "node:url";
 
 // Tailwind CSS插件
-import tailwindcss from '@tailwindcss/vite'
+import tailwindcss from "@tailwindcss/vite";
 // Vue 3 插件
-import vue from '@vitejs/plugin-vue'
+import vue from "@vitejs/plugin-vue";
 // 包大小可视化工具
-import { visualizer } from 'rollup-plugin-visualizer'
+import { visualizer } from "rollup-plugin-visualizer";
 // 自动导入工具
-import AutoImport from 'unplugin-auto-import/vite'
+import AutoImport from "unplugin-auto-import/vite";
 // Element Plus组件解析器
-import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
+import { ElementPlusResolver } from "unplugin-vue-components/resolvers";
 // 组件自动导入工具
-import Components from 'unplugin-vue-components/vite'
+import Components from "unplugin-vue-components/vite";
 // Vite配置定义函数
-import { defineConfig, loadEnv } from 'vite'
+import { defineConfig, loadEnv } from "vite";
 // 静态资源压缩插件
-import viteCompression from 'vite-plugin-compression'
+import viteCompression from "vite-plugin-compression";
 // HTML处理插件
-import { createHtmlPlugin } from 'vite-plugin-html'
+import { createHtmlPlugin } from "vite-plugin-html";
 // 开发服务器自动重启工具
-import ViteRestart from 'vite-plugin-restart'
+import ViteRestart from "vite-plugin-restart";
 // 移动端调试工具
-import vconsole from 'vite-plugin-vconsole'
+import vconsole from "vite-plugin-vconsole";
 // Vue DevTools 调试工具
-import vueDevTools from 'vite-plugin-vue-devtools'
+import vueDevTools from "vite-plugin-vue-devtools";
 // 自定义组件解析器
-import { dynamicComponentResolver } from './src/components'
+import { dynamicComponentResolver } from "./src/components";
 
 // 样式导入插件
-import { createStyleImportPlugin, ElementPlusResolve } from 'vite-plugin-style-import'
+import { createStyleImportPlugin, ElementPlusResolve } from "vite-plugin-style-import";
 // Vite配置导出
 export default ({ mode }: { mode: string }) => {
   // 从环境文件加载环境变量
-  const env = loadEnv(mode, process.cwd())
-  const isProd = mode === 'production'
+  const env = loadEnv(mode, process.cwd());
+  const isProd = mode === "production";
   // 从环境变量中提取配置项
-  const { VITE_PORT, VITE_BASE_URL, VITE_APP_TITLE, VITE_DEFAULT_LANGUAGE } = env
+  const { VITE_PORT, VITE_BASE_URL, VITE_APP_TITLE, VITE_DEFAULT_LANGUAGE } = env;
   return defineConfig({
     // 基础路径配置
     base: VITE_BASE_URL,
@@ -68,23 +68,23 @@ export default ({ mode }: { mode: string }) => {
       AutoImport({
         resolvers: [ElementPlusResolver()], // Element Plus解析器
         imports: [
-          'vue',
-          'vue-router',
-          '@vueuse/core',
-          'pinia',
+          "vue",
+          "vue-router",
+          "@vueuse/core",
+          "pinia",
           {
-            '@/locales': ['$t'],
-            '@/utils': ['routerNavigation', 'urlNavigation', '$s'],
+            "@/locales": ["$t"],
+            "@/utils": ["routerNavigation", "urlNavigation", "$s"],
           },
         ], // 自动导入模块
-        dts: 'src/types/autoImports.d.ts', // 类型声明文件路径
+        dts: "src/types/autoImports.d.ts", // 类型声明文件路径
       }),
       // 组件自动注册配置
       Components({
         resolvers: [ElementPlusResolver(), dynamicComponentResolver()], // 组件解析器列表
-        dts: 'src/types/components.d.ts', // 类型声明文件路径
-        dirs: ['src/components'], // 要搜索组件的目录
-        extensions: ['.vue'], // 要处理的组件文件扩展名
+        dts: "src/types/components.d.ts", // 类型声明文件路径
+        dirs: ["src/components"], // 要搜索组件的目录
+        extensions: [".vue"], // 要处理的组件文件扩展名
         deep: false, // 是否深度搜索子目录
       }),
       // 样式导入配置
@@ -99,11 +99,11 @@ export default ({ mode }: { mode: string }) => {
             vueDevTools(),
             // 移动端调试工具
             vconsole({
-              entry: 'src/main.ts', // 入口文件
+              entry: "src/main.ts", // 入口文件
             }),
             // 开发服务器自动重启
             ViteRestart({
-              restart: ['vite.config.ts'], // 监听这些文件的变化，触发服务器重启
+              restart: ["vite.config.ts"], // 监听这些文件的变化，触发服务器重启
             }),
           ]),
     ],
@@ -111,21 +111,22 @@ export default ({ mode }: { mode: string }) => {
     resolve: {
       // 路径别名配置
       alias: {
-        '@': fileURLToPath(new URL('./src', import.meta.url)), // @别名指向src目录
-        '@components': fileURLToPath(new URL('./src/components', import.meta.url)), // 组件目录别名
-        '@views': fileURLToPath(new URL('./src/views', import.meta.url)), // 视图目录别名
+        "@": fileURLToPath(new URL("./src", import.meta.url)), // @别名指向src目录
+        "@components": fileURLToPath(new URL("./src/components", import.meta.url)), // 组件目录别名
+        "@views": fileURLToPath(new URL("./src/views", import.meta.url)), // 视图目录别名
       },
     },
 
     // esbuild配置
     esbuild: {
-      drop: isProd ? ['console', 'debugger'] : [], // 移除打印信息
+      drop: isProd ? ["console", "debugger"] : [], // 移除打印信息
     },
 
     // 构建配置
     build: {
-      outDir: 'dist', // 项目打包根目录
-      assetsDir: 'assets', // 静态资源目录
+      outDir: "../../dist/web", // 项目打包根目录（根目录 dist/web）
+      emptyOutDir: true, // 输出目录在项目根之外，需显式清空
+      assetsDir: "assets", // 静态资源目录
       chunkSizeWarningLimit: 1000, // 警告阈值
       // minify: 'terser', // 代码压缩
       // Rollup配置
@@ -139,7 +140,7 @@ export default ({ mode }: { mode: string }) => {
         plugins: [
           // 包大小可视化
           visualizer({
-            filename: './dist/stats.html', // 打包分析报告路径
+            filename: "../dist/web/stats.html", // 打包分析报告路径
             open: false, // 自动打开报告
             gzipSize: true, // 显示gzip压缩后的大小
             brotliSize: true, // 显示brotli压缩后的大小
@@ -149,20 +150,20 @@ export default ({ mode }: { mode: string }) => {
             verbose: false, // 输出压缩日志
             disable: isProd ? false : true, // 生产环境启用
             threshold: 10240, // 文件大小阈值
-            algorithm: 'brotliCompress', // 压缩算法
-            ext: '.gz', // 压缩文件扩展名
+            algorithm: "brotliCompress", // 压缩算法
+            ext: ".gz", // 压缩文件扩展名
             deleteOriginFile: false, // 是否删除源文件
           }),
         ],
         output: {
           manualChunks: (id) => {
             // 这里打包content-script.ts为content-script.js
-            if (id.includes('content-script')) {
-              return 'content-script'
+            if (id.includes("content-script")) {
+              return "content-script";
             }
           },
         },
       },
     },
-  })
-}
+  });
+};
