@@ -3,7 +3,7 @@ import { useResumeStore } from "@/stores";
 import dayjs from "dayjs";
 import { storeToRefs } from "pinia";
 import { useRouter } from "vue-router";
-import { getAllScores, getResumeTitle } from "../resume/utils";
+import { getAllScores, getResumeTitle } from "../resumeEditor/utils";
 
 const router = useRouter();
 
