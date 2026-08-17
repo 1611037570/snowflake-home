@@ -40,23 +40,6 @@
   // "typescript.format.enable": false,
   // "javascript.format.enable": false,
   // "html.format.enable": false,
-  "cSpell.words": [
-    "Addtional",
-    "backtop",
-    "datas",
-    "daterange",
-    "echarts",
-    "iconify",
-    "Persistedstate",
-    "pinia",
-    "Stylesheet",
-    "Trae",
-    "unplugin",
-    "Vite",
-    "vueuse",
-    "xiao",
-    "yyqx"
-  ],
 
   // 路径别名智能提示配置
   "aliasFiles.configPath": "knowledges/项目别名.json",
