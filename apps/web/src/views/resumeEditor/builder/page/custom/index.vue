@@ -7,7 +7,7 @@ import {
   paddingList,
   themeColors,
 } from "@/stores/modules/resume/uiConfig";
-import Header from "@/views/resume/builder/components/header.vue";
+import Header from "../../../builder/components/header.vue";
 import { storeToRefs } from "pinia";
 import ConfigItem from "./configItem.vue";
 
@@ -28,8 +28,7 @@ const { currentUI } = storeToRefs(resumeStore);
               :key="item.value"
               class="hover:bg-sf-hover flex-1 cursor-pointer rounded-md border border-sf-border py-2 text-center text-sm transition-all"
               :class="{
-                'border-sf-theme-2 bg-sf-theme text-sf-base':
-                  currentUI.fontFamily === item.value,
+                'border-sf-theme-2 bg-sf-theme text-sf-base': currentUI.fontFamily === item.value,
               }"
               @click="currentUI.fontFamily = item.value"
             >
