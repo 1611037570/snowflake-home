@@ -7,7 +7,7 @@ export const list = [
       { name: "sf-theme-text", class: "bg-sf-theme-text" },
       { name: "基本色", class: "bg-sf-base" },
       { name: "主要色", class: "bg-sf-primary" },
-      { name: "主要色的hover颜色", class: "bg-sf-primary-hover" },
+      { name: "主要色的hover颜色", class: "bg-sf-primary-2" },
     ],
   },
   {
@@ -42,7 +42,6 @@ export const list = [
   {
     name: "透明色",
     list: [
-      { name: "弹窗色", class: "bg-sf-modal" },
       { name: "常规透明色", class: "bg-sf-transparent" },
       { name: "常规透明色-2", class: "bg-sf-transparent-2" },
       { name: "常规透明色-3", class: "bg-sf-transparent-3" },

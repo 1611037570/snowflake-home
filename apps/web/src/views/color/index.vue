@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import HeroBanner from "./components/HeroBanner.vue";
+import BackgroundLayers from "./components/BackgroundLayers.vue";
 import PaletteList from "./components/PaletteList.vue";
 </script>
 
@@ -24,6 +25,8 @@ import PaletteList from "./components/PaletteList.vue";
         </div>
 
         <PaletteList />
+
+        <BackgroundLayers />
       </div>
     </ElScrollbar>
   </SfViewContainer>
