@@ -2,6 +2,7 @@
 import { useRoute } from "vue-router";
 import Main from "./main/index.vue";
 import Mine from "./mine.vue";
+import Statistics from "./statistics/index.vue";
 import Template from "./template.vue";
 
 const navList = [
@@ -16,6 +17,10 @@ const navList = [
   {
     name: "我的简历",
     value: "mine",
+  },
+  {
+    name: "求职统计",
+    value: "statistics",
   },
 ];
 const route = useRoute();
@@ -77,6 +82,7 @@ const activeValue = computed(() => {
       <Main v-if="activeValue == 'home'" />
       <Template v-else-if="activeValue == 'template'" />
       <Mine v-else-if="activeValue == 'mine'" />
+      <Statistics v-else-if="activeValue == 'statistics'" />
     </div>
   </main>
 </template>

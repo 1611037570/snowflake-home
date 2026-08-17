@@ -47,3 +47,6 @@ export * from "./modules/password";
 
 // 智能助手相关store
 export * from "./modules/ai";
+
+// 简历统计相关store
+export * from "./modules/resumeStatistics";
