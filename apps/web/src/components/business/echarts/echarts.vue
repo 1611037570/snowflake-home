@@ -1,5 +1,5 @@
 <script setup>
-import { computed } from "vue";
+import { computed, useTemplateRef } from "vue";
 import useEcharts from "./core/useEcharts";
 
 const props = defineProps({
@@ -7,10 +7,9 @@ const props = defineProps({
     default: () => {},
   },
 });
-const id = `echarts-${Math.random().toString(36).slice(2, 9)}`;
+const echartsRef = useTemplateRef("echartsRef");
 
 defineOptions({ name: "SfEcharts" });
-// const echartsRef = useTemplateRef('echartsRef')
 // 度合并函数
 const deepMerge = (target, source) => {
   // 目标不是对象/数组，直接返回source（source存在则用source，否则用target）
@@ -57,15 +56,11 @@ const options = computed(() => {
   // 深度合并：传入的配置优先，保留默认未被覆盖的属性
   return deepMerge(defaultOptions, props.options);
 });
-useEcharts(id, options);
+useEcharts(echartsRef, options);
 </script>
 
 <template>
-  <div
-    :id="id"
-    ref="echartsRef"
-    class="border-sf-b h-100 w-100 rounded-xl border bg-sf-primary p-3 text-sf-base!"
-  ></div>
+  <div ref="echartsRef" class="bg-sf-primary p-3 text-sf-base!"></div>
 </template>
 
 <style lang="scss" scoped></style>

@@ -1,22 +1,29 @@
-import { useDebounceFn } from "@vueuse/core";
+import { useDebounceFn, useResizeObserver, unrefElement } from "@vueuse/core";
+import type { MaybeComputedElementRef } from "@vueuse/core";
 import { nextTick, onBeforeUnmount, onMounted, ref, watch } from "vue";
 import echarts from "./echarts";
 import data from "./walden.json";
-console.log("data:>> ", data);
 
-export default function useEcharts(id: string, options: any, config: { resize?: boolean } = {}) {
+// 主题全局注册一次，避免重复注册
+echarts.registerTheme("walden", data);
+
+export default function useEcharts(
+  el: MaybeComputedElementRef<HTMLElement | null | undefined>,
+  options: any,
+  config: { resize?: boolean } = {},
+) {
   const { resize = true } = config;
   const chart = ref();
   const init = ref(false);
+  // 容器尺寸监听停止函数
+  let stopResize: (() => void) | any;
   async function initChart() {
     await nextTick();
-    const dom = document.getElementById(id);
+    const dom = unrefElement(el);
     if (!dom) {
       console.warn("ECharts容器DOM不存在");
       return;
     }
-    // const walden = JSON.parse(data)
-    echarts.registerTheme("walden", data);
     chart.value = echarts.init(dom, "walden");
     init.value = true;
   }
@@ -30,9 +37,9 @@ export default function useEcharts(id: string, options: any, config: { resize?: 
   onMounted(async () => {
     await initChart();
 
-    // 添加窗口大小变化监听
-    if (resize) {
-      window.addEventListener("resize", resizeChart);
+    // 监听容器尺寸变化，容器尺寸改变时自适应调整图表大小
+    if (resize && chart.value) {
+      stopResize = useResizeObserver(chart.value.getDom(), resizeChart);
     }
 
     watch(
@@ -49,9 +56,8 @@ export default function useEcharts(id: string, options: any, config: { resize?: 
   });
 
   onBeforeUnmount(() => {
-    if (resize) {
-      window.removeEventListener("resize", resizeChart);
-    }
+    // 停止容器尺寸监听
+    stopResize?.();
     if (chart.value) {
       chart.value.dispose();
       chart.value = null;
