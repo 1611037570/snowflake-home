@@ -28,22 +28,10 @@
               <!-- 主按钮 -->
               <div class="mb-10 flex flex-col justify-center gap-4 sm:flex-row lg:justify-start">
                 <button
-                  class="group flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-sky-500 to-cyan-500 px-8 py-4 font-medium text-sf-theme-text transition-all hover:shadow-xl hover:shadow-sky-500/30"
+                  @click="go"
+                  class="group flex cursor-pointer items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-sky-500 to-cyan-500 px-8 py-4 font-medium text-sf-theme-text transition-all hover:shadow-xl"
                 >
                   免费创建简历
-                  <svg
-                    class="h-4 w-4 transition-transform group-hover:translate-x-1"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M17 8l4 4m0 0l-4 4m4-4H3"
-                    />
-                  </svg>
                 </button>
               </div>
             </div>
@@ -459,6 +447,13 @@
 
 <script setup>
 import HeroTitle from "./heroTitle.vue";
+import { useRouter } from "vue-router";
+
+const router = useRouter();
+
+function go() {
+  router.push(`/resume?type=template&t=${Date.now()}`);
+}
 </script>
 
 <style scoped>
