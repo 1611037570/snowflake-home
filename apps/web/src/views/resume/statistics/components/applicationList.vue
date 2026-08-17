@@ -123,12 +123,6 @@ const handleDeleteSelected = () => {
     selectedList.value = [];
   });
 };
-// 清空全部投递记录
-const handleClearAll = () => {
-  proxy.$confirm("确定要删除全部投递记录吗？", "删除确认").then(() => {
-    statisticsStore.clearApplications();
-  });
-};
 // 状态圆点颜色
 const getStatusDotClass = (status) => {
   return APPLICATION_STATUS.find((item) => item.value === status)?.dot || "bg-sf-info";
@@ -159,10 +153,6 @@ const getPlatformLabel = (platform) => {
         >
           <SfIcon icon="lucide:trash-2" size="3.5" />
           删除选中（{{ selectedList.length }}）
-        </button>
-        <button v-if="applications.length" type="button" :class="btnDanger" @click="handleClearAll">
-          <SfIcon icon="lucide:trash-2" size="3.5" />
-          全部删除
         </button>
         <button type="button" :class="btnOutline" @click="batchVisible = true">
           <SfIcon icon="mdi:database" size="3.5" />
@@ -247,73 +237,73 @@ const getPlatformLabel = (platform) => {
     </el-table>
   </div>
 
-  <el-dialog
-    v-model="editVisible"
-    :title="editingId ? '编辑投递记录' : '新增投递记录'"
-    width="440px"
-  >
-    <el-form :model="form" label-width="70px">
-      <el-form-item label="公司">
-        <el-input v-model="form.company" placeholder="请输入公司名称" />
-      </el-form-item>
-      <el-form-item label="平台">
-        <el-select v-model="form.platform" class="w-full">
-          <el-option
-            v-for="item in APPLICATION_PLATFORM"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value"
+  <SfModal v-model="editVisible" :title="editingId ? '编辑投递记录' : '新增投递记录'">
+    <div class="w-[440px]">
+      <el-form :model="form" label-width="70px">
+        <el-form-item label="公司">
+          <el-input v-model="form.company" placeholder="请输入公司名称" />
+        </el-form-item>
+        <el-form-item label="平台">
+          <el-select v-model="form.platform" class="w-full">
+            <el-option
+              v-for="item in APPLICATION_PLATFORM"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="投递日期">
+          <el-date-picker
+            v-model="form.date"
+            type="date"
+            value-format="YYYY-MM-DD"
+            placeholder="请选择投递日期"
+            class="w-full"
           />
-        </el-select>
-      </el-form-item>
-      <el-form-item label="投递日期">
-        <el-date-picker
-          v-model="form.date"
-          type="date"
-          value-format="YYYY-MM-DD"
-          placeholder="请选择投递日期"
-          class="w-full"
-        />
-      </el-form-item>
-      <el-form-item label="状态">
-        <el-select v-model="form.status" class="w-full">
-          <el-option
-            v-for="item in APPLICATION_STATUS"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value"
-          />
-        </el-select>
-      </el-form-item>
-    </el-form>
-    <template #footer>
-      <el-button @click="editVisible = false">取消</el-button>
-      <el-button type="primary" @click="handleSave">保存</el-button>
-    </template>
-  </el-dialog>
+        </el-form-item>
+        <el-form-item label="状态">
+          <el-select v-model="form.status" class="w-full">
+            <el-option
+              v-for="item in APPLICATION_STATUS"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            />
+          </el-select>
+        </el-form-item>
+      </el-form>
+      <div class="mt-4 flex justify-end gap-2">
+        <el-button @click="editVisible = false">取消</el-button>
+        <el-button type="primary" @click="handleSave">保存</el-button>
+      </div>
+    </div>
+  </SfModal>
 
-  <el-dialog v-model="batchVisible" title="批量添加投递" width="440px">
-    <el-form :model="batchForm" label-width="70px">
-      <el-form-item label="数量">
-        <el-input-number v-model="batchForm.count" :min="1" :max="100" class="w-full" />
-      </el-form-item>
-      <el-form-item label="平台">
-        <el-select v-model="batchForm.platform" class="w-full">
-          <el-option
-            v-for="item in APPLICATION_PLATFORM"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value"
-          />
-        </el-select>
-      </el-form-item>
-    </el-form>
-    <div class="text-xs text-sf-text-2">公司名将自动生成（xx月-xx日--随机字母），无需手动填写</div>
-    <template #footer>
-      <el-button @click="batchVisible = false">取消</el-button>
-      <el-button type="primary" @click="handleBatchAdd">确定</el-button>
-    </template>
-  </el-dialog>
+  <SfModal v-model="batchVisible" title="批量添加投递">
+    <div class="w-[440px]">
+      <el-form :model="batchForm" label-width="70px">
+        <el-form-item label="数量">
+          <el-input-number v-model="batchForm.count" :min="1" :max="100" class="w-full" />
+        </el-form-item>
+        <el-form-item label="平台">
+          <el-select v-model="batchForm.platform" class="w-full">
+            <el-option
+              v-for="item in APPLICATION_PLATFORM"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            />
+          </el-select>
+        </el-form-item>
+      </el-form>
+      <div class="text-xs text-sf-text-2">公司名将自动生成（xx月-xx日--随机字母），无需手动填写</div>
+      <div class="mt-4 flex justify-end gap-2">
+        <el-button @click="batchVisible = false">取消</el-button>
+        <el-button type="primary" @click="handleBatchAdd">确定</el-button>
+      </div>
+    </div>
+  </SfModal>
 </template>
 
 <style lang="scss" scoped></style>

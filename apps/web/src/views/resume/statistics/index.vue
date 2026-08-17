@@ -2,6 +2,7 @@
 // 简历情况统计模块：求职进度看板
 import ApplicationList from "./components/applicationList.vue";
 import StatCards from "./components/statCards.vue";
+import TrendChart from "./components/trendChart.vue";
 </script>
 
 <template>
@@ -10,6 +11,7 @@ import StatCards from "./components/statCards.vue";
       <h2 class="text-[20px] font-black text-sf-theme">简历情况统计</h2>
     </div>
     <StatCards />
+    <TrendChart />
     <ApplicationList />
   </div>
 </template>
