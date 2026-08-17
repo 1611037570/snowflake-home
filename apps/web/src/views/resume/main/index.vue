@@ -1,53 +1,13 @@
 <template>
   <div class="flex h-screen w-full overflow-hidden">
     <SfScrollbar class="w-full flex-1 bg-sf-page font-sans text-sf-text">
-      <!-- 导航栏 -->
-      <nav
-        v-if="0"
-        class="fixed top-0 right-0 left-0 z-50 border-b border-sf-border bg-sf-primary backdrop-blur-md"
-      >
-        <div class="mx-auto flex h-16 max-w-7xl items-center justify-between px-6">
-          <div class="flex items-center gap-2">
-            <div
-              class="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-sky-500 to-cyan-500 text-sm font-bold text-sf-theme-text"
-            >
-              舟
-            </div>
-            <span class="text-xl font-bold text-sf-text">轻舟简历</span>
-          </div>
-          <div class="hidden items-center gap-8 text-sm md:flex">
-            <a href="#hero" class="text-sf-text-2 transition-colors hover:text-sf-text">首页</a>
-            <a href="#editor" class="text-sf-text-2 transition-colors hover:text-sf-text"
-              >云帆编辑器</a
-            >
-            <a href="#stats" class="text-sf-text-2 transition-colors hover:text-sf-text"
-              >星轨统计</a
-            >
-            <a href="#ai" class="text-sf-text-2 transition-colors hover:text-sf-text">北斗AI助手</a>
-          </div>
-          <div class="flex items-center gap-3">
-            <button
-              class="rounded-lg px-4 py-2 text-sm text-sf-text-2 transition-colors hover:text-sf-text"
-            >
-              登录
-            </button>
-            <button
-              class="rounded-lg bg-gradient-to-r from-sky-500 to-cyan-500 px-4 py-2 text-sm font-medium text-sf-theme-text transition-all hover:shadow-lg hover:shadow-sky-500/25"
-            >
-              免费注册
-            </button>
-          </div>
-        </div>
-      </nav>
-
       <!-- 第一屏：轻舟简历 - 首页主视觉 -->
       <section id="hero" class="relative flex min-h-screen flex-col overflow-hidden">
         <!-- 远山装饰 - SVG -->
         <div class="absolute right-0 bottom-0 left-0 opacity-20">
           <svg viewBox="0 0 1440 320" class="w-full">
             <path
-              fill="#0ea5e9"
-              fill-opacity="0.3"
+              fill="var(--sf-theme)"
               d="M0,224L48,213.3C96,203,192,181,288,181.3C384,181,480,203,576,218.7C672,235,768,245,864,229.3C960,213,1056,171,1152,165.3C1248,160,1344,192,1392,208L1440,224L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"
             ></path>
           </svg>
@@ -265,11 +225,11 @@
         </div>
 
         <!-- 向下滚动提示 -->
-        <div class="relative z-10 flex justify-center pb-8">
-          <div class="flex flex-col items-center gap-2 text-sf-text-3">
+        <div class="absolute bottom-8 left-1/2 z-10 flex -translate-x-1/2 justify-center">
+          <div class="flex flex-col items-center gap-2 text-sf-text">
             <span class="text-xs">向下滚动</span>
             <div class="flex h-10 w-6 justify-center rounded-full border-2 border-sf-text-3 pt-2">
-              <div class="h-3 w-1.5 animate-bounce rounded-full bg-sf-text-3"></div>
+              <div class="h-3 w-1.5 animate-bounce rounded-full bg-sf-text"></div>
             </div>
           </div>
         </div>
