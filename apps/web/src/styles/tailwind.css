@@ -41,8 +41,8 @@
   --color-sf-base: var(--sf-base);
   /* 主要色 */
   --color-sf-primary: var(--sf-primary);
-  /* 主要色-2 */
-  --color-sf-primary-2: var(--sf-primary-2);
+  /* 页面色 */
+  --color-sf-page: var(--sf-page);
   /* 文本色 */
   --color-sf-text: var(--sf-text);
   /* 文本色-2 */
@@ -94,7 +94,7 @@
   --sf-text-3: color-mix(in oklab, oklch(0% 0 0) 40%, transparent);
   --sf-base: rgba(0, 0, 0, 1);
   --sf-primary: rgba(255, 255, 255, 1);
-  --sf-primary-2: #f2f1f6;
+  --sf-page: #f2f1f6;
   --sf-background: #f3f3f7;
   --sf-background-2: #e5e5ea;
   --sf-background-3: #d1d1d6;
@@ -110,7 +110,7 @@
   --sf-text-3: color-mix(in oklab, oklch(100% 0 0) 30%, transparent);
   --sf-base: rgba(255, 255, 255, 1);
   --sf-primary: #262525;
-  --sf-primary-2: black;
+  --sf-page: black;
   --sf-background: #121214;
   --sf-background-2: #3a3a3c;
   --sf-background-3: #48484a;
@@ -134,6 +134,6 @@
     @apply cursor-pointer bg-sf-theme text-sf-primary hover:bg-sf-theme-2 hover:text-sf-theme;
   }
   .sf-primary {
-    @apply bg-sf-primary text-sf-text hover:bg-sf-primary-2;
+    @apply hover:bg-sf-page bg-sf-primary text-sf-text;
   }
 }

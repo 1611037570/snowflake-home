@@ -44,7 +44,7 @@ const handleClick = (item) => {
             :key="item.value"
             class="flex h-10 items-center rounded-lg px-3 py-1 text-sm transition-all duration-200"
             :class="[
-              item.value === modelValue ? 'sf-theme-element' : 'hover:bg-sf-primary-2',
+              item.value === modelValue ? 'sf-theme-element' : 'hover:bg-sf-page',
               {
                 'border-b border-gray-200': index !== list.length - 1, // 最后一个item不添加下边框
               },
