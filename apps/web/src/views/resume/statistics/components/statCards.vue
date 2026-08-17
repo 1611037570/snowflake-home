@@ -25,7 +25,9 @@ const handleSave = () => {
 
 // 进行中（待处理 + 已查看 + 面试）
 const activeCount = computed(
-  () => applications.value.filter((item) => item.status !== "offer" && item.status !== "rejected").length,
+  () =>
+    applications.value.filter((item) => item.status !== "offer" && item.status !== "rejected")
+      .length,
 );
 // Offer 数
 const offerCount = computed(
@@ -70,7 +72,7 @@ const cards = computed(() => [
     <div
       v-for="card in cards"
       :key="card.label"
-      class="flex flex-col rounded-xl border border-sf-border bg-sf-primary p-4 shadow-sm"
+      class="flex flex-col rounded-xl border border-sf-border bg-sf-primary p-3 shadow-sm"
     >
       <div class="flex items-center justify-between">
         <span class="flex items-center gap-1.5 text-sm font-bold text-sf-text-2">
@@ -86,12 +88,9 @@ const cards = computed(() => [
           <SfIcon icon="lucide:pencil" size="4" />
         </button>
       </div>
-      <div class="mt-2 flex items-end gap-1">
-        <span class="text-3xl font-black text-sf-theme">{{ card.value }}</span>
-        <span class="mb-1 text-xs text-sf-text-2">{{ card.unit }}</span>
-      </div>
-      <div v-if="card.label === '已投递天数'" class="mt-1 text-xs text-sf-text-2">
-        开始投递：{{ startDate }}
+      <div class="my-2 flex items-center justify-center gap-1">
+        <span class="text-6xl font-black text-sf-theme">{{ card.value }}</span>
+        <span class="text-xs text-sf-text-2">{{ card.unit }}</span>
       </div>
     </div>
   </div>

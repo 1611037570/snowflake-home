@@ -18,44 +18,12 @@
           <div class="mx-auto grid w-full max-w-7xl items-center gap-12 px-6 lg:grid-cols-2">
             <!-- 左侧文案 -->
             <div class="relative text-center lg:text-left">
-              <!-- 顶部渐变装饰 -->
-              <div class="mb-10 flex items-center justify-center gap-2 lg:justify-start">
-                <span
-                  class="h-1.5 w-16 rounded-full bg-gradient-to-r from-sky-500 via-cyan-500 to-teal-500"
-                ></span>
-                <span class="h-2.5 w-2.5 rounded-full bg-sky-400"></span>
-              </div>
-
-              <!-- 大标题 -->
-              <div class="mb-8">
-                <div
-                  class="bg-gradient-to-r from-sky-500 via-cyan-500 to-teal-500 bg-clip-text text-7xl leading-none font-black tracking-tight text-transparent lg:text-8xl"
-                >
-                  轻舟
-                </div>
-                <div
-                  class="mt-3 text-7xl leading-none font-black tracking-tight text-sf-text-2 lg:text-8xl"
-                >
-                  简历
-                </div>
-              </div>
-
-              <!-- 副标题 -->
-              <h1
-                class="mb-10 text-3xl leading-snug font-bold tracking-tight text-sf-text md:text-4xl"
-              >
-                <span class="inline-block">以此简历</span>
-                <span class="relative mt-4 block">
-                  <span
-                    class="bg-gradient-to-r from-sky-500 via-cyan-500 to-teal-500 bg-clip-text font-black text-transparent"
-                  >
-                    渡万重山
-                  </span>
-                  <span
-                    class="absolute -bottom-3 left-0 h-1.5 w-full rounded-full bg-gradient-to-r from-sky-500 via-cyan-500 to-teal-500 opacity-50"
-                  ></span>
-                </span>
-              </h1>
+              <HeroTitle
+                title1="轻舟"
+                title2="简历"
+                subtitle="以此简历 渡万重山"
+                gradient="from-sky-500 via-cyan-500 to-teal-500"
+              />
 
               <!-- 主按钮 -->
               <div class="mb-10 flex flex-col justify-center gap-4 sm:flex-row lg:justify-start">
@@ -243,44 +211,12 @@
           class="relative z-10 mx-auto grid w-full max-w-7xl items-center gap-16 px-6 md:grid-cols-2"
         >
           <div class="text-center lg:text-left">
-            <!-- 顶部渐变装饰 -->
-            <div class="mb-10 flex items-center justify-center gap-2 lg:justify-start">
-              <span
-                class="h-1.5 w-16 rounded-full bg-gradient-to-r from-indigo-500 to-blue-500"
-              ></span>
-              <span class="h-2.5 w-2.5 rounded-full bg-indigo-400"></span>
-            </div>
-
-            <!-- 大标题 -->
-            <div class="mb-8">
-              <div
-                class="bg-gradient-to-r from-indigo-500 to-blue-500 bg-clip-text text-7xl leading-none font-black tracking-tight text-transparent lg:text-8xl"
-              >
-                云帆
-              </div>
-              <div
-                class="mt-3 text-7xl leading-none font-black tracking-tight text-sf-text-2 lg:text-8xl"
-              >
-                编辑器
-              </div>
-            </div>
-
-            <!-- 副标题 -->
-            <h2
-              class="mb-10 text-3xl leading-snug font-bold tracking-tight text-sf-text md:text-4xl"
-            >
-              <span class="inline-block">借势而行</span>
-              <span class="relative mt-4 block">
-                <span
-                  class="bg-gradient-to-r from-indigo-500 to-blue-500 bg-clip-text font-black text-transparent"
-                >
-                  直济沧海
-                </span>
-                <span
-                  class="absolute -bottom-3 left-0 h-1.5 w-full rounded-full bg-gradient-to-r from-indigo-500 to-blue-500 opacity-50"
-                ></span>
-              </span>
-            </h2>
+            <HeroTitle
+              title1="云帆"
+              title2="编辑器"
+              subtitle="借势而行 直济沧海"
+              gradient="from-blue-500 to-indigo-500"
+            />
           </div>
 
           <!-- 编辑器示意卡片 -->
@@ -339,44 +275,12 @@
         <div class="relative z-10 mx-auto w-full max-w-7xl px-6">
           <div class="grid w-full items-center gap-16 md:grid-cols-2">
             <div class="text-center lg:text-left">
-              <!-- 顶部渐变装饰 -->
-              <div class="mb-10 flex items-center justify-center gap-2 lg:justify-start">
-                <span
-                  class="h-1.5 w-16 rounded-full bg-gradient-to-r from-indigo-500 to-purple-500"
-                ></span>
-                <span class="h-2.5 w-2.5 rounded-full bg-indigo-400"></span>
-              </div>
-
-              <!-- 大标题 -->
-              <div class="mb-8">
-                <div
-                  class="bg-gradient-to-r from-indigo-500 to-purple-500 bg-clip-text text-7xl leading-none font-black tracking-tight text-transparent lg:text-8xl"
-                >
-                  北斗
-                </div>
-                <div
-                  class="mt-3 text-7xl leading-none font-black tracking-tight text-sf-text-2 lg:text-8xl"
-                >
-                  AI助手
-                </div>
-              </div>
-
-              <!-- 副标题 -->
-              <h2
-                class="mb-10 text-3xl leading-snug font-bold tracking-tight text-sf-text md:text-4xl"
-              >
-                <span class="inline-block">北斗引航</span>
-                <span class="relative mt-4 block">
-                  <span
-                    class="bg-gradient-to-r from-indigo-500 to-purple-500 bg-clip-text font-black text-transparent"
-                  >
-                    终抵群星
-                  </span>
-                  <span
-                    class="absolute -bottom-3 left-0 h-1.5 w-full rounded-full bg-gradient-to-r from-indigo-500 to-purple-500 opacity-50"
-                  ></span>
-                </span>
-              </h2>
+              <HeroTitle
+                title1="北斗"
+                title2="AI助手"
+                subtitle="北斗引航 终抵群星"
+                gradient="from-violet-500 to-fuchsia-500"
+              />
             </div>
 
             <!-- AI 对话示意 -->
@@ -484,44 +388,12 @@
           class="relative z-10 mx-auto grid w-full max-w-7xl items-center gap-16 px-6 md:grid-cols-2"
         >
           <div class="text-center lg:text-left">
-            <!-- 顶部渐变装饰 -->
-            <div class="mb-10 flex items-center justify-center gap-2 lg:justify-start">
-              <span
-                class="h-1.5 w-16 rounded-full bg-gradient-to-r from-violet-500 to-purple-500"
-              ></span>
-              <span class="h-2.5 w-2.5 rounded-full bg-violet-400"></span>
-            </div>
-
-            <!-- 大标题 -->
-            <div class="mb-8">
-              <div
-                class="bg-gradient-to-r from-violet-500 to-purple-500 bg-clip-text text-7xl leading-none font-black tracking-tight text-transparent lg:text-8xl"
-              >
-                星轨
-              </div>
-              <div
-                class="mt-3 text-7xl leading-none font-black tracking-tight text-sf-text-2 lg:text-8xl"
-              >
-                统计
-              </div>
-            </div>
-
-            <!-- 副标题 -->
-            <h2
-              class="mb-10 text-3xl leading-snug font-bold tracking-tight text-sf-text md:text-4xl"
-            >
-              <span class="inline-block">星轨为证</span>
-              <span class="relative mt-4 block">
-                <span
-                  class="bg-gradient-to-r from-violet-500 to-purple-500 bg-clip-text font-black text-transparent"
-                >
-                  功不唐捐
-                </span>
-                <span
-                  class="absolute -bottom-3 left-0 h-1.5 w-full rounded-full bg-gradient-to-r from-violet-500 to-purple-500 opacity-50"
-                ></span>
-              </span>
-            </h2>
+            <HeroTitle
+              title1="星轨"
+              title2="统计"
+              subtitle="星轨为证 功不唐捐"
+              gradient="from-amber-400 to-orange-500"
+            />
           </div>
 
           <!-- 统计示意卡片 -->
@@ -585,7 +457,9 @@
   </div>
 </template>
 
-<script setup></script>
+<script setup>
+import HeroTitle from "./heroTitle.vue";
+</script>
 
 <style scoped>
 /* 自定义动画可在此扩展 */

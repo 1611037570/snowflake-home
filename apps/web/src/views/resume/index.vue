@@ -1,9 +1,14 @@
 <script setup>
 import { useRoute } from "vue-router";
+import { useResumeStatisticsStore } from "@/stores";
 import Main from "./main/index.vue";
 import Mine from "./mine.vue";
 import Statistics from "./statistics/index.vue";
 import Template from "./template.vue";
+
+// 首次进入自动初始化开始投递日期
+const statisticsStore = useResumeStatisticsStore();
+statisticsStore.initStartDate();
 
 const navList = [
   {
