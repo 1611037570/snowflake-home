@@ -2,8 +2,11 @@
 import { useThemeStore } from "@/stores";
 import { useClipboard } from "@vueuse/core";
 import { ElMessage } from "element-plus";
-import { MdPreview } from "md-editor-v3";
-import "md-editor-v3/lib/preview.css";
+const MdPreview = defineAsyncComponent(async () => {
+  await import("md-editor-v3/lib/preview.css");
+  const { MdPreview } = await import("md-editor-v3");
+  return MdPreview;
+});
 import { storeToRefs } from "pinia";
 
 const props = defineProps({
