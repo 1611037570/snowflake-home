@@ -1,11 +1,11 @@
 <script setup>
 import { useFileDialog } from "@/hooks";
-import { useShortcutStore } from "@/stores";
+import { useHomeStore } from "@/stores";
 import { storeToRefs } from "pinia";
 import { VueDraggable } from "vue-draggable-plus";
 import AddShortcut from "./addShortcut.vue";
 const { click } = useFileDialog();
-const shortcutStore = useShortcutStore();
+const shortcutStore = useHomeStore();
 const { shortcutList } = storeToRefs(shortcutStore);
 
 // 拖拽状态

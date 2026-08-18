@@ -42,7 +42,7 @@
 </template>
 
 <script setup>
-import { useHomeStore, useSearchStore, useShortcutStore } from "@/stores";
+import { useHomeStore } from "@/stores";
 import { permissionAsyncComponent } from "@/utils";
 import { storeToRefs } from "pinia";
 // 基础组件 - 页面加载时需要的组件
@@ -68,9 +68,9 @@ const PasswordHomeModal = permissionAsyncComponent(
 );
 const homeStore = useHomeStore();
 const { tabIndex } = storeToRefs(homeStore);
-const searchStore = useSearchStore();
+const searchStore = useHomeStore();
 const { searchFocus } = storeToRefs(searchStore);
-const shortcutStore = useShortcutStore();
+const shortcutStore = useHomeStore();
 
 import { getWeatherData } from "@/services";
 getWeatherData("hello").then((res) => {

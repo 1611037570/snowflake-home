@@ -1,7 +1,7 @@
 <script setup>
-import { useShortcutStore } from "@/stores";
+import { useHomeStore } from "@/stores";
 
-const shortcutStore = useShortcutStore();
+const shortcutStore = useHomeStore();
 
 const name = ref("");
 const url = ref("");

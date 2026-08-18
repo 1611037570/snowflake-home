@@ -1,7 +1,7 @@
 <script setup>
-import { useShortcutStore } from "@/stores";
+import { useHomeStore } from "@/stores";
 import SearchTitle from "../searchTitle.vue";
-const shortcutStore = useShortcutStore();
+const shortcutStore = useHomeStore();
 const { fixedList } = storeToRefs(shortcutStore);
 function handleClick(item) {
   urlNavigation(item.url);

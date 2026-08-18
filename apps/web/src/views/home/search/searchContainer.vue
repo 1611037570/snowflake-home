@@ -1,7 +1,7 @@
 <script setup>
-import { useSearchStore } from "@/stores";
+import { useHomeStore } from "@/stores";
 import { storeToRefs } from "pinia";
-const searchStore = useSearchStore();
+const searchStore = useHomeStore();
 const { searchFocus } = storeToRefs(searchStore);
 </script>
 

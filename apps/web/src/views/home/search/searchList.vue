@@ -1,7 +1,7 @@
 <script setup>
-import { useSearchStore } from "@/stores";
+import { useHomeStore } from "@/stores";
 import { onKeyStroke } from "@vueuse/core";
-const searchStore = useSearchStore();
+const searchStore = useHomeStore();
 const { searchValue, currentIndex } = storeToRefs(searchStore);
 
 const { list, update } = defineProps({

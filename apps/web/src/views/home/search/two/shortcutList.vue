@@ -1,10 +1,10 @@
 <script setup>
-import { useSearchStore, useShortcutStore } from "@/stores";
+import { useHomeStore } from "@/stores";
 import { getStrMatch } from "@/utils";
 import Item from "../item.vue";
 import SearchTitle from "../searchTitle.vue";
-const shortcutStore = useShortcutStore();
-const searchStore = useSearchStore();
+const shortcutStore = useHomeStore();
+const searchStore = useHomeStore();
 const { shortcutVisible, searchValue } = storeToRefs(searchStore);
 const { shortcutList } = storeToRefs(shortcutStore);
 const { open } = searchStore;

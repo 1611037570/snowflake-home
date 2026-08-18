@@ -29,13 +29,13 @@
 </template>
 
 <script setup lang="ts">
-import { useSearchStore, useShortcutStore } from "@/stores";
+import { useHomeStore } from "@/stores";
 import { storeToRefs } from "pinia";
 
 defineOptions({ name: "SfApp" });
 
-const searchStore = useSearchStore();
-const shortcutStore = useShortcutStore();
+const searchStore = useHomeStore();
+const shortcutStore = useHomeStore();
 const { shortcutList } = storeToRefs(shortcutStore);
 const { openMode } = storeToRefs(searchStore);
 export interface IconProps {

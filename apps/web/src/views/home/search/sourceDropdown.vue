@@ -26,8 +26,8 @@
 </template>
 
 <script setup>
-import { useSearchStore } from "@/stores";
-const searchStore = useSearchStore();
+import { useHomeStore } from "@/stores";
+const searchStore = useHomeStore();
 const { webSource } = storeToRefs(searchStore);
 </script>
 
