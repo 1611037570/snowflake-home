@@ -168,6 +168,24 @@ export default ({ mode }: { mode: string }) => {
               if (id.includes("jspdf")) {
                 return "jspdf";
               }
+              if (id.includes("/mathjs/")) {
+                return "mathjs";
+              }
+              if (id.includes("/qrcode/")) {
+                return "qrcode";
+              }
+              if (id.includes("vue-draggable-plus")) {
+                return "vue-draggable";
+              }
+              if (id.includes("/html2canvas/")) {
+                return "html2canvas";
+              }
+              if (id.includes("/snapdom/")) {
+                return "snapdom";
+              }
+              if (id.includes("/pica/")) {
+                return "pica";
+              }
             }
             // 这里打包content-script.ts为content-script.js
             if (id.includes("content-script")) {
