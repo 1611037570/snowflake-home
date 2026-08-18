@@ -52,8 +52,6 @@ export default ({ mode }: { mode: string }) => {
       vue(),
       // Tailwind CSS插件配置
       tailwindcss(),
-      // PWA 插件配置
-      // pwaPlugin(),
       // HTML插件配置
       createHtmlPlugin({
         minify: isProd, // 开启HTML压缩

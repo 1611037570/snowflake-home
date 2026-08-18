@@ -41,7 +41,3 @@ app.config.globalProperties.$confirm = confirm;
 app.use(globalComponentInstaller);
 // 挂载应用到 DOM
 app.mount("#app");
-
-// import { registerPWA } from './utils'
-// // 注册 PWA
-// registerPWA()
