@@ -10,6 +10,14 @@ const statisticsStore = useResumeStatisticsStore();
 const { applications } = storeToRefs(statisticsStore);
 const { proxy } = getCurrentInstance();
 
+// 平台/状态选项（转换为 SfSelect 所需的 { value, name } 结构）
+const platformOptions = computed(() =>
+  APPLICATION_PLATFORM.map((item) => ({ value: item.value, name: item.label })),
+);
+const statusOptions = computed(() =>
+  APPLICATION_STATUS.map((item) => ({ value: item.value, name: item.label })),
+);
+
 // 按钮公共样式（完整类名字面量，可被 Tailwind 识别）
 const btnBase =
   "flex h-7 cursor-pointer items-center gap-1 rounded-full px-3 text-xs font-black transition";
@@ -170,22 +178,20 @@ const getPlatformLabel = (platform) => {
     </div>
 
     <div class="mt-3 flex items-center gap-3">
-      <el-select v-model="filter.platform" clearable placeholder="全部平台" class="w-40">
-        <el-option
-          v-for="item in APPLICATION_PLATFORM"
-          :key="item.value"
-          :label="item.label"
-          :value="item.value"
-        />
-      </el-select>
-      <el-select v-model="filter.status" clearable placeholder="全部状态" class="w-40">
-        <el-option
-          v-for="item in APPLICATION_STATUS"
-          :key="item.value"
-          :label="item.label"
-          :value="item.value"
-        />
-      </el-select>
+      <SfSelect
+        v-model="filter.platform"
+        clearable
+        placeholder="全部平台"
+        class="w-40"
+        :list="platformOptions"
+      />
+      <SfSelect
+        v-model="filter.status"
+        clearable
+        placeholder="全部状态"
+        class="w-40"
+        :list="statusOptions"
+      />
       <span class="text-xs text-sf-text-2">共 {{ filteredList.length }} 条</span>
     </div>
 
@@ -203,17 +209,11 @@ const getPlatformLabel = (platform) => {
       <el-table-column prop="date" label="投递日期" width="140" sortable />
       <el-table-column label="状态" width="150">
         <template #default="{ row }">
-          <el-select v-model="row.status" size="small" class="w-28">
+          <SfSelect v-model="row.status" size="small" class="w-28" :list="statusOptions">
             <template #prefix>
               <span class="h-2 w-2 rounded-full" :class="getStatusDotClass(row.status)"></span>
             </template>
-            <el-option
-              v-for="item in APPLICATION_STATUS"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            />
-          </el-select>
+          </SfSelect>
         </template>
       </el-table-column>
       <el-table-column label="操作" width="110">
@@ -241,36 +241,21 @@ const getPlatformLabel = (platform) => {
     <div class="w-[440px]">
       <el-form :model="form" label-width="70px">
         <el-form-item label="公司">
-          <el-input v-model="form.company" placeholder="请输入公司名称" />
+          <SfInput v-model="form.company" placeholder="请输入公司名称" />
         </el-form-item>
         <el-form-item label="平台">
-          <el-select v-model="form.platform" class="w-full">
-            <el-option
-              v-for="item in APPLICATION_PLATFORM"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            />
-          </el-select>
+          <SfSelect v-model="form.platform" class="w-full" :list="platformOptions" />
         </el-form-item>
         <el-form-item label="投递日期">
-          <el-date-picker
+          <SfDatePicker
             v-model="form.date"
             type="date"
             value-format="YYYY-MM-DD"
             placeholder="请选择投递日期"
-            class="w-full"
           />
         </el-form-item>
         <el-form-item label="状态">
-          <el-select v-model="form.status" class="w-full">
-            <el-option
-              v-for="item in APPLICATION_STATUS"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            />
-          </el-select>
+          <SfSelect v-model="form.status" class="w-full" :list="statusOptions" />
         </el-form-item>
       </el-form>
       <div class="mt-4 flex justify-end gap-2">
@@ -287,14 +272,7 @@ const getPlatformLabel = (platform) => {
           <el-input-number v-model="batchForm.count" :min="1" :max="100" class="w-full" />
         </el-form-item>
         <el-form-item label="平台">
-          <el-select v-model="batchForm.platform" class="w-full">
-            <el-option
-              v-for="item in APPLICATION_PLATFORM"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            />
-          </el-select>
+          <SfSelect v-model="batchForm.platform" class="w-full" :list="platformOptions" />
         </el-form-item>
       </el-form>
       <div class="text-xs text-sf-text-2">公司名将自动生成（xx月-xx日--随机字母），无需手动填写</div>

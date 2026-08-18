@@ -1,22 +1,28 @@
 <template>
   <Component
     v-model="value"
-    :is="h(ElSelect, { ...$attrs, ref: changeRef }, $slots)"
+    :is="h(ElSelect, { ...$attrs, ref: changeRef })"
+    v-bind="$attrs"
+    ref="changeRef"
     class="text-sf-base"
     :class="bg"
   >
     <ElOption v-for="item in list" :key="item.value" :label="item.name" :value="item.value" />
+    <template v-for="(item, name) in slots" #[name]>
+      <slot :name="name" />
+    </template>
   </Component>
 </template>
 
 <script setup lang="ts">
 import { ElSelect } from "element-plus";
 import type { ComponentInstance, PropType } from "vue";
-import { getCurrentInstance, h } from "vue";
+import { getCurrentInstance, useSlots, h } from "vue";
 
 defineOptions({ name: "SfSelect" });
 
 const bg = inject("bg");
+const slots = useSlots();
 
 defineProps({
   list: {
