@@ -25,14 +25,17 @@
 - 🛣️ **图片处理工具**：轻量级图片套件，涵盖压缩、裁剪、格式转换等常用功能 ![停止维护](https://img.shields.io/badge/状态-停止维护-lightgrey)
   预览：http://nannan.work/#/image
 
-## 📦 仓库结构
+## 🚀 安装运行
 
 项目基于 **pnpm monorepo** 管理，子包位于 `apps` 目录下：
 
 - **web**：项目主体 作者主导开发维护 ![作者主导](https://img.shields.io/badge/维护-作者主导-blue)
 - **server**：后端服务 AI主导开发维护 ![AI主导](https://img.shields.io/badge/维护-AI主导-purple)
 
-## 🚀 安装与运行
+**环境要求**
+
+- **Node.js**：`^20.19.0` 或 `>=22.12.0`
+- **pnpm**：`^10.0.0`
 
 推荐使用 **VS Code** 作为开发环境，项目提供了 `.vscode` 配置文件，能够带来更好的开发体验。
 

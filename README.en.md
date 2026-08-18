@@ -16,6 +16,7 @@ Launched on September 3, 2020, reconstructed and open-sourced on November 22, 20
 
   Benchmarking BOSS Zhipin and Zhijue, with AI-assisted writing, visual editing, PDF export, etc. ![Under Maintenance](https://img.shields.io/badge/Status-Under%20Maintenance-brightgreen)
   Preview: http://nannan.work/#/resume
+
 - ❄️ **Snowflake Start Page** · _A pure browsing start like snow_
 
   Core project carrier, providing a personalized and customizable website start page and project infrastructure ![Under Maintenance](https://img.shields.io/badge/Status-Under%20Maintenance-brightgreen)
