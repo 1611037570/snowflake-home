@@ -182,14 +182,14 @@ const getPlatformLabel = (platform) => {
         v-model="filter.platform"
         clearable
         placeholder="全部平台"
-        class="w-40"
+        class="flex-1"
         :list="platformOptions"
       />
       <SfSelect
         v-model="filter.status"
         clearable
         placeholder="全部状态"
-        class="w-40"
+        class="flex-1"
         :list="statusOptions"
       />
       <span class="text-xs text-sf-text-2">共 {{ filteredList.length }} 条</span>
@@ -275,7 +275,9 @@ const getPlatformLabel = (platform) => {
           <SfSelect v-model="batchForm.platform" class="w-full" :list="platformOptions" />
         </el-form-item>
       </el-form>
-      <div class="text-xs text-sf-text-2">公司名将自动生成（xx月-xx日--随机字母），无需手动填写</div>
+      <div class="text-xs text-sf-text-2">
+        公司名将自动生成（xx月-xx日--随机字母），无需手动填写
+      </div>
       <div class="mt-4 flex justify-end gap-2">
         <el-button @click="batchVisible = false">取消</el-button>
         <el-button type="primary" @click="handleBatchAdd">确定</el-button>
