@@ -88,12 +88,12 @@
 </template>
 
 <script setup>
-import { useSearchStore } from "@/stores";
+import { useHomeStore } from "@/stores";
 import { onKeyStroke } from "@vueuse/core";
 
 import { evaluate, parse } from "mathjs";
 
-const searchStore = useSearchStore();
+const searchStore = useHomeStore();
 const { search } = searchStore;
 const {
   autoFocus,

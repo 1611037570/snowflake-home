@@ -20,11 +20,11 @@
 <script setup>
 // background-image: url('https://cn.bing.com/th?id=OHR.SunbeamsForest_ZH-CN5358008117_1920x1080.jpg&rf=LaDigue_1920x1080.jpg&pid=hp');
 // https://convertio.co/zh/download/f6fd6966623acbcef28ae90b08ca0be62189ed/
-import { useHomeStore, useSearchStore } from "@/stores";
+import { useHomeStore } from "@/stores";
 import { storeToRefs } from "pinia";
 import { computed, onMounted, ref } from "vue";
 
-const searchStore = useSearchStore();
+const searchStore = useHomeStore();
 const homeStore = useHomeStore();
 const { tabIndex } = storeToRefs(homeStore);
 const { searchFocus } = storeToRefs(searchStore);

@@ -9,8 +9,8 @@
 <script setup>
 import SearchTitle from "../searchTitle.vue";
 
-import { useSearchStore } from "@/stores";
-const searchStore = useSearchStore();
+import { useHomeStore } from "@/stores";
+const searchStore = useHomeStore();
 const { hotSource, hotSourceVisible } = storeToRefs(searchStore);
 
 const hotList = [

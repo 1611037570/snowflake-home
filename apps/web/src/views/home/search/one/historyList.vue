@@ -31,11 +31,11 @@
 </template>
 
 <script setup>
-import { useSearchStore } from "@/stores";
+import { useHomeStore } from "@/stores";
 import Item from "../item.vue";
 import SearchTitle from "../searchTitle.vue";
 
-const searchStore = useSearchStore();
+const searchStore = useHomeStore();
 const { searchHistory, searchHistoryVisible, openMode } = storeToRefs(searchStore);
 const openHistory = (item) => {
   window.open(item.url, openMode.value);

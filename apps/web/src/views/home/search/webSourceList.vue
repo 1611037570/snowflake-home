@@ -25,10 +25,10 @@
 </template>
 
 <script setup>
-import { useSearchStore } from "@/stores";
+import { useHomeStore } from "@/stores";
 import { onClickOutside } from "@vueuse/core";
 
-const searchStore = useSearchStore();
+const searchStore = useHomeStore();
 const { webSourceListVisible, currentWebIndex, webSource } = storeToRefs(searchStore);
 
 // 切换搜索源

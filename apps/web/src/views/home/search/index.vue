@@ -1,5 +1,5 @@
 <script setup>
-import { useHomeStore, useSearchStore } from "@/stores";
+import { useHomeStore } from "@/stores";
 import { onClickOutside } from "@vueuse/core";
 import { storeToRefs } from "pinia";
 import { computed, ref } from "vue";
@@ -9,7 +9,7 @@ import SearchInput from "./searchInput.vue";
 import SearchTwo from "./two/index.vue";
 import WebSourceList from "./webSourceList.vue";
 
-const searchStore = useSearchStore();
+const searchStore = useHomeStore();
 const homeStore = useHomeStore();
 const { tabIndex } = storeToRefs(homeStore);
 

@@ -9,9 +9,9 @@
 </template>
 
 <script setup>
-import { useSearchStore } from "@/stores";
+import { useHomeStore } from "@/stores";
 import { storeToRefs } from "pinia";
-const searchStore = useSearchStore();
+const searchStore = useHomeStore();
 const { autoFocus, searchHistoryVisible, appSourceVisible, shortcutVisible, hotSourceVisible } =
   storeToRefs(searchStore);
 </script>

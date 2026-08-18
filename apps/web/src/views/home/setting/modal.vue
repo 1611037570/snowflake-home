@@ -76,14 +76,14 @@
 </template>
 
 <script setup>
-import { useHomeStore, useSearchStore, useShortcutStore } from "@/stores";
+import { useHomeStore } from "@/stores";
 import { storeToRefs } from "pinia";
 import ModalSearch from "./modalSearch.vue";
 import Note from "./model/note.vue";
 
 const homeStore = useHomeStore();
-const searchStore = useSearchStore();
-const shortcutStore = useShortcutStore();
+const searchStore = useHomeStore();
+const shortcutStore = useHomeStore();
 const { shortcutList } = storeToRefs(shortcutStore);
 
 const { systemVisible, autoHideDock } = storeToRefs(homeStore);

@@ -8,8 +8,8 @@
 
 <script setup>
 import { useCurrentTime } from "@/hooks";
-import { useHomeStore, useSearchStore } from "@/stores";
-const searchStore = useSearchStore();
+import { useHomeStore } from "@/stores";
+const searchStore = useHomeStore();
 const { searchFocus } = storeToRefs(searchStore);
 
 const homeStore = useHomeStore();

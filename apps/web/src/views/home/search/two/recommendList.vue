@@ -4,10 +4,10 @@
 </template>
 
 <script setup>
-import { useSearchStore } from "@/stores";
+import { useHomeStore } from "@/stores";
 import SearchList from "../searchList.vue";
 import SearchTitle from "../searchTitle.vue";
-const searchStore = useSearchStore();
+const searchStore = useHomeStore();
 const { appSource } = storeToRefs(searchStore);
 </script>
 
