@@ -1,5 +1,5 @@
 <script setup>
-import { ICON_LIST } from "@/constants";
+import { ICON_LIST } from "@/configs";
 import { useClipboard } from "@vueuse/core";
 import { ElMessage } from "element-plus";
 import { ref } from "vue";

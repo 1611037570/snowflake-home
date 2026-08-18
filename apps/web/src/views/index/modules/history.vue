@@ -63,7 +63,7 @@
 </template>
 
 <script setup lang="ts">
-import { historyList } from "@/constants/modules/history";
+import { historyList } from "@/configs";
 
 // 简单的日期格式化，如果 time 是时间戳
 const formatTime = (time: string | number) => {

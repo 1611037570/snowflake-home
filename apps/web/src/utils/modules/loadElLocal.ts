@@ -1,4 +1,4 @@
-import { DEFAULT_LANGUAGE } from "@/constants";
+import { DEFAULT_LANGUAGE } from "@/configs";
 import i18n from "@/locales";
 import en from "element-plus/es/locale/lang/en";
 import zhCn from "element-plus/es/locale/lang/zh-cn";

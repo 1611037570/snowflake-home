@@ -1,4 +1,4 @@
-import { ALL_ROUTES, DEFAULT_ROUTE } from "@/constants";
+import { ALL_ROUTES, DEFAULT_ROUTE } from "@/configs";
 import { type RouteRecordRaw } from "vue-router";
 
 // 路由数组，通过模块加载路由

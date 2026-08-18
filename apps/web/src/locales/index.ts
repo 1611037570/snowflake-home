@@ -1,4 +1,4 @@
-import { ALL_PAGE } from "@/constants";
+import { ALL_PAGE } from "@/configs";
 import { useTitle } from "@vueuse/core";
 import type { I18n, I18nOptions } from "vue-i18n";
 import { createI18n } from "vue-i18n"; // 从 vue-i18n 导入创建实例的方法

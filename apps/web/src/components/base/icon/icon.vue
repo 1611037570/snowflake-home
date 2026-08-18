@@ -13,7 +13,7 @@
 </template>
 
 <script setup lang="ts">
-import { ICON_LIST } from "@/constants";
+import { ICON_LIST } from "@/configs";
 import { Icon, loadIcon } from "@iconify/vue";
 
 defineOptions({ name: "SfIcon" });

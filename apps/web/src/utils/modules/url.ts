@@ -1,4 +1,4 @@
-import { URL_OPEN_TYPE, USER_ROUTE } from "@/constants";
+import { URL_OPEN_TYPE, USER_ROUTE } from "@/configs";
 
 // 获取基础路径
 export function getBaseUrl() {

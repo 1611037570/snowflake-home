@@ -1,6 +1,6 @@
 <script setup>
 import { getAllComponent } from "@/components";
-import { ALL_CONTENT, ALL_PAGE, ICON_LIST } from "@/constants";
+import { ALL_CONTENT, ALL_PAGE, ICON_LIST } from "@/configs";
 import { useSystemStore } from "@/stores";
 const systemStore = useSystemStore();
 const { browserInfo } = storeToRefs(systemStore);

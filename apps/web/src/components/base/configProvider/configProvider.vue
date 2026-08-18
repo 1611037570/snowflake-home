@@ -2,7 +2,7 @@
 /**
  * 配置提供器 提供默认背景颜色和颜色
  */
-import { DEFAULT_BACKGROUND, DEFAULT_COLOR } from "@/constants";
+import { DEFAULT_BACKGROUND, DEFAULT_COLOR } from "@/configs";
 import { getElLocale } from "@/utils";
 
 defineOptions({ name: "SfConfigProvider" });

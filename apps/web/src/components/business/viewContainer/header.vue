@@ -1,5 +1,5 @@
 <script setup>
-import { ALL_PAGE } from "@/constants";
+import { ALL_PAGE } from "@/configs";
 
 const route = useRoute();
 
