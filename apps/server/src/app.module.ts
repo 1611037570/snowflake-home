@@ -3,6 +3,7 @@ import { ConfigModule } from '@nestjs/config'
 import { TypeOrmModule } from '@nestjs/typeorm'
 import { AppController } from './app.controller'
 import { AppService } from './app.service'
+import { DemoModule } from './modules/demo/demo.module'
 import { LLMModule } from './modules/llm/llm.module'
 import { UtilsModule } from './modules/utils/utils.module'
 import { UserModule } from './modules/user/user.module'
@@ -19,6 +20,7 @@ import { baseConfig } from './config/base.config'
     // }),
     // RedisModule,
     // RsaModule,
+    DemoModule,
     LLMModule,
     UtilsModule,
     // UserModule
