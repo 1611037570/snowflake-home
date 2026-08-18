@@ -38,13 +38,13 @@
 </template>
 
 <script setup>
-import { useGameStore } from "@/stores";
+import { useHomeStore } from "@/stores";
 import { Icon } from "@iconify/vue";
 import { storeToRefs } from "pinia";
 import { ref } from "vue";
 
 // 从游戏状态存储中获取功德计数器
-const gameStore = useGameStore();
+const gameStore = useHomeStore();
 const { fishCount } = storeToRefs(gameStore);
 
 // 敲击状态
