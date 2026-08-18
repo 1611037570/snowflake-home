@@ -77,6 +77,7 @@ getWeatherData("hello").then((res) => {
   console.log("getWeatherData res", res);
 });
 shortcutStore.initShortcutList();
+provide("bg", "bg-sf-primary");
 
 // getBaiduSearchData('hello', false).then((res) => {
 //   console.log('getBaiduSearchData res', res)
