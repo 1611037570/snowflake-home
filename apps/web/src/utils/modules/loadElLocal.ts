@@ -5,7 +5,7 @@ import zhCn from "element-plus/es/locale/lang/zh-cn";
 
 // 语言配置对象
 const langConfig: any = {
-  "zh-CN": zhCn,
+  zh: zhCn,
   en: en,
 };
 
