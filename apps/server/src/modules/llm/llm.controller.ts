@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Res } from '@nestjs/common'
+import { Controller, Get, Post, Body, Res } from '@nestjs/common'
 import type { Response } from 'express'
 import { LLMService } from './llm.service'
 
@@ -51,5 +51,10 @@ export class LLMController {
         res.status(500).send(error.message)
       }
     }
+  }
+
+  @Get('balance')
+  async getBalance() {
+    return this.llmService.getBalance()
   }
 }
