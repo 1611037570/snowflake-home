@@ -15,7 +15,7 @@ import ScaleContainer from "./ScaleContainer.vue";
 // 简历 Store 实例
 const resumeStore = useResumeStore();
 // 当前 UI 配置响应式对象
-const { currentUI } = storeToRefs(resumeStore);
+const { currentUI, isGenerating } = storeToRefs(resumeStore);
 
 // 内边距样式工厂函数，offset 为偏移量（px），默认 0
 const paddingValue = computed(() => (offset = 0) => ({
@@ -58,7 +58,9 @@ provide("themeStyle", themeStyle);
 </script>
 
 <template>
-  <div class="scrollbar-hide flex h-full flex-1 flex-col items-center overflow-y-auto pt-3">
+  <div
+    class="scrollbar-hide relative flex h-full flex-1 flex-col items-center overflow-y-auto pt-3"
+  >
     <ScaleContainer>
       <ResumePage />
     </ScaleContainer>

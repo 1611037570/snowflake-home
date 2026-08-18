@@ -1,7 +1,7 @@
 <script setup>
 import { useAiStore, useResumeStore } from "@/stores";
 import { useScroll } from "@vueuse/core";
-import { computed, nextTick, ref, watch } from "vue";
+import { computed, inject, nextTick, ref, watch } from "vue";
 import { storeToRefs } from "pinia";
 import { arkLLM } from "@/apis";
 
@@ -12,9 +12,10 @@ import WelcomeScreen from "./welcomeScreen.vue";
 
 const resumeStore = useResumeStore();
 const aiStore = useAiStore();
-const { currentData } = storeToRefs(resumeStore);
+const { currentData, isGenerating } = storeToRefs(resumeStore);
 const { createDefaultMessage } = aiStore;
 const { thinkMode } = storeToRefs(aiStore);
+const applyDiff = inject("applyDiff");
 
 const { type } = defineProps({
   type: {
@@ -115,6 +116,7 @@ const handleSend = (content) => {
  * 处理 AI 回复的真实请求
  */
 const handleAIResponse = async () => {
+  isGenerating.value = true;
   // 保存最后一条消息的引用，用于流式更新内容
   let lastMsg = null;
   try {
@@ -152,6 +154,7 @@ const handleAIResponse = async () => {
           type: thinkMode.value ? "enabled" : "disabled",
         },
       },
+      debug: false,
       stream: true, // 开启流式响应
       // 简历模式下，需要解析 JSON 字符串
       isJson: type === "resume",
@@ -160,7 +163,6 @@ const handleAIResponse = async () => {
         if (type === "reasoning") {
           // 追加思考内容并滚动到底部
           lastMsg.thought += data;
-          scrollToBottom();
         } else if (type === "content") {
           // 思考展开，并且首次收到回复内容，标记为完成。
           if (!lastMsg.thoughtCollapsed && !thoughtStatus) {
@@ -169,11 +171,11 @@ const handleAIResponse = async () => {
           }
           // 回复正文事件：逐字追加内容并滚动到底部
           lastMsg.content += data;
-          scrollToBottom();
         } else if (type === "total_tokens") {
           // token 统计事件：保存本次消耗的 token 数
           lastMsg.total_tokens = data;
         }
+        scrollToBottom();
       },
       // 请求失败回调
       onFail: (error) => {
@@ -185,10 +187,12 @@ const handleAIResponse = async () => {
       },
       // 请求成功回调（JSON格式）
       onSuccess: (res) => {
-        console.log("res:>> ", res);
-
+        const userData = res.result.data;
+        console.log("userData:>> ", userData);
+        applyDiff?.(userData);
         // 更新请求状态为成功状态
         lastMsg.requestStatus = "success";
+        scrollToBottom();
       },
     });
 
@@ -201,6 +205,7 @@ const handleAIResponse = async () => {
     console.error("AI 请求异常:", error);
   } finally {
     // 无论成功失败，统一清理状态
+    isGenerating.value = false;
     isSending.value = false;
     abortRequest = null;
     // 确保打字状态被关闭
@@ -212,6 +217,7 @@ const handleAIResponse = async () => {
       chat.value.updateTime = Date.now();
     }
     // 请求完成，把最后一条消息数据回调给父组件
+
     emit("requestComplete", lastMsg);
   }
 };

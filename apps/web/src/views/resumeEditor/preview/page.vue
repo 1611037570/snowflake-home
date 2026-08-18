@@ -4,6 +4,7 @@ import eventBus from "@/utils/modules/eventBus";
 import { storeToRefs } from "pinia";
 import { computed, inject, onMounted, onUnmounted, ref } from "vue";
 import { resumeTitle } from "../utils";
+import GeneratingMask from "../components/generatingMask.vue";
 import MeasureContent from "./components/measureContent.vue";
 import ModuleActions from "./components/moduleActions.vue";
 import ResumeModule from "./modules/index.vue";
@@ -259,21 +260,21 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div class="mb-3 flex flex-col">
-    <!-- 隐藏的测量容器：用于 useRowInfo 读取高度 -->
-    <MeasureContent
-      class="absolute -z-10 opacity-0"
-      ref="measureRef"
-      :style="[paddingValue(), { width: `${WIDTH}px` }]"
-      :current-data="currentData"
-      :all-modules="allModules"
-    />
-
+  <!-- 隐藏的测量容器：用于 useRowInfo 读取高度 -->
+  <MeasureContent
+    class="absolute -z-10 opacity-0"
+    ref="measureRef"
+    :style="[paddingValue(), { width: `${WIDTH}px` }]"
+    :current-data="currentData"
+    :all-modules="allModules"
+  />
+  <GeneratingMask />
+  <div class="relative mb-3 flex flex-col">
     <!-- 实际渲染的分页内容 -->
     <div
       v-for="(pageSlices, pageIndex) in pages"
       :key="pageIndex"
-      class="resume-page-item mx-3 flex flex-col rounded-xl bg-white text-black shadow-lg"
+      class="resume-page-item relative mx-3 flex flex-col rounded-xl bg-white text-black"
       :class="[currentUI.fontFamily, `page-${pageIndex}`]"
       :style="[
         paddingValue(),

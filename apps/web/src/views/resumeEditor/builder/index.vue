@@ -1,5 +1,6 @@
 <script setup>
 import { markRaw, ref } from "vue";
+import GeneratingMask from "../components/generatingMask.vue";
 import Custom from "./page/custom/index.vue";
 import Editor from "./page/editor/index.vue";
 import Template from "./page/template/index.vue";
@@ -35,7 +36,7 @@ provide("bg", "bg-sf-bg");
 </script>
 
 <template>
-  <div class="flex h-full w-[360px] flex-col py-3 pl-3">
+  <div class="relative flex h-full w-[360px] flex-col py-3 pl-3">
     <!-- 左侧栏 -->
     <div
       class="relative mb-3 flex w-full items-center justify-around rounded-2xl border border-sf-border bg-sf-primary p-1"
@@ -63,6 +64,7 @@ provide("bg", "bg-sf-bg");
         </div>
       </ElScrollbar>
     </div>
+    <GeneratingMask v-if="true" />
   </div>
 </template>
 
