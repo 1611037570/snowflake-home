@@ -12,18 +12,6 @@ export async function beforeEachGuard(to: any, from: any, next: any) {
   const pageName = to.name;
   await loadPageLang(pageName);
 
-  // 用户未设置默认起始页时，先进入初始化页进行选择
-  const defaultRoute = localStorage.getItem("snowflakeRoute");
-  if (!defaultRoute) {
-    // 已经在初始化页时直接放行，避免重复重定向
-    if (to.name === "init") {
-      next();
-      return;
-    }
-    next({ name: "init" });
-    return;
-  }
-
   // 每次进入页面前检查系统版本状态
   const systemStore = useSystemStore();
   systemStore.checkVersionUpdate();
