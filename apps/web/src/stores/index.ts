@@ -22,9 +22,6 @@ export * from "./modules/resume";
 // 缓存相关store
 export * from "./modules/cache";
 
-// 弹窗相关store
-export * from "./modules/modal";
-
 // 主题相关store
 export * from "./modules/theme";
 
