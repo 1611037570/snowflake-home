@@ -1,5 +1,5 @@
 <script setup>
-import { BASE_PAGE, MUSE_PAGE, PROJECT_PAGE } from "@/constants";
+import { BASE_PAGE, MUSE_PAGE, PROJECT_PAGE } from "@/configs";
 import MoreList from "./list.vue";
 
 const showMore = ref(false);

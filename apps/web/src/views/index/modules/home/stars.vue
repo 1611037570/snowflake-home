@@ -27,7 +27,7 @@
 </template>
 
 <script setup>
-import { darkThemeColors } from "@/constants";
+import { darkThemeColors } from "@/configs";
 import { useThemeStore } from "@/stores";
 import { useSystemStore } from "@/stores/modules/system";
 import { useEventListener, useIntervalFn } from "@vueuse/core";

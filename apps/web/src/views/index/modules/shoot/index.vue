@@ -61,7 +61,7 @@
 </template>
 
 <script setup>
-import { SHOOT_ACCOUNT } from "@/constants";
+import { SHOOT_ACCOUNT } from "@/configs";
 import { urlNavigation } from "@/utils";
 import ShootMap from "./shootMap.vue";
 const components = import.meta.glob("../../../assets/images/shoot/*", { eager: true });

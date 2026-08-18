@@ -1,4 +1,4 @@
-import { version } from "@/constants/version";
+import { version } from "@/configs";
 import dayjs from "dayjs";
 import { defineStore } from "pinia";
 import { ref } from "vue";

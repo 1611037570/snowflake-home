@@ -1,5 +1,5 @@
 // 权限检查函数
-import { ALL_ROUTES } from "@/constants";
+import { ALL_ROUTES } from "@/configs";
 export function checkPermission(permission: string) {
   // 检查用户是否拥有指定权限
   return ALL_ROUTES.includes({ name: permission });

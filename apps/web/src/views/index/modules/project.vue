@@ -18,7 +18,7 @@
 </template>
 
 <script setup>
-import { PROJECT_PAGE } from "@/constants";
+import { PROJECT_PAGE } from "@/configs";
 import SmallTitle from "../components/smallTitle.vue";
 import ProjectCard from "./projectCard.vue";
 const list = computed(() => {

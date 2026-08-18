@@ -1,4 +1,4 @@
-import { darkThemeColors } from "@/constants";
+import { darkThemeColors } from "@/configs";
 // ===========列表=====================
 // 主题色列表
 export const themeColors = [...darkThemeColors];

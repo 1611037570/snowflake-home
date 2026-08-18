@@ -1,5 +1,5 @@
 <script setup>
-import { DEV_ACCOUNT, SHOOT_ACCOUNT } from "@/constants";
+import { DEV_ACCOUNT, SHOOT_ACCOUNT } from "@/configs";
 import { userInfo } from "@/views/index/data";
 import dayjs from "dayjs";
 import { computed } from "vue";

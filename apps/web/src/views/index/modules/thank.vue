@@ -1,6 +1,6 @@
 <script setup>
 import redFlower from "@/assets/images/redFlower.jpg";
-import { da_ai_xian_zun, fixed } from "@/constants";
+import { da_ai_xian_zun, fixed } from "@/configs";
 // ---------- 弹幕数据 ----------
 const list = [...fixed, ...da_ai_xian_zun].map((item) => ({
   text: item.value,

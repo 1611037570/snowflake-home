@@ -21,7 +21,7 @@
 </template>
 
 <script setup>
-import { DEFAULT_ROUTE } from "@/constants";
+import { DEFAULT_ROUTE } from "@/configs";
 import { useIntervalFn } from "@vueuse/core";
 import { onMounted, ref } from "vue";
 import { useRouter } from "vue-router";

@@ -1,7 +1,7 @@
 <script setup>
 import { ref, computed } from "vue";
 import { useRouter } from "vue-router";
-import { PROJECT_PAGE } from "@/constants";
+import { PROJECT_PAGE } from "@/configs";
 
 const router = useRouter();
 const currentRoute = ref(localStorage.getItem("snowflakeRoute") || "/home");
