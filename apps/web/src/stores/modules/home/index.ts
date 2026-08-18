@@ -12,6 +12,7 @@ export const useHomeStore = defineStore(
     const autoHideDock = ref(false);
     const tabIndex = ref(0);
     const aboutVisible = ref(false);
+    const fishCount = ref(0);
 
     const switchTab = () => {
       tabIndex.value = tabIndex.value == 0 ? 1 : 0;
@@ -174,6 +175,7 @@ export const useHomeStore = defineStore(
       systemVisible,
       autoHideDock,
       aboutVisible,
+      fishCount,
       shortcutList,
       initShortcutList,
       addShortcut,
@@ -215,6 +217,7 @@ export const useHomeStore = defineStore(
         "searchHistory",
         "searchHistoryVisible",
         "hotSource",
+        "fishCount",
       ],
     },
   },

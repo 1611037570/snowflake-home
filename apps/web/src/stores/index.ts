@@ -13,9 +13,6 @@ export default pinia;
 // 系统相关store
 export * from "./modules/system";
 
-// 游戏相关store
-export * from "./modules/game";
-
 // 主页相关store
 export * from "./modules/home";
 
