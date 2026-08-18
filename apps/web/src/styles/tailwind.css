@@ -134,6 +134,6 @@
     @apply cursor-pointer bg-sf-theme text-sf-primary hover:bg-sf-theme-2 hover:text-sf-theme;
   }
   .sf-primary {
-    @apply hover:bg-sf-page bg-sf-primary text-sf-text;
+    @apply bg-sf-primary text-sf-text hover:bg-sf-page;
   }
 }

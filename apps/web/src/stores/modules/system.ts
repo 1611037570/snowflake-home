@@ -1,6 +1,7 @@
 import dayjs from "dayjs";
 import { defineStore } from "pinia";
 import { ref } from "vue";
+import version from "@/configs/modules/version";
 const start = "2020-09-03";
 export const useSystemStore = defineStore(
   "system",
