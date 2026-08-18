@@ -26,7 +26,6 @@
   },
   "dependencies": {
     "@iconify/vue": "5.0.0",
-    "@types/lodash-es": "^4.17.12",
     "@vueuse/core": "13.9.0",
     "@vueuse/integrations": "13.9.0",
     "idb-keyval": "^6.3.0",
@@ -60,6 +59,7 @@
     "@tailwindcss/vite": "4.1.14",
     "@tsconfig/node22": "22.0.2",
     "@types/jsdom": "^27.0.0",
+    "@types/lodash-es": "^4.17.12",
     "@types/node": "22.18.9",
     "@vitejs/plugin-vue": "6.0.1",
     "@vitest/coverage-v8": "^4.0.15",
