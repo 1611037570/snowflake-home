@@ -1,11 +1,14 @@
 import { Controller, Get, Post, Body, Res } from '@nestjs/common'
+import { ApiOperation, ApiTags } from '@nestjs/swagger'
 import type { Response } from 'express'
 import { LLMService } from './llm.service'
 
+@ApiTags('LLM 接口')
 @Controller('llm')
 export class LLMController {
   constructor(private readonly llmService: LLMService) {}
 
+  @ApiOperation({ summary: 'AI 流式对话' })
   @Post('stream')
   async chatStream(@Body() data: any, @Res() res: Response) {
     try {
@@ -53,6 +56,7 @@ export class LLMController {
     }
   }
 
+  @ApiOperation({ summary: '查询 DeepSeek 余额' })
   @Get('balance')
   async getBalance() {
     return this.llmService.getBalance()
