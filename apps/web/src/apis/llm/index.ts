@@ -1,4 +1,4 @@
-import { ark } from "@/configs/ai";
+import { ark } from "@/configs";
 import { LLM } from "./request/core";
 
 const getToken = () => {

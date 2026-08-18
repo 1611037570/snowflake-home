@@ -45,3 +45,5 @@ export const SHOOT_ACCOUNT = [
     type: "shoot",
   },
 ];
+
+export const USER_ROUTE = "/index";
