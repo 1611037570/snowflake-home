@@ -155,6 +155,20 @@ export default ({ mode }: { mode: string }) => {
         ],
         output: {
           manualChunks: (id) => {
+            if (id.includes("node_modules")) {
+              if (id.includes("/echarts/")) {
+                return "echarts";
+              }
+              if (id.includes("wangeditor")) {
+                return "wangeditor";
+              }
+              if (id.includes("md-editor")) {
+                return "md-editor";
+              }
+              if (id.includes("jspdf")) {
+                return "jspdf";
+              }
+            }
             // 这里打包content-script.ts为content-script.js
             if (id.includes("content-script")) {
               return "content-script";
