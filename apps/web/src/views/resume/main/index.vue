@@ -359,7 +359,6 @@
       </div>
     </div>
   </section>
-  <!-- 星轨统计 -->
   <section
     id="stats"
     class="relative flex min-h-screen items-center justify-center overflow-hidden py-24"
