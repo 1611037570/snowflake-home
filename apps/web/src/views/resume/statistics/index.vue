@@ -12,8 +12,9 @@ const { applications } = storeToRefs(statisticsStore);
 
 <template>
   <div class="relative z-4 mx-auto flex w-[1120px] flex-col gap-4">
-    <div class="flex h-8 items-center justify-between">
+    <div class="flex h-8 items-center gap-3">
       <h2 class="text-[20px] font-black text-sf-theme">简历情况统计</h2>
+      <div>{{ $t("router.resumeStatisticsDesc") }}</div>
     </div>
     <template v-if="applications.length">
       <StatCards />
@@ -26,7 +27,7 @@ const { applications } = storeToRefs(statisticsStore);
       <div class="text-sf-text-2">
         <SfIcon icon="lucide:inbox" size="10" />
       </div>
-      <p class="text-sm text-sf-text-2">暂无投递数据，开始记录你的第一条投递吧</p>
+      <p class="text-sm text-sf-text-2">开始记录你的第一条投递吧</p>
       <div class="flex items-center gap-3">
         <el-button type="primary" @click="applicationListRef.openAdd()">新建一条</el-button>
         <el-button @click="applicationListRef.openBatch()">批量添加</el-button>
