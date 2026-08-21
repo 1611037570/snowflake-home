@@ -16,6 +16,14 @@ const sortedList = computed(() => {
     (a, b) => (b?.usage?.lastUseTime || 0) - (a?.usage?.lastUseTime || 0),
   );
 });
+// 列表卡片数据：预计算完成度，避免模板重复计算
+const displayList = computed(() =>
+  sortedList.value.map((item, index) => ({
+    item,
+    index,
+    progress: getAllScores(item.data).progress,
+  })),
+);
 const getResumePosition = (item) => {
   return item?.data?.user?.position || "未填写求职岗位";
 };
@@ -52,33 +60,26 @@ const handleCreate = () => {
   <div class="relative z-4 mx-auto flex w-[1120px] flex-col gap-4">
     <div class="flex h-8 items-center justify-between">
       <h2 class="text-[20px] font-black text-sf-theme">简历草稿</h2>
-      <button
-        type="button"
-        class="flex h-8 items-center gap-2 rounded-full border border-sf-theme bg-sf-theme px-4 text-sm font-black text-sf-theme-text shadow-lg shadow-sf-theme/25 transition-all duration-200 hover:-translate-y-0.5 hover:bg-sf-theme-2 disabled:cursor-not-allowed disabled:opacity-45"
-        :disabled="list.length >= maxCount"
-        @click="handleCreate"
-      >
+      <el-button type="primary" :disabled="list.length >= maxCount" @click="handleCreate">
         新建简历（{{ list.length }}/{{ maxCount }}）
-      </button>
+      </el-button>
     </div>
 
-    <div v-if="sortedList.length" class="grid grid-cols-3 gap-6 max-[900px]:grid-cols-1">
+    <div v-if="displayList.length" class="grid grid-cols-3 gap-4 max-[900px]:grid-cols-1">
       <div
-        v-for="(item, index) in sortedList"
-        :key="item.id || index"
-        class="group relative flex cursor-pointer flex-col overflow-hidden rounded-lg border border-sf-border bg-sf-primary/96 text-left text-sf-text shadow-[0_24px_54px_rgba(0,0,0,0.2)] transition-all duration-200 hover:-translate-y-1 hover:border-sf-theme hover:shadow-[0_30px_70px_rgba(0,0,0,0.26)]"
-        @click="handleEdit(index)"
+        v-for="card in displayList"
+        :key="card.item.id || card.index"
+        class="group flex cursor-pointer flex-col rounded-xl border border-sf-border bg-sf-primary p-4 shadow-sm transition-all duration-200 hover:-translate-y-1 hover:border-sf-theme"
+        @click="handleEdit(card.index)"
       >
-        <div
-          class="mr-5 flex h-20 items-center rounded-br-[60px] bg-sf-theme/10 p-5 text-base font-black"
-        >
-          {{ getResumeTitle(item.data) }}
+        <div class="flex h-20 items-center rounded-xl bg-sf-theme/10 p-4 text-base font-black">
+          {{ getResumeTitle(card.item.data) }}
         </div>
-        <div class="p-5">
-          <div class="relative z-1 mb-5 flex items-center justify-between">
-            <div class="relative z-1 text-sm font-bold text-sf-text-2">
-              {{ getResumePosition(item) }}
-              <div class="mt-1 text-xs">最后使用：{{ getLastUseTime(item) }}</div>
+        <div class="mt-4 flex flex-col gap-4">
+          <div class="flex items-center justify-between">
+            <div class="text-sm font-bold text-sf-text-2">
+              {{ getResumePosition(card.item) }}
+              <div class="mt-1 text-xs">最后使用：{{ getLastUseTime(card.item) }}</div>
             </div>
             <div class="flex items-center gap-2">
               <span
@@ -89,18 +90,18 @@ const handleCreate = () => {
               <button
                 type="button"
                 class="flex h-8 w-8 items-center justify-center rounded-full bg-sf-error/10 text-sf-error transition-colors duration-200 hover:bg-sf-error/20"
-                @click.stop="handleDelete(index)"
+                @click.stop="handleDelete(card.index)"
               >
                 <SfIcon icon="lucide:trash-2" size="4" />
               </button>
             </div>
           </div>
 
-          <div class="relative z-1 mt-5 h-1.5 w-full rounded-full bg-sf-bg-2">
+          <div class="h-1.5 w-full rounded-full bg-sf-bg-2">
             <div
               class="h-full rounded-full"
-              :class="getProgressClass(getAllScores(item.data).progress)"
-              :style="{ width: `${getAllScores(item.data).progress}%` }"
+              :class="getProgressClass(card.progress)"
+              :style="{ width: `${card.progress}%` }"
             ></div>
           </div>
         </div>
@@ -109,22 +110,13 @@ const handleCreate = () => {
 
     <div
       v-else
-      class="flex min-h-[320px] flex-col items-center justify-center rounded-lg border border-dashed border-sf-border bg-sf-primary/90 p-8 text-center shadow-[0_24px_60px_rgba(0,0,0,0.16)] backdrop-blur-md"
+      class="flex flex-col items-center gap-4 rounded-xl border border-sf-border bg-sf-primary p-10 shadow-sm"
     >
-      <div
-        class="mb-5 flex h-16 w-16 items-center justify-center rounded-full bg-sf-theme/10 text-sf-theme"
-      >
-        <SfIcon icon="lucide:file-text" size="8" />
+      <div class="text-sf-text-2">
+        <SfIcon icon="lucide:file-text" size="10" />
       </div>
-      <div class="text-2xl font-black text-sf-text">还没有简历</div>
-      <button
-        type="button"
-        class="mt-6 flex h-11 items-center gap-2 rounded-full bg-sf-theme px-7 text-base font-black text-sf-theme-text shadow-lg shadow-sf-theme/25 hover:bg-sf-theme-2"
-        @click="handleCreate"
-      >
-        <SfIcon icon="lucide:plus" size="4" />
-        新建简历
-      </button>
+      <p class="text-sm text-sf-text-2">还没有简历</p>
+      <el-button type="primary" @click="handleCreate">新建简历</el-button>
     </div>
   </div>
 </template>
