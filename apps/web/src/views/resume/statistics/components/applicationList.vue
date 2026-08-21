@@ -83,6 +83,12 @@ const handleBatchAdd = () => {
   statisticsStore.addApplications(batchForm.count, batchForm.platform);
   batchVisible.value = false;
 };
+// 打开批量添加弹窗（供父组件空状态复用）
+const openBatch = () => {
+  batchVisible.value = true;
+};
+// 暴露新增/批量弹窗，供父组件复用
+defineExpose({ openAdd, openBatch });
 // 导出当前筛选结果为 CSV
 const handleExport = () => {
   if (!filteredList.value.length) {
@@ -162,7 +168,7 @@ const getPlatformLabel = (platform) => {
           <SfIcon icon="lucide:trash-2" size="3.5" />
           删除选中（{{ selectedList.length }}）
         </button>
-        <button type="button" :class="btnOutline" @click="batchVisible = true">
+        <button type="button" :class="btnOutline" @click="openBatch">
           <SfIcon icon="mdi:database" size="3.5" />
           批量添加
         </button>

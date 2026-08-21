@@ -1,8 +1,13 @@
 <script setup>
 // 简历情况统计模块：求职进度看板
+import { useResumeStatisticsStore } from "@/stores";
+import { storeToRefs } from "pinia";
 import ApplicationList from "./components/applicationList.vue";
 import StatCards from "./components/statCards.vue";
 import TrendChart from "./components/trendChart.vue";
+
+const statisticsStore = useResumeStatisticsStore();
+const { applications } = storeToRefs(statisticsStore);
 </script>
 
 <template>
@@ -10,9 +15,26 @@ import TrendChart from "./components/trendChart.vue";
     <div class="flex h-8 items-center justify-between">
       <h2 class="text-[20px] font-black text-sf-theme">简历情况统计</h2>
     </div>
-    <StatCards />
-    <TrendChart />
-    <ApplicationList />
+    <template v-if="applications.length">
+      <StatCards />
+      <TrendChart />
+    </template>
+    <div
+      v-else
+      class="flex flex-col items-center gap-4 rounded-xl border border-sf-border bg-sf-primary p-10 shadow-sm"
+    >
+      <div class="text-sf-text-2">
+        <SfIcon icon="lucide:inbox" size="10" />
+      </div>
+      <p class="text-sm text-sf-text-2">暂无投递数据，开始记录你的第一条投递吧</p>
+      <div class="flex items-center gap-3">
+        <el-button type="primary" @click="applicationListRef.openAdd()">新建一条</el-button>
+        <el-button @click="applicationListRef.openBatch()">批量添加</el-button>
+      </div>
+    </div>
+    <div v-show="applications.length">
+      <ApplicationList ref="applicationListRef" />
+    </div>
   </div>
 </template>
 
