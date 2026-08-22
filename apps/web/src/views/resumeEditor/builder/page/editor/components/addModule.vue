@@ -74,8 +74,6 @@ const handleConfirm = () => {
   config.key = customKey;
   // 重置自定义模块的名称
   config.name = customModuleName.value;
-  // 重置自定义模块的标题
-  config.props.title = customModuleName.value;
   config.model.source = [customKey];
   // 重置自定义模块的子模块
   config.fields[0].addConfig.model.forEach((item) => {
