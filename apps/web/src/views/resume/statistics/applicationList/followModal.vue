@@ -65,19 +65,19 @@ const handleSubmit = () => {
 
 <template>
   <SfModal v-model="visible" title="投递跟进">
-    <div class="w-[440px]">
-      <el-form :model="form" label-width="70px">
-        <el-form-item label="公司名称">
+    <div class="flex w-[440px] flex-col">
+      <el-form :model="form" label-width="70px" class="gap-3">
+        <el-form-item label="公司名称" class="pb-3">
           <SfInput v-model="form.company" placeholder="留空将自动生成" />
         </el-form-item>
-        <el-form-item label="跟进状态">
+        <el-form-item label="跟进状态" class="pb-3">
           <SfSelect v-model="form.status" class="w-full" :list="followUpStatusOptions" />
         </el-form-item>
-        <el-form-item label="投递平台">
+        <el-form-item label="投递平台" class="pb-3">
           <SfSelect v-model="form.platform" class="w-full" :list="platformList" />
         </el-form-item>
       </el-form>
-      <div class="mt-4 flex justify-end gap-3">
+      <div class="flex justify-end gap-3">
         <el-button @click="visible = false">取消</el-button>
         <el-button type="primary" @click="handleSubmit">确定</el-button>
       </div>

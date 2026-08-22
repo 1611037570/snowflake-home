@@ -91,7 +91,7 @@ const handleDelete = (item) => {
       <span class="text-xs text-sf-text-2">共 {{ filteredList.length }} 条</span>
     </div>
 
-    <el-table :data="filteredList" class="mt-3 w-full" empty-text="暂无投递记录">
+    <el-table :data="filteredList" border class="mt-3 w-full rounded-xl" empty-text="暂无投递记录">
       <el-table-column label="平台明细" min-width="220">
         <template #default="{ row }">
           <span class="flex flex-wrap gap-1.5">
@@ -137,7 +137,11 @@ const handleDelete = (item) => {
 </template>
 
 <style lang="scss" scoped>
-:deep(.el-select) {
-  width: auto;
+.el-table--fit {
+  border-bottom: revert-layer !important;
+  border-right: revert-layer !important;
+}
+.el-table--fit {
+  border: revert-layer !important;
 }
 </style>

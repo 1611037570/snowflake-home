@@ -54,7 +54,16 @@ watch(
 
 // 提交：添加或修改投递记录（一次可含多个平台明细）
 const handleSubmit = () => {
-  const details = rows.value.filter((row) => row.count > 0);
+  const merged = new Map();
+  rows.value.forEach((row) => {
+    if (row.count > 0) {
+      merged.set(row.platform, (merged.get(row.platform) || 0) + row.count);
+    }
+  });
+  const details = Array.from(merged.entries()).map(([platform, count]) => ({
+    platform,
+    count,
+  }));
   if (!details.length) {
     ElMessage.warning("请填写至少一条投递数量");
     return;
