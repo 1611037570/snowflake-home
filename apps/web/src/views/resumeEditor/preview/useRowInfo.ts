@@ -1,132 +1,107 @@
-import { useDebounceFn, useMutationObserver, useResizeObserver } from "@vueuse/core";
-import { nextTick, onMounted, ref, watch, type Ref } from "vue";
+/**
+ * useRowInfo —— 简历分页的测量核心
+ *
+ * 作用：监听测量容器（MeasureContent）的 DOM 变化，扫描容器内所有 `.resume-module-wrapper`
+ * 模块包装元素，读取每个模块下每个"行"的高度，组装成分页所需的模块信息列表。
+ *
+ * 数据流：
+ *   测量容器渲染 → DOM 生成 → 本 Hook 扫描读取高度 → moduleList（模块 + 行信息）
+ *   → page.vue 的 pages computed 依据行高做分页裁剪
+ *
+ * 关键约定：
+ *   - 模块包装元素（wrapper）通过 `data-module` 标记模块类型（如 "user"、"custom"）
+ *   - 自定义模块额外通过 `data-custom-id` 标记真实数据 key（随机 id），用于区分多个自定义模块
+ *   - 行信息只在"行数或行高发生变化"时才更新，避免不必要的重渲染
+ */
+import { unrefElement, useDebounceFn, useMutationObserver, useResizeObserver } from "@vueuse/core";
+import { ref, watch, type Ref } from "vue";
 
+/** 单个"行"的信息（模块内部的一个 div） */
 interface RowInfo {
-  id: string;
-  height: number;
-  element: HTMLElement;
-  index: number;
-  html: string;
+  id: string; // 写入 DOM 的唯一 id（格式：row-item-模块key-序号）
+  height: number; // 行高度（offsetHeight + marginTop + marginBottom）
+  element: HTMLElement; // 行对应的 DOM 元素
+  index: number; // 行在模块内的序号（从 0 开始，用于分页裁剪 :nth-child）
+  html: string; // 行的 outerHTML（用于导出等场景）
 }
 
+/** 单个"模块"的信息（.resume-module-wrapper 包装元素） */
 interface ModuleInfo {
-  moduleKey: string;
-  rows: RowInfo[];
+  moduleKey: string; // 模块类型 key（来自 data-module，如 "user"、"custom"）
+  customId?: string; // 自定义模块的真实数据 key（来自 data-custom-id，用于区分多个自定义模块）
+  rows: RowInfo[]; // 模块下的所有行
 }
 
 /**
- * 为根div的一级div子元素绑定唯一ID和高度属性的Hooks
- * @param rootRef - 根容器的ref对象（必须指向根div）
- * @param watchOptions - 监听选项
- * @param options - 配置选项
- * @returns 包含行信息、总高度的响应式数据
+ * 为根 div 的一级子元素绑定唯一 ID 和高度信息，供分页逻辑使用
+ * @param rootRef - 测量容器的 ref（支持原生 div 或组件实例，内部通过 unrefElement 取 $el）
+ * @param watchOptions - 监听选项（样式变化时触发重新测量）
+ * @returns 模块 + 行信息的响应式列表
  */
-export function useRowInfo(
-  rootRef: Ref<HTMLDivElement | null>,
-  watchOptions: any,
-  options?: { selector?: string },
-) {
+export function useRowInfo(rootRef: Ref<HTMLDivElement | null>, watchOptions: any) {
   const idPrefix = "row-item";
-  const selector = options?.selector || ".resume-module-wrapper";
-
+  const selector = ".resume-module-wrapper";
   const moduleList = ref<ModuleInfo[]>([]);
-  const totalHeight = ref(0);
+  // 上一次测量的快照，用于判断行结构/高度是否真正变化
+  let lastSnapshot = "";
 
-  const getRowHeight = (div: HTMLElement): number => {
-    const style = window.getComputedStyle(div);
-    const marginTop = parseFloat(style.marginTop) || 0;
-    const marginBottom = parseFloat(style.marginBottom) || 0;
-    return div.offsetHeight + marginTop + marginBottom;
+  /** 行高度 = offsetHeight（含 padding/border）+ 上下 margin */
+  const rowHeight = (el: HTMLElement): number => {
+    const { marginTop, marginBottom } = window.getComputedStyle(el);
+    return el.offsetHeight + (parseFloat(marginTop) || 0) + (parseFloat(marginBottom) || 0);
   };
 
-  const createRowInfo = (div: HTMLElement, moduleKey: string, index: number): RowInfo => {
-    const rowId = `${idPrefix}-${moduleKey}-${index + 1}`;
-    div.id = rowId;
-    return {
-      id: rowId,
-      height: getRowHeight(div),
-      element: div,
-      index,
-      html: div.outerHTML,
-    };
-  };
-
-  const processModule = (
-    wrapper: HTMLElement,
-  ): { moduleKey: string; rows: RowInfo[]; height: number } => {
-    const moduleKey = wrapper.dataset.module || "";
-    const rows = Array.from(wrapper.children, (div, index) =>
-      createRowInfo(div as HTMLElement, moduleKey, index),
-    );
-    const height = rows.reduce((sum, row) => sum + row.height, 0);
-
-    return { moduleKey, rows, height };
-  };
-
-  const hasModulesChanged = (newModules: ModuleInfo[]): boolean => {
-    if (newModules.length !== moduleList.value.length) return true;
-
-    for (let i = 0; i < newModules.length; i++) {
-      const newRows = newModules[i].rows;
-      const oldRows = moduleList.value[i]?.rows || [];
-
-      if (newRows.length !== oldRows.length) return true;
-
-      for (let j = 0; j < newRows.length; j++) {
-        if (newRows[j].height !== oldRows[j]?.height) return true;
-      }
-    }
-
-    return false;
-  };
-
-  const handleRowInfo = () => {
-    const root = (
-      rootRef.value instanceof HTMLElement ? rootRef.value : (rootRef.value as any)?.$el
-    ) as HTMLElement | null;
-
+  /**
+   * 扫描测量容器：收集所有模块及行信息
+   * 只关心模块结构 + 行高度（内容 html 变化不参与比较），无变化时不更新 moduleList
+   */
+  const measure = () => {
+    // unrefElement 兼容原生 DOM 与组件实例（自动取 $el）
+    const root = unrefElement(rootRef);
     if (!root) {
       moduleList.value = [];
-      totalHeight.value = 0;
       return;
     }
-
-    const wrappers = root.querySelectorAll(selector);
-    const modules: ModuleInfo[] = [];
-    let sumHeight = 0;
-
-    wrappers.forEach((wrapper: HTMLElement) => {
-      const { moduleKey, rows, height } = processModule(wrapper);
-      modules.push({ moduleKey, rows });
-      sumHeight += height;
-    });
-
-    if (hasModulesChanged(modules)) {
+    const modules: ModuleInfo[] = Array.from(
+      root.querySelectorAll<HTMLElement>(selector),
+      (wrapper) => {
+        const moduleKey = wrapper.dataset.module || "";
+        const customId = wrapper.dataset.customId || "";
+        return {
+          moduleKey,
+          customId,
+          rows: Array.from(wrapper.children, (div, index) => {
+            const el = div as HTMLElement;
+            const id = `${idPrefix}-${moduleKey}-${index + 1}`;
+            el.id = id;
+            return { id, height: rowHeight(el), element: el, index, html: el.outerHTML };
+          }),
+        };
+      },
+    );
+    const snapshot = JSON.stringify(
+      modules.map((m) => [m.moduleKey, m.customId, m.rows.map((r) => r.height)]),
+    );
+    if (snapshot !== lastSnapshot) {
+      lastSnapshot = snapshot;
       moduleList.value = modules;
-      totalHeight.value = sumHeight;
     }
   };
-  const debouncedHandleRowInfo = useDebounceFn(handleRowInfo, 100);
+  // 防抖处理，避免连续 DOM 变化时高频执行测量
+  const debouncedMeasure = useDebounceFn(measure, 100);
 
-  onMounted(async () => {
-    await nextTick();
-    debouncedHandleRowInfo();
-  });
-
-  useResizeObserver(rootRef, debouncedHandleRowInfo);
-
-  useMutationObserver(rootRef, debouncedHandleRowInfo, {
+  // 容器挂载/重建时测量（immediate 在 ref 首次赋值时立即触发）
+  watch(rootRef, debouncedMeasure, { immediate: true });
+  // 容器尺寸变化（如缩放）时重新测量
+  useResizeObserver(rootRef, debouncedMeasure);
+  // 容器内 DOM 增删、文本变化时重新测量（内容编辑会改变高度）
+  useMutationObserver(rootRef, debouncedMeasure, {
     childList: true,
     subtree: true,
     characterData: true,
   });
+  // 样式配置（字号/行高/内边距）变化会改变高度，需重新测量
+  watch(watchOptions, debouncedMeasure, { deep: true });
 
-  watch(rootRef, debouncedHandleRowInfo, { immediate: false });
-
-  watch(watchOptions, debouncedHandleRowInfo, { deep: true });
-
-  return {
-    moduleList,
-    totalHeight,
-  };
+  return { moduleList };
 }
