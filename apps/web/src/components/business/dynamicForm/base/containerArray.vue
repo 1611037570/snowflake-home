@@ -34,6 +34,14 @@
 import { getUUID } from "@/utils";
 import { computed, inject, onMounted, onUnmounted, watch } from "vue";
 import { useDraggable } from "vue-draggable-plus";
+import {
+  DF_ADD,
+  DF_CURRENT_FORM,
+  DF_CURRENT_LENGTH,
+  DF_CURRENT_TYPE,
+  DF_REMOVE_ITEM,
+  DF_ROOT_DATA,
+} from "../code/injectionKeys";
 import ContainerObject from "./containerObject.vue";
 import FormItem from "./formItem.vue";
 const row: any = useTemplateRef("row");
@@ -43,20 +51,21 @@ defineProps<{
   currentIndex?: any;
 }>();
 const currentForm = defineModel<any>("currentForm");
-const rootData = inject<any>("df/root/data");
+const rootData = inject(DF_ROOT_DATA);
 const init = ref(false);
 const isDragging = ref(false);
 // 监听列表变化，为新增的子项补充 id，避免模板 :key 为 undefined 导致重复 key
+// 浅监听列表引用与长度：仅在新增/删除/整体替换时触发，避免子项输入时深度遍历整个列表
 watch(
-  () => currentForm.value?.list,
-  (list: any[]) => {
-    list?.forEach((item: any) => {
+  () => [currentForm.value?.list, currentForm.value?.list?.length],
+  ([list]) => {
+    (list as any[])?.forEach((item: any) => {
       if (!item.id) {
         item.id = getUUID().slice(0, 4);
       }
     });
   },
-  { deep: true, immediate: true },
+  { immediate: true },
 );
 onMounted(async () => {
   await nextTick(() => {});
@@ -177,15 +186,15 @@ const add = () => {
   currentForm.value.list.push(addConfig);
 };
 // 提供当前容器的长度
-provide("df/current/length", length);
+provide(DF_CURRENT_LENGTH, length);
 // 提供当前容器的表单数据
-provide("df/current/form", currentForm);
+provide(DF_CURRENT_FORM, currentForm);
 // 提供当前容器的类型
-provide("df/current/type", "array");
+provide(DF_CURRENT_TYPE, "array");
 // 提供添加方法
-provide("df/add", add);
+provide(DF_ADD, add);
 // 提供删除方法
-provide("df/removeItem", remove);
+provide(DF_REMOVE_ITEM, remove);
 </script>
 
 <style scoped>

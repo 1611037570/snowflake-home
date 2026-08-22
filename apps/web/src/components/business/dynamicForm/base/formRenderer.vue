@@ -32,6 +32,7 @@
 import { getUUID } from "@/utils";
 import { useDraggable } from "vue-draggable-plus";
 import { checkForm } from "../code/checkForm";
+import { DF_ROOT_DATA } from "../code/injectionKeys";
 import Container from "./container.vue";
 import ContainerArray from "./containerArray.vue";
 import ContainerObject from "./containerObject.vue";
@@ -39,7 +40,7 @@ import FormError from "./formError.vue";
 import FormItem from "./formItem.vue";
 
 defineOptions({ name: "FormRenderer" });
-const rootData = inject<any>("df/root/data");
+const rootData = inject(DF_ROOT_DATA);
 const row: any = useTemplateRef("row");
 // 表单数据
 const items = defineModel<any>("items", {});

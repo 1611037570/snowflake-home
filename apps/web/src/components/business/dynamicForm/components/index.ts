@@ -1,4 +1,5 @@
 import { inject } from "vue";
+import { INSTANCE_COMPONENTS } from "../code/injectionKeys";
 import { componentRegistry } from "../code/componentRegistry";
 
 export { componentRegistry };
@@ -11,7 +12,7 @@ export const getComponent = (name: string) => {
   if (!name) return;
 
   // 1. 优先从实例注入的组件库中查找 (SfDynamicForm 传入的 components prop)
-  const instanceComponents = inject<Record<string, any>>("instanceComponents", {});
+  const instanceComponents = inject<Record<string, any>>(INSTANCE_COMPONENTS, {});
 
   // 2. 委托给注册中心统一查找
   return componentRegistry.get(name, instanceComponents);

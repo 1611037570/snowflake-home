@@ -7,6 +7,7 @@
 import { getCurrentInstance, provide } from "vue";
 import FormRenderer from "./base/formRenderer.vue";
 import DataProxy from "./code/dataProxy";
+import { DF_ROOT_DATA, DF_ROOT_FORM, INSTANCE_COMPONENTS } from "./code/injectionKeys";
 // import useFormProxy from './code/useFormProxy'
 
 defineOptions({ name: "SfDynamicForm" });
@@ -28,11 +29,11 @@ const dataProxy = new DataProxy(data, emit);
 const formProxy = ref(form);
 
 // 注入实例组件库
-provide("instanceComponents", props.components);
+provide(INSTANCE_COMPONENTS, props.components);
 // 注入根数据
-provide("df/root/data", dataProxy);
+provide(DF_ROOT_DATA, dataProxy);
 // 注入根表单
-provide("df/root/form", formProxy);
+provide(DF_ROOT_FORM, formProxy);
 </script>
 
 <style scoped></style>

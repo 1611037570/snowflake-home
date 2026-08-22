@@ -1,5 +1,6 @@
 <script setup>
 import { ref, toRaw } from "vue";
+import { DF_CURRENT_FORM, DF_REMOVE } from "@/components/business/dynamicForm/code/injectionKeys";
 const { proxy } = getCurrentInstance();
 
 const props = defineProps({
@@ -12,8 +13,8 @@ const props = defineProps({
     default: false,
   },
 });
-const currentForm = inject("df/current/form");
-const objectRemove = inject("df/remove");
+const currentForm = inject(DF_CURRENT_FORM);
+const objectRemove = inject(DF_REMOVE);
 
 // 模块标题统一读取配置的 name 字段
 const title = computed(() => currentForm.value?.name || "未填写");

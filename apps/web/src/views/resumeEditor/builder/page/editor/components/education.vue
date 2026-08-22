@@ -1,5 +1,6 @@
 <script setup>
 import ItemCollapse from "./itemCollapse.vue";
+import { DF_CURRENT_INDEX } from "@/components/business/dynamicForm/code/injectionKeys";
 // 学校
 const name = defineModel("name", {
   type: String,
@@ -75,7 +76,7 @@ const modeList = [
     value: " ",
   },
 ];
-const currentIndex = inject("df/current/index");
+const currentIndex = inject(DF_CURRENT_INDEX);
 </script>
 
 <template>
