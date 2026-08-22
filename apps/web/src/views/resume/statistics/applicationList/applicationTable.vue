@@ -68,7 +68,7 @@ const handleDelete = (item) => {
 
 <template>
   <div>
-    <div class="flex items-center justify-end gap-2">
+    <div class="mt-3 flex items-center justify-end gap-2">
       <button type="button" :class="btnOutline" @click="openBatch">
         <SfIcon icon="mdi:database" size="3.5" />
         添加
@@ -80,13 +80,14 @@ const handleDelete = (item) => {
     </div>
 
     <div class="mt-3 flex items-center gap-3">
-      <SfSelect
-        v-model="filter.platform"
-        clearable
-        placeholder="全部平台"
-        class="flex-1"
-        :list="platformOptions"
-      />
+      <ElFormItem label="平台" prop="platform" class="flex-1">
+        <SfSelect
+          v-model="filter.platform"
+          clearable
+          placeholder="全部平台"
+          :list="platformOptions"
+        />
+      </ElFormItem>
       <span class="text-xs text-sf-text-2">共 {{ filteredList.length }} 条</span>
     </div>
 
