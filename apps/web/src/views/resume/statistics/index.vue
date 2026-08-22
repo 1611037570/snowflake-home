@@ -3,11 +3,20 @@
 import { useResumeStatisticsStore } from "@/stores";
 import { storeToRefs } from "pinia";
 import ApplicationList from "./components/applicationList.vue";
+import FollowUpList from "./components/followUpList.vue";
 import StatCards from "./components/statCards.vue";
 import TrendChart from "./components/trendChart.vue";
 
 const statisticsStore = useResumeStatisticsStore();
-const { applications } = storeToRefs(statisticsStore);
+const { applications, followUps } = storeToRefs(statisticsStore);
+const applicationListRef = ref(null);
+
+// 表格切换标签页
+const activeTab = ref("applications");
+const tabList = [
+  { value: "applications", name: "投递记录" },
+  { value: "followUps", name: "状态管理" },
+];
 </script>
 
 <template>
@@ -16,7 +25,7 @@ const { applications } = storeToRefs(statisticsStore);
       <h2 class="text-[20px] font-black text-sf-theme">简历情况统计</h2>
       <div>{{ $t("router.resumeStatisticsDesc") }}</div>
     </div>
-    <template v-if="applications.length">
+    <template v-if="applications.length || followUps.length">
       <StatCards />
       <TrendChart />
     </template>
@@ -29,12 +38,18 @@ const { applications } = storeToRefs(statisticsStore);
       </div>
       <p class="text-sm text-sf-text-2">开始记录你的第一条投递吧</p>
       <div class="flex items-center gap-3">
-        <el-button type="primary" @click="applicationListRef.openAdd()">新建一条</el-button>
-        <el-button @click="applicationListRef.openBatch()">批量添加</el-button>
+        <el-button @click="applicationListRef.openBatch()">添加</el-button>
       </div>
     </div>
-    <div v-show="applications.length">
-      <ApplicationList ref="applicationListRef" />
+    <div v-show="applications.length || followUps.length">
+      <SfTab v-model="activeTab" :list="tabList" class="mb-4">
+        <SfTabPane value="applications">
+          <ApplicationList ref="applicationListRef" />
+        </SfTabPane>
+        <SfTabPane value="followUps">
+          <FollowUpList />
+        </SfTabPane>
+      </SfTab>
     </div>
   </div>
 </template>

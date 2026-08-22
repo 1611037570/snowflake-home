@@ -6,7 +6,7 @@ import { storeToRefs } from "pinia";
 import { ref } from "vue";
 
 const statisticsStore = useResumeStatisticsStore();
-const { applications } = storeToRefs(statisticsStore);
+const { applications, followUps } = storeToRefs(statisticsStore);
 
 // 图表模式：week-近 7 天，month-当月
 const mode = ref("week");
@@ -24,8 +24,14 @@ const days = computed(() =>
           .format("YYYY-MM-DD"),
       ),
 );
-// 每天的投递数量
-const counts = computed(() => days.value.map((d) => applications.value.filter((item) => item.date === d).length));
+// 每天的投递数量（投递记录与跟进记录按日数量求和）
+const counts = computed(() =>
+  days.value.map(
+    (d) =>
+      applications.value.filter((item) => item.date === d).reduce((sum, item) => sum + item.count, 0) +
+      followUps.value.filter((item) => item.date === d).reduce((sum, item) => sum + item.count, 0),
+  ),
+);
 // 图表配置
 const options = computed(() => ({
   title: {
