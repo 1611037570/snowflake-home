@@ -33,4 +33,9 @@ defineExpose({} as ComponentInstance<typeof ElDatePicker>);
   /* 移除背景 */
   background-color: transparent !important;
 }
+
+.el-range-editor.el-input__wrapper {
+  //
+  background-color: revert-layer !important;
+}
 </style>
