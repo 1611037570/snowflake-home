@@ -4,7 +4,7 @@ import { useResumeStatisticsStore } from "@/stores";
 import { storeToRefs } from "pinia";
 
 const statisticsStore = useResumeStatisticsStore();
-const { startDate, appliedDays, applications } = storeToRefs(statisticsStore);
+const { startDate, appliedDays, totalApplications, activeCount, offerCount } = storeToRefs(statisticsStore);
 
 // 修改开始日期弹窗
 const editVisible = ref(false);
@@ -23,17 +23,6 @@ const handleSave = () => {
   editVisible.value = false;
 };
 
-// 进行中（待处理 + 已查看 + 面试）
-const activeCount = computed(
-  () =>
-    applications.value.filter((item) => item.status !== "offer" && item.status !== "rejected")
-      .length,
-);
-// Offer 数
-const offerCount = computed(
-  () => applications.value.filter((item) => item.status === "offer").length,
-);
-
 // 统计卡片配置
 const cards = computed(() => [
   {
@@ -45,7 +34,7 @@ const cards = computed(() => [
   },
   {
     label: "投递总数",
-    value: applications.value.length,
+    value: totalApplications.value,
     unit: "次",
     icon: "icon-park-outline:send-one",
     editable: false,
