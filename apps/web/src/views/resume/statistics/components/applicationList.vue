@@ -24,8 +24,10 @@ const btnBase =
   "flex h-7 cursor-pointer items-center gap-1 rounded-full px-3 text-xs font-black transition";
 const btnOutline = `${btnBase} border border-sf-theme text-sf-theme hover:bg-sf-theme-2 hover:text-sf-theme-text`;
 
-// 添加弹窗：动态多行（每行平台 + 数量）
+// 添加/修改弹窗：动态多行（每行平台 + 数量）
 const batchVisible = ref(false);
+// 当前编辑的投递记录 id（为空表示添加）
+const batchEditId = ref("");
 const batchRows = ref([{ platform: "boss", count: 1 }]);
 // 投递日期（默认当天，高级设置中可修改）
 const batchDate = ref(dayjs().format("YYYY-MM-DD"));
@@ -72,23 +74,37 @@ const filteredList = computed(() => {
   });
 });
 
-// 批量添加投递记录（一次可含多个平台明细）
+// 添加/修改投递记录（一次可含多个平台明细）
 const handleBatchAdd = () => {
   const details = batchRows.value.filter((row) => row.count > 0);
   if (!details.length) {
     ElMessage.warning("请填写至少一条投递数量");
     return;
   }
-  statisticsStore.addApplications(details, batchDate.value);
+  if (batchEditId.value) {
+    statisticsStore.updateApplication(batchEditId.value, { date: batchDate.value, details });
+  } else {
+    statisticsStore.addApplications(details, batchDate.value);
+  }
   batchVisible.value = false;
   batchRows.value = [{ platform: "boss", count: 1 }];
   batchDate.value = dayjs().format("YYYY-MM-DD");
   advancedVisible.value = false;
+  batchEditId.value = "";
 };
 // 打开添加弹窗（供父组件空状态复用）
 const openBatch = () => {
+  batchEditId.value = "";
   batchRows.value = [{ platform: "boss", count: 1 }];
   batchDate.value = dayjs().format("YYYY-MM-DD");
+  advancedVisible.value = false;
+  batchVisible.value = true;
+};
+// 打开修改弹窗：预填该条投递记录的平台明细与日期
+const openEdit = (item) => {
+  batchEditId.value = item.id;
+  batchRows.value = item.details.map((d) => ({ platform: d.platform, count: d.count }));
+  batchDate.value = item.date;
   advancedVisible.value = false;
   batchVisible.value = true;
 };
@@ -203,8 +219,15 @@ const getPlatformLabel = (platform) => {
       </el-table-column>
       <el-table-column prop="date" label="投递日期" width="140" sortable />
       <el-table-column prop="count" label="数量" width="120" sortable />
-      <el-table-column label="操作" width="120">
+      <el-table-column label="操作" width="160">
         <template #default="{ row }">
+          <button
+            type="button"
+            class="mr-2 cursor-pointer border-0 bg-transparent p-0 text-sf-text-2 transition hover:text-sf-theme"
+            @click="openEdit(row)"
+          >
+            <SfIcon icon="lucide:pencil" size="4" />
+          </button>
           <button
             type="button"
             class="mr-2 cursor-pointer border-0 bg-transparent p-0 text-sf-theme"
@@ -224,7 +247,7 @@ const getPlatformLabel = (platform) => {
     </el-table>
   </div>
 
-  <SfModal v-model="batchVisible" title="添加投递">
+  <SfModal v-model="batchVisible" :title="batchEditId ? '修改投递' : '添加投递'">
     <div class="w-[440px]">
       <el-form label-width="70px">
         <div
