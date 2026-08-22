@@ -25,18 +25,11 @@ function del() {
   });
 }
 function handleAdd() {
-  /**
-   * 错误的写法，原则上应该通过 inject('df/add')
-   * 但是数据是绑定在list上的，如果通过list会有空数组未渲染的情况，如果新增组件，又得处理不需要拖拽的元素
-   * 所以直接偷懒了
-   */
+  // 新增一条子项：深拷贝配置模板后加入列表，避免多个子项共享同一引用
   const currentFields = currentForm.value.fields[0];
   const { addConfig, list } = currentFields;
-  if (!addConfig) {
-    console.log("addConfig:>> ", addConfig);
-    return;
-  }
-  list.push(addConfig);
+  if (!addConfig) return;
+  list.push(structuredClone(addConfig));
 }
 
 // 标题编辑弹窗状态
