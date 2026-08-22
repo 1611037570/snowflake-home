@@ -12,6 +12,11 @@ const { applications, followUps } = storeToRefs(statisticsStore);
 // 是否有数据（无数据时显示空状态，屏蔽 SfTab）
 const hasData = computed(() => applications.value.length || followUps.value.length);
 
+// 标记上岸
+const handleLanded = () => {
+  statisticsStore.markLanded();
+};
+
 // 表格切换标签页
 const activeTab = ref("applications");
 const tabList = [
@@ -47,7 +52,7 @@ const openFollow = (item) => {
   <!-- 无数据时显示空状态 -->
   <div
     v-if="!hasData"
-    class="border-sf-b flex flex-col items-center gap-4 rounded-xl border bg-sf-primary p-10 shadow-sm"
+    class="flex flex-col items-center gap-4 rounded-xl border border-sf-b bg-sf-primary p-10 shadow-sm"
   >
     <div class="text-sf-text-2">
       <SfIcon icon="lucide:inbox" size="10" />
@@ -58,8 +63,16 @@ const openFollow = (item) => {
     </div>
   </div>
   <!-- 有数据时显示 SfTab + 表格 -->
-  <div v-else class="border-sf-b flex flex-col rounded-xl border bg-sf-primary p-3">
-    <SfTab v-model="activeTab" :list="tabList" class="bg-sf-primary"> </SfTab>
+  <div v-else class="flex flex-col rounded-xl border border-sf-b bg-sf-primary p-3">
+    <div class="flex items-center justify-between">
+      <div class="w-[400px]">
+        <SfTab v-model="activeTab" :list="tabList" class="bg-sf-primary"> </SfTab>
+      </div>
+      <div class="flex items-center gap-3">
+        <div>{{ $t("router.resumeStatisticsDesc") }}</div>
+        <el-button type="success" plain @click="handleLanded">上岸</el-button>
+      </div>
+    </div>
 
     <ApplicationTable
       v-if="activeTab == 'applications'"
