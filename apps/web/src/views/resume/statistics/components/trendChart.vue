@@ -32,6 +32,18 @@ const counts = computed(() =>
       followUps.value.filter((item) => item.date === d).length,
   ),
 );
+// 每天的被拒数量（跟进记录中状态为被拒的按日条数）
+const rejectedCounts = computed(() =>
+  days.value.map(
+    (d) => followUps.value.filter((item) => item.date === d && item.status === "rejected").length,
+  ),
+);
+// 每天的 Offer 数量（跟进记录中状态为 Offer 的按日条数）
+const offerCounts = computed(() =>
+  days.value.map(
+    (d) => followUps.value.filter((item) => item.date === d && item.status === "offer").length,
+  ),
+);
 // 图表配置
 const options = computed(() => ({
   title: {
@@ -45,6 +57,12 @@ const options = computed(() => ({
     type: "value",
     minInterval: 1,
   },
+  tooltip: {
+    trigger: "axis",
+  },
+  legend: {
+    data: ["投递数", "被拒", "Offer"],
+  },
   series: [
     {
       type: "line",
@@ -52,6 +70,18 @@ const options = computed(() => ({
       data: counts.value,
       smooth: true,
       areaStyle: {},
+    },
+    {
+      type: "line",
+      name: "被拒",
+      data: rejectedCounts.value,
+      smooth: true,
+    },
+    {
+      type: "line",
+      name: "Offer",
+      data: offerCounts.value,
+      smooth: true,
     },
   ],
 }));
