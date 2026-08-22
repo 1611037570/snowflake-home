@@ -282,7 +282,7 @@ onUnmounted(() => {
             :name="slice.moduleKey"
             @select="handleModuleClick(slice)"
           />
-          <ResumeModule :data="currentData" :name="slice.customId || slice.moduleKey" />
+          <ResumeModule :data="currentData" :name="slice.moduleKey" :customId="slice.customId" />
         </div>
       </div>
       <div class="pt-3 text-center text-xs opacity-50">
