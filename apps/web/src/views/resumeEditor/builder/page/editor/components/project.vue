@@ -1,5 +1,6 @@
 <script setup>
 import ItemCollapse from "./itemCollapse.vue";
+import { DF_CURRENT_INDEX } from "@/components/business/dynamicForm/code/injectionKeys";
 // 公司
 const name = defineModel("name", {
   type: String,
@@ -29,7 +30,7 @@ const result = defineModel("result", {
   type: String,
   default: "",
 });
-const currentIndex = inject("df/current/index");
+const currentIndex = inject(DF_CURRENT_INDEX);
 </script>
 
 <template>
