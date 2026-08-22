@@ -32,7 +32,7 @@
 
 <script setup lang="ts">
 import { getUUID } from "@/utils";
-import { computed, inject, onMounted, onUnmounted } from "vue";
+import { computed, inject, onMounted, onUnmounted, watch } from "vue";
 import { useDraggable } from "vue-draggable-plus";
 import ContainerObject from "./containerObject.vue";
 import FormItem from "./formItem.vue";
@@ -46,16 +46,20 @@ const currentForm = defineModel<any>("currentForm");
 const rootData = inject<any>("df/root/data");
 const init = ref(false);
 const isDragging = ref(false);
+// 监听列表变化，为新增的子项补充 id，避免模板 :key 为 undefined 导致重复 key
+watch(
+  () => currentForm.value?.list,
+  (list: any[]) => {
+    list?.forEach((item: any) => {
+      if (!item.id) {
+        item.id = getUUID().slice(0, 4);
+      }
+    });
+  },
+  { deep: true, immediate: true },
+);
 onMounted(async () => {
   await nextTick(() => {});
-  if (currentForm.value?.list) {
-    currentForm.value.list = currentForm.value.list.map((item: any) => {
-      return {
-        ...item,
-        id: item?.id || getUUID().slice(0, 4),
-      };
-    });
-  }
   init.value = true;
   if (!currentForm.value?.drag) {
     return;
