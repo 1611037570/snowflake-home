@@ -68,67 +68,58 @@ const getPlatformLabel = (platform) => {
 </script>
 
 <template>
-  <div class="flex flex-col rounded-xl border border-sf-border bg-sf-primary p-4 shadow-sm">
-    <div class="flex items-center justify-between">
-      <span class="flex items-center gap-1.5 text-sm font-bold text-sf-text-2">
-        <SfIcon icon="lucide:git-branch" size="4" />
-        状态管理
-      </span>
-    </div>
-
-    <div class="mt-3 flex items-center gap-3">
-      <SfSelect
-        v-model="filter.platform"
-        clearable
-        placeholder="全部平台"
-        class="flex-1"
-        :list="platformOptions"
-      />
-      <SfSelect
-        v-model="filter.status"
-        clearable
-        placeholder="全部状态"
-        class="flex-1"
-        :list="followUpStatusOptions"
-      />
-      <span class="text-xs text-sf-text-2">共 {{ filteredList.length }} 条</span>
-    </div>
-
-    <el-table :data="filteredList" class="mt-3 w-full" empty-text="暂无跟进记录">
-      <el-table-column prop="company" label="公司" min-width="180" show-overflow-tooltip />
-      <el-table-column label="平台" width="120">
-        <template #default="{ row }">{{ getPlatformLabel(row.platform) }}</template>
-      </el-table-column>
-      <el-table-column label="状态" width="150">
-        <template #default="{ row }">
-          <SfSelect v-model="row.status" size="small" class="w-28" :list="followUpStatusOptions">
-            <template #prefix>
-              <span class="h-2 w-2 rounded-full" :class="getStatusDotClass(row.status)"></span>
-            </template>
-          </SfSelect>
-        </template>
-      </el-table-column>
-      <el-table-column prop="date" label="投递日期" width="140" sortable />
-      <el-table-column label="操作" width="110">
-        <template #default="{ row }">
-          <button
-            type="button"
-            class="mr-2 cursor-pointer border-0 bg-transparent p-0 text-sf-text-2 transition hover:text-sf-theme"
-            @click="openEdit(row)"
-          >
-            <SfIcon icon="lucide:pencil" size="4" />
-          </button>
-          <button
-            type="button"
-            class="cursor-pointer border-0 bg-transparent p-0 text-sf-text-2 transition hover:text-sf-error"
-            @click="handleDelete(row)"
-          >
-            <SfIcon icon="lucide:trash-2" size="4" />
-          </button>
-        </template>
-      </el-table-column>
-    </el-table>
+  <div class="flex items-center gap-3">
+    <SfSelect
+      v-model="filter.platform"
+      clearable
+      placeholder="全部平台"
+      class="flex-1"
+      :list="platformOptions"
+    />
+    <SfSelect
+      v-model="filter.status"
+      clearable
+      placeholder="全部状态"
+      class="flex-1"
+      :list="followUpStatusOptions"
+    />
+    <span class="text-xs text-sf-text-2">共 {{ filteredList.length }} 条</span>
   </div>
+
+  <el-table :data="filteredList" class="mt-3 w-full" empty-text="暂无跟进记录">
+    <el-table-column prop="company" label="公司" min-width="180" show-overflow-tooltip />
+    <el-table-column label="平台" width="120">
+      <template #default="{ row }">{{ getPlatformLabel(row.platform) }}</template>
+    </el-table-column>
+    <el-table-column label="状态" width="150">
+      <template #default="{ row }">
+        <SfSelect v-model="row.status" size="small" class="w-28" :list="followUpStatusOptions">
+          <template #prefix>
+            <span class="h-2 w-2 rounded-full" :class="getStatusDotClass(row.status)"></span>
+          </template>
+        </SfSelect>
+      </template>
+    </el-table-column>
+    <el-table-column prop="date" label="投递日期" width="140" sortable />
+    <el-table-column label="操作" width="110">
+      <template #default="{ row }">
+        <button
+          type="button"
+          class="mr-2 cursor-pointer border-0 bg-transparent p-0 text-sf-text-2 transition hover:text-sf-theme"
+          @click="openEdit(row)"
+        >
+          <SfIcon icon="lucide:pencil" size="4" />
+        </button>
+        <button
+          type="button"
+          class="cursor-pointer border-0 bg-transparent p-0 text-sf-text-2 transition hover:text-sf-error"
+          @click="handleDelete(row)"
+        >
+          <SfIcon icon="lucide:trash-2" size="4" />
+        </button>
+      </template>
+    </el-table-column>
+  </el-table>
 
   <SfModal v-model="editVisible" title="修改公司名称">
     <div class="w-[440px]">

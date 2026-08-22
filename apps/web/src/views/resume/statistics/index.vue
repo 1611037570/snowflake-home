@@ -3,20 +3,12 @@
 import { useResumeStatisticsStore } from "@/stores";
 import { storeToRefs } from "pinia";
 import ApplicationList from "./components/applicationList/index.vue";
-import FollowUpList from "./components/followUpList.vue";
 import StatCards from "./components/statCards.vue";
 import TrendChart from "./components/trendChart.vue";
 
 const statisticsStore = useResumeStatisticsStore();
 const { applications, followUps } = storeToRefs(statisticsStore);
 const applicationListRef = ref(null);
-
-// 表格切换标签页
-const activeTab = ref("applications");
-const tabList = [
-  { value: "applications", name: "投递记录" },
-  { value: "followUps", name: "状态管理" },
-];
 </script>
 
 <template>
@@ -25,9 +17,7 @@ const tabList = [
       <h2 class="text-[20px] font-black text-sf-theme">简历情况统计</h2>
       <div>{{ $t("router.resumeStatisticsDesc") }}</div>
     </div>
-    <template v-if="applications.length || followUps.length">
-      <StatCards />
-    </template>
+    <StatCards v-if="applications.length || followUps.length" />
     <div
       v-else
       class="flex flex-col items-center gap-4 rounded-xl border border-sf-border bg-sf-primary p-10 shadow-sm"
@@ -40,20 +30,9 @@ const tabList = [
         <el-button @click="applicationListRef.openBatch()">添加</el-button>
       </div>
     </div>
-    <div v-show="applications.length || followUps.length">
-      <SfTab v-model="activeTab" :list="tabList" class="mb-4 bg-sf-primary">
-        <SfTabPane value="applications">
-          <ApplicationList ref="applicationListRef" />
-        </SfTabPane>
-        <SfTabPane value="followUps">
-          <FollowUpList />
-        </SfTabPane>
-      </SfTab>
-    </div>
+    <ApplicationList v-show="applications.length || followUps.length" ref="applicationListRef" />
 
-    <template v-if="applications.length || followUps.length">
-      <TrendChart />
-    </template>
+    <TrendChart v-if="applications.length || followUps.length" />
   </div>
 </template>
 
