@@ -191,7 +191,7 @@ export const DEFAULT_ACCOUNT_FORM = {
 };
 // 教育经历
 export const DEFAULT_EDUCATION_FORM = {
-  name: "社交账号",
+  name: "教育经历",
   key: "education",
   // 表单中所渲染的类型
   type: "object",
