@@ -160,7 +160,6 @@ export const DEFAULT_ACCOUNT_FORM = {
   ],
   component: "boxCollapse",
   props: {
-    title: "社交账号",
     add: true,
   },
   slot: "default",
@@ -199,7 +198,6 @@ export const DEFAULT_EDUCATION_FORM = {
   component: "boxCollapse",
   // 表单中所渲染的组件的属性
   props: {
-    title: "教育经历",
     add: true,
   },
   // 表单中所渲染的组件的双向绑定的模型
@@ -283,7 +281,6 @@ export const DEFAULT_ADVANTAGE_FORM = {
   key: "advantage",
   name: "个人优势",
   props: {
-    title: "个人优势",
     add: false,
   },
   model: {
@@ -355,7 +352,6 @@ export const DEFAULT_PROJECT_FORM = {
   name: "项目经历",
   component: "boxCollapse",
   props: {
-    title: "项目经历",
     add: true,
   },
   model: {
@@ -401,7 +397,6 @@ export const DEFAULT_CUSTOM_FORM = {
   name: "",
   component: "boxCollapse",
   props: {
-    title: "",
     add: true,
     edit: true,
   },

@@ -207,7 +207,6 @@ export const xiaoYangForm = {
       type: "object",
       component: "boxCollapse",
       props: {
-        title: "教育经历",
         add: true,
       },
       model: {
@@ -291,7 +290,6 @@ export const xiaoYangForm = {
       key: "skill",
       name: "专业技能",
       props: {
-        title: "专业技能",
         add: false,
       },
       model: {
@@ -316,7 +314,6 @@ export const xiaoYangForm = {
       name: "工作经历",
       component: "boxCollapse",
       props: {
-        title: "工作经历",
         add: true,
       },
       model: {
@@ -384,7 +381,6 @@ export const xiaoYangForm = {
       name: "项目经历",
       component: "boxCollapse",
       props: {
-        title: "项目经历",
         add: true,
       },
       model: {

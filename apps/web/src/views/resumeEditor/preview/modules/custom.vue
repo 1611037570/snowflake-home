@@ -26,7 +26,7 @@ const customList = computed(() => previewData.value?.[props.name] || []);
 // 从表单配置中反查标题（创建时填写的模块名称）
 const title = computed(() => {
   const field = currentConfig.value?.fields.find((f) => f.key === props.name);
-  return field?.props?.title || field?.name || "自定义模块";
+  return field?.name || "自定义模块";
 });
 </script>
 

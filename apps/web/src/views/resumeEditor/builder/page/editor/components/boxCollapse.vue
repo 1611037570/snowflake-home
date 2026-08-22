@@ -3,10 +3,6 @@ import { ref } from "vue";
 const { proxy } = getCurrentInstance();
 
 const props = defineProps({
-  title: {
-    type: String,
-    default: "未填写",
-  },
   add: {
     type: Boolean,
     default: true,
@@ -19,8 +15,11 @@ const props = defineProps({
 const currentForm = inject("df/current/form");
 const objectRemove = inject("df/remove");
 
+// 模块标题统一读取配置的 name 字段
+const title = computed(() => currentForm.value?.name || "未填写");
+
 function del() {
-  proxy.$confirm(`确定要删除${props.title}模块吗？`, "删除确认").then(() => {
+  proxy.$confirm(`确定要删除${title.value}模块吗？`, "删除确认").then(() => {
     objectRemove();
   });
 }
@@ -38,14 +37,14 @@ const editTitle = ref("");
 
 // 打开标题编辑弹窗（预填当前标题）
 function handleEdit() {
-  editTitle.value = props.title;
+  editTitle.value = title.value;
   editVisible.value = true;
 }
 
 // 保存编辑后的标题到表单配置
 function handleEditConfirm() {
   if (!editTitle.value) return;
-  currentForm.value.props.title = editTitle.value;
+  currentForm.value.name = editTitle.value;
   editVisible.value = false;
 }
 </script>
