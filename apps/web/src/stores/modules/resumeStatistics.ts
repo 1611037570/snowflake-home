@@ -96,6 +96,17 @@ export const useResumeStatisticsStore = defineStore(
         status: data.status,
       });
     }
+    // 修改投递记录（日期、平台明细）
+    function updateApplication(id: string, data: { date: string; details: { platform: string; count: number }[] }) {
+      const index = applications.value.findIndex((item) => item.id === id);
+      if (index === -1) return;
+      applications.value[index] = {
+        ...applications.value[index],
+        date: data.date,
+        details: data.details.map((d) => ({ ...d })),
+        count: data.details.reduce((sum, item) => sum + item.count, 0),
+      };
+    }
     // 删除投递记录
     function deleteApplication(id: string) {
       const index = applications.value.findIndex((item) => item.id === id);
@@ -146,6 +157,7 @@ export const useResumeStatisticsStore = defineStore(
       setStartDate,
       addApplications,
       followUp,
+      updateApplication,
       deleteApplication,
       updateFollowUp,
       deleteFollowUp,
