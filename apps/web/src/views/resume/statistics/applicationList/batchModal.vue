@@ -1,28 +1,18 @@
 <script setup>
 // 添加/修改投递弹窗：动态多行（每行平台 + 数量），含高级设置中的投递日期
-import { APPLICATION_PLATFORM, useResumeStatisticsStore } from "@/stores";
+import { useResumeStatisticsStore } from "@/stores";
 import dayjs from "dayjs";
 import { ElMessage } from "element-plus";
 import { storeToRefs } from "pinia";
+import { btnOutline, platformOptions } from "./utils";
 
 // 弹窗显隐（v-model 双向绑定）
 const visible = defineModel({ type: Boolean, default: false });
 // 当前编辑的投递记录 id（空表示添加）
 const props = defineProps({ editId: { type: String, default: "" } });
-const editId = computed(() => props.editId);
 
 const statisticsStore = useResumeStatisticsStore();
 const { applications } = storeToRefs(statisticsStore);
-
-// 平台选项（转换为 SfSelect 所需的 { value, name } 结构）
-const platformOptions = computed(() =>
-  APPLICATION_PLATFORM.map((item) => ({ value: item.value, name: item.label })),
-);
-
-// 按钮公共样式（完整类名字面量，可被 Tailwind 识别）
-const btnBase =
-  "flex h-7 cursor-pointer items-center gap-1 rounded-full px-3 text-xs font-black transition";
-const btnOutline = `${btnBase} border border-sf-theme text-sf-theme hover:bg-sf-theme-2 hover:text-sf-theme-text`;
 
 // 动态多行（每行平台 + 数量）
 const rows = ref([{ platform: "boss", count: 1 }]);
@@ -45,9 +35,9 @@ watch(
   visible,
   (val) => {
     if (!val) return;
-    if (editId.value) {
+    if (props.editId) {
       // 修改：预填该条投递记录的平台明细与日期
-      const target = applications.value.find((item) => item.id === editId.value);
+      const target = applications.value.find((item) => item.id === props.editId);
       if (target) {
         rows.value = target.details.map((d) => ({ platform: d.platform, count: d.count }));
         date.value = target.date;
@@ -69,8 +59,8 @@ const handleSubmit = () => {
     ElMessage.warning("请填写至少一条投递数量");
     return;
   }
-  if (editId.value) {
-    statisticsStore.updateApplication(editId.value, { date: date.value, details });
+  if (props.editId) {
+    statisticsStore.updateApplication(props.editId, { date: date.value, details });
   } else {
     statisticsStore.addApplications(details, date.value);
   }
@@ -82,7 +72,7 @@ const handleSubmit = () => {
   <SfModal v-model="visible" :title="editId ? '修改投递' : '添加投递'">
     <div class="w-[440px]">
       <el-form label-width="70px">
-        <div v-for="(row, index) in rows" :key="index" class="mb-2 flex items-center gap-3 p-3">
+        <div v-for="(row, index) in rows" :key="index" class="mb-3 flex items-center gap-3">
           <span class="flex items-center justify-center text-xs">平台 {{ index + 1 }}</span>
           <SfSelect v-model="row.platform" :list="platformOptions" class="flex-1" />
           <span class="text-xs text-sf-text-2">数量</span>
@@ -95,10 +85,10 @@ const handleSubmit = () => {
             <SfIcon icon="lucide:trash-2" size="4" />
           </button>
         </div>
-        <button type="button" :class="btnOutline" @click="addRow">
+        <div @click="addRow" class="flex-c cursor-pointer text-base text-sm hover:text-sf-theme">
           <SfIcon icon="lucide:plus" size="3.5" />
           添加一行
-        </button>
+        </div>
         <!-- 高级设置：默认收起，展开后可修改投递日期 -->
         <div class="mt-3">
           <button
@@ -134,8 +124,4 @@ const handleSubmit = () => {
   </SfModal>
 </template>
 
-<style lang="scss" scoped>
-:deep(.el-select) {
-  width: auto;
-}
-</style>
+<style lang="scss" scoped></style>

@@ -1,33 +1,23 @@
 <script setup>
 // 投递跟进弹窗：从指定平台扣减 1 条投递数量，转入状态管理记录
-import { APPLICATION_PLATFORM, FOLLOW_UP_STATUS, useResumeStatisticsStore } from "@/stores";
+import { useResumeStatisticsStore } from "@/stores";
 import dayjs from "dayjs";
 import { storeToRefs } from "pinia";
 import { reactive } from "vue";
+import { followUpStatusOptions, getPlatformLabel } from "./utils";
 
 // 弹窗显隐（v-model 双向绑定）
 const visible = defineModel({ type: Boolean, default: false });
 // 当前跟进的投递记录 id
 const props = defineProps({ targetId: { type: String, default: "" } });
-const targetId = computed(() => props.targetId);
 
 const statisticsStore = useResumeStatisticsStore();
 const { applications } = storeToRefs(statisticsStore);
-
-// 跟进状态选项
-const followUpStatusOptions = computed(() =>
-  FOLLOW_UP_STATUS.map((item) => ({ value: item.value, name: item.label })),
-);
 
 // 跟进表单
 const form = reactive({ company: "", status: "interview", platform: "boss" });
 // 当前跟进记录的平台明细（供平台下拉选择）
 const platformList = ref([]);
-
-// 平台标签文案
-const getPlatformLabel = (platform) => {
-  return APPLICATION_PLATFORM.find((item) => item.value === platform)?.label || platform || "--";
-};
 
 // 随机生成 4 个大写字母
 const randomLetters = () => {
@@ -46,8 +36,8 @@ const generateCompanyName = () => {
 watch(
   visible,
   (val) => {
-    if (!val || !targetId.value) return;
-    const target = applications.value.find((item) => item.id === targetId.value);
+    if (!val || !props.targetId) return;
+    const target = applications.value.find((item) => item.id === props.targetId);
     if (!target) return;
     form.company = "";
     form.status = "interview";
@@ -63,8 +53,8 @@ watch(
 
 // 确认跟进：指定平台投递数量 -1，转入状态管理，公司名不填则自动生成
 const handleSubmit = () => {
-  if (!targetId.value) return;
-  statisticsStore.followUp(targetId.value, {
+  if (!props.targetId) return;
+  statisticsStore.followUp(props.targetId, {
     company: form.company || generateCompanyName(),
     status: form.status,
     platform: form.platform,

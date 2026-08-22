@@ -1,22 +1,14 @@
 <script setup>
 // 状态管理：展示从投递记录转移出的面试/Offer/被拒记录，支持状态筛选、删除
-import { APPLICATION_PLATFORM, FOLLOW_UP_STATUS, useResumeStatisticsStore } from "@/stores";
+import { FOLLOW_UP_STATUS, useResumeStatisticsStore } from "@/stores";
 import { ElMessage } from "element-plus";
 import { storeToRefs } from "pinia";
 import { reactive } from "vue";
+import { followUpStatusOptions, getPlatformLabel, platformOptions } from "./utils";
 
 const statisticsStore = useResumeStatisticsStore();
 const { followUps } = storeToRefs(statisticsStore);
 const { proxy } = getCurrentInstance();
-
-// 平台选项（转换为 SfSelect 所需的 { value, name } 结构）
-const platformOptions = computed(() =>
-  APPLICATION_PLATFORM.map((item) => ({ value: item.value, name: item.label })),
-);
-// 跟进状态选项
-const followUpStatusOptions = computed(() =>
-  FOLLOW_UP_STATUS.map((item) => ({ value: item.value, name: item.label })),
-);
 
 // 筛选条件（空表示全部）
 const filter = reactive({ platform: "", status: "" });
@@ -60,10 +52,6 @@ const handleDelete = (item) => {
 // 状态圆点颜色
 const getStatusDotClass = (status) => {
   return FOLLOW_UP_STATUS.find((item) => item.value === status)?.dot || "bg-sf-info";
-};
-// 平台标签文案
-const getPlatformLabel = (platform) => {
-  return APPLICATION_PLATFORM.find((item) => item.value === platform)?.label || platform || "--";
 };
 </script>
 

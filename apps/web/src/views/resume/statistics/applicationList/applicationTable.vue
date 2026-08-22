@@ -1,26 +1,17 @@
 <script setup>
 // 投递记录表格：筛选、导出、删除，弹窗操作通过 emit 抛给父组件
-import { APPLICATION_PLATFORM, useResumeStatisticsStore } from "@/stores";
+import { useResumeStatisticsStore } from "@/stores";
 import dayjs from "dayjs";
 import { ElMessage } from "element-plus";
 import { storeToRefs } from "pinia";
 import { reactive } from "vue";
+import { btnOutline, getPlatformLabel, platformOptions } from "./utils";
 
 const emit = defineEmits(["openBatch", "openEdit", "openFollow"]);
 
 const statisticsStore = useResumeStatisticsStore();
 const { applications } = storeToRefs(statisticsStore);
 const { proxy } = getCurrentInstance();
-
-// 平台选项（转换为 SfSelect 所需的 { value, name } 结构）
-const platformOptions = computed(() =>
-  APPLICATION_PLATFORM.map((item) => ({ value: item.value, name: item.label })),
-);
-
-// 按钮公共样式（完整类名字面量，可被 Tailwind 识别）
-const btnBase =
-  "flex h-7 cursor-pointer items-center gap-1 rounded-full px-3 text-xs font-black transition";
-const btnOutline = `${btnBase} border border-sf-theme text-sf-theme hover:bg-sf-theme-2 hover:text-sf-theme-text`;
 
 // 筛选条件（空表示全部）
 const filter = reactive({ platform: "" });
@@ -72,10 +63,6 @@ const handleDelete = (item) => {
   proxy.$confirm("确定要删除这条投递记录吗？", "删除确认").then(() => {
     statisticsStore.deleteApplication(item.id);
   });
-};
-// 平台标签文案
-const getPlatformLabel = (platform) => {
-  return APPLICATION_PLATFORM.find((item) => item.value === platform)?.label || platform || "--";
 };
 </script>
 
