@@ -4,7 +4,8 @@ import { useResumeStatisticsStore } from "@/stores";
 import { storeToRefs } from "pinia";
 
 const statisticsStore = useResumeStatisticsStore();
-const { startDate, appliedDays, totalApplications, activeCount, offerCount } = storeToRefs(statisticsStore);
+const { startDate, appliedDays, totalApplications, activeCount, offerCount } =
+  storeToRefs(statisticsStore);
 
 // 修改开始日期弹窗
 const editVisible = ref(false);
@@ -61,7 +62,7 @@ const cards = computed(() => [
     <div
       v-for="card in cards"
       :key="card.label"
-      class="flex flex-col rounded-xl border border-sf-border bg-sf-primary p-3 shadow-sm"
+      class="border-sf-b flex flex-col rounded-xl border bg-sf-primary p-3 shadow-sm"
     >
       <div class="flex items-center justify-between">
         <span class="flex items-center gap-1.5 text-sm font-bold text-sf-text-2">

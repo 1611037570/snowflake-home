@@ -8,7 +8,7 @@ const totalVariableCount = computed(() => list.reduce((acc, curr) => acc + curr.
 
 <template>
   <div
-    class="relative overflow-hidden rounded-2xl border border-sf-border bg-sf-primary p-8 shadow-sm transition-all hover:shadow-md"
+    class="border-sf-b relative overflow-hidden rounded-2xl border bg-sf-primary p-8 shadow-sm transition-all hover:shadow-md"
   >
     <div class="relative z-10 flex flex-col items-center justify-between gap-6 md:flex-row">
       <div class="max-w-2xl">
@@ -25,13 +25,13 @@ const totalVariableCount = computed(() => list.reduce((acc, curr) => acc + curr.
 
       <div class="flex shrink-0 items-center gap-4">
         <div
-          class="flex h-28 w-28 flex-col items-center justify-center rounded-xl border border-sf-border bg-sf-bg-2 p-4 transition-transform hover:-translate-y-1 hover:shadow-sm"
+          class="border-sf-b flex h-28 w-28 flex-col items-center justify-center rounded-xl border bg-sf-bg-2 p-4 transition-transform hover:-translate-y-1 hover:shadow-sm"
         >
           <span class="mb-1 text-3xl font-bold text-sf-theme">{{ themeGroupCount }}</span>
           <span class="text-sm text-sf-text-3">主题色组</span>
         </div>
         <div
-          class="flex h-28 w-28 flex-col items-center justify-center rounded-xl border border-sf-border bg-sf-bg-2 p-4 transition-transform hover:-translate-y-1 hover:shadow-sm"
+          class="border-sf-b flex h-28 w-28 flex-col items-center justify-center rounded-xl border bg-sf-bg-2 p-4 transition-transform hover:-translate-y-1 hover:shadow-sm"
         >
           <span class="mb-1 text-3xl font-bold text-sf-theme">{{ totalVariableCount }}</span>
           <span class="text-sm text-sf-text-3">变量总数</span>

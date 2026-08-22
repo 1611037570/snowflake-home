@@ -47,7 +47,7 @@ const openFollow = (item) => {
   <!-- 无数据时显示空状态 -->
   <div
     v-if="!hasData"
-    class="flex flex-col items-center gap-4 rounded-xl border border-sf-border bg-sf-primary p-10 shadow-sm"
+    class="border-sf-b flex flex-col items-center gap-4 rounded-xl border bg-sf-primary p-10 shadow-sm"
   >
     <div class="text-sf-text-2">
       <SfIcon icon="lucide:inbox" size="10" />
@@ -58,7 +58,7 @@ const openFollow = (item) => {
     </div>
   </div>
   <!-- 有数据时显示 SfTab + 表格 -->
-  <div v-else class="flex flex-col rounded-xl border border-sf-border bg-sf-primary p-3">
+  <div v-else class="border-sf-b flex flex-col rounded-xl border bg-sf-primary p-3">
     <SfTab v-model="activeTab" :list="tabList" class="bg-sf-primary"> </SfTab>
 
     <ApplicationTable

@@ -22,7 +22,7 @@ function copyClass(cls: string) {
           ></div>
           <h2 class="text-xl font-bold text-sf-text transition-colors">{{ item.name }}</h2>
           <span
-            class="rounded-full border border-sf-border bg-sf-bg-2 px-2.5 py-0.5 text-xs font-medium text-sf-text-3 shadow-sm transition-colors group-hover/section:bg-sf-theme/5 group-hover/section:text-sf-theme"
+            class="border-sf-b rounded-full border bg-sf-bg-2 px-2.5 py-0.5 text-xs font-medium text-sf-text-3 shadow-sm transition-colors group-hover/section:bg-sf-theme/5 group-hover/section:text-sf-theme"
           >
             {{ item.list.length }} 种
           </span>
@@ -34,12 +34,12 @@ function copyClass(cls: string) {
           <div
             v-for="data in item.list"
             :key="data.class"
-            class="group relative flex cursor-pointer flex-col overflow-hidden rounded-xl border border-sf-border bg-sf-primary transition-all duration-300 hover:-translate-y-1.5 hover:border-sf-theme hover:shadow-xl"
+            class="group border-sf-b relative flex cursor-pointer flex-col overflow-hidden rounded-xl border bg-sf-primary transition-all duration-300 hover:-translate-y-1.5 hover:border-sf-theme hover:shadow-xl"
             @click="copyClass(data.class)"
           >
             <!-- 颜色展示区 -->
             <div
-              class="relative flex h-28 w-full items-center justify-center border-b border-sf-border transition-transform duration-500 group-hover:scale-105"
+              class="border-sf-b relative flex h-28 w-full items-center justify-center border-b transition-transform duration-500 group-hover:scale-105"
               :class="data.class"
             >
               <!-- Text visibility test if applicable -->
@@ -79,7 +79,7 @@ function copyClass(cls: string) {
               class="absolute inset-0 z-20 flex items-center justify-center opacity-0 transition-all duration-300 group-hover:opacity-100"
             >
               <span
-                class="flex translate-y-3 transform items-center gap-1.5 rounded-lg border border-sf-border bg-sf-primary/90 px-4 py-2 text-sm font-medium text-sf-text opacity-0 shadow-lg backdrop-blur-md transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100 hover:!bg-sf-theme hover:!text-sf-theme-text"
+                class="border-sf-b flex translate-y-3 transform items-center gap-1.5 rounded-lg border bg-sf-primary/90 px-4 py-2 text-sm font-medium text-sf-text opacity-0 shadow-lg backdrop-blur-md transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100 hover:!bg-sf-theme hover:!text-sf-theme-text"
               >
                 <SfIcon icon="mdi:content-copy" size="4" class="text-inherit" />
                 点击复制

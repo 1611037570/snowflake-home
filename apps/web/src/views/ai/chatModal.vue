@@ -35,7 +35,7 @@ const toggleChat = () => {
     >
       <div
         v-if="isVisible"
-        class="h-[600px] w-[460px] overflow-hidden rounded-2xl border border-sf-border/50 bg-sf-bg shadow-2xl ring-1 ring-black/5"
+        class="border-sf-b/50 h-[600px] w-[460px] overflow-hidden rounded-2xl border bg-sf-bg shadow-2xl ring-1 ring-black/5"
       >
         <Index />
       </div>

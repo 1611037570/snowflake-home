@@ -38,7 +38,7 @@ function handleConfirm() {
       :class="
         currentRoute === recommendedPage.url
           ? 'border-sf-theme bg-sf-theme/10'
-          : 'border-sf-border bg-sf-primary'
+          : 'border-sf-b bg-sf-primary'
       "
       @click="handleSelect(recommendedPage)"
     >
@@ -62,9 +62,7 @@ function handleConfirm() {
         type="button"
         class="flex cursor-pointer items-center rounded-xl border p-3 text-left transition hover:bg-sf-bg-2"
         :class="
-          currentRoute === item.url
-            ? 'border-sf-theme bg-sf-theme/10'
-            : 'border-sf-border bg-sf-primary'
+          currentRoute === item.url ? 'border-sf-theme bg-sf-theme/10' : 'border-sf-b bg-sf-primary'
         "
         @click="handleSelect(item)"
       >

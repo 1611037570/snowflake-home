@@ -1,7 +1,7 @@
 <template>
   <div class="flex flex-col p-1" v-if="list.length">
     <template v-for="(item, index) in list" :key="index">
-      <div class="my-1 border-t-[0.5px] border-sf-border" v-if="index > 0 && border"></div>
+      <div class="border-sf-b my-1 border-t-[0.5px]" v-if="index > 0 && border"></div>
       <div
         @mousedown="handleClick($event, item, index)"
         :class="[activeClass(item), hoverClass(item)]"

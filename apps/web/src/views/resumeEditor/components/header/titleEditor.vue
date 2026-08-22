@@ -47,7 +47,7 @@ defineExpose({
           @input="handleInput"
           v-model="tempTitle"
           placeholder="请输入标题"
-          class="w-full rounded-lg border border-sf-border bg-sf-bg"
+          class="border-sf-b w-full rounded-lg border bg-sf-bg"
         />
         <ElButton @click="handleResetTitle">重置</ElButton>
       </div>

@@ -30,7 +30,7 @@ test
 
 # TypeScript
 *.tsbuildinfo
-src/types/components.d.ts
+/src/types/components.d.ts
 
 # HTML 文件
 stats.html

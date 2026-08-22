@@ -40,6 +40,7 @@ declare module 'vue' {
     SfDropdown: typeof import('@components/business/dropdown/index.ts')['default']
     SfDynamicForm: typeof import('@components/business/dynamicForm/index.ts')['default']
     SfEcharts: typeof import('@components/business/echarts/index.ts')['default']
+    SfFooter: typeof import('@components/business/footer/index.ts')['default']
     SfImg: typeof import('@components/el/img/index.ts')['default']
     SfInput: typeof import('@components/el/input/index.ts')['default']
     SfInputNumber: typeof import('@components/el/inputNumber/index.ts')['default']

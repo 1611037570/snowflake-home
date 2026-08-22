@@ -39,7 +39,7 @@
     </div>
 
     <!-- 其他支持方式 -->
-    <div class="w-full border-t border-sf-border pt-6">
+    <div class="border-sf-b w-full border-t pt-6">
       <div class="mb-4 text-center text-lg font-medium text-sf-text/90">其他支持方式</div>
       <div class="mb-4 text-sf-text/80">除了资金赞助，您还可以通过以下方式支持项目：</div>
       <div class="mb-3 flex items-center gap-2 transition-all duration-200 hover:text-sf-theme/90">

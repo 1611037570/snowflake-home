@@ -44,7 +44,7 @@
 
           <!-- 内容卡片 -->
           <div
-            class="flex h-full flex-col overflow-hidden rounded-xl border border-sf-border/50 bg-sf-bg-2 p-4 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
+            class="border-sf-b/50 flex h-full flex-col overflow-hidden rounded-xl border bg-sf-bg-2 p-4 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
           >
             <!-- 文字描述 -->
             <div class="flex flex-1 flex-col justify-between">

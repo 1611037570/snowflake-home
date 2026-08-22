@@ -28,7 +28,7 @@ const emit = defineEmits(["toggle"]);
       gap,
       !collapsed
         ? 'border-sf-theme/20 bg-sf-theme/10 text-sf-theme'
-        : 'border-sf-border/10 bg-sf-bg-3 text-sf-text-3',
+        : 'border-sf-b/10 bg-sf-bg-3 text-sf-text-3',
     ]"
     @click="emit('toggle')"
   >

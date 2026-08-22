@@ -36,9 +36,7 @@ const handleLayoutClick = (item) => {
 </script>
 
 <template>
-  <header
-    class="flex h-12 items-center justify-between border-b border-sf-border bg-sf-primary px-6"
-  >
+  <header class="border-sf-b flex h-12 items-center justify-between border-b bg-sf-primary px-6">
     <!-- 左侧占位 -->
     <div class="flex flex-1 items-center gap-2">
       <SfTooltip :content="$t('router.resume')">
@@ -74,7 +72,7 @@ const handleLayoutClick = (item) => {
         <el-button
           @click="handleDownload"
           :loading="isPrinting"
-          class="!h-9 !rounded-lg !border-sf-border !bg-sf-primary !px-4 !font-medium !text-sf-text-2 hover:!border-sf-theme hover:!text-sf-theme"
+          class="!border-sf-b !h-9 !rounded-lg !bg-sf-primary !px-4 !font-medium !text-sf-text-2 hover:!border-sf-theme hover:!text-sf-theme"
         >
           <template #icon v-if="!isPrinting">
             <SfIcon icon="material-symbols:download" size="4.5" class="mr-1" />

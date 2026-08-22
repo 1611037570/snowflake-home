@@ -28,7 +28,9 @@ const days = computed(() =>
 const counts = computed(() =>
   days.value.map(
     (d) =>
-      applications.value.filter((item) => item.date === d).reduce((sum, item) => sum + item.count, 0) +
+      applications.value
+        .filter((item) => item.date === d)
+        .reduce((sum, item) => sum + item.count, 0) +
       followUps.value.filter((item) => item.date === d).length,
   ),
 );
@@ -88,7 +90,7 @@ const options = computed(() => ({
 </script>
 
 <template>
-  <div class="rounded-xl border border-sf-border bg-sf-primary p-4 shadow-sm">
+  <div class="border-sf-b rounded-xl border bg-sf-primary p-4 shadow-sm">
     <div class="mb-3">
       <el-radio-group v-model="mode">
         <el-radio-button value="week">近7天</el-radio-button>

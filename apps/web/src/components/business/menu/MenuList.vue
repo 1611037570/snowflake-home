@@ -1,5 +1,5 @@
 <template>
-  <div class="w-[200px] overflow-hidden rounded-xl border border-sf-border bg-sf-bg">
+  <div class="border-sf-b w-[200px] overflow-hidden rounded-xl border bg-sf-bg">
     <SfList :list="list" @onClick="select"></SfList>
   </div>
 </template>
