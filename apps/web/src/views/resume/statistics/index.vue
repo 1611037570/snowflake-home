@@ -20,14 +20,13 @@ const tabList = [
 </script>
 
 <template>
-  <div class="relative z-4 mx-auto flex w-[1120px] flex-col gap-4">
+  <div class="relative z-4 mx-auto flex w-[1120px] flex-col gap-4 pb-4">
     <div class="flex h-8 items-center gap-3">
       <h2 class="text-[20px] font-black text-sf-theme">简历情况统计</h2>
       <div>{{ $t("router.resumeStatisticsDesc") }}</div>
     </div>
     <template v-if="applications.length || followUps.length">
       <StatCards />
-      <TrendChart />
     </template>
     <div
       v-else
@@ -42,7 +41,7 @@ const tabList = [
       </div>
     </div>
     <div v-show="applications.length || followUps.length">
-      <SfTab v-model="activeTab" :list="tabList" class="mb-4">
+      <SfTab v-model="activeTab" :list="tabList" class="mb-4 bg-sf-primary">
         <SfTabPane value="applications">
           <ApplicationList ref="applicationListRef" />
         </SfTabPane>
@@ -51,6 +50,10 @@ const tabList = [
         </SfTabPane>
       </SfTab>
     </div>
+
+    <template v-if="applications.length || followUps.length">
+      <TrendChart />
+    </template>
   </div>
 </template>
 
