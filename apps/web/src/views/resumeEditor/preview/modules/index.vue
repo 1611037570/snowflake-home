@@ -26,15 +26,13 @@ const dynamicComponent = computed(() => {
     return;
   }
   const filePath = `./${props.name}.vue`;
-
+  // 自定义模块使用带前缀的 key,统一渲染为自定义模块组件
+  if (props.name.startsWith("custom_")) {
+    return defineAsyncComponent(components["./custom.vue"]);
+  }
   // 检查请求的组件是否存在于导入的模块中
   if (components[filePath]) {
     return defineAsyncComponent(components[filePath]);
-  }
-  // 检查是否为自定义模块
-  else if (props.data.isCustom || 1) {
-    // 自定义模式是随机id需要修正
-    return defineAsyncComponent(components["./custom.vue"]);
   }
 
   console.warn(`[ResumePreview] 组件 ${props.name} 不存在于目录中`);
