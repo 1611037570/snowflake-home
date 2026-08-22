@@ -68,7 +68,6 @@ const pages = computed(() => {
     if (!sliceModule || sliceRows.length === 0) return;
     currentPage.push({
       moduleKey: sliceModule.moduleKey,
-      customId: sliceModule.customId,
       visibleRowIndexes: sliceRows.map((r) => r.index),
     });
     sliceModule = null;
@@ -268,7 +267,7 @@ onUnmounted(() => {
       <div class="flex flex-1 flex-col gap-3">
         <div
           v-for="slice in pageSlices"
-          :key="slice.customId || slice.moduleKey"
+          :key="slice.moduleKey"
           class="resume-module-wrapper group relative rounded-xl hover:outline-2 hover:outline-gray-300 hover:outline-dashed"
           :class="{
             'rounded-xl bg-sf-theme-2/10 outline-2 outline-sf-theme-2 outline-dashed hover:outline-sf-theme-2':
@@ -282,7 +281,7 @@ onUnmounted(() => {
             :name="slice.moduleKey"
             @select="handleModuleClick(slice)"
           />
-          <ResumeModule :data="currentData" :name="slice.moduleKey" :customId="slice.customId" />
+          <ResumeModule :data="currentData" :name="slice.moduleKey" />
         </div>
       </div>
       <div class="pt-3 text-center text-xs opacity-50">

@@ -67,21 +67,21 @@ const customModuleName = ref("");
 const handleConfirm = () => {
   // 校验自定义模块名称是否为空
   if (!customModuleName.value) return;
-  // 生成随机id
-  const randomLetters = getUUID().substring(0, 4);
+  // 生成带前缀的唯一 key,作为模块标识与数据路径
+  const customKey = `custom_${getUUID().substring(0, 8)}`;
   // 深拷贝自定义模块配置
   const config = structuredClone(allConfig.custom);
-  config.key = randomLetters;
+  config.key = customKey;
   // 标记为自定义模块
   config.isCustom = true;
   // 重置自定义模块的名称
   config.name = customModuleName.value;
   // 重置自定义模块的标题
   config.props.title = customModuleName.value;
-  config.model.source = [randomLetters];
+  config.model.source = [customKey];
   // 重置自定义模块的子模块
   config.fields[0].addConfig.model.forEach((item) => {
-    item.source[0] = randomLetters;
+    item.source[0] = customKey;
   });
   // 添加自定义模块到当前表单配置
   currentConfig.value.fields.push(structuredClone(config));

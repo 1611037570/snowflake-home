@@ -9,8 +9,8 @@
  *   → page.vue 的 pages computed 依据行高做分页裁剪
  *
  * 关键约定：
- *   - 模块包装元素（wrapper）通过 `data-module` 标记模块类型（如 "user"、"custom"）
- *   - 自定义模块额外通过 `data-custom-id` 标记真实数据 key（随机 id），用于区分多个自定义模块
+ *   - 模块包装元素（wrapper）通过 `data-module` 标记模块类型（如 "user"、"custom_xxx"）
+ *   - 自定义模块的 data-module 即其唯一 key，天然区分多个自定义模块
  *   - 行信息只在"行数或行高发生变化"时才更新，避免不必要的重渲染
  */
 import { unrefElement, useDebounceFn, useMutationObserver, useResizeObserver } from "@vueuse/core";
@@ -27,8 +27,7 @@ interface RowInfo {
 
 /** 单个"模块"的信息（.resume-module-wrapper 包装元素） */
 interface ModuleInfo {
-  moduleKey: string; // 模块类型 key（来自 data-module，如 "user"、"custom"）
-  customId?: string; // 自定义模块的真实数据 key（来自 data-custom-id，用于区分多个自定义模块）
+  moduleKey: string; // 模块类型 key（来自 data-module，如 "user"、"custom_xxx"）
   rows: RowInfo[]; // 模块下的所有行
 }
 
@@ -66,10 +65,8 @@ export function useRowInfo(rootRef: Ref<HTMLDivElement | null>, watchOptions: an
       root.querySelectorAll<HTMLElement>(selector),
       (wrapper) => {
         const moduleKey = wrapper.dataset.module || "";
-        const customId = wrapper.dataset.customId || "";
         return {
           moduleKey,
-          customId,
           rows: Array.from(wrapper.children, (div, index) => {
             const el = div as HTMLElement;
             const id = `${idPrefix}-${moduleKey}-${index + 1}`;
@@ -79,9 +76,7 @@ export function useRowInfo(rootRef: Ref<HTMLDivElement | null>, watchOptions: an
         };
       },
     );
-    const snapshot = JSON.stringify(
-      modules.map((m) => [m.moduleKey, m.customId, m.rows.map((r) => r.height)]),
-    );
+    const snapshot = JSON.stringify(modules.map((m) => [m.moduleKey, m.rows.map((r) => r.height)]));
     if (snapshot !== lastSnapshot) {
       lastSnapshot = snapshot;
       moduleList.value = modules;
