@@ -24,6 +24,10 @@ export const useResumeStatisticsStore = defineStore(
   () => {
     // 开始投递日期（首次进入自动初始化，可手动修改）
     const startDate = ref("");
+    // 是否已上岸（上岸后隐藏统计内容，展示上岸页面）
+    const isLanded = ref(false);
+    // 上岸日期
+    const landDate = ref("");
     // 投递记录列表（按日期聚合为一条记录，内部含多平台明细，默认待处理）
     const applications = ref<any[]>([]);
     // 跟进状态记录列表（从投递记录转移出的面试/Offer/被拒记录）
@@ -134,6 +138,19 @@ export const useResumeStatisticsStore = defineStore(
     function clearApplications() {
       applications.value = [];
     }
+    // 标记上岸：记录上岸日期并隐藏统计内容
+    function markLanded() {
+      isLanded.value = true;
+      landDate.value = dayjs().format("YYYY-MM-DD");
+    }
+    // 重新开始记录：清空全部投递与跟进记录、重置开始日期、退出上岸状态
+    function restart() {
+      applications.value = [];
+      followUps.value = [];
+      startDate.value = dayjs().format("YYYY-MM-DD");
+      isLanded.value = false;
+      landDate.value = "";
+    }
 
     // 投递总数（投递记录数量求和 + 跟进记录条数）
     const totalApplications = computed(
@@ -152,6 +169,8 @@ export const useResumeStatisticsStore = defineStore(
 
     return {
       startDate,
+      isLanded,
+      landDate,
       applications,
       followUps,
       initStartDate,
@@ -164,6 +183,8 @@ export const useResumeStatisticsStore = defineStore(
       updateFollowUp,
       deleteFollowUp,
       clearApplications,
+      markLanded,
+      restart,
       totalApplications,
       activeCount,
       offerCount,
