@@ -2,10 +2,6 @@
 import ResumeModule from "../modules/index.vue";
 
 defineProps({
-  currentData: {
-    type: Object,
-    required: true,
-  },
   allModules: {
     type: Array,
     required: true,
@@ -15,13 +11,13 @@ defineProps({
 
 <template>
   <div class="flex flex-col">
-    <ResumeModule
-      :data="currentData"
-      :name="item.key"
-      v-for="(item, index) in allModules"
-      :key="index"
-      :data-module="item.key"
-      class="resume-module-wrapper"
-    />
+    <template v-for="(item, index) in allModules" :key="index">
+      <ResumeModule
+        :data="item"
+        :name="item.customId ? 'custom' : item.key"
+        :customId="item.key"
+        class="resume-module-wrapper"
+      />
+    </template>
   </div>
 </template>

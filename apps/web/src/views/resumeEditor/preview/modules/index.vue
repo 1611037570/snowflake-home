@@ -26,14 +26,13 @@ const dynamicComponent = computed(() => {
     return;
   }
   const filePath = `./${props.name}.vue`;
-  console.log("filePath:>> ", components[filePath]);
 
   // 检查请求的组件是否存在于导入的模块中
   if (components[filePath]) {
     return defineAsyncComponent(components[filePath]);
   }
   // 检查是否为自定义模块
-  else if (props.data.isCustom) {
+  else if (props.data.isCustom || 1) {
     // 自定义模式是随机id需要修正
     return defineAsyncComponent(components["./custom.vue"]);
   }
@@ -44,7 +43,7 @@ const dynamicComponent = computed(() => {
 </script>
 
 <template>
-  <component :is="dynamicComponent" v-if="dynamicComponent" v-bind="$attrs" />
+  <component :is="dynamicComponent" v-if="dynamicComponent" v-bind="{ ...props, ...$attrs }" />
 </template>
 
 <style lang="scss" scoped></style>

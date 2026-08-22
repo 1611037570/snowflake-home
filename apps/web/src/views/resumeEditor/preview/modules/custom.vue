@@ -4,7 +4,15 @@ import { getTime } from "../../utils";
 import Content from "../theme/content.vue";
 import Title from "../theme/title.vue";
 import Text from "./text.vue";
-
+const props = defineProps({
+  name: {
+    type: String,
+    required: true,
+  },
+  customId: {
+    type: String,
+  },
+});
 // 从上层注入获取代理后的预览数据
 const previewData = inject("previewData");
 
@@ -12,11 +20,16 @@ const fontValue = inject("fontValue");
 const lineHeightValue = inject("lineHeightValue");
 
 // 代理数据解包访问自定义模块数组
-const customList = computed(() => previewData.value?.custom || []);
+const customList = computed(() => previewData.value?.[props.customId] || []);
 </script>
 
 <template>
-  <div class="resume-row" data-module="custom" :style="[lineHeightValue(), fontValue()]">
+  <div
+    class="resume-row"
+    data-module="custom"
+    :data-custom-id="name"
+    :style="[lineHeightValue(), fontValue()]"
+  >
     <!-- 标题栏（自定义模块无固定标题，这里使用占位以保持结构一致；具体标题可由上层提供） -->
     <Title title="自定义模块"></Title>
     <!-- 内容区 -->
@@ -26,7 +39,7 @@ const customList = computed(() => previewData.value?.custom || []);
           <div class="font-bold" :style="[fontValue(3)]">
             <Text v-model="item.name" />
           </div>
-          <div v-if="item.post?.value">
+          <div>
             <Text v-model="item.post" />
           </div>
         </div>
