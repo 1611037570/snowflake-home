@@ -6,6 +6,10 @@ const props = defineProps({
   name: {
     type: String,
   },
+  data: {
+    type: Object,
+    default: () => {},
+  },
 });
 
 /**
@@ -22,10 +26,16 @@ const dynamicComponent = computed(() => {
     return;
   }
   const filePath = `./${props.name}.vue`;
+  console.log("filePath:>> ", components[filePath]);
 
   // 检查请求的组件是否存在于导入的模块中
   if (components[filePath]) {
     return defineAsyncComponent(components[filePath]);
+  }
+  // 检查是否为自定义模块
+  else if (props.data.isCustom) {
+    // 自定义模式是随机id需要修正
+    return defineAsyncComponent(components["./custom.vue"]);
   }
 
   console.warn(`[ResumePreview] 组件 ${props.name} 不存在于目录中`);
