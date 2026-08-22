@@ -3,6 +3,7 @@ import { useResumeStore } from "@/stores";
 import { allConfig } from "@/stores/modules/resume/formConfig";
 import { storeToRefs } from "pinia";
 import { computed, ref } from "vue";
+import { getUUID } from "@/utils";
 const resumeStore = useResumeStore();
 const { currentConfig } = storeToRefs(resumeStore);
 defineOptions({ name: "AddModule" });
@@ -49,11 +50,9 @@ const moduleOptions = computed(() => [
 ]);
 
 const handleAdd = (module) => {
-  console.log("module:>> ", module);
-
   const type = module.value;
+  // 自定义模块需要特殊处理
   if (type === "custom") {
-    console.log("allConfig[type]:>> ", allConfig[type]);
     showModal.value = true;
     return;
   }
@@ -64,20 +63,27 @@ const handleAdd = (module) => {
 
 const showModal = ref(false);
 const customModuleName = ref("");
-const randomLetters = Array.from({ length: 4 }, () =>
-  String.fromCharCode(97 + Math.floor(Math.random() * 26)),
-).join("");
-const handleConfirm = () => {
-  if (!customModuleName.value) return;
-  const config = structuredClone(allConfig.custom);
-  config.name = customModuleName.value;
-  config.props.title = customModuleName.value;
 
+const handleConfirm = () => {
+  // 校验自定义模块名称是否为空
+  if (!customModuleName.value) return;
+  // 生成随机id
+  const randomLetters = getUUID().substring(0, 4);
+  // 深拷贝自定义模块配置
+  const config = structuredClone(allConfig.custom);
   config.key = randomLetters;
+  // 标记为自定义模块
+  config.isCustom = true;
+  // 重置自定义模块的名称
+  config.name = customModuleName.value;
+  // 重置自定义模块的标题
+  config.props.title = customModuleName.value;
   config.model.source = [randomLetters];
+  // 重置自定义模块的子模块
   config.fields[0].addConfig.model.forEach((item) => {
     item.source[0] = randomLetters;
   });
+  // 添加自定义模块到当前表单配置
   currentConfig.value.fields.push(structuredClone(config));
 
   handleCancel();
@@ -100,7 +106,7 @@ const handleCancel = () => {
       v-for="item in moduleOptions"
       :key="item.name"
       type="button"
-      class="group border-sf-b flex h-10 cursor-pointer items-center justify-center gap-2 rounded-lg border bg-sf-primary px-3 text-sm font-medium text-sf-text-2 transition-all duration-200 hover:border-sf-theme hover:bg-sf-theme hover:text-sf-primary hover:shadow-sm"
+      class="group flex h-10 cursor-pointer items-center justify-center gap-2 rounded-lg border border-sf-b bg-sf-primary px-3 text-sm font-medium text-sf-text-2 transition-all duration-200 hover:border-sf-theme hover:bg-sf-theme hover:text-sf-primary hover:shadow-sm"
       @click="handleAdd(item)"
     >
       <SfIcon icon="ic:round-add" size="5" class="text-sf-text-3 group-hover:text-sf-primary" />
