@@ -38,7 +38,7 @@ const o = computed(() => {
     lineHeightValue: lineHeightValue.value(),
   };
 });
-const { moduleList } = useRowInfo(measureRef, o, { selector: ".resume-module-wrapper" });
+const { moduleList } = useRowInfo(measureRef, o);
 
 // 点击获取模块信息
 const handleModuleClick = (slice) => {
@@ -53,80 +53,63 @@ const handleModuleClick = (slice) => {
 
 // 分页逻辑
 const pages = computed(() => {
-  const result = [];
-  let currentPage = [];
-  let currentHeight = 0;
-
   const padding = currentUI.value.padding || 0;
   const maxContentHeight = HEIGHT - padding * 2 - 32; // 减去内边距和页脚空间
 
-  moduleList.value.forEach((group) => {
-    const groupHeight =
-      group.rows.reduce((sum, row) => sum + row.height, 0) +
-      (currentPage.length > 0 ? MODULE_GAP : 0);
+  const result = [];
+  let currentPage = [];
+  let currentHeight = 0;
+  // 当前正在累积的行切片（同一模块的连续行）
+  let sliceModule = null;
+  let sliceRows = [];
 
-    // 如果整个组（模块）能完全放入当前页，就整个放入
-    if (currentHeight + groupHeight <= maxContentHeight) {
-      currentPage.push({
-        moduleKey: group.moduleKey,
-        visibleRowIndexes: group.rows.map((r) => r.index),
-      });
-      currentHeight += groupHeight;
-    } else {
-      // 模块放不下，需要把内部的行拆分
-      const remainingRows = [...group.rows];
-
-      while (remainingRows.length > 0) {
-        let sliceHeight = 0;
-        const sliceRows = [];
-        const sliceGapHeight = currentPage.length > 0 ? MODULE_GAP : 0;
-
-        // 在当前页尽可能多地塞入行
-        while (
-          remainingRows.length > 0 &&
-          currentHeight + sliceGapHeight + sliceHeight + remainingRows[0].height <= maxContentHeight
-        ) {
-          const row = remainingRows.shift();
-          sliceRows.push(row);
-          sliceHeight += row.height;
-        }
-
-        // 如果一行都没塞进去，说明这一行的高度比剩余空间大
-        if (sliceRows.length === 0) {
-          if (currentHeight > 0) {
-            // 当前页已经有其他内容，翻页后再试
-            result.push(currentPage);
-            currentPage = [];
-            currentHeight = 0;
-            continue;
-          } else {
-            // 当前页是空的，这一行比整页都高，只能硬塞进去
-            const row = remainingRows.shift();
-            sliceRows.push(row);
-            sliceHeight += row.height;
-          }
-        }
-
-        currentPage.push({
-          moduleKey: group.moduleKey,
-          visibleRowIndexes: sliceRows.map((r) => r.index),
-        });
-        currentHeight += sliceGapHeight + sliceHeight;
-
-        // 如果还有剩余行，说明当前页满了，需要翻页
-        if (remainingRows.length > 0) {
-          result.push(currentPage);
-          currentPage = [];
-          currentHeight = 0;
-        }
-      }
+  // 把当前切片提交为页上的一个模块块
+  const commitSlice = () => {
+    if (!sliceModule || sliceRows.length === 0) return;
+    currentPage.push({
+      moduleKey: sliceModule.moduleKey,
+      customId: sliceModule.customId,
+      visibleRowIndexes: sliceRows.map((r) => r.index),
+    });
+    sliceModule = null;
+    sliceRows = [];
+  };
+  // 翻页：提交切片并把当前页存入结果
+  const newPage = () => {
+    commitSlice();
+    if (currentPage.length > 0) {
+      result.push(currentPage);
+      currentPage = [];
+      currentHeight = 0;
     }
-  });
+  };
 
-  // 补录最后一页
-  if (currentPage.length > 0 || result.length === 0) {
-    result.push(currentPage);
+  // 展平所有模块的行，逐行贪心装入页面
+  const items = moduleList.value.flatMap((group) =>
+    group.rows.map((row, index) => ({ group, row, isHead: index === 0 })),
+  );
+
+  for (const { group, row, isHead } of items) {
+    // 遇到新模块，先提交上一个切片，让 currentPage 如实反映页内内容
+    if (sliceModule && sliceModule !== group) commitSlice();
+
+    // 模块间距：模块首行且当前页已有内容时才计一次
+    let gap = currentPage.length > 0 && isHead ? MODULE_GAP : 0;
+
+    // 放不下时：当前页已有内容则翻页重试；空页仍放不下（单行超高）则硬塞
+    if (currentHeight + gap + row.height > maxContentHeight && currentPage.length > 0) {
+      newPage();
+      gap = 0; // 新页无内容，不再计间距
+    }
+
+    sliceModule = group;
+    sliceRows.push(row);
+    currentHeight += gap + row.height;
   }
+
+  // 提交最后切片并补录最后一页（无任何内容时保留一个空页）
+  newPage();
+  if (result.length === 0) result.push(currentPage);
 
   return result;
 });
@@ -265,7 +248,6 @@ onUnmounted(() => {
     class="absolute -z-10 opacity-0"
     ref="measureRef"
     :style="[paddingValue(), { width: `${WIDTH}px` }]"
-    :current-data="currentData"
     :all-modules="allModules"
   />
   <GeneratingMask />
@@ -286,7 +268,7 @@ onUnmounted(() => {
       <div class="flex flex-1 flex-col gap-3">
         <div
           v-for="slice in pageSlices"
-          :key="slice.moduleKey"
+          :key="slice.customId || slice.moduleKey"
           class="resume-module-wrapper group relative rounded-xl hover:outline-2 hover:outline-gray-300 hover:outline-dashed"
           :class="{
             'rounded-xl bg-sf-theme-2/10 outline-2 outline-sf-theme-2 outline-dashed hover:outline-sf-theme-2':
@@ -300,7 +282,7 @@ onUnmounted(() => {
             :name="slice.moduleKey"
             @select="handleModuleClick(slice)"
           />
-          <ResumeModule :data="currentData" :name="slice.moduleKey" />
+          <ResumeModule :data="currentData" :name="slice.customId || slice.moduleKey" />
         </div>
       </div>
       <div class="pt-3 text-center text-xs opacity-50">
