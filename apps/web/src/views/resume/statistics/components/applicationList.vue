@@ -227,17 +227,21 @@ const getPlatformLabel = (platform) => {
   <SfModal v-model="batchVisible" title="添加投递">
     <div class="w-[440px]">
       <el-form label-width="70px">
-        <div v-for="(row, index) in batchRows" :key="index" class="mb-2 flex items-center gap-2">
-          <!-- <div > -->
-          <SfSelect v-model="row.platform" :list="platformOptions" class="w-[180px]" />
-          <!-- </div> -->
-          <el-input-number v-model="row.count" :min="1" :max="1000" class="flex-1" />
+        <div
+          v-for="(row, index) in batchRows"
+          :key="index"
+          class="mb-2 flex items-center gap-2 p-3"
+        >
+          <span class="flex items-center justify-center text-xs"> 平台 {{ index + 1 }} </span>
+          <SfSelect v-model="row.platform" :list="platformOptions" class="flex-1" />
+          <span class="text-xs text-sf-text-2">数量</span>
+          <SfInputNumber v-model="row.count" :min="1" :max="1000" class="w-28 flex-shrink-0" />
           <button
             type="button"
-            class="cursor-pointer border-0 bg-transparent p-0 text-sf-error"
+            class="flex-shrink-0 cursor-pointer border-0 bg-transparent p-1 text-sf-text-2 transition hover:text-sf-error"
             @click="removeBatchRow(index)"
           >
-            <SfIcon icon="lucide:minus-circle" size="4" />
+            <SfIcon icon="lucide:trash-2" size="4" />
           </button>
         </div>
         <button type="button" :class="btnOutline" @click="addBatchRow">
