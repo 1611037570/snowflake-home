@@ -63,12 +63,11 @@ const openFollow = (item) => {
 
     <ApplicationTable
       v-if="activeTab == 'applications'"
-      class="mt-3"
       @open-batch="openBatch"
       @open-edit="openEdit"
       @open-follow="openFollow"
     />
-    <FollowUpList v-if="activeTab == 'followUps'" class="mt-3" />
+    <FollowUpList v-if="activeTab == 'followUps'" />
   </div>
 
   <BatchModal v-model="batchVisible" :edit-id="batchEditId" />
