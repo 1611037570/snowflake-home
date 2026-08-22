@@ -15,7 +15,6 @@ export const APPLICATION_PLATFORM = [
   { value: "boss", label: "Boss直聘" },
   { value: "zhilian", label: "智联招聘" },
   { value: "51job", label: "前程无忧" },
-  { value: "lagou", label: "拉勾招聘" },
   { value: "liepin", label: "猎聘" },
   { value: "other", label: "其他" },
 ];
@@ -97,7 +96,10 @@ export const useResumeStatisticsStore = defineStore(
       });
     }
     // 修改投递记录（日期、平台明细）
-    function updateApplication(id: string, data: { date: string; details: { platform: string; count: number }[] }) {
+    function updateApplication(
+      id: string,
+      data: { date: string; details: { platform: string; count: number }[] },
+    ) {
       const index = applications.value.findIndex((item) => item.id === id);
       if (index === -1) return;
       applications.value[index] = {
