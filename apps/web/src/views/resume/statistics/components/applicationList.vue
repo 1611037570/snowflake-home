@@ -27,6 +27,10 @@ const btnOutline = `${btnBase} border border-sf-theme text-sf-theme hover:bg-sf-
 // 添加弹窗：动态多行（每行平台 + 数量）
 const batchVisible = ref(false);
 const batchRows = ref([{ platform: "boss", count: 1 }]);
+// 投递日期（默认当天，高级设置中可修改）
+const batchDate = ref(dayjs().format("YYYY-MM-DD"));
+// 高级设置展开状态（默认收起）
+const advancedVisible = ref(false);
 // 新增一行
 const addBatchRow = () => {
   batchRows.value.push({ platform: "boss", count: 1 });
@@ -75,13 +79,17 @@ const handleBatchAdd = () => {
     ElMessage.warning("请填写至少一条投递数量");
     return;
   }
-  statisticsStore.addApplications(details);
+  statisticsStore.addApplications(details, batchDate.value);
   batchVisible.value = false;
   batchRows.value = [{ platform: "boss", count: 1 }];
+  batchDate.value = dayjs().format("YYYY-MM-DD");
+  advancedVisible.value = false;
 };
 // 打开添加弹窗（供父组件空状态复用）
 const openBatch = () => {
   batchRows.value = [{ platform: "boss", count: 1 }];
+  batchDate.value = dayjs().format("YYYY-MM-DD");
+  advancedVisible.value = false;
   batchVisible.value = true;
 };
 // 打开跟进弹窗
@@ -236,9 +244,34 @@ const getPlatformLabel = (platform) => {
           <SfIcon icon="lucide:plus" size="3.5" />
           添加一行
         </button>
+        <!-- 高级设置：默认收起，展开后可修改投递日期 -->
+        <div class="mt-3">
+          <button
+            type="button"
+            class="flex cursor-pointer items-center gap-1 border-0 bg-transparent p-0 text-xs text-sf-text-2 transition hover:text-sf-theme"
+            @click="advancedVisible = !advancedVisible"
+          >
+            <SfIcon
+              :icon="advancedVisible ? 'lucide:chevron-down' : 'lucide:chevron-right'"
+              size="3.5"
+            />
+            高级设置
+          </button>
+          <div v-show="advancedVisible" class="mt-2">
+            <el-form-item label="投递日期" class="mb-0">
+              <SfDatePicker
+                v-model="batchDate"
+                type="date"
+                value-format="YYYY-MM-DD"
+                placeholder="请选择投递日期"
+                class="w-full"
+              />
+            </el-form-item>
+          </div>
+        </div>
       </el-form>
-      <div class="text-xs text-sf-text-2">同一天记录自动聚合为一条，默认状态为待处理</div>
-      <div class="mt-4 flex justify-end gap-2">
+      <div class="my-3 text-xs text-sf-text-2">同一天记录自动合并为一条</div>
+      <div class="flex justify-end">
         <el-button @click="batchVisible = false">取消</el-button>
         <el-button type="primary" @click="handleBatchAdd">确定</el-button>
       </div>
@@ -258,7 +291,6 @@ const getPlatformLabel = (platform) => {
           <SfSelect v-model="followForm.platform" class="w-full" :list="followPlatformList" />
         </el-form-item>
       </el-form>
-      <div class="text-xs text-sf-text-2">跟进后将从该平台投递记录中扣减 1 条，转入状态管理</div>
       <div class="mt-4 flex justify-end gap-2">
         <el-button @click="followVisible = false">取消</el-button>
         <el-button type="primary" @click="handleFollow">确定</el-button>
