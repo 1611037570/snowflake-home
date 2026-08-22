@@ -1,16 +1,6 @@
 <template>
   <!-- 第一屏：轻舟简历 - 首页主视觉 -->
   <section id="hero" class="relative flex min-h-screen flex-col overflow-hidden">
-    <!-- 远山装饰 - SVG -->
-    <div class="absolute right-0 bottom-0 left-0 opacity-20">
-      <svg viewBox="0 0 1440 320" class="w-full">
-        <path
-          fill="var(--sf-theme)"
-          d="M0,224L48,213.3C96,203,192,181,288,181.3C384,181,480,203,576,218.7C672,235,768,245,864,229.3C960,213,1056,171,1152,165.3C1248,160,1344,192,1392,208L1440,224L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"
-        ></path>
-      </svg>
-    </div>
-
     <!-- 主内容区 -->
     <div class="relative z-10 flex flex-1 items-center">
       <div class="mx-auto grid w-full max-w-7xl items-center gap-12 px-6 lg:grid-cols-2">
@@ -171,16 +161,7 @@
         </div>
       </div>
     </div>
-
-    <!-- 向下滚动提示 -->
-    <div class="absolute bottom-8 left-1/2 z-10 flex -translate-x-1/2 justify-center">
-      <div class="flex flex-col items-center gap-2 text-sf-text">
-        <span class="text-xs">向下滚动</span>
-        <div class="flex h-10 w-6 justify-center rounded-full border-2 border-sf-text-3 pt-2">
-          <div class="h-3 w-1.5 animate-bounce rounded-full bg-sf-text"></div>
-        </div>
-      </div>
-    </div>
+    <Guide />
   </section>
   <!-- 第二屏：云帆编辑器 -->
   <section
@@ -234,24 +215,13 @@
         </div>
       </div>
     </div>
+    <Guide />
   </section>
   <!-- 北斗AI助手 -->
   <section
     id="ai"
     class="relative flex min-h-screen items-center justify-center overflow-hidden py-24"
   >
-    <!-- 星点装饰 -->
-    <div class="absolute inset-0 opacity-40">
-      <div class="absolute top-1/4 left-1/4 h-1 w-1 rounded-full bg-indigo-300"></div>
-      <div class="absolute top-1/3 right-1/3 h-1.5 w-1.5 rounded-full bg-indigo-300"></div>
-      <div class="absolute top-1/2 left-1/5 h-1 w-1 rounded-full bg-indigo-300"></div>
-      <div class="absolute right-1/4 bottom-1/3 h-1 w-1 rounded-full bg-purple-300"></div>
-      <div class="absolute bottom-1/4 left-1/3 h-1.5 w-1.5 rounded-full bg-purple-300"></div>
-      <div class="absolute top-1/5 right-1/4 h-1 w-1 rounded-full bg-indigo-300"></div>
-      <div class="absolute top-2/3 left-1/4 h-1 w-1 rounded-full bg-indigo-300"></div>
-      <div class="absolute right-1/3 bottom-1/5 h-1.5 w-1.5 rounded-full bg-purple-300"></div>
-    </div>
-
     <div class="relative z-10 mx-auto w-full max-w-7xl px-6">
       <div class="grid w-full items-center gap-16 md:grid-cols-2">
         <div class="text-center lg:text-left">
@@ -358,6 +328,7 @@
         </div>
       </div>
     </div>
+    <Guide />
   </section>
   <section
     id="stats"
@@ -436,6 +407,7 @@
 
 <script setup>
 import HeroTitle from "./heroTitle.vue";
+import Guide from "./guide.vue";
 import { useRouter } from "vue-router";
 
 const router = useRouter();
