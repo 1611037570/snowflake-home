@@ -32,8 +32,8 @@ function remove() {
 }
 // 提供当前容器的索引
 provide("df/current/index", toRef(props, "currentIndex"));
-// 提供当前容器的表单数据
-provide("df/current/form", props.currentForm);
+// 提供当前容器的表单数据（统一提供 ref，与 container/containerArray 保持一致）
+provide("df/current/form", toRef(props, "currentForm"));
 // 提供当前容器的类型
 provide("df/current/type", "object");
 // 提供删除方法
