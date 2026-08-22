@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from "vue";
+import { ref, toRaw } from "vue";
 const { proxy } = getCurrentInstance();
 
 const props = defineProps({
@@ -24,11 +24,11 @@ function del() {
   });
 }
 function handleAdd() {
-  // 新增一条子项：深拷贝配置模板后加入列表，避免多个子项共享同一引用
+  // 新增一条子项：toRaw 解包响应式代理后再深拷贝，避免 structuredClone 克隆 Proxy 报错
   const currentFields = currentForm.value.fields[0];
   const { addConfig, list } = currentFields;
   if (!addConfig) return;
-  list.push(structuredClone(addConfig));
+  list.push(structuredClone(toRaw(addConfig)));
 }
 
 // 标题编辑弹窗状态
