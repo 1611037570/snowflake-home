@@ -14,7 +14,7 @@ defineProps({
     <template v-for="(item, index) in allModules" :key="index">
       <ResumeModule
         :data="item"
-        :name="item.customId ? 'custom' : item.key"
+        :name="item.isCustom ? 'custom' : item.key"
         :customId="item.key"
         class="resume-module-wrapper"
       />
