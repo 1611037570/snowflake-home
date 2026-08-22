@@ -2,7 +2,7 @@
 // 简历情况统计模块：求职进度看板
 import { useResumeStatisticsStore } from "@/stores";
 import { storeToRefs } from "pinia";
-import ApplicationList from "./components/applicationList.vue";
+import ApplicationList from "./components/applicationList/index.vue";
 import FollowUpList from "./components/followUpList.vue";
 import StatCards from "./components/statCards.vue";
 import TrendChart from "./components/trendChart.vue";
