@@ -1,4 +1,6 @@
 <script setup>
+import { useResumeStore } from "@/stores";
+import { storeToRefs } from "pinia";
 import { computed, inject } from "vue";
 import { getTime } from "../../utils";
 import Content from "../theme/content.vue";
@@ -16,14 +18,22 @@ const previewData = inject("previewData");
 const fontValue = inject("fontValue");
 const lineHeightValue = inject("lineHeightValue");
 
+const resumeStore = useResumeStore();
+const { currentConfig } = storeToRefs(resumeStore);
+
 // 代理数据解包访问自定义模块数组（数据以模块 key 为路径）
 const customList = computed(() => previewData.value?.[props.name] || []);
+// 从表单配置中反查标题（创建时填写的模块名称）
+const title = computed(() => {
+  const field = currentConfig.value?.fields.find((f) => f.key === props.name);
+  return field?.props?.title || field?.name || "自定义模块";
+});
 </script>
 
 <template>
   <div class="resume-row" :data-module="name" :style="[lineHeightValue(), fontValue()]">
-    <!-- 标题栏（自定义模块无固定标题，这里使用占位以保持结构一致；具体标题可由上层提供） -->
-    <Title title="自定义模块"></Title>
+    <!-- 标题栏（使用创建时填写的模块名称） -->
+    <Title :title="title"></Title>
     <!-- 内容区 -->
     <template v-for="(item, index) in customList" :key="index">
       <div class="mb-3 flex items-center justify-between" :style="[lineHeightValue(3)]">
