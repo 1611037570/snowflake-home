@@ -49,9 +49,9 @@ export const useResumeStatisticsStore = defineStore(
       startDate.value = date;
     }
     // 批量新增投递记录：按日期聚合为一条记录，内部含多平台明细，数量累加
-    function addApplications(details: { platform: string; count: number }[]) {
-      const date = dayjs().format("YYYY-MM-DD");
-      const existing = applications.value.find((item) => item.date === date);
+    function addApplications(details: { platform: string; count: number }[], date?: string) {
+      const targetDate = date || dayjs().format("YYYY-MM-DD");
+      const existing = applications.value.find((item) => item.date === targetDate);
       if (existing) {
         // 同日期：合并平台明细，同平台数量累加
         details.forEach((d) => {
@@ -66,7 +66,7 @@ export const useResumeStatisticsStore = defineStore(
       } else {
         applications.value.push({
           id: getUUID().slice(0, 6),
-          date,
+          date: targetDate,
           details: details.map((d) => ({ ...d })),
           count: details.reduce((sum, item) => sum + item.count, 0),
         });
