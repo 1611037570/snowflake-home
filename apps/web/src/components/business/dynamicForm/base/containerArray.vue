@@ -52,7 +52,7 @@ onMounted(async () => {
     currentForm.value.list = currentForm.value.list.map((item: any) => {
       return {
         ...item,
-        id: item?.id || getUUID(),
+        id: item?.id || getUUID().slice(0, 4),
       };
     });
   }

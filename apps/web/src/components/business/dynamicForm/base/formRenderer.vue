@@ -63,14 +63,14 @@ function ensureFieldIds(fields: any[]) {
   if (!fields) return;
   fields.forEach((item: any) => {
     if (!item.id) {
-      item.id = getUUID();
+      item.id = getUUID().slice(0, 4);
     }
   });
 }
 onMounted(async () => {
   await nextTick();
   if (!items.value.id) {
-    items.value.id = getUUID();
+    items.value.id = getUUID().slice(0, 4);
   }
   ensureFieldIds(items.value.fields);
   watch(
