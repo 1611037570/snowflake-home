@@ -12,30 +12,47 @@
 
   <!-- 抽屉 -->
   <el-drawer v-model="drawerVisible" title="控制台" direction="rtl" size="50%">
-    <SfCollapse v-model="activeNames" v-if="drawerVisible">
-      <SfCollapseItem name="preview">
-        <template #title>预览数据 (previewData)</template>
-        <div class="max-h-[50vh] overflow-y-auto">
-          <MdPreview
-            :modelValue="previewMd"
-            editorId="debug-preview"
-            :codeFoldable="false"
-            class="bg-transparent! p-0!"
-          />
-        </div>
-      </SfCollapseItem>
-      <SfCollapseItem name="raw">
-        <template #title>原始数据 (currentData)</template>
-        <div class="max-h-[50vh] overflow-y-auto">
-          <MdPreview
-            :modelValue="rawMd"
-            editorId="debug-raw"
-            :codeFoldable="false"
-            class="bg-transparent! p-0!"
-          />
-        </div>
-      </SfCollapseItem>
-    </SfCollapse>
+    <div v-if="drawerVisible" class="flex flex-col gap-3 p-3">
+      <SfTab :list="tabList" v-model="activeTab">
+        <SfTabPane value="data">
+          12321
+          <SfCollapse v-model="activeNames">
+            <SfCollapseItem name="preview">
+              <template #title>预览数据 (previewData)</template>
+              <div class="max-h-[50vh] overflow-y-auto">
+                <MdPreview
+                  :modelValue="previewMd"
+                  editorId="debug-preview"
+                  :codeFoldable="false"
+                  class="bg-transparent! p-0!"
+                />
+              </div>
+            </SfCollapseItem>
+            <SfCollapseItem name="raw">
+              <template #title>原始数据 (currentData)</template>
+              <div class="max-h-[50vh] overflow-y-auto">
+                <MdPreview
+                  :modelValue="rawMd"
+                  editorId="debug-raw"
+                  :codeFoldable="false"
+                  class="bg-transparent! p-0!"
+                />
+              </div>
+            </SfCollapseItem>
+          </SfCollapse>
+        </SfTabPane>
+        <SfTabPane value="config">
+          <div class="max-h-[50vh] overflow-y-auto">
+            <MdPreview
+              :modelValue="configMd"
+              editorId="debug-config"
+              :codeFoldable="false"
+              class="bg-transparent! p-0!"
+            />
+          </div>
+        </SfTabPane>
+      </SfTab>
+    </div>
   </el-drawer>
 </template>
 
@@ -53,6 +70,13 @@ const { debugMode } = storeToRefs(systemStore);
 const drawerVisible = ref(false);
 const activeNames = ref(["preview", "raw"]);
 
+// 顶部 Tab：数据 / 配置
+const activeTab = ref("data");
+const tabList = [
+  { name: "数据", value: "data" },
+  { name: "配置", value: "config" },
+];
+
 // 主题
 const themeStore = useThemeStore();
 const { theme } = storeToRefs(themeStore);
@@ -62,7 +86,7 @@ const previewData = inject("previewData");
 
 // 获取原始数据
 const resumeStore = useResumeStore();
-const { currentData } = storeToRefs(resumeStore);
+const { currentData, currentConfig } = storeToRefs(resumeStore);
 
 // 把 fieldProxy 转为可序列化的对象 { value, newValue }
 const serializePreview = (obj) => {
@@ -99,6 +123,14 @@ const previewMd = computed(() => {
 const rawMd = computed(() => {
   try {
     return wrapJson(JSON.stringify(currentData.value ?? {}, null, 2));
+  } catch (e) {
+    return wrapJson(String(e));
+  }
+});
+
+const configMd = computed(() => {
+  try {
+    return wrapJson(JSON.stringify(currentConfig.value ?? {}, null, 2));
   } catch (e) {
     return wrapJson(String(e));
   }
