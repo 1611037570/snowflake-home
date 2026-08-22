@@ -82,8 +82,16 @@ const currentIndex = inject("df/current/index");
   <ItemCollapse :title="title" :index="currentIndex" :add="add" :containerTitle="containerTitle">
     <div class="flex flex-col gap-3">
       <div class="flex w-full gap-3">
-        <SfInput placeholder="学校" v-model="name" />
+        <div class="flex-1">
+          <SfInput placeholder="学校" v-model="name" clearable />
+        </div>
         <SfSelect placeholder="学位" v-model="education" :list="educationList" />
+      </div>
+      <div class="flex w-full gap-3">
+        <div class="flex-1">
+          <SfInput placeholder="专业" v-model="post" clearable />
+        </div>
+        <SfSelect placeholder="学制" v-model="mode" :list="modeList" />
       </div>
       <div class="flex w-full gap-3">
         <SfDatePicker
@@ -95,11 +103,8 @@ const currentIndex = inject("df/current/index");
           start-placeholder="开始时间"
           end-placeholder="结束时间"
         />
-        <SfInput placeholder="专业" v-model="post" />
       </div>
-      <div class="flex w-full gap-3">
-        <SfSelect placeholder="学制" v-model="mode" :list="modeList" />
-      </div>
+
       <SfWangEditor v-model="content"></SfWangEditor>
     </div>
   </ItemCollapse>
