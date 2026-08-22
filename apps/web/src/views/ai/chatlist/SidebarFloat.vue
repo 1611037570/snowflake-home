@@ -8,7 +8,7 @@ const { sidebarCollapsed } = storeToRefs(aiStore);
 
 <template>
   <div
-    class="absolute inset-y-0 left-0 z-50 flex h-full w-full flex-col border-r border-sf-border bg-sf-bg-2 shadow-2xl transition-all duration-300"
+    class="border-sf-b absolute inset-y-0 left-0 z-50 flex h-full w-full flex-col border-r bg-sf-bg-2 shadow-2xl transition-all duration-300"
     :class="[
       sidebarCollapsed
         ? 'pointer-events-none -translate-x-full opacity-0'

@@ -23,7 +23,7 @@ const activeNavIndex = computed(() => navList.findIndex((item) => route.path ===
 <template>
   <main class="relative flex h-screen min-w-full flex-col bg-sf-page">
     <header
-      class="fixed top-0 right-0 left-0 z-50 h-16 w-full border-b-[0.5px] border-sf-border bg-sf-page font-extrabold text-sf-base"
+      class="border-sf-b fixed top-0 right-0 left-0 z-50 h-16 w-full border-b-[0.5px] bg-sf-page font-extrabold text-sf-base"
     >
       <div class="mx-auto flex h-full w-full max-w-[1280px] items-center gap-6 px-4">
         <div class="flex shrink-0 items-center gap-2.5 text-[17px] whitespace-nowrap">

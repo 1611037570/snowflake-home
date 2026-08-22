@@ -38,7 +38,7 @@ function onRequestComplete(msg) {
 
 <template>
   <div class="box-border h-full w-[400px] py-3 pr-3">
-    <div class="flex h-full flex-col rounded-xl border border-sf-border bg-sf-primary">
+    <div class="border-sf-b flex h-full flex-col rounded-xl border bg-sf-primary">
       <!-- 顶部操作栏 -->
       <div class="flex items-center justify-end gap-2 p-3 pb-0">
         <Setting />

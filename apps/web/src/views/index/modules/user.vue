@@ -29,7 +29,7 @@ const shootYears = computed(() => {
 
     <!-- 主卡片 -->
     <div
-      class="relative flex flex-col items-center justify-center rounded-3xl border border-sf-border bg-sf-bg shadow-2xl backdrop-blur-xl transition-all"
+      class="border-sf-b relative flex flex-col items-center justify-center rounded-3xl border bg-sf-bg shadow-2xl backdrop-blur-xl transition-all"
       :class="[$s(10, 'p'), $s(6, 'gap')]"
     >
       <!-- 个人信息 -->
@@ -65,7 +65,7 @@ const shootYears = computed(() => {
 
       <!-- 悬浮经验卡片 - 开发 -->
       <div
-        class="h absolute top-8 -right-16 rotate-12 transform cursor-default rounded-xl border border-sf-border/50 bg-sf-bg/80 p-4 shadow-lg backdrop-blur-md transition-all duration-300 hover:scale-110 hover:rotate-0 hover:border-sf-theme"
+        class="h border-sf-b/50 absolute top-8 -right-16 rotate-12 transform cursor-default rounded-xl border bg-sf-bg/80 p-4 shadow-lg backdrop-blur-md transition-all duration-300 hover:scale-110 hover:rotate-0 hover:border-sf-theme"
       >
         <div class="flex flex-col items-center">
           <div class="font-bold text-sf-theme" :class="$s(8)">
@@ -77,7 +77,7 @@ const shootYears = computed(() => {
 
       <!-- 悬浮经验卡片 - 摄影 -->
       <div
-        class="absolute bottom-8 -left-12 -rotate-12 transform cursor-default rounded-xl border border-sf-border/50 bg-sf-bg/80 p-4 shadow-lg backdrop-blur-md transition-all duration-300 hover:scale-110 hover:rotate-0 hover:border-sf-theme hover:shadow-sf-theme/20"
+        class="border-sf-b/50 absolute bottom-8 -left-12 -rotate-12 transform cursor-default rounded-xl border bg-sf-bg/80 p-4 shadow-lg backdrop-blur-md transition-all duration-300 hover:scale-110 hover:rotate-0 hover:border-sf-theme hover:shadow-sf-theme/20"
       >
         <div class="flex flex-col items-center">
           <div class="font-bold text-sf-theme" :class="$s(8)">

@@ -62,7 +62,7 @@
   /* 常规透明色-3 */
   --color-sf-transparent-3: var(--sf-transparent-3);
   /* 边框基础色 */
-  --color-sf-border: var(--sf-border);
+  --color-sf-b: var(--sf-border);
 }
 
 :root {

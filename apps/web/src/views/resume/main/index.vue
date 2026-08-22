@@ -78,14 +78,14 @@
           </div>
 
           <!-- 主预览图 -->
-          <div class="relative overflow-hidden rounded-2xl border border-sf-border bg-sf-primary">
+          <div class="border-sf-b relative overflow-hidden rounded-2xl border bg-sf-primary">
             <!-- 浏览器顶栏 -->
-            <div class="flex items-center gap-2 border-b border-sf-border bg-sf-bg px-4 py-3">
+            <div class="border-sf-b flex items-center gap-2 border-b bg-sf-bg px-4 py-3">
               <span class="h-3 w-3 rounded-full bg-red-400"></span>
               <span class="h-3 w-3 rounded-full bg-yellow-400"></span>
               <span class="h-3 w-3 rounded-full bg-green-400"></span>
               <div
-                class="mx-4 flex h-6 flex-1 items-center rounded-md border border-sf-border bg-sf-primary px-2"
+                class="border-sf-b mx-4 flex h-6 flex-1 items-center rounded-md border bg-sf-primary px-2"
               >
                 <div class="text-xs text-sf-text-3">轻舟简历 · 在线编辑</div>
               </div>
@@ -183,16 +183,16 @@
       <!-- 编辑器示意卡片 -->
       <div class="relative">
         <div
-          class="overflow-hidden rounded-2xl border border-sf-border bg-sf-primary shadow-2xl shadow-indigo-500/10"
+          class="border-sf-b overflow-hidden rounded-2xl border bg-sf-primary shadow-2xl shadow-indigo-500/10"
         >
-          <div class="flex items-center gap-2 border-b border-sf-border bg-sf-bg px-4 py-3">
+          <div class="border-sf-b flex items-center gap-2 border-b bg-sf-bg px-4 py-3">
             <span class="h-3 w-3 rounded-full bg-red-400"></span>
             <span class="h-3 w-3 rounded-full bg-yellow-400"></span>
             <span class="h-3 w-3 rounded-full bg-green-400"></span>
           </div>
           <div class="flex">
             <!-- 左侧工具栏 -->
-            <div class="w-16 space-y-3 border-r border-sf-border bg-sf-bg p-3">
+            <div class="border-sf-b w-16 space-y-3 border-r bg-sf-bg p-3">
               <div class="mx-auto h-10 w-10 rounded-lg bg-indigo-100"></div>
               <div class="mx-auto h-10 w-10 rounded-lg bg-sf-bg-2"></div>
               <div class="mx-auto h-10 w-10 rounded-lg bg-sf-bg-2"></div>
@@ -236,9 +236,9 @@
         <!-- AI 对话示意 -->
         <div class="relative">
           <div
-            class="overflow-hidden rounded-2xl border border-sf-border bg-sf-primary shadow-2xl shadow-indigo-500/10"
+            class="border-sf-b overflow-hidden rounded-2xl border bg-sf-primary shadow-2xl shadow-indigo-500/10"
           >
-            <div class="flex items-center gap-3 border-b border-sf-border px-5 py-4">
+            <div class="border-sf-b flex items-center gap-3 border-b px-5 py-4">
               <div
                 class="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-indigo-400 to-purple-400"
               >
@@ -300,9 +300,9 @@
             </div>
 
             <!-- 输入框 -->
-            <div class="border-t border-sf-border px-5 py-4">
+            <div class="border-sf-b border-t px-5 py-4">
               <div
-                class="flex items-center gap-3 rounded-xl border border-sf-border bg-sf-bg px-4 py-2.5"
+                class="border-sf-b flex items-center gap-3 rounded-xl border bg-sf-bg px-4 py-2.5"
               >
                 <span class="text-sm text-sf-text-3">输入你的问题...</span>
                 <button
@@ -349,9 +349,9 @@
       <!-- 统计示意卡片 -->
       <div class="relative">
         <div
-          class="overflow-hidden rounded-2xl border border-sf-border bg-sf-primary shadow-2xl shadow-violet-500/10"
+          class="border-sf-b overflow-hidden rounded-2xl border bg-sf-primary shadow-2xl shadow-violet-500/10"
         >
-          <div class="flex items-center gap-2 border-b border-sf-border bg-sf-bg px-4 py-3">
+          <div class="border-sf-b flex items-center gap-2 border-b bg-sf-bg px-4 py-3">
             <span class="h-3 w-3 rounded-full bg-red-400"></span>
             <span class="h-3 w-3 rounded-full bg-yellow-400"></span>
             <span class="h-3 w-3 rounded-full bg-green-400"></span>

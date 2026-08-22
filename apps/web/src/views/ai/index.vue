@@ -54,7 +54,7 @@ onMounted(() => {
     <div class="relative flex h-full flex-1 flex-col overflow-hidden bg-sf-bg">
       <!-- 头部区域 -->
       <div
-        class="z-10 grid h-14 w-full shrink-0 grid-cols-[1fr_auto_1fr] items-center border-b border-sf-border/50 bg-sf-bg/80 px-3 backdrop-blur-md"
+        class="border-sf-b/50 z-10 grid h-14 w-full shrink-0 grid-cols-[1fr_auto_1fr] items-center border-b bg-sf-bg/80 px-3 backdrop-blur-md"
       >
         <!-- 左侧操作区 -->
         <div class="flex items-center gap-2">

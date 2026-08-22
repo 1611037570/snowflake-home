@@ -27,7 +27,7 @@ const list = [
 <template>
   <!-- 设置按钮 -->
   <div
-    class="flex-c h-9 w-16 cursor-pointer rounded-lg border border-sf-border/50 bg-sf-primary text-sm text-sf-text hover:border-sf-theme"
+    class="flex-c border-sf-b/50 h-9 w-16 cursor-pointer rounded-lg border bg-sf-primary text-sm text-sf-text hover:border-sf-theme"
     @click="drawerVisible = true"
   >
     设置

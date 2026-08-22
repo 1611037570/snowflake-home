@@ -47,7 +47,7 @@
             v-for="(item, index) in SHOOT_ACCOUNT"
             :key="index"
             @click.prevent="urlNavigation(item.url)"
-            class="group relative flex cursor-pointer items-center justify-center overflow-hidden rounded-2xl border border-sf-border/50 bg-white p-4 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-sf-theme/30 hover:bg-sf-theme/5 hover:shadow-lg"
+            class="group border-sf-b/50 relative flex cursor-pointer items-center justify-center overflow-hidden rounded-2xl border bg-white p-4 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-sf-theme/30 hover:bg-sf-theme/5 hover:shadow-lg"
           >
             <SfIcon
               :icon="item.icon"

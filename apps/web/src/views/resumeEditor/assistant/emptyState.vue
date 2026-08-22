@@ -47,7 +47,7 @@ const moduleNames = computed(() => {
         v-for="action in quickActions"
         :key="action.name"
         type="button"
-        class="group flex h-20 cursor-pointer flex-col items-center justify-center gap-2 rounded-lg border border-sf-border bg-white px-3 text-sm font-medium text-sf-base shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-sf-theme/40 hover:bg-sf-theme/5 hover:text-sf-theme hover:shadow-md active:scale-[0.98] active:shadow-sm"
+        class="group border-sf-b flex h-20 cursor-pointer flex-col items-center justify-center gap-2 rounded-lg border bg-white px-3 text-sm font-medium text-sf-base shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-sf-theme/40 hover:bg-sf-theme/5 hover:text-sf-theme hover:shadow-md active:scale-[0.98] active:shadow-sm"
         @click="emit('switch-mode', action.type)"
       >
         <span

@@ -10,7 +10,7 @@ const { isGenerating } = storeToRefs(resumeStore);
 <template>
   <div
     v-if="isGenerating"
-    class="flex-c absolute inset-0 z-50 cursor-not-allowed rounded-xl border border-sf-border bg-sf-transparent-3"
+    class="flex-c border-sf-b absolute inset-0 z-50 cursor-not-allowed rounded-xl border bg-sf-transparent-3"
   >
     <div class="rounded-xl bg-sf-theme-2 px-4 py-2 text-sf-theme">AI生成中 请稍等</div>
   </div>

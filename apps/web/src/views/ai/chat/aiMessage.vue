@@ -101,7 +101,7 @@ const resumeShow = computed(
           :class="
             !msg.thoughtCollapsed
               ? 'border-sf-theme/20 bg-sf-theme/10 text-sf-theme'
-              : 'border-sf-border/10 bg-sf-bg-3 text-sf-text-3'
+              : 'border-sf-b/10 bg-sf-bg-3 text-sf-text-3'
           "
           @click="emit('updateCollapsedStatus', index, 'thought')"
         >
@@ -121,7 +121,7 @@ const resumeShow = computed(
           :class="
             !msg.contentCollapsed
               ? 'border-sf-theme/20 bg-sf-theme/10 text-sf-theme'
-              : 'border-sf-border/10 bg-sf-bg-3 text-sf-text-3'
+              : 'border-sf-b/10 bg-sf-bg-3 text-sf-text-3'
           "
           @click="emit('updateCollapsedStatus', index, 'content')"
         >
@@ -162,7 +162,7 @@ const resumeShow = computed(
       <!-- AI 思考过程内容 (折叠部分) -->
       <template v-if="msg.thought && !msg.thoughtCollapsed && !isResumeMode">
         <div
-          class="relative border border-sf-border/10 px-4 text-[13.5px] leading-relaxed text-sf-text-3/90"
+          class="border-sf-b/10 relative border px-4 text-[13.5px] leading-relaxed text-sf-text-3/90"
         >
           <div class="absolute top-0 left-0 h-full w-1 bg-sf-theme/20"></div>
           <MdPreview
@@ -193,7 +193,7 @@ const resumeShow = computed(
             <div
               v-for="(item, index) in resumeContent.followQuestions"
               :key="index"
-              class="cursor-pointer rounded-lg border border-sf-border bg-sf-bg-2 px-3 py-2 text-[13px] text-sf-text transition-all duration-200 hover:border-sf-theme hover:bg-sf-bg-2"
+              class="border-sf-b cursor-pointer rounded-lg border bg-sf-bg-2 px-3 py-2 text-[13px] text-sf-text transition-all duration-200 hover:border-sf-theme hover:bg-sf-bg-2"
               @click="emit('sendFollowQuestion', item)"
             >
               {{ item }}

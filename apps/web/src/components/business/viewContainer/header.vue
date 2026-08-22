@@ -18,7 +18,7 @@ const version = computed(() => {
 
 <template>
   <header
-    class="relative flex h-12 items-center justify-start border-b-[0.5px] border-sf-border bg-sf-primary p-3 text-sf-base sm:h-14 md:justify-center"
+    class="border-sf-b relative flex h-12 items-center justify-start border-b-[0.5px] bg-sf-primary p-3 text-sf-base sm:h-14 md:justify-center"
   >
     <div
       class="flex-c top-1/2 left-3 mr-3 cursor-pointer text-xs md:absolute md:-translate-y-1/2 md:text-base"

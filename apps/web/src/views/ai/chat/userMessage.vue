@@ -25,7 +25,7 @@ const emit = defineEmits(["recall", "updateCollapsedStatus"]);
         :class="
           !msg.contentCollapsed
             ? 'border-sf-theme/20 bg-sf-theme/10 text-sf-theme'
-            : 'border-sf-border/10 bg-sf-bg-3 text-sf-text-3'
+            : 'border-sf-b/10 bg-sf-bg-3 text-sf-text-3'
         "
         @click="emit('updateCollapsedStatus', index, 'content')"
       >

@@ -39,7 +39,7 @@ const toggleSidebarMode = () => {
 
 <template>
   <!-- 侧边栏头部：新建对话 -->
-  <div class="flex h-14 shrink-0 items-center justify-between border-b border-sf-border px-4">
+  <div class="border-sf-b flex h-14 shrink-0 items-center justify-between border-b px-4">
     <div class="flex items-center gap-2">
       <!-- 折叠按钮（浮动模式下显示） -->
       <div

@@ -31,9 +31,7 @@ const filterMenuItems = (item) => {
           type="button"
           class="flex cursor-pointer items-center rounded-xl border p-2 text-left transition hover:bg-sf-bg-2"
           :class="
-            filterMenuItems(item)
-              ? 'border-sf-theme bg-sf-theme/10'
-              : 'border-sf-border bg-sf-primary'
+            filterMenuItems(item) ? 'border-sf-theme bg-sf-theme/10' : 'border-sf-b bg-sf-primary'
           "
           @click="handleClick(item)"
         >

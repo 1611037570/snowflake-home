@@ -53,7 +53,7 @@ const suggestCards = [
       <button
         v-for="card in suggestCards"
         :key="card.title"
-        class="group flex cursor-pointer items-start gap-3 rounded-xl border border-sf-border bg-sf-bg-2 p-3 text-left transition-all duration-300 hover:-translate-y-0.5 hover:border-sf-theme hover:shadow-md active:scale-[0.98]"
+        class="group border-sf-b flex cursor-pointer items-start gap-3 rounded-xl border bg-sf-bg-2 p-3 text-left transition-all duration-300 hover:-translate-y-0.5 hover:border-sf-theme hover:shadow-md active:scale-[0.98]"
         @click="handleSuggest(card)"
       >
         <div

@@ -39,7 +39,7 @@ provide("bg", "bg-sf-bg");
   <div class="relative flex h-full w-[360px] flex-col py-3 pl-3">
     <!-- 左侧栏 -->
     <div
-      class="relative mb-3 flex w-full items-center justify-around rounded-2xl border border-sf-border bg-sf-primary p-1"
+      class="border-sf-b relative mb-3 flex w-full items-center justify-around rounded-2xl border bg-sf-primary p-1"
     >
       <div
         v-for="(item, index) in menuList"
@@ -53,7 +53,7 @@ provide("bg", "bg-sf-bg");
       </div>
     </div>
     <div
-      class="flex w-full flex-1 flex-col overflow-hidden rounded-xl border border-sf-border bg-sf-primary py-3 text-sf-base"
+      class="border-sf-b flex w-full flex-1 flex-col overflow-hidden rounded-xl border bg-sf-primary py-3 text-sf-base"
     >
       <ElScrollbar class="flex min-h-0 w-full flex-1 flex-col overflow-hidden">
         <div class="px-3">
