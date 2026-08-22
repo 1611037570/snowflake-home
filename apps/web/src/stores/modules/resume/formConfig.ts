@@ -403,6 +403,7 @@ export const DEFAULT_CUSTOM_FORM = {
   props: {
     title: "",
     add: true,
+    edit: true,
   },
   model: {
     source: ["custom"],
