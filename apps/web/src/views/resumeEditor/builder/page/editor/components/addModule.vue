@@ -72,8 +72,6 @@ const handleConfirm = () => {
   // 深拷贝自定义模块配置
   const config = structuredClone(allConfig.custom);
   config.key = customKey;
-  // 标记为自定义模块
-  config.isCustom = true;
   // 重置自定义模块的名称
   config.name = customModuleName.value;
   // 重置自定义模块的标题
