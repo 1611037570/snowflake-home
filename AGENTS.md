@@ -5,5 +5,5 @@
 输出要求：不主动解释、不提供优化方案、不调整代码风格，仅输出需求相关内容；无需修改则直接回复「无需修改」，禁止输出多余内容、分析与建议。
 web项目：统一边距xx-3 如p-3 m-3 gap-3
 统一组件 优先使用apps\web\src\components目录下的组件，没有再使用element-plus组件库。
-vue文件 创建时候小驼峰，导入和使用使用大驼峰命名法， 使用setup语法糖 优先使用 vueuse库。
-按需学习：执行web项目时候，样式和图标相关内容，按需读取 knowledges 目录下的 Markdown 文档进行学习。
+vue文件 创建使用小驼峰，导入和使用使用大驼峰； js使用setup语法糖 优先使用 vueuse库；template 避免多重 div 嵌套，使用 Tailwind CSS 写法。
+按需学习：执行web项目时候，样式和图标相关内容，按需读取 knowledges 目录下的 Markdown 文档进行学习。2.
