@@ -21,7 +21,7 @@
         <div
           id="element"
           ref="elementRef"
-          class="shadow-4xl flex max-h-[90vh] max-w-[90vw] flex-col rounded-3xl border border-sf-border bg-sf-bg p-3"
+          class="shadow-4xl flex max-h-[90vh] max-w-[90vw] flex-col rounded-3xl border border-sf-border bg-sf-primary p-3"
           :style="elementStyle"
           @mouseenter="handleMouseEnter"
           @mouseleave="handleMouseLeave"
