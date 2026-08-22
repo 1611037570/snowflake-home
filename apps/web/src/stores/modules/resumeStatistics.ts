@@ -25,7 +25,7 @@ export const useResumeStatisticsStore = defineStore(
   () => {
     // 开始投递日期（首次进入自动初始化，可手动修改）
     const startDate = ref("");
-    // 投递记录列表（聚合记录：平台 + 日期 + 数量，默认待处理）
+    // 投递记录列表（按日期聚合为一条记录，内部含多平台明细，默认待处理）
     const applications = ref<any[]>([]);
     // 跟进状态记录列表（从投递记录转移出的面试/Offer/被拒记录）
     const followUps = ref<any[]>([]);
@@ -48,37 +48,52 @@ export const useResumeStatisticsStore = defineStore(
     function setStartDate(date: string) {
       startDate.value = date;
     }
-    // 批量新增投递记录：同平台同日期聚合为一条，数量累加
-    function addApplications(count: number, platform: string) {
+    // 批量新增投递记录：按日期聚合为一条记录，内部含多平台明细，数量累加
+    function addApplications(details: { platform: string; count: number }[]) {
       const date = dayjs().format("YYYY-MM-DD");
-      const existing = applications.value.find(
-        (item) => item.platform === platform && item.date === date,
-      );
+      const existing = applications.value.find((item) => item.date === date);
       if (existing) {
-        existing.count += count;
+        // 同日期：合并平台明细，同平台数量累加
+        details.forEach((d) => {
+          const detail = existing.details.find((item) => item.platform === d.platform);
+          if (detail) {
+            detail.count += d.count;
+          } else {
+            existing.details.push({ ...d });
+          }
+        });
+        existing.count = existing.details.reduce((sum, item) => sum + item.count, 0);
       } else {
-        applications.value.push({ id: getUUID().slice(0, 6), platform, date, count });
+        applications.value.push({
+          id: getUUID().slice(0, 6),
+          date,
+          details: details.map((d) => ({ ...d })),
+          count: details.reduce((sum, item) => sum + item.count, 0),
+        });
       }
     }
-    // 跟进：从投递记录扣减数量，转移为一条跟进状态记录
-    function followUp(id: string, data: { company: string; status: string; count: number }) {
+    // 跟进：从投递记录的指定平台扣减 1 条，转移为一条跟进状态记录
+    function followUp(id: string, data: { company: string; status: string; platform: string }) {
       const index = applications.value.findIndex((item) => item.id === id);
       if (index === -1) return;
       const app = applications.value[index];
-      const n = Math.min(data.count, app.count);
-      if (n <= 0) return;
-      app.count -= n;
-      // 数量减到 0 时移除该条投递记录
+      const detail = app.details.find((item) => item.platform === data.platform);
+      if (!detail || detail.count <= 0) return;
+      // 从指定平台明细扣减 1 条
+      detail.count -= 1;
+      app.count -= 1;
+      // 明细数量减到 0 时移除该平台明细
+      app.details = app.details.filter((item) => item.count > 0);
+      // 投递记录数量减到 0 时移除该条投递记录
       if (app.count <= 0) {
         applications.value.splice(index, 1);
       }
       followUps.value.push({
         id: getUUID().slice(0, 6),
         company: data.company,
-        platform: app.platform,
+        platform: data.platform,
         date: app.date,
         status: data.status,
-        count: n,
       });
     }
     // 删除投递记录
@@ -86,6 +101,13 @@ export const useResumeStatisticsStore = defineStore(
       const index = applications.value.findIndex((item) => item.id === id);
       if (index !== -1) {
         applications.value.splice(index, 1);
+      }
+    }
+    // 修改跟进状态记录
+    function updateFollowUp(id: string, data: { company: string }) {
+      const index = followUps.value.findIndex((item) => item.id === id);
+      if (index !== -1) {
+        followUps.value[index] = { ...followUps.value[index], ...data };
       }
     }
     // 删除跟进状态记录
@@ -100,25 +122,19 @@ export const useResumeStatisticsStore = defineStore(
       applications.value = [];
     }
 
-    // 投递总数（投递记录数量求和 + 跟进记录数量求和）
+    // 投递总数（投递记录数量求和 + 跟进记录条数）
     const totalApplications = computed(
-      () =>
-        applications.value.reduce((sum, item) => sum + item.count, 0) +
-        followUps.value.reduce((sum, item) => sum + item.count, 0),
+      () => applications.value.reduce((sum, item) => sum + item.count, 0) + followUps.value.length,
     );
     // 进行中（待处理投递 + 面试中的跟进）
     const activeCount = computed(
       () =>
         applications.value.reduce((sum, item) => sum + item.count, 0) +
-        followUps.value
-          .filter((item) => item.status === "interview")
-          .reduce((sum, item) => sum + item.count, 0),
+        followUps.value.filter((item) => item.status === "interview").length,
     );
     // Offer 数
-    const offerCount = computed(() =>
-      followUps.value
-        .filter((item) => item.status === "offer")
-        .reduce((sum, item) => sum + item.count, 0),
+    const offerCount = computed(
+      () => followUps.value.filter((item) => item.status === "offer").length,
     );
 
     return {
@@ -131,6 +147,7 @@ export const useResumeStatisticsStore = defineStore(
       addApplications,
       followUp,
       deleteApplication,
+      updateFollowUp,
       deleteFollowUp,
       clearApplications,
       totalApplications,

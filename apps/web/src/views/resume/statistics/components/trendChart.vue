@@ -24,12 +24,12 @@ const days = computed(() =>
           .format("YYYY-MM-DD"),
       ),
 );
-// 每天的投递数量（投递记录与跟进记录按日数量求和）
+// 每天的投递数量（投递记录按日数量求和 + 跟进记录按日条数）
 const counts = computed(() =>
   days.value.map(
     (d) =>
       applications.value.filter((item) => item.date === d).reduce((sum, item) => sum + item.count, 0) +
-      followUps.value.filter((item) => item.date === d).reduce((sum, item) => sum + item.count, 0),
+      followUps.value.filter((item) => item.date === d).length,
   ),
 );
 // 图表配置

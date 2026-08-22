@@ -1,6 +1,7 @@
 <script setup>
 // 状态管理：展示从投递记录转移出的面试/Offer/被拒记录，支持状态筛选、删除
 import { APPLICATION_PLATFORM, FOLLOW_UP_STATUS, useResumeStatisticsStore } from "@/stores";
+import { ElMessage } from "element-plus";
 import { storeToRefs } from "pinia";
 import { reactive } from "vue";
 
@@ -28,6 +29,28 @@ const filteredList = computed(() => {
   });
 });
 
+// 编辑弹窗
+const editVisible = ref(false);
+// 当前编辑的跟进记录 id
+const editId = ref("");
+// 编辑表单
+const editForm = reactive({ company: "" });
+
+// 打开编辑弹窗
+const openEdit = (item) => {
+  editId.value = item.id;
+  editForm.company = item.company;
+  editVisible.value = true;
+};
+// 保存公司名称修改
+const handleSave = () => {
+  if (!editForm.company) {
+    ElMessage.warning("请填写公司名称");
+    return;
+  }
+  statisticsStore.updateFollowUp(editId.value, { company: editForm.company });
+  editVisible.value = false;
+};
 // 删除跟进记录
 const handleDelete = (item) => {
   proxy.$confirm("确定要删除这条跟进记录吗？", "删除确认").then(() => {
@@ -90,6 +113,13 @@ const getPlatformLabel = (platform) => {
         <template #default="{ row }">
           <button
             type="button"
+            class="mr-2 cursor-pointer border-0 bg-transparent p-0 text-sf-text-2 transition hover:text-sf-theme"
+            @click="openEdit(row)"
+          >
+            <SfIcon icon="lucide:pencil" size="4" />
+          </button>
+          <button
+            type="button"
             class="cursor-pointer border-0 bg-transparent p-0 text-sf-text-2 transition hover:text-sf-error"
             @click="handleDelete(row)"
           >
@@ -99,6 +129,20 @@ const getPlatformLabel = (platform) => {
       </el-table-column>
     </el-table>
   </div>
+
+  <SfModal v-model="editVisible" title="修改公司名称">
+    <div class="w-[440px]">
+      <el-form :model="editForm" label-width="70px">
+        <el-form-item label="公司名称">
+          <SfInput v-model="editForm.company" placeholder="请输入公司名称" />
+        </el-form-item>
+      </el-form>
+      <div class="mt-4 flex justify-end gap-2">
+        <el-button @click="editVisible = false">取消</el-button>
+        <el-button type="primary" @click="handleSave">保存</el-button>
+      </div>
+    </div>
+  </SfModal>
 </template>
 
 <style lang="scss" scoped></style>
