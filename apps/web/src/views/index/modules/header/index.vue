@@ -14,7 +14,7 @@ const { theme } = storeToRefs(themeStore);
 const NAV_ITEMS = [
   { name: "关于", key: "about" },
   { name: "项目", key: "project" },
-  { name: "摄影", key: "shoot" },
+  // { name: "摄影", key: "shoot" },
   { name: "日志", key: "history" },
 ];
 
@@ -133,7 +133,7 @@ const isHeaderActive = computed(() => headerOpacity.value > 0);
         </nav>
 
         <!-- 分割线 (仅在大屏显示) -->
-        <div class="hidden h-5 w-px bg-sf-border md:block"></div>
+        <div class="bg-sf-border hidden h-5 w-px md:block"></div>
 
         <!-- 工具图标 -->
         <div class="flex items-center gap-4">
