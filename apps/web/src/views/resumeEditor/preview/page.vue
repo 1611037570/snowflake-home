@@ -7,6 +7,7 @@ import GeneratingMask from "../components/generatingMask.vue";
 import MeasureContent from "./components/measureContent.vue";
 import ModuleActions from "./components/moduleActions.vue";
 import ResumeModule from "./modules/index.vue";
+import { MODULE_GAP, RESUME_HEIGHT, RESUME_WIDTH } from "./constants";
 import { usePdfExport } from "./usePdfExport";
 import { useRowInfo } from "./useRowInfo";
 
@@ -28,9 +29,6 @@ const allModules = computed(() => {
   const configModules = currentConfig.value.fields;
   return [...fixedModules, ...configModules];
 });
-const WIDTH = 794;
-const HEIGHT = 1123;
-const MODULE_GAP = 12;
 const o = computed(() => {
   return {
     paddingValue: paddingValue.value(),
@@ -54,7 +52,7 @@ const handleModuleClick = (slice) => {
 // 分页逻辑
 const pages = computed(() => {
   const padding = currentUI.value.padding || 0;
-  const maxContentHeight = HEIGHT - padding * 2 - 32; // 减去内边距和页脚空间
+  const maxContentHeight = RESUME_HEIGHT - padding * 2 - 32; // 减去内边距和页脚空间
 
   const result = [];
   let currentPage = [];
@@ -141,7 +139,7 @@ onUnmounted(() => {
   <MeasureContent
     class="absolute -z-10 opacity-0"
     ref="measureRef"
-    :style="[paddingValue(), { width: `${WIDTH}px` }]"
+    :style="[paddingValue(), { width: `${RESUME_WIDTH}px` }]"
     :all-modules="allModules"
   />
   <GeneratingMask />
@@ -156,7 +154,7 @@ onUnmounted(() => {
         paddingValue(),
         fontValue(),
         lineHeightValue(),
-        { width: `${WIDTH}px`, height: `${HEIGHT}px` },
+        { width: `${RESUME_WIDTH}px`, height: `${RESUME_HEIGHT}px` },
       ]"
     >
       <div class="flex flex-1 flex-col gap-3">

@@ -1,6 +1,7 @@
 <script setup>
 import { TransitionPresets, useDebounceFn, useResizeObserver, useTransition } from "@vueuse/core";
 import { computed, ref } from "vue";
+import { RESUME_WIDTH } from "./constants";
 
 defineOptions({ name: "ScaleContainer" });
 
@@ -10,7 +11,6 @@ const maxScale = ref(1);
 const scaleMode = ref("auto");
 const isOpen = ref(false);
 
-const TARGET_WIDTH = 794;
 const PADDING = 40;
 const MIN_SCALE = 0.5;
 const SCALE_LIST = [0.5, 0.7, 0.9, 1];
@@ -65,7 +65,7 @@ const updateScale = useDebounceFn(([entry]) => {
 
   // 只根据宽度计算缩放比例，让内容在垂直方向可以滚动
   // 取缩放比例，且最大不超过 1
-  maxScale.value = (width - PADDING) / TARGET_WIDTH;
+  maxScale.value = (width - PADDING) / RESUME_WIDTH;
   manualScale.value = clampScale(manualScale.value);
 }, 100);
 
