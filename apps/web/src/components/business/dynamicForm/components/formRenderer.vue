@@ -4,7 +4,7 @@
       <!-- 校验失败：展示友好的错误提示 -->
       <FormError v-if="!checkForm(item)" :error-msg="item.errorMsg" :raw="item.raw" />
       <!-- v-bind="$attrs" -->
-      <Container
+      <ContainerSlot
         v-else-if="item.slot"
         :currentForm="item"
         :currentIndex="index"
@@ -27,7 +27,7 @@ import { getUUID } from "@/utils";
 import { useDraggable } from "vue-draggable-plus";
 import { checkForm } from "../code/checkForm.ts";
 import { DF_ROOT_DATA } from "../code/injectionKeys.ts";
-import Container from "./container.vue";
+import ContainerSlot from "./containerSlot.vue";
 import ContainerArray from "./containerArray.vue";
 import ContainerObject from "./containerObject.vue";
 import FormError from "./formError.vue";
