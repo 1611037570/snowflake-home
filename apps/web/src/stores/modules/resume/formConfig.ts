@@ -152,7 +152,13 @@ export const DEFAULT_ACCOUNT_FORM = {
   key: "account",
   name: "社交账号",
   span: 24,
-  model: [],
+  model: [
+    {
+      source: ["account", "collapsed"],
+      prop: "collapsed",
+      defaultValue: ["1"],
+    },
+  ],
   component: "boxCollapse",
   props: {
     add: true,
@@ -167,12 +173,12 @@ export const DEFAULT_ACCOUNT_FORM = {
       addConfig: {
         model: [
           {
-            source: ["account", "?", "name"],
+            source: ["account", "data", "?", "name"],
             defaultValue: "",
             prop: "name",
           },
           {
-            source: ["account", "?", "url"],
+            source: ["account", "data", "?", "url"],
             defaultValue: "",
             prop: "url",
           },
@@ -197,7 +203,7 @@ export const DEFAULT_EDUCATION_FORM = {
   },
   // 表单中所渲染的组件的双向绑定的模型
   model: {
-    source: ["collapse", "education"],
+    source: ["education", "collapsed"],
     prop: "collapsed",
     defaultValue: ["1"],
   },
@@ -253,14 +259,20 @@ export const DEFAULT_SKILL_FORM = {
     title: "专业技能",
     add: false,
   },
-  model: [],
+  model: [
+    {
+      source: ["skill", "collapsed"],
+      prop: "collapsed",
+      defaultValue: ["1"],
+    },
+  ],
   slot: "default",
   fields: [
     {
       type: "object",
       component: "wangEditor",
       model: {
-        source: ["skill"],
+        source: ["skill", "data"],
         prop: "modelValue",
       },
     },
@@ -275,14 +287,20 @@ export const DEFAULT_ADVANTAGE_FORM = {
   props: {
     add: false,
   },
-  model: [],
+  model: [
+    {
+      source: ["advantage", "collapsed"],
+      prop: "collapsed",
+      defaultValue: ["1"],
+    },
+  ],
   slot: "default",
   fields: [
     {
       type: "object",
       component: "wangEditor",
       model: {
-        source: ["advantage"],
+        source: ["advantage", "data"],
         prop: "modelValue",
       },
     },
@@ -298,7 +316,13 @@ export const DEFAULT_WORK_FORM = {
     title: "工作经历",
     add: true,
   },
-  model: [],
+  model: [
+    {
+      source: ["work", "collapsed"],
+      prop: "collapsed",
+      defaultValue: ["1"],
+    },
+  ],
   slot: "default",
   fields: [
     {
@@ -311,19 +335,19 @@ export const DEFAULT_WORK_FORM = {
         span: 24,
         model: [
           {
-            source: ["work", "?", "name"],
+            source: ["work", "data", "?", "name"],
             prop: "name",
           },
           {
-            source: ["work", "?", "post"],
+            source: ["work", "data", "?", "post"],
             prop: "post",
           },
           {
-            source: ["work", "?", "time"],
+            source: ["work", "data", "?", "time"],
             prop: "time",
           },
           {
-            source: ["work", "?", "content"],
+            source: ["work", "data", "?", "content"],
             prop: "content",
           },
         ],
@@ -342,7 +366,7 @@ export const DEFAULT_PROJECT_FORM = {
   },
   model: [
     {
-      source: ["collapse", "project"],
+      source: ["project", "collapsed"],
       prop: "collapsed",
       defaultValue: ["1"],
     },
@@ -389,7 +413,13 @@ export const DEFAULT_CUSTOM_FORM = {
     add: true,
     edit: true,
   },
-  model: [],
+  model: [
+    {
+      source: ["custom", "collapsed"],
+      prop: "collapsed",
+      defaultValue: ["1"],
+    },
+  ],
   slot: "default",
   fields: [
     {
@@ -402,23 +432,23 @@ export const DEFAULT_CUSTOM_FORM = {
         span: 24,
         model: [
           {
-            source: ["custom", "?", "name"],
+            source: ["custom", "data", "?", "name"],
             prop: "name",
           },
           {
-            source: ["custom", "?", "education"],
+            source: ["custom", "data", "?", "education"],
             prop: "education",
           },
           {
-            source: ["custom", "?", "post"],
+            source: ["custom", "data", "?", "post"],
             prop: "post",
           },
           {
-            source: ["custom", "?", "time"],
+            source: ["custom", "data", "?", "time"],
             prop: "time",
           },
           {
-            source: ["custom", "?", "content"],
+            source: ["custom", "data", "?", "content"],
             prop: "content",
           },
         ],
