@@ -7,7 +7,6 @@ import {
   paddingList,
   themeColors,
 } from "@/stores/modules/resume/uiConfig";
-import Header from "../../../builder/components/header.vue";
 import { storeToRefs } from "pinia";
 import ConfigItem from "./configItem.vue";
 
@@ -17,7 +16,6 @@ const { currentUI } = storeToRefs(resumeStore);
 
 <template>
   <div class="flex min-h-0 flex-1 flex-col overflow-hidden">
-    <Header>页面配置</Header>
     <SfScrollbar class="flex-1">
       <div class="flex flex-col gap-6">
         <div>
@@ -26,7 +24,7 @@ const { currentUI } = storeToRefs(resumeStore);
             <div
               v-for="item in fontFamilyList"
               :key="item.value"
-              class="hover:bg-sf-hover border-sf-b flex-1 cursor-pointer rounded-md border py-2 text-center text-sm transition-all"
+              class="hover:bg-sf-hover flex-1 cursor-pointer rounded-md border border-sf-b py-2 text-center text-sm transition-all"
               :class="{
                 'border-sf-theme-2 bg-sf-theme text-sf-base': currentUI.fontFamily === item.value,
               }"
