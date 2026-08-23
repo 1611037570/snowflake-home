@@ -84,7 +84,7 @@ const handleCancel = () => {
 </script>
 
 <template>
-  <header class="mt-3 mb-2 flex items-center text-lg font-bold text-sf-base">
+  <header class="mt-2 mb-3 flex items-center text-lg font-bold">
     <SfIcon icon="ic:round-add" size="5" />
     <div>增加模块</div>
   </header>
@@ -94,7 +94,7 @@ const handleCancel = () => {
       v-for="item in moduleOptions"
       :key="item.name"
       type="button"
-      class="group flex h-10 cursor-pointer items-center justify-center gap-2 rounded-lg border border-sf-b bg-sf-primary px-3 text-sm font-medium text-sf-text-2 transition-all duration-200 hover:border-sf-theme hover:bg-sf-theme hover:text-sf-primary hover:shadow-sm"
+      class="group flex h-10 cursor-pointer items-center justify-center gap-2 rounded-lg border border-sf-b bg-sf-bg px-3 text-sm font-medium text-sf-text-2 transition-all duration-200 hover:bg-sf-theme"
       @click="handleAdd(item)"
     >
       <SfIcon icon="ic:round-add" size="5" class="text-sf-text-3 group-hover:text-sf-primary" />
