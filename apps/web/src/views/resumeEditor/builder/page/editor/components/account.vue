@@ -1,6 +1,9 @@
 <script setup>
 import { getCurrentInstance } from "vue";
-import { DF_CURRENT_INDEX, DF_REMOVE_ITEM } from "@/components/business/dynamicForm/code/injectionKeys";
+import {
+  DF_CURRENT_INDEX,
+  DF_REMOVE_ITEM,
+} from "@/components/business/dynamicForm/code/injectionKeys";
 
 const { proxy } = getCurrentInstance();
 
@@ -26,7 +29,12 @@ const removeAccount = (index) => {
 
 <template>
   <div class="flex items-center gap-3">
-    <SfIcon icon="icon-park:drag" size="4" class="item-drag mr-1 cursor-move!" @click.stop="" />
+    <SfIcon
+      icon="icon-park-outline:drag"
+      size="4"
+      class="item-drag mr-1 cursor-move!"
+      @click.stop=""
+    />
     <!-- 第一个是平台 -->
     <div class="min-w-0 flex-1">
       <SfInput v-model="name" placeholder="平台" />

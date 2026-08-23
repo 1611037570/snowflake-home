@@ -57,7 +57,7 @@ function handleEditConfirm() {
         <div class="flex h-full w-full items-center justify-between">
           <div class="flex items-center text-lg font-bold">
             <SfIcon
-              icon="icon-park:drag"
+              icon="icon-park-outline:drag"
               size="4"
               class="container-drag mr-1 cursor-move!"
               @click.stop=""

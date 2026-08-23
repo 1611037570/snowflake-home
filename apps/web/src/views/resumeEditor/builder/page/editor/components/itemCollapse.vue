@@ -24,7 +24,7 @@ function del() {
         <div class="flex h-full w-full items-center justify-between">
           <div class="flex items-center">
             <SfIcon
-              icon="icon-park:drag"
+              icon="icon-park-outline:drag"
               size="4"
               class="item-drag mr-1 cursor-move!"
               @click.stop=""
