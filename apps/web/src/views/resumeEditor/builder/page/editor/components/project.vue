@@ -57,7 +57,7 @@ const currentIndex = inject(DF_CURRENT_INDEX);
           />
         </SfFormItem>
       </div>
-      <SfFormItem label="内容">
+      <SfFormItem label="经历">
         <SfWangEditor v-model="content"></SfWangEditor>
       </SfFormItem>
       <SfFormItem label="成绩">
