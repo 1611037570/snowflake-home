@@ -21,27 +21,27 @@ import {
   DF_ROOT_DATA,
 } from "../code/injectionKeys";
 
-const props = defineProps<{
+const { currentIndex, currentForm } = defineProps<{
   currentIndex?: any;
   currentForm: any;
 }>();
 
-const rootData = inject(DF_ROOT_DATA);
+const rootData: any = inject(DF_ROOT_DATA);
 
 const bindEvent = computed(() => {
-  return rootData.setDataProxy(props.currentForm.model, props.currentIndex);
+  return rootData.setDataProxy(currentForm.model, currentIndex);
 });
 
-const component = computed(() => getComponent(props.currentForm?.component));
+const component = computed(() => getComponent(currentForm?.component));
 const emit = defineEmits(["removeObject"]);
 
 function remove() {
-  emit("removeObject", props.currentIndex);
+  emit("removeObject", currentIndex);
 }
 // 提供当前容器的索引
-provide(DF_CURRENT_INDEX, toRef(props, "currentIndex"));
+provide(DF_CURRENT_INDEX, currentIndex);
 // 提供当前容器的表单数据（统一提供 ref，与 container/containerArray 保持一致）
-provide(DF_CURRENT_FORM, toRef(props, "currentForm"));
+provide(DF_CURRENT_FORM, currentForm);
 // 提供当前容器的类型
 provide(DF_CURRENT_TYPE, "object");
 // 提供删除方法
