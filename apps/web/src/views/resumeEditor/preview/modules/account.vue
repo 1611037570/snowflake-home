@@ -13,7 +13,7 @@ const account = computed(() => previewData.value?.account || []);
 </script>
 
 <template>
-  <div class="resume-row" data-module="work" :style="[lineHeightValue(), fontValue()]">
+  <div class="resume-row" data-module="account" :style="[lineHeightValue(), fontValue()]">
     <!-- 社交链接 -->
     <div
       v-for="(item, index) in account"
