@@ -50,7 +50,6 @@ const currentIndex = inject(DF_CURRENT_INDEX);
           start-placeholder="开始时间"
           end-placeholder="结束时间"
         />
-        <div class="w-full"></div>
       </div>
       <SfWangEditor v-model="content"></SfWangEditor>
       <div>成绩：</div>
