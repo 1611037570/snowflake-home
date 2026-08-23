@@ -1,5 +1,9 @@
 <template>
-  <Component :is="h(ElScrollbar, { ...$attrs, ref: changeRef }, $slots)" class="flex-1" />
+  <Component :is="h(ElScrollbar, { ...$attrs, ref: changeRef }, $slots)" class="flex-1">
+    <div class="overflow-hidden px-3">
+      <slot></slot>
+    </div>
+  </Component>
 </template>
 
 <script setup lang="ts">
