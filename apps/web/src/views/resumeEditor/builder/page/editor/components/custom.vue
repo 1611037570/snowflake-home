@@ -39,16 +39,17 @@ const currentIndex = inject(DF_CURRENT_INDEX);
         </SfFormItem>
       </div>
       <div class="flex w-full gap-3">
-        <SfDatePicker
-          type="monthrange"
-          placeholder="时间"
-          v-model="time"
-          format="YYYY.MM"
-          value-format="YYYY.MM"
-          start-placeholder="开始时间"
-          end-placeholder="结束时间"
-        />
-        <div class="w-full"></div>
+        <SfFormItem label="开始和结束时间">
+          <SfDatePicker
+            type="monthrange"
+            placeholder="时间"
+            v-model="time"
+            format="YYYY.MM"
+            value-format="YYYY.MM"
+            start-placeholder="开始时间"
+            end-placeholder="结束时间"
+          />
+        </SfFormItem>
       </div>
       <SfWangEditor v-model="content"></SfWangEditor>
     </div>
