@@ -25,8 +25,8 @@
 <script setup lang="ts">
 import { getUUID } from "@/utils";
 import { useDraggable } from "vue-draggable-plus";
-import { checkForm } from "../code/checkForm";
-import { DF_ROOT_DATA } from "../code/injectionKeys";
+import { checkForm } from "../code/checkForm.ts";
+import { DF_ROOT_DATA } from "../code/injectionKeys.ts";
 import Container from "./container.vue";
 import ContainerArray from "./containerArray.vue";
 import ContainerObject from "./containerObject.vue";

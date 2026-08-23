@@ -10,8 +10,13 @@
 
 <script setup lang="ts">
 import { isString } from "@/utils";
-import { DF_CURRENT_FORM, DF_CURRENT_INDEX, DF_CURRENT_TYPE, DF_REMOVE } from "../code/injectionKeys";
-import { getComponent } from "../components";
+import {
+  DF_CURRENT_FORM,
+  DF_CURRENT_INDEX,
+  DF_CURRENT_TYPE,
+  DF_REMOVE,
+} from "../code/injectionKeys.ts";
+import { getComponent } from "../code/getComponent.ts";
 import FormRenderer from "./formRenderer.vue";
 
 const currentForm = defineModel<any>("currentForm");

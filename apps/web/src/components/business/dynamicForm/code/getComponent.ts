@@ -1,6 +1,6 @@
 import { inject } from "vue";
-import { INSTANCE_COMPONENTS } from "../code/injectionKeys";
-import { componentRegistry } from "../code/componentRegistry";
+import { INSTANCE_COMPONENTS } from "./injectionKeys";
+import { componentRegistry } from "./componentRegistry";
 
 export { componentRegistry };
 
