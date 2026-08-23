@@ -11,7 +11,7 @@
 import { useRouter } from "vue-router";
 const router = useRouter();
 const openResume = () => {
-  router.push({ name: "resume" });
+  router.push("/resume");
 };
 </script>
 
