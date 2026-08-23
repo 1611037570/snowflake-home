@@ -33,6 +33,7 @@ defineExpose({} as ComponentInstance<typeof ElCollapse>);
   border: none !important;
   height: 40px !important;
   line-height: 40px !important;
+  min-height: 40px !important;
 }
 //
 :deep(.el-collapse-item__wrap) {
