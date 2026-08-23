@@ -5,7 +5,7 @@
 </template>
 <script setup lang="ts">
 import { getCurrentInstance, provide } from "vue";
-import FormRenderer from "./base/formRenderer.vue";
+import FormRenderer from "./components/formRenderer.vue";
 import DataProxy from "./code/dataProxy";
 import { DF_ROOT_DATA, DF_ROOT_FORM, INSTANCE_COMPONENTS } from "./code/injectionKeys";
 // import useFormProxy from './code/useFormProxy'

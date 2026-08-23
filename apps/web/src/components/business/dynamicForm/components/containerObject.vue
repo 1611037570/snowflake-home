@@ -11,8 +11,8 @@
 </template>
 
 <script setup lang="ts">
-import { inject, toRef } from "vue";
-import { getComponent } from "../components";
+import { inject } from "vue";
+import { getComponent } from "../code/getComponent";
 import {
   DF_CURRENT_FORM,
   DF_CURRENT_INDEX,

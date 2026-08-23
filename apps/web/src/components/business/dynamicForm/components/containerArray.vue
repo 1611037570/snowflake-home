@@ -35,7 +35,7 @@ import {
   DF_CURRENT_TYPE,
   DF_REMOVE_ITEM,
   DF_ROOT_DATA,
-} from "../code/injectionKeys";
+} from "../code/injectionKeys.ts";
 import ContainerObject from "./containerObject.vue";
 import FormItem from "./formItem.vue";
 const row: any = useTemplateRef("row");
