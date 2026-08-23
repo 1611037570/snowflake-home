@@ -35,6 +35,7 @@ test
 
 # TypeScript
 *.tsbuildinfo
+apps/web/src/types/components.d.ts
 
 # HTML 文件
 stats.html
