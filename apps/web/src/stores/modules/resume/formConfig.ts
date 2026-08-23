@@ -152,12 +152,7 @@ export const DEFAULT_ACCOUNT_FORM = {
   key: "account",
   name: "社交账号",
   span: 24,
-  model: [
-    {
-      source: ["account"],
-      prop: "modelValue",
-    },
-  ],
+  model: [],
   component: "boxCollapse",
   props: {
     add: true,
@@ -202,9 +197,9 @@ export const DEFAULT_EDUCATION_FORM = {
   },
   // 表单中所渲染的组件的双向绑定的模型
   model: {
-    // 实际未使用，这里绑定为了方便删除
-    source: ["education"],
-    prop: "modelValue",
+    source: ["collapse", "education"],
+    prop: "collapsed",
+    defaultValue: ["1"],
   },
   slot: "default",
   // 表单中所渲染的组件的子组件
@@ -217,28 +212,28 @@ export const DEFAULT_EDUCATION_FORM = {
       addConfig: {
         model: [
           {
-            source: ["education", "?", "name"],
+            source: ["education", "data", "?", "name"],
             prop: "name",
           },
           {
-            source: ["education", "?", "education"],
+            source: ["education", "data", "?", "education"],
             prop: "education",
           },
           {
-            source: ["education", "?", "post"],
+            source: ["education", "data", "?", "post"],
             prop: "post",
           },
           {
-            source: ["education", "?", "time"],
+            source: ["education", "data", "?", "time"],
             prop: "time",
           },
           {
-            source: ["education", "?", "content"],
+            source: ["education", "data", "?", "content"],
             prop: "content",
           },
           // 学制
           {
-            source: ["education", "?", "mode"],
+            source: ["education", "data", "?", "mode"],
             prop: "mode",
           },
         ],
@@ -258,10 +253,7 @@ export const DEFAULT_SKILL_FORM = {
     title: "专业技能",
     add: false,
   },
-  model: {
-    source: ["skill"],
-    prop: "modelValue",
-  },
+  model: [],
   slot: "default",
   fields: [
     {
@@ -283,10 +275,7 @@ export const DEFAULT_ADVANTAGE_FORM = {
   props: {
     add: false,
   },
-  model: {
-    source: ["advantage"],
-    prop: "modelValue",
-  },
+  model: [],
   slot: "default",
   fields: [
     {
@@ -309,10 +298,7 @@ export const DEFAULT_WORK_FORM = {
     title: "工作经历",
     add: true,
   },
-  model: {
-    source: ["work"],
-    prop: "modelValue",
-  },
+  model: [],
   slot: "default",
   fields: [
     {
@@ -354,10 +340,13 @@ export const DEFAULT_PROJECT_FORM = {
   props: {
     add: true,
   },
-  model: {
-    source: ["project"],
-    prop: "modelValue",
-  },
+  model: [
+    {
+      source: ["collapse", "project"],
+      prop: "collapsed",
+      defaultValue: ["1"],
+    },
+  ],
   slot: "default",
   fields: [
     {
@@ -370,19 +359,19 @@ export const DEFAULT_PROJECT_FORM = {
         span: 24,
         model: [
           {
-            source: ["project", "?", "name"],
+            source: ["project", "data", "?", "name"],
             prop: "name",
           },
           {
-            source: ["project", "?", "post"],
+            source: ["project", "data", "?", "post"],
             prop: "post",
           },
           {
-            source: ["project", "?", "time"],
+            source: ["project", "data", "?", "time"],
             prop: "time",
           },
           {
-            source: ["project", "?", "content"],
+            source: ["project", "data", "?", "content"],
             prop: "content",
           },
         ],
@@ -400,10 +389,7 @@ export const DEFAULT_CUSTOM_FORM = {
     add: true,
     edit: true,
   },
-  model: {
-    source: ["custom"],
-    prop: "modelValue",
-  },
+  model: [],
   slot: "default",
   fields: [
     {

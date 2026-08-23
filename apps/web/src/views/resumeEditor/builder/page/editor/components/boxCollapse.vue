@@ -16,6 +16,12 @@ defineProps({
 const currentForm = inject(DF_CURRENT_FORM);
 const objectRemove = inject(DF_REMOVE);
 
+// 展开状态：直接绑定激活项 name 数组（["1"] 展开 / [] 收起），随数据双向绑定
+const collapsed = defineModel("collapsed", {
+  type: Array,
+  default: () => [],
+});
+
 // 模块标题统一读取配置的 name 字段
 const title = computed(() => currentForm.value?.name || "未填写");
 
@@ -51,8 +57,8 @@ function handleEditConfirm() {
 </script>
 
 <template>
-  <SfCollapse>
-    <SfCollapseItem>
+  <SfCollapse v-model="collapsed">
+    <SfCollapseItem name="1">
       <template #title>
         <div class="group flex h-full w-full items-center justify-between">
           <div class="flex items-center text-lg font-bold">

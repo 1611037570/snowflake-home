@@ -1,6 +1,13 @@
 <template>
   <!-- 容器组件包裹 -->
-  <component :is="getComponent(currentForm.component)" v-bind="currentForm.props">
+  <component
+    :is="getComponent(currentForm.component)"
+    v-bind="{
+      ...rootData.getDataProxy(currentForm.model, currentIndex),
+      ...currentForm.props,
+    }"
+    v-on="bindEvent"
+  >
     <template #[slotName]>
       <!-- ="slotProps" v-bind="slotProps" -->
       <FormRenderer v-model:items="currentForm" />
@@ -15,6 +22,7 @@ import {
   DF_CURRENT_INDEX,
   DF_CURRENT_TYPE,
   DF_REMOVE,
+  DF_ROOT_DATA,
 } from "../code/injectionKeys.ts";
 import { getComponent } from "../code/getComponent.ts";
 import FormRenderer from "./formRenderer.vue";
@@ -26,6 +34,10 @@ const currentIndex = defineModel<any>("currentIndex");
 const slotName = computed(() => {
   const slot = currentForm.value?.slot;
   return isString(slot) && slot.length ? slot : "default";
+});
+const rootData: any = inject(DF_ROOT_DATA);
+const bindEvent = computed(() => {
+  return rootData.setDataProxy(currentForm.value.model, currentIndex.value);
 });
 const emit = defineEmits(["removeObject"]);
 function remove() {
