@@ -16,8 +16,10 @@ function handleEditTitle() {
 </script>
 
 <template>
-  <div class="flex items-center">
-    {{ title }}
+  <div class="flex max-w-[300px] items-center">
+    <div class="text-auto">
+      {{ title }}
+    </div>
     <SfIcon
       icon="lucide:pencil"
       class="ml-2 hover:text-sf-theme-2"
