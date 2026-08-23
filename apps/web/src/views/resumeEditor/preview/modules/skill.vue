@@ -9,8 +9,8 @@ const previewData = inject("previewData");
 const fontValue = inject("fontValue");
 const lineHeightValue = inject("lineHeightValue");
 
-// 代理数据解包，取 skill 字段的 value
-const skill = computed(() => previewData.value?.skill?.value || "");
+// 代理数据解包，取 skill 字段 data 的 value
+const skill = computed(() => previewData.value?.skill?.data?.value || "");
 </script>
 
 <template>
