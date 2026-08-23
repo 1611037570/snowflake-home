@@ -39,31 +39,36 @@
     </div>
 
     <!-- 其他支持方式 -->
-    <div class="border-sf-b w-full border-t pt-6">
+    <div class="w-full border-t border-sf-b pt-6">
       <div class="mb-4 text-center text-lg font-medium text-sf-text/90">其他支持方式</div>
       <div class="mb-4 text-sf-text/80">除了资金赞助，您还可以通过以下方式支持项目：</div>
-      <div class="mb-3 flex items-center gap-2 transition-all duration-200 hover:text-sf-theme/90">
+      <div
+        class="mb-3 flex items-center gap-2 transition-all duration-200 hover:text-sf-theme/90"
+        @click="goGitHub"
+      >
         <span class="text-sf-theme">⭐</span>
-        <span>Star 项目：在 GitHub 上给项目点 Star</span>
-        <span
-          class="ml-auto cursor-pointer rounded-full font-medium text-sf-theme transition-all duration-200"
-        >
-          <img
-            @click="goGitHub"
-            src="https://img.shields.io/github/stars/1611037570/snowflake-home.svg"
-            alt="GitHub Stars"
-            class="h-6 w-18"
-          />
-        </span>
-      </div>
-      <div class="flex items-center gap-2 transition-all duration-200 hover:text-sf-theme/90">
-        <span class="text-sf-theme">📤</span>
-        <span>分享推广：向朋友和同事推荐</span>
+        <span>在 GitHub 上给项目点</span>
+        <img
+          src="https://img.shields.io/github/stars/1611037570/snowflake-home.svg"
+          alt="GitHub Stars"
+          class="h-6 w-18"
+        />
         <span
           class="ml-auto cursor-pointer rounded-full bg-sf-theme/10 px-4 py-1 font-medium text-sf-theme transition-all duration-200 hover:bg-sf-theme hover:text-white"
-          @click="goShare"
         >
-          点我分享
+          GO
+        </span>
+      </div>
+      <div
+        class="flex items-center gap-2 transition-all duration-200 hover:text-sf-theme/90"
+        @click="goShare"
+      >
+        <span class="text-sf-theme">📤</span>
+        <span>向朋友和同事推荐</span>
+        <span
+          class="ml-auto cursor-pointer rounded-full bg-sf-theme/10 px-4 py-1 font-medium text-sf-theme transition-all duration-200 hover:bg-sf-theme hover:text-white"
+        >
+          GO
         </span>
       </div>
     </div>
