@@ -21,7 +21,7 @@ const DEFAULT_RESUME_ITEM = {
   // 简历ID
   id: getUUID().slice(0, 6),
   // 简历数据
-  data: structuredClone(DEFAULT_DATA),
+  data: structuredClone({}),
   // 固定配置
   fixedConfig: structuredClone(DEFAULT_USER_CONFIG),
   // 表单配置
