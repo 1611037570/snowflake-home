@@ -1,42 +1,43 @@
 <script setup>
-import { useResumeStore } from "@/stores";
-import { storeToRefs } from "pinia";
 import { computed, inject } from "vue";
 import { getTime } from "../../utils";
 import Content from "../theme/content.vue";
 import Title from "../theme/title.vue";
 import Text from "./text.vue";
+
+// 属性：模块标识、标题、数据 key
 const props = defineProps({
-  name: {
+  moduleName: {
+    type: String,
+    required: true,
+  },
+  title: {
+    type: String,
+    required: true,
+  },
+  dataKey: {
     type: String,
     required: true,
   },
 });
+
 // 从上层注入获取代理后的预览数据
 const previewData = inject("previewData");
 
 const fontValue = inject("fontValue");
 const lineHeightValue = inject("lineHeightValue");
 
-const resumeStore = useResumeStore();
-const { currentConfig } = storeToRefs(resumeStore);
-
-// 代理数据解包访问自定义模块数组（数据以模块 key 为路径）
-const customList = computed(() => previewData.value?.[props.name]?.data || []);
-// 从表单配置中反查标题
-const title = computed(() => {
-  const field = currentConfig.value?.fields.find((f) => f.key === props.name);
-  return field?.name;
-});
+// 代理数据解包访问数组
+const list = computed(() => previewData.value?.[props.dataKey]?.data || []);
 </script>
 
 <template>
-  <div class="resume-row" :data-module="name" :style="[lineHeightValue(), fontValue()]">
+  <div class="resume-row" :data-module="moduleName" :style="[lineHeightValue(), fontValue()]">
     <!-- 标题栏 -->
     <Title :title="title"></Title>
     <!-- 内容区 -->
-    <template v-for="(item, index) in customList" :key="index">
-      <div class="mb-3 flex items-center justify-between" :style="[lineHeightValue(3)]">
+    <template v-for="(item, index) in list" :key="index">
+      <div class="flex items-center justify-between" :style="[lineHeightValue(3)]">
         <div class="flex items-center gap-4">
           <div class="font-bold" :style="[fontValue(3)]">
             <Text v-model="item.name" />

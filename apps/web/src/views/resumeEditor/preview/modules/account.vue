@@ -9,7 +9,7 @@ const fontValue = inject("fontValue");
 const lineHeightValue = inject("lineHeightValue");
 
 // 代理数据解包访问数组
-const account = computed(() => previewData.value?.account || []);
+const account = computed(() => previewData.value?.account?.data || []);
 </script>
 
 <template>

@@ -14,7 +14,7 @@ const lineHeightValue = inject("lineHeightValue");
 
 // 代理数据解包，直接访问原数组（数组项已被代理，保持引用稳定）
 const education = computed(() => {
-  const list = previewData.value?.education || [];
+  const list = previewData.value?.education?.data || [];
   return list;
 });
 
