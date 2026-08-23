@@ -38,11 +38,11 @@ provide("bg", "bg-sf-bg");
       class="mb-3"
     />
     <div
-      class="flex w-full flex-1 flex-col overflow-hidden rounded-xl border border-sf-b bg-sf-primary py-3 text-sf-base"
+      class="flex w-full flex-1 flex-col rounded-xl border border-sf-b bg-sf-primary py-3 text-sf-base"
     >
-      <SfScrollbar class="flex min-h-0 w-full flex-1 flex-col overflow-hidden px-3">
+      <SfScrollbar class="flex min-h-0 w-full flex-1 flex-col overflow-hidden">
         <KeepAlive>
-          <component :is="menuList[activeIndex].component" class="h-full overflow-hidden" />
+          <component :is="menuList[activeIndex].component" class="h-full" />
         </KeepAlive>
       </SfScrollbar>
     </div>
