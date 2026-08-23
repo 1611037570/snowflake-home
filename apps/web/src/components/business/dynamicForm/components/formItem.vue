@@ -1,21 +1,14 @@
 <template>
   <el-col :span="getSpan(currentForm.span)">
-    <el-form-item
+    <SfFormItem
       class="w-full"
       :label="currentForm.label"
       :prop="currentForm.model?.path"
-      label-position="top"
+      :tip="true"
+      :tip-content="currentForm.tip"
     >
-      <template #label v-if="currentForm.label">
-        <div class="mb-1 flex h-5 w-full items-center font-bold text-sf-base" @click.stop="">
-          <span class="pr-1">
-            {{ currentForm.label }}
-          </span>
-          <sf-tooltip :content="currentForm.tip" v-if="currentForm.tip" />
-        </div>
-      </template>
       <slot />
-    </el-form-item>
+    </SfFormItem>
   </el-col>
 </template>
 
@@ -38,8 +31,4 @@ const getSpan = (span: number | string | undefined) => {
 };
 </script>
 
-<style scoped>
-:deep(.el-form-item__label) {
-  height: 100% !important;
-}
-</style>
+<style scoped></style>

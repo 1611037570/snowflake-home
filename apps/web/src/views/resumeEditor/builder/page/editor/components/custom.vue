@@ -31,8 +31,12 @@ const currentIndex = inject(DF_CURRENT_INDEX);
   <ItemCollapse :title="title" :index="currentIndex" :add="add" :containerTitle="containerTitle">
     <div class="flex flex-col gap-3">
       <div class="flex w-full gap-3">
-        <SfInput placeholder="名称" v-model="name" />
-        <SfInput placeholder="职位" v-model="post" />
+        <SfFormItem label="名称">
+          <SfInput placeholder="名称" v-model="name" />
+        </SfFormItem>
+        <SfFormItem label="职位">
+          <SfInput placeholder="职位" v-model="post" />
+        </SfFormItem>
       </div>
       <div class="flex w-full gap-3">
         <SfDatePicker
