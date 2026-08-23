@@ -83,30 +83,37 @@ const currentIndex = inject(DF_CURRENT_INDEX);
   <ItemCollapse :title="title" :index="currentIndex" :add="add" :containerTitle="containerTitle">
     <div class="flex flex-col gap-3">
       <div class="flex w-full gap-3">
-        <div class="flex-1">
+        <SfFormItem label="学校">
           <SfInput placeholder="学校" v-model="name" clearable />
-        </div>
-        <SfSelect placeholder="学位" v-model="education" :list="educationList" />
+        </SfFormItem>
+        <SfFormItem label="学位">
+          <SfSelect placeholder="学位" v-model="education" :list="educationList" />
+        </SfFormItem>
       </div>
       <div class="flex w-full gap-3">
-        <div class="flex-1">
+        <SfFormItem label="专业">
           <SfInput placeholder="专业" v-model="post" clearable />
-        </div>
-        <SfSelect placeholder="学制" v-model="mode" :list="modeList" />
+        </SfFormItem>
+        <SfFormItem label="学制">
+          <SfSelect placeholder="学制" v-model="mode" :list="modeList" />
+        </SfFormItem>
       </div>
       <div class="flex w-full gap-3">
-        <SfDatePicker
-          type="monthrange"
-          placeholder="时间"
-          v-model="time"
-          format="YYYY.MM"
-          value-format="YYYY.MM"
-          start-placeholder="开始时间"
-          end-placeholder="结束时间"
-        />
+        <SfFormItem label="时间">
+          <SfDatePicker
+            type="monthrange"
+            placeholder="时间"
+            v-model="time"
+            format="YYYY.MM"
+            value-format="YYYY.MM"
+            start-placeholder="开始时间"
+            end-placeholder="结束时间"
+          />
+        </SfFormItem>
       </div>
-
-      <SfWangEditor v-model="content"></SfWangEditor>
+      <SfFormItem label="经历">
+        <SfWangEditor v-model="content"></SfWangEditor>
+      </SfFormItem>
     </div>
   </ItemCollapse>
 </template>

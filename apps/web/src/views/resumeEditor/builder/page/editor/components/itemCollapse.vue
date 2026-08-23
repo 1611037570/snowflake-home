@@ -21,7 +21,7 @@ function del() {
   <SfCollapse>
     <SfCollapseItem>
       <template #title>
-        <div class="flex h-full w-full items-center justify-between">
+        <div class="flex h-full w-full items-center justify-between text-sf-text">
           <div class="flex items-center">
             <SfIcon
               icon="icon-park-outline:drag"
