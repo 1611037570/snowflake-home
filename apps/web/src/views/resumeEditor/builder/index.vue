@@ -26,43 +26,25 @@ const menuList = [
 
 // 当前选中的菜单索引
 const activeIndex = ref(0);
-
-// 切换菜单
-function handleMenuClick(index) {
-  activeIndex.value = index;
-}
-
 provide("bg", "bg-sf-bg");
 </script>
 
 <template>
   <div class="relative flex h-full w-[360px] flex-col py-3 pl-3">
-    <!-- 左侧栏 -->
+    <SfTab
+      :list="menuList"
+      v-model:index="activeIndex"
+      boxClass="border border-sf-b bg-sf-primary"
+      class="mb-3"
+    />
     <div
-      class="border-sf-b relative mb-3 flex w-full items-center justify-around rounded-2xl border bg-sf-primary p-1"
+      class="flex w-full flex-1 flex-col overflow-hidden rounded-xl border border-sf-b bg-sf-primary py-3 text-sf-base"
     >
-      <div
-        v-for="(item, index) in menuList"
-        :key="item.name"
-        class="flex cursor-pointer items-center justify-center rounded-4xl px-2 py-2 font-bold hover:bg-sf-bg-2"
-        :class="{ 'bg-sf-theme': activeIndex === index }"
-        @click="handleMenuClick(index)"
-      >
-        <SfIcon :icon="item.icon" size="5" />
-        <span class="pl-2 text-base whitespace-nowrap">{{ item.name }}</span>
-      </div>
-    </div>
-    <div
-      class="border-sf-b flex w-full flex-1 flex-col overflow-hidden rounded-xl border bg-sf-primary py-3 text-sf-base"
-    >
-      <ElScrollbar class="flex min-h-0 w-full flex-1 flex-col overflow-hidden">
-        <div class="px-3">
-          <!-- 右侧内容 -->
-          <KeepAlive>
-            <component :is="menuList[activeIndex].component" class="h-full overflow-hidden" />
-          </KeepAlive>
-        </div>
-      </ElScrollbar>
+      <SfScrollbar class="flex min-h-0 w-full flex-1 flex-col overflow-hidden px-3">
+        <KeepAlive>
+          <component :is="menuList[activeIndex].component" class="h-full overflow-hidden" />
+        </KeepAlive>
+      </SfScrollbar>
     </div>
     <GeneratingMask v-if="true" />
   </div>
