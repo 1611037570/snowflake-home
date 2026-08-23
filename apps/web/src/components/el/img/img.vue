@@ -1,5 +1,5 @@
 <template>
-  <Component :is="h(ElImage, { ...$attrs, ref: changeRef }, $slots)" :style="[getSizeStyle]" />
+  <Component :is="h(ElImage, { ...$attrs, ref: changeRef }, $slots)" />
 </template>
 
 <script setup lang="ts">
