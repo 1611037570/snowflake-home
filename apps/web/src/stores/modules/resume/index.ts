@@ -3,7 +3,6 @@ import router from "@/routers";
 import { getUUID } from "@/utils";
 import { defineStore } from "pinia";
 import { computed, ref } from "vue";
-import { DEFAULT_DATA } from "./dataConfig";
 import { DEFAULT_CONFIG, DEFAULT_USER_CONFIG } from "./formConfig";
 import {
   defaultFontFamily,
