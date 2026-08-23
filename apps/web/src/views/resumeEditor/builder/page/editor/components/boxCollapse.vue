@@ -3,7 +3,7 @@ import { ref, toRaw } from "vue";
 import { DF_CURRENT_FORM, DF_REMOVE } from "@/components/business/dynamicForm/code/injectionKeys";
 const { proxy } = getCurrentInstance();
 
-const props = defineProps({
+defineProps({
   add: {
     type: Boolean,
     default: true,
@@ -54,7 +54,7 @@ function handleEditConfirm() {
   <SfCollapse>
     <SfCollapseItem>
       <template #title>
-        <div class="flex h-full w-full items-center justify-between">
+        <div class="group flex h-full w-full items-center justify-between">
           <div class="flex items-center text-lg font-bold">
             <SfIcon
               icon="icon-park-outline:drag"
@@ -64,7 +64,7 @@ function handleEditConfirm() {
             />
             {{ title }}
           </div>
-          <div class="flex items-center gap-2">
+          <div class="flex items-center gap-2 opacity-0 group-hover:opacity-100">
             <SfIcon
               v-if="edit"
               @click.stop="handleEdit"
