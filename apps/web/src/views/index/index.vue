@@ -4,7 +4,7 @@
     <Home />
     <User />
     <Project />
-    <Shoot />
+    <Shoot v-if="0" />
     <History />
     <Thank />
     <SfBacktop />

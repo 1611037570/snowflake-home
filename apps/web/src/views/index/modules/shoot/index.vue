@@ -2,29 +2,6 @@
   <!-- 摄影社交平台 -->
   <div class="w-dwh flex-c relative z-10 flex-col bg-sf-bg py-24" id="shoot">
     <div class="flex w-full max-w-[1200px] flex-col items-center">
-      <h4 class="group mb-8 flex items-center justify-center text-xl font-medium text-sf-text">
-        <SfIcon
-          icon="lucide:camera"
-          size="24"
-          class="mr-3 text-sf-theme transition-transform duration-300 group-hover:scale-110 group-hover:-rotate-12"
-        />
-        部分作品展示
-      </h4>
-
-      <div class="mb-12 flex flex-wrap items-center justify-center gap-4 md:gap-6">
-        <template v-for="item in imgList" :key="item.id">
-          <div
-            class="group overflow-hidden rounded-2xl shadow-sm transition-all duration-500 hover:-translate-y-2 hover:shadow-xl"
-          >
-            <SfImg
-              :src="item.img"
-              alt=""
-              class="h-[240px] w-[160px] object-cover transition-transform duration-500 group-hover:scale-105 md:h-[300px] md:w-[200px]"
-            />
-          </div>
-        </template>
-      </div>
-
       <div class="mb-6 flex w-full flex-col items-center">
         <p class="mb-4 text-center text-sf-text-2">
           已旅拍城市：<span class="text-lg font-semibold text-sf-theme">
@@ -37,9 +14,9 @@
 
       <div class="mt-8 flex w-full flex-col items-center">
         <div class="mb-6 flex items-center justify-center text-sf-text-2">
-          <div class="mr-4 h-[1px] w-16 bg-gradient-to-l from-sf-border/50 to-transparent"></div>
+          <div class="from-sf-border/50 mr-4 h-[1px] w-16 bg-gradient-to-l to-transparent"></div>
           <span class="text-sm font-medium tracking-wider">全部作品</span>
-          <div class="ml-4 h-[1px] w-16 bg-gradient-to-r from-sf-border/50 to-transparent"></div>
+          <div class="from-sf-border/50 ml-4 h-[1px] w-16 bg-gradient-to-r to-transparent"></div>
         </div>
 
         <div class="flex justify-center gap-4">
@@ -47,7 +24,7 @@
             v-for="(item, index) in SHOOT_ACCOUNT"
             :key="index"
             @click.prevent="urlNavigation(item.url)"
-            class="group border-sf-b/50 relative flex cursor-pointer items-center justify-center overflow-hidden rounded-2xl border bg-white p-4 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-sf-theme/30 hover:bg-sf-theme/5 hover:shadow-lg"
+            class="group relative flex cursor-pointer items-center justify-center overflow-hidden rounded-2xl border border-sf-b/50 bg-white p-4 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-sf-theme/30 hover:bg-sf-theme/5 hover:shadow-lg"
           >
             <SfIcon
               :icon="item.icon"
@@ -64,20 +41,6 @@
 import { SHOOT_ACCOUNT } from "@/configs";
 import { urlNavigation } from "@/utils";
 import ShootMap from "./shootMap.vue";
-const components = import.meta.glob("../../../assets/images/shoot/*", { eager: true });
-
-const imgMap = new Map();
-for (const key in components) {
-  const matchNum = key.match(/(\d+)/);
-  if (matchNum) {
-    imgMap.set(Number(matchNum[1]), components[key].default);
-  }
-}
-
-const imgList = [15, 12, 11, 10, 7, 6, 4, 2, 1].map((id) => ({
-  id,
-  img: imgMap.get(id),
-}));
 const city = [
   { name: "杭州", province: "浙江省" },
   { name: "嘉兴", province: "浙江省" },
