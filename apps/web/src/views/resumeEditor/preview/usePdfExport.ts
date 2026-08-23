@@ -5,16 +5,8 @@
  * 直接利用预览层已生成的分页结构导出，无需重新排版。
  */
 import { nextTick } from "vue";
+import { PDF_PAGE_HEIGHT, PDF_PAGE_WIDTH, RESUME_HEIGHT, RESUME_WIDTH } from "./constants";
 import { resumeTitle } from "../utils";
-
-/** A4 页面宽度（mm） */
-const PDF_PAGE_WIDTH = 210;
-/** A4 页面高度（mm） */
-const PDF_PAGE_HEIGHT = 297;
-/** 简历渲染宽度（px，与 page.vue 的 WIDTH 保持一致） */
-const RESUME_WIDTH = 794;
-/** 简历渲染高度（px，与 page.vue 的 HEIGHT 保持一致） */
-const RESUME_HEIGHT = 1123;
 
 /**
  * 创建 PDF 导出能力
