@@ -110,27 +110,10 @@ class DataProxy<T> {
 
     current.splice(index, 1);
   }
-  // 删除对象元素
+  // 删除对象元素（按 key 定位并删除顶层数据）
   removeObject(payload: any) {
-    // 标准化路径：统一转为 路径对象数组，精简冗余变量
-    const pathItems = this.ensureArray(payload.model);
-    // 提取所有待删除的路径数组（如 [['a','b'], ['c','d']]）
-    const deletePaths = pathItems.map((item: any) => item.source);
-
-    if (!deletePaths) return;
-    // 遍历所有待删除的路径数组
-    for (const source of deletePaths) {
-      let target = this.data;
-      for (let i = 0; i < source.length; i++) {
-        if (source.length - 1 == i) {
-          // 删除最后一级属性
-          delete target[source[i]];
-          break;
-        } else {
-          target = target[source[i]];
-        }
-      }
-    }
+    if (!payload.key) return;
+    delete this.data[payload.key];
   }
   constructor(data: any, emit: any) {
     // 初始化数据为空对象
