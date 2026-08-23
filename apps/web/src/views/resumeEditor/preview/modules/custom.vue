@@ -23,16 +23,16 @@ const { currentConfig } = storeToRefs(resumeStore);
 
 // 代理数据解包访问自定义模块数组（数据以模块 key 为路径）
 const customList = computed(() => previewData.value?.[props.name] || []);
-// 从表单配置中反查标题（创建时填写的模块名称）
+// 从表单配置中反查标题
 const title = computed(() => {
   const field = currentConfig.value?.fields.find((f) => f.key === props.name);
-  return field?.name || "自定义模块";
+  return field?.name;
 });
 </script>
 
 <template>
   <div class="resume-row" :data-module="name" :style="[lineHeightValue(), fontValue()]">
-    <!-- 标题栏（使用创建时填写的模块名称） -->
+    <!-- 标题栏 -->
     <Title :title="title"></Title>
     <!-- 内容区 -->
     <template v-for="(item, index) in customList" :key="index">
