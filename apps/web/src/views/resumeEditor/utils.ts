@@ -40,7 +40,7 @@ export function getResumeTitle(data: any) {
   }
   const { user, education } = data;
   const name = user?.name || "";
-  const edu = education?.[0]?.education || "";
+  const edu = education?.data?.[0]?.education || "";
   const position = user?.position || "";
   return [name, edu, position, workYears.value].filter(Boolean).join("-") || defaultName;
 }
@@ -90,28 +90,28 @@ export const userScore = computed(() => getUserScore(currentData.value));
 
 // 教育经历得分
 const getEducationScore = (data: any) => {
-  const list = data?.education || [];
+  const list = data?.education?.data || [];
   return calculateListScore(list);
 };
 export const educationScore = computed(() => getEducationScore(currentData.value));
 
 // 技能得分
 const getSkillScore = (data: any) => {
-  const skill = data?.skill?.trim() || "";
+  const skill = data?.skill?.data?.trim() || "";
   return skill ? 10 : 0;
 };
 export const skillScore = computed(() => getSkillScore(currentData.value));
 
 // 工作经历得分
 const getWorkScore = (data: any) => {
-  const list = data?.work || [];
+  const list = data?.work?.data || [];
   return calculateListScore(list);
 };
 export const workScore = computed(() => getWorkScore(currentData.value));
 
 // 项目经历得分
 const getProjectScore = (data: any) => {
-  const list = data?.project || [];
+  const list = data?.project?.data || [];
   return calculateListScore(list);
 };
 export const projectScore = computed(() => getProjectScore(currentData.value));
