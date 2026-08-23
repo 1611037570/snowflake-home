@@ -1,11 +1,5 @@
 <template>
-  <el-row
-    ref="row"
-    :class="{ 'drag-container-active': isDragging }"
-    :gutter="12"
-    :key="items.id"
-    v-if="init"
-  >
+  <el-row ref="row" :class="{ 'drag-container-active': isDragging }" :gutter="12" :key="items.id">
     <FormItem :currentForm="item" v-for="(item, index) in items.fields" :key="item.id">
       <!-- 校验失败：展示友好的错误提示 -->
       <FormError v-if="!checkForm(item)" :error-msg="item.errorMsg" :raw="item.raw" />
@@ -40,11 +34,10 @@ import FormError from "./formError.vue";
 import FormItem from "./formItem.vue";
 
 defineOptions({ name: "FormRenderer" });
-const rootData = inject(DF_ROOT_DATA);
+const rootData: any = inject(DF_ROOT_DATA);
 const row: any = useTemplateRef("row");
 // 表单数据
 const items = defineModel<any>("items", {});
-const init = ref(false);
 const isDragging = ref(false);
 // 拖拽实例
 let draggable: ReturnType<typeof useDraggable> | null = null;
@@ -80,8 +73,6 @@ onMounted(async () => {
       ensureFieldIds(items.value?.fields);
     },
   );
-
-  init.value = true;
 
   if (!items.value?.drag) {
     return;

@@ -1,11 +1,5 @@
 <template>
-  <el-row
-    class="m-0! w-full"
-    :class="{ 'drag-array-active': isDragging }"
-    :gutter="0"
-    ref="row"
-    v-if="init"
-  >
+  <el-row class="m-0! w-full" :class="{ 'drag-array-active': isDragging }" :gutter="0" ref="row">
     <FormItem
       v-for="item in formListWithStyle"
       :currentForm="item.item"
@@ -50,9 +44,8 @@ let draggable: ReturnType<typeof useDraggable> | null = null;
 defineProps<{
   currentIndex?: any;
 }>();
-const currentForm = defineModel<any>("currentForm");
-const rootData = inject(DF_ROOT_DATA);
-const init = ref(false);
+const currentForm: any = defineModel("currentForm");
+const rootData: any = inject(DF_ROOT_DATA);
 const isDragging = ref(false);
 // 监听列表变化，为新增的子项补充 id，避免模板 :key 为 undefined 导致重复 key
 // 浅监听列表引用与长度：仅在新增/删除/整体替换时触发，避免子项输入时深度遍历整个列表
@@ -69,7 +62,7 @@ watch(
 );
 onMounted(async () => {
   await nextTick(() => {});
-  init.value = true;
+
   if (!currentForm.value?.drag) {
     return;
   }
@@ -79,8 +72,6 @@ onMounted(async () => {
     animation: 150,
     ghostClass: "ghost",
     onStart: (e) => {
-      console.log("e:>> ", e);
-
       e.stopPropagation();
       isDragging.value = true;
     },
@@ -89,8 +80,6 @@ onMounted(async () => {
       // 获取旧索引和新索引
       const { oldIndex, newIndex } = data;
       if (oldIndex === newIndex) return;
-      // const [item] = currentForm.value.list.splice(oldIndex, 1)
-      // currentForm.value.list.splice(newIndex, 0, item)
       rootData.move(currentForm.value.list, oldIndex, newIndex);
     },
   });
