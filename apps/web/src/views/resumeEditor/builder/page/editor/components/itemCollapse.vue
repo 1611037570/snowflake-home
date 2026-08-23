@@ -18,7 +18,7 @@ function del() {
 </script>
 
 <template>
-  <SfCollapse>
+  <SfCollapse :border="false">
     <SfCollapseItem>
       <template #title>
         <div class="group flex h-full w-full items-center justify-between text-sf-text">
