@@ -42,12 +42,17 @@ function generateRoute(item: any): RouteRecordRaw {
   const componentPath = `/src/views/${name}/index.vue`;
   const component = componentModules[componentPath];
 
-  return {
-    path: `/${name}`,
+  // 简历页为布局路由：父路由不设 name（name 已挂到空路径子路由上），
+  // 避免与子路由同名冲突，也保证按 name 导航能渲染默认子页
+  const isResume = name === "resume";
+  const defaultRoute = {
     name,
+    path: `/${name}`,
     component: component ? component : () => import("@views/status/error.vue"),
-    // 简历页为布局路由，挂载子路由
-    ...(name === "resume" ? { children: resumeChildren } : {}),
+  };
+  return {
+    ...defaultRoute,
+    ...(isResume ? { children: resumeChildren } : {}),
   };
 }
 // 生成并添加所有页面路由
