@@ -1,3 +1,5 @@
+import type { FormConfig, FormField } from "@/components/business/dynamicForm";
+
 const DEFAULT_META = {
   version: "1.0.0",
 };
@@ -137,7 +139,7 @@ export const DEFAULT_USER_FORM = [
     key: "user",
     name: "用户信息",
   },
-];
+] satisfies FormField[];
 // 用户信息的配置
 export const DEFAULT_USER_CONFIG = {
   meta: DEFAULT_META,
@@ -145,7 +147,7 @@ export const DEFAULT_USER_CONFIG = {
   drag: false,
   // 表单中所渲染的组件的字段
   fields: structuredClone(DEFAULT_USER_FORM),
-};
+} satisfies FormConfig;
 // 社交账号
 export const DEFAULT_ACCOUNT_FORM = {
   type: "object",
@@ -186,9 +188,9 @@ export const DEFAULT_ACCOUNT_FORM = {
         type: "object",
         component: "account",
       },
-    },
+    ],
   ],
-};
+} satisfies FormField;
 // 教育经历
 export const DEFAULT_EDUCATION_FORM = {
   name: "教育经历",
@@ -246,9 +248,9 @@ export const DEFAULT_EDUCATION_FORM = {
         component: "education",
         span: 24,
       },
-    },
+    ],
   ],
-};
+} satisfies FormField;
 // 专业技能
 export const DEFAULT_SKILL_FORM = {
   type: "object",
@@ -277,7 +279,7 @@ export const DEFAULT_SKILL_FORM = {
       },
     },
   ],
-};
+} satisfies FormField;
 // 个人优势
 export const DEFAULT_ADVANTAGE_FORM = {
   type: "object",
@@ -305,7 +307,7 @@ export const DEFAULT_ADVANTAGE_FORM = {
       },
     },
   ],
-};
+} satisfies FormField;
 // 工作经历
 export const DEFAULT_WORK_FORM = {
   type: "object",
@@ -354,7 +356,7 @@ export const DEFAULT_WORK_FORM = {
       },
     },
   ],
-};
+} satisfies FormField;
 // 项目经历
 export const DEFAULT_PROJECT_FORM = {
   type: "object",
@@ -402,7 +404,7 @@ export const DEFAULT_PROJECT_FORM = {
       },
     },
   ],
-};
+} satisfies FormField;
 // 自定义经历
 export const DEFAULT_CUSTOM_FORM = {
   type: "object",
@@ -455,7 +457,7 @@ export const DEFAULT_CUSTOM_FORM = {
       },
     },
   ],
-};
+} satisfies FormField;
 //
 export const DEFAULT_CONFIG = {
   meta: DEFAULT_META,
@@ -463,7 +465,7 @@ export const DEFAULT_CONFIG = {
   dragClass: ".container-drag",
   // 表单中所渲染的组件的字段
   fields: [],
-};
+} satisfies FormConfig;
 export const allConfig = {
   skill: DEFAULT_SKILL_FORM,
   user: DEFAULT_USER_FORM,
@@ -473,4 +475,4 @@ export const allConfig = {
   work: DEFAULT_WORK_FORM,
   project: DEFAULT_PROJECT_FORM,
   custom: DEFAULT_CUSTOM_FORM,
-};
+} satisfies Record<string, FormField | FormField[]>;
