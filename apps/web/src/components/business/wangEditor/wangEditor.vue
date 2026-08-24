@@ -67,6 +67,12 @@ const handleCreated = (editor) => {
   border-top-right-radius: 12px;
   padding: 0 !important;
 }
+:deep(.w-e-bar-item button) {
+  border-radius: 8px !important;
+}
+:deep(.w-e-bar-item .active) {
+  background-color: var(--color-sf-theme-2) !important;
+}
 // 修改工具栏按钮hover样式
 :deep(.w-e-bar-item button:hover) {
   svg {

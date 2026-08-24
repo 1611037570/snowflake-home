@@ -85,7 +85,9 @@
   /* 主题色 */
   --sf-theme: #50a2ff;
   /* 主题色-2 */
-  --sf-theme-2: color-mix(in oklab, #50a2ff 15%, transparent);
+  --sf-theme-2: color-mix(in oklab, #50a2ff 50%, transparent);
+  /* 主题色-3 */
+  --sf-theme-3: color-mix(in oklab, #50a2ff 15%, transparent);
 }
 /* 默认：亮色模式 */
 .light {
