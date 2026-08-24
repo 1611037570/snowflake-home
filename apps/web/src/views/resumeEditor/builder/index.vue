@@ -30,7 +30,7 @@ provide("bg", "bg-sf-bg");
 </script>
 
 <template>
-  <div class="relative flex h-full w-[360px] flex-col py-3 pl-3">
+  <div class="relative flex h-full w-[380px] flex-col py-3 pl-3">
     <SfTab
       :list="menuList"
       v-model:index="activeIndex"

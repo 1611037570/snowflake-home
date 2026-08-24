@@ -26,15 +26,13 @@ const dynamicComponents = {
 </script>
 
 <template>
-  <div class="relative flex h-full flex-col overflow-hidden">
-    <SfDynamicForm v-model:form="currentFixedConfig" v-model:data="currentData" />
-    <SfDynamicForm
-      v-model:form="currentConfig"
-      v-model:data="currentData"
-      :components="dynamicComponents"
-    />
-    <AddModule />
-  </div>
+  <SfDynamicForm v-model:form="currentFixedConfig" v-model:data="currentData" />
+  <SfDynamicForm
+    v-model:form="currentConfig"
+    v-model:data="currentData"
+    :components="dynamicComponents"
+  />
+  <AddModule />
 </template>
 
 <style lang="scss" scoped></style>
