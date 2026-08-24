@@ -109,7 +109,7 @@
   --sf-text-2: color-mix(in oklab, oklch(100% 0 0) 50%, transparent);
   --sf-text-3: color-mix(in oklab, oklch(100% 0 0) 30%, transparent);
   --sf-base: rgba(255, 255, 255, 1);
-  --sf-primary: #262525;
+  --sf-primary: #2b2c2d;
   --sf-page: black;
   --sf-background: #121214;
   --sf-background-2: #3a3a3c;
