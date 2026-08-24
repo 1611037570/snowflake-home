@@ -36,13 +36,20 @@ const getProgressClass = (progress) => {
   return "bg-sf-theme";
 };
 
-const handleEdit = (index) => {
+// 按 id 定位真实下标（displayList 按 lastUseTime 排序后 index 不可直接用）
+const findIndexById = (id) => list.value.findIndex((item) => item.id === id);
+
+const handleEdit = (item) => {
+  const index = findIndexById(item.id);
+  if (index === -1) return;
   currentIndex.value = index;
-  router.push({ path: "/resumeEditor", query: { id: list.value[index].id } });
+  router.push({ path: "/resumeEditor", query: { id: item.id } });
 };
 
-const handleDelete = (index) => {
+const handleDelete = (item) => {
   proxy.$confirm("确定要删除当前简历吗？", "删除确认").then(() => {
+    const index = findIndexById(item.id);
+    if (index === -1) return;
     currentIndex.value = index;
     resumeStore.deleteResume();
   });
@@ -90,7 +97,7 @@ const handleCreate = () => {
               <button
                 type="button"
                 class="flex h-8 w-8 items-center justify-center rounded-full bg-sf-error/10 text-sf-error transition-colors duration-200 hover:bg-sf-error/20"
-                @click.stop="handleDelete(card.index)"
+                @click.stop="handleDelete(card.item)"
               >
                 <SfIcon icon="lucide:trash-2" size="4" />
               </button>
