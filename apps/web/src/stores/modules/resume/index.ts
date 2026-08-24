@@ -34,7 +34,7 @@ const DEFAULT_RESUME_ITEM = {
     // 行高
     lineHeight: defaultLineHeight,
     // 主题颜色
-    color: defaultThemeColor,
+    themeColor: defaultThemeColor,
     // 主题样式
     themeStyle: defaultThemeStyle,
     // 字体类型
