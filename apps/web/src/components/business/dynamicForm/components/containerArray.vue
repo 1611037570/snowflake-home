@@ -26,22 +26,24 @@
 
 <script setup lang="ts">
 import { getUUID } from "@/utils";
-import { computed, inject, onMounted, onUnmounted, toRaw, watch } from "vue";
+import { computed, inject, onMounted, onUnmounted, watch } from "vue";
 import { useDraggable } from "vue-draggable-plus";
 import {
   DF_ADD,
+  DF_CONTEXT,
   DF_CURRENT_FORM,
   DF_CURRENT_LENGTH,
   DF_CURRENT_TYPE,
   DF_REMOVE_ITEM,
   DF_ROOT_DATA,
 } from "../code/injectionKeys.ts";
+import { createAddItem } from "../code/addItem.ts";
 import ContainerObject from "./containerObject.vue";
 import FormItem from "./formItem.vue";
 const row: any = useTemplateRef("row");
 let draggable: ReturnType<typeof useDraggable> | null = null;
 
-defineProps<{
+const props = defineProps<{
   currentIndex?: any;
 }>();
 const currentForm: any = defineModel("currentForm");
@@ -166,14 +168,8 @@ const remove = (index: any) => {
   rootData.removeItem(currentForm.value.list, index);
   currentForm.value.list.splice(index, 1);
 };
-// 添加
-const add = () => {
-  // 检查是否有添加配置
-  const addConfig = currentForm.value.addConfig;
-  if (!addConfig) return;
-  // 深拷贝 addConfig 后添加到列表，避免多个子项共享同一份引用
-  currentForm.value.list.push(structuredClone(toRaw(addConfig)));
-};
+// 添加（统一智能新增：array 容器直接新增，内部深拷贝 addConfig）
+const add = createAddItem(currentForm);
 // 提供当前容器的长度
 provide(DF_CURRENT_LENGTH, length);
 // 提供当前容器的表单数据
@@ -184,6 +180,17 @@ provide(DF_CURRENT_TYPE, "array");
 provide(DF_ADD, add);
 // 提供删除方法
 provide(DF_REMOVE_ITEM, remove);
+// 对外上下文契约：聚合父级上下文 + 当前数组容器能力
+const parentContext = inject(DF_CONTEXT, {});
+provide(DF_CONTEXT, {
+  ...parentContext,
+  currentForm,
+  currentIndex: props.currentIndex,
+  currentType: "array",
+  currentLength: length,
+  addItem: add,
+  removeItem: remove,
+});
 </script>
 
 <style scoped>

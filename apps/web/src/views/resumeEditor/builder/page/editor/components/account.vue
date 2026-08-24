@@ -1,6 +1,5 @@
 <script setup>
 import { getCurrentInstance } from "vue";
-import { useDynamicForm } from "@/components/business/dynamicForm/code/useDynamicForm";
 
 const { proxy } = getCurrentInstance();
 
@@ -13,7 +12,7 @@ const url = defineModel("url", {
   type: String,
   default: "",
 });
-const { currentIndex, removeItem } = useDynamicForm();
+const { currentIndex, removeItem } = inject("df/context");
 
 // 删除社交账号
 const removeAccount = (index) => {

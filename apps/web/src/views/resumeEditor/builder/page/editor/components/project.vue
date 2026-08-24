@@ -1,6 +1,5 @@
 <script setup>
 import ItemCollapse from "./itemCollapse.vue";
-import { useDynamicForm } from "@/components/business/dynamicForm/code/useDynamicForm";
 // 公司
 const name = defineModel("name", {
   type: String,
@@ -30,7 +29,7 @@ const result = defineModel("result", {
   type: String,
   default: "",
 });
-const { currentIndex } = useDynamicForm();
+const { currentIndex } = inject("df/context");
 </script>
 
 <template>

@@ -14,6 +14,7 @@
 import { inject } from "vue";
 import { getComponent } from "../code/getComponent";
 import {
+  DF_CONTEXT,
   DF_CURRENT_FORM,
   DF_CURRENT_INDEX,
   DF_CURRENT_TYPE,
@@ -46,6 +47,15 @@ provide(DF_CURRENT_FORM, currentForm);
 provide(DF_CURRENT_TYPE, "object");
 // 提供删除方法
 provide(DF_REMOVE, remove);
+// 对外上下文契约：聚合父级上下文 + 当前对象容器能力
+const parentContext = inject(DF_CONTEXT, {});
+provide(DF_CONTEXT, {
+  ...parentContext,
+  currentForm,
+  currentIndex,
+  currentType: "object",
+  removeSelf: remove,
+});
 </script>
 
 <style scoped></style>
