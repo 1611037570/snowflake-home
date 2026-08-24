@@ -1,9 +1,9 @@
 <script setup>
 import { markRaw, ref } from "vue";
 import GeneratingMask from "../components/generatingMask.vue";
-import Custom from "./page/custom/index.vue";
-import Editor from "./page/editor/index.vue";
-import Template from "./page/template/index.vue";
+import Custom from "./custom/index.vue";
+import Editor from "./editor/index.vue";
+import Template from "./template/index.vue";
 
 // 菜单配置
 const menuList = [
