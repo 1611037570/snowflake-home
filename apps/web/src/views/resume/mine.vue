@@ -76,8 +76,8 @@ const handleCreate = () => {
       <div
         v-for="card in displayList"
         :key="card.item.id || card.index"
-        class="group border-sf-b flex cursor-pointer flex-col rounded-xl border bg-sf-primary p-4 shadow-sm transition-all duration-200 hover:-translate-y-1 hover:border-sf-theme"
-        @click="handleEdit(card.index)"
+        class="group flex cursor-pointer flex-col rounded-xl border border-sf-b bg-sf-primary p-4 shadow-sm transition-all duration-200 hover:-translate-y-1 hover:border-sf-theme"
+        @click="handleEdit(card.item)"
       >
         <div class="flex h-20 items-center rounded-xl bg-sf-theme/10 p-4 text-base font-black">
           {{ getResumeTitle(card.item.data) }}
@@ -90,7 +90,8 @@ const handleCreate = () => {
             </div>
             <div class="flex items-center gap-2">
               <span
-                class="flex h-8 w-8 items-center justify-center rounded-full bg-sf-theme/10 text-sf-theme"
+                class="flex h-8 w-8 cursor-pointer items-center justify-center rounded-full bg-sf-theme/10 text-sf-theme transition-colors duration-200 hover:bg-sf-theme/20"
+                @click.stop="handleEdit(card.item)"
               >
                 <SfIcon icon="lucide:edit-3" size="4" />
               </span>
@@ -117,7 +118,7 @@ const handleCreate = () => {
 
     <div
       v-else
-      class="border-sf-b flex flex-col items-center gap-4 rounded-xl border bg-sf-primary p-10 shadow-sm"
+      class="flex flex-col items-center gap-4 rounded-xl border border-sf-b bg-sf-primary p-10 shadow-sm"
     >
       <div class="text-sf-text-2">
         <SfIcon icon="lucide:file-text" size="10" />
