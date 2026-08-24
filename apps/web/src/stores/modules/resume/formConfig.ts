@@ -333,24 +333,74 @@ export const DEFAULT_WORK_FORM = {
       dragClass: ".item-drag",
       list: [],
       addConfig: {
-        component: "work",
+        type: "object",
+        component: "itemCollapse",
+        slot: "default",
         span: 24,
+        // 折叠标题：绑定标题字段，由 itemCollapse 推导展示
+        props: {
+          placeholder: "未填写公司名称",
+        },
         model: [
           {
             source: ["work", "data", "?", "name"],
             prop: "name",
           },
+        ],
+        // 子项字段列表：纯 schema 声明
+        fields: [
           {
-            source: ["work", "data", "?", "post"],
-            prop: "post",
+            type: "object",
+            label: "公司",
+            component: "input",
+            span: 12,
+            model: {
+              source: ["work", "data", "?", "name"],
+              prop: "modelValue",
+            },
+            props: {
+              placeholder: "公司",
+            },
           },
           {
-            source: ["work", "data", "?", "time"],
-            prop: "time",
+            type: "object",
+            label: "岗位",
+            component: "input",
+            span: 12,
+            model: {
+              source: ["work", "data", "?", "post"],
+              prop: "modelValue",
+            },
+            props: {
+              placeholder: "岗位",
+            },
           },
           {
-            source: ["work", "data", "?", "content"],
-            prop: "content",
+            type: "object",
+            label: "时间",
+            component: "datePicker",
+            span: 24,
+            model: {
+              source: ["work", "data", "?", "time"],
+              prop: "modelValue",
+            },
+            props: {
+              type: "monthrange",
+              format: "YYYY.MM",
+              valueFormat: "YYYY.MM",
+              startPlaceholder: "开始时间",
+              endPlaceholder: "结束时间",
+            },
+          },
+          {
+            type: "object",
+            label: "经历",
+            component: "wangEditor",
+            span: 24,
+            model: {
+              source: ["work", "data", "?", "content"],
+              prop: "modelValue",
+            },
           },
         ],
       },

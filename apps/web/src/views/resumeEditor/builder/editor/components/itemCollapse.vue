@@ -6,12 +6,29 @@ const props = defineProps({
     default: "未填写",
   },
   index: {},
+  placeholder: {
+    type: String,
+    default: "未填写",
+  },
 });
-const { removeItem } = inject("df/context")();
+const name = defineModel("name", {
+  type: String,
+  default: "",
+});
+const { currentIndex, removeItem } = inject("df/context")();
+
+// 标题：显式传入优先，其次按标题字段数据推导，最后占位符兜底
+const displayTitle = computed(() => {
+  if (props.title && props.title !== "未填写") return props.title;
+  return name.value || props.placeholder;
+});
+
+// 删除索引：兼容显式传入与容器注入两种来源
+const delIndex = computed(() => props.index ?? currentIndex?.value);
 
 function del() {
-  proxy.$confirm(`确定要删除${props.title}吗？`, "删除确认").then(() => {
-    removeItem(props.index);
+  proxy.$confirm(`确定要删除${displayTitle.value}吗？`, "删除确认").then(() => {
+    removeItem(delIndex.value);
   });
 }
 </script>
@@ -28,7 +45,7 @@ function del() {
               class="item-drag mr-1 cursor-move!"
               @click.stop=""
             />
-            {{ title }}
+            {{ displayTitle }}
           </div>
           <SfIcon
             @click.stop="del"
