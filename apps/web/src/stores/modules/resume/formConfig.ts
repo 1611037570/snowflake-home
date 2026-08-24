@@ -188,7 +188,7 @@ export const DEFAULT_ACCOUNT_FORM = {
         type: "object",
         component: "account",
       },
-    ],
+    },
   ],
 } satisfies FormField;
 // 教育经历
@@ -248,7 +248,7 @@ export const DEFAULT_EDUCATION_FORM = {
         component: "education",
         span: 24,
       },
-    ],
+    },
   ],
 } satisfies FormField;
 // 专业技能
