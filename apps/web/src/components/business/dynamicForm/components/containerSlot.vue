@@ -18,12 +18,14 @@
 <script setup lang="ts">
 import { isString } from "@/utils";
 import {
+  DF_CONTEXT,
   DF_CURRENT_FORM,
   DF_CURRENT_INDEX,
   DF_CURRENT_TYPE,
   DF_REMOVE,
   DF_ROOT_DATA,
 } from "../code/injectionKeys.ts";
+import { createAddItem } from "../code/addItem.ts";
 import { getComponent } from "../code/getComponent.ts";
 import FormRenderer from "./formRenderer.vue";
 
@@ -51,6 +53,16 @@ provide(DF_CURRENT_INDEX, currentIndex);
 provide(DF_REMOVE, remove);
 // 提供当前容器的类型
 provide(DF_CURRENT_TYPE, "container");
+// 对外上下文契约：聚合父级上下文 + 当前插槽容器能力
+const parentContext = inject(DF_CONTEXT, {});
+provide(DF_CONTEXT, {
+  ...parentContext,
+  currentForm,
+  currentIndex,
+  currentType: "container",
+  removeSelf: remove,
+  addItem: createAddItem(currentForm),
+});
 </script>
 
 <style scoped></style>

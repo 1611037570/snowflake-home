@@ -1,6 +1,5 @@
 <script setup>
 import { ref } from "vue";
-import { useDynamicForm } from "@/components/business/dynamicForm/code/useDynamicForm";
 const { proxy } = getCurrentInstance();
 
 defineProps({
@@ -13,7 +12,7 @@ defineProps({
     default: false,
   },
 });
-const { currentForm, removeSelf, addItem } = useDynamicForm();
+const { currentForm, removeSelf, addItem } = inject("df/context");
 
 // 展开状态：直接绑定激活项 name 数组（["1"] 展开 / [] 收起），随数据双向绑定
 const collapsed = defineModel("collapsed", {

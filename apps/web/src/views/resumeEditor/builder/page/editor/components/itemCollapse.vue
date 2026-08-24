@@ -1,5 +1,4 @@
 <script setup>
-import { useDynamicForm } from "@/components/business/dynamicForm/code/useDynamicForm";
 const { proxy } = getCurrentInstance();
 const props = defineProps({
   title: {
@@ -8,7 +7,7 @@ const props = defineProps({
   },
   index: {},
 });
-const { removeItem } = useDynamicForm();
+const { removeItem } = inject("df/context");
 
 function del() {
   proxy.$confirm(`确定要删除${props.title}吗？`, "删除确认").then(() => {

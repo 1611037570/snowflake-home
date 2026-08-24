@@ -25,3 +25,8 @@ export const DF_ADD: InjectionKey<() => void> = Symbol("df/add");
 export const DF_REMOVE: InjectionKey<() => void> = Symbol("df/remove");
 /** 数组容器删除子项方法 */
 export const DF_REMOVE_ITEM: InjectionKey<(index: number) => void> = Symbol("df/removeItem");
+/**
+ * 对外上下文契约（字符串 key，业务组件按约定直接 inject 使用，无需导入）
+ * 由各容器节点提供：聚合父级上下文 + 当前容器能力
+ */
+export const DF_CONTEXT = "df/context";
