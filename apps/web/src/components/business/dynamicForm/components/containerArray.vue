@@ -108,18 +108,24 @@ const getItemStyle = (isFirstInRow: boolean, isLastInRow: boolean, bottomStyle: 
 // 动态计算样式算法：实现第一个左边距0，最后一个右边距0，其他左右各6
 const formListWithStyle = computed(() => {
   const list = currentForm.value?.list || [];
+  // 最后一行起始索引
   let lastRowStartIndex = 0;
+  // 累计占用的栅格数（跨行统计，用于确定每行起点）
   let accumulatedSpan = 0;
+  // 当前行累计占用的栅格数（逐项统计，用于确定行首行尾）
   let currentAccumulatedSpan = 0;
 
+  // 第一轮遍历：根据每项 span 换行，计算最后一行起始索引（用于决定底部间距）
   list.forEach((item: any, index: number) => {
     const span = getSpan(item);
+    // 当前行放不下，换行：更新最后一行起始索引并重置累计栅格数
     if (accumulatedSpan + span > 24) {
       lastRowStartIndex = index;
       accumulatedSpan = 0;
     }
 
     accumulatedSpan += span;
+    // 刚好排满一行，重置累计栅格数，并将最后一行起始索引指向下一项
     if (accumulatedSpan >= 24) {
       accumulatedSpan = 0;
       if (index < list.length - 1) {
@@ -128,26 +134,32 @@ const formListWithStyle = computed(() => {
     }
   });
 
+  // 第二轮遍历：逐项判断是否行首/行尾，计算每项的左右边距与底部间距
   return list.map((item: any, index: number) => {
     const span = getSpan(item);
+    // 当前行放不下，重置为行首
     if (currentAccumulatedSpan + span > 24) {
       currentAccumulatedSpan = 0;
     }
 
+    // 累计栅格为 0 时即为行首
     const isFirstInRow = currentAccumulatedSpan === 0;
     const nextItem = list[index + 1];
     const nextSpan = nextItem ? getSpan(nextItem) : 0;
+    // 满足以下任一条件即为行尾：恰好排满一行 / 下一项放不下需换行 / 是最后一项
     const isLastInRow =
       currentAccumulatedSpan + span === 24 ||
       (!!nextItem && currentAccumulatedSpan + span + nextSpan > 24) ||
       index === list.length - 1;
 
     currentAccumulatedSpan += span;
+    // 排满一行后重置，供下一项重新判断
     if (currentAccumulatedSpan >= 24) {
       currentAccumulatedSpan = 0;
     }
 
-    const bottomStyle = index >= lastRowStartIndex ? "" : "6px";
+    // 最后一行底部不留间距，其余行保留 12px 间距
+    const bottomStyle = index >= lastRowStartIndex ? "" : "12px";
 
     // 水平边距逻辑：
     // 1. 如果既是行首又是行尾（span=24），左右边距都是0
