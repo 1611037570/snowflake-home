@@ -2,6 +2,4 @@ packages:
   - 'apps/*'
 catalog:
   # 语言/工具链
-  typescript: 5.9.3
   prettier: 3.6.2
-  eslint: 9.37.0
