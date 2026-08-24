@@ -5,7 +5,8 @@ import dayjs from "dayjs";
 import { ElMessage } from "element-plus";
 import { storeToRefs } from "pinia";
 import { reactive } from "vue";
-import { btnOutline, getPlatformLabel, platformOptions } from "./utils";
+import ListFilter from "./listFilter.vue";
+import { btnOutline, getPlatformLabel } from "./utils";
 
 const emit = defineEmits(["openBatch", "openEdit", "openFollow"]);
 
@@ -79,17 +80,7 @@ const handleDelete = (item) => {
       </button>
     </div>
 
-    <div class="mt-3 flex items-center gap-3">
-      <ElFormItem label="平台" prop="platform" class="flex-1">
-        <SfSelect
-          v-model="filter.platform"
-          clearable
-          placeholder="全部平台"
-          :list="platformOptions"
-        />
-      </ElFormItem>
-      <span class="text-xs text-sf-text-2">共 {{ filteredList.length }} 条</span>
-    </div>
+    <ListFilter v-model:platform="filter.platform" :count="filteredList.length" />
 
     <el-table :data="filteredList" border class="mt-3 w-full rounded-xl" empty-text="暂无投递记录">
       <el-table-column label="平台明细" min-width="220">

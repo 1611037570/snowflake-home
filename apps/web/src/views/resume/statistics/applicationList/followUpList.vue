@@ -4,7 +4,8 @@ import { FOLLOW_UP_STATUS, useResumeStatisticsStore } from "@/stores";
 import { ElMessage } from "element-plus";
 import { storeToRefs } from "pinia";
 import { reactive } from "vue";
-import { followUpStatusOptions, getPlatformLabel, platformOptions } from "./utils";
+import ListFilter from "./listFilter.vue";
+import { followUpStatusOptions, getPlatformLabel } from "./utils";
 
 const statisticsStore = useResumeStatisticsStore();
 const { followUps } = storeToRefs(statisticsStore);
@@ -56,15 +57,7 @@ const getStatusDotClass = (status) => {
 </script>
 
 <template>
-  <div class="mt-3 flex items-center gap-3">
-    <ElFormItem label="平台" prop="platform" class="flex-1">
-      <SfSelect
-        v-model="filter.platform"
-        clearable
-        placeholder="全部平台"
-        :list="platformOptions"
-      />
-    </ElFormItem>
+  <ListFilter v-model:platform="filter.platform" :count="filteredList.length">
     <ElFormItem label="状态" prop="status" class="flex-1">
       <SfSelect
         v-model="filter.status"
@@ -73,8 +66,7 @@ const getStatusDotClass = (status) => {
         :list="followUpStatusOptions"
       />
     </ElFormItem>
-    <span class="text-xs text-sf-text-2">共 {{ filteredList.length }} 条</span>
-  </div>
+  </ListFilter>
 
   <el-table :data="filteredList" class="mt-3 w-full" empty-text="暂无跟进记录">
     <el-table-column prop="company" label="公司" min-width="180" show-overflow-tooltip />
