@@ -3,7 +3,8 @@
     <SfFormItem
       class="w-full"
       :label="currentForm.label"
-      :prop="currentForm.model?.path"
+      :prop="getProp(currentForm)"
+      :rules="currentForm.rules"
       :tip="true"
       :tip-content="currentForm.tip"
     >
@@ -17,6 +18,12 @@ defineProps<{
   currentForm: any;
 }>();
 const DEFAULT_SPAN = 24;
+// 由数据绑定路径推导 el-form 校验 prop（含数组通配 "?" 的暂不支持校验定位）
+const getProp = (currentForm: any) => {
+  const model = Array.isArray(currentForm.model) ? currentForm.model[0] : currentForm.model;
+  const source = model?.source;
+  return Array.isArray(source) && !source.includes("?") ? source.join(".") : undefined;
+};
 // 处理span值
 const getSpan = (span: number | string | undefined) => {
   // 转换为数字

@@ -52,4 +52,12 @@ function changeRef(exports: any) {
 defineExpose({} as ComponentInstance<typeof ElFormItem>);
 </script>
 
-<style scoped></style>
+<style scoped>
+.el-form-item__label {
+  display: flex !important;
+}
+:deep(.el-form-item__label) {
+  display: flex !important;
+  align-items: center;
+}
+</style>
