@@ -32,7 +32,7 @@
 
 <script setup lang="ts">
 import { getUUID } from "@/utils";
-import { computed, inject, onMounted, onUnmounted, watch } from "vue";
+import { computed, inject, onMounted, onUnmounted, ref, watch } from "vue";
 import { useDraggable } from "vue-draggable-plus";
 import {
   DF_ADD,
