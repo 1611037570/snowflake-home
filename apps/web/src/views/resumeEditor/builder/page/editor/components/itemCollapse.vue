@@ -1,5 +1,5 @@
 <script setup>
-import { DF_REMOVE_ITEM } from "@/components/business/dynamicForm/code/injectionKeys";
+import { useDynamicForm } from "@/components/business/dynamicForm/code/useDynamicForm";
 const { proxy } = getCurrentInstance();
 const props = defineProps({
   title: {
@@ -8,7 +8,7 @@ const props = defineProps({
   },
   index: {},
 });
-const removeItem = inject(DF_REMOVE_ITEM);
+const { removeItem } = useDynamicForm();
 
 function del() {
   proxy.$confirm(`确定要删除${props.title}吗？`, "删除确认").then(() => {

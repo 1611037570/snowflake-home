@@ -1,6 +1,6 @@
 <script setup>
-import { ref, toRaw } from "vue";
-import { DF_CURRENT_FORM, DF_REMOVE } from "@/components/business/dynamicForm/code/injectionKeys";
+import { ref } from "vue";
+import { useDynamicForm } from "@/components/business/dynamicForm/code/useDynamicForm";
 const { proxy } = getCurrentInstance();
 
 defineProps({
@@ -13,8 +13,7 @@ defineProps({
     default: false,
   },
 });
-const currentForm = inject(DF_CURRENT_FORM);
-const objectRemove = inject(DF_REMOVE);
+const { currentForm, removeSelf, addItem } = useDynamicForm();
 
 // 展开状态：直接绑定激活项 name 数组（["1"] 展开 / [] 收起），随数据双向绑定
 const collapsed = defineModel("collapsed", {
@@ -27,15 +26,12 @@ const title = computed(() => currentForm.value?.name || "未填写");
 
 function del() {
   proxy.$confirm(`确定要删除${title.value}模块吗？`, "删除确认").then(() => {
-    objectRemove();
+    removeSelf();
   });
 }
 function handleAdd() {
-  // 新增一条子项：toRaw 解包响应式代理后再深拷贝，避免 structuredClone 克隆 Proxy 报错
-  const currentFields = currentForm.value.fields[0];
-  const { addConfig, list } = currentFields;
-  if (!addConfig) return;
-  list.push(structuredClone(toRaw(addConfig)));
+  // 新增一条子项：引擎内部深拷贝 addConfig 后 push，避免多个子项共享同一份引用
+  addItem();
 }
 
 // 标题编辑弹窗状态
