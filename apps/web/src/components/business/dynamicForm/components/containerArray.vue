@@ -26,7 +26,7 @@
 
 <script setup lang="ts">
 import { getUUID } from "@/utils";
-import { computed, inject, onMounted, onUnmounted, watch } from "vue";
+import { computed, inject, onMounted, onUnmounted, toRaw, watch } from "vue";
 import { useDraggable } from "vue-draggable-plus";
 import {
   DF_ADD,
@@ -171,8 +171,8 @@ const add = () => {
   // 检查是否有添加配置
   const addConfig = currentForm.value.addConfig;
   if (!addConfig) return;
-  // 添加到列表
-  currentForm.value.list.push(addConfig);
+  // 深拷贝 addConfig 后添加到列表，避免多个子项共享同一份引用
+  currentForm.value.list.push(structuredClone(toRaw(addConfig)));
 };
 // 提供当前容器的长度
 provide(DF_CURRENT_LENGTH, length);
