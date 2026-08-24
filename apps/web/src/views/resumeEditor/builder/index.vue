@@ -8,17 +8,17 @@ import Template from "./page/template/index.vue";
 // 菜单配置
 const menuList = [
   {
-    name: "简历编辑",
+    name: "简历",
     icon: "lucide:file-text",
     component: markRaw(Editor),
   },
   {
-    name: "简历模板",
+    name: "模板",
     icon: "lucide:layout-template",
     component: markRaw(Template),
   },
   {
-    name: "页面布局",
+    name: "自定义",
     icon: "lucide:palette",
     component: markRaw(Custom),
   },
