@@ -11,10 +11,9 @@
         v-if="item.item.slot"
         :currentIndex="item.index"
         :currentForm="item.item"
-        :key="item.item.id"
         @removeObject="remove"
       />
-      <ContainerObject v-else :currentIndex="item.index" :currentForm="item.item" :key="item.item.id" />
+      <ContainerObject v-else :currentIndex="item.index" :currentForm="item.item" />
       <div class="flex" v-if="item.item.ui">
         <el-button @click="moveItem(item.index, item.index - 1)" :disabled="item.index === 0"
           >上移</el-button
