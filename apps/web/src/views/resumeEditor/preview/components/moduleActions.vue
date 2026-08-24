@@ -78,7 +78,7 @@ const hasNewData = computed(() => {
     </template>
     <SfTooltip :content="selected ? '取消选择' : '选择该模块'">
       <div
-        class="cursor-pointer items-center justify-center rounded-full p-1.5 text-white shadow hover:bg-sf-theme-2"
+        class="cursor-pointer items-center justify-center rounded-full p-1.5 text-white shadow hover:bg-sf-theme"
         :class="selected ? 'flex bg-sf-theme ' : 'hidden bg-sf-info group-hover:flex '"
         @click.stop="$emit('select')"
       >
