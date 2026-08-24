@@ -75,7 +75,7 @@ const modeList = [
     value: " ",
   },
 ];
-const { currentIndex } = inject("df/context");
+const { currentIndex } = inject("df/context")();
 </script>
 
 <template>

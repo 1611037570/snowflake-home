@@ -30,7 +30,6 @@ import { computed, inject, onMounted, onUnmounted, watch } from "vue";
 import { useDraggable } from "vue-draggable-plus";
 import {
   DF_ADD,
-  DF_CONTEXT,
   DF_CURRENT_FORM,
   DF_CURRENT_LENGTH,
   DF_CURRENT_TYPE,
@@ -43,7 +42,7 @@ import FormItem from "./formItem.vue";
 const row: any = useTemplateRef("row");
 let draggable: ReturnType<typeof useDraggable> | null = null;
 
-const props = defineProps<{
+defineProps<{
   currentIndex?: any;
 }>();
 const currentForm: any = defineModel("currentForm");
@@ -180,17 +179,6 @@ provide(DF_CURRENT_TYPE, "array");
 provide(DF_ADD, add);
 // 提供删除方法
 provide(DF_REMOVE_ITEM, remove);
-// 对外上下文契约：聚合父级上下文 + 当前数组容器能力
-const parentContext = inject(DF_CONTEXT, {});
-provide(DF_CONTEXT, {
-  ...parentContext,
-  currentForm,
-  currentIndex: props.currentIndex,
-  currentType: "array",
-  currentLength: length,
-  addItem: add,
-  removeItem: remove,
-});
 </script>
 
 <style scoped>

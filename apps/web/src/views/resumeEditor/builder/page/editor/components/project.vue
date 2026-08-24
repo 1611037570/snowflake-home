@@ -29,7 +29,7 @@ const result = defineModel("result", {
   type: String,
   default: "",
 });
-const { currentIndex } = inject("df/context");
+const { currentIndex } = inject("df/context")();
 </script>
 
 <template>

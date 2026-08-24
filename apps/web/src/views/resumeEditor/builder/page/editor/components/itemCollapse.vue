@@ -7,7 +7,7 @@ const props = defineProps({
   },
   index: {},
 });
-const { removeItem } = inject("df/context");
+const { removeItem } = inject("df/context")();
 
 function del() {
   proxy.$confirm(`确定要删除${props.title}吗？`, "删除确认").then(() => {
