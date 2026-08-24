@@ -12,7 +12,7 @@ const url = defineModel("url", {
   type: String,
   default: "",
 });
-const { currentIndex, removeItem } = inject("df/context");
+const { currentIndex, removeItem } = inject("df/context")();
 
 // 删除社交账号
 const removeAccount = (index) => {

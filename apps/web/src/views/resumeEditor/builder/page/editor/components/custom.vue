@@ -23,7 +23,7 @@ const content = defineModel("content", {
 });
 // 时间
 const time = defineModel("time", {});
-const { currentIndex } = inject("df/context");
+const { currentIndex } = inject("df/context")();
 </script>
 
 <template>

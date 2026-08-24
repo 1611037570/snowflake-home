@@ -4,10 +4,22 @@
   </el-form>
 </template>
 <script setup lang="ts">
-import { getCurrentInstance, provide } from "vue";
+import { getCurrentInstance, inject, provide } from "vue";
 import FormRenderer from "./components/formRenderer.vue";
 import DataProxy from "./code/dataProxy";
-import { DF_ROOT_DATA, DF_ROOT_FORM, INSTANCE_COMPONENTS } from "./code/injectionKeys";
+import { createAddItem } from "./code/addItem";
+import {
+  DF_CONTEXT,
+  DF_CURRENT_FORM,
+  DF_CURRENT_INDEX,
+  DF_CURRENT_LENGTH,
+  DF_CURRENT_TYPE,
+  DF_REMOVE,
+  DF_REMOVE_ITEM,
+  DF_ROOT_DATA,
+  DF_ROOT_FORM,
+  INSTANCE_COMPONENTS,
+} from "./code/injectionKeys";
 // import useFormProxy from './code/useFormProxy'
 
 defineOptions({ name: "SfDynamicForm" });
@@ -34,6 +46,19 @@ provide(INSTANCE_COMPONENTS, props.components);
 provide(DF_ROOT_DATA, dataProxy);
 // 注入根表单
 provide(DF_ROOT_FORM, formProxy);
+
+// 对外上下文读取器：根组件统一提供，业务组件调用时基于自身实例解析最近容器的能力，无需容器聚合
+const getContext = () => ({
+  currentForm: inject(DF_CURRENT_FORM),
+  currentIndex: inject(DF_CURRENT_INDEX),
+  currentType: inject(DF_CURRENT_TYPE),
+  currentLength: inject(DF_CURRENT_LENGTH),
+  removeSelf: inject(DF_REMOVE),
+  removeItem: inject(DF_REMOVE_ITEM),
+  addItem: createAddItem(inject(DF_CURRENT_FORM)),
+});
+// 注入对外上下文契约
+provide(DF_CONTEXT, getContext);
 </script>
 
 <style scoped></style>

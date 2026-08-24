@@ -12,7 +12,7 @@ defineProps({
     default: false,
   },
 });
-const { currentForm, removeSelf, addItem } = inject("df/context");
+const { currentForm, removeSelf, addItem } = inject("df/context")();
 
 // 展开状态：直接绑定激活项 name 数组（["1"] 展开 / [] 收起），随数据双向绑定
 const collapsed = defineModel("collapsed", {
