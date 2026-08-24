@@ -45,6 +45,14 @@ export const DEFAULT_USER_FORM = [
           placeholder: "请输入姓名",
           clearable: true,
         },
+        rules: [
+          { required: true, message: "请输入姓名", trigger: "blur" },
+          {
+            pattern: /^[\u4e00-\u9fa5a-zA-Z0-9·\s]{2,20}$/,
+            message: "请输入2-20位姓名",
+            trigger: "blur",
+          },
+        ],
       },
       {
         type: "object",
