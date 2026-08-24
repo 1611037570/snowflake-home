@@ -99,6 +99,13 @@ export const DEFAULT_USER_FORM = [
           placeholder: "请输入邮箱",
           clearable: true,
         },
+        rules: [
+          {
+            pattern: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+            message: "请输入正确的邮箱格式",
+            trigger: "blur",
+          },
+        ],
       },
       {
         type: "object",
