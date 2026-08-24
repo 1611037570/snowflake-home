@@ -9,8 +9,8 @@
     v-on="bindEvent"
   >
     <template #[slotName]>
-      <!-- ="slotProps" v-bind="slotProps" -->
-      <FormRenderer v-model:items="currentForm" />
+      <!-- 递归渲染时把容器索引显式下传，供嵌套字段解析 ? 通配 -->
+      <FormRenderer v-model:items="currentForm" :containerIndex="currentIndex" />
     </template>
   </component>
 </template>

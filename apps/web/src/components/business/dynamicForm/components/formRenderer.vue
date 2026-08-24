@@ -14,7 +14,7 @@
         v-else
         :is="item.type === 'object' ? ContainerObject : ContainerArray"
         :currentForm="item"
-        :currentIndex="index"
+        :currentIndex="containerIndex ?? index"
         @removeObject="removeObject"
         @removeItem="removeItem"
       />
@@ -34,6 +34,10 @@ import FormError from "./formError.vue";
 import FormItem from "./formItem.vue";
 
 defineOptions({ name: "FormRenderer" });
+// 容器索引：插槽递归时由上层容器（ContainerSlot）显式传入 array 子项的数据索引；顶层未传
+defineProps<{
+  containerIndex?: any;
+}>();
 const rootData: any = inject(DF_ROOT_DATA);
 const row: any = useTemplateRef("row");
 // 表单数据
