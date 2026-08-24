@@ -1,4 +1,4 @@
-import { getAllComponent } from "@/components";
+import { getComponentLoader } from "@/components";
 import { defineAsyncComponent, type Component } from "vue";
 
 type ComponentLoader = () => Promise<any>;
@@ -7,13 +7,10 @@ export class ComponentRegistry {
   private static instance: ComponentRegistry;
   private globalComponents: Map<string, Component> = new Map();
   private asyncComponents: Map<string, Component> = new Map();
-  private legacyComponents: Record<string, any> = {};
+  // 按需加载缓存：首次按名加载后复用，避免重复包装
+  private lazyComponents: Map<string, Component> = new Map();
 
-  private constructor() {
-    // 初始化时加载现有的全局组件作为兜底
-    const { components } = getAllComponent();
-    this.legacyComponents = components || {};
-  }
+  private constructor() {}
 
   static getInstance(): ComponentRegistry {
     if (!ComponentRegistry.instance) {
@@ -65,10 +62,16 @@ export class ComponentRegistry {
       return this.asyncComponents.get(name)!;
     }
 
-    // 4. 全局扫描 (Legacy support)
-    const legacy = this.legacyComponents[name];
-    if (legacy) {
-      return legacy.component;
+    // 4. 按需加载：命中目录约定（base/business/el/<name>）才加载并缓存
+    const cached = this.lazyComponents.get(name);
+    if (cached) {
+      return cached;
+    }
+    const loader = getComponentLoader(name);
+    if (loader) {
+      const asyncComp = defineAsyncComponent(loader);
+      this.lazyComponents.set(name, asyncComp);
+      return asyncComp;
     }
 
     console.warn(`[DynamicForm] Component "${name}" not found in registry or global scope.`);
