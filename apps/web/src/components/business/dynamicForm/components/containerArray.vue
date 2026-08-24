@@ -7,7 +7,14 @@
       :style="item.style"
     >
       <!-- v-bind="$attrs"  -->
-      <ContainerObject :currentIndex="item.index" :currentForm="item.item" :key="item.item.id" />
+      <ContainerSlot
+        v-if="item.item.slot"
+        :currentIndex="item.index"
+        :currentForm="item.item"
+        :key="item.item.id"
+        @removeObject="remove"
+      />
+      <ContainerObject v-else :currentIndex="item.index" :currentForm="item.item" :key="item.item.id" />
       <div class="flex" v-if="item.item.ui">
         <el-button @click="moveItem(item.index, item.index - 1)" :disabled="item.index === 0"
           >上移</el-button
@@ -38,6 +45,7 @@ import {
 } from "../code/injectionKeys.ts";
 import { createAddItem } from "../code/addItem.ts";
 import ContainerObject from "./containerObject.vue";
+import ContainerSlot from "./containerSlot.vue";
 import FormItem from "./formItem.vue";
 const row: any = useTemplateRef("row");
 let draggable: ReturnType<typeof useDraggable> | null = null;
