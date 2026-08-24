@@ -4,6 +4,8 @@ import eventBus from "@/utils/modules/eventBus";
 import { storeToRefs } from "pinia";
 import Debug from "./debug.vue";
 import Title from "./title.vue";
+import { useRouter } from "vue-router";
+const router = useRouter();
 
 const resumeStore = useResumeStore();
 const { isPrinting, layout } = storeToRefs(resumeStore);
@@ -33,17 +35,21 @@ const layoutList = [
 const handleLayoutClick = (item) => {
   resumeStore.setLayout(item.value);
 };
+const handleBack = () => {
+  router.push("/resume/mine");
+};
 </script>
 
 <template>
-  <header class="border-sf-b flex h-12 items-center justify-between border-b bg-sf-primary px-6">
+  <header class="flex h-12 items-center justify-between border-b border-sf-b bg-sf-primary px-6">
     <!-- 左侧占位 -->
     <div class="flex flex-1 items-center gap-2">
       <SfTooltip :content="$t('router.resume')">
         <div
+          @click="handleBack"
           class="flex items-center gap-1.5 rounded-full px-3 py-1 text-sf-theme transition-all hover:bg-sf-theme/20"
         >
-          <SfBack url="/resume" />
+          <SfIcon icon="famicons:chevron-back" size="4" />
           <span class="text-sm font-bold tracking-wide">{{ $t("router.resume") }}</span>
           <SfLogo size="5.5" class="animate-pulse" name="resume" />
         </div>
@@ -72,7 +78,7 @@ const handleLayoutClick = (item) => {
         <el-button
           @click="handleDownload"
           :loading="isPrinting"
-          class="!border-sf-b !h-9 !rounded-lg !bg-sf-primary !px-4 !font-medium !text-sf-text-2 hover:!border-sf-theme hover:!text-sf-theme"
+          class="!h-9 !rounded-lg !border-sf-b !bg-sf-primary !px-4 !font-medium !text-sf-text-2 hover:!border-sf-theme hover:!text-sf-theme"
         >
           <template #icon v-if="!isPrinting">
             <SfIcon icon="material-symbols:download" size="4.5" class="mr-1" />
@@ -82,7 +88,7 @@ const handleLayoutClick = (item) => {
       </div>
 
       <!-- 分隔线 -->
-      <div class="h-4 w-px bg-sf-border"></div>
+      <div class="bg-sf-border h-4 w-px"></div>
       <!-- 快捷图标 -->
       <div class="flex items-center gap-5 text-sf-text-2">
         <SfDonation />
