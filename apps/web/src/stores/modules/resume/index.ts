@@ -134,7 +134,7 @@ export const useResumeStore = defineStore(
         });
         return;
       }
-      const res = config ? mergeResumeItem(config) : DEFAULT_RESUME_ITEM;
+      const res = config ? mergeResumeItem(config) : structuredClone(DEFAULT_RESUME_ITEM);
       list.value.push(res);
       currentIndex.value = list.value.length - 1;
       router.push({ path: "/resumeEditor", query: { id: res.id } });
