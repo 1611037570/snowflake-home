@@ -179,11 +179,12 @@ const getPageStyle = (pageSlices, pageIndex) => {
           <div
             v-for="slice in pageSlices"
             :key="slice.moduleKey"
-            class="resume-module-wrapper group relative rounded-xl"
-            :class="{
-              'rounded-xl bg-sf-theme-2/10 outline-2 outline-sf-theme-2 outline-dashed hover:outline-sf-theme-2':
-                selectedModuleKeys.has(slice.moduleKey),
-            }"
+            class="resume-module-wrapper group relative rounded-xl outline-2 outline-offset-3 outline-dashed"
+            :class="[
+              selectedModuleKeys.has(slice.moduleKey)
+                ? 'outline-sf-theme'
+                : 'outline-transparent hover:outline-sf-theme-2',
+            ]"
             :data-module="slice.moduleKey"
           >
             <!-- 编辑态操作按钮插槽（编辑器预览传入 ModuleActions） -->
