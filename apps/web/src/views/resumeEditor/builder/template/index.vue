@@ -42,7 +42,7 @@ const applyTemplate = (value) => {
     >
       <!-- 模板简历缩略图：缩略区在卡片内 padding 中，宽高比与 A4 一致，随列宽自适应，页面完整显示填满 -->
       <div
-        class="relative aspect-[794/1115] w-full overflow-hidden rounded-lg border border-sf-b bg-sf-bg"
+        class="relative aspect-[794/1110] w-full overflow-hidden rounded-lg border border-sf-b bg-sf-bg"
       >
         <ThumbPreview
           :item="template.item"
