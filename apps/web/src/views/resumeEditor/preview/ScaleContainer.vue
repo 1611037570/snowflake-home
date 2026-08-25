@@ -114,81 +114,84 @@ useResizeObserver(contentRef, ([entry]) => {
 
     <div
       v-if="showToolbar"
-      class="group/scale-bar absolute bottom-4 left-1/2 z-10 -translate-x-1/2 translate-y-4 opacity-0 transition-all duration-300 select-none group-hover:translate-y-0 group-hover:opacity-100"
+      class="absolute bottom-4 left-1/2 z-10 -translate-x-1/2 translate-y-4 opacity-100 transition-all duration-300 select-none group-hover:translate-y-0 group-hover:opacity-100"
     >
-      <div
-        class="invisible absolute right-0 bottom-full mb-2 w-40 origin-bottom-right translate-y-1 scale-95 rounded-xl border border-sf-b bg-sf-primary p-1 opacity-0 shadow-xl transition-all duration-150 group-hover/scale-bar:visible group-hover/scale-bar:translate-y-0 group-hover/scale-bar:scale-100 group-hover/scale-bar:opacity-100"
-      >
-        <div
-          v-for="item in SCALE_LIST"
-          :key="item.value"
-          class="flex h-9 cursor-pointer items-center justify-between rounded-lg px-3 text-sm transition-colors"
-          :class="{
-            'font-medium text-sf-theme': isManualScaleSelected(item),
-            'cursor-not-allowed text-sf-text-3': item.value > maxScale,
-            'text-sf-text hover:bg-sf-bg-2': item.value <= maxScale && !isManualScaleSelected(item),
-          }"
-          @click="item.value <= maxScale && setManualScale(item.value)"
-        >
-          <span>{{ item.label }}</span>
-          <SfIcon
-            v-if="isManualScaleSelected(item)"
-            icon="lucide:check"
-            size="3"
-            class="text-sf-theme"
-          />
-        </div>
-        <div class="mx-2 my-1 h-px bg-sf-b"></div>
-        <div
-          class="flex h-9 cursor-pointer items-center justify-between rounded-lg px-3 text-sm transition-colors"
-          :class="{
-            'font-medium text-sf-theme': scaleMode === 'auto',
-            'text-sf-text hover:bg-sf-bg-2': scaleMode !== 'auto',
-          }"
-          @click="setAutoScale"
-        >
-          <span>自适应</span>
-          <SfIcon v-if="scaleMode === 'auto'" icon="lucide:check" size="3" class="text-sf-theme" />
-        </div>
-      </div>
-
-      <div
-        class="flex h-9 w-48 items-center gap-1 rounded-full border border-sf-b bg-sf-primary py-1 pr-1 pl-1.5 shadow-lg"
-      >
+      <div class="flex items-center gap-1 rounded-full border border-sf-b bg-sf-primary p-2">
         <button
           type="button"
-          class="flex h-6 w-6 cursor-pointer items-center justify-center rounded-full text-base leading-none text-sf-text-2 transition-colors"
+          class="flex h-7 w-7 cursor-pointer items-center justify-center rounded-full text-base leading-none text-sf-text-2 transition-colors"
           :class="{
             'cursor-not-allowed text-sf-text-3': isMinScale,
-            'hover:bg-sf-bg-2 hover:text-sf-text': !isMinScale,
+            'hover:bg-sf-theme-2 hover:text-sf-theme-text': !isMinScale,
           }"
           @click="!isMinScale && stepScale(-0.1)"
         >
-          −
+          <SfIcon icon="lucide:minus" size="6" />
         </button>
-        <button
-          type="button"
-          class="h-6 flex-1 cursor-default rounded-full px-3 text-xs font-medium text-sf-theme"
+        <div
+          class="group/scale-bar flex h-6 w-18 cursor-default items-center justify-center rounded-full px-3 text-sm font-medium text-sf-theme"
         >
           {{ scaleLabel }}
-        </button>
+          <div
+            class="invisible absolute right-0 bottom-full mb-2 w-40 origin-bottom-right translate-y-1 scale-95 rounded-xl border border-sf-b bg-sf-primary p-1 opacity-0 shadow-xl transition-all duration-150 group-hover/scale-bar:visible group-hover/scale-bar:translate-y-0 group-hover/scale-bar:scale-100 group-hover/scale-bar:opacity-100"
+          >
+            <div
+              v-for="item in SCALE_LIST"
+              :key="item.value"
+              class="flex h-9 cursor-pointer items-center justify-between rounded-lg px-3 text-sm transition-colors"
+              :class="{
+                'font-medium text-sf-theme': isManualScaleSelected(item),
+                'cursor-not-allowed text-sf-text-3': item.value > maxScale,
+                'text-sf-text hover:bg-sf-bg-2':
+                  item.value <= maxScale && !isManualScaleSelected(item),
+              }"
+              @click="item.value <= maxScale && setManualScale(item.value)"
+            >
+              <span>{{ item.label }}</span>
+              <SfIcon
+                v-if="isManualScaleSelected(item)"
+                icon="lucide:check"
+                size="3"
+                class="text-sf-theme"
+              />
+            </div>
+            <div class="mx-2 my-1 h-px bg-sf-b"></div>
+            <div
+              class="flex h-9 cursor-pointer items-center justify-between rounded-lg px-3 text-sm transition-colors"
+              :class="{
+                'font-medium text-sf-theme': scaleMode === 'auto',
+                'text-sf-text hover:bg-sf-bg-2': scaleMode !== 'auto',
+              }"
+              @click="setAutoScale"
+            >
+              <span>自适应</span>
+              <SfIcon
+                v-if="scaleMode === 'auto'"
+                icon="lucide:check"
+                size="3"
+                class="text-sf-theme"
+              />
+            </div>
+          </div>
+        </div>
+
         <button
           type="button"
-          class="flex h-6 w-6 cursor-pointer items-center justify-center rounded-full text-base leading-none text-sf-text-2 transition-colors"
+          class="flex h-7 w-7 cursor-pointer items-center justify-center rounded-full text-base leading-none text-sf-text-2 transition-colors"
           :class="{
             'cursor-not-allowed text-sf-text-3': isMaxScale,
-            'hover:bg-sf-bg-2 hover:text-sf-text': !isMaxScale,
+            'hover:bg-sf-theme-2 hover:text-sf-theme-text': !isMaxScale,
           }"
           @click="!isMaxScale && stepScale(0.1)"
         >
-          ＋
+          <SfIcon icon="lucide:plus" size="6" />
         </button>
         <button
           type="button"
-          class="flex h-6 w-6 cursor-pointer items-center justify-center rounded-full text-sf-text-2 transition-colors hover:bg-sf-bg-2 hover:text-sf-text"
+          class="flex h-7 w-7 cursor-pointer items-center justify-center rounded-full text-sf-text-2 transition-colors hover:bg-sf-theme-2 hover:text-sf-theme-text"
           @click="$emit('fullscreen')"
         >
-          <SfIcon icon="lucide:maximize" size="3" />
+          <SfIcon icon="lucide:maximize" size="5" />
         </button>
       </div>
     </div>
