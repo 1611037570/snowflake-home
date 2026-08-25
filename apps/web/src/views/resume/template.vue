@@ -27,7 +27,7 @@ const openPreview = () => {
     </div>
     <div class="group relative h-[400px] w-[282px] rounded-xl bg-sf-theme">
       <div
-        class="absolute top-0 left-0 h-full w-full overflow-hidden rounded-xl bg-sf-primary transition-all duration-300 group-hover:top-[-6px] group-hover:left-[-6px]"
+        class="relative h-full w-full overflow-hidden rounded-xl transition-all duration-300 group-hover:-translate-x-1 group-hover:-translate-y-1"
       >
         <!-- 模板简历第一页缩略图：A4 页面缩放至卡片尺寸，居中覆盖卡片并裁切超出部分（transform 视觉缩放，不影响测量分页） -->
         <div
@@ -41,14 +41,14 @@ const openPreview = () => {
         <div class="absolute inset-x-0 bottom-0 z-10 flex items-center justify-center gap-2 pb-6">
           <button
             type="button"
-            class="cursor-pointer! rounded-xl bg-sf-theme px-4 py-2 text-sm font-bold text-white opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+            class="cursor-pointer! rounded-xl bg-sf-theme px-4 py-2 text-sm font-bold text-white opacity-0 transition-all duration-300 group-hover:opacity-100 hover:-translate-y-1"
             @click="selectTemplate"
           >
             使用模板
           </button>
           <button
             type="button"
-            class="flex h-8 w-8 cursor-pointer! items-center justify-center rounded-full bg-sf-theme text-white opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+            class="flex h-8 w-8 cursor-pointer! items-center justify-center rounded-full bg-sf-theme text-white opacity-0 transition-all duration-300 group-hover:opacity-100 hover:-translate-y-1"
             @click="openPreview"
           >
             <SfIcon icon="lucide:maximize" size="4" />
