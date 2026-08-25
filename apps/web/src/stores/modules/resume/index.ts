@@ -56,9 +56,13 @@ export const useResumeStore = defineStore(
     // 是否AI生成中
     const isGenerating = ref(false);
     // 初始化状态
-    function initStatus() {
+    function initResumeStatus() {
+      // 重置打印状态
       isPrinting.value = false;
+      // 重置AI生成状态
       isGenerating.value = false;
+      // 重置选中模块
+      selectedModule.value = [];
     }
     // 获取当前选中的简历项
     const getCurrentResumeItem = () => {
@@ -163,10 +167,8 @@ export const useResumeStore = defineStore(
     const mergeResumeItem = (item: any) => {
       return merge(structuredClone(DEFAULT_RESUME_ITEM), item);
     };
-    // 初始化数据合并，防止版本更新导致字段缺失
-    const init = () => {
-      list.value = list.value.map(mergeResumeItem);
-    };
+
+    const init = () => {};
 
     return {
       list,
@@ -175,7 +177,7 @@ export const useResumeStore = defineStore(
       layout,
       isGenerating,
       setGenerating,
-      initStatus,
+      initResumeStatus,
       currentData,
       currentConfig,
       currentFixedConfig,
