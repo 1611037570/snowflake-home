@@ -3,7 +3,7 @@ import { useAiStore, useResumeStore } from "@/stores";
 import { useScroll } from "@vueuse/core";
 import { computed, inject, nextTick, ref, watch } from "vue";
 import { storeToRefs } from "pinia";
-import { arkLLM } from "@/apis";
+import { getLLM } from "@/apis";
 
 import AiMessage from "./aiMessage.vue";
 import ChatInput from "./chatInput.vue";
@@ -145,7 +145,7 @@ const handleAIResponse = async () => {
     // 思考状态，初始为 false
     let thoughtStatus = false;
     // 调用豆包大模型流式接口
-    const { sendFn, abortFn } = await arkLLM.request({
+    const { sendFn, abortFn } = await getLLM().request({
       options: {
         input: messages,
         model: "deepseek-v4-flash-ga-260731",

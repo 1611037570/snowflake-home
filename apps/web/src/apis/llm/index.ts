@@ -1,13 +1,21 @@
-import { ark } from "@/configs";
+import { snowflake } from "@/configs";
 import { LLM } from "./request/core";
+import { useAiStore } from "@/stores";
 
-const getApiKey = () => {
-  return "c15973e5-8397-422f-9c86-a12df469d452";
+const snowflakeConfig = {
+  baseUrl: snowflake.baseUrl,
+  path: snowflake.path,
+  getApiKey: () => {
+    return "";
+  },
+  provider: snowflake.provider,
 };
-const arkLLM = new LLM({
-  baseUrl: ark.baseUrl,
-  path: ark.path,
-  getApiKey,
-  provider: ark.provider,
-});
-export { arkLLM, LLM };
+const getLLM = () => {
+  const aiStore = useAiStore();
+  const { activeModel, customModel } = storeToRefs(aiStore);
+  if (activeModel.value === "snowflake") {
+    return new LLM(snowflakeConfig);
+  }
+  return new LLM(customModel.value);
+};
+export { getLLM, LLM };
