@@ -39,8 +39,11 @@ provide("previewData", previewData);
 
 // ---------- 主题样式注入（数据源为 item.ui）----------
 const ui = computed(() => props.item.ui || {});
+// 页面容器不留下边距：底部空间由页脚（页码区）控制
 const paddingValue = computed(() => (offset = 0) => ({
-  padding: `${ui.value.padding + offset}px`,
+  paddingTop: `${ui.value.padding + offset}px`,
+  paddingLeft: `${ui.value.padding + offset}px`,
+  paddingRight: `${ui.value.padding + offset}px`,
 }));
 const fontSize = computed(() => ui.value.fontSize);
 const fontSizeIndex = computed(() => {
@@ -80,7 +83,7 @@ const { moduleList } = useRowInfo(measureRef, o);
 // 分页逻辑
 const pages = computed(() => {
   const padding = ui.value.padding || 0;
-  const maxContentHeight = RESUME_HEIGHT - padding * 2 - 32; // 减去内边距和页脚空间
+  const maxContentHeight = RESUME_HEIGHT - padding - 32; // 减去上内边距和页脚空间（底部无内边距）
 
   const result = [];
   let currentPage = [];
@@ -192,8 +195,8 @@ const getPageStyle = (pageSlices, pageIndex) => {
             <ResumeModule :data="props.item.data" :name="slice.moduleKey" />
           </div>
         </div>
-        <div v-if="showPageIndex" class="pt-3 text-center text-xs opacity-50">
-          第 {{ pageIndex + 1 }} 页，共 {{ pages.length }} 页
+        <div v-if="showPageIndex" class="py-3 text-center text-xs opacity-50">
+          轻舟简历 · 第 {{ pageIndex + 1 }} 页，共 {{ pages.length }} 页
         </div>
 
         <component :is="'style'">{{ getPageStyle(pageSlices, pageIndex) }}</component>
