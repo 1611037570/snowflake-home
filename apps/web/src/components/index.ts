@@ -78,19 +78,19 @@ export const getAllComponent = () => {
   };
 };
 
-// 按需组件加载器：glob 仅建立"组件名 → 加载函数"映射，不加载任何模块
-// 供动态表单 ComponentRegistry 按需兜底使用，替代全量预载
-const componentLoaders = {
-  ...import.meta.glob("./base/*/index.ts"),
-  ...import.meta.glob("./business/*/index.ts"),
-  ...import.meta.glob("./el/*/index.ts"),
-};
-
 /**
  * 按组件名获取加载函数（找不到返回 undefined）
  * 目录命名约定：./base/<name>/index.ts、./business/<name>/index.ts、./el/<name>/index.ts
+ * 按需组件加载器：glob 仅建立"组件名 → 加载函数"映射，不加载任何模块
+ * 供动态表单 ComponentRegistry 按需兜底使用，替代全量预载
+ * 注：glob 需在函数内调用，顶层执行 import.meta.glob 会导致 vite.config.ts 加载失败
  */
 export const getComponentLoader = (name: string) => {
+  const componentLoaders = {
+    ...import.meta.glob("./base/*/index.ts"),
+    ...import.meta.glob("./business/*/index.ts"),
+    ...import.meta.glob("./el/*/index.ts"),
+  };
   const path = Object.keys(componentLoaders).find(
     (p) => p.replace("./", "").split("/")[1] === name,
   );
