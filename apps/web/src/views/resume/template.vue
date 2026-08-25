@@ -16,7 +16,7 @@ const selectTemplate = () => {
     <div class="flex h-8 items-center">
       <h2 class="text-[20px] font-black text-sf-theme">风格模板</h2>
     </div>
-    <div class="group relative h-[398px] w-[282px] rounded-xl bg-sf-theme">
+    <div class="group relative h-[394px] w-[282px] rounded-xl bg-sf-theme">
       <div
         class="relative h-full w-full overflow-hidden rounded-xl transition-all duration-300 group-hover:-translate-x-1 group-hover:-translate-y-1"
       >
