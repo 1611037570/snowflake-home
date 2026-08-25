@@ -2,12 +2,12 @@
 import { useResumeStore } from "@/stores";
 import { xiaoYangResumeItem } from "@/stores/modules/resume/xiaoYangData";
 import { ref } from "vue";
-import ResumePages from "@/views/resumeEditor/preview/resumePages.vue";
-import ZoomPreview from "@/views/resumeEditor/preview/zoomPreview.vue";
+import ThumbPreview from "@/views/resumeEditor/preview/thumbPreview.vue";
+import FullscreenPreview from "@/views/resumeEditor/preview/fullscreenPreview.vue";
 
 const resumeStore = useResumeStore();
 
-const zoomPreviewRef = ref(null);
+const fullscreenPreviewRef = ref(null);
 
 // 使用模板
 const selectTemplate = () => {
@@ -16,7 +16,7 @@ const selectTemplate = () => {
 
 // 放大查看模板简历
 const openPreview = () => {
-  zoomPreviewRef.value?.open();
+  fullscreenPreviewRef.value?.open();
 };
 </script>
 
@@ -30,13 +30,7 @@ const openPreview = () => {
         class="relative h-full w-full overflow-hidden rounded-xl transition-all duration-300 group-hover:-translate-x-1 group-hover:-translate-y-1"
       >
         <!-- 模板简历第一页缩略图：A4 页面缩放至卡片尺寸，居中覆盖卡片并裁切超出部分（transform 视觉缩放，不影响测量分页） -->
-        <div
-          class="pointer-events-none flex h-full w-full items-center justify-center overflow-hidden select-none"
-        >
-          <div class="origin-center" style="transform: scale(0.36)">
-            <ResumePages :item="xiaoYangResumeItem" />
-          </div>
-        </div>
+        <ThumbPreview :item="xiaoYangResumeItem" />
         <!-- 使用模板 + 放大查看按钮 -->
         <div class="absolute inset-x-0 bottom-0 z-10 flex items-center justify-center gap-2 pb-6">
           <button
@@ -56,7 +50,7 @@ const openPreview = () => {
         </div>
       </div>
     </div>
-    <ZoomPreview ref="zoomPreviewRef" :item="xiaoYangResumeItem" />
+    <FullscreenPreview ref="fullscreenPreviewRef" :item="xiaoYangResumeItem" />
   </div>
 </template>
 

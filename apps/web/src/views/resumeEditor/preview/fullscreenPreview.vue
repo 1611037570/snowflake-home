@@ -5,7 +5,7 @@ import { onBeforeUnmount, onMounted, ref } from "vue";
 import ResumePages from "./resumePages.vue";
 import ScaleContainer from "./ScaleContainer.vue";
 
-defineOptions({ name: "ZoomPreview" });
+defineOptions({ name: "FullscreenPreview" });
 
 defineProps({
   // 简历项：{ data, config, fixedConfig, ui }
