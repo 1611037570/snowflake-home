@@ -110,7 +110,7 @@ async function testConnection() {
   try {
     const llm = new LLM({
       baseUrl: form.url,
-      getToken: () => form.key,
+      getApiKey: () => form.key,
       provider: form.provider,
     });
     await llm.ping(form.model);
