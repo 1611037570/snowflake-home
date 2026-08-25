@@ -29,9 +29,11 @@ const openPreview = () => {
       <div
         class="absolute top-0 left-0 h-full w-full overflow-hidden rounded-xl bg-sf-primary transition-all duration-300 group-hover:top-[-6px] group-hover:left-[-6px]"
       >
-        <!-- 模板简历第一页缩略图：A4 页面缩放至卡片尺寸，超出部分裁切（transform 视觉缩放，不影响测量分页） -->
-        <div class="pointer-events-none h-full w-full overflow-hidden select-none">
-          <div class="origin-top-left" style="transform: scale(0.34)">
+        <!-- 模板简历第一页缩略图：A4 页面缩放至卡片尺寸，居中覆盖卡片并裁切超出部分（transform 视觉缩放，不影响测量分页） -->
+        <div
+          class="pointer-events-none flex h-full w-full items-center justify-center overflow-hidden select-none"
+        >
+          <div class="origin-center" style="transform: scale(0.36)">
             <ResumePages :item="xiaoYangResumeItem" />
           </div>
         </div>
