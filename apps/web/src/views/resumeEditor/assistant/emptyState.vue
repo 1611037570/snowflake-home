@@ -6,18 +6,16 @@ import { quickActions } from "./data";
 
 const emit = defineEmits(["switch-mode"]);
 const resumeStore = useResumeStore();
-const { currentConfig, currentFixedConfig, selectedModule } = storeToRefs(resumeStore);
+const { selectedModule } = storeToRefs(resumeStore);
 
 const moduleNames = computed(() => {
-  const fields = [
-    ...(currentFixedConfig.value?.fields || []),
-    ...(currentConfig.value?.fields || []),
-  ];
-  const names = Array.from(
-    selectedModule.value,
-    (key) => fields.find((item) => item.key === key)?.name || key,
-  );
-  return names.length ? names : ["整个简历"];
+  return selectedModule.value.length
+    ? selectedModule.value
+    : [
+        {
+          name: "整个简历",
+        },
+      ];
 });
 </script>
 
