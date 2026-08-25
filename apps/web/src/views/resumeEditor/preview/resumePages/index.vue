@@ -1,14 +1,16 @@
 <script setup>
 // 简历分页渲染可复用组件：接收 resumeItem（data/config/fixedConfig/ui），渲染分页后的简历页面
 // 数据源由 props 传入，不依赖 resume store；供编辑器预览、模板缩略图、全屏查看复用
-import { computed, provide, ref } from "vue";
+import { computed, onMounted, onUnmounted, provide, ref } from "vue";
 import MeasureContent from "../components/measureContent.vue";
 import ResumeModule from "../modules/index.vue";
-import { RESUME_WIDTH } from "../constants";
+import { RESUME_WIDTH, RESUME_HEIGHT } from "../constants";
 import { usePreviewData } from "../usePreviewData";
 import { useResumePages } from "./useResumePages";
 import { useResumeTheme } from "./useResumeTheme";
+import { usePdfExport } from "../usePdfExport";
 import { useResumeStore } from "@/stores";
+import eventBus from "@/utils/modules/eventBus";
 const resumeStore = useResumeStore();
 const { selectedModule } = storeToRefs(resumeStore);
 
@@ -31,6 +33,17 @@ const props = defineProps({
 const isThumb = computed(() => props.mode === "thumb");
 // 只读模式：不渲染模块操作按钮插槽
 const isReadonly = computed(() => props.mode !== "editor");
+
+// 根元素 ref：导出 PDF 时限定为当前实例的分页元素，避免误选其他 ResumePages 实例的页面
+const rootRef = ref(null);
+// 仅编辑器模式注册全局 PDF 导出事件（缩略图/全屏预览不注册）
+const { printPDF } = usePdfExport(rootRef);
+onMounted(() => {
+  if (!isReadonly.value) eventBus.on("resume-print-pdf", printPDF);
+});
+onUnmounted(() => {
+  if (!isReadonly.value) eventBus.off("resume-print-pdf", printPDF);
+});
 
 // 实例唯一前缀，避免多实例分页裁剪样式互相干扰
 const uid = `rp-${Math.random().toString(36).slice(2, 8)}`;
@@ -65,27 +78,31 @@ const { measureDone, pages, moduleClass, getPageStyle } = useResumePages({
 </script>
 
 <template>
-  <div class="relative flex flex-col">
-    <!-- 隐藏的测量容器：用于 useRowInfo 读取行高；缩略图测量完成后销毁 -->
-    <MeasureContent
-      v-if="!measureDone"
-      class="absolute -z-10 opacity-0"
-      ref="measureRef"
-      :style="[paddingValue(), { width: `${RESUME_WIDTH}px` }]"
-      :all-modules="allModules"
-    />
+  <!-- 隐藏的测量容器：用于 useRowInfo 读取行高；缩略图测量完成后销毁 -->
+  <MeasureContent
+    v-if="!measureDone"
+    class="fixed -z-10 opacity-0"
+    ref="measureRef"
+    :style="[paddingValue(), { width: `${RESUME_WIDTH}px` }]"
+    :all-modules="allModules"
+  />
+  <div ref="rootRef" class="relative flex flex-col">
     <!-- 实际渲染的分页内容 -->
     <div class="relative mb-3 flex flex-col">
       <div
         v-for="(pageSlices, pageIndex) in pages"
         :key="pageIndex"
-        class="resume-page-item relative mx-3 flex flex-col rounded-xl bg-white text-black"
+        class="resume-page-item relative flex flex-col rounded-xl bg-white text-black"
         :class="[ui.fontFamily, `${uid}-page-${pageIndex}`]"
         :style="[
           paddingValue(),
           fontValue(),
           lineHeightValue(),
-          { width: `${RESUME_WIDTH}px`, height: `${RESUME_HEIGHT}px` },
+          {
+            width: `${RESUME_WIDTH}px`,
+            height: `${RESUME_HEIGHT}px`,
+            minHeight: `${RESUME_HEIGHT}px`,
+          },
         ]"
       >
         <div class="flex flex-1 flex-col gap-3">
