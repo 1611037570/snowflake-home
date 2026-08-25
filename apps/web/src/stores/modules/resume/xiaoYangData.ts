@@ -79,7 +79,10 @@ export const xiaoYangFixedForm = {
       model: [],
     },
     {
-      list: [
+      type: "group",
+      key: "user",
+      name: "用户信息",
+      fields: [
         {
           type: "object",
           label: "求职岗位",
@@ -221,10 +224,6 @@ export const xiaoYangFixedForm = {
           },
         },
       ],
-      drag: false,
-      type: "array",
-      key: "user",
-      name: "用户信息",
     },
   ],
 };
@@ -238,7 +237,7 @@ export const xiaoYangForm = {
   fields: [
     // 社交账号
     {
-      type: "object",
+      type: "group",
       key: "account",
       span: 24,
       model: [
@@ -259,7 +258,40 @@ export const xiaoYangForm = {
           type: "array",
           drag: true,
           dragClass: ".item-drag",
-          list: [],
+          list: [
+            {
+              model: [
+                {
+                  source: ["account", "data", "?", "name"],
+                  defaultValue: "",
+                  prop: "name",
+                },
+                {
+                  source: ["account", "data", "?", "url"],
+                  defaultValue: "",
+                  prop: "url",
+                },
+              ],
+              type: "object",
+              component: "account",
+            },
+            {
+              model: [
+                {
+                  source: ["account", "data", "?", "name"],
+                  defaultValue: "",
+                  prop: "name",
+                },
+                {
+                  source: ["account", "data", "?", "url"],
+                  defaultValue: "",
+                  prop: "url",
+                },
+              ],
+              type: "object",
+              component: "account",
+            },
+          ],
           addConfig: {
             model: [
               {
@@ -282,7 +314,7 @@ export const xiaoYangForm = {
     // 教育经历
     {
       key: "education",
-      type: "object",
+      type: "group",
       component: "boxCollapse",
       props: {
         name: "教育经历",
@@ -299,7 +331,38 @@ export const xiaoYangForm = {
           type: "array",
           drag: true,
           dragClass: ".item-drag",
-          list: [],
+          list: [
+            {
+              model: [
+                {
+                  source: ["education", "data", "?", "name"],
+                  prop: "name",
+                },
+                {
+                  source: ["education", "data", "?", "education"],
+                  prop: "education",
+                },
+                {
+                  source: ["education", "data", "?", "post"],
+                  prop: "post",
+                },
+                {
+                  source: ["education", "data", "?", "time"],
+                  prop: "time",
+                },
+                {
+                  source: ["education", "data", "?", "content"],
+                  prop: "content",
+                },
+                {
+                  source: ["education", "data", "?", "mode"],
+                  prop: "mode",
+                },
+              ],
+              component: "education",
+              span: 24,
+            },
+          ],
           addConfig: {
             model: [
               {
@@ -335,7 +398,7 @@ export const xiaoYangForm = {
     },
     // 专业技能
     {
-      type: "object",
+      type: "group",
       component: "boxCollapse",
       key: "skill",
       props: {
@@ -346,7 +409,7 @@ export const xiaoYangForm = {
         {
           source: ["skill", "collapsed"],
           prop: "collapsed",
-          defaultValue: ["1"],
+          defaultValue: [],
         },
       ],
       slot: "default",
@@ -363,7 +426,7 @@ export const xiaoYangForm = {
     },
     // 工作经历
     {
-      type: "object",
+      type: "group",
       key: "work",
       component: "boxCollapse",
       props: {
@@ -374,7 +437,7 @@ export const xiaoYangForm = {
         {
           source: ["work", "collapsed"],
           prop: "collapsed",
-          defaultValue: ["1"],
+          defaultValue: [],
         },
       ],
       slot: "default",
@@ -383,9 +446,79 @@ export const xiaoYangForm = {
           type: "array",
           drag: true,
           dragClass: ".item-drag",
-          list: [],
+          list: [
+            {
+              type: "group",
+              component: "itemCollapse",
+              slot: "default",
+              span: 24,
+              model: [
+                {
+                  source: ["work", "data", "?", "name"],
+                  prop: "name",
+                },
+              ],
+              fields: [
+                {
+                  type: "object",
+                  label: "公司",
+                  component: "input",
+                  span: 12,
+                  model: {
+                    source: ["work", "data", "?", "name"],
+                    prop: "modelValue",
+                  },
+                  props: {
+                    placeholder: "公司",
+                    clearable: true,
+                  },
+                },
+                {
+                  type: "object",
+                  label: "岗位",
+                  component: "input",
+                  span: 12,
+                  model: {
+                    source: ["work", "data", "?", "post"],
+                    prop: "modelValue",
+                  },
+                  props: {
+                    placeholder: "岗位",
+                    clearable: true,
+                  },
+                },
+                {
+                  type: "object",
+                  label: "时间",
+                  component: "datePicker",
+                  span: 24,
+                  model: {
+                    source: ["work", "data", "?", "time"],
+                    prop: "modelValue",
+                  },
+                  props: {
+                    type: "monthrange",
+                    format: "YYYY.MM",
+                    valueFormat: "YYYY.MM",
+                    startPlaceholder: "开始时间",
+                    endPlaceholder: "结束时间",
+                  },
+                },
+                {
+                  type: "object",
+                  label: "经历",
+                  component: "wangEditor",
+                  span: 24,
+                  model: {
+                    source: ["work", "data", "?", "content"],
+                    prop: "modelValue",
+                  },
+                },
+              ],
+            },
+          ],
           addConfig: {
-            type: "object",
+            type: "group",
             component: "itemCollapse",
             slot: "default",
             span: 24,
@@ -458,7 +591,7 @@ export const xiaoYangForm = {
     },
     // 项目经历
     {
-      type: "object",
+      type: "group",
       key: "project",
       component: "boxCollapse",
       props: {
@@ -478,9 +611,79 @@ export const xiaoYangForm = {
           type: "array",
           drag: true,
           dragClass: ".item-drag",
-          list: [],
+          list: [
+            {
+              type: "group",
+              component: "itemCollapse",
+              slot: "default",
+              span: 24,
+              model: [
+                {
+                  source: ["project", "data", "?", "name"],
+                  prop: "name",
+                },
+              ],
+              fields: [
+                {
+                  type: "object",
+                  label: "公司",
+                  component: "input",
+                  span: 12,
+                  model: {
+                    source: ["project", "data", "?", "name"],
+                    prop: "modelValue",
+                  },
+                  props: {
+                    placeholder: "公司",
+                    clearable: true,
+                  },
+                },
+                {
+                  type: "object",
+                  label: "岗位",
+                  component: "input",
+                  span: 12,
+                  model: {
+                    source: ["project", "data", "?", "post"],
+                    prop: "modelValue",
+                  },
+                  props: {
+                    placeholder: "岗位",
+                    clearable: true,
+                  },
+                },
+                {
+                  type: "object",
+                  label: "时间",
+                  component: "datePicker",
+                  span: 24,
+                  model: {
+                    source: ["project", "data", "?", "time"],
+                    prop: "modelValue",
+                  },
+                  props: {
+                    type: "monthrange",
+                    format: "YYYY.MM",
+                    valueFormat: "YYYY.MM",
+                    startPlaceholder: "开始时间",
+                    endPlaceholder: "结束时间",
+                  },
+                },
+                {
+                  type: "object",
+                  label: "经历",
+                  component: "wangEditor",
+                  span: 24,
+                  model: {
+                    source: ["project", "data", "?", "content"],
+                    prop: "modelValue",
+                  },
+                },
+              ],
+            },
+          ],
           addConfig: {
-            type: "object",
+            type: "group",
             component: "itemCollapse",
             slot: "default",
             span: 24,
@@ -558,7 +761,7 @@ export const xiaoYangUI = {
   padding: 28,
   fontSize: 15,
   lineHeight: 25,
-  color: "#ff4d4f",
+  themeColor: "#ff4d4f",
   fontFamily: "text-puhui",
 };
 

@@ -5,7 +5,7 @@
       <FormError v-if="!checkForm(item)" :error-msg="item.errorMsg" :raw="item.raw" />
       <!-- v-bind="$attrs" -->
       <ContainerSlot
-        v-else-if="item.slot"
+        v-else-if="item.type === 'group'"
         :currentForm="item"
         :currentIndex="index"
         @removeObject="removeObject"

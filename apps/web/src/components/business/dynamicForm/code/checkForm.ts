@@ -65,6 +65,9 @@ export function checkForm(form: any) {
   if (type === "object") {
     return checkObjectForm(form);
   }
+  if (type === "group") {
+    return Array.isArray(fields) && fields.length > 0 ? true : "缺少 fields";
+  }
   if (type === "array") {
     return checkArrayForm(form);
   }

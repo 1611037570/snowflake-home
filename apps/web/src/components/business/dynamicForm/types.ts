@@ -10,9 +10,9 @@ export interface ModelBinding {
   defaultValue?: any;
 }
 
-/** 表单字段（递归）：覆盖 object 叶子 / object 容器 / array 三种形态的字段集合 */
+/** 表单字段（递归）：覆盖 object 叶子 / group 分组 / array 三种形态的字段集合 */
 export interface FormField {
-  type?: "object" | "array";
+  type?: "object" | "array" | "group";
   /** 组件名（引擎按名字查找组件实例） */
   component?: string;
   /** 静态透传给组件的属性 */

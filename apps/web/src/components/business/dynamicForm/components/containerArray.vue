@@ -8,7 +8,7 @@
     >
       <!-- v-bind="$attrs"  -->
       <ContainerSlot
-        v-if="item.item.slot"
+        v-if="item.item.type === 'group'"
         :currentIndex="item.index"
         :currentForm="item.item"
         @removeObject="remove"
