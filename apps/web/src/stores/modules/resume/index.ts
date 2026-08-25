@@ -127,13 +127,11 @@ export const useResumeStore = defineStore(
           key,
           name: currentData.value?.[key]?.name || "",
         });
+        return; // 自定义模块无默认模块映射，避免追加 undefined
       }
-      const name = DEFAULT_MODULE_NAMES.find((item) => item.key === key);
+      const data = DEFAULT_MODULE_NAMES.find((item) => item.key === key);
 
-      selectedModule.value.push({
-        key,
-        name,
-      });
+      selectedModule.value.push(data);
     };
     // 新增简历
     const addResume = (config: any) => {

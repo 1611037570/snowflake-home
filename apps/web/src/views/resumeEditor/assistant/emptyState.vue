@@ -37,7 +37,7 @@ const moduleNames = computed(() => {
         :key="item"
         class="rounded-full bg-sf-theme/10 px-2.5 py-0.5 text-sf-theme ring-1 ring-sf-theme/10"
       >
-        {{ item }}
+        {{ item.name }}
       </span>
       <span>进行以下操作</span>
     </div>
@@ -47,7 +47,7 @@ const moduleNames = computed(() => {
         v-for="action in quickActions"
         :key="action.name"
         type="button"
-        class="group flex h-20 cursor-pointer flex-col items-center justify-center gap-2 rounded-lg border border-sf-b bg-white px-3 text-sm font-medium text-sf-base shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-sf-theme/40 hover:bg-sf-theme/5 hover:text-sf-theme hover:shadow-md active:scale-[0.98] active:shadow-sm"
+        class="group flex h-20 cursor-pointer flex-col items-center justify-center gap-2 rounded-lg border border-sf-b bg-sf-bg px-3 text-sm font-medium text-sf-base shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-sf-theme/40 hover:bg-sf-theme/5 hover:text-sf-theme hover:shadow-md active:scale-[0.98] active:shadow-sm"
         @click="emit('switch-mode', action.type)"
       >
         <span
