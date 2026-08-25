@@ -2,7 +2,7 @@
 import { computed } from "vue";
 import { useResumeStore } from "@/stores";
 import { storeToRefs } from "pinia";
-import ThumbPreview from "../preview/thumbPreview.vue";
+import ThumbPreview from "../../preview/thumbPreview.vue";
 import { themeTemplateList } from "@/stores/modules/resume/uiConfig";
 
 const resumeStore = useResumeStore();
@@ -36,11 +36,21 @@ const applyTemplate = (value) => {
     <div
       v-for="template in templates"
       :key="template.value"
-      class="cursor-pointer! overflow-hidden rounded-xl border border-sf-b transition-all duration-300"
+      class="group cursor-pointer!"
       :class="{ 'border-sf-theme-2': isActive(template.value) }"
       @click="applyTemplate(template.value)"
     >
-      <div class="flex items-center justify-between p-3 pb-0">
+      <!-- 模板简历缩略图：缩略区在卡片内 padding 中，宽高比与 A4 一致，随列宽自适应，页面完整显示填满 -->
+      <div
+        class="relative aspect-[794/1115] w-full overflow-hidden rounded-lg border border-sf-b bg-sf-bg"
+      >
+        <ThumbPreview
+          :item="template.item"
+          :show-actions="true"
+          @select="applyTemplate(template.value)"
+        />
+      </div>
+      <div class="flex items-center justify-center pt-3">
         <span class="text-sm font-bold text-sf-text">{{ template.name }}</span>
         <SfIcon
           v-if="isActive(template.value)"
@@ -48,12 +58,6 @@ const applyTemplate = (value) => {
           size="3"
           class="text-sf-theme"
         />
-      </div>
-      <!-- 模板简历缩略图：缩略区在卡片内 padding 中，宽高比与 A4 一致，随列宽自适应，页面完整显示填满 -->
-      <div class="p-3">
-        <div class="relative aspect-[794/1123] w-full overflow-hidden rounded-lg bg-sf-bg">
-          <ThumbPreview :item="template.item" />
-        </div>
       </div>
     </div>
   </div>
