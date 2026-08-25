@@ -36,7 +36,7 @@ const handleBack = () => {
 </script>
 
 <template>
-  <header class="flex h-12 items-center justify-between border-b border-sf-b bg-sf-primary px-6">
+  <header class="flex h-12 items-center justify-between border-b border-sf-b bg-sf-primary px-3">
     <!-- 左侧占位 -->
     <div class="flex flex-1 items-center gap-2">
       <SfTooltip :content="$t('router.resume')">
@@ -55,12 +55,12 @@ const handleBack = () => {
     <!-- 右侧工具栏 -->
     <div class="flex items-center gap-5">
       <!-- 布局切换器 -->
-      <div class="flex items-center gap-1 rounded-xl bg-sf-bg-2 p-1">
+      <div class="flex items-center gap-1 rounded-xl bg-sf-bg p-1">
         <SfTooltip v-for="item in layoutList" :key="item.value" :content="item.name">
           <button
             type="button"
-            class="flex-c h-7 w-7 rounded-lg text-sf-text-2 transition-all hover:bg-sf-primary hover:text-sf-theme"
-            :class="{ 'bg-sf-primary text-sf-theme shadow-sm': layout === item.value }"
+            class="flex-c h-7 w-7 rounded-lg text-sf-text transition-all"
+            :class="[layout === item.value ? 'bg-sf-theme-2 text-sf-theme' : 'hover:bg-sf-theme-3']"
             @click="handleLayoutClick(item)"
           >
             <SfIcon :icon="item.icon" size="5.5" />
