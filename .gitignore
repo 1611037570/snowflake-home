@@ -32,6 +32,8 @@ test
 
 # VS Code Counter 插件生成物
 .VSCodeCounter
+# Codex 生成物
+.codex
 
 # TypeScript
 *.tsbuildinfo
