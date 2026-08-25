@@ -5,8 +5,10 @@
  * 直接利用预览层已生成的分页结构导出，无需重新排版。
  */
 import { nextTick } from "vue";
+import { storeToRefs } from "pinia";
 import { PDF_PAGE_HEIGHT, PDF_PAGE_WIDTH, RESUME_HEIGHT, RESUME_WIDTH } from "./constants";
 import { resumeTitle } from "../utils";
+import { useResumeStore } from "@/stores";
 
 /**
  * 创建 PDF 导出能力
@@ -18,6 +20,11 @@ export const usePdfExport = () => {
    * 直接利用页面中已分页的 .resume-page-item 元素导出
    */
   const printPDF = async () => {
+    // 保存当前选中的模块并清空，避免导出 PDF 时带上选中高亮
+    const resumeStore = useResumeStore();
+    const { selectedModule } = storeToRefs(resumeStore);
+    const cachedSelectedModule = structuredClone(selectedModule.value);
+    selectedModule.value.splice(0);
     try {
       // 确保DOM已渲染完成
       await nextTick();
@@ -115,6 +122,9 @@ export const usePdfExport = () => {
       console.log(`成功导出 ${pages.length} 页 PDF`);
     } catch (error) {
       console.error("生成PDF失败:", error);
+    } finally {
+      // 导出完成或失败后还原选中的模块
+      selectedModule.value.splice(0, selectedModule.value.length, ...cachedSelectedModule);
     }
   };
 

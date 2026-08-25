@@ -14,22 +14,14 @@ const handleDownload = () => {
 </script>
 
 <template>
-  <el-button
+  <button
+    type="button"
+    class="flex-c sf-theme-element h-9 gap-1.5 rounded-lg px-4 text-sm font-medium shadow-sm transition-all duration-300 hover:shadow-md active:scale-95 disabled:cursor-not-allowed disabled:opacity-60"
+    :disabled="isPrinting"
     @click="handleDownload"
-    :loading="isPrinting"
-    class="!h-9 !rounded-lg !border-sf-b !bg-sf-primary !px-4 !font-medium !text-sf-text-2 hover:!border-sf-theme hover:!text-sf-theme"
   >
-    <template #icon v-if="!isPrinting">
-      <SfIcon icon="material-symbols:download" size="4.5" class="mr-1" />
-    </template>
+    <SfIcon v-if="!isPrinting" icon="material-symbols:download" size="4.5" />
+    <SfIcon v-else icon="line-md:loading-twotone-loop" size="4.5" class="animate-spin" />
     {{ isPrinting ? "生成中..." : "下载" }}
-  </el-button>
+  </button>
 </template>
-
-<style lang="scss" scoped>
-:deep(.el-button) {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-}
-</style>
