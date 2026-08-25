@@ -22,7 +22,7 @@ interface UseResumePagesOptions {
   ui: ComputedRef<Record<string, any>>;
   themeStyles: ResumeTheme;
   isThumb: ComputedRef<boolean>;
-  selectedModuleKeys: Set<string>;
+  selectedModule: Set<string>;
   isReadonly: ComputedRef<boolean>;
   uid: string;
 }
@@ -37,7 +37,7 @@ export const useResumePages = ({
   ui,
   themeStyles,
   isThumb,
-  selectedModuleKeys,
+  selectedModule,
   isReadonly,
   uid,
 }: UseResumePagesOptions) => {
@@ -125,11 +125,10 @@ export const useResumePages = ({
   // 模块外层样式：只读模式不渲染选中高亮与虚线框
   const moduleClass = (slice: PageSlice) => {
     if (isReadonly.value) return "";
+    const isSelected = selectedModule.find((item) => item.key === slice.moduleKey);
     return [
       "outline-2 outline-offset-3 outline-dashed",
-      selectedModuleKeys.has(slice.moduleKey)
-        ? "outline-sf-theme"
-        : "outline-transparent hover:outline-sf-theme-2",
+      isSelected ? "outline-sf-theme" : "outline-transparent hover:outline-sf-theme-2",
     ];
   };
 
