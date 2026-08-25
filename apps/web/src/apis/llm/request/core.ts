@@ -48,6 +48,30 @@ class LLM {
     return path ? `${this.baseUrl}${path}` : this.url;
   }
   /**
+   * 发送平台对应的最小请求，检查模型连接是否可用
+   */
+  async ping(model: string) {
+    const options =
+      this.provider === "openai"
+        ? {
+            model,
+            messages: [{ role: "user", content: "连接测试，请回复 OK" }],
+            thinking: { type: "disabled" },
+          }
+        : {
+            model,
+            input: [{ role: "user", content: "连接测试，请回复 OK" }],
+            thinking: { type: "disabled" },
+          };
+    const { sendFn } = await this.request({
+      options,
+      stream: true,
+      isJson: false,
+      debug: false,
+    });
+    return sendFn();
+  }
+  /**
    * 创建并执行 AI 请求任务
    * @param {Object} config - 请求配置对象
    * @param {Object} [config.options={}] - 接口请求参数，包含请求所需的各种参数
