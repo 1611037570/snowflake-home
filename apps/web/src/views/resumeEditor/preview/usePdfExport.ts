@@ -12,9 +12,10 @@ import { useResumeStore } from "@/stores";
 
 /**
  * 创建 PDF 导出能力
+ * @param rootRef 组件根元素 ref，用于限定导出范围，避免误选模板缩略图等其他 ResumePages 实例的页面
  * @returns 导出 PDF 的方法
  */
-export const usePdfExport = () => {
+export const usePdfExport = (rootRef?: { value: HTMLElement | null }) => {
   /**
    * 将简历预览导出为 PDF 文件
    * 直接利用页面中已分页的 .resume-page-item 元素导出
@@ -23,7 +24,7 @@ export const usePdfExport = () => {
     // 保存当前选中的模块并清空，避免导出 PDF 时带上选中高亮
     const resumeStore = useResumeStore();
     const { selectedModule } = storeToRefs(resumeStore);
-    const cachedSelectedModule = structuredClone(selectedModule.value);
+    const cachedSelectedModule = [...selectedModule.value];
     selectedModule.value.splice(0);
     try {
       // 确保DOM已渲染完成
@@ -33,8 +34,9 @@ export const usePdfExport = () => {
       const { snapdom } = await import("@zumer/snapdom");
       const { default: jsPDF } = await import("jspdf");
 
-      // 查找所有已分页的页面元素
-      const pages = document.querySelectorAll(".resume-page-item");
+      // 仅查找当前实例根节点内的分页元素，避免选中模板缩略图等其他 ResumePages 实例的页面
+      const rootEl = rootRef?.value ?? document.body;
+      const pages = rootEl.querySelectorAll(".resume-page-item");
       if (pages.length === 0) {
         console.error("未找到可打印的简历页面");
         return;

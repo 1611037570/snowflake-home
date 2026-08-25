@@ -1,12 +1,10 @@
 <script setup>
 import { useResumeStore } from "@/stores";
-import eventBus from "@/utils/modules/eventBus";
 import { storeToRefs } from "pinia";
-import { computed, onMounted, onUnmounted } from "vue";
+import { computed } from "vue";
 import GeneratingMask from "../components/generatingMask.vue";
 import ModuleActions from "./components/moduleActions.vue";
 import ResumePages from "./resumePages/index.vue";
-import { usePdfExport } from "./usePdfExport";
 
 defineOptions({ name: "ResumePage" });
 
@@ -20,17 +18,6 @@ const resumeItem = computed(() => ({
   fixedConfig: currentFixedConfig.value,
   ui: currentUI.value,
 }));
-
-// 使用 usePdfExport 提供 PDF 导出能力
-const { printPDF } = usePdfExport();
-
-onMounted(() => {
-  eventBus.on("resume-print-pdf", printPDF);
-});
-
-onUnmounted(() => {
-  eventBus.off("resume-print-pdf", printPDF);
-});
 </script>
 
 <template>
