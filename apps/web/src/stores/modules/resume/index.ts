@@ -115,6 +115,8 @@ export const useResumeStore = defineStore(
         return;
       }
       const res = config ? mergeResumeItem(config) : structuredClone(DEFAULT_RESUME_ITEM);
+      // 每次新增都重新生成唯一ID，避免多份简历共用一个ID
+      res.id = getUUID().slice(0, 6);
       list.value.push(res);
       currentIndex.value = list.value.length - 1;
       router.push({ path: "/resumeEditor", query: { id: res.id } });
@@ -134,7 +136,7 @@ export const useResumeStore = defineStore(
       isGenerating.value = val;
     };
     const mergeResumeItem = (item: any) => {
-      return merge(DEFAULT_RESUME_ITEM, item);
+      return merge(structuredClone(DEFAULT_RESUME_ITEM), item);
     };
     // 初始化数据合并，防止版本更新导致字段缺失
     const init = () => {
