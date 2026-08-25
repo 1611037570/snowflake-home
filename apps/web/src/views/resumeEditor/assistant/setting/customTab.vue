@@ -5,14 +5,6 @@ import { ElMessage } from "element-plus";
 import { useAiStore } from "@/stores/modules/ai";
 import { LLM } from "@/apis";
 
-const props = defineProps({
-  // 抽屉是否打开（用于初始化表单）
-  visible: {
-    type: Boolean,
-    default: false,
-  },
-});
-
 // 平台选项
 const platformOptions = [
   { label: "火山方舟 (Ark)", value: "ark" },
@@ -91,15 +83,6 @@ onMounted(() => {
 // 是否为当前激活的服务
 const isActive = () => activeModel.value === "custom";
 
-// 使用该服务：校验表单后保存配置，再切换激活状态
-async function useService() {
-  const valid = await formRef.value?.validate().catch(() => false);
-  if (!valid) return;
-
-  customModel.value = { ...form };
-  aiStore.activeModel = "custom";
-}
-
 // 使用当前配置发送最小请求，验证接口地址、密钥和模型是否可用
 async function testConnection() {
   const valid = await formRef.value?.validate().catch(() => false);
@@ -116,7 +99,9 @@ async function testConnection() {
     await llm.ping(form.model);
     connectionPassed.value = true;
     ElMessage.success("连接测试成功");
-    useService();
+
+    customModel.value = { ...form };
+    aiStore.activeModel = "custom";
   } catch (error) {
     ElMessage.error(error?.message || "连接测试失败");
   } finally {
