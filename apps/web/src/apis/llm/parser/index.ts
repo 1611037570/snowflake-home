@@ -1,15 +1,18 @@
 import { arkParser, arkStreamParser } from "./ark";
 import { cozeWorkflowStreamParser } from "./cozeWorkflow";
+import { openaiParser, openaiStreamParser } from "./openai";
 
 // 流式解析器管理对象
 export const streamParsers = {
   ark: arkStreamParser,
   cozeWorkflow: cozeWorkflowStreamParser,
+  openai: openaiStreamParser,
 };
 
 // 非流式解析器管理对象
 export const notStreamParsers = {
   ark: arkParser,
+  openai: openaiParser,
 };
 
 /**
