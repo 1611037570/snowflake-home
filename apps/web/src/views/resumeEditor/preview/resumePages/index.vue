@@ -110,8 +110,8 @@ const { measureDone, pages, moduleClass, getPageStyle } = useResumePages({
             v-for="slice in pageSlices"
             :key="slice.moduleKey"
             class="resume-module-wrapper group group/module relative rounded-xl"
-            :class="moduleClass(slice)"
             :data-module="slice.moduleKey"
+            :class="moduleClass(slice)"
           >
             <!-- 编辑态操作按钮插槽（编辑器预览传入 ModuleActions） -->
             <slot v-if="!isReadonly" name="moduleActions" :slice="slice" />
