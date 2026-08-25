@@ -12,6 +12,10 @@ defineProps({
     default: false,
   },
 });
+const name = defineModel("name", {
+  type: String,
+  default: "未填写",
+});
 const { currentForm, removeSelf, addItem } = inject("df/context")();
 
 // 展开状态：直接绑定激活项 name 数组（["1"] 展开 / [] 收起），随数据双向绑定
@@ -21,7 +25,7 @@ const collapsed = defineModel("collapsed", {
 });
 
 // 模块标题统一读取配置的 name 字段
-const title = computed(() => currentForm.value?.name || "未填写");
+const title = computed(() => name.value);
 
 function del() {
   proxy.$confirm(`确定要删除${title.value}模块吗？`, "删除确认").then(() => {
