@@ -763,6 +763,7 @@ export const xiaoYangUI = {
   lineHeight: 25,
   themeColor: "#ff4d4f",
   fontFamily: "text-puhui",
+  themeTemplate: "default",
 };
 
 export const xiaoYangResumeItem = {

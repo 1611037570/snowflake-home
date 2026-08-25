@@ -76,6 +76,8 @@ const o = computed(() => {
     paddingValue: paddingValue.value(),
     fontValue: fontValue.value(),
     lineHeightValue: lineHeightValue.value(),
+    // 风格模板：切换时标题/内容的边框、内边距、背景会改变行高，需纳入监听触发重新测量分页
+    themeTemplate: themeTemplate.value,
   };
 });
 const { moduleList } = useRowInfo(measureRef, o);
