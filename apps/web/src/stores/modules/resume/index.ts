@@ -4,14 +4,7 @@ import { getUUID } from "@/utils";
 import { defineStore } from "pinia";
 import { computed, ref } from "vue";
 import { DEFAULT_CONFIG, DEFAULT_USER_CONFIG } from "./formConfig";
-import {
-  defaultFontFamily,
-  defaultFontSize,
-  defaultLineHeight,
-  defaultPadding,
-  defaultThemeColor,
-  defaultThemeStyle,
-} from "./uiConfig";
+import { DEFAULT_UI } from "./uiConfig";
 
 import { merge } from "lodash-es";
 export type ResumeLayout = "list" | "three" | "ai";
@@ -26,20 +19,7 @@ const DEFAULT_RESUME_ITEM = {
   // 表单配置
   config: structuredClone(DEFAULT_CONFIG),
   // UI配置
-  ui: {
-    // 页边距
-    padding: defaultPadding,
-    // 字体大小
-    fontSize: defaultFontSize,
-    // 行高
-    lineHeight: defaultLineHeight,
-    // 主题颜色
-    themeColor: defaultThemeColor,
-    // 主题样式
-    themeStyle: defaultThemeStyle,
-    // 字体类型
-    fontFamily: defaultFontFamily,
-  },
+  ui: structuredClone(DEFAULT_UI),
   // 使用信息
   usage: {
     // 是否自定义标题

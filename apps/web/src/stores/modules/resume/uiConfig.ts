@@ -88,7 +88,7 @@ export const lineHeightList = [
 ];
 
 // 主题样式列表
-export const themeStyleList = [
+export const themeTemplateList = [
   {
     name: "默认",
     value: "default",
@@ -105,4 +105,18 @@ export const defaultFontSize = fontSizeList[2].value;
 // 默认行间距
 export const defaultLineHeight = lineHeightList[2].value;
 // 默认主题样式
-export const defaultThemeStyle = themeStyleList[0].value;
+export const defaultThemeTemplate = themeTemplateList[0].value;
+export const DEFAULT_UI = {
+  // 页边距
+  padding: defaultPadding,
+  // 字体大小
+  fontSize: defaultFontSize,
+  // 行高
+  lineHeight: defaultLineHeight,
+  // 主题颜色
+  themeColor: defaultThemeColor,
+  // 主题样式
+  themeTemplate: defaultThemeTemplate,
+  // 字体类型
+  fontFamily: defaultFontFamily,
+};
