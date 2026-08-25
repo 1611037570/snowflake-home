@@ -2,7 +2,7 @@
 // 简历放大预览组件：全屏遮罩内用 ScaleContainer 缩放展示 resumePages 渲染的全部页
 // 数据源由 props 传入，供模板页预览、编辑器全屏查看等场景复用
 import { onBeforeUnmount, onMounted, ref } from "vue";
-import ResumePages from "./resumePages.vue";
+import ResumePages from "./resumePages/index.vue";
 import ScaleContainer from "./ScaleContainer.vue";
 
 defineOptions({ name: "FullscreenPreview" });
