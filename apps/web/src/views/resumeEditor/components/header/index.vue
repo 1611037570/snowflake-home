@@ -56,7 +56,7 @@ const handleBack = () => {
     <div class="flex items-center gap-5">
       <DownloadButton />
       <!-- 布局切换器 -->
-      <div class="flex items-center gap-1 rounded-xl bg-sf-bg p-1">
+      <div class="flex items-center gap-1 rounded-xl border border-sf-b bg-sf-page p-1">
         <SfTooltip v-for="item in layoutList" :key="item.value" :content="item.name">
           <button
             type="button"
