@@ -35,23 +35,23 @@ const openPreview = () => {
             <ResumePages :item="xiaoYangResumeItem" />
           </div>
         </div>
-        <!-- 放大查看按钮 -->
-        <button
-          type="button"
-          class="absolute top-2 right-2 z-10 flex h-8 w-8 cursor-pointer! items-center justify-center rounded-full bg-black/40 text-white shadow transition-colors hover:bg-black/60"
-          @click="openPreview"
-        >
-          <SfIcon icon="lucide:maximize" size="4" />
-        </button>
-      </div>
-      <div class="absolute inset-x-0 bottom-0 z-10 flex justify-center pb-6">
-        <button
-          type="button"
-          class="cursor-pointer! rounded-xl bg-sf-theme px-4 py-2 text-sm font-bold text-white opacity-0 transition-opacity duration-300 group-hover:opacity-100"
-          @click="selectTemplate"
-        >
-          使用模板
-        </button>
+        <!-- 使用模板 + 放大查看按钮 -->
+        <div class="absolute inset-x-0 bottom-0 z-10 flex items-center justify-center gap-2 pb-6">
+          <button
+            type="button"
+            class="cursor-pointer! rounded-xl bg-sf-theme px-4 py-2 text-sm font-bold text-white opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+            @click="selectTemplate"
+          >
+            使用模板
+          </button>
+          <button
+            type="button"
+            class="flex h-8 w-8 cursor-pointer! items-center justify-center rounded-full bg-sf-theme text-white opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+            @click="openPreview"
+          >
+            <SfIcon icon="lucide:maximize" size="4" />
+          </button>
+        </div>
       </div>
     </div>
     <ZoomPreview ref="zoomPreviewRef" :item="xiaoYangResumeItem" />
