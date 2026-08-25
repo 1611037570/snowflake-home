@@ -2,7 +2,7 @@
 import { useResizeObserver } from "@vueuse/core";
 import { ref } from "vue";
 import FullscreenPreview from "./fullscreenPreview.vue";
-import ResumePages from "./resumePages.vue";
+import ResumePages from "./resumePages/index.vue";
 import { RESUME_HEIGHT, RESUME_WIDTH } from "./constants";
 
 defineOptions({ name: "ThumbPreview" });

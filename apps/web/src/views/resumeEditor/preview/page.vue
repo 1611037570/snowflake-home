@@ -5,7 +5,7 @@ import { storeToRefs } from "pinia";
 import { computed, onMounted, onUnmounted } from "vue";
 import GeneratingMask from "../components/generatingMask.vue";
 import ModuleActions from "./components/moduleActions.vue";
-import ResumePages from "./resumePages.vue";
+import ResumePages from "./resumePages/index.vue";
 import { usePdfExport } from "./usePdfExport";
 
 defineOptions({ name: "ResumePage" });
@@ -47,11 +47,7 @@ onUnmounted(() => {
 
 <template>
   <GeneratingMask />
-  <ResumePages
-    :item="resumeItem"
-    :selected-module-keys="selectedModuleKeys"
-    show-page-index
-  >
+  <ResumePages :item="resumeItem" :selected-module-keys="selectedModuleKeys" show-page-index>
     <template #moduleActions="{ slice }">
       <ModuleActions
         :selected="selectedModuleKeys.has(slice.moduleKey)"
