@@ -56,9 +56,14 @@ const hasNewData = computed(() => {
 
   return checkHasNew(module);
 });
-// 点击选择模块
+// 点击选择/取消选择模块：已选中则从列表移除，未选中则加入
 const handleSelect = () => {
-  resumeStore.pushSelectedModule(props.modelKey);
+  if (isSelected.value) {
+    const index = selectedModule.value.findIndex((item) => item.key === props.modelKey);
+    if (index > -1) selectedModule.value.splice(index, 1);
+  } else {
+    resumeStore.pushSelectedModule(props.modelKey);
+  }
 };
 </script>
 
@@ -82,7 +87,7 @@ const handleSelect = () => {
         </div>
       </SfTooltip>
     </template>
-    <SfTooltip :content="isSelected ? '取消选择' : '选择该模块'">
+    <SfTooltip :content="isSelected ? '取消选择' : '选择模块'">
       <div
         class="cursor-pointer items-center justify-center rounded-full p-1.5 text-white shadow hover:bg-sf-theme"
         :class="isSelected ? 'flex bg-sf-theme ' : 'hidden bg-sf-info group-hover/module:flex '"
