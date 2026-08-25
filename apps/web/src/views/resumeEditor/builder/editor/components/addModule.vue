@@ -66,9 +66,12 @@ const handleConfirm = () => {
   config.key = customKey;
   // 重置自定义模块的名称
   config.name = customModuleName.value;
-  // 重置自定义模块顶层模型的数据路径（collapsed / name）
+  // 重置自定义模块顶层模型的数据路径（collapsed / name），并将模块名称写入 name 默认值
   config.model.forEach((item) => {
     item.source[0] = customKey;
+    if (item.prop === "name") {
+      item.defaultValue = customModuleName.value;
+    }
   });
   // 重置自定义模块的子模块标题模型数据路径
   config.fields[0].addConfig.model.forEach((item) => {

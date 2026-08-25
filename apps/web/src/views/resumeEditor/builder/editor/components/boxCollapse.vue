@@ -14,7 +14,7 @@ defineProps({
 });
 const name = defineModel("name", {
   type: String,
-  default: "未填写",
+  default: "",
 });
 const { currentForm, removeSelf, addItem } = inject("df/context")();
 
@@ -24,7 +24,7 @@ const collapsed = defineModel("collapsed", {
   default: () => [],
 });
 
-// 模块标题统一读取配置的 name 字段
+// 模块标题：优先读取配置的 name 字段（编辑标题后实时刷新），其次回退数据 name
 const title = computed(() => name.value);
 
 function del() {
