@@ -1,6 +1,5 @@
 <script setup>
 import { markRaw, ref } from "vue";
-import GeneratingMask from "../components/generatingMask.vue";
 import Custom from "./custom/index.vue";
 import Editor from "./editor/index.vue";
 import Template from "./template/index.vue";
@@ -30,7 +29,7 @@ provide("bg", "bg-sf-bg");
 </script>
 
 <template>
-  <div class="relative flex h-full w-[380px] flex-col py-3 pl-3">
+  <div class="relative my-3 ml-3 flex w-[380px] flex-col">
     <SfTab
       :list="menuList"
       v-model:index="activeIndex"
@@ -46,7 +45,6 @@ provide("bg", "bg-sf-bg");
         </KeepAlive>
       </SfScrollbar>
     </div>
-    <GeneratingMask v-if="true" />
   </div>
 </template>
 

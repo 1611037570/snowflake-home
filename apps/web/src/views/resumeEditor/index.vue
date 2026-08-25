@@ -1,17 +1,27 @@
 <template>
   <div class="flex h-full w-full flex-col bg-sf-page" v-if="currentIndex != -1">
     <Header />
-    <div class="flex w-full flex-1 overflow-hidden" v-if="currentIndex >= 0">
-      <!-- 左侧操作栏 -->
-      <Transition name="resume-builder">
-        <Builder v-if="layout !== 'ai'" :class="{ 'ai-generating': isGenerating }" />
-      </Transition>
-      <!-- 中间预览栏 -->
-      <Preview :class="{ 'ai-generating': isGenerating }" />
+    <div class="relative flex w-full flex-1 overflow-hidden" v-if="currentIndex >= 0">
+      <div class="relative flex min-w-0 flex-1 overflow-hidden">
+        <!-- 左侧操作栏 -->
+        <Transition name="resume-builder">
+          <Builder v-if="layout !== 'ai'" :class="{ 'ai-generating': isGenerating }" />
+        </Transition>
+        <!-- 中间预览栏 -->
+        <Preview :class="{ 'ai-generating': isGenerating }" />
+        <GeneratingMask v-if="isGenerating && !isPrinting" :visible="true" />
+      </div>
       <!-- 右侧AI助手栏 -->
       <Transition name="resume-assistant">
         <Assistant v-if="layout !== 'list'" />
       </Transition>
+      <GeneratingMask
+        v-if="isPrinting"
+        :visible="true"
+        title="正在导出简历"
+        description="请稍候，文件即将下载"
+        aria-label="正在导出简历，请稍候"
+      />
     </div>
   </div>
 </template>
@@ -24,6 +34,7 @@ import { useRoute, useRouter } from "vue-router";
 import Assistant from "./assistant/index.vue";
 import Builder from "./builder/index.vue";
 import Header from "./components/header/index.vue";
+import GeneratingMask from "./components/generatingMask.vue";
 import Preview from "./preview/index.vue";
 // 预览层代理数据及批量操作句柄
 import { usePreviewData } from "./preview/usePreviewData";
@@ -33,7 +44,7 @@ const route = useRoute();
 
 const resumeStore = useResumeStore();
 const { initResumeStatus } = resumeStore;
-const { currentIndex, layout, list, currentUsage, isGenerating, currentData } =
+const { currentIndex, layout, list, currentUsage, isGenerating, isPrinting, currentData } =
   storeToRefs(resumeStore);
 
 // 创建代理后的预览数据及批量操作句柄（AI 助手与预览层共用）

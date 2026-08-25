@@ -23,7 +23,10 @@ export const usePdfExport = (rootRef?: { value: HTMLElement | null }) => {
   const printPDF = async () => {
     // 保存当前选中的模块并清空，避免导出 PDF 时带上选中高亮
     const resumeStore = useResumeStore();
-    const { selectedModule } = storeToRefs(resumeStore);
+    const { selectedModule, isPrinting } = storeToRefs(resumeStore);
+    if (isPrinting.value) return;
+    // 导出期间锁定编辑器三栏，避免操作干扰导出结果
+    isPrinting.value = true;
     const cachedSelectedModule = [...selectedModule.value];
     selectedModule.value.splice(0);
     try {
@@ -127,6 +130,7 @@ export const usePdfExport = (rootRef?: { value: HTMLElement | null }) => {
     } finally {
       // 导出完成或失败后还原选中的模块
       selectedModule.value.splice(0, selectedModule.value.length, ...cachedSelectedModule);
+      isPrinting.value = false;
     }
   };
 
