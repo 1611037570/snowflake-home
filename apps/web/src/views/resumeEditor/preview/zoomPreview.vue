@@ -25,15 +25,15 @@ defineExpose({ open, close });
   <Teleport to="body">
     <div
       v-if="visible"
-      class="fixed inset-0 z-50 flex flex-col bg-black/70"
+      class="fixed inset-0 z-50 flex flex-col backdrop-blur-[10px]"
       @click.self="close"
     >
       <!-- 顶部栏 -->
       <div class="flex h-12 shrink-0 items-center justify-between px-4">
-        <span class="text-sm font-medium text-white">简历预览</span>
+        <span class="text-sm font-medium text-sf-text">简历预览</span>
         <button
           type="button"
-          class="flex h-8 w-8 cursor-pointer! items-center justify-center rounded-full bg-white/15 text-white transition-colors hover:bg-white/25"
+          class="flex h-8 w-8 cursor-pointer! items-center justify-center rounded-full text-sf-text transition-colors hover:bg-sf-bg-2"
           @click="close"
         >
           <SfIcon icon="lucide:x" size="4" />
