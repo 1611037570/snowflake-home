@@ -19,7 +19,7 @@ export const DEFAULT_USER_FORM = [
       {
         type: "object",
         label: "求职岗位",
-        tip: "目标岗位，必填",
+        tip: "求职岗位 推荐必填",
         component: "input",
         span: 24,
         model: {
@@ -34,7 +34,7 @@ export const DEFAULT_USER_FORM = [
       {
         type: "object",
         label: "姓名",
-        tip: "真实姓名，必填",
+        tip: "真实姓名 推荐必填",
         component: "input",
         span: 12,
         model: {
@@ -57,7 +57,7 @@ export const DEFAULT_USER_FORM = [
       {
         type: "object",
         label: "出生日期",
-        tip: "出生年月，必填",
+        tip: "出生年月 推荐必填",
         component: "datePicker",
         span: 12,
         model: {
@@ -73,7 +73,7 @@ export const DEFAULT_USER_FORM = [
       {
         type: "object",
         label: "电话",
-        tip: "常用手机号，必填",
+        tip: "常用手机号 推荐必填",
         component: "input",
         span: 12,
         model: {
@@ -383,6 +383,7 @@ export const DEFAULT_WORK_FORM = {
             },
             props: {
               placeholder: "公司",
+              clearable: true,
             },
           },
           {
@@ -396,6 +397,7 @@ export const DEFAULT_WORK_FORM = {
             },
             props: {
               placeholder: "岗位",
+              clearable: true,
             },
           },
           {
