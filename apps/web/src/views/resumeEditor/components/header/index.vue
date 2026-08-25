@@ -1,19 +1,14 @@
 <script setup>
 import { useResumeStore } from "@/stores";
-import eventBus from "@/utils/modules/eventBus";
 import { storeToRefs } from "pinia";
 import Debug from "./debug.vue";
+import DownloadButton from "./downloadButton.vue";
 import Title from "./title.vue";
 import { useRouter } from "vue-router";
 const router = useRouter();
 
 const resumeStore = useResumeStore();
-const { isPrinting, layout } = storeToRefs(resumeStore);
-
-const handleDownload = () => {
-  if (isPrinting.value) return;
-  eventBus.emit("resume-print-pdf");
-};
+const { layout } = storeToRefs(resumeStore);
 
 const layoutList = [
   {
@@ -47,19 +42,18 @@ const handleBack = () => {
       <SfTooltip :content="$t('router.resume')">
         <div
           @click="handleBack"
-          class="flex items-center gap-1.5 rounded-full px-3 py-1 text-sf-theme transition-all hover:bg-sf-theme/20"
+          class="flex items-center gap-1.5 rounded-full px-3 py-1 text-sf-theme transition-all hover:bg-sf-theme-3"
         >
           <SfIcon icon="famicons:chevron-back" size="4" />
           <span class="text-sm font-bold tracking-wide">{{ $t("router.resume") }}</span>
           <SfLogo size="5.5" class="animate-pulse" name="resume" />
         </div>
       </SfTooltip>
-
       <Title />
     </div>
 
     <!-- 右侧工具栏 -->
-    <div class="flex items-center gap-6">
+    <div class="flex items-center gap-5">
       <!-- 布局切换器 -->
       <div class="flex items-center gap-1 rounded-xl bg-sf-bg-2 p-1">
         <SfTooltip v-for="item in layoutList" :key="item.value" :content="item.name">
@@ -74,29 +68,16 @@ const handleBack = () => {
         </SfTooltip>
       </div>
       <!-- 操作按钮组 -->
-      <div class="flex items-center gap-2.5">
-        <el-button
-          @click="handleDownload"
-          :loading="isPrinting"
-          class="!h-9 !rounded-lg !border-sf-b !bg-sf-primary !px-4 !font-medium !text-sf-text-2 hover:!border-sf-theme hover:!text-sf-theme"
-        >
-          <template #icon v-if="!isPrinting">
-            <SfIcon icon="material-symbols:download" size="4.5" class="mr-1" />
-          </template>
-          {{ isPrinting ? "生成中..." : "下载" }}
-        </el-button>
-      </div>
+      <DownloadButton />
 
       <!-- 分隔线 -->
-      <div class="bg-sf-border h-4 w-px"></div>
+      <div class="h-5 w-px bg-sf-b"></div>
       <!-- 快捷图标 -->
-      <div class="flex items-center gap-5 text-sf-text-2">
-        <SfDonation />
-        <SfLocale />
-        <SfTheme />
-        <SfSetting />
-        <Debug />
-      </div>
+      <SfDonation />
+      <SfLocale />
+      <SfTheme />
+      <SfSetting />
+      <Debug />
     </div>
   </header>
 </template>

@@ -36,6 +36,8 @@
   --color-sf-theme: var(--sf-theme);
   /* 主题色-2 */
   --color-sf-theme-2: var(--sf-theme-2);
+  /* 主题色-3 */
+  --color-sf-theme-3: var(--sf-theme-3);
   --color-sf-theme-text: #fff;
   /* 基本色 */
   --color-sf-base: var(--sf-base);
