@@ -61,6 +61,10 @@ const handleCreate = () => {
   }
   resumeStore.addResume();
 };
+
+const handleUseTemplate = () => {
+  router.push("/resume/template");
+};
 </script>
 
 <template>
@@ -130,7 +134,10 @@ const handleCreate = () => {
         <SfIcon icon="lucide:file-text" size="10" />
       </div>
       <p class="text-sm text-sf-text-2">还没有简历</p>
-      <el-button type="primary" @click="handleCreate">新建简历</el-button>
+      <div class="flex items-center gap-3">
+        <el-button type="primary" @click="handleCreate">新建简历</el-button>
+        <el-button @click="handleUseTemplate">使用模板</el-button>
+      </div>
     </div>
   </div>
 </template>
