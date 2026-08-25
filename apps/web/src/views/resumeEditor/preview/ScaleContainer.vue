@@ -21,23 +21,24 @@ const scaleMode = ref("auto");
 
 const PADDING = 40;
 const MIN_SCALE = 0.5;
-const SCALE_LIST = [0.5, 0.7, 0.9, 1];
-
 const percent = (value) => `${Math.round(value * 100)}%`;
+const SCALE_LIST = [0.5, 0.7, 0.9, 1].map((value) => ({ value, label: percent(value) }));
+
 const scale = computed(() => (scaleMode.value === "auto" ? maxScale.value : manualScale.value));
 const transitionScale = useTransition(scale, {
   duration: 200,
   transition: TransitionPresets.easeOutCubic,
 });
-const scaleText = computed(() => percent(transitionScale.value));
-const scaleLabel = computed(() => (scaleMode.value === "auto" ? "自适应" : scaleText.value));
+const scaleLabel = computed(() =>
+  scaleMode.value === "auto" ? "自适应" : percent(transitionScale.value),
+);
 const minScale = computed(() => Math.min(MIN_SCALE, maxScale.value));
 const isMinScale = computed(() => scale.value <= minScale.value);
 const isMaxScale = computed(() => scale.value >= maxScale.value);
+const manualScaleText = computed(() => percent(manualScale.value));
 
-const isManualScaleSelected = (value) => {
-  return scaleMode.value === "manual" && percent(manualScale.value) === percent(value);
-};
+const isManualScaleSelected = (item) =>
+  scaleMode.value === "manual" && manualScaleText.value === item.label;
 
 const clampScale = (value) => {
   return Math.min(Math.max(value, minScale.value), maxScale.value);
@@ -59,17 +60,13 @@ const stepScale = (value) => {
 const updateScale = useDebounceFn(([entry]) => {
   const { width, height } = entry.contentRect;
 
-  // 确保宽度和高度有效
-  if (width <= 0 || height <= 0) return;
-
-  // 防止除以0或负数
+  // 容器过小或尺寸无效时，退化为最小缩放
   if (width <= PADDING || height <= PADDING) {
     maxScale.value = 0.1;
     return;
   }
 
   // 只根据宽度计算缩放比例，让内容在垂直方向可以滚动
-  // 取缩放比例，且最大不超过 1
   maxScale.value = (width - PADDING) / RESUME_WIDTH;
   manualScale.value = clampScale(manualScale.value);
 }, 100);
@@ -124,16 +121,16 @@ useResizeObserver(contentRef, ([entry]) => {
       >
         <div
           v-for="item in SCALE_LIST"
-          :key="item"
+          :key="item.value"
           class="flex h-9 cursor-pointer items-center justify-between rounded-lg px-3 text-sm transition-colors"
           :class="{
             'font-medium text-sf-theme': isManualScaleSelected(item),
-            'cursor-not-allowed text-sf-text-3': item > maxScale,
-            'text-sf-text hover:bg-sf-bg-2': item <= maxScale && !isManualScaleSelected(item),
+            'cursor-not-allowed text-sf-text-3': item.value > maxScale,
+            'text-sf-text hover:bg-sf-bg-2': item.value <= maxScale && !isManualScaleSelected(item),
           }"
-          @click="item <= maxScale && setManualScale(item)"
+          @click="item.value <= maxScale && setManualScale(item.value)"
         >
-          <span>{{ percent(item) }}</span>
+          <span>{{ item.label }}</span>
           <SfIcon
             v-if="isManualScaleSelected(item)"
             icon="lucide:check"
