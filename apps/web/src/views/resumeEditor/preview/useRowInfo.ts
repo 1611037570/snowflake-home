@@ -35,14 +35,21 @@ interface ModuleInfo {
  * 为根 div 的一级子元素绑定唯一 ID 和高度信息，供分页逻辑使用
  * @param rootRef - 测量容器的 ref（支持原生 div 或组件实例，内部通过 unrefElement 取 $el）
  * @param watchOptions - 监听选项（样式变化时触发重新测量）
+ * @param options - 可选配置：stopAfterFirstMeasure 首次测量成功后冻结，容器销毁后不重复扫描（缩略图场景）
  * @returns 模块 + 行信息的响应式列表
  */
-export function useRowInfo(rootRef: Ref<HTMLDivElement | null>, watchOptions: any) {
+export function useRowInfo(
+  rootRef: Ref<HTMLDivElement | null>,
+  watchOptions: any,
+  options?: { stopAfterFirstMeasure?: boolean },
+) {
   const idPrefix = "row-item";
   const selector = ".resume-module-wrapper";
   const moduleList = ref<ModuleInfo[]>([]);
   // 上一次测量的快照，用于判断行结构/高度是否真正变化
   let lastSnapshot = "";
+  // 单次测量模式（缩略图 page=1）：测量成功后冻结，避免测量容器销毁后清空行数据
+  let frozen = false;
 
   /** 行高度 = offsetHeight（含 padding/border）+ 上下 margin */
   const rowHeight = (el: HTMLElement): number => {
@@ -55,6 +62,7 @@ export function useRowInfo(rootRef: Ref<HTMLDivElement | null>, watchOptions: an
    * 只关心模块结构 + 行高度（内容 html 变化不参与比较），无变化时不更新 moduleList
    */
   const measure = () => {
+    if (frozen) return;
     // unrefElement 兼容原生 DOM 与组件实例（自动取 $el）
     const root = unrefElement(rootRef);
     if (!root) {
@@ -80,6 +88,10 @@ export function useRowInfo(rootRef: Ref<HTMLDivElement | null>, watchOptions: an
     if (snapshot !== lastSnapshot) {
       lastSnapshot = snapshot;
       moduleList.value = modules;
+      // 单次测量模式：首次测量成功后冻结，后续（含容器销毁）不再触发
+      if (options?.stopAfterFirstMeasure && modules.length > 0) {
+        frozen = true;
+      }
     }
   };
   // 防抖处理，避免连续 DOM 变化时高频执行测量

@@ -1,7 +1,7 @@
 <script setup>
 // 简历分页渲染可复用组件：接收 resumeItem（data/config/fixedConfig/ui），渲染分页后的简历页面
 // 数据源由 props 传入，不依赖 resume store；供编辑器预览、模板缩略图、全屏查看复用
-import { computed, provide, ref } from "vue";
+import { computed, provide, ref, watch } from "vue";
 import { fontSizeList } from "@/stores/modules/resume/uiConfig";
 import MeasureContent from "./components/measureContent.vue";
 import ResumeModule from "./modules/index.vue";
@@ -22,10 +22,10 @@ const props = defineProps({
     type: Set,
     default: () => new Set(),
   },
-  // 是否显示页码
-  showPageIndex: {
-    type: Boolean,
-    default: false,
+  // 渲染范围：'all' 渲染全部页（默认），'1' 仅渲染第一页（模板缩略图场景）
+  page: {
+    type: String,
+    default: "all",
   },
 });
 
@@ -80,7 +80,16 @@ const o = computed(() => {
     themeTemplate: themeTemplate.value,
   };
 });
-const { moduleList } = useRowInfo(measureRef, o);
+const { moduleList } = useRowInfo(measureRef, o, {
+  // 缩略图（page=1）：首次测量成功后冻结，销毁测量容器也不会清空行数据
+  stopAfterFirstMeasure: props.page === "1",
+});
+
+// 缩略图测量完成即销毁隐藏的测量容器，减少无用 DOM 与监听开销
+const measureDone = ref(false);
+watch(moduleList, (list) => {
+  if (props.page === "1" && list.length > 0) measureDone.value = true;
+});
 
 // 分页逻辑
 const pages = computed(() => {
@@ -129,6 +138,8 @@ const pages = computed(() => {
     // 放不下时：当前页已有内容则翻页重试；空页仍放不下（单行超高）则硬塞
     if (currentHeight + gap + row.height > maxContentHeight && currentPage.length > 0) {
       newPage();
+      // 缩略图（page=1）仅需第一页：翻页后不再继续计算后续页
+      if (props.page === "1") return result;
       gap = 0; // 新页无内容，不再计间距
     }
 
@@ -159,8 +170,9 @@ const getPageStyle = (pageSlices, pageIndex) => {
 
 <template>
   <div class="relative flex flex-col">
-    <!-- 隐藏的测量容器：用于 useRowInfo 读取行高 -->
+    <!-- 隐藏的测量容器：用于 useRowInfo 读取行高；缩略图测量完成后销毁 -->
     <MeasureContent
+      v-if="!measureDone"
       class="absolute -z-10 opacity-0"
       ref="measureRef"
       :style="[paddingValue(), { width: `${RESUME_WIDTH}px` }]"
@@ -197,7 +209,7 @@ const getPageStyle = (pageSlices, pageIndex) => {
             <ResumeModule :data="props.item.data" :name="slice.moduleKey" />
           </div>
         </div>
-        <div v-if="showPageIndex" class="py-3 text-center text-xs opacity-50">
+        <div class="py-3 text-center text-xs opacity-50">
           轻舟简历 · 第 {{ pageIndex + 1 }} 页 · 共 {{ pages.length }} 页
         </div>
 
