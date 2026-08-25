@@ -9,16 +9,19 @@ export const xiaoYangData: any = {
     workTime: "2022.08.01",
     sex: "男",
   },
-  account: [
-    {
-      name: "github",
-      url: "https://github.com/1611037570",
-    },
-    {
-      name: "稀土掘金",
-      url: "https://juejin.cn/user/2342386827791687/posts",
-    },
-  ],
+  account: {
+    collapsed: ["1"],
+    data: [
+      {
+        name: "github",
+        url: "https://github.com/1611037570",
+      },
+      {
+        name: "稀土掘金",
+        url: "https://juejin.cn/user/2342386827791687/posts",
+      },
+    ],
+  },
   skill: {
     collapsed: ["1"],
     data: "<p><strong>1、</strong>精通前端开发核心技术栈，熟练掌握前端技术栈，包括<strong>HTML5</strong>、<strong>CSS3</strong>精准实现产品原型图；结合<strong>ChatGPT</strong>、<strong>Copilot</strong>等AI工具实现高效开发。</p><p><strong>2、</strong>熟练使用<strong>JavaScript、TypeScript（</strong>ES6）进行现代化前端开发，掌握<strong>Axios、Loadsh</strong>等经典库的使用。</p><p><strong>3、</strong>熟练使用 <strong>Vue2和Vue3 和 VueRouter</strong>、<strong>Pinia、VueUse</strong>等vue生态框架，具有丰富的移动端和PC前台和后台项目实战经验，能够根据业务需求选择最优技术方案。</p><p><strong>4、</strong>熟练使用 <strong>UniApp </strong>跨平台开发框架，有多个同时兼容H5、小程序、App多端实战项目经验。</p><p><strong>5、</strong>熟练使用<strong>ElementPlus</strong>、<strong>AntDesignVue</strong>、<strong>Uview</strong>、<strong>Echarts</strong>等主流UI组件库的使用，能根据项目需求对组件进行深度定制和功能扩展，提高开发效率。</p><p><strong>6</strong>、完整参与过多个大型前端项目的<strong>0-1</strong>的全生命周期管理，具备独立负责项目的能力。</p><p><strong>7、</strong>熟练使用<strong>Git</strong>、<strong>SVN</strong>进行版本控制和团队协作。</p><p><strong>8、</strong>掌握<strong>Postman</strong>、<strong>Apifox </strong>等接口调试工具进行前后端联调；了解<strong>Node.js</strong>和对数据库的<strong>CURD</strong>相关知识，能与后端流畅沟通。</p><p><strong>9、</strong>具备严谨的编程思维和良好的代码规范意识，编写的代码接口清晰，可维护性强，有一定抗压能力。</p>",
@@ -80,7 +83,7 @@ export const xiaoYangFixedForm = {
         {
           type: "object",
           label: "求职岗位",
-          tip: "目标岗位，必填",
+          tip: "求职岗位 推荐必填",
           component: "input",
           span: 24,
           model: {
@@ -95,7 +98,7 @@ export const xiaoYangFixedForm = {
         {
           type: "object",
           label: "姓名",
-          tip: "真实姓名，必填",
+          tip: "真实姓名 推荐必填",
           component: "input",
           span: 12,
           model: {
@@ -106,11 +109,19 @@ export const xiaoYangFixedForm = {
             placeholder: "请输入姓名",
             clearable: true,
           },
+          rules: [
+            { required: true, message: "请输入姓名", trigger: "blur" },
+            {
+              pattern: /^[\u4e00-\u9fa5a-zA-Z0-9·\s]{2,20}$/,
+              message: "请输入2-20位姓名",
+              trigger: "blur",
+            },
+          ],
         },
         {
           type: "object",
           label: "出生日期",
-          tip: "出生年月，必填",
+          tip: "出生年月 推荐必填",
           component: "datePicker",
           span: 12,
           model: {
@@ -126,7 +137,7 @@ export const xiaoYangFixedForm = {
         {
           type: "object",
           label: "电话",
-          tip: "常用手机号，必填",
+          tip: "常用手机号 推荐必填",
           component: "input",
           span: 12,
           model: {
@@ -137,6 +148,14 @@ export const xiaoYangFixedForm = {
             placeholder: "请输入电话",
             clearable: true,
           },
+          rules: [
+            { required: true, message: "请输入手机号", trigger: "blur" },
+            {
+              pattern: /^1[3-9]\d{9}$/,
+              message: "请输入正确的手机号",
+              trigger: "blur",
+            },
+          ],
         },
         {
           type: "object",
@@ -152,6 +171,13 @@ export const xiaoYangFixedForm = {
             placeholder: "请输入邮箱",
             clearable: true,
           },
+          rules: [
+            {
+              pattern: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+              message: "请输入正确的邮箱格式",
+              trigger: "blur",
+            },
+          ],
         },
         {
           type: "object",
@@ -210,63 +236,71 @@ export const xiaoYangForm = {
   drag: true,
   dragClass: ".container-drag",
   fields: [
-    // 教育经历（原“社交账号”但 key 为 education，保留不变，仅修正 model）
+    // 社交账号
     {
-      name: "社交账号",
-      key: "education",
       type: "object",
-      component: "boxCollapse",
-      props: {
-        add: true,
-      },
-      // ✅ 修正：boxCollapse 的 model 为数组，包含 collapsed 控制
+      key: "account",
+      span: 24,
       model: [
         {
-          source: ["education", "collapsed"],
+          source: ["account", "collapsed"],
           prop: "collapsed",
           defaultValue: ["1"],
         },
       ],
+      component: "boxCollapse",
+      props: {
+        name: "社交账号",
+        add: true,
+      },
       slot: "default",
       fields: [
         {
           type: "array",
           drag: true,
           dragClass: ".item-drag",
-          list: [
-            {
-              model: [
-                {
-                  source: ["education", "data", "?", "name"],
-                  prop: "name",
-                },
-                {
-                  source: ["education", "data", "?", "education"],
-                  prop: "education",
-                },
-                {
-                  source: ["education", "data", "?", "post"],
-                  prop: "post",
-                },
-                {
-                  source: ["education", "data", "?", "time"],
-                  prop: "time",
-                },
-                {
-                  source: ["education", "data", "?", "content"],
-                  prop: "content",
-                },
-                {
-                  source: ["education", "data", "?", "mode"],
-                  prop: "mode",
-                },
-              ],
-              component: "education",
-              span: 24,
-            },
-          ],
+          list: [],
           addConfig: {
-            // ✅ 修正：addConfig 的 model 同样修正
+            model: [
+              {
+                source: ["account", "data", "?", "name"],
+                defaultValue: "",
+                prop: "name",
+              },
+              {
+                source: ["account", "data", "?", "url"],
+                defaultValue: "",
+                prop: "url",
+              },
+            ],
+            type: "object",
+            component: "account",
+          },
+        },
+      ],
+    },
+    // 教育经历
+    {
+      key: "education",
+      type: "object",
+      component: "boxCollapse",
+      props: {
+        name: "教育经历",
+        add: true,
+      },
+      model: {
+        source: ["education", "collapsed"],
+        prop: "collapsed",
+        defaultValue: ["1"],
+      },
+      slot: "default",
+      fields: [
+        {
+          type: "array",
+          drag: true,
+          dragClass: ".item-drag",
+          list: [],
+          addConfig: {
             model: [
               {
                 source: ["education", "data", "?", "name"],
@@ -304,11 +338,10 @@ export const xiaoYangForm = {
       type: "object",
       component: "boxCollapse",
       key: "skill",
-      name: "专业技能",
       props: {
+        name: "专业技能",
         add: false,
       },
-      // ✅ 修正：boxCollapse 的 model 为数组
       model: [
         {
           source: ["skill", "collapsed"],
@@ -321,7 +354,6 @@ export const xiaoYangForm = {
         {
           type: "object",
           component: "wangEditor",
-          // ✅ 修正：source 指向 skill.data
           model: {
             source: ["skill", "data"],
             prop: "modelValue",
@@ -333,12 +365,11 @@ export const xiaoYangForm = {
     {
       type: "object",
       key: "work",
-      name: "工作经历",
       component: "boxCollapse",
       props: {
+        name: "工作经历",
         add: true,
       },
-      // ✅ 修正
       model: [
         {
           source: ["work", "collapsed"],
@@ -352,63 +383,87 @@ export const xiaoYangForm = {
           type: "array",
           drag: true,
           dragClass: ".item-drag",
-          list: [
-            {
-              component: "work",
-              span: 24,
-              // ✅ 修正：source 包含 work.data.?
-              model: [
-                {
-                  source: ["work", "data", "?", "name"],
-                  prop: "name",
-                },
-                {
-                  source: ["work", "data", "?", "post"],
-                  prop: "post",
-                },
-                {
-                  source: ["work", "data", "?", "time"],
-                  prop: "time",
-                },
-                {
-                  source: ["work", "data", "?", "content"],
-                  prop: "content",
-                },
-              ],
-            },
-          ],
+          list: [],
           addConfig: {
-            component: "work",
+            type: "object",
+            component: "itemCollapse",
+            slot: "default",
             span: 24,
             model: [
               {
                 source: ["work", "data", "?", "name"],
                 prop: "name",
               },
+            ],
+            fields: [
               {
-                source: ["work", "data", "?", "post"],
-                prop: "post",
+                type: "object",
+                label: "公司",
+                component: "input",
+                span: 12,
+                model: {
+                  source: ["work", "data", "?", "name"],
+                  prop: "modelValue",
+                },
+                props: {
+                  placeholder: "公司",
+                  clearable: true,
+                },
               },
               {
-                source: ["work", "data", "?", "time"],
-                prop: "time",
+                type: "object",
+                label: "岗位",
+                component: "input",
+                span: 12,
+                model: {
+                  source: ["work", "data", "?", "post"],
+                  prop: "modelValue",
+                },
+                props: {
+                  placeholder: "岗位",
+                  clearable: true,
+                },
               },
               {
-                source: ["work", "data", "?", "content"],
-                prop: "content",
+                type: "object",
+                label: "时间",
+                component: "datePicker",
+                span: 24,
+                model: {
+                  source: ["work", "data", "?", "time"],
+                  prop: "modelValue",
+                },
+                props: {
+                  type: "monthrange",
+                  format: "YYYY.MM",
+                  valueFormat: "YYYY.MM",
+                  startPlaceholder: "开始时间",
+                  endPlaceholder: "结束时间",
+                },
+              },
+              {
+                type: "object",
+                label: "经历",
+                component: "wangEditor",
+                span: 24,
+                model: {
+                  source: ["work", "data", "?", "content"],
+                  prop: "modelValue",
+                },
               },
             ],
           },
         },
       ],
     },
+    // 项目经历
     {
       type: "object",
       key: "project",
-      name: "项目经历",
       component: "boxCollapse",
       props: {
         add: true,
+        name: "项目经历",
       },
       model: [
         {
@@ -423,49 +478,73 @@ export const xiaoYangForm = {
           type: "array",
           drag: true,
           dragClass: ".item-drag",
-          list: [
-            {
-              component: "project",
-              span: 24,
-              model: [
-                {
-                  source: ["project", "data", "?", "name"],
-                  prop: "name",
-                },
-                {
-                  source: ["project", "data", "?", "post"],
-                  prop: "post",
-                },
-                {
-                  source: ["project", "data", "?", "time"],
-                  prop: "time",
-                },
-                {
-                  source: ["project", "data", "?", "content"],
-                  prop: "content",
-                },
-              ],
-            },
-          ],
+          list: [],
           addConfig: {
-            component: "project",
+            type: "object",
+            component: "itemCollapse",
+            slot: "default",
             span: 24,
             model: [
               {
                 source: ["project", "data", "?", "name"],
                 prop: "name",
               },
+            ],
+            fields: [
               {
-                source: ["project", "data", "?", "post"],
-                prop: "post",
+                type: "object",
+                label: "公司",
+                component: "input",
+                span: 12,
+                model: {
+                  source: ["project", "data", "?", "name"],
+                  prop: "modelValue",
+                },
+                props: {
+                  placeholder: "公司",
+                  clearable: true,
+                },
               },
               {
-                source: ["project", "data", "?", "time"],
-                prop: "time",
+                type: "object",
+                label: "岗位",
+                component: "input",
+                span: 12,
+                model: {
+                  source: ["project", "data", "?", "post"],
+                  prop: "modelValue",
+                },
+                props: {
+                  placeholder: "岗位",
+                  clearable: true,
+                },
               },
               {
-                source: ["project", "data", "?", "content"],
-                prop: "content",
+                type: "object",
+                label: "时间",
+                component: "datePicker",
+                span: 24,
+                model: {
+                  source: ["project", "data", "?", "time"],
+                  prop: "modelValue",
+                },
+                props: {
+                  type: "monthrange",
+                  format: "YYYY.MM",
+                  valueFormat: "YYYY.MM",
+                  startPlaceholder: "开始时间",
+                  endPlaceholder: "结束时间",
+                },
+              },
+              {
+                type: "object",
+                label: "经历",
+                component: "wangEditor",
+                span: 24,
+                model: {
+                  source: ["project", "data", "?", "content"],
+                  prop: "modelValue",
+                },
               },
             ],
           },
