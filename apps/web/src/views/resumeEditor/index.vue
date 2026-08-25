@@ -32,6 +32,7 @@ const router = useRouter();
 const route = useRoute();
 
 const resumeStore = useResumeStore();
+const { initResumeStatus } = resumeStore;
 const { currentIndex, layout, list, currentUsage, isGenerating, currentData } =
   storeToRefs(resumeStore);
 
@@ -61,6 +62,8 @@ onMounted(() => {
     return;
   }
   currentIndex.value = index;
+  // 初始化简历状态
+  initResumeStatus();
   useTimeTimer = setInterval(() => {
     currentUsage.value.lastUseTime = Date.now();
   }, 10000);
