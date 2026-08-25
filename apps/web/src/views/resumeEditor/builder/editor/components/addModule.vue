@@ -66,10 +66,17 @@ const handleConfirm = () => {
   config.key = customKey;
   // 重置自定义模块的名称
   config.name = customModuleName.value;
-  config.model.source = [customKey];
-  // 重置自定义模块的子模块
+  // 重置自定义模块顶层模型的数据路径（collapsed / name）
+  config.model.forEach((item) => {
+    item.source[0] = customKey;
+  });
+  // 重置自定义模块的子模块标题模型数据路径
   config.fields[0].addConfig.model.forEach((item) => {
     item.source[0] = customKey;
+  });
+  // 重置自定义模块的子项字段列表数据路径
+  config.fields[0].addConfig.fields.forEach((field) => {
+    field.model.source[0] = customKey;
   });
   // 添加自定义模块到当前表单配置
   currentConfig.value.fields.push(structuredClone(config));
