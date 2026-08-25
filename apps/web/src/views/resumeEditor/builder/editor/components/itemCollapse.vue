@@ -1,15 +1,7 @@
 <script setup>
 const { proxy } = getCurrentInstance();
 const props = defineProps({
-  title: {
-    type: String,
-    default: "未填写",
-  },
   index: {},
-  placeholder: {
-    type: String,
-    default: "未填写",
-  },
 });
 const name = defineModel("name", {
   type: String,
@@ -17,17 +9,14 @@ const name = defineModel("name", {
 });
 const { currentIndex, removeItem } = inject("df/context")();
 
-// 标题：显式传入优先，其次按标题字段数据推导，最后占位符兜底
-const displayTitle = computed(() => {
-  if (props.title && props.title !== "未填写") return props.title;
-  return name.value || props.placeholder;
-});
+// 标题：统一走 name 数据源，空值占位符兜底
+const displayTitle = computed(() => name.value || "尚未填写");
 
 // 删除索引：兼容显式传入与容器注入两种来源
 const delIndex = computed(() => props.index ?? currentIndex?.value);
 
 function del() {
-  proxy.$confirm(`确定要删除${displayTitle.value}吗？`, "删除确认").then(() => {
+  proxy.$confirm(`确定要删除${name.value}吗？`, "删除确认").then(() => {
     removeItem(delIndex.value);
   });
 }
