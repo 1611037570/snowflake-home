@@ -1,8 +1,9 @@
 <script setup>
-import { reactive, watch } from "vue";
+import { onMounted, reactive, ref, watch } from "vue";
 import { storeToRefs } from "pinia";
+import { ElMessage } from "element-plus";
 import { useAiStore } from "@/stores/modules/ai";
-import { useLocalStorage } from "@vueuse/core";
+import { LLM } from "@/apis";
 
 const props = defineProps({
   // 抽屉是否打开（用于初始化表单）
@@ -18,77 +19,116 @@ const platformOptions = [
   { label: "OpenAI", value: "openai" },
 ];
 
-// 模型选项（按平台）
-const modelOptionsMap = {
-  ark: [
-    { label: "Doubao-pro-32k", value: "doubao-pro-32k" },
-    { label: "Doubao-lite-32k", value: "doubao-lite-32k" },
-  ],
-  openai: [
-    { label: "GPT-3.5 Turbo", value: "gpt-3.5-turbo" },
-    { label: "GPT-4", value: "gpt-4" },
-  ],
-  custom: [{ label: "自定义模型", value: "custom-model" }],
-};
-
 // 使用 ai store
 const aiStore = useAiStore();
-const { activeService, customModel, customModelApi } = storeToRefs(aiStore);
-
-// 本地存储：自定义表单其余字段（platform、token、baseUrl、path）
-const customStorage = useLocalStorage("sf-resume-assistant-custom", {
-  baseUrl: "",
-  path: "",
-  provider: "ark",
-  token: "",
-});
+const { activeModel, customModel } = storeToRefs(aiStore);
 
 // 自定义表单
 const form = reactive({
-  baseUrl: "",
-  path: "",
+  url: "",
   provider: "ark",
-  token: "",
   model: "",
-  api: "",
+  key: "",
+});
+const formRef = ref();
+const testing = ref(false);
+const connectionPassed = ref(false);
+
+// 兼容旧版本持久化的 { value: 配置 } 数据结构
+const normalizeCustomModel = (model) => {
+  const data = model?.value && typeof model.value === "object" ? model.value : model;
+  return {
+    url: data?.url || "",
+    provider: data?.provider || "ark",
+    model: data?.model || "",
+    key: data?.key || "",
+  };
+};
+
+// 配置字段校验规则：限制空白字符并校验完整接口地址
+const rules = {
+  provider: [
+    {
+      required: true,
+      pattern: /^(ark|openai)$/,
+      message: "请选择平台",
+      trigger: "change",
+    },
+  ],
+  model: [
+    {
+      required: true,
+      pattern: /^\S+$/,
+      message: "请输入有效的模型名称",
+      trigger: "blur",
+    },
+  ],
+  key: [
+    {
+      required: true,
+      pattern: /^\S+$/,
+      message: "请输入有效的 API Key",
+      trigger: "blur",
+    },
+  ],
+  url: [
+    {
+      required: true,
+      pattern: /^https?:\/\/[^\s]+$/,
+      message: "请输入完整的 HTTP(S) 接口地址",
+      trigger: "blur",
+    },
+  ],
+};
+
+onMounted(() => {
+  const model = normalizeCustomModel(customModel.value);
+  Object.assign(form, model);
+  // 立即覆盖旧的嵌套结构，后续只保留一层配置对象
+  customModel.value = { ...model };
 });
 
-// 抽屉打开时初始化表单（从 storage + ai store 取值）
-watch(
-  () => props.visible,
-  (val) => {
-    if (val) {
-      form.baseUrl = customStorage.value.baseUrl;
-      form.path = customStorage.value.path;
-      form.provider = customStorage.value.provider || "ark";
-      form.token = customStorage.value.token;
-      form.model = customModel.value || (modelOptionsMap[form.provider]?.[0]?.value ?? "");
-      form.api = customModelApi.value;
-    }
-  },
-  { immediate: true },
-);
-
 // 是否为当前激活的服务
-const isActive = () => activeService.value === "custom";
+const isActive = () => activeModel.value === "custom";
 
-// 使用该服务：先保存表单，再切换激活状态
-function useService() {
-  customStorage.value.baseUrl = form.baseUrl;
-  customStorage.value.path = form.path;
-  customStorage.value.provider = form.provider;
-  customStorage.value.token = form.token;
-  customModel.value = form.model;
-  customModelApi.value = form.api;
-  aiStore.activeService = "custom";
+// 使用该服务：校验表单后保存配置，再切换激活状态
+async function useService() {
+  const valid = await formRef.value?.validate().catch(() => false);
+  if (!valid) return;
+
+  customModel.value = { ...form };
+  aiStore.activeModel = "custom";
+}
+
+// 使用当前配置发送最小请求，验证接口地址、密钥和模型是否可用
+async function testConnection() {
+  const valid = await formRef.value?.validate().catch(() => false);
+  if (!valid) return;
+
+  connectionPassed.value = false;
+  testing.value = true;
+  try {
+    const llm = new LLM({
+      baseUrl: form.url,
+      getToken: () => form.key,
+      provider: form.provider,
+    });
+    await llm.ping(form.model);
+    connectionPassed.value = true;
+    ElMessage.success("连接测试成功");
+    useService();
+  } catch (error) {
+    ElMessage.error(error?.message || "连接测试失败");
+  } finally {
+    testing.value = false;
+  }
 }
 </script>
 
 <template>
-  <div class="space-y-5">
+  <el-form ref="formRef" :model="form" :rules="rules" class="mt-3 flex flex-col gap-3">
     <!-- 平台 -->
-    <div>
-      <label class="mb-2 block text-sm text-sf-text">平台</label>
+    <SfFormItem label="平台" prop="provider">
       <el-select v-model="form.provider" class="w-full" placeholder="请选择平台">
         <el-option
           v-for="item in platformOptions"
@@ -97,48 +137,30 @@ function useService() {
           :value="item.value"
         />
       </el-select>
-    </div>
+    </SfFormItem>
 
     <!-- 模型 -->
-    <div>
-      <label class="mb-2 block text-sm text-sf-text">模型</label>
-      <el-select v-model="form.model" class="w-full" placeholder="请选择模型">
-        <el-option
-          v-for="item in modelOptionsMap[form.provider] || modelOptionsMap.custom"
-          :key="item.value"
-          :label="item.label"
-          :value="item.value"
-        />
-      </el-select>
-    </div>
-
-    <!-- Token -->
-    <div>
-      <label class="mb-2 block text-sm text-sf-text">Token</label>
-      <el-input v-model="form.token" type="password" show-password placeholder="请输入 Token" />
-    </div>
+    <SfFormItem label="模型" prop="model">
+      <SfInput v-model="form.model" class="w-full" placeholder="请输入模型名称" />
+    </SfFormItem>
+    <SfFormItem label="API Key" prop="key">
+      <SfInput v-model="form.key" type="password" show-password placeholder="请输入 API Key" />
+    </SfFormItem>
 
     <!-- 接口地址 -->
-    <div>
-      <label class="mb-2 block text-sm text-sf-text">接口地址 (URL)</label>
-      <el-input v-model="form.baseUrl" placeholder="如：http://localhost:3000/llm/stream" />
-    </div>
+    <SfFormItem label="接口地址 (完整URL)" prop="url">
+      <SfInput v-model="form.url" placeholder="如：https://api.openai.com/v1/chat/completions" />
+    </SfFormItem>
 
-    <!-- 路径 -->
-    <div>
-      <label class="mb-2 block text-sm text-sf-text">路径 (Path)</label>
-      <el-input v-model="form.path" placeholder="可选，如：/chat/completions" />
+    <div class="flex gap-3">
+      <!-- 使用当前配置测试接口连通性 -->
+      <el-button type="primary" class="flex-1" :loading="testing" @click="testConnection">
+        测试连接
+      </el-button>
+      <!-- 使用该服务按钮 -->
+      <el-button type="primary" class="flex-1" :disabled="isActive() || !connectionPassed">
+        {{ isActive() ? "已选择" : "使用该服务" }}
+      </el-button>
     </div>
-
-    <!-- 自定义模型 API（customModelApi） -->
-    <div>
-      <label class="mb-2 block text-sm text-sf-text">自定义模型 API</label>
-      <el-input v-model="form.api" placeholder="如：/v1/chat/completions" />
-    </div>
-
-    <!-- 使用该服务按钮 -->
-    <el-button type="primary" class="w-full" :disabled="isActive()" @click="useService">
-      {{ isActive() ? "已选择" : "使用该服务" }}
-    </el-button>
-  </div>
+  </el-form>
 </template>

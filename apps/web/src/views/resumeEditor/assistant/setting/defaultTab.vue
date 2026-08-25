@@ -7,19 +7,19 @@ const systemStore = useSystemStore();
 const { isConnected } = storeToRefs(systemStore);
 
 const aiStore = useAiStore();
-const { activeService } = storeToRefs(aiStore);
+const { activeModel } = storeToRefs(aiStore);
 
 // 是否为当前激活的服务
-const isActive = () => activeService.value === "snowflake";
+const isActive = () => activeModel.value === "snowflake";
 
 // 使用该服务
 function useService() {
-  aiStore.activeService = "snowflake";
+  aiStore.activeModel = "snowflake";
 }
 </script>
 
 <template>
-  <div class="flex flex-col gap-4">
+  <div class="mt-3 flex flex-col gap-3">
     <div class="flex flex-col gap-3">
       <div class="flex items-center gap-3">
         雪花服务<el-tag :type="isConnected ? 'success' : 'info'">{{
