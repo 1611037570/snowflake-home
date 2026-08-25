@@ -2,7 +2,7 @@
 import { computed } from "vue";
 import { useResumeStore } from "@/stores";
 import { storeToRefs } from "pinia";
-import ResumePages from "@/views/resumeEditor/preview/resumePages.vue";
+import ThumbPreview from "../preview/thumbPreview.vue";
 import { themeTemplateList } from "@/stores/modules/resume/uiConfig";
 
 const resumeStore = useResumeStore();
@@ -32,7 +32,7 @@ const applyTemplate = (value) => {
 </script>
 
 <template>
-  <div class="flex w-full flex-col gap-4">
+  <div class="grid w-full grid-cols-2 gap-3">
     <div
       v-for="template in templates"
       :key="template.value"
@@ -40,7 +40,7 @@ const applyTemplate = (value) => {
       :class="{ 'border-sf-theme-2': isActive(template.value) }"
       @click="applyTemplate(template.value)"
     >
-      <div class="flex items-center justify-between px-4 pt-3">
+      <div class="flex items-center justify-between p-3 pb-0">
         <span class="text-sm font-bold text-sf-text">{{ template.name }}</span>
         <SfIcon
           v-if="isActive(template.value)"
@@ -49,12 +49,10 @@ const applyTemplate = (value) => {
           class="text-sf-theme"
         />
       </div>
-      <!-- 模板简历缩略图：A4 页面缩放至卡片宽度，居中覆盖裁切超出部分 -->
-      <div class="pointer-events-none relative mx-4 my-3 h-[400px] overflow-hidden rounded-lg bg-sf-bg">
-        <div class="flex h-full w-full items-center justify-center select-none">
-          <div class="origin-center" style="transform: scale(0.36)">
-            <ResumePages :item="template.item" />
-          </div>
+      <!-- 模板简历缩略图：缩略区在卡片内 padding 中，宽高比与 A4 一致，随列宽自适应，页面完整显示填满 -->
+      <div class="p-3">
+        <div class="relative aspect-[794/1123] w-full overflow-hidden rounded-lg bg-sf-bg">
+          <ThumbPreview :item="template.item" />
         </div>
       </div>
     </div>

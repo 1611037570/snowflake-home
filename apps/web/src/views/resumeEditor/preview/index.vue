@@ -4,7 +4,7 @@ import ResumePage from "./page.vue";
 // 缩放容器组件
 import ScaleContainer from "./ScaleContainer.vue";
 // 全屏预览组件
-import ZoomPreview from "./zoomPreview.vue";
+import FullscreenPreview from "./fullscreenPreview.vue";
 import { useResumeStore } from "@/stores";
 import { storeToRefs } from "pinia";
 import { computed, ref } from "vue";
@@ -20,9 +20,9 @@ const resumeItem = computed(() => ({
   ui: currentUI.value,
 }));
 
-const zoomPreviewRef = ref(null);
+const fullscreenPreviewRef = ref(null);
 // 打开全屏预览
-const openFullscreen = () => zoomPreviewRef.value?.open();
+const openFullscreen = () => fullscreenPreviewRef.value?.open();
 </script>
 
 <template>
@@ -32,7 +32,7 @@ const openFullscreen = () => zoomPreviewRef.value?.open();
     <ScaleContainer @fullscreen="openFullscreen">
       <ResumePage />
     </ScaleContainer>
-    <ZoomPreview ref="zoomPreviewRef" :item="resumeItem" />
+    <FullscreenPreview ref="fullscreenPreviewRef" :item="resumeItem" />
   </div>
 </template>
 
