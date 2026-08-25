@@ -196,7 +196,7 @@ const getPageStyle = (pageSlices, pageIndex) => {
           </div>
         </div>
         <div v-if="showPageIndex" class="py-3 text-center text-xs opacity-50">
-          轻舟简历 · 第 {{ pageIndex + 1 }} 页，共 {{ pages.length }} 页
+          轻舟简历 · 第 {{ pageIndex + 1 }} 页 · 共 {{ pages.length }} 页
         </div>
 
         <component :is="'style'">{{ getPageStyle(pageSlices, pageIndex) }}</component>
