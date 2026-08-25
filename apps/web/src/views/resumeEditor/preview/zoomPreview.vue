@@ -1,13 +1,13 @@
 <script setup>
 // 简历放大预览组件：全屏遮罩内用 ScaleContainer 缩放展示 resumePages 渲染的全部页
 // 数据源由 props 传入，供模板页预览、编辑器全屏查看等场景复用
-import { ref } from "vue";
+import { onBeforeUnmount, onMounted, ref } from "vue";
 import ResumePages from "./resumePages.vue";
 import ScaleContainer from "./ScaleContainer.vue";
 
 defineOptions({ name: "ZoomPreview" });
 
-const props = defineProps({
+defineProps({
   // 简历项：{ data, config, fixedConfig, ui }
   item: {
     type: Object,
@@ -19,6 +19,20 @@ const visible = ref(false);
 const open = () => (visible.value = true);
 const close = () => (visible.value = false);
 defineExpose({ open, close });
+
+const handleKeydown = (e) => {
+  if (e.key === "Escape" && visible.value) {
+    close();
+  }
+};
+
+onMounted(() => {
+  window.addEventListener("keydown", handleKeydown);
+});
+
+onBeforeUnmount(() => {
+  window.removeEventListener("keydown", handleKeydown);
+});
 </script>
 
 <template>
