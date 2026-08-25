@@ -14,7 +14,10 @@ export const DEFAULT_USER_FORM = [
     model: [],
   },
   {
-    list: [
+    type: "group",
+    key: "user",
+    name: "用户信息",
+    fields: [
       // 求职岗位
       {
         type: "object",
@@ -157,10 +160,6 @@ export const DEFAULT_USER_FORM = [
         },
       },
     ],
-    drag: false,
-    type: "array",
-    key: "user",
-    name: "用户信息",
   },
 ] satisfies FormField[];
 // 用户信息的配置
@@ -173,7 +172,7 @@ export const DEFAULT_USER_CONFIG = {
 } satisfies FormConfig;
 // 社交账号
 export const DEFAULT_ACCOUNT_FORM = {
-  type: "object",
+  type: "group",
   key: "account",
   span: 24,
   model: [
@@ -218,7 +217,7 @@ export const DEFAULT_ACCOUNT_FORM = {
 export const DEFAULT_EDUCATION_FORM = {
   key: "education",
   // 表单中所渲染的类型
-  type: "object",
+  type: "group",
   // 表单中所渲染的组件
   component: "boxCollapse",
   // 表单中所渲染的组件的属性
@@ -276,7 +275,7 @@ export const DEFAULT_EDUCATION_FORM = {
 } satisfies FormField;
 // 专业技能
 export const DEFAULT_SKILL_FORM = {
-  type: "object",
+  type: "group",
   component: "boxCollapse",
   key: "skill",
   props: {
@@ -304,7 +303,7 @@ export const DEFAULT_SKILL_FORM = {
 } satisfies FormField;
 // 个人优势
 export const DEFAULT_ADVANTAGE_FORM = {
-  type: "object",
+  type: "group",
   component: "boxCollapse",
   key: "advantage",
   name: "个人优势",
@@ -332,7 +331,7 @@ export const DEFAULT_ADVANTAGE_FORM = {
 } satisfies FormField;
 // 工作经历
 export const DEFAULT_WORK_FORM = {
-  type: "object",
+  type: "group",
   key: "work",
   component: "boxCollapse",
   props: {
@@ -354,7 +353,7 @@ export const DEFAULT_WORK_FORM = {
       dragClass: ".item-drag",
       list: [],
       addConfig: {
-        type: "object",
+        type: "group",
         component: "itemCollapse",
         slot: "default",
         span: 24,
@@ -428,7 +427,7 @@ export const DEFAULT_WORK_FORM = {
 } satisfies FormField;
 // 项目经历
 export const DEFAULT_PROJECT_FORM = {
-  type: "object",
+  type: "group",
   key: "project",
   component: "boxCollapse",
   props: {
@@ -450,7 +449,7 @@ export const DEFAULT_PROJECT_FORM = {
       dragClass: ".item-drag",
       list: [],
       addConfig: {
-        type: "object",
+        type: "group",
         component: "itemCollapse",
         slot: "default",
         span: 24,
@@ -525,7 +524,7 @@ export const DEFAULT_PROJECT_FORM = {
 } satisfies FormField;
 // 自定义经历
 export const DEFAULT_CUSTOM_FORM = {
-  type: "object",
+  type: "group",
   key: "custom",
   component: "boxCollapse",
   props: {
@@ -552,7 +551,7 @@ export const DEFAULT_CUSTOM_FORM = {
       dragClass: ".item-drag",
       list: [],
       addConfig: {
-        type: "object",
+        type: "group",
         component: "itemCollapse",
         slot: "default",
         span: 24,

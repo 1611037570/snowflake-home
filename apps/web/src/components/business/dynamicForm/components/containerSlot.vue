@@ -1,6 +1,13 @@
 <template>
-  <!-- 容器组件包裹 -->
+  <!-- 分组无包裹组件：纯栅格渲染子字段 -->
+  <FormRenderer
+    v-if="!currentForm.component"
+    v-model:items="currentForm"
+    :containerIndex="currentIndex"
+  />
+  <!-- 分组有包裹组件：渲染组件并在槽内递归渲染子字段 -->
   <component
+    v-else
     :is="getComponent(currentForm.component)"
     v-bind="{
       ...rootData.getDataProxy(currentForm.model, currentIndex),
