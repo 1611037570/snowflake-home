@@ -27,6 +27,11 @@ const props = defineProps({
     type: String,
     default: "all",
   },
+  // 是否渲染模块操作按钮插槽（编辑器预览传入；缩略图、全屏等只读场景关闭）
+  showModuleActions: {
+    type: Boolean,
+    default: true,
+  },
 });
 
 // 实例唯一前缀，避免多实例分页裁剪样式互相干扰
@@ -205,7 +210,7 @@ const getPageStyle = (pageSlices, pageIndex) => {
             :data-module="slice.moduleKey"
           >
             <!-- 编辑态操作按钮插槽（编辑器预览传入 ModuleActions） -->
-            <slot name="moduleActions" :slice="slice" />
+            <slot v-if="showModuleActions" name="moduleActions" :slice="slice" />
             <ResumeModule :data="props.item.data" :name="slice.moduleKey" />
           </div>
         </div>
