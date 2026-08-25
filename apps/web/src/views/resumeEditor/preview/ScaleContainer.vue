@@ -114,7 +114,7 @@ useResizeObserver(contentRef, ([entry]) => {
 
     <div
       v-if="showToolbar"
-      class="absolute bottom-4 left-1/2 z-10 -translate-x-1/2 translate-y-4 opacity-100 transition-all duration-300 select-none group-hover:translate-y-0 group-hover:opacity-100"
+      class="absolute bottom-5 left-1/2 z-10 -translate-x-1/2 translate-y-4 opacity-0 transition-all duration-200 select-none group-hover:translate-y-0 group-hover:opacity-100"
     >
       <div class="flex items-center gap-1 rounded-full border border-sf-b bg-sf-primary p-2">
         <button
