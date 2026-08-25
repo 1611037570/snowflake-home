@@ -38,7 +38,7 @@ const openFullscreen = () => fullscreenPreviewRef.value?.open();
       class="pointer-events-none flex h-full w-full items-center justify-center overflow-hidden select-none"
     >
       <div class="origin-center" :style="{ transform: `scale(${scale})` }">
-        <ResumePages :item="item" page="1" />
+        <ResumePages :item="item" page="1" :show-module-actions="false" />
       </div>
     </div>
     <!-- 底部操作按钮：使用模板 + 全屏，随外层 group 悬停渐显 -->
