@@ -94,7 +94,7 @@ const { measureDone, pages, moduleClass, getPageStyle } = useResumePages({
           <div
             v-for="slice in pageSlices"
             :key="slice.moduleKey"
-            class="resume-module-wrapper group relative rounded-xl"
+            class="resume-module-wrapper group group/module relative rounded-xl"
             :class="moduleClass(slice)"
             :data-module="slice.moduleKey"
           >
