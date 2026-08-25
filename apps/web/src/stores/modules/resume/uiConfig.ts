@@ -97,10 +97,6 @@ export const themeTemplateList = [
     name: "现代",
     value: "modern",
   },
-  {
-    name: "简约",
-    value: "simple",
-  },
 ];
 // ===========默认值=====================
 export const defaultThemeColor = themeColors[0].value;
