@@ -175,7 +175,6 @@ export const DEFAULT_USER_CONFIG = {
 export const DEFAULT_ACCOUNT_FORM = {
   type: "object",
   key: "account",
-  name: "社交账号",
   span: 24,
   model: [
     {
@@ -186,6 +185,7 @@ export const DEFAULT_ACCOUNT_FORM = {
   ],
   component: "boxCollapse",
   props: {
+    name: "社交账号",
     add: true,
   },
   slot: "default",
@@ -216,7 +216,6 @@ export const DEFAULT_ACCOUNT_FORM = {
 } satisfies FormField;
 // 教育经历
 export const DEFAULT_EDUCATION_FORM = {
-  name: "教育经历",
   key: "education",
   // 表单中所渲染的类型
   type: "object",
@@ -224,6 +223,7 @@ export const DEFAULT_EDUCATION_FORM = {
   component: "boxCollapse",
   // 表单中所渲染的组件的属性
   props: {
+    name: "教育经历",
     add: true,
   },
   // 表单中所渲染的组件的双向绑定的模型
@@ -279,9 +279,8 @@ export const DEFAULT_SKILL_FORM = {
   type: "object",
   component: "boxCollapse",
   key: "skill",
-  name: "专业技能",
   props: {
-    title: "专业技能",
+    name: "专业技能",
     add: false,
   },
   model: [
@@ -335,10 +334,9 @@ export const DEFAULT_ADVANTAGE_FORM = {
 export const DEFAULT_WORK_FORM = {
   type: "object",
   key: "work",
-  name: "工作经历",
   component: "boxCollapse",
   props: {
-    title: "工作经历",
+    name: "工作经历",
     add: true,
   },
   model: [
@@ -436,10 +434,10 @@ export const DEFAULT_WORK_FORM = {
 export const DEFAULT_PROJECT_FORM = {
   type: "object",
   key: "project",
-  name: "项目经历",
   component: "boxCollapse",
   props: {
     add: true,
+    name: "项目经历",
   },
   model: [
     {
@@ -484,7 +482,6 @@ export const DEFAULT_PROJECT_FORM = {
 export const DEFAULT_CUSTOM_FORM = {
   type: "object",
   key: "custom",
-  name: "",
   component: "boxCollapse",
   props: {
     add: true,
@@ -495,6 +492,11 @@ export const DEFAULT_CUSTOM_FORM = {
       source: ["custom", "collapsed"],
       prop: "collapsed",
       defaultValue: ["1"],
+    },
+    {
+      source: ["custom", "name"],
+      prop: "name",
+      defaultValue: "",
     },
   ],
   slot: "default",
