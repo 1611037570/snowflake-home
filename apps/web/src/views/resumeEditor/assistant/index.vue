@@ -6,15 +6,12 @@ import JdInput from "./JdInput.vue";
 import Score from "./Score.vue";
 import Setting from "./setting/index.vue";
 import { useAiStore } from "@/stores/modules/ai";
-import { useResumeStore } from "@/stores";
 import Chat from "./chat/index.vue";
 import { defaultMessage } from "./prompt.ts";
 
 // AI 对话
 const aiStore = useAiStore();
 const { createDefaultChat } = aiStore;
-const resumeStore = useResumeStore();
-const { setGenerating } = resumeStore;
 
 // 默认对话
 const chat = ref(createDefaultChat(defaultMessage));
@@ -38,7 +35,7 @@ function onRequestComplete(msg) {
 
 <template>
   <div class="box-border h-full w-[400px] py-3 pr-3">
-    <div class="border-sf-b flex h-full flex-col rounded-xl border bg-sf-primary">
+    <div class="relative flex h-full flex-col rounded-xl border border-sf-b bg-sf-primary">
       <!-- 顶部操作栏 -->
       <div class="flex items-center justify-end gap-2 p-3 pb-0">
         <Setting />

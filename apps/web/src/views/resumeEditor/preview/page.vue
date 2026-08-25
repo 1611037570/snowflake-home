@@ -2,7 +2,6 @@
 import { useResumeStore } from "@/stores";
 import { storeToRefs } from "pinia";
 import { computed } from "vue";
-import GeneratingMask from "../components/generatingMask.vue";
 import ModuleActions from "./components/moduleActions.vue";
 import ResumePages from "./resumePages/index.vue";
 
@@ -21,7 +20,6 @@ const resumeItem = computed(() => ({
 </script>
 
 <template>
-  <GeneratingMask />
   <ResumePages :item="resumeItem">
     <template #moduleActions="{ slice }">
       <ModuleActions :modelKey="slice.moduleKey" />
