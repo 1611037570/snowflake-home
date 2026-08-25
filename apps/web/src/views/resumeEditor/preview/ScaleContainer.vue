@@ -13,6 +13,8 @@ defineOptions({ name: "ScaleContainer" });
 
 const containerRef = ref(null);
 const scaleBoxRef = ref(null);
+const contentRef = ref(null);
+const contentSize = ref({ width: 0, height: 0 });
 const manualScale = ref(1);
 const maxScale = ref(1);
 const scaleMode = ref("auto");
@@ -78,6 +80,14 @@ const updateScale = useDebounceFn(([entry]) => {
 }, 100);
 
 useResizeObserver(() => containerRef.value?.wrapRef, updateScale);
+
+// 测量未缩放内容的实际宽高，用于补偿 transform: scale() 不改变布局尺寸的问题
+useResizeObserver(contentRef, ([entry]) => {
+  contentSize.value = {
+    width: entry.contentRect.width,
+    height: entry.contentRect.height,
+  };
+});
 </script>
 
 <template>
@@ -89,14 +99,24 @@ useResizeObserver(() => containerRef.value?.wrapRef, updateScale);
       height="100%"
       view-class="relative min-h-full w-full pt-3"
     >
-      <!-- 展示容器：absolute + flex 居中 -->
+      <!-- 缩放展示：外层承担缩放后的布局尺寸并水平居中，内层用 transform: scale() 缩放 -->
       <div
-        class="absolute inset-x-0 top-0 flex flex-col items-center"
+        class="absolute top-0 left-1/2 -translate-x-1/2"
         :style="{
-          zoom: scale,
+          width: `${contentSize.width * scale}px`,
+          height: `${contentSize.height * scale}px`,
         }"
       >
-        <slot></slot>
+        <div
+          ref="contentRef"
+          class="w-fit"
+          :style="{
+            transform: `scale(${scale})`,
+            transformOrigin: 'top left',
+          }"
+        >
+          <slot></slot>
+        </div>
       </div>
     </SfScrollbar>
 
