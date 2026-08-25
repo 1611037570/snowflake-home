@@ -8,6 +8,16 @@ import { DEFAULT_UI } from "./uiConfig";
 
 import { merge } from "lodash-es";
 export type ResumeLayout = "list" | "three" | "ai";
+// 默认模块 key 对应的名称（取自 formConfig，后期自行维护）
+const DEFAULT_MODULE_NAMES: { key: string; name: string }[] = [
+  { key: "user", name: "用户信息" },
+  { key: "account", name: "社交账号" },
+  { key: "education", name: "教育经历" },
+  { key: "skill", name: "专业技能" },
+  { key: "advantage", name: "个人优势" },
+  { key: "work", name: "工作经历" },
+  { key: "project", name: "项目经历" },
+];
 // 默认简历项
 const DEFAULT_RESUME_ITEM = {
   // 简历ID
@@ -33,8 +43,6 @@ const DEFAULT_RESUME_ITEM = {
 export const useResumeStore = defineStore(
   "resume",
   () => {
-    // 当前选中的模块 keys (Set)
-    const selectedModuleKeys = ref<Set<string>>(new Set());
     // 简历列表
     const list = ref<any[]>([]);
     // 最大简历数量
@@ -106,6 +114,23 @@ export const useResumeStore = defineStore(
       const item = getCurrentResumeItem();
       return item ? item.usage : undefined;
     });
+    // 选中模块的名称列表
+    const selectedModule = ref<any[]>([]);
+    const pushSelectedModule = (key: string) => {
+      if (!key) return;
+      if (key.startsWith("custom")) {
+        selectedModule.value.push({
+          key,
+          name: currentData.value?.[key]?.name || "",
+        });
+      }
+      const name = DEFAULT_MODULE_NAMES.find((item) => item.key === key);
+
+      selectedModule.value.push({
+        key,
+        name,
+      });
+    };
     // 新增简历
     const addResume = (config: any) => {
       if (list.value.length >= maxCount) {
@@ -142,9 +167,6 @@ export const useResumeStore = defineStore(
     const init = () => {
       list.value = list.value.map(mergeResumeItem);
     };
-    const addTemplate = (template: any) => {
-      list.value.push(mergeResumeItem(template));
-    };
 
     return {
       list,
@@ -160,7 +182,8 @@ export const useResumeStore = defineStore(
       currentUI,
       currentUsage,
       isPrinting,
-      selectedModuleKeys,
+      selectedModule,
+      pushSelectedModule,
       addResume,
       deleteResume,
       setLayout,

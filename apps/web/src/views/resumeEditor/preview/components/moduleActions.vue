@@ -1,17 +1,19 @@
 <script setup>
 import { inject, computed } from "vue";
+import { useResumeStore } from "@/stores";
+import { storeToRefs } from "pinia";
+
+const resumeStore = useResumeStore();
+const { selectedModule } = storeToRefs(resumeStore);
+
 const props = defineProps({
-  selected: {
-    type: Boolean,
-    default: false,
-  },
-  name: {
+  modelKey: {
     type: String,
     default: "",
   },
 });
 defineEmits(["discard", "accept", "select"]);
-
+const isSelected = computed(() => selectedModule.value.find((item) => item.key === props.modelKey));
 // 接收上游注入的预览数据
 const previewData = inject("previewData");
 // 获取当前模块的代理数据
@@ -54,6 +56,10 @@ const hasNewData = computed(() => {
 
   return checkHasNew(module);
 });
+// 点击选择模块
+const handleSelect = () => {
+  resumeStore.pushSelectedModule(props.modelKey);
+};
 </script>
 
 <template>
@@ -76,11 +82,11 @@ const hasNewData = computed(() => {
         </div>
       </SfTooltip>
     </template>
-    <SfTooltip :content="selected ? '取消选择' : '选择该模块'">
+    <SfTooltip :content="isSelected ? '取消选择' : '选择该模块'">
       <div
         class="cursor-pointer items-center justify-center rounded-full p-1.5 text-white shadow hover:bg-sf-theme"
-        :class="selected ? 'flex bg-sf-theme ' : 'hidden bg-sf-info group-hover/module:flex '"
-        @click.stop="$emit('select')"
+        :class="isSelected ? 'flex bg-sf-theme ' : 'hidden bg-sf-info group-hover/module:flex '"
+        @click.stop="handleSelect"
       >
         <SfIcon icon="lucide:pencil" size="3.5" />
       </div>

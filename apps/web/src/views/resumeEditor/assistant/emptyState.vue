@@ -6,7 +6,7 @@ import { quickActions } from "./data";
 
 const emit = defineEmits(["switch-mode"]);
 const resumeStore = useResumeStore();
-const { currentConfig, currentFixedConfig, selectedModuleKeys } = storeToRefs(resumeStore);
+const { currentConfig, currentFixedConfig, selectedModule } = storeToRefs(resumeStore);
 
 const moduleNames = computed(() => {
   const fields = [
@@ -14,7 +14,7 @@ const moduleNames = computed(() => {
     ...(currentConfig.value?.fields || []),
   ];
   const names = Array.from(
-    selectedModuleKeys.value,
+    selectedModule.value,
     (key) => fields.find((item) => item.key === key)?.name || key,
   );
   return names.length ? names : ["整个简历"];
@@ -47,7 +47,7 @@ const moduleNames = computed(() => {
         v-for="action in quickActions"
         :key="action.name"
         type="button"
-        class="group border-sf-b flex h-20 cursor-pointer flex-col items-center justify-center gap-2 rounded-lg border bg-white px-3 text-sm font-medium text-sf-base shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-sf-theme/40 hover:bg-sf-theme/5 hover:text-sf-theme hover:shadow-md active:scale-[0.98] active:shadow-sm"
+        class="group flex h-20 cursor-pointer flex-col items-center justify-center gap-2 rounded-lg border border-sf-b bg-white px-3 text-sm font-medium text-sf-base shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-sf-theme/40 hover:bg-sf-theme/5 hover:text-sf-theme hover:shadow-md active:scale-[0.98] active:shadow-sm"
         @click="emit('switch-mode', action.type)"
       >
         <span

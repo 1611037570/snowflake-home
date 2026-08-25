@@ -8,6 +8,9 @@ import { RESUME_WIDTH } from "../constants";
 import { usePreviewData } from "../usePreviewData";
 import { useResumePages } from "./useResumePages";
 import { useResumeTheme } from "./useResumeTheme";
+import { useResumeStore } from "@/stores";
+const resumeStore = useResumeStore();
+const { selectedModule } = storeToRefs(resumeStore);
 
 defineOptions({ name: "ResumePages" });
 
@@ -16,11 +19,6 @@ const props = defineProps({
   item: {
     type: Object,
     required: true,
-  },
-  // 编辑态选中的模块 keys（编辑器预览传入，其余场景不传）
-  selectedModuleKeys: {
-    type: Set,
-    default: () => new Set(),
   },
   // 场景模式：'editor' 编辑器交互预览（默认），'preview' 全屏只读，'thumb' 缩略图只读（仅渲染第一页）
   mode: {
@@ -60,7 +58,7 @@ const { measureDone, pages, moduleClass, getPageStyle } = useResumePages({
   ui,
   themeStyles,
   isThumb,
-  selectedModuleKeys: props.selectedModuleKeys,
+  selectedModule: selectedModule.value,
   isReadonly,
   uid,
 });

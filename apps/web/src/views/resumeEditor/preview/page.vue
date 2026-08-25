@@ -11,8 +11,7 @@ import { usePdfExport } from "./usePdfExport";
 defineOptions({ name: "ResumePage" });
 
 const resumeStore = useResumeStore();
-const { currentData, currentConfig, currentUI, currentFixedConfig, selectedModuleKeys } =
-  storeToRefs(resumeStore);
+const { currentData, currentConfig, currentUI, currentFixedConfig } = storeToRefs(resumeStore);
 
 // 组装可复用组件所需的简历项
 const resumeItem = computed(() => ({
@@ -21,17 +20,6 @@ const resumeItem = computed(() => ({
   fixedConfig: currentFixedConfig.value,
   ui: currentUI.value,
 }));
-
-// 点击获取模块信息
-const handleModuleClick = (slice) => {
-  const key = slice.moduleKey;
-  // 存在则删除，不存在则添加 (实现 toggle)
-  if (selectedModuleKeys.value.has(key)) {
-    selectedModuleKeys.value.delete(key);
-  } else {
-    selectedModuleKeys.value.add(key);
-  }
-};
 
 // 使用 usePdfExport 提供 PDF 导出能力
 const { printPDF } = usePdfExport();
@@ -47,13 +35,9 @@ onUnmounted(() => {
 
 <template>
   <GeneratingMask />
-  <ResumePages :item="resumeItem" :selected-module-keys="selectedModuleKeys" show-page-index>
+  <ResumePages :item="resumeItem">
     <template #moduleActions="{ slice }">
-      <ModuleActions
-        :selected="selectedModuleKeys.has(slice.moduleKey)"
-        :name="slice.moduleKey"
-        @select="handleModuleClick(slice)"
-      />
+      <ModuleActions :modelKey="slice.moduleKey" />
     </template>
   </ResumePages>
 </template>
