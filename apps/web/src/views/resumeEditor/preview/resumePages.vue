@@ -22,17 +22,17 @@ const props = defineProps({
     type: Set,
     default: () => new Set(),
   },
-  // 渲染范围：'all' 渲染全部页（默认），'1' 仅渲染第一页（模板缩略图场景）
-  page: {
+  // 场景模式：'editor' 编辑器交互预览（默认），'preview' 全屏只读，'thumb' 缩略图只读（仅渲染第一页）
+  mode: {
     type: String,
-    default: "all",
-  },
-  // 是否渲染模块操作按钮插槽（编辑器预览传入；缩略图、全屏等只读场景关闭）
-  showModuleActions: {
-    type: Boolean,
-    default: true,
+    default: "editor",
   },
 });
+
+// 缩略图模式：仅渲染第一页，测量完成后冻结行数据
+const isThumb = computed(() => props.mode === "thumb");
+// 只读模式：不渲染模块操作按钮插槽
+const isReadonly = computed(() => props.mode !== "editor");
 
 // 实例唯一前缀，避免多实例分页裁剪样式互相干扰
 const uid = `rp-${Math.random().toString(36).slice(2, 8)}`;
@@ -86,14 +86,14 @@ const o = computed(() => {
   };
 });
 const { moduleList } = useRowInfo(measureRef, o, {
-  // 缩略图（page=1）：首次测量成功后冻结，销毁测量容器也不会清空行数据
-  stopAfterFirstMeasure: props.page === "1",
+  // 缩略图模式：首次测量成功后冻结，销毁测量容器也不会清空行数据
+  stopAfterFirstMeasure: isThumb.value,
 });
 
 // 缩略图测量完成即销毁隐藏的测量容器，减少无用 DOM 与监听开销
 const measureDone = ref(false);
 watch(moduleList, (list) => {
-  if (props.page === "1" && list.length > 0) measureDone.value = true;
+  if (isThumb.value && list.length > 0) measureDone.value = true;
 });
 
 // 分页逻辑
@@ -143,8 +143,8 @@ const pages = computed(() => {
     // 放不下时：当前页已有内容则翻页重试；空页仍放不下（单行超高）则硬塞
     if (currentHeight + gap + row.height > maxContentHeight && currentPage.length > 0) {
       newPage();
-      // 缩略图（page=1）仅需第一页：翻页后不再继续计算后续页
-      if (props.page === "1") return result;
+      // 缩略图模式仅需第一页：翻页后不再继续计算后续页
+      if (isThumb.value) return result;
       gap = 0; // 新页无内容，不再计间距
     }
 
@@ -159,6 +159,17 @@ const pages = computed(() => {
 
   return result;
 });
+
+// 模块外层样式：只读模式不渲染选中高亮与虚线框
+const moduleClass = (slice) => {
+  if (isReadonly.value) return "";
+  return [
+    "outline-2 outline-offset-3 outline-dashed",
+    props.selectedModuleKeys.has(slice.moduleKey)
+      ? "outline-sf-theme"
+      : "outline-transparent hover:outline-sf-theme-2",
+  ];
+};
 
 // 生成每页的可见行裁剪样式（用实例唯一前缀隔离多实例）
 const getPageStyle = (pageSlices, pageIndex) => {
@@ -201,16 +212,12 @@ const getPageStyle = (pageSlices, pageIndex) => {
           <div
             v-for="slice in pageSlices"
             :key="slice.moduleKey"
-            class="resume-module-wrapper group relative rounded-xl outline-2 outline-offset-3 outline-dashed"
-            :class="[
-              selectedModuleKeys.has(slice.moduleKey)
-                ? 'outline-sf-theme'
-                : 'outline-transparent hover:outline-sf-theme-2',
-            ]"
+            class="resume-module-wrapper group relative rounded-xl"
+            :class="moduleClass(slice)"
             :data-module="slice.moduleKey"
           >
             <!-- 编辑态操作按钮插槽（编辑器预览传入 ModuleActions） -->
-            <slot v-if="showModuleActions" name="moduleActions" :slice="slice" />
+            <slot v-if="!isReadonly" name="moduleActions" :slice="slice" />
             <ResumeModule :data="props.item.data" :name="slice.moduleKey" />
           </div>
         </div>
