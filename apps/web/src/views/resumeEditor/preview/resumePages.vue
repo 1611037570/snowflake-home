@@ -54,12 +54,12 @@ const lineHeightValue = computed(() => (offset = 0) => {
   return { lineHeight: `${ui.value.lineHeight + offset + indexOffset}px` };
 });
 const themeColor = computed(() => ui.value.color || ui.value.themeColor);
-const themeStyle = computed(() => ui.value.themeStyle);
+const themeTemplate = computed(() => ui.value.themeTemplate);
 provide("paddingValue", paddingValue);
 provide("fontValue", fontValue);
 provide("lineHeightValue", lineHeightValue);
 provide("themeColor", themeColor);
-provide("themeStyle", themeStyle);
+provide("themeTemplate", themeTemplate);
 
 // ---------- 分页（复用 useRowInfo，算法与原 page.vue 一致）----------
 const measureRef = ref(null);

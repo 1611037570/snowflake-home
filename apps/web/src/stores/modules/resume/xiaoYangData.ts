@@ -235,7 +235,6 @@ export const xiaoYangForm = {
           dragClass: ".item-drag",
           list: [
             {
-              // ✅ 修正：内部 list 的 model 为数组，source 包含 data 和 ?
               model: [
                 {
                   source: ["education", "data", "?", "name"],
@@ -403,7 +402,6 @@ export const xiaoYangForm = {
         },
       ],
     },
-    // 项目经历
     {
       type: "object",
       key: "project",
@@ -412,7 +410,6 @@ export const xiaoYangForm = {
       props: {
         add: true,
       },
-      // ✅ 修正
       model: [
         {
           source: ["project", "collapsed"],
