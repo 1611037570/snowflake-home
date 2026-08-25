@@ -9,7 +9,7 @@
           :key="index"
           class="tab-item relative z-10 flex flex-1 cursor-pointer items-center justify-center gap-1 rounded-2xl px-2 py-1 text-center transition-all duration-100"
           :class="[
-            isActive(index) ? 'font-medium text-sf-base' : 'text-sf-text hover:bg-sf-theme-2',
+            isActive(index) ? 'font-medium text-sf-theme-text' : 'text-sf-text hover:bg-sf-theme-2',
           ]"
           @click="handleClick(index)"
         >
