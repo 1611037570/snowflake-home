@@ -358,10 +358,6 @@ export const DEFAULT_WORK_FORM = {
         component: "itemCollapse",
         slot: "default",
         span: 24,
-        // 折叠标题：绑定标题字段，由 itemCollapse 推导展示
-        props: {
-          placeholder: "未填写公司名称",
-        },
         model: [
           {
             source: ["work", "data", "?", "name"],
@@ -454,24 +450,73 @@ export const DEFAULT_PROJECT_FORM = {
       dragClass: ".item-drag",
       list: [],
       addConfig: {
-        component: "project",
+        type: "object",
+        component: "itemCollapse",
+        slot: "default",
         span: 24,
+
         model: [
           {
             source: ["project", "data", "?", "name"],
             prop: "name",
           },
+        ],
+        // 子项字段列表：纯 schema 声明
+        fields: [
           {
-            source: ["project", "data", "?", "post"],
-            prop: "post",
+            type: "object",
+            label: "公司",
+            component: "input",
+            span: 12,
+            model: {
+              source: ["project", "data", "?", "name"],
+              prop: "modelValue",
+            },
+            props: {
+              placeholder: "公司",
+              clearable: true,
+            },
           },
           {
-            source: ["project", "data", "?", "time"],
-            prop: "time",
+            type: "object",
+            label: "岗位",
+            component: "input",
+            span: 12,
+            model: {
+              source: ["project", "data", "?", "post"],
+              prop: "modelValue",
+            },
+            props: {
+              placeholder: "岗位",
+              clearable: true,
+            },
           },
           {
-            source: ["project", "data", "?", "content"],
-            prop: "content",
+            type: "object",
+            label: "时间",
+            component: "datePicker",
+            span: 24,
+            model: {
+              source: ["project", "data", "?", "time"],
+              prop: "modelValue",
+            },
+            props: {
+              type: "monthrange",
+              format: "YYYY.MM",
+              valueFormat: "YYYY.MM",
+              startPlaceholder: "开始时间",
+              endPlaceholder: "结束时间",
+            },
+          },
+          {
+            type: "object",
+            label: "经历",
+            component: "wangEditor",
+            span: 24,
+            model: {
+              source: ["project", "data", "?", "content"],
+              prop: "modelValue",
+            },
           },
         ],
       },
@@ -507,28 +552,72 @@ export const DEFAULT_CUSTOM_FORM = {
       dragClass: ".item-drag",
       list: [],
       addConfig: {
-        component: "custom",
+        type: "object",
+        component: "itemCollapse",
+        slot: "default",
         span: 24,
         model: [
           {
             source: ["custom", "data", "?", "name"],
             prop: "name",
           },
+        ],
+        // 子项字段列表：纯 schema 声明
+        fields: [
           {
-            source: ["custom", "data", "?", "education"],
-            prop: "education",
+            type: "object",
+            label: "名称",
+            component: "input",
+            span: 12,
+            model: {
+              source: ["custom", "data", "?", "name"],
+              prop: "modelValue",
+            },
+            props: {
+              placeholder: "名称",
+              clearable: true,
+            },
           },
           {
-            source: ["custom", "data", "?", "post"],
-            prop: "post",
+            type: "object",
+            label: "职位",
+            component: "input",
+            span: 12,
+            model: {
+              source: ["custom", "data", "?", "post"],
+              prop: "modelValue",
+            },
+            props: {
+              placeholder: "职位",
+              clearable: true,
+            },
           },
           {
-            source: ["custom", "data", "?", "time"],
-            prop: "time",
+            type: "object",
+            label: "时间",
+            component: "datePicker",
+            span: 24,
+            model: {
+              source: ["custom", "data", "?", "time"],
+              prop: "modelValue",
+            },
+            props: {
+              type: "monthrange",
+              format: "YYYY.MM",
+              valueFormat: "YYYY.MM",
+              startPlaceholder: "开始时间",
+              endPlaceholder: "结束时间",
+            },
           },
           {
-            source: ["custom", "data", "?", "content"],
-            prop: "content",
+            type: "object",
+            label: "经历",
+            component: "wangEditor",
+            span: 24,
+            model: {
+              source: ["custom", "data", "?", "content"],
+              prop: "modelValue",
+            },
           },
         ],
       },
