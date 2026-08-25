@@ -1,39 +1,36 @@
 <script setup>
-import {
-  TransitionPresets,
-  onClickOutside,
-  useDebounceFn,
-  useResizeObserver,
-  useTransition,
-} from "@vueuse/core";
+import { TransitionPresets, useDebounceFn, useResizeObserver, useTransition } from "@vueuse/core";
 import { computed, ref } from "vue";
 import { RESUME_WIDTH } from "./constants";
 
 defineOptions({ name: "ScaleContainer" });
 
+defineProps({
+  /** 是否显示缩放操作栏 */
+  showToolbar: { type: Boolean, default: true },
+});
+
+defineEmits(["fullscreen"]);
+
 const containerRef = ref(null);
-const scaleBoxRef = ref(null);
 const contentRef = ref(null);
 const contentSize = ref({ width: 0, height: 0 });
 const manualScale = ref(1);
 const maxScale = ref(1);
 const scaleMode = ref("auto");
-const isOpen = ref(false);
 
 const PADDING = 40;
 const MIN_SCALE = 0.5;
 const SCALE_LIST = [0.5, 0.7, 0.9, 1];
 
 const percent = (value) => `${Math.round(value * 100)}%`;
-const close = () => (isOpen.value = false);
-onClickOutside(scaleBoxRef, close);
 const scale = computed(() => (scaleMode.value === "auto" ? maxScale.value : manualScale.value));
 const transitionScale = useTransition(scale, {
   duration: 200,
   transition: TransitionPresets.easeOutCubic,
 });
 const scaleText = computed(() => percent(transitionScale.value));
-const scaleLabel = computed(() => (scaleMode.value === "auto" ? "适合屏幕" : scaleText.value));
+const scaleLabel = computed(() => (scaleMode.value === "auto" ? "自适应" : scaleText.value));
 const minScale = computed(() => Math.min(MIN_SCALE, maxScale.value));
 const isMinScale = computed(() => scale.value <= minScale.value);
 const isMaxScale = computed(() => scale.value >= maxScale.value);
@@ -49,12 +46,10 @@ const clampScale = (value) => {
 const setManualScale = (value) => {
   scaleMode.value = "manual";
   manualScale.value = clampScale(value);
-  close();
 };
 
 const setAutoScale = () => {
   scaleMode.value = "auto";
-  close();
 };
 
 const stepScale = (value) => {
@@ -121,55 +116,47 @@ useResizeObserver(contentRef, ([entry]) => {
     </SfScrollbar>
 
     <div
-      ref="scaleBoxRef"
-      class="absolute bottom-4 left-1/2 z-10 -translate-x-1/2 translate-y-4 opacity-0 transition-all duration-300 select-none group-hover:translate-y-0 group-hover:opacity-100"
+      v-if="showToolbar"
+      class="group/scale-bar absolute bottom-4 left-1/2 z-10 -translate-x-1/2 translate-y-4 opacity-0 transition-all duration-300 select-none group-hover:translate-y-0 group-hover:opacity-100"
     >
-      <Transition name="scale-pop">
+      <div
+        class="invisible absolute right-0 bottom-full mb-2 w-40 origin-bottom-right translate-y-1 scale-95 rounded-xl border border-sf-b bg-sf-primary p-1 opacity-0 shadow-xl transition-all duration-150 group-hover/scale-bar:visible group-hover/scale-bar:translate-y-0 group-hover/scale-bar:scale-100 group-hover/scale-bar:opacity-100"
+      >
         <div
-          v-if="isOpen"
-          class="absolute right-0 bottom-full mb-2 w-40 overflow-hidden rounded-xl border border-sf-b bg-sf-primary p-1 shadow-xl"
+          v-for="item in SCALE_LIST"
+          :key="item"
+          class="flex h-9 cursor-pointer items-center justify-between rounded-lg px-3 text-sm transition-colors"
+          :class="{
+            'font-medium text-sf-theme': isManualScaleSelected(item),
+            'cursor-not-allowed text-sf-text-3': item > maxScale,
+            'text-sf-text hover:bg-sf-bg-2': item <= maxScale && !isManualScaleSelected(item),
+          }"
+          @click="item <= maxScale && setManualScale(item)"
         >
-          <div
-            v-for="item in SCALE_LIST"
-            :key="item"
-            class="flex h-9 cursor-pointer items-center justify-between rounded-lg px-3 text-sm transition-colors"
-            :class="{
-              'font-medium text-sf-theme': isManualScaleSelected(item),
-              'cursor-not-allowed text-sf-text-3': item > maxScale,
-              'text-sf-text hover:bg-sf-bg-2': item <= maxScale && !isManualScaleSelected(item),
-            }"
-            @click="item <= maxScale && setManualScale(item)"
-          >
-            <span>{{ percent(item) }}</span>
-            <SfIcon
-              v-if="isManualScaleSelected(item)"
-              icon="lucide:check"
-              size="3"
-              class="text-sf-theme"
-            />
-          </div>
-          <div class="mx-2 my-1 h-px bg-sf-b"></div>
-          <div
-            class="flex h-9 cursor-pointer items-center justify-between rounded-lg px-3 text-sm transition-colors"
-            :class="{
-              'font-medium text-sf-theme': scaleMode === 'auto',
-              'text-sf-text hover:bg-sf-bg-2': scaleMode !== 'auto',
-            }"
-            @click="setAutoScale"
-          >
-            <span>适合屏幕</span>
-            <SfIcon
-              v-if="scaleMode === 'auto'"
-              icon="lucide:check"
-              size="3"
-              class="text-sf-theme"
-            />
-          </div>
+          <span>{{ percent(item) }}</span>
+          <SfIcon
+            v-if="isManualScaleSelected(item)"
+            icon="lucide:check"
+            size="3"
+            class="text-sf-theme"
+          />
         </div>
-      </Transition>
+        <div class="mx-2 my-1 h-px bg-sf-b"></div>
+        <div
+          class="flex h-9 cursor-pointer items-center justify-between rounded-lg px-3 text-sm transition-colors"
+          :class="{
+            'font-medium text-sf-theme': scaleMode === 'auto',
+            'text-sf-text hover:bg-sf-bg-2': scaleMode !== 'auto',
+          }"
+          @click="setAutoScale"
+        >
+          <span>自适应</span>
+          <SfIcon v-if="scaleMode === 'auto'" icon="lucide:check" size="3" class="text-sf-theme" />
+        </div>
+      </div>
 
       <div
-        class="flex h-9 w-[160px] items-center gap-1 rounded-full border border-sf-b bg-sf-primary py-1 pr-1 pl-1.5 shadow-lg"
+        class="flex h-9 w-48 items-center gap-1 rounded-full border border-sf-b bg-sf-primary py-1 pr-1 pl-1.5 shadow-lg"
       >
         <button
           type="button"
@@ -184,8 +171,7 @@ useResizeObserver(contentRef, ([entry]) => {
         </button>
         <button
           type="button"
-          class="h-6 flex-1 cursor-pointer rounded-full px-3 text-xs font-medium text-sf-theme transition-colors hover:bg-sf-bg-2"
-          @click="isOpen = !isOpen"
+          class="h-6 flex-1 cursor-default rounded-full px-3 text-xs font-medium text-sf-theme"
         >
           {{ scaleLabel }}
         </button>
@@ -200,22 +186,16 @@ useResizeObserver(contentRef, ([entry]) => {
         >
           ＋
         </button>
+        <button
+          type="button"
+          class="flex h-6 w-6 cursor-pointer items-center justify-center rounded-full text-sf-text-2 transition-colors hover:bg-sf-bg-2 hover:text-sf-text"
+          @click="$emit('fullscreen')"
+        >
+          <SfIcon icon="lucide:maximize" size="3" />
+        </button>
       </div>
     </div>
   </div>
 </template>
 
-<style scoped>
-.scale-pop-enter-active,
-.scale-pop-leave-active {
-  transition:
-    opacity 0.15s ease,
-    transform 0.15s ease;
-  transform-origin: bottom right;
-}
-.scale-pop-enter-from,
-.scale-pop-leave-to {
-  opacity: 0;
-  transform: translateY(4px) scale(0.96);
-}
-</style>
+<style scoped></style>

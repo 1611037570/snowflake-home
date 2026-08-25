@@ -41,7 +41,7 @@ defineExpose({ open, close });
       </div>
       <!-- 缩放预览内容 -->
       <div class="min-h-0 flex-1">
-        <ScaleContainer>
+        <ScaleContainer :show-toolbar="false">
           <ResumePages :item="item" show-page-index />
         </ScaleContainer>
       </div>
