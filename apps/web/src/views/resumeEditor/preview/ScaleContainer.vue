@@ -1,11 +1,18 @@
 <script setup>
-import { TransitionPresets, useDebounceFn, useResizeObserver, useTransition } from "@vueuse/core";
+import {
+  TransitionPresets,
+  onClickOutside,
+  useDebounceFn,
+  useResizeObserver,
+  useTransition,
+} from "@vueuse/core";
 import { computed, ref } from "vue";
 import { RESUME_WIDTH } from "./constants";
 
 defineOptions({ name: "ScaleContainer" });
 
 const containerRef = ref(null);
+const scaleBoxRef = ref(null);
 const manualScale = ref(1);
 const maxScale = ref(1);
 const scaleMode = ref("auto");
@@ -17,6 +24,7 @@ const SCALE_LIST = [0.5, 0.7, 0.9, 1];
 
 const percent = (value) => `${Math.round(value * 100)}%`;
 const close = () => (isOpen.value = false);
+onClickOutside(scaleBoxRef, close);
 const scale = computed(() => (scaleMode.value === "auto" ? maxScale.value : manualScale.value));
 const transitionScale = useTransition(scale, {
   duration: 200,
@@ -73,7 +81,7 @@ useResizeObserver(() => containerRef.value?.wrapRef, updateScale);
 </script>
 
 <template>
-  <div class="relative h-full w-full">
+  <div class="group relative h-full w-full">
     <!-- 测量容器：relative + overflow-y-auto 允许垂直滚动 -->
     <SfScrollbar
       ref="containerRef"
@@ -93,51 +101,82 @@ useResizeObserver(() => containerRef.value?.wrapRef, updateScale);
     </SfScrollbar>
 
     <div
-      class="absolute right-4 bottom-4 z-10 overflow-hidden rounded-lg bg-white text-sm text-[#333] shadow-xl"
+      ref="scaleBoxRef"
+      class="absolute bottom-4 left-1/2 z-10 -translate-x-1/2 translate-y-4 opacity-0 transition-all duration-300 select-none group-hover:translate-y-0 group-hover:opacity-100"
     >
-      <div v-if="isOpen">
-        <div class="flex flex-col border-b border-[#f0f0f0] px-6 py-2">
-          <button
+      <Transition name="scale-pop">
+        <div
+          v-if="isOpen"
+          class="absolute right-0 bottom-full mb-2 w-40 overflow-hidden rounded-xl border border-sf-b bg-sf-primary p-1 shadow-xl"
+        >
+          <div
             v-for="item in SCALE_LIST"
             :key="item"
-            class="h-10 text-left"
+            class="flex h-9 cursor-pointer items-center justify-between rounded-lg px-3 text-sm transition-colors"
             :class="{
               'font-medium text-sf-theme': isManualScaleSelected(item),
-              'cursor-not-allowed text-[#ccc]': item > maxScale,
+              'cursor-not-allowed text-sf-text-3': item > maxScale,
+              'text-sf-text hover:bg-sf-bg-2': item <= maxScale && !isManualScaleSelected(item),
             }"
-            :disabled="item > maxScale"
-            @click="setManualScale(item)"
+            @click="item <= maxScale && setManualScale(item)"
           >
-            {{ percent(item) }}
-          </button>
+            <span>{{ percent(item) }}</span>
+            <SfIcon
+              v-if="isManualScaleSelected(item)"
+              icon="lucide:check"
+              size="3"
+              class="text-sf-theme"
+            />
+          </div>
+          <div class="mx-2 my-1 h-px bg-sf-b"></div>
+          <div
+            class="flex h-9 cursor-pointer items-center justify-between rounded-lg px-3 text-sm transition-colors"
+            :class="{
+              'font-medium text-sf-theme': scaleMode === 'auto',
+              'text-sf-text hover:bg-sf-bg-2': scaleMode !== 'auto',
+            }"
+            @click="setAutoScale"
+          >
+            <span>适合屏幕</span>
+            <SfIcon
+              v-if="scaleMode === 'auto'"
+              icon="lucide:check"
+              size="3"
+              class="text-sf-theme"
+            />
+          </div>
         </div>
-        <button
-          class="h-10 w-full px-6 text-left"
-          :class="{
-            'font-medium text-sf-theme': scaleMode === 'auto',
-          }"
-          @click="setAutoScale"
-        >
-          适合屏幕
-        </button>
-      </div>
+      </Transition>
+
       <div
-        class="flex h-8 items-center justify-between bg-white px-3 shadow-[0_-1px_8px_rgba(0,0,0,0.04)]"
+        class="flex h-9 w-[160px] items-center gap-1 rounded-full border border-sf-b bg-sf-primary py-1 pr-1 pl-1.5 shadow-lg"
       >
         <button
-          class="px-1 text-lg leading-none text-[#999] disabled:text-[#ddd]"
-          :disabled="isMinScale"
-          @click="stepScale(-0.1)"
+          type="button"
+          class="flex h-6 w-6 cursor-pointer items-center justify-center rounded-full text-base leading-none text-sf-text-2 transition-colors"
+          :class="{
+            'cursor-not-allowed text-sf-text-3': isMinScale,
+            'hover:bg-sf-bg-2 hover:text-sf-text': !isMinScale,
+          }"
+          @click="!isMinScale && stepScale(-0.1)"
         >
           −
         </button>
-        <button class="px-3 font-medium text-sf-theme" @click="isOpen = !isOpen">
+        <button
+          type="button"
+          class="h-6 flex-1 cursor-pointer rounded-full px-3 text-xs font-medium text-sf-theme transition-colors hover:bg-sf-bg-2"
+          @click="isOpen = !isOpen"
+        >
           {{ scaleLabel }}
         </button>
         <button
-          class="px-1 text-lg leading-none text-[#999] disabled:text-[#ddd]"
-          :disabled="isMaxScale"
-          @click="stepScale(0.1)"
+          type="button"
+          class="flex h-6 w-6 cursor-pointer items-center justify-center rounded-full text-base leading-none text-sf-text-2 transition-colors"
+          :class="{
+            'cursor-not-allowed text-sf-text-3': isMaxScale,
+            'hover:bg-sf-bg-2 hover:text-sf-text': !isMaxScale,
+          }"
+          @click="!isMaxScale && stepScale(0.1)"
         >
           ＋
         </button>
@@ -146,4 +185,17 @@ useResizeObserver(() => containerRef.value?.wrapRef, updateScale);
   </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+.scale-pop-enter-active,
+.scale-pop-leave-active {
+  transition:
+    opacity 0.15s ease,
+    transform 0.15s ease;
+  transform-origin: bottom right;
+}
+.scale-pop-enter-from,
+.scale-pop-leave-to {
+  opacity: 0;
+  transform: translateY(4px) scale(0.96);
+}
+</style>
