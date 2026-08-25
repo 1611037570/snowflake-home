@@ -9,7 +9,7 @@
         <span class="pr-1 pl-2 text-sf-text">
           {{ label }}
         </span>
-        <sf-tooltip :content="tipContent" v-if="tip" class="text-sf-text" />
+        <sf-tooltip :content="tip" v-if="tip" class="text-sf-text" />
       </div>
     </template>
     <slot />
@@ -34,14 +34,6 @@ defineProps({
   labelPosition: {
     type: String,
     default: "top",
-  },
-  tip: {
-    type: Boolean,
-    default: false,
-  },
-  tipContent: {
-    type: String,
-    default: "",
   },
 });
 const vm: any = getCurrentInstance();

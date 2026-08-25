@@ -5,8 +5,7 @@
       :label="currentForm.label"
       :prop="getProp(currentForm)"
       :rules="currentForm.rules"
-      :tip="true"
-      :tip-content="currentForm.tip"
+      :tip="currentForm.tip"
     >
       <slot />
     </SfFormItem>
