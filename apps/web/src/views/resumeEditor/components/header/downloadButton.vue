@@ -16,7 +16,7 @@ const handleDownload = () => {
 <template>
   <button
     type="button"
-    class="flex-c sf-theme-element h-9 gap-1.5 rounded-lg px-4 text-sm font-medium shadow-sm transition-all duration-300 hover:shadow-md active:scale-95 disabled:cursor-not-allowed disabled:opacity-60"
+    class="flex-c h-9 cursor-pointer gap-1.5 rounded-lg bg-sf-bg px-4 text-sm font-medium text-sf-text transition-all duration-300 hover:bg-sf-theme-2 hover:text-sf-theme active:scale-95 disabled:cursor-not-allowed disabled:opacity-60"
     :disabled="isPrinting"
     @click="handleDownload"
   >
