@@ -7,7 +7,6 @@ const name = defineModel("name", {
 });
 defineProps({
   add: {},
-  containerTitle: {},
 });
 // 学位列表
 const educationList = [
@@ -52,10 +51,6 @@ const time = defineModel("time", {
   type: Array,
   default: () => [],
 });
-const title = computed(() => {
-  return name.value ? name.value : "未填写学校名称";
-});
-
 const mode = defineModel("mode", {
   type: String,
   default: "",
@@ -79,7 +74,7 @@ const { currentIndex } = inject("df/context")();
 </script>
 
 <template>
-  <ItemCollapse :title="title" :index="currentIndex" :add="add" :containerTitle="containerTitle">
+  <ItemCollapse v-model:name="name" :index="currentIndex" :add="add">
     <div class="flex flex-col gap-3">
       <div class="flex w-full gap-3">
         <SfFormItem label="学校">
