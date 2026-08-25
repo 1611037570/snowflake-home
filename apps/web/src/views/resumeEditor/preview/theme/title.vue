@@ -25,17 +25,13 @@ const themeTemplate = computed(() => themeTemplateRef?.value || "default");
     <div class="mr-3 h-4 w-1 rounded-full bg-sf-theme" :style="{ background: themeColor }"></div>
     <h2 class="font-bold tracking-wide" :style="[fontValue(5), lineHeightValue(5)]">{{ title }}</h2>
   </div>
-  <!-- 现代风格：下粗色条 -->
+  <!-- 现代风格：标题居中 + 主题色短横线 -->
   <div
     v-else-if="themeTemplate === 'modern' && title"
-    class="border-b-4 pb-2"
-    :style="{ borderColor: themeColor }"
+    class="flex flex-col items-center pb-2"
   >
     <h2 class="font-bold tracking-wide" :style="[fontValue(5), lineHeightValue(5)]">{{ title }}</h2>
-  </div>
-  <!-- 简约风格：居中 + 上下细线 -->
-  <div v-else-if="title" class="border-y border-sf-b py-1 text-center">
-    <h2 class="font-bold tracking-wide" :style="[fontValue(5), lineHeightValue(5)]">{{ title }}</h2>
+    <div class="mt-1 h-1 w-8 rounded-full" :style="{ background: themeColor }"></div>
   </div>
 </template>
 

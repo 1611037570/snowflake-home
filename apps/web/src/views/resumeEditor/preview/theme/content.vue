@@ -10,29 +10,6 @@ const props = defineProps({
 
 const fontValue = inject("fontValue");
 const lineHeightValue = inject("lineHeightValue");
-const themeColor = inject("themeColor");
-// 在 setup 中获取注入的引用（inject 不可在 computed getter 内调用），再取响应式值
-const themeTemplateRef = inject("themeTemplate");
-// 风格模板：未提供时按默认样式处理
-const themeTemplate = computed(() => themeTemplateRef?.value || "default");
-
-// 内容块样式：不同风格模板差异化渲染
-const blockClass = computed(() => {
-  switch (themeTemplate.value) {
-    case "modern":
-      return "border-l-2 pl-2";
-    case "simple":
-      return "rounded-md bg-sf-bg px-3 py-1";
-    default:
-      return "";
-  }
-});
-const blockStyle = computed(() => {
-  if (themeTemplate.value === "modern") {
-    return { borderColor: themeColor };
-  }
-  return {};
-});
 
 const hasContent = computed(() => {
   if (!props.content) {
@@ -80,8 +57,7 @@ const splitBlocks = computed(() => {
       :is="block.tag"
       v-bind="block.attrs"
       class="whitespace-pre-wrap"
-      :class="blockClass"
-      :style="[fontValue(-3), lineHeightValue(-3), blockStyle]"
+      :style="[fontValue(-3), lineHeightValue(-3)]"
       :innerHTML="block.html"
     ></component>
   </template>

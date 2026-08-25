@@ -1,67 +1,61 @@
 <script setup>
+import { computed } from "vue";
 import { useResumeStore } from "@/stores";
 import { storeToRefs } from "pinia";
+import ResumePages from "@/views/resumeEditor/preview/resumePages.vue";
 import { themeTemplateList } from "@/stores/modules/resume/uiConfig";
 
 const resumeStore = useResumeStore();
-const { currentUI } = storeToRefs(resumeStore);
+const { currentUI, currentData, currentConfig, currentFixedConfig } = storeToRefs(resumeStore);
+
+// 遍历风格模板数组：同一份简历数据，逐套主题生成预览项
+const templates = computed(() =>
+  themeTemplateList.map((t) => ({
+    name: t.name,
+    value: t.value,
+    item: {
+      data: currentData.value,
+      config: currentConfig.value,
+      fixedConfig: currentFixedConfig.value,
+      ui: { ...currentUI.value, themeTemplate: t.value },
+    },
+  })),
+);
 
 // 是否为当前选中的风格模板
 const isActive = (value) => (currentUI.value?.themeTemplate ?? "default") === value;
+
+// 应用风格：修改当前简历主题，预览层响应式渲染
+const applyTemplate = (value) => {
+  currentUI.value.themeTemplate = value;
+};
 </script>
 
 <template>
   <div class="flex w-full flex-col gap-4">
     <div
-      v-for="item in themeTemplateList"
-      :key="item.value"
-      class="cursor-pointer! rounded-xl border border-sf-b p-4 transition-all duration-300"
-      :class="{
-        'border-sf-theme-2 bg-sf-theme-3': isActive(item.value),
-      }"
-      @click="currentUI.themeTemplate = item.value"
+      v-for="template in templates"
+      :key="template.value"
+      class="cursor-pointer! overflow-hidden rounded-xl border border-sf-b transition-all duration-300"
+      :class="{ 'border-sf-theme-2': isActive(template.value) }"
+      @click="applyTemplate(template.value)"
     >
-      <div class="mb-3 flex items-center justify-between">
-        <span class="text-sm font-bold text-sf-text">{{ item.name }}</span>
+      <div class="flex items-center justify-between px-4 pt-3">
+        <span class="text-sm font-bold text-sf-text">{{ template.name }}</span>
         <SfIcon
-          v-if="isActive(item.value)"
+          v-if="isActive(template.value)"
           icon="lucide:check"
           size="3"
           class="text-sf-theme"
         />
       </div>
-      <!-- 标题样式预览 -->
-      <div class="mb-3">
-        <div
-          v-if="item.value === 'default'"
-          class="flex items-center border-b border-sf-b pb-2"
-        >
-          <div
-            class="mr-2 h-3 w-1 rounded-full"
-            :style="{ background: currentUI?.themeColor }"
-          ></div>
-          <span class="text-sm font-bold">教育经历</span>
+      <!-- 模板简历缩略图：A4 页面缩放至卡片宽度，居中覆盖裁切超出部分 -->
+      <div class="pointer-events-none relative mx-4 my-3 h-[400px] overflow-hidden rounded-lg bg-sf-bg">
+        <div class="flex h-full w-full items-center justify-center select-none">
+          <div class="origin-center" style="transform: scale(0.36)">
+            <ResumePages :item="template.item" />
+          </div>
         </div>
-        <div
-          v-else-if="item.value === 'modern'"
-          class="border-b-4 pb-2"
-          :style="{ borderColor: currentUI?.themeColor }"
-        >
-          <span class="text-sm font-bold">教育经历</span>
-        </div>
-        <div v-else class="border-y border-sf-b py-1 text-center">
-          <span class="text-sm font-bold">教育经历</span>
-        </div>
-      </div>
-      <!-- 内容样式预览 -->
-      <div class="text-xs leading-5 text-sf-text-2">
-        <span v-if="item.value === 'default'">示例内容：这里是正文段落展示</span>
-        <span
-          v-else-if="item.value === 'modern'"
-          class="block border-l-2 pl-2"
-          :style="{ borderColor: currentUI?.themeColor }"
-        >示例内容：这里是正文段落展示</span>
-        <span v-else class="block rounded-md bg-sf-bg px-3 py-1">示例内容：这里是正文段落展示</span>
       </div>
     </div>
   </div>
