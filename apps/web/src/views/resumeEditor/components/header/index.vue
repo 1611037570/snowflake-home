@@ -54,6 +54,7 @@ const handleBack = () => {
 
     <!-- 右侧工具栏 -->
     <div class="flex items-center gap-5">
+      <DownloadButton />
       <!-- 布局切换器 -->
       <div class="flex items-center gap-1 rounded-xl bg-sf-bg p-1">
         <SfTooltip v-for="item in layoutList" :key="item.value" :content="item.name">
@@ -67,15 +68,13 @@ const handleBack = () => {
           </button>
         </SfTooltip>
       </div>
-      <!-- 操作按钮组 -->
-      <DownloadButton />
 
       <!-- 分隔线 -->
       <div class="h-5 w-px bg-sf-b"></div>
       <!-- 快捷图标 -->
+      <SfTheme />
       <SfDonation />
       <SfLocale />
-      <SfTheme />
       <SfSetting />
       <Debug />
     </div>
