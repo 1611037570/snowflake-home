@@ -4,7 +4,7 @@
     :is="h(ElSelect, { ...$attrs, ref: changeRef })"
     v-bind="$attrs"
     ref="changeRef"
-    class="flex-1 text-sf-base"
+    class="flex-1 rounded-3xl! text-sf-base"
     :class="bg"
   >
     <ElOption v-for="item in list" :key="item.value" :label="item.name" :value="item.value" />
