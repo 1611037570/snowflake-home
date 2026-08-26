@@ -23,7 +23,7 @@ const manualScale = ref(1);
 const maxScale = ref(1);
 const scaleMode = ref("auto");
 
-const PADDING = 40;
+const PADDING = 20;
 const MIN_SCALE = 0.5;
 const percent = (value) => `${Math.round(value * 100)}%`;
 const SCALE_LIST = computed(() => [

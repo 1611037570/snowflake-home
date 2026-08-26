@@ -30,7 +30,7 @@ function onRequestComplete(msg) {
 </script>
 
 <template>
-  <div class="box-border h-full w-[400px] py-3 pr-3">
+  <div class="box-border h-full w-[400px] py-3">
     <div
       class="group relative flex h-full flex-col overflow-hidden rounded-3xl border border-sf-b bg-sf-primary"
     >
