@@ -16,6 +16,10 @@ const props = defineProps({
     type: Number,
     required: true,
   },
+  isLast: {
+    type: Boolean,
+    default: false,
+  },
 });
 // 重试回调，由 index.vue 通过 provide 注入
 const retry = inject("retry");
@@ -24,7 +28,13 @@ const themeStore = useThemeStore();
 const { theme } = storeToRefs(themeStore);
 const { copy, isSupported } = useClipboard();
 
-const emit = defineEmits(["updateCollapsedStatus", "sendFollowQuestion"]);
+const emit = defineEmits(["updateCollapsedStatus", "sendFollowQuestion", "fillFollowQuestion"]);
+
+// 将推荐问题填入输入框，不触发发送
+const handleFillFollowQuestion = (event, question) => {
+  event.stopPropagation();
+  emit("fillFollowQuestion", question);
+};
 
 const handleCopy = async (text) => {
   if (!isSupported.value) {
@@ -86,16 +96,12 @@ const showTotalTime = computed(() => props.msg.requestStatus === "success");
         />
       </div>
 
-      <div
-        v-if="msg.total_tokens"
-        class="flex items-center gap-1 text-[11px] font-black text-sf-text-3"
-      >
-        <SfIcon icon="ph:lightning-duotone" size="4" class="animate-pulse text-amber-500" />
-        <span class="opacity-70">{{ msg.total_tokens }} tokens</span>
+      <div class="flex items-center gap-3 text-[11px] text-sf-text-2">
+        <div v-if="msg.total_tokens" class="flex items-center gap-1">
+          <span class="opacity-70">{{ msg.total_tokens }} tokens</span>
+        </div>
+        <span v-if="showTotalTime"> 耗时 {{ totalTime }} 秒 </span>
       </div>
-      <span v-if="showTotalTime" class="text-[11px] font-bold text-sf-text-3 tabular-nums">
-        耗时 {{ totalTime }} 秒
-      </span>
     </header>
 
     <div class="flex w-full flex-col gap-1 pr-1">
@@ -138,14 +144,39 @@ const showTotalTime = computed(() => props.msg.requestStatus === "success");
           class="inline-block max-w-full min-w-0 overflow-hidden bg-transparent! p-0! align-bottom text-[14px] leading-relaxed text-sf-text"
           :class="{ 'typing-active': msg.typing }"
         />
-        <div class="mt-2 flex flex-col gap-2">
+        <div
+          v-if="isLast && resumeContent.followQuestions?.length"
+          class="mt-2 flex flex-col gap-2"
+        >
           <div
             v-for="(item, index) in resumeContent.followQuestions"
             :key="index"
-            class="cursor-pointer rounded-lg border border-sf-b bg-sf-bg-2 px-3 py-2 text-[13px] text-sf-text transition-all duration-200 hover:border-sf-theme hover:bg-sf-bg-2"
+            class="flex min-w-0 items-center gap-2 rounded-lg bg-sf-bg px-3 py-2 text-[13px] text-sf-text transition-all duration-200 hover:bg-sf-bg-2"
             @click="emit('sendFollowQuestion', item)"
           >
-            {{ item }}
+            <SfTooltip :content="item" class="min-w-0 flex-1">
+              <span class="block truncate whitespace-nowrap">{{ item }}</span>
+            </SfTooltip>
+            <div class="flex shrink-0 items-center gap-1">
+              <SfTooltip content="填入输入框">
+                <button
+                  type="button"
+                  class="follow-question-action"
+                  @click.stop="handleFillFollowQuestion($event, item)"
+                >
+                  <SfIcon icon="ph:chat-teardrop-dots-duotone" size="3.5" />
+                </button>
+              </SfTooltip>
+              <SfTooltip content="发送">
+                <button
+                  type="button"
+                  class="follow-question-action"
+                  @click.stop="emit('sendFollowQuestion', item)"
+                >
+                  <SfIcon icon="mingcute:arrow-right-line" size="3.5" />
+                </button>
+              </SfTooltip>
+            </div>
           </div>
         </div>
       </div>
@@ -170,6 +201,9 @@ const showTotalTime = computed(() => props.msg.requestStatus === "success");
 /* 操作按钮公共样式 */
 .action-btn {
   @apply flex h-7 w-7 items-center justify-center rounded-lg text-sf-text-3 transition-colors hover:bg-sf-bg-3 hover:text-sf-text;
+}
+.follow-question-action {
+  @apply flex h-6 w-6 items-center justify-center rounded-md text-sf-text-3 transition-colors hover:bg-sf-bg-3 hover:text-sf-text;
 }
 :deep(.md-editor-preview h2) {
   margin: 14px 0 !important;
