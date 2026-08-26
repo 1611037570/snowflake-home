@@ -29,6 +29,7 @@ const { currentUI } = storeToRefs(resumeStore);
     <ConfigItem label="页边距" v-model="currentUI.padding" />
     <ConfigItem label="字体大小" v-model="currentUI.fontSize" />
     <ConfigItem label="行间距" v-model="currentUI.lineHeight" />
+    <ConfigItem label="模块间距" v-model="currentUI.moduleSpacing" />
     <!-- 主题色 -->
     <div class="mb-6 flex flex-col">
       <div class="mb-4 text-base font-bold text-sf-text">主题色</div>
