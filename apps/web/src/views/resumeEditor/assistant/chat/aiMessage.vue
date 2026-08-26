@@ -137,7 +137,10 @@ const showTotalTime = computed(() => props.msg.requestStatus === "success");
       </SfTooltip>
     </nav>
     <!-- 推荐问题 -->
-    <div v-if="isLast && resumeContent.followQuestions?.length" class="mt-1 flex flex-col gap-2">
+    <div
+      v-if="isLast && resumeContent.followQuestions?.length"
+      class="mt-1 flex w-full flex-col gap-2"
+    >
       <div
         v-for="(item, index) in resumeContent.followQuestions"
         :key="index"
