@@ -65,7 +65,9 @@ const loadingItems = [..."生成中", "", "", ""];
     <header class="flex w-full flex-row items-center justify-between gap-1 px-1 select-none">
       <div class="flex items-center gap-1">
         <div class="flex flex-col gap-0.5 leading-tight">
-          <span class="text-[12px] font-black tracking-wider text-sf-text">小羊</span>
+          <span class="text-[12px] font-black tracking-wider text-sf-text">{{
+            $t("router.resumeAI")
+          }}</span>
           <div class="flex items-center gap-1">
             <time v-if="msg.time" class="text-[11px] font-bold tabular-nums opacity-40">{{
               msg.time
@@ -129,7 +131,7 @@ const loadingItems = [..."生成中", "", "", ""];
           <div
             v-for="(item, index) in resumeContent.followQuestions"
             :key="index"
-            class="border-sf-b cursor-pointer rounded-lg border bg-sf-bg-2 px-3 py-2 text-[13px] text-sf-text transition-all duration-200 hover:border-sf-theme hover:bg-sf-bg-2"
+            class="cursor-pointer rounded-lg border border-sf-b bg-sf-bg-2 px-3 py-2 text-[13px] text-sf-text transition-all duration-200 hover:border-sf-theme hover:bg-sf-bg-2"
             @click="emit('sendFollowQuestion', item)"
           >
             {{ item }}
