@@ -71,7 +71,7 @@ const { measureDone, pages, moduleClass, getPageStyle } = useResumePages({
   ui,
   themeStyles,
   isThumb,
-  selectedModule: selectedModule.value,
+  selectedModule,
   isReadonly,
   uid,
 });
