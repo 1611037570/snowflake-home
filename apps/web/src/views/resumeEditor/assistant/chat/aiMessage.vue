@@ -52,8 +52,10 @@ const content = computed(() => {
   return resumeContent.value.analysis;
 });
 const resumeShow = computed(() => props.msg.requestStatus === "success");
-// AI 加载动画序列：文字逐字 + 三个圆点，统一按顺序接力跳动
-const loadingItems = [..."生成中", "", "", ""];
+const isThinking = computed(() => props.msg.typing && props.msg.requestStatus === "thinking");
+const isGenerating = computed(() => props.msg.typing && props.msg.requestStatus === "generating");
+const totalTime = computed(() => (props.msg.thoughtTime || 0) + (props.msg.contentTime || 0));
+const showTotalTime = computed(() => props.msg.requestStatus === "success");
 </script>
 
 <template>
@@ -91,19 +93,28 @@ const loadingItems = [..."生成中", "", "", ""];
         <SfIcon icon="ph:lightning-duotone" size="4" class="animate-pulse text-amber-500" />
         <span class="opacity-70">{{ msg.total_tokens }} tokens</span>
       </div>
+      <span v-if="showTotalTime" class="text-[11px] font-bold text-sf-text-3 tabular-nums">
+        耗时 {{ totalTime }} 秒
+      </span>
     </header>
 
     <div class="flex w-full flex-col gap-1 pr-1">
       <!-- 加载状态 -->
       <div
-        v-if="msg.requestStatus === 'loading'"
-        class="flex h-8 w-[50px] items-center justify-center gap-1.5 rounded-xl bg-sf-theme-2 text-sf-theme"
+        v-if="msg.typing && ['loading', 'thinking', 'generating'].includes(msg.requestStatus)"
+        class="flex items-center gap-2 px-1 text-[13px] text-sf-theme"
       >
-        <template v-for="(item, i) in 3" :key="i">
-          <span
-            class="h-1.5 w-1.5 animate-bounce rounded-full bg-sf-theme opacity-80"
-            :style="`animation-delay: ${(i - 1) * 150}ms`"
-          ></span>
+        <span v-if="isThinking">思考中 {{ msg.thoughtTime || 0 }} 秒</span>
+        <span v-else-if="isGenerating">生成回复中 {{ msg.contentTime || 0 }} 秒</span>
+        <template v-else>
+          <span>生成中</span>
+          <span class="flex items-center gap-1">
+            <i
+              v-for="i in 3"
+              :key="i"
+              class="h-1.5 w-1.5 animate-bounce rounded-full bg-sf-theme"
+            />
+          </span>
         </template>
       </div>
       <!-- 错误状态 -->

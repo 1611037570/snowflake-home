@@ -95,11 +95,6 @@ export const useChatRequest = ({
       });
       // 获取刚添加的AI消息引用
       lastMsg = currentMessages.value[currentMessages.value.length - 1] ?? null;
-      if (lastMsg) {
-        timers.thinking = setInterval(() => {
-          if (isCurrentRequest()) lastMsg!.thoughtTime += 1;
-        }, 1000);
-      }
 
       // 思考状态标记（用于折叠）
       let thoughtStatus = false;
@@ -127,9 +122,16 @@ export const useChatRequest = ({
           if (!isCurrentRequest() || !lastMsg) return;
           if (type === "reasoning") {
             // 思考内容追加
+            lastMsg.requestStatus = "thinking";
+            if (!timers.thinking) {
+              timers.thinking = setInterval(() => {
+                if (isCurrentRequest()) lastMsg!.thoughtTime += 1;
+              }, 1000);
+            }
             lastMsg.thought += data;
           } else if (type === "content") {
             // 首次收到正文后切换到回复计时
+            lastMsg.requestStatus = "generating";
             if (!timers.reply) {
               if (timers.thinking) clearInterval(timers.thinking);
               timers.thinking = null;
