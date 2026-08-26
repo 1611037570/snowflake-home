@@ -4,6 +4,7 @@ import { useScroll } from "@vueuse/core";
 import { computed, inject, nextTick, ref, watch } from "vue";
 import { storeToRefs } from "pinia";
 import { getLLM } from "@/apis";
+import { fieldAnalysis, userData } from "./utils.ts";
 
 import AiMessage from "./aiMessage.vue";
 import ChatInput from "./chatInput.vue";
@@ -119,10 +120,16 @@ const handleAIResponse = async () => {
       content: m.content,
     }));
     // 拼接简历数据与用户内容
-    const prompt = `data: ${JSON.stringify(currentData.value)}
+    const content = `
+    ${userData.value}
+
+    ${fieldAnalysis.value}
+
+    ${messages.at(-1).content}
 
     `;
-    messages.at(-1).content = prompt + messages.at(-1).content;
+    messages.at(-1).content = content;
+
     // 先添加一条空的助手消息，用于展示打字中状态和流式内容
     addMessage({
       role: "assistant",
