@@ -4,7 +4,7 @@ import { storeToRefs } from "pinia";
 import { useAiStore } from "@/stores";
 import DefaultTab from "./defaultTab.vue";
 import CustomTab from "./customTab.vue";
-import Icon from "../components/icon.vue";
+import Icon from "../../components/icon.vue";
 
 // 设置弹窗可见性
 const drawerVisible = ref(false);
