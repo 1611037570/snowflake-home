@@ -1,11 +1,14 @@
 <script setup>
-defineOptions({ name: "ResumeToolbar" });
+import { useRouter } from "vue-router";
 import Ai from "./ai/index.vue";
 import System from "./system/index.vue";
 import Icon from "./components/icon.vue";
-import { useRouter } from "vue-router";
 import ImportResume from "./modules/importResume.vue";
 import ExportResume from "./modules/exportResume.vue";
+import Progress from "./modules/progress.vue";
+
+defineOptions({ name: "ResumeToolbar" });
+
 const router = useRouter();
 function goHome() {
   router.push("/resume");
@@ -16,10 +19,11 @@ function goGitHub() {
 </script>
 
 <template>
-  <div class="flex items-center p-3">
+  <div class="relative flex items-center p-3">
     <div
-      class="flex flex-col items-center gap-2 rounded-3xl border border-sf-b bg-sf-transparent p-2 text-sf-text-3"
+      class="relative flex flex-col items-center gap-2 rounded-3xl border border-sf-b bg-sf-transparent p-2 text-sf-text-3"
     >
+      <Progress />
       <System />
       <ImportResume />
       <ExportResume />
