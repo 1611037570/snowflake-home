@@ -7,19 +7,19 @@ import Template from "./template/index.vue";
 // 菜单配置
 const menuList = [
   {
-    name: "简历",
+    name: "编辑",
     icon: "lucide:file-text",
     component: markRaw(Editor),
+  },
+  {
+    name: "设计",
+    icon: "lucide:palette",
+    component: markRaw(Custom),
   },
   {
     name: "模板",
     icon: "lucide:layout-template",
     component: markRaw(Template),
-  },
-  {
-    name: "自定义",
-    icon: "lucide:palette",
-    component: markRaw(Custom),
   },
 ];
 
