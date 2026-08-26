@@ -6,9 +6,9 @@ import { useAiStore } from "@/stores";
 const aiStore = useAiStore();
 const { thinkMode } = storeToRefs(aiStore);
 
-// 是否正在发送中，由父组件（index.vue）控制
+// 是否正在生成回复，由父组件（index.vue）控制
 const props = defineProps({
-  isSending: {
+  isGenerating: {
     type: Boolean,
     default: false,
   },
@@ -34,11 +34,11 @@ const thinkModes = [
 ];
 
 // 计算是否可以发送消息
-const canSend = computed(() => !!modelValue.value.trim() && !props.isSending);
+const canSend = computed(() => !!modelValue.value.trim() && !props.isGenerating);
 
 // 动态动作按钮配置
 const actionButtonConfig = computed(() => {
-  if (props.isSending) {
+  if (props.isGenerating) {
     return {
       icon: "ph:stop-circle-fill",
       title: "停止生成",
@@ -65,7 +65,7 @@ const actionButtonConfig = computed(() => {
 const handleSend = () => {
   const content = modelValue.value.trim();
   // 确保输入内容不为空，且当前没有正在发送的消息
-  if (!content || props.isSending) return;
+  if (!content || props.isGenerating) return;
   // 清空输入框并聚焦，发送逻辑交由父组件处理
   modelValue.value = "";
   nextTick(() => inputRef.value?.focus());
@@ -104,7 +104,7 @@ onMounted(() => {
     <div class="relative z-10 w-full max-w-4xl">
       <!-- 主输入容器：增强阴影与圆角细节 -->
       <div
-        class="group hover:border-sf-b-hover border-sf-b relative flex flex-col rounded-2xl border bg-sf-bg p-1 shadow-sm transition-all duration-500"
+        class="group hover:border-sf-b-hover relative flex flex-col rounded-2xl border border-sf-b bg-sf-bg p-1 shadow-sm transition-all duration-500"
       >
         <!-- 输入框区域 -->
         <el-input

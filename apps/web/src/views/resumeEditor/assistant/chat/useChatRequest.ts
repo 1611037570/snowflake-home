@@ -1,9 +1,11 @@
 // 导入LLM接口
 import { getLLM } from "@/apis";
+import { useAiStore, useResumeStore } from "@/stores";
 // 导入聊天和消息类型
 import type { Chat, Message } from "@/stores/modules/ai";
 // 导入Vue组合式API相关类型
 import { onUnmounted, type ComputedRef, type Ref } from "vue";
+import { storeToRefs } from "pinia";
 // 导入工具函数：用户数据和字段分析
 import { fieldAnalysis, userData } from "./utils";
 
@@ -11,10 +13,6 @@ import { fieldAnalysis, userData } from "./utils";
 interface UseChatRequestOptions {
   chat: Ref<Chat>; // 当前聊天会话
   currentMessages: ComputedRef<Message[]>; // 当前消息列表（只读）
-  isGenerating: Ref<boolean>; // 是否正在生成回复
-  thinkMode: Ref<boolean>; // 思考模式开关
-  activeModel: Ref<string>; // 当前激活的模型标识
-  customModel: Ref<{ model?: string }>; // 自定义模型配置
   addMessage: (message: Partial<Message>) => void; // 添加消息的方法
   scrollToBottom: () => void | Promise<void>; // 滚动到底部
   applyDiff?: (data: Record<string, any>) => void; // 应用数据差异（可选）
@@ -25,15 +23,15 @@ interface UseChatRequestOptions {
 export const useChatRequest = ({
   chat,
   currentMessages,
-  isGenerating,
-  thinkMode,
-  activeModel,
-  customModel,
   addMessage,
   scrollToBottom,
   applyDiff,
   onRequestComplete,
 }: UseChatRequestOptions) => {
+  const resumeStore = useResumeStore();
+  const aiStore = useAiStore();
+  const { isGenerating } = storeToRefs(resumeStore);
+  const { thinkMode, activeModel, customModel } = storeToRefs(aiStore);
   // 用于取消当前请求的函数引用
   let abortRequest: (() => void) | null = null;
   // 请求版本号，用于避免旧请求干扰
