@@ -104,7 +104,7 @@ onMounted(() => {
     <div class="relative z-10 w-full max-w-4xl">
       <!-- 主输入容器：增强阴影与圆角细节 -->
       <div
-        class="group hover:border-sf-b-hover relative flex flex-col rounded-2xl border border-sf-b bg-sf-bg p-1 shadow-sm transition-all duration-500"
+        class="group hover:border-sf-b-hover relative flex flex-col rounded-3xl border border-sf-b bg-sf-bg p-1 shadow-sm transition-all duration-500"
       >
         <!-- 输入框区域 -->
         <el-input
