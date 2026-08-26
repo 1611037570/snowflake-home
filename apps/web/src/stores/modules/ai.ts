@@ -47,18 +47,11 @@ export const useAiStore = defineStore(
     // 激活的服务
     const activeModel = ref<"snowflake" | "custom">("snowflake");
     // 自定义模型
-    // const customModel = ref<any>({
-    //   url: "https://ark.cn-beijing.volces.com/api/v3/responses",
-    //   provider: "ark",
-    //   model: "doubao-seed-2-1-pro-260628",
-    //   key: "c15973e5-8397-422f-9c86-a12df469d452",
-    // });
-
     const customModel = ref<any>({
-      url: "https://api.deepseek.com/chat/completions",
-      provider: "openai",
-      model: "deepseek-v4-flash",
-      key: "sk-7ef875432c944ab98ff408bed73aaa53",
+      url: "",
+      provider: "",
+      model: "",
+      key: "",
     });
     // sk-7ef875432c944ab98ff408bed73aaa53
     const sidebarCollapsed = ref(true);
