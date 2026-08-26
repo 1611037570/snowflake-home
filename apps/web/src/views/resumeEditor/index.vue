@@ -29,7 +29,7 @@
 <script setup>
 import { useResumeStore } from "@/stores";
 import { storeToRefs } from "pinia";
-import { provide } from "vue";
+import { provide, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import Assistant from "./assistant/index.vue";
 import Builder from "./builder/index.vue";
@@ -47,8 +47,19 @@ const { initResumeStatus } = resumeStore;
 const { currentIndex, layout, list, currentUsage, isGenerating, isPrinting, currentData } =
   storeToRefs(resumeStore);
 
+// 切换简历时清空上一个简历的模块选中状态
+watch(
+  () => route.query.id,
+  () => {
+    // 初始化简历状态
+    initResumeStatus();
+  },
+  { immediate: true },
+);
+
 // 创建代理后的预览数据及批量操作句柄（AI 助手与预览层共用）
-const { previewData, acceptAll, rejectAll, acceptModule, rejectModule, applyDiff } = usePreviewData(currentData);
+const { previewData, acceptAll, rejectAll, acceptModule, rejectModule, applyDiff } =
+  usePreviewData(currentData);
 
 // 向下游组件注入代理预览数据
 provide("previewData", previewData);
@@ -76,8 +87,7 @@ onMounted(() => {
     return;
   }
   currentIndex.value = index;
-  // 初始化简历状态
-  initResumeStatus();
+
   useTimeTimer = setInterval(() => {
     currentUsage.value.lastUseTime = Date.now();
   }, 10000);
