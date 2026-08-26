@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, reactive, ref, watch } from "vue";
+import { onMounted, reactive, ref } from "vue";
 import { storeToRefs } from "pinia";
 import { ElMessage } from "element-plus";
 import { useAiStore } from "@/stores/modules/ai";
@@ -7,8 +7,8 @@ import { LLM } from "@/apis";
 
 // 平台选项
 const platformOptions = [
-  { label: "火山方舟 (Ark)", value: "ark" },
-  { label: "OpenAI", value: "openai" },
+  { name: "火山方舟 (推荐)", value: "ark" },
+  { name: "OpenAI兼容", value: "openai" },
 ];
 
 // 使用 ai store
@@ -114,14 +114,13 @@ async function testConnection() {
   <el-form ref="formRef" :model="form" :rules="rules" class="mt-3 flex flex-col gap-3">
     <!-- 平台 -->
     <SfFormItem label="平台" prop="provider">
-      <el-select v-model="form.provider" class="w-full" placeholder="请选择平台">
-        <el-option
-          v-for="item in platformOptions"
-          :key="item.value"
-          :label="item.label"
-          :value="item.value"
-        />
-      </el-select>
+      <SfSelect
+        v-model="form.provider"
+        :list="platformOptions"
+        class="w-full"
+        placeholder="请选择平台"
+      >
+      </SfSelect>
     </SfFormItem>
 
     <!-- 模型 -->
