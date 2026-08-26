@@ -18,8 +18,8 @@ const isSelected = computed(() => selectedModule.value.find((item) => item.key =
 const previewData = inject("previewData");
 // 获取当前模块的代理数据
 const moduleData = computed(() => {
-  if (!previewData || !props.name) return null;
-  return previewData.value[props.name];
+  if (!previewData || !props.modelKey) return null;
+  return previewData.value[props.modelKey];
 });
 // 判断当前模块是否有待应用的 AI 草稿
 const hasNewData = computed(() => {

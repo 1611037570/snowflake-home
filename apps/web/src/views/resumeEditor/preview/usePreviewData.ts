@@ -100,6 +100,14 @@ const clearAllNewValues = (): void => {
   Object.keys(newValueStore).forEach((k) => delete newValueStore[k]);
 };
 
+// 清空指定模块的 AI 草稿
+const clearModuleNewValues = (moduleKey: string): void => {
+  const prefix = `${moduleKey}.`;
+  Object.keys(newValueStore).forEach((path) => {
+    if (path === moduleKey || path.startsWith(prefix)) delete newValueStore[path];
+  });
+};
+
 // ---------- 字段代理工厂（叶子节点） ----------
 
 /**
@@ -282,6 +290,8 @@ const collectLeaves = (
 export interface PreviewActions {
   acceptAll: () => void; // 接受所有草稿，写入原值
   rejectAll: () => void; // 拒绝所有草稿，清空
+  acceptModule: (moduleKey: string) => void; // 接受指定模块草稿
+  rejectModule: (moduleKey: string) => void; // 拒绝指定模块草稿
   applyDiff: (aiResult: Record<string, any>) => void; // 应用 AI 差异
 }
 
@@ -315,6 +325,30 @@ export const usePreviewData = (data: Ref<Record<string, any> | undefined>) => {
       }
     });
     clearAllNewValues();
+  };
+
+  // 接受指定模块：写入该模块的草稿并清空对应草稿
+  const acceptModule = (moduleKey: string): void => {
+    const source = data.value;
+    if (!source || !moduleKey || !(moduleKey in source)) return;
+
+    const module = source[moduleKey];
+    if (module && typeof module === "object") {
+      const leaves = collectLeaves(module, moduleKey);
+      leaves.forEach(({ source: src, key, path }) => {
+        const newVal = newValueStore[path];
+        if (newVal != null && newVal !== "") src[key] = newVal;
+      });
+    } else {
+      const newVal = newValueStore[moduleKey];
+      if (newVal != null && newVal !== "") source[moduleKey] = newVal;
+    }
+    clearModuleNewValues(moduleKey);
+  };
+
+  // 拒绝指定模块：清空该模块的所有草稿
+  const rejectModule = (moduleKey: string): void => {
+    if (moduleKey) clearModuleNewValues(moduleKey);
   };
 
   /**
@@ -376,6 +410,8 @@ export const usePreviewData = (data: Ref<Record<string, any> | undefined>) => {
     previewData, // 代理后的预览数据，可直接在模板中绑定
     acceptAll,
     rejectAll,
+    acceptModule,
+    rejectModule,
     applyDiff,
   };
 };
