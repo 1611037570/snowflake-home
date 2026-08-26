@@ -50,9 +50,20 @@ const { currentIndex, layout, list, currentUsage, isGenerating, isPrinting, curr
 // 切换简历时清空上一个简历的模块选中状态
 watch(
   () => route.query.id,
-  () => {
+  (id) => {
     // 初始化简历状态
     initResumeStatus();
+    // 根据路由参数定位当前编辑的简历
+    if (!id) {
+      router.push(`/resume`);
+      return;
+    }
+    const index = list.value.findIndex((item) => item.id === id);
+    if (index == -1) {
+      router.push(`/resume`);
+      return;
+    }
+    currentIndex.value = index;
   },
   { immediate: true },
 );
@@ -76,18 +87,6 @@ provide("applyDiff", applyDiff);
 let useTimeTimer = null;
 
 onMounted(() => {
-  const id = route.query.id;
-  if (!id) {
-    router.push(`/resume`);
-    return;
-  }
-  const index = list.value.findIndex((item) => item.id === id);
-  if (index == -1) {
-    router.push(`/resume`);
-    return;
-  }
-  currentIndex.value = index;
-
   useTimeTimer = setInterval(() => {
     currentUsage.value.lastUseTime = Date.now();
   }, 10000);
