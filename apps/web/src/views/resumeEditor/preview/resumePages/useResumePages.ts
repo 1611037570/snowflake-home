@@ -103,11 +103,13 @@ export const useResumePages = ({
       // 遇到新模块，先提交上一个切片，让 currentPage 如实反映页内内容
       if (sliceModule && sliceModule !== group) commitSlice();
 
+      // 当前切片尚未提交时，页面同样已经有内容，避免大字号或大间距时继续挤在当前页
+      const hasPageContent = currentPage.length > 0 || sliceRows.length > 0;
       // 模块间距：模块首行且当前页已有内容时才计一次
-      let gap = currentPage.length > 0 && isHead ? moduleSpacing : 0;
+      let gap = hasPageContent && isHead ? moduleSpacing : 0;
 
       // 放不下时：当前页已有内容则翻页重试；空页仍放不下（单行超高）则硬塞
-      if (currentHeight + gap + row.height > maxContentHeight && currentPage.length > 0) {
+      if (currentHeight + gap + row.height > maxContentHeight && hasPageContent) {
         newPage();
         // 缩略图模式仅需第一页：翻页后不再继续计算后续页
         if (isThumb.value) return result;
