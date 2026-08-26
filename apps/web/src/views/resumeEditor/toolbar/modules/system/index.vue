@@ -2,7 +2,7 @@
 import { ref } from "vue";
 import { storeToRefs } from "pinia";
 import { useResumeStore } from "@/stores";
-import Icon from "../components/icon.vue";
+import Icon from "../../components/icon.vue";
 
 // 设置弹窗可见性
 const drawerVisible = ref(false);

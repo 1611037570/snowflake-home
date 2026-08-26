@@ -1,7 +1,7 @@
 <script setup>
 import { useRouter } from "vue-router";
-import Ai from "./ai/index.vue";
-import System from "./system/index.vue";
+import Ai from "./modules/ai/index.vue";
+import System from "./modules/system/index.vue";
 import Icon from "./components/icon.vue";
 import ImportResume from "./modules/importResume.vue";
 import ExportResume from "./modules/exportResume.vue";
@@ -25,8 +25,8 @@ function goGitHub() {
     >
       <Progress />
       <System />
-      <ImportResume />
       <ExportResume />
+      <ImportResume />
       <Ai />
       <Icon icon="akar-icons:home-alt1" size="5" content="返回首页" @click="goHome" />
       <Icon icon="simple-icons:github" size="5" content="GitHub" @click="goGitHub" />
