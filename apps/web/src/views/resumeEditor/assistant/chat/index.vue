@@ -115,6 +115,12 @@ const handleSendFollowQuestion = (question) => {
   handleSend(question);
 };
 
+// 将推荐问题填入输入框，不触发发送
+const handleFillFollowQuestion = (question) => {
+  chatInputRef.value?.setValue(question);
+  chatInputRef.value?.focus();
+};
+
 /**
  * 删除消息，count 不传时删除该消息及其后的所有消息；返回是否删除成功
  */
@@ -183,16 +189,18 @@ const handleSuggest = (payload) => {
     <SfScrollbar ref="chatContainer" class="h-full w-full flex-1">
       <EmptyState @suggest="handleSuggest" v-if="currentMessages.length === 1" />
 
-      <div v-if="currentMessages.length > 1" class="flex h-full flex-col items-center p-3">
+      <div v-if="currentMessages.length > 1" class="flex h-full flex-col items-center py-3">
         <component
           :is="msg.role === 'user' ? UserMessage : AiMessage"
           v-for="(msg, index) in displayMessages"
           :key="index"
           :msg="msg"
           :index="index"
+          :is-last="index === displayMessages.length - 1"
           @recall="handleRecall"
           @updateCollapsedStatus="updateCollapsedStatus"
           @sendFollowQuestion="handleSendFollowQuestion"
+          @fillFollowQuestion="handleFillFollowQuestion"
         />
       </div>
     </SfScrollbar>
