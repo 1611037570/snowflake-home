@@ -17,7 +17,6 @@ const props = defineProps({
     required: true,
   },
 });
-const currentType = inject("type");
 // 重试回调，由 index.vue 通过 provide 注入
 const retry = inject("retry");
 
@@ -37,9 +36,6 @@ const handleCopy = async (text) => {
 };
 
 const resumeContent = computed(() => {
-  if (currentType !== "resume") {
-    return "";
-  }
   const value = props.msg.content;
   if (typeof value === "string") {
     try {
@@ -52,20 +48,10 @@ const resumeContent = computed(() => {
 });
 // 消息内容
 const content = computed(() => {
-  // 简历模式
-  if (currentType === "resume") {
-    // 返回分析结果
-    return resumeContent.value.analysis;
-  }
-  // 普通模式
-  return props.msg.content;
+  // 返回简历分析结果
+  return resumeContent.value.analysis;
 });
-const isResumeMode = computed(() => currentType === "resume");
-const resumeShow = computed(
-  () =>
-    // 非简历模式直接展示；简历模式需请求成功
-    !isResumeMode.value || props.msg.requestStatus === "success",
-);
+const resumeShow = computed(() => props.msg.requestStatus === "success");
 // AI 加载动画序列：文字逐字 + 三个圆点，统一按顺序接力跳动
 const loadingItems = [..."生成中", "", "", ""];
 </script>
@@ -86,14 +72,6 @@ const loadingItems = [..."生成中", "", "", ""];
             }}</time>
           </div>
         </div>
-
-        <!-- 思考过程切换 (美化后的胶囊风格) -->
-        <ToggleButton
-          v-if="msg.thought && !isResumeMode"
-          :label="msg.content ? '已完成思考' : '思考中'"
-          :collapsed="msg.thoughtCollapsed"
-          @toggle="emit('updateCollapsedStatus', index, 'thought')"
-        />
 
         <!-- 回复内容切换 (美化后的胶囊风格) -->
         <ToggleButton
@@ -134,20 +112,6 @@ const loadingItems = [..."生成中", "", "", ""];
       >
         生成失败，点击重试!
       </div>
-      <!-- 思考过程内容 -->
-      <div
-        v-if="msg.thought && !msg.thoughtCollapsed && !isResumeMode"
-        class="border-sf-b/10 relative border px-4 text-[13.5px] leading-relaxed text-sf-text-3/90"
-      >
-        <div class="absolute top-0 left-0 h-full w-1 bg-sf-theme/20"></div>
-        <MdPreview
-          :modelValue="msg.thought"
-          :theme="theme"
-          editorId="thought-preview"
-          class="bg-transparent! p-0! italic"
-        />
-        <div class="mt-3" v-if="msg.content">已完成</div>
-      </div>
       <!-- 正式回复内容 -->
       <div
         class="relative w-full min-w-0"
@@ -161,7 +125,7 @@ const loadingItems = [..."生成中", "", "", ""];
           class="inline-block max-w-full min-w-0 overflow-hidden bg-transparent! p-0! align-bottom text-[14px] leading-relaxed text-sf-text"
           :class="{ 'typing-active': msg.typing }"
         />
-        <div v-if="currentType === 'resume'" class="mt-2 flex flex-col gap-2">
+        <div class="mt-2 flex flex-col gap-2">
           <div
             v-for="(item, index) in resumeContent.followQuestions"
             :key="index"

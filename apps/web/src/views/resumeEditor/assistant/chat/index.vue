@@ -17,13 +17,6 @@ const { createDefaultMessage } = aiStore;
 const { thinkMode } = storeToRefs(aiStore);
 const applyDiff = inject("applyDiff");
 
-const { type } = defineProps({
-  type: {
-    type: String,
-    default: "default",
-  },
-});
-provide("type", type);
 const chat = defineModel("chat", {
   required: true,
 });
@@ -125,14 +118,11 @@ const handleAIResponse = async () => {
       role: m.role,
       content: m.content,
     }));
-    // 属于简历项目
-    if (type === "resume") {
-      // 拼接 prompt 和 content 为一条消息
-      const prompt = `data: ${JSON.stringify(currentData.value)}
+    // 拼接简历数据与用户内容
+    const prompt = `data: ${JSON.stringify(currentData.value)}
 
-      `;
-      messages.at(-1).content = prompt + messages.at(-1).content;
-    }
+    `;
+    messages.at(-1).content = prompt + messages.at(-1).content;
     // 先添加一条空的助手消息，用于展示打字中状态和流式内容
     addMessage({
       role: "assistant",
@@ -156,8 +146,8 @@ const handleAIResponse = async () => {
       },
       debug: false,
       stream: true, // 开启流式响应
-      // 简历模式下，需要解析 JSON 字符串
-      isJson: type === "resume",
+      // 解析简历分析结果 JSON
+      isJson: true,
       // 流式事件回调
       onEvent: (type, data) => {
         if (type === "reasoning") {

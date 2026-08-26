@@ -44,7 +44,7 @@ function onRequestComplete(msg) {
         <Score v-if="currentView === 'score'" />
         <JdInput v-else-if="currentView === 'jd'" />
       </div>
-      <Chat :chat="chat" type="resume" @request-complete="onRequestComplete">
+      <Chat :chat="chat" @request-complete="onRequestComplete">
         <template #empty>
           <EmptyState @switch-mode="switchMode" />
         </template>
