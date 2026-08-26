@@ -33,11 +33,11 @@ provide("bg", "bg-sf-bg");
     <SfTab
       :list="menuList"
       v-model:index="activeIndex"
-      boxClass="border border-sf-b bg-sf-primary"
+      boxClass="border border-sf-b bg-sf-primary rounded-2xl"
       class="mb-3"
     />
     <div
-      class="flex min-h-0 w-full flex-1 flex-col rounded-xl border border-sf-b bg-sf-primary py-3 text-sf-base"
+      class="flex min-h-0 w-full flex-1 flex-col rounded-3xl border border-sf-b bg-sf-primary py-3 text-sf-base"
     >
       <SfScrollbar>
         <KeepAlive>
