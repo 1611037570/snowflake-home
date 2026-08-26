@@ -21,14 +21,20 @@ const { system } = storeToRefs(resumeStore);
       <SfSetBox>
         <SfSetItem
           title="工具栏常驻"
-          info="开启后，工具栏会常驻在页面顶部，不随内容滚动"
+          info="开启后，预览、AI工具栏会常驻在顶部"
           v-model="system.toolbarAlwaysVisible"
           type="switch"
         />
         <SfSetItem
-          title="显示进度条"
-          info="开启后，显示进度条"
+          title="简历完成进度"
+          info="开启后，右侧会显示简历完成进度"
           v-model="system.showProgress"
+          type="switch"
+        />
+        <SfSetItem
+          title="简历页码"
+          info="开启后，简历底部会显示页码"
+          v-model="system.showPageNumber"
           type="switch"
         />
       </SfSetBox>
