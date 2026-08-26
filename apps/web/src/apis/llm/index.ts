@@ -4,7 +4,6 @@ import { useAiStore } from "@/stores";
 
 const snowflakeConfig = {
   baseUrl: snowflake.baseUrl,
-  path: snowflake.path,
   getApiKey: () => {
     return "";
   },
