@@ -35,7 +35,9 @@ const handleBack = () => {
 </script>
 
 <template>
-  <header class="flex h-12 items-center justify-between border-b border-sf-b bg-sf-primary px-3">
+  <header
+    class="flex h-12 items-center justify-between border-b border-sf-b bg-sf-primary pr-6 pl-3"
+  >
     <!-- 左侧占位 -->
     <div class="flex flex-1 items-center gap-2">
       <div
