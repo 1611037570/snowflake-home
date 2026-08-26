@@ -11,6 +11,7 @@ import { useResumeTheme } from "./useResumeTheme";
 import { usePdfExport } from "../usePdfExport";
 import { useResumeStore } from "@/stores";
 import eventBus from "@/utils/modules/eventBus";
+import { useImageExport } from "../useImageExport";
 const resumeStore = useResumeStore();
 const { selectedModule } = storeToRefs(resumeStore);
 
@@ -34,15 +35,23 @@ const isThumb = computed(() => props.mode === "thumb");
 // 只读模式：不渲染模块操作按钮插槽
 const isReadonly = computed(() => props.mode !== "editor");
 
-// 根元素 ref：导出 PDF 时限定为当前实例的分页元素，避免误选其他 ResumePages 实例的页面
+// 根元素 ref：导出时限定为当前实例的分页元素，避免误选其他 ResumePages 实例的页面
 const rootRef = ref(null);
-// 仅编辑器模式注册全局 PDF 导出事件（缩略图/全屏预览不注册）
+const measureRef = ref(null);
+// 仅编辑器模式注册全局导出事件（缩略图/全屏预览不注册）
 const { printPDF } = usePdfExport(rootRef);
+const { printImage } = useImageExport(measureRef);
 onMounted(() => {
-  if (!isReadonly.value) eventBus.on("resume-print-pdf", printPDF);
+  if (!isReadonly.value) {
+    eventBus.on("resume-print-pdf", printPDF);
+    eventBus.on("resume-print-image", printImage);
+  }
 });
 onUnmounted(() => {
-  if (!isReadonly.value) eventBus.off("resume-print-pdf", printPDF);
+  if (!isReadonly.value) {
+    eventBus.off("resume-print-pdf", printPDF);
+    eventBus.off("resume-print-image", printImage);
+  }
 });
 
 // 实例唯一前缀，避免多实例分页裁剪样式互相干扰
@@ -59,7 +68,6 @@ const themeStyles = useResumeTheme(ui);
 const { paddingValue, fontValue, lineHeightValue } = themeStyles;
 
 // ---------- 分页（测量 + 分页算法 + 裁剪样式）----------
-const measureRef = ref(null);
 const allModules = computed(() => {
   const fixedModules = props.item.fixedConfig?.fields || [];
   const configModules = props.item.config?.fields || [];
