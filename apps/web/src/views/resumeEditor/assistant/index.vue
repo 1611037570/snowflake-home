@@ -33,7 +33,7 @@ function onRequestComplete(msg) {
 <template>
   <div class="box-border h-full w-[400px] py-3 pr-3">
     <div
-      class="group relative flex h-full flex-col rounded-xl border border-sf-b bg-sf-primary p-2"
+      class="group relative flex h-full flex-col rounded-3xl border border-sf-b bg-sf-primary p-2"
     >
       <!-- 顶部操作栏 -->
       <div

@@ -1,6 +1,6 @@
 <template>
   <div class="flex w-full flex-col">
-    <div class="relative h-full overflow-hidden rounded-2xl bg-sf-bg p-1" :class="boxClass">
+    <div class="relative h-full overflow-hidden rounded-3xl bg-sf-bg p-1" :class="boxClass">
       <!-- Tab列表容器 -->
       <div class="relative z-10 flex h-full w-full">
         <!-- 循环渲染Tab项 -->
