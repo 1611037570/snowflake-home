@@ -1,8 +1,8 @@
 <template>
-  <div style="" class="w-full rounded-xl" :class="bg">
+  <div style="" class="w-full rounded-2xl" :class="bg">
     <Toolbar :editor="editorRef" :defaultConfig="toolbarConfig" :mode="mode" />
     <Editor
-      class="rounded-b-xl"
+      class="rounded-b-2xl"
       style="overflow-y: hidden"
       :style="{ height: height }"
       v-model="valueHtml"
@@ -68,7 +68,7 @@ const handleCreated = (editor) => {
   padding: 0 !important;
 }
 :deep(.w-e-bar-item button) {
-  border-radius: 8px !important;
+  border-radius: 10px !important;
 }
 :deep(.w-e-bar-item .active) {
   background-color: var(--color-sf-theme-2) !important;

@@ -104,7 +104,7 @@ const handleCancel = () => {
       v-for="item in moduleOptions"
       :key="item.name"
       type="button"
-      class="group flex h-10 cursor-pointer items-center justify-center gap-2 rounded-lg border border-sf-b bg-sf-bg px-3 text-sm font-medium text-sf-text-2 transition-all duration-200 hover:bg-sf-theme"
+      class="group flex h-10 cursor-pointer items-center justify-center gap-2 rounded-3xl border border-sf-b bg-sf-bg px-3 text-sm font-medium text-sf-text-2 transition-all duration-200 hover:bg-sf-theme"
       @click="handleAdd(item)"
     >
       <SfIcon icon="ic:round-add" size="5" class="text-sf-text-3 group-hover:text-sf-primary" />

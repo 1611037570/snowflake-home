@@ -56,16 +56,18 @@ const handleBack = () => {
     <div class="flex items-center gap-5">
       <DownloadButton />
       <!-- 布局切换器 -->
-      <div class="flex items-center gap-1 rounded-xl border border-sf-b bg-sf-page p-1">
+      <div class="flex items-center gap-1 rounded-3xl border border-sf-b bg-sf-page p-1">
         <SfTooltip v-for="item in layoutList" :key="item.value" :content="item.name">
-          <button
-            type="button"
-            class="flex-c h-7 w-7 rounded-lg text-sf-text transition-all"
-            :class="[layout === item.value ? 'bg-sf-theme-2 text-sf-theme' : 'hover:bg-sf-theme-3']"
+          <SfIcon
+            :icon="item.icon"
+            size="5"
+            boxSize="7"
+            class="rounded-full"
+            :class="[
+              layout === item.value ? 'bg-sf-theme-2 text-sf-theme-text' : 'hover:bg-sf-theme-3',
+            ]"
             @click="handleLayoutClick(item)"
-          >
-            <SfIcon :icon="item.icon" size="5.5" />
-          </button>
+          />
         </SfTooltip>
       </div>
 
