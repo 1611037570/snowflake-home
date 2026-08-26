@@ -1,7 +1,7 @@
 import { useResumeStore } from "@/stores";
 import dayjs from "dayjs";
 import { storeToRefs } from "pinia";
-import { computed } from "vue";
+import { computed, toValue, type MaybeRefOrGetter } from "vue";
 
 const resumeStore = useResumeStore();
 const { currentData } = storeToRefs(resumeStore);
@@ -140,4 +140,43 @@ export const getAllScores = (data: any) => {
     totalFull,
     progress,
   };
+};
+
+// 计算各简历模块进度及总进度
+export const useProgress = (
+  data: MaybeRefOrGetter<Record<string, any> | null | undefined>,
+) => {
+  return computed(() => {
+    const source = toValue(data) || {};
+    const list = Object.keys(source).map((key) => {
+      // 用户信息直接使用根节点，其余模块取一次 data 字段
+      const moduleData = key === "user" ? source[key] : source[key]?.data;
+      const progress = Array.isArray(moduleData)
+        ? calculateListScore(moduleData)
+        : typeof moduleData === "string"
+          ? moduleData.trim()
+            ? 10
+            : 0
+          : calculateScore(moduleData);
+
+      return {
+        key,
+        progress,
+        allProgress: 10,
+      };
+    });
+
+    const totalScore = list.reduce((total, item) => total + item.progress, 0);
+    const totalFull = list.reduce((total, item) => total + item.allProgress, 0);
+    const totalProgress = totalFull
+      ? Number(((totalScore / totalFull) * 100).toFixed(2))
+      : 0;
+
+    return {
+      list,
+      totalScore,
+      totalFull,
+      progress: totalProgress,
+    };
+  });
 };
