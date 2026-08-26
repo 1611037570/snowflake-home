@@ -97,7 +97,7 @@ export const useChatRequest = ({
       lastMsg = currentMessages.value[currentMessages.value.length - 1] ?? null;
       if (lastMsg) {
         timers.thinking = setInterval(() => {
-          if (isCurrentRequest()) lastMsg!.thinkingTime += 1;
+          if (isCurrentRequest()) lastMsg!.thoughtTime += 1;
         }, 1000);
       }
 
@@ -134,7 +134,7 @@ export const useChatRequest = ({
               if (timers.thinking) clearInterval(timers.thinking);
               timers.thinking = null;
               timers.reply = setInterval(() => {
-                if (isCurrentRequest()) lastMsg!.replyTime += 1;
+                if (isCurrentRequest()) lastMsg!.contentTime += 1;
               }, 1000);
             }
             // 首次收到内容时折叠思考区域

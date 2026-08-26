@@ -30,6 +30,10 @@ export type Message = {
   thoughtCollapsed: boolean;
   // 总token数
   total_tokens: number;
+  // 思考耗时（秒）
+  thoughtTime: number;
+  // 内容耗时（秒）
+  contentTime: number;
   // 内容是否折叠
   contentCollapsed: boolean;
   // 请求状态
@@ -105,6 +109,8 @@ export const useAiStore = defineStore(
         contentCollapsed: false,
         thoughtCollapsed: false,
         total_tokens: 0,
+        thoughtTime: 0,
+        contentTime: 0,
         thought: "",
         content: "",
         typing: false,
