@@ -45,7 +45,7 @@ const openFullscreen = () => fullscreenPreviewRef.value?.open();
     <div class="absolute inset-x-0 bottom-0 z-10 flex items-center justify-center gap-2 pb-6">
       <button
         type="button"
-        class="cursor-pointer! rounded-xl bg-sf-theme px-4 py-2 text-sm font-bold text-white opacity-0 transition-all duration-300 group-hover:opacity-100 hover:-translate-y-1"
+        class="cursor-pointer! rounded-3xl bg-sf-theme px-4 py-2 text-sm font-bold text-white opacity-0 transition-all duration-300 group-hover:opacity-100 hover:-translate-y-1"
         @click="emit('select')"
       >
         使用模板
