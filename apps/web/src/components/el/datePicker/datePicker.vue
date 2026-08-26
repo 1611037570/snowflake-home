@@ -2,7 +2,7 @@
   <Component
     v-model="value"
     :is="h(ElDatePicker, { ...$attrs, ref: changeRef }, $slots)"
-    class="w-full rounded-xl border-none text-sf-text"
+    class="w-full rounded-3xl border-none text-sf-text"
     :class="bg"
   />
 </template>
