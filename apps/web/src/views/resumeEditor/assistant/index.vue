@@ -3,13 +3,16 @@ import { ref } from "vue";
 import JdInput from "./JdInput.vue";
 import Score from "./Score.vue";
 import Setting from "./setting/index.vue";
-import { useAiStore } from "@/stores/modules/ai";
+import { useAiStore, useResumeStore } from "@/stores";
+import { storeToRefs } from "pinia";
 import Chat from "./chat/index.vue";
 import { defaultMessage } from "./prompt.ts";
 
 // AI 对话
 const aiStore = useAiStore();
+const resumeStore = useResumeStore();
 const { createDefaultChat } = aiStore;
+const { toolbarAlwaysVisible } = storeToRefs(resumeStore);
 
 // 默认对话
 const chat = ref(createDefaultChat(defaultMessage));
@@ -17,9 +20,8 @@ const chat = ref(createDefaultChat(defaultMessage));
 // 当前视图：score | jd
 const currentView = ref("score");
 
-function switchMode(type) {
+function createNewChat() {
   chat.value = createDefaultChat(defaultMessage);
-  currentView.value = type;
 }
 
 // 请求完成回调，打印数据方便调试
@@ -30,10 +32,31 @@ function onRequestComplete(msg) {
 
 <template>
   <div class="box-border h-full w-[400px] py-3 pr-3">
-    <div class="relative flex h-full flex-col rounded-xl border border-sf-b bg-sf-primary">
+    <div
+      class="group relative flex h-full flex-col rounded-xl border border-sf-b bg-sf-primary p-2"
+    >
       <!-- 顶部操作栏 -->
-      <div class="flex items-center justify-end gap-2 p-3 pb-0">
-        <Setting />
+      <div
+        class="absolute top-4 left-1/2 z-10 flex -translate-x-1/2 gap-1 rounded-full border border-sf-b bg-sf-primary p-2 transition-all duration-200 select-none"
+        :class="
+          toolbarAlwaysVisible
+            ? 'translate-y-0 opacity-100'
+            : '-translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100'
+        "
+      >
+        <SfTooltip content="新建话题">
+          <SfIcon
+            @click="createNewChat"
+            icon="ph:plus-bold"
+            size="5"
+            boxSize="7"
+            class="rounded-full text-sf-text-2 hover:bg-sf-theme-2 hover:text-sf-theme-text"
+          />
+        </SfTooltip>
+
+        <SfTooltip content="助手设置">
+          <Setting />
+        </SfTooltip>
       </div>
       <div class="flex-1 overflow-y-auto">
         <Score v-if="currentView === 'score'" />

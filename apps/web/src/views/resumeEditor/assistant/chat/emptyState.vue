@@ -19,7 +19,9 @@ const moduleNames = computed(() => {
 </script>
 
 <template>
-  <div class="flex h-full flex-col items-center justify-center gap-5 px-5 text-center">
+  <div
+    class="flex h-[400px] w-full flex-1 flex-col items-center justify-center gap-5 px-5 text-center"
+  >
     <div class="flex-c gap-3 text-2xl font-bold text-sf-base">
       你好，我是 <span class="text-sf-theme">{{ $t("router.resumeAI") }}</span>
       <SfIcon icon="lucide:sparkles" class="text-sf-theme" size="6" />

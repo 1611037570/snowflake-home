@@ -1,7 +1,7 @@
 <script setup>
 import { ref } from "vue";
 import { storeToRefs } from "pinia";
-import { useAiStore } from "@/stores/modules/ai";
+import { useAiStore, useResumeStore } from "@/stores";
 import DefaultTab from "./defaultTab.vue";
 import CustomTab from "./customTab.vue";
 
@@ -11,6 +11,8 @@ const drawerVisible = ref(false);
 // 使用 ai store
 const aiStore = useAiStore();
 const { activeModel } = storeToRefs(aiStore);
+const resumeStore = useResumeStore();
+const { toolbarAlwaysVisible } = storeToRefs(resumeStore);
 
 const list = [
   {
@@ -28,12 +30,15 @@ const currentactiveModel = ref(activeModel.value);
 
 <template>
   <!-- 设置按钮 -->
-  <div
-    class="flex-c h-9 w-16 cursor-pointer rounded-lg border border-sf-b/50 bg-sf-primary text-sm text-sf-text hover:border-sf-theme"
-    @click="drawerVisible = true"
-  >
-    设置
-  </div>
+  <SfTooltip content="助手设置">
+    <SfIcon
+      icon="iconamoon:settings-fill"
+      size="5"
+      boxSize="7"
+      class="rounded-full text-sf-text-2 hover:bg-sf-theme-2 hover:text-sf-theme-text"
+      @click="drawerVisible = true"
+    />
+  </SfTooltip>
 
   <!-- 设置弹窗 -->
   <SfModal v-model="drawerVisible" title="助手设置">
@@ -48,6 +53,10 @@ const currentactiveModel = ref(activeModel.value);
             <CustomTab />
           </SfTabPane>
         </SfTab>
+      </div>
+      <div class="flex items-center justify-between rounded-xl bg-sf-bg-2 px-3 py-2">
+        <span class="text-sm text-sf-text">工具栏常驻</span>
+        <el-switch v-model="toolbarAlwaysVisible" />
       </div>
     </div>
   </SfModal>
