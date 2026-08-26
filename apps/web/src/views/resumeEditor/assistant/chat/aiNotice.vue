@@ -7,15 +7,15 @@ const visible = ref(false);
 <template>
   <div class="mt-3 flex items-center justify-center gap-1.5 text-[11px] text-sf-text-3">
     <SfIcon icon="ph:info-duotone" size="3" />
-    由
+    内容由
     <button
       type="button"
       class="flex cursor-pointer items-center transition-colors hover:text-sf-theme"
       @click="visible = true"
     >
-      {{ $t("router.resumeAI") }}
+      「{{ $t("router.resumeAI") }}」
     </button>
-    <span>生成，内容仅供参考，保持独立思考。</span>
+    <span>生成，仅供参考，请保持独立思考。</span>
 
     <SfModal v-model="visible" :title="$t('router.resumeAI')">
       <div class="flex w-[350px] flex-col">

@@ -51,7 +51,7 @@ export const ICON_LIST: Record<string, IconItem> = {
   },
   "pajamas:todo-done": { icon: "pajamas:todo-done" },
   "ic:round-add": { icon: "ic:round-add" },
-  "iconamoon:settings-fill": { icon: "iconamoon:settings-fill" },
+  "iconamoon:settings-fill": { icon: "iconamoon:settings-fill", name: "设置" },
   "mdi:fish": { icon: "mdi:fish" },
   "lucide:refresh-cw": { icon: "lucide:refresh-cw" },
   "solar:heart-bold": { icon: "solar:heart-bold" },
