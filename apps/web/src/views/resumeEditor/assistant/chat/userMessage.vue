@@ -30,11 +30,6 @@ const emit = defineEmits(["recall", "updateCollapsedStatus"]);
       />
       <div class="flex flex-col items-end gap-0.5 leading-tight">
         <span class="text-[12px] font-black tracking-wider text-sf-text">我</span>
-        <div class="flex flex-row-reverse items-center gap-1">
-          <time v-if="msg.time" class="text-[11px] font-bold tabular-nums opacity-40">{{
-            msg.time
-          }}</time>
-        </div>
       </div>
     </header>
 
