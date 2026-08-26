@@ -8,7 +8,7 @@ import Icon from "../../components/icon.vue";
 const drawerVisible = ref(false);
 
 const resumeStore = useResumeStore();
-const { toolbarAlwaysVisible } = storeToRefs(resumeStore);
+const { system } = storeToRefs(resumeStore);
 </script>
 
 <template>
@@ -18,10 +18,20 @@ const { toolbarAlwaysVisible } = storeToRefs(resumeStore);
   <!-- 设置弹窗 -->
   <SfModal v-model="drawerVisible" title="系统设置">
     <div class="flex w-[400px] flex-col gap-5 p-4">
-      <div class="flex items-center justify-between rounded-xl bg-sf-bg-2 px-3 py-2">
-        <span class="text-sm text-sf-text">工具栏常驻</span>
-        <el-switch v-model="toolbarAlwaysVisible" />
-      </div>
+      <SfSetBox>
+        <SfSetItem
+          title="工具栏常驻"
+          info="开启后，工具栏会常驻在页面顶部，不随内容滚动"
+          v-model="system.toolbarAlwaysVisible"
+          type="switch"
+        />
+        <SfSetItem
+          title="显示进度条"
+          info="开启后，显示进度条"
+          v-model="system.showProgress"
+          type="switch"
+        />
+      </SfSetBox>
     </div>
   </SfModal>
 </template>

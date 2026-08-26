@@ -66,13 +66,6 @@ export const useResumeStore = defineStore(
     const isGenerating = ref(false);
     // 系统配置
     const system = ref(structuredClone(DEFAULT_SYSTEM));
-    // 兼容现有组件使用的固定工具栏配置
-    const toolbarAlwaysVisible = computed({
-      get: () => system.value.toolbarAlwaysVisible,
-      set: (value) => {
-        system.value.toolbarAlwaysVisible = value;
-      },
-    });
     // 初始化状态
     function initResumeStatus() {
       // 重置打印状态
@@ -208,7 +201,6 @@ export const useResumeStore = defineStore(
       currentUI,
       currentUsage,
       isPrinting,
-      toolbarAlwaysVisible,
       selectedModule,
       pushSelectedModule,
       addResume,
