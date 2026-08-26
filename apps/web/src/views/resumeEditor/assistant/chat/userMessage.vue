@@ -62,6 +62,6 @@ const emit = defineEmits(["recall", "updateCollapsedStatus"]);
 
 /* 操作按钮公共样式 */
 .action-btn {
-  @apply flex h-7 w-7 items-center justify-center rounded-lg text-sf-text-3 transition-colors hover:bg-sf-bg-3 hover:text-sf-theme;
+  @apply flex h-7 w-7 items-center justify-center rounded-lg text-sf-text transition-colors hover:bg-sf-bg-3;
 }
 </style>
