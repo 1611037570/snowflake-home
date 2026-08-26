@@ -4,6 +4,7 @@ import { storeToRefs } from "pinia";
 import { useAiStore } from "@/stores";
 import DefaultTab from "./defaultTab.vue";
 import CustomTab from "./customTab.vue";
+import Icon from "../components/icon.vue";
 
 // 设置弹窗可见性
 const drawerVisible = ref(false);
@@ -27,16 +28,7 @@ const currentactiveModel = ref(activeModel.value);
 </script>
 
 <template>
-  <!-- 设置按钮 -->
-  <SfTooltip content="助手设置">
-    <SfIcon
-      icon="iconamoon:settings-fill"
-      size="5"
-      boxSize="7"
-      class="rounded-full text-sf-text-2 hover:bg-sf-theme-2 hover:text-sf-theme-text"
-      @click="drawerVisible = true"
-    />
-  </SfTooltip>
+  <Icon content="助手设置" icon="iconamoon:settings-fill" @click="drawerVisible = true" />
 
   <!-- 设置弹窗 -->
   <SfModal v-model="drawerVisible" title="助手设置">
