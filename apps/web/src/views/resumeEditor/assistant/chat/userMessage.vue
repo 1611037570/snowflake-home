@@ -25,6 +25,7 @@ const emit = defineEmits(["recall", "updateCollapsedStatus"]);
         v-if="msg.content"
         label="我的消息"
         :collapsed="msg.contentCollapsed"
+        icon-left
         gap="gap-1"
         @toggle="emit('updateCollapsedStatus', index, 'content')"
       />

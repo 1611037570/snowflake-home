@@ -10,10 +10,10 @@ defineProps({
     type: Boolean,
     required: true,
   },
-  // 图标与文字间距
-  gap: {
-    type: String,
-    default: "gap-1.5",
+  // 用户消息将折叠图标放在文字左侧并反向旋转
+  iconLeft: {
+    type: Boolean,
+    default: false,
   },
 });
 
@@ -22,9 +22,9 @@ const emit = defineEmits(["toggle"]);
 
 <template>
   <!-- 胶囊折叠切换按钮 -->
-  <button
-    class="flex cursor-pointer items-center rounded-full px-2 py-0.5 text-sf font-bold transition-all"
-    :class="[gap, !collapsed ? ' bg-sf-theme-2 text-sf-theme-text' : ' bg-sf-bg-2 text-sf-text-3']"
+  <div
+    class="flex cursor-pointer items-center gap-1.5 text-[11px] transition-all"
+    :class="[collapsed ? 'text-sf-text-3 hover:text-sf-theme-2' : ' text-sf-theme']"
     @click="emit('toggle')"
   >
     <span class="tracking-tight">{{ label }}</span>
@@ -32,7 +32,11 @@ const emit = defineEmits(["toggle"]);
       icon="ph:caret-down-bold"
       size="2"
       class="transition-transform duration-300"
-      :class="{ '-rotate-180 opacity-80': !collapsed }"
+      :class="{
+        'order-first': iconLeft,
+        '-rotate-90': collapsed && !iconLeft,
+        'rotate-90': collapsed && iconLeft,
+      }"
     />
-  </button>
+  </div>
 </template>
