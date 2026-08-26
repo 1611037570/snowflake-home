@@ -4,6 +4,8 @@ import Ai from "./ai/index.vue";
 import System from "./system/index.vue";
 import Icon from "./components/icon.vue";
 import { useRouter } from "vue-router";
+import ImportResume from "./modules/importResume.vue";
+import ExportResume from "./modules/exportResume.vue";
 const router = useRouter();
 function goHome() {
   router.push("/resume");
@@ -19,6 +21,8 @@ function goGitHub() {
       class="flex flex-col items-center gap-2 rounded-3xl border border-sf-b bg-sf-transparent p-2 text-sf-text-3"
     >
       <System />
+      <ImportResume />
+      <ExportResume />
       <Ai />
       <Icon icon="akar-icons:home-alt1" size="5" content="返回首页" @click="goHome" />
       <Icon icon="simple-icons:github" size="5" content="GitHub" @click="goGitHub" />
