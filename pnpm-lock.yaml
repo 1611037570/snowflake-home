@@ -6,15 +6,9 @@ settings:
 
 catalogs:
   default:
-    eslint:
-      specifier: 9.37.0
-      version: 9.37.0
     prettier:
       specifier: 3.6.2
       version: 3.6.2
-    typescript:
-      specifier: 5.9.3
-      version: 5.9.3
 
 importers:
 
@@ -139,7 +133,7 @@ importers:
         specifier: ^11.0.0
         version: 11.0.0
       eslint:
-        specifier: 'catalog:'
+        specifier: 9.37.0
         version: 9.37.0(jiti@2.7.0)
       eslint-config-prettier:
         specifier: ^10.0.1
@@ -175,7 +169,7 @@ importers:
         specifier: ^4.2.0
         version: 4.2.0
       typescript:
-        specifier: 'catalog:'
+        specifier: 5.9.3
         version: 5.9.3
       typescript-eslint:
         specifier: ^8.20.0
@@ -213,6 +207,9 @@ importers:
       dayjs:
         specifier: ^1.11.18
         version: 1.11.21
+      dompurify:
+        specifier: 3.4.13
+        version: 3.4.13
       echarts:
         specifier: ^6.0.0
         version: 6.1.0
@@ -311,7 +308,7 @@ importers:
         specifier: 0.8.1
         version: 0.8.1(typescript@5.9.3)(vue@3.5.22(typescript@5.9.3))
       eslint:
-        specifier: 'catalog:'
+        specifier: 9.37.0
         version: 9.37.0(jiti@2.6.1)
       eslint-plugin-oxlint:
         specifier: 1.11.2
@@ -350,7 +347,7 @@ importers:
         specifier: 4.1.17
         version: 4.1.17
       typescript:
-        specifier: 'catalog:'
+        specifier: 5.9.3
         version: 5.9.3
       unplugin-auto-import:
         specifier: 20.2.0
@@ -11263,7 +11260,6 @@ snapshots:
   dompurify@3.4.13:
     optionalDependencies:
       '@types/trusted-types': 2.0.7
-    optional: true
 
   domutils@2.8.0:
     dependencies:

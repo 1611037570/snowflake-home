@@ -1,5 +1,6 @@
 <script setup>
 import { computed, inject } from "vue";
+import DOMPurify from "dompurify";
 
 const props = defineProps({
   content: {
@@ -11,11 +12,20 @@ const props = defineProps({
 const fontValue = inject("fontValue");
 const lineHeightValue = inject("lineHeightValue");
 
+// 仅保留简历预览所需标签和安全链接协议
+const sanitizeConfig = {
+  ALLOWED_TAGS: ["p", "br", "strong", "b", "em", "i", "u", "ul", "ol", "li", "a", "span"],
+  ALLOWED_ATTR: ["href", "target", "rel"],
+  ALLOWED_URI_REGEXP: /^(?:(?:https?|mailto):)/i,
+};
+
+const sanitizedContent = computed(() => DOMPurify.sanitize(props.content, sanitizeConfig));
+
 const hasContent = computed(() => {
-  if (!props.content) {
+  if (!sanitizedContent.value) {
     return false;
   }
-  if (props.content == "<p><br></p>") {
+  if (sanitizedContent.value == "<p><br></p>") {
     return false;
   }
   return true;
@@ -23,9 +33,9 @@ const hasContent = computed(() => {
 
 // 将内容按块拆分，以便分页逻辑可以更细粒度地处理
 const splitBlocks = computed(() => {
-  if (!props.content) return [];
+  if (!sanitizedContent.value) return [];
   const template = document.createElement("template");
-  template.innerHTML = props.content;
+  template.innerHTML = sanitizedContent.value;
   return Array.from(template.content.childNodes)
     .map((node) => {
       if (node.nodeType === 3 && node.textContent.trim()) {

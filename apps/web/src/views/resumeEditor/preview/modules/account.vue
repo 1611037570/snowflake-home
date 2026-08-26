@@ -10,6 +10,19 @@ const lineHeightValue = inject("lineHeightValue");
 
 // 代理数据解包访问数组
 const account = computed(() => previewData.value?.account?.data || []);
+
+// 仅允许安全的外部链接协议
+const safeUrl = (value) => {
+  if (!value) return "";
+  try {
+    const url = new URL(String(value).trim());
+    return ["http:", "https:", "mailto:"].includes(url.protocol.toLowerCase())
+      ? url.href
+      : "";
+  } catch {
+    return "";
+  }
+};
 </script>
 
 <template>
@@ -23,7 +36,12 @@ const account = computed(() => previewData.value?.account?.data || []);
     >
       <Text v-model="item.name" />
       <span v-if="item.name?.value && item.url?.value" class="pr-1">：</span>
-      <a :href="item.url?.value" target="_blank" class="font-medium hover:underline">
+      <a
+        :href="safeUrl(item.url?.value)"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="font-medium hover:underline"
+      >
         <Text v-model="item.url" />
       </a>
     </div>
