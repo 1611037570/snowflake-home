@@ -47,7 +47,6 @@ export const useResumeTheme = (ui: ComputedRef<ResumeUi>): ResumeTheme => {
   const themeColor = computed(() => ui.value.color || ui.value.themeColor);
   const themeTemplate = computed(() => ui.value.themeTemplate);
 
-  provide("paddingValue", paddingValue);
   provide("fontValue", fontValue);
   provide("lineHeightValue", lineHeightValue);
   provide("themeColor", themeColor);
