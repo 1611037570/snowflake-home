@@ -23,7 +23,7 @@ defineEmits(["onClick"]);
       :icon="icon"
       :size="size"
       boxSize="8"
-      class="rounded-full bg-sf-bg-2 text-sf-text-2 transition-all duration-400 hover:scale-115 hover:bg-sf-theme-2 hover:text-sf-theme-text"
+      class="rounded-full bg-sf-bg-2 text-sf-base transition-all duration-400 hover:scale-115 hover:bg-sf-theme-2 hover:text-sf-theme-text"
       @click="emit('onClick')"
     />
   </SfTooltip>

@@ -3,7 +3,7 @@ import router from "@/routers";
 import { getUUID } from "@/utils";
 import { defineStore } from "pinia";
 import { computed, ref } from "vue";
-import { DEFAULT_RESUME_ITEM, DEFAULT_SYSTEM } from "./defaultConfig";
+import { DEFAULT_MODULE_NAMES, DEFAULT_RESUME_ITEM, DEFAULT_SYSTEM } from "./defaultConfig";
 
 import { merge } from "lodash-es";
 export type ResumeLayout = "list" | "three" | "ai";
