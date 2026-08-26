@@ -26,7 +26,26 @@ const scaleMode = ref("auto");
 const PADDING = 40;
 const MIN_SCALE = 0.5;
 const percent = (value) => `${Math.round(value * 100)}%`;
-const SCALE_LIST = [0.5, 0.7, 0.9, 1].map((value) => ({ value, label: percent(value) }));
+const SCALE_LIST = computed(() => [
+  ...[0.5, 0.7, 0.9, 1].map((value) => {
+    const name = percent(value);
+    const isSelected = scaleMode.value === "manual" && manualScaleText.value === name;
+    return {
+      value,
+      name,
+      // 超出最大缩放比例的项禁用
+      disabled: value > maxScale.value,
+      // 选中项高亮并显示勾选
+      active: isSelected,
+    };
+  }),
+  // 自适应选项
+  {
+    value: "auto",
+    name: "自适应",
+    active: scaleMode.value === "auto",
+  },
+]);
 
 const scale = computed(() => (scaleMode.value === "auto" ? maxScale.value : manualScale.value));
 const transitionScale = useTransition(scale, {
@@ -41,9 +60,6 @@ const isMinScale = computed(() => scale.value <= minScale.value);
 const isMaxScale = computed(() => scale.value >= maxScale.value);
 const manualScaleText = computed(() => percent(manualScale.value));
 
-const isManualScaleSelected = (item) =>
-  scaleMode.value === "manual" && manualScaleText.value === item.label;
-
 const clampScale = (value) => {
   return Math.min(Math.max(value, minScale.value), maxScale.value);
 };
@@ -55,6 +71,16 @@ const setManualScale = (value) => {
 
 const setAutoScale = () => {
   scaleMode.value = "auto";
+};
+
+const handleScaleSelect = (item) => {
+  if (item.value === "auto") {
+    setAutoScale();
+    return;
+  }
+  // 禁用项不响应选择
+  if (item.value > maxScale.value) return;
+  setManualScale(item.value);
 };
 
 const stepScale = (value) => {
@@ -144,45 +170,9 @@ useResizeObserver(contentRef, ([entry]) => {
         >
           {{ scaleLabel }}
           <div
-            class="invisible absolute top-full right-0 mt-2 w-40 origin-top-right -translate-y-1 scale-95 rounded-xl border border-sf-b bg-sf-primary p-1 opacity-0 shadow-xl transition-all duration-150 group-hover/scale-bar:visible group-hover/scale-bar:translate-y-0 group-hover/scale-bar:scale-100 group-hover/scale-bar:opacity-100"
+            class="invisible absolute top-full right-0 mt-2 w-40 origin-top-right -translate-y-1 scale-95 opacity-0 transition-all duration-150 group-hover/scale-bar:visible group-hover/scale-bar:translate-y-0 group-hover/scale-bar:scale-100 group-hover/scale-bar:opacity-100"
           >
-            <div
-              v-for="item in SCALE_LIST"
-              :key="item.value"
-              class="flex h-9 cursor-pointer items-center justify-between rounded-lg px-3 text-sm transition-colors"
-              :class="{
-                'font-medium text-sf-theme': isManualScaleSelected(item),
-                'cursor-not-allowed text-sf-text-3': item.value > maxScale,
-                'text-sf-text hover:bg-sf-bg-2':
-                  item.value <= maxScale && !isManualScaleSelected(item),
-              }"
-              @click="item.value <= maxScale && setManualScale(item.value)"
-            >
-              <span>{{ item.label }}</span>
-              <SfIcon
-                v-if="isManualScaleSelected(item)"
-                icon="lucide:check"
-                size="3"
-                class="text-sf-theme"
-              />
-            </div>
-            <div class="mx-2 my-1 h-px bg-sf-b"></div>
-            <div
-              class="flex h-9 cursor-pointer items-center justify-between rounded-lg px-3 text-sm transition-colors"
-              :class="{
-                'font-medium text-sf-theme': scaleMode === 'auto',
-                'text-sf-text hover:bg-sf-bg-2': scaleMode !== 'auto',
-              }"
-              @click="setAutoScale"
-            >
-              <span>自适应</span>
-              <SfIcon
-                v-if="scaleMode === 'auto'"
-                icon="lucide:check"
-                size="3"
-                class="text-sf-theme"
-              />
-            </div>
+            <SfList :list="SCALE_LIST" :border="false" @onClick="handleScaleSelect"> </SfList>
           </div>
         </div>
         <SfTooltip content="放大">

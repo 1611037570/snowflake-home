@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col rounded-3xl border border-sf-b bg-sf-primary p-1" v-if="list.length">
+  <div class="flex flex-col rounded-3xl border border-sf-b bg-sf-primary p-1.5" v-if="list.length">
     <template v-for="(item, index) in list" :key="index">
       <!-- 分隔线 -->
       <div class="mx-auto my-1 h-[0.5px] w-[95%] bg-sf-bg-3 px-4" v-if="index > 0 && border"></div>
@@ -7,7 +7,7 @@
         v-if="showItem(item)"
         @mousedown="handleClick($event, item, index)"
         :class="[activeClass(item), hoverClass(item)]"
-        class="relative flex h-8 w-full items-center justify-between rounded-3xl px-2"
+        class="relative flex h-8 w-full items-center justify-between rounded-3xl px-3"
       >
         <slot :item="item">
           <div class="flex flex-1 items-center gap-1">
@@ -19,12 +19,9 @@
             </span>
           </div>
         </slot>
-        <div
-          v-if="activeKey && item[activeKey] == activeValue"
-          class="h-1.5 w-1.5 rounded-full bg-sf-theme"
-        ></div>
+        <SfIcon size="4" v-if="item.active" icon="lucide:check" />
         <!-- 右侧图标 -->
-        <SfIcon size="4" :icon="item.rightIcon" class="mr-1" v-if="item.rightIcon" />
+        <SfIcon size="4" :icon="item.rightIcon" v-if="item.rightIcon" />
       </div>
     </template>
   </div>
@@ -86,7 +83,7 @@ function hoverClass(item) {
   // 当item传入disabled属性时
   if (typeof item.disabled == "boolean") {
     // 如果disabled为true，返回空字符串
-    return item.disabled ? "" : className;
+    return item.disabled ? "cursor-not-allowed hover:bg-sf-transparent text-sf-text-3" : className;
   }
   return className;
 }
