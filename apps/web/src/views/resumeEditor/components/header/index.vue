@@ -61,7 +61,7 @@ const handleBack = () => {
             boxSize="7"
             class="rounded-full"
             :class="[
-              layout === item.value ? 'bg-sf-theme-2 text-sf-theme-text' : 'hover:bg-sf-theme-3',
+              layout === item.value ? 'bg-sf-theme text-sf-theme-text' : 'hover:bg-sf-theme-2',
             ]"
             @click="handleLayoutClick(item)"
           />
