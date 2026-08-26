@@ -90,7 +90,7 @@ const { measureDone, pages, moduleClass, getPageStyle } = useResumePages({
   <!-- 隐藏的测量容器：用于 useRowInfo 读取行高；缩略图测量完成后销毁 -->
   <MeasureContent
     v-if="!measureDone"
-    class="fixed -z-10 opacity-0"
+    class="fixed -top-999 -left-999"
     ref="measureRef"
     :style="[paddingValue(), { width: `${RESUME_WIDTH}px` }]"
     :all-modules="allModules"
