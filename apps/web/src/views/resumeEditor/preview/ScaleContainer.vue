@@ -125,7 +125,7 @@ useResizeObserver(contentRef, ([entry]) => {
           : '-translate-y-4 group-hover:translate-y-0 group-hover:opacity-100'
       "
     >
-      <div class="flex items-center gap-1 rounded-full border border-sf-b bg-sf-primary p-2">
+      <div class="flex items-center gap-1 rounded-full border border-sf-b bg-sf-page p-2">
         <SfTooltip content="缩小">
           <SfIcon
             @click="!isMinScale && stepScale(-0.1)"

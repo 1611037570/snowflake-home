@@ -37,7 +37,7 @@ function onRequestComplete(msg) {
     >
       <!-- 顶部操作栏 -->
       <div
-        class="absolute top-4 left-1/2 z-10 flex -translate-x-1/2 gap-1 rounded-full border border-sf-b bg-sf-primary p-2 transition-all duration-200 select-none"
+        class="absolute top-4 left-1/2 z-10 flex -translate-x-1/2 gap-1 rounded-full border border-sf-b bg-sf-page p-2 transition-all duration-200 select-none"
         :class="
           toolbarAlwaysVisible
             ? 'translate-y-0 opacity-100'
