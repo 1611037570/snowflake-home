@@ -38,14 +38,17 @@ const currentactiveModel = ref(activeModel.value);
   <!-- 设置弹窗 -->
   <SfModal v-model="drawerVisible" title="助手设置">
     <div class="flex w-[400px] flex-col gap-5 p-4">
-      <SfTab :list="list" v-model="currentactiveModel">
-        <SfTabPane value="snowflake">
-          <DefaultTab />
-        </SfTabPane>
-        <SfTabPane value="custom">
-          <CustomTab />
-        </SfTabPane>
-      </SfTab>
+      <div>
+        <div class="mb-3">服务商</div>
+        <SfTab :list="list" v-model="currentactiveModel">
+          <SfTabPane value="snowflake">
+            <DefaultTab />
+          </SfTabPane>
+          <SfTabPane value="custom">
+            <CustomTab />
+          </SfTabPane>
+        </SfTab>
+      </div>
     </div>
   </SfModal>
 </template>
