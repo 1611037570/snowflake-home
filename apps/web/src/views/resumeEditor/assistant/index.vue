@@ -1,6 +1,5 @@
 <script setup>
 import { ref } from "vue";
-import { quickActions } from "./data";
 import JdInput from "./JdInput.vue";
 import Score from "./Score.vue";
 import Setting from "./setting/index.vue";
@@ -17,12 +16,9 @@ const chat = ref(createDefaultChat(defaultMessage));
 
 // 当前视图：score | jd
 const currentView = ref("score");
-const activeMode = ref("");
 
 function switchMode(type) {
-  const action = quickActions.find((item) => item.type === type);
   chat.value = createDefaultChat(defaultMessage);
-  activeMode.value = action?.name || "";
   currentView.value = type;
 }
 
