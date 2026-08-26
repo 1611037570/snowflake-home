@@ -40,6 +40,15 @@ const DEFAULT_RESUME_ITEM = {
     createTime: Date.now(),
   },
 };
+// 默认系统配置
+const DEFAULT_SYSTEM = {
+  // 是否展示进度
+  showProgress: true,
+  // 是否展示页码
+  showPageNumber: true,
+  // 是否固定工具栏
+  toolbarAlwaysVisible: false,
+};
 export const useResumeStore = defineStore(
   "resume",
   () => {
@@ -55,8 +64,15 @@ export const useResumeStore = defineStore(
     const isPrinting = ref(false);
     // 是否AI生成中
     const isGenerating = ref(false);
-    // 是否常驻显示编辑器工具栏
-    const toolbarAlwaysVisible = ref(false);
+    // 系统配置
+    const system = ref(structuredClone(DEFAULT_SYSTEM));
+    // 兼容现有组件使用的固定工具栏配置
+    const toolbarAlwaysVisible = computed({
+      get: () => system.value.toolbarAlwaysVisible,
+      set: (value) => {
+        system.value.toolbarAlwaysVisible = value;
+      },
+    });
     // 初始化状态
     function initResumeStatus() {
       // 重置打印状态
@@ -171,7 +187,10 @@ export const useResumeStore = defineStore(
       return merge(structuredClone(DEFAULT_RESUME_ITEM), item);
     };
 
-    const init = () => {};
+    // 合并默认配置，补充新增字段
+    const init = () => {
+      system.value = merge(structuredClone(DEFAULT_SYSTEM), system.value);
+    };
 
     return {
       list,
@@ -180,6 +199,7 @@ export const useResumeStore = defineStore(
       layout,
       isGenerating,
       setGenerating,
+      system,
       initResumeStatus,
       getModel,
       currentData,
@@ -199,7 +219,7 @@ export const useResumeStore = defineStore(
   },
   {
     persist: {
-      pick: ["list", "layout", "toolbarAlwaysVisible"],
+      pick: ["list", "layout", "system"],
     },
   },
 );
