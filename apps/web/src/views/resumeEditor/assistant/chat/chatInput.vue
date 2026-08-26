@@ -2,6 +2,7 @@
 import { computed, onMounted, ref } from "vue";
 import { storeToRefs } from "pinia";
 import { useAiStore } from "@/stores";
+import AiNotice from "./aiNotice.vue";
 
 const aiStore = useAiStore();
 const { thinkMode } = storeToRefs(aiStore);
@@ -158,13 +159,7 @@ onMounted(() => {
         </div>
       </div>
 
-      <!-- 底部免责声明 -->
-      <small
-        class="mt-3 flex items-center justify-center gap-1.5 text-[11px] tracking-wider text-sf-text-3 opacity-60 transition-opacity hover:opacity-100"
-      >
-        <SfIcon icon="ph:info-duotone" size="3" />
-        <span>ai生成仅供参考，请保持独立思考。</span>
-      </small>
+      <AiNotice />
     </div>
   </footer>
 </template>
