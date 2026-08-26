@@ -1,5 +1,9 @@
 <template>
-  <div class="relative w-auto" @mouseenter="handleMouseEnter" @mouseleave="handleMouseLeave">
+  <div
+    class="relative min-w-0 max-w-full break-words"
+    @mouseenter="handleMouseEnter"
+    @mouseleave="handleMouseLeave"
+  >
     <div
       v-show="isHovered"
       class="absolute bottom-full left-0 z-10 mb-1 flex h-7 items-center gap-x-2"

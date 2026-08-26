@@ -35,11 +35,11 @@ const hasEmail = computed(() => !!user.value?.email?.value);
   <div :style="[lineHeightValue(), fontValue()]" class="resume-row" data-module="user">
     <!-- 头部基本信息：modern 风格改为居中布局 -->
     <div
-      class="flex items-center"
+      class="flex flex-wrap items-center"
       :class="{ 'flex-col items-center': themeTemplate === 'modern' }"
       :style="[lineHeightValue(22)]"
     >
-      <h1 class="font-bold tracking-wide" :style="[fontValue(14)]">
+      <h1 class="min-w-0 max-w-full font-bold tracking-wide" :style="[fontValue(14)]">
         <Text v-model="user.name" />
       </h1>
       <!-- modern 风格：姓名下主题色短横线 -->
@@ -49,7 +49,7 @@ const hasEmail = computed(() => !!user.value?.email?.value);
         :style="{ background: themeColor }"
       ></div>
       <div
-        class="flex items-center gap-3"
+        class="flex min-w-0 max-w-full flex-wrap items-center gap-3"
         :class="{ 'ml-0': themeTemplate === 'modern' }"
         :style="[fontValue(2)]"
       >
@@ -67,15 +67,15 @@ const hasEmail = computed(() => !!user.value?.email?.value);
       data-module="user"
       v-if="hasPhone || hasEmail"
     >
-      <div v-if="hasPhone" class="flex items-center">
+      <div v-if="hasPhone" class="flex min-w-0 max-w-full flex-wrap items-center">
         <div class="pr-1">电话：</div>
-        <div class="font-medium">
+        <div class="min-w-0 max-w-full font-medium">
           <Text v-model="user.phone" />
         </div>
       </div>
-      <div v-if="hasEmail" class="flex items-center">
+      <div v-if="hasEmail" class="flex min-w-0 max-w-full flex-wrap items-center">
         <div class="pr-1">邮箱：</div>
-        <div class="font-medium">
+        <div class="min-w-0 max-w-full font-medium">
           <Text v-model="user.email" />
         </div>
       </div>

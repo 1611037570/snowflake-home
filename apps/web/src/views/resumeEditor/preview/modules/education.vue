@@ -32,22 +32,22 @@ const hasField = (item, key) => {
     <!-- 内容区：直接渲染代理数组项，不做 map 拷贝 -->
     <template v-for="(item, index) in education" :key="index">
       <div
-        class="mt-2 flex items-center justify-between"
+        class="mt-2 flex flex-wrap items-center justify-between"
         :style="[lineHeightValue(3)]"
         v-if="item.name?.value || getTime(item.time?.value)"
       >
-        <div class="flex items-baseline gap-4">
+        <div class="flex min-w-0 max-w-full flex-wrap items-baseline gap-4">
           <div class="font-bold" :style="[fontValue(3)]">
             <Text v-model="item.name" />
           </div>
         </div>
-        <div class="flex items-center gap-2">
+        <div class="flex min-w-0 max-w-full flex-wrap items-center gap-2">
           <Text v-model="item.time" :display-value="getTime(item.time?.value)" />
         </div>
       </div>
       <!-- 次信息行：post / education / mode，不创建临时对象，直接基于原字段渲染 -->
       <div
-        class="mt-1 flex items-center gap-2"
+        class="mt-1 flex min-w-0 max-w-full flex-wrap items-center gap-2"
         v-if="hasField(item, 'post') || hasField(item, 'education') || hasField(item, 'mode')"
       >
         <template v-if="hasField(item, 'education')">

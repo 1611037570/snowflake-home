@@ -37,8 +37,8 @@ const list = computed(() => previewData.value?.[props.dataKey]?.data || []);
     <Title :title="title"></Title>
     <!-- 内容区 -->
     <template v-for="(item, index) in list" :key="index">
-      <div class="flex items-center justify-between" :style="[lineHeightValue(3)]">
-        <div class="flex items-center gap-4">
+      <div class="flex flex-wrap items-center justify-between" :style="[lineHeightValue(3)]">
+        <div class="flex min-w-0 max-w-full flex-wrap items-center gap-4">
           <div class="font-bold" :style="[fontValue(3)]">
             <Text v-model="item.name" />
           </div>
@@ -46,7 +46,7 @@ const list = computed(() => previewData.value?.[props.dataKey]?.data || []);
             <Text v-model="item.post" />
           </div>
         </div>
-        <div class="flex items-center">
+        <div class="flex min-w-0 max-w-full flex-wrap items-center">
           <Text v-model="item.time" :display-value="getTime(item.time?.value)" />
         </div>
       </div>
