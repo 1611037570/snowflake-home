@@ -11,7 +11,9 @@ import WelcomeScreen from "./welcomeScreen.vue";
 
 const resumeStore = useResumeStore();
 const { currentData } = storeToRefs(resumeStore);
-const { createDefaultMessage } = useAiStore();
+const aiStore = useAiStore();
+const { createDefaultMessage } = aiStore;
+const { activeModel, customModel } = storeToRefs(aiStore);
 
 const { type } = defineProps({
   type: {
@@ -130,17 +132,20 @@ const handleAIResponse = async () => {
     lastMsg = currentMessages.value[currentMessages.value.length - 1];
     // 思考状态，初始为 false
     let thoughtStatus = false;
-    // 调用豆包大模型流式接口
-    const { sendFn, abortFn } = await getLLM().request({
-      options: {
-        input: messages,
-        model: "deepseek-v4-flash-ga-260731",
-        thinking: {
-          // 根据设置控制深度思考模式
-          // type: thinkMode.value ? "enabled" : "disabled",
-          type: "disabled",
-        }, // 👈 这个就是【深度思考开关】
-      },
+    // 根据供应商契约选择请求消息字段
+    const llm = getLLM();
+    const options = {
+      [llm.provider === "openai" ? "messages" : "input"]: messages,
+      thinking: {
+        // 根据设置控制深度思考模式
+        // type: thinkMode.value ? "enabled" : "disabled",
+        type: "disabled",
+      }, // 👈 这个就是【深度思考开关】
+      ...(activeModel.value === "custom" ? { model: customModel.value?.model } : {}),
+    };
+    // 调用当前配置的大模型流式接口
+    const { sendFn, abortFn } = await llm.request({
+      options,
       stream: true, // 开启流式响应
       // 简历模式下，需要解析 JSON 字符串
       isJson: type === "resume" ? true : false,

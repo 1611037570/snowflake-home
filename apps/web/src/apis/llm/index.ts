@@ -15,6 +15,12 @@ const getLLM = () => {
   if (activeModel.value === "snowflake") {
     return new LLM(snowflakeConfig);
   }
-  return new LLM(customModel.value);
+  const config = customModel.value || {};
+  // 将设置页保存的字段转换为 LLM 构造函数契约
+  return new LLM({
+    baseUrl: config.url,
+    getApiKey: () => config.key,
+    provider: config.provider,
+  });
 };
 export { getLLM, LLM };
