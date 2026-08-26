@@ -2,18 +2,26 @@
 defineOptions({ name: "ResumeToolbar" });
 import Ai from "./ai/index.vue";
 import System from "./system/index.vue";
-
-const size = 6;
-const boxSize = 8;
+import Icon from "./components/icon.vue";
+import { useRouter } from "vue-router";
+const router = useRouter();
+function goHome() {
+  router.push("/resume");
+}
+function goGitHub() {
+  urlNavigation("https://github.com/1611037570/snowflake-home");
+}
 </script>
 
 <template>
   <div class="flex items-center py-3 pr-3">
     <div
-      class="flex flex-col items-center gap-2 rounded-3xl border border-sf-b bg-sf-primary p-2 text-sf-text-3"
+      class="flex flex-col items-center gap-2 rounded-3xl border border-sf-b bg-sf-transparent p-2 text-sf-text-3"
     >
       <System />
       <Ai />
+      <Icon icon="akar-icons:home-alt1" size="5" content="返回首页" @click="goHome" />
+      <Icon icon="simple-icons:github" size="5" content="GitHub" @click="goGitHub" />
     </div>
   </div>
 </template>
