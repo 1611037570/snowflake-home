@@ -1,12 +1,6 @@
 <script setup>
 import { useResumeStore } from "@/stores";
-import {
-  fontFamilyList,
-  fontSizeList,
-  lineHeightList,
-  paddingList,
-  themeColors,
-} from "@/stores/modules/resume/uiConfig";
+import { fontFamilyList, themeColors } from "@/stores/modules/resume/uiConfig";
 import { storeToRefs } from "pinia";
 import ConfigItem from "./configItem.vue";
 
@@ -32,27 +26,9 @@ const { currentUI } = storeToRefs(resumeStore);
         </div>
       </div>
     </div>
-    <ConfigItem
-      label="页边距"
-      leftLabel="窄"
-      rightLabel="宽"
-      :list="paddingList"
-      v-model="currentUI.padding"
-    />
-    <ConfigItem
-      label="字体大小"
-      leftLabel="小"
-      rightLabel="大"
-      :list="fontSizeList"
-      v-model="currentUI.fontSize"
-    />
-    <ConfigItem
-      label="行间距"
-      leftLabel="密"
-      rightLabel="疏"
-      :list="lineHeightList"
-      v-model="currentUI.lineHeight"
-    />
+    <ConfigItem label="页边距" v-model="currentUI.padding" />
+    <ConfigItem label="字体大小" v-model="currentUI.fontSize" />
+    <ConfigItem label="行间距" v-model="currentUI.lineHeight" />
     <!-- 主题色 -->
     <div class="mb-6 flex flex-col">
       <div class="mb-4 text-base font-bold text-sf-text">主题色</div>
