@@ -63,8 +63,8 @@ export const useResumePages = ({
   // 分页逻辑：展平所有模块行，逐行贪心装入页面
   const pages = computed<PageSlice[][]>(() => {
     const padding = ui.value.padding || 0;
-    const bottomSpace = showPageNumber.value ? PAGE_NUMBER_HEIGHT : padding;
-    // 页码区域与主题下边距互斥，避免重复占用页面高度
+    const bottomSpace = showPageNumber.value ? PAGE_NUMBER_HEIGHT : 0;
+    // 仅根据页码区域高度计算页面可用内容高度
     const maxContentHeight = RESUME_HEIGHT - padding - bottomSpace;
 
     const result: PageSlice[][] = [];
