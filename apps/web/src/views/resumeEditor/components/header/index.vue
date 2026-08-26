@@ -39,16 +39,15 @@ const handleBack = () => {
   <header class="flex h-12 items-center justify-between border-b border-sf-b bg-sf-primary px-3">
     <!-- 左侧占位 -->
     <div class="flex flex-1 items-center gap-2">
-      <SfTooltip :content="$t('router.resume')">
-        <div
-          @click="handleBack"
-          class="flex items-center gap-1.5 rounded-full px-3 py-1 text-sf-theme transition-all hover:bg-sf-theme-3"
-        >
-          <SfIcon icon="famicons:chevron-back" size="4" />
-          <span class="text-sm font-bold tracking-wide">{{ $t("router.resume") }}</span>
-          <SfLogo size="5.5" class="animate-pulse" name="resume" />
-        </div>
-      </SfTooltip>
+      <div
+        @click="handleBack"
+        class="flex cursor-pointer items-center gap-1.5 rounded-full px-3 py-1 text-sf-theme transition-all hover:bg-sf-theme-3"
+      >
+        <SfLogo size="5.5" class="animate-pulse" name="resume" />
+
+        <span class="text-sm font-bold tracking-wide">{{ $t("router.resume") }}</span>
+      </div>
+      <div class="mr-2 text-sf-text-3">/</div>
       <Title />
     </div>
 
@@ -77,7 +76,6 @@ const handleBack = () => {
       <SfTheme />
       <SfDonation />
       <SfLocale />
-      <SfSetting />
       <Debug />
     </div>
   </header>

@@ -10,6 +10,7 @@ interface IconItem {
 }
 
 export const ICON_LIST: Record<string, IconItem> = {
+  "akar-icons:home-alt1": { icon: "akar-icons:home-alt1", name: "首页" },
   "simple-icons:juejin": { icon: "simple-icons:juejin", color: "text-blue-500", name: "稀土掘金" },
   "simple-icons:github": { icon: "simple-icons:github", color: "text-black", name: "GitHub" },
   "lucide:camera": {
