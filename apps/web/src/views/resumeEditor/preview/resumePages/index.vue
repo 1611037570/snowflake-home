@@ -88,11 +88,11 @@ const { measureDone, pages, moduleClass, getPageStyle } = useResumePages({
   />
   <div ref="rootRef" class="relative flex flex-col">
     <!-- 实际渲染的分页内容 -->
-    <div class="relative mb-3 flex flex-col">
+    <div class="relative mb-3 flex flex-col gap-3">
       <div
         v-for="(pageSlices, pageIndex) in pages"
         :key="pageIndex"
-        class="resume-page-item relative flex flex-col rounded-xl bg-white text-black"
+        class="resume-page-item relative flex flex-col rounded-3xl bg-white text-black"
         :class="[ui.fontFamily, `${uid}-page-${pageIndex}`]"
         :style="[
           paddingValue(),

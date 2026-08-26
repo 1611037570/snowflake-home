@@ -29,7 +29,7 @@ const handleExportConfig = () => {
   <div class="flex items-center gap-2">
     <button
       type="button"
-      class="flex-c h-9 cursor-pointer gap-1.5 rounded-lg border border-sf-b bg-sf-page px-4 text-sm font-medium text-sf-text transition-all duration-300 hover:bg-sf-theme-2 hover:text-sf-theme active:scale-95"
+      class="flex-c h-9 cursor-pointer gap-1.5 rounded-3xl border border-sf-b bg-sf-page px-4 text-sm font-medium text-sf-text transition-all duration-300 hover:bg-sf-theme-2 hover:text-sf-theme active:scale-95"
       @click="handleExportConfig"
     >
       <SfIcon icon="material-symbols:settings" size="4.5" />
@@ -37,7 +37,7 @@ const handleExportConfig = () => {
     </button>
     <button
       type="button"
-      class="flex-c h-9 cursor-pointer gap-1.5 rounded-lg border border-sf-b bg-sf-page px-4 text-sm font-medium text-sf-text transition-all duration-300 hover:bg-sf-theme-2 hover:text-sf-theme active:scale-95 disabled:cursor-not-allowed disabled:opacity-60"
+      class="flex-c h-9 cursor-pointer gap-1.5 rounded-3xl border border-sf-b bg-sf-page px-4 text-sm font-medium text-sf-text transition-all duration-300 hover:bg-sf-theme-2 hover:text-sf-theme active:scale-95 disabled:cursor-not-allowed disabled:opacity-60"
       :disabled="isPrinting"
       @click="handleDownload"
     >
