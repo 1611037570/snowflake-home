@@ -4,7 +4,7 @@
 import { computed, onMounted, onUnmounted, provide, ref } from "vue";
 import MeasureContent from "../components/measureContent.vue";
 import ResumeModule from "../modules/index.vue";
-import { PAGE_NUMBER_HEIGHT, RESUME_WIDTH, RESUME_HEIGHT } from "../constants";
+import { MODULE_GAP, PAGE_NUMBER_HEIGHT, RESUME_WIDTH, RESUME_HEIGHT } from "../constants";
 import { usePreviewData } from "../usePreviewData";
 import { useResumePages } from "./useResumePages";
 import { useResumeTheme } from "./useResumeTheme";
@@ -114,7 +114,8 @@ const { measureDone, pages, moduleClass, getPageStyle } = useResumePages({
           },
         ]"
       >
-        <div class="flex flex-1 flex-col gap-3">
+        <!-- 模块之间的间距由 ui.moduleSpacing 控制，与分页计算保持一致 -->
+        <div class="flex flex-1 flex-col" :style="{ gap: `${ui.moduleSpacing ?? MODULE_GAP}px` }">
           <div
             v-for="slice in pageSlices"
             :key="slice.moduleKey"

@@ -108,6 +108,8 @@ export const defaultFontFamily = fontFamilyList[0].value;
 export const defaultFontSize = fontSizeList[2].value;
 // 默认行间距
 export const defaultLineHeight = lineHeightList[2].value;
+// 默认模块间距
+export const defaultModuleSpacing = 12;
 // 默认主题样式
 export const defaultThemeTemplate = themeTemplateList[0].value;
 export const DEFAULT_UI = {
@@ -117,6 +119,8 @@ export const DEFAULT_UI = {
   fontSize: defaultFontSize,
   // 行高
   lineHeight: defaultLineHeight,
+  // 模块间距
+  moduleSpacing: defaultModuleSpacing,
   // 主题颜色
   themeColor: defaultThemeColor,
   // 主题样式

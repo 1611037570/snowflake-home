@@ -63,6 +63,7 @@ export const useResumePages = ({
   // 分页逻辑：展平所有模块行，逐行贪心装入页面
   const pages = computed<PageSlice[][]>(() => {
     const padding = ui.value.padding || 0;
+    const moduleSpacing = ui.value.moduleSpacing ?? MODULE_GAP;
     const bottomSpace = showPageNumber.value ? PAGE_NUMBER_HEIGHT : 0;
     // 仅根据页码区域高度计算页面可用内容高度
     const maxContentHeight = RESUME_HEIGHT - padding - bottomSpace;
@@ -103,7 +104,7 @@ export const useResumePages = ({
       if (sliceModule && sliceModule !== group) commitSlice();
 
       // 模块间距：模块首行且当前页已有内容时才计一次
-      let gap = currentPage.length > 0 && isHead ? MODULE_GAP : 0;
+      let gap = currentPage.length > 0 && isHead ? moduleSpacing : 0;
 
       // 放不下时：当前页已有内容则翻页重试；空页仍放不下（单行超高）则硬塞
       if (currentHeight + gap + row.height > maxContentHeight && currentPage.length > 0) {
