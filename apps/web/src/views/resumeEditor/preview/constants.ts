@@ -9,6 +9,8 @@ export const RESUME_WIDTH = 794;
 export const RESUME_HEIGHT = 1123;
 /** 模块之间的间距（px），分页时计算模块间隙用 */
 export const MODULE_GAP = 12;
+/** 页码区域固定高度（px） */
+export const PAGE_NUMBER_HEIGHT = 36;
 /** PDF A4 页面宽度（mm） */
 export const PDF_PAGE_WIDTH = 210;
 /** PDF A4 页面高度（mm） */

@@ -4,7 +4,7 @@
 import { computed, onMounted, onUnmounted, provide, ref } from "vue";
 import MeasureContent from "../components/measureContent.vue";
 import ResumeModule from "../modules/index.vue";
-import { RESUME_WIDTH, RESUME_HEIGHT } from "../constants";
+import { PAGE_NUMBER_HEIGHT, RESUME_WIDTH, RESUME_HEIGHT } from "../constants";
 import { usePreviewData } from "../usePreviewData";
 import { useResumePages } from "./useResumePages";
 import { useResumeTheme } from "./useResumeTheme";
@@ -13,7 +13,7 @@ import { useResumeStore } from "@/stores";
 import eventBus from "@/utils/modules/eventBus";
 import { useImageExport } from "../useImageExport";
 const resumeStore = useResumeStore();
-const { selectedModule } = storeToRefs(resumeStore);
+const { selectedModule, system } = storeToRefs(resumeStore);
 
 defineOptions({ name: "ResumePages" });
 
@@ -64,7 +64,8 @@ provide("previewData", previewData);
 
 // ---------- 主题样式注入（数据源为 item.ui）----------
 const ui = computed(() => props.item.ui || {});
-const themeStyles = useResumeTheme(ui);
+const showPageNumber = computed(() => system.value.showPageNumber);
+const themeStyles = useResumeTheme(ui, showPageNumber);
 const { paddingValue, fontValue, lineHeightValue } = themeStyles;
 
 // ---------- 分页（测量 + 分页算法 + 裁剪样式）----------
@@ -75,9 +76,9 @@ const allModules = computed(() => {
 });
 const { measureDone, pages, moduleClass, getPageStyle } = useResumePages({
   measureRef,
-  allModules,
   ui,
   themeStyles,
+  showPageNumber,
   isThumb,
   selectedModule,
   isReadonly,
@@ -126,7 +127,11 @@ const { measureDone, pages, moduleClass, getPageStyle } = useResumePages({
             <ResumeModule :data="props.item.data" :name="slice.moduleKey" />
           </div>
         </div>
-        <div class="py-3 text-center text-xs opacity-50">
+        <div
+          v-if="showPageNumber"
+          class="flex-c py-3 text-xs opacity-50"
+          :style="{ height: `${PAGE_NUMBER_HEIGHT}px` }"
+        >
           轻舟简历 · 第 {{ pageIndex + 1 }} 页 · 共 {{ pages.length }} 页
         </div>
 
