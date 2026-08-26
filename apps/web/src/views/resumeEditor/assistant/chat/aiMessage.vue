@@ -76,15 +76,8 @@ const showTotalTime = computed(() => props.msg.requestStatus === "success");
     <!-- 用户名与时间 -->
     <header class="flex w-full flex-row items-center justify-between gap-1 px-1 select-none">
       <div class="flex items-center gap-1">
-        <div class="flex flex-col gap-0.5 leading-tight">
-          <span class="text-[12px] font-black tracking-wider text-sf-text">{{
-            $t("router.resumeAI")
-          }}</span>
-          <div class="flex items-center gap-1">
-            <time v-if="msg.time" class="text-[11px] font-bold tabular-nums opacity-40">{{
-              msg.time
-            }}</time>
-          </div>
+        <div class="text-[12px] leading-tight font-black text-sf-text">
+          {{ $t("router.resumeAI") }}
         </div>
 
         <!-- 回复内容切换 (美化后的胶囊风格) -->
