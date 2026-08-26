@@ -34,6 +34,97 @@ export const DEFAULT_USER_FORM = [
           clearable: true,
         },
       },
+      // 姓名
+      {
+        type: "object",
+        label: "姓名",
+        tip: "真实姓名 推荐必填",
+        component: "input",
+        span: 12,
+        model: {
+          source: ["user", "name"],
+          prop: "modelValue",
+        },
+        props: {
+          placeholder: "请输入姓名",
+          clearable: true,
+        },
+        rules: [
+          { required: true, message: "请输入姓名", trigger: "blur" },
+          {
+            pattern: /^[\u4e00-\u9fa5a-zA-Z0-9·\s]{2,20}$/,
+            message: "请输入2-20位姓名",
+            trigger: "blur",
+          },
+        ],
+      },
+      // 出生日期
+      {
+        type: "object",
+        label: "出生日期",
+        tip: "出生年月 推荐必填",
+        component: "datePicker",
+        span: 12,
+        model: {
+          source: ["user", "birthday"],
+          prop: "modelValue",
+        },
+        props: {
+          placeholder: "请输入出生日期",
+          valueFormat: "YYYY.MM",
+          type: "month",
+        },
+      },
+      // 手机号
+      {
+        type: "object",
+        label: "电话",
+        tip: "常用手机号 推荐必填",
+        component: "input",
+        span: 12,
+        model: {
+          source: ["user", "phone"],
+          prop: "modelValue",
+        },
+        props: {
+          placeholder: "请输入电话",
+          clearable: true,
+        },
+        rules: [
+          { required: true, message: "请输入手机号", trigger: "blur" },
+          {
+            pattern: /^1[3-9]\d{9}$/,
+            message: "请输入正确的手机号",
+            trigger: "blur",
+          },
+        ],
+      },
+      // 性别
+      {
+        type: "object",
+        label: "性别",
+        tip: "选择性别",
+        component: "select",
+        span: 12,
+        model: {
+          source: ["user", "sex"],
+          prop: "modelValue",
+        },
+        props: {
+          placeholder: "请输入性别",
+          clearable: true,
+          list: [
+            {
+              name: "男",
+              value: "男",
+            },
+            {
+              name: "女",
+              value: "女",
+            },
+          ],
+        },
+      },
       // 求职状态
       {
         type: "object",
@@ -63,68 +154,6 @@ export const DEFAULT_USER_FORM = [
             },
           ],
         },
-      },
-      {
-        type: "object",
-        label: "姓名",
-        tip: "真实姓名 推荐必填",
-        component: "input",
-        span: 12,
-        model: {
-          source: ["user", "name"],
-          prop: "modelValue",
-        },
-        props: {
-          placeholder: "请输入姓名",
-          clearable: true,
-        },
-        rules: [
-          { required: true, message: "请输入姓名", trigger: "blur" },
-          {
-            pattern: /^[\u4e00-\u9fa5a-zA-Z0-9·\s]{2,20}$/,
-            message: "请输入2-20位姓名",
-            trigger: "blur",
-          },
-        ],
-      },
-      {
-        type: "object",
-        label: "出生日期",
-        tip: "出生年月 推荐必填",
-        component: "datePicker",
-        span: 12,
-        model: {
-          source: ["user", "birthday"],
-          prop: "modelValue",
-        },
-        props: {
-          placeholder: "请输入出生日期",
-          valueFormat: "YYYY.MM",
-          type: "month",
-        },
-      },
-      {
-        type: "object",
-        label: "电话",
-        tip: "常用手机号 推荐必填",
-        component: "input",
-        span: 12,
-        model: {
-          source: ["user", "phone"],
-          prop: "modelValue",
-        },
-        props: {
-          placeholder: "请输入电话",
-          clearable: true,
-        },
-        rules: [
-          { required: true, message: "请输入手机号", trigger: "blur" },
-          {
-            pattern: /^1[3-9]\d{9}$/,
-            message: "请输入正确的手机号",
-            trigger: "blur",
-          },
-        ],
       },
       {
         type: "object",
@@ -162,31 +191,6 @@ export const DEFAULT_USER_FORM = [
           placeholder: "请输入参加工作时间",
           valueFormat: "YYYY.MM",
           type: "month",
-        },
-      },
-      {
-        type: "object",
-        label: "性别",
-        tip: "选择性别",
-        component: "select",
-        span: 12,
-        model: {
-          source: ["user", "sex"],
-          prop: "modelValue",
-        },
-        props: {
-          placeholder: "请输入性别",
-          clearable: true,
-          list: [
-            {
-              name: "男",
-              value: "男",
-            },
-            {
-              name: "女",
-              value: "女",
-            },
-          ],
         },
       },
     ],
