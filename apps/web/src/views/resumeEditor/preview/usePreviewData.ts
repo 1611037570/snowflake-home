@@ -62,6 +62,13 @@ const isObjectArray = (value: unknown): boolean =>
 const makePath = (parent: string, key: string | number): string =>
   parent ? `${parent}.${key}` : String(key);
 
+// 数组按元素比较，避免相同内容的不同数组引用被判定为变化
+const areValuesEqual = (left: any, right: any): boolean => {
+  if (left === right) return true;
+  if (!Array.isArray(left) || !Array.isArray(right) || left.length !== right.length) return false;
+  return left.every((item, index) => areValuesEqual(item, right[index]));
+};
+
 // ---------- 响应式草稿存储 ----------
 
 /**
@@ -397,7 +404,7 @@ export const usePreviewData = (data: Ref<Record<string, any> | undefined>) => {
           return;
         }
         // 叶子字段：若 patch 值与当前值不同，则写入草稿
-        if (patchVal !== undefined && patchVal !== srcVal) {
+        if (patchVal !== undefined && !areValuesEqual(patchVal, srcVal)) {
           setNewValue(path, patchVal);
         }
       });
