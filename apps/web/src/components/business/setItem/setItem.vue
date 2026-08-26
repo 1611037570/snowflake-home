@@ -1,9 +1,7 @@
 <template>
   <!-- 外层容器：整合布局与分割线，减少一层嵌套 -->
-  <div
-    class="flex items-center justify-between rounded-xl bg-sf-primary px-3 py-2 text-sf-text"
-    :class="{ 'border-b border-gray-200': divider }"
-  >
+  <div class="flex items-center justify-between rounded-3xl bg-sf-bg px-3 py-3 text-sf-text">
+    <!-- :class="{ 'border-b border-gray-200': divider }" -->
     <div class="flex flex-col gap-0.5">
       <div class="text-[14px] font-medium">{{ title }}</div>
       <div class="text-[12px] text-sf-text-3" v-if="info">{{ info }}</div>
