@@ -29,6 +29,7 @@ export const usePdfExport = (rootRef?: { value: HTMLElement | null }) => {
     isPrinting.value = true;
     const cachedSelectedModule = [...selectedModule.value];
     selectedModule.value.splice(0);
+    let tempContainer: HTMLDivElement | undefined;
     try {
       // 确保DOM已渲染完成
       await nextTick();
@@ -53,7 +54,7 @@ export const usePdfExport = (rootRef?: { value: HTMLElement | null }) => {
       });
 
       // 创建隐藏的临时容器用于渲染 (防止缩放干扰)
-      const tempContainer = document.createElement("div");
+      tempContainer = document.createElement("div");
       tempContainer.style.position = "absolute";
       tempContainer.style.top = "-9999px";
       tempContainer.style.left = "-9999px";
@@ -118,9 +119,6 @@ export const usePdfExport = (rootRef?: { value: HTMLElement | null }) => {
         });
       }
 
-      // 清理临时容器
-      document.body.removeChild(tempContainer);
-
       // 保存PDF
       pdf.save(`${resumeTitle.value}.pdf`);
 
@@ -128,6 +126,10 @@ export const usePdfExport = (rootRef?: { value: HTMLElement | null }) => {
     } catch (error) {
       console.error("生成PDF失败:", error);
     } finally {
+      // 无论导出成功或失败都清理临时容器
+      if (tempContainer?.parentNode) {
+        tempContainer.parentNode.removeChild(tempContainer);
+      }
       // 导出完成或失败后还原选中的模块
       selectedModule.value.splice(0, selectedModule.value.length, ...cachedSelectedModule);
       isPrinting.value = false;
