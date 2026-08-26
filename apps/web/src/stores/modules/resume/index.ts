@@ -55,6 +55,8 @@ export const useResumeStore = defineStore(
     const isPrinting = ref(false);
     // 是否AI生成中
     const isGenerating = ref(false);
+    // 是否常驻显示编辑器工具栏
+    const toolbarAlwaysVisible = ref(false);
     // 初始化状态
     function initResumeStatus() {
       // 重置打印状态
@@ -186,6 +188,7 @@ export const useResumeStore = defineStore(
       currentUI,
       currentUsage,
       isPrinting,
+      toolbarAlwaysVisible,
       selectedModule,
       pushSelectedModule,
       addResume,
@@ -196,7 +199,7 @@ export const useResumeStore = defineStore(
   },
   {
     persist: {
-      pick: ["list", "layout"],
+      pick: ["list", "layout", "toolbarAlwaysVisible"],
     },
   },
 );
