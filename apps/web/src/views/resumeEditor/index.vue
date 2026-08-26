@@ -15,6 +15,8 @@
       <Transition name="resume-assistant">
         <Assistant v-if="layout !== 'list'" />
       </Transition>
+      <!-- 最右侧系统配置栏 -->
+      <Toolbar />
       <GeneratingMask
         v-if="isPrinting"
         :visible="true"
@@ -36,6 +38,7 @@ import Builder from "./builder/index.vue";
 import Header from "./components/header/index.vue";
 import GeneratingMask from "./components/generatingMask.vue";
 import Preview from "./preview/index.vue";
+import Toolbar from "./toolbar/index.vue";
 // 预览层代理数据及批量操作句柄
 import { usePreviewData } from "./preview/usePreviewData";
 
