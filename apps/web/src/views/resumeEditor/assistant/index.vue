@@ -1,7 +1,6 @@
 <script setup>
 import { ref } from "vue";
 import { quickActions } from "./data";
-import EmptyState from "./emptyState.vue";
 import JdInput from "./JdInput.vue";
 import Score from "./Score.vue";
 import Setting from "./setting/index.vue";
@@ -44,11 +43,7 @@ function onRequestComplete(msg) {
         <Score v-if="currentView === 'score'" />
         <JdInput v-else-if="currentView === 'jd'" />
       </div>
-      <Chat :chat="chat" @request-complete="onRequestComplete">
-        <template #empty>
-          <EmptyState @switch-mode="switchMode" />
-        </template>
-      </Chat>
+      <Chat :chat="chat" @request-complete="onRequestComplete" />
     </div>
   </div>
 </template>
