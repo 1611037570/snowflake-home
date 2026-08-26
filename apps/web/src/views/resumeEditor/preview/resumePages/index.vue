@@ -91,6 +91,7 @@ const { measureDone, pages, moduleClass, getPageStyle } = useResumePages({
   <MeasureContent
     v-if="!measureDone"
     class="fixed -top-999 -left-999"
+    :class="ui.fontFamily"
     ref="measureRef"
     :style="[paddingValue(), { width: `${RESUME_WIDTH}px` }]"
     :all-modules="allModules"

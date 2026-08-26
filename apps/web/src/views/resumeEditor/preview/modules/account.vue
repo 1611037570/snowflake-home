@@ -31,7 +31,7 @@ const safeUrl = (value) => {
     <div
       v-for="(item, index) in account"
       :key="index"
-      class="mt-1 flex items-center gap-2"
+      class="mt-1 flex min-w-0 max-w-full flex-wrap items-center gap-2"
       data-module="user"
     >
       <Text v-model="item.name" />
@@ -40,7 +40,7 @@ const safeUrl = (value) => {
         :href="safeUrl(item.url?.value)"
         target="_blank"
         rel="noopener noreferrer"
-        class="font-medium hover:underline"
+        class="min-w-0 max-w-full font-medium hover:underline"
       >
         <Text v-model="item.url" />
       </a>

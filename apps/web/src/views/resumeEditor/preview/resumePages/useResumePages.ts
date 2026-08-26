@@ -46,6 +46,7 @@ export const useResumePages = ({
     padding: ui.value.padding,
     fontSize: ui.value.fontSize,
     lineHeight: ui.value.lineHeight,
+    fontFamily: ui.value.fontFamily,
     themeTemplate: themeStyles.themeTemplate.value,
     showPageNumber: showPageNumber.value,
   }));
