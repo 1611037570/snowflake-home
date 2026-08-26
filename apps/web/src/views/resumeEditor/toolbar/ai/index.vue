@@ -1,7 +1,7 @@
 <script setup>
 import { ref } from "vue";
 import { storeToRefs } from "pinia";
-import { useAiStore, useResumeStore } from "@/stores";
+import { useAiStore } from "@/stores";
 import DefaultTab from "./defaultTab.vue";
 import CustomTab from "./customTab.vue";
 
@@ -11,8 +11,6 @@ const drawerVisible = ref(false);
 // 使用 ai store
 const aiStore = useAiStore();
 const { activeModel } = storeToRefs(aiStore);
-const resumeStore = useResumeStore();
-const { toolbarAlwaysVisible } = storeToRefs(resumeStore);
 
 const list = [
   {
@@ -53,10 +51,6 @@ const currentactiveModel = ref(activeModel.value);
             <CustomTab />
           </SfTabPane>
         </SfTab>
-      </div>
-      <div class="flex items-center justify-between rounded-xl bg-sf-bg-2 px-3 py-2">
-        <span class="text-sm text-sf-text">工具栏常驻</span>
-        <el-switch v-model="toolbarAlwaysVisible" />
       </div>
     </div>
   </SfModal>
