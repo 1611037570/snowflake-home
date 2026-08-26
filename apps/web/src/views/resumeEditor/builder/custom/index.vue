@@ -26,10 +26,10 @@ const { currentUI } = storeToRefs(resumeStore);
         </div>
       </div>
     </div>
-    <ConfigItem label="页边距" v-model="currentUI.padding" />
-    <ConfigItem label="字体大小" v-model="currentUI.fontSize" />
-    <ConfigItem label="行间距" v-model="currentUI.lineHeight" />
-    <ConfigItem label="模块间距" v-model="currentUI.moduleSpacing" />
+    <ConfigItem label="页边距" v-model="currentUI.padding" min="0" max="100" step="1" />
+    <ConfigItem label="字体大小" v-model="currentUI.fontSize" min="10" max="24" step="2" />
+    <ConfigItem label="行间距" v-model="currentUI.lineHeight" min="1" max="10" step="0.1" />
+    <ConfigItem label="模块间距" v-model="currentUI.moduleSpacing" min="0" max="100" step="1" />
     <!-- 主题色 -->
     <div class="mb-6 flex flex-col">
       <div class="mb-4 text-base font-bold text-sf-text">主题色</div>
