@@ -118,9 +118,10 @@
   --sf-background: #121214;
   --sf-background-2: #3a3a3c;
   --sf-background-3: #48484a;
-  --sf-transparent: rgba(0, 0, 0, 0.85);
-  --sf-transparent-2: rgba(0, 0, 0, 0.6);
-  --sf-transparent-3: rgba(0, 0, 0, 0.4);
+  /* 夜间版本 - 基于深色背景 */
+  --sf-transparent: color-mix(in oklab, oklch(50% 0.014 254.604) 80%, transparent);
+  --sf-transparent-2: color-mix(in oklab, oklch(20% 0.014 254.604) 60%, transparent);
+  --sf-transparent-3: color-mix(in oklab, oklch(46.099% 0.06009 259.259) 40%, transparent);
   --sf-border: rgba(255, 255, 255, 0.1);
 }
 
