@@ -120,17 +120,20 @@ export const useResumeStore = defineStore(
     });
     // 选中模块的名称列表
     const selectedModule = ref<any[]>([]);
-    const pushSelectedModule = (key: string) => {
+    // 获取模块名称
+    const getModel = (key: string) => {
       if (!key) return;
       if (key.startsWith("custom")) {
-        selectedModule.value.push({
+        return {
           key,
           name: currentData.value?.[key]?.name || "",
-        });
-        return; // 自定义模块无默认模块映射，避免追加 undefined
+        };
       }
-      const data = DEFAULT_MODULE_NAMES.find((item) => item.key === key);
-
+      return DEFAULT_MODULE_NAMES.find((item) => item.key === key) || {};
+    };
+    // 添加选中模块
+    const pushSelectedModule = (key: string) => {
+      const data = getModel(key);
       selectedModule.value.push(data);
     };
     // 新增简历
@@ -176,6 +179,7 @@ export const useResumeStore = defineStore(
       isGenerating,
       setGenerating,
       initResumeStatus,
+      getModel,
       currentData,
       currentConfig,
       currentFixedConfig,
