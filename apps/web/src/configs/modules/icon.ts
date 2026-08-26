@@ -50,6 +50,8 @@ export const ICON_LIST: Record<string, IconItem> = {
   "material-symbols:article-shortcut-rounded": {
     icon: "material-symbols:article-shortcut-rounded",
   },
+  "fa6-solid:file-import": { icon: "fa6-solid:file-import", name: "导入" },
+  "fa6-solid:file-export": { icon: "fa6-solid:file-export", name: "导出" },
   "pajamas:todo-done": { icon: "pajamas:todo-done" },
   "ic:round-add": { icon: "ic:round-add" },
   "iconamoon:settings-fill": { icon: "iconamoon:settings-fill", name: "设置" },
