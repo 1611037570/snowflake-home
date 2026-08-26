@@ -1,6 +1,8 @@
 <script setup>
 import { TransitionPresets, useDebounceFn, useResizeObserver, useTransition } from "@vueuse/core";
 import { computed, ref } from "vue";
+import { storeToRefs } from "pinia";
+import { useResumeStore } from "@/stores";
 import { RESUME_WIDTH } from "./constants";
 
 defineOptions({ name: "ScaleContainer" });
@@ -13,6 +15,8 @@ defineProps({
 defineEmits(["fullscreen"]);
 
 const containerRef = ref(null);
+const resumeStore = useResumeStore();
+const { toolbarAlwaysVisible } = storeToRefs(resumeStore);
 const contentRef = ref(null);
 const contentSize = ref({ width: 0, height: 0 });
 const manualScale = ref(1);
@@ -114,26 +118,33 @@ useResizeObserver(contentRef, ([entry]) => {
 
     <div
       v-if="showToolbar"
-      class="absolute bottom-5 left-1/2 z-10 -translate-x-1/2 translate-y-4 opacity-0 transition-all duration-200 select-none group-hover:translate-y-0 group-hover:opacity-100"
+      class="absolute top-4 left-1/2 z-10 -translate-x-1/2 opacity-0 transition-all duration-200 select-none"
+      :class="
+        toolbarAlwaysVisible
+          ? 'translate-y-0 opacity-100'
+          : '-translate-y-4 group-hover:translate-y-0 group-hover:opacity-100'
+      "
     >
       <div class="flex items-center gap-1 rounded-full border border-sf-b bg-sf-primary p-2">
-        <button
-          type="button"
-          class="flex h-7 w-7 cursor-pointer items-center justify-center rounded-full text-base leading-none text-sf-text-2 transition-colors"
-          :class="{
-            'cursor-not-allowed text-sf-text-3': isMinScale,
-            'hover:bg-sf-theme-2 hover:text-sf-theme-text': !isMinScale,
-          }"
-          @click="!isMinScale && stepScale(-0.1)"
-        >
-          <SfIcon icon="lucide:minus" size="6" />
-        </button>
+        <SfTooltip content="缩小">
+          <SfIcon
+            @click="!isMinScale && stepScale(-0.1)"
+            icon="lucide:minus"
+            size="5"
+            boxSize="7"
+            class="rounded-full text-sf-text-2"
+            :class="{
+              'cursor-not-allowed text-sf-text-3': isMinScale,
+              'hover:bg-sf-theme-2 hover:text-sf-theme-text': !isMinScale,
+            }"
+          />
+        </SfTooltip>
         <div
           class="group/scale-bar flex h-6 w-18 cursor-default items-center justify-center rounded-full px-3 text-sm font-medium text-sf-theme"
         >
           {{ scaleLabel }}
           <div
-            class="invisible absolute right-0 bottom-full mb-2 w-40 origin-bottom-right translate-y-1 scale-95 rounded-xl border border-sf-b bg-sf-primary p-1 opacity-0 shadow-xl transition-all duration-150 group-hover/scale-bar:visible group-hover/scale-bar:translate-y-0 group-hover/scale-bar:scale-100 group-hover/scale-bar:opacity-100"
+            class="invisible absolute top-full right-0 mt-2 w-40 origin-top-right -translate-y-1 scale-95 rounded-xl border border-sf-b bg-sf-primary p-1 opacity-0 shadow-xl transition-all duration-150 group-hover/scale-bar:visible group-hover/scale-bar:translate-y-0 group-hover/scale-bar:scale-100 group-hover/scale-bar:opacity-100"
           >
             <div
               v-for="item in SCALE_LIST"
@@ -174,25 +185,28 @@ useResizeObserver(contentRef, ([entry]) => {
             </div>
           </div>
         </div>
-
-        <button
-          type="button"
-          class="flex h-7 w-7 cursor-pointer items-center justify-center rounded-full text-base leading-none text-sf-text-2 transition-colors"
-          :class="{
-            'cursor-not-allowed text-sf-text-3': isMaxScale,
-            'hover:bg-sf-theme-2 hover:text-sf-theme-text': !isMaxScale,
-          }"
-          @click="!isMaxScale && stepScale(0.1)"
-        >
-          <SfIcon icon="lucide:plus" size="6" />
-        </button>
-        <button
-          type="button"
-          class="flex h-7 w-7 cursor-pointer items-center justify-center rounded-full text-sf-text-2 transition-colors hover:bg-sf-theme-2 hover:text-sf-theme-text"
-          @click="$emit('fullscreen')"
-        >
-          <SfIcon icon="lucide:maximize" size="5" />
-        </button>
+        <SfTooltip content="放大">
+          <SfIcon
+            icon="lucide:plus"
+            size="5"
+            boxSize="7"
+            class="rounded-full text-sf-text-2"
+            :class="{
+              'cursor-not-allowed text-sf-text-3': isMaxScale,
+              'hover:bg-sf-theme-2 hover:text-sf-theme-text': !isMaxScale,
+            }"
+            @click="!isMaxScale && stepScale(0.1)"
+          />
+        </SfTooltip>
+        <SfTooltip content="全屏">
+          <SfIcon
+            icon="lucide:maximize"
+            size="4.5"
+            boxSize="7"
+            class="rounded-full text-sf-text-2 hover:bg-sf-theme-2 hover:text-sf-theme-text"
+            @click="$emit('fullscreen')"
+          />
+        </SfTooltip>
       </div>
     </div>
   </div>
