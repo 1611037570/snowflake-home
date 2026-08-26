@@ -2,7 +2,6 @@
 import { useResumeStore } from "@/stores";
 import { storeToRefs } from "pinia";
 import Debug from "./debug.vue";
-import DownloadButton from "./downloadButton.vue";
 import Title from "./title.vue";
 import { useRouter } from "vue-router";
 const router = useRouter();
@@ -53,7 +52,6 @@ const handleBack = () => {
 
     <!-- 右侧工具栏 -->
     <div class="flex items-center gap-5">
-      <DownloadButton />
       <!-- 布局切换器 -->
       <div class="flex items-center gap-1 rounded-3xl border border-sf-b bg-sf-page p-1">
         <SfTooltip v-for="item in layoutList" :key="item.value" :content="item.name">
