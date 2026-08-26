@@ -24,7 +24,6 @@ const moduleNames = computed(() => {
       你好，我是 <span class="text-sf-theme">{{ $t("router.resumeAI") }}</span>
       <SfIcon icon="lucide:sparkles" class="text-sf-theme" size="6" />
     </div>
-    <div class="text-base text-sf-theme">{{ $t("router.resumeAIDesc") }}</div>
     <div
       class="flex flex-wrap items-center justify-center gap-1.5 text-sm font-medium text-sf-base"
     >
