@@ -21,29 +21,12 @@ export class LLMService {
   async getUpstreamResponse(data: any) {
     const apiKey = this.configService.get<string>('OPENAI_API_KEY')
     const baseURL = this.configService.get<string>('OPENAI_BASE_URL')
+    // 模型名称由服务端配置控制，前端传入值不会生效
+    const model =
+      this.configService.get<string>('OPENAI_MODEL') || 'deepseek-v4-flash-ga-260731'
     const url = `${baseURL}`
     console.log('url:', url)
     console.log('data:', data)
-    const obj = {
-      model: 'deepseek-v4-flash-ga-260731',
-      stream: true, // 关键：必须告诉上游返回流式数据
-      input: [
-        {
-          role: 'user',
-          content: [
-            {
-              type: 'input_image',
-              image_url:
-                'https://ark-project.tos-cn-beijing.volces.com/doc_image/ark_demo_img_1.png',
-            },
-            {
-              type: 'input_text',
-              text: '你看见了什么？',
-            },
-          ],
-        },
-      ],
-    }
     const response = await fetch(url, {
       method: 'POST',
       headers: {
@@ -52,6 +35,7 @@ export class LLMService {
       },
       body: JSON.stringify({
         ...data,
+        model,
         stream: true,
       }),
     })
