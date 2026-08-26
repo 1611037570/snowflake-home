@@ -2,7 +2,6 @@
 import { ref } from "vue";
 import JdInput from "./JdInput.vue";
 import Score from "./Score.vue";
-import Setting from "./setting/index.vue";
 import { useAiStore, useResumeStore } from "@/stores";
 import { storeToRefs } from "pinia";
 import Chat from "./chat/index.vue";
@@ -52,10 +51,6 @@ function onRequestComplete(msg) {
             boxSize="7"
             class="rounded-full text-sf-text-2 hover:bg-sf-theme-2 hover:text-sf-theme-text"
           />
-        </SfTooltip>
-
-        <SfTooltip content="助手设置">
-          <Setting />
         </SfTooltip>
       </div>
       <div class="flex-1 overflow-y-auto">
