@@ -109,9 +109,9 @@
 }
 /* 深色模式 */
 .dark {
-  --sf-text: color-mix(in oklab, oklch(100% 0 0) 70%, transparent);
-  --sf-text-2: color-mix(in oklab, oklch(100% 0 0) 50%, transparent);
-  --sf-text-3: color-mix(in oklab, oklch(100% 0 0) 30%, transparent);
+  --sf-text: color-mix(in oklab, oklch(100% 0 0) 80%, transparent);
+  --sf-text-2: color-mix(in oklab, oklch(100% 0 0) 60%, transparent);
+  --sf-text-3: color-mix(in oklab, oklch(100% 0 0) 40%, transparent);
   --sf-base: rgba(255, 255, 255, 1);
   --sf-primary: #2b2c2d;
   --sf-page: black;

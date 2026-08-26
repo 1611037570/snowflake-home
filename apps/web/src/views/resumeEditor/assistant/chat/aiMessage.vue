@@ -70,11 +70,9 @@ const showTotalTime = computed(() => props.msg.requestStatus === "success");
 
 <template>
   <!-- 消息主体 -->
-  <article
-    class="group flex w-full min-w-0 flex-col items-start gap-1.5 transition-all duration-300"
-  >
+  <article class="group flex w-full min-w-0 flex-col items-start transition-all duration-300">
     <!-- 用户名与时间 -->
-    <header class="flex w-full flex-row items-center justify-between gap-1 px-1 select-none">
+    <header class="flex w-full flex-row items-center justify-between gap-1 select-none">
       <div class="flex items-center gap-1">
         <div class="text-[12px] leading-tight font-black text-sf-text">
           {{ $t("router.resumeAI") }}
@@ -91,99 +89,85 @@ const showTotalTime = computed(() => props.msg.requestStatus === "success");
 
       <div class="flex items-center gap-3 text-[11px] text-sf-text-2">
         <div v-if="msg.total_tokens" class="flex items-center gap-1">
-          <span class="opacity-70">{{ msg.total_tokens }} tokens</span>
+          <span>{{ msg.total_tokens }} tokens</span>
         </div>
         <span v-if="showTotalTime"> 耗时 {{ totalTime }} 秒 </span>
       </div>
     </header>
-
-    <div class="flex w-full flex-col gap-1 pr-1">
-      <!-- 加载状态 -->
+    <!-- 加载状态 -->
+    <div
+      v-if="msg.typing && ['loading', 'thinking', 'generating'].includes(msg.requestStatus)"
+      class="flex items-center gap-2 px-1 text-[13px] text-sf-theme"
+    >
+      <span v-if="isThinking">思考中 {{ msg.thoughtTime || 0 }} 秒</span>
+      <span v-else-if="isGenerating">生成回复中 {{ msg.contentTime || 0 }} 秒</span>
+      <template v-else>
+        <span>生成中</span>
+        <span class="flex items-center gap-1">
+          <i v-for="i in 3" :key="i" class="h-1.5 w-1.5 animate-bounce rounded-full bg-sf-theme" />
+        </span>
+      </template>
+    </div>
+    <!-- 错误状态 -->
+    <div
+      v-if="msg.requestStatus === 'error'"
+      class="flex h-8 w-[170px] cursor-pointer items-center justify-center gap-1.5 rounded-xl bg-sf-error-2 text-[14px] text-sf-error"
+      @click="retry(msg)"
+    >
+      生成失败，点击重试!
+    </div>
+    <!-- 正式回复内容 -->
+    <MdPreview
+      v-if="msg.requestStatus === 'success' && !msg.contentCollapsed && content"
+      :modelValue="content"
+      :theme="theme"
+      editorId="ai-preview"
+      class="inline-block max-w-full min-w-0 overflow-hidden bg-transparent! p-0! align-bottom text-[14px] leading-relaxed text-sf-text"
+      :class="{ 'typing-active': msg.typing }"
+    />
+    <!-- 操作区域 -->
+    <nav
+      v-if="msg.content && !msg.typing && resumeShow"
+      class="mt-1 flex items-center gap-1 transition-opacity duration-300"
+    >
+      <SfTooltip content="复制">
+        <button class="action-btn" @click="handleCopy(msg.content)">
+          <SfIcon icon="ph:copy-duotone" size="3.5" />
+        </button>
+      </SfTooltip>
+    </nav>
+    <!-- 推荐问题 -->
+    <div v-if="isLast && resumeContent.followQuestions?.length" class="mt-1 flex flex-col gap-2">
       <div
-        v-if="msg.typing && ['loading', 'thinking', 'generating'].includes(msg.requestStatus)"
-        class="flex items-center gap-2 px-1 text-[13px] text-sf-theme"
+        v-for="(item, index) in resumeContent.followQuestions"
+        :key="index"
+        class="flex min-w-0 cursor-pointer items-center gap-2 rounded-3xl bg-sf-bg px-3 py-2 text-[13px] text-sf-text transition-all duration-200 hover:bg-sf-bg-2"
+        @click="emit('sendFollowQuestion', item)"
       >
-        <span v-if="isThinking">思考中 {{ msg.thoughtTime || 0 }} 秒</span>
-        <span v-else-if="isGenerating">生成回复中 {{ msg.contentTime || 0 }} 秒</span>
-        <template v-else>
-          <span>生成中</span>
-          <span class="flex items-center gap-1">
-            <i
-              v-for="i in 3"
-              :key="i"
-              class="h-1.5 w-1.5 animate-bounce rounded-full bg-sf-theme"
-            />
-          </span>
-        </template>
-      </div>
-      <!-- 错误状态 -->
-      <div
-        v-if="msg.requestStatus === 'error'"
-        class="flex h-8 w-[170px] cursor-pointer items-center justify-center gap-1.5 rounded-xl bg-sf-error-2 text-[14px] text-sf-error"
-        @click="retry(msg)"
-      >
-        生成失败，点击重试!
-      </div>
-      <!-- 正式回复内容 -->
-      <div
-        class="relative w-full min-w-0"
-        v-if="msg.requestStatus === 'success' && !msg.contentCollapsed"
-      >
-        <MdPreview
-          v-if="content"
-          :modelValue="content"
-          :theme="theme"
-          editorId="ai-preview"
-          class="inline-block max-w-full min-w-0 overflow-hidden bg-transparent! p-0! align-bottom text-[14px] leading-relaxed text-sf-text"
-          :class="{ 'typing-active': msg.typing }"
-        />
-        <div
-          v-if="isLast && resumeContent.followQuestions?.length"
-          class="mt-2 flex flex-col gap-2"
-        >
-          <div
-            v-for="(item, index) in resumeContent.followQuestions"
-            :key="index"
-            class="flex min-w-0 items-center gap-2 rounded-lg bg-sf-bg px-3 py-2 text-[13px] text-sf-text transition-all duration-200 hover:bg-sf-bg-2"
-            @click="emit('sendFollowQuestion', item)"
-          >
-            <SfTooltip :content="item" class="min-w-0 flex-1">
-              <span class="block truncate whitespace-nowrap">{{ item }}</span>
-            </SfTooltip>
-            <div class="flex shrink-0 items-center gap-1">
-              <SfTooltip content="填入输入框">
-                <button
-                  type="button"
-                  class="follow-question-action"
-                  @click.stop="handleFillFollowQuestion($event, item)"
-                >
-                  <SfIcon icon="ph:chat-teardrop-dots-duotone" size="3.5" />
-                </button>
-              </SfTooltip>
-              <SfTooltip content="发送">
-                <button
-                  type="button"
-                  class="follow-question-action"
-                  @click.stop="emit('sendFollowQuestion', item)"
-                >
-                  <SfIcon icon="mingcute:arrow-right-line" size="3.5" />
-                </button>
-              </SfTooltip>
-            </div>
-          </div>
+        <SfTooltip :content="item" class="min-w-0 flex-1">
+          <span class="block truncate whitespace-nowrap">{{ item }}</span>
+        </SfTooltip>
+        <div class="flex shrink-0 items-center gap-1">
+          <SfTooltip content="填入输入框">
+            <button
+              type="button"
+              class="follow-question-action"
+              @click.stop="handleFillFollowQuestion($event, item)"
+            >
+              <SfIcon icon="ph:chat-teardrop-dots-duotone" size="3.5" />
+            </button>
+          </SfTooltip>
+          <SfTooltip content="发送">
+            <button
+              type="button"
+              class="follow-question-action"
+              @click.stop="emit('sendFollowQuestion', item)"
+            >
+              <SfIcon icon="mingcute:arrow-right-line" size="3.5" />
+            </button>
+          </SfTooltip>
         </div>
       </div>
-      <!-- 操作区域 -->
-      <nav
-        v-if="msg.content && !msg.typing && resumeShow"
-        class="flex items-center gap-1 transition-opacity duration-300"
-      >
-        <SfTooltip content="复制">
-          <button class="action-btn" @click="handleCopy(msg.content)">
-            <SfIcon icon="ph:copy-duotone" size="3.5" />
-          </button>
-        </SfTooltip>
-      </nav>
     </div>
   </article>
 </template>
@@ -193,10 +177,10 @@ const showTotalTime = computed(() => props.msg.requestStatus === "success");
 
 /* 操作按钮公共样式 */
 .action-btn {
-  @apply flex h-7 w-7 items-center justify-center rounded-lg text-sf-text-3 transition-colors hover:bg-sf-bg-3 hover:text-sf-text;
+  @apply flex h-7 w-7 items-center justify-center rounded-lg text-sf-text transition-colors hover:bg-sf-bg-3;
 }
 .follow-question-action {
-  @apply flex h-6 w-6 items-center justify-center rounded-md text-sf-text-3 transition-colors hover:bg-sf-bg-3 hover:text-sf-text;
+  @apply flex h-6 w-6 items-center justify-center rounded-md text-sf-text transition-colors hover:bg-sf-bg-3;
 }
 :deep(.md-editor-preview h2) {
   margin: 14px 0 !important;
