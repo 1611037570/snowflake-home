@@ -1,22 +1,30 @@
 <template>
-  <div class="flex flex-col p-1" v-if="list.length">
+  <div class="flex flex-col rounded-3xl border border-sf-b bg-sf-primary p-1" v-if="list.length">
     <template v-for="(item, index) in list" :key="index">
-      <div class="border-sf-b my-1 border-t-[0.5px]" v-if="index > 0 && border"></div>
+      <!-- 分隔线 -->
+      <div class="mx-auto my-1 h-[0.5px] w-[95%] bg-sf-bg-3 px-4" v-if="index > 0 && border"></div>
       <div
+        v-if="showItem(item)"
         @mousedown="handleClick($event, item, index)"
         :class="[activeClass(item), hoverClass(item)]"
-        class="flex-c relative h-8 rounded-xl"
+        class="relative flex h-8 w-full items-center justify-between rounded-3xl px-2"
       >
         <slot :item="item">
-          <SfIcon size="4" :icon="item.icon" class="mr-1" v-if="item.icon" />
-          <span>
-            {{ item.name }}
-          </span>
+          <div class="flex flex-1 items-center gap-1">
+            <!-- 左侧图标 -->
+            <SfIcon size="4" :icon="item.icon" class="mr-1" v-if="item.icon" />
+            <!-- 文本 -->
+            <span>
+              {{ item.name }}
+            </span>
+          </div>
         </slot>
         <div
           v-if="activeKey && item[activeKey] == activeValue"
-          class="absolute top-1/2 left-3 h-1.5 w-1.5 -translate-y-1/2 rounded-full bg-sf-theme"
+          class="h-1.5 w-1.5 rounded-full bg-sf-theme"
         ></div>
+        <!-- 右侧图标 -->
+        <SfIcon size="4" :icon="item.rightIcon" class="mr-1" v-if="item.rightIcon" />
       </div>
     </template>
   </div>
@@ -74,11 +82,23 @@ function activeClass(item) {
  * 悬停项的类名
  */
 function hoverClass(item) {
-  const name = "hover:bg-sf-theme-2 cursor-pointer hover:text-sf-theme-text";
-  if (typeof item.hover == "boolean") {
-    return item.hover ? name : "";
+  const className = "hover:bg-sf-theme-2 cursor-pointer hover:text-sf-theme-text";
+  // 当item传入disabled属性时
+  if (typeof item.disabled == "boolean") {
+    // 如果disabled为true，返回空字符串
+    return item.disabled ? "" : className;
   }
-  return name;
+  return className;
+}
+
+/**
+ * 显示项
+ */
+function showItem(item) {
+  if (typeof item.hidden == "boolean") {
+    return item.hidden ? true : false;
+  }
+  return true;
 }
 </script>
 
