@@ -14,7 +14,7 @@
  *   - 行信息只在"行数或行高发生变化"时才更新，避免不必要的重渲染
  */
 import { unrefElement, useDebounceFn, useMutationObserver, useResizeObserver } from "@vueuse/core";
-import { ref, watch, type Ref } from "vue";
+import { ref, watch, type Ref, type WatchSource } from "vue";
 
 /** 单个"行"的信息（模块内部的一个 div） */
 interface RowInfo {
@@ -39,8 +39,8 @@ interface ModuleInfo {
  * @returns 模块 + 行信息的响应式列表
  */
 export function useRowInfo(
-  rootRef: Ref<HTMLDivElement | null>,
-  watchOptions: any,
+  rootRef: Ref<HTMLElement | null>,
+  watchOptions: WatchSource,
   options?: { stopAfterFirstMeasure?: boolean },
 ) {
   const idPrefix = "row-item";
@@ -108,7 +108,7 @@ export function useRowInfo(
     characterData: true,
   });
   // 样式配置（字号/行高/内边距）变化会改变高度，需重新测量
-  watch(watchOptions, debouncedMeasure, { deep: true });
+  watch(watchOptions, debouncedMeasure);
 
   return { moduleList };
 }

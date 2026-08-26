@@ -5,7 +5,7 @@
  * 供 resumePages/index.vue 组合使用。
  */
 import { computed, ref, watch, type ComputedRef, type Ref } from "vue";
-import { MODULE_GAP, RESUME_HEIGHT } from "../constants";
+import { MODULE_GAP, PAGE_NUMBER_HEIGHT, RESUME_HEIGHT } from "../constants";
 import { useRowInfo } from "../useRowInfo";
 import type { ResumeTheme } from "./useResumeTheme";
 
@@ -18,9 +18,9 @@ export interface PageSlice {
 /** useResumePages 入参 */
 interface UseResumePagesOptions {
   measureRef: Ref<HTMLElement | null>;
-  allModules: ComputedRef<Record<string, any>[]>;
   ui: ComputedRef<Record<string, any>>;
   themeStyles: ResumeTheme;
+  showPageNumber: ComputedRef<boolean>;
   isThumb: ComputedRef<boolean>;
   selectedModule: Ref<any[]>;
   isReadonly: ComputedRef<boolean>;
@@ -33,22 +33,23 @@ interface UseResumePagesOptions {
  */
 export const useResumePages = ({
   measureRef,
-  allModules,
   ui,
   themeStyles,
+  showPageNumber,
   isThumb,
   selectedModule,
   isReadonly,
   uid,
 }: UseResumePagesOptions) => {
   // 测量监听配置：风格模板切换会改变行高，纳入监听触发重新测量分页
-  const o = computed(() => ({
-    paddingValue: themeStyles.paddingValue.value(),
-    fontValue: themeStyles.fontValue.value(),
-    lineHeightValue: themeStyles.lineHeightValue.value(),
+  const watchOptions = computed(() => ({
+    padding: ui.value.padding,
+    fontSize: ui.value.fontSize,
+    lineHeight: ui.value.lineHeight,
     themeTemplate: themeStyles.themeTemplate.value,
+    showPageNumber: showPageNumber.value,
   }));
-  const { moduleList } = useRowInfo(measureRef, o, {
+  const { moduleList } = useRowInfo(measureRef, watchOptions, {
     // 缩略图模式：首次测量成功后冻结，销毁测量容器也不会清空行数据
     stopAfterFirstMeasure: isThumb.value,
   });
@@ -62,7 +63,9 @@ export const useResumePages = ({
   // 分页逻辑：展平所有模块行，逐行贪心装入页面
   const pages = computed<PageSlice[][]>(() => {
     const padding = ui.value.padding || 0;
-    const maxContentHeight = RESUME_HEIGHT - padding - 32; // 减去上内边距和页脚空间（底部无内边距）
+    const bottomSpace = showPageNumber.value ? PAGE_NUMBER_HEIGHT : padding;
+    // 页码区域与主题下边距互斥，避免重复占用页面高度
+    const maxContentHeight = RESUME_HEIGHT - padding - bottomSpace;
 
     const result: PageSlice[][] = [];
     let currentPage: PageSlice[] = [];
