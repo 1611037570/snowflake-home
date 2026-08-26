@@ -19,8 +19,17 @@ const visible = ref(false);
     <span>生成仅供参考，请保持独立思考。</span>
 
     <SfModal v-model="visible" :title="$t('router.resumeAI')">
-      <div class="w-[min(520px,80vw)] px-3 pb-3 text-sm leading-7 text-sf-text-2">
-        让我来协助你完善简历内容。AI生成结果仅供参考，请结合实际情况判断和修改。
+      <div class="flex w-[350px] flex-col">
+        <!-- AI宣传语 -->
+        <div class="flex-c mb-3 text-base">
+          {{ $t("router.resumeAIDesc") }}
+        </div>
+        <!-- ai介绍 -->
+        <div class="text-sf-text" style="display: ruby">
+          基于
+          <span class="font-semibold text-sf-theme">{{ $t("router.resume") }}</span>
+          深度定制的智能 Agent，围绕简历场景精心打磨专属 Prompt，让你的简历脱颖而出
+        </div>
       </div>
     </SfModal>
   </div>
