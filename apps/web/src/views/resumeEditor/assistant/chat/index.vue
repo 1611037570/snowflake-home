@@ -14,7 +14,7 @@ const resumeStore = useResumeStore();
 const aiStore = useAiStore();
 const { currentData, isGenerating } = storeToRefs(resumeStore);
 const { createDefaultMessage } = aiStore;
-const { thinkMode } = storeToRefs(aiStore);
+const { thinkMode, activeModel, customModel } = storeToRefs(aiStore);
 const applyDiff = inject("applyDiff");
 
 const chat = defineModel("chat", {
@@ -134,16 +134,19 @@ const handleAIResponse = async () => {
     lastMsg = currentMessages.value[currentMessages.value.length - 1];
     // 思考状态，初始为 false
     let thoughtStatus = false;
-    // 调用豆包大模型流式接口
-    const { sendFn, abortFn } = await getLLM().request({
-      options: {
-        input: messages,
-        model: "deepseek-v4-flash-ga-260731",
-        thinking: {
-          // 根据设置控制深度思考模式
-          type: thinkMode.value ? "enabled" : "disabled",
-        },
+    // 根据供应商契约选择请求消息字段
+    const llm = getLLM();
+    const options = {
+      [llm.provider === "openai" ? "messages" : "input"]: messages,
+      thinking: {
+        // 根据设置控制深度思考模式
+        type: thinkMode.value ? "enabled" : "disabled",
       },
+      ...(activeModel.value === "custom" ? { model: customModel.value?.model } : {}),
+    };
+    // 调用当前配置的大模型流式接口
+    const { sendFn, abortFn } = await llm.request({
+      options,
       debug: false,
       stream: true, // 开启流式响应
       // 解析简历分析结果 JSON
