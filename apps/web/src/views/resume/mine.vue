@@ -4,6 +4,7 @@ import dayjs from "dayjs";
 import { storeToRefs } from "pinia";
 import { useRouter } from "vue-router";
 import { getAllScores, getResumeTitle } from "../resumeEditor/utils";
+import ThumbPreview from "@/views/resumeEditor/preview/thumbPreview.vue";
 
 const router = useRouter();
 
@@ -38,6 +39,14 @@ const getProgressClass = (progress) => {
 
 // 按 id 定位真实下标（displayList 按 lastUseTime 排序后 index 不可直接用）
 const findIndexById = (id) => list.value.findIndex((item) => item.id === id);
+
+// 组装缩略预览所需的简历项
+const getThumbItem = (item) => ({
+  data: item.data,
+  config: item.config,
+  fixedConfig: item.fixedConfig,
+  ui: item.ui,
+});
 
 const handleEdit = (item) => {
   const index = findIndexById(item.id);
@@ -83,8 +92,18 @@ const handleUseTemplate = () => {
         class="group flex cursor-pointer flex-col rounded-xl border border-sf-b bg-sf-primary p-4 shadow-sm transition-all duration-200 hover:-translate-y-1 hover:border-sf-theme"
         @click="handleEdit(card.item)"
       >
+        <!-- 简历缩略预览：可直接查看与全屏放大 -->
+        <div
+          class="relative aspect-[794/1123] w-full overflow-hidden rounded-lg border border-sf-b bg-sf-bg"
+        >
+          <ThumbPreview
+            :item="getThumbItem(card.item)"
+            action-text="编辑"
+            @select="handleEdit(card.item)"
+          />
+        </div>
         <!-- 标题与操作 -->
-        <div class="flex items-start justify-between gap-2">
+        <div class="mt-3 flex items-start justify-between gap-2">
           <div class="min-w-0">
             <div class="truncate text-base font-black text-sf-text">
               {{ getResumeTitle(card.item.data) }}
