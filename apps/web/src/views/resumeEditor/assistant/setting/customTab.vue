@@ -136,6 +136,11 @@ async function testConnection() {
       <SfInput v-model="form.url" placeholder="如：https://api.openai.com/v1/chat/completions" />
     </SfFormItem>
 
+    <!-- 提示：强制开启深度思考，推荐使用最新模型 -->
+    <div class="flex items-center text-xs text-sf-text-3">
+      <SfIcon icon="mdi:information-variant" size="3.5" class="mr-1" />
+      项目会强制开启深度思考，推荐使用最新模型取更智能的回复。
+    </div>
     <div class="flex gap-3">
       <!-- 使用当前配置测试接口连通性 -->
       <el-button type="primary" class="flex-1" :loading="testing" @click="testConnection">
