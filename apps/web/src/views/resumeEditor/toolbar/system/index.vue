@@ -2,6 +2,7 @@
 import { ref } from "vue";
 import { storeToRefs } from "pinia";
 import { useResumeStore } from "@/stores";
+import Icon from "../components/icon.vue";
 
 // 设置弹窗可见性
 const drawerVisible = ref(false);
@@ -12,15 +13,7 @@ const { toolbarAlwaysVisible } = storeToRefs(resumeStore);
 
 <template>
   <!-- 设置按钮 -->
-  <SfTooltip content="系统设置" placement="left">
-    <SfIcon
-      icon="iconamoon:settings-fill"
-      size="5"
-      boxSize="7"
-      class="rounded-full text-sf-text-2 hover:bg-sf-theme-2 hover:text-sf-theme-text"
-      @click="drawerVisible = true"
-    />
-  </SfTooltip>
+  <Icon icon="iconamoon:settings-fill" content="系统设置" @click="drawerVisible = true" />
 
   <!-- 设置弹窗 -->
   <SfModal v-model="drawerVisible" title="系统设置">
