@@ -16,7 +16,7 @@ defineEmits(["fullscreen"]);
 
 const containerRef = ref(null);
 const resumeStore = useResumeStore();
-const { toolbarAlwaysVisible } = storeToRefs(resumeStore);
+const { system } = storeToRefs(resumeStore);
 const contentRef = ref(null);
 const contentSize = ref({ width: 0, height: 0 });
 const manualScale = ref(1);
@@ -146,7 +146,7 @@ useResizeObserver(contentRef, ([entry]) => {
       v-if="showToolbar"
       class="absolute top-4 left-1/2 z-10 -translate-x-1/2 opacity-0 transition-all duration-200 select-none"
       :class="
-        toolbarAlwaysVisible
+        system.toolbarAlwaysVisible
           ? 'translate-y-0 opacity-100'
           : '-translate-y-4 group-hover:translate-y-0 group-hover:opacity-100'
       "

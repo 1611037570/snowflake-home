@@ -11,7 +11,7 @@ import { defaultMessage } from "./prompt.ts";
 const aiStore = useAiStore();
 const resumeStore = useResumeStore();
 const { createDefaultChat } = aiStore;
-const { toolbarAlwaysVisible } = storeToRefs(resumeStore);
+const { system } = storeToRefs(resumeStore);
 
 // 默认对话
 const chat = ref(createDefaultChat(defaultMessage));
@@ -38,7 +38,7 @@ function onRequestComplete(msg) {
       <div
         class="absolute top-4 left-1/2 z-10 flex -translate-x-1/2 gap-1 rounded-full border border-sf-b bg-sf-page p-2 transition-all duration-200 select-none"
         :class="
-          toolbarAlwaysVisible
+          system.toolbarAlwaysVisible
             ? 'translate-y-0 opacity-100'
             : '-translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100'
         "
