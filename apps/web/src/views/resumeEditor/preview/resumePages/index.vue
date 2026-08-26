@@ -65,7 +65,7 @@ provide("previewData", previewData);
 // ---------- 主题样式注入（数据源为 item.ui）----------
 const ui = computed(() => props.item.ui || {});
 const showPageNumber = computed(() => system.value.showPageNumber);
-const themeStyles = useResumeTheme(ui, showPageNumber);
+const themeStyles = useResumeTheme(ui);
 const { paddingValue, fontValue, lineHeightValue } = themeStyles;
 
 // ---------- 分页（测量 + 分页算法 + 裁剪样式）----------

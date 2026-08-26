@@ -23,18 +23,14 @@ export interface ResumeTheme {
  * 注入简历主题样式
  * @param ui - item.ui 的响应式引用
  */
-export const useResumeTheme = (
-  ui: ComputedRef<ResumeUi>,
-  showPageNumber: ComputedRef<boolean>,
-): ResumeTheme => {
-  // 页码显示时由页码区域占用底部空间，否则保留主题下边距
+export const useResumeTheme = (ui: ComputedRef<ResumeUi>): ResumeTheme => {
+  // 页面始终不保留下边距，底部空间由页码区域控制
   const paddingValue = computed(() => (offset = 0) => {
     const padding = ui.value.padding + offset;
     return {
       paddingTop: `${padding}px`,
       paddingLeft: `${padding}px`,
       paddingRight: `${padding}px`,
-      paddingBottom: `${showPageNumber.value ? 0 : padding}px`,
     };
   });
   const fontSize = computed(() => ui.value.fontSize);
