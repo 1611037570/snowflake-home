@@ -96,7 +96,7 @@ const list = computed(() => {
   const res = [
     {
       name: currentMusic.value.name + " - " + currentMusic.value.singer,
-      hover: false,
+      disabled: false,
       active: true,
     },
     {
