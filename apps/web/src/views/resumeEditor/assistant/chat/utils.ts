@@ -15,7 +15,9 @@ export const fieldAnalysis = computed(() => {
     // 拼接所有字段的解析
     text += models.map((item: any) => `${item.key}:${item.name}`).join("、");
   }
-  return text;
+  const lastText =
+    "，最后一层字段的content都是HTML 字符串，不要改为MD格式。我们支持标签：p, br, strong, b, em, i, u, ul, ol, li, a, span这些标签。";
+  return text + lastText;
 });
 
 // 用户内容
