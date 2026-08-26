@@ -12,17 +12,17 @@ const { layout } = storeToRefs(resumeStore);
 
 const layoutList = [
   {
-    name: "列表布局",
+    name: "编辑+预览布局",
     value: "list",
     icon: "fluent:layout-column-one-third-left-24-regular",
   },
   {
-    name: "三栏布局",
+    name: "编辑+预览+AI布局",
     value: "three",
     icon: "fluent:layout-column-three-24-regular",
   },
   {
-    name: "AI布局",
+    name: "预览+AI布局",
     value: "ai",
     icon: "fluent:layout-column-one-third-right-24-regular",
   },
