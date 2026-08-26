@@ -23,13 +23,8 @@ const emit = defineEmits(["toggle"]);
 <template>
   <!-- 胶囊折叠切换按钮 -->
   <button
-    class="flex cursor-pointer items-center rounded-full border px-2 py-0.5 text-sf font-bold transition-all"
-    :class="[
-      gap,
-      !collapsed
-        ? 'border-sf-theme/20 bg-sf-theme/10 text-sf-theme'
-        : 'border-sf-b/10 bg-sf-bg-3 text-sf-text-3',
-    ]"
+    class="flex cursor-pointer items-center rounded-full px-2 py-0.5 text-sf font-bold transition-all"
+    :class="[gap, !collapsed ? ' bg-sf-theme-2 text-sf-theme-text' : ' bg-sf-bg-2 text-sf-text-3']"
     @click="emit('toggle')"
   >
     <span class="tracking-tight">{{ label }}</span>
