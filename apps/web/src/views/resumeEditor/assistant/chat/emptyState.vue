@@ -2,7 +2,6 @@
 import { useResumeStore } from "@/stores";
 import { storeToRefs } from "pinia";
 import { computed } from "vue";
-import { quickActions } from "./data";
 
 const emit = defineEmits(["switch-mode"]);
 const resumeStore = useResumeStore();
@@ -38,23 +37,6 @@ const moduleNames = computed(() => {
         {{ item.name }}
       </span>
       <span>进行以下操作</span>
-    </div>
-
-    <div class="grid w-full max-w-[300px] grid-cols-2 gap-2.5">
-      <button
-        v-for="action in quickActions"
-        :key="action.name"
-        type="button"
-        class="group flex h-20 cursor-pointer flex-col items-center justify-center gap-2 rounded-lg border border-sf-b bg-sf-bg px-3 text-sm font-medium text-sf-base shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-sf-theme/40 hover:bg-sf-theme/5 hover:text-sf-theme hover:shadow-md active:scale-[0.98] active:shadow-sm"
-        @click="emit('switch-mode', action.type)"
-      >
-        <span
-          class="flex h-8 w-8 items-center justify-center rounded-md bg-sf-bg text-sf-theme transition-colors group-hover:bg-sf-theme/10"
-        >
-          <SfIcon :icon="action.icon" size="4" />
-        </span>
-        <span>{{ action.name }}</span>
-      </button>
     </div>
   </div>
 </template>
