@@ -53,7 +53,7 @@ export const useAiStore = defineStore(
       model: "",
       key: "",
     });
-    // sk-7ef875432c944ab98ff408bed73aaa53
+
     const sidebarCollapsed = ref(true);
     const sidebarMode = ref("float"); // 'dock' or 'float'
     // 对话列表使用 IndexedDB 持久化，替代 localStorage

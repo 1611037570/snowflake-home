@@ -1,7 +1,7 @@
 <script setup>
 import { useAiStore, useResumeStore } from "@/stores";
 import { useScroll } from "@vueuse/core";
-import { computed, inject, nextTick, ref, watch } from "vue";
+import { computed, inject, nextTick, onUnmounted, ref, watch } from "vue";
 import { storeToRefs } from "pinia";
 import { getLLM } from "@/apis";
 import { fieldAnalysis, userData } from "./utils.ts";
@@ -9,11 +9,11 @@ import { fieldAnalysis, userData } from "./utils.ts";
 import AiMessage from "./aiMessage.vue";
 import ChatInput from "./chatInput.vue";
 import UserMessage from "./userMessage.vue";
-import WelcomeScreen from "./welcomeScreen.vue";
+import EmptyState from "./emptyState.vue";
 
 const resumeStore = useResumeStore();
 const aiStore = useAiStore();
-const { currentData, isGenerating } = storeToRefs(resumeStore);
+const { isGenerating } = storeToRefs(resumeStore);
 const { createDefaultMessage } = aiStore;
 const { thinkMode, activeModel, customModel } = storeToRefs(aiStore);
 const applyDiff = inject("applyDiff");
@@ -86,6 +86,9 @@ watch(
 const isSending = ref(false);
 // 中止请求的函数
 let abortRequest = null;
+// 请求代次用于阻止卸载后的旧请求继续写入消息
+let requestVersion = 0;
+let isUnmounted = false;
 
 /**
  * 处理发送消息
@@ -110,6 +113,8 @@ const handleSend = (content) => {
  * 处理 AI 回复的真实请求
  */
 const handleAIResponse = async () => {
+  const currentRequestVersion = ++requestVersion;
+  const isCurrentRequest = () => !isUnmounted && currentRequestVersion === requestVersion;
   isGenerating.value = true;
   // 保存最后一条消息的引用，用于流式更新内容
   let lastMsg = null;
@@ -160,6 +165,7 @@ const handleAIResponse = async () => {
       isJson: true,
       // 流式事件回调
       onEvent: (type, data) => {
+        if (!isCurrentRequest()) return;
         if (type === "reasoning") {
           // 追加思考内容并滚动到底部
           lastMsg.thought += data;
@@ -179,6 +185,7 @@ const handleAIResponse = async () => {
       },
       // 请求失败回调
       onFail: (error) => {
+        if (!isCurrentRequest()) return;
         lastMsg.content = `请求出错: ${error.message || "未知错误"}`;
         lastMsg.typing = false;
         isSending.value = false;
@@ -187,6 +194,7 @@ const handleAIResponse = async () => {
       },
       // 请求成功回调（JSON格式）
       onSuccess: (res) => {
+        if (!isCurrentRequest()) return;
         const userData = res.result.data;
         console.log("userData:>> ", userData);
         applyDiff?.(userData);
@@ -197,13 +205,19 @@ const handleAIResponse = async () => {
     });
 
     // 保存中止函数，供外部停止生成时调用
+    if (!isCurrentRequest()) {
+      abortFn?.();
+      return;
+    }
     abortRequest = abortFn;
     // 执行发送请求
     await sendFn();
   } catch (error) {
+    if (isUnmounted) return;
     // 捕获异常并打印
     console.error("AI 请求异常:", error);
   } finally {
+    if (isUnmounted) return;
     // 无论成功失败，统一清理状态
     isGenerating.value = false;
     isSending.value = false;
@@ -221,6 +235,19 @@ const handleAIResponse = async () => {
     emit("requestComplete", lastMsg);
   }
 };
+
+// 编辑器卸载时取消请求，避免旧请求继续更新会话和加载状态
+onUnmounted(() => {
+  isUnmounted = true;
+  requestVersion += 1;
+  abortRequest?.();
+  abortRequest = null;
+  isSending.value = false;
+  isGenerating.value = false;
+  currentMessages.value.forEach((msg) => {
+    if (msg.typing) msg.typing = false;
+  });
+});
 
 /**
  * 停止生成
@@ -312,9 +339,7 @@ const handleSuggest = (payload) => {
 <template>
   <div class="relative flex h-full w-full flex-col overflow-hidden select-text">
     <SfScrollbar ref="chatContainer" class="h-full w-full flex-1">
-      <slot name="empty" v-if="currentMessages.length === 1">
-        <WelcomeScreen @suggest="handleSuggest" />
-      </slot>
+      <EmptyState @suggest="handleSuggest" v-if="currentMessages.length === 1" />
 
       <div v-if="currentMessages.length > 1" class="flex h-full flex-col items-center p-3">
         <component
