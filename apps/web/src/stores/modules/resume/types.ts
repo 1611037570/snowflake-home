@@ -16,6 +16,8 @@ export interface Data {
     workTime?: string;
     // 性别
     sex?: string;
+    // 头像 Base64
+    avatar?: string;
   };
   // 技能
   skill?: string;

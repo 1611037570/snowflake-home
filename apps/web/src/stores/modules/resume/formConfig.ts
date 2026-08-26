@@ -58,6 +58,17 @@ export const DEFAULT_USER_FORM = [
           },
         ],
       },
+      // 头像
+      {
+        type: "object",
+        label: "头像",
+        component: "imageUpload",
+        span: 24,
+        model: {
+          source: ["user", "avatar"],
+          prop: "modelValue",
+        },
+      },
       // 出生日期
       {
         type: "object",
