@@ -3,7 +3,8 @@ import { useResumeStore } from "@/stores";
 import dayjs from "dayjs";
 import { storeToRefs } from "pinia";
 import { useRouter } from "vue-router";
-import { getAllScores, getResumeTitle } from "../resumeEditor/utils";
+import { getAllScores } from "../resumeEditor/utils";
+import { getResumeTitle } from "../resumeEditor/resumeName";
 import ThumbPreview from "@/views/resumeEditor/preview/thumbPreview.vue";
 
 const router = useRouter();

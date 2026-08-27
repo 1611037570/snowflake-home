@@ -1,7 +1,7 @@
 <script setup>
 import { useResumeStore } from "@/stores";
 import { ref } from "vue";
-import { resumeTitle } from "../../utils";
+import { resumeTitle } from "../../resumeName";
 const resumeStore = useResumeStore();
 const { currentUsage } = storeToRefs(resumeStore);
 const props = defineProps({

@@ -1,7 +1,7 @@
 <script setup>
 import dayjs from "dayjs";
 import { computed, inject } from "vue";
-import { workYears } from "../../utils";
+import { workYears } from "../../resumeName";
 import Text from "./text.vue";
 
 // 从上层注入获取代理后的预览数据

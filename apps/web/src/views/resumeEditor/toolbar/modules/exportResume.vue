@@ -1,6 +1,7 @@
 <script setup>
 import Icon from "../components/icon.vue";
 import { useResumeStore } from "@/stores";
+import { getExportFileName, getResumeTitle } from "../../resumeName";
 import eventBus from "@/utils/modules/eventBus";
 import { storeToRefs } from "pinia";
 import { ref } from "vue";
@@ -16,7 +17,8 @@ const exportConfig = () => {
   const url = URL.createObjectURL(blob);
   const link = document.createElement("a");
   link.href = url;
-  link.download = "resume-config.json";
+  // 统一命名：年-月-日-简历标题
+  link.download = getExportFileName(getResumeTitle(currentConfig.value), "json");
   link.click();
   URL.revokeObjectURL(url);
 };
