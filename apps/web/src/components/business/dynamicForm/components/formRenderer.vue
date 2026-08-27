@@ -1,6 +1,12 @@
 <template>
   <el-row ref="row" :class="{ 'drag-container-active': isDragging }" :gutter="12" :key="items.id">
-    <FormItem :currentForm="item" v-for="(item, index) in items.fields" :key="item.id">
+    <!-- :data-module-key="item.key" 临时增加 后期提供新方案 内部还能框选 -->
+    <FormItem
+      :currentForm="item"
+      :data-module-key="item.key"
+      v-for="(item, index) in items.fields"
+      :key="item.id"
+    >
       <!-- 校验失败：展示友好的错误提示 -->
       <FormError v-if="!checkForm(item)" :error-msg="item.errorMsg" :raw="item.raw" />
       <!-- v-bind="$attrs" -->

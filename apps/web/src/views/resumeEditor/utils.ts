@@ -105,6 +105,87 @@ export const getAllScores = (data: any) => {
   };
 };
 
+// 列表模块字段 prop 对应的中文标签（addConfig.model 无 label 时兜底）
+const FIELD_LABELS: Record<string, string> = {
+  name: "名称",
+  url: "链接",
+  education: "学位",
+  post: "专业",
+  time: "时间",
+  content: "经历",
+  mode: "学制",
+};
+
+// 按路径读取数据值
+const getValueByPath = (obj: any, path: any[]) => {
+  let current = obj;
+  for (const key of path) {
+    if (current == null) return undefined;
+    current = current[key];
+  }
+  return current;
+};
+
+// 判断字段值是否为空
+const isEmptyVal = (value: any) => value == null || String(value).trim() === "";
+
+// 收集模块缺失字段标签列表
+const collectMissing = (source: any, moduleKey: string) => {
+  const moduleForm = [
+    ...(resumeStore.currentFixedConfig?.fields || []),
+    ...(resumeStore.currentConfig?.fields || []),
+  ].find((field) => field?.key === moduleKey);
+  if (!moduleForm?.fields?.length) return [];
+  const missing: string[] = [];
+
+  const pushMissing = (label: string) => {
+    if (label && !missing.includes(label)) missing.push(label);
+  };
+  // 字段中文名：优先配置 label，其次 prop 映射表，最后原样兜底
+  const getLabel = (field: any, prop: string) =>
+    field?.label || FIELD_LABELS[prop] || field?.name || prop || "字段";
+
+  for (const field of moduleForm.fields) {
+    // 列表型模块（教育/工作/项目/账号等）
+    if (field.type === "array" && field.addConfig) {
+      const itemDefs = field.addConfig.fields?.length
+        ? field.addConfig.fields
+        : field.addConfig.model;
+      const firstSrc = itemDefs[0]?.model?.[0]?.source || itemDefs[0]?.source || [];
+      // 由首字段 source 推导列表路径（'?' 前部分）
+      const listPath = firstSrc.slice(0, firstSrc.indexOf("?"));
+      const list = getValueByPath(source, listPath);
+      if (!Array.isArray(list) || list.length === 0) {
+        pushMissing(field.addConfig.name || "内容");
+        continue;
+      }
+      list.forEach((item, index) => {
+        for (const def of itemDefs) {
+          const model = def?.model ? (Array.isArray(def.model) ? def.model[0] : def.model) : def;
+          const src = Array.isArray(model?.source) ? model.source : [];
+          if (!src.length) continue;
+          const prop = model?.prop || src[src.length - 1];
+          // 将 '?' 替换为数组下标后取值
+          const path = src.map((k: any) => (k === "?" ? index : k));
+          if (isEmptyVal(getValueByPath(source, path))) {
+            pushMissing(getLabel(def, prop));
+          }
+        }
+      });
+      continue;
+    }
+    // 普通字段（含富文本等）
+    const model = Array.isArray(field.model) ? field.model[0] : field.model;
+    const src = Array.isArray(model?.source) ? model.source : [];
+    if (!src.length) continue;
+    const prop = model?.prop || src[src.length - 1];
+    if (isEmptyVal(getValueByPath(source, src))) {
+      pushMissing(field.component === "wangEditor" ? "内容" : getLabel(field, prop));
+    }
+  }
+  return missing;
+};
+
 // 计算各简历模块进度及总进度
 export const useProgress = (data: MaybeRefOrGetter<Record<string, any> | null | undefined>) => {
   return computed(() => {
@@ -128,6 +209,8 @@ export const useProgress = (data: MaybeRefOrGetter<Record<string, any> | null | 
         // 模块进度百分比（0-100），与总进度保持一致
         progress: score * 10,
         allProgress: 100,
+        // 缺失字段标签列表
+        missing: collectMissing(source, key),
       };
     });
 
