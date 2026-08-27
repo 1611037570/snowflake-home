@@ -4,7 +4,6 @@ import { storeToRefs } from "pinia";
 import Account from "./components/account.vue";
 import AddModule from "./components/addModule.vue";
 import BoxCollapse from "./components/boxCollapse.vue";
-import Education from "./components/education.vue";
 import ItemCollapse from "./components/itemCollapse.vue";
 import ImageUpload from "./components/imageUpload.vue";
 
@@ -13,7 +12,6 @@ const { currentData, currentConfig, currentFixedConfig } = storeToRefs(resumeSto
 
 // 注入到动态表单的自定义组件库
 const dynamicComponents = {
-  education: Education,
   boxCollapse: BoxCollapse,
   itemCollapse: ItemCollapse,
   account: Account,
