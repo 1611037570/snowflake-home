@@ -1,27 +1,10 @@
 import { useResumeStore } from "@/stores";
-import dayjs from "dayjs";
 import { storeToRefs } from "pinia";
 import { computed, toValue, type MaybeRefOrGetter } from "vue";
 
 const resumeStore = useResumeStore();
 const { currentData } = storeToRefs(resumeStore);
 
-const user = computed(() => currentData.value?.user || {});
-
-// 计算工作年限（规则：满5个月按1年算，以此类推）
-export const workYears = computed(() => {
-  const workTime = user.value?.workTime;
-  if (!workTime) return "";
-
-  const startDate = dayjs(workTime);
-  if (!startDate.isValid()) return "";
-
-  const diffInMonths = dayjs().diff(startDate, "month");
-  // 偏移7个月以实现：5-16个月=1年，17-28个月=2年...
-  const years = Math.floor((diffInMonths + 7) / 12);
-
-  return years > 0 ? `${years}年经验` : "";
-});
 /**
  * 格式化时间范围
  * @param time 时间数组 [开始时间, 结束时间] 或 [时间]
@@ -32,26 +15,6 @@ export const getTime = (time: any) => {
   if (time.length === 1) return time[0];
   return `${time[0]} - ${time[1]}`;
 };
-export function getResumeTitle(data: any) {
-  const defaultName = "未命名简历";
-  if (!data) {
-    console.log("22222222:>> ", 22222222);
-    return defaultName;
-  }
-  const { user, education } = data;
-  const name = user?.name || "";
-  const edu = education?.data?.[0]?.education || "";
-  const position = user?.position || "";
-  return [name, edu, position, workYears.value].filter(Boolean).join("-") || defaultName;
-}
-/**
- * 生成简历标题
- * @returns 简历标题字符串
- */
-export const resumeTitle = computed(() => {
-  const data = currentData.value;
-  return getResumeTitle(data);
-});
 
 // 计算单个对象得分
 export function calculateScore(obj: any) {
@@ -149,7 +112,8 @@ export const useProgress = (data: MaybeRefOrGetter<Record<string, any> | null | 
     const list = Object.keys(source).map((key) => {
       // 用户信息直接使用根节点，其余模块取一次 data 字段
       const moduleData = key === "user" ? source[key] : source[key]?.data;
-      const progress = Array.isArray(moduleData)
+      // 模块得分（0-10）
+      const score = Array.isArray(moduleData)
         ? calculateListScore(moduleData)
         : typeof moduleData === "string"
           ? moduleData.trim()
@@ -161,8 +125,9 @@ export const useProgress = (data: MaybeRefOrGetter<Record<string, any> | null | 
         key,
         // 模块名称，复用 store 通用方法
         name: resumeStore.getModel(key)?.name || key,
-        progress,
-        allProgress: 10,
+        // 模块进度百分比（0-100），与总进度保持一致
+        progress: score * 10,
+        allProgress: 100,
       };
     });
 
