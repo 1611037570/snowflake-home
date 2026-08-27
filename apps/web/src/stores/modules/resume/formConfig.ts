@@ -285,35 +285,114 @@ export const DEFAULT_EDUCATION_FORM = {
       dragClass: ".item-drag",
       list: [],
       addConfig: {
+        type: "group",
+        component: "itemCollapse",
+        slot: "default",
+        span: 24,
         model: [
           {
             source: ["education", "data", "?", "name"],
             prop: "name",
           },
+        ],
+        // 子项字段列表：纯 schema 声明
+        fields: [
           {
-            source: ["education", "data", "?", "education"],
-            prop: "education",
+            type: "object",
+            label: "学校",
+            component: "input",
+            span: 12,
+            model: {
+              source: ["education", "data", "?", "name"],
+              prop: "modelValue",
+            },
+            props: {
+              placeholder: "学校",
+              clearable: true,
+            },
           },
           {
-            source: ["education", "data", "?", "post"],
-            prop: "post",
+            type: "object",
+            label: "学位",
+            component: "select",
+            span: 12,
+            model: {
+              source: ["education", "data", "?", "education"],
+              prop: "modelValue",
+            },
+            props: {
+              placeholder: "学位",
+              clearable: true,
+              list: [
+                { name: "高中", value: "高中" },
+                { name: "大专", value: "大专" },
+                { name: "本科", value: "本科" },
+                { name: "硕士", value: "硕士" },
+                { name: "博士", value: "博士" },
+              ],
+            },
           },
           {
-            source: ["education", "data", "?", "time"],
-            prop: "time",
+            type: "object",
+            label: "专业",
+            component: "input",
+            span: 12,
+            model: {
+              source: ["education", "data", "?", "post"],
+              prop: "modelValue",
+            },
+            props: {
+              placeholder: "专业",
+              clearable: true,
+            },
           },
           {
-            source: ["education", "data", "?", "content"],
-            prop: "content",
+            type: "object",
+            label: "学制",
+            component: "select",
+            span: 12,
+            model: {
+              source: ["education", "data", "?", "mode"],
+              prop: "modelValue",
+            },
+            props: {
+              placeholder: "学制",
+              clearable: true,
+              list: [
+                { name: "全日制", value: "全日制" },
+                { name: "非全日制", value: "非全日制" },
+                { name: "不填写", value: " " },
+              ],
+            },
           },
-          // 学制
           {
-            source: ["education", "data", "?", "mode"],
-            prop: "mode",
+            type: "object",
+            label: "时间",
+            component: "datePicker",
+            span: 24,
+            model: {
+              source: ["education", "data", "?", "time"],
+              prop: "modelValue",
+            },
+            props: {
+              type: "monthrange",
+              format: "YYYY.MM",
+              valueFormat: "YYYY.MM",
+              startPlaceholder: "开始时间",
+              endPlaceholder: "结束时间",
+            },
+          },
+          {
+            type: "object",
+            label: "经历",
+            component: "wangEditor",
+            span: 24,
+            model: {
+              source: ["education", "data", "?", "content"],
+              prop: "modelValue",
+            },
           },
         ],
-        component: "education",
-        span: 24,
       },
     },
   ],
