@@ -143,9 +143,7 @@ export const getAllScores = (data: any) => {
 };
 
 // 计算各简历模块进度及总进度
-export const useProgress = (
-  data: MaybeRefOrGetter<Record<string, any> | null | undefined>,
-) => {
+export const useProgress = (data: MaybeRefOrGetter<Record<string, any> | null | undefined>) => {
   return computed(() => {
     const source = toValue(data) || {};
     const list = Object.keys(source).map((key) => {
@@ -168,9 +166,8 @@ export const useProgress = (
 
     const totalScore = list.reduce((total, item) => total + item.progress, 0);
     const totalFull = list.reduce((total, item) => total + item.allProgress, 0);
-    const totalProgress = totalFull
-      ? Number(((totalScore / totalFull) * 100).toFixed(2))
-      : 0;
+    // 进度百分比 四舍五入取整
+    const totalProgress = totalFull ? Math.round((totalScore / totalFull) * 100) : 0;
 
     return {
       list,
