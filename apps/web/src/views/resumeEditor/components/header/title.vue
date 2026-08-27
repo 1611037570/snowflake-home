@@ -2,7 +2,7 @@
 import { useResumeStore } from "@/stores";
 import { storeToRefs } from "pinia";
 import { computed, ref } from "vue";
-import { resumeTitle } from "../../utils";
+import { resumeTitle } from "../../resumeName";
 import TitleEditor from "./titleEditor.vue";
 // 标题编辑器引用
 const titleEditorRef = ref(null);

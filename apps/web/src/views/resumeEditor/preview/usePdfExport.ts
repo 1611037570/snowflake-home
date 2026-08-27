@@ -7,7 +7,7 @@
 import { nextTick } from "vue";
 import { storeToRefs } from "pinia";
 import { PDF_PAGE_HEIGHT, PDF_PAGE_WIDTH, RESUME_HEIGHT, RESUME_WIDTH } from "./constants";
-import { resumeTitle } from "../utils";
+import { getExportFileName, resumeTitle } from "../resumeName";
 import { useResumeStore } from "@/stores";
 
 /**
@@ -119,8 +119,8 @@ export const usePdfExport = (rootRef?: { value: HTMLElement | null }) => {
         });
       }
 
-      // 保存PDF
-      pdf.save(`${resumeTitle.value}.pdf`);
+      // 保存PDF，统一命名：年-月-日-简历标题
+      pdf.save(getExportFileName(resumeTitle.value, "pdf"));
 
       console.log(`成功导出 ${pages.length} 页 PDF`);
     } catch (error) {

@@ -5,7 +5,7 @@
  */
 import { nextTick } from "vue";
 import { storeToRefs } from "pinia";
-import { resumeTitle } from "../utils";
+import { getExportFileName, resumeTitle } from "../resumeName";
 import { useResumeStore } from "@/stores";
 
 type ImageExportRoot = HTMLElement | { value: unknown };
@@ -101,7 +101,8 @@ export const useImageExport = (rootRef?: ImageExportRoot) => {
       const url = URL.createObjectURL(blob);
       const link = document.createElement("a");
       link.href = url;
-      link.download = `${resumeTitle.value}.png`;
+      // 统一命名：年-月-日-简历标题
+      link.download = getExportFileName(resumeTitle.value, "png");
       document.body.appendChild(link);
       link.click();
       link.remove();
