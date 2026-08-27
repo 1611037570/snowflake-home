@@ -1,5 +1,4 @@
 <script setup>
-import { DEFAULT_MODULE_NAMES } from "@/stores/modules/resume/defaultConfig";
 import { storeToRefs } from "pinia";
 import { useResumeStore } from "@/stores";
 import { useProgress } from "../../utils";
@@ -12,12 +11,14 @@ const { system, currentData } = storeToRefs(resumeStore);
 const visible = ref(false);
 
 // 计算简历完成度进度及各模块进度
-const { list, progress } = useProgress(currentData);
+const progressData = useProgress(currentData);
 
-// 根据模块 key 获取中文名称
-const getModuleName = (key) => {
-  const module = DEFAULT_MODULE_NAMES.find((item) => item.key === key);
-  return module?.name || currentData.value?.[key]?.name || key;
+// 按进度区间返回进度条颜色
+const getProgressColor = (progress) => {
+  if (progress >= 80) return "bg-sf-success";
+  if (progress >= 50) return "bg-sf-theme";
+  if (progress >= 30) return "bg-sf-warning";
+  return "bg-sf-error";
 };
 </script>
 
@@ -32,7 +33,7 @@ const getModuleName = (key) => {
     >
       <div class="flex w-10 flex-col items-center justify-center">
         <div class="flex items-center text-[16px] font-bold">
-          <span>{{ progress }}</span
+          <span>{{ progressData.progress }}</span
           ><span class="text-[14px]">%</span>
         </div>
         <div class="text-[11px] opacity-90">完成度</div>
@@ -42,15 +43,16 @@ const getModuleName = (key) => {
 
   <SfModal v-model="visible" title="完成度详情">
     <div class="flex w-[400px] flex-col gap-3">
-      <template v-for="item in list" :key="item.key">
+      <template v-for="item in progressData.list" :key="item.key">
         <div class="rounded-3xl border border-sf-b p-3">
           <div class="flex items-center justify-between">
-            <div class="text-lg">{{ getModuleName(item.key) }}</div>
+            <div class="text-lg">{{ item.name }}</div>
             <div class="text-lg font-bold">{{ item.progress }}%</div>
           </div>
           <div class="mt-2 h-2 w-full rounded-full bg-sf-bg-2">
             <div
-              class="h-2 rounded-full bg-sf-theme transition-all duration-300"
+              class="h-2 rounded-full transition-all duration-300"
+              :class="getProgressColor(item.progress)"
               :style="{ width: item.progress + '%' }"
             ></div>
           </div>

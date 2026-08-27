@@ -159,6 +159,8 @@ export const useProgress = (data: MaybeRefOrGetter<Record<string, any> | null | 
 
       return {
         key,
+        // 模块名称，复用 store 通用方法
+        name: resumeStore.getModel(key)?.name || key,
         progress,
         allProgress: 10,
       };
