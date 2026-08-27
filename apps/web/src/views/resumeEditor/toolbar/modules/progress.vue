@@ -1,9 +1,13 @@
 <script setup>
 import { storeToRefs } from "pinia";
 import { useResumeStore } from "@/stores";
+import { useProgress } from "../../utils";
 
 const resumeStore = useResumeStore();
-const { system } = storeToRefs(resumeStore);
+const { system, currentData } = storeToRefs(resumeStore);
+
+// 计算简历完成度进度
+const { progress } = useProgress(currentData);
 </script>
 
 <template>
@@ -16,7 +20,8 @@ const { system } = storeToRefs(resumeStore);
     >
       <div class="flex w-10 flex-col items-center justify-center">
         <div class="flex items-center text-[16px] font-bold">
-          <span>100</span><span class="text-[14px]">%</span>
+          <span>{{ progress }}</span
+          ><span class="text-[14px]">%</span>
         </div>
         <div class="text-[11px] opacity-90">完成度</div>
       </div>
