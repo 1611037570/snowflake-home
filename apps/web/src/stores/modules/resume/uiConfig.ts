@@ -30,6 +30,17 @@ export const themeTemplateList = [
     value: "modern",
   },
 ];
+// 用户信息展示模式列表
+export const userInfoModeList = [
+  {
+    name: "图标",
+    value: "icon",
+  },
+  {
+    name: "文字",
+    value: "text",
+  },
+];
 // ===========默认值=====================
 export const defaultThemeColor = themeColors[0].value;
 // 默认页边距
@@ -43,6 +54,8 @@ export const defaultLineHeight = 1.2;
 export const defaultModuleSpacing = 12;
 // 默认主题样式
 export const defaultThemeTemplate = "default";
+// 默认用户信息展示模式
+export const defaultUserInfoMode = "text";
 export const DEFAULT_UI = {
   // 页边距
   padding: defaultPadding,
@@ -58,4 +71,6 @@ export const DEFAULT_UI = {
   themeTemplate: defaultThemeTemplate,
   // 字体类型
   fontFamily: defaultFontFamily,
+  // 用户信息展示模式
+  userInfoMode: defaultUserInfoMode,
 };
