@@ -34,11 +34,7 @@ const hasEmail = computed(() => !!user.value?.email?.value);
 <template>
   <div :style="[lineHeightValue(), fontValue()]" class="resume-row" data-module="user">
     <!-- 头部基本信息：modern 风格改为居中布局 -->
-    <div
-      class="flex flex-wrap items-center"
-      :class="{ 'flex-col items-center': themeTemplate === 'modern' }"
-      :style="[lineHeightValue(22)]"
-    >
+    <div class="flex flex-wrap items-center" :class="{ 'flex-col items-center': themeTemplate === 'modern' }">
       <!-- 头像：default 风格在姓名左侧，modern 风格在姓名上方居中 -->
       <img
         v-if="user.avatar?.value"

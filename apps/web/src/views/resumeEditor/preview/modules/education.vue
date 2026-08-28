@@ -33,7 +33,6 @@ const hasField = (item, key) => {
     <template v-for="(item, index) in education" :key="index">
       <div
         class="mt-2 flex flex-wrap items-center justify-between"
-        :style="[lineHeightValue(3)]"
         v-if="item.name?.value || getTime(item.time?.value)"
       >
         <div class="flex min-w-0 max-w-full flex-wrap items-baseline gap-4">

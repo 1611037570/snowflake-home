@@ -25,7 +25,7 @@ const themeTemplate = computed(() => themeTemplateRef?.value || "default");
     <div class="mr-3 h-4 w-1 rounded-full bg-sf-theme" :style="{ background: themeColor }"></div>
     <h2
       class="min-w-0 max-w-full break-words font-bold tracking-wide"
-      :style="[fontValue(5), lineHeightValue(5)]"
+      :style="[fontValue(5)]"
     >
       {{ title }}
     </h2>
@@ -37,7 +37,7 @@ const themeTemplate = computed(() => themeTemplateRef?.value || "default");
   >
     <h2
       class="min-w-0 max-w-full break-words font-bold tracking-wide"
-      :style="[fontValue(5), lineHeightValue(5)]"
+      :style="[fontValue(5)]"
     >
       {{ title }}
     </h2>

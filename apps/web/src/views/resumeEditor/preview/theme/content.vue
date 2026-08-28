@@ -66,8 +66,8 @@ const splitBlocks = computed(() => {
       :key="idx"
       :is="block.tag"
       v-bind="block.attrs"
-      class="whitespace-pre-wrap break-words"
-      :style="[fontValue(-3), lineHeightValue(-3)]"
+      class="break-words whitespace-pre-wrap"
+      :style="[fontValue(), lineHeightValue()]"
       :innerHTML="block.html"
     ></component>
   </template>

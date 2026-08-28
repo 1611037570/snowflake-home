@@ -37,7 +37,7 @@ const list = computed(() => previewData.value?.[props.dataKey]?.data || []);
     <Title :title="title"></Title>
     <!-- 内容区 -->
     <template v-for="(item, index) in list" :key="index">
-      <div class="flex flex-wrap items-center justify-between" :style="[lineHeightValue(3)]">
+      <div class="flex flex-wrap items-center justify-between">
         <div class="flex min-w-0 max-w-full flex-wrap items-center gap-4">
           <div class="font-bold" :style="[fontValue(3)]">
             <Text v-model="item.name" />

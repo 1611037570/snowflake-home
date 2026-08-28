@@ -38,7 +38,7 @@ export const defaultPadding = 12;
 export const defaultFontFamily = "text-puhui";
 // 默认字体大小
 export const defaultFontSize = 16;
-export const defaultLineHeight = 25;
+export const defaultLineHeight = 1.2;
 // 默认模块间距
 export const defaultModuleSpacing = 12;
 // 默认主题样式
