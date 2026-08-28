@@ -6,7 +6,7 @@ import eventBus from "@/utils/modules/eventBus";
 import { nextTick, ref } from "vue";
 
 const resumeStore = useResumeStore();
-const { system, currentData } = storeToRefs(resumeStore);
+const { system, currentData, layout } = storeToRefs(resumeStore);
 
 // 弹窗显隐控制
 const visible = ref(false);
@@ -15,11 +15,16 @@ const visible = ref(false);
 const progressData = useProgress(currentData);
 
 // 跳转编辑对应模块：展开折叠并滚动定位
-const goFill = (item) => {
+const goFill = async (item) => {
   // 展开模块折叠面板
   const moduleData = currentData.value?.[item.key];
   if (moduleData && Array.isArray(moduleData.collapsed)) {
     moduleData.collapsed = ["1"];
+  }
+  // 编辑区未打开（预览+AI 布局）时先切换为三栏布局，等待编辑区挂载后再触发选中
+  if (layout.value === "ai") {
+    resumeStore.setLayout("three");
+    await nextTick();
   }
   // 触发模块选中：编辑区对应模块边框闪烁提示
   eventBus.emit("df-select-module", item.key);
