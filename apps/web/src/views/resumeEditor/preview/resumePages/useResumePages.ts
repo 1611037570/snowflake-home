@@ -151,5 +151,6 @@ export const useResumePages = ({
       .join("\n");
   };
 
-  return { measureDone, pages, moduleClass, getPageStyle };
+  // 透出测量结果（模块行高），供智能一页等上层逻辑按比例压缩参数
+  return { measureDone, pages, moduleClass, getPageStyle, moduleList };
 };
