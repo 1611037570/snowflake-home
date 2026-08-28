@@ -2,10 +2,21 @@
 import { useResumeStore } from "@/stores";
 import { fontFamilyList, themeColors } from "@/stores/modules/resume/uiConfig";
 import { storeToRefs } from "pinia";
+import { watch } from "vue";
 import ConfigItem from "./configItem.vue";
 
 const resumeStore = useResumeStore();
 const { currentUI } = storeToRefs(resumeStore);
+
+// 行高强制不低于字号，避免小行高搭配大字号导致文字重叠
+watch(
+  () => [currentUI.value?.fontSize, currentUI.value?.lineHeight],
+  ([fontSize, lineHeight]) => {
+    if (fontSize == null || lineHeight == null) return;
+    if (lineHeight < fontSize) currentUI.value.lineHeight = fontSize;
+  },
+  { immediate: true },
+);
 </script>
 
 <template>
@@ -26,10 +37,10 @@ const { currentUI } = storeToRefs(resumeStore);
         </div>
       </div>
     </div>
-    <ConfigItem label="页边距" v-model="currentUI.padding" :min="0" :max="100" :step="1" />
+    <ConfigItem label="页边距" v-model="currentUI.padding" :min="2" :max="48" :step="1" />
     <ConfigItem label="字体大小" v-model="currentUI.fontSize" :min="10" :max="24" :step="2" />
-    <ConfigItem label="行间距" v-model="currentUI.lineHeight" :min="1" :max="10" :step="0.1" />
-    <ConfigItem label="模块间距" v-model="currentUI.moduleSpacing" :min="0" :max="100" :step="1" />
+    <ConfigItem label="行间距" v-model="currentUI.lineHeight" :min="12" :max="60" :step="1" />
+    <ConfigItem label="模块间距" v-model="currentUI.moduleSpacing" :min="2" :max="48" :step="1" />
     <!-- 主题色 -->
     <div class="mb-6 flex flex-col">
       <div class="mb-4 text-base font-bold text-sf-text">主题色</div>
