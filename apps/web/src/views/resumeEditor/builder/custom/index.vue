@@ -38,17 +38,38 @@ watch(
         </div>
       </div>
     </div>
-    <ConfigItem label="页边距" v-model="currentUI.padding" :min="2" :max="48" :step="1" />
-    <ConfigItem label="字体大小" v-model="currentUI.fontSize" :min="8" :max="24" :step="1" />
+    <ConfigItem
+      label="页边距"
+      v-model="currentUI.padding"
+      :min="2"
+      :max="48"
+      :step="1"
+      tip="页面四周的留白距离"
+    />
+    <ConfigItem
+      label="字体大小"
+      v-model="currentUI.fontSize"
+      :min="10"
+      :max="24"
+      :step="2"
+      tip="正文的基础字号"
+    />
     <ConfigItem
       label="行间距"
       v-model="currentUI.lineHeight"
-      :min="8"
+      :min="12"
+      :max="60"
+      :step="1"
+      tip="行与行之间的距离，最小不能小于字体"
+    />
+    <ConfigItem
+      label="模块间距"
+      v-model="currentUI.moduleSpacing"
+      :min="2"
       :max="48"
       :step="1"
-      tip="最小不能小于字体"
+      tip="各模块之间的间隔"
     />
-    <ConfigItem label="模块间距" v-model="currentUI.moduleSpacing" :min="2" :max="24" :step="1" />
     <!-- 主题色 -->
     <div class="mb-6 flex flex-col">
       <div class="mb-4 text-base font-bold text-sf-text">主题色</div>
