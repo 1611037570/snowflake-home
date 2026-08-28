@@ -3,9 +3,10 @@ import { useResumeStore } from "@/stores";
 import dayjs from "dayjs";
 import { storeToRefs } from "pinia";
 import { useRouter } from "vue-router";
-import { getAllScores } from "../resumeEditor/utils";
-import { getResumeTitle } from "../resumeEditor/resumeName";
+import { getAllScores } from "../../resumeEditor/utils";
+import { getResumeTitle } from "../../resumeEditor/resumeName";
 import ThumbPreview from "@/views/resumeEditor/preview/thumbPreview.vue";
+import ResumeCardContainer from "./components/resumeCardContainer.vue";
 
 const router = useRouter();
 
@@ -87,10 +88,9 @@ const handleUseTemplate = () => {
     </div>
 
     <div v-if="displayList.length" class="grid grid-cols-3 gap-4 max-[900px]:grid-cols-1">
-      <div
+      <ResumeCardContainer
         v-for="card in displayList"
         :key="card.item.id || card.index"
-        class="group flex cursor-pointer flex-col rounded-xl border border-sf-b bg-sf-primary p-4 shadow-sm transition-all duration-200 hover:-translate-y-1 hover:border-sf-theme"
         @click="handleEdit(card.item)"
       >
         <!-- 简历缩略预览：可直接查看与全屏放大 -->
@@ -143,7 +143,17 @@ const handleUseTemplate = () => {
             >最后使用：{{ getLastUseTime(card.item) }}</span
           >
         </div>
-      </div>
+      </ResumeCardContainer>
+
+      <!-- 新建简历卡片：与简历卡片共用同一容器，保持风格统一 -->
+      <ResumeCardContainer v-if="list.length < maxCount" @click="handleCreate">
+        <div
+          class="flex aspect-[794/1123] w-full flex-col items-center justify-center gap-2 overflow-hidden rounded-lg border border-sf-b bg-sf-bg"
+        >
+          <SfIcon icon="ic:round-add" size="10" />
+          <span class="text-sm text-sf-text-2">新建简历</span>
+        </div>
+      </ResumeCardContainer>
     </div>
 
     <div
