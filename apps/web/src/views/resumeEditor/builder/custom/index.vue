@@ -5,6 +5,7 @@ import {
   defaultUserInfoMode,
   fontFamilyList,
   themeColors,
+  uiParamRanges,
   userInfoModeList,
 } from "@/stores/modules/resume/uiConfig";
 import { storeToRefs } from "pinia";
@@ -43,33 +44,33 @@ const userInfoMode = computed({
     <ConfigItem
       label="页边距"
       v-model="currentUI.padding"
-      :min="2"
-      :max="48"
-      :step="1"
+      :min="uiParamRanges.padding.min"
+      :max="uiParamRanges.padding.max"
+      :step="uiParamRanges.padding.step"
       tip="页面四周的留白距离"
     />
     <ConfigItem
       label="字体大小"
       v-model="currentUI.fontSize"
-      :min="10"
-      :max="24"
-      :step="2"
+      :min="uiParamRanges.fontSize.min"
+      :max="uiParamRanges.fontSize.max"
+      :step="uiParamRanges.fontSize.step"
       tip="正文的基础字号"
     />
     <ConfigItem
       label="行间距"
       v-model="currentUI.lineHeight"
-      :min="1"
-      :max="2"
-      :step="0.1"
+      :min="uiParamRanges.lineHeight.min"
+      :max="uiParamRanges.lineHeight.max"
+      :step="uiParamRanges.lineHeight.step"
       tip="行与行之间的距离（字号倍数），数值越大行距越大"
     />
     <ConfigItem
       label="模块间距"
       v-model="currentUI.moduleSpacing"
-      :min="2"
-      :max="48"
-      :step="1"
+      :min="uiParamRanges.moduleSpacing.min"
+      :max="uiParamRanges.moduleSpacing.max"
+      :step="uiParamRanges.moduleSpacing.step"
       tip="各模块之间的间隔"
     />
     <!-- 用户信息 -->

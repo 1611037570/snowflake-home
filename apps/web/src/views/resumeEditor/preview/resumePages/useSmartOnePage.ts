@@ -17,6 +17,7 @@ import {
   defaultLineHeight,
   defaultModuleSpacing,
   defaultPadding,
+  uiParamRanges,
 } from "@/stores/modules/resume/uiConfig";
 import { useResumePages } from "./useResumePages";
 import { useResumeTheme } from "./useResumeTheme";
@@ -31,12 +32,16 @@ export interface OnePageAdjustableItem {
   step: number;
 }
 
-/** 默认可用参数（与编辑器滑杆范围一致）；数组顺序即压缩优先级：先压缩间距，后压缩行高、字号 */
+/** 默认可用参数（取自 uiConfig.uiParamRanges，与编辑器滑杆范围一致）；数组顺序即压缩优先级：先压缩间距，后压缩行高、字号 */
 export const defaultOnePageAdjustable: OnePageAdjustableItem[] = [
-  { key: "moduleSpacing", min: 2, step: 1 },
-  { key: "padding", min: 2, step: 1 },
-  { key: "lineHeight", min: 1, step: 0.1 },
-  { key: "fontSize", min: 10, step: 2 },
+  {
+    key: "moduleSpacing",
+    min: uiParamRanges.moduleSpacing.min,
+    step: uiParamRanges.moduleSpacing.step,
+  },
+  { key: "padding", min: uiParamRanges.padding.min, step: uiParamRanges.padding.step },
+  { key: "lineHeight", min: uiParamRanges.lineHeight.min, step: uiParamRanges.lineHeight.step },
+  { key: "fontSize", min: uiParamRanges.fontSize.min, step: uiParamRanges.fontSize.step },
 ];
 
 /** 可调字段缺失时的兜底默认值 */
