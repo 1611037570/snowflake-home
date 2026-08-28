@@ -27,7 +27,7 @@ const componentModules = import.meta.glob("@/views/*/index.vue", { eager: false 
 const resumeChildren: RouteRecordRaw[] = [
   { path: "", component: () => import("@/views/resume/main/index.vue") },
   { path: "template", component: () => import("@/views/resume/template.vue") },
-  { path: "mine", component: () => import("@/views/resume/mine.vue") },
+  { path: "mine", component: () => import("@/views/resume/mine/index.vue") },
   { path: "statistics", component: () => import("@/views/resume/statistics/index.vue") },
 ];
 /**
