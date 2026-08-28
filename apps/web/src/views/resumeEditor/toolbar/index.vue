@@ -5,6 +5,7 @@ import System from "./modules/system/index.vue";
 import Icon from "./components/icon.vue";
 import ImportResume from "./modules/importResume.vue";
 import ExportResume from "./modules/exportResume.vue";
+import OnePage from "./modules/onePage.vue";
 import Progress from "./modules/progress.vue";
 
 defineOptions({ name: "ResumeToolbar" });
@@ -27,6 +28,7 @@ function goGitHub() {
       <System />
       <div class="h-[0.5px] w-full bg-sf-bg-2"></div>
       <ExportResume />
+      <OnePage />
       <ImportResume />
       <Ai />
       <div class="h-[0.5px] w-full bg-sf-bg-2"></div>
