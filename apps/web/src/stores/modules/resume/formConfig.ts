@@ -261,23 +261,20 @@ export const DEFAULT_ACCOUNT_FORM = {
 // 教育经历
 export const DEFAULT_EDUCATION_FORM = {
   key: "education",
-  // 表单中所渲染的类型
   type: "group",
-  // 表单中所渲染的组件
   component: "boxCollapse",
-  // 表单中所渲染的组件的属性
   props: {
     name: "教育经历",
     add: true,
   },
-  // 表单中所渲染的组件的双向绑定的模型
-  model: {
-    source: ["education", "collapsed"],
-    prop: "collapsed",
-    defaultValue: ["1"],
-  },
+  model: [
+    {
+      source: ["education", "collapsed"],
+      prop: "collapsed",
+      defaultValue: ["1"],
+    },
+  ],
   slot: "default",
-  // 表单中所渲染的组件的子组件
   fields: [
     {
       type: "array",
@@ -295,7 +292,6 @@ export const DEFAULT_EDUCATION_FORM = {
             prop: "name",
           },
         ],
-        // 子项字段列表：纯 schema 声明
         fields: [
           {
             type: "object",
@@ -361,7 +357,7 @@ export const DEFAULT_EDUCATION_FORM = {
               list: [
                 { name: "全日制", value: "全日制" },
                 { name: "非全日制", value: "非全日制" },
-                { name: "不填写", value: " " },
+                { name: "不填写", value: "" }, // 顺带优化：空格字符串改为空字符串
               ],
             },
           },
@@ -397,6 +393,7 @@ export const DEFAULT_EDUCATION_FORM = {
     },
   ],
 } satisfies FormField;
+
 // 专业技能
 export const DEFAULT_SKILL_FORM = {
   type: "group",
