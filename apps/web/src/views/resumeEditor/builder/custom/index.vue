@@ -2,22 +2,10 @@
 import { useResumeStore } from "@/stores";
 import { fontFamilyList, themeColors } from "@/stores/modules/resume/uiConfig";
 import { storeToRefs } from "pinia";
-import { watch } from "vue";
 import ConfigItem from "./configItem.vue";
 
 const resumeStore = useResumeStore();
 const { currentUI } = storeToRefs(resumeStore);
-
-// 行高强制不低于字号减8px，避免行高过小导致文字重叠
-watch(
-  () => [currentUI.value?.fontSize, currentUI.value?.lineHeight],
-  ([fontSize, lineHeight]) => {
-    if (fontSize == null || lineHeight == null) return;
-    const minLineHeight = fontSize;
-    if (lineHeight < minLineHeight) currentUI.value.lineHeight = minLineHeight;
-  },
-  { immediate: true },
-);
 </script>
 
 <template>
@@ -57,10 +45,10 @@ watch(
     <ConfigItem
       label="行间距"
       v-model="currentUI.lineHeight"
-      :min="12"
-      :max="60"
-      :step="1"
-      tip="行与行之间的距离，最小不能小于字体"
+      :min="1"
+      :max="2"
+      :step="0.1"
+      tip="行与行之间的距离（字号倍数），数值越大行距越大"
     />
     <ConfigItem
       label="模块间距"

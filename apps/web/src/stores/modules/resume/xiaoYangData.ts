@@ -99,7 +99,7 @@ export const xiaoYangForm = {
 export const xiaoYangUI = {
   padding: 28,
   fontSize: 15,
-  lineHeight: 25,
+  lineHeight: 1.2,
   moduleSpacing: 12,
   themeColor: "#ff4d4f",
   fontFamily: "text-puhui",

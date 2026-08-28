@@ -18,7 +18,7 @@ type ResumeUi = Record<string, any>;
 export interface ResumeTheme {
   paddingValue: ComputedRef<(offset?: number) => Record<string, string>>;
   fontValue: ComputedRef<(offset?: number) => Record<string, string>>;
-  lineHeightValue: ComputedRef<(offset?: number) => Record<string, string>>;
+  lineHeightValue: ComputedRef<() => Record<string, string>>;
   themeColor: ComputedRef<string | undefined>;
   themeTemplate: ComputedRef<any>;
 }
@@ -48,9 +48,9 @@ export const useResumeTheme = (ui: ComputedRef<ResumeUi>): ResumeTheme => {
   const fontValue = computed(() => (offset = 0) => ({
     fontSize: `${fontSize.value + offset}px`,
   }));
-  // 行高统一使用像素值
-  const lineHeightValue = computed(() => (offset = 0) => ({
-    lineHeight: `${lineHeight.value + offset}px`,
+  // 行高使用无单位倍数，随各字段字号自动缩放；钳制在1~2之间兜底旧版像素值
+  const lineHeightValue = computed(() => () => ({
+    lineHeight: `${Math.min(Math.max(lineHeight.value, 1), 2)}`,
   }));
   const themeColor = computed(() => ui.value.color || ui.value.themeColor);
   const themeTemplate = computed(() => ui.value.themeTemplate);
