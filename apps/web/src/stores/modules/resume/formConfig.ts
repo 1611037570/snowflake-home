@@ -18,22 +18,18 @@ export const DEFAULT_USER_FORM = [
     key: "user",
     name: "用户信息",
     fields: [
-      // 求职岗位
+      // 头像
       {
         type: "object",
-        label: "求职岗位",
-        tip: "求职岗位 推荐必填",
-        component: "input",
+        label: "头像",
+        component: "imageUpload",
         span: 24,
         model: {
-          source: ["user", "position"],
+          source: ["user", "avatar"],
           prop: "modelValue",
         },
-        props: {
-          placeholder: "请输入求职岗位",
-          clearable: true,
-        },
       },
+
       // 姓名
       {
         type: "object",
@@ -58,17 +54,7 @@ export const DEFAULT_USER_FORM = [
           },
         ],
       },
-      // 头像
-      {
-        type: "object",
-        label: "头像",
-        component: "imageUpload",
-        span: 24,
-        model: {
-          source: ["user", "avatar"],
-          prop: "modelValue",
-        },
-      },
+
       // 出生日期
       {
         type: "object",
@@ -134,6 +120,22 @@ export const DEFAULT_USER_FORM = [
               value: "女",
             },
           ],
+        },
+      },
+      // 求职岗位
+      {
+        type: "object",
+        label: "求职岗位",
+        tip: "求职岗位 推荐必填",
+        component: "input",
+        span: 12,
+        model: {
+          source: ["user", "position"],
+          prop: "modelValue",
+        },
+        props: {
+          placeholder: "请输入求职岗位",
+          clearable: true,
         },
       },
       // 求职状态
