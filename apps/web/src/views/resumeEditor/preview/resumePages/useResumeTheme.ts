@@ -9,7 +9,6 @@ import {
   defaultFontSize,
   defaultLineHeight,
   defaultPadding,
-  fontSizeList,
 } from "@/stores/modules/resume/uiConfig";
 
 /** 简历主题配置（item.ui） */
@@ -46,26 +45,13 @@ export const useResumeTheme = (ui: ComputedRef<ResumeUi>): ResumeTheme => {
       paddingRight: `${value}px`,
     };
   });
-  const fontSizeIndex = computed(() => {
-    // 自定义字号取最近档位，避免未命中预设值时产生异常行高偏移
-    return fontSizeList.reduce((closestIndex, item, index) => {
-      const closest = fontSizeList[closestIndex];
-      return Math.abs(item.value - fontSize.value) < Math.abs(closest.value - fontSize.value)
-        ? index
-        : closestIndex;
-    }, 0);
-  });
   const fontValue = computed(() => (offset = 0) => ({
     fontSize: `${fontSize.value + offset}px`,
   }));
-  const lineHeightValue = computed(() => (offset = 0) => {
-    // 兼容旧版像素行高和连续控件的无单位行高，避免无单位值被当成像素挤叠内容
-    if (lineHeight.value <= 10) {
-      return { lineHeight: `${Math.max(1, lineHeight.value)}` };
-    }
-    const indexOffset = (fontSizeIndex.value - 2) * 3;
-    return { lineHeight: `${lineHeight.value + offset + indexOffset}px` };
-  });
+  // 行高统一使用像素值
+  const lineHeightValue = computed(() => (offset = 0) => ({
+    lineHeight: `${lineHeight.value + offset}px`,
+  }));
   const themeColor = computed(() => ui.value.color || ui.value.themeColor);
   const themeTemplate = computed(() => ui.value.themeTemplate);
 
