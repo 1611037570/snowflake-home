@@ -1,6 +1,12 @@
 <template>
   <div style="" class="w-full rounded-2xl" :class="bg">
-    <Toolbar :editor="editorRef" :defaultConfig="toolbarConfig" :mode="mode" />
+    <!-- 编辑器实例创建成功后再挂载工具栏，避免工具栏在 editor 就绪前初始化报错 -->
+    <Toolbar
+      v-if="editorRef"
+      :editor="editorRef"
+      :defaultConfig="toolbarConfig"
+      :mode="mode"
+    />
     <Editor
       class="rounded-b-2xl"
       style="overflow-y: hidden"
