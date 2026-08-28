@@ -2,6 +2,7 @@
 import { storeToRefs } from "pinia";
 import { useResumeStore } from "@/stores";
 import { useProgress } from "../../utils";
+import eventBus from "@/utils/modules/eventBus";
 import { nextTick, ref } from "vue";
 
 const resumeStore = useResumeStore();
@@ -20,6 +21,8 @@ const goFill = (item) => {
   if (moduleData && Array.isArray(moduleData.collapsed)) {
     moduleData.collapsed = ["1"];
   }
+  // 触发模块选中：编辑区对应模块边框闪烁提示
+  eventBus.emit("df-select-module", item.key);
   visible.value = false;
   nextTick(() => {
     document
