@@ -18,6 +18,10 @@ const props = defineProps({
     type: Number,
     default: 1,
   },
+  tip: {
+    type: String,
+    default: "",
+  },
 });
 
 const modelValue = defineModel({
@@ -54,7 +58,10 @@ watch(
 
 <template>
   <div class="flex w-full flex-col gap-2">
-    <div class="mb-2 text-base font-bold text-sf-text">{{ label }}</div>
+    <div class="mb-2 flex items-center text-base font-bold text-sf-text">
+      <span>{{ label }}</span>
+      <sf-tooltip :content="tip" v-if="tip" class="ml-1 text-sf-text" />
+    </div>
     <!-- 左侧进度条拖拽，右侧输入框，范围与步进跟随 min/max/step 配置 -->
     <div class="flex items-center gap-3">
       <SfSlider
