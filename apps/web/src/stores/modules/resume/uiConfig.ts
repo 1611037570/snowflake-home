@@ -56,6 +56,17 @@ export const defaultModuleSpacing = 12;
 export const defaultThemeTemplate = "default";
 // 默认用户信息展示模式
 export const defaultUserInfoMode = "text";
+// ===========参数范围（编辑器滑杆与一页纸压缩共用，只维护这一处）=====================
+export const uiParamRanges = {
+  // 页边距
+  padding: { min: 12, max: 96, step: 1 },
+  // 字体大小
+  fontSize: { min: 10, max: 24, step: 2 },
+  // 行高
+  lineHeight: { min: 1, max: 2, step: 0.1 },
+  // 模块间距
+  moduleSpacing: { min: 2, max: 48, step: 1 },
+};
 export const DEFAULT_UI = {
   // 页边距
   padding: defaultPadding,
