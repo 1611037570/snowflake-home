@@ -5,6 +5,7 @@
 </template>
 <script setup lang="ts">
 import { getCurrentInstance, inject, provide } from "vue";
+import eventBus from "@/utils/modules/eventBus";
 import FormRenderer from "./components/formRenderer.vue";
 import DataProxy from "./code/dataProxy";
 import { createAddItem } from "./code/addItem";
@@ -14,6 +15,7 @@ import {
   DF_CURRENT_INDEX,
   DF_CURRENT_LENGTH,
   DF_CURRENT_TYPE,
+  DF_MODULE_SELECT,
   DF_REMOVE,
   DF_REMOVE_ITEM,
   DF_ROOT_DATA,
@@ -46,6 +48,20 @@ provide(INSTANCE_COMPONENTS, props.components);
 provide(DF_ROOT_DATA, dataProxy);
 // 注入根表单
 provide(DF_ROOT_FORM, formProxy);
+
+// 模块选中能力：外部调用 selectModule(key) 触发选中，选中后模块边框持续闪烁，鼠标经过恢复
+const selectedKey = ref<string | null>(null);
+const selectModule = (key: string | null) => {
+  selectedKey.value = key;
+};
+provide(DF_MODULE_SELECT, { selectedKey, selectModule });
+// 监听全局事件：外部（如完成度"去填写"）触发选中模块时联动边框闪烁
+onMounted(() => {
+  eventBus.on("df-select-module", selectModule);
+});
+onUnmounted(() => {
+  eventBus.off("df-select-module", selectModule);
+});
 
 // 对外上下文读取器：根组件统一提供，业务组件调用时基于自身实例解析最近容器的能力，无需容器聚合
 const getContext = () => ({

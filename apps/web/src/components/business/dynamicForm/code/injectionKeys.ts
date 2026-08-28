@@ -1,4 +1,4 @@
-import type { InjectionKey } from "vue";
+import type { InjectionKey, Ref } from "vue";
 import type DataProxy from "./dataProxy";
 
 /**
@@ -30,3 +30,11 @@ export const DF_REMOVE_ITEM: InjectionKey<(index: number) => void> = Symbol("df/
  * 由各容器节点提供：聚合父级上下文 + 当前容器能力
  */
 export const DF_CONTEXT = "df/context";
+/**
+ * 模块选中能力（内部机制，不对外导出）：根组件 provide，渲染层 inject，
+ * selectModule(key) 触发选中后模块边框持续闪烁，鼠标经过模块后恢复正常
+ */
+export const DF_MODULE_SELECT: InjectionKey<{
+  selectedKey: Ref<string | null>;
+  selectModule: (key: string | null) => void;
+}> = Symbol("df/module/select");
