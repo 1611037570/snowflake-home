@@ -39,6 +39,14 @@ const hasEmail = computed(() => !!user.value?.email?.value);
       :class="{ 'flex-col items-center': themeTemplate === 'modern' }"
       :style="[lineHeightValue(22)]"
     >
+      <!-- 头像：default 风格在姓名左侧，modern 风格在姓名上方居中 -->
+      <img
+        v-if="user.avatar?.value"
+        :src="user.avatar?.value"
+        alt="头像"
+        class="h-33 w-24 shrink-0 rounded object-cover"
+        :class="themeTemplate === 'modern' ? 'mb-2' : 'mr-3'"
+      />
       <h1 class="min-w-0 max-w-full font-bold tracking-wide" :style="[fontValue(14)]">
         <Text v-model="user.name" />
       </h1>
