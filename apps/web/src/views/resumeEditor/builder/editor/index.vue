@@ -20,7 +20,11 @@ const dynamicComponents = {
 </script>
 
 <template>
-  <SfDynamicForm v-model:form="currentFixedConfig" v-model:data="currentData" />
+  <SfDynamicForm
+    v-model:form="currentFixedConfig"
+    v-model:data="currentData"
+    :components="dynamicComponents"
+  />
   <SfDynamicForm
     v-model:form="currentConfig"
     v-model:data="currentData"
