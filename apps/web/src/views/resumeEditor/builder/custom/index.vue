@@ -1,11 +1,25 @@
 <script setup>
+import { computed } from "vue";
 import { useResumeStore } from "@/stores";
-import { fontFamilyList, themeColors } from "@/stores/modules/resume/uiConfig";
+import {
+  defaultUserInfoMode,
+  fontFamilyList,
+  themeColors,
+  userInfoModeList,
+} from "@/stores/modules/resume/uiConfig";
 import { storeToRefs } from "pinia";
 import ConfigItem from "./configItem.vue";
 
 const resumeStore = useResumeStore();
 const { currentUI } = storeToRefs(resumeStore);
+
+// 用户信息展示模式，旧数据缺失时回退为文字模式
+const userInfoMode = computed({
+  get: () => currentUI.value?.userInfoMode ?? defaultUserInfoMode,
+  set: (value) => {
+    currentUI.value.userInfoMode = value;
+  },
+});
 </script>
 
 <template>
@@ -58,6 +72,24 @@ const { currentUI } = storeToRefs(resumeStore);
       :step="1"
       tip="各模块之间的间隔"
     />
+    <!-- 用户信息 -->
+    <div class="flex flex-col gap-4">
+      <div class="text-base font-bold text-sf-text">用户信息</div>
+      <!-- 展示模式切换：图标 / 文字 -->
+      <div class="flex gap-4">
+        <div
+          v-for="mode in userInfoModeList"
+          :key="mode.value"
+          class="hover:bg-sf-hover flex-1 cursor-pointer rounded-md border border-sf-b py-2 text-center text-sm transition-all"
+          :class="{
+            'border-sf-theme-2 bg-sf-theme text-sf-base': userInfoMode === mode.value,
+          }"
+          @click="userInfoMode = mode.value"
+        >
+          {{ mode.name }}
+        </div>
+      </div>
+    </div>
     <!-- 主题色 -->
     <div class="mb-6 flex flex-col">
       <div class="mb-4 text-base font-bold text-sf-text">主题色</div>

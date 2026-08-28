@@ -14,6 +14,8 @@ const themeColor = inject("themeColor");
 const themeTemplateRef = inject("themeTemplate");
 // 风格模板：未提供时按默认样式处理
 const themeTemplate = computed(() => themeTemplateRef?.value || "default");
+// 用户信息展示模式（图标/文字）
+const userInfoMode = inject("userInfoMode");
 
 // 代理数据是 computed，解包 .value 后访问
 const user = computed(() => previewData.value?.user || {});
@@ -72,13 +74,25 @@ const hasEmail = computed(() => !!user.value?.email?.value);
       v-if="hasPhone || hasEmail"
     >
       <div v-if="hasPhone" class="flex min-w-0 max-w-full flex-wrap items-center">
-        <div class="pr-1">电话：</div>
+        <SfIcon
+          v-if="userInfoMode === 'icon'"
+          icon="mdi:phone"
+          size="3.5"
+          class="mr-1 shrink-0"
+        />
+        <div v-else class="pr-1">电话：</div>
         <div class="min-w-0 max-w-full font-medium">
           <Text v-model="user.phone" />
         </div>
       </div>
       <div v-if="hasEmail" class="flex min-w-0 max-w-full flex-wrap items-center">
-        <div class="pr-1">邮箱：</div>
+        <SfIcon
+          v-if="userInfoMode === 'icon'"
+          icon="mdi:email-outline"
+          size="3.5"
+          class="mr-1 shrink-0"
+        />
+        <div v-else class="pr-1">邮箱：</div>
         <div class="min-w-0 max-w-full font-medium">
           <Text v-model="user.email" />
         </div>

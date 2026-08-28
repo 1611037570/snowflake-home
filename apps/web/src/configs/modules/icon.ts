@@ -90,6 +90,8 @@ export const ICON_LIST: Record<string, IconItem> = {
   "material-symbols:download": { icon: "material-symbols:download" },
   "tabler:switch-3": { icon: "tabler:switch-3", name: "切换" },
   "clarity:email-solid": { icon: "clarity:email-solid", color: "text-sf-theme" },
+  "mdi:phone": { icon: "mdi:phone", name: "电话" },
+  "mdi:email-outline": { icon: "mdi:email-outline", name: "邮箱" },
   "lucide:file-text": { icon: "lucide:file-text" },
   "lucide:layout-template": { icon: "lucide:layout-template" },
   "lucide:palette": { icon: "lucide:palette" },

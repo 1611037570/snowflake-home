@@ -9,6 +9,7 @@ import {
   defaultFontSize,
   defaultLineHeight,
   defaultPadding,
+  defaultUserInfoMode,
 } from "@/stores/modules/resume/uiConfig";
 
 /** 简历主题配置（item.ui） */
@@ -55,10 +56,14 @@ export const useResumeTheme = (ui: ComputedRef<ResumeUi>): ResumeTheme => {
   const themeColor = computed(() => ui.value.color || ui.value.themeColor);
   const themeTemplate = computed(() => ui.value.themeTemplate);
 
+  // 用户信息展示模式（图标/文字），缺失时回退默认值
+  const userInfoMode = computed(() => ui.value.userInfoMode ?? defaultUserInfoMode);
+
   provide("fontValue", fontValue);
   provide("lineHeightValue", lineHeightValue);
   provide("themeColor", themeColor);
   provide("themeTemplate", themeTemplate);
+  provide("userInfoMode", userInfoMode);
 
   return { paddingValue, fontValue, lineHeightValue, themeColor, themeTemplate };
 };
