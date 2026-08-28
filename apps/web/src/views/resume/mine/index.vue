@@ -81,13 +81,12 @@ const handleUseTemplate = () => {
 <template>
   <div class="relative z-4 mx-auto flex w-[1120px] flex-col gap-4">
     <div class="flex h-8 items-center justify-between">
-      <h2 class="text-[20px] font-black text-sf-theme">简历草稿</h2>
-      <el-button type="primary" :disabled="list.length >= maxCount" @click="handleCreate">
-        新建简历（{{ list.length }}/{{ maxCount }}）
-      </el-button>
+      <h2 class="text-[20px] font-black text-sf-theme">
+        简历草稿（{{ list.length }}/{{ maxCount }}）
+      </h2>
     </div>
 
-    <div v-if="displayList.length" class="grid grid-cols-3 gap-4 max-[900px]:grid-cols-1">
+    <div class="grid grid-cols-3 gap-4 max-[900px]:grid-cols-1">
       <ResumeCardContainer
         v-for="card in displayList"
         :key="card.item.id || card.index"
@@ -144,7 +143,6 @@ const handleUseTemplate = () => {
           >
         </div>
       </ResumeCardContainer>
-
       <!-- 新建简历卡片：与简历卡片共用同一容器，保持风格统一 -->
       <ResumeCardContainer v-if="list.length < maxCount" @click="handleCreate">
         <div
@@ -154,20 +152,6 @@ const handleUseTemplate = () => {
           <span class="text-sm text-sf-text-2">新建简历</span>
         </div>
       </ResumeCardContainer>
-    </div>
-
-    <div
-      v-else
-      class="flex flex-col items-center gap-4 rounded-xl border border-sf-b bg-sf-primary p-10 shadow-sm"
-    >
-      <div class="text-sf-text-2">
-        <SfIcon icon="lucide:file-text" size="10" />
-      </div>
-      <p class="text-sm text-sf-text-2">还没有简历</p>
-      <div class="flex items-center gap-3">
-        <el-button type="primary" @click="handleCreate">新建简历</el-button>
-        <el-button @click="handleUseTemplate">使用模板</el-button>
-      </div>
     </div>
   </div>
 </template>
