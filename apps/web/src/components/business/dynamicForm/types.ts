@@ -10,6 +10,20 @@ export interface ModelBinding {
   defaultValue?: any;
 }
 
+/** 条件校验规则：path 为数据路径，其余为可扩展的满足条件 */
+export interface FieldCheckRule {
+  /** 数据路径，沿用 model.source 路径语义 */
+  path: string[];
+  /** 期望值：配置后路径数据等于该值即满足；未配置时路径数据为真即满足 */
+  equals?: unknown;
+}
+
+/** 条件校验配置：key 为条件类型，value 为规则 */
+export type FieldChecks = {
+  /** 满足条件时字段不渲染 */
+  hidden?: FieldCheckRule;
+};
+
 /** 表单字段（递归）：覆盖 object 叶子 / group 分组 / array 三种形态的字段集合 */
 export interface FormField {
   type?: "object" | "array" | "group";
@@ -33,6 +47,8 @@ export interface FormField {
   slot?: string;
   /** 数据绑定配置 */
   model?: ModelBinding | ModelBinding[];
+  /** 条件校验配置（与 model/props 同级）：当前支持 hidden 显隐 */
+  checks?: FieldChecks;
   /** 子字段（容器递归渲染） */
   fields?: FormField[];
   /** array 容器的数据列表（运行时填充） */

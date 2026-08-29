@@ -12,6 +12,7 @@ import { usePdfExport } from "../usePdfExport";
 import { useResumeStore } from "@/stores";
 import eventBus from "@/utils/modules/eventBus";
 import { useImageExport } from "../useImageExport";
+import { isFieldHidden } from "@/components/business/dynamicForm/code/fieldVisible";
 const resumeStore = useResumeStore();
 const { selectedModule, system } = storeToRefs(resumeStore);
 
@@ -73,10 +74,8 @@ const allModules = computed(() => {
   const data = props.item.data || {};
   const fixedModules = props.item.fixedConfig?.fields || [];
   const configModules = props.item.config?.fields || [];
-  // 过滤掉通过表单开关隐藏的模块，测量/分页/渲染一并跳过
-  return [...fixedModules, ...configModules].filter(
-    (field) => !(field?.key && data[field.key]?.hidden === true),
-  );
+  // 按 DSL 显隐协议过滤隐藏模块，测量/分页/渲染一并跳过
+  return [...fixedModules, ...configModules].filter((field) => !isFieldHidden(data, field));
 });
 const { measureDone, pages, moduleClass, getPageStyle } = useResumePages({
   measureRef,
