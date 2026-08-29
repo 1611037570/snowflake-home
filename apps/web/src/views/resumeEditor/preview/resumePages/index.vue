@@ -70,9 +70,13 @@ const { paddingValue, fontValue, lineHeightValue } = themeStyles;
 
 // ---------- 分页（测量 + 分页算法 + 裁剪样式）----------
 const allModules = computed(() => {
+  const data = props.item.data || {};
   const fixedModules = props.item.fixedConfig?.fields || [];
   const configModules = props.item.config?.fields || [];
-  return [...fixedModules, ...configModules];
+  // 过滤掉通过表单开关隐藏的模块，测量/分页/渲染一并跳过
+  return [...fixedModules, ...configModules].filter(
+    (field) => !(field?.key && data[field.key]?.hidden === true),
+  );
 });
 const { measureDone, pages, moduleClass, getPageStyle } = useResumePages({
   measureRef,

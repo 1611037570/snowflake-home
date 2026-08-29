@@ -24,8 +24,19 @@ const collapsed = defineModel("collapsed", {
   default: () => [],
 });
 
+// 隐藏状态：控制模块在简历预览中显示/隐藏
+const hidden = defineModel("hidden", {
+  type: Boolean,
+  default: false,
+});
+
 // 模块标题：优先读取配置的 name 字段（编辑标题后实时刷新），其次回退数据 name
 const title = computed(() => name.value);
+
+// 切换模块隐藏状态
+function toggleHidden() {
+  hidden.value = !hidden.value;
+}
 
 function del() {
   proxy.$confirm(`确定要删除${title.value}模块吗？`, "删除确认").then(() => {
@@ -60,7 +71,10 @@ function handleEditConfirm() {
     <SfCollapseItem name="1">
       <template #title>
         <div class="group flex h-full w-full items-center justify-between">
-          <div class="flex items-center text-lg font-bold">
+          <div
+            class="flex items-center text-lg font-bold"
+            :class="hidden ? 'text-sf-text-3' : ''"
+          >
             <SfIcon
               icon="icon-park-outline:drag"
               size="4"
@@ -70,6 +84,13 @@ function handleEditConfirm() {
             {{ title }}
           </div>
           <div class="flex items-center gap-2 opacity-0 group-hover:opacity-100">
+            <SfIcon
+              @click.stop="toggleHidden"
+              :icon="hidden ? 'lucide:eye-off' : 'lucide:eye'"
+              size="4"
+              class="cursor-pointer hover:text-sf-theme"
+              :class="hidden ? 'text-sf-theme' : ''"
+            />
             <SfIcon
               v-if="edit"
               @click.stop="handleEdit"
