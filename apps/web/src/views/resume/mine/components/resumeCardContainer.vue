@@ -5,7 +5,7 @@ const emit = defineEmits(["click"]);
 
 <template>
   <div
-    class="group flex cursor-pointer flex-col rounded-xl border border-sf-b bg-sf-primary p-4 shadow-sm transition-all duration-200 hover:-translate-y-1 hover:border-sf-theme"
+    class="group flex cursor-pointer flex-col rounded-3xl border border-sf-b bg-sf-primary transition-all duration-200 hover:-translate-y-1 hover:border-sf-theme"
     @click="emit('click')"
   >
     <slot />

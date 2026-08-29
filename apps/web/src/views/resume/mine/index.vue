@@ -90,7 +90,7 @@ const handleUseTemplate = () => {
       <!-- 新建简历卡片：固定在首位，与简历卡片共用同一容器，保持风格统一 -->
       <ResumeCardContainer v-if="list.length < maxCount" @click="handleCreate">
         <div
-          class="group flex aspect-[794/1123] w-full flex-col items-center justify-center gap-3 overflow-hidden rounded-lg border border-sf-b bg-sf-bg"
+          class="group flex h-full w-full flex-col items-center justify-center gap-3 overflow-hidden"
         >
           <!-- 圆形加号：鼠标悬停时旋转 90 度 -->
           <div class="flex h-16 w-16 items-center justify-center rounded-full bg-sf-theme-2">
