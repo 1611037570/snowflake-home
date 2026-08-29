@@ -235,6 +235,7 @@ export const DEFAULT_ACCOUNT_FORM = {
       defaultValue: false,
     },
   ],
+  checks: { hidden: { path: ["account", "hidden"] } },
   component: "boxCollapse",
   props: {
     name: "社交账号",
@@ -288,6 +289,7 @@ export const DEFAULT_EDUCATION_FORM = {
       defaultValue: false,
     },
   ],
+  checks: { hidden: { path: ["education", "hidden"] } },
   slot: "default",
   fields: [
     {
@@ -430,6 +432,7 @@ export const DEFAULT_SKILL_FORM = {
       defaultValue: false,
     },
   ],
+  checks: { hidden: { path: ["skill", "hidden"] } },
   slot: "default",
   fields: [
     {
@@ -464,6 +467,7 @@ export const DEFAULT_ADVANTAGE_FORM = {
       defaultValue: false,
     },
   ],
+  checks: { hidden: { path: ["advantage", "hidden"] } },
   slot: "default",
   fields: [
     {
@@ -498,6 +502,7 @@ export const DEFAULT_WORK_FORM = {
       defaultValue: false,
     },
   ],
+  checks: { hidden: { path: ["work", "hidden"] } },
   slot: "default",
   fields: [
     {
@@ -600,6 +605,7 @@ export const DEFAULT_PROJECT_FORM = {
       defaultValue: false,
     },
   ],
+  checks: { hidden: { path: ["project", "hidden"] } },
   slot: "default",
   fields: [
     {
@@ -708,6 +714,7 @@ export const DEFAULT_CUSTOM_FORM = {
       defaultValue: "",
     },
   ],
+  checks: { hidden: { path: ["custom", "hidden"] } },
   slot: "default",
   fields: [
     {

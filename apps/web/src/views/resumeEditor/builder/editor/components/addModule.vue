@@ -73,6 +73,10 @@ const handleConfirm = () => {
       item.defaultValue = customModuleName.value;
     }
   });
+  // 重置自定义模块的条件校验配置数据路径
+  if (config.checks?.hidden?.path?.length) {
+    config.checks.hidden.path[0] = customKey;
+  }
   // 重置自定义模块的子模块标题模型数据路径
   config.fields[0].addConfig.model.forEach((item) => {
     item.source[0] = customKey;

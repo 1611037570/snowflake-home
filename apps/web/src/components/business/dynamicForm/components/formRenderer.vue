@@ -2,27 +2,31 @@
   <el-row ref="row" :class="{ 'drag-container-active': isDragging }" :gutter="12" :key="items.id">
     <!-- :data-module-key="item.key" 临时增加 后期提供新方案 内部还能框选 -->
     <FormItem
-      :currentForm="item"
-      :data-module-key="item.key"
-      v-for="(item, index) in items.fields"
-      :key="item.id"
-      :class="{ 'module-selected-blink': isModuleSelected(item) }"
-      @mouseenter="handleModuleMouseEnter(item)"
+      :currentForm="item.field"
+      :data-module-key="item.field.key"
+      v-for="item in visibleFields"
+      :key="item.field.id"
+      :class="{ 'module-selected-blink': isModuleSelected(item.field) }"
+      @mouseenter="handleModuleMouseEnter(item.field)"
     >
       <!-- 校验失败：展示友好的错误提示 -->
-      <FormError v-if="!checkForm(item)" :error-msg="item.errorMsg" :raw="item.raw" />
+      <FormError
+        v-if="!checkForm(item.field)"
+        :error-msg="item.field.errorMsg"
+        :raw="item.field.raw"
+      />
       <!-- v-bind="$attrs" -->
       <ContainerSlot
-        v-else-if="item.type === 'group'"
-        :currentForm="item"
-        :currentIndex="index"
+        v-else-if="item.field.type === 'group'"
+        :currentForm="item.field"
+        :currentIndex="item.index"
         @removeObject="removeObject"
       />
       <component
         v-else
-        :is="item.type === 'object' ? ContainerObject : ContainerArray"
-        :currentForm="item"
-        :currentIndex="containerIndex ?? index"
+        :is="item.field.type === 'object' ? ContainerObject : ContainerArray"
+        :currentForm="item.field"
+        :currentIndex="containerIndex ?? item.index"
         @removeObject="removeObject"
         @removeItem="removeItem"
       />
@@ -34,6 +38,7 @@
 import { getUUID } from "@/utils";
 import { useDraggable } from "vue-draggable-plus";
 import { checkForm } from "../code/checkForm.ts";
+import { isFieldHidden } from "../code/fieldVisible";
 import { DF_MODULE_SELECT, DF_ROOT_DATA } from "../code/injectionKeys.ts";
 import ContainerSlot from "./containerSlot.vue";
 import ContainerArray from "./containerArray.vue";
@@ -50,6 +55,13 @@ const rootData: any = inject(DF_ROOT_DATA);
 const row: any = useTemplateRef("row");
 // 表单数据
 const items = defineModel<any>("items", {});
+// 按 DSL 显隐协议过滤隐藏字段：hidden 为真时表单中不再渲染（保留原始下标，避免删除定位错位）
+const visibleFields = computed(() => {
+  const fields = items.value.fields || [];
+  return fields
+    .map((field: any, index: number) => ({ field, index }))
+    .filter(({ field }: any) => !isFieldHidden(rootData.data, field));
+});
 const isDragging = ref(false);
 // 模块选中能力：由根组件提供，动态表单内部契约，调用方按约定传 key
 const moduleSelect = inject(DF_MODULE_SELECT)!;
