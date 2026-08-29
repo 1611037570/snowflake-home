@@ -141,3 +141,11 @@ export function getBrowser() {
     screen: screenGrade,
   };
 }
+
+/**
+ * 严格判断是否为谷歌浏览器，排除 Edge, Opera 等基于 Chromium 的浏览器
+ */
+export const isChrome = () => {
+  const ua = navigator.userAgent.toLowerCase();
+  return ua.includes("chrome") && !ua.includes("edg") && !ua.includes("opr") && !ua.includes("opera");
+};

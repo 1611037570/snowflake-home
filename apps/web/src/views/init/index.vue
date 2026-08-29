@@ -1,22 +1,11 @@
 <script setup>
-import { ElNotification } from "element-plus";
 import { onMounted } from "vue";
+import { showBrowserTip } from "@/components/business/browserTip";
 import StepSelectRoute from "./StepSelectRoute.vue";
 
 onMounted(() => {
-  const ua = navigator.userAgent.toLowerCase();
-  // 严格判断是否为谷歌浏览器，排除 Edge, Opera 等基于 Chromium 的浏览器
-  const isChrome =
-    ua.includes("chrome") && !ua.includes("edg") && !ua.includes("opr") && !ua.includes("opera");
-
-  if (!isChrome) {
-    ElNotification({
-      title: "浏览器建议",
-      message: "为了获得最佳体验，推荐使用谷歌浏览器，其他浏览器可能会遇到兼容性或性能问题。",
-      type: "warning",
-      duration: 0, // 不自动关闭，让用户明确看到
-    });
-  }
+  // 非推荐浏览器时提示，并给出推荐浏览器下载入口
+  showBrowserTip();
 });
 </script>
 

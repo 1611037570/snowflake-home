@@ -7,7 +7,6 @@ import ImportResume from "./modules/importResume.vue";
 import ExportResume from "./modules/exportResume.vue";
 import OnePage from "./modules/onePage.vue";
 import Progress from "./modules/progress.vue";
-import BrowserTip from "./modules/browserTip.vue";
 import DesignPreset from "./modules/designPreset.vue";
 
 defineOptions({ name: "ResumeToolbar" });
@@ -35,7 +34,6 @@ function goGitHub() {
       <ImportResume />
       <Ai />
       <div class="h-[0.5px] w-full bg-sf-bg-2"></div>
-      <BrowserTip />
       <Icon icon="akar-icons:home-alt1" size="5" content="返回首页" @click="goHome" />
       <Icon icon="simple-icons:github" size="5" content="GitHub" @click="goGitHub" />
     </div>
