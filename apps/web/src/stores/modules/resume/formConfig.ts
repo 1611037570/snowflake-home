@@ -228,6 +228,12 @@ export const DEFAULT_ACCOUNT_FORM = {
       prop: "collapsed",
       defaultValue: ["1"],
     },
+    // 隐藏开关：控制模块在简历预览中显示/隐藏
+    {
+      source: ["account", "hidden"],
+      prop: "hidden",
+      defaultValue: false,
+    },
   ],
   component: "boxCollapse",
   props: {
@@ -274,6 +280,12 @@ export const DEFAULT_EDUCATION_FORM = {
       source: ["education", "collapsed"],
       prop: "collapsed",
       defaultValue: ["1"],
+    },
+    // 隐藏开关：控制模块在简历预览中显示/隐藏
+    {
+      source: ["education", "hidden"],
+      prop: "hidden",
+      defaultValue: false,
     },
   ],
   slot: "default",
@@ -411,6 +423,12 @@ export const DEFAULT_SKILL_FORM = {
       prop: "collapsed",
       defaultValue: ["1"],
     },
+    // 隐藏开关：控制模块在简历预览中显示/隐藏
+    {
+      source: ["skill", "hidden"],
+      prop: "hidden",
+      defaultValue: false,
+    },
   ],
   slot: "default",
   fields: [
@@ -439,6 +457,12 @@ export const DEFAULT_ADVANTAGE_FORM = {
       prop: "collapsed",
       defaultValue: ["1"],
     },
+    // 隐藏开关：控制模块在简历预览中显示/隐藏
+    {
+      source: ["advantage", "hidden"],
+      prop: "hidden",
+      defaultValue: false,
+    },
   ],
   slot: "default",
   fields: [
@@ -466,6 +490,12 @@ export const DEFAULT_WORK_FORM = {
       source: ["work", "collapsed"],
       prop: "collapsed",
       defaultValue: ["1"],
+    },
+    // 隐藏开关：控制模块在简历预览中显示/隐藏
+    {
+      source: ["work", "hidden"],
+      prop: "hidden",
+      defaultValue: false,
     },
   ],
   slot: "default",
@@ -563,6 +593,12 @@ export const DEFAULT_PROJECT_FORM = {
       prop: "collapsed",
       defaultValue: ["1"],
     },
+    // 隐藏开关：控制模块在简历预览中显示/隐藏
+    {
+      source: ["project", "hidden"],
+      prop: "hidden",
+      defaultValue: false,
+    },
   ],
   slot: "default",
   fields: [
@@ -659,6 +695,12 @@ export const DEFAULT_CUSTOM_FORM = {
       source: ["custom", "collapsed"],
       prop: "collapsed",
       defaultValue: ["1"],
+    },
+    // 隐藏开关：控制模块在简历预览中显示/隐藏
+    {
+      source: ["custom", "hidden"],
+      prop: "hidden",
+      defaultValue: false,
     },
     {
       source: ["custom", "name"],
