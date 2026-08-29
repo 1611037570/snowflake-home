@@ -87,6 +87,23 @@ const handleUseTemplate = () => {
     </div>
 
     <div class="grid grid-cols-3 gap-4 max-[900px]:grid-cols-1">
+      <!-- 新建简历卡片：固定在首位，与简历卡片共用同一容器，保持风格统一 -->
+      <ResumeCardContainer v-if="list.length < maxCount" @click="handleCreate">
+        <div
+          class="group flex aspect-[794/1123] w-full flex-col items-center justify-center gap-3 overflow-hidden rounded-lg border border-sf-b bg-sf-bg"
+        >
+          <!-- 圆形加号：鼠标悬停时旋转 90 度 -->
+          <div class="flex h-16 w-16 items-center justify-center rounded-full bg-sf-theme-2">
+            <SfIcon
+              icon="ic:round-add"
+              size="8"
+              class="text-sf-theme transition-transform duration-300 group-hover:rotate-90"
+            />
+          </div>
+          <span class="text-base font-black text-sf-text">新建简历</span>
+          <span class="text-sm text-sf-text-2">从空白开始，打造专属简历</span>
+        </div>
+      </ResumeCardContainer>
       <ResumeCardContainer
         v-for="card in displayList"
         :key="card.item.id || card.index"
@@ -141,15 +158,6 @@ const handleUseTemplate = () => {
           <span class="shrink-0 text-xs text-sf-text-3"
             >最后使用：{{ getLastUseTime(card.item) }}</span
           >
-        </div>
-      </ResumeCardContainer>
-      <!-- 新建简历卡片：与简历卡片共用同一容器，保持风格统一 -->
-      <ResumeCardContainer v-if="list.length < maxCount" @click="handleCreate">
-        <div
-          class="flex aspect-[794/1123] w-full flex-col items-center justify-center gap-2 overflow-hidden rounded-lg border border-sf-b bg-sf-bg"
-        >
-          <SfIcon icon="ic:round-add" size="10" />
-          <span class="text-sm text-sf-text-2">新建简历</span>
         </div>
       </ResumeCardContainer>
     </div>
