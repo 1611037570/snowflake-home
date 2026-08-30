@@ -10,6 +10,7 @@ import {
 } from "@/stores/modules/resume/uiConfig";
 import { storeToRefs } from "pinia";
 import ConfigItem from "./configItem.vue";
+import DesignPreset from "./designPreset.vue";
 
 const resumeStore = useResumeStore();
 const { currentUI } = storeToRefs(resumeStore);
@@ -28,6 +29,8 @@ const userInfoMode = computed({
 
 <template>
   <div class="flex w-full flex-col gap-6">
+    <!-- 一键设计预设：折叠面板默认折叠 -->
+    <DesignPreset />
     <div>
       <div class="mb-4 text-base font-bold text-sf-text">字体</div>
       <div class="flex gap-4">
