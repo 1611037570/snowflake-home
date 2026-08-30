@@ -34,7 +34,7 @@ function handleResetTitle() {
 
 <template>
   <div class="flex max-w-[300px] items-center">
-    <SfIcon icon="lucide:pencil" class="mr-2 hover:text-sf-theme-2" size="5" @click="openModal" />
+    <SfIcon icon="lucide:pencil" class="mr-1 hover:text-sf-theme-2" size="4.5" @click="openModal" />
     <div class="text-auto text-sm">
       {{ title }}
     </div>
