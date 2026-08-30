@@ -82,19 +82,25 @@ export function useModuleNav() {
     });
   };
 
-  // 联动跳转：隐藏模块先恢复渲染再定位；编辑区未打开时先切三栏布局
-  const jumpAll = (key: string) => {
+  // 跳转编辑区（含隐藏恢复与布局切换）：供进度条等复用
+  const jumpToEditor = (key: string) => {
     const item = moduleList.value.find((m) => m.key === key);
     // 复用恢复函数：隐藏模块置为可见，使编辑区与预览区重新渲染该模块
     if (item?.hidden) {
       setFieldHidden(currentData.value, item.field, false);
     }
+    // 编辑区未打开时先切三栏布局
     if (layout.value === "ai") {
       resumeStore.setLayout("three");
     }
     jumpEditor(key);
+  };
+
+  // 联动跳转：编辑区 + 预览区（模块导航使用）
+  const jumpAll = (key: string) => {
+    jumpToEditor(key);
     jumpPreview(key);
   };
 
-  return { moduleList, keyword, filteredList, jumpAll, jumpPreview, jumpEditor };
+  return { moduleList, keyword, filteredList, jumpAll, jumpToEditor, jumpPreview, jumpEditor };
 }
