@@ -124,7 +124,7 @@ function handleEditConfirm() {
       </template>
     </SfCollapseItem>
     <SfModal v-model="editVisible" title="编辑模块标题">
-      <form class="flex w-80 flex-col gap-4 p-5" @submit.prevent="handleEditConfirm">
+      <form class="flex w-80 flex-col gap-3 p-3" @submit.prevent="handleEditConfirm">
         <SfInput v-model="editTitle" placeholder="请输入模块标题" />
         <footer class="flex justify-end gap-3">
           <el-button @click="editVisible = false">取消</el-button>
