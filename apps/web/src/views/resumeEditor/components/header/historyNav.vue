@@ -5,11 +5,11 @@ const handleRedo = () => {};
 </script>
 
 <template>
-  <div class="flex items-center gap-1 rounded-3xl border border-sf-b bg-sf-page p-1">
+  <div class="flex items-center gap-1">
     <SfTooltip content="撤回">
       <SfIcon
         icon="lucide:undo-2"
-        size="5"
+        size="4"
         boxSize="7"
         class="cursor-pointer rounded-full hover:bg-sf-theme-2"
         @click="handleUndo"
@@ -18,7 +18,7 @@ const handleRedo = () => {};
     <SfTooltip content="前进">
       <SfIcon
         icon="lucide:redo-2"
-        size="5"
+        size="4"
         boxSize="7"
         class="cursor-pointer rounded-full hover:bg-sf-theme-2"
         @click="handleRedo"
