@@ -1,7 +1,6 @@
 <template>
-  <Component
+  <ElSelect
     v-model="value"
-    :is="h(ElSelect, { ...$attrs, ref: changeRef })"
     v-bind="$attrs"
     ref="changeRef"
     class="flex-1 rounded-3xl! text-sf-base"
@@ -11,13 +10,13 @@
     <template v-for="(item, name) in slots" #[name]>
       <slot :name="name" />
     </template>
-  </Component>
+  </ElSelect>
 </template>
 
 <script setup lang="ts">
 import { ElSelect } from "element-plus";
 import type { ComponentInstance, PropType } from "vue";
-import { getCurrentInstance, useSlots, h } from "vue";
+import { getCurrentInstance, useSlots } from "vue";
 
 defineOptions({ name: "SfSelect" });
 
