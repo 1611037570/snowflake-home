@@ -24,7 +24,7 @@ const densityOf = (spacing) => (spacing >= 20 ? "宽松" : spacing >= 10 ? "标�
 const PRESETS = [
   {
     name: "极简留白",
-    desc: "大留白 + 宽松行距，干净大气，适合内容较少的简历",
+    desc: "大留白 + 宽松行距，适合内容较少的简历",
     themeColor: "#40a9ff",
     ui: {
       padding: 48,
@@ -38,7 +38,7 @@ const PRESETS = [
   },
   {
     name: "紧凑商务",
-    desc: "小边距 + 紧凑排版，一页纸友好，信息密度高",
+    desc: "小边距 + 紧凑排版，一页纸友好。",
     themeColor: "#ff4d4f",
     ui: {
       padding: 16,
@@ -48,62 +48,6 @@ const PRESETS = [
       fontFamily: "text-puhui",
       themeColor: "#ff4d4f",
       userInfoMode: "icon",
-    },
-  },
-  {
-    name: "创意撞色",
-    desc: "大字号 + 图标信息 + 亮眼配色，适合设计类岗位",
-    themeColor: "#9254de",
-    ui: {
-      padding: 24,
-      fontSize: 18,
-      lineHeight: 1.4,
-      moduleSpacing: 16,
-      fontFamily: "text-yyqx",
-      themeColor: "#9254de",
-      userInfoMode: "icon",
-    },
-  },
-  {
-    name: "稳重深蓝",
-    desc: "均衡参数 + 经典蓝色，稳重专业，适合技术/管理岗",
-    themeColor: "#40a9ff",
-    ui: {
-      padding: 32,
-      fontSize: 16,
-      lineHeight: 1.3,
-      moduleSpacing: 16,
-      fontFamily: "text-puhui",
-      themeColor: "#40a9ff",
-      userInfoMode: "text",
-    },
-  },
-  {
-    name: "活力清新",
-    desc: "系统字体 + 青绿色调，清爽有活力，适合应届/新锐岗位",
-    themeColor: "#36cfc9",
-    ui: {
-      padding: 36,
-      fontSize: 15,
-      lineHeight: 1.45,
-      moduleSpacing: 20,
-      fontFamily: "",
-      themeColor: "#36cfc9",
-      userInfoMode: "icon",
-    },
-  },
-  {
-    name: "经典纸张",
-    desc: "系统字体 + 暖色点缀，纸质简历质感，通用稳妥",
-    themeColor: "#ffa940",
-    ui: {
-      padding: 40,
-      fontSize: 14,
-      lineHeight: 1.35,
-      moduleSpacing: 18,
-      fontFamily: "",
-      themeColor: "#ffa940",
-      userInfoMode: "text",
     },
   },
 ];
@@ -122,24 +66,26 @@ const applyPreset = (preset) => {
       <template #title>
         <div class="flex items-center gap-2 text-base font-bold text-sf-text">
           <SfIcon icon="mdi:palette-outline" size="4" />
-          <span>一键设计预设</span>
+          <span>一键配置</span>
         </div>
       </template>
       <div class="grid grid-cols-2 gap-3 py-2">
         <div
           v-for="preset in PRESETS"
           :key="preset.name"
-          class="cursor-pointer rounded-2xl border border-sf-b p-4 transition-all duration-200 hover:-translate-y-1 hover:border-sf-theme hover:bg-sf-theme-3"
+          class="cursor-pointer rounded-2xl border border-sf-b p-3 transition-all duration-200 hover:-translate-y-1 hover:border-sf-theme hover:bg-sf-theme-3"
           @click="applyPreset(preset)"
         >
           <div class="mb-2 flex items-center gap-2">
-            <span class="h-4 w-4 rounded-full" :style="{ backgroundColor: preset.themeColor }"></span>
+            <span
+              class="h-4 w-4 rounded-full"
+              :style="{ backgroundColor: preset.themeColor }"
+            ></span>
             <span class="text-base font-bold">{{ preset.name }}</span>
           </div>
           <div class="text-sm leading-snug text-sf-text-2">{{ preset.desc }}</div>
-          <div class="mt-2 flex items-center gap-2 text-xs text-sf-text-3">
+          <div class="mt-2 flex flex-col gap-1 text-xs text-sf-text-3">
             <span>字体：{{ FONT_NAMES[preset.ui.fontFamily] }}</span>
-            <span>·</span>
             <span>密度：{{ densityOf(preset.ui.moduleSpacing) }}</span>
           </div>
         </div>
