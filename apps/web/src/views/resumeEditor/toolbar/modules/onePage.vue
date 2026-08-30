@@ -78,7 +78,7 @@ watch(ready, (val) => {
     :style="[paddingValue(), { width: `${RESUME_WIDTH}px` }]"
     :all-modules="allModules"
   />
-  <Icon icon="fa6-solid:compress" size="4" content="智能一页纸" @click="onFitOnePage" />
+  <Icon icon="fa6-solid:compress" size="4.5" content="智能一页纸" @click="onFitOnePage" />
 </template>
 
 <style lang="scss" scoped></style>
