@@ -31,12 +31,10 @@ onBeforeUnmount(() => document.removeEventListener("click", closeOnOutside));
     <!-- 非模态悬浮面板：从按钮左侧展开 -->
     <div
       v-if="visible"
-      class="absolute top-0 right-full mr-3 w-60 rounded-2xl border border-sf-b bg-sf-primary p-3 shadow-lg"
+      class="absolute top-0 right-full z-90 mr-3 w-60 rounded-2xl border border-sf-b bg-sf-primary p-3 shadow-lg"
     >
       <!-- 功能提示 -->
-      <div class="mb-2 text-xs text-sf-text-2">
-        点击模块，同步定位到预览区与编辑区
-      </div>
+      <div class="mb-2 text-xs text-sf-text-2">点击模块，同步定位到预览区与编辑区</div>
       <el-input v-model="keyword" placeholder="搜索模块" clearable size="small" />
       <div class="mt-2 flex max-h-[300px] flex-col gap-1 overflow-y-auto">
         <div
