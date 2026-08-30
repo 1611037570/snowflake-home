@@ -8,7 +8,6 @@ import OnePage from "./modules/onePage.vue";
 import Progress from "./modules/progress.vue";
 import DesignPreset from "./modules/designPreset.vue";
 import ModuleNavigator from "./modules/moduleNavigator.vue";
-import Timeline from "./modules/timeline.vue";
 
 defineOptions({ name: "ResumeToolbar" });
 
@@ -35,7 +34,6 @@ function goGitHub() {
       <div class="h-[0.5px] w-full bg-sf-bg-2"></div>
       <DesignPreset />
       <ModuleNavigator />
-      <Timeline />
       <OnePage />
       <Ai />
       <Icon icon="carbon:maximize" size="5" content="专注写作" @click="enterFocusMode" />
