@@ -24,7 +24,7 @@ const handleRedo = () => {
         boxSize="7"
         :class="[
           'rounded-full',
-          canUndo ? 'cursor-pointer hover:bg-sf-theme-2' : 'cursor-not-allowed opacity-40',
+          canUndo ? 'cursor-pointer hover:bg-sf-theme-2' : 'cursor-not-allowed! opacity-40',
         ]"
         @click="canUndo && handleUndo()"
       />
@@ -36,7 +36,7 @@ const handleRedo = () => {
         boxSize="7"
         :class="[
           'rounded-full',
-          canRedo ? 'cursor-pointer hover:bg-sf-theme-2' : 'cursor-not-allowed opacity-40',
+          canRedo ? 'cursor-pointer hover:bg-sf-theme-2' : 'cursor-not-allowed! opacity-40',
         ]"
         @click="canRedo && handleRedo()"
       />
