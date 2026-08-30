@@ -2,7 +2,6 @@
 import { computed } from "vue";
 import { useResumeStore } from "@/stores";
 import {
-  defaultUserInfoMode,
   fontFamilyList,
   themeColors,
   uiParamRanges,
@@ -18,9 +17,9 @@ const { currentUI } = storeToRefs(resumeStore);
 // 主题色预设色板，供取色器快捷选择
 const predefineColors = themeColors.map((item) => item.value);
 
-// 用户信息展示模式，旧数据缺失时回退为文字模式
+// 用户信息展示模式
 const userInfoMode = computed({
-  get: () => currentUI.value?.userInfoMode ?? defaultUserInfoMode,
+  get: () => currentUI.value?.userInfoMode,
   set: (value) => {
     currentUI.value.userInfoMode = value;
   },
