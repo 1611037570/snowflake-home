@@ -56,6 +56,8 @@ export const jumpPreview = (key: string) => {
 
 // 跳转编辑区：展开折叠 + 选中闪烁 + 滚动定位
 export const jumpEditor = (key: string) => {
+  // 切换到编辑标签，避免停留设计/模板标签时编辑区不可见
+  eventBus.emit("switch-builder-tab", 0);
   // 展开模块折叠面板
   const moduleData = currentData.value?.[key];
   if (moduleData && Array.isArray(moduleData.collapsed)) {

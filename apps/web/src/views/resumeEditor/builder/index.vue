@@ -1,7 +1,8 @@
 <script setup>
 import { useResumeStore } from "@/stores";
 import { storeToRefs } from "pinia";
-import { markRaw, ref } from "vue";
+import { markRaw, onBeforeUnmount, onMounted, ref } from "vue";
+import eventBus from "@/utils/modules/eventBus";
 import Custom from "./custom/index.vue";
 import Editor from "./editor/index.vue";
 import Template from "./template/index.vue";
@@ -28,6 +29,13 @@ const menuList = [
 // 当前选中的菜单索引
 const activeIndex = ref(0);
 provide("bg", "bg-sf-bg");
+
+// 监听模块导航跳转，切换回编辑标签
+const switchTab = (index) => {
+  activeIndex.value = index;
+};
+onMounted(() => eventBus.on("switch-builder-tab", switchTab));
+onBeforeUnmount(() => eventBus.off("switch-builder-tab", switchTab));
 
 // 专注写作模式下编辑区宽度
 const { focusMode } = storeToRefs(useResumeStore());
