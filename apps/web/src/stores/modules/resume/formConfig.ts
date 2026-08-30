@@ -50,6 +50,7 @@ export const DEFAULT_USER_FORM = [
         tip: "真实姓名 推荐必填",
         component: "input",
         span: 12,
+        required: true,
         model: {
           source: ["user", "name"],
           prop: "modelValue",
@@ -326,6 +327,7 @@ export const DEFAULT_EDUCATION_FORM = {
             type: "object",
             label: "学校",
             component: "input",
+            required: true,
             span: 12,
             model: {
               source: ["education", "data", "?", "name"],
@@ -341,6 +343,7 @@ export const DEFAULT_EDUCATION_FORM = {
             label: "学位",
             component: "select",
             span: 12,
+            required: true,
             model: {
               source: ["education", "data", "?", "education"],
               prop: "modelValue",
@@ -361,6 +364,7 @@ export const DEFAULT_EDUCATION_FORM = {
             type: "object",
             label: "专业",
             component: "input",
+            required: true,
             span: 12,
             model: {
               source: ["education", "data", "?", "post"],
@@ -375,6 +379,7 @@ export const DEFAULT_EDUCATION_FORM = {
             type: "object",
             label: "学制",
             component: "select",
+            required: true,
             span: 12,
             model: {
               source: ["education", "data", "?", "mode"],
@@ -393,6 +398,7 @@ export const DEFAULT_EDUCATION_FORM = {
           {
             type: "object",
             label: "时间",
+            required: true,
             component: "datePicker",
             span: 24,
             model: {
@@ -432,6 +438,7 @@ export const DEFAULT_SKILL_FORM = {
     name: "专业技能",
     add: false,
   },
+  required: true,
   model: [
     {
       source: ["skill", "collapsed"],
@@ -464,6 +471,7 @@ export const DEFAULT_ADVANTAGE_FORM = {
   component: "boxCollapse",
   key: "advantage",
   name: "个人优势",
+  required: true,
   props: {
     add: false,
   },
@@ -540,6 +548,7 @@ export const DEFAULT_WORK_FORM = {
             type: "object",
             label: "公司",
             component: "input",
+            required: true,
             span: 12,
             model: {
               source: ["work", "data", "?", "name"],
@@ -554,6 +563,7 @@ export const DEFAULT_WORK_FORM = {
             type: "object",
             label: "岗位",
             component: "input",
+            required: true,
             span: 12,
             model: {
               source: ["work", "data", "?", "post"],
@@ -567,6 +577,7 @@ export const DEFAULT_WORK_FORM = {
           {
             type: "object",
             label: "时间",
+            required: true,
             component: "datePicker",
             span: 24,
             model: {
@@ -584,6 +595,7 @@ export const DEFAULT_WORK_FORM = {
           {
             type: "object",
             label: "经历",
+            required: true,
             component: "wangEditor",
             span: 24,
             model: {
@@ -644,6 +656,7 @@ export const DEFAULT_PROJECT_FORM = {
             type: "object",
             label: "公司",
             component: "input",
+            required: true,
             span: 12,
             model: {
               source: ["project", "data", "?", "name"],
@@ -658,6 +671,7 @@ export const DEFAULT_PROJECT_FORM = {
             type: "object",
             label: "岗位",
             component: "input",
+            required: true,
             span: 12,
             model: {
               source: ["project", "data", "?", "post"],
@@ -671,6 +685,7 @@ export const DEFAULT_PROJECT_FORM = {
           {
             type: "object",
             label: "时间",
+            required: true,
             component: "datePicker",
             span: 24,
             model: {
@@ -689,6 +704,7 @@ export const DEFAULT_PROJECT_FORM = {
             type: "object",
             label: "经历",
             component: "wangEditor",
+            required: true,
             span: 24,
             model: {
               source: ["project", "data", "?", "content"],
@@ -750,6 +766,7 @@ export const DEFAULT_CUSTOM_FORM = {
         fields: [
           {
             type: "object",
+            required: true,
             label: "名称",
             component: "input",
             span: 12,
@@ -764,6 +781,7 @@ export const DEFAULT_CUSTOM_FORM = {
           },
           {
             type: "object",
+            required: true,
             label: "职位",
             component: "input",
             span: 12,
@@ -778,6 +796,7 @@ export const DEFAULT_CUSTOM_FORM = {
           },
           {
             type: "object",
+            required: true,
             label: "时间",
             component: "datePicker",
             span: 24,
@@ -796,6 +815,7 @@ export const DEFAULT_CUSTOM_FORM = {
           {
             type: "object",
             label: "经历",
+            required: true,
             component: "wangEditor",
             span: 24,
             model: {
