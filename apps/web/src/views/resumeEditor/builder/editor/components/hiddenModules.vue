@@ -15,11 +15,8 @@ const hiddenList = computed(() => {
   return fields.filter((field) => isFieldHidden(data, field));
 });
 
-// 弹窗状态
-const dialogVisible = ref(false);
-function handleOpen() {
-  dialogVisible.value = true;
-}
+// 悬浮面板显隐状态（popover 渲染到 body，避免被侧栏 overflow 裁剪）
+const panelVisible = ref(false);
 
 // 模块名称：优先 store 映射，其次自定义模块数据里的 name，兜底 key
 const getModuleName = (field) => resumeStore.getModel(field.key)?.name || field.key;
@@ -27,37 +24,38 @@ const getModuleName = (field) => resumeStore.getModel(field.key)?.name || field.
 // 恢复单个模块：将隐藏条件指向的数据置为 false，表单与预览同步恢复渲染
 function handleRestore(field) {
   setFieldHidden(currentData.value, field, false);
-  if (!hiddenList.value.length) dialogVisible.value = false;
+  if (!hiddenList.value.length) panelVisible.value = false;
 }
 </script>
 
 <template>
   <!-- 有隐藏模块才展示 -->
   <div v-if="hiddenList.length">
-    <header class="mt-2 mb-3 flex items-center text-lg font-bold">
-      <SfIcon icon="lucide:eye-off" size="5" />
-      <div>隐藏模块</div>
+    <header class="mt-2 mb-3 flex items-center justify-between">
+      <div class="flex items-center gap-1 font-bold">
+        <SfIcon icon="lucide:eye-off" size="3" />
+        <div class="text-lg">隐藏模块{{ hiddenList.length }} 个</div>
+      </div>
+      <el-popover v-model:visible="panelVisible" placement="right" :width="208" trigger="click">
+        <template #reference>
+          <div class="flex cursor-pointer items-center gap-1 text-sm text-sf-theme">
+            <span>点击恢复</span>
+            <SfIcon icon="lucide:chevron-right" size="4" />
+          </div>
+        </template>
+        <!-- 悬浮面板：从箭头右侧弹出 -->
+        <ul class="flex flex-col gap-2">
+          <li
+            v-for="field in hiddenList"
+            :key="field.key"
+            class="flex items-center justify-between gap-3"
+          >
+            <span class="truncate text-sm text-sf-text">{{ getModuleName(field) }}</span>
+            <el-button size="small" @click="handleRestore(field)">恢复</el-button>
+          </li>
+        </ul>
+      </el-popover>
     </header>
-    <div
-      class="flex cursor-pointer items-center gap-1 text-sm text-sf-theme"
-      @click="handleOpen"
-    >
-      <span>隐藏 {{ hiddenList.length }} 个模块，点击恢复</span>
-      <SfIcon icon="lucide:chevron-right" size="4" />
-    </div>
-
-    <SfModal v-model="dialogVisible" title="隐藏模块">
-      <ul class="flex w-80 flex-col gap-2 p-5">
-        <li
-          v-for="field in hiddenList"
-          :key="field.key"
-          class="flex items-center justify-between gap-3"
-        >
-          <span class="truncate text-sm text-sf-text">{{ getModuleName(field) }}</span>
-          <el-button size="small" @click="handleRestore(field)">恢复</el-button>
-        </li>
-      </ul>
-    </SfModal>
   </div>
 </template>
 
