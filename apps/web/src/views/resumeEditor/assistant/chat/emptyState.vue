@@ -3,7 +3,7 @@ import { useResumeStore } from "@/stores";
 import { storeToRefs } from "pinia";
 import { computed } from "vue";
 
-const emit = defineEmits(["switch-mode"]);
+const emit = defineEmits(["switch-mode", "suggest"]);
 const resumeStore = useResumeStore();
 const { selectedModule } = storeToRefs(resumeStore);
 
@@ -16,6 +16,32 @@ const moduleNames = computed(() => {
         },
       ];
 });
+
+// 建议操作卡片：简历转面试口头稿
+const suggestCards = [
+  {
+    icon: "ph:microphone-duotone",
+    title: "面试自我介绍",
+    desc: "将简历转成面试口头稿",
+    prompt: `# 任务：生成面试自我介绍口头稿
+请根据用户的简历数据，撰写一段自然流畅、口语化的面试自我介绍口头稿。
+要求：
+1. 以第一人称展开，突出核心优势、关键经历与求职意向。
+2. 字数控制在 200 字左右，适合直接朗读。
+3. 严格基于简历真实数据，严禁编造任何信息。
+4. 本次不修改简历内容，data 字段原样返回。
+5. 将自我介绍口头稿写入 analysis 字段，标题使用「问题回复」。`,
+    userContent: "请根据我的简历，生成一段面试自我介绍口头稿",
+  },
+];
+
+// 点击建议卡片，触发 AI 生成
+const handleSuggest = (card) => {
+  emit("suggest", {
+    prompt: card.prompt,
+    userContent: card.userContent,
+  });
+};
 </script>
 
 <template>
@@ -38,6 +64,30 @@ const moduleNames = computed(() => {
         {{ item.name }}
       </span>
       <span>进行以下操作</span>
+    </div>
+
+    <!-- 建议操作按钮 -->
+    <div class="grid w-full max-w-sm grid-cols-1 gap-3">
+      <button
+        v-for="card in suggestCards"
+        :key="card.title"
+        class="group flex cursor-pointer items-start gap-3 rounded-xl border border-sf-b bg-sf-bg-2 p-3 text-left transition-all duration-300 hover:-translate-y-0.5 hover:border-sf-theme hover:shadow-md active:scale-[0.98]"
+        @click="handleSuggest(card)"
+      >
+        <div
+          class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-sf-bg text-sf-text-3 transition-colors duration-300 group-hover:bg-sf-theme/10 group-hover:text-sf-theme"
+        >
+          <SfIcon :icon="card.icon" size="4.5" />
+        </div>
+        <div class="flex flex-col gap-0.5 overflow-hidden">
+          <h3 class="text-sm font-bold tracking-tight text-sf-text">
+            {{ card.title }}
+          </h3>
+          <p class="truncate text-[12px] text-sf-text-3 opacity-70">
+            {{ card.desc }}
+          </p>
+        </div>
+      </button>
     </div>
   </div>
 </template>
