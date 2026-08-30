@@ -4,7 +4,7 @@
     :class="[iconClass]"
     :style="boxIconStyle"
   >
-    <Icon ref="iconify" :icon="icon" class="bg-transparent" :style="iconStyle" />
+    <Icon ref="iconify" :icon="icon" class="bg-transparent" :width="iconSize" :height="iconSize" />
   </div>
   <!-- class="iconify-icon"
          :rotate="rotate"
@@ -56,13 +56,8 @@ const boxIconStyle = computed(() => {
     height: `${size}px`,
   };
 });
-const iconStyle = computed(() => {
-  const size = Number(props.size) * 4;
-  return {
-    width: `${size}px`,
-    height: `${size}px`,
-  };
-});
+// 图标尺寸：通过 width/height 属性传递，避免 style 中 1em 相对单位导致跨浏览器大小不一致
+const iconSize = computed(() => Number(props.size) * 4);
 const emit = defineEmits(["success", "fail"]);
 const iconClass = ref("");
 function init() {
