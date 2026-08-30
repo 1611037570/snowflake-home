@@ -1,5 +1,5 @@
 <script setup>
-import { educationScore, projectScore, skillScore, userScore, workScore } from "../utils";
+import { educationScore, projectScore, skillScore, userScore, workScore } from "../hooks/useProgress";
 
 // 雷达图配置
 const a = computed(() => ({
