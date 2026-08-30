@@ -119,7 +119,7 @@ const handleCancel = () => {
   </div>
 
   <SfModal v-model="showModal" title="自定义模块">
-    <form class="flex w-80 flex-col gap-4 p-5" @submit.prevent="handleConfirm">
+    <form class="flex w-80 flex-col gap-3 p-3" @submit.prevent="handleConfirm">
       <SfInput v-model="customModuleName" placeholder="请输入模块名称" />
       <footer class="flex justify-end gap-3">
         <el-button @click="handleCancel">取消</el-button>
