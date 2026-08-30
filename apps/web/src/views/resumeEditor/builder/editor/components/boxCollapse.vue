@@ -114,7 +114,7 @@ function handleEditConfirm() {
       <template #default>
         <slot />
         <div
-          class="mt-1 mb-3 flex cursor-pointer items-center gap-1 text-sf-theme"
+          class="mt-1 flex cursor-pointer items-center gap-1 text-sf-theme"
           @click="handleAdd"
           v-if="add"
         >
