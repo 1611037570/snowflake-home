@@ -12,7 +12,6 @@ import { usePdfExport } from "../usePdfExport";
 import { useResumeStore } from "@/stores";
 import eventBus from "@/utils/modules/eventBus";
 import { useImageExport } from "../useImageExport";
-import { isFieldHidden } from "@/components/business/dynamicForm/code/fieldVisible";
 const resumeStore = useResumeStore();
 const { selectedModule, system } = storeToRefs(resumeStore);
 
@@ -71,11 +70,9 @@ const { paddingValue, fontValue, lineHeightValue } = themeStyles;
 
 // ---------- 分页（测量 + 分页算法 + 裁剪样式）----------
 const allModules = computed(() => {
-  const data = props.item.data || {};
   const fixedModules = props.item.fixedConfig?.fields || [];
   const configModules = props.item.config?.fields || [];
-  // 按 DSL 显隐协议过滤隐藏模块，测量/分页/渲染一并跳过
-  return [...fixedModules, ...configModules].filter((field) => !isFieldHidden(data, field));
+  return [...fixedModules, ...configModules];
 });
 const { measureDone, pages, moduleClass, getPageStyle } = useResumePages({
   measureRef,
