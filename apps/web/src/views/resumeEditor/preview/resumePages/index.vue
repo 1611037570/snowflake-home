@@ -1,7 +1,7 @@
 <script setup>
 // 简历分页渲染可复用组件：接收 resumeItem（data/config/fixedConfig/ui），渲染分页后的简历页面
 // 数据源由 props 传入，不依赖 resume store；供编辑器预览、模板缩略图、全屏查看复用
-import { computed, onMounted, onUnmounted, provide, ref } from "vue";
+import { computed, inject, onMounted, onUnmounted, provide, ref } from "vue";
 import MeasureContent from "../components/measureContent.vue";
 import ResumeModule from "../modules/index.vue";
 import { MODULE_GAP, PAGE_NUMBER_HEIGHT, RESUME_WIDTH, RESUME_HEIGHT } from "../constants";
@@ -58,8 +58,10 @@ onUnmounted(() => {
 const uid = `rp-${Math.random().toString(36).slice(2, 8)}`;
 
 // ---------- 数据代理（复用 usePreviewData）----------
+// 编辑器等场景父级已注入同一份预览代理时直接复用；独立使用（缩略图/全屏）时才自行创建，避免对同一数据重复创建 hook
 const dataRef = computed(() => props.item.data);
-const { previewData } = usePreviewData(dataRef);
+const injectedPreviewData = inject("previewData", null);
+const previewData = injectedPreviewData ?? usePreviewData(dataRef).previewData;
 provide("previewData", previewData);
 
 // ---------- 主题样式注入（数据源为 item.ui）----------
