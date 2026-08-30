@@ -26,7 +26,7 @@ onBeforeUnmount(() => document.removeEventListener("click", closeOnOutside));
 
 <template>
   <div ref="panelRef" class="relative">
-    <Icon icon="mdi:map-search-outline" size="4" content="模块导航" @click="visible = !visible" />
+    <Icon icon="mdi:map-search-outline" size="4" content="查找模块" @click="visible = !visible" />
 
     <!-- 非模态悬浮面板：从按钮左侧展开 -->
     <div
@@ -35,12 +35,12 @@ onBeforeUnmount(() => document.removeEventListener("click", closeOnOutside));
     >
       <!-- 功能提示 -->
       <div class="mb-2 text-xs text-sf-text-2">点击模块，同步定位到预览区与编辑区</div>
-      <el-input v-model="keyword" placeholder="搜索模块" clearable size="small" />
+      <SfInput v-model="keyword" placeholder="搜索模块" clearable />
       <div class="mt-2 flex max-h-[300px] flex-col gap-1 overflow-y-auto">
         <div
           v-for="m in filteredList"
           :key="m.key"
-          class="flex cursor-pointer items-center gap-2 rounded-xl px-2 py-1.5 text-sm transition-colors hover:bg-sf-theme-2"
+          class="flex cursor-pointer items-center gap-2 rounded-3xl px-2 py-1.5 text-sm transition-colors hover:bg-sf-theme-2"
           :class="m.hidden ? 'opacity-60' : ''"
           @click="handleJump(m)"
         >
