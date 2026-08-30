@@ -21,7 +21,8 @@
         <div
           id="element"
           ref="elementRef"
-          class="border-sf-b flex max-h-[90vh] max-w-[90vw] flex-col rounded-3xl border bg-sf-primary p-3"
+          class="flex flex-col border border-sf-b bg-sf-primary p-3"
+          :class="full ? 'h-screen w-screen rounded-none' : 'max-h-[90vh] max-w-[90vw] rounded-3xl'"
           :style="elementStyle"
           @mouseenter="handleMouseEnter"
           @mouseleave="handleMouseLeave"
@@ -65,11 +66,13 @@ import { computed, onUnmounted, ref, useTemplateRef, watch } from "vue";
 defineOptions({ name: "SfModal" });
 
 // ==================== Props 定义 ====================
-defineProps({
+const props = defineProps({
   /** 弹窗标题 */
   title: { type: String, default: "" },
   /** 弹窗标题自定义类名 */
   titleClass: { type: String, default: "" },
+  /** 是否全屏显示（默认 false） */
+  full: { type: Boolean, default: false },
 });
 
 // ==================== 全局状态 ====================
@@ -151,7 +154,7 @@ const backgroundStyle = computed(() =>
  * - 正常模式：只保留平滑过渡，具体角度通过原生 DOM 操作赋值以绕过 Vue 渲染
  */
 const elementStyle = computed(() =>
-  performanceMode.value
+  performanceMode.value || props.full
     ? { transform: "none", transition: "none" }
     : { transition: "transform 0.15s ease-out" },
 );
@@ -192,7 +195,7 @@ let ticking = false;
  * 使用 requestAnimationFrame 和 ticking 节流，保证每帧只执行一次
  */
 function handleMouseMove(e) {
-  if (performanceMode.value) return;
+  if (performanceMode.value || props.full) return;
   if (!ticking) {
     requestAnimationFrame(() => {
       transformElement(e.clientX, e.clientY);
