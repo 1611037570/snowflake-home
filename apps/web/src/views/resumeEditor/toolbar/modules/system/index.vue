@@ -37,6 +37,12 @@ const { system } = storeToRefs(resumeStore);
           v-model="system.showPageNumber"
           type="switch"
         />
+        <SfSetItem
+          title="调试控制台"
+          info="开启后，工具栏会显示调试控制台入口"
+          v-model="system.showDebug"
+          type="switch"
+        />
       </SfSetBox>
     </div>
   </SfModal>

@@ -1,14 +1,12 @@
 <template>
-  <!-- 悬浮按钮 -->
-  <div
-    v-if="debugMode"
-    class="flex-c h-10 w-16 cursor-pointer rounded-xl bg-sf-theme text-sf-theme-text"
-    type="primary"
-    circle
+  <!-- 调试控制台按钮：是否显示由系统设置中的「调试控制台」开关控制 -->
+  <Icon
+    v-if="system.showDebug"
+    icon="mdi:console-line"
+    size="4"
+    content="调试控制台"
     @click="drawerVisible = !drawerVisible"
-  >
-    控制台
-  </div>
+  />
 
   <!-- 抽屉 -->
   <el-drawer v-model="drawerVisible" title="控制台" direction="rtl" size="50%">
@@ -59,12 +57,9 @@
 import { ref, inject, computed } from "vue";
 import { MdPreview } from "md-editor-v3";
 import "md-editor-v3/lib/preview.css";
-import { useResumeStore, useThemeStore } from "@/stores";
+import { useResumeStore } from "@/stores";
 import { storeToRefs } from "pinia";
-import { useSystemStore } from "@/stores/modules/system";
-
-const systemStore = useSystemStore();
-const { debugMode } = storeToRefs(systemStore);
+import Icon from "../components/icon.vue";
 
 const drawerVisible = ref(false);
 const activeNames = ref(["preview", "raw"]);
@@ -76,16 +71,12 @@ const tabList = [
   { name: "配置", value: "config" },
 ];
 
-// 主题
-const themeStore = useThemeStore();
-const { theme } = storeToRefs(themeStore);
-
 // 注入预览数据
 const previewData = inject("previewData");
 
 // 获取原始数据
 const resumeStore = useResumeStore();
-const { currentData, currentConfig } = storeToRefs(resumeStore);
+const { currentData, currentConfig, system } = storeToRefs(resumeStore);
 
 // 把 fieldProxy 转为可序列化的对象 { value, newValue }
 const serializePreview = (obj) => {

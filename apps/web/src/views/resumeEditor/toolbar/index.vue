@@ -8,6 +8,7 @@ import OnePage from "./modules/onePage.vue";
 import Progress from "./modules/progress.vue";
 import ModuleNavigator from "./modules/moduleNavigator.vue";
 import QaAnswer from "./modules/qaAnswer.vue";
+import Debug from "./modules/debug.vue";
 
 defineOptions({ name: "ResumeToolbar" });
 
@@ -31,6 +32,7 @@ function goGitHub() {
     >
       <Progress />
       <System />
+      <Debug />
       <div class="h-[0.5px] w-full bg-sf-bg-2"></div>
       <ModuleNavigator />
       <OnePage />
