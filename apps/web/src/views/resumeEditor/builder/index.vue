@@ -1,4 +1,6 @@
 <script setup>
+import { useResumeStore } from "@/stores";
+import { storeToRefs } from "pinia";
 import { markRaw, ref } from "vue";
 import Custom from "./custom/index.vue";
 import Editor from "./editor/index.vue";
@@ -26,10 +28,13 @@ const menuList = [
 // 当前选中的菜单索引
 const activeIndex = ref(0);
 provide("bg", "bg-sf-bg");
+
+// 专注写作模式下编辑区宽度
+const { focusMode } = storeToRefs(useResumeStore());
 </script>
 
 <template>
-  <div class="relative my-3 ml-3 flex w-[380px] flex-col">
+  <div class="relative my-3 ml-3 flex flex-col" :class="focusMode ? 'w-[420px]' : 'w-[380px]'">
     <SfTab
       :list="menuList"
       v-model:index="activeIndex"
