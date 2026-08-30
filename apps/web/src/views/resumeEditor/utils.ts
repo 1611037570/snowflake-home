@@ -43,7 +43,7 @@ export function calculateScore(obj: any) {
 
   for (const key of keys) {
     const value = obj[key];
-    const hasContent = value != null && String(value).trim() !== "";
+    const hasContent = !isEmptyVal(value);
     if (hasContent) totalScore += singleScore;
   }
   return Math.round(totalScore);
@@ -142,8 +142,11 @@ const getValueByPath = (obj: any, path: any[]) => {
   return current;
 };
 
-// 判断字段值是否为空
-const isEmptyVal = (value: any) => value == null || String(value).trim() === "";
+// 判断字段值是否为空（富文本为空时会序列化为 <p><br></p> 等空 HTML，同样视为空）
+const isEmptyVal = (value: any) => {
+  const str = String(value ?? "").trim();
+  return str === "" || str === "<p><br></p>" || str === "<p><br/></p>";
+};
 
 // 收集模块缺失字段标签列表
 const collectMissing = (source: any, moduleKey: string) => {
@@ -213,9 +216,9 @@ export const useProgress = (data: MaybeRefOrGetter<Record<string, any> | null | 
       const score = Array.isArray(moduleData)
         ? calculateListScore(moduleData)
         : typeof moduleData === "string"
-          ? moduleData.trim()
-            ? 10
-            : 0
+          ? isEmptyVal(moduleData)
+            ? 0
+            : 10
           : calculateScore(moduleData);
 
       return {
@@ -265,7 +268,9 @@ const formatGap = (months: number) => {
 };
 
 // 时间线一致性检查：检测工作/教育/项目等模块时间重叠与过大间隙
-export const useTimelineCheck = (data: MaybeRefOrGetter<Record<string, any> | null | undefined>) => {
+export const useTimelineCheck = (
+  data: MaybeRefOrGetter<Record<string, any> | null | undefined>,
+) => {
   return computed(() => {
     const source = toValue(data) || {};
     const list: any[] = [];
