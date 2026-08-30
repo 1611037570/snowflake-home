@@ -36,25 +36,23 @@ export const useResumeStore = defineStore(
       // 重置选中模块
       selectedModule.value = [];
     }
-    // 获取当前选中的简历项
-    const getCurrentResumeItem = () => {
-      return list.value[currentIndex.value];
-    };
+    // 当前选中的简历项
+    const currentItem = computed(() => list.value[currentIndex.value]);
 
     // 获取当前选中的简历数据
     const currentData = computed(() => {
-      const item = getCurrentResumeItem();
+      const item = currentItem.value;
       return item ? item.data : undefined;
     });
 
     // 获取当前选中的表单配置
     const currentConfig = computed({
       get() {
-        const item = getCurrentResumeItem();
+        const item = currentItem.value;
         return item ? item.config : undefined;
       },
       set(newConfig: any) {
-        const item = getCurrentResumeItem();
+        const item = currentItem.value;
         if (item) {
           item.config = newConfig;
         }
@@ -63,11 +61,11 @@ export const useResumeStore = defineStore(
     // 获取当前选中的固定配置
     const currentFixedConfig = computed({
       get() {
-        const item = getCurrentResumeItem();
+        const item = currentItem.value;
         return item ? item.fixedConfig : undefined;
       },
       set(newFixedConfig: any) {
-        const item = getCurrentResumeItem();
+        const item = currentItem.value;
         if (item) {
           item.fixedConfig = newFixedConfig;
         }
@@ -76,18 +74,18 @@ export const useResumeStore = defineStore(
     // 获取当前选中的UI配置
     const currentUI = computed({
       get() {
-        const item = getCurrentResumeItem();
+        const item = currentItem.value;
         return item ? item.ui : undefined;
       },
       set(newUI: any) {
-        const item = getCurrentResumeItem();
+        const item = currentItem.value;
         if (item) {
           item.ui = newUI;
         }
       },
     });
     const currentUsage = computed(() => {
-      const item = getCurrentResumeItem();
+      const item = currentItem.value;
       return item ? item.usage : undefined;
     });
     // 选中模块的名称列表
@@ -160,6 +158,7 @@ export const useResumeStore = defineStore(
       system,
       initResumeStatus,
       getModel,
+      currentItem,
       currentData,
       currentConfig,
       currentFixedConfig,
