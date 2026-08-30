@@ -3,10 +3,9 @@ import { ElMessage } from "element-plus";
 import { ref } from "vue";
 import { storeToRefs } from "pinia";
 import { useResumeStore } from "@/stores";
-import Icon from "../components/icon.vue";
 
-// 预设选择弹窗可见性
-const visible = ref(false);
+// 折叠面板：默认折叠
+const activeNames = ref([]);
 
 const resumeStore = useResumeStore();
 const { currentUI } = storeToRefs(resumeStore);
@@ -118,35 +117,41 @@ const PRESETS = [
 // 套用预设：合并进当前 UI 配置，保留其它自定义项
 const applyPreset = (preset) => {
   currentUI.value = { ...(currentUI.value ?? {}), ...preset.ui };
-  visible.value = false;
   ElMessage.success(`已应用「${preset.name}」设计方案`);
 };
 </script>
 
 <template>
-  <Icon icon="mdi:palette-outline" size="4" content="设计预设" @click="visible = true" />
-
-  <SfModal v-model="visible" title="一键设计预设">
-    <div class="grid w-[560px] grid-cols-2 gap-3 p-4">
-      <div
-        v-for="preset in PRESETS"
-        :key="preset.name"
-        class="cursor-pointer rounded-2xl border border-sf-b p-4 transition-all duration-200 hover:-translate-y-1 hover:border-sf-theme hover:bg-sf-theme-3"
-        @click="applyPreset(preset)"
-      >
-        <div class="mb-2 flex items-center gap-2">
-          <span class="h-4 w-4 rounded-full" :style="{ backgroundColor: preset.themeColor }"></span>
-          <span class="text-base font-bold">{{ preset.name }}</span>
+  <!-- 一键设计预设：折叠面板，默认折叠，直接渲染预设卡片 -->
+  <SfCollapse v-model="activeNames">
+    <SfCollapseItem name="designPreset">
+      <template #title>
+        <div class="flex items-center gap-2 text-base font-bold text-sf-text">
+          <SfIcon icon="mdi:palette-outline" size="4" />
+          <span>一键设计预设</span>
         </div>
-        <div class="text-sm leading-snug text-sf-text-2">{{ preset.desc }}</div>
-        <div class="mt-2 flex items-center gap-2 text-xs text-sf-text-3">
-          <span>字体：{{ FONT_NAMES[preset.ui.fontFamily] }}</span>
-          <span>·</span>
-          <span>密度：{{ densityOf(preset.ui.moduleSpacing) }}</span>
+      </template>
+      <div class="grid grid-cols-2 gap-3 py-2">
+        <div
+          v-for="preset in PRESETS"
+          :key="preset.name"
+          class="cursor-pointer rounded-2xl border border-sf-b p-4 transition-all duration-200 hover:-translate-y-1 hover:border-sf-theme hover:bg-sf-theme-3"
+          @click="applyPreset(preset)"
+        >
+          <div class="mb-2 flex items-center gap-2">
+            <span class="h-4 w-4 rounded-full" :style="{ backgroundColor: preset.themeColor }"></span>
+            <span class="text-base font-bold">{{ preset.name }}</span>
+          </div>
+          <div class="text-sm leading-snug text-sf-text-2">{{ preset.desc }}</div>
+          <div class="mt-2 flex items-center gap-2 text-xs text-sf-text-3">
+            <span>字体：{{ FONT_NAMES[preset.ui.fontFamily] }}</span>
+            <span>·</span>
+            <span>密度：{{ densityOf(preset.ui.moduleSpacing) }}</span>
+          </div>
         </div>
       </div>
-    </div>
-  </SfModal>
+    </SfCollapseItem>
+  </SfCollapse>
 </template>
 
 <style lang="scss" scoped></style>

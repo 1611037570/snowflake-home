@@ -6,7 +6,6 @@ import System from "./modules/system/index.vue";
 import Icon from "./components/icon.vue";
 import OnePage from "./modules/onePage.vue";
 import Progress from "./modules/progress.vue";
-import DesignPreset from "./modules/designPreset.vue";
 import ModuleNavigator from "./modules/moduleNavigator.vue";
 
 defineOptions({ name: "ResumeToolbar" });
@@ -32,7 +31,6 @@ function goGitHub() {
       <Progress />
       <System />
       <div class="h-[0.5px] w-full bg-sf-bg-2"></div>
-      <DesignPreset />
       <ModuleNavigator />
       <OnePage />
       <Ai />
