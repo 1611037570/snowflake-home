@@ -243,3 +243,87 @@ export const useProgress = (data: MaybeRefOrGetter<Record<string, any> | null | 
     };
   });
 };
+
+// 时间线一致性检查：相邻经历间隔超过该月数视为「间隙过大」
+const GAP_THRESHOLD_MONTHS = 6;
+
+// 将 "YYYY.MM" 解析为累计月数，用于比较与计算间隔
+const parseMonth = (str: any) => {
+  if (typeof str !== "string") return null;
+  const match = str.match(/^(\d{4})\.(\d{1,2})$/);
+  if (!match) return null;
+  return Number(match[1]) * 12 + Number(match[2]);
+};
+
+// 将累计月数格式化为「X年Y个月」文案
+const formatGap = (months: number) => {
+  const years = Math.floor(months / 12);
+  const rest = months % 12;
+  if (years && rest) return `${years}年${rest}个月`;
+  if (years) return `${years}年`;
+  return `${rest}个月`;
+};
+
+// 时间线一致性检查：检测工作/教育/项目等模块时间重叠与过大间隙
+export const useTimelineCheck = (data: MaybeRefOrGetter<Record<string, any> | null | undefined>) => {
+  return computed(() => {
+    const source = toValue(data) || {};
+    const list: any[] = [];
+
+    Object.keys(source).forEach((key) => {
+      const items = Array.isArray(source[key]?.data) ? source[key].data : [];
+      if (!items.length) return;
+
+      // 解析含有效起止时间的条目
+      const entries = items
+        .map((item: any, index: number) => {
+          const time = Array.isArray(item?.time) ? item.time : [];
+          const start = parseMonth(time[0]);
+          const end = parseMonth(time[1] ?? time[0]);
+          return { item, index, name: item?.name || "", time, start, end };
+        })
+        .filter((e: any) => e.start != null && e.end != null);
+      if (!entries.length) return;
+
+      // 按开始时间排序，保证重叠与间隙判断顺序稳定
+      const sorted = [...entries].sort((a: any, b: any) => a.start - b.start);
+      const issues: any[] = [];
+
+      // 重叠检测：任一条目开始时间早于另一条目结束时间即视为重叠
+      for (let i = 0; i < sorted.length; i++) {
+        for (let j = i + 1; j < sorted.length; j++) {
+          if (sorted[j].start < sorted[i].end) {
+            issues.push({
+              type: "overlap",
+              text: `「${sorted[j].name || "未命名"}」(${getTime(sorted[j].time)}) 与「${sorted[i].name || "未命名"}」(${getTime(sorted[i].time)}) 时间重叠，请核对`,
+            });
+          }
+        }
+      }
+
+      // 间隙检测：相邻条目结束与开始之间超过阈值
+      for (let i = 0; i < sorted.length - 1; i++) {
+        const gap = sorted[i + 1].start - sorted[i].end;
+        if (gap > GAP_THRESHOLD_MONTHS) {
+          issues.push({
+            type: "gap",
+            text: `「${sorted[i + 1].name || "未命名"}」与上一段「${sorted[i].name || "未命名"}」之间存在 ${formatGap(gap)} 空档，可考虑补充或说明`,
+          });
+        }
+      }
+
+      if (issues.length) {
+        list.push({
+          key,
+          name: resumeStore.getModel(key)?.name || key,
+          issues,
+        });
+      }
+    });
+
+    return {
+      list,
+      issueCount: list.reduce((total: number, m: any) => total + m.issues.length, 0),
+    };
+  });
+};
