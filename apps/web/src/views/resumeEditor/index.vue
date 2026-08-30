@@ -1,12 +1,12 @@
 <template>
   <div class="flex h-full w-full flex-col bg-sf-page" v-if="currentIndex != -1">
-    <Transition name="resume-header">
+    <Transition name="resume-header" appear>
       <Header v-if="!focusMode" />
     </Transition>
     <div class="relative flex w-full flex-1 overflow-hidden" v-if="currentIndex >= 0">
       <div class="relative flex min-w-0 flex-1 overflow-hidden">
         <!-- 左侧操作栏 -->
-        <Transition name="resume-builder">
+        <Transition name="resume-builder" appear>
           <Builder v-if="focusMode || layout !== 'ai'" :class="{ 'ai-generating': isGenerating }" />
         </Transition>
         <!-- 中间预览栏 -->
@@ -14,12 +14,15 @@
         <GeneratingMask v-if="isGenerating && !isPrinting" :visible="true" />
       </div>
       <!-- 右侧AI助手栏 -->
-      <Transition name="resume-assistant">
+      <Transition name="resume-assistant" appear>
         <Assistant v-if="!focusMode && layout !== 'list'" />
       </Transition>
       <!-- 最右侧系统配置栏：工具栏与 QA 入口整体垂直居中 -->
-      <Transition name="resume-toolbar">
-        <div v-if="!focusMode" class="relative flex h-full flex-col items-center justify-center gap-3">
+      <Transition name="resume-toolbar" appear>
+        <div
+          v-if="!focusMode"
+          class="relative flex h-full flex-col items-center justify-center gap-3"
+        >
           <Toolbar />
           <!-- QA 解答独立入口：位于右侧工具栏区域，不写入工具栏 -->
           <QaAnswer />
@@ -66,8 +69,16 @@ const route = useRoute();
 
 const resumeStore = useResumeStore();
 const { initResumeStatus, setFocusMode } = resumeStore;
-const { currentIndex, layout, focusMode, list, currentUsage, isGenerating, isPrinting, currentData } =
-  storeToRefs(resumeStore);
+const {
+  currentIndex,
+  layout,
+  focusMode,
+  list,
+  currentUsage,
+  isGenerating,
+  isPrinting,
+  currentData,
+} = storeToRefs(resumeStore);
 
 // 切换简历时清空上一个简历的模块选中状态
 watch(
