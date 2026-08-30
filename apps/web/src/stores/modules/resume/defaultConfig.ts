@@ -42,4 +42,6 @@ export const DEFAULT_SYSTEM = {
   showPageNumber: true,
   // 是否固定工具栏
   toolbarAlwaysVisible: false,
+  // 是否展示调试控制台
+  showDebug: false,
 };

@@ -1,7 +1,6 @@
 <script setup>
 import { useResumeStore } from "@/stores";
 import { storeToRefs } from "pinia";
-import Debug from "./debug.vue";
 import HistoryNav from "./historyNav.vue";
 import Title from "./title.vue";
 import LocalBackup from "./localBackup.vue";
@@ -83,7 +82,6 @@ const handleBack = () => {
       <SfTheme />
       <SfDonation />
       <SfLocale />
-      <Debug />
     </div>
   </header>
 </template>
