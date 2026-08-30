@@ -54,7 +54,13 @@ const list = [
 </script>
 
 <template>
-  <Icon icon="fa6-solid:file-export" size="4" content="导出简历" @click="visible = true" />
+  <div
+    @click="visible = true"
+    class="flex h-9 cursor-pointer items-center gap-1 rounded-3xl border border-sf-b bg-sf-page p-1 px-3"
+  >
+    <SfIcon icon="fa6-solid:file-export" size="4" class="text-sf-theme" />
+    <span> 导出简历 </span>
+  </div>
 
   <SfModal v-model="visible" title="导出简历">
     <div class="flex w-[400px] flex-col gap-3">

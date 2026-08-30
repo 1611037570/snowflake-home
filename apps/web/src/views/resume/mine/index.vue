@@ -7,6 +7,7 @@ import { getAllScores } from "../../resumeEditor/utils";
 import { getResumeTitle } from "../../resumeEditor/resumeName";
 import ThumbPreview from "@/views/resumeEditor/preview/thumbPreview.vue";
 import ResumeCardContainer from "./components/resumeCardContainer.vue";
+import ImportResume from "@/views/resumeEditor/toolbar/modules/importResume.vue";
 
 const router = useRouter();
 
@@ -66,11 +67,47 @@ const handleDelete = (item) => {
   });
 };
 
+// 新建引导弹窗状态
+const createDialogVisible = ref(false);
+// 引导表单：仅收集简单信息（姓名、电话、求职岗位）
+const createForm = ref({
+  name: "",
+  phone: "",
+  position: "",
+});
+
 const handleCreate = () => {
   if (list.value.length >= maxCount) {
     return;
   }
+  createDialogVisible.value = true;
+};
+
+// 重置引导弹窗
+const resetCreateDialog = () => {
+  createDialogVisible.value = false;
+  createForm.value = { name: "", phone: "", position: "" };
+};
+
+// 确认创建：携带已填写的简单信息进入编辑器
+const handleCreateConfirm = () => {
+  const { name, phone, position } = createForm.value;
+  resumeStore.addResume({
+    data: {
+      user: {
+        name: name.trim(),
+        phone: phone.trim(),
+        position: position.trim(),
+      },
+    },
+  });
+  resetCreateDialog();
+};
+
+// 跳过引导：直接创建空白简历
+const handleCreateSkip = () => {
   resumeStore.addResume();
+  resetCreateDialog();
 };
 
 const handleUseTemplate = () => {
@@ -84,6 +121,8 @@ const handleUseTemplate = () => {
       <h2 class="text-[20px] font-black text-sf-theme">
         简历草稿（{{ list.length }}/{{ maxCount }}）
       </h2>
+      <!-- 导入简历入口 -->
+      <ImportResume />
     </div>
 
     <div class="grid grid-cols-3 gap-4 max-[900px]:grid-cols-1">
@@ -161,6 +200,19 @@ const handleUseTemplate = () => {
         </div>
       </ResumeCardContainer>
     </div>
+
+    <!-- 新建简历引导弹窗：收集简单信息 -->
+    <SfModal v-model="createDialogVisible" title="完善基本信息">
+      <form class="flex w-96 flex-col gap-4 p-5" @submit.prevent="handleCreateConfirm">
+        <SfInput v-model="createForm.name" placeholder="请输入姓名" />
+        <SfInput v-model="createForm.phone" placeholder="请输入电话" />
+        <SfInput v-model="createForm.position" placeholder="请输入求职岗位" />
+        <footer class="flex justify-end gap-3">
+          <el-button @click="handleCreateSkip">跳过</el-button>
+          <el-button type="primary" @click="handleCreateConfirm">创建简历</el-button>
+        </footer>
+      </form>
+    </SfModal>
   </div>
 </template>
 

@@ -4,8 +4,6 @@ import { useRouter } from "vue-router";
 import Ai from "./modules/ai/index.vue";
 import System from "./modules/system/index.vue";
 import Icon from "./components/icon.vue";
-import ImportResume from "./modules/importResume.vue";
-import ExportResume from "./modules/exportResume.vue";
 import OnePage from "./modules/onePage.vue";
 import Progress from "./modules/progress.vue";
 import DesignPreset from "./modules/designPreset.vue";
@@ -38,9 +36,7 @@ function goGitHub() {
       <DesignPreset />
       <ModuleNavigator />
       <Timeline />
-      <ExportResume />
       <OnePage />
-      <ImportResume />
       <Ai />
       <Icon icon="carbon:maximize" size="5" content="专注写作" @click="enterFocusMode" />
       <div class="h-[0.5px] w-full bg-sf-bg-2"></div>
