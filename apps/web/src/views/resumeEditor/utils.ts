@@ -42,102 +42,131 @@ const FIELD_LABELS: Record<string, string> = {
   content: "经历",
   mode: "学制",
 };
+// ==================== 工具函数 ====================
 
-// 按路径读取数据值
-const getValueByPath = (obj: any, path: any[]) => {
-  let current = obj;
+/** 按路径从对象中取值（支持数字下标） */
+const getValueByPath = (obj: any, path: (string | number)[]): any => {
+  let cur = obj;
   for (const key of path) {
-    if (current == null) return undefined;
-    current = current[key];
+    if (cur == null) return undefined;
+    cur = cur[key];
   }
-  return current;
+  return cur;
 };
 
-// 判断字段值是否为空（富文本为空时会序列化为 <p><br></p> 等空 HTML，同样视为空）
-const isEmptyVal = (value: any) => {
-  const str = String(value ?? "").trim();
-  return str === "" || str === "<p><br></p>" || str === "<p><br/></p>";
+/** 判断值是否为空（未填写） */
+const isEmpty = (val: any): boolean =>
+  val == null ||
+  (typeof val === "string" && val.trim() === "") ||
+  (Array.isArray(val) && val.length === 0) ||
+  (typeof val === "object" && !Array.isArray(val) && Object.keys(val).length === 0);
+
+/** 获取字段显示标签：优先 label，其次 name，再次 prop，最后兜底 */
+const getLabel = (field: any, prop: string): string =>
+  field?.label || field?.name || prop || "字段";
+
+/** 从字段配置中提取 model、source、prop（统一处理 model 为数组或对象） */
+const getFieldMeta = (field: any) => {
+  const model = field?.model ? (Array.isArray(field.model) ? field.model[0] : field.model) : field;
+  const src = Array.isArray(model?.source) ? model.source : [];
+  const prop = model?.prop || src[src.length - 1] || "";
+  return { src, prop };
 };
 
-// 分析模块必填字段：收集缺失标签并计算必填完成度得分（0-10）
+// ==================== 主函数 ====================
+
 const analyzeModule = (source: any, moduleKey: string) => {
+  // 从 store 获取模块配置
   const moduleForm = [
     ...(resumeStore.currentFixedConfig?.fields || []),
     ...(resumeStore.currentConfig?.fields || []),
-  ].find((field) => field?.key === moduleKey);
-  // 无对应配置的模块（如数据残留）：无必填统计依据，按未完成计分
+  ].find((f) => f?.key === moduleKey);
+
+  // 无配置或没有 fields → 无法统计，返回 0
   if (!moduleForm?.fields?.length) {
     return { missing: [], score: 0 };
   }
+
   const missing: string[] = [];
-  // 必填字段完成统计（完成数 / 必填总数）
   const stat = { done: 0, total: 0 };
 
-  const pushMissing = (label: string) => {
-    if (label && !missing.includes(label)) missing.push(label);
-  };
-  // 字段中文名：优先配置 label，其次 prop 映射表，最后原样兜底
-  const getLabel = (field: any, prop: string) =>
-    field?.label || FIELD_LABELS[prop] || field?.name || prop || "字段";
-  // 计入必填字段完成度
-  const statField = (isFilled: boolean) => {
-    stat.total += 1;
-    if (isFilled) stat.done += 1;
-  };
-
+  // 遍历模块下的字段
   for (const field of moduleForm.fields) {
-    // 列表型模块（教育/工作/项目/账号等）
+    // ----- 数组类型（教育/工作/项目/账号等） -----
     if (field.type === "array" && field.addConfig) {
-      const itemDefs = field.addConfig.fields?.length
-        ? field.addConfig.fields
-        : field.addConfig.model;
-      const firstSrc = itemDefs[0]?.model?.[0]?.source || itemDefs[0]?.source || [];
-      // 由首字段 source 推导列表路径（'?' 前部分）
+      const addConfig = field.addConfig;
+      // 子项定义：优先 fields，其次 model（账号模块走这里）
+      const itemDefs = addConfig.fields?.length ? addConfig.fields : addConfig.model;
+      if (!itemDefs?.length) continue;
+
+      // 从第一个子项的 source 推导列表路径（去掉 '?' 及其后）
+      const firstSrc = getFieldMeta(itemDefs[0]).src;
       const listPath = firstSrc.slice(0, firstSrc.indexOf("?"));
       const list = getValueByPath(source, listPath);
+
+      // 情况1：列表为空 → 所有必填子项均未填
       if (!Array.isArray(list) || list.length === 0) {
-        // 列表为空：必填子项均未填写
-        itemDefs.forEach((def: any) => {
-          if (def.required !== true) return;
-          statField(false);
-        });
-        pushMissing(field.addConfig.name || "内容");
+        let hasRequired = false;
+        for (const def of itemDefs) {
+          if (def.required !== true) continue;
+          hasRequired = true;
+          stat.total += 1;
+          const { prop } = getFieldMeta(def);
+          const label = getLabel(def, prop);
+          if (!missing.includes(label)) missing.push(label);
+        }
+        if (hasRequired) {
+          const groupLabel = addConfig.name || "内容";
+          if (!missing.includes(groupLabel)) missing.push(groupLabel);
+        }
         continue;
       }
-      list.forEach((item, index) => {
+
+      // 情况2：列表有数据 → 逐项检查每个必填子字段
+      list.forEach((_, idx) => {
         for (const def of itemDefs) {
-          // 只统计必填子项字段
           if (def.required !== true) continue;
-          const model = def?.model ? (Array.isArray(def.model) ? def.model[0] : def.model) : def;
-          const src = Array.isArray(model?.source) ? model.source : [];
+          const { src, prop } = getFieldMeta(def);
           if (!src.length) continue;
-          const prop = model?.prop || src[src.length - 1];
-          // 将 '?' 替换为数组下标后取值
-          const path = src.map((k: any) => (k === "?" ? index : k));
-          const isFilled = !isEmptyVal(getValueByPath(source, path));
-          statField(isFilled);
-          if (!isFilled) pushMissing(getLabel(def, prop));
+
+          // 将路径中的 '?' 替换为当前索引
+          const path = src.map((k) => (k === "?" ? idx : k));
+          const value = getValueByPath(source, path);
+          const filled = !isEmpty(value);
+
+          stat.total += 1;
+          if (filled) {
+            stat.done += 1;
+          } else {
+            const label = getLabel(def, prop);
+            if (!missing.includes(label)) missing.push(label);
+          }
         }
       });
       continue;
     }
-    // 普通字段（含富文本等）：只统计必填字段
+
+    // ----- 普通字段（含富文本） -----
     if (field.required !== true) continue;
-    const model = Array.isArray(field.model) ? field.model[0] : field.model;
-    const src = Array.isArray(model?.source) ? model.source : [];
+    const { src, prop } = getFieldMeta(field);
     if (!src.length) continue;
-    const prop = model?.prop || src[src.length - 1];
-    const isFilled = !isEmptyVal(getValueByPath(source, src));
-    statField(isFilled);
-    if (!isFilled) {
-      pushMissing(field.component === "wangEditor" ? "内容" : getLabel(field, prop));
+
+    const value = getValueByPath(source, src);
+    const filled = !isEmpty(value);
+    stat.total += 1;
+    if (filled) {
+      stat.done += 1;
+    } else {
+      // 富文本编辑器缺失时统一显示“内容”
+      const label = field.component === "wangEditor" ? "内容" : getLabel(field, prop);
+      if (!missing.includes(label)) missing.push(label);
     }
   }
-  // 得分：必填字段完成度 × 10；无必填字段的模块不视为已完成
+
+  // 计算得分（完成度 × 10，四舍五入）
   const score = stat.total ? Math.round((stat.done / stat.total) * 10) : 0;
   return { missing, score };
 };
-
 // 各模块必填完成度得分（0-10）：统一基于必填字段统计
 export const userScore = computed(() => analyzeModule(currentData.value, "user").score);
 export const educationScore = computed(() => analyzeModule(currentData.value, "education").score);
