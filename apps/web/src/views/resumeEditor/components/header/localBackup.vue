@@ -2,6 +2,7 @@
 import { computed, onMounted, ref, watch } from "vue";
 import { storeToRefs } from "pinia";
 import { useDebounceFn, useTimeoutFn } from "@vueuse/core";
+import dayjs from "dayjs";
 import { useResumeStore } from "@/stores";
 import {
   disableLocalBackup,
@@ -55,7 +56,8 @@ const doBackup = async () => {
   if (!localBackupEnabled.value) return;
   const item = currentItem.value;
   if (!item) return;
-  const filename = `resume-backup-${item.id}.json`;
+  // 备份文件名：轻舟简历备份-时间-简历ID（时间精确到秒，避免同名覆盖）
+  const filename = `轻舟简历备份-${dayjs().format("YYYY-MM-DD_HH-mm-ss")}-${item.id}.json`;
   const ok = await writeLocalBackup(filename, JSON.stringify(item, null, 2));
   if (ok) {
     savedTip.value = true;
