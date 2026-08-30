@@ -2,7 +2,7 @@
 import { storeToRefs } from "pinia";
 import { useResumeStore } from "@/stores";
 import { useProgress, useTimelineCheck } from "../../utils";
-import { useModuleNav } from "../../useModuleNav";
+import { jumpToEditor } from "../../useModuleNav";
 import { computed, ref } from "vue";
 
 const resumeStore = useResumeStore();
@@ -34,7 +34,6 @@ const tooltipText = computed(() =>
 );
 
 // 跳转编辑对应模块：复用模块导航的编辑区跳转逻辑（不处理预览区）
-const { jumpToEditor } = useModuleNav();
 const goFill = (item) => {
   jumpToEditor(item.key);
   visible.value = false;
