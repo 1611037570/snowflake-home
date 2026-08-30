@@ -1,5 +1,5 @@
 <template>
-  <Component :is="h(ElCollapseItem, { ...$attrs, ref: changeRef }, $slots)" class="w-full" />
+  <Component :is="h(ElCollapseItem, { ...$attrs, ref: changeRef }, $slots)" class="mb-3! w-full" />
 </template>
 
 <script setup lang="ts">
