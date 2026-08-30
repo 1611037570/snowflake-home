@@ -119,18 +119,10 @@ onKeyStroke("Escape", () => {
   if (focusMode.value) setFocusMode(false);
 });
 
-let useTimeTimer = null;
-
-onMounted(() => {
-  useTimeTimer = setInterval(() => {
-    currentUsage.value.lastUseTime = Date.now();
-  }, 10000);
-});
+onMounted(() => {});
 
 onUnmounted(() => {
-  if (useTimeTimer) {
-    clearInterval(useTimeTimer);
-  }
+  currentUsage.value.lastUseTime = Date.now();
 });
 </script>
 
