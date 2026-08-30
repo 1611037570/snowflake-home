@@ -1,5 +1,4 @@
 <script setup>
-import Icon from "../components/icon.vue";
 import { ref } from "vue";
 
 const visible = ref(false);
@@ -31,7 +30,7 @@ onChange((files) => parseJsonConfig(files?.[0]));
 </script>
 
 <template>
-  <Icon icon="fa6-solid:file-import" size="4" content="导入简历" @click="visible = true" />
+  <SfIcon icon="fa6-solid:file-import" size="4"   @click="visible = true" />
 
   <SfModal v-model="visible" title="导入简历">
     <div class="flex w-[400px] flex-col gap-3">
