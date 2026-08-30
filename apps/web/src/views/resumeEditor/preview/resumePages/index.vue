@@ -8,10 +8,10 @@ import { MODULE_GAP, PAGE_NUMBER_HEIGHT, RESUME_WIDTH, RESUME_HEIGHT } from "../
 import { usePreviewData } from "../usePreviewData";
 import { useResumePages } from "./useResumePages";
 import { useResumeTheme } from "./useResumeTheme";
-import { usePdfExport } from "../usePdfExport";
+import { printPDF as exportPdf } from "../pdfExport";
 import { useResumeStore } from "@/stores";
 import eventBus from "@/utils/modules/eventBus";
-import { useImageExport } from "../useImageExport";
+import { printImage as exportImage } from "../imageExport";
 const resumeStore = useResumeStore();
 const { selectedModule, system } = storeToRefs(resumeStore);
 
@@ -38,9 +38,9 @@ const isReadonly = computed(() => props.mode !== "editor");
 // 根元素 ref：导出时限定为当前实例的分页元素，避免误选其他 ResumePages 实例的页面
 const rootRef = ref(null);
 const measureRef = ref(null);
-// 仅编辑器模式注册全局导出事件（缩略图/全屏预览不注册）
-const { printPDF } = usePdfExport(rootRef);
-const { printImage } = useImageExport(measureRef);
+// 仅编辑器模式注册全局导出事件（缩略图/全屏预览不注册），将当前实例根节点 ref 传入纯函数
+const printPDF = () => exportPdf(rootRef);
+const printImage = () => exportImage(measureRef);
 onMounted(() => {
   if (!isReadonly.value) {
     eventBus.on("resume-print-pdf", printPDF);
