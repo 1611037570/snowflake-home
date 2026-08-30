@@ -4,6 +4,7 @@ import { storeToRefs } from "pinia";
 import Debug from "./debug.vue";
 import HistoryNav from "./historyNav.vue";
 import Title from "./title.vue";
+import LocalBackup from "./localBackup.vue";
 import { useRouter } from "vue-router";
 const router = useRouter();
 
@@ -51,6 +52,7 @@ const handleBack = () => {
       </div>
       <div class="mr-2 text-sf-text-3">/</div>
       <Title />
+      <LocalBackup />
     </div>
 
     <!-- 右侧工具栏 -->
