@@ -16,7 +16,7 @@ import {
 const supported = isFileSystemAccessSupported();
 
 const resumeStore = useResumeStore();
-const { list, currentIndex, currentData } = storeToRefs(resumeStore);
+const { currentItem } = storeToRefs(resumeStore);
 
 // 弹窗可见性
 const visible = ref(false);
@@ -24,9 +24,6 @@ const visible = ref(false);
 const backupPath = ref("");
 // 是否显示备份成功提示
 const savedTip = ref(false);
-
-// 当前简历项
-const currentItem = computed(() => list.value[currentIndex.value]);
 
 // 触发图标
 const icon = computed(() => (localBackupEnabled.value ? "lucide:cloud-check" : "ph:warning-fill"));
@@ -68,7 +65,7 @@ const doBackup = async () => {
 
 // 简历数据变化后防抖执行备份
 const debouncedBackup = useDebounceFn(doBackup, 3000);
-watch(currentData, debouncedBackup, { deep: true });
+watch(currentItem, debouncedBackup, { deep: true });
 
 // 初始化绑定状态
 onMounted(async () => {
