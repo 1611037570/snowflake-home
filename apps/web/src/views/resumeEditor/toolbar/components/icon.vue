@@ -14,7 +14,7 @@ defineProps({
   },
 });
 
-defineEmits(["onClick"]);
+const emit = defineEmits(["onClick"]);
 </script>
 
 <template>
