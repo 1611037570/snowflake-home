@@ -32,7 +32,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, provide, ref } from "vue";
+import { computed, onMounted, provide, ref, watch } from "vue";
 
 defineOptions({ name: "SfTab" });
 
@@ -50,6 +50,10 @@ const currentActiveIndex = ref(0);
 
 onMounted(() => {
   currentActiveIndex.value = list.findIndex((item) => item.value === modelValue.value);
+});
+// 外部修改 index（如模块导航跳转切换标签）时同步内部激活态
+watch(indexValue, (val) => {
+  if (typeof val === "number") currentActiveIndex.value = val;
 });
 // 透传当前激活值给子组件 SfTabPane
 provide("tabModelValue", modelValue);
