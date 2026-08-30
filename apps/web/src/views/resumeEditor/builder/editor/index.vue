@@ -19,18 +19,20 @@ const dynamicComponents = {
 </script>
 
 <template>
-  <SfDynamicForm
-    v-model:form="currentFixedConfig"
-    v-model:data="currentData"
-    :components="dynamicComponents"
-  />
-  <SfDynamicForm
-    v-model:form="currentConfig"
-    v-model:data="currentData"
-    :components="dynamicComponents"
-  />
-  <HiddenModules />
-  <AddModule />
+  <div class="flex w-full flex-col">
+    <SfDynamicForm
+      v-model:form="currentFixedConfig"
+      v-model:data="currentData"
+      :components="dynamicComponents"
+    />
+    <SfDynamicForm
+      v-model:form="currentConfig"
+      v-model:data="currentData"
+      :components="dynamicComponents"
+    />
+    <HiddenModules />
+    <AddModule />
+  </div>
 </template>
 
 <style lang="scss" scoped></style>
