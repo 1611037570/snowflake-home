@@ -4,7 +4,7 @@
     :class="[iconClass]"
     :style="[boxIconStyle]"
   >
-    <Icon ref="iconify" :icon="icon" class="bg-transparent" :style="[baseStyle(iconSize)]" />
+    <Icon ref="iconify" :icon="icon" class="bg-transparent" :style="[baseStyle(size)]" />
     <!-- class="iconify-icon"
            :rotate="rotate"
         :flip="flip"
@@ -41,7 +41,8 @@ export interface IconProps {
    */
   flip?: "horizontal" | "vertical";
 }
-
+const size = computed(() => Number(props.size));
+const boxSize = computed(() => Number(props.boxSize));
 const props = withDefaults(defineProps<IconProps>(), {
   icon: "fa6-solid:snowflake",
   size: 16,
@@ -50,22 +51,20 @@ const props = withDefaults(defineProps<IconProps>(), {
   auto: true,
 });
 const boxIconStyle = computed(() => {
-  const size = Number(props.boxSize || props.size) * 4;
-  return baseStyle(size);
+  return baseStyle(boxSize.value * 4);
 });
-// 图标尺寸：通过 width/height 属性传递，避免 style 中 1em 相对单位导致跨浏览器大小不一致
-const iconSize = computed(() => Number(props.size) * 4);
+
 const emit = defineEmits(["success", "fail"]);
 const iconClass = ref("");
-const baseStyle = (size: any) => {
+const baseStyle = (s: any) => {
   return {
-    fontSize: `${size}px !important`,
-    width: `${size}px !important`,
-    height: `${size}px !important`,
-    minWidth: `${size}px !important`,
-    minHeight: `${size}px !important`,
-    maxWidth: `${size}px !important`,
-    maxHeight: `${size}px !important`,
+    fontSize: `${s}px !important`,
+    width: `${s}px !important`,
+    height: `${s}px !important`,
+    minWidth: `${s}px !important`,
+    minHeight: `${s}px !important`,
+    maxWidth: `${s}px !important`,
+    maxHeight: `${s}px !important`,
   };
 };
 function init() {
