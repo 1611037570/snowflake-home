@@ -65,7 +65,7 @@ const resumeShow = computed(() => props.msg.requestStatus === "success");
 const isThinking = computed(() => props.msg.typing && props.msg.requestStatus === "thinking");
 const isGenerating = computed(() => props.msg.typing && props.msg.requestStatus === "generating");
 const totalTime = computed(() => (props.msg.thoughtTime || 0) + (props.msg.contentTime || 0));
-const showTotalTime = computed(() => props.msg.requestStatus === "success");
+const showTotalTime = computed(() => props.msg.requestStatus === "success" && totalTime.value > 0);
 </script>
 
 <template>
