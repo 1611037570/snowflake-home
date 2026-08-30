@@ -50,15 +50,15 @@ export function useModuleNav() {
     return moduleList.value.filter((m) => m.name.includes(kw) || m.key.includes(kw));
   });
 
-  // 跳转预览区：滚动定位 + 复用 selectedModule 触发预览 outline 高亮
+  // 跳转预览区：滚动定位 + 仅高亮当前模块（清空历史选中，避免高亮堆积）
   const jumpPreview = (key: string) => {
     document
       .querySelector(`[data-module="${key}"]`)
       ?.scrollIntoView({ behavior: "smooth", block: "start" });
-    const existed = selectedModule.value.find((item) => item.key === key);
-    if (!existed) {
-      selectedModule.value.push({ key, name: moduleList.value.find((m) => m.key === key)?.name });
-    }
+    // 重置选中态：只保留当前模块，触发预览 outline 高亮
+    selectedModule.value = [
+      { key, name: moduleList.value.find((m) => m.key === key)?.name },
+    ];
   };
 
   // 跳转编辑区：展开折叠 + 选中闪烁 + 滚动定位
