@@ -17,44 +17,25 @@ const moduleNames = computed(() => {
       ];
 });
 
-// 建议操作卡片：简历转面试口头稿
+// 建议操作卡片：点击后进入引导式对话流程
 const suggestCards = [
+  {
+    icon: "ph:translate-duotone",
+    title: "简历翻译",
+    desc: "将简历翻译成英文或中文",
+    flow: "resumeTranslate",
+  },
   {
     icon: "ph:microphone-duotone",
     title: "面试自我介绍",
     desc: "将简历转成面试口头稿",
-    prompt: `# 任务：生成面试自我介绍口头稿
-请根据用户的简历数据，撰写一段自然流畅、口语化的面试自我介绍口头稿。
-要求：
-1. 以第一人称展开，突出核心优势、关键经历与求职意向。
-2. 字数控制在 200 字左右，适合直接朗读。
-3. 严格基于简历真实数据，严禁编造任何信息。
-4. 本次不修改简历内容，data 字段原样返回。
-5. 将自我介绍口头稿写入 analysis 字段，标题使用「问题回复」。`,
-    userContent: "请根据我的简历，生成一段面试自我介绍口头稿",
-  },
-  {
-    icon: "ph:translate-duotone",
-    title: "中译英",
-    desc: "将简历内容翻译成英文",
-    prompt: `# 任务：将简历内容翻译成英文
-请将用户的简历数据翻译成英文。
-要求：
-1. 逐项翻译所有字段内容，保持结构对应，不增删、不改写原意。
-2. 专业术语、职位、项目名称使用规范英文表达。
-3. 严格基于简历真实数据，严禁编造任何信息。
-4. 本次不修改简历内容，data 字段原样返回。
-5. 将英文翻译结果写入 analysis 字段，标题使用「问题回复」。`,
-    userContent: "请将我的简历内容翻译成英文",
+    flow: "selfIntro",
   },
 ];
 
-// 点击建议卡片，触发 AI 生成
+// 点击建议卡片，启动对应流程
 const handleSuggest = (card) => {
-  emit("suggest", {
-    prompt: card.prompt,
-    userContent: card.userContent,
-  });
+  emit("suggest", { flow: card.flow });
 };
 </script>
 
