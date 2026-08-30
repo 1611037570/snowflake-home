@@ -15,7 +15,6 @@
     <div v-if="drawerVisible" class="flex flex-col gap-3 p-3">
       <SfTab :list="tabList" v-model="activeTab">
         <SfTabPane value="data">
-          12321
           <SfCollapse v-model="activeNames">
             <SfCollapseItem name="preview">
               <template #title>预览数据 (previewData)</template>

@@ -28,7 +28,6 @@ export const workYears = computed(() => {
 export function getResumeTitle(data: any) {
   const defaultName = "未命名简历";
   if (!data) {
-    console.log("22222222:>> ", 22222222);
     return defaultName;
   }
   const { user, education } = data;
