@@ -1,7 +1,6 @@
 <script setup>
-import Icon from "../components/icon.vue";
 import { useResumeStore } from "@/stores";
-import { getExportFileName, getResumeTitle } from "../../resumeName";
+import { getExportFileName, getResumeTitle } from "../../resumeName.ts";
 import eventBus from "@/utils/modules/eventBus";
 import { storeToRefs } from "pinia";
 import { ref } from "vue";
@@ -56,7 +55,7 @@ const list = [
 <template>
   <div
     @click="visible = true"
-    class="flex h-9 cursor-pointer items-center gap-1 rounded-3xl border border-sf-b bg-sf-page p-1 px-3"
+    class="flex h-9 cursor-pointer items-center gap-1 rounded-3xl border border-sf-b bg-sf-page p-1 px-3 text-sm"
   >
     <SfIcon icon="fa6-solid:file-export" size="4" class="text-sf-theme" />
     <span> 导出简历 </span>

@@ -5,7 +5,7 @@ import Debug from "./debug.vue";
 import HistoryNav from "./historyNav.vue";
 import Title from "./title.vue";
 import LocalBackup from "./localBackup.vue";
-import ExportResume from "../../toolbar/modules/exportResume.vue";
+import ExportResume from "./exportResume.vue";
 import { useRouter } from "vue-router";
 const router = useRouter();
 
@@ -49,7 +49,7 @@ const handleBack = () => {
       >
         <SfLogo size="5.5" class="animate-pulse" name="resume" />
 
-        <span class="text-sm font-bold tracking-wide">{{ $t("router.resume") }}</span>
+        <span class="text-base font-bold tracking-wide">{{ $t("router.resume") }}</span>
       </div>
       <div class="mr-2 text-sf-text-3">/</div>
       <Title />
