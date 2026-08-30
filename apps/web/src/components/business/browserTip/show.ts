@@ -4,7 +4,7 @@ import { isChrome } from "@/utils";
 
 // 浏览器建议配置：推荐浏览器与下载地址
 export const RECOMMEND_BROWSER = "谷歌浏览器";
-export const DOWNLOAD_URL = "https://www.google.com/chrome/";
+export const DOWNLOAD_URL = "https://www.google.cn/intl/zh-CN/chrome/";
 
 /**
  * 浏览器建议提示：按浏览器类型反馈
