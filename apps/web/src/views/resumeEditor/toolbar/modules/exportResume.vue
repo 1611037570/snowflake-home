@@ -8,7 +8,7 @@ import { ref } from "vue";
 
 const visible = ref(false);
 const resumeStore = useResumeStore();
-const { currentConfig, isPrinting } = storeToRefs(resumeStore);
+const { currentConfig, currentData, isPrinting } = storeToRefs(resumeStore);
 
 // 导出当前简历配置为 JSON 文件
 const exportConfig = () => {
@@ -17,8 +17,8 @@ const exportConfig = () => {
   const url = URL.createObjectURL(blob);
   const link = document.createElement("a");
   link.href = url;
-  // 统一命名：年-月-日-简历标题
-  link.download = getExportFileName(getResumeTitle(currentConfig.value), "json");
+  // 统一命名：年-月-日-简历标题（标题取自简历数据，非配置）
+  link.download = getExportFileName(getResumeTitle(currentData.value), "json");
   link.click();
   URL.revokeObjectURL(url);
 };
