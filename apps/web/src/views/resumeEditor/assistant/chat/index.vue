@@ -4,6 +4,7 @@ import { useScroll } from "@vueuse/core";
 import { computed, inject, nextTick, ref, watch } from "vue";
 import { storeToRefs } from "pinia";
 import { useChatRequest } from "./useChatRequest";
+import { flows } from "../flows";
 
 import AiMessage from "./aiMessage.vue";
 import ChatInput from "./chatInput.vue";
@@ -112,6 +113,11 @@ const handleSend = (content) => {
  * 点击推荐问题，触发输入框发送
  */
 const handleSendFollowQuestion = (question) => {
+  // 引导流程中：将选项作为答案推进流程
+  if (activeFlow.value) {
+    handleFlowOption(question);
+    return;
+  }
   handleSend(question);
 };
 
@@ -159,25 +165,82 @@ const handleRetry = (msg) => {
 // 通过 provide 注入重试回调，供 aiMessage 直接调用
 provide("retry", handleRetry);
 
+// 引导式流程状态：记录当前流程、步骤与已收集的选项
+const activeFlow = ref(null);
+
 /**
- * 点击提示词卡片
+ * 点击建议卡片：启动引导式对话流程
  */
 const handleSuggest = (payload) => {
-  // 使用本地 addMessage，直接写入 defineModel 传入的 chat.messages
-  if (payload?.prompt) {
+  const flow = flows[payload?.flow];
+  if (!flow) return;
+  // 记录流程状态并展示初始用户消息
+  activeFlow.value = { flow, stepIndex: 0, answers: [] };
+  addMessage({
+    role: "user",
+    content: flow.userContent,
+    typing: false,
+  });
+  scrollToBottom();
+  // 展示第一轮预设询问
+  runFlowStep();
+};
+
+/**
+ * 展示当前步骤的预设询问，复用 followQuestions 作为选项按钮
+ */
+const runFlowStep = () => {
+  const state = activeFlow.value;
+  const step = state?.flow?.steps?.[state.stepIndex];
+  if (!step) return;
+  addMessage({
+    role: "assistant",
+    content: JSON.stringify({
+      data: null,
+      analysis: step.question,
+      followQuestions: step.options,
+    }),
+    typing: false,
+    requestStatus: "success",
+  });
+  scrollToBottom();
+};
+
+/**
+ * 处理流程中的选项点击：记录答案并推进步骤，收集完成后发起真实请求
+ */
+const handleFlowOption = (option) => {
+  const state = activeFlow.value;
+  if (!state) return;
+  // 记录答案并展示为用户消息
+  state.answers.push(option);
+  addMessage({
+    role: "user",
+    content: option,
+    typing: false,
+  });
+  scrollToBottom();
+  // 推进到下一步
+  state.stepIndex += 1;
+  if (state.stepIndex < state.flow.steps.length) {
+    runFlowStep();
+    return;
+  }
+  // 收集完成：构造真实请求并清空流程状态
+  const { prompt, userContent } = state.flow.build(state.answers);
+  activeFlow.value = null;
+  if (prompt) {
     addMessage({
       role: "system",
-      content: payload.prompt,
+      content: prompt,
       typing: false,
     });
   }
-  if (payload?.userContent) {
-    addMessage({
-      role: "user",
-      content: payload.userContent,
-      typing: false,
-    });
-  }
+  addMessage({
+    role: "user",
+    content: userContent,
+    typing: false,
+  });
   isGenerating.value = true;
   scrollToBottom();
   handleAIResponse();
