@@ -42,7 +42,7 @@ const handleBack = () => {
     class="flex h-12 items-center justify-between border-b border-sf-b bg-sf-primary pr-6 pl-3"
   >
     <!-- 左侧占位 -->
-    <div class="flex flex-1 items-center gap-2">
+    <div class="flex flex-1 items-center">
       <div
         @click="handleBack"
         class="flex cursor-pointer items-center gap-1.5 rounded-full px-3 py-1 text-sf-theme transition-all hover:bg-sf-theme-3"
@@ -51,7 +51,7 @@ const handleBack = () => {
 
         <span class="text-base font-bold tracking-wide">{{ $t("router.resume") }}</span>
       </div>
-      <div class="mr-2 text-sf-text-3">/</div>
+      <div class="mx-3 text-sf-text-3">/</div>
       <Title />
       <LocalBackup />
     </div>
