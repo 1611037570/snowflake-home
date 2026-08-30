@@ -26,17 +26,6 @@ const formRef = ref();
 const testing = ref(false);
 const connectionPassed = ref(false);
 
-// 兼容旧版本持久化的 { value: 配置 } 数据结构
-const normalizeCustomModel = (model) => {
-  const data = model?.value && typeof model.value === "object" ? model.value : model;
-  return {
-    url: data?.url || "",
-    provider: data?.provider || "ark",
-    model: data?.model || "",
-    key: data?.key || "",
-  };
-};
-
 // 配置字段校验规则：限制空白字符并校验完整接口地址
 const rules = {
   provider: [
@@ -74,10 +63,7 @@ const rules = {
 };
 
 onMounted(() => {
-  const model = normalizeCustomModel(customModel.value);
-  Object.assign(form, model);
-  // 立即覆盖旧的嵌套结构，后续只保留一层配置对象
-  customModel.value = { ...model };
+  Object.assign(form, customModel.value);
 });
 
 // 是否为当前激活的服务
