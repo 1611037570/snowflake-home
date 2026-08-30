@@ -97,7 +97,9 @@ const handleBind = async () => {
         @click="visible = true"
       >
         <SfIcon :icon="icon" :class="iconColor" size="5" />
-        <span v-if="tipText" :class="iconColor" class="text-xs">{{ tipText }}</span>
+        <Transition name="tip-slide">
+          <span v-if="tipText" :class="iconColor" class="text-xs">{{ tipText }}</span>
+        </Transition>
       </div>
     </SfTooltip>
 
@@ -119,4 +121,17 @@ const handleBind = async () => {
   </div>
 </template>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.tip-slide-enter-active,
+.tip-slide-leave-active {
+  transition:
+    transform 0.3s ease,
+    opacity 0.3s ease;
+}
+
+.tip-slide-enter-from,
+.tip-slide-leave-to {
+  transform: translateX(-8px);
+  opacity: 0;
+}
+</style>
