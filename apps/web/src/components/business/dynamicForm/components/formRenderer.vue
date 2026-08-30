@@ -159,19 +159,9 @@ onUnmounted(() => {
   inset: 0;
   z-index: 1;
   box-sizing: border-box;
-  border: 1px dashed var(--color-sf-theme);
+  border: 2px dashed var(--color-sf-theme);
   border-radius: 12px;
   pointer-events: none;
   content: "";
-  animation: module-blink 1s ease-in-out infinite;
-}
-@keyframes module-blink {
-  0%,
-  100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.2;
-  }
 }
 </style>
