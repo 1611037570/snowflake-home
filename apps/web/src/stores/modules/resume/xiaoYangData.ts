@@ -80,6 +80,28 @@ export const xiaoYangFixedForm = {
   fields: DEFAULT_USER_FORM,
 };
 
+// 复用默认配置时各模块数组子项 list 为空，按小羊已有数据条数补齐（相当于完成一次添加）
+const initArrayListByData = (fields: any[]) => {
+  fields.forEach((field: any) => {
+    // 当前模块的数组子项字段
+    const arrayField = field.fields?.find((f: any) => f.type === "array");
+    if (!arrayField?.addConfig) return;
+    // 由 addConfig 首项绑定路径解析数据数组路径（截取 "?" 之前的部分）
+    const source: string[] | undefined = arrayField.addConfig.model?.[0]?.source;
+    if (!Array.isArray(source)) return;
+    const index = source.indexOf("?");
+    if (index === -1) return;
+    const dataArray = source
+      .slice(0, index)
+      .reduce((acc: any, key: string) => acc?.[key], xiaoYangData);
+    const count = Array.isArray(dataArray) ? dataArray.length : 0;
+    // 按数据条数深拷贝 addConfig 填充 list，避免污染默认配置的共享引用
+    for (let i = 0; i < count; i++) {
+      arrayField.list.push(structuredClone(arrayField.addConfig));
+    }
+  });
+};
+
 export const xiaoYangForm = {
   meta: {
     version: "1.0.0",
@@ -88,13 +110,16 @@ export const xiaoYangForm = {
   dragClass: ".container-drag",
   // 直接复用默认模块配置，避免自行维护与默认配置不同步
   fields: [
-    DEFAULT_ACCOUNT_FORM,
-    DEFAULT_EDUCATION_FORM,
-    DEFAULT_SKILL_FORM,
-    DEFAULT_WORK_FORM,
-    DEFAULT_PROJECT_FORM,
+    structuredClone(DEFAULT_ACCOUNT_FORM),
+    structuredClone(DEFAULT_EDUCATION_FORM),
+    structuredClone(DEFAULT_SKILL_FORM),
+    structuredClone(DEFAULT_WORK_FORM),
+    structuredClone(DEFAULT_PROJECT_FORM),
   ],
 };
+
+// 复用默认配置后按数据补齐数组子项，保证带数据的模块列表完整展示
+initArrayListByData(xiaoYangForm.fields);
 
 export const xiaoYangUI = {
   padding: 28,
