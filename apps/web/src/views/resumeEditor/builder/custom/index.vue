@@ -14,6 +14,9 @@ import ConfigItem from "./configItem.vue";
 const resumeStore = useResumeStore();
 const { currentUI } = storeToRefs(resumeStore);
 
+// 主题色预设色板，供取色器快捷选择
+const predefineColors = themeColors.map((item) => item.value);
+
 // 用户信息展示模式，旧数据缺失时回退为文字模式
 const userInfoMode = computed({
   get: () => currentUI.value?.userInfoMode ?? defaultUserInfoMode,
@@ -93,7 +96,11 @@ const userInfoMode = computed({
     </div>
     <!-- 主题色 -->
     <div class="mb-6 flex flex-col">
-      <div class="mb-4 text-base font-bold text-sf-text">主题色</div>
+      <div class="mb-4 flex items-center justify-between">
+        <div class="text-base font-bold text-sf-text">主题色</div>
+        <!-- 自定义取色器 -->
+        <el-color-picker v-model="currentUI.themeColor" size="large" :predefine="predefineColors" />
+      </div>
       <div class="flex flex-wrap gap-4">
         <div
           v-for="colorItem in themeColors"
