@@ -1,7 +1,7 @@
 <script setup>
 import { storeToRefs } from "pinia";
 import { useResumeStore } from "@/stores";
-import { useProgress, useTimelineCheck } from "../../utils";
+import { useProgress, useTimelineCheck } from "../../hooks/useProgress";
 import { jumpToEditor } from "../../useModuleNav";
 import { TransitionPresets, useTransition } from "@vueuse/core";
 import { computed, ref } from "vue";

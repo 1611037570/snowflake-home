@@ -3,7 +3,7 @@ import { useResumeStore } from "@/stores";
 import dayjs from "dayjs";
 import { storeToRefs } from "pinia";
 import { useRouter } from "vue-router";
-import { getAllScores } from "../../resumeEditor/utils";
+import { getAllScores } from "../../resumeEditor/hooks/useProgress";
 import { getResumeTitle } from "../../resumeEditor/resumeName";
 import ThumbPreview from "@/views/resumeEditor/preview/thumbPreview.vue";
 import ResumeCardContainer from "./components/resumeCardContainer.vue";
