@@ -33,6 +33,8 @@ export const useResumeStore = defineStore(
     const maxHistory = 12;
     // 恢复快照时跳过下次监听的标志
     let skipNextWatch = false;
+    // 上一次的完整内容快照（深拷贝），作为撤销历史基准
+    let lastSnapshot: any = null;
     // 系统配置
     const system = ref(structuredClone(DEFAULT_SYSTEM));
     // 初始化状态
@@ -169,6 +171,8 @@ export const useResumeStore = defineStore(
       item.config = snapItem.config;
       item.fixedConfig = snapItem.fixedConfig;
       item.ui = snapItem.ui;
+      // 恢复后同步基准快照，避免下次编辑误记历史
+      lastSnapshot = cloneDeep(item);
     };
     // 撤回
     const undo = () => {
@@ -211,21 +215,26 @@ export const useResumeStore = defineStore(
     // 监听当前简历内容变化，冒泡记录撤销历史
     watch(
       () => currentItem.value,
-      (item, oldItem) => {
+      (item) => {
         if (skipNextWatch) {
           skipNextWatch = false;
           return;
         }
-        if (!oldItem || !item) return;
-        pushHistory(oldItem);
+        if (!item || !lastSnapshot) return;
+        // 内容相对上次快照有变化才记录一条历史，避免 usage 等无关变化入栈
+        if (serializeForCompare(item) !== serializeForCompare(lastSnapshot)) {
+          pushHistory(lastSnapshot);
+          lastSnapshot = cloneDeep(item);
+        }
       },
       { deep: true },
     );
-    // 切换简历时取消待写入历史并清空历史栈
+    // 切换简历时取消待写入历史、清空历史栈并重置基准快照
     watch(currentIndex, () => {
       pushHistory.cancel();
       undoStack.value = [];
       redoStack.value = [];
+      lastSnapshot = currentItem.value ? cloneDeep(currentItem.value) : null;
     });
 
     return {
