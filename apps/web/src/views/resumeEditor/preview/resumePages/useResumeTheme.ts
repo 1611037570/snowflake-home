@@ -49,9 +49,9 @@ export const useResumeTheme = (ui: ComputedRef<ResumeUi>): ResumeTheme => {
   const fontValue = computed(() => (offset = 0) => ({
     fontSize: `${fontSize.value + offset}px`,
   }));
-  // 行高使用无单位倍数，随各字段字号自动缩放；钳制在1~2之间兜底旧版像素值
+  // 行高使用无单位倍数，随各字段字号自动缩放
   const lineHeightValue = computed(() => () => ({
-    lineHeight: `${Math.min(Math.max(lineHeight.value, 1), 2)}`,
+    lineHeight: `${lineHeight.value}`,
   }));
   const themeColor = computed(() => ui.value.color || ui.value.themeColor);
   const themeTemplate = computed(() => ui.value.themeTemplate);
