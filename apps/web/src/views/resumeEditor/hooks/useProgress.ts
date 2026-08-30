@@ -38,7 +38,6 @@ const getFieldMeta = (field: any) => {
 };
 
 // ==================== 主函数 ====================
-
 const analyzeModule = (source: any, moduleKey: string) => {
   // 从 store 获取模块配置
   const moduleForm = [
@@ -63,6 +62,9 @@ const analyzeModule = (source: any, moduleKey: string) => {
       const itemDefs = addConfig.fields?.length ? addConfig.fields : addConfig.model;
       if (!itemDefs?.length) continue;
 
+      // 父级是否必填（若 addConfig 或数组字段本身标记 required，则所有子字段视为必填）
+      const parentRequired = addConfig.required === true || field.required === true;
+
       // 从第一个子项的 source 推导列表路径（去掉 '?' 及其后）
       const firstSrc = getFieldMeta(itemDefs[0]).src;
       const listPath = firstSrc.slice(0, firstSrc.indexOf("?"));
@@ -72,7 +74,8 @@ const analyzeModule = (source: any, moduleKey: string) => {
       if (!Array.isArray(list) || list.length === 0) {
         let hasRequired = false;
         for (const def of itemDefs) {
-          if (def.required !== true) continue;
+          const isRequired = def.required === true || parentRequired;
+          if (!isRequired) continue;
           hasRequired = true;
           stat.total += 1;
           const { prop } = getFieldMeta(def);
@@ -89,7 +92,8 @@ const analyzeModule = (source: any, moduleKey: string) => {
       // 情况2：列表有数据 → 逐项检查每个必填子字段
       list.forEach((_, idx) => {
         for (const def of itemDefs) {
-          if (def.required !== true) continue;
+          const isRequired = def.required === true || parentRequired;
+          if (!isRequired) continue;
           const { src, prop } = getFieldMeta(def);
           if (!src.length) continue;
 
