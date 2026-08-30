@@ -24,14 +24,3 @@ export const getTime = (time: any) => {
   if (time.length === 1) return time[0];
   return `${time[0]} - ${time[1]}`;
 };
-
-// 列表模块字段 prop 对应的中文标签（addConfig.model 无 label 时兜底）
-const FIELD_LABELS: Record<string, string> = {
-  name: "名称",
-  url: "链接",
-  education: "学位",
-  post: "专业",
-  time: "时间",
-  content: "经历",
-  mode: "学制",
-};
