@@ -35,7 +35,12 @@ function goGitHub() {
       <ModuleNavigator />
       <OnePage />
       <Ai />
-      <Icon icon="carbon:maximize" size="5" content="专注写作" @click="enterFocusMode" />
+      <Icon
+        icon="lucide:focus"
+        size="5"
+        content="专注模式，只显示编辑和预览模块"
+        @click="enterFocusMode"
+      />
       <div class="h-[0.5px] w-full bg-sf-bg-2"></div>
       <Icon icon="akar-icons:home-alt1" size="5" content="返回首页" @click="goHome" />
       <Icon icon="simple-icons:github" size="5" content="GitHub" @click="goGitHub" />
