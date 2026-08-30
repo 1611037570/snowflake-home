@@ -49,6 +49,7 @@ export interface FormField {
   model?: ModelBinding | ModelBinding[];
   /** 条件校验配置（与 model/props 同级）：当前支持 hidden 显隐 */
   checks?: FieldChecks;
+  required?: boolean;
   /** 子字段（容器递归渲染） */
   fields?: FormField[];
   /** array 容器的数据列表（运行时填充） */
