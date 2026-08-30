@@ -11,7 +11,7 @@ const notChrome = computed(() => !isChrome());
 
 <template>
   <!-- 右侧工具栏区域的 QA 解答入口 -->
-  <div class="relative">
+  <div class="absolute -bottom-12 left-1/2 -translate-x-1/2">
     <SfTooltip :content="notChrome ? 'QA解答·非推荐浏览器' : 'QA解答'" placement="left">
       <SfIcon
         :icon="notChrome ? 'mdi:alert-circle' : 'mdi:chat-question-outline'"
@@ -32,7 +32,6 @@ const notChrome = computed(() => !isChrome());
     <div class="flex w-[400px] flex-col gap-5 p-4">
       <!-- 浏览器建议：非推荐浏览器时展示推荐与下载入口 -->
       <div
-        v-if="notChrome"
         class="flex flex-col items-start gap-2 rounded-xl bg-sf-warning-2 p-3 text-sm text-sf-warning"
       >
         <span

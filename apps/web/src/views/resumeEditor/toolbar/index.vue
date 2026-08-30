@@ -7,6 +7,7 @@ import Icon from "./components/icon.vue";
 import OnePage from "./modules/onePage.vue";
 import Progress from "./modules/progress.vue";
 import ModuleNavigator from "./modules/moduleNavigator.vue";
+import QaAnswer from "./modules/qaAnswer.vue";
 
 defineOptions({ name: "ResumeToolbar" });
 
@@ -39,6 +40,8 @@ function goGitHub() {
       <Icon icon="akar-icons:home-alt1" size="5" content="返回首页" @click="goHome" />
       <Icon icon="simple-icons:github" size="5" content="GitHub" @click="goGitHub" />
     </div>
+    <!-- QA 解答 -->
+    <QaAnswer />
   </div>
 </template>
 
