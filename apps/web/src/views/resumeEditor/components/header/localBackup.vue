@@ -90,7 +90,7 @@ const handleBind = async () => {
   <div v-if="supported" class="flex items-center">
     <SfTooltip :content="tooltipContent">
       <div
-        class="flex cursor-pointer items-center gap-1 rounded-full px-1.5 py-0.5 transition-colors hover:bg-sf-bg-2"
+        class="flex h-9 cursor-pointer items-center gap-1 rounded-full p-3 transition-colors hover:bg-sf-bg-2"
         @click="visible = true"
       >
         <SfIcon :icon="icon" :class="iconColor" size="5" />
