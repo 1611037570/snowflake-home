@@ -68,9 +68,10 @@ const getContext = () => ({
   currentForm: inject(DF_CURRENT_FORM),
   currentIndex: inject(DF_CURRENT_INDEX),
   currentType: inject(DF_CURRENT_TYPE),
-  currentLength: inject(DF_CURRENT_LENGTH),
-  removeSelf: inject(DF_REMOVE),
-  removeItem: inject(DF_REMOVE_ITEM),
+  // 容器能力按容器类型选择性提供，缺失时注入默认值避免 Vue 告警
+  currentLength: inject(DF_CURRENT_LENGTH, undefined),
+  removeSelf: inject(DF_REMOVE, undefined),
+  removeItem: inject(DF_REMOVE_ITEM, undefined),
   addItem: createAddItem(inject(DF_CURRENT_FORM)),
 });
 // 注入对外上下文契约
