@@ -11,6 +11,10 @@ defineProps({
     type: Boolean,
     default: false,
   },
+  drag: {
+    type: Boolean,
+    default: true,
+  },
 });
 const name = defineModel("name", {
   type: String,
@@ -71,11 +75,9 @@ function handleEditConfirm() {
     <SfCollapseItem name="1">
       <template #title>
         <div class="group flex h-full w-full items-center justify-between">
-          <div
-            class="flex items-center text-lg font-bold"
-            :class="hidden ? 'text-sf-text-3' : ''"
-          >
+          <div class="flex items-center text-lg font-bold" :class="hidden ? 'text-sf-text-3' : ''">
             <SfIcon
+              v-if="currentForm.key !== 'user'"
               icon="icon-park-outline:drag"
               size="4"
               class="container-drag mr-1 cursor-move!"
@@ -86,6 +88,7 @@ function handleEditConfirm() {
           <div class="flex items-center gap-2 opacity-0 group-hover:opacity-100">
             <SfIcon
               @click.stop="toggleHidden"
+              v-if="currentForm.key !== 'user'"
               :icon="hidden ? 'lucide:eye-off' : 'lucide:eye'"
               size="4"
               class="cursor-pointer hover:text-sf-theme"
@@ -99,6 +102,7 @@ function handleEditConfirm() {
               class="cursor-pointer hover:text-sf-theme"
             />
             <SfIcon
+              v-if="currentForm.key !== 'user'"
               @click.stop="del"
               icon="ic:round-delete"
               size="4"

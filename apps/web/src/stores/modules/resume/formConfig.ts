@@ -6,17 +6,30 @@ const DEFAULT_META = {
 // 用户信息
 export const DEFAULT_USER_FORM = [
   {
-    type: "object",
-    component: "title",
-    props: {
-      modelValue: "个人信息",
-    },
-    model: [],
-  },
-  {
     type: "group",
+    component: "boxCollapse",
     key: "user",
     name: "用户信息",
+    props: {
+      name: "用户信息",
+      add: false,
+      drag: false,
+    },
+    model: [
+      {
+        source: ["user", "collapsed"],
+        prop: "collapsed",
+        defaultValue: ["1"],
+      },
+      // 隐藏开关：控制模块在简历预览中显示/隐藏
+      {
+        source: ["user", "hidden"],
+        prop: "hidden",
+        defaultValue: false,
+      },
+    ],
+    checks: { hidden: { path: ["user", "hidden"] } },
+    slot: "default",
     fields: [
       // 头像
       {
