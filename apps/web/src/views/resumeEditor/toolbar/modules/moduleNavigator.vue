@@ -26,7 +26,7 @@ onBeforeUnmount(() => document.removeEventListener("click", closeOnOutside));
 
 <template>
   <div ref="panelRef" class="relative">
-    <Icon icon="mdi:map-search-outline" size="4" content="查找模块" @click="visible = !visible" />
+    <Icon icon="mdi:map-search-outline" size="5" content="查找模块" @click="visible = !visible" />
 
     <!-- 非模态悬浮面板：从按钮左侧展开 -->
     <div

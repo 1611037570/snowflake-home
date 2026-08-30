@@ -3,7 +3,7 @@
   <Icon
     v-if="system.showDebug"
     icon="mdi:console-line"
-    size="4"
+    size="5"
     content="调试控制台"
     @click="drawerVisible = !drawerVisible"
   />
