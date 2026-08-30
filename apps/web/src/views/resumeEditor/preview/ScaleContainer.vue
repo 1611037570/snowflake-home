@@ -16,7 +16,7 @@ defineEmits(["fullscreen"]);
 
 const containerRef = ref(null);
 const resumeStore = useResumeStore();
-const { system } = storeToRefs(resumeStore);
+const { system, selectedModule } = storeToRefs(resumeStore);
 const contentRef = ref(null);
 const contentSize = ref({ width: 0, height: 0 });
 const manualScale = ref(1);
@@ -85,6 +85,11 @@ const handleScaleSelect = (item) => {
 
 const stepScale = (value) => {
   setManualScale(Number((scale.value + value).toFixed(1)));
+};
+
+// 一键清空选中的模块
+const clearSelectedModules = () => {
+  selectedModule.value = [];
 };
 
 const updateScale = useDebounceFn(([entry]) => {
@@ -188,6 +193,7 @@ useResizeObserver(contentRef, ([entry]) => {
             @click="!isMaxScale && stepScale(0.1)"
           />
         </SfTooltip>
+
         <SfTooltip content="全屏">
           <SfIcon
             icon="lucide:maximize"
@@ -195,6 +201,15 @@ useResizeObserver(contentRef, ([entry]) => {
             boxSize="7"
             class="rounded-full text-sf-text-2 hover:bg-sf-theme-2 hover:text-sf-theme-text"
             @click="$emit('fullscreen')"
+          />
+        </SfTooltip>
+        <SfTooltip v-if="selectedModule.length" content="清空选中">
+          <SfIcon
+            icon="lucide:circle-slash"
+            size="4.5"
+            boxSize="7"
+            class="rounded-full text-sf-text-2 hover:bg-sf-theme-2 hover:text-sf-theme-text"
+            @click="clearSelectedModules"
           />
         </SfTooltip>
       </div>
