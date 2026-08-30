@@ -3,31 +3,56 @@ import { useResumeStore } from "@/stores";
 import { storeToRefs } from "pinia";
 import { computed, ref } from "vue";
 import { resumeTitle } from "../../resumeName";
-import TitleEditor from "./titleEditor.vue";
-// 标题编辑器引用
-const titleEditorRef = ref(null);
 const resumeStore = useResumeStore();
 const { currentUsage } = storeToRefs(resumeStore);
 
 const title = computed(() => currentUsage.value?.customTitle || resumeTitle.value);
+// 编辑标题弹窗
+const editTitleVisible = ref(false);
+const custom = ref(currentUsage.value?.customTitle || false);
+const tempTitle = ref(title.value);
+
+function openModal() {
+  tempTitle.value = title.value;
+  editTitleVisible.value = true;
+}
+
 function handleEditTitle() {
-  titleEditorRef.value?.openModal();
+  const customValue = tempTitle.value.trim();
+  currentUsage.value.customTitle = custom.value ? customValue : "";
+  editTitleVisible.value = !editTitleVisible.value;
+}
+
+function handleInput() {
+  custom.value = true;
+}
+
+function handleResetTitle() {
+  tempTitle.value = resumeTitle.value;
 }
 </script>
 
 <template>
   <div class="flex max-w-[300px] items-center">
-    <div class="text-auto">
+    <SfIcon icon="lucide:pencil" class="mr-2 hover:text-sf-theme-2" size="5" @click="openModal" />
+    <div class="text-auto text-sm">
       {{ title }}
     </div>
-    <SfIcon
-      icon="lucide:pencil"
-      class="ml-2 hover:text-sf-theme-2"
-      size="5"
-      @click="handleEditTitle"
-    />
   </div>
-  <TitleEditor :default-title="title" ref="titleEditorRef" />
+  <SfModal v-model="editTitleVisible" title="重命名简历">
+    <div class="flex w-100 flex-col gap-5 p-4">
+      <div class="flex items-center gap-3">
+        <SfInput
+          @input="handleInput"
+          v-model="tempTitle"
+          placeholder="请输入标题"
+          class="w-full rounded-lg border border-sf-b bg-sf-bg"
+        />
+        <ElButton @click="handleResetTitle">重置</ElButton>
+      </div>
+      <ElButton type="primary" @click="handleEditTitle" class="w-full">确定</ElButton>
+    </div>
+  </SfModal>
 </template>
 
 <style lang="scss" scoped></style>
