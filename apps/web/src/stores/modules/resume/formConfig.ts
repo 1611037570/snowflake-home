@@ -268,11 +268,13 @@ export const DEFAULT_ACCOUNT_FORM = {
             source: ["account", "data", "?", "name"],
             defaultValue: "",
             prop: "name",
+            required: true,
           },
           {
             source: ["account", "data", "?", "url"],
             defaultValue: "",
             prop: "url",
+            required: true,
           },
         ],
         type: "object",
@@ -438,7 +440,6 @@ export const DEFAULT_SKILL_FORM = {
     name: "专业技能",
     add: false,
   },
-  required: true,
   model: [
     {
       source: ["skill", "collapsed"],
@@ -458,6 +459,7 @@ export const DEFAULT_SKILL_FORM = {
     {
       type: "object",
       component: "wangEditor",
+      required: true,
       model: {
         source: ["skill", "data"],
         prop: "modelValue",
@@ -471,7 +473,6 @@ export const DEFAULT_ADVANTAGE_FORM = {
   component: "boxCollapse",
   key: "advantage",
   name: "个人优势",
-  required: true,
   props: {
     add: false,
   },
@@ -494,6 +495,7 @@ export const DEFAULT_ADVANTAGE_FORM = {
     {
       type: "object",
       component: "wangEditor",
+      required: true,
       model: {
         source: ["advantage", "data"],
         prop: "modelValue",

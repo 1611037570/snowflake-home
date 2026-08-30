@@ -8,6 +8,8 @@ export interface ModelBinding {
   source: string[];
   prop: string;
   defaultValue?: any;
+  /** 必填标记：供 AI 判断与完成进度统计 */
+  required?: boolean;
 }
 
 /** 条件校验规则：path 为数据路径，其余为可扩展的满足条件 */
