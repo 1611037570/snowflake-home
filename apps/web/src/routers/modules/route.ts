@@ -25,7 +25,7 @@ const routes: RouteRecordRaw[] = [
 const componentModules = import.meta.glob("@/views/*/index.vue", { eager: false });
 // 简历页子路由：顶部导航的四个板块
 const resumeChildren: RouteRecordRaw[] = [
-  { path: "", component: () => import("@/views/resume/main/index.vue") },
+  { path: "", name: "resume", component: () => import("@/views/resume/main/index.vue") },
   { path: "template", component: () => import("@/views/resume/template.vue") },
   { path: "mine", component: () => import("@/views/resume/mine/index.vue") },
   { path: "statistics", component: () => import("@/views/resume/statistics/index.vue") },
@@ -46,7 +46,7 @@ function generateRoute(item: any): RouteRecordRaw {
   // 避免与子路由同名冲突，也保证按 name 导航能渲染默认子页
   const isResume = name === "resume";
   const defaultRoute = {
-    name,
+    ...(!isResume ? { name } : {}),
     path: `/${name}`,
     component: component ? component : () => import("@views/status/error.vue"),
   };
