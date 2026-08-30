@@ -24,8 +24,6 @@
           class="relative flex h-full flex-col items-center justify-center gap-3"
         >
           <Toolbar />
-          <!-- QA 解答独立入口：位于右侧工具栏区域，不写入工具栏 -->
-          <QaAnswer />
         </div>
       </Transition>
       <GeneratingMask
@@ -59,7 +57,6 @@ import Builder from "./builder/index.vue";
 import Header from "./components/header/index.vue";
 import GeneratingMask from "./components/generatingMask.vue";
 import Preview from "./preview/index.vue";
-import QaAnswer from "./components/qaAnswer.vue";
 import Toolbar from "./toolbar/index.vue";
 // 预览层代理数据及批量操作句柄
 import { usePreviewData } from "./preview/usePreviewData";
