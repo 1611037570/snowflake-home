@@ -8,9 +8,9 @@ const visible = ref(false);
 const panelRef = ref(null);
 const { keyword, filteredList, jumpAll } = useModuleNav();
 
-// 联动跳转后收起面板
-const handleJump = (key) => {
-  jumpAll(key);
+// 联动跳转后收起面板（隐藏模块由 jumpAll 内部先恢复再定位）
+const handleJump = (m) => {
+  jumpAll(m.key);
   visible.value = false;
 };
 
@@ -43,10 +43,12 @@ onBeforeUnmount(() => document.removeEventListener("click", closeOnOutside));
           v-for="m in filteredList"
           :key="m.key"
           class="flex cursor-pointer items-center gap-2 rounded-xl px-2 py-1.5 text-sm transition-colors hover:bg-sf-theme-2"
-          @click="handleJump(m.key)"
+          :class="m.hidden ? 'opacity-60' : ''"
+          @click="handleJump(m)"
         >
           <SfIcon :icon="m.icon" size="4" class="text-sf-theme" />
-          <span class="truncate">{{ m.name }}</span>
+          <span class="flex-1 truncate">{{ m.name }}</span>
+          <span v-if="m.hidden" class="text-xs text-sf-text-2">已隐藏</span>
         </div>
         <div v-if="!filteredList.length" class="py-4 text-center text-xs text-sf-text-2">
           未找到相关模块

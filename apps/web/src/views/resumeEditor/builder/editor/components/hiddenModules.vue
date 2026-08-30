@@ -2,6 +2,7 @@
 import { useResumeStore } from "@/stores";
 import { storeToRefs } from "pinia";
 import { computed, ref } from "vue";
+import { setFieldHidden } from "../../../utils";
 import { isFieldHidden } from "@/components/business/dynamicForm/code/fieldVisible";
 
 const resumeStore = useResumeStore();
@@ -23,20 +24,9 @@ function handleOpen() {
 // 模块名称：优先 store 映射，其次自定义模块数据里的 name，兜底 key
 const getModuleName = (field) => resumeStore.getModel(field.key)?.name || field.key;
 
-// 恢复模块：将隐藏条件指向的数据置为 false，表单与预览同步恢复渲染
-function setFieldHidden(field, value) {
-  const path = field.checks?.hidden?.path;
-  if (!path?.length) return;
-  let cur = currentData.value;
-  for (let i = 0; i < path.length - 1; i++) {
-    cur = cur?.[path[i]];
-  }
-  if (cur) cur[path[path.length - 1]] = value;
-}
-
-// 恢复单个模块：全部恢复后自动关闭弹窗
+// 恢复单个模块：将隐藏条件指向的数据置为 false，表单与预览同步恢复渲染
 function handleRestore(field) {
-  setFieldHidden(field, false);
+  setFieldHidden(currentData.value, field, false);
   if (!hiddenList.value.length) dialogVisible.value = false;
 }
 </script>
