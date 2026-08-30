@@ -1,11 +1,13 @@
 <template>
   <div class="flex h-full w-full flex-col bg-sf-page" v-if="currentIndex != -1">
-    <Header />
+    <Transition name="resume-header">
+      <Header v-if="!focusMode" />
+    </Transition>
     <div class="relative flex w-full flex-1 overflow-hidden" v-if="currentIndex >= 0">
       <div class="relative flex min-w-0 flex-1 overflow-hidden">
         <!-- 左侧操作栏 -->
         <Transition name="resume-builder">
-          <Builder v-if="layout !== 'ai'" :class="{ 'ai-generating': isGenerating }" />
+          <Builder v-if="focusMode || layout !== 'ai'" :class="{ 'ai-generating': isGenerating }" />
         </Transition>
         <!-- 中间预览栏 -->
         <Preview :class="{ 'ai-generating': isGenerating }" />
@@ -13,14 +15,16 @@
       </div>
       <!-- 右侧AI助手栏 -->
       <Transition name="resume-assistant">
-        <Assistant v-if="layout !== 'list'" />
+        <Assistant v-if="!focusMode && layout !== 'list'" />
       </Transition>
       <!-- 最右侧系统配置栏：工具栏与 QA 入口整体垂直居中 -->
-      <div class="relative flex h-full flex-col items-center justify-center gap-3">
-        <Toolbar />
-        <!-- QA 解答独立入口：位于右侧工具栏区域，不写入工具栏 -->
-        <QaAnswer />
-      </div>
+      <Transition name="resume-toolbar">
+        <div v-if="!focusMode" class="relative flex h-full flex-col items-center justify-center gap-3">
+          <Toolbar />
+          <!-- QA 解答独立入口：位于右侧工具栏区域，不写入工具栏 -->
+          <QaAnswer />
+        </div>
+      </Transition>
       <GeneratingMask
         v-if="isPrinting"
         :visible="true"
@@ -29,11 +33,21 @@
         aria-label="正在导出简历，请稍候"
       />
     </div>
+    <!-- 专注写作模式：右上角浮动退出按钮 -->
+    <div
+      v-if="focusMode"
+      class="fixed top-4 right-4 z-90 flex cursor-pointer items-center gap-2 rounded-full border border-sf-b bg-sf-primary px-4 py-2 text-sm text-sf-text-2 shadow-lg transition-colors hover:text-sf-theme"
+      @click="setFocusMode(false)"
+    >
+      <SfIcon icon="carbon:minimize" size="5" />
+      <span>退出专注</span>
+    </div>
   </div>
 </template>
 
 <script setup>
 import { useResumeStore } from "@/stores";
+import { onKeyStroke } from "@vueuse/core";
 import { storeToRefs } from "pinia";
 import { provide, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
@@ -51,8 +65,8 @@ const router = useRouter();
 const route = useRoute();
 
 const resumeStore = useResumeStore();
-const { initResumeStatus } = resumeStore;
-const { currentIndex, layout, list, currentUsage, isGenerating, isPrinting, currentData } =
+const { initResumeStatus, setFocusMode } = resumeStore;
+const { currentIndex, layout, focusMode, list, currentUsage, isGenerating, isPrinting, currentData } =
   storeToRefs(resumeStore);
 
 // 切换简历时清空上一个简历的模块选中状态
@@ -92,6 +106,11 @@ provide("rejectModule", rejectModule);
 // 向下游组件注入：应用 AI diff
 provide("applyDiff", applyDiff);
 
+// 专注模式下按 ESC 退出
+onKeyStroke("Escape", () => {
+  if (focusMode.value) setFocusMode(false);
+});
+
 let useTimeTimer = null;
 
 onMounted(() => {
@@ -111,10 +130,26 @@ onUnmounted(() => {
 .resume-builder-enter-active,
 .resume-builder-leave-active,
 .resume-assistant-enter-active,
-.resume-assistant-leave-active {
+.resume-assistant-leave-active,
+.resume-header-enter-active,
+.resume-header-leave-active,
+.resume-toolbar-enter-active,
+.resume-toolbar-leave-active {
   transition:
     transform 0.25s ease,
     opacity 0.25s ease;
+}
+
+.resume-header-enter-from,
+.resume-header-leave-to {
+  transform: translateY(-100%);
+  opacity: 0;
+}
+
+.resume-toolbar-enter-from,
+.resume-toolbar-leave-to {
+  transform: translateX(100%);
+  opacity: 0;
 }
 
 .resume-builder-enter-from,

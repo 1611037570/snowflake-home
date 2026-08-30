@@ -19,6 +19,8 @@ export const useResumeStore = defineStore(
     const currentIndex = ref(-1);
     // 当前布局
     const layout = ref<ResumeLayout>("three");
+    // 专注写作模式（临时状态，不持久化）
+    const focusMode = ref(false);
     // 是否正在打印
     const isPrinting = ref(false);
     // 是否AI生成中
@@ -132,6 +134,9 @@ export const useResumeStore = defineStore(
     const setLayout = (value: ResumeLayout) => {
       layout.value = value;
     };
+    const setFocusMode = (value: boolean) => {
+      focusMode.value = value;
+    };
     const setGenerating = (val: boolean) => {
       isGenerating.value = val;
     };
@@ -149,6 +154,7 @@ export const useResumeStore = defineStore(
       maxCount,
       currentIndex,
       layout,
+      focusMode,
       isGenerating,
       setGenerating,
       system,
@@ -165,6 +171,7 @@ export const useResumeStore = defineStore(
       addResume,
       deleteResume,
       setLayout,
+      setFocusMode,
       init,
     };
   },
