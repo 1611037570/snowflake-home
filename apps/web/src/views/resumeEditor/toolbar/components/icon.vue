@@ -9,7 +9,6 @@ defineProps({
     default: "",
   },
   size: {
-    type: [Number, String],
     default: 6,
   },
 });

@@ -41,8 +41,7 @@ export interface IconProps {
    */
   flip?: "horizontal" | "vertical";
 }
-const size = computed(() => Number(props.size));
-const boxSize = computed(() => Number(props.boxSize));
+
 const props = withDefaults(defineProps<IconProps>(), {
   icon: "fa6-solid:snowflake",
   size: 16,
@@ -51,12 +50,13 @@ const props = withDefaults(defineProps<IconProps>(), {
   auto: true,
 });
 const boxIconStyle = computed(() => {
-  return baseStyle(boxSize.value * 4);
+  return baseStyle(props.boxSize || props.size);
 });
 
 const emit = defineEmits(["success", "fail"]);
 const iconClass = ref("");
 const baseStyle = (s: any) => {
+  s = Number(s) * 4;
   return {
     fontSize: `${s}px !important`,
     width: `${s}px !important`,
