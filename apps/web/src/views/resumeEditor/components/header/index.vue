@@ -5,6 +5,7 @@ import Debug from "./debug.vue";
 import HistoryNav from "./historyNav.vue";
 import Title from "./title.vue";
 import LocalBackup from "./localBackup.vue";
+import ExportResume from "../../toolbar/modules/exportResume.vue";
 import { useRouter } from "vue-router";
 const router = useRouter();
 
@@ -74,6 +75,7 @@ const handleBack = () => {
           />
         </SfTooltip>
       </div>
+      <ExportResume />
 
       <!-- 分隔线 -->
       <div class="h-5 w-px bg-sf-b"></div>
