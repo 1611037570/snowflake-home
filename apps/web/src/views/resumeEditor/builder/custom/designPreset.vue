@@ -20,7 +20,7 @@ const FONT_NAMES = {
 // 间距档位：由 moduleSpacing 归一化展示
 const densityOf = (spacing) => (spacing >= 20 ? "宽松" : spacing >= 10 ? "标准" : "紧凑");
 
-// 一键设计预设：覆盖字体/间距/配色等 UI 参数，取值均在 uiParamRanges 范围内
+// 一键设计预设：覆盖字体/间距/配色等 UI 参数（不修改模板 themeTemplate），取值均在 uiParamRanges 范围内
 const PRESETS = [
   {
     name: "极简留白",
@@ -34,7 +34,6 @@ const PRESETS = [
       fontFamily: "text-puhui",
       themeColor: "#40a9ff",
       userInfoMode: "text",
-      themeTemplate: "default",
     },
   },
   {
@@ -49,7 +48,6 @@ const PRESETS = [
       fontFamily: "text-puhui",
       themeColor: "#ff4d4f",
       userInfoMode: "icon",
-      themeTemplate: "modern",
     },
   },
   {
@@ -64,7 +62,6 @@ const PRESETS = [
       fontFamily: "text-yyqx",
       themeColor: "#9254de",
       userInfoMode: "icon",
-      themeTemplate: "modern",
     },
   },
   {
@@ -79,7 +76,6 @@ const PRESETS = [
       fontFamily: "text-puhui",
       themeColor: "#40a9ff",
       userInfoMode: "text",
-      themeTemplate: "default",
     },
   },
   {
@@ -94,7 +90,6 @@ const PRESETS = [
       fontFamily: "",
       themeColor: "#36cfc9",
       userInfoMode: "icon",
-      themeTemplate: "default",
     },
   },
   {
@@ -109,7 +104,6 @@ const PRESETS = [
       fontFamily: "",
       themeColor: "#ffa940",
       userInfoMode: "text",
-      themeTemplate: "default",
     },
   },
 ];
