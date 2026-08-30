@@ -7,7 +7,7 @@ import { getAllScores } from "../../resumeEditor/hooks/useProgress";
 import { getResumeTitle } from "../../resumeEditor/resumeName";
 import ThumbPreview from "@/views/resumeEditor/preview/thumbPreview.vue";
 import ResumeCardContainer from "./components/resumeCardContainer.vue";
-import ImportResume from "@/views/resumeEditor/toolbar/modules/importResume.vue";
+import ImportResume from "./components/importResume.vue";
 
 const router = useRouter();
 
