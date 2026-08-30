@@ -3,6 +3,7 @@ import { storeToRefs } from "pinia";
 import { useResumeStore } from "@/stores";
 import { useProgress, useTimelineCheck } from "../../utils";
 import { jumpToEditor } from "../../useModuleNav";
+import { TransitionPresets, useTransition } from "@vueuse/core";
 import { computed, ref } from "vue";
 
 const resumeStore = useResumeStore();
@@ -25,6 +26,15 @@ const timelineByModule = computed(() => {
   });
   return map;
 });
+
+// 总进度数字过渡动画
+const animatedProgress = useTransition(
+  computed(() => progressData.value.progress),
+  {
+    duration: 500,
+    transition: TransitionPresets.easeOutCubic,
+  },
+);
 
 // 弹窗外提示文案：时间线存在问题时提醒
 const tooltipText = computed(() =>
@@ -76,7 +86,7 @@ const getProgressColor = (progress) => {
             class="text-sf-warning"
           />
           <div v-else class="flex items-center text-[16px] font-bold">
-            <span>{{ progressData.progress }}</span
+            <span>{{ Math.round(animatedProgress) }}</span
             ><span class="text-[14px]">%</span>
           </div>
           <div class="text-[11px] opacity-90">完成度</div>
