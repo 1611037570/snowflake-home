@@ -1,0 +1,90 @@
+import { computed, nextTick, ref } from "vue";
+import { storeToRefs } from "pinia";
+import { useResumeStore } from "@/stores";
+import eventBus from "@/utils/modules/eventBus";
+import { isFieldHidden } from "@/components/business/dynamicForm/code/fieldVisible";
+
+// 模块 key → 图标映射（自定义模块统一使用 puzzle 图标）
+export const MODULE_ICONS: Record<string, string> = {
+  user: "mdi:account",
+  account: "mdi:account-box-outline",
+  education: "mdi:school-outline",
+  skill: "mdi:hammer-wrench",
+  advantage: "fa6-solid:seedling",
+  work: "lucide:briefcase",
+  project: "mdi:code-tags",
+  custom: "mdi:puzzle-outline",
+};
+
+/**
+ * 模块导航共享逻辑：模块锚点列表 + 搜索过滤 + 预览/编辑区跳转
+ * 供模块导航器（弹窗/悬浮）与编辑区索引条复用
+ */
+export function useModuleNav() {
+  const resumeStore = useResumeStore();
+  const { currentData, currentConfig, currentFixedConfig, selectedModule, layout } =
+    storeToRefs(resumeStore);
+
+  // 模块锚点列表（与预览分页同源：固定配置 + 表单配置，过滤隐藏模块）
+  const moduleList = computed(() => {
+    const data = currentData.value;
+    const fields = [
+      ...(currentFixedConfig.value?.fields || []),
+      ...(currentConfig.value?.fields || []),
+    ];
+    return fields
+      // 跳过无 key 字段（历史/导入数据可能缺失，无 key 无法作为导航锚点）
+      .filter((field) => field?.key && !isFieldHidden(data, field))
+      .map((field) => ({
+        key: field.key,
+        name: resumeStore.getModel(field.key)?.name || field.name || field.key,
+        icon: MODULE_ICONS[field.key.startsWith("custom") ? "custom" : field.key] || "ic:round-add",
+      }));
+  });
+
+  // 搜索关键词
+  const keyword = ref("");
+  const filteredList = computed(() => {
+    const kw = keyword.value.trim();
+    if (!kw) return moduleList.value;
+    return moduleList.value.filter((m) => m.name.includes(kw) || m.key.includes(kw));
+  });
+
+  // 跳转预览区：滚动定位 + 复用 selectedModule 触发预览 outline 高亮
+  const jumpPreview = (key: string) => {
+    document
+      .querySelector(`[data-module="${key}"]`)
+      ?.scrollIntoView({ behavior: "smooth", block: "start" });
+    const existed = selectedModule.value.find((item) => item.key === key);
+    if (!existed) {
+      selectedModule.value.push({ key, name: moduleList.value.find((m) => m.key === key)?.name });
+    }
+  };
+
+  // 跳转编辑区：展开折叠 + 选中闪烁 + 滚动定位
+  const jumpEditor = (key: string) => {
+    // 展开模块折叠面板
+    const moduleData = currentData.value?.[key];
+    if (moduleData && Array.isArray(moduleData.collapsed)) {
+      moduleData.collapsed = ["1"];
+    }
+    // 触发编辑区模块选中闪烁
+    eventBus.emit("df-select-module", key);
+    nextTick(() => {
+      document
+        .querySelector(`[data-module-key="${key}"]`)
+        ?.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+  };
+
+  // 联动跳转：预览区滚动高亮 + 编辑区定位闪烁（编辑区未打开时先切三栏布局）
+  const jumpAll = (key: string) => {
+    if (layout.value === "ai") {
+      resumeStore.setLayout("three");
+    }
+    jumpEditor(key);
+    jumpPreview(key);
+  };
+
+  return { moduleList, keyword, filteredList, jumpAll, jumpPreview, jumpEditor };
+}
