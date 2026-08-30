@@ -1,4 +1,6 @@
 <script setup>
+import Cropper from "cropperjs";
+import { ref } from "vue";
 import Upload from "@/components/el/upload";
 import { compressImage } from "./compressImage";
 
@@ -24,16 +26,54 @@ const image = defineModel("modelValue", {
   default: "",
 });
 
-// 选择图片后压缩到当前显示尺寸的 2 倍，保证清晰度
-const handleChange = async (uploadFile) => {
+// ===== 裁切弹窗状态 =====
+const cropVisible = ref(false);
+const cropSrc = ref("");
+const cropImgRef = ref(null);
+let cropper = null;
+
+// 选择文件：暂存图片并打开裁切弹窗，先按组件宽高比裁切
+const handleChange = (uploadFile) => {
   const rawFile = uploadFile?.raw;
   if (!rawFile) return;
+  cropSrc.value = URL.createObjectURL(rawFile);
+  cropVisible.value = true;
+};
+
+// 图片加载完成后初始化裁切器，裁切框锁定为组件宽高比
+const initCropper = () => {
+  if (cropper) cropper.destroy();
+  cropper = new Cropper(cropImgRef.value, {
+    container: ".cropper-box",
+    aspectRatio: props.width / props.height,
+    viewMode: 1,
+    autoCropArea: 1,
+    background: false,
+  });
+};
+
+// 确认裁切：取裁切区域 canvas，再压缩到目标尺寸
+const confirmCrop = async () => {
+  const selection = cropper?.getCropperSelection();
+  if (!selection) return;
   try {
-    const { src } = await compressImage(rawFile, props.width * 2, props.height * 2);
+    const canvas = await selection.$toCanvas();
+    const blob = await new Promise((resolve) => canvas.toBlob(resolve, "image/png"));
+    const { src } = await compressImage(blob, props.width * 2, props.height * 2);
     image.value = src;
+    closeCrop();
   } catch (err) {
-    console.error("图片压缩失败:", err);
+    console.error("图片裁切压缩失败:", err);
   }
+};
+
+// 关闭裁切弹窗：销毁裁切器并释放图片资源
+const closeCrop = () => {
+  cropVisible.value = false;
+  cropper?.destroy();
+  cropper = null;
+  URL.revokeObjectURL(cropSrc.value);
+  cropSrc.value = "";
 };
 
 // 清空图片值
@@ -76,5 +116,36 @@ const removeImage = () => {
       title="删除图片"
       @click="removeImage"
     />
+
+    <!-- 裁切弹窗：上传后先按组件宽高比裁切，确认后再压缩 -->
+    <SfModal v-model="cropVisible" title="裁剪图片">
+      <div
+        class="cropper-box flex w-full items-center justify-center overflow-hidden rounded-xl bg-sf-bg"
+      >
+        <img
+          v-if="cropSrc"
+          ref="cropImgRef"
+          :src="cropSrc"
+          alt="裁剪图片"
+          class="max-w-full"
+          @load="initCropper"
+        />
+      </div>
+      <footer class="mt-4 flex justify-end gap-3">
+        <el-button @click="closeCrop">取消</el-button>
+        <el-button type="primary" @click="confirmCrop">确认</el-button>
+      </footer>
+    </SfModal>
   </div>
 </template>
+
+<style lang="scss" scoped>
+/* 裁切器可视区域高度 */
+.cropper-box {
+  height: 320px;
+
+  :deep(cropper-canvas) {
+    max-height: 320px;
+  }
+}
+</style>
