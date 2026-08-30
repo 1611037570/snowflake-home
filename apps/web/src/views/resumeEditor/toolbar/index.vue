@@ -1,4 +1,5 @@
 <script setup>
+import { useResumeStore } from "@/stores";
 import { useRouter } from "vue-router";
 import Ai from "./modules/ai/index.vue";
 import System from "./modules/system/index.vue";
@@ -13,8 +14,12 @@ import ModuleNavigator from "./modules/moduleNavigator.vue";
 defineOptions({ name: "ResumeToolbar" });
 
 const router = useRouter();
+const resumeStore = useResumeStore();
 function goHome() {
   router.push("/resume");
+}
+function enterFocusMode() {
+  resumeStore.setFocusMode(true);
 }
 function goGitHub() {
   urlNavigation("https://github.com/1611037570/snowflake-home");
@@ -35,6 +40,7 @@ function goGitHub() {
       <OnePage />
       <ImportResume />
       <Ai />
+      <Icon icon="carbon:maximize" size="5" content="专注写作" @click="enterFocusMode" />
       <div class="h-[0.5px] w-full bg-sf-bg-2"></div>
       <Icon icon="akar-icons:home-alt1" size="5" content="返回首页" @click="goHome" />
       <Icon icon="simple-icons:github" size="5" content="GitHub" @click="goGitHub" />
