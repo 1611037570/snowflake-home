@@ -17,7 +17,7 @@ import { unrefElement, useDebounceFn, useMutationObserver, useResizeObserver } f
 import { ref, watch, type Ref, type WatchSource } from "vue";
 
 /** 单个"行"的信息（模块内部的一个 div） */
-interface RowInfo {
+export interface RowInfo {
   id: string; // 写入 DOM 的唯一 id（格式：row-item-模块key-序号）
   height: number; // 行高度（offsetHeight + marginTop + marginBottom）
   element: HTMLElement; // 行对应的 DOM 元素
@@ -25,7 +25,7 @@ interface RowInfo {
 }
 
 /** 单个"模块"的信息（.resume-module-wrapper 包装元素） */
-interface ModuleInfo {
+export interface ModuleInfo {
   moduleKey: string; // 模块类型 key（来自 data-module，如 "user"、"custom_xxx"）
   rows: RowInfo[]; // 模块下的所有行
 }
