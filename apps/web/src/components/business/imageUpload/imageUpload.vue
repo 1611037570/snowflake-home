@@ -1,5 +1,6 @@
 <script setup>
 import Cropper from "cropperjs";
+import "cropperjs/dist/cropper.css";
 import { ref } from "vue";
 import Upload from "@/components/el/upload";
 import { compressImage } from "./compressImage";
@@ -32,6 +33,24 @@ const cropSrc = ref("");
 const cropImgRef = ref(null);
 let cropper = null;
 
+// 裁剪比例选项：默认按组件宽高比，其余为常用比例，自由比例不锁定
+const ratioList = [
+  { label: "默认", value: props.width / props.height },
+  { label: "1:1", value: 1 },
+  { label: "4:3", value: 4 / 3 },
+  { label: "16:9", value: 16 / 9 },
+  { label: "3:4", value: 3 / 4 },
+  { label: "自由", value: NaN },
+];
+// 当前选中比例（按 label 判断，避免 NaN 比较失效）
+const activeRatio = ref("默认");
+
+// 切换裁剪比例
+const setRatio = (label) => {
+  activeRatio.value = label;
+  cropper?.setAspectRatio(ratioList.find((item) => item.label === label)?.value);
+};
+
 // 选择文件：暂存图片并打开裁切弹窗，先按组件宽高比裁切
 const handleChange = (uploadFile) => {
   const rawFile = uploadFile?.raw;
@@ -44,20 +63,33 @@ const handleChange = (uploadFile) => {
 const initCropper = () => {
   if (cropper) cropper.destroy();
   cropper = new Cropper(cropImgRef.value, {
-    container: ".cropper-box",
-    aspectRatio: props.width / props.height,
-    viewMode: 1,
-    autoCropArea: 1,
+    aspectRatio: ratioList.find((item) => item.label === activeRatio.value)?.value,
+    // 最大化利用空间，裁剪区域不超出图片
+    viewMode: 2,
+    guides: true,
+    center: true,
+    autoCropArea: 0.8,
+    movable: true,
+    zoomable: true,
+    cropBoxMovable: true,
+    cropBoxResizable: true,
     background: false,
   });
 };
 
+// 重置裁切框位置与大小
+const resetCrop = () => {
+  cropper?.reset();
+};
+
 // 确认裁切：取裁切区域 canvas，再压缩到目标尺寸
 const confirmCrop = async () => {
-  const selection = cropper?.getCropperSelection();
-  if (!selection) return;
+  if (!cropper) return;
   try {
-    const canvas = await selection.$toCanvas();
+    const canvas = cropper.getCroppedCanvas({
+      imageSmoothingEnabled: true,
+      imageSmoothingQuality: "high",
+    });
     const blob = await new Promise((resolve) => canvas.toBlob(resolve, "image/png"));
     const { src } = await compressImage(blob, props.width * 2, props.height * 2);
     image.value = src;
@@ -118,7 +150,26 @@ const removeImage = () => {
     />
 
     <!-- 裁切弹窗：上传后先按组件宽高比裁切，确认后再压缩 -->
-    <SfModal v-model="cropVisible" title="裁剪图片">
+    <SfModal v-model="cropVisible" title="裁剪图片" width="720px">
+      <!-- 裁剪比例切换 -->
+      <div class="mb-3 flex flex-wrap items-center gap-2">
+        <span class="text-sm text-sf-text-2">裁剪比例：</span>
+        <button
+          v-for="ratio in ratioList"
+          :key="ratio.label"
+          type="button"
+          class="rounded-md border px-3 py-1.5 text-sm transition-colors"
+          :class="
+            activeRatio === ratio.label
+              ? 'border-sf-theme bg-sf-theme text-sf-base'
+              : 'border-sf-b text-sf-text hover:border-sf-theme'
+          "
+          @click="setRatio(ratio.label)"
+        >
+          {{ ratio.label }}
+        </button>
+      </div>
+      <!-- 裁剪区域：最大化利用空间 -->
       <div
         class="cropper-box flex w-full items-center justify-center overflow-hidden rounded-xl bg-sf-bg"
       >
@@ -131,7 +182,9 @@ const removeImage = () => {
           @load="initCropper"
         />
       </div>
+      <!-- 底部操作栏 -->
       <footer class="mt-4 flex justify-end gap-3">
+        <el-button @click="resetCrop">重置</el-button>
         <el-button @click="closeCrop">取消</el-button>
         <el-button type="primary" @click="confirmCrop">确认</el-button>
       </footer>
@@ -142,10 +195,25 @@ const removeImage = () => {
 <style lang="scss" scoped>
 /* 裁切器可视区域高度 */
 .cropper-box {
-  height: 320px;
-
-  :deep(cropper-canvas) {
-    max-height: 320px;
-  }
+  height: 480px;
+  /* 图片未覆盖区域显示透明棋盘格，便于识别裁切空白 */
+  background-color: var(--color-gray-50);
+  background-image:
+    linear-gradient(
+      45deg,
+      var(--color-gray-200) 25%,
+      transparent 25%,
+      transparent 75%,
+      var(--color-gray-200) 75%
+    ),
+    linear-gradient(
+      45deg,
+      var(--color-gray-200) 25%,
+      transparent 25%,
+      transparent 75%,
+      var(--color-gray-200) 75%
+    );
+  background-size: 20px 20px;
+  background-position: 0 0, 10px 10px;
 }
 </style>
