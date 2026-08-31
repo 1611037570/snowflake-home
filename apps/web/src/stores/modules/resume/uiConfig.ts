@@ -29,6 +29,14 @@ export const themeTemplateList = [
     name: "现代",
     value: "modern",
   },
+  {
+    name: "商务",
+    value: "business",
+  },
+  {
+    name: "简约",
+    value: "minimal",
+  },
 ];
 // 用户信息展示模式列表
 export const userInfoModeList = [
@@ -59,7 +67,7 @@ export const avatarPositionList = [
 // ===========默认值=====================
 export const defaultThemeColor = themeColors[0].value;
 // 默认页边距
-export const defaultPadding = 12;
+export const defaultPadding = 24;
 // 默认字体类型
 export const defaultFontFamily = "text-puhui";
 // 默认字体大小
