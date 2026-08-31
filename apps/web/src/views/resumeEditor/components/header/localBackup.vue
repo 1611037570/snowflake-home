@@ -26,17 +26,6 @@ const backupPath = ref("");
 // 是否显示备份成功提示
 const savedTip = ref(false);
 
-// 触发图标
-const icon = computed(() => (localBackupEnabled.value ? "lucide:cloud-check" : "ph:warning-fill"));
-// 图标与提示文字颜色
-const iconColor = computed(() =>
-  localBackupEnabled.value ? "text-sf-success" : "text-sf-warning",
-);
-// 图标旁提示文字
-const tipText = computed(() => {
-  if (!localBackupEnabled.value) return "未备份";
-  return savedTip.value ? "已备份" : "";
-});
 // 悬浮提示
 const tooltipContent = computed(() =>
   localBackupEnabled.value ? `已备份到本地目录：${backupPath.value}` : "点击开启本地自动备份",
@@ -95,10 +84,18 @@ const handleBind = async () => {
         class="flex h-9 cursor-pointer items-center gap-1 rounded-full p-3 transition-colors hover:bg-sf-bg-2"
         @click="visible = true"
       >
-        <SfIcon :icon="icon" :class="iconColor" size="5" />
-        <Transition name="tip-slide">
-          <span v-if="tipText" :class="iconColor" class="text-xs">{{ tipText }}</span>
-        </Transition>
+        <!-- 未备份：警示图标（呼吸动画）+ 未备份文字 -->
+        <template v-if="!localBackupEnabled">
+          <SfIcon icon="bi:shield-exclamation" class="icon-breath text-sf-warning" size="4" />
+          <span class="text-xs text-sf-warning">未备份</span>
+        </template>
+        <!-- 已备份：成功图标 + 备份成功提示文字 -->
+        <template v-else>
+          <SfIcon icon="bi:shield-check" class="text-sf-success" size="4" />
+          <Transition name="tip-slide">
+            <span v-if="savedTip" class="text-xs text-sf-success">已备份</span>
+          </Transition>
+        </template>
       </div>
     </SfTooltip>
 
@@ -132,5 +129,20 @@ const handleBind = async () => {
 .tip-slide-leave-to {
   transform: translateX(-8px);
   opacity: 0;
+}
+
+// 未备份时图标的呼吸动画（放大缩小循环）
+.icon-breath {
+  animation: icon-breath 2s ease-in-out infinite;
+}
+
+@keyframes icon-breath {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.2);
+  }
 }
 </style>
