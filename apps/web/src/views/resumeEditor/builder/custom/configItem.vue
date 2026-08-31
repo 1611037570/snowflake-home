@@ -70,8 +70,8 @@ watch(
 </script>
 
 <template>
-  <div class="flex w-full flex-col gap-2">
-    <div class="mb-2 flex items-center text-base font-bold text-sf-text">
+  <div class="flex w-full flex-col gap-1">
+    <div class="mb-2 flex items-center text-sm text-sf-text">
       <span>{{ label }}</span>
       <sf-tooltip :content="tip" v-if="tip" class="ml-1 text-sf-text" />
       <!-- 值非默认时显示恢复默认值图标 -->
