@@ -1,7 +1,7 @@
 <template>
   <Teleport to="body">
     <!-- 背景模糊层 -->
-    <Transition name="mask" :disabled="performanceMode">
+    <Transition name="mask" :disabled="performanceMode" appear>
       <div
         v-if="modeValue"
         class="fixed top-0 right-0 bottom-0 left-0 z-80 bg-sf-transparent-3"
@@ -10,7 +10,7 @@
     </Transition>
 
     <!-- 弹窗外壳 -->
-    <Transition name="fade" :disabled="performanceMode">
+    <Transition name="fade" :disabled="performanceMode" appear>
       <div
         v-if="modeValue"
         ref="mask"
