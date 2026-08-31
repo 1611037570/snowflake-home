@@ -90,3 +90,17 @@ export const formatFileSize = (bytes: number): string => {
   const i = Math.floor(Math.log(bytes) / Math.log(k));
   return (bytes / Math.pow(k, i)).toFixed(1) + " " + sizes[i];
 };
+
+// WebP 图片 data URL 固定前缀，存储时裁切掉，渲染时拼接
+const WEBP_DATA_URL_PREFIX = "data:image/webp;base64,";
+
+/**
+ * 将存储的图片值转为可直接渲染的图片地址
+ * 存储值为裸 base64，渲染时拼接固定前缀
+ * @param value - 图片存储值
+ * @returns 可渲染的图片地址
+ */
+export const toAvatarSrc = (value?: string): string => {
+  if (!value) return "";
+  return WEBP_DATA_URL_PREFIX + value;
+};

@@ -2,6 +2,7 @@
 import Cropper from "cropperjs";
 import "cropperjs/dist/cropper.css";
 import { ref } from "vue";
+import { toAvatarSrc } from "@/utils";
 import Upload from "@/components/el/upload";
 import { compressWebp } from "./compressWebp";
 
@@ -106,8 +107,9 @@ const confirmCrop = async () => {
     });
 
     // 缩小目标尺寸再乘 0.9，压缩质量 0.92
-    const { src } = await compressWebp(canvas, props.width * 0.8, props.height * 0.8, 0.8);
-    image.value = src;
+    const { src } = await compressWebp(canvas, props.width * 0.7, props.height * 0.7, 0.85);
+    // 存储裸 base64：去除固定 data URL 前缀，渲染处统一拼接
+    image.value = src.split(",")[1] || "";
     closeCrop();
   } catch (err) {
     console.error("图片裁切压缩失败:", err);
@@ -136,10 +138,10 @@ const removeImage = () => {
     <Upload :auto-upload="false" :show-file-list="false" accept="image/*" @change="handleChange">
       <div
         class="border-sf-border group relative flex cursor-pointer items-center justify-center overflow-hidden rounded-lg border border-dashed text-sf-text-3 transition-colors hover:border-sf-theme hover:text-sf-theme"
-        :style="{ width: `${width}px`, height: `${height}px` }"
+        :style="{ width: `${DEFAULT_WIDTH}px`, height: `${DEFAULT_HEIGHT}px` }"
         :title="image ? '点击重新上传' : '上传图片'"
       >
-        <img v-if="image" :src="image" alt="图片" class="h-full w-full shrink-0 object-cover" />
+        <img v-if="image" :src="toAvatarSrc(image)" alt="图片" class="h-full w-full shrink-0 object-cover" />
         <!-- 已上传时鼠标悬停显示"重新上传"遮罩提示 -->
         <div
           v-if="image"
@@ -164,9 +166,10 @@ const removeImage = () => {
       @click="removeImage"
     />
     <el-button v-if="image" size="small" @click="previewVisible = true">查看图片</el-button>
+    <div>技术支持</div>
 
     <!-- 图片查看器：点击查看上传的大图 -->
-    <el-image-viewer v-if="previewVisible" :url-list="[image]" @close="previewVisible = false" />
+    <el-image-viewer v-if="previewVisible" :url-list="[toAvatarSrc(image)]" @close="previewVisible = false" />
 
     <!-- 裁切弹窗：上传后先按组件宽高比裁切，确认后再压缩 -->
     <SfModal v-model="cropVisible" title="裁剪图片" width="720px">
