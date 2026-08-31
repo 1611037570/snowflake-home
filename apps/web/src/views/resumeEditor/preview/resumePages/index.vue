@@ -1,7 +1,7 @@
 <script setup>
 // 简历分页渲染可复用组件：接收 resumeItem（data/config/fixedConfig/ui），渲染分页后的简历页面
 // 数据源由 props 传入，不依赖 resume store；供编辑器预览、模板缩略图、全屏查看复用
-import { computed, inject, onMounted, onUnmounted, provide, ref } from "vue";
+import { computed, inject, onMounted, onUnmounted, provide, ref, watch } from "vue";
 import MeasureContent from "../components/measureContent.vue";
 import ResumeModule from "../modules/index.vue";
 import { MODULE_GAP, PAGE_NUMBER_HEIGHT, RESUME_WIDTH, RESUME_HEIGHT } from "../constants";
@@ -63,6 +63,8 @@ const dataRef = computed(() => props.item.data);
 const injectedPreviewData = inject("previewData", null);
 const previewData = injectedPreviewData ?? usePreviewData(dataRef).previewData;
 provide("previewData", previewData);
+// 共享测量结果：编辑态实例写入，供智能一页等消费方复用
+const sharedModuleList = inject("previewModuleList", null);
 
 // ---------- 主题样式注入（数据源为 item.ui）----------
 const ui = computed(() => props.item.ui || {});
@@ -76,7 +78,7 @@ const allModules = computed(() => {
   const configModules = props.item.config?.fields || [];
   return [...fixedModules, ...configModules];
 });
-const { measureDone, pages, moduleClass, getPageStyle } = useResumePages({
+const { measureDone, pages, moduleClass, getPageStyle, moduleList } = useResumePages({
   measureRef,
   ui,
   themeStyles,
@@ -85,6 +87,10 @@ const { measureDone, pages, moduleClass, getPageStyle } = useResumePages({
   selectedModule,
   isReadonly,
   uid,
+});
+// 编辑态实例把测量结果写入共享 ref，供智能一页复用，避免其重复挂载测量容器
+watch(moduleList, (list) => {
+  if (!isReadonly.value && sharedModuleList) sharedModuleList.value = list;
 });
 const containerStyle = ref({
   width: `${RESUME_WIDTH}px`,
