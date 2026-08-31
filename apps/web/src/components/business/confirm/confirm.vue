@@ -15,8 +15,8 @@
         v-if="isVisible"
         ref="dialogRef"
         tabindex="-1"
-        class="fixed top-1/2 left-1/2 flex w-96 -translate-x-1/2 -translate-y-1/2 flex-col gap-3 rounded-3xl border border-sf-b bg-sf-primary p-4 shadow-lg"
-        :style="{ zIndex: index }"
+        class="fixed top-1/2 left-1/2 flex w-96 -translate-x-1/2 -translate-y-1/2 flex-col gap-3 rounded-3xl border border-sf-b bg-sf-primary p-4"
+        :style="{ '--duration': animationTime, zIndex: index }"
       >
         <div class="text-xl font-semibold" v-if="title">{{ title }}</div>
         <div class="text-base text-sf-text" v-if="content">{{ content }}</div>
@@ -106,9 +106,6 @@ defineExpose({ close: handleCancel });
 </script>
 
 <style lang="scss" scoped>
-:root {
-  --duration: v-bind(animationTime);
-}
 .fade-enter-active,
 .fade-leave-active {
   transition: all var(--duration);
@@ -124,6 +121,6 @@ defineExpose({ close: handleCancel });
 .up-enter-from,
 .up-leave-to {
   opacity: 0;
-  transform: translate3d(-50%, 100px, 0);
+  translate: -50% calc(-50% + 100px);
 }
 </style>
