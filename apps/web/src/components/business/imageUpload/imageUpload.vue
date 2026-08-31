@@ -73,7 +73,8 @@ const initCropper = () => {
     zoomable: true,
     cropBoxMovable: true,
     cropBoxResizable: true,
-    background: false,
+    // 开启背景棋盘格，图片未覆盖区域显示透明格纹
+    background: true,
   });
 };
 
@@ -196,24 +197,5 @@ const removeImage = () => {
 /* 裁切器可视区域高度 */
 .cropper-box {
   height: 480px;
-  /* 图片未覆盖区域显示透明棋盘格，便于识别裁切空白 */
-  background-color: var(--color-gray-50);
-  background-image:
-    linear-gradient(
-      45deg,
-      var(--color-gray-200) 25%,
-      transparent 25%,
-      transparent 75%,
-      var(--color-gray-200) 75%
-    ),
-    linear-gradient(
-      45deg,
-      var(--color-gray-200) 25%,
-      transparent 25%,
-      transparent 75%,
-      var(--color-gray-200) 75%
-    );
-  background-size: 20px 20px;
-  background-position: 0 0, 10px 10px;
 }
 </style>
