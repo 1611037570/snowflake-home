@@ -43,10 +43,10 @@ export const compressWebp = async (
   dst.height = targetHeight;
   // pica 高质量缩放（lanczos3 滤波 + 适度锐化）
   const canvas = await picaInstance.resize(source, dst, {
-    filter: "lanczos3",
-    unsharpAmount: 120,
-    unsharpRadius: 1,
-    unsharpThreshold: 2,
+    filter: "hamming",
+    unsharpAmount: 160,
+    unsharpRadius: 0.6,
+    unsharpThreshold: 1,
   });
 
   // 压缩后打印一次（WebP 有损导出，保留透明）
