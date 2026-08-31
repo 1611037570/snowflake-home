@@ -9,6 +9,7 @@ import Progress from "./modules/progress.vue";
 import ModuleNavigator from "./modules/moduleNavigator.vue";
 import QaAnswer from "./modules/qaAnswer.vue";
 import Debug from "./modules/debug.vue";
+import ResumeCheck from "./modules/resumeCheck.vue";
 
 defineOptions({ name: "ResumeToolbar" });
 
@@ -37,6 +38,7 @@ function goGitHub() {
       <ModuleNavigator />
       <OnePage />
       <Ai />
+      <ResumeCheck />
       <Icon
         icon="lucide:focus"
         size="5"
