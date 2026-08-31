@@ -1,28 +1,35 @@
 <template>
   <div class="flex flex-col rounded-3xl border border-sf-b bg-sf-primary p-1.5" v-if="list.length">
     <template v-for="(item, index) in list" :key="index">
-      <!-- 分隔线 -->
-      <div class="mx-auto my-1 h-[0.5px] w-[95%] bg-sf-bg-3 px-4" v-if="index > 0 && border"></div>
-      <div
-        v-if="showItem(item)"
-        @mousedown="handleClick($event, item, index)"
-        :class="[activeClass(item), hoverClass(item)]"
-        class="relative flex h-8 w-full items-center justify-between rounded-3xl px-3"
-      >
-        <slot :item="item">
-          <div class="flex flex-1 items-center gap-1">
-            <!-- 左侧图标 -->
-            <SfIcon size="4" :icon="item.icon" class="mr-1" v-if="item.icon" />
-            <!-- 文本 -->
-            <span>
-              {{ item.name }}
-            </span>
-          </div>
-        </slot>
-        <SfIcon size="4" v-if="item.active" icon="lucide:check" />
-        <!-- 右侧图标 -->
-        <SfIcon size="4" :icon="item.rightIcon" v-if="item.rightIcon" />
-      </div>
+      <!-- 显式分割线项：仅渲染分割线，不可点击 -->
+      <div class="mx-auto my-1 h-[0.5px] w-[95%] bg-sf-bg-3 px-4" v-if="item.divider"></div>
+      <template v-else>
+        <!-- 分隔线 -->
+        <div
+          class="mx-auto my-1 h-[0.5px] w-[95%] bg-sf-bg-3 px-4"
+          v-if="index > 0 && border && !list[index - 1]?.divider"
+        ></div>
+        <div
+          v-if="showItem(item)"
+          @mousedown="handleClick($event, item, index)"
+          :class="[activeClass(item), hoverClass(item)]"
+          class="relative flex h-8 w-full items-center justify-between rounded-3xl px-3"
+        >
+          <slot :item="item">
+            <div class="flex flex-1 items-center gap-1">
+              <!-- 左侧图标 -->
+              <SfIcon size="4" :icon="item.icon" class="mr-1" v-if="item.icon" />
+              <!-- 文本 -->
+              <span>
+                {{ item.name }}
+              </span>
+            </div>
+          </slot>
+          <SfIcon size="4" v-if="item.active" icon="lucide:check" />
+          <!-- 右侧图标 -->
+          <SfIcon size="4" :icon="item.rightIcon" v-if="item.rightIcon" />
+        </div>
+      </template>
     </template>
   </div>
 </template>
