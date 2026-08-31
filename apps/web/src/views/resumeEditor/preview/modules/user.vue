@@ -14,6 +14,25 @@ const themeColor = inject("themeColor");
 const themeTemplateRef = inject("themeTemplate");
 // 风格模板：未提供时按默认样式处理
 const themeTemplate = computed(() => themeTemplateRef?.value || "default");
+// 主题差异配置：新增主题仅需在此补充，避免模板内散落主题判断
+const themeConfig = {
+  default: {
+    headerClass: "",
+    avatarClass: "mr-3",
+    showDivider: false,
+    metaClass: "flex-1",
+    contactClass: "",
+  },
+  modern: {
+    headerClass: "flex-col items-center",
+    avatarClass: "mb-2",
+    showDivider: true,
+    metaClass: "ml-0 w-full justify-center",
+    contactClass: "justify-center",
+  },
+};
+// 当前主题配置：未匹配时回退默认主题
+const theme = computed(() => themeConfig[themeTemplate.value] || themeConfig.default);
 // 用户信息展示模式（图标/文字）
 const userInfoMode = inject("userInfoMode");
 
@@ -35,29 +54,29 @@ const hasEmail = computed(() => !!user.value?.email?.value);
 
 <template>
   <div :style="[lineHeightValue(), fontValue()]" class="resume-row" data-module="user">
-    <!-- 头部基本信息：modern 风格改为居中布局 -->
-    <div class="flex flex-wrap items-center" :class="{ 'flex-col items-center': themeTemplate === 'modern' }">
-      <!-- 头像：default 风格在姓名左侧，modern 风格在姓名上方居中 -->
+    <!-- 头部基本信息：布局差异由主题配置表控制 -->
+    <div class="flex flex-wrap items-center" :class="theme.headerClass">
+      <!-- 头像：位置差异由主题配置表控制 -->
       <img
         v-if="user.avatar?.value"
         :src="user.avatar?.value"
         alt="头像"
         class="h-33 w-24 shrink-0 rounded object-cover"
-        :class="themeTemplate === 'modern' ? 'mb-2' : 'mr-3'"
+        :class="theme.avatarClass"
       />
       <h1 class="min-w-0 max-w-full font-bold tracking-wide" :style="[fontValue(14)]">
         <Text v-model="user.name" />
       </h1>
-      <!-- modern 风格：姓名下主题色短横线 -->
+      <!-- 主题装饰：姓名下主题色短横线 -->
       <div
-        v-if="themeTemplate === 'modern'"
+        v-if="theme.showDivider"
         class="my-1 h-1 w-10 rounded-full"
         :style="{ background: themeColor }"
       ></div>
-      <!-- 元信息行：default 撑满剩余宽度，modern 占满整行并居中，避免导出渲染时子项宽度取整触发换行错位 -->
+      <!-- 元信息行：宽度策略由主题配置表控制，避免导出渲染时子项宽度取整触发换行错位 -->
       <div
         class="flex min-w-0 max-w-full flex-wrap items-center gap-3"
-        :class="{ 'ml-0': themeTemplate === 'modern', 'flex-1': themeTemplate !== 'modern', 'w-full justify-center': themeTemplate === 'modern' }"
+        :class="theme.metaClass"
         :style="[fontValue(2)]"
       >
         <Text v-if="user.sex?.value" v-model="user.sex" />
@@ -67,10 +86,10 @@ const hasEmail = computed(() => !!user.value?.email?.value);
         <Text v-if="workYears" v-model="user.newWorkYears" :display-value="workYears" />
       </div>
     </div>
-    <!-- 联系方式（直接基于原字段渲染，不创建临时对象避免引用断开）；modern 风格居中 -->
+    <!-- 联系方式（直接基于原字段渲染，不创建临时对象避免引用断开）；对齐差异由主题配置表控制 -->
     <div
       class="mt-1 flex flex-wrap gap-x-6"
-      :class="{ 'justify-center': themeTemplate === 'modern' }"
+      :class="theme.contactClass"
       data-module="user"
       v-if="hasPhone || hasEmail"
     >
