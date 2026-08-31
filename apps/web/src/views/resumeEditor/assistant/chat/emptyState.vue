@@ -87,7 +87,7 @@ const handleSuggest = (card) => {
           <h3 class="text-[13px] font-bold tracking-tight text-sf-text">
             {{ card.title }}
           </h3>
-          <p class="truncate text-[10px] text-sf-text-3 opacity-70">
+          <p class="truncate text-[10px] text-sf-text-2">
             {{ card.desc }}
           </p>
         </div>
