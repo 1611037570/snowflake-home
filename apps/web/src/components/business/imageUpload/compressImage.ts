@@ -35,7 +35,7 @@ interface ResizedImage {
  * @param file - 待处理的图片文件（Blob/File）
  * @param targetWidth - 压缩目标宽度（px）
  * @param targetHeight - 压缩目标高度（px）
- * @param quality - JPEG 压缩质量 (0-1)，默认 0.92
+ * @param quality - JPEG 压缩质量 (0-1)，默认 0.92；PNG 无损格式不受该参数影响
  * @returns 压缩后的图片信息
  * @throws 文件无效、参数错误或处理失败时抛出异常
  */
@@ -55,7 +55,7 @@ export const compressImage = async (
   validateFile(file);
   const raw = await transformImage(file);
   const resized = calcResizedDimensions(raw, targetWidth, targetHeight);
-  return toBase64(resized, quality);
+  return toBase64(resized, quality, isPng(file));
 };
 
 /**
@@ -128,10 +128,23 @@ const calcResizedDimensions = (
 };
 
 /**
+ * 判断文件是否为 PNG（优先依据 MIME 类型，缺失时回退到扩展名）
+ */
+const isPng = (file: Blob): boolean => {
+  if (file.type === "image/png") return true;
+  return file instanceof File && file.name.toLowerCase().endsWith(".png");
+};
+
+/**
  * 将图片绘制到 Canvas 并导出为 base64（同步操作）
+ * PNG 导出无损格式以保留透明通道；JPEG 按 quality 压缩
  * 注意：若图片跨域且未设置 crossOrigin，会抛出 SecurityError
  */
-const toBase64 = ({ image, width, height }: ResizedImage, quality: number): ProcessedImage => {
+const toBase64 = (
+  { image, width, height }: ResizedImage,
+  quality: number,
+  png: boolean,
+): ProcessedImage => {
   const canvas = document.createElement("canvas");
   canvas.width = width;
   canvas.height = height;
@@ -145,7 +158,7 @@ const toBase64 = ({ image, width, height }: ResizedImage, quality: number): Proc
   ctx.drawImage(image, 0, 0, width, height);
 
   try {
-    const dataUrl = canvas.toDataURL("image/jpeg", quality);
+    const dataUrl = png ? canvas.toDataURL("image/png") : canvas.toDataURL("image/jpeg", quality);
     return { src: dataUrl, width, height };
   } catch (err) {
     // 捕获跨域等异常
