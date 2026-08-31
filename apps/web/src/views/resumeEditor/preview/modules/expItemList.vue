@@ -38,7 +38,8 @@ const list = computed(() => previewData.value?.[props.dataKey]?.data || []);
     <!-- 内容区 -->
     <template v-for="(item, index) in list" :key="index">
       <div class="flex flex-wrap items-center justify-between">
-        <div class="flex min-w-0 max-w-full flex-wrap items-center gap-4">
+        <!-- 信息容器撑满行内剩余宽度，避免导出渲染时子项宽度取整触发换行错位 -->
+        <div class="flex min-w-0 max-w-full flex-1 flex-wrap items-center gap-4">
           <div class="font-bold" :style="[fontValue(3)]">
             <Text v-model="item.name" />
           </div>
