@@ -54,9 +54,10 @@ const hasEmail = computed(() => !!user.value?.email?.value);
         class="my-1 h-1 w-10 rounded-full"
         :style="{ background: themeColor }"
       ></div>
+      <!-- 元信息行：default 撑满剩余宽度，modern 占满整行并居中，避免导出渲染时子项宽度取整触发换行错位 -->
       <div
         class="flex min-w-0 max-w-full flex-wrap items-center gap-3"
-        :class="{ 'ml-0': themeTemplate === 'modern' }"
+        :class="{ 'ml-0': themeTemplate === 'modern', 'flex-1': themeTemplate !== 'modern', 'w-full justify-center': themeTemplate === 'modern' }"
         :style="[fontValue(2)]"
       >
         <Text v-if="user.sex?.value" v-model="user.sex" />
