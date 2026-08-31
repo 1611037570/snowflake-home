@@ -55,6 +55,18 @@ function resetSettings() {
           v-model="system.showToolName"
           type="switch"
         />
+        <SfSetItem
+          title="窗口过小提示"
+          info="开启后，浏览器窗口过小时会弹出提醒"
+          v-model="system.showWindowTip"
+          type="switch"
+        />
+        <SfSetItem
+          title="浏览器建议提示"
+          info="开启后，使用非谷歌浏览器时会弹出建议"
+          v-model="system.showBrowserTip"
+          type="switch"
+        />
 
         <SfSetItem
           title="重置设置"
