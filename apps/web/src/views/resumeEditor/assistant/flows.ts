@@ -5,6 +5,8 @@ export type FlowStep = {
   question: string;
   // 选项按钮
   options: string[];
+  // 自由输入：等待用户在输入框输入文本作为答案
+  input?: boolean;
 };
 
 export type Flow = {
@@ -97,6 +99,33 @@ export const flows: Record<string, Flow> = {
 4. 本次不修改简历内容，data 字段原样返回。
 5. 将打招呼语写入 analysis 字段，标题使用「问题回复」。`,
         userContent: `请根据我的简历，生成一段${style}风格的开场打招呼语`,
+      };
+    },
+  },
+  // JD 对标优化：等用户在输入框输入 JD 后执行对标优化
+  jdOptimize: {
+    userContent: "帮我进行JD对标优化",
+    steps: [
+      {
+        question: "请在输入框中粘贴目标岗位的 JD 内容并发送，我将基于它对标优化你的简历",
+        options: [],
+        input: true,
+      },
+    ],
+    build: ([jd]) => {
+      return {
+        prompt: `# 任务：JD 对标优化简历
+目标岗位 JD 内容如下：
+${jd}
+
+请基于该 JD 对用户简历进行对标优化。
+要求：
+1. 逐条对比简历与 JD，给出匹配点与具体优化建议。
+2. 优化建议需可执行，不修改简历原始数据。
+3. 严格基于简历真实数据，严禁编造任何信息。
+4. 本次不修改简历内容，data 字段原样返回。
+5. 将结果写入 analysis 字段，标题使用「问题回复」。`,
+        userContent: `请根据我提供的 JD 内容，对标优化我的简历`,
       };
     },
   },
