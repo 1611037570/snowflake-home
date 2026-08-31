@@ -41,6 +41,21 @@ export const userInfoModeList = [
     value: "text",
   },
 ];
+// 头像位置列表
+export const avatarPositionList = [
+  {
+    name: "左",
+    value: "left",
+  },
+  {
+    name: "居中",
+    value: "center",
+  },
+  {
+    name: "右",
+    value: "right",
+  },
+];
 // ===========默认值=====================
 export const defaultThemeColor = themeColors[0].value;
 // 默认页边距
@@ -56,6 +71,8 @@ export const defaultModuleSpacing = 12;
 export const defaultThemeTemplate = "default";
 // 默认用户信息展示模式
 export const defaultUserInfoMode = "text";
+// 默认头像位置
+export const defaultAvatarPosition = "left";
 // ===========参数范围（编辑器滑杆与一页纸压缩共用，只维护这一处）=====================
 export const uiParamRanges = {
   // 页边距
@@ -84,4 +101,6 @@ export const DEFAULT_UI = {
   fontFamily: defaultFontFamily,
   // 用户信息展示模式
   userInfoMode: defaultUserInfoMode,
+  // 头像位置
+  avatarPosition: defaultAvatarPosition,
 };

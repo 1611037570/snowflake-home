@@ -2,6 +2,7 @@
 import { computed } from "vue";
 import { useResumeStore } from "@/stores";
 import {
+  avatarPositionList,
   fontFamilyList,
   themeColors,
   uiParamRanges,
@@ -27,6 +28,14 @@ const userInfoMode = computed({
   get: () => currentUI.value?.userInfoMode,
   set: (value) => {
     currentUI.value.userInfoMode = value;
+  },
+});
+
+// 头像位置（左/居中/右）
+const avatarPosition = computed({
+  get: () => currentUI.value?.avatarPosition,
+  set: (value) => {
+    currentUI.value.avatarPosition = value;
   },
 });
 </script>
@@ -126,6 +135,21 @@ const userInfoMode = computed({
           @click="userInfoMode = mode.value"
         >
           {{ mode.name }}
+        </div>
+      </div>
+      <!-- 头像位置切换：左 / 居中 / 右 -->
+      <div class="text-sm font-bold text-sf-text">头像位置</div>
+      <div class="flex gap-4">
+        <div
+          v-for="item in avatarPositionList"
+          :key="item.value"
+          class="hover:bg-sf-hover flex-1 cursor-pointer rounded-md border border-sf-b py-2 text-center text-sm transition-all"
+          :class="{
+            'border-sf-theme-2 bg-sf-theme text-sf-base': avatarPosition === item.value,
+          }"
+          @click="avatarPosition = item.value"
+        >
+          {{ item.name }}
         </div>
       </div>
     </ConfigGroup>

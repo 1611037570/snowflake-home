@@ -1,18 +1,12 @@
 <script setup>
-import UserAvatar from "../components/userAvatar.vue";
 import UserContact from "../components/userContact.vue";
-import UserMeta from "../components/userMeta.vue";
-import UserName from "../components/userName.vue";
+import UserHeading from "../components/userHeading.vue";
 </script>
 
 <template>
-  <!-- 默认主题：头像在姓名左侧，元信息撑满剩余宽度避免导出换行错位 -->
+  <!-- 默认主题：头部布局与头像位置由 UserHeading 统一控制 -->
   <div>
-    <div class="flex flex-wrap items-center">
-      <UserAvatar class="mr-3" />
-      <UserName />
-      <UserMeta class="flex-1" />
-    </div>
+    <UserHeading />
     <UserContact />
   </div>
 </template>
