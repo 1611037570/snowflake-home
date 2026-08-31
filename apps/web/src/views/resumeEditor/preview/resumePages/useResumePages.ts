@@ -61,7 +61,7 @@ export const useResumePages = ({
     if (isThumb.value && list.length > 0) measureDone.value = true;
   });
 
-  // 分页逻辑：展平所有模块行，逐行贪心装入页面
+  // 分页逻辑：user 模块固定位于简历最顶部，整体作为一块参与分页，其余模块逐行贪心装入页面
   const pages = computed<PageSlice[][]>(() => {
     const padding = ui.value.padding || 0;
     const moduleSpacing = ui.value.moduleSpacing ?? MODULE_GAP;
@@ -96,11 +96,30 @@ export const useResumePages = ({
       }
     };
 
-    const items = moduleList.value.flatMap((group) =>
-      group.rows.map((row, index) => ({ group, row, isHead: index === 0 })),
-    );
+    // 展平模块行；user 模块整体合成一块，防止其内部行被跨页切分
+    const blocks = moduleList.value.flatMap((group) => {
+      if (group.moduleKey === "user" && group.rows.length > 0) {
+        return [
+          {
+            group,
+            row: {
+              index: group.rows[0].index,
+              height: group.rows.reduce((sum, r) => sum + r.height, 0),
+            },
+            isHead: true,
+            rowIndexes: group.rows.map((r) => r.index),
+          },
+        ];
+      }
+      return group.rows.map((row, index) => ({
+        group,
+        row,
+        isHead: index === 0,
+        rowIndexes: [row.index],
+      }));
+    });
 
-    for (const { group, row, isHead } of items) {
+    for (const { group, row, isHead, rowIndexes } of blocks) {
       // 遇到新模块，先提交上一个切片，让 currentPage 如实反映页内内容
       if (sliceModule && sliceModule !== group) commitSlice();
 
@@ -118,7 +137,7 @@ export const useResumePages = ({
       }
 
       sliceModule = group;
-      sliceRows.push(row);
+      sliceRows.push(...rowIndexes.map((index) => ({ index })));
       currentHeight += gap + row.height;
     }
 
