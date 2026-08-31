@@ -82,7 +82,7 @@ const actionButtonConfig = computed(() => {
       icon: "ph:stop-circle-fill",
       title: "停止生成",
       class:
-        "bg-sf-error/10 text-sf-error shadow-sm hover:bg-sf-error hover:text-white active:scale-95",
+        "bg-sf-error-2 text-sf-error shadow-sm hover:bg-sf-error hover:text-white active:scale-95",
       handler: () => emit("stop"),
       disabled: false,
     };
@@ -91,7 +91,7 @@ const actionButtonConfig = computed(() => {
     icon: "ph:paper-plane-right-fill",
     title: "发送消息",
     class: canSend.value
-      ? "cursor-pointer bg-sf-theme text-white shadow-lg shadow-sf-theme/25 hover:-translate-y-0.5 hover:shadow-xl hover:shadow-sf-theme/35 active:translate-y-0 active:scale-95"
+      ? "cursor-pointer bg-sf-theme text-white  hover:-translate-y-0.5  active:translate-y-0 active:scale-95"
       : "cursor-not-allowed bg-sf-bg-3 text-sf-text opacity-50",
     handler: () => handleSend(),
     disabled: !canSend.value,
@@ -146,7 +146,7 @@ onBeforeUnmount(() => document.removeEventListener("click", closeModulePanel));
     <div class="relative z-10 w-full max-w-4xl">
       <!-- 主输入容器：增强阴影与圆角细节 -->
       <div
-        class="group hover:border-sf-b-hover relative flex flex-col rounded-3xl border border-sf-b bg-sf-bg p-1 shadow-sm transition-all duration-500"
+        class="group hover:border-sf-b-hover relative flex flex-col rounded-3xl border border-sf-b bg-sf-bg p-1 transition-all duration-500"
       >
         <!-- 输入框区域 -->
         <el-input
@@ -213,6 +213,7 @@ onBeforeUnmount(() => document.removeEventListener("click", closeModulePanel));
               class="transition-all duration-500"
               :class="{
                 'group-focus-within:scale-110 ': canSend,
+                'cursor-not-allowed!': !canSend,
               }"
             />
           </button>
