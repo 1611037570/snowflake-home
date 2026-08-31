@@ -1,7 +1,7 @@
 <script setup>
 import { computed, inject } from "vue";
 import Content from "../theme/content.vue";
-import Title from "../theme/title.vue";
+import Title from "../theme/title/index.vue";
 import Text from "./text.vue";
 
 import { getTime } from "../../utils";

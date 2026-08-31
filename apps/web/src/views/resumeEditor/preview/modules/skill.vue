@@ -1,7 +1,7 @@
 <script setup>
 import { computed, inject } from "vue";
 import Content from "../theme/content.vue";
-import Title from "../theme/title.vue";
+import Title from "../theme/title/index.vue";
 
 // 从上层注入获取代理后的预览数据
 const previewData = inject("previewData");
