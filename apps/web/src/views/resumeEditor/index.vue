@@ -10,7 +10,9 @@
           <Builder v-if="focusMode || layout !== 'ai'" :class="{ 'ai-generating': isGenerating }" />
         </Transition>
         <!-- 中间预览栏 -->
-        <Preview :class="{ 'ai-generating': isGenerating }" />
+        <Transition name="resume-preview" appear>
+          <Preview :class="{ 'ai-generating': isGenerating }" />
+        </Transition>
         <GeneratingMask v-if="isGenerating && !isPrinting" :visible="true" />
       </div>
       <!-- 右侧AI助手栏 -->
@@ -130,17 +132,51 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
-.resume-builder-enter-active,
+/* 进入：错峰起步，同一时刻到达终点 */
+.resume-header-enter-active {
+  transition:
+    transform 0.48s cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 0.48s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.resume-builder-enter-active {
+  transition:
+    transform 0.42s cubic-bezier(0.22, 1, 0.36, 1) 0.06s,
+    opacity 0.42s cubic-bezier(0.22, 1, 0.36, 1) 0.06s;
+}
+
+/* 预览面板：自下向上滑动淡入（仅位移与透明度，避免缩放导致重栅格化卡顿） */
+.resume-preview-enter-active {
+  transition:
+    transform 0.36s cubic-bezier(0.22, 1, 0.36, 1) 0.12s,
+    opacity 0.36s cubic-bezier(0.22, 1, 0.36, 1) 0.12s;
+}
+
+.resume-assistant-enter-active {
+  transition:
+    transform 0.3s cubic-bezier(0.22, 1, 0.36, 1) 0.18s,
+    opacity 0.3s cubic-bezier(0.22, 1, 0.36, 1) 0.18s;
+}
+
+.resume-toolbar-enter-active {
+  transition:
+    transform 0.24s cubic-bezier(0.22, 1, 0.36, 1) 0.24s,
+    opacity 0.24s cubic-bezier(0.22, 1, 0.36, 1) 0.24s;
+}
+
+/* 离开：保持快速退场，不受进入错峰影响 */
 .resume-builder-leave-active,
-.resume-assistant-enter-active,
 .resume-assistant-leave-active,
-.resume-header-enter-active,
 .resume-header-leave-active,
-.resume-toolbar-enter-active,
 .resume-toolbar-leave-active {
   transition:
     transform 0.25s ease,
     opacity 0.25s ease;
+}
+
+/* 预览面板退场：仅淡出 */
+.resume-preview-leave-active {
+  transition: opacity 0.25s ease;
 }
 
 .resume-header-enter-from,
@@ -164,6 +200,15 @@ onUnmounted(() => {
 .resume-assistant-enter-from,
 .resume-assistant-leave-to {
   transform: translateX(100%);
+  opacity: 0;
+}
+
+.resume-preview-enter-from {
+  transform: translateY(100px);
+  opacity: 0;
+}
+
+.resume-preview-leave-to {
   opacity: 0;
 }
 </style>
