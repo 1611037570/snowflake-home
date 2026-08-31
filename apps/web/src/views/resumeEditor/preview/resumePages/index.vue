@@ -108,7 +108,13 @@ const containerHeight = ref({
     class="fixed -top-999 -left-999 h-auto bg-white text-black"
     ref="measureRef"
     :class="ui.fontFamily"
-    :style="[paddingValue(), containerWidth]"
+    :style="[
+      paddingValue(),
+      containerWidth,
+      {
+        minHeight: `${RESUME_HEIGHT}px`,
+      },
+    ]"
   >
     <MeasureContent v-if="!measureDone" :all-modules="allModules" />
     <div
