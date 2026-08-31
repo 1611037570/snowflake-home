@@ -149,54 +149,54 @@ const handleUseTemplate = () => {
         @click="handleEdit(card.item)"
       >
         <!-- 简历缩略预览：可直接查看与全屏放大 -->
-        <div
-          class="relative aspect-[794/1123] w-full overflow-hidden rounded-lg border border-sf-b bg-sf-bg"
-        >
+        <div class="relative aspect-[794/1123] w-full overflow-hidden border border-sf-b bg-sf-bg">
           <ThumbPreview
             :item="getThumbItem(card.item)"
             action-text="编辑"
             @select="handleEdit(card.item)"
           />
         </div>
-        <!-- 标题与操作 -->
-        <div class="mt-3 flex items-start justify-between gap-2">
-          <div class="min-w-0">
-            <div class="truncate text-base font-black text-sf-text">
-              {{ getResumeTitle(card.item.data) }}
+        <div class="p-3">
+          <!-- 标题与操作 -->
+          <div class="mt-3 flex items-start justify-between gap-2">
+            <div class="min-w-0">
+              <div class="truncate text-base font-black text-sf-text">
+                {{ getResumeTitle(card.item.data) }}
+              </div>
+              <div class="mt-1 truncate text-sm text-sf-text-2">
+                {{ getResumePosition(card.item) }}
+              </div>
             </div>
-            <div class="mt-1 truncate text-sm text-sf-text-2">
-              {{ getResumePosition(card.item) }}
+            <div class="flex shrink-0 items-center gap-1">
+              <span
+                class="flex h-8 w-8 cursor-pointer items-center justify-center rounded-full text-sf-text-2 transition-colors duration-200 hover:bg-sf-theme-2 hover:text-sf-theme"
+                @click.stop="handleEdit(card.item)"
+              >
+                <SfIcon icon="lucide:pencil" size="4" />
+              </span>
+              <button
+                type="button"
+                class="flex h-8 w-8 items-center justify-center rounded-full text-sf-text-2 transition-colors duration-200 hover:bg-sf-error-2 hover:text-sf-error"
+                @click.stop="handleDelete(card.item)"
+              >
+                <SfIcon icon="lucide:trash-2" size="4" />
+              </button>
             </div>
           </div>
-          <div class="flex shrink-0 items-center gap-1">
-            <span
-              class="flex h-8 w-8 cursor-pointer items-center justify-center rounded-full text-sf-text-2 transition-colors duration-200 hover:bg-sf-theme-2 hover:text-sf-theme"
-              @click.stop="handleEdit(card.item)"
-            >
-              <SfIcon icon="lucide:pencil" size="4" />
-            </span>
-            <button
-              type="button"
-              class="flex h-8 w-8 items-center justify-center rounded-full text-sf-text-2 transition-colors duration-200 hover:bg-sf-error-2 hover:text-sf-error"
-              @click.stop="handleDelete(card.item)"
-            >
-              <SfIcon icon="lucide:trash-2" size="4" />
-            </button>
-          </div>
-        </div>
 
-        <!-- 底部：进度条与最后使用时间 -->
-        <div class="mt-4 flex items-center gap-3">
-          <div class="h-1.5 flex-1 overflow-hidden rounded-full bg-sf-bg-2">
-            <div
-              class="h-full rounded-full"
-              :class="getProgressClass(card.progress)"
-              :style="{ width: `${card.progress}%` }"
-            ></div>
+          <!-- 底部：进度条与最后使用时间 -->
+          <div class="mt-4 flex items-center gap-3">
+            <div class="h-1.5 flex-1 overflow-hidden rounded-full bg-sf-bg-2">
+              <div
+                class="h-full rounded-full"
+                :class="getProgressClass(card.progress)"
+                :style="{ width: `${card.progress}%` }"
+              ></div>
+            </div>
+            <span class="shrink-0 text-xs text-sf-text-3"
+              >最后使用：{{ getLastUseTime(card.item) }}</span
+            >
           </div>
-          <span class="shrink-0 text-xs text-sf-text-3"
-            >最后使用：{{ getLastUseTime(card.item) }}</span
-          >
         </div>
       </ResumeCardContainer>
     </div>

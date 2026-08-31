@@ -1,16 +1,15 @@
 /**
- * useSmartOnePage —— 智能一页自适应 Hook
+ * useSmartOnePage —— 智能一页自适应
  *
- * 复用现有分页算法（useResumePages）与测量逻辑（useRowInfo）。
- * 当内容超过一页时，在设定的"可用参数"（页边距 / 字体大小 / 行间距 / 模块间距）
- * 最小取值范围内，按压缩优先级逐项向下调节参数，直到内容收敛为单页且不超出页面。
+ * 直接复用预览层（编辑态 ResumePages 实例）的测量结果 moduleList（模块+行高），
+ * 不再挂载独立测量容器，避免重复渲染整份简历与重复注册观察器。
  *
- * 说明：
- *   - 参数只会向下压缩、不会自动回弹，避免收敛震荡；用户手动调整参数时会以新值重新收敛
- *   - 测量是异步的（DOM 测量防抖），收敛状态见 ready / isOnePage / canFit
+ * 压缩计算为纯数学估算：
+ *   - 模块间距、页边距对单页判断是精确的（与分页算法公式一致）
+ *   - 行高、字号按比例缩放估算行高
+ * 参数只向下压缩、不会回弹，按压缩优先级逐项进行。
  */
-import { computed, ref, toValue, watch, type ComputedRef, type Ref } from "vue";
-import { useDebounceFn } from "@vueuse/core";
+import { inject, type ComputedRef } from "vue";
 import { MODULE_GAP, PAGE_NUMBER_HEIGHT, RESUME_HEIGHT } from "../constants";
 import {
   defaultFontSize,
@@ -19,8 +18,6 @@ import {
   defaultPadding,
   uiParamRanges,
 } from "@/stores/modules/resume/uiConfig";
-import { useResumePages } from "./useResumePages";
-import { useResumeTheme } from "./useResumeTheme";
 
 /** 可被智能压缩的 ui 字段 */
 export type OnePageAdjustKey = "padding" | "fontSize" | "lineHeight" | "moduleSpacing";
@@ -64,28 +61,17 @@ interface UseSmartOnePageOptions {
   ui: ComputedRef<Record<string, any>>;
   /** 是否显示页码 */
   showPageNumber: ComputedRef<boolean>;
-  /** 编辑态选中的模块 */
-  selectedModule: Ref<any[]>;
-  /** 是否只读（决定是否渲染选中高亮） */
-  isReadonly: ComputedRef<boolean>;
   /** 可调节参数（数组顺序即压缩优先级），默认 defaultOnePageAdjustable */
   adjustable?: OnePageAdjustableItem[];
-  /** 是否启用自动收敛（默认 true）；传响应式值可在点击等时机再启用 */
-  enabled?: boolean | ComputedRef<boolean> | Ref<boolean>;
 }
 
 export const useSmartOnePage = ({
   ui,
   showPageNumber,
-  selectedModule,
-  isReadonly,
   adjustable = defaultOnePageAdjustable,
-  enabled = true,
 }: UseSmartOnePageOptions) => {
-  // 实例唯一前缀，隔离多实例的分页裁剪样式
-  const uid = `sp-${Math.random().toString(36).slice(2, 8)}`;
-  // 测量容器 ref，由调用方绑定到隐藏测量容器
-  const measureRef = ref<HTMLElement | null>(null);
+  // 复用预览层测量结果（编辑态 ResumePages 实例注入的共享 ref）
+  const previewModuleList = inject<any>("previewModuleList", null);
 
   // 读取 ui 中可调字段的当前值，缺失时用默认值兜底
   const pickAdjustable = (source: Record<string, any>) => {
@@ -97,112 +83,48 @@ export const useSmartOnePage = ({
     return result;
   };
 
-  // 当前压缩参数快照（只向下压缩，不回弹）
-  const fitParams = ref<Record<OnePageAdjustKey, number>>(pickAdjustable(ui.value));
-
-  // 应用压缩参数后的 ui：渲染与测量统一使用它，保证计算一致
-  const fitUi = computed<Record<string, any>>(() => ({ ...ui.value, ...fitParams.value }));
-
-  // 主题样式基于 fitUi 生成，并通过 provide 注入给模块子组件
-  const themeStyles = useResumeTheme(fitUi);
-
-  // 复用现有测量 + 分页算法
-  const { measureDone, pages, moduleClass, getPageStyle, moduleList } = useResumePages({
-    measureRef,
-    ui: fitUi,
-    themeStyles,
-    showPageNumber,
-    isThumb: computed(() => false),
-    selectedModule,
-    isReadonly,
-    uid,
-  });
-
-  // 收敛状态
-  const ready = ref(false); // 是否已收敛（单页或已到可用参数下限）
-  const isOnePage = ref(false); // 是否成功收敛为单页
-  const canFit = ref(true); // 是否在可用参数范围内可压缩到一页
-
-  // 是否启用自动收敛（支持点击等时机再启用）
-  const enabledRef = computed(() => toValue(enabled));
-
-  // 依据当前测量结果计算下一步压缩参数；无法再压缩时返回 null
-  const computeNext = (): Partial<Record<OnePageAdjustKey, number>> | null => {
-    const rows = moduleList.value.flatMap((group) => group.rows);
+  /**
+   * 依据预览层测量结果同步计算可压到一页的参数组合
+   * @returns 参数组合与是否成功；测量未就绪时返回 null
+   */
+  const computeFit = (): { fitParams: Record<OnePageAdjustKey, number>; ok: boolean } | null => {
+    const list = previewModuleList?.value;
+    if (!list || list.length === 0) return null;
+    const rows = list.flatMap((group: any) => group.rows);
     if (rows.length === 0) return null;
-    const spacing = fitParams.value.moduleSpacing ?? MODULE_GAP;
-    const padding = fitParams.value.padding ?? 0;
+
+    // 测量基准：预览层行高对应原始 ui 参数
+    const base = pickAdjustable(ui.value);
     const bottomSpace = showPageNumber.value ? PAGE_NUMBER_HEIGHT : 0;
-    // 与分页算法保持一致：可用高度 = 页面高度 - 页边距 - 页码区高度
-    const availHeight = RESUME_HEIGHT - padding - bottomSpace;
-    // 单页内容总高度 = 所有行高 + 模块间距 × 模块间隔数
-    const totalHeight =
-      rows.reduce((sum, row) => sum + row.height, 0) + spacing * (moduleList.value.length - 1);
-    const scale = totalHeight > 0 ? Math.min(1, availHeight / totalHeight) : 1;
 
-    // 按优先级逐项压缩：目标值向下取整到步长且不低于 min，无实际变化才尝试下一项
+    // 估算总高：行高按字号×行高比例缩放，模块间距计入模块间隔
+    const estimateTotal = (params: Record<string, number>) => {
+      const scale = (params.fontSize * params.lineHeight) / (base.fontSize * base.lineHeight);
+      const rowsTotal = rows.reduce((sum, row: any) => sum + row.height * scale, 0);
+      return rowsTotal + (params.moduleSpacing ?? MODULE_GAP) * (list.length - 1);
+    };
+    // 可用内容高：页面高 - 页边距 - 页码区高
+    const estimateAvail = (padding: number) => RESUME_HEIGHT - padding - bottomSpace;
+    const fits = (params: Record<string, number>) =>
+      estimateTotal(params) <= estimateAvail(params.padding);
+
+    // 当前参数已能放下则直接成功
+    if (fits(base)) return { fitParams: base, ok: true };
+
+    // 按优先级逐项向下压缩，找到能放下的参数组合
+    const params = { ...base };
     for (const { key, min, step } of adjustable) {
-      const current = fitParams.value[key];
-      if (current == null) continue;
-      const target = Math.max(floorByStep(current * scale, step), min);
-      if (target < current - 1e-9) return { [key]: target };
+      let val = params[key];
+      while (val > min + 1e-9) {
+        const next = Math.max(floorByStep(val - step, step), min);
+        params[key] = next;
+        if (fits(params)) return { fitParams: { ...params }, ok: true };
+        val = next;
+      }
     }
-    return null;
+    // 全部参数压到下限仍放不下
+    return { fitParams: params, ok: false };
   };
 
-  // 收敛一步：已是单页则完成；否则继续压缩参数
-  const evaluate = () => {
-    if (moduleList.value.length === 0) return; // 尚未测量
-    if (!enabledRef.value) return; // 未启用时保持用户参数
-    if (pages.value.length === 1) {
-      ready.value = true;
-      isOnePage.value = true;
-      canFit.value = true;
-      return;
-    }
-    const next = computeNext();
-    if (!next) {
-      // 可用参数已到下限仍超过一页：停止，标记无法压缩
-      ready.value = true;
-      isOnePage.value = false;
-      canFit.value = false;
-      return;
-    }
-    ready.value = false;
-    fitParams.value = { ...fitParams.value, ...next };
-  };
-
-  // 参数或分页结果变化后，等待测量收敛（测量自身有 100ms 防抖，这里留出余量）再评估
-  const scheduleEvaluate = useDebounceFn(evaluate, 200);
-  watch(pages, scheduleEvaluate);
-  watch(moduleList, scheduleEvaluate);
-  // 启用收敛的瞬间立即评估一次（点击触发）
-  watch(enabledRef, (val) => {
-    if (val) scheduleEvaluate();
-  });
-
-  // 用户手动调整可调参数时，以用户设置的新值为准重新收敛
-  watch(
-    () => adjustable.map(({ key }) => ui.value[key]),
-    () => {
-      fitParams.value = { ...fitParams.value, ...pickAdjustable(ui.value) };
-      ready.value = false;
-      scheduleEvaluate();
-    },
-  );
-
-  return {
-    fitUi,
-    themeStyles,
-    measureRef,
-    measureDone,
-    pages,
-    moduleClass,
-    getPageStyle,
-    uid,
-    fitParams,
-    ready,
-    isOnePage,
-    canFit,
-  };
+  return { computeFit };
 };
