@@ -88,10 +88,9 @@ function handleEditConfirm() {
             {{ title }}
           </div>
           <div class="flex items-center gap-2 opacity-0 group-hover:opacity-100">
-            <SfTooltip content="隐藏模块">
+            <SfTooltip content="隐藏模块" v-if="currentForm.key !== 'user'">
               <SfIcon
                 @click.stop="moduleHidden"
-                v-if="currentForm.key !== 'user'"
                 icon="lucide:eye-off"
                 size="4"
                 class="cursor-pointer hover:text-sf-theme"
