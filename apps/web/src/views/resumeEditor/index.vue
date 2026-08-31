@@ -45,6 +45,8 @@
       <SfIcon icon="carbon:minimize" size="5" />
       <span>退出专注</span>
     </div>
+    <!-- 环境检测：浏览器与窗口尺寸不符合时右侧弹窗提示 -->
+    <DetectTip />
   </div>
 </template>
 
@@ -58,6 +60,7 @@ import Assistant from "./assistant/index.vue";
 import Builder from "./builder/index.vue";
 import Header from "./components/header/index.vue";
 import GeneratingMask from "./components/generatingMask.vue";
+import DetectTip from "./components/detectTip.vue";
 import Preview from "./preview/index.vue";
 import Toolbar from "./toolbar/index.vue";
 // 预览层代理数据及批量操作句柄
