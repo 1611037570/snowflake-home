@@ -37,16 +37,18 @@ const hidden = defineModel("hidden", {
 // 模块标题：优先读取配置的 name 字段（编辑标题后实时刷新），其次回退数据 name
 const title = computed(() => name.value);
 
-// 切换模块隐藏状态
-function toggleHidden() {
-  hidden.value = !hidden.value;
-}
-
 function del() {
   proxy.$confirm(`确定要删除${title.value}模块吗？`, "删除确认").then(() => {
     removeSelf();
   });
 }
+
+function moduleHidden() {
+  proxy.$confirm(`隐藏后内容仍保留在简历中，可在隐藏模块中恢复。`, "隐藏确认").then(() => {
+    hidden.value = true;
+  });
+}
+
 function handleAdd() {
   // 新增一条子项：引擎内部深拷贝 addConfig 后 push，避免多个子项共享同一份引用
   addItem();
@@ -86,14 +88,15 @@ function handleEditConfirm() {
             {{ title }}
           </div>
           <div class="flex items-center gap-2 opacity-0 group-hover:opacity-100">
-            <SfIcon
-              @click.stop="toggleHidden"
-              v-if="currentForm.key !== 'user'"
-              :icon="hidden ? 'lucide:eye-off' : 'lucide:eye'"
-              size="4"
-              class="cursor-pointer hover:text-sf-theme"
-              :class="hidden ? 'text-sf-theme' : ''"
-            />
+            <SfTooltip content="隐藏模块">
+              <SfIcon
+                @click.stop="moduleHidden"
+                v-if="currentForm.key !== 'user'"
+                icon="lucide:eye-off"
+                size="4"
+                class="cursor-pointer hover:text-sf-theme"
+              />
+            </SfTooltip>
             <SfIcon
               v-if="edit"
               @click.stop="handleEdit"
