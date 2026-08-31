@@ -66,11 +66,11 @@ const handleSuggest = (card) => {
       <button
         v-for="card in suggestCards"
         :key="card.title"
-        class="group flex cursor-pointer items-start gap-3 rounded-xl border border-sf-b bg-sf-bg-2 p-3 text-left transition-all duration-300 hover:-translate-y-0.5 hover:border-sf-theme hover:shadow-md active:scale-[0.98]"
+        class="group/card flex cursor-pointer items-start gap-3 rounded-xl border border-sf-b bg-sf-bg p-3 text-left transition-all duration-300 hover:-translate-y-0.5 hover:border-sf-theme active:scale-[0.98]"
         @click="handleSuggest(card)"
       >
         <div
-          class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-sf-bg text-sf-text-3 transition-colors duration-300 group-hover:bg-sf-theme/10 group-hover:text-sf-theme"
+          class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-sf-bg-2 text-sf-text-3 transition-colors duration-300 group-hover/card:bg-sf-theme-3 group-hover/card:text-sf-theme"
         >
           <SfIcon :icon="card.icon" size="4.5" />
         </div>
