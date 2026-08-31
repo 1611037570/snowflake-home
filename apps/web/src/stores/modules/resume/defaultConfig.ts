@@ -46,4 +46,15 @@ export const DEFAULT_SYSTEM = {
   showDebug: false,
   // 是否展示工具栏工具名称
   showToolName: false,
+  // 是否启用窗口过小检测提示
+  showWindowTip: true,
+  // 是否启用浏览器建议提示
+  showBrowserTip: true,
+};
+// 默认编辑器配置
+export const DEFAULT_EDITOR = {
+  // 编辑器区域宽度(px)
+  editorWidth: 380,
+  // AI助手区域宽度(px)
+  assistantWidth: 400,
 };
