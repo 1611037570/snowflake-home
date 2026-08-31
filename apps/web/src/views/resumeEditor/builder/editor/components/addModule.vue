@@ -99,7 +99,7 @@ const handleCancel = () => {
 
 <template>
   <header class="mt-2 mb-3 flex items-center text-lg font-bold">
-    <SfIcon icon="ic:round-add" size="5" />
+    <SfIcon icon="ic:round-add" size="4" />
     <div>增加模块</div>
   </header>
 
