@@ -79,6 +79,8 @@ export const printImage = async (rootRef?: ImageExportRoot) => {
       scale: 2,
       backgroundColor: "#ffffff",
       embedFonts: true,
+      // 像素级精确布局：避免字体回退栅格化导致文本重新换行而漏出内容
+      reconcile: true,
     });
 
     if (!canvas || canvas.width === 0 || canvas.height === 0) {
