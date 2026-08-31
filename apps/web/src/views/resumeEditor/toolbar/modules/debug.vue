@@ -39,14 +39,30 @@
           </SfCollapse>
         </SfTabPane>
         <SfTabPane value="config">
-          <div class="max-h-[50vh] overflow-y-auto">
-            <MdPreview
-              :modelValue="configMd"
-              editorId="debug-config"
-              :codeFoldable="false"
-              class="bg-transparent! p-0!"
-            />
-          </div>
+          <SfCollapse>
+            <SfCollapseItem name="currentFixedConfig">
+              <template #title>原始配置 (currentFixedConfig)</template>
+              <div class="max-h-[50vh] overflow-y-auto">
+                <MdPreview
+                  :modelValue="fixedConfigMd"
+                  editorId="debug-config"
+                  :codeFoldable="false"
+                  class="bg-transparent! p-0!"
+                />
+              </div>
+            </SfCollapseItem>
+            <SfCollapseItem name="currentConfig">
+              <template #title>当前配置 (currentConfig)</template>
+              <div class="max-h-[50vh] overflow-y-auto">
+                <MdPreview
+                  :modelValue="configMd"
+                  editorId="debug-config"
+                  :codeFoldable="false"
+                  class="bg-transparent! p-0!"
+                />
+              </div>
+            </SfCollapseItem>
+          </SfCollapse>
         </SfTabPane>
       </SfTab>
     </div>
@@ -76,7 +92,7 @@ const previewData = inject("previewData");
 
 // 获取原始数据
 const resumeStore = useResumeStore();
-const { currentData, currentConfig, system } = storeToRefs(resumeStore);
+const { currentData, currentConfig, system, currentFixedConfig } = storeToRefs(resumeStore);
 
 // 把 fieldProxy 转为可序列化的对象 { value, newValue }
 const serializePreview = (obj) => {
@@ -118,9 +134,17 @@ const rawMd = computed(() => {
   }
 });
 
+const fixedConfigMd = computed(() => {
+  try {
+    return wrapJson(JSON.stringify(currentFixedConfig.value, null, 2));
+  } catch (e) {
+    return wrapJson(String(e));
+  }
+});
+
 const configMd = computed(() => {
   try {
-    return wrapJson(JSON.stringify(currentConfig.value ?? {}, null, 2));
+    return wrapJson(JSON.stringify(currentConfig.value, null, 2));
   } catch (e) {
     return wrapJson(String(e));
   }
