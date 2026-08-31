@@ -2,7 +2,7 @@
 import { computed, inject } from "vue";
 import { getTime } from "../../utils";
 import Content from "../theme/content.vue";
-import Title from "../theme/title.vue";
+import Title from "../theme/title/index.vue";
 import Text from "./text.vue";
 
 // 属性：模块标识、标题、数据 key
