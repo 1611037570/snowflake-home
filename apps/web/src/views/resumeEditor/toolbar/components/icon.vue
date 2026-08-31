@@ -24,7 +24,7 @@ const { system } = storeToRefs(resumeStore);
 </script>
 
 <template>
-  <SfTooltip :content="content" placement="left">
+  <SfTooltip :content="content" placement="left" :disabled="system.showToolName">
     <div class="flex flex-col items-center gap-1">
       <SfIcon
         :icon="icon"
