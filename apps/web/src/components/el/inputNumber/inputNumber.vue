@@ -42,4 +42,11 @@ defineExpose({} as ComponentInstance<typeof ElInputNumber>);
   /* 更改占位符颜色 */
   /* color: var(--color-sf-text); */
 }
+
+:deep(.el-input-number__decrease) {
+  border-radius: 16px 0 0 16px !important;
+}
+:deep(.el-input-number__increase) {
+  border-radius: 0 16px 16px 0 !important;
+}
 </style>
