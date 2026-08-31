@@ -31,6 +31,12 @@ const suggestCards = [
     desc: "将简历转成面试口头稿",
     flow: "selfIntro",
   },
+  {
+    icon: "ph:hand-waving-duotone",
+    title: "打招呼语",
+    desc: "将简历转成开场打招呼语",
+    flow: "greeting",
+  },
 ];
 
 // 点击建议卡片，启动对应流程
@@ -43,7 +49,7 @@ const handleSuggest = (card) => {
   <div
     class="flex h-[400px] w-full flex-1 flex-col items-center justify-center gap-5 px-5 text-center"
   >
-    <div class="flex-c gap-3 text-2xl font-bold text-sf-base">
+    <div class="flex-c mt-8 gap-3 text-2xl font-bold text-sf-base">
       你好，我是 <span class="text-sf-theme">{{ $t("router.resumeAI") }}</span>
       <SfIcon icon="lucide:sparkles" class="text-sf-theme" size="6" />
     </div>
