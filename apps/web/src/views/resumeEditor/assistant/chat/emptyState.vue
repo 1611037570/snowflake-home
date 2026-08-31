@@ -50,15 +50,8 @@ const handleSuggest = (card) => {
     <div
       class="flex flex-wrap items-center justify-center gap-1.5 text-sm font-medium text-sf-base"
     >
-      <span>我可以根据你的</span>
-      <span
-        v-for="item in moduleNames"
-        :key="item"
-        class="rounded-full bg-sf-theme/10 px-2.5 py-0.5 text-sf-theme ring-1 ring-sf-theme/10"
-      >
-        {{ item.name }}
-      </span>
-      <span>进行以下操作</span>
+      <span>能通过对话帮你打造受HR青睐的专业简历。</span>
+      <span>尝试和我对话吧！ 📄✨</span>
     </div>
 
     <!-- 建议操作按钮 -->
