@@ -3,6 +3,7 @@ import { ref } from "vue";
 import JdInput from "./JdInput.vue";
 import Score from "./Score.vue";
 import { useAiStore, useResumeStore } from "@/stores";
+import { DEFAULT_EDITOR } from "@/stores/modules/resume/defaultConfig";
 import { storeToRefs } from "pinia";
 import Chat from "./chat/index.vue";
 import { defaultMessage } from "./prompt.ts";
@@ -12,6 +13,8 @@ const aiStore = useAiStore();
 const resumeStore = useResumeStore();
 const { createDefaultChat } = aiStore;
 const { system } = storeToRefs(resumeStore);
+// AI助手区域宽度：读取编辑器配置，默认 400px
+const assistantWidth = DEFAULT_EDITOR.assistantWidth;
 
 // 默认对话
 const chat = ref(createDefaultChat(defaultMessage));
@@ -30,7 +33,7 @@ function onRequestComplete(msg) {
 </script>
 
 <template>
-  <div class="box-border h-full w-[400px] py-3">
+  <div class="box-border h-full py-3" :style="{ width: assistantWidth + 'px' }">
     <div
       class="group relative flex h-full flex-col overflow-hidden rounded-3xl border border-sf-b bg-sf-primary"
     >

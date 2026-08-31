@@ -1,5 +1,6 @@
 <script setup>
 import { useResumeStore } from "@/stores";
+import { DEFAULT_EDITOR } from "@/stores/modules/resume/defaultConfig";
 import { storeToRefs } from "pinia";
 import { markRaw, onBeforeUnmount, onMounted, ref, watch } from "vue";
 import eventBus from "@/utils/modules/eventBus";
@@ -44,10 +45,15 @@ onBeforeUnmount(() => eventBus.off("switch-builder-tab", switchTab));
 
 // 专注写作模式下编辑区宽度
 const { focusMode } = storeToRefs(useResumeStore());
+// 编辑器区域宽度：读取编辑器配置，专注模式保持固定 420px
+const editorWidth = DEFAULT_EDITOR.editorWidth;
 </script>
 
 <template>
-  <div class="relative my-3 ml-3 flex flex-col" :class="focusMode ? 'w-[420px]' : 'w-[380px]'">
+  <div
+    class="relative my-3 ml-3 flex flex-col"
+    :style="{ width: (focusMode ? 420 : editorWidth) + 'px' }"
+  >
     <SfTab
       :list="menuList"
       v-model:index="activeIndex"
