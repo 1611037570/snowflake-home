@@ -172,6 +172,10 @@ export const useResumeStore = defineStore(
       // 出现新编辑后清空重做栈，避免前进到旧状态
       redoStack.value = [];
     }, 100);
+    // 重置所有设置为默认值
+    const resetSettings = () => {
+      system.value = structuredClone(DEFAULT_SYSTEM);
+    };
     // 防抖记录历史：连续编辑合并为一条，防抖到期后才执行全量序列化比较与基准快照深拷贝，避免每次按键同步执行重开销
     const recordHistory = debounce((item: any) => {
       // 内容相对上次快照有变化才记录一条历史，避免 usage 时间戳等无关变化入栈
@@ -296,6 +300,7 @@ export const useResumeStore = defineStore(
       undoStack,
       redoStack,
       init,
+      resetSettings,
     };
   },
   {
