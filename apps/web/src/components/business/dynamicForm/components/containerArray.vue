@@ -203,7 +203,7 @@ provide(DF_REMOVE_ITEM, remove);
 <style scoped>
 .ghost {
   opacity: 0.5;
-  background: yellow;
+  background: #c8ebfb;
   border-radius: 12px;
 }
 .drag-array-active {
@@ -215,7 +215,7 @@ provide(DF_REMOVE_ITEM, remove);
   inset: 0;
   z-index: 1;
   box-sizing: border-box;
-  border: 1px dashed var(--color-sf-theme);
+  border: 2px dashed var(--color-sf-theme);
   border-radius: 12px;
   pointer-events: none;
   content: "";

@@ -1,5 +1,5 @@
 <template>
-  <el-row ref="row" :class="{ 'drag-container-active': isDragging }" :gutter="12" :key="items.id">
+  <el-row ref="row" :class="{ 'module-selected-blink': isDragging }" :gutter="12" :key="items.id">
     <!-- :data-module-key="item.key" 临时增加 后期提供新方案 内部还能框选 -->
     <FormItem
       :currentForm="item.field"
@@ -136,20 +136,7 @@ onUnmounted(() => {
   background: #c8ebfb;
   border-radius: 20px;
 }
-.drag-container-active {
-  position: relative;
-  border-radius: 12px;
-}
-.drag-container-active::after {
-  position: absolute;
-  inset: 0 6px;
-  z-index: 1;
-  box-sizing: border-box;
-  border: 1px dashed var(--color-sf-theme);
-  border-radius: 12px;
-  pointer-events: none;
-  content: "";
-}
+】
 /* 选中模块：边框持续闪烁提示（作用于模块级 FormItem） */
 .module-selected-blink {
   position: relative;
