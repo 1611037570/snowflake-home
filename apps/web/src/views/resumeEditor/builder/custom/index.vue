@@ -6,6 +6,10 @@ import {
   themeColors,
   uiParamRanges,
   userInfoModeList,
+  defaultPadding,
+  defaultFontSize,
+  defaultLineHeight,
+  defaultModuleSpacing,
 } from "@/stores/modules/resume/uiConfig";
 import { storeToRefs } from "pinia";
 import ConfigItem from "./configItem.vue";
@@ -52,6 +56,7 @@ const userInfoMode = computed({
       :min="uiParamRanges.padding.min"
       :max="uiParamRanges.padding.max"
       :step="uiParamRanges.padding.step"
+      :default-value="defaultPadding"
       tip="页面四周的留白距离"
     />
     <ConfigItem
@@ -60,6 +65,7 @@ const userInfoMode = computed({
       :min="uiParamRanges.fontSize.min"
       :max="uiParamRanges.fontSize.max"
       :step="uiParamRanges.fontSize.step"
+      :default-value="defaultFontSize"
       tip="正文的基础字号"
     />
     <ConfigItem
@@ -68,6 +74,7 @@ const userInfoMode = computed({
       :min="uiParamRanges.lineHeight.min"
       :max="uiParamRanges.lineHeight.max"
       :step="uiParamRanges.lineHeight.step"
+      :default-value="defaultLineHeight"
       tip="行与行之间的距离（字号倍数），数值越大行距越大"
     />
     <ConfigItem
@@ -76,6 +83,7 @@ const userInfoMode = computed({
       :min="uiParamRanges.moduleSpacing.min"
       :max="uiParamRanges.moduleSpacing.max"
       :step="uiParamRanges.moduleSpacing.step"
+      :default-value="defaultModuleSpacing"
       tip="各模块之间的间隔"
     />
     <!-- 用户信息 -->
