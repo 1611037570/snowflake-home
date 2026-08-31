@@ -22,7 +22,6 @@ interface RowInfo {
   height: number; // 行高度（offsetHeight + marginTop + marginBottom）
   element: HTMLElement; // 行对应的 DOM 元素
   index: number; // 行在模块内的序号（从 0 开始，用于分页裁剪 :nth-child）
-  html: string; // 行的 outerHTML（用于导出等场景）
 }
 
 /** 单个"模块"的信息（.resume-module-wrapper 包装元素） */
@@ -79,7 +78,7 @@ export function useRowInfo(
             const el = div as HTMLElement;
             const id = `${idPrefix}-${moduleKey}-${index + 1}`;
             el.id = id;
-            return { id, height: rowHeight(el), element: el, index, html: el.outerHTML };
+            return { id, height: rowHeight(el), element: el, index };
           }),
         };
       },
