@@ -86,6 +86,14 @@ const { measureDone, pages, moduleClass, getPageStyle } = useResumePages({
   isReadonly,
   uid,
 });
+const containerStyle = ref({
+  width: `${RESUME_WIDTH}px`,
+  minWidth: `${RESUME_WIDTH}px`,
+  maxWidth: `${RESUME_WIDTH}px`,
+  height: `${RESUME_HEIGHT}px`,
+  minHeight: `${RESUME_HEIGHT}px`,
+  maxHeight: `${RESUME_HEIGHT}px`,
+});
 </script>
 
 <template>
@@ -95,27 +103,18 @@ const { measureDone, pages, moduleClass, getPageStyle } = useResumePages({
     class="fixed -top-999 -left-999 bg-white text-black"
     :class="ui.fontFamily"
     ref="measureRef"
-    :style="[paddingValue(), { width: `${RESUME_WIDTH}px` }]"
+    :style="[paddingValue(), containerStyle]"
     :all-modules="allModules"
   />
   <div ref="rootRef" class="relative flex flex-col">
     <!-- 实际渲染的分页内容 -->
-    <div class="relative mb-3 flex flex-col gap-3">
+    <div class="relative flex flex-col gap-3">
       <div
         v-for="(pageSlices, pageIndex) in pages"
         :key="pageIndex"
         class="resume-page-item relative flex flex-col rounded-3xl bg-white text-black"
         :class="[ui.fontFamily, `${uid}-page-${pageIndex}`]"
-        :style="[
-          paddingValue(),
-          fontValue(),
-          lineHeightValue(),
-          {
-            width: `${RESUME_WIDTH}px`,
-            height: `${RESUME_HEIGHT}px`,
-            minHeight: `${RESUME_HEIGHT}px`,
-          },
-        ]"
+        :style="[paddingValue(), fontValue(), lineHeightValue(), containerStyle]"
       >
         <!-- 模块之间的间距由 ui.moduleSpacing 控制，与分页计算保持一致 -->
         <div class="flex flex-1 flex-col" :style="{ gap: `${ui.moduleSpacing ?? MODULE_GAP}px` }">
