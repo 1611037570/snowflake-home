@@ -13,24 +13,24 @@
     <Transition name="up">
       <div
         v-if="isVisible"
-        class="fixed top-1/2 left-1/2 flex w-96 -translate-x-1/2 -translate-y-1/2 flex-col gap-3 rounded-xl border bg-sf-primary p-4 shadow-lg"
+        class="fixed top-1/2 left-1/2 flex w-96 -translate-x-1/2 -translate-y-1/2 flex-col gap-3 rounded-3xl border bg-sf-primary p-4 shadow-lg"
         :style="{ zIndex: index }"
       >
-        <div class="text-base font-semibold" v-if="title">{{ title }}</div>
+        <div class="text-xl font-semibold" v-if="title">{{ title }}</div>
         <div class="text-base text-sf-text" v-if="content">{{ content }}</div>
         <!-- 按钮 -->
         <div class="flex items-center justify-end gap-2 text-[14px]">
           <div
             v-if="cancelText"
             @click="handleCancel"
-            class="cursor-pointer rounded bg-sf-bg px-4 py-1"
+            class="cursor-pointer rounded-2xl bg-sf-bg-2 px-4 py-1"
           >
             {{ cancelText }}
           </div>
           <div
             v-if="confirmText"
             @click="handleConfirm"
-            class="cursor-pointer rounded bg-sf-theme px-4 py-1 text-white"
+            class="cursor-pointer rounded-2xl bg-sf-theme px-4 py-1 text-white"
           >
             {{ confirmText }}
           </div>
