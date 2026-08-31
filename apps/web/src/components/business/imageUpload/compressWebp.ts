@@ -1,0 +1,62 @@
+import pica from "pica";
+
+/** 默认 WebP 压缩质量 (0-1) */
+const DEFAULT_QUALITY = 0.85;
+
+/** 最终处理结果 */
+export interface ProcessedImage {
+  src: string;
+  width: number;
+  height: number;
+}
+
+// pica 图片处理实例：WebWorker 高质量缩放，大图更省内存
+const picaInstance = pica({
+  tileSize: 512,
+  idleTimeout: 3000,
+});
+
+/**
+ * 将裁切后的图片缩放并导出为 WebP base64
+ * 裁切比例已与目标比例一致，直接按目标尺寸缩放，无需等比计算
+ * @param source - 裁切得到的画布或图片源
+ * @param targetWidth - 目标宽度
+ * @param targetHeight - 目标高度
+ * @param quality - WebP 压缩质量 (0-1)，默认 0.85
+ * @returns 导出结果
+ */
+export const compressWebp = async (
+  source: HTMLCanvasElement | HTMLImageElement | ImageBitmap,
+  targetWidth: number,
+  targetHeight: number,
+  quality: number = DEFAULT_QUALITY,
+): Promise<ProcessedImage> => {
+  if (quality < 0 || quality > 1) {
+    throw new Error("压缩质量参数必须在 0 到 1 之间");
+  }
+  if (targetWidth <= 0 || targetHeight <= 0) {
+    throw new Error("目标尺寸必须大于 0");
+  }
+
+  const dst = document.createElement("canvas");
+  dst.width = targetWidth;
+  dst.height = targetHeight;
+  // pica 高质量缩放（lanczos3 滤波 + 适度锐化）
+  const canvas = await picaInstance.resize(source, dst, {
+    filter: "lanczos3",
+    unsharpAmount: 120,
+    unsharpRadius: 1,
+    unsharpThreshold: 2,
+  });
+
+  // 压缩后打印一次（WebP 有损导出，保留透明）
+  const src = canvas.toDataURL("image/webp", quality);
+  console.log("图片大小-压缩后", {
+    字符长度: src.length,
+    KB: (src.length / 1024).toFixed(1),
+    宽: canvas.width,
+    高: canvas.height,
+  });
+
+  return { src, width: canvas.width, height: canvas.height };
+};
