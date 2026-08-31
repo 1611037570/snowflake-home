@@ -3,11 +3,11 @@ import Cropper from "cropperjs";
 import "cropperjs/dist/cropper.css";
 import { ref } from "vue";
 import Upload from "@/components/el/upload";
-import { compressImage } from "./compressImage";
+import { compressWebp } from "./compressWebp";
 
 // 默认 1 寸照尺寸：25mm x 35mm @96dpi ≈ 96 x 132px
-const DEFAULT_WIDTH = 96;
-const DEFAULT_HEIGHT = 132;
+const DEFAULT_WIDTH = 72;
+const DEFAULT_HEIGHT = 98;
 
 const props = defineProps({
   /** 显示宽度（px），默认 1 寸照宽度 */
@@ -26,6 +26,9 @@ const image = defineModel("modelValue", {
   type: String,
   default: "",
 });
+
+// 图片查看器显隐
+const previewVisible = ref(false);
 
 // ===== 裁切弹窗状态 =====
 const cropVisible = ref(false);
@@ -55,6 +58,16 @@ const setRatio = (label) => {
 const handleChange = (uploadFile) => {
   const rawFile = uploadFile?.raw;
   if (!rawFile) return;
+  // 选中图片打印一次（统一按 base64 字符长度）
+  const reader = new FileReader();
+  reader.onload = () => {
+    const dataUrl = String(reader.result);
+    console.log("图片大小-选中", {
+      字符长度: dataUrl.length,
+      KB: (dataUrl.length / 1024).toFixed(1),
+    });
+  };
+  reader.readAsDataURL(rawFile);
   cropSrc.value = URL.createObjectURL(rawFile);
   cropVisible.value = true;
 };
@@ -91,8 +104,9 @@ const confirmCrop = async () => {
       imageSmoothingEnabled: true,
       imageSmoothingQuality: "high",
     });
-    const blob = await new Promise((resolve) => canvas.toBlob(resolve, "image/png"));
-    const { src } = await compressImage(blob, props.width * 2, props.height * 2);
+
+    // 缩小目标尺寸再乘 0.9，压缩质量 0.92
+    const { src } = await compressWebp(canvas, props.width * 0.8, props.height * 0.8, 0.8);
     image.value = src;
     closeCrop();
   } catch (err) {
@@ -149,6 +163,10 @@ const removeImage = () => {
       title="删除图片"
       @click="removeImage"
     />
+    <el-button v-if="image" size="small" @click="previewVisible = true">查看图片</el-button>
+
+    <!-- 图片查看器：点击查看上传的大图 -->
+    <el-image-viewer v-if="previewVisible" :url-list="[image]" @close="previewVisible = false" />
 
     <!-- 裁切弹窗：上传后先按组件宽高比裁切，确认后再压缩 -->
     <SfModal v-model="cropVisible" title="裁剪图片" width="720px">
