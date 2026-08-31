@@ -34,7 +34,7 @@ function handleRestore(field) {
     <header class="mt-2 mb-3 flex items-center justify-between">
       <div class="flex items-center gap-1 font-bold">
         <SfIcon icon="lucide:eye-off" size="3" />
-        <div class="text-lg">隐藏模块{{ hiddenList.length }} 个</div>
+        <div class="text-lg">被隐藏模块{{ hiddenList.length }} 个</div>
       </div>
       <el-popover v-model:visible="panelVisible" placement="right" :width="208" trigger="click">
         <template #reference>
