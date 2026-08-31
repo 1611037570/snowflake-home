@@ -1,7 +1,7 @@
 <script setup>
 import { computed, onMounted, ref, watch } from "vue";
 import { storeToRefs } from "pinia";
-import { useDebounceFn, useTimeoutFn } from "@vueuse/core";
+import { useDebounceFn } from "@vueuse/core";
 import dayjs from "dayjs";
 import { useResumeStore } from "@/stores";
 import {
@@ -23,21 +23,12 @@ const { currentItem } = storeToRefs(resumeStore);
 const visible = ref(false);
 // 绑定的备份目录名
 const backupPath = ref("");
-// 是否显示备份成功提示
-const savedTip = ref(false);
+// 是否正在保存备份
+const saving = ref(false);
 
 // 悬浮提示
 const tooltipContent = computed(() =>
   localBackupEnabled.value ? `已备份到本地目录：${backupPath.value}` : "点击开启本地自动备份",
-);
-
-// 备份成功后短暂显示提示
-const { start: startSavedTip } = useTimeoutFn(
-  () => {
-    savedTip.value = false;
-  },
-  3000,
-  { immediate: false },
 );
 
 // 备份当前简历
@@ -45,13 +36,12 @@ const doBackup = async () => {
   if (!localBackupEnabled.value) return;
   const item = currentItem.value;
   if (!item) return;
+  // 保存中：隐藏已备份提示，展示保存中动画
+  saving.value = true;
   // 备份文件名：轻舟简历备份-时间-简历ID（时间精确到秒，避免同名覆盖）
   const filename = `轻舟简历备份-${dayjs().format("YYYY-MM-DD_HH-mm-ss")}-${item.id}.json`;
-  const ok = await writeLocalBackup(filename, JSON.stringify(item, null, 2));
-  if (ok) {
-    savedTip.value = true;
-    startSavedTip();
-  }
+  await writeLocalBackup(filename, JSON.stringify(item, null, 2));
+  saving.value = false;
 };
 
 // 简历数据变化后防抖执行备份
@@ -69,7 +59,6 @@ const handleBind = async () => {
   if (localBackupEnabled.value) {
     await disableLocalBackup();
     backupPath.value = "";
-    savedTip.value = false;
   } else {
     const name = await enableLocalBackup();
     if (name) backupPath.value = name;
@@ -89,11 +78,16 @@ const handleBind = async () => {
           <SfIcon icon="bi:shield-exclamation" class="icon-breath text-sf-warning" size="4" />
           <span class="text-xs text-sf-warning">未备份</span>
         </template>
-        <!-- 已备份：成功图标 + 备份成功提示文字 -->
+        <!-- 已备份：默认展示已备份，保存中切换为呼吸动画 + 保存中文字 -->
         <template v-else>
-          <SfIcon icon="bi:shield-check" class="text-sf-success" size="4" />
+          <SfIcon
+            :icon="saving ? 'bi:shield-exclamation' : 'bi:shield-check'"
+            :class="saving ? 'icon-breath text-sf-warning' : 'text-sf-success'"
+            size="4"
+          />
           <Transition name="tip-slide">
-            <span v-if="savedTip" class="text-xs text-sf-success">已备份</span>
+            <span v-if="saving" class="text-xs text-sf-warning">保存中</span>
+            <span v-else class="text-xs text-sf-success">已备份</span>
           </Transition>
         </template>
       </div>
