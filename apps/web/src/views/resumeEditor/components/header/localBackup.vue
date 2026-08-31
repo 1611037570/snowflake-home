@@ -41,7 +41,7 @@ const doBackup = async () => {
   // 备份文件名：轻舟简历备份-时间-简历ID（时间精确到秒，避免同名覆盖）
   const filename = `轻舟简历备份-${dayjs().format("YYYY-MM-DD_HH-mm-ss")}-${item.id}.json`;
   await writeLocalBackup(filename, JSON.stringify(item, null, 2));
-  saving.value = false;
+  setTimeout(() => (saving.value = false), 1000);
 };
 
 // 简历数据变化后防抖执行备份
@@ -80,15 +80,11 @@ const handleBind = async () => {
         </template>
         <!-- 已备份：默认展示已备份，保存中切换为呼吸动画 + 保存中文字 -->
         <template v-else>
-          <SfIcon
-            :icon="saving ? 'bi:shield-exclamation' : 'bi:shield-check'"
-            :class="saving ? 'icon-breath text-sf-warning' : 'text-sf-success'"
-            size="4"
-          />
-          <Transition name="tip-slide">
-            <span v-if="saving" class="text-xs text-sf-warning">保存中</span>
-            <span v-else class="text-xs text-sf-success">已备份</span>
+          <SfIcon icon="bi:shield-check" class="text-sf-success" size="4" />
+          <Transition name="tip-slide" :duration="{ enter: 300, leave: 0 }">
+            <span v-if="saving" class="text-xs text-sf-success">保存中</span>
           </Transition>
+          <span v-if="!saving" class="text-xs text-sf-success">已备份</span>
         </template>
       </div>
     </SfTooltip>
