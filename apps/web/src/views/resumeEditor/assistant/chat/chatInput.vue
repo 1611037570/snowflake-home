@@ -1,11 +1,49 @@
 <script setup>
-import { computed, onMounted, ref } from "vue";
+import { computed, onBeforeUnmount, onMounted, ref } from "vue";
 import { storeToRefs } from "pinia";
-import { useAiStore } from "@/stores";
+import { useAiStore, useResumeStore } from "@/stores";
+import { useModuleNav } from "../../useModuleNav";
 import AiNotice from "./aiNotice.vue";
 
 const aiStore = useAiStore();
+const resumeStore = useResumeStore();
 const { thinkMode } = storeToRefs(aiStore);
+const { selectedModule } = storeToRefs(resumeStore);
+// 模块导航数据源：全部简历模块
+const { moduleList } = useModuleNav();
+
+// 可选模块列表：基于模块导航数据源派生，标记是否已选中
+const moduleOptions = computed(() =>
+  moduleList.value.map((m) => ({
+    key: m.key,
+    name: m.name,
+    icon: m.icon,
+    active: selectedModule.value.some((item) => item.key === m.key),
+  })),
+);
+
+// 模块选择面板显隐
+const modulePanelVisible = ref(false);
+const modulePanelRef = ref(null);
+// 点击面板外区域收起
+const closeModulePanel = (e) => {
+  if (
+    modulePanelVisible.value &&
+    modulePanelRef.value &&
+    !modulePanelRef.value.contains(e.target)
+  ) {
+    modulePanelVisible.value = false;
+  }
+};
+// 切换模块选中状态
+const toggleModule = (item) => {
+  const index = selectedModule.value.findIndex((m) => m.key === item.key);
+  if (index > -1) {
+    selectedModule.value.splice(index, 1);
+  } else {
+    selectedModule.value.push({ key: item.key, name: item.name });
+  }
+};
 
 // 是否正在生成回复，由父组件（index.vue）控制
 const props = defineProps({
@@ -97,7 +135,10 @@ defineExpose({ focus, setValue });
 
 onMounted(() => {
   focus();
+  document.addEventListener("click", closeModulePanel);
 });
+// 组件卸载时移除面板外点击监听
+onBeforeUnmount(() => document.removeEventListener("click", closeModulePanel));
 </script>
 
 <template>
@@ -123,7 +164,26 @@ onMounted(() => {
         <!-- 底部工具栏 -->
         <div class="flex items-center justify-between px-1 pb-1">
           <!-- 左侧：模式切换 -->
-          <div class="flex items-center rounded-xl bg-sf-primary p-1">
+          <div ref="modulePanelRef" class="relative">
+            <div
+              class="cursor-pointer rounded-3xl border border-sf-b bg-sf-bg-2 px-2 py-1 text-sm"
+              @click="modulePanelVisible = !modulePanelVisible"
+            >
+              已选
+              <span class="text-sf-theme">
+                {{ selectedModule.length }}
+              </span>
+              模块
+            </div>
+            <!-- 模块选择面板：从按钮上方弹出 -->
+            <div
+              v-if="modulePanelVisible"
+              class="absolute bottom-full left-0 z-50 mb-2 w-56 rounded-2xl border border-sf-b bg-sf-primary p-1.5 shadow-lg"
+            >
+              <SfList :list="moduleOptions" @onClick="toggleModule" />
+            </div>
+          </div>
+          <div class="flex items-center rounded-xl bg-sf-primary p-1" v-if="0">
             <button
               v-for="mode in thinkModes"
               :key="mode.value"
