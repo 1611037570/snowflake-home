@@ -66,7 +66,7 @@ const applyPreset = (preset) => {
       <template #title>
         <div class="flex items-center gap-2 text-base font-bold text-sf-text">
           <SfIcon icon="mdi:palette-outline" size="4" />
-          <span>一键配置</span>
+          <span>一键设计</span>
         </div>
       </template>
       <div class="grid grid-cols-2 gap-3 py-2">
