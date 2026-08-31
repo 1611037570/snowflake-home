@@ -90,10 +90,12 @@ const { measureDone, pages, moduleClass, getPageStyle, moduleList } = useResumeP
 watch(moduleList, (list) => {
   if (!isReadonly.value && sharedModuleList) sharedModuleList.value = list;
 });
-const containerStyle = ref({
+const containerWidth = ref({
   width: `${RESUME_WIDTH}px`,
   minWidth: `${RESUME_WIDTH}px`,
   maxWidth: `${RESUME_WIDTH}px`,
+});
+const containerHeight = ref({
   height: `${RESUME_HEIGHT}px`,
   minHeight: `${RESUME_HEIGHT}px`,
   maxHeight: `${RESUME_HEIGHT}px`,
@@ -102,14 +104,21 @@ const containerStyle = ref({
 
 <template>
   <!-- 隐藏的测量容器：用于 useRowInfo 读取行高；缩略图测量完成后销毁 -->
-  <MeasureContent
-    v-if="!measureDone"
-    class="fixed -top-999 -left-999 bg-white text-black"
-    :class="ui.fontFamily"
+  <div
+    class="fixed -top-999 -left-999 h-auto bg-white text-black"
     ref="measureRef"
-    :style="[paddingValue(), containerStyle]"
-    :all-modules="allModules"
-  />
+    :class="ui.fontFamily"
+    :style="[paddingValue(), containerWidth]"
+  >
+    <MeasureContent v-if="!measureDone" :all-modules="allModules" />
+    <div
+      v-if="showPageNumber"
+      class="flex-c py-3 text-xs opacity-50"
+      :style="{ height: `${PAGE_NUMBER_HEIGHT}px` }"
+    >
+      轻舟简历
+    </div>
+  </div>
   <!-- 实际渲染的分页内容 -->
   <div ref="rootRef" class="relative flex flex-col gap-3">
     <div
@@ -117,7 +126,7 @@ const containerStyle = ref({
       :key="pageIndex"
       class="resume-page-item relative flex flex-col rounded-3xl bg-white text-black"
       :class="[ui.fontFamily, `${uid}-page-${pageIndex}`]"
-      :style="[paddingValue(), fontValue(), lineHeightValue(), containerStyle]"
+      :style="[paddingValue(), fontValue(), lineHeightValue(), containerWidth, containerHeight]"
     >
       <!-- 模块之间的间距由 ui.moduleSpacing 控制，与分页计算保持一致 -->
       <div class="flex flex-1 flex-col" :style="{ gap: `${ui.moduleSpacing ?? MODULE_GAP}px` }">
