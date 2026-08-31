@@ -98,6 +98,11 @@ const handleSend = (content) => {
   if (!content) return;
   // 确保当前没有正在发送的消息
   if (isGenerating.value) return;
+  // 引导流程的自由输入步骤：把输入内容作为答案推进流程
+  if (activeFlow.value?.flow?.steps?.[activeFlow.value.stepIndex]?.input) {
+    handleFlowInput(content);
+    return;
+  }
   isGenerating.value = true;
   addMessage({
     role: "user",
@@ -198,7 +203,8 @@ const runFlowStep = () => {
     content: JSON.stringify({
       data: null,
       analysis: step.question,
-      followQuestions: step.options,
+      // 自由输入步骤不展示选项按钮，等待用户直接输入
+      followQuestions: step.input ? [] : step.options,
     }),
     typing: false,
     requestStatus: "success",
@@ -207,16 +213,16 @@ const runFlowStep = () => {
 };
 
 /**
- * 处理流程中的选项点击：记录答案并推进步骤，收集完成后发起真实请求
+ * 推进流程答案：记录答案并推进步骤，收集完成后发起真实请求
  */
-const handleFlowOption = (option) => {
+const handleFlowAnswer = (answer) => {
   const state = activeFlow.value;
   if (!state) return;
   // 记录答案并展示为用户消息
-  state.answers.push(option);
+  state.answers.push(answer);
   addMessage({
     role: "user",
-    content: option,
+    content: answer,
     typing: false,
   });
   scrollToBottom();
@@ -244,6 +250,20 @@ const handleFlowOption = (option) => {
   isGenerating.value = true;
   scrollToBottom();
   handleAIResponse();
+};
+
+/**
+ * 处理流程中的选项点击：记录答案并推进流程
+ */
+const handleFlowOption = (option) => {
+  handleFlowAnswer(option);
+};
+
+/**
+ * 处理流程中的自由输入：把输入框内容作为答案推进流程
+ */
+const handleFlowInput = (content) => {
+  handleFlowAnswer(content);
 };
 </script>
 

@@ -96,6 +96,35 @@ export const useChatRequest = ({
       // 获取刚添加的AI消息引用
       lastMsg = currentMessages.value[currentMessages.value.length - 1] ?? null;
 
+      // 开发环境测试：拦截真实请求，模拟流式返回
+      if (import.meta.env.DEV) {
+        const mockContent = JSON.stringify({
+          data: null,
+          analysis: "## 模拟回复\n\n这是一条测试数据，未调用真实 AI 接口。",
+          followQuestions: ["再来一次", "帮我优化一下"],
+        });
+        await new Promise((resolve) => {
+          let index = 0;
+          const timer = setInterval(() => {
+            if (!isCurrentRequest() || !lastMsg) {
+              clearInterval(timer);
+              resolve();
+              return;
+            }
+            lastMsg.requestStatus = "generating";
+            lastMsg.content += mockContent[index++];
+            scrollToBottom();
+            if (index >= mockContent.length) {
+              clearInterval(timer);
+              lastMsg.requestStatus = "success";
+              scrollToBottom();
+              resolve();
+            }
+          }, 12);
+        });
+        return;
+      }
+
       // 思考状态标记（用于折叠）
       let thoughtStatus = false;
       // 获取LLM实例
