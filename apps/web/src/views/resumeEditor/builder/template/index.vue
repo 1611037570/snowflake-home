@@ -4,20 +4,21 @@ import { useResumeStore } from "@/stores";
 import { storeToRefs } from "pinia";
 import ThumbPreview from "../../preview/thumbPreview.vue";
 import { themeTemplateList } from "@/stores/modules/resume/uiConfig";
+import { xiaoYangResumeItem } from "@/stores/modules/resume/xiaoYangData";
 
 const resumeStore = useResumeStore();
-const { currentUI, currentData, currentConfig, currentFixedConfig } = storeToRefs(resumeStore);
+const { currentUI } = storeToRefs(resumeStore);
 
-// 遍历风格模板数组：同一份简历数据，逐套主题生成预览项
+// 遍历风格模板数组：同一份小羊示例数据，逐套主题生成预览项（与当前编辑内容解耦）
 const templates = computed(() =>
   themeTemplateList.map((t) => ({
     name: t.name,
     value: t.value,
     item: {
-      data: currentData.value,
-      config: currentConfig.value,
-      fixedConfig: currentFixedConfig.value,
-      ui: { ...currentUI.value, themeTemplate: t.value },
+      data: xiaoYangResumeItem.data,
+      config: xiaoYangResumeItem.config,
+      fixedConfig: xiaoYangResumeItem.fixedConfig,
+      ui: { ...xiaoYangResumeItem.ui, themeTemplate: t.value },
     },
   })),
 );
