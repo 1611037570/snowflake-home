@@ -28,10 +28,10 @@ const currentactiveModel = ref(activeModel.value);
 </script>
 
 <template>
-  <Icon content="AI助手设置" icon="lucide:sparkles" @click="drawerVisible = true" size="4.5" />
+  <Icon content="服务商设置" icon="lucide:sparkles" @click="drawerVisible = true" size="4.5" />
 
   <!-- 设置弹窗 -->
-  <SfModal v-model="drawerVisible" title="AI助手设置">
+  <SfModal v-model="drawerVisible" title="服务商设置">
     <div class="flex w-[400px] flex-col gap-5 p-4">
       <div>
         <div class="mb-3">服务商</div>

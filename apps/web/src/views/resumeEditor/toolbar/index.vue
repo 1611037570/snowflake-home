@@ -29,7 +29,7 @@ function goGitHub() {
 <template>
   <div class="relative flex items-center p-3">
     <div
-      class="relative flex flex-col items-center gap-2 rounded-3xl border border-sf-b bg-sf-transparent p-2 text-sf-text-3"
+      class="relative flex w-[50px] flex-col items-center gap-2 rounded-3xl border border-sf-b bg-sf-transparent py-2 text-sf-text-3"
     >
       <Progress />
       <System />
@@ -39,12 +39,7 @@ function goGitHub() {
       <OnePage />
       <Ai />
       <ResumeCheck />
-      <Icon
-        icon="lucide:focus"
-        size="5"
-        content="专注模式，只显示编辑和预览模块"
-        @click="enterFocusMode"
-      />
+      <Icon icon="lucide:focus" size="5" content="专注模式" @click="enterFocusMode" />
       <div class="h-[0.5px] w-full bg-sf-bg-2"></div>
       <Icon icon="akar-icons:home-alt1" size="5" content="返回首页" @click="goHome" />
       <Icon icon="simple-icons:github" size="5" content="GitHub" @click="goGitHub" />

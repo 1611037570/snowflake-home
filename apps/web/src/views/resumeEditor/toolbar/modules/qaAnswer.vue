@@ -12,7 +12,7 @@ const notChrome = computed(() => !isChrome());
 <template>
   <!-- 右侧工具栏区域的 QA 解答入口 -->
   <div class="absolute -bottom-12 left-1/2 -translate-x-1/2">
-    <SfTooltip :content="notChrome ? 'QA解答·非推荐浏览器' : 'QA解答'" placement="left">
+    <SfTooltip content="QA解答" placement="left">
       <SfIcon
         :icon="notChrome ? 'mdi:alert-circle' : 'mdi:chat-question-outline'"
         size="5"
