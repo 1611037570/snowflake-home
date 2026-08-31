@@ -6,6 +6,7 @@
  */
 import { computed, provide, type ComputedRef } from "vue";
 import {
+  defaultAvatarPosition,
   defaultFontSize,
   defaultLineHeight,
   defaultPadding,
@@ -58,12 +59,15 @@ export const useResumeTheme = (ui: ComputedRef<ResumeUi>): ResumeTheme => {
 
   // 用户信息展示模式（图标/文字），缺失时回退默认值
   const userInfoMode = computed(() => ui.value.userInfoMode ?? defaultUserInfoMode);
+  // 头像位置（左/居中/右），缺失时回退默认值
+  const avatarPosition = computed(() => ui.value.avatarPosition ?? defaultAvatarPosition);
 
   provide("fontValue", fontValue);
   provide("lineHeightValue", lineHeightValue);
   provide("themeColor", themeColor);
   provide("themeTemplate", themeTemplate);
   provide("userInfoMode", userInfoMode);
+  provide("avatarPosition", avatarPosition);
 
   return { paddingValue, fontValue, lineHeightValue, themeColor, themeTemplate };
 };
