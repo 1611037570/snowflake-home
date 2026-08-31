@@ -122,8 +122,8 @@ export const xiaoYangForm = {
 initArrayListByData(xiaoYangForm.fields);
 
 export const xiaoYangUI = {
-  padding: 28,
-  fontSize: 15,
+  padding: 24,
+  fontSize: 16,
   lineHeight: 1.2,
   moduleSpacing: 12,
   themeColor: "#ff4d4f",
