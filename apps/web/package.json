@@ -34,7 +34,7 @@
     "@zumer/snapdom": "^2.8.0",
     "axios": "^1.12.2",
     "chinese-workday": "^1.10.1",
-    "cropperjs": "^2.1.0",
+    "cropperjs": "^1.6.1",
     "dayjs": "^1.11.18",
     "dompurify": "3.4.13",
     "echarts": "^6.0.0",
