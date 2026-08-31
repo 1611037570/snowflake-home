@@ -2,7 +2,7 @@
   <ElSelect
     v-model="value"
     v-bind="$attrs"
-    ref="changeRef"
+    :ref="changeRef"
     class="flex-1 rounded-3xl! text-sf-base"
     :class="bg"
   >
@@ -29,7 +29,7 @@ defineProps({
     default: () => [],
   },
 });
-const value = defineModel("modelValue");
+const value: any = defineModel("modelValue");
 
 const vm: any = getCurrentInstance();
 
