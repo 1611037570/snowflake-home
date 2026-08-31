@@ -96,8 +96,8 @@ export const useChatRequest = ({
       // 获取刚添加的AI消息引用
       lastMsg = currentMessages.value[currentMessages.value.length - 1] ?? null;
 
-      // 开发环境测试：拦截真实请求，模拟流式返回
-      if (import.meta.env.DEV) {
+      // 测试开关：配置 VITE_MOCK_AI=true 时拦截真实请求，返回模拟数据
+      if (import.meta.env.VITE_MOCK_AI === "true") {
         const mockContent = JSON.stringify({
           data: null,
           analysis: "## 模拟回复\n\n这是一条测试数据，未调用真实 AI 接口。",
