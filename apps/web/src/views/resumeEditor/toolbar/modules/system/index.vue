@@ -23,7 +23,9 @@ function resetSettings() {
 
   <!-- 设置弹窗 -->
   <SfModal v-model="drawerVisible" title="系统设置">
-    <div class="flex w-[400px] flex-col gap-3">
+    <div class="flex w-[400px] flex-col">
+      <!-- 显示设置 -->
+      <SfSetTitle title="显示设置" />
       <SfSetBox>
         <SfSetItem
           title="工具栏常驻"
@@ -55,6 +57,11 @@ function resetSettings() {
           v-model="system.showToolName"
           type="switch"
         />
+      </SfSetBox>
+
+      <!-- 提示设置 -->
+      <SfSetTitle title="提示设置" />
+      <SfSetBox>
         <SfSetItem
           title="窗口过小提示"
           info="开启后，浏览器窗口过小时会弹出提醒"
@@ -67,7 +74,11 @@ function resetSettings() {
           v-model="system.showBrowserTip"
           type="switch"
         />
+      </SfSetBox>
 
+      <!-- 数据管理 -->
+      <SfSetTitle title="数据管理" />
+      <SfSetBox>
         <SfSetItem
           title="重置设置"
           info="点击后，将重置所有设置为默认值"
