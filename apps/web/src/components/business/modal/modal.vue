@@ -1,7 +1,7 @@
 <template>
   <Teleport to="body">
     <!-- 背景模糊层 -->
-    <SfMask :show="modeValue" :index="80" />
+    <SfMask :show="!!modeValue" :index="80" />
 
     <!-- 弹窗外壳 -->
     <Transition name="fade" :disabled="performanceMode" appear>
