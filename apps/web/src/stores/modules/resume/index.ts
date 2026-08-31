@@ -172,6 +172,16 @@ export const useResumeStore = defineStore(
       // 出现新编辑后清空重做栈，避免前进到旧状态
       redoStack.value = [];
     }, 100);
+    // 防抖记录历史：连续编辑合并为一条，防抖到期后才执行全量序列化比较与基准快照深拷贝，避免每次按键同步执行重开销
+    const recordHistory = debounce((item: any) => {
+      // 内容相对上次快照有变化才记录一条历史，避免 usage 时间戳等无关变化入栈
+      if (serializeForCompare(item) !== serializeForCompare(lastSnapshot)) {
+        // 将修改前的状态作为历史（防抖合并后入栈）
+        pushHistory(lastSnapshot);
+        // 更新基准快照为当前内容，作为下次变化时的"修改前状态"
+        lastSnapshot = deepClone(item);
+      }
+    }, 300);
     // 应用历史快照：只恢复内容字段（data/config/fixedConfig/ui），保留 id 与 usage
     const applySnapshot = (snapItem: any) => {
       const item = currentItem.value;
@@ -188,6 +198,7 @@ export const useResumeStore = defineStore(
     // 撤回：当前状态入重做栈，再恢复撤销栈顶的修改前状态
     const undo = () => {
       // 先落库防抖等待中的历史，保证编辑后立即撤回也能生效
+      recordHistory.flush();
       pushHistory.flush();
       const item = currentItem.value;
       if (!item || undoStack.value.length === 0) return;
@@ -202,6 +213,7 @@ export const useResumeStore = defineStore(
     // 重做：与撤回对称，恢复重做栈顶的快照
     const redo = () => {
       // 先落库防抖等待中的历史，保证操作顺序一致
+      recordHistory.flush();
       pushHistory.flush();
       const item = currentItem.value;
       if (!item || redoStack.value.length === 0) return;
@@ -241,18 +253,14 @@ export const useResumeStore = defineStore(
         }
         // 无选中简历或尚未建立基准快照时忽略
         if (!item || !lastSnapshot) return;
-        // 内容相对上次快照有变化才记录一条历史，避免 usage 时间戳等无关变化入栈
-        if (serializeForCompare(item) !== serializeForCompare(lastSnapshot)) {
-          // 将修改前的状态作为历史（防抖合并后入栈）
-          pushHistory(lastSnapshot);
-          // 更新基准快照为当前内容，作为下次变化时的"修改前状态"
-          lastSnapshot = deepClone(item);
-        }
+        // 防抖记录历史：序列化比较与深拷贝延迟到停顿后统一执行
+        recordHistory(item);
       },
       { deep: true },
     );
     // 切换简历时：取消防抖等待中的历史、清空历史栈并重置基准快照
     watch(currentIndex, () => {
+      recordHistory.cancel();
       pushHistory.cancel();
       undoStack.value = [];
       redoStack.value = [];
