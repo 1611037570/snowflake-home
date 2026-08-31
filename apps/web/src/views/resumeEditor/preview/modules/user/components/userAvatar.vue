@@ -11,7 +11,7 @@ const user = computed(() => previewData.value?.user || {});
     v-if="user.avatar?.value"
     :src="user.avatar?.value"
     alt="头像"
-    class="h-33 w-24 shrink-0 rounded object-cover"
+    class="h-[98px] w-[70px] shrink-0 rounded object-cover"
   />
 </template>
 
