@@ -1,13 +1,7 @@
 <template>
   <Teleport to="body">
     <!-- 背景模糊层 -->
-    <Transition name="mask" :disabled="performanceMode" appear>
-      <div
-        v-if="modeValue"
-        class="fixed top-0 right-0 bottom-0 left-0 z-80 bg-sf-transparent-3"
-        :style="backgroundStyle"
-      ></div>
-    </Transition>
+    <SfMask :show="modeValue" :index="80" />
 
     <!-- 弹窗外壳 -->
     <Transition name="fade" :disabled="performanceMode" appear>
@@ -133,22 +127,6 @@ const elementRef = ref(null);
 /** 鼠标是否悬浮在卡片上（悬浮时停止倾斜，避免干扰点击） */
 const isMouseOverCard = ref(false);
 
-// ---------- 背景模糊样式 ----------
-/**
- * 背景遮罩样式
- * - 性能模式：移除毛玻璃模糊，减少 GPU 开销
- * - 正常模式：保留 10px 毛玻璃效果
- */
-const backgroundStyle = computed(() =>
-  performanceMode.value
-    ? {
-        backdropFilter: "none",
-        WebkitBackdropFilter: "none",
-        backgroundColor: "var(--sf-transparent)",
-      }
-    : { backdropFilter: "blur(10px)", WebkitBackdropFilter: "blur(10px)" },
-);
-
 // ---------- 弹窗 3D 倾斜样式 ----------
 /**
  * 弹窗主体样式
@@ -248,17 +226,5 @@ function handleMouseLeave() {
 .fade-leave-to {
   opacity: 0;
   transform: scale(0.3);
-}
-
-/* ========== 遮罩层淡入淡出动画 ========== */
-.mask-enter-active,
-.mask-leave-active {
-  transition:
-    opacity 0.1s ease,
-    transform 0.1s ease;
-}
-.mask-enter-from,
-.mask-leave-to {
-  opacity: 0;
 }
 </style>

@@ -1,14 +1,7 @@
 <template>
   <Teleport to="body">
     <!-- 蒙版 -->
-    <Transition name="fade">
-      <div
-        v-if="isVisible && mask"
-        @click="handleCancel"
-        class="fixed inset-0 h-full w-full bg-black/50"
-        :style="{ zIndex: maskIndex }"
-      ></div>
-    </Transition>
+    <SfMask :show="isVisible && mask" :index="maskIndex" @click="handleCancel" />
     <!-- 弹窗内容 -->
     <Transition name="up">
       <div
@@ -19,7 +12,7 @@
         :style="{ '--duration': animationTime, zIndex: index }"
       >
         <div class="text-xl font-semibold" v-if="title">{{ title }}</div>
-        <div class="text-base text-sf-text" v-if="content">{{ content }}</div>
+        <div class="text-base text-sf-text-2" v-if="content">{{ content }}</div>
         <!-- 按钮 -->
         <div class="flex items-center justify-end gap-2 text-[14px]">
           <div
@@ -45,6 +38,7 @@
 <script setup lang="ts">
 import { computed, nextTick, onMounted, ref } from "vue";
 import { onKeyStroke } from "@vueuse/core";
+import SfMask from "@/components/base/mask";
 import { DEFAULT_CONFIRM_OPTIONS } from "./data";
 
 export interface ConfirmProps {
@@ -106,14 +100,6 @@ defineExpose({ close: handleCancel });
 </script>
 
 <style lang="scss" scoped>
-.fade-enter-active,
-.fade-leave-active {
-  transition: all var(--duration);
-}
-.fade-enter-from,
-.fade-leave-to {
-  opacity: 0;
-}
 .up-enter-active,
 .up-leave-active {
   transition: all var(--duration);
