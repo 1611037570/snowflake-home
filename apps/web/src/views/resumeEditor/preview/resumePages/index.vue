@@ -57,11 +57,9 @@ onUnmounted(() => {
 // 实例唯一前缀，避免多实例分页裁剪样式互相干扰
 const uid = `rp-${Math.random().toString(36).slice(2, 8)}`;
 
-// ---------- 数据代理（复用 usePreviewData）----------
-// 编辑器等场景父级已注入同一份预览代理时直接复用；独立使用（缩略图/全屏）时才自行创建，避免对同一数据重复创建 hook
+// ---------- 数据代理（始终基于 props 传入的数据，多实例互不干扰）----------
 const dataRef = computed(() => props.item.data);
-const injectedPreviewData = inject("previewData", null);
-const previewData = injectedPreviewData ?? usePreviewData(dataRef).previewData;
+const previewData = usePreviewData(dataRef).previewData;
 provide("previewData", previewData);
 // 共享测量结果：编辑态实例写入，供智能一页等消费方复用
 const sharedModuleList = inject("previewModuleList", null);
@@ -112,40 +110,38 @@ const containerStyle = ref({
     :style="[paddingValue(), containerStyle]"
     :all-modules="allModules"
   />
-  <div ref="rootRef" class="relative flex flex-col">
-    <!-- 实际渲染的分页内容 -->
-    <div class="relative flex flex-col gap-3">
-      <div
-        v-for="(pageSlices, pageIndex) in pages"
-        :key="pageIndex"
-        class="resume-page-item relative flex flex-col rounded-3xl bg-white text-black"
-        :class="[ui.fontFamily, `${uid}-page-${pageIndex}`]"
-        :style="[paddingValue(), fontValue(), lineHeightValue(), containerStyle]"
-      >
-        <!-- 模块之间的间距由 ui.moduleSpacing 控制，与分页计算保持一致 -->
-        <div class="flex flex-1 flex-col" :style="{ gap: `${ui.moduleSpacing ?? MODULE_GAP}px` }">
-          <div
-            v-for="slice in pageSlices"
-            :key="slice.moduleKey"
-            class="resume-module-wrapper group group/module relative rounded-xl"
-            :data-module="slice.moduleKey"
-            :class="moduleClass(slice)"
-          >
-            <!-- 编辑态操作按钮插槽（编辑器预览传入 ModuleActions） -->
-            <slot v-if="!isReadonly" name="moduleActions" :slice="slice" />
-            <ResumeModule :data="props.item.data" :name="slice.moduleKey" />
-          </div>
-        </div>
+  <!-- 实际渲染的分页内容 -->
+  <div ref="rootRef" class="relative flex flex-col gap-3">
+    <div
+      v-for="(pageSlices, pageIndex) in pages"
+      :key="pageIndex"
+      class="resume-page-item relative flex flex-col rounded-3xl bg-white text-black"
+      :class="[ui.fontFamily, `${uid}-page-${pageIndex}`]"
+      :style="[paddingValue(), fontValue(), lineHeightValue(), containerStyle]"
+    >
+      <!-- 模块之间的间距由 ui.moduleSpacing 控制，与分页计算保持一致 -->
+      <div class="flex flex-1 flex-col" :style="{ gap: `${ui.moduleSpacing ?? MODULE_GAP}px` }">
         <div
-          v-if="showPageNumber"
-          class="flex-c py-3 text-xs opacity-50"
-          :style="{ height: `${PAGE_NUMBER_HEIGHT}px` }"
+          v-for="slice in pageSlices"
+          :key="slice.moduleKey"
+          class="resume-module-wrapper group group/module relative rounded-xl"
+          :data-module="slice.moduleKey"
+          :class="moduleClass(slice)"
         >
-          轻舟简历 · 第 {{ pageIndex + 1 }} 页 · 共 {{ pages.length }} 页
+          <!-- 编辑态操作按钮插槽（编辑器预览传入 ModuleActions） -->
+          <slot v-if="!isReadonly" name="moduleActions" :slice="slice" />
+          <ResumeModule :data="props.item.data" :name="slice.moduleKey" />
         </div>
-
-        <component :is="'style'">{{ getPageStyle(pageSlices, pageIndex) }}</component>
       </div>
+      <div
+        v-if="showPageNumber"
+        class="flex-c py-3 text-xs opacity-50"
+        :style="{ height: `${PAGE_NUMBER_HEIGHT}px` }"
+      >
+        轻舟简历 · 第 {{ pageIndex + 1 }} 页 · 共 {{ pages.length }} 页
+      </div>
+
+      <component :is="'style'">{{ getPageStyle(pageSlices, pageIndex) }}</component>
     </div>
   </div>
 </template>
