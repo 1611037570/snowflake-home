@@ -50,7 +50,7 @@
 import { useResumeStore } from "@/stores";
 import { onKeyStroke } from "@vueuse/core";
 import { storeToRefs } from "pinia";
-import { provide, watch } from "vue";
+import { provide, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import Assistant from "./assistant/index.vue";
 import Builder from "./builder/index.vue";
@@ -113,6 +113,9 @@ provide("acceptModule", acceptModule);
 provide("rejectModule", rejectModule);
 // 向下游组件注入：应用 AI diff
 provide("applyDiff", applyDiff);
+// 共享测量结果 ref：编辑态预览实例写入，供智能一页等消费方复用
+const previewModuleList = ref([]);
+provide("previewModuleList", previewModuleList);
 
 // 专注模式下按 ESC 退出
 onKeyStroke("Escape", () => {
