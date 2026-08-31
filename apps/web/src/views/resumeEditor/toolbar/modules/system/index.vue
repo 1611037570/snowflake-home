@@ -50,6 +50,13 @@ function resetSettings() {
           type="switch"
         />
         <SfSetItem
+          title="工具栏工具名称"
+          info="开启后，工具栏会显示工具名称"
+          v-model="system.showToolName"
+          type="switch"
+        />
+
+        <SfSetItem
           title="重置设置"
           info="点击后，将重置所有设置为默认值"
           modelValue="重置"
