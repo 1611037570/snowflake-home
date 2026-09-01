@@ -3,7 +3,6 @@ import {
   createStreamParser,
   processResult,
   processToken,
-  StreamError,
 } from "./stream-utils";
 
 type RequestConfig = {
@@ -78,14 +77,14 @@ export function createRequest(token: string, isStream = true) {
 
       // 检查HTTP响应状态
       if (!response.ok) {
-        throw new StreamError(`请求失败 :>> ${response.statusText}`);
+        throw new Error(`请求失败 :>> ${response.statusText}`);
       }
 
       // 流式：读取并解析流数据
       if (isStream) {
         // 检查响应体是否存在
         if (!response.body) {
-          throw new StreamError("响应体为空，无法读取流式数据");
+          throw new Error("响应体为空，无法读取流式数据");
         }
         // 获取读取器和解码器
         const reader = response.body.getReader();
@@ -128,7 +127,7 @@ export function createRequest(token: string, isStream = true) {
       // 检查是否为主动取消
       if (error.name === "AbortError") {
         if (isTimeoutAbort) {
-          throw new StreamError(`请求超时（${timeout}ms）`);
+          throw new Error(`请求超时（${timeout}ms）`);
         }
         if (isDebug) console.log("请求被主动取消");
         return { aborted: true };
