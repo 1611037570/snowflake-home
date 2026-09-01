@@ -148,7 +148,7 @@ const handleAIResponse = async () => {
     // 调用当前配置的大模型流式接口
     const { sendFn, abortFn } = await llm.request({
       options,
-      stream: true, // 开启流式响应
+      isStream: true, // 开启流式响应
       // 简历模式下，需要解析 JSON 字符串
       isJson: type === "resume" ? true : false,
       // 流式事件回调（非JSON格式）
