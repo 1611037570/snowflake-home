@@ -6,6 +6,7 @@ import AddModule from "./components/addModule.vue";
 import BoxCollapse from "./components/boxCollapse.vue";
 import HiddenModules from "./components/hiddenModules.vue";
 import ItemCollapse from "./components/itemCollapse.vue";
+import ImageUpload from "./components/imageUpload/index.vue";
 
 const resumeStore = useResumeStore();
 const { currentData, currentConfig, currentFixedConfig } = storeToRefs(resumeStore);
@@ -15,6 +16,7 @@ const dynamicComponents = {
   boxCollapse: BoxCollapse,
   itemCollapse: ItemCollapse,
   account: Account,
+  imageUpload: ImageUpload,
 };
 </script>
 
