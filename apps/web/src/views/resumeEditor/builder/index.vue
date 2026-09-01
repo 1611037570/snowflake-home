@@ -51,17 +51,17 @@ const editorWidth = DEFAULT_EDITOR.editorWidth;
 
 <template>
   <div
-    class="relative my-3 ml-3 flex flex-col"
+    class="relative my-3 flex flex-col"
     :style="{ width: (focusMode ? 420 : editorWidth) + 'px' }"
   >
     <SfTab
       :list="menuList"
       v-model:index="activeIndex"
-      boxClass="border border-sf-b bg-sf-primary rounded-2xl hover:border-sf-theme-2"
-      class="mb-3"
+      boxClass="border border-sf-b bg-sf-primary  hover:border-sf-theme-2 rounded-none  rounded-r-3xl!"
+      class="mb-3 rounded-r-3xl!"
     />
     <div
-      class="flex min-h-0 w-full flex-1 flex-col rounded-3xl border border-sf-b bg-sf-primary py-3 text-sf-base hover:border-sf-theme-2"
+      class="flex min-h-0 w-full flex-1 flex-col rounded-r-3xl border border-sf-b bg-sf-primary py-3 text-sf-base hover:border-sf-theme-2"
     >
       <SfScrollbar>
         <Transition :name="`tab-slide-${direction}`" mode="out-in">
