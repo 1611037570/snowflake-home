@@ -68,7 +68,7 @@ const hasField = (item, key) => {
         </template>
       </div>
       <!-- 补充描述/经历 -->
-      <Content :content="item.content?.value ?? ''" />
+      <Content :content="item.content" />
     </template>
   </div>
 </template>
