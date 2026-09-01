@@ -30,6 +30,11 @@ class LLM {
     this.baseUrl = baseUrl;
     this.provider = provider;
     this.apiKey = apiKey;
+
+    // 校验配置完整性，任一缺失时输出警告
+    if (!this.baseUrl || !this.provider || !this.apiKey) {
+      console.warn("LLM 配置缺失，请检查！！！");
+    }
   }
   /**
    * 获取完整的请求地址
@@ -43,18 +48,15 @@ class LLM {
    * 发送平台对应的最小请求，检查模型连接是否可用
    */
   async ping(model: string) {
-    const options =
-      this.provider === "openai"
-        ? {
-            model,
-            messages: [{ role: "user", content: "连接测试，请回复 OK" }],
-            thinking: { type: "disabled" },
-          }
-        : {
-            model,
-            input: [{ role: "user", content: "连接测试，请回复 OK" }],
-            thinking: { type: "disabled" },
-          };
+    const options: any = {
+      model,
+      thinking: { type: "disabled" },
+    };
+    if (this.provider === "openai") {
+      options["messages"] = [{ role: "user", content: "连接测试，请回复 OK" }];
+    } else if (this.provider === "ark") {
+      options["input"] = [{ role: "user", content: "连接测试，请回复 OK" }];
+    }
     const { sendFn } = await this.request({
       options,
       stream: true,
