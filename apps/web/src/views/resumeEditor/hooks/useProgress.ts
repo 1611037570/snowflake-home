@@ -248,16 +248,16 @@ export const useTimelineCheck = (
       const sorted = [...entries].sort((a: any, b: any) => a.start - b.start);
       const issues: any[] = [];
 
-      // 重叠检测：任一条目开始时间早于另一条目结束时间即视为重叠
-      for (let i = 0; i < sorted.length; i++) {
-        for (let j = i + 1; j < sorted.length; j++) {
-          if (sorted[j].start < sorted[i].end) {
-            issues.push({
-              type: "overlap",
-              text: `「${sorted[j].name || "未命名"}」(${getTime(sorted[j].time)}) 与「${sorted[i].name || "未命名"}」(${getTime(sorted[i].time)}) 时间重叠，请核对`,
-            });
-          }
+      // 重叠检测：线性扫描，记录已遍历条目中结束最晚的条目，开始时间早于其结束时间即视为重叠
+      let latestEnd = sorted[0];
+      for (let i = 1; i < sorted.length; i++) {
+        if (sorted[i].start < latestEnd.end) {
+          issues.push({
+            type: "overlap",
+            text: `「${sorted[i].name || "未命名"}」(${getTime(sorted[i].time)}) 与「${latestEnd.name || "未命名"}」(${getTime(latestEnd.time)}) 时间重叠，请核对`,
+          });
         }
+        if (sorted[i].end > latestEnd.end) latestEnd = sorted[i];
       }
 
       // 间隙检测：相邻条目结束与开始之间超过阈值
