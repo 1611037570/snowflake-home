@@ -57,9 +57,8 @@ class LLM {
   /**
    * 发送平台对应的最小请求，检查模型连接是否可用
    */
-  async ping(model: string) {
+  async ping() {
     const options: any = {
-      model,
       thinking: { type: "disabled" },
     };
     if (this.provider === "openai") {
@@ -114,8 +113,8 @@ class LLM {
       console.log("请求配置 :>> ", config);
     }
 
-    // 默认模型由实例注入，调用方显式传入的 model 优先
-    const requestOptions = { ...(this.model ? { model: this.model } : {}), ...options };
+    // 默认模型由实例注入
+    const requestOptions = { ...options, model: this.model };
 
     // 提前创建处理器，确保调用方在 sendFn 执行前即可获取 abort
     const handler: any = createRequest(token, stream);
