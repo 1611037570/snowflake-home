@@ -90,14 +90,18 @@ export const useSmartOnePage = ({
   const computeFit = (): { fitParams: Record<OnePageAdjustKey, number>; ok: boolean } | null => {
     const list = previewModuleList?.value;
     if (!list || list.length === 0) return null;
-    const rows = list.flatMap((group: any) => group.rows);
-    if (rows.length === 0) return null;
 
     // 测量基准：预览层行高对应原始 ui 参数
     const base = pickAdjustable(ui.value);
     const bottomSpace = showPageNumber.value ? PAGE_NUMBER_HEIGHT : 0;
     // 行高总和与模块间距数量在单次计算中固定，提前聚合，避免每轮压缩都遍历全部行
-    const rowsTotal = rows.reduce((sum: number, row: any) => sum + row.height, 0);
+    const rowCount = list.reduce((count: number, group: any) => count + group.rows.length, 0);
+    if (rowCount === 0) return null;
+    const rowsTotal = list.reduce(
+      (sum: number, group: any) =>
+        sum + group.rows.reduce((groupSum: number, row: any) => groupSum + row.height, 0),
+      0,
+    );
     const moduleGapCount = Math.max(list.length - 1, 0);
     const baseScale = base.fontSize * base.lineHeight;
 
