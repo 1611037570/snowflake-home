@@ -1,6 +1,6 @@
 // 导入LLM接口
 import { getLLM } from "@/apis";
-import { createResumeTools, ReactRunner } from "@/apis/llm/react";
+import { createResumeTools } from "@/apis/llm/react";
 import { useAiStore, useResumeStore } from "@/stores";
 // 导入聊天和消息类型
 import type { Chat, Message } from "@/stores/modules/ai";
@@ -26,6 +26,7 @@ const REACT_SYSTEM_PROMPT = `你是资深招聘 HR 北斗AI助手，专精简历
 - 需要修改简历时调用 propose_resume_diff，不要在最终结果中返回完整简历数据。
 
 # 最终输出格式（只返回 JSON 对象）
+最终回复必须且只能是一个 JSON 对象，禁止输出 JSON 之外的任何开场白、解释、Markdown 或代码块标记。
 {
   "data": null,
   "analysis": "Markdown 格式的分析说明",
@@ -65,7 +66,7 @@ export const useChatRequest = ({
   // 用于取消当前请求的函数引用
   let abortRequest: (() => void) | null = null;
   // ReAct 编排器引用，用于中止循环
-  let reactRunner: ReactRunner | null = null;
+  let reactRunner: { abort: () => void; run: (messages: any[]) => Promise<string> } | null = null;
   // 请求版本号，用于避免旧请求干扰
   let requestVersion = 0;
   // 组件是否已卸载标记
@@ -310,12 +311,12 @@ export const useChatRequest = ({
       });
       lastMsg = currentMessages.value[currentMessages.value.length - 1] ?? null;
 
-      reactRunner = new ReactRunner({
+      const llm = getLLM();
+      reactRunner = llm.react({
         tools: createResumeTools({
           getResumeData,
           applyDiff: applyDiff ?? (() => {}),
         }),
-        getLLM: () => getLLM(),
         maxSteps: 6,
         onThink: (reasoning) => {
           if (!isCurrent() || !lastMsg || !reasoning) return;
