@@ -89,11 +89,11 @@ async function testConnection() {
   testing.value = true;
   try {
     const llm = new LLM({
-      baseUrl: form.value.url,
+      url: form.value.url,
       apiKey: form.value.key,
       provider: form.value.provider,
     });
-    await llm.ping(form.value.model);
+    await llm.ping();
     connectionPassed.value = true;
     ElMessage.success("连接测试成功");
   } catch (error) {
