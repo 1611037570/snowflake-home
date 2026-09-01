@@ -5,7 +5,7 @@ import { computed, inject, onMounted, onUnmounted, provide, ref, watch } from "v
 import MeasureContent from "../components/measureContent.vue";
 import ResumeModule from "../modules/index.vue";
 import { MODULE_GAP, PAGE_NUMBER_HEIGHT, RESUME_WIDTH, RESUME_HEIGHT } from "../constants";
-import { usePreviewData } from "../usePreviewData";
+import { createPreviewProxy } from "../usePreviewData";
 import { useResumePages } from "./useResumePages";
 import { useResumeTheme } from "./useResumeTheme";
 import { printPDF as exportPdf } from "../pdfExport";
@@ -59,7 +59,14 @@ const uid = `rp-${Math.random().toString(36).slice(2, 8)}`;
 
 // ---------- 数据代理（始终基于 props 传入的数据，多实例互不干扰）----------
 const dataRef = computed(() => props.item.data);
-const previewData = usePreviewData(dataRef).previewData;
+// 父级已基于同一份数据创建过代理时直接复用，避免同一数据重复建代理树与重复挂 watch；
+// 缩略图、全屏预览等数据源不同的实例仍各自创建，保证多实例互不干扰
+const parentPreviewData = inject("previewData", null);
+const previewData = computed(() => {
+  const source = dataRef.value || {};
+  if (parentPreviewData?.value?.__source === source) return parentPreviewData.value;
+  return createPreviewProxy(source);
+});
 provide("previewData", previewData);
 // 共享测量结果：编辑态实例写入，供智能一页等消费方复用
 const sharedModuleList = inject("previewModuleList", null);

@@ -159,11 +159,12 @@ const proxyCache = new WeakMap<object, any>();
  * - 对于普通对象/数组，递归代理其属性/元素
  * - 对于叶子值（基本类型、字符串数组等），包装为 { value, newValue }
  * - 不存在的属性返回 undefined，不进行任何代理
+ * 导出供数据源与父级不同的预览实例（缩略图/全屏）复用，同一份数据仍由顶层统一代理
  * @param source - 要代理的原始对象（或数组）
  * @param parentPath - 当前父路径（用于生成字段路径）
  * @returns 代理后的对象
  */
-const createPreviewProxy = (source: Record<string, any>, parentPath = ""): any => {
+export const createPreviewProxy = (source: Record<string, any>, parentPath = ""): any => {
   // 非对象/数组直接返回原值（实际不会走到这里）
   if (!isPlainObject(source) && !Array.isArray(source)) return source;
 
