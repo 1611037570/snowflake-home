@@ -30,6 +30,8 @@ interface UseResumePagesOptions {
   selectedModule: Ref<any[]>;
   isReadonly: ComputedRef<boolean>;
   uid: string;
+  /** 期望渲染的模块列表（缩略图模式用于判断测量完整） */
+  allModules: ComputedRef<any[]>;
 }
 
 /**
@@ -45,6 +47,7 @@ export const useResumePages = ({
   selectedModule,
   isReadonly,
   uid,
+  allModules,
 }: UseResumePagesOptions) => {
   // 测量监听配置：风格模板切换会改变行高，纳入监听触发重新测量分页
   const watchOptions = computed(() => ({
@@ -56,8 +59,11 @@ export const useResumePages = ({
     showPageNumber: showPageNumber.value,
   }));
   const { moduleList } = useRowInfo(measureRef, watchOptions, {
-    // 缩略图模式：首次测量成功后冻结，销毁测量容器也不会清空行数据
+    // 缩略图模式：测量完整后冻结并释放监听，销毁测量容器也不会清空行数据
     stopAfterFirstMeasure: isThumb.value,
+    // 缩略图数据静态：无需防抖合并编辑，立即测量；按期望模块数判定完整，避免异步挂载中途冻结
+    debounce: isThumb.value ? 0 : undefined,
+    expectedModuleCount: isThumb.value ? allModules.value.length : undefined,
   });
 
   // 缩略图测量完成即销毁隐藏的测量容器，减少无用 DOM 与监听开销
