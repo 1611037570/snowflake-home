@@ -6,7 +6,7 @@
  */
 import { computed, ref, watch, type ComputedRef, type Ref } from "vue";
 import { MODULE_GAP, PAGE_NUMBER_HEIGHT, RESUME_HEIGHT } from "../constants";
-import { useRowInfo, type ModuleInfo, type RowInfo } from "../useRowInfo";
+import { useRowInfo, type ModuleInfo, type RowInfo } from "./useRowInfo";
 import type { ResumeTheme } from "./useResumeTheme";
 
 /** 单页内一个模块的切片信息 */
@@ -106,22 +106,8 @@ export const useResumePages = ({
       }
     };
 
-    // 分页块：一组必须同页的行，user 模块整体一块，其余模块按行展开
-    const blocks: { group: ModuleInfo; rows: RowInfo[]; height: number }[] = [];
-    moduleList.value.forEach((group) => {
-      if (group.moduleKey === "user" && group.rows.length > 0) {
-        // user 模块整体不可拆分，防止跨页切分
-        blocks.push({
-          group,
-          rows: group.rows,
-          height: group.rows.reduce((sum, row) => sum + row.height, 0),
-        });
-        return;
-      }
-      group.rows.forEach((row) => blocks.push({ group, rows: [row], height: row.height }));
-    });
-
-    for (const { group, rows, height } of blocks) {
+    // 将一组必须同页的行装入当前页；翻页后缩略图模式停止并返回 false
+    const placeRows = (group: ModuleInfo, rows: RowInfo[], height: number): boolean => {
       // 遇到新模块，先提交上一个切片，让 currentPage 如实反映页内内容
       if (sliceModule && sliceModule !== group) commitSlice();
 
@@ -134,13 +120,27 @@ export const useResumePages = ({
       if (currentHeight + gap + height > maxContentHeight && hasPageContent) {
         newPage();
         // 缩略图模式仅需第一页：翻页后不再继续计算后续页
-        if (isThumb.value) return result;
+        if (isThumb.value) return false;
         gap = 0; // 新页无内容，不再计间距
       }
 
       sliceModule = group;
       sliceRows.push(...rows);
       currentHeight += gap + height;
+      return true;
+    };
+
+    // 直接遍历模块列表分页；user 模块整体一块，其余模块逐行一块，避免先构建中间数组再二次遍历
+    for (const group of moduleList.value) {
+      if (group.moduleKey === "user" && group.rows.length > 0) {
+        // user 模块整体不可拆分，防止跨页切分
+        const height = group.rows.reduce((sum, row) => sum + row.height, 0);
+        if (!placeRows(group, group.rows, height)) return result;
+        continue;
+      }
+      for (const row of group.rows) {
+        if (!placeRows(group, [row], row.height)) return result;
+      }
     }
 
     // 提交最后切片并补录最后一页（无任何内容时保留一个空页）

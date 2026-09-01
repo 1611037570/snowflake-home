@@ -18,9 +18,7 @@ import { ref, watch, type Ref, type WatchSource } from "vue";
 
 /** 单个"行"的信息（模块内部的一个 div） */
 export interface RowInfo {
-  id: string; // 写入 DOM 的唯一 id（格式：row-item-模块key-序号）
   height: number; // 行高度（offsetHeight + marginTop + marginBottom）
-  element: HTMLElement; // 行对应的 DOM 元素
   index: number; // 行在模块内的序号（从 0 开始，用于分页裁剪 :nth-child）
 }
 
@@ -30,8 +28,25 @@ export interface ModuleInfo {
   rows: RowInfo[]; // 模块下的所有行
 }
 
+/** 单次测量的纯数据快照，用于轻量比较行结构变化 */
+type Snapshot = { moduleKey: string; heights: number[] }[];
+
+/** 判断两次测量结果的结构与行高是否发生变化 */
+const isSnapshotChanged = (prev: Snapshot | null, curr: ModuleInfo[]): boolean => {
+  if (!prev || prev.length !== curr.length) return true;
+  for (let i = 0; i < curr.length; i++) {
+    const p = prev[i]!;
+    const c = curr[i]!;
+    if (p.moduleKey !== c.moduleKey || p.heights.length !== c.rows.length) return true;
+    for (let j = 0; j < c.rows.length; j++) {
+      if (p.heights[j] !== c.rows[j]!.height) return true;
+    }
+  }
+  return false;
+};
+
 /**
- * 为根 div 的一级子元素绑定唯一 ID 和高度信息，供分页逻辑使用
+ * 读取根 div 一级子元素的行高信息，供分页逻辑使用
  * @param rootRef - 测量容器的 ref（支持原生 div 或组件实例，内部通过 unrefElement 取 $el）
  * @param watchOptions - 监听选项（样式变化时触发重新测量）
  * @param options - 可选配置：stopAfterFirstMeasure 首次测量成功后冻结，容器销毁后不重复扫描（缩略图场景）
@@ -42,11 +57,10 @@ export function useRowInfo(
   watchOptions: WatchSource,
   options?: { stopAfterFirstMeasure?: boolean },
 ) {
-  const idPrefix = "row-item";
   const selector = ".resume-module-wrapper";
   const moduleList = ref<ModuleInfo[]>([]);
   // 上一次测量的快照，用于判断行结构/高度是否真正变化
-  let lastSnapshot = "";
+  let lastSnapshot: Snapshot | null = null;
   // 单次测量模式（缩略图 page=1）：测量成功后冻结，避免测量容器销毁后清空行数据
   let frozen = false;
 
@@ -76,16 +90,16 @@ export function useRowInfo(
           moduleKey,
           rows: Array.from(wrapper.children, (div, index) => {
             const el = div as HTMLElement;
-            const id = `${idPrefix}-${moduleKey}-${index + 1}`;
-            el.id = id;
-            return { id, height: rowHeight(el), element: el, index };
+            return { height: rowHeight(el), index };
           }),
         };
       },
     );
-    const snapshot = JSON.stringify(modules.map((m) => [m.moduleKey, m.rows.map((r) => r.height)]));
-    if (snapshot !== lastSnapshot) {
-      lastSnapshot = snapshot;
+    if (isSnapshotChanged(lastSnapshot, modules)) {
+      lastSnapshot = modules.map((m) => ({
+        moduleKey: m.moduleKey,
+        heights: m.rows.map((r) => r.height),
+      }));
       moduleList.value = modules;
       // 单次测量模式：首次测量成功后冻结，后续（含容器销毁）不再触发
       if (options?.stopAfterFirstMeasure && modules.length > 0) {
