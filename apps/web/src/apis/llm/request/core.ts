@@ -7,9 +7,7 @@ import { handleRetry, processError, processOption } from "./stream-utils";
  * 支持多种 AI 供应商，提供重试机制和错误处理功能。
  */
 class LLM {
-  /** @type {string} 接口基础地址，用于构建完整请求 URL */
-  baseUrl;
-  /** @type {string} 完整的请求地址，由 baseUrl 和 path 组合而成 */
+  /** @type {string} 完整的请求地址 */
   url;
   /** @type {string} AI 供应商标识，如 'cool' 等 */
   provider;
@@ -20,39 +18,28 @@ class LLM {
   /**
    * 初始化 LLM 实例
    * @param {Object} config - 配置对象
-   * @param {string} [config.baseUrl=""] - 接口基础地址，用于构建完整请求 URL
-   * @param {string} [config.path=""] - 接口请求路径，与 baseUrl 组合形成完整 URL
+   * @param {string} [config.url=""] - 完整的请求地址
    * @param {string} [config.provider="cool"] - AI 供应商标识，如 'cool' 等
    * @param {string} [config.apiKey] - 请求认证所需的 API Key
    * @param {string} [config.model] - 默认模型名
    */
   constructor(config: {
-    baseUrl?: string;
-    path?: string;
+    url?: string;
     provider?: string;
     apiKey?: string;
     model?: string;
   }) {
-    const { baseUrl = "", path = "", provider = "cool", apiKey, model } = config;
+    const { url = "", provider = "cool", apiKey, model } = config;
 
-    this.url = `${baseUrl}${path}`;
-    this.baseUrl = baseUrl;
+    this.url = url;
     this.provider = provider;
     this.apiKey = apiKey;
     this.model = model;
 
     // 校验配置完整性，任一缺失时输出警告
-    if (!this.baseUrl || !this.provider || !this.apiKey) {
+    if (!this.url || !this.provider || !this.apiKey || !this.model) {
       console.warn("LLM 配置缺失，请检查！！！");
     }
-  }
-  /**
-   * 获取完整的请求地址
-   * @param {string} [path=""] - 接口请求路径，若为空则使用构造时的 path
-   * @returns {string} 完整的请求地址，由 baseUrl 和 path 组合而成
-   */
-  getUrl(path = "") {
-    return path ? `${this.baseUrl}${path}` : this.url;
   }
   /**
    * 发送平台对应的最小请求，检查模型连接是否可用
@@ -89,7 +76,6 @@ class LLM {
    * @param {number} [config.retryCount=0] - 请求失败时的重试次数
    * @param {boolean} [config.stream=true] - 是否开启流式响应
    * @param {boolean} [config.showToast=true] - 请求失败时是否自动显示 Toast 提示
-   * @param {string} [config.path=""] - 接口请求路径，若为空则使用构造时的 path
    * @returns {Promise<any>} 返回请求结果的 Promise，包含 abortFn 和 sendFn
    */
   async request(config: any) {
@@ -104,7 +90,6 @@ class LLM {
       method = "POST",
       retryCount = 0,
       stream = true,
-      path = "",
       // 请求超时时间，默认 60 秒
       timeout = 60000,
     } = config;
@@ -128,7 +113,7 @@ class LLM {
       try {
         // 组装请求基础配置
         const requestConfig = {
-          url: this.getUrl(path),
+          url: this.url,
           method,
           debug,
           provider: this.provider,

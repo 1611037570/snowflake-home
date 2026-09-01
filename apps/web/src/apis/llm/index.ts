@@ -7,7 +7,7 @@ const mapProvider = (provider: string) =>
   ["deepseek", "ark"].includes(provider) ? "openai" : provider;
 
 const snowflakeConfig = {
-  baseUrl: snowflake.baseUrl,
+  url: snowflake.baseUrl,
   apiKey: snowflake.apiKey || "",
   provider: mapProvider(snowflake.provider),
   model: snowflake.model,
@@ -26,7 +26,7 @@ const getLLM = () => {
   // deepseek 与 ark 走 OpenAI 兼容协议
   const llmProvider = mapProvider(config.provider);
   return new LLM({
-    baseUrl: config.url,
+    url: config.url,
     apiKey: config.key,
     provider: llmProvider,
     model: config.model,
