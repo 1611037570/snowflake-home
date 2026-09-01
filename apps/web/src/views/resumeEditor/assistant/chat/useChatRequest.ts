@@ -31,7 +31,7 @@ export const useChatRequest = ({
   const resumeStore = useResumeStore();
   const aiStore = useAiStore();
   const { isGenerating } = storeToRefs(resumeStore);
-  const { thinkMode, activeModel, customModel } = storeToRefs(aiStore);
+  const { thinkMode, activeModel, customModels } = storeToRefs(aiStore);
   // 用于取消当前请求的函数引用
   let abortRequest: (() => void) | null = null;
   // 请求版本号，用于避免旧请求干扰
@@ -138,6 +138,8 @@ export const useChatRequest = ({
       let thoughtStatus = false;
       // 获取LLM实例
       const llm = getLLM();
+      // 当前激活的自定义配置
+      const activeConfig = customModels.value.find((item) => item.provider === activeModel.value);
       // 构建请求参数
       const options = {
         // 根据provider决定使用messages还是input字段
@@ -145,8 +147,8 @@ export const useChatRequest = ({
         thinking: {
           type: thinkMode.value ? "enabled" : "disabled",
         },
-        // 如果是自定义模型，添加model字段
-        ...(activeModel.value === "custom" ? { model: customModel.value?.model } : {}),
+        // 激活自定义配置时添加model字段
+        ...(activeConfig ? { model: activeConfig.model } : {}),
       };
 
       // 发起请求，获取发送函数和取消函数

@@ -1,41 +1,46 @@
 <script setup>
-import { onMounted, reactive, ref } from "vue";
+import { computed, ref, watch } from "vue";
 import { storeToRefs } from "pinia";
 import { ElMessage } from "element-plus";
 import { useAiStore } from "@/stores/modules/ai";
 import { LLM } from "@/apis";
 
-// 平台选项
-const platformOptions = [
-  { name: "火山方舟 (推荐)", value: "ark" },
-  { name: "OpenAI兼容", value: "openai" },
-];
+const props = defineProps({
+  // 当前编辑的平台类型
+  provider: {
+    type: String,
+    required: true,
+  },
+});
 
 // 使用 ai store
 const aiStore = useAiStore();
-const { activeModel, customModel } = storeToRefs(aiStore);
+const { activeModel, customModels } = storeToRefs(aiStore);
 
-// 自定义表单
-const form = reactive({
-  url: "",
-  provider: "ark",
-  model: "",
-  key: "",
-});
+// 当前编辑的配置项（实时同步数组）
+const form = computed(() => customModels.value.find((item) => item.provider === props.provider));
 const formRef = ref();
 const testing = ref(false);
 const connectionPassed = ref(false);
 
+// 配置项不存在时自动创建默认项，保证表单可实时编辑
+watch(
+  () => props.provider,
+  () => {
+    if (!customModels.value.some((item) => item.provider === props.provider)) {
+      customModels.value.push({
+        provider: props.provider,
+        model: "",
+        key: "",
+        url: "",
+      });
+    }
+  },
+  { immediate: true },
+);
+
 // 配置字段校验规则：限制空白字符并校验完整接口地址
 const rules = {
-  provider: [
-    {
-      required: true,
-      pattern: /^(ark|openai)$/,
-      message: "请选择平台",
-      trigger: "change",
-    },
-  ],
   model: [
     {
       required: true,
@@ -62,15 +67,12 @@ const rules = {
   ],
 };
 
-onMounted(() => {
-  Object.assign(form, customModel.value);
-});
-
 // 是否为当前激活的服务
-const isActive = () => activeModel.value === "custom";
+const isActive = computed(() => activeModel.value === props.provider);
 
 // 使用当前配置发送最小请求，验证接口地址、密钥和模型是否可用
 async function testConnection() {
+  if (!form.value) return;
   const valid = await formRef.value?.validate().catch(() => false);
   if (!valid) return;
 
@@ -78,54 +80,47 @@ async function testConnection() {
   testing.value = true;
   try {
     const llm = new LLM({
-      baseUrl: form.url,
-      getApiKey: () => form.key,
-      provider: form.provider,
+      baseUrl: form.value.url,
+      getApiKey: () => form.value.key,
+      provider: form.value.provider,
     });
-    await llm.ping(form.model);
+    await llm.ping(form.value.model);
     connectionPassed.value = true;
     ElMessage.success("连接测试成功");
-
-    customModel.value = { ...form };
-    aiStore.activeModel = "custom";
   } catch (error) {
     ElMessage.error(error?.message || "连接测试失败");
   } finally {
     testing.value = false;
   }
 }
+
+// 使用该配置
+function useService() {
+  activeModel.value = props.provider;
+}
 </script>
 
 <template>
-  <el-form ref="formRef" :model="form" :rules="rules" class="mt-3 flex flex-col gap-3">
-    <!-- 平台 -->
-    <SfFormItem label="平台" prop="provider">
-      <SfSelect
-        v-model="form.provider"
-        :list="platformOptions"
-        class="w-full"
-        placeholder="请选择平台"
-      >
-      </SfSelect>
-    </SfFormItem>
+  <div v-if="form" class="flex flex-col gap-3">
+    <el-form ref="formRef" :model="form" :rules="rules" class="flex flex-col gap-3">
+      <!-- 模型 -->
+      <SfFormItem label="模型" prop="model">
+        <SfInput v-model="form.model" class="w-full" placeholder="请输入模型名称" />
+      </SfFormItem>
+      <SfFormItem label="API Key" prop="key">
+        <SfInput v-model="form.key" type="password" show-password placeholder="请输入 API Key" />
+      </SfFormItem>
 
-    <!-- 模型 -->
-    <SfFormItem label="模型" prop="model">
-      <SfInput v-model="form.model" class="w-full" placeholder="请输入模型名称" />
-    </SfFormItem>
-    <SfFormItem label="API Key" prop="key">
-      <SfInput v-model="form.key" type="password" show-password placeholder="请输入 API Key" />
-    </SfFormItem>
-
-    <!-- 接口地址 -->
-    <SfFormItem label="接口地址 (完整URL)" prop="url">
-      <SfInput v-model="form.url" placeholder="如：https://api.openai.com/v1/chat/completions" />
-    </SfFormItem>
+      <!-- 接口地址 -->
+      <SfFormItem label="接口地址 (完整URL)" prop="url">
+        <SfInput v-model="form.url" placeholder="如：https://api.openai.com/v1/chat/completions" />
+      </SfFormItem>
+    </el-form>
 
     <!-- 提示：强制开启深度思考，推荐使用最新模型 -->
     <div class="flex items-center text-xs text-sf-text-3">
       <SfIcon icon="mdi:information-variant" size="3.5" class="mr-1" />
-      项目会强制开启深度思考，推荐使用最新模型取更智能的回复。
+      项目会强制开启深度思考，推荐使用最新模型获取更智能的回复。
     </div>
     <div class="flex gap-3">
       <!-- 使用当前配置测试接口连通性 -->
@@ -133,9 +128,15 @@ async function testConnection() {
         测试连接
       </el-button>
       <!-- 使用该服务按钮 -->
-      <el-button type="primary" class="flex-1" :disabled="isActive() || !connectionPassed">
-        {{ isActive() ? "已选择" : "使用该服务" }}
+      <el-button
+        type="primary"
+        class="flex-1"
+        :disabled="isActive || !connectionPassed"
+        @click="useService"
+      >
+        {{ isActive ? "已选择" : "使用该服务" }}
       </el-button>
     </div>
-  </el-form>
+  </div>
+  <div v-else class="text-sm text-sf-text-3">配置不存在</div>
 </template>

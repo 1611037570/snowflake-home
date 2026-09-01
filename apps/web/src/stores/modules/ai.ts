@@ -39,6 +39,17 @@ export type Message = {
   // 请求状态
   requestStatus: string;
 };
+// 自定义模型配置
+export type CustomModelConfig = {
+  // 平台类型
+  provider: "ark" | "openai";
+  // 模型名称
+  model: string;
+  // API 密钥
+  key: string;
+  // 完整接口地址
+  url: string;
+};
 // 默认对话记录标题
 const DEFAULT_CHAT_TITLE = "新对话";
 // 默认系统提示
@@ -48,15 +59,10 @@ const DEFAULT_SYSTEM_PROMPT =
 export const useAiStore = defineStore(
   "ai",
   () => {
-    // 激活的服务
-    const activeModel = ref<"snowflake" | "custom">("snowflake");
-    // 自定义模型
-    const customModel = ref<any>({
-      url: "",
-      provider: "",
-      model: "",
-      key: "",
-    });
+    // 激活的服务标识：snowflake 或平台类型
+    const activeModel = ref<string>("snowflake");
+    // 各平台配置列表（按平台类型各一份，切换时配置保留）
+    const customModels = ref<CustomModelConfig[]>([]);
 
     const sidebarCollapsed = ref(true);
     const sidebarMode = ref("float"); // 'dock' or 'float'
@@ -176,7 +182,7 @@ export const useAiStore = defineStore(
       currentChat,
       currentMessages,
       activeModel,
-      customModel,
+      customModels,
       thinkMode,
       createDefaultChat,
       createDefaultMessage,
@@ -190,7 +196,14 @@ export const useAiStore = defineStore(
   {
     persist: {
       storage: localStorage,
-      pick: ["sidebarMode", "currentChatId", "activeModel", "customModel"],
+      pick: ["sidebarMode", "currentChatId", "activeModel", "customModels"],
+      // 恢复后兜底：激活配置不存在时回退雪花服务
+      afterHydrate: (ctx) => {
+        const store = ctx.store as any;
+        if (!["snowflake", "openai", "ark"].includes(store.activeModel)) {
+          store.activeModel = "snowflake";
+        }
+      },
     },
   },
 );

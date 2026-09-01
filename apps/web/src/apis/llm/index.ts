@@ -11,12 +11,15 @@ const snowflakeConfig = {
 };
 const getLLM = () => {
   const aiStore = useAiStore();
-  const { activeModel, customModel } = storeToRefs(aiStore);
+  const { activeModel, customModels } = storeToRefs(aiStore);
   if (activeModel.value === "snowflake") {
     return new LLM(snowflakeConfig);
   }
-  const config = customModel.value || {};
-  // 将设置页保存的字段转换为 LLM 构造函数契约
+  // 按平台类型查找激活配置，未找到时回退雪花服务
+  const config = customModels.value.find((item) => item.provider === activeModel.value);
+  if (!config) {
+    return new LLM(snowflakeConfig);
+  }
   return new LLM({
     baseUrl: config.url,
     getApiKey: () => config.key,
