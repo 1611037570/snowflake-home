@@ -9,11 +9,6 @@ import DiffContent from "./diffContent.vue";
 const model = defineModel();
 
 const props = defineProps({
-  // value 显示覆盖，用于时间等格式化场景
-  displayValue: {
-    type: String,
-    default: "",
-  },
   // 是否按富文本 HTML 渲染
   html: {
     type: Boolean,
@@ -27,12 +22,7 @@ const popover = useDiffPopoverStore();
 
 // 字段代理兜底，避免未传入时取值报错
 const field = computed(() => model.value || { value: "", newValue: "" });
-const valueContent = computed(() => {
-  if (props.displayValue) {
-    return props.displayValue;
-  }
-  return field.value.value ?? "";
-});
+const valueContent = computed(() => field.value.value ?? "");
 const newValueContent = computed(() => field.value.newValue ?? "");
 
 // 文档流统一渲染：有草稿显示新增，否则显示原值；打印时固定展示原值
