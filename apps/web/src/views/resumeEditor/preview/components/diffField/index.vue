@@ -146,7 +146,7 @@ const handleMouseLeave = () => {
     <!-- 悬浮对比层：浮在字段上方，不占文档流 -->
     <div
       v-show="isHovered && newValueContent"
-      class="absolute z-10 flex max-h-[240px] w-max max-w-[320px] min-w-[180px] flex-col rounded-xl border border-sf-b bg-sf-page p-2 shadow-lg"
+      class="absolute z-10 flex max-h-[240px] w-max max-w-[420px] min-w-[180px] flex-col rounded-xl border border-sf-b bg-sf-bg p-2 shadow-lg"
       :class="[
         dropdownDirection === 'up' ? 'bottom-full mb-1' : 'top-full mt-1',
         dropdownAlign === 'left' ? 'left-0' : 'right-0',
