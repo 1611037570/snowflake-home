@@ -1,7 +1,7 @@
 <script setup>
 // 简历放大预览组件：全屏遮罩内用 ScaleContainer 缩放展示 resumePages 渲染的全部页
 // 数据源由 props 传入，供模板页预览、编辑器全屏查看等场景复用
-import { onBeforeUnmount, onMounted, ref } from "vue";
+import { onBeforeUnmount, ref, watch } from "vue";
 import ResumePages from "./resumePages/index.vue";
 import ScaleContainer from "./ScaleContainer.vue";
 
@@ -26,8 +26,13 @@ const handleKeydown = (e) => {
   }
 };
 
-onMounted(() => {
-  window.addEventListener("keydown", handleKeydown);
+// 仅打开时注册 Escape 监听、关闭后移除，避免未打开的实例常驻 window 监听
+watch(visible, (val) => {
+  if (val) {
+    window.addEventListener("keydown", handleKeydown);
+  } else {
+    window.removeEventListener("keydown", handleKeydown);
+  }
 });
 
 onBeforeUnmount(() => {
