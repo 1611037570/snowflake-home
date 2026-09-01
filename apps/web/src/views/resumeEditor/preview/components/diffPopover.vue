@@ -1,22 +1,54 @@
 <script setup>
-import { computed } from "vue";
+import { computed, nextTick, ref, watch } from "vue";
 import { useDiffPopoverStore } from "@/stores/modules/diffPopover";
 import DiffContent from "./diffField/diffContent.vue";
 
 const store = useDiffPopoverStore();
+const popoverRef = ref(null);
+const popoverSize = ref({ width: 0, height: 0 });
 
-// 依据字段坐标与悬浮方向计算 fixed 定位
+// 弹出后读取实际尺寸，供按窗口边界约束位置使用
+watch(
+  () => [store.visible, store.newValue, store.value],
+  async () => {
+    if (store.visible) {
+      await nextTick();
+      const el = popoverRef.value;
+      if (el) {
+        popoverSize.value = { width: el.offsetWidth, height: el.offsetHeight };
+      }
+    }
+  },
+);
+
+// 依据字段坐标、悬浮方向与窗口大小计算 fixed 定位，保证弹出层不溢出窗口
 const popoverStyle = computed(() => {
   if (!store.rect) return {};
   const { top, left, right, height } = store.rect;
-  const horizontal =
-    store.align === "right"
-      ? { right: `${window.innerWidth - right}px` }
-      : { left: `${left}px` };
-  if (store.direction === "up") {
-    return { ...horizontal, top: `${top}px`, transform: "translateY(-100%)" };
+  const { width, height: popHeight } = popoverSize.value;
+  const margin = 12;
+  // 水平：靠近窗口右缘或向右展开会溢出时，改为从字段右缘向左展开
+  let x = left;
+  if (store.align === "right" || (width && left + width > window.innerWidth - margin)) {
+    x = right - width;
   }
-  return { ...horizontal, top: `${top + height}px` };
+  // 收敛到窗口内
+  x = Math.max(margin, Math.min(x, window.innerWidth - width - margin));
+  // 垂直：按方向展开，空间不足时反向，最终收敛到窗口内
+  let y;
+  if (store.direction === "up") {
+    y = top - popHeight;
+    if (y < margin && top + height + popHeight <= window.innerHeight - margin) {
+      y = top + height;
+    }
+  } else {
+    y = top + height;
+    if (y + popHeight > window.innerHeight - margin && top - popHeight >= margin) {
+      y = top - popHeight;
+    }
+  }
+  y = Math.max(margin, Math.min(y, window.innerHeight - popHeight - margin));
+  return { left: `${x}px`, top: `${y}px` };
 });
 </script>
 
@@ -24,7 +56,8 @@ const popoverStyle = computed(() => {
   <Teleport to="body">
     <div
       v-if="store.visible"
-      class="fixed z-50 flex max-h-[240px] min-w-[180px] max-w-[420px] w-max flex-col rounded-3xl border border-sf-b bg-sf-bg p-2 shadow-lg"
+      ref="popoverRef"
+      class="fixed z-50 flex max-h-[540px] w-max max-w-[600px] min-w-[180px] flex-col rounded-3xl border border-sf-b bg-sf-bg p-2 shadow-lg"
       :style="popoverStyle"
       @mouseenter="store.stay"
       @mouseleave="store.hide"
