@@ -75,7 +75,7 @@ const sharedModuleList = inject("previewModuleList", null);
 const ui = computed(() => props.item.ui || {});
 const showPageNumber = computed(() => system.value.showPageNumber);
 const themeStyles = useResumeTheme(ui);
-const { paddingValue, fontValue, lineHeightValue } = themeStyles;
+const { paddingStyle, fontStyle, lineHeightStyle } = themeStyles;
 
 // ---------- 分页（测量 + 分页算法 + 裁剪样式）----------
 const allModules = computed(() => {
@@ -116,7 +116,7 @@ const containerHeight = {
     ref="measureRef"
     :class="ui.fontFamily"
     :style="[
-      paddingValue(),
+      paddingStyle,
       containerWidth,
       {
         minHeight: `${RESUME_HEIGHT}px`,
@@ -139,7 +139,7 @@ const containerHeight = {
       :key="pageIndex"
       class="resume-page-item relative flex flex-col rounded-3xl bg-white text-black"
       :class="[ui.fontFamily, `${uid}-page-${pageIndex}`]"
-      :style="[paddingValue(), fontValue(), lineHeightValue(), containerWidth, containerHeight]"
+      :style="[paddingStyle, fontStyle, lineHeightStyle, containerWidth, containerHeight]"
     >
       <!-- 模块之间的间距由 ui.moduleSpacing 控制，与分页计算保持一致 -->
       <div class="flex flex-1 flex-col" :style="{ gap: `${ui.moduleSpacing ?? MODULE_GAP}px` }">
