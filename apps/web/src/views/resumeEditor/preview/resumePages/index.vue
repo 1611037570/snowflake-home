@@ -112,7 +112,7 @@ const containerHeight = {
 <template>
   <!-- 隐藏的测量容器：用于 useRowInfo 读取行高；缩略图测量完成后销毁 -->
   <div
-    class="fixed -top-999 -left-999 h-auto bg-white text-black"
+    class="fixed -top-999 -left-999 flex h-auto flex-col bg-white text-black"
     ref="measureRef"
     :class="ui.fontFamily"
     :style="[
@@ -126,7 +126,7 @@ const containerHeight = {
     <MeasureContent v-if="!measureDone" :all-modules="allModules" />
     <div
       v-if="showPageNumber"
-      class="flex-c py-3 text-xs opacity-50"
+      class="flex flex-1 items-end justify-center py-3 text-xs opacity-50"
       :style="{ height: `${PAGE_NUMBER_HEIGHT}px` }"
     >
       轻舟简历
