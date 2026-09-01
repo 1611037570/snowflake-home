@@ -3,6 +3,7 @@
 // 数据源由 props 传入，不依赖 resume store；供编辑器预览、模板缩略图、全屏查看复用
 import { computed, inject, onMounted, onUnmounted, provide, ref, watch } from "vue";
 import MeasureContent from "../components/measureContent.vue";
+import DiffPopover from "../components/diffPopover.vue";
 import ResumeModule from "../modules/index.vue";
 import { MODULE_GAP, PAGE_NUMBER_HEIGHT, RESUME_WIDTH, RESUME_HEIGHT } from "../constants";
 import { createPreviewProxy } from "../usePreviewData";
@@ -172,6 +173,7 @@ const containerHeight = {
       </div>
     </div>
   </div>
+  <DiffPopover />
   <component :is="'style'">{{ pageStyleText }}</component>
 </template>
 
