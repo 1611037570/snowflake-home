@@ -21,8 +21,18 @@
         放弃
       </div>
     </div>
-    <div class="w-full rounded-xl" :class="displayClass">
-      {{ modelProxy.newValue ? displayContent : valueContent }}
+    <div v-if="!modelProxy.newValue" class="w-full rounded-xl">
+      {{ valueContent }}
+    </div>
+    <div
+      v-else-if="!isHovered"
+      class="w-full cursor-pointer rounded-xl bg-[#e8f5e9] text-[#2e7d32]"
+    >
+      {{ modelProxy.newValue }}
+    </div>
+    <div v-else class="w-full rounded-xl">
+      <div class="bg-[#e8f5e9] text-[#2e7d32]">{{ modelProxy.newValue }}</div>
+      <div class="bg-[#fef0f0] text-[#d32f2f] line-through">{{ valueContent }}</div>
     </div>
   </div>
 </template>
@@ -74,21 +84,6 @@ const { start: startHideTimer, stop: stopHideTimer } = useTimeoutFn(
   200,
   { immediate: false },
 );
-
-// 计算当前显示的值（悬停切旧值/默认显示新值）
-const displayContent = computed(() => {
-  return isHovered.value ? valueContent.value : modelProxy.value.newValue;
-});
-
-// 计算当前显示的样式类
-const displayClass = computed(() => {
-  if (modelProxy.value.newValue) {
-    return isHovered.value
-      ? "text-[#d32f2f] bg-[#fef0f0] line-through cursor-pointer"
-      : "text-[#2e7d32] bg-[#e8f5e9] cursor-pointer";
-  }
-  return "";
-});
 
 // 保留修改
 const handleSave = () => {
