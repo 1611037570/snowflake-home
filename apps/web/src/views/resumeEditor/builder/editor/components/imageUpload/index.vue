@@ -41,24 +41,6 @@ const cropSrc = ref("");
 const cropImgRef = ref(null);
 let cropper = null;
 
-// 裁剪比例选项：默认按组件宽高比，其余为常用比例，自由比例不锁定
-const ratioList = [
-  { label: "默认", value: props.width / props.height },
-  { label: "1:1", value: 1 },
-  { label: "4:3", value: 4 / 3 },
-  { label: "16:9", value: 16 / 9 },
-  { label: "3:4", value: 3 / 4 },
-  { label: "自由", value: NaN },
-];
-// 当前选中比例（按 label 判断，避免 NaN 比较失效）
-const activeRatio = ref("默认");
-
-// 切换裁剪比例
-const setRatio = (label) => {
-  activeRatio.value = label;
-  cropper?.setAspectRatio(ratioList.find((item) => item.label === label)?.value);
-};
-
 // 处理原始文件：暂存图片并打开裁切弹窗，先按组件宽高比裁切
 const handleRawFile = (rawFile) => {
   if (!rawFile) return;
@@ -92,7 +74,8 @@ onChange((files) => {
 const initCropper = () => {
   if (cropper) cropper.destroy();
   cropper = new Cropper(cropImgRef.value, {
-    aspectRatio: ratioList.find((item) => item.label === activeRatio.value)?.value,
+    // 固定按组件宽高比裁切，不支持更改
+    aspectRatio: props.width / props.height,
     // 最大化利用空间，裁剪区域不超出图片
     viewMode: 2,
     guides: true,
@@ -223,24 +206,6 @@ const removeImage = () => {
 
     <!-- 裁切弹窗：上传后先按组件宽高比裁切，确认后再压缩 -->
     <SfModal v-model="cropVisible" title="裁剪图片" width="720px">
-      <!-- 裁剪比例切换 -->
-      <div class="mb-3 flex flex-wrap items-center gap-2">
-        <span class="text-sm text-sf-text-2">裁剪比例：</span>
-        <button
-          v-for="ratio in ratioList"
-          :key="ratio.label"
-          type="button"
-          class="rounded-md border px-3 py-1.5 text-sm transition-colors"
-          :class="
-            activeRatio === ratio.label
-              ? 'border-sf-theme bg-sf-theme text-sf-base'
-              : 'border-sf-b text-sf-text hover:border-sf-theme'
-          "
-          @click="setRatio(ratio.label)"
-        >
-          {{ ratio.label }}
-        </button>
-      </div>
       <!-- 裁剪区域：最大化利用空间 -->
       <div
         class="cropper-box flex w-full items-center justify-center overflow-hidden rounded-xl bg-sf-bg"
