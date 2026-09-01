@@ -80,7 +80,7 @@ export const defaultThemeTemplate = "default";
 // 默认用户信息展示模式
 export const defaultUserInfoMode = "text";
 // 默认头像位置
-export const defaultAvatarPosition = "left";
+export const defaultAvatarPosition = "right";
 // ===========参数范围（编辑器滑杆与一页纸压缩共用，只维护这一处）=====================
 export const uiParamRanges = {
   // 页边距
