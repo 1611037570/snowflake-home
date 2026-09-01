@@ -19,12 +19,12 @@ const age = computed(() => {
 </script>
 
 <template>
-  <div
-    class="flex min-w-0 max-w-full flex-wrap items-center gap-3"
-    :style="[fontValue(2)]"
-  >
+  <div class="ml-3 flex max-w-full min-w-0 flex-wrap items-center gap-3" :style="[fontValue(2)]">
     <Text v-if="user.sex?.value" v-model="user.sex" />
-    <span v-if="user.sex?.value && (age || workYears)" class="h-3 w-px bg-current opacity-50"></span>
+    <span
+      v-if="user.sex?.value && (age || workYears)"
+      class="h-3 w-px bg-current opacity-50"
+    ></span>
     <Text v-if="age" v-model="user.newAge" :display-value="age + '岁'" />
     <span v-if="age && workYears" class="h-3 w-px bg-current opacity-50"></span>
     <Text v-if="workYears" v-model="user.newWorkYears" :display-value="workYears" />
