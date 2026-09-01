@@ -20,10 +20,12 @@ const getLLM = () => {
   if (!config) {
     return new LLM(snowflakeConfig);
   }
+  // deepseek 走 OpenAI 兼容协议
+  const llmProvider = config.provider === "deepseek" ? "openai" : config.provider;
   return new LLM({
     baseUrl: config.url,
     getApiKey: () => config.key,
-    provider: config.provider,
+    provider: llmProvider,
   });
 };
 export { getLLM, LLM };

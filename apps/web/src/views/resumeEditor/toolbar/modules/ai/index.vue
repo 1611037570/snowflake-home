@@ -13,11 +13,12 @@ const drawerVisible = ref(false);
 const aiStore = useAiStore();
 const { activeModel } = storeToRefs(aiStore);
 
-// 左侧服务商列表：雪花服务 + openai + ark
+// 左侧服务商列表：雪花服务 + openai + ark + deepseek
 const providerList = [
   { id: "snowflake", name: "雪花服务" },
   { id: "openai", name: "openai" },
   { id: "ark", name: "ark" },
+  { id: "deepseek", name: "deepseek" },
 ];
 
 // 展示用激活项：激活配置失效时回退雪花服务

@@ -42,7 +42,7 @@ export type Message = {
 // 自定义模型配置
 export type CustomModelConfig = {
   // 平台类型
-  provider: "ark" | "openai";
+  provider: "ark" | "openai" | "deepseek";
   // 模型名称
   model: string;
   // API 密钥
@@ -200,7 +200,7 @@ export const useAiStore = defineStore(
       // 恢复后兜底：激活配置不存在时回退雪花服务
       afterHydrate: (ctx) => {
         const store = ctx.store as any;
-        if (!["snowflake", "openai", "ark"].includes(store.activeModel)) {
+        if (!["snowflake", "openai", "ark", "deepseek"].includes(store.activeModel)) {
           store.activeModel = "snowflake";
         }
       },

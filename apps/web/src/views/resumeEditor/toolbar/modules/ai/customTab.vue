@@ -23,6 +23,15 @@ const formRef = ref();
 const testing = ref(false);
 const connectionPassed = ref(false);
 
+// 各平台获取 key 的链接
+const keyLinks = {
+  openai: "https://platform.openai.com/api-keys",
+  ark: "https://console.volcengine.com/ark",
+  deepseek: "https://platform.deepseek.com/",
+};
+// 当前平台的获取 key 链接
+const keyLink = computed(() => keyLinks[props.provider] || "");
+
 // 配置项不存在时自动创建默认项，保证表单可实时编辑
 watch(
   () => props.provider,
@@ -107,8 +116,25 @@ function useService() {
       <SfFormItem label="模型" prop="model">
         <SfInput v-model="form.model" class="w-full" placeholder="请输入模型名称" />
       </SfFormItem>
-      <SfFormItem label="API Key" prop="key">
-        <SfInput v-model="form.key" type="password" show-password placeholder="请输入 API Key" />
+      <div class="mb-1 flex h-5 w-full items-center justify-between">
+        <span class="pr-1 pl-2 font-bold text-sf-text">API Key</span>
+        <a
+          :href="keyLink"
+          target="_blank"
+          rel="noopener"
+          class="cursor-pointer text-xs text-sf-theme hover:underline"
+        >
+          获取key
+        </a>
+      </div>
+      <SfFormItem prop="key">
+        <SfInput
+          v-model="form.key"
+          type="password"
+          show-password
+          class="w-full"
+          placeholder="请输入 API Key"
+        />
       </SfFormItem>
 
       <!-- 接口地址 -->
