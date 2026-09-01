@@ -61,7 +61,8 @@ const handleMouseEnter = () => {
       height: rect.height,
     },
     direction: rect.top - pageRect.top < pageRect.height / 2 ? "down" : "up",
-    align: pageRect.right - rect.left < 420 ? "right" : "left",
+    // 依据窗口大小决定水平对齐：字段右缘距窗口右侧不足时向左展开
+    align: window.innerWidth - rect.right < 420 ? "right" : "left",
   });
 };
 
