@@ -58,6 +58,12 @@ export interface ReactConfig {
   onAct?: (toolCall: ToolCall) => void;
   // 观察回调：每次工具执行结果
   onObserve?: (observation: Observation) => void;
+  // 是否在最终答案后追加反思阶段，辅助修正不稳定输出
+  reflection?: boolean;
+  // 反思回调：反思后的最终答案
+  onReflect?: (answer: string) => void;
+  // 流式事件回调：透传 reasoning/content/total_tokens 等底层事件，用于计时与统计
+  onEvent?: (type: string, data: any) => void;
   // 最终答案回调
   onFinal?: (answer: string) => void;
 }

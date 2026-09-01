@@ -3,6 +3,7 @@ import { createRequest } from "./request";
 import { handleRetry, processOption } from "./stream-utils";
 import { executeToolCall } from "../react/actor";
 import { observe } from "../react/observer";
+import { reflect } from "../react/reflector";
 import { think } from "../react/thinker";
 import { ToolRegistry } from "../react/tools";
 import type { ChatMessage, ReactConfig } from "../react/types";
@@ -209,6 +210,7 @@ class LLM {
           tools: config.tools,
           model: config.model,
           abortRef,
+          onEvent: config.onEvent,
         });
 
         if (aborted) throw new Error("已中止");
@@ -222,8 +224,26 @@ class LLM {
         if (!result.toolCalls.length) {
           const finalAnswer = extractJson(result.finalAnswer);
           console.log("[ReAct] 最终答案:", finalAnswer);
-          config.onFinal?.(finalAnswer);
-          return finalAnswer;
+
+          let answer = finalAnswer;
+          // 追加反思阶段：让模型审视并修正最终答案
+          if (config.reflection) {
+            const task = initialMessages
+              .filter((m) => m.role === "user")
+              .map((m) => m.content)
+              .join("\n");
+            answer = extractJson(
+              await reflect(this, finalAnswer, task, {
+                model: config.model,
+                abortRef,
+              }),
+            );
+            console.log("[ReAct] 反思后答案:", answer);
+            config.onReflect?.(answer);
+          }
+
+          config.onFinal?.(answer);
+          return answer;
         }
 
         // 回填 assistant 的工具调用消息
