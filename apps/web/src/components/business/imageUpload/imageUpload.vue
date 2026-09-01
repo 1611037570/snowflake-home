@@ -2,9 +2,13 @@
 import Cropper from "cropperjs";
 import "cropperjs/dist/cropper.css";
 import { ref } from "vue";
-import { toAvatarSrc } from "@/utils";
+import { useFileDialog } from "@vueuse/core";
+import { routerNavigation, toAvatarSrc } from "@/utils";
 import Upload from "@/components/el/upload";
 import { compressWebp } from "./compressWebp";
+
+// 新窗口打开 image 工具页
+const goImageTools = () => routerNavigation("/image");
 
 // 默认 1 寸照尺寸：25mm x 35mm @96dpi ≈ 96 x 132px
 const DEFAULT_WIDTH = 72;
@@ -55,9 +59,8 @@ const setRatio = (label) => {
   cropper?.setAspectRatio(ratioList.find((item) => item.label === label)?.value);
 };
 
-// 选择文件：暂存图片并打开裁切弹窗，先按组件宽高比裁切
-const handleChange = (uploadFile) => {
-  const rawFile = uploadFile?.raw;
+// 处理原始文件：暂存图片并打开裁切弹窗，先按组件宽高比裁切
+const handleRawFile = (rawFile) => {
   if (!rawFile) return;
   // 选中图片打印一次（统一按 base64 字符长度）
   const reader = new FileReader();
@@ -72,6 +75,18 @@ const handleChange = (uploadFile) => {
   cropSrc.value = URL.createObjectURL(rawFile);
   cropVisible.value = true;
 };
+
+// 选择文件：转交统一处理
+const handleChange = (uploadFile) => {
+  handleRawFile(uploadFile?.raw);
+};
+
+// 重新上传：打开系统文件选择框（参考 image 项目的 useFileDialog 写法）
+const { open, onChange } = useFileDialog();
+const handleReUpload = () => open({ accept: "image/*" });
+onChange((files) => {
+  handleRawFile(files?.[0]);
+});
 
 // 图片加载完成后初始化裁切器，裁切框锁定为组件宽高比
 const initCropper = () => {
@@ -106,7 +121,7 @@ const confirmCrop = async () => {
       imageSmoothingQuality: "high",
     });
 
-    // 缩小目标尺寸再乘 0.9，压缩质量 0.92
+    // 缩小目标尺寸再乘 0.7，压缩质量 0.85
     const { src } = await compressWebp(canvas, props.width * 0.7, props.height * 0.7, 0.85);
     // 存储裸 base64：去除固定 data URL 前缀，渲染处统一拼接
     image.value = src.split(",")[1] || "";
@@ -133,43 +148,78 @@ const removeImage = () => {
 
 <template>
   <!-- 固定整体高度，保证上传前后表单区域不跳动 -->
-  <div class="flex shrink-0 items-center gap-3" :style="{ height: `${height}px` }">
-    <!-- 始终保留上传入口：未上传展示占位，已上传时点击图片可重新上传替换 -->
-    <Upload :auto-upload="false" :show-file-list="false" accept="image/*" @change="handleChange">
-      <div
-        class="border-sf-border group relative flex cursor-pointer items-center justify-center overflow-hidden rounded-lg border border-dashed text-sf-text-3 transition-colors hover:border-sf-theme hover:text-sf-theme"
+  <div class="flex flex-col" :style="{ minHeight: `${height}px` }">
+    <div class="flex gap-1">
+      <!-- 始终保留上传入口：未上传展示占位，已上传时点击图片可重新上传替换 -->
+      <Upload
+        :auto-upload="false"
+        :show-file-list="false"
+        accept="image/*"
         :style="{ width: `${DEFAULT_WIDTH}px`, height: `${DEFAULT_HEIGHT}px` }"
-        :title="image ? '点击重新上传' : '上传图片'"
+        @change="handleChange"
       >
-        <img v-if="image" :src="toAvatarSrc(image)" alt="图片" class="h-full w-full shrink-0 object-cover" />
-        <!-- 已上传时鼠标悬停显示"重新上传"遮罩提示 -->
         <div
-          v-if="image"
-          class="absolute inset-0 flex items-center justify-center bg-black/50 text-xs text-white opacity-0 transition-opacity group-hover:opacity-100"
+          class="border-sf-border group relative flex cursor-pointer items-center justify-center overflow-hidden rounded-lg border border-dashed text-sf-text-3 transition-colors hover:border-sf-theme hover:text-sf-theme"
+          :style="{ width: `${DEFAULT_WIDTH}px`, height: `${DEFAULT_HEIGHT}px` }"
+          :title="image ? '点击重新上传' : '上传图片'"
         >
-          重新上传
+          <img
+            v-if="image"
+            :src="toAvatarSrc(image)"
+            alt="图片"
+            class="h-full w-full shrink-0 object-cover"
+          />
+          <!-- 已上传时鼠标悬停显示"重新上传"遮罩提示 -->
+          <div
+            v-if="image"
+            class="absolute inset-0 flex items-center justify-center bg-black/50 text-xs text-white opacity-0 transition-opacity group-hover:opacity-100"
+          >
+            重新上传
+          </div>
+          <div v-else class="flex h-full w-full flex-col items-center justify-center gap-1">
+            <SfIcon icon="mdi:image-plus" size="6" />
+            <span class="text-xs">上传图片</span>
+          </div>
         </div>
-        <div v-else class="flex h-full w-full flex-col items-center justify-center gap-1">
-          <SfIcon icon="mdi:image-plus" size="6" />
-          <span class="text-xs">上传图片</span>
+      </Upload>
+
+      <!-- 右侧垂直操作栏：图标加文字描述，参考 image 项目操作栏布局 -->
+      <div v-if="image" class="flex h-full flex-col gap-1">
+        <div
+          class="flex cursor-pointer items-center gap-1 rounded-md px-1 py-1 transition-colors hover:text-sf-theme"
+          title="删除图片"
+          @click="removeImage"
+        >
+          <SfIcon icon="ic:round-delete" size="5" />
+          <span class="text-xs">删除</span>
+        </div>
+        <div
+          class="flex cursor-pointer items-center gap-1 rounded-md px-1 py-1 transition-colors hover:text-sf-theme"
+          title="重新上传"
+          @click="handleReUpload"
+        >
+          <SfIcon icon="ic:round-file-upload" size="5" />
+          <span class="text-xs">重新上传</span>
+        </div>
+        <div
+          class="flex cursor-pointer items-center gap-1 rounded-md px-1 py-1 transition-colors hover:text-sf-theme"
+          title="窗口大图"
+          @click="previewVisible = true"
+        >
+          <SfIcon icon="ic:round-zoom-in" size="5" />
+          <span class="text-xs">窗口大图</span>
         </div>
       </div>
-    </Upload>
-
-    <SfIcon
-      v-if="image"
-      icon="ic:round-delete"
-      size="4"
-      boxSize="8"
-      class="cursor-pointer rounded-lg transition-colors hover:text-sf-theme"
-      title="删除图片"
-      @click="removeImage"
-    />
-    <el-button v-if="image" size="small" @click="previewVisible = true">查看图片</el-button>
-    <div>技术支持</div>
-
+    </div>
+    <div class="flex cursor-pointer items-center gap-1 text-[11px] text-sf-text-2">
+      该功能由 <span @click="goImageTools" class="hover:text-sf-theme">轻图</span> 提供支持
+    </div>
     <!-- 图片查看器：点击查看上传的大图 -->
-    <el-image-viewer v-if="previewVisible" :url-list="[toAvatarSrc(image)]" @close="previewVisible = false" />
+    <el-image-viewer
+      v-if="previewVisible"
+      :url-list="[toAvatarSrc(image)]"
+      @close="previewVisible = false"
+    />
 
     <!-- 裁切弹窗：上传后先按组件宽高比裁切，确认后再压缩 -->
     <SfModal v-model="cropVisible" title="裁剪图片" width="720px">
