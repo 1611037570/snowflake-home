@@ -3,6 +3,8 @@ import { computed, inject, ref } from "vue";
 import { useTimeoutFn } from "@vueuse/core";
 import DOMPurify from "dompurify";
 import DiffContent from "./diffContent.vue";
+import { storeToRefs } from "pinia";
+import { useResumeStore } from "@/stores";
 
 // 字段代理对象：v-model 绑定，包含 value 与 newValue
 const model = defineModel();
@@ -19,6 +21,9 @@ const props = defineProps({
     default: false,
   },
 });
+
+// 打印/导出期间强制展示原值，隐藏 diff 对比效果
+const { isPrinting } = storeToRefs(useResumeStore());
 
 // 字段代理兜底，避免未传入时取值报错
 const field = computed(() => model.value || { value: "", newValue: "" });
@@ -82,18 +87,27 @@ const valueSanitized = computed(() =>
 const newBlocks = computed(() => (props.html ? splitHtml(newSanitized.value) : []));
 const valueBlocks = computed(() => (props.html ? splitHtml(valueSanitized.value) : []));
 
-// 文档流统一渲染：有草稿显示新增，否则显示原值
-const documentContent = computed(() => newValueContent.value || valueContent.value);
+// 文档流统一渲染：有草稿显示新增，否则显示原值；打印时固定展示原值
+const documentContent = computed(() =>
+  isPrinting.value ? valueContent.value : newValueContent.value || valueContent.value,
+);
 const documentClass = computed(() =>
-  newValueContent.value ? "cursor-pointer rounded-xl bg-[#e8f5e9] text-[#2e7d32]" : "",
+  !isPrinting.value && newValueContent.value
+    ? "cursor-pointer rounded-xl bg-[#e8f5e9] text-[#2e7d32]"
+    : "",
 );
 const documentBlocks = computed(() => {
   if (!props.html) return [];
+  if (isPrinting.value) return valueBlocks.value;
   return newValueContent.value ? newBlocks.value : valueBlocks.value;
 });
 
 const isHtmlContent = (html) => !!html && html !== "<p><br></p>";
 const hasContent = computed(() => {
+  // 打印时仅依据原值判断是否渲染
+  if (isPrinting.value) {
+    return props.html ? isHtmlContent(valueSanitized.value) : !!valueContent.value;
+  }
   if (props.html) {
     return isHtmlContent(newSanitized.value) || isHtmlContent(valueSanitized.value);
   }
@@ -145,30 +159,30 @@ const handleMouseLeave = () => {
   >
     <!-- 悬浮对比层：浮在字段上方，不占文档流 -->
     <div
-      v-show="isHovered && newValueContent"
-      class="absolute z-10 flex max-h-[240px] w-max max-w-[420px] min-w-[180px] flex-col rounded-xl border border-sf-b bg-sf-bg p-2 shadow-lg"
+      v-show="!isPrinting && isHovered && newValueContent"
+      class="absolute z-10 flex max-h-[240px] w-max max-w-[420px] min-w-[180px] flex-col rounded-3xl border border-sf-b bg-sf-bg p-2"
       :class="[
         dropdownDirection === 'up' ? 'bottom-full mb-1' : 'top-full mt-1',
         dropdownAlign === 'left' ? 'left-0' : 'right-0',
       ]"
     >
-      <div class="min-h-0 flex-1 overflow-y-auto">
-        <div class="rounded bg-[#e8f5e9] px-1 text-[#2e7d32]">
+      <div class="min-h-0 flex-1 overflow-y-auto rounded-xl">
+        <div class="rounded-xl bg-[#e8f5e9] px-1 text-[#2e7d32]">
           <DiffContent :content="newValueContent" :blocks="newBlocks" />
         </div>
-        <div class="mt-1 rounded bg-[#fef0f0] px-1 text-[#d32f2f] line-through">
+        <div class="mt-1 rounded-xl bg-[#fef0f0] px-1 text-[#d32f2f] line-through">
           <DiffContent :content="valueContent" :blocks="valueBlocks" />
         </div>
       </div>
       <div class="mt-1 flex shrink-0 items-center gap-x-2">
         <div
-          class="flex-c h-7 w-[45px] cursor-pointer rounded border-none bg-[#2e7d32] px-1.5 text-[11px] text-white"
+          class="flex-c h-7 w-[45px] cursor-pointer rounded-xl border-none bg-[#2e7d32] px-1.5 text-[11px] text-white"
           @click.stop="handleSave"
         >
           保留
         </div>
         <div
-          class="flex-c h-7 w-[45px] cursor-pointer rounded border-none bg-[#999] px-1.5 text-[11px] text-white"
+          class="flex-c h-7 w-[45px] cursor-pointer rounded-xl border-none bg-[#999] px-1.5 text-[11px] text-white"
           @click.stop="handleCancel"
         >
           放弃
