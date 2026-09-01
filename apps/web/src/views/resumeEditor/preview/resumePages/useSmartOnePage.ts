@@ -94,14 +94,19 @@ export const useSmartOnePage = ({
     // 测量基准：预览层行高对应原始 ui 参数
     const base = pickAdjustable(ui.value);
     const bottomSpace = showPageNumber.value ? PAGE_NUMBER_HEIGHT : 0;
-    // 行高总和与模块间距数量在单次计算中固定，提前聚合，避免每轮压缩都遍历全部行
-    const rowCount = list.reduce((count: number, group: any) => count + group.rows.length, 0);
-    if (rowCount === 0) return null;
-    const rowsTotal = list.reduce(
-      (sum: number, group: any) =>
-        sum + group.rows.reduce((groupSum: number, row: any) => groupSum + row.height, 0),
-      0,
+    // 行数、行高总和在单次计算中固定，单趟聚合，避免每轮压缩重复遍历全部行
+    const { rowCount, rowsTotal } = list.reduce(
+      (acc: { rowCount: number; rowsTotal: number }, group: any) => {
+        acc.rowCount += group.rows.length;
+        acc.rowsTotal += group.rows.reduce(
+          (groupSum: number, row: any) => groupSum + row.height,
+          0,
+        );
+        return acc;
+      },
+      { rowCount: 0, rowsTotal: 0 },
     );
+    if (rowCount === 0) return null;
     const moduleGapCount = Math.max(list.length - 1, 0);
     const baseScale = base.fontSize * base.lineHeight;
 
