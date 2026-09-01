@@ -106,15 +106,23 @@ function safeJsonParse(str: string, isDebug: boolean) {
   }
 }
 export function processResult({ text, isJson = true, isDebug }: any) {
-  // 1. 输入校验（立即抛出）
-  if (typeof text !== "string" || !text.length) {
+  // 输入校验：非字符串直接抛出
+  if (typeof text !== "string") {
     throw new Error("最终结果为空，无法解析");
   }
 
   const trimmed = text.trim();
+  // isJson=false 时允许空内容，如仅输出工具调用的中间步骤
+  if (!trimmed && !isJson) {
+    return "";
+  }
+  if (!trimmed) {
+    throw new Error("最终结果为空，无法解析");
+  }
+
   let result = trimmed;
 
-  // 2. JSON 解析（独立 try-catch）
+  // JSON 解析（独立 try-catch）
   if (isJson) {
     try {
       result = safeJsonParse(trimmed, isDebug);
@@ -123,7 +131,7 @@ export function processResult({ text, isJson = true, isDebug }: any) {
     }
   }
 
-  // 3. 调试输出与返回
+  // 调试输出与返回
   if (isDebug) {
     console.log("流式传输完成，最终结果:", result);
   }

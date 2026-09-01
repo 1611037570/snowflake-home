@@ -50,6 +50,8 @@ export async function think(
       },
     })),
     tool_choice: "auto",
+    // 强制模型以 JSON 输出最终答案，避免混入自然语言
+    response_format: { type: "json_object" },
     thinking: { type: "disabled" },
     ...(options.model ? { model: options.model } : {}),
   };
