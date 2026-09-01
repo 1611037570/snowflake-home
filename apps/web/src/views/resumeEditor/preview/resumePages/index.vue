@@ -138,7 +138,13 @@ const containerHeight = {
       v-for="(pageSlices, pageIndex) in pages"
       :key="pageIndex"
       class="resume-page-item relative flex flex-col rounded-3xl bg-white text-black"
-      :class="[ui.fontFamily, `${uid}-page-${pageIndex}`]"
+      :class="[
+        ui.fontFamily,
+        `${uid}-page-${pageIndex}`,
+        {
+          'border border-sf-b hover:border-sf-theme-2': mode === 'editor',
+        },
+      ]"
       :style="[paddingStyle, fontStyle, lineHeightStyle, containerWidth, containerHeight]"
     >
       <!-- 模块之间的间距由 ui.moduleSpacing 控制，与分页计算保持一致 -->
