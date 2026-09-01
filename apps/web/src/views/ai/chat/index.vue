@@ -13,7 +13,7 @@ const resumeStore = useResumeStore();
 const { currentData } = storeToRefs(resumeStore);
 const aiStore = useAiStore();
 const { createDefaultMessage } = aiStore;
-const { activeModel, customModel } = storeToRefs(aiStore);
+const { activeModel, customModels } = storeToRefs(aiStore);
 
 const { type } = defineProps({
   type: {
@@ -134,6 +134,8 @@ const handleAIResponse = async () => {
     let thoughtStatus = false;
     // 根据供应商契约选择请求消息字段
     const llm = getLLM();
+    // 当前激活的自定义配置
+    const activeConfig = customModels.value.find((item) => item.provider === activeModel.value);
     const options = {
       [llm.provider === "openai" ? "messages" : "input"]: messages,
       thinking: {
@@ -141,7 +143,7 @@ const handleAIResponse = async () => {
         // type: thinkMode.value ? "enabled" : "disabled",
         type: "disabled",
       }, // 👈 这个就是【深度思考开关】
-      ...(activeModel.value === "custom" ? { model: customModel.value?.model } : {}),
+      ...(activeConfig ? { model: activeConfig.model } : {}),
     };
     // 调用当前配置的大模型流式接口
     const { sendFn, abortFn } = await llm.request({
