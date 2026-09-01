@@ -1,9 +1,8 @@
 <script setup>
 import { computed, inject } from "vue";
 import { getTime } from "../../utils";
-import Content from "../theme/content.vue";
+import DiffField from "../components/diffField/index.vue";
 import Title from "../theme/title/index.vue";
-import Text from "./text.vue";
 
 // 属性：模块标识、标题、数据 key
 const props = defineProps({
@@ -41,18 +40,18 @@ const list = computed(() => previewData.value?.[props.dataKey]?.data || []);
         <!-- 信息容器撑满行内剩余宽度，避免导出渲染时子项宽度取整触发换行错位 -->
         <div class="flex min-w-0 max-w-full flex-1 flex-wrap items-center gap-4">
           <div class="font-bold" :style="[fontValue(3)]">
-            <Text v-model="item.name" />
+            <DiffField v-model="item.name" />
           </div>
           <div>
-            <Text v-model="item.post" />
+            <DiffField v-model="item.post" />
           </div>
         </div>
         <div class="flex min-w-0 max-w-full flex-wrap items-center">
-          <Text v-model="item.time" :display-value="getTime(item.time?.value)" />
+          <DiffField v-model="item.time" :display-value="getTime(item.time?.value)" />
         </div>
       </div>
       <!-- 补充描述/经历 -->
-      <Content :content="item.content" />
+      <DiffField v-model="item.content" html />
     </template>
   </div>
 </template>

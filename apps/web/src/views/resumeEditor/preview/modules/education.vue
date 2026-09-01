@@ -1,8 +1,7 @@
 <script setup>
 import { computed, inject } from "vue";
-import Content from "../theme/content.vue";
+import DiffField from "../components/diffField/index.vue";
 import Title from "../theme/title/index.vue";
-import Text from "./text.vue";
 
 import { getTime } from "../../utils";
 
@@ -37,11 +36,11 @@ const hasField = (item, key) => {
       >
         <div class="flex min-w-0 max-w-full flex-wrap items-baseline gap-4">
           <div class="font-bold" :style="[fontValue(3)]">
-            <Text v-model="item.name" />
+            <DiffField v-model="item.name" />
           </div>
         </div>
         <div class="flex min-w-0 max-w-full flex-wrap items-center gap-2">
-          <Text v-model="item.time" :display-value="getTime(item.time?.value)" />
+          <DiffField v-model="item.time" :display-value="getTime(item.time?.value)" />
         </div>
       </div>
       <!-- 次信息行：post / education / mode，不创建临时对象，直接基于原字段渲染 -->
@@ -50,25 +49,25 @@ const hasField = (item, key) => {
         v-if="hasField(item, 'post') || hasField(item, 'education') || hasField(item, 'mode')"
       >
         <template v-if="hasField(item, 'education')">
-          <Text v-model="item.education" />
+          <DiffField v-model="item.education" />
         </template>
         <template v-if="hasField(item, 'post')">
           <div
             v-if="hasField(item, 'education')"
             class="h-1 w-1 rounded-full bg-black"
           ></div>
-          <Text v-model="item.post" />
+          <DiffField v-model="item.post" />
         </template>
         <template v-if="hasField(item, 'mode')">
           <div
             v-if="hasField(item, 'education') || hasField(item, 'post')"
             class="h-1 w-1 rounded-full bg-black"
           ></div>
-          <Text v-model="item.mode" />
+          <DiffField v-model="item.mode" />
         </template>
       </div>
       <!-- 补充描述/经历 -->
-      <Content :content="item.content" />
+      <DiffField v-model="item.content" html />
     </template>
   </div>
 </template>

@@ -2,7 +2,7 @@
 import dayjs from "dayjs";
 import { computed, inject } from "vue";
 import { workYears } from "../../../../resumeName";
-import Text from "../../text.vue";
+import DiffField from "../../../components/diffField/index.vue";
 
 // 元信息组件：性别 / 年龄 / 工作年限，宽度策略由使用方通过 class 控制
 const previewData = inject("previewData");
@@ -20,14 +20,14 @@ const age = computed(() => {
 
 <template>
   <div class="ml-3 flex max-w-full min-w-0 flex-wrap items-center gap-3" :style="[fontValue(2)]">
-    <Text v-if="user.sex?.value" v-model="user.sex" />
+    <DiffField v-if="user.sex?.value" v-model="user.sex" />
     <span
       v-if="user.sex?.value && (age || workYears)"
       class="h-3 w-px bg-current opacity-50"
     ></span>
-    <Text v-if="age" v-model="user.newAge" :display-value="age + '岁'" />
+    <DiffField v-if="age" v-model="user.newAge" :display-value="age + '岁'" />
     <span v-if="age && workYears" class="h-3 w-px bg-current opacity-50"></span>
-    <Text v-if="workYears" v-model="user.newWorkYears" :display-value="workYears" />
+    <DiffField v-if="workYears" v-model="user.newWorkYears" :display-value="workYears" />
   </div>
 </template>
 
