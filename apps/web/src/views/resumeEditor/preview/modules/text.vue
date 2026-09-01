@@ -1,38 +1,46 @@
 <template>
   <div
+    ref="rootRef"
     class="relative min-w-0 max-w-full break-words"
     @mouseenter="handleMouseEnter"
     @mouseleave="handleMouseLeave"
   >
+    <!-- 悬浮对比层：浮在字段上方，不占文档流 -->
     <div
-      v-show="isHovered"
-      class="absolute bottom-full left-0 z-10 mb-1 flex h-7 items-center gap-x-2"
+      v-show="isHovered && modelProxy.newValue"
+      class="absolute left-0 z-10 flex w-full min-w-[180px] max-h-[240px] flex-col rounded-xl border border-sf-b bg-white p-2 shadow-lg"
+      :class="dropdownDirection === 'up' ? 'bottom-full mb-1' : 'top-full mt-1'"
     >
-      <div
-        class="flex-c h-full w-[45px] cursor-pointer rounded border-none bg-[#2e7d32] px-1.5 text-[11px] text-white"
-        @click.stop="handleSave"
-      >
-        保留
+      <div class="min-h-0 flex-1 overflow-y-auto">
+        <div class="rounded bg-[#e8f5e9] px-1 text-[#2e7d32]">{{ modelProxy.newValue }}</div>
+        <div class="mt-1 rounded bg-[#fef0f0] px-1 text-[#d32f2f] line-through">
+          {{ valueContent }}
+        </div>
       </div>
-      <div
-        class="flex-c h-full w-[45px] cursor-pointer rounded border-none bg-[#999] px-1.5 text-[11px] text-white"
-        @click.stop="handleCancel"
-      >
-        放弃
+      <div class="mt-1 flex shrink-0 items-center gap-x-2">
+        <div
+          class="flex-c h-7 w-[45px] cursor-pointer rounded border-none bg-[#2e7d32] px-1.5 text-[11px] text-white"
+          @click.stop="handleSave"
+        >
+          保留
+        </div>
+        <div
+          class="flex-c h-7 w-[45px] cursor-pointer rounded border-none bg-[#999] px-1.5 text-[11px] text-white"
+          @click.stop="handleCancel"
+        >
+          放弃
+        </div>
       </div>
     </div>
-    <div v-if="!modelProxy.newValue" class="w-full rounded-xl">
-      {{ valueContent }}
-    </div>
+    <!-- 文档流：有草稿显示新增内容，否则显示原值 -->
     <div
-      v-else-if="!isHovered"
+      v-if="modelProxy.newValue"
       class="w-full cursor-pointer rounded-xl bg-[#e8f5e9] text-[#2e7d32]"
     >
       {{ modelProxy.newValue }}
     </div>
     <div v-else class="w-full rounded-xl">
-      <div class="bg-[#e8f5e9] text-[#2e7d32]">{{ modelProxy.newValue }}</div>
-      <div class="bg-[#fef0f0] text-[#d32f2f] line-through">{{ valueContent }}</div>
+      {{ valueContent }}
     </div>
   </div>
 </template>
@@ -76,6 +84,10 @@ const modelProxy = computed({
 
 // 鼠标悬停状态
 const isHovered = ref(false);
+// 悬浮方向：up 向上浮，down 向下浮
+const dropdownDirection = ref("up");
+// 根元素引用，用于判断字段在页面中的位置
+const rootRef = ref(null);
 // 关闭延迟定时器（使用 VueUse 自动管理，组件卸载时自动清理）
 const { start: startHideTimer, stop: stopHideTimer } = useTimeoutFn(
   () => {
@@ -109,6 +121,12 @@ const handleMouseEnter = () => {
   // 只有当有旧数据时才显示悬停效果
   if (valueContent.value && modelProxy.value.newValue) {
     isHovered.value = true;
+    // 字段靠近页面顶部时向下浮，否则向上浮，避免溢出页面边界
+    const page = rootRef.value?.closest(".resume-page-item");
+    if (rootRef.value && page) {
+      const elTop = rootRef.value.getBoundingClientRect().top - page.getBoundingClientRect().top;
+      dropdownDirection.value = elTop < page.getBoundingClientRect().height / 2 ? "down" : "up";
+    }
   }
 };
 
