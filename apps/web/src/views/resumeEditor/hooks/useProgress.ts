@@ -38,12 +38,18 @@ const getFieldMeta = (field: any) => {
 };
 
 // ==================== 主函数 ====================
+
+// 模块配置索引：按 key 快速查找，避免每次分析时线性遍历配置
+const moduleFieldsMap = computed(() => {
+  const map = new Map<string, any>();
+  for (const f of resumeStore.currentConfig?.fields || []) map.set(f?.key, f);
+  for (const f of resumeStore.currentFixedConfig?.fields || []) map.set(f?.key, f);
+  return map;
+});
+
 const analyzeModule = (source: any, moduleKey: string) => {
   // 从 store 获取模块配置
-  const moduleForm = [
-    ...(resumeStore.currentFixedConfig?.fields || []),
-    ...(resumeStore.currentConfig?.fields || []),
-  ].find((f) => f?.key === moduleKey);
+  const moduleForm = moduleFieldsMap.value.get(moduleKey);
 
   // 无配置或没有 fields → 无法统计，返回 0
   if (!moduleForm?.fields?.length) {
@@ -135,33 +141,43 @@ const analyzeModule = (source: any, moduleKey: string) => {
   const score = stat.total ? Math.round((stat.done / stat.total) * 10) : 0;
   return { missing, score };
 };
+// 参与评分的固定模块列表
+const SCORE_MODULE_KEYS = ["user", "education", "skill", "work", "project"] as const;
+type ModuleAnalyzeResult = ReturnType<typeof analyzeModule>;
+
+// 一次性分析全部评分模块，供各调用方共用一次计算
+const analyzeAllModules = (source: any) => {
+  const result = {} as Record<(typeof SCORE_MODULE_KEYS)[number], ModuleAnalyzeResult>;
+  for (const key of SCORE_MODULE_KEYS) result[key] = analyzeModule(source, key);
+  return result;
+};
+
+// 当前简历全模块分析结果：各模块得分 computed 共用，避免重复分析
+const currentScores = computed(() => analyzeAllModules(currentData.value));
+
 // 各模块必填完成度得分（0-10）：统一基于必填字段统计
-export const userScore = computed(() => analyzeModule(currentData.value, "user").score);
-export const educationScore = computed(() => analyzeModule(currentData.value, "education").score);
-export const skillScore = computed(() => analyzeModule(currentData.value, "skill").score);
-export const workScore = computed(() => analyzeModule(currentData.value, "work").score);
-export const projectScore = computed(() => analyzeModule(currentData.value, "project").score);
+export const userScore = computed(() => currentScores.value.user.score);
+export const educationScore = computed(() => currentScores.value.education.score);
+export const skillScore = computed(() => currentScores.value.skill.score);
+export const workScore = computed(() => currentScores.value.work.score);
+export const projectScore = computed(() => currentScores.value.project.score);
 
 // 全部成绩汇总：必填完成度得分求和 + 总分进度（5项 每项满分10，总分满分50）
 export const getAllScores = (data: any) => {
-  const user = analyzeModule(data, "user").score;
-  const education = analyzeModule(data, "education").score;
-  const skill = analyzeModule(data, "skill").score;
-  const work = analyzeModule(data, "work").score;
-  const project = analyzeModule(data, "project").score;
+  const { user, education, skill, work, project } = analyzeAllModules(data);
 
   // 5项，每项满分10
-  const totalScore = user + education + skill + work + project;
+  const totalScore = user.score + education.score + skill.score + work.score + project.score;
   const totalFull = 50;
   // 进度百分比 保留2位小数
   const progress = Number(((totalScore / totalFull) * 100).toFixed(2));
 
   return {
-    userScore: user,
-    educationScore: education,
-    skillScore: skill,
-    workScore: work,
-    projectScore: project,
+    userScore: user.score,
+    educationScore: education.score,
+    skillScore: skill.score,
+    workScore: work.score,
+    projectScore: project.score,
     totalScore,
     totalFull,
     progress,
@@ -172,9 +188,12 @@ export const getAllScores = (data: any) => {
 export const useProgress = (data: MaybeRefOrGetter<Record<string, any> | null | undefined>) => {
   return computed(() => {
     const source = toValue(data) || {};
+    // 当前编辑数据时复用已缓存的全模块分析，避免与 Score 重复计算
+    const cached: Record<string, ModuleAnalyzeResult> | null =
+      source === currentData.value ? currentScores.value : null;
     const list = Object.keys(source).map((key) => {
       // 必填字段分析：缺失标签 + 必填完成度得分
-      const { missing, score } = analyzeModule(source, key);
+      const { missing, score } = cached?.[key] ?? analyzeModule(source, key);
       return {
         key,
         // 模块名称，复用 store 通用方法
