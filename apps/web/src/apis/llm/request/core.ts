@@ -23,12 +23,7 @@ class LLM {
    * @param {string} [config.apiKey] - 请求认证所需的 API Key
    * @param {string} [config.model] - 默认模型名
    */
-  constructor(config: {
-    url?: string;
-    provider?: string;
-    apiKey?: string;
-    model?: string;
-  }) {
+  constructor(config: { url?: string; provider?: string; apiKey?: string; model?: string }) {
     const { url = "", provider = "cool", apiKey, model } = config;
 
     this.url = url;
@@ -74,6 +69,7 @@ class LLM {
    * @param {string} [config.method="POST"] - 请求方法，默认为 POST
    * @param {boolean} [config.isThrow=true] - 发生错误时是否抛出异常
    * @param {number} [config.retryCount=0] - 请求失败时的重试次数
+   * @param {number} [config.timeout=180000] - 请求超时时间，默认 180 秒
    * @param {boolean} [config.isStream=true] - 是否开启流式响应
    * @returns {Promise<any>} 返回请求结果的 Promise，包含 abortFn 和 sendFn
    */
@@ -87,10 +83,9 @@ class LLM {
       debug = true,
       isJson = true,
       method = "POST",
-      retryCount = 0,
+      retryCount = 3,
       isStream = true,
-      // 请求超时时间，默认 60 秒
-      timeout = 60000,
+      timeout = 180000,
     } = config;
     const token = this.apiKey || "";
     if (debug) {
@@ -141,7 +136,6 @@ class LLM {
 
         // 处理重试逻辑
         const { retried, result } = await handleRetry({
-          code: error?.code,
           currentRetryCount,
           retryCount,
           debug,

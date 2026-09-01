@@ -182,23 +182,26 @@ export function processError(e: any) {
 /**
  * 处理重试逻辑
  * @param {Object} params
- * @param {number} params.code 错误码
  * @param {number} params.currentRetryCount 当前重试次数
  * @param {number} params.retryCount 最大重试次数
  * @param {boolean} params.debug 是否开启调试模式
  * @param {Function} params.onRetry 重试回调函数
  * @returns {Promise<{retried: boolean, result?: any}>}
  */
-export async function handleRetry({ code, currentRetryCount, retryCount, debug, onRetry }: any) {
-  if (code === 0 && currentRetryCount < retryCount) {
-    const delay = 1000 * (currentRetryCount + 1);
+export async function handleRetry({ currentRetryCount, retryCount, debug, onRetry }: any) {
+  // 重试次数未超过最大重试次数
+  if (currentRetryCount < retryCount) {
+    const delay = 500 * (currentRetryCount + 1);
     if (debug) {
-      console.log(
-        `请求失败(code=0)，准备在 ${delay}ms 后进行第 ${currentRetryCount + 1}/${retryCount} 次重试...`,
+      console.warn(
+        `请求失败，准备在 ${delay}ms 后进行第 ${currentRetryCount + 1}/${retryCount} 次重试...`,
       );
     }
+    // 等待指定时间后重试
     await new Promise((resolve) => setTimeout(resolve, delay));
+    // 重试
     const result = await onRetry(currentRetryCount + 1);
+
     return { retried: true, result };
   }
   return { retried: false };
