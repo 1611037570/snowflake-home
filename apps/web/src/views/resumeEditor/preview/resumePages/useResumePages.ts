@@ -141,17 +141,17 @@ export const useResumePages = ({
   });
 
   // 模块外层样式：只读模式不渲染选中高亮与虚线框
+  const selectedKeys = computed(() => new Set(selectedModule.value.map((item) => item.key)));
   const moduleClass = (slice: PageSlice) => {
     if (isReadonly.value) return "";
-    const isSelected = selectedModule.value.find((item) => item.key === slice.moduleKey);
-    return [
-      "outline-2 outline-offset-3 outline-dashed",
-      isSelected ? "outline-sf-theme" : "outline-transparent hover:outline-sf-theme-2",
-    ];
+    const isSelected = selectedKeys.value.has(slice.moduleKey);
+    return isSelected
+      ? "outline-2 outline-offset-3 outline-dashed outline-sf-theme"
+      : "outline-2 outline-offset-3 outline-dashed outline-transparent hover:outline-sf-theme-2";
   };
 
-  // 生成每页的可见行裁剪样式（用实例唯一前缀隔离多实例）
-  const getPageStyle = (pageSlices: PageSlice[], pageIndex: number) => {
+  // 生成每页可见行裁剪样式；集中按 pages 计算，避免模板每次渲染都重复拼接 CSS
+  const buildPageStyle = (pageSlices: PageSlice[], pageIndex: number) => {
     return pageSlices
       .map((slice) => {
         const visibleSelectors = slice.visibleRowIndexes
@@ -161,7 +161,10 @@ export const useResumePages = ({
       })
       .join("\n");
   };
+  const pageStyles = computed(() =>
+    pages.value.map((pageSlices, pageIndex) => buildPageStyle(pageSlices, pageIndex)),
+  );
 
   // 透出测量结果（模块行高），供智能一页等上层逻辑按比例压缩参数
-  return { measureDone, pages, moduleClass, getPageStyle, moduleList };
+  return { measureDone, pages, pageStyles, moduleClass, moduleList };
 };

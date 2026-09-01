@@ -96,16 +96,19 @@ export const useSmartOnePage = ({
     // 测量基准：预览层行高对应原始 ui 参数
     const base = pickAdjustable(ui.value);
     const bottomSpace = showPageNumber.value ? PAGE_NUMBER_HEIGHT : 0;
+    // 行高总和与模块间距数量在单次计算中固定，提前聚合，避免每轮压缩都遍历全部行
+    const rowsTotal = rows.reduce((sum: number, row: any) => sum + row.height, 0);
+    const moduleGapCount = Math.max(list.length - 1, 0);
+    const baseScale = base.fontSize * base.lineHeight;
 
     // 估算总高：行高按字号×行高比例缩放，模块间距计入模块间隔
-    const estimateTotal = (params: Record<string, number>) => {
-      const scale = (params.fontSize * params.lineHeight) / (base.fontSize * base.lineHeight);
-      const rowsTotal = rows.reduce((sum, row: any) => sum + row.height * scale, 0);
-      return rowsTotal + (params.moduleSpacing ?? MODULE_GAP) * (list.length - 1);
+    const estimateTotal = (params: Record<OnePageAdjustKey, number>) => {
+      const scale = (params.fontSize * params.lineHeight) / baseScale;
+      return rowsTotal * scale + (params.moduleSpacing ?? MODULE_GAP) * moduleGapCount;
     };
     // 可用内容高：页面高 - 页边距 - 页码区高
     const estimateAvail = (padding: number) => RESUME_HEIGHT - padding - bottomSpace;
-    const fits = (params: Record<string, number>) =>
+    const fits = (params: Record<OnePageAdjustKey, number>) =>
       estimateTotal(params) <= estimateAvail(params.padding);
 
     // 当前参数已能放下则直接成功
