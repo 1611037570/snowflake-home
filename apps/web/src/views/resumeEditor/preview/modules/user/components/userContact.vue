@@ -11,20 +11,15 @@ const hasEmail = computed(() => !!user.value?.email?.value);
 </script>
 
 <template>
-  <div v-if="hasPhone || hasEmail" class="mt-1 flex flex-wrap gap-x-6">
-    <div v-if="hasPhone" class="flex min-w-0 max-w-full flex-wrap items-center">
-      <SfIcon
-        v-if="userInfoMode === 'icon'"
-        icon="mdi:phone"
-        size="3.5"
-        class="mr-1 shrink-0"
-      />
+  <div v-if="hasPhone || hasEmail" class="mt-1 flex max-w-full min-w-0 flex-wrap gap-x-3">
+    <div v-if="hasPhone" class="flex max-w-full min-w-0 items-center">
+      <SfIcon v-if="userInfoMode === 'icon'" icon="mdi:phone" size="3.5" class="mr-1 shrink-0" />
       <div v-else class="pr-1">电话：</div>
-      <div class="min-w-0 max-w-full font-medium">
+      <div class="max-w-full min-w-0 font-medium">
         <DiffField v-model="user.phone" />
       </div>
     </div>
-    <div v-if="hasEmail" class="flex min-w-0 max-w-full flex-wrap items-center">
+    <div v-if="hasEmail" class="flex max-w-full min-w-0 flex-wrap items-center">
       <SfIcon
         v-if="userInfoMode === 'icon'"
         icon="mdi:email-outline"
@@ -32,7 +27,7 @@ const hasEmail = computed(() => !!user.value?.email?.value);
         class="mr-1 shrink-0"
       />
       <div v-else class="pr-1">邮箱：</div>
-      <div class="min-w-0 max-w-full font-medium">
+      <div class="max-w-full min-w-0 font-medium">
         <DiffField v-model="user.email" />
       </div>
     </div>
