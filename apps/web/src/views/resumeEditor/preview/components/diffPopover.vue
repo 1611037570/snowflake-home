@@ -57,7 +57,7 @@ const popoverStyle = computed(() => {
     <div
       v-if="store.visible"
       ref="popoverRef"
-      class="fixed z-50 flex max-h-[540px] w-max max-w-[600px] min-w-[180px] flex-col rounded-3xl border border-sf-b bg-sf-bg p-2 shadow-lg"
+      class="fixed z-50 flex max-h-[540px] w-max max-w-[700px] min-w-[180px] flex-col rounded-3xl border-2 border-sf-theme-2 bg-sf-primary p-2"
       :style="popoverStyle"
       @mouseenter="store.stay"
       @mouseleave="store.hide"
