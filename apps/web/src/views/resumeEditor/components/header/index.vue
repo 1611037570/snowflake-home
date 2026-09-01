@@ -38,7 +38,7 @@ const handleBack = () => {
 
 <template>
   <header
-    class="flex h-12 items-center justify-between border-b border-sf-b bg-sf-primary pr-6 pl-3"
+    class="flex h-12 items-center justify-between rounded-b-3xl border-b border-sf-b bg-sf-primary pr-6 pl-3"
   >
     <!-- 左侧占位 -->
     <div class="flex flex-1 items-center">

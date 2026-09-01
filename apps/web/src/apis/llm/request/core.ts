@@ -15,6 +15,8 @@ class LLM {
   provider;
   /** @type {string|undefined} 请求认证所需的 API Key */
   apiKey;
+  /** @type {string|undefined} 默认模型名，request 时自动注入 */
+  model;
   /**
    * 初始化 LLM 实例
    * @param {Object} config - 配置对象
@@ -22,14 +24,22 @@ class LLM {
    * @param {string} [config.path=""] - 接口请求路径，与 baseUrl 组合形成完整 URL
    * @param {string} [config.provider="cool"] - AI 供应商标识，如 'cool' 等
    * @param {string} [config.apiKey] - 请求认证所需的 API Key
+   * @param {string} [config.model] - 默认模型名
    */
-  constructor(config: { baseUrl?: string; path?: string; provider?: string; apiKey?: string }) {
-    const { baseUrl = "", path = "", provider = "cool", apiKey } = config;
+  constructor(config: {
+    baseUrl?: string;
+    path?: string;
+    provider?: string;
+    apiKey?: string;
+    model?: string;
+  }) {
+    const { baseUrl = "", path = "", provider = "cool", apiKey, model } = config;
 
     this.url = `${baseUrl}${path}`;
     this.baseUrl = baseUrl;
     this.provider = provider;
     this.apiKey = apiKey;
+    this.model = model;
 
     // 校验配置完整性，任一缺失时输出警告
     if (!this.baseUrl || !this.provider || !this.apiKey) {
@@ -104,6 +114,9 @@ class LLM {
       console.log("请求配置 :>> ", config);
     }
 
+    // 默认模型由实例注入，调用方显式传入的 model 优先
+    const requestOptions = { ...(this.model ? { model: this.model } : {}), ...options };
+
     // 提前创建处理器，确保调用方在 sendFn 执行前即可获取 abort
     const handler: any = createRequest(token, stream);
     const send = handler?.send;
@@ -127,13 +140,13 @@ class LLM {
         const res = stream
           ? await send?.({
               ...requestConfig,
-              data: processOption({ options }),
+              data: processOption({ options: requestOptions }),
               isJson,
               onEvent,
             })
           : await send?.({
               ...requestConfig,
-              data: JSON.stringify(options),
+              data: JSON.stringify(requestOptions),
             });
         // 主动中止时不触发成功回调
         if (!res?.aborted) {

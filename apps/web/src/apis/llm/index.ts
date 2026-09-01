@@ -10,14 +10,7 @@ const snowflakeConfig = {
   baseUrl: snowflake.baseUrl,
   apiKey: snowflake.apiKey || "",
   provider: mapProvider(snowflake.provider),
-};
-// 获取当前激活模型名：雪花服务取 snowflake.model，自定义模型取配置中的 model
-const getActiveModel = () => {
-  const aiStore = useAiStore();
-  const { activeModel, customModels } = storeToRefs(aiStore);
-  if (activeModel.value === "snowflake") return snowflake.model;
-  const config = customModels.value.find((item) => item.provider === activeModel.value);
-  return config?.model;
+  model: snowflake.model,
 };
 const getLLM = () => {
   const aiStore = useAiStore();
@@ -36,6 +29,7 @@ const getLLM = () => {
     baseUrl: config.url,
     apiKey: config.key,
     provider: llmProvider,
+    model: config.model,
   });
 };
-export { getActiveModel, getLLM, LLM };
+export { getLLM, LLM };

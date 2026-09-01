@@ -1,5 +1,5 @@
 // 导入LLM接口
-import { getActiveModel, getLLM } from "@/apis";
+import { getLLM } from "@/apis";
 import { createResumeTools, ReactRunner } from "@/ai/react";
 import { useAiStore, useResumeStore } from "@/stores";
 // 导入聊天和消息类型
@@ -182,8 +182,6 @@ export const useChatRequest = ({
       let thoughtStatus = false;
       // 获取LLM实例
       const llm = getLLM();
-      // 当前激活模型名（雪花服务或自定义模型）
-      const model = getActiveModel();
       // 构建请求参数
       const options = {
         // 根据provider决定使用messages还是input字段
@@ -191,8 +189,6 @@ export const useChatRequest = ({
         thinking: {
           type: thinkMode.value ? "enabled" : "disabled",
         },
-        // 存在模型名时透传给供应商
-        ...(model ? { model } : {}),
       };
 
       // 发起请求，获取发送函数和取消函数
@@ -301,7 +297,6 @@ export const useChatRequest = ({
 
     try {
       isGenerating.value = true;
-      const model = getActiveModel();
 
       const messages: any[] = [{ role: "system", content: REACT_SYSTEM_PROMPT }];
       if (prompt) messages.push({ role: "user", content: prompt });
@@ -321,7 +316,6 @@ export const useChatRequest = ({
           applyDiff: applyDiff ?? (() => {}),
         }),
         getLLM: () => getLLM(),
-        model,
         maxSteps: 6,
         onThink: (reasoning) => {
           if (!isCurrent() || !lastMsg || !reasoning) return;
