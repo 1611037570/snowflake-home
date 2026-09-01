@@ -150,7 +150,7 @@ export const useResumePages = ({
       : "outline-2 outline-offset-3 outline-dashed outline-transparent hover:outline-sf-theme-2";
   };
 
-  // 生成每页可见行裁剪样式；集中按 pages 计算，避免模板每次渲染都重复拼接 CSS
+  // 生成每页可见行裁剪样式；集中按 pages 计算，合并为单个样式文本，减少模板中的样式节点
   const buildPageStyle = (pageSlices: PageSlice[], pageIndex: number) => {
     return pageSlices
       .map((slice) => {
@@ -161,10 +161,10 @@ export const useResumePages = ({
       })
       .join("\n");
   };
-  const pageStyles = computed(() =>
-    pages.value.map((pageSlices, pageIndex) => buildPageStyle(pageSlices, pageIndex)),
+  const pageStyleText = computed(() =>
+    pages.value.map((pageSlices, pageIndex) => buildPageStyle(pageSlices, pageIndex)).join("\n"),
   );
 
   // 透出测量结果（模块行高），供智能一页等上层逻辑按比例压缩参数
-  return { measureDone, pages, pageStyles, moduleClass, moduleList };
+  return { measureDone, pages, pageStyleText, moduleClass, moduleList };
 };

@@ -83,7 +83,7 @@ const allModules = computed(() => {
   const configModules = props.item.config?.fields || [];
   return [...fixedModules, ...configModules];
 });
-const { measureDone, pages, pageStyles, moduleClass, moduleList } = useResumePages({
+const { measureDone, pages, pageStyleText, moduleClass, moduleList } = useResumePages({
   measureRef,
   ui,
   themeStyles,
@@ -162,10 +162,9 @@ const containerHeight = {
       >
         轻舟简历 · 第 {{ pageIndex + 1 }} 页 · 共 {{ pages.length }} 页
       </div>
-
-      <component :is="'style'">{{ pageStyles[pageIndex] }}</component>
     </div>
   </div>
+  <component :is="'style'">{{ pageStyleText }}</component>
 </template>
 
 <style lang="scss" scoped></style>
