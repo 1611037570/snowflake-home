@@ -1,6 +1,23 @@
 import { createRequest } from "./request";
 
 import { handleRetry, processOption } from "./stream-utils";
+import { executeToolCall } from "../react/actor";
+import { observe } from "../react/observer";
+import { think } from "../react/thinker";
+import { ToolRegistry } from "../react/tools";
+import type { ChatMessage, ReactConfig } from "../react/types";
+
+// 从模型输出中提取 JSON 对象，忽略 JSON 前后的自然语言；json_object 模式已保证输出 JSON
+function extractJson(text: string): string {
+  if (!text) return text;
+  const trimmed = text.trim();
+  const start = trimmed.indexOf("{");
+  const end = trimmed.lastIndexOf("}");
+  if (start !== -1 && end > start) {
+    return trimmed.slice(start, end + 1);
+  }
+  return trimmed;
+}
 
 /**
  * LLM 类用于管理与大语言模型的流式和非流式请求。
@@ -160,6 +177,98 @@ class LLM {
       abortFn: abort,
       sendFn,
     };
+  }
+  /**
+   * 以 ReAct（思考-执行-观察）模式发起多轮请求，直到模型给出最终答案或超过最大步数
+   * @param {Object} config - ReAct 配置，包含工具与各阶段回调
+   * @returns {{ abort: Function, run: Function }} 中止函数与执行函数
+   */
+  react(config: ReactConfig) {
+    let aborted = false;
+    const abortRef: { current: (() => void) | null } = { current: null };
+    const registry = new ToolRegistry();
+    config.tools.forEach((t) => registry.register(t));
+
+    const abort = () => {
+      aborted = true;
+      abortRef.current?.();
+    };
+
+    const run = async (initialMessages: ChatMessage[]): Promise<string> => {
+      const maxSteps = config.maxSteps ?? 6;
+      const history: ChatMessage[] = [...initialMessages];
+
+      // 打印 ReAct 运行过程，便于观察每一步发生了什么
+      console.log("[ReAct] 开始运行，消息数:", initialMessages.length, "最大步数:", maxSteps);
+
+      for (let step = 0; step < maxSteps; step++) {
+        if (aborted) throw new Error("已中止");
+
+        console.log(`[ReAct] 第 ${step + 1}/${maxSteps} 步 Think`);
+        const result = await think(this, history, {
+          tools: config.tools,
+          model: config.model,
+          abortRef,
+        });
+
+        if (aborted) throw new Error("已中止");
+
+        if (result.reasoning) console.log("[ReAct] 思考:", result.reasoning);
+        console.log("[ReAct] 工具调用:", result.toolCalls);
+
+        config.onThink?.(result.reasoning);
+
+        // 无工具调用表示已给出最终答案
+        if (!result.toolCalls.length) {
+          const finalAnswer = extractJson(result.finalAnswer);
+          console.log("[ReAct] 最终答案:", finalAnswer);
+          config.onFinal?.(finalAnswer);
+          return finalAnswer;
+        }
+
+        // 回填 assistant 的工具调用消息
+        history.push({
+          role: "assistant",
+          content: null,
+          tool_calls: result.toolCalls,
+        });
+
+        for (const toolCall of result.toolCalls) {
+          if (aborted) throw new Error("已中止");
+
+          console.log(
+            "[ReAct] 执行工具:",
+            toolCall.function.name,
+            "参数:",
+            toolCall.function.arguments,
+          );
+          config.onAct?.(toolCall);
+          const raw = await executeToolCall(registry, toolCall);
+          const observation = observe(toolCall, raw);
+          // 观察结果可能包含整份简历，截断打印避免刷屏
+          const observePreview =
+            observation.content.length > 2000
+              ? observation.content.slice(0, 2000) + "..."
+              : observation.content;
+          console.log(
+            "[ReAct] 观察结果(" + observation.content.length + "字符):",
+            observePreview,
+          );
+          config.onObserve?.(observation);
+
+          history.push({
+            role: "tool",
+            content: observation.content,
+            tool_call_id: observation.toolCallId,
+          });
+        }
+      }
+
+      console.warn("[ReAct] 超出最大步数");
+      throw new Error("ReAct 超出最大步数");
+    };
+
+    return { abort, run };
   }
 }
 

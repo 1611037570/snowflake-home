@@ -1,5 +1,3 @@
-import type { LLM } from "../request/core";
-
 // ReAct（思考-执行-观察）编排层类型定义
 
 // 单个工具定义，遵循 OpenAI function calling 约定
@@ -46,14 +44,12 @@ export interface Observation {
   content: string;
 }
 
-// ReAct 运行配置，集中在 runner 内部使用，避免污染单轮请求流程
+// ReAct 运行配置，集中在 LLM.react 内部使用，避免污染单轮请求流程
 export interface ReactConfig {
   // 可用工具列表
   tools: ReactTool[];
   // 最大循环步数，防止死循环
   maxSteps?: number;
-  // 获取 LLM 实例
-  getLLM: () => LLM;
   // 模型名，存在时透传到请求 options
   model?: string;
   // 思考回调：每一步思考内容
