@@ -69,17 +69,17 @@ $transition-duration: 0.3s;
 
 /* 2. 滚动条轨道 */
 ::-webkit-scrollbar-track {
-  background: var(--sf-background-2); /* 轨道底色 */
+  background: var(--sf-background-3); /* 轨道底色 */
   border-radius: 4px; /* 轨道圆角 */
 }
 /* 5. 滚动条角落（垂直+水平滚动条交汇区） */
 ::-webkit-scrollbar-corner {
-  background: var(--sf-background-2); /* 和轨道底色一致 */
+  background: var(--sf-background-3); /* 和轨道底色一致 */
 }
 
 /* 3. 滚动条滑块 */
 ::-webkit-scrollbar-thumb {
-  background: var(--sf-background); /* 滑块默认颜色 */
+  background: var(--sf-theme-3); /* 滑块默认颜色 */
   border-radius: 4px; /* 滑块圆角（和轨道一致更美观） */
   transition: background 0.2s; /* hover 过渡 */
 }
