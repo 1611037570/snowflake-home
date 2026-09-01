@@ -18,8 +18,8 @@ export const openaiParser = (res: any) => {
  * @param {Object} options - 解析选项
  * @returns {Object|string} 当前增量内容
  */
-export const openaiStreamParser = (line: string, { onEvent, debug }: any) => {
-  const data = processJson(line, debug);
+export const openaiStreamParser = (line: string, { onEvent, isDebug }: any) => {
+  const data = processJson(line, isDebug);
   if (!data || typeof data !== "object") return "";
 
   const delta = data.choices?.[0]?.delta || {};

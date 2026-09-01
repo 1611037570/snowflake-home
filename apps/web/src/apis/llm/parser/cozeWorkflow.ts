@@ -1,7 +1,7 @@
 import { processJson } from "../request/stream-utils";
-export const cozeWorkflowStreamParser = (line: string, { onEvent, debug }: any) => {
-  const jsonObj = processJson(line, debug);
-  if (debug) console.log("CozeWorkflow JSON", jsonObj);
+export const cozeWorkflowStreamParser = (line: string, { onEvent, isDebug }: any) => {
+  const jsonObj = processJson(line, isDebug);
+  if (isDebug) console.log("CozeWorkflow JSON", jsonObj);
 
   const { content_type = "", content = "" } = jsonObj;
   if (content_type !== "text") {
@@ -9,7 +9,7 @@ export const cozeWorkflowStreamParser = (line: string, { onEvent, debug }: any) 
   }
 
   onEvent?.("content", content);
-  if (debug) {
+  if (isDebug) {
     console.log("当前内容 :>> ", content);
   }
   return content;

@@ -194,7 +194,7 @@ export const useChatRequest = ({
       // 发起请求，获取发送函数和取消函数
       const { sendFn, abortFn } = await llm.request({
         options,
-        debug: false,
+        isDebug: false,
         isStream: true, // 流式输出
         isJson: true,
         // 事件回调：处理流式数据

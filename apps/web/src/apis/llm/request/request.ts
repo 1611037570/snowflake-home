@@ -13,7 +13,7 @@ type RequestConfig = {
   data: string;
   isJson?: boolean;
   onEvent?: any;
-  debug: boolean;
+  isDebug: boolean;
   provider: string;
   timeout?: number;
 };
@@ -50,7 +50,7 @@ export function createRequest(token: string, isStream = true) {
     data,
     isJson,
     onEvent,
-    debug,
+    isDebug,
     provider,
     timeout = 60000,
   }: RequestConfig) {
@@ -91,7 +91,7 @@ export function createRequest(token: string, isStream = true) {
         // 获取读取器和解码器
         const reader = response.body.getReader();
         const decoder = new TextDecoder("utf-8");
-        const parser = createStreamParser({ onEvent, debug, provider }); // 初始化解析器
+        const parser = createStreamParser({ onEvent, isDebug, provider }); // 初始化解析器
 
         let currentContent = "";
         let finalUsage = null;
@@ -103,7 +103,7 @@ export function createRequest(token: string, isStream = true) {
             const result = processResult({
               text: currentContent,
               isJson,
-              debug,
+              isDebug,
             });
             return {
               result,
@@ -131,7 +131,7 @@ export function createRequest(token: string, isStream = true) {
         if (isTimeoutAbort) {
           throw new StreamError(`请求超时（${timeout}ms）`, ERROR_CODES.NETWORK_ERROR);
         }
-        if (debug) console.log("请求被主动取消");
+        if (isDebug) console.log("请求被主动取消");
         return { aborted: true };
       }
       throw error;

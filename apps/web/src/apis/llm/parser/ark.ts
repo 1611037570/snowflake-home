@@ -12,8 +12,8 @@ export const arkParser = (res: any) => {
   return res;
 };
 
-export const arkStreamParser = (line: string, { onEvent, debug }: any) => {
-  const data = processJson(line, debug);
+export const arkStreamParser = (line: string, { onEvent, isDebug }: any) => {
+  const data = processJson(line, isDebug);
   const { type, delta } = data;
   console.log("data:>> ", data);
 
@@ -39,7 +39,7 @@ export const arkStreamParser = (line: string, { onEvent, debug }: any) => {
   }
 
   // 6. 调试日志
-  if (debug) {
+  if (isDebug) {
     currentReasoningContent && console.log("🔍 当前推理增量:", currentReasoningContent);
     currentOutputContent && console.log("💬 当前输出增量:", currentOutputContent);
     totalTokens && console.log("📊 Token 消耗:", totalTokens);

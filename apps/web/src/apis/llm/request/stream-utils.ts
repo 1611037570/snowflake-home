@@ -11,7 +11,7 @@ export class StreamError extends Error {
   }
 }
 
-export function processJson(jsonStr: string, debug: boolean) {
+export function processJson(jsonStr: string, isDebug: boolean) {
   // 入参终极防护：处理 null/undefined/非字符串，统一转为安全字符串
   let rawStr = String(jsonStr ?? "");
   // 统一清洗：移除 data: 前缀 + 去除首尾空格
@@ -21,13 +21,13 @@ export function processJson(jsonStr: string, debug: boolean) {
 
   // 校验标准JSON对象格式（必须{}包裹）
   if (!rawStr.startsWith("{") || !rawStr.endsWith("}")) {
-    debug && console.warn("非标准JSON对象格式：", rawStr);
+    isDebug && console.warn("非标准JSON对象格式：", rawStr);
     return "";
   }
   try {
     return JSON.parse(rawStr);
   } catch (error) {
-    if (debug) console.warn(`解析失败: ${rawStr}`, error);
+    if (isDebug) console.warn(`解析失败: ${rawStr}`, error);
     throw new Error("解析失败！");
   }
 }
@@ -52,18 +52,18 @@ export function processToken(token: string) {
 }
 
 // 创建流式解析器
-export function createStreamParser({ onEvent, debug, provider }: any) {
+export function createStreamParser({ onEvent, isDebug, provider }: any) {
   let buffer = "";
   console.log("provider", provider);
 
   // 根据 provider 选择解析函数
   const params = (line: string) => {
-    const options = { onEvent, debug };
+    const options = { onEvent, isDebug };
     const parser = getParser({ provider, isStream: true });
 
     if (!parser) {
       const msg = `未找到供应商 ${provider} 的解析器`;
-      if (debug) console.warn(msg);
+      if (isDebug) console.warn(msg);
       throw new StreamError(msg, ERROR_CODES.BUSINESS_ERROR);
     }
 
@@ -120,7 +120,7 @@ function safeJsonParse(str: string) {
     }
   }
 }
-export function processResult({ text, isJson = true, debug }: any) {
+export function processResult({ text, isJson = true, isDebug }: any) {
   // 1. 输入校验（立即抛出）
   if (typeof text !== "string" || !text.length) {
     throw new StreamError("最终结果为空，无法解析", ERROR_CODES.NETWORK_ERROR);
@@ -142,7 +142,7 @@ export function processResult({ text, isJson = true, debug }: any) {
   }
 
   // 3. 调试输出与返回
-  if (debug) {
+  if (isDebug) {
     console.log("流式传输完成，最终结果:", result);
   }
   return result;
@@ -184,15 +184,15 @@ export function processError(e: any) {
  * @param {Object} params
  * @param {number} params.currentRetryCount 当前重试次数
  * @param {number} params.retryCount 最大重试次数
- * @param {boolean} params.debug 是否开启调试模式
+ * @param {boolean} params.isDebug 是否开启调试模式
  * @param {Function} params.onRetry 重试回调函数
  * @returns {Promise<{retried: boolean, result?: any}>}
  */
-export async function handleRetry({ currentRetryCount, retryCount, debug, onRetry }: any) {
+export async function handleRetry({ currentRetryCount, retryCount, isDebug, onRetry }: any) {
   // 重试次数未超过最大重试次数
   if (currentRetryCount < retryCount) {
     const delay = 500 * (currentRetryCount + 1);
-    if (debug) {
+    if (isDebug) {
       console.warn(
         `请求失败，准备在 ${delay}ms 后进行第 ${currentRetryCount + 1}/${retryCount} 次重试...`,
       );
