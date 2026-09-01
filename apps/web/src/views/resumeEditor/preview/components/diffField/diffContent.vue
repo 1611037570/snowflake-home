@@ -13,6 +13,11 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  // 是否展示内容字数统计
+  showCount: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 const fontValue = inject("fontValue");
@@ -50,6 +55,14 @@ const splitHtml = (html) => {
 const blocks = computed(() =>
   props.html ? splitHtml(DOMPurify.sanitize(props.content, sanitizeConfig)) : [],
 );
+
+// 可见文本字数：富文本剥离标签后按渲染文本计数
+const charCount = computed(() => {
+  if (!props.html) return props.content.length;
+  const tmp = document.createElement("div");
+  tmp.innerHTML = blocks.value.map((b) => b.html).join("");
+  return tmp.textContent?.length || 0;
+});
 </script>
 
 <template>
@@ -67,4 +80,6 @@ const blocks = computed(() =>
   <template v-else>
     <span :style="[fontValue(), lineHeightValue()]">{{ content }}</span>
   </template>
+  <!-- 字数统计：由使用方通过 showCount 控制展示 -->
+  <div v-if="showCount" class="mt-1 w-full text-right text-xs">共 {{ charCount }} 字</div>
 </template>
