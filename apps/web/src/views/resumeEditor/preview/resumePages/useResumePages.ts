@@ -12,7 +12,12 @@ import type { ResumeTheme } from "./useResumeTheme";
 /** 单页内一个模块的切片信息 */
 export interface PageSlice {
   moduleKey: string;
-  visibleRowIndexes: number[];
+  /** 本页可见行区间起点（0-based，含） */
+  visibleStart: number;
+  /** 本页可见行区间终点（0-based，含） */
+  visibleEnd: number;
+  /** 模块总行数，用于判断区间之后是否还有隐藏行 */
+  totalRows: number;
 }
 
 /** useResumePages 入参 */
@@ -73,15 +78,20 @@ export const useResumePages = ({
     let currentPage: PageSlice[] = [];
     let currentHeight = 0;
     // 当前正在累积的行切片（同一模块的连续行）
-    let sliceModule: { moduleKey: string } | null = null;
-    let sliceRows: { index: number }[] = [];
+    let sliceModule: ModuleInfo | null = null;
+    let sliceRows: RowInfo[] = [];
 
     // 把当前切片提交为页上的一个模块块
     const commitSlice = () => {
       if (!sliceModule || sliceRows.length === 0) return;
+      const firstRow = sliceRows[0]!;
+      const lastRow = sliceRows[sliceRows.length - 1]!;
       currentPage.push({
         moduleKey: sliceModule.moduleKey,
-        visibleRowIndexes: sliceRows.map((r) => r.index),
+        // 行按顺序累积，取首尾即可描述本页可见区间，避免逐行枚举
+        visibleStart: firstRow.index,
+        visibleEnd: lastRow.index,
+        totalRows: sliceModule.rows.length,
       });
       sliceModule = null;
       sliceRows = [];
@@ -150,14 +160,26 @@ export const useResumePages = ({
       : "outline-2 outline-offset-3 outline-dashed outline-transparent hover:outline-sf-theme-2";
   };
 
-  // 生成每页可见行裁剪样式；集中按 pages 计算，合并为单个样式文本，减少模板中的样式节点
+  // 生成每页可见行裁剪样式；分页按顺序切分，隐藏行必为区间两端，
+  // 用 nth-child 区间选择器替代逐行枚举，避免选择器随行数膨胀
   const buildPageStyle = (pageSlices: PageSlice[], pageIndex: number) => {
     return pageSlices
-      .map((slice) => {
-        const visibleSelectors = slice.visibleRowIndexes
-          .map((idx) => `:nth-child(${idx + 1})`)
-          .join(",");
-        return `.${uid}-page-${pageIndex} .resume-module-wrapper[data-module="${slice.moduleKey}"] > .resume-row > :not(${visibleSelectors}) { display: none !important; }`;
+      .flatMap((slice) => {
+        const base = `.${uid}-page-${pageIndex} .resume-module-wrapper[data-module="${slice.moduleKey}"] > .resume-row`;
+        const rules: string[] = [];
+        // 隐藏区间之前的行
+        if (slice.visibleStart > 0) {
+          rules.push(
+            `${base} > :nth-child(-n+${slice.visibleStart}) { display: none !important; }`,
+          );
+        }
+        // 隐藏区间之后的行
+        if (slice.visibleEnd < slice.totalRows - 1) {
+          rules.push(
+            `${base} > :nth-child(n+${slice.visibleEnd + 2}) { display: none !important; }`,
+          );
+        }
+        return rules;
       })
       .join("\n");
   };
