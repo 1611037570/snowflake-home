@@ -18,6 +18,9 @@ type ResumeUi = Record<string, any>;
 
 /** 返回的主题样式值集合 */
 export interface ResumeTheme {
+  paddingStyle: ComputedRef<Record<string, string>>;
+  fontStyle: ComputedRef<Record<string, string>>;
+  lineHeightStyle: ComputedRef<Record<string, string>>;
   paddingValue: ComputedRef<(offset?: number) => Record<string, string>>;
   fontValue: ComputedRef<(offset?: number) => Record<string, string>>;
   lineHeightValue: ComputedRef<() => Record<string, string>>;
@@ -38,22 +41,43 @@ export const useResumeTheme = (ui: ComputedRef<ResumeUi>): ResumeTheme => {
   const fontSize = computed(() => toNumber(ui.value.fontSize, defaultFontSize));
   const lineHeight = computed(() => toNumber(ui.value.lineHeight, defaultLineHeight));
 
-  // 页面始终不保留下边距，底部空间由页码区域控制
-  const paddingValue = computed(() => (offset = 0) => {
-    const value = padding.value + offset;
+  // 页面级基础样式对象固定复用，避免模板每次渲染都重新创建相同样式
+  const paddingStyle = computed(() => {
+    const value = padding.value;
     return {
       paddingTop: `${value}px`,
       paddingLeft: `${value}px`,
       paddingRight: `${value}px`,
     };
   });
-  const fontValue = computed(() => (offset = 0) => ({
-    fontSize: `${fontSize.value + offset}px`,
+  const fontStyle = computed(() => ({
+    fontSize: `${fontSize.value}px`,
   }));
-  // 行高使用无单位倍数，随各字段字号自动缩放
-  const lineHeightValue = computed(() => () => ({
+  const lineHeightStyle = computed(() => ({
     lineHeight: `${lineHeight.value}`,
   }));
+
+  // 页面始终不保留下边距，底部空间由页码区域控制
+  const paddingValue = computed(() => {
+    const base = paddingStyle.value;
+    return (offset = 0) =>
+      offset === 0
+        ? base
+        : {
+            paddingTop: `${padding.value + offset}px`,
+            paddingLeft: `${padding.value + offset}px`,
+            paddingRight: `${padding.value + offset}px`,
+          };
+  });
+  const fontValue = computed(() => {
+    const base = fontStyle.value;
+    return (offset = 0) => (offset === 0 ? base : { fontSize: `${fontSize.value + offset}px` });
+  });
+  // 行高使用无单位倍数，随各字段字号自动缩放
+  const lineHeightValue = computed(() => {
+    const base = lineHeightStyle.value;
+    return () => base;
+  });
   const themeColor = computed(() => ui.value.color || ui.value.themeColor);
   const themeTemplate = computed(() => ui.value.themeTemplate);
 
@@ -69,5 +93,14 @@ export const useResumeTheme = (ui: ComputedRef<ResumeUi>): ResumeTheme => {
   provide("userInfoMode", userInfoMode);
   provide("avatarPosition", avatarPosition);
 
-  return { paddingValue, fontValue, lineHeightValue, themeColor, themeTemplate };
+  return {
+    paddingStyle,
+    fontStyle,
+    lineHeightStyle,
+    paddingValue,
+    fontValue,
+    lineHeightValue,
+    themeColor,
+    themeTemplate,
+  };
 };
