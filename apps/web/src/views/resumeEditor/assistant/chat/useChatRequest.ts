@@ -65,6 +65,15 @@ export const useChatRequest = ({
     activeTimers = timers;
     // 设置生成状态为true
     isGenerating.value = true;
+    // 选中整个模块或 user 模块时，临时清除头像避免请求体过大，请求结束还原
+    const { selectedModule, currentData } = resumeStore;
+    const needTrimAvatar =
+      !selectedModule.length || selectedModule.some((item: any) => item.key === "user");
+    let savedAvatar: string | undefined;
+    if (needTrimAvatar && currentData.user) {
+      savedAvatar = currentData.user.avatar;
+      delete currentData.user.avatar;
+    }
     // 最后一条消息（即AI回复消息）的引用
     let lastMsg: Message | null = null;
 
@@ -212,6 +221,10 @@ export const useChatRequest = ({
       console.error("AI 请求异常:", error);
     } finally {
       // 清理工作（无论成功或失败）
+      // 请求结束还原头像
+      if (needTrimAvatar && currentData.user) {
+        currentData.user.avatar = savedAvatar;
+      }
       if (isUnmounted) return;
       const finishTime = Date.now();
       clearTimers(timers);
