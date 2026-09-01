@@ -13,7 +13,7 @@ type RequestConfig = {
   onEvent?: any;
   isDebug: boolean;
   provider: string;
-  timeout?: number;
+  timeout: number;
 };
 
 /**
@@ -50,7 +50,7 @@ export function createRequest(token: string, isStream = true) {
     onEvent,
     isDebug,
     provider,
-    timeout = 60000,
+    timeout,
   }: RequestConfig) {
     let timeoutId: ReturnType<typeof setTimeout> | null = null;
     let isTimeoutAbort = false;

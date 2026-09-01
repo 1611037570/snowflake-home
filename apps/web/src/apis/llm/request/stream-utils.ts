@@ -37,13 +37,13 @@ export function processToken(token: string) {
 // 创建流式解析器
 export function createStreamParser({ onEvent, isDebug, provider }: any) {
   let buffer = "";
-  console.log("provider", provider);
+
+  // 解析器固定，仅查找一次
+  const parser = getParser({ provider, isStream: true });
+  const options = { onEvent, isDebug };
 
   // 根据 provider 选择解析函数
   const params = (line: string) => {
-    const options = { onEvent, isDebug };
-    const parser = getParser({ provider, isStream: true });
-
     if (!parser) {
       const msg = `未找到供应商 ${provider} 的解析器`;
       if (isDebug) console.warn(msg);
@@ -88,15 +88,17 @@ export function createStreamParser({ onEvent, isDebug, provider }: any) {
 }
 
 // 处理最终结果
-function safeJsonParse(str: string) {
+function safeJsonParse(str: string, isDebug: boolean) {
   try {
     return JSON.parse(str);
   } catch {
     // 仅当第一次失败时尝试补全
     try {
       const newStr = str + "}";
-      console.log("原始内容:", str);
-      console.log("尝试补全 JSON 字符串:", newStr);
+      if (isDebug) {
+        console.log("原始内容:", str);
+        console.log("尝试补全 JSON 字符串:", newStr);
+      }
       return JSON.parse(newStr);
     } catch {
       throw new Error(`JSON 解析失败，原始内容: ${str}`);
@@ -115,7 +117,7 @@ export function processResult({ text, isJson = true, isDebug }: any) {
   // 2. JSON 解析（独立 try-catch）
   if (isJson) {
     try {
-      result = safeJsonParse(trimmed);
+      result = safeJsonParse(trimmed, isDebug);
     } catch (err: any) {
       throw new Error(`最终结果解析失败: ${err.message}，原始内容: ${trimmed}`);
     }
