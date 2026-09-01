@@ -1,6 +1,6 @@
 <script setup>
 import { computed, inject } from "vue";
-import Text from "../../text.vue";
+import DiffField from "../../../components/diffField/index.vue";
 
 // 联系方式组件：标签支持图标 / 文字两种模式，对齐方式由使用方通过 class 控制
 const previewData = inject("previewData");
@@ -21,7 +21,7 @@ const hasEmail = computed(() => !!user.value?.email?.value);
       />
       <div v-else class="pr-1">电话：</div>
       <div class="min-w-0 max-w-full font-medium">
-        <Text v-model="user.phone" />
+        <DiffField v-model="user.phone" />
       </div>
     </div>
     <div v-if="hasEmail" class="flex min-w-0 max-w-full flex-wrap items-center">
@@ -33,7 +33,7 @@ const hasEmail = computed(() => !!user.value?.email?.value);
       />
       <div v-else class="pr-1">邮箱：</div>
       <div class="min-w-0 max-w-full font-medium">
-        <Text v-model="user.email" />
+        <DiffField v-model="user.email" />
       </div>
     </div>
   </div>

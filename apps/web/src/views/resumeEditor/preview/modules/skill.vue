@@ -1,6 +1,6 @@
 <script setup>
 import { computed, inject } from "vue";
-import Content from "../theme/content.vue";
+import DiffField from "../components/diffField/index.vue";
 import Title from "../theme/title/index.vue";
 
 // 从上层注入获取代理后的预览数据
@@ -16,7 +16,7 @@ const skill = computed(() => previewData.value?.skill?.data);
 <template>
   <div class="resume-row" data-module="skill" :style="[lineHeightValue(), fontValue()]">
     <Title title="专业技能" />
-    <Content :content="skill" />
+    <DiffField :model-value="skill" html />
   </div>
 </template>
 
