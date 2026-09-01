@@ -55,7 +55,7 @@ class LLM {
     }
     const { sendFn } = await this.request({
       options,
-      stream: true,
+      isStream: true,
       isJson: false,
       debug: false,
     });
@@ -74,8 +74,7 @@ class LLM {
    * @param {string} [config.method="POST"] - 请求方法，默认为 POST
    * @param {boolean} [config.isThrow=true] - 发生错误时是否抛出异常
    * @param {number} [config.retryCount=0] - 请求失败时的重试次数
-   * @param {boolean} [config.stream=true] - 是否开启流式响应
-   * @param {boolean} [config.showToast=true] - 请求失败时是否自动显示 Toast 提示
+   * @param {boolean} [config.isStream=true] - 是否开启流式响应
    * @returns {Promise<any>} 返回请求结果的 Promise，包含 abortFn 和 sendFn
    */
   async request(config: any) {
@@ -89,7 +88,7 @@ class LLM {
       isJson = true,
       method = "POST",
       retryCount = 0,
-      stream = true,
+      isStream = true,
       // 请求超时时间，默认 60 秒
       timeout = 60000,
     } = config;
@@ -102,7 +101,7 @@ class LLM {
     const requestOptions = { ...options, model: this.model };
 
     // 提前创建处理器，确保调用方在 sendFn 执行前即可获取 abort
-    const handler: any = createRequest(token, stream);
+    const handler: any = createRequest(token, isStream);
     const send = handler?.send;
     const abort = handler?.abort;
 
@@ -121,7 +120,7 @@ class LLM {
         };
 
         // 流式与非流式请求体不同，分别组装后发送
-        const res = stream
+        const res = isStream
           ? await send?.({
               ...requestConfig,
               data: processOption({ options: requestOptions }),

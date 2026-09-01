@@ -66,7 +66,7 @@ export async function think(
     llm
       .request({
         options: requestOptions,
-        stream: true,
+        isStream: true,
         isJson: false,
         onEvent: (type: string, data: any) => {
           if (type === "reasoning") reasoning += data;
