@@ -52,7 +52,7 @@ class LLM {
       options,
       isStream: true,
       isJson: false,
-      debug: false,
+      isDebug: false,
     });
     return sendFn();
   }
@@ -64,7 +64,7 @@ class LLM {
    * @param {Function} [config.onFail] - 请求失败回调函数，接收错误对象
    * @param {Function} [config.onEvent] - 通用事件回调函数，接收事件类型和数据
    * @param {Function} [config.onFinally] - 请求结束回调函数（无论成功或失败）
-   * @param {boolean} [config.debug=true] - 是否开启调试模式，开启后会打印请求日志
+   * @param {boolean} [config.isDebug=true] - 是否开启调试模式，开启后会打印请求日志
    * @param {boolean} [config.isJson=true] - 接口返回数据是否为 JSON 格式
    * @param {string} [config.method="POST"] - 请求方法，默认为 POST
    * @param {boolean} [config.isThrow=true] - 发生错误时是否抛出异常
@@ -80,7 +80,7 @@ class LLM {
       onFail,
       onEvent,
       onFinally,
-      debug = true,
+      isDebug = true,
       isJson = true,
       method = "POST",
       retryCount = 3,
@@ -88,7 +88,7 @@ class LLM {
       timeout = 180000,
     } = config;
     const token = this.apiKey || "";
-    if (debug) {
+    if (isDebug) {
       console.log("请求配置 :>> ", config);
     }
 
@@ -109,7 +109,7 @@ class LLM {
         const requestConfig = {
           url: this.url,
           method,
-          debug,
+          isDebug,
           provider: this.provider,
           timeout,
         };
@@ -138,7 +138,7 @@ class LLM {
         const { retried, result } = await handleRetry({
           currentRetryCount,
           retryCount,
-          debug,
+          isDebug,
           onRetry: sendFn,
         });
         // 重试后返回结果
@@ -148,7 +148,7 @@ class LLM {
         }
         onFail?.(error);
         // 统一错误处理
-        if (debug) {
+        if (isDebug) {
           console.error("请求失败 :>> ", error);
         }
         throw e;
