@@ -23,7 +23,7 @@ const { currentItem } = storeToRefs(resumeStore);
 const visible = ref(false);
 // 绑定的备份目录名
 const backupPath = ref("");
-// 是否正在保存备份
+// 是否显示已备份提示
 const saving = ref(false);
 
 // 悬浮提示
@@ -36,12 +36,12 @@ const doBackup = async () => {
   if (!localBackupEnabled.value) return;
   const item = currentItem.value;
   if (!item) return;
-  // 保存中：隐藏已备份提示，展示保存中动画
-  saving.value = true;
   // 备份文件名：轻舟简历备份-时间-简历ID（时间精确到秒，避免同名覆盖）
   const filename = `轻舟简历备份-${dayjs().format("YYYY-MM-DD_HH-mm-ss")}-${item.id}.json`;
   await writeLocalBackup(filename, JSON.stringify(item, null, 2));
-  setTimeout(() => (saving.value = false), 1000);
+  // 保存成功后显示一次已备份提示，2秒后消失
+  saving.value = true;
+  setTimeout(() => (saving.value = false), 1200);
 };
 
 // 简历数据变化后防抖执行备份
@@ -78,13 +78,14 @@ const handleBind = async () => {
           <SfIcon icon="bi:shield-exclamation" class="icon-breath text-sf-warning" size="4" />
           <span class="text-xs text-sf-warning">未备份</span>
         </template>
-        <!-- 已备份：默认展示已备份，保存中切换为呼吸动画 + 保存中文字 -->
+        <!-- 已备份：保存成功后短暂展示图标 + 已备份文字，2秒后消失 -->
         <template v-else>
-          <SfIcon icon="bi:shield-check" class="text-sf-success" size="4" />
           <Transition name="tip-slide" :duration="{ enter: 300, leave: 0 }">
-            <span v-if="saving" class="text-xs text-sf-success">保存中</span>
+            <span v-if="saving" class="flex items-center gap-1 text-sf-success">
+              <SfIcon icon="bi:shield-check" size="4" />
+              <span class="text-xs">已备份</span>
+            </span>
           </Transition>
-          <span v-if="!saving" class="text-xs text-sf-success">已备份</span>
         </template>
       </div>
     </SfTooltip>
