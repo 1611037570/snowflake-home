@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from "vue";
+import { onMounted, ref } from "vue";
 import JdInput from "./JdInput.vue";
 import Score from "./Score.vue";
 import { useAiStore, useResumeStore } from "@/stores";
@@ -12,12 +12,21 @@ import { defaultMessage } from "./prompt.ts";
 const aiStore = useAiStore();
 const resumeStore = useResumeStore();
 const { createDefaultChat } = aiStore;
+const { resumeAssistantChat } = storeToRefs(aiStore);
 const { system } = storeToRefs(resumeStore);
 // AI助手区域宽度：读取编辑器配置，默认 400px
 const assistantWidth = DEFAULT_EDITOR.assistantWidth;
 
-// 默认对话
-const chat = ref(createDefaultChat(defaultMessage));
+// 简历助手对话：优先用 Pinia 持久化缓存，首次进入时初始化默认对话
+if (!resumeAssistantChat.value) {
+  resumeAssistantChat.value = createDefaultChat(defaultMessage);
+}
+const chat = resumeAssistantChat;
+
+// 挂载时清空持久化对话，每次进入都是新对话
+onMounted(() => {
+  resumeAssistantChat.value = createDefaultChat(defaultMessage);
+});
 
 // 当前视图：score | jd
 const currentView = ref("score");
