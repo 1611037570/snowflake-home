@@ -31,12 +31,6 @@ export function processJson(jsonStr: string, isDebug: boolean) {
     throw new Error("解析失败！");
   }
 }
-// 错误码常量
-export const ERROR_CODES = {
-  NETWORK_ERROR: 0, // 网络/请求级错误
-  BUSINESS_ERROR: -1, // 业务逻辑/参数错误
-};
-
 export function processOption({ options }: any) {
   const data = JSON.stringify({
     ...options,
@@ -64,7 +58,7 @@ export function createStreamParser({ onEvent, isDebug, provider }: any) {
     if (!parser) {
       const msg = `未找到供应商 ${provider} 的解析器`;
       if (isDebug) console.warn(msg);
-      throw new StreamError(msg, ERROR_CODES.BUSINESS_ERROR);
+      throw new StreamError(msg);
     }
 
     return parser(line, options);
@@ -123,7 +117,7 @@ function safeJsonParse(str: string) {
 export function processResult({ text, isJson = true, isDebug }: any) {
   // 1. 输入校验（立即抛出）
   if (typeof text !== "string" || !text.length) {
-    throw new StreamError("最终结果为空，无法解析", ERROR_CODES.NETWORK_ERROR);
+    throw new StreamError("最终结果为空，无法解析");
   }
 
   const trimmed = text.trim();
@@ -134,10 +128,7 @@ export function processResult({ text, isJson = true, isDebug }: any) {
     try {
       result = safeJsonParse(trimmed);
     } catch (err: any) {
-      throw new StreamError(
-        `最终结果解析失败: ${err.message}，原始内容: ${trimmed}`,
-        ERROR_CODES.BUSINESS_ERROR,
-      );
+      throw new StreamError(`最终结果解析失败: ${err.message}，原始内容: ${trimmed}`);
     }
   }
 
