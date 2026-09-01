@@ -300,7 +300,7 @@ export interface PreviewActions {
   rejectAll: () => void; // 拒绝所有草稿，清空
   acceptModule: (moduleKey: string) => void; // 接受指定模块草稿
   rejectModule: (moduleKey: string) => void; // 拒绝指定模块草稿
-  applyDiff: (aiResult: Record<string, any>) => void; // 应用 AI 差异
+  applyDiff: (aiResult: Record<string, any>) => string[]; // 应用 AI 差异，返回写入草稿的字段路径
 }
 
 /**
@@ -365,12 +365,15 @@ export const usePreviewData = (data: Ref<Record<string, any> | undefined>) => {
    * - 递归对比 patch 与 source，若叶子值不同则写入草稿
    * @param aiResult - AI 返回的完整数据对象（只包含需要更新的字段）
    */
-  const applyDiff = (aiResult: Record<string, any>): void => {
+  const applyDiff = (aiResult: Record<string, any>): string[] => {
     const source = data.value;
-    if (!source || !aiResult) return;
+    if (!source || !aiResult) return [];
 
     // 清空旧草稿，保证完全替换
     clearAllNewValues();
+
+    // 记录本次写入草稿的字段路径，便于调试确认 diff 是否生效
+    const changedPaths: string[] = [];
 
     /**
      * 内部递归 diff 函数
@@ -407,11 +410,13 @@ export const usePreviewData = (data: Ref<Record<string, any> | undefined>) => {
         // 叶子字段：若 patch 值与当前值不同，则写入草稿
         if (patchVal !== undefined && !areValuesEqual(patchVal, srcVal)) {
           setNewValue(path, patchVal);
+          changedPaths.push(path);
         }
       });
     };
 
     diffInner(source, aiResult, "");
+    return changedPaths;
   };
 
   return {
