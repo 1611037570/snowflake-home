@@ -23,11 +23,7 @@ const props = defineProps({
 // 字段代理兜底，避免未传入时取值报错
 const field = computed(() => model.value || { value: "", newValue: "" });
 const valueContent = computed(() => {
-  if (
-    props.displayValue !== "" &&
-    props.displayValue !== undefined &&
-    props.displayValue !== null
-  ) {
+  if (props.displayValue) {
     return props.displayValue;
   }
   return field.value.value ?? "";
@@ -37,6 +33,7 @@ const newValueContent = computed(() => field.value.newValue ?? "");
 // 悬停状态与悬浮方向
 const isHovered = ref(false);
 const dropdownDirection = ref("up");
+const dropdownAlign = ref("left");
 const rootRef = ref(null);
 const { start: startHideTimer, stop: stopHideTimer } = useTimeoutFn(
   () => {
@@ -119,15 +116,16 @@ const handleCancel = () => {
 
 const handleMouseEnter = () => {
   stopHideTimer();
-  if (valueContent.value && newValueContent.value) {
-    isHovered.value = true;
-    // 字段靠近页面顶部时向下浮，否则向上浮，避免溢出页面边界
-    const page = rootRef.value?.closest(".resume-page-item");
-    if (rootRef.value && page) {
-      const elTop = rootRef.value.getBoundingClientRect().top - page.getBoundingClientRect().top;
-      dropdownDirection.value = elTop < page.getBoundingClientRect().height / 2 ? "down" : "up";
-    }
-  }
+  if (!valueContent.value || !newValueContent.value) return;
+  isHovered.value = true;
+  const page = rootRef.value?.closest(".resume-page-item");
+  if (!rootRef.value || !page) return;
+  // 字段靠近页面顶部时向下浮，否则向上浮，避免溢出页面边界
+  const rootRect = rootRef.value.getBoundingClientRect();
+  const pageRect = page.getBoundingClientRect();
+  dropdownDirection.value = rootRect.top - pageRect.top < pageRect.height / 2 ? "down" : "up";
+  // 字段靠近页面右侧时向右对齐，避免悬浮层溢出页面右边界
+  dropdownAlign.value = pageRect.right - rootRect.left < 320 ? "right" : "left";
 };
 
 const handleMouseLeave = () => {
@@ -148,15 +146,18 @@ const handleMouseLeave = () => {
     <!-- 悬浮对比层：浮在字段上方，不占文档流 -->
     <div
       v-show="isHovered && newValueContent"
-      class="absolute left-0 z-10 flex max-h-[240px] w-max max-w-[320px] min-w-[180px] flex-col rounded-xl border border-sf-b bg-sf-page p-2 shadow-lg"
-      :class="dropdownDirection === 'up' ? 'bottom-full mb-1' : 'top-full mt-1'"
+      class="absolute z-10 flex max-h-[240px] w-max max-w-[320px] min-w-[180px] flex-col rounded-xl border border-sf-b bg-sf-page p-2 shadow-lg"
+      :class="[
+        dropdownDirection === 'up' ? 'bottom-full mb-1' : 'top-full mt-1',
+        dropdownAlign === 'left' ? 'left-0' : 'right-0',
+      ]"
     >
       <div class="min-h-0 flex-1 overflow-y-auto">
         <div class="rounded bg-[#e8f5e9] px-1 text-[#2e7d32]">
-          <DiffContent :content="newValueContent" :blocks="newBlocks" :html="html" />
+          <DiffContent :content="newValueContent" :blocks="newBlocks" />
         </div>
         <div class="mt-1 rounded bg-[#fef0f0] px-1 text-[#d32f2f] line-through">
-          <DiffContent :content="valueContent" :blocks="valueBlocks" :html="html" />
+          <DiffContent :content="valueContent" :blocks="valueBlocks" />
         </div>
       </div>
       <div class="mt-1 flex shrink-0 items-center gap-x-2">
@@ -176,7 +177,7 @@ const handleMouseLeave = () => {
     </div>
     <!-- 文档流：有草稿显示新增内容，否则显示原值 -->
     <div class="w-full" :class="documentClass">
-      <DiffContent :content="documentContent" :blocks="documentBlocks" :html="html" />
+      <DiffContent :content="documentContent" :blocks="documentBlocks" />
     </div>
   </div>
 </template>
