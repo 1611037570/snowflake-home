@@ -23,7 +23,7 @@ const REACT_SYSTEM_PROMPT = `你是资深招聘 HR 北斗AI助手，专精简历
 # 硬性约束
 - 真实性红线：严禁编造任何数据、职级或项目细节。
 - 需要读取简历时调用 read_resume_data，不要假设简历内容。
-- 需要修改简历时调用 propose_resume_diff，不要在最终结果中返回完整简历数据。
+- 当任务要求优化或修改简历时，必须调用 propose_resume_diff 生成修改草稿，禁止只输出分析建议而跳过工具调用。
 
 # 最终输出格式（只返回 JSON 对象）
 最终回复必须且只能是一个 JSON 对象，禁止输出 JSON 之外的任何开场白、解释、Markdown 或代码块标记。
@@ -46,7 +46,7 @@ interface UseChatRequestOptions {
   currentMessages: ComputedRef<Message[]>; // 当前消息列表（只读）
   addMessage: (message: Partial<Message>) => void; // 添加消息的方法
   scrollToBottom: () => void | Promise<void>; // 滚动到底部
-  applyDiff?: (data: Record<string, any>) => void; // 应用数据差异（可选）
+  applyDiff?: (data: Record<string, any>) => string[]; // 应用数据差异，返回写入字段（可选）
   onRequestComplete: (message: Message | null) => void; // 请求完成回调
 }
 
@@ -315,7 +315,7 @@ export const useChatRequest = ({
       reactRunner = llm.react({
         tools: createResumeTools({
           getResumeData,
-          applyDiff: applyDiff ?? (() => {}),
+          applyDiff: applyDiff ?? (() => []),
         }),
         maxSteps: 6,
         onThink: (reasoning) => {

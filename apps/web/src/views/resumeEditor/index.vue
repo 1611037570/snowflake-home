@@ -7,7 +7,10 @@
       <div class="relative flex min-w-0 flex-1 overflow-hidden">
         <!-- 左侧操作栏 -->
         <Transition name="resume-builder" appear>
-          <Builder v-if="focusMode || layout !== 'ai'" :class="{ 'ai-generating': isGenerating }" />
+          <Builder
+            v-show="focusMode || layout !== 'ai'"
+            :class="{ 'ai-generating': isGenerating }"
+          />
         </Transition>
         <!-- 中间预览栏 -->
         <Transition name="resume-preview" appear>
