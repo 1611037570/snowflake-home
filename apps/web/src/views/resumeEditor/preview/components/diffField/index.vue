@@ -41,7 +41,7 @@ const hasContent = computed(() =>
 const rootRef = ref(null);
 
 const handleMouseEnter = () => {
-  if (isPrinting.value || !valueContent.value || !newValueContent.value) return;
+  if (isPrinting.value || !newValueContent.value) return;
   const el = rootRef.value;
   const page = el?.closest(".resume-page-item");
   if (!el || !page) return;

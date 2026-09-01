@@ -33,7 +33,10 @@ const popoverStyle = computed(() => {
         <div class="rounded-xl bg-[#e8f5e9] px-1 text-[#2e7d32]">
           <DiffContent :content="store.newValue" :html="store.html" />
         </div>
-        <div class="mt-1 rounded-xl bg-[#fef0f0] px-1 text-[#d32f2f] line-through">
+        <div
+          v-if="store.value"
+          class="mt-1 rounded-xl bg-[#fef0f0] px-1 text-[#d32f2f] line-through"
+        >
           <DiffContent :content="store.value" :html="store.html" />
         </div>
       </div>
