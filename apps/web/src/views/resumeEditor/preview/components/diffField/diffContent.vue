@@ -64,5 +64,7 @@ const blocks = computed(() =>
       :innerHTML="block.html"
     ></component>
   </template>
-  <template v-else>{{ content }}</template>
+  <template v-else>
+    <span :style="[fontValue(), lineHeightValue()]">{{ content }}</span>
+  </template>
 </template>
