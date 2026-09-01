@@ -8,6 +8,8 @@ export interface ThinkOptions {
   model?: string;
   // 用于在请求进行中暴露中止函数
   abortRef?: { current: (() => void) | null };
+  // 透传底层流式事件，用于上层计时与统计
+  onEvent?: (type: string, data: any) => void;
 }
 
 // 按 index 合并流式 tool_call 增量，最终得到完整工具调用
@@ -63,6 +65,7 @@ export async function think(
       if (type === "reasoning") reasoning += data;
       else if (type === "content") content += data;
       else if (type === "tool_call_delta") mergeToolCall(toolCallMap, data);
+      options.onEvent?.(type, data);
     },
   });
   if (options.abortRef) options.abortRef.current = abortFn;

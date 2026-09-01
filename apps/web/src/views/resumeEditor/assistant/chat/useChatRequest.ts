@@ -85,6 +85,45 @@ export const useChatRequest = ({
     timers.reply = null;
   };
 
+  // 统一状态处理器：把 reasoning/content/total_tokens 映射为请求状态与耗时计数
+  const createChatState = (
+    lastMsg: Message | null,
+    isCurrent: () => boolean,
+  ) => {
+    const timers: ChatTimers = { thinking: null, reply: null };
+    activeTimers = timers;
+
+    const onEvent = (type: string, data: any) => {
+      if (!isCurrent() || !lastMsg) return;
+      if (type === "reasoning") {
+        lastMsg.requestStatus = "thinking";
+        if (!timers.thinking) {
+          timers.thinking = setInterval(() => {
+            if (isCurrent()) lastMsg.thoughtTime += 1;
+          }, 1000);
+        }
+      } else if (type === "content") {
+        lastMsg.requestStatus = "generating";
+        if (!timers.reply) {
+          if (timers.thinking) clearInterval(timers.thinking);
+          timers.thinking = null;
+          timers.reply = setInterval(() => {
+            if (isCurrent()) lastMsg.contentTime += 1;
+          }, 1000);
+        }
+      } else if (type === "total_tokens") {
+        lastMsg.total_tokens = data;
+      }
+    };
+
+    const dispose = () => {
+      clearTimers(timers);
+      if (activeTimers === timers) activeTimers = null;
+    };
+
+    return { onEvent, dispose };
+  };
+
   // 读取当前简历数据，按需裁剪模块，并排除头像等大体积字段
   const getResumeData = (moduleKey?: string) => {
     const data = resumeStore.currentData;
@@ -105,9 +144,6 @@ export const useChatRequest = ({
     const currentRequestVersion = ++requestVersion;
     // 辅助函数：检查当前请求是否仍为最新且组件未卸载
     const isCurrentRequest = () => !isUnmounted && currentRequestVersion === requestVersion;
-    // 初始化本次请求的耗时计数
-    const timers: ChatTimers = { thinking: null, reply: null };
-    activeTimers = timers;
     // 设置生成状态为true
     isGenerating.value = true;
     // 选中整个模块或 user 模块时，临时清除头像避免请求体过大，请求结束还原
@@ -119,8 +155,9 @@ export const useChatRequest = ({
       savedAvatar = currentData.user.avatar;
       delete currentData.user.avatar;
     }
-    // 最后一条消息（即AI回复消息）的引用
+    // 最后一条消息（即AI回复消息）的引用与状态处理器
     let lastMsg: Message | null = null;
+    let state: ReturnType<typeof createChatState> | null = null;
 
     try {
       // 构建消息列表（只复制role和content）
@@ -149,6 +186,7 @@ export const useChatRequest = ({
       });
       // 获取刚添加的AI消息引用
       lastMsg = currentMessages.value[currentMessages.value.length - 1] ?? null;
+      state = createChatState(lastMsg, isCurrentRequest);
 
       // 测试开关：配置 VITE_MOCK_AI=true 时拦截真实请求，返回模拟数据
       if (import.meta.env.VITE_MOCK_AI === "true") {
@@ -200,35 +238,19 @@ export const useChatRequest = ({
         isJson: true,
         // 事件回调：处理流式数据
         onEvent: (type, data) => {
+          state?.onEvent(type, data);
           if (!isCurrentRequest() || !lastMsg) return;
           if (type === "reasoning") {
             // 思考内容追加
-            lastMsg.requestStatus = "thinking";
-            if (!timers.thinking) {
-              timers.thinking = setInterval(() => {
-                if (isCurrentRequest()) lastMsg!.thoughtTime += 1;
-              }, 1000);
-            }
             lastMsg.thought += data;
           } else if (type === "content") {
             // 首次收到正文后切换到回复计时
-            lastMsg.requestStatus = "generating";
-            if (!timers.reply) {
-              if (timers.thinking) clearInterval(timers.thinking);
-              timers.thinking = null;
-              timers.reply = setInterval(() => {
-                if (isCurrentRequest()) lastMsg!.contentTime += 1;
-              }, 1000);
-            }
             // 首次收到内容时折叠思考区域
             if (!lastMsg.thoughtCollapsed && !thoughtStatus) {
               thoughtStatus = true;
               lastMsg.thoughtCollapsed = true;
             }
             lastMsg.content += data;
-          } else if (type === "total_tokens") {
-            // 记录总token数
-            lastMsg.total_tokens = data;
           }
           // 滚动到最新消息
           scrollToBottom();
@@ -270,8 +292,7 @@ export const useChatRequest = ({
       }
       if (isUnmounted) return;
       const finishTime = Date.now();
-      clearTimers(timers);
-      if (activeTimers === timers) activeTimers = null;
+      state?.dispose();
       // 重置状态
       isGenerating.value = false;
       abortRequest = null;
@@ -295,6 +316,7 @@ export const useChatRequest = ({
     const currentRequestVersion = ++requestVersion;
     const isCurrent = () => !isUnmounted && currentRequestVersion === requestVersion;
     let lastMsg: Message | null = null;
+    let state: ReturnType<typeof createChatState> | null = null;
 
     try {
       isGenerating.value = true;
@@ -310,6 +332,7 @@ export const useChatRequest = ({
         requestStatus: "thinking",
       });
       lastMsg = currentMessages.value[currentMessages.value.length - 1] ?? null;
+      state = createChatState(lastMsg, isCurrent);
 
       const llm = getLLM();
       reactRunner = llm.react({
@@ -318,6 +341,10 @@ export const useChatRequest = ({
           applyDiff: applyDiff ?? (() => []),
         }),
         maxSteps: 6,
+        reflection: true,
+        onEvent: (type, data) => {
+          state?.onEvent(type, data);
+        },
         onThink: (reasoning) => {
           if (!isCurrent() || !lastMsg || !reasoning) return;
           lastMsg.thought += `\n\n### 思考\n${reasoning}`;
@@ -335,6 +362,12 @@ export const useChatRequest = ({
               ? `${observation.content.slice(0, 1200)}...`
               : observation.content;
           lastMsg.thought += `\n\n### 观察结果\n\`\`\`json\n${preview}\n\`\`\``;
+          scrollToBottom();
+        },
+        onReflect: (answer) => {
+          if (!isCurrent() || !lastMsg) return;
+          const preview = answer.length > 1200 ? `${answer.slice(0, 1200)}...` : answer;
+          lastMsg.thought += `\n\n### 反思修正\n${preview}`;
           scrollToBottom();
         },
         onFinal: (answer) => {
@@ -357,6 +390,7 @@ export const useChatRequest = ({
       }
     } finally {
       reactRunner = null;
+      state?.dispose();
       isGenerating.value = false;
       if (lastMsg?.typing) lastMsg.typing = false;
       if (chat.value) chat.value.updateTime = Date.now();
