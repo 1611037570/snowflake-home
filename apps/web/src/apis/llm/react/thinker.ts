@@ -54,42 +54,20 @@ export async function think(
     ...(options.model ? { model: options.model } : {}),
   };
 
-  await new Promise<void>((resolve, reject) => {
-    let settled = false;
-    const finish = (err?: any) => {
-      if (settled) return;
-      settled = true;
-      if (err) reject(err);
-      else resolve();
-    };
-
-    llm
-      .request({
-        options: requestOptions,
-        isStream: true,
-        isJson: false,
-        onEvent: (type: string, data: any) => {
-          if (type === "reasoning") reasoning += data;
-          else if (type === "content") content += data;
-          else if (type === "tool_call_delta") mergeToolCall(toolCallMap, data);
-        },
-        onSuccess: () => finish(),
-        onFail: (error: any) => finish(new Error(error?.message || "ReAct 思考失败")),
-      })
-      .then(({ sendFn, abortFn }: any) => {
-        if (options.abortRef) options.abortRef.current = abortFn;
-        sendFn().then(() => finish()).catch((err: any) => finish(err));
-      })
-      .catch((err: any) => finish(err));
+  const { sendFn, abortFn } = await llm.request({
+    options: requestOptions,
+    isStream: true,
+    isJson: false,
+    onEvent: (type: string, data: any) => {
+      if (type === "reasoning") reasoning += data;
+      else if (type === "content") content += data;
+      else if (type === "tool_call_delta") mergeToolCall(toolCallMap, data);
+    },
   });
+  if (options.abortRef) options.abortRef.current = abortFn;
+  await sendFn();
 
   const toolCalls = Array.from(toolCallMap.values());
-  console.log(
-    "[ReAct Think] reasoning:",
-    reasoning,
-    "toolCalls:",
-    toolCalls.map((t) => t.function.name),
-  );
   return {
     reasoning,
     toolCalls,

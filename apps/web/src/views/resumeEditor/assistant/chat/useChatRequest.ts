@@ -1,6 +1,6 @@
 // 导入LLM接口
 import { getLLM } from "@/apis";
-import { createResumeTools, ReactRunner } from "@/ai/react";
+import { createResumeTools, ReactRunner } from "@/apis/llm/react";
 import { useAiStore, useResumeStore } from "@/stores";
 // 导入聊天和消息类型
 import type { Chat, Message } from "@/stores/modules/ai";
