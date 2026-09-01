@@ -92,6 +92,7 @@ const { measureDone, pages, pageStyleText, moduleClass, moduleList } = useResume
   selectedModule,
   isReadonly,
   uid,
+  allModules,
 });
 // 编辑态实例把测量结果写入共享 ref，供智能一页复用，避免其重复挂载测量容器
 watch(moduleList, (list) => {
@@ -112,6 +113,7 @@ const containerHeight = {
 <template>
   <!-- 隐藏的测量容器：用于 useRowInfo 读取行高；缩略图测量完成后销毁 -->
   <div
+    v-if="!measureDone"
     class="fixed -top-999 -left-999 flex h-auto flex-col bg-white text-black"
     ref="measureRef"
     :class="ui.fontFamily"
@@ -123,7 +125,7 @@ const containerHeight = {
       },
     ]"
   >
-    <MeasureContent v-if="!measureDone" :all-modules="allModules" />
+    <MeasureContent :all-modules="allModules" />
     <div
       v-if="showPageNumber"
       class="flex flex-1 items-end justify-center py-3 text-xs opacity-50"

@@ -52,13 +52,21 @@ const isSnapshotChanged = (prev: ModuleInfo[] | null, curr: ModuleInfo[]): boole
 export function useRowInfo(
   rootRef: Ref<HTMLElement | null>,
   watchOptions: WatchSource,
-  options?: { stopAfterFirstMeasure?: boolean },
+  options?: {
+    stopAfterFirstMeasure?: boolean;
+    /** 测量完成所需模块数：缩略图内容异步挂载时避免中途提前冻结 */
+    expectedModuleCount?: number;
+    /** 测量防抖延迟（ms）：缩略图静态数据可传 0 立即测量 */
+    debounce?: number;
+  },
 ) {
   const selector = ".resume-module-wrapper";
   const moduleList = ref<ModuleInfo[]>([]);
   // 替换前的 moduleList 即上一次测量结果，直接作为比较基准，无需额外快照
   // 单次测量模式（缩略图 page=1）：测量成功后冻结，避免测量容器销毁后清空行数据
   let frozen = false;
+  // 冻结后释放全部监听器，避免缩略图测量完成后空跑（监听器创建后赋值）
+  let stopAll: (() => void) | null = null;
 
   /** 行高度 = offsetHeight（含 padding/border）+ 上下 margin */
   const rowHeight = (el: HTMLElement): number => {
@@ -92,29 +100,41 @@ export function useRowInfo(
       },
     );
     const prev = moduleList.value;
-    if (isSnapshotChanged(prev, modules)) {
+    // 单次测量模式：模块齐全（含异步挂载的期望模块数）才更新并冻结，
+    // 避免内容挂载中途以不完整行高提前冻结或引起闪烁
+    const expected = options?.expectedModuleCount;
+    const complete =
+      !options?.stopAfterFirstMeasure ||
+      (modules.length > 0 && (expected == null || modules.length >= expected));
+    if (complete && isSnapshotChanged(prev, modules)) {
       moduleList.value = modules;
-      // 单次测量模式：首次测量成功后冻结，后续（含容器销毁）不再触发
-      if (options?.stopAfterFirstMeasure && modules.length > 0) {
+      if (options?.stopAfterFirstMeasure) {
         frozen = true;
+        stopAll?.();
       }
     }
   };
-  // 防抖处理，避免连续 DOM 变化时高频执行测量
-  const debouncedMeasure = useDebounceFn(measure, 100);
+  // 防抖处理，避免连续 DOM 变化时高频执行测量（缩略图静态数据可配 0 立即测量）
+  const debouncedMeasure = useDebounceFn(measure, options?.debounce ?? 100);
 
-  // 容器挂载/重建时测量（immediate 在 ref 首次赋值时立即触发）
-  watch(rootRef, debouncedMeasure, { immediate: true });
+  const stopWatchRoot = watch(rootRef, debouncedMeasure, { immediate: true });
   // 容器尺寸变化（如缩放）时重新测量
-  useResizeObserver(rootRef, debouncedMeasure);
+  const { stop: stopResize } = useResizeObserver(rootRef, debouncedMeasure);
   // 容器内 DOM 增删、文本变化时重新测量（内容编辑会改变高度）
-  useMutationObserver(rootRef, debouncedMeasure, {
+  const { stop: stopMutation } = useMutationObserver(rootRef, debouncedMeasure, {
     childList: true,
     subtree: true,
     characterData: true,
   });
   // 样式配置（字号/行高/内边距）变化会改变高度，需重新测量
-  watch(watchOptions, debouncedMeasure);
+  const stopWatchOptions = watch(watchOptions, debouncedMeasure);
+  // 冻结后释放全部监听，避免缩略图测量完成后空跑
+  stopAll = () => {
+    stopWatchRoot();
+    stopResize();
+    stopMutation();
+    stopWatchOptions();
+  };
 
   return { moduleList };
 }
