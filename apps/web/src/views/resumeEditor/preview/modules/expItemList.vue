@@ -47,7 +47,7 @@ const list = computed(() => previewData.value?.[props.dataKey]?.data || []);
           </div>
         </div>
         <div class="flex min-w-0 max-w-full flex-wrap items-center">
-          <DiffField v-model="item.time" :display-value="getTime(item.time?.value)" />
+          <span>{{ getTime(item.time?.value) }}</span>
         </div>
       </div>
       <!-- 补充描述/经历 -->

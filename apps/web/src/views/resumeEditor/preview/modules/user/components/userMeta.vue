@@ -25,9 +25,9 @@ const age = computed(() => {
       v-if="user.sex?.value && (age || workYears)"
       class="h-3 w-px bg-current opacity-50"
     ></span>
-    <DiffField v-if="age" v-model="user.newAge" :display-value="age + '岁'" />
+    <span v-if="age">{{ age }}岁</span>
     <span v-if="age && workYears" class="h-3 w-px bg-current opacity-50"></span>
-    <DiffField v-if="workYears" v-model="user.newWorkYears" :display-value="workYears" />
+    <span v-if="workYears">{{ workYears }}</span>
   </div>
 </template>
 

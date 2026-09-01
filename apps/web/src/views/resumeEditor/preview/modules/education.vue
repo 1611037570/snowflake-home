@@ -40,7 +40,7 @@ const hasField = (item, key) => {
           </div>
         </div>
         <div class="flex min-w-0 max-w-full flex-wrap items-center gap-2">
-          <DiffField v-model="item.time" :display-value="getTime(item.time?.value)" />
+          <span>{{ getTime(item.time?.value) }}</span>
         </div>
       </div>
       <!-- 次信息行：post / education / mode，不创建临时对象，直接基于原字段渲染 -->
