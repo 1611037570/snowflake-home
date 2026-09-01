@@ -44,7 +44,7 @@ export const xiaoYangData: any = {
         education: "本科",
         post: "计算机科学与技术",
         time: ["2021.09", "2023.06"],
-        content: "<p>独立开发雪花起始页和简历生成器，本简历由该项目生成。</p>",
+        content: "<p>轻舟简历和雪花起始页项目作者</p>",
         mode: "全日制",
       },
     ],
@@ -54,7 +54,7 @@ export const xiaoYangData: any = {
     data: [
       {
         name: "浙江****有限公司",
-        post: "前端开发工程师",
+        post: "前端开发",
         time: ["2022.08", "2026.06"],
         content:
           "<p><strong>2023.5-2024.2：</strong>参与**社区的功能开发与系统维护，优化用户体验并提升系统稳定性，支持平台日均数百万用户的稳定访问。 </p><p><strong>2024.3-2025.2：</strong>主导**社区5.0版本重构工作，推动组件化落地，提升代码复用率与开发效率，缩短新功能开发周期约30%。 &nbsp;</p><p><strong>2025.2-2026.4：</strong>负责社区6.0版本实现AI Agent在前端的落地应用，从前端交互到后端接口的全流程开发。</p>",
@@ -66,7 +66,13 @@ export const xiaoYangData: any = {
     data: [
       {
         name: "**社区",
-        post: "前端开发工程师",
+        post: "前端开发",
+        time: ["2022.08", "2026.06"],
+        content: "",
+      },
+      {
+        name: "**轻舟简历",
+        post: "全栈开发",
         time: ["2022.08", "2026.06"],
         content: "",
       },
