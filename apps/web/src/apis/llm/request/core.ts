@@ -69,7 +69,7 @@ class LLM {
    * @param {string} [config.method="POST"] - 请求方法，默认为 POST
    * @param {boolean} [config.isThrow=true] - 发生错误时是否抛出异常
    * @param {number} [config.retryCount=0] - 请求失败时的重试次数
-   * @param {number} [config.timeout=180000] - 请求超时时间，默认 180 秒
+   * @param {number} [config.timeout=300000] - 请求超时时间，默认 5 分钟
    * @param {boolean} [config.isStream=true] - 是否开启流式响应
    * @returns {Promise<any>} 返回请求结果的 Promise，包含 abortFn 和 sendFn
    */
@@ -85,7 +85,7 @@ class LLM {
       method = "POST",
       retryCount = 3,
       isStream = true,
-      timeout = 180000,
+      timeout = 300000,
     } = config;
     const token = this.apiKey || "";
     if (isDebug) {

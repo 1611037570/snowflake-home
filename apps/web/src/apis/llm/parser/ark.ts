@@ -1,4 +1,4 @@
-import { ERROR_CODES, processJson, StreamError } from "../request/stream-utils";
+import { processJson, StreamError } from "../request/stream-utils";
 
 /**
  * Ark 供应商非流式解析逻辑
@@ -7,7 +7,7 @@ import { ERROR_CODES, processJson, StreamError } from "../request/stream-utils";
  */
 export const arkParser = (res: any) => {
   if (!res) {
-    throw new StreamError("请求失败，返回数据为空", ERROR_CODES.NETWORK_ERROR);
+    throw new StreamError("请求失败，返回数据为空");
   }
   return res;
 };
