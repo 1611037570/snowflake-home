@@ -8,9 +8,7 @@ const mapProvider = (provider: string) =>
 
 const snowflakeConfig = {
   baseUrl: snowflake.baseUrl,
-  getApiKey: () => {
-    return snowflake.getApiKey?.() || "";
-  },
+  getApiKey: snowflake.getApiKey || "",
   provider: mapProvider(snowflake.provider),
 };
 // 获取当前激活模型名：雪花服务取 snowflake.model，自定义模型取配置中的 model
@@ -36,7 +34,7 @@ const getLLM = () => {
   const llmProvider = mapProvider(config.provider);
   return new LLM({
     baseUrl: config.url,
-    getApiKey: () => config.key,
+    getApiKey: config.key,
     provider: llmProvider,
   });
 };

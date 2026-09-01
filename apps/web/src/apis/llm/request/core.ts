@@ -13,7 +13,7 @@ class LLM {
   url;
   /** @type {string} AI 供应商标识，如 'cool' 等 */
   provider;
-  /** @type {Function|undefined} 获取身份验证 Token 的回调函数，用于请求认证 */
+  /** @type {string|undefined} 请求认证所需的 API Key */
   getApiKey;
   /**
    * 初始化 LLM 实例
@@ -21,13 +21,13 @@ class LLM {
    * @param {string} [config.baseUrl=""] - 接口基础地址，用于构建完整请求 URL
    * @param {string} [config.path=""] - 接口请求路径，与 baseUrl 组合形成完整 URL
    * @param {string} [config.provider="cool"] - AI 供应商标识，如 'cool' 等
-   * @param {Function} [config.getApiKey] - 获取身份验证 Token 的回调函数，用于请求认证
+   * @param {string} [config.getApiKey] - 请求认证所需的 API Key
    */
   constructor(config: {
     baseUrl?: string;
     path?: string;
     provider?: string;
-    getApiKey?: () => string | undefined;
+    getApiKey?: string;
   }) {
     const { baseUrl = "", path = "", provider = "cool", getApiKey } = config;
 
@@ -102,7 +102,7 @@ class LLM {
       // 请求超时时间，默认 60 秒
       timeout = 60000,
     } = config;
-    const token = this.getApiKey?.() || "";
+    const token = this.getApiKey || "";
     if (debug) {
       console.log("请求配置 :>> ", config);
     }
