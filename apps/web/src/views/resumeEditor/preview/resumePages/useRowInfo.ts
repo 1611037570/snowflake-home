@@ -28,18 +28,15 @@ export interface ModuleInfo {
   rows: RowInfo[]; // 模块下的所有行
 }
 
-/** 单次测量的纯数据快照，用于轻量比较行结构变化 */
-type Snapshot = { moduleKey: string; heights: number[] }[];
-
-/** 判断两次测量结果的结构与行高是否发生变化 */
-const isSnapshotChanged = (prev: Snapshot | null, curr: ModuleInfo[]): boolean => {
+/** 判断两次测量结果的结构与行高是否发生变化（直接复用上一次 moduleList，避免额外快照冗余） */
+const isSnapshotChanged = (prev: ModuleInfo[] | null, curr: ModuleInfo[]): boolean => {
   if (!prev || prev.length !== curr.length) return true;
   for (let i = 0; i < curr.length; i++) {
     const p = prev[i]!;
     const c = curr[i]!;
-    if (p.moduleKey !== c.moduleKey || p.heights.length !== c.rows.length) return true;
+    if (p.moduleKey !== c.moduleKey || p.rows.length !== c.rows.length) return true;
     for (let j = 0; j < c.rows.length; j++) {
-      if (p.heights[j] !== c.rows[j]!.height) return true;
+      if (p.rows[j]!.height !== c.rows[j]!.height) return true;
     }
   }
   return false;
@@ -59,8 +56,7 @@ export function useRowInfo(
 ) {
   const selector = ".resume-module-wrapper";
   const moduleList = ref<ModuleInfo[]>([]);
-  // 上一次测量的快照，用于判断行结构/高度是否真正变化
-  let lastSnapshot: Snapshot | null = null;
+  // 替换前的 moduleList 即上一次测量结果，直接作为比较基准，无需额外快照
   // 单次测量模式（缩略图 page=1）：测量成功后冻结，避免测量容器销毁后清空行数据
   let frozen = false;
 
@@ -95,11 +91,8 @@ export function useRowInfo(
         };
       },
     );
-    if (isSnapshotChanged(lastSnapshot, modules)) {
-      lastSnapshot = modules.map((m) => ({
-        moduleKey: m.moduleKey,
-        heights: m.rows.map((r) => r.height),
-      }));
+    const prev = moduleList.value;
+    if (isSnapshotChanged(prev, modules)) {
       moduleList.value = modules;
       // 单次测量模式：首次测量成功后冻结，后续（含容器销毁）不再触发
       if (options?.stopAfterFirstMeasure && modules.length > 0) {
