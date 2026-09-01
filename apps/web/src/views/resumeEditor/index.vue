@@ -17,7 +17,7 @@
       </div>
       <!-- 右侧AI助手栏 -->
       <Transition name="resume-assistant" appear>
-        <Assistant v-if="!focusMode && layout !== 'list'" />
+        <Assistant v-show="!focusMode && layout !== 'list'" />
       </Transition>
       <!-- 最右侧系统配置栏：工具栏与 QA 入口整体垂直居中 -->
       <Transition name="resume-toolbar" appear>
