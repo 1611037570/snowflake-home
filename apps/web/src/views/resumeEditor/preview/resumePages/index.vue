@@ -83,7 +83,7 @@ const allModules = computed(() => {
   const configModules = props.item.config?.fields || [];
   return [...fixedModules, ...configModules];
 });
-const { measureDone, pages, moduleClass, getPageStyle, moduleList } = useResumePages({
+const { measureDone, pages, pageStyles, moduleClass, moduleList } = useResumePages({
   measureRef,
   ui,
   themeStyles,
@@ -97,16 +97,16 @@ const { measureDone, pages, moduleClass, getPageStyle, moduleList } = useResumeP
 watch(moduleList, (list) => {
   if (!isReadonly.value && sharedModuleList) sharedModuleList.value = list;
 });
-const containerWidth = ref({
+const containerWidth = {
   width: `${RESUME_WIDTH}px`,
   minWidth: `${RESUME_WIDTH}px`,
   maxWidth: `${RESUME_WIDTH}px`,
-});
-const containerHeight = ref({
+};
+const containerHeight = {
   height: `${RESUME_HEIGHT}px`,
   minHeight: `${RESUME_HEIGHT}px`,
   maxHeight: `${RESUME_HEIGHT}px`,
-});
+};
 </script>
 
 <template>
@@ -163,7 +163,7 @@ const containerHeight = ref({
         轻舟简历 · 第 {{ pageIndex + 1 }} 页 · 共 {{ pages.length }} 页
       </div>
 
-      <component :is="'style'">{{ getPageStyle(pageSlices, pageIndex) }}</component>
+      <component :is="'style'">{{ pageStyles[pageIndex] }}</component>
     </div>
   </div>
 </template>
