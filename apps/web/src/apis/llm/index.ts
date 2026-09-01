@@ -2,12 +2,24 @@ import { snowflake } from "@/configs";
 import { LLM } from "./request/core";
 import { useAiStore } from "@/stores";
 
+// ark 与 deepseek 均走 OpenAI Chat Completions 协议，统一映射为 openai 复用解析与请求格式
+const mapProvider = (provider: string) =>
+  ["deepseek", "ark"].includes(provider) ? "openai" : provider;
+
 const snowflakeConfig = {
   baseUrl: snowflake.baseUrl,
   getApiKey: () => {
-    return "";
+    return snowflake.getApiKey?.() || "";
   },
-  provider: snowflake.provider,
+  provider: mapProvider(snowflake.provider),
+};
+// 获取当前激活模型名：雪花服务取 snowflake.model，自定义模型取配置中的 model
+const getActiveModel = () => {
+  const aiStore = useAiStore();
+  const { activeModel, customModels } = storeToRefs(aiStore);
+  if (activeModel.value === "snowflake") return snowflake.model;
+  const config = customModels.value.find((item) => item.provider === activeModel.value);
+  return config?.model;
 };
 const getLLM = () => {
   const aiStore = useAiStore();
@@ -20,12 +32,12 @@ const getLLM = () => {
   if (!config) {
     return new LLM(snowflakeConfig);
   }
-  // deepseek 走 OpenAI 兼容协议
-  const llmProvider = config.provider === "deepseek" ? "openai" : config.provider;
+  // deepseek 与 ark 走 OpenAI 兼容协议
+  const llmProvider = mapProvider(config.provider);
   return new LLM({
     baseUrl: config.url,
     getApiKey: () => config.key,
     provider: llmProvider,
   });
 };
-export { getLLM, LLM };
+export { getActiveModel, getLLM, LLM };

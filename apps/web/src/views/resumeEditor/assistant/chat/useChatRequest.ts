@@ -1,5 +1,6 @@
 // 导入LLM接口
-import { getLLM } from "@/apis";
+import { getActiveModel, getLLM } from "@/apis";
+import { createResumeTools, ReactRunner } from "@/ai/react";
 import { useAiStore, useResumeStore } from "@/stores";
 // 导入聊天和消息类型
 import type { Chat, Message } from "@/stores/modules/ai";
@@ -8,6 +9,35 @@ import { onUnmounted, type ComputedRef, type Ref } from "vue";
 import { storeToRefs } from "pinia";
 // 导入工具函数：用户数据和字段分析
 import { fieldAnalysis, userData } from "./utils";
+
+// ReAct 场景系统提示：在简历助手约束基础上增加工具使用说明
+const REACT_SYSTEM_PROMPT = `你是资深招聘 HR 北斗AI助手，专精简历优化和求职竞争力提升。
+
+# 任务方式
+你可以分步骤完成任务：先思考，再调用工具，根据工具返回的结果继续思考或执行，直到完成，完成后再输出最终结果。
+
+# 可用工具
+- read_resume_data：读取当前简历数据，需要了解简历内容时调用。
+- propose_resume_diff：生成简历修改草稿，需要修改简历时调用，传入仅包含变更字段的 patch。草稿会先展示给用户确认，不会直接改动简历。
+
+# 硬性约束
+- 真实性红线：严禁编造任何数据、职级或项目细节。
+- 需要读取简历时调用 read_resume_data，不要假设简历内容。
+- 需要修改简历时调用 propose_resume_diff，不要在最终结果中返回完整简历数据。
+
+# 最终输出格式（只返回 JSON 对象）
+{
+  "data": null,
+  "analysis": "Markdown 格式的分析说明",
+  "followQuestions": ["建议追问1", "建议追问2"]
+}
+
+# analysis 字段规则
+1. 采用 Markdown 格式，简洁无冗余。
+2. 输出二级标题 问题回复：根据用户问题作答。
+3. 输出二级标题 修改说明：仅在本次有改动时出现，说明改动及原因，不暴露 JSON 字段、数组下标或变量名。
+4. 若无修改，省略 修改说明。
+5. 最多包含 问题回复、修改说明 两个二级标题。`;
 
 // 定义 useChatRequest 的配置选项接口
 interface UseChatRequestOptions {
@@ -31,9 +61,11 @@ export const useChatRequest = ({
   const resumeStore = useResumeStore();
   const aiStore = useAiStore();
   const { isGenerating } = storeToRefs(resumeStore);
-  const { thinkMode, activeModel, customModels } = storeToRefs(aiStore);
+  const { thinkMode } = storeToRefs(aiStore);
   // 用于取消当前请求的函数引用
   let abortRequest: (() => void) | null = null;
+  // ReAct 编排器引用，用于中止循环
+  let reactRunner: ReactRunner | null = null;
   // 请求版本号，用于避免旧请求干扰
   let requestVersion = 0;
   // 组件是否已卸载标记
@@ -50,6 +82,18 @@ export const useChatRequest = ({
     if (timers.reply) clearInterval(timers.reply);
     timers.thinking = null;
     timers.reply = null;
+  };
+
+  // 读取当前简历数据，按需裁剪模块，并排除头像等大体积字段
+  const getResumeData = (moduleKey?: string) => {
+    const data = resumeStore.currentData;
+    if (!data) return {};
+    const source = moduleKey ? data[moduleKey] : data;
+    if (source == null) return {};
+    const clone = JSON.parse(JSON.stringify(source));
+    if (moduleKey === "user") delete clone.avatar;
+    if (!moduleKey && clone.user) delete clone.user.avatar;
+    return clone;
   };
 
   /**
@@ -138,8 +182,8 @@ export const useChatRequest = ({
       let thoughtStatus = false;
       // 获取LLM实例
       const llm = getLLM();
-      // 当前激活的自定义配置
-      const activeConfig = customModels.value.find((item) => item.provider === activeModel.value);
+      // 当前激活模型名（雪花服务或自定义模型）
+      const model = getActiveModel();
       // 构建请求参数
       const options = {
         // 根据provider决定使用messages还是input字段
@@ -147,8 +191,8 @@ export const useChatRequest = ({
         thinking: {
           type: thinkMode.value ? "enabled" : "disabled",
         },
-        // 激活自定义配置时添加model字段
-        ...(activeConfig ? { model: activeConfig.model } : {}),
+        // 存在模型名时透传给供应商
+        ...(model ? { model } : {}),
       };
 
       // 发起请求，获取发送函数和取消函数
@@ -242,11 +286,97 @@ export const useChatRequest = ({
   };
 
   /**
+   * 发送 ReAct 请求：prompt 为任务说明，userContent 为用户意图
+   */
+  const handleReactResponse = async ({
+    prompt,
+    userContent,
+  }: {
+    prompt?: string;
+    userContent: string;
+  }) => {
+    const currentRequestVersion = ++requestVersion;
+    const isCurrent = () => !isUnmounted && currentRequestVersion === requestVersion;
+    let lastMsg: Message | null = null;
+
+    try {
+      isGenerating.value = true;
+      const model = getActiveModel();
+
+      const messages: any[] = [{ role: "system", content: REACT_SYSTEM_PROMPT }];
+      if (prompt) messages.push({ role: "user", content: prompt });
+      messages.push({ role: "user", content: userContent });
+
+      addMessage({
+        role: "assistant",
+        content: "",
+        typing: true,
+        requestStatus: "thinking",
+      });
+      lastMsg = currentMessages.value[currentMessages.value.length - 1] ?? null;
+
+      reactRunner = new ReactRunner({
+        tools: createResumeTools({
+          getResumeData,
+          applyDiff: applyDiff ?? (() => {}),
+        }),
+        getLLM: () => getLLM(),
+        model,
+        maxSteps: 6,
+        onThink: (reasoning) => {
+          if (!isCurrent() || !lastMsg || !reasoning) return;
+          lastMsg.thought += `\n\n### 思考\n${reasoning}`;
+        },
+        onAct: (toolCall) => {
+          if (!isCurrent() || !lastMsg) return;
+          const args = toolCall.function.arguments || "{}";
+          lastMsg.thought += `\n\n### 执行工具\n\`${toolCall.function.name}\`\n\n\`\`\`json\n${args}\n\`\`\``;
+          scrollToBottom();
+        },
+        onObserve: (observation) => {
+          if (!isCurrent() || !lastMsg) return;
+          const preview =
+            observation.content.length > 1200
+              ? `${observation.content.slice(0, 1200)}...`
+              : observation.content;
+          lastMsg.thought += `\n\n### 观察结果\n\`\`\`json\n${preview}\n\`\`\``;
+          scrollToBottom();
+        },
+        onFinal: (answer) => {
+          if (!isCurrent() || !lastMsg) return;
+          lastMsg.content = answer;
+          lastMsg.requestStatus = "success";
+          scrollToBottom();
+        },
+      });
+
+      await reactRunner.run(messages);
+    } catch (error: any) {
+      if (isUnmounted) return;
+      // 主动中止不视为错误
+      if (error?.message === "已中止") return;
+      console.error("ReAct 请求异常:", error);
+      if (lastMsg) {
+        lastMsg.content = `请求出错: ${error.message || "未知错误"}`;
+        lastMsg.requestStatus = "error";
+      }
+    } finally {
+      reactRunner = null;
+      isGenerating.value = false;
+      if (lastMsg?.typing) lastMsg.typing = false;
+      if (chat.value) chat.value.updateTime = Date.now();
+      onRequestComplete(lastMsg);
+    }
+  };
+
+  /**
    * 停止当前 AI 请求
    */
   const stopGenerating = () => {
     abortRequest?.(); // 取消请求
     abortRequest = null;
+    reactRunner?.abort();
+    reactRunner = null;
     // 停止请求时同步停止耗时计数
     if (activeTimers) {
       clearTimers(activeTimers);
@@ -264,6 +394,8 @@ export const useChatRequest = ({
     requestVersion += 1; // 使所有旧请求失效
     abortRequest?.();
     abortRequest = null;
+    reactRunner?.abort();
+    reactRunner = null;
     if (activeTimers) {
       clearTimers(activeTimers);
       activeTimers = null;
@@ -275,5 +407,5 @@ export const useChatRequest = ({
   });
 
   // 返回发送和停止方法
-  return { handleAIResponse, stopGenerating };
+  return { handleAIResponse, handleReactResponse, stopGenerating };
 };
