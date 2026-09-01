@@ -6,7 +6,7 @@
  */
 import { computed, ref, watch, type ComputedRef, type Ref } from "vue";
 import { MODULE_GAP, PAGE_NUMBER_HEIGHT, RESUME_HEIGHT } from "../constants";
-import { useRowInfo, type ModuleInfo, type RowInfo } from "./useRowInfo";
+import { useRowInfo, type ModuleInfo } from "./useRowInfo";
 import type { ResumeTheme } from "./useResumeTheme";
 
 /** 单页内一个模块的切片信息 */
@@ -77,24 +77,23 @@ export const useResumePages = ({
     const result: PageSlice[][] = [];
     let currentPage: PageSlice[] = [];
     let currentHeight = 0;
-    // 当前正在累积的行切片（同一模块的连续行）
+    // 当前正在累积的行切片（同一模块的连续行，仅记录首尾行号，避免逐行存数组）
     let sliceModule: ModuleInfo | null = null;
-    let sliceRows: RowInfo[] = [];
+    let sliceStart = -1;
+    let sliceEnd = -1;
 
     // 把当前切片提交为页上的一个模块块
     const commitSlice = () => {
-      if (!sliceModule || sliceRows.length === 0) return;
-      const firstRow = sliceRows[0]!;
-      const lastRow = sliceRows[sliceRows.length - 1]!;
+      if (!sliceModule || sliceEnd < 0) return;
       currentPage.push({
         moduleKey: sliceModule.moduleKey,
-        // 行按顺序累积，取首尾即可描述本页可见区间，避免逐行枚举
-        visibleStart: firstRow.index,
-        visibleEnd: lastRow.index,
+        // 行按顺序累积，取首尾行号即可描述本页可见区间，避免逐行枚举
+        visibleStart: sliceStart,
+        visibleEnd: sliceEnd,
         totalRows: sliceModule.rows.length,
       });
       sliceModule = null;
-      sliceRows = [];
+      sliceEnd = -1;
     };
     // 翻页：提交切片并把当前页存入结果
     const newPage = () => {
@@ -106,13 +105,13 @@ export const useResumePages = ({
       }
     };
 
-    // 将一组必须同页的行装入当前页；翻页后缩略图模式停止并返回 false
-    const placeRows = (group: ModuleInfo, rows: RowInfo[], height: number): boolean => {
+    // 将一段连续行（首尾行号区间）装入当前页；翻页后缩略图模式停止并返回 false
+    const placeRows = (group: ModuleInfo, start: number, end: number, height: number): boolean => {
       // 遇到新模块，先提交上一个切片，让 currentPage 如实反映页内内容
       if (sliceModule && sliceModule !== group) commitSlice();
 
       // 当前切片尚未提交时，页面同样已经有内容，避免大字号或大间距时继续挤在当前页
-      const hasPageContent = currentPage.length > 0 || sliceRows.length > 0;
+      const hasPageContent = currentPage.length > 0 || sliceEnd >= 0;
       // 模块间距：新模块的首块且当前页已有内容时才计一次
       let gap = hasPageContent && sliceModule !== group ? moduleSpacing : 0;
 
@@ -125,7 +124,8 @@ export const useResumePages = ({
       }
 
       sliceModule = group;
-      sliceRows.push(...rows);
+      if (sliceEnd < 0) sliceStart = start;
+      sliceEnd = end;
       currentHeight += gap + height;
       return true;
     };
@@ -135,11 +135,13 @@ export const useResumePages = ({
       if (group.moduleKey === "user" && group.rows.length > 0) {
         // user 模块整体不可拆分，防止跨页切分
         const height = group.rows.reduce((sum, row) => sum + row.height, 0);
-        if (!placeRows(group, group.rows, height)) return result;
+        const firstRow = group.rows[0]!;
+        const lastRow = group.rows[group.rows.length - 1]!;
+        if (!placeRows(group, firstRow.index, lastRow.index, height)) return result;
         continue;
       }
       for (const row of group.rows) {
-        if (!placeRows(group, [row], row.height)) return result;
+        if (!placeRows(group, row.index, row.index, row.height)) return result;
       }
     }
 
