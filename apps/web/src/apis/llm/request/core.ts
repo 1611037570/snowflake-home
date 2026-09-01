@@ -67,8 +67,7 @@ class LLM {
    * @param {boolean} [config.isDebug=true] - 是否开启调试模式，开启后会打印请求日志
    * @param {boolean} [config.isJson=true] - 接口返回数据是否为 JSON 格式
    * @param {string} [config.method="POST"] - 请求方法，默认为 POST
-   * @param {boolean} [config.isThrow=true] - 发生错误时是否抛出异常
-   * @param {number} [config.retryCount=0] - 请求失败时的重试次数
+   * @param {number} [config.retryCount=3] - 请求失败时的重试次数
    * @param {number} [config.timeout=300000] - 请求超时时间，默认 5 分钟
    * @param {boolean} [config.isStream=true] - 是否开启流式响应
    * @returns {Promise<any>} 返回请求结果的 Promise，包含 abortFn 和 sendFn
@@ -96,9 +95,9 @@ class LLM {
     const requestOptions = { ...options, model: this.model };
 
     // 提前创建处理器，确保调用方在 sendFn 执行前即可获取 abort
-    const handler: any = createRequest(token, isStream);
-    const send = handler?.send;
-    const abort = handler?.abort;
+    const handler = createRequest(token, isStream);
+    const send = handler.send;
+    const abort = handler.abort;
 
     // 处理请求参数
     const sendFn = async (currentRetryCount = 0) => {
@@ -116,13 +115,13 @@ class LLM {
 
         // 流式与非流式请求体不同，分别组装后发送
         const res = isStream
-          ? await send?.({
+          ? await send({
               ...requestConfig,
               data: processOption({ options: requestOptions }),
               isJson,
               onEvent,
             })
-          : await send?.({
+          : await send({
               ...requestConfig,
               data: JSON.stringify(requestOptions),
             });
