@@ -173,7 +173,7 @@ const containerHeight = {
       </div>
     </div>
   </div>
-  <DiffPopover />
+  <DiffPopover v-if="!isReadonly" />
   <component :is="'style'">{{ pageStyleText }}</component>
 </template>
 
