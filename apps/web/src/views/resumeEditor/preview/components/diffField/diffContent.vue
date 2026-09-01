@@ -7,15 +7,10 @@ const props = defineProps({
     type: String,
     default: "",
   },
-  // 富文本块数组
+  // 富文本块数组，非空时按富文本渲染
   blocks: {
     type: Array,
     default: () => [],
-  },
-  // 是否按富文本渲染
-  html: {
-    type: Boolean,
-    default: false,
   },
 });
 
@@ -24,7 +19,7 @@ const lineHeightValue = inject("lineHeightValue");
 </script>
 
 <template>
-  <template v-if="html">
+  <template v-if="blocks.length">
     <component
       v-for="(block, idx) in blocks"
       :key="idx"
