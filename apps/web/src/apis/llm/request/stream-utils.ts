@@ -1,16 +1,5 @@
 import { getParser } from "../parser/index";
 
-// 定义自定义错误类
-export class StreamError extends Error {
-  code: number;
-  name: string;
-  constructor(message: string, code = -1) {
-    super(message);
-    this.code = code;
-    this.name = "StreamError";
-  }
-}
-
 export function processJson(jsonStr: string, isDebug: boolean) {
   // 入参终极防护：处理 null/undefined/非字符串，统一转为安全字符串
   let rawStr = String(jsonStr ?? "");
@@ -58,7 +47,7 @@ export function createStreamParser({ onEvent, isDebug, provider }: any) {
     if (!parser) {
       const msg = `未找到供应商 ${provider} 的解析器`;
       if (isDebug) console.warn(msg);
-      throw new StreamError(msg);
+      throw new Error(msg);
     }
 
     return parser(line, options);
@@ -117,7 +106,7 @@ function safeJsonParse(str: string) {
 export function processResult({ text, isJson = true, isDebug }: any) {
   // 1. 输入校验（立即抛出）
   if (typeof text !== "string" || !text.length) {
-    throw new StreamError("最终结果为空，无法解析");
+    throw new Error("最终结果为空，无法解析");
   }
 
   const trimmed = text.trim();
@@ -128,7 +117,7 @@ export function processResult({ text, isJson = true, isDebug }: any) {
     try {
       result = safeJsonParse(trimmed);
     } catch (err: any) {
-      throw new StreamError(`最终结果解析失败: ${err.message}，原始内容: ${trimmed}`);
+      throw new Error(`最终结果解析失败: ${err.message}，原始内容: ${trimmed}`);
     }
   }
 
@@ -137,37 +126,6 @@ export function processResult({ text, isJson = true, isDebug }: any) {
     console.log("流式传输完成，最终结果:", result);
   }
   return result;
-}
-
-// 处理错误信息
-export function processError(e: any) {
-  let error = e;
-
-  if (e instanceof StreamError) {
-    return { code: e.code, message: e.message };
-  }
-
-  if (typeof e === "string") {
-    try {
-      error = JSON.parse(e);
-    } catch (err) {
-      error = { code: -1, message: e };
-    }
-  } else if (e instanceof Error) {
-    try {
-      // 尝试解析 message 里的 JSON (兼容旧代码)
-      const parsed = JSON.parse(e.message);
-      if (parsed && typeof parsed === "object" && "message" in parsed) {
-        error = parsed;
-      } else {
-        error = { code: -1, message: e.message };
-      }
-    } catch (err) {
-      error = { code: -1, message: e.message };
-    }
-  }
-
-  return error;
 }
 
 /**

@@ -1,6 +1,6 @@
 import { createRequest } from "./request";
 
-import { handleRetry, processError, processOption } from "./stream-utils";
+import { handleRetry, processOption } from "./stream-utils";
 
 /**
  * LLM 类用于管理与大语言模型的流式和非流式请求。
@@ -132,8 +132,6 @@ class LLM {
         }
         return res;
       } catch (e) {
-        const error = processError(e);
-
         // 处理重试逻辑
         const { retried, result } = await handleRetry({
           currentRetryCount,
@@ -146,10 +144,10 @@ class LLM {
           isRetrying = true;
           return result;
         }
-        onFail?.(error);
+        onFail?.(e);
         // 统一错误处理
         if (isDebug) {
-          console.error("请求失败 :>> ", error);
+          console.error("请求失败 :>> ", e);
         }
         throw e;
       } finally {
