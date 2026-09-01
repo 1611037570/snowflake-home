@@ -24,6 +24,8 @@ export const openaiStreamParser = (line: string, { onEvent, debug }: any) => {
 
   const delta = data.choices?.[0]?.delta || {};
   const content = typeof delta.content === "string" ? delta.content : "";
+  // 工具调用增量：模型在 ReAct 流程中输出 tool_calls 时，会按 index 分片返回
+  const toolCalls = Array.isArray(delta.tool_calls) ? delta.tool_calls : [];
   const reasoning =
     typeof delta.reasoning_content === "string"
       ? delta.reasoning_content
@@ -34,6 +36,9 @@ export const openaiStreamParser = (line: string, { onEvent, debug }: any) => {
 
   if (reasoning) onEvent?.("reasoning", reasoning);
   if (content) onEvent?.("content", content);
+  if (toolCalls.length) {
+    toolCalls.forEach((tc: any) => onEvent?.("tool_call_delta", tc));
+  }
   if (typeof totalTokens === "number") onEvent?.("total_tokens", totalTokens);
 
   return {

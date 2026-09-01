@@ -15,8 +15,6 @@ class LLM {
   provider;
   /** @type {Function|undefined} 获取身份验证 Token 的回调函数，用于请求认证 */
   getApiKey;
-  /** @type {boolean} 实例是否已成功初始化（url 是否存在），用于判断实例是否可用 */
-  initialized = false;
   /**
    * 初始化 LLM 实例
    * @param {Object} config - 配置对象
@@ -35,7 +33,6 @@ class LLM {
 
     this.url = `${baseUrl}${path}`;
     this.baseUrl = baseUrl;
-    this.initialized = !!this.url;
     this.provider = provider;
     this.getApiKey = getApiKey;
   }

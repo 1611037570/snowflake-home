@@ -81,7 +81,7 @@ watch(
   { immediate: true },
 );
 
-const { handleAIResponse, stopGenerating } = useChatRequest({
+const { handleAIResponse, handleReactResponse, stopGenerating } = useChatRequest({
   chat,
   currentMessages,
   addMessage,
@@ -234,7 +234,19 @@ const handleFlowAnswer = (answer) => {
   }
   // 收集完成：构造真实请求并清空流程状态
   const { prompt, userContent } = state.flow.build(state.answers);
+  const flowMode = state.flow.mode;
   activeFlow.value = null;
+  // ReAct 复杂任务走独立编排，不污染单轮请求流程
+  if (flowMode === "react") {
+    addMessage({
+      role: "user",
+      content: userContent,
+      typing: false,
+    });
+    scrollToBottom();
+    handleReactResponse({ prompt, userContent });
+    return;
+  }
   if (prompt) {
     addMessage({
       role: "system",

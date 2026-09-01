@@ -14,6 +14,8 @@ export type Flow = {
   userContent: string;
   // 引导步骤
   steps: FlowStep[];
+  // 复杂任务标记：react 表示走 ReAct 循环，其余走单轮问答
+  mode?: "react";
   // 收集完成后的真实请求构造
   build: (answers: string[]) => { prompt?: string; userContent: string };
 };
@@ -105,6 +107,7 @@ export const flows: Record<string, Flow> = {
   // JD 对标优化：等用户在输入框输入 JD 后执行对标优化
   jdOptimize: {
     userContent: "帮我进行JD对标优化",
+    mode: "react",
     steps: [
       {
         question: "请在输入框中粘贴目标岗位的 JD 内容并发送，我将基于它对标优化你的简历",
@@ -132,6 +135,7 @@ ${jd}
   // 简历优化：先选择优化方向，再执行
   resumeOptimize: {
     userContent: "帮我优化简历",
+    mode: "react",
     steps: [
       {
         question: "请问你希望从哪个方向优化简历？",
