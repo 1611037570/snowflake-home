@@ -35,7 +35,7 @@ function onRequestComplete(msg) {
 <template>
   <div class="box-border h-full py-3" :style="{ width: assistantWidth + 'px' }">
     <div
-      class="group relative flex h-full flex-col overflow-hidden rounded-3xl border border-sf-b bg-sf-primary"
+      class="group relative flex h-full flex-col overflow-hidden rounded-3xl border border-sf-b bg-sf-primary hover:border-sf-theme-2"
     >
       <!-- 顶部操作栏 -->
       <div
