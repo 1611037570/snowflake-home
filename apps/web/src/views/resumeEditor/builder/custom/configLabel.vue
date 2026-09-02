@@ -27,15 +27,15 @@ function resetToDefault() {
 </script>
 
 <template>
-  <div class="mb-2 flex items-center text-sm text-sf-text">
+  <div class="mb-2 flex items-center text-sm text-sf-text-2">
     <span>{{ label }}</span>
-    <sf-tooltip :content="tip" v-if="tip" class="ml-1 text-sf-text" />
+    <sf-tooltip :content="tip" v-if="tip" class="ml-1 text-sf-text-2" />
     <!-- 值非默认时显示恢复默认值图标 -->
     <sf-tooltip content="恢复默认值" class="ml-auto">
       <SfIcon
         icon="material-symbols:restart-alt"
         size="4"
-        class="cursor-pointer transition-colors hover:text-sf-theme"
+        class="cursor-pointer text-sf-text-2 transition-colors hover:text-sf-theme"
         @click.stop="resetToDefault"
       />
     </sf-tooltip>
