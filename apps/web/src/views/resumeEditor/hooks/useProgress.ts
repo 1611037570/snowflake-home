@@ -17,6 +17,11 @@ const isEmpty = (val: any): boolean =>
   (Array.isArray(val) && val.length === 0) ||
   (typeof val === "object" && !Array.isArray(val) && Object.keys(val).length === 0);
 
+const isContentEmpty = (val: any): boolean => {
+  if (typeof val !== "string") return false;
+  return val === "<p><br></p>";
+};
+
 const getLabel = (field: any, prop: string): string =>
   field?.label || field?.name || prop || "字段";
 
@@ -27,19 +32,9 @@ const getFieldMeta = (field: any) => {
   return { src, prop };
 };
 
-// ==================== 分析单个模块（内部类型不导出） ====================
+// ==================== 分析单个模块 ====================
 
-interface ModuleAnalyzeResult {
-  missing: string[];
-  score: number;
-}
-
-/**
- * 分析单个模块的必填项完成情况
- * @param moduleConfig 模块配置（fields 数组中的一项）
- * @param rootData 整个简历的根数据对象（含所有模块）
- */
-function analyzeModule(moduleConfig: any, rootData: any): ModuleAnalyzeResult {
+function analyzeModule(moduleConfig: any, rootData: any) {
   if (!moduleConfig?.fields?.length) {
     return { missing: [], score: 0 };
   }
@@ -49,7 +44,6 @@ function analyzeModule(moduleConfig: any, rootData: any): ModuleAnalyzeResult {
   let total = 0;
 
   for (const field of moduleConfig.fields) {
-    // ----- 数组类型 -----
     if (field.type === "array" && field.addConfig) {
       const addConfig = field.addConfig;
       const itemDefs = addConfig.fields?.length ? addConfig.fields : addConfig.model;
@@ -88,7 +82,10 @@ function analyzeModule(moduleConfig: any, rootData: any): ModuleAnalyzeResult {
 
           const path = src.map((k) => (k === "?" ? idx : k));
           const value = getValueByPath(rootData, path);
-          const filled = !isEmpty(value);
+
+          // 修改：使用 src 最后一个元素判断是否为 content
+          const filled =
+            src[src.length - 1] === "content" ? !isContentEmpty(value) : !isEmpty(value);
 
           total += 1;
           if (filled) {
@@ -102,13 +99,15 @@ function analyzeModule(moduleConfig: any, rootData: any): ModuleAnalyzeResult {
       continue;
     }
 
-    // ----- 普通字段 -----
     if (field.required !== true) continue;
     const { src, prop } = getFieldMeta(field);
     if (!src.length) continue;
 
     const value = getValueByPath(rootData, src);
-    const filled = !isEmpty(value);
+
+    // 修改：使用 src 最后一个元素判断是否为 content
+    const filled = src[src.length - 1] === "content" ? !isContentEmpty(value) : !isEmpty(value);
+
     total += 1;
     if (filled) {
       done += 1;
@@ -210,13 +209,8 @@ function checkTimeline(modules: Array<{ key: string; config: any }>, rootData: a
   };
 }
 
-// ==================== useProgress 组合式函数（返回类型自动推断） ====================
+// ==================== useProgress ====================
 
-/**
- * 简历进度计算组合式函数
- * @param fields 表单配置（响应式或普通值），应为 fields 数组
- * @param data 简历数据（响应式或普通值），应为包含各模块数据的对象（根数据）
- */
 export function useProgress(
   fields: MaybeRefOrGetter<any[]>,
   data: MaybeRefOrGetter<Record<string, any>>,
