@@ -5,7 +5,6 @@ import Ai from "./modules/ai/index.vue";
 import System from "./modules/system/index.vue";
 import Icon from "./components/icon.vue";
 import OnePage from "./modules/onePage.vue";
-import Progress from "./modules/progress/index.vue";
 import ModuleNavigator from "./modules/moduleNavigator.vue";
 import QaAnswer from "./modules/qaAnswer.vue";
 import Debug from "./modules/debug.vue";
@@ -31,7 +30,7 @@ function goGitHub() {
     <div
       class="relative flex w-[50px] flex-col items-center gap-2 rounded-3xl border border-sf-b bg-sf-transparent py-2 text-sf-text-3"
     >
-      <Progress />
+      <ResumeCheck />
       <System />
       <Debug />
       <div class="h-[0.5px] w-full bg-sf-bg-2"></div>
