@@ -149,20 +149,20 @@ useResizeObserver(contentRef, ([entry]) => {
 
     <div
       v-if="showToolbar"
-      class="absolute top-4 left-1/2 z-10 -translate-x-1/2 opacity-0 transition-all duration-200 select-none"
+      class="absolute top-3 left-1/2 z-10 -translate-x-1/2 opacity-0 transition-all duration-200 select-none"
       :class="
         system.toolbarAlwaysVisible
           ? 'translate-y-0 opacity-100'
-          : '-translate-y-4 group-hover:translate-y-0 group-hover:opacity-100'
+          : '-translate-y-3 group-hover:translate-y-0 group-hover:opacity-100'
       "
     >
-      <div class="flex items-center gap-1 rounded-full border border-sf-b bg-sf-page p-2">
+      <div class="flex items-center gap-1 rounded-full border border-sf-b bg-sf-page p-1.5">
         <SfTooltip content="缩小">
           <SfIcon
             @click="!isMinScale && stepScale(-0.1)"
             icon="lucide:minus"
-            size="5"
-            boxSize="7"
+            size="4"
+            boxSize="6"
             class="rounded-full text-sf-text-2"
             :class="{
               'cursor-not-allowed text-sf-text-3': isMinScale,
@@ -171,7 +171,7 @@ useResizeObserver(contentRef, ([entry]) => {
           />
         </SfTooltip>
         <div
-          class="group/scale-bar flex h-6 w-18 cursor-default items-center justify-center rounded-full px-3 text-sm font-medium text-sf-theme"
+          class="group/scale-bar flex w-15 cursor-default items-center justify-center rounded-full px-3 text-xs font-medium text-sf-theme"
         >
           {{ scaleLabel }}
           <div
@@ -183,8 +183,8 @@ useResizeObserver(contentRef, ([entry]) => {
         <SfTooltip content="放大">
           <SfIcon
             icon="lucide:plus"
-            size="5"
-            boxSize="7"
+            size="4"
+            boxSize="6"
             class="rounded-full text-sf-text-2"
             :class="{
               'cursor-not-allowed text-sf-text-3': isMaxScale,
@@ -197,8 +197,8 @@ useResizeObserver(contentRef, ([entry]) => {
         <SfTooltip content="全屏">
           <SfIcon
             icon="lucide:maximize"
-            size="4.5"
-            boxSize="7"
+            size="4"
+            boxSize="6"
             class="rounded-full text-sf-text-2 hover:bg-sf-theme-2 hover:text-sf-theme-text"
             @click="$emit('fullscreen')"
           />
@@ -206,8 +206,8 @@ useResizeObserver(contentRef, ([entry]) => {
         <SfTooltip v-if="selectedModule.length" content="清空选中">
           <SfIcon
             icon="lucide:circle-slash"
-            size="4.5"
-            boxSize="7"
+            size="4"
+            boxSize="6"
             class="rounded-full text-sf-text-2 hover:bg-sf-theme-2 hover:text-sf-theme-text"
             @click="clearSelectedModules"
           />
