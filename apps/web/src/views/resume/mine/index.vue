@@ -3,7 +3,7 @@ import { useResumeStore } from "@/stores";
 import dayjs from "dayjs";
 import { storeToRefs } from "pinia";
 import { useRouter } from "vue-router";
-import { getAllScores } from "../../resumeEditor/hooks/useProgress";
+import { useProgress } from "../../resumeEditor/hooks/useProgress";
 import { getResumeTitle } from "../../resumeEditor/resumeName";
 import ThumbPreview from "@/views/resumeEditor/preview/thumbPreview.vue";
 import ResumeCardContainer from "./components/resumeCardContainer.vue";
@@ -20,12 +20,12 @@ const sortedList = computed(() => {
     (a, b) => (b?.usage?.lastUseTime || 0) - (a?.usage?.lastUseTime || 0),
   );
 });
-// 列表卡片数据：预计算完成度，避免模板重复计算
 const displayList = computed(() =>
   sortedList.value.map((item, index) => ({
     item,
     index,
-    progress: getAllScores(item.data).progress,
+    progress: useProgress([...item.fixedConfig.fields, ...item.config.fields], item.data).value
+      .progress,
   })),
 );
 const getResumePosition = (item) => {
