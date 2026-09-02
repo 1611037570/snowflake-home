@@ -50,6 +50,34 @@ const avatarPosition = computed({
     <div class="flex w-full flex-col gap-3">
       <!-- 一键设计预设：折叠面板默认折叠 -->
       <DesignPreset />
+
+      <ConfigGroup title="主题配色">
+        <!-- 主题色自定义取色器 -->
+        <ConfigLabel
+          label="主题色"
+          v-model="currentUI.themeColor"
+          :default-value="defaultThemeColor"
+        />
+        <div class="flex flex-wrap items-center gap-4">
+          <div
+            v-for="colorItem in themeColors"
+            :key="colorItem.value"
+            class="h-6 w-6 cursor-pointer rounded-full transition-all duration-200 hover:scale-110"
+            :class="{
+              'border-2 border-sf-base': currentUI.themeColor === colorItem.value,
+            }"
+            :style="{
+              backgroundColor: colorItem.value,
+            }"
+            @click="currentUI.themeColor = colorItem.value"
+          ></div>
+          <el-color-picker
+            v-model="currentUI.themeColor"
+            size="large"
+            :predefine="predefineColors"
+          />
+        </div>
+      </ConfigGroup>
       <ConfigGroup title="页面布局">
         <ConfigItem
           label="页边距"
@@ -110,35 +138,6 @@ const avatarPosition = computed({
         />
       </ConfigGroup>
 
-      <ConfigGroup title="主题配色">
-        <!-- 主题色自定义取色器 -->
-        <ConfigLabel
-          label="主题色"
-          v-model="currentUI.themeColor"
-          :default-value="defaultThemeColor"
-        />
-        <div class="flex items-center justify-between">
-          <el-color-picker
-            v-model="currentUI.themeColor"
-            size="large"
-            :predefine="predefineColors"
-          />
-        </div>
-        <div class="flex flex-wrap gap-4">
-          <div
-            v-for="colorItem in themeColors"
-            :key="colorItem.value"
-            class="h-8 w-8 cursor-pointer rounded-full transition-all duration-200 hover:scale-110"
-            :class="{
-              'border-2 border-sf-base': currentUI.themeColor === colorItem.value,
-            }"
-            :style="{
-              backgroundColor: colorItem.value,
-            }"
-            @click="currentUI.themeColor = colorItem.value"
-          ></div>
-        </div>
-      </ConfigGroup>
       <ConfigGroup title="用户信息">
         <!-- 展示模式切换：图标 / 文字 -->
         <ConfigLabel label="展示模式" v-model="userInfoMode" :default-value="defaultUserInfoMode" />
