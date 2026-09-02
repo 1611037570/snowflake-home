@@ -15,8 +15,7 @@ const visible = ref(false);
 
 // 计算简历完成度进度及各模块进度（含时间线一致性检查结果）
 const progressData = useProgress(currentData);
-const resumeStats = computed(() => useResumeStats(currentData.value));
-console.log("resumeStats:>> ", resumeStats.value);
+const resumeStats = useResumeStats(currentData.value);
 // 时间线一致性检查结果（随进度一起返回）
 const timelineData = computed(() => progressData.value.timeline);
 
