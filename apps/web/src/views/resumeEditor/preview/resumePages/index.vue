@@ -139,15 +139,9 @@ const containerHeight = {
       :ui="ui"
       :styles="{ paddingStyle, fontStyle, lineHeightStyle }"
       :show-page-number="showPageNumber"
-      :is-readonly="isReadonly"
-      :module-class="moduleClass"
       :on-root-el="setSingleRoot"
       :on-measure-el="setSingleMeasure"
-    >
-      <template #moduleActions="{ slice }">
-        <slot name="moduleActions" :slice="slice" />
-      </template>
-    </PreviewSinglePage>
+    />
     <!-- 隐藏的测量容器：用于 useRowInfo 读取行高；多页时存在，缩略图测量完成后销毁 -->
     <div
       v-if="!isSinglePage && !measureDone"
@@ -187,7 +181,7 @@ const containerHeight = {
         :style="[paddingStyle, fontStyle, lineHeightStyle, containerWidth, containerHeight]"
       >
         <!-- 模块之间的间距由 ui.moduleSpacing 控制，与分页计算保持一致 -->
-        <div class="flex flex-1 flex-col" :style="{ gap: `${ui.moduleSpacing ?? MODULE_GAP}px` }">
+        <div class="flex flex-1 flex-col" :style="{ gap: `${ui.moduleSpacing}px` }">
           <div
             v-for="slice in pageSlices"
             :key="slice.moduleKey"

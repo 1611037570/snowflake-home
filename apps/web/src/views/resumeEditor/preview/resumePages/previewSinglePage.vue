@@ -33,28 +33,10 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
-  // 是否只读（只读不渲染操作按钮插槽）
-  isReadonly: {
-    type: Boolean,
-    default: false,
-  },
-  // 模块选中高亮样式函数（复用多页逻辑）
-  moduleClass: {
-    type: Function,
-    required: true,
-  },
   // 根元素回传：外层包裹（限导出范围）
   onRootEl: Function,
   // 根元素回传：测量页面容器（测量 / 图片导出）
   onMeasureEl: Function,
-});
-
-// 单页模式下模块不经过分页切片，构造等价单块切片供操作按钮与选中高亮复用
-const singleSlice = (key) => ({
-  moduleKey: key,
-  visibleStart: 0,
-  visibleEnd: 0,
-  totalRows: 1,
 });
 
 const rootEl = useTemplateRef("rootRef");
@@ -102,15 +84,8 @@ const containerHeight = {
           :key="item.key"
           class="group group/module relative rounded-xl"
         >
-          <!-- 编辑态操作按钮插槽（由 ResumePages 透传） -->
-          <slot v-if="!isReadonly" name="moduleActions" :slice="singleSlice(item.key)" />
           <!-- 测量包装与测量容器一致：resume-module-wrapper 直接挂在模块根元素上 -->
-          <ResumeModule
-            :data="props.item.data"
-            :name="item.key"
-            class="resume-module-wrapper"
-            :class="moduleClass(singleSlice(item.key))"
-          />
+          <ResumeModule :data="props.item.data" :name="item.key" class="resume-module-wrapper" />
         </div>
       </div>
       <div
