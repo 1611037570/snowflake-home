@@ -6,7 +6,7 @@
 import { useResumeStore } from "@/stores";
 import { DEFAULT_EDITOR } from "@/stores/modules/resume/defaultConfig";
 import { storeToRefs } from "pinia";
-import { computed, h, onBeforeUnmount, onMounted, watch } from "vue";
+import { computed, h, nextTick, onBeforeUnmount, onMounted, watch } from "vue";
 import { ElNotification } from "element-plus";
 import { useWindowSize, useDebounceFn } from "@vueuse/core";
 
@@ -132,7 +132,7 @@ function createWindowTip() {
                   type: "button",
                   class:
                     "cursor-pointer rounded-full bg-sf-theme px-3 py-1 text-sm text-sf-theme-text",
-                  onClick: () => resumeStore.setLayout("list"),
+                  onClick: () => nextTick(() => resumeStore.setLayout("list")),
                 },
                 "编辑+预览",
               ),
@@ -142,7 +142,7 @@ function createWindowTip() {
                   type: "button",
                   class:
                     "cursor-pointer rounded-full bg-sf-theme px-3 py-1 text-sm text-sf-theme-text",
-                  onClick: () => resumeStore.setLayout("ai"),
+                  onClick: () => nextTick(() => resumeStore.setLayout("ai")),
                 },
                 "预览+AI",
               ),
@@ -169,6 +169,7 @@ function createWindowTip() {
     duration: 0,
     showClose: true,
     onClose: () => {
+      // 增加空值检查，避免Vue内部访问已销毁组件时出错
       if (windowTipInstance === instance) {
         windowTipInstance = null;
       }
