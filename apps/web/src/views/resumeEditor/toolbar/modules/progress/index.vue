@@ -58,8 +58,8 @@ const goTimelineFill = (key) => {
   visible.value = false;
 };
 
-// 时间线问题类型标签
-const getTypeLabel = (type) => (type === "overlap" ? "重叠" : "间隙过大");
+// 时间线问题类型标签（仅保留间隙过大）
+const getTypeLabel = () => "间隙过大";
 
 // 按进度区间返回进度条颜色
 const getProgressColor = (progress) => {
@@ -128,14 +128,9 @@ const getProgressColor = (progress) => {
               class="flex items-start gap-2 text-sm"
             >
               <span
-                class="shrink-0 rounded-full px-2 py-0.5 text-xs"
-                :class="
-                  issue.type === 'overlap'
-                    ? 'bg-sf-error-2 text-sf-error'
-                    : 'bg-sf-warning-2 text-sf-warning'
-                "
+                class="shrink-0 rounded-full bg-sf-warning-2 px-2 py-0.5 text-xs text-sf-warning"
               >
-                {{ getTypeLabel(issue.type) }}
+                {{ getTypeLabel() }}
               </span>
               <span class="text-sf-text">{{ issue.text }}</span>
             </div>
