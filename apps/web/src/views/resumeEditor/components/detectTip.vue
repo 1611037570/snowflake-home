@@ -47,6 +47,8 @@ const browserEnabled = computed(() => system.value.showBrowserTip !== false);
 // 通知实例（每个类型仅一个）
 let browserTipInstance = null;
 let windowTipInstance = null;
+// 窗口提示 3 秒无变化自动关闭定时器
+let windowTipTimer = null;
 
 // 创建浏览器提示
 const createBrowserTip = () => {
@@ -85,7 +87,7 @@ const createBrowserTip = () => {
     position: "top-right",
     offset: 40,
     duration: 0, // 不自动关闭
-    showClose: false, // 隐藏关闭按钮，只能用“不再提醒”关闭
+    showClose: true,
     onClose: () => {
       browserTipInstance = null;
     },
@@ -98,7 +100,29 @@ const createWindowTip = () => {
   windowTipInstance = ElNotification({
     title: "窗口过小",
     message: h("div", { class: "flex flex-col items-start gap-2" }, [
-      h("span", "当前浏览器窗口太小，会影响编辑体验，请适当放大窗口。"),
+      h("span", "窗口太小影响编辑体验，请进行调整。"),
+      h("div", { class: "flex items-center gap-2" }, [
+        // 切换为编辑+预览布局
+        h(
+          "button",
+          {
+            type: "button",
+            class: "cursor-pointer rounded-full bg-sf-theme px-3 py-1 text-sm text-sf-theme-text",
+            onClick: () => resumeStore.setLayout("list"),
+          },
+          "编辑+预览",
+        ),
+        // 切换为预览+AI布局
+        h(
+          "button",
+          {
+            type: "button",
+            class: "cursor-pointer rounded-full bg-sf-theme px-3 py-1 text-sm text-sf-theme-text",
+            onClick: () => resumeStore.setLayout("ai"),
+          },
+          "预览+AI",
+        ),
+      ]),
       h(
         "button",
         {
@@ -118,11 +142,21 @@ const createWindowTip = () => {
     position: "top-right",
     offset: 40,
     duration: 0,
-    showClose: false,
+    showClose: true,
+
     onClose: () => {
       windowTipInstance = null;
     },
   });
+};
+
+// 重置窗口提示自动关闭定时器：窗口 3 秒无变化后关闭提示
+const resetWindowTipTimer = () => {
+  clearTimeout(windowTipTimer);
+  windowTipTimer = setTimeout(() => {
+    windowTipInstance?.close();
+    windowTipInstance = null;
+  }, 3000);
 };
 
 // 统一更新逻辑
@@ -140,11 +174,14 @@ const updateTips = () => {
   // 窗口提示
   if (windowEnabled.value && isOverflow.value) {
     createWindowTip();
+    // 窗口持续变化时重置定时器，保持提示显示
+    resetWindowTipTimer();
   } else {
     if (windowTipInstance) {
       windowTipInstance.close();
       windowTipInstance = null;
     }
+    clearTimeout(windowTipTimer);
   }
 };
 
@@ -153,9 +190,13 @@ onMounted(() => {
   updateTips();
   stopWatch = watch(
     [windowWidth, layout, focusMode],
-    useDebounceFn(updateTips, 100), // 100ms 防抖，连续变化时只更新一次
+    // 100ms 防抖，连续变化时最多 500ms 执行一次，持续刷新提示显示与自动关闭定时器
+    useDebounceFn(updateTips, 100, { maxWait: 500 }),
     { immediate: false },
   );
 });
-onBeforeUnmount(() => stopWatch?.());
+onBeforeUnmount(() => {
+  stopWatch?.();
+  clearTimeout(windowTipTimer);
+});
 </script>
