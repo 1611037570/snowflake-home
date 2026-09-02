@@ -72,8 +72,13 @@ const handleMouseLeave = () => {
 </script>
 
 <template>
+  <!-- HTML 富文本：直接渲染块元素，避免包装div导致分页无法按块拆分 -->
+  <template v-if="html && hasContent">
+    <DiffContent :content="documentContent" :html="html" />
+  </template>
+  <!-- 纯文本：保持原有包装div结构，支持diff弹窗 -->
   <div
-    v-if="hasContent"
+    v-else-if="hasContent"
     ref="rootRef"
     class="relative max-w-full min-w-0 break-words"
     @mouseenter="handleMouseEnter"
