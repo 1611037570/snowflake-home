@@ -20,14 +20,15 @@ const sortedList = computed(() => {
     (a, b) => (b?.usage?.lastUseTime || 0) - (a?.usage?.lastUseTime || 0),
   );
 });
-const displayList = computed(() =>
-  sortedList.value.map((item, index) => ({
+const displayList = computed(() => {
+  // id → 真实下标映射：列表按 lastUseTime 排序后仍能定位真实下标
+  const indexMap = new Map(list.value.map((item, index) => [item.id, index]));
+  return sortedList.value.map((item) => ({
     item,
-    index,
-    progress: useProgress([...item.fixedConfig.fields, ...item.config.fields], item.data).value
-      .progress,
-  })),
-);
+    index: indexMap.get(item.id) ?? -1,
+    progress: useProgress([...item.fixedConfig.fields, ...item.config.fields], item.data).progress,
+  }));
+});
 const getResumePosition = (item) => {
   return item?.data?.user?.data?.position || "未填写求职岗位";
 };
@@ -40,9 +41,6 @@ const getProgressClass = (progress) => {
   return "bg-sf-theme";
 };
 
-// 按 id 定位真实下标（displayList 按 lastUseTime 排序后 index 不可直接用）
-const findIndexById = (id) => list.value.findIndex((item) => item.id === id);
-
 // 组装缩略预览所需的简历项
 const getThumbItem = (item) => ({
   data: item.data,
@@ -51,16 +49,15 @@ const getThumbItem = (item) => ({
   ui: item.ui,
 });
 
-const handleEdit = (item) => {
-  const index = findIndexById(item.id);
+// 按真实下标定位简历（displayList 中已携带 index）
+const handleEdit = (index) => {
   if (index === -1) return;
   currentIndex.value = index;
-  router.push({ path: "/resumeEditor", query: { id: item.id } });
+  router.push({ path: "/resumeEditor", query: { id: list.value[index].id } });
 };
 
-const handleDelete = (item) => {
+const handleDelete = (index) => {
   proxy.$confirm("确定要删除当前简历吗？", "删除确认").then(() => {
-    const index = findIndexById(item.id);
     if (index === -1) return;
     currentIndex.value = index;
     resumeStore.deleteResume();
@@ -148,14 +145,14 @@ const handleUseTemplate = () => {
       <ResumeCardContainer
         v-for="card in displayList"
         :key="card.item.id || card.index"
-        @click="handleEdit(card.item)"
+        @click="handleEdit(card.index)"
       >
         <!-- 简历缩略预览：可直接查看与全屏放大 -->
         <div class="relative aspect-[794/1123] w-full overflow-hidden border border-sf-b bg-sf-bg">
           <ThumbPreview
             :item="getThumbItem(card.item)"
             action-text="编辑"
-            @select="handleEdit(card.item)"
+            @select="handleEdit(card.index)"
           />
         </div>
         <div class="p-3">
@@ -172,14 +169,14 @@ const handleUseTemplate = () => {
             <div class="flex shrink-0 items-center gap-1">
               <span
                 class="flex h-8 w-8 cursor-pointer items-center justify-center rounded-full text-sf-text-2 transition-colors duration-200 hover:bg-sf-theme-2 hover:text-sf-theme"
-                @click.stop="handleEdit(card.item)"
+                @click.stop="handleEdit(card.index)"
               >
                 <SfIcon icon="lucide:pencil" size="4" />
               </span>
               <button
                 type="button"
                 class="flex h-8 w-8 items-center justify-center rounded-full text-sf-text-2 transition-colors duration-200 hover:bg-sf-error-2 hover:text-sf-error"
-                @click.stop="handleDelete(card.item)"
+                @click.stop="handleDelete(card.index)"
               >
                 <SfIcon icon="lucide:trash-2" size="4" />
               </button>
