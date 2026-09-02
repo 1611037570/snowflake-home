@@ -216,6 +216,8 @@ export const useProgress = (data: MaybeRefOrGetter<Record<string, any> | null | 
       totalScore,
       totalFull,
       progress: totalProgress,
+      // 时间线一致性检查结果（与进度共用同一数据源）
+      timeline: checkTimeline(source),
     };
   });
 };
@@ -241,67 +243,62 @@ const formatGap = (months: number) => {
 };
 
 // 时间线一致性检查：检测工作/教育/项目等模块时间重叠与过大间隙
-export const useTimelineCheck = (
-  data: MaybeRefOrGetter<Record<string, any> | null | undefined>,
-) => {
-  return computed(() => {
-    const source = toValue(data) || {};
-    const list: any[] = [];
+function checkTimeline(source: Record<string, any>) {
+  const list: any[] = [];
 
-    Object.keys(source).forEach((key) => {
-      const items = Array.isArray(source[key]?.data) ? source[key].data : [];
-      if (!items.length) return;
+  Object.keys(source).forEach((key) => {
+    const items = Array.isArray(source[key]?.data) ? source[key].data : [];
+    if (!items.length) return;
 
-      // 解析含有效起止时间的条目
-      const entries = items
-        .map((item: any, index: number) => {
-          const time = Array.isArray(item?.time) ? item.time : [];
-          const start = parseMonth(time[0]);
-          const end = parseMonth(time[1] ?? time[0]);
-          return { item, index, name: item?.name || "", time, start, end };
-        })
-        .filter((e: any) => e.start != null && e.end != null);
-      if (!entries.length) return;
+    // 解析含有效起止时间的条目
+    const entries = items
+      .map((item: any, index: number) => {
+        const time = Array.isArray(item?.time) ? item.time : [];
+        const start = parseMonth(time[0]);
+        const end = parseMonth(time[1] ?? time[0]);
+        return { item, index, name: item?.name || "", time, start, end };
+      })
+      .filter((e: any) => e.start != null && e.end != null);
+    if (!entries.length) return;
 
-      // 按开始时间排序，保证重叠与间隙判断顺序稳定
-      const sorted = [...entries].sort((a: any, b: any) => a.start - b.start);
-      const issues: any[] = [];
+    // 按开始时间排序，保证重叠与间隙判断顺序稳定
+    const sorted = [...entries].sort((a: any, b: any) => a.start - b.start);
+    const issues: any[] = [];
 
-      // 重叠检测：线性扫描，记录已遍历条目中结束最晚的条目，开始时间早于其结束时间即视为重叠
-      let latestEnd = sorted[0];
-      for (let i = 1; i < sorted.length; i++) {
-        if (sorted[i].start < latestEnd.end) {
-          issues.push({
-            type: "overlap",
-            text: `「${sorted[i].name || "未命名"}」(${getTime(sorted[i].time)}) 与「${latestEnd.name || "未命名"}」(${getTime(latestEnd.time)}) 时间重叠，请核对`,
-          });
-        }
-        if (sorted[i].end > latestEnd.end) latestEnd = sorted[i];
-      }
-
-      // 间隙检测：相邻条目结束与开始之间超过阈值
-      for (let i = 0; i < sorted.length - 1; i++) {
-        const gap = sorted[i + 1].start - sorted[i].end;
-        if (gap > GAP_THRESHOLD_MONTHS) {
-          issues.push({
-            type: "gap",
-            text: `「${sorted[i + 1].name || "未命名"}」与上一段「${sorted[i].name || "未命名"}」之间存在 ${formatGap(gap)} 空档，可考虑补充或说明`,
-          });
-        }
-      }
-
-      if (issues.length) {
-        list.push({
-          key,
-          name: resumeStore.getModel(key)?.name || key,
-          issues,
+    // 重叠检测：线性扫描，记录已遍历条目中结束最晚的条目，开始时间早于其结束时间即视为重叠
+    let latestEnd = sorted[0];
+    for (let i = 1; i < sorted.length; i++) {
+      if (sorted[i].start < latestEnd.end) {
+        issues.push({
+          type: "overlap",
+          text: `「${sorted[i].name || "未命名"}」(${getTime(sorted[i].time)}) 与「${latestEnd.name || "未命名"}」(${getTime(latestEnd.time)}) 时间重叠，请核对`,
         });
       }
-    });
+      if (sorted[i].end > latestEnd.end) latestEnd = sorted[i];
+    }
 
-    return {
-      list,
-      issueCount: list.reduce((total: number, m: any) => total + m.issues.length, 0),
-    };
+    // 间隙检测：相邻条目结束与开始之间超过阈值
+    for (let i = 0; i < sorted.length - 1; i++) {
+      const gap = sorted[i + 1].start - sorted[i].end;
+      if (gap > GAP_THRESHOLD_MONTHS) {
+        issues.push({
+          type: "gap",
+          text: `「${sorted[i + 1].name || "未命名"}」与上一段「${sorted[i].name || "未命名"}」之间存在 ${formatGap(gap)} 空档，可考虑补充或说明`,
+        });
+      }
+    }
+
+    if (issues.length) {
+      list.push({
+        key,
+        name: resumeStore.getModel(key)?.name || key,
+        issues,
+      });
+    }
   });
-};
+
+  return {
+    list,
+    issueCount: list.reduce((total: number, m: any) => total + m.issues.length, 0),
+  };
+}

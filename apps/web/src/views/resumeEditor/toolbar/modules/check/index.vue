@@ -1,89 +1,160 @@
-<template>
-  <!-- 简历体检入口按钮 -->
-  <Icon icon="ph:stethoscope-duotone" size="5" content="简历体检" @click="visible = true" />
+<script setup>
+import { storeToRefs } from "pinia";
+import { useResumeStore } from "@/stores";
+import { useProgress } from "../../../hooks/useProgress";
+import { jumpToEditor } from "../../../useModuleNav";
+import { TransitionPresets, useTransition } from "@vueuse/core";
+import { computed, ref } from "vue";
 
-  <!-- 体检弹窗 -->
-  <SfModal v-model="visible" title="简历体检" width="520px">
-    <div class="flex flex-col gap-3 p-4">
-      <!-- 时间线断层 -->
-      <div class="flex flex-col gap-3">
-        <div class="flex items-center justify-between">
-          <span class="text-sm text-sf-text-2"
-            >相邻经历时间空窗 ≥ 3 个月（共 {{ gapList.length }} 处）</span
-          >
-        </div>
-        <div
-          v-if="!gapList.length"
-          class="flex flex-col items-center gap-2 py-10 text-sm text-sf-text-2"
-        >
-          <SfIcon icon="mdi:check-circle" size="5" class="text-sf-success" />
-          未发现 3 个月以上的时间断层
-        </div>
-        <div v-else class="flex max-h-[45vh] flex-col gap-2 overflow-y-auto pr-1">
-          <div
-            v-for="(gap, index) in gapList"
-            :key="index"
-            class="flex items-center gap-3 rounded-xl bg-sf-warning-2 p-3"
-          >
-            <SfIcon
-              icon="solar:danger-triangle-bold-duotone"
-              size="4"
-              class="shrink-0 text-sf-warning"
-            />
-            <div class="min-w-0 flex-1 text-xs">
-              <div class="truncate text-sf-text">
-                {{ gap.prevName }}（{{ gap.prevEnd }}）→ {{ gap.nextName }}（{{ gap.nextStart }}）
-              </div>
-              <div class="text-sf-warning">空窗 {{ gap.gap }} 个月，建议补充说明</div>
-            </div>
-            <el-button size="small" @click="jumpAll(gap.moduleName)">定位</el-button>
+const resumeStore = useResumeStore();
+const { system, currentData } = storeToRefs(resumeStore);
+
+// 弹窗显隐控制
+const visible = ref(false);
+
+// 计算简历完成度进度及各模块进度（含时间线一致性检查结果）
+const progressData = useProgress(currentData);
+
+// 时间线一致性检查结果（随进度一起返回）
+const timelineData = computed(() => progressData.value.timeline);
+
+// 按模块 key 聚合时间线问题，供模块进度卡片内联展示
+const timelineByModule = computed(() => {
+  const map = {};
+  timelineData.value.list.forEach((module) => {
+    map[module.key] = module.issues;
+  });
+  return map;
+});
+
+// 总进度数字过渡动画
+const animatedProgress = useTransition(
+  computed(() => progressData.value.progress),
+  {
+    duration: 500,
+    transition: TransitionPresets.easeOutCubic,
+  },
+);
+
+// 弹窗外提示文案：时间线存在问题时提醒
+const tooltipText = computed(() =>
+  timelineData.value.issueCount
+    ? `时间线存在 ${timelineData.value.issueCount} 处问题，点击查看`
+    : "查看完成度详情",
+);
+
+// 跳转编辑对应模块：复用模块导航的编辑区跳转逻辑（不处理预览区）
+const goFill = (item) => {
+  jumpToEditor(item.key);
+  visible.value = false;
+};
+
+// 跳转编辑时间线问题模块
+const goTimelineFill = (key) => {
+  jumpToEditor(key);
+  visible.value = false;
+};
+
+// 时间线问题类型标签
+const getTypeLabel = (type) => (type === "overlap" ? "重叠" : "间隙过大");
+
+// 按进度区间返回进度条颜色
+const getProgressColor = (progress) => {
+  if (progress >= 80) return "bg-sf-success";
+  if (progress >= 50) return "bg-sf-theme";
+  if (progress >= 30) return "bg-sf-warning";
+  return "bg-sf-error";
+};
+</script>
+
+<template>
+  <div
+    v-if="system.showProgress"
+    class="absolute -top-12 -right-10 z-50 -translate-y-1/2 transform"
+  >
+    <SfTooltip :content="tooltipText" placement="left">
+      <div
+        class="relative h-[66px] w-[90px] cursor-pointer rounded-2xl bg-linear-to-r from-blue-500 to-purple-500 p-3 text-white transition-all duration-300 hover:scale-105"
+        @click="visible = true"
+      >
+        <div class="flex w-10 flex-col items-center justify-center">
+          <!-- 有时间线问题时：感叹号替换进度数字，与顶部备份样式一致 -->
+          <SfIcon
+            v-if="timelineData.issueCount"
+            icon="ph:warning-fill"
+            size="6"
+            class="text-sf-warning"
+          />
+          <div v-else class="flex items-center text-[16px] font-bold">
+            <span>{{ Math.round(animatedProgress) }}</span
+            ><span class="text-[14px]">%</span>
           </div>
+          <div class="text-[11px] opacity-90">完成度</div>
         </div>
       </div>
+    </SfTooltip>
+  </div>
+
+  <SfModal v-model="visible" title="完成度详情">
+    <div class="flex w-[400px] flex-col gap-3">
+      <!-- 各模块进度列表 -->
+      <template v-for="item in progressData.list" :key="item.key">
+        <div class="rounded-3xl border border-sf-b p-3">
+          <div class="flex items-center justify-between">
+            <div class="text-lg">{{ item.name }}</div>
+            <div class="text-lg font-bold">{{ item.progress }}%</div>
+          </div>
+          <div class="mt-2 h-2 w-full rounded-full bg-sf-bg-2">
+            <div
+              class="h-2 rounded-full transition-all duration-300"
+              :class="getProgressColor(item.progress)"
+              :style="{ width: item.progress + '%' }"
+            ></div>
+          </div>
+          <!-- 模块时间线问题：存在时内联展示 -->
+          <div
+            v-if="timelineByModule[item.key]"
+            class="mt-2 flex flex-col gap-1 rounded-xl bg-sf-bg-2 p-2"
+          >
+            <div
+              v-for="(issue, index) in timelineByModule[item.key]"
+              :key="index"
+              class="flex items-start gap-2 text-sm"
+            >
+              <span
+                class="shrink-0 rounded-full px-2 py-0.5 text-xs"
+                :class="
+                  issue.type === 'overlap'
+                    ? 'bg-sf-error-2 text-sf-error'
+                    : 'bg-sf-warning-2 text-sf-warning'
+                "
+              >
+                {{ getTypeLabel(issue.type) }}
+              </span>
+              <span class="text-sf-text">{{ issue.text }}</span>
+            </div>
+            <div class="cursor-pointer text-sm text-sf-theme" @click="goTimelineFill(item.key)">
+              去修改
+            </div>
+          </div>
+          <template v-if="item.progress < 100">
+            <div class="mt-2 flex flex-wrap gap-1 text-xs text-sf-text-2">
+              <span
+                v-for="(field, index) in item.missing"
+                :key="index"
+                class="rounded-full bg-sf-bg-2 px-2 py-0.5"
+              >
+                缺：{{ field }}
+              </span>
+            </div>
+            <div class="mt-2 cursor-pointer text-sm text-sf-theme" @click="goFill(item)">
+              去填写
+            </div>
+          </template>
+        </div>
+      </template>
     </div>
   </SfModal>
 </template>
-
-<script setup>
-import { storeToRefs } from "pinia";
-import { computed, ref } from "vue";
-import { useResumeStore } from "@/stores";
-import { detectGaps } from "../../../utils.ts";
-import { jumpAll } from "../../../useModuleNav.ts";
-import Icon from "../../components/icon.vue";
-
-// 弹窗显隐
-const visible = ref(false);
-
-const resumeStore = useResumeStore();
-const { currentData } = storeToRefs(resumeStore);
-
-// 汇总各时间线模块的时间段并检测断层（空窗 ≥ 3 个月）
-const gapList = computed(() => {
-  const data = currentData.value;
-  if (!data) return [];
-  const segments = [];
-  const modules = [
-    { key: "work", label: "工作经历" },
-    { key: "education", label: "教育经历" },
-    { key: "project", label: "项目经历" },
-  ];
-  modules.forEach(({ key, label }) => {
-    (data[key]?.data || []).forEach((item) => {
-      const [start, end] = Array.isArray(item.time) ? item.time : [];
-      segments.push({ name: item.name || label, moduleName: key, start, end });
-    });
-  });
-  // 自定义经历模块（key 以 custom 开头）
-  Object.keys(data).forEach((key) => {
-    if (!key.startsWith("custom")) return;
-    (data[key]?.data || []).forEach((item) => {
-      const [start, end] = Array.isArray(item.time) ? item.time : [];
-      segments.push({ name: item.name || data[key]?.name || key, moduleName: key, start, end });
-    });
-  });
-  return detectGaps(segments);
-});
-</script>
 
 <style lang="scss" scoped></style>
