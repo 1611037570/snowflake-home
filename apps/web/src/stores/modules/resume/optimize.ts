@@ -14,7 +14,7 @@ const optimize = () => {
   };
   // 获取用户求职岗位
   const getPosition = () => {
-    const position = currentData.value?.user?.position;
+    const position = currentData.value?.user?.data?.position;
     if (!position) {
       return "";
     }
@@ -22,7 +22,7 @@ const optimize = () => {
   };
   // 获取用户工作年限
   const getWorkYear = () => {
-    const workYear = currentData.value?.user?.workYear || "";
+    const workYear = currentData.value?.user?.data?.workYear || "";
     if (!workYear) {
       return "";
     }

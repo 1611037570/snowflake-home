@@ -38,7 +38,7 @@ export const DEFAULT_USER_FORM = [
         component: "imageUpload",
         span: 24,
         model: {
-          source: ["user", "avatar"],
+          source: ["user", "data", "avatar"],
           prop: "modelValue",
         },
       },
@@ -52,7 +52,7 @@ export const DEFAULT_USER_FORM = [
         span: 12,
         required: true,
         model: {
-          source: ["user", "name"],
+          source: ["user", "data", "name"],
           prop: "modelValue",
         },
         props: {
@@ -68,7 +68,6 @@ export const DEFAULT_USER_FORM = [
           },
         ],
       },
-
       // 出生日期
       {
         type: "object",
@@ -77,7 +76,7 @@ export const DEFAULT_USER_FORM = [
         component: "datePicker",
         span: 12,
         model: {
-          source: ["user", "birthday"],
+          source: ["user", "data", "birthday"],
           prop: "modelValue",
         },
         props: {
@@ -94,7 +93,7 @@ export const DEFAULT_USER_FORM = [
         component: "input",
         span: 12,
         model: {
-          source: ["user", "phone"],
+          source: ["user", "data", "phone"],
           prop: "modelValue",
         },
         props: {
@@ -118,7 +117,7 @@ export const DEFAULT_USER_FORM = [
         component: "select",
         span: 12,
         model: {
-          source: ["user", "sex"],
+          source: ["user", "data", "sex"],
           prop: "modelValue",
         },
         props: {
@@ -144,7 +143,7 @@ export const DEFAULT_USER_FORM = [
         component: "input",
         span: 12,
         model: {
-          source: ["user", "position"],
+          source: ["user", "data", "position"],
           prop: "modelValue",
         },
         props: {
@@ -160,7 +159,7 @@ export const DEFAULT_USER_FORM = [
         component: "select",
         span: 12,
         model: {
-          source: ["user", "status"],
+          source: ["user", "data", "status"],
           prop: "modelValue",
         },
         props: {
@@ -189,7 +188,7 @@ export const DEFAULT_USER_FORM = [
         component: "input",
         span: 12,
         model: {
-          source: ["user", "email"],
+          source: ["user", "data", "email"],
           prop: "modelValue",
         },
         props: {
@@ -211,7 +210,7 @@ export const DEFAULT_USER_FORM = [
         component: "datePicker",
         span: 12,
         model: {
-          source: ["user", "workTime"],
+          source: ["user", "data", "workTime"],
           prop: "modelValue",
         },
         props: {
