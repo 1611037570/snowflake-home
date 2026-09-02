@@ -8,7 +8,7 @@ import { DEFAULT_EDITOR } from "@/stores/modules/resume/defaultConfig";
 import { storeToRefs } from "pinia";
 import { computed, h, onBeforeUnmount, onMounted, watch } from "vue";
 import { ElNotification } from "element-plus";
-import { useWindowSize, useDebounceFn } from "@vueuse/core"; // 请按实际路径调整
+import { useWindowSize, useDebounceFn } from "@vueuse/core";
 
 const resumeStore = useResumeStore();
 const { system, layout, focusMode } = storeToRefs(resumeStore);
@@ -16,7 +16,7 @@ const { system, layout, focusMode } = storeToRefs(resumeStore);
 const RECOMMEND_BROWSER = "谷歌浏览器";
 const DOWNLOAD_URL = "https://www.google.cn/intl/zh-CN/chrome/";
 
-// 浏览器检测
+// ---------- 浏览器检测 ----------
 const browser = computed(() => {
   const ua = navigator.userAgent.toLowerCase();
   if (ua.includes("edg")) return "Edge";
@@ -28,7 +28,7 @@ const browser = computed(() => {
 });
 const isRecommendedBrowser = computed(() => browser.value === "Chrome");
 
-// 窗口与侧栏宽度计算
+// ---------- 窗口与布局计算 ----------
 const { width: windowWidth } = useWindowSize();
 const editorWidth = DEFAULT_EDITOR.editorWidth;
 const assistantWidth = DEFAULT_EDITOR.assistantWidth;
@@ -39,23 +39,37 @@ const sideWidth = computed(() => {
 });
 const previewWidth = computed(() => windowWidth.value - sideWidth.value);
 const isOverflow = computed(() => previewWidth.value < 200);
-// 是否可切换两栏布局：窗口宽度 1000 以内且当前为三栏布局
 const canSwitchLayout = computed(() => windowWidth.value <= 1000 && layout.value === "three");
 
-// 用户开关
+// ---------- 用户开关 ----------
 const windowEnabled = computed(() => system.value.showWindowTip !== false);
 const browserEnabled = computed(() => system.value.showBrowserTip !== false);
 
-// 通知实例（每个类型仅一个）
+// ---------- 通知实例与辅助变量 ----------
 let browserTipInstance = null;
 let windowTipInstance = null;
-// 窗口提示 3 秒无变化自动关闭定时器
 let windowTipTimer = null;
-// 当前窗口提示是否已包含布局切换按钮
-let windowTipWithButtons = false;
+let lastWindowTipCanSwitch = false; // 记录上次按钮状态，避免重复重建
 
-// 创建浏览器提示
-const createBrowserTip = () => {
+// ---------- 关闭函数 ----------
+function closeBrowserTip() {
+  if (browserTipInstance) {
+    browserTipInstance.close();
+    browserTipInstance = null;
+  }
+}
+
+function closeWindowTip() {
+  if (windowTipInstance) {
+    windowTipInstance.close();
+    windowTipInstance = null;
+  }
+  clearTimeout(windowTipTimer);
+  windowTipTimer = null;
+}
+
+// ---------- 创建函数 ----------
+function createBrowserTip() {
   if (browserTipInstance) return;
   browserTipInstance = ElNotification({
     title: "浏览器建议",
@@ -79,8 +93,7 @@ const createBrowserTip = () => {
               "cursor-pointer rounded-full bg-sf-bg-2 px-3 py-1 text-sm text-sf-text-2 hover:text-sf-theme",
             onClick: () => {
               system.value.showBrowserTip = false;
-              browserTipInstance?.close();
-              browserTipInstance = null;
+              closeBrowserTip();
             },
           },
           "不再提醒",
@@ -90,33 +103,29 @@ const createBrowserTip = () => {
     type: "warning",
     position: "top-right",
     offset: 40,
-    duration: 0, // 不自动关闭
+    duration: 0,
     showClose: true,
     onClose: () => {
       browserTipInstance = null;
     },
   });
-};
+}
 
-// 创建窗口提示
-const createWindowTip = () => {
-  // 布局切换按钮显示条件变化时，关闭旧提示重建以刷新按钮
-  if (windowTipInstance && windowTipWithButtons !== canSwitchLayout.value) {
-    const oldInstance = windowTipInstance;
-    windowTipInstance = null;
-    oldInstance.close();
+function createWindowTip() {
+  // 若按钮状态变化，关闭旧提示并重建
+  if (windowTipInstance && lastWindowTipCanSwitch !== canSwitchLayout.value) {
+    closeWindowTip();
   }
   if (windowTipInstance) return;
-  windowTipWithButtons = canSwitchLayout.value;
+  lastWindowTipCanSwitch = canSwitchLayout.value;
+
   const instance = ElNotification({
     title: "窗口过小",
     message: h("div", { class: "flex flex-col items-start gap-2" }, [
       h("span", "窗口太小影响编辑体验，请进行调整。"),
-      // 仅窗口宽度 1000 以内且当前为三栏布局时，提供两栏切换按钮
       ...(canSwitchLayout.value
         ? [
             h("div", { class: "flex items-center gap-2" }, [
-              // 切换为编辑+预览布局
               h(
                 "button",
                 {
@@ -127,7 +136,6 @@ const createWindowTip = () => {
                 },
                 "编辑+预览",
               ),
-              // 切换为预览+AI布局
               h(
                 "button",
                 {
@@ -149,8 +157,7 @@ const createWindowTip = () => {
             "cursor-pointer rounded-full bg-sf-bg-2 px-3 py-1 text-sm text-sf-text-2 hover:text-sf-theme",
           onClick: () => {
             system.value.showWindowTip = false;
-            windowTipInstance?.close();
-            windowTipInstance = null;
+            closeWindowTip();
           },
         },
         "不再提醒",
@@ -161,62 +168,60 @@ const createWindowTip = () => {
     offset: 40,
     duration: 0,
     showClose: true,
-
     onClose: () => {
-      // 仅当仍是当前提示实例时才清空引用，避免误清重建后的新提示
-      if (windowTipInstance === instance) windowTipInstance = null;
+      if (windowTipInstance === instance) {
+        windowTipInstance = null;
+      }
     },
   });
   windowTipInstance = instance;
-};
+}
 
-// 重置窗口提示自动关闭定时器：窗口 3 秒无变化后关闭提示
-const resetWindowTipTimer = () => {
+// ---------- 定时器重置 ----------
+function resetWindowTipTimer() {
   clearTimeout(windowTipTimer);
   windowTipTimer = setTimeout(() => {
-    windowTipInstance?.close();
-    windowTipInstance = null;
+    closeWindowTip();
   }, 3000);
-};
+}
 
-// 统一更新逻辑
-const updateTips = () => {
+// ---------- 主更新逻辑（可复用） ----------
+function updateTips() {
   // 浏览器提示
   if (browserEnabled.value && !isRecommendedBrowser.value) {
     createBrowserTip();
   } else {
-    if (browserTipInstance) {
-      browserTipInstance.close();
-      browserTipInstance = null;
-    }
+    closeBrowserTip();
   }
 
   // 窗口提示
   if (windowEnabled.value && isOverflow.value) {
     createWindowTip();
-    // 窗口持续变化时重置定时器，保持提示显示
     resetWindowTipTimer();
   } else {
-    if (windowTipInstance) {
-      windowTipInstance.close();
-      windowTipInstance = null;
-    }
-    clearTimeout(windowTipTimer);
+    closeWindowTip();
   }
-};
+}
 
-let stopWatch = null;
+// ---------- 生命周期 ----------
+// 首次挂载立即显示（保留原行为）
 onMounted(() => {
   updateTips();
-  stopWatch = watch(
-    [windowWidth, layout, focusMode],
-    // 100ms 防抖，连续变化时最多 500ms 执行一次，持续刷新提示显示与自动关闭定时器
-    useDebounceFn(updateTips, 100, { maxWait: 500 }),
-    { immediate: false },
-  );
 });
+
+// 后续依赖变化时防抖更新（100ms 延迟，最多 500ms 执行一次）
+const debouncedUpdate = useDebounceFn(updateTips, 100, { maxWait: 500 });
+const stopWatch = watch(
+  [windowWidth, layout, focusMode],
+  debouncedUpdate,
+  { immediate: false }, // 不立即执行，因为 onMounted 已执行
+);
+
+// 卸载时清理所有资源
 onBeforeUnmount(() => {
   stopWatch?.();
+  closeBrowserTip();
+  closeWindowTip();
   clearTimeout(windowTipTimer);
 });
 </script>
