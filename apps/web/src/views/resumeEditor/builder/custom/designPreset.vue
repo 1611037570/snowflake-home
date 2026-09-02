@@ -10,16 +10,6 @@ const activeNames = ref([]);
 const resumeStore = useResumeStore();
 const { currentUI } = storeToRefs(resumeStore);
 
-// 字体名映射
-const FONT_NAMES = {
-  "text-puhui": "阿里普惠体",
-  "text-yyqx": "汉仪易烊千玺体",
-  "": "跟随系统",
-};
-
-// 间距档位：由 moduleSpacing 归一化展示
-const densityOf = (spacing) => (spacing >= 20 ? "宽松" : spacing >= 10 ? "标准" : "紧凑");
-
 // 一键设计预设：覆盖字体/间距/配色等 UI 参数（不修改模板 themeTemplate），取值均在 uiParamRanges 范围内
 const PRESETS = [
   {
@@ -31,7 +21,6 @@ const PRESETS = [
       fontSize: 15,
       lineHeight: 1.5,
       moduleSpacing: 24,
-      fontFamily: "text-puhui",
       themeColor: "#40a9ff",
       userInfoMode: "text",
     },
@@ -45,7 +34,6 @@ const PRESETS = [
       fontSize: 14,
       lineHeight: 1.15,
       moduleSpacing: 8,
-      fontFamily: "text-puhui",
       themeColor: "#ff4d4f",
       userInfoMode: "icon",
     },
@@ -84,10 +72,6 @@ const applyPreset = (preset) => {
             <span class="text-base font-bold">{{ preset.name }}</span>
           </div>
           <div class="text-sm leading-snug text-sf-text-2">{{ preset.desc }}</div>
-          <div class="mt-2 flex flex-col gap-1 text-xs text-sf-text-3">
-            <span>字体：{{ FONT_NAMES[preset.ui.fontFamily] }}</span>
-            <span>密度：{{ densityOf(preset.ui.moduleSpacing) }}</span>
-          </div>
         </div>
       </div>
     </SfCollapseItem>
