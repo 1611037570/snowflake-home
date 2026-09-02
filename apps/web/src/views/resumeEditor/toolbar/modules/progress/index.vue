@@ -5,6 +5,7 @@ import { useProgress } from "../../../hooks/useProgress";
 import { jumpToEditor } from "../../../useModuleNav";
 import { TransitionPresets, useTransition } from "@vueuse/core";
 import { computed, ref } from "vue";
+import { useResumeStats } from "./useResumeStats";
 
 const resumeStore = useResumeStore();
 const { system, currentData } = storeToRefs(resumeStore);
@@ -14,6 +15,8 @@ const visible = ref(false);
 
 // 计算简历完成度进度及各模块进度（含时间线一致性检查结果）
 const progressData = useProgress(currentData);
+const resumeStats = useResumeStats(currentData.value);
+console.log("resumeStats:>> ", resumeStats);
 
 // 时间线一致性检查结果（随进度一起返回）
 const timelineData = computed(() => progressData.value.timeline);
@@ -101,7 +104,10 @@ const getProgressColor = (progress) => {
       <template v-for="item in progressData.list" :key="item.key">
         <div class="rounded-3xl border border-sf-b p-3">
           <div class="flex items-center justify-between">
-            <div class="text-lg">{{ item.name }}</div>
+            <div class="text-lg">
+              {{ item.name }}
+              <span class="text-sm text-sf-text-2"> 编写{{ resumeStats[item.key].total }}字 </span>
+            </div>
             <div class="text-lg font-bold">{{ item.progress }}%</div>
           </div>
           <div class="mt-2 h-2 w-full rounded-full bg-sf-bg-2">
