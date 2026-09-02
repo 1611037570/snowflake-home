@@ -1,3 +1,6 @@
+// resume-stats.ts
+import { computed, isRef } from "vue";
+
 /**
  * 剔除 HTML 标签及常见实体
  */
@@ -63,11 +66,9 @@ export interface ResumeStats {
 }
 
 /**
- * 统计简历数据（仅统计各模块的 .data 字段）
- * @param data 原始简历 JSON
- * @returns 各模块统计 + 总计
+ * 纯计算函数，用于统计
  */
-export function useResumeStats(data: Record<string, any>): ResumeStats {
+function computeStats(data: any): ResumeStats {
   const result: ResumeStats = {} as ResumeStats;
   const totalStats: ModuleStats = {
     total: 0,
@@ -98,7 +99,6 @@ export function useResumeStats(data: Record<string, any>): ResumeStats {
       collectTexts(moduleData, texts);
     }
 
-    // 计算该模块的统计
     const full = texts.join("");
     const total = full.length;
     const chinese = (full.match(/[\u4e00-\u9fa5]/g) || []).length;
@@ -110,7 +110,6 @@ export function useResumeStats(data: Record<string, any>): ResumeStats {
     const modStats: ModuleStats = { total, chinese, english, digits, spaces, punctuation };
     result[key] = modStats;
 
-    // 累加到总计
     totalStats.total += total;
     totalStats.chinese += chinese;
     totalStats.english += english;
@@ -121,4 +120,11 @@ export function useResumeStats(data: Record<string, any>): ResumeStats {
 
   result.total = totalStats;
   return result;
+}
+
+export function useResumeStats(data: any) {
+  return computed(() => {
+    const rawData = isRef(data) ? data.value : data;
+    return computeStats(rawData);
+  });
 }
