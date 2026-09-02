@@ -13,6 +13,8 @@ export const useResumeStore = defineStore(
   () => {
     // 简历列表
     const list = ref<any[]>([]);
+    // 回收站列表
+    const trashList = ref<any[]>([]);
     // 最大简历数量
     const maxCount = 5;
     // 当前选中的简历下标
@@ -131,18 +133,35 @@ export const useResumeStore = defineStore(
       currentIndex.value = list.value.length - 1;
       router.push({ path: "/resumeEditor", query: { id: res.id } });
     };
-    // 删除简历
-    const deleteResume = () => {
-      if (currentIndex.value == -1) {
-        return;
-      }
-      list.value.splice(currentIndex.value, 1);
-      currentIndex.value = -1;
-    };
     // 深拷贝快照：structuredClone 无法直接克隆响应式 Proxy，先经 JSON 序列化脱代理再结构化克隆
     const deepClone = (value: any) => {
       if (value == null) return value;
       return structuredClone(JSON.parse(JSON.stringify(value)));
+    };
+    // 删除简历：移入回收站
+    const deleteResume = () => {
+      if (currentIndex.value == -1) {
+        return;
+      }
+      // 深拷贝一份移入回收站，标记删除时间
+      const deletedItem = deepClone(list.value[currentIndex.value]);
+      deletedItem._deletedAt = Date.now();
+      trashList.value.push(deletedItem);
+      list.value.splice(currentIndex.value, 1);
+      currentIndex.value = -1;
+    };
+    // 从回收站恢复简历
+    const restoreResume = (trashIndex: number) => {
+      if (trashIndex < 0 || trashIndex >= trashList.value.length) return;
+      const item = trashList.value[trashIndex];
+      delete item._deletedAt;
+      list.value.push(item);
+      trashList.value.splice(trashIndex, 1);
+    };
+    // 永久删除回收站中的简历
+    const permanentlyDeleteResume = (trashIndex: number) => {
+      if (trashIndex < 0 || trashIndex >= trashList.value.length) return;
+      trashList.value.splice(trashIndex, 1);
     };
     // 序列化简历内容（排除 usage），用于历史去重比较
     const serializeForCompare = (item: any) => {
@@ -273,6 +292,7 @@ export const useResumeStore = defineStore(
 
     return {
       list,
+      trashList,
       maxCount,
       currentIndex,
       layout,
@@ -293,6 +313,8 @@ export const useResumeStore = defineStore(
       pushSelectedModule,
       addResume,
       deleteResume,
+      restoreResume,
+      permanentlyDeleteResume,
       setLayout,
       setFocusMode,
       undo,
@@ -305,7 +327,7 @@ export const useResumeStore = defineStore(
   },
   {
     persist: {
-      pick: ["list", "layout", "system"],
+      pick: ["list", "trashList", "layout", "system"],
     },
   },
 );
