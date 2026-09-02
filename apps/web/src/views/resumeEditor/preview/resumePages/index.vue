@@ -42,13 +42,18 @@ const measureRef = ref(null);
 // 仅编辑器模式注册全局导出事件（缩略图/全屏预览不注册），将当前实例根节点 ref 传入纯函数
 const printPDF = () => exportPdf(rootRef);
 const printImage = () => exportImage(measureRef);
+// 初始化过渡遮罩：盖住测量完成前的空页，1 秒后自动取消（仅编辑态展示）
+const showInitMask = ref(true);
+let maskTimer = undefined;
 onMounted(() => {
+  maskTimer = window.setTimeout(() => (showInitMask.value = false), 1000);
   if (!isReadonly.value) {
     eventBus.on("resume-print-pdf", printPDF);
     eventBus.on("resume-print-image", printImage);
   }
 });
 onUnmounted(() => {
+  window.clearTimeout(maskTimer);
   if (!isReadonly.value) {
     eventBus.off("resume-print-pdf", printPDF);
     eventBus.off("resume-print-image", printImage);
@@ -121,102 +126,111 @@ const containerHeight = {
 </script>
 
 <template>
-  <!-- 单页快路径：内容放入一页时测量与渲染合一，不再常驻隐藏测量容器与分页裁剪 -->
-  <div v-if="isSinglePage" ref="rootRef" class="relative flex flex-col gap-3">
+  <div class="relative flex flex-col">
+    <!-- 初始化过渡遮罩：盖住测量完成前的空页与分支切换，1 秒后自动取消（仅编辑态展示） -->
     <div
-      ref="measureRef"
-      class="resume-page-item relative flex flex-col rounded-3xl bg-white text-black"
-      :class="[ui.fontFamily]"
-      :style="[paddingStyle, fontStyle, lineHeightStyle, containerWidth, containerHeight]"
+      v-if="showInitMask && !isReadonly"
+      class="absolute inset-0 z-20 flex items-center justify-center rounded-3xl bg-white/80 backdrop-blur-sm"
     >
-      <!-- 模块之间的间距由 ui.moduleSpacing 控制，与分页计算保持一致 -->
-      <div class="flex flex-1 flex-col" :style="{ gap: `${ui.moduleSpacing ?? MODULE_GAP}px` }">
+      <SfIcon icon="lucide:loader-circle" size="6" class="animate-spin text-sf-theme" />
+    </div>
+    <!-- 单页快路径：内容放入一页时测量与渲染合一，不再常驻隐藏测量容器与分页裁剪 -->
+    <div v-if="isSinglePage" ref="rootRef" class="relative flex flex-col gap-3">
+      <div
+        ref="measureRef"
+        class="resume-page-item relative flex flex-col rounded-3xl bg-white text-black"
+        :class="[ui.fontFamily]"
+        :style="[paddingStyle, fontStyle, lineHeightStyle, containerWidth, containerHeight]"
+      >
+        <!-- 模块之间的间距由 ui.moduleSpacing 控制，与分页计算保持一致 -->
+        <div class="flex flex-1 flex-col" :style="{ gap: `${ui.moduleSpacing ?? MODULE_GAP}px` }">
+          <div
+            v-for="item in allModules"
+            :key="item.key"
+            class="group group/module relative rounded-xl"
+          >
+            <!-- 测量包装与测量容器一致：resume-module-wrapper 直接挂在模块根元素上 -->
+            <ResumeModule
+              :data="props.item.data"
+              :name="item.key"
+              class="resume-module-wrapper"
+              :class="moduleClass(singleSlice(item.key))"
+            />
+          </div>
+        </div>
         <div
-          v-for="item in allModules"
-          :key="item.key"
-          class="group group/module relative rounded-xl"
+          v-if="showPageNumber"
+          class="flex-c py-3 text-xs opacity-50"
+          :style="{ height: `${PAGE_NUMBER_HEIGHT}px` }"
         >
-          <!-- 测量包装与测量容器一致：resume-module-wrapper 直接挂在模块根元素上 -->
-          <ResumeModule
-            :data="props.item.data"
-            :name="item.key"
-            class="resume-module-wrapper"
-            :class="moduleClass(singleSlice(item.key))"
-          />
+          轻舟简历 · 第 1 页 · 共 1 页
         </div>
       </div>
-      <div
-        v-if="showPageNumber"
-        class="flex-c py-3 text-xs opacity-50"
-        :style="{ height: `${PAGE_NUMBER_HEIGHT}px` }"
-      >
-        轻舟简历 · 第 1 页 · 共 1 页
-      </div>
     </div>
-  </div>
-  <!-- 隐藏的测量容器：用于 useRowInfo 读取行高；多页时存在，缩略图测量完成后销毁 -->
-  <div
-    v-if="!isSinglePage && !measureDone"
-    class="fixed -top-999 -left-999 flex h-auto flex-col bg-white text-black"
-    ref="measureRef"
-    :class="ui.fontFamily"
-    :style="[
-      paddingStyle,
-      containerWidth,
-      {
-        minHeight: `${RESUME_HEIGHT}px`,
-      },
-    ]"
-  >
-    <MeasureContent :all-modules="allModules" />
+    <!-- 隐藏的测量容器：用于 useRowInfo 读取行高；多页时存在，缩略图测量完成后销毁 -->
     <div
-      v-if="showPageNumber"
-      class="flex flex-1 items-end justify-center py-3 text-xs opacity-50"
-      :style="{ height: `${PAGE_NUMBER_HEIGHT}px` }"
-    >
-      轻舟简历
-    </div>
-  </div>
-  <!-- 实际渲染的分页内容 -->
-  <div v-if="!isSinglePage" ref="rootRef" class="relative flex flex-col gap-3">
-    <div
-      v-for="(pageSlices, pageIndex) in pages"
-      :key="pageIndex"
-      class="resume-page-item relative flex flex-col rounded-3xl bg-white text-black"
-      :class="[
-        ui.fontFamily,
-        `${uid}-page-${pageIndex}`,
+      v-if="!isSinglePage && !measureDone"
+      class="fixed -top-999 -left-999 flex h-auto flex-col bg-white text-black"
+      ref="measureRef"
+      :class="ui.fontFamily"
+      :style="[
+        paddingStyle,
+        containerWidth,
         {
-          'border border-sf-b hover:border-sf-theme-2': mode === 'editor',
+          minHeight: `${RESUME_HEIGHT}px`,
         },
       ]"
-      :style="[paddingStyle, fontStyle, lineHeightStyle, containerWidth, containerHeight]"
     >
-      <!-- 模块之间的间距由 ui.moduleSpacing 控制，与分页计算保持一致 -->
-      <div class="flex flex-1 flex-col" :style="{ gap: `${ui.moduleSpacing ?? MODULE_GAP}px` }">
-        <div
-          v-for="slice in pageSlices"
-          :key="slice.moduleKey"
-          class="resume-module-wrapper group group/module relative rounded-xl"
-          :data-module="slice.moduleKey"
-          :class="moduleClass(slice)"
-        >
-          <!-- 编辑态操作按钮插槽（编辑器预览传入 ModuleActions） -->
-          <slot v-if="!isReadonly" name="moduleActions" :slice="slice" />
-          <ResumeModule :data="props.item.data" :name="slice.moduleKey" />
-        </div>
-      </div>
+      <MeasureContent :all-modules="allModules" />
       <div
         v-if="showPageNumber"
-        class="flex-c py-3 text-xs opacity-50"
+        class="flex flex-1 items-end justify-center py-3 text-xs opacity-50"
         :style="{ height: `${PAGE_NUMBER_HEIGHT}px` }"
       >
-        轻舟简历 · 第 {{ pageIndex + 1 }} 页 · 共 {{ pages.length }} 页
+        轻舟简历
       </div>
     </div>
+    <!-- 实际渲染的分页内容 -->
+    <div v-if="!isSinglePage" ref="rootRef" class="relative flex flex-col gap-3">
+      <div
+        v-for="(pageSlices, pageIndex) in pages"
+        :key="pageIndex"
+        class="resume-page-item relative flex flex-col rounded-3xl bg-white text-black"
+        :class="[
+          ui.fontFamily,
+          `${uid}-page-${pageIndex}`,
+          {
+            'border border-sf-b hover:border-sf-theme-2': mode === 'editor',
+          },
+        ]"
+        :style="[paddingStyle, fontStyle, lineHeightStyle, containerWidth, containerHeight]"
+      >
+        <!-- 模块之间的间距由 ui.moduleSpacing 控制，与分页计算保持一致 -->
+        <div class="flex flex-1 flex-col" :style="{ gap: `${ui.moduleSpacing ?? MODULE_GAP}px` }">
+          <div
+            v-for="slice in pageSlices"
+            :key="slice.moduleKey"
+            class="resume-module-wrapper group group/module relative rounded-xl"
+            :data-module="slice.moduleKey"
+            :class="moduleClass(slice)"
+          >
+            <!-- 编辑态操作按钮插槽（编辑器预览传入 ModuleActions） -->
+            <slot v-if="!isReadonly" name="moduleActions" :slice="slice" />
+            <ResumeModule :data="props.item.data" :name="slice.moduleKey" />
+          </div>
+        </div>
+        <div
+          v-if="showPageNumber"
+          class="flex-c py-3 text-xs opacity-50"
+          :style="{ height: `${PAGE_NUMBER_HEIGHT}px` }"
+        >
+          轻舟简历 · 第 {{ pageIndex + 1 }} 页 · 共 {{ pages.length }} 页
+        </div>
+      </div>
+    </div>
+    <DiffPopover v-if="!isReadonly" />
+    <component :is="'style'">{{ pageStyleText }}</component>
   </div>
-  <DiffPopover v-if="!isReadonly" />
-  <component :is="'style'">{{ pageStyleText }}</component>
 </template>
 
 <style lang="scss" scoped></style>
