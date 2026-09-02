@@ -203,6 +203,20 @@ useResizeObserver(contentRef, ([entry]) => {
             @click="$emit('fullscreen')"
           />
         </SfTooltip>
+        <SfTooltip :content="system.showPageNumber ? '隐藏页码' : '显示页码'">
+          <SfIcon
+            icon="lucide:hash"
+            size="4"
+            boxSize="6"
+            class="rounded-full"
+            :class="
+              system.showPageNumber
+                ? 'bg-sf-theme-2 text-sf-theme-text'
+                : 'text-sf-text-2 hover:bg-sf-theme-2 hover:text-sf-theme-text'
+            "
+            @click="system.showPageNumber = !system.showPageNumber"
+          />
+        </SfTooltip>
         <SfTooltip v-if="selectedModule.length" content="清空选中">
           <SfIcon
             icon="lucide:circle-slash"
