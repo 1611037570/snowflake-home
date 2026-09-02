@@ -19,6 +19,7 @@ const templates = themeTemplateList.map((t) => ({
     ui: { ...xiaoYangResumeItem.ui, themeTemplate: t.value },
   },
 }));
+console.log("templates:>> ", templates);
 
 // 是否为当前选中的风格模板
 const isActive = (value) => (currentUI.value?.themeTemplate ?? "default") === value;
@@ -44,7 +45,6 @@ const applyTemplate = (value) => {
           :class="{ ' border-sf-theme!': isActive(template.value) }"
         >
           <ThumbPreview
-            v-once
             :item="template.item"
             :show-actions="true"
             @select="applyTemplate(template.value)"
