@@ -9,6 +9,7 @@ import { MODULE_GAP, PAGE_NUMBER_HEIGHT, RESUME_WIDTH, RESUME_HEIGHT } from "../
 import { createPreviewProxy } from "../usePreviewData";
 import { useResumePages } from "./useResumePages";
 import { useResumeTheme } from "./useResumeTheme";
+import PreviewSinglePage from "./previewSinglePage.vue";
 import { printPDF as exportPdf } from "../pdfExport";
 import { useResumeStore } from "@/stores";
 import eventBus from "@/utils/modules/eventBus";
@@ -102,13 +103,9 @@ const { measureDone, pages, pageStyleText, moduleClass, moduleList, isSinglePage
     allModules,
   },
 );
-// 单页快路径：模块不经过分页切片，构造等价单块切片供操作按钮与选中高亮复用
-const singleSlice = (key) => ({
-  moduleKey: key,
-  visibleStart: 0,
-  visibleEnd: 0,
-  totalRows: 1,
-});
+// 单页组件根元素回传：rootRef 限定导出范围，measureRef 供测量与图片导出
+const setSingleRoot = (el) => (rootRef.value = el);
+const setSingleMeasure = (el) => (measureRef.value = el);
 // 编辑态实例把测量结果写入共享 ref，供智能一页复用，避免其重复挂载测量容器
 watch(moduleList, (list) => {
   if (!isReadonly.value && sharedModuleList) sharedModuleList.value = list;
@@ -134,39 +131,23 @@ const containerHeight = {
     >
       <SfIcon icon="lucide:loader-circle" size="6" class="animate-spin text-sf-theme" />
     </div>
-    <!-- 单页快路径：内容放入一页时测量与渲染合一，不再常驻隐藏测量容器与分页裁剪 -->
-    <div v-if="isSinglePage" ref="rootRef" class="relative flex flex-col gap-3">
-      <div
-        ref="measureRef"
-        class="resume-page-item relative flex flex-col rounded-3xl bg-white text-black"
-        :class="[ui.fontFamily]"
-        :style="[paddingStyle, fontStyle, lineHeightStyle, containerWidth, containerHeight]"
-      >
-        <!-- 模块之间的间距由 ui.moduleSpacing 控制，与分页计算保持一致 -->
-        <div class="flex flex-1 flex-col" :style="{ gap: `${ui.moduleSpacing ?? MODULE_GAP}px` }">
-          <div
-            v-for="item in allModules"
-            :key="item.key"
-            class="group group/module relative rounded-xl"
-          >
-            <!-- 测量包装与测量容器一致：resume-module-wrapper 直接挂在模块根元素上 -->
-            <ResumeModule
-              :data="props.item.data"
-              :name="item.key"
-              class="resume-module-wrapper"
-              :class="moduleClass(singleSlice(item.key))"
-            />
-          </div>
-        </div>
-        <div
-          v-if="showPageNumber"
-          class="flex-c py-3 text-xs opacity-50"
-          :style="{ height: `${PAGE_NUMBER_HEIGHT}px` }"
-        >
-          轻舟简历 · 第 1 页 · 共 1 页
-        </div>
-      </div>
-    </div>
+    <!-- 单页快路径：内容放入一页时测量与渲染合一，不再常驻隐藏测量容器与分页裁剪；根元素由组件回传 -->
+    <PreviewSinglePage
+      v-if="isSinglePage"
+      :item="props.item"
+      :all-modules="allModules"
+      :ui="ui"
+      :styles="{ paddingStyle, fontStyle, lineHeightStyle }"
+      :show-page-number="showPageNumber"
+      :is-readonly="isReadonly"
+      :module-class="moduleClass"
+      :on-root-el="setSingleRoot"
+      :on-measure-el="setSingleMeasure"
+    >
+      <template #moduleActions="{ slice }">
+        <slot name="moduleActions" :slice="slice" />
+      </template>
+    </PreviewSinglePage>
     <!-- 隐藏的测量容器：用于 useRowInfo 读取行高；多页时存在，缩略图测量完成后销毁 -->
     <div
       v-if="!isSinglePage && !measureDone"
