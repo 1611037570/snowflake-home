@@ -48,9 +48,9 @@
 import { storeToRefs } from "pinia";
 import { computed, ref } from "vue";
 import { useResumeStore } from "@/stores";
-import { detectGaps } from "../../utils";
-import { jumpAll } from "../../useModuleNav";
-import Icon from "../components/icon.vue";
+import { detectGaps } from "../../../utils.ts";
+import { jumpAll } from "../../../useModuleNav.ts";
+import Icon from "../../components/icon.vue";
 
 // 弹窗显隐
 const visible = ref(false);

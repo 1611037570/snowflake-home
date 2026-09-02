@@ -5,11 +5,11 @@ import Ai from "./modules/ai/index.vue";
 import System from "./modules/system/index.vue";
 import Icon from "./components/icon.vue";
 import OnePage from "./modules/onePage.vue";
-import Progress from "./modules/progress.vue";
+import Progress from "./modules/progress/index.vue";
 import ModuleNavigator from "./modules/moduleNavigator.vue";
 import QaAnswer from "./modules/qaAnswer.vue";
 import Debug from "./modules/debug.vue";
-import ResumeCheck from "./modules/resumeCheck.vue";
+import ResumeCheck from "./modules/check/index.vue";
 
 defineOptions({ name: "ResumeToolbar" });
 
