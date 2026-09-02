@@ -242,7 +242,7 @@ const formatGap = (months: number) => {
   return `${rest}个月`;
 };
 
-// 时间线一致性检查：检测工作/教育/项目等模块时间重叠与过大间隙
+// 时间线一致性检查：检测工作/教育/项目等模块相邻经历间隙过大
 function checkTimeline(source: Record<string, any>) {
   const list: any[] = [];
 
@@ -261,21 +261,9 @@ function checkTimeline(source: Record<string, any>) {
       .filter((e: any) => e.start != null && e.end != null);
     if (!entries.length) return;
 
-    // 按开始时间排序，保证重叠与间隙判断顺序稳定
+    // 按开始时间排序，保证间隙判断顺序稳定
     const sorted = [...entries].sort((a: any, b: any) => a.start - b.start);
     const issues: any[] = [];
-
-    // 重叠检测：线性扫描，记录已遍历条目中结束最晚的条目，开始时间早于其结束时间即视为重叠
-    let latestEnd = sorted[0];
-    for (let i = 1; i < sorted.length; i++) {
-      if (sorted[i].start < latestEnd.end) {
-        issues.push({
-          type: "overlap",
-          text: `「${sorted[i].name || "未命名"}」(${getTime(sorted[i].time)}) 与「${latestEnd.name || "未命名"}」(${getTime(latestEnd.time)}) 时间重叠，请核对`,
-        });
-      }
-      if (sorted[i].end > latestEnd.end) latestEnd = sorted[i];
-    }
 
     // 间隙检测：相邻条目结束与开始之间超过阈值
     for (let i = 0; i < sorted.length - 1; i++) {
