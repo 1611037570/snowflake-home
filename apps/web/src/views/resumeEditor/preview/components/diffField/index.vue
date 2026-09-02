@@ -77,12 +77,12 @@ const handleMouseLeave = () => {
     <DiffContent :content="documentContent" :html="html" />
   </template>
   <!-- 纯文本：保持原有包装div结构，支持diff弹窗 -->
+  <!-- 惰性绑定：仅在存在草稿 newValue 时挂载悬浮事件，无草稿字段不注册监听 -->
   <div
     v-else-if="hasContent"
     ref="rootRef"
     class="relative max-w-full min-w-0 break-words"
-    @mouseenter="handleMouseEnter"
-    @mouseleave="handleMouseLeave"
+    v-on="newValueContent ? { mouseenter: handleMouseEnter, mouseleave: handleMouseLeave } : {}"
   >
     <!-- 文档流：有草稿显示新增内容，否则显示原值 -->
     <div class="w-full" :class="documentClass">
