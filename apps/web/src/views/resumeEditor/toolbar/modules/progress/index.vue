@@ -15,9 +15,8 @@ const visible = ref(false);
 
 // 计算简历完成度进度及各模块进度（含时间线一致性检查结果）
 const progressData = useProgress(currentData);
-const resumeStats = useResumeStats(currentData.value);
-console.log("resumeStats:>> ", resumeStats);
-
+const resumeStats = computed(() => useResumeStats(currentData.value));
+console.log("resumeStats:>> ", resumeStats.value);
 // 时间线一致性检查结果（随进度一起返回）
 const timelineData = computed(() => progressData.value.timeline);
 
@@ -33,6 +32,15 @@ const timelineByModule = computed(() => {
 // 总进度数字过渡动画
 const animatedProgress = useTransition(
   computed(() => progressData.value.progress),
+  {
+    duration: 500,
+    transition: TransitionPresets.easeOutCubic,
+  },
+);
+
+// 简历总字数数字过渡动画
+const animatedWords = useTransition(
+  computed(() => resumeStats.value.total.total),
   {
     duration: 500,
     transition: TransitionPresets.easeOutCubic,
@@ -77,10 +85,10 @@ const getProgressColor = (progress) => {
   >
     <SfTooltip :content="tooltipText" placement="left">
       <div
-        class="relative h-[66px] w-[90px] cursor-pointer rounded-2xl bg-linear-to-r from-blue-500 to-purple-500 p-3 text-white transition-all duration-300 hover:scale-105"
+        class="relative flex w-[90px] cursor-pointer items-start rounded-2xl bg-linear-to-r from-blue-500 to-purple-500 p-3 text-white transition-all duration-300"
         @click="visible = true"
       >
-        <div class="flex w-10 flex-col items-center justify-center">
+        <div class="flex flex-col items-center justify-center">
           <!-- 有时间线问题时：感叹号替换进度数字，与顶部备份样式一致 -->
           <SfIcon
             v-if="timelineData.issueCount"
@@ -88,18 +96,20 @@ const getProgressColor = (progress) => {
             size="6"
             class="text-sf-warning"
           />
-          <div v-else class="flex items-center text-[16px] font-bold">
+          <div v-else class="flex items-center text-[14px] font-bold">
             <span>{{ Math.round(animatedProgress) }}</span
-            ><span class="text-[14px]">%</span>
+            ><span class="text-[10px]">%</span>
           </div>
-          <div class="text-[11px] opacity-90">完成度</div>
+          <!-- <div class="text-[11px] opacity-90">完成度</div> -->
+          <!-- 简历总字数 -->
+          <div class="text-[10px] opacity-80">{{ Math.round(animatedWords) }}字</div>
         </div>
       </div>
     </SfTooltip>
   </div>
 
   <SfModal v-model="visible" title="完成度详情">
-    <div class="flex w-[400px] flex-col gap-3">
+    <div class="flex w-[400px] flex-col gap-1.5">
       <!-- 各模块进度列表 -->
       <template v-for="item in progressData.list" :key="item.key">
         <div class="rounded-3xl border border-sf-b p-3">
