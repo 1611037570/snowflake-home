@@ -58,6 +58,8 @@ export function useRowInfo(
     expectedModuleCount?: number;
     /** 测量防抖延迟（ms）：缩略图静态数据可传 0 立即测量 */
     debounce?: number;
+    /** 是否监听容器尺寸变化：编辑器常驻测量时尺寸变化均伴随内容 DOM 变更，关闭可避免与内容变化重复触发测量 */
+    observeResize?: boolean;
   },
 ) {
   const selector = ".resume-module-wrapper";
@@ -161,25 +163,39 @@ export function useRowInfo(
       }
     }
   };
-  // 防抖处理，避免连续 DOM 变化时高频执行测量（缩略图静态数据可配 0 立即测量）
-  const debouncedMeasure = useDebounceFn(measure, options?.debounce ?? 100);
-
-  const stopWatchRoot = watch(rootRef, debouncedMeasure, { immediate: true });
-  // 容器尺寸变化（如缩放）时重新测量
-  const { stop: stopResize } = useResizeObserver(rootRef, debouncedMeasure);
-  // 容器内 DOM 增删、文本变化时重新测量（内容编辑会改变高度）
-  // 先累积变更记录，防抖触发后按变更目标增量重扫，避免每次输入都全量扫描
-  const onMutation = (mutations: MutationRecord[]) => {
-    pendingMutations.push(...mutations);
+  // 统一调度入口：尺寸/内容/样式/根变化等触发源全部汇聚到这里合并调度，
+  // 同批次内已调度时仅累积变更记录，避免重复触发测量（同一防抖窗口内只测一次）
+  let scheduled = false;
+  const scheduleMeasure = (mutations?: MutationRecord[]) => {
+    if (mutations) pendingMutations.push(...mutations);
+    if (scheduled) return;
+    scheduled = true;
     debouncedMeasure();
   };
+  // 防抖处理，避免连续 DOM 变化时高频执行测量（缩略图静态数据可配 0 立即测量）
+  // 测量真正执行前先恢复可调度状态，保证同批次内只测一次
+  const debouncedMeasure = useDebounceFn(() => {
+    scheduled = false;
+    measure();
+  }, options?.debounce ?? 100);
+
+  const stopWatchRoot = watch(rootRef, () => scheduleMeasure(), { immediate: true });
+  // 容器尺寸变化（如缩放）时重新测量；编辑器常驻测量时尺寸变化均伴随内容 DOM 变更
+  // （已由 MutationObserver 覆盖），关闭 resize 观测避免与内容变化重复触发测量
+  const { stop: stopResize } =
+    options?.observeResize === false
+      ? { stop: () => {} }
+      : useResizeObserver(rootRef, () => scheduleMeasure());
+  // 容器内 DOM 增删、文本变化时重新测量（内容编辑会改变高度）
+  // 变更记录累积到调度入口，防抖触发后按变更目标增量重扫，避免每次输入都全量扫描
+  const onMutation = (mutations: MutationRecord[]) => scheduleMeasure(mutations);
   const { stop: stopMutation } = useMutationObserver(rootRef, onMutation, {
     childList: true,
     subtree: true,
     characterData: true,
   });
   // 样式配置（字号/行高/内边距）变化会改变高度，需重新测量
-  const stopWatchOptions = watch(watchOptions, debouncedMeasure);
+  const stopWatchOptions = watch(watchOptions, () => scheduleMeasure());
   // 冻结后释放全部监听，避免缩略图测量完成后空跑
   stopAll = () => {
     stopWatchRoot();
