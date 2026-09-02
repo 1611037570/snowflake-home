@@ -33,37 +33,39 @@ const applyTemplate = (value) => {
 </script>
 
 <template>
-  <div class="grid w-full grid-cols-2 gap-3">
-    <div
-      v-for="template in templates"
-      :key="template.value"
-      class="group cursor-pointer!"
-      @click="applyTemplate(template.value)"
-    >
-      <!-- 模板简历缩略图：缩略区在卡片内 padding 中，宽高比与 A4 一致，随列宽自适应，页面完整显示填满 -->
+  <SfScrollbar class="h-full">
+    <div class="grid w-full grid-cols-2 gap-3">
       <div
-        class="relative h-[240px] w-[172px] overflow-hidden rounded-3xl border-2 border-sf-transparent bg-sf-bg"
-        :class="{ ' border-sf-theme!': isActive(template.value) }"
+        v-for="template in templates"
+        :key="template.value"
+        class="group cursor-pointer!"
+        @click="applyTemplate(template.value)"
       >
-        <ThumbPreview
-          :item="template.item"
-          :show-actions="true"
-          @select="applyTemplate(template.value)"
-        />
-        <div class="absolute top-1/2 left-1/2 z-50 -translate-x-1/2 -translate-y-1/2">
-          <SfIcon
-            v-if="isActive(template.value)"
-            icon="lucide:check"
-            size="18"
-            class="text-sf-theme"
+        <!-- 模板简历缩略图：缩略区在卡片内 padding 中，宽高比与 A4 一致，随列宽自适应，页面完整显示填满 -->
+        <div
+          class="relative h-[240px] w-[172px] overflow-hidden rounded-3xl border-2 border-sf-transparent bg-sf-bg"
+          :class="{ ' border-sf-theme!': isActive(template.value) }"
+        >
+          <ThumbPreview
+            :item="template.item"
+            :show-actions="true"
+            @select="applyTemplate(template.value)"
           />
+          <div class="absolute top-1/2 left-1/2 z-50 -translate-x-1/2 -translate-y-1/2">
+            <SfIcon
+              v-if="isActive(template.value)"
+              icon="lucide:check"
+              size="18"
+              class="text-sf-theme"
+            />
+          </div>
+        </div>
+        <div class="flex items-center justify-center pt-1">
+          <span class="text-sm font-bold text-sf-text">{{ template.name }}</span>
         </div>
       </div>
-      <div class="flex items-center justify-center pt-1">
-        <span class="text-sm font-bold text-sf-text">{{ template.name }}</span>
-      </div>
     </div>
-  </div>
+  </SfScrollbar>
 </template>
 
 <style lang="scss" scoped></style>

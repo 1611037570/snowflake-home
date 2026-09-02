@@ -63,13 +63,13 @@ const editorWidth = DEFAULT_EDITOR.editorWidth;
     <div
       class="flex min-h-0 w-full flex-1 flex-col rounded-r-3xl border border-sf-b bg-sf-primary py-3 text-sf-base hover:border-sf-theme-2"
     >
-      <SfScrollbar>
+      <div class="flex min-h-0 flex-1 flex-col">
         <Transition :name="`tab-slide-${direction}`" mode="out-in">
           <KeepAlive>
             <component :is="menuList[activeIndex].component" class="h-full" />
           </KeepAlive>
         </Transition>
-      </SfScrollbar>
+      </div>
     </div>
   </div>
 </template>

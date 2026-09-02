@@ -41,7 +41,8 @@ const avatarPosition = computed({
 </script>
 
 <template>
-  <div class="flex w-full flex-col gap-3">
+  <SfScrollbar class="h-full">
+    <div class="flex w-full flex-col gap-3">
     <!-- 一键设计预设：折叠面板默认折叠 -->
     <DesignPreset />
     <ConfigGroup title="页面布局">
@@ -154,6 +155,7 @@ const avatarPosition = computed({
       </div>
     </ConfigGroup>
   </div>
+  </SfScrollbar>
 </template>
 
 <style lang="scss" scoped></style>
