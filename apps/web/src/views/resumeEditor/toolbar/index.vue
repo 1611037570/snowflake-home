@@ -5,10 +5,10 @@ import Ai from "./modules/ai/index.vue";
 import System from "./modules/system/index.vue";
 import Icon from "./components/icon.vue";
 import OnePage from "./modules/onePage.vue";
+import Progress from "./modules/progress/index.vue";
 import ModuleNavigator from "./modules/moduleNavigator.vue";
 import QaAnswer from "./modules/qaAnswer.vue";
 import Debug from "./modules/debug.vue";
-import ResumeCheck from "./modules/check/index.vue";
 
 defineOptions({ name: "ResumeToolbar" });
 
@@ -30,14 +30,13 @@ function goGitHub() {
     <div
       class="relative flex w-[50px] flex-col items-center gap-2 rounded-3xl border border-sf-b bg-sf-transparent py-2 text-sf-text-3"
     >
-      <ResumeCheck />
+      <Progress />
       <System />
       <Debug />
       <div class="h-[0.5px] w-full bg-sf-bg-2"></div>
       <ModuleNavigator />
       <OnePage />
       <Ai />
-      <ResumeCheck />
       <Icon icon="lucide:focus" size="5" content="专注模式" @click="enterFocusMode" />
       <div class="h-[0.5px] w-full bg-sf-bg-2"></div>
       <Icon icon="akar-icons:home-alt1" size="5" content="返回首页" @click="goHome" />
