@@ -1,5 +1,6 @@
 <script setup>
 import { computed, watch } from "vue";
+import ConfigLabel from "./configLabel.vue";
 
 const props = defineProps({
   label: {
@@ -28,14 +29,6 @@ const props = defineProps({
     default: 0,
   },
 });
-
-// 当前值是否已等于默认值，等于时隐藏恢复默认值图标
-const isDefault = computed(() => currentValue.value === Number(props.defaultValue));
-
-// 一键恢复默认值
-function resetToDefault() {
-  modelValue.value = Number(props.defaultValue);
-}
 
 const modelValue = defineModel({
   type: Number,
@@ -71,19 +64,7 @@ watch(
 
 <template>
   <div class="flex w-full flex-col gap-1">
-    <div class="mb-2 flex items-center text-sm text-sf-text">
-      <span>{{ label }}</span>
-      <sf-tooltip :content="tip" v-if="tip" class="ml-1 text-sf-text" />
-      <!-- 值非默认时显示恢复默认值图标 -->
-      <sf-tooltip content="恢复默认值" v-if="!isDefault" class="ml-auto">
-        <SfIcon
-          icon="material-symbols:restart-alt"
-          size="4"
-          class="cursor-pointer transition-colors hover:text-sf-theme"
-          @click.stop="resetToDefault"
-        />
-      </sf-tooltip>
-    </div>
+    <ConfigLabel :label="label" :tip="tip" :default-value="defaultValue" v-model="modelValue" />
     <!-- 左侧进度条拖拽，右侧输入框，范围与步进跟随 min/max/step 配置 -->
     <div class="flex items-center gap-3">
       <SfSlider
