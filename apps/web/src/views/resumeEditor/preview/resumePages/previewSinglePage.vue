@@ -3,7 +3,7 @@
 // 由 ResumePages 在 isSinglePage 时挂载；根元素通过回调上报，供测量（useRowInfo）与导出复用
 import { useTemplateRef, watch } from "vue";
 import ResumeModule from "../modules/index.vue";
-import { MODULE_GAP, PAGE_NUMBER_HEIGHT, RESUME_WIDTH, RESUME_HEIGHT } from "../constants";
+import { PAGE_NUMBER_HEIGHT, RESUME_WIDTH, RESUME_HEIGHT } from "../constants";
 
 defineOptions({ name: "PreviewSinglePage" });
 
@@ -78,7 +78,7 @@ const containerHeight = {
       ]"
     >
       <!-- 模块之间的间距由 ui.moduleSpacing 控制，与分页计算保持一致 -->
-      <div class="flex flex-1 flex-col" :style="{ gap: `${ui.moduleSpacing ?? MODULE_GAP}px` }">
+      <div class="flex flex-1 flex-col" :style="{ gap: `${ui.moduleSpacing}px` }">
         <div
           v-for="item in allModules"
           :key="item.key"

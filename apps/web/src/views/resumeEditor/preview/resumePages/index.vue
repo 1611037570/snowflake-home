@@ -5,7 +5,7 @@ import { computed, inject, onMounted, onUnmounted, provide, ref, watch } from "v
 import MeasureContent from "../components/measureContent.vue";
 import DiffPopover from "../components/diffPopover.vue";
 import ResumeModule from "../modules/index.vue";
-import { MODULE_GAP, PAGE_NUMBER_HEIGHT, RESUME_WIDTH, RESUME_HEIGHT } from "../constants";
+import { PAGE_NUMBER_HEIGHT, RESUME_WIDTH, RESUME_HEIGHT } from "../constants";
 import { createPreviewProxy } from "../usePreviewData";
 import { useResumePages } from "./useResumePages";
 import { useResumeTheme } from "./useResumeTheme";
