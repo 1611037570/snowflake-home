@@ -5,7 +5,7 @@ import DiffField from "../../../components/diffField/index.vue";
 // 联系方式组件：标签支持图标 / 文字两种模式，对齐方式由使用方通过 class 控制
 const previewData = inject("previewData");
 const userInfoMode = inject("userInfoMode");
-const user = computed(() => previewData.value?.user || {});
+const user = computed(() => previewData.value?.user?.data || {});
 const hasPhone = computed(() => !!user.value?.phone?.value);
 const hasEmail = computed(() => !!user.value?.email?.value);
 </script>

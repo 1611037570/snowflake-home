@@ -9,7 +9,7 @@ import { useResumeStore } from "@/stores";
 const resumeStore = useResumeStore();
 const { currentData } = storeToRefs(resumeStore);
 
-const user = computed(() => currentData.value?.user || {});
+const user = computed(() => currentData.value?.user?.data || {});
 
 // 计算工作年限（规则：满5个月按1年算，以此类推）
 export const workYears = computed(() => {
@@ -31,9 +31,9 @@ export function getResumeTitle(data: any) {
     return defaultName;
   }
   const { user, education } = data;
-  const name = user?.name || "";
+  const name = user?.data?.name || "";
   const edu = education?.data?.[0]?.education || "";
-  const position = user?.position || "";
+  const position = user?.data?.position || "";
   return [name, edu, position, workYears.value].filter(Boolean).join("-") || defaultName;
 }
 /**

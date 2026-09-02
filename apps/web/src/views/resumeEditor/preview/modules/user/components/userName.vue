@@ -5,7 +5,7 @@ import DiffField from "../../../components/diffField/index.vue";
 // 姓名组件：字号由主题样式注入
 const previewData = inject("previewData");
 const fontValue = inject("fontValue");
-const user = computed(() => previewData.value?.user || {});
+const user = computed(() => previewData.value?.user?.data || {});
 </script>
 
 <template>

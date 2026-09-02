@@ -29,7 +29,7 @@ const displayList = computed(() =>
   })),
 );
 const getResumePosition = (item) => {
-  return item?.data?.user?.position || "未填写求职岗位";
+  return item?.data?.user?.data?.position || "未填写求职岗位";
 };
 const getLastUseTime = (item) => {
   return item?.usage?.lastUseTime ? dayjs(item.usage.lastUseTime).format("YYYY.MM.DD HH:mm") : "--";
@@ -95,9 +95,11 @@ const handleCreateConfirm = () => {
   resumeStore.addResume({
     data: {
       user: {
-        name: name.trim(),
-        phone: phone.trim(),
-        position: position.trim(),
+        data: {
+          name: name.trim(),
+          phone: phone.trim(),
+          position: position.trim(),
+        },
       },
     },
   });

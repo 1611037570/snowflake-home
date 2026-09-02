@@ -131,8 +131,8 @@ export const useChatRequest = ({
     const source = moduleKey ? data[moduleKey] : data;
     if (source == null) return {};
     const clone = JSON.parse(JSON.stringify(source));
-    if (moduleKey === "user") delete clone.avatar;
-    if (!moduleKey && clone.user) delete clone.user.avatar;
+    if (moduleKey === "user") delete clone.data?.avatar;
+    if (!moduleKey && clone.user?.data) delete clone.user.data.avatar;
     return clone;
   };
 
@@ -151,9 +151,9 @@ export const useChatRequest = ({
     const needTrimAvatar =
       !selectedModule.length || selectedModule.some((item: any) => item.key === "user");
     let savedAvatar: string | undefined;
-    if (needTrimAvatar && currentData.user) {
-      savedAvatar = currentData.user.avatar;
-      delete currentData.user.avatar;
+    if (needTrimAvatar && currentData.user?.data) {
+      savedAvatar = currentData.user.data.avatar;
+      delete currentData.user.data.avatar;
     }
     // 最后一条消息（即AI回复消息）的引用与状态处理器
     let lastMsg: Message | null = null;
@@ -287,8 +287,8 @@ export const useChatRequest = ({
     } finally {
       // 清理工作（无论成功或失败）
       // 请求结束还原头像
-      if (needTrimAvatar && currentData.user) {
-        currentData.user.avatar = savedAvatar;
+      if (needTrimAvatar && currentData.user?.data) {
+        currentData.user.data.avatar = savedAvatar;
       }
       if (isUnmounted) return;
       const finishTime = Date.now();

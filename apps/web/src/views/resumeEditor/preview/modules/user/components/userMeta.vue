@@ -7,7 +7,7 @@ import DiffField from "../../../components/diffField/index.vue";
 // 元信息组件：性别 / 年龄 / 工作年限，宽度策略由使用方通过 class 控制
 const previewData = inject("previewData");
 const fontValue = inject("fontValue");
-const user = computed(() => previewData.value?.user || {});
+const user = computed(() => previewData.value?.user?.data || {});
 
 // 计算年龄
 const age = computed(() => {

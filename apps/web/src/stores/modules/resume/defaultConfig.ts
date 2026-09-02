@@ -2,6 +2,8 @@ import { getUUID } from "@/utils";
 import { DEFAULT_CONFIG, DEFAULT_USER_CONFIG } from "./formConfig";
 import { DEFAULT_UI } from "./uiConfig";
 
+// 简历数据结构版本号：结构变更时递增，旧版本数据不兼容直接清空
+export const RESUME_DATA_VERSION = 2;
 // 默认模块 key 对应的名称（取自 formConfig，后期自行维护）
 export const DEFAULT_MODULE_NAMES: { key: string; name: string }[] = [
   { key: "user", name: "用户信息" },
@@ -36,6 +38,8 @@ export const DEFAULT_RESUME_ITEM = {
 };
 // 默认系统配置
 export const DEFAULT_SYSTEM = {
+  // 简历数据结构版本号（用于检测并清空旧版本数据）
+  dataVersion: RESUME_DATA_VERSION,
   // 是否展示进度
   showProgress: true,
   // 是否展示页码

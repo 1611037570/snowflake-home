@@ -2,6 +2,8 @@
 export interface Data {
   // 用户信息
   user: {
+    // 用户数据
+    data: {
     // 求职岗位
     position?: string;
     // 姓名
@@ -18,6 +20,7 @@ export interface Data {
     sex?: string;
     // 头像 Base64
     avatar?: string;
+    };
   };
   // 技能
   skill?: string;
