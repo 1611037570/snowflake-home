@@ -31,7 +31,7 @@ const applyTemplate = (value) => {
 
 <template>
   <SfScrollbar class="h-full">
-    <div class="grid w-full grid-cols-3 gap-1">
+    <div class="grid w-full grid-cols-2 gap-3">
       <div
         v-for="template in templates"
         :key="template.value"
@@ -40,10 +40,11 @@ const applyTemplate = (value) => {
       >
         <!-- 模板简历缩略图：缩略区在卡片内 padding 中，宽高比与 A4 一致，随列宽自适应，页面完整显示填满 -->
         <div
-          class="relative h-[193px] w-[136px] overflow-hidden rounded-3xl border-2 border-sf-transparent bg-sf-bg"
+          class="relative mx-auto h-[213px] w-[156px] overflow-hidden rounded-3xl border-3 border-sf-transparent bg-sf-bg"
           :class="{ ' border-sf-theme!': isActive(template.value) }"
         >
           <ThumbPreview
+            v-once
             :item="template.item"
             :show-actions="true"
             @select="applyTemplate(template.value)"
