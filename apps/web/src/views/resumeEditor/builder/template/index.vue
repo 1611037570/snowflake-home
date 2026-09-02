@@ -1,5 +1,4 @@
 <script setup>
-import { computed } from "vue";
 import { useResumeStore } from "@/stores";
 import { storeToRefs } from "pinia";
 import ThumbPreview from "../../preview/thumbPreview.vue";
@@ -10,18 +9,16 @@ const resumeStore = useResumeStore();
 const { currentUI } = storeToRefs(resumeStore);
 
 // 遍历风格模板数组：同一份小羊示例数据，逐套主题生成预览项（与当前编辑内容解耦）
-const templates = computed(() =>
-  themeTemplateList.map((t) => ({
-    name: t.name,
-    value: t.value,
-    item: {
-      data: xiaoYangResumeItem.data,
-      config: xiaoYangResumeItem.config,
-      fixedConfig: xiaoYangResumeItem.fixedConfig,
-      ui: { ...xiaoYangResumeItem.ui, themeTemplate: t.value },
-    },
-  })),
-);
+const templates = themeTemplateList.map((t) => ({
+  name: t.name,
+  value: t.value,
+  item: {
+    data: xiaoYangResumeItem.data,
+    config: xiaoYangResumeItem.config,
+    fixedConfig: xiaoYangResumeItem.fixedConfig,
+    ui: { ...xiaoYangResumeItem.ui, themeTemplate: t.value },
+  },
+}));
 
 // 是否为当前选中的风格模板
 const isActive = (value) => (currentUI.value?.themeTemplate ?? "default") === value;
@@ -34,7 +31,7 @@ const applyTemplate = (value) => {
 
 <template>
   <SfScrollbar class="h-full">
-    <div class="grid w-full grid-cols-2 gap-3">
+    <div class="grid w-full grid-cols-3 gap-1">
       <div
         v-for="template in templates"
         :key="template.value"
@@ -43,7 +40,7 @@ const applyTemplate = (value) => {
       >
         <!-- 模板简历缩略图：缩略区在卡片内 padding 中，宽高比与 A4 一致，随列宽自适应，页面完整显示填满 -->
         <div
-          class="relative h-[240px] w-[172px] overflow-hidden rounded-3xl border-2 border-sf-transparent bg-sf-bg"
+          class="relative h-[193px] w-[136px] overflow-hidden rounded-3xl border-2 border-sf-transparent bg-sf-bg"
           :class="{ ' border-sf-theme!': isActive(template.value) }"
         >
           <ThumbPreview
