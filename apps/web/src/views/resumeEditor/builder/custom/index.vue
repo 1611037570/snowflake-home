@@ -105,19 +105,8 @@ const avatarPosition = computed({
           v-model="currentUI.fontFamily"
           :default-value="defaultFontFamily"
         />
-        <div class="flex gap-4">
-          <div
-            v-for="item in fontFamilyList"
-            :key="item.value"
-            class="hover:bg-sf-hover flex-1 cursor-pointer rounded-3xl border border-sf-b py-2 text-center text-[12px] transition-all"
-            :class="{
-              'border-sf-theme-2 bg-sf-theme text-sf-base': currentUI.fontFamily === item.value,
-            }"
-            @click="currentUI.fontFamily = item.value"
-          >
-            {{ item.name }}
-          </div>
-        </div>
+        <SfSelect v-model="currentUI.fontFamily" :list="fontFamilyList" />
+
         <ConfigItem
           label="字体大小"
           v-model="currentUI.fontSize"

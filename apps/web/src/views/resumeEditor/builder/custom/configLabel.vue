@@ -27,7 +27,7 @@ function resetToDefault() {
 </script>
 
 <template>
-  <div class="mb-2 flex items-center text-sm text-sf-text-2">
+  <div class="mb-0.5 flex items-center text-sm text-sf-text-2">
     <span>{{ label }}</span>
     <sf-tooltip :content="tip" v-if="tip" class="ml-1 text-sf-text-2" />
     <!-- 值非默认时显示恢复默认值图标 -->

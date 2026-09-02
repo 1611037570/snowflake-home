@@ -15,7 +15,7 @@ export const fontFamilyList = [
   },
   {
     name: "跟随系统",
-    value: "",
+    value: "null",
   },
 ];
 
