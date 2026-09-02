@@ -40,12 +40,6 @@ function resetSettings() {
           type="switch"
         />
         <SfSetItem
-          title="简历页码"
-          info="开启后，简历底部会显示页码"
-          v-model="system.showPageNumber"
-          type="switch"
-        />
-        <SfSetItem
           title="调试控制台"
           info="开启后，工具栏会显示调试控制台入口"
           v-model="system.showDebug"

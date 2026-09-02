@@ -101,6 +101,7 @@ export const ICON_LIST: Record<string, IconItem> = {
   "mdi:phone": { icon: "mdi:phone", name: "电话" },
   "mdi:email-outline": { icon: "mdi:email-outline", name: "邮箱" },
   "lucide:file-text": { icon: "lucide:file-text" },
+  "lucide:hash": { icon: "lucide:hash", name: "页码" },
   "lucide:layout-template": { icon: "lucide:layout-template" },
   "lucide:palette": { icon: "lucide:palette" },
   "element-plus": { icon: "logos:element" },
