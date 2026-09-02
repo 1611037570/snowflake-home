@@ -84,16 +84,25 @@ const allModules = computed(() => {
   const configModules = props.item.config?.fields || [];
   return [...fixedModules, ...configModules];
 });
-const { measureDone, pages, pageStyleText, moduleClass, moduleList } = useResumePages({
-  measureRef,
-  ui,
-  themeStyles,
-  showPageNumber,
-  isThumb,
-  selectedModule,
-  isReadonly,
-  uid,
-  allModules,
+const { measureDone, pages, pageStyleText, moduleClass, moduleList, isSinglePage } = useResumePages(
+  {
+    measureRef,
+    ui,
+    themeStyles,
+    showPageNumber,
+    isThumb,
+    selectedModule,
+    isReadonly,
+    uid,
+    allModules,
+  },
+);
+// 单页快路径：模块不经过分页切片，构造等价单块切片供操作按钮与选中高亮复用
+const singleSlice = (key) => ({
+  moduleKey: key,
+  visibleStart: 0,
+  visibleEnd: 0,
+  totalRows: 1,
 });
 // 编辑态实例把测量结果写入共享 ref，供智能一页复用，避免其重复挂载测量容器
 watch(moduleList, (list) => {
@@ -112,9 +121,42 @@ const containerHeight = {
 </script>
 
 <template>
-  <!-- 隐藏的测量容器：用于 useRowInfo 读取行高；缩略图测量完成后销毁 -->
+  <!-- 单页快路径：内容放入一页时测量与渲染合一，不再常驻隐藏测量容器与分页裁剪 -->
+  <div v-if="isSinglePage" ref="rootRef" class="relative flex flex-col gap-3">
+    <div
+      ref="measureRef"
+      class="resume-page-item relative flex flex-col rounded-3xl bg-white text-black"
+      :class="[ui.fontFamily]"
+      :style="[paddingStyle, fontStyle, lineHeightStyle, containerWidth, containerHeight]"
+    >
+      <!-- 模块之间的间距由 ui.moduleSpacing 控制，与分页计算保持一致 -->
+      <div class="flex flex-1 flex-col" :style="{ gap: `${ui.moduleSpacing ?? MODULE_GAP}px` }">
+        <div
+          v-for="item in allModules"
+          :key="item.key"
+          class="group group/module relative rounded-xl"
+        >
+          <!-- 测量包装与测量容器一致：resume-module-wrapper 直接挂在模块根元素上 -->
+          <ResumeModule
+            :data="props.item.data"
+            :name="item.key"
+            class="resume-module-wrapper"
+            :class="moduleClass(singleSlice(item.key))"
+          />
+        </div>
+      </div>
+      <div
+        v-if="showPageNumber"
+        class="flex-c py-3 text-xs opacity-50"
+        :style="{ height: `${PAGE_NUMBER_HEIGHT}px` }"
+      >
+        轻舟简历 · 第 1 页 · 共 1 页
+      </div>
+    </div>
+  </div>
+  <!-- 隐藏的测量容器：用于 useRowInfo 读取行高；多页时存在，缩略图测量完成后销毁 -->
   <div
-    v-if="!measureDone"
+    v-if="!isSinglePage && !measureDone"
     class="fixed -top-999 -left-999 flex h-auto flex-col bg-white text-black"
     ref="measureRef"
     :class="ui.fontFamily"
@@ -136,7 +178,7 @@ const containerHeight = {
     </div>
   </div>
   <!-- 实际渲染的分页内容 -->
-  <div ref="rootRef" class="relative flex flex-col gap-3">
+  <div v-if="!isSinglePage" ref="rootRef" class="relative flex flex-col gap-3">
     <div
       v-for="(pageSlices, pageIndex) in pages"
       :key="pageIndex"
