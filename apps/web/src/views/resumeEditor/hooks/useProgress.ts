@@ -1,4 +1,4 @@
-import { computed, toValue, type MaybeRefOrGetter } from "vue";
+import { toValue, type MaybeRefOrGetter } from "vue";
 
 // ==================== 工具函数 ====================
 
@@ -215,52 +215,50 @@ export function useProgress(
   fields: MaybeRefOrGetter<any[]>,
   data: MaybeRefOrGetter<Record<string, any>>,
 ) {
-  return computed(() => {
-    const fieldsList = toValue(fields) || [];
-    const rootData = toValue(data) || {};
+  const fieldsList = toValue(fields) || [];
+  const rootData = toValue(data) || {};
 
-    const moduleMap = new Map<string, any>();
-    for (const f of fieldsList) {
-      if (f?.key) moduleMap.set(f.key, f);
+  const moduleMap = new Map<string, any>();
+  for (const f of fieldsList) {
+    if (f?.key) moduleMap.set(f.key, f);
+  }
+
+  const progressItems: Array<{
+    key: string;
+    name: string;
+    progress: number;
+    allProgress: 100;
+    missing: string[];
+  }> = [];
+  let totalScore = 0;
+  const timelineModules: Array<{ key: string; config: any }> = [];
+
+  for (const [key, config] of moduleMap) {
+    const { missing, score } = analyzeModule(config, rootData);
+    const progress = score * 10;
+    progressItems.push({
+      key,
+      name: config.props?.name || key,
+      progress,
+      allProgress: 100,
+      missing,
+    });
+    totalScore += progress;
+
+    if (config.fields?.some((f: any) => f.type === "array" && f.addConfig)) {
+      timelineModules.push({ key, config });
     }
+  }
 
-    const progressItems: Array<{
-      key: string;
-      name: string;
-      progress: number;
-      allProgress: 100;
-      missing: string[];
-    }> = [];
-    let totalScore = 0;
-    const timelineModules: Array<{ key: string; config: any }> = [];
+  const totalFull = progressItems.length * 100;
+  const totalProgress = totalFull ? Math.round((totalScore / totalFull) * 100) : 0;
+  const timeline = checkTimeline(timelineModules, rootData);
 
-    for (const [key, config] of moduleMap) {
-      const { missing, score } = analyzeModule(config, rootData);
-      const progress = score * 10;
-      progressItems.push({
-        key,
-        name: config.props?.name || key,
-        progress,
-        allProgress: 100,
-        missing,
-      });
-      totalScore += progress;
-
-      if (config.fields?.some((f: any) => f.type === "array" && f.addConfig)) {
-        timelineModules.push({ key, config });
-      }
-    }
-
-    const totalFull = progressItems.length * 100;
-    const totalProgress = totalFull ? Math.round((totalScore / totalFull) * 100) : 0;
-    const timeline = checkTimeline(timelineModules, rootData);
-
-    return {
-      list: progressItems,
-      totalScore,
-      totalFull,
-      progress: totalProgress,
-      timeline,
-    };
-  });
+  return {
+    list: progressItems,
+    totalScore,
+    totalFull,
+    progress: totalProgress,
+    timeline,
+  };
 }
