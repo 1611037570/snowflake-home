@@ -47,7 +47,6 @@ interface UseChatRequestOptions {
   addMessage: (message: Partial<Message>) => void; // 添加消息的方法
   scrollToBottom: () => void | Promise<void>; // 滚动到底部
   applyDiff?: (data: Record<string, any>) => string[]; // 应用数据差异，返回写入字段（可选）
-  onRequestComplete: (message: Message | null) => void; // 请求完成回调
 }
 
 // 主组合式函数：处理AI聊天请求
@@ -57,7 +56,6 @@ export const useChatRequest = ({
   addMessage,
   scrollToBottom,
   applyDiff,
-  onRequestComplete,
 }: UseChatRequestOptions) => {
   const resumeStore = useResumeStore();
   const aiStore = useAiStore();
@@ -86,10 +84,7 @@ export const useChatRequest = ({
   };
 
   // 统一状态处理器：把 reasoning/content/total_tokens 映射为请求状态与耗时计数
-  const createChatState = (
-    lastMsg: Message | null,
-    isCurrent: () => boolean,
-  ) => {
+  const createChatState = (lastMsg: Message | null, isCurrent: () => boolean) => {
     const timers: ChatTimers = { thinking: null, reply: null };
     activeTimers = timers;
 
@@ -298,8 +293,6 @@ export const useChatRequest = ({
       abortRequest = null;
       if (lastMsg?.typing) lastMsg.typing = false;
       if (chat.value) chat.value.updateTime = finishTime;
-      // 调用完成回调
-      onRequestComplete(lastMsg);
     }
   };
 
@@ -394,7 +387,6 @@ export const useChatRequest = ({
       isGenerating.value = false;
       if (lastMsg?.typing) lastMsg.typing = false;
       if (chat.value) chat.value.updateTime = Date.now();
-      onRequestComplete(lastMsg);
     }
   };
 
