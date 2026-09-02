@@ -1,12 +1,11 @@
 <template>
-  <el-row ref="row" :class="{ 'module-selected-blink': isDragging }" :gutter="12" :key="items.id">
-    <!-- :data-module-key="item.key" 临时增加 后期提供新方案 内部还能框选 -->
+  <el-row ref="row" :class="{ 'drag-container-active': isDragging }" :gutter="12" :key="items.id">
     <FormItem
       :currentForm="item.field"
       :data-module-key="item.field.key"
       v-for="item in visibleFields"
       :key="item.field.id"
-      :class="{ 'module-selected-blink': isModuleSelected(item.field) }"
+      :selected="isModuleSelected(item.field)"
       @mouseenter="handleModuleMouseEnter(item.field)"
     >
       <!-- 校验失败：展示友好的错误提示 -->
@@ -136,14 +135,14 @@ onUnmounted(() => {
   background: #c8ebfb;
   border-radius: 20px;
 }
-】
-/* 选中模块：边框持续闪烁提示（作用于模块级 FormItem） */
-.module-selected-blink {
+
+.drag-container-active {
   position: relative;
+  border-radius: 12px;
 }
-.module-selected-blink::after {
+.drag-container-active::after {
   position: absolute;
-  inset: 0;
+  inset: 0px;
   z-index: 1;
   box-sizing: border-box;
   border: 2px dashed var(--color-sf-theme);
