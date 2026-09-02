@@ -60,10 +60,8 @@ const activeNavIndex = computed(() => navList.findIndex((item) => route.path ===
       class="flex h-full w-full flex-1 flex-col overflow-hidden bg-sf-page text-sf-text"
       :class="{ 'pt-20': route.path !== '/resume' }"
     >
-      <SfScrollbar class="w-full flex-1">
-        <router-view class="min-h-screen" />
-        <SfFooter />
-      </SfScrollbar>
+      <router-view class="flex-1 overflow-hidden" />
+      <SfFooter />
     </div>
   </main>
 </template>

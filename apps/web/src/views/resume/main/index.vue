@@ -1,4 +1,5 @@
 <template>
+  <SfScrollbar class="h-full">
   <!-- 第一屏：轻舟简历 - 首页主视觉 -->
   <section id="hero" class="relative flex min-h-screen flex-col overflow-hidden">
     <!-- 主内容区 -->
@@ -403,6 +404,7 @@
       </div>
     </div>
   </section>
+  </SfScrollbar>
 </template>
 
 <script setup>
