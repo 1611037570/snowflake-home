@@ -8,8 +8,8 @@
     @click="drawerVisible = !drawerVisible"
   />
 
-  <!-- 抽屉 -->
-  <el-drawer v-model="drawerVisible" title="控制台" direction="rtl" size="50%">
+  <!-- 抽屉：关闭时销毁内容，避免内容常驻导致关闭后仍持续序列化整份数据 -->
+  <el-drawer v-model="drawerVisible" title="控制台" direction="rtl" size="50%" destroy-on-close>
     <div v-if="drawerVisible" class="flex flex-col gap-3 p-3">
       <SfTab :list="tabList" v-model="activeTab">
         <SfTabPane value="data">
