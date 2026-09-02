@@ -7,7 +7,7 @@ import { useChatRequest } from "./useChatRequest";
 import { flows } from "../flows";
 
 import AiMessage from "./aiMessage.vue";
-import ChatInput from "./chatInput.vue";
+import ChatInput from "./chatInput/index.vue";
 import UserMessage from "./userMessage.vue";
 import EmptyState from "./emptyState.vue";
 
