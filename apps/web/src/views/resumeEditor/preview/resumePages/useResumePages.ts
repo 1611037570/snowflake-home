@@ -65,6 +65,9 @@ export const useResumePages = ({
     // 缩略图数据静态：无需防抖合并编辑，立即测量；按期望模块数判定完整，避免异步挂载中途冻结
     debounce: isThumb.value ? 0 : undefined,
     expectedModuleCount: isThumb.value ? allModules.value.length : undefined,
+    // 编辑器/全屏预览的隐藏测量容器尺寸变化均伴随内容 DOM 变更（MutationObserver 已覆盖），
+    // 关闭 resize 观测，避免尺寸变化与内容变化重复触发测量（缩略图首测后即冻结，保留无副作用）
+    observeResize: isThumb.value,
   });
 
   // 缩略图测量完成即销毁隐藏的测量容器，减少无用 DOM 与监听开销
