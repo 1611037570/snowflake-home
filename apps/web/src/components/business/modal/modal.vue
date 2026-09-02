@@ -43,7 +43,7 @@
           </div>
           <!-- 内容区域 -->
           <div class="flex-1 overflow-auto">
-            <slot></slot>
+            <slot v-if="modeValue"></slot>
           </div>
         </div>
       </div>
