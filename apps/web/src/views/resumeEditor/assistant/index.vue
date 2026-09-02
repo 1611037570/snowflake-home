@@ -1,6 +1,5 @@
 <script setup>
 import { onMounted, ref } from "vue";
-import JdInput from "./JdInput.vue";
 import { useAiStore, useResumeStore } from "@/stores";
 import { DEFAULT_EDITOR } from "@/stores/modules/resume/defaultConfig";
 import { storeToRefs } from "pinia";
@@ -27,16 +26,8 @@ onMounted(() => {
   resumeAssistantChat.value = createDefaultChat(defaultMessage);
 });
 
-// 当前视图：score | jd
-const currentView = ref("score");
-
 function createNewChat() {
   chat.value = createDefaultChat(defaultMessage);
-}
-
-// 请求完成回调，打印数据方便调试
-function onRequestComplete(msg) {
-  console.log("请求完成数据:>> ", msg);
 }
 </script>
 
@@ -64,7 +55,7 @@ function onRequestComplete(msg) {
           />
         </SfTooltip>
       </div>
-      <Chat :chat="chat" @request-complete="onRequestComplete" />
+      <Chat :chat="chat" />
     </div>
   </div>
 </template>

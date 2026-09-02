@@ -20,8 +20,6 @@ const applyDiff = inject("applyDiff");
 const chat = defineModel("chat", {
   required: true,
 });
-// 请求完成事件，转发给父组件
-const emit = defineEmits(["requestComplete"]);
 
 // currentMessages：从 chat.messages 派生
 const currentMessages = computed(() => chat.value?.messages ?? []);
@@ -87,7 +85,6 @@ const { handleAIResponse, handleReactResponse, stopGenerating } = useChatRequest
   addMessage,
   scrollToBottom,
   applyDiff,
-  onRequestComplete: (message) => emit("requestComplete", message),
 });
 
 /**
