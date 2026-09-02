@@ -52,7 +52,6 @@ const activeNavIndex = computed(() => navList.findIndex((item) => route.path ===
           <SfTheme />
           <SfLocale />
           <SfDonation />
-          <SfSetting />
           <SfMore> </SfMore>
         </div>
       </div>
