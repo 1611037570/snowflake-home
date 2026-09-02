@@ -81,7 +81,7 @@ const avatarPosition = computed({
           <div
             v-for="item in fontFamilyList"
             :key="item.value"
-            class="hover:bg-sf-hover flex-1 cursor-pointer rounded-md border border-sf-b py-2 text-center text-sm transition-all"
+            class="hover:bg-sf-hover flex-1 cursor-pointer rounded-3xl border border-sf-b py-2 text-center text-[12px] transition-all"
             :class="{
               'border-sf-theme-2 bg-sf-theme text-sf-base': currentUI.fontFamily === item.value,
             }"
@@ -146,7 +146,7 @@ const avatarPosition = computed({
           <div
             v-for="mode in userInfoModeList"
             :key="mode.value"
-            class="hover:bg-sf-hover flex-1 cursor-pointer rounded-md border border-sf-b py-2 text-center text-sm transition-all"
+            class="hover:bg-sf-hover flex-1 cursor-pointer rounded-3xl border border-sf-b py-2 text-center text-[12px] transition-all"
             :class="{
               'border-sf-theme-2 bg-sf-theme text-sf-base': userInfoMode === mode.value,
             }"
@@ -165,7 +165,7 @@ const avatarPosition = computed({
           <div
             v-for="item in avatarPositionList"
             :key="item.value"
-            class="hover:bg-sf-hover flex-1 cursor-pointer rounded-md border border-sf-b py-2 text-center text-sm transition-all"
+            class="hover:bg-sf-hover flex-1 cursor-pointer rounded-3xl border border-sf-b py-2 text-center text-[12px] transition-all"
             :class="{
               'border-sf-theme-2 bg-sf-theme text-sf-base': avatarPosition === item.value,
             }"

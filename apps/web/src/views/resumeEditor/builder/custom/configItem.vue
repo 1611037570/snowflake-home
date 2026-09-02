@@ -63,23 +63,23 @@ watch(
 </script>
 
 <template>
-  <div class="flex w-full flex-col gap-1">
+  <div class="flex w-full flex-col">
     <ConfigLabel :label="label" :tip="tip" :default-value="defaultValue" v-model="modelValue" />
-    <!-- 左侧进度条拖拽，右侧输入框，范围与步进跟随 min/max/step 配置 -->
-    <div class="flex items-center gap-3">
+    <div class="flex items-center gap-4">
       <SfSlider
         v-model="currentValue"
         :min="sliderMin"
         :max="sliderMax"
         :step="sliderStep"
         class="flex-1"
+        size="small"
       />
       <SfInputNumber
         v-model="currentValue"
         :min="sliderMin"
         :max="sliderMax"
         :step="sliderStep"
-        class="w-20 flex-shrink-0"
+        class="h-7 w-32! shrink-0"
       />
     </div>
   </div>
