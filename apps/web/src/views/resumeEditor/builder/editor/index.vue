@@ -1,4 +1,6 @@
 <script setup>
+// 显式命名编辑组件，供父级 KeepAlive 按 include 命中缓存
+defineOptions({ name: "BuilderEditor" });
 import { useResumeStore } from "@/stores";
 import { storeToRefs } from "pinia";
 import Account from "./components/account.vue";

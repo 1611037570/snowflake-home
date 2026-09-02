@@ -65,7 +65,8 @@ const editorWidth = DEFAULT_EDITOR.editorWidth;
     >
       <div class="flex min-h-0 flex-1 flex-col">
         <Transition :name="`tab-slide-${direction}`" mode="out-in">
-          <KeepAlive>
+          <!-- 仅缓存编辑组件，设计/模板按需渲染以降低内存占用，动画保持 -->
+          <KeepAlive :include="['BuilderEditor']">
             <component :is="menuList[activeIndex].component" class="h-full" />
           </KeepAlive>
         </Transition>
