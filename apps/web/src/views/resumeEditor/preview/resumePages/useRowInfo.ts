@@ -68,15 +68,49 @@ export function useRowInfo(
   // 冻结后释放全部监听器，避免缩略图测量完成后空跑（监听器创建后赋值）
   let stopAll: (() => void) | null = null;
 
-  /** 行高度 = offsetHeight（含 padding/border）+ 上下 margin */
-  const rowHeight = (el: HTMLElement): number => {
-    const { marginTop, marginBottom } = window.getComputedStyle(el);
-    return el.offsetHeight + (parseFloat(marginTop) || 0) + (parseFloat(marginBottom) || 0);
+  /**
+   * 批量读取一组行的高度：先统一读 offsetHeight 再统一读 margin，
+   * 避免逐行交替读写强制同步布局（layout thrash）
+   */
+  const batchRowHeights = (els: HTMLElement[]): number[] => {
+    const heights = els.map((el) => el.offsetHeight);
+    const margins = els.map((el) => {
+      const { marginTop, marginBottom } = window.getComputedStyle(el);
+      return (parseFloat(marginTop) || 0) + (parseFloat(marginBottom) || 0);
+    });
+    return heights.map((h, i) => h + margins[i]!);
+  };
+
+  /** 读取单个模块内所有行的高度信息 */
+  const measureModule = (wrapper: HTMLElement): ModuleInfo => {
+    const rows = Array.from(wrapper.children) as HTMLElement[];
+    const heights = batchRowHeights(rows);
+    return {
+      moduleKey: wrapper.dataset.module || "",
+      rows: rows.map((_, index) => ({ height: heights[index]!, index })),
+    };
+  };
+
+  // 已测量模块缓存：增量测量时未受影响的模块直接复用，避免全量重扫
+  const lastByWrapper = new WeakMap<HTMLElement, ModuleInfo>();
+  // 防抖窗口内累积的 DOM 变更，用于定位受影响模块做增量重扫
+  let pendingMutations: MutationRecord[] = [];
+
+  /** 从变更目标向上查找最近的模块包装元素，用于定位受影响模块 */
+  const findWrapper = (target: Node, root: HTMLElement): HTMLElement | null => {
+    let el: HTMLElement | null =
+      target instanceof Element ? (target as HTMLElement) : (target.parentElement ?? null);
+    while (el && el !== root) {
+      if (el.classList.contains("resume-module-wrapper")) return el;
+      el = el.parentElement;
+    }
+    return null;
   };
 
   /**
    * 扫描测量容器：收集所有模块及行信息
-   * 只关心模块结构 + 行高度（内容 html 变化不参与比较），无变化时不更新 moduleList
+   * 只关心模块结构 + 行高（内容 html 变化不参与比较），无变化时不更新 moduleList
+   * 有变更记录时按变更目标增量重扫受影响模块，未受影响模块复用缓存，减少强制同步布局
    */
   const measure = () => {
     if (frozen) return;
@@ -84,21 +118,34 @@ export function useRowInfo(
     const root = unrefElement(rootRef);
     if (!root) {
       moduleList.value = [];
+      pendingMutations = [];
       return;
     }
-    const modules: ModuleInfo[] = Array.from(
-      root.querySelectorAll<HTMLElement>(selector),
-      (wrapper) => {
-        const moduleKey = wrapper.dataset.module || "";
-        return {
-          moduleKey,
-          rows: Array.from(wrapper.children, (div, index) => {
-            const el = div as HTMLElement;
-            return { height: rowHeight(el), index };
-          }),
-        };
-      },
-    );
+    // 取出防抖窗口内累积的变更，用于增量定位受影响模块
+    const mutations = pendingMutations;
+    pendingMutations = [];
+    const wrappers = Array.from(root.querySelectorAll<HTMLElement>(selector));
+
+    // 增量定位：收集变更目标所在模块 key；定位不到（结构增删/初始化/尺寸样式变化）时回退全量重扫
+    const affectedKeys = new Set<string>();
+    if (mutations.length > 0) {
+      for (const mutation of mutations) {
+        const wrapper = findWrapper(mutation.target, root);
+        if (wrapper?.dataset.module) affectedKeys.add(wrapper.dataset.module);
+      }
+    }
+    const measureAll = affectedKeys.size === 0;
+
+    const modules: ModuleInfo[] = wrappers.map((wrapper) => {
+      const moduleKey = wrapper.dataset.module || "";
+      if (!measureAll && !affectedKeys.has(moduleKey)) {
+        return lastByWrapper.get(wrapper) ?? measureModule(wrapper);
+      }
+      return measureModule(wrapper);
+    });
+    // 更新缓存，供下次增量测量复用
+    wrappers.forEach((wrapper, i) => lastByWrapper.set(wrapper, modules[i]!));
+
     const prev = moduleList.value;
     // 单次测量模式：模块齐全（含异步挂载的期望模块数）才更新并冻结，
     // 避免内容挂载中途以不完整行高提前冻结或引起闪烁
@@ -121,7 +168,12 @@ export function useRowInfo(
   // 容器尺寸变化（如缩放）时重新测量
   const { stop: stopResize } = useResizeObserver(rootRef, debouncedMeasure);
   // 容器内 DOM 增删、文本变化时重新测量（内容编辑会改变高度）
-  const { stop: stopMutation } = useMutationObserver(rootRef, debouncedMeasure, {
+  // 先累积变更记录，防抖触发后按变更目标增量重扫，避免每次输入都全量扫描
+  const onMutation = (mutations: MutationRecord[]) => {
+    pendingMutations.push(...mutations);
+    debouncedMeasure();
+  };
+  const { stop: stopMutation } = useMutationObserver(rootRef, onMutation, {
     childList: true,
     subtree: true,
     characterData: true,
