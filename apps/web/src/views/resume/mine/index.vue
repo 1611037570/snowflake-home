@@ -4,6 +4,7 @@ import dayjs from "dayjs";
 import { storeToRefs } from "pinia";
 import { useRouter } from "vue-router";
 import { useProgress } from "../../resumeEditor/hooks/useProgress";
+import { getResumeTitle } from "../../resumeEditor/resumeName";
 import ResumeCardContainer from "./components/resumeCardContainer.vue";
 import ImportResume from "./components/importResume.vue";
 
@@ -29,6 +30,9 @@ const displayList = computed(() => {
 });
 const getLastUseTime = (item) => {
   return item?.usage?.lastUseTime ? dayjs(item.usage.lastUseTime).format("YYYY.MM.DD HH:mm") : "--";
+};
+const getResumePosition = (item) => {
+  return item?.data?.user?.data?.position || "未填写求职岗位";
 };
 const getProgressClass = (progress) => {
   if (progress < 40) return "bg-sf-error";
@@ -162,10 +166,18 @@ const handleUseTemplate = () => {
         :item="card.item"
         @click="handleEdit(card.index)"
       >
-        <template #actions>
+        <div class="mt-3 flex items-start justify-between gap-2">
+          <div class="min-w-0">
+            <div class="truncate text-base font-black text-sf-text">
+              {{ getResumeTitle(card.item.data) }}
+            </div>
+            <div class="mt-1 truncate text-sm text-sf-text-2">
+              {{ getResumePosition(card.item) }}
+            </div>
+          </div>
           <div class="flex shrink-0 items-center gap-1">
             <span
-              class="flex cursor-pointer items-center justify-center rounded-full text-sf-text-2 transition-colors duration-200 hover:bg-sf-theme-2 hover:text-sf-theme"
+              class="flex h-8 w-8 cursor-pointer items-center justify-center rounded-full text-sf-text-2 transition-colors duration-200 hover:bg-sf-theme-2 hover:text-sf-theme"
               @click.stop="handleEdit(card.index)"
             >
               <SfIcon icon="lucide:pencil" size="4" />
@@ -178,21 +190,19 @@ const handleUseTemplate = () => {
               <SfIcon icon="lucide:trash-2" size="4" />
             </button>
           </div>
-        </template>
-        <template #footer>
-          <div class="mt-4 flex items-center gap-3">
-            <div class="h-1.5 flex-1 overflow-hidden rounded-full bg-sf-bg-2">
-              <div
-                class="h-full rounded-full"
-                :class="getProgressClass(card.progress)"
-                :style="{ width: `${card.progress}%` }"
-              ></div>
-            </div>
-            <span class="shrink-0 text-xs text-sf-text-3"
-              >最后使用：{{ getLastUseTime(card.item) }}</span
-            >
+        </div>
+        <div class="mt-4 flex items-center gap-3">
+          <div class="h-1.5 flex-1 overflow-hidden rounded-full bg-sf-bg-2">
+            <div
+              class="h-full rounded-full"
+              :class="getProgressClass(card.progress)"
+              :style="{ width: `${card.progress}%` }"
+            ></div>
           </div>
-        </template>
+          <span class="shrink-0 text-xs text-sf-text-3"
+            >最后使用：{{ getLastUseTime(card.item) }}</span
+          >
+        </div>
       </ResumeCardContainer>
     </div>
 
@@ -204,33 +214,39 @@ const handleUseTemplate = () => {
         :item="item"
         action-text="已删除"
       >
-        <template #footer>
-          <div class="mt-4 flex items-center gap-3">
-            <span class="shrink-0 text-xs text-sf-text-3">
-              删除于：{{
-                item._deletedAt ? dayjs(item._deletedAt).format("YYYY.MM.DD HH:mm") : "--"
-              }}
-            </span>
+        <div class="mt-3 flex items-start justify-between gap-2">
+          <div class="min-w-0">
+            <div class="truncate text-base font-black text-sf-text">
+              {{ getResumeTitle(item.data) }}
+            </div>
+            <div class="mt-1 truncate text-sm text-sf-text-2">
+              {{ getResumePosition(item) }}
+            </div>
           </div>
-          <div class="mt-3 flex items-center gap-3">
-            <button
-              type="button"
-              class="flex h-8 flex-1 cursor-pointer items-center justify-center gap-1 rounded-lg border-0 bg-sf-theme-2 text-sm font-black text-sf-theme transition-colors duration-200 hover:bg-sf-theme hover:text-white"
-              @click="resumeStore.restoreResume(index)"
-            >
-              <SfIcon icon="lucide:rotate-ccw" size="4" />
-              恢复
-            </button>
-            <button
-              type="button"
-              class="flex h-8 flex-1 cursor-pointer items-center justify-center gap-1 rounded-lg border-0 bg-sf-error-2 text-sm font-black text-sf-error transition-colors duration-200 hover:bg-sf-error hover:text-white"
-              @click="resumeStore.permanentlyDeleteResume(index)"
-            >
-              <SfIcon icon="lucide:trash-2" size="4" />
-              永久删除
-            </button>
-          </div>
-        </template>
+        </div>
+        <div class="mt-4 flex items-center gap-3">
+          <span class="shrink-0 text-xs text-sf-text-3">
+            删除于：{{ item._deletedAt ? dayjs(item._deletedAt).format("YYYY.MM.DD HH:mm") : "--" }}
+          </span>
+        </div>
+        <div class="mt-3 flex items-center gap-3">
+          <button
+            type="button"
+            class="flex h-8 flex-1 cursor-pointer items-center justify-center gap-1 rounded-lg border-0 bg-sf-theme-2 text-sm font-black text-sf-theme transition-colors duration-200 hover:bg-sf-theme hover:text-white"
+            @click="resumeStore.restoreResume(index)"
+          >
+            <SfIcon icon="lucide:rotate-ccw" size="4" />
+            恢复
+          </button>
+          <button
+            type="button"
+            class="flex h-8 flex-1 cursor-pointer items-center justify-center gap-1 rounded-lg border-0 bg-sf-error-2 text-sm font-black text-sf-error transition-colors duration-200 hover:bg-sf-error hover:text-white"
+            @click="resumeStore.permanentlyDeleteResume(index)"
+          >
+            <SfIcon icon="lucide:trash-2" size="4" />
+            永久删除
+          </button>
+        </div>
       </ResumeCardContainer>
       <!-- 回收站为空 -->
       <div
