@@ -1,7 +1,6 @@
 <script setup>
 import { onMounted, ref } from "vue";
 import JdInput from "./JdInput.vue";
-import Score from "./Score.vue";
 import { useAiStore, useResumeStore } from "@/stores";
 import { DEFAULT_EDITOR } from "@/stores/modules/resume/defaultConfig";
 import { storeToRefs } from "pinia";
@@ -64,10 +63,6 @@ function onRequestComplete(msg) {
             class="rounded-full text-sf-text-2 hover:bg-sf-theme-2 hover:text-sf-theme-text"
           />
         </SfTooltip>
-      </div>
-      <div class="flex-1 overflow-y-auto">
-        <Score v-if="currentView === 'score'" />
-        <JdInput v-else-if="currentView === 'jd'" />
       </div>
       <Chat :chat="chat" @request-complete="onRequestComplete" />
     </div>
