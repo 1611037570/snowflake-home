@@ -56,5 +56,5 @@ export const DEFAULT_EDITOR = {
   // 编辑器区域宽度(px)
   editorWidth: 380,
   // AI助手区域宽度(px)
-  assistantWidth: 400,
+  assistantWidth: 380,
 };
