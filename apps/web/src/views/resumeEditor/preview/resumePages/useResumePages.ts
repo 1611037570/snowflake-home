@@ -6,7 +6,7 @@
  */
 import { useDebounceFn } from "@vueuse/core";
 import { computed, ref, watch, type ComputedRef, type Ref } from "vue";
-import { MODULE_GAP, PAGE_NUMBER_HEIGHT, RESUME_HEIGHT } from "../constants";
+import { PAGE_NUMBER_HEIGHT, RESUME_HEIGHT } from "../constants";
 import { useRowInfo, type ModuleInfo } from "./useRowInfo";
 import type { ResumeTheme } from "./useResumeTheme";
 
@@ -76,7 +76,7 @@ export const useResumePages = ({
   // 分页逻辑：所有内容按块贪心装入页面；user 模块整体作为一块，其余模块每行一块
   const pages = computed<PageSlice[][]>(() => {
     const padding = ui.value.padding || 0;
-    const moduleSpacing = ui.value.moduleSpacing ?? MODULE_GAP;
+    const moduleSpacing = ui.value.moduleSpacing;
     const bottomSpace = showPageNumber.value ? PAGE_NUMBER_HEIGHT : 0;
     // 仅根据页码区域高度计算页面可用内容高度
     const maxContentHeight = RESUME_HEIGHT - padding - bottomSpace;
@@ -202,7 +202,7 @@ export const useResumePages = ({
     const list = moduleList.value;
     if (list.length === 0) return false;
     const padding = ui.value.padding || 0;
-    const moduleSpacing = ui.value.moduleSpacing ?? MODULE_GAP;
+    const moduleSpacing = ui.value.moduleSpacing;
     const bottomSpace = showPageNumber.value ? PAGE_NUMBER_HEIGHT : 0;
     const maxContentHeight = RESUME_HEIGHT - padding - bottomSpace;
     let rowsTotal = 0;

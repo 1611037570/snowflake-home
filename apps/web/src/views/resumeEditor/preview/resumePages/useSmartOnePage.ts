@@ -10,7 +10,7 @@
  * 参数只向下压缩、不会回弹，按压缩优先级逐项进行。
  */
 import { inject, type ComputedRef } from "vue";
-import { MODULE_GAP, PAGE_NUMBER_HEIGHT, RESUME_HEIGHT } from "../constants";
+import { PAGE_NUMBER_HEIGHT, RESUME_HEIGHT } from "../constants";
 import {
   defaultFontSize,
   defaultLineHeight,
@@ -113,7 +113,7 @@ export const useSmartOnePage = ({
     // 估算总高：行高按字号×行高比例缩放，模块间距计入模块间隔
     const estimateTotal = (params: Record<OnePageAdjustKey, number>) => {
       const scale = (params.fontSize * params.lineHeight) / baseScale;
-      return rowsTotal * scale + (params.moduleSpacing ?? MODULE_GAP) * moduleGapCount;
+      return rowsTotal * scale + params.moduleSpacing * moduleGapCount;
     };
     // 可用内容高：页面高 - 页边距 - 页码区高
     const estimateAvail = (padding: number) => RESUME_HEIGHT - padding - bottomSpace;
