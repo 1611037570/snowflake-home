@@ -7,10 +7,15 @@ import ScaleContainer from "./ScaleContainer.vue";
 
 defineOptions({ name: "FullscreenPreview" });
 
-// 关闭时通知父组件复位控制状态，保证可再次打开
+// 关闭时通知父组件复位控制状态
 const emit = defineEmits(["close"]);
 
-defineProps({
+const props = defineProps({
+  // 全屏是否可见，由父组件单向控制
+  visible: {
+    type: Boolean,
+    default: false,
+  },
   // 简历项：{ data, config, fixedConfig, ui }
   item: {
     type: Object,
@@ -18,29 +23,24 @@ defineProps({
   },
 });
 
-const visible = ref(false);
-const open = () => (visible.value = true);
-const close = () => {
-  visible.value = false;
-  // 通知父组件复位控制状态
-  emit("close");
-};
-defineExpose({ open, close });
-
 const handleKeydown = (e) => {
-  if (e.key === "Escape" && visible.value) {
-    close();
+  if (e.key === "Escape" && props.visible) {
+    // 关闭由父组件统一处理，发送 close 由父复位 visible
+    emit("close");
   }
 };
 
 // 仅打开时注册 Escape 监听、关闭后移除，避免未打开的实例常驻 window 监听
-watch(visible, (val) => {
-  if (val) {
-    window.addEventListener("keydown", handleKeydown);
-  } else {
-    window.removeEventListener("keydown", handleKeydown);
+watch(
+  () => props.visible,
+  (val) => {
+    if (val) {
+      window.addEventListener("keydown", handleKeydown);
+    } else {
+      window.removeEventListener("keydown", handleKeydown);
+    }
   }
-});
+);
 
 onBeforeUnmount(() => {
   window.removeEventListener("keydown", handleKeydown);
@@ -52,7 +52,7 @@ onBeforeUnmount(() => {
     <div
       v-if="visible"
       class="fixed inset-0 z-50 flex flex-col backdrop-blur-[10px]"
-      @click.self="close"
+      @click.self="emit('close')"
     >
       <!-- 顶部栏 -->
       <div class="flex h-12 shrink-0 items-center justify-between px-4">
@@ -60,7 +60,7 @@ onBeforeUnmount(() => {
         <button
           type="button"
           class="flex h-8 w-8 cursor-pointer! items-center justify-center rounded-full text-sf-text transition-colors hover:bg-sf-bg-2"
-          @click="close"
+          @click="emit('close')"
         >
           <SfIcon icon="lucide:x" size="4" />
         </button>
