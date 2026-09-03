@@ -6,7 +6,13 @@
     class="flex-1 rounded-3xl! text-sf-base"
     :class="bg"
   >
-    <ElOption v-for="item in list" :key="item.value" :label="item.name" :value="item.value" />
+    <ElOption
+      v-for="item in list"
+      :key="item.value"
+      :label="item.name"
+      :value="item.value"
+      class="rounded-2xl!"
+    />
     <template v-for="(item, name) in slots" #[name]>
       <slot :name="name" />
     </template>

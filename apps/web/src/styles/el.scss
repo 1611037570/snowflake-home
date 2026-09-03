@@ -7,19 +7,53 @@
 
 /* 下拉弹层背景色：与项目主题保持一致 */
 .el-dropdown__popper.el-popper {
-  background: var(--sf-page) !important;
+  background: var(--sf-primary) !important;
   // border: none !important;
-  border-radius: 8px !important;
-  overflow: hidden;
+  border-radius: 999px !important;
 }
+// 用于修改 tooltip 组件的样式 开始
+.el-popper {
+  border-radius: 16px !important;
+  background-color: var(--sf-primary) !important;
+  color: var(--sf-base) !important;
+  border: 1px solid var(--sf-border) !important;
+}
+.el-popper__arrow:before {
+  border: 1px solid var(--sf-border) !important;
+  background-color: var(--sf-primary) !important;
+}
+
+.el-popper__arrow:before {
+  background-color: var(--sf-primary) !important;
+  border: 1px solid var(--sf-border) !important;
+}
+// 用于修改 tooltip 组件的箭头样式 结束
+// 用于修改下拉弹层的箭头样式 开始
+.el-dropdown__popper.el-popper .el-popper__arrow:before {
+  border: 1px solid var(--sf-border) !important;
+  background-color: var(--sf-primary) !important;
+}
+// 用于修改下拉弹层的箭头样式 结束
 .el-popper__arrow {
-  --el-bg-color-overlay: var(--sf-page) !important;
-  --el-text-color-primary: var(--sf-page) !important;
+  // --el-bg-color-overlay: var(--sf-page) !important;
+  // --el-text-color-primary: var(--sf-page) !important;
+  // border: 1px solid var(--sf-border) !important;
 }
+
 /* 取消 Anchor 组件链接的内边距，避免点击区域偏移 */
 .el-anchor__link {
   padding: 0 !important;
 }
+
+// .el-select-dropdown__item {
+
+.el-select-dropdown__item {
+  margin: 0 3px;
+}
+.el-select-dropdown__item.is-hovering {
+  background: var(--sf-page) !important;
+}
+
 /* Anchor 组件背景：透明，避免遮挡内容或产生多余底色 */
 .el-anchor {
   --el-anchor-bg-color: transparent !important;
@@ -102,4 +136,15 @@
 
 .el-drawer {
   background-color: var(--sf-primary) !important;
+}
+
+// .el-dropdown-menu {
+//   padding: 0 !important;
+//   border: 0px solid none !important;
+//   background-color: transparent !important;
+// }
+
+.el-dropdown__popper.el-popper {
+  border: none !important;
+  box-shadow: none !important;
 }
