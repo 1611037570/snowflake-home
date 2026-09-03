@@ -4,7 +4,7 @@
  * 输入模块行高列表与页面参数，输出每页模块切片与裁剪样式文本。
  * 纯函数无 DOM/响应式依赖，可独立单测，由 useResumePages 接线调用。
  */
-import { PAGE_NUMBER_HEIGHT, RESUME_HEIGHT } from "../constants";
+import { getContentHeight } from "../constants";
 import type { ModuleInfo } from "./useRowInfo";
 
 /** 单页内一个模块的切片信息 */
@@ -39,9 +39,8 @@ export const paginateModules = ({
   showPageNumber,
   stopAfterFirstPage,
 }: PaginateOptions): PageSlice[][] => {
-  const bottomSpace = showPageNumber ? PAGE_NUMBER_HEIGHT : 0;
-  // 仅根据页码区域高度计算页面可用内容高度
-  const maxContentHeight = RESUME_HEIGHT - padding - bottomSpace;
+  // 仅根据页码区域高度计算页面可用内容高度（与智能一页共用统一公式）
+  const maxContentHeight = getContentHeight(padding, showPageNumber);
 
   const result: PageSlice[][] = [];
   let currentPage: PageSlice[] = [];

@@ -15,7 +15,7 @@
 import { onMounted, onUnmounted, type ComputedRef, type Ref } from "vue";
 import { ElMessage } from "element-plus";
 import eventBus from "@/utils/modules/eventBus";
-import { PAGE_NUMBER_HEIGHT, RESUME_HEIGHT } from "../constants";
+import { getContentHeight } from "../constants";
 import {
   defaultFontSize,
   defaultLineHeight,
@@ -106,7 +106,6 @@ export const useSmartOnePage = ({
 
     // 测量基准：预览层行高对应原始 ui 参数
     const base = pickAdjustable(ui.value);
-    const bottomSpace = showPageNumber.value ? PAGE_NUMBER_HEIGHT : 0;
     // 行数、行高总和在单次计算中固定，单趟聚合，避免每轮压缩重复遍历全部行
     const { rowCount, rowsTotal } = list.reduce(
       (acc: { rowCount: number; rowsTotal: number }, group: any) => {
@@ -128,8 +127,8 @@ export const useSmartOnePage = ({
       const scale = (params.fontSize * params.lineHeight) / baseScale;
       return rowsTotal * scale + params.moduleSpacing * moduleGapCount;
     };
-    // 可用内容高：页面高 - 页边距 - 页码区高
-    const estimateAvail = (padding: number) => RESUME_HEIGHT - padding - bottomSpace;
+    // 可用内容高：与分页算法共用统一公式
+    const estimateAvail = (padding: number) => getContentHeight(padding, showPageNumber.value);
     const fits = (params: Record<OnePageAdjustKey, number>) =>
       estimateTotal(params) <= estimateAvail(params.padding);
 
