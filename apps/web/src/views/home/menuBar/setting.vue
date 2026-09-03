@@ -1,6 +1,5 @@
 <template>
-  <div></div>
-  <ElDropdown trigger="hover">
+  <SfDropdown trigger="hover">
     <sf-icon
       icon="iconamoon:settings-fill"
       size="8"
@@ -8,25 +7,26 @@
     />
 
     <template #dropdown>
-      <el-dropdown-menu class="w-[120px]">
-        <div @click="openSet">功能设置</div>
-        <SfSetting>
-          <div>系统设置</div>
-        </SfSetting>
-      </el-dropdown-menu>
+      <SfList :list="list"> </SfList>
     </template>
-  </ElDropdown>
+  </SfDropdown>
 </template>
-
+<!-- .el-dropdown-menu -->
 <script setup>
 import { useHomeStore } from "@/stores";
 import { storeToRefs } from "pinia";
-provide("color", "text-sf-base");
-const homeStore = useHomeStore();
-const { systemVisible } = storeToRefs(homeStore);
 const openSet = () => {
   systemVisible.value = true;
 };
+provide("color", "text-sf-base");
+const list = ref([
+  {
+    name: "功能设置",
+    fn: openSet,
+  },
+]);
+const homeStore = useHomeStore();
+const { systemVisible } = storeToRefs(homeStore);
 </script>
 
 <style lang="scss" scoped></style>
