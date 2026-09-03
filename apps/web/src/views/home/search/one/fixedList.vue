@@ -39,12 +39,15 @@ function updateCurrentItem(item) {
       v-for="item in fixedList"
       :key="item.id"
     >
-      <div
-        class="flex-c cursor-pointer flex-col overflow-hidden rounded-xl bg-sf-bg p-2 text-sm text-sf-text backdrop-blur-sm hover:bg-sf-theme-2"
-      >
-        <SfMixImg :type="item.imgType" :value="item.imgValue" :size="24" />
-        <!-- <div class="mt-2 w-full truncate px-1 text-center text-xs">{{ item.name }}</div> -->
-      </div>
+      <SfApp
+        :data="{
+          ...item,
+          name: '',
+        }"
+        :size="8"
+        boxSize="16"
+      />
+      <!-- <div class="mt-2 w-full truncate px-1 text-center text-xs">{{ item.name }}</div> -->
     </SfMenu>
   </div>
 </template>
