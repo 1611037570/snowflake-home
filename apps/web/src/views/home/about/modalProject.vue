@@ -7,7 +7,6 @@
         @close="previewVisible = false"
       />
     </Teleport>
-    <div class="mb-4 text-2xl font-bold text-blue-600" @click="goMe">小羊</div>
     <!-- 项目运行时间卡片 -->
     <div
       class="mb-8 rounded-xl border border-blue-100 bg-blue-50 p-6 text-center shadow-sm transition-all duration-300 hover:shadow-md"
@@ -76,13 +75,8 @@
 </template>
 
 <script setup>
-import { urlNavigation } from "@/utils";
 import dayjs from "dayjs";
 import { historyList } from "@/configs/modules/history";
-
-function goMe() {
-  urlNavigation("/index");
-}
 
 // 项目开始时间
 const startTime = "2020-09-03";
