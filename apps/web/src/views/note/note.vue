@@ -1,6 +1,6 @@
 <script setup>
 import { useNoteStore, useThemeStore } from "@/stores";
-import { MdEditor, MdPreview } from "md-editor-v3";
+import { MdEditor } from "md-editor-v3";
 import "md-editor-v3/lib/style.css";
 import NoteList from "./components/noteList.vue";
 const noteStore = useNoteStore();
@@ -100,7 +100,7 @@ const noteStatusList = computed(() => {
             />
           </div>
           <div class="flex-1 overflow-auto">
-            <MdPreview :modelValue="currentNote.value" :theme="theme" editorId="note-preview" />
+            <SfMdPreview :modelValue="currentNote.value" :theme="theme" editorId="note-preview" />
           </div>
         </div>
       </template>
