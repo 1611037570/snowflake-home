@@ -1,6 +1,6 @@
 <template>
   <div
-    class="group h-10 w-10 cursor-pointer rounded-lg bg-white/80 transition-all duration-200"
+    class="group h-10 w-10 cursor-pointer rounded-lg bg-sf-primary transition-all duration-200"
     @click="switchTab"
   >
     <!-- 多彩3x3圆点网格 -->

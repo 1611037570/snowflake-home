@@ -39,16 +39,6 @@ const list = [
     page: "note",
   },
   {
-    name: "邮箱",
-    component: defineAsyncComponent(() => import("./components/email.vue")),
-    type: "system",
-  },
-  {
-    name: "添加",
-    component: defineAsyncComponent(() => import("./components/appCenter.vue")),
-    type: "system",
-  },
-  {
     name: "密码箱",
     component: defineAsyncComponent(() => import("./components/passwordBox.vue")),
     type: "page",
