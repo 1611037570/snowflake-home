@@ -1,7 +1,15 @@
 <template>
-  <!-- 加载中/成功：显示 SfImg，由其 load/error 回调驱动状态 -->
+  <!-- 有 icon 数据：使用 SfIcon，由其 success/fail 事件驱动状态 -->
+  <SfIcon
+    v-if="data?.icon"
+    :icon="data.icon"
+    :size="size"
+    @success="onIconSuccess"
+    @fail="onIconFail"
+  />
+  <!-- 无 icon 数据：使用 SfImg 加载图片 -->
   <SfImg
-    v-if="status !== 'fallback'"
+    v-else-if="status !== 'fallback'"
     :src="finalSrc"
     :style="boxStyle"
     fit="cover"
@@ -11,14 +19,17 @@
     <!-- 屏蔽默认错误占位，避免重试过程中闪现 Load failed -->
     <template #error><span /></template>
   </SfImg>
-  <!-- 两次失败：显示 data 的第一个字 -->
+  <!-- 失败回退：显示首字（可通过 fallback 插槽自定义） -->
   <div v-else :style="boxStyle" class="flex-c text-center">
-    {{ firstChar }}
+    <slot name="fallback">
+      {{ firstChar }}
+    </slot>
   </div>
 </template>
 
 <script setup lang="ts">
 import SfImg from "@/components/el/img/img.vue";
+import SfIcon from "@/components/base/icon/icon.vue";
 
 defineOptions({ name: "SfAutoImg" });
 
@@ -73,6 +84,16 @@ const finalSrc = ref<string>("");
 // 标记是否已尝试 favicon 回退，避免循环
 const triedFavicon = ref(false);
 
+// SfIcon 加载成功
+function onIconSuccess() {
+  status.value = "success";
+}
+
+// SfIcon 加载失败，回退到文字
+function onIconFail() {
+  status.value = "fallback";
+}
+
 // SfImg 加载成功回调
 function onLoad() {
   status.value = "success";
@@ -93,11 +114,14 @@ function onError() {
   }
 }
 
-// data.img 变化时：重置状态，交给 SfImg 的回调判定
+// img 或 icon 变化时：重置状态，交给对应组件控制
 watch(
-  () => props.data?.img,
-  (img) => {
+  [() => props.data?.img, () => props.data?.icon],
+  ([img, icon]) => {
     status.value = "loading";
+    // 有 icon 数据时，由 SfIcon 控制加载状态
+    if (icon) return;
+
     triedFavicon.value = false;
     const rawSrc = img || "";
     if (!rawSrc) {
