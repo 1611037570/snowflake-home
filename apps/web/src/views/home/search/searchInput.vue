@@ -2,7 +2,7 @@
   <div
     class="translate translate shadow-3xl relative flex h-10 items-center rounded-3xl transition-all duration-300"
     :class="[
-      searchFocus ? 'bg-sf-primary' : 'bg-sf-transparent-2 hover:bg-sf-transparent',
+      searchFocus ? 'bg-sf-primary' : 'bg-sf-transparent-2',
       searchFocus ? 'w-[590px]' : 'w-[230px] hover:w-[590px]',
     ]"
     style="backdrop-filter: blur(10px) saturate(1.5)"
