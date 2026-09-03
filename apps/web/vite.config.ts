@@ -1,5 +1,7 @@
 // 路径处理模块
 import { fileURLToPath, URL } from "node:url";
+// Node文件系统模块
+import { writeFileSync } from "node:fs";
 
 // Tailwind CSS插件
 import tailwindcss from "@tailwindcss/vite";
@@ -30,6 +32,34 @@ import { dynamicComponentResolver } from "./src/components";
 
 // Element Plus 按需样式导入
 import ElementPlus from "unplugin-element-plus/vite";
+
+/**
+ * 版本注入插件
+ * 构建时根据时间戳自动生成版本号，注入到源码常量并写回 public/version.json
+ */
+function versionPlugin() {
+  // 时间戳版本号，打包间隔不会重复
+  const version = String(Date.now());
+  return {
+    name: "version-inject",
+    config() {
+      return {
+        // 注入全局常量，供 src/configs/modules/version.ts 使用
+        define: {
+          __APP_VERSION__: JSON.stringify(version),
+        },
+      };
+    },
+    configResolved(resolved: any) {
+      // 仅构建时写回 version.json，保证与打包版本一致
+      if (resolved.command === "build") {
+        const versionJsonPath = fileURLToPath(new URL("./public/version.json", import.meta.url));
+        writeFileSync(versionJsonPath, JSON.stringify({ version }, null, 2), "utf-8");
+      }
+    },
+  };
+}
+
 // Vite配置导出
 export default ({ mode }: { mode: string }) => {
   // 从环境文件加载环境变量
@@ -48,6 +78,8 @@ export default ({ mode }: { mode: string }) => {
       hmr: true, // 启用服务端渲染
     },
     plugins: [
+      // 版本注入插件（自动生成时间戳版本号）
+      versionPlugin(),
       // Vue 3 插件配置
       vue(),
       // Tailwind CSS插件配置
