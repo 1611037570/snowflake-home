@@ -2,6 +2,7 @@
 import { inject, computed } from "vue";
 import { useResumeStore } from "@/stores";
 import { storeToRefs } from "pinia";
+import { hasModuleNewValue } from "../usePreviewData";
 
 const resumeStore = useResumeStore();
 const { selectedModule } = storeToRefs(resumeStore);
@@ -16,45 +17,12 @@ defineEmits(["discard", "accept", "select"]);
 const isSelected = computed(() => selectedModule.value.find((item) => item.key === props.modelKey));
 // 接收上游注入的预览数据
 const previewData = inject("previewData");
-// 获取当前模块的代理数据
-const moduleData = computed(() => {
-  if (!previewData || !props.modelKey) return null;
-  return previewData.value[props.modelKey];
-});
-// 判断当前模块是否有待应用的 AI 草稿
+// 判断当前模块是否有待应用的 AI 草稿：
+// 模块存在性走预览代理，草稿有无走模块级计数索引，O(1) 判定替代整树递归扫描
 const hasNewData = computed(() => {
-  const module = moduleData.value;
-  if (!module || typeof module !== "object") return false;
-
-  // 递归检查函数
-  const checkHasNew = (node) => {
-    // 基础类型直接返回 false
-    if (node === null || typeof node !== "object") return false;
-
-    // 判断是否是叶子字段（拥有 value 和 newValue 属性）
-    if ("value" in node && "newValue" in node) {
-      // 注意：newValue 可能是空字符串、null、undefined，需要判断是否非空
-      return node.newValue != null && node.newValue !== "";
-    }
-
-    // 如果是数组，遍历每个元素
-    if (Array.isArray(node)) {
-      return node.some((item) => checkHasNew(item));
-    }
-
-    // 如果是普通对象（非数组、非叶子），遍历其所有属性值
-    // 使用 Object.values 或 for...in
-    for (const key in node) {
-      if (Object.prototype.hasOwnProperty.call(node, key)) {
-        if (checkHasNew(node[key])) {
-          return true; // 一旦找到立即返回，提高效率
-        }
-      }
-    }
-    return false;
-  };
-
-  return checkHasNew(module);
+  if (!props.modelKey) return false;
+  if (!previewData?.value?.[props.modelKey]) return false;
+  return hasModuleNewValue(props.modelKey);
 });
 // 点击选择/取消选择模块：已选中则从列表移除，未选中则加入
 const handleSelect = () => {
