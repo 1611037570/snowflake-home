@@ -10,7 +10,7 @@ export const useHomeStore = defineStore(
   () => {
     const systemVisible = ref(false);
     const autoHideDock = ref(false);
-    const tabIndex = ref(0);
+    const tabIndex = ref(1);
     const aboutVisible = ref(false);
     const fishCount = ref(0);
 
