@@ -1,7 +1,5 @@
 <script setup>
 import { useNoteStore, useThemeStore } from "@/stores";
-import { MdEditor } from "md-editor-v3";
-import "md-editor-v3/lib/style.css";
 import NoteList from "./components/noteList.vue";
 const noteStore = useNoteStore();
 const themeStore = useThemeStore();
@@ -86,17 +84,12 @@ const noteStatusList = computed(() => {
         </div>
         <div class="flex w-full flex-1 gap-2 overflow-hidden">
           <div class="flex-1 overflow-auto">
-            <!-- Markdown 编辑器：纯编辑模式，禁用预览和自定义滚动条 -->
-            <MdEditor
-              v-model="currentNote.value"
-              placeholder="Please input"
-              style="height: 100%"
+            <!-- Markdown 纯预览模式：使用 SfMdPreview 展示渲染结果 -->
+            <SfMdPreview
+              :modelValue="currentNote.value"
               :theme="theme"
-              :toolbarsExclude="['github', 'save', 'htmlPreview', 'catalog', 'preview']"
               editorId="note-editor"
-              :maxLength="200"
-              :htmlPreview="false"
-              :preview="false"
+              style="height: 100%"
             />
           </div>
           <div class="flex-1 overflow-auto">
