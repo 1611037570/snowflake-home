@@ -1,6 +1,11 @@
 <template>
   <!-- 项目运行时间卡片 -->
   <div class="px-3 text-center">
+    <div class="mb-3">
+      作者<span class="cursor-pointer text-sf-theme" @click="userNavigation">{{
+        $t("user.name")
+      }}</span>
+    </div>
     <div class="mb-3 flex items-center justify-center text-base font-medium text-sf-text">
       已运行
 
@@ -13,6 +18,7 @@
 </template>
 
 <script setup>
+import { userNavigation } from "@/utils";
 import dayjs from "dayjs";
 
 // 项目开始时间

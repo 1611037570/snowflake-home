@@ -7,6 +7,8 @@
         @close="previewVisible = false"
       />
     </Teleport>
+    <div class="my-3 text-center text-2xl font-bold text-sf-text">项目发展历程</div>
+
     <!-- 项目历程时间线 -->
     <div class="relative">
       <!-- 时间线垂直轴 -->
