@@ -79,6 +79,21 @@ const areValuesEqual = (left: any, right: any): boolean => {
 const newValueStore = reactive<Record<string, any>>({});
 
 /**
+ * 模块草稿计数索引：moduleKey → 该模块下非空草稿字段数
+ * 在 setNewValue / clearAllNewValues / clearModuleNewValues 处同步维护，
+ * 使模块级"是否有草稿"判定从递归扫描降为 O(1) 取数（无草稿模块不收录）
+ */
+const moduleDraftCount = reactive<Record<string, number>>({});
+
+/**
+ * 模块是否有非空草稿（O(1) 索引判定）
+ * @param moduleKey - 模块 key（即顶层字段名，如 "user"、"custom_xxx"）
+ * @returns 该模块下是否存在非空草稿字段
+ */
+export const hasModuleNewValue = (moduleKey: string): boolean =>
+  (moduleDraftCount[moduleKey] ?? 0) > 0;
+
+/**
  * 读取某路径的草稿值
  * @param path - 字段路径
  * @returns 草稿值，若不存在则返回空字符串
@@ -89,14 +104,28 @@ const getNewValue = (path: string): any => newValueStore[path] ?? "";
  * 写入某路径的草稿值
  * - 若 value 有效（非 null/undefined/空字符串），则存储
  * - 否则删除该路径的草稿（视为清空）
+ * 同时同步维护该路径所属模块的草稿计数（路径首段即模块 key）
  * @param path - 字段路径
  * @param value - 要写入的值
  */
 const setNewValue = (path: string, value: any): void => {
+  // 记录写入前后是否有值，仅状态翻转时更新模块计数
+  const prev = newValueStore[path];
+  const hasPrev = prev != null && prev !== "";
+  const hasNext = value != null && value !== "";
   if (value != null && value !== "") {
     newValueStore[path] = value;
   } else {
     delete newValueStore[path];
+  }
+  if (hasPrev === hasNext) return;
+  const moduleKey = path.split(".")[0]!;
+  if (hasNext) {
+    moduleDraftCount[moduleKey] = (moduleDraftCount[moduleKey] ?? 0) + 1;
+  } else {
+    const count = (moduleDraftCount[moduleKey] ?? 0) - 1;
+    if (count <= 0) delete moduleDraftCount[moduleKey];
+    else moduleDraftCount[moduleKey] = count;
   }
 };
 
@@ -105,6 +134,7 @@ const setNewValue = (path: string, value: any): void => {
  */
 const clearAllNewValues = (): void => {
   Object.keys(newValueStore).forEach((k) => delete newValueStore[k]);
+  Object.keys(moduleDraftCount).forEach((k) => delete moduleDraftCount[k]);
 };
 
 // 清空指定模块的 AI 草稿
@@ -113,6 +143,7 @@ const clearModuleNewValues = (moduleKey: string): void => {
   Object.keys(newValueStore).forEach((path) => {
     if (path === moduleKey || path.startsWith(prefix)) delete newValueStore[path];
   });
+  delete moduleDraftCount[moduleKey];
 };
 
 // ---------- 字段代理工厂（叶子节点） ----------
