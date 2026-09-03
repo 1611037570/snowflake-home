@@ -10,40 +10,50 @@ export const historyList = [
     desc: "未完待续",
   },
   {
+    time: "2026-09-03",
+    desc: "发布轻舟简历V1.0——以此简历 渡万重山",
+    url: "/resume",
+  },
+  {
+    time: "2026-08-05",
+    desc: "升级全站技术架构 启用 Pnpm MonoRepo 管理方案",
+  },
+  {
     time: "2025-11-22",
-    desc: "使用vue3 + vite + typescript 全面重构。",
+    desc: "升级前端技术栈 至 Vue3 + Vite + TypeScript",
   },
   {
     time: "2024-11-22",
-    desc: "新增简历生成器，快速制作属于自己的简历。",
+    desc: "上线简历生成器Beta——快速制作属于自己的简历",
     url: "/resume",
   },
   {
     time: "2023-11-22",
-    desc: "新增图片处理工具",
+    desc: "发布图省事V1.0——快速处理图片格式与大小",
     url: "/image",
   },
   {
     time: "2022-11-22",
-    desc: "个人主页上线",
+    desc: "发布个人主页V1.0——逆转时空的公式就是珍惜现在",
     url: "/index",
   },
   {
     time: "2021-11-22",
     img: version2,
-    desc: "雪花起始页2.0上线",
+    desc: "发布雪花起始页V2.0",
     url: "/home",
   },
   {
     time: "2020-11-22",
     img: version1,
-    desc: "雪花起始页1.0正式发布",
+    desc: "发布雪花起始页V1.0——如雪纯净的浏览器起点",
     url: "/home",
   },
   {
     time: "2020-9-3",
     img: startImg,
-    desc: "重生 [nannan.work]站点启用，新的起始页上线~",
+    desc: "梦开始的地方 新的起始页[nannan.work]启用~",
+    url: "/home",
   },
   {
     time: "2016-8-16",
@@ -52,7 +62,7 @@ export const historyList = [
   },
   {
     time: "2015-5-10",
-    desc: "通过虚拟主机搭建第一个起始页",
+    desc: "上线第一个起始页",
     img: start,
   },
 ];
