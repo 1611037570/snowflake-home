@@ -5,6 +5,7 @@ import { computed, provide, ref } from "vue";
 import MeasureContent from "../components/measureContent.vue";
 import DiffPopover from "../components/diffPopover.vue";
 import ResumeModule from "../modules/index.vue";
+import ModuleActions from "./moduleActions.vue";
 import {
   PAGE_NUMBER_HEIGHT,
   RESUME_CONTAINER_HEIGHT,
@@ -87,6 +88,9 @@ const setSingleMeasure = (el) => (measureRef.value = el);
 useResumeExport({ isEdit, rootRef, measureRef });
 // 智能一页：计算、参数应用与事件注册均由 hook 内部管理
 useSmartOnePage({ ui, showPageNumber, moduleList, currentUI, isEdit });
+
+const acceptModule = inject("acceptModule", () => {});
+const rejectModule = inject("rejectModule", () => {});
 </script>
 
 <template>
@@ -156,8 +160,12 @@ useSmartOnePage({ ui, showPageNumber, moduleList, currentUI, isEdit });
             :data-module="slice.moduleKey"
             :class="moduleClass(slice)"
           >
-            <!-- 编辑态操作按钮插槽（编辑器预览传入 ModuleActions） -->
-            <slot v-if="isEdit" name="moduleActions" :slice="slice" />
+            <ModuleActions
+              v-if="isEdit"
+              :modelKey="slice.moduleKey"
+              @accept="acceptModule(slice.moduleKey)"
+              @discard="rejectModule(slice.moduleKey)"
+            />
             <ResumeModule :data="props.item.data" :name="slice.moduleKey" />
           </div>
         </div>
