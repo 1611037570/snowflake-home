@@ -1,5 +1,5 @@
 <script setup>
-import { computed, inject, onBeforeUnmount, onMounted, ref } from "vue";
+import { computed, inject, onBeforeUnmount, onMounted } from "vue";
 import { storeToRefs } from "pinia";
 import { useResumeStore } from "@/stores";
 import DiffContent from "./diffContent.vue";
@@ -22,43 +22,40 @@ const props = defineProps({
 // 打印/导出期间强制展示原值，隐藏 diff 对比效果
 const { isPrinting } = storeToRefs(useResumeStore());
 
-// 编辑态标记：由 resumePages 注入；仅编辑态多页开放 diff 悬浮交互，单页/只读不开放
-const isEdit = inject("isEdit", ref(false));
-// 测量模式标记：由离屏测量容器注入；该模式下跳过 registry 注册与高亮 class，减少双份实例开销
-const isMeasureMode = inject("isMeasureMode", false);
+// diff 交互开关：仅实际分页内容（ResumePageShell 子树）注入 true，测量容器与非编辑态默认 false
+const enableDiff = inject("enableDiff", false);
 
 // 字段唯一标识：元素上以 data-field-key 标记，供容器事件委托定位；挂载注册、卸载注销
 const fieldKey = `df-${++diffFieldSeq}`;
 onMounted(() => {
-  // 测量模式不注册：离屏容器不可交互，注册只会让 registry 实例数翻倍
-  if (isMeasureMode) return;
+  // 非 diff 交互场景不注册：离屏测量容器与只读预览均无需悬浮交互
+  if (!enableDiff) return;
   diffFieldRegistry.set(fieldKey, { model: () => model.value, html: props.html });
 });
 onBeforeUnmount(() => {
-  if (isMeasureMode) return;
+  if (!enableDiff) return;
   diffFieldRegistry.delete(fieldKey);
 });
 
-// 字段快照：非编辑态 model 为原始值，编辑态为 { value, newValue } 代理，归一化供渲染判定
+// 字段快照：编辑态 model 为 { value, newValue } 代理，非编辑态为原始值；按 newValue 属性自动区分结构
 const fieldSnap = computed(() => {
   const v = model.value;
   if (v == null) return { value: "", newValue: "", hasNew: false };
-  if (!isEdit.value) return { value: v, newValue: "", hasNew: false };
-  const value = v.value ?? "";
-  const newValue = v.newValue ?? "";
-  return { value, newValue, hasNew: newValue !== "" };
+  if (typeof v === "object" && "newValue" in v) {
+    const value = v.value ?? "";
+    const newValue = v.newValue ?? "";
+    return { value, newValue, hasNew: newValue !== "" };
+  }
+  return { value: v, newValue: "", hasNew: false };
 });
 // 文档流统一渲染：有草稿显示新增，否则显示原值；打印时固定展示原值
 const documentContent = computed(() =>
   isPrinting.value ? fieldSnap.value.value : fieldSnap.value.newValue || fieldSnap.value.value,
 );
-// 草稿高亮：仅编辑态可点击时展示光标提示；测量模式跳过（高亮类仅 bg/rounded/cursor，不含 padding/border，不影响行高）
+// 草稿高亮：仅开启 diff 交互且有草稿时展示，其余场景不高亮
 const documentClass = computed(() => {
-  if (isMeasureMode) return "";
-  if (isPrinting.value || !fieldSnap.value.hasNew) return "";
-  return isEdit.value
-    ? "cursor-pointer rounded-xl bg-[#e8f5e9] text-[#2e7d32]"
-    : "rounded-xl bg-[#e8f5e9] text-[#2e7d32]";
+  if (!enableDiff || isPrinting.value || !fieldSnap.value.hasNew) return "";
+  return "cursor-pointer rounded-xl bg-[#e8f5e9] text-[#2e7d32]";
 });
 // 文档流有内容才渲染（与 documentContent 空判等价，避免重复判断）
 const hasContent = computed(() => documentContent.value !== "");
