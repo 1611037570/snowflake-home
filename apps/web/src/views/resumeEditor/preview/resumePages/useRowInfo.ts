@@ -98,6 +98,35 @@ export function useRowInfo(
   // 防抖窗口内累积的 DOM 变更，用于定位受影响模块做增量重扫
   let pendingMutations: MutationRecord[] = [];
 
+  // 行级尺寸观察：观察模块 wrapper 高度变化（任何行高变化都会反映到 wrapper 高度），
+  // 替代 MutationObserver 的 characterData 逐字符监听，只在高度真正变化时触发测量
+  const observedWrappers = new Set<Element>();
+  // 防抖窗口内累积的高度变化目标（wrapper 元素），按 data-module 定位模块做增量重扫
+  let pendingResizeTargets: Element[] = [];
+  const rowObserver = new ResizeObserver((entries) => {
+    for (const entry of entries) pendingResizeTargets.push(entry.target);
+    scheduleMeasure();
+  });
+
+  /** 同步行级观察集合：新增 wrapper 挂观察、消失的 wrapper 取消观察，保持观察对象与当前 DOM 一致 */
+  const syncRowObservers = (root: HTMLElement): void => {
+    const wrappers = root.querySelectorAll<HTMLElement>(selector);
+    const live = new Set<Element>();
+    wrappers.forEach((el) => live.add(el));
+    for (const el of observedWrappers) {
+      if (!live.has(el)) {
+        rowObserver.unobserve(el);
+        observedWrappers.delete(el);
+      }
+    }
+    wrappers.forEach((el) => {
+      if (!observedWrappers.has(el)) {
+        rowObserver.observe(el);
+        observedWrappers.add(el);
+      }
+    });
+  };
+
   /** 从变更目标向上查找最近的模块包装元素，用于定位受影响模块 */
   const findWrapper = (target: Node, root: HTMLElement): HTMLElement | null => {
     let el: HTMLElement | null =
@@ -121,11 +150,18 @@ export function useRowInfo(
     if (!root) {
       moduleList.value = [];
       pendingMutations = [];
+      pendingResizeTargets = [];
+      // 容器销毁时同步清空行级观察，避免残留引用
+      observedWrappers.forEach((el) => rowObserver.unobserve(el));
+      observedWrappers.clear();
       return;
     }
     // 取出防抖窗口内累积的变更，用于增量定位受影响模块
     const mutations = pendingMutations;
     pendingMutations = [];
+    // 取出防抖窗口内累积的高度变化目标（wrapper 元素）
+    const resizeTargets = pendingResizeTargets;
+    pendingResizeTargets = [];
     const wrappers = Array.from(root.querySelectorAll<HTMLElement>(selector));
 
     // 增量定位：收集变更目标所在模块 key；定位不到（结构增删/初始化/尺寸样式变化）时回退全量重扫
@@ -134,6 +170,12 @@ export function useRowInfo(
       for (const mutation of mutations) {
         const wrapper = findWrapper(mutation.target, root);
         if (wrapper?.dataset.module) affectedKeys.add(wrapper.dataset.module);
+      }
+    }
+    // 行级尺寸变化定位：target 即 wrapper 本体，直接按其 data-module 增量重扫
+    if (resizeTargets.length > 0) {
+      for (const el of resizeTargets) {
+        if (el instanceof HTMLElement && el.dataset.module) affectedKeys.add(el.dataset.module);
       }
     }
     const measureAll = affectedKeys.size === 0;
@@ -162,6 +204,8 @@ export function useRowInfo(
         stopAll?.();
       }
     }
+    // 按当前 DOM 同步行级观察集合（模块增删后挂载/解除对应的观察）
+    syncRowObservers(root);
   };
   // 统一调度入口：尺寸/内容/样式/根变化等触发源全部汇聚到这里合并调度，
   // 同批次内已调度时仅累积变更记录，避免重复触发测量（同一防抖窗口内只测一次）
@@ -186,22 +230,24 @@ export function useRowInfo(
     options?.observeResize === false
       ? { stop: () => {} }
       : useResizeObserver(rootRef, () => scheduleMeasure());
-  // 容器内 DOM 增删、文本变化时重新测量（内容编辑会改变高度）
-  // 变更记录累积到调度入口，防抖触发后按变更目标增量重扫，避免每次输入都全量扫描
+  // 容器内 DOM 结构增删（模块/行增删、内容挂载）时重新测量；
+  // 文本内容变化仅当引起行高变化时由行级 ResizeObserver 触发（见 measure 内 resizeTargets 定位），
+  // 不再监听 characterData，避免每次输入都进入测量调度
   const onMutation = (mutations: MutationRecord[]) => scheduleMeasure(mutations);
   const { stop: stopMutation } = useMutationObserver(rootRef, onMutation, {
     childList: true,
     subtree: true,
-    characterData: true,
   });
   // 样式配置（字号/行高/内边距）变化会改变高度，需重新测量
   const stopWatchOptions = watch(watchOptions, () => scheduleMeasure());
-  // 冻结后释放全部监听，避免缩略图测量完成后空跑
+  // 冻结后释放全部监听（含行级观察），避免缩略图测量完成后空跑
   stopAll = () => {
     stopWatchRoot();
     stopResize();
     stopMutation();
     stopWatchOptions();
+    rowObserver.disconnect();
+    observedWrappers.clear();
   };
 
   return { moduleList };
