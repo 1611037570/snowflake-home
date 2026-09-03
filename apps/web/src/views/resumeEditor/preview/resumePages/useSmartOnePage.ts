@@ -70,8 +70,8 @@ interface UseSmartOnePageOptions {
   moduleList: Ref<any[]>;
   /** 压缩结果写入的目标 ui（编辑态简历 store 的 currentUI） */
   currentUI: Ref<Record<string, any>>;
-  /** 只读模式（缩略图/全屏预览）不注册工具栏事件 */
-  isReadonly: ComputedRef<boolean>;
+  /** 编辑态才注册工具栏事件，其余模式（缩略图/全屏预览）不注册 */
+  isEdit: ComputedRef<boolean>;
   /** 可调节参数（数组顺序即压缩优先级），默认 defaultOnePageAdjustable */
   adjustable?: OnePageAdjustableItem[];
 }
@@ -81,7 +81,7 @@ export const useSmartOnePage = ({
   showPageNumber,
   moduleList,
   currentUI,
-  isReadonly,
+  isEdit,
   adjustable = defaultOnePageAdjustable,
 }: UseSmartOnePageOptions) => {
   // 复用调用方传入的预览层测量结果（二者共用同一份行高数据，无需再挂独立测量容器）
@@ -164,10 +164,10 @@ export const useSmartOnePage = ({
   };
   // 仅编辑态注册工具栏「一页纸」事件
   onMounted(() => {
-    if (!isReadonly.value) eventBus.on("resume-smart-one-page", onFitOnePage);
+    if (isEdit.value) eventBus.on("resume-smart-one-page", onFitOnePage);
   });
   onUnmounted(() => {
-    if (!isReadonly.value) eventBus.off("resume-smart-one-page", onFitOnePage);
+    if (isEdit.value) eventBus.off("resume-smart-one-page", onFitOnePage);
   });
 
   return { computeFit, onFitOnePage };

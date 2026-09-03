@@ -39,11 +39,14 @@ const props = defineProps({
 
 // 缩略图模式：仅渲染第一页，测量完成后冻结行数据
 const isThumb = computed(() => props.mode === "thumb");
-// 只读模式：不渲染模块操作按钮插槽
-const isReadonly = computed(() => props.mode !== "editor");
+// 全屏预览模式：只读展示，区别于编辑态与缩略图（当前仅作状态标识备用）
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const isPreview = computed(() => props.mode === "preview");
+// 编辑态标记：直接以 mode 判断编辑场景，仅编辑态开放模块操作与 diff 悬浮交互
+const isEdit = computed(() => props.mode === "editor");
 
 // 初始化过渡遮罩：盖住测量完成前的空页，1 秒后自动取消（仅编辑态展示）
-const { showInitMask } = useInitMask(isReadonly);
+const { showInitMask } = useInitMask();
 
 // 根元素 ref：导出时限定为当前实例的分页元素，避免误选其他 ResumePages 实例的页面
 const rootRef = ref(null);
@@ -76,21 +79,20 @@ const { measureDone, pages, pageStyleText, moduleClass, moduleList, isSinglePage
     showPageNumber,
     isThumb,
     selectedModule,
-    isReadonly,
+    isEdit,
     uid,
     allModules,
   },
 );
-// 编辑态标记向下注入：直接以 mode 判断编辑场景，编辑态开放 diff 悬浮交互
-const isEdit = computed(() => props.mode === "editor");
+// 编辑态标记向下注入：仅编辑态开放 diff 悬浮交互
 provide("isEdit", isEdit);
 // 单页组件根元素回传：rootRef 限定导出范围，measureRef 供测量与图片导出
 const setSingleRoot = (el) => (rootRef.value = el);
 const setSingleMeasure = (el) => (measureRef.value = el);
 // 导出：PDF/图片事件注册与注销由 hook 内部管理
-useResumeExport({ isReadonly, rootRef, measureRef });
+useResumeExport({ isEdit, rootRef, measureRef });
 // 智能一页：计算、参数应用与事件注册均由 hook 内部管理
-useSmartOnePage({ ui, showPageNumber, moduleList, currentUI, isReadonly });
+useSmartOnePage({ ui, showPageNumber, moduleList, currentUI, isEdit });
 </script>
 
 <template>
@@ -161,7 +163,7 @@ useSmartOnePage({ ui, showPageNumber, moduleList, currentUI, isReadonly });
             :class="moduleClass(slice)"
           >
             <!-- 编辑态操作按钮插槽（编辑器预览传入 ModuleActions） -->
-            <slot v-if="!isReadonly" name="moduleActions" :slice="slice" />
+            <slot v-if="isEdit" name="moduleActions" :slice="slice" />
             <ResumeModule :data="props.item.data" :name="slice.moduleKey" />
           </div>
         </div>

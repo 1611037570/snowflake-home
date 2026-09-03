@@ -29,7 +29,7 @@ interface UseResumePagesOptions {
   showPageNumber: ComputedRef<boolean>;
   isThumb: ComputedRef<boolean>;
   selectedModule: Ref<any[]>;
-  isReadonly: ComputedRef<boolean>;
+  isEdit: ComputedRef<boolean>;
   uid: string;
   /** 期望渲染的模块列表（缩略图模式用于判断测量完整） */
   allModules: ComputedRef<any[]>;
@@ -46,7 +46,7 @@ export const useResumePages = ({
   showPageNumber,
   isThumb,
   selectedModule,
-  isReadonly,
+  isEdit,
   uid,
   allModules,
 }: UseResumePagesOptions) => {
@@ -162,10 +162,10 @@ export const useResumePages = ({
     return result;
   });
 
-  // 模块外层样式：只读模式不渲染选中高亮与虚线框
+  // 模块外层样式：编辑态渲染选中高亮与虚线框，其余模式无交互样式
   const selectedKeys = computed(() => new Set(selectedModule.value.map((item) => item.key)));
   const moduleClass = (slice: PageSlice) => {
-    if (isReadonly.value) return "";
+    if (!isEdit.value) return "";
     const isSelected = selectedKeys.value.has(slice.moduleKey);
     return isSelected
       ? "outline-2 outline-offset-3 outline-dashed outline-sf-theme"
@@ -201,7 +201,9 @@ export const useResumePages = ({
 
   // 单页快路径：内容总高能放入一页时，渲染分支切换为单页（测量与渲染合一）
   // 判定公式与分页算法同口径，避免「判定一页但实际溢出」；无行的模块不产切片也不计间距
+  // 缩略图天然单页（仅渲染第一页），统一走多页裁剪分支即可，无需该判定
   const singlePage = computed(() => {
+    if (isThumb.value) return false;
     const list = moduleList.value;
     if (list.length === 0) return false;
     const padding = ui.value.padding || 0;
