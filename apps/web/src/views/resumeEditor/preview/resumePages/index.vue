@@ -71,19 +71,17 @@ const allModules = computed(() => {
   const configModules = props.item.config?.fields || [];
   return [...fixedModules, ...configModules];
 });
-const { measureDone, pages, pageStyleText, moduleClass, moduleList, isSinglePage } = useResumePages(
-  {
-    measureRef,
-    ui,
-    themeStyles,
-    showPageNumber,
-    isThumb,
-    selectedModule,
-    isEdit,
-    uid,
-    allModules,
-  },
-);
+const { measureDone, pages, pageStyleText, moduleClass, moduleList } = useResumePages({
+  measureRef,
+  ui,
+  themeStyles,
+  showPageNumber,
+  isThumb,
+  selectedModule,
+  isEdit,
+  uid,
+  allModules,
+});
 // 编辑态标记向下注入：仅编辑态开放 diff 悬浮交互
 provide("isEdit", isEdit);
 // 单页组件根元素回传：rootRef 限定导出范围，measureRef 供测量与图片导出
@@ -104,9 +102,9 @@ useSmartOnePage({ ui, showPageNumber, moduleList, currentUI, isEdit });
     >
       <SfIcon icon="lucide:loader-circle" :size="26" class="animate-spin text-sf-theme" />
     </div>
-    <!-- 单页快路径：内容放入一页时测量与渲染合一，不再常驻隐藏测量容器与分页裁剪；根元素由组件回传 -->
+    <!-- 缩略图视为单页：仅渲染第一页内容，测量与渲染合一，无需分页裁剪；根元素由组件回传 -->
     <PreviewSinglePage
-      v-if="isSinglePage"
+      v-if="isThumb"
       :item="props.item"
       :all-modules="allModules"
       :ui="ui"
@@ -117,7 +115,7 @@ useSmartOnePage({ ui, showPageNumber, moduleList, currentUI, isEdit });
     />
     <!-- 隐藏的测量容器：用于 useRowInfo 读取行高；多页时存在，缩略图测量完成后销毁 -->
     <div
-      v-if="!isSinglePage && !measureDone"
+      v-if="!isThumb && !measureDone"
       class="fixed -top-999 -left-999 flex h-auto flex-col bg-white text-black"
       ref="measureRef"
       :class="ui.fontFamily"
@@ -133,7 +131,7 @@ useSmartOnePage({ ui, showPageNumber, moduleList, currentUI, isEdit });
       </div>
     </div>
     <!-- 实际渲染的分页内容 -->
-    <div v-if="!isSinglePage" ref="rootRef" class="relative flex flex-col gap-3">
+    <div v-if="!isThumb" ref="rootRef" class="relative flex flex-col gap-3">
       <div
         v-for="(pageSlices, pageIndex) in pages"
         :key="pageIndex"
