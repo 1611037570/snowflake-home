@@ -27,6 +27,12 @@ export const historyList = [
   },
   {
     time: "2024-11-22",
+    // time:"2024-03-24"
+    desc: "上线简历生成器Beta——快速制作属于自己的简历",
+    url: "/resume",
+  },
+  {
+    time: "2024-03-24",
     desc: "上线简历生成器Beta——快速制作属于自己的简历",
     url: "/resume",
     img: resumeBeta,
@@ -36,6 +42,10 @@ export const historyList = [
     desc: "发布图省事V1.0——快速处理图片格式与大小",
     url: "/image",
     img: imageV1,
+  },
+  {
+    time: "2023-04-14",
+    desc: "升级为雪花组件库",
   },
   {
     time: "2022-11-22",
