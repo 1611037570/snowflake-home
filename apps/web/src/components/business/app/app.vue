@@ -8,7 +8,12 @@
       <div class="flex-c relative overflow-hidden rounded-xl" :style="imgStyle" :class="logoClass">
         <!-- 加载中：显示 SfIcon 加载动画 -->
         <SfIcon v-if="status === 'loading'" icon="line-md:loading-twotone-loop" :size="size" />
-        <SfAutoImg v-model:status="status" :data="data" :size="size" />
+        <SfAutoImg
+          v-model:status="status"
+          :data="data"
+          :size="size"
+          class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
+        />
       </div>
     </div>
     <div
