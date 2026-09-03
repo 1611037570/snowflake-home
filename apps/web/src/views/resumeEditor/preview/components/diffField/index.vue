@@ -84,7 +84,7 @@ const handleMouseLeave = () => {
   <!-- 纯文本 · 单页模式：仅渲染文档流，去掉悬浮监听与内层包装div，避免测量渲染时冗余DOM -->
   <div
     v-else-if="hasContent && isSinglePage"
-    class="relative w-full max-w-full min-w-0 wrap-break-word"
+    class="relative max-w-full min-w-0 break-words"
     :class="documentClass"
   >
     <DiffContent :content="documentContent" :html="html" />
@@ -94,7 +94,7 @@ const handleMouseLeave = () => {
   <div
     v-else-if="hasContent"
     ref="rootRef"
-    class="relative max-w-full min-w-0 wrap-break-word"
+    class="relative max-w-full min-w-0 break-words"
     v-on="newValueContent ? { mouseenter: handleMouseEnter, mouseleave: handleMouseLeave } : {}"
   >
     <!-- 文档流：有草稿显示新增内容，否则显示原值 -->
