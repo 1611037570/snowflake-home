@@ -6,7 +6,7 @@ const { homeModalVisible } = storeToRefs(passwordStore);
 </script>
 
 <template>
-  <SfModal v-if="homeModalVisible" v-model="homeModalVisible">
+  <SfModal v-model="homeModalVisible">
     <PasswordBox />
   </SfModal>
 </template>
