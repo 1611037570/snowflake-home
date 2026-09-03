@@ -25,8 +25,6 @@ interface UseResumePagesOptions {
   ui: ComputedRef<Record<string, any>>;
   showPageNumber: ComputedRef<boolean>;
   isThumb: ComputedRef<boolean>;
-  selectedModule: Ref<any[]>;
-  isEdit: ComputedRef<boolean>;
   uid: string;
   /** 期望渲染的模块列表（缩略图模式用于判断测量完整） */
   allModules: ComputedRef<any[]>;
@@ -41,8 +39,6 @@ export const useResumePages = ({
   ui,
   showPageNumber,
   isThumb,
-  selectedModule,
-  isEdit,
   uid,
   allModules,
 }: UseResumePagesOptions) => {
@@ -158,16 +154,6 @@ export const useResumePages = ({
     return result;
   });
 
-  // 模块外层样式：编辑态渲染选中高亮与虚线框，其余模式无交互样式
-  const selectedKeys = computed(() => new Set(selectedModule.value.map((item) => item.key)));
-  const moduleClass = (slice: PageSlice) => {
-    if (!isEdit.value) return "";
-    const isSelected = selectedKeys.value.has(slice.moduleKey);
-    return isSelected
-      ? "outline-2 outline-offset-3 outline-dashed outline-sf-theme"
-      : "outline-2 outline-offset-3 outline-dashed outline-transparent hover:outline-sf-theme-2";
-  };
-
   // 生成每页可见行裁剪样式；分页按顺序切分，隐藏行必为区间两端，
   // 用 nth-child 区间选择器替代逐行枚举，避免选择器随行数膨胀
   const buildPageStyle = (pageSlices: PageSlice[], pageIndex: number) => {
@@ -196,5 +182,5 @@ export const useResumePages = ({
   );
 
   // 透出测量结果（模块行高），供智能一页等上层逻辑按比例压缩参数
-  return { measureDone, pages, pageStyleText, moduleClass, moduleList };
+  return { measureDone, pages, pageStyleText, moduleList };
 };

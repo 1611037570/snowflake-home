@@ -69,16 +69,28 @@ const allModules = computed(() => {
   const configModules = props.item.config?.fields || [];
   return [...fixedModules, ...configModules];
 });
-const { measureDone, pages, pageStyleText, moduleClass, moduleList } = useResumePages({
+const { measureDone, pages, pageStyleText, moduleList } = useResumePages({
   measureRef,
   ui,
   showPageNumber,
   isThumb,
-  selectedModule,
-  isEdit,
   uid,
   allModules,
 });
+// 模块外层样式：编辑态渲染选中高亮与虚线框，非编辑态直接返回空对象
+const selectedKeys = computed(() => new Set(selectedModule.value.map((item) => item.key)));
+const moduleClassMap = computed(() => {
+  if (!isEdit.value) return {};
+  const keys = selectedKeys.value;
+  const map: Record<string, string> = {};
+  for (const mod of moduleList.value) {
+    map[mod.moduleKey] = keys.has(mod.moduleKey)
+      ? "outline-2 outline-offset-3 outline-dashed outline-sf-theme"
+      : "outline-2 outline-offset-3 outline-dashed outline-transparent hover:outline-sf-theme-2";
+  }
+  return map;
+});
+
 // 编辑态标记向下注入：仅编辑态开放 diff 悬浮交互
 const emit = defineEmits(["resume-export-success"]);
 provide("isEdit", isEdit);
@@ -162,7 +174,7 @@ const rejectModule = inject("rejectModule", () => {});
             :key="slice.moduleKey"
             class="resume-module-wrapper group group/module relative rounded-xl"
             :data-module="slice.moduleKey"
-            :class="moduleClass(slice)"
+            :class="moduleClassMap[slice.moduleKey]"
           >
             <ModuleActions
               v-if="isEdit"
