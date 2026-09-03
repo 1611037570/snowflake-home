@@ -1,8 +1,10 @@
 import predecessor from "@/assets/images/predecessor.jpg";
 import startImg from "@/assets/images/start.jpg";
 import start from "@/assets/images/start.png";
-import version1 from "@/assets/images/version1.webp";
-import version2 from "@/assets/images/version2.webp";
+import homeV1 from "@/assets/images/version/home-v1.webp";
+import homeV2 from "@/assets/images/version/home-v2.webp";
+import indexV1 from "@/assets/images/version/index-v1.webp";
+import imageV1 from "@/assets/images/version/image-v1.webp";
 import dayjs from "dayjs";
 export const historyList = [
   {
@@ -31,23 +33,25 @@ export const historyList = [
     time: "2023-11-22",
     desc: "发布图省事V1.0——快速处理图片格式与大小",
     url: "/image",
+    img: imageV1,
   },
   {
     time: "2022-11-22",
     desc: "发布个人主页V1.0——逆转时空的公式就是珍惜现在",
     url: "/index",
+    img: indexV1,
   },
   {
     time: "2021-11-22",
-    img: version2,
     desc: "发布雪花起始页V2.0",
     url: "/home",
+    img: homeV2,
   },
   {
     time: "2020-11-22",
-    img: version1,
     desc: "发布雪花起始页V1.0——如雪纯净的浏览器起点",
     url: "/home",
+    img: homeV1,
   },
   {
     time: "2020-9-3",
