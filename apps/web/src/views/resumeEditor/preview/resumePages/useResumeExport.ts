@@ -6,9 +6,8 @@
  */
 import { onMounted, onUnmounted, type ComputedRef, type Ref } from "vue";
 import eventBus from "@/utils/modules/eventBus";
-import { printPDF as exportPdf } from "../pdfExport";
-import { printImage as exportImage } from "../imageExport";
-
+import { printPDF as exportPdf } from "./usePdfExport";
+import { printImage as exportImage } from "./useImageExport";
 /** useResumeExport 入参 */
 interface UseResumeExportOptions {
   /** 编辑态才注册导出事件，其余模式（缩略图/全屏预览）不注册 */
