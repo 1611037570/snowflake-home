@@ -10,24 +10,19 @@
     </Title>
     <SfTab :list="sizeList" v-model="currentValue" @change="handleTabChange"></SfTab>
     <div class="my-3">预设尺寸</div>
-    <ElSelect
+    <SfSelect
       v-model="presetValue"
       placeholder="选择预设大小"
       class="mb-3"
+      :list="presetList"
       @change="handlePresetChange"
     >
-      <ElOption
-        v-for="item in presetList"
-        :key="item.value"
-        :label="item.name"
-        :value="item.value"
-      />
-    </ElSelect>
+    </SfSelect>
     <!-- 像素模式（编辑本地值，失焦后提交） -->
     <template v-if="currentValue === 'pixel'">
       <div class="flex items-center gap-2">
         <span class="text-sf-secondary w-8 text-sm">{{ $t("image.width") }}</span>
-        <ElInputNumber
+        <SfInputNumber
           v-model="localW"
           :min="1"
           :max="initialW"
@@ -38,7 +33,7 @@
       </div>
       <div class="flex items-center gap-2">
         <span class="text-sf-secondary w-8 text-sm">{{ $t("image.height") }}</span>
-        <ElInputNumber
+        <SfInputNumber
           v-model="localH"
           :min="1"
           :max="initialH"
@@ -53,7 +48,7 @@
     <template v-else>
       <div class="flex items-center gap-2">
         <span class="text-sf-secondary w-8 text-sm">{{ $t("image.ratio") }}</span>
-        <ElInputNumber
+        <SfInputNumber
           v-model="percent"
           :min="1"
           :max="100"

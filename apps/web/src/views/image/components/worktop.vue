@@ -1,7 +1,7 @@
 <template>
   <Title name="操作栏" />
   <div class="flex items-center" @click="crop">
-    <span class="text-sm font-medium">去裁切</span>
+    <!-- <span class="text-sm font-medium">去裁切</span> -->
   </div>
   <div class="mb-3 flex items-center justify-between">
     <div class="flex items-center">
