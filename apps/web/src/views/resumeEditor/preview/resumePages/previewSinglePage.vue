@@ -3,7 +3,7 @@
 // 由 ResumePages 在 isSinglePage 时挂载；根元素通过回调上报，供测量（useRowInfo）与导出复用
 import { useTemplateRef, watch } from "vue";
 import ResumeModule from "../modules/index.vue";
-import { PAGE_NUMBER_HEIGHT, RESUME_WIDTH, RESUME_HEIGHT } from "../constants";
+import { PAGE_NUMBER_HEIGHT, RESUME_CONTAINER_HEIGHT, RESUME_CONTAINER_WIDTH } from "../constants";
 
 defineOptions({ name: "PreviewSinglePage" });
 
@@ -50,17 +50,6 @@ watch(
   },
   { immediate: true },
 );
-
-const containerWidth = {
-  width: `${RESUME_WIDTH}px`,
-  minWidth: `${RESUME_WIDTH}px`,
-  maxWidth: `${RESUME_WIDTH}px`,
-};
-const containerHeight = {
-  height: `${RESUME_HEIGHT}px`,
-  minHeight: `${RESUME_HEIGHT}px`,
-  maxHeight: `${RESUME_HEIGHT}px`,
-};
 </script>
 
 <template>
@@ -73,8 +62,8 @@ const containerHeight = {
         styles.paddingStyle,
         styles.fontStyle,
         styles.lineHeightStyle,
-        containerWidth,
-        containerHeight,
+        RESUME_CONTAINER_WIDTH,
+        RESUME_CONTAINER_HEIGHT,
       ]"
     >
       <!-- 模块之间的间距由 ui.moduleSpacing 控制，与分页计算保持一致 -->

@@ -1,23 +1,26 @@
 <script setup>
 // 简历分页渲染可复用组件：接收 resumeItem（data/config/fixedConfig/ui），渲染分页后的简历页面
 // 数据源由 props 传入，不依赖 resume store；供编辑器预览、模板缩略图、全屏查看复用
-import { computed, inject, onMounted, onUnmounted, provide, ref } from "vue";
+import { computed, ref } from "vue";
 import MeasureContent from "../components/measureContent.vue";
 import DiffPopover from "../components/diffPopover.vue";
 import ResumeModule from "../modules/index.vue";
-import { PAGE_NUMBER_HEIGHT, RESUME_WIDTH, RESUME_HEIGHT } from "../constants";
-import { createPreviewProxy } from "../usePreviewData";
+import {
+  PAGE_NUMBER_HEIGHT,
+  RESUME_CONTAINER_HEIGHT,
+  RESUME_CONTAINER_WIDTH,
+  RESUME_HEIGHT,
+} from "../constants";
 import { useResumePages } from "./useResumePages";
 import { useResumeTheme } from "./useResumeTheme";
 import PreviewSinglePage from "./previewSinglePage.vue";
-import { printPDF as exportPdf } from "../pdfExport";
 import { useResumeStore } from "@/stores";
-import eventBus from "@/utils/modules/eventBus";
-import { printImage as exportImage } from "../imageExport";
-import { ElMessage } from "element-plus";
+import { useResumeExport } from "./useResumeExport";
+import { useInitMask } from "./useInitMask";
+import { useResumePreviewData } from "./useResumePreviewData";
 import { useSmartOnePage } from "./useSmartOnePage";
 const resumeStore = useResumeStore();
-const { selectedModule, system } = storeToRefs(resumeStore);
+const { selectedModule, system, currentUI } = storeToRefs(resumeStore);
 
 defineOptions({ name: "ResumePages" });
 
@@ -39,47 +42,19 @@ const isThumb = computed(() => props.mode === "thumb");
 // 只读模式：不渲染模块操作按钮插槽
 const isReadonly = computed(() => props.mode !== "editor");
 
+// 初始化过渡遮罩：盖住测量完成前的空页，1 秒后自动取消（仅编辑态展示）
+const { showInitMask } = useInitMask(isReadonly);
+
 // 根元素 ref：导出时限定为当前实例的分页元素，避免误选其他 ResumePages 实例的页面
 const rootRef = ref(null);
 const measureRef = ref(null);
-// 仅编辑器模式注册全局导出事件（缩略图/全屏预览不注册），将当前实例根节点 ref 传入纯函数
-const printPDF = () => exportPdf(rootRef);
-const printImage = () => exportImage(measureRef);
-// 初始化过渡遮罩：盖住测量完成前的空页，1 秒后自动取消（仅编辑态展示）
-const showInitMask = ref(true);
-let maskTimer = undefined;
-onMounted(() => {
-  maskTimer = window.setTimeout(() => (showInitMask.value = false), 1000);
-  if (!isReadonly.value) {
-    eventBus.on("resume-print-pdf", printPDF);
-    eventBus.on("resume-print-image", printImage);
-    // 智能一页：工具栏触发，由本实例内部完成计算与应用
-    eventBus.on("resume-smart-one-page", onFitOnePage);
-  }
-});
-onUnmounted(() => {
-  window.clearTimeout(maskTimer);
-  if (!isReadonly.value) {
-    eventBus.off("resume-print-pdf", printPDF);
-    eventBus.off("resume-print-image", printImage);
-    eventBus.off("resume-smart-one-page", onFitOnePage);
-  }
-});
 
 // 实例唯一前缀，避免多实例分页裁剪样式互相干扰
 const uid = `rp-${Math.random().toString(36).slice(2, 8)}`;
 
 // ---------- 数据代理（始终基于 props 传入的数据，多实例互不干扰）----------
 const dataRef = computed(() => props.item.data);
-// 父级已基于同一份数据创建过代理时直接复用，避免同一数据重复建代理树与重复挂 watch；
-// 缩略图、全屏预览等数据源不同的实例仍各自创建，保证多实例互不干扰
-const parentPreviewData = inject("previewData", null);
-const previewData = computed(() => {
-  const source = dataRef.value || {};
-  if (parentPreviewData?.value?.__source === source) return parentPreviewData.value;
-  return createPreviewProxy(source);
-});
-provide("previewData", previewData);
+useResumePreviewData(dataRef);
 
 // ---------- 主题样式注入（数据源为 item.ui）----------
 const ui = computed(() => props.item.ui || {});
@@ -109,36 +84,17 @@ const { measureDone, pages, pageStyleText, moduleClass, moduleList, isSinglePage
 // 单页组件根元素回传：rootRef 限定导出范围，measureRef 供测量与图片导出
 const setSingleRoot = (el) => (rootRef.value = el);
 const setSingleMeasure = (el) => (measureRef.value = el);
-// 智能一页：基于本实例测量结果内部计算压缩参数并写入 ui，工具栏通过事件触发
-const { currentUI } = storeToRefs(resumeStore);
-const { computeFit } = useSmartOnePage({ ui, showPageNumber, moduleList });
-const onFitOnePage = () => {
-  const result = computeFit();
-  if (!result) return;
-  if (result.ok) {
-    currentUI.value = { ...currentUI.value, ...result.fitParams };
-    ElMessage.success("简历已压缩为一页");
-  } else {
-    ElMessage.error("内容过长，无法压缩到一页");
-  }
-};
-const containerWidth = {
-  width: `${RESUME_WIDTH}px`,
-  minWidth: `${RESUME_WIDTH}px`,
-  maxWidth: `${RESUME_WIDTH}px`,
-};
-const containerHeight = {
-  height: `${RESUME_HEIGHT}px`,
-  minHeight: `${RESUME_HEIGHT}px`,
-  maxHeight: `${RESUME_HEIGHT}px`,
-};
+// 导出：PDF/图片事件注册与注销由 hook 内部管理
+useResumeExport({ isReadonly, rootRef, measureRef });
+// 智能一页：计算、参数应用与事件注册均由 hook 内部管理
+useSmartOnePage({ ui, showPageNumber, moduleList, currentUI, isReadonly });
 </script>
 
 <template>
   <div class="relative flex flex-col">
     <!-- 初始化过渡遮罩：盖住测量完成前的空页与分支切换，1 秒后自动取消（仅编辑态展示） -->
     <div
-      v-if="showInitMask && !isReadonly"
+      v-if="showInitMask"
       class="absolute inset-0 z-20 flex items-center justify-center rounded-3xl bg-white/80 backdrop-blur-sm"
     >
       <SfIcon icon="lucide:loader-circle" size="6" class="animate-spin text-sf-theme" />
@@ -160,13 +116,7 @@ const containerHeight = {
       class="fixed -top-999 -left-999 flex h-auto flex-col bg-white text-black"
       ref="measureRef"
       :class="ui.fontFamily"
-      :style="[
-        paddingStyle,
-        containerWidth,
-        {
-          minHeight: `${RESUME_HEIGHT}px`,
-        },
-      ]"
+      :style="[paddingStyle, RESUME_CONTAINER_WIDTH, { minHeight: `${RESUME_HEIGHT}px` }]"
     >
       <MeasureContent :all-modules="allModules" />
       <div
@@ -190,7 +140,13 @@ const containerHeight = {
             'border border-sf-b hover:border-sf-theme-2': mode === 'editor',
           },
         ]"
-        :style="[paddingStyle, fontStyle, lineHeightStyle, containerWidth, containerHeight]"
+        :style="[
+          paddingStyle,
+          fontStyle,
+          lineHeightStyle,
+          RESUME_CONTAINER_WIDTH,
+          RESUME_CONTAINER_HEIGHT,
+        ]"
       >
         <!-- 模块之间的间距由 ui.moduleSpacing 控制，与分页计算保持一致 -->
         <div class="flex flex-1 flex-col" :style="{ gap: `${ui.moduleSpacing}px` }">

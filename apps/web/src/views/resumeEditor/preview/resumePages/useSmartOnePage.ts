@@ -8,8 +8,13 @@
  *   - 模块间距、页边距对单页判断是精确的（与分页算法公式一致）
  *   - 行高、字号按比例缩放估算行高
  * 参数只向下压缩、不会回弹，按压缩优先级逐项进行。
+ *
+ * 事件与状态由本 hook 内部管理：编辑态注册「resume-smart-one-page」事件，
+ * 计算完成后直接把压缩参数写入目标 ui 并提示结果，调用方无需感知内部实现。
  */
-import type { ComputedRef, Ref } from "vue";
+import { onMounted, onUnmounted, type ComputedRef, type Ref } from "vue";
+import { ElMessage } from "element-plus";
+import eventBus from "@/utils/modules/eventBus";
 import { PAGE_NUMBER_HEIGHT, RESUME_HEIGHT } from "../constants";
 import {
   defaultFontSize,
@@ -63,6 +68,10 @@ interface UseSmartOnePageOptions {
   showPageNumber: ComputedRef<boolean>;
   /** 预览层测量结果（模块+行高），由编辑态 ResumePages 实例传入 */
   moduleList: Ref<any[]>;
+  /** 压缩结果写入的目标 ui（编辑态简历 store 的 currentUI） */
+  currentUI: Ref<Record<string, any>>;
+  /** 只读模式（缩略图/全屏预览）不注册工具栏事件 */
+  isReadonly: ComputedRef<boolean>;
   /** 可调节参数（数组顺序即压缩优先级），默认 defaultOnePageAdjustable */
   adjustable?: OnePageAdjustableItem[];
 }
@@ -71,6 +80,8 @@ export const useSmartOnePage = ({
   ui,
   showPageNumber,
   moduleList,
+  currentUI,
+  isReadonly,
   adjustable = defaultOnePageAdjustable,
 }: UseSmartOnePageOptions) => {
   // 复用调用方传入的预览层测量结果（二者共用同一份行高数据，无需再挂独立测量容器）
@@ -140,5 +151,24 @@ export const useSmartOnePage = ({
     return { fitParams: params, ok: false };
   };
 
-  return { computeFit };
+  // 应用压缩参数并提示结果；工具栏通过事件触发，计算与应用均由本 hook 内部完成
+  const onFitOnePage = () => {
+    const result = computeFit();
+    if (!result) return;
+    if (result.ok) {
+      currentUI.value = { ...currentUI.value, ...result.fitParams };
+      ElMessage.success("简历已压缩为一页");
+    } else {
+      ElMessage.error("内容过长，无法压缩到一页");
+    }
+  };
+  // 仅编辑态注册工具栏「一页纸」事件
+  onMounted(() => {
+    if (!isReadonly.value) eventBus.on("resume-smart-one-page", onFitOnePage);
+  });
+  onUnmounted(() => {
+    if (!isReadonly.value) eventBus.off("resume-smart-one-page", onFitOnePage);
+  });
+
+  return { computeFit, onFitOnePage };
 };
