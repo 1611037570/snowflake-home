@@ -3,7 +3,6 @@ import { useFileDialog } from "@/hooks";
 import { useHomeStore } from "@/stores";
 import { storeToRefs } from "pinia";
 import { VueDraggable } from "vue-draggable-plus";
-import SfMixImg from "@/components/business/mixImg/mixImg.vue";
 import AddShortcut from "./addShortcut.vue";
 import { ElMessage } from "element-plus";
 const { click } = useFileDialog();
