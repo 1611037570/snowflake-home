@@ -20,10 +20,18 @@
 </template>
 
 <script setup>
-import "@wangeditor-next/editor/dist/css/style.css"; // 引入 css
+import { defineAsyncComponent, onBeforeUnmount, onMounted, shallowRef } from "vue";
 
-import { Editor, Toolbar } from "@wangeditor-next/editor-for-vue";
-import { onBeforeUnmount, onMounted, shallowRef } from "vue";
+// 延迟加载 wangeditor 库及样式：组件实际渲染时才引入，避免编辑资源提前进包
+const Editor = defineAsyncComponent(() =>
+  import("@wangeditor-next/editor/dist/css/style.css").then(() =>
+    import("@wangeditor-next/editor-for-vue").then((m) => m.Editor),
+  ),
+);
+const Toolbar = defineAsyncComponent(() =>
+  import("@wangeditor-next/editor-for-vue").then((m) => m.Toolbar),
+);
+
 defineProps({
   height: {
     type: String,
