@@ -16,11 +16,13 @@ interface UseResumeExportOptions {
   rootRef: Ref<HTMLElement | null>;
   /** 测量容器 ref：图片导出数据源 */
   measureRef: Ref<HTMLElement | null>;
+  /** 导出成功回调 */
+  onExportSuccess?: () => void;
 }
 
-export const useResumeExport = ({ isEdit, rootRef, measureRef }: UseResumeExportOptions) => {
-  const printPDF = () => exportPdf(rootRef);
-  const printImage = () => exportImage(measureRef);
+export const useResumeExport = ({ isEdit, rootRef, measureRef, onExportSuccess }: UseResumeExportOptions) => {
+  const printPDF = () => exportPdf(rootRef, onExportSuccess);
+  const printImage = () => exportImage(measureRef, onExportSuccess);
   // 仅编辑模式注册全局导出事件
   onMounted(() => {
     if (isEdit.value) {

@@ -17,7 +17,11 @@ import { useResumeStore } from "@/stores";
  * 直接利用页面中已分页的 .resume-page-item 元素导出
  * @param rootRef 组件根元素 ref，用于限定导出范围，避免误选模板缩略图等其他 ResumePages 实例的页面
  */
-export const printPDF = async (rootRef?: { value: HTMLElement | null }) => {
+export const printPDF = async (
+  rootRef?: { value: HTMLElement | null },
+  /** 导出成功回调 */
+  onSuccess?: () => void,
+) => {
   // 保存当前选中的模块并清空，避免导出 PDF 时带上选中高亮
   const resumeStore = useResumeStore();
   const { selectedModule, isPrinting } = storeToRefs(resumeStore);
@@ -120,6 +124,7 @@ export const printPDF = async (rootRef?: { value: HTMLElement | null }) => {
     pdf.save(getExportFileName(resumeTitle.value, "pdf"));
 
     console.log(`成功导出 ${pages.length} 页 PDF`);
+    onSuccess?.();
   } catch (error) {
     console.error("生成PDF失败:", error);
   } finally {
