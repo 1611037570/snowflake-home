@@ -82,7 +82,7 @@ const selectedKeys = computed(() => new Set(selectedModule.value.map((item) => i
 const moduleClassMap = computed(() => {
   if (!isEdit.value) return {};
   const keys = selectedKeys.value;
-  const map: Record<string, string> = {};
+  const map = {};
   for (const mod of moduleList.value) {
     map[mod.moduleKey] = keys.has(mod.moduleKey)
       ? "outline-2 outline-offset-3 outline-dashed outline-sf-theme"
