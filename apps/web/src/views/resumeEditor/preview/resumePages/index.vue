@@ -1,28 +1,26 @@
 <script setup>
 // 简历分页渲染可复用组件：接收 resumeItem（data/config/fixedConfig/ui），渲染分页后的简历页面
 // 数据源由 props 传入，不依赖 resume store；供编辑器预览、模板缩略图、全屏查看复用
+// 本组件只做渲染编排（数据代理/主题注入/测量分页），导出、智能一页等编辑功能由上层 page.vue 注册
 import { computed, provide, ref } from "vue";
 import MeasureContent from "../components/measureContent.vue";
-import DiffPopover from "../components/diffPopover.vue";
-import ResumeModule from "../modules/index.vue";
-import ModuleActions from "./moduleActions.vue";
+import PreviewSinglePage from "./previewSinglePage.vue";
+import ResumePageShell from "./resumePageShell.vue";
+import ModuleSlot from "./moduleSlot.vue";
 import {
   PAGE_NUMBER_HEIGHT,
-  RESUME_CONTAINER_HEIGHT,
   RESUME_CONTAINER_WIDTH,
   RESUME_HEIGHT,
 } from "../constants";
 import { useResumePages } from "./useResumePages";
 import { useResumeTheme } from "./useResumeTheme";
-import PreviewSinglePage from "./previewSinglePage.vue";
 import { useResumeStore } from "@/stores";
-import { useResumeExport } from "./useResumeExport";
 import { useInitMask } from "./useInitMask";
 import { useResumePreviewData } from "./useResumePreviewData";
-import { useSmartOnePage } from "./useSmartOnePage";
+import { useModuleInteractions } from "./useModuleInteractions";
 
 const resumeStore = useResumeStore();
-const { selectedModule, system, currentUI } = storeToRefs(resumeStore);
+const { selectedModule, system } = storeToRefs(resumeStore);
 defineOptions({ name: "ResumePages" });
 
 const props = defineProps({
@@ -77,36 +75,21 @@ const { measureDone, pages, pageStyleText, moduleList } = useResumePages({
   uid,
   allModules,
 });
-// 模块外层样式：编辑态渲染选中高亮与虚线框，非编辑态直接返回空对象
-const selectedKeys = computed(() => new Set(selectedModule.value.map((item) => item.key)));
-const moduleClassMap = computed(() => {
-  if (!isEdit.value) return {};
-  const keys = selectedKeys.value;
-  const map = {};
-  for (const mod of moduleList.value) {
-    map[mod.moduleKey] = keys.has(mod.moduleKey)
-      ? "outline-2 outline-offset-3 outline-dashed outline-sf-theme"
-      : "outline-2 outline-offset-3 outline-dashed outline-transparent hover:outline-sf-theme-2";
-  }
-  return map;
+
+// ---------- 编辑态模块交互（选中高亮 / 草稿接受放弃）----------
+const { moduleClassMap, acceptModule, rejectModule } = useModuleInteractions({
+  isEdit,
+  moduleList,
+  selectedModule,
 });
 
 // 编辑态标记向下注入：仅编辑态开放 diff 悬浮交互
-const emit = defineEmits(["resume-export-success"]);
 provide("isEdit", isEdit);
 // 单页组件根元素回传：rootRef 限定导出范围，measureRef 供测量与图片导出
 const setSingleRoot = (el) => (rootRef.value = el);
 const setSingleMeasure = (el) => (measureRef.value = el);
-// 导出：PDF/图片事件注册与注销由 hook 内部管理
-const handleExportSuccess = () => {
-  emit("resume-export-success");
-};
-useResumeExport({ isEdit, rootRef, measureRef, onExportSuccess: handleExportSuccess });
-// 智能一页：计算、参数应用与事件注册均由 hook 内部管理
-useSmartOnePage({ ui, showPageNumber, moduleList, currentUI, isEdit });
-
-const acceptModule = inject("acceptModule", () => {});
-const rejectModule = inject("rejectModule", () => {});
+// 向上暴露导出范围与测量结果，供上层（page.vue）注册的导出/智能一页功能读取
+defineExpose({ rootEl: rootRef, measureEl: measureRef, moduleList });
 </script>
 
 <template>
@@ -148,54 +131,34 @@ const rejectModule = inject("rejectModule", () => {});
     </div>
     <!-- 实际渲染的分页内容 -->
     <div v-if="!isThumb" ref="rootRef" class="relative flex flex-col gap-3">
-      <div
+      <ResumePageShell
         v-for="(pageSlices, pageIndex) in pages"
         :key="pageIndex"
-        class="resume-page-item relative flex flex-col rounded-3xl bg-white text-black"
+        :ui="ui"
+        :styles="{ paddingStyle, fontStyle, lineHeightStyle }"
+        :show-page-number="showPageNumber"
+        :page-index="pageIndex"
+        :page-count="pages.length"
         :class="[
-          ui.fontFamily,
           `${uid}-page-${pageIndex}`,
           {
             'border border-sf-b hover:border-sf-theme-2': mode === 'editor',
           },
         ]"
-        :style="[
-          paddingStyle,
-          fontStyle,
-          lineHeightStyle,
-          RESUME_CONTAINER_WIDTH,
-          RESUME_CONTAINER_HEIGHT,
-        ]"
       >
-        <!-- 模块之间的间距由 ui.moduleSpacing 控制，与分页计算保持一致 -->
-        <div class="flex flex-1 flex-col" :style="{ gap: `${ui.moduleSpacing}px` }">
-          <div
-            v-for="slice in pageSlices"
-            :key="slice.moduleKey"
-            class="resume-module-wrapper group group/module relative rounded-xl"
-            :data-module="slice.moduleKey"
-            :class="moduleClassMap[slice.moduleKey]"
-          >
-            <ModuleActions
-              v-if="isEdit"
-              :modelKey="slice.moduleKey"
-              @accept="acceptModule(slice.moduleKey)"
-              @discard="rejectModule(slice.moduleKey)"
-            />
-            <ResumeModule :data="props.item.data" :name="slice.moduleKey" />
-          </div>
-        </div>
-        <div
-          v-if="showPageNumber"
-          class="flex-c py-3 text-xs opacity-50"
-          :style="{ height: `${PAGE_NUMBER_HEIGHT}px` }"
-        >
-          轻舟简历 · 第 {{ pageIndex + 1 }} 页 · 共 {{ pages.length }} 页
-        </div>
-      </div>
+        <ModuleSlot
+          v-for="slice in pageSlices"
+          :key="slice.moduleKey"
+          :module-key="slice.moduleKey"
+          :data="props.item.data"
+          :is-edit="isEdit"
+          :outline-class="moduleClassMap[slice.moduleKey]"
+          @accept="acceptModule"
+          @discard="rejectModule"
+        />
+      </ResumePageShell>
     </div>
-    <!-- 对比浮层：仅编辑态多页挂载，单页/只读不提供 diff 悬浮交互 -->
-    <DiffPopover v-if="isEdit" />
+    <!-- 每页可见行裁剪样式 -->
     <component :is="'style'">{{ pageStyleText }}</component>
   </div>
 </template>
