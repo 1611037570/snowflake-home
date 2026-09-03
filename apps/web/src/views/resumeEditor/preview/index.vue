@@ -3,12 +3,11 @@
 import ResumePage from "./page.vue";
 // 缩放容器组件
 import ScaleContainer from "./ScaleContainer.vue";
-// 全屏预览组件
-import FullscreenPreview from "./fullscreenPreview.vue";
 import { useResumeStore } from "@/stores";
 import { storeToRefs } from "pinia";
-import { computed, ref } from "vue";
-
+import { computed, ref, watch } from "vue";
+// 全屏预览组件
+const FullscreenPreview = markRaw(defineAsyncComponent(() => import("./fullscreenPreview.vue")));
 const resumeStore = useResumeStore();
 const { currentData, currentConfig, currentUI, currentFixedConfig } = storeToRefs(resumeStore);
 
@@ -20,9 +19,17 @@ const resumeItem = computed(() => ({
   ui: currentUI.value,
 }));
 
+const isFullscreen = ref(false);
 const fullscreenPreviewRef = ref(null);
-// 打开全屏预览
-const openFullscreen = () => fullscreenPreviewRef.value?.open();
+
+// 异步组件加载完成后 ref 才有值，此时再打开全屏
+watch(fullscreenPreviewRef, (instance) => {
+  if (instance) instance.open();
+});
+
+const openFullscreen = () => {
+  isFullscreen.value = true;
+};
 </script>
 
 <template>
@@ -32,7 +39,7 @@ const openFullscreen = () => fullscreenPreviewRef.value?.open();
     <ScaleContainer @fullscreen="openFullscreen">
       <ResumePage />
     </ScaleContainer>
-    <FullscreenPreview ref="fullscreenPreviewRef" :item="resumeItem" />
+    <FullscreenPreview v-if="isFullscreen" ref="fullscreenPreviewRef" :item="resumeItem" @close="isFullscreen = false" />
   </div>
 </template>
 

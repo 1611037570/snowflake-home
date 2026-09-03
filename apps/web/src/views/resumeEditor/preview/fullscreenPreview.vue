@@ -7,6 +7,9 @@ import ScaleContainer from "./ScaleContainer.vue";
 
 defineOptions({ name: "FullscreenPreview" });
 
+// 关闭时通知父组件复位控制状态，保证可再次打开
+const emit = defineEmits(["close"]);
+
 defineProps({
   // 简历项：{ data, config, fixedConfig, ui }
   item: {
@@ -17,7 +20,11 @@ defineProps({
 
 const visible = ref(false);
 const open = () => (visible.value = true);
-const close = () => (visible.value = false);
+const close = () => {
+  visible.value = false;
+  // 通知父组件复位控制状态
+  emit("close");
+};
 defineExpose({ open, close });
 
 const handleKeydown = (e) => {
