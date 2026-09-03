@@ -94,7 +94,6 @@ const jobPlatformList = [
   },
   {
     type: "兼职/其他",
-    desc: "短期兼职、临时工、蓝领岗位",
     array: [
       {
         name: "青团社",
@@ -129,26 +128,76 @@ const go = (data) => {
   <div>
     <div @click="visible = true">
       <slot>
-        <SfButton> 投递简历 </SfButton>
+        <!-- 投递按钮：增加发送图标并美化样式 -->
+        <SfButton>
+          <SfIcon icon="ph:paper-plane-right-fill" class="mr-2 rotate-180" size="4" />
+          投递简历
+        </SfButton>
       </slot>
     </div>
     <SfModal v-model="visible" title="投递简历">
       <div class="w-[420px]">
-        <SfCollapse>
-          <SfCollapseItem title="作者留言">
-            到这里，你的专属简历就正式完成啦～很开心能陪你走完这一程。祝你求职顺利，斩获心仪
-            offer。感谢使用轻舟简历。
+        <!-- 提示折叠面板：每个标题增加对应图标、色块与描述美化 -->
+        <SfCollapse class="deliver-collapse mb-4">
+          <SfCollapseItem name="author">
+            <template #title>
+              <div class="flex items-center">
+                <span
+                  class="mr-2 inline-flex h-6 w-6 items-center justify-center rounded-md bg-pink-100"
+                >
+                  <SfIcon icon="solar:heart-bold" class="text-pink-500" size="4" />
+                </span>
+                <span class="text-sm font-medium text-sf-text">作者留言</span>
+              </div>
+            </template>
+            <div
+              class="rounded-lg border border-pink-100/50 bg-pink-50/40 py-2 pr-3 pl-8 text-[13px] leading-6 break-words text-sf-text/80"
+            >
+              到这里，你的专属简历就正式完成啦～很开心能陪你走完这一程。祝你求职顺利，斩获心仪
+              offer。感谢使用轻舟简历。
+            </div>
           </SfCollapseItem>
-          <SfCollapseItem title="安全提醒">
-            本平台仅作信息展示，不参与招聘。内容均来自互联网，仅供参考!!!
+          <SfCollapseItem name="safe">
+            <template #title>
+              <div class="flex items-center">
+                <span
+                  class="mr-2 inline-flex h-6 w-6 items-center justify-center rounded-md bg-amber-100"
+                >
+                  <SfIcon icon="bi:shield-exclamation" size="4" class="text-amber-500" />
+                </span>
+                <span class="text-sm font-medium text-sf-text">安全提醒</span>
+              </div>
+            </template>
+            <div
+              class="rounded-lg border border-amber-100/60 bg-amber-50/50 py-2 pr-3 pl-8 text-[13px] leading-6 break-words text-sf-text/80"
+            >
+              本平台仅作信息展示，不参与招聘。内容均来自互联网，仅供参考!!!
+            </div>
           </SfCollapseItem>
-          <SfCollapseItem title="防骗指南">
-            任何收费均为诈骗，勿泄露密码/验证码，认准官方域名，面试前核实企业资质。遇骗请立即报警。
+          <SfCollapseItem name="fraud">
+            <template #title>
+              <div class="flex items-center">
+                <span
+                  class="mr-2 inline-flex h-6 w-6 items-center justify-center rounded-md bg-emerald-100"
+                >
+                  <SfIcon icon="stash:lock-closed" size="4" class="text-emerald-500" />
+                </span>
+                <span class="text-sm font-medium text-sf-text">防骗指南</span>
+              </div>
+            </template>
+            <div
+              class="rounded-lg border border-emerald-100/60 bg-emerald-50/50 py-2 pr-3 pl-8 text-[13px] leading-6 break-words text-sf-text/80"
+            >
+              任何收费均为诈骗，勿泄露密码/验证码，认准官方域名，面试前核实企业资质。遇骗请立即报警。
+            </div>
           </SfCollapseItem>
         </SfCollapse>
-        <div v-for="item in jobPlatformList" :key="item.type">
-          <div class="text-base font-bold text-sf-text">{{ item.type }}</div>
-          <div class="flex flex-wrap gap-3">
+        <div v-for="item in jobPlatformList" :key="item.type" class="mb-3">
+          <div class="mb-2 flex items-center text-base font-bold text-sf-text">
+            <span class="mr-2 inline-block h-4 w-1 rounded-full bg-sf-theme" />
+            {{ item.type }}
+          </div>
+          <div class="flex flex-wrap gap-3 pl-1">
             <div v-for="platform in item.array" :key="platform.name">
               <SfApp boxSize="18" :data="platform" @onClick="go" size="15" />
             </div>
@@ -159,4 +208,12 @@ const go = (data) => {
   </div>
 </template>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+// 折叠面板内容区去默认边框，与美化后的卡片内容融合
+:deep(.deliver-collapse .el-collapse-item__wrap) {
+  background: transparent;
+}
+:deep(.deliver-collapse .el-collapse-item__content) {
+  padding-bottom: 12px;
+}
+</style>
