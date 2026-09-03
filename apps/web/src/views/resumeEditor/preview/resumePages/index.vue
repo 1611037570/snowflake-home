@@ -81,8 +81,9 @@ const { measureDone, pages, pageStyleText, moduleClass, moduleList, isSinglePage
     allModules,
   },
 );
-// 单页标记向下注入：单页下 diffField 精简渲染，不提供 diff 悬浮交互
-provide("isSinglePage", isSinglePage);
+// 编辑态标记向下注入：直接以 mode 判断编辑场景，编辑态开放 diff 悬浮交互
+const isEdit = computed(() => props.mode === "editor");
+provide("isEdit", isEdit);
 // 单页组件根元素回传：rootRef 限定导出范围，measureRef 供测量与图片导出
 const setSingleRoot = (el) => (rootRef.value = el);
 const setSingleMeasure = (el) => (measureRef.value = el);
@@ -173,8 +174,8 @@ useSmartOnePage({ ui, showPageNumber, moduleList, currentUI, isReadonly });
         </div>
       </div>
     </div>
-    <!-- 单页模式无 diff 悬浮交互，不挂载对比浮层 -->
-    <DiffPopover v-if="!isReadonly && !isSinglePage" />
+    <!-- 对比浮层：仅编辑态多页挂载，单页/只读不提供 diff 悬浮交互 -->
+    <DiffPopover v-if="isEdit" />
     <component :is="'style'">{{ pageStyleText }}</component>
   </div>
 </template>

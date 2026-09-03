@@ -1,6 +1,9 @@
 <script setup>
-import { computed, inject } from "vue";
+import { computed, inject, useAttrs } from "vue";
 import DOMPurify from "dompurify";
+
+// 上层透传（class 高亮与悬浮监听），与各块原始属性合并渲染
+const attrs = useAttrs();
 
 const props = defineProps({
   // 纯文本内容
@@ -52,6 +55,9 @@ const splitHtml = (html) => {
     .filter((block) => block && block.html.trim());
 };
 
+// 合并透传属性与块原始属性，class/监听一并落到每个块上
+const mergeAttrs = (blockAttrs) => ({ ...blockAttrs, ...attrs });
+
 // 按原始内容缓存清洗拆分结果，避免同一内容重复执行 sanitize 与 HTML 解析
 const parseCache = new Map();
 const CACHE_MAX = 100;
@@ -95,14 +101,14 @@ const charCount = computed(() => {
       v-for="(block, idx) in blocks"
       :key="idx"
       :is="block.tag"
-      v-bind="block.attrs"
+      v-bind="mergeAttrs(block.attrs)"
       class="break-words whitespace-pre-wrap"
       :style="[lineHeightValue()]"
       :innerHTML="block.html"
     ></component>
   </template>
   <template v-else>
-    <span :style="[lineHeightValue()]">{{ content }}</span>
+    <span :style="[lineHeightValue()]" v-bind="$attrs">{{ content }}</span>
   </template>
   <!-- 字数统计：由使用方通过 showCount 控制展示 -->
   <div v-if="showCount" class="mt-1 w-full text-right text-xs">共 {{ charCount }} 字</div>
