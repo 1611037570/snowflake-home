@@ -71,7 +71,7 @@ const getAppMenuList = (type, index, item) => {
     {
       name: "分享",
       fn: () => {
-        const data= {
+        const data = {
           ...shortcutList.value[index],
         };
         // 需要过滤掉id
@@ -145,7 +145,17 @@ const sfAppDefaults = {
         class="flex cursor-pointer flex-col items-center justify-center"
         @click="handleAppClick(item.url)"
       >
+        <SfApp
+          :data="item"
+          size="10"
+          boxSize="20"
+          boxClass="bg-sf-primary hover:bg-sf-bg-2!"
+          class="text-sf-primary"
+          logoClass="text-sf-text"
+        >
+        </SfApp>
         <div
+          v-if="0"
           class="flex-c rounded-xl bg-sf-primary"
           :class="{ 'shake-element': isDrag }"
           :style="{
@@ -154,9 +164,6 @@ const sfAppDefaults = {
           }"
         >
           <SfMixImg :type="item.imgType" :value="item.imgValue" :size="sfAppDefaults.iconSize" />
-        </div>
-        <div class="flex h-6 items-center justify-center truncate text-sm text-sf-primary">
-          {{ item.name }}
         </div>
       </SfMenu>
       <SfMenu :list="menuList">
