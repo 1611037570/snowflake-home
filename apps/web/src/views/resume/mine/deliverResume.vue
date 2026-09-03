@@ -1,5 +1,13 @@
 <script setup>
+import { ref } from "vue";
+
 const visible = ref(false);
+
+// 暴露 open 方法，供外部通过 ref 调用
+const open = () => {
+  visible.value = true;
+};
+defineExpose({ open });
 const jobPlatformList = [
   {
     type: "常用求职平台",
@@ -119,7 +127,7 @@ const jobPlatformList = [
   },
 ];
 
-const go = (data) => {
+const oepn = (data) => {
   window.open(data.url, "_blank");
 };
 </script>
@@ -199,7 +207,7 @@ const go = (data) => {
           </div>
           <div class="flex flex-wrap gap-3 pl-1">
             <div v-for="platform in item.array" :key="platform.name">
-              <SfApp boxSize="18" :data="platform" @onClick="go" size="15" />
+              <SfApp boxSize="18" :data="platform" @onClick="oepn" size="15" />
             </div>
           </div>
         </div>

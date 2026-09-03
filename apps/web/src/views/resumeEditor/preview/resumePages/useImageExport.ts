@@ -31,7 +31,11 @@ const getRootElement = (rootRef?: ImageExportRoot): HTMLElement | null => {
  * 将完整简历内容渲染为一张 PNG 图片并下载
  * @param rootRef 需要导出的完整简历 DOM ref，例如 MeasureContent 的 ref
  */
-export const printImage = async (rootRef?: ImageExportRoot) => {
+export const printImage = async (
+  rootRef?: ImageExportRoot,
+  /** 导出成功回调 */
+  onSuccess?: () => void,
+) => {
   const resumeStore = useResumeStore();
   const { selectedModule, isPrinting } = storeToRefs(resumeStore);
   if (isPrinting.value) return;
@@ -108,6 +112,7 @@ export const printImage = async (rootRef?: ImageExportRoot) => {
     link.click();
     link.remove();
     URL.revokeObjectURL(url);
+    onSuccess?.();
   } catch (error) {
     console.error("生成简历图片失败:", error);
   } finally {

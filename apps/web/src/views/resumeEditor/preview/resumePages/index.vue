@@ -20,9 +20,9 @@ import { useResumeExport } from "./useResumeExport";
 import { useInitMask } from "./useInitMask";
 import { useResumePreviewData } from "./useResumePreviewData";
 import { useSmartOnePage } from "./useSmartOnePage";
+
 const resumeStore = useResumeStore();
 const { selectedModule, system, currentUI } = storeToRefs(resumeStore);
-
 defineOptions({ name: "ResumePages" });
 
 const props = defineProps({
@@ -80,12 +80,16 @@ const { measureDone, pages, pageStyleText, moduleClass, moduleList } = useResume
   allModules,
 });
 // 编辑态标记向下注入：仅编辑态开放 diff 悬浮交互
+const emit = defineEmits(["resume-export-success"]);
 provide("isEdit", isEdit);
 // 单页组件根元素回传：rootRef 限定导出范围，measureRef 供测量与图片导出
 const setSingleRoot = (el) => (rootRef.value = el);
 const setSingleMeasure = (el) => (measureRef.value = el);
 // 导出：PDF/图片事件注册与注销由 hook 内部管理
-useResumeExport({ isEdit, rootRef, measureRef });
+const handleExportSuccess = () => {
+  emit("resume-export-success");
+};
+useResumeExport({ isEdit, rootRef, measureRef, onExportSuccess: handleExportSuccess });
 // 智能一页：计算、参数应用与事件注册均由 hook 内部管理
 useSmartOnePage({ ui, showPageNumber, moduleList, currentUI, isEdit });
 
