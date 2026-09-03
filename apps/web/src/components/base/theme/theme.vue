@@ -8,19 +8,17 @@
         class="transition-all duration-300 hover:scale-120"
       />
       <template #dropdown>
-        <el-dropdown-menu>
-          <SfList
-            class="w-[120px]"
-            :list="list"
-            activeKey="value"
-            @onClick="handleClick"
-            :activeValue="themeMode"
-          >
-            <template #default="{ item }">
-              {{ item.name }}
-            </template>
-          </SfList>
-        </el-dropdown-menu>
+        <SfList
+          class="w-[120px]"
+          :list="list"
+          activeKey="value"
+          @onClick="handleClick"
+          :activeValue="themeMode"
+        >
+          <template #default="{ item }">
+            {{ item.name }}
+          </template>
+        </SfList>
       </template>
     </ElDropdown>
   </div>
