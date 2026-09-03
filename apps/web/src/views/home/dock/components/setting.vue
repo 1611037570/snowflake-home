@@ -1,15 +1,13 @@
 <template>
-  <img
-    :src="settingIcon"
-    style="width: 40px; height: 40px"
-    class="rounded-lg"
-    fit="cover"
+  <div
+    class="flex h-10 w-10 items-center justify-center rounded-lg bg-sf-primary text-[10px] backdrop-blur-md transition-all duration-200"
     @click="openSet"
-  />
+  >
+    <SfIcon icon="iconamoon:settings-fill" class="rotate-180 text-sf-text" size="7" />
+  </div>
 </template>
 
 <script setup>
-import settingIcon from "@/assets/images/setting.png";
 import { useHomeStore } from "@/stores";
 import { storeToRefs } from "pinia";
 const homeStore = useHomeStore();
