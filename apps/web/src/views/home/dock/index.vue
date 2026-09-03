@@ -12,7 +12,7 @@
     >
       <template v-for="(i, index) in list" :key="i.name">
         <div class="menu-item">
-          <div class="menu-item-name">{{ i.name }}</div>
+          <div class="menu-item-name text-sf-primary">{{ i.name }}</div>
           <Component
             v-if="i.component"
             :is="i.component"
