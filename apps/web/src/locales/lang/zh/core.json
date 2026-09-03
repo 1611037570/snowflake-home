@@ -1,8 +1,8 @@
 {
   "router": {
     "messageBoard": "留言板",
-    "image": "图片处理工具",
-    "imageDesc": "本地处理完全免费的图片编辑工具",
+    "image": "图省事",
+    "imageDesc": "快速处理图片格式与大小",
     "resume": "轻舟简历",
     "resumeDesc": "以此简历 渡万重山",
     "resumeEditor": "云帆编辑器",
@@ -14,7 +14,7 @@
     "home": "雪花起始页",
     "homeDesc": "如雪纯净的浏览器起点",
     "index": "小羊",
-    "indexDesc": "小羊的个人网站",
+    "indexDesc": "逆转时空的公式就是珍惜现在",
     "2048": "2048 游戏",
     "2048Desc": "简单而有趣的益智游戏",
     "sort": "算法可视化",
