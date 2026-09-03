@@ -1,6 +1,7 @@
 <script setup>
 import { useResumeStore } from "@/stores";
 import { useRouter } from "vue-router";
+import { storeToRefs } from "pinia";
 import { defineAsyncComponent } from "vue";
 import Icon from "./components/icon.vue";
 
@@ -17,6 +18,7 @@ defineOptions({ name: "ResumeToolbar" });
 
 const router = useRouter();
 const resumeStore = useResumeStore();
+const { system } = storeToRefs(resumeStore);
 function goHome() {
   router.push("/resume");
 }
@@ -33,7 +35,8 @@ function goGitHub() {
     <div
       class="relative flex w-[50px] flex-col items-center gap-2 rounded-3xl border border-sf-b bg-sf-transparent py-2 text-sf-text-3"
     >
-      <Progress />
+      <!-- 简历完成进度：关闭时卸载组件，停止统计计算与数字动画 -->
+      <Progress v-if="system.showProgress" />
       <System />
       <Debug />
       <div class="h-[0.5px] w-full bg-sf-bg-2"></div>
