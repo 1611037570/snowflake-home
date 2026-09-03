@@ -1,10 +1,11 @@
 <script setup>
+// 显式命名模板组件，供父级 KeepAlive 按 include 命中缓存
+defineOptions({ name: "BuilderTemplate" });
 import { useResumeStore } from "@/stores";
 import { storeToRefs } from "pinia";
 import ThumbPreview from "../../preview/thumbPreview.vue";
 import { themeTemplateList } from "@/stores/modules/resume/uiConfig";
 import { xiaoYangResumeItem } from "@/stores/modules/resume/xiaoYangData";
-
 const resumeStore = useResumeStore();
 const { currentUI } = storeToRefs(resumeStore);
 
