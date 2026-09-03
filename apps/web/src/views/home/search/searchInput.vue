@@ -91,8 +91,6 @@
 import { useHomeStore } from "@/stores";
 import { onKeyStroke } from "@vueuse/core";
 
-import { evaluate, parse } from "mathjs";
-
 const searchStore = useHomeStore();
 const { search } = searchStore;
 const {
@@ -110,10 +108,20 @@ const {
   webSource,
 } = storeToRefs(searchStore);
 
+// 按需加载 mathjs：首次计算时才引入，避免进入首屏主包
+let mathJS = null;
+const loadMath = async () => {
+  if (!mathJS) {
+    mathJS = await import("mathjs");
+  }
+  return mathJS;
+};
+
 // 表达式计算
-function expressionsComputed() {
+async function expressionsComputed() {
   const value = String(searchValue.value);
   try {
+    const { parse, evaluate } = await loadMath();
     parse(value);
     const res = evaluate(value);
     // 在有小数的时候才保留两位小数
