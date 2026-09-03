@@ -62,7 +62,6 @@ export const historyList = [
   {
     time: "2016-8-16",
     desc: "前生的最后一个版本~",
-    img: predecessor,
   },
   {
     time: "2015-5-10",
