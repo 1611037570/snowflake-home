@@ -66,9 +66,10 @@ watch(
     <div class="flex flex-1 flex-col" :style="{ gap: `${ui.moduleSpacing}px` }">
       <slot />
     </div>
+    <!-- 页码区固定不伸缩：内容超高时只触发分页，不压缩页脚，保证页码位置恒定 -->
     <div
       v-if="showPageNumber"
-      class="flex-c py-3 text-xs opacity-50"
+      class="flex-c shrink-0 py-3 text-xs opacity-50"
       :style="{ height: `${PAGE_NUMBER_HEIGHT}px` }"
     >
       轻舟简历 · 第 {{ pageIndex + 1 }} 页 · 共 {{ pageCount }} 页

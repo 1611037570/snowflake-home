@@ -41,6 +41,8 @@ export const paginateModules = ({
 }: PaginateOptions): PageSlice[][] => {
   // 仅根据页码区域高度计算页面可用内容高度（与智能一页共用统一公式）
   const maxContentHeight = getContentHeight(padding, showPageNumber);
+  // 模块间距缺省或非数值时按 0 处理，避免累加得到 NaN 导致翻页判定恒不触发
+  const safeModuleSpacing = Number.isFinite(moduleSpacing) ? moduleSpacing : 0;
 
   const result: PageSlice[][] = [];
   let currentPage: PageSlice[] = [];
@@ -81,7 +83,7 @@ export const paginateModules = ({
     // 当前切片尚未提交时，页面同样已经有内容，避免大字号或大间距时继续挤在当前页
     const hasPageContent = currentPage.length > 0 || sliceEnd >= 0;
     // 模块间距：新模块的首块且当前页已有内容时才计一次
-    let gap = hasPageContent && sliceModule !== group ? moduleSpacing : 0;
+    let gap = hasPageContent && sliceModule !== group ? safeModuleSpacing : 0;
 
     // 放不下时：当前页已有内容则翻页重试；空页仍放不下（单块超高）则硬塞
     if (currentHeight + gap + height > maxContentHeight && hasPageContent) {
