@@ -10,10 +10,10 @@ export const useInitMask = (isReadonly: ComputedRef<boolean>) => {
   let maskTimer: number | undefined;
   onMounted(() => {
     // 只读模式（缩略图/全屏预览）不展示过渡遮罩
-    if (isReadonly.value) {
-      showInitMask.value = false;
-      return;
-    }
+    // if (isReadonly.value) {
+    //   showInitMask.value = false;
+    //   return;
+    // }
     maskTimer = window.setTimeout(() => (showInitMask.value = false), 1000);
   });
   onUnmounted(() => window.clearTimeout(maskTimer));

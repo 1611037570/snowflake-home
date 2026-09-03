@@ -99,7 +99,7 @@ useSmartOnePage({ ui, showPageNumber, moduleList, currentUI, isReadonly });
       v-if="showInitMask"
       class="absolute inset-0 z-20 flex items-center justify-center rounded-3xl bg-white/80 backdrop-blur-sm"
     >
-      <SfIcon icon="lucide:loader-circle" size="6" class="animate-spin text-sf-theme" />
+      <SfIcon icon="lucide:loader-circle" :size="26" class="animate-spin text-sf-theme" />
     </div>
     <!-- 单页快路径：内容放入一页时测量与渲染合一，不再常驻隐藏测量容器与分页裁剪；根元素由组件回传 -->
     <PreviewSinglePage
