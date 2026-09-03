@@ -7,6 +7,7 @@ import { useProgress } from "../../resumeEditor/hooks/useProgress";
 import { getResumeTitle } from "../../resumeEditor/resumeName";
 import ResumeCardContainer from "./components/resumeCardContainer.vue";
 import ImportResume from "./components/importResume.vue";
+import DeliverResume from "./deliverResume.vue";
 
 const router = useRouter();
 
@@ -141,6 +142,7 @@ const handleUseTemplate = () => {
         </div>
         <!-- 导入简历入口：仅在草稿标签下显示 -->
         <ImportResume v-if="activeTab === 'draft'" />
+        <DeliverResume />
       </div>
 
       <!-- 简历草稿列表 -->
