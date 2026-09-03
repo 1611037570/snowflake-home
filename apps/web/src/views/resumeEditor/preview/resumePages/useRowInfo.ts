@@ -94,10 +94,21 @@ export function useRowInfo(
     return heights.map((h, i) => h + margins[i]!);
   };
 
+  // 按目标总高等比校正逐行高：逐行取整/外边距折叠会使行高和偏离模块真实高度，归一后任意连续行切片之和都与真实渲染一致
+  const alignHeights = (heights: number[], target: number): void => {
+    const rawSum = heights.reduce((sum, h) => sum + h, 0);
+    if (rawSum > 0 && rawSum !== target) {
+      const scale = target / rawSum;
+      heights.forEach((_, i) => (heights[i] = heights[i]! * scale));
+    }
+  };
+
   /** 读取单个模块内所有行的高度信息 */
   const measureModule = (wrapper: HTMLElement): ModuleInfo => {
     const rows = Array.from(wrapper.children) as HTMLElement[];
     const heights = batchRowHeights(rows);
+    // 行高和锚定模块真实渲染高度，消除逐行整数取整累积误差
+    alignHeights(heights, wrapper.offsetHeight);
     return {
       moduleKey: wrapper.dataset.module || "",
       rows: rows.map((_, index) => ({ height: heights[index]!, index })),
@@ -198,8 +209,28 @@ export function useRowInfo(
       }
       return measureModule(wrapper);
     });
-    // 更新缓存，供下次增量测量复用
+    // 更新缓存，供下次增量测量复用（只缓存模块自身高度，不含下方容器残差分摊）
     wrappers.forEach((wrapper, i) => lastByWrapper.set(wrapper, modules[i]!));
+
+    // flex 纵向排列存在取整残差（模块流真实内容高与各模块高之和的差），均摊到各模块首行，
+    // 使分页累加总高与真实渲染一致；以新对象替换避免污染上方增量缓存
+    const flowParent = wrappers[0]?.parentElement ?? null;
+    if (flowParent) {
+      const wrapSum = wrappers.reduce((sum, w) => sum + w.offsetHeight, 0);
+      const nonEmptyCount = modules.filter((m) => m.rows.length > 0).length;
+      const share = nonEmptyCount ? (flowParent.scrollHeight - wrapSum) / nonEmptyCount : 0;
+      if (share !== 0) {
+        modules.forEach((mod, index) => {
+          if (!mod.rows.length) return;
+          modules[index] = {
+            ...mod,
+            rows: mod.rows.map((row, rowIndex) =>
+              rowIndex === 0 ? { ...row, height: row.height + share } : row,
+            ),
+          };
+        });
+      }
+    }
 
     const prev = moduleList.value;
     // 单次测量模式：模块齐全（含异步挂载的期望模块数）才更新并冻结，

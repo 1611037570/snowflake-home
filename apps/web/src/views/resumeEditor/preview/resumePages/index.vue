@@ -7,11 +7,7 @@ import MeasureContent from "../components/measureContent.vue";
 import PreviewSinglePage from "./previewSinglePage.vue";
 import ResumePageShell from "./resumePageShell.vue";
 import ModuleSlot from "./moduleSlot.vue";
-import {
-  PAGE_NUMBER_HEIGHT,
-  RESUME_CONTAINER_WIDTH,
-  RESUME_HEIGHT,
-} from "../constants";
+import { PAGE_NUMBER_HEIGHT, RESUME_CONTAINER_WIDTH, RESUME_HEIGHT } from "../constants";
 import { useResumePages } from "./useResumePages";
 import { useResumeTheme } from "./useResumeTheme";
 import { useResumeStore } from "@/stores";
@@ -117,53 +113,56 @@ defineExpose({ rootEl: rootRef, measureEl: measureRef, moduleList });
       :on-measure-el="setSingleMeasure"
     />
     <!-- 隐藏的测量容器：用于 useRowInfo 读取行高；多页时存在，缩略图测量完成后销毁 -->
-    <div
-      v-if="!isThumb && !measureDone"
-      class="fixed -top-999 -left-999 flex h-auto flex-col bg-white text-black"
-      ref="measureRef"
-      :class="ui.fontFamily"
-      :style="[paddingStyle, RESUME_CONTAINER_WIDTH, { minHeight: `${RESUME_HEIGHT}px` }]"
-    >
-      <MeasureContent :all-modules="allModules" />
+    <!-- 编辑态页面外壳带 1px 边框会收窄内容宽度，测量容器同步补透明边框，保证测量与真实排版宽度一致 -->
+    <template v-else>
       <div
-        v-if="showPageNumber"
-        class="flex flex-1 items-end justify-center py-3 text-xs opacity-50"
-        :style="{ height: `${PAGE_NUMBER_HEIGHT}px` }"
+        v-if="!measureDone"
+        class="fixed -top-999 -left-999 flex h-auto flex-col bg-white text-black"
+        ref="measureRef"
+        :class="[ui.fontFamily, { 'border border-transparent': isEdit }]"
+        :style="[paddingStyle, RESUME_CONTAINER_WIDTH, { minHeight: `${RESUME_HEIGHT}px` }]"
       >
-        轻舟简历
+        <MeasureContent :all-modules="allModules" />
+        <div
+          v-if="showPageNumber"
+          class="flex flex-1 items-end justify-center py-3 text-xs opacity-50"
+          :style="{ height: `${PAGE_NUMBER_HEIGHT}px` }"
+        >
+          轻舟简历
+        </div>
       </div>
-    </div>
-    <!-- 实际渲染的分页内容 -->
-    <div v-if="!isThumb" ref="rootRef" class="relative flex flex-col gap-3">
-      <ResumePageShell
-        v-for="(pageSlices, pageIndex) in pages"
-        :key="pageIndex"
-        :ui="ui"
-        :styles="{ paddingStyle, fontStyle, lineHeightStyle }"
-        :show-page-number="showPageNumber"
-        :page-index="pageIndex"
-        :page-count="pages.length"
-        :class="[
-          `${uid}-page-${pageIndex}`,
-          {
-            'border border-sf-b hover:border-sf-theme-2': mode === 'editor',
-          },
-        ]"
-      >
-        <ModuleSlot
-          v-for="slice in pageSlices"
-          :key="slice.moduleKey"
-          :module-key="slice.moduleKey"
-          :data="props.item.data"
-          :is-edit="isEdit"
-          :outline-class="moduleClassMap[slice.moduleKey]"
-          @accept="acceptModule"
-          @discard="rejectModule"
-        />
-      </ResumePageShell>
-    </div>
-    <!-- 每页可见行裁剪样式 -->
-    <component :is="'style'">{{ pageStyleText }}</component>
+      <!-- 实际渲染的分页内容 -->
+      <div ref="rootRef" class="relative flex flex-col gap-3">
+        <ResumePageShell
+          v-for="(pageSlices, pageIndex) in pages"
+          :key="pageIndex"
+          :ui="ui"
+          :styles="{ paddingStyle, fontStyle, lineHeightStyle }"
+          :show-page-number="showPageNumber"
+          :page-index="pageIndex"
+          :page-count="pages.length"
+          :class="[
+            `${uid}-page-${pageIndex}`,
+            {
+              'border border-sf-b hover:border-sf-theme-2': mode === 'editor',
+            },
+          ]"
+        >
+          <ModuleSlot
+            v-for="slice in pageSlices"
+            :key="slice.moduleKey"
+            :module-key="slice.moduleKey"
+            :data="props.item.data"
+            :is-edit="isEdit"
+            :outline-class="moduleClassMap[slice.moduleKey]"
+            @accept="acceptModule"
+            @discard="rejectModule"
+          />
+        </ResumePageShell>
+      </div>
+      <!-- 每页可见行裁剪样式 -->
+      <component :is="'style'">{{ pageStyleText }}</component>
+    </template>
   </div>
 </template>
 
