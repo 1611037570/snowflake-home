@@ -146,6 +146,86 @@ const createFieldProxy = (source: Record<string, any>, key: string, path: string
   },
 });
 
+// ---------- 叶子字段代理与数组壳缓存 ----------
+
+/**
+ * 叶子字段代理缓存：按 (source, key) 复用已创建的 fieldProxy
+ * 叶子代理通过 getter 实时读取 source[key] 与草稿存储，因此同一 (source, key) 可安全复用，
+ * 避免模板中 item.name?.value、hasField 等多次访问反复新建对象
+ */
+const fieldProxyCache = new WeakMap<object, Record<string, any>>();
+
+/**
+ * 获取（或创建）叶子字段代理
+ * @param source - 原始数据对象
+ * @param key - 字段名
+ * @param path - 字段完整路径
+ * @returns 复用的 fieldProxy
+ */
+const getFieldProxy = (source: Record<string, any>, key: string, path: string): any => {
+  let cache = fieldProxyCache.get(source);
+  if (!cache) {
+    cache = Object.create(null) as Record<string, any>;
+    fieldProxyCache.set(source, cache);
+  }
+  if (!cache[key]) {
+    cache[key] = createFieldProxy(source, key, path);
+  }
+  return cache[key];
+};
+
+/**
+ * 对象数组壳缓存：按 (source, key) 复用代理数组，记录源数组引用与元素映射
+ * 仅在源数组引用变化或元素映射失效（原地增删/排序/替换）时重建
+ */
+const arrayShellCache = new WeakMap<object, Record<string, { shell: any[]; sourceArr: any[] }>>();
+
+/**
+ * 校验缓存的数组壳是否仍对应当前源数组
+ * 原始值直接比较，代理元素通过 __source 回看源对象，识别原地增删/排序/替换导致的失效
+ * @param shell - 缓存的代理壳
+ * @param value - 当前源数组
+ * @returns 是否有效
+ */
+const isShellValid = (shell: any[], value: any[]): boolean => {
+  if (shell.length !== value.length) return false;
+  for (let i = 0; i < shell.length; i++) {
+    if (shell[i] !== value[i] && shell[i]?.__source !== value[i]) return false;
+  }
+  return true;
+};
+
+/**
+ * 获取（或创建）对象数组的代理壳
+ * @param source - 原始父对象
+ * @param key - 字段名
+ * @param value - 当前源数组
+ * @param currentPath - 当前字段路径
+ * @returns 复用的代理数组
+ */
+const getArrayShell = (
+  source: Record<string, any>,
+  key: string,
+  value: any[],
+  currentPath: string,
+): any[] => {
+  let cache = arrayShellCache.get(source);
+  if (!cache) {
+    cache = Object.create(null) as Record<string, { shell: any[]; sourceArr: any[] }>;
+    arrayShellCache.set(source, cache);
+  }
+  const hit = cache[key];
+  // 仅当缓存有效（源数组引用与元素映射一致）时复用，否则重建
+  if (hit && hit.sourceArr === value && isShellValid(hit.shell, value)) {
+    return hit.shell;
+  }
+  const shell = value.map((item: Record<string, any>, idx: string | number) =>
+    createPreviewProxy(item, makePath(currentPath, idx)),
+  );
+  cache[key] = { shell, sourceArr: value };
+  return shell;
+};
+
 // ---------- 递归代理创建（带缓存） ----------
 
 /**
@@ -187,18 +267,16 @@ export const createPreviewProxy = (source: Record<string, any>, parentPath = "")
       const value = target[key];
       const currentPath = makePath(parentPath, key);
 
-      // 若是对象数组，递归代理每个元素
+      // 若是对象数组，复用缓存的代理壳（仅失效时重建）
       if (isObjectArray(value)) {
-        return value.map((item: Record<string, any>, idx: string | number) =>
-          createPreviewProxy(item, makePath(currentPath, idx)),
-        );
+        return getArrayShell(target, key, value, currentPath);
       }
       // 若是普通对象，递归代理该对象
       if (isPlainObject(value)) {
         return createPreviewProxy(value, currentPath);
       }
-      // 叶子值：包装为 fieldProxy
-      return createFieldProxy(target, key, currentPath);
+      // 叶子值：复用缓存的 fieldProxy
+      return getFieldProxy(target, key, currentPath);
     },
 
     /**
