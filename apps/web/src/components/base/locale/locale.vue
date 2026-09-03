@@ -1,5 +1,5 @@
 <template>
-  <SfDropdown>
+  <SfDropdown trigger="hover">
     <SfIcon
       icon="ion:language"
       size="8"
@@ -7,16 +7,14 @@
       class="transition-all duration-300 hover:scale-120"
     />
     <template #dropdown>
-      <el-dropdown-menu>
-        <SfList
-          class="w-30"
-          :list="LANG_LIST.filter((item) => item.name)"
-          activeKey="key"
-          :activeValue="currentLocale"
-          @onClick="handleClick"
-        >
-        </SfList>
-      </el-dropdown-menu>
+      <SfList
+        class="w-30"
+        :list="LANG_LIST.filter((item) => item.name)"
+        activeKey="key"
+        :activeValue="currentLocale"
+        @onClick="handleClick"
+      >
+      </SfList>
     </template>
   </SfDropdown>
 </template>
