@@ -23,10 +23,17 @@ const popover = useDiffPopoverStore();
 // 编辑态标记：由 resumePages 注入；仅编辑态多页开放 diff 悬浮交互，单页/只读不开放
 const isEdit = inject("isEdit", ref(false));
 
-// 字段代理兜底，避免未传入时取值报错
-const field = computed(() => model.value || { value: "", newValue: "" });
-const valueContent = computed(() => field.value.value ?? "");
-const newValueContent = computed(() => field.value.newValue ?? "");
+// 非编辑态：model 直接是 raw 值（如 "张三"），无 proxy 包裹
+// 编辑态：model 是 { value, newValue } 代理字段
+const valueContent = computed(() => {
+  const v = model.value;
+  if (v == null) return "";
+  return isEdit.value ? (v.value ?? "") : v;
+});
+const newValueContent = computed(() => {
+  if (!isEdit.value) return "";
+  return model.value?.newValue ?? "";
+});
 
 // 文档流统一渲染：有草稿显示新增，否则显示原值；打印时固定展示原值
 const documentContent = computed(() =>

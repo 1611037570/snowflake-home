@@ -8,10 +8,12 @@
 import { computed, inject, provide, type ComputedRef, type Ref } from "vue";
 import { createPreviewProxy } from "../usePreviewData";
 
-export const useResumePreviewData = (dataRef: ComputedRef<any>) => {
+export const useResumePreviewData = (dataRef: ComputedRef<any>, isEdit: ComputedRef<boolean>) => {
   // 父级已基于同一份数据创建过代理时直接复用
   const parentPreviewData = inject<Ref<any> | null>("previewData", null);
   const previewData = computed(() => {
+    // 非编辑态（缩略图/全屏预览）：无需 proxy，直接返回 raw 数据
+    if (!isEdit.value) return dataRef.value || {};
     const source = dataRef.value || {};
     const parent = parentPreviewData?.value;
     if (parent?.__source === source) return parent;
