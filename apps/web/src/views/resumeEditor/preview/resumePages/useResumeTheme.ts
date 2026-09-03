@@ -21,7 +21,6 @@ export interface ResumeTheme {
   paddingStyle: ComputedRef<Record<string, string>>;
   fontStyle: ComputedRef<Record<string, string>>;
   lineHeightStyle: ComputedRef<Record<string, string>>;
-  paddingValue: ComputedRef<(offset?: number) => Record<string, string>>;
   fontValue: ComputedRef<(offset?: number) => Record<string, string>>;
   lineHeightValue: ComputedRef<() => Record<string, string>>;
   themeColor: ComputedRef<string | undefined>;
@@ -57,18 +56,6 @@ export const useResumeTheme = (ui: ComputedRef<ResumeUi>): ResumeTheme => {
     lineHeight: `${lineHeight.value}`,
   }));
 
-  // 页面始终不保留下边距，底部空间由页码区域控制
-  const paddingValue = computed(() => {
-    const base = paddingStyle.value;
-    return (offset = 0) =>
-      offset === 0
-        ? base
-        : {
-            paddingTop: `${padding.value + offset}px`,
-            paddingLeft: `${padding.value + offset}px`,
-            paddingRight: `${padding.value + offset}px`,
-          };
-  });
   const fontValue = computed(() => {
     const base = fontStyle.value;
     return (offset = 0) => (offset === 0 ? base : { fontSize: `${fontSize.value + offset}px` });
@@ -97,7 +84,6 @@ export const useResumeTheme = (ui: ComputedRef<ResumeUi>): ResumeTheme => {
     paddingStyle,
     fontStyle,
     lineHeightStyle,
-    paddingValue,
     fontValue,
     lineHeightValue,
     themeColor,
