@@ -55,7 +55,7 @@ const uid = `rp-${Math.random().toString(36).slice(2, 8)}`;
 
 // ---------- 数据代理（始终基于 props 传入的数据，多实例互不干扰）----------
 const dataRef = computed(() => props.item.data);
-useResumePreviewData(dataRef);
+useResumePreviewData(dataRef, isEdit);
 
 // ---------- 主题样式注入（数据源为 item.ui）----------
 const ui = computed(() => props.item.ui || {});
