@@ -57,11 +57,11 @@ const menuList = computed(() => [
 ]);
 
 // SfApp 组件逻辑迁移
-const handleAppClick = (value: string) => {
+const handleAppClick = (value) => {
   window.open(value, openMode.value);
 };
 
-const getAppMenuList = (type: string, index: number, item: any) => {
+const getAppMenuList = (type, index, item) => {
   if (type === "custom") return [];
   return [
     {
@@ -71,7 +71,7 @@ const getAppMenuList = (type: string, index: number, item: any) => {
     {
       name: "分享",
       fn: () => {
-        const data: any = {
+        const data= {
           ...shortcutList.value[index],
         };
         // 需要过滤掉id
