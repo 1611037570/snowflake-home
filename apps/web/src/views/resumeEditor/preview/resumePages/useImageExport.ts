@@ -6,7 +6,7 @@
  */
 import { nextTick } from "vue";
 import { storeToRefs } from "pinia";
-import { getExportFileName, resumeTitle } from "../resumeName";
+import { getExportFileName, resumeTitle } from "../../resumeName";
 import { useResumeStore } from "@/stores";
 
 type ImageExportRoot = HTMLElement | { value: unknown };
