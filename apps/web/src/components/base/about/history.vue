@@ -31,14 +31,21 @@
         <!-- 描述内容 -->
         <div class="rounded-xl border border-sf-b bg-sf-bg-2 p-3">
           <div class="mb-2 last:mb-0">
-            <span class="text-sf-text">{{ item.desc }}</span>
+            <div class="text-sf-text">{{ item.desc }}</div>
+            <div
+              v-if="item.url"
+              class="cursor-pointer text-sf-theme hover:underline"
+              @click="go(item.url)"
+            >
+              去体验
+            </div>
           </div>
 
           <!-- 图片展示 -->
           <SfImg
             v-if="item.img"
             :src="item.img"
-            class="mx-auto mt-3 w-full cursor-pointer rounded-xl"
+            class="mx-auto w-full cursor-pointer rounded-xl"
             @click="selectImg(item.img)"
             fit="contain"
             lazy
@@ -59,5 +66,10 @@ const previewImg = ref("");
 function selectImg(img) {
   previewVisible.value = true;
   previewImg.value = img;
+}
+
+// 跳转链接
+function go(url) {
+  urlNavigation(url);
 }
 </script>

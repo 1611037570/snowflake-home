@@ -1,6 +1,6 @@
 import startImg from "@/assets/images/start.jpg";
-import hostV1 from "@/assets/images/version/host-v1.png";
-import hostV2 from "@/assets/images/version/host-v2.png";
+// import hostV1 from "@/assets/images/version/host-v1.png";
+// import hostV2 from "@/assets/images/version/host-v2.png";
 import homeV1 from "@/assets/images/version/home-v1.webp";
 import homeV2 from "@/assets/images/version/home-v2.webp";
 import indexV1 from "@/assets/images/version/index-v1.webp";
@@ -59,11 +59,11 @@ export const historyList = [
     desc: "梦开始的地方 新的起始页[nannan.work]启用~",
     url: "/home",
   },
-  {
-    time: "2020-08-04",
-    desc: "上线第二台虚拟机",
-    img: hostV2,
-  },
+  // {
+  //   time: "2020-08-04",
+  //   desc: "上线第二台虚拟机",
+  //   img: hostV2,
+  // },
   {
     time: "2016-8-16",
     desc: "前生的最后一个版本~",
@@ -71,6 +71,6 @@ export const historyList = [
   {
     time: "2015-5-10",
     desc: "上线第一个起始页",
-    img: hostV1,
+    // img: hostV1,
   },
 ];
