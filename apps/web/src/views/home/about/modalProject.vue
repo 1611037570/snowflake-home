@@ -1,5 +1,12 @@
 <template>
   <div class="mx-auto max-w-2xl p-6">
+    <Teleport to="body">
+      <el-image-viewer
+        v-if="previewVisible"
+        :url-list="[previewImg]"
+        @close="previewVisible = false"
+      />
+    </Teleport>
     <div class="mb-4 text-2xl font-bold text-blue-600" @click="goMe">小羊</div>
     <!-- 项目运行时间卡片 -->
     <div
@@ -57,7 +64,7 @@
             <SfImg
               :src="item.img"
               class="mx-auto w-full max-w-md cursor-pointer rounded-lg shadow-md transition-shadow duration-300 hover:shadow-lg"
-              :preview-src-list="item.img"
+              @click="selectImg(item.img)"
               fit="contain"
               lazy
             />
@@ -107,4 +114,13 @@ const runTimeDescription = computed(() => {
 
   return description;
 });
+
+// 图片查看器显隐
+const previewVisible = ref(false);
+const previewImg = ref("");
+
+function selectImg(img) {
+  previewVisible.value = true;
+  previewImg.value = img;
+}
 </script>
