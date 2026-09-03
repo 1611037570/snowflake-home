@@ -22,22 +22,19 @@
           @mouseleave="handleMouseLeave"
         >
           <!-- 标题和关闭按钮 -->
-          <div class="relative flex items-center justify-between">
-            <div
-              class="mb-3 w-full text-center text-2xl font-bold"
-              v-if="title"
-              :class="titleClass"
-            >
-              {{ title }}
-            </div>
-            <div
-              class="group flex-c absolute top-0 right-0 z-2 h-9 w-9 cursor-pointer rounded-xl bg-transparent transition-all duration-300 hover:bg-sf-bg-2"
-              @click="modeValue = false"
-            >
+          <div
+            class="flex-c relative mb-3 min-w-full text-xl font-bold"
+            v-if="title"
+            :class="titleClass"
+          >
+            {{ title }}
+            <div class="absolute top-1/2 -right-1 z-2 h-9 w-9 -translate-y-1/2">
               <SfIcon
+                @click="modeValue = false"
                 icon="carbon:close-outline"
                 size="6"
-                class="transition-all duration-300 group-hover:text-sf-theme"
+                boxSize="9"
+                class="rounded-2xl transition-all duration-300 group-hover:text-sf-theme hover:bg-sf-theme"
               />
             </div>
           </div>
