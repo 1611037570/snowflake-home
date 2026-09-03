@@ -7,19 +7,19 @@
       class="absolute top-2 left-1/2 flex -translate-x-1/2 -translate-y-2 transform gap-2 whitespace-nowrap opacity-0 transition-all duration-300 group-hover:-translate-y-6 group-hover:opacity-100"
     >
       <div
-        @click.stop="updateQuote"
+        @click.stop.prevent="updateQuote"
         class="flex items-center gap-1 rounded-full bg-blue-100 px-3 py-1 text-sm text-blue-600 shadow-md hover:bg-blue-200"
       >
-        <sf-icon icon="lucide:refresh-cw" class="h-4 w-4" />
+        <sf-icon icon="lucide:refresh-cw" size="4" />
         刷新
       </div>
       <div
         class="flex items-center gap-1 rounded-full bg-amber-100 px-3 py-1 text-sm text-amber-600 shadow-md hover:bg-amber-200"
-        @click.stop="toggleFavorite"
+        @click.stop.prevent="toggleFavorite"
       >
         <sf-icon
           :icon="isFavorite ? 'solar:heart-bold' : 'solar:heart-bold'"
-          class="h-4 w-4"
+          size="4"
           :class="isFavorite ? 'fill-red-500 text-red-500' : ''"
         />
         收藏
