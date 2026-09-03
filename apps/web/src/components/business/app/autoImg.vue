@@ -1,9 +1,18 @@
 <template>
-  <!-- 加载成功：显示 SfImg -->
-
-  <SfImg v-if="status === 'success'" :src="finalSrc" :style="boxStyle" fit="cover" />
+  <!-- 加载中/成功：显示 SfImg，由其 load/error 回调驱动状态 -->
+  <SfImg
+    v-if="status !== 'fallback'"
+    :src="finalSrc"
+    :style="boxStyle"
+    fit="cover"
+    @load="onLoad"
+    @error="onError"
+  >
+    <!-- 屏蔽默认错误占位，避免重试过程中闪现 Load failed -->
+    <template #error><span /></template>
+  </SfImg>
   <!-- 两次失败：显示 data 的第一个字 -->
-  <div v-else-if="status === 'fallback'" :style="boxStyle" class="flex-c text-center">
+  <div v-else :style="boxStyle" class="flex-c text-center">
     {{ firstChar }}
   </div>
 </template>
@@ -61,47 +70,43 @@ function buildFaviconUrl(src: string): string {
 
 // 最终确认可用的图片地址
 const finalSrc = ref<string>("");
+// 标记是否已尝试 favicon 回退，避免循环
+const triedFavicon = ref(false);
 
-// 使用原生 Image 对象预加载图片，避免加载过程中显示 img
-function tryLoad(url: string): Promise<boolean> {
-  return new Promise((resolve) => {
-    if (!url) {
-      resolve(false);
-      return;
-    }
-    const img = new Image();
-    img.onload = () => resolve(true);
-    img.onerror = () => resolve(false);
-    img.src = url;
-  });
+// SfImg 加载成功回调
+function onLoad() {
+  status.value = "success";
 }
 
-// data.img 变化时：走完整的加载流程
+// SfImg 加载失败回调：先尝试 favicon 回退，再失败则显示首字
+function onError() {
+  if (triedFavicon.value) {
+    status.value = "fallback";
+    return;
+  }
+  triedFavicon.value = true;
+  const favSrc = buildFaviconUrl(finalSrc.value);
+  if (favSrc && favSrc !== finalSrc.value) {
+    finalSrc.value = favSrc;
+  } else {
+    status.value = "fallback";
+  }
+}
+
+// data.img 变化时：重置状态，交给 SfImg 的回调判定
 watch(
   () => props.data?.img,
-  async (img) => {
+  (img) => {
     status.value = "loading";
-    finalSrc.value = "";
+    triedFavicon.value = false;
     const rawSrc = img || "";
-    // 第一次：尝试原始 img 地址
-    const ok1 = await tryLoad(rawSrc);
-    if (ok1) {
-      finalSrc.value = rawSrc;
-      status.value = "success";
+    if (!rawSrc) {
+      // 没有原始地址，直接进入首字占位
+      status.value = "fallback";
+      finalSrc.value = "";
       return;
     }
-    // 第二次：尝试 favicon 回退地址
-    const favSrc = buildFaviconUrl(rawSrc);
-    if (favSrc && favSrc !== rawSrc) {
-      const ok2 = await tryLoad(favSrc);
-      if (ok2) {
-        finalSrc.value = favSrc;
-        status.value = "success";
-        return;
-      }
-    }
-    // 两次失败：不渲染图片，显示首字
-    status.value = "fallback";
+    finalSrc.value = rawSrc;
   },
   { immediate: true },
 );
