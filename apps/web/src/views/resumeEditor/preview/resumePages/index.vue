@@ -1,7 +1,7 @@
 <script setup>
 // 简历分页渲染可复用组件：接收 resumeItem（data/config/fixedConfig/ui），渲染分页后的简历页面
 // 数据源由 props 传入，不依赖 resume store；供编辑器预览、模板缩略图、全屏查看复用
-import { computed, inject, onMounted, onUnmounted, provide, ref, watch } from "vue";
+import { computed, inject, onMounted, onUnmounted, provide, ref } from "vue";
 import MeasureContent from "../components/measureContent.vue";
 import DiffPopover from "../components/diffPopover.vue";
 import ResumeModule from "../modules/index.vue";
@@ -14,6 +14,8 @@ import { printPDF as exportPdf } from "../pdfExport";
 import { useResumeStore } from "@/stores";
 import eventBus from "@/utils/modules/eventBus";
 import { printImage as exportImage } from "../imageExport";
+import { ElMessage } from "element-plus";
+import { useSmartOnePage } from "./useSmartOnePage";
 const resumeStore = useResumeStore();
 const { selectedModule, system } = storeToRefs(resumeStore);
 
@@ -51,6 +53,8 @@ onMounted(() => {
   if (!isReadonly.value) {
     eventBus.on("resume-print-pdf", printPDF);
     eventBus.on("resume-print-image", printImage);
+    // 智能一页：工具栏触发，由本实例内部完成计算与应用
+    eventBus.on("resume-smart-one-page", onFitOnePage);
   }
 });
 onUnmounted(() => {
@@ -58,6 +62,7 @@ onUnmounted(() => {
   if (!isReadonly.value) {
     eventBus.off("resume-print-pdf", printPDF);
     eventBus.off("resume-print-image", printImage);
+    eventBus.off("resume-smart-one-page", onFitOnePage);
   }
 });
 
@@ -75,8 +80,6 @@ const previewData = computed(() => {
   return createPreviewProxy(source);
 });
 provide("previewData", previewData);
-// 共享测量结果：编辑态实例写入，供智能一页等消费方复用
-const sharedModuleList = inject("previewModuleList", null);
 
 // ---------- 主题样式注入（数据源为 item.ui）----------
 const ui = computed(() => props.item.ui || {});
@@ -106,10 +109,19 @@ const { measureDone, pages, pageStyleText, moduleClass, moduleList, isSinglePage
 // 单页组件根元素回传：rootRef 限定导出范围，measureRef 供测量与图片导出
 const setSingleRoot = (el) => (rootRef.value = el);
 const setSingleMeasure = (el) => (measureRef.value = el);
-// 编辑态实例把测量结果写入共享 ref，供智能一页复用，避免其重复挂载测量容器
-watch(moduleList, (list) => {
-  if (!isReadonly.value && sharedModuleList) sharedModuleList.value = list;
-});
+// 智能一页：基于本实例测量结果内部计算压缩参数并写入 ui，工具栏通过事件触发
+const { currentUI } = storeToRefs(resumeStore);
+const { computeFit } = useSmartOnePage({ ui, showPageNumber, moduleList });
+const onFitOnePage = () => {
+  const result = computeFit();
+  if (!result) return;
+  if (result.ok) {
+    currentUI.value = { ...currentUI.value, ...result.fitParams };
+    ElMessage.success("简历已压缩为一页");
+  } else {
+    ElMessage.error("内容过长，无法压缩到一页");
+  }
+};
 const containerWidth = {
   width: `${RESUME_WIDTH}px`,
   minWidth: `${RESUME_WIDTH}px`,
