@@ -72,10 +72,10 @@ const searchStore = useHomeStore();
 const { searchFocus } = storeToRefs(searchStore);
 const shortcutStore = useHomeStore();
 
-import { getWeatherData } from "@/services";
-getWeatherData("hello").then((res) => {
-  console.log("getWeatherData res", res);
-});
+// import { getWeatherData } from "@/services";
+// getWeatherData("hello").then((res) => {
+//   console.log("getWeatherData res", res);
+// });
 shortcutStore.initShortcutList();
 provide("bg", "bg-sf-primary");
 
