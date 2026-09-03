@@ -70,12 +70,17 @@
 </template>
 
 <script setup>
-import { ref, inject, computed } from "vue";
-import { MdPreview } from "md-editor-v3";
-import "md-editor-v3/lib/preview.css";
+import { ref, inject, computed, defineAsyncComponent } from "vue";
 import { useResumeStore } from "@/stores";
 import { storeToRefs } from "pinia";
 import Icon from "../components/icon.vue";
+
+// 延迟加载 markdown 预览：仅在打开调试抽屉时引入 md-editor-v3 及其样式，避免首屏主包过大
+const MdPreview = defineAsyncComponent(() =>
+  import("md-editor-v3/lib/preview.css").then(() =>
+    import("md-editor-v3").then((m) => m.MdPreview),
+  ),
+);
 
 const drawerVisible = ref(false);
 const activeNames = ref(["preview", "raw"]);
