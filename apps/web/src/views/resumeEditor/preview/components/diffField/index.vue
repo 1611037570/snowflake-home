@@ -74,6 +74,13 @@ const handleMouseEnter = () => {
 const handleMouseLeave = () => {
   popover.hide();
 };
+
+// 悬浮监听：仅多页且有草稿时挂载；单页/打印/无草稿不注册，避免无效监听与每次渲染重建对象
+const hoverListeners = computed(() =>
+  !isPrinting.value && !isSinglePage.value && newValueContent.value
+    ? { mouseenter: handleMouseEnter, mouseleave: handleMouseLeave }
+    : {},
+);
 </script>
 
 <template>
@@ -81,25 +88,14 @@ const handleMouseLeave = () => {
   <template v-if="html && hasContent">
     <DiffContent :content="documentContent" :html="html" />
   </template>
-  <!-- 纯文本 · 单页模式：仅渲染文档流，去掉悬浮监听与内层包装div，避免测量渲染时冗余DOM -->
-  <div
-    v-else-if="hasContent && isSinglePage"
-    class="relative max-w-full min-w-0 break-words"
-    :class="documentClass"
-  >
-    <DiffContent :content="documentContent" :html="html" />
-  </div>
-  <!-- 纯文本 · 多页模式：保持原有包装div结构，支持diff弹窗 -->
-  <!-- 惰性绑定：仅在存在草稿 newValue 时挂载悬浮事件，无草稿字段不注册监听 -->
+  <!-- 纯文本：单页仅渲染文档流（无悬浮监听），多页挂载悬浮支持diff弹窗；移除冗余内层包装div -->
   <div
     v-else-if="hasContent"
     ref="rootRef"
     class="relative max-w-full min-w-0 break-words"
-    v-on="newValueContent ? { mouseenter: handleMouseEnter, mouseleave: handleMouseLeave } : {}"
+    :class="documentClass"
+    v-on="hoverListeners"
   >
-    <!-- 文档流：有草稿显示新增内容，否则显示原值 -->
-    <div class="w-full" :class="documentClass">
-      <DiffContent :content="documentContent" :html="html" />
-    </div>
+    <DiffContent :content="documentContent" :html="html" />
   </div>
 </template>

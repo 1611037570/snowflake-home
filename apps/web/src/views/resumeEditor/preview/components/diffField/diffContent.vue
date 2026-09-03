@@ -71,12 +71,14 @@ const parseContent = (content) => {
   return result;
 };
 
-const blocks = computed(() => (props.html ? parseContent(props.content).blocks : []));
+// 清洗拆分结果统一入口：仅 html 内容才解析，纯文本不触发
+const parsed = computed(() => (props.html ? parseContent(props.content) : null));
+const blocks = computed(() => parsed.value?.blocks || []);
 
 // 可见文本字数：惰性计算，仅展示统计时解析一次并复用缓存
 const charCount = computed(() => {
   if (!props.html) return props.content.length;
-  const entry = parseContent(props.content);
+  const entry = parsed.value;
   if (entry.textLength === null) {
     const tmp = document.createElement("div");
     tmp.innerHTML = entry.blocks.map((b) => b.html).join("");
