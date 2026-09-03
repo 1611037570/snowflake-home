@@ -1,23 +1,12 @@
 /**
- * useResumePages —— 简历分页核心逻辑
+ * useResumePages —— 简历分页核心逻辑接线层
  *
- * 封装测量（useRowInfo）、分页算法与每页可见行裁剪样式生成，
- * 供 resumePages/index.vue 组合使用。
+ * 组合测量（useRowInfo）与分页纯算法（paginate），产出分页结果
+ * 与每页可见行裁剪样式，供 resumePages/index.vue 使用。
  */
 import { computed, ref, watch, type ComputedRef, type Ref } from "vue";
-import { PAGE_NUMBER_HEIGHT, RESUME_HEIGHT } from "../constants";
-import { useRowInfo, type ModuleInfo } from "./useRowInfo";
-
-/** 单页内一个模块的切片信息 */
-export interface PageSlice {
-  moduleKey: string;
-  /** 本页可见行区间起点（0-based，含） */
-  visibleStart: number;
-  /** 本页可见行区间终点（0-based，含） */
-  visibleEnd: number;
-  /** 模块总行数，用于判断区间之后是否还有隐藏行 */
-  totalRows: number;
-}
+import { paginateModules, buildPagesStyleText } from "./paginate";
+import { useRowInfo } from "./useRowInfo";
 
 /** useResumePages 入参 */
 interface UseResumePagesOptions {
@@ -68,118 +57,18 @@ export const useResumePages = ({
     if (isThumb.value && list.length > 0) measureDone.value = true;
   });
 
-  // 分页逻辑：所有内容按块贪心装入页面；user 模块整体作为一块，其余模块每行一块
-  const pages = computed<PageSlice[][]>(() => {
-    const padding = ui.value.padding || 0;
-    const moduleSpacing = ui.value.moduleSpacing;
-    const bottomSpace = showPageNumber.value ? PAGE_NUMBER_HEIGHT : 0;
-    // 仅根据页码区域高度计算页面可用内容高度
-    const maxContentHeight = RESUME_HEIGHT - padding - bottomSpace;
-
-    const result: PageSlice[][] = [];
-    let currentPage: PageSlice[] = [];
-    let currentHeight = 0;
-    // 当前正在累积的行切片（同一模块的连续行，仅记录首尾行号，避免逐行存数组）
-    let sliceModule: ModuleInfo | null = null;
-    let sliceStart = -1;
-    let sliceEnd = -1;
-
-    // 把当前切片提交为页上的一个模块块
-    const commitSlice = () => {
-      if (!sliceModule || sliceEnd < 0) return;
-      currentPage.push({
-        moduleKey: sliceModule.moduleKey,
-        // 行按顺序累积，取首尾行号即可描述本页可见区间，避免逐行枚举
-        visibleStart: sliceStart,
-        visibleEnd: sliceEnd,
-        totalRows: sliceModule.rows.length,
-      });
-      sliceModule = null;
-      sliceEnd = -1;
-    };
-    // 翻页：提交切片并把当前页存入结果
-    const newPage = () => {
-      commitSlice();
-      if (currentPage.length > 0) {
-        result.push(currentPage);
-        currentPage = [];
-        currentHeight = 0;
-      }
-    };
-
-    // 将一段连续行（首尾行号区间）装入当前页；翻页后缩略图模式停止并返回 false
-    const placeRows = (group: ModuleInfo, start: number, end: number, height: number): boolean => {
-      // 遇到新模块，先提交上一个切片，让 currentPage 如实反映页内内容
-      if (sliceModule && sliceModule !== group) commitSlice();
-
-      // 当前切片尚未提交时，页面同样已经有内容，避免大字号或大间距时继续挤在当前页
-      const hasPageContent = currentPage.length > 0 || sliceEnd >= 0;
-      // 模块间距：新模块的首块且当前页已有内容时才计一次
-      let gap = hasPageContent && sliceModule !== group ? moduleSpacing : 0;
-
-      // 放不下时：当前页已有内容则翻页重试；空页仍放不下（单块超高）则硬塞
-      if (currentHeight + gap + height > maxContentHeight && hasPageContent) {
-        newPage();
-        // 缩略图模式仅需第一页：翻页后不再继续计算后续页
-        if (isThumb.value) return false;
-        gap = 0; // 新页无内容，不再计间距
-      }
-
-      sliceModule = group;
-      if (sliceEnd < 0) sliceStart = start;
-      sliceEnd = end;
-      currentHeight += gap + height;
-      return true;
-    };
-
-    // 直接遍历模块列表分页；user 模块整体一块，其余模块逐行一块，避免先构建中间数组再二次遍历
-    for (const group of moduleList.value) {
-      if (group.moduleKey === "user" && group.rows.length > 0) {
-        // user 模块整体不可拆分，防止跨页切分
-        const height = group.rows.reduce((sum, row) => sum + row.height, 0);
-        const firstRow = group.rows[0]!;
-        const lastRow = group.rows[group.rows.length - 1]!;
-        if (!placeRows(group, firstRow.index, lastRow.index, height)) return result;
-        continue;
-      }
-      for (const row of group.rows) {
-        if (!placeRows(group, row.index, row.index, row.height)) return result;
-      }
-    }
-
-    // 提交最后切片并补录最后一页（无任何内容时保留一个空页）
-    newPage();
-    if (result.length === 0) result.push(currentPage);
-
-    return result;
-  });
-
-  // 生成每页可见行裁剪样式；分页按顺序切分，隐藏行必为区间两端，
-  // 用 nth-child 区间选择器替代逐行枚举，避免选择器随行数膨胀
-  const buildPageStyle = (pageSlices: PageSlice[], pageIndex: number) => {
-    return pageSlices
-      .flatMap((slice) => {
-        const base = `.${uid}-page-${pageIndex} .resume-module-wrapper[data-module="${slice.moduleKey}"] > .resume-row`;
-        const rules: string[] = [];
-        // 隐藏区间之前的行
-        if (slice.visibleStart > 0) {
-          rules.push(
-            `${base} > :nth-child(-n+${slice.visibleStart}) { display: none !important; }`,
-          );
-        }
-        // 隐藏区间之后的行
-        if (slice.visibleEnd < slice.totalRows - 1) {
-          rules.push(
-            `${base} > :nth-child(n+${slice.visibleEnd + 2}) { display: none !important; }`,
-          );
-        }
-        return rules;
-      })
-      .join("\n");
-  };
-  const pageStyleText = computed(() =>
-    pages.value.map((pageSlices, pageIndex) => buildPageStyle(pageSlices, pageIndex)).join("\n"),
+  // 分页：调用纯算法按行高生成每页模块切片
+  const pages = computed(() =>
+    paginateModules({
+      moduleList: moduleList.value,
+      padding: ui.value.padding || 0,
+      moduleSpacing: ui.value.moduleSpacing,
+      showPageNumber: showPageNumber.value,
+      stopAfterFirstPage: isThumb.value,
+    }),
   );
+  // 每页可见行裁剪样式：分页按顺序切分，隐藏行必为区间两端
+  const pageStyleText = computed(() => buildPagesStyleText(pages.value, uid));
 
   // 透出测量结果（模块行高），供智能一页等上层逻辑按比例压缩参数
   return { measureDone, pages, pageStyleText, moduleList };

@@ -1,9 +1,9 @@
 <script setup>
 // 单页快路径组件：内容放入一页时测量与渲染合一，不再常驻隐藏测量容器与分页裁剪
-// 由 ResumePages 在 isSinglePage 时挂载；根元素通过回调上报，供测量（useRowInfo）与导出复用
+// 由 ResumePages 在 thumb 模式挂载；根元素通过回调上报，供测量（useRowInfo）与导出复用
 import { useTemplateRef, watch } from "vue";
 import ResumeModule from "../modules/index.vue";
-import { PAGE_NUMBER_HEIGHT, RESUME_CONTAINER_HEIGHT, RESUME_CONTAINER_WIDTH } from "../constants";
+import ResumePageShell from "./resumePageShell.vue";
 
 defineOptions({ name: "PreviewSinglePage" });
 
@@ -40,51 +40,39 @@ const props = defineProps({
 });
 
 const rootEl = useTemplateRef("rootRef");
-const measureEl = useTemplateRef("measureRef");
-// ref 就绪后回传父级（measureRef 供 useRowInfo 测量、rootRef 供导出限定范围）
+// ref 就绪后回传外层根元素（供导出限定范围）
 watch(
-  [rootEl, measureEl],
-  ([r, m]) => {
-    props.onRootEl?.(r || null);
-    props.onMeasureEl?.(m || null);
+  rootEl,
+  (el) => {
+    props.onRootEl?.(el || null);
   },
   { immediate: true },
 );
+// 页面容器（测量 / 图片导出）由 ResumePageShell 回传
+const setMeasureEl = (el) => {
+  props.onMeasureEl?.(el || null);
+};
 </script>
 
 <template>
   <div ref="rootRef" class="relative flex flex-col gap-3">
-    <div
-      ref="measureRef"
-      class="resume-page-item relative flex flex-col rounded-3xl bg-white text-black"
-      :class="[ui.fontFamily]"
-      :style="[
-        styles.paddingStyle,
-        styles.fontStyle,
-        styles.lineHeightStyle,
-        RESUME_CONTAINER_WIDTH,
-        RESUME_CONTAINER_HEIGHT,
-      ]"
+    <ResumePageShell
+      :ui="ui"
+      :styles="styles"
+      :show-page-number="showPageNumber"
+      :page-index="0"
+      :page-count="1"
+      :on-el="setMeasureEl"
     >
-      <!-- 模块之间的间距由 ui.moduleSpacing 控制，与分页计算保持一致 -->
-      <div class="flex flex-1 flex-col" :style="{ gap: `${ui.moduleSpacing}px` }">
-        <div
-          v-for="item in allModules"
-          :key="item.key"
-          class="group group/module relative rounded-xl"
-        >
-          <!-- 测量包装与测量容器一致：resume-module-wrapper 直接挂在模块根元素上 -->
-          <ResumeModule :data="props.item.data" :name="item.key" class="resume-module-wrapper" />
-        </div>
-      </div>
       <div
-        v-if="showPageNumber"
-        class="flex-c py-3 text-xs opacity-50"
-        :style="{ height: `${PAGE_NUMBER_HEIGHT}px` }"
+        v-for="item in allModules"
+        :key="item.key"
+        class="group group/module relative rounded-xl"
       >
-        轻舟简历 · 第 1 页 · 共 1 页
+        <!-- 测量包装与测量容器一致：resume-module-wrapper 直接挂在模块根元素上 -->
+        <ResumeModule :data="props.item.data" :name="item.key" class="resume-module-wrapper" />
       </div>
-    </div>
+    </ResumePageShell>
   </div>
 </template>
 
