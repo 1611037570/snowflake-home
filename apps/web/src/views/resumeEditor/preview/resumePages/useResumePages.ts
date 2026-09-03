@@ -4,7 +4,6 @@
  * 封装测量（useRowInfo）、分页算法与每页可见行裁剪样式生成，
  * 供 resumePages/index.vue 组合使用。
  */
-import { useDebounceFn } from "@vueuse/core";
 import { computed, ref, watch, type ComputedRef, type Ref } from "vue";
 import { PAGE_NUMBER_HEIGHT, RESUME_HEIGHT } from "../constants";
 import { useRowInfo, type ModuleInfo } from "./useRowInfo";
@@ -199,46 +198,6 @@ export const useResumePages = ({
     pages.value.map((pageSlices, pageIndex) => buildPageStyle(pageSlices, pageIndex)).join("\n"),
   );
 
-  // 单页快路径：内容总高能放入一页时，渲染分支切换为单页（测量与渲染合一）
-  // 判定公式与分页算法同口径，避免「判定一页但实际溢出」；无行的模块不产切片也不计间距
-  // 缩略图天然单页（仅渲染第一页），统一走多页裁剪分支即可，无需该判定
-  const singlePage = computed(() => {
-    if (isThumb.value) return false;
-    const list = moduleList.value;
-    if (list.length === 0) return false;
-    const padding = ui.value.padding || 0;
-    const moduleSpacing = ui.value.moduleSpacing;
-    const bottomSpace = showPageNumber.value ? PAGE_NUMBER_HEIGHT : 0;
-    const maxContentHeight = RESUME_HEIGHT - padding - bottomSpace;
-    let rowsTotal = 0;
-    let gapCount = 0;
-    for (const group of list) {
-      if (group.rows.length === 0) continue;
-      for (const row of group.rows) rowsTotal += row.height;
-      gapCount++;
-    }
-    const totalHeight = rowsTotal + moduleSpacing * Math.max(gapCount - 1, 0);
-    return totalHeight <= maxContentHeight;
-  });
-  // 分支切换防抖：编辑中测量瞬时抖动不来回切换渲染分支
-  const isSinglePage = ref(false);
-  const firstApply = ref(true);
-  const applySinglePage = () => (isSinglePage.value = singlePage.value);
-  const debouncedApplySinglePage = useDebounceFn(applySinglePage, 150);
-  watch(
-    singlePage,
-    () => {
-      // 首次拿到有效测量结果立即应用，避免初始化时先渲染多页内容再切单页的两段式闪烁
-      if (firstApply.value && moduleList.value.length > 0) {
-        firstApply.value = false;
-        applySinglePage();
-      } else {
-        debouncedApplySinglePage();
-      }
-    },
-    { immediate: true },
-  );
-
   // 透出测量结果（模块行高），供智能一页等上层逻辑按比例压缩参数
-  return { measureDone, pages, pageStyleText, moduleClass, moduleList, isSinglePage };
+  return { measureDone, pages, pageStyleText, moduleClass, moduleList };
 };
