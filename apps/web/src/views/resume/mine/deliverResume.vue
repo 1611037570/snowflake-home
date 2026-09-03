@@ -129,10 +129,10 @@ const go = (data) => {
   <div>
     <div @click="visible = true">
       <slot>
-        <SfButton> 投简历 </SfButton>
+        <SfButton> 投递简历 </SfButton>
       </slot>
     </div>
-    <SfModal v-model="visible" title="投简历">
+    <SfModal v-model="visible" title="投递简历">
       <div class="w-[420px]">
         <SfCollapse>
           <SfCollapseItem title="作者留言">
