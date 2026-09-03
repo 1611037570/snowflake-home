@@ -70,16 +70,27 @@ export function useRowInfo(
   // 冻结后释放全部监听器，避免缩略图测量完成后空跑（监听器创建后赋值）
   let stopAll: (() => void) | null = null;
 
+  // 行 margin 缓存：margin 只由行元素当前的 CSS 类决定，内容变化不影响；
+  // 首次 getComputedStyle 后按元素缓存，类名变化（如模板分支切换）时重新计算，避免缓存失效
+  const marginCache = new WeakMap<HTMLElement, { margin: number; className: string }>();
+  const getRowMargin = (el: HTMLElement): number => {
+    const cached = marginCache.get(el);
+    const className = el.className;
+    if (cached && cached.className === className) return cached.margin;
+    const { marginTop, marginBottom } = window.getComputedStyle(el);
+    const margin = (parseFloat(marginTop) || 0) + (parseFloat(marginBottom) || 0);
+    marginCache.set(el, { margin, className });
+    return margin;
+  };
+
   /**
    * 批量读取一组行的高度：先统一读 offsetHeight 再统一读 margin，
-   * 避免逐行交替读写强制同步布局（layout thrash）
+   * 避免逐行交替读写强制同步布局（layout thrash）；
+   * margin 命中的行直接取缓存，不再触发 getComputedStyle 同步样式结算
    */
   const batchRowHeights = (els: HTMLElement[]): number[] => {
     const heights = els.map((el) => el.offsetHeight);
-    const margins = els.map((el) => {
-      const { marginTop, marginBottom } = window.getComputedStyle(el);
-      return (parseFloat(marginTop) || 0) + (parseFloat(marginBottom) || 0);
-    });
+    const margins = els.map(getRowMargin);
     return heights.map((h, i) => h + margins[i]!);
   };
 
