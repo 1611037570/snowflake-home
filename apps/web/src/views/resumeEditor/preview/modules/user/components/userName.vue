@@ -9,9 +9,13 @@ const user = computed(() => previewData.value?.user?.data || {});
 </script>
 
 <template>
-  <h1 class="min-w-0 max-w-full font-bold tracking-wide" :style="[fontValue(14)]">
-    <DiffField v-model="user.name" />
-  </h1>
+  <div class="max-w-full min-w-0 font-bold tracking-wide" :style="[fontValue(14)]">
+    <DiffField
+      v-model="user.name"
+      class="flex items-center! justify-center!"
+      :style="[fontValue(14)]"
+    />
+  </div>
 </template>
 
 <style lang="scss" scoped></style>

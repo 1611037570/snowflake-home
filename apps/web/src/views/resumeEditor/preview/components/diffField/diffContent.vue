@@ -20,7 +20,7 @@ const props = defineProps({
   },
 });
 
-const fontValue = inject("fontValue");
+// 行高随各字段实际字号自动缩放；字号由外层包装继承，避免强制基础字号覆盖 name 等字段的加大字号
 const lineHeightValue = inject("lineHeightValue");
 
 // 仅保留简历预览所需标签和安全链接协议
@@ -95,12 +95,12 @@ const charCount = computed(() => {
       :is="block.tag"
       v-bind="block.attrs"
       class="break-words whitespace-pre-wrap"
-      :style="[fontValue(), lineHeightValue()]"
+      :style="[lineHeightValue()]"
       :innerHTML="block.html"
     ></component>
   </template>
   <template v-else>
-    <span :style="[fontValue(), lineHeightValue()]">{{ content }}</span>
+    <span :style="[lineHeightValue()]">{{ content }}</span>
   </template>
   <!-- 字数统计：由使用方通过 showCount 控制展示 -->
   <div v-if="showCount" class="mt-1 w-full text-right text-xs">共 {{ charCount }} 字</div>
