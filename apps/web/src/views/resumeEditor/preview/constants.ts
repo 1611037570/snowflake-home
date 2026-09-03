@@ -9,6 +9,15 @@ export const RESUME_WIDTH = 794;
 export const RESUME_HEIGHT = 1123;
 /** 页码区域固定高度（px） */
 export const PAGE_NUMBER_HEIGHT = 36;
+
+/**
+ * 页面可用内容高度：页面高 - 页边距 - 页码区高
+ * 分页算法与智能一页共用同一公式，避免两处独立维护导致分页判定不一致
+ * @param padding - 页边距（px）
+ * @param showPageNumber - 是否渲染页码区
+ */
+export const getContentHeight = (padding: number, showPageNumber: boolean): number =>
+  RESUME_HEIGHT - padding - (showPageNumber ? PAGE_NUMBER_HEIGHT : 0);
 /** PDF A4 页面宽度（mm） */
 export const PDF_PAGE_WIDTH = 210;
 /** PDF A4 页面高度（mm） */
