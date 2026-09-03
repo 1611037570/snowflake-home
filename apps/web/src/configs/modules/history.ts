@@ -27,13 +27,12 @@ export const historyList = [
   },
   {
     time: "2024-11-22",
-    // time:"2024-03-24"
-    desc: "上线简历生成器Beta——快速制作属于自己的简历",
+    desc: "发布简历生成器Beta1.0",
     url: "/resume",
   },
   {
     time: "2024-03-24",
-    desc: "上线简历生成器Beta——快速制作属于自己的简历",
+    desc: "上线简历生成器Beta0.1——快速制作属于自己的简历",
     url: "/resume",
     img: resumeBeta,
   },
