@@ -5,8 +5,9 @@
  * 不再挂载独立测量容器，避免重复渲染整份简历与重复注册观察器。
  *
  * 压缩计算为纯数学估算：
- *   - 模块间距、页边距对单页判断是精确的（与分页算法公式一致）
- *   - 行高、字号按比例缩放估算行高
+ *   - 行高按字号 × 行高比例缩放
+ *   - 缩放后的行高列表直接复用分页算法（paginateModules）判定是否恰好一页，
+ *     与正式分页共用同一模型（user 模块整体一块、模块间距翻页规则），消除独立估算偏差
  * 参数只向下压缩、不会回弹，按压缩优先级逐项进行。
  *
  * 事件与状态由本 hook 内部管理：编辑态注册「resume-smart-one-page」事件，
@@ -15,7 +16,7 @@
 import { onMounted, onUnmounted, type ComputedRef, type Ref } from "vue";
 import { ElMessage } from "element-plus";
 import eventBus from "@/utils/modules/eventBus";
-import { getContentHeight } from "../constants";
+import { paginateModules } from "./paginate";
 import {
   defaultFontSize,
   defaultLineHeight,
@@ -106,34 +107,26 @@ export const useSmartOnePage = ({
 
     // 测量基准：预览层行高对应原始 ui 参数
     const base = pickAdjustable(ui.value);
-    // 行数、行高总和在单次计算中固定，单趟聚合，避免每轮压缩重复遍历全部行
-    const { rowCount, rowsTotal } = list.reduce(
-      (acc: { rowCount: number; rowsTotal: number }, group: any) => {
-        acc.rowCount += group.rows.length;
-        acc.rowsTotal += group.rows.reduce(
-          (groupSum: number, row: any) => groupSum + row.height,
-          0,
-        );
-        return acc;
-      },
-      { rowCount: 0, rowsTotal: 0 },
-    );
-    if (rowCount === 0) return null;
-    const moduleGapCount = Math.max(list.length - 1, 0);
-    const baseScale = base.fontSize * base.lineHeight;
 
-    // 估算总高：行高按字号×行高比例缩放，模块间距计入模块间隔
-    const estimateTotal = (params: Record<OnePageAdjustKey, number>) => {
-      const scale = (params.fontSize * params.lineHeight) / baseScale;
-      return rowsTotal * scale + params.moduleSpacing * moduleGapCount;
+    // 行高按压缩比例缩放后直接复用分页算法判定是否恰好一页：
+    // 与正式分页共用同一模型（user 模块整体一块、模块间距翻页规则），消除独立估算公式与实测分页的偏差
+    const isOnePage = (params: Record<OnePageAdjustKey, number>) => {
+      const scale = (params.fontSize * params.lineHeight) / (base.fontSize * base.lineHeight);
+      const scaledList = list.map((group: { moduleKey: string; rows: { height: number; index: number }[] }) => ({
+        moduleKey: group.moduleKey,
+        rows: group.rows.map((row) => ({ height: row.height * scale, index: row.index })),
+      }));
+      const pages = paginateModules({
+        moduleList: scaledList,
+        padding: params.padding,
+        moduleSpacing: params.moduleSpacing,
+        showPageNumber: showPageNumber.value,
+      });
+      return pages.length === 1;
     };
-    // 可用内容高：与分页算法共用统一公式
-    const estimateAvail = (padding: number) => getContentHeight(padding, showPageNumber.value);
-    const fits = (params: Record<OnePageAdjustKey, number>) =>
-      estimateTotal(params) <= estimateAvail(params.padding);
 
     // 当前参数已能放下则直接成功
-    if (fits(base)) return { fitParams: base, ok: true };
+    if (isOnePage(base)) return { fitParams: base, ok: true };
 
     // 按优先级逐项向下压缩，找到能放下的参数组合
     const params = { ...base };
@@ -142,7 +135,7 @@ export const useSmartOnePage = ({
       while (val > min + 1e-9) {
         const next = Math.max(floorByStep(val - step, step), min);
         params[key] = next;
-        if (fits(params)) return { fitParams: { ...params }, ok: true };
+        if (isOnePage(params)) return { fitParams: { ...params }, ok: true };
         val = next;
       }
     }
