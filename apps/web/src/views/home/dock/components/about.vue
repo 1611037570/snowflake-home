@@ -1,23 +1,12 @@
 <template>
-  <div
-    class="flex h-10 w-10 items-center justify-center rounded-lg bg-white/80 backdrop-blur-md"
-    @click="openAbout"
-  >
-    <SfLogo name="home" />
-    <Modal v-if="aboutVisible" />
-  </div>
+  <SfAbout>
+    <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-white/80 backdrop-blur-md">
+      <SfLogo name="home" />
+    </div>
+  </SfAbout>
 </template>
 
-<script setup>
-import { useHomeStore } from "@/stores";
-import Modal from "@/views/home/about/modal.vue";
-const homeStore = useHomeStore();
-const { aboutVisible } = storeToRefs(homeStore);
-
-const openAbout = () => {
-  aboutVisible.value = true;
-};
-</script>
+<script setup></script>
 
 <style scoped>
 /* 添加容器悬停效果 */
