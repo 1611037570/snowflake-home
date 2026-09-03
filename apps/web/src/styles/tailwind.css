@@ -122,7 +122,7 @@
   --sf-transparent: color-mix(in oklab, oklch(50% 0.014 254.604) 80%, transparent);
   --sf-transparent-2: color-mix(in oklab, oklch(20% 0.014 254.604) 60%, transparent);
   --sf-transparent-3: color-mix(in oklab, oklch(46.099% 0.06009 259.259) 40%, transparent);
-  --sf-border: rgba(255, 255, 255, 0.1);
+  --sf-border: rgba(255, 255, 255, 0.25);
 }
 
 /* 自定义工具类 */
