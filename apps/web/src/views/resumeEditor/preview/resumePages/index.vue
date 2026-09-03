@@ -44,7 +44,7 @@ const isThumb = computed(() => props.mode === "thumb");
 const isEdit = computed(() => props.mode === "editor");
 
 // 初始化过渡遮罩：盖住测量完成前的空页，1 秒后自动取消（仅编辑态展示）
-const { showInitMask } = useInitMask();
+const { showInitMask } = useInitMask(isEdit);
 
 // 根元素 ref：导出时限定为当前实例的分页元素，避免误选其他 ResumePages 实例的页面
 const rootRef = ref(null);
@@ -97,7 +97,7 @@ const rejectModule = inject("rejectModule", () => {});
   <div class="relative flex flex-col">
     <!-- 初始化过渡遮罩：盖住测量完成前的空页与分支切换，1 秒后自动取消（仅编辑态展示） -->
     <div
-      v-if="showInitMask"
+      v-if="showInitMask && isEdit"
       class="absolute inset-0 z-20 flex items-center justify-center rounded-3xl bg-white/80 backdrop-blur-sm"
     >
       <SfIcon icon="lucide:loader-circle" :size="26" class="animate-spin text-sf-theme" />
