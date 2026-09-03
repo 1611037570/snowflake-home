@@ -9,9 +9,9 @@ export const useDiffPopoverStore = defineStore("diffPopover", () => {
   const value = ref("");
   const newValue = ref("");
   const html = ref(false);
-  const rect = ref<any>(null);
-  const direction = ref("up");
-  const align = ref("left");
+  // 触发时的鼠标坐标，浮层按其定位并收敛到屏幕内
+  const x = ref(0);
+  const y = ref(0);
 
   // 延迟隐藏定时器，给鼠标从字段移动到悬浮层留出时间
   let hideTimer: ReturnType<typeof setTimeout> | null = null;
@@ -21,9 +21,8 @@ export const useDiffPopoverStore = defineStore("diffPopover", () => {
     value: string;
     newValue: string;
     html: boolean;
-    rect: any;
-    direction: string;
-    align: string;
+    x: number;
+    y: number;
   }) {
     if (hideTimer) {
       clearTimeout(hideTimer);
@@ -33,9 +32,8 @@ export const useDiffPopoverStore = defineStore("diffPopover", () => {
     value.value = payload.value;
     newValue.value = payload.newValue;
     html.value = payload.html;
-    rect.value = payload.rect;
-    direction.value = payload.direction;
-    align.value = payload.align;
+    x.value = payload.x;
+    y.value = payload.y;
     visible.value = true;
   }
 
@@ -77,9 +75,8 @@ export const useDiffPopoverStore = defineStore("diffPopover", () => {
     value,
     newValue,
     html,
-    rect,
-    direction,
-    align,
+    x,
+    y,
     show,
     hide,
     stay,
