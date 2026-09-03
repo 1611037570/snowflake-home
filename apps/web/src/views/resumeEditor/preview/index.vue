@@ -5,7 +5,7 @@ import ResumePage from "./page.vue";
 import ScaleContainer from "./ScaleContainer.vue";
 import { useResumeStore } from "@/stores";
 import { storeToRefs } from "pinia";
-import { computed, ref, watch } from "vue";
+import { computed, ref } from "vue";
 // 全屏预览组件
 const FullscreenPreview = markRaw(defineAsyncComponent(() => import("./fullscreenPreview.vue")));
 const resumeStore = useResumeStore();
@@ -20,13 +20,6 @@ const resumeItem = computed(() => ({
 }));
 
 const isFullscreen = ref(false);
-const fullscreenPreviewRef = ref(null);
-
-// 异步组件加载完成后 ref 才有值，此时再打开全屏
-watch(fullscreenPreviewRef, (instance) => {
-  if (instance) instance.open();
-});
-
 const openFullscreen = () => {
   isFullscreen.value = true;
 };
@@ -39,7 +32,7 @@ const openFullscreen = () => {
     <ScaleContainer @fullscreen="openFullscreen">
       <ResumePage />
     </ScaleContainer>
-    <FullscreenPreview v-if="isFullscreen" ref="fullscreenPreviewRef" :item="resumeItem" @close="isFullscreen = false" />
+    <FullscreenPreview :visible="isFullscreen" :item="resumeItem" @close="isFullscreen = false" />
   </div>
 </template>
 
