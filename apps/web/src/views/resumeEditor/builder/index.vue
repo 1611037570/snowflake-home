@@ -2,12 +2,16 @@
 import { useResumeStore } from "@/stores";
 import { DEFAULT_EDITOR } from "@/stores/modules/resume/defaultConfig";
 import { storeToRefs } from "pinia";
-import { markRaw, onBeforeUnmount, onMounted, ref, watch } from "vue";
+import { defineAsyncComponent, markRaw, onBeforeUnmount, onMounted, ref, watch } from "vue";
 import eventBus from "@/utils/modules/eventBus";
-import Custom from "./custom/index.vue";
 import Editor from "./editor/index.vue";
-import Template from "./template/index.vue";
-
+const AsyncCustom = markRaw(defineAsyncComponent(() => import("./custom/index.vue")));
+const AsyncTemplate = markRaw(
+  defineAsyncComponent({
+    loader: () => import("./template/index.vue"),
+    name: "BuilderTemplate", // 显式设置异步组件的名称
+  }),
+);
 // 菜单配置
 const menuList = [
   {
@@ -18,12 +22,12 @@ const menuList = [
   {
     name: "设计",
     icon: "lucide:palette",
-    component: markRaw(Custom),
+    component: AsyncCustom,
   },
   {
     name: "模板",
     icon: "lucide:layout-template",
-    component: markRaw(Template),
+    component: AsyncTemplate,
   },
 ];
 
@@ -65,8 +69,8 @@ const editorWidth = DEFAULT_EDITOR.editorWidth;
     >
       <div class="flex min-h-0 flex-1 flex-col">
         <Transition :name="`tab-slide-${direction}`" mode="out-in">
-          <!-- 仅缓存编辑组件，设计/模板按需渲染以降低内存占用，动画保持 -->
-          <KeepAlive :include="['BuilderEditor']">
+          <!-- 仅缓存编辑与模板组件：编辑器默认加载并缓存，模板首次打开才异步加载，之后缓存 -->
+          <KeepAlive>
             <component :is="menuList[activeIndex].component" class="h-full" />
           </KeepAlive>
         </Transition>
