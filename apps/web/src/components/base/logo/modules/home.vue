@@ -14,7 +14,10 @@ defineProps({
     :src="snowIcon"
     class="transition-all duration-600 hover:rotate-90"
     fit="contain"
-    :size="size"
+    :style="{
+      width: `${size * 4}px`,
+      height: `${size * 4}px`,
+    }"
   />
 </template>
 
