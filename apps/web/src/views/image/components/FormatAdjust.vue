@@ -11,9 +11,9 @@
           @click.stop="resetFormat"
         />
       </div>
-      <ElSelect v-model="format" :placeholder="$t('image.formatSelectPlaceholder')" class="w-full">
+      <SfSelect v-model="format" :placeholder="$t('image.formatSelectPlaceholder')" class="w-full">
         <ElOption v-for="opt in formats" :key="opt" :label="opt" :value="opt" />
-      </ElSelect>
+      </SfSelect>
     </div>
     <div class="flex flex-1 flex-col">
       <div class="mb-1 flex items-center">
@@ -25,18 +25,13 @@
           @click.stop="resetQuality"
         />
       </div>
-      <ElSelect
+      <SfSelect
         v-model="quality"
+        :list="qualityOptions"
         :placeholder="$t('image.qualitySelectPlaceholder')"
         class="w-full"
       >
-        <ElOption
-          v-for="opt in qualityOptions"
-          :key="opt.value"
-          :label="opt.label"
-          :value="opt.value"
-        />
-      </ElSelect>
+      </SfSelect>
     </div>
   </div>
 </template>
@@ -62,11 +57,11 @@ function resetFormat() {
 
 // 质量选项配置
 const qualityOptions = [
-  { label: $t("image.quality.lossless"), value: 1 },
-  { label: $t("image.quality.high"), value: 0.8 },
-  { label: $t("image.quality.medium"), value: 0.6 },
-  { label: $t("image.quality.low"), value: 0.4 },
-  { label: $t("image.quality.veryLow"), value: 0.2 },
+  { name: $t("image.quality.lossless"), value: 1 },
+  { name: $t("image.quality.high"), value: 0.8 },
+  { name: $t("image.quality.medium"), value: 0.6 },
+  { name: $t("image.quality.low"), value: 0.4 },
+  { name: $t("image.quality.veryLow"), value: 0.2 },
 ];
 
 // 支持的图片格式列表

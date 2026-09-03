@@ -93,7 +93,7 @@
           </div>
           <Intro v-else-if="page === 'intro'" key="intro" />
         </ElScrollbar>
-        <div class="flex flex-col border-l border-sf-theme-2 pl-3">
+        <div class="flex flex-col border-l border-sf-theme-2 pl-3" v-if="0">
           <div
             class="flex-c mb-2 flex flex-col"
             v-for="item in rightList"
