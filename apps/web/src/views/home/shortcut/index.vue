@@ -3,10 +3,14 @@ import { useFileDialog } from "@/hooks";
 import { useHomeStore } from "@/stores";
 import { storeToRefs } from "pinia";
 import { VueDraggable } from "vue-draggable-plus";
+import SfMixImg from "@/components/business/mixImg/mixImg.vue";
 import AddShortcut from "./addShortcut.vue";
+import { ElMessage } from "element-plus";
 const { click } = useFileDialog();
 const shortcutStore = useHomeStore();
 const { shortcutList } = storeToRefs(shortcutStore);
+const searchStore = useHomeStore();
+const { openMode } = storeToRefs(searchStore);
 
 // 拖拽状态
 const isDrag = ref(false);
@@ -51,6 +55,71 @@ const menuList = computed(() => [
     },
   },
 ]);
+
+// SfApp 组件逻辑迁移
+const handleAppClick = (value: string) => {
+  window.open(value, openMode.value);
+};
+
+const getAppMenuList = (type: string, index: number, item: any) => {
+  if (type === "custom") return [];
+  return [
+    {
+      name: "重新获取图标",
+      fn: () => {},
+    },
+    {
+      name: "分享",
+      fn: () => {
+        const data: any = {
+          ...shortcutList.value[index],
+        };
+        // 需要过滤掉id
+        delete data.id;
+        const json = JSON.stringify(data, null, 2);
+        const blob = new Blob([json], {
+          type: "application/json; charset=utf-8",
+        });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = data.name + "——快捷方式分享.json";
+        a.click();
+        // 清理资源
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      },
+    },
+    {
+      name: item.top ? "取消固定" : "固定到搜索栏",
+      fn: () => {
+        console.log("固定");
+        if (index === -1) return;
+        shortcutList.value[index].top = !item.top;
+        ElMessage.success(item.top ? "取消固定成功" : "固定成功");
+      },
+    },
+    {
+      name: "删除",
+      fn: () => {
+        console.log("删除");
+        if (index === -1) return;
+        shortcutList.value.splice(index, 1);
+        ElMessage.success("删除成功");
+      },
+    },
+  ];
+};
+
+// SfApp 组件默认参数
+const sfAppDefaults = {
+  size: 80,
+  iconSize: 40,
+  name: "",
+  type: "default",
+  index: -1,
+  value: "",
+};
 </script>
 
 <template>
@@ -69,25 +138,46 @@ const menuList = computed(() => [
       @update="onUpdate"
       @end="onEnd"
     >
-      <SfApp
+      <SfMenu
         v-for="(item, index) in shortcutList"
         :key="item.id"
-        :index="index"
-        :name="item.name"
-        :value="item.url"
-        :item="item"
-        :class="{ 'shake-element': isDrag }"
-      ></SfApp>
-      <SfMenu :list="menuList">
-        <SfApp
-          name="添加"
-          type="custom"
-          :item="{
-            icon: 'ic:round-add',
+        :list="getAppMenuList('default', index, item)"
+        class="flex cursor-pointer flex-col items-center justify-center"
+        @click="handleAppClick(item.url)"
+      >
+        <div
+          class="flex-c rounded-xl bg-sf-primary"
+          :class="{ 'shake-element': isDrag }"
+          :style="{
+            width: sfAppDefaults.size + 'px',
+            height: sfAppDefaults.size + 'px',
           }"
+        >
+          <SfMixImg :type="item.imgType" :value="item.imgValue" :size="sfAppDefaults.iconSize" />
+        </div>
+        <div class="flex h-6 items-center justify-center truncate text-sm text-sf-primary">
+          {{ item.name }}
+        </div>
+      </SfMenu>
+      <SfMenu :list="menuList">
+        <div
+          class="flex-c cursor-pointer flex-col items-center justify-center"
           :class="{ 'shake-element': isDrag }"
           @click="handleAdd"
-        ></SfApp>
+        >
+          <div
+            class="flex-c rounded-xl bg-sf-primary"
+            :style="{
+              width: sfAppDefaults.size + 'px',
+              height: sfAppDefaults.size + 'px',
+            }"
+          >
+            <SfMixImg type="custom" value="ic:round-add" :size="sfAppDefaults.iconSize" />
+          </div>
+          <div class="flex h-6 items-center justify-center truncate text-sm text-sf-primary">
+            添加
+          </div>
+        </div>
       </SfMenu>
     </VueDraggable>
   </div>
