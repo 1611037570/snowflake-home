@@ -4,10 +4,10 @@ export interface ShortcutItem {
   name: string;
   // 链接
   url: string;
-  // 图标类型
-  imgType?: "img" | "icon";
+
   // 图标值
-  imgValue?: string;
+  img?: string;
+  icon?: string;
   // 唯一标识
   id?: string;
   // 拼音

@@ -113,10 +113,8 @@ const getAppMenuList = (type, index, item) => {
 
 // SfApp 组件默认参数
 const sfAppDefaults = {
-  size: 80,
-  iconSize: 40,
-  name: "",
-  type: "default",
+  name: "添加",
+  icon: "ic:round-add",
   index: -1,
   value: "",
 };
@@ -154,36 +152,19 @@ const sfAppDefaults = {
           logoClass="text-sf-text"
         >
         </SfApp>
-        <div
-          v-if="0"
-          class="flex-c rounded-xl bg-sf-primary"
-          :class="{ 'shake-element': isDrag }"
-          :style="{
-            width: sfAppDefaults.size + 'px',
-            height: sfAppDefaults.size + 'px',
-          }"
-        >
-          <SfMixImg :type="item.imgType" :value="item.imgValue" :size="sfAppDefaults.iconSize" />
-        </div>
       </SfMenu>
       <SfMenu :list="menuList">
-        <div
-          class="flex-c cursor-pointer flex-col items-center justify-center"
-          :class="{ 'shake-element': isDrag }"
-          @click="handleAdd"
-        >
-          <div
-            class="flex-c rounded-xl bg-sf-primary"
-            :style="{
-              width: sfAppDefaults.size + 'px',
-              height: sfAppDefaults.size + 'px',
-            }"
-          >
-            <SfMixImg type="custom" value="ic:round-add" :size="sfAppDefaults.iconSize" />
-          </div>
-          <div class="flex h-6 items-center justify-center truncate text-sm text-sf-primary">
-            添加
-          </div>
+        <div class="flex-c cursor-pointer flex-col items-center justify-center">
+          <SfApp
+            :data="sfAppDefaults"
+            :class="{ 'shake-element': isDrag }"
+            size="10"
+            @click="handleAdd"
+            boxSize="20"
+            boxClass="bg-sf-primary hover:bg-sf-bg-2!"
+            class="text-sf-primary"
+            logoClass="text-sf-text"
+          />
         </div>
       </SfMenu>
     </VueDraggable>
