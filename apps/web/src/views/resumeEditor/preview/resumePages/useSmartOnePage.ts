@@ -9,7 +9,7 @@
  *   - 行高、字号按比例缩放估算行高
  * 参数只向下压缩、不会回弹，按压缩优先级逐项进行。
  */
-import { inject, type ComputedRef } from "vue";
+import type { ComputedRef, Ref } from "vue";
 import { PAGE_NUMBER_HEIGHT, RESUME_HEIGHT } from "../constants";
 import {
   defaultFontSize,
@@ -61,6 +61,8 @@ interface UseSmartOnePageOptions {
   ui: ComputedRef<Record<string, any>>;
   /** 是否显示页码 */
   showPageNumber: ComputedRef<boolean>;
+  /** 预览层测量结果（模块+行高），由编辑态 ResumePages 实例传入 */
+  moduleList: Ref<any[]>;
   /** 可调节参数（数组顺序即压缩优先级），默认 defaultOnePageAdjustable */
   adjustable?: OnePageAdjustableItem[];
 }
@@ -68,10 +70,10 @@ interface UseSmartOnePageOptions {
 export const useSmartOnePage = ({
   ui,
   showPageNumber,
+  moduleList,
   adjustable = defaultOnePageAdjustable,
 }: UseSmartOnePageOptions) => {
-  // 复用预览层测量结果（编辑态 ResumePages 实例注入的共享 ref）
-  const previewModuleList = inject<any>("previewModuleList", null);
+  // 复用调用方传入的预览层测量结果（二者共用同一份行高数据，无需再挂独立测量容器）
 
   // 读取 ui 中可调字段的当前值，缺失时用默认值兜底
   const pickAdjustable = (source: Record<string, any>) => {
@@ -88,7 +90,7 @@ export const useSmartOnePage = ({
    * @returns 参数组合与是否成功；测量未就绪时返回 null
    */
   const computeFit = (): { fitParams: Record<OnePageAdjustKey, number>; ok: boolean } | null => {
-    const list = previewModuleList?.value;
+    const list = moduleList.value;
     if (!list || list.length === 0) return null;
 
     // 测量基准：预览层行高对应原始 ui 参数
