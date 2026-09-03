@@ -17,7 +17,7 @@
             <SfCollapseItem name="preview">
               <template #title>预览数据 (previewData)</template>
               <div class="max-h-[50vh] overflow-y-auto">
-                <MdPreview
+                <SfMdPreview
                   :modelValue="previewMd"
                   editorId="debug-preview"
                   :codeFoldable="false"
@@ -28,7 +28,7 @@
             <SfCollapseItem name="raw">
               <template #title>原始数据 (currentData)</template>
               <div class="max-h-[50vh] overflow-y-auto">
-                <MdPreview
+                <SfMdPreview
                   :modelValue="rawMd"
                   editorId="debug-raw"
                   :codeFoldable="false"
@@ -43,7 +43,7 @@
             <SfCollapseItem name="currentFixedConfig">
               <template #title>原始配置 (currentFixedConfig)</template>
               <div class="max-h-[50vh] overflow-y-auto">
-                <MdPreview
+                <SfMdPreview
                   :modelValue="fixedConfigMd"
                   editorId="debug-config"
                   :codeFoldable="false"
@@ -54,7 +54,7 @@
             <SfCollapseItem name="currentConfig">
               <template #title>当前配置 (currentConfig)</template>
               <div class="max-h-[50vh] overflow-y-auto">
-                <MdPreview
+                <SfMdPreview
                   :modelValue="configMd"
                   editorId="debug-config"
                   :codeFoldable="false"
@@ -70,17 +70,10 @@
 </template>
 
 <script setup>
-import { ref, inject, computed, defineAsyncComponent } from "vue";
+import { ref, inject, computed } from "vue";
 import { useResumeStore } from "@/stores";
 import { storeToRefs } from "pinia";
 import Icon from "../components/icon.vue";
-
-// 延迟加载 markdown 预览：仅在打开调试抽屉时引入 md-editor-v3 及其样式，避免首屏主包过大
-const MdPreview = defineAsyncComponent(() =>
-  import("md-editor-v3/lib/preview.css").then(() =>
-    import("md-editor-v3").then((m) => m.MdPreview),
-  ),
-);
 
 const drawerVisible = ref(false);
 const activeNames = ref(["preview", "raw"]);

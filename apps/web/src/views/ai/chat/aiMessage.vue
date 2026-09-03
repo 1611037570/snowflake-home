@@ -2,11 +2,6 @@
 import { useThemeStore } from "@/stores";
 import { useClipboard } from "@vueuse/core";
 import { ElMessage } from "element-plus";
-const MdPreview = defineAsyncComponent(async () => {
-  await import("md-editor-v3/lib/preview.css");
-  const { MdPreview } = await import("md-editor-v3");
-  return MdPreview;
-});
 import { storeToRefs } from "pinia";
 
 const props = defineProps({
@@ -163,7 +158,7 @@ const resumeShow = computed(
       <template v-if="msg.thought && !msg.thoughtCollapsed && !isResumeMode">
         <div class="relative border border-sf-b px-4 text-[13.5px] leading-relaxed text-sf-text-3">
           <div class="absolute top-0 left-0 h-full w-1 bg-sf-theme/20"></div>
-          <MdPreview
+          <SfMdPreview
             :modelValue="msg.thought"
             :theme="theme"
             editorId="thought-preview"
@@ -179,7 +174,7 @@ const resumeShow = computed(
       >
         <!-- AI 消息 (Markdown 渲染) -->
         <div class="relative w-full min-w-0">
-          <MdPreview
+          <SfMdPreview
             v-if="content"
             :modelValue="content"
             :theme="theme"

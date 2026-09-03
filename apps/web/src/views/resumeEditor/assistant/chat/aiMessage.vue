@@ -2,8 +2,6 @@
 import { useThemeStore } from "@/stores";
 import { useClipboard } from "@vueuse/core";
 import { ElMessage } from "element-plus";
-import { MdPreview } from "md-editor-v3";
-import "md-editor-v3/lib/preview.css";
 import { storeToRefs } from "pinia";
 import ToggleButton from "./toggleButton.vue";
 
@@ -117,7 +115,7 @@ const showTotalTime = computed(() => props.msg.requestStatus === "success" && to
       生成失败，点击重试!
     </div>
     <!-- 正式回复内容 -->
-    <MdPreview
+    <SfMdPreview
       v-if="msg.requestStatus === 'success' && !msg.contentCollapsed && content"
       :modelValue="content"
       :theme="theme"
