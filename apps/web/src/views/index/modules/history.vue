@@ -3,13 +3,20 @@
     class="w-dwh relative z-10 flex flex-col overflow-hidden bg-sf-primary px-12 py-36"
     id="history"
   >
+    <Teleport to="body">
+      <el-image-viewer
+        v-if="previewVisible"
+        :url-list="[previewImg]"
+        @close="previewVisible = false"
+      />
+    </Teleport>
     <!-- 标题区域 -->
     <div class="mb-10 flex flex-col items-center space-y-2 px-4">
       <h2 class="text-3xl font-bold text-sf-text">时光轴</h2>
       <p class="text-sf-text-2">记录每一个重要的时刻与里程碑</p>
     </div>
 
-    <el-scrollbar class="relative mx-auto max-w-[1200px]">
+    <el-scrollbar class="relative mx-auto w-[1200px]">
       <!-- 左侧边缘虚化 -->
       <div
         class="pointer-events-none absolute top-0 bottom-0 left-0 z-10 w-26 bg-linear-to-r from-[var(--sf-primary)] to-transparent"
@@ -38,19 +45,29 @@
             <!-- 连接线 (除了最后一个元素) -->
             <div
               v-if="index !== historyList.length - 1"
-              class="absolute top-1/2 left-4 h-[2px] w-[calc(100%+32px)] -translate-y-1/2 bg-sf-border"
+              class="bg-sf-border absolute top-1/2 left-4 h-[2px] w-[calc(100%+32px)] -translate-y-1/2"
             ></div>
           </div>
 
           <!-- 内容卡片 -->
           <div
-            class="border-sf-b/50 flex h-full flex-col overflow-hidden rounded-xl border bg-sf-bg-2 p-4 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
+            class="flex h-full flex-col overflow-hidden rounded-xl border border-sf-b/50 bg-sf-bg-2 p-4 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
           >
             <!-- 文字描述 -->
             <div class="flex flex-1 flex-col justify-between">
               <p class="text-sm leading-relaxed text-sf-text-2">
                 {{ item.desc }}
               </p>
+              <!-- 图片预览 -->
+              <div class="flex items-center gap-2">
+                <el-image
+                  v-if="item.img"
+                  :src="item.img"
+                  fit="contain"
+                  class="h-12 w-12 cursor-pointer rounded-md"
+                  @click="selectImg(item.img)"
+                />
+              </div>
             </div>
           </div>
         </div>
@@ -64,6 +81,16 @@
 
 <script setup lang="ts">
 import { historyList } from "@/configs";
+
+// 图片查看器显隐
+const previewVisible = ref(false);
+const previewImg = ref("");
+
+// 选择图片：设置预览图片并显示查看器
+const selectImg = (img: string) => {
+  previewImg.value = img;
+  previewVisible.value = true;
+};
 
 // 简单的日期格式化，如果 time 是时间戳
 const formatTime = (time: string | number) => {
