@@ -7,7 +7,6 @@
 import { computed, ref, watch, type ComputedRef, type Ref } from "vue";
 import { PAGE_NUMBER_HEIGHT, RESUME_HEIGHT } from "../constants";
 import { useRowInfo, type ModuleInfo } from "./useRowInfo";
-import type { ResumeTheme } from "./useResumeTheme";
 
 /** 单页内一个模块的切片信息 */
 export interface PageSlice {
@@ -24,7 +23,6 @@ export interface PageSlice {
 interface UseResumePagesOptions {
   measureRef: Ref<HTMLElement | null>;
   ui: ComputedRef<Record<string, any>>;
-  themeStyles: ResumeTheme;
   showPageNumber: ComputedRef<boolean>;
   isThumb: ComputedRef<boolean>;
   selectedModule: Ref<any[]>;
@@ -41,7 +39,6 @@ interface UseResumePagesOptions {
 export const useResumePages = ({
   measureRef,
   ui,
-  themeStyles,
   showPageNumber,
   isThumb,
   selectedModule,
@@ -55,7 +52,7 @@ export const useResumePages = ({
     fontSize: ui.value.fontSize,
     lineHeight: ui.value.lineHeight,
     fontFamily: ui.value.fontFamily,
-    themeTemplate: themeStyles.themeTemplate.value,
+    themeTemplate: ui.value.themeTemplate,
     showPageNumber: showPageNumber.value,
   }));
   const { moduleList } = useRowInfo(measureRef, watchOptions, {

@@ -18,6 +18,4 @@ export const useResumePreviewData = (dataRef: ComputedRef<any>) => {
     return createPreviewProxy(source);
   });
   provide("previewData", previewData);
-
-  return { previewData };
 };

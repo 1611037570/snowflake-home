@@ -169,6 +169,4 @@ export const useSmartOnePage = ({
   onUnmounted(() => {
     if (isEdit.value) eventBus.off("resume-smart-one-page", onFitOnePage);
   });
-
-  return { computeFit, onFitOnePage };
 };

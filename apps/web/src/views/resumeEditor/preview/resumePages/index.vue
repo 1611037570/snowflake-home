@@ -39,9 +39,6 @@ const props = defineProps({
 
 // 缩略图模式：仅渲染第一页，测量完成后冻结行数据
 const isThumb = computed(() => props.mode === "thumb");
-// 全屏预览模式：只读展示，区别于编辑态与缩略图（当前仅作状态标识备用）
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const isPreview = computed(() => props.mode === "preview");
 // 编辑态标记：直接以 mode 判断编辑场景，仅编辑态开放模块操作与 diff 悬浮交互
 const isEdit = computed(() => props.mode === "editor");
 
@@ -74,7 +71,6 @@ const allModules = computed(() => {
 const { measureDone, pages, pageStyleText, moduleClass, moduleList } = useResumePages({
   measureRef,
   ui,
-  themeStyles,
   showPageNumber,
   isThumb,
   selectedModule,

@@ -35,6 +35,4 @@ export const useResumeExport = ({ isEdit, rootRef, measureRef }: UseResumeExport
       eventBus.off("resume-print-image", printImage);
     }
   });
-
-  return { printPDF, printImage };
 };
