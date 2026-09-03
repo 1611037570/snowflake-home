@@ -3,8 +3,9 @@
     <div
       class="flex-c flex-col overflow-hidden rounded-xl transition-all duration-300 hover:bg-sf-bg"
       :style="boxStyle"
+      :class="boxClass"
     >
-      <div class="flex-c relative overflow-hidden rounded-xl" :style="imgStyle">
+      <div class="flex-c relative overflow-hidden rounded-xl" :style="imgStyle" :class="logoClass">
         <!-- 加载中：显示 SfIcon 加载动画 -->
         <SfIcon v-if="status === 'loading'" icon="line-md:loading-twotone-loop" :size="size" />
         <SfAutoImg v-model:status="status" :data="data" :size="size" />
@@ -12,7 +13,7 @@
     </div>
     <div
       :style="{ width: `${boxSize}px` }"
-      class="mt-1 min-w-0 truncate text-center text-sm text-sf-text"
+      class="mt-1 min-w-0 truncate text-center text-sm"
       v-if="data.name"
     >
       {{ data.name }}
@@ -36,6 +37,8 @@ const props = withDefaults(
     data: AppData;
     size?: number | string;
     boxSize?: number | string;
+    boxClass?: string;
+    logoClass?: string;
   }>(),
   {
     size: 4,
