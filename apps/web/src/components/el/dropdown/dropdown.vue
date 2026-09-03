@@ -34,4 +34,8 @@ function changeRef(exports: any) {
 defineExpose({} as ComponentInstance<typeof ElDropdown>);
 </script>
 
-<style scoped></style>
+<style scoped>
+:deep(.el-dropdown__popper .el-dropdown-menu) {
+  background-color: red !important;
+}
+</style>
