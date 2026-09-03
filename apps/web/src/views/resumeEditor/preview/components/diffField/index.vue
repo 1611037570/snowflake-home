@@ -1,5 +1,5 @@
 <script setup>
-import { computed, ref } from "vue";
+import { computed, inject, ref } from "vue";
 import { storeToRefs } from "pinia";
 import { useResumeStore } from "@/stores";
 import { useDiffPopoverStore } from "@/stores/modules/diffPopover";
@@ -20,6 +20,9 @@ const props = defineProps({
 const { isPrinting } = storeToRefs(useResumeStore());
 const popover = useDiffPopoverStore();
 
+// 单页模式标记：由 resumePages 注入；单页下无 diff 悬浮交互，仅渲染文档流
+const isSinglePage = inject("isSinglePage", ref(false));
+
 // 字段代理兜底，避免未传入时取值报错
 const field = computed(() => model.value || { value: "", newValue: "" });
 const valueContent = computed(() => field.value.value ?? "");
@@ -29,11 +32,13 @@ const newValueContent = computed(() => field.value.newValue ?? "");
 const documentContent = computed(() =>
   isPrinting.value ? valueContent.value : newValueContent.value || valueContent.value,
 );
-const documentClass = computed(() =>
-  !isPrinting.value && newValueContent.value
-    ? "cursor-pointer rounded-xl bg-[#e8f5e9] text-[#2e7d32]"
-    : "",
-);
+// 草稿高亮：单页无悬浮交互，不显示可点击光标；多页保留光标提示可对比
+const documentClass = computed(() => {
+  if (isPrinting.value || !newValueContent.value) return "";
+  return isSinglePage.value
+    ? "rounded-xl bg-[#e8f5e9] text-[#2e7d32]"
+    : "cursor-pointer rounded-xl bg-[#e8f5e9] text-[#2e7d32]";
+});
 const hasContent = computed(() =>
   isPrinting.value ? !!valueContent.value : !!(newValueContent.value || valueContent.value),
 );
@@ -41,7 +46,7 @@ const hasContent = computed(() =>
 const rootRef = ref(null);
 
 const handleMouseEnter = () => {
-  if (isPrinting.value || !newValueContent.value) return;
+  if (isPrinting.value || isSinglePage.value || !newValueContent.value) return;
   const el = rootRef.value;
   const page = el?.closest(".resume-page-item");
   if (!el || !page) return;
@@ -76,12 +81,20 @@ const handleMouseLeave = () => {
   <template v-if="html && hasContent">
     <DiffContent :content="documentContent" :html="html" />
   </template>
-  <!-- 纯文本：保持原有包装div结构，支持diff弹窗 -->
+  <!-- 纯文本 · 单页模式：仅渲染文档流，去掉悬浮监听与内层包装div，避免测量渲染时冗余DOM -->
+  <div
+    v-else-if="hasContent && isSinglePage"
+    class="relative w-full max-w-full min-w-0 wrap-break-word"
+    :class="documentClass"
+  >
+    <DiffContent :content="documentContent" :html="html" />
+  </div>
+  <!-- 纯文本 · 多页模式：保持原有包装div结构，支持diff弹窗 -->
   <!-- 惰性绑定：仅在存在草稿 newValue 时挂载悬浮事件，无草稿字段不注册监听 -->
   <div
     v-else-if="hasContent"
     ref="rootRef"
-    class="relative max-w-full min-w-0 break-words"
+    class="relative max-w-full min-w-0 wrap-break-word"
     v-on="newValueContent ? { mouseenter: handleMouseEnter, mouseleave: handleMouseLeave } : {}"
   >
     <!-- 文档流：有草稿显示新增内容，否则显示原值 -->
