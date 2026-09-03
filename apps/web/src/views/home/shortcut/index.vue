@@ -55,7 +55,7 @@ const menuList = computed(() => [
 
 <template>
   <div>
-    <SfModal v-if="addVisible" v-model="addVisible">
+    <SfModal v-model="addVisible">
       <AddShortcut />
     </SfModal>
     <VueDraggable

@@ -6,7 +6,7 @@ const { noteVisible } = storeToRefs(noteStore);
 </script>
 
 <template>
-  <SfModal v-model="noteVisible" v-if="noteVisible" title="便签">
+  <SfModal v-model="noteVisible" title="便签">
     <Note />
   </SfModal>
 </template>
