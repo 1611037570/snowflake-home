@@ -1,7 +1,7 @@
 <script setup>
 import { useResumeStore } from "@/stores";
 import { storeToRefs } from "pinia";
-import { computed, inject } from "vue";
+import { computed } from "vue";
 import ResumePages from "./resumePages/index.vue";
 
 defineOptions({ name: "ResumePage" });
