@@ -1,7 +1,7 @@
 <script setup>
 // 简历页面外壳：页面容器样式 + 页码页脚，多页渲染与缩略图单页共用
 // 仅排版展示，不感知分页/测量逻辑；根元素回传供缩略图测量与导出使用
-import { useTemplateRef, watch } from "vue";
+import { provide, useTemplateRef, watch } from "vue";
 import {
   PAGE_NUMBER_HEIGHT,
   RESUME_CONTAINER_HEIGHT,
@@ -36,7 +36,15 @@ const props = defineProps({
   },
   // 根元素回传回调（缩略图测量 / 图片导出需要）
   onEl: Function,
+  // 是否开启 diff 交互（registry 注册与草稿高亮）：仅编辑态实际分页内容传入 true
+  enableDiff: {
+    type: Boolean,
+    default: false,
+  },
 });
+
+// 向子树注入 diff 交互开关：仅实际分页内容的 diffField 会注册与高亮，测量容器不受影响
+provide("enableDiff", props.enableDiff);
 
 const rootEl = useTemplateRef("rootRef");
 // ref 就绪或变化后回传根元素

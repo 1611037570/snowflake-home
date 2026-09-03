@@ -2,7 +2,7 @@
 // 简历分页渲染可复用组件：接收 resumeItem（data/config/fixedConfig/ui），渲染分页后的简历页面
 // 数据源由 props 传入，不依赖 resume store；供编辑器预览、模板缩略图、全屏查看复用
 // 本组件只做渲染编排（数据代理/主题注入/测量分页），导出、智能一页等编辑功能由上层 page.vue 注册
-import { computed, provide, ref } from "vue";
+import { computed, ref } from "vue";
 import MeasureContent from "../components/measureContent.vue";
 import PreviewSinglePage from "./previewSinglePage.vue";
 import ResumePageShell from "./resumePageShell.vue";
@@ -80,8 +80,6 @@ const { moduleClassMap, acceptModule, rejectModule } = useModuleInteractions({
   selectedModule,
 });
 
-// 编辑态标记向下注入：仅编辑态开放 diff 悬浮交互
-provide("isEdit", isEdit);
 // diff 悬浮事件委托：根容器统一监听，替代各字段单独挂载
 const containerRef = ref(null);
 useDiffFieldHover({ containerRef, isEdit, isPrinting });
@@ -141,6 +139,7 @@ defineExpose({ rootEl: rootRef, measureEl: measureRef, moduleList });
           :show-page-number="showPageNumber"
           :page-index="pageIndex"
           :page-count="pages.length"
+          :enable-diff="isEdit"
           :class="[
             `${uid}-page-${pageIndex}`,
             {
