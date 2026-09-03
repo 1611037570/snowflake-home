@@ -1,30 +1,63 @@
-<script setup>
-import { historyList } from "@/configs";
-</script>
-
 <template>
-  <div class="px-6">
-    <p class="mt-3 mb-6 text-center text-sm text-sf-text-2">记录每一个重要时刻</p>
-    <div class="space-y-4">
-      <div v-for="(item, index) in historyList" :key="item.time" class="group relative pl-6">
-        <div class="mb-3 inline-flex rounded-full bg-sf-theme/10 px-3 py-1 text-sm text-sf-theme">
-          {{ item.time }}
+  <div class="mx-auto max-w-2xl">
+    <Teleport to="body">
+      <el-image-viewer
+        v-if="previewVisible"
+        :url-list="[previewImg]"
+        @close="previewVisible = false"
+      />
+    </Teleport>
+    <!-- 项目历程时间线 -->
+    <div class="relative">
+      <!-- 时间线垂直轴 -->
+      <div class="absolute top-0 bottom-0 left-4 w-px bg-blue-100"></div>
+
+      <!-- 时间线条目 -->
+      <div v-for="item in historyList" :key="item.time" class="group relative ml-12">
+        <!-- 时间线圆点 -->
+        <div class="absolute -left-12 flex items-center justify-center">
+          <div
+            class="h-8 w-8 rounded-full border-4 border-white bg-sf-theme shadow-sm transition-transform duration-200 group-hover:scale-110"
+          ></div>
         </div>
-        <div
-          v-if="index !== historyList.length - 1"
-          class="absolute top-5 left-[5px] h-full w-px bg-sf-border"
-        ></div>
-        <div
-          class="absolute top-5 left-0 z-1 h-2.5 w-2.5 rounded-full bg-sf-theme transition-transform duration-200 group-hover:scale-125"
-        ></div>
-        <div
-          class="rounded-lg bg-sf-bg-2 p-2 transition-colors duration-200 group-hover:bg-sf-theme/10"
-        >
-          <p class="text-sm leading-6 text-sf-text-2">{{ item.desc }}</p>
+
+        <!-- 时间戳 -->
+        <div class="group mb-2 pt-1">
+          <div class="text-lg font-semibold text-sf-theme transition-colors duration-200">
+            {{ item.time }}
+          </div>
+        </div>
+
+        <!-- 描述内容 -->
+        <div class="rounded-xl border border-sf-b bg-sf-bg-2 p-3">
+          <div class="mb-2 last:mb-0">
+            <span class="text-sf-text">{{ item.desc }}</span>
+          </div>
+
+          <!-- 图片展示 -->
+          <SfImg
+            v-if="item.img"
+            :src="item.img"
+            class="mx-auto mt-3 w-full cursor-pointer rounded-xl"
+            @click="selectImg(item.img)"
+            fit="contain"
+            lazy
+          />
         </div>
       </div>
     </div>
   </div>
 </template>
 
-<style lang="scss" scoped></style>
+<script setup>
+import { historyList } from "@/configs/modules/history";
+
+// 图片查看器显隐
+const previewVisible = ref(false);
+const previewImg = ref("");
+
+function selectImg(img) {
+  previewVisible.value = true;
+  previewImg.value = img;
+}
+</script>
