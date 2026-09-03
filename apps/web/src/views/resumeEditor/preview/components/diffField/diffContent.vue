@@ -52,16 +52,38 @@ const splitHtml = (html) => {
     .filter((block) => block && block.html.trim());
 };
 
-const blocks = computed(() =>
-  props.html ? splitHtml(DOMPurify.sanitize(props.content, sanitizeConfig)) : [],
-);
+// 按原始内容缓存清洗拆分结果，避免同一内容重复执行 sanitize 与 HTML 解析
+const parseCache = new Map();
+const CACHE_MAX = 100;
+const parseContent = (content) => {
+  const cached = parseCache.get(content);
+  if (cached) return cached;
+  const result = {
+    blocks: splitHtml(DOMPurify.sanitize(content, sanitizeConfig)),
+    // 字数延迟到实际展示统计时再计算
+    textLength: null,
+  };
+  parseCache.set(content, result);
+  // 防止缓存无界增长，超出上限时淘汰最旧条目
+  if (parseCache.size > CACHE_MAX) {
+    parseCache.delete(parseCache.keys().next().value);
+  }
+  return result;
+};
 
-// 可见文本字数：富文本剥离标签后按渲染文本计数
+const blocks = computed(() => (props.html ? parseContent(props.content).blocks : []));
+
+// 可见文本字数：惰性计算，仅展示统计时解析一次并复用缓存
 const charCount = computed(() => {
   if (!props.html) return props.content.length;
-  const tmp = document.createElement("div");
-  tmp.innerHTML = blocks.value.map((b) => b.html).join("");
-  return tmp.textContent?.length || 0;
+  const entry = parseContent(props.content);
+  if (entry.textLength === null) {
+    const tmp = document.createElement("div");
+    tmp.innerHTML = entry.blocks.map((b) => b.html).join("");
+    // 回写缓存，后续评估直接复用
+    entry.textLength = tmp.textContent?.length || 0;
+  }
+  return entry.textLength;
 });
 </script>
 
