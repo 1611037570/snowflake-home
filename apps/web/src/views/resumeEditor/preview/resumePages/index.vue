@@ -1,7 +1,7 @@
 <script setup>
 // 简历分页渲染可复用组件：接收 resumeItem（data/config/fixedConfig/ui），渲染分页后的简历页面
 // 数据源由 props 传入，不依赖 resume store；供编辑器预览、模板缩略图、全屏查看复用
-import { computed, ref } from "vue";
+import { computed, provide, ref } from "vue";
 import MeasureContent from "../components/measureContent.vue";
 import DiffPopover from "../components/diffPopover.vue";
 import ResumeModule from "../modules/index.vue";
@@ -81,6 +81,8 @@ const { measureDone, pages, pageStyleText, moduleClass, moduleList, isSinglePage
     allModules,
   },
 );
+// 单页标记向下注入：单页下 diffField 精简渲染，不提供 diff 悬浮交互
+provide("isSinglePage", isSinglePage);
 // 单页组件根元素回传：rootRef 限定导出范围，measureRef 供测量与图片导出
 const setSingleRoot = (el) => (rootRef.value = el);
 const setSingleMeasure = (el) => (measureRef.value = el);
@@ -171,7 +173,8 @@ useSmartOnePage({ ui, showPageNumber, moduleList, currentUI, isReadonly });
         </div>
       </div>
     </div>
-    <DiffPopover v-if="!isReadonly" />
+    <!-- 单页模式无 diff 悬浮交互，不挂载对比浮层 -->
+    <DiffPopover v-if="!isReadonly && !isSinglePage" />
     <component :is="'style'">{{ pageStyleText }}</component>
   </div>
 </template>
