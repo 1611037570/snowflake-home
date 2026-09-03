@@ -7,6 +7,31 @@ const store = useDiffPopoverStore();
 const popoverRef = ref(null);
 const popoverSize = ref({ width: 0, height: 0 });
 
+// 浮层跟随鼠标移动：rAF 节流避免高频位置更新；鼠标进入浮层本体后停止跟手
+let rafId = 0;
+const updatePosition = (e) => {
+  if (rafId) return;
+  rafId = requestAnimationFrame(() => {
+    rafId = 0;
+    const el = popoverRef.value;
+    if (el && el.contains(e.target)) return;
+    store.x = e.clientX;
+    store.y = e.clientY;
+  });
+};
+// 悬浮层可见期间注册全局 mousemove，隐藏后移除
+watch(
+  () => store.visible,
+  (visible) => {
+    if (visible) {
+      document.addEventListener("mousemove", updatePosition);
+    } else {
+      document.removeEventListener("mousemove", updatePosition);
+    }
+  },
+  { immediate: true },
+);
+
 // 弹出后读取实际尺寸，供按窗口边界约束位置使用
 watch(
   () => [store.visible, store.newValue, store.value],
@@ -21,32 +46,16 @@ watch(
   },
 );
 
-// 依据字段坐标、悬浮方向与窗口大小计算 fixed 定位，保证弹出层不溢出窗口
+// 定位：贴合鼠标右下方展开，越界时反向并收敛到窗口内，保证不超出屏幕
 const popoverStyle = computed(() => {
-  if (!store.rect) return {};
-  const { top, left, right, height } = store.rect;
   const { width, height: popHeight } = popoverSize.value;
   const margin = 12;
-  // 水平：靠近窗口右缘或向右展开会溢出时，改为从字段右缘向左展开
-  let x = left;
-  if (store.align === "right" || (width && left + width > window.innerWidth - margin)) {
-    x = right - width;
-  }
-  // 收敛到窗口内
+  const offset = 14;
+  let x = store.x + offset;
+  let y = store.y + offset;
+  if (width && x + width > window.innerWidth - margin) x = store.x - width - offset;
+  if (popHeight && y + popHeight > window.innerHeight - margin) y = store.y - popHeight - offset;
   x = Math.max(margin, Math.min(x, window.innerWidth - width - margin));
-  // 垂直：按方向展开，空间不足时反向，最终收敛到窗口内
-  let y;
-  if (store.direction === "up") {
-    y = top - popHeight;
-    if (y < margin && top + height + popHeight <= window.innerHeight - margin) {
-      y = top + height;
-    }
-  } else {
-    y = top + height;
-    if (y + popHeight > window.innerHeight - margin && top - popHeight >= margin) {
-      y = top - popHeight;
-    }
-  }
   y = Math.max(margin, Math.min(y, window.innerHeight - popHeight - margin));
   return { left: `${x}px`, top: `${y}px` };
 });

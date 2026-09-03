@@ -26,11 +26,7 @@ const isEdit = inject("isEdit", ref(false));
 // 字段代理兜底，避免未传入时取值报错
 const field = computed(() => model.value || { value: "", newValue: "" });
 const valueContent = computed(() => field.value.value ?? "");
-// 调试开关：URL 携带 debugDiff=1 时强制所有字段视为有草稿新增，便于验证 diff 效果；默认走真实草稿
-const forceDiff = computed(() => new URLSearchParams(location.search).has("debugDiff"));
-const newValueContent = computed(() =>
-  forceDiff.value ? `${field.value.value ?? ""}【新增】` : (field.value.newValue ?? ""),
-);
+const newValueContent = computed(() => field.value.newValue ?? "");
 
 // 文档流统一渲染：有草稿显示新增，否则显示原值；打印时固定展示原值
 const documentContent = computed(() =>
@@ -47,30 +43,16 @@ const hasContent = computed(() =>
   isPrinting.value ? !!valueContent.value : !!(newValueContent.value || valueContent.value),
 );
 
-// 悬浮定位以鼠标所在块元素为锚点，兼容纯文本 div 与富文本多块
+// 悬浮定位：直接以鼠标位置为锚点，浮层只保证不超出屏幕
 const handleMouseEnter = (event) => {
   if (!isEdit.value || isPrinting.value || !newValueContent.value) return;
-  const el = event.currentTarget;
-  const page = el?.closest(".resume-page-item");
-  if (!el || !page) return;
-  const rect = el.getBoundingClientRect();
-  const pageRect = page.getBoundingClientRect();
   popover.show({
     field: model.value,
     value: valueContent.value,
     newValue: newValueContent.value,
     html: props.html,
-    rect: {
-      top: rect.top,
-      left: rect.left,
-      right: rect.right,
-      bottom: rect.bottom,
-      width: rect.width,
-      height: rect.height,
-    },
-    direction: rect.top - pageRect.top < pageRect.height / 2 ? "down" : "up",
-    // 依据窗口大小决定水平对齐：字段右缘距窗口右侧不足时向左展开
-    align: window.innerWidth - rect.right < 420 ? "right" : "left",
+    x: event.clientX,
+    y: event.clientY,
   });
 };
 
