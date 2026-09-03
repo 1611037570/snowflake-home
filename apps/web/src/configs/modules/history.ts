@@ -5,6 +5,7 @@ import homeV1 from "@/assets/images/version/home-v1.webp";
 import homeV2 from "@/assets/images/version/home-v2.webp";
 import indexV1 from "@/assets/images/version/index-v1.webp";
 import imageV1 from "@/assets/images/version/image-v1.webp";
+import resumeBeta from "@/assets/images/version/resume-beta.awebp";
 import dayjs from "dayjs";
 export const historyList = [
   {
@@ -28,6 +29,7 @@ export const historyList = [
     time: "2024-11-22",
     desc: "上线简历生成器Beta——快速制作属于自己的简历",
     url: "/resume",
+    img: resumeBeta,
   },
   {
     time: "2023-11-22",

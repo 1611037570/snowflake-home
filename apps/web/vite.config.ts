@@ -68,6 +68,8 @@ export default ({ mode }: { mode: string }) => {
   // 从环境变量中提取配置项
   const { VITE_PORT, VITE_BASE_URL, VITE_APP_TITLE, VITE_DEFAULT_LANGUAGE } = env;
   return defineConfig({
+    // 将 .awebp（动画 webp）视为静态资源
+    assetsInclude: ["**/*.awebp"],
     // 基础路径配置
     base: VITE_BASE_URL,
     // 开发服务器配置
