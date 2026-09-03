@@ -24,13 +24,18 @@ const { isPrinting } = storeToRefs(useResumeStore());
 
 // 编辑态标记：由 resumePages 注入；仅编辑态多页开放 diff 悬浮交互，单页/只读不开放
 const isEdit = inject("isEdit", ref(false));
+// 测量模式标记：由离屏测量容器注入；该模式下跳过 registry 注册与高亮 class，减少双份实例开销
+const isMeasureMode = inject("isMeasureMode", false);
 
 // 字段唯一标识：元素上以 data-field-key 标记，供容器事件委托定位；挂载注册、卸载注销
 const fieldKey = `df-${++diffFieldSeq}`;
 onMounted(() => {
+  // 测量模式不注册：离屏容器不可交互，注册只会让 registry 实例数翻倍
+  if (isMeasureMode) return;
   diffFieldRegistry.set(fieldKey, { model: () => model.value, html: props.html });
 });
 onBeforeUnmount(() => {
+  if (isMeasureMode) return;
   diffFieldRegistry.delete(fieldKey);
 });
 
@@ -47,8 +52,9 @@ const fieldSnap = computed(() => {
 const documentContent = computed(() =>
   isPrinting.value ? fieldSnap.value.value : fieldSnap.value.newValue || fieldSnap.value.value,
 );
-// 草稿高亮：仅编辑态可点击时展示光标提示
+// 草稿高亮：仅编辑态可点击时展示光标提示；测量模式跳过（高亮类仅 bg/rounded/cursor，不含 padding/border，不影响行高）
 const documentClass = computed(() => {
+  if (isMeasureMode) return "";
   if (isPrinting.value || !fieldSnap.value.hasNew) return "";
   return isEdit.value
     ? "cursor-pointer rounded-xl bg-[#e8f5e9] text-[#2e7d32]"
