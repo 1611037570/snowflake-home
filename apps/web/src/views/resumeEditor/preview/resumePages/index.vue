@@ -18,9 +18,10 @@ import { useResumeStore } from "@/stores";
 import { useInitMask } from "./useInitMask";
 import { useResumePreviewData } from "./useResumePreviewData";
 import { useModuleInteractions } from "./useModuleInteractions";
+import { useDiffFieldHover } from "./useDiffFieldHover";
 
 const resumeStore = useResumeStore();
-const { selectedModule, system } = storeToRefs(resumeStore);
+const { selectedModule, system, isPrinting } = storeToRefs(resumeStore);
 defineOptions({ name: "ResumePages" });
 
 const props = defineProps({
@@ -85,6 +86,9 @@ const { moduleClassMap, acceptModule, rejectModule } = useModuleInteractions({
 
 // 编辑态标记向下注入：仅编辑态开放 diff 悬浮交互
 provide("isEdit", isEdit);
+// diff 悬浮事件委托：根容器统一监听，替代各字段单独挂载
+const containerRef = ref(null);
+useDiffFieldHover({ containerRef, isEdit, isPrinting });
 // 单页组件根元素回传：rootRef 限定导出范围，measureRef 供测量与图片导出
 const setSingleRoot = (el) => (rootRef.value = el);
 const setSingleMeasure = (el) => (measureRef.value = el);
@@ -93,7 +97,7 @@ defineExpose({ rootEl: rootRef, measureEl: measureRef, moduleList });
 </script>
 
 <template>
-  <div class="relative flex flex-col">
+  <div ref="containerRef" class="relative flex flex-col">
     <!-- 初始化过渡遮罩：盖住测量完成前的空页与分支切换，1 秒后自动取消（仅编辑态展示） -->
     <div
       v-if="showInitMask && isEdit"
