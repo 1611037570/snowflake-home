@@ -147,9 +147,13 @@ export function processResult({ text, isJson = true, isDebug }: any) {
  * @param {Function} params.onRetry 重试回调函数
  * @returns {Promise<{retried: boolean, result?: any}>}
  */
-export async function handleRetry({ currentRetryCount, retryCount, isDebug, onRetry }: any) {
+export async function handleRetry({ currentRetryCount, retryCount, isDebug, onRetry, error }: any) {
+  const status = error?.status as number | undefined;
+  // 4xx 客户端错误（429 限流除外）重试无意义，直接按最终失败处理
+  const shouldRetry = !(status && status >= 400 && status < 500 && status !== 429);
+
   // 重试次数未超过最大重试次数
-  if (currentRetryCount < retryCount) {
+  if (shouldRetry && currentRetryCount < retryCount) {
     const delay = 500 * (currentRetryCount + 1);
     if (isDebug) {
       console.warn(
