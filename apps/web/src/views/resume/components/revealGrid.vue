@@ -1,5 +1,5 @@
 <script setup>
-// 逐个揭示网格：响应式列数(由 Tailwind 断点决定) + 逐项淡入入场动画
+// 逐个揭示网格：响应式列数(由 Tailwind 断点决定) + 逐项淡入入场
 // 调用方仅通过 #default 插槽决定每项渲染内容（含新建入口等常驻项也走此插槽参与动画），#empty 提供空状态
 import { computed, onMounted, onUnmounted, ref, useSlots } from "vue";
 
@@ -15,12 +15,14 @@ const props = defineProps({
 });
 
 const slots = useSlots();
+const rootRef = ref(null);
 
 // 已揭示数量：从 0 递增到 items.length，驱动逐项淡入
 const visibleCount = ref(0);
 const visibleItems = computed(() => props.items.slice(0, visibleCount.value));
 
 let timer = null;
+
 onMounted(() => {
   timer = setInterval(() => {
     visibleCount.value += 1;
@@ -30,6 +32,7 @@ onMounted(() => {
     }
   }, props.interval);
 });
+
 onUnmounted(() => {
   if (timer) clearInterval(timer);
 });
@@ -39,23 +42,31 @@ const getKey = (item, index) => item?.[props.keyField] ?? index;
 </script>
 
 <template>
-  <!-- 列数随窗口响应：1 列 → sm 2 列 → lg 3 列 → xl 4 列，卡片 282 在各档列宽下均不溢出 -->
-  <TransitionGroup tag="div" name="sf-reveal" class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-    <!-- 列表项：按揭示顺序追加，新建入口等常驻项也走此插槽参与动画 -->
-    <div v-for="(item, index) in visibleItems" :key="getKey(item, index)">
-      <slot name="default" :item="item" :index="index" />
-    </div>
-    <!-- 空状态：列表为空时占满整行 -->
-    <div v-if="!items.length && slots.empty" key="__sf-empty" class="col-span-full">
-      <slot name="empty" />
-    </div>
-  </TransitionGroup>
+  <!-- 外层 div 持 ref 作 grid 容器，TransitionGroup 走 fragment 不额外包元素，v-for 项直接是 grid 项 -->
+  <div ref="rootRef" class="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+    <TransitionGroup name="sf-reveal">
+      <!-- 包裹项 flex justify-center 让卡片在列宽内居中（列宽 > 卡片宽时不再靠左） -->
+      <div
+        v-for="(item, index) in visibleItems"
+        :key="getKey(item, index)"
+        class="flex justify-center"
+      >
+        <slot name="default" :item="item" :index="index" />
+      </div>
+      <!-- 空状态：列表为空时占满整行 -->
+      <div v-if="!items.length && slots.empty" key="__sf-empty" class="col-span-full">
+        <slot name="empty" />
+      </div>
+    </TransitionGroup>
+  </div>
 </template>
 
 <style>
 /* 逐项入场 + 增删位移过渡，供 TransitionGroup 复用 */
 .sf-reveal-enter-active {
-  transition: opacity 0.5s ease, transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+  transition:
+    opacity 0.5s ease,
+    transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
 }
 .sf-reveal-enter-from {
   opacity: 0;
