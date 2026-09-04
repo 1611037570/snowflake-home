@@ -185,7 +185,7 @@ description: |
 
 ```
 
-apps/web/src/stores/modules/resume/resume-data-contract.md
+apps/web/src/views/resumeEditor/assistant/skills/resume-data-contract.md
 
 ```
 
@@ -198,4 +198,3 @@ apps/web/src/stores/modules/resume/resume-data-contract.md
 - "更新简历数据技能文档。"
 - "我的表单配置变了，重新生成简历编写规范。"
 ```
-
