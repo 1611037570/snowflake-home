@@ -130,18 +130,16 @@ const avatarPosition = computed({
       <ConfigGroup title="用户信息">
         <!-- 展示模式切换：图标 / 文字 -->
         <ConfigLabel label="展示模式" v-model="userInfoMode" :default-value="defaultUserInfoMode" />
-        <div class="flex gap-4">
-          <div
-            v-for="mode in userInfoModeList"
-            :key="mode.value"
-            class="hover:bg-sf-hover flex-1 cursor-pointer rounded-3xl border border-sf-b bg-sf-bg py-2 text-center text-[12px] transition-all"
-            :class="{
-              'border-sf-theme-2 bg-sf-theme text-sf-base': userInfoMode === mode.value,
-            }"
+        <div class="flex gap-3">
+          <SfButton
+            class="flex-1"
             @click="userInfoMode = mode.value"
+            border
+            v-for="mode in userInfoModeList"
+            :type="userInfoMode === mode.value ? 'theme' : 'bg'"
+            :key="mode.value"
+            >{{ mode.name }}</SfButton
           >
-            {{ mode.name }}
-          </div>
         </div>
         <!-- 头像位置切换：左 / 居中 / 右 -->
         <ConfigLabel
@@ -149,18 +147,16 @@ const avatarPosition = computed({
           v-model="avatarPosition"
           :default-value="defaultAvatarPosition"
         />
-        <div class="flex gap-4">
-          <div
-            v-for="item in avatarPositionList"
-            :key="item.value"
-            class="hover:bg-sf-hover flex-1 cursor-pointer rounded-3xl border border-sf-b bg-sf-bg py-2 text-center text-[12px] transition-all"
-            :class="{
-              'border-sf-theme-2 bg-sf-theme text-sf-base': avatarPosition === item.value,
-            }"
-            @click="avatarPosition = item.value"
+        <div class="flex gap-3">
+          <SfButton
+            class="flex-1"
+            @click="avatarPosition = mode.value"
+            border
+            v-for="mode in avatarPositionList"
+            :type="avatarPosition === mode.value ? 'theme' : 'bg'"
+            :key="mode.value"
+            >{{ mode.name }}</SfButton
           >
-            {{ item.name }}
-          </div>
         </div>
       </ConfigGroup>
     </div>
