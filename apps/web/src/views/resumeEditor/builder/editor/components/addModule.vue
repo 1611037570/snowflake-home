@@ -22,6 +22,7 @@ const presets = ref([
   { name: "工作经历", value: "work" },
   { name: "项目经历", value: "project" },
   { name: "个人优势", value: "advantage" },
+  { name: "视频作品", value: "video" },
 ]);
 
 // 过滤后的预设模块：只显示尚未添加到当前表单中的模块

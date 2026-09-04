@@ -15,6 +15,10 @@ defineProps({
     type: Boolean,
     default: true,
   },
+  tip: {
+    type: String,
+    default: "",
+  },
 });
 const name = defineModel("name", {
   type: String,
@@ -86,6 +90,7 @@ function handleEditConfirm() {
               @click.stop=""
             />
             {{ title }}
+            <SfTooltip :content="tip" v-if="tip"> </SfTooltip>
           </div>
           <div class="flex items-center gap-2 opacity-0 group-hover:opacity-100">
             <SfTooltip content="隐藏模块" v-if="currentForm.key !== 'user'">
