@@ -757,6 +757,11 @@ export const DEFAULT_VIDEO_FORM = {
             defaultValue: "",
             prop: "url",
           },
+          {
+            source: ["video", "data", "?", "desc"],
+            defaultValue: "",
+            prop: "desc",
+          },
         ],
         type: "object",
         component: "video",
