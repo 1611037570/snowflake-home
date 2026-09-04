@@ -30,6 +30,7 @@ const plainClassObj = {
 const classObj = {
   error: "",
   theme: "bg-sf-theme text-sf-theme-text hover:bg-sf-theme-2",
+  bg: "bg-sf-bg text-sf-text hover:bg-sf-bg-2",
 };
 const getClass = computed(() => {
   return props.plain ? plainClassObj[props.type] : classObj[props.type];
