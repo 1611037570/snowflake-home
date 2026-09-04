@@ -27,11 +27,6 @@ const currentActive = computed(() =>
     ? activeModel.value
     : "snowflake",
 );
-
-// 选中服务商
-function selectProvider(item) {
-  activeModel.value = item.id;
-}
 </script>
 
 <template>
@@ -46,7 +41,6 @@ function selectProvider(item) {
           :list="providerList"
           active-key="id"
           :active-value="currentActive"
-          @onClick="selectProvider"
         />
       </div>
       <!-- 右侧：配置详情 -->
