@@ -4,6 +4,7 @@ import type { Ref } from "vue";
 
 // 一份外部投递的技能：name/description 供调度识别，instructions 为注入模型的正文
 export interface Skill {
+  id: string;
   name: string;
   description: string;
   instructions: string;
@@ -19,6 +20,8 @@ export interface AssistantConfig {
   skills: Skill[];
   // ReAct 可用工具
   tools: ReactTool[];
+  // 技能读取工具：模型只看到描述，需要时调用获取技能全文
+  skillTools: ReactTool[];
   // 普通流解析结果应用回调（如将模型返回的 data 写入预览草稿）
   applyResult?: (data: any) => void;
   // 请求前准备（如裁剪头像），与 afterRequest 成对使用

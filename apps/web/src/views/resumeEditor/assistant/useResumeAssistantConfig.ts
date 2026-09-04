@@ -4,6 +4,7 @@ import { computed } from "vue";
 import { storeToRefs } from "pinia";
 import { reactSystemPrompt } from "./prompt";
 import { resumeDataContract } from "./skills/resume-data-contract";
+import { createSkillTools } from "./skills/skillTools";
 import { createResumeTools } from "./tools";
 import type { AssistantConfig } from "./types";
 
@@ -84,10 +85,14 @@ export const useResumeAssistantConfig = (
 
     `;
 
+  // 技能按需读取：模型只看到工具描述，需要时调用获取全文
+  const skills = [resumeDataContract()];
+
   return {
     generating: isGenerating,
     reactSystem: reactSystemPrompt,
-    skills: [resumeDataContract()],
+    skills,
+    skillTools: createSkillTools(skills),
     tools: createResumeTools({
       getResumeData,
       applyDiff: applyDiff ?? (() => []),
