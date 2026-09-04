@@ -155,6 +155,7 @@ class LLM {
           retryCount,
           isDebug,
           onRetry: sendFn,
+          error: e,
         });
         // 重试后返回结果
         if (retried) {

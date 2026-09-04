@@ -17,6 +17,43 @@ type RequestConfig = {
 };
 
 /**
+ * 从错误响应体中提取服务端错误信息
+ * 兼容 OpenAI 结构 { error: { message, code } }、{ message } 与纯文本响应体
+ */
+async function extractErrorInfo(response: Response) {
+  let raw = "";
+  try {
+    raw = (await response.text()).trim();
+  } catch {
+    return { message: "", code: "" };
+  }
+  if (!raw) return { message: "", code: "" };
+  try {
+    const json = JSON.parse(raw);
+    const err = json?.error ?? json;
+    return {
+      message: typeof err?.message === "string" ? err.message : "",
+      code: typeof err?.code === "string" ? err.code : "",
+    };
+  } catch {
+    // 非 JSON 响应体：截断原始文本用于提示
+    return { message: raw.slice(0, 200), code: "" };
+  }
+}
+
+/**
+ * 组装接口错误：message 汇总状态码、错误码与服务端原因，可直接展示到聊天气泡
+ */
+function createApiError(status: number, reason: string, code = "") {
+  const error: any = new Error(
+    reason ? `${status}${code ? ` [${code}]` : ""}: ${reason}` : `请求失败 (HTTP ${status})`,
+  );
+  error.status = status;
+  if (code) error.code = code;
+  return error;
+}
+
+/**
  * 创建请求处理器
  * @param {string} token 身份验证 Token
  * @param {boolean} [isStream=true] 是否为流式请求
@@ -75,9 +112,10 @@ export function createRequest(token: string, isStream = true) {
         body: data,
       });
 
-      // 检查HTTP响应状态
+      // 检查HTTP响应状态：提取错误体中的服务端原因透传给上层
       if (!response.ok) {
-        throw new Error(`请求失败 :>> ${response.statusText}`);
+        const { message, code } = await extractErrorInfo(response);
+        throw createApiError(response.status, message || response.statusText, code);
       }
 
       // 流式：读取并解析流数据
@@ -131,6 +169,10 @@ export function createRequest(token: string, isStream = true) {
         }
         if (isDebug) console.log("请求被主动取消");
         return { aborted: true };
+      }
+      // 网络层失败（请求未发出或流传输中断），转为可读提示
+      if (error instanceof TypeError) {
+        throw new Error(`网络连接失败: ${error.message}`);
       }
       throw error;
     } finally {
