@@ -181,42 +181,35 @@ const handleUseTemplate = () => {
           </ResumeCardContainer>
           <!-- 简历项 -->
           <ResumeCardContainer v-else :item="card.item" @click="handleEdit(card.index)">
-            <div class="mt-3 flex items-start justify-between gap-2">
-              <div class="min-w-0">
-                <div class="truncate text-base font-black text-sf-text">
-                  {{ getResumeTitle(card.item.data) }}
-                </div>
-                <div class="mt-1 truncate text-sm text-sf-text-2">
-                  {{ getResumePosition(card.item) }}
-                </div>
-              </div>
-              <div class="flex shrink-0 items-center gap-1">
-                <span
-                  class="flex h-8 w-8 cursor-pointer items-center justify-center rounded-full text-sf-text-2 transition-colors duration-200 hover:bg-sf-theme-2 hover:text-sf-theme"
-                  @click.stop="handleEdit(card.index)"
-                >
-                  <SfIcon icon="lucide:pencil" size="4" />
-                </span>
-                <button
-                  type="button"
-                  class="flex h-8 w-8 cursor-pointer items-center justify-center rounded-full text-sf-text-2 transition-colors duration-200 hover:bg-sf-error-2 hover:text-sf-error"
-                  @click.stop="handleDelete(card.index)"
-                >
-                  <SfIcon icon="lucide:trash-2" size="4" />
-                </button>
-              </div>
+            <div class="truncate text-base font-black text-sf-text">
+              {{ getResumeTitle(card.item.data) }}
             </div>
-            <div class="mt-4 flex items-center gap-3">
-              <div class="h-1.5 flex-1 overflow-hidden rounded-full bg-sf-bg-2">
-                <div
-                  class="h-full rounded-full"
-                  :class="getProgressClass(card.progress)"
-                  :style="{ width: `${card.progress}%` }"
-                ></div>
+            <div class="mt-1 flex items-center justify-between gap-2">
+              <div class="truncate text-sm text-sf-text-2">
+                {{ getResumePosition(card.item) }}
               </div>
-              <span class="shrink-0 text-xs text-sf-text-3"
-                >最后使用：{{ getLastUseTime(card.item) }}</span
+              <span class="shrink-0 text-xs text-sf-text-3">{{ getLastUseTime(card.item) }}</span>
+            </div>
+            <div class="mt-2 flex items-center gap-3">
+              <SfButton
+                :round="false"
+                plain
+                class="flex-1"
+                @click.stop="handleEdit(card.index)"
+                icon="lucide:pencil"
               >
+                编辑
+              </SfButton>
+              <SfButton
+                :round="false"
+                plain
+                type="error"
+                class="flex-1"
+                @click.stop="handleDelete(card.index)"
+                icon="lucide:trash-2"
+              >
+                删除
+              </SfButton>
             </div>
           </ResumeCardContainer>
         </template>
