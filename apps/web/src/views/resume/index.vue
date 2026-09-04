@@ -23,7 +23,7 @@ const activeNavIndex = computed(() => navList.findIndex((item) => route.path ===
 <template>
   <main class="relative flex h-screen min-w-full flex-col bg-sf-page">
     <header
-      class="fixed top-0 right-0 left-0 z-50 h-16 w-full border-b-[0.5px] border-sf-b bg-sf-page font-extrabold text-sf-base"
+      class="fixed top-0 right-0 left-0 z-50 h-16 w-full border-b-[0.5px] border-sf-b bg-sf-primary font-extrabold text-sf-base"
     >
       <div class="mx-auto flex h-full w-full max-w-[1280px] items-center gap-5 px-4">
         <div class="flex shrink-0 items-center gap-2.5 text-[17px] whitespace-nowrap">
@@ -32,20 +32,16 @@ const activeNavIndex = computed(() => navList.findIndex((item) => route.path ===
         </div>
 
         <nav class="flex items-center gap-5">
-          <button
+          <SfSpan
             v-for="(item, index) in navList"
             :key="item.path"
-            type="button"
+            class="h-12 cursor-pointer"
+            :active="index === activeNavIndex"
+            :underline-height="1"
             @click="router.push(item.path)"
-            class="cursor-pointer border-0 bg-transparent p-0 text-[15px] font-extrabold"
-            :class="
-              index === activeNavIndex
-                ? `relative text-sf-theme after:absolute after:right-0 after:bottom-[-10px] after:left-0 after:h-[5px] after:rounded-full after:bg-sf-theme after:content-['']`
-                : ''
-            "
           >
             {{ item.name }}
-          </button>
+          </SfSpan>
         </nav>
 
         <div class="ml-auto flex items-center gap-[18px]">
@@ -61,7 +57,7 @@ const activeNavIndex = computed(() => navList.findIndex((item) => route.path ===
       :class="{ 'pt-16': route.path !== '/resume' }"
     >
       <router-view class="flex-1 overflow-hidden" />
-      <SfFooter />
+      <!-- <SfFooter /> -->
     </div>
   </main>
 </template>
