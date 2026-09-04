@@ -4,6 +4,7 @@ import {
   DEFAULT_PROJECT_FORM,
   DEFAULT_SKILL_FORM,
   DEFAULT_USER_FORM,
+  DEFAULT_VIDEO_FORM,
   DEFAULT_WORK_FORM,
 } from "./formConfig";
 // 小羊数据
@@ -83,6 +84,17 @@ export const xiaoYangData: any = {
       },
     ],
   },
+  video: {
+    collapsed: [],
+    hidden: false,
+    data: [
+      {
+        name: "轻舟简历",
+        url: "http://nannan.work/#/resumeEditor?id=1611037570",
+        desc: "非视频 仅用于展示",
+      },
+    ],
+  },
 };
 
 export const xiaoYangFixedForm = {
@@ -128,6 +140,7 @@ export const xiaoYangForm = {
     structuredClone(DEFAULT_SKILL_FORM),
     structuredClone(DEFAULT_WORK_FORM),
     structuredClone(DEFAULT_PROJECT_FORM),
+    structuredClone(DEFAULT_VIDEO_FORM),
   ],
 };
 
