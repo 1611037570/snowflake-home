@@ -124,7 +124,7 @@ const handleUseTemplate = () => {
 
 <template>
   <SfScrollbar class="h-full">
-    <div class="relative z-4 mx-auto flex w-full max-w-[1164px] flex-col gap-4">
+    <div class="relative z-4 mx-auto flex w-full max-w-[1164px] flex-col gap-3 py-3">
       <!-- 标签切换栏 -->
       <div class="flex items-center justify-between border-b border-sf-b">
         <div class="flex gap-6">
@@ -226,43 +226,37 @@ const handleUseTemplate = () => {
       <RevealGrid v-if="activeTab === 'trash'" :items="resumeStore.trashList" key-field="id">
         <template #default="{ item, index }">
           <ResumeCardContainer :item="item" action-text="已删除">
-            <div class="mt-3 flex items-start justify-between gap-2">
-              <div class="min-w-0">
-                <div class="truncate text-base font-black text-sf-text">
-                  {{ getResumeTitle(item.data) }}
-                </div>
-                <div class="mt-1 truncate text-sm text-sf-text-2">
-                  {{ getResumePosition(item) }}
-                </div>
-              </div>
+            <div class="truncate text-base font-black text-sf-text">
+              {{ getResumeTitle(item.data) }}
             </div>
-            <div class="mt-4 flex items-center gap-3">
+            <div class="mt-1 flex items-center justify-between gap-3">
+              <div class="truncate text-sm text-sf-text-2">
+                {{ getResumePosition(item) }}
+              </div>
               <span class="shrink-0 text-xs text-sf-text-3">
-                删除于：{{
-                  item._deletedAt ? dayjs(item._deletedAt).format("YYYY.MM.DD HH:mm") : "--"
-                }}
-              </span>
-              <span class="ml-auto shrink-0 text-xs text-sf-text-3">
                 {{ resumeStore.getTrashRemainingDays(item) }}天后自动清理
               </span>
             </div>
-            <div class="mt-3 flex items-center gap-3">
-              <button
-                type="button"
-                class="flex h-8 flex-1 cursor-pointer items-center justify-center gap-1 rounded-lg border-0 bg-sf-theme-2 text-sm font-black text-sf-theme transition-colors duration-200 hover:bg-sf-theme hover:text-white"
+            <div class="mt-2 flex items-center gap-3">
+              <SfButton
+                :round="false"
+                plain
+                class="flex-1"
                 @click="resumeStore.restoreResume(index)"
+                icon="lucide:rotate-ccw"
               >
-                <SfIcon icon="lucide:rotate-ccw" size="4" />
                 恢复
-              </button>
-              <button
-                type="button"
-                class="flex h-8 flex-1 cursor-pointer items-center justify-center gap-1 rounded-lg border-0 bg-sf-error-2 text-sm font-black text-sf-error transition-colors duration-200 hover:bg-sf-error hover:text-white"
+              </SfButton>
+              <SfButton
+                :round="false"
+                plain
+                type="error"
+                class="flex-1"
                 @click="resumeStore.permanentlyDeleteResume(index)"
+                icon="lucide:trash-2"
               >
-                <SfIcon icon="lucide:trash-2" size="4" />
                 永久删除
-              </button>
+              </SfButton>
             </div>
           </ResumeCardContainer>
         </template>
