@@ -840,6 +840,11 @@ export const DEFAULT_IMAGE_FORM = {
                 defaultValue: "",
                 prop: "desc",
               },
+              {
+                source: ["image", "data", "?", "size"],
+                defaultValue: 50,
+                prop: "size",
+              },
             ],
             type: "object",
             component: "image",
