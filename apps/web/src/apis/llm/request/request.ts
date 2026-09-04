@@ -1,9 +1,11 @@
-import { getParser } from "../parser/index";
-import {
-  createStreamParser,
-  processResult,
-  processToken,
-} from "./stream-utils";
+import { createStreamParser, getParser } from "../parser/index";
+import { processResult } from "../parser/stream";
+import { ApiError } from "../errors";
+
+// 组装鉴权请求头
+function processToken(token: string) {
+  return `Bearer ${token}`;
+}
 
 type RequestConfig = {
   url: string;
@@ -40,31 +42,6 @@ async function extractErrorInfo(response: Response) {
     return { message: raw.slice(0, 200), code: "" };
   }
 }
-
-/**
- * 统一接口错误：message 可直接展示到聊天气泡，status/code 供重试策略判断
- */
-export class ApiError extends Error {
-  status?: number;
-  code?: string;
-  constructor(message: string, status?: number, code?: string) {
-    super(message);
-    this.name = "ApiError";
-    this.status = status;
-    if (code) this.code = code;
-  }
-}
-
-/**
- * 主动中止错误：用户停止生成时抛出，区别于真实请求失败
- */
-export class AbortError extends Error {
-  constructor() {
-    super("已中止");
-    this.name = "AbortError";
-  }
-}
-export const isAbortError = (error: any) => !!error && error.name === "AbortError";
 
 /**
  * 创建请求处理器

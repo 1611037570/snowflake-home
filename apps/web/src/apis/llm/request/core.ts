@@ -1,6 +1,6 @@
-import { createRequest, AbortError } from "./request";
+import { createRequest } from "./request";
+import { AbortError } from "../errors";
 
-import { processOption } from "./stream-utils";
 import { executeToolCall } from "../react/actor";
 import { observe } from "../react/observer";
 import { reflect } from "../react/reflector";
@@ -18,6 +18,14 @@ function extractJson(text: string): string {
     return trimmed.slice(start, end + 1);
   }
   return trimmed;
+}
+
+// 组装请求体：强制开启流式响应
+function processOption({ options }: any) {
+  return JSON.stringify({
+    ...options,
+    stream: true, // 强制开启流式响应
+  });
 }
 
 /**
