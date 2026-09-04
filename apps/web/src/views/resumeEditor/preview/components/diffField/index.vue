@@ -1,3 +1,8 @@
+<script>
+// 字段自增序号：模块级变量，跨组件实例共享，保证同页面多个字段 key 唯一
+let diffFieldSeq = 0;
+</script>
+
 <script setup>
 import { computed, inject, onBeforeUnmount, onMounted } from "vue";
 import { storeToRefs } from "pinia";
@@ -5,8 +10,8 @@ import { useResumeStore } from "@/stores";
 import DiffContent from "./diffContent.vue";
 import { diffFieldRegistry } from "./diffFieldRegistry";
 
-// 字段自增序号：保证同页面多个字段 key 唯一（模块级变量，跨组件实例共享）
-let diffFieldSeq = 0;
+// debug 开关：改为 true 后所有字段强制携带草稿 newValue，用于测试 diff 悬浮弹窗
+const DEBUG_FORCE_DIFF = true;
 
 // 字段代理对象：v-model 绑定，包含 value 与 newValue
 const model = defineModel();
@@ -30,7 +35,8 @@ const fieldKey = `df-${++diffFieldSeq}`;
 onMounted(() => {
   // 非 diff 交互场景不注册：离屏测量容器与只读预览均无需悬浮交互
   if (!enableDiff) return;
-  diffFieldRegistry.set(fieldKey, { model: () => model.value, html: props.html });
+  // 注册快照而非原始 model：debug 强制草稿时 fieldSnap 含 newValue，事件委托据此判定是否展示弹窗
+  diffFieldRegistry.set(fieldKey, { model: () => fieldSnap.value, html: props.html });
 });
 onBeforeUnmount(() => {
   if (!enableDiff) return;
@@ -38,15 +44,20 @@ onBeforeUnmount(() => {
 });
 
 // 字段快照：编辑态 model 为 { value, newValue } 代理，非编辑态为原始值；按 newValue 属性自动区分结构
+// debug 模式下所有字段（含测量容器）强制注入草稿 newValue，保证测量与实际排版一致，分页不失效
 const fieldSnap = computed(() => {
   const v = model.value;
   if (v == null) return { value: "", newValue: "", hasNew: false };
+  const forceDraft = DEBUG_FORCE_DIFF;
   if (typeof v === "object" && "newValue" in v) {
     const value = v.value ?? "";
-    const newValue = v.newValue ?? "";
+    let newValue = v.newValue ?? "";
+    if (forceDraft && !newValue) newValue = value ? `${value}（测试草稿）` : "测试草稿内容";
     return { value, newValue, hasNew: newValue !== "" };
   }
-  return { value: v, newValue: "", hasNew: false };
+  const value = v;
+  const newValue = forceDraft ? (value ? `${value}（测试草稿）` : "测试草稿内容") : "";
+  return { value, newValue, hasNew: newValue !== "" };
 });
 // 文档流统一渲染：有草稿显示新增，否则显示原值；打印时固定展示原值
 const documentContent = computed(() =>
