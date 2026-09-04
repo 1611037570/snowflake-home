@@ -18,6 +18,6 @@
 ## Web 项目规范
 
 vue文件 创建使用小驼峰，导入和使用使用大驼峰； js使用setup语法糖 优先使用 vueuse库；template 避免多重 div 嵌套，使用 Tailwind CSS 写法。
-边距 xx-3 如p-3 m-3 gap-3
+边距 如p-3 m-3 gap-3 等 全部使用3的边
 组件 优先使用apps\web\src\components目录下的组件，没有再使用element-plus组件库。
 执行web项目时候，样式和图标相关内容，按需读取 knowledges 目录下的 Markdown 文档进行学习
