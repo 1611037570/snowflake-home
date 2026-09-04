@@ -7,6 +7,7 @@ import Account from "./components/account.vue";
 import AddModule from "./components/addModule.vue";
 import BoxCollapse from "./components/boxCollapse.vue";
 import HiddenModules from "./components/hiddenModules.vue";
+import Image from "./components/image.vue";
 import ItemCollapse from "./components/itemCollapse.vue";
 import ImageUpload from "./components/imageUpload/index.vue";
 import Video from "./components/video.vue";
@@ -20,6 +21,7 @@ const dynamicComponents = {
   itemCollapse: ItemCollapse,
   account: Account,
   imageUpload: ImageUpload,
+  image: Image,
   video: Video,
 };
 </script>

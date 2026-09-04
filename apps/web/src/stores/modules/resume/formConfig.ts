@@ -785,6 +785,76 @@ export const DEFAULT_VIDEO_FORM = {
     },
   ],
 } satisfies FormField;
+// 图片作品
+export const DEFAULT_IMAGE_FORM = {
+  type: "group",
+  key: "image",
+  component: "boxCollapse",
+  props: {
+    add: true,
+    name: "图片作品",
+  },
+  model: [
+    {
+      source: ["image", "collapsed"],
+      prop: "collapsed",
+      defaultValue: ["1"],
+    },
+    {
+      source: ["image", "hidden"],
+      prop: "hidden",
+      defaultValue: false,
+    },
+  ],
+  checks: { hidden: { path: ["image", "hidden"] } },
+  slot: "default",
+  fields: [
+    {
+      type: "array",
+      drag: true,
+      dragClass: ".item-drag",
+      list: [],
+      addConfig: {
+        // 折叠标题数据源：展示当前图片作品名称
+        model: [
+          {
+            source: ["image", "data", "?", "name"],
+            prop: "name",
+          },
+        ],
+        fields: [
+          {
+            model: [
+              {
+                source: ["image", "data", "?", "name"],
+                defaultValue: "",
+                prop: "name",
+              },
+              {
+                source: ["image", "data", "?", "img"],
+                defaultValue: "",
+                prop: "img",
+              },
+              {
+                source: ["image", "data", "?", "desc"],
+                defaultValue: "",
+                prop: "desc",
+              },
+            ],
+            type: "object",
+            component: "image",
+            required: true,
+          },
+        ],
+        type: "group",
+        component: "itemCollapse",
+        slot: "default",
+        span: 24,
+        required: true,
+      },
+    },
+  ],
+} satisfies FormField;
 // 自定义经历
 export const DEFAULT_CUSTOM_FORM = {
   type: "group",
@@ -911,6 +981,7 @@ export const allConfig = {
   advantage: DEFAULT_ADVANTAGE_FORM,
   education: DEFAULT_EDUCATION_FORM,
   video: DEFAULT_VIDEO_FORM,
+  image: DEFAULT_IMAGE_FORM,
   account: DEFAULT_ACCOUNT_FORM,
   work: DEFAULT_WORK_FORM,
   project: DEFAULT_PROJECT_FORM,
