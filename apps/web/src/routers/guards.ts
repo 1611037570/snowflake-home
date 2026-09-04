@@ -10,7 +10,8 @@ import { useSystemStore } from "@/stores";
 export async function beforeEachGuard(to: any, from: any, next: any) {
   // 根据当前页面加载对应语言包，路由名称不存在时使用默认起始页兜底
   const pageName = to.name;
-  await loadPageLang(pageName);
+  // 语言包后台加载，不阻塞路由放行，避免线上跳转停顿
+  loadPageLang(pageName);
 
   // 每次进入页面前检查系统版本状态
   const systemStore = useSystemStore();
