@@ -1,4 +1,5 @@
 <script setup>
+import { useFileDialog } from "@/hooks";
 import { useResumeStore } from "@/stores";
 import { ref } from "vue";
 
