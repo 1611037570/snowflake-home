@@ -1,6 +1,7 @@
 <script setup>
 import { useImageUpload } from "@/hooks";
 import { toAvatarSrc } from "@/utils";
+import { RESUME_WIDTH } from "@/views/resumeEditor/preview/constants";
 
 // 图片作品字段：name 名称、img 图片、desc 描述、size 显示大小百分比
 const name = defineModel("name", {
@@ -23,7 +24,7 @@ const size = defineModel("size", {
 // 图片上传 hook：不裁切，保持原比例压缩为 WebP 裸 base64
 const { openPicker, loading } = useImageUpload({
   crop: false,
-  maxWidth: 800,
+  maxWidth: RESUME_WIDTH,
   onResult: (base64) => {
     img.value = base64;
   },
