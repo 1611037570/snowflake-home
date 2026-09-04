@@ -80,13 +80,15 @@ description: |
 
 ## 第四步：特殊处理自定义模块（custom）
 
+- 实际简历中自定义模块的顶层 key 以`custom_`开头（如 `custom_a810d50c`），并非固定 `custom`；一份简历可能同时存在多个自定义模块。
 - 在`custom`模块的表格上方，固定插入以下说明段落：
 
   ```
-  > **特别说明**：此模块在 UI 中显示为`custom-自定义名称`（如 `custom-荣誉奖项`），但 JSON 中的 Key 始终是 `custom`，数据路径始终是 `custom.data[]`。请勿修改 `custom.name`字段（该字段控制 UI 显示名），只需操作`custom.data`数组。
+  > **特别说明**：自定义模块是动态添加的，顶层 key 以`custom_`开头（如 `custom_a810d50c`）。请勿修改顶层 key、`collapsed`、`hidden` 或模块内 `name`（该字段控制 UI 显示名），只需操作该模块自己的`data`数组。
   ```
 
--`custom.data[]`内部的字段与`work` 一致：`name`, `post`, `time`, `content`。
+- `custom_<id>.data[]`内部的字段与`work`一致：`name`, `post`, `time`, `content`。
+- 字段明细章节标题与表格说明使用`custom_<id>`指代实际顶层 key，不要写成固定`custom`。
 
 ***
 

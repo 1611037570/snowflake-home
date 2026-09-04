@@ -109,9 +109,9 @@ export const resumeDataContract = () => ({
 | desc | string | ✅  | 图片描述          |
 | size | number | ✅  | 图片尺寸百分比，默认 50 |
 
-## 2.10 自定义经历 (\`custom.data[]\`)
+## 2.10 自定义经历 (\`custom_<id>.data[]\`)
 
-> **特别说明**：此模块在 UI 中显示为\`custom-自定义名称\`（如 \`custom-荣誉奖项\`），但 JSON 中的 Key 始终是 \`custom\`，数据路径始终是 \`custom.data[]\`。请勿修改 \`custom.name\`字段（该字段控制 UI 显示名），只需操作\`custom.data\`数组。
+> **特别说明**：自定义模块是动态添加的，顶层 key 以\`custom_\`开头（如 \`custom_a810d50c\`），一份简历可能同时存在多个，各自 key 不同。请勿修改顶层 key、\`collapsed\`、\`hidden\` 或模块内 \`name\`（该字段控制 UI 显示名），只需操作该模块自己的\`data\`数组。
 
 | 字段      | 类型     | 必填 | 格式/备注                             |
 | :------ | :----- | :- | :-------------------------------- |
