@@ -55,35 +55,41 @@ const closeFullscreen = () => {
 </script>
 
 <template>
-  <SfScrollbar class="h-full">
-    <div class="relative z-4 mx-auto flex w-full max-w-[1164px] flex-col gap-4 py-4">
-      <!-- 标题 -->
+  <div class="relative mx-auto flex h-full w-full max-w-7xl flex-col gap-3">
+    <div class="mt-2 flex w-full min-w-full items-center justify-between px-6">
       <h2 class="text-[20px] font-black text-sf-theme">简历模板 {{ total }} 款</h2>
-
-      <!-- 模板列表：布局与逐项入场动画交给 RevealGrid，插槽只决定渲染内容 -->
-      <RevealGrid :items="templates" :interval="120" key-field="id">
-        <template #default="{ item: card }">
-          <div class="w-[282px]">
-            <ResumeCardContainer :item="card.item" @click="useTemplate(card)">
-              <div class="flex flex-col">
-                <div class="truncate text-base font-black text-black">
-                  {{ card.name }}
-                </div>
-                <div class="mt-3 flex items-center justify-between gap-2">
-                  <SfButton class="flex-1" @click.stop="openFullscreen(card)">预览</SfButton>
-                  <SfButton class="flex-1">使用模板</SfButton>
-                </div>
-              </div>
-            </ResumeCardContainer>
-          </div>
-        </template>
-      </RevealGrid>
+      <div class="flex gap-3">123</div>
     </div>
+    <SfScrollbar class="flex-1">
+      <div class="flex h-full flex-col py-1">
+        <!-- 模板列表：布局与逐项入场动画交给 RevealGrid，插槽只决定渲染内容 -->
+        <RevealGrid :items="templates" :interval="120" key-field="id">
+          <template #default="{ item: card }">
+            <div class="w-[282px]">
+              <ResumeCardContainer :item="card.item" @click="useTemplate(card)">
+                <div class="flex flex-col">
+                  <div class="truncate text-base font-black text-black">
+                    {{ card.name }}
+                  </div>
+                  <div class="mt-3 flex items-center justify-between gap-2">
+                    <SfButton class="flex-1" @click.stop="openFullscreen(card)">预览</SfButton>
+                    <SfButton class="flex-1">使用模板</SfButton>
+                  </div>
+                </div>
+              </ResumeCardContainer>
+            </div>
+          </template>
+        </RevealGrid>
+        <div class="flex flex-1 flex-col items-center justify-end">
+          <SfFooter />
+        </div>
+      </div>
+    </SfScrollbar>
     <!-- 全屏预览：复用编辑器全屏组件，按当前模板项数据渲染 -->
     <FullscreenPreview
       :visible="isFullscreen"
       :item="fullscreenItem || {}"
       @close="closeFullscreen"
     />
-  </SfScrollbar>
+  </div>
 </template>

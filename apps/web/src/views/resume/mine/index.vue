@@ -123,7 +123,7 @@ const handleUseTemplate = () => {
 </script>
 
 <template>
-  <div class="relative z-4 mx-auto flex h-full w-full max-w-[1280px] flex-col gap-3">
+  <div class="relative mx-auto flex h-full w-full max-w-7xl flex-col gap-3">
     <!-- 标签切换栏 -->
     <div class="mt-2 flex w-full min-w-full items-center justify-between px-6">
       <div class="flex gap-6">
