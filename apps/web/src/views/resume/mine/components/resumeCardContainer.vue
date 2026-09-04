@@ -21,16 +21,9 @@ const getThumbItem = (item) => ({
 
 <template>
   <div
-    class="group relative flex h-[394px] w-[282px] cursor-pointer flex-col overflow-hidden rounded-3xl border border-sf-b bg-sf-primary transition-all duration-200 hover:scale-102 hover:border-sf-theme"
+    class="group relative flex h-[344px] w-[242px] cursor-pointer flex-col overflow-hidden rounded-3xl border border-sf-b bg-sf-primary transition-all duration-200 hover:scale-102 hover:border-sf-theme"
     @click="emit('click')"
   >
-    <!-- 右上角操作区：父组件通过 #action 插槽传入（如全屏按钮），hover 卡片时显现，未传插槽则不渲染 -->
-    <div
-      v-if="$slots.action"
-      class="absolute right-2 top-2 z-20 opacity-0 transition-opacity group-hover:opacity-100"
-    >
-      <slot name="action" />
-    </div>
     <!-- 有 item 数据时渲染标准简历卡片 -->
     <template v-if="item">
       <ThumbPreview :item="getThumbItem(item)" :action-text="actionText" @select="emit('click')" />

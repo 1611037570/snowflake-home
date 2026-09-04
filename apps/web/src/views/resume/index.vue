@@ -58,7 +58,7 @@ const activeNavIndex = computed(() => navList.findIndex((item) => route.path ===
     </header>
     <div
       class="flex h-full w-full flex-1 flex-col overflow-hidden bg-sf-page text-sf-text"
-      :class="{ 'pt-20': route.path !== '/resume' }"
+      :class="{ 'pt-16': route.path !== '/resume' }"
     >
       <router-view class="flex-1 overflow-hidden" />
       <SfFooter />
