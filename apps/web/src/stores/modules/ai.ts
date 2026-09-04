@@ -40,7 +40,7 @@ export type Message = {
   requestStatus: string;
 };
 // 已添加的模型（用户实际使用的模型配置）
-export type DeployedModel = {
+export type ModelItem = {
   // 模型唯一标识
   id: string;
   // 平台类型
@@ -55,7 +55,7 @@ export type DeployedModel = {
   url: string;
 };
 // 待添加到 modelList 的配置项（可编辑草稿）
-type PendingCustomConfig = {
+type CustomModel = {
   // 平台类型：openai / ark / deepseek
   provider: string;
   // 别名（可选）
@@ -76,12 +76,12 @@ const DEFAULT_SYSTEM_PROMPT =
 export const useAiStore = defineStore(
   "ai",
   () => {
-    // 激活的模型标识：snowflake（雪花内置服务）或 DeployedModel.id
+    // 激活的模型标识：snowflake（雪花内置服务）或 ModelItem.id
     const activeModel = ref<string>("snowflake");
     // 已添加的用户模型列表（持久化到 localStorage）
-    const modelList = ref<DeployedModel[]>([]);
+    const modelList = ref<ModelItem[]>([]);
     // 可添加的服务商模板列表（草稿池，非持久化）
-    const customModelList = ref<PendingCustomConfig[]>([]);
+    const customModelList = ref<CustomModel[]>([]);
 
     const sidebarCollapsed = ref(true);
     const sidebarMode = ref("float"); // 'dock' or 'float'
@@ -198,8 +198,8 @@ export const useAiStore = defineStore(
     // ========== 模型管理方法 ==========
 
     /** 创建一个新的待添加模型（基于服务商模板） */
-    function createPendingModel(provider: string) {
-      const pending: PendingCustomConfig = {
+    function createPendingModel(provider: string): CustomModel {
+      const pending: CustomModel = {
         provider,
         name: "",
         model: "",
@@ -211,8 +211,8 @@ export const useAiStore = defineStore(
     }
 
     /** 提交待添加模型到已添加列表 */
-    function deployModel(draft: PendingCustomConfig) {
-      const deployed: DeployedModel = {
+    function deployModel(draft: CustomModel) {
+      const deployed: ModelItem = {
         id: `custom-${getUUID().slice(0, 8)}`,
         provider: draft.provider,
         name: draft.name || undefined,
@@ -230,7 +230,7 @@ export const useAiStore = defineStore(
     }
 
     /** 根据 ID 查找已添加的模型 */
-    function findModelById(id: string): DeployedModel | undefined {
+    function findModelById(id: string): ModelItem | undefined {
       if (id === "snowflake") {
         return undefined;
       }
