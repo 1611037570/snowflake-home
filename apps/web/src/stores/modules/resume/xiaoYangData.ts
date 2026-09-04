@@ -1,6 +1,7 @@
 import {
   DEFAULT_ACCOUNT_FORM,
   DEFAULT_EDUCATION_FORM,
+  DEFAULT_IMAGE_FORM,
   DEFAULT_PROJECT_FORM,
   DEFAULT_SKILL_FORM,
   DEFAULT_USER_FORM,
@@ -95,6 +96,11 @@ export const xiaoYangData: any = {
       },
     ],
   },
+  image: {
+    collapsed: [],
+    hidden: false,
+    data: [],
+  },
 };
 
 export const xiaoYangFixedForm = {
@@ -141,6 +147,7 @@ export const xiaoYangForm = {
     structuredClone(DEFAULT_WORK_FORM),
     structuredClone(DEFAULT_PROJECT_FORM),
     structuredClone(DEFAULT_VIDEO_FORM),
+    structuredClone(DEFAULT_IMAGE_FORM),
   ],
 };
 
