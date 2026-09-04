@@ -36,15 +36,15 @@ const props = defineProps({
   },
   // 根元素回传回调（缩略图测量 / 图片导出需要）
   onEl: Function,
-  // 是否开启 diff 交互（registry 注册与草稿高亮）：仅编辑态实际分页内容传入 true
-  enableDiff: {
-    type: Boolean,
-    default: false,
+  // diff 参与级别：none 原值无交互；full 渲染草稿+高亮+悬浮交互，仅编辑态实际分页内容传入
+  diffMode: {
+    type: String,
+    default: "none",
   },
 });
 
-// 向子树注入 diff 交互开关：仅实际分页内容的 diffField 会注册与高亮，测量容器不受影响
-provide("enableDiff", props.enableDiff);
+// 向子树覆盖注入 diff 档位：实际分页内容提为 full，测量容器与缩略图沿用根级档位
+provide("diffMode", props.diffMode);
 
 const rootEl = useTemplateRef("rootRef");
 // ref 就绪或变化后回传根元素
