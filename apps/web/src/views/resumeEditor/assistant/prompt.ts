@@ -41,6 +41,3 @@ export const defaultMessage: any = {
   role: "system",
   content: defaultPrompt,
 };
-
-// 过渡期保留导出：内容与默认提示一致，统一入口后移除
-export const reactSystemPrompt = defaultPrompt;

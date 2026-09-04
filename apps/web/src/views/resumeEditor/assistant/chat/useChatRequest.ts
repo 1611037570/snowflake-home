@@ -1,5 +1,5 @@
 // 导入LLM接口
-import { getLLM, isAbortError } from "@/apis";
+import { getLLM } from "@/apis";
 import { useAiStore } from "@/stores";
 // 导入聊天和消息类型
 import type { Chat, Message } from "@/stores/modules/ai";
@@ -33,7 +33,6 @@ export const useChatRequest = ({
     beforeRequest,
     afterRequest,
     buildUserContent,
-    reactSystem,
     tools,
     skillTools,
     applyResult,
@@ -164,12 +163,12 @@ export const useChatRequest = ({
         return;
       }
 
-      // 普通请求也走工具循环：技能按需读取，修改类任务与引导流程共用同一套工具
+      // 所有请求统一走 React 编排：技能按需读取，修改类任务通过 diff 工具落草稿
       const llm = getLLM();
       reactRunner = llm.react({
         tools: [...skillTools, ...tools],
-        maxSteps: 4,
-        reflection: false,
+        maxSteps: 6,
+        reflection: true,
         thinking: {
           type: thinkMode.value ? "enabled" : "disabled",
         },
@@ -193,6 +192,12 @@ export const useChatRequest = ({
               ? `${observation.content.slice(0, 1200)}...`
               : observation.content;
           lastMsg.thought += `\n\n### 观察结果\n\`\`\`json\n${preview}\n\`\`\``;
+          scrollToBottom();
+        },
+        onReflect: (answer) => {
+          if (!isCurrentRequest() || !lastMsg) return;
+          const preview = answer.length > 1200 ? `${answer.slice(0, 1200)}...` : answer;
+          lastMsg.thought += `\n\n### 反思修正\n${preview}`;
           scrollToBottom();
         },
         onFinal: (answer) => {
@@ -226,98 +231,6 @@ export const useChatRequest = ({
       abortRequest = null;
       if (lastMsg?.typing) lastMsg.typing = false;
       if (chat.value) chat.value.updateTime = finishTime;
-    }
-  };
-
-  /**
-   * 发送 ReAct 请求：prompt 为任务说明，userContent 为用户意图
-   */
-  const handleReactResponse = async ({
-    prompt,
-    userContent,
-  }: {
-    prompt?: string;
-    userContent: string;
-  }) => {
-    const currentRequestVersion = ++requestVersion;
-    const isCurrent = () => !isUnmounted && currentRequestVersion === requestVersion;
-    let lastMsg: Message | null = null;
-    let state: ReturnType<typeof createChatState> | null = null;
-
-    try {
-      generating.value = true;
-
-      const messages: any[] = [{ role: "system", content: reactSystem }];
-      // 技能正文不预载，模型需要字段规范时通过技能工具按需读取
-      if (prompt) messages.push({ role: "user", content: prompt });
-      messages.push({ role: "user", content: userContent });
-
-      addMessage({
-        role: "assistant",
-        content: "",
-        typing: true,
-        requestStatus: "thinking",
-      });
-      lastMsg = currentMessages.value[currentMessages.value.length - 1] ?? null;
-      state = createChatState(lastMsg, isCurrent);
-
-      const llm = getLLM();
-      reactRunner = llm.react({
-        tools: [...skillTools, ...tools],
-        maxSteps: 6,
-        reflection: true,
-        onEvent: (type, data) => {
-          state?.onEvent(type, data);
-        },
-        onThink: (reasoning) => {
-          if (!isCurrent() || !lastMsg || !reasoning) return;
-          lastMsg.thought += `\n\n### 思考\n${reasoning}`;
-        },
-        onAct: (toolCall) => {
-          if (!isCurrent() || !lastMsg) return;
-          const args = toolCall.function.arguments || "{}";
-          lastMsg.thought += `\n\n### 执行工具\n\`${toolCall.function.name}\`\n\n\`\`\`json\n${args}\n\`\`\``;
-          scrollToBottom();
-        },
-        onObserve: (observation) => {
-          if (!isCurrent() || !lastMsg) return;
-          const preview =
-            observation.content.length > 1200
-              ? `${observation.content.slice(0, 1200)}...`
-              : observation.content;
-          lastMsg.thought += `\n\n### 观察结果\n\`\`\`json\n${preview}\n\`\`\``;
-          scrollToBottom();
-        },
-        onReflect: (answer) => {
-          if (!isCurrent() || !lastMsg) return;
-          const preview = answer.length > 1200 ? `${answer.slice(0, 1200)}...` : answer;
-          lastMsg.thought += `\n\n### 反思修正\n${preview}`;
-          scrollToBottom();
-        },
-        onFinal: (answer) => {
-          if (!isCurrent() || !lastMsg) return;
-          lastMsg.content = answer;
-          lastMsg.requestStatus = "success";
-          scrollToBottom();
-        },
-      });
-
-      await reactRunner.run(messages);
-    } catch (error: any) {
-      if (isUnmounted) return;
-      // 主动中止不视为错误
-      if (isAbortError(error)) return;
-      console.error("ReAct 请求异常:", error);
-      if (lastMsg) {
-        lastMsg.content = `请求出错: ${error.message || "未知错误"}`;
-        lastMsg.requestStatus = "error";
-      }
-    } finally {
-      reactRunner = null;
-      state?.dispose();
-      generating.value = false;
-      if (lastMsg?.typing) lastMsg.typing = false;
-      if (chat.value) chat.value.updateTime = Date.now();
     }
   };
 
@@ -359,5 +272,5 @@ export const useChatRequest = ({
   });
 
   // 返回发送和停止方法
-  return { handleAIResponse, handleReactResponse, stopGenerating };
+  return { handleAIResponse, stopGenerating };
 };

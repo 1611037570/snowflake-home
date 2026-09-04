@@ -14,8 +14,6 @@ export interface Skill {
 export interface AssistantConfig {
   // 请求期间置为 true 的生成状态
   generating: Ref<boolean>;
-  // ReAct 复杂任务的系统提示
-  reactSystem: string;
   // ReAct 可用工具
   tools: ReactTool[];
   // 技能读取工具：模型只看到描述，需要时调用获取技能全文
