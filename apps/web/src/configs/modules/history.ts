@@ -1,4 +1,4 @@
-import startImg from "@/assets/images/start.jpg";
+import startImg from "@/assets/images/start.webp";
 // import hostV1 from "@/assets/images/version/host-v1.png";
 // import hostV2 from "@/assets/images/version/host-v2.png";
 import homeV1 from "@/assets/images/version/home-v1.webp";
