@@ -14,25 +14,39 @@ const resumeStore = useResumeStore();
 const applyDiff = inject("applyDiff");
 // 组装简历域技能与工具，由调用方传给 chat 引擎
 const assistantConfig = useResumeAssistantConfig(applyDiff);
-const { createDefaultChat } = aiStore;
+const { createDefaultChat, createDefaultMessage } = aiStore;
 const { resumeAssistantChat } = storeToRefs(aiStore);
 const { system } = storeToRefs(resumeStore);
 // AI助手区域宽度：读取编辑器配置，默认 400px
 const assistantWidth = DEFAULT_EDITOR.assistantWidth;
 
+// 创建对话：默认系统提示在前，简历数据技能全文作为第二条系统消息
+const createAssistantChat = () => {
+  const newChat = createDefaultChat(defaultMessage);
+  if (assistantConfig.skillSystem) {
+    newChat.messages.push({
+      ...createDefaultMessage(),
+      role: "system",
+      content: assistantConfig.skillSystem,
+      typing: false,
+    });
+  }
+  return newChat;
+};
+
 // 简历助手对话：优先用 Pinia 持久化缓存，首次进入时初始化默认对话
 if (!resumeAssistantChat.value) {
-  resumeAssistantChat.value = createDefaultChat(defaultMessage);
+  resumeAssistantChat.value = createAssistantChat();
 }
 const chat = resumeAssistantChat;
 
 // 挂载时清空持久化对话，每次进入都是新对话
 onMounted(() => {
-  resumeAssistantChat.value = createDefaultChat(defaultMessage);
+  resumeAssistantChat.value = createAssistantChat();
 });
 
 function createNewChat() {
-  chat.value = createDefaultChat(defaultMessage);
+  chat.value = createAssistantChat();
 }
 </script>
 

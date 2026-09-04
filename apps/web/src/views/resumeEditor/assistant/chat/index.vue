@@ -269,9 +269,9 @@ const handleFlowInput = (content) => {
 <template>
   <div class="relative flex h-full w-full flex-col overflow-hidden select-text">
     <SfScrollbar ref="chatContainer" class="h-full w-full flex-1">
-      <EmptyState @suggest="handleSuggest" v-if="currentMessages.length === 1" />
+      <EmptyState @suggest="handleSuggest" v-if="displayMessages.length === 0" />
 
-      <div v-if="currentMessages.length > 1" class="flex h-full flex-col items-center py-3">
+      <div v-if="displayMessages.length > 0" class="flex h-full flex-col items-center py-3">
         <component
           :is="msg.role === 'user' ? UserMessage : AiMessage"
           v-for="(msg, index) in displayMessages"

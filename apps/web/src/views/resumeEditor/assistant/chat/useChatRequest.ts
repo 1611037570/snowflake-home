@@ -34,7 +34,6 @@ export const useChatRequest = ({
     afterRequest,
     buildUserContent,
     tools,
-    skillTools,
     applyResult,
   } = config;
   // 用于取消当前请求的函数引用
@@ -163,10 +162,10 @@ export const useChatRequest = ({
         return;
       }
 
-      // 所有请求统一走 React 编排：技能按需读取，修改类任务通过 diff 工具落草稿
+      // 所有请求统一走 React 编排，技能规范已随对话系统消息提供
       const llm = getLLM();
       reactRunner = llm.react({
-        tools: [...skillTools, ...tools],
+        tools,
         maxSteps: 6,
         reflection: true,
         thinking: {
