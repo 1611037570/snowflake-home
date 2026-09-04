@@ -8,7 +8,7 @@ import { getResumeTitle } from "../../resumeEditor/resumeName";
 import ResumeCardContainer from "./components/resumeCardContainer.vue";
 import RevealGrid from "../components/revealGrid.vue";
 import ImportResume from "./components/importResume.vue";
-import DeliverResume from "./deliverResume.vue";
+import SendResume from "@/views/resume/components/sendResume/index.vue";
 
 const router = useRouter();
 
@@ -38,9 +38,7 @@ const displayList = computed(() => {
     progress: useProgress([...item.fixedConfig.fields, ...item.config.fields], item.data).progress,
   }));
   // 未满员时新建入口作首项，与简历项一同逐个揭示
-  return list.value.length < maxCount
-    ? [{ id: "__create", type: "create" }, ...cards]
-    : cards;
+  return list.value.length < maxCount ? [{ id: "__create", type: "create" }, ...cards] : cards;
 });
 const getLastUseTime = (item) => {
   return item?.usage?.lastUseTime ? dayjs(item.usage.lastUseTime).format("YYYY.MM.DD HH:mm") : "--";
@@ -158,7 +156,7 @@ const handleUseTemplate = () => {
         <!-- 导入简历入口：仅在草稿标签下显示 -->
         <div class="flex gap-3">
           <ImportResume />
-          <DeliverResume />
+          <SendResume />
         </div>
       </div>
 
@@ -182,11 +180,7 @@ const handleUseTemplate = () => {
             </div>
           </ResumeCardContainer>
           <!-- 简历项 -->
-          <ResumeCardContainer
-            v-else
-            :item="card.item"
-            @click="handleEdit(card.index)"
-          >
+          <ResumeCardContainer v-else :item="card.item" @click="handleEdit(card.index)">
             <div class="mt-3 flex items-start justify-between gap-2">
               <div class="min-w-0">
                 <div class="truncate text-base font-black text-sf-text">
@@ -231,10 +225,7 @@ const handleUseTemplate = () => {
       <!-- 回收站列表：布局与入场动画交给 RevealGrid，空状态由 #empty 提供 -->
       <RevealGrid v-if="activeTab === 'trash'" :items="resumeStore.trashList" key-field="id">
         <template #default="{ item, index }">
-          <ResumeCardContainer
-            :item="item"
-            action-text="已删除"
-          >
+          <ResumeCardContainer :item="item" action-text="已删除">
             <div class="mt-3 flex items-start justify-between gap-2">
               <div class="min-w-0">
                 <div class="truncate text-base font-black text-sf-text">
@@ -277,9 +268,7 @@ const handleUseTemplate = () => {
         </template>
         <!-- 回收站为空：col-span-full 由组件包裹提供 -->
         <template #empty>
-          <div
-            class="flex flex-col items-center justify-center py-20 text-sf-text-2"
-          >
+          <div class="flex flex-col items-center justify-center py-20 text-sf-text-2">
             <SfIcon icon="lucide:trash-2" size="12" class="mb-4 text-sf-text-3" />
             <span class="text-base">回收站为空</span>
           </div>

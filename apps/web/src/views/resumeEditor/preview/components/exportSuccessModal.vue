@@ -1,6 +1,6 @@
 <script setup>
 import { ref } from "vue";
-import DeliverResume from "@/views/resume/mine/deliverResume.vue";
+import SendResume from "@/views/resume/components/sendResume/index.vue";
 import Money from "@/components/base/donation/money.vue";
 
 defineOptions({ name: "ExportSuccessModal" });
@@ -31,9 +31,9 @@ defineExpose({ open });
     </div>
   </SfModal>
   <!-- 投递简历弹窗由本组件统一管理 -->
-  <DeliverResume ref="deliverResumeRef">
+  <SendResume ref="deliverResumeRef">
     <span />
-  </DeliverResume>
+  </SendResume>
 </template>
 
 <style scoped></style>
