@@ -1,5 +1,5 @@
 <template>
-  <footer class="flex-c relative flex-col overflow-hidden px-3 py-1 text-sf-text">
+  <footer class="flex-c relative flex-col overflow-hidden px-3 py-1 text-xs text-sf-text">
     <div class="flex items-center gap-3">
       <div class="flex items-center">
         {{ $t("copyright") }} © 2019-{{ currentYear }}
