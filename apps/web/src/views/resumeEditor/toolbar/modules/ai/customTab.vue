@@ -79,6 +79,17 @@ const rules = {
 // 是否为当前激活的服务
 const isActive = computed(() => activeModel.value === props.provider);
 
+// 是否已添加模型（所有字段都有值且测试通过）
+const isModelAdded = computed(() => {
+  return (
+    form.value &&
+    form.value.model &&
+    form.value.key &&
+    form.value.url &&
+    connectionPassed.value
+  );
+});
+
 // 使用当前配置发送最小请求，验证接口地址、密钥和模型是否可用
 async function testConnection() {
   if (!form.value) return;
@@ -95,9 +106,9 @@ async function testConnection() {
     });
     await llm.ping();
     connectionPassed.value = true;
-    ElMessage.success("连接测试成功");
+    ElMessage.success("添加模型成功");
   } catch (error) {
-    ElMessage.error(error?.message || "连接测试失败");
+    ElMessage.error(error?.message || "添加模型失败");
   } finally {
     testing.value = false;
   }
@@ -149,18 +160,22 @@ function useService() {
       项目会强制开启深度思考，推荐使用最新模型获取更智能的回复。
     </div>
     <div class="flex gap-3">
-      <!-- 使用当前配置测试接口连通性 -->
+      <!-- 添加模型按钮 -->
       <el-button type="primary" class="flex-1" :loading="testing" @click="testConnection">
-        测试连接
+        添加模型
       </el-button>
-      <!-- 使用该服务按钮 -->
+      <!-- 使用该服务按钮（仅当模型已添加且未激活时显示） -->
       <el-button
+        v-if="isModelAdded && !isActive"
         type="primary"
         class="flex-1"
-        :disabled="isActive || !connectionPassed"
         @click="useService"
       >
-        {{ isActive ? "已选择" : "使用该服务" }}
+        使用该服务
+      </el-button>
+      <!-- 已选择提示（仅当该服务商已激活时显示） -->
+      <el-button v-if="isActive" type="primary" class="flex-1" disabled>
+        已选择
       </el-button>
     </div>
   </div>
