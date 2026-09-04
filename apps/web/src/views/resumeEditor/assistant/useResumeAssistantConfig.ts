@@ -2,7 +2,6 @@
 import { useResumeStore } from "@/stores";
 import { computed } from "vue";
 import { storeToRefs } from "pinia";
-import { reactSystemPrompt } from "./prompt";
 import { resumeDataContract } from "./skills/resume-data-contract";
 import { createSkillTools } from "./skills/skillTools";
 import { createResumeTools } from "./tools";
@@ -90,7 +89,6 @@ export const useResumeAssistantConfig = (
 
   return {
     generating: isGenerating,
-    reactSystem: reactSystemPrompt,
     skillTools: createSkillTools(skills),
     tools: createResumeTools({
       getResumeData,
