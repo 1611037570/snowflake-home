@@ -37,14 +37,10 @@ const safeUrl = (value) => {
     >
       <DiffField v-model="item.name" />
       <span v-if="item.name?.value && item.url?.value" class="pr-1">：</span>
-      <a
-        :href="safeUrl(item.url?.value)"
-        target="_blank"
-        rel="noopener noreferrer"
-        class="max-w-full min-w-0 font-medium hover:underline"
-      >
-        <DiffField v-model="item.url" />
-      </a>
+      {{ item.url?.value }}
+      <div class="h-6 w-6">
+        <SfQrcode :value="item.url?.value" />
+      </div>
     </div>
   </div>
 </template>
