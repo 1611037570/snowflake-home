@@ -32,7 +32,7 @@ onChange((files) => parseJsonConfig(files?.[0]));
 <template>
   <SfButton @click="visible = true">
     <SfIcon icon="fa6-solid:file-import" size="4" class="mr-2" />
-    投递简历
+    导入简历
   </SfButton>
   <SfModal v-model="visible" title="导入简历">
     <div class="flex w-[400px] flex-col gap-3">
