@@ -20,6 +20,12 @@ const moduleNames = computed(() => {
 // 建议操作卡片：点击后进入引导式对话流程
 const suggestCards = [
   {
+    icon: "ph:file-plus-duotone",
+    title: "填写经历",
+    desc: "帮你完善一段工作经历",
+    flow: "resumeCreate",
+  },
+  {
     icon: "ph:magic-wand-duotone",
     title: "简历优化",
     desc: "全面优化简历内容",
