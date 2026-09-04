@@ -11,6 +11,14 @@ const { click } = useFileDialog({
   maxCount: 1,
 });
 
+// 打开导入弹窗：提前判断简历数量是否已达上限
+const handleOpenImport = () => {
+  if (resumeStore.list.length >= resumeStore.maxCount) {
+    ElMessage.warning(`简历数量已达上限（${resumeStore.maxCount}个），请先删除后再导入`);
+    return;
+  }
+  visible.value = true;
+};
 // 选择 JSON 配置文件
 const importJsonConfig = async () => {
   visible.value = false;
@@ -41,7 +49,7 @@ const parseJsonConfig = async (file) => {
 </script>
 
 <template>
-  <SfButton @click="visible = true">
+  <SfButton @click="handleOpenImport">
     <SfIcon icon="fa6-solid:file-import" size="4" class="mr-2" />
     导入简历
   </SfButton>

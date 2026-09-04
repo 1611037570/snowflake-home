@@ -15,8 +15,14 @@ export const useResumeStore = defineStore(
     const list = ref<any[]>([]);
     // 回收站列表
     const trashList = ref<any[]>([]);
-    // 最大简历数量
-    const maxCount = 5;
+    // 简历最大数量
+    const maxCount = 10;
+    // 回收站最大数量
+    const maxTrashCount = 10;
+    // 回收站保留天数：超过后自动清理
+    const trashRetentionDays = 30;
+    // 回收站保留时长（毫秒）：由 trashRetentionDays 换算
+    const trashRetentionMs = trashRetentionDays * 24 * 60 * 60 * 1000;
     // 当前选中的简历下标
     const currentIndex = ref(-1);
     // 当前布局
@@ -138,9 +144,14 @@ export const useResumeStore = defineStore(
       if (value == null) return value;
       return structuredClone(JSON.parse(JSON.stringify(value)));
     };
-    // 删除简历：移入回收站
+    // 删除简历：移入回收站（回收站已满时阻止并提示）
     const deleteResume = () => {
       if (currentIndex.value == -1) {
+        return;
+      }
+      // 回收站已满：阻止删除并提示先清理回收站
+      if (trashList.value.length >= maxTrashCount) {
+        confirm("回收站已满，请先清理回收站后再删除。", "回收站已满");
         return;
       }
       // 深拷贝一份移入回收站，标记删除时间
@@ -162,6 +173,21 @@ export const useResumeStore = defineStore(
     const permanentlyDeleteResume = (trashIndex: number) => {
       if (trashIndex < 0 || trashIndex >= trashList.value.length) return;
       trashList.value.splice(trashIndex, 1);
+    };
+    // 清理回收站中超过保留天数的简历（每次进入简历页时调用）
+    const cleanExpiredTrash = () => {
+      const now = Date.now();
+      trashList.value = trashList.value.filter((item) => {
+        const deletedAt = item?._deletedAt || 0;
+        return now - deletedAt < trashRetentionMs;
+      });
+    };
+    // 计算回收站简历剩余保留天数（0 表示即将清理）
+    const getTrashRemainingDays = (item: any) => {
+      const deletedAt = item?._deletedAt || 0;
+      if (!deletedAt) return 0;
+      const remaining = trashRetentionMs - (Date.now() - deletedAt);
+      return remaining <= 0 ? 0 : Math.ceil(remaining / (24 * 60 * 60 * 1000));
     };
     // 序列化简历内容（排除 usage），用于历史去重比较
     const serializeForCompare = (item: any) => {
@@ -315,6 +341,10 @@ export const useResumeStore = defineStore(
       deleteResume,
       restoreResume,
       permanentlyDeleteResume,
+      cleanExpiredTrash,
+      getTrashRemainingDays,
+      maxTrashCount,
+      trashRetentionDays,
       setLayout,
       setFocusMode,
       undo,
