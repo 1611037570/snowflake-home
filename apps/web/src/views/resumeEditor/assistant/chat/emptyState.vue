@@ -21,8 +21,8 @@ const moduleNames = computed(() => {
 const suggestCards = [
   {
     icon: "ph:file-plus-duotone",
-    title: "填写经历",
-    desc: "帮你完善一段工作经历",
+    title: "AI生成简历",
+    desc: "为指定模块从零生成一段经历草稿",
     flow: "resumeCreate",
   },
   {
