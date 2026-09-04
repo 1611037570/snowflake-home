@@ -1,18 +1,11 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import { storeToRefs } from "pinia";
+import { PROVIDER_NAMES } from "@/configs";
 import { useAiStore } from "@/stores";
 
 const aiStore = useAiStore();
 const { activeModel, modelList } = storeToRefs(aiStore);
-
-// 服务商展示名映射（无别名且无模型名时的兜底展示）
-const PROVIDER_NAMES: Record<string, string> = {
-  snowflake: "雪花服务",
-  openai: "OpenAI",
-  ark: "火山方舟 Ark",
-  deepseek: "DeepSeek",
-};
 
 // 模型选项列表：仅已添加的自定义模型（至少要有 provider 和 key 才展示）
 const modelOptions = computed(() => {

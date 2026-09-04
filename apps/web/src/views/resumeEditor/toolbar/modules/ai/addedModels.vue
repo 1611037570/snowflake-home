@@ -2,20 +2,13 @@
 import { computed } from "vue";
 import { storeToRefs } from "pinia";
 import { ElMessageBox } from "element-plus";
+import { PROVIDER_NAMES } from "@/configs";
 import { useAiStore } from "@/stores/modules/ai";
 
 const emit = defineEmits<{ jumpAdd: [] }>();
 
 const aiStore = useAiStore();
 const { activeModel, modelList } = storeToRefs(aiStore);
-
-// 服务商展示名映射（用于无别名且无模型名时的兜底展示）
-const PROVIDER_NAMES: Record<string, string> = {
-  snowflake: "雪花服务",
-  openai: "OpenAI",
-  ark: "火山方舟 Ark",
-  deepseek: "DeepSeek",
-};
 
 // 列表数据：已添加模型（雪花服务作为普通条目添加后同样展示于此）
 const displayList = computed(() =>
