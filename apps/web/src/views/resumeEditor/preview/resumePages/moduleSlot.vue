@@ -10,11 +10,6 @@ defineProps({
     type: String,
     required: true,
   },
-  // 简历数据（与渲染页保持一致透传给 ResumeModule）
-  data: {
-    type: Object,
-    required: true,
-  },
   // 编辑态才渲染模块操作
   isEdit: {
     type: Boolean,
@@ -42,7 +37,7 @@ defineEmits(["accept", "discard"]);
       @accept="$emit('accept', moduleKey)"
       @discard="$emit('discard', moduleKey)"
     />
-    <ResumeModule :data="data" :name="moduleKey" />
+    <ResumeModule :name="moduleKey" />
   </div>
 </template>
 

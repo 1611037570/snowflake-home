@@ -83,9 +83,9 @@ const { moduleClassMap, acceptModule, rejectModule } = useModuleInteractions({
 // diff 悬浮事件委托：根容器统一监听，替代各字段单独挂载
 const containerRef = ref(null);
 useDiffFieldHover({ containerRef, isEdit, isPrinting });
-// diff 档位根级注入：编辑态离屏测量容器仅渲染草稿（render），保证测量行高与实际排版一致，不挂高亮与交互；
-// 非编辑态（预览/缩略图）测量容器全不参与（none）；实际分页内容由 ResumePageShell 覆盖提升为 full
-provide("diffMode", isEdit.value ? "render" : "none");
+// diff 档位根级注入：编辑态实际分页内容全参与（full），非编辑态（预览/缩略图）全不参与（none）；
+// 离屏测量容器不参与交互，由 MeasureContent 内部把 full 降为 render（仅渲染草稿保持行高一致）
+provide("diffMode", isEdit.value ? "full" : "none");
 // 单页组件根元素回传：rootRef 限定导出范围，measureRef 供测量与图片导出
 const setSingleRoot = (el) => (rootRef.value = el);
 const setSingleMeasure = (el) => (measureRef.value = el);
@@ -105,7 +105,6 @@ defineExpose({ rootEl: rootRef, measureEl: measureRef, moduleList });
     <!-- 缩略图视为单页：仅渲染第一页内容，测量与渲染合一，无需分页裁剪；根元素由组件回传 -->
     <PreviewSinglePage
       v-if="isThumb"
-      :item="props.item"
       :all-modules="allModules"
       :ui="ui"
       :styles="{ paddingStyle, fontStyle, lineHeightStyle }"
@@ -142,7 +141,6 @@ defineExpose({ rootEl: rootRef, measureEl: measureRef, moduleList });
           :show-page-number="showPageNumber"
           :page-index="pageIndex"
           :page-count="pages.length"
-          :diff-mode="isEdit ? 'full' : 'none'"
           :class="[
             `${uid}-page-${pageIndex}`,
             {
@@ -154,7 +152,6 @@ defineExpose({ rootEl: rootRef, measureEl: measureRef, moduleList });
             v-for="slice in pageSlices"
             :key="slice.moduleKey"
             :module-key="slice.moduleKey"
-            :data="props.item.data"
             :is-edit="isEdit"
             :outline-class="moduleClassMap[slice.moduleKey]"
             @accept="acceptModule"
