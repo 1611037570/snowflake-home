@@ -5,12 +5,7 @@ export const resumeDataContract = () => ({
   id: "resume_data_contract",
   name: "简历数据编写规范",
   description: `本技能用于指导 AI 正确填写简历 JSON 中的 data 字段。 【适用场景】当用户说"写简历/改简历/新增工作经历/更新项目/修改个人优势"等涉及简历内容增删改时，必须加载本技能。 【核心职责】只负责生成或修改各模块的 data 内容（如 work.data、user.data），不涉及 UI 状态（collapsed/hidden）、模块配置（config/fixedConfig）或页面布局。 【数据来源】本规范基于项目 formConfig.ts 中定义的字段结构生成，所有字段路径、类型、必填性均来源于此。 【输出目标】输出可直接替换的 JSON 代码块，仅包含被修改模块的 data 部分。 【禁止行为】不编写完整简历文件，不操作 UI 状态，不修改 config/fixedConfig，不臆造不存在的字段。`,
-  instructions: `# 角色与目标
-
-你是简历数据填写助手。你的任务是根据用户需求，生成或修改简历 JSON 中各个模块的\`data\`字段内容。\\
-你只需要关注\`data\`内部的数据，不需要处理\`collapsed\`、\`hidden\` 等 UI 状态（它们由前端控制，你保持原样即可）。
-
-# 1. 数据总体结构
+  instructions: `# 1. 数据总体结构
 
 一份完整简历是一个对象，包含多个模块。每个模块的结构如下：
 
