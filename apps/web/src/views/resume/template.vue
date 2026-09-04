@@ -60,6 +60,12 @@ const openFullscreen = (card) => {
 const closeFullscreen = () => {
   fullscreenItem.value = null;
 };
+
+// 切换大小：切换模板预览大小
+const switchSize = (size) => {
+  gridClass.value = size;
+};
+const gridClass = ref("default");
 </script>
 
 <template>
@@ -67,6 +73,8 @@ const closeFullscreen = () => {
     <div class="mt-2 flex w-full min-w-full items-center justify-between px-6">
       <h2 class="text-[20px] font-black text-sf-theme">简历模板 {{ total }} 款</h2>
       <div class="flex gap-3">
+        <SfButton class="flex-1" @click="switchSize('small')">大图</SfButton>
+        <SfButton class="flex-1" @click="switchSize('default')">小图</SfButton>
         <div
           v-for="(colorItem, index) in themeColors"
           :key="colorItem.value"
@@ -82,22 +90,20 @@ const closeFullscreen = () => {
       </div>
     </div>
     <SfScrollbar class="flex-1">
-      <div class="flex h-full flex-col py-1">
-        <RevealGrid :items="templates" :interval="120" key-field="id">
+      <div class="flex h-full flex-col py-2">
+        <RevealGrid :items="templates" :size="gridClass" :interval="120" key-field="id">
           <template #default="{ item: card }">
-            <div class="w-[282px]">
-              <ResumeCardContainer :item="card.item" @click="useTemplate(card)">
-                <div class="flex flex-col">
-                  <div class="truncate text-base font-black text-black">
-                    {{ card.name }}
-                  </div>
-                  <div class="mt-3 flex items-center justify-between gap-2">
-                    <SfButton class="flex-1" @click.stop="openFullscreen(card)">预览</SfButton>
-                    <SfButton class="flex-1">使用模板</SfButton>
-                  </div>
+            <ResumeCardContainer :item="card.item" :size="gridClass" @click="useTemplate(card)">
+              <div class="flex flex-col">
+                <div class="truncate text-base font-black text-black">
+                  {{ card.name }}
                 </div>
-              </ResumeCardContainer>
-            </div>
+                <div class="mt-3 flex items-center justify-between gap-2">
+                  <SfButton class="flex-1" @click.stop="openFullscreen(card)">预览</SfButton>
+                  <SfButton class="flex-1">使用模板</SfButton>
+                </div>
+              </div>
+            </ResumeCardContainer>
           </template>
         </RevealGrid>
         <div class="flex flex-1 flex-col items-center justify-end">
