@@ -28,5 +28,7 @@ defineExpose({} as ComponentInstance<typeof ElScrollbar>);
 :deep(.el-scrollbar__view) {
   height: 100% !important;
   padding: 0 12px !important;
+  display: flex;
+  flex-direction: column;
 }
 </style>
