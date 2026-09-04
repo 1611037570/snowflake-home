@@ -25,13 +25,13 @@ const activeNavIndex = computed(() => navList.findIndex((item) => route.path ===
     <header
       class="fixed top-0 right-0 left-0 z-50 h-16 w-full border-b-[0.5px] border-sf-b bg-sf-page font-extrabold text-sf-base"
     >
-      <div class="mx-auto flex h-full w-full max-w-[1280px] items-center gap-6 px-4">
+      <div class="mx-auto flex h-full w-full max-w-[1280px] items-center gap-5 px-4">
         <div class="flex shrink-0 items-center gap-2.5 text-[17px] whitespace-nowrap">
           <SfLogo size="8.5" name="resume" />
           <span> {{ $t("router.resume") }}</span>
         </div>
 
-        <nav class="flex items-center gap-[30px] max-[1180px]:gap-5 max-[900px]:hidden">
+        <nav class="flex items-center gap-5">
           <button
             v-for="(item, index) in navList"
             :key="item.path"
