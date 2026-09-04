@@ -1,7 +1,7 @@
 <script setup>
 // 简历页面外壳：页面容器样式 + 页码页脚，多页渲染与缩略图单页共用
 // 仅排版展示，不感知分页/测量逻辑；根元素回传供缩略图测量与导出使用
-import { provide, useTemplateRef, watch } from "vue";
+import { useTemplateRef, watch } from "vue";
 import {
   PAGE_NUMBER_HEIGHT,
   RESUME_CONTAINER_HEIGHT,
@@ -36,15 +36,7 @@ const props = defineProps({
   },
   // 根元素回传回调（缩略图测量 / 图片导出需要）
   onEl: Function,
-  // diff 参与级别：none 原值无交互；full 渲染草稿+高亮+悬浮交互，仅编辑态实际分页内容传入
-  diffMode: {
-    type: String,
-    default: "none",
-  },
 });
-
-// 向子树覆盖注入 diff 档位：实际分页内容提为 full，测量容器与缩略图沿用根级档位
-provide("diffMode", props.diffMode);
 
 const rootEl = useTemplateRef("rootRef");
 // ref 就绪或变化后回传根元素

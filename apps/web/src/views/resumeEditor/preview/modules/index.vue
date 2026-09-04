@@ -6,10 +6,6 @@ const props = defineProps({
   name: {
     type: String,
   },
-  data: {
-    type: Object,
-    default: () => {},
-  },
 });
 
 /**

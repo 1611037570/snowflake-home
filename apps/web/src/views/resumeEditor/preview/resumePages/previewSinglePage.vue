@@ -8,11 +8,6 @@ import ResumePageShell from "./resumePageShell.vue";
 defineOptions({ name: "PreviewSinglePage" });
 
 const props = defineProps({
-  // 简历数据：{ data, ... }，供 ResumeModule 透传
-  item: {
-    type: Object,
-    required: true,
-  },
   // 期望渲染的模块列表（fixed + config）
   allModules: {
     type: Array,
@@ -70,7 +65,7 @@ const setMeasureEl = (el) => {
         class="group group/module relative rounded-xl"
       >
         <!-- 测量包装与测量容器一致：resume-module-wrapper 直接挂在模块根元素上 -->
-        <ResumeModule :data="props.item.data" :name="item.key" class="resume-module-wrapper" />
+        <ResumeModule :name="item.key" class="resume-module-wrapper" />
       </div>
     </ResumePageShell>
   </div>
