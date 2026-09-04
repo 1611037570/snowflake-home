@@ -6,15 +6,44 @@ import DiffContent from "./diffField/diffContent.vue";
 const store = useDiffPopoverStore();
 const popoverRef = ref(null);
 const popoverSize = ref({ width: 0, height: 0 });
+// 鼠标进入浮层后锁定位置，避免浮层持续跟随导致无法点击按钮与滚动内容
+const popoverLocked = ref(false);
 
-// 浮层跟随鼠标移动：rAF 节流避免高频位置更新；鼠标进入浮层本体后停止跟手
+// 浮层跟随鼠标移动：rAF 节流避免高频位置更新
+// 鼠标进入浮层实际矩形即永久锁定，不再跟随；接近扩展区域先停止跟随，避免追不上
+// Teleport 内模板 ref 偶发绑定为空，统一用 class 选择器直接取 DOM
 let rafId = 0;
+const getPopoverEl = () =>
+  popoverRef.value || document.querySelector(".diff-popover");
 const updatePosition = (e) => {
+  if (popoverLocked.value) return;
   if (rafId) return;
   rafId = requestAnimationFrame(() => {
     rafId = 0;
-    const el = popoverRef.value;
-    if (el && el.contains(e.target)) return;
+    const el = getPopoverEl();
+    if (el) {
+      const rect = el.getBoundingClientRect();
+      // 进入浮层实际区域：立即锁定，后续任何鼠标移动都不再更新位置
+      if (
+        e.clientX >= rect.left &&
+        e.clientX <= rect.right &&
+        e.clientY >= rect.top &&
+        e.clientY <= rect.bottom
+      ) {
+        popoverLocked.value = true;
+        return;
+      }
+      // 接近扩展区域：停止跟随，让鼠标可以平稳进入浮层触发锁定
+      const pad = 30;
+      if (
+        e.clientX >= rect.left - pad &&
+        e.clientX <= rect.right + pad &&
+        e.clientY >= rect.top - pad &&
+        e.clientY <= rect.bottom + pad
+      ) {
+        return;
+      }
+    }
     store.x = e.clientX;
     store.y = e.clientY;
   });
@@ -25,8 +54,16 @@ watch(
   (visible) => {
     if (visible) {
       document.addEventListener("mousemove", updatePosition);
+      // Teleport 内模板 ref 偶发绑定为空，nextTick 后按 class 兜底绑定，保证锁定与接近检测可用
+      nextTick(() => {
+        if (!popoverRef.value) {
+          popoverRef.value = document.querySelector(".diff-popover");
+        }
+      });
     } else {
       document.removeEventListener("mousemove", updatePosition);
+      // 隐藏时重置锁定状态，下次弹出可重新跟随
+      popoverLocked.value = false;
     }
   },
   { immediate: true },
@@ -38,7 +75,7 @@ watch(
   async () => {
     if (store.visible) {
       await nextTick();
-      const el = popoverRef.value;
+      const el = getPopoverEl();
       if (el) {
         popoverSize.value = { width: el.offsetWidth, height: el.offsetHeight };
       }
@@ -62,14 +99,13 @@ const popoverStyle = computed(() => {
 </script>
 
 <template>
-  <Teleport to="body">
+  <Teleport to="body" v-if="store.visible">
     <div
-      v-if="store.visible"
       ref="popoverRef"
-      class="fixed z-50 flex max-h-[540px] w-max max-w-[700px] min-w-[180px] flex-col rounded-3xl border-2 border-sf-theme-2 bg-sf-primary p-2"
+      class="diff-popover fixed z-50 flex max-h-[540px] w-max max-w-[700px] min-w-[180px] flex-col rounded-3xl border-2 border-sf-theme-2 bg-sf-primary p-2"
       :style="popoverStyle"
-      @mouseenter="store.stay"
-      @mouseleave="store.hide"
+      @mouseenter="popoverLocked = true; store.stay()"
+      @mouseleave="popoverLocked = false; store.hide()"
     >
       <div class="min-h-0 flex-1 overflow-y-auto rounded-xl">
         <div class="rounded-xl bg-[#e8f5e9] px-1 text-[#2e7d32]">
