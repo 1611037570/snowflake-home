@@ -13,8 +13,14 @@ const router = useRouter();
 
 const resumeStore = useResumeStore();
 const { list, currentIndex } = storeToRefs(resumeStore);
-const { maxCount } = resumeStore;
+const { maxCount, maxTrashCount } = resumeStore;
 const { proxy } = getCurrentInstance();
+
+// 每次进入简历页：清理回收站中超过保留天数的简历
+onMounted(() => {
+  resumeStore.cleanExpiredTrash();
+});
+
 const sortedList = computed(() => {
   return [...list.value].sort(
     (a, b) => (b?.usage?.lastUseTime || 0) - (a?.usage?.lastUseTime || 0),
@@ -69,7 +75,9 @@ const createForm = ref({
 });
 
 const handleCreate = () => {
+  // 提前判断：简历数量已达上限时提示并阻止
   if (list.value.length >= maxCount) {
+    ElMessage.warning(`简历数量已达上限（${maxCount}个），请先删除后再新建`);
     return;
   }
   createDialogVisible.value = true;
@@ -137,7 +145,7 @@ const handleUseTemplate = () => {
             "
             @click="activeTab = 'trash'"
           >
-            回收站（{{ resumeStore.trashList.length }}）
+            回收站（{{ resumeStore.trashList.length }}/{{ maxTrashCount }}）
           </button>
         </div>
         <!-- 导入简历入口：仅在草稿标签下显示 -->
@@ -234,6 +242,9 @@ const handleUseTemplate = () => {
               删除于：{{
                 item._deletedAt ? dayjs(item._deletedAt).format("YYYY.MM.DD HH:mm") : "--"
               }}
+            </span>
+            <span class="ml-auto shrink-0 text-xs text-sf-text-3">
+              {{ resumeStore.getTrashRemainingDays(item) }}天后自动清理
             </span>
           </div>
           <div class="mt-3 flex items-center gap-3">
