@@ -1,44 +1,13 @@
 // 导入LLM接口
 import { getLLM, isAbortError } from "@/apis";
-import { createResumeTools } from "@/apis/llm/react";
-import { useAiStore, useResumeStore } from "@/stores";
+import { useAiStore } from "@/stores";
 // 导入聊天和消息类型
 import type { Chat, Message } from "@/stores/modules/ai";
 // 导入Vue组合式API相关类型
 import { onUnmounted, type ComputedRef, type Ref } from "vue";
 import { storeToRefs } from "pinia";
-// 导入工具函数：用户数据和字段分析
-import { fieldAnalysis, userData } from "./utils";
-
-// ReAct 场景系统提示：在简历助手约束基础上增加工具使用说明
-const REACT_SYSTEM_PROMPT = `你是资深招聘 HR 北斗AI助手，专精简历优化和求职竞争力提升。
-
-# 任务方式
-你可以分步骤完成任务：先思考，再调用工具，根据工具返回的结果继续思考或执行，直到完成，完成后再输出最终结果。
-
-# 可用工具
-- read_resume_data：读取当前简历数据，需要了解简历内容时调用。
-- propose_resume_diff：生成简历修改草稿，需要修改简历时调用，传入仅包含变更字段的 patch。草稿会先展示给用户确认，不会直接改动简历。
-
-# 硬性约束
-- 真实性红线：严禁编造任何数据、职级或项目细节。
-- 需要读取简历时调用 read_resume_data，不要假设简历内容。
-- 当任务要求优化或修改简历时，必须调用 propose_resume_diff 生成修改草稿，禁止只输出分析建议而跳过工具调用。
-
-# 最终输出格式（只返回 JSON 对象）
-最终回复必须且只能是一个 JSON 对象，禁止输出 JSON 之外的任何开场白、解释、Markdown 或代码块标记。
-{
-  "data": null,
-  "analysis": "Markdown 格式的分析说明",
-  "followQuestions": ["建议追问1", "建议追问2"]
-}
-
-# analysis 字段规则
-1. 采用 Markdown 格式，简洁无冗余。
-2. 输出二级标题 问题回复：根据用户问题作答。
-3. 输出二级标题 修改说明：仅在本次有改动时出现，说明改动及原因，不暴露 JSON 字段、数组下标或变量名。
-4. 若无修改，省略 修改说明。
-5. 最多包含 问题回复、修改说明 两个二级标题。`;
+// 宿主传入的请求配置：技能与工具由调用方组装，chat 不内置业务内容
+import type { AssistantConfig } from "../types";
 
 // 定义 useChatRequest 的配置选项接口
 interface UseChatRequestOptions {
@@ -46,21 +15,29 @@ interface UseChatRequestOptions {
   currentMessages: ComputedRef<Message[]>; // 当前消息列表（只读）
   addMessage: (message: Partial<Message>) => void; // 添加消息的方法
   scrollToBottom: () => void | Promise<void>; // 滚动到底部
-  applyDiff?: (data: Record<string, any>) => string[]; // 应用数据差异，返回写入字段（可选）
+  config: AssistantConfig; // 调用方注入的技能、工具与上下文处理
 }
 
-// 主组合式函数：处理AI聊天请求
+// 主组合式函数：根据调用方注入的配置处理AI聊天请求
 export const useChatRequest = ({
   chat,
   currentMessages,
   addMessage,
   scrollToBottom,
-  applyDiff,
+  config,
 }: UseChatRequestOptions) => {
-  const resumeStore = useResumeStore();
   const aiStore = useAiStore();
-  const { isGenerating } = storeToRefs(resumeStore);
   const { thinkMode } = storeToRefs(aiStore);
+  const {
+    generating,
+    beforeRequest,
+    afterRequest,
+    buildUserContent,
+    skills,
+    reactSystem,
+    tools,
+    applyResult,
+  } = config;
   // 用于取消当前请求的函数引用
   let abortRequest: (() => void) | null = null;
   // ReAct 编排器引用，用于中止循环
@@ -119,17 +96,12 @@ export const useChatRequest = ({
     return { onEvent, dispose };
   };
 
-  // 读取当前简历数据，按需裁剪模块，并排除头像等大体积字段
-  const getResumeData = (moduleKey?: string) => {
-    const data = resumeStore.currentData;
-    if (!data) return {};
-    const source = moduleKey ? data[moduleKey] : data;
-    if (source == null) return {};
-    const clone = JSON.parse(JSON.stringify(source));
-    if (moduleKey === "user") delete clone.data?.avatar;
-    if (!moduleKey && clone.user?.data) delete clone.user.data.avatar;
-    return clone;
-  };
+  // 把技能正文合并为一份系统上下文，技能由调用方投递、不写入对话记录
+  const getSkillContent = () =>
+    skills
+      .map((skill) => skill.instructions)
+      .filter(Boolean)
+      .join("\n\n----\n\n");
 
   /**
    * 发送 AI 请求并记录思考与回复耗时
@@ -140,21 +112,14 @@ export const useChatRequest = ({
     // 辅助函数：检查当前请求是否仍为最新且组件未卸载
     const isCurrentRequest = () => !isUnmounted && currentRequestVersion === requestVersion;
     // 设置生成状态为true
-    isGenerating.value = true;
-    // 选中整个模块或 user 模块时，临时清除头像避免请求体过大，请求结束还原
-    const { selectedModule, currentData } = resumeStore;
-    const needTrimAvatar =
-      !selectedModule.length || selectedModule.some((item: any) => item.key === "user");
-    let savedAvatar: string | undefined;
-    if (needTrimAvatar && currentData.user?.data) {
-      savedAvatar = currentData.user.data.avatar;
-      delete currentData.user.data.avatar;
-    }
+    generating.value = true;
     // 最后一条消息（即AI回复消息）的引用与状态处理器
     let lastMsg: Message | null = null;
     let state: ReturnType<typeof createChatState> | null = null;
 
     try {
+      // 请求前调用方准备（如临时裁剪头像等大字段）
+      beforeRequest?.();
       // 构建消息列表（只复制role和content）
       const messages = currentMessages.value.map((message) => ({
         role: message.role,
@@ -162,16 +127,15 @@ export const useChatRequest = ({
       }));
       const lastInput = messages.at(-1);
       if (!lastInput) return;
-      // 拼接用户数据和字段分析到最后一条用户消息内容中
-      const content = `
-    ${userData.value}
-
-    ${fieldAnalysis.value}
-
-    ${lastInput.content}
-
-    `;
-      lastInput.content = content;
+      // 拼接调用方提供的用户上下文（如简历数据与字段解析）
+      if (buildUserContent) {
+        lastInput.content = buildUserContent(lastInput.content);
+      }
+      // 投递技能正文作为系统上下文
+      const skillContent = getSkillContent();
+      if (skillContent) {
+        messages.unshift({ role: "system", content: skillContent });
+      }
 
       // 添加一条空的AI回复消息（打字状态）
       addMessage({
@@ -260,7 +224,8 @@ export const useChatRequest = ({
         // 成功回调
         onSuccess: (res) => {
           if (!isCurrentRequest() || !lastMsg) return;
-          applyDiff?.(res.result.data); // 应用差异数据（如有）
+          // 应用差异由调用方注入的回调处理
+          applyResult?.(res.result.data);
           lastMsg.requestStatus = "success";
           scrollToBottom();
         },
@@ -281,15 +246,13 @@ export const useChatRequest = ({
       console.error("AI 请求异常:", error);
     } finally {
       // 清理工作（无论成功或失败）
-      // 请求结束还原头像
-      if (needTrimAvatar && currentData.user?.data) {
-        currentData.user.data.avatar = savedAvatar;
-      }
+      // 请求结束还原调用方现场
+      afterRequest?.();
       if (isUnmounted) return;
       const finishTime = Date.now();
       state?.dispose();
       // 重置状态
-      isGenerating.value = false;
+      generating.value = false;
       abortRequest = null;
       if (lastMsg?.typing) lastMsg.typing = false;
       if (chat.value) chat.value.updateTime = finishTime;
@@ -312,9 +275,13 @@ export const useChatRequest = ({
     let state: ReturnType<typeof createChatState> | null = null;
 
     try {
-      isGenerating.value = true;
+      generating.value = true;
 
-      const messages: any[] = [{ role: "system", content: REACT_SYSTEM_PROMPT }];
+      const messages: any[] = [];
+      // 技能正文在前约束数据字段，系统提示在后约束任务与输出协议
+      const skillContent = getSkillContent();
+      if (skillContent) messages.push({ role: "system", content: skillContent });
+      messages.push({ role: "system", content: reactSystem });
       if (prompt) messages.push({ role: "user", content: prompt });
       messages.push({ role: "user", content: userContent });
 
@@ -329,10 +296,7 @@ export const useChatRequest = ({
 
       const llm = getLLM();
       reactRunner = llm.react({
-        tools: createResumeTools({
-          getResumeData,
-          applyDiff: applyDiff ?? (() => []),
-        }),
+        tools,
         maxSteps: 6,
         reflection: true,
         onEvent: (type, data) => {
@@ -384,7 +348,7 @@ export const useChatRequest = ({
     } finally {
       reactRunner = null;
       state?.dispose();
-      isGenerating.value = false;
+      generating.value = false;
       if (lastMsg?.typing) lastMsg.typing = false;
       if (chat.value) chat.value.updateTime = Date.now();
     }
@@ -421,7 +385,7 @@ export const useChatRequest = ({
       clearTimers(activeTimers);
       activeTimers = null;
     }
-    isGenerating.value = false;
+    generating.value = false;
     currentMessages.value.forEach((message) => {
       if (message.typing) message.typing = false;
     });

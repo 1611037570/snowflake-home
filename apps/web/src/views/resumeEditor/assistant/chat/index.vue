@@ -1,21 +1,22 @@
-<script setup>
-import { useAiStore, useResumeStore } from "@/stores";
+<script setup lang="ts">
+import { useAiStore } from "@/stores";
 import { useScroll } from "@vueuse/core";
-import { computed, inject, nextTick, ref, watch } from "vue";
-import { storeToRefs } from "pinia";
+import { computed, nextTick, ref, watch } from "vue";
 import { useChatRequest } from "./useChatRequest";
 import { flows } from "../flows";
+import type { AssistantConfig } from "../types";
 
 import AiMessage from "./aiMessage.vue";
 import ChatInput from "./chatInput/index.vue";
 import UserMessage from "./userMessage.vue";
 import EmptyState from "./emptyState.vue";
 
-const resumeStore = useResumeStore();
 const aiStore = useAiStore();
-const { isGenerating } = storeToRefs(resumeStore);
 const { createDefaultMessage } = aiStore;
-const applyDiff = inject("applyDiff");
+// 宿主传入的技能、工具与上下文配置
+const props = defineProps<{ config: AssistantConfig }>();
+// 生成状态来自宿主注入的引用，模板与输入框共用
+const isGenerating = computed(() => props.config.generating.value);
 
 const chat = defineModel("chat", {
   required: true,
@@ -84,7 +85,7 @@ const { handleAIResponse, handleReactResponse, stopGenerating } = useChatRequest
   currentMessages,
   addMessage,
   scrollToBottom,
-  applyDiff,
+  config: props.config,
 });
 
 /**
@@ -94,13 +95,13 @@ const handleSend = (content) => {
   // 确保输入内容不为空
   if (!content) return;
   // 确保当前没有正在发送的消息
-  if (isGenerating.value) return;
+  if (props.config.generating.value) return;
   // 引导流程的自由输入步骤：把输入内容作为答案推进流程
   if (activeFlow.value?.flow?.steps?.[activeFlow.value.stepIndex]?.input) {
     handleFlowInput(content);
     return;
   }
-  isGenerating.value = true;
+  props.config.generating.value = true;
   addMessage({
     role: "user",
     content,
@@ -160,7 +161,7 @@ const handleRecall = (msg) => {
 const handleRetry = (msg) => {
   // 仅删除失败的这条消息
   removeMessage(msg, 1);
-  isGenerating.value = true;
+  props.config.generating.value = true;
   scrollToBottom();
   handleAIResponse();
 };
@@ -256,7 +257,7 @@ const handleFlowAnswer = (answer) => {
     content: userContent,
     typing: false,
   });
-  isGenerating.value = true;
+  props.config.generating.value = true;
   scrollToBottom();
   handleAIResponse();
 };

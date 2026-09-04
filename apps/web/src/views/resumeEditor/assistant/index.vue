@@ -1,14 +1,19 @@
 <script setup>
-import { onMounted, ref } from "vue";
+import { inject, onMounted, ref } from "vue";
 import { useAiStore, useResumeStore } from "@/stores";
 import { DEFAULT_EDITOR } from "@/stores/modules/resume/defaultConfig";
 import { storeToRefs } from "pinia";
 import Chat from "./chat/index.vue";
 import { defaultMessage } from "./prompt.ts";
+import { useResumeAssistantConfig } from "./useResumeAssistantConfig";
 
 // AI 对话
 const aiStore = useAiStore();
 const resumeStore = useResumeStore();
+// 应用 AI 差异由上层预览草稿注入，随技能与工具一并传给 chat
+const applyDiff = inject("applyDiff");
+// 组装简历域技能与工具，由调用方传给 chat 引擎
+const assistantConfig = useResumeAssistantConfig(applyDiff);
 const { createDefaultChat } = aiStore;
 const { resumeAssistantChat } = storeToRefs(aiStore);
 const { system } = storeToRefs(resumeStore);
@@ -55,7 +60,7 @@ function createNewChat() {
           />
         </SfTooltip>
       </div>
-      <Chat :chat="chat" />
+      <Chat :chat="chat" :config="assistantConfig" />
     </div>
   </div>
 </template>

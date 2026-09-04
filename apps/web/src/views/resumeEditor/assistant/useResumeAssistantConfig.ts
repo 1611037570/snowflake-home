@@ -92,6 +92,7 @@ export const useResumeAssistantConfig = (
       getResumeData,
       applyDiff: applyDiff ?? (() => []),
     }),
+    applyResult: (data) => applyDiff?.(data),
     beforeRequest,
     afterRequest,
     buildUserContent,
