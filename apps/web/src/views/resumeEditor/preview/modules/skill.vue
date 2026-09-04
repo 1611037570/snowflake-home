@@ -1,23 +1,10 @@
 <script setup>
-import { computed, inject } from "vue";
-import DiffField from "../components/diffField/index.vue";
-import Title from "../theme/title/index.vue";
-
-// 从上层注入获取代理后的预览数据
-const previewData = inject("previewData");
-
-const fontValue = inject("fontValue");
-const lineHeightValue = inject("lineHeightValue");
-
-// 代理数据解包，取 skill 字段 data 的代理对象（含 value 与 newValue）
-const skill = computed(() => previewData.value?.skill?.data);
+// 专业技能：标题 + 富文本单块，复用通用渲染组件
+import RichTextBlock from "./richTextBlock.vue";
 </script>
 
 <template>
-  <div class="resume-row" data-module="skill" :style="[lineHeightValue(), fontValue()]">
-    <Title title="专业技能" />
-    <DiffField :model-value="skill" html />
-  </div>
+  <RichTextBlock moduleName="skill" title="专业技能" dataKey="skill" />
 </template>
 
 <style lang="scss" scoped></style>
