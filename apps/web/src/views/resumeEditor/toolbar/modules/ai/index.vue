@@ -48,7 +48,7 @@ function jumpToAdded() {
 
   <!-- 设置弹窗 -->
   <SfModal v-model="modelManagerVisible" title="服务商设置" width="640px">
-    <div class="flex h-[480px] flex-col gap-3 p-4">
+    <div class="flex h-[500px] flex-col gap-3">
       <SfTab :list="tabList" v-model="modelManagerTab" v-model:index="activeIndex" />
       <!-- 第一个 Tab：已添加模型 -->
       <div v-show="modelManagerTab === 'added'" class="flex min-h-0 flex-1 flex-col">
