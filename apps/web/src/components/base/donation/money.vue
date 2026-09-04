@@ -1,7 +1,7 @@
 <script setup>
 // 导入支付图片
-import aliPay from "@/assets/images/aliPay.jpg";
-import weChatPay from "@/assets/images/weChatPay.jpg";
+import aliPay from "@/assets/images/aliPay.webp";
+import weChatPay from "@/assets/images/weChatPay.webp";
 
 // 支付方式列表
 const list = [
