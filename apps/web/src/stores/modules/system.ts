@@ -50,6 +50,8 @@ export const useSystemStore = defineStore(
      * 当最新版本与当前版本不匹配时，刷新页面
      */
     const checkVersionUpdate = async () => {
+      // 非生产环境跳过版本检测，dev 无需请求 version.json
+      if (!import.meta.env.PROD) return;
       try {
         // 使用新的getVersion方法获取版本号
         const newVersion = await getVersion();
@@ -69,6 +71,8 @@ export const useSystemStore = defineStore(
      * 在系统启动时获取初始版本号
      */
     const initVersion = async () => {
+      // 非生产环境跳过版本检测，dev 无需请求 version.json
+      if (!import.meta.env.PROD) return;
       try {
         const version = await getVersion();
         currentVersion.value = version;
