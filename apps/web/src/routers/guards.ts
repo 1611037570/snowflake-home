@@ -1,5 +1,6 @@
 import { loadPageLang } from "@/locales";
-import { useSystemStore } from "@/stores";
+// 版本检测已注释，暂不引入 useSystemStore
+// import { useSystemStore } from "@/stores";
 
 /**
  * 路由前置守卫
@@ -14,8 +15,9 @@ export async function beforeEachGuard(to: any, from: any, next: any) {
   loadPageLang(pageName);
 
   // 每次进入页面前检查系统版本状态
-  const systemStore = useSystemStore();
-  systemStore.checkVersionUpdate();
+  // 暂时注释掉版本检测，避免版本检查阻塞路由跳转
+  // const systemStore = useSystemStore();
+  // systemStore.checkVersionUpdate();
 
   // 放行路由
   next();
