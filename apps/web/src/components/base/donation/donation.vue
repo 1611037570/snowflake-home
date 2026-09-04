@@ -1,6 +1,8 @@
 <script setup>
 defineOptions({ name: "SfDonation" });
 import Donation from "./modalDonation.vue";
+import Money from "./money.vue";
+
 const modalValue = defineModel();
 
 const color = inject("color", "text-sf-base");
@@ -19,6 +21,7 @@ const color = inject("color", "text-sf-base");
       </SfTooltip>
     </slot>
     <SfModal v-model="modalValue" title="支持项目">
+      <Money />
       <Donation />
     </SfModal>
   </div>
