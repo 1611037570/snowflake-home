@@ -29,18 +29,20 @@ const safeUrl = (value) => {
     <!-- 标题栏 -->
     <Title title="视频作品"></Title>
     <!-- 社交链接 -->
-    <div
-      v-for="(item, index) in video"
-      :key="index"
-      class="mt-1 flex max-w-full min-w-0 flex-wrap items-center gap-2"
-      data-module="user"
-    >
-      <DiffField v-model="item.name" />
-      <span v-if="item.name?.value && item.url?.value" class="pr-1">：</span>
-      <div class="h-16 w-16">
-        <SfQrcode :value="item.url?.value" />
+    <template v-for="(item, index) in video" :key="index">
+      <div
+        class="mt-1 flex max-w-full min-w-0 flex-wrap items-center justify-between gap-2"
+        data-module="user"
+      >
+        <DiffField v-model="item.name" />
+        <div class="flex-1" :style="[fontValue(-6)]">
+          <DiffField v-model="item.desc" />
+        </div>
+        <div class="h-16 w-16">
+          <SfQrcode :value="item.url?.value" />
+        </div>
       </div>
-    </div>
+    </template>
   </div>
 </template>
 
