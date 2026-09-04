@@ -17,9 +17,9 @@ const picaInstance = pica({
 });
 
 /**
- * 将裁切后的图片缩放并导出为 WebP base64
- * 裁切比例已与目标比例一致，直接按目标尺寸缩放，无需等比计算
- * @param source - 裁切得到的画布或图片源
+ * 将图片源缩放并导出为 WebP base64
+ * 支持裁切画布或完整图片，按目标尺寸缩放
+ * @param source - 图片画布、图片元素或 ImageBitmap
  * @param targetWidth - 目标宽度
  * @param targetHeight - 目标高度
  * @param quality - WebP 压缩质量 (0-1)，默认 0.85
