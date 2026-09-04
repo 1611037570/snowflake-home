@@ -37,6 +37,7 @@ watch(
   () => {
     if (!customModels.value.some((item) => item.provider === props.provider)) {
       customModels.value.push({
+        name: "",
         provider: props.provider,
         model: "",
         key: "",
@@ -114,7 +115,11 @@ function useService() {
 <template>
   <div v-if="form" class="flex flex-col gap-3">
     <el-form ref="formRef" :model="form" :rules="rules" class="flex flex-col gap-3">
-      <!-- 模型 -->
+      <!-- 模型名称 -->
+      <SfFormItem label="模型名称" prop="name">
+        <SfInput v-model="form.name" class="w-full" placeholder="如：我的 GPT-4" />
+      </SfFormItem>
+      <!-- 模型标识 -->
       <SfFormItem label="模型" prop="model">
         <SfInput v-model="form.model" class="w-full" placeholder="请输入模型名称" />
       </SfFormItem>
