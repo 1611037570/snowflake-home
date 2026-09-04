@@ -12,18 +12,24 @@ const snowflakeConfig = {
   provider: mapProvider(snowflake.provider),
   model: snowflake.model,
 };
+
 const getLLM = () => {
   const aiStore = useAiStore();
-  const { activeModel, customModels } = storeToRefs(aiStore);
+  const { activeModel, modelList } = storeToRefs(aiStore);
+
+  // 雪花内置服务
   if (activeModel.value === "snowflake") {
     return new LLM(snowflakeConfig);
   }
-  // 按平台类型查找激活配置，未找到时回退雪花服务
-  const config = customModels.value.find((item) => item.provider === activeModel.value);
+
+  // 查找已添加的模型配置
+  const config = modelList.value.find((model) => model.id === activeModel.value);
+
+  // 未找到时回退雪花服务
   if (!config) {
     return new LLM(snowflakeConfig);
   }
-  // deepseek 与 ark 走 OpenAI 兼容协议
+
   const llmProvider = mapProvider(config.provider);
   return new LLM({
     url: config.url,
@@ -32,4 +38,5 @@ const getLLM = () => {
     model: config.model,
   });
 };
+
 export { getLLM, LLM };

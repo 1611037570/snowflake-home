@@ -39,20 +39,33 @@ export type Message = {
   // 请求状态
   requestStatus: string;
 };
-// 自定义模型配置
-export type CustomModelConfig = {
-  // 模型名称（用户自定义）
-  name: string;
+// 已添加的模型（用户实际使用的模型配置）
+export type DeployedModel = {
+  // 模型唯一标识
+  id: string;
   // 平台类型
-  provider: "ark" | "openai" | "deepseek";
+  provider: string;
+  // 别名（可选，展示优先用这个）
+  name?: string;
   // 模型标识
   model: string;
   // API 密钥
   key: string;
   // 完整接口地址
   url: string;
-  // 添加状态（success表示测试通过可添加）
-  status?: "success";
+};
+// 待添加到 modelList 的配置项（可编辑草稿）
+type PendingCustomConfig = {
+  // 平台类型：openai / ark / deepseek
+  provider: string;
+  // 别名（可选）
+  name: string;
+  // 模型名称
+  model: string;
+  // API 密钥
+  key: string;
+  // 完整接口地址
+  url: string;
 };
 // 默认对话记录标题
 const DEFAULT_CHAT_TITLE = "新对话";
@@ -63,10 +76,12 @@ const DEFAULT_SYSTEM_PROMPT =
 export const useAiStore = defineStore(
   "ai",
   () => {
-    // 激活的服务标识：snowflake 或平台类型
+    // 激活的模型标识：snowflake（雪花内置服务）或 DeployedModel.id
     const activeModel = ref<string>("snowflake");
-    // 各平台配置列表（按平台类型各一份，切换时配置保留）
-    const customModels = ref<CustomModelConfig[]>([]);
+    // 已添加的用户模型列表（持久化到 localStorage）
+    const modelList = ref<DeployedModel[]>([]);
+    // 可添加的服务商模板列表（草稿池，非持久化）
+    const customModelList = ref<PendingCustomConfig[]>([]);
 
     const sidebarCollapsed = ref(true);
     const sidebarMode = ref("float"); // 'dock' or 'float'
@@ -180,6 +195,83 @@ export const useAiStore = defineStore(
       updateChatTitle();
     }
 
+    // ========== 模型管理方法 ==========
+
+    /** 创建一个新的待添加模型（基于服务商模板） */
+    function createPendingModel(provider: string) {
+      const pending: PendingCustomConfig = {
+        provider,
+        name: "",
+        model: "",
+        key: "",
+        url: "",
+      };
+      customModelList.value.push(pending);
+      return pending;
+    }
+
+    /** 提交待添加模型到已添加列表 */
+    function deployModel(draft: PendingCustomConfig) {
+      const deployed: DeployedModel = {
+        id: `custom-${getUUID().slice(0, 8)}`,
+        provider: draft.provider,
+        name: draft.name || undefined,
+        model: draft.model,
+        key: draft.key,
+        url: draft.url,
+      };
+      modelList.value.push(deployed);
+      // 从待添加列表中移除
+      const idx = customModelList.value.indexOf(draft);
+      if (idx > -1) {
+        customModelList.value.splice(idx, 1);
+      }
+      return deployed;
+    }
+
+    /** 根据 ID 查找已添加的模型 */
+    function findModelById(id: string): DeployedModel | undefined {
+      if (id === "snowflake") {
+        return undefined;
+      }
+      return modelList.value.find((model) => model.id === id);
+    }
+
+    /** 删除已添加的模型 */
+    function deleteModel(modelId: string) {
+      const idx = modelList.value.findIndex((model) => model.id === modelId);
+      if (idx > -1) {
+        modelList.value.splice(idx, 1);
+        // 如果删除的是当前激活的模型，回退到雪花服务
+        if (activeModel.value === modelId) {
+          activeModel.value = "snowflake";
+        }
+      }
+    }
+
+    /** 将旧版 customModels 迁移到新版结构 */
+    function migrateLegacyData(oldCustomModels: any[]) {
+      oldCustomModels.forEach((old) => {
+        // 跳过没有必填字段的脏数据
+        if (!old.provider || !old.key || !old.url) return;
+
+        // 检查是否已经存在，避免重复添加
+        const exists = modelList.value.some(
+          (model) => model.provider === old.provider && model.key === old.key,
+        );
+        if (exists) return;
+
+        modelList.value.push({
+          id: `legacy-${old.provider}-${getUUID().slice(0, 4)}`,
+          provider: old.provider,
+          name: old.name || undefined,
+          model: old.model || "",
+          key: old.key,
+          url: old.url,
+        });
+      });
+    }
+
     return {
       sidebarCollapsed,
       sidebarMode,
@@ -188,7 +280,8 @@ export const useAiStore = defineStore(
       currentChat,
       currentMessages,
       activeModel,
-      customModels,
+      modelList,
+      customModelList,
       thinkMode,
       resumeAssistantChat,
       createDefaultChat,
@@ -198,18 +291,35 @@ export const useAiStore = defineStore(
       switchChat,
       delChat,
       addMessage,
+      createPendingModel,
+      deployModel,
+      findModelById,
+      deleteModel,
+      migrateLegacyData,
     };
   },
   {
     persist: {
       storage: localStorage,
-      pick: ["sidebarMode", "currentChatId", "activeModel", "customModels", "resumeAssistantChat"],
-      // 恢复后兜底：激活配置不存在时回退雪花服务
+      pick: ["sidebarMode", "currentChatId", "activeModel", "modelList"],
+      // 恢复后兜底 + 旧版兼容迁移
       afterHydrate: (ctx) => {
         const store = ctx.store as any;
+        // 兜底：激活配置不存在时回退雪花服务
         if (!["snowflake", "openai", "ark", "deepseek"].includes(store.activeModel)) {
           store.activeModel = "snowflake";
         }
+        // 旧版兼容：如果存在旧版 customModels 数据，迁移到新的 modelList
+        try {
+          const raw = localStorage.getItem("pinia");
+          if (raw) {
+            const parsed = JSON.parse(raw);
+            const legacy: any[] = parsed?.ai?.customModels || [];
+            if (Array.isArray(legacy) && legacy.length > 0) {
+              store.migrateLegacyData(legacy);
+            }
+          }
+        } catch {}
       },
     },
   },
