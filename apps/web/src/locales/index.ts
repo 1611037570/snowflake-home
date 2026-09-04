@@ -62,8 +62,8 @@ async function dynamicLoadPageLang(name: string, langKey: string) {
     i18n.global.mergeLocaleMessage(langKey, pageLang);
     return pageLang;
   } catch (error) {
-    console.error(`加载 ${name}的${langKey} 包失败:`, error);
-    return;
+    // console.error(`加载 ${name}的${langKey} 包失败:`, error);
+    // return;
   }
 }
 
