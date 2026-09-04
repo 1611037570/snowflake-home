@@ -1,5 +1,6 @@
 <script setup>
 import { ref } from "vue";
+import Money from "@/components/base/donation/money.vue";
 
 const visible = ref(false);
 
@@ -144,74 +145,93 @@ const oepn = (data) => {
       </slot>
     </div>
     <SfModal v-model="visible" title="投递简历">
-      <div class="w-[420px]">
-        <!-- 提示折叠面板：每个标题增加对应图标、色块与描述美化 -->
-        <SfCollapse class="deliver-collapse mb-4">
-          <SfCollapseItem name="author">
-            <template #title>
-              <div class="flex items-center">
-                <span
-                  class="mr-2 inline-flex h-6 w-6 items-center justify-center rounded-md bg-pink-100"
-                >
-                  <SfIcon icon="solar:heart-bold" class="text-pink-500" size="4" />
-                </span>
-                <span class="text-sm font-medium text-sf-text">作者留言</span>
+      <SfScrollbar height="600px" class="overflow-hidden">
+        <div class="w-[420px]">
+          <!-- 提示折叠面板：每个标题增加对应图标、色块与描述美化 -->
+          <SfCollapse class="deliver-collapse mb-4">
+            <SfCollapseItem name="author">
+              <template #title>
+                <div class="flex items-center">
+                  <span
+                    class="mr-2 inline-flex h-6 w-6 items-center justify-center rounded-md bg-pink-100"
+                  >
+                    <SfIcon icon="solar:heart-bold" class="text-pink-500" size="4" />
+                  </span>
+                  <span class="text-sm font-medium text-sf-text">作者留言</span>
+                </div>
+              </template>
+              <div
+                class="rounded-lg border border-pink-100/50 bg-pink-50/40 py-2 pr-3 pl-8 text-[13px] leading-6 break-words text-sf-text/80"
+              >
+                到这里，我想你的专属简历已经完成啦～很开心能陪你走完这一程。祝你求职顺利，斩获心仪
+                offer。感谢使用轻舟简历。
               </div>
-            </template>
-            <div
-              class="rounded-lg border border-pink-100/50 bg-pink-50/40 py-2 pr-3 pl-8 text-[13px] leading-6 break-words text-sf-text/80"
-            >
-              到这里，你的专属简历就正式完成啦～很开心能陪你走完这一程。祝你求职顺利，斩获心仪
-              offer。感谢使用轻舟简历。
-            </div>
-          </SfCollapseItem>
-          <SfCollapseItem name="safe">
-            <template #title>
-              <div class="flex items-center">
-                <span
-                  class="mr-2 inline-flex h-6 w-6 items-center justify-center rounded-md bg-amber-100"
-                >
-                  <SfIcon icon="bi:shield-exclamation" size="4" class="text-amber-500" />
-                </span>
-                <span class="text-sm font-medium text-sf-text">安全提醒</span>
+            </SfCollapseItem>
+            <SfCollapseItem name="money">
+              <template #title>
+                <div class="flex items-center">
+                  <span
+                    class="mr-2 inline-flex h-6 w-6 items-center justify-center rounded-md bg-pink-100"
+                  >
+                    <SfIcon icon="solar:heart-bold" class="text-pink-500" size="4" />
+                  </span>
+                  <span class="text-sm font-medium text-sf-text">支持项目</span>
+                </div>
+              </template>
+              <div
+                class="rounded-lg border border-pink-100/50 bg-pink-50/40 px-3 py-2 text-[13px] leading-6 break-words text-sf-text/80"
+              >
+                <Money />
               </div>
-            </template>
-            <div
-              class="rounded-lg border border-amber-100/60 bg-amber-50/50 py-2 pr-3 pl-8 text-[13px] leading-6 break-words text-sf-text/80"
-            >
-              本平台仅作信息展示，不参与招聘。内容均来自互联网，仅供参考!!!
-            </div>
-          </SfCollapseItem>
-          <SfCollapseItem name="fraud">
-            <template #title>
-              <div class="flex items-center">
-                <span
-                  class="mr-2 inline-flex h-6 w-6 items-center justify-center rounded-md bg-emerald-100"
-                >
-                  <SfIcon icon="stash:lock-closed" size="4" class="text-emerald-500" />
-                </span>
-                <span class="text-sm font-medium text-sf-text">防骗指南</span>
+            </SfCollapseItem>
+            <SfCollapseItem name="safe">
+              <template #title>
+                <div class="flex items-center">
+                  <span
+                    class="mr-2 inline-flex h-6 w-6 items-center justify-center rounded-md bg-amber-100"
+                  >
+                    <SfIcon icon="bi:shield-exclamation" size="4" class="text-amber-500" />
+                  </span>
+                  <span class="text-sm font-medium text-sf-text">安全提醒</span>
+                </div>
+              </template>
+              <div
+                class="rounded-lg border border-amber-100/60 bg-amber-50/50 py-2 pr-3 pl-8 text-[13px] leading-6 break-words text-sf-text/80"
+              >
+                本平台仅作信息展示，不参与招聘。内容均来自互联网，仅供参考!!!
               </div>
-            </template>
-            <div
-              class="rounded-lg border border-emerald-100/60 bg-emerald-50/50 py-2 pr-3 pl-8 text-[13px] leading-6 break-words text-sf-text/80"
-            >
-              任何收费均为诈骗，勿泄露密码/验证码，认准官方域名，面试前核实企业资质。遇骗请立即报警。
+            </SfCollapseItem>
+            <SfCollapseItem name="fraud">
+              <template #title>
+                <div class="flex items-center">
+                  <span
+                    class="mr-2 inline-flex h-6 w-6 items-center justify-center rounded-md bg-emerald-100"
+                  >
+                    <SfIcon icon="stash:lock-closed" size="4" class="text-emerald-500" />
+                  </span>
+                  <span class="text-sm font-medium text-sf-text">防骗指南</span>
+                </div>
+              </template>
+              <div
+                class="rounded-lg border border-emerald-100/60 bg-emerald-50/50 py-2 pr-3 pl-8 text-[13px] leading-6 break-words text-sf-text/80"
+              >
+                任何收费均为诈骗，勿泄露密码/验证码，认准官方域名，面试前核实企业资质。遇骗请立即报警。
+              </div>
+            </SfCollapseItem>
+          </SfCollapse>
+          <div v-for="item in jobPlatformList" :key="item.type" class="mb-3">
+            <div class="mb-2 flex items-center text-base font-bold text-sf-text">
+              <span class="mr-2 inline-block h-4 w-1 rounded-full bg-sf-theme" />
+              {{ item.type }}
             </div>
-          </SfCollapseItem>
-        </SfCollapse>
-        <div v-for="item in jobPlatformList" :key="item.type" class="mb-3">
-          <div class="mb-2 flex items-center text-base font-bold text-sf-text">
-            <span class="mr-2 inline-block h-4 w-1 rounded-full bg-sf-theme" />
-            {{ item.type }}
-          </div>
-          <div class="flex flex-wrap gap-3 pl-1">
-            <div v-for="platform in item.array" :key="platform.name">
-              <SfApp boxSize="18" :data="platform" @onClick="oepn" size="15" />
+            <div class="flex flex-wrap gap-3 pl-1">
+              <div v-for="platform in item.array" :key="platform.name">
+                <SfApp boxSize="18" :data="platform" @onClick="oepn" size="15" />
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      </SfScrollbar>
     </SfModal>
   </div>
 </template>
