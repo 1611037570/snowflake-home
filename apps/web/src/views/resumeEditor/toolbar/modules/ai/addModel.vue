@@ -128,7 +128,7 @@ function handleAddBuiltin() {
 </script>
 
 <template>
-  <div class="flex h-full min-h-0 gap-4">
+  <div class="flex h-full min-h-0 gap-3">
     <!-- 左侧：可添加服务商列表 -->
     <div class="flex w-44 shrink-0 flex-col gap-3">
       <div class="text-xs font-bold text-sf-text-2">服务商</div>
@@ -148,7 +148,7 @@ function handleAddBuiltin() {
     </div>
 
     <!-- 右侧：内置服务卡片 / 新增模型表单 -->
-    <div class="flex h-full min-h-0 flex-1 flex-col gap-4 p-4">
+    <div class="flex h-full min-h-0 flex-1 flex-col gap-3 p-3">
       <!-- 内置服务卡片：配置已预置，直接添加 -->
       <div v-if="currentProvider?.preset" class="flex min-h-0 flex-1 flex-col gap-3">
         <div class="flex items-center justify-between">
