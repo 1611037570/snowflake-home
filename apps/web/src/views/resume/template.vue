@@ -1,9 +1,10 @@
 <script setup>
 import { useResumeStore } from "@/stores";
-import { themeTemplateList } from "@/stores/modules/resume/uiConfig";
+import { themeTemplateList, themeColors } from "@/stores/modules/resume/uiConfig";
 import { xiaoYangResumeItem } from "@/stores/modules/resume/xiaoYangData";
 import ResumeCardContainer from "@/views/resume/mine/components/resumeCardContainer.vue";
 import RevealGrid from "@/views/resume/components/revealGrid.vue";
+
 // 全屏预览组件：异步加载，避免首屏打包体积过大
 const FullscreenPreview = markRaw(
   defineAsyncComponent(() => import("@/views/resumeEditor/preview/fullscreenPreview.vue")),
@@ -14,7 +15,10 @@ const resumeStore = useResumeStore();
 
 // 深拷贝：套用模板时隔离示例数据，避免与模板预览共享引用导致互相串改
 const deepClone = (value) => JSON.parse(JSON.stringify(value));
-
+const switchColor = (index) => {
+  color.value = themeColors[index].value;
+};
+const color = ref(themeColors[0].value);
 // 全部模板：遍历风格模板，统一使用小羊示例数据预览，仅覆盖风格
 const templates = computed(() =>
   themeTemplateList.map((style, index) => ({
@@ -26,7 +30,11 @@ const templates = computed(() =>
       data: xiaoYangResumeItem.data,
       config: xiaoYangResumeItem.config,
       fixedConfig: xiaoYangResumeItem.fixedConfig,
-      ui: { ...xiaoYangResumeItem.ui, themeTemplate: style.value },
+      ui: {
+        ...xiaoYangResumeItem.ui,
+        themeTemplate: style.value,
+        themeColor: color.value,
+      },
     },
   })),
 );
@@ -58,11 +66,25 @@ const closeFullscreen = () => {
   <div class="relative mx-auto flex h-full w-full max-w-7xl flex-col gap-3">
     <div class="mt-2 flex w-full min-w-full items-center justify-between px-6">
       <h2 class="text-[20px] font-black text-sf-theme">简历模板 {{ total }} 款</h2>
-      <div class="flex gap-3">123</div>
+      <div class="flex gap-3">
+        <div
+          v-for="(colorItem, index) in themeColors"
+          :key="colorItem.value"
+          class="h-9 w-9 cursor-pointer rounded-full transition-all duration-200 hover:scale-110"
+          :class="{
+            'border-2 border-sf-base': color === colorItem.value,
+          }"
+          :style="{
+            backgroundColor: colorItem.value,
+          }"
+          @click="switchColor(index)"
+        ></div>
+      </div>
     </div>
     <SfScrollbar class="flex-1">
       <div class="flex h-full flex-col py-1">
         <!-- 模板列表：布局与逐项入场动画交给 RevealGrid，插槽只决定渲染内容 -->
+        <div @click="switchColor">1111111111</div>
         <RevealGrid :items="templates" :interval="120" key-field="id">
           <template #default="{ item: card }">
             <div class="w-[282px]">
