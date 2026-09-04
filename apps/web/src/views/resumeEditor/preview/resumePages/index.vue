@@ -2,7 +2,7 @@
 // 简历分页渲染可复用组件：接收 resumeItem（data/config/fixedConfig/ui），渲染分页后的简历页面
 // 数据源由 props 传入，不依赖 resume store；供编辑器预览、模板缩略图、全屏查看复用
 // 本组件只做渲染编排（数据代理/主题注入/测量分页），导出、智能一页等编辑功能由上层 page.vue 注册
-import { computed, ref } from "vue";
+import { computed, provide, ref } from "vue";
 import MeasureContent from "../components/measureContent.vue";
 import PreviewSinglePage from "./previewSinglePage.vue";
 import ResumePageShell from "./resumePageShell.vue";
@@ -83,6 +83,9 @@ const { moduleClassMap, acceptModule, rejectModule } = useModuleInteractions({
 // diff 悬浮事件委托：根容器统一监听，替代各字段单独挂载
 const containerRef = ref(null);
 useDiffFieldHover({ containerRef, isEdit, isPrinting });
+// diff 档位根级注入：编辑态离屏测量容器仅渲染草稿（render），保证测量行高与实际排版一致，不挂高亮与交互；
+// 非编辑态（预览/缩略图）测量容器全不参与（none）；实际分页内容由 ResumePageShell 覆盖提升为 full
+provide("diffMode", isEdit.value ? "render" : "none");
 // 单页组件根元素回传：rootRef 限定导出范围，measureRef 供测量与图片导出
 const setSingleRoot = (el) => (rootRef.value = el);
 const setSingleMeasure = (el) => (measureRef.value = el);
@@ -139,7 +142,7 @@ defineExpose({ rootEl: rootRef, measureEl: measureRef, moduleList });
           :show-page-number="showPageNumber"
           :page-index="pageIndex"
           :page-count="pages.length"
-          :enable-diff="isEdit"
+          :diff-mode="isEdit ? 'full' : 'none'"
           :class="[
             `${uid}-page-${pageIndex}`,
             {
