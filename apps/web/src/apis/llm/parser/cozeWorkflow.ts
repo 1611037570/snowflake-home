@@ -1,4 +1,4 @@
-import { processJson } from "../request/stream-utils";
+import { processJson } from "./stream";
 export const cozeWorkflowStreamParser = (line: string, { onEvent, isDebug }: any) => {
   const jsonObj = processJson(line, isDebug);
   if (isDebug) console.log("CozeWorkflow JSON", jsonObj);

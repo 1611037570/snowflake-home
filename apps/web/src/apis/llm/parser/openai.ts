@@ -1,4 +1,4 @@
-import { processJson } from "../request/stream-utils";
+import { processJson } from "./stream";
 
 /**
  * OpenAI 兼容接口非流式解析逻辑

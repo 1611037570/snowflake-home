@@ -1,4 +1,4 @@
-import { processJson } from "../request/stream-utils";
+import { processJson } from "./stream";
 
 /**
  * Ark 供应商非流式解析逻辑
