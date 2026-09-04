@@ -99,6 +99,7 @@ description: |
 // 由 resume-data-contract-generator.md 生成，更新时请通过生成器，勿直接修改
 // 描述：<description 内容，单行>
 export const resumeDataContract = () => ({
+  id: "resume_data_contract",
   name: "简历数据编写规范",
   description: `<description 内容，单行>`,
   instructions: `# 角色与目标

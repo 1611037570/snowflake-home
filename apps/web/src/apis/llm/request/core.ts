@@ -222,6 +222,7 @@ class LLM {
         const result = await think(this, history, {
           tools: config.tools,
           model: config.model,
+          thinking: config.thinking,
           abortRef,
           onEvent: config.onEvent,
         });

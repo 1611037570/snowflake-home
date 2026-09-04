@@ -91,7 +91,6 @@ export const useResumeAssistantConfig = (
   return {
     generating: isGenerating,
     reactSystem: reactSystemPrompt,
-    skills,
     skillTools: createSkillTools(skills),
     tools: createResumeTools({
       getResumeData,

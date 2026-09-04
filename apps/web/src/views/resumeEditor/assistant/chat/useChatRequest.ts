@@ -33,9 +33,9 @@ export const useChatRequest = ({
     beforeRequest,
     afterRequest,
     buildUserContent,
-    skills,
     reactSystem,
     tools,
+    skillTools,
     applyResult,
   } = config;
   // 用于取消当前请求的函数引用
@@ -96,13 +96,6 @@ export const useChatRequest = ({
     return { onEvent, dispose };
   };
 
-  // 把技能正文合并为一份系统上下文，技能由调用方投递、不写入对话记录
-  const getSkillContent = () =>
-    skills
-      .map((skill) => skill.instructions)
-      .filter(Boolean)
-      .join("\n\n----\n\n");
-
   /**
    * 发送 AI 请求并记录思考与回复耗时
    */
@@ -130,11 +123,6 @@ export const useChatRequest = ({
       // 拼接调用方提供的用户上下文（如简历数据与字段解析）
       if (buildUserContent) {
         lastInput.content = buildUserContent(lastInput.content);
-      }
-      // 投递技能正文作为系统上下文
-      const skillContent = getSkillContent();
-      if (skillContent) {
-        messages.unshift({ role: "system", content: skillContent });
       }
 
       // 添加一条空的AI回复消息（打字状态）
@@ -176,70 +164,52 @@ export const useChatRequest = ({
         return;
       }
 
-      // 思考状态标记（用于折叠）
-      let thoughtStatus = false;
-      // 获取LLM实例
+      // 普通请求也走工具循环：技能正文不预载，模型需要时通过技能工具按需读取
       const llm = getLLM();
-      // 构建请求参数
-      const options = {
-        // 根据provider决定使用messages还是input字段
-        [llm.provider === "openai" ? "messages" : "input"]: messages,
+      reactRunner = llm.react({
+        tools: skillTools,
+        maxSteps: 4,
+        reflection: false,
         thinking: {
           type: thinkMode.value ? "enabled" : "disabled",
         },
-      };
-
-      // 发起请求，获取发送函数和取消函数
-      const { sendFn, abortFn } = await llm.request({
-        options,
-        isDebug: false,
-        isStream: true, // 流式输出
-        isJson: true,
-        // 事件回调：处理流式数据
         onEvent: (type, data) => {
           state?.onEvent(type, data);
+        },
+        onThink: (reasoning) => {
+          if (!isCurrentRequest() || !lastMsg || !reasoning) return;
+          lastMsg.thought += `\n\n### 思考\n${reasoning}`;
+        },
+        onAct: (toolCall) => {
           if (!isCurrentRequest() || !lastMsg) return;
-          if (type === "reasoning") {
-            // 思考内容追加
-            lastMsg.thought += data;
-          } else if (type === "content") {
-            // 首次收到正文后切换到回复计时
-            // 首次收到内容时折叠思考区域
-            if (!lastMsg.thoughtCollapsed && !thoughtStatus) {
-              thoughtStatus = true;
-              lastMsg.thoughtCollapsed = true;
-            }
-            lastMsg.content += data;
-          }
-          // 滚动到最新消息
+          const args = toolCall.function.arguments || "{}";
+          lastMsg.thought += `\n\n### 执行工具\n\`${toolCall.function.name}\`\n\n\`\`\`json\n${args}\n\`\`\``;
           scrollToBottom();
         },
-        // 失败回调
-        onFail: (error) => {
+        onObserve: (observation) => {
           if (!isCurrentRequest() || !lastMsg) return;
-          lastMsg.content = `请求出错: ${error.message || "未知错误"}`;
-          lastMsg.typing = false;
-          lastMsg.requestStatus = "error";
+          const preview =
+            observation.content.length > 1200
+              ? `${observation.content.slice(0, 1200)}...`
+              : observation.content;
+          lastMsg.thought += `\n\n### 观察结果\n\`\`\`json\n${preview}\n\`\`\``;
+          scrollToBottom();
         },
-        // 成功回调
-        onSuccess: (res) => {
+        onFinal: (answer) => {
           if (!isCurrentRequest() || !lastMsg) return;
-          // 应用差异由调用方注入的回调处理
-          applyResult?.(res.result.data);
+          lastMsg.content = answer;
+          // 兼容模型未走 diff 工具而直接返回 data 的情况
+          try {
+            applyResult?.(JSON.parse(answer).data);
+          } catch {
+            // 解析失败不阻断结果展示
+          }
           lastMsg.requestStatus = "success";
           scrollToBottom();
         },
       });
-
-      // 如果当前请求已失效，取消并返回
-      if (!isCurrentRequest()) {
-        abortFn?.();
-        return;
-      }
-      // 保存取消函数供外部调用
-      abortRequest = abortFn;
-      // 执行发送
-      await sendFn();
+      // 执行工具循环
+      await reactRunner.run(messages);
     } catch (error) {
       // 若已卸载则忽略
       if (isUnmounted) return;
@@ -277,11 +247,8 @@ export const useChatRequest = ({
     try {
       generating.value = true;
 
-      const messages: any[] = [];
-      // 技能正文在前约束数据字段，系统提示在后约束任务与输出协议
-      const skillContent = getSkillContent();
-      if (skillContent) messages.push({ role: "system", content: skillContent });
-      messages.push({ role: "system", content: reactSystem });
+      const messages: any[] = [{ role: "system", content: reactSystem }];
+      // 技能正文不预载，模型需要字段规范时通过技能工具按需读取
       if (prompt) messages.push({ role: "user", content: prompt });
       messages.push({ role: "user", content: userContent });
 
@@ -296,7 +263,7 @@ export const useChatRequest = ({
 
       const llm = getLLM();
       reactRunner = llm.react({
-        tools,
+        tools: [...skillTools, ...tools],
         maxSteps: 6,
         reflection: true,
         onEvent: (type, data) => {
