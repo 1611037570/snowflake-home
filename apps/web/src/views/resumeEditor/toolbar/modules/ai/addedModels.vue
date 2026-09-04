@@ -15,7 +15,7 @@ const displayList = computed(() =>
   modelList.value.map((m: any) => ({
     id: m.id,
     name: m.name || m.model || PROVIDER_NAMES[m.provider] || m.provider,
-    active: activeModel.value === m.id,
+    // active: activeModel.value === m.id,
   })),
 );
 
@@ -48,7 +48,9 @@ function removeModel(item: any) {
     <template #default="{ item }">
       <div class="flex min-w-0 flex-1 items-center gap-2">
         <span class="truncate">{{ item.name }}</span>
+        <span v-if="activeModel === item.id" class="text-sf-theme">已选中</span>
       </div>
+
       <span
         title="删除该模型"
         class="shrink-0 cursor-pointer text-sf-text-3 hover:text-red-500"
