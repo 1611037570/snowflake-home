@@ -70,20 +70,22 @@ export const useSystemStore = defineStore(
      * 初始化版本号
      * 在系统启动时获取初始版本号
      */
-    const initVersion = async () => {
-      // 非生产环境跳过版本检测，dev 无需请求 version.json
-      if (!import.meta.env.PROD) return;
-      try {
-        const version = await getVersion();
-        currentVersion.value = version;
-        console.log("版本号初始化完成:", version);
-      } catch (error) {
-        console.error("版本号初始化失败:", error);
-      }
-    };
+    // 版本初始化逻辑已注释，与启动调用保持一致
+    // const initVersion = async () => {
+    //   // 非生产环境跳过版本检测，dev 无需请求 version.json
+    //   if (!import.meta.env.PROD) return;
+    //   try {
+    //     const version = await getVersion();
+    //     currentVersion.value = version;
+    //     console.log("版本号初始化完成:", version);
+    //   } catch (error) {
+    //     console.error("版本号初始化失败:", error);
+    //   }
+    // };
 
     // 系统启动时初始化版本号
-    initVersion();
+    // 版本初始化已注释，避免启动时请求 version.json
+    // initVersion();
 
     return {
       runTime,
@@ -96,7 +98,7 @@ export const useSystemStore = defineStore(
       isConnected,
       getVersion,
       checkVersionUpdate,
-      initVersion,
+      // initVersion,
     };
   },
   {
