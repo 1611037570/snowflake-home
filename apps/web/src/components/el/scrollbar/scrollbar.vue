@@ -1,8 +1,11 @@
 <template>
-  <Component :is="h(ElScrollbar, { ...$attrs, ref: changeRef }, $slots)" class="flex-1">
-    <div class="overflow-hidden px-3">
-      <slot></slot>
-    </div>
+  <Component
+    :is="h(ElScrollbar, { ...$attrs, ref: changeRef }, $slots)"
+    class="flex h-full flex-1 flex-col"
+  >
+    <slot></slot>
+    <!-- <div class="min-h-full! overflow-hidden px-3">
+    </div> -->
   </Component>
 </template>
 
@@ -21,4 +24,9 @@ function changeRef(exports: any) {
 defineExpose({} as ComponentInstance<typeof ElScrollbar>);
 </script>
 
-<style scoped></style>
+<style scoped>
+:deep(.el-scrollbar__view) {
+  height: 100% !important;
+  padding: 0 12px !important;
+}
+</style>
