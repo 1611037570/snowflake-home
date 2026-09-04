@@ -49,6 +49,8 @@ export type CustomModelConfig = {
   key: string;
   // 完整接口地址
   url: string;
+  // 添加状态（success表示测试通过可添加）
+  status?: "success";
 };
 // 默认对话记录标题
 const DEFAULT_CHAT_TITLE = "新对话";

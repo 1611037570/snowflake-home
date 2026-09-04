@@ -21,7 +21,6 @@ const { activeModel, customModels } = storeToRefs(aiStore);
 const form = computed(() => customModels.value.find((item) => item.provider === props.provider));
 const formRef = ref();
 const testing = ref(false);
-const connectionPassed = ref(false);
 
 // 各平台获取 key 的链接
 const keyLinks = {
@@ -79,16 +78,8 @@ const rules = {
 // 是否为当前激活的服务
 const isActive = computed(() => activeModel.value === props.provider);
 
-// 是否已添加模型（所有字段都有值且测试通过）
-const isModelAdded = computed(() => {
-  return (
-    form.value &&
-    form.value.model &&
-    form.value.key &&
-    form.value.url &&
-    connectionPassed.value
-  );
-});
+// 是否已添加模型（状态为 success 表示测试通过可添加）
+const isModelAdded = computed(() => form.value?.status === "success");
 
 // 使用当前配置发送最小请求，验证接口地址、密钥和模型是否可用
 async function testConnection() {
@@ -96,7 +87,6 @@ async function testConnection() {
   const valid = await formRef.value?.validate().catch(() => false);
   if (!valid) return;
 
-  connectionPassed.value = false;
   testing.value = true;
   try {
     const llm = new LLM({
@@ -105,9 +95,10 @@ async function testConnection() {
       provider: form.value.provider,
     });
     await llm.ping();
-    connectionPassed.value = true;
+    form.value.status = "success";
     ElMessage.success("添加模型成功");
   } catch (error) {
+    delete form.value.status;
     ElMessage.error(error?.message || "添加模型失败");
   } finally {
     testing.value = false;
