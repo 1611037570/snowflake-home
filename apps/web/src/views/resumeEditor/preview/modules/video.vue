@@ -37,8 +37,7 @@ const safeUrl = (value) => {
     >
       <DiffField v-model="item.name" />
       <span v-if="item.name?.value && item.url?.value" class="pr-1">：</span>
-      {{ item.url?.value }}
-      <div class="h-6 w-6">
+      <div class="h-16 w-16">
         <SfQrcode :value="item.url?.value" />
       </div>
     </div>
