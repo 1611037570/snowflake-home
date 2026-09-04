@@ -643,7 +643,6 @@ export const DEFAULT_PROJECT_FORM = {
         component: "itemCollapse",
         slot: "default",
         span: 24,
-
         model: [
           {
             source: ["project", "data", "?", "name"],
@@ -746,25 +745,41 @@ export const DEFAULT_VIDEO_FORM = {
       dragClass: ".item-drag",
       list: [],
       addConfig: {
+        // 折叠标题数据源：展示当前视频名称
         model: [
           {
             source: ["video", "data", "?", "name"],
-            defaultValue: "",
             prop: "name",
           },
+        ],
+        fields: [
           {
-            source: ["video", "data", "?", "url"],
-            defaultValue: "",
-            prop: "url",
-          },
-          {
-            source: ["video", "data", "?", "desc"],
-            defaultValue: "",
-            prop: "desc",
+            model: [
+              {
+                source: ["video", "data", "?", "name"],
+                defaultValue: "",
+                prop: "name",
+              },
+              {
+                source: ["video", "data", "?", "url"],
+                defaultValue: "",
+                prop: "url",
+              },
+              {
+                source: ["video", "data", "?", "desc"],
+                defaultValue: "",
+                prop: "desc",
+              },
+            ],
+            type: "object",
+            component: "video",
+            required: true,
           },
         ],
-        type: "object",
-        component: "video",
+        type: "group",
+        component: "itemCollapse",
+        slot: "default",
+        span: 24,
         required: true,
       },
     },
