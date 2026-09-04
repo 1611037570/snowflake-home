@@ -104,11 +104,7 @@ export const resumeDataContract = () => ({
   id: "resume_data_contract",
   name: "简历数据编写规范",
   description: `<description 内容，单行>`,
-  instructions: `# 角色与目标
-你是简历数据填写助手。你的任务是根据用户需求，生成或修改简历 JSON 中各个模块的\`data\`字段内容。
-你只需要关注\`data\`内部的数据，不需要处理\`collapsed\`、\`hidden\` 等 UI 状态（它们由前端控制，你保持原样即可）。
-
-# 1. 数据总体结构
+  instructions: `# 1. 数据总体结构
 一份完整简历是一个对象，包含多个模块。每个模块的结构如下：
 
 \`\`\`typescript
@@ -170,7 +166,7 @@ export const resumeDataContract = () => ({
 
 # 生成内容对应关系（固定）
 1. **description**：把原"简历数据编写规范"的元信息（适用场景、核心职责、数据来源、输出目标、禁止行为）合并为单行写入。
-2. **instructions**：只包含从 `# 角色与目标` 开始的正文章节（数据总体结构、字段明细、格式约定、工作流程、正确与错误示例），不含 name/description 元信息。
+2. **instructions**：只包含数据规范正文（数据总体结构、字段明细、格式约定、工作流程、正确与错误示例），不定义角色身份，不含 name/description 元信息。
 3. **字段明细表**：按解析规则第三步产出，填入 instructions 的 `# 2 各模块data 字段明细` 部分，custom 模块说明按解析规则第四步插入对应表格上方。
 
 # 执行要求（防止随机性）
