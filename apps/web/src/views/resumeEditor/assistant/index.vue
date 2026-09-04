@@ -5,6 +5,7 @@ import { DEFAULT_EDITOR } from "@/stores/modules/resume/defaultConfig";
 import { storeToRefs } from "pinia";
 import Chat from "./chat/index.vue";
 import { defaultMessage } from "./prompt.ts";
+import { resumeDataContract } from "./skills/resume-data-contract";
 import { useResumeAssistantConfig } from "./useResumeAssistantConfig";
 
 // AI 对话
@@ -23,14 +24,13 @@ const assistantWidth = DEFAULT_EDITOR.assistantWidth;
 // 创建对话：默认系统提示在前，简历数据技能全文作为第二条系统消息
 const createAssistantChat = () => {
   const newChat = createDefaultChat(defaultMessage);
-  if (assistantConfig.skillSystem) {
-    newChat.messages.push({
-      ...createDefaultMessage(),
-      role: "system",
-      content: assistantConfig.skillSystem,
-      typing: false,
-    });
-  }
+  // 再添加一条技能系统消息
+  newChat.messages.push({
+    ...createDefaultMessage(),
+    role: "system",
+    content: resumeDataContract().instructions,
+    typing: false,
+  });
   return newChat;
 };
 

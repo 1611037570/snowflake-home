@@ -2,7 +2,6 @@
 import { useResumeStore } from "@/stores";
 import { computed } from "vue";
 import { storeToRefs } from "pinia";
-import { resumeDataContract } from "./skills/resume-data-contract";
 import { createResumeTools } from "./tools";
 import type { AssistantConfig } from "./types";
 
@@ -83,16 +82,8 @@ export const useResumeAssistantConfig = (
 
     `;
 
-  // 技能正文作为系统消息注入，供创建对话时随默认提示一起提供
-  const skills = [resumeDataContract()];
-  const skillSystem = skills
-    .map((skill) => skill.instructions)
-    .filter(Boolean)
-    .join("\n\n----\n\n");
-
   return {
     generating: isGenerating,
-    skillSystem,
     tools: createResumeTools({
       getResumeData,
       applyDiff: applyDiff ?? (() => []),

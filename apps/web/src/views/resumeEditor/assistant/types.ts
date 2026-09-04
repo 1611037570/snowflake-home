@@ -6,8 +6,6 @@ import type { Ref } from "vue";
 export interface AssistantConfig {
   // 请求期间置为 true 的生成状态
   generating: Ref<boolean>;
-  // 技能正文，创建对话时作为系统消息随默认提示一起注入
-  skillSystem: string;
   // ReAct 可用工具
   tools: ReactTool[];
   // 普通流解析结果应用回调（如将模型返回的 data 写入预览草稿）
