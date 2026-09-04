@@ -164,10 +164,10 @@ export const useChatRequest = ({
         return;
       }
 
-      // 普通请求也走工具循环：技能正文不预载，模型需要时通过技能工具按需读取
+      // 普通请求也走工具循环：技能按需读取，修改类任务与引导流程共用同一套工具
       const llm = getLLM();
       reactRunner = llm.react({
-        tools: skillTools,
+        tools: [...skillTools, ...tools],
         maxSteps: 4,
         reflection: false,
         thinking: {
