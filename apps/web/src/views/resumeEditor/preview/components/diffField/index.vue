@@ -53,11 +53,11 @@ const fieldSnap = computed(() => {
   if (typeof v === "object" && "newValue" in v) {
     const value = v.value ?? "";
     let newValue = v.newValue ?? "";
-    if (forceDraft && !newValue) newValue = value ? `${value}（测试草稿）` : "测试草稿内容";
+    if (forceDraft && !newValue) newValue = `${value}（测试草稿）`;
     return { value, newValue, hasNew: newValue !== "" };
   }
   const value = v;
-  const newValue = forceDraft ? (value ? `${value}（测试草稿）` : "测试草稿内容") : "";
+  const newValue = forceDraft ? `${value}（测试草稿）` : "";
   return { value, newValue, hasNew: newValue !== "" };
 });
 // 文档流统一渲染：有草稿显示新增，否则显示原值；打印时固定展示原值
