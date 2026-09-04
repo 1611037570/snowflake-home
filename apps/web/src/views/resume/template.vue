@@ -3,6 +3,8 @@ import { useResumeStore } from "@/stores";
 import { themeTemplateList } from "@/stores/modules/resume/uiConfig";
 import { xiaoYangResumeItem } from "@/stores/modules/resume/xiaoYangData";
 import ResumeCardContainer from "@/views/resume/mine/components/resumeCardContainer.vue";
+// 全屏预览组件：异步加载，避免首屏打包体积过大
+const FullscreenPreview = markRaw(defineAsyncComponent(() => import("@/views/resumeEditor/preview/fullscreenPreview.vue")));
 import { computed, onMounted, onUnmounted, ref } from "vue";
 
 const resumeStore = useResumeStore();
@@ -58,6 +60,16 @@ const useTemplate = (card) => {
     ui: { ...xiaoYangResumeItem.ui, themeTemplate: card.value },
   });
 };
+
+// 全屏预览：记录当前展开的模板项，visible 由其是否存在派生
+const fullscreenItem = ref(null);
+const isFullscreen = computed(() => !!fullscreenItem.value);
+const openFullscreen = (card) => {
+  fullscreenItem.value = card.item;
+};
+const closeFullscreen = () => {
+  fullscreenItem.value = null;
+};
 </script>
 
 <template>
@@ -78,6 +90,18 @@ const useTemplate = (card) => {
       <TransitionGroup tag="div" name="tpl" class="grid grid-cols-4 gap-3">
         <div v-for="card in visibleTemplates" :key="card.id" class="w-[282px]">
           <ResumeCardContainer :item="card.item" @click="useTemplate(card)">
+            <!-- 全屏预览按钮：仅预览不套用，阻止冒泡避免触发卡片 click -->
+            <template #action>
+              <SfTooltip content="全屏预览">
+                <SfIcon
+                  icon="lucide:maximize"
+                  size="4"
+                  boxSize="7"
+                  class="rounded-full bg-sf-bg-2 text-sf-text-2 hover:bg-sf-theme hover:text-sf-theme-text"
+                  @click.stop="openFullscreen(card)"
+                />
+              </SfTooltip>
+            </template>
             <div class="mt-3 flex items-center justify-between gap-2">
               <div class="min-w-0">
                 <div class="truncate text-base font-black text-sf-text">{{ card.name }}</div>
@@ -92,6 +116,8 @@ const useTemplate = (card) => {
         </div>
       </TransitionGroup>
     </div>
+    <!-- 全屏预览：复用编辑器全屏组件，按当前模板项数据渲染 -->
+    <FullscreenPreview :visible="isFullscreen" :item="fullscreenItem || {}" @close="closeFullscreen" />
   </SfScrollbar>
 </template>
 

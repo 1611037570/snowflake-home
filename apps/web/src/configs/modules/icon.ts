@@ -136,6 +136,7 @@ export const ICON_LIST: Record<string, IconItem> = {
   "logos:pnpm-icon": { icon: "logos:pnpm-icon" },
   "logos:prettier-icon": { icon: "logos:prettier-icon" },
   "logos:router": { icon: "logos:router" },
+  "lucide:maximize": { icon: "lucide:maximize", name: "全屏" },
   "lucide:check": { icon: "lucide:check" },
   "lucide:pencil": { icon: "lucide:pencil" },
   "lucide:sparkles": { icon: "lucide:sparkles" },
