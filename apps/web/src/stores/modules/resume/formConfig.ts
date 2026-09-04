@@ -459,7 +459,7 @@ export const DEFAULT_SKILL_FORM = {
       component: "wangEditor",
       required: true,
       model: {
-        source: ["skill", "data"],
+        source: ["skill", "data", "content"],
         prop: "modelValue",
       },
     },
@@ -470,8 +470,8 @@ export const DEFAULT_ADVANTAGE_FORM = {
   type: "group",
   component: "boxCollapse",
   key: "advantage",
-  name: "个人优势",
   props: {
+    name: "个人优势",
     add: false,
   },
   model: [
@@ -495,7 +495,7 @@ export const DEFAULT_ADVANTAGE_FORM = {
       component: "wangEditor",
       required: true,
       model: {
-        source: ["advantage", "data"],
+        source: ["advantage", "data", "content"],
         prop: "modelValue",
       },
     },
