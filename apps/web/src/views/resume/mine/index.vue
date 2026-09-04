@@ -126,32 +126,22 @@ const handleUseTemplate = () => {
   <SfScrollbar class="h-full">
     <div class="relative z-4 mx-auto flex w-full max-w-[1164px] flex-col gap-3 py-3">
       <!-- 标签切换栏 -->
-      <div class="flex items-center justify-between border-b border-sf-b">
+      <div class="flex items-center justify-between">
         <div class="flex gap-6">
-          <button
-            type="button"
-            class="relative cursor-pointer border-0 bg-transparent pb-2 text-[15px] font-extrabold transition-colors"
-            :class="
-              activeTab === 'draft'
-                ? 'text-sf-theme after:absolute after:right-0 after:bottom-[-1px] after:left-0 after:h-[3px] after:rounded-full after:bg-sf-theme after:content-[\'\']'
-                : 'text-sf-text-2 hover:text-sf-text'
-            "
+          <SfSpan
+            :active="activeTab === 'draft'"
+            class="flex-c h-10 text-[15px] font-extrabold"
             @click="activeTab = 'draft'"
           >
-            简历草稿（{{ list.length }}/{{ maxCount }}）
-          </button>
-          <button
-            type="button"
-            class="relative cursor-pointer border-0 bg-transparent pb-2 text-[15px] font-extrabold transition-colors"
-            :class="
-              activeTab === 'trash'
-                ? 'text-sf-theme after:absolute after:right-0 after:bottom-[-1px] after:left-0 after:h-[3px] after:rounded-full after:bg-sf-theme after:content-[\'\']'
-                : 'text-sf-text-2 hover:text-sf-text'
-            "
+            简历草稿({{ list.length }}/{{ maxCount }})
+          </SfSpan>
+          <SfSpan
+            :active="activeTab === 'trash'"
+            class="flex-c h-10 text-[15px] font-extrabold"
             @click="activeTab = 'trash'"
           >
-            回收站（{{ resumeStore.trashList.length }}/{{ maxTrashCount }}）
-          </button>
+            回收站({{ resumeStore.trashList.length }}/{{ maxTrashCount }})
+          </SfSpan>
         </div>
         <!-- 导入简历入口：仅在草稿标签下显示 -->
         <div class="flex gap-3">
@@ -216,7 +206,11 @@ const handleUseTemplate = () => {
       </RevealGrid>
 
       <!-- 回收站列表：布局与入场动画交给 RevealGrid，空状态由 #empty 提供 -->
-      <RevealGrid v-if="activeTab === 'trash'" :items="resumeStore.trashList" key-field="id">
+      <RevealGrid
+        v-else-if="activeTab === 'trash' && resumeStore.trashList.length > 0"
+        :items="resumeStore.trashList"
+        key-field="id"
+      >
         <template #default="{ item, index }">
           <ResumeCardContainer :item="item" action-text="已删除">
             <div class="truncate text-base font-black text-sf-text">
@@ -253,15 +247,12 @@ const handleUseTemplate = () => {
             </div>
           </ResumeCardContainer>
         </template>
-        <!-- 回收站为空：col-span-full 由组件包裹提供 -->
-        <template #empty>
-          <div class="flex flex-col items-center justify-center py-20 text-sf-text-2">
-            <SfIcon icon="lucide:trash-2" size="12" class="mb-4 text-sf-text-3" />
-            <span class="text-base">回收站为空</span>
-          </div>
-        </template>
       </RevealGrid>
-
+      <!-- 回收站为空 -->
+      <div v-else class="flex flex-col items-center justify-center py-20 text-sf-text-2">
+        <SfIcon icon="lucide:trash-2" size="12" class="mb-4 text-sf-text-3" />
+        <span class="text-base">回收站为空</span>
+      </div>
       <!-- 新建简历引导弹窗：收集简单信息 -->
       <SfModal v-model="createDialogVisible" title="完善基本信息">
         <form class="flex w-96 flex-col gap-4 p-5" @submit.prevent="handleCreateConfirm">
