@@ -13,7 +13,7 @@ const list = [
 <template>
   <!-- 描述 -->
   <div class="mb-3 text-center leading-relaxed text-sf-text">
-    如果您也喜欢我的项目，简单的捐赠就是对我最大的物质和精神支持。
+    如果您也喜欢我的项目，一份捐赠就是对我最大的物质支持与精神鼓励。
     <br />
     您的每一份支持都将帮助项目持续发展和改进。
   </div>
