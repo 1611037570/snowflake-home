@@ -13,7 +13,7 @@ const resumeStore = useResumeStore();
 const { currentData } = storeToRefs(resumeStore);
 const aiStore = useAiStore();
 const { createDefaultMessage } = aiStore;
-const { activeModel, customModels } = storeToRefs(aiStore);
+const { activeModel, modelList } = storeToRefs(aiStore);
 
 const { type } = defineProps({
   type: {
@@ -135,7 +135,7 @@ const handleAIResponse = async () => {
     // 根据供应商契约选择请求消息字段
     const llm = getLLM();
     // 当前激活的自定义配置
-    const activeConfig = customModels.value.find((item) => item.provider === activeModel.value);
+    const activeConfig = modelList.value.find((item) => item.id === activeModel.value);
     const options = {
       [llm.provider === "openai" ? "messages" : "input"]: messages,
       thinking: {
