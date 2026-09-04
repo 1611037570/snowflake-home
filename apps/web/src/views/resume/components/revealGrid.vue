@@ -12,6 +12,7 @@ const props = defineProps({
   interval: { type: Number, default: 120 },
   // 列表项唯一键字段名，用于 TransitionGroup 稳定 key
   keyField: { type: String, default: "id" },
+  size: { type: String, default: "default" },
 });
 
 const slots = useSlots();
@@ -39,17 +40,26 @@ onUnmounted(() => {
 
 // 稳定 key：优先取 keyField 字段，缺省回退下标
 const getKey = (item, index) => item?.[props.keyField] ?? index;
+
+const gridClass = computed(() => {
+  if (props.size === "default") {
+    return "grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5";
+  } else if (props.size === "small") {
+    return "grid-cols-1 md:grid-cols-2 xl:grid-cols-3";
+  }
+  return "";
+});
 </script>
 
 <template>
-  <!-- 外层 div 持 ref 作 grid 容器，TransitionGroup 走 fragment 不额外包元素，v-for 项直接是 grid 项 -->
-  <div ref="rootRef" class="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+  <!--   -->
+  <div ref="rootRef" :class="gridClass" class="grid gap-3">
     <TransitionGroup name="sf-reveal">
       <!-- 包裹项 flex justify-center 让卡片在列宽内居中（列宽 > 卡片宽时不再靠左） -->
       <div
         v-for="(item, index) in visibleItems"
         :key="getKey(item, index)"
-        class="flex justify-center"
+        class="flex items-center justify-center"
       >
         <slot name="default" :item="item" :index="index" />
       </div>
