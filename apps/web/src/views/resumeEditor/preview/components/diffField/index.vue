@@ -29,6 +29,8 @@ const { isPrinting } = storeToRefs(useResumeStore());
 
 // diff 参与级别：none 非编辑态原值无交互；render 仅渲染草稿（编辑态测量容器）；full 渲染草稿+高亮+悬浮交互
 const diffMode = inject("diffMode", "none");
+// 是否渲染草稿文本：测量容器与实际分页内容同档，保证测量行高与真实排版一致
+const canRender = diffMode !== "none";
 // 是否挂交互：仅实际分页内容注册 registry 与高亮，测量容器不挂监听
 const canInteract = diffMode === "full";
 
@@ -46,12 +48,12 @@ onBeforeUnmount(() => {
 });
 
 // 字段快照：编辑态 model 为 { value, newValue } 代理，非编辑态为原始值；按 newValue 属性自动区分结构
-// debug 仅对编辑态实际分页内容（full 档）强制注入草稿 newValue，测量容器与非编辑态调用方不受 debug 影响
+// debug 仅对编辑模式中参与草稿渲染的档位（render/full）强制注入草稿 newValue，保证测量与分页一致；非编辑态不参与
 const fieldSnap = computed(() => {
   const v = model.value;
   if (v == null) return { value: "", newValue: "", hasNew: false };
-  // debug 强制草稿仅跟随交互档位（full），测量容器与只读场景不强制
-  const forceDraft = DEBUG_FORCE_DIFF && canInteract;
+  // debug 强制草稿跟随渲染档位，测量容器与分页内容取到同一份草稿文本，避免行高差异导致分页异常
+  const forceDraft = DEBUG_FORCE_DIFF && canRender;
   if (typeof v === "object" && "newValue" in v) {
     const value = v.value ?? "";
     let newValue = v.newValue ?? "";
