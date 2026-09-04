@@ -154,4 +154,32 @@ ${jd}
       };
     },
   },
+  // 填写经历：引导用户补充工作经历详情
+  resumeCreate: {
+    userContent: "帮我填写一段工作经历",
+    mode: "react",
+    steps: [
+      {
+        question: "请描述你想添加或完善的工作经历（公司名称、职位、时间等基本信息）",
+        options: [],
+        input: true,
+      },
+    ],
+    build: ([experienceInfo]) => {
+      return {
+        prompt: `# 任务：完善工作经历
+用户提供的经历信息如下：
+${experienceInfo}
+
+请基于该信息帮助用户完善这段工作经历。
+要求：
+1. 先调用 read_resume_data 读取简历真实数据。
+2. 必须调用 propose_resume_diff 生成包含新工作经历的修改草稿，patch 仅包含变更字段，结构与简历数据一致，不得跳过工具调用。
+3. 突出工作成果和量化指标，使用专业表达。
+4. 严格基于用户提供的真实信息，严禁编造任何未提及的内容。
+5. 将完善说明写入 analysis 字段，标题使用「问题回复」。`,
+        userContent: `请帮我完善这段工作经历：${experienceInfo}`,
+      };
+    },
+  },
 };
