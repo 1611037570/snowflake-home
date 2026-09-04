@@ -41,3 +41,6 @@ apps/web/src/types/components.d.ts
 
 # HTML 文件
 stats.html
+
+# 构建产物：打包时由 vite versionPlugin 自动生成的时间戳版本号
+apps/web/public/version.json
