@@ -249,6 +249,16 @@ export const useAiStore = defineStore(
       }
     }
 
+    // 服务商设置弹窗：显隐与当前 Tab（工具栏入口与聊天输入「去添加模型」共用）
+    const modelManagerVisible = ref(false);
+    const modelManagerTab = ref<"added" | "add">("added");
+
+    /** 打开服务商设置弹窗，可指定初始 Tab */
+    function openModelManager(tab: "added" | "add" = "added") {
+      modelManagerTab.value = tab;
+      modelManagerVisible.value = true;
+    }
+
     /** 将旧版 customModels 迁移到新版结构 */
     function migrateLegacyData(oldCustomModels: any[]) {
       oldCustomModels.forEach((old) => {
@@ -295,6 +305,9 @@ export const useAiStore = defineStore(
       deployModel,
       findModelById,
       deleteModel,
+      modelManagerVisible,
+      modelManagerTab,
+      openModelManager,
       migrateLegacyData,
     };
   },
