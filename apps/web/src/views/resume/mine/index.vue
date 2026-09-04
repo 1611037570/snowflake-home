@@ -6,6 +6,7 @@ import { useRouter } from "vue-router";
 import { useProgress } from "../../resumeEditor/hooks/useProgress";
 import { getResumeTitle } from "../../resumeEditor/resumeName";
 import ResumeCardContainer from "./components/resumeCardContainer.vue";
+import RevealGrid from "../components/revealGrid.vue";
 import ImportResume from "./components/importResume.vue";
 import DeliverResume from "./deliverResume.vue";
 
@@ -29,11 +30,17 @@ const sortedList = computed(() => {
 const displayList = computed(() => {
   // id → 真实下标映射：列表按 lastUseTime 排序后仍能定位真实下标
   const indexMap = new Map(list.value.map((item, index) => [item.id, index]));
-  return sortedList.value.map((item) => ({
+  const cards = sortedList.value.map((item) => ({
+    id: item.id,
+    type: "resume",
     item,
     index: indexMap.get(item.id) ?? -1,
     progress: useProgress([...item.fixedConfig.fields, ...item.config.fields], item.data).progress,
   }));
+  // 未满员时新建入口作首项，与简历项一同逐个揭示
+  return list.value.length < maxCount
+    ? [{ id: "__create", type: "create" }, ...cards]
+    : cards;
 });
 const getLastUseTime = (item) => {
   return item?.usage?.lastUseTime ? dayjs(item.usage.lastUseTime).format("YYYY.MM.DD HH:mm") : "--";
@@ -119,7 +126,7 @@ const handleUseTemplate = () => {
 
 <template>
   <SfScrollbar class="h-full">
-    <div class="relative z-4 mx-auto flex w-[1120px] flex-col gap-4">
+    <div class="relative z-4 mx-auto flex w-full max-w-[1164px] flex-col gap-4">
       <!-- 标签切换栏 -->
       <div class="flex items-center justify-between border-b border-sf-b">
         <div class="flex gap-6">
@@ -155,126 +162,129 @@ const handleUseTemplate = () => {
         </div>
       </div>
 
-      <!-- 简历草稿列表 -->
-      <div v-if="activeTab === 'draft'" class="grid grid-cols-3 gap-3">
-        <!-- 新建简历卡片 -->
-        <ResumeCardContainer v-if="list.length < maxCount" @click="handleCreate">
-          <div
-            class="group flex h-full w-full flex-col items-center justify-center gap-3 overflow-hidden"
+      <!-- 简历草稿列表：布局与入场动画交给 RevealGrid，新建入口与简历项同走 #default 参与揭示 -->
+      <RevealGrid v-if="activeTab === 'draft'" :items="displayList" key-field="id">
+        <template #default="{ item: card }">
+          <!-- 新建简历入口项 -->
+          <ResumeCardContainer v-if="card.type === 'create'" @click="handleCreate">
+            <div
+              class="group flex h-full w-full flex-col items-center justify-center gap-3 overflow-hidden"
+            >
+              <div class="flex h-16 w-16 items-center justify-center rounded-full bg-sf-theme-2">
+                <SfIcon
+                  icon="ic:round-add"
+                  size="8"
+                  class="text-sf-theme transition-transform duration-300 group-hover:rotate-90"
+                />
+              </div>
+              <span class="text-base font-black text-sf-text">新建简历</span>
+              <span class="text-sm text-sf-text-2">从空白开始，打造专属简历</span>
+            </div>
+          </ResumeCardContainer>
+          <!-- 简历项 -->
+          <ResumeCardContainer
+            v-else
+            :item="card.item"
+            @click="handleEdit(card.index)"
           >
-            <div class="flex h-16 w-16 items-center justify-center rounded-full bg-sf-theme-2">
-              <SfIcon
-                icon="ic:round-add"
-                size="8"
-                class="text-sf-theme transition-transform duration-300 group-hover:rotate-90"
-              />
-            </div>
-            <span class="text-base font-black text-sf-text">新建简历</span>
-            <span class="text-sm text-sf-text-2">从空白开始，打造专属简历</span>
-          </div>
-        </ResumeCardContainer>
-        <ResumeCardContainer
-          v-for="card in displayList"
-          :key="card.item.id || card.index"
-          :item="card.item"
-          @click="handleEdit(card.index)"
-        >
-          <div class="mt-3 flex items-start justify-between gap-2">
-            <div class="min-w-0">
-              <div class="truncate text-base font-black text-sf-text">
-                {{ getResumeTitle(card.item.data) }}
+            <div class="mt-3 flex items-start justify-between gap-2">
+              <div class="min-w-0">
+                <div class="truncate text-base font-black text-sf-text">
+                  {{ getResumeTitle(card.item.data) }}
+                </div>
+                <div class="mt-1 truncate text-sm text-sf-text-2">
+                  {{ getResumePosition(card.item) }}
+                </div>
               </div>
-              <div class="mt-1 truncate text-sm text-sf-text-2">
-                {{ getResumePosition(card.item) }}
+              <div class="flex shrink-0 items-center gap-1">
+                <span
+                  class="flex h-8 w-8 cursor-pointer items-center justify-center rounded-full text-sf-text-2 transition-colors duration-200 hover:bg-sf-theme-2 hover:text-sf-theme"
+                  @click.stop="handleEdit(card.index)"
+                >
+                  <SfIcon icon="lucide:pencil" size="4" />
+                </span>
+                <button
+                  type="button"
+                  class="flex h-8 w-8 cursor-pointer items-center justify-center rounded-full text-sf-text-2 transition-colors duration-200 hover:bg-sf-error-2 hover:text-sf-error"
+                  @click.stop="handleDelete(card.index)"
+                >
+                  <SfIcon icon="lucide:trash-2" size="4" />
+                </button>
               </div>
             </div>
-            <div class="flex shrink-0 items-center gap-1">
-              <span
-                class="flex h-8 w-8 cursor-pointer items-center justify-center rounded-full text-sf-text-2 transition-colors duration-200 hover:bg-sf-theme-2 hover:text-sf-theme"
-                @click.stop="handleEdit(card.index)"
+            <div class="mt-4 flex items-center gap-3">
+              <div class="h-1.5 flex-1 overflow-hidden rounded-full bg-sf-bg-2">
+                <div
+                  class="h-full rounded-full"
+                  :class="getProgressClass(card.progress)"
+                  :style="{ width: `${card.progress}%` }"
+                ></div>
+              </div>
+              <span class="shrink-0 text-xs text-sf-text-3"
+                >最后使用：{{ getLastUseTime(card.item) }}</span
               >
-                <SfIcon icon="lucide:pencil" size="4" />
+            </div>
+          </ResumeCardContainer>
+        </template>
+      </RevealGrid>
+
+      <!-- 回收站列表：布局与入场动画交给 RevealGrid，空状态由 #empty 提供 -->
+      <RevealGrid v-if="activeTab === 'trash'" :items="resumeStore.trashList" key-field="id">
+        <template #default="{ item, index }">
+          <ResumeCardContainer
+            :item="item"
+            action-text="已删除"
+          >
+            <div class="mt-3 flex items-start justify-between gap-2">
+              <div class="min-w-0">
+                <div class="truncate text-base font-black text-sf-text">
+                  {{ getResumeTitle(item.data) }}
+                </div>
+                <div class="mt-1 truncate text-sm text-sf-text-2">
+                  {{ getResumePosition(item) }}
+                </div>
+              </div>
+            </div>
+            <div class="mt-4 flex items-center gap-3">
+              <span class="shrink-0 text-xs text-sf-text-3">
+                删除于：{{
+                  item._deletedAt ? dayjs(item._deletedAt).format("YYYY.MM.DD HH:mm") : "--"
+                }}
               </span>
+              <span class="ml-auto shrink-0 text-xs text-sf-text-3">
+                {{ resumeStore.getTrashRemainingDays(item) }}天后自动清理
+              </span>
+            </div>
+            <div class="mt-3 flex items-center gap-3">
               <button
                 type="button"
-                class="flex h-8 w-8 cursor-pointer items-center justify-center rounded-full text-sf-text-2 transition-colors duration-200 hover:bg-sf-error-2 hover:text-sf-error"
-                @click.stop="handleDelete(card.index)"
+                class="flex h-8 flex-1 cursor-pointer items-center justify-center gap-1 rounded-lg border-0 bg-sf-theme-2 text-sm font-black text-sf-theme transition-colors duration-200 hover:bg-sf-theme hover:text-white"
+                @click="resumeStore.restoreResume(index)"
+              >
+                <SfIcon icon="lucide:rotate-ccw" size="4" />
+                恢复
+              </button>
+              <button
+                type="button"
+                class="flex h-8 flex-1 cursor-pointer items-center justify-center gap-1 rounded-lg border-0 bg-sf-error-2 text-sm font-black text-sf-error transition-colors duration-200 hover:bg-sf-error hover:text-white"
+                @click="resumeStore.permanentlyDeleteResume(index)"
               >
                 <SfIcon icon="lucide:trash-2" size="4" />
+                永久删除
               </button>
             </div>
+          </ResumeCardContainer>
+        </template>
+        <!-- 回收站为空：col-span-full 由组件包裹提供 -->
+        <template #empty>
+          <div
+            class="flex flex-col items-center justify-center py-20 text-sf-text-2"
+          >
+            <SfIcon icon="lucide:trash-2" size="12" class="mb-4 text-sf-text-3" />
+            <span class="text-base">回收站为空</span>
           </div>
-          <div class="mt-4 flex items-center gap-3">
-            <div class="h-1.5 flex-1 overflow-hidden rounded-full bg-sf-bg-2">
-              <div
-                class="h-full rounded-full"
-                :class="getProgressClass(card.progress)"
-                :style="{ width: `${card.progress}%` }"
-              ></div>
-            </div>
-            <span class="shrink-0 text-xs text-sf-text-3"
-              >最后使用：{{ getLastUseTime(card.item) }}</span
-            >
-          </div>
-        </ResumeCardContainer>
-      </div>
-
-      <!-- 回收站列表 -->
-      <div v-if="activeTab === 'trash'" class="grid grid-cols-3 gap-3">
-        <ResumeCardContainer
-          v-for="(item, index) in resumeStore.trashList"
-          :key="item.id"
-          :item="item"
-          action-text="已删除"
-        >
-          <div class="mt-3 flex items-start justify-between gap-2">
-            <div class="min-w-0">
-              <div class="truncate text-base font-black text-sf-text">
-                {{ getResumeTitle(item.data) }}
-              </div>
-              <div class="mt-1 truncate text-sm text-sf-text-2">
-                {{ getResumePosition(item) }}
-              </div>
-            </div>
-          </div>
-          <div class="mt-4 flex items-center gap-3">
-            <span class="shrink-0 text-xs text-sf-text-3">
-              删除于：{{
-                item._deletedAt ? dayjs(item._deletedAt).format("YYYY.MM.DD HH:mm") : "--"
-              }}
-            </span>
-            <span class="ml-auto shrink-0 text-xs text-sf-text-3">
-              {{ resumeStore.getTrashRemainingDays(item) }}天后自动清理
-            </span>
-          </div>
-          <div class="mt-3 flex items-center gap-3">
-            <button
-              type="button"
-              class="flex h-8 flex-1 cursor-pointer items-center justify-center gap-1 rounded-lg border-0 bg-sf-theme-2 text-sm font-black text-sf-theme transition-colors duration-200 hover:bg-sf-theme hover:text-white"
-              @click="resumeStore.restoreResume(index)"
-            >
-              <SfIcon icon="lucide:rotate-ccw" size="4" />
-              恢复
-            </button>
-            <button
-              type="button"
-              class="flex h-8 flex-1 cursor-pointer items-center justify-center gap-1 rounded-lg border-0 bg-sf-error-2 text-sm font-black text-sf-error transition-colors duration-200 hover:bg-sf-error hover:text-white"
-              @click="resumeStore.permanentlyDeleteResume(index)"
-            >
-              <SfIcon icon="lucide:trash-2" size="4" />
-              永久删除
-            </button>
-          </div>
-        </ResumeCardContainer>
-        <!-- 回收站为空 -->
-        <div
-          v-if="resumeStore.trashList.length === 0"
-          class="col-span-3 flex flex-col items-center justify-center py-20 text-sf-text-2"
-        >
-          <SfIcon icon="lucide:trash-2" size="12" class="mb-4 text-sf-text-3" />
-          <span class="text-base">回收站为空</span>
-        </div>
-      </div>
+        </template>
+      </RevealGrid>
 
       <!-- 新建简历引导弹窗：收集简单信息 -->
       <SfModal v-model="createDialogVisible" title="完善基本信息">
