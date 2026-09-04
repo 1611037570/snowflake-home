@@ -137,35 +137,3 @@ export function processResult({ text, isJson = true, isDebug }: any) {
   }
   return result;
 }
-
-/**
- * 处理重试逻辑
- * @param {Object} params
- * @param {number} params.currentRetryCount 当前重试次数
- * @param {number} params.retryCount 最大重试次数
- * @param {boolean} params.isDebug 是否开启调试模式
- * @param {Function} params.onRetry 重试回调函数
- * @returns {Promise<{retried: boolean, result?: any}>}
- */
-export async function handleRetry({ currentRetryCount, retryCount, isDebug, onRetry, error }: any) {
-  const status = error?.status as number | undefined;
-  // 4xx 客户端错误（429 限流除外）重试无意义，直接按最终失败处理
-  const shouldRetry = !(status && status >= 400 && status < 500 && status !== 429);
-
-  // 重试次数未超过最大重试次数
-  if (shouldRetry && currentRetryCount < retryCount) {
-    const delay = 500 * (currentRetryCount + 1);
-    if (isDebug) {
-      console.warn(
-        `请求失败，准备在 ${delay}ms 后进行第 ${currentRetryCount + 1}/${retryCount} 次重试...`,
-      );
-    }
-    // 等待指定时间后重试
-    await new Promise((resolve) => setTimeout(resolve, delay));
-    // 重试
-    const result = await onRetry(currentRetryCount + 1);
-
-    return { retried: true, result };
-  }
-  return { retried: false };
-}

@@ -1,5 +1,5 @@
 // 导入LLM接口
-import { getLLM } from "@/apis";
+import { getLLM, isAbortError } from "@/apis";
 import { createResumeTools } from "@/apis/llm/react";
 import { useAiStore, useResumeStore } from "@/stores";
 // 导入聊天和消息类型
@@ -375,7 +375,7 @@ export const useChatRequest = ({
     } catch (error: any) {
       if (isUnmounted) return;
       // 主动中止不视为错误
-      if (error?.message === "已中止") return;
+      if (isAbortError(error)) return;
       console.error("ReAct 请求异常:", error);
       if (lastMsg) {
         lastMsg.content = `请求出错: ${error.message || "未知错误"}`;

@@ -1,6 +1,6 @@
-import { createRequest } from "./request";
+import { createRequest, AbortError } from "./request";
 
-import { handleRetry, processOption } from "./stream-utils";
+import { processOption } from "./stream-utils";
 import { executeToolCall } from "../react/actor";
 import { observe } from "../react/observer";
 import { reflect } from "../react/reflector";
@@ -117,51 +117,56 @@ class LLM {
     const send = handler.send;
     const abort = handler.abort;
 
-    // 处理请求参数
-    const sendFn = async (currentRetryCount = 0) => {
-      // 标记是否正在重试
-      let isRetrying = false;
+    // 发送函数：失败按重试次数循环重试，4xx 客户端错误（429 除外）不再重试
+    const sendFn = async () => {
       try {
-        // 组装请求基础配置
-        const requestConfig = {
-          url: this.url,
-          method,
-          isDebug,
-          provider: this.provider,
-          timeout,
-        };
+        for (let attempt = 1; ; attempt++) {
+          try {
+            // 组装请求基础配置
+            const requestConfig = {
+              url: this.url,
+              method,
+              isDebug,
+              provider: this.provider,
+              timeout,
+            };
 
-        // 流式与非流式请求体不同，分别组装后发送
-        const res = isStream
-          ? await send({
-              ...requestConfig,
-              data: processOption({ options: requestOptions }),
-              isJson,
-              onEvent,
-            })
-          : await send({
-              ...requestConfig,
-              data: JSON.stringify(requestOptions),
-            });
-        // 主动中止时不触发成功回调
-        if (!res?.aborted) {
-          onSuccess?.(res);
+            // 流式与非流式请求体不同，分别组装后发送
+            const res = isStream
+              ? await send({
+                  ...requestConfig,
+                  data: processOption({ options: requestOptions }),
+                  isJson,
+                  onEvent,
+                })
+              : await send({
+                  ...requestConfig,
+                  data: JSON.stringify(requestOptions),
+                });
+            // 主动中止时不触发成功回调
+            if (!res?.aborted) {
+              onSuccess?.(res);
+            }
+            return res;
+          } catch (e: any) {
+            // 判断是否可重试：4xx 客户端错误（429 限流除外）重试无意义
+            const status = e?.status;
+            const retryable = !(status && status >= 400 && status < 500 && status !== 429);
+            // 尝试次数耗尽或不可重试时，跳出循环按最终失败处理
+            if (attempt > retryCount || !retryable) {
+              throw e;
+            }
+            const delay = 500 * attempt;
+            if (isDebug) {
+              console.warn(
+                `请求失败，准备在 ${delay}ms 后进行第 ${attempt}/${retryCount} 次重试...`,
+              );
+            }
+            // 等待指定时间后进入下一次尝试
+            await new Promise((resolve) => setTimeout(resolve, delay));
+          }
         }
-        return res;
       } catch (e) {
-        // 处理重试逻辑
-        const { retried, result } = await handleRetry({
-          currentRetryCount,
-          retryCount,
-          isDebug,
-          onRetry: sendFn,
-          error: e,
-        });
-        // 重试后返回结果
-        if (retried) {
-          isRetrying = true;
-          return result;
-        }
         onFail?.(e);
         // 统一错误处理
         if (isDebug) {
@@ -169,9 +174,8 @@ class LLM {
         }
         throw e;
       } finally {
-        if (!isRetrying) {
-          onFinally?.();
-        }
+        // 无论成功或重试耗尽，结束回调仅触发一次
+        onFinally?.();
       }
     };
 
@@ -204,7 +208,7 @@ class LLM {
       console.log("[ReAct] 开始运行，消息数:", initialMessages.length, "最大步数:", maxSteps);
 
       for (let step = 0; step < maxSteps; step++) {
-        if (aborted) throw new Error("已中止");
+        if (aborted) throw new AbortError();
 
         console.log(`[ReAct] 第 ${step + 1}/${maxSteps} 步 Think`);
         const result = await think(this, history, {
@@ -214,7 +218,7 @@ class LLM {
           onEvent: config.onEvent,
         });
 
-        if (aborted) throw new Error("已中止");
+        if (aborted) throw new AbortError();
 
         if (result.reasoning) console.log("[ReAct] 思考:", result.reasoning);
         console.log("[ReAct] 工具调用:", result.toolCalls);
@@ -255,7 +259,7 @@ class LLM {
         });
 
         for (const toolCall of result.toolCalls) {
-          if (aborted) throw new Error("已中止");
+          if (aborted) throw new AbortError();
 
           console.log(
             "[ReAct] 执行工具:",

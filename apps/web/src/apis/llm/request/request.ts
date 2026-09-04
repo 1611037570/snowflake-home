@@ -42,16 +42,29 @@ async function extractErrorInfo(response: Response) {
 }
 
 /**
- * 组装接口错误：message 汇总状态码、错误码与服务端原因，可直接展示到聊天气泡
+ * 统一接口错误：message 可直接展示到聊天气泡，status/code 供重试策略判断
  */
-function createApiError(status: number, reason: string, code = "") {
-  const error: any = new Error(
-    reason ? `${status}${code ? ` [${code}]` : ""}: ${reason}` : `请求失败 (HTTP ${status})`,
-  );
-  error.status = status;
-  if (code) error.code = code;
-  return error;
+export class ApiError extends Error {
+  status?: number;
+  code?: string;
+  constructor(message: string, status?: number, code?: string) {
+    super(message);
+    this.name = "ApiError";
+    this.status = status;
+    if (code) this.code = code;
+  }
 }
+
+/**
+ * 主动中止错误：用户停止生成时抛出，区别于真实请求失败
+ */
+export class AbortError extends Error {
+  constructor() {
+    super("已中止");
+    this.name = "AbortError";
+  }
+}
+export const isAbortError = (error: any) => !!error && error.name === "AbortError";
 
 /**
  * 创建请求处理器
@@ -115,14 +128,22 @@ export function createRequest(token: string, isStream = true) {
       // 检查HTTP响应状态：提取错误体中的服务端原因透传给上层
       if (!response.ok) {
         const { message, code } = await extractErrorInfo(response);
-        throw createApiError(response.status, message || response.statusText, code);
+        const reason = message || response.statusText;
+        // message 汇总状态码、错误码与服务端原因，便于直接展示
+        throw new ApiError(
+          reason
+            ? `${response.status}${code ? ` [${code}]` : ""}: ${reason}`
+            : `请求失败 (HTTP ${response.status})`,
+          response.status,
+          code,
+        );
       }
 
       // 流式：读取并解析流数据
       if (isStream) {
         // 检查响应体是否存在
         if (!response.body) {
-          throw new Error("响应体为空，无法读取流式数据");
+          throw new ApiError("响应体为空，无法读取流式数据");
         }
         // 获取读取器和解码器
         const reader = response.body.getReader();
@@ -165,14 +186,14 @@ export function createRequest(token: string, isStream = true) {
       // 检查是否为主动取消
       if (error.name === "AbortError") {
         if (isTimeoutAbort) {
-          throw new Error(`请求超时（${timeout}ms）`);
+          throw new ApiError(`请求超时（${timeout}ms）`);
         }
         if (isDebug) console.log("请求被主动取消");
         return { aborted: true };
       }
       // 网络层失败（请求未发出或流传输中断），转为可读提示
       if (error instanceof TypeError) {
-        throw new Error(`网络连接失败: ${error.message}`);
+        throw new ApiError(`网络连接失败: ${error.message}`);
       }
       throw error;
     } finally {
