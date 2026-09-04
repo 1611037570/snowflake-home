@@ -35,13 +35,14 @@ const importJsonConfig = async () => {
   }
 };
 
-// 读取并解析 JSON 配置，导入为新简历并进入编辑器
+// 读取并解析 JSON 配置，导入为新简历（仅创建不跳转，成功后提示）
 const parseJsonConfig = async (file) => {
   if (!file) return;
   try {
     const config = JSON.parse(await file.text());
-    // 以解析出的配置创建新简历（addResume 会与默认结构合并并跳转编辑器）
-    resumeStore.addResume({ config });
+    // 以解析出的配置创建新简历，jump=false 避免跳转编辑器
+    const ok = resumeStore.addResume({ config }, false);
+    if (ok) ElMessage.success("简历导入成功");
   } catch (error) {
     console.error("解析简历配置失败:", error);
     ElMessage.error("简历配置解析失败，请检查文件格式");

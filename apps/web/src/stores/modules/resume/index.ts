@@ -124,20 +124,21 @@ export const useResumeStore = defineStore(
       const data = getModel(key);
       selectedModule.value.push(data);
     };
-    // 新增简历
-    const addResume = (config: any) => {
+    // 新增简历：jump 控制是否跳转编辑器，导入场景传 false 仅创建不跳转；返回是否新增成功
+    const addResume = (config: any, jump = true) => {
       if (list.value.length >= maxCount) {
         confirm(`请前往我的简历管理删除后再新建。`, "容量已满").then(() => {
           router.push("/resume/mine");
         });
-        return;
+        return false;
       }
       const res = config ? mergeResumeItem(config) : structuredClone(DEFAULT_RESUME_ITEM);
       // 每次新增都重新生成唯一ID，避免多份简历共用一个ID
       res.id = getUUID().slice(0, 6);
       list.value.push(res);
       currentIndex.value = list.value.length - 1;
-      router.push({ path: "/resumeEditor", query: { id: res.id } });
+      if (jump) router.push({ path: "/resumeEditor", query: { id: res.id } });
+      return true;
     };
     // 深拷贝快照：structuredClone 无法直接克隆响应式 Proxy，先经 JSON 序列化脱代理再结构化克隆
     const deepClone = (value: any) => {
