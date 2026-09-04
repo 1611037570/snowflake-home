@@ -5,29 +5,29 @@ import DiffContent from "./diffField/diffContent.vue";
 
 const store = useDiffPopoverStore();
 const popoverRef = ref(null);
-// 浮层始终挂载（v-show 控制显隐），首次进入即完成渲染，避免每次展示都重建 DOM
-// 定位以鼠标当前坐标为锚点，按真实弹性尺寸做按轴翻转收敛到窗口内；
-// 仅在「真正展示 / 切换字段」时计算一次后锁定写入 ref：
-// 同一字段内移动鼠标（含 html 多块字段块间移动）不再重定位，内容异步回流也不重算坐标
-// 不用 visibility 预隐藏：flush:post + nextTick 全在微任务内，浏览器绘制前已按真实
-// 尺寸落位，不会出现闪烁；同时避免 watcher 取不到 DOM 时「卡死 hidden」的失败模式
+// 浮层与光标的间距：浮层不压在光标下，否则指针一动就被判定移出字段而立即隐藏
+const GAP = 12;
+// 定位结果只在展示时写入一次并锁定，之后移动鼠标与内容回流都不再重算
 const popoverStyle = ref({
   left: "-9999px",
   top: "-9999px",
 });
 
-// Teleport 内模板 ref 偶发绑定为空，统一用 class 选择器兜底取 DOM
-const getPopoverEl = () => popoverRef.value || document.querySelector(".diff-popover");
+// 修正后仍超出窗口（浮层比可用空间还大）时贴回边缘
+const clampAxis = (value, size, viewport) =>
+  Math.max(GAP, Math.min(value, Math.max(GAP, viewport - size - GAP)));
 
-// 展示或切换字段时量尺并一次性定位：
-// - visible 由假转真：首次展示
-// - field 引用变化：移入不同字段（同一字段内 mouseover 不改变 field 引用，不触发）
-// watch 源只含 [visible, field]：html 富文本字段被拆成多块（共享同一 data-field-key），
-// 鼠标在块间移动会让鼠标坐标变化但 field 不变，若 watch 坐标会误触发重定位造成跟随
+// 已锁定位置的草稿签名：字段代理在父级重渲染时可能被换成内容相同的新对象，
+// 仅凭 field 引用变化会误判成切换字段而按最新鼠标坐标重新定位
+let lockedKey = null;
+const draftKey = () => `${store.html}|${store.value}|${store.newValue}`;
+
+// visible 由假转真、或移入另一份草稿时定位一次：同一字段内鼠标移动与滚动都不触发
 watch(
   () => [store.visible, store.field],
   async ([visible, field]) => {
     if (!visible || !field) {
+      lockedKey = null;
       // 隐藏时复位到屏外，避免下次展示前停留在旧坐标
       popoverStyle.value = {
         left: "-9999px",
@@ -35,30 +35,28 @@ watch(
       };
       return;
     }
-    // await 前捕获鼠标坐标：取触发本次展示的位置，块间移动不进入本分支
-    const mx = store.x;
-    const my = store.y;
-    // 内容已由 store.show 写入，等渲染完毕后取真实弹性尺寸
-    await nextTick();
-    const el = getPopoverEl();
-    if (!el) return;
-    const width = el.offsetWidth;
-    const height = el.offsetHeight;
-    const margin = 12;
-    const maxX = window.innerWidth - margin;
-    const maxY = window.innerHeight - margin;
-    // 弹窗左上角直接对齐鼠标坐标（无偏移）；按真实弹性尺寸判断越界，
-    // 空间不足时翻转到鼠标另一侧，使弹窗边角始终贴住光标
-    let x = mx;
-    let y = my;
-    if (width && x + width > maxX) x = mx - width;
-    if (height && y + height > maxY) y = my - height;
-    // 翻转后仍越界（弹窗大于可用空间）时再夹回窗口内
-    x = Math.max(margin, Math.min(x, maxX - width));
-    y = Math.max(margin, Math.min(y, maxY - height));
+    const key = draftKey();
+    if (key === lockedKey) return;
+    const { x, y } = store;
+    // 先把左上角贴到鼠标处再量尺：停在屏外量尺会按放大后的可用宽度算 w-max，量出的尺寸偏大致定位失真
     popoverStyle.value = {
-      left: `${x}px`,
-      top: `${y}px`,
+      left: `${x + GAP}px`,
+      top: `${y + GAP}px`,
+    };
+    await nextTick();
+    const el = popoverRef.value;
+    if (!el || !store.visible) return;
+    const { width, height } = el.getBoundingClientRect();
+    // 右下放不下时翻到光标另一侧展开，弹窗边角始终贴着鼠标
+    let left = x + GAP;
+    let top = y + GAP;
+    if (left + width > window.innerWidth - GAP) left = x - GAP - width;
+    if (top + height > window.innerHeight - GAP) top = y - GAP - height;
+    // 坐标按本次锚点锁定，量尺期间鼠标已移动也不追
+    lockedKey = key;
+    popoverStyle.value = {
+      left: `${clampAxis(left, width, window.innerWidth)}px`,
+      top: `${clampAxis(top, height, window.innerHeight)}px`,
     };
   },
   { flush: "post" },
