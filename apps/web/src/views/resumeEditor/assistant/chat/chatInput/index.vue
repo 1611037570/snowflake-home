@@ -4,6 +4,7 @@ import AiNotice from "../aiNotice.vue";
 import ModuleSelect from "./moduleSelect.vue";
 import BatchActions from "./batchActions.vue";
 import ThinkMode from "./thinkMode.vue";
+import ModelSelect from "./modelSelect.vue";
 
 // 是否正在生成回复，由父组件（index.vue）控制
 const props = defineProps({
@@ -115,24 +116,29 @@ onMounted(() => {
             <ThinkMode />
           </div>
 
-          <!-- 右侧：动态动作按钮 (发送/停止) -->
-          <button
-            class="flex h-10 w-10 items-center justify-center rounded-xl transition-all duration-500 ease-out"
-            :class="actionButtonConfig.class"
-            :title="actionButtonConfig.title"
-            :disabled="actionButtonConfig.disabled"
-            @click="actionButtonConfig.handler"
-          >
-            <SfIcon
-              :icon="actionButtonConfig.icon"
-              size="4.5"
-              class="transition-all duration-500"
-              :class="{
-                'group-focus-within:scale-110 ': canSend,
-                'cursor-not-allowed!': !canSend,
-              }"
-            />
-          </button>
+          <!-- 右侧-->
+          <div class="flex items-center gap-2">
+            <ModelSelect />
+
+            <!--动态动作按钮 (发送/停止) -->
+            <button
+              class="flex h-10 w-10 items-center justify-center rounded-xl transition-all duration-500 ease-out"
+              :class="actionButtonConfig.class"
+              :title="actionButtonConfig.title"
+              :disabled="actionButtonConfig.disabled"
+              @click="actionButtonConfig.handler"
+            >
+              <SfIcon
+                :icon="actionButtonConfig.icon"
+                size="4.5"
+                class="transition-all duration-500"
+                :class="{
+                  'group-focus-within:scale-110 ': canSend,
+                  'cursor-not-allowed!': !canSend,
+                }"
+              />
+            </button>
+          </div>
         </div>
       </div>
 
