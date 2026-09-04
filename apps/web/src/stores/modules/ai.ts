@@ -41,9 +41,11 @@ export type Message = {
 };
 // 自定义模型配置
 export type CustomModelConfig = {
+  // 模型名称（用户自定义）
+  name: string;
   // 平台类型
   provider: "ark" | "openai" | "deepseek";
-  // 模型名称
+  // 模型标识
   model: string;
   // API 密钥
   key: string;
