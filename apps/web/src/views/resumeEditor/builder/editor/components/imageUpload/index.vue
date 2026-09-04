@@ -186,11 +186,10 @@ const removeImage = () => {
         </div>
         <div
           class="flex cursor-pointer items-center gap-1 rounded-md px-1 py-1 transition-colors hover:text-sf-theme"
-          title="窗口大图"
           @click="previewVisible = true"
         >
           <SfIcon icon="ic:round-zoom-in" size="5" />
-          <span class="text-xs">窗口大图</span>
+          <span class="text-xs">查看图片</span>
         </div>
       </div>
     </div>
