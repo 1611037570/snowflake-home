@@ -716,6 +716,55 @@ export const DEFAULT_PROJECT_FORM = {
     },
   ],
 } satisfies FormField;
+export const DEFAULT_VIDEO_FORM = {
+  type: "group",
+  key: "video",
+  component: "boxCollapse",
+  props: {
+    add: true,
+    name: "视频作品",
+    tip: "该模块的会把视频地址转换为二维码，方便在简历中展示",
+  },
+  model: [
+    {
+      source: ["video", "collapsed"],
+      prop: "collapsed",
+      defaultValue: ["1"],
+    },
+    {
+      source: ["video", "hidden"],
+      prop: "hidden",
+      defaultValue: false,
+    },
+  ],
+  checks: { hidden: { path: ["video", "hidden"] } },
+  slot: "default",
+  fields: [
+    {
+      type: "array",
+      drag: true,
+      dragClass: ".item-drag",
+      list: [],
+      addConfig: {
+        model: [
+          {
+            source: ["video", "data", "?", "name"],
+            defaultValue: "",
+            prop: "name",
+          },
+          {
+            source: ["video", "data", "?", "url"],
+            defaultValue: "",
+            prop: "url",
+          },
+        ],
+        type: "object",
+        component: "video",
+        required: true,
+      },
+    },
+  ],
+} satisfies FormField;
 // 自定义经历
 export const DEFAULT_CUSTOM_FORM = {
   type: "group",
@@ -731,7 +780,6 @@ export const DEFAULT_CUSTOM_FORM = {
       prop: "collapsed",
       defaultValue: ["1"],
     },
-    // 隐藏开关：控制模块在简历预览中显示/隐藏
     {
       source: ["custom", "hidden"],
       prop: "hidden",
@@ -829,6 +877,7 @@ export const DEFAULT_CUSTOM_FORM = {
   ],
 } satisfies FormField;
 //
+
 export const DEFAULT_CONFIG = {
   meta: DEFAULT_META,
   drag: true,
@@ -841,6 +890,7 @@ export const allConfig = {
   user: DEFAULT_USER_FORM,
   advantage: DEFAULT_ADVANTAGE_FORM,
   education: DEFAULT_EDUCATION_FORM,
+  video: DEFAULT_VIDEO_FORM,
   account: DEFAULT_ACCOUNT_FORM,
   work: DEFAULT_WORK_FORM,
   project: DEFAULT_PROJECT_FORM,
