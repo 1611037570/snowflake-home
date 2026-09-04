@@ -44,11 +44,12 @@ onBeforeUnmount(() => {
 });
 
 // 字段快照：编辑态 model 为 { value, newValue } 代理，非编辑态为原始值；按 newValue 属性自动区分结构
-// debug 模式下所有字段（含测量容器）强制注入草稿 newValue，保证测量与实际排版一致，分页不失效
+// debug 模式下仅对开启 diff 交互的字段强制注入草稿 newValue，保证测量与实际排版一致，分页不失效
 const fieldSnap = computed(() => {
   const v = model.value;
   if (v == null) return { value: "", newValue: "", hasNew: false };
-  const forceDraft = DEBUG_FORCE_DIFF;
+  // debug 强制草稿需同时满足开关开启与字段已开启 diff 交互
+  const forceDraft = DEBUG_FORCE_DIFF && enableDiff;
   if (typeof v === "object" && "newValue" in v) {
     const value = v.value ?? "";
     let newValue = v.newValue ?? "";
