@@ -2,7 +2,7 @@
 import type { ReactTool } from "@/apis/llm/react";
 import type { Ref } from "vue";
 
-// 一份外部投递的技能：name/description 供调度识别，instructions 为注入模型的正文
+// 一份外部投递的技能：模型只看到 name/description，需要时通过技能工具读取 instructions 全文
 export interface Skill {
   id: string;
   name: string;
@@ -16,8 +16,6 @@ export interface AssistantConfig {
   generating: Ref<boolean>;
   // ReAct 复杂任务的系统提示
   reactSystem: string;
-  // 技能列表，请求时作为上下文注入
-  skills: Skill[];
   // ReAct 可用工具
   tools: ReactTool[];
   // 技能读取工具：模型只看到描述，需要时调用获取技能全文

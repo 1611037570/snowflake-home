@@ -52,6 +52,8 @@ export interface ReactConfig {
   maxSteps?: number;
   // 模型名，存在时透传到请求 options
   model?: string;
+  // 思考模式，不传时默认禁用
+  thinking?: { type: "enabled" | "disabled" };
   // 思考回调：每一步思考内容
   onThink?: (reasoning: string) => void;
   // 执行回调：每次工具调用

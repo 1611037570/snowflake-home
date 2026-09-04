@@ -6,6 +6,8 @@ export interface ThinkOptions {
   tools: ReactTool[];
   // 模型名，可选
   model?: string;
+  // 思考模式，不传时默认禁用
+  thinking?: { type: "enabled" | "disabled" };
   // 用于在请求进行中暴露中止函数
   abortRef?: { current: (() => void) | null };
   // 透传底层流式事件，用于上层计时与统计
@@ -53,7 +55,7 @@ export async function think(
     })),
     tool_choice: "auto",
     // response_format: { type: "json_object" },
-    thinking: { type: "disabled" },
+    thinking: options.thinking ?? { type: "disabled" },
     ...(options.model ? { model: options.model } : {}),
   };
 
