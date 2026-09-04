@@ -1,5 +1,5 @@
 <script setup>
-import { computed, ref } from "vue";
+import { ref, watch } from "vue";
 import { storeToRefs } from "pinia";
 import { useAiStore } from "@/stores";
 import DefaultTab from "./defaultTab.vue";
@@ -21,11 +21,42 @@ const providerList = [
   { id: "deepseek", name: "deepseek" },
 ];
 
-// 展示用激活项：激活配置失效时回退雪花服务
-const currentActive = computed(() =>
-  providerList.some((item) => item.id === activeModel.value)
-    ? activeModel.value
-    : "snowflake",
+// 当前查看的服务商（仅用于UI展示，不改变激活状态）
+const viewingProvider = ref("snowflake");
+
+// 选中服务商（仅切换查看，不改变激活状态）
+function selectProvider(item) {
+  viewingProvider.value = item.id;
+}
+
+// 获取是否为当前激活的服务商
+function isActive(id) {
+  return activeModel.value === id;
+}
+
+// 监听 activeModel 变化，更新服务商列表的 active 标记
+watch(
+  () => activeModel.value,
+  () => {
+    providerList.forEach((item) => {
+      item.active = isActive(item.id);
+    });
+  },
+);
+
+// 初始化服务商列表的 active 标记
+providerList.forEach((item) => {
+  item.active = isActive(item.id);
+});
+
+// 监听弹窗打开，重置为当前激活的服务商
+watch(
+  () => drawerVisible.value,
+  (visible) => {
+    if (visible) {
+      viewingProvider.value = providerList.find((item) => item.active)?.id || "snowflake";
+    }
+  },
 );
 </script>
 
@@ -40,13 +71,14 @@ const currentActive = computed(() =>
         <SfList
           :list="providerList"
           active-key="id"
-          :active-value="currentActive"
+          :active-value="viewingProvider"
+          @onClick="selectProvider"
         />
       </div>
       <!-- 右侧：配置详情 -->
       <div class="flex-1 overflow-y-auto rounded-3xl border border-sf-b bg-sf-primary p-4">
-        <DefaultTab v-if="currentActive === 'snowflake'" />
-        <CustomTab v-else :provider="currentActive" />
+        <DefaultTab v-if="viewingProvider === 'snowflake'" />
+        <CustomTab v-else :provider="viewingProvider" />
       </div>
     </div>
   </SfModal>
