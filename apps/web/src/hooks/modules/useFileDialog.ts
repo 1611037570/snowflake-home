@@ -97,7 +97,7 @@ export function useFileDialog(options: Options = {}) {
       // 合法文件
       fileList.value.push({ code: 200, file });
     }
-    resolve(successList);
+    resolve(successList.value);
   };
 
   const remove = () => {
