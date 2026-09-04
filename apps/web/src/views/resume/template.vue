@@ -83,8 +83,6 @@ const closeFullscreen = () => {
     </div>
     <SfScrollbar class="flex-1">
       <div class="flex h-full flex-col py-1">
-        <!-- 模板列表：布局与逐项入场动画交给 RevealGrid，插槽只决定渲染内容 -->
-        <div @click="switchColor">1111111111</div>
         <RevealGrid :items="templates" :interval="120" key-field="id">
           <template #default="{ item: card }">
             <div class="w-[282px]">
