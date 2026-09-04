@@ -11,12 +11,13 @@ const { activeModel, modelList } = storeToRefs(aiStore);
 
 // 服务商展示名映射（用于无别名且无模型名时的兜底展示）
 const PROVIDER_NAMES: Record<string, string> = {
+  snowflake: "雪花服务",
   openai: "OpenAI",
   ark: "火山方舟 Ark",
   deepseek: "DeepSeek",
 };
 
-// 列表数据：已添加的模型（当前使用的打勾），雪花服务不在此渲染
+// 列表数据：已添加模型（雪花服务作为普通条目添加后同样展示于此）
 const displayList = computed(() =>
   modelList.value.map((m: any) => ({
     id: m.id,
@@ -43,28 +44,26 @@ function removeModel(item: any) {
 </script>
 
 <template>
-  <div class="flex h-full min-h-0 flex-col">
-    <!-- 空态：无已添加模型时提示去添加 -->
-    <div v-if="!modelList.length" class="flex h-full flex-col items-center justify-center gap-3">
-      <span class="text-sm text-sf-text-3">还没有已添加的模型</span>
-      <el-button type="primary" @click="emit('jumpAdd')">去添加</el-button>
-    </div>
-
-    <!-- 模型列表：点击切换当前使用，行内提供删除 -->
-    <SfList v-else :list="displayList" @onClick="selectModel">
-      <template #default="{ item }">
-        <div class="flex min-w-0 flex-1 items-center gap-2">
-          <span class="truncate">{{ item.name }}</span>
-        </div>
-        <span
-          title="删除该模型"
-          class="shrink-0 cursor-pointer text-sf-text-3 hover:text-red-500"
-          @mousedown.stop
-          @click.stop="removeModel(item)"
-        >
-          <SfIcon icon="lucide:trash-2" size="3.5" />
-        </span>
-      </template>
-    </SfList>
+  <!-- 空态：暂无已添加模型时提示去添加 -->
+  <div v-if="!displayList.length" class="flex h-full flex-col items-center justify-center gap-3">
+    <span class="text-sm text-sf-text-3">还没有已添加的模型</span>
+    <el-button type="primary" @click="emit('jumpAdd')">去添加</el-button>
   </div>
+
+  <!-- 模型列表：点击切换当前使用，行内提供删除 -->
+  <SfList v-else :list="displayList" @onClick="selectModel">
+    <template #default="{ item }">
+      <div class="flex min-w-0 flex-1 items-center gap-2">
+        <span class="truncate">{{ item.name }}</span>
+      </div>
+      <span
+        title="删除该模型"
+        class="shrink-0 cursor-pointer text-sf-text-3 hover:text-red-500"
+        @mousedown.stop
+        @click.stop="removeModel(item)"
+      >
+        <SfIcon icon="lucide:trash-2" size="3.5" />
+      </span>
+    </template>
+  </SfList>
 </template>

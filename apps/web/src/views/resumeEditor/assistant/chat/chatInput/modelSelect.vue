@@ -8,6 +8,7 @@ const { activeModel, modelList } = storeToRefs(aiStore);
 
 // 服务商展示名映射（无别名且无模型名时的兜底展示）
 const PROVIDER_NAMES: Record<string, string> = {
+  snowflake: "雪花服务",
   openai: "OpenAI",
   ark: "火山方舟 Ark",
   deepseek: "DeepSeek",

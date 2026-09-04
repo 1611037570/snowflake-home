@@ -34,6 +34,11 @@ function openDrawer() {
 function jumpToAdd() {
   modelManagerTab.value = "add";
 }
+
+// 「添加成功」：从添加模型 Tab 切回已添加模型 Tab
+function jumpToAdded() {
+  modelManagerTab.value = "added";
+}
 </script>
 
 <template>
@@ -51,7 +56,7 @@ function jumpToAdd() {
       </div>
       <!-- 第二个 Tab：添加模型 -->
       <div v-show="modelManagerTab === 'add'" class="flex min-h-0 flex-1 flex-col">
-        <AddModel class="h-full" />
+        <AddModel class="h-full" @add-success="jumpToAdded" />
       </div>
     </div>
   </SfModal>
