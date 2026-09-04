@@ -141,8 +141,10 @@ const handleUseTemplate = () => {
           </button>
         </div>
         <!-- 导入简历入口：仅在草稿标签下显示 -->
-        <ImportResume v-if="activeTab === 'draft'" />
-        <DeliverResume />
+        <div class="flex gap-3">
+          <ImportResume />
+          <DeliverResume />
+        </div>
       </div>
 
       <!-- 简历草稿列表 -->
