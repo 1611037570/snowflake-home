@@ -66,7 +66,7 @@ const { openPicker, loading } = useImageUpload({
       </div>
       <!-- 显示大小：百分比滑杆控制，不用输入框 -->
       <div class="flex min-w-0 flex-1 items-center gap-3">
-        <SfSlider v-model="size" :min="25" :max="100" :step="5" class="flex-1" size="small" />
+        <SfSlider v-model="size" :min="25" :max="100" :step="1" class="flex-1" size="small" />
         <span class="w-12 shrink-0 text-right text-sm">{{ size }}%</span>
       </div>
     </div>
