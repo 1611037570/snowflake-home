@@ -3,7 +3,6 @@ import { AbortError } from "../errors";
 
 import { executeToolCall } from "../react/actor";
 import { observe } from "../react/observer";
-import { reflect } from "../react/reflector";
 import { think } from "../react/thinker";
 import { ToolRegistry } from "../react/tools";
 import type { ChatMessage, ReactConfig } from "../react/types";
@@ -211,6 +210,8 @@ class LLM {
     const run = async (initialMessages: ChatMessage[]): Promise<string> => {
       const maxSteps = config.maxSteps ?? 6;
       const history: ChatMessage[] = [...initialMessages];
+      // 标记候选答案后是否已进入反思轮，反思轮输出作为最终结果
+      let reflectRound = false;
 
       // 打印 ReAct 运行过程，便于观察每一步发生了什么
       console.log("[ReAct] 开始运行，消息数:", initialMessages.length, "最大步数:", maxSteps);
@@ -234,30 +235,27 @@ class LLM {
 
         config.onThink?.(result.reasoning);
 
-        // 无工具调用表示已给出最终答案
+        // 无工具调用时，若开启反思且尚未进入反思轮，则先注入候选答案并让下一轮审视定稿
         if (!result.toolCalls.length) {
           const finalAnswer = extractJson(result.finalAnswer);
-          console.log("[ReAct] 最终答案:", finalAnswer);
 
-          let answer = finalAnswer;
-          // 追加反思阶段：让模型审视并修正最终答案
-          if (config.reflection) {
-            const task = initialMessages
-              .filter((m) => m.role === "user")
-              .map((m) => m.content)
-              .join("\n");
-            answer = extractJson(
-              await reflect(this, finalAnswer, task, {
-                model: config.model,
-                abortRef,
-              }),
-            );
-            console.log("[ReAct] 反思后答案:", answer);
-            config.onReflect?.(answer);
+          if (config.reflection && !reflectRound && step < maxSteps - 1) {
+            console.log("[ReAct] 候选答案，下一轮反思定稿:", finalAnswer);
+            // 候选答案回填历史，反思轮携带完整执行过程审视并输出最终答案
+            history.push({ role: "assistant", content: result.finalAnswer });
+            history.push({
+              role: "user",
+              content:
+                "请反思你上面的答案：审视是否满足任务要求、格式是否正确，内容是否有遗漏或错误。若有问题，输出修正后的完整答案；若无问题，原样输出最终答案。",
+            });
+            reflectRound = true;
+            continue;
           }
 
-          config.onFinal?.(answer);
-          return answer;
+          console.log("[ReAct] 最终答案:", finalAnswer);
+          if (reflectRound) config.onReflect?.(finalAnswer);
+          config.onFinal?.(finalAnswer);
+          return finalAnswer;
         }
 
         // 回填 assistant 的工具调用消息
