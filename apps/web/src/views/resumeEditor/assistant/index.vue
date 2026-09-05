@@ -20,6 +20,10 @@ const { system } = storeToRefs(resumeStore);
 const { selectedModule } = storeToRefs(resumeStore);
 // 当前操作模块列表：直接取自 selectedModule，无选中时不显示提示句
 const selectedModules = computed(() => selectedModule.value);
+// 点击模块标签右上角关闭按钮时，从 selectedModule 移除对应模块
+const removeSelectedModule = (key) => {
+  selectedModule.value = selectedModule.value.filter((item) => item.key !== key);
+};
 // AI助手区域宽度：读取编辑器配置，默认 400px
 const assistantWidth = DEFAULT_EDITOR.assistantWidth;
 
@@ -283,6 +287,7 @@ function addDebugMessages() {
         :flows="flows"
         :suggestions="suggestions"
         :selected-modules="selectedModules"
+        :remove-module="removeSelectedModule"
       />
     </div>
   </div>

@@ -19,6 +19,7 @@ const props = defineProps<{
   flows: Record<string, Flow>;
   suggestions: SuggestCard[];
   selectedModules?: { key: string; name?: string }[];
+  removeModule?: (key: string) => void;
 }>();
 // 生成状态来自宿主注入的引用，模板与输入框共用
 const generating = props.config.generating;
@@ -302,6 +303,7 @@ const handleFlowInput = (content) => {
       <EmptyState
         :suggestions="props.suggestions"
         :selected-modules="props.selectedModules"
+        :remove-module="props.removeModule"
         @suggest="handleSuggest"
         v-if="displayMessages.length === 0"
       />

@@ -5,6 +5,7 @@ import type { SuggestCard } from "../../types";
 const props = defineProps<{
   suggestions: SuggestCard[];
   selectedModules?: { key: string; name?: string }[];
+  removeModule?: (key: string) => void;
 }>();
 const emit = defineEmits(["switch-mode", "suggest"]);
 
@@ -28,15 +29,22 @@ const handleSuggest = (card) => {
     </div>
     <div
       v-if="props.selectedModules?.length"
-      class="flex flex-wrap items-center justify-center gap-x-3"
+      class="flex flex-wrap items-center justify-center gap-x-3 text-sm leading-8"
     >
       还能根据 你的
       <div
         v-for="item in props.selectedModules"
         :key="item.key"
-        class="rounded-xl bg-sf-theme p-2 text-sf-theme-text"
+        class="flex-c relative h-6 rounded-xl bg-sf-theme px-1.5 py-0.5 text-sf-theme-text"
       >
         {{ item.name }}
+        <!-- 右上角关闭按钮：点击移除该模块选中 -->
+        <SfIcon
+          icon="mingcute:close-line"
+          size="3"
+          class="absolute top-0 right-0 cursor-pointer text-sf-theme-text/70 hover:text-sf-theme-text"
+          @click="props.removeModule?.(item.key)"
+        />
       </div>
       进行以下技能操作
     </div>
