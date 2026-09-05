@@ -90,7 +90,6 @@ function handleEditConfirm() {
               @click.stop=""
             />
             {{ title }}
-            <SfTooltip :content="tip" v-if="tip"> </SfTooltip>
           </div>
           <div class="flex items-center gap-2 opacity-0 group-hover:opacity-100">
             <SfTooltip content="隐藏模块" v-if="currentForm.key !== 'user'">
@@ -119,6 +118,7 @@ function handleEditConfirm() {
         </div>
       </template>
       <template #default>
+        <div v-if="tip" class="mb-2">{{ tip }}</div>
         <slot />
         <div
           class="mt-1 flex cursor-pointer items-center gap-1 text-sf-theme"
