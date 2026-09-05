@@ -3,8 +3,7 @@ import { useAiStore } from "@/stores";
 import { useScroll } from "@vueuse/core";
 import { computed, nextTick, ref, watch } from "vue";
 import { useChatRequest } from "./useChatRequest";
-import { flows } from "../flows";
-import type { AssistantConfig } from "../types";
+import type { AssistantConfig, Flow, SuggestCard } from "../types";
 
 import AiMessage from "./aiMessage.vue";
 import ChatInput from "./chatInput/index.vue";
@@ -14,7 +13,11 @@ import EmptyState from "./emptyState.vue";
 const aiStore = useAiStore();
 const { createDefaultMessage } = aiStore;
 // 宿主传入的技能、工具与上下文配置
-const props = defineProps<{ config: AssistantConfig }>();
+const props = defineProps<{
+  config: AssistantConfig;
+  flows: Record<string, Flow>;
+  suggestions: SuggestCard[];
+}>();
 // 生成状态来自宿主注入的引用，模板与输入框共用
 const isGenerating = computed(() => props.config.generating.value);
 
@@ -175,7 +178,7 @@ const activeFlow = ref(null);
  * 点击建议卡片：启动引导式对话流程
  */
 const handleSuggest = (payload) => {
-  const flow = flows[payload?.flow];
+  const flow = props.flows[payload?.flow];
   if (!flow) return;
   // 记录流程状态并展示初始用户消息
   activeFlow.value = { flow, stepIndex: 0, answers: [] };
@@ -269,7 +272,11 @@ const handleFlowInput = (content) => {
 <template>
   <div class="relative flex h-full w-full flex-col overflow-hidden select-text">
     <SfScrollbar ref="chatContainer" class="h-full w-full flex-1">
-      <EmptyState @suggest="handleSuggest" v-if="displayMessages.length === 0" />
+      <EmptyState
+        :suggestions="props.suggestions"
+        @suggest="handleSuggest"
+        v-if="displayMessages.length === 0"
+      />
 
       <div v-if="displayMessages.length > 0" class="flex h-full flex-col items-center py-3">
         <component
