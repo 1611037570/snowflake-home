@@ -40,6 +40,7 @@ const handleSuggest = (card) => {
         {{ item.name }}
         <!-- 右上角关闭按钮：点击移除该模块选中 -->
         <SfIcon
+          v-if="item.key !== 'all'"
           icon="mingcute:close-line"
           size="3"
           class="absolute top-0 right-0 cursor-pointer text-sf-theme-text/70 hover:text-sf-theme-text"

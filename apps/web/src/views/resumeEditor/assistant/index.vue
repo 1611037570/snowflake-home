@@ -18,10 +18,16 @@ const { config: assistantConfig, createChat: createAssistantChat } =
 const { resumeAssistantChat } = storeToRefs(aiStore);
 const { system } = storeToRefs(resumeStore);
 const { selectedModule } = storeToRefs(resumeStore);
-// 当前操作模块列表：直接取自 selectedModule，无选中时不显示提示句
-const selectedModules = computed(() => selectedModule.value);
+// 当前操作模块列表：有选中模块时展示真实模块，无选中时补“整个简历”兜底项
+const selectedModules = computed(() =>
+  selectedModule.value.length
+    ? selectedModule.value
+    : [{ key: "all", name: "整个简历" }],
+);
 // 点击模块标签右上角关闭按钮时，从 selectedModule 移除对应模块
 const removeSelectedModule = (key) => {
+  // “整个简历”为无选中时的兜底项，不允许移除
+  if (key === "all") return;
   selectedModule.value = selectedModule.value.filter((item) => item.key !== key);
 };
 // AI助手区域宽度：读取编辑器配置，默认 400px
