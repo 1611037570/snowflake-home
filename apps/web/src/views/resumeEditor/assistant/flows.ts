@@ -167,37 +167,31 @@ export const suggestions: SuggestCard[] = [
   {
     icon: "ph:file-plus-duotone",
     title: "AI生成简历",
-    desc: "从零生成一段简历经历",
     flow: "resumeCreate",
   },
   {
     icon: "ph:magic-wand-duotone",
     title: "AI优化简历",
-    desc: "全面优化简历内容",
     flow: "resumeOptimize",
   },
   {
     icon: "ph:translate-duotone",
     title: "AI简历翻译",
-    desc: "将简历翻译成英文或中文",
     flow: "resumeTranslate",
   },
   {
     icon: "ph:target-duotone",
     title: "JD对标优化",
-    desc: "根据岗位JD对标优化简历",
     flow: "jdOptimize",
   },
   {
     icon: "ph:hand-waving-duotone",
     title: "打招呼语",
-    desc: "将简历转成开场打招呼语",
     flow: "greeting",
   },
   {
     icon: "ph:microphone-duotone",
     title: "面试自我介绍",
-    desc: "将简历转成面试口头稿",
     flow: "selfIntro",
   },
 ];

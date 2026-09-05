@@ -31,7 +31,6 @@ export type Flow = {
 export type SuggestCard = {
   icon: string;
   title: string;
-  desc: string;
   flow: string;
 };
 
