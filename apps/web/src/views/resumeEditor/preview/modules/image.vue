@@ -32,9 +32,9 @@ const images = computed(() => previewData.value?.image?.data || []);
           v-if="item.img?.value"
           :src="toAvatarSrc(item.img?.value)"
           alt="图片作品"
-          class="flex-c h-auto w-full rounded text-center"
+          class="h-auto w-full rounded"
         />
-        <DiffField v-model="item.name" />
+        <DiffField class="text-center" v-model="item.name" />
       </div>
     </template>
   </div>
