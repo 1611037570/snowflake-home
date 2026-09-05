@@ -297,7 +297,7 @@ const handleFlowInput = (content) => {
         v-if="displayMessages.length === 0"
       />
 
-      <div v-if="displayMessages.length > 0" class="flex h-full flex-col items-center py-3 pl-3">
+      <div v-if="displayMessages.length > 0" class="flex h-full flex-col items-center py-3">
         <component
           :is="msg.role === 'user' ? UserMessage : AiMessage"
           v-for="(msg, index) in displayMessages"

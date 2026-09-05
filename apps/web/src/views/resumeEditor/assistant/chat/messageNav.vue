@@ -29,20 +29,15 @@ function getMessageBrief(msg) {
   <div class="group/nav absolute top-1/2 left-0 z-9991 -translate-y-1/2">
     <!-- 折叠手柄 -->
     <div
-      class="flex h-24 w-6 cursor-pointer items-center justify-center rounded-r-3xl border border-sf-b bg-sf-page text-sf-text-3 shadow-md transition-colors duration-300 group-hover/nav:bg-sf-theme group-hover/nav:text-sf-theme-text"
+      class="flex h-14 w-3.5 cursor-pointer items-center justify-center rounded-3xl border border-sf-b bg-sf-page text-sf-text-3 shadow-md transition-colors duration-300 group-hover/nav:bg-sf-theme group-hover/nav:text-sf-theme-text"
     >
-      <SfIcon icon="ph:list-duotone" size="4" />
+      <SfIcon icon="ph:list-duotone" size="3" />
     </div>
     <!-- 展开面板 -->
     <div
-      class="invisible absolute top-1/2 left-6 -translate-x-3 -translate-y-1/2 opacity-0 transition-all duration-300 group-hover/nav:visible group-hover/nav:translate-x-0 group-hover/nav:opacity-100"
+      class="invisible absolute top-1/2 left-4 -translate-x-3 -translate-y-1/2 opacity-0 transition-all duration-300 group-hover/nav:visible group-hover/nav:translate-x-0 group-hover/nav:opacity-100"
     >
-      <div
-        class="flex w-60 flex-col overflow-hidden rounded-r-3xl border border-sf-b bg-sf-primary shadow-lg"
-      >
-        <div class="px-3 py-3 text-xs font-bold text-sf-text">
-          <span>消息导航</span>
-        </div>
+      <div class="flex w-60 flex-col overflow-hidden rounded-3xl border border-sf-b bg-sf-primary">
         <div class="max-h-96 overflow-y-auto px-3 pb-3">
           <button
             v-for="(msg, index) in messages"
