@@ -31,13 +31,17 @@
           <Toolbar />
         </div>
       </Transition>
-      <GeneratingMask
-        v-if="isPrinting"
-        :visible="true"
-        title="正在导出简历"
-        description="请稍候，文件即将下载"
-        aria-label="正在导出简历，请稍候"
-      />
+      <!-- 导出加载浮层：teleport 到 body 以盖在导出弹窗之上 -->
+      <Teleport to="body">
+        <GeneratingMask
+          v-if="isPrinting"
+          :visible="true"
+          overlay
+          title="正在导出简历"
+          description="请稍候，文件即将下载"
+          aria-label="正在导出简历，请稍候"
+        />
+      </Teleport>
     </div>
     <!-- 专注写作模式：右上角浮动退出按钮 -->
     <div
