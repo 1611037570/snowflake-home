@@ -37,6 +37,8 @@ export interface FormField {
   span?: number;
   /** 表单项标签 */
   label?: string;
+  /** 表单项 class */
+  colClass?: string;
   /** 表单项提示 */
   tip?: string;
   /** 表单项校验规则（透传给 el-form rules） */

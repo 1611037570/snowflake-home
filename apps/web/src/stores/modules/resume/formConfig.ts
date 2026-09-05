@@ -262,7 +262,7 @@ export const DEFAULT_ACCOUNT_FORM = {
     {
       type: "array",
       drag: true,
-      dragClass: ".item-drag",
+      dragClass: DEFAULT_DRAG_CLASS,
       list: [],
       addConfig: {
         model: [
