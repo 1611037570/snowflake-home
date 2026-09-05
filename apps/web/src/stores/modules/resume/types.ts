@@ -18,6 +18,8 @@ export interface Data {
     workTime?: string;
     // 性别
     sex?: string;
+    // 所在城市
+    city?: string;
     // 头像 Base64
     avatar?: string;
     };

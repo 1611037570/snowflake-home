@@ -184,6 +184,21 @@ export const DEFAULT_USER_FORM = [
           ],
         },
       },
+      // 所在城市
+      {
+        type: "object",
+        label: "城市",
+        tip: "所在城市",
+        component: "cityPicker",
+        span: 12,
+        model: {
+          source: ["user", "data", "city"],
+          prop: "modelValue",
+        },
+        props: {
+          placeholder: "请选择城市",
+        },
+      },
       {
         type: "object",
         label: "邮箱",

@@ -6,6 +6,7 @@ import { storeToRefs } from "pinia";
 import Account from "./components/account.vue";
 import AddModule from "./components/addModule.vue";
 import BoxCollapse from "./components/boxCollapse.vue";
+import CityPicker from "./components/cityPicker/index.vue";
 import HiddenModules from "./components/hiddenModules.vue";
 import Image from "./components/image.vue";
 import ItemCollapse from "./components/itemCollapse.vue";
@@ -23,6 +24,7 @@ const dynamicComponents = {
   imageUpload: ImageUpload,
   image: Image,
   video: Video,
+  cityPicker: CityPicker,
 };
 </script>
 
