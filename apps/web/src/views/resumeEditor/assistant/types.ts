@@ -25,6 +25,4 @@ export interface AssistantConfig {
   beforeRequest?: () => void;
   // 请求结束后还原现场
   afterRequest?: () => void;
-  // 加工最后一条用户消息（如拼接简历数据与字段解析）
-  buildUserContent?: (content: string) => string;
 }
