@@ -13,6 +13,8 @@ export const DEFAULT_MODULE_NAMES: { key: string; name: string }[] = [
   { key: "advantage", name: "个人优势" },
   { key: "work", name: "工作经历" },
   { key: "project", name: "项目经历" },
+  { key: "video", name: "视频作品" },
+  { key: "image", name: "图片作品" },
 ];
 // 默认简历项
 export const DEFAULT_RESUME_ITEM = {
