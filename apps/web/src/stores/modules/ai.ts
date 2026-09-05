@@ -205,10 +205,6 @@ export const useAiStore = defineStore(
       const idx = modelList.value.findIndex((model) => model.id === modelId);
       if (idx > -1) {
         modelList.value.splice(idx, 1);
-        // 如果删除的是当前激活的模型，回退到雪花服务
-        if (activeModel.value === modelId) {
-          activeModel.value = "snowflake";
-        }
       }
     }
 
@@ -252,16 +248,6 @@ export const useAiStore = defineStore(
       // 简历助手对话一并持久化到 localStorage，刷新后可恢复最近对话
       storage: localStorage,
       pick: ["sidebarMode", "currentChatId", "activeModel", "modelList", "resumeAssistantChat"],
-      // 恢复后兜底：激活模型不在已添加列表中时回退默认雪花服务
-      afterHydrate: (ctx) => {
-        const store = ctx.store as any;
-        if (
-          store.activeModel !== "snowflake" &&
-          !store.modelList.some((m: any) => m.id === store.activeModel)
-        ) {
-          store.activeModel = "snowflake";
-        }
-      },
     },
   },
 );
