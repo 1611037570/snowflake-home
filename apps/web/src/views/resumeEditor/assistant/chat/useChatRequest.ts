@@ -29,11 +29,8 @@ export const useChatRequest = ({
   const aiStore = useAiStore();
   const { thinkMode } = storeToRefs(aiStore);
   const { generating, beforeRequest, afterRequest, tools, applyResult } = config;
-  // 调试开关：本地开发或 URL 带 aiDebug=1 时，在真实请求前打印消息内容
-  const shouldPrintRequest =
-    import.meta.env.DEV ||
-    (typeof window !== "undefined" &&
-      new URLSearchParams(window.location.search).get("aiDebug") === "1");
+  // 调试开关：本地开发时在真实请求前打印消息内容
+  const shouldPrintRequest = import.meta.env.DEV;
   // 用于取消当前请求的函数引用
   let abortRequest: (() => void) | null = null;
   // ReAct 编排器引用，用于中止循环
