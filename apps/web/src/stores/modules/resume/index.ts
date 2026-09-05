@@ -54,12 +54,6 @@ export const useResumeStore = defineStore(
       isGenerating.value = false;
       // 重置选中模块
       selectedModule.value = [];
-      // 配置同步延后到首帧渲染完成后执行，避免阻塞首屏
-      const targetItem = currentItem.value;
-      setTimeout(() => {
-        if (currentItem.value !== targetItem) return;
-        syncConfigByData();
-      }, 0);
     }
     // 当前选中的简历项
     const currentItem = computed(() => list.value[currentIndex.value]);
@@ -170,9 +164,12 @@ export const useResumeStore = defineStore(
     const { refreshConfigByData } = useRefreshConfigByData();
     // 自动同步后对齐撤销基准快照，避免自动同步产生撤销历史
     function syncConfigByData() {
+      // 记录配置同步耗时，便于排查性能问题
+      const startTime = performance.now();
       const item = currentItem.value;
-      if (!refreshConfigByData(item)) return;
-      lastSnapshot = deepClone(item);
+      const changed = refreshConfigByData(item);
+      if (changed) lastSnapshot = deepClone(item);
+      console.log(`简历配置同步耗时：${(performance.now() - startTime).toFixed(2)}ms`);
     }
     // 删除简历：移入回收站（回收站已满时阻止并提示）
     const deleteResume = () => {
@@ -375,6 +372,7 @@ export const useResumeStore = defineStore(
       setGenerating,
       system,
       initResumeStatus,
+      syncConfigByData,
       getModel,
       currentItem,
       currentData,
