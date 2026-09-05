@@ -57,7 +57,7 @@
 import { useResumeStore } from "@/stores";
 import { onKeyStroke } from "@vueuse/core";
 import { storeToRefs } from "pinia";
-import { provide, watch } from "vue";
+import { nextTick, provide, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import Assistant from "./assistant/index.vue";
 import Builder from "./builder/index.vue";
@@ -89,11 +89,9 @@ const {
 watch(
   () => route.query.id,
   (id) => {
-    // 初始化简历状态
-    initResumeStatus();
     // 根据路由参数定位当前编辑的简历
     if (!id) {
-      router.push(`/resume`);
+      router.push("/resume");
       return;
     }
     const index = list.value.findIndex((item) => item.id === id);
@@ -101,7 +99,15 @@ watch(
       router.push(`/resume`);
       return;
     }
+    // 先定位当前简历，再初始化状态，使配置同步基于当前简历 data 执行
     currentIndex.value = index;
+    initResumeStatus();
+    // 表单引擎挂载后会补充模块 id 等运行时字段，待其完成后重置历史基准避免自动入栈
+    nextTick(() => {
+      nextTick(() => {
+        resumeStore.resetHistoryBase();
+      });
+    });
   },
   { immediate: true },
 );
