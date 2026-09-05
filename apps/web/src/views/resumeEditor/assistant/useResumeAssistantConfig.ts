@@ -15,7 +15,7 @@ export const useResumeAssistantConfig = (
   const resumeStore = useResumeStore();
   const { selectedModule, currentConfig, currentData, isGenerating } = storeToRefs(resumeStore);
   const { getModel } = resumeStore;
-
+  // 停用开始
   // 字段解析：有选中模块时只解析选中模块，否则解析全部模块
   const fieldAnalysis = computed(() => {
     let text = `data第一层字段解析: `;
@@ -44,7 +44,7 @@ export const useResumeAssistantConfig = (
     }
     return `data: ${JSON.stringify(data)}\n    `;
   });
-
+  // 停用结束
   // 读取当前简历数据，按需裁剪模块，并排除头像等大体积字段
   const getResumeData = (moduleKey?: string) => {
     const data = resumeStore.currentData;
@@ -62,8 +62,7 @@ export const useResumeAssistantConfig = (
   const beforeRequest = () => {
     const data = resumeStore.currentData;
     const need =
-      !selectedModule.value.length ||
-      selectedModule.value.some((item: any) => item.key === "user");
+      !selectedModule.value.length || selectedModule.value.some((item: any) => item.key === "user");
     if (!need || !data?.user?.data) return;
     trimState = { need, saved: data.user.data.avatar };
     delete data.user.data.avatar;
@@ -76,14 +75,7 @@ export const useResumeAssistantConfig = (
   };
 
   // 拼接简历数据与字段解析到最后一条用户消息
-  const buildUserContent = (content: string) => `
-    ${userData.value}
-
-    ${fieldAnalysis.value}
-
-    ${content}
-
-    `;
+  const buildUserContent = (content: string) => `${content}`;
 
   return {
     generating: isGenerating,
