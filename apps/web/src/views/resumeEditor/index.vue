@@ -31,7 +31,7 @@
           <Toolbar />
         </div>
       </Transition>
-      <!-- 导出加载浮层：teleport 到 body 以盖在导出弹窗之上 -->
+      <!-- 导出加载浮层：teleport 到 body 全屏展示 -->
       <Teleport to="body">
         <GeneratingMask
           v-if="isPrinting"

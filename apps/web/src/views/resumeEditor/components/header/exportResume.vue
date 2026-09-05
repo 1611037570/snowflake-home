@@ -22,9 +22,10 @@ const exportConfig = () => {
   URL.revokeObjectURL(url);
 };
 
-// 统一通过事件总线触发编辑器中的导出 hooks；导出期间保留弹窗，加载浮层显示在弹窗上方
+// 统一通过事件总线触发编辑器中的导出 hooks；点击导出后关闭弹窗，加载浮层全屏展示
 const emitExport = (eventName) => {
   if (isPrinting.value) return;
+  visible.value = false;
   eventBus.emit(eventName);
 };
 
@@ -44,7 +45,8 @@ const list = [
     name: "JSON配置",
     desc: "导出当前的简历配置，支持完整无损导入，方便随时恢复进度或跨设备使用",
     fn: () => {
-      // 与 PDF/图片一致：导出后保留弹窗不自动关闭
+      // 导出配置后关闭弹窗
+      visible.value = false;
       exportConfig();
     },
   },
