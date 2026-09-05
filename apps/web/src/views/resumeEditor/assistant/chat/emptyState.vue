@@ -21,9 +21,7 @@ const handleSuggest = (card) => {
       你好，我是 <span class="text-sf-theme">{{ $t("router.resumeAI") }}</span>
       <SfIcon icon="lucide:sparkles" class="text-sf-theme" size="6" />
     </div>
-    <div
-      class="flex flex-wrap items-center justify-center gap-1.5 text-sm font-medium text-sf-base"
-    >
+    <div class="flex flex-wrap items-center justify-center gap-3 text-sm font-medium text-sf-base">
       <span>能通过对话帮你打造受HR青睐的专业简历。</span>
       <span>尝试和我对话吧！ 📄✨</span>
     </div>
@@ -31,7 +29,7 @@ const handleSuggest = (card) => {
       v-if="props.selectedModules?.length"
       class="flex flex-wrap items-center justify-center gap-x-3 text-sm leading-8"
     >
-      还能根据你的
+      根据你的
       <div
         v-for="item in props.selectedModules"
         :key="item.key"
