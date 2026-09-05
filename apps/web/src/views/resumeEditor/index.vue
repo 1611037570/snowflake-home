@@ -91,12 +91,12 @@ watch(
   (id) => {
     // 根据路由参数定位当前编辑的简历
     if (!id) {
-      router.push("/resume");
+      router.push("/resume/mine");
       return;
     }
     const index = list.value.findIndex((item) => item.id === id);
     if (index == -1) {
-      router.push(`/resume`);
+      router.push("/resume/mine");
       return;
     }
     // 先定位当前简历，再初始化状态，使配置同步基于当前简历 data 执行
@@ -136,7 +136,9 @@ onKeyStroke("Escape", () => {
 onMounted(() => {});
 
 onUnmounted(() => {
-  currentUsage.value.lastUseTime = Date.now();
+  if (currentUsage.value) {
+    currentUsage.value.lastUseTime = Date.now();
+  }
 });
 </script>
 
