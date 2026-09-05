@@ -40,6 +40,27 @@ watch(activeIndex, (val, old) => {
 });
 provide("bg", "bg-sf-bg");
 
+// 配置同步：进入或切换简历时由本组件触发，完成前展示加载效果避免白屏
+const resumeStore = useResumeStore();
+const { currentItem } = storeToRefs(resumeStore);
+// 配置同步中：展示加载效果
+const configSyncing = ref(true);
+watch(
+  () => currentItem.value,
+  (item) => {
+    if (!item) return;
+    configSyncing.value = true;
+    // 延后到加载效果渲染后再同步，避免同步期间内容区白屏
+    const targetItem = item;
+    setTimeout(() => {
+      if (currentItem.value !== targetItem) return;
+      resumeStore.syncConfigByData();
+      configSyncing.value = false;
+    }, 0);
+  },
+  { immediate: true },
+);
+
 // 监听模块导航跳转，切换回编辑标签
 const switchTab = (index) => {
   activeIndex.value = index;
@@ -60,7 +81,7 @@ const editorWidth = DEFAULT_EDITOR.editorWidth;
       class="mb-3 rounded-r-3xl!"
     />
     <div
-      class="flex min-h-0 w-full flex-1 flex-col rounded-r-3xl border-y border-r border-sf-b bg-sf-primary py-3 text-sf-base hover:border-sf-theme-2"
+      class="relative flex min-h-0 w-full flex-1 flex-col rounded-r-3xl border-y border-r border-sf-b bg-sf-primary py-3 text-sf-base hover:border-sf-theme-2"
     >
       <div class="flex min-h-0 flex-1 flex-col">
         <Transition :name="`tab-slide-${direction}`" mode="out-in">
@@ -69,6 +90,14 @@ const editorWidth = DEFAULT_EDITOR.editorWidth;
             <component :is="menuList[activeIndex].component" class="h-full" />
           </KeepAlive>
         </Transition>
+      </div>
+      <!-- 配置同步完成前展示加载效果，避免内容区白屏 -->
+      <div
+        v-if="configSyncing"
+        class="absolute inset-0 z-10 flex items-center justify-center gap-3 rounded-r-3xl bg-sf-page"
+      >
+        <SfIcon icon="line-md:loading-twotone-loop" size="6" />
+        <span class="text-sm text-sf-text-2">正在加载配置</span>
       </div>
     </div>
   </div>

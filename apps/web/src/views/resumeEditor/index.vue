@@ -103,7 +103,7 @@ watch(
       router.push("/resume/mine");
       return;
     }
-    // 先定位当前简历，再初始化状态，使配置同步基于当前简历 data 执行
+    // 先定位当前简历，再初始化状态；配置同步由 Builder 执行
     currentIndex.value = index;
     initResumeStatus();
     // 表单引擎挂载后会补充模块 id 等运行时字段，待其完成后重置历史基准避免自动入栈
