@@ -4,18 +4,20 @@ import { DEFAULT_UI } from "./uiConfig";
 
 // 简历数据结构版本号：结构变更时递增，旧版本数据不兼容直接清空
 export const RESUME_DATA_VERSION = 2;
-// 默认模块 key 对应的名称（取自 formConfig，后期自行维护）
-export const DEFAULT_MODULE_NAMES: { key: string; name: string }[] = [
-  { key: "user", name: "用户信息" },
-  { key: "account", name: "社交账号" },
-  { key: "education", name: "教育经历" },
-  { key: "skill", name: "专业技能" },
-  { key: "advantage", name: "个人优势" },
-  { key: "work", name: "工作经历" },
-  { key: "project", name: "项目经历" },
-  { key: "video", name: "视频作品" },
-  { key: "image", name: "图片作品" },
+// 默认模块 key 对应的名称与图标（取自 formConfig，后期自行维护）
+export const DEFAULT_MODULE_NAMES: { key: string; name: string; icon: string }[] = [
+  { key: "user", name: "用户信息", icon: "mdi:account" },
+  { key: "account", name: "社交账号", icon: "mdi:account-box-outline" },
+  { key: "education", name: "教育经历", icon: "mdi:school-outline" },
+  { key: "skill", name: "专业技能", icon: "mdi:hammer-wrench" },
+  { key: "advantage", name: "个人优势", icon: "fa6-solid:seedling" },
+  { key: "work", name: "工作经历", icon: "lucide:briefcase" },
+  { key: "project", name: "项目经历", icon: "mdi:code-tags" },
+  { key: "video", name: "视频作品", icon: "mdi:video" },
+  { key: "image", name: "图片作品", icon: "mdi:image" },
 ];
+// 自定义模块图标：名称由用户输入动态生成，仅图标在此统一维护
+export const CUSTOM_MODULE_ICON = "mdi:puzzle-outline";
 // 默认简历项
 export const DEFAULT_RESUME_ITEM = {
   // 简历ID
