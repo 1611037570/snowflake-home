@@ -1,5 +1,9 @@
 <template>
-  <Component :is="h(ElCollapse, { ...$attrs, ref: changeRef }, $slots)" class="w-full" />
+  <Component :is="h(ElCollapse, { ...$attrs, ref: changeRef }, $slots)" class="w-full">
+    <template #default>
+      <slot></slot>
+    </template>
+  </Component>
 </template>
 
 <script setup lang="ts">
