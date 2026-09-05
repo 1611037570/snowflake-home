@@ -31,7 +31,7 @@ const handleSuggest = (card) => {
       v-if="props.selectedModules?.length"
       class="flex flex-wrap items-center justify-center gap-x-3 text-sm leading-8"
     >
-      还能根据 你的
+      还能根据你的
       <div
         v-for="item in props.selectedModules"
         :key="item.key"
@@ -47,7 +47,7 @@ const handleSuggest = (card) => {
           @click="props.removeModule?.(item.key)"
         />
       </div>
-      进行以下技能操作
+      一键操作
     </div>
     <!-- 建议操作按钮 -->
     <div class="grid w-full max-w-md grid-cols-2 gap-3">
