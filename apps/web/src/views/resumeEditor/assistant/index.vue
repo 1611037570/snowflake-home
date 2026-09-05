@@ -1,5 +1,5 @@
 <script setup>
-import { inject } from "vue";
+import { computed, inject } from "vue";
 import { useAiStore, useResumeStore } from "@/stores";
 import { DEFAULT_EDITOR } from "@/stores/modules/resume/defaultConfig";
 import { storeToRefs } from "pinia";
@@ -17,6 +17,13 @@ const { config: assistantConfig, createChat: createAssistantChat } =
   useResumeAssistant(applyDiff);
 const { resumeAssistantChat } = storeToRefs(aiStore);
 const { system } = storeToRefs(resumeStore);
+const { selectedModule } = storeToRefs(resumeStore);
+// 当前操作对象名称：与模块选择逻辑一致，未选中模块时显示“整个简历”
+const selectedName = computed(() =>
+  selectedModule.value.length
+    ? selectedModule.value.map((item) => item.name).join("、")
+    : "整个简历",
+);
 // AI助手区域宽度：读取编辑器配置，默认 400px
 const assistantWidth = DEFAULT_EDITOR.assistantWidth;
 
@@ -279,6 +286,7 @@ function addDebugMessages() {
         :config="assistantConfig"
         :flows="flows"
         :suggestions="suggestions"
+        :selected-name="selectedName"
       />
     </div>
   </div>
