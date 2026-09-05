@@ -1,18 +1,8 @@
 <script setup>
-import { useResumeStore } from "@/stores";
 import { DEFAULT_EDITOR } from "@/stores/modules/resume/defaultConfig";
-import { storeToRefs } from "pinia";
-import {
-  defineAsyncComponent,
-  markRaw,
-  nextTick,
-  onBeforeUnmount,
-  onMounted,
-  ref,
-  watch,
-} from "vue";
+import { defineAsyncComponent, markRaw, onBeforeUnmount, onMounted, ref, watch } from "vue";
 import eventBus from "@/utils/modules/eventBus";
-import Editor from "./editor/index.vue";
+const AsyncEditor = markRaw(defineAsyncComponent(() => import("./editor/index.vue")));
 const AsyncCustom = markRaw(defineAsyncComponent(() => import("./custom/index.vue")));
 const AsyncTemplate = markRaw(
   defineAsyncComponent({
@@ -25,7 +15,7 @@ const menuList = [
   {
     name: "编辑",
     icon: "lucide:file-text",
-    component: markRaw(Editor),
+    component: AsyncEditor,
   },
   {
     name: "设计",
@@ -48,54 +38,16 @@ watch(activeIndex, (val, old) => {
 });
 provide("bg", "bg-sf-bg");
 
-// 配置同步：进入或切换简历时由本组件触发，完成前展示加载效果避免白屏
-const resumeStore = useResumeStore();
-const { currentItem } = storeToRefs(resumeStore);
-// 配置同步中：展示加载效果
-const configSyncing = ref(true);
-// 配置同步定时器：离开组件时取消，避免卸载后继续同步或误开历史记录
-let syncTimer;
-// 组件挂载状态：卸载后不再执行开启历史记录
-let mounted = true;
-watch(
-  () => currentItem.value,
-  (item) => {
-    if (!item) return;
-    // 同步期间暂停历史记录，避免初始化与同步产生的自动变更写入历史
-    resumeStore.disableHistory();
-    configSyncing.value = true;
-    // 延后到加载效果渲染后再同步，避免同步期间内容区白屏
-    const targetItem = item;
-    clearTimeout(syncTimer);
-    syncTimer = setTimeout(() => {
-      if (currentItem.value !== targetItem) return;
-      resumeStore.syncConfigByData();
-      configSyncing.value = false;
-      // 表单完成渲染后开启历史记录开关
-      nextTick(() => {
-        nextTick(() => {
-          if (!mounted || currentItem.value !== targetItem) return;
-          resumeStore.enableHistory();
-        });
-      });
-    }, 0);
-  },
-  { immediate: true },
-);
-
 // 监听模块导航跳转，切换回编辑标签
 const switchTab = (index) => {
   activeIndex.value = index;
 };
 onMounted(() => eventBus.on("switch-builder-tab", switchTab));
 onBeforeUnmount(() => {
-  mounted = false;
-  clearTimeout(syncTimer);
-  resumeStore.disableHistory();
   eventBus.off("switch-builder-tab", switchTab);
 });
 
-// 编辑器区域宽度：读取编辑器配置，专注模式保持固定 420px
+// 编辑器区域宽度：读取编辑器配置
 const editorWidth = DEFAULT_EDITOR.editorWidth;
 </script>
 
@@ -108,7 +60,7 @@ const editorWidth = DEFAULT_EDITOR.editorWidth;
       class="mb-3 rounded-r-3xl!"
     />
     <div
-      class="relative flex min-h-0 w-full flex-1 flex-col rounded-r-3xl border-y border-r border-sf-b bg-sf-primary py-3 text-sf-base hover:border-sf-theme-2"
+      class="flex min-h-0 w-full flex-1 flex-col rounded-r-3xl border-y border-r border-sf-b bg-sf-primary py-3 text-sf-base hover:border-sf-theme-2"
     >
       <div class="flex min-h-0 flex-1 flex-col">
         <Transition :name="`tab-slide-${direction}`" mode="out-in">
@@ -117,14 +69,6 @@ const editorWidth = DEFAULT_EDITOR.editorWidth;
             <component :is="menuList[activeIndex].component" class="h-full" />
           </KeepAlive>
         </Transition>
-      </div>
-      <!-- 配置同步完成前展示加载效果，避免内容区白屏 -->
-      <div
-        v-if="configSyncing"
-        class="absolute inset-0 z-10 flex items-center justify-center gap-3 rounded-r-3xl bg-sf-page"
-      >
-        <SfIcon icon="line-md:loading-twotone-loop" size="6" />
-        <span class="text-sm text-sf-text-2">正在加载配置</span>
       </div>
     </div>
   </div>
