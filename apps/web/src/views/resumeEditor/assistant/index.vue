@@ -1,5 +1,5 @@
 <script setup>
-import { inject, onMounted, ref } from "vue";
+import { inject } from "vue";
 import { useAiStore, useResumeStore } from "@/stores";
 import { DEFAULT_EDITOR } from "@/stores/modules/resume/defaultConfig";
 import { storeToRefs } from "pinia";
@@ -20,16 +20,11 @@ const { system } = storeToRefs(resumeStore);
 // AI助手区域宽度：读取编辑器配置，默认 400px
 const assistantWidth = DEFAULT_EDITOR.assistantWidth;
 
-// 简历助手对话：优先用 Pinia 持久化缓存，首次进入时初始化默认对话
+// 简历助手对话：ai store 已持久化，无缓存时初始化默认对话
 if (!resumeAssistantChat.value) {
   resumeAssistantChat.value = createAssistantChat();
 }
 const chat = resumeAssistantChat;
-
-// 挂载时清空持久化对话，每次进入都是新对话
-onMounted(() => {
-  resumeAssistantChat.value = createAssistantChat();
-});
 
 function createNewChat() {
   chat.value = createAssistantChat();

@@ -79,7 +79,7 @@ export const useAiStore = defineStore(
     const currentChatId = ref<string>("");
     // 是否开启思考模式
     const thinkMode = ref<boolean>(true);
-    // 简历助手对话（临时持久化，便于分析排查）
+    // 简历助手对话：随 ai store 持久化保存，重进编辑器时恢复
     const resumeAssistantChat = ref<Chat | null>(null);
 
     const currentChat = computed(() => chatList.value.find((c) => c.id === currentChatId.value));
@@ -249,8 +249,9 @@ export const useAiStore = defineStore(
   },
   {
     persist: {
+      // 简历助手对话一并持久化到 localStorage，刷新后可恢复最近对话
       storage: localStorage,
-      pick: ["sidebarMode", "currentChatId", "activeModel", "modelList"],
+      pick: ["sidebarMode", "currentChatId", "activeModel", "modelList", "resumeAssistantChat"],
       // 恢复后兜底：激活模型不在已添加列表中时回退默认雪花服务
       afterHydrate: (ctx) => {
         const store = ctx.store as any;
