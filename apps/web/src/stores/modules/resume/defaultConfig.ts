@@ -62,7 +62,7 @@ export const DEFAULT_SYSTEM = {
 // 默认编辑器配置
 export const DEFAULT_EDITOR = {
   // 编辑器区域宽度(px)
-  editorWidth: 380,
+  editorWidth: 400,
   // AI助手区域宽度(px)
-  assistantWidth: 380,
+  assistantWidth: 400,
 };
