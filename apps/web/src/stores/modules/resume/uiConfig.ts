@@ -37,6 +37,30 @@ export const themeTemplateList = [
     name: "简约",
     value: "minimal",
   },
+  {
+    name: "经典",
+    value: "classic",
+  },
+  {
+    name: "学术",
+    value: "academic",
+  },
+  {
+    name: "清新",
+    value: "fresh",
+  },
+  {
+    name: "活力",
+    value: "vivid",
+  },
+  {
+    name: "创意",
+    value: "creative",
+  },
+  {
+    name: "稳重",
+    value: "steady",
+  },
 ];
 // 用户信息展示模式列表
 export const userInfoModeList = [

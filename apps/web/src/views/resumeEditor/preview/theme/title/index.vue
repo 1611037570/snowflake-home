@@ -1,9 +1,15 @@
 <script setup>
 import { computed, inject } from "vue";
 import Business from "./themes/business.vue";
+import Academic from "./themes/academic.vue";
+import Classic from "./themes/classic.vue";
+import Creative from "./themes/creative.vue";
 import Default from "./themes/default.vue";
+import Fresh from "./themes/fresh.vue";
 import Minimal from "./themes/minimal.vue";
 import Modern from "./themes/modern.vue";
+import Steady from "./themes/steady.vue";
+import Vivid from "./themes/vivid.vue";
 
 // 标题主题映射：新增主题在此注册并新建对应主题组件，无需改动模板
 const themeComponents = {
@@ -11,6 +17,12 @@ const themeComponents = {
   modern: Modern,
   business: Business,
   minimal: Minimal,
+  classic: Classic,
+  academic: Academic,
+  fresh: Fresh,
+  vivid: Vivid,
+  creative: Creative,
+  steady: Steady,
 };
 defineProps({
   title: {
