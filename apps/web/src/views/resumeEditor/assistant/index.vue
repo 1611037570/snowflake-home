@@ -4,7 +4,7 @@ import { useAiStore, useResumeStore } from "@/stores";
 import { DEFAULT_EDITOR } from "@/stores/modules/resume/defaultConfig";
 import { storeToRefs } from "pinia";
 import Chat from "./chat/index.vue";
-import { defaultMessage } from "./prompt.ts";
+import { defaultMessage } from "./skills/defaultPrompt";
 import { resumeDataContract } from "./skills/resumeDataContract";
 import { useResumeAssistantConfig } from "./useResumeAssistantConfig";
 
