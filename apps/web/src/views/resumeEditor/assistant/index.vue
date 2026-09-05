@@ -5,7 +5,7 @@ import { DEFAULT_EDITOR } from "@/stores/modules/resume/defaultConfig";
 import { storeToRefs } from "pinia";
 import Chat from "./chat/index.vue";
 import { defaultMessage } from "./prompt.ts";
-import { resumeDataContract } from "./skills/resume-data-contract";
+import { resumeDataContract } from "./skills/resumeDataContract";
 import { useResumeAssistantConfig } from "./useResumeAssistantConfig";
 
 // AI 对话
@@ -29,7 +29,6 @@ const createAssistantChat = () => {
     ...createDefaultMessage(),
     role: "system",
     content: resumeDataContract().instructions,
-    typing: false,
   });
   return newChat;
 };

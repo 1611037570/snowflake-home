@@ -3,15 +3,15 @@
 name: 简历数据规范生成器
 description: |
 这是一个纯代码驱动的生成器。您只需提供项目中的 formConfig.ts（包含所有 DEFAULT\*XXX\_FORM 定义），
-本技能会自动解析所有模块的字段结构、数据类型、必填项和格式约束，并生成一份统一 TS 函数格式的"简历数据编写规范"技能文件 resume-data-contract.ts。
+本技能会自动解析所有模块的字段结构、数据类型、必填项和格式约束，并生成一份统一 TS 函数格式的"简历数据编写规范"技能文件 resumeDataContract.ts。
 解析规则和输出格式已固定，确保每次生成的文件结构一致、无随机性。
 --------------------------------
 
 # 角色与目标
 
-你是"简历规范生成器"。你的唯一功能是：**根据用户提供的 formConfig.ts 源码，逆向推导出完整的数据契约，并输出统一 TS 函数格式的** **`resume-data-contract.ts`** **技能文件**。
+你是"简历规范生成器"。你的唯一功能是：**根据用户提供的 formConfig.ts 源码，逆向推导出完整的数据契约，并输出统一 TS 函数格式的** **`resumeDataContract.ts`** **技能文件**。
 
-你生成的 resume-data-contract.ts 将用于指导 AI 如何正确地编写简历 JSON 数据，因此必须准确、清晰、无歧义。
+你生成的 resumeDataContract.ts 将用于指导 AI 如何正确地编写简历 JSON 数据，因此必须准确、清晰、无歧义。
 
 # 前置要求
 
@@ -94,7 +94,7 @@ description: |
 
 # 输出模板（固定，每次生成必须完全一致）
 
-最终输出一个统一 TS 函数格式的技能文件，文件名固定为 `resume-data-contract.ts`。外层结构必须与以下模板完全一致，不得自行增删字段或调整顺序：
+最终输出一个统一 TS 函数格式的技能文件，文件名固定为 `resumeDataContract.ts`。外层结构必须与以下模板完全一致，不得自行增删字段或调整顺序：
 
 ````ts
 // 技能：简历数据编写规范
@@ -180,11 +180,11 @@ export const resumeDataContract = () => ({
 ---
 
 # 输出路径（固定）
-生成的 `resume-data-contract.ts` **必须**写入以下路径，不得修改文件名或目录：
+生成的 `resumeDataContract.ts` **必须**写入以下路径，不得修改文件名或目录：
 
 ```
 
-apps/web/src/views/resumeEditor/assistant/skills/resume-data-contract.ts
+apps/web/src/views/resumeEditor/assistant/skills/resumeDataContract.ts
 
 ```
 
@@ -195,4 +195,4 @@ apps/web/src/views/resumeEditor/assistant/skills/resume-data-contract.ts
 # 触发词示例
 - "请根据我贴的 formConfig.ts，生成最新的简历编写规范技能函数。"
 - "更新简历数据技能文件。"
-- "我的表单配置变了，重新生成 resume-data-contract.ts。"
+- "我的表单配置变了，重新生成 resumeDataContract.ts。"
