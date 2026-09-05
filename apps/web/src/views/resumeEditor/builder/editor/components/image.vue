@@ -68,14 +68,6 @@ const { openPicker, loading } = useImageUpload({
       <div class="flex min-w-0 flex-1 items-center gap-3">
         <SfSlider v-model="size" :min="25" :max="100" :step="5" class="flex-1" size="small" />
         <span class="w-12 shrink-0 text-right text-sm">{{ size }}%</span>
-        <SfIcon
-          v-if="img"
-          icon="ic:round-delete"
-          size="4"
-          class="shrink-0 cursor-pointer text-sf-text-3 hover:text-sf-theme"
-          title="删除图片"
-          @click="img = ''"
-        />
       </div>
     </div>
   </div>
