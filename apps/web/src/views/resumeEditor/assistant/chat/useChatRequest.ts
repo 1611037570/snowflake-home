@@ -28,14 +28,7 @@ export const useChatRequest = ({
 }: UseChatRequestOptions) => {
   const aiStore = useAiStore();
   const { thinkMode } = storeToRefs(aiStore);
-  const {
-    generating,
-    beforeRequest,
-    afterRequest,
-    buildUserContent,
-    tools,
-    applyResult,
-  } = config;
+  const { generating, beforeRequest, afterRequest, buildUserContent, tools, applyResult } = config;
   // 用于取消当前请求的函数引用
   let abortRequest: (() => void) | null = null;
   // ReAct 编排器引用，用于中止循环
@@ -132,35 +125,6 @@ export const useChatRequest = ({
       // 获取刚添加的AI消息引用
       lastMsg = currentMessages.value[currentMessages.value.length - 1] ?? null;
       state = createChatState(lastMsg, isCurrentRequest);
-
-      // 测试开关：配置 VITE_MOCK_AI=true 时拦截真实请求，返回模拟数据
-      if (import.meta.env.VITE_MOCK_AI === "true") {
-        const mockContent = JSON.stringify({
-          data: null,
-          analysis: "## 模拟回复\n\n这是一条测试数据，未调用真实 AI 接口。",
-          followQuestions: ["再来一次", "帮我优化一下"],
-        });
-        await new Promise((resolve) => {
-          let index = 0;
-          const timer = setInterval(() => {
-            if (!isCurrentRequest() || !lastMsg) {
-              clearInterval(timer);
-              resolve();
-              return;
-            }
-            lastMsg.requestStatus = "generating";
-            lastMsg.content += mockContent[index++];
-            scrollToBottom();
-            if (index >= mockContent.length) {
-              clearInterval(timer);
-              lastMsg.requestStatus = "success";
-              scrollToBottom();
-              resolve();
-            }
-          }, 12);
-        });
-        return;
-      }
 
       // 所有请求统一走 React 编排，技能规范已随对话系统消息提供
       const llm = getLLM();
