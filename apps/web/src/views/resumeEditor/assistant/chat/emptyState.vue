@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import type { SuggestCard } from "../../types";
 
-const props = defineProps<{ suggestions: SuggestCard[] }>();
+// 当前操作对象名称：选中模块名或“整个简历”
+const props = defineProps<{ suggestions: SuggestCard[]; selectedName?: string }>();
 const emit = defineEmits(["switch-mode", "suggest"]);
 
 // 点击建议卡片，启动对应流程
@@ -22,7 +23,11 @@ const handleSuggest = (card) => {
       <span>能通过对话帮你打造受HR青睐的专业简历。</span>
       <span>尝试和我对话吧！ 📄✨</span>
     </div>
-
+    <div>
+      还能根据 你的
+      <span class="text-sf-theme">{{ props.selectedName || "整个简历" }}</span>
+      进行以下技能操作
+    </div>
     <!-- 建议操作按钮 -->
     <div class="grid w-full max-w-md grid-cols-2 gap-3">
       <button
@@ -37,12 +42,9 @@ const handleSuggest = (card) => {
           <SfIcon :icon="card.icon" size="4.5" />
         </div>
         <div class="flex flex-col gap-0.5 overflow-hidden">
-          <h3 class="text-[13px] font-bold tracking-tight text-sf-text">
+          <h3 class="text-[14px] font-bold tracking-tight text-sf-text">
             {{ card.title }}
           </h3>
-          <p class="truncate text-[10px] text-sf-text-2">
-            {{ card.desc }}
-          </p>
         </div>
       </button>
     </div>
