@@ -1,8 +1,13 @@
 <template>
-  <el-row class="m-0! w-full" :class="{ 'drag-array-active': isDragging }" :gutter="0" ref="row">
+  <el-row
+    class="m-0! w-full gap-3"
+    :class="[{ 'drag-array-active': isDragging }, currentForm?.rowClass]"
+    :gutter="0"
+    ref="row"
+  >
     <FormItem
       v-for="item in formListWithStyle"
-      :class="currentForm.colClass"
+      :class="currentForm?.colClass"
       :currentForm="item.item"
       :key="item.item.id"
       :style="item.style"
