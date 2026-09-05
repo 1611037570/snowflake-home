@@ -6,7 +6,7 @@
   >
     <template #label v-if="label && labelPosition === 'top'">
       <div class="mb-1 flex h-5 w-full items-center text-sf-base" @click.stop="">
-        <span class="pr-1 pl-2 text-sf-text">
+        <span class="pr-1 pl-2 text-[15px] text-sf-text">
           {{ label }}
         </span>
         <sf-tooltip :content="tip" v-if="tip" class="text-sf-text" />
