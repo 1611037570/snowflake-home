@@ -2,7 +2,7 @@
 import { useResumeStore } from "@/stores";
 import { computed } from "vue";
 import { storeToRefs } from "pinia";
-import { resumeOptimization } from "./skills/resume_optimization";
+import { resumeOptimization } from "./skills/resumeOptimization";
 import { createSkillTools } from "./skills/skillTools";
 import { createResumeTools } from "./tools";
 import type { AssistantConfig } from "./types";
