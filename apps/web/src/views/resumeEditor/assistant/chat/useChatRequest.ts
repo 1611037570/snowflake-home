@@ -28,7 +28,7 @@ export const useChatRequest = ({
 }: UseChatRequestOptions) => {
   const aiStore = useAiStore();
   const { thinkMode } = storeToRefs(aiStore);
-  const { generating, beforeRequest, afterRequest, buildUserContent, tools, applyResult } = config;
+  const { generating, beforeRequest, afterRequest, tools, applyResult } = config;
   // 用于取消当前请求的函数引用
   let abortRequest: (() => void) | null = null;
   // ReAct 编排器引用，用于中止循环
@@ -111,10 +111,6 @@ export const useChatRequest = ({
       }));
       const lastInput = messages.at(-1);
       if (!lastInput) return;
-      // 拼接调用方提供的用户上下文（如简历数据与字段解析）
-      if (buildUserContent) {
-        lastInput.content = buildUserContent(lastInput.content);
-      }
 
       // 添加一条空的AI回复消息（打字状态）
       addMessage({
