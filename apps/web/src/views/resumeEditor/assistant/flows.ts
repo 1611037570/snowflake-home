@@ -1,22 +1,5 @@
 // 引导式 AI 流程配置：点击建议卡片后，先通过预设问答收集信息，再发起真实请求
-
-export type FlowStep = {
-  // 询问文案
-  question: string;
-  // 选项按钮
-  options: string[];
-  // 自由输入：等待用户在输入框输入文本作为答案
-  input?: boolean;
-};
-
-export type Flow = {
-  // 点击卡片后展示的用户消息
-  userContent: string;
-  // 引导步骤
-  steps: FlowStep[];
-  // 收集完成后的真实请求构造
-  build: (answers: string[]) => { prompt?: string; userContent: string };
-};
+import type { Flow, SuggestCard } from "./types";
 
 export const flows: Record<string, Flow> = {
   // 简历翻译：先选择翻译方向，再执行
@@ -177,3 +160,43 @@ ${experienceInfo}
     },
   },
 };
+
+// 建议操作卡片：点击后进入对应引导流程，由调用方传给 Chat
+export const suggestions: SuggestCard[] = [
+  {
+    icon: "ph:file-plus-duotone",
+    title: "AI生成简历",
+    desc: "为指定模块从零生成一段经历草稿",
+    flow: "resumeCreate",
+  },
+  {
+    icon: "ph:magic-wand-duotone",
+    title: "简历优化",
+    desc: "全面优化简历内容",
+    flow: "resumeOptimize",
+  },
+  {
+    icon: "ph:translate-duotone",
+    title: "简历翻译",
+    desc: "将简历翻译成英文或中文",
+    flow: "resumeTranslate",
+  },
+  {
+    icon: "ph:microphone-duotone",
+    title: "面试自我介绍",
+    desc: "将简历转成面试口头稿",
+    flow: "selfIntro",
+  },
+  {
+    icon: "ph:hand-waving-duotone",
+    title: "打招呼语",
+    desc: "将简历转成开场打招呼语",
+    flow: "greeting",
+  },
+  {
+    icon: "ph:target-duotone",
+    title: "JD对标优化",
+    desc: "根据岗位JD对标优化简历",
+    flow: "jdOptimize",
+  },
+];

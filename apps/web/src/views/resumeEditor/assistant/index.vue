@@ -4,6 +4,7 @@ import { useAiStore, useResumeStore } from "@/stores";
 import { DEFAULT_EDITOR } from "@/stores/modules/resume/defaultConfig";
 import { storeToRefs } from "pinia";
 import Chat from "./chat/index.vue";
+import { flows, suggestions } from "./flows";
 import { useResumeAssistant } from "./useResumeAssistant";
 
 // AI 对话
@@ -59,7 +60,12 @@ function createNewChat() {
           />
         </SfTooltip>
       </div>
-      <Chat :chat="chat" :config="assistantConfig" />
+      <Chat
+        :chat="chat"
+        :config="assistantConfig"
+        :flows="flows"
+        :suggestions="suggestions"
+      />
     </div>
   </div>
 </template>
