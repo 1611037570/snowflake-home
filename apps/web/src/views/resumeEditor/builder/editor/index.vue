@@ -26,11 +26,56 @@ const dynamicComponents = {
   video: Video,
   cityPicker: CityPicker,
 };
+
+// 配置同步：进入或切换简历时由本组件触发，完成前展示加载效果避免白屏
+const { currentItem } = storeToRefs(resumeStore);
+// 配置同步中：展示加载效果
+const configSyncing = ref(true);
+// 配置同步定时器：离开组件时取消，避免卸载后继续同步或误开历史记录
+let syncTimer;
+// 组件挂载状态：卸载后不再执行开启历史记录
+let mounted = true;
+watch(
+  () => currentItem.value,
+  (item) => {
+    if (!item) return;
+    // 同步期间暂停历史记录，避免初始化与同步产生的自动变更写入历史
+    resumeStore.disableHistory();
+    configSyncing.value = true;
+    // 延后到加载效果渲染后再同步，避免同步期间内容区白屏
+    const targetItem = item;
+    clearTimeout(syncTimer);
+    syncTimer = setTimeout(() => {
+      if (currentItem.value !== targetItem) return;
+      resumeStore.syncConfigByData();
+      configSyncing.value = false;
+      // 表单完成渲染后开启历史记录开关
+      nextTick(() => {
+        nextTick(() => {
+          if (!mounted || currentItem.value !== targetItem) return;
+          resumeStore.enableHistory();
+        });
+      });
+    }, 0);
+  },
+  { immediate: true },
+);
+
+onBeforeUnmount(() => {
+  mounted = false;
+  clearTimeout(syncTimer);
+  resumeStore.disableHistory();
+});
 </script>
 
 <template>
   <SfScrollbar class="h-full">
-    <div class="flex w-full flex-col">
+    <!-- 配置同步完成前展示加载效果，避免内容区白屏 -->
+    <div v-if="configSyncing" class="flex w-full flex-1 items-center justify-center gap-3">
+      <SfIcon icon="line-md:loading-twotone-loop" size="6" />
+      <span class="text-sm text-sf-text-2">正在加载配置</span>
+    </div>
+    <div v-else class="flex w-full flex-col">
       <SfDynamicForm
         v-model:form="currentFixedConfig"
         v-model:data="currentData"
