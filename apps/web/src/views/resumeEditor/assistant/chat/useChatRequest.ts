@@ -104,11 +104,13 @@ export const useChatRequest = ({
     try {
       // 请求前调用方准备（如临时裁剪头像等大字段）
       beforeRequest?.();
-      // 构建消息列表（只复制role和content）
-      const messages = currentMessages.value.map((message) => ({
-        role: message.role,
-        content: message.content,
-      }));
+      // 构建消息列表（只复制 role 和 content，跳过带上下文标记的引导对话）
+      const messages = currentMessages.value
+        .filter((message) => !message.skipContext)
+        .map((message) => ({
+          role: message.role,
+          content: message.content,
+        }));
       const lastInput = messages.at(-1);
       if (!lastInput) return;
 

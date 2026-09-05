@@ -38,6 +38,8 @@ export type Message = {
   contentCollapsed: boolean;
   // 请求状态
   requestStatus: string;
+  // 上下文标记：为 true 时仅作界面展示，不随请求发送给模型
+  skipContext?: boolean;
 };
 // 已添加的模型（用户实际使用的模型配置）
 export type ModelItem = {

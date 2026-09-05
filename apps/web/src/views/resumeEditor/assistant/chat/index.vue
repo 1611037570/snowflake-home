@@ -183,10 +183,12 @@ const handleSuggest = (payload) => {
   if (!flow) return;
   // 记录流程状态并展示初始用户消息
   activeFlow.value = { flow, stepIndex: 0, answers: [] };
+  // 引导对话仅作界面展示，不加入请求上下文
   addMessage({
     role: "user",
     content: flow.userContent,
     typing: false,
+    skipContext: true,
   });
   scrollToBottom();
   // 展示第一轮预设询问
@@ -200,6 +202,7 @@ const runFlowStep = () => {
   const state = activeFlow.value;
   const step = state?.flow?.steps?.[state.stepIndex];
   if (!step) return;
+  // 引导对话仅作界面展示，不加入请求上下文
   addMessage({
     role: "assistant",
     content: JSON.stringify({
@@ -210,6 +213,7 @@ const runFlowStep = () => {
     }),
     typing: false,
     requestStatus: "success",
+    skipContext: true,
   });
   scrollToBottom();
 };
@@ -222,10 +226,12 @@ const handleFlowAnswer = (answer) => {
   if (!state) return;
   // 记录答案并展示为用户消息
   state.answers.push(answer);
+  // 引导对话仅作界面展示，不加入请求上下文
   addMessage({
     role: "user",
     content: answer,
     typing: false,
+    skipContext: true,
   });
   scrollToBottom();
   // 推进到下一步
