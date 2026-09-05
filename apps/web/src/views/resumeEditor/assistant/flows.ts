@@ -138,7 +138,8 @@ ${jd}
     userContent: "帮我从零生成一段简历经历",
     steps: [
       {
-        question: "请描述你想为哪个模块生成经历及大致方向（例如：生成一段产品经理的工作经历、生成一段 Vue 后台的项目经历）",
+        question:
+          "请描述你想为哪个模块生成经历及大致方向（例如：生成一段产品经理的工作经历、生成一段 Vue 后台的项目经历）",
         options: [],
         input: true,
       },
@@ -166,26 +167,26 @@ export const suggestions: SuggestCard[] = [
   {
     icon: "ph:file-plus-duotone",
     title: "AI生成简历",
-    desc: "为指定模块从零生成一段经历草稿",
+    desc: "从零生成一段简历经历",
     flow: "resumeCreate",
   },
   {
     icon: "ph:magic-wand-duotone",
-    title: "简历优化",
+    title: "AI优化简历",
     desc: "全面优化简历内容",
     flow: "resumeOptimize",
   },
   {
     icon: "ph:translate-duotone",
-    title: "简历翻译",
+    title: "AI简历翻译",
     desc: "将简历翻译成英文或中文",
     flow: "resumeTranslate",
   },
   {
-    icon: "ph:microphone-duotone",
-    title: "面试自我介绍",
-    desc: "将简历转成面试口头稿",
-    flow: "selfIntro",
+    icon: "ph:target-duotone",
+    title: "JD对标优化",
+    desc: "根据岗位JD对标优化简历",
+    flow: "jdOptimize",
   },
   {
     icon: "ph:hand-waving-duotone",
@@ -194,9 +195,9 @@ export const suggestions: SuggestCard[] = [
     flow: "greeting",
   },
   {
-    icon: "ph:target-duotone",
-    title: "JD对标优化",
-    desc: "根据岗位JD对标优化简历",
-    flow: "jdOptimize",
+    icon: "ph:microphone-duotone",
+    title: "面试自我介绍",
+    desc: "将简历转成面试口头稿",
+    flow: "selfIntro",
   },
 ];
