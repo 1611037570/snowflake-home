@@ -150,7 +150,7 @@ export const useResumeStore = defineStore(
     };
     // 简历表单配置同步：按当前简历 data 刷新最新默认配置并补齐数组子项
     const { refreshConfigByData } = useRefreshConfigByData();
-    // 配置同步后对齐撤销基准快照，避免自动同步产生撤销历史
+    // 自动同步后对齐撤销基准快照，避免自动同步产生撤销历史
     function syncConfigByData() {
       const item = currentItem.value;
       if (!refreshConfigByData(item)) return;
@@ -201,13 +201,27 @@ export const useResumeStore = defineStore(
       const remaining = trashRetentionMs - (Date.now() - deletedAt);
       return remaining <= 0 ? 0 : Math.ceil(remaining / (24 * 60 * 60 * 1000));
     };
-    // 序列化简历内容（排除 usage），用于历史去重比较
+    // 移除表单引擎渲染期补充的运行时 id（不参与内容差异比较）
+    const removeRuntimeIds = (value: any): any => {
+      if (Array.isArray(value)) {
+        return value.map(removeRuntimeIds);
+      }
+      if (value && typeof value === "object") {
+        return Object.fromEntries(
+          Object.entries(value)
+            .filter(([key]) => key !== "id")
+            .map(([key, item]) => [key, removeRuntimeIds(item)]),
+        );
+      }
+      return value;
+    };
+    // 序列化简历内容（排除 usage 与引擎补充的运行时 id），用于历史去重比较
     const serializeForCompare = (item: any) => {
       if (!item) return "";
       return JSON.stringify({
         data: item.data,
-        config: item.config,
-        fixedConfig: item.fixedConfig,
+        config: removeRuntimeIds(item.config),
+        fixedConfig: removeRuntimeIds(item.fixedConfig),
         ui: item.ui,
       });
     };
@@ -239,10 +253,18 @@ export const useResumeStore = defineStore(
       if (serializeForCompare(item) !== serializeForCompare(lastSnapshot)) {
         // 将修改前的状态作为历史（防抖合并后入栈）
         pushHistory(lastSnapshot);
-        // 更新基准快照为当前内容，作为下次变化时的"修改前状态"
-        lastSnapshot = deepClone(item);
       }
+      // 更新基准快照为当前内容，作为下次变化时的"修改前状态"
+      lastSnapshot = deepClone(item);
     }, 300);
+    // 重置历史基准：取消防抖、清空历史栈并对齐当前简历快照（编辑器初始化完成后调用）
+    const resetHistoryBase = () => {
+      recordHistory.cancel();
+      pushHistory.cancel();
+      undoStack.value = [];
+      redoStack.value = [];
+      lastSnapshot = currentItem.value ? deepClone(currentItem.value) : null;
+    };
     // 应用历史快照：只恢复内容字段（data/config/fixedConfig/ui），保留 id 与 usage
     const applySnapshot = (snapItem: any) => {
       const item = currentItem.value;
@@ -321,11 +343,7 @@ export const useResumeStore = defineStore(
     );
     // 切换简历时：取消防抖等待中的历史、清空历史栈并重置基准快照
     watch(currentIndex, () => {
-      recordHistory.cancel();
-      pushHistory.cancel();
-      undoStack.value = [];
-      redoStack.value = [];
-      lastSnapshot = currentItem.value ? deepClone(currentItem.value) : null;
+      resetHistoryBase();
     });
 
     return {
@@ -363,6 +381,7 @@ export const useResumeStore = defineStore(
       redo,
       undoStack,
       redoStack,
+      resetHistoryBase,
       init,
       resetSettings,
     };
