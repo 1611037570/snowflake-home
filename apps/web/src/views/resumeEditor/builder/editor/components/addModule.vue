@@ -1,6 +1,7 @@
 <script setup>
 import { useResumeStore } from "@/stores";
 import { allConfig } from "@/stores/modules/resume/formConfig";
+import { DEFAULT_MODULE_NAMES } from "@/stores/modules/resume/defaultConfig";
 import { storeToRefs } from "pinia";
 import { computed, ref } from "vue";
 import { getUUID } from "@/utils";
@@ -8,28 +9,16 @@ const resumeStore = useResumeStore();
 const { currentConfig } = storeToRefs(resumeStore);
 defineOptions({ name: "AddModule" });
 
-// 预设模块列表
-const presets = ref([
-  {
-    name: "教育经历",
-    value: "education",
-  },
-  {
-    name: "社交账号",
-    value: "account",
-  },
-  { name: "专业技能", value: "skill" },
-  { name: "工作经历", value: "work" },
-  { name: "项目经历", value: "project" },
-  { name: "个人优势", value: "advantage" },
-  { name: "视频作品", value: "video" },
-  { name: "图片作品", value: "image" },
-]);
+// 预设模块列表：复用 DEFAULT_MODULE_NAMES 统一维护 key 与名称，user 为固定模块不可添加
+const presets = DEFAULT_MODULE_NAMES.filter((item) => item.key !== "user").map((item) => ({
+  name: item.name,
+  value: item.key,
+}));
 
 // 过滤后的预设模块：只显示尚未添加到当前表单中的模块
 const filteredPresets = computed(() => {
-  if (!currentConfig.value) return presets.value;
-  return presets.value.filter((item) => {
+  if (!currentConfig.value) return presets;
+  return presets.filter((item) => {
     // 检查当前表单配置中是否已存在该模块（通过比对模块名称与表单首项的 label）
     return !currentConfig.value.fields.some((form) => form.key === item.value);
   });
