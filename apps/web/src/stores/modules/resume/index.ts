@@ -4,6 +4,7 @@ import { getUUID } from "@/utils";
 import { defineStore } from "pinia";
 import { computed, ref, watch } from "vue";
 import { DEFAULT_MODULE_NAMES, DEFAULT_RESUME_ITEM, DEFAULT_SYSTEM } from "./defaultConfig";
+import { allConfig } from "./formConfig";
 
 import { debounce, merge } from "lodash-es";
 export type ResumeLayout = "list" | "three" | "ai";
@@ -53,6 +54,8 @@ export const useResumeStore = defineStore(
       isGenerating.value = false;
       // 重置选中模块
       selectedModule.value = [];
+      // 按当前简历 data 换取最新默认表单配置，避免与默认配置出现差异
+      refreshConfigByData();
     }
     // 当前选中的简历项
     const currentItem = computed(() => list.value[currentIndex.value]);
@@ -145,6 +148,59 @@ export const useResumeStore = defineStore(
       if (value == null) return value;
       return structuredClone(JSON.parse(JSON.stringify(value)));
     };
+    // 数组型模块按 data 条数补齐 list，不清空已有 list 仅追加缺失子项
+    function fillArrayListByData(field: any, data: any) {
+      const arrayField = field.fields?.find((f: any) => f.type === "array");
+      if (!arrayField?.addConfig) return;
+      // 由 addConfig 首项绑定路径解析数据数组路径（截取 "?" 之前的部分）
+      const source: string[] | undefined = arrayField.addConfig.model?.[0]?.source;
+      if (!Array.isArray(source)) return;
+      const index = source.indexOf("?");
+      if (index === -1) return;
+      const dataArray = source
+        .slice(0, index)
+        .reduce((acc: any, key: string) => acc?.[key], data);
+      const count = Array.isArray(dataArray) ? dataArray.length : 0;
+      while (arrayField.list.length < count) {
+        arrayField.list.push(structuredClone(arrayField.addConfig));
+      }
+    }
+    // 以当前简历 data 为准，将各模块表单配置刷新为最新默认配置
+    function refreshConfigByData() {
+      const item = currentItem.value;
+      if (!item) return;
+      const data = item.data;
+      if (!data || typeof data !== "object") return;
+      let changed = false;
+      Object.keys(data).forEach((key) => {
+        const defaultForm = allConfig[key];
+        if (!defaultForm) return;
+        // user 模块属于固定配置，其余模块属于可编辑配置
+        const targetConfig = key === "user" ? item.fixedConfig : item.config;
+        if (!targetConfig || !Array.isArray(targetConfig.fields)) return;
+        // user 默认配置为字段数组，其余模块为单条字段
+        const defaultFields = Array.isArray(defaultForm) ? defaultForm : [defaultForm];
+        defaultFields.forEach((defaultField: any) => {
+          const fieldKey = defaultField?.key;
+          if (!fieldKey) return;
+          // 替换同 key 模块为最新默认配置，缺失模块追加到末尾
+          const newField = structuredClone(defaultField);
+          // 数组型模块默认 list 为空，按 data 已有条数补齐子项
+          fillArrayListByData(newField, data);
+          const fieldIndex = targetConfig.fields.findIndex((f: any) => f?.key === fieldKey);
+          if (fieldIndex > -1) {
+            targetConfig.fields[fieldIndex] = newField;
+          } else {
+            targetConfig.fields.push(newField);
+          }
+          changed = true;
+        });
+      });
+      // 自动同步不产生撤销历史，将基准快照对齐到同步后的内容
+      if (changed) {
+        lastSnapshot = deepClone(item);
+      }
+    }
     // 删除简历：移入回收站（回收站已满时阻止并提示）
     const deleteResume = () => {
       if (currentIndex.value == -1) {
