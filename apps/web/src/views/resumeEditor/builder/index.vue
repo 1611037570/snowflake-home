@@ -47,17 +47,12 @@ const switchTab = (index) => {
 onMounted(() => eventBus.on("switch-builder-tab", switchTab));
 onBeforeUnmount(() => eventBus.off("switch-builder-tab", switchTab));
 
-// 专注写作模式下编辑区宽度
-const { focusMode } = storeToRefs(useResumeStore());
 // 编辑器区域宽度：读取编辑器配置，专注模式保持固定 420px
 const editorWidth = DEFAULT_EDITOR.editorWidth;
 </script>
 
 <template>
-  <div
-    class="relative my-3 flex flex-col"
-    :style="{ width: (focusMode ? 420 : editorWidth) + 'px' }"
-  >
+  <div class="relative my-3 flex flex-col" :style="{ width: editorWidth + 'px' }">
     <SfTab
       :list="menuList"
       v-model:index="activeIndex"
