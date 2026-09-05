@@ -30,7 +30,7 @@ const providerTemplates: ProviderTemplate[] = [
     name: "雪花服务",
     builtin: true,
     preset: {
-      provider: "snowflake",
+      provider: snowflake.provider,
       name: "雪花服务",
       model: snowflake.model,
       key: snowflake.apiKey,
