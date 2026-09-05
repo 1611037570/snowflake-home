@@ -23,7 +23,7 @@ const removeAccount = (index) => {
 </script>
 
 <template>
-  <div class="flex items-center gap-3">
+  <div class="flex w-full items-center gap-3">
     <SfIcon
       icon="icon-park-outline:drag"
       size="4"
@@ -31,7 +31,7 @@ const removeAccount = (index) => {
       @click.stop=""
     />
     <!-- 第一个是平台 -->
-    <div class="min-w-0 flex-1">
+    <div class="w-22 min-w-0">
       <SfInput v-model="name" placeholder="平台" />
     </div>
     <!-- 第二个是网址 -->
