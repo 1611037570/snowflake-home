@@ -2,6 +2,14 @@
 import type { ReactTool } from "@/apis/llm/react";
 import type { Ref } from "vue";
 
+// 一份外部投递的技能：name/description 供调度识别，instructions 为技能正文
+export interface Skill {
+  id: string;
+  name: string;
+  description: string;
+  instructions: string;
+}
+
 // 宿主组装后传给 chat 的配置，技能与工具均由调用方传入
 export interface AssistantConfig {
   // 请求期间置为 true 的生成状态
