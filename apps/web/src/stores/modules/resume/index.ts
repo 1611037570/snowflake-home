@@ -2,7 +2,7 @@ import confirm from "@/components/business/confirm";
 import router from "@/routers";
 import { getUUID } from "@/utils";
 import { defineStore } from "pinia";
-import { computed, ref, watch } from "vue";
+import { computed, ref, toRaw, watch } from "vue";
 import { DEFAULT_MODULE_NAMES, DEFAULT_RESUME_ITEM, DEFAULT_SYSTEM } from "./defaultConfig";
 import { useRefreshConfigByData } from "./hooks/useRefreshConfigByData";
 
@@ -54,8 +54,12 @@ export const useResumeStore = defineStore(
       isGenerating.value = false;
       // 重置选中模块
       selectedModule.value = [];
-      // 按当前简历 data 换取最新默认表单配置，避免与默认配置出现差异
-      syncConfigByData();
+      // 配置同步延后到首帧渲染完成后执行，避免阻塞首屏
+      const targetItem = currentItem.value;
+      setTimeout(() => {
+        if (currentItem.value !== targetItem) return;
+        syncConfigByData();
+      }, 0);
     }
     // 当前选中的简历项
     const currentItem = computed(() => list.value[currentIndex.value]);
@@ -143,10 +147,24 @@ export const useResumeStore = defineStore(
       if (jump) router.push({ path: "/resumeEditor", query: { id: res.id } });
       return true;
     };
-    // 深拷贝快照：structuredClone 无法直接克隆响应式 Proxy，先经 JSON 序列化脱代理再结构化克隆
-    const deepClone = (value: any) => {
+    // 深拷贝快照：先脱响应式代理再递归克隆，原始字符串直接复用引用，避免 JSON 中转大字段开销
+    const deepClone = (value: any): any => {
       if (value == null) return value;
-      return structuredClone(JSON.parse(JSON.stringify(value)));
+      const raw = toRaw(value);
+      if (typeof raw !== "object") return raw;
+      if (raw instanceof Date) return new Date(raw.getTime());
+      if (raw instanceof RegExp) return new RegExp(raw.source, raw.flags);
+      if (raw instanceof Map) {
+        return new Map([...raw].map(([key, item]) => [deepClone(key), deepClone(item)]));
+      }
+      if (raw instanceof Set) {
+        return new Set([...raw].map(deepClone));
+      }
+      const result: any = Array.isArray(raw) ? [] : {};
+      for (const key of Object.keys(raw)) {
+        result[key] = deepClone(raw[key]);
+      }
+      return result;
     };
     // 简历表单配置同步：按当前简历 data 刷新最新默认配置并补齐数组子项
     const { refreshConfigByData } = useRefreshConfigByData();
@@ -253,9 +271,9 @@ export const useResumeStore = defineStore(
       if (serializeForCompare(item) !== serializeForCompare(lastSnapshot)) {
         // 将修改前的状态作为历史（防抖合并后入栈）
         pushHistory(lastSnapshot);
+        // 更新基准快照为当前内容，作为下次变化时的"修改前状态"
+        lastSnapshot = deepClone(item);
       }
-      // 更新基准快照为当前内容，作为下次变化时的"修改前状态"
-      lastSnapshot = deepClone(item);
     }, 300);
     // 重置历史基准：取消防抖、清空历史栈并对齐当前简历快照（编辑器初始化完成后调用）
     const resetHistoryBase = () => {
