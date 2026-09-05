@@ -31,26 +31,27 @@ onBeforeUnmount(() => document.removeEventListener("click", closeOnOutside));
     <!-- 非模态悬浮面板：从按钮左侧展开 -->
     <div
       v-if="visible"
-      class="absolute top-0 right-full z-90 mr-6 w-60 rounded-2xl border border-sf-b bg-sf-primary p-3 shadow-lg"
+      class="absolute top-0 right-full z-90 mr-6 w-60 rounded-2xl border border-sf-b bg-sf-primary py-3"
     >
       <!-- 功能提示 -->
-      <div class="mb-2 text-xs text-sf-text-2">点击模块，同步定位到预览区与编辑区</div>
-      <SfInput v-model="keyword" placeholder="搜索模块" clearable />
-      <div class="mt-2 flex max-h-[300px] flex-col gap-1 overflow-y-auto">
-        <div
-          v-for="m in filteredList"
-          :key="m.key"
-          class="flex cursor-pointer items-center gap-2 rounded-3xl px-2 py-1.5 text-sm transition-colors hover:bg-sf-theme-2"
-          :class="m.hidden ? 'opacity-60' : ''"
-          @click="handleJump(m)"
-        >
-          <SfIcon :icon="m.icon" size="4" class="text-sf-theme" />
-          <span class="flex-1 truncate">{{ m.name }}</span>
-          <span v-if="m.hidden" class="text-xs text-sf-text-2">已隐藏</span>
-        </div>
-        <div v-if="!filteredList.length" class="py-4 text-center text-xs text-sf-text-2">
-          未找到相关模块
-        </div>
+      <div class="px-3">
+        <div class="mb-2 text-xs text-sf-text-2">点击模块，同步定位到编辑和预览区</div>
+        <SfInput v-model="keyword" placeholder="搜索模块" clearable />
+      </div>
+      <div class="mt-2 flex max-h-[300px] flex-col gap-1">
+        <SfScrollbar>
+          <div
+            v-for="m in filteredList"
+            :key="m.key"
+            class="flex cursor-pointer items-center gap-2 rounded-3xl px-2 py-1.5 text-sm transition-colors hover:bg-sf-theme-2"
+            :class="m.hidden ? 'opacity-60' : ''"
+            @click="handleJump(m)"
+          >
+            <SfIcon :icon="m.icon" size="4" class="text-sf-theme" />
+            <span class="flex-1 truncate">{{ m.name }}</span>
+            <span v-if="m.hidden" class="text-xs text-sf-text-2">已隐藏</span>
+          </div>
+        </SfScrollbar>
       </div>
     </div>
   </div>
