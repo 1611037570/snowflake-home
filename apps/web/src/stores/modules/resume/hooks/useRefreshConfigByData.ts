@@ -1,5 +1,34 @@
 import { allConfig } from "../formConfig";
 
+// 忽略数组 list 与运行时 id，生成模块结构指纹用于判断是否已是最新默认配置
+const fieldSchemaFingerprint = (field: any): string => {
+  if (Array.isArray(field)) {
+    return `[${field.map(fieldSchemaFingerprint).join(",")}]`;
+  }
+  if (field instanceof RegExp) {
+    return `/${field.source}/${field.flags}`;
+  }
+  if (field && typeof field === "object") {
+    return `{${Object.entries(field)
+      .filter(([key]) => key !== "list" && key !== "id")
+      .sort(([a], [b]) => (a < b ? -1 : 1))
+      .map(([key, value]) => `${JSON.stringify(key)}:${fieldSchemaFingerprint(value)}`)
+      .join(",")}}`;
+  }
+  return JSON.stringify(field);
+};
+
+// 默认模板指纹缓存：避免每次进入编辑器重复序列化
+const defaultFieldFingerprints = new WeakMap<any, string>();
+const getDefaultFingerprint = (field: any): string => {
+  let fingerprint = defaultFieldFingerprints.get(field);
+  if (!fingerprint) {
+    fingerprint = fieldSchemaFingerprint(field);
+    defaultFieldFingerprints.set(field, fingerprint);
+  }
+  return fingerprint;
+};
+
 // 数组型模块按 data 条数补齐 list，不清空已有 list 仅追加缺失子项
 function fillArrayListByData(field: any, data: any) {
   const arrayField = field.fields?.find((f: any) => f.type === "array");
@@ -13,9 +42,12 @@ function fillArrayListByData(field: any, data: any) {
     .slice(0, index)
     .reduce((acc: any, key: string) => acc?.[key], data);
   const count = Array.isArray(dataArray) ? dataArray.length : 0;
+  let changed = false;
   while (arrayField.list.length < count) {
     arrayField.list.push(structuredClone(arrayField.addConfig));
+    changed = true;
   }
+  return changed;
 }
 
 // 自定义模块 key 为 custom_随机串，将 custom 默认模板的 key 与数据路径首段改写为实际 key
@@ -65,18 +97,29 @@ export function useRefreshConfigByData() {
       // user 默认配置为字段数组，其余模块为单条字段
       const defaultFields = Array.isArray(defaultForm) ? defaultForm : [defaultForm];
       defaultFields.forEach((defaultField: any) => {
-        const newField = structuredClone(defaultField);
+        // custom 模板需先按实际 key 重写，用于与现有模块比较及重建
+        let templateField = defaultField;
         if (isCustomModule) {
-          // custom 模板按实际模块 key 重写，并沿用原有模块标题
           const existField = targetConfig.fields.find((f: any) => f?.key === key);
-          rewriteCustomFieldByKey(newField, key, existField?.name || data[key]?.name || "");
+          templateField = structuredClone(defaultField);
+          rewriteCustomFieldByKey(templateField, key, existField?.name || data[key]?.name || "");
         }
-        const fieldKey = newField.key;
+        const fieldKey = templateField.key;
         if (!fieldKey) return;
+        const fieldIndex = targetConfig.fields.findIndex((f: any) => f?.key === fieldKey);
+        // 已有同结构模块时仅按 data 补齐缺失子项，避免全量重建
+        if (
+          fieldIndex > -1 &&
+          getDefaultFingerprint(templateField) === fieldSchemaFingerprint(targetConfig.fields[fieldIndex])
+        ) {
+          if (fillArrayListByData(targetConfig.fields[fieldIndex], data)) changed = true;
+          return;
+        }
+        // custom 模板已独立克隆可直接复用，其余模块克隆默认配置避免共享引用
+        const newField = isCustomModule ? templateField : structuredClone(templateField);
         // 数组型模块默认 list 为空，按 data 已有条数补齐子项
         fillArrayListByData(newField, data);
         // 替换同 key 模块为最新默认配置，缺失模块追加到末尾
-        const fieldIndex = targetConfig.fields.findIndex((f: any) => f?.key === fieldKey);
         if (fieldIndex > -1) {
           targetConfig.fields[fieldIndex] = newField;
         } else {
