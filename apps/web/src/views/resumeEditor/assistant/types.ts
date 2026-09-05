@@ -10,6 +10,9 @@ export interface Skill {
   instructions: string;
 }
 
+// 技能工厂：每个技能文件导出一个无参函数，返回统一 Skill 结构
+export type SkillFactory = () => Skill;
+
 // 宿主组装后传给 chat 的配置，技能与工具均由调用方传入
 export interface AssistantConfig {
   // 请求期间置为 true 的生成状态
