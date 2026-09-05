@@ -1,5 +1,5 @@
 <script setup>
-import { inject, nextTick, onMounted, ref } from "vue";
+import { inject } from "vue";
 import { useAiStore, useResumeStore } from "@/stores";
 import { DEFAULT_EDITOR } from "@/stores/modules/resume/defaultConfig";
 import { storeToRefs } from "pinia";
@@ -10,8 +10,6 @@ import { useResumeAssistant } from "./useResumeAssistant";
 // AI 对话
 const aiStore = useAiStore();
 const resumeStore = useResumeStore();
-// Chat 组件引用，调试强制触发流程时使用
-const chatRef = ref(null);
 // 应用 AI 差异由上层预览草稿注入，随技能与工具一并传给 chat
 const applyDiff = inject("applyDiff");
 // 组装简历域技能、工具与对话创建方法，入口不再直接拼接系统消息
@@ -31,13 +29,6 @@ const chat = resumeAssistantChat;
 function createNewChat() {
   chat.value = createAssistantChat();
 }
-
-// 调试：进入后直接强制触发引导流程，自动完成问答并直达真实请求
-onMounted(() => {
-  nextTick(() => {
-    chatRef.value?.runFlow("resumeOptimize");
-  });
-});
 
 // 调试：一次性追加覆盖各类请求状态的长文本测试消息
 function addDebugMessages() {
@@ -284,7 +275,6 @@ function addDebugMessages() {
         </SfTooltip>
       </div>
       <Chat
-        ref="chatRef"
         :chat="chat"
         :config="assistantConfig"
         :flows="flows"

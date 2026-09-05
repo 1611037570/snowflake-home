@@ -29,8 +29,6 @@ export const useChatRequest = ({
   const aiStore = useAiStore();
   const { thinkMode } = storeToRefs(aiStore);
   const { generating, beforeRequest, afterRequest, tools, applyResult } = config;
-  // 调试开关：本地开发时在真实请求前打印消息内容
-  const shouldPrintRequest = import.meta.env.DEV;
   // 用于取消当前请求的函数引用
   let abortRequest: (() => void) | null = null;
   // ReAct 编排器引用，用于中止循环
@@ -180,10 +178,9 @@ export const useChatRequest = ({
           scrollToBottom();
         },
       });
-      // 调试：真实请求发送前打印本次消息，便于排查 flows 链路
-      if (shouldPrintRequest) {
-        console.log("[AI Request] 发送消息:", messages);
-      }
+      // 临时调试：拦截真实请求，打印本次将发送的聊天内容后不再发起请求
+      console.log("[AI Request Intercepted]", messages);
+      return;
       // 执行工具循环
       await reactRunner.run(messages);
     } catch (error: any) {
