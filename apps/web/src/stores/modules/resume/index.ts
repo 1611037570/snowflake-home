@@ -44,6 +44,8 @@ export const useResumeStore = defineStore(
     let skipNextWatch = false;
     // 上一次的完整内容快照（深拷贝），作为撤销历史基准：每次内容变化时把这份基准入栈
     let lastSnapshot: any = null;
+    // 历史记录开关：仅在编辑器初始化完成后由 Builder 开启，离开编辑器时关闭
+    const historyEnabled = ref(false);
     // 系统配置
     const system = ref(structuredClone(DEFAULT_SYSTEM));
     // 初始化状态
@@ -280,6 +282,22 @@ export const useResumeStore = defineStore(
       redoStack.value = [];
       lastSnapshot = currentItem.value ? deepClone(currentItem.value) : null;
     };
+    // 开启历史记录：取消防抖等待并对齐当前简历快照（由 Builder 在同步完成后调用）
+    const enableHistory = () => {
+      recordHistory.cancel();
+      pushHistory.cancel();
+      lastSnapshot = currentItem.value ? deepClone(currentItem.value) : null;
+      historyEnabled.value = true;
+    };
+    // 关闭历史记录：取消防抖等待、清空历史栈并暂停记录（离开编辑器时调用）
+    const disableHistory = () => {
+      recordHistory.cancel();
+      pushHistory.cancel();
+      undoStack.value = [];
+      redoStack.value = [];
+      lastSnapshot = null;
+      historyEnabled.value = false;
+    };
     // 应用历史快照：只恢复内容字段（data/config/fixedConfig/ui），保留 id 与 usage
     const applySnapshot = (snapItem: any) => {
       const item = currentItem.value;
@@ -344,6 +362,8 @@ export const useResumeStore = defineStore(
     watch(
       () => currentItem.value,
       (item) => {
+        // 历史开关关闭时暂停记录（初始化、同步及离开编辑器期间的变更不入历史）
+        if (!historyEnabled.value) return;
         // 撤销/重做恢复触发的变化：消费标志并跳过，避免恢复动作又入栈
         if (skipNextWatch) {
           skipNextWatch = false;
@@ -398,6 +418,8 @@ export const useResumeStore = defineStore(
       undoStack,
       redoStack,
       resetHistoryBase,
+      enableHistory,
+      disableHistory,
       init,
       resetSettings,
     };

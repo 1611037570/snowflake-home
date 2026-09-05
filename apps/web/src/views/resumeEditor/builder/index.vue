@@ -2,7 +2,15 @@
 import { useResumeStore } from "@/stores";
 import { DEFAULT_EDITOR } from "@/stores/modules/resume/defaultConfig";
 import { storeToRefs } from "pinia";
-import { defineAsyncComponent, markRaw, onBeforeUnmount, onMounted, ref, watch } from "vue";
+import {
+  defineAsyncComponent,
+  markRaw,
+  nextTick,
+  onBeforeUnmount,
+  onMounted,
+  ref,
+  watch,
+} from "vue";
 import eventBus from "@/utils/modules/eventBus";
 import Editor from "./editor/index.vue";
 const AsyncCustom = markRaw(defineAsyncComponent(() => import("./custom/index.vue")));
@@ -45,17 +53,31 @@ const resumeStore = useResumeStore();
 const { currentItem } = storeToRefs(resumeStore);
 // 配置同步中：展示加载效果
 const configSyncing = ref(true);
+// 配置同步定时器：离开组件时取消，避免卸载后继续同步或误开历史记录
+let syncTimer;
+// 组件挂载状态：卸载后不再执行开启历史记录
+let mounted = true;
 watch(
   () => currentItem.value,
   (item) => {
     if (!item) return;
+    // 同步期间暂停历史记录，避免初始化与同步产生的自动变更写入历史
+    resumeStore.disableHistory();
     configSyncing.value = true;
     // 延后到加载效果渲染后再同步，避免同步期间内容区白屏
     const targetItem = item;
-    setTimeout(() => {
+    clearTimeout(syncTimer);
+    syncTimer = setTimeout(() => {
       if (currentItem.value !== targetItem) return;
       resumeStore.syncConfigByData();
       configSyncing.value = false;
+      // 表单完成渲染后开启历史记录开关
+      nextTick(() => {
+        nextTick(() => {
+          if (!mounted || currentItem.value !== targetItem) return;
+          resumeStore.enableHistory();
+        });
+      });
     }, 0);
   },
   { immediate: true },
@@ -66,7 +88,12 @@ const switchTab = (index) => {
   activeIndex.value = index;
 };
 onMounted(() => eventBus.on("switch-builder-tab", switchTab));
-onBeforeUnmount(() => eventBus.off("switch-builder-tab", switchTab));
+onBeforeUnmount(() => {
+  mounted = false;
+  clearTimeout(syncTimer);
+  resumeStore.disableHistory();
+  eventBus.off("switch-builder-tab", switchTab);
+});
 
 // 编辑器区域宽度：读取编辑器配置，专注模式保持固定 420px
 const editorWidth = DEFAULT_EDITOR.editorWidth;
