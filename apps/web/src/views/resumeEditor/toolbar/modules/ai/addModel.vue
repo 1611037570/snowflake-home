@@ -217,6 +217,7 @@ function handleAddBuiltin() {
         </div>
 
         <!-- 操作按钮：固定底部，始终可见 -->
+        <div class="text-xs text-sf-text-3">连通性测试会发起一次真实请求，会消耗少量模型Token</div>
         <el-button type="primary" class="w-full" :loading="testing" @click="handleAdd">
           {{ testing ? "测试中..." : "添加模型" }}
         </el-button>
