@@ -85,6 +85,8 @@ export const ICON_LIST: Record<string, IconItem> = {
   "mdi:file-code-outline": { icon: "mdi:file-code-outline" },
   "mdi:code-tags": { icon: "mdi:code-tags" },
   "logos:axios": { icon: "logos:axios" },
+  "mdi:video": { icon: "mdi:video" },
+  "mdi:image": { icon: "mdi:image" },
   "mdi:image-plus": { icon: "mdi:image-plus" },
   "mdi:file-pdf-box": { icon: "mdi:file-pdf-box" },
   "mdi:calendar-clock": { icon: "mdi:calendar-clock" },
