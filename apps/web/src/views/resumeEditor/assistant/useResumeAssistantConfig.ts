@@ -2,8 +2,7 @@
 import { useResumeStore } from "@/stores";
 import { computed } from "vue";
 import { storeToRefs } from "pinia";
-import { jobMatch } from "./skills/jobMatch";
-import { resumeOptimization } from "./skills/resumeOptimization";
+import { onDemandSkills } from "./skills/registry";
 import { createSkillTools } from "./skills/skillTools";
 import { createResumeTools } from "./tools";
 import type { AssistantConfig } from "./types";
@@ -81,7 +80,7 @@ export const useResumeAssistantConfig = (
     generating: isGenerating,
     tools: [
       // 按需技能注册为只读工具，需要时由模型调用获取全文
-      ...createSkillTools([resumeOptimization(), jobMatch()]),
+      ...createSkillTools(onDemandSkills.map((createSkill) => createSkill())),
       ...createResumeTools({
         getResumeData,
         applyDiff: applyDiff ?? (() => []),

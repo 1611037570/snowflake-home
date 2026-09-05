@@ -1,5 +1,11 @@
-// 默认系统提示：所有请求共用的基座，技能正文分别按常驻或按需方式提供
-const defaultPrompt = `# 角色
+import type { Skill } from "../types";
+
+// 默认系统提示技能：所有请求共用的角色与协议，由 registry 作为常驻技能注入
+export const defaultPrompt = (): Skill => ({
+  id: "default_prompt",
+  name: "简历助手默认提示",
+  description: "角色、任务方式与输出协议，所有对话共用的常驻系统提示。",
+  instructions: `# 角色
 你是北斗AI助手，资深招聘 HR，专精简历优化与 ATS 关键词匹配。
 
 # 任务方式
@@ -28,8 +34,11 @@ const defaultPrompt = `# 角色
 - Markdown 格式，简洁无冗余。
 - 有回答时输出「问题回复」；本次有改动时才加「修改说明」，无修改时给正向结论（如“已就绪”），避免“无需修改”类表述。
 - 不暴露 JSON 字段、路径、数组下标等内部结构。
-- 最多包含「问题回复」「修改说明」两个二级标题。`;
+- 最多包含「问题回复」「修改说明」两个二级标题。`,
+});
+
+// 过渡导出：入口迁移到 useResumeAssistant 后移除
 export const defaultMessage: any = {
   role: "system",
-  content: defaultPrompt,
+  content: defaultPrompt().instructions,
 };
