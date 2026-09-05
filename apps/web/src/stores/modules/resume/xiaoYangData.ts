@@ -146,8 +146,6 @@ export const xiaoYangForm = {
     structuredClone(DEFAULT_SKILL_FORM),
     structuredClone(DEFAULT_WORK_FORM),
     structuredClone(DEFAULT_PROJECT_FORM),
-    structuredClone(DEFAULT_VIDEO_FORM),
-    structuredClone(DEFAULT_IMAGE_FORM),
   ],
 };
 
