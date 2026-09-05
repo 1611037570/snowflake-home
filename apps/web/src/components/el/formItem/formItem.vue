@@ -5,7 +5,7 @@
     class="w-full"
   >
     <template #label v-if="label && labelPosition === 'top'">
-      <div class="mb-1 flex h-5 w-full items-center font-bold text-sf-base" @click.stop="">
+      <div class="mb-1 flex h-5 w-full items-center text-sf-base" @click.stop="">
         <span class="pr-1 pl-2 text-sf-text">
           {{ label }}
         </span>

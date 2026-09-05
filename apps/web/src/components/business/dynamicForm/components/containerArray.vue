@@ -102,7 +102,7 @@ const getSpan = (item: any) => Number(item.span) || 24;
 const getItemStyle = (isFirstInRow: boolean, isLastInRow: boolean, bottomStyle: string) => ({
   paddingLeft: isFirstInRow ? "0" : "3px",
   paddingRight: isLastInRow ? "0" : "3px",
-  ...(isFirstInRow || isLastInRow ? { paddingBottom: bottomStyle } : {}),
+  ...(isFirstInRow || isLastInRow ? { paddingBottom: "" } : {}),
 });
 
 // 动态计算样式算法：实现第一个左边距0，最后一个右边距0，其他左右各6
