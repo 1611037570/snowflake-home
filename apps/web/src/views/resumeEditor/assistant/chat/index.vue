@@ -293,28 +293,6 @@ const handleFlowOption = (option) => {
 const handleFlowInput = (content) => {
   handleFlowAnswer(content);
 };
-
-/**
- * 调试：强制触发指定引导流程并自动完成问答，直达真实请求
- * flowName 对应 flows 的 key；自由输入步骤使用 debugInput 或默认示例
- */
-const runFlow = async (flowName, debugInput) => {
-  handleSuggest({ flow: flowName });
-  let guard = 0;
-  while (activeFlow.value && guard++ < 20) {
-    const state = activeFlow.value;
-    const step = state.flow?.steps?.[state.stepIndex];
-    if (!step) break;
-    if (step.input) {
-      handleFlowInput(debugInput || "示例输入：负责前端项目开发与性能优化，使用 Vue 技术栈。");
-    } else {
-      handleFlowOption(step.options?.[0] ?? "");
-    }
-    await nextTick();
-  }
-};
-
-defineExpose({ runFlow });
 </script>
 
 <template>
