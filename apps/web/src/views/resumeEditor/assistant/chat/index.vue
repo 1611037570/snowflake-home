@@ -18,7 +18,7 @@ const props = defineProps<{
   config: AssistantConfig;
   flows: Record<string, Flow>;
   suggestions: SuggestCard[];
-  selectedName?: string;
+  selectedModules?: { key: string; name?: string }[];
 }>();
 // 生成状态来自宿主注入的引用，模板与输入框共用
 const generating = props.config.generating;
@@ -301,7 +301,7 @@ const handleFlowInput = (content) => {
     <SfScrollbar ref="chatContainer" class="h-full w-full flex-1">
       <EmptyState
         :suggestions="props.suggestions"
-        :selected-name="props.selectedName"
+        :selected-modules="props.selectedModules"
         @suggest="handleSuggest"
         v-if="displayMessages.length === 0"
       />

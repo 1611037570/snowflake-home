@@ -18,8 +18,8 @@ const { config: assistantConfig, createChat: createAssistantChat } =
 const { resumeAssistantChat } = storeToRefs(aiStore);
 const { system } = storeToRefs(resumeStore);
 const { selectedModule } = storeToRefs(resumeStore);
-// 当前操作对象名称：直接取自 selectedModule，无选中时不显示提示句
-const selectedName = computed(() => selectedModule.value.map((item) => item.name).join(" "));
+// 当前操作模块列表：直接取自 selectedModule，无选中时不显示提示句
+const selectedModules = computed(() => selectedModule.value);
 // AI助手区域宽度：读取编辑器配置，默认 400px
 const assistantWidth = DEFAULT_EDITOR.assistantWidth;
 
@@ -282,7 +282,7 @@ function addDebugMessages() {
         :config="assistantConfig"
         :flows="flows"
         :suggestions="suggestions"
-        :selected-name="selectedName"
+        :selected-modules="selectedModules"
       />
     </div>
   </div>
