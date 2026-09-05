@@ -6,6 +6,8 @@ const props = defineProps({
   title: { type: String, default: "AI 正在生成" },
   description: { type: String, default: "请稍候，内容即将呈现" },
   ariaLabel: { type: String, default: "AI 正在生成，请稍候" },
+  // 全屏浮层模式：用于导出场景，需盖在弹窗上方展示
+  overlay: Boolean,
 });
 const progress = ref(0);
 let progressTimer;
@@ -48,7 +50,12 @@ onUnmounted(clearProgressTimer);
   <Transition name="generating-mask">
     <div
       v-if="props.visible"
-      class="flex-c absolute inset-0 z-50 cursor-not-allowed rounded-xl border border-sf-b p-4 backdrop-blur-[2px] select-none"
+      class="flex-c p-4 select-none"
+      :class="
+        props.overlay
+          ? 'fixed inset-0 z-90 cursor-not-allowed backdrop-blur-[2px]'
+          : 'absolute inset-0 z-50 cursor-not-allowed rounded-xl border border-sf-b backdrop-blur-[2px]'
+      "
       role="status"
       aria-live="polite"
       :aria-label="props.ariaLabel"
