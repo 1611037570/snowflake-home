@@ -15,27 +15,26 @@ const images = computed(() => previewData.value?.image?.data || []);
 </script>
 
 <template>
-  <div class="resume-row w-full" data-module="image" :style="[lineHeightValue(), fontValue()]">
-    <!-- 标题栏 -->
-    <Title title="图片作品"></Title>
-    <!-- 图片作品列表：名称与描述格式同视频模块，图片宽度按 size 百分比展示 -->
+  <div
+    class="resume-row flex w-full flex-wrap items-start gap-3"
+    data-module="image"
+    :style="[lineHeightValue(), fontValue()]"
+  >
+    <!-- 模块根作为 flex 容器：作品卡片并排渲染、超出自动换行，且每个卡片独立成行便于分页识别 -->
+    <!-- 标题栏：占满整行 -->
+    <div class="w-full shrink-0">
+      <Title title="图片作品"></Title>
+    </div>
+    <!-- 单个作品：图片在上、名称在下，暂不展示描述 -->
     <template v-for="(item, index) in images" :key="index">
-      <div class="mt-1 flex max-w-full min-w-0 flex-wrap items-center justify-between gap-2">
-        <DiffField v-model="item.name" />
-        <div class="flex-1" :style="[fontValue(-6)]">
-          <DiffField v-model="item.desc" />
-        </div>
-        <div
+      <div class="flex min-w-0 flex-col gap-1" :style="{ width: `${item.size?.value ?? 50}%` }">
+        <img
           v-if="item.img?.value"
-          class="shrink-0"
-          :style="{ width: `${item.size?.value ?? 50}%` }"
-        >
-          <img
-            :src="toAvatarSrc(item.img?.value)"
-            alt="图片作品"
-            class="h-auto w-full rounded"
-          />
-        </div>
+          :src="toAvatarSrc(item.img?.value)"
+          alt="图片作品"
+          class="flex-c h-auto w-full rounded text-center"
+        />
+        <DiffField v-model="item.name" />
       </div>
     </template>
   </div>
