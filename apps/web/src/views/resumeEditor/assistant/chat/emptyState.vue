@@ -23,9 +23,9 @@ const handleSuggest = (card) => {
       <span>能通过对话帮你打造受HR青睐的专业简历。</span>
       <span>尝试和我对话吧！ 📄✨</span>
     </div>
-    <div>
+    <div v-if="props.selectedName">
       还能根据 你的
-      <span class="text-sf-theme">{{ props.selectedName || "整个简历" }}</span>
+      <span class="text-sf-theme">{{ props.selectedName }}</span>
       进行以下技能操作
     </div>
     <!-- 建议操作按钮 -->
