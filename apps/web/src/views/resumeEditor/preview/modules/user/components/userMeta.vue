@@ -4,7 +4,7 @@ import { computed, inject } from "vue";
 import { workYears } from "../../../../resumeName";
 import DiffField from "../../../components/diffField/index.vue";
 
-// 元信息组件：求职岗位 / 求职状态 / 性别 / 年龄 / 工作年限等有值字段自动排列，宽度策略由使用方通过 class 控制
+// 元信息组件：求职岗位 / 求职状态 / 所在城市 / 性别 / 年龄 / 工作年限等有值字段自动排列，宽度策略由使用方通过 class 控制
 const previewData = inject("previewData");
 const fontValue = inject("fontValue");
 const user = computed(() => previewData.value?.user?.data || {});
@@ -25,6 +25,7 @@ const metaItems = computed(() => {
   if (workYears.value) items.push({ text: workYears.value });
   if (user.value?.position?.value) items.push({ key: "position" });
   if (user.value?.status?.value) items.push({ key: "status" });
+  if (user.value?.city?.value) items.push({ key: "city" });
   return items;
 });
 </script>
