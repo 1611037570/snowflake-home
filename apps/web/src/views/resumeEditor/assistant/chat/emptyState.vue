@@ -1,8 +1,11 @@
 <script setup lang="ts">
 import type { SuggestCard } from "../../types";
 
-// 当前操作对象名称：选中模块名或“整个简历”
-const props = defineProps<{ suggestions: SuggestCard[]; selectedName?: string }>();
+// 当前操作模块列表：选中哪些模块就遍历展示哪些模块
+const props = defineProps<{
+  suggestions: SuggestCard[];
+  selectedModules?: { key: string; name?: string }[];
+}>();
 const emit = defineEmits(["switch-mode", "suggest"]);
 
 // 点击建议卡片，启动对应流程
@@ -23,9 +26,18 @@ const handleSuggest = (card) => {
       <span>能通过对话帮你打造受HR青睐的专业简历。</span>
       <span>尝试和我对话吧！ 📄✨</span>
     </div>
-    <div v-if="props.selectedName">
+    <div
+      v-if="props.selectedModules?.length"
+      class="flex flex-wrap items-center justify-center gap-x-3"
+    >
       还能根据 你的
-      <span class="text-sf-theme">{{ props.selectedName }}</span>
+      <div
+        v-for="item in props.selectedModules"
+        :key="item.key"
+        class="rounded-xl bg-sf-theme p-2 text-sf-theme-text"
+      >
+        {{ item.name }}
+      </div>
       进行以下技能操作
     </div>
     <!-- 建议操作按钮 -->
