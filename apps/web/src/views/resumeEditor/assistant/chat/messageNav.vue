@@ -29,9 +29,9 @@ function getMessageBrief(msg) {
   <div class="group/nav absolute top-1/2 left-0 z-9991 -translate-y-1/2">
     <!-- 折叠手柄 -->
     <div
-      class="flex h-14 w-3.5 cursor-pointer items-center justify-center rounded-3xl border border-sf-b bg-sf-page text-sf-text-3 shadow-md transition-colors duration-300 group-hover/nav:bg-sf-theme group-hover/nav:text-sf-theme-text"
+      class="flex h-14 w-5 cursor-pointer items-center justify-center rounded-3xl border border-sf-b bg-sf-page text-sf-text-3 transition-colors duration-300 group-hover/nav:bg-sf-theme group-hover/nav:text-sf-theme-text"
     >
-      <SfIcon icon="ph:list-duotone" size="3" />
+      <SfIcon icon="ph:list-duotone" size="4" />
     </div>
     <!-- 展开面板 -->
     <div
@@ -44,7 +44,7 @@ function getMessageBrief(msg) {
             :key="index"
             type="button"
             class="block w-full min-w-0 truncate py-3 text-left text-xs text-sf-text-2 transition-colors hover:text-sf-theme"
-            @click="emit('select', index)"
+            @click="emit('select', msg)"
           >
             {{ getMessageBrief(msg) }}
           </button>
