@@ -3,6 +3,9 @@ import type { FormConfig, FormField } from "@/components/business/dynamicForm";
 const DEFAULT_META = {
   version: "1.0.0",
 };
+const DEFAULT_DRAG_CLASS = ".item-drag";
+const DEFAULT_COL_CLASS =
+  "rounded-2xl border border-sf-bg-3 bg-sf-primary px-3! hover:border-sf-theme";
 // 用户信息
 export const DEFAULT_USER_FORM = [
   {
@@ -309,7 +312,8 @@ export const DEFAULT_EDUCATION_FORM = {
     {
       type: "array",
       drag: true,
-      dragClass: ".item-drag",
+      dragClass: DEFAULT_DRAG_CLASS,
+      colClass: DEFAULT_COL_CLASS,
       list: [],
       addConfig: {
         type: "group",
@@ -529,7 +533,8 @@ export const DEFAULT_WORK_FORM = {
     {
       type: "array",
       drag: true,
-      dragClass: ".item-drag",
+      dragClass: DEFAULT_DRAG_CLASS,
+      colClass: DEFAULT_COL_CLASS,
       list: [],
       addConfig: {
         type: "group",
@@ -636,7 +641,8 @@ export const DEFAULT_PROJECT_FORM = {
     {
       type: "array",
       drag: true,
-      dragClass: ".item-drag",
+      dragClass: DEFAULT_DRAG_CLASS,
+      colClass: DEFAULT_COL_CLASS,
       list: [],
       addConfig: {
         type: "group",
@@ -715,6 +721,7 @@ export const DEFAULT_PROJECT_FORM = {
     },
   ],
 } satisfies FormField;
+// 视频作品
 export const DEFAULT_VIDEO_FORM = {
   type: "group",
   key: "video",
@@ -742,7 +749,8 @@ export const DEFAULT_VIDEO_FORM = {
     {
       type: "array",
       drag: true,
-      dragClass: ".item-drag",
+      dragClass: DEFAULT_DRAG_CLASS,
+      colClass: DEFAULT_COL_CLASS,
       list: [],
       addConfig: {
         // 折叠标题数据源：展示当前视频名称
@@ -812,7 +820,8 @@ export const DEFAULT_IMAGE_FORM = {
     {
       type: "array",
       drag: true,
-      dragClass: ".item-drag",
+      dragClass: DEFAULT_DRAG_CLASS,
+      colClass: DEFAULT_COL_CLASS,
       list: [],
       addConfig: {
         // 折叠标题数据源：展示当前图片作品名称
@@ -892,7 +901,8 @@ export const DEFAULT_CUSTOM_FORM = {
     {
       type: "array",
       drag: true,
-      dragClass: ".item-drag",
+      dragClass: DEFAULT_DRAG_CLASS,
+      colClass: DEFAULT_COL_CLASS,
       list: [],
       addConfig: {
         type: "group",
