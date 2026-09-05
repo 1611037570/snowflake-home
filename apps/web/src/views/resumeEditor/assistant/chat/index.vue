@@ -33,6 +33,8 @@ const currentMessages = computed(() => chat.value?.messages ?? []);
 const displayMessages = computed(() => {
   return currentMessages.value.filter((m) => m.role !== "system");
 });
+// 消息导航仅展示用户消息
+const navMessages = computed(() => displayMessages.value.filter((msg) => msg.role === "user"));
 // 切换消息折叠状态
 function updateCollapsedStatus(index, type) {
   displayMessages.value[index][`${type}Collapsed`] =
@@ -84,6 +86,11 @@ function scrollToMessage(index) {
   const top =
     target.getBoundingClientRect().top - wrap.getBoundingClientRect().top + wrap.scrollTop;
   chatContainer.value.setScrollTop(Math.max(0, top - 12));
+}
+// 消息导航选择后定位到聊天列表中的原消息
+function handleNavSelect(msg) {
+  const index = displayMessages.value.indexOf(msg);
+  if (index > -1) scrollToMessage(index);
 }
 
 // 监听 chat 变化时滚动到底部并聚焦
@@ -314,12 +321,8 @@ const handleFlowInput = (content) => {
       </div>
     </SfScrollbar>
 
-    <!-- 左侧消息导航：悬停展开查看全部消息，点击跳转 -->
-    <MessageNav
-      v-if="displayMessages.length"
-      :messages="displayMessages"
-      @select="scrollToMessage"
-    />
+    <!-- 左侧消息导航：悬停展开查看用户消息，点击跳转 -->
+    <MessageNav v-if="navMessages.length" :messages="navMessages" @select="handleNavSelect" />
 
     <!-- 滚动到底部按钮 -->
     <Transition
