@@ -19,7 +19,8 @@ const props = defineProps<{
   suggestions: SuggestCard[];
 }>();
 // 生成状态来自宿主注入的引用，模板与输入框共用
-const isGenerating = computed(() => props.config.generating.value);
+const generating = props.config.generating;
+const isGenerating = computed(() => generating.value);
 
 const chat = defineModel("chat", {
   required: true,
@@ -98,13 +99,13 @@ const handleSend = (content) => {
   // 确保输入内容不为空
   if (!content) return;
   // 确保当前没有正在发送的消息
-  if (props.config.generating.value) return;
+  if (generating.value) return;
   // 引导流程的自由输入步骤：把输入内容作为答案推进流程
   if (activeFlow.value?.flow?.steps?.[activeFlow.value.stepIndex]?.input) {
     handleFlowInput(content);
     return;
   }
-  props.config.generating.value = true;
+  generating.value = true;
   addMessage({
     role: "user",
     content,
@@ -164,7 +165,7 @@ const handleRecall = (msg) => {
 const handleRetry = (msg) => {
   // 仅删除失败的这条消息
   removeMessage(msg, 1);
-  props.config.generating.value = true;
+  generating.value = true;
   scrollToBottom();
   handleAIResponse();
 };
@@ -249,7 +250,7 @@ const handleFlowAnswer = (answer) => {
     content: userContent,
     typing: false,
   });
-  props.config.generating.value = true;
+  generating.value = true;
   scrollToBottom();
   handleAIResponse();
 };
