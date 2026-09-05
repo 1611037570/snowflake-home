@@ -18,12 +18,8 @@ const { config: assistantConfig, createChat: createAssistantChat } =
 const { resumeAssistantChat } = storeToRefs(aiStore);
 const { system } = storeToRefs(resumeStore);
 const { selectedModule } = storeToRefs(resumeStore);
-// 当前操作对象名称：与模块选择逻辑一致，未选中模块时显示“整个简历”
-const selectedName = computed(() =>
-  selectedModule.value.length
-    ? selectedModule.value.map((item) => item.name).join("、")
-    : "整个简历",
-);
+// 当前操作对象名称：直接取自 selectedModule，无选中时不显示提示句
+const selectedName = computed(() => selectedModule.value.map((item) => item.name).join(" "));
 // AI助手区域宽度：读取编辑器配置，默认 400px
 const assistantWidth = DEFAULT_EDITOR.assistantWidth;
 
