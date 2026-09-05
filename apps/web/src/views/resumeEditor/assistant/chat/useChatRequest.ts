@@ -1,5 +1,5 @@
 // 导入LLM接口
-import { getLLM } from "@/apis";
+import { getLLM, isAbortError } from "@/apis";
 import { useAiStore } from "@/stores";
 // 导入聊天和消息类型
 import type { Chat, Message } from "@/stores/modules/ai";
@@ -128,6 +128,10 @@ export const useChatRequest = ({
 
       // 所有请求统一走 React 编排，技能规范已随对话系统消息提供
       const llm = getLLM();
+      // 未配置模型时抛出明确提示，由统一错误处理呈现
+      if (!llm) {
+        throw new Error("请先配置并选择 AI 模型");
+      }
       reactRunner = llm.react({
         tools,
         maxSteps: 6,
@@ -178,10 +182,17 @@ export const useChatRequest = ({
       });
       // 执行工具循环
       await reactRunner.run(messages);
-    } catch (error) {
+    } catch (error: any) {
       // 若已卸载则忽略
       if (isUnmounted) return;
+      // 主动中止不视为错误
+      if (isAbortError(error)) return;
       console.error("AI 请求异常:", error);
+      if (lastMsg) {
+        lastMsg.content = `请求出错: ${error.message || "未知错误"}`;
+        lastMsg.typing = false;
+        lastMsg.requestStatus = "error";
+      }
     } finally {
       // 清理工作（无论成功或失败）
       // 请求结束还原调用方现场
