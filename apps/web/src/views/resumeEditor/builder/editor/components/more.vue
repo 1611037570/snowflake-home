@@ -19,10 +19,10 @@ function toggle() {
   <div class="w-full">
     <!-- 更多配置开关 -->
     <div
-      class="flex cursor-pointer items-center justify-center gap-3 rounded-3xl border border-sf-b bg-sf-bg px-3 py-2 text-sm text-sf-text-2 transition-colors hover:border-sf-theme hover:text-sf-theme"
+      class="flex cursor-pointer items-center gap-3 pt-2 pl-2 text-sm text-sf-theme transition-colors"
       @click="toggle"
     >
-      <span>{{ expanded ? "收起" : "更多" }}</span>
+      <span>{{ expanded ? "收起更多" : "展开更多" }}</span>
       <SfIcon :icon="expanded ? 'fa6-solid:caret-up' : 'fa6-solid:caret-down'" size="3" />
     </div>
     <!-- 展开后才渲染其他配置 -->
