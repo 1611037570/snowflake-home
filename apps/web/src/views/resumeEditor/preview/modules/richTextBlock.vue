@@ -1,6 +1,6 @@
 <script setup>
 import { computed, inject } from "vue";
-import DiffField from "../components/diffField/index.vue";
+import ResumeField from "../components/resumeField/index.vue";
 import Title from "../theme/title/index.vue";
 
 // 通用富文本单块：供 skill、个人优势等「标题 + 富文本」模块复用，结构对齐 expItemList
@@ -32,7 +32,7 @@ const content = computed(() => previewData.value?.[props.dataKey]?.data?.content
 <template>
   <div class="resume-row" :data-module="moduleName" :style="[lineHeightValue(), fontValue()]">
     <Title :title="title" />
-    <DiffField :model-value="content" html />
+    <ResumeField :model-value="content" html />
   </div>
 </template>
 

@@ -1,6 +1,6 @@
 <script setup>
 import { computed, inject } from "vue";
-import DiffField from "../../../components/diffField/index.vue";
+import ResumeField from "../../../components/resumeField/index.vue";
 
 // 联系方式组件：标签支持图标 / 文字两种模式，对齐方式由使用方通过 class 控制
 const previewData = inject("previewData");
@@ -16,7 +16,7 @@ const hasEmail = computed(() => !!user.value?.email?.value);
       <SfIcon v-if="userInfoMode === 'icon'" icon="mdi:phone" size="3.5" class="mr-1 shrink-0" />
       <div v-else class="pr-1">电话：</div>
       <div class="max-w-full min-w-0 font-medium">
-        <DiffField v-model="user.phone" />
+        <ResumeField v-model="user.phone" />
       </div>
     </div>
     <div v-if="hasEmail" class="flex max-w-full min-w-0 flex-wrap items-center">
@@ -28,7 +28,7 @@ const hasEmail = computed(() => !!user.value?.email?.value);
       />
       <div v-else class="pr-1">邮箱：</div>
       <div class="max-w-full min-w-0 font-medium">
-        <DiffField v-model="user.email" />
+        <ResumeField v-model="user.email" />
       </div>
     </div>
   </div>

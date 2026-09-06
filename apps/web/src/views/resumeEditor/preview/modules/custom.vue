@@ -3,7 +3,7 @@ import { useResumeStore } from "@/stores";
 import { storeToRefs } from "pinia";
 import { computed, inject } from "vue";
 import { getTime } from "../../utils";
-import DiffField from "../components/diffField/index.vue";
+import ResumeField from "../components/resumeField/index.vue";
 import Title from "../theme/title/index.vue";
 const props = defineProps({
   name: {
@@ -38,10 +38,10 @@ const title = computed(() => {
       <div class="mb-3 flex flex-wrap items-center justify-between">
         <div class="flex min-w-0 max-w-full flex-wrap items-center gap-4">
           <div class="font-bold" :style="[fontValue(3)]">
-            <DiffField v-model="item.name" />
+            <ResumeField v-model="item.name" />
           </div>
           <div>
-            <DiffField v-model="item.post" />
+            <ResumeField v-model="item.post" />
           </div>
         </div>
         <div class="flex min-w-0 max-w-full flex-wrap items-center">
@@ -49,7 +49,7 @@ const title = computed(() => {
         </div>
       </div>
       <!-- 补充描述/经历 -->
-      <DiffField v-model="item.content" html />
+      <ResumeField v-model="item.content" html />
     </template>
   </div>
 </template>

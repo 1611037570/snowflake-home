@@ -1,6 +1,6 @@
 <script setup>
 import { computed, inject } from "vue";
-import DiffField from "../components/diffField/index.vue";
+import ResumeField from "../components/resumeField/index.vue";
 
 // 从上层注入获取代理后的预览数据
 const previewData = inject("previewData");
@@ -34,7 +34,7 @@ const safeUrl = (value) => {
       class="mt-1 flex min-w-0 max-w-full flex-wrap items-center gap-2"
       data-module="user"
     >
-      <DiffField v-model="item.name" />
+      <ResumeField v-model="item.name" />
       <span v-if="item.name?.value && item.url?.value" class="pr-1">：</span>
       <a
         :href="safeUrl(item.url?.value)"
@@ -42,7 +42,7 @@ const safeUrl = (value) => {
         rel="noopener noreferrer"
         class="min-w-0 max-w-full font-medium hover:underline"
       >
-        <DiffField v-model="item.url" />
+        <ResumeField v-model="item.url" />
       </a>
     </div>
   </div>

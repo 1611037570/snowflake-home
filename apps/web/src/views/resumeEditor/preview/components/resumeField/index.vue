@@ -1,8 +1,8 @@
 <script setup>
 import { computed } from "vue";
-import DiffContent from "./diffContent.vue";
+import FieldContent from "./content.vue";
 
-// 纯文本渲染器：接收原始值或 { value } 字段代理，不再包含任何 diff/草稿逻辑
+// 简历字段文本渲染器：接收原始值或 { value } 字段代理
 const model = defineModel();
 
 defineProps({
@@ -24,9 +24,9 @@ const hasContent = computed(
 
 <template>
   <template v-if="html && hasContent">
-    <DiffContent :content="fieldValue" :html="html" />
+    <FieldContent :content="fieldValue" :html="html" />
   </template>
   <div v-else-if="hasContent" class="relative max-w-full min-w-0 break-words">
-    <DiffContent :content="fieldValue" :html="html" />
+    <FieldContent :content="fieldValue" :html="html" />
   </div>
 </template>
