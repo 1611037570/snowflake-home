@@ -29,7 +29,7 @@ export type Message = {
   // 当前执行阶段的动态提示（如正在读取简历数据）
   stepLabel?: string;
   // 推荐追问：由请求流程补充记录，不再等待模型在 JSON 中返回
-  followQuestions?: string[];
+  followQuestions: string[];
   // 思考内容是否折叠
   thoughtCollapsed: boolean;
   // 总token数
@@ -132,6 +132,7 @@ export const useAiStore = defineStore(
         thoughtTime: 0,
         contentTime: 0,
         thought: "",
+        followQuestions: [],
         content: "",
         typing: false,
         role: "",

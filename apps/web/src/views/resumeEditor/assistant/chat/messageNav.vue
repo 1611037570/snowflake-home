@@ -9,7 +9,7 @@ const emit = defineEmits(["select"]);
 
 // 导航文本：展示正文摘要，空内容回退为状态文案
 function getMessageBrief(msg) {
-  const content = typeof msg.content === "string" ? msg.content : "";
+  const content = msg.content;
   const brief = content.replace(/\s+/g, " ").trim();
   if (brief) return brief;
   if (msg.requestStatus === "error") return "生成失败";

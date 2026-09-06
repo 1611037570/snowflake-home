@@ -45,10 +45,6 @@ const handleCopy = async (text) => {
 
 // 消息内容：直接保存 Markdown 正文
 const content = computed(() => props.msg.content);
-// 推荐追问：由消息字段记录
-const followQuestions = computed(() => {
-  return Array.isArray(props.msg.followQuestions) ? props.msg.followQuestions : [];
-});
 const resumeShow = computed(() => props.msg.requestStatus === "success");
 const isThinking = computed(() => props.msg.typing && props.msg.requestStatus === "thinking");
 const isGenerating = computed(() => props.msg.typing && props.msg.requestStatus === "generating");
@@ -152,9 +148,9 @@ const showTotalTime = computed(() => props.msg.requestStatus === "success" && to
       </SfTooltip>
     </nav>
     <!-- 推荐问题 -->
-    <div v-if="isLast && followQuestions.length" class="mt-1 flex w-full flex-col gap-2">
+    <div v-if="isLast && msg.followQuestions.length" class="mt-1 flex w-full flex-col gap-2">
       <div
-        v-for="(item, index) in followQuestions"
+        v-for="(item, index) in msg.followQuestions"
         :key="index"
         class="flex min-w-0 cursor-pointer items-center gap-2 rounded-3xl bg-sf-bg px-3 py-2 text-[13px] text-sf-text transition-all duration-200 hover:bg-sf-bg-2"
         @click="emit('sendFollowQuestion', item)"
