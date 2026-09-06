@@ -22,7 +22,6 @@ defineProps({
   },
 });
 
-defineEmits(["accept", "discard"]);
 </script>
 
 <template>
@@ -31,12 +30,7 @@ defineEmits(["accept", "discard"]);
     :data-module="moduleKey"
     :class="outlineClass"
   >
-    <ModuleActions
-      v-if="isEdit"
-      :modelKey="moduleKey"
-      @accept="$emit('accept', moduleKey)"
-      @discard="$emit('discard', moduleKey)"
-    />
+    <ModuleActions v-if="isEdit" :modelKey="moduleKey" />
     <ResumeModule :name="moduleKey" />
   </div>
 </template>

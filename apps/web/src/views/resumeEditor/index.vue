@@ -110,21 +110,11 @@ watch(
   { immediate: true },
 );
 
-// 创建代理后的预览数据及批量操作句柄（AI 助手与预览层共用）
-const { previewData, acceptAll, rejectAll, acceptModule, rejectModule, applyDiff } =
-  usePreviewData(currentData);
+// 创建代理后的预览数据（AI 修改已直接写入真实数据，不再需要草稿操作）
+const { previewData } = usePreviewData(currentData);
 
 // 向下游组件注入代理预览数据
 provide("previewData", previewData);
-// 向下游组件注入：全部保留
-provide("acceptAll", acceptAll);
-// 向下游组件注入：全部放弃
-provide("rejectAll", rejectAll);
-// 向下游组件注入：模块级保留与放弃
-provide("acceptModule", acceptModule);
-provide("rejectModule", rejectModule);
-// 向下游组件注入：应用 AI diff
-provide("applyDiff", applyDiff);
 
 // 专注模式下按 ESC 退出
 onKeyStroke("Escape", () => {

@@ -2,7 +2,6 @@
 import { computed, nextTick, onMounted, ref } from "vue";
 import AiNotice from "../aiNotice.vue";
 import ModuleSelect from "./moduleSelect.vue";
-import BatchActions from "./batchActions.vue";
 import ThinkMode from "./thinkMode.vue";
 import ModelSelect from "./modelSelect.vue";
 
@@ -112,7 +111,6 @@ onMounted(() => {
           <!-- 左侧 -->
           <div class="flex items-center">
             <ModuleSelect />
-            <BatchActions />
             <ThinkMode />
           </div>
 

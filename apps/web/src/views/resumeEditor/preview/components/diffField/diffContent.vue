@@ -24,7 +24,7 @@ const props = defineProps({
 });
 
 // 行高随各字段实际字号自动缩放；字号由外层包装继承，避免强制基础字号覆盖 name 等字段的加大字号
-// Teleport 浮层（DiffPopover）脱离简历 provide 上下文时回退空样式，避免 inject 为 undefined 导致渲染抛错
+// 行高样式继承自预览容器；外部未注入时回退空样式，避免渲染抛错
 const lineHeightValue = inject("lineHeightValue", () => ({}));
 
 // 仅保留简历预览所需标签和安全链接协议
