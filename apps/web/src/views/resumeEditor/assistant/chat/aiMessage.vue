@@ -62,6 +62,14 @@ const content = computed(() => {
 const resumeShow = computed(() => props.msg.requestStatus === "success");
 const isThinking = computed(() => props.msg.typing && props.msg.requestStatus === "thinking");
 const isGenerating = computed(() => props.msg.typing && props.msg.requestStatus === "generating");
+const hasThought = computed(() => !!props.msg.thought?.trim());
+// 等待态文案：优先展示当前执行动作，其次回退到思考/生成计时
+const statusText = computed(() => {
+  if (props.msg.stepLabel) return props.msg.stepLabel;
+  if (isThinking.value) return `思考中 ${props.msg.thoughtTime || 0} 秒`;
+  if (isGenerating.value) return `生成回复中 ${props.msg.contentTime || 0} 秒`;
+  return "生成中";
+});
 const totalTime = computed(() => (props.msg.thoughtTime || 0) + (props.msg.contentTime || 0));
 const showTotalTime = computed(() => props.msg.requestStatus === "success" && totalTime.value > 0);
 </script>
@@ -83,6 +91,12 @@ const showTotalTime = computed(() => props.msg.requestStatus === "success" && to
           :collapsed="msg.contentCollapsed"
           @toggle="emit('updateCollapsedStatus', index, 'content')"
         />
+        <ToggleButton
+          v-if="resumeShow && hasThought"
+          label="执行过程"
+          :collapsed="msg.thoughtCollapsed"
+          @toggle="emit('updateCollapsedStatus', index, 'thought')"
+        />
       </div>
 
       <div class="flex items-center gap-3 text-[11px] text-sf-text-2">
@@ -97,14 +111,22 @@ const showTotalTime = computed(() => props.msg.requestStatus === "success" && to
       v-if="msg.typing && ['loading', 'thinking', 'generating'].includes(msg.requestStatus)"
       class="flex items-center gap-2 px-1 text-[13px] text-sf-theme"
     >
-      <span v-if="isThinking">思考中 {{ msg.thoughtTime || 0 }} 秒</span>
-      <span v-else-if="isGenerating">生成回复中 {{ msg.contentTime || 0 }} 秒</span>
-      <template v-else>
-        <span>生成中</span>
-        <span class="flex items-center gap-1">
-          <i v-for="i in 3" :key="i" class="h-1.5 w-1.5 animate-bounce rounded-full bg-sf-theme" />
-        </span>
-      </template>
+      <span>{{ statusText }}</span>
+      <span class="flex items-center gap-1">
+        <i v-for="i in 3" :key="i" class="h-1.5 w-1.5 animate-bounce rounded-full bg-sf-theme" />
+      </span>
+    </div>
+    <!-- 执行过程：运行中实时展示思考/工具/观察，完成后按折叠状态展示 -->
+    <div
+      v-if="hasThought && (!resumeShow || !msg.thoughtCollapsed)"
+      class="mt-1 max-h-72 w-full max-w-full overflow-y-auto rounded-xl bg-sf-bg-2 px-3 py-2 text-[12px] text-sf-text-2"
+    >
+      <SfMdPreview
+        :modelValue="msg.thought"
+        :theme="theme"
+        :editorId="`thought-preview-${index}`"
+        class="bg-transparent! p-0!"
+      />
     </div>
     <!-- 错误状态 -->
     <div
