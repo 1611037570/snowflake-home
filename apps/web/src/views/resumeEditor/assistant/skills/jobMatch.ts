@@ -29,6 +29,6 @@ export const jobMatch = () => ({
 - 用词与 JD 关键词保持一致，但不做同义词硬凑。
 
 # 输出要求
-- analysis 中说明匹配分析与调整思路；有改动时先调用 load_resume_writing 获取编写流程，再通过 propose_resume_edits 提交草稿。
+- 在 Markdown 正文中用「修改说明」说明匹配分析与调整思路；有改动时先调用 load_resume_writing 获取编写流程，再通过 propose_resume_edits 提交草稿。
 - 描述改动时不要暴露简历 JSON 路径与数组下标。`,
 });
