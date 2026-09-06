@@ -35,7 +35,11 @@ export const useChatRequest = ({
     tools,
     commitDeferredWrites,
     discardDeferredWrites,
+    captureBackup,
+    restoreBackup,
   } = config;
+  // 每条 AI 回复对应的请求前简历备份，用于“撤回修改”
+  const requestBackups = new WeakMap<object, unknown>();
   // 当前 think 轮次流式输出的正文缓冲：未确认是最终输出轮前不直接展示为正文
   let stepContent = "";
   // 是否进入反思轮：反思轮的 content 直接实时渲染为正文
@@ -135,6 +139,8 @@ export const useChatRequest = ({
   const handleAIResponse = async () => {
     // 增加请求版本，用于判断当前请求是否有效
     const currentRequestVersion = ++requestVersion;
+    // 请求前备份简历，撤回修改时恢复
+    const backup = captureBackup?.();
     stepContent = "";
     streamFinalContent = false;
     finalContentStarted = false;
@@ -168,6 +174,7 @@ export const useChatRequest = ({
       });
       // 获取刚添加的AI消息引用
       lastMsg = currentMessages.value[currentMessages.value.length - 1] ?? null;
+      if (lastMsg && backup != null) requestBackups.set(lastMsg, backup);
       state = createChatState(lastMsg, isCurrentRequest);
 
       // 所有请求统一走 React 编排，技能规范已随对话系统消息提供
@@ -306,5 +313,14 @@ export const useChatRequest = ({
   });
 
   // 返回发送和停止方法
-  return { handleAIResponse, stopGenerating };
+  // 撤回本轮 AI 修改：恢复请求前备份
+  function withdrawAI(msg?: Message | null) {
+    const backup = msg ? requestBackups.get(msg) : undefined;
+    if (backup === undefined) return false;
+    requestBackups.delete(msg);
+    restoreBackup?.(backup);
+    return true;
+  }
+
+  return { handleAIResponse, stopGenerating, withdrawAI };
 };

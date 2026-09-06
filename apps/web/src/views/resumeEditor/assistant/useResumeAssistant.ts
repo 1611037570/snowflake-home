@@ -64,6 +64,26 @@ export const useResumeAssistant = (
     Object.keys(pendingAddCount).forEach((key) => delete pendingAddCount[key]);
   };
 
+  // 请求前备份：只备份 AI 可能改动的 data/config/fixedConfig
+  const captureBackup = () => {
+    const item = resumeStore.currentItem;
+    if (!item) return null;
+    return {
+      data: JSON.parse(JSON.stringify(item.data ?? {})),
+      config: JSON.parse(JSON.stringify(item.config ?? {})),
+      fixedConfig: JSON.parse(JSON.stringify(item.fixedConfig ?? {})),
+    };
+  };
+
+  // 撤回修改：用请求前备份覆盖当前简历数据
+  const restoreBackup = (backup: any) => {
+    const item = resumeStore.currentItem;
+    if (!item || !backup) return;
+    item.data = backup.data ?? {};
+    item.config = backup.config ?? {};
+    item.fixedConfig = backup.fixedConfig ?? {};
+  };
+
   // 请求配置：技能工具、简历工具与请求上下文统一在此装配
   const config: AssistantConfig = {
     generating: isGenerating,
@@ -83,6 +103,8 @@ export const useResumeAssistant = (
     afterRequest: resumeContext.afterRequest,
     commitDeferredWrites,
     discardDeferredWrites,
+    captureBackup,
+    restoreBackup,
   };
 
   // 创建对话：常驻技能按清单顺序作为系统消息注入

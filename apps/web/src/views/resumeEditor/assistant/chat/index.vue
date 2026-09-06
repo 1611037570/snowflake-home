@@ -121,7 +121,7 @@ const followContentScroll = async () => {
   await scrollToBottom();
 };
 
-const { handleAIResponse, stopGenerating } = useChatRequest({
+const { handleAIResponse, stopGenerating, withdrawAI } = useChatRequest({
   chat,
   currentMessages,
   addMessage,
@@ -215,12 +215,13 @@ function handleRegenerate(index) {
   scrollToBottom();
   handleAIResponse();
 }
-// 撤回修改：删除回复文字并清空 AI 草稿
+// 撤回修改：恢复请求前备份并清空草稿，回复文字保留、操作按钮消失
 function handleWithdrawModify(index) {
   const msg = displayMessages.value[index];
   if (!msg) return;
-  removeMessage(msg);
+  withdrawAI(msg);
   rejectAll();
+  msg.withdrawn = true;
   ElMessage.success("已撤回 AI 修改");
 }
 // 通过 provide 注入重试回调，供 aiMessage 直接调用
