@@ -9,6 +9,8 @@ export interface ResumeToolContext {
   addDataRecord?: (moduleKey: string) => number;
   // 删除数组型模块记录并同步表单配置
   removeDataRecord?: (moduleKey: string, index: number) => boolean;
+  // 移动数组型模块记录并同步表单配置
+  moveDataRecord?: (moduleKey: string, from: number, to: number) => boolean;
   // 应用 AI 提议的数据补丁（回复完成后直接写入真实数据，可撤销）
   applyPatch: (patch: Record<string, any>) => string[];
 }
@@ -37,7 +39,7 @@ export function createResumeTools(ctx: ResumeToolContext): ReactTool[] {
     {
       name: "propose_resume_edits",
       description:
-        "根据分析结果生成简历修改，回复完成后直接写入简历数据（用户可撤回）。通过 operations 语义化描述写操作：update 修改已有字段；add 为数组型模块新增记录；delete 删除数组型模块记录。提交前会做结构与格式校验，校验失败不写入并返回 errors，请按 errors 修正后重新提交。operations 必须为标准 JSON，参数只使用普通字符，禁止输出 HTML 实体（如 &#x20;、&nbsp;、&quot; 等）。",
+        "根据分析结果生成简历修改，回复完成后直接写入简历数据（用户可撤回）。通过 operations 语义化描述写操作：update 修改已有字段；add 为数组型模块新增记录；delete 删除数组型模块记录；move 调整数组型模块记录顺序。提交前会做结构与格式校验，校验失败不写入并返回 errors，请按 errors 修正后重新提交。operations 必须为标准 JSON，参数只使用普通字符，禁止输出 HTML 实体（如 &#x20;、&nbsp;、&quot; 等）。",
       parameters: {
         type: "object",
         properties: {
@@ -50,7 +52,7 @@ export function createResumeTools(ctx: ResumeToolContext): ReactTool[] {
               properties: {
                 op: {
                   type: "string",
-                  description: "操作类型：update 修改已有字段；add 新增记录；delete 删除记录",
+                  description: "操作类型：update 修改已有字段；add 新增记录；delete 删除记录；move 调整顺序",
                 },
                 module: {
                   type: "string",
@@ -70,6 +72,14 @@ export function createResumeTools(ctx: ResumeToolContext): ReactTool[] {
                 record: {
                   type: "object",
                   description: "新增记录的内容，键为字段名、值为实际写入值，add 使用",
+                },
+                from: {
+                  type: "number",
+                  description: "原记录下标（从 0 开始），move 使用",
+                },
+                to: {
+                  type: "number",
+                  description: "目标记录下标（从 0 开始），move 使用",
                 },
               },
               required: ["op", "module"],
@@ -119,6 +129,9 @@ export function createResumeTools(ctx: ResumeToolContext): ReactTool[] {
           if (op.op === "delete") {
             if (ctx.removeDataRecord?.(op.module, op.index)) changedData = true;
             return;
+          }
+          if (op.op === "move") {
+            if (ctx.moveDataRecord?.(op.module, op.from, op.to)) changedData = true;
           }
         });
         // 纯新增且无内容时不调用写入，避免误清空已有修改

@@ -23,6 +23,7 @@ export const useResumeAssistant = (
     | { type: "patch"; patch: Record<string, any> }
     | { type: "add"; module: string }
     | { type: "delete"; module: string; index: number }
+    | { type: "move"; module: string; from: number; to: number }
   > = [];
   const pendingAddCount: Record<string, number> = {};
   let bufferingWrites = false;
@@ -53,6 +54,16 @@ export const useResumeAssistant = (
     return true;
   };
 
+  const bufferedMoveRecord = (
+    moduleKey: string,
+    from: number,
+    to: number,
+  ): boolean => {
+    if (!bufferingWrites) return resumeStore.moveDataRecord(moduleKey, from, to);
+    pendingWrites.push({ type: "move", module: moduleKey, from, to });
+    return true;
+  };
+
   // 请求成功：按调用顺序把缓冲操作真实写入（新增记录、字段补丁）；返回是否真实写入过
   const commitDeferredWrites = () => {
     bufferingWrites = false;
@@ -61,6 +72,7 @@ export const useResumeAssistant = (
     writes.forEach((item) => {
       if (item.type === "add") addDataRecord?.(item.module);
       else if (item.type === "delete") resumeStore.removeDataRecord(item.module, item.index);
+      else if (item.type === "move") resumeStore.moveDataRecord(item.module, item.from, item.to);
       else realApplyDataPatch(item.patch);
     });
     return writes.length > 0;
@@ -83,6 +95,7 @@ export const useResumeAssistant = (
         getResumeData: resumeContext.getResumeData,
         addDataRecord: bufferedAddRecord,
         removeDataRecord: bufferedRemoveRecord,
+        moveDataRecord: bufferedMoveRecord,
         applyPatch: bufferedApplyPatch,
       }),
     ],
