@@ -145,7 +145,8 @@ export const useChatRequest = ({
       reactRunner = llm.react({
         tools,
         maxSteps: 6,
-        reflection: true,
+        // TODO: 反思轮暂不启用，后续需要结果审视时恢复为 true
+        reflection: false,
         thinking: {
           type: thinkMode.value ? "enabled" : "disabled",
         },
