@@ -1,4 +1,5 @@
 import type { ReactTool } from "@/apis/llm/react";
+import { buildDiffPatch, validateResumeEdits, type ResumeWriteOp } from "./resumeEdits";
 
 // 简历工具的运行时上下文，由调用方注入，保持工具本身无副作用依赖
 export interface ResumeToolContext {
@@ -9,38 +10,6 @@ export interface ResumeToolContext {
   // 将 AI 提议的补丁写入预览草稿（仍由用户确认，不直接修改简历）
   applyDiff: (patch: Record<string, any>) => string[];
 }
-
-// 语义化写操作：明确到模块、记录与字段，避免让模型自行拼装整棵 diff
-export type ResumeWriteOp =
-  | {
-      op: "update"; // 修改已有字段
-      module: string; // 模块 key，如 user/work/project/education/skill/account
-      index?: number; // 数组型模块的记录下标（从 0 开始），对象型模块不填
-      field: string; // 要修改的字段名
-      value: unknown; // 修改后的值
-    }
-  | {
-      op: "add"; // 数组型模块新增记录
-      module: string; // 模块 key，如 work/project/account/education
-      record?: Record<string, unknown>; // 新记录内容，键为字段名，值作为草稿展示
-    };
-
-// 把语义化写操作合并为预览层 diff 所需的树形 patch
-const buildDiffPatch = (operations: ResumeWriteOp[]): Record<string, any> => {
-  const patch: Record<string, any> = {};
-  operations.forEach((op) => {
-    if (!op || op.op !== "update") return;
-    const modulePatch = patch[op.module] ?? { data: op.index == null ? {} : [] };
-    patch[op.module] = modulePatch;
-    if (op.index == null) {
-      modulePatch.data[op.field] = op.value;
-    } else {
-      const record = (modulePatch.data[op.index] ??= {});
-      record[op.field] = op.value;
-    }
-  });
-  return patch;
-};
 
 // 创建简历域工具集：读取数据 + 生成修改草稿，由简历调用方组装后传给 chat
 export function createResumeTools(ctx: ResumeToolContext): ReactTool[] {
@@ -66,7 +35,7 @@ export function createResumeTools(ctx: ResumeToolContext): ReactTool[] {
     {
       name: "propose_resume_edits",
       description:
-        "根据分析结果生成简历修改草稿，写入预览草稿供用户确认，不会直接改动简历。通过 operations 语义化描述写操作：update 修改已有字段（对象型模块指定 module+field，数组型模块再加 index）；add 为数组型模块新增记录并携带 record 内容。",
+        "根据分析结果生成简历修改草稿，写入预览草稿供用户确认，不会直接改动简历。通过 operations 语义化描述写操作：update 修改已有字段（对象型模块指定 module+field，数组型模块再加 index）；add 为数组型模块新增记录并携带 record 内容。提交前会做结构与格式校验，校验失败不写入草稿并返回 errors，请按 errors 修正后重新提交。",
       parameters: {
         type: "object",
         properties: {
@@ -111,6 +80,12 @@ export function createResumeTools(ctx: ResumeToolContext): ReactTool[] {
         const operations: ResumeWriteOp[] = Array.isArray(args?.operations)
           ? args.operations
           : [];
+        // 先做结构与格式校验，校验失败不产生任何写操作副作用
+        const errors = validateResumeEdits(operations, ctx.getResumeData() as any);
+        if (errors.length) {
+          console.log("[ReAct] propose_resume_edits 校验未通过:", errors);
+          return { applied: false, changed: [], added: [], errors };
+        }
         // 先执行 add 新增记录，再把新增内容与 update 合并为同一份草稿
         const updateOps: ResumeWriteOp[] = [];
         const added: Array<{ module: string; index: number }> = [];
@@ -139,12 +114,12 @@ export function createResumeTools(ctx: ResumeToolContext): ReactTool[] {
         });
         // 纯新增且无内容时不调用 applyDiff，避免误清空已有草稿
         if (!updateOps.length) {
-          return { applied: added.length > 0, changed: [], added };
+          return { applied: added.length > 0, changed: [], added, errors: [] };
         }
         const changed = ctx.applyDiff(buildDiffPatch(updateOps));
         // 打印 diff 结果，便于确认工具是否被调用以及实际写入的字段
         console.log("[ReAct] propose_resume_edits 写入草稿字段:", changed);
-        return { applied: true, changed, added };
+        return { applied: true, changed, added, errors: [] };
       },
     },
   ];
