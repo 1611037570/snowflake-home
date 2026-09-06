@@ -34,12 +34,16 @@ const { openPicker, loading } = useImageUpload({
 <template>
   <div class="flex w-full flex-col gap-1">
     <!-- 名称与描述 -->
-    <div class="flex items-center">
+    <div class="flex items-center gap-3">
       <div class="w-[100px] min-w-0">
-        <SfInput v-model="name" placeholder="图片名称" />
+        <SfFormItem label="图片名称">
+          <SfInput v-model="name" placeholder="图片名称" />
+        </SfFormItem>
       </div>
       <div class="min-w-0 flex-1">
-        <SfInput v-model="desc" placeholder="图片描述" />
+        <SfFormItem label="图片描述">
+          <SfInput v-model="desc" placeholder="图片描述" />
+        </SfFormItem>
       </div>
     </div>
     <!-- 图片与大小控制：左右布局，编辑器内图片固定宽度不随滑杆变化 -->
