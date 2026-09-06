@@ -163,6 +163,8 @@ export const useChatRequest = ({
         },
         onAct: (toolCall) => {
           if (!isCurrentRequest() || !lastMsg) return;
+          // 本轮发起工具调用：清掉该轮随流式输出的正文，避免多轮内容混进同一条消息
+          lastMsg.content = "";
           lastMsg.stepLabel =
             TOOL_STEP_LABELS[toolCall.function.name] ||
             `正在执行 ${toolCall.function.name}…`;
