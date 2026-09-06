@@ -119,7 +119,7 @@ const showTotalTime = computed(() => props.msg.requestStatus === "success" && to
     <!-- 执行过程：运行中实时展示思考/工具/观察，完成后按折叠状态展示 -->
     <div
       v-if="hasThought && (!resumeShow || !msg.thoughtCollapsed)"
-      class="mt-1 max-h-72 w-full max-w-full overflow-y-auto rounded-xl bg-sf-bg-2 px-3 py-2 text-[12px] text-sf-text-2"
+      class="mt-1 mb-3 max-h-72 w-full max-w-full overflow-y-auto rounded-xl px-3 py-2 text-[12px] text-sf-text-2"
     >
       <SfMdPreview
         :modelValue="msg.thought"
