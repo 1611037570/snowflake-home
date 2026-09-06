@@ -206,7 +206,7 @@ export const validateResumeEdits = (
 };
 
 // 把语义化写操作合并为直接写入所需的树形 patch
-export const buildDiffPatch = (operations: ResumeWriteOp[]): Record<string, any> => {
+export const buildPatch = (operations: ResumeWriteOp[]): Record<string, any> => {
   const patch: Record<string, any> = {};
   operations.forEach((op) => {
     if (!op || op.op !== "update") return;

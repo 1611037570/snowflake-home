@@ -1,5 +1,5 @@
 import type { ReactTool } from "@/apis/llm/react";
-import { buildDiffPatch, validateResumeEdits, type ResumeWriteOp } from "./resumeEdits";
+import { buildPatch, validateResumeEdits, type ResumeWriteOp } from "./resumeEdits";
 
 // 简历工具的运行时上下文，由调用方注入，保持工具本身无副作用依赖
 export interface ResumeToolContext {
@@ -7,8 +7,8 @@ export interface ResumeToolContext {
   getResumeData: (moduleKey?: string) => unknown;
   // 数组型模块新增一条空记录并同步表单配置，返回新记录下标（失败返回 -1）
   addDataRecord?: (moduleKey: string) => number;
-  // 应用 AI 提议的补丁（回复完成后直接写入真实数据，可撤销）
-  applyDiff: (patch: Record<string, any>) => string[];
+  // 应用 AI 提议的数据补丁（回复完成后直接写入真实数据，可撤销）
+  applyPatch: (patch: Record<string, any>) => string[];
 }
 
 // 创建简历域工具集：读取数据 + 生成简历修改，由简历调用方组装后传给 chat
@@ -116,7 +116,7 @@ export function createResumeTools(ctx: ResumeToolContext): ReactTool[] {
         if (!updateOps.length) {
           return { applied: added.length > 0, changed: [], added, errors: [] };
         }
-        const changed = ctx.applyDiff(buildDiffPatch(updateOps));
+        const changed = ctx.applyPatch(buildPatch(updateOps));
         // 打印写入结果，便于确认工具是否被调用以及实际写入的字段
         console.log("[ReAct] propose_resume_edits 写入字段:", changed);
         return { applied: true, changed, added, errors: [] };
