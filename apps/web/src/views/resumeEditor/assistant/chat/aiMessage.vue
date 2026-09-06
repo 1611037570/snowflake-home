@@ -26,7 +26,13 @@ const themeStore = useThemeStore();
 const { theme } = storeToRefs(themeStore);
 const { copy, isSupported } = useClipboard();
 
-const emit = defineEmits(["updateCollapsedStatus", "sendFollowQuestion", "fillFollowQuestion"]);
+const emit = defineEmits([
+  "updateCollapsedStatus",
+  "sendFollowQuestion",
+  "fillFollowQuestion",
+  "regenerate",
+  "withdrawModify",
+]);
 
 // 将推荐问题填入输入框，不触发发送
 const handleFillFollowQuestion = (event, question) => {
@@ -150,6 +156,14 @@ const showTotalTime = computed(() => props.msg.requestStatus === "success" && to
           <SfIcon icon="ph:copy-duotone" size="3.5" />
         </button>
       </SfTooltip>
+      <template v-if="isLast">
+        <button type="button" class="ai-action-btn" @click="emit('regenerate', index)">
+          重新生成
+        </button>
+        <button type="button" class="ai-action-btn" @click="emit('withdrawModify', index)">
+          撤回修改
+        </button>
+      </template>
     </nav>
     <!-- 推荐问题 -->
     <div v-if="isLast && msg.followQuestions.length" class="mt-1 flex w-full flex-col gap-2">
@@ -193,6 +207,9 @@ const showTotalTime = computed(() => props.msg.requestStatus === "success" && to
 /* 操作按钮公共样式 */
 .action-btn {
   @apply flex h-7 w-7 items-center justify-center rounded-lg text-sf-text transition-colors hover:bg-sf-bg-3;
+}
+.ai-action-btn {
+  @apply rounded-lg border border-sf-b px-2 py-1 text-[12px] text-sf-text transition-colors hover:bg-sf-bg-2;
 }
 .follow-question-action {
   @apply flex h-6 w-6 items-center justify-center rounded-md text-sf-text transition-colors hover:bg-sf-bg-3;
