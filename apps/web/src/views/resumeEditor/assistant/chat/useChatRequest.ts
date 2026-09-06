@@ -51,6 +51,16 @@ export const useChatRequest = ({
     timers.reply = null;
   };
 
+  // 工具名到用户可读动作的映射，用于等待态展示当前正在做什么
+  const TOOL_STEP_LABELS: Record<string, string> = {
+    read_resume_data: "正在读取简历数据…",
+    propose_resume_edits: "正在校验并提交修改草稿…",
+    load_resume_data_contract: "正在读取《简历数据规范》…",
+    load_resume_writing: "正在读取《简历编写》流程…",
+    load_resume_optimization: "正在读取写作方法论…",
+    load_job_match: "正在读取岗位匹配规范…",
+  };
+
   // 统一状态处理器：把 reasoning/content/total_tokens 映射为请求状态与耗时计数
   const createChatState = (lastMsg: Message | null, isCurrent: () => boolean) => {
     const timers: ChatTimers = { thinking: null, reply: null };
@@ -60,6 +70,7 @@ export const useChatRequest = ({
       if (!isCurrent() || !lastMsg) return;
       if (type === "reasoning") {
         lastMsg.requestStatus = "thinking";
+        lastMsg.stepLabel = "正在深度思考…";
         if (!timers.thinking) {
           timers.thinking = setInterval(() => {
             if (isCurrent()) lastMsg.thoughtTime += 1;
@@ -67,6 +78,7 @@ export const useChatRequest = ({
         }
       } else if (type === "content") {
         lastMsg.requestStatus = "generating";
+        lastMsg.stepLabel = "正在生成回复…";
         if (!timers.reply) {
           if (timers.thinking) clearInterval(timers.thinking);
           timers.thinking = null;
@@ -142,16 +154,21 @@ export const useChatRequest = ({
         },
         onThink: (reasoning) => {
           if (!isCurrentRequest() || !lastMsg || !reasoning) return;
+          lastMsg.stepLabel = "正在深度思考…";
           lastMsg.thought += `\n\n### 思考\n${reasoning}`;
         },
         onAct: (toolCall) => {
           if (!isCurrentRequest() || !lastMsg) return;
+          lastMsg.stepLabel =
+            TOOL_STEP_LABELS[toolCall.function.name] ||
+            `正在执行 ${toolCall.function.name}…`;
           const args = toolCall.function.arguments || "{}";
           lastMsg.thought += `\n\n### 执行工具\n\`${toolCall.function.name}\`\n\n\`\`\`json\n${args}\n\`\`\``;
           scrollToBottom();
         },
         onObserve: (observation) => {
           if (!isCurrentRequest() || !lastMsg) return;
+          lastMsg.stepLabel = "已获取结果，正在分析…";
           const preview =
             observation.content.length > 1200
               ? `${observation.content.slice(0, 1200)}...`
@@ -161,6 +178,7 @@ export const useChatRequest = ({
         },
         onReflect: (answer) => {
           if (!isCurrentRequest() || !lastMsg) return;
+          lastMsg.stepLabel = "正在检查并修正结果…";
           const preview = answer.length > 1200 ? `${answer.slice(0, 1200)}...` : answer;
           lastMsg.thought += `\n\n### 反思修正\n${preview}`;
           scrollToBottom();
@@ -175,6 +193,8 @@ export const useChatRequest = ({
             // 解析失败不阻断结果展示
           }
           lastMsg.requestStatus = "success";
+          lastMsg.stepLabel = "";
+          lastMsg.thoughtCollapsed = true;
           scrollToBottom();
         },
       });
@@ -190,6 +210,7 @@ export const useChatRequest = ({
         lastMsg.content = `请求出错: ${error.message || "未知错误"}`;
         lastMsg.typing = false;
         lastMsg.requestStatus = "error";
+        lastMsg.stepLabel = "";
       }
     } finally {
       // 清理工作（无论成功或失败）

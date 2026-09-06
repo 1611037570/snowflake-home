@@ -26,6 +26,8 @@ export type Message = {
   typing: boolean;
   // 思考内容
   thought: string;
+  // 当前执行阶段的动态提示（如正在读取简历数据）
+  stepLabel?: string;
   // 思考内容是否折叠
   thoughtCollapsed: boolean;
   // 总token数
