@@ -19,9 +19,9 @@ const honors = computed(() => previewData.value?.honor?.data || []);
     <Title title="荣誉证书"></Title>
     <!-- 荣誉证书名称流式排列：容器放不下时才换行 -->
     <div v-if="honors.length" class="mt-1 flex max-w-full min-w-0 flex-wrap items-center gap-2">
-      <template v-for="(item, index) in honors" :key="index">
+      <div v-for="(item, index) in honors" :key="index" class="rounded-xl bg-[#F5F7F6] px-3 py-2">
         <DiffField v-model="item.name" />
-      </template>
+      </div>
     </div>
   </div>
 </template>
