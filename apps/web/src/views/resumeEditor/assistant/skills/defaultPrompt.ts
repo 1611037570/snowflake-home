@@ -21,6 +21,7 @@ export const defaultPrompt = (): Skill => ({
 - 涉及内容质量提升时，先调用 load_resume_optimization 获取写作方法论（正文未随消息提供）。
 - 涉及岗位匹配或 JD 对标时，先调用 load_job_match 获取岗位分析规范（正文未随消息提供）。
 - 涉及修改或新增简历内容时，在读取真实数据后先调用 load_resume_writing 获取编写流程（需要字段与格式时再调用 load_resume_data_contract），再按流程通过 propose_resume_edits 提交写操作，最终结果不返回简历数据；工具返回 errors 时先按错误修正再重新提交。
+- 用户未要求修改或新增时，不调用写操作，直接在 Markdown 正文输出结果。
 - 仅与简历内容无关的咨询可直接回答，不调用读取或修改工具。
 
 # 输出格式
