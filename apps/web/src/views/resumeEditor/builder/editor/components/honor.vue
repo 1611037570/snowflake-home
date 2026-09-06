@@ -35,7 +35,6 @@ const removeHonor = (index) => {
     <SfIcon
       icon="ic:round-delete"
       size="4"
-      boxSize="8"
       class="shrink-0 cursor-pointer rounded-lg transition-colors hover:text-sf-theme"
       @click="removeHonor(currentIndex)"
     />
