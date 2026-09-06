@@ -7,11 +7,11 @@ export interface ResumeToolContext {
   getResumeData: (moduleKey?: string) => unknown;
   // 数组型模块新增一条空记录并同步表单配置，返回新记录下标（失败返回 -1）
   addDataRecord?: (moduleKey: string) => number;
-  // 将 AI 提议的补丁写入预览草稿（仍由用户确认，不直接修改简历）
+  // 应用 AI 提议的补丁（回复完成后直接写入真实数据，可撤销）
   applyDiff: (patch: Record<string, any>) => string[];
 }
 
-// 创建简历域工具集：读取数据 + 生成修改草稿，由简历调用方组装后传给 chat
+// 创建简历域工具集：读取数据 + 生成简历修改，由简历调用方组装后传给 chat
 export function createResumeTools(ctx: ResumeToolContext): ReactTool[] {
   return [
     {
@@ -35,14 +35,14 @@ export function createResumeTools(ctx: ResumeToolContext): ReactTool[] {
     {
       name: "propose_resume_edits",
       description:
-        "根据分析结果生成简历修改草稿，写入预览草稿供用户确认，不会直接改动简历。通过 operations 语义化描述写操作：update 修改已有字段（对象型模块指定 module+field，数组型模块再加 index）；add 为数组型模块新增记录并携带 record 内容。提交前会做结构与格式校验，校验失败不写入草稿并返回 errors，请按 errors 修正后重新提交。operations 必须为标准 JSON，参数只使用普通字符，禁止输出 HTML 实体（如 &#x20;、&nbsp;、&quot; 等）。",
+        "根据分析结果生成简历修改，回复完成后直接写入简历数据（用户可撤回）。通过 operations 语义化描述写操作：update 修改已有字段（对象型模块指定 module+field，数组型模块再加 index）；add 为数组型模块新增记录并携带 record 内容。提交前会做结构与格式校验，校验失败不写入并返回 errors，请按 errors 修正后重新提交。operations 必须为标准 JSON，参数只使用普通字符，禁止输出 HTML 实体（如 &#x20;、&nbsp;、&quot; 等）。",
       parameters: {
         type: "object",
         properties: {
           operations: {
             type: "array",
             description:
-              "写操作列表，一次调用会合并为一份草稿；操作目标必须是 read_resume_data 返回的已有模块与字段；参数为标准 JSON，禁止输出 HTML 实体",
+              "写操作列表，一次调用会合并为一次写入；操作目标必须是 read_resume_data 返回的已有模块与字段；参数为标准 JSON，禁止输出 HTML 实体",
             items: {
               type: "object",
               properties: {
@@ -67,7 +67,7 @@ export function createResumeTools(ctx: ResumeToolContext): ReactTool[] {
                 },
                 record: {
                   type: "object",
-                  description: "新增记录的内容，键为字段名、值为草稿值，add 使用",
+                  description: "新增记录的内容，键为字段名、值为实际写入值，add 使用",
                 },
               },
               required: ["op", "module"],
@@ -86,7 +86,7 @@ export function createResumeTools(ctx: ResumeToolContext): ReactTool[] {
           console.log("[ReAct] propose_resume_edits 校验未通过:", errors);
           return { applied: false, changed: [], added: [], errors };
         }
-        // 先执行 add 新增记录，再把新增内容与 update 合并为同一份草稿
+        // 先执行 add 新增记录，再把新增内容与 update 合并为同一次写入
         const updateOps: ResumeWriteOp[] = [];
         const added: Array<{ module: string; index: number }> = [];
         operations.forEach((op) => {
@@ -112,13 +112,13 @@ export function createResumeTools(ctx: ResumeToolContext): ReactTool[] {
             }
           }
         });
-        // 纯新增且无内容时不调用 applyDiff，避免误清空已有草稿
+        // 纯新增且无内容时不调用写入，避免误清空已有修改
         if (!updateOps.length) {
           return { applied: added.length > 0, changed: [], added, errors: [] };
         }
         const changed = ctx.applyDiff(buildDiffPatch(updateOps));
         // 打印 diff 结果，便于确认工具是否被调用以及实际写入的字段
-        console.log("[ReAct] propose_resume_edits 写入草稿字段:", changed);
+        console.log("[ReAct] propose_resume_edits 写入字段:", changed);
         return { applied: true, changed, added, errors: [] };
       },
     },

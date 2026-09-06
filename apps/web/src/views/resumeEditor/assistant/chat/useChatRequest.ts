@@ -89,7 +89,7 @@ export const useChatRequest = ({
   // 工具调用过程区展示用的中文名
   const TOOL_NAMES: Record<string, string> = {
     read_resume_data: "读取简历数据",
-    propose_resume_edits: "提交修改草稿",
+    propose_resume_edits: "提交修改",
     load_resume_data_contract: "读取《简历数据规范》",
     load_resume_writing: "读取《简历编写》",
     load_resume_optimization: "读取写作方法论",

@@ -19,12 +19,12 @@ export const resumeWriting = () => ({
   - 对象型模块：{ op: "update", module, field, value }
   - 数组型模块：{ op: "update", module, index, field, value }，index 为记录下标，从 0 开始
 - 新增记录（仅数组型模块）：{ op: "add", module, record }
-  record 填写该模块 data 记录对应的字段；新增记录会同步出现在表单与预览中，内容以草稿形式等待用户确认。
+  record 填写该模块 data 记录对应的字段；新增记录会同步出现在表单与预览中，内容直接写入，可撤销或手动修改。
 
 # 操作要求
 1. 每次写操作都要基于 read_resume_data 的真实结果定位：module 必须存在；update 的 index 和 field 必须对应已有记录与字段。
-2. 一次调用可包含多条 operations，系统会合并为一份草稿，避免分多次零散提交。
+2. 一次调用可包含多条 operations，系统会合并为一次写入，避免分多次零散提交。
 3. 若 propose_resume_edits 返回 errors，先按错误逐条修正后重新提交，不得忽略错误或直接结束任务。
 4. 用户未提供的事实不得编造；信息不足时用占位内容并在正文中提示用户补充核对。
-5. 操作说明直接写入 Markdown 正文，用二级标题「修改说明」组织，并明确提示内容为待用户确认的草稿。`,
+5. 操作说明直接写入 Markdown 正文，用二级标题「修改说明」组织，并提示内容已写入、可在编辑器中撤销或修改。`,
 });
