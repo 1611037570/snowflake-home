@@ -228,7 +228,6 @@ const runFlowStep = () => {
   addMessage({
     role: "assistant",
     content: JSON.stringify({
-      data: null,
       analysis: step.question,
       // 自由输入步骤不展示选项按钮，等待用户直接输入
       followQuestions: step.input ? [] : step.options,

@@ -55,7 +55,7 @@ function addDebugMessages() {
     chat.value.messages.push({ ...aiStore.createDefaultMessage(), ...payload });
   };
   const assistantJson = (analysis, followQuestions = []) =>
-    JSON.stringify({ data: null, analysis, followQuestions });
+    JSON.stringify({ analysis, followQuestions });
   // 用模块标题与优化要点生成长文本 markdown 分析
   const buildAnalysis = (title, bullets) =>
     `### ${title}\n\n${bullets.map((bullet) => `- ${bullet}`).join("\n")}\n\n### 呈现建议\n\n- 保持结构稳定，关键结论前置，方便招聘方快速阅读。`;

@@ -28,7 +28,7 @@ export const useChatRequest = ({
 }: UseChatRequestOptions) => {
   const aiStore = useAiStore();
   const { thinkMode } = storeToRefs(aiStore);
-  const { generating, beforeRequest, afterRequest, tools, applyResult } = config;
+  const { generating, beforeRequest, afterRequest, tools } = config;
   // 用于取消当前请求的函数引用
   let abortRequest: (() => void) | null = null;
   // ReAct 编排器引用，用于中止循环
@@ -186,12 +186,6 @@ export const useChatRequest = ({
         onFinal: (answer) => {
           if (!isCurrentRequest() || !lastMsg) return;
           lastMsg.content = answer;
-          // 兼容模型未走 diff 工具而直接返回 data 的情况
-          try {
-            applyResult?.(JSON.parse(answer).data);
-          } catch {
-            // 解析失败不阻断结果展示
-          }
           lastMsg.requestStatus = "success";
           lastMsg.stepLabel = "";
           lastMsg.thoughtCollapsed = true;
