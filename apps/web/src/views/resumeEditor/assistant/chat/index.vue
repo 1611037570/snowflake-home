@@ -56,10 +56,16 @@ function addMessage(msg) {
 // 聊天容器的引用，用于滚动
 const chatContainer = ref(null);
 
+// 是否跟随生成内容自动滚动：初始视为位于底部，用户上滑离开后关闭，回到底部后恢复
+const followOutput = ref(true);
 // 滚动监听，用于显示回到底部按钮
 const scrollTarget = computed(() => chatContainer.value?.wrapRef);
 const { arrivedState } = useScroll(scrollTarget, {
   offset: { bottom: 100 },
+  // 每次滚动后按是否接近底部同步跟随状态
+  onScroll: () => {
+    followOutput.value = arrivedState.bottom;
+  },
 });
 
 const showScrollBottom = computed(() => {
@@ -106,11 +112,17 @@ watch(
   { immediate: true },
 );
 
+// 生成内容期间仅在用户仍位于底部时自动跟随滚动，避免强制打断用户上滑阅读
+const followContentScroll = async () => {
+  if (!followOutput.value) return;
+  await scrollToBottom();
+};
+
 const { handleAIResponse, stopGenerating } = useChatRequest({
   chat,
   currentMessages,
   addMessage,
-  scrollToBottom,
+  scrollToBottom: followContentScroll,
   config: props.config,
 });
 
