@@ -8,6 +8,7 @@ import AddModule from "./components/addModule.vue";
 import BoxCollapse from "./components/boxCollapse.vue";
 import CityPicker from "./components/cityPicker/index.vue";
 import HiddenModules from "./components/hiddenModules.vue";
+import Honor from "./components/honor.vue";
 import Image from "./components/image.vue";
 import ItemCollapse from "./components/itemCollapse.vue";
 import ImageUpload from "./components/imageUpload/index.vue";
@@ -22,6 +23,7 @@ const dynamicComponents = {
   itemCollapse: ItemCollapse,
   account: Account,
   imageUpload: ImageUpload,
+  honor: Honor,
   image: Image,
   video: Video,
   cityPicker: CityPicker,
@@ -39,21 +41,22 @@ watch(
   () => currentItem.value,
   (item) => {
     if (!item) return;
+    configSyncing.value = true;
     // 同步期间暂停历史记录，避免初始化与同步产生的自动变更写入历史
     resumeStore.disableHistory();
-    configSyncing.value = true;
     // 延后到加载效果渲染后再同步，避免同步期间内容区白屏
     const targetItem = item;
     clearTimeout(syncTimer);
     syncTimer = setTimeout(() => {
       if (currentItem.value !== targetItem) return;
       resumeStore.syncConfigByData();
-      configSyncing.value = false;
+
       // 表单完成渲染后开启历史记录开关
       nextTick(() => {
         nextTick(() => {
           if (!mounted || currentItem.value !== targetItem) return;
           resumeStore.enableHistory();
+          configSyncing.value = false;
         });
       });
     }, 0);
@@ -69,13 +72,16 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <SfScrollbar class="h-full">
+  <SfScrollbar class="relative h-full">
     <!-- 配置同步完成前展示加载效果，避免内容区白屏 -->
-    <div v-if="configSyncing" class="flex w-full flex-1 items-center justify-center gap-3">
+    <div
+      v-if="configSyncing"
+      class="absolute top-1/2 left-1/2 z-20 flex w-full flex-1 -translate-x-1/2 -translate-y-1/2 items-center justify-center gap-3"
+    >
       <SfIcon icon="line-md:loading-twotone-loop" size="6" />
       <span class="text-sm text-sf-text-2">正在加载配置</span>
     </div>
-    <div v-else class="flex w-full flex-col">
+    <div class="flex w-full flex-col">
       <SfDynamicForm
         v-model:form="currentFixedConfig"
         v-model:data="currentData"
