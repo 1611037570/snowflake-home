@@ -100,9 +100,8 @@ function handleEditConfirm() {
                 class="cursor-pointer hover:text-sf-theme"
               />
             </SfTooltip>
-            <SfTooltip content="编辑标题" v-if="currentForm.key !== 'user'">
+            <SfTooltip content="编辑标题" v-if="currentForm.key !== 'user' && edit">
               <SfIcon
-                v-if="edit"
                 @click.stop="handleEdit"
                 icon="ic:round-edit"
                 size="4"
