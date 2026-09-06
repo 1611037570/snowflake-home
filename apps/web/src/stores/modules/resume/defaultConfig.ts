@@ -16,6 +16,15 @@ export const DEFAULT_MODULE_NAMES: { key: string; name: string; icon: string }[]
   { key: "video", name: "视频作品", icon: "mdi:video" },
   { key: "image", name: "图片作品", icon: "mdi:image" },
 ];
+// “整个简历”占位项：无具体模块选中时作为默认操作对象
+export const ALL_MODULE_KEY = "all";
+export const ALL_MODULE_NAME = "整个简历";
+export const ALL_MODULE_ICON = "lucide:file-text";
+export const ALL_MODULE = {
+  key: ALL_MODULE_KEY,
+  name: ALL_MODULE_NAME,
+  icon: ALL_MODULE_ICON,
+};
 // 自定义模块图标：名称由用户输入动态生成，仅图标在此统一维护
 export const CUSTOM_MODULE_ICON = "mdi:puzzle-outline";
 // 默认简历项

@@ -3,7 +3,8 @@ import router from "@/routers";
 import { getUUID } from "@/utils";
 import { defineStore } from "pinia";
 import { computed, ref, toRaw, watch } from "vue";
-import { DEFAULT_MODULE_NAMES, DEFAULT_RESUME_ITEM, DEFAULT_SYSTEM } from "./defaultConfig";
+import { ALL_MODULE_KEY, DEFAULT_MODULE_NAMES, DEFAULT_RESUME_ITEM, DEFAULT_SYSTEM } from "./defaultConfig";
+import type { SelectedModule } from "./types";
 import { useRefreshConfigByData } from "./hooks/useRefreshConfigByData";
 
 import { debounce, merge } from "lodash-es";
@@ -110,9 +111,9 @@ export const useResumeStore = defineStore(
       return item ? item.usage : undefined;
     });
     // 选中模块的名称列表
-    const selectedModule = ref<any[]>([]);
+    const selectedModule = ref<SelectedModule[]>([]);
     // 获取模块名称
-    const getModel = (key: string) => {
+    const getModel = (key: string): SelectedModule | undefined => {
       if (!key) return;
       if (key.startsWith("custom")) {
         return {
@@ -120,12 +121,33 @@ export const useResumeStore = defineStore(
           name: currentData.value?.[key]?.name || "",
         };
       }
-      return DEFAULT_MODULE_NAMES.find((item) => item.key === key) || {};
+      const found = DEFAULT_MODULE_NAMES.find((item) => item.key === key);
+      return found ? { key: found.key, name: found.name } : undefined;
     };
-    // 添加选中模块
+    // 选中模块：已存在则忽略，名称由 getModel 统一解析
+    const selectModule = (key: string) => {
+      const model = getModel(key);
+      if (!model?.key) return;
+      if (!selectedModule.value.some((item) => item.key === key)) {
+        selectedModule.value.push(model);
+      }
+    };
+    // 取消选中模块：“整个简历”占位项不允许移除
+    const unselectModule = (key: string) => {
+      if (key === ALL_MODULE_KEY) return;
+      selectedModule.value = selectedModule.value.filter((item) => item.key !== key);
+    };
+    // 清空选中模块
+    const clearSelectedModules = () => {
+      selectedModule.value = [];
+    };
+    // 整体替换选中模块：导出恢复、跳转定位等场景使用
+    const setSelectedModules = (modules: SelectedModule[]) => {
+      selectedModule.value = modules;
+    };
+    // 添加选中模块：兼容旧入口
     const pushSelectedModule = (key: string) => {
-      const data = getModel(key);
-      selectedModule.value.push(data);
+      selectModule(key);
     };
     // 新增简历：jump 控制是否跳转编辑器，导入场景传 false 仅创建不跳转；返回是否新增成功
     const addResume = (config: any, jump = true) => {
@@ -402,6 +424,10 @@ export const useResumeStore = defineStore(
       currentUsage,
       isPrinting,
       selectedModule,
+      selectModule,
+      unselectModule,
+      clearSelectedModules,
+      setSelectedModules,
       pushSelectedModule,
       addResume,
       deleteResume,
