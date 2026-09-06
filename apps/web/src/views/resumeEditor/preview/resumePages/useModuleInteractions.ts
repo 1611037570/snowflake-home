@@ -1,10 +1,9 @@
 /**
  * useModuleInteractions —— 编辑态模块交互状态
  *
- * 依据选中模块集合为每个渲染模块计算高亮轮廓类，
- * 并透出模块草稿接受/放弃回调，供 ModuleSlot 使用。
+ * 依据选中模块集合为每个渲染模块计算高亮轮廓类。
  */
-import { computed, inject, type ComputedRef, type Ref } from "vue";
+import { computed, type ComputedRef, type Ref } from "vue";
 
 /** useModuleInteractions 入参 */
 interface UseModuleInteractionsOptions {
@@ -20,10 +19,6 @@ export const useModuleInteractions = ({
   moduleList,
   selectedModule,
 }: UseModuleInteractionsOptions) => {
-  // 从编辑器根注入模块草稿接受/放弃回调
-  const acceptModule = inject<(moduleKey: string) => void>("acceptModule", () => {});
-  const rejectModule = inject<(moduleKey: string) => void>("rejectModule", () => {});
-
   // 选中的模块 key 集合
   const selectedKeys = computed(() => new Set(selectedModule.value.map((item) => item.key)));
   // 模块外层样式：编辑态渲染选中高亮与虚线框，非编辑态直接返回空对象
@@ -39,5 +34,5 @@ export const useModuleInteractions = ({
     return map;
   });
 
-  return { moduleClassMap, acceptModule, rejectModule };
+  return { moduleClassMap };
 };

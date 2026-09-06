@@ -2,7 +2,7 @@
 // 简历分页渲染可复用组件：接收 resumeItem（data/config/fixedConfig/ui），渲染分页后的简历页面
 // 数据源由 props 传入，不依赖 resume store；供编辑器预览、模板缩略图、全屏查看复用
 // 本组件只做渲染编排（数据代理/主题注入/测量分页），导出、智能一页等编辑功能由上层 page.vue 注册
-import { computed, provide, ref } from "vue";
+import { computed, ref } from "vue";
 import MeasureContent from "../components/measureContent.vue";
 import PreviewSinglePage from "./previewSinglePage.vue";
 import ResumePageShell from "./resumePageShell.vue";
@@ -14,10 +14,9 @@ import { useResumeStore } from "@/stores";
 import { useInitMask } from "./useInitMask";
 import { useResumePreviewData } from "./useResumePreviewData";
 import { useModuleInteractions } from "./useModuleInteractions";
-import { useDiffFieldHover } from "./useDiffFieldHover";
 
 const resumeStore = useResumeStore();
-const { selectedModule, system, isPrinting } = storeToRefs(resumeStore);
+const { selectedModule, system } = storeToRefs(resumeStore);
 defineOptions({ name: "ResumePages" });
 
 const props = defineProps({
@@ -35,7 +34,7 @@ const props = defineProps({
 
 // 缩略图模式：仅渲染第一页，测量完成后冻结行数据
 const isThumb = computed(() => props.mode === "thumb");
-// 编辑态标记：直接以 mode 判断编辑场景，仅编辑态开放模块操作与 diff 悬浮交互
+// 编辑态标记：直接以 mode 判断编辑场景，仅编辑态开放模块选择交互
 const isEdit = computed(() => props.mode === "editor");
 
 // 初始化过渡遮罩：盖住测量完成前的空页，1 秒后自动取消（仅编辑态展示）
@@ -74,18 +73,12 @@ const { measureDone, pages, pageStyleText, moduleList } = useResumePages({
 });
 
 // ---------- 编辑态模块交互（选中高亮 / 草稿接受放弃）----------
-const { moduleClassMap, acceptModule, rejectModule } = useModuleInteractions({
+const { moduleClassMap } = useModuleInteractions({
   isEdit,
   moduleList,
   selectedModule,
 });
 
-// diff 悬浮事件委托：根容器统一监听，替代各字段单独挂载
-const containerRef = ref(null);
-useDiffFieldHover({ containerRef, isEdit, isPrinting });
-// diff 档位根级注入：编辑态实际分页内容全参与（full），非编辑态（预览/缩略图）全不参与（none）；
-// 离屏测量容器不参与交互，由 MeasureContent 内部把 full 降为 render（仅渲染草稿保持行高一致）
-provide("diffMode", isEdit.value ? "full" : "none");
 // 单页组件根元素回传：rootRef 限定导出范围，measureRef 供测量与图片导出
 const setSingleRoot = (el) => (rootRef.value = el);
 const setSingleMeasure = (el) => (measureRef.value = el);
@@ -94,7 +87,7 @@ defineExpose({ rootEl: rootRef, measureEl: measureRef, moduleList });
 </script>
 
 <template>
-  <div ref="containerRef" class="relative flex flex-col">
+  <div class="relative flex flex-col">
     <!-- 初始化过渡遮罩：盖住测量完成前的空页与分支切换，1 秒后自动取消（仅编辑态展示） -->
     <div
       v-if="showInitMask && isEdit"
@@ -154,8 +147,6 @@ defineExpose({ rootEl: rootRef, measureEl: measureRef, moduleList });
             :module-key="slice.moduleKey"
             :is-edit="isEdit"
             :outline-class="moduleClassMap[slice.moduleKey]"
-            @accept="acceptModule"
-            @discard="rejectModule"
           />
         </ResumePageShell>
       </div>

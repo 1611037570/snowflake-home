@@ -9,11 +9,11 @@ const previewData = inject("previewData");
 const fontValue = inject("fontValue");
 const lineHeightValue = inject("lineHeightValue");
 
-// 获取单条荣誉证书名称（编辑态为 { value, newValue } 代理，非编辑态为原始字符串）
+// 获取单条荣誉证书名称（字段代理统一为 { value }）
 const getName = (item) => {
   const field = item?.name;
   if (field && typeof field === "object") {
-    return field.newValue || field.value || "";
+    return field.value || "";
   }
   return field || "";
 };
