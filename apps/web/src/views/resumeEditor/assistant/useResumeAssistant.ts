@@ -29,7 +29,6 @@ export const useResumeAssistant = (
         applyDiff: applyDiff ?? (() => []),
       }),
     ],
-    applyResult: (data) => applyDiff?.(data),
     beforeRequest: resumeContext.beforeRequest,
     afterRequest: resumeContext.afterRequest,
   };
