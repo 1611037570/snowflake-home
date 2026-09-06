@@ -135,6 +135,7 @@ export const resumeDataContract = () => ({
 3. 先调用 read_resume_data 读取目标模块真实数据，作为定位修改目标的依据。
 4. 查阅本规范中对应的"字段明细表"，确定要修改的模块、记录下标与字段。
 5. 通过 propose_resume_edits 以 operations 提交写操作：对象型模块用 { op: "update", module, field, value }，数组型模块修改用 index 定位、新增用 { op: "add", module, record }；不直接在最终结果中返回 data。
+6. 若 propose_resume_edits 返回 errors，先按错误逐条修正后重新提交，不得直接结束任务。
 
 # 5. 正确与错误示例
 
