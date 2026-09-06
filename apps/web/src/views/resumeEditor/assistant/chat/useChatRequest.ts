@@ -30,6 +30,11 @@ export const useChatRequest = ({
   const { thinkMode } = storeToRefs(aiStore);
   const { generating, beforeRequest, afterRequest, tools, commitDeferredWrites, discardDeferredWrites } =
     config;
+  // 当前 think 轮次流式输出的正文缓冲：未确认是最终输出轮前不直接展示为正文
+  let stepContent = "";
+  // 当前缓冲内容在 thought 中临时展示的起始位置，用于最终轮输出时移除
+  let stepOutputStart = -1;
+  const PROCESS_PREFIX = "\n\n### 过程输出\n";
   // 用于取消当前请求的函数引用
   let abortRequest: (() => void) | null = null;
   // ReAct 编排器引用，用于中止循环
@@ -80,8 +85,18 @@ export const useChatRequest = ({
       } else if (type === "content") {
         lastMsg.requestStatus = "generating";
         lastMsg.stepLabel = "正在生成回复…";
-        // 实时拼接正文分块，让 Markdown 正文边生成边可见
-        if (data) lastMsg.content = `${lastMsg.content || ""}${data}`;
+        // 先按 think 轮次缓冲：工具轮转入思考区，最终轮由 onFinal 统一输出正文
+        if (data) {
+          stepContent += data;
+          // 缓冲内容先在思考区临时展示，避免误入正文后闪退
+          if (stepOutputStart === -1) {
+            stepOutputStart = lastMsg.thought.length;
+            lastMsg.thought += PROCESS_PREFIX;
+          }
+          lastMsg.thought =
+            `${lastMsg.thought.slice(0, stepOutputStart + PROCESS_PREFIX.length)}${stepContent}`;
+          scrollToBottom();
+        }
         if (!timers.reply) {
           if (timers.thinking) clearInterval(timers.thinking);
           timers.thinking = null;
@@ -89,7 +104,6 @@ export const useChatRequest = ({
             if (isCurrent()) lastMsg.contentTime += 1;
           }, 1000);
         }
-        scrollToBottom();
       } else if (type === "total_tokens") {
         lastMsg.total_tokens = data;
       }
@@ -109,6 +123,8 @@ export const useChatRequest = ({
   const handleAIResponse = async () => {
     // 增加请求版本，用于判断当前请求是否有效
     const currentRequestVersion = ++requestVersion;
+    stepContent = "";
+    stepOutputStart = -1;
     // 辅助函数：检查当前请求是否仍为最新且组件未卸载
     const isCurrentRequest = () => !isUnmounted && currentRequestVersion === requestVersion;
     // 设置生成状态为true
@@ -164,11 +180,9 @@ export const useChatRequest = ({
         },
         onAct: (toolCall) => {
           if (!isCurrentRequest() || !lastMsg) return;
-          // 本轮发起工具调用：把该轮随流式输出的正文移入思考过程，避免混进最终正文
-          if (lastMsg.content) {
-            lastMsg.thought += `\n\n### 过程输出\n${lastMsg.content}`;
-            lastMsg.content = "";
-          }
+          // 本轮发起工具调用：缓冲文字已实时展示在思考区，结束本轮的临时输出状态
+          stepContent = "";
+          stepOutputStart = -1;
           lastMsg.stepLabel =
             TOOL_STEP_LABELS[toolCall.function.name] ||
             `正在执行 ${toolCall.function.name}…`;
@@ -199,6 +213,12 @@ export const useChatRequest = ({
           lastMsg.requestStatus = "success";
           lastMsg.stepLabel = "";
           lastMsg.thoughtCollapsed = true;
+          // 最终输出轮结束：移除思考区里的临时输出，正文由 content 完整展示
+          if (stepOutputStart !== -1) {
+            lastMsg.thought = lastMsg.thought.slice(0, stepOutputStart);
+          }
+          stepContent = "";
+          stepOutputStart = -1;
           // 回复完成后再统一提交生成期间缓冲的写操作
           commitDeferredWrites?.();
           scrollToBottom();
@@ -207,6 +227,11 @@ export const useChatRequest = ({
       // 执行工具循环
       await reactRunner.run(messages);
     } catch (error: any) {
+      if (stepOutputStart !== -1 && lastMsg) {
+        lastMsg.thought = lastMsg.thought.slice(0, stepOutputStart);
+      }
+      stepContent = "";
+      stepOutputStart = -1;
       // 取消或失败时丢弃缓冲写操作，避免留下半截新增/草稿
       discardDeferredWrites?.();
       // 若已卸载则忽略
