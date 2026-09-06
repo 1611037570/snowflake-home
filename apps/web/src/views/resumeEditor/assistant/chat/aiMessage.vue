@@ -75,6 +75,8 @@ const isThinking = computed(() => props.msg.typing && props.msg.requestStatus ==
 const isGenerating = computed(() => props.msg.typing && props.msg.requestStatus === "generating");
 const hasThought = computed(() => !!props.msg.thought?.trim());
 const hasContent = computed(() => !!content.value?.trim());
+// 执行过程按钮文案：完成后标记“已完成”，运行中保持“执行过程”
+const processLabel = computed(() => (resumeShow ? "执行过程 · 已完成" : "执行过程"));
 // 等待态文案：优先展示当前执行动作，其次回退到思考/生成计时
 const statusText = computed(() => {
   if (props.msg.stepLabel) return props.msg.stepLabel;
@@ -105,7 +107,7 @@ const showTotalTime = computed(() => props.msg.requestStatus === "success" && to
         />
         <ToggleButton
           v-if="hasThought"
-          label="执行过程"
+          :label="processLabel"
           :collapsed="msg.thoughtCollapsed"
           @toggle="emit('updateCollapsedStatus', index, 'thought')"
         />
