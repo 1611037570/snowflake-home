@@ -7,13 +7,12 @@ export const resumeDataContract = () => ({
   description: `本技能用于指导 AI 正确填写简历 JSON 中的 data 字段。 【适用场景】当用户说"写简历/改简历/新增工作经历/更新项目/修改个人优势"等涉及简历内容增删改时，必须加载本技能。 【核心职责】只负责生成或修改各模块的 data 内容（如 work.data、user.data），不涉及 UI 状态（collapsed/hidden）、模块配置（config/fixedConfig）或页面布局。 【数据来源】本规范基于项目 formConfig.ts 中定义的字段结构生成，所有字段路径、类型、必填性均来源于此。 【输出目标】通过 propose_resume_diff 提交仅含变更字段的 patch，不直接返回 data。 【禁止行为】不编写完整简历文件，不操作 UI 状态，不修改 config/fixedConfig，不臆造不存在的字段。`,
   instructions: `# 1. 数据总体结构
 
-一份完整简历是一个对象，包含多个模块。每个模块的结构如下：
+一份简历按模块拆分，AI 读写统一使用以下结构，不包含 collapsed/hidden 等 UI 状态。每个模块只保留 data：
 
 \`\`\`typescript
 {
-  collapsed: boolean | string[],  // UI 折叠状态，不修改
-  hidden: boolean,                // UI 隐藏状态，不修改
-  data: 对象 | 数组                // ✅ 这是你唯一需要操作的部分
+  user: { data: 对象 },   // 对象型模块
+  work: { data: 数组 },   // 数组型模块
 }
 \`\`\`
 
@@ -21,7 +20,7 @@ export const resumeDataContract = () => ({
 
 - **数组型模块**（account, education, work, project, video, image, custom）：\`data\`是一个数组，每个元素是一条记录。
 
-> **重要**：用户的实际简历可能只包含以上模块中的一部分，请只操作已存在的模块，不要凭空创建不存在的模块。
+> **重要**：用户的实际简历可能只包含以上模块中的一部分，请只操作已存在的模块，不要凭空创建不存在的模块。\`read_resume_data\` 返回的就是该结构，\`propose_resume_diff\` 的 patch 与之保持一致。
 
 # 2. 各模块\`data\` 字段明细
 
@@ -106,7 +105,7 @@ export const resumeDataContract = () => ({
 
 ## 2.10 自定义经历 (\`custom_<id>.data[]\`)
 
-> **特别说明**：自定义模块是动态添加的，顶层 key 以\`custom_\`开头（如 \`custom_a810d50c\`），一份简历可能同时存在多个，各自 key 不同。请勿修改顶层 key、\`collapsed\`、\`hidden\` 或模块内 \`name\`（该字段控制 UI 显示名），只需操作该模块自己的\`data\`数组。
+> **特别说明**：自定义模块是动态添加的，顶层 key 以\`custom_\`开头（如 \`custom_a810d50c\`），一份简历可能同时存在多个，各自 key 不同。请勿修改顶层 key 或模块内 \`name\`（该字段控制 UI 显示名），只需提交该模块自己的\`data\`内容。
 
 | 字段      | 类型     | 必填 | 格式/备注                             |
 | :------ | :----- | :- | :-------------------------------- |
@@ -126,7 +125,7 @@ export const resumeDataContract = () => ({
 
 1. 用户提出修改简历内容。
 2. 确认目标模块（如 \`work\`）。
-3. 先调用 read_resume_data 读取该模块真实数据。
+3. 先调用 read_resume_data 读取目标模块真实数据，返回结构即 patch 结构。
 4. 查阅本规范中对应的"字段明细表"，按格式要求生成仅含变更字段的 patch。
 5. 通过 propose_resume_diff 提交 patch，不直接在最终结果中返回 data。
 
