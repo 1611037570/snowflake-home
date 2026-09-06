@@ -66,6 +66,15 @@ export const useChatRequest = ({
     load_resume_optimization: "正在读取写作方法论…",
     load_job_match: "正在读取岗位匹配规范…",
   };
+  // 工具调用过程区展示用的中文名
+  const TOOL_NAMES: Record<string, string> = {
+    read_resume_data: "读取简历数据",
+    propose_resume_edits: "提交修改草稿",
+    load_resume_data_contract: "读取《简历数据规范》",
+    load_resume_writing: "读取《简历编写》",
+    load_resume_optimization: "读取写作方法论",
+    load_job_match: "读取岗位匹配规范",
+  };
 
   // 统一状态处理器：把 reasoning/content/total_tokens 映射为请求状态与耗时计数
   const createChatState = (lastMsg: Message | null, isCurrent: () => boolean) => {
@@ -183,11 +192,17 @@ export const useChatRequest = ({
           // 本轮发起工具调用：缓冲文字已实时展示在思考区，结束本轮的临时输出状态
           stepContent = "";
           stepOutputStart = -1;
+          const displayName = TOOL_NAMES[toolCall.function.name] || toolCall.function.name;
+          const args = (toolCall.function.arguments || "").trim();
+          let toolTrace = `\n\n### 执行工具\n${displayName}`;
+          // 空参数不展示 JSON，避免出现无意义的 {}
+          if (args && args !== "{}") {
+            toolTrace += `\n\n\`\`\`json\n${args}\n\`\`\``;
+          }
+          lastMsg.thought += toolTrace;
           lastMsg.stepLabel =
             TOOL_STEP_LABELS[toolCall.function.name] ||
             `正在执行 ${toolCall.function.name}…`;
-          const args = toolCall.function.arguments || "{}";
-          lastMsg.thought += `\n\n### 执行工具\n\`${toolCall.function.name}\`\n\n\`\`\`json\n${args}\n\`\`\``;
           scrollToBottom();
         },
         onObserve: (observation) => {
