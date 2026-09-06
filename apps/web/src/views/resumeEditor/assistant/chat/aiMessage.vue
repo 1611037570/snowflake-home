@@ -43,32 +43,11 @@ const handleCopy = async (text) => {
   ElMessage.success("复制成功");
 };
 
-const parsedContent = computed(() => {
-  const value = props.msg.content;
-  if (typeof value === "string") {
-    try {
-      return JSON.parse(value);
-    } catch {
-      return null;
-    }
-  }
-  return value;
-});
-// 消息内容：新版直接保存 Markdown 正文，旧版兼容 JSON 中的 analysis
-const content = computed(() => {
-  const obj = parsedContent.value;
-  if (obj && typeof obj === "object" && typeof obj.analysis === "string") {
-    return obj.analysis;
-  }
-  return props.msg.content;
-});
-// 推荐追问：优先读取消息字段（由请求流程补充），旧版兼容 JSON 中的 followQuestions
+// 消息内容：直接保存 Markdown 正文
+const content = computed(() => props.msg.content);
+// 推荐追问：由消息字段记录
 const followQuestions = computed(() => {
-  if (Array.isArray(props.msg.followQuestions) && props.msg.followQuestions.length) {
-    return props.msg.followQuestions;
-  }
-  const obj = parsedContent.value;
-  return Array.isArray(obj?.followQuestions) ? obj.followQuestions : [];
+  return Array.isArray(props.msg.followQuestions) ? props.msg.followQuestions : [];
 });
 const resumeShow = computed(() => props.msg.requestStatus === "success");
 const isThinking = computed(() => props.msg.typing && props.msg.requestStatus === "thinking");
@@ -76,7 +55,7 @@ const isGenerating = computed(() => props.msg.typing && props.msg.requestStatus 
 const hasThought = computed(() => !!props.msg.thought?.trim());
 const hasContent = computed(() => !!content.value?.trim());
 // 执行过程按钮文案：完成后标记“已完成”，运行中保持“执行过程”
-const processLabel = computed(() => (resumeShow ? "已完成执行" : "执行过程"));
+const processLabel = computed(() => (hasContent.value ? "已完成执行" : "执行过程"));
 // 等待态文案：优先展示当前执行动作，其次回退到思考/生成计时
 const statusText = computed(() => {
   if (props.msg.stepLabel) return props.msg.stepLabel;
