@@ -1,4 +1,5 @@
 import { allConfig } from "../formConfig";
+import { toRaw } from "vue";
 
 // 忽略数组 list 与运行时 id，生成模块结构指纹用于判断是否已是最新默认配置
 const fieldSchemaFingerprint = (field: any): string => {
@@ -44,7 +45,8 @@ function fillArrayListByData(field: any, data: any) {
   const count = Array.isArray(dataArray) ? dataArray.length : 0;
   let changed = false;
   while (arrayField.list.length < count) {
-    arrayField.list.push(structuredClone(arrayField.addConfig));
+    // 先解包响应式代理再克隆，避免 structuredClone 命中 Vue Proxy 抛出 DataCloneError
+    arrayField.list.push(structuredClone(toRaw(arrayField.addConfig)));
     changed = true;
   }
   return changed;
