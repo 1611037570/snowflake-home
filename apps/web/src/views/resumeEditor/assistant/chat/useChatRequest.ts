@@ -32,8 +32,11 @@ export const useChatRequest = ({
     config;
   // 当前 think 轮次流式输出的正文缓冲：未确认是最终输出轮前不直接展示为正文
   let stepContent = "";
+  // 当前缓冲内容在 thought 中临时展示的起始位置，用于最终轮输出时移除
+  let stepOutputStart = -1;
   // 是否进入反思轮：反思轮的 content 直接实时渲染为正文
   let streamFinalContent = false;
+  const PROCESS_PREFIX = "\n\n### 过程输出\n";
   // 用于取消当前请求的函数引用
   let abortRequest: (() => void) | null = null;
   // ReAct 编排器引用，用于中止循环
@@ -99,8 +102,16 @@ export const useChatRequest = ({
             lastMsg.content = `${lastMsg.content || ""}${data}`;
             scrollToBottom();
           } else {
-            // 未确认是最终输出轮前只缓冲，不写入正文也不长期保存
+            // 先按 think 轮次缓冲：工具轮转入思考区，最终轮由 onFinal 统一输出正文
             stepContent += data;
+            // 缓冲内容先在思考区临时展示，避免误入正文后闪退
+            if (stepOutputStart === -1) {
+              stepOutputStart = lastMsg.thought.length;
+              lastMsg.thought += PROCESS_PREFIX;
+            }
+            lastMsg.thought =
+              `${lastMsg.thought.slice(0, stepOutputStart + PROCESS_PREFIX.length)}${stepContent}`;
+            scrollToBottom();
           }
         }
         if (!timers.reply) {
@@ -130,6 +141,7 @@ export const useChatRequest = ({
     // 增加请求版本，用于判断当前请求是否有效
     const currentRequestVersion = ++requestVersion;
     stepContent = "";
+    stepOutputStart = -1;
     streamFinalContent = false;
     // 辅助函数：检查当前请求是否仍为最新且组件未卸载
     const isCurrentRequest = () => !isUnmounted && currentRequestVersion === requestVersion;
@@ -174,10 +186,14 @@ export const useChatRequest = ({
         reflection: true,
         onReflectStart: () => {
           if (!isCurrentRequest() || !lastMsg) return;
-          // 最终精炼轮开始：本轮 content 直接实时渲染为正文
+          // 反思轮开始：移除候选答案的临时输出，本轮 content 直接实时渲染为正文
+          if (stepOutputStart !== -1) {
+            lastMsg.thought = lastMsg.thought.slice(0, stepOutputStart);
+          }
           stepContent = "";
+          stepOutputStart = -1;
           streamFinalContent = true;
-          lastMsg.stepLabel = "正在精炼并生成最终回复…";
+          lastMsg.stepLabel = "正在审视并生成最终回复…";
         },
         thinking: {
           type: thinkMode.value ? "enabled" : "disabled",
@@ -188,27 +204,42 @@ export const useChatRequest = ({
         onThink: (reasoning) => {
           if (!isCurrentRequest() || !lastMsg || !reasoning) return;
           lastMsg.stepLabel = "正在深度思考…";
+          lastMsg.thought += `\n\n### 思考\n${reasoning}`;
         },
         onAct: (toolCall) => {
           if (!isCurrentRequest() || !lastMsg) return;
-          // 本轮发起工具调用：只记录调用了什么，不保存参数与过程正文
+          // 本轮发起工具调用：缓冲文字已实时展示在思考区，结束本轮的临时输出状态
           stepContent = "";
+          stepOutputStart = -1;
           streamFinalContent = false;
           const displayName = TOOL_NAMES[toolCall.function.name] || toolCall.function.name;
-          lastMsg.thought += `\n\n### 执行工具\n${displayName}`;
+          const args = (toolCall.function.arguments || "").trim();
+          let toolTrace = `\n\n### 执行工具\n${displayName}`;
+          // 空参数不展示 JSON，避免出现无意义的 {}
+          if (args && args !== "{}") {
+            toolTrace += `\n\n\`\`\`json\n${args}\n\`\`\``;
+          }
+          lastMsg.thought += toolTrace;
           lastMsg.stepLabel =
             TOOL_STEP_LABELS[toolCall.function.name] ||
             `正在执行 ${toolCall.function.name}…`;
           scrollToBottom();
         },
-        onObserve: () => {
+        onObserve: (observation) => {
           if (!isCurrentRequest() || !lastMsg) return;
           lastMsg.stepLabel = "已获取结果，正在分析…";
+          const preview =
+            observation.content.length > 1200
+              ? `${observation.content.slice(0, 1200)}...`
+              : observation.content;
+          lastMsg.thought += `\n\n### 观察结果\n\`\`\`json\n${preview}\n\`\`\``;
           scrollToBottom();
         },
-        onReflect: () => {
+        onReflect: (answer) => {
           if (!isCurrentRequest() || !lastMsg) return;
-          lastMsg.stepLabel = "正在输出最终答案…";
+          lastMsg.stepLabel = "正在检查并修正结果…";
+          const preview = answer.length > 1200 ? `${answer.slice(0, 1200)}...` : answer;
+          lastMsg.thought += `\n\n### 反思修正\n${preview}`;
           scrollToBottom();
         },
         onFinal: (answer) => {
@@ -217,7 +248,12 @@ export const useChatRequest = ({
           lastMsg.requestStatus = "success";
           lastMsg.stepLabel = "";
           lastMsg.thoughtCollapsed = true;
+          // 最终输出轮结束：移除思考区里的临时输出，正文由 content 完整展示
+          if (stepOutputStart !== -1) {
+            lastMsg.thought = lastMsg.thought.slice(0, stepOutputStart);
+          }
           stepContent = "";
+          stepOutputStart = -1;
           streamFinalContent = false;
           // 回复完成后再统一提交生成期间缓冲的写操作
           commitDeferredWrites?.();
@@ -227,7 +263,11 @@ export const useChatRequest = ({
       // 执行工具循环
       await reactRunner.run(messages);
     } catch (error: any) {
+      if (stepOutputStart !== -1 && lastMsg) {
+        lastMsg.thought = lastMsg.thought.slice(0, stepOutputStart);
+      }
       stepContent = "";
+      stepOutputStart = -1;
       streamFinalContent = false;
       // 取消或失败时丢弃缓冲写操作，避免留下半截新增/草稿
       discardDeferredWrites?.();
