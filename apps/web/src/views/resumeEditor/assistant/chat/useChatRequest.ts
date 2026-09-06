@@ -40,6 +40,8 @@ export const useChatRequest = ({
   let stepContent = "";
   // 是否进入反思轮：反思轮的 content 直接实时渲染为正文
   let streamFinalContent = false;
+  // 最终回复正文是否已开始输出：执行过程完成标记与自动折叠只在首个正文分片触发一次
+  let finalContentStarted = false;
   // 最近一次执行的工具名：用于判断观察结果是否为技能加载，避免把技能全文存入思考区
   let lastToolName = "";
   // 用于取消当前请求的函数引用
@@ -94,6 +96,11 @@ export const useChatRequest = ({
         lastMsg.stepLabel = "正在生成回复…";
         if (data) {
           if (streamFinalContent) {
+            // 最终回复正文开始输出：执行过程视为已结束，折叠执行过程并切换完成标记
+            if (!finalContentStarted) {
+              finalContentStarted = true;
+              lastMsg.thoughtCollapsed = true;
+            }
             // 反思轮（最终输出）：实时写入正文，边生成边渲染
             lastMsg.content = `${lastMsg.content || ""}${data}`;
             scrollToBottom();
@@ -130,6 +137,7 @@ export const useChatRequest = ({
     const currentRequestVersion = ++requestVersion;
     stepContent = "";
     streamFinalContent = false;
+    finalContentStarted = false;
     lastToolName = "";
     // 辅助函数：检查当前请求是否仍为最新且组件未卸载
     const isCurrentRequest = () => !isUnmounted && currentRequestVersion === requestVersion;
