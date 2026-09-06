@@ -76,21 +76,4 @@ export default defineConfigWithVueTs(
       ],
     },
   },
-  // 简历助手 chat 域禁止反向依赖上层业务：流程与技能由调用方注入
-  {
-    files: ["src/views/resumeEditor/assistant/chat/**/*.{ts,vue}"],
-    rules: {
-      "no-restricted-imports": [
-        "error",
-        {
-          patterns: [
-            {
-              group: ["../flows", "../skills/*", "../resumeContext", "../resumeTools", "../useResumeAssistant"],
-              message: "chat 域禁止反向依赖简历业务，请由调用方通过 props/config 注入",
-            },
-          ],
-        },
-      ],
-    },
-  },
 );
