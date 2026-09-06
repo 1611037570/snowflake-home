@@ -117,7 +117,7 @@ export const resumeDataContract = () => ({
 - **对象型模块**（[按模块名列表]）：\`data\` 是一个普通对象。
 - **数组型模块**（[按模块名列表]）：\`data\` 是一个数组，每个元素是一条记录。
 
-> **重要**：用户的实际简历可能只包含以上模块中的一部分，请只操作已存在的模块，不要凭空创建不存在的模块。\`read_resume_data\` 返回的就是该结构，\`propose_resume_diff\` 的 patch 与之保持一致。
+> **重要**：用户的实际简历可能只包含以上模块中的一部分，请只操作已存在的模块，不要凭空创建不存在的模块。\`read_resume_data\` 返回的就是该结构，\`propose_resume_edits\` 通过 operations 定位其中要修改的模块、记录与字段。
 
 # 2. 各模块\`data\` 字段明细
 
@@ -146,9 +146,9 @@ export const resumeDataContract = () => ({
 
 1. 用户提出修改简历内容。
 2. 确认目标模块（如 \`work\`）。
-3. 先调用 read_resume_data 读取目标模块真实数据，返回结构即 patch 结构。
-4. 查阅本规范中对应的"字段明细表"，按格式要求生成仅含变更字段的 patch。
-5. 通过 propose_resume_diff 提交 patch，不直接在最终结果中返回 data。
+3. 先调用 read_resume_data 读取目标模块真实数据，作为定位修改目标的依据。
+4. 查阅本规范中对应的"字段明细表"，确定要修改的模块、记录下标与字段。
+5. 通过 propose_resume_edits 以 operations 提交写操作：对象型模块填 { op: "update", module, field, value }，数组型模块再填 index 定位记录；不直接在最终结果中返回 data。
 
 # 5. 正确与错误示例
 
@@ -164,7 +164,7 @@ export const resumeDataContract = () => ({
 **转义要求（必须执行）**：`description` 与 `instructions` 使用反引号模板字符串包裹；正文中出现的所有反引号必须写成 `\``，`${` 必须写成 `\${`，反斜杠必须写成 `\\`，确保输出是合法 TS 且不发生模板字符串插值或提前结束。
 
 # 生成内容对应关系（固定）
-1. **description**：把"简历数据编写规范"的元信息（适用场景、核心职责、数据来源、输出目标、禁止行为）合并为单行写入，其中【输出目标】表述为：通过 propose_resume_diff 提交仅含变更字段的 patch，不直接返回 data。
+1. **description**：把"简历数据编写规范"的元信息（适用场景、核心职责、数据来源、输出目标、禁止行为）合并为单行写入，其中【输出目标】表述为：通过 propose_resume_edits 以 operations 提交写操作，不直接返回 data。
 2. **instructions**：只包含数据规范正文（数据总体结构、字段明细、格式约定、工作流程、正确与错误示例），不定义角色身份，不含 name/description 元信息。
 3. **字段明细表**：按解析规则第三步产出，填入 instructions 的 `# 2 各模块data 字段明细` 部分，custom 模块说明按解析规则第四步插入对应表格上方。
 

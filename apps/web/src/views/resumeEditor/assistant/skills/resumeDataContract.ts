@@ -1,10 +1,10 @@
 // 技能：简历数据编写规范
 // 由 resume-data-contract-generator.md 生成，更新时请通过生成器，勿直接修改
-// 描述：本技能用于指导 AI 正确填写简历 JSON 中的 data 字段。 【适用场景】当用户说"写简历/改简历/新增工作经历/更新项目/修改个人优势"等涉及简历内容增删改时，必须加载本技能。 【核心职责】只负责生成或修改各模块的 data 内容（如 work.data、user.data），不涉及 UI 状态（collapsed/hidden）、模块配置（config/fixedConfig）或页面布局。 【数据来源】本规范基于项目 formConfig.ts 中定义的字段结构生成，所有字段路径、类型、必填性均来源于此。 【输出目标】通过 propose_resume_diff 提交仅含变更字段的 patch，不直接返回 data。 【禁止行为】不编写完整简历文件，不操作 UI 状态，不修改 config/fixedConfig，不臆造不存在的字段。
+// 描述：本技能用于指导 AI 正确填写简历 JSON 中的 data 字段。 【适用场景】当用户说"写简历/改简历/新增工作经历/更新项目/修改个人优势"等涉及简历内容增删改时，必须加载本技能。 【核心职责】只负责生成或修改各模块的 data 内容（如 work.data、user.data），不涉及 UI 状态（collapsed/hidden）、模块配置（config/fixedConfig）或页面布局。 【数据来源】本规范基于项目 formConfig.ts 中定义的字段结构生成，所有字段路径、类型、必填性均来源于此。 【输出目标】通过 propose_resume_edits 以 operations 提交写操作，不直接返回 data。 【禁止行为】不编写完整简历文件，不操作 UI 状态，不修改 config/fixedConfig，不臆造不存在的字段。
 export const resumeDataContract = () => ({
   id: "resume_data_contract",
   name: "简历数据编写规范",
-  description: `本技能用于指导 AI 正确填写简历 JSON 中的 data 字段。 【适用场景】当用户说"写简历/改简历/新增工作经历/更新项目/修改个人优势"等涉及简历内容增删改时，必须加载本技能。 【核心职责】只负责生成或修改各模块的 data 内容（如 work.data、user.data），不涉及 UI 状态（collapsed/hidden）、模块配置（config/fixedConfig）或页面布局。 【数据来源】本规范基于项目 formConfig.ts 中定义的字段结构生成，所有字段路径、类型、必填性均来源于此。 【输出目标】通过 propose_resume_diff 提交仅含变更字段的 patch，不直接返回 data。 【禁止行为】不编写完整简历文件，不操作 UI 状态，不修改 config/fixedConfig，不臆造不存在的字段。`,
+  description: `本技能用于指导 AI 正确填写简历 JSON 中的 data 字段。 【适用场景】当用户说"写简历/改简历/新增工作经历/更新项目/修改个人优势"等涉及简历内容增删改时，必须加载本技能。 【核心职责】只负责生成或修改各模块的 data 内容（如 work.data、user.data），不涉及 UI 状态（collapsed/hidden）、模块配置（config/fixedConfig）或页面布局。 【数据来源】本规范基于项目 formConfig.ts 中定义的字段结构生成，所有字段路径、类型、必填性均来源于此。 【输出目标】通过 propose_resume_edits 以 operations 提交写操作，不直接返回 data。 【禁止行为】不编写完整简历文件，不操作 UI 状态，不修改 config/fixedConfig，不臆造不存在的字段。`,
   instructions: `# 1. 数据总体结构
 
 一份简历按模块拆分，AI 读写统一使用以下结构，不包含 collapsed/hidden 等 UI 状态。每个模块只保留 data：
@@ -20,7 +20,7 @@ export const resumeDataContract = () => ({
 
 - **数组型模块**（account, education, work, project, video, image, custom）：\`data\`是一个数组，每个元素是一条记录。
 
-> **重要**：用户的实际简历可能只包含以上模块中的一部分，请只操作已存在的模块，不要凭空创建不存在的模块。\`read_resume_data\` 返回的就是该结构，\`propose_resume_diff\` 的 patch 与之保持一致。
+> **重要**：用户的实际简历可能只包含以上模块中的一部分，请只操作已存在的模块，不要凭空创建不存在的模块。\`read_resume_data\` 返回的就是该结构，\`propose_resume_edits\` 通过 operations 定位其中要修改的模块、记录与字段。
 
 # 2. 各模块\`data\` 字段明细
 
@@ -125,9 +125,9 @@ export const resumeDataContract = () => ({
 
 1. 用户提出修改简历内容。
 2. 确认目标模块（如 \`work\`）。
-3. 先调用 read_resume_data 读取目标模块真实数据，返回结构即 patch 结构。
-4. 查阅本规范中对应的"字段明细表"，按格式要求生成仅含变更字段的 patch。
-5. 通过 propose_resume_diff 提交 patch，不直接在最终结果中返回 data。
+3. 先调用 read_resume_data 读取目标模块真实数据，作为定位修改目标的依据。
+4. 查阅本规范中对应的"字段明细表"，确定要修改的模块、记录下标与字段。
+5. 通过 propose_resume_edits 以 operations 提交写操作：对象型模块填 { op: "update", module, field, value }，数组型模块再填 index 定位记录；不直接在最终结果中返回 data。
 
 # 5. 正确与错误示例
 
