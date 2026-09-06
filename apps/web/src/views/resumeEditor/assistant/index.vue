@@ -18,7 +18,10 @@ const resumeStore = useResumeStore();
 // 应用 AI 差异由上层预览草稿注入，随技能与工具一并传给 chat
 const applyDiff = inject("applyDiff");
 // 组装简历域技能、工具与对话创建方法，入口不再直接拼接系统消息
-const { config: assistantConfig, createChat: createAssistantChat } = useResumeAssistant(applyDiff);
+const { config: assistantConfig, createChat: createAssistantChat } = useResumeAssistant(
+  applyDiff,
+  resumeStore.addDataRecord,
+);
 const { resumeAssistantChat } = storeToRefs(aiStore);
 const { system } = storeToRefs(resumeStore);
 const { selectedModule } = storeToRefs(resumeStore);

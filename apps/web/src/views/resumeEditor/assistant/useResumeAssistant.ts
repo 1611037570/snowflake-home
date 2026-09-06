@@ -9,6 +9,7 @@ import type { AssistantConfig } from "./types";
 // 简历助手唯一组装器：入口只消费本模块产出的 config 与创建对话方法
 export const useResumeAssistant = (
   applyDiff?: (patch: Record<string, any>) => string[],
+  addDataRecord?: (moduleKey: string) => number,
 ) => {
   const aiStore = useAiStore();
   const resumeStore = useResumeStore();
@@ -24,6 +25,7 @@ export const useResumeAssistant = (
       ...createSkillTools(onDemandSkills.map((createSkill) => createSkill())),
       ...createResumeTools({
         getResumeData: resumeContext.getResumeData,
+        addDataRecord,
         applyDiff: applyDiff ?? (() => []),
       }),
     ],
