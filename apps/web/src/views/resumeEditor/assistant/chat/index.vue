@@ -204,7 +204,7 @@ const handleRetry = (msg) => {
   scrollToBottom();
   handleAIResponse();
 };
-// 重新生成：删除回复并清空草稿，复用上一轮请求重新发起
+// 重新生成：回滚本轮修改并删除回复，复用上一轮请求重新发起
 function handleRegenerate(index) {
   const msg = displayMessages.value[index];
   if (!msg || generating.value) return;
@@ -213,7 +213,7 @@ function handleRegenerate(index) {
   scrollToBottom();
   handleAIResponse();
 }
-// 撤回修改：恢复请求前备份并清空草稿，回复文字保留、操作按钮消失
+// 撤回修改：恢复请求前备份，回复文字保留、操作按钮消失
 function handleWithdrawModify(index) {
   const msg = displayMessages.value[index];
   if (!msg) return;

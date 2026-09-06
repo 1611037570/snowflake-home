@@ -1,6 +1,6 @@
 import { allConfig } from "@/stores/modules/resume/formConfig";
 
-// 语义化写操作：明确到模块、记录与字段，避免让模型自行拼装整棵 diff
+// 语义化写操作：明确到模块、记录与字段，避免让模型自行拼装整棵数据
 export type ResumeWriteOp =
   | {
       op: "update"; // 修改已有字段
@@ -205,7 +205,7 @@ export const validateResumeEdits = (
   return errors;
 };
 
-// 把语义化写操作合并为预览层 diff 所需的树形 patch
+// 把语义化写操作合并为直接写入所需的树形 patch
 export const buildDiffPatch = (operations: ResumeWriteOp[]): Record<string, any> => {
   const patch: Record<string, any> = {};
   operations.forEach((op) => {

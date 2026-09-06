@@ -263,7 +263,7 @@ export const useChatRequest = ({
     } catch (error: any) {
       stepContent = "";
       streamFinalContent = false;
-      // 取消或失败时丢弃缓冲写操作，避免留下半截新增/草稿
+      // 取消或失败时丢弃缓冲写操作，避免留下半截新增/修改
       discardDeferredWrites?.();
       // 若已卸载则忽略
       if (isUnmounted) return;

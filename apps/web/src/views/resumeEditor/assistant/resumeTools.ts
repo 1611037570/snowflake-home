@@ -117,7 +117,7 @@ export function createResumeTools(ctx: ResumeToolContext): ReactTool[] {
           return { applied: added.length > 0, changed: [], added, errors: [] };
         }
         const changed = ctx.applyDiff(buildDiffPatch(updateOps));
-        // 打印 diff 结果，便于确认工具是否被调用以及实际写入的字段
+        // 打印写入结果，便于确认工具是否被调用以及实际写入的字段
         console.log("[ReAct] propose_resume_edits 写入字段:", changed);
         return { applied: true, changed, added, errors: [] };
       },
