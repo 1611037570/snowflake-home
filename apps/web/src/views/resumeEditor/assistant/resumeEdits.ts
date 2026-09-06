@@ -13,6 +13,11 @@ export type ResumeWriteOp =
       op: "add"; // 数组型模块新增记录
       module: string; // 模块 key，如 work/project/account/education
       record?: Record<string, unknown>; // 新记录内容，键为字段名，值直接写入
+    }
+  | {
+      op: "delete"; // 数组型模块删除记录
+      module: string;
+      index: number; // 要删除的记录下标（从 0 开始）
     };
 
 // 字段格式规则：由 formConfig 的组件类型推导，作为 operations 校验依据
@@ -155,6 +160,23 @@ export const validateResumeEdits = (
         }
         validateFieldValue(op.module, field, value, rule, errors);
       });
+      return;
+    }
+    if (op.op === "delete") {
+      if (!Array.isArray(moduleView.data)) {
+        errors.push(`${order}：模块 ${op.module} 不是数组型模块，不能执行 delete`);
+        return;
+      }
+      if (
+        typeof op.index !== "number" ||
+        !Number.isInteger(op.index) ||
+        op.index < 0 ||
+        op.index >= moduleView.data.length
+      ) {
+        errors.push(
+          `${order}：模块 ${op.module} 不存在下标 ${op.index} 的记录（当前共 ${moduleView.data.length} 条）`,
+        );
+      }
       return;
     }
     if (op.op !== "update") {

@@ -22,6 +22,7 @@ export const useResumeAssistant = (
   const pendingWrites: Array<
     | { type: "patch"; patch: Record<string, any> }
     | { type: "add"; module: string }
+    | { type: "delete"; module: string; index: number }
   > = [];
   const pendingAddCount: Record<string, number> = {};
   let bufferingWrites = false;
@@ -46,6 +47,12 @@ export const useResumeAssistant = (
     return index;
   };
 
+  const bufferedRemoveRecord = (moduleKey: string, index: number): boolean => {
+    if (!bufferingWrites) return resumeStore.removeDataRecord(moduleKey, index);
+    pendingWrites.push({ type: "delete", module: moduleKey, index });
+    return true;
+  };
+
   // 请求成功：按调用顺序把缓冲操作真实写入（新增记录、字段补丁）；返回是否真实写入过
   const commitDeferredWrites = () => {
     bufferingWrites = false;
@@ -53,6 +60,7 @@ export const useResumeAssistant = (
     const writes = pendingWrites.splice(0);
     writes.forEach((item) => {
       if (item.type === "add") addDataRecord?.(item.module);
+      else if (item.type === "delete") resumeStore.removeDataRecord(item.module, item.index);
       else realApplyDataPatch(item.patch);
     });
     return writes.length > 0;
@@ -74,6 +82,7 @@ export const useResumeAssistant = (
       ...createResumeTools({
         getResumeData: resumeContext.getResumeData,
         addDataRecord: bufferedAddRecord,
+        removeDataRecord: bufferedRemoveRecord,
         applyPatch: bufferedApplyPatch,
       }),
     ],
