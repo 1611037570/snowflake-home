@@ -13,13 +13,14 @@ export function createResumeTools(ctx: ResumeToolContext): ReactTool[] {
   return [
     {
       name: "read_resume_data",
-      description: "读取当前简历数据，可传入 moduleKey 读取指定模块，不传则读取整份简历。",
+      description:
+        "读取当前简历数据（仅各模块 data，不含 collapsed/hidden 等 UI 状态），可传入 moduleKey 读取指定模块，不传则读取整份简历。",
       parameters: {
         type: "object",
         properties: {
           moduleKey: {
             type: "string",
-            description: "模块 key，如 user/work/project/education/skill/account，可选",
+            description: "模块 key，如 user/work/project/education/skill/account，可选，不传读取整份简历",
           },
         },
       },
@@ -31,14 +32,14 @@ export function createResumeTools(ctx: ResumeToolContext): ReactTool[] {
     {
       name: "propose_resume_diff",
       description:
-        "根据分析结果生成简历修改草稿，写入预览草稿供用户确认，不会直接改动简历。patch 结构与 read_resume_data 返回的 data 字段内容一致，不含 data 外层。",
+        "根据分析结果生成简历修改草稿，写入预览草稿供用户确认，不会直接改动简历。patch 结构与 read_resume_data 返回结构一致：顶层为模块 key，模块内只含变更后的 data 内容。",
       parameters: {
         type: "object",
         properties: {
           patch: {
             type: "object",
             description:
-              "需要修改的简历字段补丁，结构与 read_resume_data 返回的 data 内容一致（不含 data 外层），仅包含变更字段",
+              "需要修改的简历字段补丁，结构与 read_resume_data 返回结构一致，顶层为模块 key，模块 data 中仅包含变更字段",
           },
         },
         required: ["patch"],

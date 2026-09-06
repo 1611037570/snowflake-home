@@ -84,7 +84,7 @@ description: |
 - 在`custom`模块的表格上方，固定插入以下说明段落：
 
   ```
-  > **特别说明**：自定义模块是动态添加的，顶层 key 以`custom_`开头（如 `custom_a810d50c`）。请勿修改顶层 key、`collapsed`、`hidden` 或模块内 `name`（该字段控制 UI 显示名），只需操作该模块自己的`data`数组。
+  > **特别说明**：自定义模块是动态添加的，顶层 key 以`custom_`开头（如 `custom_a810d50c`）。请勿修改顶层 key 或模块内 `name`（该字段控制 UI 显示名），只需提交该模块自己的`data`内容。
   ```
 
 - `custom_<id>.data[]`内部的字段与`work`一致：`name`, `post`, `time`, `content`。
@@ -105,20 +105,19 @@ export const resumeDataContract = () => ({
   name: "简历数据编写规范",
   description: `<description 内容，单行>`,
   instructions: `# 1. 数据总体结构
-一份完整简历是一个对象，包含多个模块。每个模块的结构如下：
+一份简历按模块拆分，AI 读写统一使用以下结构，不包含 collapsed/hidden 等 UI 状态。每个模块只保留 data：
 
 \`\`\`typescript
 {
-  collapsed: boolean | string[],  // UI 折叠状态，不修改
-  hidden: boolean,                // UI 隐藏状态，不修改
-  data: 对象 | 数组                // ✅ 这是你唯一需要操作的部分
+  user: { data: 对象 },   // 对象型模块
+  work: { data: 数组 },   // 数组型模块
 }
 \`\`\`
 
 - **对象型模块**（[按模块名列表]）：\`data\` 是一个普通对象。
 - **数组型模块**（[按模块名列表]）：\`data\` 是一个数组，每个元素是一条记录。
 
-> **重要**：用户的实际简历可能只包含以上模块中的一部分，请只操作已存在的模块，不要凭空创建不存在的模块。
+> **重要**：用户的实际简历可能只包含以上模块中的一部分，请只操作已存在的模块，不要凭空创建不存在的模块。\`read_resume_data\` 返回的就是该结构，\`propose_resume_diff\` 的 patch 与之保持一致。
 
 # 2. 各模块\`data\` 字段明细
 
@@ -147,7 +146,7 @@ export const resumeDataContract = () => ({
 
 1. 用户提出修改简历内容。
 2. 确认目标模块（如 \`work\`）。
-3. 先调用 read_resume_data 读取该模块真实数据。
+3. 先调用 read_resume_data 读取目标模块真实数据，返回结构即 patch 结构。
 4. 查阅本规范中对应的"字段明细表"，按格式要求生成仅含变更字段的 patch。
 5. 通过 propose_resume_diff 提交 patch，不直接在最终结果中返回 data。
 
