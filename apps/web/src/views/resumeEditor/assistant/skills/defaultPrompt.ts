@@ -30,9 +30,3 @@ export const defaultPrompt = (): Skill => ({
 - 最多包含「问题回复」「修改说明」两个二级标题。
 - 不暴露内部字段、JSON 路径、数组下标与工具调用细节。`,
 });
-
-// 过渡导出：入口迁移到 useResumeAssistant 后移除
-export const defaultMessage: any = {
-  role: "system",
-  content: defaultPrompt().instructions,
-};
