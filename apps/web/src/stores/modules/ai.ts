@@ -30,8 +30,6 @@ export type Message = {
   stepLabel?: string;
   // 推荐追问：由请求流程补充记录，不再等待模型在 JSON 中返回
   followQuestions: string[];
-  // 是否已撤回本轮 AI 修改（用于隐藏操作按钮）
-  withdrawn?: boolean;
   // 思考内容是否折叠
   thoughtCollapsed: boolean;
   // 总token数
