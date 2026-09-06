@@ -205,6 +205,42 @@ export const useResumeStore = defineStore(
       syncConfigByData();
       return module.data.length - 1;
     }
+    // AI 直接写入：把语义化 patch 递归应用到真实简历数据，不再经过预览草稿
+    function applyAiDataPatch(patch: Record<string, any>): string[] {
+      const data = currentData.value;
+      if (!data || !patch || typeof patch !== "object") return [];
+      const changedPaths: string[] = [];
+      const isPlainObject = (value: any) =>
+        value !== null && typeof value === "object" && !Array.isArray(value);
+      const isObjectArray = (value: any) =>
+        Array.isArray(value) && value.some((item) => isPlainObject(item));
+      const sameValue = (a: any, b: any) => JSON.stringify(a) === JSON.stringify(b);
+      const write = (src: any, node: any, parent: string) => {
+        if (!isPlainObject(node)) return;
+        Object.keys(node).forEach((key) => {
+          if (!src || !(key in src)) return;
+          const srcVal = src[key];
+          const patchVal = node[key];
+          const path = parent ? `${parent}.${key}` : key;
+          if (isObjectArray(srcVal) && isObjectArray(patchVal)) {
+            srcVal.forEach((item: any, idx: number) => {
+              if (patchVal[idx]) write(item, patchVal[idx], `${path}.${idx}`);
+            });
+            return;
+          }
+          if (isPlainObject(srcVal) && isPlainObject(patchVal)) {
+            write(srcVal, patchVal, path);
+            return;
+          }
+          if (patchVal !== undefined && !sameValue(patchVal, srcVal)) {
+            src[key] = patchVal;
+            changedPaths.push(path);
+          }
+        });
+      };
+      write(data, patch, "");
+      return changedPaths;
+    }
     // 删除简历：移入回收站（回收站已满时阻止并提示）
     const deleteResume = () => {
       if (currentIndex.value == -1) {
@@ -426,6 +462,7 @@ export const useResumeStore = defineStore(
       initResumeStatus,
       syncConfigByData,
       addDataRecord,
+      applyAiDataPatch,
       getModel,
       currentItem,
       currentData,

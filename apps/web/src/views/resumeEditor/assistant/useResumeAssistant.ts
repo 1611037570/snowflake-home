@@ -17,7 +17,7 @@ export const useResumeAssistant = (
   const { createDefaultChat, createDefaultMessage } = aiStore;
   const resumeContext = useResumeContext();
 
-  // 写操作缓冲：生成期间工具先不落数据/草稿，成功回复后再统一应用，避免中间状态暴露给用户
+  // 写操作缓冲：生成期间工具先不落数据，成功回复后再统一写入，避免中间状态暴露给用户
   const realApplyDiff = applyDiff ?? (() => []);
   const pendingWrites: Array<
     | { type: "diff"; patch: Record<string, any> }
@@ -46,7 +46,7 @@ export const useResumeAssistant = (
     return index;
   };
 
-  // 请求成功：按调用顺序把缓冲操作真实落库（新增记录、diff 草稿）
+  // 请求成功：按调用顺序把缓冲操作真实写入（新增记录、字段补丁）
   const commitDeferredWrites = () => {
     bufferingWrites = false;
     Object.keys(pendingAddCount).forEach((key) => delete pendingAddCount[key]);
@@ -57,7 +57,7 @@ export const useResumeAssistant = (
     });
   };
 
-  // 请求取消/失败：丢弃缓冲，避免留下半截新增或草稿
+  // 请求取消/失败：丢弃缓冲，避免留下半截新增或修改
   const discardDeferredWrites = () => {
     bufferingWrites = false;
     pendingWrites.length = 0;

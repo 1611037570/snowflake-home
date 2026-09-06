@@ -12,7 +12,7 @@ export type ResumeWriteOp =
   | {
       op: "add"; // 数组型模块新增记录
       module: string; // 模块 key，如 work/project/account/education
-      record?: Record<string, unknown>; // 新记录内容，键为字段名，值作为草稿展示
+      record?: Record<string, unknown>; // 新记录内容，键为字段名，值直接写入
     };
 
 // 字段格式规则：由 formConfig 的组件类型推导，作为 operations 校验依据
