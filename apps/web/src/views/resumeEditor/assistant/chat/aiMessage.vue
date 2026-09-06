@@ -141,6 +141,8 @@ const showTotalTime = computed(() => props.msg.requestStatus === "success" && to
         :editorId="`thought-preview-${index}`"
         class="bg-transparent! p-0!"
       />
+      <!-- 完成后的思考区与正文之间加分隔线，避免内容混淆 -->
+      <div v-if="resumeShow" class="mt-3 border-t border-sf-b" aria-hidden="true"></div>
     </div>
     <!-- 错误状态 -->
     <div
