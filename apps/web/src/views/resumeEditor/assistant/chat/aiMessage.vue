@@ -156,7 +156,7 @@ const showTotalTime = computed(() => props.msg.requestStatus === "success" && to
           <SfIcon icon="ph:copy-duotone" size="3.5" />
         </button>
       </SfTooltip>
-      <template v-if="isLast">
+      <template v-if="isLast && !msg.withdrawn">
         <button type="button" class="ai-action-btn" @click="emit('regenerate', index)">
           重新生成
         </button>
