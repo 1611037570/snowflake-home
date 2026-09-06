@@ -72,7 +72,7 @@ const { measureDone, pages, pageStyleText, moduleList } = useResumePages({
   allModules,
 });
 
-// ---------- 编辑态模块交互（选中高亮 / 草稿接受放弃）----------
+// ---------- 编辑态模块交互（选中高亮）----------
 const { moduleClassMap } = useModuleInteractions({
   isEdit,
   moduleList,
