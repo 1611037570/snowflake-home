@@ -7,6 +7,8 @@ export interface ResumeToolContext {
   getResumeData: (moduleKey?: string) => unknown;
   // 数组型模块新增一条空记录并同步表单配置，返回新记录下标（失败返回 -1）
   addDataRecord?: (moduleKey: string) => number;
+  // 删除数组型模块记录并同步表单配置
+  removeDataRecord?: (moduleKey: string, index: number) => boolean;
   // 应用 AI 提议的数据补丁（回复完成后直接写入真实数据，可撤销）
   applyPatch: (patch: Record<string, any>) => string[];
 }
@@ -35,7 +37,7 @@ export function createResumeTools(ctx: ResumeToolContext): ReactTool[] {
     {
       name: "propose_resume_edits",
       description:
-        "根据分析结果生成简历修改，回复完成后直接写入简历数据（用户可撤回）。通过 operations 语义化描述写操作：update 修改已有字段（对象型模块指定 module+field，数组型模块再加 index）；add 为数组型模块新增记录并携带 record 内容。提交前会做结构与格式校验，校验失败不写入并返回 errors，请按 errors 修正后重新提交。operations 必须为标准 JSON，参数只使用普通字符，禁止输出 HTML 实体（如 &#x20;、&nbsp;、&quot; 等）。",
+        "根据分析结果生成简历修改，回复完成后直接写入简历数据（用户可撤回）。通过 operations 语义化描述写操作：update 修改已有字段；add 为数组型模块新增记录；delete 删除数组型模块记录。提交前会做结构与格式校验，校验失败不写入并返回 errors，请按 errors 修正后重新提交。operations 必须为标准 JSON，参数只使用普通字符，禁止输出 HTML 实体（如 &#x20;、&nbsp;、&quot; 等）。",
       parameters: {
         type: "object",
         properties: {
@@ -48,7 +50,7 @@ export function createResumeTools(ctx: ResumeToolContext): ReactTool[] {
               properties: {
                 op: {
                   type: "string",
-                  description: "操作类型：update 修改已有字段，add 为数组型模块新增记录",
+                  description: "操作类型：update 修改已有字段；add 新增记录；delete 删除记录",
                 },
                 module: {
                   type: "string",
@@ -89,6 +91,7 @@ export function createResumeTools(ctx: ResumeToolContext): ReactTool[] {
         // 先执行 add 新增记录，再把新增内容与 update 合并为同一次写入
         const updateOps: ResumeWriteOp[] = [];
         const added: Array<{ module: string; index: number }> = [];
+        let changedData = false;
         operations.forEach((op) => {
           if (!op) return;
           if (op.op === "update") {
@@ -98,6 +101,7 @@ export function createResumeTools(ctx: ResumeToolContext): ReactTool[] {
           if (op.op === "add") {
             const index = ctx.addDataRecord?.(op.module) ?? -1;
             if (index < 0) return;
+            changedData = true;
             added.push({ module: op.module, index });
             if (op.record && typeof op.record === "object") {
               Object.entries(op.record).forEach(([field, value]) => {
@@ -110,11 +114,16 @@ export function createResumeTools(ctx: ResumeToolContext): ReactTool[] {
                 });
               });
             }
+            return;
+          }
+          if (op.op === "delete") {
+            if (ctx.removeDataRecord?.(op.module, op.index)) changedData = true;
+            return;
           }
         });
         // 纯新增且无内容时不调用写入，避免误清空已有修改
         if (!updateOps.length) {
-          return { applied: added.length > 0, changed: [], added, errors: [] };
+          return { applied: added.length > 0 || changedData, changed: [], added, errors: [] };
         }
         const changed = ctx.applyPatch(buildPatch(updateOps));
         // 打印写入结果，便于确认工具是否被调用以及实际写入的字段

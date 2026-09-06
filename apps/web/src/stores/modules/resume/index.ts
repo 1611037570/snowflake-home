@@ -241,6 +241,24 @@ export const useResumeStore = defineStore(
       write(data, patch, "");
       return changedPaths;
     }
+    // 定位模块对应的数组表单子项列表，用于同步 data 与配置顺序
+    const findModuleArrayField = (item: any, moduleKey: string) => {
+      const targetConfig =
+        moduleKey === "user" ? item?.fixedConfig : item?.config;
+      const moduleField = targetConfig?.fields?.find((f: any) => f?.key === moduleKey);
+      return moduleField?.fields?.find((f: any) => f?.type === "array");
+    };
+    // AI 删除记录：同步 data 与表单配置
+    function removeDataRecord(moduleKey: string, index: number): boolean {
+      const data = currentData.value;
+      const module = data?.[moduleKey];
+      if (!module || !Array.isArray(module.data)) return false;
+      if (index < 0 || index >= module.data.length) return false;
+      module.data.splice(index, 1);
+      const arrayField = findModuleArrayField(currentItem.value, moduleKey);
+      arrayField?.list?.splice(index, 1);
+      return true;
+    }
     // 删除简历：移入回收站（回收站已满时阻止并提示）
     const deleteResume = () => {
       if (currentIndex.value == -1) {
@@ -463,6 +481,7 @@ export const useResumeStore = defineStore(
       syncConfigByData,
       addDataRecord,
       applyAiDataPatch,
+      removeDataRecord,
       getModel,
       currentItem,
       currentData,
