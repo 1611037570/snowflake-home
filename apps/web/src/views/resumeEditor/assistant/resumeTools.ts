@@ -35,14 +35,14 @@ export function createResumeTools(ctx: ResumeToolContext): ReactTool[] {
     {
       name: "propose_resume_edits",
       description:
-        "根据分析结果生成简历修改草稿，写入预览草稿供用户确认，不会直接改动简历。通过 operations 语义化描述写操作：update 修改已有字段（对象型模块指定 module+field，数组型模块再加 index）；add 为数组型模块新增记录并携带 record 内容。提交前会做结构与格式校验，校验失败不写入草稿并返回 errors，请按 errors 修正后重新提交。",
+        "根据分析结果生成简历修改草稿，写入预览草稿供用户确认，不会直接改动简历。通过 operations 语义化描述写操作：update 修改已有字段（对象型模块指定 module+field，数组型模块再加 index）；add 为数组型模块新增记录并携带 record 内容。提交前会做结构与格式校验，校验失败不写入草稿并返回 errors，请按 errors 修正后重新提交。operations 必须为标准 JSON，参数只使用普通字符，禁止输出 HTML 实体（如 &#x20;、&nbsp;、&quot; 等）。",
       parameters: {
         type: "object",
         properties: {
           operations: {
             type: "array",
             description:
-              "写操作列表，一次调用会合并为一份草稿；操作目标必须是 read_resume_data 返回的已有模块与字段",
+              "写操作列表，一次调用会合并为一份草稿；操作目标必须是 read_resume_data 返回的已有模块与字段；参数为标准 JSON，禁止输出 HTML 实体",
             items: {
               type: "object",
               properties: {
