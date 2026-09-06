@@ -81,8 +81,8 @@ export const useAiStore = defineStore(
     // 对话列表使用 IndexedDB 持久化，替代 localStorage
     const { data: chatList } = useIDBKeyval<Chat[]>("chat-list", []);
     const currentChatId = ref<string>("");
-    // 是否开启思考模式
-    const thinkMode = ref<boolean>(true);
+    // 是否开启思考模式：默认快速模式，需要深度思考时由开关开启
+    const thinkMode = ref<boolean>(false);
     // 简历助手对话：随 ai store 持久化保存，重进编辑器时恢复
     const resumeAssistantChat = ref<Chat | null>(null);
 
