@@ -17,6 +17,53 @@ export const useResumeAssistant = (
   const { createDefaultChat, createDefaultMessage } = aiStore;
   const resumeContext = useResumeContext();
 
+  // 写操作缓冲：生成期间工具先不落数据/草稿，成功回复后再统一应用，避免中间状态暴露给用户
+  const realApplyDiff = applyDiff ?? (() => []);
+  const pendingWrites: Array<
+    | { type: "diff"; patch: Record<string, any> }
+    | { type: "add"; module: string }
+  > = [];
+  const pendingAddCount: Record<string, number> = {};
+  let bufferingWrites = false;
+
+  const bufferedApplyDiff = (patch: Record<string, any>): string[] => {
+    if (bufferingWrites) {
+      pendingWrites.push({ type: "diff", patch });
+      return [];
+    }
+    return realApplyDiff(patch);
+  };
+
+  const bufferedAddRecord = (moduleKey: string): number => {
+    if (!bufferingWrites) return addDataRecord?.(moduleKey) ?? -1;
+    const view = resumeContext.getResumeData(moduleKey)?.[moduleKey] as
+      | { data?: unknown }
+      | undefined;
+    if (!view || !Array.isArray(view.data)) return -1;
+    const index = view.data.length + (pendingAddCount[moduleKey] ?? 0);
+    pendingAddCount[moduleKey] = (pendingAddCount[moduleKey] ?? 0) + 1;
+    pendingWrites.push({ type: "add", module: moduleKey });
+    return index;
+  };
+
+  // 请求成功：按调用顺序把缓冲操作真实落库（新增记录、diff 草稿）
+  const commitDeferredWrites = () => {
+    bufferingWrites = false;
+    Object.keys(pendingAddCount).forEach((key) => delete pendingAddCount[key]);
+    const writes = pendingWrites.splice(0);
+    writes.forEach((item) => {
+      if (item.type === "add") addDataRecord?.(item.module);
+      else realApplyDiff(item.patch);
+    });
+  };
+
+  // 请求取消/失败：丢弃缓冲，避免留下半截新增或草稿
+  const discardDeferredWrites = () => {
+    bufferingWrites = false;
+    pendingWrites.length = 0;
+    Object.keys(pendingAddCount).forEach((key) => delete pendingAddCount[key]);
+  };
+
   // 请求配置：技能工具、简历工具与请求上下文统一在此装配
   const config: AssistantConfig = {
     generating: isGenerating,
@@ -25,12 +72,17 @@ export const useResumeAssistant = (
       ...createSkillTools(onDemandSkills.map((createSkill) => createSkill())),
       ...createResumeTools({
         getResumeData: resumeContext.getResumeData,
-        addDataRecord,
-        applyDiff: applyDiff ?? (() => []),
+        addDataRecord: bufferedAddRecord,
+        applyDiff: bufferedApplyDiff,
       }),
     ],
-    beforeRequest: resumeContext.beforeRequest,
+    beforeRequest: () => {
+      bufferingWrites = true;
+      resumeContext.beforeRequest();
+    },
     afterRequest: resumeContext.afterRequest,
+    commitDeferredWrites,
+    discardDeferredWrites,
   };
 
   // 创建对话：常驻技能按清单顺序作为系统消息注入

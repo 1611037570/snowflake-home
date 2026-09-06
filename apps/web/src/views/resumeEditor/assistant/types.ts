@@ -44,4 +44,8 @@ export interface AssistantConfig {
   beforeRequest?: () => void;
   // 请求结束后还原现场
   afterRequest?: () => void;
+  // 请求成功产出最终回复后，提交生成期间缓冲的写操作
+  commitDeferredWrites?: () => void;
+  // 请求被取消或失败时，丢弃生成期间缓冲的写操作
+  discardDeferredWrites?: () => void;
 }

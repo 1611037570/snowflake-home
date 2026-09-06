@@ -28,7 +28,8 @@ export const useChatRequest = ({
 }: UseChatRequestOptions) => {
   const aiStore = useAiStore();
   const { thinkMode } = storeToRefs(aiStore);
-  const { generating, beforeRequest, afterRequest, tools } = config;
+  const { generating, beforeRequest, afterRequest, tools, commitDeferredWrites, discardDeferredWrites } =
+    config;
   // 用于取消当前请求的函数引用
   let abortRequest: (() => void) | null = null;
   // ReAct 编排器引用，用于中止循环
@@ -198,12 +199,16 @@ export const useChatRequest = ({
           lastMsg.requestStatus = "success";
           lastMsg.stepLabel = "";
           lastMsg.thoughtCollapsed = true;
+          // 回复完成后再统一提交生成期间缓冲的写操作
+          commitDeferredWrites?.();
           scrollToBottom();
         },
       });
       // 执行工具循环
       await reactRunner.run(messages);
     } catch (error: any) {
+      // 取消或失败时丢弃缓冲写操作，避免留下半截新增/草稿
+      discardDeferredWrites?.();
       // 若已卸载则忽略
       if (isUnmounted) return;
       // 主动中止不视为错误
