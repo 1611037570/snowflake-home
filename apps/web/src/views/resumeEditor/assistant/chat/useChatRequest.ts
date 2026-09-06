@@ -178,9 +178,6 @@ export const useChatRequest = ({
           scrollToBottom();
         },
       });
-      // 临时调试：拦截真实请求，打印本次将发送的聊天内容后不再发起请求
-      console.log("[AI Request Intercepted]", messages);
-      return;
       // 执行工具循环
       await reactRunner.run(messages);
     } catch (error: any) {
