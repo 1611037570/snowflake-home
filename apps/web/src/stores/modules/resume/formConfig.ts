@@ -278,6 +278,7 @@ export const DEFAULT_ACCOUNT_FORM = {
       type: "array",
       drag: true,
       dragClass: DEFAULT_DRAG_CLASS,
+      colClass: DEFAULT_COL_CLASS + " py-1",
       list: [],
       addConfig: {
         model: [
@@ -887,10 +888,11 @@ export const DEFAULT_IMAGE_FORM = {
 // 荣誉证书
 export const DEFAULT_HONOR_FORM = {
   type: "group",
-  component: "honor",
+  component: "boxCollapse",
   key: "honor",
   props: {
     name: "荣誉证书",
+    add: true,
   },
   model: [
     {
@@ -904,12 +906,6 @@ export const DEFAULT_HONOR_FORM = {
       prop: "hidden",
       defaultValue: false,
     },
-    // 数据数组：供模块组件直接写入新增名称
-    {
-      source: ["honor", "data"],
-      prop: "items",
-      defaultValue: [],
-    },
   ],
   checks: { hidden: { path: ["honor", "hidden"] } },
   slot: "default",
@@ -918,6 +914,8 @@ export const DEFAULT_HONOR_FORM = {
       type: "array",
       drag: true,
       dragClass: DEFAULT_DRAG_CLASS,
+      colClass: DEFAULT_COL_CLASS + " py-1",
+
       list: [],
       addConfig: {
         // 名称数据源：绑定当前荣誉证书名称
@@ -929,7 +927,7 @@ export const DEFAULT_HONOR_FORM = {
           },
         ],
         type: "object",
-        component: "honorItem",
+        component: "honor",
         required: true,
       },
     },
