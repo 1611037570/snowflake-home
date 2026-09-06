@@ -221,7 +221,6 @@ function handleWithdrawModify(index) {
   if (!msg) return;
   withdrawAI(msg);
   rejectAll();
-  msg.withdrawn = true;
   ElMessage.success("已撤回 AI 修改");
 }
 // 通过 provide 注入重试回调，供 aiMessage 直接调用
