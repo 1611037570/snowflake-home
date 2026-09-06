@@ -17,12 +17,12 @@ const honors = computed(() => previewData.value?.honor?.data || []);
   <div class="resume-row" data-module="honor" :style="[lineHeightValue(), fontValue()]">
     <!-- 标题栏 -->
     <Title title="荣誉证书"></Title>
-    <!-- 荣誉证书名称列表 -->
-    <template v-for="(item, index) in honors" :key="index">
-      <div class="mt-1 flex max-w-full min-w-0 flex-wrap items-center gap-2">
+    <!-- 荣誉证书名称流式排列：容器放不下时才换行 -->
+    <div v-if="honors.length" class="mt-1 flex max-w-full min-w-0 flex-wrap items-center gap-2">
+      <template v-for="(item, index) in honors" :key="index">
         <DiffField v-model="item.name" />
-      </div>
-    </template>
+      </template>
+    </div>
   </div>
 </template>
 
