@@ -182,6 +182,28 @@ ${experienceInfo}
       userContent: "请根据我的简历开始模拟面试",
     }),
   },
+  // AI 简历打分：确认开始后，从多个维度评估简历并给出改进建议
+  resumeScore: {
+    userContent: "帮我进行AI简历打分",
+    steps: [
+      {
+        question: "请确认开始打分：我会先阅读你的简历，再从完整度、量化成果、语言表达与岗位匹配等维度综合评估。",
+        options: ["开始打分"],
+      },
+    ],
+    build: () => ({
+      prompt: `# 任务：AI 简历打分
+请根据用户的简历数据，从资深 HR 视角进行综合评估。
+要求：
+1. 先调用 read_resume_data 读取简历真实数据。
+2. 从简历完整度、结构排版、内容质量（成果量化、STAR 表达）、语言表达、岗位匹配度等维度逐项评估。
+3. 给出百分制总分与各分项得分，说明评分依据，列出主要扣分点，并给出可执行的改进建议。
+4. 严格基于简历真实数据，严禁编造任何信息；简历未体现的维度按缺失评估并给出补强方向。
+5. 本次不修改简历内容，data 固定为 null，不直接返回简历数据。
+6. 将打分结果与改进建议写入 analysis 字段，标题使用「问题回复」。`,
+      userContent: "请根据我的简历进行综合打分并给出改进建议",
+    }),
+  },
 };
 
 // 建议操作卡片：点击后进入对应引导流程，由调用方传给 Chat
@@ -220,5 +242,10 @@ export const suggestions: SuggestCard[] = [
     icon: "ph:chats-teardrop-duotone",
     title: "AI简历面试",
     flow: "resumeInterview",
+  },
+  {
+    icon: "ph:star-duotone",
+    title: "AI简历打分",
+    flow: "resumeScore",
   },
 ];
