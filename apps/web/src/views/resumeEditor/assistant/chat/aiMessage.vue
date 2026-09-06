@@ -28,33 +28,6 @@ const { copy, isSupported } = useClipboard();
 
 const emit = defineEmits(["updateCollapsedStatus", "sendFollowQuestion", "fillFollowQuestion"]);
 
-// 解码思考内容中的 HTML 实体（部分模型输出会用实体表示空格、引号等）
-const decodeEntities = (value) => {
-  if (!value) return "";
-  let result = value;
-  for (let round = 0; round < 2; round += 1) {
-    result = result.replace(
-      /&#(x[0-9a-f]+|\d+);|&(lt|gt|amp|quot|apos|nbsp);/gi,
-      (match, numeric, named) => {
-        if (numeric) {
-          const code = numeric[0]?.toLowerCase() === "x" ? parseInt(numeric.slice(1), 16) : parseInt(numeric, 10);
-          return Number.isFinite(code) ? String.fromCodePoint(code) : match;
-        }
-        const map = {
-          lt: "<",
-          gt: ">",
-          amp: "&",
-          quot: '"',
-          apos: "'",
-          nbsp: " ",
-        };
-        return map[named?.toLowerCase() ?? ""] ?? match;
-      },
-    );
-  }
-  return result;
-};
-
 // 将推荐问题填入输入框，不触发发送
 const handleFillFollowQuestion = (event, question) => {
   event.stopPropagation();
@@ -101,7 +74,6 @@ const resumeShow = computed(() => props.msg.requestStatus === "success");
 const isThinking = computed(() => props.msg.typing && props.msg.requestStatus === "thinking");
 const isGenerating = computed(() => props.msg.typing && props.msg.requestStatus === "generating");
 const hasThought = computed(() => !!props.msg.thought?.trim());
-const thoughtText = computed(() => decodeEntities(props.msg.thought || ""));
 const hasContent = computed(() => !!content.value?.trim());
 // 等待态文案：优先展示当前执行动作，其次回退到思考/生成计时
 const statusText = computed(() => {
@@ -162,7 +134,7 @@ const showTotalTime = computed(() => props.msg.requestStatus === "success" && to
       class="mt-1 mb-3 max-h-72 w-full max-w-full overflow-y-auto rounded-xl px-3 py-2 text-[12px] text-sf-text-2"
     >
       <SfMdPreview
-        :modelValue="thoughtText"
+        :modelValue="msg.thought"
         :theme="theme"
         :editorId="`thought-preview-${index}`"
         class="bg-transparent! p-0!"
