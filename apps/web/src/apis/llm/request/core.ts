@@ -241,6 +241,8 @@ class LLM {
 
           if (config.reflection && !reflectRound && step < maxSteps - 1) {
             console.log("[ReAct] 候选答案，下一轮反思定稿:", finalAnswer);
+            // 通知前端进入反思轮，便于实时渲染最终正文
+            config.onReflectStart?.();
             // 候选答案回填历史，反思轮携带完整执行过程审视并输出最终答案
             history.push({ role: "assistant", content: result.finalAnswer });
             history.push({

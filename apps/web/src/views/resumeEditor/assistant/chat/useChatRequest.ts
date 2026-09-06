@@ -34,6 +34,8 @@ export const useChatRequest = ({
   let stepContent = "";
   // 当前缓冲内容在 thought 中临时展示的起始位置，用于最终轮输出时移除
   let stepOutputStart = -1;
+  // 是否进入反思轮：反思轮的 content 直接实时渲染为正文
+  let streamFinalContent = false;
   const PROCESS_PREFIX = "\n\n### 过程输出\n";
   // 用于取消当前请求的函数引用
   let abortRequest: (() => void) | null = null;
@@ -94,17 +96,23 @@ export const useChatRequest = ({
       } else if (type === "content") {
         lastMsg.requestStatus = "generating";
         lastMsg.stepLabel = "正在生成回复…";
-        // 先按 think 轮次缓冲：工具轮转入思考区，最终轮由 onFinal 统一输出正文
         if (data) {
-          stepContent += data;
-          // 缓冲内容先在思考区临时展示，避免误入正文后闪退
-          if (stepOutputStart === -1) {
-            stepOutputStart = lastMsg.thought.length;
-            lastMsg.thought += PROCESS_PREFIX;
+          if (streamFinalContent) {
+            // 反思轮（最终输出）：实时写入正文，边生成边渲染
+            lastMsg.content = `${lastMsg.content || ""}${data}`;
+            scrollToBottom();
+          } else {
+            // 先按 think 轮次缓冲：工具轮转入思考区，最终轮由 onFinal 统一输出正文
+            stepContent += data;
+            // 缓冲内容先在思考区临时展示，避免误入正文后闪退
+            if (stepOutputStart === -1) {
+              stepOutputStart = lastMsg.thought.length;
+              lastMsg.thought += PROCESS_PREFIX;
+            }
+            lastMsg.thought =
+              `${lastMsg.thought.slice(0, stepOutputStart + PROCESS_PREFIX.length)}${stepContent}`;
+            scrollToBottom();
           }
-          lastMsg.thought =
-            `${lastMsg.thought.slice(0, stepOutputStart + PROCESS_PREFIX.length)}${stepContent}`;
-          scrollToBottom();
         }
         if (!timers.reply) {
           if (timers.thinking) clearInterval(timers.thinking);
@@ -134,6 +142,7 @@ export const useChatRequest = ({
     const currentRequestVersion = ++requestVersion;
     stepContent = "";
     stepOutputStart = -1;
+    streamFinalContent = false;
     // 辅助函数：检查当前请求是否仍为最新且组件未卸载
     const isCurrentRequest = () => !isUnmounted && currentRequestVersion === requestVersion;
     // 设置生成状态为true
@@ -174,8 +183,18 @@ export const useChatRequest = ({
       reactRunner = llm.react({
         tools,
         maxSteps: 6,
-        // TODO: 反思轮暂不启用，后续需要结果审视时恢复为 true
-        reflection: false,
+        reflection: true,
+        onReflectStart: () => {
+          if (!isCurrentRequest() || !lastMsg) return;
+          // 反思轮开始：移除候选答案的临时输出，本轮 content 直接实时渲染为正文
+          if (stepOutputStart !== -1) {
+            lastMsg.thought = lastMsg.thought.slice(0, stepOutputStart);
+          }
+          stepContent = "";
+          stepOutputStart = -1;
+          streamFinalContent = true;
+          lastMsg.stepLabel = "正在审视并生成最终回复…";
+        },
         thinking: {
           type: thinkMode.value ? "enabled" : "disabled",
         },
@@ -192,6 +211,7 @@ export const useChatRequest = ({
           // 本轮发起工具调用：缓冲文字已实时展示在思考区，结束本轮的临时输出状态
           stepContent = "";
           stepOutputStart = -1;
+          streamFinalContent = false;
           const displayName = TOOL_NAMES[toolCall.function.name] || toolCall.function.name;
           const args = (toolCall.function.arguments || "").trim();
           let toolTrace = `\n\n### 执行工具\n${displayName}`;
@@ -234,6 +254,7 @@ export const useChatRequest = ({
           }
           stepContent = "";
           stepOutputStart = -1;
+          streamFinalContent = false;
           // 回复完成后再统一提交生成期间缓冲的写操作
           commitDeferredWrites?.();
           scrollToBottom();
@@ -247,6 +268,7 @@ export const useChatRequest = ({
       }
       stepContent = "";
       stepOutputStart = -1;
+      streamFinalContent = false;
       // 取消或失败时丢弃缓冲写操作，避免留下半截新增/草稿
       discardDeferredWrites?.();
       // 若已卸载则忽略
