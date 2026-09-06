@@ -54,7 +54,7 @@ const selected = computed({
 </script>
 
 <template>
-  <ElCascader
+  <SfCascader
     v-model="selected"
     :options="cascaderOptions"
     filterable
@@ -67,6 +67,6 @@ const selected = computed({
 <style lang="scss" scoped>
 :deep(.el-input__wrapper) {
   box-shadow: none;
-  background-color: transparent;
+  background-color: red !important;
 }
 </style>
