@@ -1,11 +1,16 @@
 <script setup>
 import { computed, inject } from "vue";
 import { useAiStore, useResumeStore } from "@/stores";
-import { ALL_MODULE_KEY, ALL_MODULE_NAME, DEFAULT_EDITOR } from "@/stores/modules/resume/defaultConfig";
+import {
+  ALL_MODULE_KEY,
+  ALL_MODULE_NAME,
+  DEFAULT_EDITOR,
+} from "@/stores/modules/resume/defaultConfig";
 import { storeToRefs } from "pinia";
-import Chat from "./chat/index.vue";
 import { flows, suggestions } from "./flows";
 import { useResumeAssistant } from "./useResumeAssistant";
+
+const Chat = defineAsyncComponent(() => import("./chat/index.vue"));
 
 // AI 对话
 const aiStore = useAiStore();
@@ -13,8 +18,7 @@ const resumeStore = useResumeStore();
 // 应用 AI 差异由上层预览草稿注入，随技能与工具一并传给 chat
 const applyDiff = inject("applyDiff");
 // 组装简历域技能、工具与对话创建方法，入口不再直接拼接系统消息
-const { config: assistantConfig, createChat: createAssistantChat } =
-  useResumeAssistant(applyDiff);
+const { config: assistantConfig, createChat: createAssistantChat } = useResumeAssistant(applyDiff);
 const { resumeAssistantChat } = storeToRefs(aiStore);
 const { system } = storeToRefs(resumeStore);
 const { selectedModule } = storeToRefs(resumeStore);
@@ -56,10 +60,7 @@ function addDebugMessages() {
   const assistantSay = (round, index, followQuestions = []) =>
     push({
       role: "assistant",
-      content: assistantJson(
-        buildAnalysis(round.title, round.bullets),
-        followQuestions,
-      ),
+      content: assistantJson(buildAnalysis(round.title, round.bullets), followQuestions),
       requestStatus: "success",
       total_tokens: 1800 + index * 240,
       thoughtTime: 2 + (index % 9),
