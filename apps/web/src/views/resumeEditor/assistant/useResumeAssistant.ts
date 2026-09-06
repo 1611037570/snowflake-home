@@ -8,7 +8,7 @@ import type { AssistantConfig } from "./types";
 
 // 简历助手唯一组装器：入口只消费本模块产出的 config 与创建对话方法
 export const useResumeAssistant = (
-  applyDiff?: (patch: Record<string, any>) => string[],
+  applyDataPatch?: (patch: Record<string, any>) => string[],
   addDataRecord?: (moduleKey: string) => number,
 ) => {
   const aiStore = useAiStore();
@@ -18,20 +18,20 @@ export const useResumeAssistant = (
   const resumeContext = useResumeContext();
 
   // 写操作缓冲：生成期间工具先不落数据，成功回复后再统一写入，避免中间状态暴露给用户
-  const realApplyDiff = applyDiff ?? (() => []);
+  const realApplyDataPatch = applyDataPatch ?? (() => []);
   const pendingWrites: Array<
-    | { type: "diff"; patch: Record<string, any> }
+    | { type: "patch"; patch: Record<string, any> }
     | { type: "add"; module: string }
   > = [];
   const pendingAddCount: Record<string, number> = {};
   let bufferingWrites = false;
 
-  const bufferedApplyDiff = (patch: Record<string, any>): string[] => {
+  const bufferedApplyPatch = (patch: Record<string, any>): string[] => {
     if (bufferingWrites) {
-      pendingWrites.push({ type: "diff", patch });
+      pendingWrites.push({ type: "patch", patch });
       return [];
     }
-    return realApplyDiff(patch);
+    return realApplyDataPatch(patch);
   };
 
   const bufferedAddRecord = (moduleKey: string): number => {
@@ -53,7 +53,7 @@ export const useResumeAssistant = (
     const writes = pendingWrites.splice(0);
     writes.forEach((item) => {
       if (item.type === "add") addDataRecord?.(item.module);
-      else realApplyDiff(item.patch);
+      else realApplyDataPatch(item.patch);
     });
     return writes.length > 0;
   };
@@ -74,7 +74,7 @@ export const useResumeAssistant = (
       ...createResumeTools({
         getResumeData: resumeContext.getResumeData,
         addDataRecord: bufferedAddRecord,
-        applyDiff: bufferedApplyDiff,
+        applyPatch: bufferedApplyPatch,
       }),
     ],
     beforeRequest: () => {
