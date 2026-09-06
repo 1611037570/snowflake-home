@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { useAiStore } from "@/stores";
 import { useScroll } from "@vueuse/core";
-import { computed, nextTick, ref, watch } from "vue";
+import { ElMessage } from "element-plus";
+import { computed, inject, nextTick, ref, watch } from "vue";
 import { useChatRequest } from "./useChatRequest";
 import type { AssistantConfig, Flow, SuggestCard } from "../types";
 import type { SelectedModule } from "@/stores/modules/resume/types";
@@ -14,6 +15,8 @@ import MessageNav from "./messageNav.vue";
 
 const aiStore = useAiStore();
 const { createDefaultMessage } = aiStore;
+// AI 草稿操作：撤回修改时清空本轮草稿
+const rejectAll = inject("rejectAll", () => {});
 // 宿主传入的技能、工具与上下文配置
 const props = defineProps<{
   config: AssistantConfig;
@@ -203,6 +206,23 @@ const handleRetry = (msg) => {
   scrollToBottom();
   handleAIResponse();
 };
+// 重新生成：删除回复并清空草稿，复用上一轮请求重新发起
+function handleRegenerate(index) {
+  const msg = displayMessages.value[index];
+  if (!msg || generating.value) return;
+  removeMessage(msg);
+  rejectAll();
+  scrollToBottom();
+  handleAIResponse();
+}
+// 撤回修改：删除回复文字并清空 AI 草稿
+function handleWithdrawModify(index) {
+  const msg = displayMessages.value[index];
+  if (!msg) return;
+  removeMessage(msg);
+  rejectAll();
+  ElMessage.success("已撤回 AI 修改");
+}
 // 通过 provide 注入重试回调，供 aiMessage 直接调用
 provide("retry", handleRetry);
 
@@ -331,6 +351,8 @@ const handleFlowInput = (content) => {
           @updateCollapsedStatus="updateCollapsedStatus"
           @sendFollowQuestion="handleSendFollowQuestion"
           @fillFollowQuestion="handleFillFollowQuestion"
+          @regenerate="handleRegenerate"
+          @withdraw-modify="handleWithdrawModify"
         />
       </div>
     </SfScrollbar>
