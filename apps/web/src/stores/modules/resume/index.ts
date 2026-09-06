@@ -259,6 +259,29 @@ export const useResumeStore = defineStore(
       arrayField?.list?.splice(index, 1);
       return true;
     }
+    // AI 移动记录：同步 data 与表单配置
+    function moveDataRecord(moduleKey: string, from: number, to: number): boolean {
+      const data = currentData.value;
+      const module = data?.[moduleKey];
+      if (!module || !Array.isArray(module.data)) return false;
+      if (
+        from === to ||
+        from < 0 ||
+        to < 0 ||
+        from >= module.data.length ||
+        to >= module.data.length
+      ) {
+        return false;
+      }
+      const [record] = module.data.splice(from, 1);
+      module.data.splice(to, 0, record);
+      const arrayField = findModuleArrayField(currentItem.value, moduleKey);
+      if (Array.isArray(arrayField?.list)) {
+        const [formItem] = arrayField.list.splice(from, 1);
+        arrayField.list.splice(to, 0, formItem);
+      }
+      return true;
+    }
     // 删除简历：移入回收站（回收站已满时阻止并提示）
     const deleteResume = () => {
       if (currentIndex.value == -1) {
@@ -482,6 +505,7 @@ export const useResumeStore = defineStore(
       addDataRecord,
       applyAiDataPatch,
       removeDataRecord,
+      moveDataRecord,
       getModel,
       currentItem,
       currentData,

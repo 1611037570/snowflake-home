@@ -18,6 +18,12 @@ export type ResumeWriteOp =
       op: "delete"; // 数组型模块删除记录
       module: string;
       index: number; // 要删除的记录下标（从 0 开始）
+    }
+  | {
+      op: "move"; // 数组型模块调整记录顺序
+      module: string;
+      from: number; // 原下标（从 0 开始）
+      to: number; // 目标下标（从 0 开始）
     };
 
 // 字段格式规则：由 formConfig 的组件类型推导，作为 operations 校验依据
@@ -176,6 +182,19 @@ export const validateResumeEdits = (
         errors.push(
           `${order}：模块 ${op.module} 不存在下标 ${op.index} 的记录（当前共 ${moduleView.data.length} 条）`,
         );
+      }
+      return;
+    }
+    if (op.op === "move") {
+      if (!Array.isArray(moduleView.data)) {
+        errors.push(`${order}：模块 ${op.module} 不是数组型模块，不能执行 move`);
+        return;
+      }
+      const count = moduleView.data.length;
+      const invalid = (value: unknown) =>
+        typeof value !== "number" || !Number.isInteger(value) || value < 0 || value >= count;
+      if (invalid(op.from) || invalid(op.to)) {
+        errors.push(`${order}：模块 ${op.module} 的 move 下标无效（from/to 应在 0~${count - 1} 之间）`);
       }
       return;
     }
