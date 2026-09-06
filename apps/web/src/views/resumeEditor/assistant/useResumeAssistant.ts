@@ -46,7 +46,7 @@ export const useResumeAssistant = (
     return index;
   };
 
-  // 请求成功：按调用顺序把缓冲操作真实写入（新增记录、字段补丁）
+  // 请求成功：按调用顺序把缓冲操作真实写入（新增记录、字段补丁）；返回是否真实写入过
   const commitDeferredWrites = () => {
     bufferingWrites = false;
     Object.keys(pendingAddCount).forEach((key) => delete pendingAddCount[key]);
@@ -55,6 +55,7 @@ export const useResumeAssistant = (
       if (item.type === "add") addDataRecord?.(item.module);
       else realApplyDiff(item.patch);
     });
+    return writes.length > 0;
   };
 
   // 请求取消/失败：丢弃缓冲，避免留下半截新增或修改
