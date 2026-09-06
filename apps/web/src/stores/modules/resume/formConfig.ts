@@ -154,51 +154,6 @@ export const DEFAULT_USER_FORM = [
           clearable: true,
         },
       },
-      // 求职状态
-      {
-        type: "object",
-        label: "状态",
-        tip: "求职状态",
-        component: "select",
-        span: 12,
-        model: {
-          source: ["user", "data", "status"],
-          prop: "modelValue",
-        },
-        props: {
-          placeholder: "请选择状态",
-          clearable: true,
-          list: [
-            {
-              name: "在职",
-              value: "在职",
-            },
-            {
-              name: "离职",
-              value: "离职",
-            },
-            {
-              name: "应届生",
-              value: "应届生",
-            },
-          ],
-        },
-      },
-      // 所在城市
-      {
-        type: "object",
-        label: "期望城市",
-        tip: "期望城市",
-        component: "cityPicker",
-        span: 12,
-        model: {
-          source: ["user", "data", "city"],
-          prop: "modelValue",
-        },
-        props: {
-          placeholder: "请选择城市",
-        },
-      },
       {
         type: "object",
         label: "邮箱",
@@ -236,6 +191,67 @@ export const DEFAULT_USER_FORM = [
           valueFormat: "YYYY.MM",
           type: "month",
         },
+      },
+      // 更多配置：展开后才渲染其他配置
+      {
+        type: "group",
+        component: "more",
+        slot: "default",
+        span: 24,
+        model: [
+          {
+            source: ["user", "moreCollapsed"],
+            prop: "collapsed",
+            defaultValue: [],
+          },
+        ],
+        fields: [
+          // 求职状态
+          {
+            type: "object",
+            label: "状态",
+            tip: "求职状态",
+            component: "select",
+            span: 12,
+            model: {
+              source: ["user", "data", "status"],
+              prop: "modelValue",
+            },
+            props: {
+              placeholder: "请选择状态",
+              clearable: true,
+              list: [
+                {
+                  name: "在职",
+                  value: "在职",
+                },
+                {
+                  name: "离职",
+                  value: "离职",
+                },
+                {
+                  name: "应届生",
+                  value: "应届生",
+                },
+              ],
+            },
+          },
+          // 所在城市
+          {
+            type: "object",
+            label: "期望城市",
+            tip: "期望城市",
+            component: "cityPicker",
+            span: 12,
+            model: {
+              source: ["user", "data", "city"],
+              prop: "modelValue",
+            },
+            props: {
+              placeholder: "请选择城市",
+            },
+          },
+        ],
       },
     ],
   },

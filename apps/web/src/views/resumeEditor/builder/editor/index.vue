@@ -12,6 +12,7 @@ import Honor from "./components/honor.vue";
 import Image from "./components/image.vue";
 import ItemCollapse from "./components/itemCollapse.vue";
 import ImageUpload from "./components/imageUpload/index.vue";
+import More from "./components/more.vue";
 import Video from "./components/video.vue";
 
 const resumeStore = useResumeStore();
@@ -25,6 +26,7 @@ const dynamicComponents = {
   imageUpload: ImageUpload,
   honor: Honor,
   image: Image,
+  more: More,
   video: Video,
   cityPicker: CityPicker,
 };
