@@ -7,13 +7,9 @@ defineProps({
 });
 const emit = defineEmits(["select"]);
 
-// 导航文本：结构化回复优先展示分析文案，空内容回退为状态文案
+// 导航文本：展示正文摘要，空内容回退为状态文案
 function getMessageBrief(msg) {
-  const content = typeof msg.content === "string" ? msg.content : JSON.stringify(msg.content ?? "");
-  try {
-    const parsed = JSON.parse(content);
-    if (parsed?.analysis) return String(parsed.analysis);
-  } catch {}
+  const content = typeof msg.content === "string" ? msg.content : "";
   const brief = content.replace(/\s+/g, " ").trim();
   if (brief) return brief;
   if (msg.requestStatus === "error") return "生成失败";

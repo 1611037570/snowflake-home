@@ -239,11 +239,9 @@ const runFlowStep = () => {
   // 引导对话仅作界面展示，不加入请求上下文
   addMessage({
     role: "assistant",
-    content: JSON.stringify({
-      analysis: step.question,
-      // 自由输入步骤不展示选项按钮，等待用户直接输入
-      followQuestions: step.input ? [] : step.options,
-    }),
+    content: step.question,
+    // 自由输入步骤不展示选项按钮，等待用户直接输入
+    followQuestions: step.input ? [] : step.options,
     typing: false,
     requestStatus: "success",
     skipContext: true,
