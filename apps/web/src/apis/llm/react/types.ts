@@ -64,6 +64,8 @@ export interface ReactConfig {
   reflection?: boolean;
   // 反思回调：反思后的最终答案
   onReflect?: (answer: string) => void;
+  // 反思轮开始回调：用于前端把该轮 content 作为最终正文实时渲染
+  onReflectStart?: () => void;
   // 流式事件回调：透传 reasoning/content/total_tokens 等底层事件，用于计时与统计
   onEvent?: (type: string, data: any) => void;
   // 最终答案回调
