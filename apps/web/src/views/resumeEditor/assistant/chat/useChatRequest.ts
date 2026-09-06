@@ -36,6 +36,8 @@ export const useChatRequest = ({
   let stepOutputStart = -1;
   // 是否进入反思轮：反思轮的 content 直接实时渲染为正文
   let streamFinalContent = false;
+  // 最近一次执行的工具名：用于判断观察结果是否为技能加载，避免把技能全文存入思考区
+  let lastToolName = "";
   const PROCESS_PREFIX = "\n\n### 过程输出\n";
   // 用于取消当前请求的函数引用
   let abortRequest: (() => void) | null = null;
@@ -143,6 +145,7 @@ export const useChatRequest = ({
     stepContent = "";
     stepOutputStart = -1;
     streamFinalContent = false;
+    lastToolName = "";
     // 辅助函数：检查当前请求是否仍为最新且组件未卸载
     const isCurrentRequest = () => !isUnmounted && currentRequestVersion === requestVersion;
     // 设置生成状态为true
@@ -208,6 +211,7 @@ export const useChatRequest = ({
         },
         onAct: (toolCall) => {
           if (!isCurrentRequest() || !lastMsg) return;
+          lastToolName = toolCall.function.name;
           // 本轮发起工具调用：缓冲文字已实时展示在思考区，结束本轮的临时输出状态
           stepContent = "";
           stepOutputStart = -1;
@@ -228,6 +232,11 @@ export const useChatRequest = ({
         onObserve: (observation) => {
           if (!isCurrentRequest() || !lastMsg) return;
           lastMsg.stepLabel = "已获取结果，正在分析…";
+          // 技能加载的观察内容只用于本次运行给 AI 看，不写入思考区
+          if (lastToolName.startsWith("load_")) {
+            scrollToBottom();
+            return;
+          }
           const preview =
             observation.content.length > 1200
               ? `${observation.content.slice(0, 1200)}...`
