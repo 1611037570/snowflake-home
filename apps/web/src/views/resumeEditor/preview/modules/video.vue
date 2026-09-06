@@ -31,11 +31,11 @@ const safeUrl = (value) => {
     <!-- 社交链接 -->
     <template v-for="(item, index) in video" :key="index">
       <div
-        class="mt-1 flex max-w-full min-w-0 flex-wrap items-center justify-between gap-2"
+        class="mt-1 flex h-auto max-w-full min-w-0 flex-wrap items-center justify-between gap-2"
         data-module="user"
       >
-        <DiffField v-model="item.name" />
-        <div class="flex-1" :style="[fontValue(-6)]">
+        <div class="flex flex-1 items-center gap-3" :style="[fontValue(-6)]">
+          <DiffField v-model="item.name" :style="[fontValue(1)]" />
           <DiffField v-model="item.desc" />
         </div>
         <div class="h-16 w-16">
