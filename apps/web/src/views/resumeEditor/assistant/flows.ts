@@ -160,6 +160,28 @@ ${experienceInfo}
       };
     },
   },
+  // AI 简历面试：确认开始后，以面试官身份基于简历逐一提问
+  resumeInterview: {
+    userContent: "帮我进行AI简历面试",
+    steps: [
+      {
+        question: "请确认开始模拟面试：我会先阅读你的简历，再以面试官身份围绕简历内容逐一提问。",
+        options: ["开始面试"],
+      },
+    ],
+    build: () => ({
+      prompt: `# 任务：AI 模拟面试
+请根据用户的简历数据，以资深面试官的身份开展模拟面试。
+要求：
+1. 先调用 read_resume_data 读取简历真实数据，围绕求职岗位、经历、项目与技能设计问题。
+2. 每次只提出一个面试问题，从自我介绍、经历深挖、项目细节到专业能力循序渐进，符合真实面试节奏。
+3. 用户回答后继续追问或转换考察方向；用户提出结束或索要参考答案时，再点评回答并给出答题思路。
+4. 严格基于简历真实数据，严禁编造任何信息。
+5. 本次不修改简历内容，data 固定为 null，不直接返回简历数据。
+6. 将本轮面试问题写入 analysis 字段，标题使用「问题回复」。`,
+      userContent: "请根据我的简历开始模拟面试",
+    }),
+  },
 };
 
 // 建议操作卡片：点击后进入对应引导流程，由调用方传给 Chat
@@ -193,5 +215,10 @@ export const suggestions: SuggestCard[] = [
     icon: "ph:microphone-duotone",
     title: "面试自我介绍",
     flow: "selfIntro",
+  },
+  {
+    icon: "ph:chats-teardrop-duotone",
+    title: "AI简历面试",
+    flow: "resumeInterview",
   },
 ];
