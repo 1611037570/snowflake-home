@@ -48,8 +48,4 @@ export interface AssistantConfig {
   commitDeferredWrites?: () => void;
   // 请求被取消或失败时，丢弃生成期间缓冲的写操作
   discardDeferredWrites?: () => void;
-  // 发起请求前备份简历数据（供“撤回修改”恢复）
-  captureBackup?: () => unknown;
-  // 用备份恢复简历数据
-  restoreBackup?: (backup: unknown) => void;
 }

@@ -1,6 +1,6 @@
 // 导入LLM接口
 import { getLLM, isAbortError } from "@/apis";
-import { useAiStore } from "@/stores";
+import { useAiStore, useResumeStore } from "@/stores";
 // 导入聊天和消息类型
 import type { Chat, Message } from "@/stores/modules/ai";
 // 导入Vue组合式API相关类型
@@ -27,6 +27,7 @@ export const useChatRequest = ({
   config,
 }: UseChatRequestOptions) => {
   const aiStore = useAiStore();
+  const resumeStore = useResumeStore();
   const { thinkMode } = storeToRefs(aiStore);
   const {
     generating,
@@ -35,9 +36,24 @@ export const useChatRequest = ({
     tools,
     commitDeferredWrites,
     discardDeferredWrites,
-    captureBackup,
-    restoreBackup,
   } = config;
+  // 请求前备份简历数据，撤回修改时恢复（仅当前会话内存使用）
+  const captureBackup = () => {
+    const item = resumeStore.currentItem;
+    if (!item) return null;
+    return {
+      data: JSON.parse(JSON.stringify(item.data ?? {})),
+      config: JSON.parse(JSON.stringify(item.config ?? {})),
+      fixedConfig: JSON.parse(JSON.stringify(item.fixedConfig ?? {})),
+    };
+  };
+  const restoreBackup = (backup: any) => {
+    const item = resumeStore.currentItem;
+    if (!item || !backup) return;
+    item.data = backup.data ?? {};
+    item.config = backup.config ?? {};
+    item.fixedConfig = backup.fixedConfig ?? {};
+  };
   // 每条 AI 回复对应的请求前简历备份，用于“撤回修改”
   const requestBackups = new WeakMap<object, unknown>();
   // 当前 think 轮次流式输出的正文缓冲：未确认是最终输出轮前不直接展示为正文
