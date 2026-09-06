@@ -3,6 +3,7 @@ import { computed, nextTick, onMounted, ref } from "vue";
 import AiNotice from "../aiNotice.vue";
 import ModuleSelect from "./moduleSelect.vue";
 import BatchActions from "./batchActions.vue";
+import ThinkMode from "./thinkMode.vue";
 import ModelSelect from "./modelSelect.vue";
 
 // 是否正在生成回复，由父组件（index.vue）控制
@@ -112,6 +113,7 @@ onMounted(() => {
           <div class="flex items-center">
             <ModuleSelect />
             <BatchActions />
+            <ThinkMode />
           </div>
 
           <!-- 右侧-->
