@@ -6,6 +6,7 @@ import { computed, ref, toRaw, watch } from "vue";
 import { ALL_MODULE_KEY, DEFAULT_MODULE_NAMES, DEFAULT_RESUME_ITEM, DEFAULT_SYSTEM } from "./defaultConfig";
 import type { SelectedModule } from "./types";
 import { useRefreshConfigByData } from "./hooks/useRefreshConfigByData";
+import { createRecordSkeleton } from "./hooks/useAddRecord";
 
 import { debounce, merge } from "lodash-es";
 export type ResumeLayout = "list" | "three" | "ai";
@@ -194,6 +195,15 @@ export const useResumeStore = defineStore(
       const changed = refreshConfigByData(item);
       if (changed) lastSnapshot = deepClone(item);
       console.log(`简历配置同步耗时：${(performance.now() - startTime).toFixed(2)}ms`);
+    }
+    // 数组型模块新增记录：落一条含字段的空记录骨架并同步表单配置，返回新记录下标
+    function addDataRecord(moduleKey: string): number {
+      const data = currentData.value;
+      const module = data?.[moduleKey];
+      if (!module || !Array.isArray(module.data)) return -1;
+      module.data.push(createRecordSkeleton(moduleKey));
+      syncConfigByData();
+      return module.data.length - 1;
     }
     // 删除简历：移入回收站（回收站已满时阻止并提示）
     const deleteResume = () => {
@@ -415,6 +425,7 @@ export const useResumeStore = defineStore(
       system,
       initResumeStatus,
       syncConfigByData,
+      addDataRecord,
       getModel,
       currentItem,
       currentData,
