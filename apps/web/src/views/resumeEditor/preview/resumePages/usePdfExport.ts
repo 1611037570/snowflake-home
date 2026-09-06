@@ -29,7 +29,7 @@ export const printPDF = async (
   // 导出期间锁定编辑器三栏，避免操作干扰导出结果
   isPrinting.value = true;
   const cachedSelectedModule = [...selectedModule.value];
-  selectedModule.value.splice(0);
+  resumeStore.clearSelectedModules();
   let tempContainer: HTMLDivElement | undefined;
   try {
     // 确保DOM已渲染完成
@@ -133,7 +133,7 @@ export const printPDF = async (
       tempContainer.parentNode.removeChild(tempContainer);
     }
     // 导出完成或失败后还原选中的模块
-    selectedModule.value.splice(0, selectedModule.value.length, ...cachedSelectedModule);
+    resumeStore.setSelectedModules(cachedSelectedModule);
     isPrinting.value = false;
   }
 };

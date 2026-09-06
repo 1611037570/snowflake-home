@@ -43,7 +43,7 @@ export const printImage = async (
   // 导出期间锁定编辑器并移除模块选中状态
   isPrinting.value = true;
   const cachedSelectedModule = [...selectedModule.value];
-  selectedModule.value.splice(0);
+  resumeStore.clearSelectedModules();
   let tempContainer: HTMLDivElement | undefined;
 
   try {
@@ -119,7 +119,7 @@ export const printImage = async (
     if (tempContainer?.parentNode) {
       tempContainer.parentNode.removeChild(tempContainer);
     }
-    selectedModule.value.splice(0, selectedModule.value.length, ...cachedSelectedModule);
+    resumeStore.setSelectedModules(cachedSelectedModule);
     isPrinting.value = false;
   }
 };

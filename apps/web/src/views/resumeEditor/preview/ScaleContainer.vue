@@ -17,6 +17,8 @@ defineEmits(["fullscreen"]);
 const containerRef = ref(null);
 const resumeStore = useResumeStore();
 const { system, selectedModule } = storeToRefs(resumeStore);
+// 清空选中模块：直接调用 store 操作
+const { clearSelectedModules } = resumeStore;
 const contentRef = ref(null);
 const contentSize = ref({ width: 0, height: 0 });
 const manualScale = ref(1);
@@ -85,11 +87,6 @@ const handleScaleSelect = (item) => {
 
 const stepScale = (value) => {
   setManualScale(Number((scale.value + value).toFixed(1)));
-};
-
-// 一键清空选中的模块
-const clearSelectedModules = () => {
-  selectedModule.value = [];
 };
 
 const updateScale = useDebounceFn(([entry]) => {

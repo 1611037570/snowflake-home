@@ -1,10 +1,12 @@
 <script setup lang="ts">
+import { ALL_MODULE_KEY } from "@/stores/modules/resume/defaultConfig";
+import type { SelectedModule } from "@/stores/modules/resume/types";
 import type { SuggestCard } from "../../types";
 
 // 当前操作模块列表：选中哪些模块就遍历展示哪些模块
 const props = defineProps<{
   suggestions: SuggestCard[];
-  selectedModules?: { key: string; name?: string }[];
+  selectedModules?: SelectedModule[];
   removeModule?: (key: string) => void;
 }>();
 const emit = defineEmits(["switch-mode", "suggest"]);
@@ -38,7 +40,7 @@ const handleSuggest = (card) => {
         {{ item.name }}
         <!-- 右上角关闭按钮：点击移除该模块选中 -->
         <SfIcon
-          v-if="item.key !== 'all'"
+          v-if="item.key !== ALL_MODULE_KEY"
           icon="mingcute:close-line"
           size="3"
           class="absolute top-0 right-0 cursor-pointer text-sf-theme-text/70 hover:text-sf-theme-text"
