@@ -71,3 +71,9 @@ export interface Data {
     content?: string;
   }[];
 }
+
+// 简历模块选中项：key 为模块标识，name 为展示名（custom 模块由用户输入）
+export interface SelectedModule {
+  key: string;
+  name?: string;
+}
