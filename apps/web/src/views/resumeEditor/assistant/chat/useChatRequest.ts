@@ -28,17 +28,20 @@ export const useChatRequest = ({
 }: UseChatRequestOptions) => {
   const aiStore = useAiStore();
   const { thinkMode } = storeToRefs(aiStore);
-  const { generating, beforeRequest, afterRequest, tools, commitDeferredWrites, discardDeferredWrites } =
-    config;
+  const {
+    generating,
+    beforeRequest,
+    afterRequest,
+    tools,
+    commitDeferredWrites,
+    discardDeferredWrites,
+  } = config;
   // 当前 think 轮次流式输出的正文缓冲：未确认是最终输出轮前不直接展示为正文
   let stepContent = "";
-  // 当前缓冲内容在 thought 中临时展示的起始位置，用于最终轮输出时移除
-  let stepOutputStart = -1;
   // 是否进入反思轮：反思轮的 content 直接实时渲染为正文
   let streamFinalContent = false;
   // 最近一次执行的工具名：用于判断观察结果是否为技能加载，避免把技能全文存入思考区
   let lastToolName = "";
-  const PROCESS_PREFIX = "\n\n### 过程输出\n";
   // 用于取消当前请求的函数引用
   let abortRequest: (() => void) | null = null;
   // ReAct 编排器引用，用于中止循环
@@ -61,15 +64,6 @@ export const useChatRequest = ({
     timers.reply = null;
   };
 
-  // 工具名到用户可读动作的映射，用于等待态展示当前正在做什么
-  const TOOL_STEP_LABELS: Record<string, string> = {
-    read_resume_data: "正在读取简历数据…",
-    propose_resume_edits: "正在校验并提交修改草稿…",
-    load_resume_data_contract: "正在读取《简历数据规范》…",
-    load_resume_writing: "正在读取《简历编写》流程…",
-    load_resume_optimization: "正在读取写作方法论…",
-    load_job_match: "正在读取岗位匹配规范…",
-  };
   // 工具调用过程区展示用的中文名
   const TOOL_NAMES: Record<string, string> = {
     read_resume_data: "读取简历数据",
@@ -104,16 +98,8 @@ export const useChatRequest = ({
             lastMsg.content = `${lastMsg.content || ""}${data}`;
             scrollToBottom();
           } else {
-            // 先按 think 轮次缓冲：工具轮转入思考区，最终轮由 onFinal 统一输出正文
+            // 未确认是最终输出轮前只缓冲，不写入思考区也不写入正文
             stepContent += data;
-            // 缓冲内容先在思考区临时展示，避免误入正文后闪退
-            if (stepOutputStart === -1) {
-              stepOutputStart = lastMsg.thought.length;
-              lastMsg.thought += PROCESS_PREFIX;
-            }
-            lastMsg.thought =
-              `${lastMsg.thought.slice(0, stepOutputStart + PROCESS_PREFIX.length)}${stepContent}`;
-            scrollToBottom();
           }
         }
         if (!timers.reply) {
@@ -143,7 +129,6 @@ export const useChatRequest = ({
     // 增加请求版本，用于判断当前请求是否有效
     const currentRequestVersion = ++requestVersion;
     stepContent = "";
-    stepOutputStart = -1;
     streamFinalContent = false;
     lastToolName = "";
     // 辅助函数：检查当前请求是否仍为最新且组件未卸载
@@ -189,12 +174,8 @@ export const useChatRequest = ({
         reflection: true,
         onReflectStart: () => {
           if (!isCurrentRequest() || !lastMsg) return;
-          // 反思轮开始：移除候选答案的临时输出，本轮 content 直接实时渲染为正文
-          if (stepOutputStart !== -1) {
-            lastMsg.thought = lastMsg.thought.slice(0, stepOutputStart);
-          }
+          // 最终精炼轮开始：本轮 content 直接实时渲染为正文
           stepContent = "";
-          stepOutputStart = -1;
           streamFinalContent = true;
           lastMsg.stepLabel = "正在审视并生成最终回复…";
         },
@@ -212,43 +193,25 @@ export const useChatRequest = ({
         onAct: (toolCall) => {
           if (!isCurrentRequest() || !lastMsg) return;
           lastToolName = toolCall.function.name;
-          // 本轮发起工具调用：缓冲文字已实时展示在思考区，结束本轮的临时输出状态
-          stepContent = "";
-          stepOutputStart = -1;
-          streamFinalContent = false;
           const displayName = TOOL_NAMES[toolCall.function.name] || toolCall.function.name;
-          const args = (toolCall.function.arguments || "").trim();
-          let toolTrace = `\n\n### 执行工具\n${displayName}`;
-          // 空参数不展示 JSON，避免出现无意义的 {}
-          if (args && args !== "{}") {
-            toolTrace += `\n\n\`\`\`json\n${args}\n\`\`\``;
-          }
-          lastMsg.thought += toolTrace;
-          lastMsg.stepLabel =
-            TOOL_STEP_LABELS[toolCall.function.name] ||
-            `正在执行 ${toolCall.function.name}…`;
+          // 工具开始只记录执行动作，不写入参数与数据
+          stepContent = "";
+          streamFinalContent = false;
+          lastMsg.thought += `\n\n正在执行：${displayName}\n`;
+          lastMsg.stepLabel = `正在执行：${displayName}`;
           scrollToBottom();
         },
-        onObserve: (observation) => {
+        onObserve: () => {
           if (!isCurrentRequest() || !lastMsg) return;
-          lastMsg.stepLabel = "已获取结果，正在分析…";
-          // 技能加载的观察内容只用于本次运行给 AI 看，不写入思考区
-          if (lastToolName.startsWith("load_")) {
-            scrollToBottom();
-            return;
-          }
-          const preview =
-            observation.content.length > 1200
-              ? `${observation.content.slice(0, 1200)}...`
-              : observation.content;
-          lastMsg.thought += `\n\n### 观察结果\n\`\`\`json\n${preview}\n\`\`\``;
+          const displayName = TOOL_NAMES[lastToolName] || lastToolName;
+          // 工具完成只记录完成动作，观察数据不写入思考区
+          lastMsg.thought += `\n执行完成：${displayName}`;
+          lastMsg.stepLabel = "正在处理结果…";
           scrollToBottom();
         },
-        onReflect: (answer) => {
+        onReflect: () => {
           if (!isCurrentRequest() || !lastMsg) return;
-          lastMsg.stepLabel = "正在检查并修正结果…";
-          const preview = answer.length > 1200 ? `${answer.slice(0, 1200)}...` : answer;
-          lastMsg.thought += `\n\n### 反思修正\n${preview}`;
+          lastMsg.stepLabel = "正在输出最终答案…";
           scrollToBottom();
         },
         onFinal: (answer) => {
@@ -257,12 +220,7 @@ export const useChatRequest = ({
           lastMsg.requestStatus = "success";
           lastMsg.stepLabel = "";
           lastMsg.thoughtCollapsed = true;
-          // 最终输出轮结束：移除思考区里的临时输出，正文由 content 完整展示
-          if (stepOutputStart !== -1) {
-            lastMsg.thought = lastMsg.thought.slice(0, stepOutputStart);
-          }
           stepContent = "";
-          stepOutputStart = -1;
           streamFinalContent = false;
           // 回复完成后再统一提交生成期间缓冲的写操作
           commitDeferredWrites?.();
@@ -272,11 +230,7 @@ export const useChatRequest = ({
       // 执行工具循环
       await reactRunner.run(messages);
     } catch (error: any) {
-      if (stepOutputStart !== -1 && lastMsg) {
-        lastMsg.thought = lastMsg.thought.slice(0, stepOutputStart);
-      }
       stepContent = "";
-      stepOutputStart = -1;
       streamFinalContent = false;
       // 取消或失败时丢弃缓冲写操作，避免留下半截新增/草稿
       discardDeferredWrites?.();
