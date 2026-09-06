@@ -63,7 +63,7 @@ export function createResumeTools(ctx: ResumeToolContext): ReactTool[] {
                   description: "要修改的字段名，来自 read_resume_data 返回的数据，update 使用",
                 },
                 value: {
-                  description: "修改后的值，格式遵守简历数据编写规范，update 使用",
+                  description: "修改后的值，格式遵守简历数据规范，update 使用",
                 },
                 record: {
                   type: "object",

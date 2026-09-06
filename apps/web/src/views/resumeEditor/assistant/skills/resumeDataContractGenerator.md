@@ -3,7 +3,7 @@
 name: 简历数据规范生成器
 description: |
 这是一个纯代码驱动的生成器。您只需提供项目中的 formConfig.ts（包含所有 DEFAULT\*XXX_FORM 定义），
-本技能会自动解析所有模块的字段结构、数据类型、必填项和格式约束，并生成一份统一 TS 函数格式的"简历数据编写规范"技能文件 resumeDataContract.ts。
+本技能会自动解析所有模块的字段结构、数据类型、必填项和格式约束，并生成一份统一 TS 函数格式的"简历数据规范"技能文件 resumeDataContract.ts。
 解析规则和输出格式已固定，确保每次生成的文件结构一致、无随机性。
 
 ---
@@ -12,7 +12,7 @@ description: |
 
 你是"简历规范生成器"。你的唯一功能是：**根据用户提供的 formConfig.ts 源码，逆向推导出完整的数据契约，并输出统一 TS 函数格式的** **`resumeDataContract.ts`** **技能文件**。
 
-你生成的 resumeDataContract.ts 将用于指导 AI 如何正确地编写简历 JSON 数据，因此必须准确、清晰、无歧义。
+你生成的 resumeDataContract.ts 将为 AI 提供准确的简历数据字段与格式契约，因此必须准确、清晰、无歧义。
 
 # 前置要求
 
@@ -94,12 +94,12 @@ description: |
 最终输出一个统一 TS 函数格式的技能文件，文件名固定为 `resumeDataContract.ts`。外层结构必须与以下模板完全一致，不得自行增删字段或调整顺序：
 
 ```ts
-// 技能：简历数据编写规范
+// 技能：简历数据规范
 // 由 resume-data-contract-generator.md 生成，更新时请通过生成器，勿直接修改
 // 描述：<description 内容，单行>
 export const resumeDataContract = () => ({
   id: "resume_data_contract",
-  name: "简历数据编写规范",
+  name: "简历数据规范",
   description: `<description 内容，单行>`,
   instructions: `# 1. 数据总体结构
 一份简历按模块拆分，AI 读写统一使用以下结构，每个模块只保留 data：
@@ -114,7 +114,7 @@ export const resumeDataContract = () => ({
 - **对象型模块**（[按模块名列表]）：\`data\` 是一个普通对象。
 - **数组型模块**（[按模块名列表]）：\`data\` 是一个数组，每个元素是一条记录。
 
-> **重要**：用户的实际简历可能只包含以上模块中的一部分，请只操作已存在的模块，不要凭空创建不存在的模块。\`read_resume_data\` 返回的就是该结构，\`propose_resume_edits\` 通过 operations 定位其中要修改的模块、记录与字段。
+> **重要**：用户的实际简历可能只包含以上模块中的一部分。\`read_resume_data\` 返回的就是该结构，字段明细与格式以本规范为准。
 
 # 2. 各模块\`data\` 字段明细
 
@@ -136,19 +136,9 @@ export const resumeDataContract = () => ({
 
 1. **时间格式**：所有时间必须使用 \`YYYY.MM\`（如 \`2023.07\`）。\`workTime\`和\`birthday\`只能是\`YYYY.MM\`，**严禁带日**（如 \`2022.08.01\`是错的）。
 2. **富文本正文**：所有\`content\`字段必须是 HTML 字符串，用\`<p>\`包裹，加粗用\`<strong>\`。
-3. **数组新增**：通过 propose_resume_edits 提交 op: add 并携带 record 内容新增记录，系统会同步表单配置；新增内容的草稿经用户保留后生效。
-4. **数组型模块的** **\`data\`**：如果用户要修改第 N 条记录，注意数组索引从 0 开始。
+3. **数组型模块的** **\`data\`**：数组元素按记录顺序排列，记录下标从 0 开始。
 
-# 4. 工作流程
-
-1. 用户提出修改简历内容。
-2. 确认目标模块（如 \`work\`）。
-3. 先调用 read_resume_data 读取目标模块真实数据，作为定位修改目标的依据。
-4. 查阅本规范中对应的"字段明细表"，确定要修改的模块、记录下标与字段。
-5. 通过 propose_resume_edits 以 operations 提交写操作：对象型模块用 { op: "update", module, field, value }，数组型模块修改用 index 定位、新增用 { op: "add", module, record }；不直接在最终结果中返回 data。
-6. 若 propose_resume_edits 返回 errors，先按错误逐条修正后重新提交，不得直接结束任务。
-
-# 5. 正确与错误示例
+# 4. 正确与错误示例
 
 | 场景      | ❌ 错误写法                           | ✅ 正确写法                           |
 | :------ | :------------------------------- | :------------------------------- |
@@ -163,8 +153,8 @@ export const resumeDataContract = () => ({
 
 # 生成内容对应关系（固定）
 
-1. **description**：把"简历数据编写规范"的元信息（适用场景、核心职责、数据来源、输出目标、禁止行为）合并为单行写入，其中【输出目标】表述为：通过 propose_resume_edits 以 operations 提交写操作，不直接返回 data。
-2. **instructions**：只包含数据规范正文（数据总体结构、字段明细、格式约定、工作流程、正确与错误示例），不定义角色身份，不含 name/description 元信息，禁止重复 description 中的职责边界与禁止行为表。
+1. **description**：把"简历数据规范"的元信息（适用场景、数据来源、禁止行为）合并为单行写入，其中【适用场景】表述为：当 AI 需要了解简历模块结构、字段明细、必填项、枚举值与时间/HTML 格式时必须加载。
+2. **instructions**：只包含数据规范正文（数据总体结构、字段明细、格式约定、正确与错误示例），不定义角色身份，不含 name/description 元信息，禁止重复 description 中的职责边界与禁止行为表。
 3. **字段明细表**：按解析规则第三步产出，填入 instructions 的 `# 2 各模块data 字段明细` 部分，custom 模块说明按解析规则第四步插入对应表格上方。
 
 # 执行要求（防止随机性）
@@ -194,6 +184,6 @@ apps/web/src/views/resumeEditor/assistant/skills/resumeDataContract.ts
 
 # 触发词示例
 
-- "请根据我贴的 formConfig.ts，生成最新的简历编写规范技能函数。"
+- "请根据我贴的 formConfig.ts，生成最新的简历数据规范技能函数。"
 - "更新简历数据技能文件。"
 - "我的表单配置变了，重新生成 resumeDataContract.ts。"
