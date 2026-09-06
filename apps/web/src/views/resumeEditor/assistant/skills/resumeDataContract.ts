@@ -7,7 +7,7 @@ export const resumeDataContract = () => ({
   description: `本技能用于指导 AI 正确填写简历 JSON 中的 data 字段。 【适用场景】当用户说"写简历/改简历/新增工作经历/更新项目/修改个人优势"等涉及简历内容增删改时，必须加载本技能。 【核心职责】只负责生成或修改各模块的 data 内容（如 work.data、user.data），不涉及 UI 状态（collapsed/hidden）、模块配置（config/fixedConfig）或页面布局。 【数据来源】本规范基于项目 formConfig.ts 中定义的字段结构生成，所有字段路径、类型、必填性均来源于此。 【输出目标】通过 propose_resume_edits 以 operations 提交写操作，不直接返回 data。 【禁止行为】不编写完整简历文件，不操作 UI 状态，不修改 config/fixedConfig，不臆造不存在的字段。`,
   instructions: `# 1. 数据总体结构
 
-一份简历按模块拆分，AI 读写统一使用以下结构，不包含 collapsed/hidden 等 UI 状态。每个模块只保留 data：
+一份简历按模块拆分，AI 读写统一使用以下结构，每个模块只保留 data：
 
 \`\`\`typescript
 {
@@ -18,7 +18,7 @@ export const resumeDataContract = () => ({
 
 - **对象型模块**（user, skill, advantage）：\`data\` 是一个普通对象。
 
-- **数组型模块**（account, education, work, project, video, image, custom）：\`data\`是一个数组，每个元素是一条记录。
+- **数组型模块**（account, education, work, project, video, image, honor, custom）：\`data\`是一个数组，每个元素是一条记录。
 
 > **重要**：用户的实际简历可能只包含以上模块中的一部分，请只操作已存在的模块，不要凭空创建不存在的模块。\`read_resume_data\` 返回的就是该结构，\`propose_resume_edits\` 通过 operations 定位其中要修改的模块、记录与字段。
 
@@ -34,9 +34,10 @@ export const resumeDataContract = () => ({
 | phone    | string | ✅  | 手机号，11位数字（1开头）      |
 | sex      | string | 否  | 可选值 "男"/"女"         |
 | position | string | 否  | 求职岗位                |
-| status   | string | 否  | 可选值 "在职"/"离职"/"应届生" |
 | email    | string | 否  | 邮箱地址                |
 | workTime | string | 否  | 参加工作时间，格式 YYYY.MM   |
+| status   | string | 否  | 可选值 "在职"/"离职"/"应届生" |
+| city     | string | 否  | 期望城市                |
 
 ## 2.2 社交账号 (\`account.data[]\`)
 
@@ -103,9 +104,15 @@ export const resumeDataContract = () => ({
 | desc | string | ✅  | 图片描述          |
 | size | number | ✅  | 图片尺寸百分比，默认 50 |
 
-## 2.10 自定义经历 (\`custom_<id>.data[]\`)
+## 2.10 荣誉证书 (\`honor.data[]\`)
 
-> **特别说明**：自定义模块是动态添加的，顶层 key 以\`custom_\`开头（如 \`custom_a810d50c\`），一份简历可能同时存在多个，各自 key 不同。请勿修改顶层 key 或模块内 \`name\`（该字段控制 UI 显示名），只需提交该模块自己的\`data\`内容。
+| 字段   | 类型     | 必填 | 格式/备注  |
+| :--- | :----- | :- | :----- |
+| name | string | ✅  | 荣誉证书名称 |
+
+## 2.11 自定义经历 (\`custom_<id>.data[]\`)
+
+> **特别说明**：自定义模块是动态添加的，顶层 key 以\`custom_\`开头（如 \`custom_a810d50c\`）。请勿修改顶层 key 或模块内 \`name\`（该字段控制 UI 显示名），只需提交该模块自己的\`data\`内容。
 
 | 字段      | 类型     | 必填 | 格式/备注                             |
 | :------ | :----- | :- | :-------------------------------- |
@@ -118,7 +125,7 @@ export const resumeDataContract = () => ({
 
 1. **时间格式**：所有时间必须使用 \`YYYY.MM\`（如 \`2023.07\`）。\`workTime\`和\`birthday\`只能是\`YYYY.MM\`，**严禁带日**（如 \`2022.08.01\`是错的）。
 2. **富文本正文**：所有\`content\`字段必须是 HTML 字符串，用\`<p>\`包裹，加粗用\`<strong>\`。
-3. **数组新增**：当用户要求"新增"一条记录时，需先提醒用户在 UI 中点击"添加"按钮，否则数据不会渲染。
+3. **数组新增**：通过 propose_resume_edits 提交 op: add 并携带 record 内容新增记录，系统会同步表单配置；新增内容的草稿经用户保留后生效。
 4. **数组型模块的** **\`data\`**：如果用户要修改第 N 条记录，注意数组索引从 0 开始。
 
 # 4. 工作流程
@@ -127,7 +134,7 @@ export const resumeDataContract = () => ({
 2. 确认目标模块（如 \`work\`）。
 3. 先调用 read_resume_data 读取目标模块真实数据，作为定位修改目标的依据。
 4. 查阅本规范中对应的"字段明细表"，确定要修改的模块、记录下标与字段。
-5. 通过 propose_resume_edits 以 operations 提交写操作：对象型模块填 { op: "update", module, field, value }，数组型模块再填 index 定位记录；不直接在最终结果中返回 data。
+5. 通过 propose_resume_edits 以 operations 提交写操作：对象型模块用 { op: "update", module, field, value }，数组型模块修改用 index 定位、新增用 { op: "add", module, record }；不直接在最终结果中返回 data。
 
 # 5. 正确与错误示例
 
