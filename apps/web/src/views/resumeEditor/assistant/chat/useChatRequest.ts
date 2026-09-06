@@ -37,12 +37,29 @@ export const useChatRequest = ({
     commitDeferredWrites,
     discardDeferredWrites,
   } = config;
+  // 深拷贝简历数据时跳过 base64 大字段（user.avatar、image[].img），避免每请求全量序列化
+  const cloneDataSkippingMedia = (value: any, parentKey?: string): any => {
+    if (Array.isArray(value)) {
+      return value.map((item: any) => cloneDataSkippingMedia(item, parentKey));
+    }
+    if (value && typeof value === "object") {
+      const result: Record<string, any> = {};
+      Object.entries(value).forEach(([key, item]) => {
+        if (parentKey === "user" && key === "avatar") return;
+        if (parentKey === "image" && key === "img") return;
+        const nextParent = key === "user" || key === "image" ? key : parentKey;
+        result[key] = cloneDataSkippingMedia(item, nextParent);
+      });
+      return result;
+    }
+    return value;
+  };
   // 请求前备份简历数据，撤回修改时恢复（仅当前会话内存使用）
   const captureBackup = () => {
     const item = resumeStore.currentItem;
     if (!item) return null;
     return {
-      data: JSON.parse(JSON.stringify(item.data ?? {})),
+      data: cloneDataSkippingMedia(item.data ?? {}),
       config: JSON.parse(JSON.stringify(item.config ?? {})),
       fixedConfig: JSON.parse(JSON.stringify(item.fixedConfig ?? {})),
     };
@@ -50,7 +67,19 @@ export const useChatRequest = ({
   const restoreBackup = (backup: any) => {
     const item = resumeStore.currentItem;
     if (!item || !backup) return;
+    // 恢复时保留当前未被 AI 修改的大字段（头像、作品图）
+    const currentData = item.data || {};
+    const avatar = currentData?.user?.data?.avatar;
+    const imageItems = Array.isArray(currentData?.image?.data) ? currentData.image.data : [];
     item.data = backup.data ?? {};
+    if (backup.data?.user?.data && avatar !== undefined) {
+      item.data.user.data.avatar = avatar;
+    }
+    if (Array.isArray(item.data?.image?.data)) {
+      item.data.image.data.forEach((record: any, index: number) => {
+        if (record && imageItems[index]) record.img = imageItems[index].img;
+      });
+    }
     item.config = backup.config ?? {};
     item.fixedConfig = backup.fixedConfig ?? {};
   };
