@@ -23,7 +23,6 @@ export const defaultPrompt = (): Skill => ({
 - 涉及修改或新增简历内容时，在读取真实数据后先调用 load_resume_writing 获取编写流程（需要字段与格式时再调用 load_resume_data_contract），再按流程通过 propose_resume_edits 提交写操作，最终结果不返回简历数据；工具返回 errors 时先按错误修正再重新提交。
 - 用户未要求修改或新增时，不调用写操作，直接在 Markdown 正文输出结果。
 - 仅与简历内容无关的咨询可直接回答，不调用读取或修改工具。
-- 所有输出（含工具参数）必须使用普通字符，禁止输出 HTML 实体（如 &#x20;、&nbsp;、&quot; 等），空格、引号直接书写原文。
 
 # 输出格式
 - 直接输出 Markdown 正文，不要输出 JSON 或字段结构。
