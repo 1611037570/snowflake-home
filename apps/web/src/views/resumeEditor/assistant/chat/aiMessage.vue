@@ -74,6 +74,7 @@ const resumeShow = computed(() => props.msg.requestStatus === "success");
 const isThinking = computed(() => props.msg.typing && props.msg.requestStatus === "thinking");
 const isGenerating = computed(() => props.msg.typing && props.msg.requestStatus === "generating");
 const hasThought = computed(() => !!props.msg.thought?.trim());
+const hasContent = computed(() => !!content.value?.trim());
 // 等待态文案：优先展示当前执行动作，其次回退到思考/生成计时
 const statusText = computed(() => {
   if (props.msg.stepLabel) return props.msg.stepLabel;
@@ -97,13 +98,13 @@ const showTotalTime = computed(() => props.msg.requestStatus === "success" && to
 
         <!-- 回复内容切换 (美化后的胶囊风格) -->
         <ToggleButton
-          v-if="resumeShow"
+          v-if="hasContent"
           label="回复内容"
           :collapsed="msg.contentCollapsed"
           @toggle="emit('updateCollapsedStatus', index, 'content')"
         />
         <ToggleButton
-          v-if="resumeShow && hasThought"
+          v-if="hasThought"
           label="执行过程"
           :collapsed="msg.thoughtCollapsed"
           @toggle="emit('updateCollapsedStatus', index, 'thought')"
@@ -129,7 +130,7 @@ const showTotalTime = computed(() => props.msg.requestStatus === "success" && to
     </div>
     <!-- 执行过程：运行中实时展示思考/工具/观察，完成后按折叠状态展示 -->
     <div
-      v-if="hasThought && (!resumeShow || !msg.thoughtCollapsed)"
+      v-if="hasThought && !msg.thoughtCollapsed"
       class="mt-1 mb-3 max-h-72 w-full max-w-full overflow-y-auto rounded-xl px-3 py-2 text-[12px] text-sf-text-2"
     >
       <SfMdPreview
@@ -168,10 +169,7 @@ const showTotalTime = computed(() => props.msg.requestStatus === "success" && to
       </SfTooltip>
     </nav>
     <!-- 推荐问题 -->
-    <div
-      v-if="isLast && followQuestions.length"
-      class="mt-1 flex w-full flex-col gap-2"
-    >
+    <div v-if="isLast && followQuestions.length" class="mt-1 flex w-full flex-col gap-2">
       <div
         v-for="(item, index) in followQuestions"
         :key="index"
