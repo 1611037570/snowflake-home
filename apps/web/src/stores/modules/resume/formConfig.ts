@@ -187,8 +187,8 @@ export const DEFAULT_USER_FORM = [
       // 所在城市
       {
         type: "object",
-        label: "城市",
-        tip: "所在城市",
+        label: "期望城市",
+        tip: "期望城市",
         component: "cityPicker",
         span: 12,
         model: {
