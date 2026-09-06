@@ -1,11 +1,9 @@
 // 导入LLM接口
 import { getLLM, isAbortError } from "@/apis";
-import { useAiStore } from "@/stores";
 // 导入聊天和消息类型
 import type { Chat, Message } from "@/stores/modules/ai";
 // 导入Vue组合式API相关类型
 import { onUnmounted, type ComputedRef, type Ref } from "vue";
-import { storeToRefs } from "pinia";
 // 宿主传入的请求配置：技能与工具由调用方组装，chat 不内置业务内容
 import type { AssistantConfig } from "../types";
 
@@ -26,8 +24,6 @@ export const useChatRequest = ({
   scrollToBottom,
   config,
 }: UseChatRequestOptions) => {
-  const aiStore = useAiStore();
-  const { thinkMode } = storeToRefs(aiStore);
   const { generating, beforeRequest, afterRequest, tools } = config;
   // 用于取消当前请求的函数引用
   let abortRequest: (() => void) | null = null;
@@ -79,6 +75,8 @@ export const useChatRequest = ({
       } else if (type === "content") {
         lastMsg.requestStatus = "generating";
         lastMsg.stepLabel = "正在生成回复…";
+        // 实时拼接正文分块，让 Markdown 正文边生成边可见
+        if (data) lastMsg.content = `${lastMsg.content || ""}${data}`;
         if (!timers.reply) {
           if (timers.thinking) clearInterval(timers.thinking);
           timers.thinking = null;
@@ -86,6 +84,7 @@ export const useChatRequest = ({
             if (isCurrent()) lastMsg.contentTime += 1;
           }, 1000);
         }
+        scrollToBottom();
       } else if (type === "total_tokens") {
         lastMsg.total_tokens = data;
       }
@@ -147,8 +146,9 @@ export const useChatRequest = ({
         maxSteps: 6,
         // TODO: 反思轮暂不启用，后续需要结果审视时恢复为 true
         reflection: false,
+        // TODO: 当前默认关闭深度思考以加快返回，后续需要时恢复 thinkMode 控制
         thinking: {
-          type: thinkMode.value ? "enabled" : "disabled",
+          type: "disabled",
         },
         onEvent: (type, data) => {
           state?.onEvent(type, data);

@@ -43,21 +43,32 @@ const handleCopy = async (text) => {
   ElMessage.success("复制成功");
 };
 
-const resumeContent = computed(() => {
+const parsedContent = computed(() => {
   const value = props.msg.content;
   if (typeof value === "string") {
     try {
       return JSON.parse(value);
     } catch {
-      return value;
+      return null;
     }
   }
   return value;
 });
-// 消息内容
+// 消息内容：新版直接保存 Markdown 正文，旧版兼容 JSON 中的 analysis
 const content = computed(() => {
-  // 返回简历分析结果
-  return resumeContent.value.analysis;
+  const obj = parsedContent.value;
+  if (obj && typeof obj === "object" && typeof obj.analysis === "string") {
+    return obj.analysis;
+  }
+  return props.msg.content;
+});
+// 推荐追问：优先读取消息字段（由请求流程补充），旧版兼容 JSON 中的 followQuestions
+const followQuestions = computed(() => {
+  if (Array.isArray(props.msg.followQuestions) && props.msg.followQuestions.length) {
+    return props.msg.followQuestions;
+  }
+  const obj = parsedContent.value;
+  return Array.isArray(obj?.followQuestions) ? obj.followQuestions : [];
 });
 const resumeShow = computed(() => props.msg.requestStatus === "success");
 const isThinking = computed(() => props.msg.typing && props.msg.requestStatus === "thinking");
@@ -138,7 +149,7 @@ const showTotalTime = computed(() => props.msg.requestStatus === "success" && to
     </div>
     <!-- 正式回复内容 -->
     <SfMdPreview
-      v-if="msg.requestStatus === 'success' && !msg.contentCollapsed && content"
+      v-if="(msg.requestStatus === 'success' || isGenerating) && !msg.contentCollapsed && content"
       :modelValue="content"
       :theme="theme"
       editorId="ai-preview"
@@ -158,11 +169,11 @@ const showTotalTime = computed(() => props.msg.requestStatus === "success" && to
     </nav>
     <!-- 推荐问题 -->
     <div
-      v-if="isLast && resumeContent.followQuestions?.length"
+      v-if="isLast && followQuestions.length"
       class="mt-1 flex w-full flex-col gap-2"
     >
       <div
-        v-for="(item, index) in resumeContent.followQuestions"
+        v-for="(item, index) in followQuestions"
         :key="index"
         class="flex min-w-0 cursor-pointer items-center gap-2 rounded-3xl bg-sf-bg px-3 py-2 text-[13px] text-sf-text transition-all duration-200 hover:bg-sf-bg-2"
         @click="emit('sendFollowQuestion', item)"
