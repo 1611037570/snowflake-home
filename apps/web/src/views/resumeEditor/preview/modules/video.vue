@@ -1,7 +1,7 @@
 <script setup>
 import { computed, inject } from "vue";
 import Title from "../theme/title/index.vue";
-import DiffField from "../components/diffField/index.vue";
+import ResumeField from "../components/resumeField/index.vue";
 
 // 从上层注入获取代理后的预览数据
 const previewData = inject("previewData");
@@ -12,16 +12,6 @@ const lineHeightValue = inject("lineHeightValue");
 // 代理数据解包访问数组
 const video = computed(() => previewData.value?.video?.data || []);
 
-// 仅允许安全的外部链接协议
-const safeUrl = (value) => {
-  if (!value) return "";
-  try {
-    const url = new URL(String(value).trim());
-    return ["http:", "https:", "mailto:"].includes(url.protocol.toLowerCase()) ? url.href : "";
-  } catch {
-    return "";
-  }
-};
 </script>
 
 <template>
@@ -35,8 +25,8 @@ const safeUrl = (value) => {
         data-module="user"
       >
         <div class="flex flex-1 items-center gap-3" :style="[fontValue(-6)]">
-          <DiffField v-model="item.name" :style="[fontValue(1)]" />
-          <DiffField v-model="item.desc" />
+          <ResumeField v-model="item.name" :style="[fontValue(1)]" />
+          <ResumeField v-model="item.desc" />
         </div>
         <div class="h-16 w-16">
           <SfQrcode :value="item.url?.value" />

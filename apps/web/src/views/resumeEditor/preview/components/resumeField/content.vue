@@ -6,7 +6,7 @@ import DOMPurify from "dompurify";
 const attrs = useAttrs();
 
 const props = defineProps({
-  // 纯文本内容
+  // 文本内容
   content: {
     type: String,
     default: "",

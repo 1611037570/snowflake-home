@@ -1,6 +1,6 @@
 <script setup>
 import { computed, inject } from "vue";
-import DiffField from "../components/diffField/index.vue";
+import ResumeField from "../components/resumeField/index.vue";
 import Title from "../theme/title/index.vue";
 import { toAvatarSrc } from "@/utils";
 
@@ -34,7 +34,7 @@ const images = computed(() => previewData.value?.image?.data || []);
           alt="图片作品"
           class="h-auto w-full rounded"
         />
-        <DiffField class="text-center" v-model="item.name" />
+        <ResumeField class="text-center" v-model="item.name" />
       </div>
     </template>
   </div>

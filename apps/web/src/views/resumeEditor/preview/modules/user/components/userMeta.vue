@@ -2,7 +2,7 @@
 import dayjs from "dayjs";
 import { computed, inject } from "vue";
 import { workYears } from "../../../../resumeName";
-import DiffField from "../../../components/diffField/index.vue";
+import ResumeField from "../../../components/resumeField/index.vue";
 
 // 元信息组件：求职岗位 / 求职状态 / 所在城市 / 性别 / 年龄 / 工作年限等有值字段自动排列，宽度策略由使用方通过 class 控制
 const previewData = inject("previewData");
@@ -34,7 +34,7 @@ const metaItems = computed(() => {
   <div class="ml-3 flex max-w-full min-w-0 flex-wrap items-center gap-3" :style="[fontValue(2)]">
     <template v-for="(item, index) in metaItems" :key="item.key || item.text">
       <span v-if="index > 0" class="h-3 w-px bg-current opacity-50"></span>
-      <DiffField v-if="item.key" v-model="user[item.key]" />
+      <ResumeField v-if="item.key" v-model="user[item.key]" />
       <span v-else>{{ item.text }}</span>
     </template>
   </div>
