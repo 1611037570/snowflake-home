@@ -331,7 +331,8 @@ export const useChatRequest = ({
   // 返回发送和停止方法
   // 撤回本轮 AI 修改：恢复请求前备份
   function withdrawAI(msg?: Message | null) {
-    const backup = msg ? requestBackups.get(msg) : undefined;
+    if (!msg) return false;
+    const backup = requestBackups.get(msg);
     if (backup === undefined) return false;
     requestBackups.delete(msg);
     restoreBackup?.(backup);
