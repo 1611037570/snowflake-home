@@ -4,6 +4,7 @@ import { useScroll } from "@vueuse/core";
 import { computed, nextTick, ref, watch } from "vue";
 import { useChatRequest } from "./useChatRequest";
 import type { AssistantConfig, Flow, SuggestCard } from "../types";
+import type { SelectedModule } from "@/stores/modules/resume/types";
 
 import AiMessage from "./aiMessage.vue";
 import ChatInput from "./chatInput/index.vue";
@@ -18,7 +19,7 @@ const props = defineProps<{
   config: AssistantConfig;
   flows: Record<string, Flow>;
   suggestions: SuggestCard[];
-  selectedModules?: { key: string; name?: string }[];
+  selectedModules?: SelectedModule[];
   removeModule?: (key: string) => void;
 }>();
 // 生成状态来自宿主注入的引用，模板与输入框共用

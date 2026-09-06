@@ -1,7 +1,7 @@
 <script setup>
 import { computed, inject } from "vue";
 import { useAiStore, useResumeStore } from "@/stores";
-import { DEFAULT_EDITOR } from "@/stores/modules/resume/defaultConfig";
+import { ALL_MODULE_KEY, ALL_MODULE_NAME, DEFAULT_EDITOR } from "@/stores/modules/resume/defaultConfig";
 import { storeToRefs } from "pinia";
 import Chat from "./chat/index.vue";
 import { flows, suggestions } from "./flows";
@@ -22,13 +22,11 @@ const { selectedModule } = storeToRefs(resumeStore);
 const selectedModules = computed(() =>
   selectedModule.value.length
     ? selectedModule.value
-    : [{ key: "all", name: "整个简历" }],
+    : [{ key: ALL_MODULE_KEY, name: ALL_MODULE_NAME }],
 );
-// 点击模块标签右上角关闭按钮时，从 selectedModule 移除对应模块
+// 点击模块标签右上角关闭按钮时取消选中，统一走 store 操作
 const removeSelectedModule = (key) => {
-  // “整个简历”为无选中时的兜底项，不允许移除
-  if (key === "all") return;
-  selectedModule.value = selectedModule.value.filter((item) => item.key !== key);
+  resumeStore.unselectModule(key);
 };
 // AI助手区域宽度：读取编辑器配置，默认 400px
 const assistantWidth = DEFAULT_EDITOR.assistantWidth;

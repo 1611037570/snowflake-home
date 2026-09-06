@@ -24,13 +24,12 @@ const hasNewData = computed(() => {
   if (!previewData?.value?.[props.modelKey]) return false;
   return hasModuleNewValue(props.modelKey);
 });
-// 点击选择/取消选择模块：已选中则从列表移除，未选中则加入
+// 点击选择/取消选择模块：统一走 store 操作切换选中态
 const handleSelect = () => {
   if (isSelected.value) {
-    const index = selectedModule.value.findIndex((item) => item.key === props.modelKey);
-    if (index > -1) selectedModule.value.splice(index, 1);
+    resumeStore.unselectModule(props.modelKey);
   } else {
-    resumeStore.pushSelectedModule(props.modelKey);
+    resumeStore.selectModule(props.modelKey);
   }
 };
 </script>

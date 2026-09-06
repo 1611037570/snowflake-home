@@ -8,7 +8,7 @@ import { isFieldHidden } from "@/components/business/dynamicForm/code/fieldVisib
 
 // store 为全局单例：模块列表与跳转逻辑无组件级状态，抽为模块级共享，避免各组件重复创建 hook
 const resumeStore = useResumeStore();
-const { currentData, currentConfig, currentFixedConfig, selectedModule, layout } =
+const { currentData, currentConfig, currentFixedConfig, layout } =
   storeToRefs(resumeStore);
 
 // 模块锚点列表：全部模块（含隐藏模块，便于搜索定位）；预览分页仍按显隐协议过滤
@@ -44,9 +44,9 @@ export const jumpPreview = (key: string) => {
       ?.scrollIntoView({ behavior: "smooth", block: "start" });
   });
   // 重置选中态：只保留当前模块，触发预览 outline 高亮
-  selectedModule.value = [
+  resumeStore.setSelectedModules([
     { key, name: moduleList.value.find((m) => m.key === key)?.name },
-  ];
+  ]);
 };
 
 // 跳转编辑区：展开折叠 + 选中闪烁 + 滚动定位
