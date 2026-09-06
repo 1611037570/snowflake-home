@@ -18,6 +18,10 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  canWithdraw: {
+    type: Boolean,
+    default: false,
+  },
 });
 // 本轮是否已撤回：仅用于隐藏操作按钮，不写入消息数据
 const withdrawn = ref(false);
@@ -164,14 +168,22 @@ const showTotalTime = computed(() => props.msg.requestStatus === "success" && to
           <SfIcon icon="ph:copy-duotone" size="3.5" />
         </button>
       </SfTooltip>
-      <template v-if="isLast && !withdrawn">
-        <button type="button" class="ai-action-btn" @click="emit('regenerate', index)">
-          重新生成
-        </button>
-        <button type="button" class="ai-action-btn" @click="handleWithdrawModify">
-          撤回修改
-        </button>
-      </template>
+      <button
+        v-if="isLast && !withdrawn"
+        type="button"
+        class="ai-action-btn"
+        @click="emit('regenerate', index)"
+      >
+        重新生成
+      </button>
+      <button
+        v-if="isLast && !withdrawn && canWithdraw"
+        type="button"
+        class="ai-action-btn"
+        @click="handleWithdrawModify"
+      >
+        撤回修改
+      </button>
     </nav>
     <!-- 推荐问题 -->
     <div v-if="isLast && msg.followQuestions.length" class="mt-1 flex w-full flex-col gap-2">

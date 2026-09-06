@@ -85,6 +85,8 @@ export const useChatRequest = ({
   };
   // 每条 AI 回复对应的请求前简历备份，用于“撤回修改”
   const requestBackups = new WeakMap<object, unknown>();
+  // 真实产生过写入的消息（用于控制“撤回修改”按钮显隐）
+  const writeMessages = new WeakSet<object>();
   // 当前 think 轮次流式输出的正文缓冲：未确认是最终输出轮前不直接展示为正文
   let stepContent = "";
   // 是否进入反思轮：反思轮的 content 直接实时渲染为正文
@@ -282,8 +284,9 @@ export const useChatRequest = ({
           lastMsg.thoughtCollapsed = true;
           stepContent = "";
           streamFinalContent = false;
-          // 回复完成后再统一提交生成期间缓冲的写操作
-          commitDeferredWrites?.();
+          // 回复完成后再统一提交生成期间缓冲的写操作；有真实写入才开放“撤回修改”
+          const hadWrites = commitDeferredWrites?.() ?? false;
+          if (hadWrites && lastMsg) writeMessages.add(lastMsg);
           scrollToBottom();
         },
       });
@@ -368,5 +371,10 @@ export const useChatRequest = ({
     return true;
   }
 
-  return { handleAIResponse, stopGenerating, withdrawAI };
+  // 该条 AI 回复是否真实产生过简历写入
+  function hasWriteChanges(msg?: Message | null) {
+    return !!msg && writeMessages.has(msg);
+  }
+
+  return { handleAIResponse, stopGenerating, withdrawAI, hasWriteChanges };
 };

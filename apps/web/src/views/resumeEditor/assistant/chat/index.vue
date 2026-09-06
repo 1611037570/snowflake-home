@@ -119,7 +119,7 @@ const followContentScroll = async () => {
   await scrollToBottom();
 };
 
-const { handleAIResponse, stopGenerating, withdrawAI } = useChatRequest({
+const { handleAIResponse, stopGenerating, withdrawAI, hasWriteChanges } = useChatRequest({
   chat,
   currentMessages,
   addMessage,
@@ -344,6 +344,7 @@ const handleFlowInput = (content) => {
           :index="index"
           :data-msg-index="index"
           :is-last="index === displayMessages.length - 1"
+          :can-withdraw="hasWriteChanges(msg)"
           @recall="handleRecall"
           @updateCollapsedStatus="updateCollapsedStatus"
           @sendFollowQuestion="handleSendFollowQuestion"
