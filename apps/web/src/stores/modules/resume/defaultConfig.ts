@@ -13,6 +13,7 @@ export const DEFAULT_MODULE_NAMES: { key: string; name: string; icon: string }[]
   { key: "advantage", name: "个人优势", icon: "fa6-solid:seedling" },
   { key: "work", name: "工作经历", icon: "lucide:briefcase" },
   { key: "project", name: "项目经历", icon: "mdi:code-tags" },
+  { key: "honor", name: "荣誉证书", icon: "fa6-solid:award" },
   { key: "video", name: "视频作品", icon: "mdi:video" },
   { key: "image", name: "图片作品", icon: "mdi:image" },
 ];

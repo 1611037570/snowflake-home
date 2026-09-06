@@ -884,6 +884,57 @@ export const DEFAULT_IMAGE_FORM = {
     },
   ],
 } satisfies FormField;
+// 荣誉证书
+export const DEFAULT_HONOR_FORM = {
+  type: "group",
+  component: "honor",
+  key: "honor",
+  props: {
+    name: "荣誉证书",
+  },
+  model: [
+    {
+      source: ["honor", "collapsed"],
+      prop: "collapsed",
+      defaultValue: ["1"],
+    },
+    // 隐藏开关：控制模块在简历预览中显示/隐藏
+    {
+      source: ["honor", "hidden"],
+      prop: "hidden",
+      defaultValue: false,
+    },
+    // 数据数组：供模块组件直接写入新增名称
+    {
+      source: ["honor", "data"],
+      prop: "items",
+      defaultValue: [],
+    },
+  ],
+  checks: { hidden: { path: ["honor", "hidden"] } },
+  slot: "default",
+  fields: [
+    {
+      type: "array",
+      drag: true,
+      dragClass: DEFAULT_DRAG_CLASS,
+      list: [],
+      addConfig: {
+        // 名称数据源：绑定当前荣誉证书名称
+        model: [
+          {
+            source: ["honor", "data", "?", "name"],
+            defaultValue: "",
+            prop: "name",
+          },
+        ],
+        type: "object",
+        component: "honorItem",
+        required: true,
+      },
+    },
+  ],
+} satisfies FormField;
 // 自定义经历
 export const DEFAULT_CUSTOM_FORM = {
   type: "group",
@@ -1015,5 +1066,6 @@ export const allConfig = {
   account: DEFAULT_ACCOUNT_FORM,
   work: DEFAULT_WORK_FORM,
   project: DEFAULT_PROJECT_FORM,
+  honor: DEFAULT_HONOR_FORM,
   custom: DEFAULT_CUSTOM_FORM,
 } satisfies Record<string, FormField | FormField[]>;
