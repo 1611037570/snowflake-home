@@ -10,7 +10,7 @@ export const useResumeContext = () => {
   const getResumeData = (moduleKey?: string) => {
     const data = resumeStore.currentData;
     if (!data) return {};
-    // 返回结构与 propose_resume_diff 的 patch 对齐：顶层为模块 key，模块内仅保留 data
+    // 返回结构供 propose_resume_edits 的 operations 定位修改目标：顶层为模块 key，模块内仅保留 data
     const result: Record<string, any> = {};
     const keys = moduleKey ? [moduleKey] : Object.keys(data);
     keys.forEach((key) => {
