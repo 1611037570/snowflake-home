@@ -17,6 +17,17 @@ const age = computed(() => {
   return Math.max(0, ageDiff);
 });
 
+// 身高体重：对象 { height, weight }，两项齐全时拼接为文本
+const heightWeightText = computed(() => {
+  const value = user.value?.heightWeight;
+  // 编辑态字段为 { value } 代理，非编辑态为原始数值，两种形态兼容读取
+  const height =
+    value?.height && typeof value.height === "object" ? value.height.value : value?.height;
+  const weight =
+    value?.weight && typeof value.weight === "object" ? value.weight.value : value?.weight;
+  return height != null && weight != null ? `${height}cm/${weight}kg` : "";
+});
+
 // 有值字段列表：sex/position/status 为可编辑字段，年龄与工作年限为派生文本；空值字段不占位，项间分隔线随列表自动生成
 const metaItems = computed(() => {
   const items = [];
@@ -26,6 +37,7 @@ const metaItems = computed(() => {
   if (user.value?.position?.value) items.push({ key: "position" });
   if (user.value?.status?.value) items.push({ key: "status" });
   if (user.value?.city?.value) items.push({ key: "city" });
+  if (heightWeightText.value) items.push({ text: heightWeightText.value });
   return items;
 });
 </script>
