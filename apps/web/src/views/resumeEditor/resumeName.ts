@@ -11,20 +11,25 @@ const { currentData } = storeToRefs(resumeStore);
 
 const user = computed(() => currentData.value?.user?.data || {});
 
-// 计算工作年限（规则：满5个月按1年算，以此类推）
-export const workYears = computed(() => {
+// 计算工作年限数字（规则：满5个月按1年算，以此类推）
+const calcWorkYears = () => {
   const workTime = user.value?.workTime;
-  if (!workTime) return "";
+  if (!workTime) return 0;
 
   const startDate = dayjs(workTime);
-  if (!startDate.isValid()) return "";
+  if (!startDate.isValid()) return 0;
 
   const diffInMonths = dayjs().diff(startDate, "month");
   // 偏移7个月以实现：5-16个月=1年，17-28个月=2年...
   const years = Math.floor((diffInMonths + 7) / 12);
 
-  return years > 0 ? `${years}年经验` : "";
-});
+  return years > 0 ? years : 0;
+};
+export const workYearsNumber = computed(calcWorkYears);
+// 中文工作年限文本：供简历标题与导出文件名等场景使用
+export const workYears = computed(() =>
+  workYearsNumber.value ? `${workYearsNumber.value}年经验` : "",
+);
 export function getResumeTitle(data: any) {
   const defaultName = "未命名简历";
   if (!data) {
