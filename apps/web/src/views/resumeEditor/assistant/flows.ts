@@ -49,9 +49,8 @@ export const flows: Record<string, Flow> = {
       },
     ],
     build: ([style]) => {
+      // 任务规范已抽离为 greeting 技能，由模型按需加载；此处仅携带风格参数
       return {
-        prompt: `# 任务：生成面试开场打招呼语
-以第一人称撰写一段开场打招呼语：先礼貌问候，再简要介绍身份与求职意向；风格${style}，语言自然流畅，适合开场直接说出。`,
         userContent: `请根据我的简历，生成一段${style}风格的开场打招呼语`,
       };
     },
