@@ -6,6 +6,7 @@ export const jobMatch = () => ({
   instructions: `# 适用场景与执行流程
 用户提供目标岗位 JD，要求匹配分析或对标优化简历（如"这份简历投该岗位怎么改/哪里不匹配/按 JD 优化我的简历"）时，按本规范执行；本技能是 JD 对标优化的统一入口。
 
+- 用户未提供目标岗位 JD 原文时，先请用户粘贴 JD，再进行匹配分析与改写。
 - 先调用 read_resume_data 读取简历真实数据；目标 JD 原文以用户消息内容为准。
 - 需要写入修改时先调用 load_resume_writing 获取编写流程，再通过 propose_resume_edits 提交；提交前确认 operations 基于 read_resume_data 的真实结果。
 
