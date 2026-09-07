@@ -24,7 +24,6 @@ const props = defineProps<{
   selectedModules?: SelectedModule[];
   removeModule?: (key: string) => void;
 }>();
-const emit = defineEmits(["new-chat"]);
 // 生成状态来自宿主注入的引用，模板与输入框共用
 const generating = props.config.generating;
 const isGenerating = computed(() => generating.value);
@@ -336,7 +335,7 @@ const handleFlowInput = (content) => {
 
 <template>
   <div class="relative flex h-full w-full flex-col overflow-hidden select-text">
-    <ChatHeader @new-chat="emit('new-chat')" />
+    <ChatHeader />
     <SfScrollbar ref="chatContainer" class="w-full flex-1">
       <EmptyState
         :suggestions="props.suggestions"
