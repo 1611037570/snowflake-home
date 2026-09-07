@@ -14,7 +14,6 @@ export const DEFAULT_USER_FORM = [
     key: "user",
     // 固定模块：不参与模块拖拽排序
     fixed: true,
-    name: "用户信息",
     props: {
       name: "用户信息",
       add: false,
