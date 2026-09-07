@@ -11,7 +11,6 @@ import AiMessage from "./aiMessage.vue";
 import ChatInput from "./chatInput/index.vue";
 import UserMessage from "./userMessage.vue";
 import EmptyState from "./emptyState";
-import MessageNav from "./messageNav.vue";
 import ChatHeader from "./header/index.vue";
 
 const aiStore = useAiStore();
@@ -335,7 +334,7 @@ const handleFlowInput = (content) => {
 
 <template>
   <div class="relative flex h-full w-full flex-col overflow-hidden select-text">
-    <ChatHeader />
+    <ChatHeader :messages="navMessages" @select="handleNavSelect" />
     <SfScrollbar ref="chatContainer" class="w-full flex-1">
       <EmptyState
         :suggestions="props.suggestions"
@@ -364,9 +363,6 @@ const handleFlowInput = (content) => {
         />
       </div>
     </SfScrollbar>
-
-    <!-- 左侧消息导航：悬停展开查看用户消息，点击跳转 -->
-    <MessageNav v-if="navMessages.length" :messages="navMessages" @select="handleNavSelect" />
 
     <!-- 滚动到底部按钮 -->
     <Transition
