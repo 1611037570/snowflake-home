@@ -37,6 +37,8 @@ const metaItems = computed(() => {
   if (user.value?.position?.value) items.push({ key: "position" });
   if (user.value?.status?.value) items.push({ key: "status" });
   if (user.value?.city?.value) items.push({ key: "city" });
+  // 籍贯
+  if (user.value?.nativePlace?.value) items.push({ key: "nativePlace" });
   if (heightWeightText.value) items.push({ text: heightWeightText.value });
   return items;
 });
