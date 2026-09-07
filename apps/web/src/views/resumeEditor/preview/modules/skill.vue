@@ -4,7 +4,7 @@ import RichTextBlock from "./richTextBlock.vue";
 </script>
 
 <template>
-  <RichTextBlock moduleName="skill" title="专业技能" dataKey="skill" />
+  <RichTextBlock moduleName="skill" dataKey="skill" />
 </template>
 
 <style lang="scss" scoped></style>

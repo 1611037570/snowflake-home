@@ -27,35 +27,32 @@ const hasField = (item, key) => {
 <template>
   <div class="resume-row w-full" data-module="education" :style="[lineHeightValue(), fontValue()]">
     <!-- 标题栏 -->
-    <Title title="教育经历"></Title>
+    <Title module-key="education"></Title>
     <!-- 内容区：直接渲染代理数组项，不做 map 拷贝 -->
     <template v-for="(item, index) in education" :key="index">
       <div
         class="mt-2 flex flex-wrap items-center justify-between"
         v-if="item.name?.value || getTime(item.time?.value)"
       >
-        <div class="flex min-w-0 max-w-full flex-wrap items-baseline gap-4">
+        <div class="flex max-w-full min-w-0 flex-wrap items-baseline gap-4">
           <div class="font-bold" :style="[fontValue(3)]">
             <ResumeField v-model="item.name" />
           </div>
         </div>
-        <div class="flex min-w-0 max-w-full flex-wrap items-center gap-2">
+        <div class="flex max-w-full min-w-0 flex-wrap items-center gap-2">
           <span>{{ getTime(item.time?.value) }}</span>
         </div>
       </div>
       <!-- 次信息行：post / education / mode，不创建临时对象，直接基于原字段渲染 -->
       <div
-        class="mt-1 flex min-w-0 max-w-full flex-wrap items-center gap-2"
+        class="mt-1 flex max-w-full min-w-0 flex-wrap items-center gap-2"
         v-if="hasField(item, 'post') || hasField(item, 'education') || hasField(item, 'mode')"
       >
         <template v-if="hasField(item, 'education')">
           <ResumeField v-model="item.education" />
         </template>
         <template v-if="hasField(item, 'post')">
-          <div
-            v-if="hasField(item, 'education')"
-            class="h-1 w-1 rounded-full bg-black"
-          ></div>
+          <div v-if="hasField(item, 'education')" class="h-1 w-1 rounded-full bg-black"></div>
           <ResumeField v-model="item.post" />
         </template>
         <template v-if="hasField(item, 'mode')">

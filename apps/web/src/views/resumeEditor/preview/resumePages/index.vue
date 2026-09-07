@@ -53,6 +53,11 @@ useResumePreviewData(dataRef, isEdit);
 
 // ---------- 主题样式注入（数据源为 item.ui）----------
 const ui = computed(() => props.item.ui || {});
+// 简历展示语言：供预览标题语言包使用
+provide(
+  "previewLang",
+  computed(() => ui.value.language || "zh"),
+);
 const showPageNumber = computed(() => system.value.showPageNumber);
 const themeStyles = useResumeTheme(ui);
 const { paddingStyle, fontStyle, lineHeightStyle } = themeStyles;
