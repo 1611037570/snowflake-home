@@ -171,6 +171,24 @@ useResizeObserver(contentRef, ([entry]) => {
       "
     >
       <div class="flex items-center gap-1 rounded-full border border-sf-b bg-sf-page p-1.5">
+        <div class="group/lang-picker relative flex items-center">
+          <SfTooltip :content="`切换简历语言（当前：${currentLangName}）`">
+            <SfIcon
+              icon="mdi:translate"
+              size="4"
+              boxSize="6"
+              class="rounded-full text-sf-text-2 hover:bg-sf-theme-2 hover:text-sf-theme-text"
+            />
+          </SfTooltip>
+          <span class="ml-1 w-20 shrink-0 truncate text-xs text-sf-text-2">
+            {{ currentLangName }}
+          </span>
+          <div
+            class="invisible absolute top-full left-0 mt-2 w-36 origin-top-left -translate-y-1 scale-95 opacity-0 transition-all duration-150 group-hover/lang-picker:visible group-hover/lang-picker:translate-y-0 group-hover/lang-picker:scale-100 group-hover/lang-picker:opacity-100"
+          >
+            <SfList :list="langOptions" :border="false" @onClick="handleLangSelect" />
+          </div>
+        </div>
         <SfTooltip content="缩小">
           <SfIcon
             @click="!isMinScale && stepScale(-0.1)"
@@ -217,22 +235,6 @@ useResizeObserver(contentRef, ([entry]) => {
             @click="$emit('fullscreen')"
           />
         </SfTooltip>
-        <div class="group/lang-picker relative flex items-center">
-          <SfTooltip :content="`切换简历语言（当前：${currentLangName}）`">
-            <SfIcon
-              icon="mdi:translate"
-              size="4"
-              boxSize="6"
-              class="rounded-full text-sf-text-2 hover:bg-sf-theme-2 hover:text-sf-theme-text"
-            />
-          </SfTooltip>
-          <span class="ml-1 max-w-12 truncate text-xs text-sf-text-2">{{ currentLangName }}</span>
-          <div
-            class="invisible absolute top-full right-0 mt-2 w-36 origin-top-right -translate-y-1 scale-95 opacity-0 transition-all duration-150 group-hover/lang-picker:visible group-hover/lang-picker:translate-y-0 group-hover/lang-picker:scale-100 group-hover/lang-picker:opacity-100"
-          >
-            <SfList :list="langOptions" :border="false" @onClick="handleLangSelect" />
-          </div>
-        </div>
         <SfTooltip :content="system.showPageNumber ? '隐藏页码' : '显示页码'">
           <SfIcon
             icon="lucide:hash"
