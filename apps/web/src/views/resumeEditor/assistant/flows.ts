@@ -66,7 +66,7 @@ export const flows: Record<string, Flow> = {
       },
     ],
     build: ([jd]) => {
-      // 任务规范已抽离为 jdOptimize 技能，由模型按需加载；JD 原文随用户消息传递
+      // JD 对标统一走 jobMatch 技能，由模型按需加载；JD 原文随用户消息传递
       return {
         userContent: `请根据我提供的以下目标岗位 JD 内容，对标优化我的简历：\n\n${jd}`,
       };

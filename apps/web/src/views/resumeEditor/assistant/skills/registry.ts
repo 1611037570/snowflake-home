@@ -2,7 +2,6 @@ import type { SkillFactory } from "../types";
 import { defaultPrompt } from "./defaultPrompt";
 import { greeting } from "./greeting";
 import { jobMatch } from "./jobMatch";
-import { jdOptimize } from "./jdOptimize";
 import { resumeCreate } from "./resumeCreate";
 import { resumeDataContract } from "./resumeDataContract";
 import { resumeInterview } from "./resumeInterview";
@@ -21,7 +20,6 @@ export const onDemandSkills: SkillFactory[] = [
   resumeWriting,
   resumeOptimization,
   jobMatch,
-  jdOptimize,
   greeting,
   resumeCreate,
   resumeInterview,
