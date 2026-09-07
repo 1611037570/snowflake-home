@@ -197,6 +197,10 @@ class LLM {
    * @returns {{ abort: Function, run: Function }} 中止函数与执行函数
    */
   react(config: ReactConfig) {
+    // 反思文案属于使用方策略：开启反思但未提供提示词时直接报错，避免带空文案进入模型
+    if (config.reflection && !config.reflectPrompt) {
+      throw new Error("启用反思时必须提供 reflectPrompt");
+    }
     let aborted = false;
     const abortRef: { current: (() => void) | null } = { current: null };
     const registry = new ToolRegistry();
@@ -247,8 +251,7 @@ class LLM {
             history.push({ role: "assistant", content: result.finalAnswer });
             history.push({
               role: "user",
-              content:
-                "请检查上一条内容：若与用户任务冲突或格式被破坏，只输出修正后的完整内容；否则逐字原样输出。禁止输出任何解释、理解过程、思考、说明、标题或额外新增内容；若上一条内容本身是提问或交互内容，保持原样，不得拆分或补充新问题。",
+              content: config.reflectPrompt ?? "",
             });
             reflectRound = true;
             continue;

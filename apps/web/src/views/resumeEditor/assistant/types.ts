@@ -40,6 +40,8 @@ export interface AssistantConfig {
   generating: Ref<boolean>;
   // ReAct 可用工具
   tools: ReactTool[];
+  // 反思轮提示词：反思口径由宿主按业务提供，请求引擎不内置
+  reflectPrompt: string;
   // 请求前准备（如裁剪头像），与 afterRequest 成对使用
   beforeRequest?: () => void;
   // 请求结束后还原现场
