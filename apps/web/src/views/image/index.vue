@@ -182,14 +182,8 @@ const handleFileSelected = (file) => {
   isConverting.value = false;
   console.log("file", file);
   if (file.type == "image/svg+xml") {
-    // 创建 FileReader 读取文件内容
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      setSvgImage(e.target.result);
-    };
-
-    // 读取文件为文本
-    reader.readAsText(file);
+    // 直接传入文件，由 setSvgImage 读取SVG内容
+    setSvgImage(file);
     return;
   }
   // 设置原始图片数据（加载图片信息）
