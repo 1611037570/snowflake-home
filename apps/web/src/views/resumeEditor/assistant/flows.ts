@@ -33,7 +33,7 @@ export const flows: Record<string, Flow> = {
     build: ([language]) => {
       // 翻译任务规范已抽离为技能，由模型按需加载；此处仅携带目标语言
       return {
-        userContent: `请将我的简历内容翻译成${language}`,
+        userContent: `请将我的简历内容翻译成${language}并更新到简历`,
       };
     },
   },
