@@ -9,6 +9,12 @@ export class ToolRegistry {
   }
 
   get(name: string) {
-    return this.tools.get(name);
+    const exact = this.tools.get(name);
+    if (exact) return exact;
+    // 容错匹配：模型可能漏写或多写工具名后缀，唯一前缀命中时采用该工具
+    const candidates = [...this.tools.keys()].filter(
+      (key) => key.startsWith(name) || name.startsWith(key),
+    );
+    return candidates.length === 1 ? this.tools.get(candidates[0]) : undefined;
   }
 }
