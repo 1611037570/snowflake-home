@@ -167,7 +167,7 @@ const { open, onChange } = useFileDialog();
 // const cropVisible = ref(false)
 // 创建一个 ref 来存储当前选择的文件对象
 const selectedFile = ref(null);
-const show = ref(false);
+const show = ref(true);
 // 处理文件选择事件
 const loading = ref(true);
 const handleFileSelected = (file) => {
@@ -377,7 +377,7 @@ const clearImageData = (type = "all") => {
 };
 
 // 控制是否启用实时预览功能
-const live = ref(false);
+const live = ref(true);
 
 // 计算属性：判断预览是否可见
 // 需要同时满足：启用实时预览、显示转换后图片、转换后图片URL存在
