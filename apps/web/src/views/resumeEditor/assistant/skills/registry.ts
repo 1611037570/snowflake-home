@@ -3,6 +3,7 @@ import { defaultPrompt } from "./defaultPrompt";
 import { greeting } from "./greeting";
 import { jobMatch } from "./jobMatch";
 import { jdOptimize } from "./jdOptimize";
+import { resumeCreate } from "./resumeCreate";
 import { resumeDataContract } from "./resumeDataContract";
 import { resumeOptimization } from "./resumeOptimization";
 import { resumeOptimizeTask } from "./resumeOptimizeTask";
@@ -22,6 +23,7 @@ export const onDemandSkills: SkillFactory[] = [
   jdOptimize,
   greeting,
   resumeOptimizeTask,
+  resumeCreate,
   resumeTranslate,
   selfIntro,
 ];
