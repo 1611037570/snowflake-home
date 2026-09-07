@@ -1,12 +1,9 @@
 <script setup>
 // 简历页面外壳：页面容器样式 + 页码页脚，多页渲染与缩略图单页共用
 // 仅排版展示，不感知分页/测量逻辑；根元素回传供缩略图测量与导出使用
-import { useTemplateRef, watch } from "vue";
-import {
-  PAGE_NUMBER_HEIGHT,
-  RESUME_CONTAINER_HEIGHT,
-  RESUME_CONTAINER_WIDTH,
-} from "../constants";
+import { computed, inject, useTemplateRef, watch } from "vue";
+import { getPreviewText } from "../i18n";
+import { PAGE_NUMBER_HEIGHT, RESUME_CONTAINER_HEIGHT, RESUME_CONTAINER_WIDTH } from "../constants";
 
 const props = defineProps({
   // 简历 ui（fontFamily / moduleSpacing）
@@ -39,6 +36,17 @@ const props = defineProps({
 });
 
 const rootEl = useTemplateRef("rootRef");
+// 简历展示语言：与模块标题语言包保持一致
+const previewLang = inject(
+  "previewLang",
+  computed(() => "zh"),
+);
+const footerText = computed(() =>
+  getPreviewText("footer", previewLang.value, {
+    page: props.pageIndex + 1,
+    total: props.pageCount,
+  }),
+);
 // ref 就绪或变化后回传根元素
 watch(
   rootEl,
@@ -72,7 +80,7 @@ watch(
       class="flex-c shrink-0 py-3 text-xs opacity-50"
       :style="{ height: `${PAGE_NUMBER_HEIGHT}px` }"
     >
-      轻舟简历 · 第 {{ pageIndex + 1 }} 页 · 共 {{ pageCount }} 页
+      {{ footerText }}
     </div>
   </div>
 </template>

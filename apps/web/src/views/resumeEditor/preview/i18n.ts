@@ -33,6 +33,33 @@ export const PREVIEW_TITLES: Record<PreviewLang, Record<string, string>> = {
   },
 };
 
+// 预览区其它界面文案（页脚、user 模块内嵌标签等）
+export const PREVIEW_TEXTS: Record<PreviewLang, Record<string, string>> = {
+  zh: {
+    brand: "轻舟简历",
+    footer: "轻舟简历 · 第 {page} 页 · 共 {total} 页",
+    age: "{age}岁",
+    expYears: "{years}年经验",
+    phoneLabel: "电话：",
+    emailLabel: "邮箱：",
+  },
+  en: {
+    brand: "Qingzhou Resume",
+    footer: "Qingzhou Resume · Page {page} of {total}",
+    age: "{age} years old",
+    expYears: "{years} years of experience",
+    phoneLabel: "Phone: ",
+    emailLabel: "Email: ",
+  },
+};
+
+// 取预览文案并替换 {变量}
+export function getPreviewText(key: string, lang: string, vars: Record<string, any> = {}) {
+  const texts = PREVIEW_TEXTS[lang as PreviewLang] || PREVIEW_TEXTS.zh;
+  const text = texts[key] ?? PREVIEW_TEXTS.zh[key] ?? "";
+  return text.replace(/\{(\w+)\}/g, (_, name: string) => String(vars[name] ?? ""));
+}
+
 // 取模块标题：语言缺失时回退中文，仍缺失返回空串
 export function getPreviewTitle(moduleKey: string, lang: string) {
   const titles = PREVIEW_TITLES[lang as PreviewLang] || PREVIEW_TITLES.zh;
