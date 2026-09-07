@@ -91,6 +91,11 @@ const stepScale = (value) => {
 };
 
 // 简历展示语言：选择后写入当前简历 ui，预览标题按语言包刷新
+const currentLangName = computed(
+  () =>
+    previewLangList.find((item) => item.value === (currentUI.value?.language || "zh"))?.name ||
+    previewLangList[0].name,
+);
 const langOptions = computed(() =>
   previewLangList.map((item) => ({
     ...item,
@@ -213,7 +218,7 @@ useResizeObserver(contentRef, ([entry]) => {
           />
         </SfTooltip>
         <div class="group/lang-picker relative flex items-center">
-          <SfTooltip content="切换简历语言">
+          <SfTooltip :content="`切换简历语言（当前：${currentLangName}）`">
             <SfIcon
               icon="mdi:translate"
               size="4"
@@ -221,6 +226,7 @@ useResizeObserver(contentRef, ([entry]) => {
               class="rounded-full text-sf-text-2 hover:bg-sf-theme-2 hover:text-sf-theme-text"
             />
           </SfTooltip>
+          <span class="ml-1 max-w-12 truncate text-xs text-sf-text-2">{{ currentLangName }}</span>
           <div
             class="invisible absolute top-full right-0 mt-2 w-36 origin-top-right -translate-y-1 scale-95 opacity-0 transition-all duration-150 group-hover/lang-picker:visible group-hover/lang-picker:translate-y-0 group-hover/lang-picker:scale-100 group-hover/lang-picker:opacity-100"
           >
