@@ -8,9 +8,10 @@ import {
   DEFAULT_MODULE_NAMES,
   DEFAULT_RESUME_ITEM,
   DEFAULT_SYSTEM,
+  RESUME_DATA_VERSION,
 } from "./defaultConfig";
 import type { SelectedModule } from "./types";
-import { useRefreshConfigByData } from "./hooks/useRefreshConfigByData";
+import { compactConfigFields, expandConfigFields } from "./hooks/useConfigTemplate";
 import { createRecordSkeleton } from "./hooks/useAddRecord";
 
 import { debounce, merge } from "lodash-es";
@@ -151,6 +152,8 @@ export const useResumeStore = defineStore(
         return false;
       }
       const res = config ? mergeResumeItem(config) : structuredClone(DEFAULT_RESUME_ITEM);
+      // 统一按模板展开为完整 schema，保证新建/导入简历即可直接渲染
+      res.config.fields = expandConfigFields(res.config.fields, res.data);
       // 每次新增都重新生成唯一ID，避免多份简历共用一个ID
       res.id = getUUID().slice(0, 6);
       list.value.push(res);
@@ -177,24 +180,17 @@ export const useResumeStore = defineStore(
       }
       return result;
     };
-    // 简历表单配置同步：按当前简历 data 刷新最新默认配置并补齐数组子项
-    const { refreshConfigByData } = useRefreshConfigByData();
-    // 自动同步后对齐撤销基准快照，避免自动同步产生撤销历史
-    function syncConfigByData() {
-      // 记录配置同步耗时，便于排查性能问题
-      const startTime = performance.now();
-      const item = currentItem.value;
-      const changed = refreshConfigByData(item);
-      if (changed) lastSnapshot = deepClone(item);
-      console.log(`简历配置同步耗时：${(performance.now() - startTime).toFixed(2)}ms`);
-    }
     // 数组型模块新增记录：落一条含字段的空记录骨架并同步表单配置，返回新记录下标
     function addDataRecord(moduleKey: string): number {
       const data = currentData.value;
       const module = data?.[moduleKey];
       if (!module || !Array.isArray(module.data)) return -1;
       module.data.push(createRecordSkeleton(moduleKey));
-      syncConfigByData();
+      // 同步补一条表单子项，保证编辑器与 data 数量一致
+      const arrayField = findModuleArrayField(currentItem.value, moduleKey);
+      if (arrayField?.addConfig && Array.isArray(arrayField.list)) {
+        arrayField.list.push(structuredClone(toRaw(arrayField.addConfig)));
+      }
       return module.data.length - 1;
     }
     // AI 直接写入：把语义化 patch 递归应用到真实简历数据，不再经过预览草稿
@@ -447,35 +443,17 @@ export const useResumeStore = defineStore(
       isGenerating.value = val;
     };
     const mergeResumeItem = (item: any) => {
-      return merge(structuredClone(DEFAULT_RESUME_ITEM), item);
+      const merged = merge(structuredClone(DEFAULT_RESUME_ITEM), item);
+      // 旧结构字段不再保留，统一以模板展开为准
+      delete merged.fixedConfig;
+      return merged;
     };
-
-    // 旧版简历迁移：fixedConfig 中 user 模块合并进 config.fields 首位后移除该字段
-    const migrateLegacyItem = (item: any) => {
-      if (!item || !item.fixedConfig) return;
-      const config = item.config && typeof item.config === "object" ? item.config : {};
-      if (!Array.isArray(config.fields)) config.fields = [];
-      const fixedFields = Array.isArray(item.fixedConfig.fields) ? item.fixedConfig.fields : [];
-      fixedFields.forEach((field: any) => {
-        const duplicated = field?.key && config.fields.some((f: any) => f?.key === field.key);
-        if (!duplicated) config.fields.unshift(field);
-      });
-      item.config = config;
-      delete item.fixedConfig;
-    };
-    // 持久化恢复或外部导入旧结构时统一迁移，避免各处重复兼容
-    watch(
-      [list, trashList],
-      () => {
-        list.value.forEach(migrateLegacyItem);
-        trashList.value.forEach(migrateLegacyItem);
-      },
-      { immediate: true },
-    );
 
     // 合并默认配置，补充新增字段
     const init = () => {
       system.value = merge(structuredClone(DEFAULT_SYSTEM), system.value);
+      // 结构版本始终以当前代码为准，旧版本数据在反序列化时直接清空
+      system.value.dataVersion = RESUME_DATA_VERSION;
     };
 
     // 监听当前简历内容变化（data/config/ui 任意嵌套字段），冒泡记录撤销历史
@@ -512,7 +490,6 @@ export const useResumeStore = defineStore(
       setGenerating,
       system,
       initResumeStatus,
-      syncConfigByData,
       addDataRecord,
       applyAiDataPatch,
       removeDataRecord,
@@ -554,6 +531,45 @@ export const useResumeStore = defineStore(
   {
     persist: {
       pick: ["list", "trashList", "layout", "system"],
+      // 落盘只存模块 key，读取时按最新模板展开；版本不符的旧数据直接清空
+      serializer: {
+        serialize: (state: any) => {
+          const compactItem = (item: any) => {
+            if (!item) return item;
+            return {
+              ...item,
+              config: {
+                ...item.config,
+                fields: compactConfigFields(item.config?.fields || []),
+              },
+            };
+          };
+          return JSON.stringify({
+            ...state,
+            list: (state.list || []).map(compactItem),
+            trashList: (state.trashList || []).map(compactItem),
+          });
+        },
+        deserialize: (raw: string) => {
+          const state = JSON.parse(raw);
+          if (state.system?.dataVersion !== RESUME_DATA_VERSION) {
+            state.list = [];
+            state.trashList = [];
+            return state;
+          }
+          const expandItem = (item: any) => {
+            if (!item) return item;
+            const config = item.config && typeof item.config === "object" ? item.config : {};
+            config.fields = Array.isArray(config.fields)
+              ? expandConfigFields(config.fields, item.data)
+              : [];
+            return { ...item, config };
+          };
+          state.list = (state.list || []).map(expandItem);
+          state.trashList = (state.trashList || []).map(expandItem);
+          return state;
+        },
+      },
     },
   },
 );
