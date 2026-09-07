@@ -125,6 +125,12 @@ export const useChatRequest = ({
     load_resume_writing: "读取《简历编写》",
     load_resume_optimization: "读取写作方法论",
     load_job_match: "读取岗位匹配规范",
+    load_resume_translate: "读取《简历翻译》",
+    load_self_intro: "读取《面试自我介绍》",
+    load_greeting: "读取《打招呼语》",
+    load_resume_create: "读取《从零生成简历经历》",
+    load_resume_interview: "读取《AI 简历面试》",
+    load_resume_score: "读取《AI 简历打分》",
   };
 
   // 统一状态处理器：把 reasoning/content/total_tokens 映射为请求状态与耗时计数
