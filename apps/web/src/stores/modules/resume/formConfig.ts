@@ -251,6 +251,17 @@ export const DEFAULT_USER_FORM = [
               placeholder: "请选择城市",
             },
           },
+          {
+            type: "object",
+            label: "身高体重",
+            tip: "身高体重",
+            component: "heightWeight",
+            span: 24,
+            model: {
+              source: ["user", "data", "heightWeight"],
+              prop: "modelValue",
+            },
+          },
         ],
       },
     ],
