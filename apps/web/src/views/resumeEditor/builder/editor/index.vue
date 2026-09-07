@@ -8,6 +8,7 @@ import AddModule from "./components/addModule.vue";
 import BoxCollapse from "./components/boxCollapse.vue";
 import CityPicker from "./components/cityPicker/index.vue";
 import HiddenModules from "./components/hiddenModules.vue";
+import HeightWeight from "./components/heightWeight.vue";
 import Honor from "./components/honor.vue";
 import Image from "./components/image.vue";
 import ItemCollapse from "./components/itemCollapse.vue";
@@ -26,6 +27,7 @@ const dynamicComponents = {
   imageUpload: ImageUpload,
   honor: Honor,
   image: Image,
+  heightWeight: HeightWeight,
   more: More,
   video: Video,
   cityPicker: CityPicker,
