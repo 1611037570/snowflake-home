@@ -11,6 +11,13 @@ export const RESUME_OPTIONS = {
     { name: "离职", value: "离职" },
     { name: "应届生", value: "应届生" },
   ],
+  // 政治面貌
+  political: [
+    { name: "中共党员", value: "中共党员" },
+    { name: "中共预备党员", value: "中共预备党员" },
+    { name: "共青团员", value: "共青团员" },
+    { name: "群众", value: "群众" },
+  ],
   // 学位
   education: [
     { name: "小学", value: "小学" },
