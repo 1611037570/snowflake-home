@@ -265,6 +265,10 @@ export const useChatRequest = ({
         onAct: (toolCall) => {
           if (!isCurrentRequest() || !lastMsg) return;
           lastToolName = toolCall.function.name;
+          // 执行过简历数据修改技能的消息开放“撤回修改”
+          if (toolCall.function.name === "propose_resume_edits") {
+            writeMessages.add(lastMsg);
+          }
           const displayName = TOOL_NAMES[toolCall.function.name] || toolCall.function.name;
           // 工具开始只记录执行动作，不写入参数与数据
           stepContent = "";
@@ -294,9 +298,8 @@ export const useChatRequest = ({
           lastMsg.thoughtCollapsed = true;
           stepContent = "";
           streamFinalContent = false;
-          // 回复完成后再统一提交生成期间缓冲的写操作；有真实写入才开放“撤回修改”
-          const hadWrites = commitDeferredWrites?.() ?? false;
-          if (hadWrites && lastMsg) writeMessages.add(lastMsg);
+          // 回复完成后统一提交生成期间缓冲的写操作
+          commitDeferredWrites?.();
           scrollToBottom();
         },
       });
@@ -330,6 +333,8 @@ export const useChatRequest = ({
       abortRequest = null;
       if (lastMsg?.typing) lastMsg.typing = false;
       if (chat.value) chat.value.updateTime = finishTime;
+      // 按钮等尾部内容在 typing=false 后才渲染，收尾后补一次滚动避免被遮挡
+      if (!isUnmounted) await scrollToBottom();
     }
   };
 
