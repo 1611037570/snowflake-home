@@ -3,7 +3,7 @@
 defineOptions({ name: "BuilderEditor" });
 import { useResumeStore } from "@/stores";
 import { storeToRefs } from "pinia";
-import { RESUME_OPTIONS } from "@/configs/modules/resumeOptions";
+import { RESUME_OPTIONS } from "@/stores/modules/resume/resumeOptions";
 import Account from "./components/account.vue";
 import AddModule from "./components/addModule.vue";
 import BoxCollapse from "./components/boxCollapse.vue";
