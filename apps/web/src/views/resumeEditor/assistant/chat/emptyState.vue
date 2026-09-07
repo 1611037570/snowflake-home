@@ -11,9 +11,9 @@ const props = defineProps<{
 }>();
 const emit = defineEmits(["switch-mode", "suggest"]);
 
-// 点击建议卡片，把卡片携带的请求发给 Chat
+// 点击建议卡片，启动对应流程
 const handleSuggest = (card) => {
-  emit("suggest", card);
+  emit("suggest", { flow: card.flow });
 };
 </script>
 
