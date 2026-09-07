@@ -1,9 +1,9 @@
 import { getUUID } from "@/utils";
-import { DEFAULT_CONFIG, DEFAULT_USER_CONFIG } from "./formConfig";
+import { DEFAULT_CONFIG, DEFAULT_USER_FORM } from "./formConfig";
 import { DEFAULT_UI } from "./uiConfig";
 
 // 简历数据结构版本号：结构变更时递增，旧版本数据不兼容直接清空
-export const RESUME_DATA_VERSION = 2;
+export const RESUME_DATA_VERSION = 3;
 // 默认模块 key 对应的名称与图标（取自 formConfig，后期自行维护）
 export const DEFAULT_MODULE_NAMES: { key: string; name: string; icon: string }[] = [
   { key: "user", name: "用户信息", icon: "mdi:account" },
@@ -34,10 +34,11 @@ export const DEFAULT_RESUME_ITEM = {
   id: getUUID().slice(0, 6),
   // 简历数据
   data: structuredClone({}),
-  // 固定配置
-  fixedConfig: structuredClone(DEFAULT_USER_CONFIG),
-  // 表单配置
-  config: structuredClone(DEFAULT_CONFIG),
+  // 表单配置：user 固定模块置顶，其余模块按添加顺序排列
+  config: {
+    ...structuredClone(DEFAULT_CONFIG),
+    fields: structuredClone(DEFAULT_USER_FORM),
+  },
   // UI配置
   ui: structuredClone(DEFAULT_UI),
   // 使用信息

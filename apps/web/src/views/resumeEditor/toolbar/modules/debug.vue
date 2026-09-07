@@ -32,20 +32,6 @@
         </SfTabPane>
         <SfTabPane value="config">
           <SfCollapse>
-            <SfCollapseItem name="currentFixedConfig">
-              <template #title>原始配置 (currentFixedConfig)</template>
-              <div class="max-h-[50vh] overflow-y-auto">
-                <div v-for="(value, key) in currentFixedConfig ?? {}" :key="key" class="mb-3">
-                  <div class="mb-3 font-medium">{{ key }}</div>
-                  <SfMdPreview
-                    :modelValue="fieldMd(value)"
-                    editorId="debug-config"
-                    :codeFoldable="false"
-                    class="bg-transparent! p-0!"
-                  />
-                </div>
-              </div>
-            </SfCollapseItem>
             <SfCollapseItem name="currentConfig">
               <template #title>当前配置 (currentConfig)</template>
               <div class="max-h-[50vh] overflow-y-auto">
@@ -86,9 +72,7 @@
                   >
                     <span class="shrink-0 text-sm font-medium">{{ msg.role }}</span>
                     <span class="shrink-0 text-xs text-sf-text-3">{{ msg.requestStatus }}</span>
-                    <span
-                      class="min-w-0 flex-1 truncate whitespace-nowrap text-sm text-sf-text-2"
-                    >
+                    <span class="min-w-0 flex-1 truncate text-sm whitespace-nowrap text-sf-text-2">
                       {{ msgBrief(msg) }}
                     </span>
                     <SfTooltip content="删除该消息">
@@ -138,7 +122,7 @@ const tabList = [
 
 // 获取原始数据
 const resumeStore = useResumeStore();
-const { currentData, currentConfig, system, currentFixedConfig } = storeToRefs(resumeStore);
+const { currentData, currentConfig, system } = storeToRefs(resumeStore);
 
 // 获取简历助手的 LLM 对话（编辑器当前正在使用的对话）
 const aiStore = useAiStore();

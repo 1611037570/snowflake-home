@@ -103,14 +103,6 @@ export const xiaoYangData: any = {
   },
 };
 
-export const xiaoYangFixedForm = {
-  meta: {
-    version: "1.0.0",
-  },
-  drag: false,
-  fields: DEFAULT_USER_FORM,
-};
-
 // 复用默认配置时各模块数组子项 list 为空，按小羊已有数据条数补齐（相当于完成一次添加）
 const initArrayListByData = (fields: any[]) => {
   fields.forEach((field: any) => {
@@ -141,6 +133,7 @@ export const xiaoYangForm = {
   dragClass: ".container-drag",
   // 直接复用默认模块配置，避免自行维护与默认配置不同步
   fields: [
+    ...structuredClone(DEFAULT_USER_FORM),
     structuredClone(DEFAULT_ACCOUNT_FORM),
     structuredClone(DEFAULT_EDUCATION_FORM),
     structuredClone(DEFAULT_SKILL_FORM),
@@ -167,6 +160,5 @@ export const xiaoYangUI = {
 export const xiaoYangResumeItem = {
   data: xiaoYangData,
   config: xiaoYangForm,
-  fixedConfig: xiaoYangFixedForm,
   ui: xiaoYangUI,
 };

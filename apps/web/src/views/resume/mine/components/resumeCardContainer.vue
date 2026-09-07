@@ -14,7 +14,6 @@ const emit = defineEmits(["click"]);
 const getThumbItem = (item) => ({
   data: item.data,
   config: item.config,
-  fixedConfig: item.fixedConfig,
   ui: item.ui,
 });
 const boxSize = computed(() => {

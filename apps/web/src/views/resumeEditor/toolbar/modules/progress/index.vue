@@ -8,17 +8,14 @@ import { computed, ref } from "vue";
 import { useResumeStats } from "./useResumeStats";
 
 const resumeStore = useResumeStore();
-const { system, currentData, currentFixedConfig, currentConfig } = storeToRefs(resumeStore);
+const { system, currentData, currentConfig } = storeToRefs(resumeStore);
 
 // 弹窗显隐控制
 const visible = ref(false);
 
 // 计算简历完成度进度及各模块进度（含时间线一致性检查结果）
 const progressData = computed(() =>
-  useProgress(
-    [...currentFixedConfig.value.fields, ...currentConfig.value.fields],
-    currentData.value,
-  ),
+  useProgress(currentConfig.value?.fields || [], currentData.value),
 );
 const resumeStats = useResumeStats(currentData.value);
 // 时间线一致性检查结果（随进度一起返回）
