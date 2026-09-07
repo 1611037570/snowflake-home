@@ -3,6 +3,7 @@
 defineOptions({ name: "BuilderEditor" });
 import { useResumeStore } from "@/stores";
 import { storeToRefs } from "pinia";
+import { RESUME_OPTIONS } from "@/configs/modules/resumeOptions";
 import Account from "./components/account.vue";
 import AddModule from "./components/addModule.vue";
 import BoxCollapse from "./components/boxCollapse.vue";
@@ -90,11 +91,13 @@ onBeforeUnmount(() => {
         v-model:form="currentFixedConfig"
         v-model:data="currentData"
         :components="dynamicComponents"
+        :options="RESUME_OPTIONS"
       />
       <SfDynamicForm
         v-model:form="currentConfig"
         v-model:data="currentData"
         :components="dynamicComponents"
+        :options="RESUME_OPTIONS"
       />
       <HiddenModules />
       <AddModule />
