@@ -4,6 +4,7 @@ import { storeToRefs } from "pinia";
 import { useDebounceFn } from "@vueuse/core";
 import dayjs from "dayjs";
 import { useResumeStore } from "@/stores";
+import { compactConfigFields } from "@/stores/modules/resume/hooks/useConfigTemplate";
 import {
   disableLocalBackup,
   enableLocalBackup,
@@ -38,7 +39,12 @@ const doBackup = async () => {
   if (!item) return;
   // 备份文件名：轻舟简历备份-时间-简历ID（时间精确到秒，避免同名覆盖）
   const filename = `轻舟简历备份-${dayjs().format("YYYY-MM-DD_HH-mm-ss")}-${item.id}.json`;
-  await writeLocalBackup(filename, JSON.stringify(item, null, 2));
+  // 备份时配置只保留模块 key，减小文件体积
+  const backupItem = {
+    ...item,
+    config: { ...item.config, fields: compactConfigFields(item.config?.fields || []) },
+  };
+  await writeLocalBackup(filename, JSON.stringify(backupItem, null, 2));
   // 保存成功后显示一次已备份提示，2秒后消失
   saving.value = true;
   setTimeout(() => (saving.value = false), 1200);
