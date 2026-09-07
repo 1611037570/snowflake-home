@@ -18,13 +18,13 @@ const fontValue = inject("fontValue");
 const lineHeightValue = inject("lineHeightValue");
 
 const resumeStore = useResumeStore();
-const { currentConfig } = storeToRefs(resumeStore);
+const { runtimeFields } = storeToRefs(resumeStore);
 
 // 代理数据解包访问自定义模块数组（数据以模块 key 为路径）
 const customList = computed(() => previewData.value?.[props.name]?.data || []);
 // 从表单配置中反查标题
 const title = computed(() => {
-  const field = currentConfig.value?.fields.find((f) => f.key === props.name);
+  const field = runtimeFields.value?.find((f) => f.key === props.name);
   return field?.name;
 });
 </script>
@@ -36,7 +36,7 @@ const title = computed(() => {
     <!-- 内容区 -->
     <template v-for="(item, index) in customList" :key="index">
       <div class="mb-3 flex flex-wrap items-center justify-between">
-        <div class="flex min-w-0 max-w-full flex-wrap items-center gap-4">
+        <div class="flex max-w-full min-w-0 flex-wrap items-center gap-4">
           <div class="font-bold" :style="[fontValue(3)]">
             <ResumeField v-model="item.name" />
           </div>
@@ -44,7 +44,7 @@ const title = computed(() => {
             <ResumeField v-model="item.post" />
           </div>
         </div>
-        <div class="flex min-w-0 max-w-full flex-wrap items-center">
+        <div class="flex max-w-full min-w-0 flex-wrap items-center">
           <span>{{ getTime(item.time?.value) }}</span>
         </div>
       </div>

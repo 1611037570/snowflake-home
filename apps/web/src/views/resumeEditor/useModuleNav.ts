@@ -8,12 +8,12 @@ import { isFieldHidden } from "@/components/business/dynamicForm/code/fieldVisib
 
 // store 为全局单例：模块列表与跳转逻辑无组件级状态，抽为模块级共享，避免各组件重复创建 hook
 const resumeStore = useResumeStore();
-const { currentData, currentConfig, layout } = storeToRefs(resumeStore);
+const { currentData, runtimeFields, layout } = storeToRefs(resumeStore);
 
 // 模块锚点列表：全部模块（含隐藏模块，便于搜索定位）；预览分页仍按显隐协议过滤
 const moduleList = computed(() => {
   const data = currentData.value;
-  const fields = currentConfig.value?.fields || [];
+  const fields = runtimeFields.value || [];
   return (
     fields
       // 跳过无 key 字段（历史/导入数据可能缺失，无 key 无法作为导航锚点）
