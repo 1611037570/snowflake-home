@@ -64,19 +64,21 @@ onBeforeUnmount(() => document.removeEventListener("click", closeModulePanel));
 
 <template>
   <div ref="modulePanelRef" class="relative">
-    <div
-      class="cursor-pointer rounded-3xl border border-sf-b bg-sf-bg-2 px-2 py-1 text-sm"
-      @click="modulePanelVisible = !modulePanelVisible"
-    >
-      <template v-if="selectedModule.length">
-        已选
-        <span class="text-sf-theme">
-          {{ selectedModule.length }}
-        </span>
-        模块
-      </template>
-      <template v-else> {{ ALL_MODULE_NAME }} </template>
-    </div>
+    <SfTooltip content="选择后 AI 只读取和操作选中的模块，不选则针对整份简历">
+      <div
+        class="cursor-pointer rounded-3xl border border-sf-b bg-sf-bg-2 px-2 py-1 text-sm"
+        @click="modulePanelVisible = !modulePanelVisible"
+      >
+        <template v-if="selectedModule.length">
+          已选
+          <span class="text-sf-theme">
+            {{ selectedModule.length }}
+          </span>
+          模块
+        </template>
+        <template v-else> {{ ALL_MODULE_NAME }} </template>
+      </div>
+    </SfTooltip>
     <!-- 模块选择面板：从按钮上方弹出 -->
     <div
       v-if="modulePanelVisible"
