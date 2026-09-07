@@ -262,6 +262,20 @@ export const DEFAULT_USER_FORM = [
               prop: "modelValue",
             },
           },
+          {
+            type: "object",
+            label: "籍贯",
+            tip: "籍贯",
+            component: "cityPicker",
+            span: 12,
+            model: {
+              source: ["user", "data", "nativePlace"],
+              prop: "modelValue",
+            },
+            props: {
+              placeholder: "请选择籍贯",
+            },
+          },
         ],
       },
     ],
