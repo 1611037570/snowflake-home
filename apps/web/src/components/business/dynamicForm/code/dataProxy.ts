@@ -4,12 +4,16 @@ interface DataProxyOption {
   source: Path;
   prop: string;
   defaultValue?: string;
+  // 仅从外部字典读取，不代理、不写入简历数据
+  raw?: boolean;
 }
 
 // 创建一个类
 class DataProxy<T> {
   private modelValue: any;
   private emit: (event: string, value: any, ...args: any[]) => void;
+  // 外部字典：raw 绑定从这里取值，不进入简历数据
+  private options: Record<string, any>;
 
   // 确保数据为数组格式
   private ensureArray<V>(val: V | V[]): V[] {
@@ -25,9 +29,15 @@ class DataProxy<T> {
     const result: any = {};
     const optionsArray = this.ensureArray(options);
     for (const item of optionsArray) {
-      result[name + item.prop] = callback(item);
+      result[name + item.prop] = item.raw ? this.readRaw(item) : callback(item);
     }
     return result;
+  }
+  // 读取外部字典：source 末段作为字典 key（如 ["__options", "mode"] 取 mode）
+  private readRaw(item: DataProxyOption) {
+    const keyPath = this.ensureArray(item.source);
+    const key = keyPath[keyPath.length - 1] ?? "";
+    return this.options?.[key];
   }
   private select(options: {
     source: Path;
@@ -76,7 +86,9 @@ class DataProxy<T> {
   // 获取数组路径（截取 '?' 之前的部分）
   getPath(options: DataProxyOption | DataProxyOption[] /* 数据配置 */) {
     const optionsArray: any = this.ensureArray(options);
-    const source = optionsArray[0].source;
+    // 跳过 raw 绑定，取第一个真实数据绑定定位数组路径
+    const source =
+      optionsArray.find((item: DataProxyOption) => !item.raw)?.source ?? optionsArray[0].source;
     const index = source.indexOf("?");
     return source.slice(0, index);
   }
@@ -115,11 +127,12 @@ class DataProxy<T> {
     if (!payload.key) return;
     delete this.data[payload.key];
   }
-  constructor(data: any, emit: any) {
+  constructor(data: any, emit: any, options: Record<string, any> = {}) {
     // 初始化数据为空对象
     if (!data || typeof data !== "object") data = {};
     this.modelValue = data;
     this.emit = emit;
+    this.options = options;
   }
 
   // 获取数据代理
@@ -134,6 +147,8 @@ class DataProxy<T> {
     const result: any = {};
     const optionsArray = this.ensureArray(options);
     for (const item of optionsArray) {
+      // raw 绑定只读字典，不生成写入事件
+      if (item.raw) continue;
       result["update:" + item.prop] = (newValue: T) => {
         this.select({ source: item.source, value: newValue, index });
       };
@@ -142,9 +157,14 @@ class DataProxy<T> {
   }
 
   setEventProxy(options: DataProxyOption | DataProxyOption[]) {
-    return this.createDataProxyHelper(options, (item: DataProxyOption) => {
-      return (newValue: T, ...args: T[]) => this.emit(item.prop, newValue, ...args);
-    });
+    const result: any = {};
+    const optionsArray = this.ensureArray(options);
+    for (const item of optionsArray) {
+      // raw 绑定只读字典，不注册事件
+      if (item.raw) continue;
+      result[item.prop] = (newValue: T, ...args: T[]) => this.emit(item.prop, newValue, ...args);
+    }
+    return result;
   }
 
   // 获取当前数据
