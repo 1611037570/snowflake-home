@@ -78,3 +78,11 @@ export function expandConfigFields(fields: any[], data: any) {
 export function compactConfigFields(fields: any[]) {
   return fields.map((field: any) => ({ key: field.key }));
 }
+
+// 按持久化 key 配置构建编辑器会话使用的完整表单配置
+export function buildRuntimeConfig(config: any, data: any) {
+  return {
+    ...config,
+    fields: expandConfigFields(config?.fields || [], data),
+  };
+}

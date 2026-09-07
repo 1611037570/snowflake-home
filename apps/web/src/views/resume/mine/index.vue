@@ -5,6 +5,7 @@ import { storeToRefs } from "pinia";
 import { useRouter } from "vue-router";
 import { useProgress } from "../../resumeEditor/hooks/useProgress";
 import { getResumeTitle } from "../../resumeEditor/resumeName";
+import { expandConfigFields } from "@/stores/modules/resume/hooks/useConfigTemplate";
 import ResumeCardContainer from "./components/resumeCardContainer.vue";
 import RevealGrid from "../components/revealGrid.vue";
 import ImportResume from "./components/importResume.vue";
@@ -35,7 +36,8 @@ const displayList = computed(() => {
     type: "resume",
     item,
     index: indexMap.get(item.id) ?? -1,
-    progress: useProgress(item.config?.fields || [], item.data).progress,
+    progress: useProgress(expandConfigFields(item.config?.fields || [], item.data), item.data)
+      .progress,
   }));
   // 未满员时新建入口作首项，与简历项一同逐个揭示
   return list.value.length < maxCount ? [{ id: "__create", type: "create" }, ...cards] : cards;

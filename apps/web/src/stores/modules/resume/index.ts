@@ -8,10 +8,9 @@ import {
   DEFAULT_MODULE_NAMES,
   DEFAULT_RESUME_ITEM,
   DEFAULT_SYSTEM,
-  RESUME_DATA_VERSION,
 } from "./defaultConfig";
 import type { SelectedModule } from "./types";
-import { compactConfigFields, expandConfigFields } from "./hooks/useConfigTemplate";
+import { buildRuntimeConfig, compactConfigFields } from "./hooks/useConfigTemplate";
 import { createRecordSkeleton } from "./hooks/useAddRecord";
 
 import { debounce, merge } from "lodash-es";
@@ -87,6 +86,31 @@ export const useResumeStore = defineStore(
         }
       },
     });
+    // 编辑器会话配置：从持久化 key 展开，完整 schema 只存在于运行时
+    const runtimeConfig = ref<any>(null);
+    const runtimeFields = computed(() => runtimeConfig.value?.fields || []);
+    const refreshRuntime = () => {
+      const item = currentItem.value;
+      runtimeConfig.value = item ? buildRuntimeConfig(item.config, item.data) : null;
+    };
+    // 切简历/新建/恢复时按最新模板重建运行时配置
+    watch(currentItem, refreshRuntime, { immediate: true });
+    // 模块增删与排序只改运行时 fields，变化后回写持久化的 key 列表
+    watch(
+      () => runtimeConfig.value?.fields?.map((field: any) => field.key).join("|"),
+      (keys) => {
+        const item = currentItem.value;
+        if (!item || !keys) return;
+        const config = item.config && typeof item.config === "object" ? item.config : {};
+        const oldKeys = (config.fields || []).map((field: any) => field.key).join("|");
+        if (oldKeys !== keys) {
+          config.fields = keys
+            .split("|")
+            .filter(Boolean)
+            .map((key: string) => ({ key }));
+        }
+      },
+    );
     // 获取当前选中的UI配置
     const currentUI = computed({
       get() {
@@ -152,8 +176,8 @@ export const useResumeStore = defineStore(
         return false;
       }
       const res = config ? mergeResumeItem(config) : structuredClone(DEFAULT_RESUME_ITEM);
-      // 统一按模板展开为完整 schema，保证新建/导入简历即可直接渲染
-      res.config.fields = expandConfigFields(res.config.fields, res.data);
+      // 持久化只保留模块 key，完整 schema 由运行时按模板展开
+      res.config.fields = compactConfigFields(res.config.fields);
       // 每次新增都重新生成唯一ID，避免多份简历共用一个ID
       res.id = getUUID().slice(0, 6);
       list.value.push(res);
@@ -403,6 +427,8 @@ export const useResumeStore = defineStore(
       item.ui = snapItem.ui;
       // 恢复后同步基准快照，保证下次编辑以恢复后的状态为历史基准
       lastSnapshot = deepClone(item);
+      // 恢复的持久配置为 key 列表，需要重建运行时展开配置
+      refreshRuntime();
     };
     // 撤回：当前状态入重做栈，再恢复撤销栈顶的修改前状态
     const undo = () => {
@@ -452,8 +478,6 @@ export const useResumeStore = defineStore(
     // 合并默认配置，补充新增字段
     const init = () => {
       system.value = merge(structuredClone(DEFAULT_SYSTEM), system.value);
-      // 结构版本始终以当前代码为准，旧版本数据在反序列化时直接清空
-      system.value.dataVersion = RESUME_DATA_VERSION;
     };
 
     // 监听当前简历内容变化（data/config/ui 任意嵌套字段），冒泡记录撤销历史
@@ -498,6 +522,8 @@ export const useResumeStore = defineStore(
       currentItem,
       currentData,
       currentConfig,
+      runtimeConfig,
+      runtimeFields,
       currentUI,
       currentUsage,
       isPrinting,
@@ -531,45 +557,6 @@ export const useResumeStore = defineStore(
   {
     persist: {
       pick: ["list", "trashList", "layout", "system"],
-      // 落盘只存模块 key，读取时按最新模板展开；版本不符的旧数据直接清空
-      serializer: {
-        serialize: (state: any) => {
-          const compactItem = (item: any) => {
-            if (!item) return item;
-            return {
-              ...item,
-              config: {
-                ...item.config,
-                fields: compactConfigFields(item.config?.fields || []),
-              },
-            };
-          };
-          return JSON.stringify({
-            ...state,
-            list: (state.list || []).map(compactItem),
-            trashList: (state.trashList || []).map(compactItem),
-          });
-        },
-        deserialize: (raw: string) => {
-          const state = JSON.parse(raw);
-          if (state.system?.dataVersion !== RESUME_DATA_VERSION) {
-            state.list = [];
-            state.trashList = [];
-            return state;
-          }
-          const expandItem = (item: any) => {
-            if (!item) return item;
-            const config = item.config && typeof item.config === "object" ? item.config : {};
-            config.fields = Array.isArray(config.fields)
-              ? expandConfigFields(config.fields, item.data)
-              : [];
-            return { ...item, config };
-          };
-          state.list = (state.list || []).map(expandItem);
-          state.trashList = (state.trashList || []).map(expandItem);
-          return state;
-        },
-      },
     },
   },
 );

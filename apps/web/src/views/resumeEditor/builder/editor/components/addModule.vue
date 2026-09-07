@@ -6,7 +6,7 @@ import { storeToRefs } from "pinia";
 import { computed, ref } from "vue";
 import { getUUID } from "@/utils";
 const resumeStore = useResumeStore();
-const { currentConfig } = storeToRefs(resumeStore);
+const { runtimeConfig, currentData } = storeToRefs(resumeStore);
 defineOptions({ name: "AddModule" });
 
 // 预设模块列表：复用 DEFAULT_MODULE_NAMES 统一维护 key 与名称，user 为固定模块不可添加
@@ -17,10 +17,10 @@ const presets = DEFAULT_MODULE_NAMES.filter((item) => item.key !== "user").map((
 
 // 过滤后的预设模块：只显示尚未添加到当前表单中的模块
 const filteredPresets = computed(() => {
-  if (!currentConfig.value) return presets;
+  if (!runtimeConfig.value) return presets;
   return presets.filter((item) => {
-    // 检查当前表单配置中是否已存在该模块（通过比对模块名称与表单首项的 label）
-    return !currentConfig.value.fields.some((form) => form.key === item.value);
+    // 检查运行时配置中是否已存在该模块
+    return !runtimeConfig.value.fields.some((form) => form.key === item.value);
   });
 });
 
@@ -40,7 +40,7 @@ const handleAdd = (module) => {
     return;
   }
   if (type in allConfig) {
-    currentConfig.value.fields.push(structuredClone(allConfig[type]));
+    runtimeConfig.value.fields.push(structuredClone(allConfig[type]));
   }
 };
 
@@ -52,6 +52,14 @@ const handleConfirm = () => {
   if (!customModuleName.value) return;
   // 生成带前缀的唯一 key,作为模块标识与数据路径
   const customKey = `custom_${getUUID().substring(0, 8)}`;
+  // 名称等实例数据写入简历 data，config 只保留 key
+  if (currentData.value) {
+    currentData.value[customKey] = {
+      name: customModuleName.value,
+      collapsed: ["1"],
+      hidden: false,
+    };
+  }
   // 深拷贝自定义模块配置
   const config = structuredClone(allConfig.custom);
   config.key = customKey;
@@ -76,8 +84,8 @@ const handleConfirm = () => {
   config.fields[0].addConfig.fields.forEach((field) => {
     field.model.source[0] = customKey;
   });
-  // 添加自定义模块到当前表单配置
-  currentConfig.value.fields.push(structuredClone(config));
+  // 添加自定义模块到运行时配置
+  runtimeConfig.value.fields.push(structuredClone(config));
 
   handleCancel();
 };

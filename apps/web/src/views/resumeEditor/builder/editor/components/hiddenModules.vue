@@ -6,12 +6,12 @@ import { setFieldHidden } from "../../../utils";
 import { isFieldHidden } from "@/components/business/dynamicForm/code/fieldVisible";
 
 const resumeStore = useResumeStore();
-const { currentConfig, currentData } = storeToRefs(resumeStore);
+const { runtimeConfig, currentData } = storeToRefs(resumeStore);
 
 // 隐藏模块列表：仅统计配置中声明隐藏条件且数据为真的模块
 const hiddenList = computed(() => {
   const data = currentData.value;
-  const fields = currentConfig.value?.fields || [];
+  const fields = runtimeConfig.value?.fields || [];
   return fields.filter((field) => isFieldHidden(data, field));
 });
 
