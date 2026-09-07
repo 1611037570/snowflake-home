@@ -30,22 +30,22 @@ const importJsonConfig = async () => {
     if (file) {
       await parseJsonConfig(file);
     }
-  } catch (error) {
+  } catch {
     // 用户取消选择，忽略即可
   }
 };
 
-// 读取并解析 JSON 配置，导入为新简历（仅创建不跳转，成功后提示）
+// 读取并解析完整简历 JSON，导入为新简历（仅创建不跳转，成功后提示）
 const parseJsonConfig = async (file) => {
   if (!file) return;
   try {
-    const config = JSON.parse(await file.text());
-    // 以解析出的配置创建新简历，jump=false 避免跳转编辑器
-    const ok = resumeStore.addResume({ config }, false);
+    const item = JSON.parse(await file.text());
+    // 以解析出的完整简历创建新简历，jump=false 避免跳转编辑器
+    const ok = resumeStore.addResume(item, false);
     if (ok) ElMessage.success("简历导入成功");
   } catch (error) {
-    console.error("解析简历配置失败:", error);
-    ElMessage.error("简历配置解析失败，请检查文件格式");
+    console.error("解析简历文件失败:", error);
+    ElMessage.error("简历文件解析失败，请检查文件格式");
   }
 };
 </script>
@@ -61,8 +61,8 @@ const parseJsonConfig = async (file) => {
         class="cursor-pointer rounded-3xl border border-sf-b p-3 transition-colors hover:bg-sf-theme-2"
         @click="importJsonConfig"
       >
-        <div class="text-xl">JSON配置</div>
-        <div class="text-sm">选择并解析简历配置文件</div>
+        <div class="text-xl">JSON完整备份</div>
+        <div class="text-sm">选择并解析完整简历备份文件</div>
       </div>
     </div>
   </SfModal>
