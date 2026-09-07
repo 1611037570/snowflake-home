@@ -41,11 +41,9 @@ export const useResumeAssistant = (
 
   const bufferedAddRecord = (moduleKey: string): number => {
     if (!bufferingWrites) return addDataRecord?.(moduleKey) ?? -1;
-    const view = resumeContext.getResumeData(moduleKey)?.[moduleKey] as
-      | { data?: unknown }
-      | undefined;
-    if (!view || !Array.isArray(view.data)) return -1;
-    const index = view.data.length + (pendingAddCount[moduleKey] ?? 0);
+    const module = (resumeStore.currentData as any)?.[moduleKey];
+    if (!module || !Array.isArray(module.data)) return -1;
+    const index = module.data.length + (pendingAddCount[moduleKey] ?? 0);
     pendingAddCount[moduleKey] = (pendingAddCount[moduleKey] ?? 0) + 1;
     pendingWrites.push({ type: "add", module: moduleKey });
     return index;
