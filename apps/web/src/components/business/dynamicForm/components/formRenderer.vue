@@ -3,6 +3,7 @@
     <FormItem
       :currentForm="item.field"
       :data-module-key="item.field.key"
+      :data-fixed="item.field.fixed ? 'true' : undefined"
       v-for="item in visibleFields"
       :key="item.field.id"
       :selected="isModuleSelected(item.field)"
@@ -94,6 +95,18 @@ function ensureFieldIds(fields: any[]) {
     }
   });
 }
+
+// 固定模块保底校正：无论拖拽如何发生，固定模块始终按原相对顺序排在最前
+function keepFixedFirst() {
+  const fields = items.value.fields || [];
+  const fixed = fields.filter((field: any) => field.fixed);
+  if (!fixed.length) return;
+  const others = fields.filter((field: any) => !field.fixed);
+  const next = [...fixed, ...others];
+  if (next.some((field, index) => field !== fields[index])) {
+    fields.splice(0, fields.length, ...next);
+  }
+}
 onMounted(async () => {
   await nextTick();
   if (!items.value.id) {
@@ -115,10 +128,13 @@ onMounted(async () => {
     animation: 150,
     ghostClass: "ghost",
     handle: items.value?.dragClass || "",
+    // 固定模块不可被其它模块越过或交换
+    onMove: (evt) => !evt.related?.dataset?.fixed,
     onStart() {
       isDragging.value = true;
     },
     onEnd() {
+      keepFixedFirst();
       isDragging.value = false;
     },
   });
