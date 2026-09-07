@@ -1,3 +1,4 @@
+<!-- 1V1 优化服务入口 -->
 <script setup>
 import { ref } from "vue";
 import Money from "@/components/base/donation/money.vue";
