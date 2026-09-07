@@ -295,14 +295,7 @@ export const DEFAULT_USER_FORM = [
     ],
   },
 ] satisfies FormField[];
-// 用户信息的配置
-export const DEFAULT_USER_CONFIG = {
-  meta: DEFAULT_META,
-  // 是否可拖动
-  drag: false,
-  // 表单中所渲染的组件的字段
-  fields: structuredClone(DEFAULT_USER_FORM),
-} satisfies FormConfig;
+
 // 社交账号
 export const DEFAULT_ACCOUNT_FORM = {
   type: "group",
