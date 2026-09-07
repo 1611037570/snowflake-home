@@ -1,5 +1,24 @@
 // 引导式 AI 流程配置：点击建议卡片后，先通过预设问答收集信息，再发起真实请求
+import { useResumeStore } from "@/stores";
+import { DEFAULT_MODULE_NAMES } from "@/stores/modules/resume/defaultConfig";
 import type { Flow, SuggestCard } from "./types";
+
+// 获取可作为 AI 生成经历的已有模块名：过滤用户信息与社交账号，内置模块按默认顺序展示
+const getResumeCreateModuleOptions = (): string[] => {
+  const resumeStore = useResumeStore();
+  const data = resumeStore.currentData;
+  if (!data) return [];
+  const builtinOrder = new Map(DEFAULT_MODULE_NAMES.map((item, index) => [item.key, index]));
+  return Object.keys(data)
+    .filter((key) => key !== "user" && key !== "account")
+    .sort((a, b) => {
+      const orderA = builtinOrder.get(a) ?? Number.MAX_SAFE_INTEGER;
+      const orderB = builtinOrder.get(b) ?? Number.MAX_SAFE_INTEGER;
+      return orderA === orderB ? a.localeCompare(b) : orderA - orderB;
+    })
+    .map((key) => resumeStore.getModel(key)?.name || key)
+    .filter(Boolean);
+};
 
 export const flows: Record<string, Flow> = {
   // 简历翻译：先选择翻译方向，再执行
@@ -93,16 +112,19 @@ export const flows: Record<string, Flow> = {
     userContent: "帮我从零生成一段简历经历",
     steps: [
       {
-        question:
-          "请描述你想为哪个模块生成经历及大致方向（例如：生成一段产品经理的工作经历、生成一段 Vue 后台的项目经历）",
+        question: "请选择要为哪个模块生成经历",
+        options: getResumeCreateModuleOptions,
+      },
+      {
+        question: "请描述这段经历的大致方向与内容要点（例如：产品经理，负责官网重构）",
         options: [],
         input: true,
       },
     ],
-    build: ([experienceInfo]) => {
-      // 任务规范已抽离为 resumeCreate 技能，由模型按需加载；此处仅携带经历描述
+    build: ([moduleName, direction]) => {
+      // 任务规范已抽离为 resumeCreate 技能，由模型按需加载；此处携带所选模块与方向描述
       return {
-        userContent: `请帮我生成这段经历：${experienceInfo}`,
+        userContent: `请帮我生成这段${moduleName}：${direction}`,
       };
     },
   },
