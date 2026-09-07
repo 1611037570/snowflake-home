@@ -26,15 +26,14 @@ export const flows: Record<string, Flow> = {
     userContent: "帮我进行简历翻译",
     steps: [
       {
-        question: "请问你需要哪种翻译方向？",
-        options: ["中译英", "英译中"],
+        question: "请问你需要翻译成哪种语言？",
+        options: ["英语", "日语", "韩语", "法语", "德语", "西班牙语", "俄语"],
       },
     ],
-    build: ([direction]) => {
-      // 翻译任务规范已抽离为技能，由模型按需加载；此处仅把翻译方向带进真实请求
-      const isZhToEn = direction === "中译英";
+    build: ([language]) => {
+      // 翻译任务规范已抽离为技能，由模型按需加载；此处仅携带目标语言
       return {
-        userContent: isZhToEn ? "请将我的简历内容翻译成英文" : "请将我的简历内容翻译成中文",
+        userContent: `请将我的简历内容翻译成${language}`,
       };
     },
   },
