@@ -122,16 +122,16 @@ export const useChatRequest = ({
   const TOOL_NAMES: Record<string, string> = {
     read_resume_data: "读取简历数据",
     propose_resume_edits: "修改简历",
-    load_resume_data_contract: "读取《轻舟简历字段规范》",
-    load_resume_writing: "读取《轻舟简历数据操作规范》",
-    load_resume_optimization: "读取《写作方法论》",
-    load_job_match: "读取《岗位匹配规范》",
-    load_resume_translate: "读取《简历翻译》",
-    load_self_intro: "读取《面试自我介绍》",
-    load_greeting: "读取《打招呼语》",
-    load_resume_create: "读取《从零生成简历经历》",
-    load_resume_interview: "读取《AI 简历面试》",
-    load_resume_score: "读取《AI 简历打分》",
+    resume_data_contract: "读取《轻舟简历字段规范》",
+    resume_writing: "读取《轻舟简历数据操作规范》",
+    resume_optimization: "读取《写作方法论》",
+    job_match: "读取《岗位匹配规范》",
+    resume_translate: "读取《简历翻译》",
+    self_intro: "读取《面试自我介绍》",
+    greeting: "读取《打招呼语》",
+    resume_create: "读取《从零生成简历经历》",
+    resume_interview: "读取《AI 简历面试》",
+    resume_score: "读取《AI 简历打分》",
   };
 
   // 统一状态处理器：把 reasoning/content/total_tokens 映射为请求状态与耗时计数

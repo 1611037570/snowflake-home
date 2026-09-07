@@ -9,8 +9,8 @@ export const resumeWriting = () => ({
 
 # 前置准备
 1. 先按默认读取协议获取目标模块真实数据，确认模块、已有记录与字段（字段格式不理解时先加载《简历数据规范》）。
-2. 字段名、类型、必填与格式一律以《简历数据规范》为准，需要时调用 load_resume_data_contract 获取全文，不要凭记忆写。
-3. 涉及内容质量提升时，配合 load_resume_optimization 获取写作方法论。
+2. 字段名、类型、必填与格式一律以《简历数据规范》为准，需要时调用 resume_data_contract 获取全文，不要凭记忆写。
+3. 涉及内容质量提升时，配合 resume_optimization 获取写作方法论。
 
 # 写操作（propose_resume_edits）
 只通过 operations 提交写操作，不直接在最终结果中返回简历数据。
