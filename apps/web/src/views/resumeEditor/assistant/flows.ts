@@ -78,15 +78,22 @@ export const flows: Record<string, Flow> = {
     userContent: "帮我进行JD对标优化",
     steps: [
       {
-        question: "请在输入框中粘贴目标岗位的 JD 内容并发送，我将基于它对标优化你的简历",
+        question: "请问你希望怎么处理这份 JD？",
+        options: ["只给匹配分析，暂不改简历", "分析并直接优化写入"],
+      },
+      {
+        question: "请在输入框中粘贴目标岗位的 JD 内容并发送",
         options: [],
         input: true,
       },
     ],
-    build: ([jd]) => {
-      // JD 对标统一走 jobMatch 技能，由模型按需加载；JD 原文随用户消息传递
+    build: ([mode, jd]) => {
+      // JD 对标统一走 jobMatch 技能，由模型按需加载；此处携带处理模式与 JD 原文
+      const onlyAnalyze = mode === "只给匹配分析，暂不改简历";
       return {
-        userContent: `请根据我提供的以下目标岗位 JD 内容，对标优化我的简历：\n\n${jd}`,
+        userContent: onlyAnalyze
+          ? `请根据我提供的以下目标岗位 JD 内容，对我的简历做匹配分析（只给分析结论与补强方向，不改动简历）：\n\n${jd}`
+          : `请根据我提供的以下目标岗位 JD 内容，对标优化我的简历并写入修改：\n\n${jd}`,
       };
     },
   },
