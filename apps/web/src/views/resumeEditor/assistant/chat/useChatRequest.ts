@@ -132,7 +132,7 @@ export const useChatRequest = ({
     greeting: "读取《打招呼语》",
     resume_create: "读取《从零生成简历经历》",
     resume_interview: "读取《AI 简历面试》",
-    resume_score: "读取《AI 简历打分》",
+    resume_score: "读取《AI 简历评估》",
   };
 
   // 统一状态处理器：把 reasoning/content/total_tokens 映射为请求状态与耗时计数

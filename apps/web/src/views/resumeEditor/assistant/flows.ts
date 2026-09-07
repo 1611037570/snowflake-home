@@ -157,19 +157,19 @@ export const flows: Record<string, Flow> = {
       };
     },
   },
-  // AI 简历打分：确认开始后，从多个维度评估简历并给出改进建议
+  // AI 简历评估：体检 + 打分，确认后综合评估简历
   resumeScore: {
-    userContent: "帮我进行AI简历打分",
+    userContent: "帮我进行AI简历评估",
     steps: [
       {
         question:
-          "请确认开始打分：我会先阅读你的简历，再从完整度、量化成果、语言表达与岗位匹配等维度综合评估。",
-        options: ["开始打分"],
+          "请确认开始评估：我会先阅读你的简历，先检查格式与一致性问题（体检），再从完整度、内容质量、语言表达与岗位匹配等维度打分。",
+        options: ["开始评估"],
       },
     ],
     build: () => ({
       // 任务规范已抽离为 resumeScore 技能，由模型按需加载
-      userContent: "请根据我的简历进行综合打分并给出改进建议",
+      userContent: "请根据我的简历进行综合评估：先体检并列出问题清单，再打分并给出改进建议",
     }),
   },
 };
@@ -213,7 +213,7 @@ export const suggestions: SuggestCard[] = [
   },
   {
     icon: "ph:star-duotone",
-    title: "AI简历打分",
+    title: "AI简历评估",
     flow: "resumeScore",
   },
 ];
