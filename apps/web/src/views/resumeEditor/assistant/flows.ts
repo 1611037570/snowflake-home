@@ -142,11 +142,18 @@ export const flows: Record<string, Flow> = {
         question: "请问你希望模拟面试重点考察哪个方向？",
         options: ["八股文", "项目深挖"],
       },
+      {
+        question: "每次回答后希望得到什么反馈？",
+        options: ["打分并给改进建议", "只继续追问"],
+      },
     ],
-    build: ([direction]) => {
-      // 任务规范已抽离为 resumeInterview 技能，由模型按需加载；此处仅携带考察方向
+    build: ([direction, feedback]) => {
+      // 任务规范已抽离为 resumeInterview 技能，由模型按需加载；此处携带考察方向与反馈模式
+      const withScore = feedback === "打分并给改进建议";
       return {
-        userContent: `请根据我的简历进行${direction}方向的模拟面试`,
+        userContent: withScore
+          ? `请根据我的简历进行${direction}方向的模拟面试，每次只问一个问题，等我回答后再继续追问；每次我回答后先针对回复打分并给改进建议，再问下一题`
+          : `请根据我的简历进行${direction}方向的模拟面试，每次只问一个问题，等我回答后再继续追问`,
       };
     },
   },
@@ -155,7 +162,8 @@ export const flows: Record<string, Flow> = {
     userContent: "帮我进行AI简历打分",
     steps: [
       {
-        question: "请确认开始打分：我会先阅读你的简历，再从完整度、量化成果、语言表达与岗位匹配等维度综合评估。",
+        question:
+          "请确认开始打分：我会先阅读你的简历，再从完整度、量化成果、语言表达与岗位匹配等维度综合评估。",
         options: ["开始打分"],
       },
     ],
