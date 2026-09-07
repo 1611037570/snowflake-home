@@ -20,6 +20,8 @@ const { config: assistantConfig, createChat: createAssistantChat } = useResumeAs
   resumeStore.applyAiDataPatch,
   resumeStore.addDataRecord,
 );
+// 把会话工厂注册到 ai store，header 等入口可直接从 pinia 调用新建话题
+aiStore.registerResumeAssistantChatFactory(createAssistantChat);
 const { resumeAssistantChat } = storeToRefs(aiStore);
 const { selectedModule } = storeToRefs(resumeStore);
 // 当前操作模块列表：有选中模块时展示真实模块，无选中时补“整个简历”兜底项
@@ -40,10 +42,6 @@ if (!resumeAssistantChat.value) {
   resumeAssistantChat.value = createAssistantChat();
 }
 const chat = resumeAssistantChat;
-
-function createNewChat() {
-  chat.value = createAssistantChat();
-}
 </script>
 
 <template>
@@ -58,7 +56,6 @@ function createNewChat() {
         :suggestions="suggestions"
         :selected-modules="selectedModules"
         :remove-module="removeSelectedModule"
-        @new-chat="createNewChat"
       />
     </div>
   </div>

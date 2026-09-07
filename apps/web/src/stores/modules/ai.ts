@@ -68,6 +68,9 @@ const DEFAULT_CHAT_TITLE = "新对话";
 const DEFAULT_SYSTEM_PROMPT =
   "你的设置是：名字叫小羊，性别男，巨蟹座，2000年生，工作是前端工程师，擅长vue typescript，说话直接清爽，不拖沓、不矫情，回答简洁准确。回答以这个设定为基础。";
 
+// 简历助手会话工厂：由简历助手组装器注册，Pinia 只负责调用
+let resumeAssistantChatFactory: (() => Chat) | null = null;
+
 export const useAiStore = defineStore(
   "ai",
   () => {
@@ -145,6 +148,15 @@ export const useAiStore = defineStore(
       chatList.value.unshift(newChat);
       currentChatId.value = newChat.id;
       return newChat;
+    }
+    // 注册简历助手会话工厂，供“新建话题”等入口直接调用
+    function registerResumeAssistantChatFactory(factory: () => Chat) {
+      resumeAssistantChatFactory = factory;
+    }
+    // 新建简历助手话题
+    function createNewResumeAssistantChat() {
+      if (!resumeAssistantChatFactory) return;
+      resumeAssistantChat.value = resumeAssistantChatFactory();
     }
 
     function switchChat(id: string) {
@@ -237,6 +249,8 @@ export const useAiStore = defineStore(
       createDefaultChat,
       createDefaultMessage,
       addChat,
+      registerResumeAssistantChatFactory,
+      createNewResumeAssistantChat,
       prepareNewChat,
       switchChat,
       delChat,

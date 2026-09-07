@@ -1,5 +1,11 @@
 <script setup>
-const emit = defineEmits(["new-chat"]);
+import { useAiStore } from "@/stores";
+
+const aiStore = useAiStore();
+
+function createNewChat() {
+  aiStore.createNewResumeAssistantChat();
+}
 </script>
 
 <template>
@@ -11,7 +17,7 @@ const emit = defineEmits(["new-chat"]);
       <div class="flex items-center">
         <SfTooltip content="新建话题">
           <SfIcon
-            @click="emit('new-chat')"
+            @click="createNewChat"
             icon="ph:plus-bold"
             size="4"
             boxSize="6"
