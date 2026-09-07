@@ -13,10 +13,10 @@ export interface Skill {
 // 技能工厂：每个技能文件导出一个无参函数，返回统一 Skill 结构
 export type SkillFactory = () => Skill;
 
-// 引导流程步骤：预设询问或自由输入
+// 引导流程步骤：预设询问或自由输入；options 为函数时在步骤展示前求值（如按当前简历动态生成）
 export type FlowStep = {
   question: string;
-  options: string[];
+  options: string[] | (() => string[]);
   input?: boolean;
 };
 

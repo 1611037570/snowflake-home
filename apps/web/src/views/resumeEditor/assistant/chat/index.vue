@@ -136,9 +136,14 @@ const handleSend = (content) => {
   // 确保当前没有正在发送的消息
   if (generating.value) return;
   // 引导流程的自由输入步骤：把输入内容作为答案推进流程
-  if (activeFlow.value?.flow?.steps?.[activeFlow.value.stepIndex]?.input) {
-    handleFlowInput(content);
-    return;
+  const flowStep = activeFlow.value?.flow?.steps?.[activeFlow.value.stepIndex];
+  if (flowStep) {
+    // 无可用选项的步骤同样允许自由输入，避免流程卡死
+    const options = typeof flowStep.options === "function" ? flowStep.options() : flowStep.options;
+    if (flowStep.input || !options.length) {
+      handleFlowInput(content);
+      return;
+    }
   }
   generating.value = true;
   addMessage({
@@ -253,12 +258,15 @@ const runFlowStep = () => {
   const state = activeFlow.value;
   const step = state?.flow?.steps?.[state.stepIndex];
   if (!step) return;
+  // 动态选项在展示时求值；无可用选项时退回自由输入
+  const options = typeof step.options === "function" ? step.options() : step.options;
+  const needInput = step.input || !options.length;
   // 引导对话仅作界面展示，不加入请求上下文
   addMessage({
     role: "assistant",
     content: step.question,
-    // 自由输入步骤不展示选项按钮，等待用户直接输入
-    followQuestions: step.input ? [] : step.options,
+    // 自由输入或无可选项时不展示选项按钮，等待用户直接输入
+    followQuestions: needInput ? [] : options,
     typing: false,
     requestStatus: "success",
     skipContext: true,
