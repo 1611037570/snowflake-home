@@ -13,7 +13,7 @@ const props = defineProps<{
 const emit = defineEmits(["switch-mode", "suggest"]);
 
 // 点击建议卡片，启动对应流程
-const handleSuggest = (card) => {
+const handleSuggest = (card: SuggestCard) => {
   emit("suggest", { flow: card.flow });
 };
 </script>

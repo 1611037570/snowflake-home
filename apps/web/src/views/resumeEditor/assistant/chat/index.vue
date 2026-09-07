@@ -10,7 +10,7 @@ import type { SelectedModule } from "@/stores/modules/resume/types";
 import AiMessage from "./aiMessage.vue";
 import ChatInput from "./chatInput/index.vue";
 import UserMessage from "./userMessage.vue";
-import EmptyState from "./emptyState";
+import EmptyState from "./emptyState/index.vue";
 import ChatHeader from "./header/index.vue";
 
 const aiStore = useAiStore();
