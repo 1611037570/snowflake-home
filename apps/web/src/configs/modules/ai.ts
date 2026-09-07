@@ -10,6 +10,6 @@ export const PROVIDER_NAMES: Record<string, string> = {
 export const snowflake = {
   baseUrl: "https://api.deepseek.com/chat/completions",
   provider: "openai",
-  apiKey: "sk-b296024c9bf14e189ef53d07571b56f0",
+  apiKey: "sk-f00b980cb4544e1a97b9af782f4a708d",
   model: "deepseek-v4-flash",
 };
