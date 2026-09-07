@@ -23,15 +23,14 @@ function getMessageBrief(msg) {
 <template>
   <!-- 消息导航：悬停图标展开用户消息列表 -->
   <div class="group/nav relative flex items-center">
-    <SfTooltip content="消息导航">
-      <div
-        class="flex h-6 w-6 cursor-pointer items-center justify-center rounded-full text-sf-text-2 transition-colors hover:bg-sf-theme-2 hover:text-sf-theme-text"
-      >
-        <SfIcon icon="ph:list-duotone" size="4" />
-      </div>
-    </SfTooltip>
+    <SfIcon
+      icon="ph:list-duotone"
+      size="5"
+      boxSize="7"
+      class="rounded-full text-sf-text-2 hover:bg-sf-theme-2 hover:text-sf-theme-text"
+    />
     <div
-      class="invisible absolute top-7 right-0 z-10 opacity-0 transition-all duration-300 group-hover/nav:visible group-hover/nav:opacity-100"
+      class="invisible absolute top-7 -left-2 z-10 opacity-0 transition-all duration-300 group-hover/nav:visible group-hover/nav:opacity-100"
     >
       <div
         class="flex w-60 flex-col overflow-hidden rounded-3xl border border-sf-b bg-sf-primary shadow-lg"
