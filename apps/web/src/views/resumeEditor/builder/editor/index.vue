@@ -54,7 +54,6 @@ watch(
     clearTimeout(syncTimer);
     syncTimer = setTimeout(() => {
       if (currentItem.value !== targetItem) return;
-      resumeStore.syncConfigByData();
 
       // 表单完成渲染后开启历史记录开关
       nextTick(() => {

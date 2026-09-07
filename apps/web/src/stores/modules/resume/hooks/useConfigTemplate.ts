@@ -51,7 +51,7 @@ function rewriteCustomFieldByKey(field: any, customKey: string, customName: stri
 export function getModuleTemplate(key: string) {
   if (key === "user") return DEFAULT_USER_FORM[0];
   if (key.startsWith("custom_")) return allConfig.custom;
-  return allConfig[key];
+  return (allConfig as Record<string, any>)[key];
 }
 
 // 持久化字段列表展开为可渲染的完整 schema，并按 data 补齐数组子项
