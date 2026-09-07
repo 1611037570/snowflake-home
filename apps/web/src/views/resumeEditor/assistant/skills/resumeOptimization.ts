@@ -5,7 +5,7 @@ export const resumeOptimization = () => ({
   instructions: `# 适用场景与执行流程
 本技能是简历优化类请求的统一入口，覆盖整体优化与局部内容质量提升。
 
-- 先调用 read_resume_data 读取简历真实数据；整体优化方向未明确时先询问：整体结构、语言表达、内容润色。
+- 整体优化方向未明确时先询问：整体结构、语言表达、内容润色。
 - 保持内容真实：不增删事实、不编造经历、数据或职级；用户未提供的细节不得虚构。
 - 需要写入时先调用 load_resume_writing 获取编写流程，再通过 propose_resume_edits 提交修改。
 
