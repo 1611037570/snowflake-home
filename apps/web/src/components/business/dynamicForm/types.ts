@@ -64,6 +64,8 @@ export interface FormField {
   addConfig?: FormField;
   /** 是否可拖拽 */
   drag?: boolean;
+  /** 模块是否固定：固定模块不参与容器拖拽排序 */
+  fixed?: boolean;
   /** 拖拽手柄 class */
   dragClass?: string;
   /** 运行时 id（引擎自动补充） */
