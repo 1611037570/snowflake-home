@@ -7,7 +7,7 @@ import {
   DEFAULT_EDITOR,
 } from "@/stores/modules/resume/defaultConfig";
 import { storeToRefs } from "pinia";
-import { suggestions } from "./flows";
+import { flows, suggestions } from "./flows";
 import { useResumeAssistant } from "./useResumeAssistant";
 
 const Chat = defineAsyncComponent(() => import("./chat/index.vue"));
@@ -73,6 +73,7 @@ function createNewChat() {
       <Chat
         :chat="chat"
         :config="assistantConfig"
+        :flows="flows"
         :suggestions="suggestions"
         :selected-modules="selectedModules"
         :remove-module="removeSelectedModule"
