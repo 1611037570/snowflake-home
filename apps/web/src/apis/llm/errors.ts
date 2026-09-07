@@ -22,5 +22,13 @@ export class AbortError extends Error {
   }
 }
 
+// 工具名未注册错误：由 ReAct 编排层捕获后转为可恢复观察，不直接中断请求
+export class ToolNotFoundError extends Error {
+  constructor(toolName: string) {
+    super(`未注册的工具: ${toolName}`);
+    this.name = "ToolNotFoundError";
+  }
+}
+
 // 主动中止判定：兼容自定义 AbortError 与 fetch 原生中止错误
 export const isAbortError = (error: any) => !!error && error.name === "AbortError";

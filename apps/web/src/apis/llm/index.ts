@@ -24,4 +24,4 @@ const getLLM = () => {
 
 export { getLLM, LLM };
 // 错误类型统一出口：供调用方区分主动中止与真实请求失败
-export { ApiError, AbortError, isAbortError } from "./errors";
+export { ApiError, AbortError, ToolNotFoundError, isAbortError } from "./errors";

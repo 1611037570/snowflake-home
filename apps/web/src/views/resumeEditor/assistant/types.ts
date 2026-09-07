@@ -1,5 +1,5 @@
 // AI 助手宿主配置类型：技能与工具由调用方提供，chat 引擎不内置业务内容
-import type { ReactTool } from "@/apis/llm/react";
+import type { ReactConfig, ReactTool } from "@/apis/llm/react";
 import type { Ref } from "vue";
 
 // 一份外部投递的技能：name/description 供调度识别，instructions 为技能正文
@@ -42,6 +42,8 @@ export interface AssistantConfig {
   tools: ReactTool[];
   // 反思轮提示词：反思口径由宿主按业务提供，请求引擎不内置
   reflectPrompt: string;
+  // 工具执行错误回调：由宿主决定恢复或中断，引擎只负责转交
+  onToolError?: ReactConfig["onToolError"];
   // 请求前准备（如裁剪头像），与 afterRequest 成对使用
   beforeRequest?: () => void;
   // 请求结束后还原现场
