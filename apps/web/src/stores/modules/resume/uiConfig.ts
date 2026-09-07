@@ -117,6 +117,8 @@ export const uiParamRanges = {
   moduleSpacing: { min: 2, max: 48, step: 1 },
 };
 export const DEFAULT_UI = {
+  // 简历展示语言（预览区模块标题语言包使用）
+  language: "zh",
   // 页边距
   padding: defaultPadding,
   // 字体大小
