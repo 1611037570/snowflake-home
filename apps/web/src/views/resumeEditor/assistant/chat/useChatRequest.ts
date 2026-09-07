@@ -121,11 +121,11 @@ export const useChatRequest = ({
   // 工具调用过程区展示用的中文名
   const TOOL_NAMES: Record<string, string> = {
     read_resume_data: "读取简历数据",
-    propose_resume_edits: "提交修改",
-    load_resume_data_contract: "读取《简历数据规范》",
-    load_resume_writing: "读取《简历编写》",
-    load_resume_optimization: "读取写作方法论",
-    load_job_match: "读取岗位匹配规范",
+    propose_resume_edits: "修改简历",
+    load_resume_data_contract: "读取《轻舟简历字段规范》",
+    load_resume_writing: "读取《轻舟简历数据操作规范》",
+    load_resume_optimization: "读取《写作方法论》",
+    load_job_match: "读取《岗位匹配规范》",
     load_resume_translate: "读取《简历翻译》",
     load_self_intro: "读取《面试自我介绍》",
     load_greeting: "读取《打招呼语》",
