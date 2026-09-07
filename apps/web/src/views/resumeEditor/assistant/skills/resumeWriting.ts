@@ -3,7 +3,7 @@
 export const resumeWriting = () => ({
   id: "resume_writing",
   name: "简历编写",
-  description: `本技能用于指导 AI 如何通过 propose_resume_edits 编写、修改、新增、删除或排序简历内容。当用户要求写简历、改经历、新增工作/项目/教育等记录时必须加载本技能。字段结构与格式以《简历数据规范》为准。`,
+  description: `指导 AI 通过 propose_resume_edits 编写、修改、新增、删除或排序简历内容。`,
   instructions: `# 适用场景
 写简历、改简历、把用户描述转成经历内容、新增/删除/排序数组型模块记录（如工作、项目、教育）时使用本技能。
 
