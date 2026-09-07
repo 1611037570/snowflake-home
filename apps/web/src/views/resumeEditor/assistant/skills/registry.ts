@@ -5,6 +5,7 @@ import { jobMatch } from "./jobMatch";
 import { jdOptimize } from "./jdOptimize";
 import { resumeDataContract } from "./resumeDataContract";
 import { resumeOptimization } from "./resumeOptimization";
+import { resumeOptimizeTask } from "./resumeOptimizeTask";
 import { resumeTranslate } from "./resumeTranslate";
 import { resumeWriting } from "./resumeWriting";
 import { selfIntro } from "./selfIntro";
@@ -20,6 +21,7 @@ export const onDemandSkills: SkillFactory[] = [
   jobMatch,
   jdOptimize,
   greeting,
+  resumeOptimizeTask,
   resumeTranslate,
   selfIntro,
 ];
