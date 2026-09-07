@@ -162,8 +162,7 @@ export const flows: Record<string, Flow> = {
     userContent: "帮我进行AI简历评估",
     steps: [
       {
-        question:
-          "请确认开始评估：我会先阅读你的简历，先检查格式与一致性问题（体检），再从完整度、内容质量、语言表达与岗位匹配等维度打分。",
+        question: "请确认开始综合评估？",
         options: ["开始评估"],
       },
     ],
