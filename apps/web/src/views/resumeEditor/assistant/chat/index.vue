@@ -280,23 +280,23 @@ const runFlowStep = () => {
 const handleFlowAnswer = (answer) => {
   const state = activeFlow.value;
   if (!state) return;
-  // 记录答案并展示为用户消息
+  // 记录答案；仅中间步骤单独展示，最后一步并入真实请求
   state.answers.push(answer);
-  // 引导对话仅作界面展示，不加入请求上下文
-  addMessage({
-    role: "user",
-    content: answer,
-    typing: false,
-    skipContext: true,
-  });
-  scrollToBottom();
   // 推进到下一步
   state.stepIndex += 1;
   if (state.stepIndex < state.flow.steps.length) {
+    // 中间步骤答案仅作界面展示，不加入请求上下文
+    addMessage({
+      role: "user",
+      content: answer,
+      typing: false,
+      skipContext: true,
+    });
+    scrollToBottom();
     runFlowStep();
     return;
   }
-  // 收集完成：构造真实请求并清空流程状态
+  // 收集完成：最后一步答案并入真实请求，不再单独展示，避免出现两条 user 消息
   const { prompt, userContent } = state.flow.build(state.answers);
   activeFlow.value = null;
   // 所有请求统一走 React 编排
