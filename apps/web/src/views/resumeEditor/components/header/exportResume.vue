@@ -2,6 +2,7 @@
 import { useResumeStore } from "@/stores";
 import { getExportFileName, getResumeTitle } from "../../resumeName.ts";
 import eventBus from "@/utils/modules/eventBus";
+import { compactConfigFields } from "@/stores/modules/resume/hooks/useConfigTemplate";
 import { storeToRefs } from "pinia";
 import { ref } from "vue";
 
@@ -11,7 +12,13 @@ const { currentConfig, currentData, isPrinting } = storeToRefs(resumeStore);
 
 // 导出当前简历配置为 JSON 文件
 const exportConfig = () => {
-  const json = JSON.stringify(currentConfig.value ?? {}, null, 2);
+  const config = currentConfig.value ?? {};
+  // 导出只保留模块 key，导入时再按模板展开
+  const json = JSON.stringify(
+    { ...config, fields: compactConfigFields(config.fields || []) },
+    null,
+    2,
+  );
   const blob = new Blob([json], { type: "application/json" });
   const url = URL.createObjectURL(blob);
   const link = document.createElement("a");
