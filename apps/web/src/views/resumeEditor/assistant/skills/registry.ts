@@ -3,6 +3,7 @@ import { defaultPrompt } from "./defaultPrompt";
 import { jobMatch } from "./jobMatch";
 import { resumeDataContract } from "./resumeDataContract";
 import { resumeOptimization } from "./resumeOptimization";
+import { resumeTranslate } from "./resumeTranslate";
 import { resumeWriting } from "./resumeWriting";
 
 // 常驻技能：按顺序作为系统消息注入对话
@@ -14,4 +15,5 @@ export const onDemandSkills: SkillFactory[] = [
   resumeWriting,
   resumeOptimization,
   jobMatch,
+  resumeTranslate,
 ];
