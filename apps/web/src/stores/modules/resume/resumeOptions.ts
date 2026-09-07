@@ -13,8 +13,8 @@ export const RESUME_OPTIONS = {
   ],
   // 政治面貌
   political: [
-    { name: "中共党员", value: "中共党员" },
-    { name: "中共预备党员", value: "中共预备党员" },
+    { name: "共产党员", value: "共产党员" },
+    { name: "预备党员", value: "预备党员" },
     { name: "共青团员", value: "共青团员" },
     { name: "群众", value: "群众" },
   ],
