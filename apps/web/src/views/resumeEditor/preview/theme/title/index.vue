@@ -25,7 +25,7 @@ const themeComponents = {
   creative: Creative,
   steady: Steady,
 };
-defineProps({
+const props = defineProps({
   title: {
     type: String,
     default: "",
