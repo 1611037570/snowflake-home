@@ -27,6 +27,5 @@ export const RESUME_OPTIONS = {
   mode: [
     { name: "全日制", value: "全日制" },
     { name: "非全日制", value: "非全日制" },
-    { name: "不填写", value: "" },
   ],
 };
