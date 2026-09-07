@@ -3,12 +3,7 @@ export const jobMatch = () => ({
   id: "job_match",
   name: "岗位匹配与 ATS 优化",
   description: `本技能用于分析目标岗位 JD 并与当前简历做匹配对标与改写优化：提取关键词、区分硬性要求与加分项、找出命中与缺口并给出补强方向。当用户提供 JD 文本或询问"这份简历投这个岗位怎么改/哪里不匹配/对标优化我的简历"时调用。`,
-  instructions: `# 适用场景与执行流程
-用户提供目标岗位 JD，要求匹配分析或对标优化简历（如"这份简历投该岗位怎么改/哪里不匹配/按 JD 优化我的简历"）时，按本规范执行；本技能是 JD 对标优化的统一入口。
-
-- 需要写入修改时先调用 resume_writing 获取编写流程，再通过 propose_resume_edits 提交；提交前确认 operations 基于 read_resume_data 的真实结果。
-
-# 分析步骤
+  instructions: `# 分析步骤
 
 ## 1. 拆解 JD
 - **硬性要求**：年限、学历、必备技能栈、行业经验，简历必须有真实对应的命中点。
@@ -31,6 +26,6 @@ export const jobMatch = () => ({
 - 用词与 JD 关键词保持一致，但不做同义词硬凑。
 
 # 输出要求
-- 在 Markdown 正文中用「修改说明」说明匹配分析与调整思路；有改动时先调用 resume_writing 获取编写流程，再通过 propose_resume_edits 提交修改。
+- 在 Markdown 正文中用「修改说明」说明匹配分析与调整思路。
 - 描述改动时不要暴露简历 JSON 路径与数组下标。`,
 });
