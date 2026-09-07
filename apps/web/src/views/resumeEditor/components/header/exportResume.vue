@@ -2,23 +2,16 @@
 import { useResumeStore } from "@/stores";
 import { getExportFileName, getResumeTitle } from "../../resumeName.ts";
 import eventBus from "@/utils/modules/eventBus";
-import { compactConfigFields } from "@/stores/modules/resume/hooks/useConfigTemplate";
 import { storeToRefs } from "pinia";
 import { ref } from "vue";
 
 const visible = ref(false);
 const resumeStore = useResumeStore();
-const { currentConfig, currentData, isPrinting } = storeToRefs(resumeStore);
+const { currentItem, currentData, isPrinting } = storeToRefs(resumeStore);
 
-// 导出当前简历配置为 JSON 文件
+// 导出当前完整简历为 JSON 文件（data/config/ui），支持无损导入恢复
 const exportConfig = () => {
-  const config = currentConfig.value ?? {};
-  // 导出只保留模块 key，导入时再按模板展开
-  const json = JSON.stringify(
-    { ...config, fields: compactConfigFields(config.fields || []) },
-    null,
-    2,
-  );
+  const json = JSON.stringify(currentItem.value ?? {}, null, 2);
   const blob = new Blob([json], { type: "application/json" });
   const url = URL.createObjectURL(blob);
   const link = document.createElement("a");
@@ -49,8 +42,8 @@ const list = [
     fn: () => emitExport("resume-print-image"),
   },
   {
-    name: "JSON配置",
-    desc: "导出当前的简历配置，支持完整无损导入，方便随时恢复进度或跨设备使用",
+    name: "JSON完整备份",
+    desc: "导出完整简历数据，支持无损导入恢复，方便随时备份或跨设备使用",
     fn: () => {
       // 导出配置后关闭弹窗
       visible.value = false;
