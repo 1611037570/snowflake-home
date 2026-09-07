@@ -5,6 +5,7 @@ import { resumeDataContract } from "./resumeDataContract";
 import { resumeOptimization } from "./resumeOptimization";
 import { resumeTranslate } from "./resumeTranslate";
 import { resumeWriting } from "./resumeWriting";
+import { selfIntro } from "./selfIntro";
 
 // 常驻技能：按顺序作为系统消息注入对话
 export const residentSkills: SkillFactory[] = [defaultPrompt];
@@ -16,4 +17,5 @@ export const onDemandSkills: SkillFactory[] = [
   resumeOptimization,
   jobMatch,
   resumeTranslate,
+  selfIntro,
 ];

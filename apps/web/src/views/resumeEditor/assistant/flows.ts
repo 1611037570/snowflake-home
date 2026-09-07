@@ -33,9 +33,8 @@ export const flows: Record<string, Flow> = {
       },
     ],
     build: ([wordCount, style]) => {
+      // 任务规范已抽离为 selfIntro 技能，由模型按需加载；此处仅携带字数与风格参数
       return {
-        prompt: `# 任务：生成面试自我介绍口头稿
-以第一人称撰写一段自然流畅、口语化的自我介绍，突出核心优势、关键经历与求职意向；字数约 ${wordCount}，风格${style}，适合直接朗读。`,
         userContent: `请根据我的简历，生成一段${style}风格、约${wordCount}的面试自我介绍口头稿`,
       };
     },
