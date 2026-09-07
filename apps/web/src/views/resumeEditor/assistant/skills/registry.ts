@@ -8,6 +8,7 @@ import { resumeDataContract } from "./resumeDataContract";
 import { resumeInterview } from "./resumeInterview";
 import { resumeOptimization } from "./resumeOptimization";
 import { resumeOptimizeTask } from "./resumeOptimizeTask";
+import { resumeScore } from "./resumeScore";
 import { resumeTranslate } from "./resumeTranslate";
 import { resumeWriting } from "./resumeWriting";
 import { selfIntro } from "./selfIntro";
@@ -26,6 +27,7 @@ export const onDemandSkills: SkillFactory[] = [
   resumeOptimizeTask,
   resumeCreate,
   resumeInterview,
+  resumeScore,
   resumeTranslate,
   selfIntro,
 ];
