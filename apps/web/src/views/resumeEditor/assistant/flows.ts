@@ -66,13 +66,9 @@ export const flows: Record<string, Flow> = {
       },
     ],
     build: ([jd]) => {
+      // 任务规范已抽离为 jdOptimize 技能，由模型按需加载；JD 原文随用户消息传递
       return {
-        prompt: `# 任务：JD 对标优化简历
-目标岗位 JD 内容如下：
-${jd}
-
-请基于该 JD 对用户简历进行对标优化并提交修改。`,
-        userContent: `请根据我提供的 JD 内容，对标优化我的简历`,
+        userContent: `请根据我提供的以下目标岗位 JD 内容，对标优化我的简历：\n\n${jd}`,
       };
     },
   },
