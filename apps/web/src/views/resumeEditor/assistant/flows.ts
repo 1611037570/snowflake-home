@@ -82,7 +82,7 @@ export const flows: Record<string, Flow> = {
       },
     ],
     build: ([direction]) => {
-      // 任务规范已抽离为 resumeOptimizeTask 技能，由模型按需加载；此处仅携带优化方向
+      // 简历优化统一走 resumeOptimization 技能，由模型按需加载；此处仅携带优化方向
       return {
         userContent: `请帮我优化简历，侧重${direction}`,
       };
