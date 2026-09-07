@@ -5,7 +5,7 @@ import { buildToolGuide } from "./toolGuide";
 import { onDemandSkills, residentSkills } from "./skills/registry";
 import { createSkillTools } from "./skills/skillTools";
 import { useResumeContext } from "./resumeContext";
-import { createResumeTools } from "./resumeTools";
+import { createResumeTools, RESUME_LANG_CODES } from "./resumeTools";
 import type { AssistantConfig } from "./types";
 
 // 简历助手唯一组装器：入口只消费本模块产出的 config 与创建对话方法
@@ -26,6 +26,7 @@ export const useResumeAssistant = (
     | { type: "add"; module: string }
     | { type: "delete"; module: string; index: number }
     | { type: "move"; module: string; from: number; to: number }
+    | { type: "lang"; language: string }
   > = [];
   const pendingAddCount: Record<string, number> = {};
   let bufferingWrites = false;
@@ -56,13 +57,23 @@ export const useResumeAssistant = (
     return true;
   };
 
-  const bufferedMoveRecord = (
-    moduleKey: string,
-    from: number,
-    to: number,
-  ): boolean => {
+  const bufferedMoveRecord = (moduleKey: string, from: number, to: number): boolean => {
     if (!bufferingWrites) return resumeStore.moveDataRecord(moduleKey, from, to);
     pendingWrites.push({ type: "move", module: moduleKey, from, to });
+    return true;
+  };
+
+  const updateCurrentLang = (language: string): boolean => {
+    const ui = resumeStore.currentUI;
+    if (!ui || !RESUME_LANG_CODES.includes(language)) return false;
+    ui.language = language;
+    return true;
+  };
+  // 翻译完成前缓冲语言更新，成功回复后才写入简历 ui
+  const bufferedUpdateLanguage = (language: string): boolean => {
+    if (!RESUME_LANG_CODES.includes(language)) return false;
+    if (!bufferingWrites) return updateCurrentLang(language);
+    pendingWrites.push({ type: "lang", language });
     return true;
   };
 
@@ -75,6 +86,7 @@ export const useResumeAssistant = (
       if (item.type === "add") addDataRecord?.(item.module);
       else if (item.type === "delete") resumeStore.removeDataRecord(item.module, item.index);
       else if (item.type === "move") resumeStore.moveDataRecord(item.module, item.from, item.to);
+      else if (item.type === "lang") updateCurrentLang(item.language);
       else realApplyDataPatch(item.patch);
     });
     return writes.length > 0;
@@ -109,6 +121,7 @@ export const useResumeAssistant = (
         removeDataRecord: bufferedRemoveRecord,
         moveDataRecord: bufferedMoveRecord,
         applyPatch: bufferedApplyPatch,
+        updateLanguage: bufferedUpdateLanguage,
       }),
     ],
     beforeRequest: () => {

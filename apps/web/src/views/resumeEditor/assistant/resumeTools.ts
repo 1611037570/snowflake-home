@@ -1,6 +1,9 @@
 import type { ReactTool } from "@/apis/llm/react";
 import { buildPatch, validateResumeEdits, type ResumeWriteOp } from "./resumeEdits";
 
+// 支持更新简历展示语言的语言代码
+export const RESUME_LANG_CODES = ["zh", "en", "ja", "ko", "fr", "de", "es", "ru"];
+
 // 简历工具的运行时上下文，由调用方注入，保持工具本身无副作用依赖
 export interface ResumeToolContext {
   // 读取当前简历数据，可选按模块 key 裁剪
@@ -13,6 +16,8 @@ export interface ResumeToolContext {
   moveDataRecord?: (moduleKey: string, from: number, to: number) => boolean;
   // 应用 AI 提议的数据补丁（回复完成后直接写入真实数据，可撤销）
   applyPatch: (patch: Record<string, any>) => string[];
+  // 更新简历展示语言（翻译完成后同步标题等界面文案语言）
+  updateLanguage?: (language: string) => boolean;
 }
 
 // 创建简历域工具集：读取数据 + 生成简历修改，由简历调用方组装后传给 chat
@@ -27,7 +32,8 @@ export function createResumeTools(ctx: ResumeToolContext): ReactTool[] {
         properties: {
           moduleKey: {
             type: "string",
-            description: "模块 key，如 user/work/project/education/skill/account，可选，不传读取整份简历",
+            description:
+              "模块 key，如 user/work/project/education/skill/account，可选，不传读取整份简历",
           },
         },
       },
@@ -52,7 +58,8 @@ export function createResumeTools(ctx: ResumeToolContext): ReactTool[] {
               properties: {
                 op: {
                   type: "string",
-                  description: "操作类型：update 修改已有字段；add 新增记录；delete 删除记录；move 调整顺序",
+                  description:
+                    "操作类型：update 修改已有字段；add 新增记录；delete 删除记录；move 调整顺序",
                 },
                 module: {
                   type: "string",
@@ -89,9 +96,7 @@ export function createResumeTools(ctx: ResumeToolContext): ReactTool[] {
         required: ["operations"],
       },
       execute: (args: any) => {
-        const operations: ResumeWriteOp[] = Array.isArray(args?.operations)
-          ? args.operations
-          : [];
+        const operations: ResumeWriteOp[] = Array.isArray(args?.operations) ? args.operations : [];
         // 先做结构与格式校验，校验失败不产生任何写操作副作用
         const errors = validateResumeEdits(operations, ctx.getResumeData() as any);
         if (errors.length) {
@@ -142,6 +147,28 @@ export function createResumeTools(ctx: ResumeToolContext): ReactTool[] {
         // 打印写入结果，便于确认工具是否被调用以及实际写入的字段
         console.log("[ReAct] propose_resume_edits 写入字段:", changed);
         return { applied: true, changed, added, errors: [] };
+      },
+    },
+    {
+      name: "update_resume_language",
+      description:
+        "更新简历的展示语言（控制模块标题、页脚等界面文案语言），翻译简历内容后调用，language 使用规范语言代码",
+      parameters: {
+        type: "object",
+        properties: {
+          language: {
+            type: "string",
+            description:
+              "规范语言代码：zh 中文 / en 英语 / ja 日语 / ko 韩语 / fr 法语 / de 德语 / es 西班牙语 / ru 俄语",
+          },
+        },
+        required: ["language"],
+      },
+      execute: (args: any) => {
+        const language = args?.language;
+        const updated =
+          RESUME_LANG_CODES.includes(language) && (ctx.updateLanguage?.(language) ?? false);
+        return updated ? { updated: true } : { updated: false };
       },
     },
   ];
