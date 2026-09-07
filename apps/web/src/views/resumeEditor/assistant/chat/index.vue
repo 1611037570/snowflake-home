@@ -12,6 +12,7 @@ import ChatInput from "./chatInput/index.vue";
 import UserMessage from "./userMessage.vue";
 import EmptyState from "./emptyState.vue";
 import MessageNav from "./messageNav.vue";
+import ChatHeader from "./header/index.vue";
 
 const aiStore = useAiStore();
 const { createDefaultMessage } = aiStore;
@@ -23,6 +24,7 @@ const props = defineProps<{
   selectedModules?: SelectedModule[];
   removeModule?: (key: string) => void;
 }>();
+const emit = defineEmits(["new-chat"]);
 // 生成状态来自宿主注入的引用，模板与输入框共用
 const generating = props.config.generating;
 const isGenerating = computed(() => generating.value);
@@ -334,7 +336,8 @@ const handleFlowInput = (content) => {
 
 <template>
   <div class="relative flex h-full w-full flex-col overflow-hidden select-text">
-    <SfScrollbar ref="chatContainer" class="h-full w-full flex-1">
+    <ChatHeader @new-chat="emit('new-chat')" />
+    <SfScrollbar ref="chatContainer" class="w-full flex-1">
       <EmptyState
         :suggestions="props.suggestions"
         :selected-modules="props.selectedModules"

@@ -1,0 +1,26 @@
+<script setup>
+const emit = defineEmits(["new-chat"]);
+</script>
+
+<template>
+  <div class="p-3">
+    <div
+      class="flex h-[36px] w-full justify-between rounded-3xl border border-sf-b bg-sf-page p-1.5"
+    >
+      <div></div>
+      <div class="flex items-center">
+        <SfTooltip content="新建话题">
+          <SfIcon
+            @click="emit('new-chat')"
+            icon="ph:plus-bold"
+            size="4"
+            boxSize="6"
+            class="rounded-full text-sf-text-2 hover:bg-sf-theme-2 hover:text-sf-theme-text"
+          />
+        </SfTooltip>
+      </div>
+    </div>
+  </div>
+</template>
+
+<style lang="scss" scoped></style>
