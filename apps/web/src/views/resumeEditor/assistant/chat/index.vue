@@ -4,7 +4,7 @@ import { useScroll } from "@vueuse/core";
 import { ElMessage } from "element-plus";
 import { computed, nextTick, ref, watch } from "vue";
 import { useChatRequest } from "./useChatRequest";
-import type { AssistantConfig, Flow, SuggestCard } from "../types";
+import type { AssistantConfig, SuggestCard } from "../types";
 import type { SelectedModule } from "@/stores/modules/resume/types";
 
 import AiMessage from "./aiMessage.vue";
@@ -18,7 +18,6 @@ const { createDefaultMessage } = aiStore;
 // 宿主传入的技能、工具与上下文配置
 const props = defineProps<{
   config: AssistantConfig;
-  flows: Record<string, Flow>;
   suggestions: SuggestCard[];
   selectedModules?: SelectedModule[];
   removeModule?: (key: string) => void;
@@ -135,11 +134,6 @@ const handleSend = (content) => {
   if (!content) return;
   // 确保当前没有正在发送的消息
   if (generating.value) return;
-  // 引导流程的自由输入步骤：把输入内容作为答案推进流程
-  if (activeFlow.value?.flow?.steps?.[activeFlow.value.stepIndex]?.input) {
-    handleFlowInput(content);
-    return;
-  }
   generating.value = true;
   addMessage({
     role: "user",
@@ -155,11 +149,6 @@ const handleSend = (content) => {
  * 点击推荐问题，触发输入框发送
  */
 const handleSendFollowQuestion = (question) => {
-  // 引导流程中：将选项作为答案推进流程
-  if (activeFlow.value) {
-    handleFlowOption(question);
-    return;
-  }
   handleSend(question);
 };
 
@@ -223,104 +212,11 @@ function handleWithdrawModify(index) {
 // 通过 provide 注入重试回调，供 aiMessage 直接调用
 provide("retry", handleRetry);
 
-// 引导式流程状态：记录当前流程、步骤与已收集的选项
-const activeFlow = ref(null);
-
 /**
- * 点击建议卡片：启动引导式对话流程
+ * 点击建议卡片：把卡片携带的请求当作普通消息发送，参数由模型按技能流程追问
  */
 const handleSuggest = (payload) => {
-  const flow = props.flows[payload?.flow];
-  if (!flow) return;
-  // 记录流程状态并展示初始用户消息
-  activeFlow.value = { flow, stepIndex: 0, answers: [] };
-  // 引导对话仅作界面展示，不加入请求上下文
-  addMessage({
-    role: "user",
-    content: flow.userContent,
-    typing: false,
-    skipContext: true,
-  });
-  scrollToBottom();
-  // 展示第一轮预设询问
-  runFlowStep();
-};
-
-/**
- * 展示当前步骤的预设询问，复用 followQuestions 作为选项按钮
- */
-const runFlowStep = () => {
-  const state = activeFlow.value;
-  const step = state?.flow?.steps?.[state.stepIndex];
-  if (!step) return;
-  // 引导对话仅作界面展示，不加入请求上下文
-  addMessage({
-    role: "assistant",
-    content: step.question,
-    // 自由输入步骤不展示选项按钮，等待用户直接输入
-    followQuestions: step.input ? [] : step.options,
-    typing: false,
-    requestStatus: "success",
-    skipContext: true,
-  });
-  scrollToBottom();
-};
-
-/**
- * 推进流程答案：记录答案并推进步骤，收集完成后发起真实请求
- */
-const handleFlowAnswer = (answer) => {
-  const state = activeFlow.value;
-  if (!state) return;
-  // 记录答案并展示为用户消息
-  state.answers.push(answer);
-  // 引导对话仅作界面展示，不加入请求上下文
-  addMessage({
-    role: "user",
-    content: answer,
-    typing: false,
-    skipContext: true,
-  });
-  scrollToBottom();
-  // 推进到下一步
-  state.stepIndex += 1;
-  if (state.stepIndex < state.flow.steps.length) {
-    runFlowStep();
-    return;
-  }
-  // 收集完成：构造真实请求并清空流程状态
-  const { prompt, userContent } = state.flow.build(state.answers);
-  activeFlow.value = null;
-  // 所有请求统一走 React 编排
-  if (prompt) {
-    addMessage({
-      role: "system",
-      content: prompt,
-      typing: false,
-    });
-  }
-  addMessage({
-    role: "user",
-    content: userContent,
-    typing: false,
-  });
-  generating.value = true;
-  scrollToBottom();
-  handleAIResponse();
-};
-
-/**
- * 处理流程中的选项点击：记录答案并推进流程
- */
-const handleFlowOption = (option) => {
-  handleFlowAnswer(option);
-};
-
-/**
- * 处理流程中的自由输入：把输入框内容作为答案推进流程
- */
-const handleFlowInput = (content) => {
-  handleFlowAnswer(content);
+  if (payload?.userContent) handleSend(payload.userContent);
 };
 </script>
 
