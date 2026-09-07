@@ -27,7 +27,7 @@ export const flows: Record<string, Flow> = {
     steps: [
       {
         question: "请问你需要翻译成哪种语言？",
-        options: ["英语", "日语", "韩语", "法语", "德语", "西班牙语", "俄语"],
+        options: ["中文", "英语", "日语", "韩语", "法语", "德语", "西班牙语", "俄语"],
       },
     ],
     build: ([language]) => {
