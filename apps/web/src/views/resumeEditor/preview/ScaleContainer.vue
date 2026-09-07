@@ -4,6 +4,7 @@ import { computed, ref } from "vue";
 import { storeToRefs } from "pinia";
 import { useResumeStore } from "@/stores";
 import { RESUME_WIDTH } from "./constants";
+import { previewLangList } from "./i18n";
 
 defineOptions({ name: "ScaleContainer" });
 
@@ -16,7 +17,7 @@ defineEmits(["fullscreen"]);
 
 const containerRef = ref(null);
 const resumeStore = useResumeStore();
-const { system, selectedModule } = storeToRefs(resumeStore);
+const { system, selectedModule, currentUI } = storeToRefs(resumeStore);
 // 清空选中模块：直接调用 store 操作
 const { clearSelectedModules } = resumeStore;
 const contentRef = ref(null);
@@ -87,6 +88,17 @@ const handleScaleSelect = (item) => {
 
 const stepScale = (value) => {
   setManualScale(Number((scale.value + value).toFixed(1)));
+};
+
+// 简历展示语言：选择后写入当前简历 ui，预览标题按语言包刷新
+const langOptions = computed(() =>
+  previewLangList.map((item) => ({
+    ...item,
+    active: item.value === (currentUI.value?.language || "zh"),
+  })),
+);
+const handleLangSelect = (item) => {
+  if (currentUI.value) currentUI.value.language = item.value;
 };
 
 const updateScale = useDebounceFn(([entry]) => {
@@ -200,6 +212,21 @@ useResizeObserver(contentRef, ([entry]) => {
             @click="$emit('fullscreen')"
           />
         </SfTooltip>
+        <div class="group/lang-picker relative flex items-center">
+          <SfTooltip content="切换简历语言">
+            <SfIcon
+              icon="mdi:translate"
+              size="4"
+              boxSize="6"
+              class="rounded-full text-sf-text-2 hover:bg-sf-theme-2 hover:text-sf-theme-text"
+            />
+          </SfTooltip>
+          <div
+            class="invisible absolute top-full right-0 mt-2 w-36 origin-top-right -translate-y-1 scale-95 opacity-0 transition-all duration-150 group-hover/lang-picker:visible group-hover/lang-picker:translate-y-0 group-hover/lang-picker:scale-100 group-hover/lang-picker:opacity-100"
+          >
+            <SfList :list="langOptions" :border="false" @onClick="handleLangSelect" />
+          </div>
+        </div>
         <SfTooltip :content="system.showPageNumber ? '隐藏页码' : '显示页码'">
           <SfIcon
             icon="lucide:hash"
