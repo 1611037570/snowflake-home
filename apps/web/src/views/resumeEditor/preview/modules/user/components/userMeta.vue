@@ -36,6 +36,8 @@ const metaItems = computed(() => {
   if (workYears.value) items.push({ text: workYears.value });
   if (user.value?.position?.value) items.push({ key: "position" });
   if (user.value?.status?.value) items.push({ key: "status" });
+  // 政治面貌
+  if (user.value?.political?.value) items.push({ key: "political" });
   if (user.value?.city?.value) items.push({ key: "city" });
   // 籍贯
   if (user.value?.nativePlace?.value) items.push({ key: "nativePlace" });

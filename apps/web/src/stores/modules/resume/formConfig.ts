@@ -226,6 +226,29 @@ export const DEFAULT_USER_FORM = [
               clearable: true,
             },
           },
+          // 政治面貌
+          {
+            type: "object",
+            label: "政治面貌",
+            tip: "政治面貌",
+            component: "select",
+            span: 12,
+            model: [
+              {
+                source: ["user", "data", "political"],
+                prop: "modelValue",
+              },
+              {
+                source: ["__options", "political"],
+                prop: "list",
+                raw: true,
+              },
+            ],
+            props: {
+              placeholder: "请选择政治面貌",
+              clearable: true,
+            },
+          },
           // 所在城市
           {
             type: "object",
