@@ -2,7 +2,7 @@
 import { ALL_MODULE_KEY } from "@/stores/modules/resume/defaultConfig";
 import type { SelectedModule } from "@/stores/modules/resume/types";
 import type { SuggestCard } from "../../types";
-import OneVOne from "../oneVOne";
+import OneVOne from "./oneVOne.vue";
 
 // 当前操作模块列表：选中哪些模块就遍历展示哪些模块
 const props = defineProps<{
