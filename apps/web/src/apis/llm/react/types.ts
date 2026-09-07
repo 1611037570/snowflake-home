@@ -60,6 +60,12 @@ export interface ReactConfig {
   onAct?: (toolCall: ToolCall) => void;
   // 观察回调：每次工具执行结果
   onObserve?: (observation: Observation) => void;
+  // 工具执行错误回调：返回非 undefined 时作为该工具的观察结果回填并继续；返回 undefined 则按原错误中断
+  onToolError?: (info: {
+    toolCall: ToolCall;
+    error: Error;
+    tools: ReactTool[];
+  }) => unknown;
   // 是否在候选答案后追加反思轮，由反思轮输出决定最终答案
   reflection?: boolean;
   // 反思轮注入给模型的提示词：由使用方按业务提供，开启反思时必须传入

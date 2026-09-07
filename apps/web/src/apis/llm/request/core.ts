@@ -280,7 +280,15 @@ class LLM {
             toolCall.function.arguments,
           );
           config.onAct?.(toolCall);
-          const raw = await executeToolCall(registry, toolCall);
+          let raw: unknown;
+          try {
+            raw = await executeToolCall(registry, toolCall);
+          } catch (error) {
+            // 工具执行错误交由宿主决定：返回观察值则恢复继续，否则按原错误中断
+            const fallback = config.onToolError?.({ toolCall, error, tools: config.tools });
+            if (fallback === undefined) throw error;
+            raw = fallback;
+          }
           const observation = observe(toolCall, raw);
           // 观察结果可能包含整份简历，截断打印避免刷屏
           const observePreview =

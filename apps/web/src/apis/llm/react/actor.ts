@@ -1,5 +1,6 @@
 import type { ToolCall } from "./types";
 import type { ToolRegistry } from "./tools";
+import { ToolNotFoundError } from "../errors";
 
 /**
  * 执行一次工具调用，返回原始结果
@@ -10,7 +11,7 @@ export async function executeToolCall(
 ): Promise<unknown> {
   const tool = registry.get(toolCall.function.name);
   if (!tool) {
-    throw new Error(`未注册的工具: ${toolCall.function.name}`);
+    throw new ToolNotFoundError(toolCall.function.name);
   }
 
   let args: any = {};

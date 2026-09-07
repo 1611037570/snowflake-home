@@ -35,6 +35,7 @@ export const useChatRequest = ({
     afterRequest,
     tools,
     reflectPrompt,
+    onToolError,
     commitDeferredWrites,
     discardDeferredWrites,
   } = config;
@@ -242,6 +243,7 @@ export const useChatRequest = ({
         maxSteps: 6,
         reflection: true,
         reflectPrompt,
+        onToolError,
         onReflectStart: () => {
           if (!isCurrentRequest() || !lastMsg) return;
           // 最终精炼轮开始：本轮 content 直接实时渲染为正文
