@@ -388,8 +388,12 @@ export const DEFAULT_EDUCATION_FORM = {
               placeholder: "学位",
               clearable: true,
               list: [
+                { name: "小学", value: "小学" },
+                { name: "初中", value: "初中" },
                 { name: "高中", value: "高中" },
                 { name: "大专", value: "大专" },
+                { name: "专升本", value: "专升本" },
+                { name: "成人本科", value: "成人本科" },
                 { name: "本科", value: "本科" },
                 { name: "硕士", value: "硕士" },
                 { name: "博士", value: "博士" },
@@ -579,7 +583,6 @@ export const DEFAULT_WORK_FORM = {
             prop: "name",
           },
         ],
-        // 子项字段列表：纯 schema 声明
         fields: [
           {
             type: "object",
