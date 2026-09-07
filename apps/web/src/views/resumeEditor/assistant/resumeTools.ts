@@ -6,8 +6,8 @@ export const RESUME_LANG_CODES = ["zh", "en", "ja", "ko", "fr", "de", "es", "ru"
 
 // 简历工具的运行时上下文，由调用方注入，保持工具本身无副作用依赖
 export interface ResumeToolContext {
-  // 读取当前简历数据，可选按模块 key 裁剪
-  getResumeData: (moduleKey?: string) => unknown;
+  // 读取当前简历数据（跟随 AI 助手当前选中的模块）
+  getResumeData: () => unknown;
   // 数组型模块新增一条空记录并同步表单配置，返回新记录下标（失败返回 -1）
   addDataRecord?: (moduleKey: string) => number;
   // 删除数组型模块记录并同步表单配置
@@ -26,19 +26,13 @@ export function createResumeTools(ctx: ResumeToolContext): ReactTool[] {
     {
       name: "read_resume_data",
       description:
-        "读取当前简历数据（仅各模块 data，不含 collapsed/hidden 等 UI 状态），可传入 moduleKey 读取指定模块，不传则读取整份简历。",
+        "读取当前简历数据：跟随用户在 AI 助手里的模块选择，未选择模块时读取整份简历；仅返回各模块 data，不含 collapsed/hidden 等 UI 状态。",
       parameters: {
         type: "object",
-        properties: {
-          moduleKey: {
-            type: "string",
-            description:
-              "模块 key，如 user/work/project/education/skill/account，可选，不传读取整份简历",
-          },
-        },
+        properties: {},
       },
-      execute: (args: any) => {
-        const data = ctx.getResumeData(args?.moduleKey);
+      execute: () => {
+        const data = ctx.getResumeData();
         return { data };
       },
     },

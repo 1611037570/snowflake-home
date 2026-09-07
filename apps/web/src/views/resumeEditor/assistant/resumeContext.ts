@@ -6,13 +6,13 @@ export const useResumeContext = () => {
   const resumeStore = useResumeStore();
   const { selectedModule } = storeToRefs(resumeStore);
 
-  // 读取当前简历数据，仅返回各模块 data，排除 UI 状态与头像、图片作品图片等大体积字段
-  const getResumeData = (moduleKey?: string) => {
+  // 读取当前简历数据：跟随用户在 AI 助手里的模块选择；未选择任何模块时返回整份简历
+  const getResumeData = () => {
     const data = resumeStore.currentData;
     if (!data) return {};
-    // 返回结构供 propose_resume_edits 的 operations 定位修改目标：顶层为模块 key，模块内仅保留 data
     const result: Record<string, any> = {};
-    const keys = moduleKey ? [moduleKey] : Object.keys(data);
+    const selectedKeys = selectedModule.value.map((item) => item.key);
+    const keys = selectedKeys.length ? selectedKeys : Object.keys(data);
     keys.forEach((key) => {
       const module = data[key];
       if (!module || typeof module !== "object" || !("data" in module)) return;
