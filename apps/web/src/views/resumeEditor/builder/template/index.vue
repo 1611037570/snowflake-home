@@ -16,7 +16,6 @@ const templates = themeTemplateList.map((t) => ({
   item: {
     data: xiaoYangResumeItem.data,
     config: xiaoYangResumeItem.config,
-    fixedConfig: xiaoYangResumeItem.fixedConfig,
     ui: { ...xiaoYangResumeItem.ui, themeTemplate: t.value },
   },
 }));

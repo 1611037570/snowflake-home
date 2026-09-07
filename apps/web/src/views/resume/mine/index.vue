@@ -35,7 +35,7 @@ const displayList = computed(() => {
     type: "resume",
     item,
     index: indexMap.get(item.id) ?? -1,
-    progress: useProgress([...item.fixedConfig.fields, ...item.config.fields], item.data).progress,
+    progress: useProgress(item.config?.fields || [], item.data).progress,
   }));
   // 未满员时新建入口作首项，与简历项一同逐个揭示
   return list.value.length < maxCount ? [{ id: "__create", type: "create" }, ...cards] : cards;

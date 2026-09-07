@@ -29,7 +29,6 @@ const templates = computed(() =>
     item: {
       data: xiaoYangResumeItem.data,
       config: xiaoYangResumeItem.config,
-      fixedConfig: xiaoYangResumeItem.fixedConfig,
       ui: {
         ...xiaoYangResumeItem.ui,
         themeTemplate: style.value,
@@ -46,7 +45,6 @@ const useTemplate = (card) => {
   resumeStore.addResume({
     data: deepClone(xiaoYangResumeItem.data),
     config: deepClone(xiaoYangResumeItem.config),
-    fixedConfig: deepClone(xiaoYangResumeItem.fixedConfig),
     ui: { ...xiaoYangResumeItem.ui, themeTemplate: card.value },
   });
 };

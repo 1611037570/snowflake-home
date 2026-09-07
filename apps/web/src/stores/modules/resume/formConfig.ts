@@ -12,6 +12,8 @@ export const DEFAULT_USER_FORM = [
     type: "group",
     component: "boxCollapse",
     key: "user",
+    // 固定模块：不参与模块拖拽排序
+    fixed: true,
     name: "用户信息",
     props: {
       name: "用户信息",

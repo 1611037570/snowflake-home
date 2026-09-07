@@ -63,7 +63,6 @@ export const useChatRequest = ({
     return {
       data: cloneDataSkippingMedia(item.data ?? {}),
       config: JSON.parse(JSON.stringify(item.config ?? {})),
-      fixedConfig: JSON.parse(JSON.stringify(item.fixedConfig ?? {})),
     };
   };
   const restoreBackup = (backup: any) => {
@@ -83,7 +82,6 @@ export const useChatRequest = ({
       });
     }
     item.config = backup.config ?? {};
-    item.fixedConfig = backup.fixedConfig ?? {};
   };
   // 每条 AI 回复对应的请求前简历备份，用于“撤回修改”
   const requestBackups = new WeakMap<object, unknown>();

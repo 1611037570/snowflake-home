@@ -18,7 +18,7 @@ import More from "./components/more.vue";
 import Video from "./components/video.vue";
 
 const resumeStore = useResumeStore();
-const { currentData, currentConfig, currentFixedConfig } = storeToRefs(resumeStore);
+const { currentData, currentConfig } = storeToRefs(resumeStore);
 
 // 注入到动态表单的自定义组件库
 const dynamicComponents = {
@@ -87,12 +87,6 @@ onBeforeUnmount(() => {
       <span class="text-sm text-sf-text-2">正在加载配置</span>
     </div>
     <div class="flex w-full flex-col">
-      <SfDynamicForm
-        v-model:form="currentFixedConfig"
-        v-model:data="currentData"
-        :components="dynamicComponents"
-        :options="RESUME_OPTIONS"
-      />
       <SfDynamicForm
         v-model:form="currentConfig"
         v-model:data="currentData"

@@ -16,7 +16,7 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
-  // 简历项：{ data, config, fixedConfig, ui }
+  // 简历项：{ data, config, ui }
   item: {
     type: Object,
     required: true,
@@ -39,7 +39,7 @@ watch(
     } else {
       window.removeEventListener("keydown", handleKeydown);
     }
-  }
+  },
 );
 
 onBeforeUnmount(() => {

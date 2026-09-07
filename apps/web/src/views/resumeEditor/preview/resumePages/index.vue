@@ -1,5 +1,5 @@
 <script setup>
-// 简历分页渲染可复用组件：接收 resumeItem（data/config/fixedConfig/ui），渲染分页后的简历页面
+// 简历分页渲染可复用组件：接收 resumeItem（data/config/ui），渲染分页后的简历页面
 // 数据源由 props 传入，不依赖 resume store；供编辑器预览、模板缩略图、全屏查看复用
 // 本组件只做渲染编排（数据代理/主题注入/测量分页），导出、智能一页等编辑功能由上层 page.vue 注册
 import { computed, ref } from "vue";
@@ -20,7 +20,7 @@ const { selectedModule, system } = storeToRefs(resumeStore);
 defineOptions({ name: "ResumePages" });
 
 const props = defineProps({
-  // 简历项：{ data, config, fixedConfig, ui }
+  // 简历项：{ data, config, ui }
   item: {
     type: Object,
     required: true,
@@ -59,9 +59,7 @@ const { paddingStyle, fontStyle, lineHeightStyle } = themeStyles;
 
 // ---------- 分页（测量 + 分页算法 + 裁剪样式）----------
 const allModules = computed(() => {
-  const fixedModules = props.item.fixedConfig?.fields || [];
-  const configModules = props.item.config?.fields || [];
-  return [...fixedModules, ...configModules];
+  return props.item.config?.fields || [];
 });
 const { measureDone, pages, pageStyleText, moduleList } = useResumePages({
   measureRef,

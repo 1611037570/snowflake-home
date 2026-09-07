@@ -3,7 +3,12 @@ import router from "@/routers";
 import { getUUID } from "@/utils";
 import { defineStore } from "pinia";
 import { computed, ref, toRaw, watch } from "vue";
-import { ALL_MODULE_KEY, DEFAULT_MODULE_NAMES, DEFAULT_RESUME_ITEM, DEFAULT_SYSTEM } from "./defaultConfig";
+import {
+  ALL_MODULE_KEY,
+  DEFAULT_MODULE_NAMES,
+  DEFAULT_RESUME_ITEM,
+  DEFAULT_SYSTEM,
+} from "./defaultConfig";
 import type { SelectedModule } from "./types";
 import { useRefreshConfigByData } from "./hooks/useRefreshConfigByData";
 import { createRecordSkeleton } from "./hooks/useAddRecord";
@@ -78,19 +83,6 @@ export const useResumeStore = defineStore(
         const item = currentItem.value;
         if (item) {
           item.config = newConfig;
-        }
-      },
-    });
-    // 获取当前选中的固定配置
-    const currentFixedConfig = computed({
-      get() {
-        const item = currentItem.value;
-        return item ? item.fixedConfig : undefined;
-      },
-      set(newFixedConfig: any) {
-        const item = currentItem.value;
-        if (item) {
-          item.fixedConfig = newFixedConfig;
         }
       },
     });
@@ -243,9 +235,7 @@ export const useResumeStore = defineStore(
     }
     // 定位模块对应的数组表单子项列表，用于同步 data 与配置顺序
     const findModuleArrayField = (item: any, moduleKey: string) => {
-      const targetConfig =
-        moduleKey === "user" ? item?.fixedConfig : item?.config;
-      const moduleField = targetConfig?.fields?.find((f: any) => f?.key === moduleKey);
+      const moduleField = item?.config?.fields?.find((f: any) => f?.key === moduleKey);
       return moduleField?.fields?.find((f: any) => f?.type === "array");
     };
     // AI 删除记录：同步 data 与表单配置
@@ -347,7 +337,6 @@ export const useResumeStore = defineStore(
       return JSON.stringify({
         data: item.data,
         config: removeRuntimeIds(item.config),
-        fixedConfig: removeRuntimeIds(item.fixedConfig),
         ui: item.ui,
       });
     };
@@ -407,7 +396,7 @@ export const useResumeStore = defineStore(
       lastSnapshot = null;
       historyEnabled.value = false;
     };
-    // 应用历史快照：只恢复内容字段（data/config/fixedConfig/ui），保留 id 与 usage
+    // 应用历史快照：只恢复内容字段（data/config/ui），保留 id 与 usage
     const applySnapshot = (snapItem: any) => {
       const item = currentItem.value;
       if (!item) return;
@@ -415,7 +404,6 @@ export const useResumeStore = defineStore(
       skipNextWatch = true;
       item.data = snapItem.data;
       item.config = snapItem.config;
-      item.fixedConfig = snapItem.fixedConfig;
       item.ui = snapItem.ui;
       // 恢复后同步基准快照，保证下次编辑以恢复后的状态为历史基准
       lastSnapshot = deepClone(item);
@@ -462,12 +450,35 @@ export const useResumeStore = defineStore(
       return merge(structuredClone(DEFAULT_RESUME_ITEM), item);
     };
 
+    // 旧版简历迁移：fixedConfig 中 user 模块合并进 config.fields 首位后移除该字段
+    const migrateLegacyItem = (item: any) => {
+      if (!item || !item.fixedConfig) return;
+      const config = item.config && typeof item.config === "object" ? item.config : {};
+      if (!Array.isArray(config.fields)) config.fields = [];
+      const fixedFields = Array.isArray(item.fixedConfig.fields) ? item.fixedConfig.fields : [];
+      fixedFields.forEach((field: any) => {
+        const duplicated = field?.key && config.fields.some((f: any) => f?.key === field.key);
+        if (!duplicated) config.fields.unshift(field);
+      });
+      item.config = config;
+      delete item.fixedConfig;
+    };
+    // 持久化恢复或外部导入旧结构时统一迁移，避免各处重复兼容
+    watch(
+      [list, trashList],
+      () => {
+        list.value.forEach(migrateLegacyItem);
+        trashList.value.forEach(migrateLegacyItem);
+      },
+      { immediate: true },
+    );
+
     // 合并默认配置，补充新增字段
     const init = () => {
       system.value = merge(structuredClone(DEFAULT_SYSTEM), system.value);
     };
 
-    // 监听当前简历内容变化（data/config/fixedConfig/ui 任意嵌套字段），冒泡记录撤销历史
+    // 监听当前简历内容变化（data/config/ui 任意嵌套字段），冒泡记录撤销历史
     watch(
       () => currentItem.value,
       (item) => {
@@ -510,7 +521,6 @@ export const useResumeStore = defineStore(
       currentItem,
       currentData,
       currentConfig,
-      currentFixedConfig,
       currentUI,
       currentUsage,
       isPrinting,

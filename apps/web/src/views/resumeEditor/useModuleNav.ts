@@ -8,32 +8,30 @@ import { isFieldHidden } from "@/components/business/dynamicForm/code/fieldVisib
 
 // store 为全局单例：模块列表与跳转逻辑无组件级状态，抽为模块级共享，避免各组件重复创建 hook
 const resumeStore = useResumeStore();
-const { currentData, currentConfig, currentFixedConfig, layout } =
-  storeToRefs(resumeStore);
+const { currentData, currentConfig, layout } = storeToRefs(resumeStore);
 
 // 模块锚点列表：全部模块（含隐藏模块，便于搜索定位）；预览分页仍按显隐协议过滤
 const moduleList = computed(() => {
   const data = currentData.value;
-  const fields = [
-    ...(currentFixedConfig.value?.fields || []),
-    ...(currentConfig.value?.fields || []),
-  ];
-  return fields
-    // 跳过无 key 字段（历史/导入数据可能缺失，无 key 无法作为导航锚点）
-    .filter((field) => field?.key)
-    .map((field) => {
-      // 图标统一查默认模块元数据表，自定义模块前缀单独走 puzzle 图标
-      const icon =
-        DEFAULT_MODULE_NAMES.find((item) => item.key === field.key)?.icon ||
-        (field.key.startsWith("custom") ? CUSTOM_MODULE_ICON : "ic:round-add");
-      return {
-        key: field.key,
-        name: resumeStore.getModel(field.key)?.name || field.name || field.key,
-        icon,
-        hidden: isFieldHidden(data, field),
-        field, // 原始字段配置，用于恢复隐藏模块
-      };
-    });
+  const fields = currentConfig.value?.fields || [];
+  return (
+    fields
+      // 跳过无 key 字段（历史/导入数据可能缺失，无 key 无法作为导航锚点）
+      .filter((field) => field?.key)
+      .map((field) => {
+        // 图标统一查默认模块元数据表，自定义模块前缀单独走 puzzle 图标
+        const icon =
+          DEFAULT_MODULE_NAMES.find((item) => item.key === field.key)?.icon ||
+          (field.key.startsWith("custom") ? CUSTOM_MODULE_ICON : "ic:round-add");
+        return {
+          key: field.key,
+          name: resumeStore.getModel(field.key)?.name || field.name || field.key,
+          icon,
+          hidden: isFieldHidden(data, field),
+          field, // 原始字段配置，用于恢复隐藏模块
+        };
+      })
+  );
 });
 
 // 跳转预览区：滚动定位 + 仅高亮当前模块（清空历史选中，避免高亮堆积）

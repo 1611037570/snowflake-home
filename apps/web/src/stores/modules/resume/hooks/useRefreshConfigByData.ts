@@ -39,9 +39,7 @@ function fillArrayListByData(field: any, data: any) {
   if (!Array.isArray(source)) return;
   const index = source.indexOf("?");
   if (index === -1) return;
-  const dataArray = source
-    .slice(0, index)
-    .reduce((acc: any, key: string) => acc?.[key], data);
+  const dataArray = source.slice(0, index).reduce((acc: any, key: string) => acc?.[key], data);
   const count = Array.isArray(dataArray) ? dataArray.length : 0;
   let changed = false;
   while (arrayField.list.length < count) {
@@ -93,8 +91,8 @@ export function useRefreshConfigByData() {
       const isCustomModule = key.startsWith("custom");
       const defaultForm = isCustomModule ? allConfig.custom : allConfig[key];
       if (!defaultForm) return;
-      // user 模块属于固定配置，其余模块属于可编辑配置
-      const targetConfig = key === "user" ? item.fixedConfig : item.config;
+      // 所有模块（含固定 user）统一维护在 config.fields 中
+      const targetConfig = item.config;
       if (!targetConfig || !Array.isArray(targetConfig.fields)) return;
       // user 默认配置为字段数组，其余模块为单条字段
       const defaultFields = Array.isArray(defaultForm) ? defaultForm : [defaultForm];
@@ -112,7 +110,8 @@ export function useRefreshConfigByData() {
         // 已有同结构模块时仅按 data 补齐缺失子项，避免全量重建
         if (
           fieldIndex > -1 &&
-          getDefaultFingerprint(templateField) === fieldSchemaFingerprint(targetConfig.fields[fieldIndex])
+          getDefaultFingerprint(templateField) ===
+            fieldSchemaFingerprint(targetConfig.fields[fieldIndex])
         ) {
           if (fillArrayListByData(targetConfig.fields[fieldIndex], data)) changed = true;
           return;

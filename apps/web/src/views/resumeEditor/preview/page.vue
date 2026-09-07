@@ -10,8 +10,7 @@ import { useSmartOnePage } from "./resumePages/useSmartOnePage";
 defineOptions({ name: "ResumePage" });
 
 const resumeStore = useResumeStore();
-const { currentData, currentConfig, currentUI, currentFixedConfig, system } =
-  storeToRefs(resumeStore);
+const { currentData, currentConfig, currentUI, system } = storeToRefs(resumeStore);
 
 const exportSuccessModalRef = ref(null);
 
@@ -19,7 +18,6 @@ const exportSuccessModalRef = ref(null);
 const resumeItem = computed(() => ({
   data: currentData.value,
   config: currentConfig.value,
-  fixedConfig: currentFixedConfig.value,
   ui: currentUI.value,
 }));
 
