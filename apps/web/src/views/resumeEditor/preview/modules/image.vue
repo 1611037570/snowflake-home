@@ -3,12 +3,18 @@ import { computed, inject } from "vue";
 import ResumeField from "../components/resumeField/index.vue";
 import Title from "../theme/title/index.vue";
 import { toAvatarSrc } from "@/utils";
+import { getPreviewTitle } from "../i18n";
 
 // 从上层注入获取代理后的预览数据
 const previewData = inject("previewData");
 
 const fontValue = inject("fontValue");
 const lineHeightValue = inject("lineHeightValue");
+const previewLang = inject(
+  "previewLang",
+  computed(() => "zh"),
+);
+const imageAlt = computed(() => getPreviewTitle("image", previewLang.value));
 
 // 代理数据解包访问数组
 const images = computed(() => previewData.value?.image?.data || []);
@@ -31,7 +37,7 @@ const images = computed(() => previewData.value?.image?.data || []);
         <img
           v-if="item.img?.value"
           :src="toAvatarSrc(item.img?.value)"
-          alt="图片作品"
+          :alt="imageAlt"
           class="h-auto w-full rounded"
         />
         <ResumeField class="text-center" v-model="item.name" />

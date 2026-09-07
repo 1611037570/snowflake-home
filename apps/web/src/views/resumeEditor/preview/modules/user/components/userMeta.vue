@@ -1,13 +1,18 @@
 <script setup>
 import dayjs from "dayjs";
 import { computed, inject } from "vue";
-import { workYears } from "../../../../resumeName";
+import { workYearsNumber } from "../../../../resumeName";
 import ResumeField from "../../../components/resumeField/index.vue";
+import { getPreviewText } from "../../../i18n";
 
 // 元信息组件：求职岗位 / 求职状态 / 所在城市 / 性别 / 年龄 / 工作年限等有值字段自动排列，宽度策略由使用方通过 class 控制
 const previewData = inject("previewData");
 const fontValue = inject("fontValue");
 const user = computed(() => previewData.value?.user?.data || {});
+const previewLang = inject(
+  "previewLang",
+  computed(() => "zh"),
+);
 
 // 计算年龄
 const age = computed(() => {
@@ -32,8 +37,12 @@ const heightWeightText = computed(() => {
 const metaItems = computed(() => {
   const items = [];
   if (user.value?.sex?.value) items.push({ key: "sex" });
-  if (age.value) items.push({ text: `${age.value}岁` });
-  if (workYears.value) items.push({ text: workYears.value });
+  if (age.value) items.push({ text: getPreviewText("age", previewLang.value, { age: age.value }) });
+  if (workYearsNumber.value) {
+    items.push({
+      text: getPreviewText("expYears", previewLang.value, { years: workYearsNumber.value }),
+    });
+  }
   if (user.value?.position?.value) items.push({ key: "position" });
   if (user.value?.status?.value) items.push({ key: "status" });
   // 政治面貌
