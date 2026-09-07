@@ -100,12 +100,8 @@ export const flows: Record<string, Flow> = {
       },
     ],
     build: ([experienceInfo]) => {
+      // 任务规范已抽离为 resumeCreate 技能，由模型按需加载；此处仅携带经历描述
       return {
-        prompt: `# 任务：从零生成简历经历
-用户想生成的经历描述如下：
-${experienceInfo}
-
-请基于该描述在对应简历模块起草一段经历（用于模块开荒起步）：先确认目标模块已有内容，避免重复添加；内容围绕用户描述的模块与方向展开，突出成果与量化指标，使用专业表达；用户未提供的事实细节用通用示例占位，便于核对后修改为真实信息；写入后提醒用户可在编辑器中核对或撤销。`,
         userContent: `请帮我生成这段经历：${experienceInfo}`,
       };
     },
