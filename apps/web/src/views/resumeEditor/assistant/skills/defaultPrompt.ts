@@ -23,7 +23,7 @@ export const defaultPrompt = (): Skill => ({
 | 优化整份简历或局部内容质量提升 | resume_optimization |
 | 从零生成一段简历经历 | resume_create |
 | 模拟面试（八股文 / 项目深挖） | resume_interview |
-| 简历打分 / 综合评估 | resume_score |
+| 简历评估（体检 + 打分） | resume_score |
 
 # 执行协议
 - 简历真实数据、字段规范与编写流程均不随消息提供，必须通过工具获取。需要字段结构时先调用 resume_data_contract 读取《简历数据规范》，再调用 read_resume_data 读取真实数据（同一对话已加载可跳过重复读取）；写简历前先调用 resume_writing 获取编写流程。
