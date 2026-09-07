@@ -7,7 +7,7 @@ export const resumeOptimization = () => ({
 
 - 整体优化方向未明确时先询问：整体结构、语言表达、内容润色。
 - 保持内容真实：不增删事实、不编造经历、数据或职级；用户未提供的细节不得虚构。
-- 需要写入时先调用 load_resume_writing 获取编写流程，再通过 propose_resume_edits 提交修改。
+- 需要写入时先调用 resume_writing 获取编写流程，再通过 propose_resume_edits 提交修改。
 
 ---
 

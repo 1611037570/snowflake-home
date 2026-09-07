@@ -7,7 +7,8 @@ export const createSkillTools = (skills: Skill[]): ReactTool[] =>
     // 只保留技能名与首句用途，避免复制完整 description 增加每轮请求体
     const brief = skill.description.split("。")[0] + "。";
     return {
-      name: `load_${skill.id}`,
+      // 工具名直接用技能 id，去掉 load_ 前缀：更短省 token，也避免模型臆造前缀
+      name: skill.id,
       description: `读取《${skill.name}》全文。${brief} 正文未随消息提供，需要该技能时调用本工具。`,
       parameters: {
         type: "object",
