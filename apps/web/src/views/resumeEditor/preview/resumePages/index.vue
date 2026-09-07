@@ -14,6 +14,7 @@ import { useResumeStore } from "@/stores";
 import { useInitMask } from "./useInitMask";
 import { useResumePreviewData } from "./useResumePreviewData";
 import { useModuleInteractions } from "./useModuleInteractions";
+import { getPreviewText } from "../i18n";
 
 const resumeStore = useResumeStore();
 const { selectedModule, system } = storeToRefs(resumeStore);
@@ -58,6 +59,7 @@ provide(
   "previewLang",
   computed(() => ui.value.language || "zh"),
 );
+const brandText = computed(() => getPreviewText("brand", ui.value.language || "zh"));
 const showPageNumber = computed(() => system.value.showPageNumber);
 const themeStyles = useResumeTheme(ui);
 const { paddingStyle, fontStyle, lineHeightStyle } = themeStyles;
@@ -124,7 +126,7 @@ defineExpose({ rootEl: rootRef, measureEl: measureRef, moduleList });
           class="flex flex-1 items-end justify-center py-3 text-xs opacity-50"
           :style="{ height: `${PAGE_NUMBER_HEIGHT}px` }"
         >
-          轻舟简历
+          {{ brandText }}
         </div>
       </div>
       <!-- 实际渲染的分页内容 -->
