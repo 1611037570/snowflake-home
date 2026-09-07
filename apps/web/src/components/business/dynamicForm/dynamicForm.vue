@@ -27,9 +27,12 @@ import {
 defineOptions({ name: "SfDynamicForm" });
 type DynamicFormProps = {
   components?: Record<string, any>;
+  // 外部选项字典：raw 绑定从这里取值
+  options?: Record<string, any>;
 };
 const props = withDefaults(defineProps<DynamicFormProps>(), {
   components: () => ({}),
+  options: () => ({}),
 });
 
 const instance = getCurrentInstance();
@@ -38,7 +41,7 @@ const emit = instance?.emit;
 const form = defineModel<any>("form");
 // 定义数据模型
 const data = defineModel<any>("data");
-const dataProxy = new DataProxy(data, emit);
+const dataProxy = new DataProxy(data, emit, props.options);
 // const formProxy = useFormProxy(form)
 const formProxy = ref(form);
 
