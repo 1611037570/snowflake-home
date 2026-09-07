@@ -119,8 +119,8 @@ export const PREVIEW_TEXTS: Record<PreviewLang, Record<string, string>> = {
   en: {
     brand: "Qingzhou Resume",
     footer: "Qingzhou Resume · Page {page} of {total}",
-    age: "{age} years old",
-    expYears: "{years} years of experience",
+    age: "{age}",
+    expYears: "{years} years",
     avatarAlt: "Avatar",
     phoneLabel: "Phone: ",
     emailLabel: "Email: ",
