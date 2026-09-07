@@ -1,5 +1,6 @@
 <script setup>
 import { computed, inject } from "vue";
+import { getPreviewTitle } from "../../i18n";
 import Business from "./themes/business.vue";
 import Academic from "./themes/academic.vue";
 import Classic from "./themes/classic.vue";
@@ -27,9 +28,22 @@ const themeComponents = {
 defineProps({
   title: {
     type: String,
-    default: "教育经历",
+    default: "",
+  },
+  // 模块 key：存在时按简历展示语言从语言包取标题
+  moduleKey: {
+    type: String,
+    default: "",
   },
 });
+// 简历展示语言：由 ResumePages 注入，缺省中文
+const previewLang = inject(
+  "previewLang",
+  computed(() => "zh"),
+);
+const displayTitle = computed(
+  () => props.title || getPreviewTitle(props.moduleKey, previewLang.value),
+);
 const themeTemplateRef = inject("themeTemplate");
 // 风格模板：未提供时按默认样式处理
 const themeTemplate = computed(() => themeTemplateRef?.value || "default");
@@ -38,7 +52,7 @@ const current = computed(() => themeComponents[themeTemplate.value] || themeComp
 </script>
 
 <template>
-  <component :is="current" :title="title" />
+  <component :is="current" :title="displayTitle" />
 </template>
 
 <style lang="scss" scoped></style>

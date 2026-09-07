@@ -11,13 +11,12 @@ const lineHeightValue = inject("lineHeightValue");
 
 // 代理数据解包访问数组
 const video = computed(() => previewData.value?.video?.data || []);
-
 </script>
 
 <template>
   <div class="resume-row" data-module="video" :style="[lineHeightValue(), fontValue()]">
     <!-- 标题栏 -->
-    <Title title="视频作品"></Title>
+    <Title module-key="video"></Title>
     <!-- 社交链接 -->
     <template v-for="(item, index) in video" :key="index">
       <div

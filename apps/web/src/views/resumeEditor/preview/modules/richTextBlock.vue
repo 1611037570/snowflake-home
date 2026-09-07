@@ -9,10 +9,6 @@ const props = defineProps({
     type: String,
     required: true,
   },
-  title: {
-    type: String,
-    required: true,
-  },
   dataKey: {
     type: String,
     required: true,
@@ -31,7 +27,7 @@ const content = computed(() => previewData.value?.[props.dataKey]?.data?.content
 
 <template>
   <div class="resume-row" :data-module="moduleName" :style="[lineHeightValue(), fontValue()]">
-    <Title :title="title" />
+    <Title :module-key="moduleName" />
     <ResumeField :model-value="content" html />
   </div>
 </template>
