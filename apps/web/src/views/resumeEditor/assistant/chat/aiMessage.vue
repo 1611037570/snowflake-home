@@ -119,9 +119,6 @@ const showTotalTime = computed(() => props.msg.requestStatus === "success" && to
       class="flex items-center gap-2 px-1 text-[13px] text-sf-theme"
     >
       <span>{{ statusText }}</span>
-      <span class="flex items-center gap-1">
-        <i v-for="i in 3" :key="i" class="h-1.5 w-1.5 animate-bounce rounded-full bg-sf-theme" />
-      </span>
     </div>
     <!-- 执行过程：运行中实时展示思考/工具/观察，完成后按折叠状态展示 -->
     <div
