@@ -88,6 +88,9 @@ export const useResumeAssistant = (
   // 请求配置：技能工具、简历工具与请求上下文统一在此装配
   const config: AssistantConfig = {
     generating: isGenerating,
+    // 反思口径由简历域提供：仅检查冲突与格式，不做扩写，避免把提问等交互内容当成答案精炼
+    reflectPrompt:
+      "请检查上一条内容：若与用户任务冲突或格式被破坏，只输出修正后的完整内容；否则逐字原样输出。禁止输出任何解释、理解过程、思考、说明、标题或额外新增内容；若上一条内容本身是提问或交互内容，保持原样，不得拆分或补充新问题。",
     tools: [
       // 按需技能注册为只读工具，需要时由模型调用获取全文
       ...createSkillTools(onDemandSkills.map((createSkill) => createSkill())),

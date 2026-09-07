@@ -62,6 +62,8 @@ export interface ReactConfig {
   onObserve?: (observation: Observation) => void;
   // 是否在候选答案后追加反思轮，由反思轮输出决定最终答案
   reflection?: boolean;
+  // 反思轮注入给模型的提示词：由使用方按业务提供，开启反思时必须传入
+  reflectPrompt?: string;
   // 反思回调：反思后的最终答案
   onReflect?: (answer: string) => void;
   // 反思轮开始回调：用于前端把该轮 content 作为最终正文实时渲染
