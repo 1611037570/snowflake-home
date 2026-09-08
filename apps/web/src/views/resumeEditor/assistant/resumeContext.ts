@@ -4,7 +4,7 @@ import { storeToRefs } from "pinia";
 // 简历数据上下文：统一提供工具读取与请求前的头像裁剪，避免逻辑散落各处
 export const useResumeContext = () => {
   const resumeStore = useResumeStore();
-  const { selectedModule } = storeToRefs(resumeStore);
+  const { selectedModule, desensitizeMode } = storeToRefs(resumeStore);
 
   // 发送给 AI 的记录内 UI 状态字段：AI 不需要也不应修改
   // collapsed：记录在编辑区的折叠状态，不参与内容翻译与优化
@@ -37,6 +37,12 @@ export const useResumeContext = () => {
       const clone = JSON.parse(JSON.stringify(module.data));
       // 读取 user 模块时排除头像，避免请求体过大
       if (key === "user") delete clone.avatar;
+      // 开启脱敏时不上传姓名、手机号和邮箱
+      if (key === "user" && desensitizeMode.value) {
+        delete clone.name;
+        delete clone.phone;
+        delete clone.email;
+      }
       // 读取图片作品模块时排除作品图片，避免请求体过大
       if (key === "image" && Array.isArray(clone)) clone.forEach((item: any) => delete item?.img);
       // 排除记录 UI 状态，避免 AI 误读或写回折叠字段

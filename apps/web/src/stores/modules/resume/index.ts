@@ -47,6 +47,8 @@ export const useResumeStore = defineStore(
     const assistantWidth = ref(DEFAULT_EDITOR.assistantWidth);
     // 专注写作模式（临时状态，不持久化）
     const focusMode = ref(false);
+    // 是否开启 AI 请求脱敏
+    const desensitizeMode = ref(false);
     // 是否正在打印
     const isPrinting = ref(false);
     // 是否AI生成中
@@ -529,6 +531,7 @@ export const useResumeStore = defineStore(
       editorWidth,
       assistantWidth,
       focusMode,
+      desensitizeMode,
       isGenerating,
       setGenerating,
       system,
