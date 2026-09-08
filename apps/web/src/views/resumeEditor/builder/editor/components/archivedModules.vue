@@ -31,7 +31,7 @@ function handleRestore(field) {
 <template>
   <!-- 有归档模块才展示 -->
   <div v-if="archivedList.length">
-    <header class="mt-2 mb-3 flex items-center justify-between">
+    <header class="flex h-10 items-center justify-between">
       <div class="flex items-center gap-1 font-bold">
         <SfIcon icon="lucide:archive" size="3" />
         <div class="text-lg">已归档模块{{ archivedList.length }} 个</div>
