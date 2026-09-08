@@ -1,8 +1,12 @@
 <script setup>
-import { computed, onBeforeUnmount, onMounted, ref } from "vue";
+import { computed } from "vue";
 import { storeToRefs } from "pinia";
 import { useResumeStore } from "@/stores";
-import { ALL_MODULE_ICON, ALL_MODULE_KEY, ALL_MODULE_NAME } from "@/stores/modules/resume/defaultConfig";
+import {
+  ALL_MODULE_ICON,
+  ALL_MODULE_KEY,
+  ALL_MODULE_NAME,
+} from "@/stores/modules/resume/defaultConfig";
 import { useModuleNav } from "../../../useModuleNav";
 
 const resumeStore = useResumeStore();
@@ -29,19 +33,6 @@ const moduleOptions = computed(() => {
   return list;
 });
 
-// 模块选择面板显隐
-const modulePanelVisible = ref(false);
-const modulePanelRef = ref(null);
-// 点击面板外区域收起
-const closeModulePanel = (e) => {
-  if (
-    modulePanelVisible.value &&
-    modulePanelRef.value &&
-    !modulePanelRef.value.contains(e.target)
-  ) {
-    modulePanelVisible.value = false;
-  }
-};
 // 切换模块选中状态：整个简历激活时取消之前的单个选中
 const toggleModule = (item) => {
   // 整个简历：清空单个选中，等价于整份简历
@@ -56,18 +47,11 @@ const toggleModule = (item) => {
     resumeStore.selectModule(item.key);
   }
 };
-
-onMounted(() => document.addEventListener("click", closeModulePanel));
-// 组件卸载时移除面板外点击监听
-onBeforeUnmount(() => document.removeEventListener("click", closeModulePanel));
 </script>
 
 <template>
-  <div ref="modulePanelRef" class="relative">
-    <div
-      class="cursor-pointer rounded-3xl border border-sf-b bg-sf-bg-2 px-2 py-1 text-sm"
-      @click="modulePanelVisible = !modulePanelVisible"
-    >
+  <SfDropdown trigger="hover" placement="top-start" :show-arrow="false">
+    <div class="cursor-pointer rounded-3xl bg-sf-bg-2 px-2 py-1 text-sm">
       <template v-if="selectedModule.length">
         已选
         <span class="text-sf-theme">
@@ -78,14 +62,13 @@ onBeforeUnmount(() => document.removeEventListener("click", closeModulePanel));
       <template v-else> {{ ALL_MODULE_NAME }} </template>
     </div>
     <!-- 模块选择面板：从按钮上方弹出 -->
-    <div
-      v-if="modulePanelVisible"
-      class="absolute bottom-full left-0 z-50 mb-2 w-56 rounded-2xl border border-sf-b bg-sf-primary p-1.5 shadow-lg"
-    >
-      <p class="px-1 pb-1 text-xs text-sf-text-3">
-        选择后 AI 只读取和操作选中的模块，不选则针对整份简历
-      </p>
-      <SfList :list="moduleOptions" :border="false" @onClick="toggleModule" />
-    </div>
-  </div>
+    <template #dropdown>
+      <div class="w-56 rounded-2xl border border-sf-b bg-sf-primary p-1.5">
+        <p class="px-1 pb-1 text-xs text-sf-text-3">
+          选择后 AI 只读取和操作选中的模块，不选则针对整份简历
+        </p>
+        <SfList :list="moduleOptions" :border="false" @onClick="toggleModule" />
+      </div>
+    </template>
+  </SfDropdown>
 </template>

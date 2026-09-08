@@ -10,7 +10,7 @@ const { desensitizeMode } = storeToRefs(aiStore);
   <!-- 脱敏操作模式 -->
   <SfTooltip content="脱敏后不上传敏感信息，如手机号、邮箱等，由用户自己处理。">
     <button
-      class="relative cursor-pointer rounded-xl px-3 py-1.5 text-[11px] font-semibold transition-all duration-300"
+      class="flex-c relative cursor-pointer rounded-xl px-2 py-1 text-[11px] font-semibold transition-all duration-300"
       :class="
         desensitizeMode
           ? 'bg-sf-theme text-white'
@@ -18,7 +18,7 @@ const { desensitizeMode } = storeToRefs(aiStore);
       "
       @click="desensitizeMode = !desensitizeMode"
     >
-      脱敏操作
+      脱敏
     </button>
   </SfTooltip>
 </template>
