@@ -58,7 +58,7 @@ const handleCopy = async (text) => {
 // 撤回修改：先隐藏按钮再通知父级执行数据回滚
 function handleWithdrawModify() {
   withdrawn.value = true;
-  emit("withdrawModify", index);
+  emit("withdrawModify", props.index);
 }
 
 // 消息内容：直接保存 Markdown 正文
