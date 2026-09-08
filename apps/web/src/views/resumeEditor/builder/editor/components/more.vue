@@ -1,5 +1,6 @@
 <script setup>
 import { computed } from "vue";
+import { EXPANDED } from "@/stores/modules/resume/formConfig";
 
 // 更多配置展开状态：数组含 "1" 表示展开，与模块折叠语义一致
 const collapsed = defineModel("collapsed", {
@@ -7,11 +8,11 @@ const collapsed = defineModel("collapsed", {
   default: () => [],
 });
 
-const expanded = computed(() => collapsed.value.includes("1"));
+const expanded = computed(() => collapsed.value.includes(EXPANDED[0] ?? "1"));
 
 // 切换展开/收起
 function toggle() {
-  collapsed.value = expanded.value ? [] : ["1"];
+  collapsed.value = expanded.value ? [] : [...EXPANDED];
 }
 </script>
 
