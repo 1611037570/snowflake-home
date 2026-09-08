@@ -1,11 +1,10 @@
 import { useResumeStore } from "@/stores";
 import { storeToRefs } from "pinia";
-import { isFieldArchived } from "@/components/business/dynamicForm/code/fieldVisible";
 
 // 简历数据上下文：统一提供工具读取与请求前的头像裁剪，避免逻辑散落各处
 export const useResumeContext = () => {
   const resumeStore = useResumeStore();
-  const { selectedModule, desensitizeMode, runtimeFields } = storeToRefs(resumeStore);
+  const { selectedModule, desensitizeMode } = storeToRefs(resumeStore);
   const NORMAL_USER_SENSITIVE_KEYS = ["name", "phone", "email"];
   const PHONE_PATTERN = /1[3-9]\d{9}/g;
   const EMAIL_PATTERN = /[\w.%+-]+@[\w.-]+\.[A-Za-z]{2,}/g;
@@ -67,14 +66,7 @@ export const useResumeContext = () => {
     const result: Record<string, any> = {};
     const userName = typeof data.user?.data?.name === "string" ? data.user.data.name : "";
     const selectedKeys = selectedModule.value.map((item) => item.key);
-    const archivedKeys = new Set(
-      runtimeFields.value
-        .filter((field) => isFieldArchived(data, field))
-        .map((field) => field.key),
-    );
-    const keys = (selectedKeys.length ? selectedKeys : Object.keys(data)).filter(
-      (key) => !archivedKeys.has(key),
-    );
+    const keys = selectedKeys.length ? selectedKeys : Object.keys(data);
     keys.forEach((key) => {
       const module = data[key];
       if (!module || typeof module !== "object" || !("data" in module)) return;
