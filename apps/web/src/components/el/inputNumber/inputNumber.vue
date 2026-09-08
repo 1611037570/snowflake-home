@@ -43,6 +43,9 @@ defineExpose({} as ComponentInstance<typeof ElInputNumber>);
   /* color: var(--color-sf-text); */
 }
 
+.el-input-number {
+  width: 100% !important;
+}
 :deep(.el-input-number__decrease) {
   border-radius: 16px 0 0 16px !important;
 }
