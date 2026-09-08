@@ -39,7 +39,7 @@ const chat = resumeAssistantChat;
 <template>
   <SfResizable
     v-model:size="assistantWidth"
-    :min="360"
+    :min="400"
     :max="500"
     position="left"
     class="box-border h-full py-3"
