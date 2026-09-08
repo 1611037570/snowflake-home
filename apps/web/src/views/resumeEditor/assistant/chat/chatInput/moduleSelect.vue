@@ -51,7 +51,7 @@ const toggleModule = (item) => {
 
 <template>
   <SfDropdown trigger="hover" placement="top-start" :show-arrow="false">
-    <div class="cursor-pointer rounded-3xl bg-sf-bg-2 px-2 py-1 text-sm">
+    <div class="cursor-pointer rounded-3xl bg-sf-bg-2 px-2 py-1 text-sm select-none">
       <template v-if="selectedModule.length">
         已选
         <span class="text-sf-theme">
