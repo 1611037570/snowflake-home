@@ -60,7 +60,10 @@ function toggleHidden() {
 
 function archiveModule() {
   proxy
-    .$confirm(`归档后，模块将从编辑器主区域移除，便于专注编辑其他模块；预览区仍会正常显示。`, "归档确认")
+    .$confirm(
+      `归档后，模块将从编辑器域移除，便于专注其他模块；预览区仍会正常显示，可恢复，不影响打印效果。`,
+      "归档确认",
+    )
     .then(() => {
       archived.value = true;
       resumeStore.unselectModule(currentForm.value.key);
