@@ -4,7 +4,7 @@
     <!-- 线条仅在悬停拖拽块时显示 -->
     <div
       class="group absolute top-0 z-10 h-full w-3"
-      :class="position === 'left' ? 'left-0' : '-right-1.5'"
+      :class="position === 'left' ? '-left-1.5' : '-right-1.5'"
     >
       <div
         class="absolute top-0 left-1/2 h-full w-px -translate-x-1/2 rounded-xl bg-sf-theme-2 opacity-0 transition-opacity group-hover:opacity-100"
