@@ -1,5 +1,4 @@
 import { toValue, type MaybeRefOrGetter } from "vue";
-import { isFieldArchived } from "@/components/business/dynamicForm/code/fieldVisible";
 
 // ==================== 工具函数 ====================
 
@@ -226,7 +225,7 @@ export function useProgress(
 
   const moduleMap = new Map<string, any>();
   for (const f of fieldsList) {
-    if (f?.key && !isFieldArchived(rootData, f)) moduleMap.set(f.key, f);
+    if (f?.key) moduleMap.set(f.key, f);
   }
 
   const progressItems: Array<{
