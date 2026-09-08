@@ -8,7 +8,7 @@ import Account from "./components/account.vue";
 import AddModule from "./components/addModule.vue";
 import BoxCollapse from "./components/boxCollapse.vue";
 import CityPicker from "./components/cityPicker/index.vue";
-import HiddenModules from "./components/hiddenModules.vue";
+import ArchivedModules from "./components/archivedModules.vue";
 import HeightWeight from "./components/heightWeight.vue";
 import Honor from "./components/honor.vue";
 import Image from "./components/image.vue";
@@ -93,7 +93,7 @@ onBeforeUnmount(() => {
         :components="dynamicComponents"
         :options="RESUME_OPTIONS"
       />
-      <HiddenModules />
+      <ArchivedModules />
       <AddModule />
     </div>
   </SfScrollbar>
