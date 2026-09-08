@@ -18,14 +18,13 @@ export const resumeWriting = () => ({
 只通过 operations 提交写操作，回复完成后直接写入简历数据（用户可撤回），不要返回简历数据。
 
 - 修改已有字段：
-  - 对象型模块：{ op: "update", module, field, value }
-  - 数组型模块：{ op: "update", module, index, field, value }，index 为记录下标，从 0 开始
-  - 自定义模块标题：{ op: "update", module, field: "title", value }
+  - 模块级字段：{ op: "updateModule", module, field, value }（自定义模块标题 field 为 title）
+  - 记录字段：{ op: "updateRecord", module, index, field, value }，index 为记录下标，从 0 开始
   - 自定义模块记录仍用 index 更新其 data.list 中的记录
-- 新增记录（仅数组型模块）：{ op: "add", module, record }
+- 新增记录（仅数组型模块）：{ op: "addRecord", module, record }
   record 填写该模块 data 记录对应的字段；用户未提供的字段用【待补充：xxx】占位或留空待补。
-- 删除记录：{ op: "delete", module, index }
-- 调整顺序：{ op: "move", module, from, to }
+- 删除记录：{ op: "deleteRecord", module, index }
+- 调整顺序：{ op: "moveRecord", module, from, to }
 
 # 操作要求
 1. 每次写操作都基于 read_resume_data 返回的真实数据定位：module 必须在返回范围内；update/delete/move 的 index、from、to 必须对应已有记录。
