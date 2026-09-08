@@ -1,5 +1,4 @@
 import { toRaw } from "vue";
-import { cloneWithFunctions } from "@/components/business/dynamicForm/code/clone";
 import { allConfig, DEFAULT_USER_FORM } from "../formConfig";
 
 // 按 key 补齐数组模块的子项 list：list 数量与 data 条数一致，缺多少补多少
@@ -14,7 +13,7 @@ function fillArrayListByData(field: any, data: any) {
   const count = Array.isArray(dataArray) ? dataArray.length : 0;
   while (arrayField.list.length < count) {
     // 先解包响应式代理再克隆，避免 structuredClone 命中 Vue Proxy 抛出 DataCloneError
-    arrayField.list.push(cloneWithFunctions(toRaw(arrayField.addConfig)));
+    arrayField.list.push({ ...toRaw(arrayField.addConfig) });
   }
 }
 
