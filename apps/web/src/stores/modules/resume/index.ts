@@ -43,6 +43,8 @@ export const useResumeStore = defineStore(
     const layout = ref<ResumeLayout>("three");
     // 编辑器区域宽度
     const editorWidth = ref(DEFAULT_EDITOR.editorWidth);
+    // AI 助手区域宽度
+    const assistantWidth = ref(DEFAULT_EDITOR.assistantWidth);
     // 专注写作模式（临时状态，不持久化）
     const focusMode = ref(false);
     // 是否正在打印
@@ -525,6 +527,7 @@ export const useResumeStore = defineStore(
       currentIndex,
       layout,
       editorWidth,
+      assistantWidth,
       focusMode,
       isGenerating,
       setGenerating,
@@ -574,7 +577,7 @@ export const useResumeStore = defineStore(
   },
   {
     persist: {
-      pick: ["list", "trashList", "layout", "editorWidth", "system"],
+      pick: ["list", "trashList", "layout", "editorWidth", "assistantWidth", "system"],
     },
   },
 );

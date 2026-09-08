@@ -1,11 +1,7 @@
 <script setup>
 import { computed } from "vue";
 import { useAiStore, useResumeStore } from "@/stores";
-import {
-  ALL_MODULE_KEY,
-  ALL_MODULE_NAME,
-  DEFAULT_EDITOR,
-} from "@/stores/modules/resume/defaultConfig";
+import { ALL_MODULE_KEY, ALL_MODULE_NAME } from "@/stores/modules/resume/defaultConfig";
 import { storeToRefs } from "pinia";
 import { flows, suggestions } from "./flows";
 import { useResumeAssistant } from "./useResumeAssistant";
@@ -22,7 +18,7 @@ const { config: assistantConfig, createChat: createAssistantChat } = useResumeAs
 // 把会话工厂注册到 ai store，header 等入口可直接从 pinia 调用新建话题
 aiStore.registerResumeAssistantChatFactory(createAssistantChat);
 const { resumeAssistantChat } = storeToRefs(aiStore);
-const { selectedModule } = storeToRefs(resumeStore);
+const { selectedModule, assistantWidth } = storeToRefs(resumeStore);
 // 当前操作模块列表：有选中模块时展示真实模块，无选中时补“整个简历”兜底项
 const selectedModules = computed(() =>
   selectedModule.value.length
@@ -33,9 +29,6 @@ const selectedModules = computed(() =>
 const removeSelectedModule = (key) => {
   resumeStore.unselectModule(key);
 };
-// AI助手区域宽度：读取编辑器配置，默认 400px
-const assistantWidth = DEFAULT_EDITOR.assistantWidth;
-
 // 简历助手对话：ai store 已持久化，无缓存时初始化默认对话
 if (!resumeAssistantChat.value) {
   resumeAssistantChat.value = createAssistantChat();
@@ -44,7 +37,13 @@ const chat = resumeAssistantChat;
 </script>
 
 <template>
-  <div class="box-border h-full py-3" :style="{ width: assistantWidth + 'px' }">
+  <SfResizable
+    v-model:size="assistantWidth"
+    :min="360"
+    :max="500"
+    position="left"
+    class="box-border h-full py-3"
+  >
     <div
       class="group relative flex h-full flex-col overflow-hidden rounded-3xl border border-sf-b bg-sf-primary hover:border-sf-theme-2"
     >
@@ -57,7 +56,7 @@ const chat = resumeAssistantChat;
         :remove-module="removeSelectedModule"
       />
     </div>
-  </div>
+  </SfResizable>
 </template>
 
 <style lang="scss" scoped></style>

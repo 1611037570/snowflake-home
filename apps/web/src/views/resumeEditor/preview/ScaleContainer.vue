@@ -118,7 +118,7 @@ const updateScale = useDebounceFn(([entry]) => {
   // 只根据宽度计算缩放比例，让内容在垂直方向可以滚动
   maxScale.value = (width - PADDING) / RESUME_WIDTH;
   manualScale.value = clampScale(manualScale.value);
-}, 0);
+}, 50);
 
 useResizeObserver(() => containerRef.value?.wrapRef, updateScale);
 
