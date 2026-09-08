@@ -2,6 +2,8 @@ import type { FormConfig, FormField } from "@/components/business/dynamicForm";
 
 // 展开状态数组：对应 SfCollapseItem 的激活 name，表示折叠容器为展开态
 export const EXPANDED = ["1"];
+// 收起状态数组：表示折叠容器为收起态
+export const COLLAPSED: string[] = [];
 
 const DEFAULT_META = {
   version: "1.0.0",

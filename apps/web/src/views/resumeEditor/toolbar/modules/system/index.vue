@@ -51,6 +51,12 @@ function resetSettings() {
           v-model="system.showToolName"
           type="switch"
         />
+        <SfSetItem
+          title="新记录默认展开"
+          info="开启后，新添加的经历记录默认展开"
+          v-model="system.defaultItemExpanded"
+          type="switch"
+        />
       </SfSetBox>
 
       <SfSetTitle title="检测设置" />

@@ -9,6 +9,7 @@ import {
   DEFAULT_RESUME_ITEM,
   DEFAULT_SYSTEM,
 } from "./defaultConfig";
+import { COLLAPSED, EXPANDED } from "./formConfig";
 import type { SelectedModule } from "./types";
 import { buildRuntimeConfig, compactConfigFields } from "./hooks/useConfigTemplate";
 import { createRecordSkeleton } from "./hooks/useAddRecord";
@@ -55,6 +56,10 @@ export const useResumeStore = defineStore(
     const historyEnabled = ref(false);
     // 系统配置
     const system = ref(structuredClone(DEFAULT_SYSTEM));
+    // 新增记录的默认折叠状态：由系统设置统一决定
+    const itemDefaultCollapsed = computed(() =>
+      system.value.defaultItemExpanded ? EXPANDED : COLLAPSED,
+    );
     // 初始化状态
     function initResumeStatus() {
       // 重置打印状态
@@ -248,13 +253,7 @@ export const useResumeStore = defineStore(
       const module = data?.[moduleKey];
       const records = resolveModuleRecords(module);
       if (!records) return false;
-      if (
-        from === to ||
-        from < 0 ||
-        to < 0 ||
-        from >= records.length ||
-        to >= records.length
-      ) {
+      if (from === to || from < 0 || to < 0 || from >= records.length || to >= records.length) {
         return false;
       }
       const [record] = records.splice(from, 1);
@@ -515,6 +514,7 @@ export const useResumeStore = defineStore(
       isGenerating,
       setGenerating,
       system,
+      itemDefaultCollapsed,
       initResumeStatus,
       addDataRecord,
       removeDataRecord,

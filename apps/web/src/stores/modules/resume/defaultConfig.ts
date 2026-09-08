@@ -51,6 +51,8 @@ export const DEFAULT_RESUME_ITEM = {
 };
 // 默认系统配置
 export const DEFAULT_SYSTEM = {
+  // 新增记录默认展开：开启时新添加的记录默认展开，关闭默认收起
+  defaultItemExpanded: true,
   // 是否展示进度
   showProgress: true,
   // 是否展示页码
