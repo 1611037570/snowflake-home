@@ -55,9 +55,12 @@ const handleConfirm = () => {
   // 名称等实例数据写入简历 data，config 只保留 key
   if (currentData.value) {
     currentData.value[customKey] = {
-      name: customModuleName.value,
       collapsed: ["1"],
       hidden: false,
+      data: {
+        title: customModuleName.value,
+        list: [],
+      },
     };
   }
   // 深拷贝自定义模块配置

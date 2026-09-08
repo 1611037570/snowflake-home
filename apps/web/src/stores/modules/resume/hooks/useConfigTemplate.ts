@@ -67,7 +67,7 @@ export function expandConfigFields(fields: any[], data: any) {
     if (!template) return item;
     const field = structuredClone(template);
     if (String(item.key).startsWith("custom_")) {
-      rewriteCustomFieldByKey(field, item.key, data?.[item.key]?.name || "");
+      rewriteCustomFieldByKey(field, item.key, data?.[item.key]?.data?.title || "");
     }
     fillArrayListByData(field, data);
     return field;
