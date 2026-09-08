@@ -1,5 +1,8 @@
 import type { FormConfig, FormField } from "@/components/business/dynamicForm";
 
+// 展开状态数组：对应 SfCollapseItem 的激活 name，表示折叠容器为展开态
+export const EXPANDED = ["1"];
+
 const DEFAULT_META = {
   version: "1.0.0",
 };
@@ -23,7 +26,7 @@ export const DEFAULT_USER_FORM = [
       {
         source: ["user", "collapsed"],
         prop: "collapsed",
-        defaultValue: ["1"],
+        defaultValue: EXPANDED,
       },
       // 隐藏开关：控制模块在简历预览中显示/隐藏
       {
@@ -305,7 +308,7 @@ export const DEFAULT_ACCOUNT_FORM = {
     {
       source: ["account", "collapsed"],
       prop: "collapsed",
-      defaultValue: ["1"],
+      defaultValue: EXPANDED,
     },
     // 隐藏开关：控制模块在简历预览中显示/隐藏
     {
@@ -361,7 +364,7 @@ export const DEFAULT_EDUCATION_FORM = {
     {
       source: ["education", "collapsed"],
       prop: "collapsed",
-      defaultValue: ["1"],
+      defaultValue: EXPANDED,
     },
     // 隐藏开关：控制模块在简历预览中显示/隐藏
     {
@@ -388,7 +391,7 @@ export const DEFAULT_EDUCATION_FORM = {
           {
             source: ["education", "data", "?", "collapsed"],
             prop: "collapsed",
-            defaultValue: ["1"],
+            defaultValue: EXPANDED,
           },
           {
             source: ["education", "data", "?", "name"],
@@ -517,7 +520,7 @@ export const DEFAULT_SKILL_FORM = {
     {
       source: ["skill", "collapsed"],
       prop: "collapsed",
-      defaultValue: ["1"],
+      defaultValue: EXPANDED,
     },
     // 隐藏开关：控制模块在简历预览中显示/隐藏
     {
@@ -553,7 +556,7 @@ export const DEFAULT_ADVANTAGE_FORM = {
     {
       source: ["advantage", "collapsed"],
       prop: "collapsed",
-      defaultValue: ["1"],
+      defaultValue: EXPANDED,
     },
     // 隐藏开关：控制模块在简历预览中显示/隐藏
     {
@@ -589,7 +592,7 @@ export const DEFAULT_WORK_FORM = {
     {
       source: ["work", "collapsed"],
       prop: "collapsed",
-      defaultValue: ["1"],
+      defaultValue: EXPANDED,
     },
     // 隐藏开关：控制模块在简历预览中显示/隐藏
     {
@@ -616,7 +619,7 @@ export const DEFAULT_WORK_FORM = {
           {
             source: ["work", "data", "?", "collapsed"],
             prop: "collapsed",
-            defaultValue: ["1"],
+            defaultValue: EXPANDED,
           },
           {
             source: ["work", "data", "?", "name"],
@@ -701,7 +704,7 @@ export const DEFAULT_PROJECT_FORM = {
     {
       source: ["project", "collapsed"],
       prop: "collapsed",
-      defaultValue: ["1"],
+      defaultValue: EXPANDED,
     },
     // 隐藏开关：控制模块在简历预览中显示/隐藏
     {
@@ -728,7 +731,7 @@ export const DEFAULT_PROJECT_FORM = {
           {
             source: ["project", "data", "?", "collapsed"],
             prop: "collapsed",
-            defaultValue: ["1"],
+            defaultValue: EXPANDED,
           },
           {
             source: ["project", "data", "?", "name"],
@@ -815,7 +818,7 @@ export const DEFAULT_VIDEO_FORM = {
     {
       source: ["video", "collapsed"],
       prop: "collapsed",
-      defaultValue: ["1"],
+      defaultValue: EXPANDED,
     },
     {
       source: ["video", "hidden"],
@@ -838,7 +841,7 @@ export const DEFAULT_VIDEO_FORM = {
           {
             source: ["video", "data", "?", "collapsed"],
             prop: "collapsed",
-            defaultValue: ["1"],
+            defaultValue: EXPANDED,
           },
           {
             source: ["video", "data", "?", "name"],
@@ -891,7 +894,7 @@ export const DEFAULT_IMAGE_FORM = {
     {
       source: ["image", "collapsed"],
       prop: "collapsed",
-      defaultValue: ["1"],
+      defaultValue: EXPANDED,
     },
     {
       source: ["image", "hidden"],
@@ -914,7 +917,7 @@ export const DEFAULT_IMAGE_FORM = {
           {
             source: ["image", "data", "?", "collapsed"],
             prop: "collapsed",
-            defaultValue: ["1"],
+            defaultValue: EXPANDED,
           },
           {
             source: ["image", "data", "?", "name"],
@@ -972,7 +975,7 @@ export const DEFAULT_HONOR_FORM = {
     {
       source: ["honor", "collapsed"],
       prop: "collapsed",
-      defaultValue: ["1"],
+      defaultValue: EXPANDED,
     },
     // 隐藏开关：控制模块在简历预览中显示/隐藏
     {
@@ -1020,7 +1023,7 @@ export const DEFAULT_CUSTOM_FORM = {
     {
       source: ["custom", "collapsed"],
       prop: "collapsed",
-      defaultValue: ["1"],
+      defaultValue: EXPANDED,
     },
     {
       source: ["custom", "hidden"],
@@ -1051,7 +1054,7 @@ export const DEFAULT_CUSTOM_FORM = {
           {
             source: ["custom", "data", "list", "?", "collapsed"],
             prop: "collapsed",
-            defaultValue: ["1"],
+            defaultValue: EXPANDED,
           },
           {
             source: ["custom", "data", "list", "?", "name"],

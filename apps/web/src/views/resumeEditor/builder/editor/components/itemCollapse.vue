@@ -1,12 +1,14 @@
 <script setup>
+import { EXPANDED } from "@/stores/modules/resume/formConfig";
+
 const { proxy } = getCurrentInstance();
 const props = defineProps({
   index: {},
 });
-// 记录折叠状态：数组含 "1" 表示展开，随记录数据持久化
+// 记录折叠状态：复用展开常量，随记录数据持久化
 const collapsed = defineModel("collapsed", {
   type: Array,
-  default: () => ["1"],
+  default: () => EXPANDED,
 });
 const name = defineModel("name", {
   type: String,
