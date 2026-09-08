@@ -1,4 +1,5 @@
 import { toRaw } from "vue";
+import { cloneWithFunctions } from "./clone";
 
 /**
  * 创建统一的"新增子项"方法（引擎容器内部使用）
@@ -15,6 +16,6 @@ export function createAddItem(currentForm: any) {
     const arrayField =
       form.type === "array" ? form : form.fields?.find((f: any) => f.type === "array");
     if (!arrayField?.addConfig) return;
-    arrayField.list.push(structuredClone(toRaw(arrayField.addConfig)));
+    arrayField.list.push(cloneWithFunctions(toRaw(arrayField.addConfig)));
   };
 }

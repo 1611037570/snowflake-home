@@ -11,8 +11,13 @@ import {
 } from "./defaultConfig";
 import { COLLAPSED, EXPANDED } from "./formConfig";
 import type { SelectedModule } from "./types";
-import { buildRuntimeConfig, compactConfigFields } from "./hooks/useConfigTemplate";
+import {
+  bindCollapsedDefault,
+  buildRuntimeConfig,
+  compactConfigFields,
+} from "./hooks/useConfigTemplate";
 import { createRecordSkeleton } from "./hooks/useAddRecord";
+import { cloneWithFunctions } from "@/components/business/dynamicForm/code/clone";
 
 import { debounce, merge } from "lodash-es";
 export type ResumeLayout = "list" | "three" | "ai";
@@ -96,7 +101,14 @@ export const useResumeStore = defineStore(
     const runtimeFields = computed(() => runtimeConfig.value?.fields || []);
     const refreshRuntime = () => {
       const item = currentItem.value;
-      runtimeConfig.value = item ? buildRuntimeConfig(item.config, item.data) : null;
+      if (!item) {
+        runtimeConfig.value = null;
+        return;
+      }
+      const runtime = buildRuntimeConfig(item.config, item.data);
+      // 记录折叠默认值按系统设置读取，仅影响新增记录
+      bindCollapsedDefault(runtime.fields, () => itemDefaultCollapsed.value);
+      runtimeConfig.value = runtime;
     };
     // 切简历/新建/恢复时按最新模板重建运行时配置
     watch(currentItem, refreshRuntime, { immediate: true });
@@ -226,7 +238,7 @@ export const useResumeStore = defineStore(
       // 同步补一条表单子项，保证编辑器与 data 数量一致
       const arrayField = findModuleArrayField(currentItem.value, moduleKey);
       if (arrayField?.addConfig && Array.isArray(arrayField.list)) {
-        arrayField.list.push(structuredClone(toRaw(arrayField.addConfig)));
+        arrayField.list.push(cloneWithFunctions(toRaw(arrayField.addConfig)));
       }
       return records.length - 1;
     }
