@@ -30,6 +30,8 @@ const moduleOptions = computed(() => {
     icon: ALL_MODULE_ICON,
     active: !selectedModule.value.length,
   });
+  list.push({ divider: true });
+
   return list;
 });
 
@@ -70,12 +72,13 @@ const toggleModule = (item) => {
     </div>
     <!-- 模块选择面板：从按钮上方弹出 -->
     <template #dropdown>
-      <div class="w-56 rounded-2xl border border-sf-b bg-sf-primary p-1.5">
-        <p class="px-1 pb-1 text-xs text-sf-text-3">
-          选择后 AI 只读取和操作选中的模块，不选则针对整份简历
-        </p>
-        <SfList :list="moduleOptions" :border="false" @onClick="toggleModule" />
-      </div>
+      <SfList :list="moduleOptions" :border="false" @onClick="toggleModule">
+        <template #footer>
+          <p class="px-1 pt-1 text-xs text-sf-text-3">
+            选择后 AI 只读取和操作选中的模块，而非整份简历
+          </p>
+        </template>
+      </SfList>
     </template>
   </SfDropdown>
 </template>
