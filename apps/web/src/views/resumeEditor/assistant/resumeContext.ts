@@ -6,6 +6,24 @@ export const useResumeContext = () => {
   const resumeStore = useResumeStore();
   const { selectedModule } = storeToRefs(resumeStore);
 
+  // 发送给 AI 的记录内 UI 状态字段：AI 不需要也不应修改
+  // collapsed：记录在编辑区的折叠状态，不参与内容翻译与优化
+  const RECORD_UI_KEYS = ["collapsed"];
+
+  // 递归剔除记录内 UI 状态字段，保留简历内容结构
+  const stripRecordUiState = (value: any): any => {
+    if (Array.isArray(value)) return value.map(stripRecordUiState);
+    if (value && typeof value === "object") {
+      const next: Record<string, any> = {};
+      Object.entries(value).forEach(([key, item]) => {
+        if (RECORD_UI_KEYS.includes(key)) return;
+        next[key] = stripRecordUiState(item);
+      });
+      return next;
+    }
+    return value;
+  };
+
   // 读取当前简历数据：跟随用户在 AI 助手里的模块选择；未选择任何模块时返回整份简历
   const getResumeData = () => {
     const data = resumeStore.currentData;
@@ -21,7 +39,8 @@ export const useResumeContext = () => {
       if (key === "user") delete clone.avatar;
       // 读取图片作品模块时排除作品图片，避免请求体过大
       if (key === "image" && Array.isArray(clone)) clone.forEach((item: any) => delete item?.img);
-      result[key] = { data: clone };
+      // 排除记录 UI 状态，避免 AI 误读或写回折叠字段
+      result[key] = { data: stripRecordUiState(clone) };
     });
     return result;
   };

@@ -24,8 +24,16 @@ function stripHtml(html: string): string {
     .trim();
 }
 
+// 文本统计忽略字段及原因：
+// avatar：头像媒体，仅展示不计入正文
+// img：图片作品媒体，仅展示不计入正文
+// status：求职状态枚举，有独立字段管理，不计入正文文本
+// collapsed：模块/记录折叠 UI 状态
+// hidden：模块显隐 UI 状态
+const SKIP_TEXT_FIELDS = ["avatar", "img", "status", "collapsed", "hidden"];
+
 /**
- * 递归收集文本（跳过 avatar/collapsed/hidden/status/img，content 剥离 HTML）
+ * 递归收集文本（content 剥离 HTML），跳过非内容字段
  */
 function collectTexts(obj: unknown, result: string[]): void {
   if (typeof obj === "string") {
@@ -38,8 +46,7 @@ function collectTexts(obj: unknown, result: string[]): void {
   }
   if (obj && typeof obj === "object") {
     for (const [key, value] of Object.entries(obj)) {
-      // 图片等属性仅作展示，不参与文本统计，跳过
-      if (["avatar", "collapsed", "hidden", "status", "img"].includes(key)) continue;
+      if (SKIP_TEXT_FIELDS.includes(key)) continue;
       if (key === "content" && typeof value === "string") {
         const cleaned = stripHtml(value);
         if (cleaned) result.push(cleaned);
