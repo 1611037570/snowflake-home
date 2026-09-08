@@ -4,12 +4,7 @@ import { defineAsyncComponent, markRaw, onBeforeUnmount, onMounted, ref, watch }
 import eventBus from "@/utils/modules/eventBus";
 const AsyncEditor = markRaw(defineAsyncComponent(() => import("./editor/index.vue")));
 const AsyncCustom = markRaw(defineAsyncComponent(() => import("./custom/index.vue")));
-const AsyncTemplate = markRaw(
-  defineAsyncComponent({
-    loader: () => import("./template/index.vue"),
-    name: "BuilderTemplate", // 显式设置异步组件的名称
-  }),
-);
+const AsyncTemplate = markRaw(defineAsyncComponent(() => import("./template/index.vue")));
 // 菜单配置
 const menuList = [
   {
