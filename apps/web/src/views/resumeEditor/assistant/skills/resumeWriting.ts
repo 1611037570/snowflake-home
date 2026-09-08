@@ -20,6 +20,8 @@ export const resumeWriting = () => ({
 - 修改已有字段：
   - 对象型模块：{ op: "update", module, field, value }
   - 数组型模块：{ op: "update", module, index, field, value }，index 为记录下标，从 0 开始
+  - 自定义模块标题：{ op: "update", module, field: "title", value }
+  - 自定义模块记录仍用 index 更新其 data.list 中的记录
 - 新增记录（仅数组型模块）：{ op: "add", module, record }
   record 填写该模块 data 记录对应的字段；用户未提供的字段用【待补充：xxx】占位或留空待补。
 - 删除记录：{ op: "delete", module, index }

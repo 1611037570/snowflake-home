@@ -49,7 +49,8 @@ description: |
 
   ```
   对象型模块：user, skill, advantage
-  数组型模块：account, education, work, project, video, image, custom
+  数组型模块：account, education, work, project, video, image, honor
+  自定义模块：custom（特殊，data 为 { title, list }）
   ```
 
 ## 第三步：解析每个模块的字段明细（固定表格格式）
@@ -84,10 +85,10 @@ description: |
 - 在`custom`模块的表格上方，固定插入以下说明段落：
 
   ```
-  > **特别说明**：自定义模块是动态添加的，顶层 key 以`custom_`开头（如 `custom_a810d50c`）。请勿修改顶层 key 或模块内 `name`（该字段控制 UI 显示名），只需提交该模块自己的`data`内容。
+  > **特别说明**：自定义模块是动态添加的，顶层 key 以`custom_`开头（如 `custom_a810d50c`）。`data.title` 是模块标题（AI 可修改），`data.list` 是经历记录数组。
   ```
 
-- `custom_<id>.data[]`内部的字段与`work`一致：`name`, `post`, `time`, `content`。
+- `custom_<id>.data.title` 是标题；`custom_<id>.data.list[]` 记录字段与`work`一致：`name`, `post`, `time`, `content`。
 - 字段明细章节标题与表格说明使用`custom_<id>`指代实际顶层 key，不要写成固定`custom`。
 
 ---
