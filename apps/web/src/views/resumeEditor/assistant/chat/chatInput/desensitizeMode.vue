@@ -1,24 +1,55 @@
 <script setup>
+import { computed, ref } from "vue";
 import { storeToRefs } from "pinia";
 import { useResumeStore } from "@/stores";
 
 const resumeStore = useResumeStore();
 const { desensitizeMode } = storeToRefs(resumeStore);
+const dropdownRef = ref();
+const desensitizeOptions = [
+  { key: "disabled", name: "无需脱敏" },
+  { key: "normal", name: "普通脱敏" },
+  { key: "strict", name: "严格脱敏" },
+];
+const activeKey = computed(() =>
+  desensitizeMode.value.disabled ? "disabled" : desensitizeMode.value.level,
+);
+const activeName = computed(
+  () => desensitizeOptions.find((item) => item.key === activeKey.value)?.name,
+);
+
+// 选择脱敏等级并关闭下拉菜单
+const handleSelect = (item) => {
+  resumeStore.desensitizeMode = {
+    disabled: item.key === "disabled",
+    level: item.key === "strict" ? "strict" : "normal",
+  };
+  dropdownRef.value?.handleClose?.();
+};
 </script>
 
 <template>
-  <!-- 脱敏操作模式 -->
-  <SfTooltip content="脱敏后不上传敏感信息，如手机号、邮箱等，由用户自己处理。">
-    <button
-      class="flex-c relative cursor-pointer rounded-xl px-2 py-1 text-[11px] font-semibold transition-all duration-300"
+  <!-- 脱敏等级选择 -->
+  <SfDropdown ref="dropdownRef" trigger="click" placement="top-start" :show-arrow="false">
+    <div
+      class="flex-c cursor-pointer rounded-xl px-3 py-1.5 text-[11px] font-semibold transition-all duration-300"
       :class="
-        desensitizeMode
-          ? 'bg-sf-theme text-white'
-          : 'text-sf-text-3 hover:bg-sf-bg-2 hover:text-sf-text'
+        desensitizeMode.disabled
+          ? 'text-sf-text-3 hover:bg-sf-bg-2 hover:text-sf-text'
+          : 'bg-sf-theme text-white'
       "
-      @click="desensitizeMode = !desensitizeMode"
     >
-      脱敏
-    </button>
-  </SfTooltip>
+      {{ activeName }}
+      <SfIcon icon="mingcute:down-line" size="4" />
+    </div>
+    <template #dropdown>
+      <SfList
+        class="w-36"
+        :list="desensitizeOptions"
+        activeKey="key"
+        :activeValue="activeKey"
+        @onClick="handleSelect"
+      />
+    </template>
+  </SfDropdown>
 </template>
