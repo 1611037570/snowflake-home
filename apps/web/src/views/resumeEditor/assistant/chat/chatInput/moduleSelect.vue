@@ -51,7 +51,9 @@ const toggleModule = (item) => {
 
 <template>
   <SfDropdown trigger="hover" placement="top-start" :show-arrow="false">
-    <div class="cursor-pointer rounded-3xl bg-sf-bg-2 px-2 py-1 text-sm select-none">
+    <div
+      class="flex-c cursor-pointer gap-0.5 rounded-3xl px-2 py-1.5 text-[12px] font-semibold select-none hover:bg-sf-bg-2"
+    >
       <template v-if="selectedModule.length">
         已选
         <span class="text-sf-theme">
@@ -59,7 +61,12 @@ const toggleModule = (item) => {
         </span>
         模块
       </template>
-      <template v-else> {{ ALL_MODULE_NAME }} </template>
+      <span v-else class="text-sf-theme"> {{ ALL_MODULE_NAME }} </span>
+      <SfIcon
+        icon="mingcute:down-line"
+        size="4"
+        :class="[selectedModule.length ? '' : 'text-sf-theme']"
+      />
     </div>
     <!-- 模块选择面板：从按钮上方弹出 -->
     <template #dropdown>

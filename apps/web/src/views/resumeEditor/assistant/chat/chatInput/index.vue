@@ -4,6 +4,7 @@ import AiNotice from "../aiNotice.vue";
 import DesensitizeMode from "./desensitizeMode.vue";
 import ModuleSelect from "./moduleSelect.vue";
 import ModelSelect from "./modelSelect.vue";
+import ThinkMode from "./thinkMode.vue";
 
 // 是否正在生成回复，由父组件（index.vue）控制
 const props = defineProps({
@@ -36,7 +37,7 @@ const actionButtonConfig = computed(() => {
     };
   }
   return {
-    icon: "ph:paper-plane-right-fill",
+    icon: "mdi:arrow-up",
     title: "发送消息",
     class: canSend.value
       ? "cursor-pointer bg-sf-theme text-white  hover:-translate-y-0.5  active:translate-y-0 active:scale-95"
@@ -110,12 +111,14 @@ onMounted(() => {
         <div class="flex items-center justify-between px-1 pb-1">
           <!-- 左侧 -->
           <div class="flex min-w-0 flex-1 items-center gap-1">
-            <ModuleSelect />
-            <DesensitizeMode />
+            <div class="flex flex-col gap-1">
+              <ModuleSelect />
+              <DesensitizeMode />
+            </div>
           </div>
-
           <!-- 右侧-->
           <div class="flex items-center gap-1">
+            <ThinkMode />
             <ModelSelect />
             <!--动态动作按钮 (发送/停止) -->
             <button

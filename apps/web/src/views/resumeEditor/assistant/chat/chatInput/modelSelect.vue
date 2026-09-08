@@ -5,7 +5,7 @@ import { PROVIDER_NAMES } from "@/configs";
 import { useAiStore } from "@/stores";
 
 const aiStore = useAiStore();
-const { activeModel, modelList, thinkMode } = storeToRefs(aiStore);
+const { activeModel, modelList } = storeToRefs(aiStore);
 const ADD_MODEL_OPTION_ID = "__add-model__";
 const dropdownRef = ref();
 
@@ -55,7 +55,7 @@ function goToAddModel() {
   <!-- 无已添加模型：按钮直接变为「去添加模型」 -->
   <div
     v-if="!configuredModels.length"
-    class="flex cursor-pointer items-center gap-1 rounded-3xl border border-transparent px-2 py-1 text-sm text-sf-warning hover:border-sf-b hover:bg-sf-bg-2"
+    class="flex cursor-pointer items-center gap-0.5 truncate rounded-3xl border border-transparent px-2 py-1.5 text-[12px] font-semibold text-sf-warning select-none hover:bg-sf-bg-2"
     @click="goToAddModel"
   >
     <SfIcon icon="lucide:triangle-alert" size="4" />
@@ -65,20 +65,8 @@ function goToAddModel() {
   <!-- 模型切换：普通 div 触发，SfDropdown + SfList 渲染模型列表 -->
   <SfDropdown ref="dropdownRef" v-else trigger="click" placement="top" :show-arrow="false">
     <div
-      class="flex-c max-w-54 cursor-pointer gap-1 truncate rounded-3xl border border-transparent px-2 py-1 text-sm select-none hover:border-sf-b hover:bg-sf-bg-2"
+      class="flex-c max-w-54 cursor-pointer gap-0.5 truncate rounded-3xl px-2 py-1.5 text-[12px] font-semibold select-none hover:bg-sf-bg-2"
     >
-      <button
-        class="flex-c relative cursor-pointer rounded-xl px-2 py-1 text-[11px] font-semibold transition-all duration-300"
-        :class="
-          thinkMode
-            ? 'bg-sf-theme text-white'
-            : 'text-sf-text-3 hover:bg-sf-primary hover:text-sf-text'
-        "
-        @click.stop="thinkMode = !thinkMode"
-      >
-        思考
-      </button>
-
       {{ activeName }}
       <SfIcon icon="mingcute:down-line" size="4" />
     </div>
