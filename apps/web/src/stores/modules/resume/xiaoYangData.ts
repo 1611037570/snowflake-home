@@ -11,6 +11,7 @@ import {
 // 小羊数据
 export const xiaoYangData: any = {
   user: {
+    archived: false,
     data: {
       position: "前端开发",
       name: "小羊",
