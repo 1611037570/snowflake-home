@@ -3,6 +3,8 @@
 // 数据源由 props 传入，不依赖 resume store；供编辑器预览、模板缩略图、全屏查看复用
 // 本组件只做渲染编排（数据代理/主题注入/测量分页），导出、智能一页等编辑功能由上层 page.vue 注册
 import { computed, ref } from "vue";
+import { isFieldHidden } from "@/components/business/dynamicForm/code/fieldVisible";
+import { expandConfigFields } from "@/stores/modules/resume/hooks/useConfigTemplate";
 import MeasureContent from "../components/measureContent.vue";
 import PreviewSinglePage from "./previewSinglePage.vue";
 import ResumePageShell from "./resumePageShell.vue";
@@ -66,7 +68,11 @@ const { paddingStyle, fontStyle, lineHeightStyle } = themeStyles;
 
 // ---------- 分页（测量 + 分页算法 + 裁剪样式）----------
 const allModules = computed(() => {
-  return props.item.config?.fields || [];
+  // 展开完整模块配置后再过滤隐藏模块，避免持久化 key 配置缺少隐藏规则
+  const fields = expandConfigFields(props.item.config?.fields || [], props.item.data);
+  return fields.filter(
+    (field) => !isFieldHidden(props.item.data, field),
+  );
 });
 const { measureDone, pages, pageStyleText, moduleList } = useResumePages({
   measureRef,
