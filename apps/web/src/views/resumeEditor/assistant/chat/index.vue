@@ -373,7 +373,7 @@ const handleFlowInput = (content) => {
       leave-from-class="translate-y-0 opacity-100"
       leave-to-class="translate-y-4 opacity-0"
     >
-      <div v-if="showScrollBottom" class="absolute bottom-42 left-1/2 z-9990 -translate-x-1/2">
+      <div v-if="showScrollBottom" class="absolute bottom-42 left-1/2 z-9 -translate-x-1/2">
         <SfIcon
           icon="mingcute:arrow-down-line"
           size="4"

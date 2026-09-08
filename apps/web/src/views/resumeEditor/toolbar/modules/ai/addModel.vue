@@ -208,12 +208,6 @@ function handleAddBuiltin() {
               placeholder="如：https://api.openai.com/v1/chat/completions"
             />
           </SfFormItem>
-
-          <!-- 提示 -->
-          <div class="flex items-center text-xs text-sf-text-3">
-            <SfIcon icon="mdi:information-variant" size="3.5" class="mr-1" />
-            项目会强制开启深度思考，推荐使用最新模型获取更智能的回复。
-          </div>
         </div>
 
         <!-- 操作按钮：固定底部，始终可见 -->
