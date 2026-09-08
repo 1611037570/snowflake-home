@@ -3,6 +3,11 @@ const { proxy } = getCurrentInstance();
 const props = defineProps({
   index: {},
 });
+// 记录折叠状态：数组含 "1" 表示展开，随记录数据持久化
+const collapsed = defineModel("collapsed", {
+  type: Array,
+  default: () => ["1"],
+});
 const name = defineModel("name", {
   type: String,
   default: "",
@@ -23,8 +28,8 @@ function del() {
 </script>
 
 <template>
-  <SfCollapse :border="false">
-    <SfCollapseItem>
+  <SfCollapse v-model="collapsed" :border="false">
+    <SfCollapseItem name="1">
       <template #title>
         <div class="group flex h-full w-full items-center justify-between text-sf-text">
           <div class="flex items-center text-[15px] font-bold">
