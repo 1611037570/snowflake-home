@@ -54,7 +54,7 @@ const { editorWidth } = storeToRefs(resumeStore);
     :min="360"
     :max="500"
     position="right"
-    class="relative my-3 flex flex-col"
+    class="relative flex h-full flex-col py-3"
   >
     <SfTab
       :list="menuList"
