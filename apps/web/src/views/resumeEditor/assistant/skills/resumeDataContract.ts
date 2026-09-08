@@ -18,7 +18,9 @@ export const resumeDataContract = () => ({
 
 - **对象型模块**（user, skill, advantage）：\`data\` 是一个普通对象。
 
-- **数组型模块**（account, education, work, project, video, image, honor, custom）：\`data\`是一个数组，每个元素是一条记录。
+- **数组型模块**（account, education, work, project, video, image, honor）：\`data\`是一个数组，每个元素是一条记录。
+
+- **自定义模块**（custom_x）：\`data\`是对象，结构为 \`{ title: string, list: 数组 }\`，\`title\` 是模块标题，\`list\` 才是经历记录数组。
 
 > **重要**：用户的实际简历可能只包含以上模块中的一部分。\`read_resume_data\` 返回的就是该结构，字段明细与格式以本规范为准。
 
@@ -110,13 +112,20 @@ export const resumeDataContract = () => ({
 | :--- | :----- | :- | :----- |
 | name | string | ✅  | 荣誉证书名称 |
 
-## 2.11 自定义经历 (\`custom_<id>.data[]\`)
+## 2.11 自定义经历 (\`custom_<id>.data\`)
 
-> **特别说明**：自定义模块是动态添加的，顶层 key 以\`custom_\`开头（如 \`custom_a810d50c\`）。请勿修改顶层 key 或模块内 \`name\`（该字段控制 UI 显示名），只需提交该模块自己的\`data\`内容。
+> **特别说明**：自定义模块是动态添加的，顶层 key 以\`custom_\`开头（如 \`custom_a810d50c\`）。\`data.title\` 是模块标题（AI 可修改），\`data.list\` 是经历记录数组。
+
+| 字段  | 类型     | 必填 | 格式/备注     |
+| :-- | :----- | :- | :-------- |
+| title | string | ✅  | 模块标题       |
+| list | array  | ✅  | 经历记录数组    |
+
+### \`data.list[]\` 记录字段
 
 | 字段      | 类型     | 必填 | 格式/备注                             |
 | :------ | :----- | :- | :-------------------------------- |
-| name    | string | ✅  | 名称                                |
+| name    | string | ✅  | 记录名称                             |
 | post    | string | ✅  | 职位/角色                             |
 | time    | array  | ✅  | 时间区间 \\["开始.YYYY.MM","结束.YYYY.MM"] |
 | content | string | ✅  | 富文本 HTML（<p>包裹）                   |
