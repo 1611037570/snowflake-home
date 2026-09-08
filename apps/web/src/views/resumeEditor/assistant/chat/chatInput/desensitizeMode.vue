@@ -1,9 +1,9 @@
 <script setup>
 import { storeToRefs } from "pinia";
-import { useAiStore } from "@/stores";
+import { useResumeStore } from "@/stores";
 
-const aiStore = useAiStore();
-const { desensitizeMode } = storeToRefs(aiStore);
+const resumeStore = useResumeStore();
+const { desensitizeMode } = storeToRefs(resumeStore);
 </script>
 
 <template>
