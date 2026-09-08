@@ -18,6 +18,8 @@
 ## Web 项目规范
 
 vue文件 创建使用小驼峰，导入和使用使用大驼峰； js使用setup语法糖 优先使用 vueuse库；template 避免多重 div 嵌套，使用 Tailwind CSS 写法。
-边距 如p-3 m-3 gap-3 等 全部使用3的边
+间距类 Tailwind 类统一使用 3 的倍数（如 p-3、m-3、gap-3），避免零散的非 3 倍间距。
 组件 优先使用apps\web\src\components目录下的组件，没有再使用element-plus组件库。
 执行web项目时候，样式和图标相关内容，按需读取 knowledges 目录下的 Markdown 文档进行学习
+引擎层（如 dynamicForm 等通用组件）只承载通用能力，不嵌入业务规则；业务默认值、字典、系统设置等在调用方或业务域内注入处理。
+AI 引擎层（如通用对话/技能调度、ReAct 运行等）同理只承载通用能力，简历技能、提示词与业务工具在简历域内注册注入。
