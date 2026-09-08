@@ -8,6 +8,8 @@ import { onUnmounted, type ComputedRef, type Ref } from "vue";
 import { storeToRefs } from "pinia";
 // 宿主传入的请求配置：技能与工具由调用方组装，chat 不内置业务内容
 import type { AssistantConfig } from "../types";
+// 导入默认提示词，每次请求提级到用户消息前避免遗忘规则
+import { defaultPrompt } from "../skills/defaultPrompt";
 
 // 定义 useChatRequest 的配置选项接口
 interface UseChatRequestOptions {
@@ -211,12 +213,28 @@ export const useChatRequest = ({
       // 请求前调用方准备（如临时裁剪头像等大字段）
       beforeRequest?.();
       // 构建消息列表（只复制 role 和 content，跳过带上下文标记的引导对话）
-      const messages = currentMessages.value
+      let messages = currentMessages.value
         .filter((message) => !message.skipContext)
         .map((message) => ({
           role: message.role,
           content: message.content,
         }));
+      // 动态提级默认提示词：先移除所有已存在的默认提示，再插入到最后一个用户消息之前
+      // 确保每次请求规则都紧邻用户问题，避免长对话遗忘导致幻觉
+      const defaultSkill = defaultPrompt();
+      // 移除已有的默认提示（可能在开头）
+      messages = messages.filter(
+        (m) => !(m.role === "system" && m.content === defaultSkill.instructions),
+      );
+      // 找到最后一个用户消息位置
+      const lastUserIndex = messages.findLastIndex((m) => m.role === "user");
+      if (lastUserIndex !== -1) {
+        // 插入到用户消息之前，完成提级
+        messages.splice(lastUserIndex, 0, {
+          role: "system",
+          content: defaultSkill.instructions,
+        });
+      }
       const lastInput = messages.at(-1);
       if (!lastInput) return;
 
