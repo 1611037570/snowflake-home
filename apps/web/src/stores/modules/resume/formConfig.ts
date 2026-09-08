@@ -1003,7 +1003,7 @@ export const DEFAULT_CUSTOM_FORM = {
       defaultValue: false,
     },
     {
-      source: ["custom", "name"],
+      source: ["custom", "data", "title"],
       prop: "name",
       defaultValue: "",
     },
@@ -1024,7 +1024,7 @@ export const DEFAULT_CUSTOM_FORM = {
         span: 24,
         model: [
           {
-            source: ["custom", "data", "?", "name"],
+            source: ["custom", "data", "list", "?", "name"],
             prop: "name",
           },
         ],
@@ -1037,7 +1037,7 @@ export const DEFAULT_CUSTOM_FORM = {
             component: "input",
             span: 12,
             model: {
-              source: ["custom", "data", "?", "name"],
+              source: ["custom", "data", "list", "?", "name"],
               prop: "modelValue",
             },
             props: {
@@ -1052,7 +1052,7 @@ export const DEFAULT_CUSTOM_FORM = {
             component: "input",
             span: 12,
             model: {
-              source: ["custom", "data", "?", "post"],
+              source: ["custom", "data", "list", "?", "post"],
               prop: "modelValue",
             },
             props: {
@@ -1067,7 +1067,7 @@ export const DEFAULT_CUSTOM_FORM = {
             component: "datePicker",
             span: 24,
             model: {
-              source: ["custom", "data", "?", "time"],
+              source: ["custom", "data", "list", "?", "time"],
               prop: "modelValue",
             },
             props: {
@@ -1085,7 +1085,7 @@ export const DEFAULT_CUSTOM_FORM = {
             component: "wangEditor",
             span: 24,
             model: {
-              source: ["custom", "data", "?", "content"],
+              source: ["custom", "data", "list", "?", "content"],
               prop: "modelValue",
             },
           },

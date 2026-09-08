@@ -20,10 +20,16 @@ const lineHeightValue = inject("lineHeightValue");
 const resumeStore = useResumeStore();
 const { runtimeFields } = storeToRefs(resumeStore);
 
-// 代理数据解包访问自定义模块数组（数据以模块 key 为路径）
-const customList = computed(() => previewData.value?.[props.name]?.data || []);
-// 从表单配置中反查标题
+// 自定义模块 data 为 { title, list }，list 才是记录数组
+const customData = computed(() => previewData.value?.[props.name]?.data || {});
+const customList = computed(() => customData.value?.list || []);
+// 标题优先取 data.title，其次回退表单配置
 const title = computed(() => {
+  const dataTitle = customData.value?.title;
+  if (dataTitle && typeof dataTitle === "object" && "value" in dataTitle) {
+    return dataTitle.value;
+  }
+  if (dataTitle) return dataTitle;
   const field = runtimeFields.value?.find((f) => f.key === props.name);
   return field?.name;
 });

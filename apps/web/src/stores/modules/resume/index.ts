@@ -136,7 +136,7 @@ export const useResumeStore = defineStore(
       if (key.startsWith("custom")) {
         return {
           key,
-          name: currentData.value?.[key]?.name || "",
+          name: currentData.value?.[key]?.data?.title || "",
         };
       }
       const found = DEFAULT_MODULE_NAMES.find((item) => item.key === key);
@@ -208,14 +208,21 @@ export const useResumeStore = defineStore(
     function addDataRecord(moduleKey: string): number {
       const data = currentData.value;
       const module = data?.[moduleKey];
-      if (!module || !Array.isArray(module.data)) return -1;
-      module.data.push(createRecordSkeleton(moduleKey));
+      if (!module || typeof module !== "object") return -1;
+      // 自定义模块记录位于 data.list，其余数组模块直接是 data
+      const records = Array.isArray(module.data)
+        ? module.data
+        : Array.isArray(module.data?.list)
+          ? module.data.list
+          : null;
+      if (!records) return -1;
+      records.push(createRecordSkeleton(moduleKey));
       // 同步补一条表单子项，保证编辑器与 data 数量一致
       const arrayField = findModuleArrayField(currentItem.value, moduleKey);
       if (arrayField?.addConfig && Array.isArray(arrayField.list)) {
         arrayField.list.push(structuredClone(toRaw(arrayField.addConfig)));
       }
-      return module.data.length - 1;
+      return records.length - 1;
     }
     // AI 直接写入：把语义化 patch 递归应用到真实简历数据，不再经过预览草稿
     function applyAiDataPatch(patch: Record<string, any>): string[] {
@@ -262,9 +269,15 @@ export const useResumeStore = defineStore(
     function removeDataRecord(moduleKey: string, index: number): boolean {
       const data = currentData.value;
       const module = data?.[moduleKey];
-      if (!module || !Array.isArray(module.data)) return false;
-      if (index < 0 || index >= module.data.length) return false;
-      module.data.splice(index, 1);
+      if (!module || typeof module !== "object") return false;
+      const records = Array.isArray(module.data)
+        ? module.data
+        : Array.isArray(module.data?.list)
+          ? module.data.list
+          : null;
+      if (!records) return false;
+      if (index < 0 || index >= records.length) return false;
+      records.splice(index, 1);
       const arrayField = findModuleArrayField(currentItem.value, moduleKey);
       arrayField?.list?.splice(index, 1);
       return true;
@@ -273,18 +286,24 @@ export const useResumeStore = defineStore(
     function moveDataRecord(moduleKey: string, from: number, to: number): boolean {
       const data = currentData.value;
       const module = data?.[moduleKey];
-      if (!module || !Array.isArray(module.data)) return false;
+      if (!module || typeof module !== "object") return false;
+      const records = Array.isArray(module.data)
+        ? module.data
+        : Array.isArray(module.data?.list)
+          ? module.data.list
+          : null;
+      if (!records) return false;
       if (
         from === to ||
         from < 0 ||
         to < 0 ||
-        from >= module.data.length ||
-        to >= module.data.length
+        from >= records.length ||
+        to >= records.length
       ) {
         return false;
       }
-      const [record] = module.data.splice(from, 1);
-      module.data.splice(to, 0, record);
+      const [record] = records.splice(from, 1);
+      records.splice(to, 0, record);
       const arrayField = findModuleArrayField(currentItem.value, moduleKey);
       if (Array.isArray(arrayField?.list)) {
         const [formItem] = arrayField.list.splice(from, 1);

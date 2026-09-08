@@ -145,7 +145,12 @@ function checkTimeline(modules: Array<{ key: string; config: any }>, rootData: a
 
   for (const { key, config } of modules) {
     const moduleData = rootData[key];
-    const items = Array.isArray(moduleData?.data) ? moduleData.data : [];
+    // 自定义模块记录位于 data.list，其余数组模块直接是 data
+    const items = Array.isArray(moduleData?.data)
+      ? moduleData.data
+      : Array.isArray(moduleData?.data?.list)
+        ? moduleData.data.list
+        : [];
     if (!items.length) continue;
 
     let timeFieldPath: string[] = [];
