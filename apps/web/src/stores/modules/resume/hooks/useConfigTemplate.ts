@@ -32,6 +32,9 @@ function rewriteCustomFieldByKey(field: any, customKey: string, customName: stri
   if (Array.isArray(field.checks?.hidden?.path)) {
     field.checks.hidden.path[0] = customKey;
   }
+  if (Array.isArray(field.checks?.archived?.path)) {
+    field.checks.archived.path[0] = customKey;
+  }
   const arrayField = field.fields?.find((f: any) => f.type === "array");
   if (arrayField?.addConfig) {
     arrayField.addConfig.model?.forEach((item: any) => {

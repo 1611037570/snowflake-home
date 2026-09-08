@@ -318,8 +318,17 @@ export const DEFAULT_ACCOUNT_FORM = {
       prop: "hidden",
       defaultValue: false,
     },
+    // 归档状态：已完成模块移入归档区域
+    {
+      source: ["account", "archived"],
+      prop: "archived",
+      defaultValue: false,
+    },
   ],
-  checks: { hidden: { path: ["account", "hidden"] } },
+  checks: {
+    hidden: { path: ["account", "hidden"] },
+    archived: { path: ["account", "archived"] },
+  },
   component: "boxCollapse",
   props: {
     name: "社交账号",
@@ -374,8 +383,17 @@ export const DEFAULT_EDUCATION_FORM = {
       prop: "hidden",
       defaultValue: false,
     },
+    // 归档状态：已完成模块移入归档区域
+    {
+      source: ["education", "archived"],
+      prop: "archived",
+      defaultValue: false,
+    },
   ],
-  checks: { hidden: { path: ["education", "hidden"] } },
+  checks: {
+    hidden: { path: ["education", "hidden"] },
+    archived: { path: ["education", "archived"] },
+  },
   slot: "default",
   fields: [
     {
@@ -530,8 +548,17 @@ export const DEFAULT_SKILL_FORM = {
       prop: "hidden",
       defaultValue: false,
     },
+    // 归档状态：已完成模块移入归档区域
+    {
+      source: ["skill", "archived"],
+      prop: "archived",
+      defaultValue: false,
+    },
   ],
-  checks: { hidden: { path: ["skill", "hidden"] } },
+  checks: {
+    hidden: { path: ["skill", "hidden"] },
+    archived: { path: ["skill", "archived"] },
+  },
   slot: "default",
   fields: [
     {
@@ -566,8 +593,17 @@ export const DEFAULT_ADVANTAGE_FORM = {
       prop: "hidden",
       defaultValue: false,
     },
+    // 归档状态：已完成模块移入归档区域
+    {
+      source: ["advantage", "archived"],
+      prop: "archived",
+      defaultValue: false,
+    },
   ],
-  checks: { hidden: { path: ["advantage", "hidden"] } },
+  checks: {
+    hidden: { path: ["advantage", "hidden"] },
+    archived: { path: ["advantage", "archived"] },
+  },
   slot: "default",
   fields: [
     {
@@ -602,8 +638,17 @@ export const DEFAULT_WORK_FORM = {
       prop: "hidden",
       defaultValue: false,
     },
+    // 归档状态：已完成模块移入归档区域
+    {
+      source: ["work", "archived"],
+      prop: "archived",
+      defaultValue: false,
+    },
   ],
-  checks: { hidden: { path: ["work", "hidden"] } },
+  checks: {
+    hidden: { path: ["work", "hidden"] },
+    archived: { path: ["work", "archived"] },
+  },
   slot: "default",
   fields: [
     {
@@ -714,8 +759,17 @@ export const DEFAULT_PROJECT_FORM = {
       prop: "hidden",
       defaultValue: false,
     },
+    // 归档状态：已完成模块移入归档区域
+    {
+      source: ["project", "archived"],
+      prop: "archived",
+      defaultValue: false,
+    },
   ],
-  checks: { hidden: { path: ["project", "hidden"] } },
+  checks: {
+    hidden: { path: ["project", "hidden"] },
+    archived: { path: ["project", "archived"] },
+  },
   slot: "default",
   fields: [
     {
@@ -827,8 +881,17 @@ export const DEFAULT_VIDEO_FORM = {
       prop: "hidden",
       defaultValue: false,
     },
+    // 归档状态：已完成模块移入归档区域
+    {
+      source: ["video", "archived"],
+      prop: "archived",
+      defaultValue: false,
+    },
   ],
-  checks: { hidden: { path: ["video", "hidden"] } },
+  checks: {
+    hidden: { path: ["video", "hidden"] },
+    archived: { path: ["video", "archived"] },
+  },
   slot: "default",
   fields: [
     {
@@ -903,8 +966,17 @@ export const DEFAULT_IMAGE_FORM = {
       prop: "hidden",
       defaultValue: false,
     },
+    // 归档状态：已完成模块移入归档区域
+    {
+      source: ["image", "archived"],
+      prop: "archived",
+      defaultValue: false,
+    },
   ],
-  checks: { hidden: { path: ["image", "hidden"] } },
+  checks: {
+    hidden: { path: ["image", "hidden"] },
+    archived: { path: ["image", "archived"] },
+  },
   slot: "default",
   fields: [
     {
@@ -985,8 +1057,17 @@ export const DEFAULT_HONOR_FORM = {
       prop: "hidden",
       defaultValue: false,
     },
+    // 归档状态：已完成模块移入归档区域
+    {
+      source: ["honor", "archived"],
+      prop: "archived",
+      defaultValue: false,
+    },
   ],
-  checks: { hidden: { path: ["honor", "hidden"] } },
+  checks: {
+    hidden: { path: ["honor", "hidden"] },
+    archived: { path: ["honor", "archived"] },
+  },
   slot: "default",
   fields: [
     {
@@ -1032,13 +1113,22 @@ export const DEFAULT_CUSTOM_FORM = {
       prop: "hidden",
       defaultValue: false,
     },
+    // 归档状态：已完成模块移入归档区域
+    {
+      source: ["custom", "archived"],
+      prop: "archived",
+      defaultValue: false,
+    },
     {
       source: ["custom", "data", "title"],
       prop: "name",
       defaultValue: "",
     },
   ],
-  checks: { hidden: { path: ["custom", "hidden"] } },
+  checks: {
+    hidden: { path: ["custom", "hidden"] },
+    archived: { path: ["custom", "archived"] },
+  },
   slot: "default",
   fields: [
     {
