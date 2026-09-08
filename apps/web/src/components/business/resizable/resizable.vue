@@ -10,7 +10,7 @@
         class="absolute top-0 left-1/2 h-full w-px -translate-x-1/2 rounded-xl bg-sf-theme-2 opacity-0 transition-opacity group-hover:opacity-100"
       />
       <div
-        class="absolute top-1/2 h-12 w-3 -translate-y-1/2 cursor-col-resize rounded-xl border border-sf-bg-2 bg-sf-bg transition-all hover:scale-110 hover:border-sf-b"
+        class="absolute top-1/2 h-12 w-3 -translate-y-1/2 cursor-col-resize rounded-xl border border-sf-b bg-sf-primary transition-all hover:scale-110"
         @pointerdown="handlePointerDown"
       />
     </div>
