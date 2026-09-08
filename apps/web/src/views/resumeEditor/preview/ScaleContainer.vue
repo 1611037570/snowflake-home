@@ -126,111 +126,106 @@ useResizeObserver(contentRef, ([entry]) => {
 </script>
 
 <template>
-  <div class="group relative mx-3 flex h-full w-full flex-col overflow-hidden">
-    <div class="relative z-10 mx-auto mb-3 select-none">
-      <div class="flex items-center gap-1 rounded-full border border-sf-b bg-sf-primary p-1.5">
-        <SfDropdown trigger="hover" placement="bottom-start" :show-arrow="false">
-          <SfTooltip :content="`切换简历语言`">
-            <SfIcon
-              icon="mdi:translate"
-              size="5"
-              boxSize="7"
-              class="rounded-full text-sf-text-2 hover:bg-sf-theme-2 hover:text-sf-theme-text"
-            />
-          </SfTooltip>
-          <template #dropdown>
-            <SfList
-              class="w-[140px]"
-              :list="langOptions"
-              :border="false"
-              @onClick="handleLangSelect"
-            />
-          </template>
-        </SfDropdown>
-        <SfTooltip :content="system.showPageNumber ? '隐藏页码' : '显示页码'">
+  <div class="group relative mx-1 flex h-full flex-col self-stretch overflow-hidden">
+    <div
+      class="mx-auto mb-3 flex items-center gap-1 self-stretch rounded-full border border-sf-b bg-sf-primary p-1.5 select-none"
+    >
+      <SfDropdown trigger="hover" placement="bottom-start" :show-arrow="false">
+        <SfTooltip :content="`切换简历语言`">
           <SfIcon
-            icon="lucide:hash"
-            size="5"
-            boxSize="7"
-            class="rounded-full"
-            :class="
-              system.showPageNumber
-                ? 'bg-sf-theme-2 text-sf-theme-text'
-                : 'text-sf-text-2 hover:bg-sf-theme-2 hover:text-sf-theme-text'
-            "
-            @click="system.showPageNumber = !system.showPageNumber"
-          />
-        </SfTooltip>
-        <SfTooltip content="缩小">
-          <SfIcon
-            @click="!isMinScale && stepScale(-0.1)"
-            icon="lucide:minus"
-            size="5"
-            boxSize="7"
-            class="rounded-full text-sf-text-2"
-            :class="{
-              'cursor-not-allowed! text-sf-text-3': isMinScale,
-              'hover:bg-sf-theme-2 hover:text-sf-theme-text': !isMinScale,
-            }"
-          />
-        </SfTooltip>
-        <SfDropdown trigger="hover" placement="bottom-start" :show-arrow="false">
-          <div
-            class="flex h-7 w-15 cursor-default items-center justify-center rounded-full px-3 text-xs font-medium text-sf-theme"
-          >
-            {{ scaleLabel }}
-          </div>
-          <template #dropdown>
-            <SfList
-              :list="SCALE_LIST"
-              class="w-[120px]"
-              :border="false"
-              @onClick="handleScaleSelect"
-            >
-            </SfList>
-          </template>
-        </SfDropdown>
-        <SfTooltip content="放大">
-          <SfIcon
-            icon="lucide:plus"
-            size="5"
-            boxSize="7"
-            class="rounded-full text-sf-text-2"
-            :class="{
-              'cursor-not-allowed! text-sf-text-3': isMaxScale,
-              'hover:bg-sf-theme-2 hover:text-sf-theme-text': !isMaxScale,
-            }"
-            @click="!isMaxScale && stepScale(0.1)"
-          />
-        </SfTooltip>
-
-        <SfTooltip content="全屏">
-          <SfIcon
-            icon="lucide:maximize"
+            icon="mdi:translate"
             size="5"
             boxSize="7"
             class="rounded-full text-sf-text-2 hover:bg-sf-theme-2 hover:text-sf-theme-text"
-            @click="$emit('fullscreen')"
           />
         </SfTooltip>
+        <template #dropdown>
+          <SfList
+            class="w-[140px]"
+            :list="langOptions"
+            :border="false"
+            @onClick="handleLangSelect"
+          />
+        </template>
+      </SfDropdown>
+      <SfTooltip :content="system.showPageNumber ? '隐藏页码' : '显示页码'">
+        <SfIcon
+          icon="lucide:hash"
+          size="5"
+          boxSize="7"
+          class="rounded-full"
+          :class="
+            system.showPageNumber
+              ? 'bg-sf-theme-2 text-sf-theme-text'
+              : 'text-sf-text-2 hover:bg-sf-theme-2 hover:text-sf-theme-text'
+          "
+          @click="system.showPageNumber = !system.showPageNumber"
+        />
+      </SfTooltip>
+      <SfTooltip content="缩小">
+        <SfIcon
+          @click="!isMinScale && stepScale(-0.1)"
+          icon="lucide:minus"
+          size="5"
+          boxSize="7"
+          class="rounded-full text-sf-text-2"
+          :class="{
+            'cursor-not-allowed! text-sf-text-3': isMinScale,
+            'hover:bg-sf-theme-2 hover:text-sf-theme-text': !isMinScale,
+          }"
+        />
+      </SfTooltip>
+      <SfDropdown trigger="hover" placement="bottom-start" :show-arrow="false">
+        <div
+          class="flex h-7 w-15 cursor-default items-center justify-center rounded-full px-3 text-xs font-medium text-sf-theme"
+        >
+          {{ scaleLabel }}
+        </div>
+        <template #dropdown>
+          <SfList :list="SCALE_LIST" class="w-[120px]" :border="false" @onClick="handleScaleSelect">
+          </SfList>
+        </template>
+      </SfDropdown>
+      <SfTooltip content="放大">
+        <SfIcon
+          icon="lucide:plus"
+          size="5"
+          boxSize="7"
+          class="rounded-full text-sf-text-2"
+          :class="{
+            'cursor-not-allowed! text-sf-text-3': isMaxScale,
+            'hover:bg-sf-theme-2 hover:text-sf-theme-text': !isMaxScale,
+          }"
+          @click="!isMaxScale && stepScale(0.1)"
+        />
+      </SfTooltip>
 
-        <SfTooltip v-if="selectedModule.length" content="清空选中">
-          <SfIcon
-            icon="lucide:circle-slash"
-            size="5"
-            boxSize="7"
-            class="rounded-full text-sf-text-2 hover:bg-sf-theme-2 hover:text-sf-theme-text"
-            @click="clearSelectedModules"
-          />
-        </SfTooltip>
-      </div>
+      <SfTooltip content="全屏">
+        <SfIcon
+          icon="lucide:maximize"
+          size="5"
+          boxSize="7"
+          class="rounded-full text-sf-text-2 hover:bg-sf-theme-2 hover:text-sf-theme-text"
+          @click="$emit('fullscreen')"
+        />
+      </SfTooltip>
+
+      <SfTooltip v-if="selectedModule.length" content="清空选中">
+        <SfIcon
+          icon="lucide:circle-slash"
+          size="5"
+          boxSize="7"
+          class="rounded-full text-sf-text-2 hover:bg-sf-theme-2 hover:text-sf-theme-text"
+          @click="clearSelectedModules"
+        />
+      </SfTooltip>
     </div>
     <!-- 测量容器：relative + overflow-y-auto 允许垂直滚动 -->
     <SfScrollbar
       ref="containerRef"
       class="relative h-full w-full"
       height="100%"
-      view-class="relative min-h-full w-full pt-3"
+      view-class="relative min-h-full w-full pt-3 "
     >
       <!-- 缩放展示：外层承担缩放后的布局尺寸并水平居中，内层用 transform: scale() 缩放 -->
       <div
@@ -242,7 +237,7 @@ useResizeObserver(contentRef, ([entry]) => {
       >
         <div
           ref="contentRef"
-          class="w-fit"
+          class="w-fit pb-3!"
           :style="{
             transform: `scale(${scale})`,
             transformOrigin: 'top left',
