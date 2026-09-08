@@ -11,7 +11,7 @@ const DEFAULT_META = {
 const DEFAULT_DRAG_CLASS = ".item-drag";
 const DEFAULT_COL_CLASS =
   "rounded-2xl border border-sf-bg-3 bg-sf-primary px-3! hover:border-sf-theme";
-// 用户信息
+// 个人信息
 export const DEFAULT_USER_FORM = [
   {
     type: "group",
@@ -20,7 +20,7 @@ export const DEFAULT_USER_FORM = [
     // 固定模块：不参与模块拖拽排序
     fixed: true,
     props: {
-      name: "用户信息",
+      name: "个人信息",
       add: false,
       drag: false,
     },

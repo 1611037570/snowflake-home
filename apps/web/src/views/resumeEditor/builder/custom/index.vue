@@ -28,7 +28,7 @@ const { currentUI } = storeToRefs(resumeStore);
 // 主题色预设色板，供取色器快捷选择
 const predefineColors = themeColors.map((item) => item.value);
 
-// 用户信息展示模式
+// 个人信息展示模式
 const userInfoMode = computed({
   get: () => currentUI.value?.userInfoMode,
   set: (value) => {
@@ -127,7 +127,7 @@ const avatarPosition = computed({
         />
       </ConfigGroup>
 
-      <ConfigGroup title="用户信息">
+      <ConfigGroup title="个人信息">
         <!-- 展示模式切换：图标 / 文字 -->
         <ConfigLabel label="展示模式" v-model="userInfoMode" :default-value="defaultUserInfoMode" />
         <div class="flex gap-3">
