@@ -17,7 +17,6 @@ import {
   compactConfigFields,
 } from "./hooks/useConfigTemplate";
 import { createRecordSkeleton } from "./hooks/useAddRecord";
-import { cloneWithFunctions } from "@/components/business/dynamicForm/code/clone";
 
 import { debounce, merge } from "lodash-es";
 export type ResumeLayout = "list" | "three" | "ai";
@@ -238,7 +237,7 @@ export const useResumeStore = defineStore(
       // 同步补一条表单子项，保证编辑器与 data 数量一致
       const arrayField = findModuleArrayField(currentItem.value, moduleKey);
       if (arrayField?.addConfig && Array.isArray(arrayField.list)) {
-        arrayField.list.push(cloneWithFunctions(toRaw(arrayField.addConfig)));
+        arrayField.list.push({ ...toRaw(arrayField.addConfig) });
       }
       return records.length - 1;
     }
