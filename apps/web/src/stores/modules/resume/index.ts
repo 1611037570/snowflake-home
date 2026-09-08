@@ -204,17 +204,18 @@ export const useResumeStore = defineStore(
       }
       return result;
     };
+    // 解析模块记录数组：自定义模块位于 data.list，其余数组模块直接是 data
+    const resolveModuleRecords = (module: any): any[] | null => {
+      if (!module || typeof module !== "object") return null;
+      if (Array.isArray(module.data)) return module.data;
+      if (Array.isArray(module.data?.list)) return module.data.list;
+      return null;
+    };
     // 数组型模块新增记录：落一条含字段的空记录骨架并同步表单配置，返回新记录下标
     function addDataRecord(moduleKey: string): number {
       const data = currentData.value;
       const module = data?.[moduleKey];
-      if (!module || typeof module !== "object") return -1;
-      // 自定义模块记录位于 data.list，其余数组模块直接是 data
-      const records = Array.isArray(module.data)
-        ? module.data
-        : Array.isArray(module.data?.list)
-          ? module.data.list
-          : null;
+      const records = resolveModuleRecords(module);
       if (!records) return -1;
       records.push(createRecordSkeleton(moduleKey));
       // 同步补一条表单子项，保证编辑器与 data 数量一致
@@ -269,12 +270,7 @@ export const useResumeStore = defineStore(
     function removeDataRecord(moduleKey: string, index: number): boolean {
       const data = currentData.value;
       const module = data?.[moduleKey];
-      if (!module || typeof module !== "object") return false;
-      const records = Array.isArray(module.data)
-        ? module.data
-        : Array.isArray(module.data?.list)
-          ? module.data.list
-          : null;
+      const records = resolveModuleRecords(module);
       if (!records) return false;
       if (index < 0 || index >= records.length) return false;
       records.splice(index, 1);
@@ -286,12 +282,7 @@ export const useResumeStore = defineStore(
     function moveDataRecord(moduleKey: string, from: number, to: number): boolean {
       const data = currentData.value;
       const module = data?.[moduleKey];
-      if (!module || typeof module !== "object") return false;
-      const records = Array.isArray(module.data)
-        ? module.data
-        : Array.isArray(module.data?.list)
-          ? module.data.list
-          : null;
+      const records = resolveModuleRecords(module);
       if (!records) return false;
       if (
         from === to ||
@@ -309,6 +300,34 @@ export const useResumeStore = defineStore(
         const [formItem] = arrayField.list.splice(from, 1);
         arrayField.list.splice(to, 0, formItem);
       }
+      return true;
+    }
+    // 修改模块级 data 字段（自定义模块的 title 等）
+    function updateModuleField(moduleKey: string, field: string, value: unknown): boolean {
+      const module = currentData.value?.[moduleKey];
+      if (
+        !module ||
+        !module.data ||
+        typeof module.data !== "object" ||
+        Array.isArray(module.data) ||
+        !(field in module.data)
+      ) {
+        return false;
+      }
+      module.data[field] = value;
+      return true;
+    }
+    // 修改记录字段（普通数组模块与自定义 data.list 统一走记录容器）
+    function updateRecordField(
+      moduleKey: string,
+      index: number,
+      field: string,
+      value: unknown,
+    ): boolean {
+      const records = resolveModuleRecords(currentData.value?.[moduleKey]);
+      const record = records?.[index];
+      if (!record || typeof record !== "object" || !(field in record)) return false;
+      record[field] = value;
       return true;
     }
     // 删除简历：移入回收站（回收站已满时阻止并提示）
@@ -537,6 +556,8 @@ export const useResumeStore = defineStore(
       applyAiDataPatch,
       removeDataRecord,
       moveDataRecord,
+      updateModuleField,
+      updateRecordField,
       getModel,
       currentItem,
       currentData,
