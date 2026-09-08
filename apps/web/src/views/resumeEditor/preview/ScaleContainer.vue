@@ -30,7 +30,7 @@ const PADDING = 20;
 const MIN_SCALE = 0.5;
 const percent = (value) => `${Math.round(value * 100)}%`;
 const SCALE_LIST = computed(() => [
-  ...[0.5, 0.7, 0.9, 1].map((value) => {
+  ...[0.5, 0.6, 0.7, 0.8, 0.9, 1].map((value) => {
     const name = percent(value);
     const isSelected = scaleMode.value === "manual" && manualScaleText.value === name;
     return {
@@ -90,12 +90,6 @@ const stepScale = (value) => {
   setManualScale(Number((scale.value + value).toFixed(1)));
 };
 
-// 简历展示语言：选择后写入当前简历 ui，预览标题按语言包刷新
-const currentLangName = computed(
-  () =>
-    previewLangList.find((item) => item.value === (currentUI.value?.language || "zh"))?.name ||
-    previewLangList[0].name,
-);
 const langOptions = computed(() =>
   previewLangList.map((item) => ({
     ...item,
@@ -175,7 +169,7 @@ useResizeObserver(contentRef, ([entry]) => {
             boxSize="7"
             class="rounded-full text-sf-text-2"
             :class="{
-              'cursor-not-allowed text-sf-text-3': isMinScale,
+              'cursor-not-allowed! text-sf-text-3': isMinScale,
               'hover:bg-sf-theme-2 hover:text-sf-theme-text': !isMinScale,
             }"
           />
@@ -203,7 +197,7 @@ useResizeObserver(contentRef, ([entry]) => {
             boxSize="7"
             class="rounded-full text-sf-text-2"
             :class="{
-              'cursor-not-allowed text-sf-text-3': isMaxScale,
+              'cursor-not-allowed! text-sf-text-3': isMaxScale,
               'hover:bg-sf-theme-2 hover:text-sf-theme-text': !isMaxScale,
             }"
             @click="!isMaxScale && stepScale(0.1)"
