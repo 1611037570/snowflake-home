@@ -107,36 +107,34 @@ onMounted(() => {
         />
 
         <!-- 底部工具栏 -->
-        <div class="flex items-center justify-between gap-3 px-1 pb-1">
+        <div class="flex items-center justify-between px-1 pb-1">
           <!-- 左侧 -->
-          <div class="flex min-w-0 flex-1 items-center gap-3">
+          <div class="flex min-w-0 flex-1 items-center gap-1">
             <ModuleSelect />
             <DesensitizeMode />
           </div>
 
           <!-- 右侧-->
-          <div class="flex shrink-0 flex-col items-end gap-3">
-            <div class="flex items-center gap-3">
-              <ModelSelect />
-              <!--动态动作按钮 (发送/停止) -->
-              <button
-                class="flex h-[30px] w-8 items-center justify-center rounded-xl transition-all duration-500 ease-out"
-                :class="actionButtonConfig.class"
-                :title="actionButtonConfig.title"
-                :disabled="actionButtonConfig.disabled"
-                @click="actionButtonConfig.handler"
-              >
-                <SfIcon
-                  :icon="actionButtonConfig.icon"
-                  size="4"
-                  class="transition-all duration-500"
-                  :class="{
-                    'group-focus-within:scale-110 ': canSend,
-                    'cursor-not-allowed!': !canSend,
-                  }"
-                />
-              </button>
-            </div>
+          <div class="flex items-center gap-1">
+            <ModelSelect />
+            <!--动态动作按钮 (发送/停止) -->
+            <button
+              class="flex h-[30px] w-8 items-center justify-center rounded-xl transition-all duration-500 ease-out"
+              :class="actionButtonConfig.class"
+              :title="actionButtonConfig.title"
+              :disabled="actionButtonConfig.disabled"
+              @click="actionButtonConfig.handler"
+            >
+              <SfIcon
+                :icon="actionButtonConfig.icon"
+                size="4"
+                class="transition-all duration-500"
+                :class="{
+                  'group-focus-within:scale-110 ': canSend,
+                  'cursor-not-allowed!': !canSend,
+                }"
+              />
+            </button>
           </div>
         </div>
       </div>

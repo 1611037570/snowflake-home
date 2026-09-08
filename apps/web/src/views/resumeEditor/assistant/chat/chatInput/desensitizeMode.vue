@@ -32,7 +32,7 @@ const handleSelect = (item) => {
   <!-- 脱敏等级选择 -->
   <SfDropdown ref="dropdownRef" trigger="click" placement="top-start" :show-arrow="false">
     <div
-      class="flex-c cursor-pointer rounded-xl px-3 py-1.5 text-[11px] font-semibold transition-all duration-300 select-none"
+      class="flex-c cursor-pointer rounded-xl px-2 py-1.5 text-[11px] font-semibold transition-all duration-300 select-none"
       :class="
         desensitizeMode.disabled
           ? 'text-sf-text-3 hover:bg-sf-bg-2 hover:text-sf-text'
