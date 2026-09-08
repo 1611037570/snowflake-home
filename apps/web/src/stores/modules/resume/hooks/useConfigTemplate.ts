@@ -1,4 +1,5 @@
 import { toRaw } from "vue";
+import { cloneWithFunctions } from "@/components/business/dynamicForm/code/clone";
 import { allConfig, DEFAULT_USER_FORM } from "../formConfig";
 
 // 按 key 补齐数组模块的子项 list：list 数量与 data 条数一致，缺多少补多少
@@ -13,7 +14,7 @@ function fillArrayListByData(field: any, data: any) {
   const count = Array.isArray(dataArray) ? dataArray.length : 0;
   while (arrayField.list.length < count) {
     // 先解包响应式代理再克隆，避免 structuredClone 命中 Vue Proxy 抛出 DataCloneError
-    arrayField.list.push(structuredClone(toRaw(arrayField.addConfig)));
+    arrayField.list.push(cloneWithFunctions(toRaw(arrayField.addConfig)));
   }
 }
 
@@ -77,6 +78,18 @@ export function expandConfigFields(fields: any[], data: any) {
 // 可渲染配置压缩为持久化字段列表：只保留模块 key 与顺序
 export function compactConfigFields(fields: any[]) {
   return fields.map((field: any) => ({ key: field.key }));
+}
+
+// 将记录折叠默认值绑定为运行时函数，新增记录时按当前设置落值
+export function bindCollapsedDefault(fields: any[], getDefault: () => string[]) {
+  fields.forEach((field: any) => {
+    const arrayField = field?.fields?.find((item: any) => item?.type === "array");
+    const model = arrayField?.addConfig?.model;
+    if (!Array.isArray(model)) return;
+    model.forEach((binding: any) => {
+      if (binding?.prop === "collapsed") binding.defaultValue = getDefault;
+    });
+  });
 }
 
 // 按持久化 key 配置构建编辑器会话使用的完整表单配置
