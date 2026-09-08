@@ -7,9 +7,9 @@ const resumeStore = useResumeStore();
 const { desensitizeMode } = storeToRefs(resumeStore);
 const dropdownRef = ref();
 const desensitizeOptions = [
-  { key: "disabled", name: "无需脱敏" },
-  { key: "normal", name: "普通脱敏" },
-  { key: "strict", name: "严格脱敏" },
+  { key: "disabled", name: "不脱敏", description: "完整发送简历内容" },
+  { key: "normal", name: "普通脱敏", description: "隐藏个人敏感信息" },
+  { key: "strict", name: "严格脱敏", description: "额外隐藏公司和学校名称" },
 ];
 const activeKey = computed(() =>
   desensitizeMode.value.disabled ? "disabled" : desensitizeMode.value.level,
@@ -32,7 +32,7 @@ const handleSelect = (item) => {
   <!-- 脱敏等级选择 -->
   <SfDropdown ref="dropdownRef" trigger="click" placement="top-start" :show-arrow="false">
     <div
-      class="flex-c cursor-pointer rounded-xl px-3 py-1.5 text-[11px] font-semibold transition-all duration-300"
+      class="flex-c cursor-pointer rounded-xl px-3 py-1.5 text-[11px] font-semibold transition-all duration-300 select-none"
       :class="
         desensitizeMode.disabled
           ? 'text-sf-text-3 hover:bg-sf-bg-2 hover:text-sf-text'
@@ -44,12 +44,19 @@ const handleSelect = (item) => {
     </div>
     <template #dropdown>
       <SfList
-        class="w-36"
+        class="w-60"
         :list="desensitizeOptions"
         activeKey="key"
         :activeValue="activeKey"
         @onClick="handleSelect"
-      />
+      >
+        <template #default="{ item }">
+          <div class="flex min-w-0 flex-1 items-center justify-between gap-3">
+            <span class="shrink-0">{{ item.name }}</span>
+            <span class="truncate text-[12px] text-sf-text-3">{{ item.description }}</span>
+          </div>
+        </template>
+      </SfList>
     </template>
   </SfDropdown>
 </template>

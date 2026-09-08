@@ -5,7 +5,7 @@ const visible = ref(false);
 </script>
 
 <template>
-  <div class="mt-3 flex items-center justify-center gap-1.5 text-[11px] text-sf-text-3">
+  <div class="mt-3 flex items-center justify-center gap-1.5 text-[11px] text-sf-text-3 select-none">
     <SfIcon icon="ph:info-duotone" size="3" />
     内容由
     <button
