@@ -285,6 +285,8 @@ export const useChatRequest = ({
           // 执行过简历数据修改技能的消息开放“撤回修改”
           if (toolCall.function.name === "propose_resume_edits") {
             writeMessages.add(lastMsg);
+            // 在消息对象上做持久标记，避免组件重绘后内存 WeakSet 丢失导致按钮不显示
+            (lastMsg as any).hasWriteChanges = true;
           }
           const displayName = TOOL_NAMES[toolCall.function.name] || toolCall.function.name;
           // 工具开始只记录执行动作，不写入参数与数据
@@ -404,8 +406,9 @@ export const useChatRequest = ({
   }
 
   // 该条 AI 回复是否真实产生过简历写入
+  // 同时检查内存 WeakSet 和消息对象上的持久标记
   function hasWriteChanges(msg?: Message | null) {
-    return !!msg && writeMessages.has(msg);
+    return !!msg && (writeMessages.has(msg) || !!(msg as any).hasWriteChanges);
   }
 
   return { handleAIResponse, stopGenerating, withdrawAI, hasWriteChanges };
