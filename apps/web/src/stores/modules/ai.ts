@@ -86,6 +86,8 @@ export const useAiStore = defineStore(
     const currentChatId = ref<string>("");
     // 是否开启思考模式：默认快速模式，需要深度思考时由开关开启
     const thinkMode = ref<boolean>(false);
+    // 是否开启脱敏操作模式
+    const desensitizeMode = ref<boolean>(false);
     // 简历助手对话：随 ai store 持久化保存，重进编辑器时恢复
     const resumeAssistantChat = ref<Chat | null>(null);
 
@@ -245,6 +247,7 @@ export const useAiStore = defineStore(
       activeModel,
       modelList,
       thinkMode,
+      desensitizeMode,
       resumeAssistantChat,
       createDefaultChat,
       createDefaultMessage,
@@ -266,7 +269,14 @@ export const useAiStore = defineStore(
     persist: {
       // 简历助手对话一并持久化到 localStorage，刷新后可恢复最近对话
       storage: localStorage,
-      pick: ["sidebarMode", "currentChatId", "activeModel", "modelList", "resumeAssistantChat"],
+      pick: [
+        "sidebarMode",
+        "currentChatId",
+        "activeModel",
+        "modelList",
+        "resumeAssistantChat",
+        "thinkMode",
+      ],
     },
   },
 );
