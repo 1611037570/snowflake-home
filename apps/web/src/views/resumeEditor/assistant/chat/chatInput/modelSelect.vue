@@ -55,7 +55,7 @@ function goToAddModel() {
   <!-- 无已添加模型：按钮直接变为「去添加模型」 -->
   <div
     v-if="!configuredModels.length"
-    class="flex cursor-pointer items-center gap-1 rounded-3xl border border-sf-b bg-sf-bg-2 px-2 py-1 text-sm text-sf-warning"
+    class="flex cursor-pointer items-center gap-1 rounded-3xl border border-transparent px-2 py-1 text-sm text-sf-warning hover:border-sf-b hover:bg-sf-bg-2"
     @click="goToAddModel"
   >
     <SfIcon icon="lucide:triangle-alert" size="4" />
@@ -63,13 +63,7 @@ function goToAddModel() {
   </div>
 
   <!-- 模型切换：普通 div 触发，SfDropdown + SfList 渲染模型列表 -->
-  <SfDropdown
-    ref="dropdownRef"
-    v-else
-    trigger="click"
-    placement="top"
-    :show-arrow="false"
-  >
+  <SfDropdown ref="dropdownRef" v-else trigger="click" placement="top" :show-arrow="false">
     <div
       class="flex-c max-w-44 cursor-pointer gap-1 truncate rounded-3xl border border-transparent px-2 py-1 text-sm select-none hover:border-sf-b hover:bg-sf-bg-2"
     >
