@@ -4,20 +4,23 @@ import { useResumeStore } from "@/stores";
 import { CUSTOM_MODULE_ICON, DEFAULT_MODULE_NAMES } from "@/stores/modules/resume/defaultConfig";
 import eventBus from "@/utils/modules/eventBus";
 import { setFieldHidden } from "./utils";
-import { isFieldHidden } from "@/components/business/dynamicForm/code/fieldVisible";
+import {
+  isFieldArchived,
+  isFieldHidden,
+} from "@/components/business/dynamicForm/code/fieldVisible";
 
 // store 为全局单例：模块列表与跳转逻辑无组件级状态，抽为模块级共享，避免各组件重复创建 hook
 const resumeStore = useResumeStore();
 const { currentData, runtimeFields, layout } = storeToRefs(resumeStore);
 
-// 模块锚点列表：全部模块（含隐藏模块，便于搜索定位）；预览分页仍按显隐协议过滤
+// 模块锚点列表：未归档模块（含隐藏模块，便于搜索定位）；预览分页仍按状态协议过滤
 const moduleList = computed(() => {
   const data = currentData.value;
   const fields = runtimeFields.value || [];
   return (
-    fields
+      fields
       // 跳过无 key 字段（历史/导入数据可能缺失，无 key 无法作为导航锚点）
-      .filter((field) => field?.key)
+      .filter((field) => field?.key && !isFieldArchived(data, field))
       .map((field) => {
         // 图标统一查默认模块元数据表，自定义模块前缀单独走 puzzle 图标
         const icon =

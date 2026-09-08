@@ -25,3 +25,10 @@ export const isFieldHidden = (data: Record<string, any> | undefined, field: Form
   if (!rule?.path?.length) return false;
   return isRuleSatisfied(getValueByPath(data, rule.path), rule);
 };
+
+// 按 DSL 归档协议判断模块是否已归档
+export const isFieldArchived = (data: Record<string, any> | undefined, field: FormField): boolean => {
+  const rule = field.checks?.archived;
+  if (!rule?.path?.length) return false;
+  return isRuleSatisfied(getValueByPath(data, rule.path), rule);
+};

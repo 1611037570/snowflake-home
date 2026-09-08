@@ -1,5 +1,6 @@
 <script setup>
 import { ref } from "vue";
+import { useResumeStore } from "@/stores";
 const { proxy } = getCurrentInstance();
 
 defineProps({
@@ -25,6 +26,7 @@ const name = defineModel("name", {
   default: "",
 });
 const { currentForm, removeSelf, addItem } = inject("df/context")();
+const resumeStore = useResumeStore();
 
 // 展开状态：直接绑定激活项 name 数组（["1"] 展开 / [] 收起），随数据双向绑定
 const collapsed = defineModel("collapsed", {
@@ -34,6 +36,11 @@ const collapsed = defineModel("collapsed", {
 
 // 隐藏状态：控制模块在简历预览中显示/隐藏
 const hidden = defineModel("hidden", {
+  type: Boolean,
+  default: false,
+});
+// 归档状态：已完成模块从主编辑区移入归档区域
+const archived = defineModel("archived", {
   type: Boolean,
   default: false,
 });
@@ -47,8 +54,13 @@ function del() {
   });
 }
 
-function moduleHidden() {
-  hidden.value = true;
+function toggleHidden() {
+  hidden.value = !hidden.value;
+}
+
+function archiveModule() {
+  archived.value = true;
+  resumeStore.unselectModule(currentForm.value.key);
 }
 
 function handleAdd() {
@@ -92,10 +104,18 @@ function handleEditConfirm() {
             {{ title }}
           </div>
           <div class="flex items-center gap-2 opacity-0 group-hover:opacity-100">
-            <SfTooltip content="隐藏模块" v-if="currentForm.key !== 'user'">
+            <SfTooltip :content="hidden ? '显示模块' : '隐藏模块'" v-if="currentForm.key !== 'user'">
               <SfIcon
-                @click.stop="moduleHidden"
-                icon="lucide:eye-off"
+                @click.stop="toggleHidden"
+                :icon="hidden ? 'lucide:eye' : 'lucide:eye-off'"
+                size="4"
+                class="cursor-pointer hover:text-sf-theme"
+              />
+            </SfTooltip>
+            <SfTooltip content="归档模块" v-if="currentForm.key !== 'user'">
+              <SfIcon
+                @click.stop="archiveModule"
+                icon="lucide:archive"
                 size="4"
                 class="cursor-pointer hover:text-sf-theme"
               />

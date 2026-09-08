@@ -1,5 +1,6 @@
 // resume-stats.ts
 import { computed, isRef } from "vue";
+import { isFieldArchived } from "@/components/business/dynamicForm/code/fieldVisible";
 
 /**
  * 剔除 HTML 标签及常见实体
@@ -130,9 +131,18 @@ function computeStats(data: any): ResumeStats {
   return result;
 }
 
-export function useResumeStats(data: any) {
+export function useResumeStats(data: any, fields: any = []) {
   return computed(() => {
     const rawData = isRef(data) ? data.value : data;
-    return computeStats(rawData);
+    const fieldsList = isRef(fields) ? fields.value : fields;
+    const archivedKeys = new Set(
+      (fieldsList || [])
+        .filter((field: any) => isFieldArchived(rawData, field))
+        .map((field: any) => field.key),
+    );
+    const activeData = Object.fromEntries(
+      Object.entries(rawData || {}).filter(([key]) => !archivedKeys.has(key)),
+    );
+    return computeStats(activeData);
   });
 }

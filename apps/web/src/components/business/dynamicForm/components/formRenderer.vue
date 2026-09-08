@@ -38,6 +38,7 @@
 import { getUUID } from "@/utils";
 import { useDraggable } from "vue-draggable-plus";
 import { checkForm } from "../code/checkForm.ts";
+import { isFieldArchived } from "../code/fieldVisible";
 import { DF_MODULE_SELECT, DF_ROOT_DATA } from "../code/injectionKeys.ts";
 import ContainerSlot from "./containerSlot.vue";
 import ContainerArray from "./containerArray.vue";
@@ -54,10 +55,12 @@ const rootData: any = inject(DF_ROOT_DATA);
 const row: any = useTemplateRef("row");
 // 表单数据
 const items = defineModel<any>("items", {});
-// 编辑器保留隐藏模块，隐藏状态只影响预览区渲染
+// 编辑器移除已归档模块，隐藏模块仍保留在编辑器中
 const visibleFields = computed(() => {
   const fields = items.value.fields || [];
-  return fields.map((field: any, index: number) => ({ field, index }));
+  return fields
+    .map((field: any, index: number) => ({ field, index }))
+    .filter(({ field }: any) => !isFieldArchived(rootData.data, field));
 });
 const isDragging = ref(false);
 // 模块选中能力：由根组件提供，动态表单内部契约，调用方按约定传 key
