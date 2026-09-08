@@ -3,7 +3,6 @@ import { computed, nextTick, onMounted, ref } from "vue";
 import AiNotice from "../aiNotice.vue";
 import DesensitizeMode from "./desensitizeMode.vue";
 import ModuleSelect from "./moduleSelect.vue";
-import ThinkMode from "./thinkMode.vue";
 import ModelSelect from "./modelSelect.vue";
 
 // 是否正在生成回复，由父组件（index.vue）控制
@@ -112,7 +111,6 @@ onMounted(() => {
           <!-- 左侧 -->
           <div class="flex min-w-0 flex-1 items-center gap-3">
             <ModuleSelect />
-            <!-- <ThinkMode /> -->
             <DesensitizeMode />
           </div>
 
