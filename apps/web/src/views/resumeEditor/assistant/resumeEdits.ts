@@ -125,6 +125,13 @@ const validateFieldValue = (
   }
 };
 
+// 取模块记录数组：自定义模块记录在 data.list，其余数组模块直接是 data
+const getModuleRecords = (moduleView: { data: unknown }): any[] | null => {
+  if (Array.isArray(moduleView?.data)) return moduleView.data;
+  if (Array.isArray((moduleView?.data as any)?.list)) return (moduleView.data as any).list;
+  return null;
+};
+
 /**
  * 校验语义化写操作：模块存在、数组下标合法、字段存在且值格式正确
  * @param operations 待校验的操作列表
@@ -148,8 +155,9 @@ export const validateResumeEdits = (
       return;
     }
     const moduleRules = getModuleRules(op.module);
+    const records = getModuleRecords(moduleView);
     if (op.op === "add") {
-      if (!Array.isArray(moduleView.data)) {
+      if (!records) {
         errors.push(`${order}：模块 ${op.module} 不是数组型模块，不能执行 add`);
         return;
       }
@@ -169,7 +177,7 @@ export const validateResumeEdits = (
       return;
     }
     if (op.op === "delete") {
-      if (!Array.isArray(moduleView.data)) {
+      if (!records) {
         errors.push(`${order}：模块 ${op.module} 不是数组型模块，不能执行 delete`);
         return;
       }
@@ -177,20 +185,20 @@ export const validateResumeEdits = (
         typeof op.index !== "number" ||
         !Number.isInteger(op.index) ||
         op.index < 0 ||
-        op.index >= moduleView.data.length
+        op.index >= records.length
       ) {
         errors.push(
-          `${order}：模块 ${op.module} 不存在下标 ${op.index} 的记录（当前共 ${moduleView.data.length} 条）`,
+          `${order}：模块 ${op.module} 不存在下标 ${op.index} 的记录（当前共 ${records.length} 条）`,
         );
       }
       return;
     }
     if (op.op === "move") {
-      if (!Array.isArray(moduleView.data)) {
+      if (!records) {
         errors.push(`${order}：模块 ${op.module} 不是数组型模块，不能执行 move`);
         return;
       }
-      const count = moduleView.data.length;
+      const count = records.length;
       const invalid = (value: unknown) =>
         typeof value !== "number" || !Number.isInteger(value) || value < 0 || value >= count;
       if (invalid(op.from) || invalid(op.to)) {
@@ -210,15 +218,19 @@ export const validateResumeEdits = (
       errors.push(`${order}：update 必须提供 value`);
       return;
     }
-    if (Array.isArray(moduleView.data)) {
+    if (op.index != null) {
+      if (!records) {
+        errors.push(`${order}：模块 ${op.module} 不存在记录数组，不能按 index 更新`);
+        return;
+      }
       if (typeof op.index !== "number" || !Number.isInteger(op.index)) {
         errors.push(`${order}：数组型模块 ${op.module} 的 update 必须提供 index`);
         return;
       }
-      const record = moduleView.data[op.index];
+      const record = records[op.index];
       if (!record || typeof record !== "object") {
         errors.push(
-          `${order}：模块 ${op.module} 不存在下标 ${op.index} 的记录（当前共 ${moduleView.data.length} 条）`,
+          `${order}：模块 ${op.module} 不存在下标 ${op.index} 的记录（当前共 ${records.length} 条）`,
         );
         return;
       }
@@ -229,8 +241,10 @@ export const validateResumeEdits = (
       validateFieldValue(op.module, op.field, op.value, moduleRules.get(op.field), errors);
       return;
     }
-    if (op.index != null) {
-      errors.push(`${order}：对象型模块 ${op.module} 的 update 不需要 index`);
+    const isDataObject =
+      moduleView.data && typeof moduleView.data === "object" && !Array.isArray(moduleView.data);
+    if (records && !isDataObject) {
+      errors.push(`${order}：数组型模块 ${op.module} 的 update 必须提供 index`);
       return;
     }
     if (
@@ -251,12 +265,15 @@ export const buildPatch = (operations: ResumeWriteOp[]): Record<string, any> => 
   const patch: Record<string, any> = {};
   operations.forEach((op) => {
     if (!op || op.op !== "update") return;
-    const modulePatch = patch[op.module] ?? { data: op.index == null ? {} : [] };
+    const isCustom = op.module.startsWith("custom");
+    const dataContainer = isCustom && op.index != null ? { list: [] } : op.index == null ? {} : [];
+    const modulePatch = patch[op.module] ?? { data: dataContainer };
     patch[op.module] = modulePatch;
     if (op.index == null) {
       modulePatch.data[op.field] = op.value;
     } else {
-      const record = (modulePatch.data[op.index] ??= {});
+      const target = isCustom ? modulePatch.data.list : modulePatch.data;
+      const record = (target[op.index] ??= {});
       record[op.field] = op.value;
     }
   });
