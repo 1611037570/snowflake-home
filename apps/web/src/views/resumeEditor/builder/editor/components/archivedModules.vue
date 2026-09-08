@@ -38,7 +38,7 @@ function handleRestore(field) {
       </div>
       <el-popover v-model:visible="panelVisible" placement="right" :width="208" trigger="click">
         <template #reference>
-          <div class="flex cursor-pointer items-center gap-1 text-sm text-sf-theme">
+          <div class="mr-1.5 flex cursor-pointer items-center gap-1 text-sm text-sf-theme">
             <span>恢复归档</span>
             <SfIcon icon="lucide:chevron-right" size="4" />
           </div>
