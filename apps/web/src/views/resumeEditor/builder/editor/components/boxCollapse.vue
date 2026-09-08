@@ -71,6 +71,8 @@ function handleEdit() {
 // 保存编辑后的标题到表单配置
 function handleEditConfirm() {
   if (!editTitle.value) return;
+  // 标题写入数据源（自定义模块为 data.title），保证预览/配置同步
+  name.value = editTitle.value;
   currentForm.value.name = editTitle.value;
   editVisible.value = false;
 }
