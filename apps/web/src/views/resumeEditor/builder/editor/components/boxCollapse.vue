@@ -59,8 +59,10 @@ function toggleHidden() {
 }
 
 function archiveModule() {
-  archived.value = true;
-  resumeStore.unselectModule(currentForm.value.key);
+  proxy.$confirm(`归档后模块将从主编辑区移除，可在已归档模块中恢复。`, "归档确认").then(() => {
+    archived.value = true;
+    resumeStore.unselectModule(currentForm.value.key);
+  });
 }
 
 function handleAdd() {
