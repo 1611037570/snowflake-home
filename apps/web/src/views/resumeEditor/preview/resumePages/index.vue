@@ -142,7 +142,7 @@ defineExpose({ rootEl: rootRef, measureEl: measureRef, moduleList });
           :class="[
             `${uid}-page-${pageIndex}`,
             {
-              'border border-sf-b hover:border-sf-theme-2': mode === 'editor',
+              'border border-sf-b': mode === 'editor',
             },
           ]"
         >

@@ -45,7 +45,7 @@ const chat = resumeAssistantChat;
     class="box-border h-full py-3"
   >
     <div
-      class="group relative flex h-full flex-col overflow-hidden rounded-3xl border border-sf-b bg-sf-primary hover:border-sf-theme-2"
+      class="group relative flex h-full flex-col overflow-hidden rounded-3xl border border-sf-b bg-sf-primary"
     >
       <Chat
         :chat="chat"
