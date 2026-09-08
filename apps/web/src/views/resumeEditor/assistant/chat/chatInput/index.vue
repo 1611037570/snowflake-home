@@ -4,7 +4,6 @@ import AiNotice from "../aiNotice.vue";
 import DesensitizeMode from "./desensitizeMode.vue";
 import ModuleSelect from "./moduleSelect.vue";
 import ModelSelect from "./modelSelect.vue";
-import ThinkMode from "./thinkMode.vue";
 
 // 是否正在生成回复，由父组件（index.vue）控制
 const props = defineProps({
@@ -118,7 +117,6 @@ onMounted(() => {
           </div>
           <!-- 右侧-->
           <div class="flex items-center gap-1">
-            <ThinkMode />
             <ModelSelect />
             <!--动态动作按钮 (发送/停止) -->
             <button
