@@ -349,6 +349,10 @@ export const useResumeStore = defineStore(
       if (trashIndex < 0 || trashIndex >= trashList.value.length) return;
       trashList.value.splice(trashIndex, 1);
     };
+    // 清空回收站内全部简历。
+    const clearTrash = () => {
+      trashList.value = [];
+    };
     // 清理回收站中超过保留天数的简历（每次进入简历页时调用）
     const cleanExpiredTrash = () => {
       const now = Date.now();
@@ -569,6 +573,7 @@ export const useResumeStore = defineStore(
       deleteResume,
       restoreResume,
       permanentlyDeleteResume,
+      clearTrash,
       cleanExpiredTrash,
       getTrashRemainingDays,
       maxTrashCount,

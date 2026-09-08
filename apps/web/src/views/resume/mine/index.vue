@@ -73,6 +73,14 @@ const handleDelete = (index) => {
   });
 };
 
+// 清空前二次确认，避免误删回收站内容。
+const handleClearTrash = () => {
+  if (!resumeStore.trashList.length) return;
+  proxy.$confirm("确定要永久删除回收站内的全部简历吗？", "全部删除确认").then(() => {
+    resumeStore.clearTrash();
+  });
+};
+
 </script>
 
 <template>
@@ -95,10 +103,21 @@ const handleDelete = (index) => {
           回收站({{ resumeStore.trashList.length }}/{{ maxTrashCount }})
         </SfSpan>
       </div>
-      <!-- 导入简历入口：仅在草稿标签下显示 -->
+      <!-- 草稿与回收站使用对应操作入口。 -->
       <div class="flex gap-3">
-        <ImportResume />
-        <SendResume />
+        <template v-if="activeTab === 'draft'">
+          <ImportResume />
+          <SendResume />
+        </template>
+        <SfButton
+          v-else
+          plain
+          type="error"
+          icon="lucide:trash-2"
+          @click="handleClearTrash"
+        >
+          全部删除
+        </SfButton>
       </div>
     </div>
     <SfScrollbar class="flex-1">
