@@ -7,6 +7,7 @@ import {
   ALL_MODULE_KEY,
   DEFAULT_MODULE_NAMES,
   DEFAULT_RESUME_ITEM,
+  DEFAULT_EDITOR,
   DEFAULT_SYSTEM,
 } from "./defaultConfig";
 import { COLLAPSED, EXPANDED } from "./formConfig";
@@ -40,6 +41,8 @@ export const useResumeStore = defineStore(
     const currentIndex = ref(-1);
     // 当前布局
     const layout = ref<ResumeLayout>("three");
+    // 编辑器区域宽度
+    const editorWidth = ref(DEFAULT_EDITOR.editorWidth);
     // 专注写作模式（临时状态，不持久化）
     const focusMode = ref(false);
     // 是否正在打印
@@ -521,6 +524,7 @@ export const useResumeStore = defineStore(
       maxCount,
       currentIndex,
       layout,
+      editorWidth,
       focusMode,
       isGenerating,
       setGenerating,
@@ -570,7 +574,7 @@ export const useResumeStore = defineStore(
   },
   {
     persist: {
-      pick: ["list", "trashList", "layout", "system"],
+      pick: ["list", "trashList", "layout", "editorWidth", "system"],
     },
   },
 );

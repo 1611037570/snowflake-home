@@ -1,6 +1,7 @@
 <script setup>
-import { DEFAULT_EDITOR } from "@/stores/modules/resume/defaultConfig";
+import { useResumeStore } from "@/stores";
 import { defineAsyncComponent, markRaw, onBeforeUnmount, onMounted, ref, watch } from "vue";
+import { storeToRefs } from "pinia";
 import eventBus from "@/utils/modules/eventBus";
 const AsyncEditor = markRaw(defineAsyncComponent(() => import("./editor/index.vue")));
 const AsyncCustom = markRaw(defineAsyncComponent(() => import("./custom/index.vue")));
@@ -42,12 +43,19 @@ onBeforeUnmount(() => {
   eventBus.off("switch-builder-tab", switchTab);
 });
 
-// 编辑器区域宽度：读取编辑器配置
-const editorWidth = DEFAULT_EDITOR.editorWidth;
+// 编辑器区域宽度：由简历 Store 统一管理并持久化
+const resumeStore = useResumeStore();
+const { editorWidth } = storeToRefs(resumeStore);
 </script>
 
 <template>
-  <div class="relative my-3 flex flex-col" :style="{ width: editorWidth + 'px' }">
+  <SfResizable
+    v-model:size="editorWidth"
+    :min="360"
+    :max="500"
+    position="right"
+    class="relative my-3 flex flex-col"
+  >
     <SfTab
       :list="menuList"
       v-model:index="activeIndex"
@@ -66,7 +74,7 @@ const editorWidth = DEFAULT_EDITOR.editorWidth;
         </Transition>
       </div>
     </div>
-  </div>
+  </SfResizable>
 </template>
 
 <style lang="scss" scoped>
