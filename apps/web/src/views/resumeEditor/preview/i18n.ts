@@ -115,6 +115,8 @@ export const PREVIEW_TEXTS: Record<PreviewLang, Record<string, string>> = {
     avatarAlt: "头像",
     phoneLabel: "电话：",
     emailLabel: "邮箱：",
+    cityLabel: "期望城市：",
+    nativePlaceLabel: "籍贯：",
   },
   en: {
     brand: "Qingzhou Resume",
@@ -124,6 +126,8 @@ export const PREVIEW_TEXTS: Record<PreviewLang, Record<string, string>> = {
     avatarAlt: "Avatar",
     phoneLabel: "Phone: ",
     emailLabel: "Email: ",
+    cityLabel: "Preferred city: ",
+    nativePlaceLabel: "Native place: ",
   },
   ja: {
     brand: "Qingzhou Resume",
@@ -133,6 +137,8 @@ export const PREVIEW_TEXTS: Record<PreviewLang, Record<string, string>> = {
     avatarAlt: "アバター",
     phoneLabel: "電話：",
     emailLabel: "メール：",
+    cityLabel: "希望勤務地：",
+    nativePlaceLabel: "出身地：",
   },
   ko: {
     brand: "Qingzhou Resume",
@@ -142,6 +148,8 @@ export const PREVIEW_TEXTS: Record<PreviewLang, Record<string, string>> = {
     avatarAlt: "아바타",
     phoneLabel: "전화: ",
     emailLabel: "이메일: ",
+    cityLabel: "희망 도시: ",
+    nativePlaceLabel: "출신지: ",
   },
   fr: {
     brand: "Qingzhou Resume",
@@ -151,6 +159,8 @@ export const PREVIEW_TEXTS: Record<PreviewLang, Record<string, string>> = {
     avatarAlt: "Avatar",
     phoneLabel: "Tél. : ",
     emailLabel: "E-mail : ",
+    cityLabel: "Ville souhaitée : ",
+    nativePlaceLabel: "Lieu d’origine : ",
   },
   de: {
     brand: "Qingzhou Resume",
@@ -160,6 +170,8 @@ export const PREVIEW_TEXTS: Record<PreviewLang, Record<string, string>> = {
     avatarAlt: "Avatar",
     phoneLabel: "Telefon: ",
     emailLabel: "E-Mail: ",
+    cityLabel: "Wunschstadt: ",
+    nativePlaceLabel: "Herkunftsort: ",
   },
   es: {
     brand: "Qingzhou Resume",
@@ -169,6 +181,8 @@ export const PREVIEW_TEXTS: Record<PreviewLang, Record<string, string>> = {
     avatarAlt: "Avatar",
     phoneLabel: "Teléfono: ",
     emailLabel: "Correo: ",
+    cityLabel: "Ciudad deseada: ",
+    nativePlaceLabel: "Lugar de origen: ",
   },
   ru: {
     brand: "Qingzhou Resume",
@@ -178,6 +192,8 @@ export const PREVIEW_TEXTS: Record<PreviewLang, Record<string, string>> = {
     avatarAlt: "Аватар",
     phoneLabel: "Телефон: ",
     emailLabel: "Почта: ",
+    cityLabel: "Желаемый город: ",
+    nativePlaceLabel: "Место рождения: ",
   },
 };
 

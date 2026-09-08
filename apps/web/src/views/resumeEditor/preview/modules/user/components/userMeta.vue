@@ -22,7 +22,7 @@ const age = computed(() => {
   return Math.max(0, ageDiff);
 });
 
-// 身高体重：对象 { height, weight }，两项齐全时拼接为文本
+// 身高体重：对象 { height, weight }，任一项有值时拼接为文本
 const heightWeightText = computed(() => {
   const value = user.value?.heightWeight;
   // 编辑态字段为 { value } 代理，非编辑态为原始数值，两种形态兼容读取
@@ -30,7 +30,12 @@ const heightWeightText = computed(() => {
     value?.height && typeof value.height === "object" ? value.height.value : value?.height;
   const weight =
     value?.weight && typeof value.weight === "object" ? value.weight.value : value?.weight;
-  return height != null && weight != null ? `${height}cm/${weight}kg` : "";
+  const hasHeight = height != null && height !== "";
+  const hasWeight = weight != null && weight !== "";
+  if (!hasHeight && !hasWeight) return "";
+  return [hasHeight ? `${height}cm` : "", hasWeight ? `${weight}kg` : ""]
+    .filter(Boolean)
+    .join("/");
 });
 
 // 有值字段列表：sex/position/status 为可编辑字段，年龄与工作年限为派生文本；空值字段不占位，项间分隔线随列表自动生成
@@ -47,9 +52,19 @@ const metaItems = computed(() => {
   if (user.value?.status?.value) items.push({ key: "status" });
   // 政治面貌
   if (user.value?.political?.value) items.push({ key: "political" });
-  if (user.value?.city?.value) items.push({ key: "city" });
+  if (user.value?.city?.value) {
+    items.push({
+      key: "city",
+      label: getPreviewText("cityLabel", previewLang.value),
+    });
+  }
   // 籍贯
-  if (user.value?.nativePlace?.value) items.push({ key: "nativePlace" });
+  if (user.value?.nativePlace?.value) {
+    items.push({
+      key: "nativePlace",
+      label: getPreviewText("nativePlaceLabel", previewLang.value),
+    });
+  }
   if (heightWeightText.value) items.push({ text: heightWeightText.value });
   return items;
 });
@@ -59,7 +74,10 @@ const metaItems = computed(() => {
   <div class="ml-3 flex max-w-full min-w-0 flex-wrap items-center gap-3" :style="[fontValue(2)]">
     <template v-for="(item, index) in metaItems" :key="item.key || item.text">
       <span v-if="index > 0" class="h-3 w-px bg-current opacity-50"></span>
-      <ResumeField v-if="item.key" v-model="user[item.key]" />
+      <template v-if="item.key">
+        <span v-if="item.label">{{ item.label }}</span>
+        <ResumeField v-model="user[item.key]" />
+      </template>
       <span v-else>{{ item.text }}</span>
     </template>
   </div>
