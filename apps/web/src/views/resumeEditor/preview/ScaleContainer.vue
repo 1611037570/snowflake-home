@@ -129,6 +129,7 @@ useResizeObserver(contentRef, ([entry]) => {
   <div class="group relative mx-1 flex h-full flex-col self-stretch overflow-hidden">
     <div
       class="mx-auto mb-3 flex items-center gap-1 self-stretch rounded-full border border-sf-b bg-sf-primary p-1.5 select-none"
+      v-show="showToolbar"
     >
       <SfDropdown trigger="hover" placement="bottom-start" :show-arrow="false">
         <SfTooltip :content="`切换简历语言`">
