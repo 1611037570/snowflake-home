@@ -386,6 +386,11 @@ export const DEFAULT_EDUCATION_FORM = {
         span: 24,
         model: [
           {
+            source: ["education", "data", "?", "collapsed"],
+            prop: "collapsed",
+            defaultValue: ["1"],
+          },
+          {
             source: ["education", "data", "?", "name"],
             prop: "name",
           },
@@ -609,6 +614,11 @@ export const DEFAULT_WORK_FORM = {
         span: 24,
         model: [
           {
+            source: ["work", "data", "?", "collapsed"],
+            prop: "collapsed",
+            defaultValue: ["1"],
+          },
+          {
             source: ["work", "data", "?", "name"],
             prop: "name",
           },
@@ -716,6 +726,11 @@ export const DEFAULT_PROJECT_FORM = {
         span: 24,
         model: [
           {
+            source: ["project", "data", "?", "collapsed"],
+            prop: "collapsed",
+            defaultValue: ["1"],
+          },
+          {
             source: ["project", "data", "?", "name"],
             prop: "name",
           },
@@ -821,6 +836,11 @@ export const DEFAULT_VIDEO_FORM = {
         // 折叠标题数据源：展示当前视频名称
         model: [
           {
+            source: ["video", "data", "?", "collapsed"],
+            prop: "collapsed",
+            defaultValue: ["1"],
+          },
+          {
             source: ["video", "data", "?", "name"],
             prop: "name",
           },
@@ -891,6 +911,11 @@ export const DEFAULT_IMAGE_FORM = {
       addConfig: {
         // 折叠标题数据源：展示当前图片作品名称
         model: [
+          {
+            source: ["image", "data", "?", "collapsed"],
+            prop: "collapsed",
+            defaultValue: ["1"],
+          },
           {
             source: ["image", "data", "?", "name"],
             prop: "name",
@@ -1023,6 +1048,11 @@ export const DEFAULT_CUSTOM_FORM = {
         slot: "default",
         span: 24,
         model: [
+          {
+            source: ["custom", "data", "list", "?", "collapsed"],
+            prop: "collapsed",
+            defaultValue: ["1"],
+          },
           {
             source: ["custom", "data", "list", "?", "name"],
             prop: "name",
