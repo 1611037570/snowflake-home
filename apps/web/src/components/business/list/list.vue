@@ -31,6 +31,8 @@
         </div>
       </template>
     </template>
+    <!-- 列表底部扩展内容 -->
+    <slot name="footer"></slot>
   </div>
 </template>
 
