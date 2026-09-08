@@ -10,6 +10,7 @@ import ResumeCardContainer from "./components/resumeCardContainer.vue";
 import RevealGrid from "../components/revealGrid.vue";
 import ImportResume from "./components/importResume.vue";
 import SendResume from "@/views/resume/components/sendResume/index.vue";
+import CreateResume from "./components/createResume.vue";
 
 const router = useRouter();
 
@@ -72,56 +73,6 @@ const handleDelete = (index) => {
   });
 };
 
-// 新建引导弹窗状态
-const createDialogVisible = ref(false);
-// 引导表单：仅收集简单信息（姓名、电话、求职岗位）
-const createForm = ref({
-  name: "",
-  phone: "",
-  position: "",
-});
-
-const handleCreate = () => {
-  // 提前判断：简历数量已达上限时提示并阻止
-  if (list.value.length >= maxCount) {
-    ElMessage.warning(`简历数量已达上限（${maxCount}个），请先删除后再新建`);
-    return;
-  }
-  createDialogVisible.value = true;
-};
-
-// 重置引导弹窗
-const resetCreateDialog = () => {
-  createDialogVisible.value = false;
-  createForm.value = { name: "", phone: "", position: "" };
-};
-
-// 确认创建：携带已填写的简单信息进入编辑器
-const handleCreateConfirm = () => {
-  const { name, phone, position } = createForm.value;
-  resumeStore.addResume({
-    data: {
-      user: {
-        data: {
-          name: name.trim(),
-          phone: phone.trim(),
-          position: position.trim(),
-        },
-      },
-    },
-  });
-  resetCreateDialog();
-};
-
-// 跳过引导：直接创建空白简历
-const handleCreateSkip = () => {
-  resumeStore.addResume();
-  resetCreateDialog();
-};
-
-const handleUseTemplate = () => {
-  router.push("/resume/template");
-};
 </script>
 
 <template>
@@ -156,21 +107,7 @@ const handleUseTemplate = () => {
         <RevealGrid v-if="activeTab === 'draft'" :items="displayList" key-field="id">
           <template #default="{ item: card }">
             <!-- 新建简历入口项 -->
-            <ResumeCardContainer v-if="card.type === 'create'" @click="handleCreate">
-              <div
-                class="group flex h-full w-full flex-col items-center justify-center gap-3 overflow-hidden"
-              >
-                <div class="flex h-16 w-16 items-center justify-center rounded-full bg-sf-theme-2">
-                  <SfIcon
-                    icon="ic:round-add"
-                    size="8"
-                    class="text-sf-theme transition-transform duration-300 group-hover:rotate-90"
-                  />
-                </div>
-                <span class="text-base font-black text-sf-text">新建简历</span>
-                <span class="text-sm text-sf-text-2">从空白开始，打造专属简历</span>
-              </div>
-            </ResumeCardContainer>
+            <CreateResume v-if="card.type === 'create'" />
             <!-- 简历项 -->
             <ResumeCardContainer v-else :item="card.item" @click="handleEdit(card.index)">
               <div class="truncate text-base font-black text-sf-text">
@@ -255,18 +192,6 @@ const handleUseTemplate = () => {
           <SfIcon icon="lucide:trash-2" size="12" class="mb-4 text-sf-text-3" />
           <span class="text-base">回收站为空</span>
         </div>
-        <!-- 新建简历引导弹窗：收集简单信息 -->
-        <SfModal v-model="createDialogVisible" title="完善基本信息">
-          <form class="flex w-96 flex-col gap-4 p-5" @submit.prevent="handleCreateConfirm">
-            <SfInput v-model="createForm.name" placeholder="请输入姓名" />
-            <SfInput v-model="createForm.phone" placeholder="请输入电话" />
-            <SfInput v-model="createForm.position" placeholder="请输入求职岗位" />
-            <footer class="flex justify-end gap-3">
-              <el-button @click="handleCreateSkip">跳过</el-button>
-              <el-button type="primary" @click="handleCreateConfirm">创建简历</el-button>
-            </footer>
-          </form>
-        </SfModal>
         <div class="flex flex-1 flex-col items-center justify-end">
           <SfFooter />
         </div>
