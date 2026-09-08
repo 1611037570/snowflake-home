@@ -3,6 +3,7 @@ import { computed, ref } from "vue";
 import { storeToRefs } from "pinia";
 import { PROVIDER_NAMES } from "@/configs";
 import { useAiStore } from "@/stores";
+import ThinkMode from "./thinkMode.vue";
 
 const aiStore = useAiStore();
 const { activeModel, modelList } = storeToRefs(aiStore);
@@ -61,30 +62,32 @@ function goToAddModel() {
     <SfIcon icon="lucide:triangle-alert" size="4" />
     <span>未配置模型</span>
   </div>
-
-  <!-- 模型切换：普通 div 触发，SfDropdown + SfList 渲染模型列表 -->
-  <SfDropdown ref="dropdownRef" v-else trigger="click" placement="top" :show-arrow="false">
-    <div
-      class="flex-c max-w-54 cursor-pointer gap-0.5 truncate rounded-3xl px-2 py-1.5 text-[12px] font-semibold select-none hover:bg-sf-bg-2"
-    >
-      {{ activeName }}
-      <SfIcon icon="mingcute:down-line" size="4" />
-    </div>
-    <template #dropdown>
-      <SfList
-        class="w-44"
-        :list="modelOptions"
-        activeKey="id"
-        :activeValue="activeModel"
-        @onClick="selectModel"
+  <div class="flex items-center gap-1" v-else>
+    <ThinkMode />
+    <!-- 模型切换：普通 div 触发，SfDropdown + SfList 渲染模型列表 -->
+    <SfDropdown ref="dropdownRef" trigger="click" placement="top" :show-arrow="false">
+      <div
+        class="flex-c max-w-54 cursor-pointer gap-0.5 truncate rounded-3xl px-2 py-1.5 text-[12px] font-semibold select-none hover:bg-sf-bg-2"
       >
-        <template #default="{ item }">
-          <div class="flex min-w-0 flex-1 items-center">
-            <SfIcon v-if="item.id === ADD_MODEL_OPTION_ID" icon="ic:round-add" size="4" />
-            <span class="truncate">{{ item.name }}</span>
-          </div>
-        </template>
-      </SfList>
-    </template>
-  </SfDropdown>
+        {{ activeName }}
+        <SfIcon icon="mingcute:down-line" size="4" />
+      </div>
+      <template #dropdown>
+        <SfList
+          class="w-44"
+          :list="modelOptions"
+          activeKey="id"
+          :activeValue="activeModel"
+          @onClick="selectModel"
+        >
+          <template #default="{ item }">
+            <div class="flex min-w-0 flex-1 items-center">
+              <SfIcon v-if="item.id === ADD_MODEL_OPTION_ID" icon="ic:round-add" size="4" />
+              <span class="truncate">{{ item.name }}</span>
+            </div>
+          </template>
+        </SfList>
+      </template>
+    </SfDropdown>
+  </div>
 </template>
