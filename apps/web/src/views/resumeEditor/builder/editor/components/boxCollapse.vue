@@ -48,9 +48,7 @@ function del() {
 }
 
 function moduleHidden() {
-  proxy.$confirm(`隐藏后内容仍保留在简历中，可在隐藏模块中恢复。`, "隐藏确认").then(() => {
-    hidden.value = true;
-  });
+  hidden.value = true;
 }
 
 function handleAdd() {
