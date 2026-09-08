@@ -62,7 +62,7 @@ export const themeTemplateList = [
     value: "steady",
   },
 ];
-// 用户信息展示模式列表
+// 个人信息展示模式列表
 export const userInfoModeList = [
   {
     name: "图标",
@@ -101,7 +101,7 @@ export const defaultLineHeight = 1.2;
 export const defaultModuleSpacing = 12;
 // 默认主题样式
 export const defaultThemeTemplate = "default";
-// 默认用户信息展示模式
+// 默认个人信息展示模式
 export const defaultUserInfoMode = "text";
 // 默认头像位置
 export const defaultAvatarPosition = "right";
@@ -133,7 +133,7 @@ export const DEFAULT_UI = {
   themeTemplate: defaultThemeTemplate,
   // 字体类型
   fontFamily: defaultFontFamily,
-  // 用户信息展示模式
+  // 个人信息展示模式
   userInfoMode: defaultUserInfoMode,
   // 头像位置
   avatarPosition: defaultAvatarPosition,

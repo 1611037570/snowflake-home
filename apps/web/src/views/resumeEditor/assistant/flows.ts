@@ -3,7 +3,7 @@ import { useResumeStore } from "@/stores";
 import { DEFAULT_MODULE_NAMES } from "@/stores/modules/resume/defaultConfig";
 import type { Flow, SuggestCard } from "./types";
 
-// 获取可作为 AI 生成经历的已有模块名：过滤用户信息与社交账号，内置模块按默认顺序展示
+// 获取可作为 AI 生成经历的已有模块名：过滤个人信息与社交账号，内置模块按默认顺序展示
 const getResumeCreateModuleOptions = (): string[] => {
   const resumeStore = useResumeStore();
   const data = resumeStore.currentData;

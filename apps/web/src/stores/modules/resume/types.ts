@@ -1,27 +1,27 @@
 // 简历数据类型
 export interface Data {
-  // 用户信息
+  // 个人信息
   user: {
     // 用户数据
     data: {
-    // 求职岗位
-    position?: string;
-    // 姓名
-    name: string;
-    // 出生日期
-    birthday: string;
-    // 手机号
-    phone: string;
-    // 邮箱
-    email?: string;
-    // 工作时间
-    workTime?: string;
-    // 性别
-    sex?: string;
-    // 所在城市
-    city?: string;
-    // 头像 Base64
-    avatar?: string;
+      // 求职岗位
+      position?: string;
+      // 姓名
+      name: string;
+      // 出生日期
+      birthday: string;
+      // 手机号
+      phone: string;
+      // 邮箱
+      email?: string;
+      // 工作时间
+      workTime?: string;
+      // 性别
+      sex?: string;
+      // 所在城市
+      city?: string;
+      // 头像 Base64
+      avatar?: string;
     };
   };
   // 技能
