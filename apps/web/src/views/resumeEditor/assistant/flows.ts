@@ -10,7 +10,7 @@ const getResumeCreateModuleOptions = (): string[] => {
   if (!data) return [];
   const builtinOrder = new Map(DEFAULT_MODULE_NAMES.map((item, index) => [item.key, index]));
   return Object.keys(data)
-    .filter((key) => key !== "user" && key !== "account")
+    .filter((key) => key !== "user")
     .sort((a, b) => {
       const orderA = builtinOrder.get(a) ?? Number.MAX_SAFE_INTEGER;
       const orderB = builtinOrder.get(b) ?? Number.MAX_SAFE_INTEGER;
