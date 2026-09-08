@@ -21,6 +21,11 @@ import { createRecordSkeleton } from "./hooks/useAddRecord";
 
 import { debounce, merge } from "lodash-es";
 export type ResumeLayout = "list" | "three" | "ai";
+export type DesensitizeLevel = "normal" | "strict";
+export type DesensitizeConfig = {
+  disabled: boolean;
+  level: DesensitizeLevel;
+};
 
 export const useResumeStore = defineStore(
   "resume",
@@ -47,8 +52,11 @@ export const useResumeStore = defineStore(
     const assistantWidth = ref(DEFAULT_EDITOR.assistantWidth);
     // 专注写作模式（临时状态，不持久化）
     const focusMode = ref(false);
-    // 是否开启 AI 请求脱敏
-    const desensitizeMode = ref(false);
+    // AI 请求脱敏配置：禁用时不脱敏，否则按等级过滤敏感字段
+    const desensitizeMode = ref<DesensitizeConfig>({
+      disabled: true,
+      level: "normal",
+    });
     // 是否正在打印
     const isPrinting = ref(false);
     // 是否AI生成中

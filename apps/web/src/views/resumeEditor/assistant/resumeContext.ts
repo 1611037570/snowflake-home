@@ -5,6 +5,9 @@ import { storeToRefs } from "pinia";
 export const useResumeContext = () => {
   const resumeStore = useResumeStore();
   const { selectedModule, desensitizeMode } = storeToRefs(resumeStore);
+  const NORMAL_USER_SENSITIVE_KEYS = ["name", "phone", "email"];
+  const PHONE_PATTERN = /1[3-9]\d{9}/g;
+  const EMAIL_PATTERN = /[\w.%+-]+@[\w.-]+\.[A-Za-z]{2,}/g;
 
   // 发送给 AI 的记录内 UI 状态字段：AI 不需要也不应修改
   // collapsed：记录在编辑区的折叠状态，不参与内容翻译与优化
@@ -24,29 +27,62 @@ export const useResumeContext = () => {
     return value;
   };
 
+  // 脱敏文本中的姓名、手机号和邮箱，避免敏感信息藏在经历描述中
+  const sanitizeSensitiveText = (value: string, name: string) => {
+    let result = value.replace(EMAIL_PATTERN, "[邮箱已脱敏]").replace(PHONE_PATTERN, "[手机号已脱敏]");
+    if (name) result = result.split(name).join("[姓名已脱敏]");
+    return result;
+  };
+
+  // 严格脱敏时额外移除工作与教育名称
+  const sanitizeNestedData = (
+    value: any,
+    name: string,
+    removeOrganizationName: boolean,
+  ): any => {
+    if (typeof value === "string") return sanitizeSensitiveText(value, name);
+    if (Array.isArray(value)) {
+      return value.map((item) =>
+        sanitizeNestedData(item, name, removeOrganizationName),
+      );
+    }
+    if (!value || typeof value !== "object") return value;
+    const next: Record<string, any> = {};
+    Object.entries(value).forEach(([key, item]) => {
+      if (removeOrganizationName && key === "name") return;
+      next[key] = sanitizeNestedData(item, name, removeOrganizationName);
+    });
+    return next;
+  };
+
   // 读取当前简历数据：跟随用户在 AI 助手里的模块选择；未选择任何模块时返回整份简历
   const getResumeData = () => {
     const data = resumeStore.currentData;
     if (!data) return {};
     const result: Record<string, any> = {};
+    const userName = typeof data.user?.data?.name === "string" ? data.user.data.name : "";
     const selectedKeys = selectedModule.value.map((item) => item.key);
     const keys = selectedKeys.length ? selectedKeys : Object.keys(data);
     keys.forEach((key) => {
       const module = data[key];
       if (!module || typeof module !== "object" || !("data" in module)) return;
       const clone = JSON.parse(JSON.stringify(module.data));
+      const shouldDesensitize = !desensitizeMode.value.disabled;
+      const strict = shouldDesensitize && desensitizeMode.value.level === "strict";
       // 读取 user 模块时排除头像，避免请求体过大
       if (key === "user") delete clone.avatar;
-      // 开启脱敏时不上传姓名、手机号和邮箱
-      if (key === "user" && desensitizeMode.value) {
-        delete clone.name;
-        delete clone.phone;
-        delete clone.email;
+      // 普通脱敏移除直接身份字段，严格脱敏额外移除公司和学校名称
+      if (key === "user" && shouldDesensitize) {
+        NORMAL_USER_SENSITIVE_KEYS.forEach((field) => delete clone[field]);
       }
       // 读取图片作品模块时排除作品图片，避免请求体过大
       if (key === "image" && Array.isArray(clone)) clone.forEach((item: any) => delete item?.img);
+      const removeOrganizationName = strict && ["work", "education"].includes(key);
+      const sanitized = shouldDesensitize
+        ? sanitizeNestedData(clone, userName, removeOrganizationName)
+        : clone;
       // 排除记录 UI 状态，避免 AI 误读或写回折叠字段
-      result[key] = { data: stripRecordUiState(clone) };
+      result[key] = { data: stripRecordUiState(sanitized) };
     });
     return result;
   };
