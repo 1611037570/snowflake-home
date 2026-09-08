@@ -17,6 +17,7 @@ import { useInitMask } from "./useInitMask";
 import { useResumePreviewData } from "./useResumePreviewData";
 import { useModuleInteractions } from "./useModuleInteractions";
 import { getPreviewText } from "../i18n";
+import { useResumeStats } from "../../toolbar/modules/progress/useResumeStats";
 
 const resumeStore = useResumeStore();
 const { selectedModule, system } = storeToRefs(resumeStore);
@@ -53,6 +54,9 @@ const uid = `rp-${Math.random().toString(36).slice(2, 8)}`;
 // ---------- 数据代理（始终基于 props 传入的数据，多实例互不干扰）----------
 const dataRef = computed(() => props.item.data);
 useResumePreviewData(dataRef, isEdit);
+// 复用编辑器总字数统计判断空简历，避免空数据时预览区无内容。
+const resumeStats = useResumeStats(dataRef);
+const isEmpty = computed(() => resumeStats.value.total.total === 0);
 
 // ---------- 主题样式注入（数据源为 item.ui）----------
 const ui = computed(() => props.item.ui || {});
@@ -106,9 +110,30 @@ defineExpose({ rootEl: rootRef, measureEl: measureRef, moduleList });
     >
       <SfIcon icon="lucide:loader-circle" :size="26" class="animate-spin text-sf-theme" />
     </div>
+    <!-- 空简历使用提示页，保留标准页面尺寸与主题样式。 -->
+    <div v-if="isEmpty" ref="rootRef" class="relative flex flex-col">
+      <ResumePageShell
+        :ui="ui"
+        :styles="{ paddingStyle, fontStyle, lineHeightStyle }"
+        :show-page-number="showPageNumber"
+        :page-index="0"
+        :page-count="1"
+        :on-el="setSingleMeasure"
+      >
+        <div class="flex flex-1 flex-col items-center justify-center gap-3 text-center">
+          <div class="flex h-15 w-15 items-center justify-center rounded-full bg-sf-theme-2">
+            <SfIcon icon="lucide:file-text" size="7" class="text-sf-theme" />
+          </div>
+          <div class="flex flex-col gap-3">
+            <span class="text-lg font-black text-sf-text">当前还没有数据</span>
+            <span class="text-sm text-sf-text-2">尝试输入一点内容吧</span>
+          </div>
+        </div>
+      </ResumePageShell>
+    </div>
     <!-- 缩略图视为单页：仅渲染第一页内容，测量与渲染合一，无需分页裁剪；根元素由组件回传 -->
     <PreviewSinglePage
-      v-if="isThumb"
+      v-else-if="isThumb"
       :all-modules="allModules"
       :ui="ui"
       :styles="{ paddingStyle, fontStyle, lineHeightStyle }"
