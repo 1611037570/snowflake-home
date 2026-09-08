@@ -3,27 +3,33 @@ import { allConfig } from "@/stores/modules/resume/formConfig";
 // 语义化写操作：明确到模块、记录与字段，避免让模型自行拼装整棵数据
 export type ResumeWriteOp =
   | {
-      op: "update"; // 修改已有字段
-      module: string; // 模块 key，如 user/work/project/education/skill/account
-      index?: number; // 数组型模块的记录下标（从 0 开始），对象型模块不填
-      field: string; // 要修改的字段名
+      op: "updateModule"; // 修改模块级 data 字段（如自定义模块 title）
+      module: string;
+      field: string;
       value: unknown; // 修改后的值
     }
   | {
-      op: "add"; // 数组型模块新增记录
-      module: string; // 模块 key，如 work/project/account/education
+      op: "updateRecord"; // 修改记录字段
+      module: string;
+      index: number; // 记录下标（从 0 开始）
+      field: string;
+      value: unknown;
+    }
+  | {
+      op: "addRecord"; // 数组型模块新增记录
+      module: string;
       record?: Record<string, unknown>; // 新记录内容，键为字段名，值直接写入
     }
   | {
-      op: "delete"; // 数组型模块删除记录
+      op: "deleteRecord"; // 删除记录
       module: string;
-      index: number; // 要删除的记录下标（从 0 开始）
+      index: number;
     }
   | {
-      op: "move"; // 数组型模块调整记录顺序
+      op: "moveRecord"; // 调整记录顺序
       module: string;
-      from: number; // 原下标（从 0 开始）
-      to: number; // 目标下标（从 0 开始）
+      from: number;
+      to: number;
     };
 
 // 字段格式规则：由 formConfig 的组件类型推导，作为 operations 校验依据
@@ -149,6 +155,15 @@ export const validateResumeEdits = (
       errors.push(`${order}格式无效`);
       return;
     }
+    const rawOp = (op as { op?: string }).op;
+    if (
+      !["updateModule", "updateRecord", "addRecord", "deleteRecord", "moveRecord"].includes(
+        rawOp ?? "",
+      )
+    ) {
+      errors.push(`${order}：不支持的操作类型 ${rawOp ?? "未知"}`);
+      return;
+    }
     const moduleView = dataView?.[op.module];
     if (!moduleView) {
       errors.push(`${order}：模块 ${op.module} 不存在于当前简历`);
@@ -156,7 +171,7 @@ export const validateResumeEdits = (
     }
     const moduleRules = getModuleRules(op.module);
     const records = getModuleRecords(moduleView);
-    if (op.op === "add") {
+    if (op.op === "addRecord") {
       if (!records) {
         errors.push(`${order}：模块 ${op.module} 不是数组型模块，不能执行 add`);
         return;
@@ -176,7 +191,7 @@ export const validateResumeEdits = (
       });
       return;
     }
-    if (op.op === "delete") {
+    if (op.op === "deleteRecord") {
       if (!records) {
         errors.push(`${order}：模块 ${op.module} 不是数组型模块，不能执行 delete`);
         return;
@@ -193,7 +208,7 @@ export const validateResumeEdits = (
       }
       return;
     }
-    if (op.op === "move") {
+    if (op.op === "moveRecord") {
       if (!records) {
         errors.push(`${order}：模块 ${op.module} 不是数组型模块，不能执行 move`);
         return;
@@ -206,25 +221,21 @@ export const validateResumeEdits = (
       }
       return;
     }
-    if (op.op !== "update") {
-      errors.push(`${order}：不支持的操作类型 ${(op as any).op}`);
-      return;
-    }
     if (typeof op.field !== "string") {
-      errors.push(`${order}：update 必须提供 field`);
+      errors.push(`${order}：必须提供 field`);
       return;
     }
     if (!("value" in op)) {
-      errors.push(`${order}：update 必须提供 value`);
+      errors.push(`${order}：必须提供 value`);
       return;
     }
-    if (op.index != null) {
-      if (!records) {
-        errors.push(`${order}：模块 ${op.module} 不存在记录数组，不能按 index 更新`);
+    if (op.op === "updateRecord") {
+      if (typeof op.index !== "number" || !Number.isInteger(op.index)) {
+        errors.push(`${order}：updateRecord 必须提供合法 index`);
         return;
       }
-      if (typeof op.index !== "number" || !Number.isInteger(op.index)) {
-        errors.push(`${order}：数组型模块 ${op.module} 的 update 必须提供 index`);
+      if (!records) {
+        errors.push(`${order}：模块 ${op.module} 不存在记录数组，不能执行 updateRecord`);
         return;
       }
       const record = records[op.index];
@@ -243,39 +254,14 @@ export const validateResumeEdits = (
     }
     const isDataObject =
       moduleView.data && typeof moduleView.data === "object" && !Array.isArray(moduleView.data);
-    if (records && !isDataObject) {
-      errors.push(`${order}：数组型模块 ${op.module} 的 update 必须提供 index`);
-      return;
-    }
     if (
-      !moduleView.data ||
-      typeof moduleView.data !== "object" ||
+      !isDataObject ||
       !(op.field in (moduleView.data as Record<string, unknown>))
     ) {
-      errors.push(`${order}：模块 ${op.module} 不存在字段 ${op.field}`);
+      errors.push(`${order}：模块 ${op.module} 不存在模块级字段 ${op.field}`);
       return;
     }
     validateFieldValue(op.module, op.field, op.value, moduleRules.get(op.field), errors);
   });
   return errors;
-};
-
-// 把语义化写操作合并为直接写入所需的树形 patch
-export const buildPatch = (operations: ResumeWriteOp[]): Record<string, any> => {
-  const patch: Record<string, any> = {};
-  operations.forEach((op) => {
-    if (!op || op.op !== "update") return;
-    const isCustom = op.module.startsWith("custom");
-    const dataContainer = isCustom && op.index != null ? { list: [] } : op.index == null ? {} : [];
-    const modulePatch = patch[op.module] ?? { data: dataContainer };
-    patch[op.module] = modulePatch;
-    if (op.index == null) {
-      modulePatch.data[op.field] = op.value;
-    } else {
-      const target = isCustom ? modulePatch.data.list : modulePatch.data;
-      const record = (target[op.index] ??= {});
-      record[op.field] = op.value;
-    }
-  });
-  return patch;
 };

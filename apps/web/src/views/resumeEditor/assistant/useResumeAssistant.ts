@@ -9,10 +9,7 @@ import { createResumeTools, RESUME_LANG_CODES } from "./resumeTools";
 import type { AssistantConfig } from "./types";
 
 // 简历助手唯一组装器：入口只消费本模块产出的 config 与创建对话方法
-export const useResumeAssistant = (
-  applyDataPatch?: (patch: Record<string, any>) => string[],
-  addDataRecord?: (moduleKey: string) => number,
-) => {
+export const useResumeAssistant = (addDataRecord?: (moduleKey: string) => number) => {
   const aiStore = useAiStore();
   const resumeStore = useResumeStore();
   const { isGenerating } = storeToRefs(resumeStore);
@@ -20,9 +17,9 @@ export const useResumeAssistant = (
   const resumeContext = useResumeContext();
 
   // 写操作缓冲：生成期间工具先不落数据，成功回复后再统一写入，避免中间状态暴露给用户
-  const realApplyDataPatch = applyDataPatch ?? (() => []);
   const pendingWrites: Array<
-    | { type: "patch"; patch: Record<string, any> }
+    | { type: "module"; module: string; field: string; value: unknown }
+    | { type: "record"; module: string; index: number; field: string; value: unknown }
     | { type: "add"; module: string }
     | { type: "delete"; module: string; index: number }
     | { type: "move"; module: string; from: number; to: number }
@@ -31,19 +28,16 @@ export const useResumeAssistant = (
   const pendingAddCount: Record<string, number> = {};
   let bufferingWrites = false;
 
-  const bufferedApplyPatch = (patch: Record<string, any>): string[] => {
-    if (bufferingWrites) {
-      pendingWrites.push({ type: "patch", patch });
-      return [];
-    }
-    return realApplyDataPatch(patch);
-  };
-
   const bufferedAddRecord = (moduleKey: string): number => {
     if (!bufferingWrites) return addDataRecord?.(moduleKey) ?? -1;
     const module = (resumeStore.currentData as any)?.[moduleKey];
-    if (!module || !Array.isArray(module.data)) return -1;
-    const index = module.data.length + (pendingAddCount[moduleKey] ?? 0);
+    const records = Array.isArray(module?.data)
+      ? module.data
+      : Array.isArray(module?.data?.list)
+        ? module.data.list
+        : null;
+    if (!records) return -1;
+    const index = records.length + (pendingAddCount[moduleKey] ?? 0);
     pendingAddCount[moduleKey] = (pendingAddCount[moduleKey] ?? 0) + 1;
     pendingWrites.push({ type: "add", module: moduleKey });
     return index;
@@ -52,6 +46,29 @@ export const useResumeAssistant = (
   const bufferedRemoveRecord = (moduleKey: string, index: number): boolean => {
     if (!bufferingWrites) return resumeStore.removeDataRecord(moduleKey, index);
     pendingWrites.push({ type: "delete", module: moduleKey, index });
+    return true;
+  };
+
+  const bufferedUpdateModuleField = (
+    moduleKey: string,
+    field: string,
+    value: unknown,
+  ): boolean => {
+    if (!bufferingWrites) return resumeStore.updateModuleField(moduleKey, field, value);
+    pendingWrites.push({ type: "module", module: moduleKey, field, value });
+    return true;
+  };
+
+  const bufferedUpdateRecordField = (
+    moduleKey: string,
+    index: number,
+    field: string,
+    value: unknown,
+  ): boolean => {
+    if (!bufferingWrites) {
+      return resumeStore.updateRecordField(moduleKey, index, field, value);
+    }
+    pendingWrites.push({ type: "record", module: moduleKey, index, field, value });
     return true;
   };
 
@@ -84,8 +101,12 @@ export const useResumeAssistant = (
       if (item.type === "add") addDataRecord?.(item.module);
       else if (item.type === "delete") resumeStore.removeDataRecord(item.module, item.index);
       else if (item.type === "move") resumeStore.moveDataRecord(item.module, item.from, item.to);
+      else if (item.type === "module") {
+        resumeStore.updateModuleField(item.module, item.field, item.value);
+      } else if (item.type === "record") {
+        resumeStore.updateRecordField(item.module, item.index, item.field, item.value);
+      }
       else if (item.type === "lang") updateCurrentLang(item.language);
-      else realApplyDataPatch(item.patch);
     });
     return writes.length > 0;
   };
@@ -118,7 +139,8 @@ export const useResumeAssistant = (
         addDataRecord: bufferedAddRecord,
         removeDataRecord: bufferedRemoveRecord,
         moveDataRecord: bufferedMoveRecord,
-        applyPatch: bufferedApplyPatch,
+        updateModuleField: bufferedUpdateModuleField,
+        updateRecordField: bufferedUpdateRecordField,
         updateLanguage: bufferedUpdateLanguage,
       }),
     ],

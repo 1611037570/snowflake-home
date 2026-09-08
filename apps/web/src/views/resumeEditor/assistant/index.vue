@@ -17,7 +17,6 @@ const aiStore = useAiStore();
 const resumeStore = useResumeStore();
 // 组装简历域技能、工具与对话创建方法，入口不再直接拼接系统消息
 const { config: assistantConfig, createChat: createAssistantChat } = useResumeAssistant(
-  resumeStore.applyAiDataPatch,
   resumeStore.addDataRecord,
 );
 // 把会话工厂注册到 ai store，header 等入口可直接从 pinia 调用新建话题
