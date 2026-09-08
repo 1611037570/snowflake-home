@@ -36,8 +36,17 @@ export const DEFAULT_USER_FORM = [
         prop: "hidden",
         defaultValue: false,
       },
+      // 归档开关：控制模块是否从编辑器主区域移除
+      {
+        source: ["user", "archived"],
+        prop: "archived",
+        defaultValue: false,
+      },
     ],
-    checks: { hidden: { path: ["user", "hidden"] } },
+    checks: {
+      hidden: { path: ["user", "hidden"] },
+      archived: { path: ["user", "archived"] },
+    },
     slot: "default",
     fields: [
       // 头像
