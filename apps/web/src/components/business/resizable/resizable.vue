@@ -1,7 +1,7 @@
 <template>
   <div class="relative h-full" :style="{ width: `${size}px` }">
     <slot />
-    <!-- 线条仅在悬停拖拽块时显示 -->
+    <!-- 拖拽块常显，鼠标进入拖拽区域时显示全高线条 -->
     <div
       class="group absolute top-0 z-10 h-full w-3"
       :class="position === 'left' ? '-left-1.5' : '-right-1.5'"
