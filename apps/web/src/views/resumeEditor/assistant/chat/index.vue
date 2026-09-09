@@ -62,8 +62,7 @@ const followOutput = ref(true);
 // 滚动监听，用于显示回到底部按钮
 const scrollTarget = computed(() => chatContainer.value?.wrapRef);
 const { arrivedState } = useScroll(scrollTarget, {
-  offset: { bottom: 100 },
-  // 每次滚动后按是否接近底部同步跟随状态
+  // 每次滚动后按是否到达底部同步跟随状态
   onScroll: () => {
     followOutput.value = arrivedState.bottom;
   },
@@ -363,7 +362,6 @@ const handleFlowInput = (content) => {
         />
       </div>
     </SfScrollbar>
-
     <!-- 滚动到底部按钮 -->
     <Transition
       enter-active-class="transition duration-200 ease-out"
