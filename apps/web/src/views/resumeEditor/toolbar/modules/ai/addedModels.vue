@@ -1,23 +1,69 @@
 <script setup lang="ts">
-import { computed } from "vue";
+import { computed, ref } from "vue";
 import { storeToRefs } from "pinia";
-import { ElMessageBox } from "element-plus";
+import { ElMessage, ElMessageBox } from "element-plus";
 import { PROVIDER_NAMES } from "@/configs";
 import { useAiStore } from "@/stores/modules/ai";
+import { LLM } from "@/apis";
 
 const emit = defineEmits<{ jumpAdd: [] }>();
 
 const aiStore = useAiStore();
 const { activeModel, modelList } = storeToRefs(aiStore);
+const balanceMap = ref<Record<string, string>>({});
+const balanceLoading = ref<Record<string, boolean>>({});
 
 // 列表数据：已添加模型（雪花服务作为普通条目添加后同样展示于此）
 const displayList = computed(() =>
   modelList.value.map((m: any) => ({
     id: m.id,
     name: m.name || m.model || PROVIDER_NAMES[m.provider] || m.provider,
+    provider: m.provider,
+    model: m.model,
+    key: m.key,
+    url: m.url,
+    protocol: m.protocol === "responses" ? "responses" : "chatCompletions",
+    balanceSupported: !m.builtin && m.name !== "雪花服务" && m.provider !== "snowflake",
     // active: activeModel.value === m.id,
   })),
 );
+
+// 格式化不同供应商的余额响应
+function formatBalance(item: any, data: any) {
+  if (item.provider === "deepseek") {
+    const balances = (data.balance_infos || [])
+      .map((balance: any) => `${balance.currency} ${balance.total_balance}`)
+      .join(" / ");
+    return balances || "暂无余额";
+  }
+  if (item.provider === "ark") {
+    return data?.Result?.AvailableBalance ?? data?.result?.AvailableBalance ?? "暂无余额";
+  }
+  return data?.total_available ?? data?.totalAvailable ?? "暂无余额";
+}
+
+// 查询已添加模型的账户余额
+async function queryBalance(item: any) {
+  if (!item.balanceSupported || balanceLoading.value[item.id]) return;
+  balanceLoading.value[item.id] = true;
+  try {
+    const llm = new LLM({
+      url: item.url,
+      apiKey: item.key,
+      provider: item.provider,
+      model: item.model,
+      protocol: item.protocol,
+    });
+    const data = await llm.getBalance();
+    const balance = formatBalance(item, data);
+    balanceMap.value[item.id] = balance;
+    ElMessage.success(`当前余额：${balance}`);
+  } catch (error: any) {
+    ElMessage.error(error?.message || "查询余额失败");
+  } finally {
+    balanceLoading.value[item.id] = false;
+  }
+}
 
 // 点击模型：切换为当前使用模型
 function selectModel(item: any) {
@@ -49,6 +95,23 @@ function removeModel(item: any) {
       <div class="flex min-w-0 flex-1 items-center gap-2">
         <span class="truncate">{{ item.name }}</span>
         <span v-if="activeModel === item.id" class="text-sf-theme">已选中</span>
+      </div>
+
+      <div class="flex shrink-0 items-center gap-3">
+        <span v-if="balanceMap[item.id]" class="text-xs text-sf-text-3">
+          {{ balanceMap[item.id] }}
+        </span>
+        <el-button
+          v-if="item.balanceSupported"
+          link
+          type="primary"
+          size="small"
+          :loading="balanceLoading[item.id]"
+          @mousedown.stop
+          @click.stop="queryBalance(item)"
+        >
+          查询余额
+        </el-button>
       </div>
 
       <span
