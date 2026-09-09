@@ -12,4 +12,5 @@ export const snowflake = {
   provider: "openai",
   apiKey: "sk-f00b980cb4544e1a97b9af782f4a708d",
   model: "deepseek-v4-flash",
+  protocol: "chatCompletions" as const,
 };

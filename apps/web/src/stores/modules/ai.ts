@@ -45,6 +45,7 @@ export type Message = {
   // 上下文标记：为 true 时仅作界面展示，不随请求发送给模型
   skipContext?: boolean;
 };
+export type ModelProtocol = "chatCompletions" | "responses";
 // 已添加的模型（用户实际使用的模型配置）
 export type ModelItem = {
   // 模型唯一标识
@@ -59,6 +60,8 @@ export type ModelItem = {
   key: string;
   // 完整接口地址
   url: string;
+  // 接口协议类型
+  protocol: ModelProtocol;
 };
 // 添加模型时提交的配置（表单或内置模板，不含 id）
 type ModelDraft = Omit<ModelItem, "id">;
@@ -212,6 +215,7 @@ export const useAiStore = defineStore(
         model: draft.model,
         key: draft.key,
         url: draft.url,
+        protocol: draft.protocol,
       };
       modelList.value.push(deployed);
       return deployed;

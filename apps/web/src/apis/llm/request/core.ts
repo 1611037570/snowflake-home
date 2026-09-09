@@ -40,6 +40,8 @@ class LLM {
   apiKey;
   /** @type {string|undefined} 默认模型名，request 时自动注入 */
   model;
+  /** @type {string} 接口协议类型 */
+  protocol;
   /**
    * 初始化 LLM 实例
    * @param {Object} config - 配置对象
@@ -48,13 +50,20 @@ class LLM {
    * @param {string} [config.apiKey] - 请求认证所需的 API Key
    * @param {string} [config.model] - 默认模型名
    */
-  constructor(config: { url?: string; provider?: string; apiKey?: string; model?: string }) {
-    const { url = "", provider = "cool", apiKey, model } = config;
+  constructor(config: {
+    url?: string;
+    provider?: string;
+    apiKey?: string;
+    model?: string;
+    protocol?: "chatCompletions" | "responses";
+  }) {
+    const { url = "", provider = "cool", apiKey, model, protocol = "chatCompletions" } = config;
 
     this.url = url;
     this.provider = provider;
     this.apiKey = apiKey;
     this.model = model;
+    this.protocol = protocol;
 
     // 校验配置完整性，任一缺失时输出警告
     if (!this.url || !this.provider || !this.apiKey || !this.model) {
@@ -68,9 +77,9 @@ class LLM {
     const options: any = {
       thinking: { type: "disabled" },
     };
-    if (this.provider === "openai") {
+    if (this.protocol === "chatCompletions") {
       options["messages"] = [{ role: "user", content: "连接测试，请回复 OK" }];
-    } else if (this.provider === "ark") {
+    } else if (this.protocol === "responses") {
       options["input"] = [{ role: "user", content: "连接测试，请回复 OK" }];
     }
     const { sendFn } = await this.request({

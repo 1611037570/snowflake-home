@@ -137,7 +137,7 @@ const handleAIResponse = async () => {
     // 当前激活的自定义配置
     const activeConfig = modelList.value.find((item) => item.id === activeModel.value);
     const options = {
-      [llm.provider === "openai" ? "messages" : "input"]: messages,
+      [llm.protocol === "chatCompletions" ? "messages" : "input"]: messages,
       thinking: {
         // 根据设置控制深度思考模式
         // type: thinkMode.value ? "enabled" : "disabled",
