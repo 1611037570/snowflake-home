@@ -1,13 +1,13 @@
 <script setup>
 import { useResumeStore } from "@/stores";
-import { getExportFileName, getResumeTitle } from "../../resumeName.ts";
+import { getExportFileName, resumeTitle } from "../../resumeName.ts";
 import eventBus from "@/utils/modules/eventBus";
 import { storeToRefs } from "pinia";
 import { ref } from "vue";
 
 const visible = ref(false);
 const resumeStore = useResumeStore();
-const { currentItem, currentData, isPrinting } = storeToRefs(resumeStore);
+const { currentItem, isPrinting } = storeToRefs(resumeStore);
 
 // 导出当前完整简历为 JSON 文件（data/config/ui），支持无损导入恢复
 const exportConfig = () => {
@@ -17,7 +17,7 @@ const exportConfig = () => {
   const link = document.createElement("a");
   link.href = url;
   // 统一命名：年-月-日-简历标题（标题取自简历数据，非配置）
-  link.download = getExportFileName(getResumeTitle(currentData.value), "json");
+  link.download = getExportFileName(resumeTitle.value, "json");
   link.click();
   URL.revokeObjectURL(url);
 };
