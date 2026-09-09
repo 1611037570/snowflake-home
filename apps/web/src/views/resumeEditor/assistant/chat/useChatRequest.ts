@@ -137,7 +137,11 @@ export const useChatRequest = ({
   };
 
   // 统一状态处理器：把 reasoning/content/total_tokens 映射为请求状态与耗时计数
-  const createChatState = (lastMsg: Message | null, isCurrent: () => boolean) => {
+  const createChatState = (
+    lastMsg: Message | null,
+    isCurrent: () => boolean,
+    onUsage: (tokens: number) => void,
+  ) => {
     const timers: ChatTimers = { thinking: null, reply: null };
     activeTimers = timers;
 
@@ -177,7 +181,7 @@ export const useChatRequest = ({
           }, 1000);
         }
       } else if (type === "total_tokens") {
-        lastMsg.total_tokens = data;
+        onUsage(data);
       }
     };
 
@@ -208,6 +212,14 @@ export const useChatRequest = ({
     // 最后一条消息（即AI回复消息）的引用与状态处理器
     let lastMsg: Message | null = null;
     let state: ReturnType<typeof createChatState> | null = null;
+    let totalTokenUsage = 0;
+    // 累加 ReAct 每一轮模型请求返回的 token 用量
+    const addTokenUsage = (value: unknown) => {
+      const tokens = typeof value === "number" ? value : Number(value);
+      if (!Number.isFinite(tokens) || tokens <= 0) return;
+      totalTokenUsage += tokens;
+      if (lastMsg) lastMsg.total_tokens = totalTokenUsage;
+    };
 
     try {
       // 请求前调用方准备（如临时裁剪头像等大字段）
@@ -247,7 +259,9 @@ export const useChatRequest = ({
       // 获取刚添加的AI消息引用
       lastMsg = currentMessages.value[currentMessages.value.length - 1] ?? null;
       if (lastMsg && backup != null) requestBackups.set(lastMsg, backup);
-      state = createChatState(lastMsg, isCurrentRequest);
+      state = createChatState(lastMsg, isCurrentRequest, addTokenUsage);
+      // 请求开始即启动计时，避免首个模型事件返回前没有耗时
+      state.onEvent("reasoning", null);
 
       // 所有请求统一走 React 编排，技能规范已随对话系统消息提供
       const llm = getLLM();

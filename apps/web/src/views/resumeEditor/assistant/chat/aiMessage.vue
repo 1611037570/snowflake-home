@@ -1,6 +1,6 @@
 <script setup>
 import { useThemeStore } from "@/stores";
-import { useClipboard } from "@vueuse/core";
+import { TransitionPresets, useClipboard, useTransition } from "@vueuse/core";
 import { ElMessage } from "element-plus";
 import { storeToRefs } from "pinia";
 import ToggleButton from "./toggleButton.vue";
@@ -78,7 +78,17 @@ const statusText = computed(() => {
   return "生成中";
 });
 const totalTime = computed(() => (props.msg.thoughtTime || 0) + (props.msg.contentTime || 0));
-const showTotalTime = computed(() => props.msg.requestStatus === "success" && totalTime.value > 0);
+const showTotalTime = computed(
+  () => (props.msg.typing || props.msg.requestStatus === "success") && totalTime.value > 0,
+);
+// token 数变化时使用过渡动画平滑展示
+const animatedTokens = useTransition(
+  computed(() => Number(props.msg.total_tokens) || 0),
+  {
+    duration: 500,
+    transition: TransitionPresets.easeOutCubic,
+  },
+);
 </script>
 
 <template>
@@ -108,7 +118,7 @@ const showTotalTime = computed(() => props.msg.requestStatus === "success" && to
 
       <div class="flex items-center gap-3 text-[11px] text-sf-text-2">
         <div v-if="msg.total_tokens" class="flex items-center gap-1">
-          <span>{{ msg.total_tokens }} tokens</span>
+          <span>{{ Math.round(animatedTokens) }} tokens</span>
         </div>
         <span v-if="showTotalTime"> 耗时 {{ totalTime }} 秒 </span>
       </div>
