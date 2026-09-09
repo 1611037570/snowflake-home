@@ -31,9 +31,7 @@ const heightWeightText = computed(() => {
   const hasHeight = height != null && height !== "";
   const hasWeight = weight != null && weight !== "";
   if (!hasHeight && !hasWeight) return "";
-  return [hasHeight ? `${height}cm` : "", hasWeight ? `${weight}kg` : ""]
-    .filter(Boolean)
-    .join("/");
+  return [hasHeight ? `${height}cm` : "", hasWeight ? `${weight}kg` : ""].filter(Boolean).join("/");
 });
 const secondaryItems = computed(() => {
   const items = [];
@@ -79,23 +77,22 @@ const secondaryItems = computed(() => {
 <template>
   <div
     v-if="hasPhone || hasEmail || secondaryItems.length"
-    class="flex max-w-full min-w-0 flex-wrap items-center gap-x-3"
-    :class="{ 'justify-center': props.centered }"
+    class="max-w-full min-w-0 items-center"
+    :class="
+      props.centered
+        ? 'flex flex-wrap justify-center gap-3'
+        : 'grid grid-cols-[repeat(auto-fit,minmax(min(100%,13rem),1fr))] gap-3'
+    "
   >
-    <div v-if="hasPhone" class="flex max-w-full min-w-0 items-center">
+    <div v-if="hasPhone" class="grid min-w-0 grid-cols-[auto_minmax(0,1fr)] items-center gap-x-1">
       <SfIcon v-if="isIconMode" icon="mdi:phone" size="3.5" class="mr-1 shrink-0" />
       <div v-else class="pr-1">{{ phoneLabel }}</div>
       <div class="max-w-full min-w-0 font-medium">
         <ResumeField :model-value="user.phone" />
       </div>
     </div>
-    <div v-if="hasEmail" class="flex max-w-full min-w-0 flex-wrap items-center">
-      <SfIcon
-        v-if="isIconMode"
-        icon="mdi:email-outline"
-        size="3.5"
-        class="mr-1 shrink-0"
-      />
+    <div v-if="hasEmail" class="grid min-w-0 grid-cols-[auto_minmax(0,1fr)] items-center gap-x-1">
+      <SfIcon v-if="isIconMode" icon="mdi:email-outline" size="3.5" class="mr-1 shrink-0" />
       <div v-else class="pr-1">{{ emailLabel }}</div>
       <div class="max-w-full min-w-0 font-medium">
         <ResumeField :model-value="user.email" />
@@ -104,7 +101,7 @@ const secondaryItems = computed(() => {
     <div
       v-for="item in secondaryItems"
       :key="item.key || item.text"
-      class="flex max-w-full min-w-0 items-center"
+      class="grid min-w-0 grid-cols-[auto_minmax(0,1fr)] items-center gap-x-1"
     >
       <SfIcon v-if="isIconMode" :icon="item.icon" size="3.5" class="mr-1 shrink-0" />
       <div v-else class="pr-1">{{ item.label }}</div>

@@ -23,7 +23,7 @@ const themeColor = inject("themeColor");
   <!-- 左：头像在左，信息区在右，元信息撑满剩余宽度避免导出换行错位 -->
   <div v-if="position === 'left'" class="flex flex-wrap items-center">
     <UserAvatar class="mr-3" />
-    <div class="min-w-0 max-w-full flex-1">
+    <div class="max-w-full min-w-0 flex-1">
       <div class="flex flex-wrap items-center">
         <UserName />
         <UserMeta class="flex-1" />
@@ -34,7 +34,7 @@ const themeColor = inject("themeColor");
   <!-- 居中：头像在上，信息区垂直居中 -->
   <div v-else-if="position === 'center'" class="flex flex-col items-center">
     <UserAvatar class="mb-2" />
-    <div class="flex min-w-0 max-w-full flex-col items-center">
+    <div class="flex max-w-full min-w-0 flex-col items-center">
       <UserName />
       <div
         v-if="showDivider"
@@ -47,10 +47,10 @@ const themeColor = inject("themeColor");
   </div>
   <!-- 右：信息区在左，头像在右，元信息撑满剩余宽度 -->
   <div v-else class="flex flex-wrap items-center">
-    <div class="min-w-0 max-w-full flex-1">
+    <div class="max-w-full min-w-0 flex-1">
       <div class="flex flex-wrap items-center">
-        <UserName />
         <UserMeta class="flex-1" />
+        <UserName />
       </div>
       <UserContact class="w-full" />
     </div>
