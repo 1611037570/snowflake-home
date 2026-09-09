@@ -1,23 +1,20 @@
 <template>
   <div style="" class="relative w-full rounded-2xl" :class="bg">
     <!-- 编辑器实例创建成功后再挂载工具栏，避免工具栏在 editor 就绪前初始化报错 -->
-    <Toolbar
-      v-if="editorRef"
-      :editor="editorRef"
-      :defaultConfig="toolbarConfig"
-      :mode="mode"
-    />
-    <Editor
-      class="rounded-b-2xl"
-      style="overflow-y: hidden"
-      :style="{ height: height }"
-      v-model="valueHtml"
-      :defaultConfig="editorConfig"
-      :mode="mode"
-      @onCreated="handleCreated"
-      @onChange="handleChange"
-    />
-    <div class="pointer-events-none absolute right-3 bottom-3 z-10 text-xs text-sf-text-2">
+    <Toolbar v-if="editorRef" :editor="editorRef" :defaultConfig="toolbarConfig" :mode="mode" />
+    <!-- 使用项目统一滚动条承载编辑器内容 -->
+    <SfScrollbar :height="height" class="rounded-b-2xl">
+      <Editor
+        class="rounded-b-2xl"
+        :style="{ height: 'auto', minHeight: height }"
+        v-model="valueHtml"
+        :defaultConfig="editorConfig"
+        :mode="mode"
+        @onCreated="handleCreated"
+        @onChange="handleChange"
+      />
+    </SfScrollbar>
+    <div class="pointer-events-none absolute right-2 bottom-2 z-10 text-xs text-sf-text-2">
       {{ currentLength }}/{{ props.maxLength }}
     </div>
   </div>
@@ -66,7 +63,8 @@ onMounted(() => {});
 const toolbarConfig = {
   toolbarKeys: ["bold", "italic", "underline", "bulletedList", "numberedList", "undo", "redo"],
 };
-const editorConfig = { placeholder: "请输入内容..." };
+// 关闭编辑器内部滚动，避免出现嵌套滚动条
+const editorConfig = { placeholder: "请输入内容...", scroll: false };
 
 const mode = "simple"; // 或 'simple'
 
@@ -131,6 +129,13 @@ const handleChange = (editor) => {
 :deep(.w-e-text-container) {
   background: transparent;
   color: var(--color-sf-base);
+  height: auto !important;
+  padding: 0 !important;
+  padding-bottom: 3px !important;
+}
+// 让编辑器内容自然撑开，由外层滚动容器负责滚动
+:deep(.w-e-scroll) {
+  height: auto !important;
 }
 //
 :deep(.w-e-text-placeholder) {
