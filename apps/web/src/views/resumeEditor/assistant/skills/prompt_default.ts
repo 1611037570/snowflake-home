@@ -16,7 +16,7 @@ export const defaultPrompt = (): Skill => ({
 
 | 用户请求 | 先加载技能 |
 | :--- | :--- |
-| 简历翻译（中译英 / 英译中） | resume_translate |
+| 简历翻译 | resume_translate |
 | 面试自我介绍 | self_intro |
 | 打招呼语 | greeting |
 | 提供 JD 做匹配分析或对标优化 | job_match |
