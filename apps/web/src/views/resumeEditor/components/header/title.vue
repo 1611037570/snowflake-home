@@ -6,12 +6,7 @@ import { resumeTitle } from "../../resumeName";
 const resumeStore = useResumeStore();
 const { currentUsage } = storeToRefs(resumeStore);
 
-// 没有模式字段的旧数据按自定义标题兼容处理
-const isCustomTitle = computed(
-  () =>
-    currentUsage.value?.titleMode === "custom" ||
-    (!currentUsage.value?.titleMode && !!currentUsage.value?.customTitle),
-);
+const isCustomTitle = computed(() => currentUsage.value?.titleMode === "custom");
 const title = computed(() =>
   isCustomTitle.value && currentUsage.value?.customTitle
     ? currentUsage.value.customTitle
@@ -24,17 +19,21 @@ const pendingTitleMode = ref("auto");
 
 function openModal() {
   tempTitle.value = title.value;
-  pendingTitleMode.value = isCustomTitle.value ? "custom" : "auto";
+  pendingTitleMode.value = currentUsage.value?.titleMode || "auto";
   editTitleVisible.value = true;
 }
 
-function handleEditTitle() {
+function closeModal() {
+  editTitleVisible.value = false;
+}
+
+function handleSaveTitle() {
   const customValue = tempTitle.value.trim();
-  if (!currentUsage.value) return;
+  if (!currentUsage.value) return closeModal();
   const useCustomTitle = pendingTitleMode.value === "custom" && !!customValue;
   currentUsage.value.customTitle = useCustomTitle ? customValue : "";
   currentUsage.value.titleMode = useCustomTitle ? "custom" : "auto";
-  editTitleVisible.value = !editTitleVisible.value;
+  closeModal();
 }
 
 // 输入自定义内容后切换为自定义模式，等待点击保存才写入简历
@@ -50,7 +49,7 @@ function handleAutoTitle() {
 
 // 取消编辑并关闭弹窗，不保存临时标题
 function handleCancel() {
-  editTitleVisible.value = false;
+  closeModal();
 }
 </script>
 
@@ -77,7 +76,7 @@ function handleCancel() {
       </div>
       <div class="flex justify-end gap-3">
         <SfButton type="bg" @click="handleCancel">取消</SfButton>
-        <SfButton @click="handleEditTitle">保存</SfButton>
+        <SfButton @click="handleSaveTitle">保存</SfButton>
       </div>
     </div>
   </SfModal>

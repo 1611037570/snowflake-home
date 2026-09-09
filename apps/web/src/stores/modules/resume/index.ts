@@ -501,10 +501,6 @@ export const useResumeStore = defineStore(
     };
     const mergeResumeItem = (item: any) => {
       const merged = merge(structuredClone(DEFAULT_RESUME_ITEM), item);
-      // 兼容旧数据：没有标题模式时根据已有自定义标题恢复模式
-      if (!item?.usage?.titleMode) {
-        merged.usage.titleMode = merged.usage.customTitle ? "custom" : "auto";
-      }
       // 旧结构字段不再保留，统一以模板展开为准
       delete merged.fixedConfig;
       return merged;
