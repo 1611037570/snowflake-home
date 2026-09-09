@@ -1,7 +1,7 @@
 <script setup>
 import { computed, inject } from "vue";
-import ResumeField from "../../../components/resumeField/index.vue";
 import { getPreviewText } from "../../../i18n";
+import UserContactItem from "./userContactItem.vue";
 
 // 联系方式组件：标签支持图标 / 文字两种模式，对齐方式由使用方通过 class 控制
 const previewData = inject("previewData");
@@ -85,47 +85,49 @@ const secondaryItems = computed(() => {
   }
   return items;
 });
+// 统一整理联系方式和扩展信息，交由通用单项组件渲染
+const contactItems = computed(() => {
+  const items = [];
+  if (hasPhone.value) {
+    items.push({
+      key: "phone",
+      icon: "mdi:phone",
+      label: phoneLabel.value,
+    });
+  }
+  if (hasEmail.value) {
+    items.push({
+      key: "email",
+      icon: "mdi:email-outline",
+      label: emailLabel.value,
+    });
+  }
+  if (hasWechat.value) {
+    items.push({
+      key: "wechat",
+      icon: "mdi:wechat",
+      label: wechatLabel.value,
+    });
+  }
+  return [...items, ...secondaryItems.value];
+});
 </script>
 
 <template>
   <div
-    v-if="hasPhone || hasEmail || hasWechat || secondaryItems.length"
+    v-if="contactItems.length"
     class="max-w-full min-w-0 items-center"
     :class="layoutClass"
   >
-    <div v-if="hasPhone" class="grid min-w-0 grid-cols-[auto_minmax(0,1fr)] items-center gap-x-1">
-      <SfIcon v-if="isIconMode" icon="mdi:phone" size="3.5" class="mr-1 shrink-0" />
-      <div v-else class="pr-1">{{ phoneLabel }}</div>
-      <div class="max-w-full min-w-0 font-medium">
-        <ResumeField :model-value="user.phone" />
-      </div>
-    </div>
-    <div v-if="hasEmail" class="grid min-w-0 grid-cols-[auto_minmax(0,1fr)] items-center gap-x-1">
-      <SfIcon v-if="isIconMode" icon="mdi:email-outline" size="3.5" class="mr-1 shrink-0" />
-      <div v-else class="pr-1">{{ emailLabel }}</div>
-      <div class="max-w-full min-w-0 font-medium">
-        <ResumeField :model-value="user.email" />
-      </div>
-    </div>
-    <div v-if="hasWechat" class="grid min-w-0 grid-cols-[auto_minmax(0,1fr)] items-center gap-x-1">
-      <SfIcon v-if="isIconMode" icon="mdi:wechat" size="3.5" class="mr-1 shrink-0" />
-      <div v-else class="pr-1">{{ wechatLabel }}</div>
-      <div class="max-w-full min-w-0 font-medium">
-        <ResumeField :model-value="user.wechat" />
-      </div>
-    </div>
-    <div
-      v-for="item in secondaryItems"
+    <UserContactItem
+      v-for="item in contactItems"
       :key="item.key || item.text"
-      class="grid min-w-0 grid-cols-[auto_minmax(0,1fr)] items-center gap-x-1"
-    >
-      <SfIcon v-if="isIconMode" :icon="item.icon" size="3.5" class="mr-1 shrink-0" />
-      <div v-else class="pr-1">{{ item.label }}</div>
-      <div v-if="item.key" class="max-w-full min-w-0 font-medium">
-        <ResumeField :model-value="user[item.key]" />
-      </div>
-      <span v-else>{{ item.text }}</span>
-    </div>
+      :icon="item.icon"
+      :label="item.label"
+      :model-value="item.key ? user[item.key] : null"
+      :text="item.text"
+      :icon-mode="isIconMode"
+    />
   </div>
 </template>
 
