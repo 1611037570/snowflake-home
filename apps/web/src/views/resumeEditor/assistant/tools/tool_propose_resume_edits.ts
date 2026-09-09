@@ -1,19 +1,20 @@
 import type { ReactTool } from "@/apis/llm/react";
 import { validateResumeEdits, type ResumeWriteOp } from "../resumeEdits";
+import { PROPOSE_RESUME_EDITS_RULE, TOOL_ARGUMENT_RULE } from "../skills/prompt_tool_rules";
 import type { ResumeToolContext } from "./tool_types";
 
 // 创建简历修改工具：校验后直接写入，由请求结束时统一提交缓冲写入
 export const createProposeResumeEditsTool = (ctx: ResumeToolContext): ReactTool => ({
   name: "propose_resume_edits",
   description:
-    "根据分析结果生成简历修改，回复完成后直接写入简历数据（用户可撤回）。通过 operations 语义化描述写操作：updateModule 修改模块级 data 字段（如自定义模块 title）；updateRecord 修改记录字段；addRecord 新增记录；deleteRecord 删除记录；moveRecord 调整记录顺序。提交前会做结构与格式校验，校验失败不写入并返回 errors，请按 errors 修正后重新提交。operations 必须为标准 JSON，参数只使用普通字符，禁止输出 HTML 实体（如 &#x20;、&nbsp;、&quot; 等）。",
+    `${TOOL_ARGUMENT_RULE}\n\n${PROPOSE_RESUME_EDITS_RULE}\n\n根据分析结果生成简历修改，回复完成后直接写入简历数据（用户可撤回）。通过 operations 语义化描述写操作：updateModule 修改模块级 data 字段（如自定义模块 title）；updateRecord 修改记录字段；addRecord 新增记录；deleteRecord 删除记录；moveRecord 调整记录顺序。提交前会做结构与格式校验，校验失败不写入并返回 errors，请按 errors 修正后重新提交。`,
   parameters: {
     type: "object",
     properties: {
       operations: {
         type: "array",
         description:
-          "写操作列表，一次调用会合并为一次写入；操作目标必须是 read_resume_data 返回的已有模块与字段；参数为标准 JSON，禁止输出 HTML 实体",
+          "写操作列表，一次调用会合并为一次写入；操作目标必须是 read_resume_data 返回的已有模块与字段；参数必须是标准 JSON",
         items: {
           type: "object",
           properties: {
