@@ -117,7 +117,18 @@ class LLM {
     }
 
     // 默认模型由实例注入
-    const requestOptions = { ...options, model: this.model };
+    const requestOptions = {
+      ...options,
+      model: this.model,
+      ...(isStream && this.provider === "openai"
+        ? {
+            stream_options: {
+              ...options.stream_options,
+              include_usage: true,
+            },
+          }
+        : {}),
+    };
 
     // 提前创建处理器，确保调用方在 sendFn 执行前即可获取 abort
     const handler = createRequest(token, isStream);
