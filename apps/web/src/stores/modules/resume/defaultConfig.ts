@@ -41,7 +41,9 @@ export const DEFAULT_RESUME_ITEM = {
   ui: structuredClone(DEFAULT_UI),
   // 使用信息
   usage: {
-    // 是否自定义标题
+    // 标题模式：自动生成或自定义
+    titleMode: "auto" as const,
+    // 自定义标题内容
     customTitle: "",
     // 最后使用时间
     lastUseTime: Date.now(),

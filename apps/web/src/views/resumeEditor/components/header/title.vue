@@ -6,10 +6,19 @@ import { resumeTitle } from "../../resumeName";
 const resumeStore = useResumeStore();
 const { currentUsage } = storeToRefs(resumeStore);
 
-const title = computed(() => currentUsage.value?.customTitle || resumeTitle.value);
+// 没有模式字段的旧数据按自定义标题兼容处理
+const isCustomTitle = computed(
+  () =>
+    currentUsage.value?.titleMode === "custom" ||
+    (!currentUsage.value?.titleMode && !!currentUsage.value?.customTitle),
+);
+const title = computed(() =>
+  isCustomTitle.value && currentUsage.value?.customTitle
+    ? currentUsage.value.customTitle
+    : resumeTitle.value,
+);
 // 编辑标题弹窗
 const editTitleVisible = ref(false);
-const custom = ref(currentUsage.value?.customTitle || false);
 const tempTitle = ref(title.value);
 
 function openModal() {
@@ -19,16 +28,19 @@ function openModal() {
 
 function handleEditTitle() {
   const customValue = tempTitle.value.trim();
-  currentUsage.value.customTitle = custom.value ? customValue : "";
+  if (!currentUsage.value) return;
+  currentUsage.value.customTitle = customValue;
+  currentUsage.value.titleMode = customValue ? "custom" : "auto";
   editTitleVisible.value = !editTitleVisible.value;
 }
 
-function handleInput() {
-  custom.value = true;
-}
-
-function handleResetTitle() {
+// 一键切回自动标题，并清除当前自定义标题
+function handleAutoTitle() {
+  if (!currentUsage.value) return;
+  currentUsage.value.titleMode = "auto";
+  currentUsage.value.customTitle = "";
   tempTitle.value = resumeTitle.value;
+  editTitleVisible.value = false;
 }
 </script>
 
@@ -46,12 +58,11 @@ function handleResetTitle() {
     <div class="flex w-100 flex-col gap-5 p-4">
       <div class="flex items-center gap-3">
         <SfInput
-          @input="handleInput"
           v-model="tempTitle"
           placeholder="请输入标题"
           class="w-full rounded-lg border border-sf-b bg-sf-bg"
         />
-        <ElButton @click="handleResetTitle">重置</ElButton>
+        <ElButton @click="handleAutoTitle">一键自动</ElButton>
       </div>
       <ElButton type="primary" @click="handleEditTitle" class="w-full">确定</ElButton>
     </div>
