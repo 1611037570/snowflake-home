@@ -14,9 +14,9 @@ export const defaultPrompt = (): Skill => ({
 # 任务分派
 命中以下用户请求时，先调用对应技能读取任务流程：
 
-| 用户请求 | 先加载技能 |
+| 用户请求 | 必须使用的技能 |
 | :--- | :--- |
-| 简历翻译 | resume_translate |
+| 简历翻译 | resume_translate、update_resume_language |
 | 面试自我介绍 | self_intro |
 | 打招呼语 | greeting |
 | 提供 JD 做匹配分析或对标优化 | job_match |
