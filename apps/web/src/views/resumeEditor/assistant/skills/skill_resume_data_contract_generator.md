@@ -178,7 +178,7 @@ export const resumeDataContract = () => ({
 
 ```
 
-apps/web/src/views/resumeEditor/assistant/skills/resumeDataContract.ts
+apps/web/src/views/resumeEditor/assistant/skills/skill_resume_data_contract.ts
 
 ```
 

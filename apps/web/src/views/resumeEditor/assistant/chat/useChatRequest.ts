@@ -9,7 +9,7 @@ import { storeToRefs } from "pinia";
 // 宿主传入的请求配置：技能与工具由调用方组装，chat 不内置业务内容
 import type { AssistantConfig } from "../types";
 // 导入默认提示词，每次请求提级到用户消息前避免遗忘规则
-import { defaultPrompt } from "../skills/defaultPrompt";
+import { defaultPrompt } from "../skills/prompt_default";
 
 // 定义 useChatRequest 的配置选项接口
 interface UseChatRequestOptions {

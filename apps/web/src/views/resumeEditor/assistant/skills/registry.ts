@@ -1,15 +1,15 @@
 import type { SkillFactory } from "../types";
-import { defaultPrompt } from "./defaultPrompt";
-import { greeting } from "./greeting";
-import { jobMatch } from "./jobMatch";
-import { resumeCreate } from "./resumeCreate";
-import { resumeDataContract } from "./resumeDataContract";
-import { resumeInterview } from "./resumeInterview";
-import { resumeOptimization } from "./resumeOptimization";
-import { resumeScore } from "./resumeScore";
-import { resumeTranslate } from "./resumeTranslate";
-import { resumeWriting } from "./resumeWriting";
-import { selfIntro } from "./selfIntro";
+import { defaultPrompt } from "./prompt_default";
+import { greeting } from "./skill_greeting";
+import { jobMatch } from "./skill_job_match";
+import { resumeCreate } from "./skill_resume_create";
+import { resumeDataContract } from "./skill_resume_data_contract";
+import { resumeInterview } from "./skill_resume_interview";
+import { resumeOptimization } from "./skill_resume_optimization";
+import { resumeScore } from "./skill_resume_score";
+import { resumeTranslate } from "./skill_resume_translate";
+import { resumeWriting } from "./skill_resume_writing";
+import { selfIntro } from "./skill_self_intro";
 
 // 常驻技能：按顺序作为系统消息注入对话
 export const residentSkills: SkillFactory[] = [defaultPrompt];
