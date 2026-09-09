@@ -20,26 +20,36 @@ const title = computed(() =>
 // 编辑标题弹窗
 const editTitleVisible = ref(false);
 const tempTitle = ref(title.value);
+const pendingTitleMode = ref("auto");
 
 function openModal() {
   tempTitle.value = title.value;
+  pendingTitleMode.value = isCustomTitle.value ? "custom" : "auto";
   editTitleVisible.value = true;
 }
 
 function handleEditTitle() {
   const customValue = tempTitle.value.trim();
   if (!currentUsage.value) return;
-  currentUsage.value.customTitle = customValue;
-  currentUsage.value.titleMode = customValue ? "custom" : "auto";
+  const useCustomTitle = pendingTitleMode.value === "custom" && !!customValue;
+  currentUsage.value.customTitle = useCustomTitle ? customValue : "";
+  currentUsage.value.titleMode = useCustomTitle ? "custom" : "auto";
   editTitleVisible.value = !editTitleVisible.value;
 }
 
-// 一键切回自动标题，并清除当前自定义标题
+// 输入自定义内容后切换为自定义模式，等待点击保存才写入简历
+function handleInput() {
+  pendingTitleMode.value = "custom";
+}
+
+// 一键预览自动标题，等待点击保存才切换模式
 function handleAutoTitle() {
-  if (!currentUsage.value) return;
-  currentUsage.value.titleMode = "auto";
-  currentUsage.value.customTitle = "";
   tempTitle.value = resumeTitle.value;
+  pendingTitleMode.value = "auto";
+}
+
+// 取消编辑并关闭弹窗，不保存临时标题
+function handleCancel() {
   editTitleVisible.value = false;
 }
 </script>
@@ -55,16 +65,20 @@ function handleAutoTitle() {
     </div>
   </div>
   <SfModal v-model="editTitleVisible" title="重命名简历">
-    <div class="flex w-100 flex-col gap-5 p-4">
+    <div class="flex w-100 flex-col gap-3 p-3">
       <div class="flex items-center gap-3">
         <SfInput
+          @input="handleInput"
           v-model="tempTitle"
           placeholder="请输入标题"
           class="w-full rounded-lg border border-sf-b bg-sf-bg"
         />
         <ElButton @click="handleAutoTitle">一键自动</ElButton>
       </div>
-      <ElButton type="primary" @click="handleEditTitle" class="w-full">确定</ElButton>
+      <div class="flex justify-end gap-3">
+        <SfButton type="bg" @click="handleCancel">取消</SfButton>
+        <SfButton @click="handleEditTitle">保存</SfButton>
+      </div>
     </div>
   </SfModal>
 </template>
