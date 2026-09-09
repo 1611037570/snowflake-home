@@ -1,17 +1,12 @@
 <script setup>
 import { useResumeStore } from "@/stores";
 import { storeToRefs } from "pinia";
-import { computed, ref } from "vue";
+import { ref } from "vue";
 import { resumeTitle } from "../../resumeName";
 const resumeStore = useResumeStore();
 const { currentUsage } = storeToRefs(resumeStore);
 
-const isCustomTitle = computed(() => currentUsage.value?.titleMode === "custom");
-const title = computed(() =>
-  isCustomTitle.value && currentUsage.value?.customTitle
-    ? currentUsage.value.customTitle
-    : resumeTitle.value,
-);
+const title = resumeTitle;
 // 编辑标题弹窗
 const editTitleVisible = ref(false);
 const tempTitle = ref(title.value);

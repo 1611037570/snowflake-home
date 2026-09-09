@@ -130,7 +130,7 @@ const handleClearTrash = () => {
             <!-- 简历项 -->
             <ResumeCardContainer v-else :item="card.item" @click="handleEdit(card.index)">
               <div class="truncate text-base font-black text-sf-text">
-                {{ getResumeTitle(card.item.data) }}
+                {{ getResumeTitle(card.item) }}
               </div>
               <div class="mt-1 flex items-center justify-between gap-2">
                 <div class="truncate text-sm text-sf-text-2">
@@ -172,7 +172,7 @@ const handleClearTrash = () => {
           <template #default="{ item, index }">
             <ResumeCardContainer :item="item" action-text="已删除">
               <div class="truncate text-base font-black text-sf-text">
-                {{ getResumeTitle(item.data) }}
+                {{ getResumeTitle(item) }}
               </div>
               <div class="mt-1 flex items-center justify-between gap-3">
                 <div class="truncate text-sm text-sf-text-2">
