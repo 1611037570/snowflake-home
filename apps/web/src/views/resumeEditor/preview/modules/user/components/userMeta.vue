@@ -13,6 +13,7 @@ const props = defineProps({
 });
 const previewData = inject("previewData");
 const fontValue = inject("fontValue");
+const userInfoLayout = inject("userInfoLayout");
 const user = computed(() => previewData.value?.user?.data || {});
 const previewLang = inject(
   "previewLang",
@@ -54,20 +55,30 @@ const metaItems = computed(() => {
   if (user.value?.position?.value) items.push({ key: "position" });
   return items;
 });
+
+// 根据用户选择切换布局，并保持居中模式的对齐方式
+const layoutClass = computed(() => {
+  const isCentered = props.centered;
+  if (userInfoLayout?.value === "flex") {
+    return isCentered ? "flex flex-wrap justify-center gap-3" : "flex flex-wrap gap-3";
+  }
+  return isCentered
+    ? "grid grid-cols-[repeat(auto-fit,minmax(min(100%,13rem),1fr))] justify-items-center gap-3"
+    : "grid grid-cols-[repeat(auto-fit,minmax(min(100%,13rem),1fr))] gap-3";
+});
 </script>
 
 <template>
   <div
     v-if="metaItems.length"
-    class="ml-3 flex max-w-full min-w-0 flex-wrap items-center gap-3"
-    :class="{ 'justify-center': props.centered }"
+    class="max-w-full min-w-0 items-center"
+    :class="layoutClass"
     :style="[fontValue(2)]"
   >
-    <template v-for="(item, index) in metaItems" :key="item.key || item.text">
-      <span v-if="index > 0" class="h-3 w-px bg-current opacity-50"></span>
+    <div v-for="item in metaItems" :key="item.key || item.text" class="min-w-0">
       <ResumeField v-if="item.key" :model-value="user[item.key]" />
       <span v-else>{{ item.text }}</span>
-    </template>
+    </div>
   </div>
 </template>
 
