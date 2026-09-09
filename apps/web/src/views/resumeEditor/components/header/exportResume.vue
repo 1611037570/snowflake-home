@@ -74,16 +74,16 @@ const list = [
     desc: "将简历一键导出为PNG图片，方便在社交媒体、作品集或PPT中直接展示",
     fn: () => emitExport("resume-print-image"),
   },
-  {
-    name: "JSON完整备份",
-    desc: "导出完整简历数据，支持无损导入恢复，方便随时备份或跨设备使用",
-    fn: () => {
-      // 导出配置后关闭弹窗
-      visible.value = false;
-      exportConfig();
-    },
-  },
 ];
+const a = {
+  name: "JSON完整备份",
+  desc: "导出完整简历数据，支持无损导入恢复，方便随时备份或跨设备使用",
+  fn: () => {
+    // 导出配置后关闭弹窗
+    visible.value = false;
+    exportConfig();
+  },
+};
 </script>
 
 <template>
@@ -99,6 +99,18 @@ const list = [
   <SfModal v-model="visible" title="导出简历">
     <div class="flex w-[400px] flex-col gap-3">
       <div class="text-lg">选择您希望导出简历的格式</div>
+
+      <template v-for="item in list" :key="item.name">
+        <div
+          class="cursor-pointer rounded-3xl border border-sf-b p-3 transition-colors hover:bg-sf-theme-2"
+          @click="item.fn"
+        >
+          <div class="text-xl">
+            {{ item.name }}
+          </div>
+          <div class="text-sm">{{ item.desc }}</div>
+        </div>
+      </template>
       <div class="flex items-center gap-3">
         <span class="shrink-0">清晰度</span>
         <SfButton
@@ -114,17 +126,16 @@ const list = [
       <div class="rounded-xl bg-sf-bg-2 p-3 text-sm" :class="exportScaleTip.class">
         {{ exportScaleTip.text }}
       </div>
-      <template v-for="item in list" :key="item.name">
-        <div
-          class="cursor-pointer rounded-3xl border border-sf-b p-3 transition-colors hover:bg-sf-theme-2"
-          @click="item.fn"
-        >
-          <div class="text-xl">
-            {{ item.name }}
-          </div>
-          <div class="text-sm">{{ item.desc }}</div>
+      <div>简历配置</div>
+      <div
+        class="cursor-pointer rounded-3xl border border-sf-b p-3 transition-colors hover:bg-sf-theme-2"
+        @click="a.fn"
+      >
+        <div class="text-xl">
+          {{ a.name }}
         </div>
-      </template>
+        <div class="text-sm">{{ a.desc }}</div>
+      </div>
     </div>
   </SfModal>
 </template>
