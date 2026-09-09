@@ -21,8 +21,10 @@ interface UseResumeExportOptions {
 }
 
 export const useResumeExport = ({ isEdit, rootRef, measureRef, onExportSuccess }: UseResumeExportOptions) => {
-  const printPDF = () => exportPdf(rootRef, onExportSuccess);
-  const printImage = () => exportImage(measureRef, onExportSuccess);
+  const printPDF = (scale: unknown = 2) =>
+    exportPdf(rootRef, onExportSuccess, scale === 8 ? 8 : scale === 4 ? 4 : scale === 2 ? 2 : 1);
+  const printImage = (scale: unknown = 2) =>
+    exportImage(measureRef, onExportSuccess, scale === 8 ? 8 : scale === 4 ? 4 : scale === 2 ? 2 : 1);
   // 仅编辑模式注册全局导出事件
   onMounted(() => {
     if (isEdit.value) {

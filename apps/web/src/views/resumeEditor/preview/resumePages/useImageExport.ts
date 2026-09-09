@@ -35,6 +35,8 @@ export const printImage = async (
   rootRef?: ImageExportRoot,
   /** 导出成功回调 */
   onSuccess?: () => void,
+  /** Canvas 渲染倍率 */
+  scale = 2,
 ) => {
   const resumeStore = useResumeStore();
   const { selectedModule, isPrinting } = storeToRefs(resumeStore);
@@ -83,7 +85,7 @@ export const printImage = async (
     document.body.appendChild(tempContainer);
 
     const canvas = await snapdom.toCanvas(clone, {
-      scale: 2,
+      scale,
       backgroundColor: "#ffffff",
       embedFonts: true,
       // 像素级精确布局：避免字体回退栅格化导致文本重新换行而漏出内容
