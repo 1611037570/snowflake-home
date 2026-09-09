@@ -3,10 +3,10 @@
     <!-- 编辑器实例创建成功后再挂载工具栏，避免工具栏在 editor 就绪前初始化报错 -->
     <Toolbar v-if="editorRef" :editor="editorRef" :defaultConfig="toolbarConfig" :mode="mode" />
     <!-- 使用项目统一滚动条承载编辑器内容 -->
-    <SfScrollbar :height="height" class="rounded-b-2xl">
+    <SfScrollbar :max-height="height" class="rounded-b-2xl">
       <Editor
         class="rounded-b-2xl"
-        :style="{ height: 'auto', minHeight: height }"
+        :style="{ height: 'auto', minHeight: '80px' }"
         v-model="valueHtml"
         :defaultConfig="editorConfig"
         :mode="mode"
@@ -135,7 +135,11 @@ const handleChange = (editor) => {
 }
 // 让编辑器内容自然撑开，由外层滚动容器负责滚动
 :deep(.w-e-scroll) {
-  height: auto !important;
+  height: 100% !important;
+}
+// 保证空内容时仍保留完整的可编辑区域
+:deep(.w-e-text-container [data-slate-editor]) {
+  min-height: 100px;
 }
 //
 :deep(.w-e-text-placeholder) {
