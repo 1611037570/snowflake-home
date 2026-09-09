@@ -292,6 +292,7 @@ export const useChatRequest = ({
           if (!isCurrentRequest() || !lastMsg || !reasoning) return;
           lastMsg.stepLabel = "正在深度思考…";
           lastMsg.thought += `\n\n### 思考\n${reasoning}`;
+          scrollToBottom();
         },
         onAct: (toolCall) => {
           if (!isCurrentRequest() || !lastMsg) return;
@@ -334,6 +335,9 @@ export const useChatRequest = ({
           // 回复完成后统一提交生成期间缓冲的写操作
           commitDeferredWrites?.();
           scrollToBottom();
+          setTimeout(() => {
+            scrollToBottom();
+          }, 10);
         },
       });
       // 执行工具循环
