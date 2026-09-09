@@ -62,6 +62,8 @@ export type ModelItem = {
   url: string;
   // 接口协议类型
   protocol: ModelProtocol;
+  // 是否为内置服务
+  builtin?: boolean;
 };
 // 添加模型时提交的配置（表单或内置模板，不含 id）
 type ModelDraft = Omit<ModelItem, "id">;
@@ -216,6 +218,7 @@ export const useAiStore = defineStore(
         key: draft.key,
         url: draft.url,
         protocol: draft.protocol,
+        builtin: draft.builtin,
       };
       modelList.value.push(deployed);
       return deployed;

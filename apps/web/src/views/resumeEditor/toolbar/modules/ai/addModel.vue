@@ -142,7 +142,7 @@ async function handleAdd() {
 function handleAddBuiltin() {
   const preset = currentProvider.value?.preset;
   if (!preset) return;
-  aiStore.deployModel({ ...preset });
+  aiStore.deployModel({ ...preset, builtin: true });
   ElMessage.success("模型添加成功");
   // 添加成功后切到「已添加模型」Tab，让用户看到新模型
   emit("addSuccess");

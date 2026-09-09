@@ -91,6 +91,39 @@ class LLM {
     return sendFn();
   }
   /**
+   * 查询当前供应商余额
+   */
+  async getBalance() {
+    let balanceUrl = "";
+    if (this.provider === "openai") {
+      balanceUrl = `${new URL(this.url).origin}/dashboard/billing/credit_grants`;
+    } else if (this.provider === "deepseek") {
+      balanceUrl = `${new URL(this.url).origin}/user/balance`;
+    } else if (this.provider === "ark") {
+      balanceUrl = "https://open.volcengineapi.com/?Action=QueryBalanceAcct&Version=2022-01-01";
+    } else {
+      throw new Error(`供应商 ${this.provider} 暂不支持查询余额`);
+    }
+
+    const response = await fetch(balanceUrl, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${this.apiKey || ""}`,
+      },
+    });
+    const data = await response.json().catch(() => null);
+    if (!response.ok) {
+      const error = data?.error ?? data;
+      throw new Error(
+        `${response.status}${error?.code ? ` [${error.code}]` : ""}: ${
+          error?.message || response.statusText
+        }`,
+      );
+    }
+    return data;
+  }
+  /**
    * 创建并执行 AI 请求任务
    * @param {Object} config - 请求配置对象
    * @param {Object} [config.options={}] - 接口请求参数，包含请求所需的各种参数
