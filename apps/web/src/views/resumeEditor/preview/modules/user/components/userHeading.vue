@@ -26,9 +26,11 @@ const themeColor = inject("themeColor");
     <div class="min-w-0 max-w-full flex-1">
       <div class="flex flex-wrap items-center">
         <UserName />
-        <UserMeta class="flex-1" />
+        <UserMeta class="flex-1" row="primary" />
       </div>
-      <UserContact />
+      <UserMeta class="w-full" row="secondary">
+        <UserContact />
+      </UserMeta>
     </div>
   </div>
   <!-- 居中：头像在上，信息区垂直居中 -->
@@ -41,8 +43,10 @@ const themeColor = inject("themeColor");
         class="my-1 h-1 w-10 rounded-full"
         :style="{ background: themeColor }"
       ></div>
-      <UserMeta class="w-full justify-center" />
-      <UserContact class="justify-center" />
+      <UserMeta class="w-full" row="primary" centered />
+      <UserMeta class="w-full" row="secondary" centered>
+        <UserContact />
+      </UserMeta>
     </div>
   </div>
   <!-- 右：信息区在左，头像在右，元信息撑满剩余宽度 -->
@@ -50,9 +54,11 @@ const themeColor = inject("themeColor");
     <div class="min-w-0 max-w-full flex-1">
       <div class="flex flex-wrap items-center">
         <UserName />
-        <UserMeta class="flex-1" />
+        <UserMeta class="flex-1" row="primary" />
       </div>
-      <UserContact />
+      <UserMeta class="w-full" row="secondary">
+        <UserContact />
+      </UserMeta>
     </div>
     <UserAvatar class="ml-3" />
   </div>

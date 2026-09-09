@@ -4,7 +4,17 @@ import { computed, inject } from "vue";
 import ResumeField from "../../../components/resumeField/index.vue";
 import { getPreviewText } from "../../../i18n";
 
-// 元信息组件：求职岗位 / 求职状态 / 所在城市 / 性别 / 年龄 / 工作年限等有值字段自动排列，宽度策略由使用方通过 class 控制
+// 元信息组件：按调用方指定的行展示字段，宽度策略由使用方通过 class 控制
+const props = defineProps({
+  row: {
+    type: String,
+    default: "primary",
+  },
+  centered: {
+    type: Boolean,
+    default: false,
+  },
+});
 const previewData = inject("previewData");
 const fontValue = inject("fontValue");
 const userInfoMode = inject("userInfoMode");
@@ -47,17 +57,23 @@ const heightWeightText = computed(() => {
     .join("/");
 });
 
-// 有值字段列表：sex/position/status 为可编辑字段，年龄与工作年限为派生文本；空值字段不占位，项间分隔线随列表自动生成
+// 有值字段列表：第一行固定展示性别、年龄、工作年限和求职岗位
 const metaItems = computed(() => {
   const items = [];
-  if (user.value?.sex?.value) items.push({ key: "sex" });
-  if (age.value) items.push({ text: getPreviewText("age", previewLang.value, { age: age.value }) });
+  if (user.value?.sex?.value) items.push({ key: "sex", primary: true });
+  if (age.value) {
+    items.push({
+      text: getPreviewText("age", previewLang.value, { age: age.value }),
+      primary: true,
+    });
+  }
   if (workYearsNumber.value) {
     items.push({
       text: getPreviewText("expYears", previewLang.value, { years: workYearsNumber.value }),
+      primary: true,
     });
   }
-  if (user.value?.position?.value) items.push({ key: "position" });
+  if (user.value?.position?.value) items.push({ key: "position", primary: true });
   if (user.value?.status?.value) {
     items.push({
       key: "status",
@@ -97,11 +113,19 @@ const metaItems = computed(() => {
   }
   return items;
 });
+const primaryItems = computed(() => metaItems.value.filter((item) => item.primary));
+const secondaryItems = computed(() => metaItems.value.filter((item) => !item.primary));
+const rowItems = computed(() => (props.row === "secondary" ? secondaryItems.value : primaryItems.value));
 </script>
 
 <template>
-  <div class="ml-3 flex max-w-full min-w-0 flex-wrap items-center gap-3" :style="[fontValue(2)]">
-    <template v-for="(item, index) in metaItems" :key="item.key || item.text">
+  <div
+    v-if="rowItems.length || $slots.default"
+    class="ml-3 flex max-w-full min-w-0 flex-wrap items-center gap-3"
+    :class="{ 'justify-center': props.centered }"
+    :style="[fontValue(2)]"
+  >
+    <template v-for="(item, index) in rowItems" :key="item.key || item.text">
       <span v-if="index > 0" class="h-3 w-px bg-current opacity-50"></span>
       <template v-if="item.key">
         <SfIcon
@@ -124,6 +148,8 @@ const metaItems = computed(() => {
         <span>{{ item.text }}</span>
       </template>
     </template>
+    <span v-if="rowItems.length && $slots.default" class="h-3 w-px bg-current opacity-50"></span>
+    <slot />
   </div>
 </template>
 
