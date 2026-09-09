@@ -21,6 +21,8 @@ export const printPDF = async (
   rootRef?: { value: HTMLElement | null },
   /** 导出成功回调 */
   onSuccess?: () => void,
+  /** Canvas 渲染倍率，PDF 页面物理尺寸保持 A4 */
+  scale = 2,
 ) => {
   // 保存当前选中的模块并清空，避免导出 PDF 时带上选中高亮
   const resumeStore = useResumeStore();
@@ -78,7 +80,7 @@ export const printPDF = async (
 
       // 渲染页面为 Canvas
       const canvas = await snapdom.toCanvas(clone, {
-        scale: 2, // 提高清晰度
+        scale,
         backgroundColor: "#ffffff",
         embedFonts: true,
         width: RESUME_WIDTH,

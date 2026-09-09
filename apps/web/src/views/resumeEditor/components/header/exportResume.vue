@@ -3,9 +3,42 @@ import { useResumeStore } from "@/stores";
 import { getExportFileName, resumeTitle } from "../../resumeName.ts";
 import eventBus from "@/utils/modules/eventBus";
 import { storeToRefs } from "pinia";
-import { ref } from "vue";
+import { computed, ref } from "vue";
 
 const visible = ref(false);
+// 默认使用标准 1x，导出弹窗中可切换更高清晰度
+const exportScale = ref(1);
+const exportScaleList = [
+  { name: "1x", value: 1 },
+  { name: "2x", value: 2 },
+  { name: "4x", value: 4 },
+  { name: "8x", value: 8 },
+];
+// 根据倍率提示导出耗时和资源占用
+const exportScaleTip = computed(() => {
+  if (exportScale.value === 8) {
+    return {
+      class: "text-sf-error",
+      text: "最高清晰度，导出很慢，占用大量内存，可能失败或崩溃。",
+    };
+  }
+  if (exportScale.value === 4) {
+    return {
+      class: "text-sf-error",
+      text: "最清晰，导出慢，占用较多内存，可能失败或崩溃。",
+    };
+  }
+  if (exportScale.value === 2) {
+    return {
+      class: "text-sf-warning",
+      text: "更清晰，导出速度稍慢。",
+    };
+  }
+  return {
+    class: "text-sf-text-2",
+    text: "清晰度正常，导出速度快。",
+  };
+});
 const resumeStore = useResumeStore();
 const { currentItem, isPrinting } = storeToRefs(resumeStore);
 
@@ -26,7 +59,7 @@ const exportConfig = () => {
 const emitExport = (eventName) => {
   if (isPrinting.value) return;
   visible.value = false;
-  eventBus.emit(eventName);
+  eventBus.emit(eventName, exportScale.value);
 };
 
 // 菜单配置
@@ -66,6 +99,21 @@ const list = [
   <SfModal v-model="visible" title="导出简历">
     <div class="flex w-[400px] flex-col gap-3">
       <div class="text-lg">选择您希望导出简历的格式</div>
+      <div class="flex items-center gap-3">
+        <span class="shrink-0">清晰度</span>
+        <SfButton
+          v-for="item in exportScaleList"
+          :key="item.value"
+          class="flex-1"
+          border
+          :type="exportScale === item.value ? 'theme' : 'bg'"
+          @click="exportScale = item.value"
+          >{{ item.name }}</SfButton
+        >
+      </div>
+      <div class="rounded-xl bg-sf-bg-2 p-3 text-sm" :class="exportScaleTip.class">
+        {{ exportScaleTip.text }}
+      </div>
       <template v-for="item in list" :key="item.name">
         <div
           class="cursor-pointer rounded-3xl border border-sf-b p-3 transition-colors hover:bg-sf-theme-2"
