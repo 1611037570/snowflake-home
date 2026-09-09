@@ -20,6 +20,7 @@ type ProviderTemplate = {
     model: string;
     key: string;
     url: string;
+    protocol: "chatCompletions" | "responses";
   };
 };
 
@@ -35,6 +36,7 @@ const providerTemplates: ProviderTemplate[] = [
       model: snowflake.model,
       key: snowflake.apiKey,
       url: snowflake.baseUrl,
+      protocol: snowflake.protocol,
     },
   },
   { id: "openai", name: "OpenAI" },
@@ -64,7 +66,13 @@ const currentProvider = computed(() =>
 const keyLink = computed(() => keyLinks[selectedProvider.value] || "");
 
 // 新增表单数据（切换服务商即重置，不做草稿回填）
-const formSource = ref({ name: "", model: "", key: "", url: "" });
+const formSource = ref({
+  name: "",
+  model: "",
+  key: "",
+  url: "",
+  protocol: "chatCompletions" as const,
+});
 const testing = ref(false);
 const testPassed = ref(false);
 
@@ -72,7 +80,13 @@ const testPassed = ref(false);
 function selectProvider(item: any) {
   if (selectedProvider.value === item.id) return;
   selectedProvider.value = item.id;
-  formSource.value = { name: "", model: "", key: "", url: "" };
+  formSource.value = {
+    name: "",
+    model: "",
+    key: "",
+    url: "",
+    protocol: "chatCompletions",
+  };
   testPassed.value = false;
 }
 
@@ -98,6 +112,8 @@ async function handleAdd() {
         url: src.url,
         apiKey: src.key,
         provider: selectedProvider.value,
+        model: src.model,
+        protocol: src.protocol,
       });
       await llm.ping();
       testPassed.value = true;
@@ -111,7 +127,13 @@ async function handleAdd() {
   aiStore.deployModel({ provider: selectedProvider.value, ...src });
   ElMessage.success("模型添加成功");
   testPassed.value = false;
-  formSource.value = { name: "", model: "", key: "", url: "" };
+  formSource.value = {
+    name: "",
+    model: "",
+    key: "",
+    url: "",
+    protocol: "chatCompletions",
+  };
   // 添加成功后切到「已添加模型」Tab，让用户看到新模型
   emit("addSuccess");
 }

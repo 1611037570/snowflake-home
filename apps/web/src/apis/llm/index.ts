@@ -19,6 +19,7 @@ const getLLM = () => {
     apiKey: config.key,
     provider: config.provider,
     model: config.model,
+    protocol: config.protocol === "responses" ? "responses" : "chatCompletions",
   });
 };
 
