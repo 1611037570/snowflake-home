@@ -11,7 +11,7 @@ const user = computed(() => previewData.value?.user?.data || {});
 <template>
   <div class="max-w-full min-w-0 font-bold tracking-wide" :style="[fontValue(14)]">
     <ResumeField
-      v-model="user.name"
+      :model-value="user.name"
       class="flex items-center! justify-center!"
       :style="[fontValue(14)]"
     />

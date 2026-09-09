@@ -19,6 +19,8 @@ export const DEFAULT_USER_FORM = [
     key: "user",
     // 固定模块：不参与模块拖拽排序
     fixed: true,
+    drag: true,
+    dragClass: DEFAULT_DRAG_CLASS,
     props: {
       name: "个人信息",
       add: false,
@@ -55,6 +57,7 @@ export const DEFAULT_USER_FORM = [
         label: "头像",
         component: "imageUpload",
         span: 24,
+        fixed: true,
         model: {
           source: ["user", "data", "avatar"],
           prop: "modelValue",
@@ -69,6 +72,7 @@ export const DEFAULT_USER_FORM = [
         component: "input",
         span: 12,
         required: true,
+        fixed: true,
         model: {
           source: ["user", "data", "name"],
           prop: "modelValue",
@@ -93,6 +97,7 @@ export const DEFAULT_USER_FORM = [
         tip: "出生年月 推荐必填",
         component: "datePicker",
         span: 12,
+        drag: true,
         model: {
           source: ["user", "data", "birthday"],
           prop: "modelValue",
@@ -110,6 +115,7 @@ export const DEFAULT_USER_FORM = [
         tip: "常用手机号 推荐必填",
         component: "input",
         span: 12,
+        drag: true,
         model: {
           source: ["user", "data", "phone"],
           prop: "modelValue",
@@ -134,6 +140,7 @@ export const DEFAULT_USER_FORM = [
         tip: "选择性别",
         component: "select",
         span: 12,
+        drag: true,
         model: [
           {
             source: ["user", "data", "sex"],
@@ -157,6 +164,7 @@ export const DEFAULT_USER_FORM = [
         tip: "求职岗位 推荐必填",
         component: "input",
         span: 12,
+        drag: true,
         model: {
           source: ["user", "data", "position"],
           prop: "modelValue",
@@ -172,6 +180,7 @@ export const DEFAULT_USER_FORM = [
         tip: "常用邮箱",
         component: "input",
         span: 12,
+        drag: true,
         model: {
           source: ["user", "data", "email"],
           prop: "modelValue",
@@ -194,6 +203,7 @@ export const DEFAULT_USER_FORM = [
         tip: "首次工作年月",
         component: "datePicker",
         span: 12,
+        drag: true,
         model: {
           source: ["user", "data", "workTime"],
           prop: "modelValue",
