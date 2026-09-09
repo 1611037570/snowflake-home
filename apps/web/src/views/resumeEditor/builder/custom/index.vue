@@ -6,6 +6,7 @@ import {
   fontFamilyList,
   themeColors,
   uiParamRanges,
+  userInfoLayoutList,
   userInfoModeList,
   defaultPadding,
   defaultFontSize,
@@ -14,6 +15,7 @@ import {
   defaultFontFamily,
   defaultThemeColor,
   defaultUserInfoMode,
+  defaultUserInfoLayout,
   defaultAvatarPosition,
 } from "@/stores/modules/resume/uiConfig";
 import { storeToRefs } from "pinia";
@@ -33,6 +35,14 @@ const userInfoMode = computed({
   get: () => currentUI.value?.userInfoMode,
   set: (value) => {
     currentUI.value.userInfoMode = value;
+  },
+});
+
+// 个人信息布局（网格/弹性）
+const userInfoLayout = computed({
+  get: () => currentUI.value?.userInfoLayout,
+  set: (value) => {
+    currentUI.value.userInfoLayout = value;
   },
 });
 
@@ -137,6 +147,23 @@ const avatarPosition = computed({
             border
             v-for="mode in userInfoModeList"
             :type="userInfoMode === mode.value ? 'theme' : 'bg'"
+            :key="mode.value"
+            >{{ mode.name }}</SfButton
+          >
+        </div>
+        <!-- 布局方式切换：网格 / 弹性 -->
+        <ConfigLabel
+          label="布局方式"
+          v-model="userInfoLayout"
+          :default-value="defaultUserInfoLayout"
+        />
+        <div class="flex gap-3">
+          <SfButton
+            class="flex-1"
+            @click="userInfoLayout = mode.value"
+            border
+            v-for="mode in userInfoLayoutList"
+            :type="userInfoLayout === mode.value ? 'theme' : 'bg'"
             :key="mode.value"
             >{{ mode.name }}</SfButton
           >
