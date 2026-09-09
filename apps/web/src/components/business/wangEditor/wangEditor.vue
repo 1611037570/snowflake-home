@@ -15,6 +15,7 @@
       :defaultConfig="editorConfig"
       :mode="mode"
       @onCreated="handleCreated"
+      @onChange="handleChange"
     />
     <div class="pointer-events-none absolute right-3 bottom-3 z-10 text-xs text-sf-text-2">
       {{ currentLength }}/{{ props.maxLength }}
@@ -23,7 +24,7 @@
 </template>
 
 <script setup>
-import { computed, defineAsyncComponent, onBeforeUnmount, onMounted, shallowRef } from "vue";
+import { defineAsyncComponent, onBeforeUnmount, onMounted, ref, shallowRef } from "vue";
 
 // 延迟加载 wangeditor 库及样式：组件实际渲染时才引入，避免编辑资源提前进包
 const Editor = defineAsyncComponent(() =>
@@ -53,12 +54,11 @@ const valueHtml = defineModel("modelValue", {
   default: "<p>欢迎体验 雪花浏览器</p>",
 });
 
-// 根据编辑器纯文本内容统计当前字数，仅用于展示
-const currentLength = computed(() => {
-  const container = document.createElement("div");
-  container.innerHTML = valueHtml.value || "";
-  return container.textContent?.length ?? 0;
-});
+// 根据编辑器实例的纯文本内容统计当前字数，仅用于展示
+const currentLength = ref(0);
+const updateCurrentLength = (editor) => {
+  currentLength.value = editor.getText().length;
+};
 
 // 模拟 ajax 异步获取内容
 onMounted(() => {});
@@ -79,6 +79,11 @@ onBeforeUnmount(() => {
 
 const handleCreated = (editor) => {
   editorRef.value = editor; // 记录 editor 实例，重要！
+  updateCurrentLength(editor);
+};
+
+const handleChange = (editor) => {
+  updateCurrentLength(editor);
 };
 </script>
 
