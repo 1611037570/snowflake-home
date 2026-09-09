@@ -30,9 +30,9 @@ const themeColor = inject("themeColor");
     </div>
   </div>
   <!-- 居中：头像在上，信息区垂直居中 -->
-  <div v-else-if="position === 'center'" class="flex flex-col items-center">
-    <UserAvatar class="mb-3" />
-    <div class="flex w-full max-w-full min-w-0 flex-col items-center">
+  <div v-else-if="position === 'center'" class="flex w-full flex-col items-center">
+    <UserAvatar />
+    <div class="flex w-full max-w-full min-w-0 flex-col items-center gap-3">
       <UserName />
       <div
         v-if="showDivider"
