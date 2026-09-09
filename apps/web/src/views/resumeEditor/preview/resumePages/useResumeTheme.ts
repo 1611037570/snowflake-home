@@ -10,6 +10,7 @@ import {
   defaultFontSize,
   defaultLineHeight,
   defaultPadding,
+  defaultUserInfoLayout,
   defaultUserInfoMode,
 } from "@/stores/modules/resume/uiConfig";
 
@@ -70,6 +71,8 @@ export const useResumeTheme = (ui: ComputedRef<ResumeUi>): ResumeTheme => {
 
   // 个人信息展示模式（图标/文字），缺失时回退默认值
   const userInfoMode = computed(() => ui.value.userInfoMode ?? defaultUserInfoMode);
+  // 个人信息布局（网格/弹性），缺失时回退默认值
+  const userInfoLayout = computed(() => ui.value.userInfoLayout ?? defaultUserInfoLayout);
   // 头像位置（左/居中/右），缺失时回退默认值
   const avatarPosition = computed(() => ui.value.avatarPosition ?? defaultAvatarPosition);
 
@@ -78,6 +81,7 @@ export const useResumeTheme = (ui: ComputedRef<ResumeUi>): ResumeTheme => {
   provide("themeColor", themeColor);
   provide("themeTemplate", themeTemplate);
   provide("userInfoMode", userInfoMode);
+  provide("userInfoLayout", userInfoLayout);
   provide("avatarPosition", avatarPosition);
 
   return {

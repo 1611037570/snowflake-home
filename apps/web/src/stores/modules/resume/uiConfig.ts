@@ -73,6 +73,17 @@ export const userInfoModeList = [
     value: "text",
   },
 ];
+// 个人信息布局列表
+export const userInfoLayoutList = [
+  {
+    name: "弹性",
+    value: "flex",
+  },
+  {
+    name: "网格",
+    value: "grid",
+  },
+];
 // 头像位置列表
 export const avatarPositionList = [
   {
@@ -103,6 +114,8 @@ export const defaultModuleSpacing = 12;
 export const defaultThemeTemplate = "default";
 // 默认个人信息展示模式
 export const defaultUserInfoMode = "text";
+// 默认个人信息布局
+export const defaultUserInfoLayout = "flex";
 // 默认头像位置
 export const defaultAvatarPosition = "right";
 // ===========参数范围（编辑器滑杆与一页纸压缩共用，只维护这一处）=====================
@@ -135,6 +148,8 @@ export const DEFAULT_UI = {
   fontFamily: defaultFontFamily,
   // 个人信息展示模式
   userInfoMode: defaultUserInfoMode,
+  // 个人信息布局
+  userInfoLayout: defaultUserInfoLayout,
   // 头像位置
   avatarPosition: defaultAvatarPosition,
 };
