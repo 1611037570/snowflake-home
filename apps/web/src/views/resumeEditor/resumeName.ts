@@ -7,7 +7,7 @@ import dayjs from "dayjs";
 import { useResumeStore } from "@/stores";
 
 const resumeStore = useResumeStore();
-const { currentData } = storeToRefs(resumeStore);
+const { currentData, currentItem } = storeToRefs(resumeStore);
 
 const user = computed(() => currentData.value?.user?.data || {});
 
@@ -29,12 +29,16 @@ export const workYearsNumber = computed(() => calcWorkYears(user.value?.workTime
 export const workYears = computed(() =>
   workYearsNumber.value ? `${workYearsNumber.value}年经验` : "",
 );
-export function getResumeTitle(data: any) {
+// 根据完整简历项生成标题，自定义模式优先使用自定义标题
+export function getResumeTitle(resumeItem: any) {
   const defaultName = "未命名简历";
-  if (!data) {
+  if (!resumeItem) {
     return defaultName;
   }
-  const { user, education } = data;
+  if (resumeItem.usage?.titleMode === "custom" && resumeItem.usage.customTitle) {
+    return resumeItem.usage.customTitle;
+  }
+  const { user, education } = resumeItem.data || {};
   const name = user?.data?.name || "";
   const edu = education?.data?.[0]?.education || "";
   const position = user?.data?.position || "";
@@ -56,6 +60,5 @@ export function getExportFileName(title: string, ext: string) {
  * @returns 简历标题字符串
  */
 export const resumeTitle = computed(() => {
-  const data = currentData.value;
-  return getResumeTitle(data);
+  return getResumeTitle(currentItem.value);
 });
