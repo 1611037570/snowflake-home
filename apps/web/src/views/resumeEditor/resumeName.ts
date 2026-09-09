@@ -12,8 +12,7 @@ const { currentData } = storeToRefs(resumeStore);
 const user = computed(() => currentData.value?.user?.data || {});
 
 // 计算工作年限数字（规则：满5个月按1年算，以此类推）
-const calcWorkYears = () => {
-  const workTime = user.value?.workTime;
+const calcWorkYears = (workTime: string) => {
   if (!workTime) return 0;
 
   const startDate = dayjs(workTime);
@@ -25,7 +24,7 @@ const calcWorkYears = () => {
 
   return years > 0 ? years : 0;
 };
-export const workYearsNumber = computed(calcWorkYears);
+export const workYearsNumber = computed(() => calcWorkYears(user.value?.workTime));
 // 中文工作年限文本：供简历标题与导出文件名等场景使用
 export const workYears = computed(() =>
   workYearsNumber.value ? `${workYearsNumber.value}年经验` : "",
@@ -39,7 +38,9 @@ export function getResumeTitle(data: any) {
   const name = user?.data?.name || "";
   const edu = education?.data?.[0]?.education || "";
   const position = user?.data?.position || "";
-  return [name, edu, position, workYears.value].filter(Boolean).join("-") || defaultName;
+  const years = calcWorkYears(user?.data?.workTime);
+  const experience = years ? `${years}年经验` : "";
+  return [name, edu, position, experience].filter(Boolean).join("-") || defaultName;
 }
 /**
  * 生成统一格式的导出文件名：年-月-日-简历标题
