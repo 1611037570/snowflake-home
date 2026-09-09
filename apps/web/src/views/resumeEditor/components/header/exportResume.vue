@@ -56,10 +56,11 @@ const list = [
 <template>
   <div
     @click="visible = true"
-    class="flex h-9 cursor-pointer items-center gap-1 rounded-3xl border border-sf-b bg-sf-page p-1 px-3 text-sm"
+    class="flex h-9 cursor-pointer items-center gap-1 rounded-3xl border border-sf-b bg-sf-page p-1 px-2 text-sm transition-colors hover:bg-sf-theme hover:text-white"
   >
-    <SfIcon icon="fa6-solid:file-export" size="4" class="text-sf-theme" />
+    <SfIcon icon="material-symbols:download" size="4" />
     <span> 导出简历 </span>
+    <SfIcon icon="mingcute:down-line" size="4" />
   </div>
 
   <SfModal v-model="visible" title="导出简历">
