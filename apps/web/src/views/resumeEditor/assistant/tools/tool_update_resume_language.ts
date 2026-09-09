@@ -9,7 +9,7 @@ export const RESUME_LANG_CODES = ["zh", "en", "ja", "ko", "fr", "de", "es", "ru"
 export const createUpdateResumeLanguageTool = (ctx: ResumeToolContext): ReactTool => ({
   name: "update_resume_language",
   description:
-    `${TOOL_ARGUMENT_RULE}\n\n更新简历的展示语言（控制模块标题、页脚等界面文案语言），翻译简历内容后调用，language 使用规范语言代码`,
+    `${TOOL_ARGUMENT_RULE}\n\n更新简历展示语言。翻译简历时必须先调用 resume_translate 技能，完成翻译后再调用本工具。language 使用规范语言代码`,
   parameters: {
     type: "object",
     properties: {
