@@ -3,7 +3,7 @@ import { ToolNotFoundError } from "@/apis";
 import { storeToRefs } from "pinia";
 import { buildToolGuide } from "./toolGuide";
 import { onDemandSkills, residentSkills } from "./skills/registry";
-import { createSkillTools } from "./skills/skillTools";
+import { createSkillTools } from "./skills/tool_skill_loader";
 import { useResumeContext } from "./resumeContext";
 import { createResumeTools, RESUME_LANG_CODES } from "./resumeTools";
 import type { AssistantConfig } from "./types";
