@@ -593,7 +593,15 @@ export const useResumeStore = defineStore(
   },
   {
     persist: {
-      pick: ["list", "trashList", "layout", "editorWidth", "assistantWidth", "system"],
+      pick: [
+        "list",
+        "trashList",
+        "layout",
+        "editorWidth",
+        "assistantWidth",
+        "system",
+        "desensitizeMode",
+      ],
     },
   },
 );
