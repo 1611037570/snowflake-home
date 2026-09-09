@@ -1,0 +1,109 @@
+import type { ReactTool } from "@/apis/llm/react";
+import { validateResumeEdits, type ResumeWriteOp } from "../resumeEdits";
+import type { ResumeToolContext } from "./tool_types";
+
+// 创建简历修改工具：校验后直接写入，由请求结束时统一提交缓冲写入
+export const createProposeResumeEditsTool = (ctx: ResumeToolContext): ReactTool => ({
+  name: "propose_resume_edits",
+  description:
+    "根据分析结果生成简历修改，回复完成后直接写入简历数据（用户可撤回）。通过 operations 语义化描述写操作：updateModule 修改模块级 data 字段（如自定义模块 title）；updateRecord 修改记录字段；addRecord 新增记录；deleteRecord 删除记录；moveRecord 调整记录顺序。提交前会做结构与格式校验，校验失败不写入并返回 errors，请按 errors 修正后重新提交。operations 必须为标准 JSON，参数只使用普通字符，禁止输出 HTML 实体（如 &#x20;、&nbsp;、&quot; 等）。",
+  parameters: {
+    type: "object",
+    properties: {
+      operations: {
+        type: "array",
+        description:
+          "写操作列表，一次调用会合并为一次写入；操作目标必须是 read_resume_data 返回的已有模块与字段；参数为标准 JSON，禁止输出 HTML 实体",
+        items: {
+          type: "object",
+          properties: {
+            op: {
+              type: "string",
+              description:
+                "操作类型：updateModule 改模块字段；updateRecord 改记录；addRecord 新增；deleteRecord 删除；moveRecord 排序",
+            },
+            module: {
+              type: "string",
+              description: "模块 key，如 user/work/project/education/skill/account",
+            },
+            index: {
+              type: "number",
+              description: "记录下标（从 0 开始），updateRecord/deleteRecord 使用",
+            },
+            field: {
+              type: "string",
+              description:
+                "要修改的字段名，来自 read_resume_data 返回的数据，updateModule/updateRecord 使用",
+            },
+            value: {
+              description: "修改后的值，格式遵守简历数据规范，updateModule/updateRecord 使用",
+            },
+            record: {
+              type: "object",
+              description: "新增记录的内容，键为字段名、值为实际写入值，addRecord 使用",
+            },
+            from: {
+              type: "number",
+              description: "原记录下标（从 0 开始），moveRecord 使用",
+            },
+            to: {
+              type: "number",
+              description: "目标记录下标（从 0 开始），moveRecord 使用",
+            },
+          },
+          required: ["op", "module"],
+        },
+      },
+    },
+    required: ["operations"],
+  },
+  execute: (args: any) => {
+    const operations: ResumeWriteOp[] = Array.isArray(args?.operations) ? args.operations : [];
+    // 先做结构与格式校验，校验失败不产生任何写操作副作用
+    const errors = validateResumeEdits(operations, ctx.getResumeData() as any);
+    if (errors.length) {
+      console.log("[ReAct] propose_resume_edits 校验未通过:", errors);
+      return { applied: false, changed: [], added: [], errors };
+    }
+    const added: Array<{ module: string; index: number }> = [];
+    let changedData = false;
+    operations.forEach((op) => {
+      if (!op) return;
+      if (op.op === "updateModule") {
+        if (ctx.updateModuleField?.(op.module, op.field, op.value)) changedData = true;
+        return;
+      }
+      if (op.op === "updateRecord") {
+        if (ctx.updateRecordField?.(op.module, op.index, op.field, op.value)) {
+          changedData = true;
+        }
+        return;
+      }
+      if (op.op === "addRecord") {
+        const index = ctx.addDataRecord?.(op.module) ?? -1;
+        if (index < 0) return;
+        changedData = true;
+        added.push({ module: op.module, index });
+        if (op.record && typeof op.record === "object") {
+          Object.entries(op.record).forEach(([field, value]) => {
+            if (ctx.updateRecordField?.(op.module, index, field, value)) changedData = true;
+          });
+        }
+        return;
+      }
+      if (op.op === "deleteRecord") {
+        if (ctx.removeDataRecord?.(op.module, op.index)) changedData = true;
+        return;
+      }
+      if (op.op === "moveRecord") {
+        if (ctx.moveDataRecord?.(op.module, op.from, op.to)) changedData = true;
+      }
+    });
+    return {
+      applied: changedData,
+      changed: [],
+      added,
+      errors: [],
+    };
+  },
+});

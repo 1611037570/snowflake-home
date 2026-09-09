@@ -5,7 +5,7 @@ import { buildToolGuide } from "./toolGuide";
 import { onDemandSkills, residentSkills } from "./skills/registry";
 import { createSkillTools } from "./skills/tool_skill_loader";
 import { useResumeContext } from "./resumeContext";
-import { createResumeTools, RESUME_LANG_CODES } from "./resumeTools";
+import { createResumeTools, RESUME_LANG_CODES } from "./tools";
 import type { AssistantConfig } from "./types";
 
 // 简历助手唯一组装器：入口只消费本模块产出的 config 与创建对话方法
