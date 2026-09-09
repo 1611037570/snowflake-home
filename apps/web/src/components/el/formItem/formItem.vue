@@ -6,14 +6,6 @@
   >
     <template #label v-if="label && labelPosition === 'top'">
       <div class="mb-1 flex h-5 w-full items-center text-sf-base" @click.stop="">
-        <!-- 可拖拽字段显示拖拽手柄 -->
-        <SfIcon
-          v-if="drag"
-          icon="icon-park-outline:drag"
-          size="4"
-          class="item-drag mr-1 cursor-move!"
-          @click.stop=""
-        />
         <span class="pr-1 pl-2 text-[15px] text-sf-text">
           {{ label }}
         </span>
@@ -42,10 +34,6 @@ defineProps({
   labelPosition: {
     type: String,
     default: "top",
-  },
-  drag: {
-    type: Boolean,
-    default: false,
   },
 });
 const vm: any = getCurrentInstance();
