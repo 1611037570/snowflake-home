@@ -67,9 +67,11 @@ function goToAddModel() {
     <!-- 模型切换：普通 div 触发，SfDropdown + SfList 渲染模型列表 -->
     <SfDropdown ref="dropdownRef" trigger="click" placement="top" :show-arrow="false">
       <div
-        class="flex-c max-w-54 cursor-pointer gap-0.5 truncate rounded-3xl px-2 py-1.5 text-[12px] font-semibold select-none hover:bg-sf-bg-2"
+        class="flex-c max-w-24 cursor-pointer gap-0.5 overflow-hidden rounded-3xl px-2 py-1.5 text-[12px] font-semibold select-none hover:bg-sf-bg-2"
       >
-        {{ activeName }}
+        <div class="flex-1 truncate">
+          {{ activeName }}
+        </div>
         <SfIcon icon="mingcute:down-line" size="4" />
       </div>
       <template #dropdown>
