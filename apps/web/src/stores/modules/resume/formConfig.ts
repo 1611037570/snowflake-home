@@ -204,6 +204,22 @@ export const DEFAULT_USER_FORM = [
           type: "month",
         },
       },
+      // 微信号
+      {
+        type: "object",
+        label: "微信号",
+        tip: "常用微信号",
+        component: "input",
+        span: 12,
+        model: {
+          source: ["user", "data", "wechat"],
+          prop: "modelValue",
+        },
+        props: {
+          placeholder: "请输入微信号",
+          clearable: true,
+        },
+      },
       // 更多配置：展开后才渲染其他配置
       {
         type: "group",

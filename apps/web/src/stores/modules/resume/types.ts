@@ -14,6 +14,8 @@ export interface Data {
       phone: string;
       // 邮箱
       email?: string;
+      // 微信号
+      wechat?: string;
       // 工作时间
       workTime?: string;
       // 性别

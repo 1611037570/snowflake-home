@@ -31,8 +31,10 @@ const layoutClass = computed(() => {
 });
 const hasPhone = computed(() => !!user.value?.phone?.value);
 const hasEmail = computed(() => !!user.value?.email?.value);
+const hasWechat = computed(() => !!user.value?.wechat?.value);
 const phoneLabel = computed(() => getPreviewText("phoneLabel", previewLang.value));
 const emailLabel = computed(() => getPreviewText("emailLabel", previewLang.value));
+const wechatLabel = computed(() => getPreviewText("wechatLabel", previewLang.value));
 
 // 第二行展示电话、邮箱及其他个人信息
 const heightWeightText = computed(() => {
@@ -87,7 +89,7 @@ const secondaryItems = computed(() => {
 
 <template>
   <div
-    v-if="hasPhone || hasEmail || secondaryItems.length"
+    v-if="hasPhone || hasEmail || hasWechat || secondaryItems.length"
     class="max-w-full min-w-0 items-center"
     :class="layoutClass"
   >
@@ -103,6 +105,13 @@ const secondaryItems = computed(() => {
       <div v-else class="pr-1">{{ emailLabel }}</div>
       <div class="max-w-full min-w-0 font-medium">
         <ResumeField :model-value="user.email" />
+      </div>
+    </div>
+    <div v-if="hasWechat" class="grid min-w-0 grid-cols-[auto_minmax(0,1fr)] items-center gap-x-1">
+      <SfIcon v-if="isIconMode" icon="mdi:wechat" size="3.5" class="mr-1 shrink-0" />
+      <div v-else class="pr-1">{{ wechatLabel }}</div>
+      <div class="max-w-full min-w-0 font-medium">
+        <ResumeField :model-value="user.wechat" />
       </div>
     </div>
     <div
