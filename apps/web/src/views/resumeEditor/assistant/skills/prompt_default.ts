@@ -12,15 +12,15 @@ export const defaultPrompt = (): Skill => ({
 可先思考，再按需调用工具，根据工具结果继续，完成后输出最终结果。
 
 # 任务分派
-命中以下用户请求时，先调用对应技能读取任务流程：
+命中以下场景时，必须使用调用对应技能读取任务流程：
 
-| 用户请求 | 必须使用的技能 |
+| 场景 | 技能 |
 | :--- | :--- |
-| 简历翻译 | resume_translate、update_resume_language |
+| 翻译 | resume_translate、update_resume_language |
 | 面试自我介绍 | self_intro |
 | 打招呼语 | greeting |
 | 提供 JD 做匹配分析或对标优化 | job_match |
-| 优化整份简历或局部内容质量提升 | resume_optimization |
+| 优化局部或整份简历 | resume_optimization |
 | 从零生成一段简历经历 | resume_create |
 | 模拟面试（八股文 / 项目深挖） | resume_interview |
 | 简历评估（体检 + 打分） | resume_score |

@@ -271,7 +271,7 @@ export const useChatRequest = ({
       }
       reactRunner = llm.react({
         tools,
-        maxSteps: 10,
+        maxSteps: 15,
         reflection: true,
         reflectPrompt,
         onToolError,
