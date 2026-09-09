@@ -6,6 +6,7 @@
       :prop="getProp(currentForm)"
       :rules="currentForm.rules"
       :tip="currentForm.tip"
+      :drag="currentForm.drag && !currentForm.fixed"
     >
       <slot />
     </SfFormItem>

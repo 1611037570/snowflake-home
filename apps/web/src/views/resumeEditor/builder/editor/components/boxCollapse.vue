@@ -111,7 +111,7 @@ function handleEditConfirm() {
             {{ title }}
           </div>
           <div class="mr-3 flex items-center gap-3 opacity-0 group-hover:opacity-100">
-            <SfTooltip :content="hidden ? '显示模块' : '隐藏模块'">
+            <SfTooltip :content="hidden ? '显示' : '隐藏'">
               <SfIcon
                 @click.stop="toggleHidden"
                 :icon="hidden ? 'lucide:eye' : 'lucide:eye-off'"
@@ -119,7 +119,7 @@ function handleEditConfirm() {
                 class="cursor-pointer hover:text-sf-theme"
               />
             </SfTooltip>
-            <SfTooltip content="归档模块">
+            <SfTooltip content="归档">
               <SfIcon
                 @click.stop="archiveModule"
                 icon="lucide:archive"
