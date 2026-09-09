@@ -1,5 +1,5 @@
 <template>
-  <div style="" class="w-full rounded-2xl" :class="bg">
+  <div style="" class="relative w-full rounded-2xl" :class="bg">
     <!-- 编辑器实例创建成功后再挂载工具栏，避免工具栏在 editor 就绪前初始化报错 -->
     <Toolbar
       v-if="editorRef"
@@ -16,11 +16,14 @@
       :mode="mode"
       @onCreated="handleCreated"
     />
+    <div class="pointer-events-none absolute right-3 bottom-3 z-10 text-xs text-sf-text-2">
+      {{ currentLength }}/{{ props.maxLength }}
+    </div>
   </div>
 </template>
 
 <script setup>
-import { defineAsyncComponent, onBeforeUnmount, onMounted, shallowRef } from "vue";
+import { computed, defineAsyncComponent, onBeforeUnmount, onMounted, shallowRef } from "vue";
 
 // 延迟加载 wangeditor 库及样式：组件实际渲染时才引入，避免编辑资源提前进包
 const Editor = defineAsyncComponent(() =>
@@ -32,10 +35,14 @@ const Toolbar = defineAsyncComponent(() =>
   import("@wangeditor-next/editor-for-vue").then((m) => m.Toolbar),
 );
 
-defineProps({
+const props = defineProps({
   height: {
     type: String,
     default: "300px",
+  },
+  maxLength: {
+    type: Number,
+    default: 9999,
   },
 });
 // 编辑器实例，必须用 shallowRef
@@ -44,6 +51,13 @@ const bg = inject("bg", "var(--color-sf-primary)");
 // 内容 HTML
 const valueHtml = defineModel("modelValue", {
   default: "<p>欢迎体验 雪花浏览器</p>",
+});
+
+// 根据编辑器纯文本内容统计当前字数，仅用于展示
+const currentLength = computed(() => {
+  const container = document.createElement("div");
+  container.innerHTML = valueHtml.value || "";
+  return container.textContent?.length ?? 0;
 });
 
 // 模拟 ajax 异步获取内容
