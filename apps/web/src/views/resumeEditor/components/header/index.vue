@@ -4,7 +4,7 @@ import { storeToRefs } from "pinia";
 import HistoryNav from "./historyNav.vue";
 import Title from "./title.vue";
 import LocalBackup from "./localBackup.vue";
-import ExportResume from "./exportResume.vue";
+import ExportResume from "./exportResume/index.vue";
 import { useRouter } from "vue-router";
 const router = useRouter();
 
