@@ -87,7 +87,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <footer class="relative flex w-full flex-col items-center p-3">
+  <footer class="relative flex w-full flex-col items-center px-3 pt-3">
     <div class="relative z-10 w-full max-w-4xl">
       <!-- 主输入容器：增强阴影与圆角细节 -->
       <div

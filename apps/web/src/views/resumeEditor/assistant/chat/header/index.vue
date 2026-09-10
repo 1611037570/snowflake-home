@@ -18,7 +18,7 @@ function createNewChat() {
 </script>
 
 <template>
-  <div class="px-3 pt-3">
+  <div class="px-3">
     <div class="flex w-full justify-between">
       <div>
         <MessageNav

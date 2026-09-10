@@ -1,11 +1,13 @@
 <script setup lang="ts">
-import { useAiStore } from "@/stores";
+import { useAiStore, useResumeStore } from "@/stores";
 import { useScroll } from "@vueuse/core";
 import { ElMessage } from "element-plus";
 import { computed, nextTick, ref, watch } from "vue";
+import { storeToRefs } from "pinia";
 import { useChatRequest } from "./useChatRequest";
-import type { AssistantConfig, Flow, SuggestCard } from "../types";
-import type { SelectedModule } from "@/stores/modules/resume/types";
+import { ALL_MODULE_KEY, ALL_MODULE_NAME } from "@/stores/modules/resume/defaultConfig";
+import { flows, suggestions } from "../flows";
+import { useResumeAssistant } from "../useResumeAssistant";
 
 import AiMessage from "./aiMessage.vue";
 import ChatInput from "./chatInput/index.vue";
@@ -14,22 +16,39 @@ import EmptyState from "./emptyState/index.vue";
 import ChatHeader from "./header/index.vue";
 
 const aiStore = useAiStore();
+const resumeStore = useResumeStore();
 const { createDefaultMessage } = aiStore;
-// 宿主传入的技能、工具与上下文配置
-const props = defineProps<{
-  config: AssistantConfig;
-  flows: Record<string, Flow>;
-  suggestions: SuggestCard[];
-  selectedModules?: SelectedModule[];
-  removeModule?: (key: string) => void;
-}>();
-// 生成状态来自宿主注入的引用，模板与输入框共用
-const generating = props.config.generating;
-const isGenerating = computed(() => generating.value);
-
-const chat = defineModel("chat", {
-  required: true,
+// 组装简历域技能、工具与对话创建方法
+const { config: assistantConfig, createChat: createAssistantChat } = useResumeAssistant(
+  resumeStore.addDataRecord,
+);
+// 把会话工厂注册到 ai store，供新建话题入口调用
+aiStore.registerResumeAssistantChatFactory(createAssistantChat);
+const { resumeAssistantChat } = storeToRefs(aiStore);
+const { selectedModule } = storeToRefs(resumeStore);
+// 当前操作模块列表：有选中模块时展示真实模块，无选中时补“整个简历”兜底项
+const selectedModules = computed(() =>
+  selectedModule.value.length
+    ? selectedModule.value
+    : [{ key: ALL_MODULE_KEY, name: ALL_MODULE_NAME }],
+);
+// 点击模块标签右上角关闭按钮时取消选中，统一走 store 操作
+const removeSelectedModule = (key: string) => {
+  resumeStore.unselectModule(key);
+};
+// 简历助手对话：ai store 已持久化，无缓存时初始化默认对话
+if (!resumeAssistantChat.value) {
+  resumeAssistantChat.value = createAssistantChat();
+}
+const chat = computed({
+  get: () => resumeAssistantChat.value!,
+  set: (value) => {
+    resumeAssistantChat.value = value;
+  },
 });
+// 生成状态来自宿主注入的引用，模板与输入框共用
+const generating = assistantConfig.generating;
+const isGenerating = computed(() => generating.value);
 
 // currentMessages：从 chat.messages 派生
 const currentMessages = computed(() => chat.value?.messages ?? []);
@@ -123,7 +142,7 @@ const { handleAIResponse, stopGenerating, withdrawAI, hasWriteChanges } = useCha
   currentMessages,
   addMessage,
   scrollToBottom: followContentScroll,
-  config: props.config,
+  config: assistantConfig,
 });
 
 /**
@@ -234,7 +253,7 @@ const activeFlow = ref(null);
  * 点击建议卡片：启动引导式对话流程
  */
 const handleSuggest = (payload) => {
-  const flow = props.flows[payload?.flow];
+  const flow = flows[payload?.flow];
   if (!flow) return;
   // 记录流程状态并展示初始用户消息
   activeFlow.value = { flow, stepIndex: 0, answers: [] };
@@ -336,9 +355,9 @@ const handleFlowInput = (content) => {
     <ChatHeader :messages="navMessages" @select="handleNavSelect" />
     <SfScrollbar ref="chatContainer" class="w-full flex-1">
       <EmptyState
-        :suggestions="props.suggestions"
-        :selected-modules="props.selectedModules"
-        :remove-module="props.removeModule"
+        :suggestions="suggestions"
+        :selected-modules="selectedModules"
+        :remove-module="removeSelectedModule"
         @suggest="handleSuggest"
         v-if="displayMessages.length === 0"
       />
