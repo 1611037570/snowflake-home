@@ -229,7 +229,7 @@
         <div class="grid w-full items-center gap-16 md:grid-cols-2">
           <div class="text-center lg:text-left">
             <HeroTitle
-              title1="北斗"
+              title1="小舟"
               title2="AI助手"
               subtitle="北斗引航 终抵群星"
               gradient="from-violet-500 to-fuchsia-500"
@@ -259,7 +259,7 @@
                     />
                   </svg>
                 </div>
-                <span class="text-sm font-medium text-sf-text">北斗 AI 助手</span>
+                <span class="text-sm font-medium text-sf-text">小舟 AI 助手</span>
                 <span class="ml-auto text-xs text-green-500">在线</span>
               </div>
 
