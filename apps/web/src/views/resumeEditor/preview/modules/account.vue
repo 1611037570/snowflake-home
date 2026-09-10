@@ -42,7 +42,7 @@ const safeUrl = (value) => {
         :href="safeUrl(item.url?.value)"
         target="_blank"
         rel="noopener noreferrer"
-        class="max-w-full min-w-0 flex-1"
+        class="max-w-full min-w-0 flex-1 hover:underline"
       >
         <ResumeField v-model="item.url" />
       </a>
