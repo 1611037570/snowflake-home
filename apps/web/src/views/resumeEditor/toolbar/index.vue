@@ -9,6 +9,7 @@ import Icon from "./components/icon.vue";
 const Ai = defineAsyncComponent(() => import("./modules/ai/index.vue"));
 const System = defineAsyncComponent(() => import("./modules/system/index.vue"));
 const OnePage = defineAsyncComponent(() => import("./modules/onePage.vue"));
+const CopyResume = defineAsyncComponent(() => import("./modules/copyResume.vue"));
 const Progress = defineAsyncComponent(() => import("./modules/progress/index.vue"));
 const ModuleNavigator = defineAsyncComponent(() => import("./modules/moduleNavigator.vue"));
 const QaAnswer = defineAsyncComponent(() => import("./modules/qaAnswer.vue"));
@@ -42,6 +43,7 @@ function goGitHub() {
       <div class="h-[0.5px] w-full bg-sf-bg-2"></div>
       <ModuleNavigator />
       <OnePage />
+      <CopyResume />
       <Ai />
       <Icon icon="lucide:focus" size="5" content="专注模式" @click="enterFocusMode" />
       <div class="h-[0.5px] w-full bg-sf-bg-2"></div>
