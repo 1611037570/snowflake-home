@@ -74,6 +74,11 @@ const list = [
     desc: "将简历一键导出为PNG图片，方便在社交媒体、作品集或PPT中直接展示",
     fn: () => emitExport("resume-print-image"),
   },
+  {
+    name: "浏览器打印",
+    desc: "使用浏览器系统打印功能打印当前简历",
+    fn: () => emitExport("resume-print-browser"),
+  },
 ];
 const a = {
   name: "JSON完整备份",
