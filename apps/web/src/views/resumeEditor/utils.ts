@@ -17,11 +17,11 @@ export const setFieldHidden = (data: any, field: any, value: boolean) => {
 /**
  * 设置模块归档状态：按字段归档路径将对应数据置值
  * @param data 简历数据
- * @param field 字段配置（含 checks.archived.path）
+ * @param field 字段配置（含 checks.visible.path）
  * @param value 目标归档状态
  */
 export const setFieldArchived = (data: any, field: any, value: boolean) => {
-  const path = field.checks?.archived?.path;
+  const path = field.checks?.visible?.path;
   if (!path?.length) return;
   let cur = data;
   for (let i = 0; i < path.length - 1; i++) {

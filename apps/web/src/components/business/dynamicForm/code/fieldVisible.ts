@@ -26,9 +26,9 @@ export const isFieldHidden = (data: Record<string, any> | undefined, field: Form
   return isRuleSatisfied(getValueByPath(data, rule.path), rule);
 };
 
-// 按 DSL 归档协议判断模块是否已归档
-export const isFieldArchived = (data: Record<string, any> | undefined, field: FormField): boolean => {
-  const rule = field.checks?.archived;
+// 按 DSL visible 协议判断字段是否需要从当前表单移除
+export const isFieldVisible = (data: Record<string, any> | undefined, field: FormField): boolean => {
+  const rule = field.checks?.visible;
   if (!rule?.path?.length) return false;
   return isRuleSatisfied(getValueByPath(data, rule.path), rule);
 };

@@ -84,8 +84,8 @@ const handleConfirm = () => {
   if (config.checks?.hidden?.path?.length) {
     config.checks.hidden.path[0] = customKey;
   }
-  if (config.checks?.archived?.path?.length) {
-    config.checks.archived.path[0] = customKey;
+  if (config.checks?.visible?.path?.length) {
+    config.checks.visible.path[0] = customKey;
   }
   // 重置自定义模块的子模块标题模型数据路径
   config.fields[0].addConfig.model.forEach((item) => {
