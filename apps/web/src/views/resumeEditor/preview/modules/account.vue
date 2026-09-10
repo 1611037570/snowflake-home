@@ -16,9 +16,7 @@ const safeUrl = (value) => {
   if (!value) return "";
   try {
     const url = new URL(String(value).trim());
-    return ["http:", "https:", "mailto:"].includes(url.protocol.toLowerCase())
-      ? url.href
-      : "";
+    return ["http:", "https:", "mailto:"].includes(url.protocol.toLowerCase()) ? url.href : "";
   } catch {
     return "";
   }
@@ -26,21 +24,25 @@ const safeUrl = (value) => {
 </script>
 
 <template>
-  <div class="resume-row" data-module="account" :style="[lineHeightValue(), fontValue()]">
+  <div
+    class="resume-row flex flex-col gap-3"
+    data-module="account"
+    :style="[lineHeightValue(), fontValue()]"
+  >
     <!-- 社交链接 -->
     <div
       v-for="(item, index) in account"
       :key="index"
-      class="mt-1 flex min-w-0 max-w-full flex-wrap items-center gap-2"
+      class="flex max-w-full min-w-0 flex-wrap items-center gap-1"
       data-module="user"
     >
       <ResumeField v-model="item.name" />
-      <span v-if="item.name?.value && item.url?.value" class="pr-1">：</span>
+      <span v-if="item.name?.value && item.url?.value">：</span>
       <a
         :href="safeUrl(item.url?.value)"
         target="_blank"
         rel="noopener noreferrer"
-        class="min-w-0 max-w-full font-medium hover:underline"
+        class="max-w-full min-w-0 flex-1"
       >
         <ResumeField v-model="item.url" />
       </a>
