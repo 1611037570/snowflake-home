@@ -77,16 +77,16 @@ const list = [
     fn: () => emitExport("resume-print-image"),
   },
   {
-    name: "PDF备用",
-    icon: "mdi:google-chrome",
-    desc: "调用浏览器系统打印功能，作为兜底方案。",
-    fn: () => emitExport("resume-print-browser"),
-  },
-  {
     name: "Markdown文档",
     icon: "mdi:language-markdown",
-    desc: "导出适合编辑和分享的文本简历",
+    desc: "适合编辑和分享的文本简历",
     fn: () => emitExport("resume-print-markdown"),
+  },
+  {
+    name: "HTML网页",
+    icon: "mdi:language-html5",
+    desc: "适合打开和编辑的单文件网页",
+    fn: () => emitExport("resume-print-html"),
   },
 ];
 const a = {

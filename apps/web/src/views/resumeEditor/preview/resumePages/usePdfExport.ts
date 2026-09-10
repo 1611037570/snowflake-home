@@ -10,6 +10,7 @@ import { storeToRefs } from "pinia";
 import { PDF_PAGE_HEIGHT, PDF_PAGE_WIDTH, RESUME_HEIGHT, RESUME_WIDTH } from "../constants";
 import { getExportFileName, resumeTitle } from "../../resumeName";
 import { useResumeStore } from "@/stores";
+import { printResume } from "./useBrowserPrint";
 // import confirm from "@/components/business/confirm";
 
 /**
@@ -33,6 +34,7 @@ export const printPDF = async (
   const cachedSelectedModule = [...selectedModule.value];
   resumeStore.clearSelectedModules();
   let tempContainer: HTMLDivElement | undefined;
+  let shouldFallback = false;
   try {
     // 确保DOM已渲染完成
     await nextTick();
@@ -46,8 +48,7 @@ export const printPDF = async (
     const rootEl = rootRef?.value ?? document.body;
     const pages = rootEl.querySelectorAll(".resume-page-item");
     if (pages.length === 0) {
-      console.error("未找到可打印的简历页面");
-      return;
+      throw new Error("未找到可打印的简历页面");
     }
 
     // 创建PDF文档 (A4尺寸)
@@ -91,8 +92,7 @@ export const printPDF = async (
       if (signal.aborted) return;
 
       if (!canvas || canvas.width === 0 || canvas.height === 0) {
-        console.error(`第 ${i + 1} 页渲染失败`);
-        continue;
+        throw new Error(`第 ${i + 1} 页渲染失败`);
       }
 
       const imgData = canvas.toDataURL("image/png");
@@ -132,6 +132,7 @@ export const printPDF = async (
     console.log(`成功导出 ${pages.length} 页 PDF`);
     onSuccess?.();
   } catch (error) {
+    shouldFallback = !signal.aborted;
     console.error("生成PDF失败:", error);
   } finally {
     // 无论导出成功或失败都清理临时容器
@@ -141,5 +142,9 @@ export const printPDF = async (
     // 导出完成或失败后还原选中的模块
     resumeStore.setSelectedModules(cachedSelectedModule);
     resumeStore.finishPrinting(signal);
+  }
+  // 默认 PDF 失败时使用浏览器打印兜底
+  if (shouldFallback && !signal.aborted) {
+    await printResume({ value: rootRef?.value ?? document.body }, onSuccess, scale);
   }
 };
