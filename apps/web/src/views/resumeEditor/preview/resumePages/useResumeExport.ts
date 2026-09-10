@@ -8,8 +8,8 @@ import { onMounted, onUnmounted, type ComputedRef, type Ref } from "vue";
 import eventBus from "@/utils/modules/eventBus";
 import { printPDF as exportPdf } from "./usePdfExport";
 import { printImage as exportImage } from "./useImageExport";
-import { printResume } from "./useBrowserPrint";
 import { exportMarkdown } from "./useMarkdownExport";
+import { exportHtml } from "./useHtmlExport";
 /** useResumeExport 入参 */
 interface UseResumeExportOptions {
   /** 编辑态才注册导出事件，其余模式（缩略图/全屏预览）不注册 */
@@ -27,28 +27,24 @@ export const useResumeExport = ({ isEdit, rootRef, measureRef, onExportSuccess }
     exportPdf(rootRef, onExportSuccess, scale === 8 ? 8 : scale === 4 ? 4 : scale === 2 ? 2 : 1);
   const printImage = (scale: unknown = 2) =>
     exportImage(measureRef, onExportSuccess, scale === 8 ? 8 : scale === 4 ? 4 : scale === 2 ? 2 : 1);
-  const printBrowser = (scale: unknown = 1) =>
-    printResume(
-      rootRef,
-      onExportSuccess,
-      scale === 8 ? 8 : scale === 4 ? 4 : scale === 2 ? 2 : 1,
-    );
   const printMarkdown = () => exportMarkdown(onExportSuccess);
+  // 导出可编辑的单文件 HTML
+  const printHtml = () => exportHtml(rootRef, onExportSuccess);
   // 仅编辑模式注册全局导出事件
   onMounted(() => {
     if (isEdit.value) {
       eventBus.on("resume-print-pdf", printPDF);
       eventBus.on("resume-print-image", printImage);
-      eventBus.on("resume-print-browser", printBrowser);
       eventBus.on("resume-print-markdown", printMarkdown);
+      eventBus.on("resume-print-html", printHtml);
     }
   });
   onUnmounted(() => {
     if (isEdit.value) {
       eventBus.off("resume-print-pdf", printPDF);
       eventBus.off("resume-print-image", printImage);
-      eventBus.off("resume-print-browser", printBrowser);
       eventBus.off("resume-print-markdown", printMarkdown);
+      eventBus.off("resume-print-html", printHtml);
     }
   });
 };
