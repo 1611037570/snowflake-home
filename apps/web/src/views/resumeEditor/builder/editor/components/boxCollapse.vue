@@ -1,6 +1,7 @@
 <script setup>
 import { ref } from "vue";
 import { useResumeStore } from "@/stores";
+import { jumpPreview } from "../../../useModuleNav";
 const { proxy } = getCurrentInstance();
 
 defineProps({
@@ -58,6 +59,11 @@ function toggleHidden() {
   hidden.value = !hidden.value;
 }
 
+// 从编辑模块定位到预览区对应模块
+function handlePreviewJump() {
+  jumpPreview(currentForm.value.key);
+}
+
 function archiveModule() {
   proxy
     .$confirm(
@@ -111,6 +117,14 @@ function handleEditConfirm() {
             {{ title }}
           </div>
           <div class="mr-3 flex items-center gap-3 opacity-0 group-hover:opacity-100">
+            <SfTooltip content="定位预览" v-if="!hidden">
+              <SfIcon
+                @click.stop="handlePreviewJump"
+                icon="lucide:search"
+                size="4"
+                class="cursor-pointer hover:text-sf-theme"
+              />
+            </SfTooltip>
             <SfTooltip :content="hidden ? '显示' : '隐藏'">
               <SfIcon
                 @click.stop="toggleHidden"
