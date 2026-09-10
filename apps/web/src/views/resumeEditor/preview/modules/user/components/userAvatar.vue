@@ -1,6 +1,5 @@
 <script setup>
 import { computed, inject } from "vue";
-import { toAvatarSrc } from "@/utils";
 import { getPreviewText } from "../../../i18n";
 
 // 头像组件：位置与间距由使用方通过 class 控制
@@ -16,7 +15,7 @@ const avatarAlt = computed(() => getPreviewText("avatarAlt", previewLang.value))
 <template>
   <img
     v-if="user.avatar?.value"
-    :src="toAvatarSrc(user.avatar?.value)"
+    :src="user.avatar?.value"
     :alt="avatarAlt"
     class="h-[98px] w-[70px] shrink-0 rounded object-cover"
   />

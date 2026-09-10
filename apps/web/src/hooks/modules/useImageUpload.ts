@@ -13,8 +13,8 @@ interface UseImageUploadOptions {
   maxWidth?: number;
   /** WebP 压缩质量 (0-1) */
   quality?: number;
-  /** 处理完成回调，参数为裸 base64（不含 data URL 前缀） */
-  onResult?: (base64: string) => void;
+  /** 处理完成回调，参数为完整的图片 Data URL */
+  onResult?: (dataUrl: string) => void;
 }
 
 /**
@@ -60,9 +60,6 @@ export function useImageUpload(options: UseImageUploadOptions = {}) {
       img.src = url;
     });
 
-  // 压缩为裸 base64（去除固定 data URL 前缀，渲染处统一拼接）
-  const toBareBase64 = (src: string) => src.split(",")[1] || "";
-
   // 关闭裁切弹窗并释放预览资源
   const closeCrop = () => {
     cropVisible.value = false;
@@ -88,7 +85,7 @@ export function useImageUpload(options: UseImageUploadOptions = {}) {
       const targetWidth = Math.max(1, Math.round(img.naturalWidth * ratio));
       const targetHeight = Math.max(1, Math.round(img.naturalHeight * ratio));
       const { src } = await compressWebp(img, targetWidth, targetHeight, quality);
-      onResult?.(toBareBase64(src));
+      onResult?.(src);
     } finally {
       URL.revokeObjectURL(url);
     }
@@ -116,7 +113,7 @@ export function useImageUpload(options: UseImageUploadOptions = {}) {
   // 打开图片选择
   const openPicker = () => open({ accept: "image/*" });
 
-  // 确认裁切：内部取裁切画布并压缩为裸 base64
+  // 确认裁切：内部取裁切画布并压缩为完整图片 Data URL
   const confirmCrop = async (cropper: any) => {
     if (!cropper) return;
     if (!outputWidth || !outputHeight) {
@@ -129,7 +126,7 @@ export function useImageUpload(options: UseImageUploadOptions = {}) {
         imageSmoothingQuality: "high",
       });
       const { src } = await compressWebp(canvas, outputWidth, outputHeight, quality);
-      onResult?.(toBareBase64(src));
+      onResult?.(src);
     } finally {
       closeCrop();
     }

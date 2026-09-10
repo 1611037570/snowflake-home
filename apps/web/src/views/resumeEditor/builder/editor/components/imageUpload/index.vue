@@ -3,7 +3,7 @@ import Cropper from "cropperjs";
 import "cropperjs/dist/cropper.css";
 import { ref, watch } from "vue";
 import { useImageUpload } from "@/hooks";
-import { routerNavigation, toAvatarSrc } from "@/utils";
+import { routerNavigation } from "@/utils";
 
 // 新窗口打开 image 工具页
 const goImageTools = () => routerNavigation("/image");
@@ -33,7 +33,7 @@ const image = defineModel("modelValue", {
 // 图片查看器显隐
 const previewVisible = ref(false);
 
-// 图片上传全流程 hook：vueuse 选择文件，内部完成裁切压缩并返回裸 base64
+// 图片上传全流程 hook：vueuse 选择文件，内部完成裁切压缩并返回完整图片 Data URL
 const { openPicker, cropVisible, cropSrc, confirmCrop, closeCrop } = useImageUpload({
   crop: true,
   outputWidth: props.width * 0.7,
@@ -119,7 +119,7 @@ const removeImage = () => {
       >
         <img
           v-if="image"
-          :src="toAvatarSrc(image)"
+          :src="image"
           alt="图片"
           class="h-full w-full shrink-0 object-cover"
         />
@@ -171,7 +171,7 @@ const removeImage = () => {
     <!-- 图片查看器：点击查看上传的大图 -->
     <el-image-viewer
       v-if="previewVisible"
-      :url-list="[toAvatarSrc(image)]"
+      :url-list="[image]"
       @close="previewVisible = false"
     />
 

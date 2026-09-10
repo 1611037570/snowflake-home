@@ -16,18 +16,6 @@ const FIELD_LABELS: Record<string, string> = {
   url: "链接",
 };
 
-// 将头像数据转换为 Markdown 可识别的图片地址
-const getImageSource = (value: unknown) => {
-  if (!value) return "";
-  const source = String(value).trim();
-  if (/^data:image\//i.test(source)) return source;
-  if (/^UklGR/i.test(source)) return `data:image/webp;base64,${source}`;
-  if (/^iVBORw0KGgo/i.test(source)) return `data:image/png;base64,${source}`;
-  if (/^\/9j\//.test(source)) return `data:image/jpeg;base64,${source}`;
-  if (/^R0lGOD/i.test(source)) return `data:image/gif;base64,${source}`;
-  return `data:image/png;base64,${source}`;
-};
-
 // 将富文本内容转换为 Markdown 可读的纯文本
 const formatText = (value: unknown) => {
   if (value === null || value === undefined) return "";
@@ -112,7 +100,7 @@ const appendRecord = (lines: string[], record: Record<string, unknown>, definiti
   const entries = definitions
     .map((definition) => ({
       ...definition,
-      value: definition.key === "avatar" ? getImageSource(record[definition.key]) : formatText(record[definition.key]),
+      value: formatText(record[definition.key]),
     }))
     .filter((item) => item.value);
   if (!entries.length) return;
