@@ -221,8 +221,8 @@ export const useResumeStore = defineStore(
     const pushSelectedModule = (key: string) => {
       selectModule(key);
     };
-    // 新增简历：jump 控制是否跳转编辑器，导入场景传 false 仅创建不跳转；返回是否新增成功
-    const addResume = (config: any, jump = true) => {
+    // 新增简历：jump 控制是否跳转编辑器，select 控制是否选中新简历
+    const addResume = (config: any, jump = true, select = true) => {
       if (list.value.length >= maxCount) {
         confirm(`请前往我的简历管理删除后再新建。`, "容量已满").then(() => {
           router.push("/resume/mine");
@@ -235,8 +235,10 @@ export const useResumeStore = defineStore(
       // 每次新增都重新生成唯一ID，避免多份简历共用一个ID
       res.id = getUUID().slice(0, 6);
       list.value.push(res);
-      currentIndex.value = list.value.length - 1;
-      if (jump) router.push({ path: "/resumeEditor", query: { id: res.id } });
+      if (select) {
+        currentIndex.value = list.value.length - 1;
+        if (jump) router.push({ path: "/resumeEditor", query: { id: res.id } });
+      }
       return true;
     };
     // 深拷贝快照：先脱响应式代理再递归克隆，原始字符串直接复用引用，避免 JSON 中转大字段开销
@@ -257,6 +259,17 @@ export const useResumeStore = defineStore(
         result[key] = deepClone(raw[key]);
       }
       return result;
+    };
+    // 深拷贝当前简历并创建独立的新简历
+    const duplicateResume = () => {
+      const item = currentItem.value;
+      if (!item) return false;
+      const copy = deepClone(item);
+      const now = Date.now();
+      copy.usage = { ...copy.usage, createTime: now, lastUseTime: now };
+      const currentCount = list.value.length;
+      if (!addResume(copy, false, false)) return "";
+      return list.value[currentCount]?.id || "";
     };
     // 解析模块记录数组：自定义模块位于 data.list，其余数组模块直接是 data
     const resolveModuleRecords = (module: any): any[] | null => {
@@ -596,6 +609,7 @@ export const useResumeStore = defineStore(
       setSelectedModules,
       pushSelectedModule,
       addResume,
+      duplicateResume,
       deleteResume,
       restoreResume,
       permanentlyDeleteResume,
