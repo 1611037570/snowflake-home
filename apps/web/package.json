@@ -35,6 +35,7 @@
     "chinese-workday": "^1.10.1",
     "cropperjs": "^1.6.1",
     "dayjs": "^1.11.18",
+    "docx": "^9.7.1",
     "dompurify": "3.4.13",
     "echarts": "^6.0.0",
     "element-plus": "2.14.4",
