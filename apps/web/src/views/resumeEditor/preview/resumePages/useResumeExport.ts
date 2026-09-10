@@ -8,8 +8,8 @@ import { onMounted, onUnmounted, type ComputedRef, type Ref } from "vue";
 import eventBus from "@/utils/modules/eventBus";
 import { printPDF as exportPdf } from "./usePdfExport";
 import { printImage as exportImage } from "./useImageExport";
-import { exportWord } from "./useDocumentExport";
 import { printResume } from "./useBrowserPrint";
+import { exportMarkdown } from "./useMarkdownExport";
 /** useResumeExport 入参 */
 interface UseResumeExportOptions {
   /** 编辑态才注册导出事件，其余模式（缩略图/全屏预览）不注册 */
@@ -33,15 +33,14 @@ export const useResumeExport = ({ isEdit, rootRef, measureRef, onExportSuccess }
       onExportSuccess,
       scale === 8 ? 8 : scale === 4 ? 4 : scale === 2 ? 2 : 1,
     );
-  const printWord = (scale: unknown = 1) =>
-    exportWord(rootRef, onExportSuccess, scale === 8 ? 8 : scale === 4 ? 4 : scale === 2 ? 2 : 1);
+  const printMarkdown = () => exportMarkdown(onExportSuccess);
   // 仅编辑模式注册全局导出事件
   onMounted(() => {
     if (isEdit.value) {
       eventBus.on("resume-print-pdf", printPDF);
       eventBus.on("resume-print-image", printImage);
       eventBus.on("resume-print-browser", printBrowser);
-      eventBus.on("resume-print-word", printWord);
+      eventBus.on("resume-print-markdown", printMarkdown);
     }
   });
   onUnmounted(() => {
@@ -49,7 +48,7 @@ export const useResumeExport = ({ isEdit, rootRef, measureRef, onExportSuccess }
       eventBus.off("resume-print-pdf", printPDF);
       eventBus.off("resume-print-image", printImage);
       eventBus.off("resume-print-browser", printBrowser);
-      eventBus.off("resume-print-word", printWord);
+      eventBus.off("resume-print-markdown", printMarkdown);
     }
   });
 };

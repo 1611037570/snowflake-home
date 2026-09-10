@@ -95,6 +95,7 @@ export const ICON_LIST: Record<string, IconItem> = {
   "tabler:external-link": { icon: "tabler:external-link" },
   "mingcute:down-line": { icon: "mingcute:down-line" },
   "mingcute:right-line": { icon: "mingcute:right-line" },
+  "mdi:language-markdown": { icon: "mdi:language-markdown" },
   "fa7-solid:qrcode": { icon: "fa7-solid:qrcode" },
   "basil:file-user-solid": { icon: "basil:file-user-solid", color: "text-blue-500" },
   "majesticons:music": { icon: "majesticons:music" },
