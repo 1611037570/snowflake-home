@@ -3,8 +3,8 @@ import { TransitionPresets, useDebounceFn, useResizeObserver, useTransition } fr
 import { computed, ref } from "vue";
 import { storeToRefs } from "pinia";
 import { useResumeStore } from "@/stores";
-import { RESUME_WIDTH } from "./constants";
-import { previewLangList } from "./i18n";
+import { RESUME_WIDTH } from "../constants";
+import { previewLangList } from "../i18n";
 
 defineOptions({ name: "ScaleContainer" });
 
@@ -131,6 +131,9 @@ useResizeObserver(contentRef, ([entry]) => {
       class="mx-auto mb-3 flex items-center gap-1 self-stretch rounded-full border border-sf-b bg-sf-primary p-1.5 select-none"
       v-show="showToolbar"
     >
+      <SfTooltip :content="`主题颜色`">
+        <div class="h-7 w-7 cursor-pointer rounded-full border bg-sf-theme-2"></div>
+      </SfTooltip>
       <SfDropdown trigger="hover" placement="bottom-start" :show-arrow="false">
         <SfTooltip :content="`切换简历语言`">
           <SfIcon
