@@ -75,9 +75,7 @@ const { paddingStyle, fontStyle, lineHeightStyle } = themeStyles;
 const allModules = computed(() => {
   // 展开完整模块配置后再过滤隐藏模块，避免持久化 key 配置缺少隐藏规则
   const fields = expandConfigFields(props.item.config?.fields || [], props.item.data);
-  return fields.filter(
-    (field) => !isFieldMuted(props.item.data, field),
-  );
+  return fields.filter((field) => !isFieldMuted(props.item.data, field));
 });
 const { measureDone, pages, pageStyleText, moduleList } = useResumePages({
   measureRef,
@@ -172,6 +170,7 @@ defineExpose({ rootEl: rootRef, measureEl: measureRef, moduleList });
       <div ref="rootRef" class="relative flex flex-col gap-3">
         <ResumePageShell
           v-for="(pageSlices, pageIndex) in pages"
+          class="cursor-pointer"
           :key="pageIndex"
           :ui="ui"
           :styles="{ paddingStyle, fontStyle, lineHeightStyle }"
