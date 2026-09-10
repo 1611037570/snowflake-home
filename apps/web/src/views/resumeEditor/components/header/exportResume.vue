@@ -71,22 +71,22 @@ const list = [
     fn: () => emitExport("resume-print-pdf"),
   },
   {
-    name: "图片",
+    name: "长图",
     icon: "material-symbols:image-outline",
-    desc: "适合分享、展示或放入PPT",
+    desc: "适合快速分享",
     fn: () => emitExport("resume-print-image"),
   },
   {
-    name: "浏览器打印",
+    name: "PDF备用",
     icon: "mdi:google-chrome",
-    desc: "调用浏览器系统打印功能",
+    desc: "调用浏览器系统打印功能，作为兜底方案。",
     fn: () => emitExport("resume-print-browser"),
   },
   {
-    name: "Word文档",
-    icon: "mdi:file-document-outline",
-    desc: "导出可用 Word 打开的文档",
-    fn: () => emitExport("resume-print-word"),
+    name: "Markdown文档",
+    icon: "mdi:language-markdown",
+    desc: "导出适合编辑和分享的文本简历",
+    fn: () => emitExport("resume-print-markdown"),
   },
 ];
 const a = {
@@ -112,7 +112,7 @@ const a = {
   </div>
 
   <SfModal v-model="visible" title="导出简历">
-    <div class="flex w-[800px] max-w-[90vw] flex-col gap-6">
+    <div class="flex w-[600px] max-w-[90vw] flex-col gap-6">
       <div>
         <div class="text-lg font-bold">导出格式</div>
         <div class="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2">
@@ -122,7 +122,9 @@ const a = {
             class="group flex min-w-0 cursor-pointer items-center gap-3 rounded-3xl border border-sf-b p-3 transition-colors hover:border-sf-theme hover:bg-sf-theme-2"
             @click="item.fn"
           >
-            <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-sf-theme-2 text-sf-theme">
+            <div
+              class="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-sf-theme-2 text-sf-theme"
+            >
               <SfIcon :icon="item.icon" size="6" />
             </div>
             <div class="min-w-0 flex-1">
@@ -165,7 +167,9 @@ const a = {
           class="group mt-3 flex cursor-pointer items-center gap-3 rounded-3xl border border-sf-b p-3 transition-colors hover:border-sf-theme hover:bg-sf-theme-2"
           @click="a.fn"
         >
-          <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-sf-bg-2 text-sf-theme">
+          <div
+            class="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-sf-bg-2 text-sf-theme"
+          >
             <SfIcon :icon="a.icon" size="6" />
           </div>
           <div class="min-w-0 flex-1">
@@ -179,7 +183,6 @@ const a = {
           />
         </div>
       </div>
-
     </div>
   </SfModal>
 </template>
