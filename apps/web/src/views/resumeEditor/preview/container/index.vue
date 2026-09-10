@@ -3,7 +3,7 @@ import { TransitionPresets, useDebounceFn, useResizeObserver, useTransition } fr
 import { computed, ref } from "vue";
 import { storeToRefs } from "pinia";
 import { useResumeStore } from "@/stores";
-import { RESUME_WIDTH } from "../constants";
+import { RESUME_HEIGHT, RESUME_WIDTH } from "../constants";
 import { previewLangList } from "../i18n";
 import ThemeColor from "./themeColor.vue";
 
@@ -23,6 +23,7 @@ const { system, selectedModule, currentUI } = storeToRefs(resumeStore);
 const { clearSelectedModules } = resumeStore;
 const contentRef = ref(null);
 const contentSize = ref({ width: 0, height: 0 });
+const availableSize = ref({ width: 0, height: 0 });
 const manualScale = ref(1);
 const maxScale = ref(1);
 const scaleMode = ref("auto");
@@ -49,15 +50,35 @@ const SCALE_LIST = computed(() => [
     name: "自适应",
     active: scaleMode.value === "auto",
   },
+  // 一页模式同时根据当前可用宽高计算页面缩放比例
+  {
+    value: "onePage",
+    name: "一页",
+    active: scaleMode.value === "onePage",
+  },
 ]);
 
-const scale = computed(() => (scaleMode.value === "auto" ? maxScale.value : manualScale.value));
+const onePageScale = computed(() => {
+  const { width, height } = availableSize.value;
+  if (width <= PADDING || height <= PADDING) return 0.1;
+  return Math.min((width - PADDING) / RESUME_WIDTH, (height - PADDING) / RESUME_HEIGHT);
+});
+
+const scale = computed(() => {
+  if (scaleMode.value === "auto") return maxScale.value;
+  if (scaleMode.value === "onePage") return onePageScale.value;
+  return manualScale.value;
+});
 const transitionScale = useTransition(scale, {
   duration: 200,
   transition: TransitionPresets.easeOutCubic,
 });
 const scaleLabel = computed(() =>
-  scaleMode.value === "auto" ? "自适应" : percent(transitionScale.value),
+  scaleMode.value === "auto"
+    ? "自适应"
+    : scaleMode.value === "onePage"
+      ? "一页"
+      : percent(transitionScale.value),
 );
 const minScale = computed(() => Math.min(MIN_SCALE, maxScale.value));
 const isMinScale = computed(() => scale.value <= minScale.value);
@@ -77,9 +98,17 @@ const setAutoScale = () => {
   scaleMode.value = "auto";
 };
 
+const setOnePageScale = () => {
+  scaleMode.value = "onePage";
+};
+
 const handleScaleSelect = (item) => {
   if (item.value === "auto") {
     setAutoScale();
+    return;
+  }
+  if (item.value === "onePage") {
+    setOnePageScale();
     return;
   }
   // 禁用项不响应选择
@@ -103,6 +132,7 @@ const handleLangSelect = (item) => {
 
 const updateScale = useDebounceFn(([entry]) => {
   const { width, height } = entry.contentRect;
+  availableSize.value = { width, height };
 
   // 容器过小或尺寸无效时，退化为最小缩放
   if (width <= PADDING || height <= PADDING) {
