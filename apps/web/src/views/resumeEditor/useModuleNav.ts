@@ -4,7 +4,8 @@ import { useResumeStore } from "@/stores";
 import { CUSTOM_MODULE_ICON, DEFAULT_MODULE_NAMES } from "@/stores/modules/resume/defaultConfig";
 import eventBus from "@/utils/modules/eventBus";
 import { setFieldHidden } from "./utils";
-import { isFieldMuted } from "@/components/business/dynamicForm/code/fieldVisible";
+import { isFieldMuted, isFieldVisible } from "@/components/business/dynamicForm/code/fieldVisible";
+import { ElNotification } from "element-plus";
 
 // store 为全局单例：模块列表与跳转逻辑无组件级状态，抽为模块级共享，避免各组件重复创建 hook
 const resumeStore = useResumeStore();
@@ -49,6 +50,19 @@ export const jumpPreview = (key: string) => {
 
 // 跳转编辑区：展开折叠 + 选中闪烁 + 滚动定位
 export const jumpEditor = (key: string) => {
+  const item = moduleList.value.find((m) => m.key === key);
+  // 归档模块不在左侧编辑区展示，定位时提示用户先恢复模块
+  if (item && isFieldVisible(currentData.value, item.field)) {
+    ElNotification({
+      title: "模块已归档",
+      message: "请先在左侧恢复归档后再编辑该模块。",
+      type: "warning",
+      position: "top-right",
+      offset: 40,
+      duration: 3000,
+    });
+    return;
+  }
   // 切换到编辑标签，避免停留设计/模板标签时编辑区不可见
   eventBus.emit("switch-builder-tab", 0);
   // 展开模块折叠面板

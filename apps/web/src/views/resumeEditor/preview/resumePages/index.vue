@@ -95,7 +95,7 @@ const { moduleClassMap } = useModuleInteractions({
 
 // 点击预览模块时定位左侧编辑模块
 const handlePageClick = (event) => {
-  const moduleEl = event.target.closest?.("[data-module]");
+  const moduleEl = event.target.closest?.(".resume-module-wrapper");
   const moduleKey = moduleEl?.dataset.module;
   if (moduleKey) jumpEditor(moduleKey);
 };
