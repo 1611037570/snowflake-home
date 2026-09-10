@@ -108,6 +108,8 @@ export const ICON_LIST: Record<string, IconItem> = {
   "lucide:hash": { icon: "lucide:hash", name: "页码" },
   "lucide:layout-template": { icon: "lucide:layout-template" },
   "lucide:palette": { icon: "lucide:palette" },
+  "lucide:type": { icon: "lucide:type" },
+  "lucide:expand": { icon: "lucide:expand" },
   "element-plus": { icon: "logos:element" },
   "fa6-solid:award": { icon: "fa6-solid:award" },
   "fa6-solid:bullseye": { icon: "fa6-solid:bullseye" },
