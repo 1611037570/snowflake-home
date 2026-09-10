@@ -2,7 +2,7 @@
 // 简历页面渲染组件
 import ResumePage from "./page.vue";
 // 缩放容器组件
-import ScaleContainer from "./ScaleContainer.vue";
+import ScaleContainer from "./container/index.vue";
 import { useResumeStore } from "@/stores";
 import { storeToRefs } from "pinia";
 import { computed, ref } from "vue";
