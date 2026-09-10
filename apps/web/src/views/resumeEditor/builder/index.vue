@@ -1,36 +1,20 @@
 <script setup>
 import { useResumeStore } from "@/stores";
-import { defineAsyncComponent, markRaw, onBeforeUnmount, onMounted, ref, watch } from "vue";
+import {
+  computed,
+  defineAsyncComponent,
+  markRaw,
+  onBeforeUnmount,
+  onMounted,
+  ref,
+  watch,
+} from "vue";
 import { storeToRefs } from "pinia";
 import eventBus from "@/utils/modules/eventBus";
 const AsyncEditor = markRaw(defineAsyncComponent(() => import("./editor/index.vue")));
 const AsyncCustom = markRaw(defineAsyncComponent(() => import("./custom/index.vue")));
 const AsyncTemplate = markRaw(defineAsyncComponent(() => import("./template/index.vue")));
 const AsyncAi = markRaw(defineAsyncComponent(() => import("../assistant/chat/index.vue")));
-// 菜单配置
-const menuList = [
-  {
-    name: "编辑",
-    icon: "lucide:file-text",
-    component: AsyncEditor,
-  },
-  {
-    name: "AI",
-    icon: "lucide:palette",
-    component: AsyncAi,
-  },
-  {
-    name: "设计",
-    icon: "lucide:palette",
-    component: AsyncCustom,
-  },
-  {
-    name: "模板",
-    icon: "lucide:layout-template",
-    component: AsyncTemplate,
-  },
-];
-
 // 当前选中的菜单索引
 const activeIndex = ref(0);
 // 切换方向：索引增大为 right（新内容从右侧滑入），减小为 left
@@ -49,9 +33,56 @@ onBeforeUnmount(() => {
   eventBus.off("switch-builder-tab", switchTab);
 });
 
-// 编辑器区域宽度：由简历 Store 统一管理并持久化
 const resumeStore = useResumeStore();
-const { editorWidth } = storeToRefs(resumeStore);
+const { editorWidth, system } = storeToRefs(resumeStore);
+
+// 菜单配置：独立窗口模式下不在主窗口渲染 AI
+const menuList = computed(() => [
+  {
+    name: "编辑",
+    icon: "lucide:file-text",
+    component: AsyncEditor,
+  },
+  ...(!system.value.aiIndependentWindow
+    ? [
+        {
+          name: "AI",
+          icon: "lucide:palette",
+          component: AsyncAi,
+        },
+      ]
+    : []),
+  {
+    name: "设计",
+    icon: "lucide:palette",
+    component: AsyncCustom,
+  },
+  {
+    name: "模板",
+    icon: "lucide:layout-template",
+    component: AsyncTemplate,
+  },
+]);
+
+// 菜单项减少时修正当前索引，避免主窗口渲染不存在的组件
+watch(menuList, (list) => {
+  if (list.length && activeIndex.value >= list.length) {
+    activeIndex.value = list.length - 1;
+  }
+});
+
+// 关闭独立窗口时自动切换到主窗口的 AI 页面
+watch(
+  () => system.value.aiIndependentWindow,
+  (isIndependent) => {
+    if (!isIndependent) {
+      activeIndex.value = menuList.value.findIndex((item) => item.component === AsyncAi);
+    }
+  },
+  { immediate: true },
+);
+
+const activeMenu = computed(() => menuList.value[activeIndex.value] || menuList.value[0]);
 </script>
 
 <template>
@@ -75,7 +106,7 @@ const { editorWidth } = storeToRefs(resumeStore);
         <Transition :name="`tab-slide-${direction}`" mode="out-in">
           <!-- 仅缓存编辑与模板组件：编辑器默认加载并缓存，模板首次打开才异步加载，之后缓存 -->
           <KeepAlive>
-            <component :is="menuList[activeIndex].component" class="h-full" />
+            <component :is="activeMenu.component" class="h-full" />
           </KeepAlive>
         </Transition>
       </div>
