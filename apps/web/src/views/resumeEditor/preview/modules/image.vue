@@ -2,7 +2,6 @@
 import { computed, inject } from "vue";
 import ResumeField from "../components/resumeField/index.vue";
 import Title from "../theme/title/index.vue";
-import { toAvatarSrc } from "@/utils";
 import { getPreviewTitle } from "../i18n";
 
 // 从上层注入获取代理后的预览数据
@@ -36,7 +35,7 @@ const images = computed(() => previewData.value?.image?.data || []);
       <div class="flex min-w-0 flex-col gap-1" :style="{ width: `${item.size?.value ?? 50}%` }">
         <img
           v-if="item.img?.value"
-          :src="toAvatarSrc(item.img?.value)"
+          :src="item.img?.value"
           :alt="imageAlt"
           class="h-auto w-full rounded"
         />

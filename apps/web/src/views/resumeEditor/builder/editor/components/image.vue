@@ -1,6 +1,5 @@
 <script setup>
 import { useImageUpload } from "@/hooks";
-import { toAvatarSrc } from "@/utils";
 import { RESUME_WIDTH } from "@/views/resumeEditor/preview/constants";
 
 // 图片作品字段：name 名称、img 图片、desc 描述、size 显示大小百分比
@@ -21,7 +20,7 @@ const size = defineModel("size", {
   default: 50,
 });
 
-// 图片上传 hook：不裁切，保持原比例压缩为 WebP 裸 base64
+// 图片上传 hook：不裁切，保持原比例压缩为完整图片 Data URL
 const { openPicker, loading } = useImageUpload({
   crop: false,
   maxWidth: RESUME_WIDTH,
@@ -54,7 +53,7 @@ const { openPicker, loading } = useImageUpload({
         :title="img ? '点击重新上传' : '上传图片'"
         @click="openPicker"
       >
-        <img v-if="img" :src="toAvatarSrc(img)" alt="图片" class="h-auto w-full object-cover" />
+        <img v-if="img" :src="img" alt="图片" class="h-auto w-full object-cover" />
         <!-- 已上传时鼠标悬停显示"重新上传"遮罩提示 -->
         <div
           v-if="img"

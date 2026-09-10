@@ -53,7 +53,7 @@ const uid = `rp-${Math.random().toString(36).slice(2, 8)}`;
 
 // ---------- 数据代理（始终基于 props 传入的数据，多实例互不干扰）----------
 const dataRef = computed(() => props.item.data);
-useResumePreviewData(dataRef, isEdit);
+useResumePreviewData(dataRef);
 // 复用编辑器总字数统计判断空简历，避免空数据时预览区无内容。
 const resumeStats = useResumeStats(dataRef);
 const isEmpty = computed(() => resumeStats.value.total.total === 0);
