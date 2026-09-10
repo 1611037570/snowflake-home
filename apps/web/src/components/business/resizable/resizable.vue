@@ -1,16 +1,20 @@
 <template>
   <div class="relative h-full" :style="{ width: `${size}px` }">
     <slot />
-    <!-- 拖拽块常显，鼠标进入拖拽区域时显示全高线条 -->
+    <!-- 拖拽块常显，鼠标悬停时显示全高线条 -->
     <div
-      class="group absolute top-0 z-10 h-full w-3"
+      class="absolute top-0 z-10 h-full w-3"
       :class="position === 'left' ? '-left-1.5' : '-right-1.5'"
     >
       <div
-        class="absolute top-0 left-1/2 h-full w-px -translate-x-1/2 rounded-xl bg-sf-theme-2 opacity-0 transition-opacity group-hover:opacity-100"
+        v-if="isHandleHovered"
+        class="pointer-events-none absolute top-0 left-1/2 h-full w-px -translate-x-1/2 rounded-xl bg-sf-theme-2"
       />
+      <!-- 拖拽容器 -->
       <div
         class="absolute top-1/2 h-12 w-3 -translate-y-1/2 cursor-col-resize rounded-xl border border-sf-b bg-sf-primary transition-all hover:scale-110"
+        @mouseenter="isHandleHovered = true"
+        @mouseleave="isHandleHovered = false"
         @pointerdown="handlePointerDown"
       />
     </div>
@@ -41,6 +45,8 @@ const emit = defineEmits<{ resize: [size: number] }>();
 const startX = ref(0);
 const startSize = ref(0);
 const isDragging = ref(false);
+// 仅在鼠标悬停拖拽块时显示辅助线
+const isHandleHovered = ref(false);
 
 function getValidSize(size: number) {
   return Math.min(Math.max(size, props.min), props.max);
