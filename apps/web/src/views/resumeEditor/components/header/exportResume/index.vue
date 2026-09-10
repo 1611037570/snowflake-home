@@ -1,9 +1,10 @@
 <script setup>
 import { useResumeStore } from "@/stores";
-import { getExportFileName, resumeTitle } from "../../resumeName.ts";
+import { getExportFileName, resumeTitle } from "../../../resumeName.ts";
 import eventBus from "@/utils/modules/eventBus";
 import { storeToRefs } from "pinia";
 import { computed, ref } from "vue";
+import ExportItem from "./exportItem.vue";
 
 const visible = ref(false);
 // 默认使用标准 1x，导出弹窗中可切换更高清晰度
@@ -116,72 +117,37 @@ const a = {
       <div>
         <div class="text-lg font-bold">导出格式</div>
         <div class="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2">
-          <div
+          <ExportItem
             v-for="item in list"
             :key="item.name"
-            class="group flex min-w-0 cursor-pointer items-center gap-3 rounded-3xl border border-sf-b p-3 transition-colors hover:border-sf-theme hover:bg-sf-theme-2"
+            :item="item"
             @click="item.fn"
-          >
-            <div
-              class="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-sf-theme-2 text-sf-theme"
-            >
-              <SfIcon :icon="item.icon" size="6" />
-            </div>
-            <div class="min-w-0 flex-1">
-              <div class="truncate text-base font-bold">{{ item.name }}</div>
-              <div class="mt-3 text-sm text-sf-text-2">{{ item.desc }}</div>
-            </div>
-            <SfIcon
-              icon="mingcute:right-line"
-              size="4"
-              class="shrink-0 text-sf-text-3 transition-transform group-hover:translate-x-1 group-hover:text-sf-theme"
-            />
-          </div>
+          />
         </div>
 
-        <div class="mt-3 flex flex-col gap-3 rounded-3xl bg-sf-bg-2 p-3">
-          <div class="flex items-center justify-between gap-3">
-            <span class="font-bold">清晰度</span>
-            <span class="text-sm text-sf-text-2">导出图片质量</span>
-          </div>
-          <div class="flex items-center gap-3">
+        <div class="mt-3 flex items-center gap-3">
+          <span class="font-bold">清晰度</span>
+          <div class="flex flex-1 items-center gap-3">
             <SfButton
               v-for="item in exportScaleList"
               :key="item.value"
               class="flex-1"
+              size="small"
               border
               :type="exportScale === item.value ? 'theme' : 'bg'"
               @click="exportScale = item.value"
               >{{ item.name }}</SfButton
             >
           </div>
-          <div class="text-sm" :class="exportScaleTip.class">
-            {{ exportScaleTip.text }}
-          </div>
+        </div>
+        <div class="mt-3 text-sm" :class="exportScaleTip.class">
+          {{ exportScaleTip.text }}
         </div>
       </div>
 
       <div>
         <div class="text-lg font-bold">简历配置</div>
-        <div
-          class="group mt-3 flex cursor-pointer items-center gap-3 rounded-3xl border border-sf-b p-3 transition-colors hover:border-sf-theme hover:bg-sf-theme-2"
-          @click="a.fn"
-        >
-          <div
-            class="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-sf-bg-2 text-sf-theme"
-          >
-            <SfIcon :icon="a.icon" size="6" />
-          </div>
-          <div class="min-w-0 flex-1">
-            <div class="text-base font-bold">{{ a.name }}</div>
-            <div class="mt-3 text-sm text-sf-text-2">{{ a.desc }}</div>
-          </div>
-          <SfIcon
-            icon="mingcute:right-line"
-            size="4"
-            class="shrink-0 text-sf-text-3 transition-transform group-hover:translate-x-1 group-hover:text-sf-theme"
-          />
-        </div>
+        <ExportItem :item="a" @click="a.fn" />
       </div>
     </div>
   </SfModal>
