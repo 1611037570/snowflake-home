@@ -19,7 +19,12 @@ const handleSuggest = (card: SuggestCard) => {
 </script>
 
 <template>
-  <div class="mt-20 flex w-full flex-1 flex-col items-center justify-center gap-3 text-center">
+  <div
+    class="relative flex w-full flex-1 flex-col items-center justify-center gap-3 pt-20 text-center"
+  >
+    <!-- 1V1 人工优化入口 -->
+    <OneVOne class="w-full" />
+
     <div class="flex-c gap-3 text-2xl font-bold text-sf-base select-none">
       你好，我是 <span class="text-sf-theme">{{ $t("router.resumeAI") }}</span>
       <SfIcon icon="lucide:sparkles" class="text-sf-theme" size="6" />
@@ -30,25 +35,9 @@ const handleSuggest = (card: SuggestCard) => {
     </div>
     <div
       v-if="props.selectedModules?.length"
-      class="flex flex-wrap items-center justify-center gap-x-3 text-sm leading-8"
+      class="flex flex-wrap items-center justify-center gap-x-3 text-sm"
     >
-      根据你的
-      <div
-        v-for="item in props.selectedModules"
-        :key="item.key"
-        class="flex-c relative h-6 rounded-xl bg-sf-theme px-1.5 py-0.5 text-sf-theme-text"
-      >
-        {{ item.name }}
-        <!-- 右上角关闭按钮：点击移除该模块选中 -->
-        <SfIcon
-          v-if="item.key !== ALL_MODULE_KEY"
-          icon="mingcute:close-line"
-          size="3"
-          class="absolute top-0 right-0 cursor-pointer text-sf-theme-text/70 hover:text-sf-theme-text"
-          @click="props.removeModule?.(item.key)"
-        />
-      </div>
-      一键操作
+      你可以这样问
     </div>
     <!-- 建议操作按钮 -->
     <div class="grid w-full max-w-md grid-cols-2 gap-3">
@@ -70,7 +59,25 @@ const handleSuggest = (card: SuggestCard) => {
         </div>
       </button>
     </div>
-    <!-- 1V1 人工优化入口 -->
-    <OneVOne class="mt-3 w-full" />
+
+    <div class="flex flex-wrap items-center justify-center gap-x-3 text-sm">
+      我将根据你的
+      <div
+        v-for="item in props.selectedModules"
+        :key="item.key"
+        class="flex-c relative h-6 rounded-xl bg-sf-theme px-1.5 py-0.5 text-sf-theme-text"
+      >
+        {{ item.name }}
+        <!-- 右上角关闭按钮：点击移除该模块选中 -->
+        <SfIcon
+          v-if="item.key !== ALL_MODULE_KEY"
+          icon="mingcute:close-line"
+          size="3"
+          class="absolute top-0 right-0 cursor-pointer text-sf-theme-text/70 hover:text-sf-theme-text"
+          @click="props.removeModule?.(item.key)"
+        />
+      </div>
+      一键操作
+    </div>
   </div>
 </template>
