@@ -36,6 +36,19 @@ const BACK_TOP_THRESHOLD = 200;
 const MIN_SCALE = 0.5;
 const percent = (value) => `${Math.round(value * 100)}%`;
 const SCALE_LIST = computed(() => [
+  // 自适应选项
+  {
+    value: "auto",
+    name: "自适应最大",
+    active: scaleMode.value === "auto",
+  },
+  // 一页模式同时根据当前可用宽高计算页面缩放比例
+  {
+    value: "onePage",
+    name: "自适应一页",
+    active: scaleMode.value === "onePage",
+  },
+  { divider: true },
   ...[0.5, 0.6, 0.7, 0.8, 0.9, 1].map((value) => {
     const name = percent(value);
     const isSelected = scaleMode.value === "manual" && manualScaleText.value === name;
@@ -48,18 +61,6 @@ const SCALE_LIST = computed(() => [
       active: isSelected,
     };
   }),
-  // 自适应选项
-  {
-    value: "auto",
-    name: "自适应",
-    active: scaleMode.value === "auto",
-  },
-  // 一页模式同时根据当前可用宽高计算页面缩放比例
-  {
-    value: "onePage",
-    name: "一页",
-    active: scaleMode.value === "onePage",
-  },
 ]);
 
 const onePageScale = computed(() => {
@@ -233,7 +234,7 @@ useResizeObserver(contentRef, ([entry]) => {
           {{ scaleLabel }}
         </div>
         <template #dropdown>
-          <SfList :list="SCALE_LIST" class="w-[120px]" :border="false" @onClick="handleScaleSelect">
+          <SfList :list="SCALE_LIST" class="w-[140px]" :border="false" @onClick="handleScaleSelect">
           </SfList>
         </template>
       </SfDropdown>
