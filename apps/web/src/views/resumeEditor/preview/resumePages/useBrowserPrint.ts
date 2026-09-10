@@ -1,5 +1,4 @@
 import { nextTick } from "vue";
-import { storeToRefs } from "pinia";
 import { useResumeStore } from "@/stores";
 import { RESUME_HEIGHT, RESUME_WIDTH } from "../constants";
 import type { Ref } from "vue";
@@ -31,7 +30,7 @@ const clonePrintPage = (page: HTMLElement) => {
 };
 
 // 将预览页面按指定倍率渲染为图片，供当前页面系统打印
-const getPrintImageHtml = async (pages: HTMLElement[], scale: number) => {
+const getPrintImageHtml = async (pages: HTMLElement[], scale: number, signal: AbortSignal) => {
   const { snapdom } = await import("@zumer/snapdom");
   const tempContainer = document.createElement("div");
   tempContainer.style.position = "absolute";
@@ -43,6 +42,7 @@ const getPrintImageHtml = async (pages: HTMLElement[], scale: number) => {
   try {
     const images = [];
     for (const page of pages) {
+      if (signal.aborted) return null;
       const clone = clonePrintPage(page);
       tempContainer.innerHTML = "";
       tempContainer.appendChild(clone);
@@ -53,6 +53,7 @@ const getPrintImageHtml = async (pages: HTMLElement[], scale: number) => {
         width: RESUME_WIDTH,
         height: RESUME_HEIGHT,
       });
+      if (signal.aborted) return null;
       if (!canvas || canvas.width === 0 || canvas.height === 0) {
         throw new Error("简历页面渲染失败");
       }
@@ -74,16 +75,15 @@ export const printResume = async (
   scale = 1,
 ) => {
   const resumeStore = useResumeStore();
-  const { isPrinting } = storeToRefs(resumeStore);
-  if (isPrinting.value) return;
-
   const pages = getResumePages(rootRef);
   if (!pages.length) {
     console.error("未找到可打印的简历页面");
     return;
   }
 
-  isPrinting.value = true;
+  const signal = resumeStore.beginPrinting();
+  if (!signal) return;
+
   let printRoot: HTMLDivElement | undefined;
   let printStyle: HTMLStyleElement | undefined;
   const previousAfterPrint = window.onafterprint;
@@ -94,7 +94,7 @@ export const printResume = async (
     printRoot?.remove();
     printStyle?.remove();
     window.onafterprint = previousAfterPrint;
-    isPrinting.value = false;
+    resumeStore.finishPrinting(signal);
     if (success) onSuccess?.();
     previousAfterPrint?.call(window);
   };
@@ -102,7 +102,11 @@ export const printResume = async (
   try {
     await nextTick();
     await document.fonts?.ready;
-    const imageMarkup = await getPrintImageHtml(pages, scale);
+    const imageMarkup = await getPrintImageHtml(pages, scale, signal);
+    if (!imageMarkup || signal.aborted) {
+      restorePrintState();
+      return;
+    }
     printRoot = document.createElement("div");
     printRoot.className = "resume-browser-print-root";
     printRoot.innerHTML = imageMarkup;
@@ -141,6 +145,10 @@ export const printResume = async (
         });
       }),
     );
+    if (signal.aborted) {
+      restorePrintState();
+      return;
+    }
     window.onafterprint = () => {
       restorePrintState(true);
     };

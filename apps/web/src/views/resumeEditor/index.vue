@@ -37,9 +37,11 @@
           v-if="isPrinting"
           :visible="true"
           overlay
+          cancelable
           title="正在导出简历"
           description="请稍候，文件即将下载"
           aria-label="正在导出简历，请稍候"
+          @cancel="cancelPrinting"
         />
       </Teleport>
     </div>
@@ -77,7 +79,7 @@ const router = useRouter();
 const route = useRoute();
 
 const resumeStore = useResumeStore();
-const { initResumeStatus, setFocusMode } = resumeStore;
+const { initResumeStatus, setFocusMode, cancelPrinting } = resumeStore;
 const {
   currentIndex,
   layout,

@@ -39,11 +39,11 @@ export const printImage = async (
   scale = 2,
 ) => {
   const resumeStore = useResumeStore();
-  const { selectedModule, isPrinting } = storeToRefs(resumeStore);
-  if (isPrinting.value) return;
+  const { selectedModule } = storeToRefs(resumeStore);
+  const signal = resumeStore.beginPrinting();
+  if (!signal) return;
 
   // 导出期间锁定编辑器并移除模块选中状态
-  isPrinting.value = true;
   const cachedSelectedModule = [...selectedModule.value];
   resumeStore.clearSelectedModules();
   let tempContainer: HTMLDivElement | undefined;
@@ -51,6 +51,7 @@ export const printImage = async (
   try {
     await nextTick();
     await document.fonts?.ready;
+    if (signal.aborted) return;
 
     const rootEl = getRootElement(rootRef);
     if (!rootEl) {
@@ -91,6 +92,7 @@ export const printImage = async (
       // 像素级精确布局：避免字体回退栅格化导致文本重新换行而漏出内容
       reconcile: true,
     });
+    if (signal.aborted) return;
 
     if (!canvas || canvas.width === 0 || canvas.height === 0) {
       console.error("简历图片渲染失败");
@@ -100,6 +102,7 @@ export const printImage = async (
     const blob = await new Promise<Blob | null>((resolve) => {
       canvas.toBlob(resolve, "image/png");
     });
+    if (signal.aborted) return;
     if (!blob) {
       console.error("简历图片生成失败");
       return;
@@ -122,6 +125,6 @@ export const printImage = async (
       tempContainer.parentNode.removeChild(tempContainer);
     }
     resumeStore.setSelectedModules(cachedSelectedModule);
-    isPrinting.value = false;
+    resumeStore.finishPrinting(signal);
   }
 };
