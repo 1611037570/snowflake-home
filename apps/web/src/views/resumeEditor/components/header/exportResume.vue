@@ -79,13 +79,13 @@ const list = [
   {
     name: "Markdown文档",
     icon: "mdi:language-markdown",
-    desc: "适合编辑和分享的文本简历",
+    desc: "适合编辑和分享的文本",
     fn: () => emitExport("resume-print-markdown"),
   },
   {
     name: "HTML网页",
     icon: "mdi:language-html5",
-    desc: "适合打开和编辑的单文件网页",
+    desc: "适合编辑和分享的网页",
     fn: () => emitExport("resume-print-html"),
   },
 ];
