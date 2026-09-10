@@ -16,11 +16,6 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
-  // 是否展示内容字数统计
-  showCount: {
-    type: Boolean,
-    default: false,
-  },
 });
 
 // 行高随各字段实际字号自动缩放；字号由外层包装继承，避免强制基础字号覆盖 name 等字段的加大字号
@@ -81,19 +76,6 @@ const parseContent = (content) => {
 // 清洗拆分结果统一入口：仅 html 内容才解析，纯文本不触发
 const parsed = computed(() => (props.html ? parseContent(props.content) : null));
 const blocks = computed(() => parsed.value?.blocks || []);
-
-// 可见文本字数：惰性计算，仅展示统计时解析一次并复用缓存
-const charCount = computed(() => {
-  if (!props.html) return props.content.length;
-  const entry = parsed.value;
-  if (entry.textLength === null) {
-    const tmp = document.createElement("div");
-    tmp.innerHTML = entry.blocks.map((b) => b.html).join("");
-    // 回写缓存，后续评估直接复用
-    entry.textLength = tmp.textContent?.length || 0;
-  }
-  return entry.textLength;
-});
 </script>
 
 <template>
@@ -111,6 +93,4 @@ const charCount = computed(() => {
   <template v-else>
     <span :style="[lineHeightValue()]" v-bind="$attrs">{{ content }}</span>
   </template>
-  <!-- 字数统计：由使用方通过 showCount 控制展示 -->
-  <div v-if="showCount" class="mt-1 w-full text-right text-xs">共 {{ charCount }} 字</div>
 </template>
