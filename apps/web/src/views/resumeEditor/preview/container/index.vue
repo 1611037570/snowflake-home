@@ -6,6 +6,8 @@ import { useResumeStore } from "@/stores";
 import { RESUME_HEIGHT, RESUME_WIDTH } from "../constants";
 import { previewLangList } from "../i18n";
 import ThemeColor from "./themeColor.vue";
+import FontSize from "./fontSize.vue";
+import Padding from "./padding.vue";
 
 defineOptions({ name: "ScaleContainer" });
 
@@ -163,6 +165,8 @@ useResizeObserver(contentRef, ([entry]) => {
       v-show="showToolbar"
     >
       <ThemeColor />
+      <FontSize />
+      <Padding />
       <SfTooltip :content="system.showPageNumber ? '隐藏页码' : '显示页码'">
         <SfIcon
           icon="lucide:hash"
