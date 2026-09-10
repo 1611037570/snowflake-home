@@ -4,7 +4,6 @@ import { useResumeStore } from "@/stores";
 import {
   avatarPositionList,
   fontFamilyList,
-  themeColors,
   uiParamRanges,
   userInfoLayoutList,
   userInfoModeList,
@@ -23,12 +22,10 @@ import ConfigGroup from "./configGroup.vue";
 import ConfigItem from "./configItem.vue";
 import DesignPreset from "./designPreset.vue";
 import ConfigLabel from "./configLabel.vue";
+import ThemeColorPicker from "@/components/business/themeColorPicker/themeColorPicker.vue";
 
 const resumeStore = useResumeStore();
 const { currentUI } = storeToRefs(resumeStore);
-
-// 主题色预设色板，供取色器快捷选择
-const predefineColors = themeColors.map((item) => item.value);
 
 // 个人信息展示模式
 const userInfoMode = computed({
@@ -68,25 +65,7 @@ const avatarPosition = computed({
           v-model="currentUI.themeColor"
           :default-value="defaultThemeColor"
         />
-        <div class="flex flex-wrap items-center gap-4">
-          <div
-            v-for="colorItem in themeColors"
-            :key="colorItem.value"
-            class="h-6 w-6 cursor-pointer rounded-full transition-all duration-200 hover:scale-110"
-            :class="{
-              'border-2 border-sf-base': currentUI.themeColor === colorItem.value,
-            }"
-            :style="{
-              backgroundColor: colorItem.value,
-            }"
-            @click="currentUI.themeColor = colorItem.value"
-          ></div>
-          <el-color-picker
-            v-model="currentUI.themeColor"
-            size="large"
-            :predefine="predefineColors"
-          />
-        </div>
+        <ThemeColorPicker v-model="currentUI.themeColor" />
       </ConfigGroup>
       <ConfigGroup title="页面布局">
         <ConfigItem
