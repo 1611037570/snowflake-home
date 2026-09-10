@@ -20,10 +20,10 @@ const handleSuggest = (card: SuggestCard) => {
 
 <template>
   <div
-    class="relative flex w-full flex-1 flex-col items-center justify-center gap-3 pt-20 text-center"
+    class="relative flex w-full flex-1 flex-col items-center justify-center gap-3 pt-20 text-center select-none"
   >
     <!-- 1V1 人工优化入口 -->
-    <OneVOne class="w-full" />
+    <OneVOne />
 
     <div class="flex-c gap-3 text-2xl font-bold text-sf-base select-none">
       你好，我是 <span class="text-sf-theme">{{ $t("router.resumeAI") }}</span>
