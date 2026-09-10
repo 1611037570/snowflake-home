@@ -66,7 +66,7 @@ const emitExport = (eventName) => {
 // 菜单配置
 const list = [
   {
-    name: "PDF文件",
+    name: "PDF",
     icon: "mdi:file-pdf-box",
     desc: "适合打印、发送或存档",
     fn: () => emitExport("resume-print-pdf"),
@@ -78,22 +78,22 @@ const list = [
     fn: () => emitExport("resume-print-image"),
   },
   {
-    name: "Markdown文档",
+    name: "Markdown",
     icon: "mdi:language-markdown",
     desc: "适合编辑和分享的文本",
     fn: () => emitExport("resume-print-markdown"),
   },
   {
-    name: "HTML网页",
+    name: "HTML",
     icon: "mdi:language-html5",
     desc: "适合编辑和分享的网页",
     fn: () => emitExport("resume-print-html"),
   },
 ];
 const a = {
-  name: "JSON完整备份",
+  name: "JSON",
   icon: "mdi:file-code-outline",
-  desc: "备份、迁移或恢复完整简历数据",
+  desc: "适合备份和恢复的完整简历数据",
   fn: () => {
     // 导出配置后关闭弹窗
     visible.value = false;
@@ -117,12 +117,7 @@ const a = {
       <div>
         <div class="text-lg font-bold">导出格式</div>
         <div class="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2">
-          <ExportItem
-            v-for="item in list"
-            :key="item.name"
-            :item="item"
-            @click="item.fn"
-          />
+          <ExportItem v-for="item in list" :key="item.name" :item="item" @click="item.fn" />
         </div>
 
         <div class="mt-3 flex items-center gap-3">
