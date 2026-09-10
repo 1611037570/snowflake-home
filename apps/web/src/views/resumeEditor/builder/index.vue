@@ -6,12 +6,18 @@ import eventBus from "@/utils/modules/eventBus";
 const AsyncEditor = markRaw(defineAsyncComponent(() => import("./editor/index.vue")));
 const AsyncCustom = markRaw(defineAsyncComponent(() => import("./custom/index.vue")));
 const AsyncTemplate = markRaw(defineAsyncComponent(() => import("./template/index.vue")));
+const AsyncAi = markRaw(defineAsyncComponent(() => import("../assistant/chat/index.vue")));
 // 菜单配置
 const menuList = [
   {
     name: "编辑",
     icon: "lucide:file-text",
     component: AsyncEditor,
+  },
+  {
+    name: "AI",
+    icon: "lucide:palette",
+    component: AsyncAi,
   },
   {
     name: "设计",
