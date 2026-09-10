@@ -46,7 +46,7 @@ const menuList = computed(() => [
   ...(!system.value.aiIndependentWindow
     ? [
         {
-          name: "AI",
+          name: "AI编辑",
           icon: "lucide:palette",
           component: AsyncAi,
         },
@@ -79,7 +79,6 @@ watch(
       activeIndex.value = menuList.value.findIndex((item) => item.component === AsyncAi);
     }
   },
-  { immediate: true },
 );
 
 const activeMenu = computed(() => menuList.value[activeIndex.value] || menuList.value[0]);
