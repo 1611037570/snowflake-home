@@ -21,7 +21,7 @@ const themeColor = inject("themeColor");
 
 <template>
   <!-- 左：头像在左，信息区在右，元信息撑满剩余宽度避免导出换行错位 -->
-  <div v-if="position === 'left'" class="flex flex-wrap items-center">
+  <div v-if="position === 'left'" class="flex w-full flex-wrap items-center">
     <UserAvatar class="mr-3" />
     <div class="flex max-w-full min-w-0 flex-1 flex-col items-start gap-3">
       <UserName />
@@ -44,7 +44,7 @@ const themeColor = inject("themeColor");
     </div>
   </div>
   <!-- 右：信息区在左，头像在右，元信息撑满剩余宽度 -->
-  <div v-else class="flex flex-wrap items-center">
+  <div v-else class="flex w-full flex-wrap items-center">
     <div class="flex max-w-full min-w-0 flex-1 flex-col items-start gap-3">
       <UserName />
       <UserMeta class="w-full" />
