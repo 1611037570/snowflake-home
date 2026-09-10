@@ -39,12 +39,12 @@ function goGitHub() {
       <!-- 简历完成进度：关闭时卸载组件，停止统计计算与数字动画 -->
       <Progress v-if="system.showProgress" />
       <System />
+      <Ai />
       <Debug />
       <div class="h-[0.5px] w-full bg-sf-bg-2"></div>
       <ModuleNavigator />
       <OnePage />
       <CopyResume />
-      <Ai />
       <Icon icon="lucide:focus" size="5" content="专注模式" @click="enterFocusMode" />
       <div class="h-[0.5px] w-full bg-sf-bg-2"></div>
       <Icon icon="akar-icons:home-alt1" size="5" content="返回首页" @click="goHome" />
