@@ -26,6 +26,8 @@ export interface FieldCheckRule {
 export type FieldChecks = {
   /** 满足条件时字段不渲染 */
   hidden?: FieldCheckRule;
+  /** 满足条件时字段参与当前表单渲染判断 */
+  visible?: FieldCheckRule;
 };
 
 /** 表单字段（递归）：覆盖 object 叶子 / group 分组 / array 三种形态的字段集合 */
@@ -53,7 +55,7 @@ export interface FormField {
   slot?: string;
   /** 数据绑定配置 */
   model?: ModelBinding | ModelBinding[];
-  /** 条件校验配置（与 model/props 同级）：当前支持 hidden 显隐 */
+  /** 条件校验配置（与 model/props 同级）：当前支持 hidden、visible 显隐 */
   checks?: FieldChecks;
   required?: boolean;
   /** 子字段（容器递归渲染） */
