@@ -26,10 +26,10 @@ export const printPDF = async (
 ) => {
   // 保存当前选中的模块并清空，避免导出 PDF 时带上选中高亮
   const resumeStore = useResumeStore();
-  const { selectedModule, isPrinting } = storeToRefs(resumeStore);
-  if (isPrinting.value) return;
+  const { selectedModule } = storeToRefs(resumeStore);
+  const signal = resumeStore.beginPrinting();
+  if (!signal) return;
   // 导出期间锁定编辑器三栏，避免操作干扰导出结果
-  isPrinting.value = true;
   const cachedSelectedModule = [...selectedModule.value];
   resumeStore.clearSelectedModules();
   let tempContainer: HTMLDivElement | undefined;
@@ -37,6 +37,7 @@ export const printPDF = async (
     // 确保DOM已渲染完成
     await nextTick();
     await document.fonts?.ready;
+    if (signal.aborted) return;
     // 动态导入PDF相关库
     const { snapdom } = await import("@zumer/snapdom");
     const { default: jsPDF } = await import("jspdf");
@@ -65,6 +66,7 @@ export const printPDF = async (
     document.body.appendChild(tempContainer);
 
     for (let i = 0; i < pages.length; i++) {
+      if (signal.aborted) return;
       const pageEl = pages[i];
 
       // 克隆页面并清除可能干扰渲染的样式 (如阴影、圆角)
@@ -86,6 +88,7 @@ export const printPDF = async (
         width: RESUME_WIDTH,
         height: RESUME_HEIGHT,
       });
+      if (signal.aborted) return;
 
       if (!canvas || canvas.width === 0 || canvas.height === 0) {
         console.error(`第 ${i + 1} 页渲染失败`);
@@ -122,6 +125,7 @@ export const printPDF = async (
       });
     }
 
+    if (signal.aborted) return;
     // 保存PDF，统一命名：年-月-日-简历标题
     pdf.save(getExportFileName(resumeTitle.value, "pdf"));
 
@@ -136,6 +140,6 @@ export const printPDF = async (
     }
     // 导出完成或失败后还原选中的模块
     resumeStore.setSelectedModules(cachedSelectedModule);
-    isPrinting.value = false;
+    resumeStore.finishPrinting(signal);
   }
 };

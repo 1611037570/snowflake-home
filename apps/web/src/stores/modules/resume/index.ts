@@ -59,6 +59,27 @@ export const useResumeStore = defineStore(
     });
     // 是否正在打印
     const isPrinting = ref(false);
+    let printController: AbortController | null = null;
+    // 开始导出并创建可取消信号
+    const beginPrinting = () => {
+      if (isPrinting.value) return null;
+      const controller = new AbortController();
+      printController = controller;
+      isPrinting.value = true;
+      return controller.signal;
+    };
+    // 取消当前导出
+    const cancelPrinting = () => {
+      printController?.abort();
+      printController = null;
+      isPrinting.value = false;
+    };
+    // 仅结束当前导出，避免旧任务影响新任务状态
+    const finishPrinting = (signal: AbortSignal) => {
+      if (printController?.signal !== signal) return;
+      printController = null;
+      isPrinting.value = false;
+    };
     // 是否AI生成中
     const isGenerating = ref(false);
     // 撤销历史栈：每个元素为 { _s: 内容序列化(用于去重), item: 修改前的完整深拷贝快照 }
@@ -82,6 +103,8 @@ export const useResumeStore = defineStore(
     // 初始化状态
     function initResumeStatus() {
       // 重置打印状态
+      printController?.abort();
+      printController = null;
       isPrinting.value = false;
       // 重置AI生成状态
       isGenerating.value = false;
@@ -563,6 +586,9 @@ export const useResumeStore = defineStore(
       currentUI,
       currentUsage,
       isPrinting,
+      beginPrinting,
+      cancelPrinting,
+      finishPrinting,
       selectedModule,
       selectModule,
       unselectModule,

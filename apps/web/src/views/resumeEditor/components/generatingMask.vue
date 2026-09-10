@@ -8,7 +8,10 @@ const props = defineProps({
   ariaLabel: { type: String, default: "AI 正在生成，请稍候" },
   // 全屏浮层模式：用于导出场景，需盖在弹窗上方展示
   overlay: Boolean,
+  // 导出场景允许用户主动终止任务
+  cancelable: Boolean,
 });
+const emit = defineEmits(["cancel"]);
 const progress = ref(0);
 let progressTimer;
 
@@ -107,6 +110,16 @@ onUnmounted(clearProgressTimer);
           <span class="h-1.5 w-1.5 rounded-full bg-sf-theme-2 motion-safe:animate-bounce"></span>
           <span class="h-1.5 w-1.5 rounded-full bg-sf-theme-3 motion-safe:animate-bounce"></span>
         </div>
+
+        <button
+          v-if="props.cancelable"
+          type="button"
+          class="rounded-lg border border-sf-b px-3 py-1.5 text-xs text-sf-text-2 transition-colors hover:border-sf-theme hover:text-sf-theme"
+          aria-label="取消导出"
+          @click="emit('cancel')"
+        >
+          取消导出
+        </button>
       </div>
     </div>
   </Transition>
