@@ -10,14 +10,12 @@ const visible = ref(false);
 </script>
 
 <template>
-  <div class="w-full">
-    <SfButton type="theme" class="w-full" @click="visible = true">1V1优化简历</SfButton>
+  <div class="absolute top-0 -left-6">
+    <SfButton type="theme" @click="visible = true" class="w-[120px]">1V1优化简历</SfButton>
 
     <SfModal v-model="visible" title="1V1优化简历" width="560px">
       <div class="flex w-full flex-col items-center px-3 pb-3">
-        <p class="text-center text-sf-text">
-          赞助 50R，备注联系方式，作者为你 1V1 优化简历
-        </p>
+        <p class="text-center text-sf-text">赞助 50R，备注联系方式，作者为你 1V1 优化简历</p>
         <Money class="mt-3 w-full" />
       </div>
     </SfModal>

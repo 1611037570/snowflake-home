@@ -35,7 +35,7 @@ function createNewChat() {
         />
       </div>
       <div class="flex items-center gap-1">
-        <SfTooltip content="新建话题">
+        <SfTooltip content="新建话题" v-if="props.messages.length">
           <SfIcon
             @click="createNewChat"
             icon="ph:plus-bold"
