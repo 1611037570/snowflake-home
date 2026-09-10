@@ -4,7 +4,7 @@
 import ModuleActions from "./moduleActions.vue";
 import ResumeModule from "../modules/index.vue";
 
-defineProps({
+const props = defineProps({
   // 模块 key（分页切片提供，与测量结果的 data-module 对齐）
   moduleKey: {
     type: String,
@@ -21,6 +21,12 @@ defineProps({
     default: "",
   },
 });
+const emit = defineEmits(["mouseenter"]);
+
+// 鼠标经过模块内容时通知父级清除预览定位边框
+const handleMouseEnter = () => {
+  emit("mouseenter", props.moduleKey);
+};
 
 </script>
 
@@ -31,7 +37,7 @@ defineProps({
     :class="outlineClass"
   >
     <ModuleActions v-if="isEdit" :modelKey="moduleKey" />
-    <ResumeModule :name="moduleKey" />
+    <ResumeModule :name="moduleKey" @mouseenter="handleMouseEnter" />
   </div>
 </template>
 

@@ -13,7 +13,7 @@ const props = defineProps({
   },
 });
 const isSelected = computed(() => selectedModule.value.find((item) => item.key === props.modelKey));
-// 点击选择/取消选择模块：统一走 store 操作切换选中态
+// 选择按钮状态独立于模块边框，点击后保持按钮自身激活显示
 const handleSelect = () => {
   if (isSelected.value) {
     resumeStore.unselectModule(props.modelKey);

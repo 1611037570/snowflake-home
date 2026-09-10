@@ -18,7 +18,7 @@ import { useResumePreviewData } from "./useResumePreviewData";
 import { useModuleInteractions } from "./useModuleInteractions";
 import { getPreviewText } from "../i18n";
 import { useResumeStats } from "../../toolbar/modules/progress/useResumeStats";
-import { jumpEditor } from "../../useModuleNav";
+import { clearPreviewSelection, jumpEditor, previewSelectedModule } from "../../useModuleNav";
 
 const resumeStore = useResumeStore();
 const { selectedModule, system } = storeToRefs(resumeStore);
@@ -91,6 +91,7 @@ const { moduleClassMap } = useModuleInteractions({
   isEdit,
   moduleList,
   selectedModule,
+  activeModuleKey: previewSelectedModule,
 });
 
 // 点击预览模块时定位左侧编辑模块
@@ -98,6 +99,11 @@ const handlePageClick = (event) => {
   const moduleEl = event.target.closest?.(".resume-module-wrapper");
   const moduleKey = moduleEl?.dataset.module;
   if (moduleKey) jumpEditor(moduleKey);
+};
+
+// 鼠标经过模块内容时取消编辑区定位产生的边框
+const handleModuleMouseEnter = (key) => {
+  clearPreviewSelection(key);
 };
 
 // 单页组件根元素回传：rootRef 限定导出范围，measureRef 供测量与图片导出
@@ -191,6 +197,7 @@ defineExpose({ rootEl: rootRef, measureEl: measureRef, moduleList });
             :module-key="slice.moduleKey"
             :is-edit="isEdit"
             :outline-class="moduleClassMap[slice.moduleKey]"
+            @mouseenter="handleModuleMouseEnter"
           />
         </ResumePageShell>
       </div>
