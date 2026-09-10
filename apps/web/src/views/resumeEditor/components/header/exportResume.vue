@@ -66,23 +66,33 @@ const emitExport = (eventName) => {
 const list = [
   {
     name: "PDF文件",
-    desc: "将简历导出为高清PDF格式，适合打印、邮件发送或存档，排版清晰不变形",
+    icon: "mdi:file-pdf-box",
+    desc: "适合打印、发送或存档",
     fn: () => emitExport("resume-print-pdf"),
   },
   {
     name: "图片",
-    desc: "将简历一键导出为PNG图片，方便在社交媒体、作品集或PPT中直接展示",
+    icon: "material-symbols:image-outline",
+    desc: "适合分享、展示或放入PPT",
     fn: () => emitExport("resume-print-image"),
   },
   {
     name: "浏览器打印",
-    desc: "使用浏览器系统打印功能打印当前简历",
+    icon: "mdi:google-chrome",
+    desc: "调用浏览器系统打印功能",
     fn: () => emitExport("resume-print-browser"),
+  },
+  {
+    name: "Word文档",
+    icon: "mdi:file-document-outline",
+    desc: "导出可用 Word 打开的文档",
+    fn: () => emitExport("resume-print-word"),
   },
 ];
 const a = {
   name: "JSON完整备份",
-  desc: "导出完整简历数据，支持无损导入恢复，方便随时备份或跨设备使用",
+  icon: "mdi:file-code-outline",
+  desc: "备份、迁移或恢复完整简历数据",
   fn: () => {
     // 导出配置后关闭弹窗
     visible.value = false;
@@ -102,45 +112,74 @@ const a = {
   </div>
 
   <SfModal v-model="visible" title="导出简历">
-    <div class="flex w-[400px] flex-col gap-3">
-      <div class="text-lg">选择您希望导出简历的格式</div>
-
-      <template v-for="item in list" :key="item.name">
-        <div
-          class="cursor-pointer rounded-3xl border border-sf-b p-3 transition-colors hover:bg-sf-theme-2"
-          @click="item.fn"
-        >
-          <div class="text-xl">
-            {{ item.name }}
+    <div class="flex w-[800px] max-w-[90vw] flex-col gap-6">
+      <div>
+        <div class="text-lg font-bold">导出格式</div>
+        <div class="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2">
+          <div
+            v-for="item in list"
+            :key="item.name"
+            class="group flex min-w-0 cursor-pointer items-center gap-3 rounded-3xl border border-sf-b p-3 transition-colors hover:border-sf-theme hover:bg-sf-theme-2"
+            @click="item.fn"
+          >
+            <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-sf-theme-2 text-sf-theme">
+              <SfIcon :icon="item.icon" size="6" />
+            </div>
+            <div class="min-w-0 flex-1">
+              <div class="truncate text-base font-bold">{{ item.name }}</div>
+              <div class="mt-3 text-sm text-sf-text-2">{{ item.desc }}</div>
+            </div>
+            <SfIcon
+              icon="mingcute:right-line"
+              size="4"
+              class="shrink-0 text-sf-text-3 transition-transform group-hover:translate-x-1 group-hover:text-sf-theme"
+            />
           </div>
-          <div class="text-sm">{{ item.desc }}</div>
         </div>
-      </template>
-      <div class="flex items-center gap-3">
-        <span class="shrink-0">清晰度</span>
-        <SfButton
-          v-for="item in exportScaleList"
-          :key="item.value"
-          class="flex-1"
-          border
-          :type="exportScale === item.value ? 'theme' : 'bg'"
-          @click="exportScale = item.value"
-          >{{ item.name }}</SfButton
+
+        <div class="mt-3 flex flex-col gap-3 rounded-3xl bg-sf-bg-2 p-3">
+          <div class="flex items-center justify-between gap-3">
+            <span class="font-bold">清晰度</span>
+            <span class="text-sm text-sf-text-2">导出图片质量</span>
+          </div>
+          <div class="flex items-center gap-3">
+            <SfButton
+              v-for="item in exportScaleList"
+              :key="item.value"
+              class="flex-1"
+              border
+              :type="exportScale === item.value ? 'theme' : 'bg'"
+              @click="exportScale = item.value"
+              >{{ item.name }}</SfButton
+            >
+          </div>
+          <div class="text-sm" :class="exportScaleTip.class">
+            {{ exportScaleTip.text }}
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div class="text-lg font-bold">简历配置</div>
+        <div
+          class="group mt-3 flex cursor-pointer items-center gap-3 rounded-3xl border border-sf-b p-3 transition-colors hover:border-sf-theme hover:bg-sf-theme-2"
+          @click="a.fn"
         >
-      </div>
-      <div class="rounded-xl bg-sf-bg-2 p-3 text-sm" :class="exportScaleTip.class">
-        {{ exportScaleTip.text }}
-      </div>
-      <div>简历配置</div>
-      <div
-        class="cursor-pointer rounded-3xl border border-sf-b p-3 transition-colors hover:bg-sf-theme-2"
-        @click="a.fn"
-      >
-        <div class="text-xl">
-          {{ a.name }}
+          <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-sf-bg-2 text-sf-theme">
+            <SfIcon :icon="a.icon" size="6" />
+          </div>
+          <div class="min-w-0 flex-1">
+            <div class="text-base font-bold">{{ a.name }}</div>
+            <div class="mt-3 text-sm text-sf-text-2">{{ a.desc }}</div>
+          </div>
+          <SfIcon
+            icon="mingcute:right-line"
+            size="4"
+            class="shrink-0 text-sf-text-3 transition-transform group-hover:translate-x-1 group-hover:text-sf-theme"
+          />
         </div>
-        <div class="text-sm">{{ a.desc }}</div>
       </div>
+
     </div>
   </SfModal>
 </template>
