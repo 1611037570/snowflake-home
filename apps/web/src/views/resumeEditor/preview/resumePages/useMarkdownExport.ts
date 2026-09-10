@@ -96,7 +96,7 @@ const getRecords = (moduleData: any) => {
   return moduleData?.data && typeof moduleData.data === "object" ? [moduleData.data] : [];
 };
 
-const appendRecord = (lines: string[], record: Record<string, unknown>, definitions: FieldDefinition[], index: number) => {
+const appendRecord = (lines: string[], record: Record<string, unknown>, definitions: FieldDefinition[]) => {
   const entries = definitions
     .map((definition) => ({
       ...definition,
@@ -108,8 +108,6 @@ const appendRecord = (lines: string[], record: Record<string, unknown>, definiti
   const titleEntry = entries.find((item) => item.key === "name");
   if (titleEntry) {
     lines.push(`### ${titleEntry.value}`, "");
-  } else if (definitions.length > 1) {
-    lines.push(`### 记录 ${index + 1}`, "");
   }
 
   entries.forEach((entry) => {
@@ -147,7 +145,7 @@ export const exportMarkdown = (onSuccess?: () => void) => {
     if (!records.length) return;
 
     lines.push(`## ${getModuleTitle(moduleKey, moduleData, schema)}`, "");
-    records.forEach((record, index) => appendRecord(lines, record, definitions, index));
+    records.forEach((record) => appendRecord(lines, record, definitions));
   });
 
   const markdown = `${lines.join("\n").replace(/\n{3,}/g, "\n\n").trim()}\n`;
