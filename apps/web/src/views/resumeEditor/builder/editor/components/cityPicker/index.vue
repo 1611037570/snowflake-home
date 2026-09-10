@@ -48,7 +48,8 @@ const selected = computed({
     return province.children ? [province.value, city.value] : [province.value];
   },
   set: (values) => {
-    city.value = values.length ? String(values[values.length - 1]) : "";
+    // 清空选择时级联组件可能回传空值
+    city.value = values?.length ? String(values[values.length - 1]) : "";
   },
 });
 </script>
