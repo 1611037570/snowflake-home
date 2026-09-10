@@ -26,11 +26,13 @@ const { clearSelectedModules } = resumeStore;
 const contentRef = ref(null);
 const contentSize = ref({ width: 0, height: 0 });
 const availableSize = ref({ width: 0, height: 0 });
+const showBackTop = ref(false);
 const manualScale = ref(1);
 const maxScale = ref(1);
 const scaleMode = ref("auto");
 
 const PADDING = 20;
+const BACK_TOP_THRESHOLD = 200;
 const MIN_SCALE = 0.5;
 const percent = (value) => `${Math.round(value * 100)}%`;
 const SCALE_LIST = computed(() => [
@@ -102,6 +104,17 @@ const setAutoScale = () => {
 
 const setOnePageScale = () => {
   scaleMode.value = "onePage";
+};
+
+// 滚动超过指定距离时显示回到顶部按钮
+const handleScroll = () => {
+  const wrap = containerRef.value?.wrapRef;
+  showBackTop.value = Boolean(wrap && wrap.scrollTop > BACK_TOP_THRESHOLD);
+};
+
+// 平滑滚动到预览容器顶部
+const handleBackTop = () => {
+  containerRef.value?.wrapRef?.scrollTo({ top: 0, behavior: "smooth" });
 };
 
 const handleScaleSelect = (item) => {
@@ -264,6 +277,7 @@ useResizeObserver(contentRef, ([entry]) => {
       class="relative h-full w-full"
       height="100%"
       view-class="relative min-h-full w-full pt-3 "
+      @scroll="handleScroll"
     >
       <!-- 缩放展示：外层承担缩放后的布局尺寸并水平居中，内层用 transform: scale() 缩放 -->
       <div
@@ -285,6 +299,16 @@ useResizeObserver(contentRef, ([entry]) => {
         </div>
       </div>
     </SfScrollbar>
+    <button
+      v-if="showBackTop"
+      type="button"
+      title="回到顶部"
+      aria-label="回到顶部"
+      class="absolute right-3 bottom-3 z-10 cursor-pointer rounded-full bg-sf-theme p-3 text-sf-theme-text shadow-lg hover:bg-sf-theme-hover"
+      @click="handleBackTop"
+    >
+      <SfIcon icon="mingcute:up-line" size="5" />
+    </button>
   </div>
 </template>
 
