@@ -20,7 +20,7 @@
       </div>
       <!-- 右侧AI助手栏 -->
       <Transition name="resume-assistant" appear>
-        <Assistant v-show="!focusMode && layout !== 'list'" />
+        <Assistant v-show="!focusMode && layout !== 'list' && system.aiIndependentWindow" />
       </Transition>
       <!-- 最右侧系统配置栏：工具栏与 QA 入口整体垂直居中 -->
       <Transition name="resume-toolbar" appear>
@@ -79,6 +79,8 @@ const router = useRouter();
 const route = useRoute();
 
 const resumeStore = useResumeStore();
+// 补齐旧版本系统配置，确保新增开关立即参与渲染
+resumeStore.init();
 const { initResumeStatus, setFocusMode, cancelPrinting } = resumeStore;
 const {
   currentIndex,
@@ -89,6 +91,7 @@ const {
   isGenerating,
   isPrinting,
   currentData,
+  system,
 } = storeToRefs(resumeStore);
 
 // 切换简历时清空上一个简历的模块选中状态
