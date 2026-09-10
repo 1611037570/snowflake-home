@@ -18,6 +18,7 @@ import { useResumePreviewData } from "./useResumePreviewData";
 import { useModuleInteractions } from "./useModuleInteractions";
 import { getPreviewText } from "../i18n";
 import { useResumeStats } from "../../toolbar/modules/progress/useResumeStats";
+import { jumpEditor } from "../../useModuleNav";
 
 const resumeStore = useResumeStore();
 const { selectedModule, system } = storeToRefs(resumeStore);
@@ -93,6 +94,13 @@ const { moduleClassMap } = useModuleInteractions({
   moduleList,
   selectedModule,
 });
+
+// 点击预览模块时定位左侧编辑模块
+const handlePageClick = (event) => {
+  const moduleEl = event.target.closest?.("[data-module]");
+  const moduleKey = moduleEl?.dataset.module;
+  if (moduleKey) jumpEditor(moduleKey);
+};
 
 // 单页组件根元素回传：rootRef 限定导出范围，measureRef 供测量与图片导出
 const setSingleRoot = (el) => (rootRef.value = el);
@@ -170,6 +178,7 @@ defineExpose({ rootEl: rootRef, measureEl: measureRef, moduleList });
           :show-page-number="showPageNumber"
           :page-index="pageIndex"
           :page-count="pages.length"
+          @click="handlePageClick"
           :class="[
             `${uid}-page-${pageIndex}`,
             {
