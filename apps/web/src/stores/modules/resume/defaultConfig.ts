@@ -59,12 +59,10 @@ export const DEFAULT_SYSTEM = {
   showProgress: true,
   // 是否展示页码
   showPageNumber: true,
-  // 是否固定工具栏
-  toolbarAlwaysVisible: false,
   // 是否展示调试控制台
   showDebug: false,
   // 是否将 AI 助手设置为独立窗口
-  aiIndependentWindow: true,
+  aiIndependentWindow: false,
   // 是否展示工具栏工具名称
   showToolName: false,
   // 是否启用窗口过小检测提示
