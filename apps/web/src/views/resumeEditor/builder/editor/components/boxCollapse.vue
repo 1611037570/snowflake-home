@@ -100,7 +100,7 @@ function handleEditConfirm() {
     <SfCollapseItem name="1">
       <template #title>
         <div class="group flex h-full w-full items-center justify-between">
-          <div class="flex items-center text-lg font-bold" :class="hidden ? 'text-sf-text-3' : ''">
+          <div class="flex items-center text-lg font-bold">
             <SfIcon
               v-if="currentForm.key !== 'user'"
               icon="icon-park-outline:drag"

@@ -16,12 +16,12 @@ const isRuleSatisfied = (value: any, rule: FieldCheckRule): boolean => {
 };
 
 /**
- * 按 DSL checks 协议解析字段是否隐藏
- * - 无 checks.hidden 声明：不隐藏（默认）
- * - checks.hidden 指向的数据满足规则时隐藏
+ * 按表单控制协议解析字段是否置灰
+ * - 无 checks.muted 声明：不置灰（默认）
+ * - checks.muted 指向的数据满足规则时置灰
  */
-export const isFieldHidden = (data: Record<string, any> | undefined, field: FormField): boolean => {
-  const rule = field.checks?.hidden;
+export const isFieldMuted = (data: Record<string, any> | undefined, field: FormField): boolean => {
+  const rule = field.checks?.muted;
   if (!rule?.path?.length) return false;
   return isRuleSatisfied(getValueByPath(data, rule.path), rule);
 };

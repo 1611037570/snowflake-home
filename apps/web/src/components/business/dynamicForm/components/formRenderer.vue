@@ -6,6 +6,7 @@
       :data-fixed="item.field.fixed ? 'true' : undefined"
       v-for="item in visibleFields"
       :key="item.field.id"
+      :muted="isFieldMuted(rootData.data, item.field)"
       :selected="isModuleSelected(item.field)"
       @mouseenter="handleModuleMouseEnter(item.field)"
     >
@@ -38,7 +39,7 @@
 import { getUUID } from "@/utils";
 import { useDraggable } from "vue-draggable-plus";
 import { checkForm } from "../code/checkForm.ts";
-import { isFieldVisible } from "../code/fieldVisible";
+import { isFieldMuted, isFieldVisible } from "../code/fieldVisible";
 import { DF_MODULE_SELECT, DF_ROOT_DATA } from "../code/injectionKeys.ts";
 import ContainerSlot from "./containerSlot.vue";
 import ContainerArray from "./containerArray.vue";
