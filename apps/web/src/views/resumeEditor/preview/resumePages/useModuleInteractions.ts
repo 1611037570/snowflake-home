@@ -1,7 +1,7 @@
 /**
  * useModuleInteractions —— 编辑态模块交互状态
  *
- * 依据选中模块集合为每个渲染模块计算高亮轮廓类。
+ * 依据预览激活模块为每个渲染模块计算高亮轮廓类。
  */
 import { computed, type ComputedRef, type Ref } from "vue";
 
@@ -10,26 +10,31 @@ interface UseModuleInteractionsOptions {
   isEdit: ComputedRef<boolean>;
   /** 测量结果（模块 + 行高），用于生成每个模块的高亮映射 */
   moduleList: Ref<any[]>;
-  /** 已选中的模块列表（来自 resume store） */
+  /** 预览选择按钮激活的模块列表，仅用于悬浮边框颜色 */
   selectedModule: Ref<any[]>;
+  /** 编辑区定位后激活的预览模块 key */
+  activeModuleKey: Ref<string | null>;
 }
 
 export const useModuleInteractions = ({
   isEdit,
   moduleList,
   selectedModule,
+  activeModuleKey,
 }: UseModuleInteractionsOptions) => {
-  // 选中的模块 key 集合
+  // 选择按钮状态只决定悬浮边框颜色，不决定模块是否持续显示边框
   const selectedKeys = computed(() => new Set(selectedModule.value.map((item) => item.key)));
-  // 模块外层样式：编辑态渲染选中高亮与虚线框，非编辑态直接返回空对象
+  // 搜索定位状态独立控制固定主题边框，鼠标经过模块后由父级清除该状态
   const moduleClassMap = computed(() => {
     if (!isEdit.value) return {};
-    const keys = selectedKeys.value;
     const map: Record<string, string> = {};
     for (const mod of moduleList.value) {
-      map[mod.moduleKey] = keys.has(mod.moduleKey)
+      map[mod.moduleKey] = activeModuleKey.value === mod.moduleKey
         ? "outline-2 outline-offset-3 outline-dashed outline-sf-theme"
-        : "outline-2 outline-offset-3 outline-dashed outline-transparent hover:outline-sf-theme-2";
+        // 已选择模块悬浮时使用主题色，未选择模块悬浮时使用主题浅色
+        : selectedKeys.value.has(mod.moduleKey)
+          ? "outline-2 outline-offset-3 outline-dashed outline-transparent hover:outline-sf-theme"
+          : "outline-2 outline-offset-3 outline-dashed outline-transparent hover:outline-sf-theme-2";
     }
     return map;
   });

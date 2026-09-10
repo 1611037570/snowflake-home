@@ -11,6 +11,13 @@ import { ElNotification } from "element-plus";
 const resumeStore = useResumeStore();
 const { currentData, runtimeFields, layout } = storeToRefs(resumeStore);
 const PREVIEW_SCROLL_OFFSET = 24;
+// 左侧搜索定位使用独立状态，不写入预览选择按钮使用的 selectedModule
+export const previewSelectedModule = ref<string | null>(null);
+
+// 清除编辑区定位产生的预览激活状态
+export const clearPreviewSelection = (key: string) => {
+  if (previewSelectedModule.value === key) previewSelectedModule.value = null;
+};
 
 // 模块锚点列表：全部模块（含隐藏模块，便于搜索定位）；预览分页仍按显隐协议过滤
 const moduleList = computed(() => {
@@ -36,8 +43,9 @@ const moduleList = computed(() => {
   );
 });
 
-// 跳转预览区：滚动定位 + 仅高亮当前模块（清空历史选中，避免高亮堆积）
+// 跳转预览区：滚动定位并激活当前模块边框
 export const jumpPreview = (key: string) => {
+  previewSelectedModule.value = key;
   nextTick(() => {
     const target = document.querySelector<HTMLElement>(
       `.resume-page-item .resume-module-wrapper[data-module="${key}"]`,
@@ -51,10 +59,6 @@ export const jumpPreview = (key: string) => {
       behavior: "smooth",
     });
   });
-  // 重置选中态：只保留当前模块，触发预览 outline 高亮
-  resumeStore.setSelectedModules([
-    { key, name: moduleList.value.find((m) => m.key === key)?.name },
-  ]);
 };
 
 // 跳转编辑区：展开折叠 + 选中闪烁 + 滚动定位
@@ -123,5 +127,14 @@ export function useModuleNav() {
   const keyword = ref("");
   const filteredList = computed(() => filterModules(keyword.value.trim()));
 
-  return { moduleList, keyword, filteredList, jumpAll, jumpToEditor, jumpPreview, jumpEditor };
+  return {
+    moduleList,
+    keyword,
+    filteredList,
+    jumpAll,
+    jumpToEditor,
+    jumpPreview,
+    jumpEditor,
+    previewSelectedModule,
+  };
 }
