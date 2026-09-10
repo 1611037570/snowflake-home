@@ -84,7 +84,7 @@ const getProgressColor = (progress) => {
   >
     <SfTooltip :content="tooltipText" placement="left">
       <div
-        class="relative flex w-[90px] cursor-pointer items-start rounded-2xl bg-linear-to-r from-blue-500 to-purple-500 p-3 text-white transition-all duration-300"
+        class="relative flex w-[90px] cursor-pointer items-start rounded-3xl bg-linear-to-r from-blue-500 to-purple-500 p-3 text-white transition-all duration-300"
         @click="visible = true"
       >
         <div class="flex flex-col items-center justify-center">
