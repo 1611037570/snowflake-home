@@ -10,6 +10,7 @@ import { ElNotification } from "element-plus";
 // store 为全局单例：模块列表与跳转逻辑无组件级状态，抽为模块级共享，避免各组件重复创建 hook
 const resumeStore = useResumeStore();
 const { currentData, runtimeFields, layout } = storeToRefs(resumeStore);
+const PREVIEW_SCROLL_OFFSET = 24;
 
 // 模块锚点列表：全部模块（含隐藏模块，便于搜索定位）；预览分页仍按显隐协议过滤
 const moduleList = computed(() => {
@@ -38,9 +39,17 @@ const moduleList = computed(() => {
 // 跳转预览区：滚动定位 + 仅高亮当前模块（清空历史选中，避免高亮堆积）
 export const jumpPreview = (key: string) => {
   nextTick(() => {
-    document
-      .querySelector(`[data-module="${key}"]`)
-      ?.scrollIntoView({ behavior: "smooth", block: "start" });
+    const target = document.querySelector<HTMLElement>(
+      `.resume-page-item .resume-module-wrapper[data-module="${key}"]`,
+    );
+    const wrap = target?.closest<HTMLElement>(".el-scrollbar__wrap");
+    if (!target || !wrap) return;
+    const targetTop =
+      target.getBoundingClientRect().top - wrap.getBoundingClientRect().top + wrap.scrollTop;
+    wrap.scrollTo({
+      top: Math.max(0, targetTop - PREVIEW_SCROLL_OFFSET),
+      behavior: "smooth",
+    });
   });
   // 重置选中态：只保留当前模块，触发预览 outline 高亮
   resumeStore.setSelectedModules([
