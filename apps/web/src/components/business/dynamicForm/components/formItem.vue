@@ -1,5 +1,5 @@
 <template>
-  <el-col :span="getSpan(currentForm.span)">
+  <el-col :class="{ 'dynamic-form-muted': muted }" :span="getSpan(currentForm.span)">
     <SfFormItem
       :class="['w-full', { 'module-selected-blink': selected }]"
       :label="currentForm.label"
@@ -16,6 +16,7 @@
 defineProps<{
   currentForm: any;
   selected?: boolean;
+  muted?: boolean;
 }>();
 const DEFAULT_SPAN = 24;
 // 由数据绑定路径推导 el-form 校验 prop（含数组通配 "?" 的暂不支持校验定位）
@@ -39,6 +40,16 @@ const getSpan = (span: number | string | undefined) => {
 </script>
 
 <style scoped>
+/* 表单控制项置灰时统一应用灰度效果 */
+.dynamic-form-muted {
+  filter: grayscale(1);
+}
+
+.dynamic-form-muted :deep(.el-collapse),
+.dynamic-form-muted :deep(.el-collapse-item__header),
+.dynamic-form-muted :deep(.el-collapse-item__wrap) {
+  color: var(--color-sf-text-3) !important;
+}
 /* 选中模块：边框持续闪烁提示 */
 .module-selected-blink {
   position: relative;

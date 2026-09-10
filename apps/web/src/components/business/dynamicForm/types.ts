@@ -22,10 +22,10 @@ export interface FieldCheckRule {
   equals?: unknown;
 }
 
-/** 条件校验配置：key 为条件类型，value 为规则 */
+/** 表单控制配置：由动态表单根据条件决定字段是否渲染或置灰 */
 export type FieldChecks = {
-  /** 满足条件时字段不渲染 */
-  hidden?: FieldCheckRule;
+  /** 满足条件时字段置灰 */
+  muted?: FieldCheckRule;
   /** 满足条件时字段参与当前表单渲染判断 */
   visible?: FieldCheckRule;
 };
@@ -55,7 +55,7 @@ export interface FormField {
   slot?: string;
   /** 数据绑定配置 */
   model?: ModelBinding | ModelBinding[];
-  /** 条件校验配置（与 model/props 同级）：当前支持 hidden、visible 显隐 */
+  /** 表单控制配置（与 model/props 同级）：由动态表单处理 visible、muted */
   checks?: FieldChecks;
   required?: boolean;
   /** 子字段（容器递归渲染） */
