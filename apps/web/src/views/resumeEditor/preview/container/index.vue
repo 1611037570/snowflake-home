@@ -133,6 +133,20 @@ useResizeObserver(contentRef, ([entry]) => {
       v-show="showToolbar"
     >
       <ThemeColor />
+      <SfTooltip :content="system.showPageNumber ? '隐藏页码' : '显示页码'">
+        <SfIcon
+          icon="lucide:hash"
+          size="5"
+          boxSize="7"
+          class="rounded-full"
+          :class="
+            system.showPageNumber
+              ? 'bg-sf-theme-2 text-sf-theme-text'
+              : 'text-sf-text-2 hover:bg-sf-theme-2 hover:text-sf-theme-text'
+          "
+          @click="system.showPageNumber = !system.showPageNumber"
+        />
+      </SfTooltip>
       <SfDropdown trigger="hover" placement="bottom-start" :show-arrow="false">
         <SfTooltip :content="`切换简历语言`">
           <SfIcon
@@ -151,20 +165,7 @@ useResizeObserver(contentRef, ([entry]) => {
           />
         </template>
       </SfDropdown>
-      <SfTooltip :content="system.showPageNumber ? '隐藏页码' : '显示页码'">
-        <SfIcon
-          icon="lucide:hash"
-          size="5"
-          boxSize="7"
-          class="rounded-full"
-          :class="
-            system.showPageNumber
-              ? 'bg-sf-theme-2 text-sf-theme-text'
-              : 'text-sf-text-2 hover:bg-sf-theme-2 hover:text-sf-theme-text'
-          "
-          @click="system.showPageNumber = !system.showPageNumber"
-        />
-      </SfTooltip>
+
       <SfTooltip content="缩小">
         <SfIcon
           @click="!isMinScale && stepScale(-0.1)"
