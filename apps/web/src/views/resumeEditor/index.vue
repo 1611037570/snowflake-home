@@ -12,10 +12,22 @@
             :class="{ 'ai-generating': isGenerating }"
           />
         </Transition>
-        <!-- 中间预览栏 -->
-        <Transition name="resume-preview" appear>
-          <Preview :class="{ 'ai-generating': isGenerating }" />
-        </Transition>
+        <div class="relative flex min-w-0 flex-1 overflow-hidden">
+          <!-- 中间预览栏 -->
+          <Transition name="resume-preview" appear>
+            <Preview :class="{ 'ai-generating': isGenerating }" />
+          </Transition>
+          <!-- 最右侧系统配置栏：工具栏与 QA 入口整体垂直居中 -->
+          <Transition name="resume-toolbar" appear>
+            <div
+              v-if="!focusMode"
+              class="relative flex h-full flex-col items-center justify-center gap-3"
+            >
+              <Toolbar />
+            </div>
+          </Transition>
+          <AiMask :visible="isGenerating" />
+        </div>
       </div>
       <!-- 右侧AI助手栏 -->
       <Transition name="resume-assistant" appear>
@@ -57,6 +69,7 @@ import { provide, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import Assistant from "./assistant/index.vue";
 import Builder from "./builder/index.vue";
+import AiMask from "./components/aiMask.vue";
 import Header from "./components/header/index.vue";
 import ExportMask from "./components/exportMask.vue";
 import DetectTip from "./components/detectTip.vue";
