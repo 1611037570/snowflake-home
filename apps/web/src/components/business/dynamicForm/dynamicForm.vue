@@ -4,11 +4,12 @@
   </el-form>
 </template>
 <script setup lang="ts">
-import { getCurrentInstance, inject, provide } from "vue";
+import { getCurrentInstance, inject, provide, unref } from "vue";
 import eventBus from "@/utils/modules/eventBus";
 import FormRenderer from "./components/formRenderer.vue";
 import DataProxy from "./code/dataProxy";
 import { createAddItem } from "./code/addItem";
+import { addFieldData, getFieldDataKey, hasFieldData } from "./code/fieldData";
 import {
   DF_CONTEXT,
   DF_CURRENT_FORM,
@@ -67,16 +68,25 @@ onUnmounted(() => {
 });
 
 // 对外上下文读取器：根组件统一提供，业务组件调用时基于自身实例解析最近容器的能力，无需容器聚合
-const getContext = () => ({
-  currentForm: inject(DF_CURRENT_FORM),
-  currentIndex: inject(DF_CURRENT_INDEX),
-  currentType: inject(DF_CURRENT_TYPE),
-  // 容器能力按容器类型选择性提供，缺失时注入默认值避免 Vue 告警
-  currentLength: inject(DF_CURRENT_LENGTH, undefined),
-  removeSelf: inject(DF_REMOVE, undefined),
-  removeItem: inject(DF_REMOVE_ITEM, undefined),
-  addItem: createAddItem(inject(DF_CURRENT_FORM), dataProxy),
-});
+const getContext = () => {
+  const currentForm = inject(DF_CURRENT_FORM);
+  const currentIndex = inject(DF_CURRENT_INDEX);
+  return {
+    currentForm,
+    currentIndex,
+    currentType: inject(DF_CURRENT_TYPE),
+    // 容器能力按容器类型选择性提供，缺失时注入默认值避免 Vue 告警
+    currentLength: inject(DF_CURRENT_LENGTH, undefined),
+    removeSelf: inject(DF_REMOVE, undefined),
+    removeItem: inject(DF_REMOVE_ITEM, undefined),
+    addItem: createAddItem(currentForm, dataProxy),
+    // 可添加字段统一通过引擎读写真实数据，业务组件只负责选择字段
+    hasFieldData: (field: any) => hasFieldData(dataProxy.data, field, unref(currentIndex)),
+    addField: (field: any) =>
+      field?.addable === true && addFieldData(dataProxy.data, field, unref(currentIndex)),
+    getFieldDataKey,
+  };
+};
 // 注入对外上下文契约
 provide(DF_CONTEXT, getContext);
 </script>
