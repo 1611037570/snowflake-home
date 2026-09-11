@@ -82,9 +82,10 @@ const getSchemaFields = (schema: any) => (Array.isArray(schema) ? schema : schem
 const getModuleTitle = (moduleKey: string, moduleData: any, schema: any) => {
   const normalizedSchema = Array.isArray(schema) ? schema[0] : schema;
   return (
+    moduleData?.ui?.title ||
+    normalizedSchema?.model?.find((item: any) => item?.prop === "title")?.defaultValue ||
     normalizedSchema?.name ||
     normalizedSchema?.props?.name ||
-    moduleData?.title ||
     { user: "个人信息", account: "社交账号", skill: "专业技能", advantage: "个人优势" }[moduleKey] ||
     moduleKey
   );

@@ -25,6 +25,12 @@ const isContentEmpty = (val: any): boolean => {
 const getLabel = (field: any, prop: string): string =>
   field?.label || field?.name || prop || "字段";
 
+// 模块名称优先读取 ui.title，缺失时回退标题模型默认值
+const getModuleTitle = (config: any, rootData: Record<string, any>, key: string): string =>
+  rootData?.[key]?.ui?.title ||
+  config.model?.find((item: any) => item?.prop === "title")?.defaultValue ||
+  key;
+
 const getFieldMeta = (field: any) => {
   const model = field?.model ? (Array.isArray(field.model) ? field.model[0] : field.model) : field;
   const src = Array.isArray(model?.source) ? model.source : [];
@@ -202,7 +208,7 @@ function checkTimeline(modules: Array<{ key: string; config: any }>, rootData: a
     if (issues.length) {
       issuesList.push({
         key,
-        name: config.props?.name || key,
+        name: getModuleTitle(config, rootData, key),
         issues,
       });
     }
@@ -243,7 +249,7 @@ export function useProgress(
     const progress = score * 10;
     progressItems.push({
       key,
-      name: config.props?.name || key,
+      name: getModuleTitle(config, rootData, key),
       progress,
       allProgress: 100,
       missing,

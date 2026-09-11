@@ -17,15 +17,14 @@ function fillArrayListByData(field: any, data: any) {
   }
 }
 
-// 自定义模块：按实际 key 重写模板，名称取自 data
-function rewriteCustomFieldByKey(field: any, customKey: string, customName: string) {
+// 自定义模块：按实际 key 重写模板，标题取自模块 ui
+function rewriteCustomFieldByKey(field: any, customKey: string, customTitle: string) {
   field.key = customKey;
-  field.name = customName;
   field.model?.forEach((item: any) => {
     if (Array.isArray(item.source)) {
       item.source[0] = customKey;
-      if (item.prop === "name") {
-        item.defaultValue = customName;
+      if (item.prop === "title") {
+        item.defaultValue = customTitle;
       }
     }
   });
@@ -70,7 +69,8 @@ export function expandConfigFields(fields: any[], data: any) {
     if (!template) return item;
     const field = structuredClone(template);
     if (String(item.key).startsWith("custom_")) {
-      rewriteCustomFieldByKey(field, item.key, data?.[item.key]?.data?.title || "");
+      const customTitle = data?.[item.key]?.ui?.title || "";
+      rewriteCustomFieldByKey(field, item.key, customTitle);
     }
     fillArrayListByData(field, data);
     return field;

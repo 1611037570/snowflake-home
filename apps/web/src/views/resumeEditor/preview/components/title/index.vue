@@ -41,9 +41,16 @@ const previewLang = inject(
   "previewLang",
   computed(() => "zh"),
 );
-const displayTitle = computed(
-  () => props.title || getPreviewTitle(props.moduleKey, previewLang.value),
+const previewData = inject(
+  "previewData",
+  computed(() => ({})),
 );
+const displayTitle = computed(() => {
+  const moduleData = previewData.value?.[props.moduleKey];
+  // 模块标题统一读取 ui.title
+  const moduleTitle = moduleData?.ui?.title?.value;
+  return props.title || moduleTitle || getPreviewTitle(props.moduleKey, previewLang.value);
+});
 const themeTemplateRef = inject("themeTemplate");
 // 风格模板：未提供时按默认样式处理
 const themeTemplate = computed(() => themeTemplateRef?.value || "default");

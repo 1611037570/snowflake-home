@@ -182,13 +182,10 @@ export const useResumeStore = defineStore(
     // 获取模块名称
     const getModel = (key: string): SelectedModule | undefined => {
       if (!key) return;
-      if (key.startsWith("custom")) {
-        return {
-          key,
-          name: currentData.value?.[key]?.data?.title || "",
-        };
-      }
+      // 模块展示标题统一读取 ui.title
+      const moduleTitle = currentData.value?.[key]?.ui?.title;
       const found = DEFAULT_MODULE_NAMES.find((item) => item.key === key);
+      if (moduleTitle) return { key, name: moduleTitle };
       return found ? { key: found.key, name: found.name } : undefined;
     };
     // 选中模块：已存在则忽略，名称由 getModel 统一解析
@@ -322,7 +319,7 @@ export const useResumeStore = defineStore(
       }
       return true;
     }
-    // 修改模块级 data 字段（自定义模块的 title 等）
+    // 修改模块级 data 字段
     function updateModuleField(moduleKey: string, field: string, value: unknown): boolean {
       const module = currentData.value?.[moduleKey];
       if (
@@ -335,6 +332,15 @@ export const useResumeStore = defineStore(
         return false;
       }
       module.data[field] = value;
+      return true;
+    }
+    // 修改模块展示标题，标题统一存放在模块 ui.title
+    function updateModuleTitle(moduleKey: string, title: string): boolean {
+      const module = currentData.value?.[moduleKey];
+      const value = title.trim();
+      if (!module || typeof module !== "object" || !value) return false;
+      module.ui ||= {};
+      module.ui.title = value;
       return true;
     }
     // 修改记录字段（普通数组模块与自定义 data.list 统一走记录容器）
@@ -579,6 +585,7 @@ export const useResumeStore = defineStore(
       removeDataRecord,
       moveDataRecord,
       updateModuleField,
+      updateModuleTitle,
       updateRecordField,
       getModel,
       currentItem,
