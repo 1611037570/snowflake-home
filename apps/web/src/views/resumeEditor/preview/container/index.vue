@@ -8,6 +8,7 @@ import { previewLangList } from "../i18n";
 import ThemeColor from "./themeColor.vue";
 import FontSize from "./fontSize.vue";
 import Padding from "./padding.vue";
+import PageNumber from "./pageNumber.vue";
 
 defineOptions({ name: "ScaleContainer" });
 
@@ -20,7 +21,7 @@ defineEmits(["fullscreen"]);
 
 const containerRef = ref(null);
 const resumeStore = useResumeStore();
-const { system, selectedModule, currentUI } = storeToRefs(resumeStore);
+const { selectedModule, currentUI } = storeToRefs(resumeStore);
 // 清空选中模块：直接调用 store 操作
 const { clearSelectedModules } = resumeStore;
 const contentRef = ref(null);
@@ -181,20 +182,7 @@ useResizeObserver(contentRef, ([entry]) => {
       <ThemeColor />
       <FontSize />
       <Padding />
-      <SfTooltip :content="system.showPageNumber ? '隐藏页码' : '显示页码'">
-        <SfIcon
-          icon="lucide:hash"
-          size="5"
-          boxSize="7"
-          class="rounded-full"
-          :class="
-            system.showPageNumber
-              ? 'bg-sf-theme-2 text-sf-theme-text'
-              : 'text-sf-text-2 hover:bg-sf-theme-2 hover:text-sf-theme-text'
-          "
-          @click="system.showPageNumber = !system.showPageNumber"
-        />
-      </SfTooltip>
+      <PageNumber />
       <SfDropdown trigger="hover" placement="bottom-start" :show-arrow="false">
         <SfTooltip :content="`切换简历语言`">
           <SfIcon
