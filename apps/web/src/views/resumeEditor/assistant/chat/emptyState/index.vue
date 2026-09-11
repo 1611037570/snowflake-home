@@ -26,7 +26,8 @@ const handleSuggest = (card: SuggestCard) => {
     <OneVOne />
 
     <div class="flex-c gap-3 text-2xl font-bold text-sf-base select-none">
-      你好，我是 <span class="text-sf-theme">{{ $t("router.resumeAI") }}</span>
+      你好，我是 <span class="text-sf-theme">{{ $t("router.resumeAI") }}</span
+      >AI助手
       <SfIcon icon="lucide:sparkles" class="text-sf-theme" size="6" />
     </div>
     <div class="flex flex-wrap items-center justify-center gap-3 text-sm font-medium text-sf-base">
