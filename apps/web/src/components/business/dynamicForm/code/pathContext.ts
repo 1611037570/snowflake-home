@@ -1,7 +1,7 @@
 export type DataPath = Array<string | number>;
 
 export interface DataPathContext {
-  basePath: string[];
+  basePath: DataPath;
   index: number;
 }
 

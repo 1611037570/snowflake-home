@@ -19,6 +19,9 @@ function rewriteCustomFieldByKey(field: any, customKey: string, customTitle: str
   }
   const arrayField = field.fields?.find((f: any) => f.type === "array");
   if (arrayField?.itemSchema) {
+    if (Array.isArray(arrayField.source)) {
+      arrayField.source[0] = customKey;
+    }
     arrayField.itemSchema.model?.forEach((item: any) => {
       if (Array.isArray(item.source)) {
         item.source[0] = customKey;

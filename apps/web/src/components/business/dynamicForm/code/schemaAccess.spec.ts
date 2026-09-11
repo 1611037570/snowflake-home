@@ -90,4 +90,19 @@ describe("schemaAccess", () => {
 
     expect(getArrayDataPath(schema)).toEqual(["education", "data"]);
   });
+
+  it("优先读取数组容器显式声明的数据源", () => {
+    const schema: FormField = {
+      type: "array",
+      source: ["education", "data"],
+      itemSchema: {
+        model: {
+          source: ["旧路径", "?", "name"],
+          prop: "modelValue",
+        },
+      },
+    };
+
+    expect(getArrayDataPath(schema)).toEqual(["education", "data"]);
+  });
 });
