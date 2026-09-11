@@ -9,7 +9,11 @@
           :key="index"
           class="tab-item relative z-10 flex flex-1 cursor-pointer items-center justify-center gap-1 rounded-2xl px-2 py-1 text-center transition-all duration-100"
           :class="[
-            isActive(index) ? 'font-medium text-sf-theme-text' : 'text-sf-text hover:bg-sf-theme-2',
+            disabled
+              ? 'cursor-not-allowed! text-sf-text-3 opacity-60'
+              : isActive(index)
+                ? 'font-medium text-sf-theme-text'
+                : 'text-sf-text hover:bg-sf-theme-2',
           ]"
           @click="handleClick(index)"
         >
@@ -44,6 +48,8 @@ const { list } = defineProps<{
 }>();
 const modelValue = defineModel("modelValue");
 const indexValue = defineModel("index");
+// 禁用标签切换：由调用方双向绑定，通常用于等待异步响应完成
+const disabled = defineModel("disabled", { type: Boolean, default: false });
 
 // 当前激活的下标（使用响应式引用而不是计算属性引用自身）
 const currentActiveIndex = ref(0);
@@ -61,6 +67,7 @@ provide("tabModelValue", modelValue);
 const emit = defineEmits(["change"]);
 // 处理点击事件
 const handleClick = (index: number) => {
+  if (disabled.value) return;
   currentActiveIndex.value = index;
   modelValue.value = list[index].value;
   indexValue.value = index;
