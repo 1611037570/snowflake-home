@@ -1,0 +1,82 @@
+import { createPinia, setActivePinia } from "pinia";
+import { nextTick } from "vue";
+import { beforeEach, describe, expect, it, vi } from "vitest";
+import { useResumeStore } from "./index";
+
+vi.mock("@/components/business/confirm", () => ({ default: vi.fn() }));
+vi.mock("@/routers", () => ({ default: { push: vi.fn() } }));
+vi.mock("@/utils", () => ({ getUUID: () => "test-resume-id" }));
+vi.mock("./formConfig", () => {
+  const user = {
+    type: "group",
+    key: "user",
+    fields: [
+      {
+        type: "object",
+        component: "input",
+        model: { source: ["user", "data", "birthday"], prop: "modelValue" },
+      },
+      {
+        type: "object",
+        component: "input",
+        addable: true,
+        model: { source: ["user", "data", "email"], prop: "modelValue" },
+      },
+    ],
+  };
+  return {
+    allConfig: { user },
+    COLLAPSED: ["1"],
+    DEFAULT_CONFIG: { fields: [{ key: "user" }] },
+    DEFAULT_USER_FORM: [user],
+    EXPANDED: [],
+  };
+});
+
+describe("resume store updateModuleField", () => {
+  beforeEach(() => {
+    setActivePinia(createPinia());
+  });
+
+  it("允许写入运行时结构声明的可添加字段", async () => {
+    const store = useResumeStore();
+    store.addResume(
+      {
+        data: {
+          user: {
+            data: { name: "张三" },
+            ui: { title: "个人信息" },
+          },
+        },
+        config: { fields: [{ key: "user" }] },
+      },
+      false,
+      true,
+    );
+    await nextTick();
+
+    expect(store.updateModuleField("user", "email", "test@example.com")).toBe(true);
+    expect(store.currentData.user.data.email).toBe("test@example.com");
+  });
+
+  it("拒绝写入缺失的普通字段与未知字段", async () => {
+    const store = useResumeStore();
+    store.addResume(
+      {
+        data: {
+          user: {
+            data: { name: "张三" },
+            ui: { title: "个人信息" },
+          },
+        },
+        config: { fields: [{ key: "user" }] },
+      },
+      false,
+      true,
+    );
+    await nextTick();
+
+    expect(store.updateModuleField("user", "birthday", "2000.01")).toBe(false);
+    expect(store.updateModuleField("user", "unknown", "任意内容")).toBe(false);
+  });
+});

@@ -1,10 +1,10 @@
 // 技能：简历数据规范
 // 由 resume-data-contract-generator.md 生成，更新时请通过生成器，勿直接修改
-// 描述：本技能提供简历数据字段与格式规范。 【适用场景】当 AI 需要了解简历模块结构、字段明细、必填项、枚举值与时间/HTML 格式时必须加载。 【数据来源】本规范基于项目 formConfig.ts 中定义的字段结构生成，所有字段路径、类型、必填性均来源于此。 【禁止行为】只描述数据结构与格式，不规定写操作流程，不臆造不存在的字段。
+// 描述：本技能提供简历数据字段与格式规范。 【适用场景】当 AI 需要了解简历模块结构、字段明细、必填项、可添加字段、枚举值与时间/HTML 格式时必须加载。 【数据来源】本规范基于项目 formConfig.ts 中定义的字段结构生成，所有字段路径、类型、必填性与可添加性均来源于此。 【禁止行为】只描述数据结构与格式，不规定写操作流程，不臆造不存在的字段。
 export const resumeDataContract = () => ({
   id: "resume_data_contract",
   name: "简历数据规范",
-  description: `本技能提供简历数据字段与格式规范。 【适用场景】当 AI 需要了解简历模块结构、字段明细、必填项、枚举值与时间/HTML 格式时必须加载。 【数据来源】本规范基于项目 formConfig.ts 中定义的字段结构生成，所有字段路径、类型、必填性均来源于此。 【禁止行为】只描述数据结构与格式，不规定写操作流程，不臆造不存在的字段。`,
+  description: `本技能提供简历数据字段与格式规范。 【适用场景】当 AI 需要了解简历模块结构、字段明细、必填项、可添加字段、枚举值与时间/HTML 格式时必须加载。 【数据来源】本规范基于项目 formConfig.ts 中定义的字段结构生成，所有字段路径、类型、必填性与可添加性均来源于此。 【禁止行为】只描述数据结构与格式，不规定写操作流程，不臆造不存在的字段。`,
   instructions: `# 1. 数据总体结构
 
 一份简历按模块拆分，AI 读写统一使用以下结构，每个模块包含展示标题 title 与经历数据 data：
@@ -26,22 +26,28 @@ export const resumeDataContract = () => ({
 
 > **重要**：用户的实际简历可能只包含以上模块中的一部分。\`read_resume_data\` 返回的就是该结构，字段明细与格式以本规范为准。
 
+> **可添加字段**：字段表中标注“可添加字段”的模块级字段即使未出现在 \`read_resume_data\` 返回的 \`data\` 中，也可通过 \`updateModule\` 写入；写入后字段会被激活展示。
+
 # 2. 各模块\`data\` 字段明细
 
 ## 2.1 个人信息 (\`user.data\`)
 
-| 字段       | 类型     | 必填 | 格式/备注               |
-| :------- | :----- | :- | :------------------ |
-| avatar   | string | 否  | 头像 URL              |
-| name     | string | ✅  | 真实姓名，2-20位          |
-| birthday | string | 否  | 出生日期，格式 YYYY.MM     |
-| phone    | string | ✅  | 手机号，11位数字（1开头）      |
-| sex      | string | 否  | 可选值 "男"/"女"         |
-| position | string | 否  | 求职岗位                |
-| email    | string | 否  | 邮箱地址                |
-| workTime | string | 否  | 参加工作时间，格式 YYYY.MM   |
-| status   | string | 否  | 可选值 "在职"/"离职"/"应届生" |
-| city     | string | 否  | 期望城市                |
+| 字段         | 类型     | 必填 | 格式/备注                                      |
+| :--------- | :----- | :- | :----------------------------------------- |
+| avatar     | string | 否  | 头像 URL                                     |
+| name       | string | ✅  | 真实姓名，2-20位                                 |
+| birthday   | string | 否  | 出生日期，格式 YYYY.MM                            |
+| phone      | string | ✅  | 手机号，11位数字（1开头）                             |
+| sex        | string | 否  | 可选值 "男"/"女"                                |
+| position   | string | 否  | 求职岗位                                       |
+| email      | string | 否  | 可添加字段；邮箱地址                                |
+| workTime   | string | 否  | 可添加字段；参加工作时间，格式 YYYY.MM                  |
+| wechat     | string | 否  | 可添加字段；常用微信号                               |
+| status     | string | 否  | 可添加字段；可选值 "在职"/"离职"/"应届生"              |
+| political  | string | 否  | 可添加字段；可选值 "共产党员"/"预备党员"/"共青团员"/"群众" |
+| city       | string | 否  | 可添加字段；期望城市                                |
+| nativePlace | string | 否  | 可添加字段；籍贯                                  |
+| heightWeight | object | 否 | 可添加字段；结构为 { height: number, weight: number }，单位分别为 cm/kg |
 
 ## 2.2 社交账号 (\`account.data[]\`)
 

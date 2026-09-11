@@ -3,7 +3,7 @@
 name: 简历数据规范生成器
 description: |
 这是一个纯代码驱动的生成器。您需要提供项目中的 formConfig.ts（包含所有 DEFAULT\*XXX_FORM 定义）与 resumeOptions.ts（select 字段的可选值字典），
-本技能会自动解析所有模块的字段结构、数据类型、必填项和格式约束，并生成一份统一 TS 函数格式的"简历数据规范"技能文件 resumeDataContract.ts。
+本技能会自动解析所有模块的字段结构、数据类型、必填项、可添加性和格式约束，并生成一份统一 TS 函数格式的"简历数据规范"技能文件 resumeDataContract.ts。
 解析规则和输出格式已固定，确保每次生成的文件结构一致、无随机性。
 
 ---
@@ -12,7 +12,7 @@ description: |
 
 你是"简历规范生成器"。你的唯一功能是：**根据用户提供的 formConfig.ts 与 resumeOptions.ts 源码，逆向推导出完整的数据契约，并输出统一 TS 函数格式的** **`resumeDataContract.ts`** **技能文件**。
 
-你生成的 resumeDataContract.ts 将为 AI 提供准确的简历数据字段与格式契约，因此必须准确、清晰、无歧义。
+你生成的 resumeDataContract.ts 将为 AI 提供准确的简历数据字段、可添加性与格式契约，因此必须准确、清晰、无歧义。
 
 # 前置要求
 
@@ -66,17 +66,20 @@ description: |
 
 - **组件类型**：从 `component` 获取（`input`, `select`, `datePicker`, `wangEditor`等）。
 
+- **可添加性**：检查字段是否声明`addable: true`。命中时在“格式/备注”列固定写入“可添加字段；”，表示该字段可能不在当前`data`中，但允许通过`updateModule`写入并激活。
+
 - **格式约束**：-`datePicker`+`type: "monthrange"`→ 输出为 **数组**`["开始.YYYY.MM", "结束.YYYY.MM"]`
   - `datePicker`+`type: "month"`→ 输出为 **字符串**`YYYY.MM`
 
   - `wangEditor` → 内容必须是 **HTML 字符串**（`<p>`包裹）
+  - `heightWeight` → 输出为 **对象**，结构为`{ height: number, weight: number }`
   - `select` → 在 `model` 数组中找到 `raw: true` 的绑定（如 `{ source: ["__options", "mode"], prop: "list", raw: true }`），取 `source` 最后一个元素作为字典 key（如 `mode`），再到 `resumeOptions.ts` 的 `RESUME_OPTIONS` 中读取对应选项，在备注中列出可选值
 
 **产出**：为每个模块生成一个固定的 Markdown 表格，**表格必须包含以下四列，顺序不得变更**：
 
-| 字段     | 类型         | 必填     | 格式/备注 |
-| :------- | :----------- | :------- | :-------- |
-| `字段名` | string/array | ✅ 或 否 | 格式说明  |
+| 字段     | 类型                | 必填     | 格式/备注 |
+| :------- | :------------------ | :------- | :-------- |
+| `字段名` | string/array/object | ✅ 或 否 | 格式说明  |
 
 **字段顺序**：按`fields`或`itemSchema.fields`中出现的顺序排列。
 
@@ -122,6 +125,8 @@ export const resumeDataContract = () => ({
 
 > **重要**：用户的实际简历可能只包含以上模块中的一部分。\`read_resume_data\` 返回的就是该结构，字段明细与格式以本规范为准。
 
+> **可添加字段**：字段表中标注“可添加字段”的模块级字段即使未出现在 \`read_resume_data\` 返回的 \`data\` 中，也可通过 \`updateModule\` 写入；写入后字段会被激活展示。
+
 # 2. 各模块\`data\` 字段明细
 
 ## 2.1 个人信息 (\`user.data\`)
@@ -159,7 +164,7 @@ export const resumeDataContract = () => ({
 
 # 生成内容对应关系（固定）
 
-1. **description**：把"简历数据规范"的元信息（适用场景、数据来源、禁止行为）合并为单行写入，其中【适用场景】表述为：当 AI 需要了解简历模块结构、字段明细、必填项、枚举值与时间/HTML 格式时必须加载。
+1. **description**：把"简历数据规范"的元信息（适用场景、数据来源、禁止行为）合并为单行写入，其中【适用场景】表述为：当 AI 需要了解简历模块结构、字段明细、必填项、可添加字段、枚举值与时间/HTML 格式时必须加载。
 2. **instructions**：只包含数据规范正文（数据总体结构、字段明细、格式约定、正确与错误示例），不定义角色身份，不含 name/description 元信息，禁止重复 description 中的职责边界与禁止行为表。
 3. **字段明细表**：按解析规则第三步产出，填入 instructions 的 `# 2 各模块data 字段明细` 部分，custom 模块说明按解析规则第四步插入对应表格上方。
 
@@ -171,6 +176,7 @@ export const resumeDataContract = () => ({
 4. **禁止重新表述**：字段名必须原样取自`source`的最后一个元素，不得自行翻译或简化。例如`post`不能写成`position`，`time`不能写成`dateRange`。
 5. **可选值必须列出**：`select`字段按 `raw: true` 绑定的 `source` 末段定位 `RESUME_OPTIONS` 中的选项，其 `value` 值必须在"格式/备注"列中列出（如`"全日制"/"非全日制"/""`）；若字典中不存在对应 key，则在备注中注明需检查 `resumeOptions.ts`。
 6. **时间格式必须显式标注**：所有 `datePicker` 字段的备注中必须包含 **`YYYY.MM`**。
+7. **可添加字段必须标注**：声明`addable: true`的字段必须在“格式/备注”列以“可添加字段；”开头。
 
 ---
 

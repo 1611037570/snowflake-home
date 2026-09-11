@@ -6,15 +6,14 @@ import type { ResumeToolContext } from "./tool_types";
 // 创建简历修改工具：校验后直接写入，由请求结束时统一提交缓冲写入
 export const createProposeResumeEditsTool = (ctx: ResumeToolContext): ReactTool => ({
   name: "propose_resume_edits",
-  description:
-    `${TOOL_ARGUMENT_RULE}\n\n${PROPOSE_RESUME_EDITS_RULE}\n\n根据分析结果生成简历修改，回复完成后直接写入简历数据（用户可撤回）。通过 operations 语义化描述写操作：updateModule 修改模块级 data 字段；updateModuleTitle 修改模块展示标题；updateRecord 修改记录字段；addRecord 新增记录；deleteRecord 删除记录；moveRecord 调整记录顺序。提交前会做结构与格式校验，校验失败不写入并返回 errors，请按 errors 修正后重新提交。`,
+  description: `${TOOL_ARGUMENT_RULE}\n\n${PROPOSE_RESUME_EDITS_RULE}\n\n根据分析结果生成简历修改，回复完成后直接写入简历数据（用户可撤回）。通过 operations 语义化描述写操作：updateModule 修改模块级 data 字段；updateModuleTitle 修改模块展示标题；updateRecord 修改记录字段；addRecord 新增记录；deleteRecord 删除记录；moveRecord 调整记录顺序。提交前会做结构与格式校验，校验失败不写入并返回 errors，请按 errors 修正后重新提交。`,
   parameters: {
     type: "object",
     properties: {
       operations: {
         type: "array",
         description:
-          "写操作列表，一次调用会合并为一次写入；操作目标必须是 read_resume_data 返回的已有模块与字段；参数必须是标准 JSON",
+          "写操作列表，一次调用会合并为一次写入；模块必须来自 read_resume_data，字段必须是当前已有字段或《简历数据规范》声明的可添加字段；参数必须是标准 JSON",
         items: {
           type: "object",
           properties: {
@@ -34,7 +33,7 @@ export const createProposeResumeEditsTool = (ctx: ResumeToolContext): ReactTool 
             field: {
               type: "string",
               description:
-                "要修改的字段名，来自 read_resume_data 返回的数据，updateModule/updateRecord 使用",
+                "要修改的字段名，来自 read_resume_data 或《简历数据规范》中声明的可添加字段，updateModule/updateRecord 使用",
             },
             value: {
               description: "修改后的值，格式遵守简历数据规范，updateModule/updateRecord 使用",
