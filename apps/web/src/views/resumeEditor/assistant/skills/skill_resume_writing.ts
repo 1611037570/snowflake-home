@@ -3,7 +3,7 @@
 export const resumeWriting = () => ({
   id: "resume_writing",
   name: "简历编写",
-  description: `指导 AI 通过 propose_resume_edits 编写、修改、新增、删除或排序简历内容。`,
+  description: `指导 AI 通过 propose_resume_edits 编写、修改、重命名、新增、删除或排序简历内容。`,
   instructions: `# 适用场景
 写简历、改简历、把用户描述转成经历内容、新增/删除/排序数组型模块记录（如工作、项目、教育）时使用本技能。
 
@@ -18,7 +18,8 @@ export const resumeWriting = () => ({
 只通过 operations 提交写操作，回复完成后直接写入简历数据（用户可撤回），不要返回简历数据。
 
 - 修改已有字段：
-  - 模块级字段：{ op: "updateModule", module, field, value }（自定义模块标题 field 为 title）
+  - 模块级字段：{ op: "updateModule", module, field, value }
+  - 模块展示标题：{ op: "updateModuleTitle", module, title }，module 始终使用 read_resume_data 返回的稳定 key，禁止把展示标题当作 key
   - 记录字段：{ op: "updateRecord", module, index, field, value }，index 为记录下标，从 0 开始
   - 自定义模块记录仍用 index 更新其 data.list 中的记录
 - 新增记录（仅数组型模块）：{ op: "addRecord", module, record }
@@ -31,5 +32,6 @@ export const resumeWriting = () => ({
 2. 一次调用可包含多条 operations，系统会合并为一次写入，避免分多次零散提交。
 3. 若 propose_resume_edits 返回 errors，先按错误逐条修正后重新提交，不得忽略错误或直接结束任务。
 4. 起草新增内容时优先使用真实事实；缺失部分用【待补充：xxx】占位并在正文提醒补充核对，占位不算虚构，禁止把占位伪装成真实具体值。
+5. 除非用户明确要求修改模块标题，或正在翻译用户自定义标题，否则不得主动调用 updateModuleTitle。
 `,
 });

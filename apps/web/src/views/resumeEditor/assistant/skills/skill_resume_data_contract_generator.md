@@ -50,7 +50,7 @@ description: |
   ```
   对象型模块：user, skill, advantage
   数组型模块：account, education, work, project, video, image, honor
-  自定义模块：custom（特殊，data 为 { title, list }）
+  自定义模块：custom（特殊，data 为 { list }）
   ```
 
 ## 第三步：解析每个模块的字段明细（固定表格格式）
@@ -58,6 +58,7 @@ description: |
 对每个模块，提取其下所有字段：
 
 - **字段名**：从`model.source`数组中取**最后一个元素**（如`["work","data","?","name"]`→`name`；`["skill","data","content"]`→`content`）。
+- 只解析路径中包含`data`的经历字段；`ui.title`是模块展示标题，通过模块顶层`title`单独提供，不进入`data`字段表。
 
 - **中文标签**：从 `label`属性获取（如果`label`不存在，则用字段名代替）。
 
@@ -85,10 +86,10 @@ description: |
 - 在`custom`模块的表格上方，固定插入以下说明段落：
 
   ```
-  > **特别说明**：自定义模块是动态添加的，顶层 key 以`custom_`开头（如 `custom_a810d50c`）。`data.title` 是模块标题（AI 可修改），`data.list` 是经历记录数组。
+  > **特别说明**：自定义模块是动态添加的，顶层 key 以`custom_`开头（如 `custom_a810d50c`）。模块`title`是展示标题，`data.list`是经历记录数组。
   ```
 
-- `custom_<id>.data.title` 是标题；`custom_<id>.data.list[]` 记录字段与`work`一致：`name`, `post`, `time`, `content`。
+- `custom_<id>.title` 是标题；`custom_<id>.data.list[]` 记录字段与`work`一致：`name`, `post`, `time`, `content`。
 - 字段明细章节标题与表格说明使用`custom_<id>`指代实际顶层 key，不要写成固定`custom`。
 
 ---
@@ -106,17 +107,18 @@ export const resumeDataContract = () => ({
   name: "简历数据规范",
   description: `<description 内容，单行>`,
   instructions: `# 1. 数据总体结构
-一份简历按模块拆分，AI 读写统一使用以下结构，每个模块只保留 data：
+一份简历按模块拆分，AI 读写统一使用以下结构，每个模块包含展示标题 title 与经历数据 data：
 
 \`\`\`typescript
 {
-  user: { data: 对象 },   // 对象型模块
-  work: { data: 数组 },   // 数组型模块
+  user: { title: "个人信息", data: 对象 },
+  work: { title: "工作经历", data: 数组 },
 }
 \`\`\`
 
 - **对象型模块**（[按模块名列表]）：\`data\` 是一个普通对象。
 - **数组型模块**（[按模块名列表]）：\`data\` 是一个数组，每个元素是一条记录。
+- **模块标题**：\`title\`是当前展示名称；模块身份始终由顶层稳定 key 标识，写操作不得使用标题代替 key。
 
 > **重要**：用户的实际简历可能只包含以上模块中的一部分。\`read_resume_data\` 返回的就是该结构，字段明细与格式以本规范为准。
 

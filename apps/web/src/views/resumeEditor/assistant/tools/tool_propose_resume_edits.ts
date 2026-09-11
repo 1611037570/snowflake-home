@@ -7,7 +7,7 @@ import type { ResumeToolContext } from "./tool_types";
 export const createProposeResumeEditsTool = (ctx: ResumeToolContext): ReactTool => ({
   name: "propose_resume_edits",
   description:
-    `${TOOL_ARGUMENT_RULE}\n\n${PROPOSE_RESUME_EDITS_RULE}\n\n根据分析结果生成简历修改，回复完成后直接写入简历数据（用户可撤回）。通过 operations 语义化描述写操作：updateModule 修改模块级 data 字段（如自定义模块 title）；updateRecord 修改记录字段；addRecord 新增记录；deleteRecord 删除记录；moveRecord 调整记录顺序。提交前会做结构与格式校验，校验失败不写入并返回 errors，请按 errors 修正后重新提交。`,
+    `${TOOL_ARGUMENT_RULE}\n\n${PROPOSE_RESUME_EDITS_RULE}\n\n根据分析结果生成简历修改，回复完成后直接写入简历数据（用户可撤回）。通过 operations 语义化描述写操作：updateModule 修改模块级 data 字段；updateModuleTitle 修改模块展示标题；updateRecord 修改记录字段；addRecord 新增记录；deleteRecord 删除记录；moveRecord 调整记录顺序。提交前会做结构与格式校验，校验失败不写入并返回 errors，请按 errors 修正后重新提交。`,
   parameters: {
     type: "object",
     properties: {
@@ -21,7 +21,7 @@ export const createProposeResumeEditsTool = (ctx: ResumeToolContext): ReactTool 
             op: {
               type: "string",
               description:
-                "操作类型：updateModule 改模块字段；updateRecord 改记录；addRecord 新增；deleteRecord 删除；moveRecord 排序",
+                "操作类型：updateModule 改模块字段；updateModuleTitle 改模块标题；updateRecord 改记录；addRecord 新增；deleteRecord 删除；moveRecord 排序",
             },
             module: {
               type: "string",
@@ -38,6 +38,10 @@ export const createProposeResumeEditsTool = (ctx: ResumeToolContext): ReactTool 
             },
             value: {
               description: "修改后的值，格式遵守简历数据规范，updateModule/updateRecord 使用",
+            },
+            title: {
+              type: "string",
+              description: "模块展示标题，updateModuleTitle 使用；module 仍必须传稳定 key",
             },
             record: {
               type: "object",
@@ -72,6 +76,10 @@ export const createProposeResumeEditsTool = (ctx: ResumeToolContext): ReactTool 
       if (!op) return;
       if (op.op === "updateModule") {
         if (ctx.updateModuleField?.(op.module, op.field, op.value)) changedData = true;
+        return;
+      }
+      if (op.op === "updateModuleTitle") {
+        if (ctx.updateModuleTitle?.(op.module, op.title)) changedData = true;
         return;
       }
       if (op.op === "updateRecord") {

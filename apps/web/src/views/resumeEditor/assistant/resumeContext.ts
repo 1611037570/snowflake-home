@@ -71,6 +71,7 @@ export const useResumeContext = () => {
       const module = data[key];
       if (!module || typeof module !== "object" || !("data" in module)) return;
       const clone = JSON.parse(JSON.stringify(module.data));
+      const title = module.ui?.title || resumeStore.getModel(key)?.name || key;
       const shouldDesensitize = !desensitizeMode.value.disabled;
       const strict = shouldDesensitize && desensitizeMode.value.level === "strict";
       // 读取 user 模块时排除头像，避免请求体过大
@@ -88,7 +89,7 @@ export const useResumeContext = () => {
         ? sanitizeNestedData(clone, userName, removeOrganizationName)
         : clone;
       // 排除记录 UI 状态，避免 AI 误读或写回折叠字段
-      result[key] = { data: stripRecordUiState(sanitized) };
+      result[key] = { title, data: stripRecordUiState(sanitized) };
     });
     return result;
   };
