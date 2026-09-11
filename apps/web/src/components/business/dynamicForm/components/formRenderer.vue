@@ -6,7 +6,7 @@
       :data-fixed="item.field.fixed ? 'true' : undefined"
       v-for="item in renderFields"
       :key="item.field.id"
-      :muted="isFieldMuted(rootData.data, item.field)"
+      :muted="isFieldMuted(rootData.data, item.field, pathContext)"
       :pathContext="pathContext"
       :selected="isModuleSelected(item.field)"
       @mouseenter="handleModuleMouseEnter(item.field)"
@@ -68,8 +68,8 @@ const renderFields = computed(() => {
     .map((field: any, index: number) => ({ field, index }))
     .filter(
       ({ field }: any) =>
-        !isFieldVisible(rootData.data, field) &&
-        (!field.addable || hasFieldData(rootData.data, field, containerIndex)),
+        !isFieldVisible(rootData.data, field, pathContext) &&
+        (!field.addable || hasFieldData(rootData.data, field, pathContext)),
     );
 });
 const isDragging = ref(false);

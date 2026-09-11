@@ -61,18 +61,20 @@ describe("fieldData", () => {
     expect((first as any).user.data.tags).not.toBe((second as any).user.data.tags);
   });
 
-  it("支持解析数组记录索引", () => {
+  it("支持按数组记录上下文解析相对字段", () => {
     const field: FormField = {
       model: {
-        source: ["work", "data", "?", "summary"],
+        source: ["summary"],
         prop: "modelValue",
         defaultValue: "待填写",
       },
     };
     const data = { work: { data: [{}] } };
+    const context = { basePath: ["work", "data"], index: 0 };
 
-    expect(addFieldData(data, field, 0)).toBe(true);
-    expect(hasFieldData(data, field, 0)).toBe(true);
+    expect(getFieldDataKey(field, context)).toBe("work.data.0.summary");
+    expect(addFieldData(data, field, context)).toBe(true);
+    expect(hasFieldData(data, field, context)).toBe(true);
     expect(data.work.data[0]).toEqual({ summary: "待填写" });
     expect(hasFieldData(data, field)).toBe(false);
   });
