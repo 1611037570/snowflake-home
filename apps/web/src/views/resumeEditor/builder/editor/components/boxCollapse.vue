@@ -120,7 +120,7 @@ function handleEditConfirm() {
             <SfTooltip content="定位预览" v-if="!hidden">
               <SfIcon
                 @click.stop="handlePreviewJump"
-                icon="lucide:search"
+                icon="mdi:map-search-outline"
                 size="4"
                 class="cursor-pointer hover:text-sf-theme"
               />
