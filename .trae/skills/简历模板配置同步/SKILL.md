@@ -37,8 +37,8 @@ formConfig.ts 中的默认配置：
 3. **固定表单对齐**：`xiaoYangFixedForm` 需与 `DEFAULT_USER_FORM` 完全一致（tip 文案、rules 校验规则、props 等）。
 4. **可拖拽表单对齐**：`xiaoYangForm` 各模块结构与 formConfig.ts 中对应配置一致：
    - `boxCollapse` 模块：`props.name` / `props.add`、`model` 绑定 `collapsed`
-   - 数组子项：`list: []` + `addConfig`（含 `model` 绑定与 `component`）
-   - work/project/custom 子项：`addConfig` 使用 `itemCollapse` + 嵌套 `fields`（公司/岗位/时间/经历，时间用 `datePicker` `monthrange`）
+   - 数组子项：`list: []` + `itemSchema`（含 `model` 绑定与 `component`）
+   - work/project/custom 子项：`itemSchema` 使用 `itemCollapse` + 嵌套 `fields`（公司/岗位/时间/经历，时间用 `datePicker` `monthrange`）
    - 文本编辑：`wangEditor` 组件绑定 `modelValue`
 
 ## 执行步骤

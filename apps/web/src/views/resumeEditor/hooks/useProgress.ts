@@ -50,12 +50,12 @@ function analyzeModule(moduleConfig: any, rootData: any) {
   let total = 0;
 
   for (const field of moduleConfig.fields) {
-    if (field.type === "array" && field.addConfig) {
-      const addConfig = field.addConfig;
-      const itemDefs = addConfig.fields?.length ? addConfig.fields : addConfig.model;
+    if (field.type === "array" && field.itemSchema) {
+      const itemSchema = field.itemSchema;
+      const itemDefs = itemSchema.fields?.length ? itemSchema.fields : itemSchema.model;
       if (!itemDefs?.length) continue;
 
-      const parentRequired = addConfig.required === true || field.required === true;
+      const parentRequired = itemSchema.required === true || field.required === true;
 
       const firstSrc = getFieldMeta(itemDefs[0]).src;
       const listPath = firstSrc.slice(0, firstSrc.indexOf("?"));
@@ -73,7 +73,7 @@ function analyzeModule(moduleConfig: any, rootData: any) {
           if (!missing.includes(label)) missing.push(label);
         }
         if (hasRequired) {
-          const groupLabel = addConfig.name || "内容";
+          const groupLabel = itemSchema.name || "内容";
           if (!missing.includes(groupLabel)) missing.push(groupLabel);
         }
         continue;
@@ -171,8 +171,8 @@ function checkTimeline(modules: Array<{ key: string; config: any }>, rootData: a
         if (f.fields) {
           if (findTimeField(f.fields)) return true;
         }
-        if (f.addConfig?.fields) {
-          if (findTimeField(f.addConfig.fields)) return true;
+        if (f.itemSchema?.fields) {
+          if (findTimeField(f.itemSchema.fields)) return true;
         }
       }
       return false;
@@ -256,7 +256,7 @@ export function useProgress(
     });
     totalScore += progress;
 
-    if (config.fields?.some((f: any) => f.type === "array" && f.addConfig)) {
+    if (config.fields?.some((f: any) => f.type === "array" && f.itemSchema)) {
       timelineModules.push({ key, config });
     }
   }

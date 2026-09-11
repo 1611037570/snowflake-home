@@ -63,7 +63,7 @@ export interface FormField {
   /** array 容器的数据列表（运行时填充） */
   list?: FormField[];
   /** array 容器「新增子项」的模板配置 */
-  addConfig?: FormField;
+  itemSchema?: FormField;
   /** 是否可拖拽 */
   drag?: boolean;
   /** 模块是否固定：固定模块不参与容器拖拽排序 */

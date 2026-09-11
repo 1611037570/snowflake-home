@@ -279,8 +279,8 @@ export const useResumeStore = defineStore(
       records.push(createRecordSkeleton(moduleKey));
       // 同步补一条表单子项，保证编辑器与 data 数量一致
       const arrayField = findModuleArrayField(currentItem.value, moduleKey);
-      if (arrayField?.addConfig && Array.isArray(arrayField.list)) {
-        arrayField.list.push({ ...toRaw(arrayField.addConfig) });
+      if (arrayField?.itemSchema && Array.isArray(arrayField.list)) {
+        arrayField.list.push({ ...toRaw(arrayField.itemSchema) });
       }
       return records.length - 1;
     }

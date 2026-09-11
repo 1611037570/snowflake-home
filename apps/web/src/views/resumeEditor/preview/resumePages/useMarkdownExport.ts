@@ -57,15 +57,15 @@ const collectFieldDefinitions = (fields: any[], definitions: FieldDefinition[]) 
         label: field.label || FIELD_LABELS[key] || binding.prop || key,
       });
     });
-    getBindings(field.addConfig?.model).forEach((binding) => {
+    getBindings(field.itemSchema?.model).forEach((binding) => {
       const key = getDataKey(binding);
       if (!key || ["collapsed", "hidden", "archived"].includes(key)) return;
       if (definitions.some((item) => item.key === key)) return;
       definitions.push({ key, label: FIELD_LABELS[key] || binding.prop || key });
     });
     if (Array.isArray(field.fields)) collectFieldDefinitions(field.fields, definitions);
-    if (Array.isArray(field.addConfig?.fields)) {
-      collectFieldDefinitions(field.addConfig.fields, definitions);
+    if (Array.isArray(field.itemSchema?.fields)) {
+      collectFieldDefinitions(field.itemSchema.fields, definitions);
     }
   });
 };

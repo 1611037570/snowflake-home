@@ -88,11 +88,11 @@ const handleConfirm = () => {
     config.checks.visible.path[0] = customKey;
   }
   // 重置自定义模块的子模块标题模型数据路径
-  config.fields[0].addConfig.model.forEach((item) => {
+  config.fields[0].itemSchema.model.forEach((item) => {
     item.source[0] = customKey;
   });
   // 重置自定义模块的子项字段列表数据路径
-  config.fields[0].addConfig.fields.forEach((field) => {
+  config.fields[0].itemSchema.fields.forEach((field) => {
     field.model.source[0] = customKey;
   });
   // 自定义模块内的记录默认折叠状态跟随系统设置

@@ -41,7 +41,7 @@ description: |
 ## 第二步：判断每个模块的类型
 
 - 读取模块定义结构：
-  - 如果 `fields`中包含`type: "array"`且存在`addConfig`→ **数组型模块**
+  - 如果 `fields`中包含`type: "array"`且存在`itemSchema`→ **数组型模块**
 
   - 否则 → **对象型模块**
 
@@ -78,7 +78,7 @@ description: |
 | :------- | :----------- | :------- | :-------- |
 | `字段名` | string/array | ✅ 或 否 | 格式说明  |
 
-**字段顺序**：按`fields`或`addConfig.fields`中出现的顺序排列。
+**字段顺序**：按`fields`或`itemSchema.fields`中出现的顺序排列。
 
 ## 第四步：特殊处理自定义模块（custom）
 
@@ -165,7 +165,7 @@ export const resumeDataContract = () => ({
 
 # 执行要求（防止随机性）
 
-1. **字段顺序**：模块表格中的字段顺序必须与`formConfig.ts`中`fields`（或 `addConfig.fields`）的定义顺序完全一致。
+1. **字段顺序**：模块表格中的字段顺序必须与`formConfig.ts`中`fields`（或 `itemSchema.fields`）的定义顺序完全一致。
 2. **模块顺序**：instructions 中 2.1 ~ 2.N 的模块顺序必须与 `模块清单`中的顺序一致。
 3. **表格格式**：必须使用`| :--- | :--- | :--- | :--- |`作为表头分隔线。
 4. **禁止重新表述**：字段名必须原样取自`source`的最后一个元素，不得自行翻译或简化。例如`post`不能写成`position`，`time`不能写成`dateRange`。

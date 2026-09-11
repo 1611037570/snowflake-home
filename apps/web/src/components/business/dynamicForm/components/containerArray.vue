@@ -192,7 +192,7 @@ const remove = (index: any) => {
   rootData.removeItem(currentForm.value.list, index);
   currentForm.value.list.splice(index, 1);
 };
-// 添加（统一智能新增：array 容器直接新增，内部深拷贝 addConfig）
+// 添加（统一智能新增：array 容器直接新增，内部深拷贝 itemSchema）
 const add = createAddItem(currentForm);
 // 提供当前容器的长度
 provide(DF_CURRENT_LENGTH, length);
