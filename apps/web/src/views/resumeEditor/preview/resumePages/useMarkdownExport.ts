@@ -22,15 +22,15 @@ const formatText = (value: unknown) => {
   if (value === null || value === undefined) return "";
   if (Array.isArray(value)) return value.filter(Boolean).join(" - ");
   if (typeof value === "object") {
-    return Object.values(value as Record<string, unknown>).filter(Boolean).join(" / ");
+    return Object.values(value as Record<string, unknown>)
+      .filter(Boolean)
+      .join(" / ");
   }
 
   const text = String(value);
   if (!/<[a-z][\s\S]*>/i.test(text)) return text.trim();
   const element = document.createElement("div");
-  element.innerHTML = text
-    .replace(/<br\s*\/?\s*>/gi, "\n")
-    .replace(/<\/(p|li|h[1-6])>/gi, "\n");
+  element.innerHTML = text.replace(/<br\s*\/?\s*>/gi, "\n").replace(/<\/(p|li|h[1-6])>/gi, "\n");
   return (element.textContent || "")
     .replace(/\u00a0/g, " ")
     .replace(/[ \t]+\n/g, "\n")
@@ -40,9 +40,10 @@ const formatText = (value: unknown) => {
 
 const getDataKey = (binding: any) => {
   const source = binding?.source;
-  if (!Array.isArray(source) || !source.includes("data")) return "";
+  // 原始字典绑定不属于简历数据，其余字段兼容顶层绝对路径和子项相对路径
+  if (binding?.raw || !Array.isArray(source)) return "";
   const key = source[source.length - 1];
-  return key && key !== "?" ? key : "";
+  return key || "";
 };
 
 const collectFieldDefinitions = (fields: any[], definitions: FieldDefinition[]) => {
@@ -75,7 +76,9 @@ const getModuleTitle = (moduleKey: string, moduleData: any, schema: any) => {
     normalizedSchema?.model?.find((item: any) => item?.prop === "title")?.defaultValue ||
     normalizedSchema?.name ||
     normalizedSchema?.props?.name ||
-    { user: "个人信息", account: "社交账号", skill: "专业技能", advantage: "个人优势" }[moduleKey] ||
+    { user: "个人信息", account: "社交账号", skill: "专业技能", advantage: "个人优势" }[
+      moduleKey
+    ] ||
     moduleKey
   );
 };
@@ -86,7 +89,11 @@ const getRecords = (moduleData: any) => {
   return moduleData?.data && typeof moduleData.data === "object" ? [moduleData.data] : [];
 };
 
-const appendRecord = (lines: string[], record: Record<string, unknown>, definitions: FieldDefinition[]) => {
+const appendRecord = (
+  lines: string[],
+  record: Record<string, unknown>,
+  definitions: FieldDefinition[],
+) => {
   const entries = definitions
     .map((definition) => ({
       ...definition,
@@ -138,7 +145,10 @@ export const exportMarkdown = (onSuccess?: () => void) => {
     records.forEach((record) => appendRecord(lines, record, definitions));
   });
 
-  const markdown = `${lines.join("\n").replace(/\n{3,}/g, "\n\n").trim()}\n`;
+  const markdown = `${lines
+    .join("\n")
+    .replace(/\n{3,}/g, "\n\n")
+    .trim()}\n`;
   const blob = new Blob([markdown], { type: "text/markdown;charset=utf-8" });
   const url = URL.createObjectURL(blob);
   const link = document.createElement("a");

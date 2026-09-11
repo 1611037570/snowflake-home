@@ -10,6 +10,7 @@
       :class="currentForm?.colClass"
       :currentForm="item.item"
       :key="item.key"
+      :pathContext="getPathContext(item.index)"
       :style="item.style"
     >
       <!-- v-bind="$attrs"  -->

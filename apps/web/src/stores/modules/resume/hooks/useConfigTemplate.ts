@@ -22,16 +22,6 @@ function rewriteCustomFieldByKey(field: any, customKey: string, customTitle: str
     if (Array.isArray(arrayField.source)) {
       arrayField.source[0] = customKey;
     }
-    arrayField.itemSchema.model?.forEach((item: any) => {
-      if (Array.isArray(item.source)) {
-        item.source[0] = customKey;
-      }
-    });
-    arrayField.itemSchema.fields?.forEach((subField: any) => {
-      if (Array.isArray(subField.model?.source)) {
-        subField.model.source[0] = customKey;
-      }
-    });
   }
 }
 

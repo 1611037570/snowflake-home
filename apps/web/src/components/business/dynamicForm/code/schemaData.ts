@@ -38,17 +38,10 @@ export function createArrayItemData(arrayField: FormField): Record<string, any> 
   walkFormFields(arrayField.itemSchema, (field) => {
     getModelBindings(field).forEach((binding) => {
       if (binding.raw) return;
-      const markerIndex = binding.source.indexOf("?");
-      if (markerIndex === -1) return;
-      const relativePath = binding.source.slice(markerIndex + 1);
-      if (!relativePath.length || relativePath.includes("?")) return;
+      const relativePath = binding.source;
+      if (!relativePath.length) return;
       const hasDefault = Object.prototype.hasOwnProperty.call(binding, "defaultValue");
-      setRecordValue(
-        record,
-        relativePath,
-        resolveDefaultValue(binding.defaultValue),
-        hasDefault,
-      );
+      setRecordValue(record, relativePath, resolveDefaultValue(binding.defaultValue), hasDefault);
     });
   });
 

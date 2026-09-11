@@ -1,4 +1,5 @@
 import { resolveDefaultValue } from "./schemaData";
+import { resolveDataPath, type DataPathContext } from "./pathContext";
 
 type Path = string | string[];
 // 定义数据代理选项类型
@@ -41,11 +42,17 @@ class DataProxy<T> {
     const key = keyPath[keyPath.length - 1] ?? "";
     return this.options?.[key];
   }
-  private select(options: { source: Path; value?: any; index?: number; defaultValue?: any }): any {
-    const { source, value, index = 0 } = options;
+  private select(options: {
+    source: Path;
+    value?: any;
+    index?: number;
+    defaultValue?: any;
+    pathContext?: DataPathContext;
+  }): any {
+    const { source, value, index = 0, pathContext } = options;
     // 使用引擎统一默认值规则，保证字段绑定与完整记录生成结果一致
     const defaultValue = resolveDefaultValue(options.defaultValue);
-    const keyPath = this.ensureArray(source);
+    const keyPath = resolveDataPath(this.ensureArray(source), pathContext);
     // 获取响应式数据的实际值
     const dataValue = this.modelValue.value || this.modelValue;
     let current: any = dataValue;
@@ -96,21 +103,29 @@ class DataProxy<T> {
   }
 
   // 获取数据代理
-  getDataProxy(options: DataProxyOption | DataProxyOption[], index: number = 0) {
+  getDataProxy(
+    options: DataProxyOption | DataProxyOption[],
+    index: number = 0,
+    pathContext?: DataPathContext,
+  ) {
     return this.createDataProxyHelper(options, (item: DataProxyOption) =>
-      this.select({ source: item.source, index, defaultValue: item.defaultValue }),
+      this.select({ source: item.source, index, defaultValue: item.defaultValue, pathContext }),
     );
   }
 
   // 设置数据代理
-  setDataProxy(options: DataProxyOption | DataProxyOption[], index: number) {
+  setDataProxy(
+    options: DataProxyOption | DataProxyOption[],
+    index: number,
+    pathContext?: DataPathContext,
+  ) {
     const result: any = {};
     const optionsArray = this.ensureArray(options);
     for (const item of optionsArray) {
       // raw 绑定只读字典，不生成写入事件
       if (item.raw) continue;
       result["update:" + item.prop] = (newValue: T) => {
-        this.select({ source: item.source, value: newValue, index });
+        this.select({ source: item.source, value: newValue, index, pathContext });
       };
     }
     return result;

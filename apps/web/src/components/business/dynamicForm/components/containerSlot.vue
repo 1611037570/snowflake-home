@@ -11,7 +11,7 @@
     v-else
     :is="getComponent(currentForm.component)"
     v-bind="{
-      ...rootData.getDataProxy(currentForm.model, currentIndex),
+      ...rootData.getDataProxy(currentForm.model, currentIndex, pathContext),
       ...currentForm.props,
     }"
     v-on="bindEvent"
@@ -53,7 +53,7 @@ const slotName = computed(() => {
 });
 const rootData: any = inject(DF_ROOT_DATA);
 const bindEvent = computed(() => {
-  return rootData.setDataProxy(currentForm.value.model, currentIndex.value);
+  return rootData.setDataProxy(currentForm.value.model, currentIndex.value, pathContext);
 });
 const emit = defineEmits(["removeObject"]);
 function remove() {

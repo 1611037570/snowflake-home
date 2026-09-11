@@ -386,12 +386,12 @@ export const DEFAULT_ACCOUNT_FORM = {
       itemSchema: {
         model: [
           {
-            source: ["account", "data", "?", "name"],
+            source: ["name"],
             defaultValue: "",
             prop: "name",
           },
           {
-            source: ["account", "data", "?", "url"],
+            source: ["url"],
             defaultValue: "",
             prop: "url",
           },
@@ -454,12 +454,12 @@ export const DEFAULT_EDUCATION_FORM = {
         span: 24,
         model: [
           {
-            source: ["education", "data", "?", "collapsed"],
+            source: ["collapsed"],
             prop: "collapsed",
             defaultValue: EXPANDED,
           },
           {
-            source: ["education", "data", "?", "name"],
+            source: ["name"],
             prop: "name",
           },
         ],
@@ -471,7 +471,7 @@ export const DEFAULT_EDUCATION_FORM = {
             required: true,
             span: 12,
             model: {
-              source: ["education", "data", "?", "name"],
+              source: ["name"],
               prop: "modelValue",
             },
             props: {
@@ -487,7 +487,7 @@ export const DEFAULT_EDUCATION_FORM = {
             required: true,
             model: [
               {
-                source: ["education", "data", "?", "education"],
+                source: ["education"],
                 prop: "modelValue",
               },
               {
@@ -508,7 +508,7 @@ export const DEFAULT_EDUCATION_FORM = {
             required: true,
             span: 12,
             model: {
-              source: ["education", "data", "?", "post"],
+              source: ["post"],
               prop: "modelValue",
             },
             props: {
@@ -524,7 +524,7 @@ export const DEFAULT_EDUCATION_FORM = {
             span: 12,
             model: [
               {
-                source: ["education", "data", "?", "mode"],
+                source: ["mode"],
                 prop: "modelValue",
               },
               {
@@ -545,7 +545,7 @@ export const DEFAULT_EDUCATION_FORM = {
             component: "datePicker",
             span: 24,
             model: {
-              source: ["education", "data", "?", "time"],
+              source: ["time"],
               prop: "modelValue",
             },
             props: {
@@ -562,7 +562,7 @@ export const DEFAULT_EDUCATION_FORM = {
             component: "wangEditor",
             span: 24,
             model: {
-              source: ["education", "data", "?", "content"],
+              source: ["content"],
               prop: "modelValue",
             },
           },
@@ -721,12 +721,12 @@ export const DEFAULT_WORK_FORM = {
         span: 24,
         model: [
           {
-            source: ["work", "data", "?", "collapsed"],
+            source: ["collapsed"],
             prop: "collapsed",
             defaultValue: EXPANDED,
           },
           {
-            source: ["work", "data", "?", "name"],
+            source: ["name"],
             prop: "name",
           },
         ],
@@ -738,7 +738,7 @@ export const DEFAULT_WORK_FORM = {
             required: true,
             span: 12,
             model: {
-              source: ["work", "data", "?", "name"],
+              source: ["name"],
               prop: "modelValue",
             },
             props: {
@@ -753,7 +753,7 @@ export const DEFAULT_WORK_FORM = {
             required: true,
             span: 12,
             model: {
-              source: ["work", "data", "?", "post"],
+              source: ["post"],
               prop: "modelValue",
             },
             props: {
@@ -768,7 +768,7 @@ export const DEFAULT_WORK_FORM = {
             component: "datePicker",
             span: 24,
             model: {
-              source: ["work", "data", "?", "time"],
+              source: ["time"],
               prop: "modelValue",
             },
             props: {
@@ -786,7 +786,7 @@ export const DEFAULT_WORK_FORM = {
             component: "wangEditor",
             span: 24,
             model: {
-              source: ["work", "data", "?", "content"],
+              source: ["content"],
               prop: "modelValue",
             },
           },
@@ -846,12 +846,12 @@ export const DEFAULT_PROJECT_FORM = {
         span: 24,
         model: [
           {
-            source: ["project", "data", "?", "collapsed"],
+            source: ["collapsed"],
             prop: "collapsed",
             defaultValue: EXPANDED,
           },
           {
-            source: ["project", "data", "?", "name"],
+            source: ["name"],
             prop: "name",
           },
         ],
@@ -864,7 +864,7 @@ export const DEFAULT_PROJECT_FORM = {
             required: true,
             span: 12,
             model: {
-              source: ["project", "data", "?", "name"],
+              source: ["name"],
               prop: "modelValue",
             },
             props: {
@@ -879,7 +879,7 @@ export const DEFAULT_PROJECT_FORM = {
             required: true,
             span: 12,
             model: {
-              source: ["project", "data", "?", "post"],
+              source: ["post"],
               prop: "modelValue",
             },
             props: {
@@ -894,7 +894,7 @@ export const DEFAULT_PROJECT_FORM = {
             component: "datePicker",
             span: 24,
             model: {
-              source: ["project", "data", "?", "time"],
+              source: ["time"],
               prop: "modelValue",
             },
             props: {
@@ -912,7 +912,7 @@ export const DEFAULT_PROJECT_FORM = {
             required: true,
             span: 24,
             model: {
-              source: ["project", "data", "?", "content"],
+              source: ["content"],
               prop: "modelValue",
             },
           },
@@ -969,12 +969,12 @@ export const DEFAULT_VIDEO_FORM = {
         // 折叠标题数据源：展示当前视频名称
         model: [
           {
-            source: ["video", "data", "?", "collapsed"],
+            source: ["collapsed"],
             prop: "collapsed",
             defaultValue: EXPANDED,
           },
           {
-            source: ["video", "data", "?", "name"],
+            source: ["name"],
             prop: "name",
           },
         ],
@@ -982,17 +982,17 @@ export const DEFAULT_VIDEO_FORM = {
           {
             model: [
               {
-                source: ["video", "data", "?", "name"],
+                source: ["name"],
                 defaultValue: "",
                 prop: "name",
               },
               {
-                source: ["video", "data", "?", "url"],
+                source: ["url"],
                 defaultValue: "",
                 prop: "url",
               },
               {
-                source: ["video", "data", "?", "desc"],
+                source: ["desc"],
                 defaultValue: "",
                 prop: "desc",
               },
@@ -1058,12 +1058,12 @@ export const DEFAULT_IMAGE_FORM = {
         // 折叠标题数据源：展示当前图片作品名称
         model: [
           {
-            source: ["image", "data", "?", "collapsed"],
+            source: ["collapsed"],
             prop: "collapsed",
             defaultValue: EXPANDED,
           },
           {
-            source: ["image", "data", "?", "name"],
+            source: ["name"],
             prop: "name",
           },
         ],
@@ -1071,22 +1071,22 @@ export const DEFAULT_IMAGE_FORM = {
           {
             model: [
               {
-                source: ["image", "data", "?", "name"],
+                source: ["name"],
                 defaultValue: "",
                 prop: "name",
               },
               {
-                source: ["image", "data", "?", "img"],
+                source: ["img"],
                 defaultValue: "",
                 prop: "img",
               },
               {
-                source: ["image", "data", "?", "desc"],
+                source: ["desc"],
                 defaultValue: "",
                 prop: "desc",
               },
               {
-                source: ["image", "data", "?", "size"],
+                source: ["size"],
                 defaultValue: 50,
                 prop: "size",
               },
@@ -1154,7 +1154,7 @@ export const DEFAULT_HONOR_FORM = {
         // 名称数据源：绑定当前荣誉证书名称
         model: [
           {
-            source: ["honor", "data", "?", "name"],
+            source: ["name"],
             defaultValue: "",
             prop: "name",
           },
@@ -1216,12 +1216,12 @@ export const DEFAULT_CUSTOM_FORM = {
         span: 24,
         model: [
           {
-            source: ["custom", "data", "list", "?", "collapsed"],
+            source: ["collapsed"],
             prop: "collapsed",
             defaultValue: EXPANDED,
           },
           {
-            source: ["custom", "data", "list", "?", "name"],
+            source: ["name"],
             prop: "name",
           },
         ],
@@ -1234,7 +1234,7 @@ export const DEFAULT_CUSTOM_FORM = {
             component: "input",
             span: 12,
             model: {
-              source: ["custom", "data", "list", "?", "name"],
+              source: ["name"],
               prop: "modelValue",
             },
             props: {
@@ -1249,7 +1249,7 @@ export const DEFAULT_CUSTOM_FORM = {
             component: "input",
             span: 12,
             model: {
-              source: ["custom", "data", "list", "?", "post"],
+              source: ["post"],
               prop: "modelValue",
             },
             props: {
@@ -1264,7 +1264,7 @@ export const DEFAULT_CUSTOM_FORM = {
             component: "datePicker",
             span: 24,
             model: {
-              source: ["custom", "data", "list", "?", "time"],
+              source: ["time"],
               prop: "modelValue",
             },
             props: {
@@ -1282,7 +1282,7 @@ export const DEFAULT_CUSTOM_FORM = {
             component: "wangEditor",
             span: 24,
             model: {
-              source: ["custom", "data", "list", "?", "content"],
+              source: ["content"],
               prop: "modelValue",
             },
           },

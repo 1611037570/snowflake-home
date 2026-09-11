@@ -87,14 +87,10 @@ const handleConfirm = () => {
   if (config.checks?.visible?.path?.length) {
     config.checks.visible.path[0] = customKey;
   }
-  // 重置自定义模块的子模块标题模型数据路径
-  config.fields[0].itemSchema.model.forEach((item) => {
-    item.source[0] = customKey;
-  });
-  // 重置自定义模块的子项字段列表数据路径
-  config.fields[0].itemSchema.fields.forEach((field) => {
-    field.model.source[0] = customKey;
-  });
+  // 自定义模块只重写数组容器数据源，子项字段保持相对路径
+  if (config.fields[0].source?.length) {
+    config.fields[0].source[0] = customKey;
+  }
   // 自定义模块内的记录默认折叠状态跟随系统设置
   bindCollapsedDefault([config], () => resumeStore.itemDefaultCollapsed);
   // 添加自定义模块到运行时配置

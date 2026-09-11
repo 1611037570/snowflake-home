@@ -7,6 +7,7 @@
       v-for="item in renderFields"
       :key="item.field.id"
       :muted="isFieldMuted(rootData.data, item.field)"
+      :pathContext="pathContext"
       :selected="isModuleSelected(item.field)"
       @mouseenter="handleModuleMouseEnter(item.field)"
     >
