@@ -101,7 +101,7 @@ const handlePageClick = (event) => {
   if (moduleKey) jumpEditor(moduleKey);
 };
 
-// 鼠标经过模块内容时取消编辑区定位产生的边框
+// 鼠标进入模块内容时清除查找定位边框
 const handleModuleMouseEnter = (key) => {
   clearPreviewSelection(key);
 };

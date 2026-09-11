@@ -24,7 +24,7 @@ export const useModuleInteractions = ({
 }: UseModuleInteractionsOptions) => {
   // 选择按钮状态只决定悬浮边框颜色，不决定模块是否持续显示边框
   const selectedKeys = computed(() => new Set(selectedModule.value.map((item) => item.key)));
-  // 搜索定位状态独立控制固定主题边框，鼠标经过模块后由父级清除该状态
+  // 搜索定位状态独立控制主题边框，鼠标进入模块后清除
   const moduleClassMap = computed(() => {
     if (!isEdit.value) return {};
     const map: Record<string, string> = {};

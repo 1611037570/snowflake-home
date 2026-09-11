@@ -23,7 +23,7 @@ const props = defineProps({
 });
 const emit = defineEmits(["mouseenter"]);
 
-// 鼠标经过模块内容时通知父级清除预览定位边框
+// 鼠标进入模块内容时通知父级清除查找边框
 const handleMouseEnter = () => {
   emit("mouseenter", props.moduleKey);
 };

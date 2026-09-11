@@ -11,10 +11,12 @@ import { ElNotification } from "element-plus";
 const resumeStore = useResumeStore();
 const { currentData, runtimeFields } = storeToRefs(resumeStore);
 const PREVIEW_SCROLL_OFFSET = 24;
+const PREVIEW_HIGHLIGHT_DELAY = 10;
+let previewHighlightTimer: number | null = null;
 // 左侧搜索定位使用独立状态，不写入预览选择按钮使用的 selectedModule
 export const previewSelectedModule = ref<string | null>(null);
 
-// 清除编辑区定位产生的预览激活状态
+// 鼠标进入定位模块后清除预览边框
 export const clearPreviewSelection = (key: string) => {
   if (previewSelectedModule.value === key) previewSelectedModule.value = null;
 };
@@ -46,7 +48,13 @@ const moduleList = computed(() => {
 
 // 跳转预览区：滚动定位并激活当前模块边框
 export const jumpPreview = (key: string) => {
-  previewSelectedModule.value = key;
+  if (previewHighlightTimer !== null) window.clearTimeout(previewHighlightTimer);
+  previewSelectedModule.value = null;
+  // 延迟添加边框，避开查找滚动触发的鼠标进入事件
+  previewHighlightTimer = window.setTimeout(() => {
+    previewSelectedModule.value = key;
+    previewHighlightTimer = null;
+  }, PREVIEW_HIGHLIGHT_DELAY);
   nextTick(() => {
     const target = document.querySelector<HTMLElement>(
       `.resume-page-item .resume-module-wrapper[data-module="${key}"]`,
