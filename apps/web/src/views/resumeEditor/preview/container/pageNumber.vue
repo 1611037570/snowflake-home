@@ -20,7 +20,7 @@ const togglePageNumber = () => {
       class="rounded-full"
       :class="
         system.showPageNumber
-          ? 'bg-sf-theme-2 text-sf-theme-text'
+          ? 'text-sf-theme hover:bg-sf-theme-2'
           : 'text-sf-text-2 hover:bg-sf-theme-2 hover:text-sf-theme-text'
       "
       @click="togglePageNumber"
