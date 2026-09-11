@@ -4,7 +4,7 @@
       :currentForm="item.field"
       :data-module-key="item.field.key"
       :data-fixed="item.field.fixed ? 'true' : undefined"
-      v-for="item in visibleFields"
+      v-for="item in renderFields"
       :key="item.field.id"
       :muted="isFieldMuted(rootData.data, item.field)"
       :selected="isModuleSelected(item.field)"
@@ -38,6 +38,7 @@
 import { getUUID } from "@/utils";
 import { useDraggable } from "vue-draggable-plus";
 import { checkForm } from "../code/checkForm.ts";
+import { hasFieldData } from "../code/fieldData";
 import { isFieldMuted, isFieldVisible } from "../code/fieldVisible";
 import { DF_MODULE_SELECT, DF_ROOT_DATA } from "../code/injectionKeys.ts";
 import ContainerSlot from "./containerSlot.vue";
@@ -48,19 +49,23 @@ import FormItem from "./formItem.vue";
 
 defineOptions({ name: "FormRenderer" });
 // 容器索引：插槽递归时由上层容器（ContainerSlot）显式传入 array 子项的数据索引；顶层未传
-defineProps<{
+const { containerIndex } = defineProps<{
   containerIndex?: any;
 }>();
 const rootData: any = inject(DF_ROOT_DATA);
 const row: any = useTemplateRef("row");
 // 表单数据
 const items = defineModel<any>("items", {});
-// 编辑器移除已归档模块，隐藏模块仍保留在编辑器中
-const visibleFields = computed(() => {
+// 编辑器移除已归档模块与尚未添加的字段，隐藏模块仍保留在编辑器中
+const renderFields = computed(() => {
   const fields = items.value.fields || [];
   return fields
     .map((field: any, index: number) => ({ field, index }))
-    .filter(({ field }: any) => !isFieldVisible(rootData.data, field));
+    .filter(
+      ({ field }: any) =>
+        !isFieldVisible(rootData.data, field) &&
+        (!field.addable || hasFieldData(rootData.data, field, containerIndex)),
+    );
 });
 const isDragging = ref(false);
 // 模块选中能力：由根组件提供，动态表单内部契约，调用方按约定传 key
