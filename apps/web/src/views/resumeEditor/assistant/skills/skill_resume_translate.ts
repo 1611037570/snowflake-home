@@ -10,6 +10,7 @@ export const resumeTranslate = () => ({
 - 需要字段结构、字段类型或格式要求时，必须调用 resume_data_contract 读取《简历数据规范》。
 - 凡需基于简历内容进行翻译，每次请求都必须调用 read_resume_data 获取当前选中模块（未选择时为整份简历）的真实数据；同一次请求内可复用读取结果，禁止凭记忆或跨请求沿用数据。
 - 翻译结果需要写入简历时，必须调用 resume_writing 获取编写流程，再逐项翻译各模块字段内容，保持模块结构与记录顺序对应。
+- read_resume_data 返回的模块 title 也属于简历展示内容，翻译写入时通过 updateModuleTitle 保持标题语言一致，module 参数仍使用原始稳定 key。
 - 只做翻译，不增删内容、不改写原意；专业术语、职位与项目名称使用规范的目标语言表达。
 - 翻译完成后，必须将全部翻译结果整理为一次完整的 propose_resume_edits 调用；只有该工具成功后，才允许调用 update_resume_language。
 - update_resume_language 必须是本流程最后一个工具调用，只把简历展示语言同步为目标语言，不代表翻译内容已经完成；不得提前调用，也不得用它代替修改翻译内容。

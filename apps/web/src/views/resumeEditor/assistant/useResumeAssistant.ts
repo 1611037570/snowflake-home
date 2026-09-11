@@ -19,6 +19,7 @@ export const useResumeAssistant = (addDataRecord?: (moduleKey: string) => number
   // 写操作缓冲：生成期间工具先不落数据，成功回复后再统一写入，避免中间状态暴露给用户
   const pendingWrites: Array<
     | { type: "module"; module: string; field: string; value: unknown }
+    | { type: "title"; module: string; title: string }
     | { type: "record"; module: string; index: number; field: string; value: unknown }
     | { type: "add"; module: string }
     | { type: "delete"; module: string; index: number }
@@ -56,6 +57,12 @@ export const useResumeAssistant = (addDataRecord?: (moduleKey: string) => number
   ): boolean => {
     if (!bufferingWrites) return resumeStore.updateModuleField(moduleKey, field, value);
     pendingWrites.push({ type: "module", module: moduleKey, field, value });
+    return true;
+  };
+
+  const bufferedUpdateModuleTitle = (moduleKey: string, title: string): boolean => {
+    if (!bufferingWrites) return resumeStore.updateModuleTitle(moduleKey, title);
+    pendingWrites.push({ type: "title", module: moduleKey, title });
     return true;
   };
 
@@ -103,6 +110,8 @@ export const useResumeAssistant = (addDataRecord?: (moduleKey: string) => number
       else if (item.type === "move") resumeStore.moveDataRecord(item.module, item.from, item.to);
       else if (item.type === "module") {
         resumeStore.updateModuleField(item.module, item.field, item.value);
+      } else if (item.type === "title") {
+        resumeStore.updateModuleTitle(item.module, item.title);
       } else if (item.type === "record") {
         resumeStore.updateRecordField(item.module, item.index, item.field, item.value);
       }
@@ -140,6 +149,7 @@ export const useResumeAssistant = (addDataRecord?: (moduleKey: string) => number
         removeDataRecord: bufferedRemoveRecord,
         moveDataRecord: bufferedMoveRecord,
         updateModuleField: bufferedUpdateModuleField,
+        updateModuleTitle: bufferedUpdateModuleTitle,
         updateRecordField: bufferedUpdateRecordField,
         updateLanguage: bufferedUpdateLanguage,
       }),

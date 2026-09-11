@@ -3,10 +3,15 @@ import { allConfig } from "@/stores/modules/resume/formConfig";
 // 语义化写操作：明确到模块、记录与字段，避免让模型自行拼装整棵数据
 export type ResumeWriteOp =
   | {
-      op: "updateModule"; // 修改模块级 data 字段（如自定义模块 title）
+      op: "updateModule"; // 修改模块级 data 字段
       module: string;
       field: string;
       value: unknown; // 修改后的值
+    }
+  | {
+      op: "updateModuleTitle"; // 修改模块 ui.title 展示标题
+      module: string;
+      title: string;
     }
   | {
       op: "updateRecord"; // 修改记录字段
@@ -141,12 +146,12 @@ const getModuleRecords = (moduleView: { data: unknown }): any[] | null => {
 /**
  * 校验语义化写操作：模块存在、数组下标合法、字段存在且值格式正确
  * @param operations 待校验的操作列表
- * @param dataView read_resume_data 返回的数据视图（顶层模块 key，模块内仅 data）
+ * @param dataView read_resume_data 返回的数据视图（顶层模块 key，模块内包含 title 与 data）
  * @returns 错误列表，为空表示校验通过
  */
 export const validateResumeEdits = (
   operations: ResumeWriteOp[],
-  dataView: Record<string, { data: unknown }>,
+  dataView: Record<string, { title?: string; data: unknown }>,
 ): string[] => {
   const errors: string[] = [];
   operations.forEach((op, index) => {
@@ -157,9 +162,14 @@ export const validateResumeEdits = (
     }
     const rawOp = (op as { op?: string }).op;
     if (
-      !["updateModule", "updateRecord", "addRecord", "deleteRecord", "moveRecord"].includes(
-        rawOp ?? "",
-      )
+      ![
+        "updateModule",
+        "updateModuleTitle",
+        "updateRecord",
+        "addRecord",
+        "deleteRecord",
+        "moveRecord",
+      ].includes(rawOp ?? "")
     ) {
       errors.push(`${order}：不支持的操作类型 ${rawOp ?? "未知"}`);
       return;
@@ -167,6 +177,12 @@ export const validateResumeEdits = (
     const moduleView = dataView?.[op.module];
     if (!moduleView) {
       errors.push(`${order}：模块 ${op.module} 不存在于当前简历`);
+      return;
+    }
+    if (op.op === "updateModuleTitle") {
+      if (typeof op.title !== "string" || !op.title.trim()) {
+        errors.push(`${order}：模块标题不能为空`);
+      }
       return;
     }
     const moduleRules = getModuleRules(op.module);

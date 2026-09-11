@@ -7,12 +7,12 @@ export const resumeDataContract = () => ({
   description: `本技能提供简历数据字段与格式规范。 【适用场景】当 AI 需要了解简历模块结构、字段明细、必填项、枚举值与时间/HTML 格式时必须加载。 【数据来源】本规范基于项目 formConfig.ts 中定义的字段结构生成，所有字段路径、类型、必填性均来源于此。 【禁止行为】只描述数据结构与格式，不规定写操作流程，不臆造不存在的字段。`,
   instructions: `# 1. 数据总体结构
 
-一份简历按模块拆分，AI 读写统一使用以下结构，每个模块只保留 data：
+一份简历按模块拆分，AI 读写统一使用以下结构，每个模块包含展示标题 title 与经历数据 data：
 
 \`\`\`typescript
 {
-  user: { data: 对象 },   // 对象型模块
-  work: { data: 数组 },   // 数组型模块
+  user: { title: "个人信息", data: 对象 },
+  work: { title: "工作经历", data: 数组 },
 }
 \`\`\`
 
@@ -20,7 +20,9 @@ export const resumeDataContract = () => ({
 
 - **数组型模块**（account, education, work, project, video, image, honor）：\`data\`是一个数组，每个元素是一条记录。
 
-- **自定义模块**（custom_x）：\`data\`是对象，结构为 \`{ title: string, list: 数组 }\`，\`title\` 是模块标题，\`list\` 才是经历记录数组。
+- **自定义模块**（custom_x）：\`data\`是对象，结构为 \`{ list: 数组 }\`，\`list\`是经历记录数组。
+
+- **模块标题**：\`title\`是当前展示名称；模块身份始终由顶层稳定 key 标识，写操作不得使用标题代替 key。
 
 > **重要**：用户的实际简历可能只包含以上模块中的一部分。\`read_resume_data\` 返回的就是该结构，字段明细与格式以本规范为准。
 
@@ -114,11 +116,10 @@ export const resumeDataContract = () => ({
 
 ## 2.11 自定义经历 (\`custom_<id>.data\`)
 
-> **特别说明**：自定义模块是动态添加的，顶层 key 以\`custom_\`开头（如 \`custom_a810d50c\`）。\`data.title\` 是模块标题（AI 可修改），\`data.list\` 是经历记录数组。
+> **特别说明**：自定义模块是动态添加的，顶层 key 以\`custom_\`开头（如 \`custom_a810d50c\`）。模块\`title\`是展示标题，\`data.list\`是经历记录数组。
 
 | 字段  | 类型     | 必填 | 格式/备注     |
 | :-- | :----- | :- | :-------- |
-| title | string | ✅  | 模块标题       |
 | list | array  | ✅  | 经历记录数组    |
 
 ### \`data.list[]\` 记录字段

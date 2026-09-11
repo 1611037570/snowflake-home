@@ -8,8 +8,10 @@ export interface ResumeToolContext {
   removeDataRecord?: (moduleKey: string, index: number) => boolean;
   // 移动数组型模块记录并同步表单配置
   moveDataRecord?: (moduleKey: string, from: number, to: number) => boolean;
-  // 修改模块级 data 字段（如自定义模块 title）
+  // 修改模块级 data 字段
   updateModuleField?: (moduleKey: string, field: string, value: unknown) => boolean;
+  // 修改模块 ui.title 展示标题
+  updateModuleTitle?: (moduleKey: string, title: string) => boolean;
   // 修改记录字段
   updateRecordField?: (
     moduleKey: string,
