@@ -7,10 +7,7 @@
       <div class="relative flex min-w-0 flex-1 overflow-hidden">
         <!-- 左侧操作栏 -->
         <Transition name="resume-builder" appear>
-          <Builder
-            v-show="focusMode || layout !== 'ai'"
-            :class="{ 'ai-generating': isGenerating }"
-          />
+          <Builder :class="{ 'ai-generating': isGenerating }" />
         </Transition>
         <div class="relative flex min-w-0 flex-1 overflow-hidden">
           <!-- 中间预览栏 -->
@@ -29,19 +26,6 @@
           <AiMask :visible="isGenerating" />
         </div>
       </div>
-      <!-- 右侧AI助手栏 -->
-      <Transition name="resume-assistant" appear>
-        <Assistant v-show="!focusMode && layout !== 'list' && system.aiIndependentWindow" />
-      </Transition>
-      <!-- 最右侧系统配置栏：工具栏与 QA 入口整体垂直居中 -->
-      <Transition name="resume-toolbar" appear>
-        <div
-          v-if="!focusMode"
-          class="relative flex h-full flex-col items-center justify-center gap-3"
-        >
-          <Toolbar />
-        </div>
-      </Transition>
       <!-- 导出加载浮层：teleport 到 body 全屏展示 -->
       <Teleport to="body">
         <ExportMask v-if="isPrinting" @cancel="cancelPrinting" />
@@ -67,7 +51,6 @@ import { onKeyStroke } from "@vueuse/core";
 import { storeToRefs } from "pinia";
 import { provide, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import Assistant from "./assistant/index.vue";
 import Builder from "./builder/index.vue";
 import AiMask from "./components/aiMask.vue";
 import Header from "./components/header/index.vue";
@@ -85,17 +68,8 @@ const resumeStore = useResumeStore();
 // 补齐旧版本系统配置，确保新增开关立即参与渲染
 resumeStore.init();
 const { initResumeStatus, setFocusMode, cancelPrinting } = resumeStore;
-const {
-  currentIndex,
-  layout,
-  focusMode,
-  list,
-  currentUsage,
-  isGenerating,
-  isPrinting,
-  currentData,
-  system,
-} = storeToRefs(resumeStore);
+const { currentIndex, focusMode, list, currentUsage, isGenerating, isPrinting, currentData } =
+  storeToRefs(resumeStore);
 
 // 切换简历时清空上一个简历的模块选中状态
 watch(
@@ -159,12 +133,6 @@ onUnmounted(() => {
     opacity 0.36s cubic-bezier(0.22, 1, 0.36, 1) 0.12s;
 }
 
-.resume-assistant-enter-active {
-  transition:
-    transform 0.3s cubic-bezier(0.22, 1, 0.36, 1) 0.18s,
-    opacity 0.3s cubic-bezier(0.22, 1, 0.36, 1) 0.18s;
-}
-
 .resume-toolbar-enter-active {
   transition:
     transform 0.24s cubic-bezier(0.22, 1, 0.36, 1) 0.24s,
@@ -173,7 +141,6 @@ onUnmounted(() => {
 
 /* 离开：保持快速退场，不受进入错峰影响 */
 .resume-builder-leave-active,
-.resume-assistant-leave-active,
 .resume-header-leave-active,
 .resume-toolbar-leave-active {
   transition:
@@ -201,12 +168,6 @@ onUnmounted(() => {
 .resume-builder-enter-from,
 .resume-builder-leave-to {
   transform: translateX(-100%);
-  opacity: 0;
-}
-
-.resume-assistant-enter-from,
-.resume-assistant-leave-to {
-  transform: translateX(100%);
   opacity: 0;
 }
 

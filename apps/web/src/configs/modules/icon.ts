@@ -127,13 +127,6 @@ export const ICON_LIST: Record<string, IconItem> = {
   "fa6-solid:share-alt": { icon: "fa6-solid:share-alt" },
   "fa6-solid:signature": { icon: "fa6-solid:signature" },
   "famicons:copy-outline": { icon: "famicons:copy-outline" },
-  "fluent:layout-column-one-third-left-24-regular": {
-    icon: "fluent:layout-column-one-third-left-24-regular",
-  },
-  "fluent:layout-column-one-third-right-24-regular": {
-    icon: "fluent:layout-column-one-third-right-24-regular",
-  },
-  "fluent:layout-column-three-24-regular": { icon: "fluent:layout-column-three-24-regular" },
   "line-md:loading-twotone-loop": { icon: "line-md:loading-twotone-loop" },
   "line-md:save": { icon: "line-md:save" },
   "logos:dayjs": { icon: "logos:dayjs" },

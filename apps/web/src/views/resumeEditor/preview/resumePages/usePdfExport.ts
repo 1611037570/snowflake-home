@@ -30,7 +30,7 @@ export const printPDF = async (
   const { selectedModule } = storeToRefs(resumeStore);
   const signal = resumeStore.beginPrinting();
   if (!signal) return;
-  // 导出期间锁定编辑器三栏，避免操作干扰导出结果
+  // 导出期间锁定编辑器，避免操作干扰导出结果
   const cachedSelectedModule = [...selectedModule.value];
   resumeStore.clearSelectedModules();
   let tempContainer: HTMLDivElement | undefined;

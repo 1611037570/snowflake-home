@@ -9,7 +9,7 @@ import { ElNotification } from "element-plus";
 
 // store 为全局单例：模块列表与跳转逻辑无组件级状态，抽为模块级共享，避免各组件重复创建 hook
 const resumeStore = useResumeStore();
-const { currentData, runtimeFields, layout } = storeToRefs(resumeStore);
+const { currentData, runtimeFields } = storeToRefs(resumeStore);
 const PREVIEW_SCROLL_OFFSET = 24;
 // 左侧搜索定位使用独立状态，不写入预览选择按钮使用的 selectedModule
 export const previewSelectedModule = ref<string | null>(null);
@@ -92,16 +92,12 @@ export const jumpEditor = (key: string) => {
   });
 };
 
-// 跳转编辑区（含隐藏恢复与布局切换）：供进度条等复用
+// 跳转编辑区（含隐藏恢复）：供进度条等复用
 export const jumpToEditor = (key: string) => {
   const item = moduleList.value.find((m) => m.key === key);
   // 复用恢复函数：隐藏模块置为可见，使编辑区与预览区重新渲染该模块
   if (item?.hidden) {
     setFieldHidden(currentData.value, item.field, false);
-  }
-  // 编辑区未打开时先切三栏布局
-  if (layout.value === "ai") {
-    resumeStore.setLayout("three");
   }
   jumpEditor(key);
 };
