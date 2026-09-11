@@ -4,11 +4,11 @@ import { computed, ref } from "vue";
 import { storeToRefs } from "pinia";
 import { useResumeStore } from "@/stores";
 import { RESUME_HEIGHT, RESUME_WIDTH } from "../constants";
-import { previewLangList } from "../i18n";
 import ThemeColor from "./themeColor.vue";
 import FontSize from "./fontSize.vue";
 import Padding from "./padding.vue";
 import PageNumber from "./pageNumber.vue";
+import Language from "./language.vue";
 
 defineOptions({ name: "ScaleContainer" });
 
@@ -21,7 +21,7 @@ defineEmits(["fullscreen"]);
 
 const containerRef = ref(null);
 const resumeStore = useResumeStore();
-const { selectedModule, currentUI } = storeToRefs(resumeStore);
+const { selectedModule } = storeToRefs(resumeStore);
 // 清空选中模块：直接调用 store 操作
 const { clearSelectedModules } = resumeStore;
 const contentRef = ref(null);
@@ -137,16 +137,6 @@ const stepScale = (value) => {
   setManualScale(Number((scale.value + value).toFixed(1)));
 };
 
-const langOptions = computed(() =>
-  previewLangList.map((item) => ({
-    ...item,
-    active: item.value === (currentUI.value?.language || "zh"),
-  })),
-);
-const handleLangSelect = (item) => {
-  if (currentUI.value) currentUI.value.language = item.value;
-};
-
 const updateScale = useDebounceFn(([entry]) => {
   const { width, height } = entry.contentRect;
   availableSize.value = { width, height };
@@ -183,24 +173,7 @@ useResizeObserver(contentRef, ([entry]) => {
       <FontSize />
       <Padding />
       <PageNumber />
-      <SfDropdown trigger="hover" placement="bottom-start" :show-arrow="false">
-        <SfTooltip :content="`切换简历语言`">
-          <SfIcon
-            icon="mdi:translate"
-            size="5"
-            boxSize="7"
-            class="rounded-full text-sf-text-2 hover:bg-sf-theme-2 hover:text-sf-theme-text"
-          />
-        </SfTooltip>
-        <template #dropdown>
-          <SfList
-            class="w-[140px]"
-            :list="langOptions"
-            :border="false"
-            @onClick="handleLangSelect"
-          />
-        </template>
-      </SfDropdown>
+      <Language />
 
       <SfTooltip content="缩小">
         <SfIcon
