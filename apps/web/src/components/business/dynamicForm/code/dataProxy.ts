@@ -45,11 +45,10 @@ class DataProxy<T> {
   private select(options: {
     source: Path;
     value?: any;
-    index?: number;
     defaultValue?: any;
     pathContext?: DataPathContext;
   }): any {
-    const { source, value, index = 0, pathContext } = options;
+    const { source, value, pathContext } = options;
     // 使用引擎统一默认值规则，保证字段绑定与完整记录生成结果一致
     const defaultValue = resolveDefaultValue(options.defaultValue);
     const keyPath = resolveDataPath(this.ensureArray(source), pathContext);
@@ -61,18 +60,12 @@ class DataProxy<T> {
     for (let i = 0; i < lastIndex; i++) {
       const key: any = keyPath[i];
 
-      // 移动到下一级
-      if (key == "?") {
-        current = current[index] ?? (current[index] = {});
-        continue;
-      }
-
       if (current[key] != undefined) {
         current = current[key];
         continue;
       }
       const nextKey = keyPath[i + 1];
-      current[key] = nextKey === "?" ? [] : {};
+      current[key] = typeof nextKey === "number" ? [] : {};
       current = current[key];
     }
 
@@ -103,29 +96,21 @@ class DataProxy<T> {
   }
 
   // 获取数据代理
-  getDataProxy(
-    options: DataProxyOption | DataProxyOption[],
-    index: number = 0,
-    pathContext?: DataPathContext,
-  ) {
+  getDataProxy(options: DataProxyOption | DataProxyOption[], pathContext?: DataPathContext) {
     return this.createDataProxyHelper(options, (item: DataProxyOption) =>
-      this.select({ source: item.source, index, defaultValue: item.defaultValue, pathContext }),
+      this.select({ source: item.source, defaultValue: item.defaultValue, pathContext }),
     );
   }
 
   // 设置数据代理
-  setDataProxy(
-    options: DataProxyOption | DataProxyOption[],
-    index: number,
-    pathContext?: DataPathContext,
-  ) {
+  setDataProxy(options: DataProxyOption | DataProxyOption[], pathContext?: DataPathContext) {
     const result: any = {};
     const optionsArray = this.ensureArray(options);
     for (const item of optionsArray) {
       // raw 绑定只读字典，不生成写入事件
       if (item.raw) continue;
       result["update:" + item.prop] = (newValue: T) => {
-        this.select({ source: item.source, value: newValue, index, pathContext });
+        this.select({ source: item.source, value: newValue, pathContext });
       };
     }
     return result;

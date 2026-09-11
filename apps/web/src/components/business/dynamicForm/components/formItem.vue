@@ -23,12 +23,10 @@ const { pathContext } = defineProps<{
   pathContext?: DataPathContext;
 }>();
 const DEFAULT_SPAN = 24;
-// 由数据绑定路径推导 el-form 校验 prop（含数组通配 "?" 的暂不支持校验定位）
+// 由当前上下文中的完整数据绑定路径推导表单校验属性
 const getProp = (currentForm: any) => {
   const source = getPrimaryModelBinding(currentForm)?.source;
-  return Array.isArray(source) && !source.includes("?")
-    ? resolveDataPath(source, pathContext).join(".")
-    : undefined;
+  return Array.isArray(source) ? resolveDataPath(source, pathContext).join(".") : undefined;
 };
 // 处理span值
 const getSpan = (span: number | string | undefined) => {

@@ -3,7 +3,7 @@
  * 由 SfDynamicForm 组件统一导出，业务侧配置（如 stores/modules/resume/formConfig.ts）import 使用
  */
 
-/** 数据绑定：source 为数据路径（支持 "?" 数组索引通配），prop 为组件上的绑定属性名 */
+/** 数据绑定：source 为当前容器内的数据路径，prop 为组件上的绑定属性名 */
 export interface ModelBinding {
   source: string[];
   prop: string;

@@ -57,8 +57,8 @@ description: |
 
 对每个模块，提取其下所有字段：
 
-- **字段名**：从`model.source`数组中取**最后一个元素**（如`["work","data","?","name"]`→`name`；`["skill","data","content"]`→`content`）。
-- 只解析路径中包含`data`的经历字段；`ui.title`是模块展示标题，通过模块顶层`title`单独提供，不进入`data`字段表。
+- **字段名**：从`model.source`数组中取**最后一个元素**（如数组子项相对路径`["name"]`→`name`；对象字段绝对路径`["skill","data","content"]`→`content`）。
+- 只解析模块`fields`及数组`itemSchema.fields`中的非`raw`业务字段；`ui.title`是模块展示标题，通过模块顶层`title`单独提供，不进入`data`字段表。
 
 - **中文标签**：从 `label`属性获取（如果`label`不存在，则用字段名代替）。
 

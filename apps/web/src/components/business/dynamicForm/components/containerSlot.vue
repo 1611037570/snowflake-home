@@ -11,13 +11,13 @@
     v-else
     :is="getComponent(currentForm.component)"
     v-bind="{
-      ...rootData.getDataProxy(currentForm.model, currentIndex, pathContext),
+      ...rootData.getDataProxy(currentForm.model, pathContext),
       ...currentForm.props,
     }"
     v-on="bindEvent"
   >
     <template #[slotName]>
-      <!-- 递归渲染时把容器索引显式下传，供嵌套字段解析 ? 通配 -->
+      <!-- 递归渲染时显式下传当前数组记录上下文 -->
       <FormRenderer
         v-model:items="currentForm"
         :containerIndex="currentIndex"
@@ -54,7 +54,7 @@ const slotName = computed(() => {
 });
 const rootData: any = inject(DF_ROOT_DATA);
 const bindEvent = computed(() => {
-  return rootData.setDataProxy(currentForm.value.model, currentIndex.value, pathContext);
+  return rootData.setDataProxy(currentForm.value.model, pathContext);
 });
 const emit = defineEmits(["removeObject"]);
 function remove() {
