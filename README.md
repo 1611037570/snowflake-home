@@ -4,7 +4,7 @@
 
 ## 📌 项目介绍
 
-项目主体为雪花起始页，基于起始页衍生拓展很多小项目以及基建。
+项目主体为雪花起始页，基于起始页衍生了两个项目以及基建。
 
 通过本项目，您可以学习 **Vue3**、**Vite**、**NestJS** 等现代前后端技术的实战应用。
 
@@ -14,7 +14,7 @@
 
 - 📄 **轻舟简历** · _一叶轻舟 渡你过万重山_
 
-  对标BOSS直聘和职决，AI辅助编写、可视化编辑、PDF导出等 ![维护中](https://img.shields.io/badge/状态-维护中-brightgreen)
+  AI简历生成、可视化编辑、PDF导出等 ![维护中](https://img.shields.io/badge/状态-维护中-brightgreen)
 
   预览：http://nannan.work/#/resume
 
