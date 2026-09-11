@@ -36,7 +36,10 @@ const moduleList = computed(() => {
           (field.key.startsWith("custom") ? CUSTOM_MODULE_ICON : "ic:round-add");
         return {
           key: field.key,
-          name: resumeStore.getModel(field.key)?.name || field.name || field.key,
+          name:
+            resumeStore.getModel(field.key)?.name ||
+            field.model?.find((item: any) => item?.prop === "title")?.defaultValue ||
+            field.key,
           icon,
           hidden: isFieldMuted(data, field),
           archived: isFieldVisible(data, field),

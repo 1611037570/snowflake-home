@@ -56,14 +56,16 @@ const handleConfirm = () => {
   if (!customModuleName.value) return;
   // 生成带前缀的唯一 key,作为模块标识与数据路径
   const customKey = `custom_${getUUID().substring(0, 8)}`;
-  // 名称等实例数据写入简历 data，config 只保留 key
+  // 模块标题写入 ui，经历记录继续保存在 data.list
   if (currentData.value) {
     currentData.value[customKey] = {
       collapsed: ["1"],
       hidden: false,
       archived: false,
-      data: {
+      ui: {
         title: customModuleName.value,
+      },
+      data: {
         list: [],
       },
     };
@@ -71,12 +73,10 @@ const handleConfirm = () => {
   // 深拷贝自定义模块配置
   const config = structuredClone(allConfig.custom);
   config.key = customKey;
-  // 重置自定义模块的名称
-  config.name = customModuleName.value;
-  // 重置自定义模块顶层模型的数据路径（collapsed / name），并将模块名称写入 name 默认值
+  // 重置自定义模块顶层模型的数据路径，并写入标题默认值
   config.model.forEach((item) => {
     item.source[0] = customKey;
-    if (item.prop === "name") {
+    if (item.prop === "title") {
       item.defaultValue = customModuleName.value;
     }
   });

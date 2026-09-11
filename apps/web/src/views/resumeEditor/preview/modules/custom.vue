@@ -1,6 +1,4 @@
 <script setup>
-import { useResumeStore } from "@/stores";
-import { storeToRefs } from "pinia";
 import { computed, inject } from "vue";
 import { getTime } from "../../utils";
 import ResumeField from "../components/resumeField/index.vue";
@@ -17,28 +15,15 @@ const previewData = inject("previewData");
 const fontValue = inject("fontValue");
 const lineHeightValue = inject("lineHeightValue");
 
-const resumeStore = useResumeStore();
-const { runtimeFields } = storeToRefs(resumeStore);
-
-// 自定义模块 data 为 { title, list }，list 才是记录数组
+// 自定义模块 data.list 为经历记录数组
 const customData = computed(() => previewData.value?.[props.name]?.data || {});
 const customList = computed(() => customData.value?.list || []);
-// 标题优先取 data.title，其次回退表单配置
-const title = computed(() => {
-  const dataTitle = customData.value?.title;
-  if (dataTitle && typeof dataTitle === "object" && "value" in dataTitle) {
-    return dataTitle.value;
-  }
-  if (dataTitle) return dataTitle;
-  const field = runtimeFields.value?.find((f) => f.key === props.name);
-  return field?.name;
-});
 </script>
 
 <template>
   <div class="resume-row" :data-module="name" :style="[lineHeightValue(), fontValue()]">
     <!-- 标题栏 -->
-    <Title :title="title"></Title>
+    <Title :module-key="name"></Title>
     <!-- 内容区 -->
     <template v-for="(item, index) in customList" :key="index">
       <div class="mb-3 flex flex-wrap items-center justify-between">

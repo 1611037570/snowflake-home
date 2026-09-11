@@ -20,11 +20,15 @@ export const DEFAULT_USER_FORM = [
     // 固定模块：不参与模块拖拽排序
     fixed: true,
     props: {
-      name: "个人信息",
       add: false,
       drag: false,
     },
     model: [
+      {
+        source: ["user", "ui", "title"],
+        prop: "title",
+        defaultValue: "个人信息",
+      },
       {
         source: ["user", "collapsed"],
         prop: "collapsed",
@@ -333,6 +337,11 @@ export const DEFAULT_ACCOUNT_FORM = {
   span: 24,
   model: [
     {
+      source: ["account", "ui", "title"],
+      prop: "title",
+      defaultValue: "社交账号",
+    },
+    {
       source: ["account", "collapsed"],
       prop: "collapsed",
       defaultValue: EXPANDED,
@@ -356,7 +365,6 @@ export const DEFAULT_ACCOUNT_FORM = {
   },
   component: "boxCollapse",
   props: {
-    name: "社交账号",
     add: true,
   },
   slot: "default",
@@ -393,10 +401,14 @@ export const DEFAULT_EDUCATION_FORM = {
   type: "group",
   component: "boxCollapse",
   props: {
-    name: "教育经历",
     add: true,
   },
   model: [
+    {
+      source: ["education", "ui", "title"],
+      prop: "title",
+      defaultValue: "教育经历",
+    },
     {
       source: ["education", "collapsed"],
       prop: "collapsed",
@@ -558,10 +570,14 @@ export const DEFAULT_SKILL_FORM = {
   component: "boxCollapse",
   key: "skill",
   props: {
-    name: "专业技能",
     add: false,
   },
   model: [
+    {
+      source: ["skill", "ui", "title"],
+      prop: "title",
+      defaultValue: "专业技能",
+    },
     {
       source: ["skill", "collapsed"],
       prop: "collapsed",
@@ -603,10 +619,14 @@ export const DEFAULT_ADVANTAGE_FORM = {
   component: "boxCollapse",
   key: "advantage",
   props: {
-    name: "个人优势",
     add: false,
   },
   model: [
+    {
+      source: ["advantage", "ui", "title"],
+      prop: "title",
+      defaultValue: "个人优势",
+    },
     {
       source: ["advantage", "collapsed"],
       prop: "collapsed",
@@ -648,10 +668,14 @@ export const DEFAULT_WORK_FORM = {
   key: "work",
   component: "boxCollapse",
   props: {
-    name: "工作经历",
     add: true,
   },
   model: [
+    {
+      source: ["work", "ui", "title"],
+      prop: "title",
+      defaultValue: "工作经历",
+    },
     {
       source: ["work", "collapsed"],
       prop: "collapsed",
@@ -770,9 +794,13 @@ export const DEFAULT_PROJECT_FORM = {
   component: "boxCollapse",
   props: {
     add: true,
-    name: "项目经历",
   },
   model: [
+    {
+      source: ["project", "ui", "title"],
+      prop: "title",
+      defaultValue: "项目经历",
+    },
     {
       source: ["project", "collapsed"],
       prop: "collapsed",
@@ -892,10 +920,14 @@ export const DEFAULT_VIDEO_FORM = {
   component: "boxCollapse",
   props: {
     add: true,
-    name: "视频作品",
     tip: "该模块的会把视频地址转换为二维码，方便在简历中展示",
   },
   model: [
+    {
+      source: ["video", "ui", "title"],
+      prop: "title",
+      defaultValue: "视频作品",
+    },
     {
       source: ["video", "collapsed"],
       prop: "collapsed",
@@ -978,9 +1010,13 @@ export const DEFAULT_IMAGE_FORM = {
   component: "boxCollapse",
   props: {
     add: true,
-    name: "图片作品",
   },
   model: [
+    {
+      source: ["image", "ui", "title"],
+      prop: "title",
+      defaultValue: "图片作品",
+    },
     {
       source: ["image", "collapsed"],
       prop: "collapsed",
@@ -1067,10 +1103,14 @@ export const DEFAULT_HONOR_FORM = {
   component: "boxCollapse",
   key: "honor",
   props: {
-    name: "荣誉证书",
     add: true,
   },
   model: [
+    {
+      source: ["honor", "ui", "title"],
+      prop: "title",
+      defaultValue: "荣誉证书",
+    },
     {
       source: ["honor", "collapsed"],
       prop: "collapsed",
@@ -1125,9 +1165,13 @@ export const DEFAULT_CUSTOM_FORM = {
   component: "boxCollapse",
   props: {
     add: true,
-    edit: true,
   },
   model: [
+    {
+      source: ["custom", "ui", "title"],
+      prop: "title",
+      defaultValue: "",
+    },
     {
       source: ["custom", "collapsed"],
       prop: "collapsed",
@@ -1143,11 +1187,6 @@ export const DEFAULT_CUSTOM_FORM = {
       source: ["custom", "archived"],
       prop: "archived",
       defaultValue: false,
-    },
-    {
-      source: ["custom", "data", "title"],
-      prop: "name",
-      defaultValue: "",
     },
   ],
   checks: {
