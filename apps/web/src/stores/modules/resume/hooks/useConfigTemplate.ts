@@ -4,8 +4,8 @@ import { allConfig, DEFAULT_USER_FORM } from "../formConfig";
 // 按 key 补齐数组模块的子项 list：list 数量与 data 条数一致，缺多少补多少
 function fillArrayListByData(field: any, data: any) {
   const arrayField = field.fields?.find((f: any) => f.type === "array");
-  if (!arrayField?.addConfig) return;
-  const source: string[] | undefined = arrayField.addConfig.model?.[0]?.source;
+  if (!arrayField?.itemSchema) return;
+  const source: string[] | undefined = arrayField.itemSchema.model?.[0]?.source;
   if (!Array.isArray(source)) return;
   const index = source.indexOf("?");
   if (index === -1) return;
@@ -13,7 +13,7 @@ function fillArrayListByData(field: any, data: any) {
   const count = Array.isArray(dataArray) ? dataArray.length : 0;
   while (arrayField.list.length < count) {
     // 先解包响应式代理再克隆，避免 structuredClone 命中 Vue Proxy 抛出 DataCloneError
-    arrayField.list.push({ ...toRaw(arrayField.addConfig) });
+    arrayField.list.push({ ...toRaw(arrayField.itemSchema) });
   }
 }
 
@@ -35,13 +35,13 @@ function rewriteCustomFieldByKey(field: any, customKey: string, customTitle: str
     field.checks.visible.path[0] = customKey;
   }
   const arrayField = field.fields?.find((f: any) => f.type === "array");
-  if (arrayField?.addConfig) {
-    arrayField.addConfig.model?.forEach((item: any) => {
+  if (arrayField?.itemSchema) {
+    arrayField.itemSchema.model?.forEach((item: any) => {
       if (Array.isArray(item.source)) {
         item.source[0] = customKey;
       }
     });
-    arrayField.addConfig.fields?.forEach((subField: any) => {
+    arrayField.itemSchema.fields?.forEach((subField: any) => {
       if (Array.isArray(subField.model?.source)) {
         subField.model.source[0] = customKey;
       }
@@ -86,7 +86,7 @@ export function compactConfigFields(fields: any[]) {
 export function bindCollapsedDefault(fields: any[], getDefault: () => string[]) {
   fields.forEach((field: any) => {
     const arrayField = field?.fields?.find((item: any) => item?.type === "array");
-    const model = arrayField?.addConfig?.model;
+    const model = arrayField?.itemSchema?.model;
     if (!Array.isArray(model)) return;
     model.forEach((binding: any) => {
       if (binding?.prop === "collapsed") binding.defaultValue = getDefault;

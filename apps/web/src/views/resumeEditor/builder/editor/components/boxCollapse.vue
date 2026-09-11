@@ -71,7 +71,7 @@ function archiveModule() {
 }
 
 function handleAdd() {
-  // 新增一条子项：引擎内部深拷贝 addConfig 后 push，避免多个子项共享同一份引用
+  // 新增一条子项：引擎内部深拷贝 itemSchema 后 push，避免多个子项共享同一份引用
   addItem();
 }
 </script>

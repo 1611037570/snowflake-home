@@ -75,9 +75,9 @@ const walkFieldNodes = (nodes: unknown, rules: Map<string, FieldRule>) => {
       });
     }
     if (Array.isArray(node.fields)) walkFieldNodes(node.fields, rules);
-    if (node.addConfig && typeof node.addConfig === "object") {
-      if (Array.isArray(node.addConfig.model)) walkFieldNodes(node.addConfig.model, rules);
-      if (Array.isArray(node.addConfig.fields)) walkFieldNodes(node.addConfig.fields, rules);
+    if (node.itemSchema && typeof node.itemSchema === "object") {
+      if (Array.isArray(node.itemSchema.model)) walkFieldNodes(node.itemSchema.model, rules);
+      if (Array.isArray(node.itemSchema.fields)) walkFieldNodes(node.itemSchema.fields, rules);
     }
   });
 };
