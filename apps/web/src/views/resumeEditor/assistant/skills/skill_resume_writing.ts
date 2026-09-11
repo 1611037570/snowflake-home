@@ -17,8 +17,9 @@ export const resumeWriting = () => ({
 # 写操作（propose_resume_edits）
 只通过 operations 提交写操作，回复完成后直接写入简历数据（用户可撤回），不要返回简历数据。
 
-- 修改已有字段：
+- 修改字段：
   - 模块级字段：{ op: "updateModule", module, field, value }
+  - 模块级可添加字段即使未出现在当前 data 中，也可按《简历数据规范》通过 updateModule 写入，写入后会激活并展示该字段
   - 模块展示标题：{ op: "updateModuleTitle", module, title }，module 始终使用 read_resume_data 返回的稳定 key，禁止把展示标题当作 key
   - 记录字段：{ op: "updateRecord", module, index, field, value }，index 为记录下标，从 0 开始
   - 自定义模块记录仍用 index 更新其 data.list 中的记录

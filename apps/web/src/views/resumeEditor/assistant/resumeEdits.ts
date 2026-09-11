@@ -1,4 +1,7 @@
-import { getModelBindings, walkFormFields } from "@/components/business/dynamicForm";
+import {
+  getModelBindings,
+  walkFormFields,
+} from "@/components/business/dynamicForm/code/schemaAccess";
 import { allConfig } from "@/stores/modules/resume/formConfig";
 
 // 语义化写操作：明确到模块、记录与字段，避免让模型自行拼装整棵数据
@@ -43,6 +46,7 @@ type FieldRule = {
   field: string;
   component?: string;
   options?: string[];
+  addable?: boolean;
   month?: boolean;
   monthRange?: boolean;
   html?: boolean;
@@ -65,6 +69,7 @@ const collectFieldRules = (source: any, rules: Map<string, FieldRule>) => {
         field,
         component: component ?? prev?.component,
         options: options ?? prev?.options,
+        addable: node.addable === true || prev?.addable,
         month: component === "datePicker" && props.type === "month",
         monthRange: component === "datePicker" && props.type === "monthrange",
         html: component === "wangEditor",
@@ -224,7 +229,9 @@ export const validateResumeEdits = (
       const invalid = (value: unknown) =>
         typeof value !== "number" || !Number.isInteger(value) || value < 0 || value >= count;
       if (invalid(op.from) || invalid(op.to)) {
-        errors.push(`${order}：模块 ${op.module} 的 move 下标无效（from/to 应在 0~${count - 1} 之间）`);
+        errors.push(
+          `${order}：模块 ${op.module} 的 move 下标无效（from/to 应在 0~${count - 1} 之间）`,
+        );
       }
       return;
     }
@@ -261,14 +268,17 @@ export const validateResumeEdits = (
     }
     const isDataObject =
       moduleView.data && typeof moduleView.data === "object" && !Array.isArray(moduleView.data);
+    const data = moduleView.data as Record<string, unknown>;
+    const rule = moduleRules.get(op.field);
+    // 模块级缺失字段仅允许由表单结构中声明的可添加字段补入
     if (
       !isDataObject ||
-      !(op.field in (moduleView.data as Record<string, unknown>))
+      (!Object.prototype.hasOwnProperty.call(data, op.field) && rule?.addable !== true)
     ) {
       errors.push(`${order}：模块 ${op.module} 不存在模块级字段 ${op.field}`);
       return;
     }
-    validateFieldValue(op.module, op.field, op.value, moduleRules.get(op.field), errors);
+    validateFieldValue(op.module, op.field, op.value, rule, errors);
   });
   return errors;
 };

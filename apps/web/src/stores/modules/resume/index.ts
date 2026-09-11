@@ -3,7 +3,11 @@ import {
   addArrayRecord,
   moveArrayRecord,
   removeArrayRecord,
-} from "@/components/business/dynamicForm";
+} from "@/components/business/dynamicForm/code/arrayData";
+import {
+  getPrimaryModelBinding,
+  walkFormFields,
+} from "@/components/business/dynamicForm/code/schemaAccess";
 import router from "@/routers";
 import { getUUID } from "@/utils";
 import { defineStore } from "pinia";
@@ -284,6 +288,29 @@ export const useResumeStore = defineStore(
       const moduleField = fields?.find((f: any) => f?.key === moduleKey);
       return moduleField?.fields?.find((f: any) => f?.type === "array");
     };
+    // 从运行时表单结构定位模块级可添加字段
+    const findAddableModuleField = (
+      fields: any[] | undefined,
+      moduleKey: string,
+      field: string,
+    ) => {
+      const moduleField = fields?.find((item: any) => item?.key === moduleKey);
+      let result: any;
+      walkFormFields(moduleField, (item) => {
+        if (result || item.addable !== true) return;
+        const source = getPrimaryModelBinding(item)?.source;
+        if (
+          Array.isArray(source) &&
+          source.length === 3 &&
+          source[0] === moduleKey &&
+          source[1] === "data" &&
+          source[2] === field
+        ) {
+          result = item;
+        }
+      });
+      return result;
+    };
     // AI 删除记录：统一修改真实数据数组
     function removeDataRecord(moduleKey: string, index: number): boolean {
       const arrayField = findModuleArrayField(runtimeConfig.value?.fields, moduleKey);
@@ -303,9 +330,12 @@ export const useResumeStore = defineStore(
         !module ||
         !module.data ||
         typeof module.data !== "object" ||
-        Array.isArray(module.data) ||
-        !(field in module.data)
+        Array.isArray(module.data)
       ) {
+        return false;
+      }
+      const hasField = Object.prototype.hasOwnProperty.call(module.data, field);
+      if (!hasField && !findAddableModuleField(runtimeConfig.value?.fields, moduleKey, field)) {
         return false;
       }
       module.data[field] = value;
