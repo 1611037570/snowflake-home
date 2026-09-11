@@ -31,14 +31,8 @@ const handleSuggest = (card: SuggestCard) => {
     </div>
     <div class="flex flex-wrap items-center justify-center gap-3 text-sm font-medium text-sf-base">
       <span>能通过对话帮你打造受HR青睐的专业简历。</span>
-      <span>尝试和我对话吧！ 📄✨</span>
     </div>
-    <div
-      v-if="props.selectedModules?.length"
-      class="flex flex-wrap items-center justify-center gap-x-3 text-sm"
-    >
-      你可以这样问
-    </div>
+    <div class="flex flex-wrap items-center justify-center gap-x-3 text-sm">✨📄你可以这样问</div>
     <!-- 建议操作按钮 -->
     <div class="grid w-full max-w-md grid-cols-2 gap-3">
       <button
