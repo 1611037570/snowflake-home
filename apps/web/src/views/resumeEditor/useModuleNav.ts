@@ -104,6 +104,32 @@ export const jumpEditor = (key: string) => {
   });
 };
 
+// 预览区定位编辑区：仅切标签、选中闪烁与滚动定位，不展开折叠，避免点击查找改变编辑区折叠状态
+export const locateEditor = (key: string) => {
+  const item = moduleList.value.find((m) => m.key === key);
+  // 归档模块不在左侧编辑区展示，定位时提示用户先恢复模块
+  if (item && isFieldVisible(currentData.value, item.field)) {
+    ElNotification({
+      title: "模块已归档",
+      message: "请先在左侧恢复归档后再编辑该模块。",
+      type: "warning",
+      position: "top-right",
+      offset: 40,
+      duration: 3000,
+    });
+    return;
+  }
+  // 切换到编辑标签，避免停留设计/模板标签时编辑区不可见
+  eventBus.emit("switch-builder-tab", 0);
+  // 触发编辑区模块选中闪烁
+  eventBus.emit("df-select-module", key);
+  nextTick(() => {
+    document
+      .querySelector(`[data-module-key="${key}"]`)
+      ?.scrollIntoView({ behavior: "smooth", block: "start" });
+  });
+};
+
 // 跳转编辑区（含隐藏恢复）：供进度条等复用
 export const jumpToEditor = (key: string) => {
   const item = moduleList.value.find((m) => m.key === key);
@@ -143,6 +169,7 @@ export function useModuleNav() {
     jumpToEditor,
     jumpPreview,
     jumpEditor,
+    locateEditor,
     previewSelectedModule,
   };
 }

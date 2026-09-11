@@ -18,7 +18,7 @@ import { useResumePreviewData } from "./useResumePreviewData";
 import { useModuleInteractions } from "./useModuleInteractions";
 import { getPreviewText } from "../i18n";
 import { useResumeStats } from "../../toolbar/modules/progress/useResumeStats";
-import { clearPreviewSelection, jumpEditor, previewSelectedModule } from "../../useModuleNav";
+import { clearPreviewSelection, locateEditor, previewSelectedModule } from "../../useModuleNav";
 
 const resumeStore = useResumeStore();
 const { selectedModule, system } = storeToRefs(resumeStore);
@@ -98,7 +98,7 @@ const { moduleClassMap } = useModuleInteractions({
 const handlePageClick = (event) => {
   const moduleEl = event.target.closest?.(".resume-module-wrapper");
   const moduleKey = moduleEl?.dataset.module;
-  if (moduleKey) jumpEditor(moduleKey);
+  if (moduleKey) locateEditor(moduleKey);
 };
 
 // 鼠标进入模块内容时清除查找定位边框
