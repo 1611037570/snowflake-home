@@ -300,16 +300,15 @@ useResizeObserver(contentRef, ([entry]) => {
         </div>
       </div>
     </SfScrollbar>
-    <button
-      v-if="showBackTop"
-      type="button"
-      title="回到顶部"
-      aria-label="回到顶部"
-      class="absolute right-3 bottom-3 z-10 cursor-pointer rounded-full bg-sf-theme p-3 text-sf-theme-text shadow-lg hover:bg-sf-theme-hover"
-      @click="handleBackTop"
-    >
-      <SfIcon icon="mingcute:up-line" size="5" />
-    </button>
+    <SfTooltip v-if="showBackTop" content="回到顶部" class="absolute right-12 bottom-12 z-10">
+      <SfIcon
+        @click="handleBackTop"
+        icon="mingcute:up-line"
+        size="8"
+        boxSize="10"
+        class="cursor-pointer rounded-full bg-sf-theme text-sf-theme-text"
+      />
+    </SfTooltip>
   </div>
 </template>
 
