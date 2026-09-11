@@ -1,4 +1,9 @@
 import confirm from "@/components/business/confirm";
+import {
+  addArrayRecord,
+  moveArrayRecord,
+  removeArrayRecord,
+} from "@/components/business/dynamicForm";
 import router from "@/routers";
 import { getUUID } from "@/utils";
 import { defineStore } from "pinia";
@@ -17,8 +22,6 @@ import {
   buildRuntimeConfig,
   compactConfigFields,
 } from "./hooks/useConfigTemplate";
-import { createRecordSkeleton } from "./hooks/useAddRecord";
-
 import { debounce, merge } from "lodash-es";
 export type DesensitizeLevel = "normal" | "strict";
 export type DesensitizeConfig = {
@@ -270,53 +273,28 @@ export const useResumeStore = defineStore(
       if (Array.isArray(module.data?.list)) return module.data.list;
       return null;
     };
-    // 数组型模块新增记录：落一条含字段的空记录骨架并同步表单配置，返回新记录下标
+    // 数组型模块新增记录：统一按运行时结构向真实数据追加默认记录
     function addDataRecord(moduleKey: string): number {
-      const data = currentData.value;
-      const module = data?.[moduleKey];
-      const records = resolveModuleRecords(module);
-      // 从运行时结构创建记录，确保业务注入的默认值生效
       const arrayField = findModuleArrayField(runtimeConfig.value?.fields, moduleKey);
-      if (!records || !arrayField?.itemSchema || !Array.isArray(arrayField.list)) return -1;
-      records.push(createRecordSkeleton(arrayField));
-      // 同步补一条表单子项，保证编辑器与 data 数量一致
-      arrayField.list.push({ ...toRaw(arrayField.itemSchema) });
-      return records.length - 1;
+      if (!arrayField) return -1;
+      return addArrayRecord(currentData.value, arrayField);
     }
-    // 定位模块对应的数组表单子项列表，用于同步 data 与配置顺序
+    // 从运行时模块结构定位数组字段
     const findModuleArrayField = (fields: any[] | undefined, moduleKey: string) => {
       const moduleField = fields?.find((f: any) => f?.key === moduleKey);
       return moduleField?.fields?.find((f: any) => f?.type === "array");
     };
-    // AI 删除记录：同步 data 与表单配置
+    // AI 删除记录：统一修改真实数据数组
     function removeDataRecord(moduleKey: string, index: number): boolean {
-      const data = currentData.value;
-      const module = data?.[moduleKey];
-      const records = resolveModuleRecords(module);
-      if (!records) return false;
-      if (index < 0 || index >= records.length) return false;
-      records.splice(index, 1);
-      const arrayField = findModuleArrayField(currentItem.value?.config?.fields, moduleKey);
-      arrayField?.list?.splice(index, 1);
-      return true;
+      const arrayField = findModuleArrayField(runtimeConfig.value?.fields, moduleKey);
+      if (!arrayField) return false;
+      return removeArrayRecord(currentData.value, arrayField, index);
     }
-    // AI 移动记录：同步 data 与表单配置
+    // AI 移动记录：统一调整真实数据数组顺序
     function moveDataRecord(moduleKey: string, from: number, to: number): boolean {
-      const data = currentData.value;
-      const module = data?.[moduleKey];
-      const records = resolveModuleRecords(module);
-      if (!records) return false;
-      if (from === to || from < 0 || to < 0 || from >= records.length || to >= records.length) {
-        return false;
-      }
-      const [record] = records.splice(from, 1);
-      records.splice(to, 0, record);
-      const arrayField = findModuleArrayField(currentItem.value?.config?.fields, moduleKey);
-      if (Array.isArray(arrayField?.list)) {
-        const [formItem] = arrayField.list.splice(from, 1);
-        arrayField.list.splice(to, 0, formItem);
-      }
-      return true;
+      const arrayField = findModuleArrayField(runtimeConfig.value?.fields, moduleKey);
+      if (!arrayField) return false;
+      return moveArrayRecord(currentData.value, arrayField, from, to);
     }
     // 修改模块级 data 字段
     function updateModuleField(moduleKey: string, field: string, value: unknown): boolean {
