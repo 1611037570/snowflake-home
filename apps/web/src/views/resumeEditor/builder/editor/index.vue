@@ -16,7 +16,7 @@ import ItemCollapse from "./components/itemCollapse.vue";
 import ImageUpload from "./components/imageUpload/index.vue";
 import More from "./components/more.vue";
 import Video from "./components/video.vue";
-import ModuleManager from "./components/moduleManager.vue";
+import ModuleManager from "../../components/moduleManager/index.vue";
 
 const resumeStore = useResumeStore();
 const { currentData, runtimeConfig } = storeToRefs(resumeStore);
