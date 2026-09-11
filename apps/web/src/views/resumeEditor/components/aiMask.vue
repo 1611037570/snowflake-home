@@ -6,9 +6,8 @@ const props = defineProps({
 </script>
 
 <template>
-  <!-- 调试时强制渲染，发布前删除 || 1 -->
   <div
-    v-if="props.visible || 1"
+    v-if="props.visible"
     class="absolute inset-0 z-50 flex cursor-not-allowed items-center justify-center backdrop-blur-[1.5px]"
   >
     <div
