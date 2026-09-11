@@ -8,6 +8,12 @@ export function getModelBindings(field: FormField): ModelBinding[] {
   return Array.isArray(field.model) ? field.model : [field.model];
 }
 
+// 优先取得组件主值绑定，并排除只读的外部字典绑定
+export function getPrimaryModelBinding(field: FormField): ModelBinding | undefined {
+  const bindings = getModelBindings(field).filter((binding) => !binding.raw);
+  return bindings.find((binding) => binding.prop === "modelValue") ?? bindings[0];
+}
+
 // 按声明顺序递归遍历普通子字段与数组子项结构
 export function walkFormFields(source: FormFieldSource, visitor: (field: FormField) => void) {
   const fields = Array.isArray(source) ? source : source ? [source] : [];
