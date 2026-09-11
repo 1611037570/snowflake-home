@@ -61,8 +61,6 @@ export const DEFAULT_SYSTEM = {
   showPageNumber: true,
   // 是否展示调试控制台
   showDebug: false,
-  // 是否将 AI 助手设置为独立窗口
-  aiIndependentWindow: false,
   // 是否展示工具栏工具名称
   showToolName: false,
   // 是否启用窗口过小检测提示
@@ -74,6 +72,4 @@ export const DEFAULT_SYSTEM = {
 export const DEFAULT_EDITOR = {
   // 编辑器区域宽度(px)
   editorWidth: 400,
-  // AI助手区域宽度(px)
-  assistantWidth: 400,
 };

@@ -34,24 +34,20 @@ onBeforeUnmount(() => {
 });
 
 const resumeStore = useResumeStore();
-const { editorWidth, system } = storeToRefs(resumeStore);
+const { editorWidth } = storeToRefs(resumeStore);
 
-// 菜单配置：独立窗口模式下不在主窗口渲染 AI
+// 菜单配置
 const menuList = computed(() => [
   {
     name: "编辑",
     icon: "lucide:file-text",
     component: AsyncEditor,
   },
-  ...(!system.value.aiIndependentWindow
-    ? [
-        {
-          name: "AI编辑",
-          icon: "lucide:palette",
-          component: AsyncAi,
-        },
-      ]
-    : []),
+  {
+    name: "AI编辑",
+    icon: "lucide:palette",
+    component: AsyncAi,
+  },
   {
     name: "设计",
     icon: "lucide:palette",
@@ -70,16 +66,6 @@ watch(menuList, (list) => {
     activeIndex.value = list.length - 1;
   }
 });
-
-// 关闭独立窗口时自动切换到主窗口的 AI 页面
-watch(
-  () => system.value.aiIndependentWindow,
-  (isIndependent) => {
-    if (!isIndependent) {
-      activeIndex.value = menuList.value.findIndex((item) => item.component === AsyncAi);
-    }
-  },
-);
 
 const activeMenu = computed(() => menuList.value[activeIndex.value] || menuList.value[0]);
 </script>

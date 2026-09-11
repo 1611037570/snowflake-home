@@ -1,6 +1,4 @@
 <script setup>
-import { useResumeStore } from "@/stores";
-import { storeToRefs } from "pinia";
 import HistoryNav from "./historyNav.vue";
 import Title from "./title.vue";
 import LocalBackup from "./localBackup.vue";
@@ -8,29 +6,6 @@ import ExportResume from "./exportResume/index.vue";
 import { useRouter } from "vue-router";
 const router = useRouter();
 
-const resumeStore = useResumeStore();
-const { layout } = storeToRefs(resumeStore);
-
-const layoutList = [
-  {
-    name: "编辑+预览布局",
-    value: "list",
-    icon: "fluent:layout-column-one-third-left-24-regular",
-  },
-  {
-    name: "编辑+预览+AI布局",
-    value: "three",
-    icon: "fluent:layout-column-three-24-regular",
-  },
-  {
-    name: "预览+AI布局",
-    value: "ai",
-    icon: "fluent:layout-column-one-third-right-24-regular",
-  },
-];
-const handleLayoutClick = (item) => {
-  resumeStore.setLayout(item.value);
-};
 const handleBack = () => {
   router.push("/resume/mine");
 };
@@ -59,21 +34,6 @@ const handleBack = () => {
     <div class="flex items-center gap-5">
       <!-- 撤回/前进 -->
       <HistoryNav />
-      <!-- 布局切换器 -->
-      <div class="flex items-center gap-1 rounded-3xl border border-sf-b bg-sf-page p-1">
-        <SfTooltip v-for="item in layoutList" :key="item.value" :content="item.name">
-          <SfIcon
-            :icon="item.icon"
-            size="5"
-            boxSize="7"
-            class="rounded-full"
-            :class="[
-              layout === item.value ? 'bg-sf-theme text-sf-theme-text' : 'hover:bg-sf-theme-2',
-            ]"
-            @click="handleLayoutClick(item)"
-          />
-        </SfTooltip>
-      </div>
       <ExportResume />
 
       <!-- 分隔线 -->

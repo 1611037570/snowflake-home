@@ -1,7 +1,5 @@
 <script setup>
 import { useAiStore } from "@/stores";
-import { useResumeStore } from "@/stores";
-import { storeToRefs } from "pinia";
 import MessageNav from "./messageNav.vue";
 
 const props = defineProps({
@@ -13,8 +11,6 @@ const props = defineProps({
 const emit = defineEmits(["select"]);
 
 const aiStore = useAiStore();
-const resumeStore = useResumeStore();
-const { system } = storeToRefs(resumeStore);
 
 function createNewChat() {
   aiStore.createNewResumeAssistantChat();
@@ -25,9 +21,6 @@ function createNewChat() {
   <div class="px-3">
     <div class="flex w-full justify-between">
       <div class="flex items-center gap-3">
-        <div class="flex items-center gap-1.5" v-if="0">
-          独立窗口<ElSwitch v-model="system.aiIndependentWindow" />
-        </div>
         <MessageNav
           v-if="props.messages.length"
           :messages="props.messages"

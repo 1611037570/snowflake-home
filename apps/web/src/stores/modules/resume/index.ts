@@ -20,7 +20,6 @@ import {
 import { createRecordSkeleton } from "./hooks/useAddRecord";
 
 import { debounce, merge } from "lodash-es";
-export type ResumeLayout = "list" | "three" | "ai";
 export type DesensitizeLevel = "normal" | "strict";
 export type DesensitizeConfig = {
   disabled: boolean;
@@ -44,12 +43,8 @@ export const useResumeStore = defineStore(
     const trashRetentionMs = trashRetentionDays * 24 * 60 * 60 * 1000;
     // 当前选中的简历下标
     const currentIndex = ref(-1);
-    // 当前布局
-    const layout = ref<ResumeLayout>("three");
     // 编辑器区域宽度
     const editorWidth = ref(DEFAULT_EDITOR.editorWidth);
-    // AI 助手区域宽度
-    const assistantWidth = ref(DEFAULT_EDITOR.assistantWidth);
     // 专注写作模式（临时状态，不持久化）
     const focusMode = ref(false);
     // AI 请求脱敏配置：禁用时不脱敏，否则按等级过滤敏感字段
@@ -526,9 +521,6 @@ export const useResumeStore = defineStore(
       }
       applySnapshot(redoStack.value.pop().item);
     };
-    const setLayout = (value: ResumeLayout) => {
-      layout.value = value;
-    };
     const setFocusMode = (value: boolean) => {
       focusMode.value = value;
     };
@@ -575,9 +567,7 @@ export const useResumeStore = defineStore(
       trashList,
       maxCount,
       currentIndex,
-      layout,
       editorWidth,
-      assistantWidth,
       focusMode,
       desensitizeMode,
       isGenerating,
@@ -618,7 +608,6 @@ export const useResumeStore = defineStore(
       getTrashRemainingDays,
       maxTrashCount,
       trashRetentionDays,
-      setLayout,
       setFocusMode,
       undo,
       redo,
@@ -633,15 +622,7 @@ export const useResumeStore = defineStore(
   },
   {
     persist: {
-      pick: [
-        "list",
-        "trashList",
-        "layout",
-        "editorWidth",
-        "assistantWidth",
-        "system",
-        "desensitizeMode",
-      ],
+      pick: ["list", "trashList", "editorWidth", "system", "desensitizeMode"],
     },
   },
 );
