@@ -4,7 +4,7 @@ import { storeToRefs } from "pinia";
 import { computed, inject } from "vue";
 import { getTime } from "../../utils";
 import ResumeField from "../components/resumeField/index.vue";
-import Title from "../theme/title/index.vue";
+import Title from "../components/title/index.vue";
 const props = defineProps({
   name: {
     type: String,

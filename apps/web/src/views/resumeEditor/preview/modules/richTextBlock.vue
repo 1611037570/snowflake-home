@@ -1,7 +1,7 @@
 <script setup>
 import { computed, inject } from "vue";
 import ResumeField from "../components/resumeField/index.vue";
-import Title from "../theme/title/index.vue";
+import Title from "../components/title/index.vue";
 
 // 通用富文本单块：供 skill、个人优势等「标题 + 富文本」模块复用，结构对齐 expItemList
 const props = defineProps({

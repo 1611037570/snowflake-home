@@ -1,6 +1,6 @@
 <script setup>
 import { computed, inject } from "vue";
-import Title from "../theme/title/index.vue";
+import Title from "../components/title/index.vue";
 import ResumeField from "../components/resumeField/index.vue";
 
 // 从上层注入获取代理后的预览数据
