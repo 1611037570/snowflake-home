@@ -1,8 +1,5 @@
-import {
-  getModelBindings,
-  walkFormFields,
-} from "@/components/business/dynamicForm/code/schemaAccess";
-import { allConfig } from "@/stores/modules/resume/formConfig";
+import type { ResumeFieldSchema } from "./resumeSchema";
+import { findResumeModuleSchema } from "./resumeSchemaRegistry";
 
 // 语义化写操作：明确到模块、记录与字段，避免让模型自行拼装整棵数据
 export type ResumeWriteOp =
@@ -41,75 +38,23 @@ export type ResumeWriteOp =
       to: number;
     };
 
-// 字段格式规则：由 formConfig 的组件类型推导，作为 operations 校验依据
-type FieldRule = {
-  field: string;
-  component?: string;
-  options?: string[];
-  addable?: boolean;
-  month?: boolean;
-  monthRange?: boolean;
-  html?: boolean;
-};
-
-// 基于引擎遍历能力收集模块字段规则，避免 AI 层理解容器嵌套结构
-const collectFieldRules = (source: any, rules: Map<string, FieldRule>) => {
-  walkFormFields(source, (node) => {
-    const props = node.props ?? {};
-    const options = Array.isArray(props.list)
-      ? props.list.map((item: any) => (item && typeof item === "object" ? item.value : item))
-      : undefined;
-    const component = node.component || props.component;
-    getModelBindings(node).forEach((binding) => {
-      const bindingSource = binding.source;
-      if (!Array.isArray(bindingSource) || !bindingSource.length || binding.raw) return;
-      const field = String(bindingSource[bindingSource.length - 1]);
-      const prev = rules.get(field);
-      rules.set(field, {
-        field,
-        component: component ?? prev?.component,
-        options: options ?? prev?.options,
-        addable: node.addable === true || prev?.addable,
-        month: component === "datePicker" && props.type === "month",
-        monthRange: component === "datePicker" && props.type === "monthrange",
-        html: component === "wangEditor",
-      });
-    });
-  });
-};
-
-// 按模块 key 取字段规则（自定义模块复用 custom 模板）
-const getModuleRules = (moduleKey: string): Map<string, FieldRule> => {
-  const isCustomModule = moduleKey.startsWith("custom");
-  const template: any = isCustomModule
-    ? allConfig.custom
-    : (allConfig as Record<string, any>)[moduleKey];
-  const rules = new Map<string, FieldRule>();
-  if (Array.isArray(template)) {
-    collectFieldRules(template, rules);
-  } else if (template) {
-    collectFieldRules(template, rules);
-  }
-  return rules;
-};
-
 // 校验单个字段值的时间、枚举与 HTML 格式
 const validateFieldValue = (
   module: string,
   field: string,
   value: unknown,
-  rule: FieldRule | undefined,
+  rule: ResumeFieldSchema | undefined,
   errors: string[],
 ) => {
   if (!rule) return;
   const monthRe = /^\d{4}\.(0[1-9]|1[0-2])$/;
-  if (rule.month) {
+  if (rule.format === "month") {
     if (typeof value !== "string" || !monthRe.test(value)) {
       errors.push(`模块 ${module} 字段 ${field} 应为 YYYY.MM 格式（如 2023.07），实际值无效`);
     }
     return;
   }
-  if (rule.monthRange) {
+  if (rule.format === "monthRange") {
     if (
       !Array.isArray(value) ||
       value.length !== 2 ||
@@ -119,16 +64,38 @@ const validateFieldValue = (
     }
     return;
   }
-  if (rule.html) {
+  if (rule.format === "html") {
     if (typeof value !== "string" || !value.includes("<p")) {
       errors.push(`模块 ${module} 字段 ${field} 必须是 <p> 包裹的 HTML 字符串`);
     }
     return;
   }
+  if (rule.format === "heightWeight") {
+    const dimensions = value as Record<string, unknown>;
+    if (
+      !dimensions ||
+      typeof dimensions !== "object" ||
+      Array.isArray(dimensions) ||
+      typeof dimensions.height !== "number" ||
+      typeof dimensions.weight !== "number"
+    ) {
+      errors.push(`模块 ${module} 字段 ${field} 应为包含数字 height 和 weight 的对象`);
+    }
+    return;
+  }
   if (Array.isArray(rule.options) && rule.options.length && value !== "") {
-    if (typeof value !== "string" || !rule.options.includes(value)) {
+    if (!rule.options.includes(value)) {
       errors.push(`模块 ${module} 字段 ${field} 可选值应为：${rule.options.join(" / ")}`);
     }
+    return;
+  }
+  const invalidType =
+    (rule.valueType === "string" && typeof value !== "string") ||
+    (rule.valueType === "number" && typeof value !== "number") ||
+    (rule.valueType === "array" && !Array.isArray(value)) ||
+    (rule.valueType === "object" && (!value || typeof value !== "object" || Array.isArray(value)));
+  if (invalidType) {
+    errors.push(`模块 ${module} 字段 ${field} 应为 ${rule.valueType} 类型`);
   }
 };
 
@@ -181,7 +148,8 @@ export const validateResumeEdits = (
       }
       return;
     }
-    const moduleRules = getModuleRules(op.module);
+    const moduleSchema = findResumeModuleSchema(op.module);
+    const moduleRules = new Map(moduleSchema?.fields.map((field) => [field.key, field]) ?? []);
     const records = getModuleRecords(moduleView);
     if (op.op === "addRecord") {
       if (!records) {
@@ -243,6 +211,11 @@ export const validateResumeEdits = (
       errors.push(`${order}：必须提供 value`);
       return;
     }
+    const rule = moduleRules.get(op.field);
+    if (!rule) {
+      errors.push(`${order}：模块 ${op.module} 不存在字段 ${op.field}`);
+      return;
+    }
     if (op.op === "updateRecord") {
       if (typeof op.index !== "number" || !Number.isInteger(op.index)) {
         errors.push(`${order}：updateRecord 必须提供合法 index`);
@@ -263,13 +236,12 @@ export const validateResumeEdits = (
         errors.push(`${order}：模块 ${op.module} 下标 ${op.index} 的记录不存在字段 ${op.field}`);
         return;
       }
-      validateFieldValue(op.module, op.field, op.value, moduleRules.get(op.field), errors);
+      validateFieldValue(op.module, op.field, op.value, rule, errors);
       return;
     }
     const isDataObject =
       moduleView.data && typeof moduleView.data === "object" && !Array.isArray(moduleView.data);
     const data = moduleView.data as Record<string, unknown>;
-    const rule = moduleRules.get(op.field);
     // 模块级缺失字段仅允许由表单结构中声明的可添加字段补入
     if (
       !isDataObject ||
