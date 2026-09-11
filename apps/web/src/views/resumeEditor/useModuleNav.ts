@@ -37,6 +37,7 @@ const moduleList = computed(() => {
           name: resumeStore.getModel(field.key)?.name || field.name || field.key,
           icon,
           hidden: isFieldMuted(data, field),
+          archived: isFieldVisible(data, field),
           field, // 原始字段配置，用于恢复隐藏模块
         };
       })
@@ -119,7 +120,7 @@ const filterModules = (kw: string) => {
  * 跳转函数已抽为模块级纯函数，其他组件无需再创建 hook
  */
 export function useModuleNav() {
-  // 搜索关键词
+  // 每个模块查找入口维护独立搜索词
   const keyword = ref("");
   const filteredList = computed(() => filterModules(keyword.value.trim()));
 
