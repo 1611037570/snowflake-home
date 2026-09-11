@@ -27,6 +27,7 @@ import {
   compactConfigFields,
 } from "./hooks/useConfigTemplate";
 import { debounce, merge } from "lodash-es";
+import { executeResumeOperations, type ResumeWriteOp } from "./resumeOperations";
 export type DesensitizeLevel = "normal" | "strict";
 export type DesensitizeConfig = {
   disabled: boolean;
@@ -363,6 +364,17 @@ export const useResumeStore = defineStore(
       record[field] = value;
       return true;
     }
+    // 批量写操作统一通过领域执行器落到当前简历
+    function applyResumeOperations(operations: ResumeWriteOp[]) {
+      return executeResumeOperations(operations, {
+        addDataRecord,
+        removeDataRecord,
+        moveDataRecord,
+        updateModuleField,
+        updateModuleTitle,
+        updateRecordField,
+      });
+    }
     // 删除简历：移入回收站（回收站已满时阻止并提示）
     const deleteResume = () => {
       if (currentIndex.value == -1) {
@@ -594,6 +606,7 @@ export const useResumeStore = defineStore(
       updateModuleField,
       updateModuleTitle,
       updateRecordField,
+      applyResumeOperations,
       getModel,
       currentItem,
       currentData,

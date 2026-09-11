@@ -1,4 +1,39 @@
-import type { ResumeWriteOp } from "./resumeEdits";
+// 语义化写操作：明确到模块、记录与字段，避免调用方直接拼装整棵数据
+export type ResumeWriteOp =
+  | {
+      op: "updateModule";
+      module: string;
+      field: string;
+      value: unknown;
+    }
+  | {
+      op: "updateModuleTitle";
+      module: string;
+      title: string;
+    }
+  | {
+      op: "updateRecord";
+      module: string;
+      index: number;
+      field: string;
+      value: unknown;
+    }
+  | {
+      op: "addRecord";
+      module: string;
+      record?: Record<string, unknown>;
+    }
+  | {
+      op: "deleteRecord";
+      module: string;
+      index: number;
+    }
+  | {
+      op: "moveRecord";
+      module: string;
+      from: number;
+      to: number;
+    };
 
 export type ResumeOperationTarget = {
   updateModuleField: (module: string, field: string, value: unknown) => boolean;

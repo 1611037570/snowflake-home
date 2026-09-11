@@ -1,5 +1,6 @@
 import type { ReactTool } from "@/apis/llm/react";
-import { validateResumeEdits, type ResumeWriteOp } from "../resumeEdits";
+import type { ResumeWriteOp } from "@/stores/modules/resume/resumeOperations";
+import { validateResumeEdits } from "../resumeEdits";
 import { PROPOSE_RESUME_EDITS_RULE, TOOL_ARGUMENT_RULE } from "../skills/prompt_tool_rules";
 import type { ResumeToolContext } from "./tool_types";
 

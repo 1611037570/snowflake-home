@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { validateResumeEdits, type ResumeWriteOp } from "./resumeEdits";
+import type { ResumeWriteOp } from "@/stores/modules/resume/resumeOperations";
+import { validateResumeEdits } from "./resumeEdits";
 
 const validateUserOperation = (operation: ResumeWriteOp) =>
   validateResumeEdits([operation], {
