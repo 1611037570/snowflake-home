@@ -1,153 +1,89 @@
-// 技能：简历数据规范
-// 由 resume-data-contract-generator.md 生成，更新时请通过生成器，勿直接修改
-// 描述：本技能提供简历数据字段与格式规范。 【适用场景】当 AI 需要了解简历模块结构、字段明细、必填项、可添加字段、枚举值与时间/HTML 格式时必须加载。 【数据来源】本规范基于项目 formConfig.ts 中定义的字段结构生成，所有字段路径、类型、必填性与可添加性均来源于此。 【禁止行为】只描述数据结构与格式，不规定写操作流程，不臆造不存在的字段。
+import type { ResumeFieldSchema, ResumeModuleKind, ResumeModuleSchema } from "../resumeSchema";
+import { RESUME_SCHEMA } from "../resumeSchemaRegistry";
+
+const DESCRIPTION =
+  "本技能提供由当前简历表单结构自动生成的数据契约。当 AI 需要了解模块、字段、必填项、可添加字段、枚举值与时间或富文本格式时必须加载；不得臆造未声明字段。";
+
+const KIND_LABELS: Record<ResumeModuleKind, string> = {
+  object: "对象",
+  array: "记录数组",
+  custom: "自定义记录数组",
+};
+
+const formatOptions = (options: unknown[]) =>
+  options.map((value) => JSON.stringify(value)).join(" / ");
+
+const getFieldNotes = (field: ResumeFieldSchema) => {
+  const notes: string[] = [];
+  if (field.addable) notes.push("可添加字段，缺失时允许通过 updateModule 激活");
+  if (field.format === "month") notes.push("格式 YYYY.MM");
+  if (field.format === "monthRange") notes.push('格式 ["开始.YYYY.MM", "结束.YYYY.MM"]');
+  if (field.format === "html") notes.push("HTML 字符串，正文使用 <p> 包裹");
+  if (field.format === "heightWeight") {
+    notes.push("结构 { height: number, weight: number }");
+  }
+  if (field.options?.length) notes.push(`可选值 ${formatOptions(field.options)}`);
+  return notes.join("；") || "-";
+};
+
+const getModuleDataLabel = (module: ResumeModuleSchema) => {
+  if (module.kind === "object") return `${module.key}.data`;
+  if (module.kind === "custom") return "custom_<id>.data.list[]";
+  return `${module.key}.data[]`;
+};
+
+const renderModule = (module: ResumeModuleSchema, index: number) => {
+  const rows = module.fields
+    .map(
+      (field) =>
+        `| \`${field.key}\` | ${field.label} | ${field.valueType} | ${field.required ? "是" : "否"} | ${getFieldNotes(field)} |`,
+    )
+    .join("\n");
+  const customNote =
+    module.kind === "custom"
+      ? "> 自定义模块的实际顶层 key 以 `custom_` 开头；标题来自模块 `title`，记录写入 `data.list`。\n\n"
+      : "";
+  return `## ${index + 1}. ${module.title}（\`${getModuleDataLabel(module)}\`）
+
+${customNote}| 字段 | 中文标签 | 类型 | 必填 | 格式/备注 |
+| :--- | :--- | :--- | :--- | :--- |
+${rows}`;
+};
+
+// 数据规范直接由表单领域结构生成，字段调整后无需维护第二份静态表格
+const buildInstructions = () => {
+  const moduleRows = RESUME_SCHEMA.map(
+    (module) => `| \`${module.key}\` | ${module.title} | ${KIND_LABELS[module.kind]} |`,
+  ).join("\n");
+  const modules = RESUME_SCHEMA.map(renderModule).join("\n\n");
+
+  return `# 简历数据总体结构
+
+\`read_resume_data\` 返回以稳定模块 key 为键的对象，每个模块均为 \`{ title, data }\`。\`title\`只用于展示，写操作必须使用模块 key。
+
+| 模块 key | 默认标题 | data 结构 |
+| :--- | :--- | :--- |
+${moduleRows}
+
+- 对象模块通过 \`updateModule\` 修改字段。
+- 数组模块通过 \`updateRecord\`、\`addRecord\`、\`deleteRecord\`、\`moveRecord\` 修改记录。
+- 字段表标记为“可添加字段”时，即使当前数据缺失，也允许 \`updateModule\` 首次写入。
+- 当前简历可能只包含模块清单的一部分，不得写入当前数据中不存在的模块。
+
+# 字段契约
+
+${modules}
+
+# 强制格式
+
+1. 月份使用 \`YYYY.MM\`，月份区间必须包含两个值。
+2. 富文本字段必须是 HTML 字符串，并使用 \`<p>\` 包裹正文。
+3. 只能使用以上字段与枚举值，不得根据自然语言自行创建字段名。`;
+};
+
 export const resumeDataContract = () => ({
   id: "resume_data_contract",
   name: "简历数据规范",
-  description: `本技能提供简历数据字段与格式规范。 【适用场景】当 AI 需要了解简历模块结构、字段明细、必填项、可添加字段、枚举值与时间/HTML 格式时必须加载。 【数据来源】本规范基于项目 formConfig.ts 中定义的字段结构生成，所有字段路径、类型、必填性与可添加性均来源于此。 【禁止行为】只描述数据结构与格式，不规定写操作流程，不臆造不存在的字段。`,
-  instructions: `# 1. 数据总体结构
-
-一份简历按模块拆分，AI 读写统一使用以下结构，每个模块包含展示标题 title 与经历数据 data：
-
-\`\`\`typescript
-{
-  user: { title: "个人信息", data: 对象 },
-  work: { title: "工作经历", data: 数组 },
-}
-\`\`\`
-
-- **对象型模块**（user, skill, advantage）：\`data\` 是一个普通对象。
-
-- **数组型模块**（account, education, work, project, video, image, honor）：\`data\`是一个数组，每个元素是一条记录。
-
-- **自定义模块**（custom_x）：\`data\`是对象，结构为 \`{ list: 数组 }\`，\`list\`是经历记录数组。
-
-- **模块标题**：\`title\`是当前展示名称；模块身份始终由顶层稳定 key 标识，写操作不得使用标题代替 key。
-
-> **重要**：用户的实际简历可能只包含以上模块中的一部分。\`read_resume_data\` 返回的就是该结构，字段明细与格式以本规范为准。
-
-> **可添加字段**：字段表中标注“可添加字段”的模块级字段即使未出现在 \`read_resume_data\` 返回的 \`data\` 中，也可通过 \`updateModule\` 写入；写入后字段会被激活展示。
-
-# 2. 各模块\`data\` 字段明细
-
-## 2.1 个人信息 (\`user.data\`)
-
-| 字段         | 类型     | 必填 | 格式/备注                                      |
-| :--------- | :----- | :- | :----------------------------------------- |
-| avatar     | string | 否  | 头像 URL                                     |
-| name       | string | ✅  | 真实姓名，2-20位                                 |
-| birthday   | string | 否  | 出生日期，格式 YYYY.MM                            |
-| phone      | string | ✅  | 手机号，11位数字（1开头）                             |
-| sex        | string | 否  | 可选值 "男"/"女"                                |
-| position   | string | 否  | 求职岗位                                       |
-| email      | string | 否  | 可添加字段；邮箱地址                                |
-| workTime   | string | 否  | 可添加字段；参加工作时间，格式 YYYY.MM                  |
-| wechat     | string | 否  | 可添加字段；常用微信号                               |
-| status     | string | 否  | 可添加字段；可选值 "在职"/"离职"/"应届生"              |
-| political  | string | 否  | 可添加字段；可选值 "共产党员"/"预备党员"/"共青团员"/"群众" |
-| city       | string | 否  | 可添加字段；期望城市                                |
-| nativePlace | string | 否  | 可添加字段；籍贯                                  |
-| heightWeight | object | 否 | 可添加字段；结构为 { height: number, weight: number }，单位分别为 cm/kg |
-
-## 2.2 社交账号 (\`account.data[]\`)
-
-| 字段   | 类型     | 必填 | 格式/备注             |
-| :--- | :----- | :- | :---------------- |
-| name | string | ✅  | 账号名称（如 GitHub、博客） |
-| url  | string | ✅  | 账号链接地址            |
-
-## 2.3 教育经历 (\`education.data[]\`)
-
-| 字段        | 类型     | 必填 | 格式/备注                             |
-| :-------- | :----- | :- | :-------------------------------- |
-| name      | string | ✅  | 学校名称                              |
-| education | string | ✅  | 可选值 "高中"/"大专"/"本科"/"硕士"/"博士"      |
-| post      | string | ✅  | 专业                                |
-| mode      | string | ✅  | 可选值 "全日制"/"非全日制"/""(不填写)          |
-| time      | array  | ✅  | 时间区间 \\["开始.YYYY.MM","结束.YYYY.MM"] |
-| content   | string | 否  | 富文本 HTML（<p>包裹）                   |
-
-## 2.4 专业技能 (\`skill.data\`)
-
-| 字段      | 类型     | 必填 | 格式/备注           |
-| :------ | :----- | :- | :-------------- |
-| content | string | ✅  | 富文本 HTML（<p>包裹） |
-
-## 2.5 个人优势 (\`advantage.data\`)
-
-| 字段      | 类型     | 必填 | 格式/备注           |
-| :------ | :----- | :- | :-------------- |
-| content | string | ✅  | 富文本 HTML（<p>包裹） |
-
-## 2.6 工作经历 (\`work.data[]\`)
-
-| 字段      | 类型     | 必填 | 格式/备注                             |
-| :------ | :----- | :- | :-------------------------------- |
-| name    | string | ✅  | 公司名称                              |
-| post    | string | ✅  | 岗位名称                              |
-| time    | array  | ✅  | 时间区间 \\["开始.YYYY.MM","结束.YYYY.MM"] |
-| content | string | ✅  | 富文本 HTML（<p>包裹）                   |
-
-## 2.7 项目经历 (\`project.data[]\`)
-
-| 字段      | 类型     | 必填 | 格式/备注                             |
-| :------ | :----- | :- | :-------------------------------- |
-| name    | string | ✅  | 公司/项目名称                           |
-| post    | string | ✅  | 岗位/角色                             |
-| time    | array  | ✅  | 时间区间 \\["开始.YYYY.MM","结束.YYYY.MM"] |
-| content | string | ✅  | 富文本 HTML（<p>包裹）                   |
-
-## 2.8 视频作品 (\`video.data[]\`)
-
-| 字段   | 类型     | 必填 | 格式/备注 |
-| :--- | :----- | :- | :---- |
-| name | string | ✅  | 视频名称  |
-| url  | string | ✅  | 视频地址  |
-| desc | string | ✅  | 视频描述  |
-
-## 2.9 图片作品 (\`image.data[]\`)
-
-| 字段   | 类型     | 必填 | 格式/备注         |
-| :--- | :----- | :- | :------------ |
-| name | string | ✅  | 图片名称          |
-| img  | string | ✅  | 图片 URL        |
-| desc | string | ✅  | 图片描述          |
-| size | number | ✅  | 图片尺寸百分比，默认 50 |
-
-## 2.10 荣誉证书 (\`honor.data[]\`)
-
-| 字段   | 类型     | 必填 | 格式/备注  |
-| :--- | :----- | :- | :----- |
-| name | string | ✅  | 荣誉证书名称 |
-
-## 2.11 自定义经历 (\`custom_<id>.data\`)
-
-> **特别说明**：自定义模块是动态添加的，顶层 key 以\`custom_\`开头（如 \`custom_a810d50c\`）。模块\`title\`是展示标题，\`data.list\`是经历记录数组。
-
-| 字段  | 类型     | 必填 | 格式/备注     |
-| :-- | :----- | :- | :-------- |
-| list | array  | ✅  | 经历记录数组    |
-
-### \`data.list[]\` 记录字段
-
-| 字段      | 类型     | 必填 | 格式/备注                             |
-| :------ | :----- | :- | :-------------------------------- |
-| name    | string | ✅  | 记录名称                             |
-| post    | string | ✅  | 职位/角色                             |
-| time    | array  | ✅  | 时间区间 \\["开始.YYYY.MM","结束.YYYY.MM"] |
-| content | string | ✅  | 富文本 HTML（<p>包裹）                   |
-
-# 3. 格式强制约定（必须遵守）
-
-1. **时间格式**：所有时间必须使用 \`YYYY.MM\`（如 \`2023.07\`）。\`workTime\`和\`birthday\`只能是\`YYYY.MM\`，**严禁带日**（如 \`2022.08.01\`是错的）。
-2. **富文本正文**：所有\`content\`字段必须是 HTML 字符串，用\`<p>\`包裹，加粗用\`<strong>\`。
-3. **数组型模块的** **\`data\`**：数组元素按记录顺序排列，记录下标从 0 开始。
-
-# 4. 正确与错误示例
-
-| 场景      | ❌ 错误写法                           | ✅ 正确写法                           |
-| :------ | :------------------------------- | :------------------------------- |
-| 时间（数组内） | \`"time": ["2023-01", "2024-01"]\` | \`"time": ["2023.01", "2024.01"]\` |
-| 参加工作时间  | \`"workTime": "2022.08.01"\`       | \`"workTime": "2022.08"\`          |
-| 富文本正文   | \`"content": "我负责开发"\`             | \`"content": "<p>我负责开发</p>"\`      |`,
+  description: DESCRIPTION,
+  instructions: buildInstructions(),
 });
