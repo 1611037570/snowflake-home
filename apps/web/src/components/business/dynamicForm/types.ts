@@ -51,6 +51,8 @@ export interface FormField {
   key?: string;
   /** 模块名 */
   name?: string;
+  /** 容器绑定的数据源路径 */
+  source?: string[];
   /** 插槽名（存在则渲染为带插槽的容器组件） */
   slot?: string;
   /** 数据绑定配置 */
