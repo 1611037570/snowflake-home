@@ -137,7 +137,7 @@ defineExpose({ rootEl: rootRef, measureEl: measureRef, moduleList });
             <SfIcon icon="lucide:file-text" size="7" class="text-sf-theme" />
           </div>
           <div class="flex flex-col gap-3">
-            <span class="text-lg font-black text-sf-text">当前还没有数据</span>
+            <span class="text-lg font-black text-black">当前还没有数据</span>
             <span class="text-sm text-sf-text-2">尝试输入一点内容吧</span>
           </div>
         </div>
