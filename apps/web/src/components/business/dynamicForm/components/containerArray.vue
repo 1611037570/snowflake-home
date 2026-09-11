@@ -17,9 +17,15 @@
         v-if="item.item.type === 'group'"
         :currentIndex="item.index"
         :currentForm="item.item"
+        :pathContext="getPathContext(item.index)"
         @removeObject="remove"
       />
-      <ContainerObject v-else :currentIndex="item.index" :currentForm="item.item" />
+      <ContainerObject
+        v-else
+        :currentIndex="item.index"
+        :currentForm="item.item"
+        :pathContext="getPathContext(item.index)"
+      />
       <div class="flex" v-if="item.item.ui">
         <el-button @click="moveItem(item.index, item.index - 1)" :disabled="item.index === 0"
           >上移</el-button
@@ -41,6 +47,7 @@ import { getUUID } from "@/utils";
 import { computed, inject, onMounted, onUnmounted, ref, toRaw } from "vue";
 import { useDraggable } from "vue-draggable-plus";
 import { getArrayRecords, moveArrayRecord, removeArrayRecord } from "../code/arrayData.ts";
+import { resolveDataPath, type DataPathContext } from "../code/pathContext";
 import {
   DF_CURRENT_FORM,
   DF_CURRENT_LENGTH,
@@ -55,8 +62,9 @@ import FormItem from "./formItem.vue";
 const row: any = useTemplateRef("row");
 let draggable: ReturnType<typeof useDraggable> | null = null;
 
-defineProps<{
+const { pathContext } = defineProps<{
   currentIndex?: any;
+  pathContext?: DataPathContext;
 }>();
 const currentForm: any = defineModel("currentForm");
 const rootData: any = inject(DF_ROOT_DATA);
@@ -78,6 +86,13 @@ const getRecordKey = (record: any, index: number) => {
     return recordKeys.get(target);
   }
   return `${index}-${String(record)}`;
+};
+// 为每条数组记录创建子项字段使用的数据路径上下文
+const getPathContext = (index: number): DataPathContext | undefined => {
+  const source = currentForm.value?.source;
+  return Array.isArray(source)
+    ? { basePath: resolveDataPath(source, pathContext), index }
+    : undefined;
 };
 onMounted(async () => {
   await nextTick(() => {});

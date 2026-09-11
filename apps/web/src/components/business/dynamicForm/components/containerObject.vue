@@ -13,6 +13,7 @@
 <script setup lang="ts">
 import { inject } from "vue";
 import { getComponent } from "../code/getComponent";
+import type { DataPathContext } from "../code/pathContext";
 import {
   DF_CURRENT_FORM,
   DF_CURRENT_INDEX,
@@ -21,10 +22,13 @@ import {
   DF_ROOT_DATA,
 } from "../code/injectionKeys";
 
-const { currentIndex, currentForm } = defineProps<{
+const { currentIndex, currentForm, pathContext } = defineProps<{
   currentIndex?: any;
   currentForm: any;
+  pathContext?: DataPathContext;
 }>();
+
+void pathContext;
 
 const rootData: any = inject(DF_ROOT_DATA);
 

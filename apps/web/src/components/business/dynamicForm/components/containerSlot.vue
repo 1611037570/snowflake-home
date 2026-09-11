@@ -4,6 +4,7 @@
     v-if="!currentForm.component"
     v-model:items="currentForm"
     :containerIndex="currentIndex"
+    :pathContext="pathContext"
   />
   <!-- 分组有包裹组件：渲染组件并在槽内递归渲染子字段 -->
   <component
@@ -17,13 +18,18 @@
   >
     <template #[slotName]>
       <!-- 递归渲染时把容器索引显式下传，供嵌套字段解析 ? 通配 -->
-      <FormRenderer v-model:items="currentForm" :containerIndex="currentIndex" />
+      <FormRenderer
+        v-model:items="currentForm"
+        :containerIndex="currentIndex"
+        :pathContext="pathContext"
+      />
     </template>
   </component>
 </template>
 
 <script setup lang="ts">
 import { isString } from "@/utils";
+import type { DataPathContext } from "../code/pathContext";
 import {
   DF_CURRENT_FORM,
   DF_CURRENT_INDEX,
@@ -36,6 +42,9 @@ import FormRenderer from "./formRenderer.vue";
 
 const currentForm = defineModel<any>("currentForm");
 const currentIndex = defineModel<any>("currentIndex");
+const { pathContext } = defineProps<{
+  pathContext?: DataPathContext;
+}>();
 
 // 处理插槽名称
 const slotName = computed(() => {

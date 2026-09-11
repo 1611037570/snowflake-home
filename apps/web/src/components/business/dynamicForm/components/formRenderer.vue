@@ -21,6 +21,7 @@
         v-else-if="item.field.type === 'group'"
         :currentForm="item.field"
         :currentIndex="item.index"
+        :pathContext="pathContext"
         @removeObject="removeObject"
       />
       <component
@@ -28,6 +29,7 @@
         :is="item.field.type === 'object' ? ContainerObject : ContainerArray"
         :currentForm="item.field"
         :currentIndex="containerIndex ?? item.index"
+        :pathContext="pathContext"
         @removeObject="removeObject"
       />
     </FormItem>
@@ -41,6 +43,7 @@ import { checkForm } from "../code/checkForm.ts";
 import { hasFieldData } from "../code/fieldData";
 import { isFieldMuted, isFieldVisible } from "../code/fieldVisible";
 import { DF_MODULE_SELECT, DF_ROOT_DATA } from "../code/injectionKeys.ts";
+import type { DataPathContext } from "../code/pathContext";
 import ContainerSlot from "./containerSlot.vue";
 import ContainerArray from "./containerArray.vue";
 import ContainerObject from "./containerObject.vue";
@@ -49,8 +52,9 @@ import FormItem from "./formItem.vue";
 
 defineOptions({ name: "FormRenderer" });
 // 容器索引：插槽递归时由上层容器（ContainerSlot）显式传入 array 子项的数据索引；顶层未传
-const { containerIndex } = defineProps<{
+const { containerIndex, pathContext } = defineProps<{
   containerIndex?: any;
+  pathContext?: DataPathContext;
 }>();
 const rootData: any = inject(DF_ROOT_DATA);
 const row: any = useTemplateRef("row");
