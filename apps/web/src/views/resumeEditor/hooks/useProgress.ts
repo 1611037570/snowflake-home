@@ -2,6 +2,7 @@ import { toValue, type MaybeRefOrGetter } from "vue";
 import {
   getArrayDataPath,
   getModelBindings,
+  resolveDataPath,
   walkFormFields,
 } from "@/components/business/dynamicForm";
 
@@ -90,7 +91,8 @@ function analyzeModule(moduleConfig: any, rootData: any) {
           const { src, prop } = getFieldMeta(def);
           if (!src.length) continue;
 
-          const path = src.map((k) => (k === "?" ? idx : k));
+          // 数组子项字段基于当前记录上下文解析为完整数据路径
+          const path = resolveDataPath(src, { basePath: listPath, index: idx });
           const value = getValueByPath(rootData, path);
 
           // 修改：使用 src 最后一个元素判断是否为 content
@@ -154,14 +156,11 @@ function checkTimeline(modules: Array<{ key: string; config: any }>, rootData: a
   const issuesList: any[] = [];
 
   for (const { key, config } of modules) {
-    const moduleData = rootData[key];
-    // 自定义模块记录位于 data.list，其余数组模块直接是 data
-    const items = Array.isArray(moduleData?.data)
-      ? moduleData.data
-      : Array.isArray(moduleData?.data?.list)
-        ? moduleData.data.list
-        : [];
-    if (!items.length) continue;
+    const arrayField = config.fields?.find((field: any) => field.type === "array");
+    const listPath = getArrayDataPath(arrayField) || [];
+    // 时间线记录统一按数组容器声明的数据源读取
+    const items = getValueByPath(rootData, listPath);
+    if (!Array.isArray(items) || !items.length) continue;
 
     let timeFieldPath: string[] = [];
     walkFormFields(config.fields, (field) => {
@@ -180,7 +179,7 @@ function checkTimeline(modules: Array<{ key: string; config: any }>, rootData: a
 
     const entries = items
       .map((item: any, index: number) => {
-        const path = timeFieldPath.map((k) => (k === "?" ? index : k));
+        const path = resolveDataPath(timeFieldPath, { basePath: listPath, index });
         const time = getValueByPath(rootData, path) || [];
         const start = parseMonth(time[0]);
         const end = parseMonth(time[1] ?? time[0]);

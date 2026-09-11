@@ -13,17 +13,22 @@
 </template>
 
 <script setup lang="ts">
-defineProps<{
+import { resolveDataPath, type DataPathContext } from "../code/pathContext";
+import { getPrimaryModelBinding } from "../code/schemaAccess";
+
+const { pathContext } = defineProps<{
   currentForm: any;
   selected?: boolean;
   muted?: boolean;
+  pathContext?: DataPathContext;
 }>();
 const DEFAULT_SPAN = 24;
 // 由数据绑定路径推导 el-form 校验 prop（含数组通配 "?" 的暂不支持校验定位）
 const getProp = (currentForm: any) => {
-  const model = Array.isArray(currentForm.model) ? currentForm.model[0] : currentForm.model;
-  const source = model?.source;
-  return Array.isArray(source) && !source.includes("?") ? source.join(".") : undefined;
+  const source = getPrimaryModelBinding(currentForm)?.source;
+  return Array.isArray(source) && !source.includes("?")
+    ? resolveDataPath(source, pathContext).join(".")
+    : undefined;
 };
 // 处理span值
 const getSpan = (span: number | string | undefined) => {

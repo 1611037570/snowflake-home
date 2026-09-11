@@ -4,10 +4,11 @@ import { createAddItem } from "./addItem";
 
 const arrayField: FormField = {
   type: "array",
+  source: ["education", "data"],
   itemSchema: {
     type: "group",
     model: {
-      source: ["education", "data", "?", "name"],
+      source: ["name"],
       prop: "name",
       defaultValue: "默认名称",
     },

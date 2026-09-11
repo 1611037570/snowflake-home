@@ -38,11 +38,11 @@ describe("schemaData", () => {
         type: "group",
         model: [
           {
-            source: ["image", "data", "?", "collapsed"],
+            source: ["collapsed"],
             prop: "collapsed",
             defaultValue: () => ["1"],
           },
-          { source: ["image", "data", "?", "name"], prop: "name" },
+          { source: ["name"], prop: "name" },
         ],
         fields: [
           {
@@ -50,12 +50,12 @@ describe("schemaData", () => {
             component: "image",
             model: [
               {
-                source: ["image", "data", "?", "name"],
+                source: ["name"],
                 prop: "name",
                 defaultValue: "默认名称",
               },
               {
-                source: ["image", "data", "?", "profile", "size"],
+                source: ["profile", "size"],
                 prop: "size",
                 defaultValue: 50,
               },
@@ -79,7 +79,7 @@ describe("schemaData", () => {
       itemSchema: {
         type: "group",
         model: {
-          source: ["education", "data", "?", "collapsed"],
+          source: ["collapsed"],
           prop: "collapsed",
           defaultValue: ["1"],
         },

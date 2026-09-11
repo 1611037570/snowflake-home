@@ -2,7 +2,7 @@
   <component
     :is="component"
     v-bind="{
-      ...rootData.getDataProxy(currentForm.model, currentIndex),
+      ...rootData.getDataProxy(currentForm.model, currentIndex, pathContext),
       ...currentForm.props,
       // ...$attrs,
     }"
@@ -28,12 +28,10 @@ const { currentIndex, currentForm, pathContext } = defineProps<{
   pathContext?: DataPathContext;
 }>();
 
-void pathContext;
-
 const rootData: any = inject(DF_ROOT_DATA);
 
 const bindEvent = computed(() => {
-  return rootData.setDataProxy(currentForm.model, currentIndex);
+  return rootData.setDataProxy(currentForm.model, currentIndex, pathContext);
 });
 
 const component = computed(() => getComponent(currentForm?.component));
