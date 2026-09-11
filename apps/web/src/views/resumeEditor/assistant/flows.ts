@@ -177,12 +177,12 @@ export const flows: Record<string, Flow> = {
 export const suggestions: SuggestCard[] = [
   {
     icon: "ph:file-plus-duotone",
-    title: "AI生成简历",
+    title: "AI简历生成",
     flow: "resumeCreate",
   },
   {
     icon: "ph:magic-wand-duotone",
-    title: "AI优化简历",
+    title: "AI简历优化",
     flow: "resumeOptimize",
   },
   {
