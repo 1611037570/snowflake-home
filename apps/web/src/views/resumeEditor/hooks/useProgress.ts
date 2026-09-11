@@ -1,4 +1,9 @@
 import { toValue, type MaybeRefOrGetter } from "vue";
+import {
+  getArrayDataPath,
+  getModelBindings,
+  walkFormFields,
+} from "@/components/business/dynamicForm";
 
 // ==================== 工具函数 ====================
 
@@ -57,8 +62,7 @@ function analyzeModule(moduleConfig: any, rootData: any) {
 
       const parentRequired = itemSchema.required === true || field.required === true;
 
-      const firstSrc = getFieldMeta(itemDefs[0]).src;
-      const listPath = firstSrc.slice(0, firstSrc.indexOf("?"));
+      const listPath = getArrayDataPath(field) || [];
       const list = getValueByPath(rootData, listPath);
 
       if (!Array.isArray(list) || list.length === 0) {
@@ -160,24 +164,18 @@ function checkTimeline(modules: Array<{ key: string; config: any }>, rootData: a
     if (!items.length) continue;
 
     let timeFieldPath: string[] = [];
-    const findTimeField = (fields: any[]) => {
-      for (const f of fields) {
-        if (f.type === "object" && f.component === "datePicker" && f.model?.source) {
-          if (f.props?.type === "monthrange") {
-            timeFieldPath = f.model.source;
-            return true;
-          }
-        }
-        if (f.fields) {
-          if (findTimeField(f.fields)) return true;
-        }
-        if (f.itemSchema?.fields) {
-          if (findTimeField(f.itemSchema.fields)) return true;
-        }
+    walkFormFields(config.fields, (field) => {
+      if (timeFieldPath.length) return;
+      const binding = getModelBindings(field)[0];
+      if (
+        field.type === "object" &&
+        field.component === "datePicker" &&
+        field.props?.type === "monthrange" &&
+        binding?.source
+      ) {
+        timeFieldPath = binding.source;
       }
-      return false;
-    };
-    findTimeField(config.fields || []);
+    });
     if (!timeFieldPath.length) continue;
 
     const entries = items

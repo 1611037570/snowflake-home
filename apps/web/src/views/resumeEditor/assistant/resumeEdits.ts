@@ -1,3 +1,4 @@
+import { getModelBindings, walkFormFields } from "@/components/business/dynamicForm";
 import { allConfig } from "@/stores/modules/resume/formConfig";
 
 // 语义化写操作：明确到模块、记录与字段，避免让模型自行拼装整棵数据
@@ -47,23 +48,18 @@ type FieldRule = {
   html?: boolean;
 };
 
-// 递归收集模块表单里的叶子字段规则
-const walkFieldNodes = (nodes: unknown, rules: Map<string, FieldRule>) => {
-  if (!Array.isArray(nodes)) return;
-  nodes.forEach((node: any) => {
-    if (!node || typeof node !== "object") return;
-    const source = Array.isArray(node.source)
-      ? node.source
-      : Array.isArray(node.model?.source)
-        ? node.model.source
-        : null;
-    if (Array.isArray(source) && source.length) {
-      const field = String(source[source.length - 1]);
-      const props = node.props ?? {};
-      const options = Array.isArray(props.list)
-        ? props.list.map((item: any) => (item && typeof item === "object" ? item.value : item))
-        : undefined;
-      const component = node.component || props.component;
+// 基于引擎遍历能力收集模块字段规则，避免 AI 层理解容器嵌套结构
+const collectFieldRules = (source: any, rules: Map<string, FieldRule>) => {
+  walkFormFields(source, (node) => {
+    const props = node.props ?? {};
+    const options = Array.isArray(props.list)
+      ? props.list.map((item: any) => (item && typeof item === "object" ? item.value : item))
+      : undefined;
+    const component = node.component || props.component;
+    getModelBindings(node).forEach((binding) => {
+      const bindingSource = binding.source;
+      if (!Array.isArray(bindingSource) || !bindingSource.length || binding.raw) return;
+      const field = String(bindingSource[bindingSource.length - 1]);
       const prev = rules.get(field);
       rules.set(field, {
         field,
@@ -73,12 +69,7 @@ const walkFieldNodes = (nodes: unknown, rules: Map<string, FieldRule>) => {
         monthRange: component === "datePicker" && props.type === "monthrange",
         html: component === "wangEditor",
       });
-    }
-    if (Array.isArray(node.fields)) walkFieldNodes(node.fields, rules);
-    if (node.itemSchema && typeof node.itemSchema === "object") {
-      if (Array.isArray(node.itemSchema.model)) walkFieldNodes(node.itemSchema.model, rules);
-      if (Array.isArray(node.itemSchema.fields)) walkFieldNodes(node.itemSchema.fields, rules);
-    }
+    });
   });
 };
 
@@ -90,9 +81,9 @@ const getModuleRules = (moduleKey: string): Map<string, FieldRule> => {
     : (allConfig as Record<string, any>)[moduleKey];
   const rules = new Map<string, FieldRule>();
   if (Array.isArray(template)) {
-    walkFieldNodes(template, rules);
+    collectFieldRules(template, rules);
   } else if (template) {
-    walkFieldNodes([template], rules);
+    collectFieldRules(template, rules);
   }
   return rules;
 };

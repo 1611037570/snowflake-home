@@ -1,4 +1,5 @@
 import { storeToRefs } from "pinia";
+import { getModelBindings, walkFormFields } from "@/components/business/dynamicForm";
 import { useResumeStore } from "@/stores";
 import { allConfig } from "@/stores/modules/resume/formConfig";
 import { getExportFileName, resumeTitle } from "../../resumeName";
@@ -37,8 +38,6 @@ const formatText = (value: unknown) => {
     .trim();
 };
 
-const getBindings = (model: any) => (Array.isArray(model) ? model : model ? [model] : []);
-
 const getDataKey = (binding: any) => {
   const source = binding?.source;
   if (!Array.isArray(source) || !source.includes("data")) return "";
@@ -47,8 +46,8 @@ const getDataKey = (binding: any) => {
 };
 
 const collectFieldDefinitions = (fields: any[], definitions: FieldDefinition[]) => {
-  fields?.forEach((field) => {
-    getBindings(field.model).forEach((binding) => {
+  walkFormFields(fields, (field) => {
+    getModelBindings(field).forEach((binding) => {
       const key = getDataKey(binding);
       if (!key || ["collapsed", "hidden", "archived"].includes(key)) return;
       if (definitions.some((item) => item.key === key)) return;
@@ -57,16 +56,6 @@ const collectFieldDefinitions = (fields: any[], definitions: FieldDefinition[]) 
         label: field.label || FIELD_LABELS[key] || binding.prop || key,
       });
     });
-    getBindings(field.itemSchema?.model).forEach((binding) => {
-      const key = getDataKey(binding);
-      if (!key || ["collapsed", "hidden", "archived"].includes(key)) return;
-      if (definitions.some((item) => item.key === key)) return;
-      definitions.push({ key, label: FIELD_LABELS[key] || binding.prop || key });
-    });
-    if (Array.isArray(field.fields)) collectFieldDefinitions(field.fields, definitions);
-    if (Array.isArray(field.itemSchema?.fields)) {
-      collectFieldDefinitions(field.itemSchema.fields, definitions);
-    }
   });
 };
 

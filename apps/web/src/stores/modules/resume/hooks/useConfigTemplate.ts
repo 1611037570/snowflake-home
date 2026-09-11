@@ -1,11 +1,12 @@
 import { toRaw } from "vue";
+import { getArrayDataPath } from "@/components/business/dynamicForm";
 import { allConfig, DEFAULT_USER_FORM } from "../formConfig";
 
 // 按 key 补齐数组模块的子项 list：list 数量与 data 条数一致，缺多少补多少
 function fillArrayListByData(field: any, data: any) {
   const arrayField = field.fields?.find((f: any) => f.type === "array");
   if (!arrayField?.itemSchema) return;
-  const source: string[] | undefined = arrayField.itemSchema.model?.[0]?.source;
+  const source = getArrayDataPath(arrayField);
   if (!Array.isArray(source)) return;
   const index = source.indexOf("?");
   if (index === -1) return;
