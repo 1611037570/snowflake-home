@@ -19,9 +19,7 @@ const aiStore = useAiStore();
 const resumeStore = useResumeStore();
 const { createDefaultMessage } = aiStore;
 // 组装简历域技能、工具与对话创建方法
-const { config: assistantConfig, createChat: createAssistantChat } = useResumeAssistant(
-  resumeStore.addDataRecord,
-);
+const { config: assistantConfig, createChat: createAssistantChat } = useResumeAssistant();
 // 把会话工厂注册到 ai store，供新建话题入口调用
 aiStore.registerResumeAssistantChatFactory(createAssistantChat);
 const { resumeAssistantChat } = storeToRefs(aiStore);
