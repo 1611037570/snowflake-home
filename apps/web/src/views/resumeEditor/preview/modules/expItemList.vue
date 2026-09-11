@@ -2,7 +2,7 @@
 import { computed, inject } from "vue";
 import { getTime } from "../../utils";
 import ResumeField from "../components/resumeField/index.vue";
-import Title from "../theme/title/index.vue";
+import Title from "../components/title/index.vue";
 
 // 属性：模块标识、标题、数据 key
 const props = defineProps({
