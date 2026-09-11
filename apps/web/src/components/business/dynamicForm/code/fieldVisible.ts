@@ -1,10 +1,11 @@
 import type { FieldCheckRule, FormField } from "../types";
+import { resolveDataPath, type DataPath, type DataPathContext } from "./pathContext";
 
-/** 按数据路径逐级取值（沿用 model.source 路径语义；"?" 通配不在显隐判断场景使用） */
-const getValueByPath = (data: any, path: string[]): any => {
+/** 按完整数据路径逐级取值 */
+const getValueByPath = (data: any, path: DataPath): any => {
   let current = data;
   for (const key of path) {
-    if (current == null || key === "?") return undefined;
+    if (current == null) return undefined;
     current = current[key];
   }
   return current;
@@ -20,15 +21,23 @@ const isRuleSatisfied = (value: any, rule: FieldCheckRule): boolean => {
  * - 无 checks.muted 声明：不置灰（默认）
  * - checks.muted 指向的数据满足规则时置灰
  */
-export const isFieldMuted = (data: Record<string, any> | undefined, field: FormField): boolean => {
+export const isFieldMuted = (
+  data: Record<string, any> | undefined,
+  field: FormField,
+  context?: DataPathContext,
+): boolean => {
   const rule = field.checks?.muted;
   if (!rule?.path?.length) return false;
-  return isRuleSatisfied(getValueByPath(data, rule.path), rule);
+  return isRuleSatisfied(getValueByPath(data, resolveDataPath(rule.path, context)), rule);
 };
 
 // 按 DSL visible 协议判断字段是否需要从当前表单移除
-export const isFieldVisible = (data: Record<string, any> | undefined, field: FormField): boolean => {
+export const isFieldVisible = (
+  data: Record<string, any> | undefined,
+  field: FormField,
+  context?: DataPathContext,
+): boolean => {
   const rule = field.checks?.visible;
   if (!rule?.path?.length) return false;
-  return isRuleSatisfied(getValueByPath(data, rule.path), rule);
+  return isRuleSatisfied(getValueByPath(data, resolveDataPath(rule.path, context)), rule);
 };

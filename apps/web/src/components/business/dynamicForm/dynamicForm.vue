@@ -15,6 +15,7 @@ import {
   DF_CURRENT_FORM,
   DF_CURRENT_INDEX,
   DF_CURRENT_LENGTH,
+  DF_CURRENT_PATH_CONTEXT,
   DF_CURRENT_TYPE,
   DF_MODULE_SELECT,
   DF_REMOVE,
@@ -71,6 +72,7 @@ onUnmounted(() => {
 const getContext = () => {
   const currentForm = inject(DF_CURRENT_FORM);
   const currentIndex = inject(DF_CURRENT_INDEX);
+  const pathContext = unref(inject(DF_CURRENT_PATH_CONTEXT, undefined));
   return {
     currentForm,
     currentIndex,
@@ -81,10 +83,10 @@ const getContext = () => {
     removeItem: inject(DF_REMOVE_ITEM, undefined),
     addItem: createAddItem(currentForm, dataProxy),
     // 可添加字段统一通过引擎读写真实数据，业务组件只负责选择字段
-    hasFieldData: (field: any) => hasFieldData(dataProxy.data, field, unref(currentIndex)),
+    hasFieldData: (field: any) => hasFieldData(dataProxy.data, field, pathContext),
     addField: (field: any) =>
-      field?.addable === true && addFieldData(dataProxy.data, field, unref(currentIndex)),
-    getFieldDataKey,
+      field?.addable === true && addFieldData(dataProxy.data, field, pathContext),
+    getFieldDataKey: (field: any) => getFieldDataKey(field, pathContext),
   };
 };
 // 注入对外上下文契约

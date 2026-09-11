@@ -1,5 +1,6 @@
-import type { InjectionKey, Ref } from "vue";
+import type { InjectionKey, MaybeRef, Ref } from "vue";
 import type DataProxy from "./dataProxy";
+import type { DataPathContext } from "./pathContext";
 
 /**
  * 动态表单的注入键常量
@@ -15,6 +16,9 @@ export const DF_ROOT_FORM: InjectionKey<any> = Symbol("df/root/form");
 export const DF_CURRENT_FORM: InjectionKey<any> = Symbol("df/current/form");
 /** 当前容器/子项索引 */
 export const DF_CURRENT_INDEX: InjectionKey<any> = Symbol("df/current/index");
+/** 当前数组记录的数据路径上下文 */
+export const DF_CURRENT_PATH_CONTEXT: InjectionKey<MaybeRef<DataPathContext | undefined>> =
+  Symbol("df/current/pathContext");
 /** 当前容器类型 */
 export const DF_CURRENT_TYPE: InjectionKey<string> = Symbol("df/current/type");
 /** 当前数组容器长度 */
