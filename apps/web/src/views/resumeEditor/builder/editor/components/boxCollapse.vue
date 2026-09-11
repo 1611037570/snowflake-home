@@ -2,16 +2,13 @@
 import { ref } from "vue";
 import { useResumeStore } from "@/stores";
 import { jumpPreview } from "../../../useModuleNav";
+import EditableTitle from "./editableTitle.vue";
 const { proxy } = getCurrentInstance();
 
 defineProps({
   add: {
     type: Boolean,
     default: true,
-  },
-  edit: {
-    type: Boolean,
-    default: false,
   },
   drag: {
     type: Boolean,
@@ -22,7 +19,7 @@ defineProps({
     default: "",
   },
 });
-const name = defineModel("name", {
+const title = defineModel("title", {
   type: String,
   default: "",
 });
@@ -45,9 +42,6 @@ const archived = defineModel("archived", {
   type: Boolean,
   default: false,
 });
-
-// 模块标题：优先读取配置的 name 字段（编辑标题后实时刷新），其次回退数据 name
-const title = computed(() => name.value);
 
 function del() {
   proxy.$confirm(`确定要删除${title.value}模块吗？`, "删除确认").then(() => {
@@ -80,25 +74,6 @@ function handleAdd() {
   // 新增一条子项：引擎内部深拷贝 addConfig 后 push，避免多个子项共享同一份引用
   addItem();
 }
-
-// 标题编辑弹窗状态
-const editVisible = ref(false);
-const editTitle = ref("");
-
-// 打开标题编辑弹窗（预填当前标题）
-function handleEdit() {
-  editTitle.value = title.value;
-  editVisible.value = true;
-}
-
-// 保存编辑后的标题到表单配置
-function handleEditConfirm() {
-  if (!editTitle.value) return;
-  // 标题写入数据源（自定义模块为 data.title），保证预览/配置同步
-  name.value = editTitle.value;
-  currentForm.value.name = editTitle.value;
-  editVisible.value = false;
-}
 </script>
 
 <template>
@@ -114,7 +89,7 @@ function handleEditConfirm() {
               class="container-drag mr-1 cursor-move!"
               @click.stop=""
             />
-            {{ title }}
+            <EditableTitle v-model="title" />
           </div>
           <div class="mr-3 flex items-center gap-3 opacity-0 group-hover:opacity-100">
             <SfTooltip content="定位预览" v-if="!hidden">
@@ -137,14 +112,6 @@ function handleEditConfirm() {
               <SfIcon
                 @click.stop="archiveModule"
                 icon="lucide:archive"
-                size="4"
-                class="cursor-pointer hover:text-sf-theme"
-              />
-            </SfTooltip>
-            <SfTooltip content="编辑标题" v-if="currentForm.key !== 'user' && edit">
-              <SfIcon
-                @click.stop="handleEdit"
-                icon="ic:round-edit"
                 size="4"
                 class="cursor-pointer hover:text-sf-theme"
               />
@@ -172,17 +139,6 @@ function handleEditConfirm() {
         </div>
       </template>
     </SfCollapseItem>
-    <SfModal v-model="editVisible" title="编辑模块标题">
-      <form class="flex w-80 flex-col gap-3 p-3" @submit.prevent="handleEditConfirm">
-        <SfInput v-model="editTitle" placeholder="请输入模块标题" />
-        <footer class="flex justify-end gap-3">
-          <el-button @click="editVisible = false">取消</el-button>
-          <el-button type="primary" :disabled="!editTitle" @click="handleEditConfirm"
-            >保存</el-button
-          >
-        </footer>
-      </form>
-    </SfModal>
   </SfCollapse>
 </template>
 
