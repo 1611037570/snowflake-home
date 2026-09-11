@@ -55,6 +55,8 @@ export interface FormField {
   slot?: string;
   /** 数据绑定配置 */
   model?: ModelBinding | ModelBinding[];
+  /** 是否可由用户按需添加 */
+  addable?: boolean;
   /** 表单控制配置（与 model/props 同级）：由动态表单处理 visible、muted */
   checks?: FieldChecks;
   required?: boolean;

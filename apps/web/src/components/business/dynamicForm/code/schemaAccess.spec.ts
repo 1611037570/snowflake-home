@@ -1,6 +1,11 @@
 import { describe, expect, it, vi } from "vitest";
 import type { FormField } from "../types";
-import { getArrayDataPath, getModelBindings, walkFormFields } from "./schemaAccess";
+import {
+  getArrayDataPath,
+  getModelBindings,
+  getPrimaryModelBinding,
+  walkFormFields,
+} from "./schemaAccess";
 
 describe("schemaAccess", () => {
   it("统一返回单绑定与多绑定", () => {
@@ -17,6 +22,28 @@ describe("schemaAccess", () => {
     expect(getModelBindings(single)).toHaveLength(1);
     expect(getModelBindings(multiple)).toHaveLength(2);
     expect(getModelBindings({})).toEqual([]);
+  });
+
+  it("优先取得组件主值绑定并排除外部字典", () => {
+    const field: FormField = {
+      model: [
+        { source: ["user", "data", "label"], prop: "label" },
+        { source: ["__options", "status"], prop: "list", raw: true },
+        { source: ["user", "data", "status"], prop: "modelValue" },
+      ],
+    };
+
+    expect(getPrimaryModelBinding(field)?.source).toEqual(["user", "data", "status"]);
+    expect(
+      getPrimaryModelBinding({
+        model: { source: ["user", "data", "name"], prop: "name" },
+      })?.source,
+    ).toEqual(["user", "data", "name"]);
+    expect(
+      getPrimaryModelBinding({
+        model: { source: ["__options", "status"], prop: "list", raw: true },
+      }),
+    ).toBeUndefined();
   });
 
   it("按声明顺序遍历普通子字段与数组子项结构", () => {
