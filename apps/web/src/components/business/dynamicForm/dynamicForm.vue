@@ -75,7 +75,7 @@ const getContext = () => ({
   currentLength: inject(DF_CURRENT_LENGTH, undefined),
   removeSelf: inject(DF_REMOVE, undefined),
   removeItem: inject(DF_REMOVE_ITEM, undefined),
-  addItem: createAddItem(inject(DF_CURRENT_FORM)),
+  addItem: createAddItem(inject(DF_CURRENT_FORM), dataProxy),
 });
 // 注入对外上下文契约
 provide(DF_CONTEXT, getContext);

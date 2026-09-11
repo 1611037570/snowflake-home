@@ -9,7 +9,7 @@
       v-for="item in formListWithStyle"
       :class="currentForm?.colClass"
       :currentForm="item.item"
-      :key="item.item.id"
+      :key="item.key"
       :style="item.style"
     >
       <!-- v-bind="$attrs"  -->
@@ -38,8 +38,9 @@
 
 <script setup lang="ts">
 import { getUUID } from "@/utils";
-import { computed, inject, onMounted, onUnmounted, ref, watch } from "vue";
+import { computed, inject, onMounted, onUnmounted, ref, toRaw } from "vue";
 import { useDraggable } from "vue-draggable-plus";
+import { getArrayRecords, moveArrayRecord, removeArrayRecord } from "../code/arrayData.ts";
 import {
   DF_ADD,
   DF_CURRENT_FORM,
@@ -61,19 +62,24 @@ defineProps<{
 const currentForm: any = defineModel("currentForm");
 const rootData: any = inject(DF_ROOT_DATA);
 const isDragging = ref(false);
-// 监听列表变化，为新增的子项补充 id，避免模板 :key 为 undefined 导致重复 key
-// 浅监听列表引用与长度：仅在新增/删除/整体替换时触发，避免子项输入时深度遍历整个列表
-watch(
-  () => [currentForm.value?.list, currentForm.value?.list?.length],
-  ([list]) => {
-    (list as any[])?.forEach((item: any) => {
-      if (!item.id) {
-        item.id = getUUID().slice(0, 4);
-      }
-    });
+// 数组容器直接读取真实记录，并允许拖拽组件整体回写顺序
+const records = computed<any[]>({
+  get: () => getArrayRecords(rootData.data, currentForm.value) || [],
+  set: (value) => {
+    const current = getArrayRecords(rootData.data, currentForm.value);
+    if (current) current.splice(0, current.length, ...value);
   },
-  { immediate: true },
-);
+});
+// 记录标识仅用于渲染，不写入业务数据
+const recordKeys = new WeakMap<object, string>();
+const getRecordKey = (record: any, index: number) => {
+  if (record && typeof record === "object") {
+    const target = toRaw(record);
+    if (!recordKeys.has(target)) recordKeys.set(target, getUUID());
+    return recordKeys.get(target);
+  }
+  return `${index}-${String(record)}`;
+};
 onMounted(async () => {
   await nextTick(() => {});
 
@@ -81,7 +87,7 @@ onMounted(async () => {
     return;
   }
 
-  draggable = useDraggable(row, currentForm.value.list, {
+  draggable = useDraggable(row, records, {
     handle: currentForm.value?.dragClass || "",
     animation: 150,
     ghostClass: "ghost",
@@ -89,12 +95,8 @@ onMounted(async () => {
       e.stopPropagation();
       isDragging.value = true;
     },
-    onEnd(data: any) {
+    onEnd() {
       isDragging.value = false;
-      // 获取旧索引和新索引
-      const { oldIndex, newIndex } = data;
-      if (oldIndex === newIndex) return;
-      rootData.move(currentForm.value.list, oldIndex, newIndex);
     },
   });
 });
@@ -103,17 +105,21 @@ onUnmounted(() => {
   draggable = null;
 });
 
-const length = computed(() => currentForm.value?.list?.length || 0);
+const length = computed(() => records.value.length);
 const getSpan = (item: any) => Number(item.span) || 24;
-const getItemStyle = (isFirstInRow: boolean, isLastInRow: boolean, bottomStyle: string) => ({
-  paddingLeft: isFirstInRow ? "0" : "3px",
-  paddingRight: isLastInRow ? "0" : "3px",
-  ...(isFirstInRow || isLastInRow ? { paddingBottom: "" } : {}),
-});
+const getItemStyle = (isFirstInRow: boolean, isLastInRow: boolean, bottomStyle: string) => {
+  void bottomStyle;
+  return {
+    paddingLeft: isFirstInRow ? "0" : "3px",
+    paddingRight: isLastInRow ? "0" : "3px",
+    ...(isFirstInRow || isLastInRow ? { paddingBottom: "" } : {}),
+  };
+};
 
 // 动态计算样式算法：实现第一个左边距0，最后一个右边距0，其他左右各6
 const formListWithStyle = computed(() => {
-  const list = currentForm.value?.list || [];
+  const list = records.value;
+  const itemSchema = currentForm.value?.itemSchema;
   // 最后一行起始索引
   let lastRowStartIndex = 0;
   // 累计占用的栅格数（跨行统计，用于确定每行起点）
@@ -173,8 +179,9 @@ const formListWithStyle = computed(() => {
     // 3. 如果只是行尾，右边距0，左边距6
     // 4. 中间元素，左右都是6
     return {
-      item,
+      item: itemSchema,
       index,
+      key: getRecordKey(item, index),
       style: getItemStyle(isFirstInRow, isLastInRow, bottomStyle),
     };
   });
@@ -183,17 +190,14 @@ const formListWithStyle = computed(() => {
 // 上移
 const moveItem = (index: any, targetIndex: any) => {
   if (targetIndex < 0 || targetIndex >= length.value) return;
-  const [item] = currentForm.value.list.splice(index, 1);
-  currentForm.value.list.splice(targetIndex, 0, item);
-  rootData.move(currentForm.value.list, index, targetIndex);
+  moveArrayRecord(rootData.data, currentForm.value, index, targetIndex);
 };
 // 删除
 const remove = (index: any) => {
-  rootData.removeItem(currentForm.value.list, index);
-  currentForm.value.list.splice(index, 1);
+  removeArrayRecord(rootData.data, currentForm.value, index);
 };
-// 添加（统一智能新增：array 容器直接新增，内部深拷贝 itemSchema）
-const add = createAddItem(currentForm);
+// 添加操作通过统一数组入口写入真实数据
+const add = createAddItem(currentForm, rootData);
 // 提供当前容器的长度
 provide(DF_CURRENT_LENGTH, length);
 // 提供当前容器的表单数据
