@@ -24,18 +24,8 @@ export function walkFormFields(source: FormFieldSource, visitor: (field: FormFie
   });
 }
 
-// 从数组子项绑定中解析真实数据数组路径，不依赖固定的绑定位置
+// 读取数组容器显式声明的真实数据路径
 export function getArrayDataPath(field: FormField): string[] | undefined {
   if (field.type !== "array") return;
-  // 数组容器显式声明的数据源优先于子项路径推导
-  if (field.source?.length) return [...field.source];
-  if (!field.itemSchema) return;
-  let result: string[] | undefined;
-  walkFormFields(field.itemSchema, (child) => {
-    if (result) return;
-    const binding = getModelBindings(child).find((item) => !item.raw && item.source.includes("?"));
-    if (!binding) return;
-    result = binding.source.slice(0, binding.source.indexOf("?"));
-  });
-  return result;
+  return field.source?.length ? [...field.source] : undefined;
 }

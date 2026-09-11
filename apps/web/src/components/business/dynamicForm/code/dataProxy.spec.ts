@@ -12,8 +12,8 @@ describe("DataProxy", () => {
     const binding = { source: ["name"], prop: "modelValue" };
     const context = { basePath: ["education", "data"], index: 0 };
 
-    expect(proxy.getDataProxy(binding, 0, context)).toEqual({ modelValue: "原名称" });
-    proxy.setDataProxy(binding, 0, context)["update:modelValue"]("新名称");
+    expect(proxy.getDataProxy(binding, context)).toEqual({ modelValue: "原名称" });
+    proxy.setDataProxy(binding, context)["update:modelValue"]("新名称");
     expect(data.education.data[0]?.name).toBe("新名称");
   });
 });
