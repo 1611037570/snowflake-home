@@ -16,7 +16,6 @@
         <Transition name="resume-preview" appear>
           <Preview :class="{ 'ai-generating': isGenerating }" />
         </Transition>
-        <GeneratingMask v-if="isGenerating && !isPrinting" :visible="true" />
       </div>
       <!-- 右侧AI助手栏 -->
       <Transition name="resume-assistant" appear>
@@ -33,16 +32,7 @@
       </Transition>
       <!-- 导出加载浮层：teleport 到 body 全屏展示 -->
       <Teleport to="body">
-        <GeneratingMask
-          v-if="isPrinting"
-          :visible="true"
-          overlay
-          cancelable
-          title="正在导出简历"
-          description="请稍候，文件即将下载"
-          aria-label="正在导出简历，请稍候"
-          @cancel="cancelPrinting"
-        />
+        <ExportMask v-if="isPrinting" @cancel="cancelPrinting" />
       </Teleport>
     </div>
     <!-- 专注写作模式：右上角浮动退出按钮 -->
@@ -68,7 +58,7 @@ import { useRoute, useRouter } from "vue-router";
 import Assistant from "./assistant/index.vue";
 import Builder from "./builder/index.vue";
 import Header from "./components/header/index.vue";
-import GeneratingMask from "./components/generatingMask.vue";
+import ExportMask from "./components/exportMask.vue";
 import DetectTip from "./components/detectTip.vue";
 import Preview from "./preview/index.vue";
 import Toolbar from "./toolbar/index.vue";
