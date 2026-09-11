@@ -16,6 +16,7 @@ import ItemCollapse from "./components/itemCollapse.vue";
 import ImageUpload from "./components/imageUpload/index.vue";
 import More from "./components/more.vue";
 import Video from "./components/video.vue";
+import ModuleManager from "./components/moduleManager.vue";
 
 const resumeStore = useResumeStore();
 const { currentData, runtimeConfig } = storeToRefs(resumeStore);
@@ -76,27 +77,31 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <SfScrollbar class="relative h-full">
-    <!-- 配置同步完成前展示加载效果，避免内容区白屏 -->
-    <div
-      v-if="configSyncing"
-      class="absolute top-1/2 left-1/2 z-20 flex w-full flex-1 -translate-x-1/2 -translate-y-1/2 items-center justify-center gap-3"
-    >
-      <SfIcon icon="line-md:loading-twotone-loop" size="6" />
-      <span class="text-sm text-sf-text-2">正在加载配置</span>
-    </div>
-    <div class="flex w-full flex-col">
-      <SfDynamicForm
-        v-if="runtimeConfig"
-        v-model:form="runtimeConfig"
-        v-model:data="currentData"
-        :components="dynamicComponents"
-        :options="RESUME_OPTIONS"
-      />
-      <ArchivedModules />
-      <AddModule />
-    </div>
-  </SfScrollbar>
+  <div class="relative h-full">
+    <!-- 模块管理固定在编辑区域右上角，不跟随内容滚动 -->
+    <ModuleManager v-if="runtimeConfig" />
+    <SfScrollbar class="relative h-full">
+      <!-- 配置同步完成前展示加载效果，避免内容区白屏 -->
+      <div
+        v-if="configSyncing"
+        class="absolute top-1/2 left-1/2 z-20 flex w-full flex-1 -translate-x-1/2 -translate-y-1/2 items-center justify-center gap-3"
+      >
+        <SfIcon icon="line-md:loading-twotone-loop" size="6" />
+        <span class="text-sm text-sf-text-2">正在加载配置</span>
+      </div>
+      <div class="flex w-full flex-col">
+        <SfDynamicForm
+          v-if="runtimeConfig"
+          v-model:form="runtimeConfig"
+          v-model:data="currentData"
+          :components="dynamicComponents"
+          :options="RESUME_OPTIONS"
+        />
+        <ArchivedModules />
+        <AddModule />
+      </div>
+    </SfScrollbar>
+  </div>
 </template>
 
 <style lang="scss" scoped></style>
