@@ -7,63 +7,46 @@ import { createSkillTools } from "./skills/tool_skill_loader";
 import { useResumeContext } from "./resumeContext";
 import { createResumeTools, RESUME_LANG_CODES } from "./tools";
 import type { AssistantConfig } from "./types";
+import { createResumeOperationBuffer } from "./resumeOperationBuffer";
+import type { ResumeWriteOp } from "@/stores/modules/resume/resumeOperations";
 
 // 简历助手唯一组装器：入口只消费本模块产出的 config 与创建对话方法
-export const useResumeAssistant = (addDataRecord?: (moduleKey: string) => number) => {
+export const useResumeAssistant = () => {
   const aiStore = useAiStore();
   const resumeStore = useResumeStore();
   const { isGenerating } = storeToRefs(resumeStore);
   const { createDefaultChat, createDefaultMessage } = aiStore;
   const resumeContext = useResumeContext();
 
-  // 写操作缓冲：生成期间工具先不落数据，成功回复后再统一写入，避免中间状态暴露给用户
-  const pendingWrites: Array<
-    | { type: "module"; module: string; field: string; value: unknown }
-    | { type: "title"; module: string; title: string }
-    | { type: "record"; module: string; index: number; field: string; value: unknown }
-    | { type: "add"; module: string }
-    | { type: "delete"; module: string; index: number }
-    | { type: "move"; module: string; from: number; to: number }
-    | { type: "lang"; language: string }
-  > = [];
-  const pendingAddCount: Record<string, number> = {};
-  let bufferingWrites = false;
+  const getRecordCount = (moduleKey: string) => {
+    const module = (resumeStore.currentData as any)?.[moduleKey];
+    if (Array.isArray(module?.data)) return module.data.length;
+    if (Array.isArray(module?.data?.list)) return module.data.list.length;
+    return 0;
+  };
+  const operationBuffer = createResumeOperationBuffer({
+    apply: (operations) => resumeStore.applyResumeOperations(operations),
+    getRecordCount,
+  });
+  const pendingLanguages: string[] = [];
+  let bufferingLanguage = false;
+
+  const executeOperation = (operation: ResumeWriteOp) => operationBuffer.execute([operation]);
 
   const bufferedAddRecord = (moduleKey: string): number => {
-    if (!bufferingWrites) return addDataRecord?.(moduleKey) ?? -1;
-    const module = (resumeStore.currentData as any)?.[moduleKey];
-    const records = Array.isArray(module?.data)
-      ? module.data
-      : Array.isArray(module?.data?.list)
-        ? module.data.list
-        : null;
-    if (!records) return -1;
-    const index = records.length + (pendingAddCount[moduleKey] ?? 0);
-    pendingAddCount[moduleKey] = (pendingAddCount[moduleKey] ?? 0) + 1;
-    pendingWrites.push({ type: "add", module: moduleKey });
-    return index;
+    return executeOperation({ op: "addRecord", module: moduleKey }).added[0]?.index ?? -1;
   };
 
   const bufferedRemoveRecord = (moduleKey: string, index: number): boolean => {
-    if (!bufferingWrites) return resumeStore.removeDataRecord(moduleKey, index);
-    pendingWrites.push({ type: "delete", module: moduleKey, index });
-    return true;
+    return executeOperation({ op: "deleteRecord", module: moduleKey, index }).applied;
   };
 
-  const bufferedUpdateModuleField = (
-    moduleKey: string,
-    field: string,
-    value: unknown,
-  ): boolean => {
-    if (!bufferingWrites) return resumeStore.updateModuleField(moduleKey, field, value);
-    pendingWrites.push({ type: "module", module: moduleKey, field, value });
-    return true;
+  const bufferedUpdateModuleField = (moduleKey: string, field: string, value: unknown): boolean => {
+    return executeOperation({ op: "updateModule", module: moduleKey, field, value }).applied;
   };
 
   const bufferedUpdateModuleTitle = (moduleKey: string, title: string): boolean => {
-    if (!bufferingWrites) return resumeStore.updateModuleTitle(moduleKey, title);
-    pendingWrites.push({ type: "title", module: moduleKey, title });
-    return true;
+    return executeOperation({ op: "updateModuleTitle", module: moduleKey, title }).applied;
   };
 
   const bufferedUpdateRecordField = (
@@ -72,17 +55,11 @@ export const useResumeAssistant = (addDataRecord?: (moduleKey: string) => number
     field: string,
     value: unknown,
   ): boolean => {
-    if (!bufferingWrites) {
-      return resumeStore.updateRecordField(moduleKey, index, field, value);
-    }
-    pendingWrites.push({ type: "record", module: moduleKey, index, field, value });
-    return true;
+    return executeOperation({ op: "updateRecord", module: moduleKey, index, field, value }).applied;
   };
 
   const bufferedMoveRecord = (moduleKey: string, from: number, to: number): boolean => {
-    if (!bufferingWrites) return resumeStore.moveDataRecord(moduleKey, from, to);
-    pendingWrites.push({ type: "move", module: moduleKey, from, to });
-    return true;
+    return executeOperation({ op: "moveRecord", module: moduleKey, from, to }).applied;
   };
 
   const updateCurrentLang = (language: string): boolean => {
@@ -94,37 +71,25 @@ export const useResumeAssistant = (addDataRecord?: (moduleKey: string) => number
   // 翻译完成前缓冲语言更新，成功回复后才写入简历 ui
   const bufferedUpdateLanguage = (language: string): boolean => {
     if (!RESUME_LANG_CODES.includes(language)) return false;
-    if (!bufferingWrites) return updateCurrentLang(language);
-    pendingWrites.push({ type: "lang", language });
+    if (!bufferingLanguage) return updateCurrentLang(language);
+    pendingLanguages.push(language);
     return true;
   };
 
-  // 请求成功：按调用顺序把缓冲操作真实写入（新增记录、字段补丁）；返回是否真实写入过
+  // 请求成功：语义操作整批写入，语言更新在内容提交后执行
   const commitDeferredWrites = () => {
-    bufferingWrites = false;
-    Object.keys(pendingAddCount).forEach((key) => delete pendingAddCount[key]);
-    const writes = pendingWrites.splice(0);
-    writes.forEach((item) => {
-      if (item.type === "add") addDataRecord?.(item.module);
-      else if (item.type === "delete") resumeStore.removeDataRecord(item.module, item.index);
-      else if (item.type === "move") resumeStore.moveDataRecord(item.module, item.from, item.to);
-      else if (item.type === "module") {
-        resumeStore.updateModuleField(item.module, item.field, item.value);
-      } else if (item.type === "title") {
-        resumeStore.updateModuleTitle(item.module, item.title);
-      } else if (item.type === "record") {
-        resumeStore.updateRecordField(item.module, item.index, item.field, item.value);
-      }
-      else if (item.type === "lang") updateCurrentLang(item.language);
-    });
-    return writes.length > 0;
+    bufferingLanguage = false;
+    const result = operationBuffer.commit();
+    const languages = pendingLanguages.splice(0);
+    languages.forEach(updateCurrentLang);
+    return result.applied || languages.length > 0;
   };
 
   // 请求取消/失败：丢弃缓冲，避免留下半截新增或修改
   const discardDeferredWrites = () => {
-    bufferingWrites = false;
-    pendingWrites.length = 0;
-    Object.keys(pendingAddCount).forEach((key) => delete pendingAddCount[key]);
+    bufferingLanguage = false;
+    pendingLanguages.length = 0;
+    operationBuffer.discard();
   };
 
   // 请求配置：技能工具、简历工具与请求上下文统一在此装配
@@ -155,7 +120,8 @@ export const useResumeAssistant = (addDataRecord?: (moduleKey: string) => number
       }),
     ],
     beforeRequest: () => {
-      bufferingWrites = true;
+      bufferingLanguage = true;
+      operationBuffer.begin();
       resumeContext.beforeRequest();
     },
     afterRequest: resumeContext.afterRequest,
