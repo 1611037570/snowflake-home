@@ -1,3 +1,4 @@
+import { computed, reactive } from "vue";
 import { describe, expect, it } from "vitest";
 import type { FormField } from "../types";
 import { addFieldData, getFieldDataKey, hasFieldData } from "./fieldData";
@@ -23,6 +24,15 @@ describe("fieldData", () => {
 
     expect(hasFieldData(data, emailField)).toBe(true);
     expect(hasFieldData({ user: { data: {} } }, emailField)).toBe(false);
+  });
+
+  it("新增字段后触发响应式存在性更新", () => {
+    const data = reactive({ user: { data: {} } });
+    const active = computed(() => hasFieldData(data, emailField));
+
+    expect(active.value).toBe(false);
+    addFieldData(data, emailField);
+    expect(active.value).toBe(true);
   });
 
   it("按主数据路径创建统一默认值", () => {

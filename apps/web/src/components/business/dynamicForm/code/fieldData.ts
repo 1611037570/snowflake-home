@@ -28,7 +28,12 @@ export function hasFieldData(rootData: unknown, field: FormField, index?: number
 
   let current: unknown = rootData;
   for (const key of path) {
-    if (!isDataContainer(current) || !Object.prototype.hasOwnProperty.call(current, key)) {
+    // Reflect.has 让 Vue 跟踪缺失属性的存在性变化，hasOwnProperty 保持自有属性语义
+    if (
+      !isDataContainer(current) ||
+      !Reflect.has(current, key) ||
+      !Object.prototype.hasOwnProperty.call(current, key)
+    ) {
       return false;
     }
     current = current[key];
