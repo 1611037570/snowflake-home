@@ -1,3 +1,5 @@
+import { resolveDefaultValue } from "./schemaData";
+
 type Path = string | string[];
 // 定义数据代理选项类型
 interface DataProxyOption {
@@ -41,9 +43,8 @@ class DataProxy<T> {
   }
   private select(options: { source: Path; value?: any; index?: number; defaultValue?: any }): any {
     const { source, value, index = 0 } = options;
-    // 默认值支持函数：每次取值时调用，用于读取运行时设置
-    const defaultValue =
-      typeof options.defaultValue === "function" ? options.defaultValue() : options.defaultValue;
+    // 使用引擎统一默认值规则，保证字段绑定与完整记录生成结果一致
+    const defaultValue = resolveDefaultValue(options.defaultValue);
     const keyPath = this.ensureArray(source);
     // 获取响应式数据的实际值
     const dataValue = this.modelValue.value || this.modelValue;
@@ -73,7 +74,7 @@ class DataProxy<T> {
 
     // 当前key不存在
     if (!current.hasOwnProperty(lastKey)) {
-      current[lastKey] = defaultValue ?? "";
+      current[lastKey] = defaultValue;
     }
     // 设置值（如果有）
     if (options.hasOwnProperty("value")) {

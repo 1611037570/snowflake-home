@@ -275,18 +275,17 @@ export const useResumeStore = defineStore(
       const data = currentData.value;
       const module = data?.[moduleKey];
       const records = resolveModuleRecords(module);
-      if (!records) return -1;
-      records.push(createRecordSkeleton(moduleKey));
+      // 从运行时结构创建记录，确保业务注入的默认值生效
+      const arrayField = findModuleArrayField(runtimeConfig.value?.fields, moduleKey);
+      if (!records || !arrayField?.itemSchema || !Array.isArray(arrayField.list)) return -1;
+      records.push(createRecordSkeleton(arrayField));
       // 同步补一条表单子项，保证编辑器与 data 数量一致
-      const arrayField = findModuleArrayField(currentItem.value, moduleKey);
-      if (arrayField?.itemSchema && Array.isArray(arrayField.list)) {
-        arrayField.list.push({ ...toRaw(arrayField.itemSchema) });
-      }
+      arrayField.list.push({ ...toRaw(arrayField.itemSchema) });
       return records.length - 1;
     }
     // 定位模块对应的数组表单子项列表，用于同步 data 与配置顺序
-    const findModuleArrayField = (item: any, moduleKey: string) => {
-      const moduleField = item?.config?.fields?.find((f: any) => f?.key === moduleKey);
+    const findModuleArrayField = (fields: any[] | undefined, moduleKey: string) => {
+      const moduleField = fields?.find((f: any) => f?.key === moduleKey);
       return moduleField?.fields?.find((f: any) => f?.type === "array");
     };
     // AI 删除记录：同步 data 与表单配置
@@ -297,7 +296,7 @@ export const useResumeStore = defineStore(
       if (!records) return false;
       if (index < 0 || index >= records.length) return false;
       records.splice(index, 1);
-      const arrayField = findModuleArrayField(currentItem.value, moduleKey);
+      const arrayField = findModuleArrayField(currentItem.value?.config?.fields, moduleKey);
       arrayField?.list?.splice(index, 1);
       return true;
     }
@@ -312,7 +311,7 @@ export const useResumeStore = defineStore(
       }
       const [record] = records.splice(from, 1);
       records.splice(to, 0, record);
-      const arrayField = findModuleArrayField(currentItem.value, moduleKey);
+      const arrayField = findModuleArrayField(currentItem.value?.config?.fields, moduleKey);
       if (Array.isArray(arrayField?.list)) {
         const [formItem] = arrayField.list.splice(from, 1);
         arrayField.list.splice(to, 0, formItem);
