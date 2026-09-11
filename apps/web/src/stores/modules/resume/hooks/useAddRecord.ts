@@ -1,3 +1,4 @@
+import { getModelBindings, walkFormFields } from "@/components/business/dynamicForm";
 import { allConfig } from "../formConfig";
 
 /**
@@ -12,11 +13,14 @@ export function createRecordSkeleton(moduleKey: string): Record<string, any> {
   const arrayField = template?.fields?.find((field: any) => field.type === "array");
   const itemSchema = arrayField?.itemSchema;
   const keys = new Set<string>();
-  const collectSource = (source: unknown) => {
+  const collectSource = (source: string[]) => {
     if (Array.isArray(source) && source.length) keys.add(String(source[source.length - 1]));
   };
-  itemSchema?.model?.forEach((item: any) => collectSource(item?.source));
-  itemSchema?.fields?.forEach((field: any) => collectSource(field?.model?.source));
+  walkFormFields(itemSchema, (field) => {
+    getModelBindings(field).forEach((binding) => {
+      if (!binding.raw) collectSource(binding.source);
+    });
+  });
   const record: Record<string, any> = {};
   keys.forEach((key) => {
     record[key] = "";
