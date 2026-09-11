@@ -170,61 +170,7 @@ export const DEFAULT_USER_FORM = [
           clearable: true,
         },
       },
-      {
-        type: "object",
-        label: "邮箱",
-        tip: "常用邮箱",
-        component: "input",
-        span: 12,
-        model: {
-          source: ["user", "data", "email"],
-          prop: "modelValue",
-        },
-        props: {
-          placeholder: "请输入邮箱",
-          clearable: true,
-        },
-        rules: [
-          {
-            pattern: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
-            message: "请输入正确的邮箱格式",
-            trigger: "blur",
-          },
-        ],
-      },
-      {
-        type: "object",
-        label: "参加工作时间",
-        tip: "首次工作年月",
-        component: "datePicker",
-        span: 12,
-        model: {
-          source: ["user", "data", "workTime"],
-          prop: "modelValue",
-        },
-        props: {
-          placeholder: "请输入参加工作时间",
-          valueFormat: "YYYY.MM",
-          type: "month",
-        },
-      },
-      // 微信号
-      {
-        type: "object",
-        label: "微信号",
-        tip: "常用微信号",
-        component: "input",
-        span: 12,
-        model: {
-          source: ["user", "data", "wechat"],
-          prop: "modelValue",
-        },
-        props: {
-          placeholder: "请输入微信号",
-          clearable: true,
-        },
-      },
-      // 更多配置：展开后才渲染其他配置
+      // 可添加信息：数据路径存在后渲染在选择入口上方
       {
         type: "group",
         component: "more",
@@ -238,6 +184,63 @@ export const DEFAULT_USER_FORM = [
           },
         ],
         fields: [
+          {
+            type: "object",
+            label: "邮箱",
+            tip: "常用邮箱",
+            component: "input",
+            span: 12,
+            addable: true,
+            model: {
+              source: ["user", "data", "email"],
+              prop: "modelValue",
+            },
+            props: {
+              placeholder: "请输入邮箱",
+              clearable: true,
+            },
+            rules: [
+              {
+                pattern: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+                message: "请输入正确的邮箱格式",
+                trigger: "blur",
+              },
+            ],
+          },
+          {
+            type: "object",
+            label: "参加工作时间",
+            tip: "首次工作年月",
+            component: "datePicker",
+            span: 12,
+            addable: true,
+            model: {
+              source: ["user", "data", "workTime"],
+              prop: "modelValue",
+            },
+            props: {
+              placeholder: "请输入参加工作时间",
+              valueFormat: "YYYY.MM",
+              type: "month",
+            },
+          },
+          // 微信号
+          {
+            type: "object",
+            label: "微信号",
+            tip: "常用微信号",
+            component: "input",
+            span: 12,
+            addable: true,
+            model: {
+              source: ["user", "data", "wechat"],
+              prop: "modelValue",
+            },
+            props: {
+              placeholder: "请输入微信号",
+              clearable: true,
+            },
+          },
           // 求职状态
           {
             type: "object",
@@ -245,6 +248,7 @@ export const DEFAULT_USER_FORM = [
             tip: "求职状态",
             component: "select",
             span: 12,
+            addable: true,
             model: [
               {
                 source: ["user", "data", "status"],
@@ -268,6 +272,7 @@ export const DEFAULT_USER_FORM = [
             tip: "政治面貌",
             component: "select",
             span: 12,
+            addable: true,
             model: [
               {
                 source: ["user", "data", "political"],
@@ -291,6 +296,7 @@ export const DEFAULT_USER_FORM = [
             tip: "期望城市",
             component: "cityPicker",
             span: 12,
+            addable: true,
             model: {
               source: ["user", "data", "city"],
               prop: "modelValue",
@@ -305,6 +311,7 @@ export const DEFAULT_USER_FORM = [
             tip: "籍贯",
             component: "cityPicker",
             span: 12,
+            addable: true,
             model: {
               source: ["user", "data", "nativePlace"],
               prop: "modelValue",
@@ -319,6 +326,7 @@ export const DEFAULT_USER_FORM = [
             tip: "身高体重",
             component: "heightWeight",
             span: 24,
+            addable: true,
             model: {
               source: ["user", "data", "heightWeight"],
               prop: "modelValue",
