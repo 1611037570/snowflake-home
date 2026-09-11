@@ -3,28 +3,26 @@
     <Transition name="resume-header" appear>
       <Header v-if="!focusMode" />
     </Transition>
-    <div class="relative flex w-full flex-1 overflow-hidden" v-if="currentIndex >= 0">
+    <div v-if="currentIndex >= 0" class="relative flex w-full min-w-0 flex-1 overflow-hidden">
+      <!-- 左侧操作栏 -->
+      <Transition name="resume-builder" appear>
+        <Builder :class="{ 'ai-generating': isGenerating }" />
+      </Transition>
       <div class="relative flex min-w-0 flex-1 overflow-hidden">
-        <!-- 左侧操作栏 -->
-        <Transition name="resume-builder" appear>
-          <Builder :class="{ 'ai-generating': isGenerating }" />
+        <!-- 中间预览栏 -->
+        <Transition name="resume-preview" appear>
+          <Preview :class="{ 'ai-generating': isGenerating }" />
         </Transition>
-        <div class="relative flex min-w-0 flex-1 overflow-hidden">
-          <!-- 中间预览栏 -->
-          <Transition name="resume-preview" appear>
-            <Preview :class="{ 'ai-generating': isGenerating }" />
-          </Transition>
-          <!-- 最右侧系统配置栏：工具栏与 QA 入口整体垂直居中 -->
-          <Transition name="resume-toolbar" appear>
-            <div
-              v-if="!focusMode"
-              class="relative flex h-full flex-col items-center justify-center gap-3"
-            >
-              <Toolbar />
-            </div>
-          </Transition>
-          <AiMask :visible="isGenerating" />
-        </div>
+        <!-- 最右侧系统配置栏：工具栏与 QA 入口整体垂直居中 -->
+        <Transition name="resume-toolbar" appear>
+          <div
+            v-if="!focusMode"
+            class="relative flex h-full flex-col items-center justify-center gap-3"
+          >
+            <Toolbar />
+          </div>
+        </Transition>
+        <AiMask :visible="isGenerating" />
       </div>
       <!-- 导出加载浮层：teleport 到 body 全屏展示 -->
       <Teleport to="body">
@@ -34,7 +32,7 @@
     <!-- 专注写作模式：右上角浮动退出按钮 -->
     <div
       v-if="focusMode"
-      class="fixed top-4 right-4 z-90 flex cursor-pointer items-center gap-2 rounded-full border border-sf-b bg-sf-primary px-4 py-2 text-sm text-sf-text-2 shadow-lg transition-colors hover:text-sf-theme"
+      class="fixed top-3 right-3 z-90 flex cursor-pointer items-center gap-2 rounded-full border border-sf-b bg-sf-primary px-3 py-2 text-sm text-sf-text-2 transition-colors hover:text-sf-theme"
       @click="setFocusMode(false)"
     >
       <SfIcon icon="carbon:minimize" size="5" />
