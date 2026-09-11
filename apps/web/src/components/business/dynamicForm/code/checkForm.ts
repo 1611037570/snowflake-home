@@ -31,15 +31,10 @@ function checkObjectForm(form: any) {
  * @param form 表单项配置
  */
 function checkArrayForm(form: any) {
-  const { component, list } = form;
+  const { itemSchema } = form;
   const errors = [];
-  if (!component) {
-    errors.push("component");
-  }
-  if (!list) {
-    errors.push("list");
-  } else if (!Array.isArray(list)) {
-    errors.push("list 必须是数组");
+  if (!itemSchema) {
+    errors.push("itemSchema");
   }
 
   if (errors.length > 0) {

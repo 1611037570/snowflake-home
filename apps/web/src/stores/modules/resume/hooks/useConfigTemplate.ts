@@ -1,22 +1,4 @@
-import { toRaw } from "vue";
-import { getArrayDataPath } from "@/components/business/dynamicForm";
 import { allConfig, DEFAULT_USER_FORM } from "../formConfig";
-
-// 按 key 补齐数组模块的子项 list：list 数量与 data 条数一致，缺多少补多少
-function fillArrayListByData(field: any, data: any) {
-  const arrayField = field.fields?.find((f: any) => f.type === "array");
-  if (!arrayField?.itemSchema) return;
-  const source = getArrayDataPath(arrayField);
-  if (!Array.isArray(source)) return;
-  const index = source.indexOf("?");
-  if (index === -1) return;
-  const dataArray = source.slice(0, index).reduce((acc: any, key: string) => acc?.[key], data);
-  const count = Array.isArray(dataArray) ? dataArray.length : 0;
-  while (arrayField.list.length < count) {
-    // 先解包响应式代理再克隆，避免 structuredClone 命中 Vue Proxy 抛出 DataCloneError
-    arrayField.list.push({ ...toRaw(arrayField.itemSchema) });
-  }
-}
 
 // 自定义模块：按实际 key 重写模板，标题取自模块 ui
 function rewriteCustomFieldByKey(field: any, customKey: string, customTitle: string) {
@@ -57,15 +39,9 @@ export function getModuleTemplate(key: string) {
   return (allConfig as Record<string, any>)[key];
 }
 
-// 持久化字段列表展开为可渲染的完整 schema，并按 data 补齐数组子项
+// 持久化字段列表展开为可渲染的完整 schema
 export function expandConfigFields(fields: any[], data: any) {
   return fields.map((item: any) => {
-    // 已是完整 schema（旧导入数据）直接保留，仅补子项
-    if (item?.type || item?.component) {
-      const field = structuredClone(item);
-      fillArrayListByData(field, data);
-      return field;
-    }
     const template = getModuleTemplate(item.key);
     if (!template) return item;
     const field = structuredClone(template);
@@ -73,7 +49,6 @@ export function expandConfigFields(fields: any[], data: any) {
       const customTitle = data?.[item.key]?.ui?.title || "";
       rewriteCustomFieldByKey(field, item.key, customTitle);
     }
-    fillArrayListByData(field, data);
     return field;
   });
 }

@@ -60,8 +60,6 @@ export interface FormField {
   required?: boolean;
   /** 子字段（容器递归渲染） */
   fields?: FormField[];
-  /** array 容器的数据列表（运行时填充） */
-  list?: FormField[];
   /** array 容器「新增子项」的模板配置 */
   itemSchema?: FormField;
   /** 是否可拖拽 */
