@@ -1,42 +1,6 @@
 import type { ResumeFieldSchema } from "./resumeSchema";
 import { findResumeModuleSchema } from "./resumeSchemaRegistry";
-
-// 语义化写操作：明确到模块、记录与字段，避免让模型自行拼装整棵数据
-export type ResumeWriteOp =
-  | {
-      op: "updateModule"; // 修改模块级 data 字段
-      module: string;
-      field: string;
-      value: unknown; // 修改后的值
-    }
-  | {
-      op: "updateModuleTitle"; // 修改模块 ui.title 展示标题
-      module: string;
-      title: string;
-    }
-  | {
-      op: "updateRecord"; // 修改记录字段
-      module: string;
-      index: number; // 记录下标（从 0 开始）
-      field: string;
-      value: unknown;
-    }
-  | {
-      op: "addRecord"; // 数组型模块新增记录
-      module: string;
-      record?: Record<string, unknown>; // 新记录内容，键为字段名，值直接写入
-    }
-  | {
-      op: "deleteRecord"; // 删除记录
-      module: string;
-      index: number;
-    }
-  | {
-      op: "moveRecord"; // 调整记录顺序
-      module: string;
-      from: number;
-      to: number;
-    };
+import type { ResumeWriteOp } from "@/stores/modules/resume/resumeOperations";
 
 // 校验单个字段值的时间、枚举与 HTML 格式
 const validateFieldValue = (

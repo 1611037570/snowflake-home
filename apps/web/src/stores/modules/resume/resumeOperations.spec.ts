@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { executeResumeOperations, type ResumeOperationTarget } from "./resumeOperationExecutor";
+import { executeResumeOperations, type ResumeOperationTarget } from "./resumeOperations";
 
 describe("executeResumeOperations", () => {
   it("按顺序执行全部语义化写操作", () => {

@@ -79,4 +79,33 @@ describe("resume store updateModuleField", () => {
     expect(store.updateModuleField("user", "birthday", "2000.01")).toBe(false);
     expect(store.updateModuleField("user", "unknown", "任意内容")).toBe(false);
   });
+
+  it("通过统一入口批量执行语义化操作", async () => {
+    const store = useResumeStore();
+    store.addResume(
+      {
+        data: {
+          user: {
+            data: { name: "张三" },
+            ui: { title: "个人信息" },
+          },
+        },
+        config: { fields: [{ key: "user" }] },
+      },
+      false,
+      true,
+    );
+    await nextTick();
+
+    const result = store.applyResumeOperations([
+      { op: "updateModule", module: "user", field: "name", value: "李四" },
+      { op: "updateModuleTitle", module: "user", title: "基本资料" },
+    ]);
+
+    expect(result).toMatchObject({ applied: true, changed: [0, 1], failed: [] });
+    expect(store.currentData.user).toMatchObject({
+      data: { name: "李四" },
+      ui: { title: "基本资料" },
+    });
+  });
 });
