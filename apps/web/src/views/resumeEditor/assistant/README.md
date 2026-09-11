@@ -6,6 +6,7 @@
 index.vue（薄入口）
   → useResumeAssistant（唯一组装器）
        → skills（技能清单与内容）
+       → resumeSchemaRegistry（表单配置生成的领域结构）
        → resumeContext（简历数据上下文）
        → resumeTools（简历工具）
        → flows（引导流程与建议卡片，由调用方注入 Chat）
@@ -18,7 +19,10 @@ index.vue（薄入口）
 - `index.vue`：只负责拿到组装产物并渲染 Chat。
 - `useResumeAssistant.ts`：唯一组装器，产出 config 与创建对话方法，不再有第二处拼装。
 - `skills/registry.ts`：声明常驻与按需技能，新增技能只需加文件并在清单登记。
-- `skills/*`：只产出统一 Skill 内容，不依赖运行时。
+- `resumeSchema.ts`：将注入的表单结构解析为模块与字段领域结构，不依赖简历业务配置。
+- `resumeSchemaRegistry.ts`：在简历域内注入表单配置和选项字典，提供唯一领域结构实例。
+- `skills/*`：产出统一 Skill 内容；数据规范直接消费领域结构，不维护静态字段表。
+- `resumeEdits.ts`：定义语义化写操作，并基于领域结构统一校验字段与格式。
 - `resumeContext.ts`：集中简历数据读取、头像裁剪。
 - `resumeTools.ts`：只定义简历工具。
 - `flows.ts`：只提供引导流程与建议卡片数据。
