@@ -82,45 +82,6 @@ class DataProxy<T> {
     }
     return current[lastKey];
   }
-  // 获取数组路径（截取 '?' 之前的部分）
-  getPath(options: DataProxyOption | DataProxyOption[] /* 数据配置 */) {
-    const optionsArray: any = this.ensureArray(options);
-    // 跳过 raw 绑定，取第一个真实数据绑定定位数组路径
-    const source =
-      optionsArray.find((item: DataProxyOption) => !item.raw)?.source ?? optionsArray[0].source;
-    const index = source.indexOf("?");
-    return source.slice(0, index);
-  }
-  move(path: any, oldIndex: number, newIndex: number) {
-    const currentPath = this.getPath(path[oldIndex].model);
-    if (!currentPath) return;
-
-    let current = this.data;
-    for (const key of currentPath) {
-      if (current && current[key] !== undefined) {
-        current = current[key];
-      } else {
-        return;
-      }
-    }
-
-    if (Array.isArray(current)) {
-      const [removed] = current.splice(oldIndex, 1);
-      current.splice(newIndex, 0, removed);
-    }
-  }
-  // 删除数组元素
-  removeItem(payload: any, index: number) {
-    const currentPath = this.getPath(payload[0].model);
-    if (!currentPath) return;
-
-    let current = this.data;
-    for (const key of currentPath) {
-      current = current[key];
-    }
-
-    current.splice(index, 1);
-  }
   // 删除对象元素（按 key 定位并删除顶层数据）
   removeObject(payload: any) {
     if (!payload.key) return;

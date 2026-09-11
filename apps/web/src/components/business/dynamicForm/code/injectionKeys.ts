@@ -19,8 +19,6 @@ export const DF_CURRENT_INDEX: InjectionKey<any> = Symbol("df/current/index");
 export const DF_CURRENT_TYPE: InjectionKey<string> = Symbol("df/current/type");
 /** 当前数组容器长度 */
 export const DF_CURRENT_LENGTH: InjectionKey<any> = Symbol("df/current/length");
-/** 数组容器新增方法 */
-export const DF_ADD: InjectionKey<() => void> = Symbol("df/add");
 /** 对象容器删除方法 */
 export const DF_REMOVE: InjectionKey<() => void> = Symbol("df/remove");
 /** 数组容器删除子项方法 */

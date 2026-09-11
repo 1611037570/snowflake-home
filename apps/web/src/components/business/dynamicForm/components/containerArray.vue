@@ -42,7 +42,6 @@ import { computed, inject, onMounted, onUnmounted, ref, toRaw } from "vue";
 import { useDraggable } from "vue-draggable-plus";
 import { getArrayRecords, moveArrayRecord, removeArrayRecord } from "../code/arrayData.ts";
 import {
-  DF_ADD,
   DF_CURRENT_FORM,
   DF_CURRENT_LENGTH,
   DF_CURRENT_TYPE,
@@ -204,8 +203,6 @@ provide(DF_CURRENT_LENGTH, length);
 provide(DF_CURRENT_FORM, currentForm);
 // 提供当前容器的类型
 provide(DF_CURRENT_TYPE, "array");
-// 提供添加方法
-provide(DF_ADD, add);
 // 提供删除方法
 provide(DF_REMOVE_ITEM, remove);
 </script>

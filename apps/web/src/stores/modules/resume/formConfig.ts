@@ -374,7 +374,6 @@ export const DEFAULT_ACCOUNT_FORM = {
       drag: true,
       dragClass: DEFAULT_DRAG_CLASS,
       colClass: DEFAULT_COL_CLASS + " py-1",
-      list: [],
       itemSchema: {
         model: [
           {
@@ -438,7 +437,6 @@ export const DEFAULT_EDUCATION_FORM = {
       drag: true,
       dragClass: DEFAULT_DRAG_CLASS,
       colClass: DEFAULT_COL_CLASS,
-      list: [],
       itemSchema: {
         type: "group",
         component: "itemCollapse",
@@ -705,7 +703,6 @@ export const DEFAULT_WORK_FORM = {
       drag: true,
       dragClass: DEFAULT_DRAG_CLASS,
       colClass: DEFAULT_COL_CLASS,
-      list: [],
       itemSchema: {
         type: "group",
         component: "itemCollapse",
@@ -830,7 +827,6 @@ export const DEFAULT_PROJECT_FORM = {
       drag: true,
       dragClass: DEFAULT_DRAG_CLASS,
       colClass: DEFAULT_COL_CLASS,
-      list: [],
       itemSchema: {
         type: "group",
         component: "itemCollapse",
@@ -956,7 +952,6 @@ export const DEFAULT_VIDEO_FORM = {
       drag: true,
       dragClass: DEFAULT_DRAG_CLASS,
       colClass: DEFAULT_COL_CLASS,
-      list: [],
       itemSchema: {
         // 折叠标题数据源：展示当前视频名称
         model: [
@@ -1045,7 +1040,6 @@ export const DEFAULT_IMAGE_FORM = {
       drag: true,
       dragClass: DEFAULT_DRAG_CLASS,
       colClass: DEFAULT_COL_CLASS,
-      list: [],
       itemSchema: {
         // 折叠标题数据源：展示当前图片作品名称
         model: [
@@ -1141,7 +1135,6 @@ export const DEFAULT_HONOR_FORM = {
       dragClass: DEFAULT_DRAG_CLASS,
       colClass: DEFAULT_COL_CLASS + " py-1",
 
-      list: [],
       itemSchema: {
         // 名称数据源：绑定当前荣誉证书名称
         model: [
@@ -1200,7 +1193,6 @@ export const DEFAULT_CUSTOM_FORM = {
       drag: true,
       dragClass: DEFAULT_DRAG_CLASS,
       colClass: DEFAULT_COL_CLASS,
-      list: [],
       itemSchema: {
         type: "group",
         component: "itemCollapse",

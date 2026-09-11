@@ -29,7 +29,6 @@
         :currentForm="item.field"
         :currentIndex="containerIndex ?? item.index"
         @removeObject="removeObject"
-        @removeItem="removeItem"
       />
     </FormItem>
   </el-row>
@@ -82,12 +81,6 @@ function removeObject(index: number) {
   rootData.removeObject(items.value.fields[index]);
   items.value.fields.splice(index, 1);
 }
-// 移除数组项
-function removeItem(index: number) {
-  rootData.removeItem(items.value.list[index], index);
-  items.value.list.splice(index, 1);
-}
-
 function ensureFieldIds(fields: any[]) {
   if (!fields) return;
   fields.forEach((item: any) => {
