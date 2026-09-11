@@ -34,7 +34,7 @@ onBeforeUnmount(() => {
 });
 
 const resumeStore = useResumeStore();
-const { editorWidth } = storeToRefs(resumeStore);
+const { editorWidth, isGenerating } = storeToRefs(resumeStore);
 
 // 菜单配置
 const menuList = computed(() => [
@@ -81,6 +81,7 @@ const activeMenu = computed(() => menuList.value[activeIndex.value] || menuList.
     <SfTab
       :list="menuList"
       v-model:index="activeIndex"
+      v-model:disabled="isGenerating"
       boxClass=" border-y border-r border-sf-b bg-sf-primary rounded-none  rounded-r-3xl!"
       class="mb-3 rounded-r-3xl!"
     />
