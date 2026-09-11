@@ -171,6 +171,22 @@ export const flows: Record<string, Flow> = {
       userContent: "请根据我的简历进行综合评估：先体检并列出问题清单，再打分并给出改进建议",
     }),
   },
+  // 职业规划：根据简历中的所有经历生成职业规划
+  careerPlanning: {
+    userContent: "帮我生成职业规划",
+    steps: [],
+    build: () => ({
+      userContent: "请根据我的所有经历生成职业规划",
+    }),
+  },
+  // 人生总结：根据简历中的所有经历生成人生总结
+  lifeSummary: {
+    userContent: "帮我生成人生总结",
+    steps: [],
+    build: () => ({
+      userContent: "请根据我的所有经历生成人生总结",
+    }),
+  },
 };
 
 // 建议操作卡片：点击后进入对应引导流程，由调用方传给 Chat
@@ -214,5 +230,15 @@ export const suggestions: SuggestCard[] = [
     icon: "ph:star-duotone",
     title: "AI简历评估",
     flow: "resumeScore",
+  },
+  {
+    icon: "ph:briefcase-duotone",
+    title: "职业规划",
+    flow: "careerPlanning",
+  },
+  {
+    icon: "ph:user-duotone",
+    title: "人生总结",
+    flow: "lifeSummary",
   },
 ];
