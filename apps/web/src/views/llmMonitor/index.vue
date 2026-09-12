@@ -231,10 +231,10 @@ function isToolEvent(type: LlmTraceEventType) {
             <h3 class="font-bold text-sf-text">事件时间线</h3>
             <div class="mt-3 space-y-3">
               <template v-for="event in selectedTrace.events" :key="`${event.time}-${event.type}`">
-                <details v-if="isToolEvent(event.type)" class="rounded-lg bg-sf-bg-2 p-3">
-                  <summary class="flex cursor-pointer flex-wrap items-center justify-between gap-3">
+                <details v-if="isToolEvent(event.type)" class="border-sf-border rounded-lg border p-3">
+                  <summary class="cursor-pointer font-medium text-sf-text">
                     <span class="font-medium text-sf-text">{{ eventText[event.type] }}</span>
-                    <span class="text-sm text-sf-text-2">{{ formatTime(event.time) }}</span>
+                    <span class="ml-3 text-sm text-sf-text-2">{{ formatTime(event.time) }}</span>
                   </summary>
                   <pre
                     v-if="event.data !== undefined"
