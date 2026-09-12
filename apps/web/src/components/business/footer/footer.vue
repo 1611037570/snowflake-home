@@ -17,6 +17,7 @@
       <SfCopyright>
         <div class="cursor-pointer font-medium hover:text-sf-theme">版权声明</div>
       </SfCopyright>
+      <Feedback />
     </div>
     <Banner v-if="banner" />
   </footer>
@@ -27,6 +28,7 @@ import { userNavigation } from "@/utils";
 import dayjs from "dayjs";
 import { computed } from "vue";
 import Banner from "./banner.vue";
+import Feedback from "./feedback.vue";
 
 defineOptions({ name: "SfFooter" });
 
