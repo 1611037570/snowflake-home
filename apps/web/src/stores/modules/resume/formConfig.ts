@@ -17,6 +17,8 @@ export const DEFAULT_USER_FORM = [
     type: "group",
     component: "boxCollapse",
     key: "user",
+    drag: true,
+    dragClass: DEFAULT_DRAG_CLASS,
     // 固定模块：不参与模块拖拽排序
     fixed: true,
     props: {
@@ -275,6 +277,8 @@ export const DEFAULT_USER_FORM = [
       // 可添加信息：数据路径存在后渲染在选择入口上方
       {
         type: "group",
+        drag: true,
+        dragClass: DEFAULT_DRAG_CLASS,
         key: "more",
         component: "more",
         slot: "default",
