@@ -210,13 +210,6 @@ function formatData(value: unknown) {
                 >{{ selectedTrace.output || "等待模型输出" }}</pre
               >
             </details>
-            <details v-if="selectedTrace.usage" class="border-sf-border rounded-lg border p-3">
-              <summary class="cursor-pointer font-medium text-sf-text">Token 用量</summary>
-              <pre
-                class="mt-3 overflow-auto text-sm break-words whitespace-pre-wrap text-sf-text-2"
-                >{{ formatData(selectedTrace.usage) }}</pre
-              >
-            </details>
             <div
               v-if="selectedTrace.error"
               class="rounded-lg border border-sf-error p-3 text-sm text-sf-error"
