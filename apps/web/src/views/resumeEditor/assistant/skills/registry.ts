@@ -19,6 +19,8 @@ import { industryHealthcare } from "./skill_industry_healthcare";
 import { industryInternet } from "./skill_industry_internet";
 import { industryLegal } from "./skill_industry_legal";
 import { industryManufacturing } from "./skill_industry_manufacturing";
+import { industryMedia } from "./skill_industry_media";
+import { industryRealEstate } from "./skill_industry_realestate";
 
 // 常驻技能：按顺序作为系统消息注入对话
 export const residentSkills: SkillFactory[] = [defaultPrompt];
@@ -43,5 +45,7 @@ export const onDemandSkills: SkillFactory[] = [
   industryGovernment,
   industryLegal,
   industryEducation,
+  industryMedia,
+  industryRealEstate,
   industryGeneral,
 ];

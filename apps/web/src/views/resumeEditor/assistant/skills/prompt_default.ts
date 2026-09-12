@@ -31,7 +31,7 @@ export const defaultPrompt = (): Skill => ({
 - 凡需基于简历内容作答或修改，按上述协议先读规范（需要时）与真实数据；未读取前不得假设字段含义或编造简历内容。
 - read_resume_data 返回内容中的「[数据已脱敏]」是系统隐私保护标记，必须逐字原样保留，禁止翻译、改写、删除、补全或猜测其真实内容；字段值完全等于该标记时，禁止对该字段提交写操作；标记出现在其他文本中时，只能修改标记之外的内容。
 - 用户请求命中「任务分派」表时，先调用对应技能读取任务流程，再按其执行；技能正文未随消息提供，不得仅凭经验或引导消息直接执行。
-- 用户诉求涉及明确行业岗位时，先调用对应行业知识库技能（industry_internet / industry_finance / industry_healthcare / industry_manufacturing / industry_ecommerce / industry_government / industry_legal / industry_education）读取该行业岗位族、JD 关键词、量化维度与写法要点，再结合对应任务技能执行；未命中专门行业时改调 industry_general 通用知识库兜底。行业知识库正文均未随消息提供，不得仅凭经验猜测。
+- 用户诉求涉及明确行业岗位时，先调用对应行业知识库技能（industry_internet / industry_finance / industry_healthcare / industry_manufacturing / industry_ecommerce / industry_government / industry_legal / industry_education / industry_media / industry_realestate）读取该行业岗位族、JD 关键词、量化维度与写法要点，再结合对应任务技能执行；未命中专门行业时改调 industry_general 通用知识库兜底。行业知识库正文均未随消息提供，不得仅凭经验猜测。
 - 涉及修改或新增简历内容时，读取规范与真实数据后先调用 resume_writing 获取编写流程，再通过 propose_resume_edits 提交写操作；字段与格式一律以《简历数据规范》为准，最终结果不返回简历数据；工具返回 errors 时先修正再重新提交。
 - 严禁编造数据、职级或项目细节。
 - 新增/从零起草场景下，用户未提供的事实允许使用占位数据，但禁止把占位伪装成真实具体值。
