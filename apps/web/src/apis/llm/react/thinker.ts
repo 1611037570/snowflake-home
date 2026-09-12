@@ -12,6 +12,8 @@ export interface ThinkOptions {
   abortRef?: { current: (() => void) | null };
   // 透传底层流式事件，用于上层计时与统计
   onEvent?: (type: string, data: any) => void;
+  // 复用 ReAct 工作流的观测标识，避免每轮推理提前结束观测。
+  traceId?: string;
 }
 
 // 按 index 合并流式 tool_call 增量，最终得到完整工具调用
@@ -59,10 +61,12 @@ export async function think(
     ...(options.model ? { model: options.model } : {}),
   };
 
-  const { sendFn, abortFn, traceId } = await llm.request({
+  const { sendFn, abortFn } = await llm.request({
     options: requestOptions,
     isStream: true,
     isJson: false,
+    traceId: options.traceId,
+    deferTraceFinish: Boolean(options.traceId),
     onEvent: (type: string, data: any) => {
       if (type === "reasoning") reasoning += data;
       else if (type === "content") content += data;
@@ -78,6 +82,5 @@ export async function think(
     reasoning,
     toolCalls,
     finalAnswer: toolCalls.length ? "" : content,
-    traceId,
   };
 }
