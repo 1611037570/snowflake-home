@@ -3,7 +3,7 @@ import { useResumeStore } from "@/stores";
 import { storeToRefs } from "pinia";
 import { computed, ref } from "vue";
 import { setFieldArchived } from "../../../utils";
-import { isFieldVisible } from "@/components/business/dynamicForm/code/fieldVisible";
+import { isFieldRemoved } from "@/components/business/dynamicForm/code/fieldVisible";
 
 const resumeStore = useResumeStore();
 const { runtimeConfig, currentData } = storeToRefs(resumeStore);
@@ -12,7 +12,7 @@ const { runtimeConfig, currentData } = storeToRefs(resumeStore);
 const archivedList = computed(() => {
   const data = currentData.value;
   const fields = runtimeConfig.value?.fields || [];
-  return fields.filter((field) => isFieldVisible(data, field));
+  return fields.filter((field) => isFieldRemoved(data, field));
 });
 
 // 悬浮面板显隐状态（popover 渲染到 body，避免被侧栏 overflow 裁剪）

@@ -42,7 +42,7 @@ import { getUUID } from "@/utils";
 import { useDraggable } from "vue-draggable-plus";
 import { checkForm } from "../code/checkForm.ts";
 import { hasFieldData } from "../code/fieldData";
-import { isFieldMuted, isFieldVisible } from "../code/fieldVisible";
+import { isFieldMuted, isFieldRemoved } from "../code/fieldVisible";
 import { DF_MODULE_SELECT, DF_ROOT_DATA } from "../code/injectionKeys.ts";
 import type { DataPathContext } from "../code/pathContext";
 import ContainerSlot from "./containerSlot.vue";
@@ -78,7 +78,7 @@ const renderFields = computed(() => {
     .map((field: any, index: number) => ({ field, index }))
     .filter(
       ({ field }: any) =>
-        !isFieldVisible(rootData.data, field, pathContext) &&
+        !isFieldRemoved(rootData.data, field, pathContext) &&
         (!field.addable || hasFieldData(rootData.data, field, pathContext)),
     );
 });
