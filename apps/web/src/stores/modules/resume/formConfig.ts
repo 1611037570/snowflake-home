@@ -292,6 +292,7 @@ export const DEFAULT_USER_FORM = [
                 prop: "hidden",
                 defaultValue: false,
               },
+              removable: true,
             },
             checks: {
               hidden: {
@@ -330,6 +331,7 @@ export const DEFAULT_USER_FORM = [
                 prop: "hidden",
                 defaultValue: false,
               },
+              removable: true,
             },
             checks: {
               hidden: {
@@ -360,6 +362,7 @@ export const DEFAULT_USER_FORM = [
                 prop: "hidden",
                 defaultValue: false,
               },
+              removable: true,
             },
             checks: {
               hidden: {
@@ -397,6 +400,7 @@ export const DEFAULT_USER_FORM = [
                 prop: "hidden",
                 defaultValue: false,
               },
+              removable: true,
             },
             checks: {
               hidden: {
@@ -434,6 +438,7 @@ export const DEFAULT_USER_FORM = [
                 prop: "hidden",
                 defaultValue: false,
               },
+              removable: true,
             },
             checks: {
               hidden: {
@@ -462,6 +467,7 @@ export const DEFAULT_USER_FORM = [
                 prop: "hidden",
                 defaultValue: false,
               },
+              removable: true,
             },
             checks: {
               hidden: {
@@ -490,6 +496,7 @@ export const DEFAULT_USER_FORM = [
                 prop: "hidden",
                 defaultValue: false,
               },
+              removable: true,
             },
             checks: {
               hidden: {

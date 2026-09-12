@@ -28,6 +28,19 @@
               class="pointer-events-none cursor-pointer hover:text-sf-theme"
             />
           </button>
+          <button
+            v-if="currentForm.ui?.removable"
+            type="button"
+            class="flex items-center"
+            @pointerdown.stop.prevent
+            @click.stop.prevent="removeField"
+          >
+            <SfIcon
+              icon="ic:round-delete"
+              size="4"
+              class="pointer-events-none cursor-pointer hover:text-sf-theme"
+            />
+          </button>
         </div>
       </template>
       <slot />
@@ -48,10 +61,13 @@ const { pathContext, hidden, hiddenState } = defineProps<{
 }>();
 const emit = defineEmits<{
   "update:hidden": [value: boolean];
+  remove: [];
 }>();
 const DEFAULT_SPAN = 24;
 // 切换表单项隐藏状态并写回数据
 const toggleHidden = () => emit("update:hidden", !hidden);
+// 删除当前可添加字段
+const removeField = () => emit("remove");
 // 由当前上下文中的完整数据绑定路径推导表单校验属性
 const getProp = (currentForm: any) => {
   const source = getPrimaryModelBinding(currentForm)?.source;
