@@ -14,8 +14,6 @@ export const DF_ROOT_DATA: InjectionKey<DataProxy<any>> = Symbol("df/root/data")
 export const DF_ROOT_FORM: InjectionKey<any> = Symbol("df/root/form");
 /** 当前容器表单配置（统一为 ref） */
 export const DF_CURRENT_FORM: InjectionKey<any> = Symbol("df/current/form");
-/** 当前容器/子项索引 */
-export const DF_CURRENT_INDEX: InjectionKey<any> = Symbol("df/current/index");
 /** 当前数组记录的数据路径上下文 */
 export const DF_CURRENT_PATH_CONTEXT: InjectionKey<MaybeRef<DataPathContext | undefined>> =
   Symbol("df/current/pathContext");
@@ -25,8 +23,6 @@ export const DF_CURRENT_TYPE: InjectionKey<string> = Symbol("df/current/type");
 export const DF_CURRENT_LENGTH: InjectionKey<any> = Symbol("df/current/length");
 /** 对象容器删除方法 */
 export const DF_REMOVE: InjectionKey<() => void> = Symbol("df/remove");
-/** 数组容器删除子项方法 */
-export const DF_REMOVE_ITEM: InjectionKey<(index: number) => void> = Symbol("df/removeItem");
 /**
  * 对外上下文契约（字符串 key，业务组件按约定直接 inject 使用，无需导入）
  * 由各容器节点提供：聚合父级上下文 + 当前容器能力
