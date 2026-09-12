@@ -1,5 +1,5 @@
 <template>
-  <el-col :class="{ 'dynamic-form-muted': muted }" :span="getSpan(currentForm.span)">
+  <el-col :class="{ 'dynamic-form-muted': hiddenState }" :span="getSpan(currentForm.span)">
     <SfFormItem
       :class="['w-full', { 'module-selected-blink': selected }]"
       :label="currentForm.label"
@@ -39,11 +39,11 @@
 import { resolveDataPath, type DataPathContext } from "../code/pathContext";
 import { getPrimaryModelBinding } from "../code/schemaAccess";
 
-const { pathContext, hidden } = defineProps<{
+const { pathContext, hidden, hiddenState } = defineProps<{
   currentForm: any;
   selected?: boolean;
-  muted?: boolean;
   hidden?: boolean;
+  hiddenState?: boolean;
   pathContext?: DataPathContext;
 }>();
 const emit = defineEmits<{

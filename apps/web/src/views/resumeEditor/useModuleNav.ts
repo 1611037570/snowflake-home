@@ -4,7 +4,7 @@ import { useResumeStore } from "@/stores";
 import { CUSTOM_MODULE_ICON, DEFAULT_MODULE_NAMES } from "@/stores/modules/resume/defaultConfig";
 import eventBus from "@/utils/modules/eventBus";
 import { setFieldHidden } from "./utils";
-import { isFieldMuted, isFieldRemoved } from "@/components/business/dynamicForm/code/fieldVisible";
+import { isFieldHidden, isFieldRemoved } from "@/components/business/dynamicForm/code/fieldVisible";
 import { ElNotification } from "element-plus";
 
 // store 为全局单例：模块列表与跳转逻辑无组件级状态，抽为模块级共享，避免各组件重复创建 hook
@@ -41,7 +41,7 @@ const moduleList = computed(() => {
             field.model?.find((item: any) => item?.prop === "title")?.defaultValue ||
             field.key,
           icon,
-          hidden: isFieldMuted(data, field),
+          hidden: isFieldHidden(data, field),
           archived: isFieldRemoved(data, field),
           field, // 原始字段配置，用于恢复隐藏模块
         };
