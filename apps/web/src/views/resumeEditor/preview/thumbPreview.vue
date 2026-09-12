@@ -12,12 +12,6 @@ defineProps({
     type: Object,
     required: true,
   },
-
-  // 主操作按钮文案
-  actionText: {
-    type: String,
-    default: "使用模板",
-  },
 });
 
 const wrapRef = ref(null);
