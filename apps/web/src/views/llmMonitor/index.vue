@@ -89,12 +89,16 @@ function formatData(value: unknown) {
     return String(value);
   }
 }
+
+function isToolEvent(type: LlmTraceEventType) {
+  return type === "tool_call" || type === "tool_result";
+}
 </script>
 
 <template>
   <SfViewContainer>
-    <div class="h-full overflow-auto p-3">
-      <div class="mb-3 flex items-center justify-between gap-3">
+    <div class="flex h-full flex-col overflow-hidden p-3">
+      <div class="mb-3 flex shrink-0 items-center justify-between gap-3">
         <div>
           <h1 class="text-lg font-bold text-sf-text">LLM 请求观测</h1>
           <p class="mt-3 text-sm text-sf-text-2">数据仅保存在当前浏览器，不参与模型请求。</p>
@@ -108,8 +112,10 @@ function formatData(value: unknown) {
         </button>
       </div>
 
-      <div class="grid h-full gap-3 lg:grid-cols-3">
-        <section class="border-sf-border rounded-xl border bg-sf-primary p-3 lg:col-span-1">
+      <div class="grid min-h-0 flex-1 gap-3 lg:grid-cols-3">
+        <section
+          class="border-sf-border min-h-0 overflow-y-auto rounded-xl border bg-sf-primary p-3 lg:col-span-1"
+        >
           <div class="mb-3 flex items-center justify-between">
             <h2 class="font-bold text-sf-text">请求列表</h2>
             <span class="text-sm text-sf-text-2">{{ llmTraces.length }} 条</span>
@@ -144,7 +150,7 @@ function formatData(value: unknown) {
 
         <section
           v-if="selectedTrace"
-          class="border-sf-border rounded-xl border bg-sf-primary p-3 lg:col-span-2"
+          class="border-sf-border min-h-0 overflow-y-auto rounded-xl border bg-sf-primary p-3 lg:col-span-2"
         >
           <div class="flex flex-wrap items-center justify-between gap-3">
             <div>
@@ -224,21 +230,30 @@ function formatData(value: unknown) {
           <div class="mt-3">
             <h3 class="font-bold text-sf-text">事件时间线</h3>
             <div class="mt-3 space-y-3">
-              <div
-                v-for="event in selectedTrace.events"
-                :key="`${event.time}-${event.type}`"
-                class="rounded-lg bg-sf-bg-2 p-3"
-              >
-                <div class="flex flex-wrap items-center justify-between gap-3">
-                  <span class="font-medium text-sf-text">{{ eventText[event.type] }}</span>
-                  <span class="text-sm text-sf-text-2">{{ formatTime(event.time) }}</span>
+              <template v-for="event in selectedTrace.events" :key="`${event.time}-${event.type}`">
+                <details v-if="isToolEvent(event.type)" class="rounded-lg bg-sf-bg-2 p-3">
+                  <summary class="flex cursor-pointer flex-wrap items-center justify-between gap-3">
+                    <span class="font-medium text-sf-text">{{ eventText[event.type] }}</span>
+                    <span class="text-sm text-sf-text-2">{{ formatTime(event.time) }}</span>
+                  </summary>
+                  <pre
+                    v-if="event.data !== undefined"
+                    class="mt-3 overflow-auto text-sm break-words whitespace-pre-wrap text-sf-text-2"
+                    >{{ formatData(event.data) }}</pre
+                  >
+                </details>
+                <div v-else class="rounded-lg bg-sf-bg-2 p-3">
+                  <div class="flex flex-wrap items-center justify-between gap-3">
+                    <span class="font-medium text-sf-text">{{ eventText[event.type] }}</span>
+                    <span class="text-sm text-sf-text-2">{{ formatTime(event.time) }}</span>
+                  </div>
+                  <pre
+                    v-if="event.data !== undefined"
+                    class="mt-3 overflow-auto text-sm break-words whitespace-pre-wrap text-sf-text-2"
+                    >{{ formatData(event.data) }}</pre
+                  >
                 </div>
-                <pre
-                  v-if="event.data !== undefined"
-                  class="mt-3 overflow-auto text-sm break-words whitespace-pre-wrap text-sf-text-2"
-                  >{{ formatData(event.data) }}</pre
-                >
-              </div>
+              </template>
             </div>
           </div>
         </section>
