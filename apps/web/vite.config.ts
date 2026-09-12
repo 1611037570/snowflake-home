@@ -60,6 +60,27 @@ function versionPlugin() {
   };
 }
 
+function copyrightPlugin() {
+  const copyright = "Copyright (c) 2026 Snowflake. Licensed under MIT.";
+  return {
+    name: "copyright-watermark",
+    outputOptions(outputOptions: any) {
+      // Preserve the copyright notice in every generated script.
+      return {
+        ...outputOptions,
+        banner: `/*! ${copyright} */`,
+      };
+    },
+    generateBundle() {
+      this.emitFile({
+        type: "asset",
+        fileName: "COPYRIGHT.txt",
+        source: `${copyright}\n`,
+      });
+    },
+  };
+}
+
 // Vite配置导出
 export default ({ mode }: { mode: string }) => {
   // 从环境文件加载环境变量
@@ -82,6 +103,7 @@ export default ({ mode }: { mode: string }) => {
     plugins: [
       // 版本注入插件（自动生成时间戳版本号）
       versionPlugin(),
+      copyrightPlugin(),
       // Vue 3 插件配置
       vue(),
       // Tailwind CSS插件配置
