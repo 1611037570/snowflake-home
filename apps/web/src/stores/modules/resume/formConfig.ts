@@ -56,6 +56,7 @@ export const DEFAULT_USER_FORM = [
       // 头像
       {
         type: "object",
+        key: "avatar",
         label: "头像",
         component: "imageUpload",
         span: 24,
@@ -68,6 +69,7 @@ export const DEFAULT_USER_FORM = [
       // 姓名
       {
         type: "object",
+        key: "name",
         label: "姓名",
         tip: "真实姓名 推荐必填",
         ui: {
@@ -106,6 +108,7 @@ export const DEFAULT_USER_FORM = [
       // 出生日期
       {
         type: "object",
+        key: "birthday",
         label: "出生日期",
         tip: "出生年月 推荐必填",
         component: "datePicker",
@@ -136,6 +139,7 @@ export const DEFAULT_USER_FORM = [
       // 手机号
       {
         type: "object",
+        key: "phone",
         label: "电话",
         tip: "常用手机号 推荐必填",
         component: "input",
@@ -173,6 +177,7 @@ export const DEFAULT_USER_FORM = [
       // 性别
       {
         type: "object",
+        key: "sex",
         label: "性别",
         tip: "选择性别",
         component: "select",
@@ -209,6 +214,7 @@ export const DEFAULT_USER_FORM = [
       // 求职岗位
       {
         type: "object",
+        key: "position",
         label: "求职岗位",
         tip: "求职岗位 推荐必填",
         component: "input",
@@ -237,6 +243,7 @@ export const DEFAULT_USER_FORM = [
       },
       {
         type: "object",
+        key: "workTime",
         label: "参加工作时间",
         tip: "首次工作年月",
         component: "datePicker",
@@ -268,6 +275,7 @@ export const DEFAULT_USER_FORM = [
       // 可添加信息：数据路径存在后渲染在选择入口上方
       {
         type: "group",
+        key: "more",
         component: "more",
         slot: "default",
         span: 24,
@@ -281,6 +289,7 @@ export const DEFAULT_USER_FORM = [
         fields: [
           {
             type: "object",
+            key: "email",
             label: "邮箱",
             tip: "常用邮箱",
             component: "input",
@@ -320,6 +329,7 @@ export const DEFAULT_USER_FORM = [
           // 微信号
           {
             type: "object",
+            key: "wechat",
             label: "微信号",
             tip: "常用微信号",
             component: "input",
@@ -351,6 +361,7 @@ export const DEFAULT_USER_FORM = [
           // 求职状态
           {
             type: "object",
+            key: "status",
             label: "状态",
             tip: "求职状态",
             component: "select",
@@ -389,6 +400,7 @@ export const DEFAULT_USER_FORM = [
           // 政治面貌
           {
             type: "object",
+            key: "political",
             label: "政治面貌",
             tip: "政治面貌",
             component: "select",
@@ -427,6 +439,7 @@ export const DEFAULT_USER_FORM = [
           // 所在城市
           {
             type: "object",
+            key: "city",
             label: "期望城市",
             tip: "期望城市",
             component: "cityPicker",
@@ -456,6 +469,7 @@ export const DEFAULT_USER_FORM = [
           },
           {
             type: "object",
+            key: "nativePlace",
             label: "籍贯",
             tip: "籍贯",
             component: "cityPicker",
@@ -485,6 +499,7 @@ export const DEFAULT_USER_FORM = [
           },
           {
             type: "object",
+            key: "heightWeight",
             label: "身高体重",
             tip: "身高体重",
             component: "heightWeight",
