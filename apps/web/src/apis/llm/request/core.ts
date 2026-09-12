@@ -192,6 +192,7 @@ class LLM {
       if (type === "reasoning") appendLlmTraceReasoning(traceId, data);
       if (type === "content") appendLlmTraceOutput(traceId, data);
       if (type === "total_tokens") updateLlmTraceUsage(traceId, data);
+      if (type === "usage") updateLlmTraceUsage(traceId, data);
       onEvent?.(type, data);
     };
 
