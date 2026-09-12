@@ -7,12 +7,17 @@ const props = defineProps({
     type: Array,
     default: () => [],
   },
+  isGenerating: {
+    type: Boolean,
+    default: false,
+  },
 });
 const emit = defineEmits(["select"]);
 
 const aiStore = useAiStore();
 
 function createNewChat() {
+  if (props.isGenerating) return;
   aiStore.createNewResumeAssistantChat();
 }
 </script>
@@ -35,6 +40,7 @@ function createNewChat() {
             size="5"
             boxSize="7"
             class="rounded-full text-sf-text-2 hover:bg-sf-theme-2 hover:text-sf-theme-text"
+            :class="{ 'cursor-not-allowed opacity-50': props.isGenerating }"
           />
         </SfTooltip>
       </div>
