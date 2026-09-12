@@ -34,6 +34,8 @@ export interface ThinkResult {
   toolCalls: ToolCall[];
   // 最终答案文本，仅当无工具调用时有值
   finalAnswer: string;
+  // Trace id links tool events to the model request that created them.
+  traceId?: string;
 }
 
 // Observe 层输出：工具执行结果的格式化观察

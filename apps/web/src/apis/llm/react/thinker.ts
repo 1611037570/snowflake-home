@@ -59,7 +59,7 @@ export async function think(
     ...(options.model ? { model: options.model } : {}),
   };
 
-  const { sendFn, abortFn } = await llm.request({
+  const { sendFn, abortFn, traceId } = await llm.request({
     options: requestOptions,
     isStream: true,
     isJson: false,
@@ -78,5 +78,6 @@ export async function think(
     reasoning,
     toolCalls,
     finalAnswer: toolCalls.length ? "" : content,
+    traceId,
   };
 }

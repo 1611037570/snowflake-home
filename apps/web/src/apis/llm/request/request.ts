@@ -1,6 +1,7 @@
 import { createStreamParser, getParser } from "../parser/index";
 import { processResult } from "../parser/stream";
 import { ApiError } from "../errors";
+import { markLlmTraceFirstToken, recordLlmTraceEvent } from "../monitor";
 
 // 组装鉴权请求头
 function processToken(token: string) {
@@ -16,6 +17,7 @@ type RequestConfig = {
   isDebug: boolean;
   provider: string;
   timeout: number;
+  traceId?: string;
 };
 
 /**
@@ -78,6 +80,7 @@ export function createRequest(token: string, isStream = true) {
     isDebug,
     provider,
     timeout,
+    traceId,
   }: RequestConfig) {
     let timeoutId: ReturnType<typeof setTimeout> | null = null;
     let isTimeoutAbort = false;
@@ -92,6 +95,7 @@ export function createRequest(token: string, isStream = true) {
       }, timeout);
 
       // 发送请求
+      recordLlmTraceEvent(traceId || "", "request");
       const response = await fetch(url, {
         signal: controller.signal,
         method,
@@ -116,6 +120,8 @@ export function createRequest(token: string, isStream = true) {
         );
       }
 
+      recordLlmTraceEvent(traceId || "", "response", { status: response.status });
+
       // 流式：读取并解析流数据
       if (isStream) {
         // 检查响应体是否存在
@@ -129,6 +135,7 @@ export function createRequest(token: string, isStream = true) {
 
         let currentContent = "";
         let finalUsage = null;
+        let receivedFirstChunk = false;
 
         // 循环读取流数据
         while (true) {
@@ -143,6 +150,11 @@ export function createRequest(token: string, isStream = true) {
               result,
               usage: finalUsage,
             };
+          }
+
+          if (!receivedFirstChunk) {
+            receivedFirstChunk = true;
+            markLlmTraceFirstToken(traceId || "");
           }
 
           // 解码二进制数据
@@ -160,6 +172,7 @@ export function createRequest(token: string, isStream = true) {
       const parser = getParser({ provider, isStream: false });
       return parser(json);
     } catch (error: any) {
+      recordLlmTraceEvent(traceId || "", "error", error?.message || "请求失败");
       // 检查是否为主动取消
       if (error.name === "AbortError") {
         if (isTimeoutAbort) {
