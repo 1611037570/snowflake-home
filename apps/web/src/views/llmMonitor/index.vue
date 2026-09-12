@@ -65,11 +65,14 @@ function formatFirstToken(trace: LlmTrace) {
   return `${trace.firstTokenTime - trace.startTime} 毫秒`;
 }
 
-function getToken(trace: LlmTrace, type: "input" | "output") {
+function getToken(trace: LlmTrace, type: "input" | "output" | "total") {
   if (!trace.usage || typeof trace.usage !== "object") return "—";
   const usage = trace.usage as Record<string, unknown>;
-  const keys =
-    type === "input" ? ["input_tokens", "prompt_tokens"] : ["output_tokens", "completion_tokens"];
+  const keys = {
+    input: ["input_tokens", "prompt_tokens"],
+    output: ["output_tokens", "completion_tokens"],
+    total: ["total_tokens"],
+  }[type];
   const value = keys.map((key) => usage[key]).find((item) => typeof item === "number");
   return typeof value === "number" ? value.toLocaleString() : "—";
 }
@@ -175,6 +178,12 @@ function formatData(value: unknown) {
               <div class="text-sm text-sf-text-2">输出 Token</div>
               <div class="mt-3 font-medium text-sf-text">
                 {{ getToken(selectedTrace, "output") }}
+              </div>
+            </div>
+            <div class="rounded-lg bg-sf-bg-2 p-3">
+              <div class="text-sm text-sf-text-2">总 Token</div>
+              <div class="mt-3 font-medium text-sf-text">
+                {{ getToken(selectedTrace, "total") }}
               </div>
             </div>
           </div>
