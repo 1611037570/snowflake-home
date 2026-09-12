@@ -16,7 +16,6 @@ import ItemCollapse from "./components/itemCollapse.vue";
 import ImageUpload from "./components/imageUpload/index.vue";
 import More from "./components/more.vue";
 import Video from "./components/video.vue";
-import ModuleManager from "../../components/moduleManager/index.vue";
 
 const resumeStore = useResumeStore();
 const { currentData, runtimeConfig } = storeToRefs(resumeStore);
@@ -78,8 +77,6 @@ onBeforeUnmount(() => {
 
 <template>
   <div class="relative h-full">
-    <!-- 模块管理固定在编辑区域右上角，不跟随内容滚动 -->
-    <ModuleManager v-if="runtimeConfig" />
     <SfScrollbar class="relative h-full">
       <!-- 配置同步完成前展示加载效果，避免内容区白屏 -->
       <div
