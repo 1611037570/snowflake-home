@@ -49,23 +49,37 @@
 </template>
 
 <script setup lang="ts">
+import { computed, inject } from "vue";
+import { isFieldHidden } from "../code/fieldVisible";
+import { DF_ROOT_DATA } from "../code/injectionKeys";
 import { resolveDataPath, type DataPathContext } from "../code/pathContext";
 import { getPrimaryModelBinding } from "../code/schemaAccess";
 
-const { pathContext, hidden, hiddenState } = defineProps<{
+const { pathContext, currentForm, selected } = defineProps<{
   currentForm: any;
   selected?: boolean;
-  hidden?: boolean;
-  hiddenState?: boolean;
   pathContext?: DataPathContext;
 }>();
 const emit = defineEmits<{
-  "update:hidden": [value: boolean];
   remove: [];
 }>();
+const rootData: any = inject(DF_ROOT_DATA);
+const hiddenBinding = computed(() => currentForm?.ui?.hidden);
+// 表单项直接读取自身的隐藏绑定，避免把 UI 状态传给实际输入组件
+const hidden = computed(() => {
+  const binding = hiddenBinding.value;
+  if (!binding || typeof binding !== "object" || !binding.source?.length) return false;
+  return rootData.getDataProxy(binding, pathContext).hidden ?? false;
+});
+// 表单项根据自身配置判断置灰状态
+const hiddenState = computed(() => isFieldHidden(rootData.data, currentForm, pathContext));
 const DEFAULT_SPAN = 24;
 // 切换表单项隐藏状态并写回数据
-const toggleHidden = () => emit("update:hidden", !hidden);
+const toggleHidden = () => {
+  const binding = hiddenBinding.value;
+  if (!binding || typeof binding !== "object" || !binding.source?.length) return;
+  rootData.setDataProxy(binding, pathContext)["update:hidden"]?.(!hidden.value);
+};
 // 删除当前可添加字段
 const removeField = () => emit("remove");
 // 由当前上下文中的完整数据绑定路径推导表单校验属性

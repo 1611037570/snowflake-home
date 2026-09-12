@@ -6,11 +6,8 @@
       :data-fixed="item.field.fixed ? 'true' : undefined"
       v-for="item in renderFields"
       :key="item.field.id"
-      :hiddenState="isFieldHidden(rootData.data, item.field, pathContext)"
       :pathContext="pathContext"
       :selected="isModuleSelected(item.field)"
-      v-bind="getHiddenProps(item.field)"
-      v-on="getHiddenEvents(item.field)"
       @mouseenter="handleModuleMouseEnter(item.field)"
       @remove="removeField(item.field)"
     >
@@ -43,7 +40,7 @@ import { getUUID } from "@/utils";
 import { useDraggable } from "vue-draggable-plus";
 import { checkForm } from "../code/checkForm.ts";
 import { hasFieldData, removeFieldData } from "../code/fieldData";
-import { isFieldHidden, isFieldRemoved } from "../code/fieldVisible";
+import { isFieldRemoved } from "../code/fieldVisible";
 import { DF_MODULE_SELECT, DF_ROOT_DATA } from "../code/injectionKeys.ts";
 import type { DataPathContext } from "../code/pathContext";
 import ContainerSlot from "./containerSlot.vue";
@@ -58,18 +55,6 @@ const { pathContext } = defineProps<{
 }>();
 const rootData: any = inject(DF_ROOT_DATA);
 const row: any = useTemplateRef("row");
-// UI 隐藏状态独立绑定到表单项，避免传给实际输入组件
-const getHiddenProps = (field: any) => {
-  const binding = field.ui?.hidden;
-  if (!binding || typeof binding !== "object" || !binding.source?.length) return {};
-  return rootData.getDataProxy(binding, pathContext);
-};
-// UI 隐藏状态沿用数据代理写回当前数据
-const getHiddenEvents = (field: any) => {
-  const binding = field.ui?.hidden;
-  if (!binding || typeof binding !== "object" || !binding.source?.length) return {};
-  return rootData.setDataProxy(binding, pathContext);
-};
 // 表单数据
 const items = defineModel<any>("items", {});
 // 编辑器移除已归档模块与尚未添加的字段，隐藏模块仍保留在编辑器中

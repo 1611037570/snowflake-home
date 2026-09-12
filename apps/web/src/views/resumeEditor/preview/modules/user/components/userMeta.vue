@@ -3,6 +3,7 @@ import dayjs from "dayjs";
 import { computed, inject } from "vue";
 import ResumeField from "../../../components/resumeField/index.vue";
 import { getPreviewText } from "../../../i18n";
+import { useUserFieldVisibility } from "../useUserFieldVisibility";
 
 // 元信息组件：展示姓名旁的基础信息，宽度策略由使用方通过 class 控制
 const props = defineProps({
@@ -15,12 +16,14 @@ const previewData = inject("previewData");
 const fontValue = inject("fontValue");
 const userInfoLayout = inject("userInfoLayout");
 const user = computed(() => previewData.value?.user?.data || {});
+const { isUserFieldHidden } = useUserFieldVisibility();
 const previewLang = inject(
   "previewLang",
   computed(() => "zh"),
 );
 // 计算年龄
 const age = computed(() => {
+  if (isUserFieldHidden("birthday")) return 0;
   const birthday = user.value?.birthday?.value;
   if (!birthday || !dayjs(birthday).isValid()) return 0;
   const ageDiff = dayjs().diff(dayjs(birthday), "year");
@@ -29,6 +32,7 @@ const age = computed(() => {
 
 // 按个人资料中的参加工作时间计算工作经验，避免依赖全局当前简历状态
 const workYearsNumber = computed(() => {
+  if (isUserFieldHidden("workTime")) return 0;
   const workTime = user.value?.workTime?.value;
   if (!workTime) return 0;
   const startDate = dayjs(workTime);
@@ -41,7 +45,7 @@ const workYearsNumber = computed(() => {
 // 有值字段列表：第一行固定展示性别、年龄、工作年限和求职岗位
 const metaItems = computed(() => {
   const items = [];
-  if (user.value?.sex?.value) items.push({ key: "sex" });
+  if (!isUserFieldHidden("sex") && user.value?.sex?.value) items.push({ key: "sex" });
   if (age.value) {
     items.push({
       text: getPreviewText("age", previewLang.value, { age: age.value }),
@@ -52,7 +56,9 @@ const metaItems = computed(() => {
       text: getPreviewText("expYears", previewLang.value, { years: workYearsNumber.value }),
     });
   }
-  if (user.value?.position?.value) items.push({ key: "position" });
+  if (!isUserFieldHidden("position") && user.value?.position?.value) {
+    items.push({ key: "position" });
+  }
   return items;
 });
 
