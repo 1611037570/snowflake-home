@@ -7,6 +7,29 @@
       :rules="currentForm.rules"
       :tip="currentForm.tip"
     >
+      <template #label>
+        <div class="mb-1 flex h-5 w-full items-center text-sf-base" @click.stop.prevent="">
+          <div class="flex flex-1 items-center">
+            <span class="pr-1 pl-2 text-[15px] text-sf-text">
+              {{ currentForm.label }}
+            </span>
+            <sf-tooltip :content="currentForm.tip" v-if="currentForm.tip" class="text-sf-text" />
+          </div>
+          <button
+            v-if="currentForm.ui?.hidden"
+            type="button"
+            class="flex items-center"
+            @pointerdown.stop.prevent
+            @click.stop.prevent="toggleHidden"
+          >
+            <SfIcon
+              :icon="hidden ? 'lucide:eye' : 'lucide:eye-off'"
+              size="4"
+              class="pointer-events-none cursor-pointer hover:text-sf-theme"
+            />
+          </button>
+        </div>
+      </template>
       <slot />
     </SfFormItem>
   </el-col>
@@ -16,13 +39,19 @@
 import { resolveDataPath, type DataPathContext } from "../code/pathContext";
 import { getPrimaryModelBinding } from "../code/schemaAccess";
 
-const { pathContext } = defineProps<{
+const { pathContext, hidden } = defineProps<{
   currentForm: any;
   selected?: boolean;
   muted?: boolean;
+  hidden?: boolean;
   pathContext?: DataPathContext;
 }>();
+const emit = defineEmits<{
+  "update:hidden": [value: boolean];
+}>();
 const DEFAULT_SPAN = 24;
+// 切换表单项隐藏状态并写回数据
+const toggleHidden = () => emit("update:hidden", !hidden);
 // 由当前上下文中的完整数据绑定路径推导表单校验属性
 const getProp = (currentForm: any) => {
   const source = getPrimaryModelBinding(currentForm)?.source;
