@@ -110,6 +110,19 @@ export const DEFAULT_USER_FORM = [
         tip: "出生年月 推荐必填",
         component: "datePicker",
         span: 12,
+        ui: {
+          hidden: {
+            source: ["ui", "fields", "birthday", "hidden"],
+            prop: "hidden",
+            defaultValue: false,
+          },
+        },
+        checks: {
+          hidden: {
+            path: ["ui", "fields", "birthday", "hidden"],
+            equals: true,
+          },
+        },
         model: {
           source: ["user", "data", "birthday"],
           prop: "modelValue",
@@ -127,6 +140,19 @@ export const DEFAULT_USER_FORM = [
         tip: "常用手机号 推荐必填",
         component: "input",
         span: 12,
+        ui: {
+          hidden: {
+            source: ["ui", "fields", "phone", "hidden"],
+            prop: "hidden",
+            defaultValue: false,
+          },
+        },
+        checks: {
+          hidden: {
+            path: ["ui", "fields", "phone", "hidden"],
+            equals: true,
+          },
+        },
         model: {
           source: ["user", "data", "phone"],
           prop: "modelValue",
@@ -151,6 +177,19 @@ export const DEFAULT_USER_FORM = [
         tip: "选择性别",
         component: "select",
         span: 12,
+        ui: {
+          hidden: {
+            source: ["ui", "fields", "sex", "hidden"],
+            prop: "hidden",
+            defaultValue: false,
+          },
+        },
+        checks: {
+          hidden: {
+            path: ["ui", "fields", "sex", "hidden"],
+            equals: true,
+          },
+        },
         model: [
           {
             source: ["user", "data", "sex"],
@@ -174,6 +213,19 @@ export const DEFAULT_USER_FORM = [
         tip: "求职岗位 推荐必填",
         component: "input",
         span: 12,
+        ui: {
+          hidden: {
+            source: ["ui", "fields", "position", "hidden"],
+            prop: "hidden",
+            defaultValue: false,
+          },
+        },
+        checks: {
+          hidden: {
+            path: ["ui", "fields", "position", "hidden"],
+            equals: true,
+          },
+        },
         model: {
           source: ["user", "data", "position"],
           prop: "modelValue",
@@ -204,6 +256,19 @@ export const DEFAULT_USER_FORM = [
             component: "input",
             span: 12,
             addable: true,
+            ui: {
+              hidden: {
+                source: ["ui", "fields", "email", "hidden"],
+                prop: "hidden",
+                defaultValue: false,
+              },
+            },
+            checks: {
+              hidden: {
+                path: ["ui", "fields", "email", "hidden"],
+                equals: true,
+              },
+            },
             model: {
               source: ["user", "data", "email"],
               prop: "modelValue",
@@ -227,6 +292,19 @@ export const DEFAULT_USER_FORM = [
             component: "datePicker",
             span: 12,
             addable: true,
+            ui: {
+              hidden: {
+                source: ["ui", "fields", "workTime", "hidden"],
+                prop: "hidden",
+                defaultValue: false,
+              },
+            },
+            checks: {
+              hidden: {
+                path: ["ui", "fields", "workTime", "hidden"],
+                equals: true,
+              },
+            },
             model: {
               source: ["user", "data", "workTime"],
               prop: "modelValue",
@@ -245,6 +323,19 @@ export const DEFAULT_USER_FORM = [
             component: "input",
             span: 12,
             addable: true,
+            ui: {
+              hidden: {
+                source: ["ui", "fields", "wechat", "hidden"],
+                prop: "hidden",
+                defaultValue: false,
+              },
+            },
+            checks: {
+              hidden: {
+                path: ["ui", "fields", "wechat", "hidden"],
+                equals: true,
+              },
+            },
             model: {
               source: ["user", "data", "wechat"],
               prop: "modelValue",
@@ -262,6 +353,19 @@ export const DEFAULT_USER_FORM = [
             component: "select",
             span: 12,
             addable: true,
+            ui: {
+              hidden: {
+                source: ["ui", "fields", "status", "hidden"],
+                prop: "hidden",
+                defaultValue: false,
+              },
+            },
+            checks: {
+              hidden: {
+                path: ["ui", "fields", "status", "hidden"],
+                equals: true,
+              },
+            },
             model: [
               {
                 source: ["user", "data", "status"],
@@ -286,6 +390,19 @@ export const DEFAULT_USER_FORM = [
             component: "select",
             span: 12,
             addable: true,
+            ui: {
+              hidden: {
+                source: ["ui", "fields", "political", "hidden"],
+                prop: "hidden",
+                defaultValue: false,
+              },
+            },
+            checks: {
+              hidden: {
+                path: ["ui", "fields", "political", "hidden"],
+                equals: true,
+              },
+            },
             model: [
               {
                 source: ["user", "data", "political"],
@@ -310,6 +427,19 @@ export const DEFAULT_USER_FORM = [
             component: "cityPicker",
             span: 12,
             addable: true,
+            ui: {
+              hidden: {
+                source: ["ui", "fields", "city", "hidden"],
+                prop: "hidden",
+                defaultValue: false,
+              },
+            },
+            checks: {
+              hidden: {
+                path: ["ui", "fields", "city", "hidden"],
+                equals: true,
+              },
+            },
             model: {
               source: ["user", "data", "city"],
               prop: "modelValue",
@@ -325,6 +455,19 @@ export const DEFAULT_USER_FORM = [
             component: "cityPicker",
             span: 12,
             addable: true,
+            ui: {
+              hidden: {
+                source: ["ui", "fields", "nativePlace", "hidden"],
+                prop: "hidden",
+                defaultValue: false,
+              },
+            },
+            checks: {
+              hidden: {
+                path: ["ui", "fields", "nativePlace", "hidden"],
+                equals: true,
+              },
+            },
             model: {
               source: ["user", "data", "nativePlace"],
               prop: "modelValue",
@@ -340,6 +483,19 @@ export const DEFAULT_USER_FORM = [
             component: "heightWeight",
             span: 24,
             addable: true,
+            ui: {
+              hidden: {
+                source: ["ui", "fields", "heightWeight", "hidden"],
+                prop: "hidden",
+                defaultValue: false,
+              },
+            },
+            checks: {
+              hidden: {
+                path: ["ui", "fields", "heightWeight", "hidden"],
+                equals: true,
+              },
+            },
             model: {
               source: ["user", "data", "heightWeight"],
               prop: "modelValue",
