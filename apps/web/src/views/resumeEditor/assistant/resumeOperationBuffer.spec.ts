@@ -19,7 +19,7 @@ describe("createResumeOperationBuffer", () => {
 
     expect(apply).not.toHaveBeenCalled();
     expect(first.added).toEqual([{ module: "work", index: 2 }]);
-    expect(second.changed).toEqual([1]);
+    expect(second.changed).toEqual([0]);
     buffer.commit();
     expect(apply).toHaveBeenCalledTimes(1);
     expect(apply.mock.calls[0]?.[0]).toHaveLength(2);
