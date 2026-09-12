@@ -8,7 +8,6 @@ import { useResumeContext } from "./resumeContext";
 import { createResumeTools, RESUME_LANG_CODES } from "./tools";
 import type { AssistantConfig } from "./types";
 import { createResumeOperationBuffer } from "./resumeOperationBuffer";
-import type { ResumeWriteOp } from "@/stores/modules/resume/resumeOperations";
 
 // 简历助手唯一组装器：入口只消费本模块产出的 config 与创建对话方法
 export const useResumeAssistant = () => {
@@ -30,37 +29,6 @@ export const useResumeAssistant = () => {
   });
   const pendingLanguages: string[] = [];
   let bufferingLanguage = false;
-
-  const executeOperation = (operation: ResumeWriteOp) => operationBuffer.execute([operation]);
-
-  const bufferedAddRecord = (moduleKey: string): number => {
-    return executeOperation({ op: "addRecord", module: moduleKey }).added[0]?.index ?? -1;
-  };
-
-  const bufferedRemoveRecord = (moduleKey: string, index: number): boolean => {
-    return executeOperation({ op: "deleteRecord", module: moduleKey, index }).applied;
-  };
-
-  const bufferedUpdateModuleField = (moduleKey: string, field: string, value: unknown): boolean => {
-    return executeOperation({ op: "updateModule", module: moduleKey, field, value }).applied;
-  };
-
-  const bufferedUpdateModuleTitle = (moduleKey: string, title: string): boolean => {
-    return executeOperation({ op: "updateModuleTitle", module: moduleKey, title }).applied;
-  };
-
-  const bufferedUpdateRecordField = (
-    moduleKey: string,
-    index: number,
-    field: string,
-    value: unknown,
-  ): boolean => {
-    return executeOperation({ op: "updateRecord", module: moduleKey, index, field, value }).applied;
-  };
-
-  const bufferedMoveRecord = (moduleKey: string, from: number, to: number): boolean => {
-    return executeOperation({ op: "moveRecord", module: moduleKey, from, to }).applied;
-  };
 
   const updateCurrentLang = (language: string): boolean => {
     const ui = resumeStore.currentUI;
@@ -110,12 +78,7 @@ export const useResumeAssistant = () => {
       ...createSkillTools(onDemandSkills.map((createSkill) => createSkill())),
       ...createResumeTools({
         getResumeData: resumeContext.getResumeData,
-        addDataRecord: bufferedAddRecord,
-        removeDataRecord: bufferedRemoveRecord,
-        moveDataRecord: bufferedMoveRecord,
-        updateModuleField: bufferedUpdateModuleField,
-        updateModuleTitle: bufferedUpdateModuleTitle,
-        updateRecordField: bufferedUpdateRecordField,
+        applyResumeOperations: operationBuffer.execute,
         updateLanguage: bufferedUpdateLanguage,
       }),
     ],

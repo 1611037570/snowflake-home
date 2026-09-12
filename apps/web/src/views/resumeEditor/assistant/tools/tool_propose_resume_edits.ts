@@ -70,49 +70,11 @@ export const createProposeResumeEditsTool = (ctx: ResumeToolContext): ReactTool 
       console.log("[ReAct] propose_resume_edits 校验未通过:", errors);
       return { applied: false, changed: [], added: [], errors };
     }
-    const added: Array<{ module: string; index: number }> = [];
-    let changedData = false;
-    operations.forEach((op) => {
-      if (!op) return;
-      if (op.op === "updateModule") {
-        if (ctx.updateModuleField?.(op.module, op.field, op.value)) changedData = true;
-        return;
-      }
-      if (op.op === "updateModuleTitle") {
-        if (ctx.updateModuleTitle?.(op.module, op.title)) changedData = true;
-        return;
-      }
-      if (op.op === "updateRecord") {
-        if (ctx.updateRecordField?.(op.module, op.index, op.field, op.value)) {
-          changedData = true;
-        }
-        return;
-      }
-      if (op.op === "addRecord") {
-        const index = ctx.addDataRecord?.(op.module) ?? -1;
-        if (index < 0) return;
-        changedData = true;
-        added.push({ module: op.module, index });
-        if (op.record && typeof op.record === "object") {
-          Object.entries(op.record).forEach(([field, value]) => {
-            if (ctx.updateRecordField?.(op.module, index, field, value)) changedData = true;
-          });
-        }
-        return;
-      }
-      if (op.op === "deleteRecord") {
-        if (ctx.removeDataRecord?.(op.module, op.index)) changedData = true;
-        return;
-      }
-      if (op.op === "moveRecord") {
-        if (ctx.moveDataRecord?.(op.module, op.from, op.to)) changedData = true;
-      }
-    });
+    // 工具只提交完整操作列表，具体执行语义由简历领域统一处理
+    const result = ctx.applyResumeOperations(operations);
     return {
-      applied: changedData,
-      changed: [],
-      added,
-      errors: [],
+      ...result,
+      errors: result.failed.map((index) => `第 ${index + 1} 条操作未执行成功`),
     };
   },
 });
