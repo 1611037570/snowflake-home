@@ -1,7 +1,7 @@
 export const resumeOptimization = () => ({
   id: "resume_optimization",
-  name: "简历优化方法论",
-  description: `指导 AI 优化简历内容质量：结构优化、成果量化、语言精炼、岗位对齐等。`,
+  name: "简历写作方法论",
+  description: `简历写作通用方法论知识库：提供 STAR 法则、成果量化、动词表、模块要点与自查清单，优化、编写、生成或匹配简历内容时读取。`,
   instructions: `# 执行规则
 - 整体优化方向未明确时先询问：整体结构、语言表达、内容润色。
 - 优化不改变事实：不增删经历与数据，不虚构未提供细节。
