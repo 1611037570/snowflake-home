@@ -99,7 +99,8 @@ function sanitize(value: unknown, depth = 0): unknown {
   if (Array.isArray(value)) return value.map((item) => sanitize(item, depth + 1));
   if (value && typeof value === "object") {
     return Object.entries(value).reduce<Record<string, unknown>>((result, [key, item]) => {
-      result[key] = /api[-_]?key|authorization|token|password|secret/i.test(key)
+      result[key] =
+        /api[-_]?key|authorization|password|secret|access_token|refresh_token|id_token/i.test(key)
           ? "[已脱敏]"
           : sanitize(item, depth + 1);
       return result;
