@@ -7,6 +7,7 @@ import { DemoModule } from './modules/demo/demo.module'
 import { LLMModule } from './modules/llm/llm.module'
 import { UtilsModule } from './modules/utils/utils.module'
 import { UserModule } from './modules/user/user.module'
+import { FeedbackModule } from './modules/feedback/feedback.module'
 import { RedisModule } from './shared/redis/redis.module'
 import { RsaModule } from './shared/rsa/rsa.module'
 import { baseConfig } from './config/base.config'
@@ -14,15 +15,16 @@ import { baseConfig } from './config/base.config'
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }), // 全局配置
-    // TypeOrmModule.forRoot({
-    //   ...baseConfig.mysql,
-    //   autoLoadEntities: true,
-    // }),
+    TypeOrmModule.forRoot({
+      ...baseConfig.mysql,
+      autoLoadEntities: true,
+    }),
     // RedisModule,
     // RsaModule,
     DemoModule,
     LLMModule,
     UtilsModule,
+    FeedbackModule,
     // UserModule
   ],
   controllers: [AppController],
