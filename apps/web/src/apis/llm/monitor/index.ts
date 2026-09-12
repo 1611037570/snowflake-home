@@ -11,6 +11,7 @@ export type LlmTraceStatus =
   | "pending"
   | "requesting"
   | "streaming"
+  | "tool_calling"
   | "success"
   | "error"
   | "aborted"

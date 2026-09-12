@@ -162,6 +162,8 @@ class LLM {
       retryCount = 3,
       isStream = true,
       timeout = 300000,
+      traceId: parentTraceId,
+      deferTraceFinish = false,
     } = config;
     const token = this.apiKey || "";
     if (isDebug) {
@@ -181,12 +183,14 @@ class LLM {
           }
         : {}),
     };
-    // Create an isolated trace for the request without changing its transport behavior.
-    const traceId = createLlmTrace({
-      provider: this.provider,
-      model: requestOptions.model,
-      input: requestOptions,
-    });
+    // Create a trace only when the request is not part of a parent workflow.
+    const traceId =
+      parentTraceId ||
+      createLlmTrace({
+        provider: this.provider,
+        model: requestOptions.model,
+        input: requestOptions,
+      });
 
     const handleEvent = (type: string, data: any) => {
       if (type === "reasoning") appendLlmTraceReasoning(traceId, data);
@@ -233,8 +237,8 @@ class LLM {
             if (!res?.aborted) {
               onSuccess?.(res);
               if (!isStream) setLlmTraceOutput(traceId, res);
-              finishLlmTrace(traceId, "success");
-            } else {
+              if (!deferTraceFinish) finishLlmTrace(traceId, "success");
+            } else if (!deferTraceFinish) {
               finishLlmTrace(traceId, "aborted");
             }
             return res;
@@ -259,7 +263,9 @@ class LLM {
         }
       } catch (e) {
         const message = String((e as any)?.message || "请求失败");
-        finishLlmTrace(traceId, message.includes("请求超时") ? "timeout" : "error", message);
+        if (!deferTraceFinish) {
+          finishLlmTrace(traceId, message.includes("请求超时") ? "timeout" : "error", message);
+        }
         onFail?.(e);
         // 统一错误处理
         if (isDebug) {
@@ -301,105 +307,119 @@ class LLM {
     const run = async (initialMessages: ChatMessage[]): Promise<string> => {
       const maxSteps = config.maxSteps ?? 6;
       const history: ChatMessage[] = [...initialMessages];
+      const traceId = createLlmTrace({
+        provider: this.provider,
+        model: config.model || this.model,
+        input: initialMessages,
+      });
       // 标记候选答案后是否已进入反思轮，反思轮输出作为最终结果
       let reflectRound = false;
 
-      // 打印 ReAct 运行过程，便于观察每一步发生了什么
-      console.log("[ReAct] 开始运行，消息数:", initialMessages.length, "最大步数:", maxSteps);
+      try {
+        // 打印 ReAct 运行过程，便于观察每一步发生了什么
+        console.log("[ReAct] 开始运行，消息数:", initialMessages.length, "最大步数:", maxSteps);
 
-      for (let step = 0; step < maxSteps; step++) {
-        if (aborted) throw new AbortError();
-
-        console.log(`[ReAct] 第 ${step + 1}/${maxSteps} 步 Think`);
-        const result = await think(this, history, {
-          tools: config.tools,
-          model: config.model,
-          thinking: config.thinking,
-          abortRef,
-          onEvent: config.onEvent,
-        });
-
-        if (aborted) throw new AbortError();
-
-        if (result.reasoning) console.log("[ReAct] 思考:", result.reasoning);
-        console.log("[ReAct] 工具调用:", result.toolCalls);
-
-        config.onThink?.(result.reasoning);
-
-        // 无工具调用时，若开启反思且尚未进入反思轮，则先注入候选答案并让下一轮审视定稿
-        if (!result.toolCalls.length) {
-          const finalAnswer = extractJson(result.finalAnswer);
-
-          if (config.reflection && !reflectRound && step < maxSteps - 1) {
-            console.log("[ReAct] 候选答案，下一轮反思定稿:", finalAnswer);
-            // 通知前端进入反思轮，便于实时渲染最终正文
-            config.onReflectStart?.();
-            // 候选答案回填历史，反思轮携带完整执行过程审视并输出最终答案
-            history.push({ role: "assistant", content: result.finalAnswer });
-            history.push({
-              role: "user",
-              content: config.reflectPrompt ?? "",
-            });
-            reflectRound = true;
-            continue;
-          }
-
-          console.log("[ReAct] 最终答案:", finalAnswer);
-          if (reflectRound) config.onReflect?.(finalAnswer);
-          config.onFinal?.(finalAnswer);
-          return finalAnswer;
-        }
-
-        // 回填 assistant 的工具调用消息
-        history.push({
-          role: "assistant",
-          content: null,
-          tool_calls: result.toolCalls,
-        });
-
-        for (const toolCall of result.toolCalls) {
+        for (let step = 0; step < maxSteps; step++) {
           if (aborted) throw new AbortError();
 
-          console.log(
-            "[ReAct] 执行工具:",
-            toolCall.function.name,
-            "参数:",
-            toolCall.function.arguments,
-          );
-          recordLlmTraceEvent(result.traceId || "", "tool_call", toolCall);
-          config.onAct?.(toolCall);
-          let raw: unknown;
-          try {
-            raw = await executeToolCall(registry, toolCall);
-          } catch (error) {
-            // 工具执行错误交由宿主决定：返回观察值则恢复继续，否则按原错误中断
-            const fallback = config.onToolError?.({ toolCall, error, tools: config.tools });
-            if (fallback === undefined) throw error;
-            raw = fallback;
-          }
-          const observation = observe(toolCall, raw);
-          // 观察结果可能包含整份简历，截断打印避免刷屏
-          const observePreview =
-            observation.content.length > 2000
-              ? observation.content.slice(0, 2000) + "..."
-              : observation.content;
-          console.log(
-            "[ReAct] 观察结果(" + observation.content.length + "字符):",
-            observePreview,
-          );
-          recordLlmTraceEvent(result.traceId || "", "tool_result", observation);
-          config.onObserve?.(observation);
-
-          history.push({
-            role: "tool",
-            content: observation.content,
-            tool_call_id: observation.toolCallId,
+          console.log(`[ReAct] 第 ${step + 1}/${maxSteps} 步 Think`);
+          const result = await think(this, history, {
+            tools: config.tools,
+            model: config.model,
+            thinking: config.thinking,
+            abortRef,
+            onEvent: config.onEvent,
+            traceId,
           });
-        }
-      }
 
-      console.warn("[ReAct] 超出最大步数");
-      throw new Error("ReAct 超出最大步数");
+          if (aborted) throw new AbortError();
+
+          if (result.reasoning) console.log("[ReAct] 思考:", result.reasoning);
+          console.log("[ReAct] 工具调用:", result.toolCalls);
+
+          config.onThink?.(result.reasoning);
+
+          // 无工具调用时，若开启反思且尚未进入反思轮，则先注入候选答案并让下一轮审视定稿
+          if (!result.toolCalls.length) {
+            const finalAnswer = extractJson(result.finalAnswer);
+
+            if (config.reflection && !reflectRound && step < maxSteps - 1) {
+              console.log("[ReAct] 候选答案，下一轮反思定稿:", finalAnswer);
+              // 通知前端进入反思轮，便于实时渲染最终正文
+              config.onReflectStart?.();
+              // 候选答案回填历史，反思轮携带完整执行过程审视并输出最终答案
+              history.push({ role: "assistant", content: result.finalAnswer });
+              history.push({
+                role: "user",
+                content: config.reflectPrompt ?? "",
+              });
+              reflectRound = true;
+              continue;
+            }
+
+            console.log("[ReAct] 最终答案:", finalAnswer);
+            if (reflectRound) config.onReflect?.(finalAnswer);
+            config.onFinal?.(finalAnswer);
+            finishLlmTrace(traceId, "success");
+            return finalAnswer;
+          }
+
+          // 回填 assistant 的工具调用消息
+          history.push({
+            role: "assistant",
+            content: null,
+            tool_calls: result.toolCalls,
+          });
+          updateLlmTraceStatus(traceId, "tool_calling");
+
+          for (const toolCall of result.toolCalls) {
+            if (aborted) throw new AbortError();
+
+            console.log(
+              "[ReAct] 执行工具:",
+              toolCall.function.name,
+              "参数:",
+              toolCall.function.arguments,
+            );
+            recordLlmTraceEvent(traceId, "tool_call", toolCall);
+            config.onAct?.(toolCall);
+            let raw: unknown;
+            try {
+              raw = await executeToolCall(registry, toolCall);
+            } catch (error) {
+              // 工具执行错误交由宿主决定：返回观察值则恢复继续，否则按原错误中断
+              const fallback = config.onToolError?.({ toolCall, error, tools: config.tools });
+              if (fallback === undefined) throw error;
+              raw = fallback;
+            }
+            const observation = observe(toolCall, raw);
+            // 观察结果可能包含整份简历，截断打印避免刷屏
+            const observePreview =
+              observation.content.length > 2000
+                ? observation.content.slice(0, 2000) + "..."
+                : observation.content;
+            console.log(
+              "[ReAct] 观察结果(" + observation.content.length + "字符):",
+              observePreview,
+            );
+            recordLlmTraceEvent(traceId, "tool_result", observation);
+            config.onObserve?.(observation);
+
+            history.push({
+              role: "tool",
+              content: observation.content,
+              tool_call_id: observation.toolCallId,
+            });
+          }
+        }
+
+        console.warn("[ReAct] 超出最大步数");
+        throw new Error("ReAct 超出最大步数");
+      } catch (error) {
+        const message = String((error as any)?.message || "ReAct 执行失败");
+        finishLlmTrace(traceId, error instanceof AbortError ? "aborted" : "error", message);
+        throw error;
+      }
     };
 
     return { abort, run };
