@@ -65,6 +65,15 @@ function formatFirstToken(trace: LlmTrace) {
   return `${trace.firstTokenTime - trace.startTime} 毫秒`;
 }
 
+function getToken(trace: LlmTrace, type: "input" | "output") {
+  if (!trace.usage || typeof trace.usage !== "object") return "—";
+  const usage = trace.usage as Record<string, unknown>;
+  const keys =
+    type === "input" ? ["input_tokens", "prompt_tokens"] : ["output_tokens", "completion_tokens"];
+  const value = keys.map((key) => usage[key]).find((item) => typeof item === "number");
+  return typeof value === "number" ? value.toLocaleString() : "—";
+}
+
 function formatData(value: unknown) {
   if (value === undefined) return "";
   if (typeof value === "string") return value;
@@ -155,6 +164,18 @@ function formatData(value: unknown) {
             <div class="rounded-lg bg-sf-bg-2 p-3">
               <div class="text-sm text-sf-text-2">供应商</div>
               <div class="mt-3 font-medium text-sf-text">{{ selectedTrace.provider }}</div>
+            </div>
+            <div class="rounded-lg bg-sf-bg-2 p-3">
+              <div class="text-sm text-sf-text-2">输入 Token</div>
+              <div class="mt-3 font-medium text-sf-text">
+                {{ getToken(selectedTrace, "input") }}
+              </div>
+            </div>
+            <div class="rounded-lg bg-sf-bg-2 p-3">
+              <div class="text-sm text-sf-text-2">输出 Token</div>
+              <div class="mt-3 font-medium text-sf-text">
+                {{ getToken(selectedTrace, "output") }}
+              </div>
             </div>
           </div>
 
