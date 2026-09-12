@@ -40,6 +40,7 @@ export const openaiStreamParser = (line: string, { onEvent, isDebug }: any) => {
     toolCalls.forEach((tc: any) => onEvent?.("tool_call_delta", tc));
   }
   if (typeof totalTokens === "number") onEvent?.("total_tokens", totalTokens);
+  if (data.usage && typeof data.usage === "object") onEvent?.("usage", data.usage);
 
   return {
     content,
