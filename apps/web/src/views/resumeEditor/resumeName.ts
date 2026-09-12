@@ -7,9 +7,7 @@ import dayjs from "dayjs";
 import { useResumeStore } from "@/stores";
 
 const resumeStore = useResumeStore();
-const { currentData, currentItem } = storeToRefs(resumeStore);
-
-const user = computed(() => currentData.value?.user?.data || {});
+const { currentItem } = storeToRefs(resumeStore);
 
 // 计算工作年限数字（规则：满5个月按1年算，以此类推）
 const calcWorkYears = (workTime: string) => {
@@ -24,11 +22,6 @@ const calcWorkYears = (workTime: string) => {
 
   return years > 0 ? years : 0;
 };
-export const workYearsNumber = computed(() => calcWorkYears(user.value?.workTime));
-// 中文工作年限文本：供简历标题与导出文件名等场景使用
-export const workYears = computed(() =>
-  workYearsNumber.value ? `${workYearsNumber.value}年经验` : "",
-);
 // 根据完整简历项生成标题，自定义模式优先使用自定义标题
 export function getResumeTitle(resumeItem: any) {
   const defaultName = "未命名简历";
