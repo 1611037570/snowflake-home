@@ -26,4 +26,8 @@ export const onDemandSkills: SkillFactory[] = [
   resumeScore,
   resumeTranslate,
   selfIntro,
+  industryInternet,
+  industryFinance,
+  industryHealthcare,
+  industryManufacturing,
 ];
