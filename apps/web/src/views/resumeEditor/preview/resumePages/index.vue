@@ -4,6 +4,7 @@
 // 本组件只做渲染编排（数据代理/主题注入/测量分页），导出、智能一页等编辑功能由上层 page.vue 注册
 import { computed, ref } from "vue";
 import { isFieldHidden } from "@/components/business/dynamicForm/code/fieldVisible";
+import { getPrimaryModelBinding } from "@/components/business/dynamicForm/code/schemaAccess";
 import { expandConfigFields } from "@/stores/modules/resume/hooks/useConfigTemplate";
 import MeasureContent from "../components/measureContent.vue";
 import PreviewSinglePage from "./previewSinglePage.vue";
@@ -77,6 +78,24 @@ const allModules = computed(() => {
   const fields = expandConfigFields(props.item.config?.fields || [], props.item.data);
   return fields.filter((field) => !isFieldHidden(props.item.data, field));
 });
+const userHiddenFields = computed(() => {
+  const hiddenFields = new Set();
+  const userField = allModules.value.find((field) => field.key === "user");
+  const collectFields = (fields = []) => {
+    fields.forEach((field) => {
+      if (field.type === "group") collectFields(field.fields);
+      const source = getPrimaryModelBinding(field)?.source;
+      const key = Array.isArray(source) ? source[source.length - 1] : undefined;
+      if (key && field.checks?.hidden && isFieldHidden(props.item.data, field)) {
+        hiddenFields.add(key);
+      }
+    });
+  };
+  collectFields(userField?.fields);
+  return hiddenFields;
+});
+// 将用户模块字段的隐藏状态提供给预览子组件
+provide("userHiddenFields", userHiddenFields);
 const { measureDone, pages, pageStyleText, moduleList } = useResumePages({
   measureRef,
   ui,
