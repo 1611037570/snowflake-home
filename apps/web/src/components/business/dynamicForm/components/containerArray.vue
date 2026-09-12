@@ -16,17 +16,15 @@
       <!-- v-bind="$attrs"  -->
       <ContainerSlot
         v-if="item.item.type === 'group'"
-        :currentIndex="item.index"
         :currentForm="item.item"
         :pathContext="getPathContext(item.index)"
-        @removeObject="remove"
+        @removeObject="remove(item.index)"
       />
       <ContainerObject
         v-else
-        :currentIndex="item.index"
         :currentForm="item.item"
         :pathContext="getPathContext(item.index)"
-        @removeObject="remove"
+        @removeObject="remove(item.index)"
       />
       <div class="flex" v-if="item.item.ui">
         <el-button @click="moveItem(item.index, item.index - 1)" :disabled="item.index === 0"
@@ -54,7 +52,6 @@ import {
   DF_CURRENT_FORM,
   DF_CURRENT_LENGTH,
   DF_CURRENT_TYPE,
-  DF_REMOVE_ITEM,
   DF_ROOT_DATA,
 } from "../code/injectionKeys.ts";
 import { createAddItem } from "../code/addItem.ts";
@@ -64,7 +61,6 @@ import FormItem from "./formItem.vue";
 const row: any = useTemplateRef("row");
 
 const { pathContext } = defineProps<{
-  currentIndex?: any;
   pathContext?: DataPathContext;
 }>();
 const currentForm: any = defineModel("currentForm");
@@ -224,8 +220,6 @@ provide(DF_CURRENT_LENGTH, length);
 provide(DF_CURRENT_FORM, currentForm);
 // 提供当前容器的类型
 provide(DF_CURRENT_TYPE, "array");
-// 提供删除方法
-provide(DF_REMOVE_ITEM, remove);
 </script>
 
 <style scoped>

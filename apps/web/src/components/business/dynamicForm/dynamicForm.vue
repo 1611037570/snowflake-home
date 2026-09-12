@@ -13,13 +13,11 @@ import { addFieldData, getFieldDataKey, hasFieldData } from "./code/fieldData";
 import {
   DF_CONTEXT,
   DF_CURRENT_FORM,
-  DF_CURRENT_INDEX,
   DF_CURRENT_LENGTH,
   DF_CURRENT_PATH_CONTEXT,
   DF_CURRENT_TYPE,
   DF_MODULE_SELECT,
   DF_REMOVE,
-  DF_REMOVE_ITEM,
   DF_ROOT_DATA,
   DF_ROOT_FORM,
   INSTANCE_COMPONENTS,
@@ -71,18 +69,14 @@ onUnmounted(() => {
 // 对外上下文读取器：根组件统一提供，业务组件调用时基于自身实例解析最近容器的能力，无需容器聚合
 const getContext = () => {
   const currentForm = inject(DF_CURRENT_FORM);
-  const currentIndex = inject(DF_CURRENT_INDEX);
   const pathContext = unref(inject(DF_CURRENT_PATH_CONTEXT, undefined));
   return {
     currentForm,
-    currentIndex,
     currentType: inject(DF_CURRENT_TYPE),
     // 容器能力按容器类型选择性提供，缺失时注入默认值避免 Vue 告警
     currentLength: inject(DF_CURRENT_LENGTH, undefined),
     // 当前节点删除能力已由所在容器绑定目标，调用方无需传递索引
     removeCurrent: inject(DF_REMOVE, undefined),
-    removeSelf: inject(DF_REMOVE, undefined),
-    removeItem: inject(DF_REMOVE_ITEM, undefined),
     addItem: createAddItem(currentForm, dataProxy),
     // 可添加字段统一通过引擎读写真实数据，业务组件只负责选择字段
     hasFieldData: (field: any) => hasFieldData(dataProxy.data, field, pathContext),

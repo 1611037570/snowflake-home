@@ -3,7 +3,6 @@
   <FormRenderer
     v-if="!currentForm.component"
     v-model:items="currentForm"
-    :containerIndex="currentIndex"
     :pathContext="pathContext"
   />
   <!-- 分组有包裹组件：渲染组件并在槽内递归渲染子字段 -->
@@ -18,11 +17,7 @@
   >
     <template #[slotName]>
       <!-- 递归渲染时显式下传当前数组记录上下文 -->
-      <FormRenderer
-        v-model:items="currentForm"
-        :containerIndex="currentIndex"
-        :pathContext="pathContext"
-      />
+      <FormRenderer v-model:items="currentForm" :pathContext="pathContext" />
     </template>
   </component>
 </template>
@@ -32,7 +27,6 @@ import { isString } from "@/utils";
 import type { DataPathContext } from "../code/pathContext";
 import {
   DF_CURRENT_FORM,
-  DF_CURRENT_INDEX,
   DF_CURRENT_PATH_CONTEXT,
   DF_CURRENT_TYPE,
   DF_REMOVE,
@@ -42,7 +36,6 @@ import { getComponent } from "../code/getComponent.ts";
 import FormRenderer from "./formRenderer.vue";
 
 const currentForm = defineModel<any>("currentForm");
-const currentIndex = defineModel<any>("currentIndex");
 const { pathContext } = defineProps<{
   pathContext?: DataPathContext;
 }>();
@@ -58,12 +51,10 @@ const bindEvent = computed(() => {
 });
 const emit = defineEmits(["removeObject"]);
 function remove() {
-  emit("removeObject", currentIndex.value);
+  emit("removeObject");
 }
 // 提供当前容器的表单数据
 provide(DF_CURRENT_FORM, currentForm);
-// 提供当前容器的索引
-provide(DF_CURRENT_INDEX, currentIndex);
 // 提供当前数组记录路径，供业务组件调用引擎能力时解析相对字段
 provide(
   DF_CURRENT_PATH_CONTEXT,

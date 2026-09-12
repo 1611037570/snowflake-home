@@ -21,17 +21,15 @@
       <ContainerSlot
         v-else-if="item.field.type === 'group'"
         :currentForm="item.field"
-        :currentIndex="item.index"
         :pathContext="pathContext"
-        @removeObject="removeObject"
+        @removeObject="removeObject(item.field)"
       />
       <component
         v-else
         :is="item.field.type === 'object' ? ContainerObject : ContainerArray"
         :currentForm="item.field"
-        :currentIndex="containerIndex ?? item.index"
         :pathContext="pathContext"
-        @removeObject="removeObject"
+        @removeObject="removeObject(item.field)"
       />
     </FormItem>
   </el-row>
@@ -52,9 +50,7 @@ import FormError from "./formError.vue";
 import FormItem from "./formItem.vue";
 
 defineOptions({ name: "FormRenderer" });
-// 容器索引：插槽递归时由上层容器（ContainerSlot）显式传入 array 子项的数据索引；顶层未传
-const { containerIndex, pathContext } = defineProps<{
-  containerIndex?: any;
+const { pathContext } = defineProps<{
   pathContext?: DataPathContext;
 }>();
 const rootData: any = inject(DF_ROOT_DATA);
@@ -86,10 +82,11 @@ const handleModuleMouseEnter = (item: any) => {
 // 拖拽实例
 let draggable: ReturnType<typeof useDraggable> | null = null;
 
-// 移除对象
-function removeObject(index: number) {
-  rootData.removeObject(items.value.fields[index]);
-  items.value.fields.splice(index, 1);
+// 当前字段由渲染节点直接绑定，删除时不依赖过滤前后的数组索引
+function removeObject(field: any) {
+  rootData.removeObject(field);
+  const index = items.value.fields.indexOf(field);
+  if (index >= 0) items.value.fields.splice(index, 1);
 }
 function ensureFieldIds(fields: any[]) {
   if (!fields) return;

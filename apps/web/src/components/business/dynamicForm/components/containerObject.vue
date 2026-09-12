@@ -16,15 +16,13 @@ import { getComponent } from "../code/getComponent";
 import type { DataPathContext } from "../code/pathContext";
 import {
   DF_CURRENT_FORM,
-  DF_CURRENT_INDEX,
   DF_CURRENT_PATH_CONTEXT,
   DF_CURRENT_TYPE,
   DF_REMOVE,
   DF_ROOT_DATA,
 } from "../code/injectionKeys";
 
-const { currentIndex, currentForm, pathContext } = defineProps<{
-  currentIndex?: any;
+const { currentForm, pathContext } = defineProps<{
   currentForm: any;
   pathContext?: DataPathContext;
 }>();
@@ -39,10 +37,8 @@ const component = computed(() => getComponent(currentForm?.component));
 const emit = defineEmits(["removeObject"]);
 
 function remove() {
-  emit("removeObject", currentIndex);
+  emit("removeObject");
 }
-// 提供当前容器的索引
-provide(DF_CURRENT_INDEX, currentIndex);
 // 提供当前数组记录路径，供业务组件调用引擎能力时解析相对字段
 provide(
   DF_CURRENT_PATH_CONTEXT,
