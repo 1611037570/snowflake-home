@@ -19,7 +19,6 @@ const templates = themeTemplateList.map((t) => ({
     ui: { ...xiaoYangResumeItem.ui, themeTemplate: t.value },
   },
 }));
-console.log("templates:>> ", templates);
 
 // 是否为当前选中的风格模板
 const isActive = (value) => (currentUI.value?.themeTemplate ?? "default") === value;
@@ -46,7 +45,6 @@ const applyTemplate = (value) => {
         >
           <ThumbPreview
             :item="template.item"
-            :show-actions="true"
             @select="applyTemplate(template.value)"
           />
           <div class="absolute top-1/2 left-1/2 z-50 -translate-x-1/2 -translate-y-1/2">
