@@ -235,6 +235,36 @@ export const DEFAULT_USER_FORM = [
           clearable: true,
         },
       },
+      {
+        type: "object",
+        label: "参加工作时间",
+        tip: "首次工作年月",
+        component: "datePicker",
+        span: 12,
+        addable: true,
+        ui: {
+          hidden: {
+            source: ["ui", "fields", "workTime", "hidden"],
+            prop: "hidden",
+            defaultValue: false,
+          },
+        },
+        checks: {
+          hidden: {
+            path: ["ui", "fields", "workTime", "hidden"],
+            equals: true,
+          },
+        },
+        model: {
+          source: ["user", "data", "workTime"],
+          prop: "modelValue",
+        },
+        props: {
+          placeholder: "请输入参加工作时间",
+          valueFormat: "YYYY.MM",
+          type: "month",
+        },
+      },
       // 可添加信息：数据路径存在后渲染在选择入口上方
       {
         type: "group",
@@ -285,36 +315,7 @@ export const DEFAULT_USER_FORM = [
               },
             ],
           },
-          {
-            type: "object",
-            label: "参加工作时间",
-            tip: "首次工作年月",
-            component: "datePicker",
-            span: 12,
-            addable: true,
-            ui: {
-              hidden: {
-                source: ["ui", "fields", "workTime", "hidden"],
-                prop: "hidden",
-                defaultValue: false,
-              },
-            },
-            checks: {
-              hidden: {
-                path: ["ui", "fields", "workTime", "hidden"],
-                equals: true,
-              },
-            },
-            model: {
-              source: ["user", "data", "workTime"],
-              prop: "modelValue",
-            },
-            props: {
-              placeholder: "请输入参加工作时间",
-              valueFormat: "YYYY.MM",
-              type: "month",
-            },
-          },
+
           // 微信号
           {
             type: "object",
