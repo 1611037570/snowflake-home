@@ -69,8 +69,8 @@ const layoutClass = computed(() => {
     return isCentered ? "flex flex-wrap justify-center gap-3" : "flex flex-wrap gap-3";
   }
   return isCentered
-    ? "grid grid-cols-[repeat(auto-fit,minmax(min(100%,13rem),1fr))] justify-items-center gap-3"
-    : "grid grid-cols-[repeat(auto-fit,minmax(min(100%,13rem),1fr))] gap-3";
+    ? "grid grid-cols-2 justify-items-center gap-3"
+    : "grid grid-cols-2 gap-3";
 });
 </script>
 
