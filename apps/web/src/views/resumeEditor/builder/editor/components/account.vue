@@ -12,12 +12,12 @@ const url = defineModel("url", {
   type: String,
   default: "",
 });
-const { currentIndex, removeItem } = inject("df/context")();
+const { removeCurrent } = inject("df/context")();
 
 // 删除社交账号
-const removeAccount = (index) => {
+const removeAccount = () => {
   proxy.$confirm("确定要删除当前内容吗？", "删除确认").then(() => {
-    removeItem(index);
+    removeCurrent();
   });
 };
 </script>
@@ -43,7 +43,7 @@ const removeAccount = (index) => {
       icon="ic:round-delete"
       size="4"
       class="shrink-0 cursor-pointer rounded-lg transition-colors hover:text-sf-theme"
-      @click="removeAccount(currentIndex)"
+      @click="removeAccount"
     />
   </div>
 </template>

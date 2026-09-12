@@ -8,12 +8,12 @@ const name = defineModel("name", {
   type: String,
   default: "",
 });
-const { currentIndex, removeItem } = inject("df/context")();
+const { removeCurrent } = inject("df/context")();
 
 // 删除当前荣誉证书
-const removeHonor = (index) => {
+const removeHonor = () => {
   proxy.$confirm("确定要删除当前内容吗？", "删除确认").then(() => {
-    removeItem(index);
+    removeCurrent();
   });
 };
 </script>
@@ -36,7 +36,7 @@ const removeHonor = (index) => {
       icon="ic:round-delete"
       size="4"
       class="shrink-0 cursor-pointer rounded-lg transition-colors hover:text-sf-theme"
-      @click="removeHonor(currentIndex)"
+      @click="removeHonor"
     />
   </div>
 </template>
