@@ -26,7 +26,7 @@ const isIconMode = computed(() => userInfoMode?.value === "icon");
 const layoutClass = computed(() => {
   const isCentered = props.centered;
   if (userInfoLayout?.value === "flex") {
-    return isCentered ? "flex flex-wrap justify-center gap-3" : "flex flex-wrap gap-3";
+    return isCentered ? "flex flex-wrap justify-center gap-3" : "block";
   }
   return isCentered
     ? "grid grid-cols-2 justify-items-center gap-3"
@@ -137,6 +137,7 @@ const contactItems = computed(() => {
       :model-value="item.key ? user[item.key] : null"
       :text="item.text"
       :icon-mode="isIconMode"
+      :flow-mode="userInfoLayout === 'flex' && !centered"
     />
   </div>
 </template>
