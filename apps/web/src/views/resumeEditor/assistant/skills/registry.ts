@@ -10,6 +10,15 @@ import { resumeScore } from "./skill_resume_score";
 import { resumeTranslate } from "./skill_resume_translate";
 import { resumeWriting } from "./skill_resume_writing";
 import { selfIntro } from "./skill_self_intro";
+import { industryEcommerce } from "./skill_industry_ecommerce";
+import { industryEducation } from "./skill_industry_education";
+import { industryFinance } from "./skill_industry_finance";
+import { industryGeneral } from "./skill_industry_general";
+import { industryGovernment } from "./skill_industry_government";
+import { industryHealthcare } from "./skill_industry_healthcare";
+import { industryInternet } from "./skill_industry_internet";
+import { industryLegal } from "./skill_industry_legal";
+import { industryManufacturing } from "./skill_industry_manufacturing";
 
 // 常驻技能：按顺序作为系统消息注入对话
 export const residentSkills: SkillFactory[] = [defaultPrompt];
@@ -30,4 +39,9 @@ export const onDemandSkills: SkillFactory[] = [
   industryFinance,
   industryHealthcare,
   industryManufacturing,
+  industryEcommerce,
+  industryGovernment,
+  industryLegal,
+  industryEducation,
+  industryGeneral,
 ];
