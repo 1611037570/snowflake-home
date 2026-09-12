@@ -23,7 +23,7 @@ const title = defineModel("title", {
   type: String,
   default: "",
 });
-const { currentForm, removeSelf, addItem } = inject("df/context")();
+const { currentForm, removeCurrent, addItem } = inject("df/context")();
 const resumeStore = useResumeStore();
 
 // 展开状态：直接绑定激活项 name 数组（["1"] 展开 / [] 收起），随数据双向绑定
@@ -45,7 +45,7 @@ const archived = defineModel("archived", {
 
 function del() {
   proxy.$confirm(`确定要删除${title.value}模块吗？`, "删除确认").then(() => {
-    removeSelf();
+    removeCurrent();
   });
 }
 

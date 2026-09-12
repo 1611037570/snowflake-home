@@ -2,9 +2,6 @@
 import { EXPANDED } from "@/stores/modules/resume/formConfig";
 
 const { proxy } = getCurrentInstance();
-const props = defineProps({
-  index: {},
-});
 // 记录折叠状态：复用展开常量，随记录数据持久化
 const collapsed = defineModel("collapsed", {
   type: Array,
@@ -14,17 +11,14 @@ const name = defineModel("name", {
   type: String,
   default: "",
 });
-const { currentIndex, removeItem } = inject("df/context")();
+const { removeCurrent } = inject("df/context")();
 
 // 标题：统一走 name 数据源，空值占位符兜底
 const displayTitle = computed(() => name.value || "尚未填写");
 
-// 删除索引：兼容显式传入与容器注入两种来源
-const delIndex = computed(() => props.index ?? currentIndex?.value);
-
 function del() {
   proxy.$confirm(`确定要删除${name.value}吗？`, "删除确认").then(() => {
-    removeItem(delIndex.value);
+    removeCurrent();
   });
 }
 </script>
