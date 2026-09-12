@@ -44,6 +44,7 @@ export interface LlmTrace {
   usage?: unknown;
   error?: string;
   startTime: number;
+  lastUpdateTime: number;
   endTime?: number;
   firstTokenTime?: number;
   events: LlmTraceEvent[];
@@ -129,6 +130,7 @@ function updateTrace(id: string, updater: (trace: LlmTrace) => void, shouldPersi
     const trace = findTrace(id);
     if (!trace) return;
     updater(trace);
+    trace.lastUpdateTime = Date.now();
     if (shouldPersist) schedulePersist();
   } catch {
     // Observation failures must never affect the request flow.
@@ -147,6 +149,7 @@ export function createLlmTrace(options: CreateTraceOptions) {
       output: "",
       reasoning: "",
       startTime,
+      lastUpdateTime: startTime,
       events: [{ time: startTime, type: "created" }],
     };
     llmTraces.value.unshift(trace);

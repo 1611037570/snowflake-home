@@ -55,7 +55,8 @@ function formatTime(value?: number) {
 }
 
 function formatDuration(trace: LlmTrace) {
-  const endTime = trace.endTime || Date.now();
+  const endTime =
+    trace.endTime || trace.lastUpdateTime || trace.events.at(-1)?.time || trace.startTime;
   return `${((endTime - trace.startTime) / 1000).toFixed(2)} 秒`;
 }
 
