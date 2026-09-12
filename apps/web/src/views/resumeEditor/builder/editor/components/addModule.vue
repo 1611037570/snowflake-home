@@ -84,8 +84,8 @@ const handleConfirm = () => {
   if (config.checks?.muted?.path?.length) {
     config.checks.muted.path[0] = customKey;
   }
-  if (config.checks?.visible?.path?.length) {
-    config.checks.visible.path[0] = customKey;
+  if (config.checks?.removed?.path?.length) {
+    config.checks.removed.path[0] = customKey;
   }
   // 自定义模块只重写数组容器数据源，子项字段保持相对路径
   if (config.fields[0].source?.length) {

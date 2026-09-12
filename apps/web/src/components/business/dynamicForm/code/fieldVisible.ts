@@ -31,13 +31,13 @@ export const isFieldMuted = (
   return isRuleSatisfied(getValueByPath(data, resolveDataPath(rule.path, context)), rule);
 };
 
-// 按 DSL visible 协议判断字段是否需要从当前表单移除
-export const isFieldVisible = (
+// 按 DSL removed 协议判断字段是否需要从当前表单移除
+export const isFieldRemoved = (
   data: Record<string, any> | undefined,
   field: FormField,
   context?: DataPathContext,
 ): boolean => {
-  const rule = field.checks?.visible;
+  const rule = field.checks?.removed;
   if (!rule?.path?.length) return false;
   return isRuleSatisfied(getValueByPath(data, resolveDataPath(rule.path, context)), rule);
 };

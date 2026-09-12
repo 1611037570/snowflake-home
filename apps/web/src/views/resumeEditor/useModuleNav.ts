@@ -4,7 +4,7 @@ import { useResumeStore } from "@/stores";
 import { CUSTOM_MODULE_ICON, DEFAULT_MODULE_NAMES } from "@/stores/modules/resume/defaultConfig";
 import eventBus from "@/utils/modules/eventBus";
 import { setFieldHidden } from "./utils";
-import { isFieldMuted, isFieldVisible } from "@/components/business/dynamicForm/code/fieldVisible";
+import { isFieldMuted, isFieldRemoved } from "@/components/business/dynamicForm/code/fieldVisible";
 import { ElNotification } from "element-plus";
 
 // store 为全局单例：模块列表与跳转逻辑无组件级状态，抽为模块级共享，避免各组件重复创建 hook
@@ -42,7 +42,7 @@ const moduleList = computed(() => {
             field.key,
           icon,
           hidden: isFieldMuted(data, field),
-          archived: isFieldVisible(data, field),
+          archived: isFieldRemoved(data, field),
           field, // 原始字段配置，用于恢复隐藏模块
         };
       })
@@ -77,7 +77,7 @@ export const jumpPreview = (key: string) => {
 export const jumpEditor = (key: string) => {
   const item = moduleList.value.find((m) => m.key === key);
   // 归档模块不在左侧编辑区展示，定位时提示用户先恢复模块
-  if (item && isFieldVisible(currentData.value, item.field)) {
+  if (item && isFieldRemoved(currentData.value, item.field)) {
     ElNotification({
       title: "模块已归档",
       message: "请先在左侧恢复归档后再编辑该模块。",
@@ -108,7 +108,7 @@ export const jumpEditor = (key: string) => {
 export const locateEditor = (key: string) => {
   const item = moduleList.value.find((m) => m.key === key);
   // 归档模块不在左侧编辑区展示，定位时提示用户先恢复模块
-  if (item && isFieldVisible(currentData.value, item.field)) {
+  if (item && isFieldRemoved(currentData.value, item.field)) {
     ElNotification({
       title: "模块已归档",
       message: "请先在左侧恢复归档后再编辑该模块。",

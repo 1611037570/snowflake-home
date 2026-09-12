@@ -49,7 +49,7 @@ export const DEFAULT_USER_FORM = [
     ],
     checks: {
       muted: { path: ["user", "hidden"] },
-      visible: { path: ["user", "archived"] },
+      removed: { path: ["user", "archived"] },
     },
     slot: "default",
     fields: [
@@ -382,7 +382,7 @@ export const DEFAULT_ACCOUNT_FORM = {
   ],
   checks: {
     muted: { path: ["account", "hidden"] },
-    visible: { path: ["account", "archived"] },
+    removed: { path: ["account", "archived"] },
   },
   component: "boxCollapse",
   props: {
@@ -450,7 +450,7 @@ export const DEFAULT_EDUCATION_FORM = {
   ],
   checks: {
     muted: { path: ["education", "hidden"] },
-    visible: { path: ["education", "archived"] },
+    removed: { path: ["education", "archived"] },
   },
   slot: "default",
   fields: [
@@ -619,7 +619,7 @@ export const DEFAULT_SKILL_FORM = {
   ],
   checks: {
     muted: { path: ["skill", "hidden"] },
-    visible: { path: ["skill", "archived"] },
+    removed: { path: ["skill", "archived"] },
   },
   slot: "default",
   fields: [
@@ -668,7 +668,7 @@ export const DEFAULT_ADVANTAGE_FORM = {
   ],
   checks: {
     muted: { path: ["advantage", "hidden"] },
-    visible: { path: ["advantage", "archived"] },
+    removed: { path: ["advantage", "archived"] },
   },
   slot: "default",
   fields: [
@@ -717,7 +717,7 @@ export const DEFAULT_WORK_FORM = {
   ],
   checks: {
     muted: { path: ["work", "hidden"] },
-    visible: { path: ["work", "archived"] },
+    removed: { path: ["work", "archived"] },
   },
   slot: "default",
   fields: [
@@ -842,7 +842,7 @@ export const DEFAULT_PROJECT_FORM = {
   ],
   checks: {
     muted: { path: ["project", "hidden"] },
-    visible: { path: ["project", "archived"] },
+    removed: { path: ["project", "archived"] },
   },
   slot: "default",
   fields: [
@@ -968,7 +968,7 @@ export const DEFAULT_VIDEO_FORM = {
   ],
   checks: {
     muted: { path: ["video", "hidden"] },
-    visible: { path: ["video", "archived"] },
+    removed: { path: ["video", "archived"] },
   },
   slot: "default",
   fields: [
@@ -1057,7 +1057,7 @@ export const DEFAULT_IMAGE_FORM = {
   ],
   checks: {
     muted: { path: ["image", "hidden"] },
-    visible: { path: ["image", "archived"] },
+    removed: { path: ["image", "archived"] },
   },
   slot: "default",
   fields: [
@@ -1152,7 +1152,7 @@ export const DEFAULT_HONOR_FORM = {
   ],
   checks: {
     muted: { path: ["honor", "hidden"] },
-    visible: { path: ["honor", "archived"] },
+    removed: { path: ["honor", "archived"] },
   },
   slot: "default",
   fields: [
@@ -1212,7 +1212,7 @@ export const DEFAULT_CUSTOM_FORM = {
   ],
   checks: {
     muted: { path: ["custom", "hidden"] },
-    visible: { path: ["custom", "archived"] },
+    removed: { path: ["custom", "archived"] },
   },
   slot: "default",
   fields: [
