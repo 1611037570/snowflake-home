@@ -10,6 +10,19 @@
       <template #label>
         <div class="mb-1 flex h-5 w-full items-center text-sf-base" @click.stop.prevent="">
           <div class="flex flex-1 items-center">
+            <button
+              v-if="draggable && currentForm.label"
+              type="button"
+              :class="dragHandleClass"
+              class="mr-1 flex cursor-move items-center"
+              @click.stop=""
+            >
+              <SfIcon
+                icon="icon-park-outline:drag"
+                size="4"
+                class="pointer-events-none hover:text-sf-theme"
+              />
+            </button>
             <span class="pr-1 pl-2 text-[15px] text-sf-text">
               {{ currentForm.label }}
             </span>
@@ -55,10 +68,12 @@ import { DF_ROOT_DATA } from "../code/injectionKeys";
 import { resolveDataPath, type DataPathContext } from "../code/pathContext";
 import { getPrimaryModelBinding } from "../code/schemaAccess";
 
-const { pathContext, currentForm, selected } = defineProps<{
+const { pathContext, currentForm, selected, draggable, dragClass } = defineProps<{
   currentForm: any;
   selected?: boolean;
   pathContext?: DataPathContext;
+  draggable?: boolean;
+  dragClass?: string;
 }>();
 const emit = defineEmits<{
   remove: [];
@@ -73,6 +88,10 @@ const hidden = computed(() => {
 });
 // 表单项根据自身配置判断置灰状态
 const hiddenState = computed(() => isFieldHidden(rootData.data, currentForm, pathContext));
+const dragHandleClass = computed(() => {
+  const value = dragClass?.trim();
+  return value?.startsWith(".") ? value.slice(1) : value || "item-drag";
+});
 const DEFAULT_SPAN = 24;
 // 切换表单项隐藏状态并写回数据
 const toggleHidden = () => {

@@ -152,19 +152,15 @@ export const useResumeStore = defineStore(
     };
     // 切简历/新建/恢复时按最新模板重建运行时配置
     watch(currentItem, refreshRuntime, { immediate: true });
-    // 模块增删与排序只改运行时 fields，变化后回写持久化的 key 列表
+    // 模块与内部字段排序只改运行时 fields，变化后递归回写持久化顺序
     watch(
-      () => runtimeConfig.value?.fields?.map((field: any) => field.key).join("|"),
-      (keys) => {
+      () => JSON.stringify(compactConfigFields(runtimeConfig.value?.fields || [])),
+      (serializedFields) => {
         const item = currentItem.value;
-        if (!item || !keys) return;
+        if (!item || !serializedFields) return;
         const config = item.config && typeof item.config === "object" ? item.config : {};
-        const oldKeys = (config.fields || []).map((field: any) => field.key).join("|");
-        if (oldKeys !== keys) {
-          config.fields = keys
-            .split("|")
-            .filter(Boolean)
-            .map((key: string) => ({ key }));
+        if (JSON.stringify(config.fields || []) !== serializedFields) {
+          config.fields = JSON.parse(serializedFields);
         }
       },
     );

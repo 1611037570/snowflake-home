@@ -8,6 +8,8 @@
       :key="item.field.id"
       :pathContext="pathContext"
       :selected="isModuleSelected(item.field)"
+      :draggable="items.drag === true"
+      :drag-class="items.dragClass"
       @mouseenter="handleModuleMouseEnter(item.field)"
       @remove="removeField(item.field)"
     >
@@ -57,16 +59,29 @@ const rootData: any = inject(DF_ROOT_DATA);
 const row: any = useTemplateRef("row");
 // 表单数据
 const items = defineModel<any>("items", {});
+const isFieldRenderable = (field: any) =>
+  !isFieldRemoved(rootData.data, field, pathContext) &&
+  (!field.addable || hasFieldData(rootData.data, field, pathContext));
 // 编辑器移除已归档模块与尚未添加的字段，隐藏模块仍保留在编辑器中
 const renderFields = computed(() => {
   const fields = items.value.fields || [];
   return fields
     .map((field: any, index: number) => ({ field, index }))
-    .filter(
-      ({ field }: any) =>
-        !isFieldRemoved(rootData.data, field, pathContext) &&
-        (!field.addable || hasFieldData(rootData.data, field, pathContext)),
-    );
+    .filter(({ field }: any) => isFieldRenderable(field));
+});
+// 拖拽只重排当前可见字段，未渲染字段保留在原数据槽位
+const sortableFields = computed<any[]>({
+  get: () => renderFields.value.map((item: any) => item.field),
+  set: (value) => {
+    const fields = items.value.fields || [];
+    const visibleIndexes = fields.reduce((indexes: number[], field: any, index: number) => {
+      if (isFieldRenderable(field)) indexes.push(index);
+      return indexes;
+    }, []);
+    visibleIndexes.forEach((fieldIndex: number, visibleIndex: number) => {
+      if (value[visibleIndex]) fields[fieldIndex] = value[visibleIndex];
+    });
+  },
 });
 const isDragging = ref(false);
 // 模块选中能力：由根组件提供，动态表单内部契约，调用方按约定传 key
@@ -129,7 +144,7 @@ onMounted(async () => {
     return;
   }
   // 初始化拖拽
-  draggable = useDraggable(row, items.value.fields, {
+  draggable = useDraggable(row, sortableFields, {
     animation: 150,
     ghostClass: "ghost",
     handle: items.value?.dragClass || "",
