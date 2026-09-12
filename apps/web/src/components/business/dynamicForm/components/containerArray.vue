@@ -61,7 +61,6 @@ import ContainerObject from "./containerObject.vue";
 import ContainerSlot from "./containerSlot.vue";
 import FormItem from "./formItem.vue";
 const row: any = useTemplateRef("row");
-let draggable: ReturnType<typeof useDraggable> | null = null;
 
 const { pathContext } = defineProps<{
   currentIndex?: any;
@@ -95,29 +94,34 @@ const getPathContext = (index: number): DataPathContext | undefined => {
     ? { basePath: resolveDataPath(source, pathContext), index }
     : undefined;
 };
+// 延迟到真实根元素挂载完成后再启动拖拽
+const draggable = useDraggable(null, records, {
+  immediate: false,
+  handle: currentForm.value?.dragClass || "",
+  animation: 150,
+  ghostClass: "ghost",
+  onStart: (e) => {
+    e.stopPropagation();
+    isDragging.value = true;
+  },
+  onEnd() {
+    isDragging.value = false;
+  },
+});
 onMounted(async () => {
-  await nextTick(() => {});
+  await nextTick();
 
   if (!currentForm.value?.drag) {
     return;
   }
 
-  draggable = useDraggable(row, records, {
-    handle: currentForm.value?.dragClass || "",
-    animation: 150,
-    ghostClass: "ghost",
-    onStart: (e) => {
-      e.stopPropagation();
-      isDragging.value = true;
-    },
-    onEnd() {
-      isDragging.value = false;
-    },
-  });
+  const element = row.value?.$el ?? row.value;
+  if (!(element instanceof HTMLElement)) return;
+
+  draggable.start(element);
 });
 onUnmounted(() => {
-  draggable?.destroy();
-  draggable = null;
+  draggable.destroy();
 });
 
 const length = computed(() => records.value.length);
