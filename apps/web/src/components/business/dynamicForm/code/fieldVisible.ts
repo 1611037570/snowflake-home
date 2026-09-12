@@ -17,16 +17,16 @@ const isRuleSatisfied = (value: any, rule: FieldCheckRule): boolean => {
 };
 
 /**
- * 按表单控制协议解析字段是否置灰
- * - 无 checks.muted 声明：不置灰（默认）
- * - checks.muted 指向的数据满足规则时置灰
+ * 按表单控制协议解析字段是否隐藏
+ * - 无 checks.hidden 声明：不置灰（默认）
+ * - checks.hidden 指向的数据满足规则时置灰
  */
-export const isFieldMuted = (
+export const isFieldHidden = (
   data: Record<string, any> | undefined,
   field: FormField,
   context?: DataPathContext,
 ): boolean => {
-  const rule = field.checks?.muted;
+  const rule = field.checks?.hidden;
   if (!rule?.path?.length) return false;
   return isRuleSatisfied(getValueByPath(data, resolveDataPath(rule.path, context)), rule);
 };

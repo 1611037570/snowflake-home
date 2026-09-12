@@ -6,7 +6,7 @@
       :data-fixed="item.field.fixed ? 'true' : undefined"
       v-for="item in renderFields"
       :key="item.field.id"
-      :muted="isFieldMuted(rootData.data, item.field, pathContext)"
+      :hiddenState="isFieldHidden(rootData.data, item.field, pathContext)"
       :pathContext="pathContext"
       :selected="isModuleSelected(item.field)"
       v-bind="getHiddenProps(item.field)"
@@ -42,7 +42,7 @@ import { getUUID } from "@/utils";
 import { useDraggable } from "vue-draggable-plus";
 import { checkForm } from "../code/checkForm.ts";
 import { hasFieldData } from "../code/fieldData";
-import { isFieldMuted, isFieldRemoved } from "../code/fieldVisible";
+import { isFieldHidden, isFieldRemoved } from "../code/fieldVisible";
 import { DF_MODULE_SELECT, DF_ROOT_DATA } from "../code/injectionKeys.ts";
 import type { DataPathContext } from "../code/pathContext";
 import ContainerSlot from "./containerSlot.vue";

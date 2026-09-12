@@ -11,11 +11,11 @@ function rewriteCustomFieldByKey(field: any, customKey: string, customTitle: str
       }
     }
   });
-  if (Array.isArray(field.checks?.muted?.path)) {
-    field.checks.muted.path[0] = customKey;
+  if (Array.isArray(field.checks?.hidden?.path)) {
+    field.checks.hidden.path[0] = customKey;
   }
-  if (Array.isArray(field.checks?.visible?.path)) {
-    field.checks.visible.path[0] = customKey;
+  if (Array.isArray(field.checks?.removed?.path)) {
+    field.checks.removed.path[0] = customKey;
   }
   const arrayField = field.fields?.find((f: any) => f.type === "array");
   if (arrayField?.itemSchema) {

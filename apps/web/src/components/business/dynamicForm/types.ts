@@ -24,8 +24,8 @@ export interface FieldCheckRule {
 
 /** 表单控制配置：由动态表单根据条件决定字段是否渲染或置灰 */
 export type FieldChecks = {
-  /** 满足条件时字段置灰 */
-  muted?: FieldCheckRule;
+  /** 满足条件时字段隐藏但仍保留在编辑器中 */
+  hidden?: FieldCheckRule;
   /** 满足条件时字段从当前表单移除 */
   removed?: FieldCheckRule;
 };
@@ -61,7 +61,7 @@ export interface FormField {
   model?: ModelBinding | ModelBinding[];
   /** 是否可由用户按需添加 */
   addable?: boolean;
-  /** 表单控制配置（与 model/props 同级）：由动态表单处理 removed、muted */
+  /** 表单控制配置（与 model/props 同级）：由动态表单处理 removed、hidden */
   checks?: FieldChecks;
   required?: boolean;
   /** 子字段（容器递归渲染） */
