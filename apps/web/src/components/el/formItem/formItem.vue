@@ -3,14 +3,19 @@
     :is="h(ElFormItem, { ...$attrs, ref: changeRef }, $slots)"
     :label-position="labelPosition"
     class="w-full"
+    @click.stop.prevent=""
   >
     <template #label v-if="label && labelPosition === 'top'">
-      <div class="mb-1 flex h-5 w-full items-center text-sf-base" @click.stop="">
-        <span class="pr-1 pl-2 text-[15px] text-sf-text">
-          {{ label }}
-        </span>
-        <sf-tooltip :content="tip" v-if="tip" class="text-sf-text" />
-      </div>
+      <slot name="label">
+        <div class="mb-1 flex h-5 w-full items-center text-sf-base" @click.stop.prevent="">
+          <div class="flex flex-1 items-center">
+            <span class="pr-1 pl-2 text-[15px] text-sf-text">
+              {{ label }}
+            </span>
+            <sf-tooltip :content="tip" v-if="tip" class="text-sf-text" />
+          </div>
+        </div>
+      </slot>
     </template>
     <slot />
   </Component>

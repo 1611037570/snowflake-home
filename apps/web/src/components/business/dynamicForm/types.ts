@@ -45,6 +45,8 @@ export interface FormField {
   colClass?: string;
   /** 表单项提示 */
   tip?: string;
+  /** 表单项 UI 配置 */
+  ui?: Record<string, any>;
   /** 表单项校验规则（透传给 el-form rules） */
   rules?: any[];
   /** 模块标识（同时是数据路径首段） */

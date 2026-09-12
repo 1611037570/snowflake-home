@@ -70,6 +70,13 @@ export const DEFAULT_USER_FORM = [
         type: "object",
         label: "姓名",
         tip: "真实姓名 推荐必填",
+        ui: {
+          hidden: {
+            source: ["ui", "fields", "name", "hidden"],
+            prop: "hidden",
+            defaultValue: false,
+          },
+        },
         component: "input",
         span: 12,
         required: true,
@@ -89,6 +96,12 @@ export const DEFAULT_USER_FORM = [
             trigger: "blur",
           },
         ],
+        checks: {
+          muted: {
+            path: ["ui", "fields", "name", "hidden"],
+            equals: true,
+          },
+        },
       },
       // 出生日期
       {
