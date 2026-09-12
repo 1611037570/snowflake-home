@@ -36,7 +36,6 @@ export const arkStreamParser = (line: string, { onEvent, isDebug }: any) => {
   if (type === "response.completed" && data.response?.usage) {
     totalTokens = data.response.usage.total_tokens;
     onEvent?.("total_tokens", totalTokens);
-    onEvent?.("usage", data.response.usage);
   }
 
   // 6. 调试日志

@@ -217,10 +217,6 @@ export function updateLlmTraceUsage(id: string, usage: unknown) {
   updateTrace(
     id,
     (trace) => {
-      if (typeof usage === "number") {
-        trace.usage = { total_tokens: usage };
-        return;
-      }
       trace.usage = sanitize(usage);
     },
     false,
