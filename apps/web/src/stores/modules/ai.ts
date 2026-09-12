@@ -93,6 +93,8 @@ export const useAiStore = defineStore(
     const thinkMode = ref<boolean>(false);
     // 简历助手对话：随 ai store 持久化保存，重进编辑器时恢复
     const resumeAssistantChat = ref<Chat | null>(null);
+    // 简历助手对话列表：保留多个话题，当前会话始终来自该列表
+    const resumeAssistantChatList = ref<Chat[]>([]);
 
     const currentChat = computed(() => chatList.value.find((c) => c.id === currentChatId.value));
 
@@ -158,10 +160,46 @@ export const useAiStore = defineStore(
     function registerResumeAssistantChatFactory(factory: () => Chat) {
       resumeAssistantChatFactory = factory;
     }
+    // 初始化简历助手对话，同时把旧版单条会话迁移到列表
+    function initializeResumeAssistantChat() {
+      if (resumeAssistantChat.value) {
+        const savedChat = resumeAssistantChatList.value.find(
+          (chat) => chat.id === resumeAssistantChat.value?.id,
+        );
+        if (savedChat) {
+          resumeAssistantChat.value = savedChat;
+        } else {
+          resumeAssistantChatList.value.unshift(resumeAssistantChat.value);
+        }
+        return resumeAssistantChat.value;
+      }
+      if (resumeAssistantChatList.value.length) {
+        resumeAssistantChat.value = resumeAssistantChatList.value[0];
+        return resumeAssistantChat.value;
+      }
+      return createNewResumeAssistantChat();
+    }
     // 新建简历助手话题
     function createNewResumeAssistantChat() {
       if (!resumeAssistantChatFactory) return;
-      resumeAssistantChat.value = resumeAssistantChatFactory();
+      const chat = resumeAssistantChatFactory();
+      resumeAssistantChatList.value.unshift(chat);
+      resumeAssistantChat.value = chat;
+      return chat;
+    }
+    // 切换当前简历助手话题
+    function switchResumeAssistantChat(id: string) {
+      const chat = resumeAssistantChatList.value.find((item) => item.id === id);
+      if (!chat) return;
+      resumeAssistantChat.value = chat;
+    }
+    // 首条用户消息生成简历助手话题标题
+    function updateResumeAssistantChatTitle(chat: Chat) {
+      if (chat.title !== DEFAULT_CHAT_TITLE) return;
+      const firstUserMsg = chat.messages.find((message) => message.role === "user");
+      if (!firstUserMsg) return;
+      const content = firstUserMsg.content;
+      chat.title = content.length > 15 ? `${content.slice(0, 15)}...` : content;
     }
 
     function switchChat(id: string) {
@@ -253,11 +291,15 @@ export const useAiStore = defineStore(
       modelList,
       thinkMode,
       resumeAssistantChat,
+      resumeAssistantChatList,
       createDefaultChat,
       createDefaultMessage,
       addChat,
       registerResumeAssistantChatFactory,
+      initializeResumeAssistantChat,
       createNewResumeAssistantChat,
+      switchResumeAssistantChat,
+      updateResumeAssistantChatTitle,
       prepareNewChat,
       switchChat,
       delChat,
@@ -279,6 +321,7 @@ export const useAiStore = defineStore(
         "activeModel",
         "modelList",
         "resumeAssistantChat",
+        "resumeAssistantChatList",
         "thinkMode",
       ],
     },
