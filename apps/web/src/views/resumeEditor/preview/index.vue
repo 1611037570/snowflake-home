@@ -31,7 +31,13 @@ const openFullscreen = () => {
     <ScaleContainer @fullscreen="openFullscreen">
       <ResumePage />
     </ScaleContainer>
-    <FullscreenPreview :visible="isFullscreen" :item="resumeItem" @close="isFullscreen = false" />
+    <!-- 仅打开时挂载异步组件，避免编辑器初始化时提前加载全屏预览。 -->
+    <FullscreenPreview
+      v-if="isFullscreen"
+      :visible="isFullscreen"
+      :item="resumeItem"
+      @close="isFullscreen = false"
+    />
   </div>
 </template>
 
