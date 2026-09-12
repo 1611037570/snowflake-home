@@ -94,8 +94,25 @@ const userHiddenFields = computed(() => {
   collectFields(userField?.fields);
   return hiddenFields;
 });
+const userFieldOrder = computed(() => {
+  const order = [];
+  const userField = allModules.value.find((field) => field.key === "user");
+  const collectFields = (fields = []) => {
+    fields.forEach((field) => {
+      if (field.type === "group") {
+        collectFields(field.fields);
+      } else if (field.key) {
+        order.push(field.key);
+      }
+    });
+  };
+  collectFields(userField?.fields);
+  return order;
+});
 // 将用户模块字段的隐藏状态提供给预览子组件
 provide("userHiddenFields", userHiddenFields);
+// 将用户模块字段顺序提供给预览子组件
+provide("userFieldOrder", userFieldOrder);
 const { measureDone, pages, pageStyleText, moduleList } = useResumePages({
   measureRef,
   ui,

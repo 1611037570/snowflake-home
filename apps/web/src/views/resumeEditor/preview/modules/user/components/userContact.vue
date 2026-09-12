@@ -20,6 +20,7 @@ const previewLang = inject(
 );
 const user = computed(() => previewData.value?.user?.data || {});
 const { isUserFieldHidden } = useUserFieldVisibility();
+const userFieldOrder = inject("userFieldOrder", computed(() => []));
 const isIconMode = computed(() => userInfoMode?.value === "icon");
 // 根据用户选择切换布局，并保持居中模式的对齐方式
 const layoutClass = computed(() => {
@@ -81,6 +82,7 @@ const secondaryItems = computed(() => {
   }
   if (heightWeightText.value) {
     items.push({
+      sortKey: "heightWeight",
       text: heightWeightText.value,
       icon: "mdi:human-male-height",
       label: getPreviewText("heightWeightLabel", previewLang.value),
@@ -112,7 +114,12 @@ const contactItems = computed(() => {
       label: wechatLabel.value,
     });
   }
-  return [...items, ...secondaryItems.value];
+  const order = new Map(userFieldOrder.value.map((key, index) => [key, index]));
+  return [...items, ...secondaryItems.value].sort(
+    (a, b) =>
+      (order.get(a.sortKey || a.key) ?? Number.MAX_SAFE_INTEGER) -
+      (order.get(b.sortKey || b.key) ?? Number.MAX_SAFE_INTEGER),
+  );
 });
 </script>
 
