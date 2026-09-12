@@ -1,5 +1,15 @@
 import { createRequest } from "./request";
 import { AbortError } from "../errors";
+import {
+  appendLlmTraceOutput,
+  appendLlmTraceReasoning,
+  createLlmTrace,
+  finishLlmTrace,
+  recordLlmTraceEvent,
+  setLlmTraceOutput,
+  updateLlmTraceStatus,
+  updateLlmTraceUsage,
+} from "../monitor";
 
 import { executeToolCall } from "../react/actor";
 import { observe } from "../react/observer";
@@ -171,6 +181,19 @@ class LLM {
           }
         : {}),
     };
+    // Create an isolated trace for the request without changing its transport behavior.
+    const traceId = createLlmTrace({
+      provider: this.provider,
+      model: requestOptions.model,
+      input: requestOptions,
+    });
+
+    const handleEvent = (type: string, data: any) => {
+      if (type === "reasoning") appendLlmTraceReasoning(traceId, data);
+      if (type === "content") appendLlmTraceOutput(traceId, data);
+      if (type === "total_tokens") updateLlmTraceUsage(traceId, data);
+      onEvent?.(type, data);
+    };
 
     // 提前创建处理器，确保调用方在 sendFn 执行前即可获取 abort
     const handler = createRequest(token, isStream);
@@ -180,6 +203,7 @@ class LLM {
     // 发送函数：失败按重试次数循环重试，4xx 客户端错误（429 除外）不再重试
     const sendFn = async () => {
       try {
+        updateLlmTraceStatus(traceId, "requesting");
         for (let attempt = 1; ; attempt++) {
           try {
             // 组装请求基础配置
@@ -189,6 +213,7 @@ class LLM {
               isDebug,
               provider: this.provider,
               timeout,
+              traceId,
             };
 
             // 流式与非流式请求体不同，分别组装后发送
@@ -197,7 +222,7 @@ class LLM {
                   ...requestConfig,
                   data: processOption({ options: requestOptions }),
                   isJson,
-                  onEvent,
+                  onEvent: handleEvent,
                 })
               : await send({
                   ...requestConfig,
@@ -206,6 +231,10 @@ class LLM {
             // 主动中止时不触发成功回调
             if (!res?.aborted) {
               onSuccess?.(res);
+              if (!isStream) setLlmTraceOutput(traceId, res);
+              finishLlmTrace(traceId, "success");
+            } else {
+              finishLlmTrace(traceId, "aborted");
             }
             return res;
           } catch (e: any) {
@@ -217,6 +246,7 @@ class LLM {
               throw e;
             }
             const delay = 500 * attempt;
+            recordLlmTraceEvent(traceId, "retry", { attempt, delay });
             if (isDebug) {
               console.warn(
                 `请求失败，准备在 ${delay}ms 后进行第 ${attempt}/${retryCount} 次重试...`,
@@ -227,6 +257,8 @@ class LLM {
           }
         }
       } catch (e) {
+        const message = String((e as any)?.message || "请求失败");
+        finishLlmTrace(traceId, message.includes("请求超时") ? "timeout" : "error", message);
         onFail?.(e);
         // 统一错误处理
         if (isDebug) {
@@ -242,6 +274,7 @@ class LLM {
     return {
       abortFn: abort,
       sendFn,
+      traceId,
     };
   }
   /**
@@ -332,6 +365,7 @@ class LLM {
             "参数:",
             toolCall.function.arguments,
           );
+          recordLlmTraceEvent(result.traceId || "", "tool_call", toolCall);
           config.onAct?.(toolCall);
           let raw: unknown;
           try {
@@ -352,6 +386,7 @@ class LLM {
             "[ReAct] 观察结果(" + observation.content.length + "字符):",
             observePreview,
           );
+          recordLlmTraceEvent(result.traceId || "", "tool_result", observation);
           config.onObserve?.(observation);
 
           history.push({

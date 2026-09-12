@@ -34,7 +34,9 @@
     "passwordBoxDesc": "安全存储和管理密码",
     "form": "表单生成器",
     "formDesc": "快速生成表单",
-    "init": "初始化"
+    "init": "初始化",
+    "llmMonitor": "请求观测",
+    "llmMonitorDesc": "查看模型请求与工具执行过程"
   },
   "moreTools": "更多内容",
   "load": "逆转时空的公式就是珍惜现在",

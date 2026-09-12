@@ -52,6 +52,7 @@ export const MUSE_ROUTES = [
   { name: "reborn" },
   { name: "time" },
   { name: "ai" },
+  { name: "llmMonitor" },
   { name: "test" },
 ];
 /**

@@ -28,7 +28,9 @@
     "passwordBox": "Password Box",
     "passwordBoxDesc": "Securely store and manage passwords",
     "form": "Form Generator",
-    "formDesc": "Quickly generate forms"
+    "formDesc": "Quickly generate forms",
+    "llmMonitor": "LLM Monitor",
+    "llmMonitorDesc": "Inspect model requests and tool execution"
   },
   "moreTools": "More Tools",
   "load": "The formula for reversing time and space is to cherish the present",
