@@ -69,9 +69,9 @@ function getToken(trace: LlmTrace, type: "input" | "output" | "total") {
   if (!trace.usage || typeof trace.usage !== "object") return "—";
   const usage = trace.usage as Record<string, unknown>;
   const keys = {
-    input: ["input_tokens", "prompt_tokens"],
-    output: ["output_tokens", "completion_tokens"],
-    total: ["total_tokens"],
+    input: ["input_tokens", "prompt_tokens", "inputTokens", "prompt_token_count"],
+    output: ["output_tokens", "completion_tokens", "outputTokens", "completion_token_count"],
+    total: ["total_tokens", "totalTokens", "total_token_count"],
   }[type];
   const value = keys.map((key) => usage[key]).find((item) => typeof item === "number");
   return typeof value === "number" ? value.toLocaleString() : "—";
