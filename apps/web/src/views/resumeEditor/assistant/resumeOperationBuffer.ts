@@ -35,11 +35,10 @@ export const createResumeOperationBuffer = ({
         recordCounts.set(operation.module, Math.max(0, count - 1));
       }
     });
-    const offset = pending.length;
     pending.push(...operations);
     return {
       applied: operations.length > 0,
-      changed: operations.map((_, index) => offset + index),
+      changed: operations.map((_, index) => index),
       added,
       failed: [],
     };
