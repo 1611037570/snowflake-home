@@ -124,7 +124,7 @@ export const resumeOptimization = () => ({
 
 ---
 
-## 6. 优化示例
+## 5. 优化示例
 
 ### 工作经历
 **优化前**：
