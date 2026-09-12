@@ -33,7 +33,7 @@ vi.mock("./formConfig", () => {
   };
 });
 
-describe("resume store updateModuleField", () => {
+describe("resume store applyResumeOperations", () => {
   beforeEach(() => {
     setActivePinia(createPinia());
   });
@@ -55,7 +55,16 @@ describe("resume store updateModuleField", () => {
     );
     await nextTick();
 
-    expect(store.updateModuleField("user", "email", "test@example.com")).toBe(true);
+    expect(
+      store.applyResumeOperations([
+        {
+          op: "updateModule",
+          module: "user",
+          field: "email",
+          value: "test@example.com",
+        },
+      ]).applied,
+    ).toBe(true);
     expect(store.currentData.user.data.email).toBe("test@example.com");
   });
 
@@ -76,8 +85,16 @@ describe("resume store updateModuleField", () => {
     );
     await nextTick();
 
-    expect(store.updateModuleField("user", "birthday", "2000.01")).toBe(false);
-    expect(store.updateModuleField("user", "unknown", "任意内容")).toBe(false);
+    expect(
+      store.applyResumeOperations([
+        { op: "updateModule", module: "user", field: "birthday", value: "2000.01" },
+      ]).applied,
+    ).toBe(false);
+    expect(
+      store.applyResumeOperations([
+        { op: "updateModule", module: "user", field: "unknown", value: "任意内容" },
+      ]).applied,
+    ).toBe(false);
   });
 
   it("通过统一入口批量执行语义化操作", async () => {
