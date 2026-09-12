@@ -74,3 +74,27 @@ export function addFieldData(
   current[lastKey] = resolveDefaultValue(binding.defaultValue);
   return true;
 }
+
+// 删除字段主数据，删除后字段会回到可添加列表
+export function removeFieldData(
+  rootData: unknown,
+  field: FormField,
+  context?: DataPathContext,
+): boolean {
+  const path = resolveFieldDataPath(field, context);
+  if (!path || !isDataContainer(rootData)) return false;
+
+  let current: DataContainer = rootData;
+  for (let pathIndex = 0; pathIndex < path.length - 1; pathIndex++) {
+    const key = path[pathIndex];
+    if (key === undefined) return false;
+    const value = current[key];
+    if (!isDataContainer(value)) return false;
+    current = value;
+  }
+
+  const lastKey = path[path.length - 1];
+  if (!lastKey || !Object.prototype.hasOwnProperty.call(current, lastKey)) return false;
+  delete current[lastKey];
+  return true;
+}

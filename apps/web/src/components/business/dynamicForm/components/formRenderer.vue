@@ -12,6 +12,7 @@
       v-bind="getHiddenProps(item.field)"
       v-on="getHiddenEvents(item.field)"
       @mouseenter="handleModuleMouseEnter(item.field)"
+      @remove="removeField(item.field)"
     >
       <!-- 校验失败：展示友好的错误提示 -->
       <FormError
@@ -41,7 +42,7 @@
 import { getUUID } from "@/utils";
 import { useDraggable } from "vue-draggable-plus";
 import { checkForm } from "../code/checkForm.ts";
-import { hasFieldData } from "../code/fieldData";
+import { hasFieldData, removeFieldData } from "../code/fieldData";
 import { isFieldHidden, isFieldRemoved } from "../code/fieldVisible";
 import { DF_MODULE_SELECT, DF_ROOT_DATA } from "../code/injectionKeys.ts";
 import type { DataPathContext } from "../code/pathContext";
@@ -101,6 +102,10 @@ function removeObject(field: any) {
   rootData.removeObject(field);
   const index = items.value.fields.indexOf(field);
   if (index >= 0) items.value.fields.splice(index, 1);
+}
+// 删除可添加字段的数据，保留字段模板以便后续重新添加
+function removeField(field: any) {
+  removeFieldData(rootData.data, field, pathContext);
 }
 function ensureFieldIds(fields: any[]) {
   if (!fields) return;
