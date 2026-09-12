@@ -33,18 +33,26 @@ const safeUrl = (value) => {
     <div
       v-for="(item, index) in account"
       :key="index"
-      class="flex max-w-full min-w-0 flex-wrap items-center gap-1"
+      class="max-w-full min-w-0"
       data-module="user"
     >
-      <ResumeField v-model="item.name" />
-      <span v-if="item.name?.value && item.url?.value">：</span>
+      <span
+        v-if="item.name?.value"
+        class="inline-block whitespace-nowrap"
+      >
+        <ResumeField v-model="item.name" class="inline" />
+        <span v-if="item.url?.value">：</span>
+      </span>
       <a
         :href="safeUrl(item.url?.value)"
         target="_blank"
         rel="noopener noreferrer"
-        class="max-w-full min-w-0 flex-1 hover:underline"
+        class="inline max-w-full min-w-0 break-all hover:underline"
       >
-        <ResumeField v-model="item.url" />
+        <ResumeField
+          v-model="item.url"
+          class="inline max-w-full min-w-0 break-all"
+        />
       </a>
     </div>
   </div>
