@@ -38,8 +38,6 @@ export const useChatRequest = ({
     tools,
     reflectPrompt,
     onToolError,
-    commitDeferredWrites,
-    discardDeferredWrites,
   } = config;
   // 深拷贝简历数据时跳过 base64 大字段（user.avatar、image[].img），避免每请求全量序列化
   const cloneDataSkippingMedia = (value: any, parentKey?: string): any => {
@@ -332,8 +330,6 @@ export const useChatRequest = ({
           lastMsg.thoughtCollapsed = true;
           stepContent = "";
           streamFinalContent = false;
-          // 回复完成后统一提交生成期间缓冲的写操作
-          commitDeferredWrites?.();
           scrollToBottom();
           setTimeout(() => {
             scrollToBottom();
@@ -345,8 +341,6 @@ export const useChatRequest = ({
     } catch (error: any) {
       stepContent = "";
       streamFinalContent = false;
-      // 取消或失败时丢弃缓冲写操作，避免留下半截新增/修改
-      discardDeferredWrites?.();
       // 若已卸载则忽略
       if (isUnmounted) return;
       // 主动中止不视为错误

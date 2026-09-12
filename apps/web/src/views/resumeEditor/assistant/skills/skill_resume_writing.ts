@@ -15,7 +15,7 @@ export const resumeWriting = () => ({
 5. 涉及内容质量提升时，配合调用 resume_optimization 获取写作方法论。
 
 # 写操作（propose_resume_edits）
-只通过 operations 提交写操作，回复完成后直接写入简历数据（用户可撤回），不要返回简历数据。
+只通过 operations 提交写操作，调用后立即写入简历数据（用户可撤回），不要返回简历数据。
 
 - 修改字段：
   - 模块级字段：{ op: "updateModule", module, field, value }
