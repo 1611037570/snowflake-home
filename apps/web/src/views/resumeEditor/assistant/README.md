@@ -9,7 +9,6 @@ index.vue（薄入口）
        → resumeSchemaRegistry（表单配置生成的领域结构）
        → resumeContext（简历数据上下文）
        → tools（简历工具，只提交语义操作）
-       → resumeOperationBuffer（请求期间的操作缓冲）
        → flows（引导流程与建议卡片，由调用方注入 Chat）
   → chat（通用聊天 UI 与请求执行）
        → useChatRequest / llm.react（请求引擎）
@@ -27,6 +26,5 @@ index.vue（薄入口）
 - `stores/modules/resume/resumeOperations.ts`：定义写操作协议与执行顺序，Store 对外只暴露批量入口。
 - `resumeContext.ts`：集中简历数据读取、头像裁剪。
 - `tools/*`：定义简历工具，写工具只校验并提交完整语义操作列表。
-- `resumeOperationBuffer.ts`：成功回复后整批提交操作，取消或失败时整批丢弃。
 - `flows.ts`：只提供引导流程与建议卡片数据。
 - `chat/*`：只做消息 UI 与请求执行，业务内容由 props/config 注入；不得反向 import 上层业务。

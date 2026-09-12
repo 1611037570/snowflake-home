@@ -1,10 +1,9 @@
 import { describe, expect, it, vi } from "vitest";
 import { executeResumeOperations } from "@/stores/modules/resume/resumeOperations";
-import { createResumeOperationBuffer } from "./resumeOperationBuffer";
 import { createProposeResumeEditsTool } from "./tools/tool_propose_resume_edits";
 
 describe("resume write flow", () => {
-  it("从真实字段契约校验后延迟整批写入简历数据", () => {
+  it("从真实字段契约校验后立即写入简历数据", () => {
     const data: any = {
       user: { ui: { title: "个人信息" }, data: { name: "张三" } },
       work: {
@@ -50,16 +49,12 @@ describe("resume write flow", () => {
       },
     };
     const apply = vi.fn((operations) => executeResumeOperations(operations, target));
-    const buffer = createResumeOperationBuffer({
-      apply,
-      getRecordCount: (module) => data[module].data.length,
-    });
     const tool = createProposeResumeEditsTool({
       getResumeData: () => ({
         user: { title: data.user.ui.title, data: structuredClone(data.user.data) },
         work: { title: data.work.ui.title, data: structuredClone(data.work.data) },
       }),
-      applyResumeOperations: buffer.execute,
+      applyResumeOperations: apply,
     });
     const operations = [
       {
@@ -79,8 +74,6 @@ describe("resume write flow", () => {
         },
       },
     ];
-    buffer.begin();
-
     const result = tool.execute({ operations });
 
     expect(result).toMatchObject({
@@ -89,10 +82,6 @@ describe("resume write flow", () => {
       added: [{ module: "work", index: 1 }],
       errors: [],
     });
-    expect(data.user.data.email).toBeUndefined();
-    expect(data.work.data).toHaveLength(1);
-
-    buffer.commit();
     expect(apply).toHaveBeenCalledTimes(1);
     expect(data.user.data.email).toBe("test@example.com");
     expect(data.work.data[1]).toMatchObject({

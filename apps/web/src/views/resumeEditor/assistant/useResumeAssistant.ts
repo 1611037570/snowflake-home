@@ -7,7 +7,6 @@ import { createSkillTools } from "./skills/tool_skill_loader";
 import { useResumeContext } from "./resumeContext";
 import { createResumeTools, RESUME_LANG_CODES } from "./tools";
 import type { AssistantConfig } from "./types";
-import { createResumeOperationBuffer } from "./resumeOperationBuffer";
 
 // 简历助手唯一组装器：入口只消费本模块产出的 config 与创建对话方法
 export const useResumeAssistant = () => {
@@ -17,49 +16,12 @@ export const useResumeAssistant = () => {
   const { createDefaultChat, createDefaultMessage } = aiStore;
   const resumeContext = useResumeContext();
 
-  const getRecordCount = (moduleKey: string) => {
-    const module = (resumeStore.currentData as any)?.[moduleKey];
-    if (Array.isArray(module?.data)) return module.data.length;
-    if (Array.isArray(module?.data?.list)) return module.data.list.length;
-    return 0;
-  };
-  const operationBuffer = createResumeOperationBuffer({
-    apply: (operations) => resumeStore.applyResumeOperations(operations),
-    getRecordCount,
-  });
-  const pendingLanguages: string[] = [];
-  let bufferingLanguage = false;
-
   const updateCurrentLang = (language: string): boolean => {
     const ui = resumeStore.currentUI;
     if (!ui || !RESUME_LANG_CODES.includes(language)) return false;
     ui.language = language;
     return true;
   };
-  // 翻译完成前缓冲语言更新，成功回复后才写入简历 ui
-  const bufferedUpdateLanguage = (language: string): boolean => {
-    if (!RESUME_LANG_CODES.includes(language)) return false;
-    if (!bufferingLanguage) return updateCurrentLang(language);
-    pendingLanguages.push(language);
-    return true;
-  };
-
-  // 请求成功：语义操作整批写入，语言更新在内容提交后执行
-  const commitDeferredWrites = () => {
-    bufferingLanguage = false;
-    const result = operationBuffer.commit();
-    const languages = pendingLanguages.splice(0);
-    languages.forEach(updateCurrentLang);
-    return result.applied || languages.length > 0;
-  };
-
-  // 请求取消/失败：丢弃缓冲，避免留下半截新增或修改
-  const discardDeferredWrites = () => {
-    bufferingLanguage = false;
-    pendingLanguages.length = 0;
-    operationBuffer.discard();
-  };
-
   // 请求配置：技能工具、简历工具与请求上下文统一在此装配
   const config: AssistantConfig = {
     generating: isGenerating,
@@ -78,18 +40,14 @@ export const useResumeAssistant = () => {
       ...createSkillTools(onDemandSkills.map((createSkill) => createSkill())),
       ...createResumeTools({
         getResumeData: resumeContext.getResumeData,
-        applyResumeOperations: operationBuffer.execute,
-        updateLanguage: bufferedUpdateLanguage,
+        applyResumeOperations: (operations) => resumeStore.applyResumeOperations(operations),
+        updateLanguage: updateCurrentLang,
       }),
     ],
     beforeRequest: () => {
-      bufferingLanguage = true;
-      operationBuffer.begin();
       resumeContext.beforeRequest();
     },
     afterRequest: resumeContext.afterRequest,
-    commitDeferredWrites,
-    discardDeferredWrites,
   };
 
   // 创建对话：常驻技能按清单顺序作为系统消息注入
