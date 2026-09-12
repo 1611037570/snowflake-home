@@ -79,6 +79,8 @@ const getContext = () => {
     currentType: inject(DF_CURRENT_TYPE),
     // 容器能力按容器类型选择性提供，缺失时注入默认值避免 Vue 告警
     currentLength: inject(DF_CURRENT_LENGTH, undefined),
+    // 当前节点删除能力已由所在容器绑定目标，调用方无需传递索引
+    removeCurrent: inject(DF_REMOVE, undefined),
     removeSelf: inject(DF_REMOVE, undefined),
     removeItem: inject(DF_REMOVE_ITEM, undefined),
     addItem: createAddItem(currentForm, dataProxy),

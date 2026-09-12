@@ -26,6 +26,7 @@
         :currentIndex="item.index"
         :currentForm="item.item"
         :pathContext="getPathContext(item.index)"
+        @removeObject="remove"
       />
       <div class="flex" v-if="item.item.ui">
         <el-button @click="moveItem(item.index, item.index - 1)" :disabled="item.index === 0"
