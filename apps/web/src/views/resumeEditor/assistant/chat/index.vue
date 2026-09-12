@@ -14,6 +14,7 @@ import ChatInput from "./chatInput/index.vue";
 import UserMessage from "./userMessage.vue";
 import EmptyState from "./emptyState/index.vue";
 import ChatHeader from "./header/index.vue";
+import ChatList from "./chatList.vue";
 
 const aiStore = useAiStore();
 const resumeStore = useResumeStore();
@@ -22,7 +23,7 @@ const { createDefaultMessage } = aiStore;
 const { config: assistantConfig, createChat: createAssistantChat } = useResumeAssistant();
 // 把会话工厂注册到 ai store，供新建话题入口调用
 aiStore.registerResumeAssistantChatFactory(createAssistantChat);
-const { resumeAssistantChat } = storeToRefs(aiStore);
+const { resumeAssistantChat, resumeAssistantChatList } = storeToRefs(aiStore);
 const { selectedModule } = storeToRefs(resumeStore);
 // 当前操作模块列表：有选中模块时展示真实模块，无选中时补“整个简历”兜底项
 const selectedModules = computed(() =>
@@ -34,10 +35,8 @@ const selectedModules = computed(() =>
 const removeSelectedModule = (key: string) => {
   resumeStore.unselectModule(key);
 };
-// 简历助手对话：ai store 已持久化，无缓存时初始化默认对话
-if (!resumeAssistantChat.value) {
-  resumeAssistantChat.value = createAssistantChat();
-}
+// 简历助手对话：初始化时把旧版单条会话迁移到会话列表
+aiStore.initializeResumeAssistantChat();
 const chat = computed({
   get: () => resumeAssistantChat.value!,
   set: (value) => {
@@ -47,6 +46,16 @@ const chat = computed({
 // 生成状态来自宿主注入的引用，模板与输入框共用
 const generating = assistantConfig.generating;
 const isGenerating = computed(() => generating.value);
+
+function createNewChat() {
+  if (generating.value) return;
+  aiStore.createNewResumeAssistantChat();
+}
+
+function selectChat(id: string) {
+  if (generating.value) return;
+  aiStore.switchResumeAssistantChat(id);
+}
 
 // currentMessages：从 chat.messages 派生
 const currentMessages = computed(() => chat.value?.messages ?? []);
@@ -70,6 +79,7 @@ function addMessage(msg) {
     ...msg,
   });
   chat.value.updateTime = Date.now();
+  aiStore.updateResumeAssistantChatTitle(chat.value);
 }
 // 聊天容器的引用，用于滚动
 const chatContainer = ref(null);
@@ -349,9 +359,17 @@ const handleFlowInput = (content) => {
 </script>
 
 <template>
-  <div class="relative flex h-full w-full flex-col overflow-hidden select-text">
-    <ChatHeader :messages="navMessages" @select="handleNavSelect" />
-    <SfScrollbar ref="chatContainer" class="w-full flex-1">
+  <div class="flex h-full w-full overflow-hidden select-text">
+    <ChatList
+      :chats="resumeAssistantChatList"
+      :active-chat-id="chat.id"
+      :disabled="isGenerating"
+      @create="createNewChat"
+      @select="selectChat"
+    />
+    <div class="relative flex min-w-0 flex-1 flex-col overflow-hidden">
+      <ChatHeader :messages="navMessages" :is-generating="isGenerating" @select="handleNavSelect" />
+      <SfScrollbar ref="chatContainer" class="w-full flex-1">
       <EmptyState
         :suggestions="suggestions"
         :selected-modules="selectedModules"
@@ -378,33 +396,34 @@ const handleFlowInput = (content) => {
           @withdraw-modify="handleWithdrawModify"
         />
       </div>
-    </SfScrollbar>
-    <!-- 滚动到底部按钮 -->
-    <Transition
+      </SfScrollbar>
+      <!-- 滚动到底部按钮 -->
+      <Transition
       enter-active-class="transition duration-200 ease-out"
       enter-from-class="translate-y-4 opacity-0"
       enter-to-class="translate-y-0 opacity-100"
       leave-active-class="transition duration-200 ease-in"
       leave-from-class="translate-y-0 opacity-100"
       leave-to-class="translate-y-4 opacity-0"
-    >
-      <div v-if="showScrollBottom" class="absolute bottom-42 left-1/2 z-9 -translate-x-1/2">
-        <SfIcon
-          icon="mingcute:arrow-down-line"
-          size="4"
-          boxSize="8"
-          class="rounded-full border border-sf-b bg-sf-bg"
-          @click="scrollToBottom"
-        />
-      </div>
-    </Transition>
+      >
+        <div v-if="showScrollBottom" class="absolute bottom-42 left-1/2 z-9 -translate-x-1/2">
+          <SfIcon
+            icon="mingcute:arrow-down-line"
+            size="4"
+            boxSize="8"
+            class="rounded-full border border-sf-b bg-sf-bg"
+            @click="scrollToBottom"
+          />
+        </div>
+      </Transition>
 
-    <ChatInput
-      ref="chatInputRef"
-      :is-generating="isGenerating"
-      @send="handleSend"
-      @stop="stopGenerating"
-    />
+      <ChatInput
+        ref="chatInputRef"
+        :is-generating="isGenerating"
+        @send="handleSend"
+        @stop="stopGenerating"
+      />
+    </div>
   </div>
 </template>
 
