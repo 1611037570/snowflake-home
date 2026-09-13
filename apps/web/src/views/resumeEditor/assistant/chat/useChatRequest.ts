@@ -131,6 +131,7 @@ export const useChatRequest = ({
     resume_create: "读取《从零生成简历经历》",
     resume_interview: "读取《AI 简历面试》",
     resume_score: "读取《AI 简历评估》",
+    resume_one_key_optimize: "读取《一键优化》",
     update_resume_language: "更新简历语言",
   };
 
