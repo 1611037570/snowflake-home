@@ -18,13 +18,23 @@ export type FlowStep = {
   question: string;
   options: string[] | (() => string[]);
   input?: boolean;
+  // 条件步骤仅在满足业务条件时加入本次引导流程
+  when?: () => boolean;
+  // 命中取消答案时结束流程，不触发 AI 请求
+  cancelAnswers?: string[];
+  cancelMessage?: string;
+  collectAnswer?: boolean;
 };
 
 // 引导流程：点击建议卡片后先收集信息，再构造真实请求
 export type Flow = {
   userContent: string;
   steps: FlowStep[];
-  build: (answers: string[]) => { prompt?: string; userContent: string };
+  build: (answers: string[]) => {
+    prompt?: string;
+    userContent: string;
+    requestContext?: Record<string, unknown>;
+  };
 };
 
 // 建议卡片：由调用方注入，Chat 只负责展示与转发
@@ -45,7 +55,7 @@ export interface AssistantConfig {
   // 工具执行错误回调：由宿主决定恢复或中断，引擎只负责转交
   onToolError?: ReactConfig["onToolError"];
   // 请求前准备（如裁剪头像），与 afterRequest 成对使用
-  beforeRequest?: () => void;
+  beforeRequest?: (context?: Record<string, unknown>) => void;
   // 请求结束后还原现场
   afterRequest?: () => void;
 }

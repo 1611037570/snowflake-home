@@ -166,7 +166,7 @@ const handleSend = (content) => {
   // 确保当前没有正在发送的消息
   if (generating.value) return;
   // 引导流程的自由输入步骤：把输入内容作为答案推进流程
-  const flowStep = activeFlow.value?.flow?.steps?.[activeFlow.value.stepIndex];
+  const flowStep = activeFlow.value?.steps?.[activeFlow.value.stepIndex];
   if (flowStep) {
     // 无可用选项的步骤同样允许自由输入，避免流程卡死
     const options = typeof flowStep.options === "function" ? flowStep.options() : flowStep.options;
@@ -268,7 +268,9 @@ const handleSuggest = (payload) => {
   const flow = flows[payload?.flow];
   if (!flow) return;
   // 记录流程状态并展示初始用户消息
-  activeFlow.value = { flow, stepIndex: 0, answers: [] };
+  // 流程启动时固化条件步骤，保证本轮授权判断与入口状态一致
+  const steps = flow.steps.filter((step) => step.when?.() ?? true);
+  activeFlow.value = { flow, steps, stepIndex: 0, answers: [] };
   // 引导对话仅作界面展示，不加入请求上下文
   addMessage({
     role: "user",
@@ -286,7 +288,7 @@ const handleSuggest = (payload) => {
  */
 const runFlowStep = () => {
   const state = activeFlow.value;
-  const step = state?.flow?.steps?.[state.stepIndex];
+  const step = state?.steps?.[state.stepIndex];
   if (!step) return;
   // 动态选项在展示时求值；无可用选项时退回自由输入
   const options = typeof step.options === "function" ? step.options() : step.options;
@@ -310,11 +312,26 @@ const runFlowStep = () => {
 const handleFlowAnswer = (answer) => {
   const state = activeFlow.value;
   if (!state) return;
-  // 记录答案；仅中间步骤单独展示，最后一步并入真实请求
-  state.answers.push(answer);
+  const step = state.steps[state.stepIndex];
+  // 授权被拒绝时只结束引导流程，不向模型发送请求
+  if (step?.cancelAnswers?.includes(answer)) {
+    addMessage({ role: "user", content: answer, typing: false, skipContext: true });
+    addMessage({
+      role: "assistant",
+      content: step.cancelMessage || "已取消本次操作。",
+      typing: false,
+      requestStatus: "success",
+      skipContext: true,
+    });
+    activeFlow.value = null;
+    scrollToBottom();
+    return;
+  }
+  // 仅收集构造最终请求所需的业务答案，授权答案不混入请求参数
+  if (step?.collectAnswer !== false) state.answers.push(answer);
   // 推进到下一步
   state.stepIndex += 1;
-  if (state.stepIndex < state.flow.steps.length) {
+  if (state.stepIndex < state.steps.length) {
     // 中间步骤答案仅作界面展示，不加入请求上下文
     addMessage({
       role: "user",
@@ -327,7 +344,7 @@ const handleFlowAnswer = (answer) => {
     return;
   }
   // 收集完成：最后一步答案并入真实请求，不再单独展示，避免出现两条 user 消息
-  const { prompt, userContent } = state.flow.build(state.answers);
+  const { prompt, userContent, requestContext } = state.flow.build(state.answers);
   activeFlow.value = null;
   // 所有请求统一走 React 编排
   if (prompt) {
@@ -341,6 +358,7 @@ const handleFlowAnswer = (answer) => {
     role: "user",
     content: userContent,
     typing: false,
+    requestContext,
   });
   generating.value = true;
   scrollToBottom();

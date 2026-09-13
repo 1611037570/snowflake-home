@@ -60,13 +60,14 @@ export const useResumeContext = () => {
   };
 
   // 读取当前简历数据：跟随用户在 AI 助手里的模块选择；未选择任何模块时返回整份简历
+  let forceFullResume = false;
   const getResumeData = () => {
     const data = resumeStore.currentData;
     if (!data) return {};
     const result: Record<string, any> = {};
     const userName = typeof data.user?.data?.name === "string" ? data.user.data.name : "";
     const selectedKeys = selectedModule.value.map((item) => item.key);
-    const keys = selectedKeys.length ? selectedKeys : Object.keys(data);
+    const keys = forceFullResume || !selectedKeys.length ? Object.keys(data) : selectedKeys;
     keys.forEach((key) => {
       const module = data[key];
       if (!module || typeof module !== "object" || !("data" in module)) return;
@@ -96,15 +97,20 @@ export const useResumeContext = () => {
 
   // 整份或 user 模块请求时，临时清除头像避免请求体过大，请求结束后还原
   let trimState: { saved: string | undefined } | null = null;
-  const beforeRequest = () => {
+  const beforeRequest = (context?: Record<string, unknown>) => {
+    // 一键优化在用户授权后固定读取整份简历，避免生成期间受模块选择变化影响
+    forceFullResume = context?.resumeScope === "all";
     const data = resumeStore.currentData;
     const need =
-      !selectedModule.value.length || selectedModule.value.some((item: any) => item.key === "user");
+      forceFullResume ||
+      !selectedModule.value.length ||
+      selectedModule.value.some((item: any) => item.key === "user");
     if (!need || !data?.user?.data) return;
     trimState = { saved: data.user.data.avatar };
     delete data.user.data.avatar;
   };
   const afterRequest = () => {
+    forceFullResume = false;
     if (!trimState) return;
     const data = resumeStore.currentData;
     if (data?.user?.data) data.user.data.avatar = trimState.saved;

@@ -192,6 +192,15 @@ export const flows: Record<string, Flow> = {
     userContent: "帮我进行一键优化",
     steps: [
       {
+        question: "一键优化需要读取整份简历，当前只选择了部分模块，是否授权本次读取整份简历？",
+        options: ["授权读取并继续", "拒绝并取消"],
+        // 仅局部模块模式需要额外授权，整个简历模式直接进入优化信息收集
+        when: () => useResumeStore().selectedModule.length > 0,
+        cancelAnswers: ["拒绝并取消"],
+        cancelMessage: "已取消一键优化，未发起 AI 请求。",
+        collectAnswer: false,
+      },
+      {
         question: "请确认或填写你的求职方向（例如：金融分析师、后端开发）",
         // 求职方向已在简历中填写时以该值作为确认选项；未填写时返回空选项回退为自由输入
         options: () => {
@@ -208,6 +217,8 @@ export const flows: Record<string, Flow> = {
       // 一键优化规范已抽离为 resumeOneKeyOptimize 技能，由模型按需加载；此处携带求职方向与身份参数
       return {
         userContent: `请对我的简历进行一键优化：求职方向为「${direction}」，身份为「${identity}」。请补齐缺失经历、综合优化内容，并给出评分与优化报告。`,
+        // 用户已处于整个简历模式或在流程中明确授权，本次请求固定读取整份简历
+        requestContext: { resumeScope: "all" },
       };
     },
   },

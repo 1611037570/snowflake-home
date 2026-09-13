@@ -222,7 +222,11 @@ export const useChatRequest = ({
 
     try {
       // 请求前调用方准备（如临时裁剪头像等大字段）
-      beforeRequest?.();
+      // 请求读取范围跟随最后一条用户消息持久化，重试与重新生成时保持一致
+      const requestMessage = [...currentMessages.value]
+        .reverse()
+        .find((message) => message.role === "user");
+      beforeRequest?.(requestMessage?.requestContext);
       // 构建消息列表（只复制 role 和 content，跳过带上下文标记的引导对话）
       let messages = currentMessages.value
         .filter((message) => !message.skipContext)
