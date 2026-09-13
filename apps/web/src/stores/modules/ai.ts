@@ -44,6 +44,8 @@ export type Message = {
   requestStatus: string;
   // 上下文标记：为 true 时仅作界面展示，不随请求发送给模型
   skipContext?: boolean;
+  // 由业务宿主解释的请求上下文，重试与重新生成时保持一致
+  requestContext?: Record<string, unknown>;
 };
 export type ModelProtocol = "chatCompletions" | "responses";
 // 已添加的模型（用户实际使用的模型配置）

@@ -44,8 +44,8 @@ export const useResumeAssistant = () => {
         updateLanguage: updateCurrentLang,
       }),
     ],
-    beforeRequest: () => {
-      resumeContext.beforeRequest();
+    beforeRequest: (options) => {
+      resumeContext.beforeRequest(options);
     },
     afterRequest: resumeContext.afterRequest,
   };
