@@ -9,6 +9,7 @@ import {
   walkFormFields,
 } from "@/components/business/dynamicForm/code/schemaAccess";
 import router from "@/routers";
+import { useAiStore } from "@/stores/modules/ai";
 import { getUUID } from "@/utils";
 import { defineStore } from "pinia";
 import { computed, ref, toRaw, watch } from "vue";
@@ -385,6 +386,8 @@ export const useResumeStore = defineStore(
       const deletedItem = deepClone(list.value[currentIndex.value]);
       deletedItem._deletedAt = Date.now();
       trashList.value.push(deletedItem);
+      // 简历删除后同步清理该简历的助手对话
+      useAiStore().removeResumeAssistantChats(deletedItem.id);
       list.value.splice(currentIndex.value, 1);
       currentIndex.value = -1;
     };
