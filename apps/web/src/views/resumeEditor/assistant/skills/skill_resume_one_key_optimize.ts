@@ -5,11 +5,12 @@ export const resumeOneKeyOptimize = () => ({
   description: `一键优化编排：按求职方向与身份，补齐缺失经历、综合优化内容并评分，输出结构化优化报告。`,
   instructions: `# 执行流程
 - 必须先调用 read_resume_data 读取整份简历真实数据，不得只读取或处理局部模块；再根据用户提供的求职方向，调用名称匹配目标行业的 industry_* 行业知识库技能读取岗位族、量化维度与写法要点，未命中专门行业改调 industry_general。
-- 调用 resume_writing、resume_optimization 与 resume_data_contract 获取写入、优化及字段规范；需要补齐整段经历时再调用 resume_create，完成后参考 resume_score 做体检与打分。
+- 在读取真实数据后，调用 resume_writing、resume_optimization、resume_data_contract 与 resume_score 获取写入、优化、字段及评分规范；这些互不依赖的技能应尽量在同一轮并行读取。仅在确认需要补齐整段经历时调用 resume_create。
 - 先逐模块审查完整性、重复度、岗位相关性和表达质量，再一次性通过 propose_resume_edits 写入必要的新增、修改、删除与排序操作，禁止只给建议或只做同义改写。
 
 # 增删规则
-- 学生应具备实习或校园经历与项目经历，职场人应具备工作经历与项目经历；对应经历模块存在但没有记录时，新增一条带【待补充：字段名】占位的记录，禁止把占位伪装成真实值。
+- 根据目标职业、身份、从业年限和现有经历判断是否确有必要补齐经历，不得仅因身份强制要求固定模块。学生优先检查实习、校园、科研或项目等能证明目标能力的经历；职场人优先检查工作经历，并仅在目标岗位确有项目证明需求时要求项目经历。
+- 必要经历对应的模块已存在但没有记录时，新增一条带【待补充：字段名】占位的记录，禁止把占位伪装成真实值；模块本身不存在时不得写入，改为在 todo 中提示用户先添加对应模块。
 - 基于已有真实事实，可补充缺失的职责、行动、技能场景与成果表达；没有真实数据支撑的数字必须使用【待补充：量化指标】占位，不得编造。
 - 删除重复句、空洞自评、无信息量套话、明显模板残留及完全重复的记录；与目标岗位弱相关但包含真实事实的经历不得整段删除，应压缩、降序或突出可迁移能力。
 - 不得删除个人身份与联系方式字段，不得删除唯一一条真实工作、项目或教育经历。
@@ -17,7 +18,8 @@ export const resumeOneKeyOptimize = () => ({
 
 # 诊断与优化闭环
 - 以用户提供的求职方向和身份为基础，结合简历中的从业年限、当前职位与求职状态定位求职现状；信息缺失时纳入 todo，不得自行假设。
-- 先按 resume_score 找出问题并排序，再按 resume_optimization 处理可直接解决的问题；需要新增事实或量化数据的问题不得强行润色，保留到 todo 与 suggestions。
+- 先按 resume_score 的统一评分标尺找出问题并排序，再按 resume_optimization 处理可直接解决的问题；需要新增事实或量化数据的问题不得强行润色，保留到 todo 与 suggestions。
+- propose_resume_edits 成功后，以实际写入结果为准完成六维评分；不得把未执行或执行失败的修改计入得分与亮点。
 - changes 只记录实际写入的优化动作，highlights 说明这些动作对阅读效率、职业契合、职业成就或其他六维竞争力的实际改善。
 - suggestions 只保留本轮未解决的问题，每条使用“优先级｜问题｜具体行动｜预期改善”格式，禁止重复已完成改动或给出空泛建议。
 
@@ -36,7 +38,7 @@ export const resumeOneKeyOptimize = () => ({
     { "name": "职业稳定性", "score": 88 }
   ],
   "checks": [
-    { "level": "error", "message": "缺少证书模块" },
+    { "level": "error", "message": "目标岗位所需的联系方式未填写完整" },
     { "level": "warning", "message": "工作经历第2段缺少量化数据" }
   ],
   "changes": [
@@ -50,5 +52,6 @@ export const resumeOneKeyOptimize = () => ({
 
 - totalScore 与 dimensions 中每个 score 均为 0-100 的整数，totalScore 取六项得分的算术平均值并四舍五入；checks 的 level 只能取 error 或 warning。
 - dimensions 固定使用以下六项，不可增减、改名或调整顺序：信息完整度、阅读效率、职业契合度、职业成就、发展潜力、职业稳定性。
+- dimensions 的分数必须遵循 resume_score 的统一评分标尺；checks 仅记录优化后仍存在的具体问题，不得重复已经成功解决的问题。
 - 只输出上述一个 resume-report 代码块，代码块外不再输出额外正文。`,
 });
