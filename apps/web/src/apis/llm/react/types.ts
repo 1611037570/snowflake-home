@@ -58,8 +58,8 @@ export interface ReactConfig {
   onThink?: (reasoning: string) => void;
   // 执行回调：每次工具调用
   onAct?: (toolCall: ToolCall) => void;
-  // 观察回调：每次工具执行结果
-  onObserve?: (observation: Observation) => void;
+  // 观察回调：每次工具执行结果，并标注当前 ReAct 轮次
+  onObserve?: (observation: Observation, round: number) => void;
   // 工具执行错误回调：返回非 undefined 时作为该工具的观察结果回填并继续；返回 undefined 则按原错误中断
   onToolError?: (info: {
     toolCall: ToolCall;

@@ -314,6 +314,21 @@ class LLM {
       });
       // 标记候选答案后是否已进入反思轮，反思轮输出作为最终结果
       let reflectRound = false;
+      let activeRound: { round: number; startTime: number } | null = null;
+
+      // 统一记录每轮结束时间与耗时，异常和取消同样保留本轮数据
+      const finishActiveRound = (status: "success" | "error" | "aborted" = "success") => {
+        if (!activeRound) return;
+        const endTime = Date.now();
+        recordLlmTraceEvent(traceId, "round_complete", {
+          round: activeRound.round,
+          startTime: activeRound.startTime,
+          endTime,
+          durationMs: endTime - activeRound.startTime,
+          status,
+        });
+        activeRound = null;
+      };
 
       try {
         // 打印 ReAct 运行过程，便于观察每一步发生了什么
@@ -322,7 +337,10 @@ class LLM {
         for (let step = 0; step < maxSteps; step++) {
           if (aborted) throw new AbortError();
 
-          console.log(`[ReAct] 第 ${step + 1}/${maxSteps} 步 Think`);
+          const round = step + 1;
+          activeRound = { round, startTime: Date.now() };
+          recordLlmTraceEvent(traceId, "round_start", { round });
+          console.log(`[ReAct] 第 ${round}/${maxSteps} 步 Think`);
           const result = await think(this, history, {
             tools: config.tools,
             model: config.model,
@@ -354,12 +372,14 @@ class LLM {
                 content: config.reflectPrompt ?? "",
               });
               reflectRound = true;
+              finishActiveRound();
               continue;
             }
 
             console.log("[ReAct] 最终答案:", finalAnswer);
             if (reflectRound) config.onReflect?.(finalAnswer);
             config.onFinal?.(finalAnswer);
+            finishActiveRound();
             finishLlmTrace(traceId, "success");
             return finalAnswer;
           }
@@ -381,7 +401,7 @@ class LLM {
               "参数:",
               toolCall.function.arguments,
             );
-            recordLlmTraceEvent(traceId, "tool_call", toolCall);
+            recordLlmTraceEvent(traceId, "tool_call", { round, toolCall });
             config.onAct?.(toolCall);
             let raw: unknown;
             try {
@@ -402,8 +422,9 @@ class LLM {
               "[ReAct] 观察结果(" + observation.content.length + "字符):",
               observePreview,
             );
-            recordLlmTraceEvent(traceId, "tool_result", observation);
-            config.onObserve?.(observation);
+            recordLlmTraceEvent(traceId, "tool_result", { round, observation });
+            // 回传从一开始的 ReAct 轮次，供宿主标注观测过程
+            config.onObserve?.(observation, round);
 
             history.push({
               role: "tool",
@@ -411,13 +432,16 @@ class LLM {
               tool_call_id: observation.toolCallId,
             });
           }
+          finishActiveRound();
         }
 
         console.warn("[ReAct] 超出最大步数");
         throw new Error("ReAct 超出最大步数");
       } catch (error) {
         const message = String((error as any)?.message || "ReAct 执行失败");
-        finishLlmTrace(traceId, error instanceof AbortError ? "aborted" : "error", message);
+        const status = error instanceof AbortError ? "aborted" : "error";
+        finishActiveRound(status);
+        finishLlmTrace(traceId, status, message);
         throw error;
       }
     };
