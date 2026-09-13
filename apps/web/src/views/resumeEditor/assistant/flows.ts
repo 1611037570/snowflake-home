@@ -54,6 +54,8 @@ export const flows: Record<string, Flow> = {
       // 任务规范已抽离为 selfIntro 技能，由模型按需加载；此处仅携带字数与风格参数
       return {
         userContent: `请根据我的简历，生成一段${style}风格、约${wordCount}的面试自我介绍口头稿`,
+        // 自我介绍需要综合完整经历，本次请求固定读取整份简历
+        requestContext: { resumeScope: "all" },
       };
     },
   },
@@ -154,6 +156,8 @@ export const flows: Record<string, Flow> = {
         userContent: withScore
           ? `请根据我的简历进行${direction}方向的模拟面试，每次只问一个问题，等我回答后再继续追问；每次我回答后先针对回复打分并给改进建议，再问下一题`
           : `请根据我的简历进行${direction}方向的模拟面试，每次只问一个问题，等我回答后再继续追问`,
+        // 模拟面试需要从完整经历持续选题，本次请求固定读取整份简历
+        requestContext: { resumeScope: "all" },
       };
     },
   },
@@ -169,6 +173,8 @@ export const flows: Record<string, Flow> = {
     build: () => ({
       // 任务规范已抽离为 resumeScore 技能，由模型按需加载
       userContent: "请根据我的简历进行综合评估：先体检并列出问题清单，再打分并给出改进建议",
+      // 综合评估必须覆盖全部模块，本次请求固定读取整份简历
+      requestContext: { resumeScope: "all" },
     }),
   },
   // 职业规划：根据简历中的所有经历生成职业规划
