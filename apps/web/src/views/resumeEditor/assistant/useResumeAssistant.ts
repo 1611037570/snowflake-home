@@ -15,6 +15,8 @@ export const useResumeAssistant = () => {
   const { isGenerating } = storeToRefs(resumeStore);
   const { createDefaultChat, createDefaultMessage } = aiStore;
   const resumeContext = useResumeContext();
+  // 每次请求独立记录写入结果，语言工具只能在本轮完整写入成功后执行
+  let hasSuccessfulWrite = false;
 
   const updateCurrentLang = (language: string): boolean => {
     const ui = resumeStore.currentUI;
@@ -40,14 +42,24 @@ export const useResumeAssistant = () => {
       ...createSkillTools(onDemandSkills.map((createSkill) => createSkill())),
       ...createResumeTools({
         getResumeData: resumeContext.getResumeData,
-        applyResumeOperations: (operations) => resumeStore.applyResumeOperations(operations),
+        applyResumeOperations: (operations) => {
+          const result = resumeStore.applyResumeOperations(operations);
+          if (result.applied && !result.failed.length) hasSuccessfulWrite = true;
+          return result;
+        },
+        hasSuccessfulWrite: () => hasSuccessfulWrite,
         updateLanguage: updateCurrentLang,
       }),
     ],
     beforeRequest: (options) => {
+      // 新请求开始时清空上轮写入凭据，禁止跨请求复用
+      hasSuccessfulWrite = false;
       resumeContext.beforeRequest(options);
     },
-    afterRequest: resumeContext.afterRequest,
+    afterRequest: () => {
+      hasSuccessfulWrite = false;
+      resumeContext.afterRequest();
+    },
   };
 
   // 创建对话：常驻技能按清单顺序作为系统消息注入
