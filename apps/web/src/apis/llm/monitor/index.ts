@@ -19,6 +19,8 @@ export type LlmTraceStatus =
 
 export type LlmTraceEventType =
   | "created"
+  | "round_start"
+  | "round_complete"
   | "request"
   | "response"
   | "first_token"

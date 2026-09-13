@@ -314,12 +314,12 @@ export const useChatRequest = ({
           lastMsg.stepLabel = `正在执行：${displayName}`;
           scrollToBottom();
         },
-        onObserve: () => {
+        onObserve: (_observation, round) => {
           if (!isCurrentRequest() || !lastMsg) return;
           const displayName = TOOL_NAMES[lastToolName] || lastToolName;
-          // 工具完成只记录完成动作，观察数据不写入思考区
-          lastMsg.thought += `\n执行完成：${displayName}`;
-          lastMsg.stepLabel = "正在处理结果…";
+          // 工具完成时标注当前 ReAct 轮次，观察数据不写入思考区
+          lastMsg.thought += `\n第 ${round} 轮观测完成：${displayName}`;
+          lastMsg.stepLabel = `第 ${round} 轮观测完成，正在处理结果…`;
           scrollToBottom();
         },
         onReflect: () => {

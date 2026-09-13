@@ -3,6 +3,7 @@ import {
   clearLlmTraces,
   llmTraces,
   type LlmTrace,
+  type LlmTraceEvent,
   type LlmTraceEventType,
   type LlmTraceStatus,
 } from "@/apis/llm/monitor";
@@ -33,6 +34,8 @@ const statusClass: Record<LlmTraceStatus, string> = {
 
 const eventText: Record<LlmTraceEventType, string> = {
   created: "已创建",
+  round_start: "轮次开始",
+  round_complete: "轮次完成",
   request: "已发起请求",
   response: "已收到响应",
   first_token: "收到首字",
@@ -47,6 +50,20 @@ const selectedTrace = computed(() => {
   return llmTraces.value.find((trace) => trace.id === selectedId.value) || llmTraces.value[0];
 });
 
+// 从轮次完成事件生成耗时概览，旧记录没有轮次事件时保持为空
+const roundStats = computed(() =>
+  (selectedTrace.value?.events ?? [])
+    .filter((event) => event.type === "round_complete")
+    .map((event) => {
+      const data = getEventData(event);
+      return {
+        round: typeof data?.round === "number" ? data.round : 0,
+        durationMs: typeof data?.durationMs === "number" ? data.durationMs : 0,
+        status: typeof data?.status === "string" ? data.status : "success",
+      };
+    }),
+);
+
 function selectTrace(id: string) {
   selectedId.value = id;
 }
@@ -60,6 +77,10 @@ function formatDuration(trace: LlmTrace) {
   const endTime =
     trace.endTime || trace.lastUpdateTime || trace.events.at(-1)?.time || trace.startTime;
   return `${((endTime - trace.startTime) / 1000).toFixed(2)} 秒`;
+}
+
+function formatMilliseconds(value: number) {
+  return value < 1000 ? `${value} 毫秒` : `${(value / 1000).toFixed(2)} 秒`;
 }
 
 function formatFirstToken(trace: LlmTrace) {
@@ -90,6 +111,27 @@ function formatData(value: unknown) {
   } catch {
     return String(value);
   }
+}
+
+function getEventData(event: LlmTraceEvent) {
+  if (!event.data || typeof event.data !== "object" || Array.isArray(event.data)) return null;
+  return event.data as Record<string, unknown>;
+}
+
+function formatEventTitle(event: LlmTraceEvent) {
+  const data = getEventData(event);
+  const round = typeof data?.round === "number" ? data.round : null;
+  if (event.type === "round_start" && round) return `第 ${round} 轮开始`;
+  if (event.type === "round_complete" && round) return `第 ${round} 轮完成`;
+  if (isToolEvent(event.type) && round) return `第 ${round} 轮 · ${eventText[event.type]}`;
+  return eventText[event.type];
+}
+
+function getEventPayload(event: LlmTraceEvent) {
+  const data = getEventData(event);
+  if (event.type === "tool_call" && data?.toolCall !== undefined) return data.toolCall;
+  if (event.type === "tool_result" && data?.observation !== undefined) return data.observation;
+  return event.data;
 }
 
 function isToolEvent(type: LlmTraceEventType) {
@@ -199,6 +241,25 @@ function isToolEvent(type: LlmTraceEventType) {
             </div>
           </div>
 
+          <div v-if="roundStats.length" class="mt-3">
+            <h3 class="font-bold text-sf-text">ReAct 轮次耗时</h3>
+            <div class="mt-3 grid gap-3 sm:grid-cols-3">
+              <div
+                v-for="item in roundStats"
+                :key="item.round"
+                class="flex items-center justify-between gap-3 rounded-lg bg-sf-bg-2 p-3"
+              >
+                <span class="font-medium text-sf-text">第 {{ item.round }} 轮</span>
+                <span
+                  class="text-sm"
+                  :class="item.status === 'success' ? 'text-sf-text-2' : 'text-sf-error'"
+                >
+                  {{ formatMilliseconds(item.durationMs) }}
+                </span>
+              </div>
+            </div>
+          </div>
+
           <div class="mt-3 space-y-3">
             <details class="border-sf-border rounded-lg border p-3">
               <summary class="cursor-pointer font-medium text-sf-text">请求输入</summary>
@@ -235,24 +296,29 @@ function isToolEvent(type: LlmTraceEventType) {
               <template v-for="event in selectedTrace.events" :key="`${event.time}-${event.type}`">
                 <details v-if="isToolEvent(event.type)" class="border-sf-border rounded-lg border p-3">
                   <summary class="cursor-pointer font-medium text-sf-text">
-                    <span class="font-medium text-sf-text">{{ eventText[event.type] }}</span>
+                    <span class="font-medium text-sf-text">{{ formatEventTitle(event) }}</span>
                     <span class="ml-3 text-sm text-sf-text-2">{{ formatTime(event.time) }}</span>
                   </summary>
                   <pre
                     v-if="event.data !== undefined"
                     class="mt-3 overflow-auto text-sm break-words whitespace-pre-wrap text-sf-text-2"
-                    >{{ formatData(event.data) }}</pre
+                    >{{ formatData(getEventPayload(event)) }}</pre
                   >
                 </details>
                 <div v-else class="rounded-lg bg-sf-bg-2 p-3">
                   <div class="flex flex-wrap items-center justify-between gap-3">
-                    <span class="font-medium text-sf-text">{{ eventText[event.type] }}</span>
-                    <span class="text-sm text-sf-text-2">{{ formatTime(event.time) }}</span>
+                    <span class="font-medium text-sf-text">{{ formatEventTitle(event) }}</span>
+                    <span class="text-sm text-sf-text-2">
+                      <template v-if="event.type === 'round_complete'">
+                        {{ formatMilliseconds(Number(getEventData(event)?.durationMs || 0)) }} ·
+                      </template>
+                      {{ formatTime(event.time) }}
+                    </span>
                   </div>
                   <pre
                     v-if="event.data !== undefined"
                     class="mt-3 overflow-auto text-sm break-words whitespace-pre-wrap text-sf-text-2"
-                    >{{ formatData(event.data) }}</pre
+                    >{{ formatData(getEventPayload(event)) }}</pre
                   >
                 </div>
               </template>
