@@ -38,12 +38,14 @@ const saveQrCode = async () => {
 </script>
 
 <template>
-  <div class="group relative h-9 w-9 rounded-3xl">
+  <div
+    class="group relative flex h-9 w-9 overflow-hidden rounded-3xl transition-[width] duration-300 group-hover:w-[72px]"
+  >
     <div
-      class="absolute top-0 right-0 flex h-9 w-9 items-center overflow-hidden rounded-none bg-sf-theme-2 text-sf-theme-text transition-all duration-300 group-hover:w-[72px]"
+      class="absolute inset-0 flex items-center rounded-none bg-sf-theme-2 text-sf-theme-text"
     >
       <span
-        class="max-w-0 translate-x-2 overflow-hidden whitespace-nowrap text-sm opacity-0 transition-all duration-300 group-hover:mr-9 group-hover:max-w-9 group-hover:translate-x-0 group-hover:opacity-100"
+        class="pl-3 text-sm opacity-0 transition-opacity duration-300 group-hover:opacity-100"
       >
         分享
       </span>
@@ -51,7 +53,7 @@ const saveQrCode = async () => {
     <button
       type="button"
       aria-label="分享"
-      class="relative z-10 flex h-9 w-9 cursor-pointer items-center justify-center rounded-3xl bg-sf-bg-2 text-sf-base transition-colors duration-300 hover:bg-sf-theme hover:text-sf-theme-text"
+      class="relative z-10 ml-auto flex h-9 w-9 shrink-0 cursor-pointer items-center justify-center rounded-3xl bg-sf-bg-2 text-sf-base transition-colors duration-300 hover:bg-sf-theme hover:text-sf-theme-text"
       @click="visible = true"
     >
       <SfIcon icon="fa6-solid:share-alt" size="5" />
