@@ -5,6 +5,7 @@ import { industryInternet } from "./skill_industry_internet";
 import { jobMatch } from "./skill_job_match";
 import { resumeCreate } from "./skill_resume_create";
 import { resumeOptimization } from "./skill_resume_optimization";
+import { resumeScore } from "./skill_resume_score";
 import { resumeTranslate } from "./skill_resume_translate";
 
 describe("promptSafety", () => {
@@ -18,6 +19,14 @@ describe("promptSafety", () => {
 
   it("常驻提示统一限制敏感信息输出", () => {
     expect(defaultPrompt().instructions).toContain("个人敏感信息");
+  });
+
+  it("评分不使用个人敏感属性并支持不适用维度", () => {
+    const instructions = resumeScore().instructions;
+
+    expect(instructions).toContain("个人敏感属性不得参与评分");
+    expect(instructions).toContain("维度标记为“不适用”");
+    expect(instructions).toContain("不得机械压低全部六项得分");
   });
 
   it("通用方法论禁止迁移示例事实", () => {

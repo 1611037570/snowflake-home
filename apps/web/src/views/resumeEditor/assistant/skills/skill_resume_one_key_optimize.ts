@@ -29,14 +29,14 @@ export const resumeOneKeyOptimize = () => ({
 
 \`\`\`resume-report
 {
-  "totalScore": 80,
+  "totalScore": 78,
   "dimensions": [
     { "name": "信息完整度", "score": 85 },
     { "name": "阅读效率", "score": 78 },
     { "name": "职业契合度", "score": 75 },
     { "name": "职业成就", "score": 72 },
     { "name": "发展潜力", "score": 80 },
-    { "name": "职业稳定性", "score": 88 }
+    { "name": "职业稳定性", "score": null }
   ],
   "checks": [
     { "level": "error", "message": "【信息完整度】目标岗位所需的联系方式未填写完整" },
@@ -51,7 +51,7 @@ export const resumeOneKeyOptimize = () => ({
 }
 \`\`\`
 
-- totalScore 与 dimensions 中每个 score 均为 0-100 的整数，totalScore 取六项得分的算术平均值并四舍五入；checks 的 level 只能取 error 或 warning。
+- dimensions 中可评分项的 score 为 0-100 的整数，不适用或缺少判断基础的维度使用 null；totalScore 取所有非 null 得分的算术平均值并四舍五入，禁止用零分代替不适用。checks 的 level 只能取 error 或 warning。
 - dimensions 固定使用以下六项，不可增减、改名或调整顺序：信息完整度、阅读效率、职业契合度、职业成就、发展潜力、职业稳定性。
 - dimensions 的分数必须遵循 resume_score 的统一评分标尺；checks 仅记录优化后仍存在的具体问题，不得重复已经成功解决的问题。
 - 示例中的分数与内容仅用于展示数据结构，必须根据本次简历重新判断，禁止照抄或作为默认分数。
