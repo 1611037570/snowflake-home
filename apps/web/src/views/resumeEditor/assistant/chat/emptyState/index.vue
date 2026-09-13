@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ALL_MODULE_KEY } from "@/stores/modules/resume/defaultConfig";
 import type { SelectedModule } from "@/stores/modules/resume/types";
+import { computed } from "vue";
 import type { SuggestCard } from "../../types";
 import OneVOne from "./oneVOne.vue";
 
@@ -11,6 +12,14 @@ const props = defineProps<{
   removeModule?: (key: string) => void;
 }>();
 const emit = defineEmits(["switch-mode", "suggest"]);
+
+// 一键优化独立置顶，其余建议保持原有网格布局
+const oneKeyOptimize = computed(() =>
+  props.suggestions.find((card) => card.flow === "oneKeyOptimize"),
+);
+const commonSuggestions = computed(() =>
+  props.suggestions.filter((card) => card.flow !== "oneKeyOptimize"),
+);
 
 // 点击建议卡片，启动对应流程
 const handleSuggest = (card: SuggestCard) => {
@@ -34,10 +43,26 @@ const handleSuggest = (card: SuggestCard) => {
       <span>能通过对话帮你打造受HR青睐的专业简历。</span>
     </div>
     <div class="flex flex-wrap items-center justify-center gap-x-3 text-sm">✨📄你可以这样问</div>
+    <!-- 一键优化入口独立置顶并突出主题色 -->
+    <div v-if="oneKeyOptimize" class="flex w-full max-w-md justify-center">
+      <button
+        class="group/card flex w-1/2 cursor-pointer items-center justify-center gap-3 rounded-xl bg-sf-theme p-3 text-sf-theme-text transition-all duration-300 hover:-translate-y-0.5 hover:bg-sf-theme-2 active:scale-[0.98]"
+        @click="handleSuggest(oneKeyOptimize)"
+      >
+        <div
+          class="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-sf-theme-2 text-sf-theme-text transition-colors duration-300"
+        >
+          <SfIcon :icon="oneKeyOptimize.icon" size="4.5" />
+        </div>
+        <h3 class="text-[14px] font-bold tracking-tight">
+          {{ oneKeyOptimize.title }}
+        </h3>
+      </button>
+    </div>
     <!-- 建议操作按钮 -->
     <div class="grid w-full max-w-md grid-cols-2 gap-3">
       <button
-        v-for="card in props.suggestions"
+        v-for="card in commonSuggestions"
         :key="card.title"
         class="group/card flex cursor-pointer items-center gap-3 rounded-xl bg-sf-bg p-3 text-left transition-all duration-300 hover:-translate-y-0.5 hover:border-sf-theme active:scale-[0.98]"
         @click="handleSuggest(card)"
