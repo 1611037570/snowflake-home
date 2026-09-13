@@ -2,6 +2,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { flows } from "./flows";
 import { resumeOneKeyOptimize } from "./skills/skill_resume_one_key_optimize";
 import { resumeOptimization } from "./skills/skill_resume_optimization";
+import { resumeScore } from "./skills/skill_resume_score";
 
 const resumeState = vi.hoisted(() => ({
   selectedModule: [] as Array<{ key: string; name: string }>,
@@ -48,5 +49,13 @@ describe("oneKeyOptimize", () => {
       "信息完整度、阅读效率、职业契合度、职业成就、发展潜力、职业稳定性",
     );
     expect(instructions).toContain("totalScore 取六项得分的算术平均值并四舍五入");
+  });
+
+  it("按求职现状形成精准建议与高效润色闭环", () => {
+    expect(resumeScore().instructions).toContain("问题—求职影响—具体行动—预期改善");
+    expect(resumeOptimization().instructions).toContain("用最少改动提升信息密度和专业度");
+    expect(resumeOneKeyOptimize().instructions).toContain(
+      "优先级｜问题｜具体行动｜预期改善",
+    );
   });
 });
