@@ -6,7 +6,7 @@ const props = defineProps({
   report: { type: Object, required: true },
 });
 
-// 雷达图配置：按五个固定维度绘制能力雷达
+// 雷达图配置：按六个固定维度绘制能力雷达
 const radarOptions = computed(() => {
   const dims = props.report.dimensions || [];
   return {
@@ -51,8 +51,12 @@ const level = computed(() => {
 
 <template>
   <div class="w-full max-w-full overflow-hidden rounded-3xl border border-sf-b bg-sf-bg p-3">
+    <div class="text-center">
+      <h2 class="text-lg font-bold text-sf-text">全方位综合评估</h2>
+      <p class="mt-3 text-[13px] text-sf-text-2">六大维度深度剖析简历质量</p>
+    </div>
     <!-- 综合评分与雷达图 -->
-    <div class="flex items-center gap-3">
+    <div class="mt-3 flex items-center gap-3">
       <SfEcharts :options="radarOptions" class="h-52 w-2/3!" />
       <div class="flex w-1/3 flex-col items-center justify-center gap-3">
         <span class="text-[40px] font-black leading-none text-sf-theme">{{ report.totalScore }}</span>
