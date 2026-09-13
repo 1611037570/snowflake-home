@@ -1,5 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
 import { flows, suggestions } from "./flows";
+import { supportsInterviewEarlyEnd } from "./interview/flows";
 import { aptitudeHrInterview } from "./interview/skills/skill_aptitude_hr_interview";
 import { interviewPrediction } from "./interview/skills/skill_interview_prediction";
 import { specializedInterview } from "./interview/skills/skill_specialized_interview";
@@ -11,6 +12,13 @@ vi.mock("@/stores", () => ({
 
 // 面试功能需同时具备入口、引导流程与专用技能
 describe("interviewFlows", () => {
+  it("逐题面试流程均支持提前结束", () => {
+    expect(supportsInterviewEarlyEnd("specializedInterview")).toBe(true);
+    expect(supportsInterviewEarlyEnd("aptitudeHrInterview")).toBe(true);
+    expect(supportsInterviewEarlyEnd("resumeInterview")).toBe(true);
+    expect(supportsInterviewEarlyEnd("interviewPrediction")).toBe(false);
+  });
+
   it("面试押题收集 JD 并读取整份简历", () => {
     const flow = flows.interviewPrediction!;
     const result = flow.build(["负责后端服务开发"]);
