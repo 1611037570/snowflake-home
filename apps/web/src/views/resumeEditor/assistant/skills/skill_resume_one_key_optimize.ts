@@ -22,6 +22,7 @@ export const resumeOneKeyOptimize = () => ({
 - propose_resume_edits 成功后，以实际写入结果为准完成六维评分；不得把未执行或执行失败的修改计入得分与亮点。
 - changes 只记录实际写入的优化动作，highlights 说明这些动作对阅读效率、职业契合、职业成就或其他六维竞争力的实际改善。
 - suggestions 只保留本轮未解决的问题，每条使用“优先级｜问题｜具体行动｜预期改善”格式，禁止重复已完成改动或给出空泛建议。
+- checks 与 highlights 的每条内容均以“【维度名称】”开头并给出简历中的具体依据，使六维得分能够追溯；没有证据时明确写为信息缺口，不得补造依据。
 
 # 报告输出
 - 最终回复只输出一份结构化报告，代码块语言标记必须为 resume-report：
@@ -53,5 +54,6 @@ export const resumeOneKeyOptimize = () => ({
 - totalScore 与 dimensions 中每个 score 均为 0-100 的整数，totalScore 取六项得分的算术平均值并四舍五入；checks 的 level 只能取 error 或 warning。
 - dimensions 固定使用以下六项，不可增减、改名或调整顺序：信息完整度、阅读效率、职业契合度、职业成就、发展潜力、职业稳定性。
 - dimensions 的分数必须遵循 resume_score 的统一评分标尺；checks 仅记录优化后仍存在的具体问题，不得重复已经成功解决的问题。
+- 示例中的分数与内容仅用于展示数据结构，必须根据本次简历重新判断，禁止照抄或作为默认分数。
 - 只输出上述一个 resume-report 代码块，代码块外不再输出额外正文。`,
 });
