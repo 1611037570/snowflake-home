@@ -25,28 +25,60 @@ export interface ResumeReport {
   suggestions: string[];
 }
 
-// 报告代码块匹配：```resume-report 开头、``` 结尾
-const REPORT_RE = /```resume-report\s*\n([\s\S]*?)\n```/;
-const REPORT_BLOCK_RE = /```resume-report\s*\n[\s\S]*?\n```\s*/g;
+// 报告特征：有效报告必须含数字总分与维度数组
+const isReport = (v: unknown): v is ResumeReport =>
+  !!v &&
+  typeof v === "object" &&
+  typeof (v as ResumeReport).totalScore === "number" &&
+  Array.isArray((v as ResumeReport).dimensions);
 
-// 从回复正文中提取并解析 resume-report 代码块；无有效报告时返回 null
+// 报告可能以 resume-report 或 json 代码块输出，均尝试匹配
+const REPORT_BLOCK_RES = [
+  /```resume-report\s*\n([\s\S]*?)\n```/,
+  /```json\s*\n([\s\S]*?)\n```/,
+];
+// 剥离时需移除的报告代码块
+const REPORT_BLOCK_STRIP_RES = [
+  /```resume-report\s*\n[\s\S]*?\n```\s*/g,
+  /```json\s*\n[\s\S]*?\n```\s*/g,
+];
+
+// 从回复正文中提取并解析报告；兼容代码块与裸 JSON 输出，无有效报告时返回 null
 export const parseResumeReport = (content: string): ResumeReport | null => {
   if (!content) return null;
-  const match = content.match(REPORT_RE);
-  if (!match) return null;
-  try {
-    const report = JSON.parse(match[1]!);
-    if (typeof report?.totalScore !== "number" || !Array.isArray(report?.dimensions)) {
+  for (const re of REPORT_BLOCK_RES) {
+    const match = content.match(re);
+    if (!match) continue;
+    try {
+      const report = JSON.parse(match[1]!);
+      return isReport(report) ? report : null;
+    } catch {
       return null;
     }
-    return report as ResumeReport;
+  }
+  // 裸 JSON 兜底
+  try {
+    const report = JSON.parse(content);
+    return isReport(report) ? report : null;
   } catch {
     return null;
   }
 };
 
-// 从回复正文中移除 resume-report 代码块，返回剩余正文供普通 Markdown 渲染
+// 从回复正文中移除报告代码块；整个正文为裸 JSON 报告时返回空
 export const stripResumeReportBlock = (content: string): string => {
   if (!content) return content;
-  return content.replace(REPORT_BLOCK_RE, "").trim();
+  let result = content;
+  REPORT_BLOCK_STRIP_RES.forEach((re) => {
+    result = result.replace(re, "");
+  });
+  const trimmed = result.trim();
+  if (trimmed) {
+    try {
+      if (isReport(JSON.parse(trimmed))) return "";
+    } catch {
+      // 非 JSON 正文，保留
+    }
+  }
+  return trimmed;
 };
