@@ -4,6 +4,8 @@ import { TransitionPresets, useClipboard, useTransition } from "@vueuse/core";
 import { ElMessage } from "element-plus";
 import { storeToRefs } from "pinia";
 import ToggleButton from "./toggleButton.vue";
+import ReportPanel from "./reportPanel.vue";
+import { parseResumeReport, stripResumeReportBlock } from "../resumeReport";
 
 const props = defineProps({
   msg: {
@@ -63,6 +65,10 @@ function handleWithdrawModify() {
 
 // 消息内容：直接保存 Markdown 正文
 const content = computed(() => props.msg.content);
+// 一键优化结构化报告：从回复正文中解析
+const report = computed(() => parseResumeReport(content.value || ""));
+// 剥离报告代码块后的剩余正文
+const textContent = computed(() => stripResumeReportBlock(content.value || ""));
 const resumeShow = computed(() => props.msg.requestStatus === "success");
 const isThinking = computed(() => props.msg.typing && props.msg.requestStatus === "thinking");
 const isGenerating = computed(() => props.msg.typing && props.msg.requestStatus === "generating");
@@ -156,10 +162,16 @@ const animatedTokens = useTransition(
     >
       生成失败，点击重试!
     </div>
-    <!-- 正式回复内容 -->
+    <!-- 一键优化结构化报告面板 -->
+    <ReportPanel
+      v-if="(msg.requestStatus === 'success' || isGenerating) && !msg.contentCollapsed && report"
+      :report="report"
+      class="mb-3"
+    />
+    <!-- 正式回复内容（剥离报告代码块后的正文） -->
     <SfMdPreview
-      v-if="(msg.requestStatus === 'success' || isGenerating) && !msg.contentCollapsed && content"
-      :modelValue="content"
+      v-if="(msg.requestStatus === 'success' || isGenerating) && !msg.contentCollapsed && textContent"
+      :modelValue="textContent"
       :theme="theme"
       editorId="ai-preview"
       class="inline-block max-w-full min-w-0 overflow-hidden bg-transparent! p-0! align-bottom text-[14px] leading-relaxed text-sf-text"
