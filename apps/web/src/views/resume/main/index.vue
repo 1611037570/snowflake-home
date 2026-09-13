@@ -1,429 +1,471 @@
 <template>
-  <SfScrollbar class="h-full">
-    <!-- 第一屏：轻舟简历 - 首页主视觉 -->
-    <section id="hero" class="relative flex min-h-screen flex-col overflow-hidden">
-      <!-- 主内容区 -->
-      <div class="relative z-10 flex flex-1 items-center">
-        <div class="mx-auto grid w-full max-w-7xl items-center gap-12 px-6 lg:grid-cols-2">
-          <!-- 左侧文案 -->
-          <div class="relative text-center lg:text-left">
-            <HeroTitle
-              title1="轻舟"
-              title2="简历"
-              subtitle="以此简历 渡万重山"
-              gradient="from-sky-500 via-cyan-500 to-teal-500"
-            />
+  <SfScrollbar class="h-full bg-sf-page">
+    <main class="resume-home relative w-full shrink-0 overflow-hidden bg-sf-page text-sf-text">
+      <div class="resume-home__aurora resume-home__aurora--one"></div>
+      <div class="resume-home__aurora resume-home__aurora--two"></div>
 
-            <!-- 主按钮 -->
-            <div class="mb-10 flex flex-col justify-center gap-4 sm:flex-row lg:justify-start">
-              <button
-                @click="go"
-                class="group flex cursor-pointer items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-sky-500 to-cyan-500 px-8 py-4 font-medium text-sf-theme-text transition-all hover:shadow-xl"
-              >
-                免费创建简历
-              </button>
-            </div>
-          </div>
-
-          <!-- 右侧产品预览卡片 -->
-          <div class="relative hidden lg:block">
-            <!-- 浮动装饰卡片 -->
-            <div
-              class="absolute -top-4 -left-4 z-20 flex animate-bounce items-center gap-3 rounded-xl bg-sf-primary p-4"
-              style="animation-duration: 3s"
-            >
-              <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-green-100">
-                <svg
-                  class="h-5 w-5 text-green-600"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M5 13l4 4L19 7"
-                  />
-                </svg>
-              </div>
-              <div>
-                <div class="text-sm font-medium text-sf-text">AI 优化完成</div>
-                <div class="text-xs text-sf-text-3">简历匹配度 +35%</div>
-              </div>
-            </div>
-
-            <div
-              class="absolute -right-2 -bottom-6 z-20 flex items-center gap-3 rounded-xl bg-sf-primary p-4 shadow-xl"
-              style="animation: bounce 3.5s infinite 1s"
-            >
-              <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-sky-100">
-                <svg
-                  class="h-5 w-5 text-sky-600"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-                  />
-                </svg>
-              </div>
-              <div>
-                <div class="text-sm font-medium text-sf-text">一键导出 PDF</div>
-                <div class="text-xs text-sf-text-3">完美排版无错位</div>
-              </div>
-            </div>
-
-            <!-- 主预览图 -->
-            <div class="relative overflow-hidden rounded-2xl border border-sf-b bg-sf-primary">
-              <!-- 浏览器顶栏 -->
-              <div class="flex items-center gap-2 border-b border-sf-b bg-sf-bg px-4 py-3">
-                <span class="h-3 w-3 rounded-full bg-red-400"></span>
-                <span class="h-3 w-3 rounded-full bg-yellow-400"></span>
-                <span class="h-3 w-3 rounded-full bg-green-400"></span>
-                <div
-                  class="mx-4 flex h-6 flex-1 items-center rounded-md border border-sf-b bg-sf-primary px-2"
-                >
-                  <div class="text-xs text-sf-text-3">轻舟简历 · 在线编辑</div>
-                </div>
-              </div>
-
-              <!-- 简历预览内容 -->
-              <div class="bg-sf-primary p-6">
-                <!-- 简历头部 -->
-                <div class="mb-5 flex items-start gap-4">
-                  <div
-                    class="h-16 w-16 flex-shrink-0 rounded-full bg-gradient-to-br from-sky-400 to-cyan-400"
-                  ></div>
-                  <div class="flex-1">
-                    <div class="mb-2 h-5 w-24 rounded bg-sf-text"></div>
-                    <div class="mb-1.5 h-3 w-32 rounded bg-sf-bg-3"></div>
-                    <div class="h-3 w-40 rounded bg-sf-bg-2"></div>
-                  </div>
-                </div>
-
-                <!-- 个人简介 -->
-                <div class="mb-5">
-                  <div class="mb-2 h-3 w-16 rounded bg-sf-text"></div>
-                  <div class="space-y-1.5">
-                    <div class="h-2.5 w-full rounded bg-sf-bg-2"></div>
-                    <div class="h-2.5 w-11/12 rounded bg-sf-bg-2"></div>
-                    <div class="h-2.5 w-10/12 rounded bg-sf-bg-2"></div>
-                  </div>
-                </div>
-
-                <!-- 工作经历 -->
-                <div class="mb-5">
-                  <div class="mb-2 h-3 w-16 rounded bg-sf-text"></div>
-                  <div class="space-y-3">
-                    <div class="flex gap-3">
-                      <div class="w-1.5 flex-shrink-0 rounded-full bg-sky-400"></div>
-                      <div class="flex-1 space-y-1.5">
-                        <div class="flex justify-between">
-                          <div class="h-2.5 w-24 rounded bg-sf-bg-3"></div>
-                          <div class="h-2 w-16 rounded bg-sf-bg-2"></div>
-                        </div>
-                        <div class="h-2 w-20 rounded bg-sf-bg-2"></div>
-                        <div class="h-2 w-full rounded bg-sf-bg-2"></div>
-                        <div class="h-2 w-5/6 rounded bg-sf-bg-2"></div>
-                      </div>
-                    </div>
-                    <div class="flex gap-3">
-                      <div class="w-1.5 flex-shrink-0 rounded-full bg-sky-400"></div>
-                      <div class="flex-1 space-y-1.5">
-                        <div class="flex justify-between">
-                          <div class="h-2.5 w-28 rounded bg-sf-bg-3"></div>
-                          <div class="h-2 w-16 rounded bg-sf-bg-2"></div>
-                        </div>
-                        <div class="h-2 w-20 rounded bg-sf-bg-2"></div>
-                        <div class="h-2 w-full rounded bg-sf-bg-2"></div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <!-- 技能标签 -->
-                <div class="flex flex-wrap gap-2">
-                  <span class="rounded-md bg-sky-100 px-2.5 py-1 text-xs text-sky-700">Vue.js</span>
-                  <span class="rounded-md bg-cyan-100 px-2.5 py-1 text-xs text-cyan-700"
-                    >React</span
-                  >
-                  <span class="rounded-md bg-teal-100 px-2.5 py-1 text-xs text-teal-700"
-                    >TypeScript</span
-                  >
-                  <span class="rounded-md bg-sf-bg-2 px-2.5 py-1 text-xs text-sf-text-2"
-                    >Node.js</span
-                  >
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <Guide />
-    </section>
-    <!-- 第二屏：云帆编辑器 -->
-    <section
-      id="editor"
-      class="relative flex min-h-screen items-center justify-center overflow-hidden py-24"
-    >
-      <div
-        class="relative z-10 mx-auto grid w-full max-w-7xl items-center gap-16 px-6 md:grid-cols-2"
+      <section
+        class="relative mx-auto grid min-h-screen max-w-[1440px] items-center gap-12 px-6 pt-24 pb-12 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] lg:px-12"
       >
-        <div class="text-center lg:text-left">
-          <HeroTitle
-            title1="云帆"
-            title2="编辑器"
-            subtitle="借势而行 直济沧海"
-            gradient="from-blue-500 to-indigo-500"
-          />
-        </div>
-
-        <!-- 编辑器示意卡片 -->
-        <div class="relative">
-          <div
-            class="overflow-hidden rounded-2xl border border-sf-b bg-sf-primary shadow-2xl shadow-indigo-500/10"
+        <article class="relative z-10 mx-auto max-w-2xl text-center lg:mx-0 lg:text-left">
+          <p
+            class="animate-rise mb-6 inline-flex items-center gap-3 rounded-full border border-sf-b bg-sf-primary px-3 py-3 text-sm text-sf-text-2 shadow-sm"
           >
-            <div class="flex items-center gap-2 border-b border-sf-b bg-sf-bg px-4 py-3">
-              <span class="h-3 w-3 rounded-full bg-red-400"></span>
-              <span class="h-3 w-3 rounded-full bg-yellow-400"></span>
-              <span class="h-3 w-3 rounded-full bg-green-400"></span>
-            </div>
-            <div class="flex">
-              <!-- 左侧工具栏 -->
-              <div class="w-16 space-y-3 border-r border-sf-b bg-sf-bg p-3">
-                <div class="mx-auto h-10 w-10 rounded-lg bg-indigo-100"></div>
-                <div class="mx-auto h-10 w-10 rounded-lg bg-sf-bg-2"></div>
-                <div class="mx-auto h-10 w-10 rounded-lg bg-sf-bg-2"></div>
-                <div class="mx-auto h-10 w-10 rounded-lg bg-sf-bg-2"></div>
-              </div>
-              <!-- 编辑区 -->
-              <div class="flex-1 space-y-4 p-6">
-                <div class="h-5 w-1/3 rounded bg-sf-text"></div>
-                <div class="h-3 w-2/3 rounded bg-sf-bg-2"></div>
-                <div class="h-3 w-1/2 rounded bg-sf-bg-2"></div>
-                <div class="mt-6 h-4 w-1/4 rounded bg-indigo-200"></div>
-                <div class="h-3 w-3/4 rounded bg-sf-bg-2"></div>
-                <div class="h-3 w-2/3 rounded bg-sf-bg-2"></div>
-                <div class="h-3 w-1/2 rounded bg-sf-bg-2"></div>
-                <div class="mt-4 h-3 w-1/5 rounded bg-indigo-200"></div>
-                <div class="h-3 w-4/5 rounded bg-sf-bg-2"></div>
-                <div class="h-3 w-3/5 rounded bg-sf-bg-2"></div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <Guide />
-    </section>
-    <!-- 北斗AI助手 -->
-    <section
-      id="ai"
-      class="relative flex min-h-screen items-center justify-center overflow-hidden py-24"
-    >
-      <div class="relative z-10 mx-auto w-full max-w-7xl px-6">
-        <div class="grid w-full items-center gap-16 md:grid-cols-2">
-          <div class="text-center lg:text-left">
-            <HeroTitle
-              title1="小舟"
-              title2="AI助手"
-              subtitle="北斗引航 终抵群星"
-              gradient="from-violet-500 to-fuchsia-500"
-            />
-          </div>
-
-          <!-- AI 对话示意 -->
-          <div class="relative">
-            <div
-              class="overflow-hidden rounded-2xl border border-sf-b bg-sf-primary shadow-2xl shadow-indigo-500/10"
+            <SfIcon icon="lucide:sparkles" size="4" class="text-sf-theme" />
+            轻舟简历 · 一叶轻舟，助你渡过万重山
+          </p>
+          <h1
+            class="animate-rise animate-rise--delay-one text-5xl leading-[1.15] font-black tracking-[-0.06em] sm:text-6xl lg:text-7xl"
+          >
+            写好<span class="resume-home__highlight">轻舟简历</span>，<br />
+            让经历抵达下一站
+          </h1>
+          <p
+            class="animate-rise animate-rise--delay-two mx-auto mt-6 max-w-xl text-base leading-8 text-sf-text-2 sm:text-lg lg:mx-0"
+          >
+            轻舟简历把零散经历梳理成有说服力的职业故事。从 AI
+            表达优化、实时编辑，到模板、投递统计与多格式导出，为求职准备一整套顺手的工具。
+          </p>
+          <div
+            class="animate-rise animate-rise--delay-three mt-9 flex flex-col justify-center gap-3 sm:flex-row lg:justify-start"
+          >
+            <button
+              class="group inline-flex cursor-pointer items-center justify-center gap-3 rounded-full bg-sf-theme px-6 py-3 font-semibold text-sf-theme-text transition-transform duration-300 hover:-translate-y-1"
+              @click="go"
             >
-              <div class="flex items-center gap-3 border-b border-sf-b px-5 py-4">
-                <div
-                  class="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-indigo-400 to-purple-400"
+              开始制作简历
+              <SfIcon
+                icon="mingcute:arrow-right-line"
+                size="4"
+                class="transition-transform duration-300 group-hover:translate-x-1"
+              />
+            </button>
+            <a
+              class="inline-flex items-center justify-center gap-3 rounded-full border border-sf-b bg-sf-primary px-6 py-3 font-semibold transition-colors duration-300 hover:bg-sf-bg"
+              href="#journey"
+            >
+              探索特色
+              <SfIcon icon="mingcute:arrow-down-line" size="4" />
+            </a>
+          </div>
+          <dl
+            class="animate-rise animate-rise--delay-three mt-12 grid grid-cols-2 border-t border-sf-b pt-6 text-left sm:grid-cols-4"
+          >
+            <div class="border-r border-sf-b pr-3">
+              <dt class="text-xl font-black sm:text-2xl">10 款</dt>
+              <dd class="mt-3 text-xs text-sf-text-3 sm:text-sm">专业简历模板</dd>
+            </div>
+            <div class="border-r border-sf-b px-3">
+              <dt class="text-xl font-black sm:text-2xl">5 类</dt>
+              <dd class="mt-3 text-xs text-sf-text-3 sm:text-sm">投递与备份导出</dd>
+            </div>
+            <div class="border-r border-sf-b pt-6 pr-3 sm:border-r-0 sm:px-3 sm:pt-0">
+              <dt class="text-xl font-black sm:text-2xl">AI 助手</dt>
+              <dd class="mt-3 text-xs text-sf-text-3 sm:text-sm">让表达更精准</dd>
+            </div>
+            <div class="pt-6 pl-3 sm:pt-0">
+              <dt class="text-xl font-black sm:text-2xl">实时编辑</dt>
+              <dd class="mt-3 text-xs text-sf-text-3 sm:text-sm">细节随改随见</dd>
+            </div>
+          </dl>
+        </article>
+
+        <div class="animate-float relative mx-auto w-full max-w-2xl lg:mr-0">
+          <div
+            class="resume-home__status absolute top-9 -left-3 z-10 hidden items-center gap-3 rounded-2xl border border-sf-b bg-sf-primary p-3 shadow-lg sm:flex"
+          >
+            <span
+              class="flex h-9 w-9 items-center justify-center rounded-xl bg-sf-theme-3 text-sf-theme"
+            >
+              <SfIcon icon="lucide:sparkles" size="4" />
+            </span>
+            <span>
+              <strong class="block text-sm">AI 正在润色</strong>
+              <small class="text-xs text-sf-text-3">表达更有说服力</small>
+            </span>
+          </div>
+          <div
+            class="resume-home__preview relative overflow-hidden rounded-[30px] border border-sf-b bg-sf-primary p-3 shadow-2xl"
+          >
+            <div class="flex items-center gap-3 rounded-2xl bg-sf-bg px-3 py-3">
+              <span class="h-3 w-3 rounded-full bg-sf-error"></span>
+              <span class="h-3 w-3 rounded-full bg-sf-warning"></span>
+              <span class="h-3 w-3 rounded-full bg-sf-success"></span>
+              <span class="ml-3 h-3 w-24 rounded-full bg-sf-bg-3"></span>
+            </div>
+            <div
+              class="resume-home__shot group relative mt-3 aspect-[16/10] overflow-hidden rounded-2xl border border-dashed border-sf-b bg-sf-bg"
+            >
+              <!-- 将此区域替换为首页产品截图即可 -->
+              <div
+                class="absolute inset-0 flex flex-col items-center justify-center gap-3 p-6 text-center"
+              >
+                <span
+                  class="flex h-15 w-15 items-center justify-center rounded-2xl bg-sf-primary text-sf-theme shadow-sm"
                 >
-                  <svg
-                    class="h-4 w-4 text-sf-theme-text"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
+                  <SfIcon icon="material-symbols:image-outline" size="8" />
+                </span>
+                <span>
+                  <strong class="block text-base">首页产品截图预留区</strong>
+                  <small class="mt-3 block text-sm text-sf-text-3"
+                    >替换为您的编辑器或简历展示截图</small
                   >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"
-                    />
-                  </svg>
-                </div>
-                <span class="text-sm font-medium text-sf-text">小舟 AI 助手</span>
-                <span class="ml-auto text-xs text-green-500">在线</span>
+                </span>
               </div>
-
-              <div class="h-80 space-y-4 overflow-hidden p-5">
-                <!-- 用户消息 -->
-                <div class="flex justify-end">
-                  <div
-                    class="max-w-[80%] rounded-2xl rounded-br-md bg-indigo-100 px-4 py-2.5 text-sm text-indigo-800"
-                  >
-                    帮我优化一下这段项目经历
-                  </div>
-                </div>
-
-                <!-- AI 回复 -->
-                <div class="flex gap-3">
-                  <div
-                    class="h-8 w-8 flex-shrink-0 rounded-full bg-gradient-to-br from-indigo-400 to-purple-400"
-                  ></div>
-                  <div
-                    class="max-w-[85%] space-y-2 rounded-2xl rounded-bl-md bg-sf-bg-2 px-4 py-3 text-sm text-sf-text"
-                  >
-                    <p>已为你优化，采用 STAR 法则重构：</p>
-                    <div class="space-y-1 rounded-lg bg-sf-primary p-3 text-xs text-sf-text-3">
-                      <p>• 主导用户增长项目（S）</p>
-                      <p>• 制定拉新策略与落地执行（T）</p>
-                      <p>• 搭建裂变体系并优化转化（A）</p>
-                      <p>• 3个月新增用户12万，ROI达1:4.2（R）</p>
-                    </div>
-                    <p class="text-xs text-indigo-600">匹配度提升 42%，是否应用到简历？</p>
-                  </div>
-                </div>
-
-                <!-- 用户消息 -->
-                <div class="flex justify-end">
-                  <div
-                    class="max-w-[80%] rounded-2xl rounded-br-md bg-indigo-100 px-4 py-2.5 text-sm text-indigo-800"
-                  >
-                    应用，再帮我加个量化成果
-                  </div>
-                </div>
-              </div>
-
-              <!-- 输入框 -->
-              <div class="border-t border-sf-b px-5 py-4">
-                <div
-                  class="flex items-center gap-3 rounded-xl border border-sf-b bg-sf-bg px-4 py-2.5"
-                >
-                  <span class="text-sm text-sf-text-3">输入你的问题...</span>
-                  <button
-                    class="ml-auto flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-r from-indigo-500 to-purple-500"
-                  >
-                    <svg
-                      class="h-4 w-4 text-sf-theme-text"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
-                        d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"
-                      />
-                    </svg>
-                  </button>
-                </div>
-              </div>
+              <span class="resume-home__grid absolute inset-0"></span>
+              <span
+                class="absolute right-6 bottom-6 rounded-full bg-sf-primary px-3 py-3 text-xs font-medium shadow-sm"
+                >实时预览</span
+              >
+            </div>
+          </div>
+          <div
+            class="resume-home__note absolute -right-3 -bottom-6 hidden rounded-2xl border border-sf-b bg-sf-primary p-3 shadow-lg sm:block"
+          >
+            <div class="flex items-center gap-3">
+              <span
+                class="flex h-9 w-9 items-center justify-center rounded-xl bg-sf-success-2 text-sf-success"
+              >
+                <SfIcon icon="lucide:check" size="4" />
+              </span>
+              <span class="text-sm font-medium">一键导出，排版如初</span>
             </div>
           </div>
         </div>
-      </div>
-      <Guide />
-    </section>
-    <section
-      id="stats"
-      class="relative flex min-h-screen flex-col items-center justify-center overflow-hidden pt-24"
-    >
-      <div class="flex w-full flex-1 flex-col items-center justify-center">
+      </section>
+
+      <section
+        id="journey"
+        class="relative mx-auto flex min-h-screen max-w-[1440px] flex-col justify-center px-6 py-18 lg:px-12"
+      >
+        <div class="flex flex-col justify-between gap-6 md:flex-row md:items-end">
+          <div class="max-w-2xl">
+            <p class="text-sm font-semibold tracking-[0.18em] text-sf-theme">一条清晰的求职路径</p>
+            <h2 class="mt-3 text-3xl font-black tracking-[-0.04em] sm:text-4xl">
+              不只做一份简历，帮你走完整个求职过程。
+            </h2>
+          </div>
+          <p class="max-w-md leading-7 text-sf-text-2">
+            先用模板与编辑器完成表达，再借助 AI 对准岗位，最后完成投递、跟进与复盘。
+          </p>
+        </div>
+        <div class="mt-12 grid gap-3 md:grid-cols-4">
+          <article
+            v-for="(step, index) in journeySteps"
+            :key="step.title"
+            class="group relative rounded-[24px] border border-sf-b bg-sf-primary p-6 transition-transform duration-300 hover:-translate-y-2"
+          >
+            <span class="text-sm font-black text-sf-theme">0{{ index + 1 }}</span>
+            <SfIcon :icon="step.icon" size="6" class="mt-9 text-sf-theme" />
+            <h3 class="mt-6 text-xl font-bold">{{ step.title }}</h3>
+            <p class="mt-3 leading-7 text-sf-text-2">{{ step.description }}</p>
+          </article>
+        </div>
+      </section>
+
+      <section
+        v-for="(group, index) in featureGroups"
+        :id="group.id"
+        :key="group.title"
+        class="relative mx-auto grid min-h-screen max-w-[1440px] items-center gap-12 px-6 py-18 lg:grid-cols-2 lg:px-12"
+      >
+        <article :class="index % 2 ? 'lg:order-2' : ''" class="max-w-xl">
+          <p class="text-sm font-semibold tracking-[0.18em] text-sf-theme">{{ group.eyebrow }}</p>
+          <h2 class="mt-3 text-3xl font-black tracking-[-0.04em] sm:text-4xl">{{ group.title }}</h2>
+          <p class="mt-6 leading-8 text-sf-text-2">{{ group.description }}</p>
+          <ul class="mt-9 grid gap-3 sm:grid-cols-2">
+            <li
+              v-for="item in group.items"
+              :key="item"
+              class="flex items-start gap-3 text-sm leading-6 text-sf-text-2"
+            >
+              <span
+                class="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-sf-success-2 text-sf-success"
+              >
+                <SfIcon icon="lucide:check" size="3" />
+              </span>
+              {{ item }}
+            </li>
+          </ul>
+        </article>
+        <div :class="index % 2 ? 'lg:order-1' : ''" class="relative">
+          <div
+            class="resume-home__shot relative aspect-[16/10] overflow-hidden rounded-[30px] border border-dashed border-sf-b bg-sf-bg"
+          >
+            <!-- 将此区域替换为对应模块的产品截图即可 -->
+            <div
+              class="absolute inset-0 flex flex-col items-center justify-center gap-3 p-6 text-center"
+            >
+              <span
+                class="flex h-15 w-15 items-center justify-center rounded-2xl bg-sf-primary text-sf-theme shadow-sm"
+              >
+                <SfIcon :icon="group.icon" size="8" />
+              </span>
+              <span>
+                <strong class="block text-base">{{ group.shotTitle }}</strong>
+                <small class="mt-3 block text-sm text-sf-text-3">{{ group.shotDescription }}</small>
+              </span>
+            </div>
+            <span class="resume-home__grid absolute inset-0"></span>
+          </div>
+        </div>
+      </section>
+
+      <section class="relative mx-auto max-w-[1440px] px-6 pt-18 pb-12 lg:px-12">
         <div
-          class="relative z-10 mx-auto grid w-full max-w-7xl items-center gap-16 px-6 md:grid-cols-2"
+          class="resume-home__closing relative overflow-hidden rounded-[30px] border border-sf-b bg-sf-primary px-6 py-12 text-center sm:px-12"
         >
-          <div class="text-center lg:text-left">
-            <HeroTitle
-              title1="星轨"
-              title2="统计"
-              subtitle="星轨为证 功不唐捐"
-              gradient="from-amber-400 to-orange-500"
-            />
-          </div>
-
-          <!-- 统计示意卡片 -->
-          <div class="relative">
-            <div
-              class="overflow-hidden rounded-2xl border border-sf-b bg-sf-primary shadow-2xl shadow-violet-500/10"
+          <span class="resume-home__closing-orbit resume-home__closing-orbit--one"></span>
+          <span class="resume-home__closing-orbit resume-home__closing-orbit--two"></span>
+          <div class="relative mx-auto max-w-2xl">
+            <span
+              class="mx-auto flex h-15 w-15 items-center justify-center rounded-2xl bg-sf-theme text-sf-theme-text shadow-lg"
+              ><SfIcon icon="lucide:sparkles" size="8"
+            /></span>
+            <h2 class="mt-6 text-3xl font-black tracking-[-0.04em] sm:text-4xl">
+              现在，写下那个更好的自己。
+            </h2>
+            <p class="mt-3 leading-7 text-sf-text-2">
+              你的下一份简历，值得从一个干净而有力的开始。
+            </p>
+            <button
+              class="mt-9 inline-flex cursor-pointer items-center gap-3 rounded-full bg-sf-theme px-6 py-3 font-semibold text-sf-theme-text transition-transform duration-300 hover:-translate-y-1"
+              @click="go"
             >
-              <div class="flex items-center gap-2 border-b border-sf-b bg-sf-bg px-4 py-3">
-                <span class="h-3 w-3 rounded-full bg-red-400"></span>
-                <span class="h-3 w-3 rounded-full bg-yellow-400"></span>
-                <span class="h-3 w-3 rounded-full bg-green-400"></span>
-              </div>
-              <div class="p-6">
-                <!-- 求职概览 -->
-                <div class="mb-6 grid grid-cols-3 gap-4">
-                  <div class="rounded-xl bg-sf-bg p-4 text-center">
-                    <div class="text-2xl font-bold text-sf-text">128</div>
-                    <div class="mt-1 text-xs text-sf-text-3">累计投递</div>
-                  </div>
-                  <div class="rounded-xl bg-sf-bg p-4 text-center">
-                    <div class="text-2xl font-bold text-sf-text">26</div>
-                    <div class="mt-1 text-xs text-sf-text-3">面试邀请</div>
-                  </div>
-                  <div class="rounded-xl bg-sf-bg p-4 text-center">
-                    <div class="text-2xl font-bold text-violet-600">5</div>
-                    <div class="mt-1 text-xs text-sf-text-3">Offer 收入</div>
-                  </div>
-                </div>
-                <!-- 投递趋势 -->
-                <div>
-                  <div class="mb-3 flex items-center justify-between">
-                    <div class="text-sm font-medium text-sf-text">近 6 周投递趋势</div>
-                    <div class="text-xs text-sf-text-3">单位：次</div>
-                  </div>
-                  <div class="flex h-32 items-end gap-3">
-                    <div class="flex-1 rounded-t-md bg-violet-200" style="height: 40%"></div>
-                    <div class="flex-1 rounded-t-md bg-violet-300" style="height: 60%"></div>
-                    <div class="flex-1 rounded-t-md bg-violet-300" style="height: 55%"></div>
-                    <div class="flex-1 rounded-t-md bg-violet-400" style="height: 80%"></div>
-                    <div class="flex-1 rounded-t-md bg-violet-400" style="height: 70%"></div>
-                    <div
-                      class="flex-1 rounded-t-md bg-gradient-to-t from-violet-500 to-purple-400"
-                      style="height: 100%"
-                    ></div>
-                  </div>
-                  <div class="mt-2 flex justify-between text-xs text-sf-text-3">
-                    <span>第1周</span>
-                    <span>第2周</span>
-                    <span>第3周</span>
-                    <span>第4周</span>
-                    <span>第5周</span>
-                    <span>第6周</span>
-                  </div>
-                </div>
-              </div>
-            </div>
+              免费开始制作
+              <SfIcon icon="mingcute:arrow-right-line" size="4" />
+            </button>
           </div>
         </div>
-      </div>
+      </section>
       <SfFooter />
-    </section>
+    </main>
   </SfScrollbar>
 </template>
 
 <script setup>
-import HeroTitle from "./heroTitle.vue";
-import Guide from "./guide.vue";
 import { useRouter } from "vue-router";
 
 const router = useRouter();
 
+const journeySteps = [
+  {
+    icon: "ph:file-md-duotone",
+    title: "创建简历",
+    description: "从空白、快速填写或模板开始，为不同岗位准备不同版本。",
+  },
+  {
+    icon: "mdi:widgets",
+    title: "云帆编辑器",
+    description: "编辑模块、调整样式、实时预览，并完成导出、分享与备份。",
+  },
+  {
+    icon: "ph:brain-duotone",
+    title: "小舟 AI 助手",
+    description: "生成、优化、翻译与 JD 对标，也为面试准备提供针对性练习。",
+  },
+  {
+    icon: "mdi:chart-pie",
+    title: "星轨求职统计",
+    description: "记录投递、跟进与 offer，用趋势和数据看清下一步方向。",
+  },
+];
+
+const featureGroups = [
+  {
+    icon: "ph:file-md-duotone",
+    id: "create",
+    eyebrow: "创建简历",
+    title: "从任意起点开始",
+    description: "不论资料是否齐全，都能找到适合自己的创建方式。",
+    shotTitle: "创建方式与模板截图预留区",
+    shotDescription: "展示新建简历、快速填写或模板选择界面",
+    items: [
+      "从空白、基础信息或模板开始创建",
+      "复制已有简历，为不同岗位单独准备",
+      "10 款模板支持全屏预览后再使用",
+      "导入 JSON 完整备份，继续编辑旧简历",
+    ],
+  },
+  {
+    icon: "mdi:widgets",
+    id: "editor",
+    eyebrow: "云帆编辑器",
+    title: "按你的方式排版",
+    description: "内容和视觉都可以细调，让信息结构真正服务于阅读。",
+    shotTitle: "编辑器截图预留区",
+    shotDescription: "展示模块编辑与实时预览的协同体验",
+    items: [
+      "模块导航、隐藏归档与自定义模块管理",
+      "调整主题色、字体、边距、行距与模块间距",
+      "切换个人信息展示、布局和头像位置，支持撤销重做与智能一页纸",
+      "支持 PDF、PNG、Markdown、HTML 与 JSON 导出",
+      "生成分享链接与二维码，并支持本地自动备份",
+    ],
+  },
+  {
+    icon: "ph:brain-duotone",
+    id: "ai",
+    eyebrow: "小舟 AI 助手",
+    title: "AI 陪你准备表达",
+    description: "从内容起草到面试练习，让每次开口与落笔都有更清晰的方向。",
+    shotTitle: "AI 助手截图预留区",
+    shotDescription: "展示简历优化、JD 对标或模拟面试过程",
+    items: [
+      "生成经历、润色表达与一键优化报告",
+      "结合目标岗位 JD 做匹配分析和优化",
+      "支持中文、英语、日语等多语言翻译",
+      "自我介绍、面试押题与逐轮模拟训练",
+    ],
+  },
+  {
+    icon: "mdi:chart-pie",
+    id: "statistics",
+    eyebrow: "星轨求职统计",
+    title: "记录每一份机会",
+    description: "简历完成不是终点，投递节奏、面试进展和成果都值得被看见。",
+    shotTitle: "投递统计截图预留区",
+    shotDescription: "展示投递记录、趋势图与 offer 进度",
+    items: [
+      "记录投递、跟进、面试与 offer 状态",
+      "查看近七天或本月的投递趋势",
+      "统计已投递天数、进行中机会与 offer 数量",
+      "批量录入投递记录，安排后续跟进事项",
+    ],
+  },
+];
+
+// 跳转至模板选择页开始创建简历
 function go() {
   router.push("/resume/template");
 }
 </script>
 
 <style scoped>
-/* 自定义动画可在此扩展 */
+.resume-home__aurora {
+  position: absolute;
+  width: 30rem;
+  height: 30rem;
+  border-radius: 9999px;
+  background: var(--sf-theme-3);
+  filter: blur(90px);
+  opacity: 0.72;
+  pointer-events: none;
+}
+
+.resume-home__aurora--one {
+  top: 3rem;
+  right: -12rem;
+}
+
+.resume-home__aurora--two {
+  top: 42rem;
+  left: -15rem;
+  opacity: 0.42;
+}
+
+.resume-home__highlight {
+  color: var(--sf-theme);
+  text-decoration: underline;
+  text-decoration-color: var(--sf-theme-2);
+  text-underline-offset: 0.16em;
+}
+
+.resume-home__preview {
+  transform: perspective(1200px) rotateY(-5deg) rotateX(2deg);
+}
+
+.resume-home__grid {
+  background-image:
+    linear-gradient(var(--sf-border) 1px, transparent 1px),
+    linear-gradient(90deg, var(--sf-border) 1px, transparent 1px);
+  background-size: 2rem 2rem;
+  mask-image: linear-gradient(
+    to bottom,
+    transparent,
+    var(--sf-base) 35%,
+    var(--sf-base) 70%,
+    transparent
+  );
+  pointer-events: none;
+}
+
+.resume-home__closing {
+  background-image: linear-gradient(135deg, var(--sf-primary), var(--sf-transparent));
+}
+
+.resume-home__closing-orbit {
+  position: absolute;
+  width: 16rem;
+  height: 16rem;
+  border: 1px solid var(--sf-theme-2);
+  border-radius: 9999px;
+  pointer-events: none;
+}
+
+.resume-home__closing-orbit--one {
+  top: -9rem;
+  left: -6rem;
+}
+
+.resume-home__closing-orbit--two {
+  right: -6rem;
+  bottom: -10rem;
+  width: 20rem;
+  height: 20rem;
+}
+
+.animate-rise {
+  animation: rise 0.7s ease-out both;
+}
+
+.animate-rise--delay-one {
+  animation-delay: 0.08s;
+}
+
+.animate-rise--delay-two {
+  animation-delay: 0.16s;
+}
+
+.animate-rise--delay-three {
+  animation-delay: 0.24s;
+}
+
+.animate-float {
+  animation: float 5s ease-in-out infinite;
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(1.5rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-0.75rem);
+  }
+}
+
+@media (max-width: 639px) {
+  .resume-home__preview {
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-rise,
+  .animate-float {
+    animation: none;
+  }
+}
 </style>
