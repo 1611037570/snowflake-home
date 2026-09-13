@@ -23,11 +23,12 @@ const routes: RouteRecordRaw[] = [
 
 // 动态导入所有视图组件，优化路径匹配
 const componentModules = import.meta.glob("@/views/*/index.vue", { eager: false });
-// 简历页子路由：顶部导航的四个板块
+// 简历页子路由：顶部导航板块
 const resumeChildren: RouteRecordRaw[] = [
   { path: "", name: "resume", component: () => import("@/views/resume/main/index.vue") },
   { path: "template", component: () => import("@/views/resume/template/index.vue") },
   { path: "mine", component: () => import("@/views/resume/mine/index.vue") },
+  { path: "ai", component: () => import("@/views/resume/ai/index.vue") },
   { path: "statistics", component: () => import("@/views/resume/statistics/index.vue") },
   {
     path: "editor",
