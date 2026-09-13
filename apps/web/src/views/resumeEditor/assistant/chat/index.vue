@@ -363,7 +363,7 @@ const handleFlowInput = (content) => {
 </script>
 
 <template>
-  <div class="relative flex h-full w-full flex-col overflow-hidden select-text">
+  <div class="relative flex h-full w-full flex-col overflow-hidden rounded-r-3xl select-text">
     <ChatHeader
       :messages="navMessages"
       :is-generating="isGenerating"
@@ -433,7 +433,7 @@ const handleFlowInput = (content) => {
       leave-from-class="translate-x-0"
       leave-to-class="translate-x-full"
     >
-      <div v-if="chatListVisible" class="absolute inset-0 z-20">
+      <div v-if="chatListVisible" class="absolute inset-0 z-20 bg-sf-primary">
         <ChatList
           :chats="resumeAssistantChatList"
           :active-chat-id="chat.id"

@@ -19,7 +19,7 @@ function formatTime(time: number) {
 </script>
 
 <template>
-  <aside class="flex h-full min-h-0 w-full flex-col bg-sf-primary">
+  <aside class="flex h-full min-h-0 w-full flex-col rounded-r-3xl bg-sf-primary">
     <div class="flex shrink-0 items-center justify-between gap-3 p-3">
       <h2 class="font-bold text-sf-text">对话记录</h2>
       <div class="flex items-center gap-3">
