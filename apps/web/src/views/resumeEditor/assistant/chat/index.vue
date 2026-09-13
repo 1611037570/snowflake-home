@@ -50,11 +50,14 @@ const isGenerating = computed(() => generating.value);
 const chatListVisible = ref(false);
 // 专项面试期间开放语音转文字入口，其余简历任务保持原输入方式
 const voiceInputEnabled = ref(false);
+// 长时面试流程启动后持续提供提前结束入口
+const earlyEndEnabled = ref(false);
 
 function createNewChat() {
   if (generating.value) return;
   aiStore.createNewResumeAssistantChat();
   voiceInputEnabled.value = false;
+  earlyEndEnabled.value = false;
   chatListVisible.value = false;
 }
 
@@ -62,6 +65,7 @@ function selectChat(id: string) {
   if (generating.value) return;
   aiStore.switchResumeAssistantChat(id);
   voiceInputEnabled.value = false;
+  earlyEndEnabled.value = false;
   chatListVisible.value = false;
 }
 
@@ -179,6 +183,11 @@ const handleSend = (content) => {
       return;
     }
   }
+  // 用户结束长时评估后关闭专用操作入口，后续仅保留普通对话输入
+  if (earlyEndEnabled.value && content.trim() === "提前结束") {
+    earlyEndEnabled.value = false;
+    voiceInputEnabled.value = false;
+  }
   generating.value = true;
   addMessage({
     role: "user",
@@ -273,6 +282,7 @@ const handleSuggest = (payload) => {
   if (!flow) return;
   // 仅专项面试模拟启用语音输入，启动其他流程时同步关闭
   voiceInputEnabled.value = payload.flow === "specializedInterview";
+  earlyEndEnabled.value = false;
   // 记录流程状态并展示初始用户消息
   // 流程启动时固化条件步骤，保证本轮授权判断与入口状态一致
   const steps = flow.steps.filter((step) => step.when?.() ?? true);
@@ -292,12 +302,22 @@ const handleSuggest = (payload) => {
       typing: false,
       requestContext,
     });
+    // 无引导步骤的长时流程在真实请求开始后开放提前结束
+    earlyEndEnabled.value = ["specializedInterview", "aptitudeHrInterview"].includes(
+      payload.flow,
+    );
     generating.value = true;
     scrollToBottom();
     handleAIResponse();
     return;
   }
-  activeFlow.value = { flow, steps, stepIndex: 0, answers: [] };
+  activeFlow.value = {
+    flow,
+    steps,
+    stepIndex: 0,
+    answers: [],
+    allowEarlyEnd: ["specializedInterview", "aptitudeHrInterview"].includes(payload.flow),
+  };
   // 引导对话仅作界面展示，不加入请求上下文
   addMessage({
     role: "user",
@@ -372,6 +392,8 @@ const handleFlowAnswer = (answer) => {
   }
   // 收集完成：最后一步答案并入真实请求，不再单独展示，避免出现两条 user 消息
   const { prompt, userContent, requestContext } = state.flow.build(state.answers);
+  // 完成入口问答后再展示提前结束，避免尚未开始评估时误触
+  earlyEndEnabled.value = state.allowEarlyEnd;
   activeFlow.value = null;
   // 所有请求统一走 React 编排
   if (prompt) {
@@ -404,6 +426,12 @@ const handleFlowOption = (option) => {
  */
 const handleFlowInput = (content) => {
   handleFlowAnswer(content);
+};
+
+// 提前结束使用普通用户消息触发技能收尾与阶段性评分
+const handleEarlyEnd = () => {
+  if (!earlyEndEnabled.value || generating.value) return;
+  handleSend("提前结束");
 };
 </script>
 
@@ -467,8 +495,10 @@ const handleFlowInput = (content) => {
       ref="chatInputRef"
       :is-generating="isGenerating"
       :voice-enabled="voiceInputEnabled"
+      :early-end-enabled="earlyEndEnabled"
       @send="handleSend"
       @stop="stopGenerating"
+      @early-end="handleEarlyEnd"
     />
 
     <Transition

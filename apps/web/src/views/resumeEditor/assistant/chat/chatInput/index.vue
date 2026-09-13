@@ -16,10 +16,14 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  earlyEndEnabled: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 // 发送 / 停止事件
-const emit = defineEmits(["send", "stop"]);
+const emit = defineEmits(["send", "stop", "early-end"]);
 
 // 输入框绑定的值
 const modelValue = ref("");
@@ -184,6 +188,17 @@ onBeforeUnmount(() => {
           <!-- 右侧-->
           <div class="flex items-center gap-1">
             <ModelSelect />
+            <!-- 长时评估允许随时结束，并交由面试技能生成保守的阶段性报告 -->
+            <button
+              v-if="props.earlyEndEnabled"
+              class="flex h-[30px] items-center justify-center rounded-xl bg-sf-bg-3 px-3 text-xs text-sf-text transition-all duration-500 hover:bg-sf-bg-2 disabled:cursor-not-allowed disabled:opacity-50"
+              title="提前结束并生成阶段性报告"
+              type="button"
+              :disabled="props.isGenerating"
+              @click="emit('early-end')"
+            >
+              提前结束
+            </button>
             <!-- 专项面试语音入口：识别结果先进入输入框，确认后再发送 -->
             <button
               v-if="props.voiceEnabled"

@@ -61,6 +61,15 @@ describe("interviewFlows", () => {
     expect(instructions).toContain("不得补造职责、技术、数据、成果或业务背景");
   });
 
+  it("专项面试提前结束时按完成度保守评分", () => {
+    const instructions = specializedInterview().instructions;
+    const result = flows.specializedInterview!.build(["业务面"]);
+
+    expect(result.userContent).toContain("随时点击“提前结束”");
+    expect(instructions).toContain("已完成回答均分 × 完成度");
+    expect(instructions).toContain("结果可能不准确");
+  });
+
   it("行测与 HR 面试确认后读取整份简历", () => {
     const flow = flows.aptitudeHrInterview!;
     const result = flow.build(["开始综合评估"]);
@@ -85,5 +94,16 @@ describe("interviewFlows", () => {
     expect(instructions).toContain("言语理解三题、数量关系三题、判断推理四题");
     expect(instructions).toContain("不得声称系统能自动计时");
     expect(instructions).toContain("沟通表达与情绪管理反馈");
+  });
+
+  it("行测与 HR 面试提前结束时计入未完成项目", () => {
+    const instructions = aptitudeHrInterview().instructions;
+    const flow = flows.aptitudeHrInterview!;
+    const result = flow.build(["开始综合评估"]);
+
+    expect(flow.steps[0]?.question).toContain("可随时提前结束");
+    expect(result.userContent).toContain("避免阶段性分数虚高");
+    expect(instructions).toContain("未完成题目按零分计入完成度折算总分");
+    expect(instructions).toContain("结果可能不准确");
   });
 });
