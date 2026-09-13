@@ -48,16 +48,20 @@ const generating = assistantConfig.generating;
 const isGenerating = computed(() => generating.value);
 // 控制会话记录第二页的显示状态
 const chatListVisible = ref(false);
+// 专项面试期间开放语音转文字入口，其余简历任务保持原输入方式
+const voiceInputEnabled = ref(false);
 
 function createNewChat() {
   if (generating.value) return;
   aiStore.createNewResumeAssistantChat();
+  voiceInputEnabled.value = false;
   chatListVisible.value = false;
 }
 
 function selectChat(id: string) {
   if (generating.value) return;
   aiStore.switchResumeAssistantChat(id);
+  voiceInputEnabled.value = false;
   chatListVisible.value = false;
 }
 
@@ -267,6 +271,8 @@ const activeFlow = ref(null);
 const handleSuggest = (payload) => {
   const flow = flows[payload?.flow];
   if (!flow) return;
+  // 仅专项面试模拟启用语音输入，启动其他流程时同步关闭
+  voiceInputEnabled.value = payload.flow === "specializedInterview";
   // 记录流程状态并展示初始用户消息
   // 流程启动时固化条件步骤，保证本轮授权判断与入口状态一致
   const steps = flow.steps.filter((step) => step.when?.() ?? true);
@@ -460,6 +466,7 @@ const handleFlowInput = (content) => {
     <ChatInput
       ref="chatInputRef"
       :is-generating="isGenerating"
+      :voice-enabled="voiceInputEnabled"
       @send="handleSend"
       @stop="stopGenerating"
     />

@@ -91,6 +91,21 @@ export const flows: Record<string, Flow> = {
       requestContext: { resumeScope: "all" },
     }),
   },
+  // 专项面试模拟：选择技术面或业务面后，基于整份简历开展逐轮追问与评分
+  specializedInterview: {
+    userContent: "帮我进行专项面试模拟",
+    steps: [
+      {
+        question: "请选择本次专项模拟的面试方向",
+        options: ["技术面", "业务面"],
+      },
+    ],
+    build: ([direction]) => ({
+      userContent: `请根据我的整份简历开展${direction}专项面试模拟。请保持真实面试官角色，每轮只问一个问题；我回答后先针对本轮表现给出十分制评分、反馈与回答技巧，再结合回答继续追问。`,
+      // 专项模拟需要持续核对完整经历，本次请求固定读取整份简历
+      requestContext: { resumeScope: "all" },
+    }),
+  },
   // JD 对标优化：等用户在输入框输入 JD 后执行对标优化
   jdOptimize: {
     userContent: "帮我进行JD对标优化",
@@ -302,6 +317,24 @@ export const suggestions: SuggestCard[] = [
       ],
       scene: "面试前快速准备",
       action: "开始面试押题",
+    },
+  },
+  {
+    icon: "ph:microphone-stage-duotone",
+    title: "专项面试模拟",
+    flow: "specializedInterview",
+    intro: {
+      badge: "🔥 最受欢迎",
+      duration: "约 1 小时 · 支持语音/文字多模态",
+      description:
+        "针对技术面、业务面进行深度 1v1 模拟，AI 面试官实时追问与反馈，全面提升实战能力。",
+      features: [
+        "真实面试场景 1v1 对话模拟",
+        "AI 智能追问，深度挖掘技术能力",
+        "多轮问答评估，即时反馈与打分",
+      ],
+      scene: "深度实战训练",
+      action: "开始专项模拟",
     },
   },
   {

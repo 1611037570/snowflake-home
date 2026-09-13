@@ -1,5 +1,6 @@
 <script setup>
-import { computed, nextTick, onMounted, ref } from "vue";
+import { ElMessage } from "element-plus";
+import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from "vue";
 import AiNotice from "../aiNotice.vue";
 import DesensitizeMode from "./desensitizeMode.vue";
 import ModuleSelect from "./moduleSelect.vue";
@@ -11,6 +12,10 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  voiceEnabled: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 // 发送 / 停止事件
@@ -19,6 +24,62 @@ const emit = defineEmits(["send", "stop"]);
 // 输入框绑定的值
 const modelValue = ref("");
 const inputRef = ref(null);
+const recognition = ref(null);
+const isListening = ref(false);
+const speechBaseValue = ref("");
+
+// 浏览器提供语音识别能力时，专项面试可将语音实时转写到输入框
+const getSpeechRecognition = () => window.SpeechRecognition || window.webkitSpeechRecognition;
+const isVoiceSupported = computed(() => props.voiceEnabled && !!getSpeechRecognition());
+
+const stopVoiceInput = () => {
+  recognition.value?.stop();
+  recognition.value = null;
+  isListening.value = false;
+};
+
+const toggleVoiceInput = () => {
+  if (isListening.value) {
+    stopVoiceInput();
+    return;
+  }
+  const SpeechRecognition = getSpeechRecognition();
+  if (!SpeechRecognition) {
+    ElMessage.warning("当前浏览器不支持语音输入，请使用文字作答");
+    return;
+  }
+  // 每次开始录音时保留已有文字，识别结果仅追加到本轮输入
+  const instance = new SpeechRecognition();
+  speechBaseValue.value = modelValue.value.trim();
+  instance.lang = navigator.language || "zh-CN";
+  instance.continuous = true;
+  instance.interimResults = true;
+  instance.onresult = (event) => {
+    const transcript = Array.from(event.results)
+      .map((result) => result[0]?.transcript || "")
+      .join("")
+      .trim();
+    modelValue.value = [speechBaseValue.value, transcript].filter(Boolean).join(" ");
+  };
+  instance.onerror = () => {
+    ElMessage.warning("语音识别失败，请重试或使用文字作答");
+  };
+  instance.onend = () => {
+    recognition.value = null;
+    isListening.value = false;
+  };
+  recognition.value = instance;
+  isListening.value = true;
+  instance.start();
+};
+
+// 离开专项面试输入模式时立即停止仍在进行的语音识别
+watch(
+  () => props.voiceEnabled,
+  (enabled) => {
+    if (!enabled && isListening.value) stopVoiceInput();
+  },
+);
 
 // 计算是否可以发送消息
 const canSend = computed(() => !!modelValue.value.trim() && !props.isGenerating);
@@ -84,6 +145,11 @@ defineExpose({ focus, setValue });
 onMounted(() => {
   focus();
 });
+
+// 组件销毁时结束录音，避免语音识别继续占用麦克风
+onBeforeUnmount(() => {
+  stopVoiceInput();
+});
 </script>
 
 <template>
@@ -118,6 +184,22 @@ onMounted(() => {
           <!-- 右侧-->
           <div class="flex items-center gap-1">
             <ModelSelect />
+            <!-- 专项面试语音入口：识别结果先进入输入框，确认后再发送 -->
+            <button
+              v-if="props.voiceEnabled"
+              data-test="voice-input"
+              class="flex h-[30px] w-8 items-center justify-center rounded-xl transition-all duration-500"
+              :class="
+                isListening
+                  ? 'bg-sf-error-2 text-sf-error'
+                  : 'bg-sf-bg-3 text-sf-text hover:bg-sf-bg-2'
+              "
+              :title="isVoiceSupported ? (isListening ? '停止语音输入' : '开始语音输入') : '当前浏览器不支持语音输入'"
+              type="button"
+              @click="toggleVoiceInput"
+            >
+              <SfIcon :icon="isListening ? 'ph:stop-circle-fill' : 'ph:microphone-duotone'" size="4" />
+            </button>
             <!--动态动作按钮 (发送/停止) -->
             <button
               class="flex h-[30px] w-8 items-center justify-center rounded-xl transition-all duration-500 ease-out"

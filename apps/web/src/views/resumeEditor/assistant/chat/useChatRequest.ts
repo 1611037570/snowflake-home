@@ -129,6 +129,7 @@ export const useChatRequest = ({
     self_intro: "读取《面试自我介绍》",
     greeting: "读取《打招呼语》",
     interview_prediction: "读取《面试押题》",
+    specialized_interview: "读取《专项面试模拟》",
     resume_create: "读取《从零生成简历经历》",
     resume_interview: "读取《AI 简历面试》",
     resume_score: "读取《AI 简历评估》",
