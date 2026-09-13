@@ -23,6 +23,9 @@ const commonSuggestions = computed(() =>
 
 // 一键优化先展示能力与数据范围说明，用户确认后再进入原有引导流程
 const oneKeyIntroVisible = ref(false);
+// 带功能介绍的建议先展示详情，确认后再进入对应引导流程
+const featureIntroVisible = ref(false);
+const activeFeature = ref<SuggestCard | null>(null);
 const oneKeyFeatures = [
   {
     icon: "ph:stethoscope-duotone",
@@ -52,6 +55,11 @@ const handleSuggest = (card: SuggestCard) => {
     oneKeyIntroVisible.value = true;
     return;
   }
+  if (card.intro) {
+    activeFeature.value = card;
+    featureIntroVisible.value = true;
+    return;
+  }
   emit("suggest", { flow: card.flow });
 };
 
@@ -60,6 +68,13 @@ const startOneKeyOptimize = () => {
   if (!oneKeyOptimize.value) return;
   oneKeyIntroVisible.value = false;
   emit("suggest", { flow: oneKeyOptimize.value.flow });
+};
+
+// 关闭功能介绍并启动当前建议对应的引导流程
+const startFeature = () => {
+  if (!activeFeature.value) return;
+  featureIntroVisible.value = false;
+  emit("suggest", { flow: activeFeature.value.flow });
 };
 </script>
 
@@ -172,6 +187,51 @@ const startOneKeyOptimize = () => {
             暂不优化
           </SfButton>
           <SfButton size="large" @click="startOneKeyOptimize">开始一键优化</SfButton>
+        </div>
+      </div>
+    </SfModal>
+
+    <SfModal
+      v-model="featureIntroVisible"
+      :title="activeFeature?.title || '功能介绍'"
+      width="560px"
+    >
+      <div v-if="activeFeature?.intro" class="flex w-full flex-col gap-3 pb-3 text-left">
+        <div class="flex flex-wrap items-center gap-3">
+          <span
+            v-if="activeFeature.intro.badge"
+            class="flex h-6 items-center rounded-xl bg-sf-theme-3 px-3 text-[12px] font-medium text-sf-theme"
+          >
+            {{ activeFeature.intro.badge }}
+          </span>
+          <span class="text-[13px] font-medium text-sf-theme">
+            {{ activeFeature.intro.duration }}
+          </span>
+        </div>
+
+        <p class="text-[14px] leading-relaxed text-sf-text-2">
+          {{ activeFeature.intro.description }}
+        </p>
+
+        <div class="flex flex-col gap-3 rounded-xl bg-sf-bg p-3">
+          <div
+            v-for="feature in activeFeature.intro.features"
+            :key="feature"
+            class="flex items-start gap-3"
+          >
+            <SfIcon icon="ph:check-circle-duotone" size="5" class="shrink-0 text-sf-theme" />
+            <span class="text-[13px] leading-relaxed text-sf-text">{{ feature }}</span>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-3 rounded-xl bg-sf-bg-2 p-3">
+          <span class="text-[13px] text-sf-text-2">适合场景</span>
+          <span class="text-[13px] font-bold text-sf-text">{{ activeFeature.intro.scene }}</span>
+        </div>
+
+        <div class="flex justify-end gap-3 pt-3">
+          <SfButton type="bg" size="large" @click="featureIntroVisible = false">暂不开始</SfButton>
+          <SfButton size="large" @click="startFeature">{{ activeFeature.intro.action }}</SfButton>
         </div>
       </div>
     </SfModal>

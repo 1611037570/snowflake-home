@@ -42,6 +42,15 @@ export type SuggestCard = {
   icon: string;
   title: string;
   flow: string;
+  // 功能介绍用于建议卡片启动前展示能力、耗时与适用场景
+  intro?: {
+    badge?: string;
+    duration: string;
+    description: string;
+    features: string[];
+    scene: string;
+    action: string;
+  };
 };
 
 // 宿主组装后传给 chat 的配置，技能与工具均由调用方传入
