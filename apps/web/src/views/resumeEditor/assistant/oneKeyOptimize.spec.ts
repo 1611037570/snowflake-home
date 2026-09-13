@@ -4,6 +4,7 @@ import { defaultPrompt } from "./skills/prompt_default";
 import { resumeOneKeyOptimize } from "./skills/skill_resume_one_key_optimize";
 import { resumeOptimization } from "./skills/skill_resume_optimization";
 import { resumeScore } from "./skills/skill_resume_score";
+import { resumeWriting } from "./skills/skill_resume_writing";
 
 const resumeState = vi.hoisted(() => ({
   selectedModule: [] as Array<{ key: string; name: string }>,
@@ -86,5 +87,20 @@ describe("oneKeyOptimize", () => {
     expect(resumeOneKeyOptimize().instructions).toContain(
       '"highlights": ["【职业契合度】目标岗位相关成果已前置，岗位主线更清晰"]',
     );
+  });
+
+  it("写入后基于最新数据验证并避免重复提交", () => {
+    expect(defaultPrompt().instructions).toContain("只重新构造未成功的操作");
+    expect(resumeWriting().instructions).toContain("禁止重放已成功操作");
+    expect(resumeOneKeyOptimize().instructions).toContain(
+      "写入完成后必须再次调用 read_resume_data 读取整份简历",
+    );
+  });
+
+  it("明确数据规范的必读条件", () => {
+    const instructions = defaultPrompt().instructions;
+
+    expect(instructions).toContain("新增记录、修改模块标题、翻译");
+    expect(instructions).toContain("只修改已读取且类型明确的现有文本字段时可不调用");
   });
 });
