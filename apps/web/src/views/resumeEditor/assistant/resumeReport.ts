@@ -35,7 +35,7 @@ export const parseResumeReport = (content: string): ResumeReport | null => {
   const match = content.match(REPORT_RE);
   if (!match) return null;
   try {
-    const report = JSON.parse(match[1]);
+    const report = JSON.parse(match[1]!);
     if (typeof report?.totalScore !== "number" || !Array.isArray(report?.dimensions)) {
       return null;
     }
