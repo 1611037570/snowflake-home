@@ -1,4 +1,5 @@
 import type { SkillFactory } from "../types";
+import { aptitudeHrInterview } from "./skill_aptitude_hr_interview";
 import { careerPlanning } from "./skill_career_planning";
 import { defaultPrompt } from "./prompt_default";
 import { greeting } from "./skill_greeting";
@@ -40,6 +41,7 @@ export const onDemandSkills: SkillFactory[] = [
   greeting,
   interviewPrediction,
   specializedInterview,
+  aptitudeHrInterview,
   resumeCreate,
   resumeInterview,
   resumeScore,

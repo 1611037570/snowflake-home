@@ -27,6 +27,7 @@ export const defaultPrompt = (): Skill => ({
 | 打招呼语 | greeting |
 | 基于 JD 与简历预测面试题 | interview_prediction |
 | 技术面或业务面专项模拟 | specialized_interview |
+| 行测与 HR 软技能综合评估 | aptitude_hr_interview |
 | 提供 JD 做匹配分析或对标优化 | job_match |
 | 优化局部或整份简历 | resume_optimization |
 | 从零生成一段简历经历 | resume_create |

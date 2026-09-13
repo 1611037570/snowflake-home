@@ -1,6 +1,7 @@
 import { describe, expect, it, vi } from "vitest";
 import { flows, suggestions } from "./flows";
 import { onDemandSkills } from "./skills/registry";
+import { aptitudeHrInterview } from "./skills/skill_aptitude_hr_interview";
 import { interviewPrediction } from "./skills/skill_interview_prediction";
 import { specializedInterview } from "./skills/skill_specialized_interview";
 
@@ -58,5 +59,31 @@ describe("interviewFlows", () => {
     expect(instructions).toContain("每轮回复只能包含一个问句");
     expect(instructions).toContain("十分制评分");
     expect(instructions).toContain("不得补造职责、技术、数据、成果或业务背景");
+  });
+
+  it("行测与 HR 面试确认后读取整份简历", () => {
+    const flow = flows.aptitudeHrInterview!;
+    const result = flow.build(["开始综合评估"]);
+
+    expect(flow.steps[0]?.options).toEqual(["开始综合评估"]);
+    expect(result.userContent).toContain("先进行带建议时限的行测模拟");
+    expect(result.requestContext).toEqual({ resumeScope: "all" });
+  });
+
+  it("行测与 HR 面试入口和技能均已注册", () => {
+    const suggestion = suggestions.find((item) => item.flow === "aptitudeHrInterview");
+
+    expect(suggestion?.intro?.badge).toBe("综合评估");
+    expect(onDemandSkills.some((createSkill) => createSkill().id === "aptitude_hr_interview")).toBe(
+      true,
+    );
+  });
+
+  it("行测与 HR 面试约束双阶段、限时说明与综合报告", () => {
+    const instructions = aptitudeHrInterview().instructions;
+
+    expect(instructions).toContain("言语理解三题、数量关系三题、判断推理四题");
+    expect(instructions).toContain("不得声称系统能自动计时");
+    expect(instructions).toContain("沟通表达与情绪管理反馈");
   });
 });
