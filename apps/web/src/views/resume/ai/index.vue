@@ -1,10 +1,14 @@
 <script setup>
 import { ref } from "vue";
 import AiProviderSettingsContent from "../editor/toolbar/modules/ai/content.vue";
+import ConversationViewer from "./components/conversationViewer.vue";
 
-// 左侧菜单控制右侧 AI 配置内容。
+// 左侧菜单控制右侧内容。
 const activePanel = ref("settings");
-const panelList = [{ name: "AI设置", value: "settings", icon: "lucide:settings-2" }];
+const panelList = [
+  { name: "消息", value: "messages", icon: "ph:chats-duotone" },
+  { name: "AI设置", value: "settings", icon: "lucide:settings-2" },
+];
 </script>
 
 <template>
@@ -27,6 +31,7 @@ const panelList = [{ name: "AI设置", value: "settings", icon: "lucide:settings
       </button>
     </aside>
     <section class="min-w-0 flex-1 p-6">
+      <ConversationViewer v-if="activePanel === 'messages'" class="h-full" />
       <AiProviderSettingsContent v-if="activePanel === 'settings'" class="h-full" />
     </section>
   </div>
