@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useAiStore, useResumeStore } from "@/stores";
-import { useScroll } from "@vueuse/core";
+import { useClipboard, useScroll } from "@vueuse/core";
 import { ElMessage } from "element-plus";
 import { computed, nextTick, ref, watch } from "vue";
 import { storeToRefs } from "pinia";
@@ -61,6 +61,10 @@ const quickAnswerLoading = ref(false);
 const quickAnswerVisible = ref(false);
 const quickAnswerContent = ref("");
 const quickAnswerError = ref("");
+const {
+  copy: copyQuickAnswer,
+  isSupported: quickAnswerCopySupported,
+} = useClipboard();
 
 function createNewChat() {
   if (generating.value || quickAnswerLoading.value) return;
@@ -467,6 +471,22 @@ const handleEarlyEnd = () => {
   handleSend("提前结束");
 };
 
+// 执行单次回答请求；换一个时仅把上一版作为差异化参考
+const generateQuickAnswer = async (previousAnswer = "") => {
+  quickAnswerLoading.value = true;
+  quickAnswerError.value = "";
+  try {
+    quickAnswerContent.value = await requestQuickAnswer(
+      latestInterviewQuestion.value,
+      previousAnswer,
+    );
+  } catch (error: any) {
+    quickAnswerError.value = error?.message || "回答生成失败";
+  } finally {
+    quickAnswerLoading.value = false;
+  }
+};
+
 // 为最近一道真实面试题生成一个独立回答方案，不写入当前会话消息
 const handleQuickAnswer = async () => {
   if (!quickAnswerEnabled.value || generating.value || quickAnswerLoading.value) return;
@@ -475,16 +495,25 @@ const handleQuickAnswer = async () => {
     return;
   }
   quickAnswerVisible.value = true;
-  quickAnswerLoading.value = true;
   quickAnswerContent.value = "";
-  quickAnswerError.value = "";
-  try {
-    quickAnswerContent.value = await requestQuickAnswer(latestInterviewQuestion.value);
-  } catch (error: any) {
-    quickAnswerError.value = error?.message || "回答生成失败";
-  } finally {
-    quickAnswerLoading.value = false;
+  await generateQuickAnswer();
+};
+
+// 保留同一道题与简历事实，以不同表达重新生成单个回答方案
+const handleReplaceQuickAnswer = async () => {
+  if (quickAnswerLoading.value) return;
+  await generateQuickAnswer(quickAnswerContent.value);
+};
+
+// 复制当前回答方案，失败时提供明确反馈
+const handleCopyQuickAnswer = async () => {
+  if (!quickAnswerContent.value) return;
+  if (!quickAnswerCopySupported.value) {
+    ElMessage.error("当前浏览器不支持复制");
+    return;
   }
+  await copyQuickAnswer(quickAnswerContent.value);
+  ElMessage.success("回答方案已复制");
 };
 </script>
 
@@ -576,7 +605,16 @@ const handleQuickAnswer = async () => {
         <p v-else class="whitespace-pre-wrap text-sm leading-relaxed text-sf-text">
           {{ quickAnswerContent }}
         </p>
-        <div v-if="!quickAnswerLoading" class="flex justify-end pt-3">
+        <div v-if="!quickAnswerLoading" class="flex justify-end gap-3 pt-3">
+          <SfButton
+            v-if="quickAnswerContent"
+            type="bg"
+            size="large"
+            @click="handleCopyQuickAnswer"
+          >
+            复制
+          </SfButton>
+          <SfButton type="bg" size="large" @click="handleReplaceQuickAnswer">换一个</SfButton>
           <SfButton size="large" @click="quickAnswerVisible = false">关闭</SfButton>
         </div>
       </div>
