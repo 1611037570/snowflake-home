@@ -7,7 +7,7 @@ import RevealGrid from "@/views/resume/components/revealGrid.vue";
 
 // 全屏预览组件：异步加载，避免首屏打包体积过大
 const FullscreenPreview = markRaw(
-  defineAsyncComponent(() => import("@/views/resumeEditor/preview/fullscreenPreview.vue")),
+  defineAsyncComponent(() => import("@/views/resume/editor/preview/fullscreenPreview.vue")),
 );
 import { computed, ref } from "vue";
 

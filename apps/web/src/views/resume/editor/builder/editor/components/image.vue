@@ -1,6 +1,6 @@
 <script setup>
 import { useImageUpload } from "@/hooks";
-import { RESUME_WIDTH } from "@/views/resumeEditor/preview/constants";
+import { RESUME_WIDTH } from "@/views/resume/editor/preview/constants";
 
 // 图片作品字段：name 名称、img 图片、desc 描述、size 显示大小百分比
 const name = defineModel("name", {

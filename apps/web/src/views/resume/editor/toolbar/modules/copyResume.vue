@@ -14,7 +14,7 @@ function copyResume() {
   let notification;
   const switchResume = () => {
     notification?.close();
-    router.push({ path: "/resumeEditor", query: { id: copiedId } });
+    router.push({ path: "/resume/editor", query: { id: copiedId } });
   };
   notification = ElNotification({
     title: "复制成功",

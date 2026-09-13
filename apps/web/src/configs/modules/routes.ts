@@ -29,11 +29,6 @@ export const PROJECT_ROUTES = [
     icon: "image",
   },
   {
-    name: "resumeEditor",
-    hidden: true,
-    icon: "",
-  },
-  {
     name: "index",
     iconType: "component",
     icon: "index",

@@ -88,7 +88,7 @@ export const xiaoYangData: any = {
     data: [
       {
         name: "轻舟简历",
-        url: "http://nannan.work/#/resumeEditor?id=1611037570",
+        url: "http://nannan.work/#/resume/editor?id=1611037570",
         desc: "非视频 仅用于展示",
       },
     ],

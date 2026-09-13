@@ -1,5 +1,5 @@
 <script setup>
-import ThumbPreview from "@/views/resumeEditor/preview/thumbPreview.vue";
+import ThumbPreview from "@/views/resume/editor/preview/thumbPreview.vue";
 
 const props = defineProps({
   // 简历数据，传入后自动渲染缩略预览，内容由调用方通过默认插槽传入；不传则仅显示默认插槽（如新建简历卡片）
