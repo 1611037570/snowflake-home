@@ -20,16 +20,43 @@ const handleRestart = () => {
 
 <template>
   <div
-    class="border-sf-b flex flex-col items-center gap-4 rounded-xl border bg-sf-primary p-16 text-center shadow-sm"
+    class="star-track-landed relative flex flex-col items-center gap-3 overflow-hidden rounded-2xl border border-sf-b bg-sf-primary p-16 text-center shadow-sm"
   >
-    <div class="text-sf-theme">
-      <SfIcon icon="lucide:party-popper" size="12" />
+    <div
+      class="relative z-10 flex h-18 w-18 items-center justify-center rounded-full bg-sf-bg-2 text-sf-theme"
+    >
+      <SfIcon icon="lucide:star" size="9" />
     </div>
-    <h3 class="text-2xl font-black text-sf-theme">恭喜上岸</h3>
-    <p v-if="landDate" class="text-sm text-sf-text-2">上岸日期：{{ landDate }}</p>
-    <p class="text-sm text-sf-text-2">求职之旅圆满结束，愿新工作一切顺利</p>
-    <el-button type="primary" @click="handleRestart">清空数据，重新开始记录</el-button>
+    <span class="relative z-10 rounded-full bg-sf-bg-2 px-3 py-1 text-xs font-bold text-sf-theme"
+      >星轨抵达</span
+    >
+    <h3 class="relative z-10 text-2xl font-black text-sf-theme">恭喜抵达新星</h3>
+    <p v-if="landDate" class="relative z-10 text-sm text-sf-text-2">抵达日期：{{ landDate }}</p>
+    <p class="relative z-10 text-sm text-sf-text-2">每一段坚持都没有被辜负，愿新的旅程明亮顺遂</p>
+    <el-button class="relative z-10" type="primary" @click="handleRestart">开启新的星轨</el-button>
   </div>
 </template>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.star-track-landed::before,
+.star-track-landed::after {
+  position: absolute;
+  border: 1px solid var(--sf-border);
+  border-radius: 9999px;
+  content: "";
+}
+
+.star-track-landed::before {
+  top: -9rem;
+  left: -6rem;
+  width: 18rem;
+  height: 18rem;
+}
+
+.star-track-landed::after {
+  right: -4rem;
+  bottom: -6rem;
+  width: 14rem;
+  height: 14rem;
+}
+</style>

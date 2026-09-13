@@ -27,28 +27,32 @@ const handleSave = () => {
 // 统计卡片配置
 const cards = computed(() => [
   {
-    label: "已投递天数",
+    label: "航行天数",
+    description: "从第一份投递开始",
     value: appliedDays.value,
     unit: "天",
     icon: "mdi:calendar-clock",
     editable: true,
   },
   {
-    label: "投递总数",
+    label: "机会坐标",
+    description: "每一份都值得记录",
     value: totalApplications.value,
     unit: "次",
     icon: "icon-park-outline:send-one",
     editable: false,
   },
   {
-    label: "进行中",
+    label: "轨道进行中",
+    description: "正在靠近的机会",
     value: activeCount.value,
     unit: "家",
     icon: "solar:hourglass-line-duotone",
     editable: false,
   },
   {
-    label: "Offer",
+    label: "抵达星点",
+    description: "已收获 Offer",
     value: offerCount.value,
     unit: "个",
     icon: "fa6-solid:award",
@@ -62,11 +66,15 @@ const cards = computed(() => [
     <div
       v-for="card in cards"
       :key="card.label"
-      class="border-sf-b flex flex-col rounded-xl border bg-sf-primary p-3 shadow-sm"
+      class="star-track-card relative flex min-h-39 flex-col overflow-hidden rounded-2xl border border-sf-b bg-sf-primary p-3 shadow-sm"
     >
-      <div class="flex items-center justify-between">
-        <span class="flex items-center gap-1.5 text-sm font-bold text-sf-text-2">
-          <SfIcon :icon="card.icon" size="4" />
+      <div class="relative z-10 flex items-center justify-between">
+        <span class="flex items-center gap-3 text-sm font-bold text-sf-text-2">
+          <span
+            class="flex h-9 w-9 items-center justify-center rounded-xl bg-sf-bg-2 text-sf-theme"
+          >
+            <SfIcon :icon="card.icon" size="4" />
+          </span>
           {{ card.label }}
         </span>
         <button
@@ -78,10 +86,11 @@ const cards = computed(() => [
           <SfIcon icon="lucide:pencil" size="4" />
         </button>
       </div>
-      <div class="my-2 flex items-center justify-center gap-1">
+      <div class="relative z-10 mt-3 flex items-end gap-1">
         <span class="text-6xl font-black text-sf-theme">{{ card.value }}</span>
-        <span class="text-xs text-sf-text-2">{{ card.unit }}</span>
+        <span class="mb-2 text-xs text-sf-text-2">{{ card.unit }}</span>
       </div>
+      <p class="relative z-10 mt-auto text-xs text-sf-text-2">{{ card.description }}</p>
     </div>
   </div>
 
@@ -102,4 +111,15 @@ const cards = computed(() => [
   </SfModal>
 </template>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.star-track-card::after {
+  position: absolute;
+  right: -1.5rem;
+  bottom: -3rem;
+  width: 7.5rem;
+  height: 7.5rem;
+  border: 1px solid var(--sf-border);
+  border-radius: 9999px;
+  content: "";
+}
+</style>

@@ -52,24 +52,38 @@ const openFollow = (item) => {
   <!-- 无数据时显示空状态 -->
   <div
     v-if="!hasData"
-    class="flex flex-col items-center gap-4 rounded-xl border border-sf-b bg-sf-primary p-10 shadow-sm"
+    class="star-track-empty relative flex flex-col items-center gap-3 overflow-hidden rounded-2xl border border-sf-b bg-sf-primary p-12 text-center shadow-sm"
   >
-    <div class="text-sf-text-2">
-      <SfIcon icon="lucide:inbox" size="10" />
+    <div
+      class="relative z-10 flex h-18 w-18 items-center justify-center rounded-full bg-sf-bg-2 text-sf-theme"
+    >
+      <SfIcon icon="lucide:orbit" size="9" />
     </div>
-    <p class="text-sm text-sf-text-2">开始记录你的第一条投递吧</p>
-    <div class="flex items-center gap-3">
-      <el-button @click="openBatch">添加</el-button>
+    <h3 class="relative z-10 text-lg font-black text-sf-text">绘制第一段星轨</h3>
+    <p class="relative z-10 text-sm text-sf-text-2">
+      从第一份投递开始，让每一次尝试都成为清晰的机会坐标
+    </p>
+    <div class="relative z-10 flex items-center gap-3">
+      <el-button type="primary" @click="openBatch">记录投递</el-button>
     </div>
   </div>
   <!-- 有数据时显示 SfTab + 表格 -->
-  <div v-else class="flex flex-col rounded-xl border border-sf-b bg-sf-primary p-3">
+  <div v-else class="flex flex-col rounded-2xl border border-sf-b bg-sf-primary p-3">
     <div class="flex items-center justify-between">
-      <div class="w-[400px]">
-        <SfTab v-model="activeTab" :list="tabList" class="bg-sf-primary"> </SfTab>
+      <div class="flex items-center gap-3">
+        <div
+          class="hidden h-9 w-9 items-center justify-center rounded-xl bg-sf-bg-2 text-sf-theme sm:flex"
+        >
+          <SfIcon icon="lucide:orbit" size="4" />
+        </div>
+        <div class="w-[400px]">
+          <SfTab v-model="activeTab" :list="tabList" class="bg-sf-primary"> </SfTab>
+        </div>
       </div>
       <div class="flex items-center gap-3">
-        <div>{{ $t("router.resumeStatisticsDesc") }}</div>
+        <div class="hidden text-xs text-sf-text-2 lg:block">
+          {{ $t("router.resumeStatisticsDesc") }}
+        </div>
         <el-button type="success" plain @click="handleLanded">上岸</el-button>
       </div>
     </div>
@@ -87,4 +101,15 @@ const openFollow = (item) => {
   <FollowModal v-model="followVisible" :target-id="followTargetId" />
 </template>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.star-track-empty::before {
+  position: absolute;
+  top: -5rem;
+  left: -4rem;
+  width: 12rem;
+  height: 12rem;
+  border: 1px solid var(--sf-border);
+  border-radius: 9999px;
+  content: "";
+}
+</style>
