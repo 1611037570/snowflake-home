@@ -270,6 +270,27 @@ const handleSuggest = (payload) => {
   // 记录流程状态并展示初始用户消息
   // 流程启动时固化条件步骤，保证本轮授权判断与入口状态一致
   const steps = flow.steps.filter((step) => step.when?.() ?? true);
+  // 无前置问答的流程直接发起真实请求，避免停留在空引导状态
+  if (!steps.length) {
+    const { prompt, userContent, requestContext } = flow.build([]);
+    if (prompt) {
+      addMessage({
+        role: "system",
+        content: prompt,
+        typing: false,
+      });
+    }
+    addMessage({
+      role: "user",
+      content: userContent,
+      typing: false,
+      requestContext,
+    });
+    generating.value = true;
+    scrollToBottom();
+    handleAIResponse();
+    return;
+  }
   activeFlow.value = { flow, steps, stepIndex: 0, answers: [] };
   // 引导对话仅作界面展示，不加入请求上下文
   addMessage({
