@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { flows } from "./flows";
+import { defaultPrompt } from "./skills/prompt_default";
 import { resumeOneKeyOptimize } from "./skills/skill_resume_one_key_optimize";
 import { resumeOptimization } from "./skills/skill_resume_optimization";
 import { resumeScore } from "./skills/skill_resume_score";
@@ -49,6 +50,14 @@ describe("oneKeyOptimize", () => {
       "信息完整度、阅读效率、职业契合度、职业成就、发展潜力、职业稳定性",
     );
     expect(instructions).toContain("totalScore 取六项得分的算术平均值并四舍五入");
+  });
+
+  it("专项技能输出协议优先于默认输出格式", () => {
+    const instructions = defaultPrompt().instructions;
+
+    expect(instructions).toContain("以该技能的输出格式为准");
+    expect(instructions).toContain("| 翻译 | resume_translate |");
+    expect(instructions).not.toContain("resume_translate、update_resume_language");
   });
 
   it("按求职现状形成精准建议与高效润色闭环", () => {
