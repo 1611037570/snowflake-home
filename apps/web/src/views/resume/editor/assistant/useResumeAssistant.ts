@@ -72,6 +72,10 @@ export const useResumeAssistant = () => {
       content: first.instructions,
       typing: false,
     });
+    // 简历助手对话仅服务于当前正在编辑的简历
+    if (resumeStore.currentItem?.id) {
+      newChat.resumeId = resumeStore.currentItem.id;
+    }
     rest.forEach((skill) => {
       newChat.messages.push({
         ...createDefaultMessage(),

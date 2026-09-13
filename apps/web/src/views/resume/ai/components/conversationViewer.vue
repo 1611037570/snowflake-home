@@ -1,10 +1,13 @@
 <script setup lang="ts">
-import { useAiStore, type Chat } from "@/stores";
+import { useAiStore, useResumeStore, type Chat } from "@/stores";
 import { storeToRefs } from "pinia";
 import { computed, ref, watch } from "vue";
+import { getResumeTitle } from "../../editor/resumeName";
 
 const aiStore = useAiStore();
+const resumeStore = useResumeStore();
 const { resumeAssistantChatList } = storeToRefs(aiStore);
+const { list } = storeToRefs(resumeStore);
 const activeChatId = ref("");
 
 // 对话记录更新后优先保留当前选择，首次进入默认展示最新一条。
@@ -24,6 +27,14 @@ const activeChat = computed<Chat | undefined>(() =>
 const messages = computed(
   () => activeChat.value?.messages.filter((message) => message.role !== "system") || [],
 );
+const resumeTitles = computed(
+  () => new Map(list.value.map((item) => [item.id, getResumeTitle(item)])),
+);
+
+function getChatResumeTitle(chat: Chat) {
+  if (!chat.resumeId) return "未关联简历";
+  return resumeTitles.value.get(chat.resumeId) || "已删除简历";
+}
 
 function formatTime(time: number) {
   return new Date(time).toLocaleString();
@@ -51,6 +62,9 @@ function formatTime(time: number) {
             @click="activeChatId = chat.id"
           >
             <strong class="block truncate text-sm">{{ chat.title }}</strong>
+            <small class="mt-3 block truncate text-xs text-sf-text-3">
+              {{ getChatResumeTitle(chat) }}
+            </small>
             <small class="mt-3 block text-xs text-sf-text-3">{{
               formatTime(chat.updateTime)
             }}</small>
