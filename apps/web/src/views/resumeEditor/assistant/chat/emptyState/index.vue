@@ -95,7 +95,7 @@ const startFeature = () => {
 
 <template>
   <div
-    class="relative flex w-full flex-1 flex-col items-center justify-center gap-3 pt-20 text-center select-none"
+    class="relative flex h-full w-full flex-col items-center justify-center gap-3 text-center select-none"
   >
     <!-- 1V1 人工优化入口 -->
     <OneVOne />
