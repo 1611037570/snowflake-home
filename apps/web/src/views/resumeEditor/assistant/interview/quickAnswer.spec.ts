@@ -33,6 +33,18 @@ describe("interviewQuickAnswer", () => {
     expect(supportsQuickAnswer("selfIntro")).toBe(false);
   });
 
+  it("换一个时携带上一版并要求生成不同表达", () => {
+    const messages = buildQuickAnswerMessages(
+      "请介绍项目难点",
+      { project: "真实项目" },
+      "上一版回答",
+    );
+
+    expect(messages[0]?.content).toContain("必须更换表达结构或回答侧重点");
+    expect(messages[1]?.content).toContain("<previous_answer>");
+    expect(messages[1]?.content).toContain("上一版回答");
+  });
+
   it("使用无工具且不重试的单次普通模型请求", async () => {
     const sendFn = vi.fn().mockResolvedValue({
       choices: [{ message: { content: "这是一个回答方案" } }],
