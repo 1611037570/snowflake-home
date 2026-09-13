@@ -42,6 +42,8 @@ export type SuggestCard = {
   icon: string;
   title: string;
   flow: string;
+  // 功能分类用于保持简历编辑入口简洁，并为面试模块独立展示预留边界
+  category: "resume" | "interview";
   // 功能介绍用于建议卡片启动前展示能力、耗时与适用场景
   intro?: {
     badge?: string;
