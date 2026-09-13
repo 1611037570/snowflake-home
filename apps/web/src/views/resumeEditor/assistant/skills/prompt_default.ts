@@ -25,6 +25,7 @@ export const defaultPrompt = (): Skill => ({
 | 翻译 | resume_translate |
 | 面试自我介绍 | self_intro |
 | 打招呼语 | greeting |
+| 基于 JD 与简历预测面试题 | interview_prediction |
 | 提供 JD 做匹配分析或对标优化 | job_match |
 | 优化局部或整份简历 | resume_optimization |
 | 从零生成一段简历经历 | resume_create |

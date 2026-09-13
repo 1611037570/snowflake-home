@@ -13,6 +13,18 @@ vi.mock("./oneVOne.vue", () => ({
 const suggestions = [
   { icon: "ph:rocket-launch-duotone", title: "一键优化", flow: "oneKeyOptimize" },
   { icon: "ph:magic-wand-duotone", title: "简历优化", flow: "resumeOptimize" },
+  {
+    icon: "ph:crosshair-duotone",
+    title: "面试押题",
+    flow: "interviewPrediction",
+    intro: {
+      duration: "3-5 分钟快速生成 · 命中率 80%+",
+      description: "基于岗位 JD 和个人简历预测高频面试题。",
+      features: ["覆盖技术、项目、行为等多维度题型"],
+      scene: "面试前快速准备",
+      action: "开始面试押题",
+    },
+  },
 ];
 
 const mountEmptyState = () =>
@@ -62,5 +74,25 @@ describe("oneKeyOptimizeIntro", () => {
 
     expect(wrapper.emitted("suggest")).toEqual([[{ flow: "oneKeyOptimize" }]]);
     expect(wrapper.find('[data-test="modal"]').exists()).toBe(false);
+  });
+});
+
+describe("featureIntro", () => {
+  it("面试押题先展示功能介绍再启动流程", async () => {
+    const wrapper = mountEmptyState();
+    const entry = wrapper.findAll("button").find((button) => button.text() === "面试押题")!;
+
+    await entry.trigger("click");
+
+    expect(wrapper.text()).toContain("3-5 分钟快速生成 · 命中率 80%+");
+    expect(wrapper.text()).toContain("覆盖技术、项目、行为等多维度题型");
+    expect(wrapper.emitted("suggest")).toBeUndefined();
+
+    const confirm = wrapper
+      .findAll("button")
+      .find((button) => button.text() === "开始面试押题")!;
+    await confirm.trigger("click");
+
+    expect(wrapper.emitted("suggest")).toEqual([[{ flow: "interviewPrediction" }]]);
   });
 });

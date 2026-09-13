@@ -75,6 +75,22 @@ export const flows: Record<string, Flow> = {
       };
     },
   },
+  // 面试押题：收集目标岗位 JD 后，结合整份简历生成高频问题与准备反馈
+  interviewPrediction: {
+    userContent: "帮我进行面试押题",
+    steps: [
+      {
+        question: "请在输入框中粘贴目标岗位的 JD 内容并发送",
+        options: [],
+        input: true,
+      },
+    ],
+    build: ([jd]) => ({
+      userContent: `请基于我的整份简历和以下目标岗位 JD 进行面试押题，覆盖技术或专业、项目或经历、行为题，并提供参考答案、回答技巧与准备反馈报告。\n\n<job_description>\n${jd}\n</job_description>`,
+      // 面试押题需要对照完整经历与岗位要求，本次请求固定读取整份简历
+      requestContext: { resumeScope: "all" },
+    }),
+  },
   // JD 对标优化：等用户在输入框输入 JD 后执行对标优化
   jdOptimize: {
     userContent: "帮我进行JD对标优化",
@@ -270,6 +286,23 @@ export const suggestions: SuggestCard[] = [
     icon: "ph:microphone-duotone",
     title: "面试自我介绍",
     flow: "selfIntro",
+  },
+  {
+    icon: "ph:crosshair-duotone",
+    title: "面试押题",
+    flow: "interviewPrediction",
+    intro: {
+      duration: "3-5 分钟快速生成 · 命中率 80%+",
+      description:
+        "基于岗位 JD 和个人简历，AI 智能分析并预测高频面试题，提供参考答案与回答技巧，得到专业反馈报告。",
+      features: [
+        "智能分析岗位 JD，精准匹配技能要求",
+        "覆盖技术、项目、行为等多维度题型",
+        "附带高分参考答案与 STAR 回答框架",
+      ],
+      scene: "面试前快速准备",
+      action: "开始面试押题",
+    },
   },
   {
     icon: "ph:chats-teardrop-duotone",
