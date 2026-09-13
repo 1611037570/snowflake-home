@@ -8,7 +8,8 @@ const props = defineProps({
 
 // 雷达图配置：按六个固定维度绘制能力雷达
 const radarOptions = computed(() => {
-  const dims = props.report.dimensions || [];
+  // 雷达图只绘制有可靠分数的维度，不适用项保留在明细中展示
+  const dims = (props.report.dimensions || []).filter((d) => typeof d.score === "number");
   return {
     title: { show: false },
     legend: { show: false },
@@ -69,9 +70,14 @@ const level = computed(() => {
       <div v-for="d in report.dimensions" :key="d.name" class="flex items-center gap-3">
         <span class="w-20 shrink-0 text-[13px] text-sf-text-2">{{ d.name }}</span>
         <div class="h-2 flex-1 overflow-hidden rounded-full bg-sf-bg-2">
-          <div class="h-full rounded-full bg-sf-theme" :style="{ width: d.score + '%' }" />
+          <div
+            class="h-full rounded-full bg-sf-theme"
+            :style="{ width: (typeof d.score === 'number' ? d.score : 0) + '%' }"
+          />
         </div>
-        <span class="w-8 shrink-0 text-right text-[13px] font-medium text-sf-text">{{ d.score }}</span>
+        <span class="w-12 shrink-0 text-right text-[13px] font-medium text-sf-text">
+          {{ d.score ?? "不适用" }}
+        </span>
       </div>
     </div>
 

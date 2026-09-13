@@ -54,7 +54,8 @@ describe("oneKeyOptimize", () => {
     expect(instructions).toContain(
       "信息完整度、阅读效率、职业契合度、职业成就、发展潜力、职业稳定性",
     );
-    expect(instructions).toContain("totalScore 取六项得分的算术平均值并四舍五入");
+    expect(instructions).toContain("totalScore 取所有非 null 得分的算术平均值并四舍五入");
+    expect(instructions).toContain('"name": "职业稳定性", "score": null');
     expect(resumeScore().instructions).toContain("## 统一评分标尺");
     expect(instructions).toContain("遵循 resume_score 的统一评分标尺");
   });

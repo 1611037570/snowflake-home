@@ -1,7 +1,7 @@
 // 一键优化报告数据结构与解析工具：协调编排技能输出与前端面板渲染
 export interface ReportDimension {
   name: string;
-  score: number;
+  score: number | null;
 }
 
 export interface ReportCheck {
