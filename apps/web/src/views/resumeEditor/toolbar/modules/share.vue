@@ -38,26 +38,24 @@ const saveQrCode = async () => {
 </script>
 
 <template>
-  <div
-    class="group relative flex h-9 w-9 overflow-hidden rounded-3xl transition-[width] duration-300 group-hover:w-[72px]"
-  >
+  <div class="absolute -right-10 -bottom-12 z-50">
     <div
-      class="absolute inset-0 flex items-center rounded-none bg-sf-theme-2 text-sf-theme-text"
+      class="group relative h-9 w-[90px] cursor-pointer overflow-hidden rounded-3xl"
     >
-      <span
-        class="pl-3 text-sm opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+      <div
+        class="flex h-9 w-[90px] translate-x-[54px] items-center bg-sf-theme-2 transition-transform duration-300 group-hover:translate-x-0"
       >
-        分享
-      </span>
+        <button
+          type="button"
+          aria-label="分享"
+          class="flex h-9 w-9 shrink-0 cursor-pointer items-center justify-center rounded-3xl bg-sf-bg-2 text-sf-base transition-colors duration-300 hover:bg-sf-theme hover:text-sf-theme-text"
+          @click="visible = true"
+        >
+          <SfIcon icon="fa6-solid:share-alt" size="5" />
+        </button>
+        <span class="pl-3 text-sm whitespace-nowrap text-sf-theme-text">分享</span>
+      </div>
     </div>
-    <button
-      type="button"
-      aria-label="分享"
-      class="relative z-10 ml-auto flex h-9 w-9 shrink-0 cursor-pointer items-center justify-center rounded-3xl bg-sf-bg-2 text-sf-base transition-colors duration-300 hover:bg-sf-theme hover:text-sf-theme-text"
-      @click="visible = true"
-    >
-      <SfIcon icon="fa6-solid:share-alt" size="5" />
-    </button>
   </div>
 
   <SfModal v-model="visible" title="分享简历">
