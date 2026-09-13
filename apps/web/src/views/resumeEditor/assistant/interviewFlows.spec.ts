@@ -1,9 +1,9 @@
 import { describe, expect, it, vi } from "vitest";
 import { flows, suggestions } from "./flows";
+import { aptitudeHrInterview } from "./interview/skills/skill_aptitude_hr_interview";
+import { interviewPrediction } from "./interview/skills/skill_interview_prediction";
+import { specializedInterview } from "./interview/skills/skill_specialized_interview";
 import { onDemandSkills } from "./skills/registry";
-import { aptitudeHrInterview } from "./skills/skill_aptitude_hr_interview";
-import { interviewPrediction } from "./skills/skill_interview_prediction";
-import { specializedInterview } from "./skills/skill_specialized_interview";
 
 vi.mock("@/stores", () => ({
   useResumeStore: () => ({ selectedModule: [], currentData: undefined }),
