@@ -20,10 +20,18 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  quickAnswerEnabled: {
+    type: Boolean,
+    default: false,
+  },
+  quickAnswerLoading: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 // 发送 / 停止事件
-const emit = defineEmits(["send", "stop", "early-end"]);
+const emit = defineEmits(["send", "stop", "early-end", "quick-answer"]);
 
 // 输入框绑定的值
 const modelValue = ref("");
@@ -188,6 +196,17 @@ onBeforeUnmount(() => {
           <!-- 右侧-->
           <div class="flex items-center gap-1">
             <ModelSelect />
+            <!-- 面试问题使用独立单次请求生成回答，不写入原对话 -->
+            <button
+              v-if="props.quickAnswerEnabled"
+              class="flex h-[30px] items-center justify-center rounded-xl bg-sf-theme-3 px-3 text-xs text-sf-theme transition-all duration-500 hover:bg-sf-theme-2 disabled:cursor-not-allowed disabled:opacity-50"
+              title="为最近一道面试题生成回答方案"
+              type="button"
+              :disabled="props.isGenerating || props.quickAnswerLoading"
+              @click="emit('quick-answer')"
+            >
+              {{ props.quickAnswerLoading ? "生成中" : "帮我答" }}
+            </button>
             <!-- 长时评估允许随时结束，并交由面试技能生成保守的阶段性报告 -->
             <button
               v-if="props.earlyEndEnabled"
