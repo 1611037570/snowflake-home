@@ -1,7 +1,9 @@
 import type { SkillFactory } from "../types";
+import { careerPlanning } from "./skill_career_planning";
 import { defaultPrompt } from "./prompt_default";
 import { greeting } from "./skill_greeting";
 import { jobMatch } from "./skill_job_match";
+import { lifeSummary } from "./skill_life_summary";
 import { resumeCreate } from "./skill_resume_create";
 import { resumeDataContract } from "./skill_resume_data_contract";
 import { resumeInterview } from "./skill_resume_interview";
@@ -39,6 +41,8 @@ export const onDemandSkills: SkillFactory[] = [
   resumeScore,
   resumeTranslate,
   selfIntro,
+  careerPlanning,
+  lifeSummary,
   industryInternet,
   industryFinance,
   industryHealthcare,

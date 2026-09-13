@@ -177,6 +177,8 @@ export const flows: Record<string, Flow> = {
     steps: [],
     build: () => ({
       userContent: "请根据我的所有经历生成职业规划",
+      // 职业规划依赖完整经历链，本次请求固定读取整份简历
+      requestContext: { resumeScope: "all" },
     }),
   },
   // 人生总结：根据简历中的所有经历生成人生总结
@@ -185,6 +187,8 @@ export const flows: Record<string, Flow> = {
     steps: [],
     build: () => ({
       userContent: "请根据我的所有经历生成人生总结",
+      // 人生总结依赖完整时间线，本次请求固定读取整份简历
+      requestContext: { resumeScope: "all" },
     }),
   },
   // 一键优化：先收集求职方向（已填则确认、未填则输入）与身份，再发起完整优化并产出报告
