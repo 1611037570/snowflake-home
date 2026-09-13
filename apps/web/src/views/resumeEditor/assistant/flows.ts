@@ -187,6 +187,30 @@ export const flows: Record<string, Flow> = {
       userContent: "请根据我的所有经历生成人生总结",
     }),
   },
+  // 一键优化：先收集求职方向（已填则确认、未填则输入）与身份，再发起完整优化并产出报告
+  oneKeyOptimize: {
+    userContent: "帮我进行一键优化",
+    steps: [
+      {
+        question: "请确认或填写你的求职方向（例如：金融分析师、后端开发）",
+        // 求职方向已在简历中填写时以该值作为确认选项；未填写时返回空选项回退为自由输入
+        options: () => {
+          const position = useResumeStore().currentData?.user?.data?.position?.trim();
+          return position ? [position] : [];
+        },
+      },
+      {
+        question: "请选择你的身份",
+        options: ["学生", "职场人"],
+      },
+    ],
+    build: ([direction, identity]) => {
+      // 一键优化规范已抽离为 resumeOneKeyOptimize 技能，由模型按需加载；此处携带求职方向与身份参数
+      return {
+        userContent: `请对我的简历进行一键优化：求职方向为「${direction}」，身份为「${identity}」。请补齐缺失经历、综合优化内容，并给出评分与优化报告。`,
+      };
+    },
+  },
 };
 
 // 建议操作卡片：点击后进入对应引导流程，由调用方传给 Chat
@@ -200,6 +224,11 @@ export const suggestions: SuggestCard[] = [
     icon: "ph:magic-wand-duotone",
     title: "AI简历优化",
     flow: "resumeOptimize",
+  },
+  {
+    icon: "ph:rocket-launch-duotone",
+    title: "一键优化",
+    flow: "oneKeyOptimize",
   },
   {
     icon: "ph:translate-duotone",
