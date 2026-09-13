@@ -46,15 +46,19 @@ const chat = computed({
 // 生成状态来自宿主注入的引用，模板与输入框共用
 const generating = assistantConfig.generating;
 const isGenerating = computed(() => generating.value);
+// 控制会话记录第二页的显示状态
+const chatListVisible = ref(false);
 
 function createNewChat() {
   if (generating.value) return;
   aiStore.createNewResumeAssistantChat();
+  chatListVisible.value = false;
 }
 
 function selectChat(id: string) {
   if (generating.value) return;
   aiStore.switchResumeAssistantChat(id);
+  chatListVisible.value = false;
 }
 
 // currentMessages：从 chat.messages 派生
@@ -359,17 +363,14 @@ const handleFlowInput = (content) => {
 </script>
 
 <template>
-  <div class="flex h-full w-full overflow-hidden select-text">
-    <ChatList
-      :chats="resumeAssistantChatList"
-      :active-chat-id="chat.id"
-      :disabled="isGenerating"
-      @create="createNewChat"
-      @select="selectChat"
+  <div class="relative flex h-full w-full flex-col overflow-hidden select-text">
+    <ChatHeader
+      :messages="navMessages"
+      :is-generating="isGenerating"
+      @open-chat-list="chatListVisible = true"
+      @select="handleNavSelect"
     />
-    <div class="relative flex min-w-0 flex-1 flex-col overflow-hidden">
-      <ChatHeader :messages="navMessages" :is-generating="isGenerating" @select="handleNavSelect" />
-      <SfScrollbar ref="chatContainer" class="w-full flex-1">
+    <SfScrollbar ref="chatContainer" class="w-full flex-1">
       <EmptyState
         :suggestions="suggestions"
         :selected-modules="selectedModules"
@@ -396,9 +397,9 @@ const handleFlowInput = (content) => {
           @withdraw-modify="handleWithdrawModify"
         />
       </div>
-      </SfScrollbar>
-      <!-- 滚动到底部按钮 -->
-      <Transition
+    </SfScrollbar>
+    <!-- 滚动到底部按钮 -->
+    <Transition
       enter-active-class="transition duration-200 ease-out"
       enter-from-class="translate-y-4 opacity-0"
       enter-to-class="translate-y-0 opacity-100"
@@ -406,24 +407,43 @@ const handleFlowInput = (content) => {
       leave-from-class="translate-y-0 opacity-100"
       leave-to-class="translate-y-4 opacity-0"
       >
-        <div v-if="showScrollBottom" class="absolute bottom-42 left-1/2 z-9 -translate-x-1/2">
-          <SfIcon
-            icon="mingcute:arrow-down-line"
-            size="4"
-            boxSize="8"
-            class="rounded-full border border-sf-b bg-sf-bg"
-            @click="scrollToBottom"
-          />
-        </div>
-      </Transition>
+      <div v-if="showScrollBottom" class="absolute bottom-42 left-1/2 z-9 -translate-x-1/2">
+        <SfIcon
+          icon="mingcute:arrow-down-line"
+          size="4"
+          boxSize="8"
+          class="rounded-full border border-sf-b bg-sf-bg"
+          @click="scrollToBottom"
+        />
+      </div>
+    </Transition>
 
-      <ChatInput
-        ref="chatInputRef"
-        :is-generating="isGenerating"
-        @send="handleSend"
-        @stop="stopGenerating"
-      />
-    </div>
+    <ChatInput
+      ref="chatInputRef"
+      :is-generating="isGenerating"
+      @send="handleSend"
+      @stop="stopGenerating"
+    />
+
+    <Transition
+      enter-active-class="transition duration-200 ease-out"
+      enter-from-class="translate-x-full"
+      enter-to-class="translate-x-0"
+      leave-active-class="transition duration-200 ease-in"
+      leave-from-class="translate-x-0"
+      leave-to-class="translate-x-full"
+    >
+      <div v-if="chatListVisible" class="absolute inset-0 z-20">
+        <ChatList
+          :chats="resumeAssistantChatList"
+          :active-chat-id="chat.id"
+          :disabled="isGenerating"
+          @close="chatListVisible = false"
+          @create="createNewChat"
+          @select="selectChat"
+        />
+      </div>
+    </Transition>
   </div>
 </template>
 
