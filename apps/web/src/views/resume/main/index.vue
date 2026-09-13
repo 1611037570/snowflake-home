@@ -5,7 +5,8 @@
       <div class="resume-home__aurora resume-home__aurora--two"></div>
 
       <section
-        class="relative mx-auto grid min-h-screen max-w-[1440px] items-center gap-12 px-6 pt-24 pb-12 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] lg:px-12"
+        :ref="registerRevealSection"
+        class="resume-home__reveal resume-home__hero relative mx-auto grid min-h-screen max-w-[1440px] items-center gap-12 px-6 pt-24 pb-12 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] lg:px-12"
       >
         <article class="relative z-10 mx-auto max-w-2xl text-center lg:mx-0 lg:text-left">
           <p
@@ -136,7 +137,8 @@
 
       <section
         id="journey"
-        class="relative mx-auto flex min-h-screen max-w-[1440px] flex-col justify-center px-6 py-18 lg:px-12"
+        :ref="registerRevealSection"
+        class="resume-home__reveal relative mx-auto flex min-h-screen max-w-[1440px] flex-col justify-center px-6 py-18 lg:px-12"
       >
         <div class="flex flex-col justify-between gap-6 md:flex-row md:items-end">
           <div class="max-w-2xl">
@@ -149,11 +151,11 @@
             先用模板与编辑器完成表达，再借助 AI 对准岗位，最后完成投递、跟进与复盘。
           </p>
         </div>
-        <div class="mt-12 grid gap-3 md:grid-cols-4">
+        <div class="resume-home__journey-grid mt-12 grid gap-3 md:grid-cols-4">
           <article
             v-for="(step, index) in journeySteps"
             :key="step.title"
-            class="group relative rounded-[24px] border border-sf-b bg-sf-primary p-6 transition-transform duration-300 hover:-translate-y-2"
+            class="resume-home__journey-card group relative rounded-[24px] border border-sf-b bg-sf-primary p-6 transition-transform duration-300 hover:-translate-y-2"
           >
             <span class="text-sm font-black text-sf-theme">0{{ index + 1 }}</span>
             <SfIcon :icon="step.icon" size="6" class="mt-9 text-sf-theme" />
@@ -167,7 +169,8 @@
         v-for="(group, index) in featureGroups"
         :id="group.id"
         :key="group.title"
-        class="relative mx-auto grid min-h-screen max-w-[1440px] items-center gap-12 px-6 py-18 lg:grid-cols-2 lg:px-12"
+        :ref="registerRevealSection"
+        class="resume-home__reveal relative mx-auto grid min-h-screen max-w-[1440px] items-center gap-12 px-6 py-18 lg:grid-cols-2 lg:px-12"
       >
         <article :class="index % 2 ? 'lg:order-2' : ''" class="max-w-xl">
           <p class="text-sm font-semibold tracking-[0.18em] text-sf-theme">{{ group.eyebrow }}</p>
@@ -190,7 +193,7 @@
         </article>
         <div :class="index % 2 ? 'lg:order-1' : ''" class="relative">
           <div
-            class="resume-home__shot relative aspect-[16/10] overflow-hidden rounded-[30px] border border-dashed border-sf-b bg-sf-bg"
+            class="resume-home__feature-shot resume-home__shot relative aspect-[16/10] overflow-hidden rounded-[30px] border border-dashed border-sf-b bg-sf-bg"
           >
             <!-- 将此区域替换为对应模块的产品截图即可 -->
             <div
@@ -211,7 +214,10 @@
         </div>
       </section>
 
-      <section class="relative mx-auto max-w-[1440px] px-6 pt-18 pb-12 lg:px-12">
+      <section
+        :ref="registerRevealSection"
+        class="resume-home__reveal relative mx-auto flex min-h-screen max-w-[1440px] items-center px-6 py-18 lg:px-12"
+      >
         <div
           class="resume-home__closing relative overflow-hidden rounded-[30px] border border-sf-b bg-sf-primary px-6 py-12 text-center sm:px-12"
         >
@@ -244,9 +250,29 @@
 </template>
 
 <script setup>
+import { useIntersectionObserver } from "@vueuse/core";
 import { useRouter } from "vue-router";
+import { ref } from "vue";
 
 const router = useRouter();
+const revealSections = ref([]);
+
+// 页面每次进出视口都切换入场状态，让长页面滚动保持节奏感。
+function registerRevealSection(element) {
+  if (element && !revealSections.value.includes(element)) {
+    revealSections.value.push(element);
+  }
+}
+
+useIntersectionObserver(
+  revealSections,
+  (entries) => {
+    entries.forEach((entry) => {
+      entry.target.classList.toggle("is-visible", entry.isIntersecting);
+    });
+  },
+  { threshold: 0.3 },
+);
 
 const journeySteps = [
   {
@@ -351,6 +377,7 @@ function go() {
   filter: blur(90px);
   opacity: 0.72;
   pointer-events: none;
+  animation: aurora-drift 12s ease-in-out infinite alternate;
 }
 
 .resume-home__aurora--one {
@@ -362,6 +389,7 @@ function go() {
   top: 42rem;
   left: -15rem;
   opacity: 0.42;
+  animation-delay: -6s;
 }
 
 .resume-home__highlight {
@@ -415,6 +443,63 @@ function go() {
   height: 20rem;
 }
 
+.resume-home__reveal {
+  opacity: 0;
+  transition: opacity 0.3s ease-out;
+}
+
+.resume-home__reveal.is-visible {
+  opacity: 1;
+}
+
+.resume-home__reveal > article,
+.resume-home__reveal > div {
+  opacity: 0;
+  transform: translateY(1.5rem);
+  transition:
+    opacity 0.5s ease-out,
+    transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.resume-home__reveal.is-visible > article,
+.resume-home__reveal.is-visible > div {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.resume-home__reveal > div:nth-child(2) {
+  transition-delay: 0.12s;
+}
+
+.resume-home__journey-card {
+  opacity: 0;
+  transform: translateY(1.5rem);
+  transition:
+    opacity 0.5s ease-out,
+    transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.resume-home__reveal.is-visible .resume-home__journey-card {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.resume-home__journey-card:nth-child(2) {
+  transition-delay: 0.09s;
+}
+
+.resume-home__journey-card:nth-child(3) {
+  transition-delay: 0.18s;
+}
+
+.resume-home__journey-card:nth-child(4) {
+  transition-delay: 0.27s;
+}
+
+.resume-home__hero {
+  transition-delay: 0.08s;
+}
+
 .animate-rise {
   animation: rise 0.7s ease-out both;
 }
@@ -456,16 +541,18 @@ function go() {
   }
 }
 
-@media (max-width: 639px) {
-  .resume-home__preview {
-    transform: none;
+@keyframes aurora-drift {
+  0% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  100% {
+    transform: translate3d(3rem, 2.25rem, 0) scale(1.12);
   }
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .animate-rise,
-  .animate-float {
-    animation: none;
+@media (max-width: 639px) {
+  .resume-home__preview {
+    transform: none;
   }
 }
 </style>
