@@ -40,4 +40,13 @@ describe("oneKeyOptimize", () => {
     expect(oneKeyInstructions).toContain("删除重复句、空洞自评");
     expect(optimizationInstructions).toContain("以该技能的增删规则为准");
   });
+
+  it("一键优化报告统一使用六大评估维度", () => {
+    const instructions = resumeOneKeyOptimize().instructions;
+
+    expect(instructions).toContain(
+      "信息完整度、阅读效率、职业契合度、职业成就、发展潜力、职业稳定性",
+    );
+    expect(instructions).toContain("totalScore 取六项得分的算术平均值并四舍五入");
+  });
 });

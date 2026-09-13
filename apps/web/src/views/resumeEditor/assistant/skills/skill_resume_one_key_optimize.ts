@@ -20,13 +20,14 @@ export const resumeOneKeyOptimize = () => ({
 
 \`\`\`resume-report
 {
-  "totalScore": 82,
+  "totalScore": 80,
   "dimensions": [
-    { "name": "内容完整度", "score": 85 },
-    { "name": "量化表达", "score": 70 },
-    { "name": "结构排版", "score": 88 },
-    { "name": "语言表达", "score": 80 },
-    { "name": "行业匹配", "score": 75 }
+    { "name": "信息完整度", "score": 85 },
+    { "name": "阅读效率", "score": 78 },
+    { "name": "职业契合度", "score": 75 },
+    { "name": "职业成就", "score": 72 },
+    { "name": "发展潜力", "score": 80 },
+    { "name": "职业稳定性", "score": 88 }
   ],
   "checks": [
     { "level": "error", "message": "缺少证书模块" },
@@ -41,7 +42,7 @@ export const resumeOneKeyOptimize = () => ({
 }
 \`\`\`
 
-- totalScore 与 dimensions 中每个 score 均为 0-100 的整数；checks 的 level 只能取 error 或 warning。
-- dimensions 固定使用以下五项，不可增减或改名：内容完整度、量化表达、结构排版、语言表达、行业匹配。
+- totalScore 与 dimensions 中每个 score 均为 0-100 的整数，totalScore 取六项得分的算术平均值并四舍五入；checks 的 level 只能取 error 或 warning。
+- dimensions 固定使用以下六项，不可增减、改名或调整顺序：信息完整度、阅读效率、职业契合度、职业成就、发展潜力、职业稳定性。
 - 只输出上述一个 resume-report 代码块，代码块外不再输出额外正文。`,
 });
