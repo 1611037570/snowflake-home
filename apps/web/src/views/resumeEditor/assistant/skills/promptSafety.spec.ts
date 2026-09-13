@@ -47,6 +47,8 @@ describe("promptSafety", () => {
 
   it("专项任务声明事实与执行边界", () => {
     expect(jobMatch().instructions).toContain("用户选择只分析时，不调用 propose_resume_edits");
+    expect(jobMatch().instructions).toContain("不得把行业知识库、常见惯例或模型推测升级为硬性要求");
+    expect(jobMatch().instructions).toContain("JD 未提及的行业关键词不得作为扣分项");
     expect(resumeCreate().instructions).toContain("不得为了完整度补造");
     expect(resumeTranslate().instructions).toContain("不得把局部翻译声称为整份翻译");
     expect(industryInternet().instructions).toContain("### 2.7 安全");
