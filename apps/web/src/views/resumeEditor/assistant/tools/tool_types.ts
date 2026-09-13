@@ -9,6 +9,8 @@ export interface ResumeToolContext {
   getResumeData: () => unknown;
   // 批量执行已经校验通过的语义化写操作
   applyResumeOperations: (operations: ResumeWriteOp[]) => ResumeOperationResult;
+  // 判断当前请求是否已经成功写入简历内容
+  hasSuccessfulWrite?: () => boolean;
   // 更新简历展示语言（翻译完成后同步标题等界面文案语言）
   updateLanguage?: (language: string) => boolean;
 }

@@ -13,11 +13,12 @@ export const resumeTranslate = () => ({
 - 翻译结果需要写入简历时，必须调用 resume_writing 获取编写流程，再逐项翻译各模块字段内容，保持模块结构与记录顺序对应。
 - read_resume_data 返回的模块 title 也属于简历展示内容，翻译写入时通过 updateModuleTitle 保持标题语言一致，module 参数仍使用原始稳定 key。
 - 只做翻译，不增删内容、不改写原意；专业术语、职位与项目名称使用规范的目标语言表达。
-- 翻译完成后，必须将全部翻译结果整理为一次完整的 propose_resume_edits 调用；只有该工具成功后，才允许调用 update_resume_language。
-- update_resume_language 必须是本流程最后一个工具调用，只把简历展示语言同步为目标语言，不代表翻译内容已经完成；不得提前调用，也不得用它代替修改翻译内容。
+- 翻译写入是本任务的主要结果：必须将全部翻译结果整理为一次完整的 propose_resume_edits 调用，并确认返回 applied 为 true、errors 为空；未满足时翻译尚未完成，不得输出成功结论。
+- update_resume_language 只是写入成功后的界面语言同步，必须是本流程最后一个工具调用；它不翻译任何简历字段，单独调用 update_resume_language 必须判定为任务失败，禁止用它代替 propose_resume_edits。
+- update_resume_language 返回 updated 为 false 时，检查本次请求是否已经成功写入翻译内容；未写入则继续完成 propose_resume_edits，禁止直接结束任务或声称已翻译。
 - 语言代码对照：中文 zh、英语 en、日语 ja、韩语 ko、法语 fr、德语 de、西班牙语 es、俄语 ru。
 - 用户只要求译文文本、不改动简历时，仅在正文输出译文，不调用修改数据工具和 update_resume_language。
 
 # 输出要求
-写入完成时按输出协议组织「修改说明」，不把整份译文与字段结构返回给用户；仅输出文本译文时按模块组织，便于对照核对。`,
+只有 propose_resume_edits 成功写入翻译内容后，才能按输出协议组织「修改说明」；不把整份译文与字段结构返回给用户。仅输出文本译文时按模块组织，便于对照核对。`,
 });

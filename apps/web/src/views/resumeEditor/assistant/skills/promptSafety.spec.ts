@@ -53,6 +53,8 @@ describe("promptSafety", () => {
     expect(jobMatch().instructions).toContain("JD 未提及的行业关键词不得作为扣分项");
     expect(resumeCreate().instructions).toContain("不得为了完整度补造");
     expect(resumeTranslate().instructions).toContain("不得把局部翻译声称为整份翻译");
+    expect(resumeTranslate().instructions).toContain("单独调用 update_resume_language 必须判定为任务失败");
+    expect(resumeTranslate().instructions).toContain("确认返回 applied 为 true、errors 为空");
     expect(industryInternet().instructions).toContain("### 2.7 安全");
   });
 });
