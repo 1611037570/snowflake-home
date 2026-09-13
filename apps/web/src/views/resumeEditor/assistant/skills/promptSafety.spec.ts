@@ -33,7 +33,7 @@ describe("promptSafety", () => {
     expect(resumeOptimization().instructions).toContain("均不得迁移到用户简历");
   });
 
-  it("全部行业示例声明不得迁移指标", () => {
+  it("全部行业示例声明完整事实隔离边界", () => {
     // 行业提示统一声明示例边界，避免模型把演示数据写入用户简历
     const industries = onDemandSkills
       .map((createSkill) => createSkill())
@@ -41,7 +41,9 @@ describe("promptSafety", () => {
 
     expect(industries).toHaveLength(11);
     industries.forEach((skill) => {
-      expect(skill.instructions).toContain("主体、动作和指标不得迁移");
+      expect(skill.instructions).toContain("不是候选人事实来源");
+      expect(skill.instructions).toContain("均不得迁移或仿写为具体事实");
+      expect(skill.instructions).toContain("信息不足时必须保留【待补充】占位");
     });
   });
 
