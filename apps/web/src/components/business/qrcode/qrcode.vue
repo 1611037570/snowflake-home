@@ -19,6 +19,10 @@ const props = defineProps({
 // 二维码图片URL
 const qrUrl = ref("");
 
+// 暴露二维码图片地址，供分享等场景下载生成结果
+const getDataUrl = () => qrUrl.value;
+defineExpose({ getDataUrl });
+
 // 生成二维码
 const generateQRCode = async () => {
   if (!props.value) return;
