@@ -40,6 +40,8 @@ describe("oneKeyOptimize", () => {
 
     expect(oneKeyInstructions).toContain("必要的新增、修改、删除与排序操作");
     expect(oneKeyInstructions).toContain("删除重复句、空洞自评");
+    expect(oneKeyInstructions).toContain("不得仅因身份强制要求固定模块");
+    expect(oneKeyInstructions).toContain("模块本身不存在时不得写入");
     expect(optimizationInstructions).toContain("以该技能的增删规则为准");
   });
 
@@ -50,6 +52,8 @@ describe("oneKeyOptimize", () => {
       "信息完整度、阅读效率、职业契合度、职业成就、发展潜力、职业稳定性",
     );
     expect(instructions).toContain("totalScore 取六项得分的算术平均值并四舍五入");
+    expect(resumeScore().instructions).toContain("## 统一评分标尺");
+    expect(instructions).toContain("遵循 resume_score 的统一评分标尺");
   });
 
   it("专项技能输出协议优先于默认输出格式", () => {
