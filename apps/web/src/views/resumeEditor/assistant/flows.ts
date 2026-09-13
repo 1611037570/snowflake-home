@@ -106,6 +106,22 @@ export const flows: Record<string, Flow> = {
       requestContext: { resumeScope: "all" },
     }),
   },
+  // 行测与 HR 面试：确认后依次开展限时行测、软技能面试与综合评估
+  aptitudeHrInterview: {
+    userContent: "帮我进行行测和 HR 面试综合评估",
+    steps: [
+      {
+        question: "本次评估约 45 分钟，将依次进行行测与 HR 面试，请确认是否开始",
+        options: ["开始综合评估"],
+      },
+    ],
+    build: () => ({
+      userContent:
+        "请根据我的整份简历开展行测与 HR 面试综合评估：先进行带建议时限的行测模拟，再进行 HR 软技能面试；每轮只出一道题并等待我回答，完成两个阶段后输出综合评分与反馈报告。",
+      // HR 评估需要核对完整经历，行测与面试共用本次整份简历上下文
+      requestContext: { resumeScope: "all" },
+    }),
+  },
   // JD 对标优化：等用户在输入框输入 JD 后执行对标优化
   jdOptimize: {
     userContent: "帮我进行JD对标优化",
@@ -335,6 +351,24 @@ export const suggestions: SuggestCard[] = [
       ],
       scene: "深度实战训练",
       action: "开始专项模拟",
+    },
+  },
+  {
+    icon: "ph:exam-duotone",
+    title: "行测 + HR 面试",
+    flow: "aptitudeHrInterview",
+    intro: {
+      badge: "综合评估",
+      duration: "约 45 分钟 · 双重评估维度",
+      description:
+        "覆盖行政能力测试 + HR 软技能面试，全面评估综合素质与软实力表现，大幅提升入职率。",
+      features: [
+        "行测题库与限时模拟测试",
+        "HR 面试软技能深度评估",
+        "沟通表达与情商能力评测反馈",
+      ],
+      scene: "全面能力提升",
+      action: "开始综合评估",
     },
   },
   {

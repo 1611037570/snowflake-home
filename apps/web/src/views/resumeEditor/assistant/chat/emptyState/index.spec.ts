@@ -38,6 +38,19 @@ const suggestions = [
       action: "开始专项模拟",
     },
   },
+  {
+    icon: "ph:exam-duotone",
+    title: "行测 + HR 面试",
+    flow: "aptitudeHrInterview",
+    intro: {
+      badge: "综合评估",
+      duration: "约 45 分钟 · 双重评估维度",
+      description: "覆盖行政能力测试 + HR 软技能面试。",
+      features: ["沟通表达与情商能力评测反馈"],
+      scene: "全面能力提升",
+      action: "开始综合评估",
+    },
+  },
 ];
 
 const mountEmptyState = () =>
@@ -122,5 +135,20 @@ describe("featureIntro", () => {
     await confirm.trigger("click");
 
     expect(wrapper.emitted("suggest")).toEqual([[{ flow: "specializedInterview" }]]);
+  });
+
+  it("行测与 HR 面试展示综合评估介绍并启动流程", async () => {
+    const wrapper = mountEmptyState();
+    const entry = wrapper.findAll("button").find((button) => button.text() === "行测 + HR 面试")!;
+
+    await entry.trigger("click");
+
+    expect(wrapper.text()).toContain("综合评估");
+    expect(wrapper.text()).toContain("约 45 分钟 · 双重评估维度");
+
+    const confirm = wrapper.findAll("button").find((button) => button.text() === "开始综合评估")!;
+    await confirm.trigger("click");
+
+    expect(wrapper.emitted("suggest")).toEqual([[{ flow: "aptitudeHrInterview" }]]);
   });
 });
