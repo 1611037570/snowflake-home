@@ -10,6 +10,7 @@ defineProps<{
 const emit = defineEmits<{
   select: [id: string];
   create: [];
+  close: [];
 }>();
 
 function formatTime(time: number) {
@@ -18,19 +19,30 @@ function formatTime(time: number) {
 </script>
 
 <template>
-  <aside class="border-sf-border flex min-h-0 w-72 shrink-0 flex-col border-r bg-sf-primary">
+  <aside class="flex h-full min-h-0 w-full flex-col bg-sf-primary">
     <div class="flex shrink-0 items-center justify-between gap-3 p-3">
       <h2 class="font-bold text-sf-text">对话记录</h2>
-      <SfTooltip content="新建话题">
-        <button
-          class="flex cursor-pointer items-center justify-center rounded-lg bg-sf-theme p-3 text-sf-theme-text transition hover:bg-sf-theme-2 disabled:cursor-not-allowed disabled:bg-sf-bg-3 disabled:text-sf-text-2"
-          type="button"
-          :disabled="disabled"
-          @click="emit('create')"
-        >
-          <SfIcon icon="ph:plus-bold" size="4" />
-        </button>
-      </SfTooltip>
+      <div class="flex items-center gap-3">
+        <SfTooltip content="新建话题">
+          <button
+            class="flex cursor-pointer items-center justify-center rounded-lg bg-sf-theme p-3 text-sf-theme-text transition hover:bg-sf-theme-2 disabled:cursor-not-allowed disabled:bg-sf-bg-3 disabled:text-sf-text-2"
+            type="button"
+            :disabled="disabled"
+            @click="emit('create')"
+          >
+            <SfIcon icon="ph:plus-bold" size="4" />
+          </button>
+        </SfTooltip>
+        <SfTooltip content="返回对话">
+          <button
+            class="flex cursor-pointer items-center justify-center rounded-lg p-3 text-sf-text-2 transition hover:bg-sf-bg-2 hover:text-sf-text"
+            type="button"
+            @click="emit('close')"
+          >
+            <SfIcon icon="mingcute:close-line" size="4" />
+          </button>
+        </SfTooltip>
+      </div>
     </div>
 
     <SfScrollbar class="min-h-0 flex-1 px-3 pb-3">
