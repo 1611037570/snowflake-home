@@ -1,5 +1,14 @@
 import type { Flow } from "../types";
 
+// 逐题面试支持用户主动结束，内容生成类流程无需展示结束入口
+const EARLY_END_FLOW_KEYS = new Set([
+  "specializedInterview",
+  "aptitudeHrInterview",
+  "resumeInterview",
+]);
+export const supportsInterviewEarlyEnd = (flowKey: string) =>
+  EARLY_END_FLOW_KEYS.has(flowKey);
+
 // 面试域流程独立配置，通过统一出口接入当前简历助手
 export const interviewFlows: Record<string, Flow> = {
   selfIntro: {

@@ -7,6 +7,7 @@ import { storeToRefs } from "pinia";
 import { useChatRequest } from "./useChatRequest";
 import { ALL_MODULE_KEY, ALL_MODULE_NAME } from "@/stores/modules/resume/defaultConfig";
 import { flows, suggestions } from "../flows";
+import { supportsInterviewEarlyEnd } from "../interview/flows";
 import { supportsQuickAnswer, useInterviewQuickAnswer } from "../interview/quickAnswer";
 import { useResumeAssistant } from "../useResumeAssistant";
 
@@ -312,6 +313,7 @@ const handleSuggest = (payload) => {
   const flow = flows[payload?.flow];
   if (!flow) return;
   const allowQuickAnswer = supportsQuickAnswer(payload.flow);
+  const allowEarlyEnd = supportsInterviewEarlyEnd(payload.flow);
   // 仅专项面试模拟启用语音输入，启动其他流程时同步关闭
   voiceInputEnabled.value = payload.flow === "specializedInterview";
   earlyEndEnabled.value = false;
@@ -336,9 +338,7 @@ const handleSuggest = (payload) => {
       requestContext,
     });
     // 无引导步骤的长时流程在真实请求开始后开放提前结束
-    earlyEndEnabled.value = ["specializedInterview", "aptitudeHrInterview"].includes(
-      payload.flow,
-    );
+    earlyEndEnabled.value = allowEarlyEnd;
     // 真实面试请求开始后才开放快速回答，避免回答入口配置问题
     quickAnswerEnabled.value = allowQuickAnswer;
     generating.value = true;
@@ -351,7 +351,7 @@ const handleSuggest = (payload) => {
     steps,
     stepIndex: 0,
     answers: [],
-    allowEarlyEnd: ["specializedInterview", "aptitudeHrInterview"].includes(payload.flow),
+    allowEarlyEnd,
     allowQuickAnswer,
   };
   // 引导对话仅作界面展示，不加入请求上下文
