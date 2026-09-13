@@ -26,9 +26,15 @@ const componentModules = import.meta.glob("@/views/*/index.vue", { eager: false 
 // 简历页子路由：顶部导航的四个板块
 const resumeChildren: RouteRecordRaw[] = [
   { path: "", name: "resume", component: () => import("@/views/resume/main/index.vue") },
-  { path: "template", component: () => import("@/views/resume/template.vue") },
+  { path: "template", component: () => import("@/views/resume/template/index.vue") },
   { path: "mine", component: () => import("@/views/resume/mine/index.vue") },
   { path: "statistics", component: () => import("@/views/resume/statistics/index.vue") },
+  {
+    path: "editor",
+    name: "editor",
+    component: () => import("@/views/resume/editor/index.vue"),
+    meta: { hideResumeLayout: true },
+  },
 ];
 /**
  * 路由映射表

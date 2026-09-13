@@ -3,8 +3,8 @@ import { useResumeStore } from "@/stores";
 import dayjs from "dayjs";
 import { storeToRefs } from "pinia";
 import { useRouter } from "vue-router";
-import { useProgress } from "../../resumeEditor/hooks/useProgress";
-import { getResumeTitle } from "../../resumeEditor/resumeName";
+import { useProgress } from "../editor/hooks/useProgress";
+import { getResumeTitle } from "../editor/resumeName";
 import { expandConfigFields } from "@/stores/modules/resume/hooks/useConfigTemplate";
 import ResumeCardContainer from "./components/resumeCardContainer.vue";
 import RevealGrid from "../components/revealGrid.vue";
@@ -62,7 +62,7 @@ const activeTab = ref("draft");
 const handleEdit = (index) => {
   if (index === -1) return;
   currentIndex.value = index;
-  router.push({ path: "/resumeEditor", query: { id: list.value[index].id } });
+  router.push({ path: "/resume/editor", query: { id: list.value[index].id } });
 };
 
 const handleDelete = (index) => {

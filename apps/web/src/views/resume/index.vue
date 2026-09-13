@@ -1,13 +1,14 @@
 <script setup>
-import { useRoute, useRouter } from "vue-router";
 import { useResumeStatisticsStore } from "@/stores";
-
-// 首次进入自动初始化开始投递日期
-const statisticsStore = useResumeStatisticsStore();
-statisticsStore.initStartDate();
+import { useRoute, useRouter } from "vue-router";
 
 const route = useRoute();
 const router = useRouter();
+
+// 首次进入自动初始化开始投递日期
+const statisticsStore = useResumeStatisticsStore();
+// 编辑器使用独立页头，不初始化简历导航页的统计状态。
+if (!route.meta.hideResumeLayout) statisticsStore.initStartDate();
 
 // 顶部导航配置（对应 /resume 下的子路由）
 const navList = [
@@ -21,7 +22,8 @@ const activeNavIndex = computed(() => navList.findIndex((item) => route.path ===
 </script>
 
 <template>
-  <main class="relative flex h-screen min-w-full flex-col bg-sf-page">
+  <router-view v-if="route.meta.hideResumeLayout" class="h-screen w-full" />
+  <main v-else class="relative flex h-screen min-w-full flex-col bg-sf-page">
     <header
       class="fixed top-0 right-0 left-0 z-50 h-16 w-full border-b-[0.5px] border-sf-b bg-sf-primary font-extrabold text-sf-base"
     >

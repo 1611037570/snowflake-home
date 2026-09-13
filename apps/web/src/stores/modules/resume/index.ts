@@ -233,7 +233,7 @@ export const useResumeStore = defineStore(
       list.value.push(res);
       if (select) {
         currentIndex.value = list.value.length - 1;
-        if (jump) router.push({ path: "/resumeEditor", query: { id: res.id } });
+        if (jump) router.push({ path: "/resume/editor", query: { id: res.id } });
       }
       return true;
     };
