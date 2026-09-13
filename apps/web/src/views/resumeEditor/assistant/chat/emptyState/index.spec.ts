@@ -11,12 +11,23 @@ vi.mock("./oneVOne.vue", () => ({
 }));
 
 const suggestions = [
-  { icon: "ph:rocket-launch-duotone", title: "一键优化", flow: "oneKeyOptimize" },
-  { icon: "ph:magic-wand-duotone", title: "简历优化", flow: "resumeOptimize" },
+  {
+    icon: "ph:rocket-launch-duotone",
+    title: "一键优化",
+    flow: "oneKeyOptimize",
+    category: "resume" as const,
+  },
+  {
+    icon: "ph:magic-wand-duotone",
+    title: "简历优化",
+    flow: "resumeOptimize",
+    category: "resume" as const,
+  },
   {
     icon: "ph:crosshair-duotone",
     title: "面试押题",
     flow: "interviewPrediction",
+    category: "interview" as const,
     intro: {
       duration: "3-5 分钟快速生成 · 命中率 80%+",
       description: "基于岗位 JD 和个人简历预测高频面试题。",
@@ -29,6 +40,7 @@ const suggestions = [
     icon: "ph:microphone-stage-duotone",
     title: "专项面试模拟",
     flow: "specializedInterview",
+    category: "interview" as const,
     intro: {
       badge: "🔥 最受欢迎",
       duration: "约 1 小时 · 支持语音/文字多模态",
@@ -42,6 +54,7 @@ const suggestions = [
     icon: "ph:exam-duotone",
     title: "行测 + HR 面试",
     flow: "aptitudeHrInterview",
+    category: "interview" as const,
     intro: {
       badge: "综合评估",
       duration: "约 45 分钟 · 双重评估维度",
@@ -71,6 +84,27 @@ const mountEmptyState = () =>
       },
     },
   });
+
+// 面试相关用例先切换到次级分类，默认入口仍验证简历工具
+const showInterviewSuggestions = async (wrapper: ReturnType<typeof mountEmptyState>) => {
+  const category = wrapper.findAll("button").find((button) => button.text() === "面试训练")!;
+  await category.trigger("click");
+};
+
+describe("suggestionCategory", () => {
+  it("默认只展示简历工具，切换后展示面试训练", async () => {
+    const wrapper = mountEmptyState();
+
+    expect(wrapper.text()).toContain("简历优化");
+    expect(wrapper.text()).not.toContain("面试押题");
+
+    await showInterviewSuggestions(wrapper);
+
+    expect(wrapper.text()).toContain("面试押题");
+    expect(wrapper.text()).not.toContain("简历优化");
+    expect(wrapper.text()).toContain("基于你的简历开展岗位准备与模拟训练");
+  });
+});
 
 describe("oneKeyOptimizeIntro", () => {
   it("点击一键优化时先展示功能介绍", async () => {
@@ -106,6 +140,7 @@ describe("oneKeyOptimizeIntro", () => {
 describe("featureIntro", () => {
   it("面试押题先展示功能介绍再启动流程", async () => {
     const wrapper = mountEmptyState();
+    await showInterviewSuggestions(wrapper);
     const entry = wrapper.findAll("button").find((button) => button.text() === "面试押题")!;
 
     await entry.trigger("click");
@@ -124,6 +159,7 @@ describe("featureIntro", () => {
 
   it("专项面试模拟展示热门标识并启动对应流程", async () => {
     const wrapper = mountEmptyState();
+    await showInterviewSuggestions(wrapper);
     const entry = wrapper.findAll("button").find((button) => button.text() === "专项面试模拟")!;
 
     await entry.trigger("click");
@@ -139,6 +175,7 @@ describe("featureIntro", () => {
 
   it("行测与 HR 面试展示综合评估介绍并启动流程", async () => {
     const wrapper = mountEmptyState();
+    await showInterviewSuggestions(wrapper);
     const entry = wrapper.findAll("button").find((button) => button.text() === "行测 + HR 面试")!;
 
     await entry.trigger("click");

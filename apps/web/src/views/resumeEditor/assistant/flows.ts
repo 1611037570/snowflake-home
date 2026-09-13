@@ -287,41 +287,49 @@ export const suggestions: SuggestCard[] = [
     icon: "ph:file-plus-duotone",
     title: "AI简历生成",
     flow: "resumeCreate",
+    category: "resume",
   },
   {
     icon: "ph:magic-wand-duotone",
     title: "AI简历优化",
     flow: "resumeOptimize",
+    category: "resume",
   },
   {
     icon: "ph:rocket-launch-duotone",
     title: "一键优化",
     flow: "oneKeyOptimize",
+    category: "resume",
   },
   {
     icon: "ph:translate-duotone",
     title: "AI简历翻译",
     flow: "resumeTranslate",
+    category: "resume",
   },
   {
     icon: "ph:target-duotone",
     title: "JD对标优化",
     flow: "jdOptimize",
+    category: "resume",
   },
   {
     icon: "ph:hand-waving-duotone",
     title: "打招呼语",
     flow: "greeting",
+    category: "resume",
   },
   {
     icon: "ph:microphone-duotone",
     title: "面试自我介绍",
     flow: "selfIntro",
+    category: "interview",
   },
   {
     icon: "ph:crosshair-duotone",
     title: "面试押题",
     flow: "interviewPrediction",
+    category: "interview",
     intro: {
       duration: "3-5 分钟快速生成 · 命中率 80%+",
       description:
@@ -339,6 +347,7 @@ export const suggestions: SuggestCard[] = [
     icon: "ph:microphone-stage-duotone",
     title: "专项面试模拟",
     flow: "specializedInterview",
+    category: "interview",
     intro: {
       badge: "🔥 最受欢迎",
       duration: "约 1 小时 · 支持语音/文字多模态",
@@ -357,6 +366,7 @@ export const suggestions: SuggestCard[] = [
     icon: "ph:exam-duotone",
     title: "行测 + HR 面试",
     flow: "aptitudeHrInterview",
+    category: "interview",
     intro: {
       badge: "综合评估",
       duration: "约 45 分钟 · 双重评估维度",
@@ -375,20 +385,24 @@ export const suggestions: SuggestCard[] = [
     icon: "ph:chats-teardrop-duotone",
     title: "AI简历面试",
     flow: "resumeInterview",
+    category: "interview",
   },
   {
     icon: "ph:star-duotone",
     title: "AI简历评估",
     flow: "resumeScore",
+    category: "resume",
   },
   {
     icon: "ph:briefcase-duotone",
     title: "职业规划",
     flow: "careerPlanning",
+    category: "resume",
   },
   {
     icon: "ph:user-duotone",
     title: "人生总结",
     flow: "lifeSummary",
+    category: "resume",
   },
 ];

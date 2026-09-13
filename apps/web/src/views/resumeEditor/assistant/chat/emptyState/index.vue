@@ -13,12 +13,27 @@ const props = defineProps<{
 }>();
 const emit = defineEmits(["switch-mode", "suggest"]);
 
-// 一键优化独立置顶，其余建议保持原有网格布局
+// 默认突出简历编辑能力，面试训练通过次级分类按需展示
+const activeCategory = ref<"resume" | "interview">("resume");
+const categories = [
+  { key: "resume" as const, label: "简历工具" },
+  { key: "interview" as const, label: "面试训练" },
+];
+const visibleSuggestions = computed(() =>
+  props.suggestions.filter((card) => card.category === activeCategory.value),
+);
+const assistantDescription = computed(() =>
+  activeCategory.value === "resume"
+    ? "能通过对话帮你打造受HR青睐的专业简历。"
+    : "基于你的简历开展岗位准备与模拟训练。",
+);
+
+// 简历分类中的一键优化独立置顶，其余建议保持原有网格布局
 const oneKeyOptimize = computed(() =>
-  props.suggestions.find((card) => card.flow === "oneKeyOptimize"),
+  visibleSuggestions.value.find((card) => card.flow === "oneKeyOptimize"),
 );
 const commonSuggestions = computed(() =>
-  props.suggestions.filter((card) => card.flow !== "oneKeyOptimize"),
+  visibleSuggestions.value.filter((card) => card.flow !== "oneKeyOptimize"),
 );
 
 // 一键优化先展示能力与数据范围说明，用户确认后再进入原有引导流程
@@ -91,7 +106,24 @@ const startFeature = () => {
       <SfIcon icon="lucide:sparkles" class="text-sf-theme" size="6" />
     </div>
     <div class="flex flex-wrap items-center justify-center gap-3 text-sm font-medium text-sf-base">
-      <span>能通过对话帮你打造受HR青睐的专业简历。</span>
+      <span>{{ assistantDescription }}</span>
+    </div>
+    <!-- 两个轻量分类保持当前页面以简历编辑为主，面试功能按需展开 -->
+    <div class="flex items-center gap-3 rounded-xl bg-sf-bg p-3">
+      <button
+        v-for="category in categories"
+        :key="category.key"
+        class="flex h-9 items-center rounded-xl px-3 text-sm font-medium transition-colors duration-300"
+        :class="
+          activeCategory === category.key
+            ? 'bg-sf-theme text-sf-theme-text'
+            : 'text-sf-text-2 hover:bg-sf-bg-2'
+        "
+        type="button"
+        @click="activeCategory = category.key"
+      >
+        {{ category.label }}
+      </button>
     </div>
     <div class="flex flex-wrap items-center justify-center gap-x-3 text-sm">✨📄你可以这样问</div>
     <!-- 一键优化入口独立置顶并突出主题色 -->
@@ -148,7 +180,7 @@ const startFeature = () => {
           @click="props.removeModule?.(item.key)"
         />
       </div>
-      一键操作
+      {{ activeCategory === "resume" ? "一键操作" : "开展训练" }}
     </div>
 
     <SfModal v-model="oneKeyIntroVisible" title="一键优化能为你做什么" width="560px">
