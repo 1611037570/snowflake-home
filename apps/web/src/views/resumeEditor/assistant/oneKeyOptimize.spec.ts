@@ -34,11 +34,13 @@ describe("oneKeyOptimize", () => {
     });
   });
 
-  it("一键优化明确执行必要增删且不受普通优化默认限制", () => {
+  it("一键优化仅执行有依据的必要增删且不受普通优化默认限制", () => {
     const oneKeyInstructions = resumeOneKeyOptimize().instructions;
     const optimizationInstructions = resumeOptimization().instructions;
 
     expect(oneKeyInstructions).toContain("必要的新增、修改、删除与排序操作");
+    expect(oneKeyInstructions).toContain("没有安全且必要的改动时允许不调用写入工具");
+    expect(oneKeyInstructions).toContain("不得写入纯占位记录");
     expect(oneKeyInstructions).toContain("删除重复句、空洞自评");
     expect(oneKeyInstructions).toContain("不得仅因身份强制要求固定模块");
     expect(oneKeyInstructions).toContain("模块本身不存在时不得写入");
@@ -78,5 +80,11 @@ describe("oneKeyOptimize", () => {
       "优先级｜问题｜具体行动｜预期改善",
     );
     expect(resumeOneKeyOptimize().instructions).toContain("均以“【维度名称】”开头");
+    expect(resumeOneKeyOptimize().instructions).toContain(
+      '"message": "【信息完整度】目标岗位所需的联系方式未填写完整"',
+    );
+    expect(resumeOneKeyOptimize().instructions).toContain(
+      '"highlights": ["【职业契合度】目标岗位相关成果已前置，岗位主线更清晰"]',
+    );
   });
 });
