@@ -25,6 +25,19 @@ const suggestions = [
       action: "开始面试押题",
     },
   },
+  {
+    icon: "ph:microphone-stage-duotone",
+    title: "专项面试模拟",
+    flow: "specializedInterview",
+    intro: {
+      badge: "🔥 最受欢迎",
+      duration: "约 1 小时 · 支持语音/文字多模态",
+      description: "针对技术面、业务面进行深度 1v1 模拟。",
+      features: ["多轮问答评估，即时反馈与打分"],
+      scene: "深度实战训练",
+      action: "开始专项模拟",
+    },
+  },
 ];
 
 const mountEmptyState = () =>
@@ -94,5 +107,20 @@ describe("featureIntro", () => {
     await confirm.trigger("click");
 
     expect(wrapper.emitted("suggest")).toEqual([[{ flow: "interviewPrediction" }]]);
+  });
+
+  it("专项面试模拟展示热门标识并启动对应流程", async () => {
+    const wrapper = mountEmptyState();
+    const entry = wrapper.findAll("button").find((button) => button.text() === "专项面试模拟")!;
+
+    await entry.trigger("click");
+
+    expect(wrapper.text()).toContain("🔥 最受欢迎");
+    expect(wrapper.text()).toContain("约 1 小时 · 支持语音/文字多模态");
+
+    const confirm = wrapper.findAll("button").find((button) => button.text() === "开始专项模拟")!;
+    await confirm.trigger("click");
+
+    expect(wrapper.emitted("suggest")).toEqual([[{ flow: "specializedInterview" }]]);
   });
 });

@@ -14,6 +14,7 @@ import { resumeScore } from "./skill_resume_score";
 import { resumeTranslate } from "./skill_resume_translate";
 import { resumeWriting } from "./skill_resume_writing";
 import { selfIntro } from "./skill_self_intro";
+import { specializedInterview } from "./skill_specialized_interview";
 import { industryEcommerce } from "./skill_industry_ecommerce";
 import { industryEducation } from "./skill_industry_education";
 import { industryFinance } from "./skill_industry_finance";
@@ -38,6 +39,7 @@ export const onDemandSkills: SkillFactory[] = [
   jobMatch,
   greeting,
   interviewPrediction,
+  specializedInterview,
   resumeCreate,
   resumeInterview,
   resumeScore,
