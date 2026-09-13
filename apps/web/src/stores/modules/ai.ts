@@ -6,6 +6,8 @@ import { computed, ref } from "vue";
 export type Chat = {
   // 对话记录id
   id: string;
+  // 关联简历id
+  resumeId?: string;
   // 对话记录标题
   title: string;
   // 创建时间
@@ -162,9 +164,10 @@ export const useAiStore = defineStore(
     function registerResumeAssistantChatFactory(factory: () => Chat) {
       resumeAssistantChatFactory = factory;
     }
-    // 初始化简历助手对话，同时把旧版单条会话迁移到列表
-    function initializeResumeAssistantChat() {
-      if (resumeAssistantChat.value) {
+    // 初始化指定简历的助手对话，避免不同简历共用会话
+    function initializeResumeAssistantChat(resumeId: string) {
+      const chats = resumeAssistantChatList.value.filter((chat) => chat.resumeId === resumeId);
+      if (resumeAssistantChat.value?.resumeId === resumeId) {
         const savedChat = resumeAssistantChatList.value.find(
           (chat) => chat.id === resumeAssistantChat.value?.id,
         );
@@ -175,8 +178,8 @@ export const useAiStore = defineStore(
         }
         return resumeAssistantChat.value;
       }
-      if (resumeAssistantChatList.value.length) {
-        resumeAssistantChat.value = resumeAssistantChatList.value[0];
+      if (chats.length) {
+        resumeAssistantChat.value = chats[0];
         return resumeAssistantChat.value;
       }
       return createNewResumeAssistantChat();

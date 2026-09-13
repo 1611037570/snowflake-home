@@ -29,6 +29,11 @@ const { requestQuickAnswer } = useInterviewQuickAnswer();
 aiStore.registerResumeAssistantChatFactory(createAssistantChat);
 const { resumeAssistantChat, resumeAssistantChatList } = storeToRefs(aiStore);
 const { selectedModule } = storeToRefs(resumeStore);
+// 当前简历只展示自身的助手对话
+const resumeId = computed(() => resumeStore.currentItem?.id || "");
+const resumeAssistantChats = computed(() =>
+  resumeAssistantChatList.value.filter((item) => item.resumeId === resumeId.value),
+);
 // 当前操作模块列表：有选中模块时展示真实模块，无选中时补“整个简历”兜底项
 const selectedModules = computed(() =>
   selectedModule.value.length
@@ -39,8 +44,14 @@ const selectedModules = computed(() =>
 const removeSelectedModule = (key: string) => {
   resumeStore.unselectModule(key);
 };
-// 简历助手对话：初始化时把旧版单条会话迁移到会话列表
-aiStore.initializeResumeAssistantChat();
+// 切换简历时恢复该简历最近一次助手对话
+watch(
+  resumeId,
+  (id) => {
+    if (id) aiStore.initializeResumeAssistantChat(id);
+  },
+  { immediate: true },
+);
 const chat = computed({
   get: () => resumeAssistantChat.value!,
   set: (value) => {
@@ -630,7 +641,7 @@ const handleCopyQuickAnswer = async () => {
     >
       <div v-if="chatListVisible" class="absolute inset-0 z-20 bg-sf-primary">
         <ChatList
-          :chats="resumeAssistantChatList"
+          :chats="resumeAssistantChats"
           :active-chat-id="chat.id"
           :disabled="isGenerating"
           @close="chatListVisible = false"
