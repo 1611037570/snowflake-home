@@ -198,6 +198,15 @@ export const useAiStore = defineStore(
       if (!chat) return;
       resumeAssistantChat.value = chat;
     }
+    // 删除简历时同步移除其所属的助手对话
+    function removeResumeAssistantChats(resumeId: string) {
+      resumeAssistantChatList.value = resumeAssistantChatList.value.filter(
+        (chat) => chat.resumeId !== resumeId,
+      );
+      if (resumeAssistantChat.value?.resumeId === resumeId) {
+        resumeAssistantChat.value = null;
+      }
+    }
     // 首条用户消息生成简历助手话题标题
     function updateResumeAssistantChatTitle(chat: Chat) {
       if (chat.title !== DEFAULT_CHAT_TITLE) return;
@@ -304,6 +313,7 @@ export const useAiStore = defineStore(
       initializeResumeAssistantChat,
       createNewResumeAssistantChat,
       switchResumeAssistantChat,
+      removeResumeAssistantChats,
       updateResumeAssistantChatTitle,
       prepareNewChat,
       switchChat,
