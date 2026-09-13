@@ -6,7 +6,8 @@ const route = useRoute();
 // 从items数组中获取当前路由的标题
 const title = computed(() => {
   const currentItem = ALL_PAGE.value.find((item) => item.url === route.path);
-  return currentItem?.name || "";
+  // 二级路由未配置标题时，沿用所属一级路由标题
+  return currentItem?.name || ALL_PAGE.value.find((item) => route.path.startsWith(`${item.url}/`))?.name || "";
 });
 
 // 获取当前路由的版本号
