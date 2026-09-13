@@ -1,21 +1,17 @@
 import type { SkillFactory } from "../types";
-import { aptitudeHrInterview } from "./skill_aptitude_hr_interview";
+import { interviewSkills } from "../interview/skills";
 import { careerPlanning } from "./skill_career_planning";
 import { defaultPrompt } from "./prompt_default";
 import { greeting } from "./skill_greeting";
-import { interviewPrediction } from "./skill_interview_prediction";
 import { jobMatch } from "./skill_job_match";
 import { lifeSummary } from "./skill_life_summary";
 import { resumeCreate } from "./skill_resume_create";
 import { resumeDataContract } from "./skill_resume_data_contract";
-import { resumeInterview } from "./skill_resume_interview";
 import { resumeOptimization } from "./skill_resume_optimization";
 import { resumeOneKeyOptimize } from "./skill_resume_one_key_optimize";
 import { resumeScore } from "./skill_resume_score";
 import { resumeTranslate } from "./skill_resume_translate";
 import { resumeWriting } from "./skill_resume_writing";
-import { selfIntro } from "./skill_self_intro";
-import { specializedInterview } from "./skill_specialized_interview";
 import { industryEcommerce } from "./skill_industry_ecommerce";
 import { industryEducation } from "./skill_industry_education";
 import { industryFinance } from "./skill_industry_finance";
@@ -39,14 +35,11 @@ export const onDemandSkills: SkillFactory[] = [
   resumeOneKeyOptimize,
   jobMatch,
   greeting,
-  interviewPrediction,
-  specializedInterview,
-  aptitudeHrInterview,
+  // 面试域技能通过独立清单整体注入，注册器不再感知单项实现
+  ...interviewSkills,
   resumeCreate,
-  resumeInterview,
   resumeScore,
   resumeTranslate,
-  selfIntro,
   careerPlanning,
   lifeSummary,
   industryInternet,
