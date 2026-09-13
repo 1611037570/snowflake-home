@@ -64,11 +64,19 @@ describe("oneKeyOptimize", () => {
     expect(instructions).not.toContain("resume_translate、update_resume_language");
   });
 
+  it("任务技能、数据与行业知识按无歧义顺序加载", () => {
+    const instructions = defaultPrompt().instructions;
+
+    expect(instructions).toContain("命中任务分派时先读取对应任务技能");
+    expect(instructions).toContain("在任务技能之后调用名称匹配目标行业");
+  });
+
   it("按求职现状形成精准建议与高效润色闭环", () => {
     expect(resumeScore().instructions).toContain("问题—求职影响—具体行动—预期改善");
     expect(resumeOptimization().instructions).toContain("用最少改动提升信息密度和专业度");
     expect(resumeOneKeyOptimize().instructions).toContain(
       "优先级｜问题｜具体行动｜预期改善",
     );
+    expect(resumeOneKeyOptimize().instructions).toContain("均以“【维度名称】”开头");
   });
 });
