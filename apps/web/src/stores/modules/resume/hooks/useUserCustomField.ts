@@ -17,22 +17,22 @@ export function createUserCustomField(key: string, label: string): ObjectFormFie
     span: 24,
     ui: {
       layout: "horizontal",
-      // 图标选择与隐藏开关同结构，均可持久化到字段配置
+      // 图标选择与隐藏开关均保存至个人信息模块配置
       icon: {
-        source: ["ui", "fields", key, "icon"],
+        source: ["user", "ui", key, "icon"],
         prop: "icon",
         defaultValue: "lucide:tag",
       },
-      // 复用个人信息既有字段隐藏状态，不新增独立状态结构
+      // 复用个人信息字段隐藏状态
       hidden: {
-        source: ["ui", "fields", key, "hidden"],
+        source: ["user", "ui", key, "hidden"],
         prop: "hidden",
         defaultValue: false,
       },
     },
     checks: {
       hidden: {
-        path: ["ui", "fields", key, "hidden"],
+        path: ["user", "ui", key, "hidden"],
         equals: true,
       },
     },
@@ -85,6 +85,6 @@ export function removeUserCustomField(runtimeConfig: any, data: any, key: string
 
   moreField.fields.splice(index, 1);
   delete data?.user?.data?.[key];
-  delete data?.ui?.fields?.[key];
+  delete data?.user?.ui?.[key];
   return true;
 }
