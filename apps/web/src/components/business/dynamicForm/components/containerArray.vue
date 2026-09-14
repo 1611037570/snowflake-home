@@ -123,12 +123,10 @@ onUnmounted(() => {
 
 const length = computed(() => records.value.length);
 const getSpan = (item: any) => Number(item.span) || 24;
-const getItemStyle = (isFirstInRow: boolean, isLastInRow: boolean, bottomStyle: string) => {
-  void bottomStyle;
+const getItemStyle = (isFirstInRow: boolean, isLastInRow: boolean) => {
   return {
     paddingLeft: isFirstInRow ? "0" : "3px",
     paddingRight: isLastInRow ? "0" : "3px",
-    ...(isFirstInRow || isLastInRow ? { paddingBottom: "" } : {}),
   };
 };
 
@@ -136,33 +134,10 @@ const getItemStyle = (isFirstInRow: boolean, isLastInRow: boolean, bottomStyle: 
 const formListWithStyle = computed(() => {
   const list = records.value;
   const itemSchema = currentForm.value?.itemSchema;
-  // 最后一行起始索引
-  let lastRowStartIndex = 0;
-  // 累计占用的栅格数（跨行统计，用于确定每行起点）
-  let accumulatedSpan = 0;
   // 当前行累计占用的栅格数（逐项统计，用于确定行首行尾）
   let currentAccumulatedSpan = 0;
 
-  // 第一轮遍历：根据每项 span 换行，计算最后一行起始索引（用于决定底部间距）
-  list.forEach((item: any, index: number) => {
-    const span = getSpan(item);
-    // 当前行放不下，换行：更新最后一行起始索引并重置累计栅格数
-    if (accumulatedSpan + span > 24) {
-      lastRowStartIndex = index;
-      accumulatedSpan = 0;
-    }
-
-    accumulatedSpan += span;
-    // 刚好排满一行，重置累计栅格数，并将最后一行起始索引指向下一项
-    if (accumulatedSpan >= 24) {
-      accumulatedSpan = 0;
-      if (index < list.length - 1) {
-        lastRowStartIndex = index + 1;
-      }
-    }
-  });
-
-  // 第二轮遍历：逐项判断是否行首/行尾，计算每项的左右边距与底部间距
+  // 逐项判断是否行首/行尾，仅计算左右边距
   return list.map((item: any, index: number) => {
     const span = getSpan(item);
     // 当前行放不下，重置为行首
@@ -186,9 +161,6 @@ const formListWithStyle = computed(() => {
       currentAccumulatedSpan = 0;
     }
 
-    // 最后一行底部不留间距，其余行保留 12px 间距
-    const bottomStyle = index >= lastRowStartIndex ? "" : "12px";
-
     // 水平边距逻辑：
     // 1. 如果既是行首又是行尾（span=24），左右边距都是0
     // 2. 如果只是行首，左边距0，右边距6
@@ -198,7 +170,7 @@ const formListWithStyle = computed(() => {
       item: itemSchema,
       index,
       key: getRecordKey(item, index),
-      style: getItemStyle(isFirstInRow, isLastInRow, bottomStyle),
+      style: getItemStyle(isFirstInRow, isLastInRow),
     };
   });
 });
