@@ -30,7 +30,7 @@ const currentIcons = computed(() =>
 // 当前选中图标信息，供触发区域展示
 const activeIcon = computed(() => allIcons.value.find((item) => item.icon === modelValue.value));
 
-// 选择图标并写入 v-model，el-dropdown-item 点击后会自动关闭下拉
+// 选择图标并写入 v-model
 const selectIcon = (icon: string) => {
   modelValue.value = icon;
 };
@@ -70,12 +70,12 @@ const selectIcon = (icon: string) => {
           <div
             v-for="item in currentIcons"
             :key="item.icon"
-            :command="item.icon"
             :title="item.name"
             class="!m-0 flex !p-1"
             :class="{
               'rounded-3xl border border-sf-theme text-sf-primary': modelValue === item.icon,
             }"
+            @click="selectIcon(item.icon)"
           >
             <SfIcon :icon="item.icon" :size="size" />
           </div>
