@@ -17,7 +17,7 @@ export const DEFAULT_USER_FORM = [
     type: "group",
     component: "boxCollapse",
     key: "user",
-    drag: true,
+    drag: false,
     dragClass: DEFAULT_DRAG_CLASS,
     // 固定模块：不参与模块拖拽排序
     fixed: true,
@@ -82,7 +82,7 @@ export const DEFAULT_USER_FORM = [
           },
         },
         component: "input",
-        span: 12,
+        span: 24,
         required: true,
         model: {
           source: ["user", "data", "name"],
@@ -114,7 +114,7 @@ export const DEFAULT_USER_FORM = [
         label: "出生日期",
         tip: "出生年月 推荐必填",
         component: "datePicker",
-        span: 12,
+        span: 24,
         ui: {
           hidden: {
             source: ["ui", "fields", "birthday", "hidden"],
@@ -145,7 +145,7 @@ export const DEFAULT_USER_FORM = [
         label: "电话",
         tip: "常用手机号 推荐必填",
         component: "input",
-        span: 12,
+        span: 24,
         ui: {
           hidden: {
             source: ["ui", "fields", "phone", "hidden"],
@@ -183,7 +183,7 @@ export const DEFAULT_USER_FORM = [
         label: "性别",
         tip: "选择性别",
         component: "select",
-        span: 12,
+        span: 24,
         ui: {
           hidden: {
             source: ["ui", "fields", "sex", "hidden"],
@@ -220,7 +220,7 @@ export const DEFAULT_USER_FORM = [
         label: "求职岗位",
         tip: "求职岗位 推荐必填",
         component: "input",
-        span: 12,
+        span: 24,
         ui: {
           hidden: {
             source: ["ui", "fields", "position", "hidden"],
@@ -249,7 +249,7 @@ export const DEFAULT_USER_FORM = [
         label: "参加工作时间",
         tip: "首次工作年月",
         component: "datePicker",
-        span: 12,
+        span: 24,
         addable: true,
         ui: {
           hidden: {
@@ -297,7 +297,7 @@ export const DEFAULT_USER_FORM = [
             label: "邮箱",
             tip: "常用邮箱",
             component: "input",
-            span: 12,
+            span: 24,
             addable: true,
             ui: {
               hidden: {
@@ -337,7 +337,7 @@ export const DEFAULT_USER_FORM = [
             label: "微信号",
             tip: "常用微信号",
             component: "input",
-            span: 12,
+            span: 24,
             addable: true,
             ui: {
               hidden: {
@@ -369,7 +369,7 @@ export const DEFAULT_USER_FORM = [
             label: "状态",
             tip: "求职状态",
             component: "select",
-            span: 12,
+            span: 24,
             addable: true,
             ui: {
               hidden: {
@@ -408,7 +408,7 @@ export const DEFAULT_USER_FORM = [
             label: "政治面貌",
             tip: "政治面貌",
             component: "select",
-            span: 12,
+            span: 24,
             addable: true,
             ui: {
               hidden: {
@@ -447,7 +447,7 @@ export const DEFAULT_USER_FORM = [
             label: "期望城市",
             tip: "期望城市",
             component: "cityPicker",
-            span: 12,
+            span: 24,
             addable: true,
             ui: {
               hidden: {
@@ -477,7 +477,7 @@ export const DEFAULT_USER_FORM = [
             label: "籍贯",
             tip: "籍贯",
             component: "cityPicker",
-            span: 12,
+            span: 24,
             addable: true,
             ui: {
               hidden: {
