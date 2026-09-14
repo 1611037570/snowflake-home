@@ -4,6 +4,7 @@
     v-if="!currentForm.component"
     v-model:items="currentForm"
     :pathContext="pathContext"
+    :class="currentForm.rowClass"
   />
   <!-- 分组有包裹组件：渲染组件并在槽内递归渲染子字段 -->
   <component
@@ -17,7 +18,11 @@
   >
     <template #[slotName]>
       <!-- 递归渲染时显式下传当前数组记录上下文 -->
-      <FormRenderer v-model:items="currentForm" :pathContext="pathContext" />
+      <FormRenderer
+        v-model:items="currentForm"
+        :pathContext="pathContext"
+        :class="currentForm.rowClass"
+      />
     </template>
   </component>
 </template>
