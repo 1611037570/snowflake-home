@@ -27,50 +27,67 @@ const currentIcons = computed(() =>
     : (ICON_CATEGORIES.find((cat) => cat.key === activeCategory.value)?.icons ?? []),
 );
 
-// 选择图标并写入 v-model
+// 当前选中图标信息，供触发区域展示
+const activeIcon = computed(() => allIcons.value.find((item) => item.icon === modelValue.value));
+
+// 选择图标并写入 v-model，el-dropdown-item 点击后会自动关闭下拉
 const selectIcon = (icon: string) => {
   modelValue.value = icon;
 };
 </script>
 
 <template>
-  <div class="flex flex-col gap-3">
-    <!-- 分类切换：全部 + 各业务分类 -->
-    <div class="flex flex-wrap gap-3">
-      <button
-        v-for="item in [allCategory, ...ICON_CATEGORIES]"
-        :key="item.key"
-        type="button"
-        class="h-8 cursor-pointer rounded-full border px-3 text-sm font-medium transition-all duration-200"
-        :class="
-          activeCategory === item.key
-            ? 'border-sf-theme bg-sf-bg text-sf-primary'
-            : 'border-sf-b text-sf-text-2 hover:border-sf-theme'
-        "
-        @click="activeCategory = item.key"
-      >
-        {{ item.name }}
-      </button>
-    </div>
-    <!-- 图标网格 -->
-    <div class="grid grid-cols-5 gap-3">
-      <button
-        v-for="item in currentIcons"
-        :key="item.icon"
-        type="button"
-        class="flex aspect-square cursor-pointer items-center justify-center rounded-3xl border transition-all duration-200 hover:scale-105"
-        :class="
-          modelValue === item.icon
-            ? 'border-sf-theme bg-sf-bg text-sf-primary'
-            : 'border-sf-b text-sf-text-2 hover:border-sf-theme'
-        "
-        :title="item.name"
-        @click="selectIcon(item.icon)"
-      >
-        <SFIcon :icon="item.icon" :size="size" />
-      </button>
-    </div>
-  </div>
+  <!-- 下拉选择：触发区域默认仅展示当前选中图标，点击展开面板选择 -->
+  <SfDropdown trigger="click" popper-class="icon-picker-popper" @command="selectIcon">
+    <SfIcon
+      :icon="activeIcon?.icon || 'mdi:shape-outline'"
+      :size="size"
+      class="rounded-3xl hover:bg-sf-theme-2 hover:text-sf-theme-text"
+      :boxSize="size + 2"
+    />
+
+    <template #dropdown>
+      <div class="w-80 rounded-3xl border border-sf-b bg-sf-primary p-3">
+        <!-- 分类切换：全部 + 各业务分类 -->
+        <div class="mb-3 flex flex-wrap gap-2">
+          <button
+            v-for="item in [allCategory, ...ICON_CATEGORIES]"
+            :key="item.key"
+            type="button"
+            class="h-7 cursor-pointer rounded-full border px-3 text-xs font-medium transition-all duration-200"
+            :class="
+              activeCategory === item.key
+                ? 'border-sf-theme bg-sf-bg text-sf-text'
+                : 'border-sf-b text-sf-text-2 hover:border-sf-theme'
+            "
+            @click="activeCategory = item.key"
+          >
+            {{ item.name }}
+          </button>
+        </div>
+        <!-- 图标网格：均为菜单项，点击即选中并关闭下拉 -->
+        <div class="!grid !grid-cols-6 !gap-3 !p-0">
+          <div
+            v-for="item in currentIcons"
+            :key="item.icon"
+            :command="item.icon"
+            :title="item.name"
+            class="!m-0 flex !p-1"
+            :class="{
+              'rounded-3xl border border-sf-theme text-sf-primary': modelValue === item.icon,
+            }"
+          >
+            <SfIcon :icon="item.icon" :size="size" />
+          </div>
+        </div>
+      </div>
+    </template>
+  </SfDropdown>
 </template>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+// 覆盖 element-plus 下拉菜单默认样式，保持图标网格布局
+:deep(.el-dropdown-menu) {
+  background: transparent;
+}
+</style>
