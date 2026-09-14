@@ -34,14 +34,14 @@ export type FieldChecks = {
 export interface FieldUIConfig {
   /** 表单项布局模板 */
   layout?: "vertical" | "horizontal";
-  [key: string]: any;
+  /** 表单项隐藏状态绑定 */
+  hidden?: ModelBinding;
+  /** 是否允许移除可添加字段 */
+  removable?: boolean;
 }
 
-/** 表单字段（递归）：覆盖 object 叶子 / group 分组 / array 三种形态的字段集合 */
-export interface FormField {
-  type?: "object" | "array" | "group";
-  /** 组件名（引擎按名字查找组件实例） */
-  component?: string;
+/** 表单字段共享配置 */
+interface BaseFormField {
   /** 静态透传给组件的属性 */
   props?: Record<string, any>;
   /** 栅格宽度（1-24） */
@@ -64,21 +64,11 @@ export interface FormField {
   key?: string;
   /** 模块名 */
   name?: string;
-  /** 容器绑定的数据源路径 */
-  source?: string[];
-  /** 插槽名（存在则渲染为带插槽的容器组件） */
-  slot?: string;
-  /** 数据绑定配置 */
-  model?: ModelBinding | ModelBinding[];
   /** 是否可由用户按需添加 */
   addable?: boolean;
   /** 表单控制配置（与 model/props 同级）：由动态表单处理 removed、hidden */
   checks?: FieldChecks;
   required?: boolean;
-  /** 子字段（容器递归渲染） */
-  fields?: FormField[];
-  /** array 容器「新增子项」的模板配置 */
-  itemSchema?: FormField;
   /** 是否可拖拽 */
   drag?: boolean;
   /** 模块是否固定：固定模块不参与容器拖拽排序 */
@@ -88,6 +78,42 @@ export interface FormField {
   /** 运行时 id（引擎自动补充） */
   id?: string;
 }
+
+/** 普通字段：必须声明渲染组件与数据绑定 */
+export interface ObjectFormField extends BaseFormField {
+  type: "object";
+  component: string;
+  model: ModelBinding | ModelBinding[];
+  source?: never;
+  slot?: never;
+  fields?: never;
+  itemSchema?: never;
+}
+
+/** 分组字段：递归渲染 fields，可选包裹组件与数据绑定 */
+export interface GroupFormField extends BaseFormField {
+  type: "group";
+  component?: string;
+  model?: ModelBinding | ModelBinding[];
+  slot?: string;
+  fields: FormField[];
+  source?: never;
+  itemSchema?: never;
+}
+
+/** 数组字段：通过 source 定位记录，并使用 itemSchema 渲染每条记录 */
+export interface ArrayFormField extends BaseFormField {
+  type: "array";
+  source: string[];
+  itemSchema: FormField;
+  component?: never;
+  model?: never;
+  slot?: never;
+  fields?: never;
+}
+
+/** 严格区分普通字段、分组字段和数组字段 */
+export type FormField = ObjectFormField | GroupFormField | ArrayFormField;
 
 /** 顶层表单配置 */
 export interface FormConfig {

@@ -12,6 +12,7 @@ const arrayField: FormField = {
       prop: "name",
       defaultValue: "默认名称",
     },
+    fields: [],
   },
 };
 

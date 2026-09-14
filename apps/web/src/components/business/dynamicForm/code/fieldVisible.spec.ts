@@ -11,6 +11,9 @@ describe("fieldVisible", () => {
     };
     const context = { basePath: ["work", "data"], index: 0 };
     const field: FormField = {
+      type: "object",
+      component: "input",
+      model: { source: ["name"], prop: "modelValue" },
       checks: {
         removed: { path: ["hidden"] },
         hidden: { path: ["archived"], equals: false },

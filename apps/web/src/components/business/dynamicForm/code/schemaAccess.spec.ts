@@ -10,9 +10,13 @@ import {
 describe("schemaAccess", () => {
   it("统一返回单绑定与多绑定", () => {
     const single: FormField = {
+      type: "object",
+      component: "input",
       model: { source: ["user", "data", "name"], prop: "modelValue" },
     };
     const multiple: FormField = {
+      type: "object",
+      component: "select",
       model: [
         { source: ["user", "data", "sex"], prop: "modelValue" },
         { source: ["__options", "sex"], prop: "list", raw: true },
@@ -21,11 +25,13 @@ describe("schemaAccess", () => {
 
     expect(getModelBindings(single)).toHaveLength(1);
     expect(getModelBindings(multiple)).toHaveLength(2);
-    expect(getModelBindings({})).toEqual([]);
+    expect(getModelBindings({} as FormField)).toEqual([]);
   });
 
   it("优先取得组件主值绑定并排除外部字典", () => {
     const field: FormField = {
+      type: "object",
+      component: "select",
       model: [
         { source: ["user", "data", "label"], prop: "label" },
         { source: ["__options", "status"], prop: "list", raw: true },
@@ -36,11 +42,15 @@ describe("schemaAccess", () => {
     expect(getPrimaryModelBinding(field)?.source).toEqual(["user", "data", "status"]);
     expect(
       getPrimaryModelBinding({
+        type: "object",
+        component: "input",
         model: { source: ["user", "data", "name"], prop: "name" },
       })?.source,
     ).toEqual(["user", "data", "name"]);
     expect(
       getPrimaryModelBinding({
+        type: "object",
+        component: "select",
         model: { source: ["__options", "status"], prop: "list", raw: true },
       }),
     ).toBeUndefined();
@@ -51,12 +61,25 @@ describe("schemaAccess", () => {
     const schema: FormField = {
       type: "group",
       fields: [
-        { type: "object", component: "input", label: "固定字段" },
+        {
+          type: "object",
+          component: "input",
+          label: "固定字段",
+          model: { source: ["fixed"], prop: "modelValue" },
+        },
         {
           type: "array",
+          source: ["items"],
           itemSchema: {
             type: "group",
-            fields: [{ type: "object", component: "input", label: "数组字段" }],
+            fields: [
+              {
+                type: "object",
+                component: "input",
+                label: "数组字段",
+                model: { source: ["name"], prop: "modelValue" },
+              },
+            ],
           },
         },
       ],
@@ -78,6 +101,8 @@ describe("schemaAccess", () => {
       type: "array",
       source: ["education", "data"],
       itemSchema: {
+        type: "object",
+        component: "input",
         model: {
           source: ["name"],
           prop: "modelValue",
@@ -86,6 +111,6 @@ describe("schemaAccess", () => {
     };
 
     expect(getArrayDataPath(schema)).toEqual(["education", "data"]);
-    expect(getArrayDataPath({ type: "array" })).toBeUndefined();
+    expect(getArrayDataPath({ type: "array" } as FormField)).toBeUndefined();
   });
 });

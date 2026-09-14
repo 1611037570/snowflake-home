@@ -76,7 +76,7 @@ describe("resumeSchema", () => {
   });
 
   it("动态自定义模块复用自定义结构", () => {
-    const schema = buildResumeSchema([{ key: "custom", schema: { type: "group" } }]);
+    const schema = buildResumeSchema([{ key: "custom", schema: { type: "group", fields: [] } }]);
 
     expect(getResumeModuleSchema(schema, "custom_abcd")?.key).toBe("custom");
   });
