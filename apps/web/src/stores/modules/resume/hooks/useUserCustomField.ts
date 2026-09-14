@@ -17,6 +17,18 @@ export function createUserCustomField(key: string, label: string): ObjectFormFie
     span: 24,
     ui: {
       layout: "horizontal",
+      // 复用个人信息既有字段隐藏状态，不新增独立状态结构
+      hidden: {
+        source: ["ui", "fields", key, "hidden"],
+        prop: "hidden",
+        defaultValue: false,
+      },
+    },
+    checks: {
+      hidden: {
+        path: ["ui", "fields", key, "hidden"],
+        equals: true,
+      },
     },
     model: {
       source: ["user", "data", key],
@@ -67,5 +79,6 @@ export function removeUserCustomField(runtimeConfig: any, data: any, key: string
 
   moreField.fields.splice(index, 1);
   delete data?.user?.data?.[key];
+  delete data?.ui?.fields?.[key];
   return true;
 }
