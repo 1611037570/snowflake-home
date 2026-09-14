@@ -221,4 +221,10 @@ export const ICON_LIST: Record<string, IconItem> = {
   "mdi:linkedin": { icon: "mdi:linkedin", name: "领英" },
   "mdi:shape-outline": { icon: "mdi:shape-outline", name: "形状" },
   "carbon:data-view-alt": { icon: "carbon:data-view-alt", name: "数据视图" },
+  "mdi:briefcase-check-outline": { icon: "mdi:briefcase-check-outline", name: "求职状态" },
+  "mdi:flag-outline": { icon: "mdi:flag-outline", name: "政治面貌" },
+  "mdi:map-marker-outline": { icon: "mdi:map-marker-outline", name: "城市" },
+  "mdi:home-outline": { icon: "mdi:home-outline", name: "籍贯" },
+  "mdi:human-male-height": { icon: "mdi:human-male-height", name: "身高体重" },
+  "lucide:tag": { icon: "lucide:tag", name: "标签" },
 };
