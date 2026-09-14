@@ -11,6 +11,7 @@ import { FeedbackModule } from './modules/feedback/feedback.module'
 import { RedisModule } from './shared/redis/redis.module'
 import { RsaModule } from './shared/rsa/rsa.module'
 import { baseConfig } from './config/base.config'
+import { ResumePdfModule } from './modules/resume-pdf/resume-pdf.module'
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { baseConfig } from './config/base.config'
     LLMModule,
     UtilsModule,
     FeedbackModule,
+    ResumePdfModule,
     // UserModule
   ],
   controllers: [AppController],

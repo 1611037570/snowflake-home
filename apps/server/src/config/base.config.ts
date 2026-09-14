@@ -12,6 +12,11 @@ export const baseConfig = {
       origin: '*',
     },
   },
+  // PDF渲染页面配置
+  pdf: {
+    renderUrl: process.env.PDF_RENDER_URL || 'http://localhost:5173/resume/print',
+    timeout: Number(process.env.PDF_RENDER_TIMEOUT || 60000),
+  },
   // 数据库配置
   mysql: {
     // 数据库类型
