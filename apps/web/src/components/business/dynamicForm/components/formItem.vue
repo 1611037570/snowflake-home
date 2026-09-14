@@ -2,27 +2,21 @@
   <el-col :class="{ 'dynamic-form-muted': hiddenState }" :span="getSpan(currentForm.span)">
     <SfFormItem
       :class="['w-full', { 'module-selected-blink': selected }]"
-      :label="currentForm.label"
+      :label="layout === 'horizontal' ? undefined : currentForm.label"
       :prop="getProp(currentForm)"
       :rules="currentForm.rules"
-      :tip="currentForm.tip"
     >
-      <template #label>
+      <template v-if="layout !== 'horizontal'" #label>
         <div class="mb-1 flex h-5 w-full items-center text-sf-base" @click.stop.prevent="">
           <div class="flex flex-1 items-center">
-            <button
-              v-if="draggable && currentForm.label"
-              type="button"
-              :class="dragHandleClass"
-              class="mr-1 flex cursor-move items-center"
+            <SfIcon
+              v-if="draggable"
               @click.stop=""
-            >
-              <SfIcon
-                icon="icon-park-outline:drag"
-                size="4"
-                class="pointer-events-none hover:text-sf-theme"
-              />
-            </button>
+              icon="icon-park-outline:drag"
+              :class="dragHandleClass"
+              size="4"
+              class="mr-1 cursor-move! hover:text-sf-theme"
+            />
             <span class="pr-1 pl-2 text-[15px] text-sf-text">
               {{ currentForm.label }}
             </span>
@@ -56,7 +50,64 @@
           </button>
         </div>
       </template>
-      <slot />
+      <template v-if="layout === 'horizontal'">
+        <div class="flex w-full items-center gap-3">
+          <div
+            v-if="currentForm.label"
+            class="flex w-36 shrink-0 items-center"
+            @click.stop.prevent=""
+          >
+            <SfIcon
+              v-if="draggable"
+              @click.stop=""
+              icon="icon-park-outline:drag"
+              :class="dragHandleClass"
+              size="4"
+              class="mr-1 cursor-move! hover:text-sf-theme"
+            />
+            <span class="truncate pr-1 pl-2 text-[15px] text-sf-text">
+              {{ currentForm.label }}
+            </span>
+            <sf-tooltip :content="currentForm.tip" v-if="currentForm.tip" class="text-sf-text" />
+          </div>
+          <div class="min-w-0 flex-1">
+            <slot />
+          </div>
+          <!-- Keep field actions aligned to the right edge. -->
+          <div
+            v-if="currentForm.ui?.hidden || currentForm.ui?.removable"
+            class="flex shrink-0 items-center gap-3"
+          >
+            <button
+              v-if="currentForm.ui?.hidden"
+              type="button"
+              class="flex items-center"
+              @pointerdown.stop.prevent
+              @click.stop.prevent="toggleHidden"
+            >
+              <SfIcon
+                :icon="hidden ? 'lucide:eye' : 'lucide:eye-off'"
+                size="4"
+                class="pointer-events-none cursor-pointer hover:text-sf-theme"
+              />
+            </button>
+            <button
+              v-if="currentForm.ui?.removable"
+              type="button"
+              class="flex items-center"
+              @pointerdown.stop.prevent
+              @click.stop.prevent="removeField"
+            >
+              <SfIcon
+                icon="ic:round-delete"
+                size="4"
+                class="pointer-events-none cursor-pointer hover:text-sf-theme"
+              />
+            </button>
+          </div>
+        </div>
+      </template>
+      <slot v-else />
     </SfFormItem>
   </el-col>
 </template>
@@ -79,6 +130,8 @@ const emit = defineEmits<{
   remove: [];
 }>();
 const rootData: any = inject(DF_ROOT_DATA);
+// Default to the vertical layout when the field has no layout configuration.
+const layout = computed(() => currentForm.ui?.layout ?? "vertical");
 const hiddenBinding = computed(() => currentForm?.ui?.hidden);
 // 表单项直接读取自身的隐藏绑定，避免把 UI 状态传给实际输入组件
 const hidden = computed(() => {
