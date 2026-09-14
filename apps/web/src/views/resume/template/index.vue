@@ -5,10 +5,8 @@ import { xiaoZhouResumeItem } from "@/stores/modules/resume/xiaoZhouData";
 import ResumeCardContainer from "@/views/resume/mine/components/resumeCardContainer.vue";
 import RevealGrid from "@/views/resume/components/revealGrid.vue";
 
-// 全屏预览组件：异步加载，避免首屏打包体积过大
-const FullscreenPreview = markRaw(
-  defineAsyncComponent(() => import("@/views/resume/editor/preview/fullscreenPreview.vue")),
-);
+// 模板页专用全屏预览组件：异步加载，避免首屏打包体积过大
+const TemplatePreview = markRaw(defineAsyncComponent(() => import("./templatePreview.vue")));
 import { computed, ref } from "vue";
 
 const resumeStore = useResumeStore();
@@ -50,14 +48,18 @@ const useTemplate = (card) => {
   });
 };
 
-// 全屏预览：记录当前展开的模板项，visible 由其是否存在派生
-const fullscreenItem = ref(null);
-const isFullscreen = computed(() => !!fullscreenItem.value);
+// 全屏预览：记录当前展开的模板卡片，visible 由其是否存在派生
+const fullscreenCard = ref(null);
+const isFullscreen = computed(() => !!fullscreenCard.value);
 const openFullscreen = (card) => {
-  fullscreenItem.value = card.item;
+  fullscreenCard.value = card;
 };
 const closeFullscreen = () => {
-  fullscreenItem.value = null;
+  fullscreenCard.value = null;
+};
+const useFullscreenTemplate = () => {
+  if (fullscreenCard.value) useTemplate(fullscreenCard.value);
+  closeFullscreen();
 };
 
 // 切换大小：切换模板预览大小
@@ -133,11 +135,13 @@ const gridClass = ref("default");
         </div>
       </div>
     </SfScrollbar>
-    <!-- 全屏预览：复用编辑器全屏组件，按当前模板项数据渲染 -->
-    <FullscreenPreview
+    <!-- 模板页专用全屏预览：左侧展示简历，右侧展示模板文字信息 -->
+    <TemplatePreview
       :visible="isFullscreen"
-      :item="fullscreenItem || {}"
+      :item="fullscreenCard?.item || {}"
+      :title="fullscreenCard?.name || '简历模板'"
       @close="closeFullscreen"
+      @use="useFullscreenTemplate"
     />
   </div>
 </template>
