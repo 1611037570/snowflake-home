@@ -17,6 +17,12 @@ export function createUserCustomField(key: string, label: string): ObjectFormFie
     span: 24,
     ui: {
       layout: "horizontal",
+      // 图标选择与隐藏开关同结构，均可持久化到字段配置
+      icon: {
+        source: ["ui", "fields", key, "icon"],
+        prop: "icon",
+        defaultValue: "lucide:tag",
+      },
       // 复用个人信息既有字段隐藏状态，不新增独立状态结构
       hidden: {
         source: ["ui", "fields", key, "hidden"],
