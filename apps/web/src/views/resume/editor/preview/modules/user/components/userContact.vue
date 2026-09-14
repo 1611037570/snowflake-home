@@ -4,7 +4,7 @@ import { getPreviewText } from "../../../i18n";
 import UserContactItem from "./userContactItem.vue";
 import { useUserFieldVisibility } from "../useUserFieldVisibility";
 
-// 联系方式组件：标签支持图标 / 文字两种模式，对齐方式由使用方通过 class 控制
+// 联系方式组件：标签支持图标、文字和隐藏模式，对齐方式由使用方通过 class 控制
 const previewData = inject("previewData");
 const userInfoMode = inject("userInfoMode");
 const userInfoLayout = inject("userInfoLayout");
@@ -22,6 +22,8 @@ const user = computed(() => previewData.value?.user?.data || {});
 const { isUserFieldHidden } = useUserFieldVisibility();
 const userFieldOrder = inject("userFieldOrder", computed(() => []));
 const isIconMode = computed(() => userInfoMode?.value === "icon");
+// 隐藏模式仅保留个人信息字段值
+const isLabelHidden = computed(() => userInfoMode?.value === "none");
 // 根据用户选择切换布局，并保持居中模式的对齐方式
 const layoutClass = computed(() => {
   const isCentered = props.centered;
@@ -137,6 +139,7 @@ const contactItems = computed(() => {
       :model-value="item.key ? user[item.key] : null"
       :text="item.text"
       :icon-mode="isIconMode"
+      :hide-label="isLabelHidden"
       :flow-mode="userInfoLayout === 'flex' && !centered"
     />
   </div>

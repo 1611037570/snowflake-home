@@ -69,7 +69,7 @@ export const useResumeTheme = (ui: ComputedRef<ResumeUi>): ResumeTheme => {
   const themeColor = computed(() => ui.value.color || ui.value.themeColor);
   const themeTemplate = computed(() => ui.value.themeTemplate);
 
-  // 个人信息展示模式（图标/文字），缺失时回退默认值
+  // 个人信息展示模式（图标/文字/隐藏），缺失时回退默认值
   const userInfoMode = computed(() => ui.value.userInfoMode ?? defaultUserInfoMode);
   // 个人信息布局（网格/弹性），缺失时回退默认值
   const userInfoLayout = computed(() => ui.value.userInfoLayout ?? defaultUserInfoLayout);
