@@ -20,6 +20,10 @@ const previewLang = inject(
   computed(() => "zh"),
 );
 const user = computed(() => previewData.value?.user?.data || {});
+// 字段级 UI 配置（图标等），与编辑器同读根数据 ui 层级
+const ui = computed(() => previewData.value?.ui || {});
+// 读取字段配置中的图标，未配置时为 undefined 由图标组件兜底处理
+const fieldIcon = (key) => ui.value?.fields?.[key]?.icon?.value;
 const { isUserFieldHidden } = useUserFieldVisibility();
 const userFieldOrder = inject("userFieldOrder", computed(() => []));
 const userFieldLabels = inject("userFieldLabels", computed(() => new Map()));
@@ -59,28 +63,28 @@ const secondaryItems = computed(() => {
   if (!isUserFieldHidden("status") && user.value?.status?.value) {
     items.push({
       key: "status",
-      icon: "mdi:briefcase-check-outline",
+      icon: fieldIcon("status"),
       label: getPreviewText("statusLabel", previewLang.value),
     });
   }
   if (!isUserFieldHidden("political") && user.value?.political?.value) {
     items.push({
       key: "political",
-      icon: "mdi:flag-outline",
+      icon: fieldIcon("political"),
       label: getPreviewText("politicalLabel", previewLang.value),
     });
   }
   if (!isUserFieldHidden("city") && user.value?.city?.value) {
     items.push({
       key: "city",
-      icon: "mdi:map-marker-outline",
+      icon: fieldIcon("city"),
       label: getPreviewText("cityLabel", previewLang.value),
     });
   }
   if (!isUserFieldHidden("nativePlace") && user.value?.nativePlace?.value) {
     items.push({
       key: "nativePlace",
-      icon: "mdi:home-outline",
+      icon: fieldIcon("nativePlace"),
       label: getPreviewText("nativePlaceLabel", previewLang.value),
     });
   }
@@ -88,7 +92,7 @@ const secondaryItems = computed(() => {
     items.push({
       sortKey: "heightWeight",
       text: heightWeightText.value,
-      icon: "mdi:human-male-height",
+      icon: fieldIcon("heightWeight"),
       label: getPreviewText("heightWeightLabel", previewLang.value),
     });
   }
@@ -101,7 +105,7 @@ const customItems = computed(() =>
     .filter((key) => !isUserFieldHidden(key) && user.value?.[key]?.value)
     .map((key) => ({
       key,
-      icon: "lucide:tag",
+      icon: fieldIcon(key),
       label: userFieldLabels.value.get(key) || "自定义字段",
     })),
 );
@@ -111,21 +115,22 @@ const contactItems = computed(() => {
   if (hasPhone.value) {
     items.push({
       key: "phone",
-      icon: "mdi:phone",
+      icon: fieldIcon("phone"),
       label: phoneLabel.value,
     });
   }
   if (hasEmail.value) {
     items.push({
       key: "email",
-      icon: "mdi:email-outline",
+      // 图标读取字段 UI 配置，由表单默认值兜底写入
+      icon: fieldIcon("email"),
       label: emailLabel.value,
     });
   }
   if (hasWechat.value) {
     items.push({
       key: "wechat",
-      icon: "mdi:wechat",
+      icon: fieldIcon("wechat"),
       label: wechatLabel.value,
     });
   }
