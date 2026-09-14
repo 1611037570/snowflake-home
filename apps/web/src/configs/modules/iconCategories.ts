@@ -91,10 +91,7 @@ export const ICON_CATEGORIES: IconCategory[] = [
       { icon: "mdi:wechat", name: "微信" },
       { icon: "mdi:linkedin", name: "领英" },
       { icon: "simple-icons:github", name: "GitHub" },
-      { icon: "simple-icons:juejin", name: "掘金" },
       { icon: "simple-icons:xiaohongshu", name: "小红书" },
-      { icon: "logos:tiktok-icon", name: "抖音" },
-      { icon: "clarity:email-solid", name: "邮箱实心" },
     ],
   },
   {
