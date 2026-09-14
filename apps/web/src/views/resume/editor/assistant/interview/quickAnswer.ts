@@ -1,4 +1,4 @@
-import { getLLM } from "@/apis";
+import { getXiaoYangLLM } from "@/apis";
 import { useResumeContext } from "../resumeContext";
 
 // 快速回答仅用于逐题互动流程，押题报告与自我介绍不重复提供入口
@@ -61,7 +61,7 @@ export const useInterviewQuickAnswer = () => {
     questionContext: string,
     previousAnswer = "",
   ): Promise<string> => {
-    const llm = getLLM();
+    const llm = getXiaoYangLLM();
     if (!llm) throw new Error("请先配置并选择 AI 模型");
     resumeContext.beforeRequest({ resumeScope: "all" });
     try {

@@ -1,5 +1,5 @@
 // 导入LLM接口
-import { getLLM, isAbortError } from "@/apis";
+import { getXiaoYangLLM, isAbortError } from "@/apis";
 import { useAiStore, useResumeStore } from "@/stores";
 // 导入聊天和消息类型
 import type { Chat, Message } from "@/stores/modules/ai";
@@ -270,7 +270,7 @@ export const useChatRequest = ({
       state.onEvent("reasoning", null);
 
       // 所有请求统一走 React 编排，技能规范已随对话系统消息提供
-      const llm = getLLM();
+      const llm = getXiaoYangLLM();
       // 未配置模型时抛出明确提示，由统一错误处理呈现
       if (!llm) {
         throw new Error("请先配置并选择 AI 模型");
