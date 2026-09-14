@@ -36,10 +36,12 @@ const sizeClassObj = {
 const sizeClass = computed(() => sizeClassObj[props.size] || sizeClassObj.default);
 const plainClassObj = {
   error: "bg-sf-error-2 text-sf-error hover:bg-sf-error hover:text-white",
+  success: "bg-sf-success-2 text-sf-success hover:bg-sf-success hover:text-white",
   theme: "bg-sf-theme-3 text-sf-theme hover:bg-sf-theme hover:text-white",
 };
 const classObj = {
   error: "",
+  success: "bg-sf-success text-white hover:bg-sf-success-2",
   theme: "bg-sf-theme text-sf-theme-text hover:bg-sf-theme-2",
   bg: "bg-sf-bg text-sf-text hover:bg-sf-bg-2",
 };

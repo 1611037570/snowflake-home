@@ -9,6 +9,11 @@ import LandedPage from "./components/landedPage.vue";
 
 const statisticsStore = useResumeStatisticsStore();
 const { applications, followUps, isLanded, totalApplications } = storeToRefs(statisticsStore);
+
+// 标记上岸
+const handleLanded = () => {
+  statisticsStore.markLanded();
+};
 </script>
 
 <template>
@@ -44,6 +49,7 @@ const { applications, followUps, isLanded, totalApplications } = storeToRefs(sta
         >
           <SfIcon icon="lucide:star" size="5" />
         </div>
+        <SfButton type="success" plain @click="handleLanded">上岸</SfButton>
       </div>
     </div>
     <SfScrollbar class="flex-1">
