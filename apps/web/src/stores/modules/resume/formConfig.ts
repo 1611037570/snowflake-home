@@ -64,10 +64,12 @@ export const DEFAULT_USER_FORM = [
         label: "头像",
         component: "imageUpload",
         span: 24,
-        model: {
-          source: ["user", "data", "avatar"],
-          prop: "modelValue",
-        },
+        model: [
+          {
+            source: ["user", "data", "avatar"],
+            prop: "modelValue",
+          },
+        ],
       },
 
       // 姓名
@@ -87,10 +89,12 @@ export const DEFAULT_USER_FORM = [
         component: "input",
         span: 24,
         required: true,
-        model: {
-          source: ["user", "data", "name"],
-          prop: "modelValue",
-        },
+        model: [
+          {
+            source: ["user", "data", "name"],
+            prop: "modelValue",
+          },
+        ],
         props: {
           placeholder: "请输入姓名",
           clearable: true,
@@ -152,6 +156,11 @@ export const DEFAULT_USER_FORM = [
         span: 24,
         ui: {
           layout: "horizontal",
+          icon: {
+            source: ["ui", "fields", "phone", "icon"],
+            prop: "icon",
+            defaultValue: "mdi:phone",
+          },
           hidden: {
             source: ["ui", "fields", "phone", "hidden"],
             prop: "hidden",
@@ -294,7 +303,6 @@ export const DEFAULT_USER_FORM = [
         span: 24,
         // 可添加字段之间保持统一垂直间距
         rowClass: "gap-y-3",
-
         model: [
           {
             source: ["user", "moreCollapsed"],
@@ -308,11 +316,15 @@ export const DEFAULT_USER_FORM = [
             key: "email",
             label: "邮箱",
             component: "input",
-
             span: 24,
             addable: true,
             ui: {
               layout: "horizontal",
+              icon: {
+                source: ["ui", "fields", "email", "icon"],
+                prop: "icon",
+                defaultValue: "mdi:email-outline",
+              },
               hidden: {
                 source: ["ui", "fields", "email", "hidden"],
                 prop: "hidden",
@@ -353,6 +365,11 @@ export const DEFAULT_USER_FORM = [
             addable: true,
             ui: {
               layout: "horizontal",
+              icon: {
+                source: ["ui", "fields", "wechat", "icon"],
+                prop: "icon",
+                defaultValue: "mdi:wechat",
+              },
               hidden: {
                 source: ["ui", "fields", "wechat", "hidden"],
                 prop: "hidden",
@@ -385,6 +402,11 @@ export const DEFAULT_USER_FORM = [
             addable: true,
             ui: {
               layout: "horizontal",
+              icon: {
+                source: ["ui", "fields", "status", "icon"],
+                prop: "icon",
+                defaultValue: "mdi:briefcase-check-outline",
+              },
               hidden: {
                 source: ["ui", "fields", "status", "hidden"],
                 prop: "hidden",
@@ -424,6 +446,11 @@ export const DEFAULT_USER_FORM = [
             addable: true,
             ui: {
               layout: "horizontal",
+              icon: {
+                source: ["ui", "fields", "political", "icon"],
+                prop: "icon",
+                defaultValue: "mdi:flag-outline",
+              },
               hidden: {
                 source: ["ui", "fields", "political", "hidden"],
                 prop: "hidden",
@@ -463,6 +490,11 @@ export const DEFAULT_USER_FORM = [
             addable: true,
             ui: {
               layout: "horizontal",
+              icon: {
+                source: ["ui", "fields", "city", "icon"],
+                prop: "icon",
+                defaultValue: "mdi:map-marker-outline",
+              },
               hidden: {
                 source: ["ui", "fields", "city", "hidden"],
                 prop: "hidden",
@@ -494,6 +526,11 @@ export const DEFAULT_USER_FORM = [
             addable: true,
             ui: {
               layout: "horizontal",
+              icon: {
+                source: ["ui", "fields", "nativePlace", "icon"],
+                prop: "icon",
+                defaultValue: "mdi:home-outline",
+              },
               hidden: {
                 source: ["ui", "fields", "nativePlace", "hidden"],
                 prop: "hidden",
@@ -524,6 +561,11 @@ export const DEFAULT_USER_FORM = [
             addable: true,
             ui: {
               layout: "horizontal",
+              icon: {
+                source: ["ui", "fields", "heightWeight", "icon"],
+                prop: "icon",
+                defaultValue: "mdi:human-male-height",
+              },
               hidden: {
                 source: ["ui", "fields", "heightWeight", "hidden"],
                 prop: "hidden",
