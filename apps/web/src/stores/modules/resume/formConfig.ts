@@ -77,6 +77,7 @@ export const DEFAULT_USER_FORM = [
         label: "姓名",
         tip: "真实姓名 推荐必填",
         ui: {
+          layout: "horizontal",
           hidden: {
             source: ["ui", "fields", "name", "hidden"],
             prop: "hidden",
@@ -84,7 +85,7 @@ export const DEFAULT_USER_FORM = [
           },
         },
         component: "input",
-        span: 12,
+        span: 24,
         required: true,
         model: {
           source: ["user", "data", "name"],
@@ -116,8 +117,9 @@ export const DEFAULT_USER_FORM = [
         label: "出生日期",
         tip: "出生年月 推荐必填",
         component: "datePicker",
-        span: 12,
+        span: 24,
         ui: {
+          layout: "horizontal",
           hidden: {
             source: ["ui", "fields", "birthday", "hidden"],
             prop: "hidden",
@@ -147,8 +149,9 @@ export const DEFAULT_USER_FORM = [
         label: "电话",
         tip: "常用手机号 推荐必填",
         component: "input",
-        span: 12,
+        span: 24,
         ui: {
+          layout: "horizontal",
           hidden: {
             source: ["ui", "fields", "phone", "hidden"],
             prop: "hidden",
@@ -187,6 +190,7 @@ export const DEFAULT_USER_FORM = [
         component: "select",
         span: 24,
         ui: {
+          layout: "horizontal",
           hidden: {
             source: ["ui", "fields", "sex", "hidden"],
             prop: "hidden",
@@ -224,6 +228,7 @@ export const DEFAULT_USER_FORM = [
         component: "input",
         span: 24,
         ui: {
+          layout: "horizontal",
           hidden: {
             source: ["ui", "fields", "position", "hidden"],
             prop: "hidden",
@@ -288,6 +293,7 @@ export const DEFAULT_USER_FORM = [
         span: 24,
         // 可添加字段之间保持统一垂直间距
         rowClass: "gap-y-3",
+
         model: [
           {
             source: ["user", "moreCollapsed"],
@@ -301,6 +307,7 @@ export const DEFAULT_USER_FORM = [
             key: "email",
             label: "邮箱",
             component: "input",
+
             span: 24,
             addable: true,
             ui: {
