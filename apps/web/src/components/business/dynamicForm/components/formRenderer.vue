@@ -5,12 +5,13 @@
       :currentForm="item.field"
       :data-module-key="item.field.key"
       :data-fixed="item.field.fixed ? 'true' : undefined"
-      v-for="item in renderFields"
+      v-for="item in renderFieldsWithStyle"
       :key="item.field.id"
       :pathContext="pathContext"
       :selected="isModuleSelected(item.field)"
       :draggable="items.drag === true"
       :drag-class="items.dragClass"
+      :style="item.style"
       @mouseenter="handleModuleMouseEnter(item.field)"
       @remove="removeField(item.field)"
     >
@@ -43,6 +44,7 @@ import { getUUID } from "@/utils";
 import { useDraggable } from "vue-draggable-plus";
 import { checkForm } from "../code/checkForm.ts";
 import { hasFieldData, removeFieldData } from "../code/fieldData";
+import { getFormItemStyles } from "../code/formItemStyle";
 import { isFieldRemoved } from "../code/fieldVisible";
 import { DF_MODULE_SELECT, DF_ROOT_DATA } from "../code/injectionKeys.ts";
 import type { DataPathContext } from "../code/pathContext";
@@ -69,6 +71,12 @@ const renderFields = computed(() => {
   return fields
     .map((field: any, index: number) => ({ field, index }))
     .filter(({ field }: any) => isFieldRenderable(field));
+});
+// 外层表单项复用栅格间距计算
+const renderFieldsWithStyle = computed(() => {
+  const fields = renderFields.value;
+  const styles = getFormItemStyles(fields.map((item: any) => item.field));
+  return fields.map((item: any, index: number) => ({ ...item, style: styles[index] }));
 });
 // 拖拽只重排当前可见字段，未渲染字段保留在原数据槽位
 const sortableFields = computed<any[]>({

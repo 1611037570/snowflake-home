@@ -47,6 +47,7 @@ import { getUUID } from "@/utils";
 import { computed, inject, onMounted, onUnmounted, ref, toRaw } from "vue";
 import { useDraggable } from "vue-draggable-plus";
 import { getArrayRecords, moveArrayRecord, removeArrayRecord } from "../code/arrayData.ts";
+import { getFormItemStyles } from "../code/formItemStyle";
 import { resolveDataPath, type DataPathContext } from "../code/pathContext";
 import {
   DF_CURRENT_FORM,
@@ -122,55 +123,16 @@ onUnmounted(() => {
 });
 
 const length = computed(() => records.value.length);
-const getSpan = (item: any) => Number(item.span) || 24;
-const getItemStyle = (isFirstInRow: boolean, isLastInRow: boolean) => {
-  return {
-    paddingLeft: isFirstInRow ? "0" : "3px",
-    paddingRight: isLastInRow ? "0" : "3px",
-  };
-};
-
-// 动态计算样式算法：实现第一个左边距0，最后一个右边距0，其他左右各6
 const formListWithStyle = computed(() => {
   const list = records.value;
   const itemSchema = currentForm.value?.itemSchema;
-  // 当前行累计占用的栅格数（逐项统计，用于确定行首行尾）
-  let currentAccumulatedSpan = 0;
-
-  // 逐项判断是否行首/行尾，仅计算左右边距
+  const styles = getFormItemStyles(list);
   return list.map((item: any, index: number) => {
-    const span = getSpan(item);
-    // 当前行放不下，重置为行首
-    if (currentAccumulatedSpan + span > 24) {
-      currentAccumulatedSpan = 0;
-    }
-
-    // 累计栅格为 0 时即为行首
-    const isFirstInRow = currentAccumulatedSpan === 0;
-    const nextItem = list[index + 1];
-    const nextSpan = nextItem ? getSpan(nextItem) : 0;
-    // 满足以下任一条件即为行尾：恰好排满一行 / 下一项放不下需换行 / 是最后一项
-    const isLastInRow =
-      currentAccumulatedSpan + span === 24 ||
-      (!!nextItem && currentAccumulatedSpan + span + nextSpan > 24) ||
-      index === list.length - 1;
-
-    currentAccumulatedSpan += span;
-    // 排满一行后重置，供下一项重新判断
-    if (currentAccumulatedSpan >= 24) {
-      currentAccumulatedSpan = 0;
-    }
-
-    // 水平边距逻辑：
-    // 1. 如果既是行首又是行尾（span=24），左右边距都是0
-    // 2. 如果只是行首，左边距0，右边距6
-    // 3. 如果只是行尾，右边距0，左边距6
-    // 4. 中间元素，左右都是6
     return {
       item: itemSchema,
       index,
       key: getRecordKey(item, index),
-      style: getItemStyle(isFirstInRow, isLastInRow),
+      style: styles[index],
     };
   });
 });
