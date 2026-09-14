@@ -247,11 +247,11 @@ export const DEFAULT_USER_FORM = [
         type: "object",
         key: "workTime",
         label: "参加工作时间",
-        tip: "首次工作年月",
         component: "datePicker",
         span: 24,
         addable: true,
         ui: {
+          layout: "horizontal",
           hidden: {
             source: ["ui", "fields", "workTime", "hidden"],
             prop: "hidden",
@@ -295,7 +295,6 @@ export const DEFAULT_USER_FORM = [
             type: "object",
             key: "email",
             label: "邮箱",
-            tip: "常用邮箱",
             component: "input",
             span: 24,
             addable: true,
@@ -336,11 +335,11 @@ export const DEFAULT_USER_FORM = [
             type: "object",
             key: "wechat",
             label: "微信号",
-            tip: "常用微信号",
             component: "input",
             span: 24,
             addable: true,
             ui: {
+              layout: "horizontal",
               hidden: {
                 source: ["ui", "fields", "wechat", "hidden"],
                 prop: "hidden",
@@ -367,12 +366,12 @@ export const DEFAULT_USER_FORM = [
           {
             type: "object",
             key: "status",
-            label: "状态",
-            tip: "求职状态",
+            label: "求职状态",
             component: "select",
             span: 24,
             addable: true,
             ui: {
+              layout: "horizontal",
               hidden: {
                 source: ["ui", "fields", "status", "hidden"],
                 prop: "hidden",
@@ -407,11 +406,11 @@ export const DEFAULT_USER_FORM = [
             type: "object",
             key: "political",
             label: "政治面貌",
-            tip: "政治面貌",
             component: "select",
             span: 24,
             addable: true,
             ui: {
+              layout: "horizontal",
               hidden: {
                 source: ["ui", "fields", "political", "hidden"],
                 prop: "hidden",
@@ -446,11 +445,11 @@ export const DEFAULT_USER_FORM = [
             type: "object",
             key: "city",
             label: "期望城市",
-            tip: "期望城市",
             component: "cityPicker",
             span: 24,
             addable: true,
             ui: {
+              layout: "horizontal",
               hidden: {
                 source: ["ui", "fields", "city", "hidden"],
                 prop: "hidden",
@@ -476,11 +475,12 @@ export const DEFAULT_USER_FORM = [
             type: "object",
             key: "nativePlace",
             label: "籍贯",
-            tip: "籍贯",
+
             component: "cityPicker",
             span: 24,
             addable: true,
             ui: {
+              layout: "horizontal",
               hidden: {
                 source: ["ui", "fields", "nativePlace", "hidden"],
                 prop: "hidden",
@@ -506,11 +506,11 @@ export const DEFAULT_USER_FORM = [
             type: "object",
             key: "heightWeight",
             label: "身高体重",
-            tip: "身高体重",
             component: "heightWeight",
             span: 24,
             addable: true,
             ui: {
+              layout: "horizontal",
               hidden: {
                 source: ["ui", "fields", "heightWeight", "hidden"],
                 prop: "hidden",
