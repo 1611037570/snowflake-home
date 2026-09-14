@@ -53,12 +53,11 @@ const selectIcon = (icon: string) => {
           <button
             v-for="item in [allCategory, ...ICON_CATEGORIES]"
             :key="item.key"
-            type="button"
-            class="h-7 cursor-pointer rounded-full border px-3 text-xs font-medium transition-all duration-200"
+            class="h-7 cursor-pointer rounded-full px-2 text-xs font-medium transition-all duration-200"
             :class="
               activeCategory === item.key
-                ? 'border-sf-theme bg-sf-bg text-sf-text'
-                : 'border-sf-b text-sf-text-2 hover:border-sf-theme'
+                ? 'bg-sf-bg text-sf-text'
+                : 'text-sf-text-2 hover:bg-sf-bg-2'
             "
             @click="activeCategory = item.key"
           >
@@ -66,20 +65,22 @@ const selectIcon = (icon: string) => {
           </button>
         </div>
         <!-- 图标网格：均为菜单项，点击即选中并关闭下拉 -->
-        <div class="!grid !grid-cols-6 !gap-3 !p-0">
-          <div
-            v-for="item in currentIcons"
-            :key="item.icon"
-            :title="item.name"
-            class="!m-0 flex !p-1"
-            :class="{
-              'rounded-3xl border border-sf-theme text-sf-primary': modelValue === item.icon,
-            }"
-            @click="selectIcon(item.icon)"
-          >
-            <SfIcon :icon="item.icon" :size="size" />
+        <SfScrollbar class="min-h-[200px]" height="200px">
+          <div class="grid grid-cols-6 gap-3">
+            <SfIcon
+              v-for="item in currentIcons"
+              :key="item.icon"
+              :icon="item.icon"
+              :size="size"
+              :boxSize="size + 3"
+              @click="selectIcon(item.icon)"
+              class="rounded-3xl"
+              :class="[
+                modelValue === item.icon ? ' bg-sf-theme text-sf-theme-text' : 'hover:bg-sf-bg',
+              ]"
+            />
           </div>
-        </div>
+        </SfScrollbar>
       </div>
     </template>
   </SfDropdown>
