@@ -63,7 +63,7 @@ export const useSystemStore = defineStore(
           window.location.reload();
           return;
         }
-      } catch (error) {}
+      } catch {}
     };
 
     /**

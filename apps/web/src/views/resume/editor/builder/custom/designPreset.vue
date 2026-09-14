@@ -42,7 +42,7 @@ const PRESETS = [
 
 // 套用预设：合并进当前 UI 配置，保留其它自定义项
 const applyPreset = (preset) => {
-  currentUI.value = { ...(currentUI.value ?? {}), ...preset.ui };
+  currentUI.value = { ...currentUI.value, ...preset.ui };
   ElMessage.success(`已应用「${preset.name}」设计方案`);
 };
 </script>

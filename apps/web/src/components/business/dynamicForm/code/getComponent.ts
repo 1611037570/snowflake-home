@@ -1,4 +1,4 @@
-import { inject } from "vue";
+import { getCurrentInstance, inject } from "vue";
 import { INSTANCE_COMPONENTS } from "./injectionKeys";
 import { componentRegistry } from "./componentRegistry";
 
@@ -14,6 +14,10 @@ export const getComponent = (name: string) => {
   // 1. 优先从实例注入的组件库中查找 (SfDynamicForm 传入的 components prop)
   const instanceComponents = inject<Record<string, any>>(INSTANCE_COMPONENTS, {});
 
-  // 2. 委托给注册中心统一查找
+  // 基础组件统一复用应用全局注册实例，避免再次走动态加载
+  const globalComponent = getCurrentInstance()?.appContext.components[name];
+  if (globalComponent) return globalComponent;
+
+  // 3. 委托给注册中心统一查找
   return componentRegistry.get(name, instanceComponents);
 };

@@ -1,4 +1,5 @@
 import confirm from "@/components/business/confirm";
+import { ElMessage } from "element-plus";
 import {
   addArrayRecord,
   moveArrayRecord,
@@ -21,7 +22,6 @@ import {
   DEFAULT_SYSTEM,
 } from "./defaultConfig";
 import { COLLAPSED, EXPANDED } from "./formConfig";
-import type { SelectedModule } from "./types";
 import {
   bindCollapsedDefault,
   buildRuntimeConfig,
@@ -42,6 +42,43 @@ export const useResumeStore = defineStore(
     const list = ref<any[]>([]);
     // 回收站列表
     const trashList = ref<any[]>([]);
+    const LOCAL_RESUME_STORAGE_LIMIT = 5 * 1024 * 1024;
+    const STORAGE_WARNING_RATIO = 0.8;
+    const STORAGE_DANGER_RATIO = 0.95;
+    let storageWarningLevel = "";
+    // 检测简历持久化数据大小，在接近浏览器容量上限时提醒用户
+    const checkResumeStorage = debounce(async () => {
+      try {
+        const payload = JSON.stringify({
+          list: toRaw(list.value),
+          trashList: toRaw(trashList.value),
+        });
+        const payloadBytes = new Blob([payload]).size;
+        const estimate = await navigator.storage?.estimate();
+        const quotaBytes = estimate?.quota || LOCAL_RESUME_STORAGE_LIMIT;
+        const usageBytes = estimate?.usage || 0;
+        const ratio = Math.max(payloadBytes / LOCAL_RESUME_STORAGE_LIMIT, usageBytes / quotaBytes);
+        const nextLevel =
+          ratio >= STORAGE_DANGER_RATIO
+            ? "danger"
+            : ratio >= STORAGE_WARNING_RATIO
+              ? "warning"
+              : "";
+        if (nextLevel === storageWarningLevel) return;
+        storageWarningLevel = nextLevel;
+        if (nextLevel === "danger") {
+          ElMessage.error("简历本地存储空间接近上限，请立即导出 JSON 备份并清理图片或旧简历。");
+        } else if (nextLevel === "warning") {
+          const size = `${(payloadBytes / 1024 / 1024).toFixed(1)} MB`;
+          ElMessage.warning(
+            `简历本地数据已占用约 ${size}，请及时导出 JSON 备份并清理图片或旧简历。`,
+          );
+        }
+      } catch {
+        // 容量检测失败时不影响简历编辑流程
+      }
+    }, 600);
+    watch([list, trashList], checkResumeStorage, { deep: true, immediate: true });
     // 简历最大数量
     const maxCount = 10;
     // 回收站最大数量
@@ -183,9 +220,9 @@ export const useResumeStore = defineStore(
       return item ? item.usage : undefined;
     });
     // 选中模块的名称列表
-    const selectedModule = ref<SelectedModule[]>([]);
+    const selectedModule = ref<any[]>([]);
     // 获取模块名称
-    const getModel = (key: string): SelectedModule | undefined => {
+    const getModel = (key: string): any => {
       if (!key) return;
       // 模块展示标题统一读取 ui.title
       const moduleTitle = currentData.value?.[key]?.ui?.title;
@@ -211,7 +248,7 @@ export const useResumeStore = defineStore(
       selectedModule.value = [];
     };
     // 整体替换选中模块：导出恢复、跳转定位等场景使用
-    const setSelectedModules = (modules: SelectedModule[]) => {
+    const setSelectedModules = (modules: any[]) => {
       selectedModule.value = modules;
     };
     // 添加选中模块：兼容旧入口
@@ -394,6 +431,10 @@ export const useResumeStore = defineStore(
     // 从回收站恢复简历
     const restoreResume = (trashIndex: number) => {
       if (trashIndex < 0 || trashIndex >= trashList.value.length) return;
+      if (list.value.length >= maxCount) {
+        ElMessage.warning(`简历数量已达到上限（${maxCount}个），请先删除其他简历。`);
+        return;
+      }
       const item = trashList.value[trashIndex];
       delete item._deletedAt;
       list.value.push(item);

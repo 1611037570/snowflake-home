@@ -1,11 +1,8 @@
 /**
  * 组件注册器
  * 其实一个动态注册就够用啦
- * 写全局和动态是为了学习记录使用的~
+ * 提供全局注册与动态加载能力~
  */
-import fs from "fs";
-import path from "path";
-import type { ComponentResolver } from "unplugin-vue-components";
 import { defineAsyncComponent, type App } from "vue";
 
 export function getAllBaseComponent() {
@@ -80,14 +77,13 @@ export const getAllComponent = () => {
 
 /**
  * 按组件名获取加载函数（找不到返回 undefined）
- * 目录命名约定：./base/<name>/index.ts、./business/<name>/index.ts、./el/<name>/index.ts
+ * 目录命名约定：./business/<name>/index.ts、./el/<name>/index.ts
  * 按需组件加载器：glob 仅建立"组件名 → 加载函数"映射，不加载任何模块
  * 供动态表单 ComponentRegistry 按需兜底使用，替代全量预载
  * 注：glob 需在函数内调用，顶层执行 import.meta.glob 会导致 vite.config.ts 加载失败
  */
 export const getComponentLoader = (name: string) => {
   const componentLoaders = {
-    ...import.meta.glob("./base/*/index.ts"),
     ...import.meta.glob("./business/*/index.ts"),
     ...import.meta.glob("./el/*/index.ts"),
   };
@@ -105,37 +101,4 @@ export const globalComponentInstaller = {
       app.component(componentName, component);
     }
   },
-};
-// 通过fs获取基础组件
-function getDynamicComponent(str: string) {
-  const baseDir = path.join(__dirname, str);
-  const entries = fs.readdirSync(baseDir, { withFileTypes: true });
-  return entries.filter((entry) => entry.isDirectory()).map((entry) => entry.name);
-}
-
-export const dynamicComponentResolver = (): ComponentResolver => {
-  return (componentName: string) => {
-    const baseMap = getDynamicComponent("base");
-
-    const name = componentName.slice(2).replace(/^./, (c) => c.toLowerCase());
-    function isBaseComponent(name: string) {
-      return baseMap.includes(name);
-    }
-
-    if (isBaseComponent(name)) {
-      return;
-    }
-    if (!componentName.startsWith("Sf")) {
-      return;
-    }
-    const elMap = getDynamicComponent("el");
-    const fileName = elMap.includes(name) ? "el" : "business";
-    const path = `@components/${fileName}/${name}/index.ts`;
-    return {
-      // importName: name,
-      path,
-      name: componentName,
-      from: path,
-    };
-  };
 };

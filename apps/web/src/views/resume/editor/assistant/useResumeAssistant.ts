@@ -31,7 +31,7 @@ export const useResumeAssistant = () => {
     reflectPrompt:
       "请检查上一条内容：若与用户任务冲突或格式被破坏，只输出修正后的完整内容；否则逐字原样输出。禁止输出任何解释、理解过程、思考、说明、标题或额外新增内容；若上一条内容本身是提问或交互内容，保持原样，不得拆分或补充新问题。",
     // 工具名未注册属可恢复错误：返回错误与可用工具清单让模型重调；其它执行错误保持中断
-    onToolError: ({ toolCall, error, tools }) => {
+    onToolError: ({ error, tools }) => {
       if (error instanceof ToolNotFoundError) {
         return { error: error.message, guide: buildToolGuide(tools) };
       }
