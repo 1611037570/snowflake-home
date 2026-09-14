@@ -1,6 +1,7 @@
 <template>
   <div class="text-sf-text" @click="toggleTheme">
-    <ElDropdown trigger="hover">
+    <!-- 统一使用下拉封装，避免直接触发下拉组件的递归更新。 -->
+    <SfDropdown trigger="hover">
       <SfIcon
         :icon="theme === 'dark' ? 'twemoji:sun' : 'ri:moon-clear-fill'"
         size="8"
@@ -20,7 +21,7 @@
           </template>
         </SfList>
       </template>
-    </ElDropdown>
+    </SfDropdown>
   </div>
 </template>
 
