@@ -3,12 +3,7 @@ import HistoryNav from "./historyNav.vue";
 import Title from "./title.vue";
 import LocalBackup from "./localBackup.vue";
 import ExportResume from "./exportResume/index.vue";
-import { useRouter } from "vue-router";
-const router = useRouter();
-
-const handleBack = () => {
-  router.push("/resume/mine");
-};
+import ProjectTitle from "../../../components/projectTitle.vue";
 </script>
 
 <template>
@@ -17,14 +12,7 @@ const handleBack = () => {
   >
     <!-- 左侧占位 -->
     <div class="flex flex-1 items-center">
-      <div
-        @click="handleBack"
-        class="flex cursor-pointer items-center gap-1.5 rounded-full px-3 py-1 text-sf-theme transition-all hover:bg-sf-theme-3"
-      >
-        <SfLogo size="5.5" class="animate-pulse" name="resume" />
-
-        <span class="text-base font-bold tracking-wide">{{ $t("router.resume") }}</span>
-      </div>
+      <ProjectTitle />
       <div class="mx-3 text-sf-text-3">/</div>
       <Title />
       <LocalBackup />
