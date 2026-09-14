@@ -9,24 +9,36 @@
         class="resume-home__reveal resume-home__hero relative mx-auto grid min-h-screen max-w-[1440px] items-center gap-12 px-6 pt-24 pb-12 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] lg:px-12"
       >
         <article class="relative z-10 mx-auto max-w-2xl text-center lg:mx-0 lg:text-left">
-          <p
-            class="animate-rise mb-6 inline-flex items-center gap-3 rounded-full border border-sf-b bg-sf-primary px-3 py-3 text-sm text-sf-text-2 shadow-sm"
-          >
-            <SfIcon icon="lucide:sparkles" size="4" class="text-sf-theme" />
-            轻舟简历 · 一叶轻舟，助你渡过万重山
-          </p>
           <h1
             class="animate-rise animate-rise--delay-one text-5xl leading-[1.15] font-black tracking-[-0.06em] sm:text-6xl lg:text-7xl"
           >
-            写好<span class="resume-home__highlight">轻舟简历</span>，<br />
-            让经历抵达下一站
+            一叶<span class="resume-home__highlight">轻舟</span>，<br />
+            助你渡过万重山
           </h1>
-          <p
-            class="animate-rise animate-rise--delay-two mx-auto mt-6 max-w-xl text-base leading-8 text-sf-text-2 sm:text-lg lg:mx-0"
+          <dl
+            class="animate-rise animate-rise--delay-three grid grid-cols-1 pt-8 text-left sm:grid-cols-3"
           >
-            轻舟简历把零散经历梳理成有说服力的职业故事。从 AI
-            表达优化、实时编辑，到模板、投递统计与多格式导出，为求职准备一整套顺手的工具。
-          </p>
+            <div class="flex flex-col justify-center border-r border-sf-b pr-3">
+              <dt class="text-xl font-black sm:text-2xl">
+                <span class="text-sf-theme">10</span> 款专业模板
+              </dt>
+              <dd class="mt-3 text-xs text-sf-text-3 sm:text-sm">总有你喜欢的</dd>
+            </div>
+            <div class="flex flex-col justify-center border-r border-sf-b px-3">
+              <dt class="text-xl font-black sm:text-2xl">
+                <span class="text-sf-theme">5</span> 个导出方式
+              </dt>
+              <dd class="mt-3 text-xs text-sf-text-3 sm:text-sm">应对不同场景</dd>
+            </div>
+            <div
+              class="flex flex-col justify-center border-r border-sf-b pt-6 pr-3 sm:border-r sm:border-r-0 sm:px-3 sm:pt-0"
+            >
+              <dt class="text-xl font-black sm:text-2xl">
+                <span class="text-sf-theme">2</span> 种编辑方式
+              </dt>
+              <dd class="mt-3 text-xs text-sf-text-3 sm:text-sm">内置AI和强大编辑器</dd>
+            </div>
+          </dl>
           <div
             class="animate-rise animate-rise--delay-three mt-9 flex flex-col justify-center gap-3 sm:flex-row lg:justify-start"
           >
@@ -34,7 +46,7 @@
               class="group inline-flex cursor-pointer items-center justify-center gap-3 rounded-full bg-sf-theme px-6 py-3 font-semibold text-sf-theme-text transition-transform duration-300 hover:-translate-y-1"
               @click="go"
             >
-              开始制作简历
+              免费制作简历
               <SfIcon
                 icon="mingcute:arrow-right-line"
                 size="4"
@@ -49,26 +61,6 @@
               <SfIcon icon="mingcute:arrow-down-line" size="4" />
             </a>
           </div>
-          <dl
-            class="animate-rise animate-rise--delay-three mt-12 grid grid-cols-2 border-t border-sf-b pt-6 text-left sm:grid-cols-4"
-          >
-            <div class="border-r border-sf-b pr-3">
-              <dt class="text-xl font-black sm:text-2xl">10 款</dt>
-              <dd class="mt-3 text-xs text-sf-text-3 sm:text-sm">专业简历模板</dd>
-            </div>
-            <div class="border-r border-sf-b px-3">
-              <dt class="text-xl font-black sm:text-2xl">5 类</dt>
-              <dd class="mt-3 text-xs text-sf-text-3 sm:text-sm">投递与备份导出</dd>
-            </div>
-            <div class="border-r border-sf-b pt-6 pr-3 sm:border-r-0 sm:px-3 sm:pt-0">
-              <dt class="text-xl font-black sm:text-2xl">AI 助手</dt>
-              <dd class="mt-3 text-xs text-sf-text-3 sm:text-sm">让表达更精准</dd>
-            </div>
-            <div class="pt-6 pl-3 sm:pt-0">
-              <dt class="text-xl font-black sm:text-2xl">实时编辑</dt>
-              <dd class="mt-3 text-xs text-sf-text-3 sm:text-sm">细节随改随见</dd>
-            </div>
-          </dl>
         </article>
 
         <div class="animate-float relative mx-auto w-full max-w-2xl lg:mr-0">
@@ -81,8 +73,7 @@
               <SfIcon icon="lucide:sparkles" size="4" />
             </span>
             <span>
-              <strong class="block text-sm">AI 正在润色</strong>
-              <small class="text-xs text-sf-text-3">表达更有说服力</small>
+              <strong class="block text-sm">全部模板永久免费</strong>
             </span>
           </div>
           <div
@@ -129,7 +120,7 @@
               >
                 <SfIcon icon="lucide:check" size="4" />
               </span>
-              <span class="text-sm font-medium">一键导出，排版如初</span>
+              <span class="text-sm font-medium">导出功能永久免费</span>
             </div>
           </div>
         </div>
@@ -144,12 +135,9 @@
           <div class="max-w-2xl">
             <p class="text-sm font-semibold tracking-[0.18em] text-sf-theme">一条清晰的求职路径</p>
             <h2 class="mt-3 text-3xl font-black tracking-[-0.04em] sm:text-4xl">
-              不只做一份简历，帮你走完整个求职过程。
+              不只做一份简历，陪你走完整个求职过程。
             </h2>
           </div>
-          <p class="max-w-md leading-7 text-sf-text-2">
-            先用模板与编辑器完成表达，再借助 AI 对准岗位，最后完成投递、跟进与复盘。
-          </p>
         </div>
         <div class="resume-home__journey-grid mt-12 grid gap-3 md:grid-cols-4">
           <article
@@ -157,9 +145,10 @@
             :key="step.title"
             class="resume-home__journey-card group relative rounded-[24px] border border-sf-b bg-sf-primary p-6 transition-transform duration-300 hover:-translate-y-2"
           >
-            <span class="text-sm font-black text-sf-theme">0{{ index + 1 }}</span>
-            <SfIcon :icon="step.icon" size="6" class="mt-9 text-sf-theme" />
-            <h3 class="mt-6 text-xl font-bold">{{ step.title }}</h3>
+            <div class="flex items-center gap-3">
+              <span class="text-sm font-black text-sf-theme">0{{ index + 1 }}</span>
+              <div class="text-xl font-bold">{{ step.title }}</div>
+            </div>
             <p class="mt-3 leading-7 text-sf-text-2">{{ step.description }}</p>
           </article>
         </div>
@@ -218,16 +207,8 @@
         :ref="registerRevealSection"
         class="resume-home__reveal relative mx-auto flex min-h-screen max-w-[1440px] items-center px-6 py-18 lg:px-12"
       >
-        <div
-          class="resume-home__closing relative overflow-hidden rounded-[30px] border border-sf-b bg-sf-primary px-6 py-12 text-center sm:px-12"
-        >
-          <span class="resume-home__closing-orbit resume-home__closing-orbit--one"></span>
-          <span class="resume-home__closing-orbit resume-home__closing-orbit--two"></span>
+        <div class="relative w-full overflow-hidden rounded-[30px] px-6 py-12 text-center sm:px-12">
           <div class="relative mx-auto max-w-2xl">
-            <span
-              class="mx-auto flex h-15 w-15 items-center justify-center rounded-2xl bg-sf-theme text-sf-theme-text shadow-lg"
-              ><SfIcon icon="lucide:sparkles" size="8"
-            /></span>
             <h2 class="mt-6 text-3xl font-black tracking-[-0.04em] sm:text-4xl">
               现在，写下那个更好的自己。
             </h2>
@@ -276,23 +257,19 @@ useIntersectionObserver(
 
 const journeySteps = [
   {
-    icon: "ph:file-md-duotone",
     title: "创建简历",
-    description: "从空白、快速填写或模板开始，为不同岗位准备不同版本。",
+    description: "从任意起点开始，都能找到适合自己的创建方式。",
   },
   {
-    icon: "mdi:widgets",
     title: "云帆编辑器",
-    description: "编辑模块、调整样式、实时预览，并完成导出、分享与备份。",
+    description: "编辑模块、调整样式、实时预览，完成导出与备份。",
   },
   {
-    icon: "ph:brain-duotone",
     title: "小舟 AI 助手",
-    description: "生成、优化、翻译与 JD 对标，也为面试准备提供针对性练习。",
+    description: "支持一键优化，能面试准备提供针对性练习。",
   },
   {
-    icon: "mdi:chart-pie",
-    title: "星轨求职统计",
+    title: "星轨统计",
     description: "记录投递、跟进与 offer，用趋势和数据看清下一步方向。",
   },
 ];
@@ -309,7 +286,7 @@ const featureGroups = [
     items: [
       "从空白、基础信息或模板开始创建",
       "复制已有简历，为不同岗位单独准备",
-      "10 款模板支持全屏预览后再使用",
+      "AI智能解析已有简历，快速创建新版本",
       "导入 JSON 完整备份，继续编辑旧简历",
     ],
   },
@@ -347,7 +324,7 @@ const featureGroups = [
   {
     icon: "mdi:chart-pie",
     id: "statistics",
-    eyebrow: "星轨求职统计",
+    eyebrow: "星轨统计",
     title: "记录每一份机会",
     description: "简历完成不是终点，投递节奏、面试进展和成果都值得被看见。",
     shotTitle: "投递统计截图预留区",
@@ -394,9 +371,6 @@ function go() {
 
 .resume-home__highlight {
   color: var(--sf-theme);
-  text-decoration: underline;
-  text-decoration-color: var(--sf-theme-2);
-  text-underline-offset: 0.16em;
 }
 
 .resume-home__preview {
