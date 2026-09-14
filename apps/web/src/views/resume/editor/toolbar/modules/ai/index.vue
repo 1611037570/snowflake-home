@@ -20,7 +20,7 @@ function openDrawer() {
   </div>
 
   <!-- 设置弹窗 -->
-  <SfModal v-model="modelManagerVisible" title="服务商设置" width="640px">
+  <SfModal v-model="modelManagerVisible" title="服务商设置" width="720px">
     <ProviderSettingsContent class="h-[460px]" />
   </SfModal>
 </template>
