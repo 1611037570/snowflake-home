@@ -9,7 +9,7 @@ import { LLM } from "@/apis";
 const emit = defineEmits<{ jumpAdd: [] }>();
 
 const aiStore = useAiStore();
-const { activeModel, modelList } = storeToRefs(aiStore);
+const { modelList } = storeToRefs(aiStore);
 const balanceMap = ref<Record<string, string>>({});
 const balanceLoading = ref<Record<string, boolean>>({});
 
@@ -24,7 +24,6 @@ const displayList = computed(() =>
     url: m.url,
     protocol: m.protocol === "responses" ? "responses" : "chatCompletions",
     balanceSupported: !m.builtin && m.name !== "雪花服务" && m.provider !== "snowflake",
-    // active: activeModel.value === m.id,
   })),
 );
 
@@ -65,12 +64,7 @@ async function queryBalance(item: any) {
   }
 }
 
-// 点击模型：切换为当前使用模型
-function selectModel(item: any) {
-  aiStore.activeModel = item.id;
-}
-
-// 行内删除已添加的模型（激活项删除后 store 会自动回退雪花服务）
+// 行内删除已添加的模型
 function removeModel(item: any) {
   ElMessageBox.confirm("确定要删除该模型吗？此操作不可恢复。", "删除模型", {
     type: "warning",
@@ -89,12 +83,11 @@ function removeModel(item: any) {
     <el-button type="primary" @click="emit('jumpAdd')">去添加</el-button>
   </div>
 
-  <!-- 模型列表：点击切换当前使用，行内提供删除 -->
-  <SfList v-else :list="displayList" @onClick="selectModel">
+  <!-- 模型列表：仅展示已添加模型，行内提供删除 -->
+  <SfList v-else :list="displayList">
     <template #default="{ item }">
       <div class="flex min-w-0 flex-1 items-center gap-2">
         <span class="truncate">{{ item.name }}</span>
-        <span v-if="activeModel === item.id" class="text-sf-theme">已选中</span>
       </div>
 
       <div class="flex shrink-0 items-center gap-3">

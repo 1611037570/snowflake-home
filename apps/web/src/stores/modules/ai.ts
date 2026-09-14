@@ -85,11 +85,9 @@ let resumeAssistantChatFactory: (() => Chat) | null = null;
 export const useAiStore = defineStore(
   "ai",
   () => {
-    // 激活的模型标识：snowflake（雪花内置服务）或 ModelItem.id
-    const activeModel = ref<string>("snowflake");
     // 已添加的用户模型列表（持久化到 localStorage）
     const modelList = ref<ModelItem[]>([]);
-    // 三个业务角色分别绑定模型，空值时兼容回退到旧的当前模型
+    // 三个业务角色分别绑定模型
     const agentModels = ref<AiAgentModels>({
       xiaoZhou: "",
       xiaoYang: "",
@@ -292,12 +290,9 @@ export const useAiStore = defineStore(
       }
     }
 
-    // 获取角色绑定的模型，配置失效时回退到旧的当前模型
+    // 获取角色绑定的模型
     function getAgentModelId(agent: AiAgentKey) {
-      const modelId = agentModels.value[agent];
-      return modelId && modelList.value.some((model) => model.id === modelId)
-        ? modelId
-        : activeModel.value;
+      return agentModels.value[agent];
     }
 
     // 保存角色绑定的模型
@@ -322,7 +317,6 @@ export const useAiStore = defineStore(
       currentChatId,
       currentChat,
       currentMessages,
-      activeModel,
       modelList,
       agentModels,
       thinkMode,
@@ -357,7 +351,6 @@ export const useAiStore = defineStore(
       pick: [
         "sidebarMode",
         "currentChatId",
-        "activeModel",
         "modelList",
         "agentModels",
         "resumeAssistantChat",
