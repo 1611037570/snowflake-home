@@ -146,50 +146,7 @@ export const DEFAULT_USER_FORM = [
           type: "month",
         },
       },
-      // 手机号
-      {
-        type: "object",
-        key: "phone",
-        label: "电话",
-        tip: "推荐必填",
-        component: "input",
-        span: 24,
-        ui: {
-          layout: "horizontal",
-          icon: {
-            source: ["user", "ui", "phone", "icon"],
-            prop: "icon",
-            defaultValue: "mdi:phone",
-          },
-          hidden: {
-            source: ["user", "ui", "phone", "hidden"],
-            prop: "hidden",
-            defaultValue: false,
-          },
-        },
-        checks: {
-          hidden: {
-            path: ["user", "ui", "phone", "hidden"],
-            equals: true,
-          },
-        },
-        model: {
-          source: ["user", "data", "phone"],
-          prop: "modelValue",
-        },
-        props: {
-          placeholder: "请输入电话",
-          clearable: true,
-        },
-        rules: [
-          { required: true, message: "请输入手机号", trigger: "blur" },
-          {
-            pattern: /^1[3-9]\d{9}$/,
-            message: "请输入正确的手机号",
-            trigger: "blur",
-          },
-        ],
-      },
+
       // 性别
       {
         type: "object",
@@ -311,6 +268,50 @@ export const DEFAULT_USER_FORM = [
           },
         ],
         fields: [
+          // 手机号
+          {
+            type: "object",
+            key: "phone",
+            label: "电话",
+            tip: "推荐必填",
+            component: "input",
+            span: 24,
+            ui: {
+              layout: "horizontal",
+              icon: {
+                source: ["user", "ui", "phone", "icon"],
+                prop: "icon",
+                defaultValue: "mdi:phone",
+              },
+              hidden: {
+                source: ["user", "ui", "phone", "hidden"],
+                prop: "hidden",
+                defaultValue: false,
+              },
+            },
+            checks: {
+              hidden: {
+                path: ["user", "ui", "phone", "hidden"],
+                equals: true,
+              },
+            },
+            model: {
+              source: ["user", "data", "phone"],
+              prop: "modelValue",
+            },
+            props: {
+              placeholder: "请输入电话",
+              clearable: true,
+            },
+            rules: [
+              { required: true, message: "请输入手机号", trigger: "blur" },
+              {
+                pattern: /^1[3-9]\d{9}$/,
+                message: "请输入正确的手机号",
+                trigger: "blur",
+              },
+            ],
+          },
           {
             type: "object",
             key: "email",
