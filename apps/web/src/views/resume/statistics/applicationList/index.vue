@@ -12,11 +12,6 @@ const { applications, followUps } = storeToRefs(statisticsStore);
 // 是否有数据（无数据时显示空状态，屏蔽 SfTab）
 const hasData = computed(() => applications.value.length || followUps.value.length);
 
-// 标记上岸
-const handleLanded = () => {
-  statisticsStore.markLanded();
-};
-
 // 表格切换标签页
 const activeTab = ref("applications");
 // 标签名称拼接当前列表总条数
@@ -81,11 +76,8 @@ const openFollow = (item) => {
           <SfTab v-model="activeTab" :list="tabList" class="bg-sf-primary"> </SfTab>
         </div>
       </div>
-      <div class="flex items-center gap-3">
-        <div class="hidden text-xs text-sf-text-2 lg:block">
-          {{ $t("router.resumeStatisticsDesc") }}
-        </div>
-        <el-button type="success" plain @click="handleLanded">上岸</el-button>
+      <div class="hidden text-xs text-sf-text-2 lg:block">
+        {{ $t("router.resumeStatisticsDesc") }}
       </div>
     </div>
 
