@@ -81,7 +81,7 @@ export const DEFAULT_USER_FORM = [
         ui: {
           layout: "horizontal",
           hidden: {
-            source: ["ui", "fields", "name", "hidden"],
+            source: ["user", "ui", "name", "hidden"],
             prop: "hidden",
             defaultValue: false,
           },
@@ -109,7 +109,7 @@ export const DEFAULT_USER_FORM = [
         ],
         checks: {
           hidden: {
-            path: ["ui", "fields", "name", "hidden"],
+            path: ["user", "ui", "name", "hidden"],
             equals: true,
           },
         },
@@ -125,14 +125,14 @@ export const DEFAULT_USER_FORM = [
         ui: {
           layout: "horizontal",
           hidden: {
-            source: ["ui", "fields", "birthday", "hidden"],
+            source: ["user", "ui", "birthday", "hidden"],
             prop: "hidden",
             defaultValue: false,
           },
         },
         checks: {
           hidden: {
-            path: ["ui", "fields", "birthday", "hidden"],
+            path: ["user", "ui", "birthday", "hidden"],
             equals: true,
           },
         },
@@ -157,19 +157,19 @@ export const DEFAULT_USER_FORM = [
         ui: {
           layout: "horizontal",
           icon: {
-            source: ["ui", "fields", "phone", "icon"],
+            source: ["user", "ui", "phone", "icon"],
             prop: "icon",
             defaultValue: "mdi:phone",
           },
           hidden: {
-            source: ["ui", "fields", "phone", "hidden"],
+            source: ["user", "ui", "phone", "hidden"],
             prop: "hidden",
             defaultValue: false,
           },
         },
         checks: {
           hidden: {
-            path: ["ui", "fields", "phone", "hidden"],
+            path: ["user", "ui", "phone", "hidden"],
             equals: true,
           },
         },
@@ -201,14 +201,14 @@ export const DEFAULT_USER_FORM = [
         ui: {
           layout: "horizontal",
           hidden: {
-            source: ["ui", "fields", "sex", "hidden"],
+            source: ["user", "ui", "sex", "hidden"],
             prop: "hidden",
             defaultValue: false,
           },
         },
         checks: {
           hidden: {
-            path: ["ui", "fields", "sex", "hidden"],
+            path: ["user", "ui", "sex", "hidden"],
             equals: true,
           },
         },
@@ -239,14 +239,14 @@ export const DEFAULT_USER_FORM = [
         ui: {
           layout: "horizontal",
           hidden: {
-            source: ["ui", "fields", "position", "hidden"],
+            source: ["user", "ui", "position", "hidden"],
             prop: "hidden",
             defaultValue: false,
           },
         },
         checks: {
           hidden: {
-            path: ["ui", "fields", "position", "hidden"],
+            path: ["user", "ui", "position", "hidden"],
             equals: true,
           },
         },
@@ -270,14 +270,14 @@ export const DEFAULT_USER_FORM = [
         ui: {
           layout: "horizontal",
           hidden: {
-            source: ["ui", "fields", "workTime", "hidden"],
+            source: ["user", "ui", "workTime", "hidden"],
             prop: "hidden",
             defaultValue: false,
           },
         },
         checks: {
           hidden: {
-            path: ["ui", "fields", "workTime", "hidden"],
+            path: ["user", "ui", "workTime", "hidden"],
             equals: true,
           },
         },
@@ -321,12 +321,12 @@ export const DEFAULT_USER_FORM = [
             ui: {
               layout: "horizontal",
               icon: {
-                source: ["ui", "fields", "email", "icon"],
+                source: ["user", "ui", "email", "icon"],
                 prop: "icon",
                 defaultValue: "mdi:email-outline",
               },
               hidden: {
-                source: ["ui", "fields", "email", "hidden"],
+                source: ["user", "ui", "email", "hidden"],
                 prop: "hidden",
                 defaultValue: false,
               },
@@ -334,7 +334,7 @@ export const DEFAULT_USER_FORM = [
             },
             checks: {
               hidden: {
-                path: ["ui", "fields", "email", "hidden"],
+                path: ["user", "ui", "email", "hidden"],
                 equals: true,
               },
             },
@@ -366,12 +366,12 @@ export const DEFAULT_USER_FORM = [
             ui: {
               layout: "horizontal",
               icon: {
-                source: ["ui", "fields", "wechat", "icon"],
+                source: ["user", "ui", "wechat", "icon"],
                 prop: "icon",
                 defaultValue: "mdi:wechat",
               },
               hidden: {
-                source: ["ui", "fields", "wechat", "hidden"],
+                source: ["user", "ui", "wechat", "hidden"],
                 prop: "hidden",
                 defaultValue: false,
               },
@@ -379,7 +379,7 @@ export const DEFAULT_USER_FORM = [
             },
             checks: {
               hidden: {
-                path: ["ui", "fields", "wechat", "hidden"],
+                path: ["user", "ui", "wechat", "hidden"],
                 equals: true,
               },
             },
@@ -403,12 +403,12 @@ export const DEFAULT_USER_FORM = [
             ui: {
               layout: "horizontal",
               icon: {
-                source: ["ui", "fields", "status", "icon"],
+                source: ["user", "ui", "status", "icon"],
                 prop: "icon",
                 defaultValue: "mdi:briefcase-check-outline",
               },
               hidden: {
-                source: ["ui", "fields", "status", "hidden"],
+                source: ["user", "ui", "status", "hidden"],
                 prop: "hidden",
                 defaultValue: false,
               },
@@ -416,7 +416,7 @@ export const DEFAULT_USER_FORM = [
             },
             checks: {
               hidden: {
-                path: ["ui", "fields", "status", "hidden"],
+                path: ["user", "ui", "status", "hidden"],
                 equals: true,
               },
             },
@@ -447,12 +447,12 @@ export const DEFAULT_USER_FORM = [
             ui: {
               layout: "horizontal",
               icon: {
-                source: ["ui", "fields", "political", "icon"],
+                source: ["user", "ui", "political", "icon"],
                 prop: "icon",
                 defaultValue: "mdi:flag-outline",
               },
               hidden: {
-                source: ["ui", "fields", "political", "hidden"],
+                source: ["user", "ui", "political", "hidden"],
                 prop: "hidden",
                 defaultValue: false,
               },
@@ -460,7 +460,7 @@ export const DEFAULT_USER_FORM = [
             },
             checks: {
               hidden: {
-                path: ["ui", "fields", "political", "hidden"],
+                path: ["user", "ui", "political", "hidden"],
                 equals: true,
               },
             },
@@ -491,12 +491,12 @@ export const DEFAULT_USER_FORM = [
             ui: {
               layout: "horizontal",
               icon: {
-                source: ["ui", "fields", "city", "icon"],
+                source: ["user", "ui", "city", "icon"],
                 prop: "icon",
                 defaultValue: "mdi:map-marker-outline",
               },
               hidden: {
-                source: ["ui", "fields", "city", "hidden"],
+                source: ["user", "ui", "city", "hidden"],
                 prop: "hidden",
                 defaultValue: false,
               },
@@ -504,7 +504,7 @@ export const DEFAULT_USER_FORM = [
             },
             checks: {
               hidden: {
-                path: ["ui", "fields", "city", "hidden"],
+                path: ["user", "ui", "city", "hidden"],
                 equals: true,
               },
             },
@@ -527,12 +527,12 @@ export const DEFAULT_USER_FORM = [
             ui: {
               layout: "horizontal",
               icon: {
-                source: ["ui", "fields", "nativePlace", "icon"],
+                source: ["user", "ui", "nativePlace", "icon"],
                 prop: "icon",
                 defaultValue: "mdi:home-outline",
               },
               hidden: {
-                source: ["ui", "fields", "nativePlace", "hidden"],
+                source: ["user", "ui", "nativePlace", "hidden"],
                 prop: "hidden",
                 defaultValue: false,
               },
@@ -540,7 +540,7 @@ export const DEFAULT_USER_FORM = [
             },
             checks: {
               hidden: {
-                path: ["ui", "fields", "nativePlace", "hidden"],
+                path: ["user", "ui", "nativePlace", "hidden"],
                 equals: true,
               },
             },
@@ -562,12 +562,12 @@ export const DEFAULT_USER_FORM = [
             ui: {
               layout: "horizontal",
               icon: {
-                source: ["ui", "fields", "heightWeight", "icon"],
+                source: ["user", "ui", "heightWeight", "icon"],
                 prop: "icon",
                 defaultValue: "mdi:human-male-height",
               },
               hidden: {
-                source: ["ui", "fields", "heightWeight", "hidden"],
+                source: ["user", "ui", "heightWeight", "hidden"],
                 prop: "hidden",
                 defaultValue: false,
               },
@@ -575,7 +575,7 @@ export const DEFAULT_USER_FORM = [
             },
             checks: {
               hidden: {
-                path: ["ui", "fields", "heightWeight", "hidden"],
+                path: ["user", "ui", "heightWeight", "hidden"],
                 equals: true,
               },
             },
