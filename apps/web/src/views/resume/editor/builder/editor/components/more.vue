@@ -1,8 +1,14 @@
 <script setup>
 import { computed, inject } from "vue";
+import { useResumeStore } from "@/stores";
 import { EXPANDED } from "@/stores/modules/resume/formConfig";
+import { addUserCustomField } from "@/stores/modules/resume/hooks/useUserCustomField";
+import { getUUID } from "@/utils";
+import { storeToRefs } from "pinia";
 
 const { currentForm, hasFieldData, addField, getFieldDataKey } = inject("df/context")();
+const resumeStore = useResumeStore();
+const { runtimeConfig, currentData } = storeToRefs(resumeStore);
 
 // 更多配置展开状态：数组含 "1" 表示展开，与模块折叠语义一致
 const collapsed = defineModel("collapsed", {
@@ -11,6 +17,8 @@ const collapsed = defineModel("collapsed", {
 });
 
 const expanded = computed(() => collapsed.value.includes(EXPANDED[0] ?? "1"));
+const showCustomModal = ref(false);
+const customFieldLabel = ref("");
 // 只展示结构中声明为可添加且数据路径尚不存在的字段
 const availableFields = computed(() =>
   (currentForm.value?.fields ?? []).filter(
@@ -34,6 +42,18 @@ function handleAdd(field) {
     fields.push(field);
   }
 }
+
+// 自定义字段直接插入更多字段配置，并写入对应的真实数据值
+function handleCreateCustomField() {
+  const label = customFieldLabel.value.trim();
+  if (!label || !runtimeConfig.value || !currentData.value) return;
+
+  const key = `custom_${getUUID().substring(0, 8)}`;
+  if (addUserCustomField(runtimeConfig.value, currentData.value, key, label)) {
+    showCustomModal.value = false;
+    customFieldLabel.value = "";
+  }
+}
 </script>
 
 <template>
@@ -42,7 +62,6 @@ function handleAdd(field) {
     <slot />
     <!-- 更多配置开关 -->
     <button
-      v-if="availableFields.length"
       type="button"
       class="flex cursor-pointer items-center gap-3 pt-3 text-sm text-sf-theme transition-colors"
       @click="toggle"
@@ -51,7 +70,7 @@ function handleAdd(field) {
       <SfIcon :icon="expanded ? 'fa6-solid:caret-up' : 'fa6-solid:caret-down'" size="3" />
     </button>
     <!-- 展开后展示尚未添加的字段 -->
-    <div v-if="expanded && availableFields.length" class="mt-3 flex flex-wrap gap-3">
+    <div v-if="expanded" class="mt-3 flex flex-wrap gap-3">
       <button
         v-for="field in availableFields"
         :key="getFieldDataKey(field)"
@@ -61,7 +80,29 @@ function handleAdd(field) {
       >
         + {{ field.label }}
       </button>
+      <button
+        type="button"
+        class="h-9 cursor-pointer rounded-lg border border-dashed border-sf-border bg-sf-primary px-3 text-sm text-sf-text-2 transition-colors hover:border-sf-theme hover:text-sf-theme"
+        @click="showCustomModal = true"
+      >
+        + 自定义字段
+      </button>
     </div>
+
+    <SfModal v-model="showCustomModal" title="新增自定义字段">
+      <form class="flex w-80 flex-col gap-3 p-3" @submit.prevent="handleCreateCustomField">
+        <SfInput v-model="customFieldLabel" placeholder="请输入字段名称" />
+        <footer class="flex justify-end gap-3">
+          <el-button @click="showCustomModal = false">取消</el-button>
+          <el-button
+            type="primary"
+            :disabled="!customFieldLabel.trim()"
+            @click="handleCreateCustomField"
+            >保存</el-button
+          >
+        </footer>
+      </form>
+    </SfModal>
   </div>
 </template>
 
