@@ -22,41 +22,27 @@
             </span>
             <sf-tooltip :content="currentForm.tip" v-if="currentForm.tip" class="text-sf-text" />
           </div>
-          <button
+          <SfIcon
             v-if="currentForm.ui?.hidden"
-            type="button"
-            class="flex items-center"
             @pointerdown.stop.prevent
             @click.stop.prevent="toggleHidden"
-          >
-            <SfIcon
-              :icon="hidden ? 'lucide:eye' : 'lucide:eye-off'"
-              size="4"
-              class="pointer-events-none cursor-pointer hover:text-sf-theme"
-            />
-          </button>
-          <button
+            :icon="hidden ? 'lucide:eye' : 'lucide:eye-off'"
+            size="4"
+            class="cursor-pointer hover:text-sf-theme"
+          />
+          <SfIcon
             v-if="currentForm.ui?.removable"
-            type="button"
-            class="flex items-center"
             @pointerdown.stop.prevent
             @click.stop.prevent="removeField"
-          >
-            <SfIcon
-              icon="ic:round-delete"
-              size="4"
-              class="pointer-events-none cursor-pointer hover:text-sf-theme"
-            />
-          </button>
+            icon="ic:round-delete"
+            size="4"
+            class="cursor-pointer hover:text-sf-theme"
+          />
         </div>
       </template>
       <template v-if="layout === 'horizontal'">
         <div class="flex w-full items-center gap-3">
-          <div
-            v-if="currentForm.label"
-            class="flex w-36 shrink-0 items-center"
-            @click.stop.prevent=""
-          >
+          <div v-if="currentForm.label" class="flex shrink-0 items-center" @click.stop.prevent="">
             <SfIcon
               v-if="draggable"
               @click.stop=""
@@ -78,32 +64,22 @@
             v-if="currentForm.ui?.hidden || currentForm.ui?.removable"
             class="flex shrink-0 items-center gap-3"
           >
-            <button
+            <SfIcon
               v-if="currentForm.ui?.hidden"
-              type="button"
-              class="flex items-center"
               @pointerdown.stop.prevent
               @click.stop.prevent="toggleHidden"
-            >
-              <SfIcon
-                :icon="hidden ? 'lucide:eye' : 'lucide:eye-off'"
-                size="4"
-                class="pointer-events-none cursor-pointer hover:text-sf-theme"
-              />
-            </button>
-            <button
+              :icon="hidden ? 'lucide:eye' : 'lucide:eye-off'"
+              size="4"
+              class="cursor-pointer hover:text-sf-theme"
+            />
+            <SfIcon
               v-if="currentForm.ui?.removable"
-              type="button"
-              class="flex items-center"
               @pointerdown.stop.prevent
               @click.stop.prevent="removeField"
-            >
-              <SfIcon
-                icon="ic:round-delete"
-                size="4"
-                class="pointer-events-none cursor-pointer hover:text-sf-theme"
-              />
-            </button>
+              icon="ic:round-delete"
+              size="4"
+              class="cursor-pointer hover:text-sf-theme"
+            />
           </div>
         </div>
       </template>
