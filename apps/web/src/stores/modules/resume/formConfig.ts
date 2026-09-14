@@ -281,7 +281,7 @@ export const DEFAULT_USER_FORM = [
         type: "group",
         drag: true,
         dragClass: DEFAULT_DRAG_CLASS,
-        colClass: DEFAULT_COL_CLASS,
+        itemClass: DEFAULT_COL_CLASS,
         key: "more",
         component: "more",
         slot: "default",
