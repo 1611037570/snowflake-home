@@ -109,21 +109,15 @@ const startFeature = () => {
       <span>{{ assistantDescription }}</span>
     </div>
     <!-- 两个轻量分类保持当前页面以简历编辑为主，面试功能按需展开 -->
-    <div class="flex items-center gap-3 rounded-xl bg-sf-bg p-3">
-      <SfTab v-model="activeCategory" :list="categories" />
-    </div>
+    <SfTab v-model="activeCategory" :list="categories" />
     <div class="flex flex-wrap items-center justify-center gap-x-3 text-sm">✨📄你可以这样问</div>
     <!-- 一键优化入口独立置顶并突出主题色 -->
     <div v-if="oneKeyOptimize" class="flex w-full max-w-md justify-center">
       <button
-        class="group/card flex w-1/2 cursor-pointer items-center justify-center gap-3 rounded-xl bg-sf-theme p-3 text-sf-theme-text transition-all duration-300 hover:-translate-y-0.5 hover:bg-sf-theme-2 active:scale-[0.98]"
+        class="group/card flex w-[140px] cursor-pointer items-center justify-center gap-1 rounded-3xl bg-sf-theme p-2 text-sf-theme-text transition-all duration-300 hover:-translate-y-0.5 hover:bg-sf-theme-2 active:scale-[0.98]"
         @click="handleSuggest(oneKeyOptimize)"
       >
-        <div
-          class="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-sf-theme-2 text-sf-theme-text transition-colors duration-300"
-        >
-          <SfIcon :icon="oneKeyOptimize.icon" size="4.5" />
-        </div>
+        <SfIcon :icon="oneKeyOptimize.icon" size="4.5" />
         <h3 class="text-[14px] font-bold tracking-tight">
           {{ oneKeyOptimize.title }}
         </h3>
@@ -134,14 +128,10 @@ const startFeature = () => {
       <button
         v-for="card in commonSuggestions"
         :key="card.title"
-        class="group/card flex cursor-pointer items-center gap-3 rounded-xl bg-sf-bg p-3 text-left transition-all duration-300 hover:-translate-y-0.5 hover:border-sf-theme active:scale-[0.98]"
+        class="group/card flex cursor-pointer items-center gap-3 rounded-3xl bg-sf-bg p-3 text-left transition-all duration-300 hover:-translate-y-0.5 hover:border-sf-theme active:scale-[0.98]"
         @click="handleSuggest(card)"
       >
-        <div
-          class="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-sf-bg-2 text-sf-text-3 transition-colors duration-300 group-hover/card:bg-sf-theme-3 group-hover/card:text-sf-theme"
-        >
-          <SfIcon :icon="card.icon" size="4.5" />
-        </div>
+        <SfIcon :icon="card.icon" size="4.5" />
         <div class="flex flex-col gap-0.5 overflow-hidden">
           <h3 class="text-[14px] font-bold tracking-tight text-sf-text">
             {{ card.title }}
@@ -202,9 +192,7 @@ const startFeature = () => {
         </div>
 
         <div class="flex justify-end gap-3 pt-3">
-          <SfButton type="bg" size="large" @click="oneKeyIntroVisible = false">
-            暂不优化
-          </SfButton>
+          <SfButton type="bg" size="large" @click="oneKeyIntroVisible = false"> 暂不优化 </SfButton>
           <SfButton size="large" @click="startOneKeyOptimize">开始一键优化</SfButton>
         </div>
       </div>
