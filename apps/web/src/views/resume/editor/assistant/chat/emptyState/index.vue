@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { ALL_MODULE_KEY } from "@/stores/modules/resume/defaultConfig";
-import type { SelectedModule } from "@/stores/modules/resume/types";
 import { computed, ref } from "vue";
 import type { SuggestCard } from "../../types";
 import OneVOne from "./oneVOne.vue";
@@ -8,7 +7,7 @@ import OneVOne from "./oneVOne.vue";
 // 当前操作模块列表：选中哪些模块就遍历展示哪些模块
 const props = defineProps<{
   suggestions: SuggestCard[];
-  selectedModules?: SelectedModule[];
+  selectedModules?: any[];
   removeModule?: (key: string) => void;
 }>();
 const emit = defineEmits(["switch-mode", "suggest"]);

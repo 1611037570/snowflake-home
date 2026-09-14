@@ -364,7 +364,6 @@ export const useChatRequest = ({
       // 清理工作（无论成功或失败）
       // 请求结束还原调用方现场
       afterRequest?.();
-      if (isUnmounted) return;
       const finishTime = Date.now();
       state?.dispose();
       // 重置状态
@@ -373,7 +372,9 @@ export const useChatRequest = ({
       if (lastMsg?.typing) lastMsg.typing = false;
       if (chat.value) chat.value.updateTime = finishTime;
       // 按钮等尾部内容在 typing=false 后才渲染，收尾后补一次滚动避免被遮挡
-      if (!isUnmounted) await scrollToBottom();
+      if (!isUnmounted) {
+        await scrollToBottom();
+      }
     }
   };
 

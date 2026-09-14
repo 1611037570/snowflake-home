@@ -18,21 +18,6 @@ export const useHomeStore = defineStore(
       tabIndex.value = tabIndex.value == 0 ? 1 : 0;
     };
 
-    // 数据列表
-    function getPinyin(str: string) {
-      const pinyin = import("pinyin");
-      console.log("pinyin", pinyin);
-      const pinyinStr: any = pinyin(str, {
-        // 紧凑风格
-        compact: true,
-        // 多音字模式
-        heteronym: false,
-        // 普通风格
-        style: pinyin.STYLE_NORMAL,
-      });
-
-      return pinyinStr[0].join("");
-    }
     const shortcutList = ref(default_list);
     const initShortcutList = () => {
       shortcutList.value = shortcutList.value.map((item: any) => ({

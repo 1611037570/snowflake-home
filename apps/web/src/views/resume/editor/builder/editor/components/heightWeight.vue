@@ -11,7 +11,7 @@ const modelValue = defineModel("modelValue", {
 const height = computed({
   get: () => modelValue.value?.height,
   set: (value) => {
-    modelValue.value = { ...(modelValue.value || {}), height: value };
+    modelValue.value = { ...modelValue.value, height: value };
   },
 });
 
@@ -19,7 +19,7 @@ const height = computed({
 const weight = computed({
   get: () => modelValue.value?.weight,
   set: (value) => {
-    modelValue.value = { ...(modelValue.value || {}), weight: value };
+    modelValue.value = { ...modelValue.value, weight: value };
   },
 });
 </script>
