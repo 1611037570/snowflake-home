@@ -10,14 +10,15 @@ import { useSmartOnePage } from "./resumePages/useSmartOnePage";
 defineOptions({ name: "ResumePage" });
 
 const resumeStore = useResumeStore();
-const { currentData, currentConfig, currentUI, system } = storeToRefs(resumeStore);
+const { currentData, currentConfig, currentUI, runtimeConfig, system } = storeToRefs(resumeStore);
 
 const exportSuccessModalRef = ref(null);
 
 // 组装可复用组件所需的简历项
 const resumeItem = computed(() => ({
   data: currentData.value,
-  config: currentConfig.value,
+  // 编辑态优先使用运行时配置，使字段拖拽顺序立即同步到预览。
+  config: runtimeConfig.value ?? currentConfig.value,
   ui: currentUI.value,
 }));
 
