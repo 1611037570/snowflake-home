@@ -32,6 +32,10 @@ const boxSize = computed(() => {
     class="group relative flex cursor-pointer flex-col overflow-hidden rounded-3xl border border-sf-b bg-sf-primary transition-all duration-200 hover:scale-102 hover:border-sf-theme"
     @click="emit('click')"
   >
+    <!-- 卡片右上角操作入口由调用方按需注入。 -->
+    <div class="absolute top-3 right-3 z-20" @click.stop>
+      <slot name="actions" />
+    </div>
     <!-- 有 item 数据时渲染标准简历卡片 -->
     <template v-if="item && size">
       <ThumbPreview :item="getThumbItem(item)" @select="emit('click')" />
