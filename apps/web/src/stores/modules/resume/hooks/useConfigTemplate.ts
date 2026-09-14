@@ -1,4 +1,5 @@
 import { allConfig, DEFAULT_USER_FORM } from "../formConfig";
+import { createUserCustomField, isUserCustomFieldKey } from "./useUserCustomField";
 
 // 自定义模块：按实际 key 重写模板，标题取自模块 ui
 function rewriteCustomFieldByKey(field: any, customKey: string, customTitle: string) {
@@ -42,9 +43,25 @@ export function expandConfigFields(fields: any[], data: any) {
       const customTitle = data?.[item.key]?.ui?.title || "";
       rewriteCustomFieldByKey(field, item.key, customTitle);
     }
+    appendUserCustomFields(field, item);
     restoreFieldOrder(field, item);
     return field;
   });
+}
+
+// 自定义个人字段仅持久化 key 与标题，展开时补全为可渲染配置
+function appendUserCustomFields(field: any, persisted: any) {
+  if (field?.key !== "user") return;
+
+  const moreField = field.fields?.find((item: any) => item?.key === "more");
+  const persistedMoreField = persisted?.fields?.find((item: any) => item?.key === "more");
+  if (!moreField || !Array.isArray(persistedMoreField?.fields)) return;
+
+  persistedMoreField.fields
+    .filter((item: any) => isUserCustomFieldKey(item?.key))
+    .forEach((item: any) => {
+      moreField.fields.push(createUserCustomField(item.key, item.label || "自定义字段"));
+    });
 }
 
 // 包含可拖拽子项的容器需要保留嵌套字段顺序
@@ -55,11 +72,14 @@ function hasSortableFields(field: any) {
 }
 
 // 可渲染配置压缩为持久化字段列表：只保留模块 key 与顺序
-export function compactConfigFields(fields: any[]) {
+export function compactConfigFields(fields: any[], parentKey?: string) {
   return fields.map((field: any) => {
     const compactField: any = { key: field.key };
+    if (parentKey === "more" && isUserCustomFieldKey(field.key)) {
+      compactField.label = field.label;
+    }
     if (Array.isArray(field.fields) && hasSortableFields(field)) {
-      compactField.fields = compactConfigFields(field.fields);
+      compactField.fields = compactConfigFields(field.fields, field.key);
     }
     return compactField;
   });
