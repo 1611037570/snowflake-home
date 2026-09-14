@@ -1,0 +1,109 @@
+// 小舟数据
+export const xiaoZhouData: any = {
+  user: {
+    archived: false,
+    data: {
+      position: "独立开发者",
+      name: "小舟",
+      birthday: "2000-07",
+      phone: "158****2637",
+      email: "161****570@qq.com",
+      workTime: "2022.08.01",
+      sex: "女",
+      avatar:
+        "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",
+    },
+  },
+  account: {
+    collapsed: ["1"],
+    archived: false,
+    data: [
+      {
+        name: "github",
+        url: "https://github.com/1611037570",
+      },
+      {
+        name: "稀土掘金",
+        url: "https://juejin.cn/user/2342386827791687/posts",
+      },
+    ],
+  },
+  skill: {
+    collapsed: ["1"],
+    archived: false,
+    data: {
+      content: "<p></p>",
+    },
+  },
+  education: {
+    collapsed: ["1"],
+    archived: false,
+    data: [
+      {
+        name: "广西科技大学鹿山学院",
+        education: "本科",
+        post: "计算机科学与技术",
+        content: "<p></p>",
+        mode: "全日制",
+      },
+    ],
+  },
+  project: {
+    collapsed: ["1"],
+    archived: false,
+    data: [
+      {
+        name: "**轻舟简历",
+        post: "全栈开发",
+        time: ["2022.08", "2026.06"],
+        content: "",
+      },
+    ],
+  },
+  video: {
+    collapsed: [],
+    hidden: false,
+    archived: false,
+    data: [
+      {
+        name: "轻舟简历",
+        url: "http://nannan.work/#/resume/editor?id=1611037570",
+        desc: "非视频 仅用于展示",
+      },
+    ],
+  },
+};
+
+export const xiaoZhouForm = {
+  meta: {
+    version: "1.0.0",
+  },
+  drag: true,
+  dragClass: ".container-drag",
+  // 仅保留模块 key 与顺序，完整配置由运行时统一展开。
+  fields: [
+    { key: "user" },
+    { key: "account" },
+    { key: "education" },
+    { key: "skill" },
+    { key: "project" },
+  ],
+};
+
+export const xiaoZhouUI = {
+  padding: 24,
+  fontSize: 16,
+  lineHeight: 1.2,
+  moduleSpacing: 12,
+  themeColor: "#ff4d4f",
+  fontFamily: "text-puhui",
+  themeTemplate: "default",
+  userInfoMode: "text",
+  avatarPosition: "right",
+};
+
+export const xiaoZhouResumeItem = {
+  data: xiaoZhouData,
+  config: xiaoZhouForm,
+  ui: xiaoZhouUI,
+};
