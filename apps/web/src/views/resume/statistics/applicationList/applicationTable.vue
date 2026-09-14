@@ -100,33 +100,35 @@ const handleDelete = (item) => {
       <el-table-column prop="count" label="数量" width="120" sortable />
       <el-table-column label="操作" width="160">
         <template #default="{ row }">
-          <!-- 编辑：绑定 SfTooltip 提示 -->
-          <SfTooltip content="编辑" placement="top">
+          <div class="flex items-center">
+            <!-- 编辑：绑定 SfTooltip 提示 -->
+            <SfTooltip content="编辑" placement="top">
+              <button
+                type="button"
+                class="mr-2 cursor-pointer border-0 bg-transparent p-0 text-sf-text-2 transition hover:text-sf-theme"
+                @click="openEdit(row)"
+              >
+                <SfIcon icon="lucide:pencil" size="4" />
+              </button>
+            </SfTooltip>
+            <!-- 跟进：绑定 SfTooltip 提示 -->
+            <SfTooltip content="跟进" placement="top">
+              <button
+                type="button"
+                class="mr-2 cursor-pointer border-0 bg-transparent p-0 text-sf-theme"
+                @click="openFollow(row)"
+              >
+                <SfIcon icon="lucide:git-branch-plus" size="4" />
+              </button>
+            </SfTooltip>
             <button
               type="button"
-              class="mr-2 cursor-pointer border-0 bg-transparent p-0 text-sf-text-2 transition hover:text-sf-theme"
-              @click="openEdit(row)"
+              class="cursor-pointer border-0 bg-transparent p-0 text-sf-text-2 transition hover:text-sf-error"
+              @click="handleDelete(row)"
             >
-              <SfIcon icon="lucide:pencil" size="4" />
+              <SfIcon icon="lucide:trash-2" size="4" />
             </button>
-          </SfTooltip>
-          <!-- 跟进：绑定 SfTooltip 提示 -->
-          <SfTooltip content="跟进" placement="top">
-            <button
-              type="button"
-              class="mr-2 cursor-pointer border-0 bg-transparent p-0 text-sf-theme"
-              @click="openFollow(row)"
-            >
-              <SfIcon icon="lucide:git-branch-plus" size="4" />
-            </button>
-          </SfTooltip>
-          <button
-            type="button"
-            class="cursor-pointer border-0 bg-transparent p-0 text-sf-text-2 transition hover:text-sf-error"
-            @click="handleDelete(row)"
-          >
-            <SfIcon icon="lucide:trash-2" size="4" />
-          </button>
+          </div>
         </template>
       </el-table-column>
     </el-table>
