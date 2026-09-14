@@ -285,6 +285,8 @@ export const DEFAULT_USER_FORM = [
         component: "more",
         slot: "default",
         span: 24,
+        // 可添加字段之间保持统一垂直间距
+        rowClass: "gap-y-3",
         model: [
           {
             source: ["user", "moreCollapsed"],
