@@ -5,9 +5,10 @@
     :gutter="0"
     ref="row"
   >
+    <!-- 数组记录样式与数组字段自身样式分离 -->
     <FormItem
       v-for="item in formListWithStyle"
-      :class="currentForm?.colClass"
+      :class="currentForm?.itemClass"
       :currentForm="item.item"
       :key="item.key"
       :pathContext="getPathContext(item.index)"
