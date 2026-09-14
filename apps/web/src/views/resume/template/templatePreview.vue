@@ -1,10 +1,10 @@
 <script setup>
-// 模板页专用预览：全屏展示简历，并在右侧保留模板文字信息
+// 通用简历预览：全屏展示简历，并在右侧展示调用方提供的文字信息
 import { useResizeObserver } from "@vueuse/core";
 import { computed, onBeforeUnmount, ref, watch } from "vue";
 import ResumePages from "@/views/resume/editor/preview/resumePages/index.vue";
 
-defineOptions({ name: "TemplatePreview" });
+defineOptions({ name: "ResumePreview" });
 
 const props = defineProps({
   // 全屏是否可见，由父组件单向控制
@@ -17,14 +17,29 @@ const props = defineProps({
     type: Object,
     required: true,
   },
-  // 模板名称，用于右侧信息展示
+  // 右侧信息标题
   title: {
     type: String,
     default: "简历模板",
   },
+  // 右侧标题上方的场景文案
+  eyebrowText: {
+    type: String,
+    default: "简历模板",
+  },
+  // 右侧主操作文案，为空时不显示主操作按钮
+  primaryActionText: {
+    type: String,
+    default: "使用此模板",
+  },
+  // 右侧次操作文案
+  secondaryActionText: {
+    type: String,
+    default: "返回模板列表",
+  },
 });
 
-const emit = defineEmits(["close", "use"]);
+const emit = defineEmits(["close", "action"]);
 
 const stageRef = ref(null);
 const contentRef = ref(null);
@@ -107,7 +122,7 @@ onBeforeUnmount(() => {
       <aside class="flex h-full w-1/3 min-w-0 flex-col border-l border-sf-b bg-sf-primary p-6">
         <div class="flex items-start justify-between gap-3">
           <div class="flex min-w-0 flex-col gap-3">
-            <span class="text-sm font-medium text-sf-text-2">简历模板</span>
+            <span class="text-sm font-medium text-sf-text-2">{{ eyebrowText }}</span>
             <h1 class="truncate text-2xl font-black text-sf-text">{{ title }}</h1>
           </div>
           <button
@@ -120,8 +135,17 @@ onBeforeUnmount(() => {
           </button>
         </div>
         <div class="mt-auto flex flex-col gap-3">
-          <SfButton type="theme" class="w-full" @click="emit('use')">使用此模板</SfButton>
-          <SfButton type="bg" class="w-full" @click="emit('close')">返回模板列表</SfButton>
+          <SfButton
+            v-if="primaryActionText"
+            type="theme"
+            class="w-full"
+            @click="emit('action')"
+          >
+            {{ primaryActionText }}
+          </SfButton>
+          <SfButton type="bg" class="w-full" @click="emit('close')">
+            {{ secondaryActionText }}
+          </SfButton>
         </div>
       </aside>
     </div>

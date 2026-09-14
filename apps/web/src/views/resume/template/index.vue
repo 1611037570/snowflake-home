@@ -141,7 +141,7 @@ const gridClass = ref("default");
       :item="fullscreenCard?.item || {}"
       :title="fullscreenCard?.name || '简历模板'"
       @close="closeFullscreen"
-      @use="useFullscreenTemplate"
+      @action="useFullscreenTemplate"
     />
   </div>
 </template>

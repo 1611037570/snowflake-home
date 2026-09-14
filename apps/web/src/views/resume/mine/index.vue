@@ -103,6 +103,13 @@ const handleEdit = (index) => {
   router.push({ path: "/resume/editor", query: { id: list.value[index].id } });
 };
 
+// 从预览返回对应草稿的编辑器。
+const editPreview = () => {
+  const index = list.value.findIndex((item) => item.id === previewItem.value?.id);
+  closePreview();
+  handleEdit(index);
+};
+
 const handleDelete = (index) => {
   proxy.$confirm("确定要删除当前简历吗？", "删除确认").then(() => {
     if (index === -1) return;
@@ -272,7 +279,11 @@ const handleClearTrash = () => {
       :visible="isPreviewVisible"
       :item="previewItem || {}"
       :title="getResumeTitle(previewItem)"
+      eyebrow-text="我的简历"
+      primary-action-text="编辑简历"
+      secondary-action-text="返回我的简历"
       @close="closePreview"
+      @action="editPreview"
     />
   </div>
 </template>
