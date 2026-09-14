@@ -119,15 +119,9 @@ onBeforeUnmount(() => {
             <SfIcon icon="lucide:x" size="5" />
           </button>
         </div>
-
-        <div class="mt-9 flex flex-col gap-3 text-sm leading-7 text-sf-text-2">
-          <p>查看模板的完整简历排版，确认样式后即可开始编辑。</p>
-          <p>当前预览已按屏幕高度自适应，简历内容保持完整展示。</p>
-        </div>
-
         <div class="mt-auto flex flex-col gap-3">
-          <SfButton type="primary" class="w-full" @click="emit('use')">使用此模板</SfButton>
-          <SfButton class="w-full" @click="emit('close')">返回模板列表</SfButton>
+          <SfButton type="theme" class="w-full" @click="emit('use')">使用此模板</SfButton>
+          <SfButton type="bg" class="w-full" @click="emit('close')">返回模板列表</SfButton>
         </div>
       </aside>
     </div>
