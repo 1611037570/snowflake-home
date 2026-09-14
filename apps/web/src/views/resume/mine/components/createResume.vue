@@ -1,7 +1,7 @@
 <script setup>
 import { useResumeStore } from "@/stores";
 import { themeTemplateList } from "@/stores/modules/resume/uiConfig";
-import { xiaoYangResumeItem } from "@/stores/modules/resume/xiaoYangData";
+import { xiaoZhouResumeItem } from "@/stores/modules/resume/xiaoZhouData";
 import { useRouter } from "vue-router";
 import ResumeCardContainer from "./resumeCardContainer.vue";
 
@@ -41,9 +41,9 @@ const templates = computed(() =>
     name: style.name,
     value: style.value,
     item: {
-      data: xiaoYangResumeItem.data,
-      config: xiaoYangResumeItem.config,
-      ui: { ...xiaoYangResumeItem.ui, themeTemplate: style.value },
+      data: xiaoZhouResumeItem.data,
+      config: xiaoZhouResumeItem.config,
+      ui: { ...xiaoZhouResumeItem.ui, themeTemplate: style.value },
     },
   })),
 );
@@ -96,9 +96,9 @@ const createQuickResume = () => {
 
 const useTemplate = (template) => {
   resumeStore.addResume({
-    data: structuredClone(xiaoYangResumeItem.data),
-    config: structuredClone(xiaoYangResumeItem.config),
-    ui: { ...xiaoYangResumeItem.ui, themeTemplate: template.value },
+    data: structuredClone(xiaoZhouResumeItem.data),
+    config: structuredClone(xiaoZhouResumeItem.config),
+    ui: { ...xiaoZhouResumeItem.ui, themeTemplate: template.value },
   });
   close();
 };
