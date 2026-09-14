@@ -34,26 +34,26 @@ export const DEFAULT_USER_FORM = [
         defaultValue: "个人信息",
       },
       {
-        source: ["user", "collapsed"],
+        source: ["user", "ui", "collapsed"],
         prop: "collapsed",
         defaultValue: EXPANDED,
       },
       // 隐藏开关：控制模块在简历预览中显示/隐藏
       {
-        source: ["user", "hidden"],
+        source: ["user", "ui", "hidden"],
         prop: "hidden",
         defaultValue: false,
       },
       // 归档开关：控制模块是否从编辑器主区域移除
       {
-        source: ["user", "archived"],
+        source: ["user", "ui", "archived"],
         prop: "archived",
         defaultValue: false,
       },
     ],
     checks: {
-      hidden: { path: ["user", "hidden"] },
-      removed: { path: ["user", "archived"] },
+      hidden: { path: ["user", "ui", "hidden"] },
+      removed: { path: ["user", "ui", "archived"] },
     },
     slot: "default",
     fields: [
@@ -262,7 +262,7 @@ export const DEFAULT_USER_FORM = [
         rowClass: "gap-y-3",
         model: [
           {
-            source: ["user", "moreCollapsed"],
+            source: ["user", "ui", "moreCollapsed"],
             prop: "collapsed",
             defaultValue: [],
           },
@@ -603,26 +603,26 @@ export const DEFAULT_ACCOUNT_FORM = {
       defaultValue: "社交账号",
     },
     {
-      source: ["account", "collapsed"],
+      source: ["account", "ui", "collapsed"],
       prop: "collapsed",
       defaultValue: EXPANDED,
     },
     // 隐藏开关：控制模块在简历预览中显示/隐藏
     {
-      source: ["account", "hidden"],
+      source: ["account", "ui", "hidden"],
       prop: "hidden",
       defaultValue: false,
     },
     // 归档状态：已完成模块移入归档区域
     {
-      source: ["account", "archived"],
+      source: ["account", "ui", "archived"],
       prop: "archived",
       defaultValue: false,
     },
   ],
   checks: {
-    hidden: { path: ["account", "hidden"] },
-    removed: { path: ["account", "archived"] },
+    hidden: { path: ["account", "ui", "hidden"] },
+    removed: { path: ["account", "ui", "archived"] },
   },
   component: "boxCollapse",
   props: {
@@ -671,26 +671,26 @@ export const DEFAULT_EDUCATION_FORM = {
       defaultValue: "教育经历",
     },
     {
-      source: ["education", "collapsed"],
+      source: ["education", "ui", "collapsed"],
       prop: "collapsed",
       defaultValue: EXPANDED,
     },
     // 隐藏开关：控制模块在简历预览中显示/隐藏
     {
-      source: ["education", "hidden"],
+      source: ["education", "ui", "hidden"],
       prop: "hidden",
       defaultValue: false,
     },
     // 归档状态：已完成模块移入归档区域
     {
-      source: ["education", "archived"],
+      source: ["education", "ui", "archived"],
       prop: "archived",
       defaultValue: false,
     },
   ],
   checks: {
-    hidden: { path: ["education", "hidden"] },
-    removed: { path: ["education", "archived"] },
+    hidden: { path: ["education", "ui", "hidden"] },
+    removed: { path: ["education", "ui", "archived"] },
   },
   slot: "default",
   fields: [
@@ -707,7 +707,7 @@ export const DEFAULT_EDUCATION_FORM = {
         span: 24,
         model: [
           {
-            source: ["collapsed"],
+            source: ["ui", "collapsed"],
             prop: "collapsed",
             defaultValue: EXPANDED,
           },
@@ -840,26 +840,26 @@ export const DEFAULT_SKILL_FORM = {
       defaultValue: "专业技能",
     },
     {
-      source: ["skill", "collapsed"],
+      source: ["skill", "ui", "collapsed"],
       prop: "collapsed",
       defaultValue: EXPANDED,
     },
     // 隐藏开关：控制模块在简历预览中显示/隐藏
     {
-      source: ["skill", "hidden"],
+      source: ["skill", "ui", "hidden"],
       prop: "hidden",
       defaultValue: false,
     },
     // 归档状态：已完成模块移入归档区域
     {
-      source: ["skill", "archived"],
+      source: ["skill", "ui", "archived"],
       prop: "archived",
       defaultValue: false,
     },
   ],
   checks: {
-    hidden: { path: ["skill", "hidden"] },
-    removed: { path: ["skill", "archived"] },
+    hidden: { path: ["skill", "ui", "hidden"] },
+    removed: { path: ["skill", "ui", "archived"] },
   },
   slot: "default",
   fields: [
@@ -889,26 +889,26 @@ export const DEFAULT_ADVANTAGE_FORM = {
       defaultValue: "个人优势",
     },
     {
-      source: ["advantage", "collapsed"],
+      source: ["advantage", "ui", "collapsed"],
       prop: "collapsed",
       defaultValue: EXPANDED,
     },
     // 隐藏开关：控制模块在简历预览中显示/隐藏
     {
-      source: ["advantage", "hidden"],
+      source: ["advantage", "ui", "hidden"],
       prop: "hidden",
       defaultValue: false,
     },
     // 归档状态：已完成模块移入归档区域
     {
-      source: ["advantage", "archived"],
+      source: ["advantage", "ui", "archived"],
       prop: "archived",
       defaultValue: false,
     },
   ],
   checks: {
-    hidden: { path: ["advantage", "hidden"] },
-    removed: { path: ["advantage", "archived"] },
+    hidden: { path: ["advantage", "ui", "hidden"] },
+    removed: { path: ["advantage", "ui", "archived"] },
   },
   slot: "default",
   fields: [
@@ -938,26 +938,26 @@ export const DEFAULT_WORK_FORM = {
       defaultValue: "工作经历",
     },
     {
-      source: ["work", "collapsed"],
+      source: ["work", "ui", "collapsed"],
       prop: "collapsed",
       defaultValue: EXPANDED,
     },
     // 隐藏开关：控制模块在简历预览中显示/隐藏
     {
-      source: ["work", "hidden"],
+      source: ["work", "ui", "hidden"],
       prop: "hidden",
       defaultValue: false,
     },
     // 归档状态：已完成模块移入归档区域
     {
-      source: ["work", "archived"],
+      source: ["work", "ui", "archived"],
       prop: "archived",
       defaultValue: false,
     },
   ],
   checks: {
-    hidden: { path: ["work", "hidden"] },
-    removed: { path: ["work", "archived"] },
+    hidden: { path: ["work", "ui", "hidden"] },
+    removed: { path: ["work", "ui", "archived"] },
   },
   slot: "default",
   fields: [
@@ -974,7 +974,7 @@ export const DEFAULT_WORK_FORM = {
         span: 24,
         model: [
           {
-            source: ["collapsed"],
+            source: ["ui", "collapsed"],
             prop: "collapsed",
             defaultValue: EXPANDED,
           },
@@ -1063,26 +1063,26 @@ export const DEFAULT_PROJECT_FORM = {
       defaultValue: "项目经历",
     },
     {
-      source: ["project", "collapsed"],
+      source: ["project", "ui", "collapsed"],
       prop: "collapsed",
       defaultValue: EXPANDED,
     },
     // 隐藏开关：控制模块在简历预览中显示/隐藏
     {
-      source: ["project", "hidden"],
+      source: ["project", "ui", "hidden"],
       prop: "hidden",
       defaultValue: false,
     },
     // 归档状态：已完成模块移入归档区域
     {
-      source: ["project", "archived"],
+      source: ["project", "ui", "archived"],
       prop: "archived",
       defaultValue: false,
     },
   ],
   checks: {
-    hidden: { path: ["project", "hidden"] },
-    removed: { path: ["project", "archived"] },
+    hidden: { path: ["project", "ui", "hidden"] },
+    removed: { path: ["project", "ui", "archived"] },
   },
   slot: "default",
   fields: [
@@ -1099,7 +1099,7 @@ export const DEFAULT_PROJECT_FORM = {
         span: 24,
         model: [
           {
-            source: ["collapsed"],
+            source: ["ui", "collapsed"],
             prop: "collapsed",
             defaultValue: EXPANDED,
           },
@@ -1190,25 +1190,25 @@ export const DEFAULT_VIDEO_FORM = {
       defaultValue: "视频作品",
     },
     {
-      source: ["video", "collapsed"],
+      source: ["video", "ui", "collapsed"],
       prop: "collapsed",
       defaultValue: EXPANDED,
     },
     {
-      source: ["video", "hidden"],
+      source: ["video", "ui", "hidden"],
       prop: "hidden",
       defaultValue: false,
     },
     // 归档状态：已完成模块移入归档区域
     {
-      source: ["video", "archived"],
+      source: ["video", "ui", "archived"],
       prop: "archived",
       defaultValue: false,
     },
   ],
   checks: {
-    hidden: { path: ["video", "hidden"] },
-    removed: { path: ["video", "archived"] },
+    hidden: { path: ["video", "ui", "hidden"] },
+    removed: { path: ["video", "ui", "archived"] },
   },
   slot: "default",
   fields: [
@@ -1222,7 +1222,7 @@ export const DEFAULT_VIDEO_FORM = {
         // 折叠标题数据源：展示当前视频名称
         model: [
           {
-            source: ["collapsed"],
+            source: ["ui", "collapsed"],
             prop: "collapsed",
             defaultValue: EXPANDED,
           },
@@ -1279,25 +1279,25 @@ export const DEFAULT_IMAGE_FORM = {
       defaultValue: "图片作品",
     },
     {
-      source: ["image", "collapsed"],
+      source: ["image", "ui", "collapsed"],
       prop: "collapsed",
       defaultValue: EXPANDED,
     },
     {
-      source: ["image", "hidden"],
+      source: ["image", "ui", "hidden"],
       prop: "hidden",
       defaultValue: false,
     },
     // 归档状态：已完成模块移入归档区域
     {
-      source: ["image", "archived"],
+      source: ["image", "ui", "archived"],
       prop: "archived",
       defaultValue: false,
     },
   ],
   checks: {
-    hidden: { path: ["image", "hidden"] },
-    removed: { path: ["image", "archived"] },
+    hidden: { path: ["image", "ui", "hidden"] },
+    removed: { path: ["image", "ui", "archived"] },
   },
   slot: "default",
   fields: [
@@ -1311,7 +1311,7 @@ export const DEFAULT_IMAGE_FORM = {
         // 折叠标题数据源：展示当前图片作品名称
         model: [
           {
-            source: ["collapsed"],
+            source: ["ui", "collapsed"],
             prop: "collapsed",
             defaultValue: EXPANDED,
           },
@@ -1373,26 +1373,26 @@ export const DEFAULT_HONOR_FORM = {
       defaultValue: "荣誉证书",
     },
     {
-      source: ["honor", "collapsed"],
+      source: ["honor", "ui", "collapsed"],
       prop: "collapsed",
       defaultValue: EXPANDED,
     },
     // 隐藏开关：控制模块在简历预览中显示/隐藏
     {
-      source: ["honor", "hidden"],
+      source: ["honor", "ui", "hidden"],
       prop: "hidden",
       defaultValue: false,
     },
     // 归档状态：已完成模块移入归档区域
     {
-      source: ["honor", "archived"],
+      source: ["honor", "ui", "archived"],
       prop: "archived",
       defaultValue: false,
     },
   ],
   checks: {
-    hidden: { path: ["honor", "hidden"] },
-    removed: { path: ["honor", "archived"] },
+    hidden: { path: ["honor", "ui", "hidden"] },
+    removed: { path: ["honor", "ui", "archived"] },
   },
   slot: "default",
   fields: [
@@ -1434,25 +1434,25 @@ export const DEFAULT_CUSTOM_FORM = {
       defaultValue: "",
     },
     {
-      source: ["custom", "collapsed"],
+      source: ["custom", "ui", "collapsed"],
       prop: "collapsed",
       defaultValue: EXPANDED,
     },
     {
-      source: ["custom", "hidden"],
+      source: ["custom", "ui", "hidden"],
       prop: "hidden",
       defaultValue: false,
     },
     // 归档状态：已完成模块移入归档区域
     {
-      source: ["custom", "archived"],
+      source: ["custom", "ui", "archived"],
       prop: "archived",
       defaultValue: false,
     },
   ],
   checks: {
-    hidden: { path: ["custom", "hidden"] },
-    removed: { path: ["custom", "archived"] },
+    hidden: { path: ["custom", "ui", "hidden"] },
+    removed: { path: ["custom", "ui", "archived"] },
   },
   slot: "default",
   fields: [
@@ -1469,7 +1469,7 @@ export const DEFAULT_CUSTOM_FORM = {
         span: 24,
         model: [
           {
-            source: ["collapsed"],
+            source: ["ui", "collapsed"],
             prop: "collapsed",
             defaultValue: EXPANDED,
           },

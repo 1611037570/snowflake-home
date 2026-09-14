@@ -59,11 +59,11 @@ const handleConfirm = () => {
   // 模块标题写入 ui，经历记录继续保存在 data.list
   if (currentData.value) {
     currentData.value[customKey] = {
-      collapsed: ["1"],
-      hidden: false,
-      archived: false,
       ui: {
         title: customModuleName.value,
+        collapsed: ["1"],
+        hidden: false,
+        archived: false,
       },
       data: {
         list: [],

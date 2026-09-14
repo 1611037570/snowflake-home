@@ -1,7 +1,9 @@
 // 小舟数据
 export const xiaoZhouData: any = {
   user: {
-    archived: false,
+    ui: {
+      archived: false,
+    },
     data: {
       position: "独立开发者",
       name: "小舟",
@@ -15,8 +17,10 @@ export const xiaoZhouData: any = {
     },
   },
   account: {
-    collapsed: ["1"],
-    archived: false,
+    ui: {
+      collapsed: ["1"],
+      archived: false,
+    },
     data: [
       {
         name: "github",
@@ -29,15 +33,19 @@ export const xiaoZhouData: any = {
     ],
   },
   skill: {
-    collapsed: ["1"],
-    archived: false,
+    ui: {
+      collapsed: ["1"],
+      archived: false,
+    },
     data: {
       content: "<p></p>",
     },
   },
   education: {
-    collapsed: ["1"],
-    archived: false,
+    ui: {
+      collapsed: ["1"],
+      archived: false,
+    },
     data: [
       {
         name: "广西科技大学鹿山学院",
@@ -49,8 +57,10 @@ export const xiaoZhouData: any = {
     ],
   },
   project: {
-    collapsed: ["1"],
-    archived: false,
+    ui: {
+      collapsed: ["1"],
+      archived: false,
+    },
     data: [
       {
         name: "**轻舟简历",
@@ -61,9 +71,11 @@ export const xiaoZhouData: any = {
     ],
   },
   video: {
-    collapsed: [],
-    hidden: false,
-    archived: false,
+    ui: {
+      collapsed: [],
+      hidden: false,
+      archived: false,
+    },
     data: [
       {
         name: "轻舟简历",

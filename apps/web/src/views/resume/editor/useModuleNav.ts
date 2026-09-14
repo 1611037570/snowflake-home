@@ -92,8 +92,9 @@ export const jumpEditor = (key: string) => {
   eventBus.emit("switch-builder-tab", 0);
   // 展开模块折叠面板
   const moduleData = currentData.value?.[key];
-  if (moduleData && Array.isArray(moduleData.collapsed)) {
-    moduleData.collapsed = ["1"];
+  if (moduleData) {
+    moduleData.ui ??= {};
+    moduleData.ui.collapsed = ["1"];
   }
   // 触发编辑区模块选中闪烁
   eventBus.emit("df-select-module", key);
