@@ -15,6 +15,7 @@ import Image from "./components/image.vue";
 import ItemCollapse from "./components/itemCollapse.vue";
 import ImageUpload from "./components/imageUpload/index.vue";
 import More from "./components/more.vue";
+import UserCustomField from "./components/userCustomField.vue";
 import Video from "./components/video.vue";
 
 const resumeStore = useResumeStore();
@@ -30,6 +31,7 @@ const dynamicComponents = {
   image: Image,
   heightWeight: HeightWeight,
   more: More,
+  userCustomField: UserCustomField,
   video: Video,
   cityPicker: CityPicker,
 };
