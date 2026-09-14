@@ -117,9 +117,23 @@ const loadMath = async () => {
   return mathJS;
 };
 
+// 仅对可能是表达式的输入执行计算，普通搜索词不加载 MathJS。
+const isLikelyExpression = (value) => {
+  const normalizedValue = value.trim();
+  if (!normalizedValue || /[^\d\s+\-*/%^().,a-z_]/i.test(normalizedValue)) return false;
+  return (
+    /\d/.test(normalizedValue) ||
+    /\b(?:pi|e|sin|cos|tan|sqrt|log|abs|exp|mod)\b/i.test(normalizedValue)
+  );
+};
+
 // 表达式计算
 async function expressionsComputed() {
   const value = String(searchValue.value);
+  if (!isLikelyExpression(value)) {
+    expressionsFlag.value = false;
+    return;
+  }
   try {
     const { parse, evaluate } = await loadMath();
     parse(value);
