@@ -10,8 +10,8 @@ const { modelList } = storeToRefs(aiStore);
 const ADD_MODEL_OPTION_ID = "__add-model__";
 const dropdownRef = ref();
 
-// 编辑器模型下拉对应小羊角色的模型配置
-const selectedModel = computed(() => aiStore.getAgentModelId("xiaoYang"));
+// 编辑器模型下拉与设置中的小舟角色共用持久化模型配置
+const selectedModel = computed(() => aiStore.getAgentModelId("xiaoZhou"));
 
 // 模型选项列表：仅已添加的自定义模型（至少要有 provider 和 key 才展示）
 const configuredModels = computed(() => {
@@ -46,7 +46,7 @@ function selectModel(item: any) {
     goToAddModel();
     return;
   }
-  aiStore.setAgentModel("xiaoYang", item.id);
+  aiStore.setAgentModel("xiaoZhou", item.id);
 }
 
 // 空态：打开服务商设置弹窗并切到添加模型 Tab
