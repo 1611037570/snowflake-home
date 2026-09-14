@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { getLLM } from "@/apis";
+import { getXiaoYangLLM } from "@/apis";
 import { useResumeContext } from "../resumeContext";
 import {
   buildQuickAnswerMessages,
@@ -7,7 +7,7 @@ import {
   useInterviewQuickAnswer,
 } from "./quickAnswer";
 
-vi.mock("@/apis", () => ({ getLLM: vi.fn() }));
+vi.mock("@/apis", () => ({ getXiaoYangLLM: vi.fn() }));
 vi.mock("../resumeContext", () => ({ useResumeContext: vi.fn() }));
 
 describe("interviewQuickAnswer", () => {
@@ -52,7 +52,7 @@ describe("interviewQuickAnswer", () => {
     const request = vi.fn().mockResolvedValue({ sendFn });
     const beforeRequest = vi.fn();
     const afterRequest = vi.fn();
-    vi.mocked(getLLM).mockReturnValue({ protocol: "chatCompletions", request } as any);
+    vi.mocked(getXiaoYangLLM).mockReturnValue({ protocol: "chatCompletions", request } as any);
     vi.mocked(useResumeContext).mockReturnValue({
       getResumeData: () => ({ project: "真实项目" }),
       beforeRequest,

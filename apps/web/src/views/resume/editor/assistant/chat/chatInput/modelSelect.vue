@@ -6,9 +6,12 @@ import { useAiStore } from "@/stores";
 import ThinkMode from "./thinkMode.vue";
 
 const aiStore = useAiStore();
-const { activeModel, modelList } = storeToRefs(aiStore);
+const { modelList } = storeToRefs(aiStore);
 const ADD_MODEL_OPTION_ID = "__add-model__";
 const dropdownRef = ref();
+
+// 编辑器模型下拉对应小羊角色的模型配置
+const selectedModel = computed(() => aiStore.getAgentModelId("xiaoYang"));
 
 // 模型选项列表：仅已添加的自定义模型（至少要有 provider 和 key 才展示）
 const configuredModels = computed(() => {
@@ -18,7 +21,7 @@ const configuredModels = computed(() => {
       options.push({
         id: model.id,
         name: model.name || model.model || PROVIDER_NAMES[model.provider] || model.provider,
-        active: activeModel.value === model.id,
+        active: selectedModel.value === model.id,
       });
     }
   });
@@ -31,7 +34,7 @@ const modelOptions = computed(() => [
 
 // 触发按钮文本：选中的自定义模型名，未选中自定义模型时回退到内置雪花服务
 const activeName = computed(() => {
-  const current = configuredModels.value.find((item) => item.id === activeModel.value);
+  const current = configuredModels.value.find((item) => item.id === selectedModel.value);
   return current ? current.name : "雪花服务";
 });
 
@@ -43,7 +46,7 @@ function selectModel(item: any) {
     goToAddModel();
     return;
   }
-  aiStore.activeModel = item.id;
+  aiStore.setAgentModel("xiaoYang", item.id);
 }
 
 // 空态：打开服务商设置弹窗并切到添加模型 Tab
@@ -79,7 +82,7 @@ function goToAddModel() {
           class="w-44"
           :list="modelOptions"
           activeKey="id"
-          :activeValue="activeModel"
+          :activeValue="selectedModel"
           @onClick="selectModel"
         >
           <template #default="{ item }">
