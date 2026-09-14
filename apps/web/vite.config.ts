@@ -16,7 +16,7 @@ import { ElementPlusResolver } from "unplugin-vue-components/resolvers";
 // 组件自动导入工具
 import Components from "unplugin-vue-components/vite";
 // Vite配置定义函数
-import { defineConfig, loadEnv } from "vite";
+import { defineConfig, loadEnv, type Plugin } from "vite";
 // 静态资源压缩插件
 import viteCompression from "vite-plugin-compression";
 // HTML处理插件
@@ -60,7 +60,7 @@ function versionPlugin() {
   };
 }
 
-function copyrightPlugin() {
+function copyrightPlugin(): Plugin {
   const copyright = "Copyright (c) 2026 Snowflake. Licensed under MIT.";
   return {
     name: "copyright-watermark",
