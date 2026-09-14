@@ -228,12 +228,14 @@
       <SfFooter />
     </main>
   </SfScrollbar>
+  <Share />
 </template>
 
 <script setup>
 import { useIntersectionObserver } from "@vueuse/core";
 import { useRouter } from "vue-router";
 import { ref } from "vue";
+import Share from "../components/share.vue";
 
 const router = useRouter();
 const revealSections = ref([]);

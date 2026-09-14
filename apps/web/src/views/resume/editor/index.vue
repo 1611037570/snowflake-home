@@ -40,6 +40,8 @@
     </div>
     <!-- 环境检测：浏览器与窗口尺寸不符合时右侧弹窗提示 -->
     <DetectTip />
+    <!-- 分享入口：固定在编辑器视口右下角 -->
+    <Share v-if="!focusMode" />
   </div>
 </template>
 
@@ -54,6 +56,7 @@ import AiMask from "./components/aiMask.vue";
 import Header from "./components/header/index.vue";
 import ExportMask from "./components/exportMask.vue";
 import DetectTip from "./components/detectTip.vue";
+import Share from "../components/share.vue";
 import Preview from "./preview/index.vue";
 import Toolbar from "./toolbar/index.vue";
 // 预览层代理数据及批量操作句柄

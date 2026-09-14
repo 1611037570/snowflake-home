@@ -38,24 +38,13 @@ const saveQrCode = async () => {
 </script>
 
 <template>
-  <div class="absolute -right-10 -bottom-12 z-50">
-    <div
-      class="group relative h-9 w-[90px] cursor-pointer overflow-hidden rounded-3xl"
-    >
-      <div
-        class="flex h-9 w-[90px] translate-x-[54px] items-center bg-sf-theme-2 transition-transform duration-300 group-hover:translate-x-0"
-      >
-        <button
-          type="button"
-          aria-label="分享"
-          class="flex h-9 w-9 shrink-0 cursor-pointer items-center justify-center rounded-3xl bg-sf-bg-2 text-sf-base transition-colors duration-300 hover:bg-sf-theme hover:text-sf-theme-text"
-          @click="visible = true"
-        >
-          <SfIcon icon="fa6-solid:share-alt" size="5" />
-        </button>
-        <span class="pl-3 text-sm whitespace-nowrap text-sf-theme-text">分享</span>
-      </div>
-    </div>
+  <!-- 默认露出图标，悬停时整体滑出分享文案 -->
+  <div
+    class="flex-c fixed -right-30 bottom-6 z-50 cursor-pointer rounded-l-3xl bg-sf-theme p-3 text-sf-theme-text transition-all duration-300 hover:-translate-x-28"
+    @click="visible = true"
+  >
+    <SfIcon icon="ph:paper-plane-right-fill" size="5" />
+    <span class="pr-6 pl-3 text-sm whitespace-nowrap">分享轻舟简历</span>
   </div>
 
   <SfModal v-model="visible" title="分享简历">
@@ -63,7 +52,7 @@ const saveQrCode = async () => {
       <div class="h-56 w-56 rounded-3xl bg-white p-3">
         <SfQrcode ref="qrCodeRef" :value="resumeUrl" :size="220" />
       </div>
-      <p class="max-w-full break-all text-center text-sm text-sf-text-2">{{ resumeUrl }}</p>
+      <p class="max-w-full text-center text-sm break-all text-sf-text-2">{{ resumeUrl }}</p>
       <div class="flex w-full gap-3">
         <SfButton class="flex-1" type="bg" @click="saveQrCode">保存图片</SfButton>
         <SfButton class="flex-1" @click="copyLink">复制链接</SfButton>
