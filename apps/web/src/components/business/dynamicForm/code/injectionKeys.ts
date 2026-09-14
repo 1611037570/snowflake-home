@@ -10,8 +10,6 @@ import type { DataPathContext } from "./pathContext";
 export const INSTANCE_COMPONENTS: InjectionKey<Record<string, any>> = Symbol("instanceComponents");
 /** 根数据代理 */
 export const DF_ROOT_DATA: InjectionKey<DataProxy<any>> = Symbol("df/root/data");
-/** 根表单代理 */
-export const DF_ROOT_FORM: InjectionKey<any> = Symbol("df/root/form");
 /** 当前容器表单配置（统一为 ref） */
 export const DF_CURRENT_FORM: InjectionKey<any> = Symbol("df/current/form");
 /** 当前数组记录的数据路径上下文 */
