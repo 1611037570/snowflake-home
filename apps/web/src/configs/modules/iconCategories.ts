@@ -23,6 +23,10 @@ export const ICON_CATEGORIES: IconCategory[] = [
       { icon: "basil:file-user-solid", name: "用户档案" },
       { icon: "mdi:email-outline", name: "邮箱" },
       { icon: "mdi:phone", name: "电话" },
+      { icon: "mdi:flag-outline", name: "政治面貌" },
+      { icon: "mdi:map-marker-outline", name: "期望城市" },
+      { icon: "mdi:home-outline", name: "籍贯" },
+      { icon: "mdi:human-male-height", name: "身高体重" },
     ],
   },
   {
@@ -46,6 +50,7 @@ export const ICON_CATEGORIES: IconCategory[] = [
       { icon: "ph:briefcase-duotone", name: "公文包双色" },
       { icon: "fa6-solid:rocket", name: "火箭" },
       { icon: "fa6-solid:bullseye", name: "靶心" },
+      { icon: "mdi:briefcase-check-outline", name: "求职状态" },
     ],
   },
   {
@@ -103,6 +108,7 @@ export const ICON_CATEGORIES: IconCategory[] = [
       { icon: "mdi:widgets", name: "组件" },
       { icon: "mdi:shape-outline", name: "形状" },
       { icon: "carbon:data-view-alt", name: "数据视图" },
+      { icon: "lucide:tag", name: "标签" },
     ],
   },
 ];
