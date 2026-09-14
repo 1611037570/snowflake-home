@@ -16,7 +16,7 @@ const emailField: FormField = {
 describe("fieldData", () => {
   it("使用主数据路径生成稳定标识", () => {
     expect(getFieldDataKey(emailField)).toBe("user.data.email");
-    expect(getFieldDataKey({})).toBeUndefined();
+    expect(getFieldDataKey({} as FormField)).toBeUndefined();
   });
 
   it("按属性存在性判断字段是否已添加", () => {
@@ -45,6 +45,8 @@ describe("fieldData", () => {
 
   it("为引用类型默认值创建独立副本", () => {
     const field: FormField = {
+      type: "object",
+      component: "input",
       model: {
         source: ["user", "data", "tags"],
         prop: "modelValue",
@@ -63,6 +65,8 @@ describe("fieldData", () => {
 
   it("支持按数组记录上下文解析相对字段", () => {
     const field: FormField = {
+      type: "object",
+      component: "input",
       model: {
         source: ["summary"],
         prop: "modelValue",

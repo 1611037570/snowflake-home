@@ -34,6 +34,7 @@ describe("schemaData", () => {
   it("根据数组子项结构生成完整数据", () => {
     const schema: FormField = {
       type: "array",
+      source: ["items"],
       itemSchema: {
         type: "group",
         model: [
@@ -76,6 +77,7 @@ describe("schemaData", () => {
   it("每次生成的数据不共享默认值引用", () => {
     const schema: FormField = {
       type: "array",
+      source: ["items"],
       itemSchema: {
         type: "group",
         model: {
@@ -83,6 +85,7 @@ describe("schemaData", () => {
           prop: "collapsed",
           defaultValue: ["1"],
         },
+        fields: [],
       },
     };
 

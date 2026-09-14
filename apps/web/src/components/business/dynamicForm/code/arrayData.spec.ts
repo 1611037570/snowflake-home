@@ -12,6 +12,7 @@ const createArrayField = (source: string[]): FormField => ({
       prop: "name",
       defaultValue: "默认名称",
     },
+    fields: [],
   },
 });
 
@@ -54,7 +55,10 @@ describe("arrayData", () => {
   it("无效路径和下标不会修改数据", () => {
     const data = { work: { data: [{ name: "甲" }] } };
     const field = createArrayField(["work", "data"]);
-    const invalidField: FormField = { type: "array", itemSchema: { type: "group" } };
+    const invalidField = {
+      type: "array",
+      itemSchema: { type: "group", fields: [] },
+    } as unknown as FormField;
 
     expect(addArrayRecord(data, invalidField)).toBe(-1);
     expect(removeArrayRecord(data, field, -1)).toBe(false);
