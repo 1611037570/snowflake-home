@@ -36,6 +36,7 @@ const cards = computed(() => [
   },
   {
     label: "机会坐标",
+    tooltip: "原名称：投递总数",
     description: "每一份都值得记录",
     value: totalApplications.value,
     unit: "次",
@@ -44,6 +45,7 @@ const cards = computed(() => [
   },
   {
     label: "轨道进行中",
+    tooltip: "原名称：进行中",
     description: "正在靠近的机会",
     value: activeCount.value,
     unit: "家",
@@ -52,6 +54,7 @@ const cards = computed(() => [
   },
   {
     label: "抵达星点",
+    tooltip: "原名称：Offer",
     description: "已收获 Offer",
     value: offerCount.value,
     unit: "个",
@@ -75,7 +78,10 @@ const cards = computed(() => [
           >
             <SfIcon :icon="card.icon" size="4" />
           </span>
-          {{ card.label }}
+          <SfTooltip v-if="card.tooltip" :content="card.tooltip">
+            {{ card.label }}
+          </SfTooltip>
+          <template v-else>{{ card.label }}</template>
         </span>
         <button
           v-if="card.editable"
