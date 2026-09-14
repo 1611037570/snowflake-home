@@ -1,5 +1,6 @@
 <script setup>
 import { computed, inject } from "vue";
+import { isUserCustomFieldKey } from "@/stores/modules/resume/hooks/useUserCustomField";
 import { getPreviewText } from "../../../i18n";
 import UserContactItem from "./userContactItem.vue";
 import { useUserFieldVisibility } from "../useUserFieldVisibility";
@@ -21,6 +22,7 @@ const previewLang = inject(
 const user = computed(() => previewData.value?.user?.data || {});
 const { isUserFieldHidden } = useUserFieldVisibility();
 const userFieldOrder = inject("userFieldOrder", computed(() => []));
+const userFieldLabels = inject("userFieldLabels", computed(() => new Map()));
 const isIconMode = computed(() => userInfoMode?.value === "icon");
 // 隐藏模式仅保留个人信息字段值
 const isLabelHidden = computed(() => userInfoMode?.value === "none");
@@ -92,6 +94,17 @@ const secondaryItems = computed(() => {
   }
   return items;
 });
+// 自定义字段与预设字段共用更多字段排序，标题由运行时配置提供
+const customItems = computed(() =>
+  userFieldOrder.value
+    .filter((key) => isUserCustomFieldKey(key))
+    .filter((key) => !isUserFieldHidden(key) && user.value?.[key]?.value)
+    .map((key) => ({
+      key,
+      icon: "lucide:tag",
+      label: userFieldLabels.value.get(key) || "自定义字段",
+    })),
+);
 // 统一整理联系方式和扩展信息，交由通用单项组件渲染
 const contactItems = computed(() => {
   const items = [];
@@ -117,7 +130,7 @@ const contactItems = computed(() => {
     });
   }
   const order = new Map(userFieldOrder.value.map((key, index) => [key, index]));
-  return [...items, ...secondaryItems.value].sort(
+  return [...items, ...secondaryItems.value, ...customItems.value].sort(
     (a, b) =>
       (order.get(a.sortKey || a.key) ?? Number.MAX_SAFE_INTEGER) -
       (order.get(b.sortKey || b.key) ?? Number.MAX_SAFE_INTEGER),
