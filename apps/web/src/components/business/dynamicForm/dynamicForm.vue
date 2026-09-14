@@ -1,6 +1,6 @@
 <template>
   <el-form ref="dynamicForm" :model="data" label-width="auto" class="flex w-full flex-col">
-    <FormRenderer v-model:items="formProxy" />
+    <FormRenderer v-model:items="form" />
   </el-form>
 </template>
 <script setup lang="ts">
@@ -19,7 +19,6 @@ import {
   DF_MODULE_SELECT,
   DF_REMOVE,
   DF_ROOT_DATA,
-  DF_ROOT_FORM,
   INSTANCE_COMPONENTS,
 } from "./code/injectionKeys";
 
@@ -36,20 +35,16 @@ const props = withDefaults(defineProps<DynamicFormProps>(), {
 
 const instance = getCurrentInstance();
 const emit = instance?.emit;
-// 定义表单模型
+// 表单配置直接使用 defineModel 返回的响应式引用
 const form = defineModel<any>("form");
 // 定义数据模型
 const data = defineModel<any>("data");
 const dataProxy = new DataProxy(data, emit, props.options);
-const formProxy = ref(form);
 
 // 注入实例组件库
 provide(INSTANCE_COMPONENTS, props.components);
 // 注入根数据
 provide(DF_ROOT_DATA, dataProxy);
-// 注入根表单
-provide(DF_ROOT_FORM, formProxy);
-
 // 模块选中能力：外部调用 selectModule(key) 触发选中，选中后模块边框持续闪烁，鼠标经过恢复
 const selectedKey = ref<string | null>(null);
 const selectModule = (key: string | null) => {
