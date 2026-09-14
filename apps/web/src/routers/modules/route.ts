@@ -49,13 +49,13 @@ function generateRoute(item: any): RouteRecordRaw {
   const componentPath = `/src/views/${name}/index.vue`;
   const component = componentModules[componentPath];
 
-  // 简历页为布局路由：父路由不设 name（name 已挂到空路径子路由上），
-  // 避免与子路由同名冲突，也保证按 name 导航能渲染默认子页
+  // 简历页为布局路由：父路由不设 name，保留页面标识供子路由复用
   const isResume = name === "resume";
   const defaultRoute = {
     ...(!isResume ? { name } : {}),
     path: `/${name}`,
     component: component ? component : () => import("@views/status/error.vue"),
+    ...(isResume ? { meta: { pageName: name } } : {}),
   };
   return {
     ...defaultRoute,
