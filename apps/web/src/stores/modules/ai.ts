@@ -69,6 +69,8 @@ export type ModelItem = {
   // 是否为内置服务
   builtin?: boolean;
 };
+export type AiAgentKey = "xiaoZhou" | "xiaoYang" | "resumeParser";
+export type AiAgentModels = Record<AiAgentKey, string>;
 // 添加模型时提交的配置（表单或内置模板，不含 id）
 type ModelDraft = Omit<ModelItem, "id">;
 // 默认对话记录标题
@@ -87,6 +89,12 @@ export const useAiStore = defineStore(
     const activeModel = ref<string>("snowflake");
     // 已添加的用户模型列表（持久化到 localStorage）
     const modelList = ref<ModelItem[]>([]);
+    // 三个业务角色分别绑定模型，空值时兼容回退到旧的当前模型
+    const agentModels = ref<AiAgentModels>({
+      xiaoZhou: "",
+      xiaoYang: "",
+      resumeParser: "",
+    });
 
     const sidebarCollapsed = ref(true);
     const sidebarMode = ref("float"); // 'dock' or 'float'
@@ -284,6 +292,19 @@ export const useAiStore = defineStore(
       }
     }
 
+    // 获取角色绑定的模型，配置失效时回退到旧的当前模型
+    function getAgentModelId(agent: AiAgentKey) {
+      const modelId = agentModels.value[agent];
+      return modelId && modelList.value.some((model) => model.id === modelId)
+        ? modelId
+        : activeModel.value;
+    }
+
+    // 保存角色绑定的模型
+    function setAgentModel(agent: AiAgentKey, modelId: string) {
+      agentModels.value[agent] = modelId;
+    }
+
     // 服务商设置弹窗：显隐与当前 Tab（工具栏入口与聊天输入「去添加模型」共用）
     const modelManagerVisible = ref(false);
     const modelManagerTab = ref<"added" | "add">("added");
@@ -303,6 +324,7 @@ export const useAiStore = defineStore(
       currentMessages,
       activeModel,
       modelList,
+      agentModels,
       thinkMode,
       resumeAssistantChat,
       resumeAssistantChatList,
@@ -321,6 +343,8 @@ export const useAiStore = defineStore(
       addMessage,
       deployModel,
       deleteModel,
+      getAgentModelId,
+      setAgentModel,
       modelManagerVisible,
       modelManagerTab,
       openModelManager,
@@ -335,6 +359,7 @@ export const useAiStore = defineStore(
         "currentChatId",
         "activeModel",
         "modelList",
+        "agentModels",
         "resumeAssistantChat",
         "resumeAssistantChatList",
         "thinkMode",
