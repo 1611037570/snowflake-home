@@ -16,11 +16,15 @@
 <script setup lang="ts">
 import { ElDropdown } from "element-plus";
 import type { ComponentInstance } from "vue";
-import { getCurrentInstance, h, ref } from "vue";
+import { getCurrentInstance, h } from "vue";
 
 import { useThemeStore } from "@/stores";
 import { storeToRefs } from "pinia";
-const trigger = ref("hover");
+
+// 触发方式默认 hover，可按需传入 click / contextmenu
+const props = withDefaults(defineProps<{ trigger?: "hover" | "click" | "contextmenu" }>(), {
+  trigger: "hover",
+});
 
 defineOptions({ name: "SfDropdown" });
 const themeStore = useThemeStore();
