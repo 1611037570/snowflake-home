@@ -50,7 +50,7 @@ export interface FormField {
   label?: string;
   /** 表单项 class */
   colClass?: string;
-  /** 数组记录 class */
+  /** 容器子项 class */
   itemClass?: string;
   /** 子字段容器 class */
   rowClass?: string;
