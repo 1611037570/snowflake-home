@@ -26,6 +26,13 @@ function toggle() {
 // 字段添加交由动态表单写入真实数据
 function handleAdd(field) {
   addField(field);
+  // Newly added fields are appended after the existing visible fields.
+  const fields = currentForm.value?.fields;
+  const index = fields?.indexOf(field) ?? -1;
+  if (index >= 0) {
+    fields.splice(index, 1);
+    fields.push(field);
+  }
 }
 </script>
 
