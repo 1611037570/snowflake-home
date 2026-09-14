@@ -75,7 +75,7 @@ export const DEFAULT_USER_FORM = [
         type: "object",
         key: "name",
         label: "姓名",
-        tip: "真实姓名 推荐必填",
+        tip: "推荐必填",
         ui: {
           layout: "horizontal",
           hidden: {
@@ -115,7 +115,7 @@ export const DEFAULT_USER_FORM = [
         type: "object",
         key: "birthday",
         label: "出生日期",
-        tip: "出生年月 推荐必填",
+        tip: "推荐必填",
         component: "datePicker",
         span: 24,
         ui: {
@@ -147,7 +147,7 @@ export const DEFAULT_USER_FORM = [
         type: "object",
         key: "phone",
         label: "电话",
-        tip: "常用手机号 推荐必填",
+        tip: "推荐必填",
         component: "input",
         span: 24,
         ui: {
@@ -186,7 +186,7 @@ export const DEFAULT_USER_FORM = [
         type: "object",
         key: "sex",
         label: "性别",
-        tip: "选择性别",
+        tip: "推荐必填",
         component: "select",
         span: 24,
         ui: {
@@ -224,7 +224,7 @@ export const DEFAULT_USER_FORM = [
         type: "object",
         key: "position",
         label: "求职岗位",
-        tip: "求职岗位 推荐必填",
+        tip: "推荐必填",
         component: "input",
         span: 24,
         ui: {
@@ -254,6 +254,7 @@ export const DEFAULT_USER_FORM = [
         type: "object",
         key: "workTime",
         label: "参加工作时间",
+        tip: "推荐必填",
         component: "datePicker",
         span: 24,
         addable: true,
@@ -286,7 +287,7 @@ export const DEFAULT_USER_FORM = [
         type: "group",
         drag: true,
         dragClass: DEFAULT_DRAG_CLASS,
-        itemClass: DEFAULT_COL_CLASS,
+        itemClass: DEFAULT_COL_CLASS + " py-1",
         key: "more",
         component: "more",
         slot: "default",
