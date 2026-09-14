@@ -30,6 +30,13 @@ export type FieldChecks = {
   removed?: FieldCheckRule;
 };
 
+/** 表单项 UI 配置 */
+export interface FieldUIConfig {
+  /** 表单项布局模板 */
+  layout?: "vertical" | "horizontal";
+  [key: string]: any;
+}
+
 /** 表单字段（递归）：覆盖 object 叶子 / group 分组 / array 三种形态的字段集合 */
 export interface FormField {
   type?: "object" | "array" | "group";
@@ -46,7 +53,7 @@ export interface FormField {
   /** 表单项提示 */
   tip?: string;
   /** 表单项 UI 配置 */
-  ui?: Record<string, any>;
+  ui?: FieldUIConfig;
   /** 表单项校验规则（透传给 el-form rules） */
   rules?: any[];
   /** 模块标识（同时是数据路径首段） */

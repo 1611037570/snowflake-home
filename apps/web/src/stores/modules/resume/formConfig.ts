@@ -300,6 +300,7 @@ export const DEFAULT_USER_FORM = [
             span: 24,
             addable: true,
             ui: {
+              layout: "horizontal",
               hidden: {
                 source: ["ui", "fields", "email", "hidden"],
                 prop: "hidden",
