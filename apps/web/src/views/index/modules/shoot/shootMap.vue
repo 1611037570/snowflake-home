@@ -16,7 +16,6 @@
 </template>
 
 <script setup>
-import * as echarts from "echarts";
 import { onBeforeUnmount, onMounted, ref, watch } from "vue";
 
 const props = defineProps({
@@ -28,10 +27,14 @@ const props = defineProps({
 
 const chartRef = ref(null);
 let chartInstance = null;
+let echarts = null;
 const currentMap = ref("china");
 const mapFeatures = ref([]);
 
 const initChart = async () => {
+  if (!chartRef.value) return;
+  // 进入地图模块时再加载 ECharts，避免未使用的地图影响首屏。
+  echarts = await import("echarts");
   if (!chartRef.value) return;
   chartInstance = echarts.init(chartRef.value);
 

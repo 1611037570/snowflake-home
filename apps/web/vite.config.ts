@@ -214,15 +214,6 @@ export default ({ mode }: { mode: string }) => {
               if (id.includes("wangeditor")) {
                 return "wangeditor";
               }
-              if (id.includes("md-editor")) {
-                return "md-editor";
-              }
-              if (id.includes("jspdf")) {
-                return "jspdf";
-              }
-              if (id.includes("/mathjs/")) {
-                return "mathjs";
-              }
               if (id.includes("/qrcode/")) {
                 return "qrcode";
               }
