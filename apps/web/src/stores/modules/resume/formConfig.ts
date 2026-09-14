@@ -19,6 +19,8 @@ export const DEFAULT_USER_FORM = [
     key: "user",
     drag: false,
     dragClass: DEFAULT_DRAG_CLASS,
+    // 个人信息字段保持统一垂直间距
+    rowClass: "gap-y-3",
     // 固定模块：不参与模块拖拽排序
     fixed: true,
     props: {
