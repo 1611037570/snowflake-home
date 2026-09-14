@@ -36,6 +36,12 @@ const resumeChildren: RouteRecordRaw[] = [
     component: () => import("@/views/resume/editor/index.vue"),
     meta: { hideResumeLayout: true },
   },
+  {
+    path: "print",
+    name: "resume-print",
+    component: () => import("@/views/resume/print/index.vue"),
+    meta: { hideResumeLayout: true },
+  },
 ];
 /**
  * 路由映射表

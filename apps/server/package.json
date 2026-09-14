@@ -34,6 +34,7 @@
     "class-validator": "^0.15.1",
     "ioredis": "^5.10.1",
     "mysql2": "^3.20.0",
+    "playwright": "^1.55.1",
     "passport-jwt": "^4.0.1",
     "pinyin": "^4.0.0",
     "reflect-metadata": "^0.2.2",

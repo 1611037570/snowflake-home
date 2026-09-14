@@ -1,4 +1,5 @@
 import XyRequest from "../../request";
+import axios from "axios";
 const request = new XyRequest({
   baseURL: import.meta.env.VITE_SNOWFLAKE_API_URL,
 });
@@ -26,4 +27,17 @@ export const createFeedback = async (data: CreateFeedbackParams) => {
   if (response instanceof Error || response?.isAxiosError) throw response;
 
   return response;
+};
+
+export const createResumePdf = async (item: any, system?: any) => {
+  const response = await axios.post<Blob>(
+    `${import.meta.env.VITE_SNOWFLAKE_API_URL}/resume/pdf`,
+    { item, system },
+    {
+      responseType: "blob",
+      timeout: 120000,
+      headers: { "Content-Type": "application/json;charset=UTF-8" },
+    },
+  );
+  return response.data;
 };
