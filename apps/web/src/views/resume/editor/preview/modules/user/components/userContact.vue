@@ -20,10 +20,10 @@ const previewLang = inject(
   computed(() => "zh"),
 );
 const user = computed(() => previewData.value?.user?.data || {});
-// 字段级 UI 配置（图标等），与编辑器同读根数据 ui 层级
-const ui = computed(() => previewData.value?.ui || {});
+// 字段级 UI 配置（图标等），与编辑器同读个人信息模块 ui 层级
+const ui = computed(() => previewData.value?.user?.ui || {});
 // 读取字段配置中的图标，未配置时为 undefined 由图标组件兜底处理
-const fieldIcon = (key) => ui.value?.fields?.[key]?.icon?.value;
+const fieldIcon = (key) => ui.value?.[key]?.icon?.value;
 const { isUserFieldHidden } = useUserFieldVisibility();
 const userFieldOrder = inject("userFieldOrder", computed(() => []));
 const userFieldLabels = inject("userFieldLabels", computed(() => new Map()));
