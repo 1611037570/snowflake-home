@@ -4,7 +4,7 @@ import dayjs from "dayjs";
 import { storeToRefs } from "pinia";
 import { useRouter } from "vue-router";
 import { useProgress } from "../editor/hooks/useProgress";
-import { getResumeTitle } from "../editor/resumeName";
+import { getExportFileName, getResumeTitle } from "../editor/resumeName";
 import { expandConfigFields } from "@/stores/modules/resume/hooks/useConfigTemplate";
 import ResumeCardContainer from "./components/resumeCardContainer.vue";
 import RevealGrid from "../components/revealGrid.vue";
@@ -54,6 +54,32 @@ const getProgressClass = (progress) => {
   if (progress < 60) return "bg-sf-warning";
   return "bg-sf-theme";
 };
+
+// 导出指定简历的完整 JSON 配置，支持后续无损导入恢复。
+const exportJson = (item) => {
+  const json = JSON.stringify(item ?? {}, null, 2);
+  const blob = new Blob([json], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = getExportFileName(getResumeTitle(item), "json");
+  link.click();
+  URL.revokeObjectURL(url);
+};
+
+// 草稿卡片操作菜单：预览入口暂不绑定功能。
+const getActionList = (item) => [
+  {
+    name: "导出 JSON",
+    icon: "fa6-solid:file-export",
+    fn: () => exportJson(item),
+  },
+  {
+    name: "预览",
+    icon: "lucide:eye",
+    disabled: true,
+  },
+];
 
 // 当前标签：draft | trash
 const activeTab = ref("draft");
@@ -129,6 +155,19 @@ const handleClearTrash = () => {
             <CreateResume v-if="card.type === 'create'" />
             <!-- 简历项 -->
             <ResumeCardContainer v-else :item="card.item" @click="handleEdit(card.index)">
+              <template #actions>
+                <SfDropdown trigger="click" placement="bottom-end" :show-arrow="false">
+                  <SfIcon
+                    icon="mdi:dots-horizontal"
+                    size="5"
+                    boxSize="8"
+                    class="cursor-pointer rounded-full border border-sf-b bg-sf-primary text-sf-text-2 shadow-sm hover:bg-sf-theme-2 hover:text-sf-theme"
+                  />
+                  <template #dropdown>
+                    <SfList :list="getActionList(card.item)" class="w-36" />
+                  </template>
+                </SfDropdown>
+              </template>
               <div class="truncate text-base font-black text-sf-text">
                 {{ getResumeTitle(card.item) }}
               </div>
