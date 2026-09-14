@@ -27,19 +27,7 @@
         :pathContext="getPathContext(item.index)"
         @removeObject="remove(item.index)"
       />
-      <div class="flex" v-if="item.item.ui">
-        <el-button @click="moveItem(item.index, item.index - 1)" :disabled="item.index === 0"
-          >上移</el-button
-        >
-        <el-button
-          @click="moveItem(item.index, item.index + 1)"
-          :disabled="item.index === length - 1"
-          >下移</el-button
-        >
-        <el-button @click="remove(item.index)">删除</el-button>
-      </div>
     </FormItem>
-    <el-button @click="add()" v-if="0">添加</el-button>
   </el-row>
 </template>
 
@@ -47,7 +35,7 @@
 import { getUUID } from "@/utils";
 import { computed, inject, onMounted, onUnmounted, ref, toRaw } from "vue";
 import { useDraggable } from "vue-draggable-plus";
-import { getArrayRecords, moveArrayRecord, removeArrayRecord } from "../code/arrayData.ts";
+import { getArrayRecords, removeArrayRecord } from "../code/arrayData.ts";
 import { getFormItemStyles } from "../code/formItemStyle";
 import { resolveDataPath, type DataPathContext } from "../code/pathContext";
 import {
@@ -56,7 +44,6 @@ import {
   DF_CURRENT_TYPE,
   DF_ROOT_DATA,
 } from "../code/injectionKeys.ts";
-import { createAddItem } from "../code/addItem.ts";
 import ContainerObject from "./containerObject.vue";
 import ContainerSlot from "./containerSlot.vue";
 import FormItem from "./formItem.vue";
@@ -139,17 +126,10 @@ const formListWithStyle = computed(() => {
   });
 });
 
-// 上移
-const moveItem = (index: any, targetIndex: any) => {
-  if (targetIndex < 0 || targetIndex >= length.value) return;
-  moveArrayRecord(rootData.data, currentForm.value, index, targetIndex);
-};
 // 删除
 const remove = (index: any) => {
   removeArrayRecord(rootData.data, currentForm.value, index);
 };
-// 添加操作通过统一数组入口写入真实数据
-const add = createAddItem(currentForm, rootData);
 // 提供当前容器的长度
 provide(DF_CURRENT_LENGTH, length);
 // 提供当前容器的表单数据
