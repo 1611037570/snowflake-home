@@ -53,6 +53,7 @@
               boxSize="6"
               class="cursor-move! rounded-xl hover:bg-sf-theme hover:text-sf-theme-text"
             />
+            <SfIconPicker v-if="iconBinding" v-model="iconModel" :size="4" class="mr-1" />
             <span class="truncate pr-1 text-[15px] text-sf-text">
               {{ currentForm.label }}
             </span>
@@ -121,6 +122,21 @@ const hidden = computed(() => {
 });
 // 表单项根据自身配置判断置灰状态
 const hiddenState = computed(() => isFieldHidden(rootData.data, currentForm, pathContext));
+// 图标绑定：字段在 ui 中声明 icon 配置才渲染图标选择器
+const iconBinding = computed(() => currentForm?.ui?.icon);
+// 图标值双向绑定：与隐藏开关同一套数据代理逻辑
+const iconModel = computed({
+  get: () => {
+    const binding = iconBinding.value;
+    if (!binding || typeof binding !== "object" || !binding.source?.length) return undefined;
+    return rootData.getDataProxy(binding, pathContext).icon;
+  },
+  set: (value) => {
+    const binding = iconBinding.value;
+    if (!binding || typeof binding !== "object" || !binding.source?.length) return;
+    rootData.setDataProxy(binding, pathContext)["update:icon"]?.(value);
+  },
+});
 const dragHandleClass = computed(() => {
   const value = dragClass?.trim();
   return value?.startsWith(".") ? value.slice(1) : value || "item-drag";
