@@ -9,8 +9,8 @@ import { loadPageLang } from "@/locales";
  * @param next 路由放行函数
  */
 export async function beforeEachGuard(to: any, from: any, next: any) {
-  // 根据当前页面加载对应语言包，路由名称不存在时使用默认起始页兜底
-  const pageName = to.name;
+  // 二级路由没有名称时复用一级页面标识
+  const pageName = to.meta.pageName || to.name;
   // 语言包后台加载，不阻塞路由放行，避免线上跳转停顿
   loadPageLang(pageName);
 
