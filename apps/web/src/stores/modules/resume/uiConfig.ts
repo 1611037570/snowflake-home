@@ -72,6 +72,10 @@ export const userInfoModeList = [
     name: "文字",
     value: "text",
   },
+  {
+    name: "不显示",
+    value: "none",
+  },
 ];
 // 个人信息布局列表
 export const userInfoLayoutList = [
