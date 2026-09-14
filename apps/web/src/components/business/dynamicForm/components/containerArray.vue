@@ -14,7 +14,6 @@
       :pathContext="getPathContext(item.index)"
       :style="item.style"
     >
-      <!-- v-bind="$attrs"  -->
       <ContainerSlot
         v-if="item.item.type === 'group'"
         :currentForm="item.item"

@@ -4,7 +4,6 @@
     v-bind="{
       ...rootData.getDataProxy(currentForm.model, pathContext),
       ...currentForm.props,
-      // ...$attrs,
     }"
     v-on="bindEvent"
   ></component>

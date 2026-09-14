@@ -22,7 +22,6 @@ import {
   DF_ROOT_FORM,
   INSTANCE_COMPONENTS,
 } from "./code/injectionKeys";
-// import useFormProxy from './code/useFormProxy'
 
 defineOptions({ name: "SfDynamicForm" });
 type DynamicFormProps = {
@@ -42,7 +41,6 @@ const form = defineModel<any>("form");
 // 定义数据模型
 const data = defineModel<any>("data");
 const dataProxy = new DataProxy(data, emit, props.options);
-// const formProxy = useFormProxy(form)
 const formProxy = ref(form);
 
 // 注入实例组件库

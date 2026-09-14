@@ -1,5 +1,4 @@
 <template>
-  <!-- :gutter="12" -->
   <el-row ref="row" :class="{ 'drag-container-active': isDragging }" :key="items.id">
     <!-- 容器子项样式与字段自身样式统一绑定到对应栅格项 -->
     <FormItem
@@ -23,7 +22,6 @@
         :error-msg="item.error"
         :raw="item.field"
       />
-      <!-- v-bind="$attrs" -->
       <ContainerSlot
         v-else-if="item.field.type === 'group'"
         :currentForm="item.field"
