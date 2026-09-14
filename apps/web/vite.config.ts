@@ -142,7 +142,7 @@ export default ({ mode }: { mode: string }) => {
         deep: false, // 是否深度搜索子目录
       }),
       // Element Plus 按需样式导入
-      ElementPlus(),
+      ElementPlus({}),
       // 仅在开发环境启用
       ...(isProd
         ? []
