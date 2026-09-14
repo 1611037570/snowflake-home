@@ -16,8 +16,8 @@ const emit = defineEmits(["switch-mode", "suggest"]);
 // 默认突出简历编辑能力，面试训练通过次级分类按需展示
 const activeCategory = ref<"resume" | "interview">("resume");
 const categories = [
-  { key: "resume" as const, label: "简历工具" },
-  { key: "interview" as const, label: "面试训练" },
+  { value: "resume" as const, name: "简历工具" },
+  { value: "interview" as const, name: "面试训练" },
 ];
 const visibleSuggestions = computed(() =>
   props.suggestions.filter((card) => card.category === activeCategory.value),
@@ -110,20 +110,7 @@ const startFeature = () => {
     </div>
     <!-- 两个轻量分类保持当前页面以简历编辑为主，面试功能按需展开 -->
     <div class="flex items-center gap-3 rounded-xl bg-sf-bg p-3">
-      <button
-        v-for="category in categories"
-        :key="category.key"
-        class="flex h-9 items-center rounded-xl px-3 text-sm font-medium transition-colors duration-300"
-        :class="
-          activeCategory === category.key
-            ? 'bg-sf-theme text-sf-theme-text'
-            : 'text-sf-text-2 hover:bg-sf-bg-2'
-        "
-        type="button"
-        @click="activeCategory = category.key"
-      >
-        {{ category.label }}
-      </button>
+      <SfTab v-model="activeCategory" :list="categories" />
     </div>
     <div class="flex flex-wrap items-center justify-center gap-x-3 text-sm">✨📄你可以这样问</div>
     <!-- 一键优化入口独立置顶并突出主题色 -->
