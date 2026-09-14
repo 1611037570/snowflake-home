@@ -47,11 +47,18 @@ export function expandConfigFields(fields: any[], data: any) {
   });
 }
 
+// 包含可拖拽子项的容器需要保留嵌套字段顺序
+function hasSortableFields(field: any) {
+  return (
+    field?.drag === true || (Array.isArray(field?.fields) && field.fields.some(hasSortableFields))
+  );
+}
+
 // 可渲染配置压缩为持久化字段列表：只保留模块 key 与顺序
 export function compactConfigFields(fields: any[]) {
   return fields.map((field: any) => {
     const compactField: any = { key: field.key };
-    if (field.drag && Array.isArray(field.fields)) {
+    if (Array.isArray(field.fields) && hasSortableFields(field)) {
       compactField.fields = compactConfigFields(field.fields);
     }
     return compactField;

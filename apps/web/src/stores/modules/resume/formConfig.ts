@@ -82,7 +82,7 @@ export const DEFAULT_USER_FORM = [
           },
         },
         component: "input",
-        span: 24,
+        span: 12,
         required: true,
         model: {
           source: ["user", "data", "name"],
@@ -114,7 +114,7 @@ export const DEFAULT_USER_FORM = [
         label: "出生日期",
         tip: "出生年月 推荐必填",
         component: "datePicker",
-        span: 24,
+        span: 12,
         ui: {
           hidden: {
             source: ["ui", "fields", "birthday", "hidden"],
@@ -145,7 +145,7 @@ export const DEFAULT_USER_FORM = [
         label: "电话",
         tip: "常用手机号 推荐必填",
         component: "input",
-        span: 24,
+        span: 12,
         ui: {
           hidden: {
             source: ["ui", "fields", "phone", "hidden"],
