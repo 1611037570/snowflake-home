@@ -10,7 +10,7 @@ describe("resume write flow", () => {
         ui: { title: "工作经历" },
         data: [
           {
-            collapsed: [],
+            ui: { collapsed: [] },
             name: "甲公司",
             post: "工程师",
             time: ["2024.01", "2025.01"],
@@ -34,7 +34,7 @@ describe("resume write flow", () => {
       },
       addDataRecord: (module: string) =>
         data[module].data.push({
-          collapsed: [],
+          ui: { collapsed: [] },
           name: "",
           post: "",
           time: [],

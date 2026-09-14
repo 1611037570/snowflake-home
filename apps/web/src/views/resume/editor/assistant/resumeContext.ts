@@ -10,17 +10,13 @@ export const useResumeContext = () => {
   const EMAIL_PATTERN = /[\w.%+-]+@[\w.-]+\.[A-Za-z]{2,}/g;
   const DESENSITIZED_TEXT = "[数据已脱敏]";
 
-  // 发送给 AI 的记录内 UI 状态字段：AI 不需要也不应修改
-  // collapsed：记录在编辑区的折叠状态，不参与内容翻译与优化
-  const RECORD_UI_KEYS = ["collapsed"];
-
-  // 递归剔除记录内 UI 状态字段，保留简历内容结构
+  // 递归剔除记录内 UI 状态，避免 AI 读取或修改编辑器控制数据
   const stripRecordUiState = (value: any): any => {
     if (Array.isArray(value)) return value.map(stripRecordUiState);
     if (value && typeof value === "object") {
       const next: Record<string, any> = {};
       Object.entries(value).forEach(([key, item]) => {
-        if (RECORD_UI_KEYS.includes(key)) return;
+        if (key === "ui") return;
         next[key] = stripRecordUiState(item);
       });
       return next;

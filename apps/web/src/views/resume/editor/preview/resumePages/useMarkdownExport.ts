@@ -134,7 +134,7 @@ export const exportMarkdown = (onSuccess?: () => void) => {
 
   moduleKeys.forEach((moduleKey) => {
     const moduleData = data[moduleKey];
-    if (!moduleData || moduleData.hidden || moduleData.archived) return;
+    if (!moduleData || moduleData.ui?.hidden || moduleData.ui?.archived) return;
     const schema = getSchema(moduleKey);
     const definitions: FieldDefinition[] = [];
     collectFieldDefinitions(getSchemaFields(schema), definitions);
