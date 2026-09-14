@@ -55,14 +55,6 @@ pnpm build
 
 ## Author's Murmurs
 
-The new repository has reached 2000 commits.
-
-> #### **September 8, 2026**
-
-The new repository has reached 1000 commits.
-
-> #### **August 23, 2026**
-
 ❄️ First Snow Again, Six Years of Frontend.
 
 Looking back, it is the sediment of **tens of thousands of commits**, the persistence of countless **console.log**, and the desire to have a **signature work**.
