@@ -34,6 +34,8 @@ export type FieldChecks = {
 export interface FieldUIConfig {
   /** 表单项布局模板 */
   layout?: "vertical" | "horizontal";
+  /** 表单项图标选择绑定：与隐藏绑定同结构，存在时渲染图标选择器 */
+  icon?: ModelBinding;
   /** 表单项隐藏状态绑定 */
   hidden?: ModelBinding;
   /** 是否允许移除可添加字段 */
