@@ -1,8 +1,10 @@
 <template>
   <!-- :gutter="12" -->
   <el-row ref="row" :class="{ 'drag-container-active': isDragging }" :key="items.id">
+    <!-- 字段自身样式统一绑定到对应栅格项 -->
     <FormItem
       :currentForm="item.field"
+      :class="item.field.colClass"
       :data-module-key="item.field.key"
       :data-fixed="item.field.fixed ? 'true' : undefined"
       v-for="item in renderFieldsWithStyle"
