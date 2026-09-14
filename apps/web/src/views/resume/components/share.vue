@@ -1,23 +1,13 @@
 <script setup>
 import { computed, nextTick, ref } from "vue";
-import { storeToRefs } from "pinia";
-import { useResumeStore } from "@/stores";
 import { useCopy } from "@/hooks";
-import { useRouter } from "vue-router";
 
-const router = useRouter();
-const resumeStore = useResumeStore();
-const { currentItem } = storeToRefs(resumeStore);
 const visible = ref(false);
 const qrCodeRef = ref();
 
 // 分享地址使用简历页面，并携带当前简历标识，不暴露编辑器路径
 const resumeUrl = computed(() => {
-  const href = router.resolve({
-    path: "/resume",
-    query: currentItem.value?.id ? { id: currentItem.value.id } : undefined,
-  }).href;
-  return new URL(href, window.location.origin).href;
+  return new URL("http://qzresume.com", window.location.origin).href;
 });
 
 // 复制当前简历的公开地址
@@ -47,7 +37,7 @@ const saveQrCode = async () => {
     <span class="pr-6 pl-3 text-sm whitespace-nowrap">分享轻舟简历</span>
   </div>
 
-  <SfModal v-model="visible" title="分享简历">
+  <SfModal v-model="visible" title="分享轻舟简历">
     <div class="flex w-[360px] max-w-[80vw] flex-col items-center gap-3">
       <div class="h-56 w-56 rounded-3xl bg-white p-3">
         <SfQrcode ref="qrCodeRef" :value="resumeUrl" :size="220" />
