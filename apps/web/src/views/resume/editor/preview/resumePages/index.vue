@@ -109,10 +109,27 @@ const userFieldOrder = computed(() => {
   collectFields(userField?.fields);
   return order;
 });
+const userFieldLabels = computed(() => {
+  const labels = new Map();
+  const userField = allModules.value.find((field) => field.key === "user");
+  const collectFields = (fields = []) => {
+    fields.forEach((field) => {
+      if (field.type === "group") {
+        collectFields(field.fields);
+      } else if (field.key && field.label) {
+        labels.set(field.key, field.label);
+      }
+    });
+  };
+  collectFields(userField?.fields);
+  return labels;
+});
 // 将用户模块字段的隐藏状态提供给预览子组件
 provide("userHiddenFields", userHiddenFields);
 // 将用户模块字段顺序提供给预览子组件
 provide("userFieldOrder", userFieldOrder);
+// 预览标签从字段配置读取，避免复制到个人信息数据中
+provide("userFieldLabels", userFieldLabels);
 const { measureDone, pages, pageStyleText, moduleList } = useResumePages({
   measureRef,
   ui,
