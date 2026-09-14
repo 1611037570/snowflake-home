@@ -1,7 +1,7 @@
 <script setup>
 import { useResumeStore } from "@/stores";
 import { themeTemplateList, themeColors } from "@/stores/modules/resume/uiConfig";
-import { xiaoYangResumeItem } from "@/stores/modules/resume/xiaoYangData";
+import { xiaoZhouResumeItem } from "@/stores/modules/resume/xiaoZhouData";
 import ResumeCardContainer from "@/views/resume/mine/components/resumeCardContainer.vue";
 import RevealGrid from "@/views/resume/components/revealGrid.vue";
 
@@ -20,7 +20,7 @@ const switchColor = (value) => {
   color.value = value;
 };
 const color = ref(themeColors[0].value);
-// 全部模板：遍历风格模板，统一使用小羊示例数据预览，仅覆盖风格
+// 全部模板：遍历风格模板，统一使用小舟示例数据预览，仅覆盖风格
 const templates = computed(() =>
   themeTemplateList.map((style, index) => ({
     id: style.value,
@@ -28,10 +28,10 @@ const templates = computed(() =>
     value: style.value,
     revealIndex: index,
     item: {
-      data: xiaoYangResumeItem.data,
-      config: xiaoYangResumeItem.config,
+      data: xiaoZhouResumeItem.data,
+      config: xiaoZhouResumeItem.config,
       ui: {
-        ...xiaoYangResumeItem.ui,
+        ...xiaoZhouResumeItem.ui,
         themeTemplate: style.value,
         themeColor: color.value,
       },
@@ -44,9 +44,9 @@ const total = computed(() => templates.value.length);
 // 套用模板：携带风格，深拷贝数据后新增简历并进入编辑
 const useTemplate = (card) => {
   resumeStore.addResume({
-    data: deepClone(xiaoYangResumeItem.data),
-    config: deepClone(xiaoYangResumeItem.config),
-    ui: { ...xiaoYangResumeItem.ui, themeTemplate: card.value },
+    data: deepClone(xiaoZhouResumeItem.data),
+    config: deepClone(xiaoZhouResumeItem.config),
+    ui: { ...xiaoZhouResumeItem.ui, themeTemplate: card.value },
   });
 };
 
