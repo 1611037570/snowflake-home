@@ -37,6 +37,8 @@
 </template>
 
 <script setup>
+import { inject } from "vue";
+
 defineOptions({
   name: "SfList",
 });
@@ -65,7 +67,10 @@ const props = defineProps({
   },
 });
 const emit = defineEmits(["onClick"]);
+const closeDropdown = inject("sfDropdownClose", null);
 function handleClick(event, item, index) {
+  // 下拉菜单中的列表项点击后先关闭宿主下拉，避免动作执行后菜单残留。
+  closeDropdown?.();
   if (item.fn) item.fn();
   event.stopPropagation();
   event.preventDefault();

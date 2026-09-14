@@ -16,7 +16,7 @@
 <script setup lang="ts">
 import { ElDropdown } from "element-plus";
 import type { ComponentInstance } from "vue";
-import { getCurrentInstance, h } from "vue";
+import { getCurrentInstance, h, provide, ref } from "vue";
 
 import { useThemeStore } from "@/stores";
 import { storeToRefs } from "pinia";
@@ -31,10 +31,14 @@ const themeStore = useThemeStore();
 const { theme } = storeToRefs(themeStore);
 
 const vm: any = getCurrentInstance();
+const dropdownRef = ref<ComponentInstance<typeof ElDropdown>>();
 
 function changeRef(exports: any) {
+  dropdownRef.value = exports;
   vm.exposed = exports;
 }
+// 向下拉内容提供统一关闭方法，列表点击时自动收起当前下拉。
+provide("sfDropdownClose", () => dropdownRef.value?.handleClose?.());
 defineExpose({} as ComponentInstance<typeof ElDropdown>);
 </script>
 
