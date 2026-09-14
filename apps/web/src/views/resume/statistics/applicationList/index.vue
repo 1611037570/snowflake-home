@@ -19,10 +19,11 @@ const handleLanded = () => {
 
 // 表格切换标签页
 const activeTab = ref("applications");
-const tabList = [
-  { value: "applications", name: "投递记录" },
-  { value: "followUps", name: "状态管理" },
-];
+// 标签名称拼接当前列表总条数
+const tabList = computed(() => [
+  { value: "applications", name: `投递记录（${applications.value.length}）` },
+  { value: "followUps", name: `状态管理（${followUps.value.length}）` },
+]);
 
 // 添加/修改弹窗显隐与当前编辑 id（空表示添加）
 const batchVisible = ref(false);
