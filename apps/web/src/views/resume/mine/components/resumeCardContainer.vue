@@ -33,7 +33,10 @@ const boxSize = computed(() => {
     @click="emit('click')"
   >
     <!-- 卡片右上角操作入口由调用方按需注入。 -->
-    <div class="absolute top-3 right-3 z-20" @click.stop>
+    <div
+      class="invisible absolute top-3 right-3 z-20 opacity-0 transition-opacity duration-200 group-hover:visible group-hover:opacity-100"
+      @click.stop
+    >
       <slot name="actions" />
     </div>
     <!-- 有 item 数据时渲染标准简历卡片 -->
