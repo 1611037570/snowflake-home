@@ -11,6 +11,8 @@ import RevealGrid from "../components/revealGrid.vue";
 import ImportResume from "./components/importResume.vue";
 import SendResume from "@/views/resume/components/sendResume/index.vue";
 import CreateResume from "./components/createResume.vue";
+// 草稿预览复用模板页专用全屏预览组件，保持两处预览布局一致。
+const TemplatePreview = markRaw(defineAsyncComponent(() => import("../template/templatePreview.vue")));
 
 const router = useRouter();
 
@@ -67,7 +69,17 @@ const exportJson = (item) => {
   URL.revokeObjectURL(url);
 };
 
-// 草稿卡片操作菜单：预览入口暂不绑定功能。
+// 草稿预览：记录当前打开的简历项，visible 由其是否存在派生。
+const previewItem = ref(null);
+const isPreviewVisible = computed(() => !!previewItem.value);
+const openPreview = (item) => {
+  previewItem.value = item;
+};
+const closePreview = () => {
+  previewItem.value = null;
+};
+
+// 草稿卡片操作菜单。
 const getActionList = (item) => [
   {
     name: "导出 JSON",
@@ -77,7 +89,7 @@ const getActionList = (item) => [
   {
     name: "预览",
     icon: "lucide:eye",
-    disabled: true,
+    fn: () => openPreview(item),
   },
 ];
 
@@ -255,6 +267,13 @@ const handleClearTrash = () => {
         </div>
       </div>
     </SfScrollbar>
+    <!-- 草稿专用全屏预览：复用模板页预览布局。 -->
+    <TemplatePreview
+      :visible="isPreviewVisible"
+      :item="previewItem || {}"
+      :title="getResumeTitle(previewItem)"
+      @close="closePreview"
+    />
   </div>
 </template>
 
