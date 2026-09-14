@@ -14,7 +14,6 @@ const Progress = defineAsyncComponent(() => import("./modules/progress/index.vue
 const ModuleNavigator = defineAsyncComponent(() => import("./modules/moduleNavigator.vue"));
 const QaAnswer = defineAsyncComponent(() => import("./modules/qaAnswer.vue"));
 const Debug = defineAsyncComponent(() => import("./modules/debug.vue"));
-const Share = defineAsyncComponent(() => import("./modules/share.vue"));
 
 defineOptions({ name: "ResumeToolbar" });
 
@@ -50,7 +49,6 @@ function goGitHub() {
       <div class="h-[0.5px] w-full bg-sf-bg-2"></div>
       <Icon icon="akar-icons:home-alt1" size="5" content="返回首页" @click="goHome" />
       <Icon icon="simple-icons:github" size="5" content="GitHub" @click="goGitHub" />
-      <Share />
     </div>
     <!-- QA 解答 -->
     <QaAnswer />
