@@ -127,7 +127,8 @@ const length = computed(() => records.value.length);
 const formListWithStyle = computed(() => {
   const list = records.value;
   const itemSchema = currentForm.value?.itemSchema;
-  const styles = getFormItemStyles(list);
+  // 数组记录共享 itemSchema，间距应依据字段跨度而不是业务数据计算
+  const styles = getFormItemStyles(list.map(() => itemSchema));
   return list.map((item: any, index: number) => {
     return {
       item: itemSchema,

@@ -19,9 +19,9 @@
     >
       <!-- 校验失败：展示友好的错误提示 -->
       <FormError
-        v-if="!checkForm(item.field)"
-        :error-msg="item.field.errorMsg"
-        :raw="item.field.raw"
+        v-if="item.error"
+        :error-msg="item.error"
+        :raw="item.field"
       />
       <!-- v-bind="$attrs" -->
       <ContainerSlot
@@ -78,7 +78,15 @@ const renderFields = computed(() => {
 const renderFieldsWithStyle = computed(() => {
   const fields = renderFields.value;
   const styles = getFormItemStyles(fields.map((item: any) => item.field));
-  return fields.map((item: any, index: number) => ({ ...item, style: styles[index] }));
+  return fields.map((item: any, index: number) => {
+    // 配置校验结果随渲染项传递，避免错误字符串被当作校验成功
+    const result = checkForm(item.field);
+    return {
+      ...item,
+      style: styles[index],
+      error: result === true ? undefined : result,
+    };
+  });
 });
 // 拖拽只重排当前可见字段，未渲染字段保留在原数据槽位
 const sortableFields = computed<any[]>({

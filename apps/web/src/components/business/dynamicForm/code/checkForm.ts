@@ -10,18 +10,10 @@ function checkObjectForm(form: any) {
   }
   if (!model) {
     errors.push("model");
-  } else {
-    // const { path, key } = model
-    // if (!path) {
-    //   errors.push('model.path')
-    // }
-    // if (!key) {
-    //   errors.push('model.key')
-    // }
   }
 
   if (errors.length > 0) {
-    return "缺少 " + errors.join("、 ");
+    return "缺少 " + errors.join("、");
   }
   return true;
 }
@@ -38,7 +30,7 @@ function checkArrayForm(form: any) {
   }
 
   if (errors.length > 0) {
-    return "缺少 " + errors.join("、 ");
+    return "缺少 " + errors.join("、");
   }
   return true;
 }
@@ -48,14 +40,11 @@ function checkArrayForm(form: any) {
  * @param form 表单项配置
  */
 export function checkForm(form: any) {
+  if (!form || typeof form !== "object") return "配置无效";
   const { type, fields } = form;
-  // 如果有 children，认为是一个容器，校验通过
-  if (Array.isArray(fields) && fields.length > 0) {
-    return true;
-  }
-  // 否则必须有类型
+  // 先按节点类型校验，避免存在 fields 时绕过类型约束
   if (!type) {
-    return "type";
+    return "缺少 type";
   }
   if (type === "object") {
     return checkObjectForm(form);
