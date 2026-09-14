@@ -27,6 +27,8 @@ import ViteRestart from "vite-plugin-restart";
 import vconsole from "vite-plugin-vconsole";
 // Vue DevTools 调试工具
 import vueDevTools from "vite-plugin-vue-devtools";
+// 自定义组件解析器
+import { dynamicComponentResolver } from "./src/components";
 // Element Plus 按需样式导入
 import ElementPlus from "unplugin-element-plus/vite";
 
@@ -132,8 +134,7 @@ export default ({ mode }: { mode: string }) => {
       }),
       // 组件自动注册配置
       Components({
-        // 基础组件统一由 globalComponentInstaller 注册，自动导入仅处理 Element Plus
-        resolvers: [ElementPlusResolver()],
+        resolvers: [ElementPlusResolver(), dynamicComponentResolver()], // 组件解析器列表
         dts: "src/types/components.d.ts", // 类型声明文件路径
         dirs: ["src/components"], // 要搜索组件的目录
         extensions: [".vue"], // 要处理的组件文件扩展名
