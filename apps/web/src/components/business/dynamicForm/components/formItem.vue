@@ -15,7 +15,8 @@
               icon="icon-park-outline:drag"
               :class="dragHandleClass"
               size="4"
-              class="mr-1 cursor-move! hover:text-sf-theme"
+              boxSize="6"
+              class="mr-1 cursor-move! rounded-xl hover:bg-sf-theme hover:text-sf-theme-text"
             />
             <span class="pr-1 pl-2 text-[15px] text-sf-text">
               {{ currentForm.label }}
@@ -41,7 +42,7 @@
         </div>
       </template>
       <template v-if="layout === 'horizontal'">
-        <div class="flex w-full items-center gap-3">
+        <div class="flex w-full items-center gap-1">
           <div v-if="currentForm.label" class="flex shrink-0 items-center" @click.stop.prevent="">
             <SfIcon
               v-if="draggable"
@@ -49,9 +50,10 @@
               icon="icon-park-outline:drag"
               :class="dragHandleClass"
               size="4"
-              class="mr-1 cursor-move! hover:text-sf-theme"
+              boxSize="6"
+              class="cursor-move! rounded-xl hover:bg-sf-theme hover:text-sf-theme-text"
             />
-            <span class="truncate pr-1 pl-2 text-[15px] text-sf-text">
+            <span class="truncate pr-1 text-[15px] text-sf-text">
               {{ currentForm.label }}
             </span>
             <sf-tooltip :content="currentForm.tip" v-if="currentForm.tip" class="text-sf-text" />
@@ -62,7 +64,7 @@
           <!-- Keep field actions aligned to the right edge. -->
           <div
             v-if="currentForm.ui?.hidden || currentForm.ui?.removable"
-            class="flex shrink-0 items-center gap-3"
+            class="flex shrink-0 items-center gap-1"
           >
             <SfIcon
               v-if="currentForm.ui?.hidden"
@@ -70,7 +72,8 @@
               @click.stop.prevent="toggleHidden"
               :icon="hidden ? 'lucide:eye' : 'lucide:eye-off'"
               size="4"
-              class="cursor-pointer hover:text-sf-theme"
+              boxSize="6"
+              class="cursor-pointer rounded-xl hover:bg-sf-theme hover:text-sf-theme-text"
             />
             <SfIcon
               v-if="currentForm.ui?.removable"
@@ -78,7 +81,8 @@
               @click.stop.prevent="removeField"
               icon="ic:round-delete"
               size="4"
-              class="cursor-pointer hover:text-sf-theme"
+              boxSize="6"
+              class="cursor-pointer rounded-xl hover:bg-sf-theme hover:text-sf-theme-text"
             />
           </div>
         </div>
