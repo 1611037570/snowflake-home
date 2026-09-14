@@ -281,6 +281,7 @@ export const DEFAULT_USER_FORM = [
         type: "group",
         drag: true,
         dragClass: DEFAULT_DRAG_CLASS,
+        colClass: DEFAULT_COL_CLASS,
         key: "more",
         component: "more",
         slot: "default",
@@ -583,7 +584,7 @@ export const DEFAULT_ACCOUNT_FORM = {
       source: ["account", "data"],
       drag: true,
       dragClass: DEFAULT_DRAG_CLASS,
-      colClass: DEFAULT_COL_CLASS + " py-1",
+      itemClass: DEFAULT_COL_CLASS + " py-1",
       itemSchema: {
         model: [
           {
@@ -647,7 +648,7 @@ export const DEFAULT_EDUCATION_FORM = {
       source: ["education", "data"],
       drag: true,
       dragClass: DEFAULT_DRAG_CLASS,
-      colClass: DEFAULT_COL_CLASS,
+      itemClass: DEFAULT_COL_CLASS,
       itemSchema: {
         type: "group",
         component: "itemCollapse",
@@ -914,7 +915,7 @@ export const DEFAULT_WORK_FORM = {
       source: ["work", "data"],
       drag: true,
       dragClass: DEFAULT_DRAG_CLASS,
-      colClass: DEFAULT_COL_CLASS,
+      itemClass: DEFAULT_COL_CLASS,
       itemSchema: {
         type: "group",
         component: "itemCollapse",
@@ -1039,7 +1040,7 @@ export const DEFAULT_PROJECT_FORM = {
       source: ["project", "data"],
       drag: true,
       dragClass: DEFAULT_DRAG_CLASS,
-      colClass: DEFAULT_COL_CLASS,
+      itemClass: DEFAULT_COL_CLASS,
       itemSchema: {
         type: "group",
         component: "itemCollapse",
@@ -1165,7 +1166,7 @@ export const DEFAULT_VIDEO_FORM = {
       source: ["video", "data"],
       drag: true,
       dragClass: DEFAULT_DRAG_CLASS,
-      colClass: DEFAULT_COL_CLASS,
+      itemClass: DEFAULT_COL_CLASS,
       itemSchema: {
         // 折叠标题数据源：展示当前视频名称
         model: [
@@ -1254,7 +1255,7 @@ export const DEFAULT_IMAGE_FORM = {
       source: ["image", "data"],
       drag: true,
       dragClass: DEFAULT_DRAG_CLASS,
-      colClass: DEFAULT_COL_CLASS,
+      itemClass: DEFAULT_COL_CLASS,
       itemSchema: {
         // 折叠标题数据源：展示当前图片作品名称
         model: [
@@ -1349,7 +1350,7 @@ export const DEFAULT_HONOR_FORM = {
       source: ["honor", "data"],
       drag: true,
       dragClass: DEFAULT_DRAG_CLASS,
-      colClass: DEFAULT_COL_CLASS + " py-1",
+      itemClass: DEFAULT_COL_CLASS + " py-1",
 
       itemSchema: {
         // 名称数据源：绑定当前荣誉证书名称
@@ -1409,7 +1410,7 @@ export const DEFAULT_CUSTOM_FORM = {
       source: ["custom", "data", "list"],
       drag: true,
       dragClass: DEFAULT_DRAG_CLASS,
-      colClass: DEFAULT_COL_CLASS,
+      itemClass: DEFAULT_COL_CLASS,
       itemSchema: {
         type: "group",
         component: "itemCollapse",
