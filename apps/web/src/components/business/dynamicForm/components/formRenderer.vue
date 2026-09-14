@@ -1,5 +1,6 @@
 <template>
-  <el-row ref="row" :class="{ 'drag-container-active': isDragging }" :gutter="12" :key="items.id">
+  <!-- :gutter="12" -->
+  <el-row ref="row" :class="{ 'drag-container-active': isDragging }" :key="items.id">
     <FormItem
       :currentForm="item.field"
       :data-module-key="item.field.key"
