@@ -38,13 +38,18 @@ const submit = async () => {
     submitting.value = false;
   }
 };
+
+// 反馈入口暂时统一跳转至 GitHub Issues
+const goToFeedback = () => {
+  window.location.href = "https://github.com/1611037570/snowflake-home/issues";
+};
 </script>
 
 <template>
   <button
     class="cursor-pointer font-medium hover:text-sf-theme"
     type="button"
-    @click="visible = true"
+    @click="goToFeedback"
   >
     意见反馈
   </button>
