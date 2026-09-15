@@ -6,10 +6,9 @@
  */
 import { onMounted, onUnmounted, type ComputedRef, type Ref } from "vue";
 import eventBus from "@/utils/modules/eventBus";
-import { printPDF as exportPdf } from "./usePdfExport";
 import { printResume } from "./useBrowserPrint";
 import { printServerPDF as exportServerPdf } from "./useServerPdfExport";
-import { printImage as exportImage } from "./useImageExport";
+import { printImage as exportImage, printLongImagePdf } from "./useImageExport";
 import { exportMarkdown } from "./useMarkdownExport";
 import { exportHtml } from "./useHtmlExport";
 /** useResumeExport 入参 */
@@ -25,8 +24,13 @@ interface UseResumeExportOptions {
 }
 
 export const useResumeExport = ({ isEdit, rootRef, measureRef, onExportSuccess }: UseResumeExportOptions) => {
+  // 长图 PDF 与 PNG 共用长图渲染结果，保持单页长图输出。
   const printPDF = (scale: unknown = 2) =>
-    exportPdf(rootRef, onExportSuccess, scale === 8 ? 8 : scale === 4 ? 4 : scale === 2 ? 2 : 1);
+    printLongImagePdf(
+      measureRef,
+      onExportSuccess,
+      scale === 8 ? 8 : scale === 4 ? 4 : scale === 2 ? 2 : 1,
+    );
   // 浏览器打印单独作为导出选项，保留系统打印能力。
   const printBrowserPDF = (scale: unknown = 2) =>
     printResume(rootRef, onExportSuccess, scale === 8 ? 8 : scale === 4 ? 4 : scale === 2 ? 2 : 1);
