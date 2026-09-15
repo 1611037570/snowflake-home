@@ -2,6 +2,7 @@
 import { ref } from "vue";
 import SendResume from "@/views/resume/components/sendResume/index.vue";
 import Money from "@/components/base/donation/money.vue";
+import eventBus from "@/utils/modules/eventBus";
 
 defineOptions({ name: "ExportSuccessModal" });
 
@@ -15,6 +16,12 @@ const goDeliverResume = () => {
   visible.value = false;
 };
 
+// 关闭成功提示并重新打开导出菜单。
+const continueExport = () => {
+  visible.value = false;
+  eventBus.emit("resume-open-export");
+};
+
 // 暴露 open 方法，供父组件在导出成功回调中触发
 const open = () => {
   visible.value = true;
@@ -26,6 +33,7 @@ defineExpose({ open });
   <SfModal v-model="visible" title="导出成功">
     <Money />
     <div class="flex-c gap-4">
+      <SfButton @click="continueExport">继续导出</SfButton>
       <SfButton @click="visible = false"> 没写完 继续编辑 </SfButton>
       <SfButton @click="goDeliverResume"> 写完了 投递简历 </SfButton>
     </div>

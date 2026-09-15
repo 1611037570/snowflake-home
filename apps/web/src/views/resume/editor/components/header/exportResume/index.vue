@@ -3,7 +3,7 @@ import { useResumeStore } from "@/stores";
 import { getExportFileName, resumeTitle } from "../../../resumeName.ts";
 import eventBus from "@/utils/modules/eventBus";
 import { storeToRefs } from "pinia";
-import { computed, ref } from "vue";
+import { computed, onMounted, onUnmounted, ref } from "vue";
 import ExportItem from "./exportItem.vue";
 
 const visible = ref(false);
@@ -42,6 +42,14 @@ const emitExport = (eventName) => {
   visible.value = false;
   eventBus.emit(eventName, exportScale);
 };
+
+// 响应导出成功弹窗的继续导出操作，重新打开导出菜单。
+const openExport = () => {
+  visible.value = true;
+};
+
+onMounted(() => eventBus.on("resume-open-export", openExport));
+onUnmounted(() => eventBus.off("resume-open-export", openExport));
 
 // PDF 和长图分别合并导出来源与文件类型，减少菜单入口数量。
 const list = computed(() => [
