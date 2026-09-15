@@ -350,11 +350,10 @@ export const useResumeStore = defineStore(
       if (!addResume(copy, false, false)) return "";
       return list.value[currentCount]?.id || "";
     };
-    // 解析模块记录数组：自定义模块位于 data.list，其余数组模块直接是 data
+    // 所有数组模块统一将记录存放在 data
     const resolveModuleRecords = (module: any): any[] | null => {
       if (!module || typeof module !== "object") return null;
       if (Array.isArray(module.data)) return module.data;
-      if (Array.isArray(module.data?.list)) return module.data.list;
       return null;
     };
     // 数组型模块新增记录：统一按运行时结构向真实数据追加默认记录
@@ -430,7 +429,7 @@ export const useResumeStore = defineStore(
       module.ui.title = value;
       return true;
     }
-    // 修改记录字段（普通数组模块与自定义 data.list 统一走记录容器）
+    // 修改数组模块记录字段
     function updateRecordField(
       moduleKey: string,
       index: number,

@@ -56,7 +56,7 @@ const handleConfirm = () => {
   if (!customModuleName.value) return;
   // 生成带前缀的唯一 key,作为模块标识与数据路径
   const customKey = `custom_${getUUID().substring(0, 8)}`;
-  // 模块标题写入 ui，经历记录继续保存在 data.list
+  // 模块标题写入 ui，经历记录统一保存在 data 数组
   if (currentData.value) {
     currentData.value[customKey] = {
       ui: {
@@ -65,9 +65,7 @@ const handleConfirm = () => {
         hidden: false,
         archived: false,
       },
-      data: {
-        list: [],
-      },
+      data: [],
     };
   }
   // 深拷贝自定义模块配置

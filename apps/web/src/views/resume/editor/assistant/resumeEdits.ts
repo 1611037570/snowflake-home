@@ -63,10 +63,9 @@ const validateFieldValue = (
   }
 };
 
-// 取模块记录数组：自定义模块记录在 data.list，其余数组模块直接是 data
+// 取数组模块记录
 const getModuleRecords = (moduleView: { data: unknown }): any[] | null => {
   if (Array.isArray(moduleView?.data)) return moduleView.data;
-  if (Array.isArray((moduleView?.data as any)?.list)) return (moduleView.data as any).list;
   return null;
 };
 

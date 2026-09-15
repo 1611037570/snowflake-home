@@ -36,7 +36,7 @@ describe("resumeSchemaRegistry", () => {
     expect(findResumeModuleSchema("custom_a810d50c")).toMatchObject({
       key: "custom",
       kind: "custom",
-      dataPath: ["data", "list"],
+      dataPath: ["data"],
     });
     expect(RESUME_SCHEMA.filter((module) => module.key === "custom")).toHaveLength(1);
   });

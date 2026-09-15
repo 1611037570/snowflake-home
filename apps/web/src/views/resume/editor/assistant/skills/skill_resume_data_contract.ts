@@ -28,7 +28,7 @@ const getFieldNotes = (field: ResumeFieldSchema) => {
 
 const getModuleDataLabel = (module: ResumeModuleSchema) => {
   if (module.kind === "object") return `${module.key}.data`;
-  if (module.kind === "custom") return "custom_<id>.data.list[]";
+  if (module.kind === "custom") return "custom_<id>.data[]";
   return `${module.key}.data[]`;
 };
 
@@ -41,7 +41,7 @@ const renderModule = (module: ResumeModuleSchema, index: number) => {
     .join("\n");
   const customNote =
     module.kind === "custom"
-      ? "> 自定义模块的实际顶层 key 以 `custom_` 开头；标题来自模块 `title`，记录写入 `data.list`。\n\n"
+      ? "> 自定义模块的实际顶层 key 以 `custom_` 开头；标题来自模块 `title`，记录与内置数组模块一样直接写入 `data`。\n\n"
       : "";
   return `## ${index + 1}. ${module.title}（\`${getModuleDataLabel(module)}\`）
 

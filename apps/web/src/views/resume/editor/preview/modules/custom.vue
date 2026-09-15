@@ -16,9 +16,8 @@ const previewData = inject("previewData");
 const fontValue = inject("fontValue");
 const lineHeightValue = inject("lineHeightValue");
 
-// 自定义模块 data.list 为经历记录数组
-const customData = computed(() => previewData.value?.[props.name]?.data || {});
-const customList = computed(() => getValidData(customData.value?.list || []));
+// 自定义模块与内置数组模块统一直接读取 data
+const customList = computed(() => getValidData(previewData.value?.[props.name]?.data || []));
 </script>
 
 <template>

@@ -32,12 +32,12 @@ describe("arrayData", () => {
     expect(data).toEqual({ education: { data: [{ name: "默认名称" }] } });
   });
 
-  it("支持自定义模块的嵌套记录路径", () => {
-    const data = { custom_a1: { data: { list: [] as any[] } } };
-    const field = createArrayField(["custom_a1", "data", "list"]);
+  it("支持自定义模块的记录路径", () => {
+    const data = { custom_a1: { data: [] as any[] } };
+    const field = createArrayField(["custom_a1", "data"]);
 
     expect(addArrayRecord(data, field)).toBe(0);
-    expect(data.custom_a1.data.list).toEqual([{ name: "默认名称" }]);
+    expect(data.custom_a1.data).toEqual([{ name: "默认名称" }]);
   });
 
   it("删除和移动只修改真实记录数组", () => {
