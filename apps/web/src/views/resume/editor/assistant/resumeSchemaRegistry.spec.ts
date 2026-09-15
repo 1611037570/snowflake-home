@@ -8,7 +8,7 @@ describe("resumeSchemaRegistry", () => {
 
     expect(user).toMatchObject({ title: "个人信息", kind: "object", dataPath: ["data"] });
     expect(status).toMatchObject({
-      label: "状态",
+      label: "求职状态",
       addable: true,
       options: ["在职", "离职", "应届生"],
     });
