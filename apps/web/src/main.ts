@@ -1,7 +1,7 @@
 // 导入 Vue 应用创建函数
 import { createApp } from "vue";
 // 导入 Pinia 状态管理
-import pinia, { useResumeStore } from "./stores";
+import pinia from "./stores";
 // 导入 i18n 配置
 import i18n from "./locales";
 // 导入根组件
@@ -15,8 +15,7 @@ import "./styles/tailwind.css";
 // 导入全局组件安装器
 import { globalComponentInstaller } from "./components";
 // 导入默认事件加载器
-import confirm from "./components/business/confirm";
-import { $s, eventBus, loadEvent, loadTheme } from "./utils";
+import { loadEvent, loadTheme } from "./utils";
 // 创建 Vue 应用实例
 const app = createApp(App);
 
@@ -24,26 +23,21 @@ const app = createApp(App);
 app.use(i18n);
 // 注册 Pinia 状态管理
 app.use(pinia);
+// 注册路由
+app.use(router);
+// 加载主题
+loadTheme();
+// 加载默认事件
+loadEvent();
 
-const startApp = async () => {
-  // 等待简历索引与完整数据加载后再挂载页面，避免初始化期间误判简历不存在。
-  await useResumeStore(pinia).init();
-  // 注册路由
-  app.use(router);
-  // 加载主题
-  loadTheme();
-  // 加载默认事件
-  loadEvent();
+// 注册全局函数 $s、$bus 和 $confirm
+import confirm from "./components/business/confirm";
+import { $s, eventBus } from "./utils";
+app.config.globalProperties.$s = $s;
+app.config.globalProperties.$bus = eventBus;
+app.config.globalProperties.$confirm = confirm;
 
-  // 注册全局函数 $s、$bus 和 $confirm
-  app.config.globalProperties.$s = $s;
-  app.config.globalProperties.$bus = eventBus;
-  app.config.globalProperties.$confirm = confirm;
-
-  // 注册全局组件安装器
-  app.use(globalComponentInstaller);
-  // 挂载应用到 DOM
-  app.mount("#app");
-};
-
-startApp();
+// 注册全局组件安装器
+app.use(globalComponentInstaller);
+// 挂载应用到 DOM
+app.mount("#app");
