@@ -4,6 +4,8 @@ import { getTime } from "../../utils";
 import ResumeField from "../components/resumeField/index.vue";
 import Title from "../components/title/index.vue";
 import { getValidData } from "./validData";
+import { isContentEmpty } from "../modules/validData";
+
 const props = defineProps({
   name: {
     type: String,
@@ -41,7 +43,12 @@ const customList = computed(() => getValidData(previewData.value?.[props.name]?.
         </div>
       </div>
       <!-- 补充描述/经历 -->
-      <ResumeField :model-value="item.content" html />
+      <ResumeField
+        :model-value="item.content"
+        html
+        v-if="!isContentEmpty(item.content)"
+        class="mt-3"
+      />
     </template>
   </div>
 </template>
