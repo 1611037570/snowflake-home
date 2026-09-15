@@ -42,6 +42,17 @@ const exportScaleTip = computed(() => {
 });
 const resumeStore = useResumeStore();
 const { currentItem, isPrinting } = storeToRefs(resumeStore);
+const pdfExportType = ref("local");
+const longImageExportType = ref("png");
+
+const pdfExportOptions = [
+  { name: "本地", value: "local" },
+  { name: "服务器", value: "server" },
+];
+const longImageExportOptions = [
+  { name: "PNG", value: "png" },
+  { name: "PDF图片", value: "pdf" },
+];
 
 // 导出当前完整简历为 JSON 文件（data/config/ui），支持无损导入恢复
 const exportConfig = () => {
@@ -63,31 +74,31 @@ const emitExport = (eventName) => {
   eventBus.emit(eventName, exportScale.value);
 };
 
-// 菜单配置
-const list = [
+// PDF 和长图分别合并导出来源与文件类型，减少菜单入口数量。
+const list = computed(() => [
   {
     name: "PDF",
     icon: "mdi:file-pdf-box",
-    desc: "适合打印、发送或存档",
-    fn: () => emitExport("resume-print-pdf"),
-  },
-  {
-    name: "浏览器打印",
-    icon: "mdi:printer",
-    desc: "使用浏览器系统打印",
-    fn: () => emitExport("resume-print-browser-pdf"),
-  },
-  {
-    name: "服务器导出",
-    icon: "mdi:server",
-    desc: "服务端高精度排版导出",
-    fn: () => emitExport("resume-print-server-pdf"),
+    desc: "本地或服务器排版导出",
+    options: pdfExportOptions,
+    modelValue: pdfExportType.value,
+    onChange: (value) => (pdfExportType.value = value),
+    fn: () =>
+      emitExport(
+        pdfExportType.value === "server" ? "resume-print-server-pdf" : "resume-print-browser-pdf",
+      ),
   },
   {
     name: "长图",
     icon: "material-symbols:image-outline",
-    desc: "适合快速分享",
-    fn: () => emitExport("resume-print-image"),
+    desc: "适合快速分享的图片导出",
+    options: longImageExportOptions,
+    modelValue: longImageExportType.value,
+    onChange: (value) => (longImageExportType.value = value),
+    fn: () =>
+      emitExport(
+        longImageExportType.value === "pdf" ? "resume-print-pdf" : "resume-print-image",
+      ),
   },
   {
     name: "Markdown",
@@ -101,7 +112,7 @@ const list = [
     desc: "适合编辑和分享的网页",
     fn: () => emitExport("resume-print-html"),
   },
-];
+]);
 const a = {
   name: "JSON",
   icon: "mdi:file-code-outline",
