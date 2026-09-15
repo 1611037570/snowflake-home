@@ -28,14 +28,6 @@ import ThemeColorPicker from "@/components/business/themeColorPicker/themeColorP
 const resumeStore = useResumeStore();
 const { currentUI } = storeToRefs(resumeStore);
 
-// 旧简历缺少新配置时沿用现有视觉间距
-const paragraphSpacing = computed({
-  get: () => currentUI.value?.paragraphSpacing ?? defaultParagraphSpacing,
-  set: (value) => {
-    if (currentUI.value) currentUI.value.paragraphSpacing = value;
-  },
-});
-
 // 个人信息展示模式
 const userInfoMode = computed({
   get: () => currentUI.value?.userInfoMode,
@@ -125,7 +117,7 @@ const avatarPosition = computed({
         />
         <ConfigItem
           label="段落间距"
-          v-model="paragraphSpacing"
+          v-model="currentUI.paragraphSpacing"
           :min="uiParamRanges.paragraphSpacing.min"
           :max="uiParamRanges.paragraphSpacing.max"
           :step="uiParamRanges.paragraphSpacing.step"
