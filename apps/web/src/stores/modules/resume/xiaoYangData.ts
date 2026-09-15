@@ -159,6 +159,7 @@ export const xiaoYangUI = {
   padding: 24,
   fontSize: 16,
   lineHeight: 1.2,
+  paragraphSpacing: 12,
   moduleSpacing: 12,
   themeColor: "#ff4d4f",
   fontFamily: "text-puhui",
