@@ -9,7 +9,6 @@ import {
   defaultAvatarPosition,
   defaultFontSize,
   defaultLineHeight,
-  defaultParagraphSpacing,
   defaultPadding,
   defaultUserInfoLayout,
   defaultUserInfoMode,
@@ -42,9 +41,7 @@ export const useResumeTheme = (ui: ComputedRef<ResumeUi>): ResumeTheme => {
   const padding = computed(() => toNumber(ui.value.padding, defaultPadding));
   const fontSize = computed(() => toNumber(ui.value.fontSize, defaultFontSize));
   const lineHeight = computed(() => toNumber(ui.value.lineHeight, defaultLineHeight));
-  const paragraphSpacing = computed(() =>
-    toNumber(ui.value.paragraphSpacing, defaultParagraphSpacing),
-  );
+  const paragraphSpacing = computed(() => Number(ui.value.paragraphSpacing));
 
   // 页面级基础样式对象固定复用，避免模板每次渲染都重新创建相同样式
   const paddingStyle = computed(() => {
