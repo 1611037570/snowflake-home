@@ -1,98 +1,159 @@
-import { storeToRefs } from "pinia";
-import { toRaw } from "vue";
+import { nextTick } from "vue";
 import { useResumeStore } from "@/stores";
-import router from "@/routers";
-import type { Ref } from "vue";
 
-type ResumeRootRef = Ref<HTMLElement | null>;
+type ResumeRootRef = { value: HTMLElement | null };
 
-const BROWSER_PRINT_READY = "snowflake-resume-browser-print-ready";
-const BROWSER_PRINT_DATA = "snowflake-resume-browser-print-data";
-const BROWSER_PRINT_DONE = "snowflake-resume-browser-print-done";
+const getResumeRoot = (rootRef: ResumeRootRef) => rootRef.value;
 
-// 复制简历数据，保留简历内容中的 Base64 图片。
-const cloneJson = (value: unknown) => JSON.parse(JSON.stringify(toRaw(value)));
+// 复制当前页面样式，保持模板和主题在打印文档中继续生效。
+const getStyleText = () =>
+  Array.from(document.styleSheets)
+    .flatMap((styleSheet) => {
+      try {
+        return Array.from(styleSheet.cssRules).map((rule) => rule.cssText);
+      } catch {
+        return [];
+      }
+    })
+    .join("\n");
 
-// 使用已有简历打印页，避免在当前编辑页重复实现排版逻辑。
-const getPrintUrl = (token: string) => {
-  const href = router.resolve({
-    name: "resume-print",
-    query: { browserPrint: "1", token },
-  }).href;
-  return new URL(href, window.location.origin).href;
+// 等待打印文档中的图片加载完成，Base64 图片保持原有地址不做转换。
+const waitForImages = async (printDocument: Document) => {
+  await Promise.all(
+    Array.from(printDocument.images).map(async (image) => {
+      if (image.complete) return;
+      await new Promise<void>((resolve) => {
+        image.addEventListener("load", () => resolve(), { once: true });
+        image.addEventListener("error", () => resolve(), { once: true });
+      });
+    }),
+  );
 };
 
-// 使用简历打印页的原生 DOM 和系统打印，不将页面转换为图片。
+// 等待字体、图片和两帧布局完成后再调用浏览器打印。
+const waitForPrintReady = async (printWindow: Window, printDocument: Document) => {
+  await printDocument.fonts?.ready;
+  await waitForImages(printDocument);
+  await new Promise<void>((resolve) => {
+    printWindow.requestAnimationFrame(() => {
+      printWindow.requestAnimationFrame(() => resolve());
+    });
+  });
+};
+
+// 使用隐藏 iframe 复制当前简历 DOM，交给浏览器原生打印。
 export const printResume = async (
   rootRef: ResumeRootRef,
   onSuccess?: () => void,
   scale = 1,
 ) => {
-  void rootRef;
   void scale;
-
   const resumeStore = useResumeStore();
-  const { currentItem, system } = storeToRefs(resumeStore);
-  if (!currentItem.value) return;
-
   const signal = resumeStore.beginPrinting();
   if (!signal) return;
 
-  const token = `${Date.now()}-${Math.random().toString(36).slice(2)}`;
-  const payload = {
-    item: cloneJson(currentItem.value),
-    system: cloneJson(system.value),
-  };
-  let printWindow: Window | null = null;
-  let restored = false;
+  const root = getResumeRoot(rootRef);
+  if (!root) {
+    resumeStore.finishPrinting(signal);
+    console.error("未找到可打印的简历页面");
+    return;
+  }
 
+  const printFrame = document.createElement("iframe");
+  printFrame.setAttribute("title", "简历打印预览");
+  printFrame.style.position = "absolute";
+  printFrame.style.width = "1px";
+  printFrame.style.height = "1px";
+  printFrame.style.left = "-9999px";
+  printFrame.style.visibility = "hidden";
+
+  let restored = false;
   const restorePrintState = (success = false) => {
     if (restored) return;
     restored = true;
-    window.removeEventListener("message", handleMessage);
+    printFrame.remove();
     resumeStore.finishPrinting(signal);
     if (success) onSuccess?.();
   };
 
-  const handleMessage = (event: MessageEvent) => {
-    if (
-      event.origin !== window.location.origin ||
-      event.source !== printWindow ||
-      event.data?.token !== token
-    ) {
-      return;
-    }
-
-    if (event.data.type === BROWSER_PRINT_READY) {
-      printWindow?.postMessage(
-        { type: BROWSER_PRINT_DATA, token, payload },
-        window.location.origin,
-      );
-    } else if (event.data.type === BROWSER_PRINT_DONE) {
-      restorePrintState(true);
-    }
-  };
-
-  window.addEventListener("message", handleMessage);
+  signal.addEventListener(
+    "abort",
+    () => restorePrintState(),
+    { once: true },
+  );
 
   try {
-    printWindow = window.open(getPrintUrl(token), "_blank");
-    if (!printWindow) {
+    const clonedRoot = root.cloneNode(true) as HTMLElement;
+    clonedRoot.style.transform = "none";
+    clonedRoot.style.zoom = "1";
+    clonedRoot.classList.add("resume-iframe-print-root");
+
+    const styleText = getStyleText();
+    const baseHref = document.baseURI.replace(/"/g, "&quot;");
+    document.body.appendChild(printFrame);
+    const printDocument = printFrame.contentDocument;
+    const printWindow = printFrame.contentWindow;
+    if (!printDocument || !printWindow) {
       restorePrintState();
-      console.error("浏览器打印窗口打开失败");
+      console.error("创建浏览器打印文档失败");
       return;
     }
 
-    signal.addEventListener(
-      "abort",
-      () => {
-        printWindow?.close();
-        restorePrintState();
-      },
-      { once: true },
-    );
+    printDocument.open();
+    printDocument.write(`
+      <!doctype html>
+      <html lang="zh-CN" class="${document.documentElement.className}">
+        <head>
+          <meta charset="UTF-8" />
+          <base href="${baseHref}" />
+          <title>${document.title}</title>
+          <style>${styleText}</style>
+          <style>
+            @page { size: A4; margin: 0; }
+            html, body { margin: 0; padding: 0; background: #fff; }
+            body { width: 210mm; min-width: 794px; }
+            .resume-iframe-print-root { width: 794px !important; gap: 0 !important; }
+            .resume-iframe-print-root .resume-page-item {
+              margin: 0 !important;
+              border-radius: 0 !important;
+              box-shadow: none !important;
+              transform: none !important;
+              zoom: 1 !important;
+              break-after: page;
+              page-break-after: always;
+            }
+            .resume-iframe-print-root .resume-page-item:last-child {
+              break-after: auto;
+              page-break-after: auto;
+            }
+          </style>
+        </head>
+        <body>
+          <main id="print-content"></main>
+        </body>
+      </html>
+    `);
+    printDocument.close();
+    printDocument.body.className = document.body.className;
+
+    const printContent = printDocument.getElementById("print-content");
+    if (!printContent) {
+      restorePrintState();
+      console.error("创建浏览器打印内容失败");
+      return;
+    }
+    printContent.appendChild(clonedRoot);
+
+    await nextTick();
+    if (signal.aborted) return;
+    await waitForPrintReady(printWindow, printDocument);
+    if (signal.aborted) return;
+
+    printWindow.onafterprint = () => restorePrintState(true);
+    printWindow.focus();
+    printWindow.print();
   } catch (error) {
     restorePrintState();
-    console.error("打开浏览器打印失败:", error);
+    console.error("创建 iframe 浏览器打印失败:", error);
   }
 };
