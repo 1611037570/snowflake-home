@@ -64,12 +64,26 @@ export const DEFAULT_USER_FORM = [
         label: "头像",
         component: "imageUpload",
         span: 24,
+        ui: {
+          // 头像隐藏开关：控制头像在简历预览中显示或隐藏
+          hidden: {
+            source: ["user", "ui", "avatar", "hidden"],
+            prop: "hidden",
+            defaultValue: false,
+          },
+        },
         model: [
           {
             source: ["user", "data", "avatar"],
             prop: "modelValue",
           },
         ],
+        checks: {
+          hidden: {
+            path: ["user", "ui", "avatar", "hidden"],
+            equals: true,
+          },
+        },
       },
 
       // 姓名
