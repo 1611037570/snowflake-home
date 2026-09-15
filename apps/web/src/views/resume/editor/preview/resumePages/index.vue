@@ -71,7 +71,7 @@ provide(
 const brandText = computed(() => getPreviewText("brand", ui.value.language || "zh"));
 const showPageNumber = computed(() => system.value.showPageNumber);
 const themeStyles = useResumeTheme(ui);
-const { paddingStyle, fontStyle, lineHeightStyle } = themeStyles;
+const { paddingStyle, fontStyle, lineHeightStyle, fontReadyVersion } = themeStyles;
 
 // ---------- 分页（测量 + 分页算法 + 裁剪样式）----------
 const allModules = computed(() => {
@@ -140,6 +140,7 @@ const { measureDone, pages, pageStyleText, moduleList } = useResumePages({
   ui,
   showPageNumber,
   isThumb,
+  fontReadyVersion,
   uid,
   allModules,
 });
