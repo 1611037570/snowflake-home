@@ -36,7 +36,7 @@ const hasHonor = computed(() => honors.value.length > 0);
     <!-- 标题栏 -->
     <Title module-key="honor"></Title>
     <!-- 荣誉证书名称流式排列：容器放不下时才换行 -->
-    <div class="mt-1 flex max-w-full min-w-0 flex-wrap items-center gap-2">
+    <div class="mt-3 flex max-w-full min-w-0 flex-wrap items-center gap-2">
       <div v-for="(item, index) in honors" :key="index" class="rounded-xl bg-[#F5F7F6] px-3 py-2">
         <ResumeField v-model="item.name" />
       </div>

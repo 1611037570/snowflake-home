@@ -21,7 +21,7 @@ const images = computed(() => previewData.value?.image?.data || []);
 
 <template>
   <div
-    class="resume-row flex w-full flex-wrap items-start gap-3"
+    class="resume-row flex w-full flex-wrap items-start gap-x-3"
     data-module="image"
     :style="[lineHeightValue(), fontValue()]"
   >
@@ -32,7 +32,7 @@ const images = computed(() => previewData.value?.image?.data || []);
     </div>
     <!-- 单个作品：图片在上、名称在下，暂不展示描述 -->
     <template v-for="(item, index) in images" :key="index">
-      <div class="flex min-w-0 flex-col gap-1" :style="{ width: `${item.size?.value ?? 50}%` }">
+      <div class="mt-3 flex min-w-0 flex-col gap-1" :style="{ width: `${item.size?.value ?? 50}%` }">
         <img
           v-if="item.img?.value"
           :src="item.img?.value"

@@ -22,7 +22,7 @@ const textColor = computed(() => {
 
 <template>
   <!-- 活力风格：标题置于主题色实心圆角色块上，视觉醒目 -->
-  <div v-if="title" class="pb-3">
+  <div v-if="title">
     <h2
       class="inline-block max-w-full min-w-0 rounded-lg px-4 py-1 font-bold tracking-wide break-words"
       :style="[{ background: themeColor, color: textColor }, fontValue(5)]"

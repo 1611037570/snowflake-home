@@ -14,7 +14,7 @@ const fontValue = inject("fontValue");
   <!-- 简约风格：纯标题文字，无装饰 -->
   <h2
     v-if="title"
-    class="min-w-0 max-w-full break-words pb-2 font-bold tracking-wide"
+    class="min-w-0 max-w-full break-words font-bold tracking-wide"
     :style="[fontValue(5)]"
   >
     {{ title }}
