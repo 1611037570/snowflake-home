@@ -65,7 +65,7 @@ const list = computed(() => [
     name: "PDF",
     icon: "mdi:file-pdf-box",
     desc: "本地或服务器排版导出",
-    options: pdfExportOptions,
+    options: pdfExportOptions.value,
     modelValue: pdfExportType.value,
     onChange: changePdfExportType,
     fn: () =>
