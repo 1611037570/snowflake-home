@@ -1,11 +1,12 @@
 <script setup>
 import { computed } from "vue";
 import FieldContent from "./content.vue";
+import { isContentEmpty } from "../../modules/validData";
 
 // 简历字段文本渲染器：接收原始值或 { value } 字段代理
 const model = defineModel();
 
-defineProps({
+const props = defineProps({
   html: {
     type: Boolean,
     default: false,
@@ -17,9 +18,12 @@ const fieldValue = computed(() => {
   if (value && typeof value === "object" && "value" in value) return value.value;
   return value;
 });
-const hasContent = computed(
-  () => fieldValue.value != null && fieldValue.value !== "",
-);
+const hasContent = computed(() => {
+  const value = fieldValue.value;
+  // Skip the editor's canonical empty paragraph before mounting HTML blocks.
+  if (props.html && isContentEmpty(value)) return false;
+  return value != null && value !== "";
+});
 </script>
 
 <template>
