@@ -24,6 +24,7 @@ const size = defineModel("size", {
 const { openPicker, loading } = useImageUpload({
   crop: false,
   maxWidth: RESUME_WIDTH,
+  quality: 1, // 使用最高质量导出，避免图片质量损失
   onResult: (base64) => {
     img.value = base64;
   },
