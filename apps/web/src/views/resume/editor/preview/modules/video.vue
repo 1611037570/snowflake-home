@@ -4,13 +4,13 @@ import Title from "../components/title/index.vue";
 import ResumeField from "../components/resumeField/index.vue";
 import { getValidData } from "./validData";
 
-// 从上层注入获取代理后的预览数据
+// 从上层注入获取原始简历数据
 const previewData = inject("previewData");
 
 const fontValue = inject("fontValue");
 const lineHeightValue = inject("lineHeightValue");
 
-// 代理数据解包访问数组
+// 数组记录统一由 getValidData 过滤并提取业务内容
 const video = computed(() => getValidData(previewData.value?.video?.data || []));
 </script>
 
@@ -25,11 +25,11 @@ const video = computed(() => getValidData(previewData.value?.video?.data || []))
         data-module="user"
       >
         <div class="flex flex-1 items-center gap-3" :style="[fontValue(-6)]">
-          <ResumeField v-model="item.name" :style="[fontValue(1)]" />
-          <ResumeField v-model="item.desc" />
+          <ResumeField :model-value="item.name" :style="[fontValue(1)]" />
+          <ResumeField :model-value="item.desc" />
         </div>
         <div class="h-16 w-16">
-          <SfQrcode :value="item.url?.value" />
+          <SfQrcode :value="item.url" />
         </div>
       </div>
     </template>

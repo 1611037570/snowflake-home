@@ -61,8 +61,6 @@ import IssueFeedback from "../components/issueFeedback.vue";
 import Share from "../components/share.vue";
 import Preview from "./preview/index.vue";
 import Toolbar from "./toolbar/index.vue";
-// 预览层代理数据及批量操作句柄
-import { usePreviewData } from "./preview/usePreviewData";
 
 const router = useRouter();
 const route = useRoute();
@@ -95,11 +93,8 @@ watch(
   { immediate: true },
 );
 
-// 创建代理后的预览数据（AI 修改已直接写入真实数据，不再需要草稿操作）
-const { previewData } = usePreviewData(currentData);
-
-// 向下游组件注入代理预览数据
-provide("previewData", previewData);
+// 向下游组件注入简历原始数据，预览层只读使用
+provide("previewData", currentData);
 
 // 专注模式下按 ESC 退出
 onKeyStroke("Escape", () => {

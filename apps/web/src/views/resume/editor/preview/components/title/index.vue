@@ -48,7 +48,7 @@ const previewData = inject(
 const displayTitle = computed(() => {
   const moduleData = previewData.value?.[props.moduleKey];
   // 模块标题统一读取 ui.title
-  const moduleTitle = moduleData?.ui?.title?.value;
+  const moduleTitle = moduleData?.ui?.title;
   return props.title || moduleTitle || getPreviewTitle(props.moduleKey, previewLang.value);
 });
 const themeTemplateRef = inject("themeTemplate");

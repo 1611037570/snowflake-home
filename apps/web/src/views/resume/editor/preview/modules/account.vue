@@ -3,13 +3,13 @@ import { computed, inject } from "vue";
 import ResumeField from "../components/resumeField/index.vue";
 import { getValidData } from "./validData";
 
-// 从上层注入获取代理后的预览数据
+// 从上层注入获取原始简历数据
 const previewData = inject("previewData");
 
 const fontValue = inject("fontValue");
 const lineHeightValue = inject("lineHeightValue");
 
-// 代理数据解包访问数组
+// 数组记录统一由 getValidData 过滤并提取业务内容
 const account = computed(() => getValidData(previewData.value?.account?.data || []));
 
 // 仅允许安全的外部链接协议
@@ -38,20 +38,20 @@ const safeUrl = (value) => {
       data-module="user"
     >
       <span
-        v-if="item.name?.value"
+        v-if="item.name"
         class="inline-block whitespace-nowrap"
       >
-        <ResumeField v-model="item.name" class="inline" />
-        <span v-if="item.url?.value">：</span>
+        <ResumeField :model-value="item.name" class="inline" />
+        <span v-if="item.url">：</span>
       </span>
       <a
-        :href="safeUrl(item.url?.value)"
+        :href="safeUrl(item.url)"
         target="_blank"
         rel="noopener noreferrer"
         class="inline max-w-full min-w-0 break-all hover:underline"
       >
         <ResumeField
-          v-model="item.url"
+          :model-value="item.url"
           class="inline max-w-full min-w-0 break-all"
         />
       </a>
