@@ -33,7 +33,7 @@ function del() {
     <SfCollapseItem name="1">
       <template #title>
         <div class="group flex h-full w-full items-center justify-between text-sf-text">
-          <div class="flex items-center text-[15px] font-bold">
+          <div class="flex flex-1 items-center text-[15px] font-bold">
             <SfIcon
               icon="icon-park-outline:drag"
               size="4"
@@ -42,18 +42,20 @@ function del() {
             />
             {{ displayTitle }}
           </div>
-          <SfIcon
-            :icon="hidden ? 'lucide:eye' : 'lucide:eye-off'"
-            size="4"
-            class="shrink-0 cursor-pointer rounded-lg transition-colors hover:text-sf-theme"
-            @click.stop="hidden = !hidden"
-          />
-          <SfIcon
-            @click.stop="del"
-            icon="ic:round-delete"
-            size="4"
-            class="mr-3 opacity-0 group-hover:opacity-100 hover:text-sf-theme"
-          />
+          <div class="flex items-center">
+            <SfIcon
+              :icon="hidden ? 'lucide:eye' : 'lucide:eye-off'"
+              size="4"
+              class="mr-3 opacity-0 group-hover:opacity-100 hover:text-sf-theme"
+              @click.stop="hidden = !hidden"
+            />
+            <SfIcon
+              @click.stop="del"
+              icon="ic:round-delete"
+              size="4"
+              class="mr-3 opacity-0 group-hover:opacity-100 hover:text-sf-theme"
+            />
+          </div>
         </div>
       </template>
       <template #default>
