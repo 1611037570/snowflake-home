@@ -74,6 +74,26 @@ describe("schemaData", () => {
     });
   });
 
+  it("根据 ui 和 data 路径生成统一记录节点", () => {
+    const schema: FormField = {
+      type: "array",
+      source: ["data"],
+      itemSchema: {
+        type: "group",
+        model: [
+          { source: ["ui", "hidden"], prop: "hidden", defaultValue: false },
+          { source: ["data", "name"], prop: "name", defaultValue: "默认名称" },
+        ],
+        fields: [],
+      },
+    };
+
+    expect(createArrayItemData(schema)).toEqual({
+      ui: { hidden: false },
+      data: { name: "默认名称" },
+    });
+  });
+
   it("每次生成的数据不共享默认值引用", () => {
     const schema: FormField = {
       type: "array",

@@ -17,6 +17,7 @@ export const DEFAULT_USER_FORM = [
     type: "group",
     component: "boxCollapse",
     key: "user",
+    context: ["user"],
     drag: false,
     dragClass: DEFAULT_DRAG_CLASS,
     // 个人信息字段保持统一垂直间距
@@ -29,31 +30,31 @@ export const DEFAULT_USER_FORM = [
     },
     model: [
       {
-        source: ["user", "ui", "title"],
+        source: ["ui", "title"],
         prop: "title",
         defaultValue: "个人信息",
       },
       {
-        source: ["user", "ui", "collapsed"],
+        source: ["ui", "collapsed"],
         prop: "collapsed",
         defaultValue: EXPANDED,
       },
       // 隐藏开关：控制模块在简历预览中显示/隐藏
       {
-        source: ["user", "ui", "hidden"],
+        source: ["ui", "hidden"],
         prop: "hidden",
         defaultValue: false,
       },
       // 归档开关：控制模块是否从编辑器主区域移除
       {
-        source: ["user", "ui", "archived"],
+        source: ["ui", "archived"],
         prop: "archived",
         defaultValue: false,
       },
     ],
     checks: {
-      hidden: { path: ["user", "ui", "hidden"] },
-      removed: { path: ["user", "ui", "archived"] },
+      hidden: { path: ["ui", "hidden"] },
+      removed: { path: ["ui", "archived"] },
     },
     slot: "default",
     fields: [
@@ -67,20 +68,20 @@ export const DEFAULT_USER_FORM = [
         ui: {
           // 头像隐藏开关：控制头像在简历预览中显示或隐藏
           hidden: {
-            source: ["user", "ui", "avatar", "hidden"],
+            source: ["ui", "avatar", "hidden"],
             prop: "hidden",
             defaultValue: false,
           },
         },
         model: [
           {
-            source: ["user", "data", "avatar"],
+            source: ["data", "avatar"],
             prop: "modelValue",
           },
         ],
         checks: {
           hidden: {
-            path: ["user", "ui", "avatar", "hidden"],
+            path: ["ui", "avatar", "hidden"],
             equals: true,
           },
         },
@@ -95,7 +96,7 @@ export const DEFAULT_USER_FORM = [
         ui: {
           layout: "horizontal",
           hidden: {
-            source: ["user", "ui", "name", "hidden"],
+            source: ["ui", "name", "hidden"],
             prop: "hidden",
             defaultValue: false,
           },
@@ -105,7 +106,7 @@ export const DEFAULT_USER_FORM = [
         required: true,
         model: [
           {
-            source: ["user", "data", "name"],
+            source: ["data", "name"],
             prop: "modelValue",
           },
         ],
@@ -123,7 +124,7 @@ export const DEFAULT_USER_FORM = [
         ],
         checks: {
           hidden: {
-            path: ["user", "ui", "name", "hidden"],
+            path: ["ui", "name", "hidden"],
             equals: true,
           },
         },
@@ -139,19 +140,19 @@ export const DEFAULT_USER_FORM = [
         ui: {
           layout: "horizontal",
           hidden: {
-            source: ["user", "ui", "birthday", "hidden"],
+            source: ["ui", "birthday", "hidden"],
             prop: "hidden",
             defaultValue: false,
           },
         },
         checks: {
           hidden: {
-            path: ["user", "ui", "birthday", "hidden"],
+            path: ["ui", "birthday", "hidden"],
             equals: true,
           },
         },
         model: {
-          source: ["user", "data", "birthday"],
+          source: ["data", "birthday"],
           prop: "modelValue",
         },
         props: {
@@ -172,20 +173,20 @@ export const DEFAULT_USER_FORM = [
         ui: {
           layout: "horizontal",
           hidden: {
-            source: ["user", "ui", "sex", "hidden"],
+            source: ["ui", "sex", "hidden"],
             prop: "hidden",
             defaultValue: false,
           },
         },
         checks: {
           hidden: {
-            path: ["user", "ui", "sex", "hidden"],
+            path: ["ui", "sex", "hidden"],
             equals: true,
           },
         },
         model: [
           {
-            source: ["user", "data", "sex"],
+            source: ["data", "sex"],
             prop: "modelValue",
           },
           {
@@ -210,19 +211,19 @@ export const DEFAULT_USER_FORM = [
         ui: {
           layout: "horizontal",
           hidden: {
-            source: ["user", "ui", "position", "hidden"],
+            source: ["ui", "position", "hidden"],
             prop: "hidden",
             defaultValue: false,
           },
         },
         checks: {
           hidden: {
-            path: ["user", "ui", "position", "hidden"],
+            path: ["ui", "position", "hidden"],
             equals: true,
           },
         },
         model: {
-          source: ["user", "data", "position"],
+          source: ["data", "position"],
           prop: "modelValue",
         },
         props: {
@@ -241,19 +242,19 @@ export const DEFAULT_USER_FORM = [
         ui: {
           layout: "horizontal",
           hidden: {
-            source: ["user", "ui", "workTime", "hidden"],
+            source: ["ui", "workTime", "hidden"],
             prop: "hidden",
             defaultValue: false,
           },
         },
         checks: {
           hidden: {
-            path: ["user", "ui", "workTime", "hidden"],
+            path: ["ui", "workTime", "hidden"],
             equals: true,
           },
         },
         model: {
-          source: ["user", "data", "workTime"],
+          source: ["data", "workTime"],
           prop: "modelValue",
         },
         props: {
@@ -276,7 +277,7 @@ export const DEFAULT_USER_FORM = [
         rowClass: "gap-y-3",
         model: [
           {
-            source: ["user", "ui", "moreCollapsed"],
+            source: ["ui", "moreCollapsed"],
             prop: "collapsed",
             defaultValue: [],
           },
@@ -293,24 +294,24 @@ export const DEFAULT_USER_FORM = [
             ui: {
               layout: "horizontal",
               icon: {
-                source: ["user", "ui", "phone", "icon"],
+                source: ["ui", "phone", "icon"],
                 prop: "icon",
                 defaultValue: "mdi:phone",
               },
               hidden: {
-                source: ["user", "ui", "phone", "hidden"],
+                source: ["ui", "phone", "hidden"],
                 prop: "hidden",
                 defaultValue: false,
               },
             },
             checks: {
               hidden: {
-                path: ["user", "ui", "phone", "hidden"],
+                path: ["ui", "phone", "hidden"],
                 equals: true,
               },
             },
             model: {
-              source: ["user", "data", "phone"],
+              source: ["data", "phone"],
               prop: "modelValue",
             },
             props: {
@@ -336,12 +337,12 @@ export const DEFAULT_USER_FORM = [
             ui: {
               layout: "horizontal",
               icon: {
-                source: ["user", "ui", "email", "icon"],
+                source: ["ui", "email", "icon"],
                 prop: "icon",
                 defaultValue: "mdi:email-outline",
               },
               hidden: {
-                source: ["user", "ui", "email", "hidden"],
+                source: ["ui", "email", "hidden"],
                 prop: "hidden",
                 defaultValue: false,
               },
@@ -349,12 +350,12 @@ export const DEFAULT_USER_FORM = [
             },
             checks: {
               hidden: {
-                path: ["user", "ui", "email", "hidden"],
+                path: ["ui", "email", "hidden"],
                 equals: true,
               },
             },
             model: {
-              source: ["user", "data", "email"],
+              source: ["data", "email"],
               prop: "modelValue",
             },
             props: {
@@ -381,12 +382,12 @@ export const DEFAULT_USER_FORM = [
             ui: {
               layout: "horizontal",
               icon: {
-                source: ["user", "ui", "wechat", "icon"],
+                source: ["ui", "wechat", "icon"],
                 prop: "icon",
                 defaultValue: "mdi:wechat",
               },
               hidden: {
-                source: ["user", "ui", "wechat", "hidden"],
+                source: ["ui", "wechat", "hidden"],
                 prop: "hidden",
                 defaultValue: false,
               },
@@ -394,12 +395,12 @@ export const DEFAULT_USER_FORM = [
             },
             checks: {
               hidden: {
-                path: ["user", "ui", "wechat", "hidden"],
+                path: ["ui", "wechat", "hidden"],
                 equals: true,
               },
             },
             model: {
-              source: ["user", "data", "wechat"],
+              source: ["data", "wechat"],
               prop: "modelValue",
             },
             props: {
@@ -418,12 +419,12 @@ export const DEFAULT_USER_FORM = [
             ui: {
               layout: "horizontal",
               icon: {
-                source: ["user", "ui", "status", "icon"],
+                source: ["ui", "status", "icon"],
                 prop: "icon",
                 defaultValue: "mdi:briefcase-check-outline",
               },
               hidden: {
-                source: ["user", "ui", "status", "hidden"],
+                source: ["ui", "status", "hidden"],
                 prop: "hidden",
                 defaultValue: false,
               },
@@ -431,13 +432,13 @@ export const DEFAULT_USER_FORM = [
             },
             checks: {
               hidden: {
-                path: ["user", "ui", "status", "hidden"],
+                path: ["ui", "status", "hidden"],
                 equals: true,
               },
             },
             model: [
               {
-                source: ["user", "data", "status"],
+                source: ["data", "status"],
                 prop: "modelValue",
               },
               {
@@ -462,12 +463,12 @@ export const DEFAULT_USER_FORM = [
             ui: {
               layout: "horizontal",
               icon: {
-                source: ["user", "ui", "political", "icon"],
+                source: ["ui", "political", "icon"],
                 prop: "icon",
                 defaultValue: "mdi:flag-outline",
               },
               hidden: {
-                source: ["user", "ui", "political", "hidden"],
+                source: ["ui", "political", "hidden"],
                 prop: "hidden",
                 defaultValue: false,
               },
@@ -475,13 +476,13 @@ export const DEFAULT_USER_FORM = [
             },
             checks: {
               hidden: {
-                path: ["user", "ui", "political", "hidden"],
+                path: ["ui", "political", "hidden"],
                 equals: true,
               },
             },
             model: [
               {
-                source: ["user", "data", "political"],
+                source: ["data", "political"],
                 prop: "modelValue",
               },
               {
@@ -506,12 +507,12 @@ export const DEFAULT_USER_FORM = [
             ui: {
               layout: "horizontal",
               icon: {
-                source: ["user", "ui", "city", "icon"],
+                source: ["ui", "city", "icon"],
                 prop: "icon",
                 defaultValue: "mdi:map-marker-outline",
               },
               hidden: {
-                source: ["user", "ui", "city", "hidden"],
+                source: ["ui", "city", "hidden"],
                 prop: "hidden",
                 defaultValue: false,
               },
@@ -519,12 +520,12 @@ export const DEFAULT_USER_FORM = [
             },
             checks: {
               hidden: {
-                path: ["user", "ui", "city", "hidden"],
+                path: ["ui", "city", "hidden"],
                 equals: true,
               },
             },
             model: {
-              source: ["user", "data", "city"],
+              source: ["data", "city"],
               prop: "modelValue",
             },
             props: {
@@ -542,12 +543,12 @@ export const DEFAULT_USER_FORM = [
             ui: {
               layout: "horizontal",
               icon: {
-                source: ["user", "ui", "nativePlace", "icon"],
+                source: ["ui", "nativePlace", "icon"],
                 prop: "icon",
                 defaultValue: "mdi:home-outline",
               },
               hidden: {
-                source: ["user", "ui", "nativePlace", "hidden"],
+                source: ["ui", "nativePlace", "hidden"],
                 prop: "hidden",
                 defaultValue: false,
               },
@@ -555,12 +556,12 @@ export const DEFAULT_USER_FORM = [
             },
             checks: {
               hidden: {
-                path: ["user", "ui", "nativePlace", "hidden"],
+                path: ["ui", "nativePlace", "hidden"],
                 equals: true,
               },
             },
             model: {
-              source: ["user", "data", "nativePlace"],
+              source: ["data", "nativePlace"],
               prop: "modelValue",
             },
             props: {
@@ -577,12 +578,12 @@ export const DEFAULT_USER_FORM = [
             ui: {
               layout: "horizontal",
               icon: {
-                source: ["user", "ui", "heightWeight", "icon"],
+                source: ["ui", "heightWeight", "icon"],
                 prop: "icon",
                 defaultValue: "mdi:human-male-height",
               },
               hidden: {
-                source: ["user", "ui", "heightWeight", "hidden"],
+                source: ["ui", "heightWeight", "hidden"],
                 prop: "hidden",
                 defaultValue: false,
               },
@@ -590,12 +591,12 @@ export const DEFAULT_USER_FORM = [
             },
             checks: {
               hidden: {
-                path: ["user", "ui", "heightWeight", "hidden"],
+                path: ["ui", "heightWeight", "hidden"],
                 equals: true,
               },
             },
             model: {
-              source: ["user", "data", "heightWeight"],
+              source: ["data", "heightWeight"],
               prop: "modelValue",
             },
           },
@@ -609,34 +610,35 @@ export const DEFAULT_USER_FORM = [
 export const DEFAULT_ACCOUNT_FORM = {
   type: "group",
   key: "account",
+  context: ["account"],
   span: 24,
   model: [
     {
-      source: ["account", "ui", "title"],
+      source: ["ui", "title"],
       prop: "title",
       defaultValue: "社交账号",
     },
     {
-      source: ["account", "ui", "collapsed"],
+      source: ["ui", "collapsed"],
       prop: "collapsed",
       defaultValue: EXPANDED,
     },
     // 隐藏开关：控制模块在简历预览中显示/隐藏
     {
-      source: ["account", "ui", "hidden"],
+      source: ["ui", "hidden"],
       prop: "hidden",
       defaultValue: false,
     },
     // 归档状态：已完成模块移入归档区域
     {
-      source: ["account", "ui", "archived"],
+      source: ["ui", "archived"],
       prop: "archived",
       defaultValue: false,
     },
   ],
   checks: {
-    hidden: { path: ["account", "ui", "hidden"] },
-    removed: { path: ["account", "ui", "archived"] },
+    hidden: { path: ["ui", "hidden"] },
+    removed: { path: ["ui", "archived"] },
   },
   component: "boxCollapse",
   props: {
@@ -646,19 +648,19 @@ export const DEFAULT_ACCOUNT_FORM = {
   fields: [
     {
       type: "array",
-      source: ["account", "data"],
+      source: ["data"],
       drag: true,
       dragClass: DEFAULT_DRAG_CLASS,
       itemClass: DEFAULT_COL_CLASS + " py-1",
       itemSchema: {
         model: [
           {
-            source: ["name"],
+            source: ["data", "name"],
             defaultValue: "",
             prop: "name",
           },
           {
-            source: ["url"],
+            source: ["data", "url"],
             defaultValue: "",
             prop: "url",
           },
@@ -685,43 +687,44 @@ export const DEFAULT_ACCOUNT_FORM = {
 export const DEFAULT_EDUCATION_FORM = {
   key: "education",
   type: "group",
+  context: ["education"],
   component: "boxCollapse",
   props: {
     add: true,
   },
   model: [
     {
-      source: ["education", "ui", "title"],
+      source: ["ui", "title"],
       prop: "title",
       defaultValue: "教育经历",
     },
     {
-      source: ["education", "ui", "collapsed"],
+      source: ["ui", "collapsed"],
       prop: "collapsed",
       defaultValue: EXPANDED,
     },
     // 隐藏开关：控制模块在简历预览中显示/隐藏
     {
-      source: ["education", "ui", "hidden"],
+      source: ["ui", "hidden"],
       prop: "hidden",
       defaultValue: false,
     },
     // 归档状态：已完成模块移入归档区域
     {
-      source: ["education", "ui", "archived"],
+      source: ["ui", "archived"],
       prop: "archived",
       defaultValue: false,
     },
   ],
   checks: {
-    hidden: { path: ["education", "ui", "hidden"] },
-    removed: { path: ["education", "ui", "archived"] },
+    hidden: { path: ["ui", "hidden"] },
+    removed: { path: ["ui", "archived"] },
   },
   slot: "default",
   fields: [
     {
       type: "array",
-      source: ["education", "data"],
+      source: ["data"],
       drag: true,
       dragClass: DEFAULT_DRAG_CLASS,
       itemClass: DEFAULT_COL_CLASS,
@@ -748,7 +751,7 @@ export const DEFAULT_EDUCATION_FORM = {
             defaultValue: false,
           },
           {
-            source: ["name"],
+            source: ["data", "name"],
             prop: "name",
           },
         ],
@@ -760,7 +763,7 @@ export const DEFAULT_EDUCATION_FORM = {
             required: true,
             span: 12,
             model: {
-              source: ["name"],
+              source: ["data", "name"],
               prop: "modelValue",
             },
             props: {
@@ -776,7 +779,7 @@ export const DEFAULT_EDUCATION_FORM = {
             required: true,
             model: [
               {
-                source: ["education"],
+                source: ["data", "education"],
                 prop: "modelValue",
               },
               {
@@ -797,7 +800,7 @@ export const DEFAULT_EDUCATION_FORM = {
             required: true,
             span: 12,
             model: {
-              source: ["post"],
+              source: ["data", "post"],
               prop: "modelValue",
             },
             props: {
@@ -813,7 +816,7 @@ export const DEFAULT_EDUCATION_FORM = {
             span: 12,
             model: [
               {
-                source: ["mode"],
+                source: ["data", "mode"],
                 prop: "modelValue",
               },
               {
@@ -834,7 +837,7 @@ export const DEFAULT_EDUCATION_FORM = {
             component: "datePicker",
             span: 24,
             model: {
-              source: ["time"],
+              source: ["data", "time"],
               prop: "modelValue",
             },
             props: {
@@ -851,7 +854,7 @@ export const DEFAULT_EDUCATION_FORM = {
             component: "wangEditor",
             span: 24,
             model: {
-              source: ["content"],
+              source: ["data", "content"],
               prop: "modelValue",
             },
           },
@@ -866,36 +869,37 @@ export const DEFAULT_SKILL_FORM = {
   type: "group",
   component: "boxCollapse",
   key: "skill",
+  context: ["skill"],
   props: {
     add: false,
   },
   model: [
     {
-      source: ["skill", "ui", "title"],
+      source: ["ui", "title"],
       prop: "title",
       defaultValue: "专业技能",
     },
     {
-      source: ["skill", "ui", "collapsed"],
+      source: ["ui", "collapsed"],
       prop: "collapsed",
       defaultValue: EXPANDED,
     },
     // 隐藏开关：控制模块在简历预览中显示/隐藏
     {
-      source: ["skill", "ui", "hidden"],
+      source: ["ui", "hidden"],
       prop: "hidden",
       defaultValue: false,
     },
     // 归档状态：已完成模块移入归档区域
     {
-      source: ["skill", "ui", "archived"],
+      source: ["ui", "archived"],
       prop: "archived",
       defaultValue: false,
     },
   ],
   checks: {
-    hidden: { path: ["skill", "ui", "hidden"] },
-    removed: { path: ["skill", "ui", "archived"] },
+    hidden: { path: ["ui", "hidden"] },
+    removed: { path: ["ui", "archived"] },
   },
   slot: "default",
   fields: [
@@ -904,7 +908,7 @@ export const DEFAULT_SKILL_FORM = {
       component: "wangEditor",
       required: true,
       model: {
-        source: ["skill", "data", "content"],
+        source: ["data", "content"],
         prop: "modelValue",
       },
     },
@@ -915,36 +919,37 @@ export const DEFAULT_ADVANTAGE_FORM = {
   type: "group",
   component: "boxCollapse",
   key: "advantage",
+  context: ["advantage"],
   props: {
     add: false,
   },
   model: [
     {
-      source: ["advantage", "ui", "title"],
+      source: ["ui", "title"],
       prop: "title",
       defaultValue: "个人优势",
     },
     {
-      source: ["advantage", "ui", "collapsed"],
+      source: ["ui", "collapsed"],
       prop: "collapsed",
       defaultValue: EXPANDED,
     },
     // 隐藏开关：控制模块在简历预览中显示/隐藏
     {
-      source: ["advantage", "ui", "hidden"],
+      source: ["ui", "hidden"],
       prop: "hidden",
       defaultValue: false,
     },
     // 归档状态：已完成模块移入归档区域
     {
-      source: ["advantage", "ui", "archived"],
+      source: ["ui", "archived"],
       prop: "archived",
       defaultValue: false,
     },
   ],
   checks: {
-    hidden: { path: ["advantage", "ui", "hidden"] },
-    removed: { path: ["advantage", "ui", "archived"] },
+    hidden: { path: ["ui", "hidden"] },
+    removed: { path: ["ui", "archived"] },
   },
   slot: "default",
   fields: [
@@ -953,7 +958,7 @@ export const DEFAULT_ADVANTAGE_FORM = {
       component: "wangEditor",
       required: true,
       model: {
-        source: ["advantage", "data", "content"],
+        source: ["data", "content"],
         prop: "modelValue",
       },
     },
@@ -963,43 +968,44 @@ export const DEFAULT_ADVANTAGE_FORM = {
 export const DEFAULT_WORK_FORM = {
   type: "group",
   key: "work",
+  context: ["work"],
   component: "boxCollapse",
   props: {
     add: true,
   },
   model: [
     {
-      source: ["work", "ui", "title"],
+      source: ["ui", "title"],
       prop: "title",
       defaultValue: "工作经历",
     },
     {
-      source: ["work", "ui", "collapsed"],
+      source: ["ui", "collapsed"],
       prop: "collapsed",
       defaultValue: EXPANDED,
     },
     // 隐藏开关：控制模块在简历预览中显示/隐藏
     {
-      source: ["work", "ui", "hidden"],
+      source: ["ui", "hidden"],
       prop: "hidden",
       defaultValue: false,
     },
     // 归档状态：已完成模块移入归档区域
     {
-      source: ["work", "ui", "archived"],
+      source: ["ui", "archived"],
       prop: "archived",
       defaultValue: false,
     },
   ],
   checks: {
-    hidden: { path: ["work", "ui", "hidden"] },
-    removed: { path: ["work", "ui", "archived"] },
+    hidden: { path: ["ui", "hidden"] },
+    removed: { path: ["ui", "archived"] },
   },
   slot: "default",
   fields: [
     {
       type: "array",
-      source: ["work", "data"],
+      source: ["data"],
       drag: true,
       dragClass: DEFAULT_DRAG_CLASS,
       itemClass: DEFAULT_COL_CLASS,
@@ -1026,7 +1032,7 @@ export const DEFAULT_WORK_FORM = {
             defaultValue: false,
           },
           {
-            source: ["name"],
+            source: ["data", "name"],
             prop: "name",
           },
         ],
@@ -1038,7 +1044,7 @@ export const DEFAULT_WORK_FORM = {
             required: true,
             span: 12,
             model: {
-              source: ["name"],
+              source: ["data", "name"],
               prop: "modelValue",
             },
             props: {
@@ -1053,7 +1059,7 @@ export const DEFAULT_WORK_FORM = {
             required: true,
             span: 12,
             model: {
-              source: ["post"],
+              source: ["data", "post"],
               prop: "modelValue",
             },
             props: {
@@ -1068,7 +1074,7 @@ export const DEFAULT_WORK_FORM = {
             component: "datePicker",
             span: 24,
             model: {
-              source: ["time"],
+              source: ["data", "time"],
               prop: "modelValue",
             },
             props: {
@@ -1086,7 +1092,7 @@ export const DEFAULT_WORK_FORM = {
             component: "wangEditor",
             span: 24,
             model: {
-              source: ["content"],
+              source: ["data", "content"],
               prop: "modelValue",
             },
           },
@@ -1099,43 +1105,44 @@ export const DEFAULT_WORK_FORM = {
 export const DEFAULT_PROJECT_FORM = {
   type: "group",
   key: "project",
+  context: ["project"],
   component: "boxCollapse",
   props: {
     add: true,
   },
   model: [
     {
-      source: ["project", "ui", "title"],
+      source: ["ui", "title"],
       prop: "title",
       defaultValue: "项目经历",
     },
     {
-      source: ["project", "ui", "collapsed"],
+      source: ["ui", "collapsed"],
       prop: "collapsed",
       defaultValue: EXPANDED,
     },
     // 隐藏开关：控制模块在简历预览中显示/隐藏
     {
-      source: ["project", "ui", "hidden"],
+      source: ["ui", "hidden"],
       prop: "hidden",
       defaultValue: false,
     },
     // 归档状态：已完成模块移入归档区域
     {
-      source: ["project", "ui", "archived"],
+      source: ["ui", "archived"],
       prop: "archived",
       defaultValue: false,
     },
   ],
   checks: {
-    hidden: { path: ["project", "ui", "hidden"] },
-    removed: { path: ["project", "ui", "archived"] },
+    hidden: { path: ["ui", "hidden"] },
+    removed: { path: ["ui", "archived"] },
   },
   slot: "default",
   fields: [
     {
       type: "array",
-      source: ["project", "data"],
+      source: ["data"],
       drag: true,
       dragClass: DEFAULT_DRAG_CLASS,
       itemClass: DEFAULT_COL_CLASS,
@@ -1162,7 +1169,7 @@ export const DEFAULT_PROJECT_FORM = {
             defaultValue: false,
           },
           {
-            source: ["name"],
+            source: ["data", "name"],
             prop: "name",
           },
         ],
@@ -1175,7 +1182,7 @@ export const DEFAULT_PROJECT_FORM = {
             required: true,
             span: 12,
             model: {
-              source: ["name"],
+              source: ["data", "name"],
               prop: "modelValue",
             },
             props: {
@@ -1190,7 +1197,7 @@ export const DEFAULT_PROJECT_FORM = {
             required: true,
             span: 12,
             model: {
-              source: ["post"],
+              source: ["data", "post"],
               prop: "modelValue",
             },
             props: {
@@ -1205,7 +1212,7 @@ export const DEFAULT_PROJECT_FORM = {
             component: "datePicker",
             span: 24,
             model: {
-              source: ["time"],
+              source: ["data", "time"],
               prop: "modelValue",
             },
             props: {
@@ -1223,7 +1230,7 @@ export const DEFAULT_PROJECT_FORM = {
             required: true,
             span: 24,
             model: {
-              source: ["content"],
+              source: ["data", "content"],
               prop: "modelValue",
             },
           },
@@ -1236,6 +1243,7 @@ export const DEFAULT_PROJECT_FORM = {
 export const DEFAULT_VIDEO_FORM = {
   type: "group",
   key: "video",
+  context: ["video"],
   component: "boxCollapse",
   props: {
     add: true,
@@ -1243,36 +1251,36 @@ export const DEFAULT_VIDEO_FORM = {
   },
   model: [
     {
-      source: ["video", "ui", "title"],
+      source: ["ui", "title"],
       prop: "title",
       defaultValue: "视频作品",
     },
     {
-      source: ["video", "ui", "collapsed"],
+      source: ["ui", "collapsed"],
       prop: "collapsed",
       defaultValue: EXPANDED,
     },
     {
-      source: ["video", "ui", "hidden"],
+      source: ["ui", "hidden"],
       prop: "hidden",
       defaultValue: false,
     },
     // 归档状态：已完成模块移入归档区域
     {
-      source: ["video", "ui", "archived"],
+      source: ["ui", "archived"],
       prop: "archived",
       defaultValue: false,
     },
   ],
   checks: {
-    hidden: { path: ["video", "ui", "hidden"] },
-    removed: { path: ["video", "ui", "archived"] },
+    hidden: { path: ["ui", "hidden"] },
+    removed: { path: ["ui", "archived"] },
   },
   slot: "default",
   fields: [
     {
       type: "array",
-      source: ["video", "data"],
+      source: ["data"],
       drag: true,
       dragClass: DEFAULT_DRAG_CLASS,
       itemClass: DEFAULT_COL_CLASS,
@@ -1290,7 +1298,7 @@ export const DEFAULT_VIDEO_FORM = {
             defaultValue: false,
           },
           {
-            source: ["name"],
+            source: ["data", "name"],
             prop: "name",
           },
         ],
@@ -1298,17 +1306,17 @@ export const DEFAULT_VIDEO_FORM = {
           {
             model: [
               {
-                source: ["name"],
+                source: ["data", "name"],
                 defaultValue: "",
                 prop: "name",
               },
               {
-                source: ["url"],
+                source: ["data", "url"],
                 defaultValue: "",
                 prop: "url",
               },
               {
-                source: ["desc"],
+                source: ["data", "desc"],
                 defaultValue: "",
                 prop: "desc",
               },
@@ -1337,42 +1345,43 @@ export const DEFAULT_VIDEO_FORM = {
 export const DEFAULT_IMAGE_FORM = {
   type: "group",
   key: "image",
+  context: ["image"],
   component: "boxCollapse",
   props: {
     add: true,
   },
   model: [
     {
-      source: ["image", "ui", "title"],
+      source: ["ui", "title"],
       prop: "title",
       defaultValue: "图片作品",
     },
     {
-      source: ["image", "ui", "collapsed"],
+      source: ["ui", "collapsed"],
       prop: "collapsed",
       defaultValue: EXPANDED,
     },
     {
-      source: ["image", "ui", "hidden"],
+      source: ["ui", "hidden"],
       prop: "hidden",
       defaultValue: false,
     },
     // 归档状态：已完成模块移入归档区域
     {
-      source: ["image", "ui", "archived"],
+      source: ["ui", "archived"],
       prop: "archived",
       defaultValue: false,
     },
   ],
   checks: {
-    hidden: { path: ["image", "ui", "hidden"] },
-    removed: { path: ["image", "ui", "archived"] },
+    hidden: { path: ["ui", "hidden"] },
+    removed: { path: ["ui", "archived"] },
   },
   slot: "default",
   fields: [
     {
       type: "array",
-      source: ["image", "data"],
+      source: ["data"],
       drag: true,
       dragClass: DEFAULT_DRAG_CLASS,
       itemClass: DEFAULT_COL_CLASS,
@@ -1390,7 +1399,7 @@ export const DEFAULT_IMAGE_FORM = {
             defaultValue: false,
           },
           {
-            source: ["name"],
+            source: ["data", "name"],
             prop: "name",
           },
         ],
@@ -1398,22 +1407,22 @@ export const DEFAULT_IMAGE_FORM = {
           {
             model: [
               {
-                source: ["name"],
+                source: ["data", "name"],
                 defaultValue: "",
                 prop: "name",
               },
               {
-                source: ["img"],
+                source: ["data", "img"],
                 defaultValue: "",
                 prop: "img",
               },
               {
-                source: ["desc"],
+                source: ["data", "desc"],
                 defaultValue: "",
                 prop: "desc",
               },
               {
-                source: ["size"],
+                source: ["data", "size"],
                 defaultValue: 50,
                 prop: "size",
               },
@@ -1443,42 +1452,43 @@ export const DEFAULT_HONOR_FORM = {
   type: "group",
   component: "boxCollapse",
   key: "honor",
+  context: ["honor"],
   props: {
     add: true,
   },
   model: [
     {
-      source: ["honor", "ui", "title"],
+      source: ["ui", "title"],
       prop: "title",
       defaultValue: "荣誉证书",
     },
     {
-      source: ["honor", "ui", "collapsed"],
+      source: ["ui", "collapsed"],
       prop: "collapsed",
       defaultValue: EXPANDED,
     },
     // 隐藏开关：控制模块在简历预览中显示/隐藏
     {
-      source: ["honor", "ui", "hidden"],
+      source: ["ui", "hidden"],
       prop: "hidden",
       defaultValue: false,
     },
     // 归档状态：已完成模块移入归档区域
     {
-      source: ["honor", "ui", "archived"],
+      source: ["ui", "archived"],
       prop: "archived",
       defaultValue: false,
     },
   ],
   checks: {
-    hidden: { path: ["honor", "ui", "hidden"] },
-    removed: { path: ["honor", "ui", "archived"] },
+    hidden: { path: ["ui", "hidden"] },
+    removed: { path: ["ui", "archived"] },
   },
   slot: "default",
   fields: [
     {
       type: "array",
-      source: ["honor", "data"],
+      source: ["data"],
       drag: true,
       dragClass: DEFAULT_DRAG_CLASS,
       itemClass: DEFAULT_COL_CLASS + " py-1",
@@ -1487,7 +1497,7 @@ export const DEFAULT_HONOR_FORM = {
         // 名称数据源：绑定当前荣誉证书名称
         model: [
           {
-            source: ["name"],
+            source: ["data", "name"],
             defaultValue: "",
             prop: "name",
           },
@@ -1514,42 +1524,43 @@ export const DEFAULT_HONOR_FORM = {
 export const DEFAULT_CUSTOM_FORM = {
   type: "group",
   key: "custom",
+  context: ["custom"],
   component: "boxCollapse",
   props: {
     add: true,
   },
   model: [
     {
-      source: ["custom", "ui", "title"],
+      source: ["ui", "title"],
       prop: "title",
       defaultValue: "",
     },
     {
-      source: ["custom", "ui", "collapsed"],
+      source: ["ui", "collapsed"],
       prop: "collapsed",
       defaultValue: EXPANDED,
     },
     {
-      source: ["custom", "ui", "hidden"],
+      source: ["ui", "hidden"],
       prop: "hidden",
       defaultValue: false,
     },
     // 归档状态：已完成模块移入归档区域
     {
-      source: ["custom", "ui", "archived"],
+      source: ["ui", "archived"],
       prop: "archived",
       defaultValue: false,
     },
   ],
   checks: {
-    hidden: { path: ["custom", "ui", "hidden"] },
-    removed: { path: ["custom", "ui", "archived"] },
+    hidden: { path: ["ui", "hidden"] },
+    removed: { path: ["ui", "archived"] },
   },
   slot: "default",
   fields: [
     {
       type: "array",
-      source: ["custom", "data"],
+      source: ["data"],
       drag: true,
       dragClass: DEFAULT_DRAG_CLASS,
       itemClass: DEFAULT_COL_CLASS,
@@ -1576,7 +1587,7 @@ export const DEFAULT_CUSTOM_FORM = {
             defaultValue: false,
           },
           {
-            source: ["name"],
+            source: ["data", "name"],
             prop: "name",
           },
         ],
@@ -1589,7 +1600,7 @@ export const DEFAULT_CUSTOM_FORM = {
             component: "input",
             span: 12,
             model: {
-              source: ["name"],
+              source: ["data", "name"],
               prop: "modelValue",
             },
             props: {
@@ -1604,7 +1615,7 @@ export const DEFAULT_CUSTOM_FORM = {
             component: "input",
             span: 12,
             model: {
-              source: ["post"],
+              source: ["data", "post"],
               prop: "modelValue",
             },
             props: {
@@ -1619,7 +1630,7 @@ export const DEFAULT_CUSTOM_FORM = {
             component: "datePicker",
             span: 24,
             model: {
-              source: ["time"],
+              source: ["data", "time"],
               prop: "modelValue",
             },
             props: {
@@ -1637,7 +1648,7 @@ export const DEFAULT_CUSTOM_FORM = {
             component: "wangEditor",
             span: 24,
             model: {
-              source: ["content"],
+              source: ["data", "content"],
               prop: "modelValue",
             },
           },

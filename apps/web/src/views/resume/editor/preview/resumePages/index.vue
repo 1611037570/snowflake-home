@@ -4,6 +4,7 @@
 // 本组件只做渲染编排（数据代理/主题注入/测量分页），导出、智能一页等编辑功能由上层 page.vue 注册
 import { computed, ref } from "vue";
 import { isFieldHidden } from "@/components/business/dynamicForm/code/fieldVisible";
+import { createDataPathContext } from "@/components/business/dynamicForm/code/pathContext";
 import { getPrimaryModelBinding } from "@/components/business/dynamicForm/code/schemaAccess";
 import { expandConfigFields } from "@/stores/modules/resume/hooks/useConfigTemplate";
 import MeasureContent from "../components/measureContent.vue";
@@ -81,12 +82,16 @@ const allModules = computed(() => {
 const userHiddenFields = computed(() => {
   const hiddenFields = new Set();
   const userField = allModules.value.find((field) => field.key === "user");
+  // 个人字段继承 user 分组上下文解析相对显隐路径
+  const userContext = userField?.context?.length
+    ? createDataPathContext(userField.context)
+    : undefined;
   const collectFields = (fields = []) => {
     fields.forEach((field) => {
       if (field.type === "group") collectFields(field.fields);
       const source = getPrimaryModelBinding(field)?.source;
       const key = Array.isArray(source) ? source[source.length - 1] : undefined;
-      if (key && field.checks?.hidden && isFieldHidden(props.item.data, field)) {
+      if (key && field.checks?.hidden && isFieldHidden(props.item.data, field, userContext)) {
         hiddenFields.add(key);
       }
     });

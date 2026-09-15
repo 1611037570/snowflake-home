@@ -10,20 +10,6 @@ export const useResumeContext = () => {
   const EMAIL_PATTERN = /[\w.%+-]+@[\w.-]+\.[A-Za-z]{2,}/g;
   const DESENSITIZED_TEXT = "[数据已脱敏]";
 
-  // 递归剔除记录内 UI 状态，避免 AI 读取或修改编辑器控制数据
-  const stripRecordUiState = (value: any): any => {
-    if (Array.isArray(value)) return value.map(stripRecordUiState);
-    if (value && typeof value === "object") {
-      const next: Record<string, any> = {};
-      Object.entries(value).forEach(([key, item]) => {
-        if (key === "ui") return;
-        next[key] = stripRecordUiState(item);
-      });
-      return next;
-    }
-    return value;
-  };
-
   // 脱敏文本中的姓名、手机号和邮箱，避免敏感信息藏在经历描述中
   const sanitizeSensitiveText = (value: string, name: string) => {
     let result = value.replace(EMAIL_PATTERN, DESENSITIZED_TEXT).replace(PHONE_PATTERN, DESENSITIZED_TEXT);
@@ -67,7 +53,10 @@ export const useResumeContext = () => {
     keys.forEach((key) => {
       const module = data[key];
       if (!module || typeof module !== "object" || !("data" in module)) return;
-      const clone = JSON.parse(JSON.stringify(module.data));
+      // 数组记录只向 AI 暴露业务 data，不携带编辑器 ui 状态
+      const clone = Array.isArray(module.data)
+        ? module.data.map((record: any) => JSON.parse(JSON.stringify(record?.data ?? {})))
+        : JSON.parse(JSON.stringify(module.data));
       const title = module.ui?.title || resumeStore.getModel(key)?.name || key;
       const shouldDesensitize = !desensitizeMode.value.disabled;
       const strict = shouldDesensitize && desensitizeMode.value.level === "strict";
@@ -85,8 +74,7 @@ export const useResumeContext = () => {
       const sanitized = shouldDesensitize
         ? sanitizeNestedData(clone, userName, removeOrganizationName)
         : clone;
-      // 排除记录 UI 状态，避免 AI 误读或写回折叠字段
-      result[key] = { title, data: stripRecordUiState(sanitized) };
+      result[key] = { title, data: sanitized };
     });
     return result;
   };

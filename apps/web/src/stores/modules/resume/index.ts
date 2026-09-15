@@ -9,6 +9,7 @@ import {
   getPrimaryModelBinding,
   walkFormFields,
 } from "@/components/business/dynamicForm/code/schemaAccess";
+import { createDataPathContext } from "@/components/business/dynamicForm/code/pathContext";
 import router from "@/routers";
 import { useAiStore } from "@/stores/modules/ai";
 import { getUUID } from "@/utils";
@@ -358,14 +359,16 @@ export const useResumeStore = defineStore(
     };
     // 数组型模块新增记录：统一按运行时结构向真实数据追加默认记录
     function addDataRecord(moduleKey: string): number {
-      const arrayField = findModuleArrayField(runtimeConfig.value?.fields, moduleKey);
-      if (!arrayField) return -1;
-      return addArrayRecord(currentData.value, arrayField);
+      const target = findModuleArrayField(runtimeConfig.value?.fields, moduleKey);
+      if (!target) return -1;
+      return addArrayRecord(currentData.value, target.field, target.context);
     }
     // 从运行时模块结构定位数组字段
     const findModuleArrayField = (fields: any[] | undefined, moduleKey: string) => {
       const moduleField = fields?.find((f: any) => f?.key === moduleKey);
-      return moduleField?.fields?.find((f: any) => f?.type === "array");
+      const field = moduleField?.fields?.find((item: any) => item?.type === "array");
+      if (!field || !Array.isArray(moduleField?.context)) return;
+      return { field, context: createDataPathContext(moduleField.context) };
     };
     // 从运行时表单结构定位模块级可添加字段
     const findAddableModuleField = (
@@ -380,10 +383,9 @@ export const useResumeStore = defineStore(
         const source = getPrimaryModelBinding(item)?.source;
         if (
           Array.isArray(source) &&
-          source.length === 3 &&
-          source[0] === moduleKey &&
-          source[1] === "data" &&
-          source[2] === field
+          source.length === 2 &&
+          source[0] === "data" &&
+          source[1] === field
         ) {
           result = item;
         }
@@ -392,15 +394,15 @@ export const useResumeStore = defineStore(
     };
     // AI 删除记录：统一修改真实数据数组
     function removeDataRecord(moduleKey: string, index: number): boolean {
-      const arrayField = findModuleArrayField(runtimeConfig.value?.fields, moduleKey);
-      if (!arrayField) return false;
-      return removeArrayRecord(currentData.value, arrayField, index);
+      const target = findModuleArrayField(runtimeConfig.value?.fields, moduleKey);
+      if (!target) return false;
+      return removeArrayRecord(currentData.value, target.field, index, target.context);
     }
     // AI 移动记录：统一调整真实数据数组顺序
     function moveDataRecord(moduleKey: string, from: number, to: number): boolean {
-      const arrayField = findModuleArrayField(runtimeConfig.value?.fields, moduleKey);
-      if (!arrayField) return false;
-      return moveArrayRecord(currentData.value, arrayField, from, to);
+      const target = findModuleArrayField(runtimeConfig.value?.fields, moduleKey);
+      if (!target) return false;
+      return moveArrayRecord(currentData.value, target.field, from, to, target.context);
     }
     // 修改模块级 data 字段
     function updateModuleField(moduleKey: string, field: string, value: unknown): boolean {
@@ -438,8 +440,8 @@ export const useResumeStore = defineStore(
     ): boolean {
       const records = resolveModuleRecords(currentData.value?.[moduleKey]);
       const record = records?.[index];
-      if (!record || typeof record !== "object" || !(field in record)) return false;
-      record[field] = value;
+      if (!record?.data || typeof record.data !== "object" || !(field in record.data)) return false;
+      record.data[field] = value;
       return true;
     }
     // 批量写操作统一通过领域执行器落到当前简历

@@ -2,15 +2,15 @@
 import { useAiStore, useResumeStore } from "@/stores";
 import { useScroll } from "@vueuse/core";
 import { computed, nextTick, ref, watch } from "vue";
-import { storeToRefs } from "pinia";
 import { getXiaoZhouLLM } from "@/apis";
+import { useResumeContext } from "@/views/resume/editor/assistant/resumeContext";
 
 import ChatInput from "./chatInput.vue";
 import MessageList from "./messageList.vue";
 import WelcomeScreen from "./welcomeScreen.vue";
 
 const resumeStore = useResumeStore();
-const { currentData } = storeToRefs(resumeStore);
+const { getResumeData } = useResumeContext();
 const aiStore = useAiStore();
 const { createDefaultMessage } = aiStore;
 
@@ -114,8 +114,8 @@ const handleAIResponse = async () => {
     }));
     // 属于简历项目
     if (type === "resume") {
-      // 拼接 prompt 和 content 为一条消息
-      const prompt = `data: ${JSON.stringify(currentData.value)}
+      // 仅向 AI 提供简历业务内容，不暴露编辑器状态
+      const prompt = `data: ${JSON.stringify(getResumeData())}
 
       `;
       messages.at(-1).content = prompt + messages.at(-1).content;

@@ -19,25 +19,25 @@ export function createUserCustomField(key: string, label: string): ObjectFormFie
       layout: "horizontal",
       // 图标选择与隐藏开关均保存至个人信息模块配置
       icon: {
-        source: ["user", "ui", key, "icon"],
+        source: ["ui", key, "icon"],
         prop: "icon",
         defaultValue: "lucide:tag",
       },
       // 复用个人信息字段隐藏状态
       hidden: {
-        source: ["user", "ui", key, "hidden"],
+        source: ["ui", key, "hidden"],
         prop: "hidden",
         defaultValue: false,
       },
     },
     checks: {
       hidden: {
-        path: ["user", "ui", key, "hidden"],
+        path: ["ui", key, "hidden"],
         equals: true,
       },
     },
     model: {
-      source: ["user", "data", key],
+      source: ["data", key],
       prop: "modelValue",
     },
     props: {

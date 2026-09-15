@@ -1,5 +1,10 @@
 import type { FieldCheckRule, FormField } from "../types";
-import { resolveDataPath, type DataPath, type DataPathContext } from "./pathContext";
+import {
+  createDataPathContext,
+  resolveDataPath,
+  type DataPath,
+  type DataPathContext,
+} from "./pathContext";
 
 /** 按完整数据路径逐级取值 */
 const getValueByPath = (data: any, path: DataPath): any => {
@@ -16,6 +21,12 @@ const isRuleSatisfied = (value: any, rule: FieldCheckRule): boolean => {
   return rule.hasOwnProperty("equals") ? value === rule.equals : !!value;
 };
 
+// 根分组使用自身上下文解析模块级控制路径
+const getFieldContext = (field: FormField, context?: DataPathContext) => {
+  if (context || field.type !== "group" || !field.context?.length) return context;
+  return createDataPathContext(field.context);
+};
+
 /**
  * 按表单控制协议解析字段是否隐藏
  * - 无 checks.hidden 声明：不置灰（默认）
@@ -28,7 +39,10 @@ export const isFieldHidden = (
 ): boolean => {
   const rule = field.checks?.hidden;
   if (!rule?.path?.length) return false;
-  return isRuleSatisfied(getValueByPath(data, resolveDataPath(rule.path, context)), rule);
+  return isRuleSatisfied(
+    getValueByPath(data, resolveDataPath(rule.path, getFieldContext(field, context))),
+    rule,
+  );
 };
 
 // 按 DSL removed 协议判断字段是否需要从当前表单移除
@@ -39,5 +53,8 @@ export const isFieldRemoved = (
 ): boolean => {
   const rule = field.checks?.removed;
   if (!rule?.path?.length) return false;
-  return isRuleSatisfied(getValueByPath(data, resolveDataPath(rule.path, context)), rule);
+  return isRuleSatisfied(
+    getValueByPath(data, resolveDataPath(rule.path, getFieldContext(field, context))),
+    rule,
+  );
 };

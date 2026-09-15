@@ -148,7 +148,7 @@ export const buildResumeSchema = (
     const title = String(titleBinding?.defaultValue || module.name || key);
     const fieldSource = arrayField?.itemSchema ?? module.fields;
     const fields = collectFields(fieldSource, options, (binding) =>
-      arrayField ? true : binding.source[0] === key && binding.source[1] === "data",
+      arrayField ? true : binding.source[0] === "data",
     );
 
     return [
@@ -156,7 +156,7 @@ export const buildResumeSchema = (
         key,
         title,
         kind,
-        dataPath: arrayField?.source ? arrayField.source.slice(1) : ["data"],
+        dataPath: arrayField?.source ? [...arrayField.source] : ["data"],
         fields,
       },
     ];

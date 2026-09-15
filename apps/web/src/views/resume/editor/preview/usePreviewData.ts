@@ -41,7 +41,7 @@ const arrayShellCache = new WeakMap<object, Record<string, { shell: any[]; sourc
 const isShellValid = (shell: any[], value: any[]): boolean => {
   if (shell.length !== value.length) return false;
   for (let i = 0; i < shell.length; i++) {
-    if (shell[i] !== value[i] && shell[i]?.__source !== value[i]) return false;
+    if (shell[i] !== value[i] && shell[i]?.__source !== value[i]?.data) return false;
   }
   return true;
 };
@@ -56,7 +56,8 @@ const getArrayShell = (source: Record<string, any>, key: string, value: any[]): 
   if (hit && hit.sourceArr === value && isShellValid(hit.shell, value)) {
     return hit.shell;
   }
-  const shell = value.map((item: Record<string, any>) => createPreviewProxy(item));
+  // 预览只暴露记录内容，编辑器状态保留在记录 ui 层
+  const shell = value.map((item: Record<string, any>) => createPreviewProxy(item?.data ?? {}));
   cache[key] = { shell, sourceArr: value };
   return shell;
 };

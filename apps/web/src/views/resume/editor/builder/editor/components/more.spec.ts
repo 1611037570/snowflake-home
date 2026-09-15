@@ -6,12 +6,12 @@ import More from "./more.vue";
 const emailField = {
   label: "邮箱",
   addable: true,
-  model: { source: ["user", "data", "email"], prop: "modelValue" },
+  model: { source: ["data", "email"], prop: "modelValue" },
 };
 const wechatField = {
   label: "微信号",
   addable: true,
-  model: { source: ["user", "data", "wechat"], prop: "modelValue" },
+  model: { source: ["data", "wechat"], prop: "modelValue" },
 };
 
 const mountMore = (collapsed: string[], addField = vi.fn()) =>
