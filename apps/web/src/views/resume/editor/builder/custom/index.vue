@@ -10,6 +10,7 @@ import {
   defaultPadding,
   defaultFontSize,
   defaultLineHeight,
+  defaultParagraphSpacing,
   defaultModuleSpacing,
   defaultFontFamily,
   defaultThemeColor,
@@ -26,6 +27,14 @@ import ThemeColorPicker from "@/components/business/themeColorPicker/themeColorP
 
 const resumeStore = useResumeStore();
 const { currentUI } = storeToRefs(resumeStore);
+
+// 旧简历缺少新配置时沿用现有视觉间距
+const paragraphSpacing = computed({
+  get: () => currentUI.value?.paragraphSpacing ?? defaultParagraphSpacing,
+  set: (value) => {
+    if (currentUI.value) currentUI.value.paragraphSpacing = value;
+  },
+});
 
 // 个人信息展示模式
 const userInfoMode = computed({
@@ -113,6 +122,15 @@ const avatarPosition = computed({
           :step="uiParamRanges.lineHeight.step"
           :default-value="defaultLineHeight"
           tip="行与行之间的距离（字号倍数），数值越大行距越大"
+        />
+        <ConfigItem
+          label="段落间距"
+          v-model="paragraphSpacing"
+          :min="uiParamRanges.paragraphSpacing.min"
+          :max="uiParamRanges.paragraphSpacing.max"
+          :step="uiParamRanges.paragraphSpacing.step"
+          :default-value="defaultParagraphSpacing"
+          tip="同一模块内各条内容之间的间隔"
         />
       </ConfigGroup>
 

@@ -11,6 +11,7 @@ const previewData = inject("previewData");
 
 const fontValue = inject("fontValue");
 const lineHeightValue = inject("lineHeightValue");
+const paragraphSpacingStyle = inject("paragraphSpacingStyle");
 
 // 数组记录统一由 getValidData 过滤并提取业务内容
 const education = computed(() => {
@@ -32,7 +33,8 @@ const hasField = (item, key) => {
     <!-- 内容区：直接渲染已过滤的业务数据 -->
     <template v-for="(item, index) in education" :key="index">
       <div
-        class="mt-3 flex flex-wrap items-center justify-between"
+        :style="paragraphSpacingStyle"
+        class="flex flex-wrap items-center justify-between"
         v-if="item.name || getTime(item.time)"
       >
         <div class="flex max-w-full min-w-0 flex-wrap items-baseline gap-4">
@@ -46,7 +48,8 @@ const hasField = (item, key) => {
       </div>
       <!-- 次信息行：post / education / mode，不创建临时对象，直接基于原字段渲染 -->
       <div
-        class="mt-3 flex max-w-full min-w-0 flex-wrap items-center gap-2"
+        :style="paragraphSpacingStyle"
+        class="flex max-w-full min-w-0 flex-wrap items-center gap-2"
         v-if="hasField(item, 'post') || hasField(item, 'education') || hasField(item, 'mode')"
       >
         <template v-if="hasField(item, 'education')">

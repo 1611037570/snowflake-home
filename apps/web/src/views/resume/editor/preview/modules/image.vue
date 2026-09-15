@@ -10,6 +10,7 @@ const previewData = inject("previewData");
 
 const fontValue = inject("fontValue");
 const lineHeightValue = inject("lineHeightValue");
+const paragraphSpacingStyle = inject("paragraphSpacingStyle");
 const previewLang = inject(
   "previewLang",
   computed(() => "zh"),
@@ -33,7 +34,10 @@ const images = computed(() => getValidData(previewData.value?.image?.data || [])
     </div>
     <!-- 单个作品：图片在上、名称在下，暂不展示描述 -->
     <template v-for="(item, index) in images" :key="index">
-      <div class="mt-3 flex min-w-0 flex-col gap-1" :style="{ width: `${item.size ?? 50}%` }">
+      <div
+        :style="[paragraphSpacingStyle, { width: `${item.size ?? 50}%` }]"
+        class="flex min-w-0 flex-col gap-1"
+      >
         <img
           v-if="item.img"
           :src="item.img"

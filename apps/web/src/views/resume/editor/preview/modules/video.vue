@@ -9,6 +9,7 @@ const previewData = inject("previewData");
 
 const fontValue = inject("fontValue");
 const lineHeightValue = inject("lineHeightValue");
+const paragraphSpacingStyle = inject("paragraphSpacingStyle");
 
 // 数组记录统一由 getValidData 过滤并提取业务内容
 const video = computed(() => getValidData(previewData.value?.video?.data || []));
@@ -21,7 +22,8 @@ const video = computed(() => getValidData(previewData.value?.video?.data || []))
     <!-- 社交链接 -->
     <template v-for="(item, index) in video" :key="index">
       <div
-        class="mt-3 flex h-auto max-w-full min-w-0 flex-wrap items-center justify-between gap-2"
+        :style="paragraphSpacingStyle"
+        class="flex h-auto max-w-full min-w-0 flex-wrap items-center justify-between gap-2"
         data-module="user"
       >
         <div class="flex flex-1 items-center gap-3" :style="[fontValue(-6)]">

@@ -9,6 +9,7 @@ import {
   defaultAvatarPosition,
   defaultFontSize,
   defaultLineHeight,
+  defaultParagraphSpacing,
   defaultPadding,
   defaultUserInfoLayout,
   defaultUserInfoMode,
@@ -22,6 +23,7 @@ export interface ResumeTheme {
   paddingStyle: ComputedRef<Record<string, string>>;
   fontStyle: ComputedRef<Record<string, string>>;
   lineHeightStyle: ComputedRef<Record<string, string>>;
+  paragraphSpacingStyle: ComputedRef<Record<string, string>>;
   fontValue: ComputedRef<(offset?: number) => Record<string, string>>;
   lineHeightValue: ComputedRef<() => Record<string, string>>;
   themeColor: ComputedRef<string | undefined>;
@@ -40,6 +42,9 @@ export const useResumeTheme = (ui: ComputedRef<ResumeUi>): ResumeTheme => {
   const padding = computed(() => toNumber(ui.value.padding, defaultPadding));
   const fontSize = computed(() => toNumber(ui.value.fontSize, defaultFontSize));
   const lineHeight = computed(() => toNumber(ui.value.lineHeight, defaultLineHeight));
+  const paragraphSpacing = computed(() =>
+    toNumber(ui.value.paragraphSpacing, defaultParagraphSpacing),
+  );
 
   // 页面级基础样式对象固定复用，避免模板每次渲染都重新创建相同样式
   const paddingStyle = computed(() => {
@@ -55,6 +60,10 @@ export const useResumeTheme = (ui: ComputedRef<ResumeUi>): ResumeTheme => {
   }));
   const lineHeightStyle = computed(() => ({
     lineHeight: `${lineHeight.value}`,
+  }));
+  // 内部纵向间距统一使用上边距，避免与模块间距混用
+  const paragraphSpacingStyle = computed(() => ({
+    marginTop: `${paragraphSpacing.value}px`,
   }));
 
   const fontValue = computed(() => {
@@ -78,6 +87,7 @@ export const useResumeTheme = (ui: ComputedRef<ResumeUi>): ResumeTheme => {
 
   provide("fontValue", fontValue);
   provide("lineHeightValue", lineHeightValue);
+  provide("paragraphSpacingStyle", paragraphSpacingStyle);
   provide("themeColor", themeColor);
   provide("themeTemplate", themeTemplate);
   provide("userInfoMode", userInfoMode);
@@ -88,6 +98,7 @@ export const useResumeTheme = (ui: ComputedRef<ResumeUi>): ResumeTheme => {
     paddingStyle,
     fontStyle,
     lineHeightStyle,
+    paragraphSpacingStyle,
     fontValue,
     lineHeightValue,
     themeColor,

@@ -112,6 +112,8 @@ export const defaultFontFamily = "text-puhui";
 // 默认字体大小
 export const defaultFontSize = 16;
 export const defaultLineHeight = 1.2;
+// 默认段落间距，延续现有 mt-3 的视觉间距
+export const defaultParagraphSpacing = 12;
 // 默认模块间距
 export const defaultModuleSpacing = 12;
 // 默认主题样式
@@ -130,6 +132,8 @@ export const uiParamRanges = {
   fontSize: { min: 10, max: 24, step: 2 },
   // 行高
   lineHeight: { min: 1, max: 2, step: 0.1 },
+  // 段落间距
+  paragraphSpacing: { min: 0, max: 36, step: 3 },
   // 模块间距
   moduleSpacing: { min: 2, max: 48, step: 1 },
 };
@@ -142,6 +146,8 @@ export const DEFAULT_UI = {
   fontSize: defaultFontSize,
   // 行高
   lineHeight: defaultLineHeight,
+  // 段落间距
+  paragraphSpacing: defaultParagraphSpacing,
   // 模块间距
   moduleSpacing: defaultModuleSpacing,
   // 主题颜色
