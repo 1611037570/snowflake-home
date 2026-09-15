@@ -25,6 +25,12 @@ const longImageExportOptions = [
   { name: "PDF图片", value: "pdf" },
 ];
 
+// 服务器未连接时只禁止切换服务器选项，保留整个 PDF 导出入口。
+const changePdfExportType = (value) => {
+  if (value === "server" && !isConnected.value) return;
+  pdfExportType.value = value;
+};
+
 // 导出当前完整简历为 JSON 文件（data/config/ui），支持无损导入恢复
 const exportConfig = () => {
   const json = JSON.stringify(currentItem.value ?? {}, null, 2);
@@ -61,7 +67,7 @@ const list = computed(() => [
     desc: "本地或服务器排版导出",
     options: pdfExportOptions,
     modelValue: pdfExportType.value,
-    onChange: (value) => (pdfExportType.value = value),
+    onChange: changePdfExportType,
     fn: () =>
       emitExport(
         pdfExportType.value === "server" && isConnected.value
