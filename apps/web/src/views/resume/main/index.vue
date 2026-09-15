@@ -129,7 +129,7 @@
       <section
         id="journey"
         :ref="registerRevealSection"
-        class="resume-home__reveal relative mx-auto flex min-h-screen max-w-[1440px] flex-col justify-center px-6 py-18 lg:px-12"
+        class="resume-home__reveal relative mx-auto flex max-w-[1440px] flex-col justify-center px-6 py-18 lg:px-12"
       >
         <div class="flex flex-col justify-between gap-6 md:flex-row md:items-end">
           <div class="max-w-2xl">
@@ -159,7 +159,7 @@
         :id="group.id"
         :key="group.title"
         :ref="registerRevealSection"
-        class="resume-home__reveal relative mx-auto grid min-h-screen max-w-[1440px] items-center gap-12 px-6 py-18 lg:grid-cols-2 lg:px-12"
+        class="resume-home__reveal relative mx-auto grid max-w-[1440px] items-center gap-12 px-6 py-18 lg:grid-cols-2 lg:px-12"
       >
         <article :class="index % 2 ? 'lg:order-2' : ''" class="max-w-xl">
           <p class="text-sm font-semibold tracking-[0.18em] text-sf-theme">{{ group.eyebrow }}</p>
@@ -205,7 +205,7 @@
 
       <section
         :ref="registerRevealSection"
-        class="resume-home__reveal relative mx-auto flex min-h-screen max-w-[1440px] items-center px-6 py-18 lg:px-12"
+        class="resume-home__reveal relative mx-auto flex max-w-[1440px] items-center px-6 py-18 lg:px-12"
       >
         <div class="relative w-full overflow-hidden rounded-[30px] px-6 py-12 text-center sm:px-12">
           <div class="relative mx-auto max-w-2xl">
