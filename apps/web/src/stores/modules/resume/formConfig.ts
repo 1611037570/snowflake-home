@@ -662,9 +662,20 @@ export const DEFAULT_ACCOUNT_FORM = {
             defaultValue: "",
             prop: "url",
           },
+          {
+            source: ["ui", "hidden"],
+            defaultValue: false,
+            prop: "hidden",
+          },
         ],
         type: "object",
         component: "account",
+        checks: {
+          hidden: {
+            path: ["ui", "hidden"],
+            equals: true,
+          },
+        },
         required: true,
       },
     },
@@ -719,11 +730,22 @@ export const DEFAULT_EDUCATION_FORM = {
         component: "itemCollapse",
         slot: "default",
         span: 24,
+        checks: {
+          hidden: {
+            path: ["ui", "hidden"],
+            equals: true,
+          },
+        },
         model: [
           {
             source: ["ui", "collapsed"],
             prop: "collapsed",
             defaultValue: EXPANDED,
+          },
+          {
+            source: ["ui", "hidden"],
+            prop: "hidden",
+            defaultValue: false,
           },
           {
             source: ["name"],
@@ -986,11 +1008,22 @@ export const DEFAULT_WORK_FORM = {
         component: "itemCollapse",
         slot: "default",
         span: 24,
+        checks: {
+          hidden: {
+            path: ["ui", "hidden"],
+            equals: true,
+          },
+        },
         model: [
           {
             source: ["ui", "collapsed"],
             prop: "collapsed",
             defaultValue: EXPANDED,
+          },
+          {
+            source: ["ui", "hidden"],
+            prop: "hidden",
+            defaultValue: false,
           },
           {
             source: ["name"],
@@ -1111,11 +1144,22 @@ export const DEFAULT_PROJECT_FORM = {
         component: "itemCollapse",
         slot: "default",
         span: 24,
+        checks: {
+          hidden: {
+            path: ["ui", "hidden"],
+            equals: true,
+          },
+        },
         model: [
           {
             source: ["ui", "collapsed"],
             prop: "collapsed",
             defaultValue: EXPANDED,
+          },
+          {
+            source: ["ui", "hidden"],
+            prop: "hidden",
+            defaultValue: false,
           },
           {
             source: ["name"],
@@ -1241,6 +1285,11 @@ export const DEFAULT_VIDEO_FORM = {
             defaultValue: EXPANDED,
           },
           {
+            source: ["ui", "hidden"],
+            prop: "hidden",
+            defaultValue: false,
+          },
+          {
             source: ["name"],
             prop: "name",
           },
@@ -1273,6 +1322,12 @@ export const DEFAULT_VIDEO_FORM = {
         component: "itemCollapse",
         slot: "default",
         span: 24,
+        checks: {
+          hidden: {
+            path: ["ui", "hidden"],
+            equals: true,
+          },
+        },
         required: true,
       },
     },
@@ -1330,6 +1385,11 @@ export const DEFAULT_IMAGE_FORM = {
             defaultValue: EXPANDED,
           },
           {
+            source: ["ui", "hidden"],
+            prop: "hidden",
+            defaultValue: false,
+          },
+          {
             source: ["name"],
             prop: "name",
           },
@@ -1367,6 +1427,12 @@ export const DEFAULT_IMAGE_FORM = {
         component: "itemCollapse",
         slot: "default",
         span: 24,
+        checks: {
+          hidden: {
+            path: ["ui", "hidden"],
+            equals: true,
+          },
+        },
         required: true,
       },
     },
@@ -1425,9 +1491,20 @@ export const DEFAULT_HONOR_FORM = {
             defaultValue: "",
             prop: "name",
           },
+          {
+            source: ["ui", "hidden"],
+            defaultValue: false,
+            prop: "hidden",
+          },
         ],
         type: "object",
         component: "honor",
+        checks: {
+          hidden: {
+            path: ["ui", "hidden"],
+            equals: true,
+          },
+        },
         required: true,
       },
     },
@@ -1481,11 +1558,22 @@ export const DEFAULT_CUSTOM_FORM = {
         component: "itemCollapse",
         slot: "default",
         span: 24,
+        checks: {
+          hidden: {
+            path: ["ui", "hidden"],
+            equals: true,
+          },
+        },
         model: [
           {
             source: ["ui", "collapsed"],
             prop: "collapsed",
             defaultValue: EXPANDED,
+          },
+          {
+            source: ["ui", "hidden"],
+            prop: "hidden",
+            defaultValue: false,
           },
           {
             source: ["name"],
