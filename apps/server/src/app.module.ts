@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common'
+import { DynamicModule, Module } from '@nestjs/common'
 import { ConfigModule } from '@nestjs/config'
 import { TypeOrmModule } from '@nestjs/typeorm'
 import { AppController } from './app.controller'
@@ -16,20 +16,30 @@ import { ResumePdfModule } from './modules/resume-pdf/resume-pdf.module'
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }), // 全局配置
-    TypeOrmModule.forRoot({
-      ...baseConfig.mysql,
-      autoLoadEntities: true,
-    }),
     // RedisModule,
     // RsaModule,
     DemoModule,
     LLMModule,
     UtilsModule,
-    FeedbackModule,
     ResumePdfModule,
     // UserModule
   ],
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule {
+  static register(databaseEnabled: boolean): DynamicModule {
+    return {
+      module: AppModule,
+      imports: databaseEnabled
+        ? [
+            TypeOrmModule.forRoot({
+              ...baseConfig.mysql,
+              autoLoadEntities: true,
+            }),
+            FeedbackModule,
+          ]
+        : [],
+    }
+  }
+}
