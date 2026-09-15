@@ -36,8 +36,9 @@ const previewVisible = ref(false);
 // 图片上传全流程 hook：vueuse 选择文件，内部完成裁切压缩并返回完整图片 Data URL
 const { openPicker, cropVisible, cropSrc, confirmCrop, closeCrop } = useImageUpload({
   crop: true,
-  outputWidth: props.width * 0.7,
-  outputHeight: props.height * 0.7,
+  outputWidth: props.width,
+  outputHeight: props.height,
+  quality: 1, // 使用最高质量导出，避免图片质量损失
   onResult: (base64) => {
     image.value = base64;
   },
