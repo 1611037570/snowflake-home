@@ -7,6 +7,7 @@
 import { onMounted, onUnmounted, type ComputedRef, type Ref } from "vue";
 import eventBus from "@/utils/modules/eventBus";
 import { printPDF as exportPdf } from "./usePdfExport";
+import { printResume } from "./useBrowserPrint";
 import { printServerPDF as exportServerPdf } from "./useServerPdfExport";
 import { printImage as exportImage } from "./useImageExport";
 import { exportMarkdown } from "./useMarkdownExport";
@@ -26,6 +27,9 @@ interface UseResumeExportOptions {
 export const useResumeExport = ({ isEdit, rootRef, measureRef, onExportSuccess }: UseResumeExportOptions) => {
   const printPDF = (scale: unknown = 2) =>
     exportPdf(rootRef, onExportSuccess, scale === 8 ? 8 : scale === 4 ? 4 : scale === 2 ? 2 : 1);
+  // 浏览器打印单独作为导出选项，保留系统打印能力。
+  const printBrowserPDF = (scale: unknown = 2) =>
+    printResume(rootRef, onExportSuccess, scale === 8 ? 8 : scale === 4 ? 4 : scale === 2 ? 2 : 1);
   const printServerPDF = (scale: unknown = 2) =>
     exportServerPdf(rootRef, onExportSuccess, scale === 8 ? 8 : scale === 4 ? 4 : scale === 2 ? 2 : 1);
   const printImage = (scale: unknown = 2) =>
@@ -37,6 +41,7 @@ export const useResumeExport = ({ isEdit, rootRef, measureRef, onExportSuccess }
   onMounted(() => {
     if (isEdit.value) {
       eventBus.on("resume-print-pdf", printPDF);
+      eventBus.on("resume-print-browser-pdf", printBrowserPDF);
       eventBus.on("resume-print-server-pdf", printServerPDF);
       eventBus.on("resume-print-image", printImage);
       eventBus.on("resume-print-markdown", printMarkdown);
@@ -46,6 +51,7 @@ export const useResumeExport = ({ isEdit, rootRef, measureRef, onExportSuccess }
   onUnmounted(() => {
     if (isEdit.value) {
       eventBus.off("resume-print-pdf", printPDF);
+      eventBus.off("resume-print-browser-pdf", printBrowserPDF);
       eventBus.off("resume-print-server-pdf", printServerPDF);
       eventBus.off("resume-print-image", printImage);
       eventBus.off("resume-print-markdown", printMarkdown);
