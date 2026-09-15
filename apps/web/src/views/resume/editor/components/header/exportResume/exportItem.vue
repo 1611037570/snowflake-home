@@ -42,6 +42,26 @@ const emit = defineEmits(["click"]);
         {{ option.name }}
       </SfButton>
     </div>
+    <!-- 清晰度只对图片类导出显示。 -->
+    <div v-if="item.scale" class="flex w-full flex-col gap-3" @click.stop>
+      <div class="flex items-center justify-between gap-3 text-sm">
+        <span class="font-semibold">清晰度</span>
+        <span :class="item.scale.tip.class">{{ item.scale.tip.text }}</span>
+      </div>
+      <div class="flex w-full gap-3">
+        <SfButton
+          v-for="option in item.scale.options"
+          :key="option.value"
+          class="min-w-0 flex-1"
+          size="small"
+          border
+          :type="item.scale.modelValue === option.value ? 'theme' : 'bg'"
+          @click.stop="item.scale.onChange(option.value)"
+        >
+          {{ option.name }}
+        </SfButton>
+      </div>
+    </div>
   </div>
 </template>
 
