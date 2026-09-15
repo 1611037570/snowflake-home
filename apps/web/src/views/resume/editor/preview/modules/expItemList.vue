@@ -4,7 +4,7 @@ import { getTime } from "../../utils";
 import ResumeField from "../components/resumeField/index.vue";
 import Title from "../components/title/index.vue";
 import { getValidData } from "./validData";
-
+import { isContentEmpty } from "../modules/validData";
 // 属性：模块标识、标题、数据 key
 const props = defineProps({
   moduleName: {
@@ -49,7 +49,12 @@ const list = computed(() => getValidData(previewData.value?.[props.dataKey]?.dat
         </div>
       </div>
       <!-- 补充描述/经历 -->
-      <ResumeField :model-value="item.content" html />
+      <ResumeField
+        :model-value="item.content"
+        html
+        class="mt-3"
+        v-if="!isContentEmpty(item.content)"
+      />
     </template>
   </div>
 </template>

@@ -2,7 +2,7 @@
 import { computed, inject } from "vue";
 import ResumeField from "../components/resumeField/index.vue";
 import Title from "../components/title/index.vue";
-
+import { isContentEmpty } from "../modules/validData";
 import { getTime } from "../../utils";
 import { getValidData } from "./validData";
 
@@ -48,8 +48,7 @@ const hasField = (item, key) => {
       </div>
       <!-- 次信息行：post / education / mode，不创建临时对象，直接基于原字段渲染 -->
       <div
-        :style="paragraphSpacingStyle"
-        class="flex max-w-full min-w-0 flex-wrap items-center gap-2"
+        class="mt-3 flex max-w-full min-w-0 flex-wrap items-center gap-2"
         v-if="hasField(item, 'post') || hasField(item, 'education') || hasField(item, 'mode')"
       >
         <template v-if="hasField(item, 'education')">
@@ -68,7 +67,12 @@ const hasField = (item, key) => {
         </template>
       </div>
       <!-- 补充描述/经历 -->
-      <ResumeField :model-value="item.content" html />
+      <ResumeField
+        :model-value="item.content"
+        html
+        class="mt-3"
+        v-if="!isContentEmpty(item.content)"
+      />
     </template>
   </div>
 </template>

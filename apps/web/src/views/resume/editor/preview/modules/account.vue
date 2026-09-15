@@ -2,6 +2,7 @@
 import { computed, inject } from "vue";
 import ResumeField from "../components/resumeField/index.vue";
 import { getValidData } from "./validData";
+import Title from "../components/title/index.vue";
 
 // 从上层注入获取原始简历数据
 const previewData = inject("previewData");
@@ -31,18 +32,16 @@ const safeUrl = (value) => {
     data-module="account"
     :style="[lineHeightValue(), fontValue()]"
   >
+    <Title module-key="account"></Title>
     <!-- 社交链接 -->
     <div
       v-for="(item, index) in account"
       :key="index"
       class="max-w-full min-w-0"
       data-module="user"
-      :style="index > 0 ? paragraphSpacingStyle : undefined"
+      :style="paragraphSpacingStyle"
     >
-      <span
-        v-if="item.name"
-        class="inline-block whitespace-nowrap"
-      >
+      <span v-if="item.name" class="inline-block whitespace-nowrap">
         <ResumeField :model-value="item.name" class="inline" />
         <span v-if="item.url">：</span>
       </span>
@@ -52,10 +51,7 @@ const safeUrl = (value) => {
         rel="noopener noreferrer"
         class="inline max-w-full min-w-0 break-all hover:underline"
       >
-        <ResumeField
-          :model-value="item.url"
-          class="inline max-w-full min-w-0 break-all"
-        />
+        <ResumeField :model-value="item.url" class="inline max-w-full min-w-0 break-all" />
       </a>
     </div>
   </div>

@@ -30,7 +30,7 @@ const video = computed(() => getValidData(previewData.value?.video?.data || []))
           <ResumeField :model-value="item.name" :style="[fontValue(1)]" />
           <ResumeField :model-value="item.desc" />
         </div>
-        <div class="h-16 w-16">
+        <div class="h-16 w-16" v-if="item.url">
           <SfQrcode :value="item.url" />
         </div>
       </div>

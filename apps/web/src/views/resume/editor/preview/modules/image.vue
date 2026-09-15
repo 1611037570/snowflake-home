@@ -38,13 +38,9 @@ const images = computed(() => getValidData(previewData.value?.image?.data || [])
         :style="[paragraphSpacingStyle, { width: `${item.size ?? 50}%` }]"
         class="flex min-w-0 flex-col gap-1"
       >
-        <img
-          v-if="item.img"
-          :src="item.img"
-          :alt="imageAlt"
-          class="h-auto w-full rounded"
-        />
+        <img v-if="item.img" :src="item.img" :alt="imageAlt" class="h-auto w-full rounded" />
         <ResumeField class="text-center" :model-value="item.name" />
+        <ResumeField class="text-center" :model-value="item.desc" />
       </div>
     </template>
   </div>
