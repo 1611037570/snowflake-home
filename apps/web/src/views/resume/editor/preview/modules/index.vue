@@ -8,6 +8,8 @@ const props = defineProps({
   },
 });
 
+const richTextModules = new Set(["skill", "advantage"]);
+
 /**
  * 使用 Vite 的 import.meta.glob 动态导入当前目录下的所有 .vue 组件
  * 排除当前 index.vue 文件自身
@@ -21,6 +23,10 @@ const components = import.meta.glob(["./*.vue", "./*/index.vue"]);
 const dynamicComponent = computed(() => {
   if (!props.name) {
     return;
+  }
+  // Reuse the shared rich-text renderer for equivalent modules.
+  if (richTextModules.has(props.name)) {
+    return defineAsyncComponent(components["./richTextBlock.vue"]);
   }
   // 自定义模块使用带前缀的 key,统一渲染为自定义模块组件
   if (props.name.startsWith("custom_")) {
@@ -38,10 +44,24 @@ const dynamicComponent = computed(() => {
   console.warn(`[ResumePreview] 组件 ${props.name} 不存在于目录中`);
   return null;
 });
+
+const componentProps = computed(() => {
+  if (richTextModules.has(props.name)) {
+    return {
+      moduleName: props.name,
+      dataKey: props.name,
+    };
+  }
+  return props;
+});
 </script>
 
 <template>
-  <component :is="dynamicComponent" v-if="dynamicComponent" v-bind="{ ...props, ...$attrs }" />
+  <component
+    :is="dynamicComponent"
+    v-if="dynamicComponent"
+    v-bind="{ ...componentProps, ...$attrs }"
+  />
 </template>
 
 <style lang="scss" scoped></style>
