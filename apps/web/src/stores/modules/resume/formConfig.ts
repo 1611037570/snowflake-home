@@ -1549,7 +1549,7 @@ export const DEFAULT_CUSTOM_FORM = {
   fields: [
     {
       type: "array",
-      source: ["custom", "data", "list"],
+      source: ["custom", "data"],
       drag: true,
       dragClass: DEFAULT_DRAG_CLASS,
       itemClass: DEFAULT_COL_CLASS,

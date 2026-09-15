@@ -9,6 +9,6 @@ describe("resumeDataContract", () => {
     expect(instructions).toContain("`email` | 邮箱 | string | 否 | 可添加字段");
     expect(instructions).toContain('可选值 "在职" / "离职" / "应届生"');
     expect(instructions).toContain('格式 ["开始.YYYY.MM", "结束.YYYY.MM"]');
-    expect(instructions).toContain("`custom_<id>.data.list[]`");
+    expect(instructions).toContain("`custom_<id>.data[]`");
   });
 });
