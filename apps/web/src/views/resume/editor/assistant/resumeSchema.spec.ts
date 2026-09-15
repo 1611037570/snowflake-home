@@ -8,7 +8,8 @@ describe("resumeSchema", () => {
       {
         type: "group",
         key: "user",
-        model: { source: ["user", "ui", "title"], prop: "title", defaultValue: "个人信息" },
+        context: ["user"],
+        model: { source: ["ui", "title"], prop: "title", defaultValue: "个人信息" },
         fields: [
           {
             type: "object",
@@ -16,7 +17,7 @@ describe("resumeSchema", () => {
             label: "求职状态",
             addable: true,
             model: [
-              { source: ["user", "data", "status"], prop: "modelValue" },
+              { source: ["data", "status"], prop: "modelValue" },
               { source: ["__options", "status"], prop: "list", raw: true },
             ],
           },
@@ -42,10 +43,11 @@ describe("resumeSchema", () => {
     const work: FormField = {
       type: "group",
       key: "work",
+      context: ["work"],
       fields: [
         {
           type: "array",
-          source: ["work", "data"],
+          source: ["data"],
           itemSchema: {
             type: "group",
             required: true,
@@ -55,7 +57,7 @@ describe("resumeSchema", () => {
                 component: "datePicker",
                 label: "时间",
                 props: { type: "monthrange" },
-                model: { source: ["time"], prop: "modelValue" },
+                model: { source: ["data", "time"], prop: "modelValue" },
               },
             ],
           },
@@ -68,7 +70,7 @@ describe("resumeSchema", () => {
     expect(schema[0]).toMatchObject({ kind: "array", dataPath: ["data"] });
     expect(schema[0]?.fields[0]).toMatchObject({
       key: "time",
-      path: ["time"],
+      path: ["data", "time"],
       valueType: "array",
       required: true,
       format: "monthRange",

@@ -4,26 +4,13 @@ import { createUserCustomField, isUserCustomFieldKey } from "./useUserCustomFiel
 // 自定义模块：按实际 key 重写模板，标题取自模块 ui
 function rewriteCustomFieldByKey(field: any, customKey: string, customTitle: string) {
   field.key = customKey;
+  // 自定义模块通过上下文绑定实际数据节点
+  field.context = [customKey];
   field.model?.forEach((item: any) => {
-    if (Array.isArray(item.source)) {
-      item.source[0] = customKey;
-      if (item.prop === "title") {
-        item.defaultValue = customTitle;
-      }
+    if (item.prop === "title") {
+      item.defaultValue = customTitle;
     }
   });
-  if (Array.isArray(field.checks?.hidden?.path)) {
-    field.checks.hidden.path[0] = customKey;
-  }
-  if (Array.isArray(field.checks?.removed?.path)) {
-    field.checks.removed.path[0] = customKey;
-  }
-  const arrayField = field.fields?.find((f: any) => f.type === "array");
-  if (arrayField?.itemSchema) {
-    if (Array.isArray(arrayField.source)) {
-      arrayField.source[0] = customKey;
-    }
-  }
 }
 
 // 模板注册表：user 与其它预设模块统一从默认配置展开

@@ -1,5 +1,6 @@
 import { toValue, type MaybeRefOrGetter } from "vue";
 import {
+  createDataPathContext,
   getArrayDataPath,
   getModelBindings,
   resolveDataPath,
@@ -54,6 +55,10 @@ function analyzeModule(moduleConfig: any, rootData: any) {
   const missing: string[] = [];
   let done = 0;
   let total = 0;
+  // 模块字段统一从分组上下文解析相对路径
+  const moduleContext = moduleConfig.context?.length
+    ? createDataPathContext(moduleConfig.context)
+    : undefined;
 
   for (const field of moduleConfig.fields) {
     if (field.type === "array" && field.itemSchema) {
@@ -63,7 +68,7 @@ function analyzeModule(moduleConfig: any, rootData: any) {
 
       const parentRequired = itemSchema.required === true || field.required === true;
 
-      const listPath = getArrayDataPath(field) || [];
+      const listPath = getArrayDataPath(field, moduleContext) || [];
       const list = getValueByPath(rootData, listPath);
 
       if (!Array.isArray(list) || list.length === 0) {
@@ -115,7 +120,7 @@ function analyzeModule(moduleConfig: any, rootData: any) {
     const { src, prop } = getFieldMeta(field);
     if (!src.length) continue;
 
-    const value = getValueByPath(rootData, src);
+    const value = getValueByPath(rootData, resolveDataPath(src, moduleContext));
 
     // 修改：使用 src 最后一个元素判断是否为 content
     const filled = src[src.length - 1] === "content" ? !isContentEmpty(value) : !isEmpty(value);
@@ -157,7 +162,8 @@ function checkTimeline(modules: Array<{ key: string; config: any }>, rootData: a
 
   for (const { key, config } of modules) {
     const arrayField = config.fields?.find((field: any) => field.type === "array");
-    const listPath = getArrayDataPath(arrayField) || [];
+    const moduleContext = config.context?.length ? createDataPathContext(config.context) : undefined;
+    const listPath = getArrayDataPath(arrayField, moduleContext) || [];
     // 时间线记录统一按数组容器声明的数据源读取
     const items = getValueByPath(rootData, listPath);
     if (!Array.isArray(items) || !items.length) continue;
@@ -183,7 +189,7 @@ function checkTimeline(modules: Array<{ key: string; config: any }>, rootData: a
         const time = getValueByPath(rootData, path) || [];
         const start = parseMonth(time[0]);
         const end = parseMonth(time[1] ?? time[0]);
-        return { item, index, name: item?.name || "", time, start, end };
+        return { item, index, name: item?.data?.name || "", time, start, end };
       })
       .filter((e: any) => e.start != null && e.end != null);
 

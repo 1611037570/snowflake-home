@@ -4,8 +4,13 @@ import { executeResumeOperations, type ResumeOperationTarget } from "./resumeOpe
 describe("executeResumeOperations", () => {
   it("按顺序执行全部语义化写操作", () => {
     const data: any = {
-      user: { title: "个人信息", data: { name: "张三" } },
-      work: { data: [{ name: "甲公司" }, { name: "乙公司" }] },
+      user: { ui: { title: "个人信息" }, data: { name: "张三" } },
+      work: {
+        data: [
+          { ui: {}, data: { name: "甲公司" } },
+          { ui: {}, data: { name: "乙公司" } },
+        ],
+      },
     };
     const target: ResumeOperationTarget = {
       updateModuleField: (module, field, value) => {
@@ -13,14 +18,14 @@ describe("executeResumeOperations", () => {
         return true;
       },
       updateModuleTitle: (module, title) => {
-        data[module].title = title;
+        data[module].ui.title = title;
         return true;
       },
       updateRecordField: (module, index, field, value) => {
-        data[module].data[index][field] = value;
+        data[module].data[index].data[field] = value;
         return true;
       },
-      addDataRecord: (module) => data[module].data.push({ name: "" }) - 1,
+      addDataRecord: (module) => data[module].data.push({ ui: {}, data: { name: "" } }) - 1,
       removeDataRecord: (module, index) => data[module].data.splice(index, 1).length > 0,
       moveDataRecord: (module, from, to) => {
         const [record] = data[module].data.splice(from, 1);
@@ -41,8 +46,11 @@ describe("executeResumeOperations", () => {
       target,
     );
 
-    expect(data.user).toEqual({ title: "基本资料", data: { name: "李四" } });
-    expect(data.work.data).toEqual([{ name: "丙公司" }, { name: "乙公司" }]);
+    expect(data.user).toEqual({ ui: { title: "基本资料" }, data: { name: "李四" } });
+    expect(data.work.data).toEqual([
+      { ui: {}, data: { name: "丙公司" } },
+      { ui: {}, data: { name: "乙公司" } },
+    ]);
     expect(result).toEqual({
       applied: true,
       changed: [0, 1, 2, 3, 4, 5],

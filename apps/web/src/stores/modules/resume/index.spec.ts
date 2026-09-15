@@ -10,17 +10,18 @@ vi.mock("./formConfig", () => {
   const user = {
     type: "group",
     key: "user",
+    context: ["user"],
     fields: [
       {
         type: "object",
         component: "input",
-        model: { source: ["user", "data", "birthday"], prop: "modelValue" },
+        model: { source: ["data", "birthday"], prop: "modelValue" },
       },
       {
         type: "object",
         component: "input",
         addable: true,
-        model: { source: ["user", "data", "email"], prop: "modelValue" },
+        model: { source: ["data", "email"], prop: "modelValue" },
       },
     ],
   };

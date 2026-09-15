@@ -11,10 +11,12 @@ describe("resume write flow", () => {
         data: [
           {
             ui: { collapsed: [] },
-            name: "甲公司",
-            post: "工程师",
-            time: ["2024.01", "2025.01"],
-            content: "<p>负责开发</p>",
+            data: {
+              name: "甲公司",
+              post: "工程师",
+              time: ["2024.01", "2025.01"],
+              content: "<p>负责开发</p>",
+            },
           },
         ],
       },
@@ -29,16 +31,18 @@ describe("resume write flow", () => {
         return true;
       },
       updateRecordField: (module: string, index: number, field: string, value: unknown) => {
-        data[module].data[index][field] = value;
+        data[module].data[index].data[field] = value;
         return true;
       },
       addDataRecord: (module: string) =>
         data[module].data.push({
           ui: { collapsed: [] },
-          name: "",
-          post: "",
-          time: [],
-          content: "",
+          data: {
+            name: "",
+            post: "",
+            time: [],
+            content: "",
+          },
         }) - 1,
       removeDataRecord: (module: string, index: number) =>
         data[module].data.splice(index, 1).length > 0,
@@ -52,7 +56,10 @@ describe("resume write flow", () => {
     const tool = createProposeResumeEditsTool({
       getResumeData: () => ({
         user: { title: data.user.ui.title, data: structuredClone(data.user.data) },
-        work: { title: data.work.ui.title, data: structuredClone(data.work.data) },
+        work: {
+          title: data.work.ui.title,
+          data: data.work.data.map((record: any) => structuredClone(record.data)),
+        },
       }),
       applyResumeOperations: apply,
     });
@@ -84,7 +91,7 @@ describe("resume write flow", () => {
     });
     expect(apply).toHaveBeenCalledTimes(1);
     expect(data.user.data.email).toBe("test@example.com");
-    expect(data.work.data[1]).toMatchObject({
+    expect(data.work.data[1].data).toMatchObject({
       name: "乙公司",
       post: "高级工程师",
       time: ["2025.02", "2026.08"],

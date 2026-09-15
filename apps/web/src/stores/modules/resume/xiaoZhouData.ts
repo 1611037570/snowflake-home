@@ -23,12 +23,18 @@ export const xiaoZhouData: any = {
     },
     data: [
       {
-        name: "github",
-        url: "https://github.com/1611037570",
+        ui: {},
+        data: {
+          name: "github",
+          url: "https://github.com/1611037570",
+        },
       },
       {
-        name: "稀土掘金",
-        url: "https://juejin.cn/user/2342386827791687/posts",
+        ui: {},
+        data: {
+          name: "稀土掘金",
+          url: "https://juejin.cn/user/2342386827791687/posts",
+        },
       },
     ],
   },
@@ -48,11 +54,14 @@ export const xiaoZhouData: any = {
     },
     data: [
       {
-        name: "广西科技大学鹿山学院",
-        education: "本科",
-        post: "计算机科学与技术",
-        content: "<p></p>",
-        mode: "全日制",
+        ui: {},
+        data: {
+          name: "广西科技大学鹿山学院",
+          education: "本科",
+          post: "计算机科学与技术",
+          content: "<p></p>",
+          mode: "全日制",
+        },
       },
     ],
   },
@@ -63,10 +72,13 @@ export const xiaoZhouData: any = {
     },
     data: [
       {
-        name: "**轻舟简历",
-        post: "全栈开发",
-        time: ["2022.08", "2026.06"],
-        content: "",
+        ui: {},
+        data: {
+          name: "**轻舟简历",
+          post: "全栈开发",
+          time: ["2022.08", "2026.06"],
+          content: "",
+        },
       },
     ],
   },
@@ -78,9 +90,12 @@ export const xiaoZhouData: any = {
     },
     data: [
       {
-        name: "轻舟简历",
-        url: "http://nannan.work/#/resume/editor?id=1611037570",
-        desc: "非视频 仅用于展示",
+        ui: {},
+        data: {
+          name: "轻舟简历",
+          url: "http://nannan.work/#/resume/editor?id=1611037570",
+          desc: "非视频 仅用于展示",
+        },
       },
     ],
   },

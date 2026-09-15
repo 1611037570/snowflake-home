@@ -101,7 +101,7 @@ function computeStats(data: any): ResumeStats {
       if (cleaned) texts.push(cleaned);
     } else if (Array.isArray(moduleData)) {
       for (const item of moduleData) {
-        collectTexts(item, texts);
+        collectTexts(item?.data, texts);
       }
     } else if (moduleData && typeof moduleData === "object") {
       collectTexts(moduleData, texts);

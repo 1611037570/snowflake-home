@@ -78,7 +78,9 @@ export const useChatRequest = ({
     }
     if (Array.isArray(item.data?.image?.data)) {
       item.data.image.data.forEach((record: any, index: number) => {
-        if (record && imageItems[index]) record.img = imageItems[index].img;
+        if (record?.data && imageItems[index]?.data) {
+          record.data.img = imageItems[index].data.img;
+        }
       });
     }
     item.config = backup.config ?? {};
