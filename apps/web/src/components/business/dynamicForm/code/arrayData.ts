@@ -1,10 +1,15 @@
 import type { FormField } from "../types";
 import { getArrayDataPath } from "./schemaAccess";
 import { createArrayItemData } from "./schemaData";
+import type { DataPathContext } from "./pathContext";
 
 // 按数组字段声明读取真实记录，不在读取时创建缺失数据
-export function getArrayRecords(rootData: unknown, arrayField: FormField): any[] | undefined {
-  const path = getArrayDataPath(arrayField);
+export function getArrayRecords(
+  rootData: unknown,
+  arrayField: FormField,
+  pathContext?: DataPathContext,
+): any[] | undefined {
+  const path = getArrayDataPath(arrayField, pathContext);
   if (!path) return;
   let current: any = rootData;
   for (const key of path) {
@@ -15,8 +20,12 @@ export function getArrayRecords(rootData: unknown, arrayField: FormField): any[]
 }
 
 // 按数组字段声明创建缺失路径，仅供新增记录时使用
-function ensureArrayRecords(rootData: unknown, arrayField: FormField): any[] | undefined {
-  const path = getArrayDataPath(arrayField);
+function ensureArrayRecords(
+  rootData: unknown,
+  arrayField: FormField,
+  pathContext?: DataPathContext,
+): any[] | undefined {
+  const path = getArrayDataPath(arrayField, pathContext);
   if (!path || rootData == null || typeof rootData !== "object") return;
   if (!path.length) return Array.isArray(rootData) ? rootData : undefined;
 
@@ -36,8 +45,12 @@ function ensureArrayRecords(rootData: unknown, arrayField: FormField): any[] | u
 }
 
 // 根据 itemSchema 创建默认数据并追加到真实记录数组
-export function addArrayRecord(rootData: unknown, arrayField: FormField): number {
-  const records = ensureArrayRecords(rootData, arrayField);
+export function addArrayRecord(
+  rootData: unknown,
+  arrayField: FormField,
+  pathContext?: DataPathContext,
+): number {
+  const records = ensureArrayRecords(rootData, arrayField, pathContext);
   if (!records) return -1;
   records.push(createArrayItemData(arrayField));
   return records.length - 1;
@@ -48,8 +61,9 @@ export function removeArrayRecord(
   rootData: unknown,
   arrayField: FormField,
   index: number,
+  pathContext?: DataPathContext,
 ): boolean {
-  const records = getArrayRecords(rootData, arrayField);
+  const records = getArrayRecords(rootData, arrayField, pathContext);
   if (!records || !Number.isInteger(index) || index < 0 || index >= records.length) return false;
   records.splice(index, 1);
   return true;
@@ -61,8 +75,9 @@ export function moveArrayRecord(
   arrayField: FormField,
   from: number,
   to: number,
+  pathContext?: DataPathContext,
 ): boolean {
-  const records = getArrayRecords(rootData, arrayField);
+  const records = getArrayRecords(rootData, arrayField, pathContext);
   if (
     !records ||
     !Number.isInteger(from) ||

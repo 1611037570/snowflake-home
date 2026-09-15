@@ -40,6 +40,15 @@ describe("arrayData", () => {
     expect(data.custom_a1.data).toEqual([{ name: "默认名称" }]);
   });
 
+  it("支持当前对象节点内的相对数组路径", () => {
+    const data = { work: { data: [] as any[] } };
+    const field = createArrayField(["data"]);
+    const context = { basePath: ["work"] };
+
+    expect(addArrayRecord(data, field, context)).toBe(0);
+    expect(data.work.data).toEqual([{ name: "默认名称" }]);
+  });
+
   it("删除和移动只修改真实记录数组", () => {
     const data = {
       work: { data: [{ name: "甲" }, { name: "乙" }, { name: "丙" }] },

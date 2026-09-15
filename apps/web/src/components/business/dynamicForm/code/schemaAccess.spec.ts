@@ -113,4 +113,17 @@ describe("schemaAccess", () => {
     expect(getArrayDataPath(schema)).toEqual(["education", "data"]);
     expect(getArrayDataPath({ type: "array" } as FormField)).toBeUndefined();
   });
+
+  it("在对象节点内解析数组相对路径", () => {
+    const schema: FormField = {
+      type: "array",
+      source: ["data"],
+      itemSchema: { type: "group", fields: [] },
+    };
+
+    expect(getArrayDataPath(schema, { basePath: ["education"] })).toEqual([
+      "education",
+      "data",
+    ]);
+  });
 });
