@@ -228,6 +228,7 @@
       <SfFooter />
     </main>
   </SfScrollbar>
+  <IssueFeedback />
   <Share />
 </template>
 
@@ -235,6 +236,7 @@
 import { useIntersectionObserver } from "@vueuse/core";
 import { useRouter } from "vue-router";
 import { ref } from "vue";
+import IssueFeedback from "../components/issueFeedback.vue";
 import Share from "../components/share.vue";
 
 const router = useRouter();

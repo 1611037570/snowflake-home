@@ -28,9 +28,9 @@ const saveQrCode = async () => {
 </script>
 
 <template>
-  <!-- 默认露出图标，悬停时整体滑出分享文案 -->
+  <!-- 分享入口位于问题反馈上方，并保留 12px 间距 -->
   <div
-    class="flex-c fixed -right-30 bottom-6 z-50 cursor-pointer rounded-l-3xl bg-sf-theme p-3 text-sf-theme-text transition-all duration-300 hover:-translate-x-28"
+    class="flex-c fixed -right-30 bottom-20 z-50 cursor-pointer rounded-l-3xl bg-sf-theme p-3 text-sf-theme-text transition-all duration-300 hover:-translate-x-28"
     @click="visible = true"
   >
     <SfIcon icon="ph:paper-plane-right-fill" size="5" />
