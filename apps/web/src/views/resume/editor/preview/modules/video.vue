@@ -2,6 +2,7 @@
 import { computed, inject } from "vue";
 import Title from "../components/title/index.vue";
 import ResumeField from "../components/resumeField/index.vue";
+import { getValidData } from "./validData";
 
 // 从上层注入获取代理后的预览数据
 const previewData = inject("previewData");
@@ -10,7 +11,7 @@ const fontValue = inject("fontValue");
 const lineHeightValue = inject("lineHeightValue");
 
 // 代理数据解包访问数组
-const video = computed(() => previewData.value?.video?.data || []);
+const video = computed(() => getValidData(previewData.value?.video?.data || []));
 </script>
 
 <template>

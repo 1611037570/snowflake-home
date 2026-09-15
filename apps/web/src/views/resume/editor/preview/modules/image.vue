@@ -3,6 +3,7 @@ import { computed, inject } from "vue";
 import ResumeField from "../components/resumeField/index.vue";
 import Title from "../components/title/index.vue";
 import { getPreviewTitle } from "../i18n";
+import { getValidData } from "./validData";
 
 // 从上层注入获取代理后的预览数据
 const previewData = inject("previewData");
@@ -16,7 +17,7 @@ const previewLang = inject(
 const imageAlt = computed(() => getPreviewTitle("image", previewLang.value));
 
 // 代理数据解包访问数组
-const images = computed(() => previewData.value?.image?.data || []);
+const images = computed(() => getValidData(previewData.value?.image?.data || []));
 </script>
 
 <template>

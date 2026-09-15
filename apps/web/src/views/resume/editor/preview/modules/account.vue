@@ -1,6 +1,7 @@
 <script setup>
 import { computed, inject } from "vue";
 import ResumeField from "../components/resumeField/index.vue";
+import { getValidData } from "./validData";
 
 // 从上层注入获取代理后的预览数据
 const previewData = inject("previewData");
@@ -9,7 +10,7 @@ const fontValue = inject("fontValue");
 const lineHeightValue = inject("lineHeightValue");
 
 // 代理数据解包访问数组
-const account = computed(() => previewData.value?.account?.data || []);
+const account = computed(() => getValidData(previewData.value?.account?.data || []));
 
 // 仅允许安全的外部链接协议
 const safeUrl = (value) => {
