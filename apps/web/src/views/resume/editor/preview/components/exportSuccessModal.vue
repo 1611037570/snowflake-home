@@ -32,9 +32,9 @@ defineExpose({ open });
 <template>
   <SfModal v-model="visible" title="导出成功">
     <Money />
-    <div class="flex-c gap-4">
+    <div class="flex-c gap-3">
+      <SfButton type="bg" @click="visible = false"> 没写完 继续编辑 </SfButton>
       <SfButton @click="continueExport">继续导出</SfButton>
-      <SfButton @click="visible = false"> 没写完 继续编辑 </SfButton>
       <SfButton @click="goDeliverResume"> 写完了 投递简历 </SfButton>
     </div>
   </SfModal>
