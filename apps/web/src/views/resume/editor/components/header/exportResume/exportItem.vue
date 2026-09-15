@@ -36,6 +36,7 @@ const emit = defineEmits(["click"]);
         class="min-w-0 flex-1"
         size="small"
         border
+        :disabled="option.disabled"
         :type="item.modelValue === option.value ? 'theme' : 'bg'"
         @click.stop="item.onChange(option.value)"
       >

@@ -25,7 +25,17 @@ const props = defineProps({
     type: String,
     default: "default",
   },
+  disabled: {
+    type: Boolean,
+    default: false,
+  },
 });
+const emit = defineEmits(["click"]);
+// 禁用按钮时不向外派发点击事件。
+const handleClick = (event) => {
+  if (props.disabled) return;
+  emit("click", event);
+};
 const isBorder = computed(() => (props.border ? "border border-sf-b" : ""));
 const isRound = computed(() => (props.round ? "rounded-3xl" : "rounded-xl"));
 const sizeClassObj = {
@@ -53,7 +63,9 @@ const getClass = computed(() => {
 <template>
   <div
     class="flex cursor-pointer items-center justify-center transition-all duration-300 active:scale-98"
-    :class="[isBorder, getClass, isRound, sizeClass]"
+    :class="[isBorder, getClass, isRound, sizeClass, { 'cursor-not-allowed opacity-60': props.disabled }]"
+    :aria-disabled="props.disabled"
+    @click="handleClick"
   >
     <SfIcon v-if="icon" :icon="icon" size="4" class="mr-1" />
     <slot></slot>
