@@ -141,7 +141,7 @@ export const DEFAULT_USER_FORM = [
           prop: "modelValue",
         },
         props: {
-          placeholder: "请输入出生日期",
+          placeholder: "请选择出生日期",
           valueFormat: "YYYY.MM",
           type: "month",
         },
@@ -181,7 +181,7 @@ export const DEFAULT_USER_FORM = [
           },
         ],
         props: {
-          placeholder: "请输入性别",
+          placeholder: "请选择性别",
           clearable: true,
         },
       },
@@ -243,7 +243,7 @@ export const DEFAULT_USER_FORM = [
           prop: "modelValue",
         },
         props: {
-          placeholder: "请输入参加工作时间",
+          placeholder: "请选择参加工作时间",
           valueFormat: "YYYY.MM",
           type: "month",
         },
@@ -433,7 +433,7 @@ export const DEFAULT_USER_FORM = [
               },
             ],
             props: {
-              placeholder: "请选择状态",
+              placeholder: "请选择求职状态",
               clearable: true,
             },
           },
@@ -728,7 +728,7 @@ export const DEFAULT_EDUCATION_FORM = {
               prop: "modelValue",
             },
             props: {
-              placeholder: "学校",
+              placeholder: "请输入学校",
               clearable: true,
             },
           },
@@ -750,7 +750,7 @@ export const DEFAULT_EDUCATION_FORM = {
               },
             ],
             props: {
-              placeholder: "学位",
+              placeholder: "请选择学位",
               clearable: true,
             },
           },
@@ -765,7 +765,7 @@ export const DEFAULT_EDUCATION_FORM = {
               prop: "modelValue",
             },
             props: {
-              placeholder: "专业",
+              placeholder: "请输入专业",
               clearable: true,
             },
           },
@@ -787,7 +787,7 @@ export const DEFAULT_EDUCATION_FORM = {
               },
             ],
             props: {
-              placeholder: "学制",
+              placeholder: "请选择学制",
               clearable: true,
             },
           },
@@ -805,8 +805,8 @@ export const DEFAULT_EDUCATION_FORM = {
               type: "monthrange",
               format: "YYYY.MM",
               valueFormat: "YYYY.MM",
-              startPlaceholder: "开始时间",
-              endPlaceholder: "结束时间",
+              startPlaceholder: "请选择开始时间",
+              endPlaceholder: "请选择结束时间",
             },
           },
           {
@@ -995,7 +995,7 @@ export const DEFAULT_WORK_FORM = {
               prop: "modelValue",
             },
             props: {
-              placeholder: "公司",
+              placeholder: "请输入公司",
               clearable: true,
             },
           },
@@ -1010,7 +1010,7 @@ export const DEFAULT_WORK_FORM = {
               prop: "modelValue",
             },
             props: {
-              placeholder: "岗位",
+              placeholder: "请输入岗位",
               clearable: true,
             },
           },
@@ -1028,8 +1028,8 @@ export const DEFAULT_WORK_FORM = {
               type: "monthrange",
               format: "YYYY.MM",
               valueFormat: "YYYY.MM",
-              startPlaceholder: "开始时间",
-              endPlaceholder: "结束时间",
+              startPlaceholder: "请选择开始时间",
+              endPlaceholder: "请选择结束时间",
             },
           },
           {
@@ -1154,8 +1154,8 @@ export const DEFAULT_PROJECT_FORM = {
               type: "monthrange",
               format: "YYYY.MM",
               valueFormat: "YYYY.MM",
-              startPlaceholder: "开始时间",
-              endPlaceholder: "结束时间",
+              startPlaceholder: "请选择开始时间",
+              endPlaceholder: "请选择结束时间",
             },
           },
           {
@@ -1181,7 +1181,7 @@ export const DEFAULT_VIDEO_FORM = {
   component: "boxCollapse",
   props: {
     add: true,
-    tip: "该模块的会把视频地址转换为二维码，方便在简历中展示",
+    tip: "该模块会将视频地址转换为二维码，方便在简历中展示",
   },
   model: [
     {
@@ -1491,7 +1491,7 @@ export const DEFAULT_CUSTOM_FORM = {
               prop: "modelValue",
             },
             props: {
-              placeholder: "名称",
+              placeholder: "请输入名称",
               clearable: true,
             },
           },
@@ -1506,7 +1506,7 @@ export const DEFAULT_CUSTOM_FORM = {
               prop: "modelValue",
             },
             props: {
-              placeholder: "职位",
+              placeholder: "请输入职位",
               clearable: true,
             },
           },
@@ -1524,8 +1524,8 @@ export const DEFAULT_CUSTOM_FORM = {
               type: "monthrange",
               format: "YYYY.MM",
               valueFormat: "YYYY.MM",
-              startPlaceholder: "开始时间",
-              endPlaceholder: "结束时间",
+              startPlaceholder: "请选择开始时间",
+              endPlaceholder: "请选择结束时间",
             },
           },
           {
