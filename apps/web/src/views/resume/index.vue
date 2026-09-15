@@ -36,16 +36,16 @@ const activeNavIndex = computed(() => navList.findIndex((item) => route.path ===
   <router-view v-else-if="route.meta.hideResumeLayout" class="h-screen w-full" />
   <main v-else class="relative flex h-screen min-w-full flex-col bg-sf-page">
     <header
-      class="fixed top-0 right-0 left-0 z-50 h-16 w-full border-b-[0.5px] border-sf-b bg-sf-primary font-extrabold text-sf-base"
+      class="fixed top-0 right-0 left-0 z-50 h-12 w-full rounded-b-3xl border-b-[0.5px] border-sf-b bg-sf-primary font-extrabold text-sf-base"
     >
-      <div class="mx-auto flex h-full w-full max-w-[1280px] items-center gap-5 px-4">
+      <div class="mx-auto flex h-full w-full max-w-7xl items-center gap-5 px-4">
         <ProjectTitle />
 
         <nav class="flex items-center gap-5">
           <SfSpan
             v-for="(item, index) in navList"
             :key="item.path"
-            class="h-12 cursor-pointer"
+            class="h-9 cursor-pointer"
             :active="index === activeNavIndex"
             :underline-height="1"
             @click="router.push(item.path)"
@@ -54,11 +54,10 @@ const activeNavIndex = computed(() => navList.findIndex((item) => route.path ===
           </SfSpan>
         </nav>
 
-        <div class="ml-auto flex items-center gap-[18px]">
+        <div class="ml-auto flex items-center gap-3">
           <SfTheme />
           <SfLocale />
           <SfDonation />
-          <SfMore> </SfMore>
         </div>
       </div>
     </header>
