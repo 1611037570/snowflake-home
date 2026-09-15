@@ -41,7 +41,11 @@ const submit = async () => {
 
 // 反馈入口暂时统一跳转至 GitHub Issues
 const goToFeedback = () => {
-  window.location.href = "https://github.com/1611037570/snowflake-home/issues";
+  window.open(
+    "https://github.com/1611037570/snowflake-home/issues",
+    "_blank",
+    "noopener,noreferrer",
+  );
 };
 </script>
 
