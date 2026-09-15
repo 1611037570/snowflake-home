@@ -4,7 +4,8 @@
  * 根据 item.ui 计算主题样式（内边距、字号、行高、主题色、风格模板），
  * 通过 provide 提供给模块子组件使用。
  */
-import { computed, provide, type ComputedRef } from "vue";
+import { computed, provide, ref, watch, type ComputedRef, type Ref } from "vue";
+import { loadFont } from "@/utils";
 import {
   defaultAvatarPosition,
   defaultFontSize,
@@ -23,6 +24,7 @@ export interface ResumeTheme {
   fontStyle: ComputedRef<Record<string, string>>;
   lineHeightStyle: ComputedRef<Record<string, string>>;
   paragraphSpacingStyle: ComputedRef<Record<string, string>>;
+  fontReadyVersion: Ref<number>;
   fontValue: ComputedRef<(offset?: number) => Record<string, string>>;
   lineHeightValue: ComputedRef<() => Record<string, string>>;
   themeColor: ComputedRef<string | undefined>;
@@ -42,6 +44,23 @@ export const useResumeTheme = (ui: ComputedRef<ResumeUi>): ResumeTheme => {
   const fontSize = computed(() => toNumber(ui.value.fontSize, defaultFontSize));
   const lineHeight = computed(() => toNumber(ui.value.lineHeight, defaultLineHeight));
   const paragraphSpacing = computed(() => Number(ui.value.paragraphSpacing));
+  const fontReadyVersion = ref(0);
+  let fontRequestId = 0;
+
+  // 字体加载完成后递增版本号，通知分页测量使用已生效的字体重新计算
+  watch(
+    () => ui.value.fontFamily,
+    async (fontKey) => {
+      const requestId = ++fontRequestId;
+      try {
+        await loadFont(fontKey);
+      } catch {
+        // 加载失败时继续使用浏览器回退字体，并触发一次测量
+      }
+      if (requestId === fontRequestId) fontReadyVersion.value += 1;
+    },
+    { immediate: true },
+  );
 
   // 页面级基础样式对象固定复用，避免模板每次渲染都重新创建相同样式
   const paddingStyle = computed(() => {
@@ -96,6 +115,7 @@ export const useResumeTheme = (ui: ComputedRef<ResumeUi>): ResumeTheme => {
     fontStyle,
     lineHeightStyle,
     paragraphSpacingStyle,
+    fontReadyVersion,
     fontValue,
     lineHeightValue,
     themeColor,

@@ -14,6 +14,7 @@ interface UseResumePagesOptions {
   ui: ComputedRef<Record<string, any>>;
   showPageNumber: ComputedRef<boolean>;
   isThumb: ComputedRef<boolean>;
+  fontReadyVersion: Ref<number>;
   uid: string;
   /** 期望渲染的模块列表（缩略图模式用于判断测量完整） */
   allModules: ComputedRef<any[]>;
@@ -28,6 +29,7 @@ export const useResumePages = ({
   ui,
   showPageNumber,
   isThumb,
+  fontReadyVersion,
   uid,
   allModules,
 }: UseResumePagesOptions) => {
@@ -37,7 +39,7 @@ export const useResumePages = ({
     fontSize: ui.value.fontSize,
     lineHeight: ui.value.lineHeight,
     paragraphSpacing: ui.value.paragraphSpacing,
-    fontFamily: ui.value.fontFamily,
+    fontReadyVersion: fontReadyVersion.value,
     themeTemplate: ui.value.themeTemplate,
     showPageNumber: showPageNumber.value,
   }));
