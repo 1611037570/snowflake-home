@@ -13,7 +13,7 @@ describe("resumeSchema", () => {
           {
             type: "object",
             component: "select",
-            label: "状态",
+            label: "求职状态",
             addable: true,
             model: [
               { source: ["user", "data", "status"], prop: "modelValue" },
@@ -31,7 +31,7 @@ describe("resumeSchema", () => {
     expect(module).toMatchObject({ key: "user", title: "个人信息", kind: "object" });
     expect(module?.fields[0]).toMatchObject({
       key: "status",
-      label: "状态",
+      label: "求职状态",
       valueType: "string",
       addable: true,
       options: ["在职"],
