@@ -1,7 +1,7 @@
 <script setup>
-import { useResumeStore } from "@/stores";
 import { getExportFileName, resumeTitle } from "../../../resumeName.ts";
 import eventBus from "@/utils/modules/eventBus";
+import { useSystemStore, useResumeStore } from "@/stores";
 import { storeToRefs } from "pinia";
 import { computed, onMounted, onUnmounted, ref } from "vue";
 import ExportItem from "./exportItem.vue";
@@ -10,14 +10,16 @@ const visible = ref(false);
 // 所有支持清晰度的导出统一使用 2 倍，减少用户选择成本。
 const exportScale = 2;
 const resumeStore = useResumeStore();
+const systemStore = useSystemStore();
 const { currentItem, isPrinting } = storeToRefs(resumeStore);
+const { isConnected } = storeToRefs(systemStore);
 const pdfExportType = ref("local");
 const longImageExportType = ref("png");
 
-const pdfExportOptions = [
+const pdfExportOptions = computed(() => [
   { name: "本地", value: "local" },
-  { name: "服务器", value: "server" },
-];
+  { name: "服务器", value: "server", disabled: !isConnected.value },
+]);
 const longImageExportOptions = [
   { name: "PNG", value: "png" },
   { name: "PDF图片", value: "pdf" },
@@ -62,7 +64,9 @@ const list = computed(() => [
     onChange: (value) => (pdfExportType.value = value),
     fn: () =>
       emitExport(
-        pdfExportType.value === "server" ? "resume-print-server-pdf" : "resume-print-browser-pdf",
+        pdfExportType.value === "server" && isConnected.value
+          ? "resume-print-server-pdf"
+          : "resume-print-browser-pdf",
       ),
   },
   {
