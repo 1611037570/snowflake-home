@@ -8,13 +8,12 @@ const props = defineProps({
   },
   url: {
     type: String,
-    default: DEFAULT_ROUTE,
+    default: "/home",
   },
 });
 const getContent = computed(() => {
   return "返回" + props.tip || "起始页";
 });
-import { DEFAULT_ROUTE } from "@/configs";
 import { useRouter } from "vue-router";
 const router = useRouter();
 const back = () => {
