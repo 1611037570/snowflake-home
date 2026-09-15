@@ -1,6 +1,7 @@
 <script setup>
 import { computed, inject } from "vue";
 import { getPreviewText } from "../../../i18n";
+import { useUserFieldVisibility } from "../useUserFieldVisibility";
 
 // 头像组件：位置与间距由使用方通过 class 控制
 const previewData = inject("previewData");
@@ -10,11 +11,12 @@ const previewLang = inject(
 );
 const user = computed(() => previewData.value?.user?.data || {});
 const avatarAlt = computed(() => getPreviewText("avatarAlt", previewLang.value));
+const { isUserFieldHidden } = useUserFieldVisibility();
 </script>
 
 <template>
   <img
-    v-if="user.avatar?.value"
+    v-if="!isUserFieldHidden('avatar') && user.avatar?.value"
     :src="user.avatar?.value"
     :alt="avatarAlt"
     class="h-[98px] w-[70px] shrink-0 rounded object-cover"
