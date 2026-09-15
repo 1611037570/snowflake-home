@@ -14,6 +14,8 @@ import { useAiStore } from "@/stores/modules/ai";
 import { getUUID } from "@/utils";
 import { defineStore } from "pinia";
 import { computed, ref, toRaw, watch } from "vue";
+import { useStorage } from "@vueuse/core";
+import { useIDBKeyval } from "@vueuse/integrations/useIDBKeyval";
 import {
   ALL_MODULE_KEY,
   DEFAULT_MODULE_NAMES,
@@ -42,22 +44,64 @@ export const useResumeStore = defineStore(
     const list = ref<any[]>([]);
     // 回收站列表
     const trashList = ref<any[]>([]);
-    const LOCAL_RESUME_STORAGE_LIMIT = 5 * 1024 * 1024;
+    // localStorage 仅保存简历 ID 索引，完整简历由 IndexedDB 按 ID 保存
+    const resumeIds = useStorage<string[]>("snowflake-resume-list", []);
+    const trashResumeIds = useStorage<string[]>("snowflake-resume-trash-list", []);
+    // 为每份简历复用同一个 VueUse IndexedDB 响应式实例
+    const resumeStorageMap = new Map<string, any>();
+    const resumeStorageKey = (id: string) => `snowflake-resume:${id}`;
+    const getResumeStorage = (id: string, initialValue: any = null, writeDefaults = false) => {
+      const existing = resumeStorageMap.get(id);
+      if (existing) return existing;
+      const storage = useIDBKeyval(resumeStorageKey(id), initialValue, { writeDefaults });
+      resumeStorageMap.set(id, storage);
+      return storage;
+    };
+    const waitForResumeStorage = (storage: any) => {
+      if (storage.isFinished.value) return Promise.resolve();
+      return new Promise<void>((resolve) => {
+        const stop = watch(storage.isFinished, (finished) => {
+          if (!finished) return;
+          stop();
+          resolve();
+        });
+      });
+    };
+    const loadResumeItems = async (ids: string[]) => {
+      const items = await Promise.all(
+        ids.map(async (id) => {
+          const storage = getResumeStorage(id);
+          await waitForResumeStorage(storage);
+          const item = storage.data.value;
+          return item?.id === id ? item : null;
+        }),
+      );
+      return items.filter(Boolean);
+    };
+    const syncResumeIds = () => {
+      resumeIds.value = list.value.map((item) => item.id).filter(Boolean);
+    };
+    const syncTrashResumeIds = () => {
+      trashResumeIds.value = trashList.value.map((item) => item.id).filter(Boolean);
+    };
+    const removeResumeStorage = (id: string) => {
+      const storage = resumeStorageMap.get(id);
+      if (!storage) return;
+      void storage.set(null);
+      resumeStorageMap.delete(id);
+    };
+    let initPromise: Promise<void> | null = null;
     const STORAGE_WARNING_RATIO = 0.8;
     const STORAGE_DANGER_RATIO = 0.95;
     let storageWarningLevel = "";
-    // 检测简历持久化数据大小，在接近浏览器容量上限时提醒用户
+    // 检测浏览器本地存储使用量，在接近容量上限时提醒用户
     const checkResumeStorage = debounce(async () => {
       try {
-        const payload = JSON.stringify({
-          list: toRaw(list.value),
-          trashList: toRaw(trashList.value),
-        });
-        const payloadBytes = new Blob([payload]).size;
         const estimate = await navigator.storage?.estimate();
-        const quotaBytes = estimate?.quota || LOCAL_RESUME_STORAGE_LIMIT;
+        const quotaBytes = estimate?.quota || 0;
         const usageBytes = estimate?.usage || 0;
-        const ratio = Math.max(payloadBytes / LOCAL_RESUME_STORAGE_LIMIT, usageBytes / quotaBytes);
+        if (!quotaBytes) return;
+        const ratio = usageBytes / quotaBytes;
         const nextLevel =
           ratio >= STORAGE_DANGER_RATIO
             ? "danger"
@@ -67,12 +111,10 @@ export const useResumeStore = defineStore(
         if (nextLevel === storageWarningLevel) return;
         storageWarningLevel = nextLevel;
         if (nextLevel === "danger") {
-          ElMessage.error("简历本地存储空间接近上限，请立即导出 JSON 备份并清理图片或旧简历。");
+          ElMessage.error("浏览器本地存储空间接近上限，请立即导出 JSON 备份并清理图片或旧简历。");
         } else if (nextLevel === "warning") {
-          const size = `${(payloadBytes / 1024 / 1024).toFixed(1)} MB`;
-          ElMessage.warning(
-            `简历本地数据已占用约 ${size}，请及时导出 JSON 备份并清理图片或旧简历。`,
-          );
+          const size = `${(usageBytes / 1024 / 1024).toFixed(1)} MB`;
+          ElMessage.warning(`浏览器本地数据已占用约 ${size}，请及时导出 JSON 备份并清理图片或旧简历。`);
         }
       } catch {
         // 容量检测失败时不影响简历编辑流程
@@ -268,7 +310,10 @@ export const useResumeStore = defineStore(
       res.config.fields = compactConfigFields(res.config.fields);
       // 每次新增都重新生成唯一ID，避免多份简历共用一个ID
       res.id = getUUID().slice(0, 6);
-      list.value.push(res);
+      // 新简历使用独立 IndexedDB key 保存完整对象
+      const storage = getResumeStorage(res.id, res, true);
+      list.value.push(storage.data.value);
+      syncResumeIds();
       if (select) {
         currentIndex.value = list.value.length - 1;
         if (jump) router.push({ path: "/resume/editor", query: { id: res.id } });
@@ -419,13 +464,15 @@ export const useResumeStore = defineStore(
         confirm("回收站已满，请先清理回收站后再删除。", "回收站已满");
         return;
       }
-      // 深拷贝一份移入回收站，标记删除时间
-      const deletedItem = deepClone(list.value[currentIndex.value]);
+      // 保留同一份完整简历数据，仅通过索引移动到回收站
+      const deletedItem = list.value[currentIndex.value];
       deletedItem._deletedAt = Date.now();
       trashList.value.push(deletedItem);
       // 简历删除后同步清理该简历的助手对话
       useAiStore().removeResumeAssistantChats(deletedItem.id);
       list.value.splice(currentIndex.value, 1);
+      syncResumeIds();
+      syncTrashResumeIds();
       currentIndex.value = -1;
     };
     // 从回收站恢复简历
@@ -439,23 +486,36 @@ export const useResumeStore = defineStore(
       delete item._deletedAt;
       list.value.push(item);
       trashList.value.splice(trashIndex, 1);
+      syncResumeIds();
+      syncTrashResumeIds();
     };
     // 永久删除回收站中的简历
     const permanentlyDeleteResume = (trashIndex: number) => {
       if (trashIndex < 0 || trashIndex >= trashList.value.length) return;
+      const item = trashList.value[trashIndex];
       trashList.value.splice(trashIndex, 1);
+      removeResumeStorage(item.id);
+      syncTrashResumeIds();
     };
     // 清空回收站内全部简历。
     const clearTrash = () => {
+      const ids = trashList.value.map((item) => item.id);
       trashList.value = [];
+      ids.forEach(removeResumeStorage);
+      syncTrashResumeIds();
     };
     // 清理回收站中超过保留天数的简历（每次进入简历页时调用）
     const cleanExpiredTrash = () => {
       const now = Date.now();
+      const expiredIds: string[] = [];
       trashList.value = trashList.value.filter((item) => {
         const deletedAt = item?._deletedAt || 0;
-        return now - deletedAt < trashRetentionMs;
+        const keep = now - deletedAt < trashRetentionMs;
+        if (!keep) expiredIds.push(item.id);
+        return keep;
       });
+      expiredIds.forEach(removeResumeStorage);
+      syncTrashResumeIds();
     };
     // 计算回收站简历剩余保留天数（0 表示即将清理）
     const getTrashRemainingDays = (item: any) => {
@@ -599,9 +659,24 @@ export const useResumeStore = defineStore(
       return merged;
     };
 
-    // 合并默认配置，补充新增字段
+    // 合并默认配置并从 ID 索引加载完整简历
     const init = () => {
-      system.value = merge(structuredClone(DEFAULT_SYSTEM), system.value);
+      if (initPromise) return initPromise;
+      initPromise = (async () => {
+        system.value = merge(structuredClone(DEFAULT_SYSTEM), system.value);
+        const activeIds = Array.isArray(resumeIds.value) ? resumeIds.value : [];
+        const trashIds = Array.isArray(trashResumeIds.value) ? trashResumeIds.value : [];
+        const [activeItems, trashItems] = await Promise.all([
+          loadResumeItems(activeIds),
+          loadResumeItems(trashIds),
+        ]);
+        list.value = activeItems;
+        trashList.value = trashItems;
+        // 清理索引中已经不存在的简历 ID
+        syncResumeIds();
+        syncTrashResumeIds();
+      })();
+      return initPromise;
     };
 
     // 监听当前简历内容变化（data/config/ui 任意嵌套字段），冒泡记录撤销历史
@@ -683,7 +758,8 @@ export const useResumeStore = defineStore(
   },
   {
     persist: {
-      pick: ["list", "trashList", "editorWidth", "system", "desensitizeMode"],
+      key: "snowflake-resume-settings",
+      pick: ["editorWidth", "system", "desensitizeMode"],
     },
   },
 );
