@@ -3,6 +3,7 @@ import { computed, inject } from "vue";
 import { getTime } from "../../utils";
 import ResumeField from "../components/resumeField/index.vue";
 import Title from "../components/title/index.vue";
+import { getValidData } from "./validData";
 const props = defineProps({
   name: {
     type: String,
@@ -17,7 +18,7 @@ const lineHeightValue = inject("lineHeightValue");
 
 // 自定义模块 data.list 为经历记录数组
 const customData = computed(() => previewData.value?.[props.name]?.data || {});
-const customList = computed(() => customData.value?.list || []);
+const customList = computed(() => getValidData(customData.value?.list || []));
 </script>
 
 <template>

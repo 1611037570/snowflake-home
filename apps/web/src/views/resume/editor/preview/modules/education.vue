@@ -4,6 +4,7 @@ import ResumeField from "../components/resumeField/index.vue";
 import Title from "../components/title/index.vue";
 
 import { getTime } from "../../utils";
+import { getValidData } from "./validData";
 
 // 从上层注入获取代理后的预览数据
 const previewData = inject("previewData");
@@ -14,7 +15,7 @@ const lineHeightValue = inject("lineHeightValue");
 // 代理数据解包，直接访问原数组（数组项已被代理，保持引用稳定）
 const education = computed(() => {
   const list = previewData.value?.education?.data || [];
-  return list;
+  return getValidData(list);
 });
 
 // 判断是否有某项字段（用于渲染 infoList 的分隔点）

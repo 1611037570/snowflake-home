@@ -3,6 +3,7 @@ import { computed, inject } from "vue";
 import { getTime } from "../../utils";
 import ResumeField from "../components/resumeField/index.vue";
 import Title from "../components/title/index.vue";
+import { getValidData } from "./validData";
 
 // 属性：模块标识、标题、数据 key
 const props = defineProps({
@@ -23,7 +24,7 @@ const fontValue = inject("fontValue");
 const lineHeightValue = inject("lineHeightValue");
 
 // 代理数据解包访问数组
-const list = computed(() => previewData.value?.[props.dataKey]?.data || []);
+const list = computed(() => getValidData(previewData.value?.[props.dataKey]?.data || []));
 </script>
 
 <template>
