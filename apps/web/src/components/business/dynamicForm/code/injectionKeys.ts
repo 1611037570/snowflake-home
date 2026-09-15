@@ -12,7 +12,7 @@ export const INSTANCE_COMPONENTS: InjectionKey<Record<string, any>> = Symbol("in
 export const DF_ROOT_DATA: InjectionKey<DataProxy<any>> = Symbol("df/root/data");
 /** 当前容器表单配置（统一为 ref） */
 export const DF_CURRENT_FORM: InjectionKey<any> = Symbol("df/current/form");
-/** 当前数组记录的数据路径上下文 */
+/** 当前对象节点的数据路径上下文 */
 export const DF_CURRENT_PATH_CONTEXT: InjectionKey<MaybeRef<DataPathContext | undefined>> =
   Symbol("df/current/pathContext");
 /** 当前容器类型 */

@@ -70,7 +70,7 @@ const getContext = () => {
     currentLength: inject(DF_CURRENT_LENGTH, undefined),
     // 当前节点删除能力已由所在容器绑定目标，调用方无需传递索引
     removeCurrent: inject(DF_REMOVE, undefined),
-    addItem: createAddItem(currentForm, dataProxy),
+    addItem: createAddItem(currentForm, dataProxy, pathContext),
     // 可添加字段统一通过引擎读写真实数据，业务组件只负责选择字段
     hasFieldData: (field: any) => hasFieldData(dataProxy.data, field, pathContext),
     addField: (field: any) =>

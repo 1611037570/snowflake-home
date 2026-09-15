@@ -1,4 +1,5 @@
 import type { FormField, ModelBinding } from "../types";
+import { resolveDataPath, type DataPath, type DataPathContext } from "./pathContext";
 
 type FormFieldSource = FormField | FormField[] | null | undefined;
 
@@ -24,8 +25,11 @@ export function walkFormFields(source: FormFieldSource, visitor: (field: FormFie
   });
 }
 
-// 读取数组容器显式声明的真实数据路径
-export function getArrayDataPath(field: FormField): string[] | undefined {
+// 读取数组容器在当前对象节点内声明的真实数据路径
+export function getArrayDataPath(
+  field: FormField,
+  context?: DataPathContext,
+): DataPath | undefined {
   if (field.type !== "array") return;
-  return field.source?.length ? [...field.source] : undefined;
+  return field.source?.length ? resolveDataPath(field.source, context) : undefined;
 }

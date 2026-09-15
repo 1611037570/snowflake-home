@@ -33,4 +33,18 @@ describe("createAddItem", () => {
     expect(addItem()).toBe(0);
     expect(data.education.data).toEqual([{ name: "默认名称" }]);
   });
+
+  it("对象节点内的分组容器向相对数组新增记录", () => {
+    const data = { education: { data: [] as any[] } };
+    const field: FormField = {
+      type: "array",
+      source: ["data"],
+      itemSchema: arrayField.itemSchema,
+    };
+    const group: FormField = { type: "group", fields: [field] };
+    const addItem = createAddItem({ value: group }, { data }, { basePath: ["education"] });
+
+    expect(addItem()).toBe(0);
+    expect(data.education.data).toEqual([{ name: "默认名称" }]);
+  });
 });

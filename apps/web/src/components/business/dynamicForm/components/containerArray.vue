@@ -36,7 +36,8 @@ import { computed, inject, onMounted, onUnmounted, ref, toRaw } from "vue";
 import { useDraggable } from "vue-draggable-plus";
 import { getArrayRecords, removeArrayRecord } from "../code/arrayData.ts";
 import { getFormItemStyles } from "../code/formItemStyle";
-import { resolveDataPath, type DataPathContext } from "../code/pathContext";
+import type { DataPathContext } from "../code/pathContext";
+import { getArrayDataPath } from "../code/schemaAccess";
 import {
   DF_CURRENT_FORM,
   DF_CURRENT_LENGTH,
@@ -56,9 +57,9 @@ const rootData: any = inject(DF_ROOT_DATA);
 const isDragging = ref(false);
 // 数组容器直接读取真实记录，并允许拖拽组件整体回写顺序
 const records = computed<any[]>({
-  get: () => getArrayRecords(rootData.data, currentForm.value) || [],
+  get: () => getArrayRecords(rootData.data, currentForm.value, pathContext) || [],
   set: (value) => {
-    const current = getArrayRecords(rootData.data, currentForm.value);
+    const current = getArrayRecords(rootData.data, currentForm.value, pathContext);
     if (current) current.splice(0, current.length, ...value);
   },
 });
@@ -74,10 +75,8 @@ const getRecordKey = (record: any, index: number) => {
 };
 // 为每条数组记录创建子项字段使用的数据路径上下文
 const getPathContext = (index: number): DataPathContext | undefined => {
-  const source = currentForm.value?.source;
-  return Array.isArray(source)
-    ? { basePath: resolveDataPath(source, pathContext), index }
-    : undefined;
+  const source = getArrayDataPath(currentForm.value, pathContext);
+  return source ? { basePath: source, index } : undefined;
 };
 // 延迟到真实根元素挂载完成后再启动拖拽
 const draggable = useDraggable(null, records, {
@@ -127,7 +126,7 @@ const formListWithStyle = computed(() => {
 
 // 删除
 const remove = (index: any) => {
-  removeArrayRecord(rootData.data, currentForm.value, index);
+  removeArrayRecord(rootData.data, currentForm.value, index, pathContext);
 };
 // 提供当前容器的长度
 provide(DF_CURRENT_LENGTH, length);

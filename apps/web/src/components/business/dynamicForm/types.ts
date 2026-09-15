@@ -95,6 +95,8 @@ export interface ObjectFormField extends BaseFormField {
 /** 分组字段：递归渲染 fields，可选包裹组件与数据绑定 */
 export interface GroupFormField extends BaseFormField {
   type: "group";
+  /** 当前对象节点的数据路径，子字段在该节点内使用相对路径 */
+  context?: string[];
   component?: string;
   model?: ModelBinding | ModelBinding[];
   slot?: string;

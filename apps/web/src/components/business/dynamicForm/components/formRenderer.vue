@@ -8,7 +8,7 @@
       :data-fixed="item.field.fixed ? 'true' : undefined"
       v-for="item in renderFieldsWithStyle"
       :key="item.field.id"
-      :pathContext="pathContext"
+      :pathContext="getFieldPathContext(item.field)"
       :selected="isModuleSelected(item.field)"
       :draggable="items.drag === true"
       :drag-class="items.dragClass"
@@ -25,14 +25,14 @@
       <ContainerSlot
         v-else-if="item.field.type === 'group'"
         :currentForm="item.field"
-        :pathContext="pathContext"
+        :pathContext="getFieldPathContext(item.field)"
         @removeObject="removeObject(item.field)"
       />
       <component
         v-else
         :is="item.field.type === 'object' ? ContainerObject : ContainerArray"
         :currentForm="item.field"
-        :pathContext="pathContext"
+        :pathContext="getFieldPathContext(item.field)"
         @removeObject="removeObject(item.field)"
       />
     </FormItem>
@@ -47,7 +47,7 @@ import { hasFieldData, removeFieldData } from "../code/fieldData";
 import { getFormItemStyles } from "../code/formItemStyle";
 import { isFieldRemoved } from "../code/fieldVisible";
 import { DF_MODULE_SELECT, DF_ROOT_DATA } from "../code/injectionKeys.ts";
-import type { DataPathContext } from "../code/pathContext";
+import { createDataPathContext, type DataPathContext } from "../code/pathContext";
 import ContainerSlot from "./containerSlot.vue";
 import ContainerArray from "./containerArray.vue";
 import ContainerObject from "./containerObject.vue";
@@ -62,9 +62,20 @@ const rootData: any = inject(DF_ROOT_DATA);
 const row: any = useTemplateRef("row");
 // 表单数据
 const items = defineModel<any>("items", {});
-const isFieldRenderable = (field: any) =>
-  !isFieldRemoved(rootData.data, field, pathContext) &&
-  (!field.addable || hasFieldData(rootData.data, field, pathContext));
+// 分组声明 context 后，字段自身及其子项均在该对象节点内解析路径
+const getFieldPathContext = (field: any): DataPathContext | undefined => {
+  if (field?.type !== "group" || !Array.isArray(field.context) || !field.context.length) {
+    return pathContext;
+  }
+  return createDataPathContext(field.context, pathContext);
+};
+const isFieldRenderable = (field: any) => {
+  const fieldPathContext = getFieldPathContext(field);
+  return (
+    !isFieldRemoved(rootData.data, field, fieldPathContext) &&
+    (!field.addable || hasFieldData(rootData.data, field, fieldPathContext))
+  );
+};
 // 编辑器移除已归档模块与尚未添加的字段，隐藏模块仍保留在编辑器中
 const renderFields = computed(() => {
   const fields = items.value.fields || [];
@@ -122,7 +133,7 @@ function removeObject(field: any) {
 }
 // 删除可添加字段的数据，保留字段模板以便后续重新添加
 function removeField(field: any) {
-  removeFieldData(rootData.data, field, pathContext);
+  removeFieldData(rootData.data, field, getFieldPathContext(field));
 }
 function ensureFieldIds(fields: any[]) {
   if (!fields) return;
