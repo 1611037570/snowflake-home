@@ -47,9 +47,13 @@ import { onMounted, ref } from "vue";
 import Background from "./background.vue";
 import ScrollGuide from "./scroll-guide.vue";
 import Stars from "./stars.vue";
+import { loadFont } from "@/utils";
 
 const showContent = ref(false);
 const isHoveredFormula = ref(false);
+
+// 首页标题按需加载非默认字体，避免全局样式预先请求字体资源
+void loadFont("text-yyqx").catch(() => undefined);
 
 // ---------- 初始化 ----------
 onMounted(() => {
