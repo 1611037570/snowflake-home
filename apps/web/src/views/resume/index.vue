@@ -1,10 +1,18 @@
 <script setup>
-import { useResumeStatisticsStore } from "@/stores";
+import { useResumeStatisticsStore, useResumeStore } from "@/stores";
+import LoadingComponent from "@views/status/loading.vue";
 import { useRoute, useRouter } from "vue-router";
 import ProjectTitle from "./components/projectTitle.vue";
 
 const route = useRoute();
 const router = useRouter();
+const resumeStore = useResumeStore();
+const resumeReady = ref(false);
+
+// 仅在进入简历模块时加载简历数据，避免阻塞其他模块启动。
+void resumeStore.init().then(() => {
+  resumeReady.value = true;
+});
 
 // 首次进入自动初始化开始投递日期
 const statisticsStore = useResumeStatisticsStore();
@@ -24,7 +32,8 @@ const activeNavIndex = computed(() => navList.findIndex((item) => route.path ===
 </script>
 
 <template>
-  <router-view v-if="route.meta.hideResumeLayout" class="h-screen w-full" />
+  <LoadingComponent v-if="!resumeReady" class="h-screen w-full" />
+  <router-view v-else-if="route.meta.hideResumeLayout" class="h-screen w-full" />
   <main v-else class="relative flex h-screen min-w-full flex-col bg-sf-page">
     <header
       class="fixed top-0 right-0 left-0 z-50 h-16 w-full border-b-[0.5px] border-sf-b bg-sf-primary font-extrabold text-sf-base"
