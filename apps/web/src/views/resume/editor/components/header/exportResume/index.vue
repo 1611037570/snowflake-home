@@ -7,39 +7,8 @@ import { computed, ref } from "vue";
 import ExportItem from "./exportItem.vue";
 
 const visible = ref(false);
-// 默认使用标准 1x，导出弹窗中可切换更高清晰度
-const exportScale = ref(1);
-const exportScaleList = [
-  { name: "1x", value: 1 },
-  { name: "2x", value: 2 },
-  { name: "4x", value: 4 },
-  { name: "8x", value: 8 },
-];
-// 根据倍率提示导出耗时和资源占用
-const exportScaleTip = computed(() => {
-  if (exportScale.value === 8) {
-    return {
-      class: "text-sf-error",
-      text: "最高清晰度，导出很慢，占用大量内存，可能失败或崩溃。",
-    };
-  }
-  if (exportScale.value === 4) {
-    return {
-      class: "text-sf-error",
-      text: "最清晰，导出慢，占用较多内存，可能失败或崩溃。",
-    };
-  }
-  if (exportScale.value === 2) {
-    return {
-      class: "text-sf-warning",
-      text: "更清晰，导出速度稍慢。",
-    };
-  }
-  return {
-    class: "text-sf-text-2",
-    text: "清晰度正常，导出速度快。",
-  };
-});
+// 所有支持清晰度的导出统一使用 2 倍，减少用户选择成本。
+const exportScale = 2;
 const resumeStore = useResumeStore();
 const { currentItem, isPrinting } = storeToRefs(resumeStore);
 const pdfExportType = ref("local");
@@ -71,7 +40,7 @@ const exportConfig = () => {
 const emitExport = (eventName) => {
   if (isPrinting.value) return;
   visible.value = false;
-  eventBus.emit(eventName, exportScale.value);
+  eventBus.emit(eventName, exportScale);
 };
 
 // PDF 和长图分别合并导出来源与文件类型，减少菜单入口数量。
@@ -95,12 +64,6 @@ const list = computed(() => [
     options: longImageExportOptions,
     modelValue: longImageExportType.value,
     onChange: (value) => (longImageExportType.value = value),
-    scale: {
-      options: exportScaleList,
-      modelValue: exportScale.value,
-      tip: exportScaleTip.value,
-      onChange: (value) => (exportScale.value = value),
-    },
     fn: () =>
       emitExport(
         longImageExportType.value === "pdf" ? "resume-print-pdf" : "resume-print-image",
