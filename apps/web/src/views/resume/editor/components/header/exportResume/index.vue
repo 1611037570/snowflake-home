@@ -91,10 +91,16 @@ const list = computed(() => [
   {
     name: "长图",
     icon: "material-symbols:image-outline",
-    desc: "适合快速分享的图片导出",
+    desc: "PNG 或 PDF图片，适合快速分享",
     options: longImageExportOptions,
     modelValue: longImageExportType.value,
     onChange: (value) => (longImageExportType.value = value),
+    scale: {
+      options: exportScaleList,
+      modelValue: exportScale.value,
+      tip: exportScaleTip.value,
+      onChange: (value) => (exportScale.value = value),
+    },
     fn: () =>
       emitExport(
         longImageExportType.value === "pdf" ? "resume-print-pdf" : "resume-print-image",
@@ -143,24 +149,6 @@ const a = {
           <ExportItem v-for="item in list" :key="item.name" :item="item" @click="item.fn" />
         </div>
 
-        <div class="mt-3 flex items-center gap-3">
-          <span class="font-bold">清晰度</span>
-          <div class="flex flex-1 items-center gap-3">
-            <SfButton
-              v-for="item in exportScaleList"
-              :key="item.value"
-              class="flex-1"
-              size="small"
-              border
-              :type="exportScale === item.value ? 'theme' : 'bg'"
-              @click="exportScale = item.value"
-              >{{ item.name }}</SfButton
-            >
-          </div>
-        </div>
-        <div class="mt-3 text-sm" :class="exportScaleTip.class">
-          {{ exportScaleTip.text }}
-        </div>
       </div>
 
       <div>
