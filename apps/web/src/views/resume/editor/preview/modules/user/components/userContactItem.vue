@@ -12,7 +12,7 @@ defineProps({
     default: "",
   },
   modelValue: {
-    type: Object,
+    type: [String, Number, Array, Object],
     default: null,
   },
   text: {

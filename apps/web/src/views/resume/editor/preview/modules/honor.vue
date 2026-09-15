@@ -4,7 +4,7 @@ import ResumeField from "../components/resumeField/index.vue";
 import Title from "../components/title/index.vue";
 import { getValidData } from "./validData";
 
-// 从上层注入获取代理后的预览数据
+// 从上层注入获取原始简历数据
 const previewData = inject("previewData");
 
 const fontValue = inject("fontValue");
@@ -27,7 +27,7 @@ const honors = computed(() => {
     <!-- 荣誉证书名称流式排列：容器放不下时才换行 -->
     <div v-if="honors.length" class="mt-3 flex max-w-full min-w-0 flex-wrap items-center gap-2">
       <div v-for="(item, index) in honors" :key="index" class="rounded-xl bg-[#F5F7F6] px-3 py-2">
-        <ResumeField v-model="item.name" />
+        <ResumeField :model-value="item.name" />
       </div>
     </div>
   </div>

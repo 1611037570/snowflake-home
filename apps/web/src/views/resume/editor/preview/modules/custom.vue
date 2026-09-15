@@ -10,7 +10,7 @@ const props = defineProps({
     required: true,
   },
 });
-// 从上层注入获取代理后的预览数据
+// 从上层注入获取原始简历数据
 const previewData = inject("previewData");
 
 const fontValue = inject("fontValue");
@@ -29,18 +29,18 @@ const customList = computed(() => getValidData(previewData.value?.[props.name]?.
       <div class="mt-3 flex flex-wrap items-center justify-between">
         <div class="flex max-w-full min-w-0 flex-wrap items-center gap-4">
           <div class="font-bold" :style="[fontValue(3)]">
-            <ResumeField v-model="item.name" />
+            <ResumeField :model-value="item.name" />
           </div>
           <div>
-            <ResumeField v-model="item.post" />
+            <ResumeField :model-value="item.post" />
           </div>
         </div>
         <div class="flex max-w-full min-w-0 flex-wrap items-center">
-          <span>{{ getTime(item.time?.value) }}</span>
+          <span>{{ getTime(item.time) }}</span>
         </div>
       </div>
       <!-- 补充描述/经历 -->
-      <ResumeField v-model="item.content" html />
+      <ResumeField :model-value="item.content" html />
     </template>
   </div>
 </template>

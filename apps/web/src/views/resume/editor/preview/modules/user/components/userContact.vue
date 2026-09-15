@@ -23,7 +23,7 @@ const user = computed(() => previewData.value?.user?.data || {});
 // 字段级 UI 配置（图标等），与编辑器同读个人信息模块 ui 层级
 const ui = computed(() => previewData.value?.user?.ui || {});
 // 读取字段配置中的图标，未配置时为 undefined 由图标组件兜底处理
-const fieldIcon = (key) => ui.value?.[key]?.icon?.value;
+const fieldIcon = (key) => ui.value?.[key]?.icon;
 const { isUserFieldHidden } = useUserFieldVisibility();
 const userFieldOrder = inject("userFieldOrder", computed(() => []));
 const userFieldLabels = inject("userFieldLabels", computed(() => new Map()));
@@ -40,9 +40,9 @@ const layoutClass = computed(() => {
     ? "grid grid-cols-2 justify-items-center gap-3"
     : "grid grid-cols-2 gap-3";
 });
-const hasPhone = computed(() => !isUserFieldHidden("phone") && !!user.value?.phone?.value);
-const hasEmail = computed(() => !isUserFieldHidden("email") && !!user.value?.email?.value);
-const hasWechat = computed(() => !isUserFieldHidden("wechat") && !!user.value?.wechat?.value);
+const hasPhone = computed(() => !isUserFieldHidden("phone") && !!user.value?.phone);
+const hasEmail = computed(() => !isUserFieldHidden("email") && !!user.value?.email);
+const hasWechat = computed(() => !isUserFieldHidden("wechat") && !!user.value?.wechat);
 const phoneLabel = computed(() => getPreviewText("phoneLabel", previewLang.value));
 const emailLabel = computed(() => getPreviewText("emailLabel", previewLang.value));
 const wechatLabel = computed(() => getPreviewText("wechatLabel", previewLang.value));
@@ -51,8 +51,8 @@ const wechatLabel = computed(() => getPreviewText("wechatLabel", previewLang.val
 const heightWeightText = computed(() => {
   if (isUserFieldHidden("heightWeight")) return "";
   const value = user.value?.heightWeight;
-  const height = value?.height?.value;
-  const weight = value?.weight?.value;
+  const height = value?.height;
+  const weight = value?.weight;
   const hasHeight = height != null && height !== "";
   const hasWeight = weight != null && weight !== "";
   if (!hasHeight && !hasWeight) return "";
@@ -60,28 +60,28 @@ const heightWeightText = computed(() => {
 });
 const secondaryItems = computed(() => {
   const items = [];
-  if (!isUserFieldHidden("status") && user.value?.status?.value) {
+  if (!isUserFieldHidden("status") && user.value?.status) {
     items.push({
       key: "status",
       icon: fieldIcon("status"),
       label: getPreviewText("statusLabel", previewLang.value),
     });
   }
-  if (!isUserFieldHidden("political") && user.value?.political?.value) {
+  if (!isUserFieldHidden("political") && user.value?.political) {
     items.push({
       key: "political",
       icon: fieldIcon("political"),
       label: getPreviewText("politicalLabel", previewLang.value),
     });
   }
-  if (!isUserFieldHidden("city") && user.value?.city?.value) {
+  if (!isUserFieldHidden("city") && user.value?.city) {
     items.push({
       key: "city",
       icon: fieldIcon("city"),
       label: getPreviewText("cityLabel", previewLang.value),
     });
   }
-  if (!isUserFieldHidden("nativePlace") && user.value?.nativePlace?.value) {
+  if (!isUserFieldHidden("nativePlace") && user.value?.nativePlace) {
     items.push({
       key: "nativePlace",
       icon: fieldIcon("nativePlace"),
@@ -102,7 +102,7 @@ const secondaryItems = computed(() => {
 const customItems = computed(() =>
   userFieldOrder.value
     .filter((key) => isUserCustomFieldKey(key))
-    .filter((key) => !isUserFieldHidden(key) && user.value?.[key]?.value)
+    .filter((key) => !isUserFieldHidden(key) && user.value?.[key])
     .map((key) => ({
       key,
       icon: fieldIcon(key),

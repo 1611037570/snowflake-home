@@ -17,13 +17,13 @@ const props = defineProps({
   },
 });
 
-// 从上层注入获取代理后的预览数据
+// 从上层注入获取原始简历数据
 const previewData = inject("previewData");
 
 const fontValue = inject("fontValue");
 const lineHeightValue = inject("lineHeightValue");
 
-// 代理数据解包访问数组
+// 数组记录统一由 getValidData 过滤并提取业务内容
 const list = computed(() => getValidData(previewData.value?.[props.dataKey]?.data || []));
 </script>
 
@@ -37,18 +37,18 @@ const list = computed(() => getValidData(previewData.value?.[props.dataKey]?.dat
         <!-- 信息容器撑满行内剩余宽度，避免导出渲染时子项宽度取整触发换行错位 -->
         <div class="flex max-w-full min-w-0 flex-1 flex-wrap items-center gap-4">
           <div class="font-bold" :style="[fontValue(3)]">
-            <ResumeField v-model="item.name" />
+            <ResumeField :model-value="item.name" />
           </div>
           <div>
-            <ResumeField v-model="item.post" />
+            <ResumeField :model-value="item.post" />
           </div>
         </div>
         <div class="flex max-w-full min-w-0 flex-wrap items-center">
-          <span>{{ getTime(item.time?.value) }}</span>
+          <span>{{ getTime(item.time) }}</span>
         </div>
       </div>
       <!-- 补充描述/经历 -->
-      <ResumeField v-model="item.content" html />
+      <ResumeField :model-value="item.content" html />
     </template>
   </div>
 </template>

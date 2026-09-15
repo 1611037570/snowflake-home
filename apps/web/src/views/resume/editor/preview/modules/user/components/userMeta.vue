@@ -24,7 +24,7 @@ const previewLang = inject(
 // 计算年龄
 const age = computed(() => {
   if (isUserFieldHidden("birthday")) return 0;
-  const birthday = user.value?.birthday?.value;
+  const birthday = user.value?.birthday;
   if (!birthday || !dayjs(birthday).isValid()) return 0;
   const ageDiff = dayjs().diff(dayjs(birthday), "year");
   return Math.max(0, ageDiff);
@@ -33,7 +33,7 @@ const age = computed(() => {
 // 按个人资料中的参加工作时间计算工作经验，避免依赖全局当前简历状态
 const workYearsNumber = computed(() => {
   if (isUserFieldHidden("workTime")) return 0;
-  const workTime = user.value?.workTime?.value;
+  const workTime = user.value?.workTime;
   if (!workTime) return 0;
   const startDate = dayjs(workTime);
   if (!startDate.isValid()) return 0;
@@ -45,7 +45,7 @@ const workYearsNumber = computed(() => {
 // 有值字段列表：第一行固定展示性别、年龄、工作年限和求职岗位
 const metaItems = computed(() => {
   const items = [];
-  if (!isUserFieldHidden("sex") && user.value?.sex?.value) items.push({ key: "sex" });
+  if (!isUserFieldHidden("sex") && user.value?.sex) items.push({ key: "sex" });
   if (age.value) {
     items.push({
       text: getPreviewText("age", previewLang.value, { age: age.value }),
@@ -56,7 +56,7 @@ const metaItems = computed(() => {
       text: getPreviewText("expYears", previewLang.value, { years: workYearsNumber.value }),
     });
   }
-  if (!isUserFieldHidden("position") && user.value?.position?.value) {
+  if (!isUserFieldHidden("position") && user.value?.position) {
     items.push({ key: "position" });
   }
   return items;

@@ -5,7 +5,7 @@ import Title from "../components/title/index.vue";
 import { getPreviewTitle } from "../i18n";
 import { getValidData } from "./validData";
 
-// 从上层注入获取代理后的预览数据
+// 从上层注入获取原始简历数据
 const previewData = inject("previewData");
 
 const fontValue = inject("fontValue");
@@ -16,7 +16,7 @@ const previewLang = inject(
 );
 const imageAlt = computed(() => getPreviewTitle("image", previewLang.value));
 
-// 代理数据解包访问数组
+// 数组记录统一由 getValidData 过滤并提取业务内容
 const images = computed(() => getValidData(previewData.value?.image?.data || []));
 </script>
 
@@ -33,14 +33,14 @@ const images = computed(() => getValidData(previewData.value?.image?.data || [])
     </div>
     <!-- 单个作品：图片在上、名称在下，暂不展示描述 -->
     <template v-for="(item, index) in images" :key="index">
-      <div class="mt-3 flex min-w-0 flex-col gap-1" :style="{ width: `${item.size?.value ?? 50}%` }">
+      <div class="mt-3 flex min-w-0 flex-col gap-1" :style="{ width: `${item.size ?? 50}%` }">
         <img
-          v-if="item.img?.value"
-          :src="item.img?.value"
+          v-if="item.img"
+          :src="item.img"
           :alt="imageAlt"
           class="h-auto w-full rounded"
         />
-        <ResumeField class="text-center" v-model="item.name" />
+        <ResumeField class="text-center" :model-value="item.name" />
       </div>
     </template>
   </div>

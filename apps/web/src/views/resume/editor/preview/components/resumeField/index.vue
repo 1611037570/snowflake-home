@@ -3,7 +3,7 @@ import { computed } from "vue";
 import FieldContent from "./content.vue";
 import { isContentEmpty } from "../../modules/validData";
 
-// 简历字段文本渲染器：接收原始值或 { value } 字段代理
+// 简历字段文本渲染器：预览只读取原始字段值
 const model = defineModel();
 
 const props = defineProps({
@@ -13,11 +13,7 @@ const props = defineProps({
   },
 });
 
-const fieldValue = computed(() => {
-  const value = model.value;
-  if (value && typeof value === "object" && "value" in value) return value.value;
-  return value;
-});
+const fieldValue = computed(() => model.value);
 const hasContent = computed(() => {
   const value = fieldValue.value;
   // Skip the editor's canonical empty paragraph before mounting HTML blocks.

@@ -16,7 +16,7 @@ const props = defineProps({
   },
 });
 
-// 从上层注入获取代理后的预览数据
+// 从上层注入获取原始简历数据
 const previewData = inject("previewData");
 
 const fontValue = inject("fontValue");

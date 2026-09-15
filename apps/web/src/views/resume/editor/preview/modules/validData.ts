@@ -1,9 +1,3 @@
-// Unwrap preview field proxies before evaluating a record.
-const unwrapValue = (value: any) => {
-  if (value && typeof value === "object" && "value" in value) return value.value;
-  return value;
-};
-
 // Rich text uses the editor's only empty value.
 export const isContentEmpty = (val: any): boolean => {
   if (typeof val !== "string") return false;
@@ -12,26 +6,24 @@ export const isContentEmpty = (val: any): boolean => {
 
 // Evaluate whether one field contains data that can be rendered.
 const hasValidValue = (key: string, rawValue: any): boolean => {
-  const value = unwrapValue(rawValue);
-  if (key === "content") return !isContentEmpty(value);
-  if (Array.isArray(value)) return value.some((item) => hasValidValue("", item));
-  if (typeof value === "string") return value.trim() !== "";
+  if (key === "content") return !isContentEmpty(rawValue);
+  if (Array.isArray(rawValue)) return rawValue.some((item) => hasValidValue("", item));
+  if (typeof rawValue === "string") return rawValue.trim() !== "";
   return false;
 };
 
-// Hidden records must be excluded before checking renderable fields.
-const isHiddenData = (data: any): boolean =>
-  unwrapValue(data?.hidden) === true || unwrapValue(data?.ui?.hidden) === true;
-
-// Keep a record only when at least one renderable field exists.
-export const isValidData = (data: any): boolean => {
+// 业务内容至少包含一个可渲染字段时才展示
+const isValidData = (data: any): boolean => {
   if (!data || typeof data !== "object" || Array.isArray(data)) return false;
-  if (isHiddenData(data)) return false;
   return Object.entries(data).some(([key, value]) => hasValidValue(key, value));
 };
 
-// Preserve original proxy records while supporting list and single-object data.
+// 数组记录过滤展示状态后只向预览组件传递业务 data
 export const getValidData = (data: any) => {
-  if (Array.isArray(data)) return data.filter(isValidData);
+  if (Array.isArray(data)) {
+    return data
+      .filter((record) => record?.ui?.hidden !== true && isValidData(record?.data))
+      .map((record) => record.data);
+  }
   return isValidData(data) ? data : null;
 };

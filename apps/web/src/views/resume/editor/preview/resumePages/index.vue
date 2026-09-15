@@ -1,8 +1,8 @@
 <script setup>
 // 简历分页渲染可复用组件：接收 resumeItem（data/config/ui），渲染分页后的简历页面
 // 数据源由 props 传入，不依赖 resume store；供编辑器预览、模板缩略图、全屏查看复用
-// 本组件只做渲染编排（数据代理/主题注入/测量分页），导出、智能一页等编辑功能由上层 page.vue 注册
-import { computed, ref } from "vue";
+// 本组件只做渲染编排（数据注入/主题注入/测量分页），导出、智能一页等编辑功能由上层 page.vue 注册
+import { computed, provide, ref } from "vue";
 import { isFieldHidden } from "@/components/business/dynamicForm/code/fieldVisible";
 import { createDataPathContext } from "@/components/business/dynamicForm/code/pathContext";
 import { getPrimaryModelBinding } from "@/components/business/dynamicForm/code/schemaAccess";
@@ -16,7 +16,6 @@ import { useResumePages } from "./useResumePages";
 import { useResumeTheme } from "./useResumeTheme";
 import { useResumeStore } from "@/stores";
 import { useInitMask } from "./useInitMask";
-import { useResumePreviewData } from "./useResumePreviewData";
 import { useModuleInteractions } from "./useModuleInteractions";
 import { getPreviewText } from "../i18n";
 import { useResumeStats } from "../../toolbar/modules/progress/useResumeStats";
@@ -54,9 +53,10 @@ const measureRef = ref(null);
 // 实例唯一前缀，避免多实例分页裁剪样式互相干扰
 const uid = `rp-${Math.random().toString(36).slice(2, 8)}`;
 
-// ---------- 数据代理（始终基于 props 传入的数据，多实例互不干扰）----------
+// ---------- 数据注入（始终基于 props 传入的数据，多实例互不干扰）----------
 const dataRef = computed(() => props.item.data);
-useResumePreviewData(dataRef);
+// 预览直接读取简历原始数据，不再构造字段代理副本
+provide("previewData", dataRef);
 // 复用编辑器总字数统计判断空简历，避免空数据时预览区无内容。
 const resumeStats = useResumeStats(dataRef);
 const isEmpty = computed(() => resumeStats.value.total.total === 0);
