@@ -21,6 +21,7 @@ const previewData = inject("previewData");
 
 const fontValue = inject("fontValue");
 const lineHeightValue = inject("lineHeightValue");
+const paragraphSpacingStyle = inject("paragraphSpacingStyle");
 
 // 富文本内容统一存放于 data.content（与列表项 content 字段保持一致）
 const contentData = computed(() =>
@@ -32,7 +33,7 @@ const content = computed(() => contentData.value?.content);
 <template>
   <div class="resume-row" :data-module="moduleName" :style="[lineHeightValue(), fontValue()]">
     <Title :module-key="moduleName" />
-    <div v-if="contentData" class="mt-3">
+    <div v-if="contentData" :style="paragraphSpacingStyle">
       <ResumeField :model-value="content" html />
     </div>
   </div>

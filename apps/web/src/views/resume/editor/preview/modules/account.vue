@@ -8,6 +8,7 @@ const previewData = inject("previewData");
 
 const fontValue = inject("fontValue");
 const lineHeightValue = inject("lineHeightValue");
+const paragraphSpacingStyle = inject("paragraphSpacingStyle");
 
 // 数组记录统一由 getValidData 过滤并提取业务内容
 const account = computed(() => getValidData(previewData.value?.account?.data || []));
@@ -26,7 +27,7 @@ const safeUrl = (value) => {
 
 <template>
   <div
-    class="resume-row flex flex-col gap-3"
+    class="resume-row flex flex-col"
     data-module="account"
     :style="[lineHeightValue(), fontValue()]"
   >
@@ -36,6 +37,7 @@ const safeUrl = (value) => {
       :key="index"
       class="max-w-full min-w-0"
       data-module="user"
+      :style="index > 0 ? paragraphSpacingStyle : undefined"
     >
       <span
         v-if="item.name"
