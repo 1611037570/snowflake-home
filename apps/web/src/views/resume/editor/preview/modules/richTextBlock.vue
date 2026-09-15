@@ -28,7 +28,9 @@ const content = computed(() => previewData.value?.[props.dataKey]?.data?.content
 <template>
   <div class="resume-row" :data-module="moduleName" :style="[lineHeightValue(), fontValue()]">
     <Title :module-key="moduleName" />
-    <ResumeField :model-value="content" html />
+    <div class="mt-3">
+      <ResumeField :model-value="content" html />
+    </div>
   </div>
 </template>
 

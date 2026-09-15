@@ -20,7 +20,7 @@ const video = computed(() => previewData.value?.video?.data || []);
     <!-- 社交链接 -->
     <template v-for="(item, index) in video" :key="index">
       <div
-        class="mt-1 flex h-auto max-w-full min-w-0 flex-wrap items-center justify-between gap-2"
+        class="mt-3 flex h-auto max-w-full min-w-0 flex-wrap items-center justify-between gap-2"
         data-module="user"
       >
         <div class="flex flex-1 items-center gap-3" :style="[fontValue(-6)]">

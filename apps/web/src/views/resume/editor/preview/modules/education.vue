@@ -31,7 +31,7 @@ const hasField = (item, key) => {
     <!-- 内容区：直接渲染代理数组项，不做 map 拷贝 -->
     <template v-for="(item, index) in education" :key="index">
       <div
-        class="mt-2 flex flex-wrap items-center justify-between"
+        class="mt-3 flex flex-wrap items-center justify-between"
         v-if="item.name?.value || getTime(item.time?.value)"
       >
         <div class="flex max-w-full min-w-0 flex-wrap items-baseline gap-4">
@@ -45,7 +45,7 @@ const hasField = (item, key) => {
       </div>
       <!-- 次信息行：post / education / mode，不创建临时对象，直接基于原字段渲染 -->
       <div
-        class="mt-1 flex max-w-full min-w-0 flex-wrap items-center gap-2"
+        class="mt-3 flex max-w-full min-w-0 flex-wrap items-center gap-2"
         v-if="hasField(item, 'post') || hasField(item, 'education') || hasField(item, 'mode')"
       >
         <template v-if="hasField(item, 'education')">

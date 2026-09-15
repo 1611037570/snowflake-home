@@ -32,7 +32,7 @@ const list = computed(() => previewData.value?.[props.dataKey]?.data || []);
     <Title :module-key="moduleName"></Title>
     <!-- 内容区 -->
     <template v-for="(item, index) in list" :key="index">
-      <div class="flex flex-wrap items-center justify-between">
+      <div class="mt-3 flex flex-wrap items-center justify-between">
         <!-- 信息容器撑满行内剩余宽度，避免导出渲染时子项宽度取整触发换行错位 -->
         <div class="flex max-w-full min-w-0 flex-1 flex-wrap items-center gap-4">
           <div class="font-bold" :style="[fontValue(3)]">

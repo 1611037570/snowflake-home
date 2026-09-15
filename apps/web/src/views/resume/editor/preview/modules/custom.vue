@@ -26,7 +26,7 @@ const customList = computed(() => customData.value?.list || []);
     <Title :module-key="name"></Title>
     <!-- 内容区 -->
     <template v-for="(item, index) in customList" :key="index">
-      <div class="mb-3 flex flex-wrap items-center justify-between">
+      <div class="mt-3 flex flex-wrap items-center justify-between">
         <div class="flex max-w-full min-w-0 flex-wrap items-center gap-4">
           <div class="font-bold" :style="[fontValue(3)]">
             <ResumeField v-model="item.name" />
