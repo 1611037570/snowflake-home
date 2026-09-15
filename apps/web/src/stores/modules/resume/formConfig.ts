@@ -272,7 +272,7 @@ export const DEFAULT_USER_FORM = [
           {
             type: "object",
             key: "phone",
-            label: "电话",
+            label: "手机号",
             tip: "推荐必填",
             component: "input",
             span: 24,
@@ -300,7 +300,7 @@ export const DEFAULT_USER_FORM = [
               prop: "modelValue",
             },
             props: {
-              placeholder: "请输入电话",
+              placeholder: "请输入手机号",
               clearable: true,
             },
             rules: [
@@ -1112,7 +1112,7 @@ export const DEFAULT_PROJECT_FORM = {
         fields: [
           {
             type: "object",
-            label: "公司",
+            label: "项目名称",
             component: "input",
             required: true,
             span: 12,
@@ -1121,7 +1121,7 @@ export const DEFAULT_PROJECT_FORM = {
               prop: "modelValue",
             },
             props: {
-              placeholder: "公司",
+              placeholder: "请输入项目名称",
               clearable: true,
             },
           },
@@ -1136,7 +1136,7 @@ export const DEFAULT_PROJECT_FORM = {
               prop: "modelValue",
             },
             props: {
-              placeholder: "岗位",
+              placeholder: "请输入岗位",
               clearable: true,
             },
           },
