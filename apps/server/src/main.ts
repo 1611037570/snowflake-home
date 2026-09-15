@@ -6,12 +6,35 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger'
 import { AppModule } from './app.module'
 import { json } from 'express' // 引入express
 import { baseConfig } from './config/base.config'
+import mysql from 'mysql2/promise'
+
+// 数据库不可用时只关闭数据库模块，不阻塞核心服务启动。
+async function checkDatabaseConnection() {
+  const connection = await mysql.createConnection({
+    host: baseConfig.mysql.host,
+    port: baseConfig.mysql.port,
+    user: baseConfig.mysql.username,
+    password: baseConfig.mysql.password,
+    database: baseConfig.mysql.database,
+    connectTimeout: 1500,
+  })
+  await connection.end()
+}
 
 async function bootstrap() {
   console.log(`🚀 ${baseConfig.app.name}启动中`)
 
+  let databaseEnabled = true
+  try {
+    await checkDatabaseConnection()
+  } catch (error) {
+    databaseEnabled = false
+    const message = error instanceof Error ? error.message : String(error)
+    console.warn('数据库不可用，已跳过数据库模块，核心服务继续启动', message)
+  }
+
   // 创建Nest应用实例
-  const app = await NestFactory.create(AppModule, new ExpressAdapter())
+  const app = await NestFactory.create(AppModule.register(databaseEnabled), new ExpressAdapter())
   // 启用全局参数验证
   app.useGlobalPipes(new ValidationPipe())
   // 允许处理JSON请求体上限
