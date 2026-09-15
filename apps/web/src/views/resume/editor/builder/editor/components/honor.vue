@@ -8,6 +8,11 @@ const name = defineModel("name", {
   type: String,
   default: "",
 });
+// 当前荣誉证书的隐藏状态
+const hidden = defineModel("hidden", {
+  type: Boolean,
+  default: false,
+});
 const { removeCurrent } = inject("df/context")();
 
 // 删除当前荣誉证书
@@ -31,6 +36,13 @@ const removeHonor = () => {
     <div class="min-w-0 flex-1">
       <SfInput v-model="name" placeholder="荣誉证书名称" />
     </div>
+    <!-- 隐藏当前荣誉证书 -->
+    <SfIcon
+      :icon="hidden ? 'lucide:eye' : 'lucide:eye-off'"
+      size="4"
+      class="shrink-0 cursor-pointer rounded-lg transition-colors hover:text-sf-theme"
+      @click.stop="hidden = !hidden"
+    />
     <!-- 删除按钮 -->
     <SfIcon
       icon="ic:round-delete"

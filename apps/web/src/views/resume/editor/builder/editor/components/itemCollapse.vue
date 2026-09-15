@@ -11,6 +11,11 @@ const name = defineModel("name", {
   type: String,
   default: "",
 });
+// 当前经历项的隐藏状态
+const hidden = defineModel("hidden", {
+  type: Boolean,
+  default: false,
+});
 const { removeCurrent } = inject("df/context")();
 
 // 标题：统一走 name 数据源，空值占位符兜底
@@ -37,6 +42,12 @@ function del() {
             />
             {{ displayTitle }}
           </div>
+          <SfIcon
+            :icon="hidden ? 'lucide:eye' : 'lucide:eye-off'"
+            size="4"
+            class="shrink-0 cursor-pointer rounded-lg transition-colors hover:text-sf-theme"
+            @click.stop="hidden = !hidden"
+          />
           <SfIcon
             @click.stop="del"
             icon="ic:round-delete"
