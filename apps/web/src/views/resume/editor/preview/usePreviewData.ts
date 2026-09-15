@@ -41,9 +41,54 @@ const arrayShellCache = new WeakMap<object, Record<string, { shell: any[]; sourc
 const isShellValid = (shell: any[], value: any[]): boolean => {
   if (shell.length !== value.length) return false;
   for (let i = 0; i < shell.length; i++) {
-    if (shell[i] !== value[i] && shell[i]?.__source !== value[i]?.data) return false;
+    if (shell[i] !== value[i] && shell[i]?.__source !== value[i]) return false;
   }
   return true;
+};
+
+const recordProxyCache = new WeakMap<object, any>();
+
+// 数组记录对预览保持业务字段平铺，同时保留 ui 供显隐等展示状态读取
+const createPreviewRecordProxy = (record: Record<string, any>): any => {
+  if (recordProxyCache.has(record)) return recordProxyCache.get(record);
+
+  const proxy = new Proxy(record, {
+    get(target, key: string) {
+      if (typeof key !== "string") return undefined;
+      if (key === "__source") return target;
+      if (key === "ui") return isPlainObject(target.ui) ? createPreviewProxy(target.ui) : undefined;
+
+      const data = target.data;
+      if (!isPlainObject(data) || !(key in data)) return undefined;
+      const value = data[key];
+      if (isObjectArray(value)) return getArrayShell(data, key, value);
+      if (isPlainObject(value)) return createPreviewProxy(value);
+      return getFieldProxy(data, key);
+    },
+    set(target, key: string, value: any) {
+      if (typeof key !== "string" || key === "ui") return false;
+      target.data ??= {};
+      target.data[key] = value && typeof value === "object" && "value" in value ? value.value : value;
+      return true;
+    },
+    has(target, key: string) {
+      return key === "ui" || (isPlainObject(target.data) && key in target.data);
+    },
+    ownKeys(target) {
+      return isPlainObject(target.data) ? Reflect.ownKeys(target.data) : [];
+    },
+    getOwnPropertyDescriptor(target, key: string) {
+      if (!isPlainObject(target.data) || !(key in target.data)) return undefined;
+      return {
+        configurable: true,
+        enumerable: true,
+        value: target.data[key],
+      };
+    },
+  });
+
+  recordProxyCache.set(record, proxy);
+  return proxy;
 };
 
 const getArrayShell = (source: Record<string, any>, key: string, value: any[]): any[] => {
@@ -56,8 +101,7 @@ const getArrayShell = (source: Record<string, any>, key: string, value: any[]): 
   if (hit && hit.sourceArr === value && isShellValid(hit.shell, value)) {
     return hit.shell;
   }
-  // 预览只暴露记录内容，编辑器状态保留在记录 ui 层
-  const shell = value.map((item: Record<string, any>) => createPreviewProxy(item?.data ?? {}));
+  const shell = value.map((item: Record<string, any>) => createPreviewRecordProxy(item));
   cache[key] = { shell, sourceArr: value };
   return shell;
 };
