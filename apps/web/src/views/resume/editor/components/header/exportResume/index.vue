@@ -72,6 +72,12 @@ const list = [
     fn: () => emitExport("resume-print-pdf"),
   },
   {
+    name: "服务器导出",
+    icon: "mdi:server",
+    desc: "服务端高精度排版导出",
+    fn: () => emitExport("resume-print-server-pdf"),
+  },
+  {
     name: "长图",
     icon: "material-symbols:image-outline",
     desc: "适合快速分享",

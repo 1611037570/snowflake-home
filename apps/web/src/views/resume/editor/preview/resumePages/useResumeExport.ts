@@ -7,6 +7,7 @@
 import { onMounted, onUnmounted, type ComputedRef, type Ref } from "vue";
 import eventBus from "@/utils/modules/eventBus";
 import { printPDF as exportPdf } from "./usePdfExport";
+import { printServerPDF as exportServerPdf } from "./useServerPdfExport";
 import { printImage as exportImage } from "./useImageExport";
 import { exportMarkdown } from "./useMarkdownExport";
 import { exportHtml } from "./useHtmlExport";
@@ -25,6 +26,8 @@ interface UseResumeExportOptions {
 export const useResumeExport = ({ isEdit, rootRef, measureRef, onExportSuccess }: UseResumeExportOptions) => {
   const printPDF = (scale: unknown = 2) =>
     exportPdf(rootRef, onExportSuccess, scale === 8 ? 8 : scale === 4 ? 4 : scale === 2 ? 2 : 1);
+  const printServerPDF = (scale: unknown = 2) =>
+    exportServerPdf(rootRef, onExportSuccess, scale === 8 ? 8 : scale === 4 ? 4 : scale === 2 ? 2 : 1);
   const printImage = (scale: unknown = 2) =>
     exportImage(measureRef, onExportSuccess, scale === 8 ? 8 : scale === 4 ? 4 : scale === 2 ? 2 : 1);
   const printMarkdown = () => exportMarkdown(onExportSuccess);
@@ -34,6 +37,7 @@ export const useResumeExport = ({ isEdit, rootRef, measureRef, onExportSuccess }
   onMounted(() => {
     if (isEdit.value) {
       eventBus.on("resume-print-pdf", printPDF);
+      eventBus.on("resume-print-server-pdf", printServerPDF);
       eventBus.on("resume-print-image", printImage);
       eventBus.on("resume-print-markdown", printMarkdown);
       eventBus.on("resume-print-html", printHtml);
@@ -42,6 +46,7 @@ export const useResumeExport = ({ isEdit, rootRef, measureRef, onExportSuccess }
   onUnmounted(() => {
     if (isEdit.value) {
       eventBus.off("resume-print-pdf", printPDF);
+      eventBus.off("resume-print-server-pdf", printServerPDF);
       eventBus.off("resume-print-image", printImage);
       eventBus.off("resume-print-markdown", printMarkdown);
       eventBus.off("resume-print-html", printHtml);
