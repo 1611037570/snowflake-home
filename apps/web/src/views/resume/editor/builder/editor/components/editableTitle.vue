@@ -52,24 +52,25 @@ function handleKeydown(e) {
 outline-offset-3 outline-dashed outline-sf-theme
 
 <template>
-  <template v-if="!isEditing">
+  <div class="flex-1 truncate">
     <span
+      v-if="!isEditing"
       class="cursor-pointer rounded-3xl border-transparent px-1 hover:border-dashed hover:outline-offset-1 hover:outline-sf-theme hover:outline-dashed"
       @click.stop.prevent="startEdit"
       @focus.stop.prevent
     >
       {{ modelValue }}
     </span>
-  </template>
-  <div ref="editBox" v-else class="w-[140px]">
-    <SfInput
-      v-model="modelValue"
-      class="rounded border border-sf-theme outline-none"
-      @click.stop.prevent
-      @focus.stop
-      @blur="finishEdit"
-      @keydown.stop="handleKeydown"
-    />
+    <div ref="editBox" v-else class="w-full">
+      <SfInput
+        v-model="modelValue"
+        class="rounded border border-sf-theme outline-none"
+        @click.stop.prevent
+        @focus.stop
+        @blur="finishEdit"
+        @keydown.stop="handleKeydown"
+      />
+    </div>
   </div>
 </template>
 
