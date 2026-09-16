@@ -49,14 +49,12 @@ function handleKeydown(e) {
   }
 }
 </script>
-outline-offset-3 outline-dashed outline-sf-theme
-
 <template>
   <div class="flex-1 truncate">
     <span
       v-if="!isEditing"
-      class="cursor-pointer rounded-3xl border-transparent px-1 hover:border-dashed hover:outline-offset-1 hover:outline-sf-theme hover:outline-dashed"
-      @click.stop.prevent="startEdit"
+      class="border-sf-border cursor-pointer rounded-3xl border border-dashed border-transparent px-1 hover:border-dashed hover:border-sf-theme hover:outline-offset-1"
+      p.prevent="startEdit"
       @focus.stop.prevent
     >
       {{ modelValue }}
