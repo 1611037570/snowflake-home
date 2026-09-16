@@ -4,7 +4,7 @@ import { allConfig } from "@/stores/modules/resume/formConfig";
 import { DEFAULT_MODULE_NAMES } from "@/stores/modules/resume/defaultConfig";
 import { bindCollapsedDefault } from "@/stores/modules/resume/hooks/useConfigTemplate";
 import { storeToRefs } from "pinia";
-import { computed, ref } from "vue";
+import { computed } from "vue";
 import { getUUID } from "@/utils";
 const resumeStore = useResumeStore();
 const { runtimeConfig, currentData } = storeToRefs(resumeStore);
@@ -37,7 +37,7 @@ const handleAdd = (module) => {
   const type = module.value;
   // 自定义模块需要特殊处理
   if (type === "custom") {
-    showModal.value = true;
+    handleConfirm();
     return;
   }
   if (type in allConfig) {
@@ -48,58 +48,36 @@ const handleAdd = (module) => {
   }
 };
 
-const showModal = ref(false);
-const customModuleName = ref("");
-
 const handleConfirm = () => {
-  // 校验自定义模块名称是否为空
-  if (!customModuleName.value) return;
+  const customModuleName = "尚未填写";
   // 生成带前缀的唯一 key,作为模块标识与数据路径
   const customKey = `custom_${getUUID().substring(0, 8)}`;
-  // 模块标题写入 ui，经历记录统一保存在 data 数组
+  // 模块标题写入 ui，经历记录统一保存在 list 数组
   if (currentData.value) {
     currentData.value[customKey] = {
       ui: {
-        title: customModuleName.value,
+        title: customModuleName,
         collapsed: ["1"],
         hidden: false,
         archived: false,
       },
-      data: [],
+      list: [],
     };
   }
   // 深拷贝自定义模块配置
   const config = structuredClone(allConfig.custom);
   config.key = customKey;
-  // 重置自定义模块顶层模型的数据路径，并写入标题默认值
+  // 自定义模块进入实际数据节点，内部绑定继续使用相对路径
+  config.context = [customKey];
   config.model.forEach((item) => {
-    item.source[0] = customKey;
     if (item.prop === "title") {
-      item.defaultValue = customModuleName.value;
+      item.defaultValue = customModuleName;
     }
   });
-  // 重置自定义模块的条件校验配置数据路径
-  if (config.checks?.hidden?.path?.length) {
-    config.checks.hidden.path[0] = customKey;
-  }
-  if (config.checks?.removed?.path?.length) {
-    config.checks.removed.path[0] = customKey;
-  }
-  // 自定义模块只重写数组容器数据源，子项字段保持相对路径
-  if (config.fields[0].source?.length) {
-    config.fields[0].source[0] = customKey;
-  }
   // 自定义模块内的记录默认折叠状态跟随系统设置
   bindCollapsedDefault([config], () => resumeStore.itemDefaultCollapsed);
   // 添加自定义模块到运行时配置
   runtimeConfig.value.fields.push(config);
-
-  handleCancel();
-};
-
-const handleCancel = () => {
-  showModal.value = false;
-  customModuleName.value = "";
 };
 </script>
 
@@ -124,17 +102,6 @@ const handleCancel = () => {
     </button>
   </div>
 
-  <SfModal v-model="showModal" title="自定义模块">
-    <form class="flex w-80 flex-col gap-3 p-3" @submit.prevent="handleConfirm">
-      <SfInput v-model="customModuleName" placeholder="请输入模块名称" />
-      <footer class="flex justify-end gap-3">
-        <el-button @click="handleCancel">取消</el-button>
-        <el-button type="primary" :disabled="!customModuleName" @click="handleConfirm"
-          >保存</el-button
-        >
-      </footer>
-    </form>
-  </SfModal>
 </template>
 
 <style scoped></style>
