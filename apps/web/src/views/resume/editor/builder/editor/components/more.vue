@@ -70,14 +70,14 @@ function handleCreateCustomField() {
         v-for="field in availableFields"
         :key="getFieldDataKey(field)"
         type="button"
-        class="h-9 cursor-pointer rounded-lg border border-sf-border bg-sf-primary px-3 text-sm text-sf-text-2 transition-colors hover:border-sf-theme hover:text-sf-theme"
+        class="border-sf-border h-9 cursor-pointer rounded-3xl border bg-sf-primary px-3 text-sm text-sf-text-2 transition-colors hover:border-sf-theme hover:text-sf-theme"
         @click="handleAdd(field)"
       >
         + {{ field.label }}
       </button>
       <button
         type="button"
-        class="h-9 cursor-pointer rounded-lg border border-dashed border-sf-border bg-sf-primary px-3 text-sm text-sf-text-2 transition-colors hover:border-sf-theme hover:text-sf-theme"
+        class="border-sf-border h-9 cursor-pointer rounded-3xl border border-dashed bg-sf-primary px-3 text-sm text-sf-text-2 transition-colors hover:border-sf-theme hover:text-sf-theme"
         @click="handleCreateCustomField"
       >
         + 自定义字段
