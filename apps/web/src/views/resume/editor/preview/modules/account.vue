@@ -12,7 +12,7 @@ const lineHeightValue = inject("lineHeightValue");
 const paragraphSpacingStyle = inject("paragraphSpacingStyle");
 
 // 数组记录统一由 getValidData 过滤并提取业务内容
-const account = computed(() => getValidData(previewData.value?.account?.data || []));
+const account = computed(() => getValidData(previewData.value?.account?.list || []));
 
 // 仅允许安全的外部链接协议
 const safeUrl = (value) => {

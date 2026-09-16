@@ -12,22 +12,18 @@ export const useResumeContext = () => {
 
   // 脱敏文本中的姓名、手机号和邮箱，避免敏感信息藏在经历描述中
   const sanitizeSensitiveText = (value: string, name: string) => {
-    let result = value.replace(EMAIL_PATTERN, DESENSITIZED_TEXT).replace(PHONE_PATTERN, DESENSITIZED_TEXT);
+    let result = value
+      .replace(EMAIL_PATTERN, DESENSITIZED_TEXT)
+      .replace(PHONE_PATTERN, DESENSITIZED_TEXT);
     if (name) result = result.split(name).join(DESENSITIZED_TEXT);
     return result;
   };
 
   // 严格脱敏时额外标记工作与教育名称
-  const sanitizeNestedData = (
-    value: any,
-    name: string,
-    removeOrganizationName: boolean,
-  ): any => {
+  const sanitizeNestedData = (value: any, name: string, removeOrganizationName: boolean): any => {
     if (typeof value === "string") return sanitizeSensitiveText(value, name);
     if (Array.isArray(value)) {
-      return value.map((item) =>
-        sanitizeNestedData(item, name, removeOrganizationName),
-      );
+      return value.map((item) => sanitizeNestedData(item, name, removeOrganizationName));
     }
     if (!value || typeof value !== "object") return value;
     const next: Record<string, any> = {};
@@ -52,10 +48,10 @@ export const useResumeContext = () => {
     const keys = forceFullResume || !selectedKeys.length ? Object.keys(data) : selectedKeys;
     keys.forEach((key) => {
       const module = data[key];
-      if (!module || typeof module !== "object" || !("data" in module)) return;
+      if (!module || typeof module !== "object" || !("data" in module || "list" in module)) return;
       // 数组记录只向 AI 暴露业务 data，不携带编辑器 ui 状态
-      const clone = Array.isArray(module.data)
-        ? module.data.map((record: any) => JSON.parse(JSON.stringify(record?.data ?? {})))
+      const clone = Array.isArray(module.list)
+        ? module.list.map((record: any) => JSON.parse(JSON.stringify(record?.data ?? {})))
         : JSON.parse(JSON.stringify(module.data));
       const title = module.ui?.title || resumeStore.getModel(key)?.name || key;
       const shouldDesensitize = !desensitizeMode.value.disabled;

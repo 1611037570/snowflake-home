@@ -19,8 +19,8 @@ const fontValue = inject("fontValue");
 const lineHeightValue = inject("lineHeightValue");
 const paragraphSpacingStyle = inject("paragraphSpacingStyle");
 
-// 自定义模块与内置数组模块统一直接读取 data
-const customList = computed(() => getValidData(previewData.value?.[props.name]?.data || []));
+// 自定义模块与内置数组模块统一直接读取 list
+const customList = computed(() => getValidData(previewData.value?.[props.name]?.list || []));
 </script>
 
 <template>

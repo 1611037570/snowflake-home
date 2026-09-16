@@ -31,14 +31,7 @@ export const useChatRequest = ({
   const aiStore = useAiStore();
   const resumeStore = useResumeStore();
   const { thinkMode } = storeToRefs(aiStore);
-  const {
-    generating,
-    beforeRequest,
-    afterRequest,
-    tools,
-    reflectPrompt,
-    onToolError,
-  } = config;
+  const { generating, beforeRequest, afterRequest, tools, reflectPrompt, onToolError } = config;
   // 深拷贝简历数据时跳过 base64 大字段（user.avatar、image[].img），避免每请求全量序列化
   const cloneDataSkippingMedia = (value: any, parentKey?: string): any => {
     if (Array.isArray(value)) {
@@ -71,13 +64,13 @@ export const useChatRequest = ({
     // 恢复时保留当前未被 AI 修改的大字段（头像、作品图）
     const currentData = item.data || {};
     const avatar = currentData?.user?.data?.avatar;
-    const imageItems = Array.isArray(currentData?.image?.data) ? currentData.image.data : [];
+    const imageItems = Array.isArray(currentData?.image?.list) ? currentData.image.list : [];
     item.data = backup.data ?? {};
     if (backup.data?.user?.data && avatar !== undefined) {
       item.data.user.data.avatar = avatar;
     }
-    if (Array.isArray(item.data?.image?.data)) {
-      item.data.image.data.forEach((record: any, index: number) => {
+    if (Array.isArray(item.data?.image?.list)) {
+      item.data.image.list.forEach((record: any, index: number) => {
         if (record?.data && imageItems[index]?.data) {
           record.data.img = imageItems[index].data.img;
         }

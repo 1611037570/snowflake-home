@@ -25,7 +25,7 @@ const lineHeightValue = inject("lineHeightValue");
 const paragraphSpacingStyle = inject("paragraphSpacingStyle");
 
 // 数组记录统一由 getValidData 过滤并提取业务内容
-const list = computed(() => getValidData(previewData.value?.[props.dataKey]?.data || []));
+const list = computed(() => getValidData(previewData.value?.[props.dataKey]?.list || []));
 </script>
 
 <template>

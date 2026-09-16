@@ -12,17 +12,13 @@ const lineHeightValue = inject("lineHeightValue");
 const paragraphSpacingStyle = inject("paragraphSpacingStyle");
 
 const honors = computed(() => {
-  const list = previewData.value?.honor?.data || [];
+  const list = previewData.value?.honor?.list || [];
   return getValidData(list);
 });
 </script>
 
 <template>
-  <div
-    class="resume-row"
-    data-module="honor"
-    :style="[lineHeightValue(), fontValue()]"
-  >
+  <div class="resume-row" data-module="honor" :style="[lineHeightValue(), fontValue()]">
     <!-- 标题栏 -->
     <Title module-key="honor"></Title>
     <!-- 荣誉证书名称流式排列：容器放不下时才换行 -->

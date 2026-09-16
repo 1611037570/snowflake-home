@@ -6,7 +6,7 @@ describe("executeResumeOperations", () => {
     const data: any = {
       user: { ui: { title: "个人信息" }, data: { name: "张三" } },
       work: {
-        data: [
+        list: [
           { ui: {}, data: { name: "甲公司" } },
           { ui: {}, data: { name: "乙公司" } },
         ],
@@ -22,14 +22,14 @@ describe("executeResumeOperations", () => {
         return true;
       },
       updateRecordField: (module, index, field, value) => {
-        data[module].data[index].data[field] = value;
+        data[module].list[index].data[field] = value;
         return true;
       },
-      addDataRecord: (module) => data[module].data.push({ ui: {}, data: { name: "" } }) - 1,
-      removeDataRecord: (module, index) => data[module].data.splice(index, 1).length > 0,
+      addDataRecord: (module) => data[module].list.push({ ui: {}, data: { name: "" } }) - 1,
+      removeDataRecord: (module, index) => data[module].list.splice(index, 1).length > 0,
       moveDataRecord: (module, from, to) => {
-        const [record] = data[module].data.splice(from, 1);
-        data[module].data.splice(to, 0, record);
+        const [record] = data[module].list.splice(from, 1);
+        data[module].list.splice(to, 0, record);
         return true;
       },
     };
@@ -47,7 +47,7 @@ describe("executeResumeOperations", () => {
     );
 
     expect(data.user).toEqual({ ui: { title: "基本资料" }, data: { name: "李四" } });
-    expect(data.work.data).toEqual([
+    expect(data.work.list).toEqual([
       { ui: {}, data: { name: "丙公司" } },
       { ui: {}, data: { name: "乙公司" } },
     ]);

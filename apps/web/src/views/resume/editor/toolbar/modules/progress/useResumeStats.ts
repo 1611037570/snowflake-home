@@ -90,12 +90,12 @@ function computeStats(data: any): ResumeStats {
   for (const key of Object.keys(data)) {
     const module = data[key];
     if (!module || typeof module !== "object") continue;
-    if (!("data" in module)) continue; // 只处理有 .data 的模块
+    if (!("data" in module || "list" in module)) continue;
 
-    const moduleData = module.data;
+    const moduleData = Array.isArray(module.list) ? module.list : module.data;
     const texts: string[] = [];
 
-    // 提取该模块 .data 下的所有文本
+    // 提取对象模块 data 或数组模块 list 下的所有文本
     if (typeof moduleData === "string") {
       const cleaned = stripHtml(moduleData);
       if (cleaned) texts.push(cleaned);

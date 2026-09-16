@@ -648,7 +648,7 @@ export const DEFAULT_ACCOUNT_FORM = {
   fields: [
     {
       type: "array",
-      source: ["data"],
+      source: ["list"],
       drag: true,
       dragClass: DEFAULT_DRAG_CLASS,
       itemClass: DEFAULT_COL_CLASS + " py-1",
@@ -724,7 +724,7 @@ export const DEFAULT_EDUCATION_FORM = {
   fields: [
     {
       type: "array",
-      source: ["data"],
+      source: ["list"],
       drag: true,
       dragClass: DEFAULT_DRAG_CLASS,
       itemClass: DEFAULT_COL_CLASS,
@@ -1005,7 +1005,7 @@ export const DEFAULT_WORK_FORM = {
   fields: [
     {
       type: "array",
-      source: ["data"],
+      source: ["list"],
       drag: true,
       dragClass: DEFAULT_DRAG_CLASS,
       itemClass: DEFAULT_COL_CLASS,
@@ -1142,7 +1142,7 @@ export const DEFAULT_PROJECT_FORM = {
   fields: [
     {
       type: "array",
-      source: ["data"],
+      source: ["list"],
       drag: true,
       dragClass: DEFAULT_DRAG_CLASS,
       itemClass: DEFAULT_COL_CLASS,
@@ -1280,7 +1280,7 @@ export const DEFAULT_VIDEO_FORM = {
   fields: [
     {
       type: "array",
-      source: ["data"],
+      source: ["list"],
       drag: true,
       dragClass: DEFAULT_DRAG_CLASS,
       itemClass: DEFAULT_COL_CLASS,
@@ -1381,7 +1381,7 @@ export const DEFAULT_IMAGE_FORM = {
   fields: [
     {
       type: "array",
-      source: ["data"],
+      source: ["list"],
       drag: true,
       dragClass: DEFAULT_DRAG_CLASS,
       itemClass: DEFAULT_COL_CLASS,
@@ -1488,7 +1488,7 @@ export const DEFAULT_HONOR_FORM = {
   fields: [
     {
       type: "array",
-      source: ["data"],
+      source: ["list"],
       drag: true,
       dragClass: DEFAULT_DRAG_CLASS,
       itemClass: DEFAULT_COL_CLASS + " py-1",
@@ -1560,7 +1560,7 @@ export const DEFAULT_CUSTOM_FORM = {
   fields: [
     {
       type: "array",
-      source: ["data"],
+      source: ["list"],
       drag: true,
       dragClass: DEFAULT_DRAG_CLASS,
       itemClass: DEFAULT_COL_CLASS,

@@ -17,7 +17,7 @@ describe("resumeSchemaRegistry", () => {
   it("从真实数组容器生成记录字段", () => {
     const education = findResumeModuleSchema("education");
 
-    expect(education).toMatchObject({ kind: "array", dataPath: ["data"] });
+    expect(education).toMatchObject({ kind: "array", dataPath: ["list"] });
     expect(education?.fields.map((field) => field.key)).toEqual([
       "name",
       "education",
@@ -36,7 +36,7 @@ describe("resumeSchemaRegistry", () => {
     expect(findResumeModuleSchema("custom_a810d50c")).toMatchObject({
       key: "custom",
       kind: "custom",
-      dataPath: ["data"],
+      dataPath: ["list"],
     });
     expect(RESUME_SCHEMA.filter((module) => module.key === "custom")).toHaveLength(1);
   });
