@@ -2,12 +2,12 @@
   <el-col :class="{ 'dynamic-form-muted': hiddenState }" :span="getSpan(currentForm.span)">
     <SfFormItem
       :class="['w-full', { 'module-selected-blink': selected }]"
-      :label="layout === 'horizontal' ? undefined : currentForm.label"
+      :label="currentForm.label"
       :prop="getProp(currentForm)"
       :rules="currentForm.rules"
     >
       <!-- 无标签的字段不提供标签插槽，避免渲染出空白标签行 -->
-      <template v-if="currentForm.label && layout !== 'horizontal'" #label>
+      <template v-if="currentForm.label" #label>
         <div class="mb-1 flex h-5 w-full items-center text-sf-base" @click.stop.prevent="">
           <div class="flex flex-1 items-center">
             <SfIcon
@@ -65,8 +65,6 @@ const emit = defineEmits<{
   remove: [];
 }>();
 const rootData: any = inject(DF_ROOT_DATA);
-// Default to the vertical layout when the field has no layout configuration.
-const layout = computed(() => currentForm.ui?.layout ?? "vertical");
 const hiddenBinding = computed(() => currentForm?.ui?.hidden);
 // 表单项直接读取自身的隐藏绑定，避免把 UI 状态传给实际输入组件
 const hidden = computed(() => {
