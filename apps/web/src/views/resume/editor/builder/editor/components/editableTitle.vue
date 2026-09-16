@@ -54,7 +54,7 @@ function handleKeydown(e) {
     <span
       v-if="!isEditing"
       class="border-sf-border cursor-pointer rounded-3xl border border-dashed border-transparent px-1 hover:border-dashed hover:border-sf-theme hover:outline-offset-1"
-      p.prevent="startEdit"
+      @click.stop.prevent="startEdit"
       @focus.stop.prevent
     >
       {{ modelValue }}
