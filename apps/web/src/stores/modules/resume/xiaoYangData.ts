@@ -21,7 +21,7 @@ export const xiaoYangData: any = {
       collapsed: ["1"],
       archived: false,
     },
-    data: [
+    list: [
       {
         ui: {},
         data: {
@@ -53,7 +53,7 @@ export const xiaoYangData: any = {
       collapsed: ["1"],
       archived: false,
     },
-    data: [
+    list: [
       {
         ui: {},
         data: {
@@ -72,7 +72,7 @@ export const xiaoYangData: any = {
       collapsed: ["1"],
       archived: false,
     },
-    data: [
+    list: [
       {
         ui: {},
         data: {
@@ -90,7 +90,7 @@ export const xiaoYangData: any = {
       collapsed: ["1"],
       archived: false,
     },
-    data: [
+    list: [
       {
         ui: {},
         data: {
@@ -117,7 +117,7 @@ export const xiaoYangData: any = {
       hidden: false,
       archived: false,
     },
-    data: [
+    list: [
       {
         ui: {},
         data: {
@@ -134,7 +134,7 @@ export const xiaoYangData: any = {
       hidden: false,
       archived: false,
     },
-    data: [],
+    list: [],
   },
 };
 

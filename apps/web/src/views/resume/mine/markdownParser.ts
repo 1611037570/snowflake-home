@@ -15,7 +15,9 @@ const isRecord = (value: unknown): value is Record<string, any> =>
   value !== null && typeof value === "object" && !Array.isArray(value);
 
 const hasValue = (value: unknown) =>
-  value !== undefined && value !== null && value !== "" &&
+  value !== undefined &&
+  value !== null &&
+  value !== "" &&
   (!Array.isArray(value) || value.length > 0);
 
 // 兼容不同模型协议的文本返回结构，统一取出模型生成的 JSON 文本。
@@ -38,7 +40,10 @@ const extractResponseText = (response: any): string => {
 
 // 去除 Markdown 代码围栏并提取首个 JSON 对象，降低模型额外输出对导入的影响。
 const parseJsonText = (text: string): Record<string, any> => {
-  const normalized = text.trim().replace(/^```(?:json)?\s*/i, "").replace(/\s*```$/i, "");
+  const normalized = text
+    .trim()
+    .replace(/^```(?:json)?\s*/i, "")
+    .replace(/\s*```$/i, "");
   const start = normalized.indexOf("{");
   const end = normalized.lastIndexOf("}");
   if (start < 0 || end <= start) throw new Error("简历解析结果不是有效 JSON");
@@ -51,6 +56,7 @@ const unwrapModuleData = (value: any) =>
   isRecord(value) && Object.prototype.hasOwnProperty.call(value, "data") ? value.data : value;
 
 const pickRecordFields = (value: any, module: ResumeModuleSchema) => {
+  if (isRecord(value?.data)) value = value.data;
   if (!isRecord(value)) return {};
   return Object.fromEntries(
     module.fields
@@ -63,11 +69,12 @@ const pickRecordFields = (value: any, module: ResumeModuleSchema) => {
 const normalizeModuleData = (value: any, module: ResumeModuleSchema) => {
   const rawData = unwrapModuleData(value);
   if (module.kind === "array") {
-    const records = Array.isArray(rawData)
-      ? rawData
-      : isRecord(rawData) && Array.isArray(rawData.list)
-        ? rawData.list
-        : [];
+    const records =
+      isRecord(value) && Array.isArray(value.list)
+        ? value.list
+        : Array.isArray(rawData)
+          ? rawData
+          : [];
     const normalized = records.map((record) => pickRecordFields(record, module));
     return normalized.filter((record) => Object.keys(record).length > 0);
   }
@@ -78,7 +85,8 @@ const normalizeModuleData = (value: any, module: ResumeModuleSchema) => {
 
 // 兼容模型返回完整简历包装层或直接返回模块对象。
 const getSourceData = (parsed: Record<string, any>) => {
-  if (isRecord(parsed.resume)) return isRecord(parsed.resume.data) ? parsed.resume.data : parsed.resume;
+  if (isRecord(parsed.resume))
+    return isRecord(parsed.resume.data) ? parsed.resume.data : parsed.resume;
   if (isRecord(parsed.data)) return parsed.data;
   return parsed;
 };
@@ -90,7 +98,11 @@ const normalizeResumeData = (parsed: Record<string, any>) => {
     const module = MODULE_SCHEMA.get(key)!;
     const normalized = normalizeModuleData(source[key], module);
     if (module.kind === "array" ? normalized.length > 0 : Object.keys(normalized).length > 0) {
-      data[key] = { data: normalized };
+      // 数组模块保存记录列表，每条记录内部继续区分业务 data 与界面 ui
+      data[key] =
+        module.kind === "array"
+          ? { list: normalized.map((record: Record<string, any>) => ({ data: record, ui: {} })) }
+          : { data: normalized };
     }
   });
   if (!data.user) data.user = { data: {} };

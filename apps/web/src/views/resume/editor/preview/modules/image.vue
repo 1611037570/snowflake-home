@@ -18,7 +18,7 @@ const previewLang = inject(
 const imageAlt = computed(() => getPreviewTitle("image", previewLang.value));
 
 // 数组记录统一由 getValidData 过滤并提取业务内容
-const images = computed(() => getValidData(previewData.value?.image?.data || []));
+const images = computed(() => getValidData(previewData.value?.image?.list || []));
 </script>
 
 <template>

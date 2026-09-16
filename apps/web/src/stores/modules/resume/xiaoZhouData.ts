@@ -21,7 +21,7 @@ export const xiaoZhouData: any = {
       collapsed: ["1"],
       archived: false,
     },
-    data: [
+    list: [
       {
         ui: {},
         data: {
@@ -52,7 +52,7 @@ export const xiaoZhouData: any = {
       collapsed: ["1"],
       archived: false,
     },
-    data: [
+    list: [
       {
         ui: {},
         data: {
@@ -70,7 +70,7 @@ export const xiaoZhouData: any = {
       collapsed: ["1"],
       archived: false,
     },
-    data: [
+    list: [
       {
         ui: {},
         data: {
@@ -88,7 +88,7 @@ export const xiaoZhouData: any = {
       hidden: false,
       archived: false,
     },
-    data: [
+    list: [
       {
         ui: {},
         data: {

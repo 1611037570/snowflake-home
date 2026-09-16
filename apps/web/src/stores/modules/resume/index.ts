@@ -115,7 +115,9 @@ export const useResumeStore = defineStore(
           ElMessage.error("浏览器本地存储空间接近上限，请立即导出 JSON 备份并清理图片或旧简历。");
         } else if (nextLevel === "warning") {
           const size = `${(usageBytes / 1024 / 1024).toFixed(1)} MB`;
-          ElMessage.warning(`浏览器本地数据已占用约 ${size}，请及时导出 JSON 备份并清理图片或旧简历。`);
+          ElMessage.warning(
+            `浏览器本地数据已占用约 ${size}，请及时导出 JSON 备份并清理图片或旧简历。`,
+          );
         }
       } catch {
         // 容量检测失败时不影响简历编辑流程
@@ -351,10 +353,10 @@ export const useResumeStore = defineStore(
       if (!addResume(copy, false, false)) return "";
       return list.value[currentCount]?.id || "";
     };
-    // 所有数组模块统一将记录存放在 data
+    // 所有数组模块统一将记录存放在 list
     const resolveModuleRecords = (module: any): any[] | null => {
       if (!module || typeof module !== "object") return null;
-      if (Array.isArray(module.data)) return module.data;
+      if (Array.isArray(module.list)) return module.list;
       return null;
     };
     // 数组型模块新增记录：统一按运行时结构向真实数据追加默认记录

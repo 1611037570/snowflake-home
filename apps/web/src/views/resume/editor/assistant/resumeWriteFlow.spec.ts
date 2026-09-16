@@ -8,7 +8,7 @@ describe("resume write flow", () => {
       user: { ui: { title: "个人信息" }, data: { name: "张三" } },
       work: {
         ui: { title: "工作经历" },
-        data: [
+        list: [
           {
             ui: { collapsed: [] },
             data: {
@@ -31,11 +31,11 @@ describe("resume write flow", () => {
         return true;
       },
       updateRecordField: (module: string, index: number, field: string, value: unknown) => {
-        data[module].data[index].data[field] = value;
+        data[module].list[index].data[field] = value;
         return true;
       },
       addDataRecord: (module: string) =>
-        data[module].data.push({
+        data[module].list.push({
           ui: { collapsed: [] },
           data: {
             name: "",
@@ -45,10 +45,10 @@ describe("resume write flow", () => {
           },
         }) - 1,
       removeDataRecord: (module: string, index: number) =>
-        data[module].data.splice(index, 1).length > 0,
+        data[module].list.splice(index, 1).length > 0,
       moveDataRecord: (module: string, from: number, to: number) => {
-        const [record] = data[module].data.splice(from, 1);
-        data[module].data.splice(to, 0, record);
+        const [record] = data[module].list.splice(from, 1);
+        data[module].list.splice(to, 0, record);
         return true;
       },
     };
@@ -58,7 +58,7 @@ describe("resume write flow", () => {
         user: { title: data.user.ui.title, data: structuredClone(data.user.data) },
         work: {
           title: data.work.ui.title,
-          data: data.work.data.map((record: any) => structuredClone(record.data)),
+          data: data.work.list.map((record: any) => structuredClone(record.data)),
         },
       }),
       applyResumeOperations: apply,
@@ -91,7 +91,7 @@ describe("resume write flow", () => {
     });
     expect(apply).toHaveBeenCalledTimes(1);
     expect(data.user.data.email).toBe("test@example.com");
-    expect(data.work.data[1].data).toMatchObject({
+    expect(data.work.list[1].data).toMatchObject({
       name: "乙公司",
       post: "高级工程师",
       time: ["2025.02", "2026.08"],

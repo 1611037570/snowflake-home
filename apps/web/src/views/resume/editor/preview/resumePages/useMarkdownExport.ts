@@ -84,7 +84,8 @@ const getModuleTitle = (moduleKey: string, moduleData: any, schema: any) => {
 };
 
 const getRecords = (moduleData: any) => {
-  if (Array.isArray(moduleData?.data)) return moduleData.data.map((record: any) => record?.data ?? {});
+  if (Array.isArray(moduleData?.list))
+    return moduleData.list.map((record: any) => record?.data ?? {});
   return moduleData?.data && typeof moduleData.data === "object" ? [moduleData.data] : [];
 };
 

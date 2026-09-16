@@ -12,7 +12,7 @@ const lineHeightValue = inject("lineHeightValue");
 const paragraphSpacingStyle = inject("paragraphSpacingStyle");
 
 // 数组记录统一由 getValidData 过滤并提取业务内容
-const video = computed(() => getValidData(previewData.value?.video?.data || []));
+const video = computed(() => getValidData(previewData.value?.video?.list || []));
 </script>
 
 <template>

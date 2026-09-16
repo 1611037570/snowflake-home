@@ -33,7 +33,7 @@ export function getResumeTitle(resumeItem: any) {
   }
   const { user, education } = resumeItem.data || {};
   const name = user?.data?.name || "";
-  const edu = education?.data?.[0]?.data?.education || "";
+  const edu = education?.list?.[0]?.data?.education || "";
   const position = user?.data?.position || "";
   const years = calcWorkYears(user?.data?.workTime);
   const experience = years ? `${years}年经验` : "";
