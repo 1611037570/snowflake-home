@@ -173,9 +173,14 @@ onMounted(async () => {
   }
   // 初始化拖拽
   draggable = useDraggable(row, sortableFields, {
-    animation: 150,
+    animation: 300,
+    easing: "cubic-bezier(.2, .8, .2, 1)",
     ghostClass: "ghost",
     handle: items.value?.dragClass || "",
+    // 用克隆体跟手拖拽，才能给拖拽中的模块加缩放与投影
+    forceFallback: true,
+    fallbackClass: "df-drag-fallback",
+    fallbackOnBody: true,
     // 固定模块不可被其它模块越过或交换
     onMove: (evt) => !evt.related?.dataset?.fixed,
     onStart() {
@@ -194,10 +199,17 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
+/* 拖拽时原位仅保留占位高度，视觉上不可见 */
 .ghost {
-  opacity: 0.5;
-  background: #c8ebfb;
+  opacity: 0;
+}
+
+/* 跟手拖拽的克隆体：抬升并微放大，位移由 Sortable 每帧写入 matrix 控制 */
+.df-drag-fallback {
+  transform: scale(1.03);
   border-radius: 20px;
+  opacity: 1 !important;
+  box-shadow: 0 14px 30px rgba(17, 24, 39, 0.18);
 }
 
 .drag-container-active {

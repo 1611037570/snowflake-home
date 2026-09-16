@@ -82,8 +82,13 @@ const getPathContext = (index: number): DataPathContext | undefined => {
 const draggable = useDraggable(null, records, {
   immediate: false,
   handle: currentForm.value?.dragClass || "",
-  animation: 150,
+  animation: 300,
+  easing: "cubic-bezier(.2, .8, .2, 1)",
   ghostClass: "ghost",
+  // 用克隆体跟手拖拽，才能给拖拽中的条目加缩放与投影
+  forceFallback: true,
+  fallbackClass: "df-drag-fallback",
+  fallbackOnBody: true,
   onStart: (e) => {
     e.stopPropagation();
     isDragging.value = true;
@@ -137,10 +142,17 @@ provide(DF_CURRENT_TYPE, "array");
 </script>
 
 <style scoped>
+/* 拖拽时原位仅保留占位高度，视觉上不可见 */
 .ghost {
-  opacity: 0.5;
-  background: #c8ebfb;
+  opacity: 0;
+}
+
+/* 跟手拖拽的克隆体：抬升并微放大，位移由 Sortable 每帧写入 matrix 控制 */
+.df-drag-fallback {
+  transform: scale(1.03);
   border-radius: 12px;
+  opacity: 1 !important;
+  box-shadow: 0 14px 30px rgba(17, 24, 39, 0.18);
 }
 .drag-array-active {
   position: relative;
