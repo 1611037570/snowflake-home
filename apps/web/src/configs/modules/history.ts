@@ -13,8 +13,13 @@ export const historyList = [
     desc: "未完待续",
   },
   {
-    time: "2026-09-03",
-    desc: "发布轻舟简历V1.0——以此简历 渡万重山",
+    time: "2026-09-16",
+    desc: "全新域名qzresume.com上线——敬贺共庆平陆运河通航；轻舟入海，齐赴职场新程。",
+    url: "/resume",
+  },
+  {
+    time: "2026-08-15",
+    desc: "发布轻舟简历V1.0——一叶轻舟 渡你过万重山",
     url: "/resume",
   },
   {
