@@ -258,12 +258,12 @@ export function useRowInfo(
     scheduled = true;
     debouncedMeasure();
   };
-  // 防抖处理，避免连续 DOM 变化时高频执行测量（缩略图静态数据可配 0 立即测量）
+  // 按短窗口合并连续 DOM 变化，避免配置拖动时高频测量造成可见布局抖动
   // 测量真正执行前先恢复可调度状态，保证同批次内只测一次
   const debouncedMeasure = useDebounceFn(() => {
     scheduled = false;
     measure();
-  }, options?.debounce ?? 100);
+  }, options?.debounce ?? 0);
 
   const stopWatchRoot = watch(rootRef, () => scheduleMeasure(), { immediate: true });
   // 容器尺寸变化（如缩放）时重新测量；编辑器常驻测量时尺寸变化均伴随内容 DOM 变更
@@ -281,7 +281,8 @@ export function useRowInfo(
     subtree: true,
   });
   // 样式配置（字号/行高/内边距）变化会改变高度，需重新测量
-  const stopWatchOptions = watch(watchOptions, () => scheduleMeasure());
+  // 等可见预览先完成样式更新，再读取隐藏测量容器，避免前后两帧使用不同布局
+  const stopWatchOptions = watch(watchOptions, () => scheduleMeasure(), { flush: "post" });
   // 冻结后释放全部监听（含行级观察），避免缩略图测量完成后空跑
   stopAll = () => {
     stopWatchRoot();
