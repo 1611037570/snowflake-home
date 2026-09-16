@@ -5,10 +5,8 @@ import {
   moveArrayRecord,
   removeArrayRecord,
 } from "@/components/business/dynamicForm/code/arrayData";
-import {
-  getPrimaryModelBinding,
-  walkFormFields,
-} from "@/components/business/dynamicForm/code/schemaAccess";
+import { getFieldDataPath } from "@/components/business/dynamicForm/code/fieldData";
+import { walkFormFields } from "@/components/business/dynamicForm/code/schemaAccess";
 import { createDataPathContext } from "@/components/business/dynamicForm/code/pathContext";
 import router from "@/routers";
 import { useAiStore } from "@/stores/modules/ai";
@@ -382,13 +380,8 @@ export const useResumeStore = defineStore(
       let result: any;
       walkFormFields(moduleField, (item) => {
         if (result || item.addable !== true) return;
-        const source = getPrimaryModelBinding(item)?.source;
-        if (
-          Array.isArray(source) &&
-          source.length === 2 &&
-          source[0] === "data" &&
-          source[1] === field
-        ) {
+        const source = getFieldDataPath(item);
+        if (source?.length === 2 && source[0] === "data" && source[1] === field) {
           result = item;
         }
       });

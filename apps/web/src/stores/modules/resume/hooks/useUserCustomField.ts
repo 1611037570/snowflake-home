@@ -22,11 +22,6 @@ export function createUserCustomField(key: string, label: string): GroupFormFiel
     },
     // 字段状态绑定到包裹组，供包裹组件双向绑定
     model: [
-      // 数据绑定同步声明，供添加/移除与进度统计定位字段
-      {
-        source: ["data", key],
-        prop: "modelValue",
-      },
       {
         source: ["ui", key, "hidden"],
         prop: "hidden",

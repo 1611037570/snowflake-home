@@ -101,11 +101,6 @@ export const DEFAULT_USER_FORM = [
         },
         // 字段状态绑定到包裹组，供包裹组件双向绑定
         model: [
-          // 数据绑定同步声明，供添加/移除与进度统计定位字段
-          {
-            source: ["data", "name"],
-            prop: "modelValue",
-          },
           {
             source: ["ui", "name", "hidden"],
             prop: "hidden",
@@ -161,11 +156,6 @@ export const DEFAULT_USER_FORM = [
         },
         // 字段状态绑定到包裹组，供包裹组件双向绑定
         model: [
-          // 数据绑定同步声明，供添加/移除与进度统计定位字段
-          {
-            source: ["data", "birthday"],
-            prop: "modelValue",
-          },
           {
             source: ["ui", "birthday", "hidden"],
             prop: "hidden",
@@ -212,11 +202,6 @@ export const DEFAULT_USER_FORM = [
         },
         // 字段状态绑定到包裹组，供包裹组件双向绑定
         model: [
-          // 数据绑定同步声明，供添加/移除与进度统计定位字段
-          {
-            source: ["data", "sex"],
-            prop: "modelValue",
-          },
           {
             source: ["ui", "sex", "hidden"],
             prop: "hidden",
@@ -268,11 +253,6 @@ export const DEFAULT_USER_FORM = [
         },
         // 字段状态绑定到包裹组，供包裹组件双向绑定
         model: [
-          // 数据绑定同步声明，供添加/移除与进度统计定位字段
-          {
-            source: ["data", "position"],
-            prop: "modelValue",
-          },
           {
             source: ["ui", "position", "hidden"],
             prop: "hidden",
@@ -318,11 +298,6 @@ export const DEFAULT_USER_FORM = [
         addable: true,
         // 字段状态绑定到包裹组，供包裹组件双向绑定
         model: [
-          // 数据绑定同步声明，供添加/移除与进度统计定位字段
-          {
-            source: ["data", "workTime"],
-            prop: "modelValue",
-          },
           {
             source: ["ui", "workTime", "hidden"],
             prop: "hidden",
@@ -391,11 +366,6 @@ export const DEFAULT_USER_FORM = [
             },
             // 字段状态绑定到包裹组，供包裹组件双向绑定
             model: [
-              // 数据绑定同步声明，供添加/移除与进度统计定位字段
-              {
-                source: ["data", "phone"],
-                prop: "modelValue",
-              },
               {
                 source: ["ui", "phone", "hidden"],
                 prop: "hidden",
@@ -455,11 +425,6 @@ export const DEFAULT_USER_FORM = [
             addable: true,
             // 字段状态绑定到包裹组，供包裹组件双向绑定
             model: [
-              // 数据绑定同步声明，供添加/移除与进度统计定位字段
-              {
-                source: ["data", "email"],
-                prop: "modelValue",
-              },
               {
                 source: ["ui", "email", "hidden"],
                 prop: "hidden",
@@ -521,11 +486,6 @@ export const DEFAULT_USER_FORM = [
             addable: true,
             // 字段状态绑定到包裹组，供包裹组件双向绑定
             model: [
-              // 数据绑定同步声明，供添加/移除与进度统计定位字段
-              {
-                source: ["data", "wechat"],
-                prop: "modelValue",
-              },
               {
                 source: ["ui", "wechat", "hidden"],
                 prop: "hidden",
@@ -579,11 +539,6 @@ export const DEFAULT_USER_FORM = [
             addable: true,
             // 字段状态绑定到包裹组，供包裹组件双向绑定
             model: [
-              // 数据绑定同步声明，供添加/移除与进度统计定位字段
-              {
-                source: ["data", "github"],
-                prop: "modelValue",
-              },
               {
                 source: ["ui", "github", "hidden"],
                 prop: "hidden",
@@ -637,11 +592,6 @@ export const DEFAULT_USER_FORM = [
             addable: true,
             // 字段状态绑定到包裹组，供包裹组件双向绑定
             model: [
-              // 数据绑定同步声明，供添加/移除与进度统计定位字段
-              {
-                source: ["data", "status"],
-                prop: "modelValue",
-              },
               {
                 source: ["ui", "status", "hidden"],
                 prop: "hidden",
@@ -702,11 +652,6 @@ export const DEFAULT_USER_FORM = [
             addable: true,
             // 字段状态绑定到包裹组，供包裹组件双向绑定
             model: [
-              // 数据绑定同步声明，供添加/移除与进度统计定位字段
-              {
-                source: ["data", "political"],
-                prop: "modelValue",
-              },
               {
                 source: ["ui", "political", "hidden"],
                 prop: "hidden",
@@ -767,11 +712,6 @@ export const DEFAULT_USER_FORM = [
             addable: true,
             // 字段状态绑定到包裹组，供包裹组件双向绑定
             model: [
-              // 数据绑定同步声明，供添加/移除与进度统计定位字段
-              {
-                source: ["data", "city"],
-                prop: "modelValue",
-              },
               {
                 source: ["ui", "city", "hidden"],
                 prop: "hidden",
@@ -823,11 +763,6 @@ export const DEFAULT_USER_FORM = [
             addable: true,
             // 字段状态绑定到包裹组，供包裹组件双向绑定
             model: [
-              // 数据绑定同步声明，供添加/移除与进度统计定位字段
-              {
-                source: ["data", "nativePlace"],
-                prop: "modelValue",
-              },
               {
                 source: ["ui", "nativePlace", "hidden"],
                 prop: "hidden",
@@ -879,11 +814,6 @@ export const DEFAULT_USER_FORM = [
             addable: true,
             // 字段状态绑定到包裹组，供包裹组件双向绑定
             model: [
-              // 数据绑定同步声明，供添加/移除与进度统计定位字段
-              {
-                source: ["data", "heightWeight"],
-                prop: "modelValue",
-              },
               {
                 source: ["ui", "heightWeight", "hidden"],
                 prop: "hidden",
