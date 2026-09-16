@@ -1,6 +1,7 @@
 import { storeToRefs } from "pinia";
+import { getFieldDataPath } from "@/components/business/dynamicForm/code/fieldData";
 import { getFieldLabel } from "@/components/business/dynamicForm/code/schemaAccess";
-import { getModelBindings, walkFormFields } from "@/components/business/dynamicForm";
+import { walkFormFields } from "@/components/business/dynamicForm";
 import { useResumeStore } from "@/stores";
 import { allConfig } from "@/stores/modules/resume/formConfig";
 import { getExportFileName, resumeTitle } from "../../resumeName";
@@ -39,24 +40,16 @@ const formatText = (value: unknown) => {
     .trim();
 };
 
-const getDataKey = (binding: any) => {
-  const source = binding?.source;
-  // 原始字典绑定不属于简历数据，其余字段兼容顶层绝对路径和子项相对路径
-  if (binding?.raw || !Array.isArray(source)) return "";
-  const key = source[source.length - 1];
-  return key || "";
-};
-
 const collectFieldDefinitions = (fields: any[], definitions: FieldDefinition[]) => {
   walkFormFields(fields, (field) => {
-    getModelBindings(field).forEach((binding) => {
-      const key = getDataKey(binding);
-      if (!key || ["collapsed", "hidden", "archived", "icon"].includes(key)) return;
-      if (definitions.some((item) => item.key === key)) return;
-      definitions.push({
-        key,
-        label: getFieldLabel(field) || FIELD_LABELS[key] || key,
-      });
+    // 字段包裹组按被包裹字段定位数据，名称取包裹组声明
+    const path = getFieldDataPath(field);
+    const key = path?.[path.length - 1];
+    if (!key || ["collapsed", "hidden", "archived", "icon"].includes(key)) return;
+    if (definitions.some((item) => item.key === key)) return;
+    definitions.push({
+      key,
+      label: getFieldLabel(field) || FIELD_LABELS[key] || key,
     });
   });
 };

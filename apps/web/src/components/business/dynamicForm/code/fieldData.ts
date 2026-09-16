@@ -8,16 +8,26 @@ type DataContainer = Record<string, any>;
 const isDataContainer = (value: unknown): value is DataContainer =>
   value !== null && typeof value === "object";
 
-// 按当前记录上下文解析字段的完整数据路径
-function resolveFieldDataPath(field: FormField, context?: DataPathContext): DataPath | undefined {
-  const source = getPrimaryModelBinding(field)?.source;
+// 字段包裹组：唯一子字段为输入字段、且名称由包裹组声明的分组，自身不承载数据
+export function unwrapField(field: FormField | undefined): FormField | undefined {
+  if (field?.type !== "group" || field.fields?.length !== 1) return field;
+  if (!field.props?.label) return field;
+  return field.fields[0]?.type === "object" ? field.fields[0] : field;
+}
+
+// 按当前记录上下文解析字段的完整数据路径：字段包裹组按被包裹字段解析
+export function getFieldDataPath(
+  field: FormField,
+  context?: DataPathContext,
+): DataPath | undefined {
+  const source = getPrimaryModelBinding(unwrapField(field))?.source;
   if (!source?.length) return;
   return resolveDataPath(source, context);
 }
 
 // 使用字段主数据路径作为稳定标识，不额外维护字段标识
 export function getFieldDataKey(field: FormField, context?: DataPathContext): string | undefined {
-  const path = resolveFieldDataPath(field, context);
+  const path = getFieldDataPath(field, context);
   return path?.length ? path.join(".") : undefined;
 }
 
@@ -27,7 +37,7 @@ export function hasFieldData(
   field: FormField,
   context?: DataPathContext,
 ): boolean {
-  const path = resolveFieldDataPath(field, context);
+  const path = getFieldDataPath(field, context);
   if (!path || !isDataContainer(rootData)) return false;
 
   let current: unknown = rootData;
@@ -51,8 +61,8 @@ export function addFieldData(
   field: FormField,
   context?: DataPathContext,
 ): boolean {
-  const binding = getPrimaryModelBinding(field);
-  const path = resolveFieldDataPath(field, context);
+  const binding = getPrimaryModelBinding(unwrapField(field));
+  const path = getFieldDataPath(field, context);
   if (!binding || !path || !isDataContainer(rootData) || hasFieldData(rootData, field, context)) {
     return false;
   }
@@ -81,7 +91,7 @@ export function removeFieldData(
   field: FormField,
   context?: DataPathContext,
 ): boolean {
-  const path = resolveFieldDataPath(field, context);
+  const path = getFieldDataPath(field, context);
   if (!path || !isDataContainer(rootData)) return false;
 
   let current: DataContainer = rootData;

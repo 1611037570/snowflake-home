@@ -1,4 +1,5 @@
 import { toValue, type MaybeRefOrGetter } from "vue";
+import { unwrapField } from "@/components/business/dynamicForm/code/fieldData";
 import { getFieldLabel } from "@/components/business/dynamicForm/code/schemaAccess";
 import {
   createDataPathContext,
@@ -117,8 +118,8 @@ function analyzeModule(moduleConfig: any, rootData: any) {
       continue;
     }
 
-    // 字段被字段包裹组件包裹时，必填与数据路径以内层字段为准
-    const target = field?.component === "fieldItem" ? field.fields?.[0] : field;
+    // 字段被包裹组件包裹时，必填与数据路径以内层字段为准
+    const target = unwrapField(field) ?? field;
     if (target?.required !== true) continue;
     const { src, prop } = getFieldMeta(target);
     if (!src.length) continue;

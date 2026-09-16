@@ -1,3 +1,4 @@
+import { unwrapField } from "@/components/business/dynamicForm/code/fieldData";
 import {
   getFieldLabel,
   getModelBindings,
@@ -91,21 +92,24 @@ const collectFields = (
   const visit = (current: FormField | FormField[] | undefined, inheritedRequired = false) => {
     const fields = Array.isArray(current) ? current : current ? [current] : [];
     fields.forEach((field) => {
-      const required = isRequired(field, inheritedRequired);
-      const format = getFormat(field);
-      const optionValues = getOptionValues(field, options);
-      getModelBindings(field).forEach((binding) => {
+      // 字段包裹组：名称在包裹组上，其余配置以内层字段为准
+      const target = unwrapField(field) ?? field;
+      const wrapped = target !== field;
+      const required = isRequired(target, inheritedRequired);
+      const format = getFormat(target);
+      const optionValues = getOptionValues(target, options);
+      getModelBindings(target).forEach((binding) => {
         if (binding.raw || !acceptBinding(binding)) return;
         const key = binding.source[binding.source.length - 1];
         if (!key || RESERVED_FIELDS.has(key)) return;
         const next: ResumeFieldSchema = {
           key,
-          label: getFieldLabel(field) || key,
+          label: getFieldLabel(field) || getFieldLabel(target) || key,
           path: [...binding.source],
-          component: field.component,
-          valueType: getValueType(field, binding, format),
+          component: target.component,
+          valueType: getValueType(target, binding, format),
           required,
-          addable: field.addable === true,
+          addable: target.addable === true,
           format,
           options: optionValues,
         };
@@ -126,6 +130,8 @@ const collectFields = (
           options: next.options ?? previous.options,
         };
       });
+      // 已用被包裹字段展开时不再递归，避免重复登记
+      if (wrapped) return;
       visit(field.fields, required);
       visit(field.itemSchema, required);
     });

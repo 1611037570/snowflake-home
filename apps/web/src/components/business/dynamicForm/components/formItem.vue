@@ -49,10 +49,10 @@
 
 <script setup lang="ts">
 import { computed, inject } from "vue";
+import { getFieldDataPath } from "../code/fieldData";
 import { isFieldHidden } from "../code/fieldVisible";
 import { DF_ROOT_DATA } from "../code/injectionKeys";
-import { resolveDataPath, type DataPathContext } from "../code/pathContext";
-import { getPrimaryModelBinding } from "../code/schemaAccess";
+import type { DataPathContext } from "../code/pathContext";
 
 const { pathContext, currentForm, selected, draggable, dragClass } = defineProps<{
   currentForm: any;
@@ -87,11 +87,8 @@ const toggleHidden = () => {
 };
 // 删除当前可添加字段
 const removeField = () => emit("remove");
-// 由当前上下文中的完整数据绑定路径推导表单校验属性
-const getProp = (currentForm: any) => {
-  const source = getPrimaryModelBinding(currentForm)?.source;
-  return Array.isArray(source) ? resolveDataPath(source, pathContext).join(".") : undefined;
-};
+// 由当前上下文中的完整数据路径推导表单校验属性
+const getProp = (field: any) => getFieldDataPath(field, pathContext)?.join(".");
 // 处理span值
 const getSpan = (span: number | string | undefined) => {
   // 转换为数字
