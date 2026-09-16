@@ -1,8 +1,8 @@
 import { toValue, type MaybeRefOrGetter } from "vue";
+import { getFieldLabel } from "@/components/business/dynamicForm/code/schemaAccess";
 import {
   createDataPathContext,
   getArrayDataPath,
-  getFieldLabel,
   getModelBindings,
   resolveDataPath,
   walkFormFields,
