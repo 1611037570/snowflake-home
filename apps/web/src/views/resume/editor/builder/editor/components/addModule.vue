@@ -87,16 +87,17 @@ const handleConfirm = () => {
     <div>增加模块</div>
   </header>
 
-  <div class="grid grid-cols-2 gap-2">
+  <div class="flex flex-wrap gap-3">
     <button
       v-for="item in moduleOptions"
       :key="item.name"
       type="button"
-      class="group flex h-10 cursor-pointer items-center justify-center gap-2 rounded-3xl border border-sf-b bg-sf-bg px-3 text-sm font-medium text-sf-text-2 transition-all duration-200 hover:bg-sf-theme"
+      class="border-sf-border flex h-9 cursor-pointer items-center justify-center gap-3 rounded-3xl border bg-sf-primary px-3 text-sm text-sf-text-2 transition-colors hover:border-sf-theme hover:text-sf-theme"
+      :class="item.value === 'custom' ? 'border-dashed' : ''"
       @click="handleAdd(item)"
     >
-      <SfIcon icon="ic:round-add" size="5" class="text-sf-text-3 group-hover:text-sf-primary" />
-      <span class="truncate group-hover:text-sf-primary">
+      <SfIcon icon="ic:round-add" size="4" />
+      <span>
         {{ item.name }}
       </span>
     </button>
