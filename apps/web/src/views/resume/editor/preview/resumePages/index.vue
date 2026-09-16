@@ -5,7 +5,7 @@
 import { computed, provide, ref } from "vue";
 import { isFieldHidden } from "@/components/business/dynamicForm/code/fieldVisible";
 import { createDataPathContext } from "@/components/business/dynamicForm/code/pathContext";
-import { getPrimaryModelBinding } from "@/components/business/dynamicForm/code/schemaAccess";
+import { getFieldLabel } from "@/components/business/dynamicForm/code/schemaAccess";
 import { expandConfigFields } from "@/stores/modules/resume/hooks/useConfigTemplate";
 import MeasureContent from "../components/measureContent.vue";
 import PreviewSinglePage from "./previewSinglePage.vue";
@@ -89,10 +89,9 @@ const userHiddenFields = computed(() => {
   const collectFields = (fields = []) => {
     fields.forEach((field) => {
       if (field.type === "group") collectFields(field.fields);
-      const source = getPrimaryModelBinding(field)?.source;
-      const key = field.key ?? (Array.isArray(source) ? source[source.length - 1] : undefined);
-      if (key && field.checks?.hidden && isFieldHidden(props.item.data, field, userContext)) {
-        hiddenFields.add(key);
+      // 字段标识统一由字段或包裹组件声明
+      if (field.key && field.checks?.hidden && isFieldHidden(props.item.data, field, userContext)) {
+        hiddenFields.add(field.key);
       }
     });
   };
@@ -120,8 +119,8 @@ const userFieldLabels = computed(() => {
   const collectFields = (fields = []) => {
     fields.forEach((field) => {
       if (field.type === "group") collectFields(field.fields);
-      // 字段名称由字段或包裹组件声明，两者都参与收集
-      const label = field.label || field.props?.label;
+      // 字段名称由字段或包裹组件声明
+      const label = getFieldLabel(field);
       if (field.key && label) labels.set(field.key, label);
     });
   };

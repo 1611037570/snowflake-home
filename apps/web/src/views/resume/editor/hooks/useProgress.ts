@@ -2,6 +2,7 @@ import { toValue, type MaybeRefOrGetter } from "vue";
 import {
   createDataPathContext,
   getArrayDataPath,
+  getFieldLabel,
   getModelBindings,
   resolveDataPath,
   walkFormFields,
@@ -30,7 +31,7 @@ const isContentEmpty = (val: any): boolean => {
 };
 
 const getLabel = (field: any, prop: string): string =>
-  field?.label || field?.props?.label || field?.name || prop || "字段";
+  getFieldLabel(field) || field?.name || prop || "字段";
 
 // 模块名称优先读取 ui.title，缺失时回退标题模型默认值
 const getModuleTitle = (config: any, rootData: Record<string, any>, key: string): string =>
