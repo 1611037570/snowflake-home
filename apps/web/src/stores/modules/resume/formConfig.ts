@@ -408,6 +408,43 @@ export const DEFAULT_USER_FORM = [
               clearable: true,
             },
           },
+          // GitHub
+          {
+            type: "object",
+            key: "github",
+            label: "GitHub",
+            component: "input",
+            span: 24,
+            addable: true,
+            ui: {
+              layout: "horizontal",
+              icon: {
+                source: ["ui", "github", "icon"],
+                prop: "icon",
+                defaultValue: "simple-icons:github",
+              },
+              hidden: {
+                source: ["ui", "github", "hidden"],
+                prop: "hidden",
+                defaultValue: false,
+              },
+              removable: true,
+            },
+            checks: {
+              hidden: {
+                path: ["ui", "github", "hidden"],
+                equals: true,
+              },
+            },
+            model: {
+              source: ["data", "github"],
+              prop: "modelValue",
+            },
+            props: {
+              placeholder: "请输入 GitHub 地址",
+              clearable: true,
+            },
+          },
           // 求职状态
           {
             type: "object",
