@@ -11,8 +11,11 @@ import RevealGrid from "../components/revealGrid.vue";
 import ImportResume from "./components/importResume.vue";
 import SendResume from "@/views/resume/components/sendResume/index.vue";
 import CreateResume from "./components/createResume.vue";
+import { ElNotification } from "element-plus";
 // 草稿预览复用模板页专用全屏预览组件，保持两处预览布局一致。
-const TemplatePreview = markRaw(defineAsyncComponent(() => import("../template/templatePreview.vue")));
+const TemplatePreview = markRaw(
+  defineAsyncComponent(() => import("../template/templatePreview.vue")),
+);
 
 const router = useRouter();
 
@@ -51,11 +54,6 @@ const getLastUseTime = (item) => {
 const getResumePosition = (item) => {
   return item?.data?.user?.data?.position || "未填写求职岗位";
 };
-const getProgressClass = (progress) => {
-  if (progress < 40) return "bg-sf-error";
-  if (progress < 60) return "bg-sf-warning";
-  return "bg-sf-theme";
-};
 
 // 导出指定简历的完整 JSON 配置，支持后续无损导入恢复。
 const exportJson = (item) => {
@@ -79,8 +77,25 @@ const closePreview = () => {
   previewItem.value = null;
 };
 
+// 复制指定简历：复用 store 深拷贝逻辑创建独立新简历，并提示复制结果。
+const copyResume = (item) => {
+  const copiedId = resumeStore.duplicateResume(item);
+  if (!copiedId) return;
+  ElNotification({
+    title: "复制成功",
+    message: "已创建一份新的简历",
+    position: "top-right",
+    offset: 40,
+  });
+};
+
 // 草稿卡片操作菜单。
 const getActionList = (item) => [
+  {
+    name: "复制",
+    icon: "lucide:copy",
+    fn: () => copyResume(item),
+  },
   {
     name: "导出 JSON",
     icon: "fa6-solid:file-export",
@@ -125,7 +140,6 @@ const handleClearTrash = () => {
     resumeStore.clearTrash();
   });
 };
-
 </script>
 
 <template>
@@ -154,13 +168,7 @@ const handleClearTrash = () => {
           <ImportResume />
           <SendResume />
         </template>
-        <SfButton
-          v-else
-          plain
-          type="error"
-          icon="lucide:trash-2"
-          @click="handleClearTrash"
-        >
+        <SfButton v-else plain type="error" icon="lucide:trash-2" @click="handleClearTrash">
           全部删除
         </SfButton>
       </div>
