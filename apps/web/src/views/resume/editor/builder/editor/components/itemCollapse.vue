@@ -41,7 +41,13 @@ function del() {
           <div
             class="flex items-center opacity-0 transition-all duration-300 group-hover:opacity-100"
           >
-            <Icon :icon="hidden ? 'lucide:eye' : 'lucide:eye-off'" @click.stop="hidden = !hidden" />
+            <SfTooltip :content="hidden ? '显示' : '隐藏'">
+              <Icon
+                :icon="hidden ? 'lucide:eye' : 'lucide:eye-off'"
+                @click.stop="hidden = !hidden"
+              />
+            </SfTooltip>
+
             <Icon @click.stop="del" icon="ic:round-delete" />
           </div>
         </div>
