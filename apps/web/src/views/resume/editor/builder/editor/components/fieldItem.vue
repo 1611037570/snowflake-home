@@ -51,7 +51,7 @@ const clearField = () => removeField(field.value);
       <slot />
     </div>
     <!-- 操作区固定在右侧，避免字段宽度变化导致按钮位移 -->
-    <div v-if="hidden !== undefined || removable" class="flex shrink-0 items-center gap-1">
+    <div v-if="hidden !== undefined || removable" class="flex shrink-0 items-center">
       <Icon
         v-if="hidden !== undefined"
         @click="toggleHidden"
