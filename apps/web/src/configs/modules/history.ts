@@ -14,7 +14,7 @@ export const historyList = [
   },
   {
     time: "2026-09-16",
-    desc: "全新域名qzresume.com上线——敬贺共庆平陆运河通航；轻舟入海，齐赴职场新程。",
+    desc: "全新域名qzresume.com上线——敬贺平陆运河通航；轻舟入海，开启职场新程。",
     url: "/resume",
   },
   {
