@@ -32,7 +32,7 @@ const clearField = () => removeField(field.value);
 </script>
 
 <template>
-  <div v-if="renderable" class="flex w-full items-center">
+  <div v-if="renderable" class="flex w-full items-center gap-1">
     <div v-if="label" class="flex shrink-0 items-center" @click.stop.prevent="">
       <Icon v-if="draggable" icon="icon-park-outline:drag" class="item-drag cursor-move!" />
       <SfIconPicker
@@ -47,7 +47,7 @@ const clearField = () => removeField(field.value);
       </span>
       <sf-tooltip :content="tip" v-if="tip" class="text-sf-text" />
     </div>
-    <div class="ml-1 min-w-0 flex-1">
+    <div class="min-w-0 flex-1">
       <slot />
     </div>
     <!-- 操作区固定在右侧，避免字段宽度变化导致按钮位移 -->
