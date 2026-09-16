@@ -1,5 +1,6 @@
 <script setup>
 import { EXPANDED } from "@/stores/modules/resume/formConfig";
+import Icon from "../icon.vue";
 
 const { proxy } = getCurrentInstance();
 // 记录折叠状态：复用展开常量，随记录数据持久化
@@ -34,27 +35,14 @@ function del() {
       <template #title>
         <div class="group flex h-full w-full items-center justify-between text-sf-text">
           <div class="flex flex-1 items-center text-[15px] font-bold">
-            <SfIcon
-              icon="icon-park-outline:drag"
-              size="4"
-              class="item-drag mr-1 cursor-move!"
-              @click.stop=""
-            />
+            <Icon icon="icon-park-outline:drag" class="item-drag cursor-move!" @click.stop="" />
             {{ displayTitle }}
           </div>
-          <div class="flex items-center">
-            <SfIcon
-              :icon="hidden ? 'lucide:eye' : 'lucide:eye-off'"
-              size="4"
-              class="mr-3 opacity-0 group-hover:opacity-100 hover:text-sf-theme"
-              @click.stop="hidden = !hidden"
-            />
-            <SfIcon
-              @click.stop="del"
-              icon="ic:round-delete"
-              size="4"
-              class="mr-3 opacity-0 group-hover:opacity-100 hover:text-sf-theme"
-            />
+          <div
+            class="flex items-center opacity-0 transition-all duration-300 group-hover:opacity-100"
+          >
+            <Icon :icon="hidden ? 'lucide:eye' : 'lucide:eye-off'" @click.stop="hidden = !hidden" />
+            <Icon @click.stop="del" icon="ic:round-delete" />
           </div>
         </div>
       </template>

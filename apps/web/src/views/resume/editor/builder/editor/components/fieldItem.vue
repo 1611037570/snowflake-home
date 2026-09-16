@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import Icon from "../icon.vue";
 // 包裹组的模型绑定只用于状态透传，不落成根元素属性
 defineOptions({ inheritAttrs: false });
 // 字段包裹组件：定制水平布局的标签与操作区，字段内容通过插槽嵌套
@@ -31,16 +32,9 @@ const clearField = () => removeField(field.value);
 </script>
 
 <template>
-  <div v-if="renderable" class="flex w-full items-center gap-1">
+  <div v-if="renderable" class="flex w-full items-center">
     <div v-if="label" class="flex shrink-0 items-center" @click.stop.prevent="">
-      <SfIcon
-        v-if="draggable"
-        @click.stop=""
-        icon="icon-park-outline:drag"
-        size="4"
-        boxSize="6"
-        class="item-drag mr-1 cursor-move! rounded-xl hover:bg-sf-theme hover:text-sf-theme-text"
-      />
+      <Icon v-if="draggable" icon="icon-park-outline:drag" class="item-drag cursor-move!" />
       <SfIconPicker
         v-if="icon !== undefined"
         :modelValue="icon"
@@ -58,24 +52,12 @@ const clearField = () => removeField(field.value);
     </div>
     <!-- 操作区固定在右侧，避免字段宽度变化导致按钮位移 -->
     <div v-if="hidden !== undefined || removable" class="flex shrink-0 items-center gap-1">
-      <SfIcon
+      <Icon
         v-if="hidden !== undefined"
-        @pointerdown.stop.prevent
-        @click.stop.prevent="toggleHidden"
+        @click="toggleHidden"
         :icon="hidden ? 'lucide:eye' : 'lucide:eye-off'"
-        size="4"
-        boxSize="6"
-        class="cursor-pointer rounded-xl hover:bg-sf-theme hover:text-sf-theme-text"
       />
-      <SfIcon
-        v-if="removable"
-        @pointerdown.stop.prevent
-        @click.stop.prevent="clearField"
-        icon="ic:round-delete"
-        size="4"
-        boxSize="6"
-        class="cursor-pointer rounded-xl hover:bg-sf-theme hover:text-sf-theme-text"
-      />
+      <Icon v-if="removable" @click="clearField" icon="ic:round-delete" />
     </div>
   </div>
 </template>

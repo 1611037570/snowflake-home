@@ -1,7 +1,7 @@
 <script setup>
-import { ref } from "vue";
 import { useResumeStore } from "@/stores";
 import { jumpPreview } from "../../../useModuleNav";
+import Icon from "../icon.vue";
 import EditableTitle from "./editableTitle.vue";
 const { proxy } = getCurrentInstance();
 
@@ -82,46 +82,28 @@ function handleAdd() {
       <template #title>
         <div class="group flex h-full w-full items-center justify-between">
           <div class="flex flex-1 items-center truncate text-lg font-bold">
-            <SfIcon
+            <Icon
               v-if="currentForm.key !== 'user'"
               icon="icon-park-outline:drag"
-              size="4"
-              class="container-drag mr-1 cursor-move!"
-              @click.stop=""
+              class="container-drag cursor-move!"
             />
             <EditableTitle v-model="title" />
           </div>
-          <div class="mr-3 flex items-center gap-3 opacity-0 group-hover:opacity-100">
+          <div class="flex items-center opacity-0 group-hover:opacity-100">
             <SfTooltip content="定位预览" v-if="!hidden">
-              <SfIcon
-                @click.stop="handlePreviewJump"
-                icon="mdi:map-search-outline"
-                size="4"
-                class="cursor-pointer hover:text-sf-theme"
-              />
+              <Icon @click.stop="handlePreviewJump" icon="mdi:map-search-outline" />
             </SfTooltip>
             <SfTooltip :content="hidden ? '显示' : '隐藏'">
-              <SfIcon
-                @click.stop="toggleHidden"
-                :icon="hidden ? 'lucide:eye' : 'lucide:eye-off'"
-                size="4"
-                class="cursor-pointer hover:text-sf-theme"
-              />
+              <Icon @click.stop="toggleHidden" :icon="hidden ? 'lucide:eye' : 'lucide:eye-off'" />
             </SfTooltip>
             <SfTooltip content="归档">
-              <SfIcon
-                @click.stop="archiveModule"
-                icon="lucide:archive"
-                size="4"
-                class="cursor-pointer hover:text-sf-theme"
-              />
+              <Icon @click.stop="archiveModule" icon="lucide:archive" size="4" />
             </SfTooltip>
-            <SfIcon
+            <Icon
               v-if="currentForm.key !== 'user'"
               @click.stop="del"
               icon="ic:round-delete"
               size="4"
-              class="hover:text-sf-theme"
             />
           </div>
         </div>
