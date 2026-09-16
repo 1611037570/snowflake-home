@@ -89,7 +89,9 @@ function handleAdd() {
             />
             <EditableTitle v-model="title" />
           </div>
-          <div class="flex items-center opacity-0 group-hover:opacity-100">
+          <div
+            class="flex items-center opacity-0 transition-all duration-300 group-hover:opacity-100"
+          >
             <SfTooltip content="定位预览" v-if="!hidden">
               <Icon @click.stop="handlePreviewJump" icon="mdi:map-search-outline" />
             </SfTooltip>
