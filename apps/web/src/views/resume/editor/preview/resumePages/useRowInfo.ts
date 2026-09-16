@@ -14,7 +14,7 @@
  *   - 行信息只在"行数或行高发生变化"时才更新，避免不必要的重渲染
  */
 import { unrefElement, useDebounceFn, useMutationObserver, useResizeObserver } from "@vueuse/core";
-import { ref, watch, type Ref, type WatchSource } from "vue";
+import { shallowRef, watch, type Ref, type WatchSource } from "vue";
 
 /** 单个"行"的信息（模块内部的一个 div） */
 export interface RowInfo {
@@ -63,7 +63,8 @@ export function useRowInfo(
   },
 ) {
   const selector = ".resume-module-wrapper";
-  const moduleList = ref<ModuleInfo[]>([]);
+  // 测量结果只做整体替换、内部不被修改，用 shallowRef 避免每次测量为模块/行对象批量创建响应式代理
+  const moduleList = shallowRef<ModuleInfo[]>([]);
   // 替换前的 moduleList 即上一次测量结果，直接作为比较基准，无需额外快照
   // 单次测量模式（缩略图 page=1）：测量成功后冻结，避免测量容器销毁后清空行数据
   let frozen = false;
