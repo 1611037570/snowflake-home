@@ -105,6 +105,8 @@ export const avatarPositionList = [
 ];
 // ===========默认值=====================
 export const defaultThemeColor = themeColors[0].value;
+// 默认自定义页尾品牌名（留空表示使用默认品牌名）
+export const defaultFooter = "";
 // 默认页边距
 export const defaultPadding = 24;
 // 默认字体类型
@@ -140,6 +142,8 @@ export const uiParamRanges = {
 export const DEFAULT_UI = {
   // 简历展示语言（预览区模块标题语言包使用）
   language: "zh",
+  // 自定义页尾品牌名：留空使用默认品牌，页码部分固定展示
+  footer: "",
   // 页边距
   padding: defaultPadding,
   // 字体大小

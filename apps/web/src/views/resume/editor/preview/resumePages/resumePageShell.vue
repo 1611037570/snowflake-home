@@ -41,12 +41,16 @@ const previewLang = inject(
   "previewLang",
   computed(() => "zh"),
 );
-const footerText = computed(() =>
-  getPreviewText("footer", previewLang.value, {
+const footerText = computed(() => {
+  const defaultFooter = getPreviewText("footer", previewLang.value, {
     page: props.pageIndex + 1,
     total: props.pageCount,
-  }),
-);
+  });
+  // 仅品牌名可自定义：用自定义文案替换默认品牌名，页码后缀保持默认格式
+  const customBrand = props.ui.footer?.trim();
+  if (!customBrand) return defaultFooter;
+  return defaultFooter.replace(getPreviewText("brand", previewLang.value), customBrand);
+});
 // ref 就绪或变化后回传根元素
 watch(
   rootEl,
