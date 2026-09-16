@@ -5,8 +5,6 @@ const modelValue = defineModel();
 
 // 是否正在编辑
 const isEditing = ref(false);
-// 输入框引用
-const inputRef = ref();
 // 编辑态输入框容器：用于判断点击是否落在输入框内
 const editBox = ref();
 // 文档级点击监听停止函数
@@ -25,10 +23,10 @@ function startEdit() {
     },
     { capture: true },
   );
-  // 下一帧自动聚焦
+  // 下一帧自动聚焦：直接定位容器内 input，避免依赖组件 expose 的时序
   nextTick(() => {
     setTimeout(() => {
-      inputRef.value?.focus();
+      editBox.value?.querySelector("input")?.focus();
     }, 0);
   });
 }
@@ -68,7 +66,7 @@ outline-offset-3 outline-dashed outline-sf-theme
       v-model="modelValue"
       class="rounded border border-sf-theme outline-none"
       @click.stop.prevent
-      @focus.stop.prevent
+      @focus.stop
       @blur="finishEdit"
       @keydown.stop="handleKeydown"
     />
