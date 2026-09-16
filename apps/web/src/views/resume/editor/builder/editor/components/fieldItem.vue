@@ -47,17 +47,19 @@ const clearField = () => removeField(field.value);
       </span>
       <sf-tooltip :content="tip" v-if="tip" class="text-sf-text" />
     </div>
-    <div class="min-w-0 flex-1">
+    <div class="ml-1 min-w-0 flex-1">
       <slot />
     </div>
     <!-- 操作区固定在右侧，避免字段宽度变化导致按钮位移 -->
     <div v-if="hidden !== undefined || removable" class="flex shrink-0 items-center">
-      <Icon
-        v-if="hidden !== undefined"
-        @pointerdown.stop.prevent
-        @click="toggleHidden"
-        :icon="hidden ? 'lucide:eye' : 'lucide:eye-off'"
-      />
+      <SfTooltip :content="hidden ? '显示' : '隐藏'">
+        <Icon
+          v-if="hidden !== undefined"
+          @pointerdown.stop.prevent
+          @click="toggleHidden"
+          :icon="hidden ? 'lucide:eye' : 'lucide:eye-off'"
+        />
+      </SfTooltip>
       <Icon v-if="removable" @pointerdown.stop.prevent @click="clearField" icon="ic:round-delete" />
     </div>
   </div>
