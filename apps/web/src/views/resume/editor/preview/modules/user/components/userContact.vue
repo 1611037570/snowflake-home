@@ -43,9 +43,11 @@ const layoutClass = computed(() => {
 const hasPhone = computed(() => !isUserFieldHidden("phone") && !!user.value?.phone);
 const hasEmail = computed(() => !isUserFieldHidden("email") && !!user.value?.email);
 const hasWechat = computed(() => !isUserFieldHidden("wechat") && !!user.value?.wechat);
+const hasGithub = computed(() => !isUserFieldHidden("github") && !!user.value?.github);
 const phoneLabel = computed(() => getPreviewText("phoneLabel", previewLang.value));
 const emailLabel = computed(() => getPreviewText("emailLabel", previewLang.value));
 const wechatLabel = computed(() => getPreviewText("wechatLabel", previewLang.value));
+const githubLabel = computed(() => getPreviewText("githubLabel", previewLang.value));
 
 // 第二行展示电话、邮箱及其他个人信息
 const heightWeightText = computed(() => {
@@ -132,6 +134,13 @@ const contactItems = computed(() => {
       key: "wechat",
       icon: fieldIcon("wechat"),
       label: wechatLabel.value,
+    });
+  }
+  if (hasGithub.value) {
+    items.push({
+      key: "github",
+      icon: fieldIcon("github"),
+      label: githubLabel.value,
     });
   }
   const order = new Map(userFieldOrder.value.map((key, index) => [key, index]));
