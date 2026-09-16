@@ -70,7 +70,7 @@ function handleCreateCustomField() {
         v-for="field in availableFields"
         :key="getFieldDataKey(field)"
         type="button"
-        class="border-sf-border flex h-9 cursor-pointer items-center justify-center gap-3 rounded-3xl border bg-sf-primary px-3 text-sm text-sf-text-2 transition-colors hover:border-sf-theme hover:text-sf-theme"
+        class="border-sf-border flex h-9 cursor-pointer items-center justify-center gap-1 rounded-3xl border bg-sf-primary px-3 text-sm text-sf-text-2 transition-colors hover:border-sf-theme hover:text-sf-theme"
         @click="handleAdd(field)"
       >
         <SfIcon icon="ic:round-add" size="4" />
@@ -78,7 +78,7 @@ function handleCreateCustomField() {
       </button>
       <button
         type="button"
-        class="border-sf-border flex h-9 cursor-pointer items-center justify-center gap-3 rounded-3xl border border-dashed bg-sf-primary px-3 text-sm text-sf-text-2 transition-colors hover:border-sf-theme hover:text-sf-theme"
+        class="border-sf-border flex h-9 cursor-pointer items-center justify-center gap-1 rounded-3xl border border-dashed bg-sf-primary px-3 text-sm text-sf-text-2 transition-colors hover:border-sf-theme hover:text-sf-theme"
         @click="handleCreateCustomField"
       >
         <SfIcon icon="ic:round-add" size="4" />
