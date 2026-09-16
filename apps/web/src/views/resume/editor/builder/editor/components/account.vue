@@ -1,5 +1,6 @@
 <script setup>
 import { getCurrentInstance } from "vue";
+import Icon from "../icon.vue";
 
 const { proxy } = getCurrentInstance();
 
@@ -28,15 +29,10 @@ const removeAccount = () => {
 </script>
 
 <template>
-  <div class="flex w-full items-center gap-3">
-    <SfIcon
-      icon="icon-park-outline:drag"
-      size="4"
-      class="item-drag mr-1 cursor-move!"
-      @click.stop=""
-    />
+  <div class="flex w-full items-center">
+    <Icon icon="icon-park-outline:drag" class="item-drag cursor-move!" />
     <!-- 第一个是平台 -->
-    <div class="w-22 min-w-0">
+    <div class="mr-1 w-22 min-w-0">
       <SfInput v-model="name" placeholder="平台" />
     </div>
     <!-- 第二个是网址 -->
@@ -44,19 +40,9 @@ const removeAccount = () => {
       <SfInput v-model="url" placeholder="网址" />
     </div>
     <!-- 隐藏当前社交账号 -->
-    <SfIcon
-      :icon="hidden ? 'lucide:eye' : 'lucide:eye-off'"
-      size="4"
-      class="shrink-0 cursor-pointer rounded-lg transition-colors hover:text-sf-theme"
-      @click.stop="hidden = !hidden"
-    />
+    <Icon :icon="hidden ? 'lucide:eye' : 'lucide:eye-off'" @click.stop="hidden = !hidden" />
     <!-- 删除按钮 -->
-    <SfIcon
-      icon="ic:round-delete"
-      size="4"
-      class="shrink-0 cursor-pointer rounded-lg transition-colors hover:text-sf-theme"
-      @click="removeAccount"
-    />
+    <Icon icon="ic:round-delete" @click="removeAccount" />
   </div>
 </template>
 
