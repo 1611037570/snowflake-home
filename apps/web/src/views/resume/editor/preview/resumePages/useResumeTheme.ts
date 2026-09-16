@@ -91,7 +91,8 @@ export const useResumeTheme = (ui: ComputedRef<ResumeUi>): ResumeTheme => {
     const base = lineHeightStyle.value;
     return () => base;
   });
-  const themeColor = computed(() => ui.value.color || ui.value.themeColor);
+  // 主题色统一读取 ui 的 themeColor
+  const themeColor = computed(() => ui.value.themeColor);
   const themeTemplate = computed(() => ui.value.themeTemplate);
 
   // 个人信息展示模式（图标/文字/隐藏），缺失时回退默认值

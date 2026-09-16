@@ -47,7 +47,7 @@ describe("resumeSchema", () => {
       fields: [
         {
           type: "array",
-          source: ["data"],
+          source: ["list"],
           itemSchema: {
             type: "group",
             required: true,
@@ -67,7 +67,7 @@ describe("resumeSchema", () => {
 
     const schema = buildResumeSchema([{ key: "work", schema: work }]);
 
-    expect(schema[0]).toMatchObject({ kind: "array", dataPath: ["data"] });
+    expect(schema[0]).toMatchObject({ kind: "array", dataPath: ["list"] });
     expect(schema[0]?.fields[0]).toMatchObject({
       key: "time",
       path: ["data", "time"],
