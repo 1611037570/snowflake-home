@@ -154,7 +154,8 @@ export const buildResumeSchema = (
     );
     const kind: ResumeModuleKind = key === "custom" ? "custom" : arrayField ? "array" : "object";
     const titleBinding = getModelBindings(module).find((binding) => binding.prop === "title");
-    const title = String(titleBinding?.defaultValue || module.name || key);
+    // 模块标题取模板声明的标题默认值，缺失时回退模块 key
+    const title = String(titleBinding?.defaultValue || key);
     const fieldSource = arrayField?.itemSchema ?? module.fields;
     const fields = collectFields(fieldSource, options, (binding) =>
       arrayField ? true : binding.source[0] === "data",

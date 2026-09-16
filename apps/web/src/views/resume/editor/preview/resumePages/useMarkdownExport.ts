@@ -55,21 +55,21 @@ const collectFieldDefinitions = (fields: any[], definitions: FieldDefinition[]) 
 };
 
 const getSchema = (moduleKey: string) => {
+  // 运行时配置已按模板展开为完整 schema，未命中时回退模板注册表
   const runtimeField = runtimeConfig.value?.fields?.find((field: any) => field.key === moduleKey);
-  if (runtimeField?.fields || runtimeField?.type) return runtimeField;
+  if (runtimeField) return runtimeField;
   if (moduleKey.startsWith("custom_")) return allConfig.custom;
   return (allConfig as Record<string, any>)[moduleKey];
 };
 
 const getSchemaFields = (schema: any) => (Array.isArray(schema) ? schema : schema?.fields) || [];
 
+// 模块标题：优先模块 ui.title，其次模板声明的标题默认值
 const getModuleTitle = (moduleKey: string, moduleData: any, schema: any) => {
   const normalizedSchema = Array.isArray(schema) ? schema[0] : schema;
   return (
     moduleData?.ui?.title ||
     normalizedSchema?.model?.find((item: any) => item?.prop === "title")?.defaultValue ||
-    normalizedSchema?.name ||
-    normalizedSchema?.props?.name ||
     { user: "个人信息", account: "社交账号", skill: "专业技能", advantage: "个人优势" }[
       moduleKey
     ] ||
@@ -77,9 +77,9 @@ const getModuleTitle = (moduleKey: string, moduleData: any, schema: any) => {
   );
 };
 
+// 数组模块按 list 取记录，对象模块把 data 视为单条记录
 const getRecords = (moduleData: any) => {
-  if (Array.isArray(moduleData?.list))
-    return moduleData.list.map((record: any) => record?.data ?? {});
+  if (Array.isArray(moduleData?.list)) return moduleData.list.map((record: any) => record.data);
   return moduleData?.data && typeof moduleData.data === "object" ? [moduleData.data] : [];
 };
 
@@ -120,8 +120,9 @@ const appendRecord = (
 export const exportMarkdown = (onSuccess?: () => void) => {
   const item = currentItem.value;
   const data = item?.data || {};
+  // 字段配置统一以模块 key 标识
   const configuredKeys = (runtimeConfig.value?.fields || item?.config?.fields || [])
-    .map((field: any) => (typeof field === "string" ? field : field?.key))
+    .map((field: any) => field?.key)
     .filter(Boolean);
   const moduleKeys = [...new Set([...configuredKeys, ...Object.keys(data)])];
   const lines = [`# ${resumeTitle.value}`, ""];

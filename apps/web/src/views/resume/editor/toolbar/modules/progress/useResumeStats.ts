@@ -92,14 +92,11 @@ function computeStats(data: any): ResumeStats {
     if (!module || typeof module !== "object") continue;
     if (!("data" in module || "list" in module)) continue;
 
-    const moduleData = Array.isArray(module.list) ? module.list : module.data;
+    // 对象模块只有 data，数组模块记录只在 list
+    const moduleData = module.list ?? module.data;
     const texts: string[] = [];
 
-    // 提取对象模块 data 或数组模块 list 下的所有文本
-    if (typeof moduleData === "string") {
-      const cleaned = stripHtml(moduleData);
-      if (cleaned) texts.push(cleaned);
-    } else if (Array.isArray(moduleData)) {
+    if (Array.isArray(moduleData)) {
       for (const item of moduleData) {
         collectTexts(item?.data, texts);
       }

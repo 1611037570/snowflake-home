@@ -18,7 +18,7 @@ const archivedList = computed(() => {
 // 悬浮面板显隐状态（popover 渲染到 body，避免被侧栏 overflow 裁剪）
 const panelVisible = ref(false);
 
-// 模块名称：优先 store 映射，其次自定义模块数据里的 name，兜底 key
+// 模块名称：统一走 store 映射（内部读取 data[模块key].ui.title），兜底 key
 const getModuleName = (field) => resumeStore.getModel(field.key)?.name || field.key;
 
 // 恢复单个模块：将归档条件指向的数据置为 false，表单与预览同步恢复渲染

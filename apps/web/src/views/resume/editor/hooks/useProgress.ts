@@ -31,8 +31,7 @@ const isContentEmpty = (val: any): boolean => {
   return val === "<p><br></p>";
 };
 
-const getLabel = (field: any, prop: string): string =>
-  getFieldLabel(field) || field?.name || prop || "字段";
+const getLabel = (field: any, prop: string): string => getFieldLabel(field) || prop || "字段";
 
 // 模块名称优先读取 ui.title，缺失时回退标题模型默认值
 const getModuleTitle = (config: any, rootData: Record<string, any>, key: string): string =>
@@ -85,7 +84,7 @@ function analyzeModule(moduleConfig: any, rootData: any) {
           if (!missing.includes(label)) missing.push(label);
         }
         if (hasRequired) {
-          const groupLabel = itemSchema.name || "内容";
+          const groupLabel = getFieldLabel(itemSchema) || "内容";
           if (!missing.includes(groupLabel)) missing.push(groupLabel);
         }
         continue;

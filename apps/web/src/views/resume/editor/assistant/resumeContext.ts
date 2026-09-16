@@ -51,7 +51,7 @@ export const useResumeContext = () => {
       if (!module || typeof module !== "object" || !("data" in module || "list" in module)) return;
       // 数组记录只向 AI 暴露业务 data，不携带编辑器 ui 状态
       const clone = Array.isArray(module.list)
-        ? module.list.map((record: any) => JSON.parse(JSON.stringify(record?.data ?? {})))
+        ? module.list.map((record: any) => JSON.parse(JSON.stringify(record.data)))
         : JSON.parse(JSON.stringify(module.data));
       const title = module.ui?.title || resumeStore.getModel(key)?.name || key;
       const shouldDesensitize = !desensitizeMode.value.disabled;
