@@ -52,7 +52,13 @@ export const useResumeStore = defineStore(
     const getResumeStorage = (id: string, initialValue: any = null, writeDefaults = false) => {
       const existing = resumeStorageMap.get(id);
       if (existing) return existing;
-      const storage = useIDBKeyval(resumeStorageKey(id), initialValue, { writeDefaults });
+      // 关闭内置深监听自动写入，改由下方防抖手动写入，避免每次按键都触发整份简历的存储写入
+      const storage = useIDBKeyval(resumeStorageKey(id), initialValue, { writeDefaults, deep: false });
+      // 简历内容变化后 200ms 防抖写入 IndexedDB，把连续编辑合并为一次写入
+      const persistResume = debounce(() => {
+        void storage.set(storage.data.value);
+      }, 200);
+      watch(storage.data, persistResume, { deep: true });
       resumeStorageMap.set(id, storage);
       return storage;
     };
