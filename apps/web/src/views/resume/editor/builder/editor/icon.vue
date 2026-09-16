@@ -8,8 +8,9 @@ defineProps({
 
 const emit = defineEmits(["click"]);
 
-function handleClick() {
-  emit("click");
+// 透传原生事件：父级使用 @click.stop 等修饰符时需要事件对象，否则修饰符守卫会报错
+function handleClick(e) {
+  emit("click", e);
 }
 </script>
 
