@@ -43,9 +43,10 @@ function finishEdit() {
 // 卸载时清理文档监听，避免编辑态残留
 onBeforeUnmount(() => stopDocListen?.());
 
-// 处理键盘回车
+// 处理键盘回车：仅在回车时阻止默认行为（避免触发外层表单提交）并退出编辑
 function handleKeydown(e) {
   if (e.key === "Enter") {
+    e.preventDefault();
     finishEdit();
   }
 }
@@ -69,7 +70,7 @@ outline-offset-3 outline-dashed outline-sf-theme
       @click.stop.prevent
       @focus.stop.prevent
       @blur="finishEdit"
-      @keydown.stop.prevent="handleKeydown"
+      @keydown.stop="handleKeydown"
     />
   </div>
 </template>
