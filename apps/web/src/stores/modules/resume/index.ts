@@ -96,38 +96,6 @@ export const useResumeStore = defineStore(
       resumeStorageMap.delete(id);
     };
     let initPromise: Promise<void> | null = null;
-    const STORAGE_WARNING_RATIO = 0.8;
-    const STORAGE_DANGER_RATIO = 0.95;
-    let storageWarningLevel = "";
-    // 检测浏览器本地存储使用量，在接近容量上限时提醒用户
-    const checkResumeStorage = debounce(async () => {
-      try {
-        const estimate = await navigator.storage?.estimate();
-        const quotaBytes = estimate?.quota || 0;
-        const usageBytes = estimate?.usage || 0;
-        if (!quotaBytes) return;
-        const ratio = usageBytes / quotaBytes;
-        const nextLevel =
-          ratio >= STORAGE_DANGER_RATIO
-            ? "danger"
-            : ratio >= STORAGE_WARNING_RATIO
-              ? "warning"
-              : "";
-        if (nextLevel === storageWarningLevel) return;
-        storageWarningLevel = nextLevel;
-        if (nextLevel === "danger") {
-          ElMessage.error("浏览器本地存储空间接近上限，请立即导出 JSON 备份并清理图片或旧简历。");
-        } else if (nextLevel === "warning") {
-          const size = `${(usageBytes / 1024 / 1024).toFixed(1)} MB`;
-          ElMessage.warning(
-            `浏览器本地数据已占用约 ${size}，请及时导出 JSON 备份并清理图片或旧简历。`,
-          );
-        }
-      } catch {
-        // 容量检测失败时不影响简历编辑流程
-      }
-    }, 600);
-    watch([list, trashList], checkResumeStorage, { deep: true, immediate: true });
     // 简历最大数量
     const maxCount = 10;
     // 回收站最大数量
