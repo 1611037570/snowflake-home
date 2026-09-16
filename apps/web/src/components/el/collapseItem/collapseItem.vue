@@ -16,4 +16,9 @@ function changeRef(exports: any) {
 defineExpose({} as ComponentInstance<typeof ElCollapseItem>);
 </script>
 
-<style scoped></style>
+<style scoped>
+/* EP 标题包裹层默认 min-width:auto，长标题会撑破折叠头，这里放开收缩 */
+:deep(.el-collapse-item__title) {
+  min-width: 0;
+}
+</style>
