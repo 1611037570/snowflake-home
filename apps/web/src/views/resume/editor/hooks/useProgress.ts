@@ -30,7 +30,7 @@ const isContentEmpty = (val: any): boolean => {
 };
 
 const getLabel = (field: any, prop: string): string =>
-  field?.label || field?.name || prop || "字段";
+  field?.label || field?.props?.label || field?.name || prop || "字段";
 
 // 模块名称优先读取 ui.title，缺失时回退标题模型默认值
 const getModuleTitle = (config: any, rootData: Record<string, any>, key: string): string =>
@@ -116,8 +116,10 @@ function analyzeModule(moduleConfig: any, rootData: any) {
       continue;
     }
 
-    if (field.required !== true) continue;
-    const { src, prop } = getFieldMeta(field);
+    // 字段被字段包裹组件包裹时，必填与数据路径以内层字段为准
+    const target = field?.component === "fieldItem" ? field.fields?.[0] : field;
+    if (target?.required !== true) continue;
+    const { src, prop } = getFieldMeta(target);
     if (!src.length) continue;
 
     const value = getValueByPath(rootData, resolveDataPath(src, moduleContext));
@@ -129,7 +131,7 @@ function analyzeModule(moduleConfig: any, rootData: any) {
     if (filled) {
       done += 1;
     } else {
-      const label = field.component === "wangEditor" ? "内容" : getLabel(field, prop);
+      const label = target.component === "wangEditor" ? "内容" : getLabel(field, prop);
       if (!missing.includes(label)) missing.push(label);
     }
   }
@@ -162,7 +164,9 @@ function checkTimeline(modules: Array<{ key: string; config: any }>, rootData: a
 
   for (const { key, config } of modules) {
     const arrayField = config.fields?.find((field: any) => field.type === "array");
-    const moduleContext = config.context?.length ? createDataPathContext(config.context) : undefined;
+    const moduleContext = config.context?.length
+      ? createDataPathContext(config.context)
+      : undefined;
     const listPath = getArrayDataPath(arrayField, moduleContext) || [];
     // 时间线记录统一按数组容器声明的数据源读取
     const items = getValueByPath(rootData, listPath);

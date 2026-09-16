@@ -74,7 +74,7 @@ function handleCreateCustomField() {
         @click="handleAdd(field)"
       >
         <SfIcon icon="ic:round-add" size="4" />
-        <span>{{ field.label }}</span>
+        <span>{{ field.props?.label }}</span>
       </button>
       <button
         type="button"

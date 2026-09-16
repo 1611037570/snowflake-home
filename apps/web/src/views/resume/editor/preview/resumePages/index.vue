@@ -90,7 +90,7 @@ const userHiddenFields = computed(() => {
     fields.forEach((field) => {
       if (field.type === "group") collectFields(field.fields);
       const source = getPrimaryModelBinding(field)?.source;
-      const key = Array.isArray(source) ? source[source.length - 1] : undefined;
+      const key = field.key ?? (Array.isArray(source) ? source[source.length - 1] : undefined);
       if (key && field.checks?.hidden && isFieldHidden(props.item.data, field, userContext)) {
         hiddenFields.add(key);
       }
@@ -119,11 +119,10 @@ const userFieldLabels = computed(() => {
   const userField = allModules.value.find((field) => field.key === "user");
   const collectFields = (fields = []) => {
     fields.forEach((field) => {
-      if (field.type === "group") {
-        collectFields(field.fields);
-      } else if (field.key && field.label) {
-        labels.set(field.key, field.label);
-      }
+      if (field.type === "group") collectFields(field.fields);
+      // 字段名称由字段或包裹组件声明，两者都参与收集
+      const label = field.label || field.props?.label;
+      if (field.key && label) labels.set(field.key, label);
     });
   };
   collectFields(userField?.fields);

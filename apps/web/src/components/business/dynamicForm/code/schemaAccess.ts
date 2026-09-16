@@ -15,6 +15,11 @@ export function getPrimaryModelBinding(field: FormField): ModelBinding | undefin
   return bindings.find((binding) => binding.prop === "modelValue") ?? bindings[0];
 }
 
+// 字段显示名称：字段可直接声明，也可由字段包裹组件通过 props 声明
+export function getFieldLabel(field: FormField | null | undefined): string | undefined {
+  return field?.label ?? field?.props?.label;
+}
+
 // 按声明顺序递归遍历普通子字段与数组子项结构
 export function walkFormFields(source: FormFieldSource, visitor: (field: FormField) => void) {
   const fields = Array.isArray(source) ? source : source ? [source] : [];

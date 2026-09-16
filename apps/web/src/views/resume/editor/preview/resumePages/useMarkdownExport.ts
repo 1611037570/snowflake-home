@@ -1,5 +1,5 @@
 import { storeToRefs } from "pinia";
-import { getModelBindings, walkFormFields } from "@/components/business/dynamicForm";
+import { getFieldLabel, getModelBindings, walkFormFields } from "@/components/business/dynamicForm";
 import { useResumeStore } from "@/stores";
 import { allConfig } from "@/stores/modules/resume/formConfig";
 import { getExportFileName, resumeTitle } from "../../resumeName";
@@ -50,11 +50,11 @@ const collectFieldDefinitions = (fields: any[], definitions: FieldDefinition[]) 
   walkFormFields(fields, (field) => {
     getModelBindings(field).forEach((binding) => {
       const key = getDataKey(binding);
-      if (!key || ["collapsed", "hidden", "archived"].includes(key)) return;
+      if (!key || ["collapsed", "hidden", "archived", "icon"].includes(key)) return;
       if (definitions.some((item) => item.key === key)) return;
       definitions.push({
         key,
-        label: field.label || FIELD_LABELS[key] || binding.prop || key,
+        label: getFieldLabel(field) || FIELD_LABELS[key] || key,
       });
     });
   });
