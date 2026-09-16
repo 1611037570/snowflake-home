@@ -29,7 +29,7 @@ const removeAccount = () => {
 </script>
 
 <template>
-  <div class="flex w-full items-center">
+  <div class="flex w-full items-center gap-1">
     <Icon icon="icon-park-outline:drag" class="item-drag cursor-move!" />
     <!-- 第一个是平台 -->
     <div class="mr-1 w-22 min-w-0">
