@@ -73,195 +73,267 @@ export const DEFAULT_USER_FORM = [
             defaultValue: false,
           },
         },
-        model: [
-          {
-            source: ["data", "avatar"],
-            prop: "modelValue",
-          },
-        ],
         checks: {
           hidden: {
             path: ["ui", "avatar", "hidden"],
             equals: true,
           },
         },
+        model: [
+          {
+            source: ["data", "avatar"],
+            prop: "modelValue",
+          },
+        ],
       },
 
       // 姓名
       {
-        type: "object",
+        type: "group",
+        component: "fieldItem",
+        slot: "default",
+        // 包裹组沿用字段标识，供字段顺序持久化与定位
         key: "name",
-        label: "姓名",
-        tip: "推荐必填",
-        ui: {
-          layout: "horizontal",
-          hidden: {
+        // 标签与操作区由包裹组件渲染，字段自身不再声明
+        props: {
+          label: "姓名",
+          tip: "推荐必填",
+        },
+        // 字段状态绑定到包裹组，供包裹组件双向绑定
+        model: [
+          {
             source: ["ui", "name", "hidden"],
             prop: "hidden",
             defaultValue: false,
           },
-        },
-        component: "input",
-        span: 24,
-        required: true,
-        model: [
-          {
-            source: ["data", "name"],
-            prop: "modelValue",
-          },
         ],
-        props: {
-          placeholder: "请输入姓名",
-          clearable: true,
-        },
-        rules: [
-          { required: true, message: "请输入姓名", trigger: "blur" },
-          {
-            pattern: /^[\u4e00-\u9fa5a-zA-Z0-9·\s]{2,20}$/,
-            message: "请输入2-20位姓名",
-            trigger: "blur",
-          },
-        ],
+        // 字段隐藏时的置灰判断
         checks: {
           hidden: {
             path: ["ui", "name", "hidden"],
             equals: true,
           },
         },
+        fields: [
+          {
+            type: "object",
+            key: "name",
+            component: "input",
+            span: 24,
+            required: true,
+            model: [
+              {
+                source: ["data", "name"],
+                prop: "modelValue",
+              },
+            ],
+            props: {
+              placeholder: "请输入姓名",
+              clearable: true,
+            },
+            rules: [
+              { required: true, message: "请输入姓名", trigger: "blur" },
+              {
+                pattern: /^[\u4e00-\u9fa5a-zA-Z0-9·\s]{2,20}$/,
+                message: "请输入2-20位姓名",
+                trigger: "blur",
+              },
+            ],
+          },
+        ],
       },
       // 出生日期
       {
-        type: "object",
+        type: "group",
+        component: "fieldItem",
+        slot: "default",
+        // 包裹组沿用字段标识，供字段顺序持久化与定位
         key: "birthday",
-        label: "出生日期",
-        tip: "推荐必填",
-        component: "datePicker",
-        span: 24,
-        ui: {
-          layout: "horizontal",
-          hidden: {
+        // 标签与操作区由包裹组件渲染，字段自身不再声明
+        props: {
+          label: "出生日期",
+          tip: "推荐必填",
+        },
+        // 字段状态绑定到包裹组，供包裹组件双向绑定
+        model: [
+          {
             source: ["ui", "birthday", "hidden"],
             prop: "hidden",
             defaultValue: false,
           },
-        },
+        ],
+        // 字段隐藏时的置灰判断
         checks: {
           hidden: {
             path: ["ui", "birthday", "hidden"],
             equals: true,
           },
         },
-        model: {
-          source: ["data", "birthday"],
-          prop: "modelValue",
-        },
-        props: {
-          placeholder: "请选择出生日期",
-          valueFormat: "YYYY.MM",
-          type: "month",
-        },
+        fields: [
+          {
+            type: "object",
+            key: "birthday",
+            component: "datePicker",
+            span: 24,
+            model: {
+              source: ["data", "birthday"],
+              prop: "modelValue",
+            },
+            props: {
+              placeholder: "请选择出生日期",
+              valueFormat: "YYYY.MM",
+              type: "month",
+            },
+          },
+        ],
       },
 
       // 性别
       {
-        type: "object",
+        type: "group",
+        component: "fieldItem",
+        slot: "default",
+        // 包裹组沿用字段标识，供字段顺序持久化与定位
         key: "sex",
-        label: "性别",
-        tip: "推荐必填",
-        component: "select",
-        span: 24,
-        ui: {
-          layout: "horizontal",
-          hidden: {
+        // 标签与操作区由包裹组件渲染，字段自身不再声明
+        props: {
+          label: "性别",
+          tip: "推荐必填",
+        },
+        // 字段状态绑定到包裹组，供包裹组件双向绑定
+        model: [
+          {
             source: ["ui", "sex", "hidden"],
             prop: "hidden",
             defaultValue: false,
           },
-        },
+        ],
+        // 字段隐藏时的置灰判断
         checks: {
           hidden: {
             path: ["ui", "sex", "hidden"],
             equals: true,
           },
         },
-        model: [
+        fields: [
           {
-            source: ["data", "sex"],
-            prop: "modelValue",
-          },
-          {
-            source: ["__options", "sex"],
-            prop: "list",
-            raw: true,
+            type: "object",
+            key: "sex",
+            component: "select",
+            span: 24,
+            model: [
+              {
+                source: ["data", "sex"],
+                prop: "modelValue",
+              },
+              {
+                source: ["__options", "sex"],
+                prop: "list",
+                raw: true,
+              },
+            ],
+            props: {
+              placeholder: "请选择性别",
+              clearable: true,
+            },
           },
         ],
-        props: {
-          placeholder: "请选择性别",
-          clearable: true,
-        },
       },
       // 求职岗位
       {
-        type: "object",
+        type: "group",
+        component: "fieldItem",
+        slot: "default",
+        // 包裹组沿用字段标识，供字段顺序持久化与定位
         key: "position",
-        label: "求职岗位",
-        tip: "推荐必填",
-        component: "input",
-        span: 24,
-        ui: {
-          layout: "horizontal",
-          hidden: {
+        // 标签与操作区由包裹组件渲染，字段自身不再声明
+        props: {
+          label: "求职岗位",
+          tip: "推荐必填",
+        },
+        // 字段状态绑定到包裹组，供包裹组件双向绑定
+        model: [
+          {
             source: ["ui", "position", "hidden"],
             prop: "hidden",
             defaultValue: false,
           },
-        },
+        ],
+        // 字段隐藏时的置灰判断
         checks: {
           hidden: {
             path: ["ui", "position", "hidden"],
             equals: true,
           },
         },
-        model: {
-          source: ["data", "position"],
-          prop: "modelValue",
-        },
-        props: {
-          placeholder: "请输入求职岗位",
-          clearable: true,
-        },
+        fields: [
+          {
+            type: "object",
+            key: "position",
+            component: "input",
+            span: 24,
+            model: {
+              source: ["data", "position"],
+              prop: "modelValue",
+            },
+            props: {
+              placeholder: "请输入求职岗位",
+              clearable: true,
+            },
+          },
+        ],
       },
       {
-        type: "object",
+        type: "group",
+        component: "fieldItem",
+        slot: "default",
+        // 包裹组沿用字段标识，供字段顺序持久化与定位
         key: "workTime",
-        label: "参加工作时间",
-        tip: "推荐必填",
-        component: "datePicker",
-        span: 24,
+        // 标签与操作区由包裹组件渲染，字段自身不再声明
+        props: {
+          label: "参加工作时间",
+          tip: "推荐必填",
+        },
+        // 可添加字段：数据存在才渲染
         addable: true,
-        ui: {
-          layout: "horizontal",
-          hidden: {
+        // 字段状态绑定到包裹组，供包裹组件双向绑定
+        model: [
+          // 数据绑定同步声明，供添加/移除与进度统计定位字段
+          {
+            source: ["data", "workTime"],
+            prop: "modelValue",
+          },
+          {
             source: ["ui", "workTime", "hidden"],
             prop: "hidden",
             defaultValue: false,
           },
-        },
+        ],
+        // 字段隐藏时的置灰判断
         checks: {
           hidden: {
             path: ["ui", "workTime", "hidden"],
             equals: true,
           },
         },
-        model: {
-          source: ["data", "workTime"],
-          prop: "modelValue",
-        },
-        props: {
-          placeholder: "请选择参加工作时间",
-          valueFormat: "YYYY.MM",
-          type: "month",
-        },
+        fields: [
+          {
+            type: "object",
+            key: "workTime",
+            component: "datePicker",
+            span: 24,
+            addable: true,
+            model: {
+              source: ["data", "workTime"],
+              prop: "modelValue",
+            },
+            props: {
+              placeholder: "请选择参加工作时间",
+              valueFormat: "YYYY.MM",
+              type: "month",
+            },
+          },
+        ],
       },
       // 可添加信息：数据路径存在后渲染在选择入口上方
       {
@@ -285,357 +357,539 @@ export const DEFAULT_USER_FORM = [
         fields: [
           // 手机号
           {
-            type: "object",
+            type: "group",
+            component: "fieldItem",
+            slot: "default",
+            // 包裹组沿用字段标识，供字段顺序持久化与定位
             key: "phone",
-            label: "手机号",
-            tip: "推荐必填",
-            component: "input",
-            span: 24,
-            ui: {
-              layout: "horizontal",
-              icon: {
-                source: ["ui", "phone", "icon"],
-                prop: "icon",
-                defaultValue: "mdi:phone",
-              },
-              hidden: {
+            // 标签与操作区由包裹组件渲染，字段自身不再声明
+            props: {
+              label: "手机号",
+              tip: "推荐必填",
+              removable: true,
+              draggable: true,
+            },
+            // 字段状态绑定到包裹组，供包裹组件双向绑定
+            model: [
+              {
                 source: ["ui", "phone", "hidden"],
                 prop: "hidden",
                 defaultValue: false,
               },
-            },
+              {
+                source: ["ui", "phone", "icon"],
+                prop: "icon",
+                defaultValue: "mdi:phone",
+              },
+            ],
+            // 字段隐藏时的置灰判断
             checks: {
               hidden: {
                 path: ["ui", "phone", "hidden"],
                 equals: true,
               },
             },
-            model: {
-              source: ["data", "phone"],
-              prop: "modelValue",
-            },
-            props: {
-              placeholder: "请输入手机号",
-              clearable: true,
-            },
-            rules: [
-              { required: true, message: "请输入手机号", trigger: "blur" },
+            fields: [
               {
-                pattern: /^1[3-9]\d{9}$/,
-                message: "请输入正确的手机号",
-                trigger: "blur",
+                type: "object",
+                key: "phone",
+                component: "input",
+                span: 24,
+                model: {
+                  source: ["data", "phone"],
+                  prop: "modelValue",
+                },
+                props: {
+                  placeholder: "请输入手机号",
+                  clearable: true,
+                },
+                rules: [
+                  { required: true, message: "请输入手机号", trigger: "blur" },
+                  {
+                    pattern: /^1[3-9]\d{9}$/,
+                    message: "请输入正确的手机号",
+                    trigger: "blur",
+                  },
+                ],
               },
             ],
           },
           {
-            type: "object",
+            type: "group",
+            component: "fieldItem",
+            slot: "default",
+            // 包裹组沿用字段标识，供字段顺序持久化与定位
             key: "email",
-            label: "邮箱",
-            component: "input",
-            span: 24,
+            // 标签与操作区由包裹组件渲染，字段自身不再声明
+            props: {
+              label: "邮箱",
+              removable: true,
+              draggable: true,
+            },
+            // 可添加字段：数据存在才渲染
             addable: true,
-            ui: {
-              layout: "horizontal",
-              icon: {
-                source: ["ui", "email", "icon"],
-                prop: "icon",
-                defaultValue: "mdi:email-outline",
+            // 字段状态绑定到包裹组，供包裹组件双向绑定
+            model: [
+              // 数据绑定同步声明，供添加/移除与进度统计定位字段
+              {
+                source: ["data", "email"],
+                prop: "modelValue",
               },
-              hidden: {
+              {
                 source: ["ui", "email", "hidden"],
                 prop: "hidden",
                 defaultValue: false,
               },
-              removable: true,
-            },
+              {
+                source: ["ui", "email", "icon"],
+                prop: "icon",
+                defaultValue: "mdi:email-outline",
+              },
+            ],
+            // 字段隐藏时的置灰判断
             checks: {
               hidden: {
                 path: ["ui", "email", "hidden"],
                 equals: true,
               },
             },
-            model: {
-              source: ["data", "email"],
-              prop: "modelValue",
-            },
-            props: {
-              placeholder: "请输入邮箱",
-              clearable: true,
-            },
-            rules: [
+            fields: [
               {
-                pattern: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
-                message: "请输入正确的邮箱格式",
-                trigger: "blur",
+                type: "object",
+                key: "email",
+                component: "input",
+                span: 24,
+                addable: true,
+                model: {
+                  source: ["data", "email"],
+                  prop: "modelValue",
+                },
+                props: {
+                  placeholder: "请输入邮箱",
+                  clearable: true,
+                },
+                rules: [
+                  {
+                    pattern: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+                    message: "请输入正确的邮箱格式",
+                    trigger: "blur",
+                  },
+                ],
               },
             ],
           },
 
           // 微信号
           {
-            type: "object",
+            type: "group",
+            component: "fieldItem",
+            slot: "default",
+            // 包裹组沿用字段标识，供字段顺序持久化与定位
             key: "wechat",
-            label: "微信号",
-            component: "input",
-            span: 24,
+            // 标签与操作区由包裹组件渲染，字段自身不再声明
+            props: {
+              label: "微信号",
+              removable: true,
+              draggable: true,
+            },
+            // 可添加字段：数据存在才渲染
             addable: true,
-            ui: {
-              layout: "horizontal",
-              icon: {
-                source: ["ui", "wechat", "icon"],
-                prop: "icon",
-                defaultValue: "mdi:wechat",
+            // 字段状态绑定到包裹组，供包裹组件双向绑定
+            model: [
+              // 数据绑定同步声明，供添加/移除与进度统计定位字段
+              {
+                source: ["data", "wechat"],
+                prop: "modelValue",
               },
-              hidden: {
+              {
                 source: ["ui", "wechat", "hidden"],
                 prop: "hidden",
                 defaultValue: false,
               },
-              removable: true,
-            },
+              {
+                source: ["ui", "wechat", "icon"],
+                prop: "icon",
+                defaultValue: "mdi:wechat",
+              },
+            ],
+            // 字段隐藏时的置灰判断
             checks: {
               hidden: {
                 path: ["ui", "wechat", "hidden"],
                 equals: true,
               },
             },
-            model: {
-              source: ["data", "wechat"],
-              prop: "modelValue",
-            },
-            props: {
-              placeholder: "请输入微信号",
-              clearable: true,
-            },
+            fields: [
+              {
+                type: "object",
+                key: "wechat",
+                component: "input",
+                span: 24,
+                addable: true,
+                model: {
+                  source: ["data", "wechat"],
+                  prop: "modelValue",
+                },
+                props: {
+                  placeholder: "请输入微信号",
+                  clearable: true,
+                },
+              },
+            ],
           },
           // GitHub
           {
-            type: "object",
+            type: "group",
+            component: "fieldItem",
+            slot: "default",
+            // 包裹组沿用字段标识，供字段顺序持久化与定位
             key: "github",
-            label: "GitHub",
-            component: "input",
-            span: 24,
+            // 标签与操作区由包裹组件渲染，字段自身不再声明
+            props: {
+              label: "GitHub",
+              removable: true,
+              draggable: true,
+            },
+            // 可添加字段：数据存在才渲染
             addable: true,
-            ui: {
-              layout: "horizontal",
-              icon: {
-                source: ["ui", "github", "icon"],
-                prop: "icon",
-                defaultValue: "simple-icons:github",
+            // 字段状态绑定到包裹组，供包裹组件双向绑定
+            model: [
+              // 数据绑定同步声明，供添加/移除与进度统计定位字段
+              {
+                source: ["data", "github"],
+                prop: "modelValue",
               },
-              hidden: {
+              {
                 source: ["ui", "github", "hidden"],
                 prop: "hidden",
                 defaultValue: false,
               },
-              removable: true,
-            },
+              {
+                source: ["ui", "github", "icon"],
+                prop: "icon",
+                defaultValue: "simple-icons:github",
+              },
+            ],
+            // 字段隐藏时的置灰判断
             checks: {
               hidden: {
                 path: ["ui", "github", "hidden"],
                 equals: true,
               },
             },
-            model: {
-              source: ["data", "github"],
-              prop: "modelValue",
-            },
-            props: {
-              placeholder: "请输入 GitHub 地址",
-              clearable: true,
-            },
+            fields: [
+              {
+                type: "object",
+                key: "github",
+                component: "input",
+                span: 24,
+                addable: true,
+                model: {
+                  source: ["data", "github"],
+                  prop: "modelValue",
+                },
+                props: {
+                  placeholder: "请输入 GitHub 地址",
+                  clearable: true,
+                },
+              },
+            ],
           },
           // 求职状态
           {
-            type: "object",
+            type: "group",
+            component: "fieldItem",
+            slot: "default",
+            // 包裹组沿用字段标识，供字段顺序持久化与定位
             key: "status",
-            label: "求职状态",
-            component: "select",
-            span: 24,
+            // 标签与操作区由包裹组件渲染，字段自身不再声明
+            props: {
+              label: "求职状态",
+              removable: true,
+              draggable: true,
+            },
+            // 可添加字段：数据存在才渲染
             addable: true,
-            ui: {
-              layout: "horizontal",
-              icon: {
-                source: ["ui", "status", "icon"],
-                prop: "icon",
-                defaultValue: "mdi:briefcase-check-outline",
+            // 字段状态绑定到包裹组，供包裹组件双向绑定
+            model: [
+              // 数据绑定同步声明，供添加/移除与进度统计定位字段
+              {
+                source: ["data", "status"],
+                prop: "modelValue",
               },
-              hidden: {
+              {
                 source: ["ui", "status", "hidden"],
                 prop: "hidden",
                 defaultValue: false,
               },
-              removable: true,
-            },
+              {
+                source: ["ui", "status", "icon"],
+                prop: "icon",
+                defaultValue: "mdi:briefcase-check-outline",
+              },
+            ],
+            // 字段隐藏时的置灰判断
             checks: {
               hidden: {
                 path: ["ui", "status", "hidden"],
                 equals: true,
               },
             },
-            model: [
+            fields: [
               {
-                source: ["data", "status"],
-                prop: "modelValue",
-              },
-              {
-                source: ["__options", "status"],
-                prop: "list",
-                raw: true,
+                type: "object",
+                key: "status",
+                component: "select",
+                span: 24,
+                addable: true,
+                model: [
+                  {
+                    source: ["data", "status"],
+                    prop: "modelValue",
+                  },
+                  {
+                    source: ["__options", "status"],
+                    prop: "list",
+                    raw: true,
+                  },
+                ],
+                props: {
+                  placeholder: "请选择求职状态",
+                  clearable: true,
+                },
               },
             ],
-            props: {
-              placeholder: "请选择求职状态",
-              clearable: true,
-            },
           },
           // 政治面貌
           {
-            type: "object",
+            type: "group",
+            component: "fieldItem",
+            slot: "default",
+            // 包裹组沿用字段标识，供字段顺序持久化与定位
             key: "political",
-            label: "政治面貌",
-            component: "select",
-            span: 24,
+            // 标签与操作区由包裹组件渲染，字段自身不再声明
+            props: {
+              label: "政治面貌",
+              removable: true,
+              draggable: true,
+            },
+            // 可添加字段：数据存在才渲染
             addable: true,
-            ui: {
-              layout: "horizontal",
-              icon: {
-                source: ["ui", "political", "icon"],
-                prop: "icon",
-                defaultValue: "mdi:flag-outline",
+            // 字段状态绑定到包裹组，供包裹组件双向绑定
+            model: [
+              // 数据绑定同步声明，供添加/移除与进度统计定位字段
+              {
+                source: ["data", "political"],
+                prop: "modelValue",
               },
-              hidden: {
+              {
                 source: ["ui", "political", "hidden"],
                 prop: "hidden",
                 defaultValue: false,
               },
-              removable: true,
-            },
+              {
+                source: ["ui", "political", "icon"],
+                prop: "icon",
+                defaultValue: "mdi:flag-outline",
+              },
+            ],
+            // 字段隐藏时的置灰判断
             checks: {
               hidden: {
                 path: ["ui", "political", "hidden"],
                 equals: true,
               },
             },
-            model: [
+            fields: [
               {
-                source: ["data", "political"],
-                prop: "modelValue",
-              },
-              {
-                source: ["__options", "political"],
-                prop: "list",
-                raw: true,
+                type: "object",
+                key: "political",
+                component: "select",
+                span: 24,
+                addable: true,
+                model: [
+                  {
+                    source: ["data", "political"],
+                    prop: "modelValue",
+                  },
+                  {
+                    source: ["__options", "political"],
+                    prop: "list",
+                    raw: true,
+                  },
+                ],
+                props: {
+                  placeholder: "请选择政治面貌",
+                  clearable: true,
+                },
               },
             ],
-            props: {
-              placeholder: "请选择政治面貌",
-              clearable: true,
-            },
           },
           // 所在城市
           {
-            type: "object",
+            type: "group",
+            component: "fieldItem",
+            slot: "default",
+            // 包裹组沿用字段标识，供字段顺序持久化与定位
             key: "city",
-            label: "期望城市",
-            component: "cityPicker",
-            span: 24,
+            // 标签与操作区由包裹组件渲染，字段自身不再声明
+            props: {
+              label: "期望城市",
+              removable: true,
+              draggable: true,
+            },
+            // 可添加字段：数据存在才渲染
             addable: true,
-            ui: {
-              layout: "horizontal",
-              icon: {
-                source: ["ui", "city", "icon"],
-                prop: "icon",
-                defaultValue: "mdi:map-marker-outline",
+            // 字段状态绑定到包裹组，供包裹组件双向绑定
+            model: [
+              // 数据绑定同步声明，供添加/移除与进度统计定位字段
+              {
+                source: ["data", "city"],
+                prop: "modelValue",
               },
-              hidden: {
+              {
                 source: ["ui", "city", "hidden"],
                 prop: "hidden",
                 defaultValue: false,
               },
-              removable: true,
-            },
+              {
+                source: ["ui", "city", "icon"],
+                prop: "icon",
+                defaultValue: "mdi:map-marker-outline",
+              },
+            ],
+            // 字段隐藏时的置灰判断
             checks: {
               hidden: {
                 path: ["ui", "city", "hidden"],
                 equals: true,
               },
             },
-            model: {
-              source: ["data", "city"],
-              prop: "modelValue",
-            },
-            props: {
-              placeholder: "请选择城市",
-            },
+            fields: [
+              {
+                type: "object",
+                key: "city",
+                component: "cityPicker",
+                span: 24,
+                addable: true,
+                model: {
+                  source: ["data", "city"],
+                  prop: "modelValue",
+                },
+                props: {
+                  placeholder: "请选择城市",
+                },
+              },
+            ],
           },
           {
-            type: "object",
+            type: "group",
+            component: "fieldItem",
+            slot: "default",
+            // 包裹组沿用字段标识，供字段顺序持久化与定位
             key: "nativePlace",
-            label: "籍贯",
-
-            component: "cityPicker",
-            span: 24,
+            // 标签与操作区由包裹组件渲染，字段自身不再声明
+            props: {
+              label: "籍贯",
+              removable: true,
+              draggable: true,
+            },
+            // 可添加字段：数据存在才渲染
             addable: true,
-            ui: {
-              layout: "horizontal",
-              icon: {
-                source: ["ui", "nativePlace", "icon"],
-                prop: "icon",
-                defaultValue: "mdi:home-outline",
+            // 字段状态绑定到包裹组，供包裹组件双向绑定
+            model: [
+              // 数据绑定同步声明，供添加/移除与进度统计定位字段
+              {
+                source: ["data", "nativePlace"],
+                prop: "modelValue",
               },
-              hidden: {
+              {
                 source: ["ui", "nativePlace", "hidden"],
                 prop: "hidden",
                 defaultValue: false,
               },
-              removable: true,
-            },
+              {
+                source: ["ui", "nativePlace", "icon"],
+                prop: "icon",
+                defaultValue: "mdi:home-outline",
+              },
+            ],
+            // 字段隐藏时的置灰判断
             checks: {
               hidden: {
                 path: ["ui", "nativePlace", "hidden"],
                 equals: true,
               },
             },
-            model: {
-              source: ["data", "nativePlace"],
-              prop: "modelValue",
-            },
-            props: {
-              placeholder: "请选择籍贯",
-            },
+            fields: [
+              {
+                type: "object",
+                key: "nativePlace",
+                component: "cityPicker",
+                span: 24,
+                addable: true,
+                model: {
+                  source: ["data", "nativePlace"],
+                  prop: "modelValue",
+                },
+                props: {
+                  placeholder: "请选择籍贯",
+                },
+              },
+            ],
           },
           {
-            type: "object",
+            type: "group",
+            component: "fieldItem",
+            slot: "default",
+            // 包裹组沿用字段标识，供字段顺序持久化与定位
             key: "heightWeight",
-            label: "身高体重",
-            component: "heightWeight",
-            span: 24,
+            // 标签与操作区由包裹组件渲染，字段自身不再声明
+            props: {
+              label: "身高体重",
+              removable: true,
+              draggable: true,
+            },
+            // 可添加字段：数据存在才渲染
             addable: true,
-            ui: {
-              layout: "horizontal",
-              icon: {
-                source: ["ui", "heightWeight", "icon"],
-                prop: "icon",
-                defaultValue: "mdi:human-male-height",
+            // 字段状态绑定到包裹组，供包裹组件双向绑定
+            model: [
+              // 数据绑定同步声明，供添加/移除与进度统计定位字段
+              {
+                source: ["data", "heightWeight"],
+                prop: "modelValue",
               },
-              hidden: {
+              {
                 source: ["ui", "heightWeight", "hidden"],
                 prop: "hidden",
                 defaultValue: false,
               },
-              removable: true,
-            },
+              {
+                source: ["ui", "heightWeight", "icon"],
+                prop: "icon",
+                defaultValue: "mdi:human-male-height",
+              },
+            ],
+            // 字段隐藏时的置灰判断
             checks: {
               hidden: {
                 path: ["ui", "heightWeight", "hidden"],
                 equals: true,
               },
             },
-            model: {
-              source: ["data", "heightWeight"],
-              prop: "modelValue",
-            },
+            fields: [
+              {
+                type: "object",
+                key: "heightWeight",
+                component: "heightWeight",
+                span: 24,
+                addable: true,
+                model: {
+                  source: ["data", "heightWeight"],
+                  prop: "modelValue",
+                },
+              },
+            ],
           },
         ],
       },

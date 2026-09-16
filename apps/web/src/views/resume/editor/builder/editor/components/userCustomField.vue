@@ -23,7 +23,9 @@ const fieldLabel = ref("");
 function openRenameModal() {
   const userField = runtimeConfig.value?.fields?.find((field: any) => field?.key === "user");
   const moreField = userField?.fields?.find((field: any) => field?.key === "more");
-  fieldLabel.value = moreField?.fields?.find((field: any) => field?.key === props.fieldKey)?.label || "";
+  // 标题保存在包裹组配置上
+  fieldLabel.value =
+    moreField?.fields?.find((field: any) => field?.key === props.fieldKey)?.props.label || "";
   showRenameModal.value = true;
 }
 

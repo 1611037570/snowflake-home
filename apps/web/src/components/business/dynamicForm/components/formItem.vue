@@ -6,7 +6,8 @@
       :prop="getProp(currentForm)"
       :rules="currentForm.rules"
     >
-      <template v-if="layout !== 'horizontal'" #label>
+      <!-- 无标签的字段不提供标签插槽，避免渲染出空白标签行 -->
+      <template v-if="currentForm.label && layout !== 'horizontal'" #label>
         <div class="mb-1 flex h-5 w-full items-center text-sf-base" @click.stop.prevent="">
           <div class="flex flex-1 items-center">
             <SfIcon
@@ -41,54 +42,7 @@
           />
         </div>
       </template>
-      <template v-if="layout === 'horizontal'">
-        <div class="flex w-full items-center gap-1">
-          <div v-if="currentForm.label" class="flex shrink-0 items-center" @click.stop.prevent="">
-            <SfIcon
-              v-if="draggable"
-              @click.stop=""
-              icon="icon-park-outline:drag"
-              :class="dragHandleClass"
-              size="4"
-              boxSize="6"
-              class="cursor-move! rounded-xl hover:bg-sf-theme hover:text-sf-theme-text"
-            />
-            <SfIconPicker v-if="iconBinding" v-model="iconModel" :size="4" class="mr-1" />
-            <span class="truncate pr-1 text-[15px] text-sf-text">
-              {{ currentForm.label }}
-            </span>
-            <sf-tooltip :content="currentForm.tip" v-if="currentForm.tip" class="text-sf-text" />
-          </div>
-          <div class="min-w-0 flex-1">
-            <slot />
-          </div>
-          <!-- Keep field actions aligned to the right edge. -->
-          <div
-            v-if="currentForm.ui?.hidden || currentForm.ui?.removable"
-            class="flex shrink-0 items-center gap-1"
-          >
-            <SfIcon
-              v-if="currentForm.ui?.hidden"
-              @pointerdown.stop.prevent
-              @click.stop.prevent="toggleHidden"
-              :icon="hidden ? 'lucide:eye' : 'lucide:eye-off'"
-              size="4"
-              boxSize="6"
-              class="cursor-pointer rounded-xl hover:bg-sf-theme hover:text-sf-theme-text"
-            />
-            <SfIcon
-              v-if="currentForm.ui?.removable"
-              @pointerdown.stop.prevent
-              @click.stop.prevent="removeField"
-              icon="ic:round-delete"
-              size="4"
-              boxSize="6"
-              class="cursor-pointer rounded-xl hover:bg-sf-theme hover:text-sf-theme-text"
-            />
-          </div>
-        </div>
-      </template>
-      <slot v-else />
+      <slot />
     </SfFormItem>
   </el-col>
 </template>
@@ -122,21 +76,6 @@ const hidden = computed(() => {
 });
 // 表单项根据自身配置判断置灰状态
 const hiddenState = computed(() => isFieldHidden(rootData.data, currentForm, pathContext));
-// 图标绑定：字段在 ui 中声明 icon 配置才渲染图标选择器
-const iconBinding = computed(() => currentForm?.ui?.icon);
-// 图标值双向绑定：与隐藏开关同一套数据代理逻辑
-const iconModel = computed({
-  get: () => {
-    const binding = iconBinding.value;
-    if (!binding || typeof binding !== "object" || !binding.source?.length) return undefined;
-    return rootData.getDataProxy(binding, pathContext).icon;
-  },
-  set: (value) => {
-    const binding = iconBinding.value;
-    if (!binding || typeof binding !== "object" || !binding.source?.length) return;
-    rootData.setDataProxy(binding, pathContext)["update:icon"]?.(value);
-  },
-});
 const dragHandleClass = computed(() => {
   const value = dragClass?.trim();
   return value?.startsWith(".") ? value.slice(1) : value || "item-drag";
