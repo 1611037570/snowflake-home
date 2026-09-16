@@ -133,3 +133,42 @@ export function useResumeStats(data: any) {
     return computeStats(rawData);
   });
 }
+
+/**
+ * 是否存在正文文本：命中第一处非空文本即返回，避免为判空遍历整份简历
+ */
+function hasText(obj: unknown): boolean {
+  if (typeof obj === "string") return Boolean(obj.trim());
+  if (Array.isArray(obj)) return obj.some(hasText);
+  if (obj && typeof obj === "object") {
+    for (const [key, value] of Object.entries(obj)) {
+      if (SKIP_TEXT_FIELDS.includes(key)) continue;
+      if (key === "content" && typeof value === "string") {
+        if (stripHtml(value)) return true;
+      } else if (hasText(value)) {
+        return true;
+      }
+    }
+  }
+  return false;
+}
+
+/**
+ * 轻量判空：按 computeStats 相同的字段口径扫描模块，命中文本即可提前结束
+ */
+export function isEmptyResume(data: any): boolean {
+  if (!data || typeof data !== "object") return true;
+  for (const key of Object.keys(data)) {
+    const module = data[key];
+    if (!module || typeof module !== "object") continue;
+    if (!("data" in module || "list" in module)) continue;
+    // 对象模块只有 data，数组模块记录只在 list
+    const moduleData = module.list ?? module.data;
+    if (Array.isArray(moduleData)) {
+      if (moduleData.some((item) => hasText(item?.data))) return false;
+    } else if (hasText(moduleData)) {
+      return false;
+    }
+  }
+  return true;
+}

@@ -18,7 +18,7 @@ import { useResumeStore } from "@/stores";
 import { useInitMask } from "./useInitMask";
 import { useModuleInteractions } from "./useModuleInteractions";
 import { getPreviewText } from "../i18n";
-import { useResumeStats } from "../../toolbar/modules/progress/useResumeStats";
+import { isEmptyResume } from "../../toolbar/modules/progress/useResumeStats";
 import { clearPreviewSelection, locateEditor, previewSelectedModule } from "../../useModuleNav";
 
 const resumeStore = useResumeStore();
@@ -57,9 +57,8 @@ const uid = `rp-${Math.random().toString(36).slice(2, 8)}`;
 const dataRef = computed(() => props.item.data);
 // 预览直接读取简历原始数据，不再构造字段代理副本
 provide("previewData", dataRef);
-// 复用编辑器总字数统计判断空简历，避免空数据时预览区无内容。
-const resumeStats = useResumeStats(dataRef);
-const isEmpty = computed(() => resumeStats.value.total.total === 0);
+// 轻量判空：命中第一处正文文本即结束，避免为判空执行全量字数统计
+const isEmpty = computed(() => isEmptyResume(dataRef.value));
 
 // ---------- 主题样式注入（数据源为 item.ui）----------
 const ui = computed(() => props.item.ui || {});
