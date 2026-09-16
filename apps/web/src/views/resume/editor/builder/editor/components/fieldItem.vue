@@ -54,10 +54,11 @@ const clearField = () => removeField(field.value);
     <div v-if="hidden !== undefined || removable" class="flex shrink-0 items-center">
       <Icon
         v-if="hidden !== undefined"
+        @pointerdown.stop.prevent
         @click="toggleHidden"
         :icon="hidden ? 'lucide:eye' : 'lucide:eye-off'"
       />
-      <Icon v-if="removable" @click="clearField" icon="ic:round-delete" />
+      <Icon v-if="removable" @pointerdown.stop.prevent @click="clearField" icon="ic:round-delete" />
     </div>
   </div>
 </template>

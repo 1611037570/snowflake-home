@@ -35,7 +35,7 @@ function del() {
       <template #title>
         <div class="group flex h-full w-full items-center justify-between text-sf-text">
           <div class="flex flex-1 items-center text-[15px] font-bold">
-            <Icon icon="icon-park-outline:drag" class="item-drag cursor-move!" @click.stop="" />
+            <Icon icon="icon-park-outline:drag" class="item-drag cursor-move!" />
             {{ displayTitle }}
           </div>
           <div
