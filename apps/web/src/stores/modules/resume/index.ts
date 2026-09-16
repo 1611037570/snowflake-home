@@ -342,11 +342,11 @@ export const useResumeStore = defineStore(
       }
       return result;
     };
-    // 深拷贝当前简历并创建独立的新简历
-    const duplicateResume = () => {
-      const item = currentItem.value;
-      if (!item) return false;
-      const copy = deepClone(item);
+    // 深拷贝指定简历（缺省为当前简历）并创建独立的新简历
+    const duplicateResume = (item?: any) => {
+      const source = item ?? currentItem.value;
+      if (!source) return false;
+      const copy = deepClone(source);
       const now = Date.now();
       copy.usage = { ...copy.usage, createTime: now, lastUseTime: now };
       const currentCount = list.value.length;
