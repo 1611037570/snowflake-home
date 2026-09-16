@@ -63,7 +63,8 @@ export function compactConfigFields(fields: any[], parentKey?: string) {
   return fields.map((field: any) => {
     const compactField: any = { key: field.key };
     if (parentKey === "more" && isUserCustomFieldKey(field.key)) {
-      compactField.label = field.label;
+      // 标题保存在包裹组配置上
+      compactField.label = field.props.label;
     }
     if (Array.isArray(field.fields) && hasSortableFields(field)) {
       compactField.fields = compactConfigFields(field.fields, field.key);

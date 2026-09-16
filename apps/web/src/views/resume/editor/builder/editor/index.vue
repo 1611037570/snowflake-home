@@ -12,6 +12,7 @@ import ArchivedModules from "./components/archivedModules.vue";
 import HeightWeight from "./components/heightWeight.vue";
 import Honor from "./components/honor.vue";
 import Image from "./components/image.vue";
+import FieldItem from "./components/fieldItem.vue";
 import ItemCollapse from "./components/itemCollapse.vue";
 import ImageUpload from "./components/imageUpload/index.vue";
 import More from "./components/more.vue";
@@ -25,6 +26,7 @@ const { currentData, runtimeConfig } = storeToRefs(resumeStore);
 const dynamicComponents = {
   boxCollapse: BoxCollapse,
   itemCollapse: ItemCollapse,
+  fieldItem: FieldItem,
   account: Account,
   imageUpload: ImageUpload,
   honor: Honor,

@@ -9,7 +9,7 @@ import eventBus from "@/utils/modules/eventBus";
 import FormRenderer from "./components/formRenderer.vue";
 import DataProxy from "./code/dataProxy";
 import { createAddItem } from "./code/addItem";
-import { addFieldData, getFieldDataKey, hasFieldData } from "./code/fieldData";
+import { addFieldData, getFieldDataKey, hasFieldData, removeFieldData } from "./code/fieldData";
 import {
   DF_CONTEXT,
   DF_CURRENT_FORM,
@@ -75,6 +75,8 @@ const getContext = () => {
     hasFieldData: (field: any) => hasFieldData(dataProxy.data, field, pathContext),
     addField: (field: any) =>
       field?.addable === true && addFieldData(dataProxy.data, field, pathContext),
+    // 清空可添加字段的数据：字段模板保留，便于后续重新添加
+    removeField: (field: any) => removeFieldData(dataProxy.data, field, pathContext),
     getFieldDataKey: (field: any) => getFieldDataKey(field, pathContext),
   };
 };
