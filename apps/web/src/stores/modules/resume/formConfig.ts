@@ -16,8 +16,7 @@ const DEFAULT_META = {
   version: "1.0.0",
 };
 const DEFAULT_DRAG_CLASS = ".item-drag";
-const DEFAULT_COL_CLASS =
-  "rounded-2xl border border-sf-bg-3 bg-sf-primary px-3! hover:border-sf-theme";
+const DEFAULT_COL_CLASS = "rounded-3xl border border-sf-bg-3 bg-sf-primary";
 
 // 模块界面状态绑定：标题、折叠、隐藏、归档在各模块间结构一致
 const createModuleState = (title: string): ModelBinding[] => [
@@ -283,7 +282,7 @@ export const DEFAULT_USER_FORM = [
         type: "group",
         drag: true,
         dragClass: DEFAULT_DRAG_CLASS,
-        itemClass: DEFAULT_COL_CLASS + " py-1",
+        itemClass: DEFAULT_COL_CLASS + " py-1 px-1!",
         key: "more",
         component: "more",
         slot: "default",
@@ -440,7 +439,7 @@ export const DEFAULT_ACCOUNT_FORM = {
       source: ["list"],
       drag: true,
       dragClass: DEFAULT_DRAG_CLASS,
-      itemClass: DEFAULT_COL_CLASS + " py-1",
+      itemClass: DEFAULT_COL_CLASS + " py-1 px-1!",
       itemSchema: {
         model: [
           {
@@ -490,7 +489,7 @@ export const DEFAULT_EDUCATION_FORM = {
       source: ["list"],
       drag: true,
       dragClass: DEFAULT_DRAG_CLASS,
-      itemClass: DEFAULT_COL_CLASS,
+      itemClass: DEFAULT_COL_CLASS + " px-3!",
       itemSchema: {
         type: "group",
         component: "itemCollapse",
@@ -693,7 +692,7 @@ export const DEFAULT_WORK_FORM = {
       source: ["list"],
       drag: true,
       dragClass: DEFAULT_DRAG_CLASS,
-      itemClass: DEFAULT_COL_CLASS,
+      itemClass: DEFAULT_COL_CLASS + " px-3!",
       itemSchema: {
         type: "group",
         component: "itemCollapse",
@@ -804,7 +803,7 @@ export const DEFAULT_PROJECT_FORM = {
       source: ["list"],
       drag: true,
       dragClass: DEFAULT_DRAG_CLASS,
-      itemClass: DEFAULT_COL_CLASS,
+      itemClass: DEFAULT_COL_CLASS + " px-3!",
       itemSchema: {
         type: "group",
         component: "itemCollapse",
@@ -917,7 +916,7 @@ export const DEFAULT_VIDEO_FORM = {
       source: ["list"],
       drag: true,
       dragClass: DEFAULT_DRAG_CLASS,
-      itemClass: DEFAULT_COL_CLASS,
+      itemClass: DEFAULT_COL_CLASS + " px-3!",
       itemSchema: {
         // 折叠标题数据源：展示当前视频名称
         model: [
@@ -993,7 +992,7 @@ export const DEFAULT_IMAGE_FORM = {
       source: ["list"],
       drag: true,
       dragClass: DEFAULT_DRAG_CLASS,
-      itemClass: DEFAULT_COL_CLASS,
+      itemClass: DEFAULT_COL_CLASS + " px-3!",
       itemSchema: {
         // 折叠标题数据源：展示当前图片作品名称
         model: [
@@ -1074,7 +1073,7 @@ export const DEFAULT_HONOR_FORM = {
       source: ["list"],
       drag: true,
       dragClass: DEFAULT_DRAG_CLASS,
-      itemClass: DEFAULT_COL_CLASS + " py-1",
+      itemClass: DEFAULT_COL_CLASS + " py-1 px-1!",
 
       itemSchema: {
         // 名称数据源：绑定当前荣誉证书名称
@@ -1121,7 +1120,7 @@ export const DEFAULT_CUSTOM_FORM = {
       source: ["list"],
       drag: true,
       dragClass: DEFAULT_DRAG_CLASS,
-      itemClass: DEFAULT_COL_CLASS,
+      itemClass: DEFAULT_COL_CLASS + " px-3!",
       itemSchema: {
         type: "group",
         component: "itemCollapse",
