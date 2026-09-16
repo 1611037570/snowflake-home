@@ -1,4 +1,11 @@
-import type { FormConfig, FormField } from "@/components/business/dynamicForm";
+import type {
+  FieldChecks,
+  FormConfig,
+  FormField,
+  GroupFormField,
+  ModelBinding,
+  ObjectFormField,
+} from "@/components/business/dynamicForm";
 
 // 展开状态数组：对应 SfCollapseItem 的激活 name，表示折叠容器为展开态
 export const EXPANDED = ["1"];
@@ -11,6 +18,115 @@ const DEFAULT_META = {
 const DEFAULT_DRAG_CLASS = ".item-drag";
 const DEFAULT_COL_CLASS =
   "rounded-2xl border border-sf-bg-3 bg-sf-primary px-3! hover:border-sf-theme";
+
+// 模块界面状态绑定：标题、折叠、隐藏、归档在各模块间结构一致
+const createModuleState = (title: string): ModelBinding[] => [
+  {
+    source: ["ui", "title"],
+    prop: "title",
+    defaultValue: title,
+  },
+  {
+    source: ["ui", "collapsed"],
+    prop: "collapsed",
+    defaultValue: EXPANDED,
+  },
+  // 隐藏开关：控制模块在简历预览中显示/隐藏
+  {
+    source: ["ui", "hidden"],
+    prop: "hidden",
+    defaultValue: false,
+  },
+  // 归档开关：控制模块是否从编辑器主区域移除
+  {
+    source: ["ui", "archived"],
+    prop: "archived",
+    defaultValue: false,
+  },
+];
+
+// 模块级显隐与归档判断：所有模块共用同一数据路径
+const MODULE_CHECKS = {
+  hidden: { path: ["ui", "hidden"] },
+  removed: { path: ["ui", "archived"] },
+} satisfies FieldChecks;
+
+// 个人信息固定字段包裹组：标签与状态绑定结构一致，仅内层字段不同
+const createUserField = (
+  key: string,
+  label: string,
+  field: ObjectFormField,
+  options: { tip?: string; addable?: boolean } = {},
+): GroupFormField => {
+  const { tip = "推荐必填", addable } = options;
+  return {
+    type: "group",
+    component: "fieldItem",
+    slot: "default",
+    // 包裹组沿用字段标识，供字段顺序持久化与定位
+    key,
+    // 标签与操作区由包裹组件渲染，字段自身不再声明
+    props: { label, tip },
+    // 可添加字段：数据存在才渲染
+    ...(addable ? { addable: true } : {}),
+    // 字段状态绑定到包裹组，供包裹组件双向绑定
+    model: [{ source: ["ui", key, "hidden"], prop: "hidden", defaultValue: false }],
+    // 字段隐藏时的置灰判断
+    checks: { hidden: { path: ["ui", key, "hidden"], equals: true } },
+    fields: [{ ...field, ...(addable ? { addable: true } : {}) }],
+  };
+};
+
+// 个人信息更多字段包裹组：图标、可移除/拖拽与字典绑定结构一致，仅标签与组件不同
+const createMoreField = (options: {
+  key: string;
+  label: string;
+  component: string;
+  icon: string;
+  tip?: string;
+  addable?: boolean;
+  // 字典 key：存在时内层字段同时绑定选项列表
+  dict?: string;
+  props?: Record<string, any>;
+  rules?: any[];
+}): GroupFormField => {
+  const { key, label, component, icon, tip, addable, dict, props, rules } = options;
+  return {
+    type: "group",
+    component: "fieldItem",
+    slot: "default",
+    // 包裹组沿用字段标识，供字段顺序持久化与定位
+    key,
+    // 标签与操作区由包裹组件渲染，字段自身不再声明
+    props: { label, ...(tip ? { tip } : {}), removable: true, draggable: true },
+    // 可添加字段：数据存在才渲染
+    ...(addable ? { addable: true } : {}),
+    // 字段状态绑定到包裹组，供包裹组件双向绑定
+    model: [
+      { source: ["ui", key, "hidden"], prop: "hidden", defaultValue: false },
+      { source: ["ui", key, "icon"], prop: "icon", defaultValue: icon },
+    ],
+    // 字段隐藏时的置灰判断
+    checks: { hidden: { path: ["ui", key, "hidden"], equals: true } },
+    fields: [
+      {
+        type: "object",
+        key,
+        component,
+        span: 24,
+        ...(addable ? { addable: true } : {}),
+        model: dict
+          ? [
+              { source: ["data", key], prop: "modelValue" },
+              { source: ["__options", dict], prop: "list", raw: true },
+            ]
+          : { source: ["data", key], prop: "modelValue" },
+        ...(props ? { props } : {}),
+        ...(rules ? { rules } : {}),
+      },
+    ],
+  };
+};
 // 个人信息
 export const DEFAULT_USER_FORM = [
   {
@@ -28,34 +144,8 @@ export const DEFAULT_USER_FORM = [
       add: false,
       drag: false,
     },
-    model: [
-      {
-        source: ["ui", "title"],
-        prop: "title",
-        defaultValue: "个人信息",
-      },
-      {
-        source: ["ui", "collapsed"],
-        prop: "collapsed",
-        defaultValue: EXPANDED,
-      },
-      // 隐藏开关：控制模块在简历预览中显示/隐藏
-      {
-        source: ["ui", "hidden"],
-        prop: "hidden",
-        defaultValue: false,
-      },
-      // 归档开关：控制模块是否从编辑器主区域移除
-      {
-        source: ["ui", "archived"],
-        prop: "archived",
-        defaultValue: false,
-      },
-    ],
-    checks: {
-      hidden: { path: ["ui", "hidden"] },
-      removed: { path: ["ui", "archived"] },
-    },
+    model: createModuleState("个人信息"),
+    checks: MODULE_CHECKS,
     slot: "default",
     fields: [
       // 头像
@@ -88,248 +178,106 @@ export const DEFAULT_USER_FORM = [
       },
 
       // 姓名
-      {
-        type: "group",
-        component: "fieldItem",
-        slot: "default",
-        // 包裹组沿用字段标识，供字段顺序持久化与定位
+      createUserField("name", "姓名", {
+        type: "object",
         key: "name",
-        // 标签与操作区由包裹组件渲染，字段自身不再声明
-        props: {
-          label: "姓名",
-          tip: "推荐必填",
-        },
-        // 字段状态绑定到包裹组，供包裹组件双向绑定
+        component: "input",
+        span: 24,
+        required: true,
         model: [
           {
-            source: ["ui", "name", "hidden"],
-            prop: "hidden",
-            defaultValue: false,
+            source: ["data", "name"],
+            prop: "modelValue",
           },
         ],
-        // 字段隐藏时的置灰判断
-        checks: {
-          hidden: {
-            path: ["ui", "name", "hidden"],
-            equals: true,
-          },
+        props: {
+          placeholder: "请输入姓名",
+          clearable: true,
         },
-        fields: [
+        rules: [
+          { required: true, message: "请输入姓名", trigger: "blur" },
           {
-            type: "object",
-            key: "name",
-            component: "input",
-            span: 24,
-            required: true,
-            model: [
-              {
-                source: ["data", "name"],
-                prop: "modelValue",
-              },
-            ],
-            props: {
-              placeholder: "请输入姓名",
-              clearable: true,
-            },
-            rules: [
-              { required: true, message: "请输入姓名", trigger: "blur" },
-              {
-                pattern: /^[\u4e00-\u9fa5a-zA-Z0-9·\s]{2,20}$/,
-                message: "请输入2-20位姓名",
-                trigger: "blur",
-              },
-            ],
+            pattern: /^[\u4e00-\u9fa5a-zA-Z0-9·\s]{2,20}$/,
+            message: "请输入2-20位姓名",
+            trigger: "blur",
           },
         ],
-      },
+      }),
       // 出生日期
-      {
-        type: "group",
-        component: "fieldItem",
-        slot: "default",
-        // 包裹组沿用字段标识，供字段顺序持久化与定位
+      createUserField("birthday", "出生日期", {
+        type: "object",
         key: "birthday",
-        // 标签与操作区由包裹组件渲染，字段自身不再声明
+        component: "datePicker",
+        span: 24,
+        model: {
+          source: ["data", "birthday"],
+          prop: "modelValue",
+        },
         props: {
-          label: "出生日期",
-          tip: "推荐必填",
+          placeholder: "请选择出生日期",
+          valueFormat: "YYYY.MM",
+          type: "month",
         },
-        // 字段状态绑定到包裹组，供包裹组件双向绑定
-        model: [
-          {
-            source: ["ui", "birthday", "hidden"],
-            prop: "hidden",
-            defaultValue: false,
-          },
-        ],
-        // 字段隐藏时的置灰判断
-        checks: {
-          hidden: {
-            path: ["ui", "birthday", "hidden"],
-            equals: true,
-          },
-        },
-        fields: [
-          {
-            type: "object",
-            key: "birthday",
-            component: "datePicker",
-            span: 24,
-            model: {
-              source: ["data", "birthday"],
-              prop: "modelValue",
-            },
-            props: {
-              placeholder: "请选择出生日期",
-              valueFormat: "YYYY.MM",
-              type: "month",
-            },
-          },
-        ],
-      },
+      }),
 
       // 性别
-      {
-        type: "group",
-        component: "fieldItem",
-        slot: "default",
-        // 包裹组沿用字段标识，供字段顺序持久化与定位
+      createUserField("sex", "性别", {
+        type: "object",
         key: "sex",
-        // 标签与操作区由包裹组件渲染，字段自身不再声明
-        props: {
-          label: "性别",
-          tip: "推荐必填",
-        },
-        // 字段状态绑定到包裹组，供包裹组件双向绑定
+        component: "select",
+        span: 24,
         model: [
           {
-            source: ["ui", "sex", "hidden"],
-            prop: "hidden",
-            defaultValue: false,
+            source: ["data", "sex"],
+            prop: "modelValue",
           },
-        ],
-        // 字段隐藏时的置灰判断
-        checks: {
-          hidden: {
-            path: ["ui", "sex", "hidden"],
-            equals: true,
-          },
-        },
-        fields: [
           {
-            type: "object",
-            key: "sex",
-            component: "select",
-            span: 24,
-            model: [
-              {
-                source: ["data", "sex"],
-                prop: "modelValue",
-              },
-              {
-                source: ["__options", "sex"],
-                prop: "list",
-                raw: true,
-              },
-            ],
-            props: {
-              placeholder: "请选择性别",
-              clearable: true,
-            },
+            source: ["__options", "sex"],
+            prop: "list",
+            raw: true,
           },
         ],
-      },
+        props: {
+          placeholder: "请选择性别",
+          clearable: true,
+        },
+      }),
       // 求职岗位
-      {
-        type: "group",
-        component: "fieldItem",
-        slot: "default",
-        // 包裹组沿用字段标识，供字段顺序持久化与定位
+      createUserField("position", "求职岗位", {
+        type: "object",
         key: "position",
-        // 标签与操作区由包裹组件渲染，字段自身不再声明
-        props: {
-          label: "求职岗位",
-          tip: "推荐必填",
+        component: "input",
+        span: 24,
+        model: {
+          source: ["data", "position"],
+          prop: "modelValue",
         },
-        // 字段状态绑定到包裹组，供包裹组件双向绑定
-        model: [
-          {
-            source: ["ui", "position", "hidden"],
-            prop: "hidden",
-            defaultValue: false,
-          },
-        ],
-        // 字段隐藏时的置灰判断
-        checks: {
-          hidden: {
-            path: ["ui", "position", "hidden"],
-            equals: true,
-          },
-        },
-        fields: [
-          {
-            type: "object",
-            key: "position",
-            component: "input",
-            span: 24,
-            model: {
-              source: ["data", "position"],
-              prop: "modelValue",
-            },
-            props: {
-              placeholder: "请输入求职岗位",
-              clearable: true,
-            },
-          },
-        ],
-      },
-      {
-        type: "group",
-        component: "fieldItem",
-        slot: "default",
-        // 包裹组沿用字段标识，供字段顺序持久化与定位
-        key: "workTime",
-        // 标签与操作区由包裹组件渲染，字段自身不再声明
         props: {
-          label: "参加工作时间",
-          tip: "推荐必填",
+          placeholder: "请输入求职岗位",
+          clearable: true,
+        },
+      }),
+      createUserField(
+        "workTime",
+        "参加工作时间",
+        {
+          type: "object",
+          key: "workTime",
+          component: "datePicker",
+          span: 24,
+          model: {
+            source: ["data", "workTime"],
+            prop: "modelValue",
+          },
+          props: {
+            placeholder: "请选择参加工作时间",
+            valueFormat: "YYYY.MM",
+            type: "month",
+          },
         },
         // 可添加字段：数据存在才渲染
-        addable: true,
-        // 字段状态绑定到包裹组，供包裹组件双向绑定
-        model: [
-          {
-            source: ["ui", "workTime", "hidden"],
-            prop: "hidden",
-            defaultValue: false,
-          },
-        ],
-        // 字段隐藏时的置灰判断
-        checks: {
-          hidden: {
-            path: ["ui", "workTime", "hidden"],
-            equals: true,
-          },
-        },
-        fields: [
-          {
-            type: "object",
-            key: "workTime",
-            component: "datePicker",
-            span: 24,
-            addable: true,
-            model: {
-              source: ["data", "workTime"],
-              prop: "modelValue",
-            },
-            props: {
-              placeholder: "请选择参加工作时间",
-              valueFormat: "YYYY.MM",
-              type: "month",
-            },
-          },
-        ],
-      },
+        { addable: true },
+      ),
       // 可添加信息：数据路径存在后渲染在选择入口上方
       {
         type: "group",
@@ -351,501 +299,122 @@ export const DEFAULT_USER_FORM = [
         ],
         fields: [
           // 手机号
-          {
-            type: "group",
-            component: "fieldItem",
-            slot: "default",
-            // 包裹组沿用字段标识，供字段顺序持久化与定位
+          createMoreField({
             key: "phone",
-            // 标签与操作区由包裹组件渲染，字段自身不再声明
+            label: "手机号",
+            component: "input",
+            icon: "mdi:phone",
+            tip: "推荐必填",
             props: {
-              label: "手机号",
-              tip: "推荐必填",
-              removable: true,
-              draggable: true,
+              placeholder: "请输入手机号",
+              clearable: true,
             },
-            // 字段状态绑定到包裹组，供包裹组件双向绑定
-            model: [
+            rules: [
+              { required: true, message: "请输入手机号", trigger: "blur" },
               {
-                source: ["ui", "phone", "hidden"],
-                prop: "hidden",
-                defaultValue: false,
-              },
-              {
-                source: ["ui", "phone", "icon"],
-                prop: "icon",
-                defaultValue: "mdi:phone",
+                pattern: /^1[3-9]\d{9}$/,
+                message: "请输入正确的手机号",
+                trigger: "blur",
               },
             ],
-            // 字段隐藏时的置灰判断
-            checks: {
-              hidden: {
-                path: ["ui", "phone", "hidden"],
-                equals: true,
-              },
-            },
-            fields: [
-              {
-                type: "object",
-                key: "phone",
-                component: "input",
-                span: 24,
-                model: {
-                  source: ["data", "phone"],
-                  prop: "modelValue",
-                },
-                props: {
-                  placeholder: "请输入手机号",
-                  clearable: true,
-                },
-                rules: [
-                  { required: true, message: "请输入手机号", trigger: "blur" },
-                  {
-                    pattern: /^1[3-9]\d{9}$/,
-                    message: "请输入正确的手机号",
-                    trigger: "blur",
-                  },
-                ],
-              },
-            ],
-          },
-          {
-            type: "group",
-            component: "fieldItem",
-            slot: "default",
-            // 包裹组沿用字段标识，供字段顺序持久化与定位
+          }),
+          createMoreField({
             key: "email",
-            // 标签与操作区由包裹组件渲染，字段自身不再声明
-            props: {
-              label: "邮箱",
-              removable: true,
-              draggable: true,
-            },
-            // 可添加字段：数据存在才渲染
+            label: "邮箱",
+            component: "input",
+            icon: "mdi:email-outline",
             addable: true,
-            // 字段状态绑定到包裹组，供包裹组件双向绑定
-            model: [
-              {
-                source: ["ui", "email", "hidden"],
-                prop: "hidden",
-                defaultValue: false,
-              },
-              {
-                source: ["ui", "email", "icon"],
-                prop: "icon",
-                defaultValue: "mdi:email-outline",
-              },
-            ],
-            // 字段隐藏时的置灰判断
-            checks: {
-              hidden: {
-                path: ["ui", "email", "hidden"],
-                equals: true,
-              },
+            props: {
+              placeholder: "请输入邮箱",
+              clearable: true,
             },
-            fields: [
+            rules: [
               {
-                type: "object",
-                key: "email",
-                component: "input",
-                span: 24,
-                addable: true,
-                model: {
-                  source: ["data", "email"],
-                  prop: "modelValue",
-                },
-                props: {
-                  placeholder: "请输入邮箱",
-                  clearable: true,
-                },
-                rules: [
-                  {
-                    pattern: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
-                    message: "请输入正确的邮箱格式",
-                    trigger: "blur",
-                  },
-                ],
+                pattern: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+                message: "请输入正确的邮箱格式",
+                trigger: "blur",
               },
             ],
-          },
+          }),
 
           // 微信号
-          {
-            type: "group",
-            component: "fieldItem",
-            slot: "default",
-            // 包裹组沿用字段标识，供字段顺序持久化与定位
+          createMoreField({
             key: "wechat",
-            // 标签与操作区由包裹组件渲染，字段自身不再声明
-            props: {
-              label: "微信号",
-              removable: true,
-              draggable: true,
-            },
-            // 可添加字段：数据存在才渲染
+            label: "微信号",
+            component: "input",
+            icon: "mdi:wechat",
             addable: true,
-            // 字段状态绑定到包裹组，供包裹组件双向绑定
-            model: [
-              {
-                source: ["ui", "wechat", "hidden"],
-                prop: "hidden",
-                defaultValue: false,
-              },
-              {
-                source: ["ui", "wechat", "icon"],
-                prop: "icon",
-                defaultValue: "mdi:wechat",
-              },
-            ],
-            // 字段隐藏时的置灰判断
-            checks: {
-              hidden: {
-                path: ["ui", "wechat", "hidden"],
-                equals: true,
-              },
+            props: {
+              placeholder: "请输入微信号",
+              clearable: true,
             },
-            fields: [
-              {
-                type: "object",
-                key: "wechat",
-                component: "input",
-                span: 24,
-                addable: true,
-                model: {
-                  source: ["data", "wechat"],
-                  prop: "modelValue",
-                },
-                props: {
-                  placeholder: "请输入微信号",
-                  clearable: true,
-                },
-              },
-            ],
-          },
+          }),
           // GitHub
-          {
-            type: "group",
-            component: "fieldItem",
-            slot: "default",
-            // 包裹组沿用字段标识，供字段顺序持久化与定位
+          createMoreField({
             key: "github",
-            // 标签与操作区由包裹组件渲染，字段自身不再声明
-            props: {
-              label: "GitHub",
-              removable: true,
-              draggable: true,
-            },
-            // 可添加字段：数据存在才渲染
+            label: "GitHub",
+            component: "input",
+            icon: "simple-icons:github",
             addable: true,
-            // 字段状态绑定到包裹组，供包裹组件双向绑定
-            model: [
-              {
-                source: ["ui", "github", "hidden"],
-                prop: "hidden",
-                defaultValue: false,
-              },
-              {
-                source: ["ui", "github", "icon"],
-                prop: "icon",
-                defaultValue: "simple-icons:github",
-              },
-            ],
-            // 字段隐藏时的置灰判断
-            checks: {
-              hidden: {
-                path: ["ui", "github", "hidden"],
-                equals: true,
-              },
+            props: {
+              placeholder: "请输入 GitHub 地址",
+              clearable: true,
             },
-            fields: [
-              {
-                type: "object",
-                key: "github",
-                component: "input",
-                span: 24,
-                addable: true,
-                model: {
-                  source: ["data", "github"],
-                  prop: "modelValue",
-                },
-                props: {
-                  placeholder: "请输入 GitHub 地址",
-                  clearable: true,
-                },
-              },
-            ],
-          },
+          }),
           // 求职状态
-          {
-            type: "group",
-            component: "fieldItem",
-            slot: "default",
-            // 包裹组沿用字段标识，供字段顺序持久化与定位
+          createMoreField({
             key: "status",
-            // 标签与操作区由包裹组件渲染，字段自身不再声明
-            props: {
-              label: "求职状态",
-              removable: true,
-              draggable: true,
-            },
-            // 可添加字段：数据存在才渲染
+            label: "求职状态",
+            component: "select",
+            icon: "mdi:briefcase-check-outline",
             addable: true,
-            // 字段状态绑定到包裹组，供包裹组件双向绑定
-            model: [
-              {
-                source: ["ui", "status", "hidden"],
-                prop: "hidden",
-                defaultValue: false,
-              },
-              {
-                source: ["ui", "status", "icon"],
-                prop: "icon",
-                defaultValue: "mdi:briefcase-check-outline",
-              },
-            ],
-            // 字段隐藏时的置灰判断
-            checks: {
-              hidden: {
-                path: ["ui", "status", "hidden"],
-                equals: true,
-              },
+            dict: "status",
+            props: {
+              placeholder: "请选择求职状态",
+              clearable: true,
             },
-            fields: [
-              {
-                type: "object",
-                key: "status",
-                component: "select",
-                span: 24,
-                addable: true,
-                model: [
-                  {
-                    source: ["data", "status"],
-                    prop: "modelValue",
-                  },
-                  {
-                    source: ["__options", "status"],
-                    prop: "list",
-                    raw: true,
-                  },
-                ],
-                props: {
-                  placeholder: "请选择求职状态",
-                  clearable: true,
-                },
-              },
-            ],
-          },
+          }),
           // 政治面貌
-          {
-            type: "group",
-            component: "fieldItem",
-            slot: "default",
-            // 包裹组沿用字段标识，供字段顺序持久化与定位
+          createMoreField({
             key: "political",
-            // 标签与操作区由包裹组件渲染，字段自身不再声明
-            props: {
-              label: "政治面貌",
-              removable: true,
-              draggable: true,
-            },
-            // 可添加字段：数据存在才渲染
+            label: "政治面貌",
+            component: "select",
+            icon: "mdi:flag-outline",
             addable: true,
-            // 字段状态绑定到包裹组，供包裹组件双向绑定
-            model: [
-              {
-                source: ["ui", "political", "hidden"],
-                prop: "hidden",
-                defaultValue: false,
-              },
-              {
-                source: ["ui", "political", "icon"],
-                prop: "icon",
-                defaultValue: "mdi:flag-outline",
-              },
-            ],
-            // 字段隐藏时的置灰判断
-            checks: {
-              hidden: {
-                path: ["ui", "political", "hidden"],
-                equals: true,
-              },
+            dict: "political",
+            props: {
+              placeholder: "请选择政治面貌",
+              clearable: true,
             },
-            fields: [
-              {
-                type: "object",
-                key: "political",
-                component: "select",
-                span: 24,
-                addable: true,
-                model: [
-                  {
-                    source: ["data", "political"],
-                    prop: "modelValue",
-                  },
-                  {
-                    source: ["__options", "political"],
-                    prop: "list",
-                    raw: true,
-                  },
-                ],
-                props: {
-                  placeholder: "请选择政治面貌",
-                  clearable: true,
-                },
-              },
-            ],
-          },
+          }),
           // 所在城市
-          {
-            type: "group",
-            component: "fieldItem",
-            slot: "default",
-            // 包裹组沿用字段标识，供字段顺序持久化与定位
+          createMoreField({
             key: "city",
-            // 标签与操作区由包裹组件渲染，字段自身不再声明
-            props: {
-              label: "期望城市",
-              removable: true,
-              draggable: true,
-            },
-            // 可添加字段：数据存在才渲染
+            label: "期望城市",
+            component: "cityPicker",
+            icon: "mdi:map-marker-outline",
             addable: true,
-            // 字段状态绑定到包裹组，供包裹组件双向绑定
-            model: [
-              {
-                source: ["ui", "city", "hidden"],
-                prop: "hidden",
-                defaultValue: false,
-              },
-              {
-                source: ["ui", "city", "icon"],
-                prop: "icon",
-                defaultValue: "mdi:map-marker-outline",
-              },
-            ],
-            // 字段隐藏时的置灰判断
-            checks: {
-              hidden: {
-                path: ["ui", "city", "hidden"],
-                equals: true,
-              },
+            props: {
+              placeholder: "请选择城市",
             },
-            fields: [
-              {
-                type: "object",
-                key: "city",
-                component: "cityPicker",
-                span: 24,
-                addable: true,
-                model: {
-                  source: ["data", "city"],
-                  prop: "modelValue",
-                },
-                props: {
-                  placeholder: "请选择城市",
-                },
-              },
-            ],
-          },
-          {
-            type: "group",
-            component: "fieldItem",
-            slot: "default",
-            // 包裹组沿用字段标识，供字段顺序持久化与定位
+          }),
+          createMoreField({
             key: "nativePlace",
-            // 标签与操作区由包裹组件渲染，字段自身不再声明
-            props: {
-              label: "籍贯",
-              removable: true,
-              draggable: true,
-            },
-            // 可添加字段：数据存在才渲染
+            label: "籍贯",
+            component: "cityPicker",
+            icon: "mdi:home-outline",
             addable: true,
-            // 字段状态绑定到包裹组，供包裹组件双向绑定
-            model: [
-              {
-                source: ["ui", "nativePlace", "hidden"],
-                prop: "hidden",
-                defaultValue: false,
-              },
-              {
-                source: ["ui", "nativePlace", "icon"],
-                prop: "icon",
-                defaultValue: "mdi:home-outline",
-              },
-            ],
-            // 字段隐藏时的置灰判断
-            checks: {
-              hidden: {
-                path: ["ui", "nativePlace", "hidden"],
-                equals: true,
-              },
+            props: {
+              placeholder: "请选择籍贯",
             },
-            fields: [
-              {
-                type: "object",
-                key: "nativePlace",
-                component: "cityPicker",
-                span: 24,
-                addable: true,
-                model: {
-                  source: ["data", "nativePlace"],
-                  prop: "modelValue",
-                },
-                props: {
-                  placeholder: "请选择籍贯",
-                },
-              },
-            ],
-          },
-          {
-            type: "group",
-            component: "fieldItem",
-            slot: "default",
-            // 包裹组沿用字段标识，供字段顺序持久化与定位
+          }),
+          createMoreField({
             key: "heightWeight",
-            // 标签与操作区由包裹组件渲染，字段自身不再声明
-            props: {
-              label: "身高体重",
-              removable: true,
-              draggable: true,
-            },
-            // 可添加字段：数据存在才渲染
+            label: "身高体重",
+            component: "heightWeight",
+            icon: "mdi:human-male-height",
             addable: true,
-            // 字段状态绑定到包裹组，供包裹组件双向绑定
-            model: [
-              {
-                source: ["ui", "heightWeight", "hidden"],
-                prop: "hidden",
-                defaultValue: false,
-              },
-              {
-                source: ["ui", "heightWeight", "icon"],
-                prop: "icon",
-                defaultValue: "mdi:human-male-height",
-              },
-            ],
-            // 字段隐藏时的置灰判断
-            checks: {
-              hidden: {
-                path: ["ui", "heightWeight", "hidden"],
-                equals: true,
-              },
-            },
-            fields: [
-              {
-                type: "object",
-                key: "heightWeight",
-                component: "heightWeight",
-                span: 24,
-                addable: true,
-                model: {
-                  source: ["data", "heightWeight"],
-                  prop: "modelValue",
-                },
-              },
-            ],
-          },
+          }),
         ],
       },
     ],
@@ -858,34 +427,8 @@ export const DEFAULT_ACCOUNT_FORM = {
   key: "account",
   context: ["account"],
   span: 24,
-  model: [
-    {
-      source: ["ui", "title"],
-      prop: "title",
-      defaultValue: "社交账号",
-    },
-    {
-      source: ["ui", "collapsed"],
-      prop: "collapsed",
-      defaultValue: EXPANDED,
-    },
-    // 隐藏开关：控制模块在简历预览中显示/隐藏
-    {
-      source: ["ui", "hidden"],
-      prop: "hidden",
-      defaultValue: false,
-    },
-    // 归档状态：已完成模块移入归档区域
-    {
-      source: ["ui", "archived"],
-      prop: "archived",
-      defaultValue: false,
-    },
-  ],
-  checks: {
-    hidden: { path: ["ui", "hidden"] },
-    removed: { path: ["ui", "archived"] },
-  },
+  model: createModuleState("社交账号"),
+  checks: MODULE_CHECKS,
   component: "boxCollapse",
   props: {
     add: true,
@@ -938,34 +481,8 @@ export const DEFAULT_EDUCATION_FORM = {
   props: {
     add: true,
   },
-  model: [
-    {
-      source: ["ui", "title"],
-      prop: "title",
-      defaultValue: "教育经历",
-    },
-    {
-      source: ["ui", "collapsed"],
-      prop: "collapsed",
-      defaultValue: EXPANDED,
-    },
-    // 隐藏开关：控制模块在简历预览中显示/隐藏
-    {
-      source: ["ui", "hidden"],
-      prop: "hidden",
-      defaultValue: false,
-    },
-    // 归档状态：已完成模块移入归档区域
-    {
-      source: ["ui", "archived"],
-      prop: "archived",
-      defaultValue: false,
-    },
-  ],
-  checks: {
-    hidden: { path: ["ui", "hidden"] },
-    removed: { path: ["ui", "archived"] },
-  },
+  model: createModuleState("教育经历"),
+  checks: MODULE_CHECKS,
   slot: "default",
   fields: [
     {
@@ -1119,34 +636,8 @@ export const DEFAULT_SKILL_FORM = {
   props: {
     add: false,
   },
-  model: [
-    {
-      source: ["ui", "title"],
-      prop: "title",
-      defaultValue: "专业技能",
-    },
-    {
-      source: ["ui", "collapsed"],
-      prop: "collapsed",
-      defaultValue: EXPANDED,
-    },
-    // 隐藏开关：控制模块在简历预览中显示/隐藏
-    {
-      source: ["ui", "hidden"],
-      prop: "hidden",
-      defaultValue: false,
-    },
-    // 归档状态：已完成模块移入归档区域
-    {
-      source: ["ui", "archived"],
-      prop: "archived",
-      defaultValue: false,
-    },
-  ],
-  checks: {
-    hidden: { path: ["ui", "hidden"] },
-    removed: { path: ["ui", "archived"] },
-  },
+  model: createModuleState("专业技能"),
+  checks: MODULE_CHECKS,
   slot: "default",
   fields: [
     {
@@ -1169,34 +660,8 @@ export const DEFAULT_ADVANTAGE_FORM = {
   props: {
     add: false,
   },
-  model: [
-    {
-      source: ["ui", "title"],
-      prop: "title",
-      defaultValue: "个人优势",
-    },
-    {
-      source: ["ui", "collapsed"],
-      prop: "collapsed",
-      defaultValue: EXPANDED,
-    },
-    // 隐藏开关：控制模块在简历预览中显示/隐藏
-    {
-      source: ["ui", "hidden"],
-      prop: "hidden",
-      defaultValue: false,
-    },
-    // 归档状态：已完成模块移入归档区域
-    {
-      source: ["ui", "archived"],
-      prop: "archived",
-      defaultValue: false,
-    },
-  ],
-  checks: {
-    hidden: { path: ["ui", "hidden"] },
-    removed: { path: ["ui", "archived"] },
-  },
+  model: createModuleState("个人优势"),
+  checks: MODULE_CHECKS,
   slot: "default",
   fields: [
     {
@@ -1219,34 +684,8 @@ export const DEFAULT_WORK_FORM = {
   props: {
     add: true,
   },
-  model: [
-    {
-      source: ["ui", "title"],
-      prop: "title",
-      defaultValue: "工作经历",
-    },
-    {
-      source: ["ui", "collapsed"],
-      prop: "collapsed",
-      defaultValue: EXPANDED,
-    },
-    // 隐藏开关：控制模块在简历预览中显示/隐藏
-    {
-      source: ["ui", "hidden"],
-      prop: "hidden",
-      defaultValue: false,
-    },
-    // 归档状态：已完成模块移入归档区域
-    {
-      source: ["ui", "archived"],
-      prop: "archived",
-      defaultValue: false,
-    },
-  ],
-  checks: {
-    hidden: { path: ["ui", "hidden"] },
-    removed: { path: ["ui", "archived"] },
-  },
+  model: createModuleState("工作经历"),
+  checks: MODULE_CHECKS,
   slot: "default",
   fields: [
     {
@@ -1356,34 +795,8 @@ export const DEFAULT_PROJECT_FORM = {
   props: {
     add: true,
   },
-  model: [
-    {
-      source: ["ui", "title"],
-      prop: "title",
-      defaultValue: "项目经历",
-    },
-    {
-      source: ["ui", "collapsed"],
-      prop: "collapsed",
-      defaultValue: EXPANDED,
-    },
-    // 隐藏开关：控制模块在简历预览中显示/隐藏
-    {
-      source: ["ui", "hidden"],
-      prop: "hidden",
-      defaultValue: false,
-    },
-    // 归档状态：已完成模块移入归档区域
-    {
-      source: ["ui", "archived"],
-      prop: "archived",
-      defaultValue: false,
-    },
-  ],
-  checks: {
-    hidden: { path: ["ui", "hidden"] },
-    removed: { path: ["ui", "archived"] },
-  },
+  model: createModuleState("项目经历"),
+  checks: MODULE_CHECKS,
   slot: "default",
   fields: [
     {
@@ -1495,33 +908,8 @@ export const DEFAULT_VIDEO_FORM = {
     add: true,
     tip: "该模块会将视频地址转换为二维码，方便在简历中展示",
   },
-  model: [
-    {
-      source: ["ui", "title"],
-      prop: "title",
-      defaultValue: "视频作品",
-    },
-    {
-      source: ["ui", "collapsed"],
-      prop: "collapsed",
-      defaultValue: EXPANDED,
-    },
-    {
-      source: ["ui", "hidden"],
-      prop: "hidden",
-      defaultValue: false,
-    },
-    // 归档状态：已完成模块移入归档区域
-    {
-      source: ["ui", "archived"],
-      prop: "archived",
-      defaultValue: false,
-    },
-  ],
-  checks: {
-    hidden: { path: ["ui", "hidden"] },
-    removed: { path: ["ui", "archived"] },
-  },
+  model: createModuleState("视频作品"),
+  checks: MODULE_CHECKS,
   slot: "default",
   fields: [
     {
@@ -1596,33 +984,8 @@ export const DEFAULT_IMAGE_FORM = {
   props: {
     add: true,
   },
-  model: [
-    {
-      source: ["ui", "title"],
-      prop: "title",
-      defaultValue: "图片作品",
-    },
-    {
-      source: ["ui", "collapsed"],
-      prop: "collapsed",
-      defaultValue: EXPANDED,
-    },
-    {
-      source: ["ui", "hidden"],
-      prop: "hidden",
-      defaultValue: false,
-    },
-    // 归档状态：已完成模块移入归档区域
-    {
-      source: ["ui", "archived"],
-      prop: "archived",
-      defaultValue: false,
-    },
-  ],
-  checks: {
-    hidden: { path: ["ui", "hidden"] },
-    removed: { path: ["ui", "archived"] },
-  },
+  model: createModuleState("图片作品"),
+  checks: MODULE_CHECKS,
   slot: "default",
   fields: [
     {
@@ -1702,34 +1065,8 @@ export const DEFAULT_HONOR_FORM = {
   props: {
     add: true,
   },
-  model: [
-    {
-      source: ["ui", "title"],
-      prop: "title",
-      defaultValue: "荣誉证书",
-    },
-    {
-      source: ["ui", "collapsed"],
-      prop: "collapsed",
-      defaultValue: EXPANDED,
-    },
-    // 隐藏开关：控制模块在简历预览中显示/隐藏
-    {
-      source: ["ui", "hidden"],
-      prop: "hidden",
-      defaultValue: false,
-    },
-    // 归档状态：已完成模块移入归档区域
-    {
-      source: ["ui", "archived"],
-      prop: "archived",
-      defaultValue: false,
-    },
-  ],
-  checks: {
-    hidden: { path: ["ui", "hidden"] },
-    removed: { path: ["ui", "archived"] },
-  },
+  model: createModuleState("荣誉证书"),
+  checks: MODULE_CHECKS,
   slot: "default",
   fields: [
     {
@@ -1775,33 +1112,8 @@ export const DEFAULT_CUSTOM_FORM = {
   props: {
     add: true,
   },
-  model: [
-    {
-      source: ["ui", "title"],
-      prop: "title",
-      defaultValue: "",
-    },
-    {
-      source: ["ui", "collapsed"],
-      prop: "collapsed",
-      defaultValue: EXPANDED,
-    },
-    {
-      source: ["ui", "hidden"],
-      prop: "hidden",
-      defaultValue: false,
-    },
-    // 归档状态：已完成模块移入归档区域
-    {
-      source: ["ui", "archived"],
-      prop: "archived",
-      defaultValue: false,
-    },
-  ],
-  checks: {
-    hidden: { path: ["ui", "hidden"] },
-    removed: { path: ["ui", "archived"] },
-  },
+  model: createModuleState(""),
+  checks: MODULE_CHECKS,
   slot: "default",
   fields: [
     {
