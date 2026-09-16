@@ -17,8 +17,6 @@ const collapsed = defineModel("collapsed", {
 });
 
 const expanded = computed(() => collapsed.value.includes(EXPANDED[0] ?? "1"));
-const showCustomModal = ref(false);
-const customFieldLabel = ref("");
 // 只展示结构中声明为可添加且数据路径尚不存在的字段
 const availableFields = computed(() =>
   (currentForm.value?.fields ?? []).filter(
@@ -43,16 +41,13 @@ function handleAdd(field) {
   }
 }
 
-// 自定义字段直接插入更多字段配置，并写入对应的真实数据值
+// 自定义字段直接以默认名称插入更多字段配置，并写入对应的真实数据值
 function handleCreateCustomField() {
-  const label = customFieldLabel.value.trim();
-  if (!label || !runtimeConfig.value || !currentData.value) return;
+  const label = "尚未填写";
+  if (!runtimeConfig.value || !currentData.value) return;
 
   const key = `custom_${getUUID().substring(0, 8)}`;
-  if (addUserCustomField(runtimeConfig.value, currentData.value, key, label)) {
-    showCustomModal.value = false;
-    customFieldLabel.value = "";
-  }
+  addUserCustomField(runtimeConfig.value, currentData.value, key, label);
 }
 </script>
 
@@ -83,26 +78,11 @@ function handleCreateCustomField() {
       <button
         type="button"
         class="h-9 cursor-pointer rounded-lg border border-dashed border-sf-border bg-sf-primary px-3 text-sm text-sf-text-2 transition-colors hover:border-sf-theme hover:text-sf-theme"
-        @click="showCustomModal = true"
+        @click="handleCreateCustomField"
       >
         + 自定义字段
       </button>
     </div>
-
-    <SfModal v-model="showCustomModal" title="新增自定义字段">
-      <form class="flex w-80 flex-col gap-3 p-3" @submit.prevent="handleCreateCustomField">
-        <SfInput v-model="customFieldLabel" placeholder="请输入字段名称" />
-        <footer class="flex justify-end gap-3">
-          <el-button @click="showCustomModal = false">取消</el-button>
-          <el-button
-            type="primary"
-            :disabled="!customFieldLabel.trim()"
-            @click="handleCreateCustomField"
-            >保存</el-button
-          >
-        </footer>
-      </form>
-    </SfModal>
   </div>
 </template>
 
