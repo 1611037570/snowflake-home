@@ -81,7 +81,7 @@ function handleAdd() {
     <SfCollapseItem name="1">
       <template #title>
         <div class="group flex h-full w-full items-center justify-between">
-          <div class="flex items-center text-lg font-bold">
+          <div class="flex flex-1 items-center truncate text-lg font-bold">
             <SfIcon
               v-if="currentForm.key !== 'user'"
               icon="icon-park-outline:drag"
