@@ -1,4 +1,7 @@
-import { getModelBindings } from "@/components/business/dynamicForm/code/schemaAccess";
+import {
+  getFieldLabel,
+  getModelBindings,
+} from "@/components/business/dynamicForm/code/schemaAccess";
 import type { FormField, ModelBinding } from "@/components/business/dynamicForm/types";
 
 export type ResumeModuleKind = "object" | "array" | "custom";
@@ -97,7 +100,7 @@ const collectFields = (
         if (!key || RESERVED_FIELDS.has(key)) return;
         const next: ResumeFieldSchema = {
           key,
-          label: field.label || key,
+          label: getFieldLabel(field) || key,
           path: [...binding.source],
           component: field.component,
           valueType: getValueType(field, binding, format),
@@ -117,7 +120,7 @@ const collectFields = (
         result[position] = {
           ...previous,
           ...next,
-          label: field.label || previous.label,
+          label: getFieldLabel(field) || previous.label,
           required: previous.required || next.required,
           addable: previous.addable || next.addable,
           options: next.options ?? previous.options,
