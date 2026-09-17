@@ -81,6 +81,18 @@ const mountEmptyState = () =>
           props: ["modelValue"],
           template: '<div v-if="modelValue" data-test="modal"><slot /></div>',
         },
+        // 分类切换用按钮渲染，便于按标题点击切换
+        SfTab: {
+          props: ["list", "modelValue"],
+          emits: ["update:modelValue"],
+          template: `<div>
+            <button
+              v-for="item in list"
+              :key="item.value"
+              @click="$emit('update:modelValue', item.value)"
+            >{{ item.name }}</button>
+          </div>`,
+        },
       },
     },
   });

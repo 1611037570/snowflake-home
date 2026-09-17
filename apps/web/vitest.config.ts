@@ -15,6 +15,12 @@ export default mergeConfig(
     test: {
       globals: true, // 开启全局测试 APIs
       environment: 'jsdom', // 浏览器环境模拟
+      // element-plus 的样式入口需交由 vite 处理，否则 node 会直接加载 .css 并报未知扩展名
+      server: {
+        deps: {
+          inline: ['element-plus'],
+        },
+      },
       exclude: [...configDefaults.exclude, 'e2e/*'], // 排除 e2e 测试
       root: fileURLToPath(new URL('./', import.meta.url)), // 测试根目录
       reporters: ['verbose', 'html', 'json'], // 测试报告输出
