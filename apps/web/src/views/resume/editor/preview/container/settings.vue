@@ -5,6 +5,7 @@ import {
   avatarPositionList,
   defaultAvatarPosition,
   defaultInfoPosition,
+  defaultLineHeight,
   defaultModuleSpacing,
   defaultPaddingHorizontal,
   defaultPaddingVertical,
@@ -20,12 +21,24 @@ import {
 const resumeStore = useResumeStore();
 const { currentUI } = storeToRefs(resumeStore);
 
-// 页面布局数值参数：标签、绑定字段与默认值集中维护，模板统一渲染
+// 页面布局数值参数：标签、绑定字段、默认值与单位集中维护，模板统一渲染
 const layoutParams = [
-  { label: "上下边距", key: "paddingVertical", defaultValue: defaultPaddingVertical },
-  { label: "左右边距", key: "paddingHorizontal", defaultValue: defaultPaddingHorizontal },
-  { label: "模块上下间距", key: "moduleSpacing", defaultValue: defaultModuleSpacing },
-  { label: "模块段落间距", key: "paragraphSpacing", defaultValue: defaultParagraphSpacing },
+  { label: "上下页边距", key: "paddingVertical", defaultValue: defaultPaddingVertical, unit: "px" },
+  {
+    label: "左右页边距",
+    key: "paddingHorizontal",
+    defaultValue: defaultPaddingHorizontal,
+    unit: "px",
+  },
+  { label: "模块上下间距", key: "moduleSpacing", defaultValue: defaultModuleSpacing, unit: "px" },
+  {
+    label: "模块段落间距",
+    key: "paragraphSpacing",
+    defaultValue: defaultParagraphSpacing,
+    unit: "px",
+  },
+  // 行间距为字号倍数，单位与其它像素值不同
+  { label: "行间距", key: "lineHeight", defaultValue: defaultLineHeight, unit: "倍" },
 ];
 
 // 个人信息选项参数：左侧标签加重置按钮，右侧按选项按钮组渲染
@@ -80,7 +93,9 @@ const setParam = (key, value) => {
       />
     </SfTooltip>
     <template #dropdown>
-      <div class="flex w-[240px] flex-col gap-3 rounded-3xl border border-sf-b bg-sf-primary p-3">
+      <div
+        class="flex w-[240px] flex-col gap-3 overflow-hidden rounded-3xl border border-sf-b bg-sf-primary p-3"
+      >
         <div class="text-xs font-bold text-sf-text">页面布局</div>
         <div v-for="item in layoutParams" :key="item.key" class="flex flex-col gap-1">
           <div class="flex items-center justify-between text-sm text-sf-text-2">
@@ -95,7 +110,7 @@ const setParam = (key, value) => {
                 />
               </SfTooltip>
             </span>
-            <span>{{ getNumberValue(item.key) }}px</span>
+            <span>{{ getNumberValue(item.key) }}{{ item.unit }}</span>
           </div>
           <SfSlider
             :model-value="getNumberValue(item.key)"
