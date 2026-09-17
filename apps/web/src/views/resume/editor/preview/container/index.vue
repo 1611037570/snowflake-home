@@ -6,7 +6,7 @@ import { useResumeStore } from "@/stores";
 import { RESUME_HEIGHT, RESUME_WIDTH } from "../constants";
 import ThemeColor from "./themeColor.vue";
 import FontSize from "./fontSize.vue";
-import Padding from "./padding.vue";
+import Settings from "./settings.vue";
 import PageNumber from "./pageNumber.vue";
 import PrintMode from "./printMode.vue";
 import Language from "./language.vue";
@@ -174,7 +174,7 @@ useResizeObserver(contentRef, ([entry]) => {
     >
       <ThemeColor />
       <FontSize />
-      <Padding />
+      <Settings />
       <PageNumber />
       <PrintMode />
       <Language />

@@ -2,27 +2,15 @@
 import { computed } from "vue";
 import { useResumeStore } from "@/stores";
 import {
-  avatarPositionList,
   dateStyleList,
   fontFamilyList,
-  infoPositionList,
   titleIconList,
   uiParamRanges,
-  userInfoLayoutList,
-  userInfoModeList,
-  defaultPaddingVertical,
-  defaultPaddingHorizontal,
   defaultFontSize,
   defaultTitleFontSize,
   defaultLineHeight,
-  defaultParagraphSpacing,
-  defaultModuleSpacing,
   defaultFontFamily,
   defaultThemeColor,
-  defaultUserInfoMode,
-  defaultUserInfoLayout,
-  defaultAvatarPosition,
-  defaultInfoPosition,
   defaultDateStyle,
   defaultTitleIcon,
   defaultFooter,
@@ -36,38 +24,6 @@ import ThemeColorPicker from "@/components/business/themeColorPicker/themeColorP
 
 const resumeStore = useResumeStore();
 const { currentUI } = storeToRefs(resumeStore);
-
-// 个人信息展示模式
-const userInfoMode = computed({
-  get: () => currentUI.value?.userInfoMode,
-  set: (value) => {
-    currentUI.value.userInfoMode = value;
-  },
-});
-
-// 个人信息布局（网格/弹性）
-const userInfoLayout = computed({
-  get: () => currentUI.value?.userInfoLayout,
-  set: (value) => {
-    currentUI.value.userInfoLayout = value;
-  },
-});
-
-// 头像位置（左/居中/右）
-const avatarPosition = computed({
-  get: () => currentUI.value?.avatarPosition,
-  set: (value) => {
-    currentUI.value.avatarPosition = value;
-  },
-});
-
-// 信息位置（左/居中/右），独立于头像位置
-const infoPosition = computed({
-  get: () => currentUI.value?.infoPosition,
-  set: (value) => {
-    currentUI.value.infoPosition = value;
-  },
-});
 
 // 日期样式（点号/中文）
 const dateStyle = computed({
@@ -99,108 +55,6 @@ const footer = computed({
     <div class="flex w-full flex-col gap-3">
       <!-- 一键设计预设：折叠面板默认折叠 -->
       <DesignPreset />
-
-      <ConfigGroup title="个人信息">
-        <!-- 展示模式切换：图标 / 文字 -->
-        <ConfigLabel label="展示模式" v-model="userInfoMode" :default-value="defaultUserInfoMode" />
-        <div class="flex gap-3">
-          <SfButton
-            class="flex-1"
-            @click="userInfoMode = mode.value"
-            border
-            v-for="mode in userInfoModeList"
-            :type="userInfoMode === mode.value ? 'theme' : 'bg'"
-            :key="mode.value"
-            >{{ mode.name }}</SfButton
-          >
-        </div>
-        <!-- 布局方式切换：网格 / 弹性 -->
-        <ConfigLabel
-          label="布局方式"
-          v-model="userInfoLayout"
-          :default-value="defaultUserInfoLayout"
-        />
-        <div class="flex gap-3">
-          <SfButton
-            class="flex-1"
-            @click="userInfoLayout = mode.value"
-            border
-            v-for="mode in userInfoLayoutList"
-            :type="userInfoLayout === mode.value ? 'theme' : 'bg'"
-            :key="mode.value"
-            >{{ mode.name }}</SfButton
-          >
-        </div>
-        <!-- 头像位置切换：左 / 居中 / 右 -->
-        <ConfigLabel
-          label="头像位置"
-          v-model="avatarPosition"
-          :default-value="defaultAvatarPosition"
-        />
-        <div class="flex gap-3">
-          <SfButton
-            class="flex-1"
-            @click="avatarPosition = mode.value"
-            border
-            v-for="mode in avatarPositionList"
-            :type="avatarPosition === mode.value ? 'theme' : 'bg'"
-            :key="mode.value"
-            >{{ mode.name }}</SfButton
-          >
-        </div>
-        <!-- 信息位置切换：左 / 居中 / 右，与头像位置各管各的 -->
-        <ConfigLabel label="信息位置" v-model="infoPosition" :default-value="defaultInfoPosition" />
-        <div class="flex gap-3">
-          <SfButton
-            class="flex-1"
-            @click="infoPosition = mode.value"
-            border
-            v-for="mode in infoPositionList"
-            :type="infoPosition === mode.value ? 'theme' : 'bg'"
-            :key="mode.value"
-            >{{ mode.name }}</SfButton
-          >
-        </div>
-      </ConfigGroup>
-
-      <ConfigGroup title="页面布局">
-        <ConfigItem
-          label="上下边距"
-          v-model="currentUI.paddingVertical"
-          :min="uiParamRanges.paddingVertical.min"
-          :max="uiParamRanges.paddingVertical.max"
-          :step="uiParamRanges.paddingVertical.step"
-          :default-value="defaultPaddingVertical"
-          tip="页面顶部与底部的留白距离"
-        />
-        <ConfigItem
-          label="左右边距"
-          v-model="currentUI.paddingHorizontal"
-          :min="uiParamRanges.paddingHorizontal.min"
-          :max="uiParamRanges.paddingHorizontal.max"
-          :step="uiParamRanges.paddingHorizontal.step"
-          :default-value="defaultPaddingHorizontal"
-          tip="页面左侧与右侧的留白距离"
-        />
-        <ConfigItem
-          label="模块上下间距"
-          v-model="currentUI.moduleSpacing"
-          :min="uiParamRanges.moduleSpacing.min"
-          :max="uiParamRanges.moduleSpacing.max"
-          :step="uiParamRanges.moduleSpacing.step"
-          :default-value="defaultModuleSpacing"
-          tip="各模块之间的间隔"
-        />
-        <ConfigItem
-          label="模块段落间距"
-          v-model="currentUI.paragraphSpacing"
-          :min="uiParamRanges.paragraphSpacing.min"
-          :max="uiParamRanges.paragraphSpacing.max"
-          :step="uiParamRanges.paragraphSpacing.step"
-          :default-value="defaultParagraphSpacing"
-          tip="同一模块内各条内容之间的间隔"
-        />
-      </ConfigGroup>
 
       <ConfigGroup title="文字排版">
         <!-- 字体类型选择 -->
