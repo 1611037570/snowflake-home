@@ -5,6 +5,7 @@
  * 与每页可见行裁剪样式，供 resumePages/index.vue 使用。
  */
 import { computed, ref, watch, type ComputedRef, type Ref } from "vue";
+import { defaultPaddingVertical } from "@/stores/modules/resume/uiConfig";
 import { paginateModules, buildPagesStyleText } from "./paginate";
 import { useRowInfo } from "./useRowInfo";
 
@@ -34,8 +35,10 @@ export const useResumePages = ({
   allModules,
 }: UseResumePagesOptions) => {
   // 测量监听配置：风格模板切换会改变行高，纳入监听触发重新测量分页
+  // 左右边距改变内容宽度会影响换行，同样需要重新测量
   const watchOptions = computed(() => ({
-    padding: ui.value.padding,
+    paddingVertical: ui.value.paddingVertical,
+    paddingHorizontal: ui.value.paddingHorizontal,
     fontSize: ui.value.fontSize,
     lineHeight: ui.value.lineHeight,
     paragraphSpacing: ui.value.paragraphSpacing,
@@ -64,7 +67,8 @@ export const useResumePages = ({
   const pages = computed(() =>
     paginateModules({
       moduleList: moduleList.value,
-      padding: ui.value.padding || 0,
+      // 与主题样式保持同一兜底值，避免上下留白与分页可用高度不一致
+      paddingVertical: ui.value.paddingVertical ?? defaultPaddingVertical,
       moduleSpacing: ui.value.moduleSpacing,
       showPageNumber: showPageNumber.value,
       stopAfterFirstPage: isThumb.value,

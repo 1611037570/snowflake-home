@@ -12,7 +12,8 @@ import {
   defaultFontSize,
   defaultInfoPosition,
   defaultLineHeight,
-  defaultPadding,
+  defaultPaddingHorizontal,
+  defaultPaddingVertical,
   defaultTitleFontSize,
   defaultUserInfoLayout,
   defaultUserInfoMode,
@@ -44,7 +45,12 @@ export const useResumeTheme = (ui: ComputedRef<ResumeUi>): ResumeTheme => {
     const number = Number(value);
     return Number.isFinite(number) ? number : fallback;
   };
-  const padding = computed(() => toNumber(ui.value.padding, defaultPadding));
+  const paddingVertical = computed(() =>
+    toNumber(ui.value.paddingVertical, defaultPaddingVertical),
+  );
+  const paddingHorizontal = computed(() =>
+    toNumber(ui.value.paddingHorizontal, defaultPaddingHorizontal),
+  );
   const fontSize = computed(() => toNumber(ui.value.fontSize, defaultFontSize));
   const lineHeight = computed(() => toNumber(ui.value.lineHeight, defaultLineHeight));
   const paragraphSpacing = computed(() => Number(ui.value.paragraphSpacing));
@@ -67,14 +73,12 @@ export const useResumeTheme = (ui: ComputedRef<ResumeUi>): ResumeTheme => {
   );
 
   // 页面级基础样式对象固定复用，避免模板每次渲染都重新创建相同样式
-  const paddingStyle = computed(() => {
-    const value = padding.value;
-    return {
-      paddingTop: `${value}px`,
-      paddingLeft: `${value}px`,
-      paddingRight: `${value}px`,
-    };
-  });
+  const paddingStyle = computed(() => ({
+    // 页面底部留白由分页裁剪隐含，只保留顶部留白
+    paddingTop: `${paddingVertical.value}px`,
+    paddingLeft: `${paddingHorizontal.value}px`,
+    paddingRight: `${paddingHorizontal.value}px`,
+  }));
   const fontStyle = computed(() => ({
     fontSize: `${fontSize.value}px`,
   }));

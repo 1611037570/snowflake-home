@@ -17,7 +17,8 @@ const PRESETS = [
     desc: "大留白 + 宽松行距，适合内容较少的简历",
     themeColor: "#40a9ff",
     ui: {
-      padding: 48,
+      paddingVertical: 48,
+      paddingHorizontal: 48,
       fontSize: 15,
       lineHeight: 1.5,
       moduleSpacing: 24,
@@ -30,7 +31,8 @@ const PRESETS = [
     desc: "小边距 + 紧凑排版，一页纸友好。",
     themeColor: "#ff4d4f",
     ui: {
-      padding: 16,
+      paddingVertical: 16,
+      paddingHorizontal: 16,
       fontSize: 14,
       lineHeight: 1.15,
       moduleSpacing: 8,

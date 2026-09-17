@@ -162,7 +162,8 @@ export const xiaoYangForm = {
 };
 
 export const xiaoYangUI = {
-  padding: 24,
+  paddingVertical: 24,
+  paddingHorizontal: 24,
   fontSize: 16,
   titleFontSize: 22,
   lineHeight: 1.2,

@@ -9,7 +9,8 @@ import {
   uiParamRanges,
   userInfoLayoutList,
   userInfoModeList,
-  defaultPadding,
+  defaultPaddingVertical,
+  defaultPaddingHorizontal,
   defaultFontSize,
   defaultTitleFontSize,
   defaultLineHeight,
@@ -154,13 +155,22 @@ const footer = computed({
 
       <ConfigGroup title="页面布局">
         <ConfigItem
-          label="页边距"
-          v-model="currentUI.padding"
-          :min="uiParamRanges.padding.min"
-          :max="uiParamRanges.padding.max"
-          :step="uiParamRanges.padding.step"
-          :default-value="defaultPadding"
-          tip="页面四周的留白距离"
+          label="上下边距"
+          v-model="currentUI.paddingVertical"
+          :min="uiParamRanges.paddingVertical.min"
+          :max="uiParamRanges.paddingVertical.max"
+          :step="uiParamRanges.paddingVertical.step"
+          :default-value="defaultPaddingVertical"
+          tip="页面顶部与底部的留白距离"
+        />
+        <ConfigItem
+          label="左右边距"
+          v-model="currentUI.paddingHorizontal"
+          :min="uiParamRanges.paddingHorizontal.min"
+          :max="uiParamRanges.paddingHorizontal.max"
+          :step="uiParamRanges.paddingHorizontal.step"
+          :default-value="defaultPaddingHorizontal"
+          tip="页面左侧与右侧的留白距离"
         />
         <ConfigItem
           label="模块上下间距"
