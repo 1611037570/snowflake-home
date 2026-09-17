@@ -134,6 +134,7 @@ const dateStyle = computed({
               v-for="mode in dateStyleList"
               :key="mode.value"
               class="flex-1"
+              size="small"
               border
               @click="dateStyle = mode.value"
               :type="dateStyle === mode.value ? 'theme' : 'bg'"

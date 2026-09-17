@@ -136,6 +136,7 @@ const setParam = (key, value) => {
               v-for="option in item.list"
               :key="option.value"
               class="flex-1"
+              size="small"
               border
               @click="setParam(item.key, option.value)"
               :type="getValue(item.key) === option.value ? 'theme' : 'bg'"
