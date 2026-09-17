@@ -155,6 +155,11 @@ export const useResumeStore = defineStore(
     const setConfigSyncing = (value: boolean) => {
       configSyncing.value = value;
     };
+    // 预览渲染状态：预览页测量完成前为 true，供外壳展示加载提示
+    const previewSyncing = ref(true);
+    const setPreviewSyncing = (value: boolean) => {
+      previewSyncing.value = value;
+    };
     // 撤销历史栈：每个元素为修改前的内容快照字符串（data/config/ui），撤销时解析还原
     const undoStack = ref<string[]>([]);
     // 重做历史栈：结构与撤销栈相同
@@ -774,6 +779,8 @@ export const useResumeStore = defineStore(
       init,
       configSyncing,
       setConfigSyncing,
+      previewSyncing,
+      setPreviewSyncing,
       resetSettings,
     };
   },
