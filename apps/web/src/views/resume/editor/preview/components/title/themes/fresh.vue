@@ -1,5 +1,6 @@
 <script setup>
 import { inject } from "vue";
+import TitleText from "../titleText.vue";
 
 defineProps({
   title: {
@@ -18,7 +19,7 @@ const themeColor = inject("themeColor");
       class="inline-block max-w-full min-w-0 rounded-full px-4 py-1 font-bold tracking-wide break-words"
       :style="[{ background: themeColor + '1a' }]"
     >
-      {{ title }}
+      <TitleText :title="title" />
     </h2>
   </div>
 </template>

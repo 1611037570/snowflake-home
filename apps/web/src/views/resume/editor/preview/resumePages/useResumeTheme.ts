@@ -15,6 +15,7 @@ import {
   defaultPaddingHorizontal,
   defaultPaddingVertical,
   defaultTitleFontSize,
+  defaultTitleIcon,
   defaultUserInfoLayout,
   defaultUserInfoMode,
 } from "@/stores/modules/resume/uiConfig";
@@ -120,6 +121,8 @@ export const useResumeTheme = (ui: ComputedRef<ResumeUi>): ResumeTheme => {
   const infoPosition = computed(() => ui.value.infoPosition ?? defaultInfoPosition);
   // 日期样式（2026.9 / 2026年9月），缺失时回退默认值
   const dateStyle = computed(() => ui.value.dateStyle ?? defaultDateStyle);
+  // 标题图标开关，缺失时回退默认值
+  const titleIconEnabled = computed(() => ui.value.titleIcon ?? defaultTitleIcon);
 
   provide("fontValue", fontValue);
   provide("titleFontStyle", titleFontStyle);
@@ -132,6 +135,7 @@ export const useResumeTheme = (ui: ComputedRef<ResumeUi>): ResumeTheme => {
   provide("avatarPosition", avatarPosition);
   provide("infoPosition", infoPosition);
   provide("dateStyle", dateStyle);
+  provide("titleIconEnabled", titleIconEnabled);
 
   return {
     paddingStyle,

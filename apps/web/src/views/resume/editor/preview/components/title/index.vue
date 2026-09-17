@@ -1,5 +1,6 @@
 <script setup>
-import { computed, inject } from "vue";
+import { computed, inject, provide } from "vue";
+import { CUSTOM_MODULE_ICON, DEFAULT_MODULE_NAMES } from "@/stores/modules/resume/defaultConfig";
 import { getPreviewTitle } from "../../i18n";
 import Business from "./themes/business.vue";
 import Academic from "./themes/academic.vue";
@@ -62,6 +63,28 @@ const themeTemplateRef = inject("themeTemplate");
 const themeTemplate = computed(() => themeTemplateRef?.value || "default");
 // 当前主题组件：未匹配时回退默认主题
 const current = computed(() => themeComponents[themeTemplate.value] || themeComponents.default);
+
+// 标题图标开关：由 ResumePages 注入，关闭时不展示模块图标
+const titleIconEnabled = inject(
+  "titleIconEnabled",
+  computed(() => false),
+);
+// 模块图标：取模块默认图标表，自定义模块用统一图标，未知模块不展示
+const titleIcon = computed(() => {
+  if (!titleIconEnabled.value) return "";
+  const key = props.moduleKey;
+  return (
+    DEFAULT_MODULE_NAMES.find((item) => item.key === key)?.icon ||
+    (key.startsWith("custom") ? CUSTOM_MODULE_ICON : "")
+  );
+});
+// 图标尺寸与标题字号保持一致（SfIcon 的 size 单位为 px 除以 4）
+const titleIconSize = computed(() => {
+  const size = parseFloat(titleFontStyle.value?.fontSize);
+  return Number.isFinite(size) ? size / 4 : 4;
+});
+provide("titleIcon", titleIcon);
+provide("titleIconSize", titleIconSize);
 </script>
 
 <template>

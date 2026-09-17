@@ -1,5 +1,6 @@
 <script setup>
 import { inject } from "vue";
+import TitleText from "../titleText.vue";
 
 defineProps({
   title: {
@@ -13,7 +14,7 @@ const fontValue = inject("fontValue");
 <template>
   <!-- 简约风格：纯标题文字，无装饰 -->
   <h2 v-if="title" class="max-w-full min-w-0 font-bold tracking-wide break-words">
-    {{ title }}
+    <TitleText :title="title" />
   </h2>
 </template>
 

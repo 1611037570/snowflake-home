@@ -134,6 +134,17 @@ export const dateStyleList = [
     value: "cn",
   },
 ];
+// 标题图标列表（是否在模块标题前展示模块图标）
+export const titleIconList = [
+  {
+    name: "关闭",
+    value: false,
+  },
+  {
+    name: "开启",
+    value: true,
+  },
+];
 // ===========默认值=====================
 export const defaultThemeColor = themeColors[0].value;
 // 默认自定义页尾品牌名（留空表示使用默认品牌名）
@@ -165,6 +176,8 @@ export const defaultAvatarPosition = "right";
 export const defaultInfoPosition = "left";
 // 默认日期样式
 export const defaultDateStyle = "dot";
+// 默认标题图标开关
+export const defaultTitleIcon = false;
 // ===========参数范围（编辑器滑杆与一页纸压缩共用，只维护这一处）=====================
 export const uiParamRanges = {
   // 上下页边距
@@ -217,4 +230,6 @@ export const DEFAULT_UI = {
   infoPosition: defaultInfoPosition,
   // 日期样式
   dateStyle: defaultDateStyle,
+  // 标题图标：开启后在模块标题前展示模块图标
+  titleIcon: defaultTitleIcon,
 };
