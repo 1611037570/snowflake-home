@@ -73,9 +73,10 @@ export const useResumeTheme = (ui: ComputedRef<ResumeUi>): ResumeTheme => {
   );
 
   // 页面级基础样式对象固定复用，避免模板每次渲染都重新创建相同样式
+  // 上下边距对称：顶部与底部各留一份，页尾落在底部留白之内
   const paddingStyle = computed(() => ({
-    // 页面底部留白由分页裁剪隐含，只保留顶部留白
     paddingTop: `${paddingVertical.value}px`,
+    paddingBottom: `${paddingVertical.value}px`,
     paddingLeft: `${paddingHorizontal.value}px`,
     paddingRight: `${paddingHorizontal.value}px`,
   }));
