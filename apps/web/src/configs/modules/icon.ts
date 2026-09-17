@@ -223,5 +223,6 @@ export const ICON_LIST: Record<string, IconItem> = {
   "mdi:map-marker-outline": { icon: "mdi:map-marker-outline", name: "城市" },
   "mdi:home-outline": { icon: "mdi:home-outline", name: "籍贯" },
   "mdi:human-male-height": { icon: "mdi:human-male-height", name: "身高体重" },
+  "mdi:currency-cny": { icon: "mdi:currency-cny", name: "期望薪资" },
   "lucide:tag": { icon: "lucide:tag", name: "标签" },
 };

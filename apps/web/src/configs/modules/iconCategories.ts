@@ -27,6 +27,7 @@ export const ICON_CATEGORIES: IconCategory[] = [
       { icon: "mdi:map-marker-outline", name: "期望城市" },
       { icon: "mdi:home-outline", name: "籍贯" },
       { icon: "mdi:human-male-height", name: "身高体重" },
+      { icon: "mdi:currency-cny", name: "期望薪资" },
     ],
   },
   {
