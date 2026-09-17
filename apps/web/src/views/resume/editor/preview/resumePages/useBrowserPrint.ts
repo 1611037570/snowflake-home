@@ -112,6 +112,11 @@ export const printResume = async (
             @page { size: A4; margin: 0; }
             html, body { margin: 0; padding: 0; background: #fff; }
             body { width: 210mm; min-width: 794px; }
+            /* 强制打印背景色，否则浏览器默认丢弃背景导致主题色丢失 */
+            html, body, .resume-iframe-print-root, .resume-iframe-print-root * {
+              -webkit-print-color-adjust: exact;
+              print-color-adjust: exact;
+            }
             .resume-iframe-print-root { width: 794px !important; gap: 0 !important; }
             .resume-iframe-print-root .resume-page-item {
               margin: 0 !important;
