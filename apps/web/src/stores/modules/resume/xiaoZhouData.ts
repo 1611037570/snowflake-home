@@ -115,6 +115,8 @@ export const xiaoZhouForm = {
     { key: "education" },
     { key: "skill" },
     { key: "project" },
+    // 视频作品：数据已存在，需登记模块 key 才能在编辑区与预览区渲染
+    { key: "video" },
   ],
 };
 
