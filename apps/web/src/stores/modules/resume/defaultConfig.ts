@@ -61,6 +61,8 @@ export const DEFAULT_SYSTEM = {
   showPageNumber: true,
   // 打印模式：开启后预览去色，模拟黑白打印效果
   printMode: false,
+  // 点击预览定位：开启后点击预览区模块会定位到左侧编辑区对应模块
+  previewClickLocate: true,
   // 是否展示调试控制台
   showDebug: false,
   // 是否展示工具栏工具名称

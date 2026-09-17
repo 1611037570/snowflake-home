@@ -51,6 +51,12 @@ function resetSettings() {
           v-model="system.defaultItemExpanded"
           type="switch"
         />
+        <SfSetItem
+          title="点击预览定位编辑区"
+          info="开启后，点击预览区模块会定位到左侧编辑区对应模块"
+          v-model="system.previewClickLocate"
+          type="switch"
+        />
       </SfSetBox>
 
       <SfSetTitle title="检测设置" />
