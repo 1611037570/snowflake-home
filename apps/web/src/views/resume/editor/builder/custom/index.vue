@@ -68,83 +68,6 @@ const footer = computed({
       <!-- 一键设计预设：折叠面板默认折叠 -->
       <DesignPreset />
 
-      <ConfigGroup title="主题配色">
-        <!-- 主题色自定义取色器 -->
-        <ConfigLabel
-          label="主题色"
-          v-model="currentUI.themeColor"
-          :default-value="defaultThemeColor"
-        />
-        <ThemeColorPicker v-model="currentUI.themeColor" />
-      </ConfigGroup>
-      <ConfigGroup title="页面布局">
-        <ConfigItem
-          label="页边距"
-          v-model="currentUI.padding"
-          :min="uiParamRanges.padding.min"
-          :max="uiParamRanges.padding.max"
-          :step="uiParamRanges.padding.step"
-          :default-value="defaultPadding"
-          tip="页面四周的留白距离"
-        />
-        <ConfigItem
-          label="模块间距"
-          v-model="currentUI.moduleSpacing"
-          :min="uiParamRanges.moduleSpacing.min"
-          :max="uiParamRanges.moduleSpacing.max"
-          :step="uiParamRanges.moduleSpacing.step"
-          :default-value="defaultModuleSpacing"
-          tip="各模块之间的间隔"
-        />
-      </ConfigGroup>
-      <ConfigGroup title="页脚设置">
-        <!-- 自定义页尾品牌名：留空时展示默认「轻舟简历」 -->
-        <ConfigLabel
-          label="自定义页尾"
-          v-model="footer"
-          :default-value="defaultFooter"
-          tip="仅自定义开头的品牌名，页码部分固定展示，留空恢复「轻舟简历」"
-        />
-        <SfInput v-model="footer" placeholder="例如：我的简历" clearable />
-      </ConfigGroup>
-      <ConfigGroup title="文字排版">
-        <!-- 字体类型选择 -->
-        <ConfigLabel
-          label="字体类型"
-          v-model="currentUI.fontFamily"
-          :default-value="defaultFontFamily"
-        />
-        <SfSelect v-model="currentUI.fontFamily" :list="fontFamilyList" />
-
-        <ConfigItem
-          label="字体大小"
-          v-model="currentUI.fontSize"
-          :min="uiParamRanges.fontSize.min"
-          :max="uiParamRanges.fontSize.max"
-          :step="uiParamRanges.fontSize.step"
-          :default-value="defaultFontSize"
-          tip="正文的基础字号"
-        />
-        <ConfigItem
-          label="行间距"
-          v-model="currentUI.lineHeight"
-          :min="uiParamRanges.lineHeight.min"
-          :max="uiParamRanges.lineHeight.max"
-          :step="uiParamRanges.lineHeight.step"
-          :default-value="defaultLineHeight"
-          tip="行与行之间的距离（字号倍数），数值越大行距越大"
-        />
-        <ConfigItem
-          label="段落间距"
-          v-model="currentUI.paragraphSpacing"
-          :min="uiParamRanges.paragraphSpacing.min"
-          :max="uiParamRanges.paragraphSpacing.max"
-          :step="uiParamRanges.paragraphSpacing.step"
-          :default-value="defaultParagraphSpacing"
-          tip="同一模块内各条内容之间的间隔"
-        />
-      </ConfigGroup>
-
       <ConfigGroup title="个人信息">
         <!-- 展示模式切换：图标 / 文字 -->
         <ConfigLabel label="展示模式" v-model="userInfoMode" :default-value="defaultUserInfoMode" />
@@ -193,6 +116,85 @@ const footer = computed({
             >{{ mode.name }}</SfButton
           >
         </div>
+      </ConfigGroup>
+
+      <ConfigGroup title="页面布局">
+        <ConfigItem
+          label="页边距"
+          v-model="currentUI.padding"
+          :min="uiParamRanges.padding.min"
+          :max="uiParamRanges.padding.max"
+          :step="uiParamRanges.padding.step"
+          :default-value="defaultPadding"
+          tip="页面四周的留白距离"
+        />
+        <ConfigItem
+          label="模块上下间距"
+          v-model="currentUI.moduleSpacing"
+          :min="uiParamRanges.moduleSpacing.min"
+          :max="uiParamRanges.moduleSpacing.max"
+          :step="uiParamRanges.moduleSpacing.step"
+          :default-value="defaultModuleSpacing"
+          tip="各模块之间的间隔"
+        />
+        <ConfigItem
+          label="模块段落间距"
+          v-model="currentUI.paragraphSpacing"
+          :min="uiParamRanges.paragraphSpacing.min"
+          :max="uiParamRanges.paragraphSpacing.max"
+          :step="uiParamRanges.paragraphSpacing.step"
+          :default-value="defaultParagraphSpacing"
+          tip="同一模块内各条内容之间的间隔"
+        />
+      </ConfigGroup>
+
+      <ConfigGroup title="文字排版">
+        <!-- 字体类型选择 -->
+        <ConfigLabel
+          label="字体类型"
+          v-model="currentUI.fontFamily"
+          :default-value="defaultFontFamily"
+        />
+        <SfSelect v-model="currentUI.fontFamily" :list="fontFamilyList" />
+
+        <ConfigItem
+          label="字体大小"
+          v-model="currentUI.fontSize"
+          :min="uiParamRanges.fontSize.min"
+          :max="uiParamRanges.fontSize.max"
+          :step="uiParamRanges.fontSize.step"
+          :default-value="defaultFontSize"
+          tip="正文的基础字号"
+        />
+        <ConfigItem
+          label="行间距"
+          v-model="currentUI.lineHeight"
+          :min="uiParamRanges.lineHeight.min"
+          :max="uiParamRanges.lineHeight.max"
+          :step="uiParamRanges.lineHeight.step"
+          :default-value="defaultLineHeight"
+          tip="行与行之间的距离（字号倍数），数值越大行距越大"
+        />
+      </ConfigGroup>
+      <ConfigGroup title="页脚设置">
+        <!-- 自定义页尾品牌名：留空时展示默认「轻舟简历」 -->
+        <ConfigLabel
+          label="自定义页尾"
+          v-model="footer"
+          :default-value="defaultFooter"
+          tip="仅自定义开头的品牌名，页码部分固定展示，留空恢复「轻舟简历」"
+        />
+        <SfInput v-model="footer" placeholder="例如：我的简历" clearable />
+      </ConfigGroup>
+
+      <ConfigGroup title="主题配色">
+        <!-- 主题色自定义取色器 -->
+        <ConfigLabel
+          label="主题色"
+          v-model="currentUI.themeColor"
+          :default-value="defaultThemeColor"
+        />
+        <ThemeColorPicker v-model="currentUI.themeColor" />
       </ConfigGroup>
     </div>
   </SfScrollbar>
