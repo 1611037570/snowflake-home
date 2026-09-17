@@ -2,6 +2,8 @@
 
 [简体中文](README.md) | [English](README.en.md)
 
+[![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE) ![Vue](https://img.shields.io/badge/Vue-3.5-42b883) ![Vite](https://img.shields.io/badge/Vite-7.1-646CFF) ![NestJS](https://img.shields.io/badge/NestJS-11-E0234E)
+
 ## 📌 项目介绍
 
 项目主体为雪花起始页，基于起始页衍生了两个项目以及基建。
@@ -14,7 +16,7 @@
 
 - 📄 **轻舟简历** · _一叶轻舟 渡你过万重山_
 
-  AI简历生成、可视化编辑、PDF导出等 ![维护中](https://img.shields.io/badge/状态-维护中-brightgreen)
+  自定义编辑器+AI两套编辑模式、实时渲染所见即所得、PDF导出等 ![维护中](https://img.shields.io/badge/状态-维护中-brightgreen)
 
   预览：http://nannan.work/#/resume
 
@@ -52,6 +54,15 @@ pnpm dev
 # 打包项目
 pnpm build
 ```
+
+## 📜 开源协议与商业授权
+
+本项目基于 [Apache License 2.0](LICENSE) 开源，并附加了商业使用限制条款，详见 [附加商业授权与用户协议](LICENSE-ADDITIONAL.md)。
+
+- 个人非商业用途免费使用（如个人学习交流、制作个人简历、个人浏览器起始页使用）
+- 任何组织或个人，将本项目作为服务向公众提供、嵌入商业软件或闭源产品、二次开发后用于商业运营，均须提前联系作者获取商业授权
+
+> 完整条款见 [LICENSE-ADDITIONAL.md](LICENSE-ADDITIONAL.md)，继续使用本项目即表示您同意该协议。
 
 ## 作者碎碎念
 

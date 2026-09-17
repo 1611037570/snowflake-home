@@ -2,6 +2,8 @@
 
 [Simplified Chinese](README.md) | [English](README.en.md)
 
+[![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE) ![Vue](https://img.shields.io/badge/Vue-3.5-42b883) ![Vite](https://img.shields.io/badge/Vite-7.1-646CFF) ![NestJS](https://img.shields.io/badge/NestJS-11-E0234E)
+
 ## 📌 Project Introduction
 
 The main body of the project is the Snowflake Start Page, based on which many small tools and infrastructure features are derived and expanded.
@@ -52,6 +54,15 @@ pnpm dev
 # Build the project
 pnpm build
 ```
+
+## 📜 License & Commercial Licensing
+
+This project is open-sourced under the [Apache License 2.0](LICENSE), with additional restrictions on commercial use. See the [Additional Commercial Restrictions & User Agreement](LICENSE-ADDITIONAL.md) for details.
+
+- Free for personal, non-commercial use (such as personal learning and exchange, creating a personal resume, or personal use as a browser start page)
+- Any organization or individual that provides this project to the public as a service, embeds it into commercial software or closed-source products, or uses its derivatives for commercial operations must contact the author in advance to obtain a commercial license
+
+> See [LICENSE-ADDITIONAL.md](LICENSE-ADDITIONAL.md) for the full terms. By continuing to use this project, you agree to this agreement.
 
 ## Author's Murmurs
 
