@@ -107,25 +107,6 @@ export const ICON_CATEGORIES: IconCategory[] = [
     ],
   },
   {
-    key: "tech",
-    name: "技术栈",
-    icons: [
-      { icon: "logos:vue", name: "Vue" },
-      { icon: "logos:typescript-icon", name: "TypeScript" },
-      { icon: "logos:vitejs", name: "Vite" },
-      { icon: "logos:pinia", name: "Pinia" },
-      { icon: "logos:tailwindcss-icon", name: "Tailwind CSS" },
-      { icon: "logos:eslint", name: "ESLint" },
-      { icon: "logos:prettier-icon", name: "Prettier" },
-      { icon: "logos:axios", name: "Axios" },
-      { icon: "logos:router", name: "路由" },
-      { icon: "logos:iconify", name: "Iconify" },
-      { icon: "logos:pnpm-icon", name: "pnpm" },
-      { icon: "logos:dayjs", name: "Day.js" },
-      { icon: "logos:husky", name: "Husky" },
-    ],
-  },
-  {
     key: "honor",
     name: "荣誉证书",
     icons: [
