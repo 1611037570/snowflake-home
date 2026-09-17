@@ -221,7 +221,7 @@ export const DEFAULT_USER_FORM = [
             key: "birthday",
             label: "出生日期",
             component: "datePicker",
-            icon: "mdi:calendar-clock",
+            icon: "mdi:cake-variant",
             tip: "推荐必填",
             addable: true,
             props: {
