@@ -39,6 +39,8 @@ export const useResumePages = ({
     paddingVertical: ui.value.paddingVertical,
     paddingHorizontal: ui.value.paddingHorizontal,
     fontSize: ui.value.fontSize,
+    // 标题字号影响模块首行高度，同样需要重新测量
+    titleFontSize: ui.value.titleFontSize,
     lineHeight: ui.value.lineHeight,
     paragraphSpacing: ui.value.paragraphSpacing,
     fontReadyVersion: fontReadyVersion.value,
