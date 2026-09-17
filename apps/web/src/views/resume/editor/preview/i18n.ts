@@ -121,6 +121,7 @@ export const PREVIEW_TEXTS: Record<PreviewLang, Record<string, string>> = {
     politicalLabel: "政治面貌：",
     cityLabel: "期望城市：",
     nativePlaceLabel: "籍贯：",
+    salaryLabel: "期望薪资：",
     heightWeightLabel: "身高体重：",
   },
   en: {
@@ -137,6 +138,7 @@ export const PREVIEW_TEXTS: Record<PreviewLang, Record<string, string>> = {
     politicalLabel: "Political status: ",
     cityLabel: "Preferred city: ",
     nativePlaceLabel: "Native place: ",
+    salaryLabel: "Expected salary: ",
     heightWeightLabel: "Height & weight: ",
   },
   ja: {
@@ -153,6 +155,7 @@ export const PREVIEW_TEXTS: Record<PreviewLang, Record<string, string>> = {
     politicalLabel: "政治的立場：",
     cityLabel: "希望勤務地：",
     nativePlaceLabel: "出身地：",
+    salaryLabel: "希望給与：",
     heightWeightLabel: "身長・体重：",
   },
   ko: {
@@ -169,6 +172,7 @@ export const PREVIEW_TEXTS: Record<PreviewLang, Record<string, string>> = {
     politicalLabel: "정치적 성향: ",
     cityLabel: "희망 도시: ",
     nativePlaceLabel: "출신지: ",
+    salaryLabel: "희망 급여: ",
     heightWeightLabel: "키·몸무게: ",
   },
   fr: {
@@ -185,6 +189,7 @@ export const PREVIEW_TEXTS: Record<PreviewLang, Record<string, string>> = {
     politicalLabel: "Situation politique : ",
     cityLabel: "Ville souhaitée : ",
     nativePlaceLabel: "Lieu d’origine : ",
+    salaryLabel: "Salaire souhaité : ",
     heightWeightLabel: "Taille et poids : ",
   },
   de: {
@@ -201,6 +206,7 @@ export const PREVIEW_TEXTS: Record<PreviewLang, Record<string, string>> = {
     politicalLabel: "Politischer Status: ",
     cityLabel: "Wunschstadt: ",
     nativePlaceLabel: "Herkunftsort: ",
+    salaryLabel: "Gehaltswunsch: ",
     heightWeightLabel: "Größe und Gewicht: ",
   },
   es: {
@@ -217,6 +223,7 @@ export const PREVIEW_TEXTS: Record<PreviewLang, Record<string, string>> = {
     politicalLabel: "Situación política: ",
     cityLabel: "Ciudad deseada: ",
     nativePlaceLabel: "Lugar de origen: ",
+    salaryLabel: "Salario deseado: ",
     heightWeightLabel: "Altura y peso: ",
   },
   ru: {
@@ -233,6 +240,7 @@ export const PREVIEW_TEXTS: Record<PreviewLang, Record<string, string>> = {
     politicalLabel: "Политический статус: ",
     cityLabel: "Желаемый город: ",
     nativePlaceLabel: "Место рождения: ",
+    salaryLabel: "Ожидаемая зарплата: ",
     heightWeightLabel: "Рост и вес: ",
   },
 };

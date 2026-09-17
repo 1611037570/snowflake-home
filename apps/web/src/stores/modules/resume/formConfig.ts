@@ -411,6 +411,18 @@ export const DEFAULT_USER_FORM = [
               placeholder: "请选择籍贯",
             },
           }),
+          // 期望薪资
+          createMoreField({
+            key: "salary",
+            label: "期望薪资",
+            component: "input",
+            icon: "mdi:currency-cny",
+            addable: true,
+            props: {
+              placeholder: "请输入期望薪资",
+              clearable: true,
+            },
+          }),
           createMoreField({
             key: "heightWeight",
             label: "身高体重",

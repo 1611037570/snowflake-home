@@ -90,6 +90,13 @@ const secondaryItems = computed(() => {
       label: getPreviewText("nativePlaceLabel", previewLang.value),
     });
   }
+  if (!isUserFieldHidden("salary") && user.value?.salary) {
+    items.push({
+      key: "salary",
+      icon: fieldIcon("salary"),
+      label: getPreviewText("salaryLabel", previewLang.value),
+    });
+  }
   if (heightWeightText.value) {
     items.push({
       sortKey: "heightWeight",
