@@ -8,6 +8,7 @@ import { computed, provide, ref, watch, type ComputedRef, type Ref } from "vue";
 import { loadFont } from "@/utils";
 import {
   defaultAvatarPosition,
+  defaultDateStyle,
   defaultFontSize,
   defaultInfoPosition,
   defaultLineHeight,
@@ -112,6 +113,8 @@ export const useResumeTheme = (ui: ComputedRef<ResumeUi>): ResumeTheme => {
   const avatarPosition = computed(() => ui.value.avatarPosition ?? defaultAvatarPosition);
   // 信息位置（左/居中/右），独立于头像位置，缺失时回退默认值
   const infoPosition = computed(() => ui.value.infoPosition ?? defaultInfoPosition);
+  // 日期样式（2026.9 / 2026年9月），缺失时回退默认值
+  const dateStyle = computed(() => ui.value.dateStyle ?? defaultDateStyle);
 
   provide("fontValue", fontValue);
   provide("titleFontStyle", titleFontStyle);
@@ -123,6 +126,7 @@ export const useResumeTheme = (ui: ComputedRef<ResumeUi>): ResumeTheme => {
   provide("userInfoLayout", userInfoLayout);
   provide("avatarPosition", avatarPosition);
   provide("infoPosition", infoPosition);
+  provide("dateStyle", dateStyle);
 
   return {
     paddingStyle,

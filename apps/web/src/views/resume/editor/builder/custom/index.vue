@@ -3,6 +3,7 @@ import { computed } from "vue";
 import { useResumeStore } from "@/stores";
 import {
   avatarPositionList,
+  dateStyleList,
   fontFamilyList,
   infoPositionList,
   uiParamRanges,
@@ -20,6 +21,7 @@ import {
   defaultUserInfoLayout,
   defaultAvatarPosition,
   defaultInfoPosition,
+  defaultDateStyle,
   defaultFooter,
 } from "@/stores/modules/resume/uiConfig";
 import { storeToRefs } from "pinia";
@@ -61,6 +63,14 @@ const infoPosition = computed({
   get: () => currentUI.value?.infoPosition,
   set: (value) => {
     currentUI.value.infoPosition = value;
+  },
+});
+
+// 日期样式（点号/中文）
+const dateStyle = computed({
+  get: () => currentUI.value?.dateStyle,
+  set: (value) => {
+    currentUI.value.dateStyle = value;
   },
 });
 
@@ -208,6 +218,19 @@ const footer = computed({
           :default-value="defaultLineHeight"
           tip="行与行之间的距离（字号倍数），数值越大行距越大"
         />
+        <!-- 日期样式切换：点号 / 中文 -->
+        <ConfigLabel label="日期样式" v-model="dateStyle" :default-value="defaultDateStyle" />
+        <div class="flex gap-3">
+          <SfButton
+            class="flex-1"
+            @click="dateStyle = mode.value"
+            border
+            v-for="mode in dateStyleList"
+            :type="dateStyle === mode.value ? 'theme' : 'bg'"
+            :key="mode.value"
+            >{{ mode.name }}</SfButton
+          >
+        </div>
       </ConfigGroup>
       <ConfigGroup title="页脚设置">
         <!-- 自定义页尾品牌名：留空时展示默认「轻舟简历」 -->
