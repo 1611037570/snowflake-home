@@ -121,6 +121,13 @@ const clearField = () => {
       v-if="hidden !== undefined || removable || subtitleKeys !== undefined"
       class="flex shrink-0 items-center"
     >
+      <!-- 重命名仅对自定义字段开放：预设字段标题来自模板配置，不会持久化 -->
+      <Icon
+        v-if="isCustomField"
+        @pointerdown.stop.prevent
+        @click="openRenameModal"
+        icon="lucide:pencil"
+      />
       <SfTooltip :content="subtitleTip">
         <Icon
           v-if="subtitleKeys !== undefined"
@@ -138,8 +145,7 @@ const clearField = () => {
           :icon="hidden ? 'lucide:eye' : 'lucide:eye-off'"
         />
       </SfTooltip>
-      <!-- 重命名仅对自定义字段开放：预设字段标题来自模板配置，不会持久化 -->
-      <Icon v-if="isCustomField" @pointerdown.stop.prevent @click="openRenameModal" icon="lucide:pencil" />
+
       <Icon v-if="removable" @pointerdown.stop.prevent @click="clearField" icon="ic:round-delete" />
     </div>
   </div>
