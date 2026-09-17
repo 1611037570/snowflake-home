@@ -82,11 +82,6 @@ class DataProxy<T> {
     }
     return current[lastKey];
   }
-  // 删除对象元素（按 key 定位并删除顶层数据）
-  removeObject(payload: any) {
-    if (!payload.key) return;
-    delete this.data[payload.key];
-  }
   constructor(data: any, emit: any, options: Record<string, any> = {}) {
     // 初始化数据为空对象
     if (!data || typeof data !== "object") data = {};
