@@ -2,7 +2,7 @@
 import { createRouter, createWebHashHistory, createWebHistory } from "vue-router";
 // 导入路由配置
 import { beforeEachGuard } from "./guards";
-import routes from "./modules/route";
+import routes, { prefetchRouteComponents } from "./modules/route";
 
 // 根据环境变量确定路由模式
 const routerMode = import.meta.env.VITE_ROUTER_MODE;
@@ -18,6 +18,17 @@ const router = createRouter({
 });
 
 router.beforeEach(beforeEachGuard);
+
+// 生产环境浏览器空闲时预取页面 chunk，避免点击导航时现场加载造成停顿
+if (import.meta.env.PROD) {
+  router.isReady().then(() => {
+    if (typeof requestIdleCallback === "function") {
+      requestIdleCallback(() => prefetchRouteComponents());
+    } else {
+      setTimeout(() => prefetchRouteComponents(), 1500);
+    }
+  });
+}
 
 // 导出路由实例
 export default router;
