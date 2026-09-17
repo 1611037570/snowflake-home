@@ -115,7 +115,7 @@ const getProgressColor = (progress) => {
           <div class="flex items-center justify-between">
             <div class="text-lg">
               {{ item.name }}
-              <span class="text-sm text-sf-text-2"> 编写{{ resumeStats[item.key].total }}字 </span>
+              <span class="text-sm text-sf-text-2"> 编写{{ resumeStats[item.key]?.total ?? 0 }}字 </span>
             </div>
             <div class="text-lg font-bold">{{ item.progress }}%</div>
           </div>
