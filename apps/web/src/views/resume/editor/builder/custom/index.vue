@@ -10,7 +10,6 @@ import {
   defaultTitleFontSize,
   defaultLineHeight,
   defaultFontFamily,
-  defaultThemeColor,
   defaultDateStyle,
   defaultTitleIcon,
 } from "@/stores/modules/resume/uiConfig";
@@ -19,7 +18,6 @@ import ConfigGroup from "./configGroup.vue";
 import ConfigItem from "./configItem.vue";
 import DesignPreset from "./designPreset.vue";
 import ConfigLabel from "./configLabel.vue";
-import ThemeColorPicker from "@/components/business/themeColorPicker/themeColorPicker.vue";
 
 const resumeStore = useResumeStore();
 const { currentUI } = storeToRefs(resumeStore);
@@ -109,16 +107,6 @@ const titleIcon = computed({
             >{{ mode.name }}</SfButton
           >
         </div>
-      </ConfigGroup>
-
-      <ConfigGroup title="主题配色">
-        <!-- 主题色自定义取色器 -->
-        <ConfigLabel
-          label="主题色"
-          v-model="currentUI.themeColor"
-          :default-value="defaultThemeColor"
-        />
-        <ThemeColorPicker v-model="currentUI.themeColor" />
       </ConfigGroup>
     </div>
   </SfScrollbar>
