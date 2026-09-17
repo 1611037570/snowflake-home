@@ -10,9 +10,13 @@
       </Transition>
       <div class="relative flex min-w-0 flex-1 overflow-hidden">
         <!-- 中间预览栏 -->
-        <Transition name="resume-preview" appear>
-          <Preview :class="{ 'ai-generating': isGenerating }" />
-        </Transition>
+        <div class="relative flex min-w-0 flex-1">
+          <Transition name="resume-preview" appear>
+            <Preview :class="{ 'ai-generating': isGenerating }" />
+          </Transition>
+          <!-- 预览渲染完成前展示加载提示，预览组件加载完成前即可见 -->
+          <LoadingTip v-if="previewSyncing" text="正在加载预览" class="absolute inset-0 z-20" />
+        </div>
         <!-- 最右侧系统配置栏：工具栏与 QA 入口整体垂直居中 -->
         <Transition name="resume-toolbar" appear>
           <div
@@ -55,6 +59,7 @@ import { useRoute, useRouter } from "vue-router";
 import Builder from "./builder/index.vue";
 import AiMask from "./components/aiMask.vue";
 import Header from "./components/header/index.vue";
+import LoadingTip from "./components/loadingTip.vue";
 import ExportMask from "./components/exportMask.vue";
 import DetectTip from "./components/detectTip.vue";
 import IssueFeedback from "../components/issueFeedback.vue";
@@ -69,8 +74,16 @@ const resumeStore = useResumeStore();
 // 补齐旧版本系统配置，确保新增开关立即参与渲染
 resumeStore.init();
 const { initResumeStatus, setFocusMode, cancelPrinting } = resumeStore;
-const { currentIndex, focusMode, list, currentUsage, isGenerating, isPrinting, currentData } =
-  storeToRefs(resumeStore);
+const {
+  currentIndex,
+  focusMode,
+  list,
+  currentUsage,
+  isGenerating,
+  isPrinting,
+  currentData,
+  previewSyncing,
+} = storeToRefs(resumeStore);
 
 // 切换简历时清空上一个简历的模块选中状态
 watch(
