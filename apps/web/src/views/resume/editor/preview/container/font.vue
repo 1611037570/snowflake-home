@@ -27,8 +27,11 @@ const fontFamily = computed({
   },
 });
 
-// 读取数值型参数：统一转为数值，避免字符串参与滑块内部计算
-const getNumberValue = (key) => Number(currentUI.value?.[key]);
+// 读取数值型参数：统一转为数值，缺失时回退默认值，避免出现 NaN
+const getNumberValue = (key, defaultValue) => {
+  const value = Number(currentUI.value?.[key]);
+  return Number.isFinite(value) ? value : defaultValue;
+};
 
 // 写入数值型参数
 const setParam = (key, value) => {
@@ -76,10 +79,10 @@ const setParam = (key, value) => {
                 @click="setParam(item.key, item.defaultValue)"
               />
             </span>
-            <span>{{ getNumberValue(item.key) }}px</span>
+            <span>{{ getNumberValue(item.key, item.defaultValue) }}px</span>
           </div>
           <SfSlider
-            :model-value="getNumberValue(item.key)"
+            :model-value="getNumberValue(item.key, item.defaultValue)"
             @update:model-value="(value) => setParam(item.key, value)"
             :min="uiParamRanges[item.key].min"
             :max="uiParamRanges[item.key].max"
