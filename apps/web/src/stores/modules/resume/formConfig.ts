@@ -304,6 +304,8 @@ export const DEFAULT_USER_FORM = [
             component: "input",
             icon: "mdi:phone",
             tip: "推荐必填",
+            // 可添加字段：数据存在才渲染，删除后可从更多中重新添加
+            addable: true,
             props: {
               placeholder: "请输入手机号",
               clearable: true,
