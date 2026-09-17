@@ -20,9 +20,9 @@ const iconSize = inject(
 </script>
 
 <template>
-  <!-- 图标独立于文字排版，不参与标题换行 -->
-  <div v-if="icon" class="flex shrink-0 items-center">
-    <SfIcon :icon="icon" :size="iconSize" class="mr-1" />
+  <!-- 图标独立于文字排版，不参与标题换行；关闭图标开关时仅隐藏图标 -->
+  <div class="flex shrink-0 items-center">
+    <SfIcon v-if="icon" :icon="icon" :size="iconSize" class="mr-1" />
     <span>{{ title }}</span>
   </div>
 </template>
