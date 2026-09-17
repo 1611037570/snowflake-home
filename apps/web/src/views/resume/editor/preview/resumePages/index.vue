@@ -150,8 +150,9 @@ const { moduleClassMap } = useModuleInteractions({
   activeModuleKey: previewSelectedModule,
 });
 
-// 点击预览模块时定位左侧编辑模块
+// 点击预览模块时定位左侧编辑模块，可在系统设置中关闭
 const handlePageClick = (event) => {
+  if (!system.value.previewClickLocate) return;
   const moduleEl = event.target.closest?.(".resume-module-wrapper");
   const moduleKey = moduleEl?.dataset.module;
   if (moduleKey) locateEditor(moduleKey);
