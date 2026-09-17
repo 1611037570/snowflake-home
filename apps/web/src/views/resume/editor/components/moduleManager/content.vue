@@ -3,14 +3,13 @@ import { computed, getCurrentInstance, nextTick, onMounted, onUnmounted, ref } f
 import { storeToRefs } from "pinia";
 import { useDraggable } from "vue-draggable-plus";
 import { useResumeStore } from "@/stores";
-import { setFieldArchived, setFieldHidden } from "../../utils";
 import { useModuleNav } from "../../useModuleNav";
 
 defineOptions({ name: "ModuleManagerContent" });
 
 const { proxy } = getCurrentInstance();
 const resumeStore = useResumeStore();
-const { currentData, runtimeConfig } = storeToRefs(resumeStore);
+const { runtimeConfig } = storeToRefs(resumeStore);
 const { keyword, filteredList, jumpAll } = useModuleNav();
 const listRef = ref(null);
 const moduleFields = computed(() => runtimeConfig.value?.fields || []);
@@ -18,31 +17,25 @@ let draggable = null;
 
 // 查找模块时先恢复归档状态，再同步定位编辑区与预览区
 const handleFind = async (module) => {
-  if (module.archived) setFieldArchived(currentData.value, module.field, false);
+  if (module.archived) resumeStore.setModuleArchived(module.key, false);
   await nextTick();
   jumpAll(module.key);
 };
 
 // 切换模块在简历预览中的显示状态
 const handleHidden = (module) => {
-  setFieldHidden(currentData.value, module.field, !module.hidden);
+  resumeStore.setModuleHidden(module.key, !module.hidden);
 };
 
 // 切换模块归档状态，归档后同步取消 AI 模块选中
 const handleArchived = (module) => {
-  const archived = !module.archived;
-  setFieldArchived(currentData.value, module.field, archived);
-  if (archived) resumeStore.unselectModule(module.key);
+  resumeStore.setModuleArchived(module.key, !module.archived);
 };
 
 // 删除模块时同步移除模块数据与运行时配置
 const handleDelete = (module) => {
   proxy.$confirm(`确定要删除${module.name}模块吗？`, "删除确认").then(() => {
-    const index = moduleFields.value.findIndex((field) => field.key === module.key);
-    if (index < 0) return;
-    moduleFields.value.splice(index, 1);
-    if (currentData.value) delete currentData.value[module.key];
-    resumeStore.unselectModule(module.key);
+    resumeStore.removeModule(module.key);
   });
 };
 

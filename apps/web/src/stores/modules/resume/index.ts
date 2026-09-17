@@ -6,6 +6,7 @@ import {
   removeArrayRecord,
 } from "@/components/business/dynamicForm/code/arrayData";
 import { getFieldDataPath } from "@/components/business/dynamicForm/code/fieldData";
+import { setFieldCheckValue } from "@/components/business/dynamicForm/code/fieldVisible";
 import { walkFormFields } from "@/components/business/dynamicForm/code/schemaAccess";
 import { createDataPathContext } from "@/components/business/dynamicForm/code/pathContext";
 import router from "@/routers";
@@ -400,6 +401,34 @@ export const useResumeStore = defineStore(
       module.ui.title = value;
       return true;
     }
+    // 从运行时配置定位模块字段：模块级状态操作统一按 key 查找
+    const findModuleField = (moduleKey: string) =>
+      runtimeConfig.value?.fields?.find((field: any) => field?.key === moduleKey);
+    // 设置模块显隐：预览区按同一数据路径同步显隐
+    function setModuleHidden(moduleKey: string, hidden: boolean): boolean {
+      const field = findModuleField(moduleKey);
+      if (!field) return false;
+      setFieldCheckValue(currentData.value, field, "hidden", hidden);
+      return true;
+    }
+    // 设置模块归档：归档后模块从编辑区移除，并同步取消模块选中
+    function setModuleArchived(moduleKey: string, archived: boolean): boolean {
+      const field = findModuleField(moduleKey);
+      if (!field) return false;
+      setFieldCheckValue(currentData.value, field, "removed", archived);
+      if (archived) unselectModule(moduleKey);
+      return true;
+    }
+    // 删除模块：移除运行时配置节点与数据，并同步取消模块选中
+    function removeModule(moduleKey: string): boolean {
+      const fields = runtimeConfig.value?.fields;
+      const index = fields?.findIndex((field: any) => field?.key === moduleKey) ?? -1;
+      if (index < 0) return false;
+      fields.splice(index, 1);
+      if (currentData.value) delete currentData.value[moduleKey];
+      unselectModule(moduleKey);
+      return true;
+    }
     // 修改数组模块记录字段
     function updateRecordField(
       moduleKey: string,
@@ -706,6 +735,9 @@ export const useResumeStore = defineStore(
       clearSelectedModules,
       setSelectedModules,
       pushSelectedModule,
+      setModuleHidden,
+      setModuleArchived,
+      removeModule,
       addResume,
       duplicateResume,
       deleteResume,

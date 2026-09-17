@@ -2,7 +2,6 @@
 import { useResumeStore } from "@/stores";
 import { storeToRefs } from "pinia";
 import { computed, ref } from "vue";
-import { setFieldArchived } from "../../../utils";
 import { isFieldRemoved } from "@/components/business/dynamicForm/code/fieldVisible";
 
 const resumeStore = useResumeStore();
@@ -23,7 +22,7 @@ const getModuleName = (field) => resumeStore.getModel(field.key)?.name || field.
 
 // 恢复单个模块：将归档条件指向的数据置为 false，表单与预览同步恢复渲染
 function handleRestore(field) {
-  setFieldArchived(currentData.value, field, false);
+  resumeStore.setModuleArchived(field.key, false);
   if (!archivedList.value.length) panelVisible.value = false;
 }
 </script>

@@ -18,7 +18,7 @@ const DEFAULT_META = {
 const DEFAULT_DRAG_CLASS = ".item-drag";
 const DEFAULT_COL_CLASS = "rounded-3xl border border-sf-bg-3 bg-sf-primary";
 
-// 模块界面状态绑定：标题、折叠、隐藏、归档在各模块间结构一致
+// 模块界面状态绑定：标题、折叠、隐藏在各模块间结构一致
 const createModuleState = (title: string): ModelBinding[] => [
   {
     source: ["ui", "title"],
@@ -34,12 +34,6 @@ const createModuleState = (title: string): ModelBinding[] => [
   {
     source: ["ui", "hidden"],
     prop: "hidden",
-    defaultValue: false,
-  },
-  // 归档开关：控制模块是否从编辑器主区域移除
-  {
-    source: ["ui", "archived"],
-    prop: "archived",
     defaultValue: false,
   },
 ];
