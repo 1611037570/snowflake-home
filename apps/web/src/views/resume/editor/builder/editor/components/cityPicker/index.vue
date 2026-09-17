@@ -2,9 +2,12 @@
 import { computed } from "vue";
 import { ElCascader } from "element-plus";
 
-import cityData from "./cityData.json";
-
-defineProps({
+const props = defineProps({
+  // 省市级联选项：由业务域字典注入，组件自身不内置城市数据
+  options: {
+    type: Array,
+    default: () => [],
+  },
   placeholder: {
     type: String,
     default: "请选择城市",
@@ -15,31 +18,17 @@ defineProps({
   },
 });
 
-// 表单仅保存最后选中的城市名，省份分组与城市数据内置在组件内，不写入简历 JSON
+// 表单仅保存最后选中的城市名，省份分组由注入的级联选项提供，不写入简历 JSON
 const city = defineModel("modelValue", {
   type: String,
   default: "",
 });
 
-// 级联选项：直辖市自身即为城市可直接选中，其余省份展开城市
-const cascaderOptions = computed(() =>
-  cityData.map((province) => {
-    const isDirectCity = province.cities.length === 1 && province.cities[0] === province.label;
-    return {
-      value: province.label,
-      label: province.label,
-      children: isDirectCity
-        ? undefined
-        : province.cities.map((name) => ({ value: name, label: name })),
-    };
-  }),
-);
-
 // 回显时按城市名反查所在省份
 const selected = computed({
   get: () => {
     if (!city.value) return [];
-    const province = cascaderOptions.value.find((item) =>
+    const province = props.options.find((item) =>
       item.children
         ? item.children.some((child) => child.value === city.value)
         : item.value === city.value,
@@ -57,7 +46,7 @@ const selected = computed({
 <template>
   <SfCascader
     v-model="selected"
-    :options="cascaderOptions"
+    :options="options"
     filterable
     class="w-full"
     :placeholder="placeholder"
@@ -68,6 +57,5 @@ const selected = computed({
 <style lang="scss" scoped>
 :deep(.el-input__wrapper) {
   box-shadow: none;
-  background-color: red !important;
 }
 </style>
