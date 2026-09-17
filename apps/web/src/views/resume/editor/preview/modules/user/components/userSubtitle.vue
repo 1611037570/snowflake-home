@@ -31,7 +31,7 @@ const items = computed(() => subtitleKeys.value.map((key) => textOf(key)).filter
 <template>
   <div
     v-if="items.length"
-    class="flex max-w-full min-w-0 flex-wrap items-center justify-center gap-3 font-normal"
+    class="flex max-w-full min-w-0 flex-wrap items-center gap-3 font-normal"
   >
     <ResumeField v-for="(item, index) in items" :key="index" :model-value="item" />
   </div>
