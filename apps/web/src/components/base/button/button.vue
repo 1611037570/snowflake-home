@@ -58,18 +58,21 @@ const classObj = {
 const getClass = computed(() => {
   return props.plain ? plainClassObj[props.type] : classObj[props.type];
 });
+
+const disabledClass = computed(() => (props.disabled ? "cursor-not-allowed! opacity-60" : ""));
 </script>
 
 <template>
-  <div
+  <button
+    type="button"
     class="flex cursor-pointer items-center justify-center transition-all duration-300 active:scale-98"
-    :class="[isBorder, getClass, isRound, sizeClass, { 'cursor-not-allowed opacity-60': props.disabled }]"
+    :class="[isBorder, getClass, isRound, sizeClass, disabledClass]"
     :aria-disabled="props.disabled"
     @click="handleClick"
   >
     <SfIcon v-if="icon" :icon="icon" size="4" class="mr-1" />
     <slot></slot>
-  </div>
+  </button>
 </template>
 
 <style lang="scss" scoped></style>
