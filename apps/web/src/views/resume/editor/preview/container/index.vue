@@ -9,6 +9,7 @@ import FontSize from "./fontSize.vue";
 import Padding from "./padding.vue";
 import PageNumber from "./pageNumber.vue";
 import Language from "./language.vue";
+import OnePage from "./onePage.vue";
 
 defineOptions({ name: "ScaleContainer" });
 
@@ -174,7 +175,7 @@ useResizeObserver(contentRef, ([entry]) => {
       <Padding />
       <PageNumber />
       <Language />
-
+      <OnePage />
       <SfTooltip content="缩小">
         <SfIcon
           @click="!isMinScale && stepScale(-0.1)"

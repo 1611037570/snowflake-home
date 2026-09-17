@@ -8,7 +8,6 @@ import Icon from "./components/icon.vue";
 // 工具栏各模块按需分包：独立 chunk 便于缓存，避免全部合并进编辑页主包
 const Ai = defineAsyncComponent(() => import("./modules/ai/index.vue"));
 const System = defineAsyncComponent(() => import("./modules/system/index.vue"));
-const OnePage = defineAsyncComponent(() => import("./modules/onePage.vue"));
 const CopyResume = defineAsyncComponent(() => import("./modules/copyResume.vue"));
 const Progress = defineAsyncComponent(() => import("./modules/progress/index.vue"));
 const ModuleNavigator = defineAsyncComponent(() => import("./modules/moduleNavigator.vue"));
@@ -43,7 +42,6 @@ function goGitHub() {
       <Debug />
       <div class="h-[0.5px] w-full bg-sf-bg-2"></div>
       <ModuleNavigator />
-      <OnePage />
       <CopyResume />
       <Icon icon="lucide:focus" size="5" content="专注模式" @click="enterFocusMode" />
       <div class="h-[0.5px] w-full bg-sf-bg-2"></div>
