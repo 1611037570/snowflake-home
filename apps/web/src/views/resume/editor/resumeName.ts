@@ -40,13 +40,13 @@ export function getResumeTitle(resumeItem: any) {
   return [name, edu, position, experience].filter(Boolean).join("-") || defaultName;
 }
 /**
- * 生成统一格式的导出文件名：年-月-日-简历标题
+ * 生成统一格式的导出文件名：轻舟简历-简历标题-年-月-日
  * @param title 简历标题
  * @param ext 文件扩展名
  * @returns 统一命名的导出文件名
  */
 export function getExportFileName(title: string, ext: string) {
-  return `${dayjs().format("YYYY-MM-DD")}-${title}.${ext}`;
+  return `轻舟简历-${title}-${dayjs().format("YYYY-MM-DD")}.${ext}`;
 }
 /**
  * 生成简历标题

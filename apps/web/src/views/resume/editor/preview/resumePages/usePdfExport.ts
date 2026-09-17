@@ -125,7 +125,7 @@ export const printPDF = async (
     }
 
     if (signal.aborted) return;
-    // 保存PDF，统一命名：年-月-日-简历标题
+    // 保存PDF，统一命名：轻舟简历-简历标题-年-月-日
     pdf.save(getExportFileName(resumeTitle.value, "pdf"));
 
     console.log(`成功导出 ${pages.length} 页 PDF`);
