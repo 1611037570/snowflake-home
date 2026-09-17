@@ -4,6 +4,7 @@ defineOptions({ name: "BuilderEditor" });
 import { useResumeStore } from "@/stores";
 import { storeToRefs } from "pinia";
 import { RESUME_OPTIONS } from "@/stores/modules/resume/resumeOptions";
+import { RESUME_CITY_OPTIONS } from "@/stores/modules/resume/resumeCityOptions";
 import Account from "./components/account.vue";
 import AddModule from "./components/addModule.vue";
 import BoxCollapse from "./components/boxCollapse.vue";
@@ -37,6 +38,9 @@ const dynamicComponents = {
   video: Video,
   cityPicker: CityPicker,
 };
+
+// 表单运行时字典：城市为省市级联结构，与扁平可选值字典分开传入，避免被当作可选值参与校验
+const FORM_OPTIONS = { ...RESUME_OPTIONS, city: RESUME_CITY_OPTIONS };
 
 // 配置同步：进入或切换简历时由本组件触发，完成前展示加载效果避免白屏
 const { currentItem } = storeToRefs(resumeStore);
@@ -96,7 +100,7 @@ onBeforeUnmount(() => {
           v-model:form="runtimeConfig"
           v-model:data="currentData"
           :components="dynamicComponents"
-          :options="RESUME_OPTIONS"
+          :options="FORM_OPTIONS"
         />
         <ArchivedModules />
         <AddModule />
