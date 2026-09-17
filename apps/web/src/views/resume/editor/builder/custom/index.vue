@@ -13,7 +13,6 @@ import {
   defaultThemeColor,
   defaultDateStyle,
   defaultTitleIcon,
-  defaultFooter,
 } from "@/stores/modules/resume/uiConfig";
 import { storeToRefs } from "pinia";
 import ConfigGroup from "./configGroup.vue";
@@ -38,14 +37,6 @@ const titleIcon = computed({
   get: () => currentUI.value?.titleIcon,
   set: (value) => {
     currentUI.value.titleIcon = value;
-  },
-});
-
-// 自定义页尾文案
-const footer = computed({
-  get: () => currentUI.value?.footer ?? "",
-  set: (value) => {
-    currentUI.value.footer = value;
   },
 });
 </script>
@@ -118,16 +109,6 @@ const footer = computed({
             >{{ mode.name }}</SfButton
           >
         </div>
-      </ConfigGroup>
-      <ConfigGroup title="页脚设置">
-        <!-- 自定义页尾品牌名：留空时展示默认「轻舟简历」 -->
-        <ConfigLabel
-          label="自定义页尾"
-          v-model="footer"
-          :default-value="defaultFooter"
-          tip="仅自定义开头的品牌名，页码部分固定展示，留空恢复「轻舟简历」"
-        />
-        <SfInput v-model="footer" placeholder="例如：我的简历" clearable />
       </ConfigGroup>
 
       <ConfigGroup title="主题配色">
