@@ -38,12 +38,8 @@ import { getArrayRecords, removeArrayRecord } from "../code/arrayData.ts";
 import { getFormItemStyles } from "../code/formItemStyle";
 import type { DataPathContext } from "../code/pathContext";
 import { getArrayDataPath } from "../code/schemaAccess";
-import {
-  DF_CURRENT_FORM,
-  DF_CURRENT_LENGTH,
-  DF_CURRENT_TYPE,
-  DF_ROOT_DATA,
-} from "../code/injectionKeys.ts";
+import { DF_ROOT_DATA } from "../code/injectionKeys.ts";
+import { provideContainerContext } from "../code/provideContainerContext";
 import ContainerObject from "./containerObject.vue";
 import ContainerSlot from "./containerSlot.vue";
 import FormItem from "./formItem.vue";
@@ -133,12 +129,12 @@ const formListWithStyle = computed(() => {
 const remove = (index: any) => {
   removeArrayRecord(rootData.data, currentForm.value, index, pathContext);
 };
-// 提供当前容器的长度
-provide(DF_CURRENT_LENGTH, length);
-// 提供当前容器的表单数据
-provide(DF_CURRENT_FORM, currentForm);
-// 提供当前容器的类型
-provide(DF_CURRENT_TYPE, "array");
+// 统一提供容器上下文：类型、表单配置与记录数；删除与路径由记录节点提供
+provideContainerContext({
+  type: "array",
+  form: currentForm,
+  length,
+});
 </script>
 
 <style scoped>

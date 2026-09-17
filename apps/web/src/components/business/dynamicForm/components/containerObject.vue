@@ -12,14 +12,9 @@
 <script setup lang="ts">
 import { inject } from "vue";
 import { getComponent } from "../code/getComponent";
+import { DF_ROOT_DATA } from "../code/injectionKeys";
 import type { DataPathContext } from "../code/pathContext";
-import {
-  DF_CURRENT_FORM,
-  DF_CURRENT_PATH_CONTEXT,
-  DF_CURRENT_TYPE,
-  DF_REMOVE,
-  DF_ROOT_DATA,
-} from "../code/injectionKeys";
+import { provideContainerContext } from "../code/provideContainerContext";
 
 const { currentForm, pathContext } = defineProps<{
   currentForm: any;
@@ -38,20 +33,13 @@ const emit = defineEmits(["removeObject"]);
 function remove() {
   emit("removeObject");
 }
-// 提供当前数组记录路径，供业务组件调用引擎能力时解析相对字段
-provide(
-  DF_CURRENT_PATH_CONTEXT,
-  computed(() => pathContext),
-);
-// 提供当前容器的表单数据（统一提供 ref，与 container/containerArray 保持一致）
-provide(
-  DF_CURRENT_FORM,
-  computed(() => currentForm),
-);
-// 提供当前容器的类型
-provide(DF_CURRENT_TYPE, "object");
-// 提供删除方法
-provide(DF_REMOVE, remove);
+// 统一提供容器上下文：类型、表单配置、路径与删除能力
+provideContainerContext({
+  type: "object",
+  form: () => currentForm,
+  pathContext: () => pathContext,
+  remove,
+});
 </script>
 
 <style scoped></style>
