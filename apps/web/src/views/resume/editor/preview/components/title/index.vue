@@ -45,6 +45,8 @@ const previewData = inject(
   "previewData",
   computed(() => ({})),
 );
+const fontValue = inject("fontValue");
+
 const displayTitle = computed(() => {
   const moduleData = previewData.value?.[props.moduleKey];
   // 模块标题统一读取 ui.title
@@ -59,7 +61,7 @@ const current = computed(() => themeComponents[themeTemplate.value] || themeComp
 </script>
 
 <template>
-  <component :is="current" :title="displayTitle" />
+  <component :is="current" :title="displayTitle" :style="[fontValue(6)]" />
 </template>
 
 <style lang="scss" scoped></style>

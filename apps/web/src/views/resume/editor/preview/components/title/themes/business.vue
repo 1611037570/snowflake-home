@@ -16,7 +16,7 @@ const themeColor = inject("themeColor");
   <div v-if="title" class="border-b-2" :style="{ borderColor: themeColor }">
     <div class="flex items-center">
       <div class="mr-3 h-4 w-1" :style="{ background: themeColor }"></div>
-      <h2 class="min-w-0 max-w-full break-words font-bold tracking-wide" :style="[fontValue(5)]">
+      <h2 class="max-w-full min-w-0 font-bold tracking-wide break-words">
         {{ title }}
       </h2>
     </div>
