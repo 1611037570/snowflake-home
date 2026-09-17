@@ -42,17 +42,17 @@ export function moveFieldByKey(
   position: FieldPosition = "before",
 ): boolean {
   if (!fromKey || !toKey || fromKey === toKey) return false;
-  const fromIndex = fields.findIndex((field) => field.key === fromKey);
-  const toIndex = fields.findIndex((field) => field.key === toKey);
-  if (fromIndex < 0 || toIndex < 0) return false;
+  const fromField = fields.find((field) => field.key === fromKey);
+  const toField = fields.find((field) => field.key === toKey);
+  if (!fromField || !toField || fromField === toField) return false;
   // 固定字段不参与移动，也不允许插到固定字段之前
-  if (fields[fromIndex].fixed) return false;
-  if (fields[toIndex].fixed && position === "before") return false;
+  if (fromField.fixed === true) return false;
+  if (toField.fixed === true && position === "before") return false;
 
-  const [field] = fields.splice(fromIndex, 1);
+  fields.splice(fields.indexOf(fromField), 1);
   // 移除后按 key 重新定位目标，避免来源下标影响目标下标
-  const target = fields.findIndex((item) => item.key === toKey);
-  fields.splice(position === "after" ? target + 1 : target, 0, field);
-  keepFixedFirst(fields, (item) => item.fixed);
+  const target = fields.indexOf(toField);
+  fields.splice(position === "after" ? target + 1 : target, 0, fromField);
+  keepFixedFirst(fields, (item) => item.fixed === true);
   return true;
 }

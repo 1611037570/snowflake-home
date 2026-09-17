@@ -1,6 +1,7 @@
 import { mount } from "@vue/test-utils";
 import { ref } from "vue";
 import { describe, expect, it, vi } from "vitest";
+import { DF_CONTEXT } from "@/components/business/dynamicForm/api";
 import More from "./more.vue";
 
 const emailField = {
@@ -20,7 +21,7 @@ const mountMore = (collapsed: string[], addField = vi.fn()) =>
     slots: { default: "<div data-test='active-field'>已添加字段</div>" },
     global: {
       provide: {
-        "df/context": () => ({
+        [DF_CONTEXT]: () => ({
           currentForm: ref({ fields: [emailField, wechatField, { label: "姓名" }] }),
           hasFieldData: (field: any) => field.label === wechatField.label,
           addField,

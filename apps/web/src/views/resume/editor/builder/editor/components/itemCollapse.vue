@@ -1,5 +1,6 @@
 <script setup>
 import { EXPANDED } from "@/stores/modules/resume/formConfig";
+import { useFormContext } from "@/components/business/dynamicForm/api";
 import Icon from "../icon.vue";
 
 const { proxy } = getCurrentInstance();
@@ -17,7 +18,7 @@ const hidden = defineModel("hidden", {
   type: Boolean,
   default: false,
 });
-const { removeCurrent } = inject("df/context")();
+const { removeCurrent } = useFormContext();
 
 // 标题：统一走 name 数据源，空值占位符兜底
 const displayTitle = computed(() => name.value || "尚未填写");

@@ -1,12 +1,13 @@
 <script setup>
-import { computed, inject } from "vue";
+import { computed } from "vue";
+import { useFormContext } from "@/components/business/dynamicForm/api";
 import { useResumeStore } from "@/stores";
 import { EXPANDED } from "@/stores/modules/resume/formConfig";
 import { addUserCustomField } from "@/stores/modules/resume/hooks/useUserCustomField";
 import { getUUID } from "@/utils";
 import { storeToRefs } from "pinia";
 
-const { currentForm, hasFieldData, addField, getFieldDataKey } = inject("df/context")();
+const { currentForm, hasFieldData, addField, getFieldDataKey } = useFormContext();
 const resumeStore = useResumeStore();
 const { runtimeConfig, currentData } = storeToRefs(resumeStore);
 

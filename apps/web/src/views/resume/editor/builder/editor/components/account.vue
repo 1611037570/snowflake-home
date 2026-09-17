@@ -1,5 +1,6 @@
 <script setup>
 import { getCurrentInstance } from "vue";
+import { useFormContext } from "@/components/business/dynamicForm/api";
 import Icon from "../icon.vue";
 
 const { proxy } = getCurrentInstance();
@@ -18,7 +19,7 @@ const hidden = defineModel("hidden", {
   type: Boolean,
   default: false,
 });
-const { removeCurrent } = inject("df/context")();
+const { removeCurrent } = useFormContext();
 
 // 删除社交账号
 const removeAccount = () => {
