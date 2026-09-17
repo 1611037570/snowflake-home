@@ -19,6 +19,7 @@ import { shallowRef, watch, type Ref, type WatchSource } from "vue";
 /** 单个"行"的信息（模块内部的一个 div） */
 export interface RowInfo {
   height: number; // 行高度（offsetHeight + marginTop + marginBottom）
+  margin: number; // 行外边距，固定不随字号缩放，供按比例估算时保留固定部分
   index: number; // 行在模块内的序号（从 0 开始，用于分页裁剪 :nth-child）
 }
 
@@ -108,11 +109,17 @@ export function useRowInfo(
   const measureModule = (wrapper: HTMLElement): ModuleInfo => {
     const rows = Array.from(wrapper.children) as HTMLElement[];
     const heights = batchRowHeights(rows);
+    // 外边距单独留存：字号缩放估算需要区分随字号缩放的文字部分
+    const margins = rows.map(getRowMargin);
     // 行高和锚定模块真实渲染高度，消除逐行整数取整累积误差
     alignHeights(heights, wrapper.offsetHeight);
     return {
       moduleKey: wrapper.dataset.module || "",
-      rows: rows.map((_, index) => ({ height: heights[index]!, index })),
+      rows: rows.map((_, index) => ({
+        height: heights[index]!,
+        margin: margins[index]!,
+        index,
+      })),
     };
   };
 
