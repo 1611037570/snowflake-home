@@ -1,4 +1,4 @@
-import type { FieldCheckRule, FormField } from "../types";
+import type { FieldCheckRule, FieldChecks, FormField } from "../types";
 import {
   createDataPathContext,
   resolveDataPath,
@@ -57,4 +57,25 @@ export const isFieldRemoved = (
     getValueByPath(data, resolveDataPath(rule.path, getFieldContext(field, context))),
     rule,
   );
+};
+
+/**
+ * 按表单控制协议写入字段检查值
+ * 与 isFieldHidden/isFieldRemoved 对称：只写字段自身 checks 声明的路径，业务无需关心数据结构
+ */
+export const setFieldCheckValue = (
+  data: Record<string, any> | undefined,
+  field: FormField,
+  checkKey: keyof FieldChecks,
+  value: boolean,
+  context?: DataPathContext,
+): void => {
+  const rule = field.checks?.[checkKey];
+  if (!rule?.path?.length) return;
+  const path = resolveDataPath(rule.path, getFieldContext(field, context));
+  let current = data;
+  for (let i = 0; i < path.length - 1; i++) {
+    current = current?.[path[i]];
+  }
+  if (current) current[path[path.length - 1]] = value;
 };

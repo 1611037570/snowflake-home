@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import type { FormField } from "../types";
-import { isFieldHidden, isFieldRemoved } from "./fieldVisible";
+import { isFieldHidden, isFieldRemoved, setFieldCheckValue } from "./fieldVisible";
 
 describe("fieldVisible", () => {
   it("按分组上下文解析模块级显隐规则", () => {
@@ -33,5 +33,32 @@ describe("fieldVisible", () => {
 
     expect(isFieldRemoved(data, field, context)).toBe(true);
     expect(isFieldHidden(data, field, context)).toBe(true);
+  });
+
+  it("按分组上下文写入模块级控制值", () => {
+    const data = { user: { ui: { hidden: false } } };
+    const field: FormField = {
+      type: "group",
+      context: ["user"],
+      checks: { hidden: { path: ["ui", "hidden"] } },
+      fields: [],
+    };
+
+    setFieldCheckValue(data, field, "hidden", true);
+
+    expect(data.user.ui.hidden).toBe(true);
+  });
+
+  it("未声明检查规则时不写入数据", () => {
+    const data = { work: {} as Record<string, any> };
+    const field: FormField = {
+      type: "object",
+      component: "input",
+      model: { source: ["name"], prop: "modelValue" },
+    };
+
+    setFieldCheckValue(data, field, "removed", true);
+
+    expect(data.work).toEqual({});
   });
 });

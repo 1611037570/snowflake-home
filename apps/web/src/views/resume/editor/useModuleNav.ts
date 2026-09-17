@@ -3,7 +3,6 @@ import { storeToRefs } from "pinia";
 import { useResumeStore } from "@/stores";
 import { CUSTOM_MODULE_ICON, DEFAULT_MODULE_NAMES } from "@/stores/modules/resume/defaultConfig";
 import eventBus from "@/utils/modules/eventBus";
-import { setFieldHidden } from "./utils";
 import { isFieldHidden, isFieldRemoved } from "@/components/business/dynamicForm/code/fieldVisible";
 import { ElNotification } from "element-plus";
 
@@ -134,9 +133,9 @@ export const locateEditor = (key: string) => {
 // 跳转编辑区（含隐藏恢复）：供进度条等复用
 export const jumpToEditor = (key: string) => {
   const item = moduleList.value.find((m) => m.key === key);
-  // 复用恢复函数：隐藏模块置为可见，使编辑区与预览区重新渲染该模块
+  // 复用恢复能力：隐藏模块置为可见，使编辑区与预览区重新渲染该模块
   if (item?.hidden) {
-    setFieldHidden(currentData.value, item.field, false);
+    resumeStore.setModuleHidden(key, false);
   }
   jumpEditor(key);
 };
