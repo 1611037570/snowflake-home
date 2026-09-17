@@ -8,7 +8,6 @@ import {
   uiParamRanges,
   defaultFontSize,
   defaultTitleFontSize,
-  defaultLineHeight,
   defaultFontFamily,
   defaultDateStyle,
   defaultTitleIcon,
@@ -85,15 +84,6 @@ const titleIcon = computed({
             >{{ mode.name }}</SfButton
           >
         </div>
-        <ConfigItem
-          label="行间距"
-          v-model="currentUI.lineHeight"
-          :min="uiParamRanges.lineHeight.min"
-          :max="uiParamRanges.lineHeight.max"
-          :step="uiParamRanges.lineHeight.step"
-          :default-value="defaultLineHeight"
-          tip="行与行之间的距离（字号倍数），数值越大行距越大"
-        />
         <!-- 日期样式切换：点号 / 中文 -->
         <ConfigLabel label="日期样式" v-model="dateStyle" :default-value="defaultDateStyle" />
         <div class="flex gap-3">
