@@ -21,12 +21,12 @@ import {
   defaultFontSize,
   defaultLineHeight,
   defaultModuleSpacing,
-  defaultPadding,
+  defaultPaddingVertical,
   uiParamRanges,
 } from "@/stores/modules/resume/uiConfig";
 
 /** 可被智能压缩的 ui 字段 */
-export type OnePageAdjustKey = "padding" | "fontSize" | "lineHeight" | "moduleSpacing";
+export type OnePageAdjustKey = "paddingVertical" | "fontSize" | "lineHeight" | "moduleSpacing";
 
 /** 单个可调参数的压缩配置：从当前值向下压缩到 min，每次按 step 取整 */
 export interface OnePageAdjustableItem {
@@ -42,14 +42,18 @@ export const defaultOnePageAdjustable: OnePageAdjustableItem[] = [
     min: uiParamRanges.moduleSpacing.min,
     step: uiParamRanges.moduleSpacing.step,
   },
-  { key: "padding", min: uiParamRanges.padding.min, step: uiParamRanges.padding.step },
+  {
+    key: "paddingVertical",
+    min: uiParamRanges.paddingVertical.min,
+    step: uiParamRanges.paddingVertical.step,
+  },
   { key: "lineHeight", min: uiParamRanges.lineHeight.min, step: uiParamRanges.lineHeight.step },
   { key: "fontSize", min: uiParamRanges.fontSize.min, step: uiParamRanges.fontSize.step },
 ];
 
 /** 可调字段缺失时的兜底默认值 */
 const uiDefaults: Record<OnePageAdjustKey, number> = {
-  padding: defaultPadding,
+  paddingVertical: defaultPaddingVertical,
   fontSize: defaultFontSize,
   lineHeight: defaultLineHeight,
   moduleSpacing: defaultModuleSpacing,
@@ -118,7 +122,7 @@ export const useSmartOnePage = ({
       }));
       const pages = paginateModules({
         moduleList: scaledList,
-        padding: params.padding,
+        paddingVertical: params.paddingVertical,
         moduleSpacing: params.moduleSpacing,
         showPageNumber: showPageNumber.value,
       });

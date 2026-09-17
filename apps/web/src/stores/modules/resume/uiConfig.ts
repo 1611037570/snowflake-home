@@ -138,8 +138,10 @@ export const dateStyleList = [
 export const defaultThemeColor = themeColors[0].value;
 // 默认自定义页尾品牌名（留空表示使用默认品牌名）
 export const defaultFooter = "";
-// 默认页边距
-export const defaultPadding = 24;
+// 默认上下页边距
+export const defaultPaddingVertical = 24;
+// 默认左右页边距
+export const defaultPaddingHorizontal = 24;
 // 默认字体类型
 export const defaultFontFamily = "text-puhui";
 // 默认字体大小
@@ -165,8 +167,10 @@ export const defaultInfoPosition = "left";
 export const defaultDateStyle = "dot";
 // ===========参数范围（编辑器滑杆与一页纸压缩共用，只维护这一处）=====================
 export const uiParamRanges = {
-  // 页边距
-  padding: { min: 12, max: 96, step: 1 },
+  // 上下页边距
+  paddingVertical: { min: 12, max: 96, step: 1 },
+  // 左右页边距
+  paddingHorizontal: { min: 12, max: 96, step: 1 },
   // 字体大小
   fontSize: { min: 10, max: 24, step: 2 },
   // 模块标题字号
@@ -183,8 +187,10 @@ export const DEFAULT_UI = {
   language: "zh",
   // 自定义页尾品牌名：留空使用默认品牌，页码部分固定展示
   footer: "",
-  // 页边距
-  padding: defaultPadding,
+  // 上下页边距
+  paddingVertical: defaultPaddingVertical,
+  // 左右页边距
+  paddingHorizontal: defaultPaddingHorizontal,
   // 字体大小
   fontSize: defaultFontSize,
   // 模块标题字号

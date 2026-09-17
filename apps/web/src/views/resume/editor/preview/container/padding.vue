@@ -7,11 +7,19 @@ import { uiParamRanges } from "@/stores/modules/resume/uiConfig";
 const resumeStore = useResumeStore();
 const { currentUI } = storeToRefs(resumeStore);
 
-// 页边距调整值统一使用数值类型
-const padding = computed({
-  get: () => Number(currentUI.value.padding),
+// 上下边距调整值统一使用数值类型
+const paddingVertical = computed({
+  get: () => Number(currentUI.value.paddingVertical),
   set: (value) => {
-    currentUI.value.padding = Number(value);
+    currentUI.value.paddingVertical = Number(value);
+  },
+});
+
+// 左右边距调整值统一使用数值类型
+const paddingHorizontal = computed({
+  get: () => Number(currentUI.value.paddingHorizontal),
+  set: (value) => {
+    currentUI.value.paddingHorizontal = Number(value);
   },
 });
 </script>
@@ -29,14 +37,25 @@ const padding = computed({
     <template #dropdown>
       <div class="w-[216px] rounded-3xl border border-sf-b bg-sf-primary p-3">
         <div class="mb-3 flex items-center justify-between text-sm text-sf-text-2">
-          <span>页边距</span>
-          <span>{{ padding }}px</span>
+          <span>上下边距</span>
+          <span>{{ paddingVertical }}px</span>
         </div>
         <SfSlider
-          v-model="padding"
-          :min="uiParamRanges.padding.min"
-          :max="uiParamRanges.padding.max"
-          :step="uiParamRanges.padding.step"
+          v-model="paddingVertical"
+          :min="uiParamRanges.paddingVertical.min"
+          :max="uiParamRanges.paddingVertical.max"
+          :step="uiParamRanges.paddingVertical.step"
+          size="small"
+        />
+        <div class="mt-3 mb-3 flex items-center justify-between text-sm text-sf-text-2">
+          <span>左右边距</span>
+          <span>{{ paddingHorizontal }}px</span>
+        </div>
+        <SfSlider
+          v-model="paddingHorizontal"
+          :min="uiParamRanges.paddingHorizontal.min"
+          :max="uiParamRanges.paddingHorizontal.max"
+          :step="uiParamRanges.paddingHorizontal.step"
           size="small"
         />
       </div>

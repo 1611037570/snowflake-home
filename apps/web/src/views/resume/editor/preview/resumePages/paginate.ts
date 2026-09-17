@@ -21,7 +21,8 @@ export interface PageSlice {
 /** 分页入参 */
 export interface PaginateOptions {
   moduleList: ModuleInfo[];
-  padding: number;
+  /** 上下页边距，决定页面可用内容高度 */
+  paddingVertical: number;
   moduleSpacing: number;
   showPageNumber: boolean;
   /** 仅需第一页时翻页即提前终止（缩略图场景） */
@@ -34,13 +35,13 @@ export interface PaginateOptions {
  */
 export const paginateModules = ({
   moduleList,
-  padding,
+  paddingVertical,
   moduleSpacing,
   showPageNumber,
   stopAfterFirstPage,
 }: PaginateOptions): PageSlice[][] => {
   // 仅根据页码区域高度计算页面可用内容高度（与智能一页共用统一公式）
-  const maxContentHeight = getContentHeight(padding, showPageNumber);
+  const maxContentHeight = getContentHeight(paddingVertical, showPageNumber);
   // 模块间距缺省或非数值时按 0 处理，避免累加得到 NaN 导致翻页判定恒不触发
   const safeModuleSpacing = Number.isFinite(moduleSpacing) ? moduleSpacing : 0;
 
