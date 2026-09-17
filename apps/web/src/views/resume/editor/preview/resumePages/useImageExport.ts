@@ -135,7 +135,7 @@ const exportLongImage = async (
       const url = URL.createObjectURL(blob);
       const link = document.createElement("a");
       link.href = url;
-      // 统一命名：年-月-日-简历标题
+      // 统一命名：轻舟简历-简历标题-年-月-日
       link.download = getExportFileName(resumeTitle.value, "png");
       document.body.appendChild(link);
       link.click();

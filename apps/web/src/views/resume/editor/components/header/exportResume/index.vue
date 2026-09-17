@@ -38,7 +38,7 @@ const exportConfig = () => {
   const url = URL.createObjectURL(blob);
   const link = document.createElement("a");
   link.href = url;
-  // 统一命名：年-月-日-简历标题（标题取自简历数据，非配置）
+  // 统一命名：轻舟简历-简历标题-年-月-日（标题取自简历数据，非配置）
   link.download = getExportFileName(resumeTitle.value, "json");
   link.click();
   URL.revokeObjectURL(url);
