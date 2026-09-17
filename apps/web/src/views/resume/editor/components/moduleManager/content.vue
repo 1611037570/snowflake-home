@@ -1,7 +1,8 @@
 <script setup>
-import { computed, getCurrentInstance, nextTick, onMounted, onUnmounted, ref } from "vue";
+import { computed, getCurrentInstance, nextTick, onMounted, onUnmounted, ref, watch } from "vue";
 import { storeToRefs } from "pinia";
 import { useDraggable } from "vue-draggable-plus";
+import { applyVisibleOrder, keepFixedFirst } from "@/components/business/dynamicForm";
 import { useResumeStore } from "@/stores";
 import { useModuleNav } from "../../useModuleNav";
 
@@ -10,9 +11,18 @@ defineOptions({ name: "ModuleManagerContent" });
 const { proxy } = getCurrentInstance();
 const resumeStore = useResumeStore();
 const { runtimeConfig } = storeToRefs(resumeStore);
-const { keyword, filteredList, jumpAll } = useModuleNav();
+const { keyword, filteredList, moduleList, jumpAll } = useModuleNav();
 const listRef = ref(null);
 const moduleFields = computed(() => runtimeConfig.value?.fields || []);
+// 拖拽排序作用于可导航模块，结束后按引擎统一规则回填完整字段列表
+const visibleModules = ref([]);
+watch(
+  moduleList,
+  (list) => {
+    visibleModules.value = [...list];
+  },
+  { immediate: true },
+);
 let draggable = null;
 
 // 查找模块时先恢复归档状态，再同步定位编辑区与预览区
@@ -42,11 +52,21 @@ const handleDelete = (module) => {
 onMounted(async () => {
   await nextTick();
   // 搜索时隐藏拖拽手柄，避免过滤列表与完整模块顺序不一致
-  draggable = useDraggable(listRef, moduleFields, {
+  draggable = useDraggable(listRef, visibleModules, {
     animation: 150,
     ghostClass: "module-manager-ghost",
     handle: ".module-manager-drag",
     onMove: (event) => !event.related?.dataset?.fixed,
+    // 拖拽结束按可见顺序回填完整字段列表，并让固定模块保底排在最前
+    onEnd: () => {
+      const fields = moduleFields.value;
+      applyVisibleOrder(
+        fields,
+        visibleModules.value.map((item) => item.field),
+        (field) => !!field?.key,
+      );
+      keepFixedFirst(fields, (field) => field.fixed);
+    },
   });
 });
 

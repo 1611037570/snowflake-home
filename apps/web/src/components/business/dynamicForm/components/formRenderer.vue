@@ -47,6 +47,7 @@ import { hasFieldData, removeFieldData } from "../code/fieldData";
 import { getFormItemStyles } from "../code/formItemStyle";
 import { isFieldRemoved } from "../code/fieldVisible";
 import { DF_MODULE_SELECT, DF_ROOT_DATA } from "../code/injectionKeys.ts";
+import { applyVisibleOrder, keepFixedFirst } from "../code/orderData";
 import { createDataPathContext, type DataPathContext } from "../code/pathContext";
 import ContainerSlot from "./containerSlot.vue";
 import ContainerArray from "./containerArray.vue";
@@ -101,14 +102,7 @@ const renderFieldsWithStyle = computed(() => {
 const sortableFields = computed<any[]>({
   get: () => renderFields.value.map((item: any) => item.field),
   set: (value) => {
-    const fields = items.value.fields || [];
-    const visibleIndexes = fields.reduce((indexes: number[], field: any, index: number) => {
-      if (isFieldRenderable(field)) indexes.push(index);
-      return indexes;
-    }, []);
-    visibleIndexes.forEach((fieldIndex: number, visibleIndex: number) => {
-      if (value[visibleIndex]) fields[fieldIndex] = value[visibleIndex];
-    });
+    applyVisibleOrder(items.value.fields || [], value, isFieldRenderable);
   },
 });
 const isDragging = ref(false);
@@ -139,7 +133,8 @@ const draggable = useDraggable(null, sortableFields, {
     isDragging.value = true;
   },
   onEnd() {
-    keepFixedFirst();
+    // 固定模块保底校正：无论拖拽如何发生，固定模块始终按原相对顺序排在最前
+    keepFixedFirst(items.value.fields || [], (field: any) => field.fixed);
     isDragging.value = false;
   },
 });
@@ -163,17 +158,6 @@ function ensureFieldIds(fields: any[]) {
   });
 }
 
-// 固定模块保底校正：无论拖拽如何发生，固定模块始终按原相对顺序排在最前
-function keepFixedFirst() {
-  const fields = items.value.fields || [];
-  const fixed = fields.filter((field: any) => field.fixed);
-  if (!fixed.length) return;
-  const others = fields.filter((field: any) => !field.fixed);
-  const next = [...fixed, ...others];
-  if (next.some((field, index) => field !== fields[index])) {
-    fields.splice(0, fields.length, ...next);
-  }
-}
 onMounted(async () => {
   await nextTick();
   if (!items.value.id) {
