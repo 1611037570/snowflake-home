@@ -1,7 +1,12 @@
 import { darkThemeColors } from "@/configs";
 // ===========列表=====================
 // 主题色列表
-export const themeColors = [...darkThemeColors];
+export const themeColors = [
+  { name: "主题色", value: "#50A2FF" },
+  ...darkThemeColors.slice(0, -2),
+  darkThemeColors.at(-1),
+  { name: "极致黑", value: "#000000" },
+];
 
 // 字体类型列表
 export const fontFamilyList = [
