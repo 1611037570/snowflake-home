@@ -3,7 +3,7 @@ import { computed, inject } from "vue";
 import ResumeField from "../../../components/resumeField/index.vue";
 import { useUserFieldVisibility } from "../useUserFieldVisibility";
 
-// 副标题：渲染编辑器中标记的字段值，按标记顺序逐行展示在姓名下方
+// 副标题：渲染编辑器中标记的字段值，按标记顺序在姓名下方并排一行展示
 const previewData = inject("previewData");
 const user = computed(() => previewData.value?.user?.data || {});
 // 已标记的副标题字段
@@ -18,24 +18,22 @@ const heightWeightText = (value) => {
   if (!hasHeight && !hasWeight) return "";
   return [hasHeight ? `${height}cm` : "", hasWeight ? `${weight}kg` : ""].filter(Boolean).join("/");
 };
-// 单行内容：字段被隐藏或值空时不展示
-const lineOf = (key) => {
+// 单项内容：字段被隐藏或值空时不展示
+const textOf = (key) => {
   if (!key || isUserFieldHidden(key)) return "";
   const value = user.value?.[key];
   if (value == null || value === "") return "";
   return key === "heightWeight" ? heightWeightText(value) : String(value);
 };
-const lines = computed(() => subtitleKeys.value.map((key) => lineOf(key)).filter(Boolean));
+const items = computed(() => subtitleKeys.value.map((key) => textOf(key)).filter(Boolean));
 </script>
 
 <template>
-  <div v-if="lines.length" class="max-w-full min-w-0 font-normal">
-    <ResumeField
-      v-for="(line, index) in lines"
-      :key="index"
-      :model-value="line"
-      class="flex items-center! justify-center!"
-    />
+  <div
+    v-if="items.length"
+    class="flex max-w-full min-w-0 flex-wrap items-center justify-center gap-3 font-normal"
+  >
+    <ResumeField v-for="(item, index) in items" :key="index" :model-value="item" />
   </div>
 </template>
 
