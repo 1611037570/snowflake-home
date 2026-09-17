@@ -19,7 +19,13 @@ const themeColor = computed({
 </script>
 
 <template>
-  <SfDropdown v-if="currentUI" trigger="click" placement="bottom-start" :show-arrow="false">
+  <SfDropdown
+    v-if="currentUI"
+    trigger="click"
+    placement="bottom-start"
+    :show-arrow="false"
+    popper-class="sf-theme-color-popper"
+  >
     <SfTooltip :content="`主题颜色`">
       <div
         class="box-border h-7 w-7 cursor-pointer rounded-full border-3 border-sf-b bg-sf-theme-2"
@@ -28,10 +34,16 @@ const themeColor = computed({
     </SfTooltip>
     <template #dropdown>
       <div class="rounded-3xl border border-sf-b bg-sf-primary p-3">
-        <ThemeColorPicker v-model="themeColor" />
+        <ThemeColorPicker v-model="themeColor" :teleported="false" />
       </div>
     </template>
   </SfDropdown>
 </template>
 
-<style lang="scss" scoped></style>
+<style lang="scss">
+/* 取色器面板内联渲染在下拉弹层内，取消滚动容器裁剪，避免面板被弹层裁掉 */
+.sf-theme-color-popper .el-scrollbar,
+.sf-theme-color-popper .el-scrollbar__wrap {
+  overflow: visible;
+}
+</style>
