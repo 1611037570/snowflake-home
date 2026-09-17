@@ -84,7 +84,7 @@ const dateStyle = computed({
   >
     <SfTooltip content="模板设置">
       <SfIcon
-        icon="lucide:palette"
+        icon="lucide:swatch-book"
         size="5"
         boxSize="7"
         class="rounded-full text-sf-text-2 hover:bg-sf-theme-2 hover:text-sf-theme-text"

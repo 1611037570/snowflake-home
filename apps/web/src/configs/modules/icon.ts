@@ -108,6 +108,7 @@ export const ICON_LIST: Record<string, IconItem> = {
   "lucide:hash": { icon: "lucide:hash", name: "页码" },
   "lucide:layout-template": { icon: "lucide:layout-template" },
   "lucide:palette": { icon: "lucide:palette" },
+  "lucide:swatch-book": { icon: "lucide:swatch-book" },
   "lucide:contrast": { icon: "lucide:contrast", name: "黑白对比" },
   "lucide:type": { icon: "lucide:type" },
   "lucide:expand": { icon: "lucide:expand" },
