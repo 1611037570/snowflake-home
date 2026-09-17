@@ -22,7 +22,7 @@ const pdfExportOptions = computed(() => [
 ]);
 const longImageExportOptions = [
   { name: "PNG", value: "png" },
-  { name: "PDF图片", value: "pdf" },
+  { name: "PDF", value: "pdf" },
 ];
 
 // 服务器未连接时只禁止切换服务器选项，保留整个 PDF 导出入口。
