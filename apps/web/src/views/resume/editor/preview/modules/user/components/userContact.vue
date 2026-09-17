@@ -88,15 +88,19 @@ const metaItems = computed(() => {
   }
   if (age.value) {
     items.push({
-      // 年龄跟随出生日期排序
+      // 年龄跟随出生日期排序，图标与标签沿用出生日期字段配置
       sortKey: "birthday",
+      icon: fieldIcon("birthday"),
+      label: getPreviewText("ageLabel", previewLang.value),
       text: getPreviewText("age", previewLang.value, { age: age.value }),
     });
   }
   if (workYearsNumber.value) {
     items.push({
-      // 工作年限跟随参加工作时间排序
+      // 工作年限跟随参加工作时间排序，图标与标签沿用参加工作时间字段配置
       sortKey: "workTime",
+      icon: fieldIcon("workTime"),
+      label: getPreviewText("expYearsLabel", previewLang.value),
       text: getPreviewText("expYears", previewLang.value, { years: workYearsNumber.value }),
     });
   }

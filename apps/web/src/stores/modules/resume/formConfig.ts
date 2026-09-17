@@ -312,15 +312,15 @@ export const DEFAULT_USER_FORM = [
             ],
           }),
 
-          // 微信号
+          // 微信
           createMoreField({
             key: "wechat",
-            label: "微信号",
+            label: "微信",
             component: "input",
             icon: "mdi:wechat",
             addable: true,
             props: {
-              placeholder: "请输入微信号",
+              placeholder: "请输入微信",
               clearable: true,
             },
           }),
