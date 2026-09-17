@@ -48,6 +48,9 @@ const offerCounts = computed(() =>
 );
 // 图表配置
 const options = computed(() => ({
+  title: {
+    text: mode.value === "week" ? "近七天投递趋势" : "本月投递趋势",
+  },
   xAxis: {
     type: "category",
     data: days.value.map((d) => dayjs(d).format(mode.value === "week" ? "MM-DD" : "DD")),
@@ -60,25 +63,25 @@ const options = computed(() => ({
     trigger: "axis",
   },
   legend: {
-    data: ["投递轨迹", "反馈信号", "Offer 星点"],
+    data: ["投递数", "被拒", "Offer"],
   },
   series: [
     {
       type: "line",
-      name: "投递轨迹",
+      name: "投递数",
       data: counts.value,
       smooth: true,
       areaStyle: {},
     },
     {
       type: "line",
-      name: "反馈信号",
+      name: "被拒",
       data: rejectedCounts.value,
       smooth: true,
     },
     {
       type: "line",
-      name: "Offer 星点",
+      name: "Offer",
       data: offerCounts.value,
       smooth: true,
     },
@@ -87,17 +90,8 @@ const options = computed(() => ({
 </script>
 
 <template>
-  <div class="rounded-2xl border border-sf-b bg-sf-primary p-3 shadow-sm">
-    <div class="mb-3 flex items-start justify-between gap-3">
-      <div class="flex items-center gap-3">
-        <div class="flex h-9 w-9 items-center justify-center rounded-xl bg-sf-bg-2 text-sf-theme">
-          <SfIcon icon="lucide:radar" size="4" />
-        </div>
-        <div>
-          <h3 class="text-sm font-black text-sf-text">星轨趋势</h3>
-          <p class="mt-1 text-xs text-sf-text-2">看见投递节奏与机会变化</p>
-        </div>
-      </div>
+  <div class="border-sf-b rounded-xl border bg-sf-primary p-4 shadow-sm">
+    <div class="mb-3">
       <el-radio-group v-model="mode">
         <el-radio-button value="week">近7天</el-radio-button>
         <el-radio-button value="month">本月</el-radio-button>

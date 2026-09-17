@@ -273,7 +273,7 @@ const journeySteps = [
     description: "支持一键优化，能面试准备提供针对性练习。",
   },
   {
-    title: "星轨统计",
+    title: "简历情况统计",
     description: "记录投递、跟进与 offer，用趋势和数据看清下一步方向。",
   },
 ];
@@ -328,7 +328,7 @@ const featureGroups = [
   {
     icon: "mdi:chart-pie",
     id: "statistics",
-    eyebrow: "星轨统计",
+    eyebrow: "简历情况统计",
     title: "记录每一份机会",
     description: "简历完成不是终点，投递节奏、面试进展和成果都值得被看见。",
     shotTitle: "投递统计截图预留区",
