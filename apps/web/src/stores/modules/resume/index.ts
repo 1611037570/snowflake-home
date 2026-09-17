@@ -148,6 +148,29 @@ export const useResumeStore = defineStore(
       printController = null;
       isPrinting.value = false;
     };
+    // 智能一页压缩中：复用导出遮罩，屏蔽试参数过程中的排版变化
+    const isFittingOnePage = ref(false);
+    let onePageController: AbortController | null = null;
+    // 开始压缩并创建可取消信号
+    const beginFittingOnePage = () => {
+      if (isFittingOnePage.value) return null;
+      const controller = new AbortController();
+      onePageController = controller;
+      isFittingOnePage.value = true;
+      return controller.signal;
+    };
+    // 取消当前压缩
+    const cancelFittingOnePage = () => {
+      onePageController?.abort();
+      onePageController = null;
+      isFittingOnePage.value = false;
+    };
+    // 仅结束当前压缩，避免旧任务影响新任务状态
+    const finishFittingOnePage = (signal: AbortSignal) => {
+      if (onePageController?.signal !== signal) return;
+      onePageController = null;
+      isFittingOnePage.value = false;
+    };
     // 是否AI生成中
     const isGenerating = ref(false);
     // 配置同步状态：编辑器表单渲染完成前为 true，供外壳展示加载提示
@@ -750,6 +773,10 @@ export const useResumeStore = defineStore(
       beginPrinting,
       cancelPrinting,
       finishPrinting,
+      isFittingOnePage,
+      beginFittingOnePage,
+      cancelFittingOnePage,
+      finishFittingOnePage,
       selectedModule,
       selectModule,
       unselectModule,
