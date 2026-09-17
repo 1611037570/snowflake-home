@@ -5,7 +5,7 @@
  * 不再挂载独立测量容器，避免重复渲染整份简历与重复注册观察器。
  *
  * 压缩计算为纯数学估算：
- *   - 行高按字号 × 行高比例缩放
+ *   - 行高按字号 × 行高比例缩放，行外边距固定不参与缩放
  *   - 缩放后的行高列表直接复用分页算法（paginateModules）判定是否恰好一页，
  *     与正式分页共用同一模型（user 模块整体一块、模块间距翻页规则），消除独立估算偏差
  * 参数只向下压缩、不会回弹，按压缩优先级逐项进行。
@@ -116,10 +116,18 @@ export const useSmartOnePage = ({
     // 与正式分页共用同一模型（user 模块整体一块、模块间距翻页规则），消除独立估算公式与实测分页的偏差
     const isOnePage = (params: Record<OnePageAdjustKey, number>) => {
       const scale = (params.fontSize * params.lineHeight) / (base.fontSize * base.lineHeight);
-      const scaledList = list.map((group: { moduleKey: string; rows: { height: number; index: number }[] }) => ({
-        moduleKey: group.moduleKey,
-        rows: group.rows.map((row) => ({ height: row.height * scale, index: row.index })),
-      }));
+      // 只缩放随字号变化的文字部分，行外边距固定不缩放；
+      // 否则估算偏乐观，判定为一页但实际仍溢出，需要反复点击才能压缩到位
+      const scaledList = list.map(
+        (group: { moduleKey: string; rows: { height: number; margin: number; index: number }[] }) => ({
+          moduleKey: group.moduleKey,
+          rows: group.rows.map((row) => ({
+            height: (row.height - row.margin) * scale + row.margin,
+            margin: row.margin,
+            index: row.index,
+          })),
+        }),
+      );
       const pages = paginateModules({
         moduleList: scaledList,
         paddingVertical: params.paddingVertical,
