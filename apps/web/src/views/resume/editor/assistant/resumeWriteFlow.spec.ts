@@ -14,7 +14,8 @@ describe("resume write flow", () => {
             data: {
               name: "甲公司",
               post: "工程师",
-              time: ["2024.01", "2025.01"],
+              startTime: "2024.01",
+              endTime: "2025.01",
               content: "<p>负责开发</p>",
             },
           },
@@ -40,7 +41,8 @@ describe("resume write flow", () => {
           data: {
             name: "",
             post: "",
-            time: [],
+            startTime: "",
+            endTime: "",
             content: "",
           },
         }) - 1,
@@ -76,7 +78,8 @@ describe("resume write flow", () => {
         record: {
           name: "乙公司",
           post: "高级工程师",
-          time: ["2025.02", "2026.08"],
+          startTime: "2025.02",
+          endTime: "2026.08",
           content: "<p>负责架构设计</p>",
         },
       },
@@ -94,7 +97,8 @@ describe("resume write flow", () => {
     expect(data.work.list[1].data).toMatchObject({
       name: "乙公司",
       post: "高级工程师",
-      time: ["2025.02", "2026.08"],
+      startTime: "2025.02",
+      endTime: "2026.08",
       content: "<p>负责架构设计</p>",
     });
   });

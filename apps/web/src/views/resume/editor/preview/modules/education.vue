@@ -35,7 +35,7 @@ const hasField = (item, key) => {
       <div
         :style="paragraphSpacingStyle"
         class="flex flex-wrap items-center justify-between"
-        v-if="item.name || getTime(item.time)"
+        v-if="item.name || getTime(item.startTime, item.endTime)"
       >
         <div class="flex max-w-full min-w-0 flex-wrap items-baseline gap-4">
           <div class="font-bold" :style="[fontValue(3)]">
@@ -43,7 +43,7 @@ const hasField = (item, key) => {
           </div>
         </div>
         <div class="flex max-w-full min-w-0 flex-wrap items-center gap-2">
-          <span>{{ getTime(item.time) }}</span>
+          <span>{{ getTime(item.startTime, item.endTime) }}</span>
         </div>
       </div>
       <!-- 次信息行：post / education / mode，不创建临时对象，直接基于原字段渲染 -->

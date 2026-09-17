@@ -38,7 +38,7 @@ formConfig.ts 中的默认配置：
 4. **可拖拽表单对齐**：`xiaoYangForm` 各模块结构与 formConfig.ts 中对应配置一致：
    - `boxCollapse` 模块：`props.name` / `props.add`、`model` 绑定 `collapsed`
    - 数组子项：`list: []` + `itemSchema`（含 `model` 绑定与 `component`）
-   - work/project/custom 子项：`itemSchema` 使用 `itemCollapse` + 嵌套 `fields`（公司/岗位/时间/经历，时间用 `datePicker` `monthrange`）
+   - work/project/custom 子项：`itemSchema` 使用 `itemCollapse` + 嵌套 `fields`（公司/岗位/开始时间/结束时间/经历，开始时间用 `datePicker`、结束时间用 `datePickerPresent`，均为 `month`）
    - 文本编辑：`wangEditor` 组件绑定 `modelValue`
 
 ## 执行步骤

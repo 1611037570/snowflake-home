@@ -13,18 +13,11 @@ const validateFieldValue = (
   if (!rule) return;
   const monthRe = /^\d{4}\.(0[1-9]|1[0-2])$/;
   if (rule.format === "month") {
-    if (typeof value !== "string" || !monthRe.test(value)) {
-      errors.push(`模块 ${module} 字段 ${field} 应为 YYYY.MM 格式（如 2023.07），实际值无效`);
-    }
-    return;
-  }
-  if (rule.format === "monthRange") {
-    if (
-      !Array.isArray(value) ||
-      value.length !== 2 ||
-      value.some((item) => typeof item !== "string" || !monthRe.test(item))
-    ) {
-      errors.push(`模块 ${module} 字段 ${field} 应为 ["开始.YYYY.MM", "结束.YYYY.MM"] 格式`);
+    // 结束时间允许使用"至今"表示持续中
+    if (typeof value !== "string" || (!monthRe.test(value) && value !== "至今")) {
+      errors.push(
+        `模块 ${module} 字段 ${field} 应为 YYYY.MM 格式（如 2023.07）或 至今，实际值无效`,
+      );
     }
     return;
   }

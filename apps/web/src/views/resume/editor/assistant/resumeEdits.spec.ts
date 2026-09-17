@@ -49,7 +49,7 @@ describe("validateResumeEdits", () => {
         field: "workTime",
         value: "2026-09",
       }),
-    ).toContain("模块 user 字段 workTime 应为 YYYY.MM 格式（如 2023.07），实际值无效");
+    ).toContain("模块 user 字段 workTime 应为 YYYY.MM 格式（如 2023.07）或 至今，实际值无效");
   });
 
   it("按表单字典拒绝无效枚举值", () => {

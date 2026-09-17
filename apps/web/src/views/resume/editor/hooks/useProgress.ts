@@ -152,6 +152,12 @@ const parseMonth = (str: any) => {
   return Number(match[1]) * 12 + Number(match[2]);
 };
 
+// 当前月份，与 parseMonth 同为"年 * 12 + 月"的数值
+const currentMonth = () => {
+  const now = new Date();
+  return now.getFullYear() * 12 + now.getMonth() + 1;
+};
+
 const formatGap = (months: number) => {
   const years = Math.floor(months / 12);
   const rest = months % 12;
@@ -173,28 +179,31 @@ function checkTimeline(modules: Array<{ key: string; config: any }>, rootData: a
     const items = getValueByPath(rootData, listPath);
     if (!Array.isArray(items) || !items.length) continue;
 
-    let timeFieldPath: string[] = [];
+    let startTimePath: string[] = [];
+    let endTimePath: string[] = [];
     walkFormFields(config.fields, (field) => {
-      if (timeFieldPath.length) return;
       const binding = getModelBindings(field)[0];
-      if (
-        field.type === "object" &&
-        field.component === "datePicker" &&
-        field.props?.type === "monthrange" &&
-        binding?.source
-      ) {
-        timeFieldPath = binding.source;
-      }
+      if (field.type !== "object" || !binding?.source) return;
+      // 时间线只关注记录内的开始时间与结束时间字段
+      const fieldKey = binding.source[binding.source.length - 1];
+      if (fieldKey === "startTime") startTimePath = binding.source;
+      if (fieldKey === "endTime") endTimePath = binding.source;
     });
-    if (!timeFieldPath.length) continue;
+    if (!startTimePath.length) continue;
 
     const entries = items
       .map((item: any, index: number) => {
-        const path = resolveDataPath(timeFieldPath, { basePath: listPath, index });
-        const time = getValueByPath(rootData, path) || [];
-        const start = parseMonth(time[0]);
-        const end = parseMonth(time[1] ?? time[0]);
-        return { item, index, name: item?.data?.name || "", time, start, end };
+        const startValue = getValueByPath(
+          rootData,
+          resolveDataPath(startTimePath, { basePath: listPath, index }),
+        );
+        const endValue = endTimePath.length
+          ? getValueByPath(rootData, resolveDataPath(endTimePath, { basePath: listPath, index }))
+          : null;
+        const start = parseMonth(startValue);
+        // 结束时间为"至今"时按当前月参与计算，缺省时沿用开始时间
+        const end = endValue === "至今" ? currentMonth() : (parseMonth(endValue) ?? start);
+        return { item, index, name: item?.data?.name || "", start, end };
       })
       .filter((e: any) => e.start != null && e.end != null);
 

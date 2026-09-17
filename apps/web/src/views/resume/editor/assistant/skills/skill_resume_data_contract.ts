@@ -17,7 +17,7 @@ const getFieldNotes = (field: ResumeFieldSchema) => {
   const notes: string[] = [];
   if (field.addable) notes.push("可添加字段，缺失时允许通过 updateModule 激活");
   if (field.format === "month") notes.push("格式 YYYY.MM");
-  if (field.format === "monthRange") notes.push('格式 ["开始.YYYY.MM", "结束.YYYY.MM"]');
+  if (field.key === "endTime") notes.push("持续中时填 至今");
   if (field.format === "html") notes.push("HTML 字符串，正文使用 <p> 包裹");
   if (field.format === "heightWeight") {
     notes.push("结构 { height: number, weight: number }");
@@ -76,7 +76,7 @@ ${modules}
 
 # 强制格式
 
-1. 月份使用 \`YYYY.MM\`，月份区间必须包含两个值。
+1. 月份使用 \`YYYY.MM\`；经历仍在持续时，结束时间填 \`至今\`。
 2. 富文本字段必须是 HTML 字符串，并使用 \`<p>\` 包裹正文。
 3. 只能使用以上字段与枚举值，不得根据自然语言自行创建字段名。`;
 };
