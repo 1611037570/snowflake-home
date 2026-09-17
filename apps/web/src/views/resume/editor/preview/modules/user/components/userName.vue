@@ -1,6 +1,7 @@
 <script setup>
 import { computed, inject } from "vue";
 import ResumeField from "../../../components/resumeField/index.vue";
+import UserSubtitle from "./userSubtitle.vue";
 import { useUserFieldVisibility } from "../useUserFieldVisibility";
 
 // 姓名组件：字号由主题样式注入
@@ -17,6 +18,7 @@ const { isUserFieldHidden } = useUserFieldVisibility();
       class="flex items-center! justify-center!"
       :style="[fontValue(10)]"
     />
+    <UserSubtitle />
   </div>
 </template>
 

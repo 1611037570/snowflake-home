@@ -26,6 +26,8 @@ const user = computed(() => previewData.value?.user?.data || {});
 const ui = computed(() => previewData.value?.user?.ui || {});
 // 读取字段配置中的图标，未配置时为 undefined 由图标组件兜底处理
 const fieldIcon = (key) => ui.value?.[key]?.icon;
+// 副标题字段在姓名下方单独展示，不再出现在信息行
+const subtitleKey = computed(() => ui.value?.subtitle || "");
 const { isUserFieldHidden } = useUserFieldVisibility();
 const userFieldOrder = inject("userFieldOrder", computed(() => []));
 const userFieldLabels = inject("userFieldLabels", computed(() => new Map()));
@@ -216,11 +218,13 @@ const contactItems = computed(() => {
     });
   }
   const order = new Map(userFieldOrder.value.map((key, index) => [key, index]));
-  return [...metaItems.value, ...items, ...secondaryItems.value, ...customItems.value].sort(
-    (a, b) =>
-      (order.get(a.sortKey || a.key) ?? Number.MAX_SAFE_INTEGER) -
-      (order.get(b.sortKey || b.key) ?? Number.MAX_SAFE_INTEGER),
-  );
+  return [...metaItems.value, ...items, ...secondaryItems.value, ...customItems.value]
+    .filter((item) => item.key !== subtitleKey.value)
+    .sort(
+      (a, b) =>
+        (order.get(a.sortKey || a.key) ?? Number.MAX_SAFE_INTEGER) -
+        (order.get(b.sortKey || b.key) ?? Number.MAX_SAFE_INTEGER),
+    );
 });
 </script>
 
