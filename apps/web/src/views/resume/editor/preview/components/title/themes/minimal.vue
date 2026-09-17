@@ -12,11 +12,7 @@ const fontValue = inject("fontValue");
 
 <template>
   <!-- 简约风格：纯标题文字，无装饰 -->
-  <h2
-    v-if="title"
-    class="min-w-0 max-w-full break-words font-bold tracking-wide"
-    :style="[fontValue(5)]"
-  >
+  <h2 v-if="title" class="max-w-full min-w-0 font-bold tracking-wide break-words">
     {{ title }}
   </h2>
 </template>

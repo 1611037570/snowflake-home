@@ -7,7 +7,6 @@ defineProps({
     default: "",
   },
 });
-const fontValue = inject("fontValue");
 const themeColor = inject("themeColor");
 // 实心色块上自动选择黑白文字，保证深浅主题色下均可读
 const textColor = computed(() => {
@@ -25,7 +24,7 @@ const textColor = computed(() => {
   <div v-if="title">
     <h2
       class="inline-block max-w-full min-w-0 rounded-lg px-4 py-1 font-bold tracking-wide break-words"
-      :style="[{ background: themeColor, color: textColor }, fontValue(5)]"
+      :style="[{ background: themeColor, color: textColor }]"
     >
       {{ title }}
     </h2>

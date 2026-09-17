@@ -68,9 +68,7 @@ const layoutClass = computed(() => {
   if (userInfoLayout?.value === "flex") {
     return isCentered ? "flex flex-wrap justify-center gap-3" : "flex flex-wrap gap-3";
   }
-  return isCentered
-    ? "grid grid-cols-2 justify-items-center gap-3"
-    : "grid grid-cols-2 gap-3";
+  return isCentered ? "grid grid-cols-2 justify-items-center gap-3" : "grid grid-cols-2 gap-3";
 });
 </script>
 
@@ -79,7 +77,7 @@ const layoutClass = computed(() => {
     v-if="metaItems.length"
     class="max-w-full min-w-0 items-center"
     :class="layoutClass"
-    :style="[fontValue(2)]"
+    :style="[fontValue()]"
   >
     <div v-for="item in metaItems" :key="item.key || item.text" class="min-w-0">
       <ResumeField v-if="item.key" :model-value="user[item.key]" />
