@@ -24,6 +24,7 @@ import {
   DEFAULT_SYSTEM,
 } from "./defaultConfig";
 import { COLLAPSED, EXPANDED } from "./formConfig";
+import { DEFAULT_UI } from "./uiConfig";
 import {
   bindCollapsedDefault,
   buildRuntimeConfig,
@@ -73,13 +74,21 @@ export const useResumeStore = defineStore(
         });
       });
     };
+    // 历史简历可能缺少后续新增的 UI 字段，加载时按默认值原地补齐
+    const fillResumeUiDefaults = (item: any) => {
+      if (!item.ui || typeof item.ui !== "object") item.ui = structuredClone(DEFAULT_UI);
+      Object.entries(DEFAULT_UI).forEach(([key, value]) => {
+        if (item.ui[key] === undefined) item.ui[key] = value;
+      });
+      return item;
+    };
     const loadResumeItems = async (ids: string[]) => {
       const items = await Promise.all(
         ids.map(async (id) => {
           const storage = getResumeStorage(id);
           await waitForResumeStorage(storage);
           const item = storage.data.value;
-          return item?.id === id ? item : null;
+          return item?.id === id ? fillResumeUiDefaults(item) : null;
         }),
       );
       return items.filter(Boolean);
