@@ -29,31 +29,31 @@ function resetSettings() {
       <SfSetBox>
         <SfSetItem
           title="简历完成进度"
-          info="开启后，右侧会显示简历完成进度"
+          info="右侧显示简历完成进度"
           v-model="system.showProgress"
           type="switch"
         />
         <SfSetItem
           title="调试控制台"
-          info="开启后，工具栏会显示调试控制台入口"
+          info="工具栏显示调试入口"
           v-model="system.showDebug"
           type="switch"
         />
         <SfSetItem
           title="工具栏工具名称"
-          info="开启后，工具栏会显示工具名称"
+          info="工具按钮旁显示名称"
           v-model="system.showToolName"
           type="switch"
         />
         <SfSetItem
           title="新记录默认展开"
-          info="开启后，新添加的经历记录默认展开"
+          info="新添加的记录默认展开"
           v-model="system.defaultItemExpanded"
           type="switch"
         />
         <SfSetItem
-          title="点击预览定位编辑区"
-          info="开启后，点击预览区模块会定位到左侧编辑区对应模块"
+          title="点击预览定位"
+          info="点击预览模块，定位到左侧编辑区"
           v-model="system.previewClickLocate"
           type="switch"
         />
@@ -63,13 +63,13 @@ function resetSettings() {
       <SfSetBox>
         <SfSetItem
           title="窗口过小检测"
-          info="开启后，浏览器窗口过小时会弹出提醒"
+          info="窗口过小时弹出提醒"
           v-model="system.showWindowTip"
           type="switch"
         />
         <SfSetItem
           title="浏览器建议检测"
-          info="开启后，使用非谷歌浏览器时会弹出建议"
+          info="非谷歌浏览器时弹出建议"
           v-model="system.showBrowserTip"
           type="switch"
         />
@@ -80,7 +80,7 @@ function resetSettings() {
       <SfSetBox>
         <SfSetItem
           title="重置设置"
-          info="点击后，将重置所有设置为默认值"
+          info="恢复所有设置为默认值"
           modelValue="重置"
           @click="resetSettings"
           type="button"
