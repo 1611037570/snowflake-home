@@ -29,7 +29,7 @@ import {
   buildRuntimeConfig,
   compactConfigFields,
 } from "./hooks/useConfigTemplate";
-import { debounce, merge } from "lodash-es";
+import { debounce, isEqual, merge } from "lodash-es";
 import { executeResumeOperations, type ResumeWriteOp } from "./resumeOperations";
 export type DesensitizeLevel = "normal" | "strict";
 export type DesensitizeConfig = {
@@ -208,18 +208,28 @@ export const useResumeStore = defineStore(
     };
     // 切简历/新建/恢复时按最新模板重建运行时配置
     watch(currentItem, refreshRuntime, { immediate: true });
-    // 模块与内部字段排序只改运行时 fields，变化后递归回写持久化顺序
+    // 持久化字段列表写入：内容一致时跳过，避免无谓变更（入参须为已投影的字段列表）
+    const setConfigFields = (item: any, fields: any[]) => {
+      if (!item) return;
+      const config = item.config && typeof item.config === "object" ? item.config : {};
+      if (isEqual(config.fields || [], fields)) return;
+      config.fields = structuredClone(fields);
+    };
+    // 模块与内部字段排序只改运行时 fields，变化后按投影回写持久化顺序
     watch(
-      () => JSON.stringify(compactConfigFields(runtimeConfig.value?.fields || [])),
-      (serializedFields) => {
-        const item = currentItem.value;
-        if (!item || !serializedFields) return;
-        const config = item.config && typeof item.config === "object" ? item.config : {};
-        if (JSON.stringify(config.fields || []) !== serializedFields) {
-          config.fields = JSON.parse(serializedFields);
-        }
-      },
+      () => compactConfigFields(runtimeConfig.value?.fields || []),
+      (projectedFields) => setConfigFields(currentItem.value, projectedFields),
     );
+    // 整体恢复配置：AI 撤回等场景使用，结构变化时同步重建运行时配置
+    const restoreConfig = (config: any) => {
+      const item = currentItem.value;
+      if (!item) return;
+      const next = config && typeof config === "object" ? structuredClone(toRaw(config)) : {};
+      // 仅结构变化才重建运行时配置，避免无关恢复触发表单整表重建
+      const configChanged = !isEqual(toRaw(item.config), next);
+      item.config = next;
+      if (configChanged) refreshRuntime();
+    };
     // 获取当前选中的UI配置
     const currentUI = computed({
       get() {
@@ -283,7 +293,7 @@ export const useResumeStore = defineStore(
       }
       const res = config ? mergeResumeItem(config) : structuredClone(DEFAULT_RESUME_ITEM);
       // 持久化只保留模块 key，完整 schema 由运行时按模板展开
-      res.config.fields = compactConfigFields(res.config.fields);
+      setConfigFields(res, compactConfigFields(res.config.fields));
       // 每次新增都重新生成唯一ID，避免多份简历共用一个ID
       res.id = getUUID().slice(0, 6);
       // 新简历使用独立 IndexedDB key 保存完整对象
@@ -717,6 +727,7 @@ export const useResumeStore = defineStore(
       itemDefaultCollapsed,
       initResumeStatus,
       applyResumeOperations,
+      restoreConfig,
       getModel,
       currentItem,
       currentData,

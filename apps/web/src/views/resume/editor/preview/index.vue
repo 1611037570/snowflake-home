@@ -9,12 +9,13 @@ import { computed, ref } from "vue";
 // 全屏预览组件
 const FullscreenPreview = markRaw(defineAsyncComponent(() => import("./fullscreenPreview.vue")));
 const resumeStore = useResumeStore();
-const { currentData, currentConfig, currentUI } = storeToRefs(resumeStore);
+const { currentData, currentConfig, currentUI, runtimeConfig } = storeToRefs(resumeStore);
 
 // 组装全屏预览所需的简历项
 const resumeItem = computed(() => ({
   data: currentData.value,
-  config: currentConfig.value,
+  // 编辑态优先使用运行时配置，与编辑预览保持同一配置来源
+  config: runtimeConfig.value ?? currentConfig.value,
   ui: currentUI.value,
 }));
 
