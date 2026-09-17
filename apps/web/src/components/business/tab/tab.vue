@@ -71,7 +71,6 @@ const handleClick = (index: number) => {
   currentActiveIndex.value = index;
   modelValue.value = list[index].value;
   indexValue.value = index;
-  console.log("modelValue.value", index, modelValue.value);
   emit("change", modelValue.value, index);
 };
 

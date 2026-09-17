@@ -28,13 +28,11 @@ const weight = computed({
   <div class="flex w-full items-center gap-1">
     <!-- 身高数值输入 -->
     <div class="min-w-0 flex-1">
-      <!-- <SfInputNumber v-model="height" :min="1" :max="300" placeholder="身高" class="w-full" /> -->
       <SfInput v-model="height" placeholder="身高" class="w-full" />
     </div>
     <span class="shrink-0 text-sm text-sf-text-2">cm</span>
     <!-- 体重数值输入 -->
     <div class="min-w-0 flex-1">
-      <!-- <SfInputNumber v-model="weight" :min="1" :max="500" placeholder="体重" class="w-full" /> -->
       <SfInput v-model="weight" placeholder="体重" class="w-full" />
     </div>
     <span class="shrink-0 text-sm text-sf-text-2">kg</span>
