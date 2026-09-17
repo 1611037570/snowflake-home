@@ -92,8 +92,6 @@ const scaleLabel = computed(() =>
       : percent(transitionScale.value),
 );
 const minScale = computed(() => Math.min(MIN_SCALE, maxScale.value));
-const isMinScale = computed(() => scale.value <= minScale.value);
-const isMaxScale = computed(() => scale.value >= maxScale.value);
 const manualScaleText = computed(() => percent(manualScale.value));
 
 const clampScale = (value) => {
@@ -138,10 +136,6 @@ const handleScaleSelect = (item) => {
   setManualScale(item.value);
 };
 
-const stepScale = (value) => {
-  setManualScale(Number((scale.value + value).toFixed(1)));
-};
-
 const updateScale = useDebounceFn(([entry]) => {
   const { width, height } = entry.contentRect;
   availableSize.value = { width, height };
@@ -181,19 +175,6 @@ useResizeObserver(contentRef, ([entry]) => {
       <PrintMode />
       <Language />
       <OnePage />
-      <SfTooltip content="缩小">
-        <SfIcon
-          @click="!isMinScale && stepScale(-0.1)"
-          icon="lucide:minus"
-          size="5"
-          boxSize="7"
-          class="rounded-full text-sf-text-2"
-          :class="{
-            'cursor-not-allowed! text-sf-text-3': isMinScale,
-            'hover:bg-sf-theme-2 hover:text-sf-theme-text': !isMinScale,
-          }"
-        />
-      </SfTooltip>
       <SfDropdown trigger="hover" placement="bottom-start" :show-arrow="false">
         <div
           class="flex h-7 w-15 cursor-default items-center justify-center rounded-full px-3 text-xs font-medium text-sf-theme"
@@ -201,23 +182,16 @@ useResizeObserver(contentRef, ([entry]) => {
           {{ scaleLabel }}
         </div>
         <template #dropdown>
-          <SfList :list="SCALE_LIST" class="w-[140px]" :border="false" @onClick="handleScaleSelect">
+          <SfList
+            :list="SCALE_LIST"
+            class="w-[140px]"
+            :border="false"
+            :auto-close="false"
+            @onClick="handleScaleSelect"
+          >
           </SfList>
         </template>
       </SfDropdown>
-      <SfTooltip content="放大">
-        <SfIcon
-          icon="lucide:plus"
-          size="5"
-          boxSize="7"
-          class="rounded-full text-sf-text-2"
-          :class="{
-            'cursor-not-allowed! text-sf-text-3': isMaxScale,
-            'hover:bg-sf-theme-2 hover:text-sf-theme-text': !isMaxScale,
-          }"
-          @click="!isMaxScale && stepScale(0.1)"
-        />
-      </SfTooltip>
 
       <SfTooltip content="全屏">
         <SfIcon
