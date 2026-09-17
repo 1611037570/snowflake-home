@@ -576,6 +576,9 @@ export const useResumeStore = defineStore(
       const item = currentItem.value;
       if (!item) return;
       const snapItem = JSON.parse(snapshot);
+      // 模块配置是否变化：仅增删模块或调整顺序时才需要重建运行时配置（重建会重排表单 key 导致整表重建）
+      const configChanged =
+        JSON.stringify(removeRuntimeIds(item.config)) !== JSON.stringify(snapItem.config);
       // 恢复引发的响应式变化不应被记为新的历史，跳过下一次监听
       skipNextWatch = true;
       item.data = snapItem.data;
@@ -583,8 +586,8 @@ export const useResumeStore = defineStore(
       item.ui = snapItem.ui;
       // 恢复后同步基准快照，保证下次编辑以恢复后的状态为历史基准
       lastSnapshot = serializeForCompare(item);
-      // 恢复的持久配置为 key 列表，需要重建运行时展开配置
-      refreshRuntime();
+      // 内容类改动无需重建运行时配置，避免撤回时整表重建造成卡顿
+      if (configChanged) refreshRuntime();
     };
     // 撤回：当前状态入重做栈，再恢复撤销栈顶的修改前状态
     const undo = () => {
