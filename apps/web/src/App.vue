@@ -36,7 +36,8 @@ checkConnection();
 <style>
 .page-transition-enter-active,
 .page-transition-leave-active {
-  transition: opacity 0.3s ease;
+  /* 缩短过渡时长，减少页面切换时的停顿感 */
+  transition: opacity 0.15s ease;
 }
 
 .page-transition-enter-from,

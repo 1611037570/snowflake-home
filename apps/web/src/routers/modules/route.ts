@@ -72,4 +72,23 @@ function generateRoute(item: any): RouteRecordRaw {
 const list = ALL_ROUTES.map((item) => generateRoute(item));
 routes.push(...list);
 
+/**
+ * 预取所有页面组件 chunk
+ * 浏览器空闲时提前下载页面代码，避免点击导航时现场加载造成停顿
+ */
+export function prefetchRouteComponents() {
+  const loaders: Array<() => Promise<unknown>> = [];
+  const collect = (routeList: RouteRecordRaw[]) => {
+    routeList.forEach((item) => {
+      if (typeof item.component === "function") {
+        loaders.push(item.component as () => Promise<unknown>);
+      }
+      if (item.children?.length) collect(item.children as RouteRecordRaw[]);
+    });
+  };
+  collect(routes);
+  // 预取失败不影响正常导航
+  loaders.forEach((load) => void load().catch(() => {}));
+}
+
 export default routes;

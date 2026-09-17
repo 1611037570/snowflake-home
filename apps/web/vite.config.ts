@@ -202,7 +202,6 @@ export default ({ mode }: { mode: string }) => {
             disable: isProd ? false : true, // 生产环境启用
             threshold: 10240, // 文件大小阈值
             algorithm: "brotliCompress", // 压缩算法
-            ext: ".gz", // 压缩文件扩展名
             deleteOriginFile: false, // 是否删除源文件
           }),
         ],
