@@ -31,6 +31,14 @@
       <!-- 导出加载浮层：teleport 到 body 全屏展示 -->
       <Teleport to="body">
         <ExportMask v-if="isPrinting" @cancel="cancelPrinting" />
+        <!-- 智能一页压缩浮层：与导出共用遮罩，屏蔽试参数过程中的排版变化 -->
+        <ExportMask
+          v-if="isFittingOnePage"
+          title="正在压缩为一页"
+          tip="正在调整排版参数"
+          cancel-text="取消压缩"
+          @cancel="cancelFittingOnePage"
+        />
       </Teleport>
     </div>
     <!-- 专注写作模式：右上角浮动退出按钮 -->
@@ -73,7 +81,7 @@ const route = useRoute();
 const resumeStore = useResumeStore();
 // 补齐旧版本系统配置，确保新增开关立即参与渲染
 resumeStore.init();
-const { initResumeStatus, setFocusMode, cancelPrinting } = resumeStore;
+const { initResumeStatus, setFocusMode, cancelPrinting, cancelFittingOnePage } = resumeStore;
 const {
   currentIndex,
   focusMode,
@@ -81,6 +89,7 @@ const {
   currentUsage,
   isGenerating,
   isPrinting,
+  isFittingOnePage,
   currentData,
   previewSyncing,
 } = storeToRefs(resumeStore);

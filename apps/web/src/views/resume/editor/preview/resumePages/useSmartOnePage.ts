@@ -1,63 +1,70 @@
 /**
- * useSmartOnePage —— 智能一页自适应
+ * useSmartOnePage —— 智能一页自适应（真实测量闭环）
  *
- * 直接复用预览层（编辑态 ResumePages 实例）的测量结果 moduleList（模块+行高），
- * 不再挂载独立测量容器，避免重复渲染整份简历与重复注册观察器。
+ * 不使用数学估算预测压缩结果，而是按优先级逐档下调参数、每档变更后等预览重新测量，
+ * 直接读取预览真实的页数判定，避免估算偏差导致的「要点好几次才压到位」。
+ * 压缩过程用导出遮罩屏蔽，用户看不到中间的排版变化。
  *
- * 压缩计算为纯数学估算：
- *   - 行高按字号 × 行高比例缩放，行外边距固定不参与缩放
- *   - 缩放后的行高列表直接复用分页算法（paginateModules）判定是否恰好一页，
- *     与正式分页共用同一模型（user 模块整体一块、模块间距翻页规则），消除独立估算偏差
- * 参数只向下压缩、不会回弹，按压缩优先级逐项进行。
- *
- * 事件与状态由本 hook 内部管理：编辑态注册「resume-smart-one-page」事件，
- * 计算完成后直接把压缩参数写入目标 ui 并提示结果，调用方无需感知内部实现。
+ * 参数只向下压缩、不回弹；失败或中途取消时回退到压缩前的参数。
  */
-import { onMounted, onUnmounted, type ComputedRef, type Ref } from "vue";
+import { nextTick, onMounted, onUnmounted, watch, type ComputedRef, type Ref } from "vue";
 import { ElMessage } from "element-plus";
 import eventBus from "@/utils/modules/eventBus";
-import { paginateModules } from "./paginate";
+import { useResumeStore } from "@/stores";
 import {
   defaultFontSize,
   defaultLineHeight,
   defaultModuleSpacing,
+  defaultPaddingHorizontal,
   defaultPaddingVertical,
+  defaultParagraphSpacing,
+  defaultTitleFontSize,
   uiParamRanges,
 } from "@/stores/modules/resume/uiConfig";
 
 /** 可被智能压缩的 ui 字段 */
-export type OnePageAdjustKey = "paddingVertical" | "fontSize" | "lineHeight" | "moduleSpacing";
+export type OnePageAdjustKey =
+  | "moduleSpacing"
+  | "paddingVertical"
+  | "paddingHorizontal"
+  | "paragraphSpacing"
+  | "lineHeight"
+  | "titleFontSize"
+  | "fontSize";
 
 /** 单个可调参数的压缩配置：从当前值向下压缩到 min，每次按 step 取整 */
 export interface OnePageAdjustableItem {
   key: OnePageAdjustKey;
   min: number;
   step: number;
+  /** 会改变测量结果的参数（行高、内容宽度）需等重新测量后再判定 */
+  remeasure?: boolean;
 }
 
-/** 默认可用参数（取自 uiConfig.uiParamRanges，与编辑器滑杆范围一致）；数组顺序即压缩优先级：先压缩间距，后压缩行高、字号 */
+/** 默认可用参数（取自 uiConfig.uiParamRanges，与编辑器滑杆一致）；数组顺序即压缩优先级：先压间距，最后压字号 */
 export const defaultOnePageAdjustable: OnePageAdjustableItem[] = [
-  {
-    key: "moduleSpacing",
-    min: uiParamRanges.moduleSpacing.min,
-    step: uiParamRanges.moduleSpacing.step,
-  },
-  {
-    key: "paddingVertical",
-    min: uiParamRanges.paddingVertical.min,
-    step: uiParamRanges.paddingVertical.step,
-  },
-  { key: "lineHeight", min: uiParamRanges.lineHeight.min, step: uiParamRanges.lineHeight.step },
-  { key: "fontSize", min: uiParamRanges.fontSize.min, step: uiParamRanges.fontSize.step },
+  { key: "moduleSpacing", ...uiParamRanges.moduleSpacing },
+  { key: "paddingVertical", ...uiParamRanges.paddingVertical },
+  { key: "paddingHorizontal", ...uiParamRanges.paddingHorizontal, remeasure: true },
+  { key: "paragraphSpacing", ...uiParamRanges.paragraphSpacing, remeasure: true },
+  { key: "lineHeight", ...uiParamRanges.lineHeight, remeasure: true },
+  { key: "titleFontSize", ...uiParamRanges.titleFontSize, remeasure: true },
+  { key: "fontSize", ...uiParamRanges.fontSize, remeasure: true },
 ];
 
 /** 可调字段缺失时的兜底默认值 */
 const uiDefaults: Record<OnePageAdjustKey, number> = {
-  paddingVertical: defaultPaddingVertical,
-  fontSize: defaultFontSize,
-  lineHeight: defaultLineHeight,
   moduleSpacing: defaultModuleSpacing,
+  paddingVertical: defaultPaddingVertical,
+  paddingHorizontal: defaultPaddingHorizontal,
+  paragraphSpacing: defaultParagraphSpacing,
+  lineHeight: defaultLineHeight,
+  titleFontSize: defaultTitleFontSize,
+  fontSize: defaultFontSize,
 };
+
+/** 等待重新测量的兜底时长：参数不影响测量时不会产生新数据，避免流程挂住 */
+const MEASURE_TIMEOUT = 300;
 
 /** 按步长向下取整（浮点步长做精度兜底） */
 const floorByStep = (value: number, step: number) => {
@@ -69,10 +76,10 @@ const floorByStep = (value: number, step: number) => {
 interface UseSmartOnePageOptions {
   /** 用户设置的 ui（响应式） */
   ui: ComputedRef<Record<string, any>>;
-  /** 是否显示页码 */
-  showPageNumber: ComputedRef<boolean>;
   /** 预览层测量结果（模块+行高），由编辑态 ResumePages 实例传入 */
   moduleList: Ref<any[]>;
+  /** 预览层真实分页结果，判定是否已压到一页 */
+  pages: ComputedRef<any[]>;
   /** 压缩结果写入的目标 ui（编辑态简历 store 的 currentUI） */
   currentUI: Ref<Record<string, any>>;
   /** 编辑态才注册工具栏事件，其余模式（缩略图/全屏预览）不注册 */
@@ -83,13 +90,13 @@ interface UseSmartOnePageOptions {
 
 export const useSmartOnePage = ({
   ui,
-  showPageNumber,
   moduleList,
+  pages,
   currentUI,
   isEdit,
   adjustable = defaultOnePageAdjustable,
 }: UseSmartOnePageOptions) => {
-  // 复用调用方传入的预览层测量结果（二者共用同一份行高数据，无需再挂独立测量容器）
+  const resumeStore = useResumeStore();
 
   // 读取 ui 中可调字段的当前值，缺失时用默认值兜底
   const pickAdjustable = (source: Record<string, any>) => {
@@ -101,69 +108,72 @@ export const useSmartOnePage = ({
     return result;
   };
 
-  /**
-   * 依据预览层测量结果同步计算可压到一页的参数组合
-   * @returns 参数组合与是否成功；测量未就绪时返回 null
-   */
-  const computeFit = (): { fitParams: Record<OnePageAdjustKey, number>; ok: boolean } | null => {
-    const list = moduleList.value;
-    if (!list || list.length === 0) return null;
-
-    // 测量基准：预览层行高对应原始 ui 参数
-    const base = pickAdjustable(ui.value);
-
-    // 行高按压缩比例缩放后直接复用分页算法判定是否恰好一页：
-    // 与正式分页共用同一模型（user 模块整体一块、模块间距翻页规则），消除独立估算公式与实测分页的偏差
-    const isOnePage = (params: Record<OnePageAdjustKey, number>) => {
-      const scale = (params.fontSize * params.lineHeight) / (base.fontSize * base.lineHeight);
-      // 只缩放随字号变化的文字部分，行外边距固定不缩放；
-      // 否则估算偏乐观，判定为一页但实际仍溢出，需要反复点击才能压缩到位
-      const scaledList = list.map(
-        (group: { moduleKey: string; rows: { height: number; margin: number; index: number }[] }) => ({
-          moduleKey: group.moduleKey,
-          rows: group.rows.map((row) => ({
-            height: (row.height - row.margin) * scale + row.margin,
-            margin: row.margin,
-            index: row.index,
-          })),
-        }),
+  // 等待下一次测量落地：参数影响行高/宽度时会替换测量结果
+  const waitForMeasure = () =>
+    new Promise<void>((resolve) => {
+      let timer = 0;
+      const stopWatch = watch(
+        moduleList,
+        () => {
+          window.clearTimeout(timer);
+          stopWatch();
+          resolve();
+        },
+        { flush: "post" },
       );
-      const pages = paginateModules({
-        moduleList: scaledList,
-        paddingVertical: params.paddingVertical,
-        moduleSpacing: params.moduleSpacing,
-        showPageNumber: showPageNumber.value,
-      });
-      return pages.length === 1;
-    };
+      timer = window.setTimeout(() => {
+        stopWatch();
+        resolve();
+      }, MEASURE_TIMEOUT);
+    });
 
-    // 当前参数已能放下则直接成功
-    if (isOnePage(base)) return { fitParams: base, ok: true };
-
-    // 按优先级逐项向下压缩，找到能放下的参数组合
-    const params = { ...base };
-    for (const { key, min, step } of adjustable) {
-      let val = params[key];
-      while (val > min + 1e-9) {
-        const next = Math.max(floorByStep(val - step, step), min);
-        params[key] = next;
-        if (isOnePage(params)) return { fitParams: { ...params }, ok: true };
-        val = next;
-      }
-    }
-    // 全部参数压到下限仍放不下
-    return { fitParams: params, ok: false };
+  // 写入参数、等测量与分页落地后返回预览真实页数
+  const applyAndCount = async (
+    params: Record<OnePageAdjustKey, number>,
+    item: OnePageAdjustableItem,
+  ) => {
+    currentUI.value = { ...currentUI.value, ...params };
+    if (item.remeasure) await waitForMeasure();
+    await nextTick();
+    return pages.value.length;
   };
 
-  // 应用压缩参数并提示结果；工具栏通过事件触发，计算与应用均由本 hook 内部完成
-  const onFitOnePage = () => {
-    const result = computeFit();
-    if (!result) return;
-    if (result.ok) {
-      currentUI.value = { ...currentUI.value, ...result.fitParams };
-      ElMessage.success("简历已压缩为一页");
-    } else {
+  // 压缩：逐档下调参数，直到真实页数为 1；工具栏通过事件触发
+  const onFitOnePage = async () => {
+    const signal = resumeStore.beginFittingOnePage();
+    if (!signal) return;
+
+    const base = pickAdjustable(ui.value);
+    // 回退到压缩前的参数，避免失败或取消后留在半压缩状态
+    const rollback = () => (currentUI.value = { ...currentUI.value, ...base });
+
+    try {
+      if (pages.value.length === 1) {
+        ElMessage.success("简历已压缩为一页");
+        return;
+      }
+      const params = { ...base };
+      for (const item of adjustable) {
+        let value = params[item.key];
+        while (value > item.min + 1e-9) {
+          params[item.key] = Math.max(floorByStep(value - item.step, item.step), item.min);
+          const pageCount = await applyAndCount(params, item);
+          if (signal.aborted) {
+            rollback();
+            return;
+          }
+          if (pageCount === 1) {
+            ElMessage.success("简历已压缩为一页");
+            return;
+          }
+          value = params[item.key];
+        }
+      }
+      // 全部参数压到下限仍放不下
+      rollback();
       ElMessage.error("内容过长，无法压缩到一页");
+    } finally {
+      resumeStore.finishFittingOnePage(signal);
     }
   };
   // 仅编辑态注册工具栏「一页纸」事件

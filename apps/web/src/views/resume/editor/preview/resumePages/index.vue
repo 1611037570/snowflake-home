@@ -186,7 +186,7 @@ const handleModuleMouseEnter = (key) => {
 const setSingleRoot = (el) => (rootRef.value = el);
 const setSingleMeasure = (el) => (measureRef.value = el);
 // 向上暴露导出范围与测量结果，供上层（page.vue）注册的导出/智能一页功能读取
-defineExpose({ rootEl: rootRef, measureEl: measureRef, moduleList });
+defineExpose({ rootEl: rootRef, measureEl: measureRef, moduleList, pages });
 </script>
 
 <template>
