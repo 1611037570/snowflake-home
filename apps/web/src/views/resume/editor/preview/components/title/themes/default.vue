@@ -1,5 +1,6 @@
 <script setup>
 import { inject } from "vue";
+import TitleText from "../titleText.vue";
 
 defineProps({
   title: {
@@ -16,7 +17,7 @@ const themeColor = inject("themeColor");
   <div v-if="title" class="flex flex-wrap items-center border-b border-sf-b">
     <div class="mr-3 h-4 w-1 rounded-full bg-sf-theme" :style="{ background: themeColor }"></div>
     <h2 class="max-w-full min-w-0 font-bold tracking-wide break-words">
-      {{ title }}
+      <TitleText :title="title" />
     </h2>
   </div>
 </template>

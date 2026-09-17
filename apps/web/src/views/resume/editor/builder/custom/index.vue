@@ -6,6 +6,7 @@ import {
   dateStyleList,
   fontFamilyList,
   infoPositionList,
+  titleIconList,
   uiParamRanges,
   userInfoLayoutList,
   userInfoModeList,
@@ -23,6 +24,7 @@ import {
   defaultAvatarPosition,
   defaultInfoPosition,
   defaultDateStyle,
+  defaultTitleIcon,
   defaultFooter,
 } from "@/stores/modules/resume/uiConfig";
 import { storeToRefs } from "pinia";
@@ -72,6 +74,14 @@ const dateStyle = computed({
   get: () => currentUI.value?.dateStyle,
   set: (value) => {
     currentUI.value.dateStyle = value;
+  },
+});
+
+// 标题图标（关闭/开启）
+const titleIcon = computed({
+  get: () => currentUI.value?.titleIcon,
+  set: (value) => {
+    currentUI.value.titleIcon = value;
   },
 });
 
@@ -219,6 +229,19 @@ const footer = computed({
           :default-value="defaultTitleFontSize"
           tip="各模块标题文字的大小"
         />
+        <!-- 标题图标切换：关闭 / 开启 -->
+        <ConfigLabel label="标题图标" v-model="titleIcon" :default-value="defaultTitleIcon" />
+        <div class="flex gap-3">
+          <SfButton
+            class="flex-1"
+            @click="titleIcon = mode.value"
+            border
+            v-for="mode in titleIconList"
+            :type="titleIcon === mode.value ? 'theme' : 'bg'"
+            :key="mode.name"
+            >{{ mode.name }}</SfButton
+          >
+        </div>
         <ConfigItem
           label="行间距"
           v-model="currentUI.lineHeight"

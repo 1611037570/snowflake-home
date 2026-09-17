@@ -1,5 +1,6 @@
 <script setup>
 import { computed, inject } from "vue";
+import TitleText from "../titleText.vue";
 
 defineProps({
   title: {
@@ -26,7 +27,7 @@ const textColor = computed(() => {
       class="inline-block max-w-full min-w-0 rounded-lg px-4 py-1 font-bold tracking-wide break-words"
       :style="[{ background: themeColor, color: textColor }]"
     >
-      {{ title }}
+      <TitleText :title="title" />
     </h2>
   </div>
 </template>
