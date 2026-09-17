@@ -17,7 +17,7 @@ const padding = computed({
 </script>
 
 <template>
-  <SfDropdown trigger="hover" placement="bottom-start" :show-arrow="false">
+  <SfDropdown trigger="click" placement="bottom-start" :show-arrow="false">
     <SfTooltip content="页边距">
       <SfIcon
         icon="lucide:expand"

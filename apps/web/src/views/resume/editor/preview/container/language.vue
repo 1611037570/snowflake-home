@@ -41,7 +41,7 @@ const handleLangSelect = (item) => {
 </script>
 
 <template>
-  <SfDropdown trigger="hover" placement="bottom-start" :show-arrow="false">
+  <SfDropdown trigger="click" placement="bottom-start" :show-arrow="false">
     <SfTooltip content="切换简历语言">
       <SfIcon
         icon="mdi:translate"
