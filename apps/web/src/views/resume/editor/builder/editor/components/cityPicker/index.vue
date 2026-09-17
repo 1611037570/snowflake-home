@@ -4,7 +4,7 @@ import { ElCascader } from "element-plus";
 
 const props = defineProps({
   // 省市级联选项：由业务域字典注入，组件自身不内置城市数据
-  options: {
+  list: {
     type: Array,
     default: () => [],
   },
@@ -28,7 +28,7 @@ const city = defineModel("modelValue", {
 const selected = computed({
   get: () => {
     if (!city.value) return [];
-    const province = props.options.find((item) =>
+    const province = props.list.find((item) =>
       item.children
         ? item.children.some((child) => child.value === city.value)
         : item.value === city.value,
@@ -46,7 +46,7 @@ const selected = computed({
 <template>
   <SfCascader
     v-model="selected"
-    :options="options"
+    :options="list"
     filterable
     class="w-full"
     :placeholder="placeholder"

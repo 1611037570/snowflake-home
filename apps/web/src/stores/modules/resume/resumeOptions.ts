@@ -1,4 +1,18 @@
 // 简历表单选项字典：仅供动态表单 raw 绑定运行时读取，不写入简历数据
+import cityData from "./cityData.json";
+
+// 省市级联字典：静态数据一次性构建；直辖市自身即为城市，可直接选中，不再展开子级
+const CITY_OPTIONS = cityData.map((province) => {
+  const isDirectCity = province.cities.length === 1 && province.cities[0] === province.label;
+  return {
+    value: province.label,
+    label: province.label,
+    children: isDirectCity
+      ? undefined
+      : province.cities.map((name) => ({ value: name, label: name })),
+  };
+});
+
 export const RESUME_OPTIONS = {
   // 性别
   sex: [
@@ -35,4 +49,6 @@ export const RESUME_OPTIONS = {
     { name: "全日制", value: "全日制" },
     { name: "非全日制", value: "非全日制" },
   ],
+  // 城市（省市级联）
+  city: CITY_OPTIONS,
 };

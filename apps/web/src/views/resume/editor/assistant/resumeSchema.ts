@@ -75,6 +75,8 @@ const getOptionValues = (field: FormField, options: ResumeOptionDictionary) => {
   const optionKey = rawBinding?.source?.[rawBinding.source.length - 1];
   const list = optionKey ? options[optionKey] : undefined;
   if (!Array.isArray(list)) return;
+  // 级联字典（选项含 children）不是扁平可选值，跳过，避免被当作可选值参与写入校验
+  if (list.some((item: any) => item && typeof item === "object" && "children" in item)) return;
   // 字典既支持值数组，也支持表单常用的 name/value 对象数组
   return list.map((item: any) =>
     item && typeof item === "object" && "value" in item ? item.value : item,

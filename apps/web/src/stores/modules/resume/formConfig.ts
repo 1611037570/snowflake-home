@@ -86,23 +86,10 @@ const createMoreField = (options: {
   addable?: boolean;
   // 字典 key：存在时内层字段同时绑定选项列表
   dict?: string;
-  // 字典绑定的组件属性名：默认 list，级联组件使用 options
-  dictProp?: string;
   props?: Record<string, any>;
   rules?: any[];
 }): GroupFormField => {
-  const {
-    key,
-    label,
-    component,
-    icon,
-    tip,
-    addable,
-    dict,
-    dictProp = "list",
-    props,
-    rules,
-  } = options;
+  const { key, label, component, icon, tip, addable, dict, props, rules } = options;
   return {
     type: "group",
     component: "fieldItem",
@@ -130,7 +117,7 @@ const createMoreField = (options: {
         model: dict
           ? [
               { source: ["data", key], prop: "modelValue" },
-              { source: ["__options", dict], prop: dictProp, raw: true },
+              { source: ["__options", dict], prop: "list", raw: true },
             ]
           : { source: ["data", key], prop: "modelValue" },
         ...(props ? { props } : {}),
@@ -407,7 +394,6 @@ export const DEFAULT_USER_FORM = [
             icon: "mdi:map-marker-outline",
             addable: true,
             dict: "city",
-            dictProp: "options",
             props: {
               placeholder: "请选择城市",
             },
@@ -419,7 +405,6 @@ export const DEFAULT_USER_FORM = [
             icon: "mdi:home-outline",
             addable: true,
             dict: "city",
-            dictProp: "options",
             props: {
               placeholder: "请选择籍贯",
             },
