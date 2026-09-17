@@ -271,24 +271,24 @@ export const DEFAULT_USER_FORM = [
               type: "month",
             },
           }),
-          // 手机号
+          // 电话
           createMoreField({
             key: "phone",
-            label: "手机号",
+            label: "电话",
             component: "input",
             icon: "mdi:phone",
             tip: "推荐必填",
             // 可添加字段：数据存在才渲染，删除后可从更多中重新添加
             addable: true,
             props: {
-              placeholder: "请输入手机号",
+              placeholder: "请输入电话",
               clearable: true,
             },
             rules: [
-              { required: true, message: "请输入手机号", trigger: "blur" },
+              { required: true, message: "请输入电话", trigger: "blur" },
               {
                 pattern: /^1[3-9]\d{9}$/,
-                message: "请输入正确的手机号",
+                message: "请输入正确的电话",
                 trigger: "blur",
               },
             ],

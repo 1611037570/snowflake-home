@@ -115,7 +115,7 @@ export const PREVIEW_TEXTS: Record<PreviewLang, Record<string, string>> = {
     expYears: "{years}年",
     expYearsLabel: "工作年限：",
     avatarAlt: "头像",
-    phoneLabel: "手机号：",
+    phoneLabel: "电话：",
     emailLabel: "邮箱：",
     wechatLabel: "微信：",
     githubLabel: "GitHub：",
