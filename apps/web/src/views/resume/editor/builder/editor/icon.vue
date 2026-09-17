@@ -20,7 +20,7 @@ function handleClick(e) {
     size="4"
     boxSize="6"
     @click.stop.prevent="handleClick"
-    class="cursor-pointer rounded-xl transition-all duration-300 hover:scale-105 hover:bg-sf-bg-3"
+    class="cursor-pointer rounded-xl transition-all duration-300 hover:scale-110 hover:bg-sf-bg-3 active:scale-90"
   ></SfIcon>
 </template>
 
