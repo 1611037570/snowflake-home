@@ -55,9 +55,16 @@ describe("resumeSchema", () => {
               {
                 type: "object",
                 component: "datePicker",
-                label: "时间",
-                props: { type: "monthrange" },
-                model: { source: ["data", "time"], prop: "modelValue" },
+                label: "开始时间",
+                props: { type: "month" },
+                model: { source: ["data", "startTime"], prop: "modelValue" },
+              },
+              {
+                type: "object",
+                component: "datePickerPresent",
+                label: "结束时间",
+                props: { type: "month" },
+                model: { source: ["data", "endTime"], prop: "modelValue" },
               },
             ],
           },
@@ -69,11 +76,18 @@ describe("resumeSchema", () => {
 
     expect(schema[0]).toMatchObject({ kind: "array", dataPath: ["list"] });
     expect(schema[0]?.fields[0]).toMatchObject({
-      key: "time",
-      path: ["data", "time"],
-      valueType: "array",
+      key: "startTime",
+      path: ["data", "startTime"],
+      valueType: "string",
       required: true,
-      format: "monthRange",
+      format: "month",
+    });
+    expect(schema[0]?.fields[1]).toMatchObject({
+      key: "endTime",
+      path: ["data", "endTime"],
+      valueType: "string",
+      required: true,
+      format: "month",
     });
   });
 

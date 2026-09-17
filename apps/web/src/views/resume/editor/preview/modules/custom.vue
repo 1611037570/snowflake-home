@@ -39,7 +39,7 @@ const customList = computed(() => getValidData(previewData.value?.[props.name]?.
           </div>
         </div>
         <div class="flex max-w-full min-w-0 flex-wrap items-center">
-          <span>{{ getTime(item.time) }}</span>
+          <span>{{ getTime(item.startTime, item.endTime) }}</span>
         </div>
       </div>
       <!-- 补充描述/经历 -->

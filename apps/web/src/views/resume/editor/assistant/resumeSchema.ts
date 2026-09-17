@@ -7,7 +7,7 @@ import type { FormField, ModelBinding } from "@/components/business/dynamicForm/
 
 export type ResumeModuleKind = "object" | "array" | "custom";
 export type ResumeFieldValueType = "string" | "number" | "array" | "object" | "unknown";
-export type ResumeFieldFormat = "month" | "monthRange" | "html" | "heightWeight";
+export type ResumeFieldFormat = "month" | "html" | "heightWeight";
 
 export type ResumeFieldSchema = {
   key: string;
@@ -47,8 +47,12 @@ const isRequired = (field: FormField, inherited: boolean) =>
   field.rules?.some((rule: any) => rule?.required === true) === true;
 
 const getFormat = (field: FormField): ResumeFieldFormat | undefined => {
-  if (field.component === "datePicker" && field.props?.type === "month") return "month";
-  if (field.component === "datePicker" && field.props?.type === "monthrange") return "monthRange";
+  if (
+    (field.component === "datePicker" || field.component === "datePickerPresent") &&
+    field.props?.type === "month"
+  ) {
+    return "month";
+  }
   if (field.component === "wangEditor") return "html";
   if (field.component === "heightWeight") return "heightWeight";
 };
@@ -58,7 +62,6 @@ const getValueType = (
   binding: ModelBinding,
   format?: ResumeFieldFormat,
 ): ResumeFieldValueType => {
-  if (format === "monthRange") return "array";
   if (format === "heightWeight") return "object";
   if (field.component === "inputNumber") return "number";
   const defaultValue = binding.defaultValue;

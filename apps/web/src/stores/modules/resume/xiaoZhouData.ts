@@ -76,7 +76,8 @@ export const xiaoZhouData: any = {
         data: {
           name: "**轻舟简历",
           post: "全栈开发",
-          time: ["2022.08", "2026.06"],
+          startTime: "2022.08",
+          endTime: "2026.06",
           content: "",
         },
       },

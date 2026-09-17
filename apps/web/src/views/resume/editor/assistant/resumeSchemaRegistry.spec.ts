@@ -23,12 +23,13 @@ describe("resumeSchemaRegistry", () => {
       "education",
       "post",
       "mode",
-      "time",
+      "startTime",
+      "endTime",
       "content",
     ]);
-    expect(education?.fields.find((field) => field.key === "time")).toMatchObject({
-      format: "monthRange",
-      valueType: "array",
+    expect(education?.fields.find((field) => field.key === "endTime")).toMatchObject({
+      format: "month",
+      valueType: "string",
     });
   });
 
