@@ -10,7 +10,8 @@ export function getModelBindings(field: FormField): ModelBinding[] {
 }
 
 // 优先取得组件主值绑定，并排除只读的外部字典绑定
-export function getPrimaryModelBinding(field: FormField): ModelBinding | undefined {
+export function getPrimaryModelBinding(field?: FormField): ModelBinding | undefined {
+  if (!field) return;
   const bindings = getModelBindings(field).filter((binding) => !binding.raw);
   return bindings.find((binding) => binding.prop === "modelValue") ?? bindings[0];
 }
