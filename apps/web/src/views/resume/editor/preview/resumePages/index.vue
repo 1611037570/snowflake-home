@@ -2,7 +2,8 @@
 // 简历分页渲染可复用组件：接收 resumeItem（data/config/ui），渲染分页后的简历页面
 // 数据源由 props 传入，不依赖 resume store；供编辑器预览、模板缩略图、全屏查看复用
 // 本组件只做渲染编排（数据注入/主题注入/测量分页），导出、智能一页等编辑功能由上层 page.vue 注册
-import { computed, provide, ref } from "vue";
+import { computed, provide, ref, watch } from "vue";
+import { useDebounceFn } from "@vueuse/core";
 import {
   createDataPathContext,
   getFieldLabel,
@@ -17,7 +18,6 @@ import { PAGE_NUMBER_HEIGHT, RESUME_CONTAINER_WIDTH, RESUME_HEIGHT } from "../co
 import { useResumePages } from "./useResumePages";
 import { useResumeTheme } from "./useResumeTheme";
 import { useResumeStore } from "@/stores";
-import { useInitMask } from "./useInitMask";
 import { useModuleInteractions } from "./useModuleInteractions";
 import { getPreviewText } from "../i18n";
 import { isEmptyResume } from "../../toolbar/modules/progress/useResumeStats";
@@ -44,17 +44,6 @@ const props = defineProps({
 const isThumb = computed(() => props.mode === "thumb");
 // 编辑态标记：直接以 mode 判断编辑场景，仅编辑态开放模块选择交互
 const isEdit = computed(() => props.mode === "editor");
-
-// 初始化过渡遮罩：测量完成前由外壳展示统一加载提示（仅编辑态实例上报）
-const { showInitMask } = useInitMask(isEdit);
-// 多实例共存时只有编辑态实例代表编辑器预览的加载状态
-watch(
-  showInitMask,
-  (visible) => {
-    if (isEdit.value) resumeStore.setPreviewSyncing(visible);
-  },
-  { immediate: true },
-);
 
 // 根元素 ref：导出时限定为当前实例的分页元素，避免误选其他 ResumePages 实例的页面
 const rootRef = ref(null);
@@ -151,6 +140,26 @@ const { measureDone, pages, pageStyleText, moduleList } = useResumePages({
   uid,
   allModules,
 });
+// 预览就绪：空简历直接展示提示页，其余以首次测量出模块行为准
+const previewMeasured = computed(() => isEmpty.value || moduleList.value.length > 0);
+// 测量会随内容变化持续触发，静默一段时间后才认定为渲染完成
+const SETTLE_DELAY = 200;
+const settlePreviewSync = useDebounceFn(() => {
+  if (previewMeasured.value) resumeStore.setPreviewSyncing(false);
+}, SETTLE_DELAY);
+// 预览加载状态交由外壳统一展示，仅编辑态实例上报，避免缩略图/全屏实例覆盖
+watch(
+  [previewMeasured, moduleList],
+  () => {
+    if (!isEdit.value) return;
+    if (!previewMeasured.value) {
+      resumeStore.setPreviewSyncing(true);
+      return;
+    }
+    settlePreviewSync();
+  },
+  { immediate: true },
+);
 
 // ---------- 编辑态模块交互（选中高亮）----------
 const { moduleClassMap } = useModuleInteractions({
