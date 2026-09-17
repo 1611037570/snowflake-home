@@ -29,6 +29,10 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  rightIcon: {
+    type: String,
+    default: "",
+  },
 });
 const emit = defineEmits(["click"]);
 // 禁用按钮时不向外派发点击事件。
@@ -36,7 +40,9 @@ const handleClick = (event) => {
   if (props.disabled) return;
   emit("click", event);
 };
+// 按钮边框
 const isBorder = computed(() => (props.border ? "border border-sf-b" : ""));
+// 按钮圆角
 const isRound = computed(() => (props.round ? "rounded-3xl" : "rounded-xl"));
 const sizeClassObj = {
   small: "p-1 text-[13px]",
@@ -58,20 +64,22 @@ const classObj = {
 const getClass = computed(() => {
   return props.plain ? plainClassObj[props.type] : classObj[props.type];
 });
-
+// 禁用按钮时的样式
 const disabledClass = computed(() => (props.disabled ? "cursor-not-allowed! opacity-60" : ""));
+const clickClass = computed(() => (props.disabled ? "" : "active:scale-95 hover:scale-105"));
 </script>
 
 <template>
   <button
     type="button"
-    class="flex cursor-pointer items-center justify-center transition-all duration-300 active:scale-98"
-    :class="[isBorder, getClass, isRound, sizeClass, disabledClass]"
+    class="8 flex cursor-pointer items-center justify-center transition-all duration-300"
+    :class="[isBorder, getClass, isRound, sizeClass, disabledClass, clickClass]"
     :aria-disabled="props.disabled"
     @click="handleClick"
   >
     <SfIcon v-if="icon" :icon="icon" size="4" class="mr-1" />
     <slot></slot>
+    <SfIcon v-if="rightIcon" :icon="rightIcon" size="4" class="ml-1" />
   </button>
 </template>
 
