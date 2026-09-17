@@ -60,13 +60,6 @@ const menuList = computed(() => [
   },
 ]);
 
-// 菜单项减少时修正当前索引，避免主窗口渲染不存在的组件
-watch(menuList, (list) => {
-  if (list.length && activeIndex.value >= list.length) {
-    activeIndex.value = list.length - 1;
-  }
-});
-
 const activeMenu = computed(() => menuList.value[activeIndex.value] || menuList.value[0]);
 </script>
 
@@ -101,10 +94,6 @@ const activeMenu = computed(() => menuList.value[activeIndex.value] || menuList.
 </template>
 
 <style lang="scss" scoped>
-.sidebar {
-  box-shadow: 4px 0 10px rgba(0, 0, 0, 0.1);
-}
-
 /* 内容切换滑动动画：向右切换（right）/ 向左切换（left） */
 .tab-slide-right-enter-active,
 .tab-slide-right-leave-active,
