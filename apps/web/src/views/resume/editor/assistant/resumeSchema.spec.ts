@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import type { FormField } from "@/components/business/dynamicForm/types";
+import type { FormField } from "@/components/business/dynamicForm/api";
 import { buildResumeSchema, getResumeModuleSchema } from "./resumeSchema";
 
 describe("resumeSchema", () => {

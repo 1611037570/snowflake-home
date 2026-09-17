@@ -2,7 +2,7 @@
 import { useResumeStore } from "@/stores";
 import { storeToRefs } from "pinia";
 import { computed, ref } from "vue";
-import { isFieldRemoved } from "@/components/business/dynamicForm/code/fieldVisible";
+import { isFieldRemoved } from "@/components/business/dynamicForm/api";
 
 const resumeStore = useResumeStore();
 const { runtimeConfig, currentData } = storeToRefs(resumeStore);

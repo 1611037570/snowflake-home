@@ -1,7 +1,9 @@
 import { storeToRefs } from "pinia";
-import { getFieldDataPath } from "@/components/business/dynamicForm/code/fieldData";
-import { getFieldLabel } from "@/components/business/dynamicForm/code/schemaAccess";
-import { walkFormFields } from "@/components/business/dynamicForm";
+import {
+  getFieldDataPath,
+  getFieldLabel,
+  walkFormFields,
+} from "@/components/business/dynamicForm/api";
 import { useResumeStore } from "@/stores";
 import { allConfig } from "@/stores/modules/resume/formConfig";
 import { getExportFileName, resumeTitle } from "../../resumeName";

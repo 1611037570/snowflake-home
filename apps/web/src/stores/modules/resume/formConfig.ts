@@ -5,7 +5,7 @@ import type {
   GroupFormField,
   ModelBinding,
   ObjectFormField,
-} from "@/components/business/dynamicForm";
+} from "@/components/business/dynamicForm/api";
 
 // 展开状态数组：对应 SfCollapseItem 的激活 name，表示折叠容器为展开态
 export const EXPANDED = ["1"];
