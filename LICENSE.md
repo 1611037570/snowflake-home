@@ -1,3 +1,18 @@
+本项目基于 Apache License 2.0 开源分发，并附加额外许可限制条款。Apache License 2.0 与附加条款共同构成本项目的完整许可协议，二者应一并阅读并遵守。
+
+附加条款完整内容（中英对照）见 [LICENSE-ADDITIONAL.md](LICENSE-ADDITIONAL.md)。除该附加条款明确作出的限制外，其余权利与限制均遵循 Apache License 2.0。
+
+您下载、复制、修改、编译、部署、分发或以其他任何方式使用本项目源代码及其衍生作品，即视为您已阅读、理解并同意接受 Apache License 2.0 与附加条款的全部约束。若您不同意其中任何一条，请立即停止使用本项目；在此情形下，本项目不向您授予任何使用许可。
+
+This project is distributed under the Apache License 2.0 with additional license restrictions. The Apache License 2.0 and the additional terms together constitute the complete license agreement for this project, and both must be read and complied with.
+
+The full bilingual additional terms are set out in [LICENSE-ADDITIONAL.md](LICENSE-ADDITIONAL.md). Except for the restrictions expressly set out in those additional terms, all other rights and limitations follow the Apache License 2.0.
+
+By downloading, copying, modifying, compiling, deploying, distributing, or otherwise using the source code of this project or any derivative work thereof, you acknowledge that you have read, understood, and agreed to be bound by all terms of the Apache License 2.0 and the additional terms. If you do not agree to any of them, you must immediately stop using this project, and no license to use it is granted to you.
+
+---
+
+```
  Apache License
  Version 2.0, January 2004
  http://www.apache.org/licenses/
@@ -199,11 +214,4 @@
  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  See the License for the specific language governing permissions and
  limitations under the License.
-
-=============================================================================
-
- This project is distributed under the Apache License 2.0 together with
- additional commercial restrictions. The additional terms are set out in
- the LICENSE-ADDITIONAL.md file in the root directory of this repository
- and are incorporated herein by reference. You must comply with those
- additional terms in order to use this software.
+```

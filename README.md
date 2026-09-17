@@ -2,7 +2,7 @@
 
 [简体中文](README.md) | [English](README.en.md)
 
-[![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE) ![Vue](https://img.shields.io/badge/Vue-3.5-42b883) ![Vite](https://img.shields.io/badge/Vite-7.1-646CFF) ![NestJS](https://img.shields.io/badge/NestJS-11-E0234E)
+[![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE.md) ![Vue](https://img.shields.io/badge/Vue-3.5-42b883) ![Vite](https://img.shields.io/badge/Vite-7.1-646CFF) ![NestJS](https://img.shields.io/badge/NestJS-11-E0234E)
 
 ## 📌 项目介绍
 
@@ -57,7 +57,7 @@ pnpm build
 
 ## 📜 开源协议与商业授权
 
-本项目基于 [Apache License 2.0](LICENSE) 开源，并附加了商业使用限制条款，详见 [附加商业授权与用户协议](LICENSE-ADDITIONAL.md)。
+本项目基于 [Apache License 2.0](LICENSE.md) 开源，并附加了商业使用限制条款，详见 [附加商业授权与用户协议](LICENSE-ADDITIONAL.md)。
 
 - 个人非商业用途免费使用（如个人学习交流、制作个人简历、个人浏览器起始页使用）
 - 任何组织或个人，将本项目作为服务向公众提供、嵌入商业软件或闭源产品、二次开发后用于商业运营，均须提前联系作者获取商业授权
