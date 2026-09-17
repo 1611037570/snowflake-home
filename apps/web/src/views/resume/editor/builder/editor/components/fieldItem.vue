@@ -7,6 +7,11 @@ import {
   removeUserCustomField,
   renameUserCustomField,
 } from "@/stores/modules/resume/hooks/useUserCustomField";
+import {
+  getUserSubtitleKeys,
+  getNextUserSubtitleOrder,
+  MAX_USER_SUBTITLE,
+} from "@/stores/modules/resume/hooks/useUserSubtitle";
 import { storeToRefs } from "pinia";
 // 包裹组的模型绑定只用于状态透传，不落成根元素属性
 defineOptions({ inheritAttrs: false });
@@ -27,10 +32,8 @@ const { currentForm, hasFieldData, removeField } = useFormContext();
 const hidden = defineModel<boolean | undefined>("hidden");
 // 字段图标：绑定被包裹字段的图标路径，未声明绑定时不渲染图标选择
 const icon = defineModel<string | undefined>("icon");
-// 副标题标记：所有字段共用同一路径，数组内为已标记字段的标识
-const subtitleKeys = defineModel<string[] | undefined>("subtitleKeys");
-// 副标题数量上限
-const MAX_SUBTITLE = 3;
+// 副标题标记：序号存在字段自身的界面配置里，未标记为 0
+const subtitleOrder = defineModel<number | undefined>("subtitleOrder");
 // 被包裹的字段：数据绑定与渲染条件以字段自身配置为准
 const field = computed(() => currentForm.value?.fields?.[0]);
 // 字段标识：包裹组与内层字段共用同一标识
@@ -39,22 +42,20 @@ const fieldKey = computed(() => field.value?.key);
 const isCustomField = computed(() => isUserCustomFieldKey(fieldKey.value));
 // 可添加字段：数据存在才渲染，与编辑器的添加逻辑保持一致
 const renderable = computed(() => !field.value?.addable || hasFieldData(field.value));
+// 简历运行时配置与数据：副标题标记、自定义字段的重命名与删除都落在配置与数据上
+const resumeStore = useResumeStore();
+const { runtimeConfig, currentData } = storeToRefs(resumeStore);
 // 当前字段是否为副标题
-const isSubtitle = computed(
-  () => !!field.value?.key && (subtitleKeys.value ?? []).includes(field.value.key),
-);
+const isSubtitle = computed(() => (subtitleOrder.value ?? 0) > 0);
+// 已标记的副标题数量：上限按标记个数判断，与序号是否连续无关
+const subtitleCount = computed(() => getUserSubtitleKeys(currentData.value?.user?.ui).length);
 // 副标题已达上限且当前字段未标记
-const subtitleFull = computed(
-  () => (subtitleKeys.value?.length ?? 0) >= MAX_SUBTITLE && !isSubtitle.value,
-);
+const subtitleFull = computed(() => !isSubtitle.value && subtitleCount.value >= MAX_USER_SUBTITLE);
 // 副标题按钮提示：区分取消、已达上限与可标记
 const subtitleTip = computed(() => {
   if (isSubtitle.value) return "取消副标题";
-  return subtitleFull.value ? `最多标记 ${MAX_SUBTITLE} 个副标题` : "标记为副标题";
+  return subtitleFull.value ? `最多标记 ${MAX_USER_SUBTITLE} 个副标题` : "标记为副标题";
 });
-// 简历运行时配置与数据：自定义字段的重命名与删除都落在配置和数据上
-const resumeStore = useResumeStore();
-const { runtimeConfig, currentData } = storeToRefs(resumeStore);
 // 重命名弹窗与临时标题
 const showRenameModal = ref(false);
 const fieldLabel = ref("");
@@ -74,17 +75,14 @@ const handleRename = () => {
 const toggleHidden = () => (hidden.value = !hidden.value);
 // 更新图标：写回字段的图标路径
 const updateIcon = (value: string) => (icon.value = value);
-// 切换副标题：标记按先后顺序排列，达到上限后不再新增
+// 切换副标题：序号取当前最大值加一，取消标记不重排其余字段
 const toggleSubtitle = () => {
-  const key = field.value?.key;
-  if (!key) return;
-  const keys = subtitleKeys.value ?? [];
   if (isSubtitle.value) {
-    subtitleKeys.value = keys.filter((item) => item !== key);
+    subtitleOrder.value = 0;
     return;
   }
   if (subtitleFull.value) return;
-  subtitleKeys.value = [...keys, key];
+  subtitleOrder.value = getNextUserSubtitleOrder(currentData.value?.user?.ui);
 };
 // 删除：自定义字段彻底移除，预设字段只清空数据以便重新添加
 const clearField = () => {
@@ -118,7 +116,7 @@ const clearField = () => {
     </div>
     <!-- 操作区固定在右侧，避免字段宽度变化导致按钮位移 -->
     <div
-      v-if="hidden !== undefined || removable || subtitleKeys !== undefined"
+      v-if="hidden !== undefined || removable || subtitleOrder !== undefined"
       class="flex shrink-0 items-center"
     >
       <!-- 重命名仅对自定义字段开放：预设字段标题来自模板配置，不会持久化 -->
@@ -130,7 +128,7 @@ const clearField = () => {
       />
       <SfTooltip :content="subtitleTip">
         <Icon
-          v-if="subtitleKeys !== undefined"
+          v-if="subtitleOrder !== undefined"
           @pointerdown.stop.prevent
           @click="toggleSubtitle"
           icon="lucide:heading-2"

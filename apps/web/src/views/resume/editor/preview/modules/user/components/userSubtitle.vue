@@ -1,13 +1,14 @@
 <script setup>
 import { computed, inject } from "vue";
 import ResumeField from "../../../components/resumeField/index.vue";
+import { getUserSubtitleKeys } from "@/stores/modules/resume/hooks/useUserSubtitle";
 import { useUserFieldVisibility } from "../useUserFieldVisibility";
 
-// 副标题：渲染编辑器中标记的字段值，按标记顺序在姓名下方并排一行展示
+// 副标题：渲染编辑器中标记的字段值，按标记序号在姓名下方并排展示
 const previewData = inject("previewData");
 const user = computed(() => previewData.value?.user?.data || {});
-// 已标记的副标题字段
-const subtitleKeys = computed(() => previewData.value?.user?.ui?.subtitle || []);
+// 已标记的副标题字段：按标记序号升序
+const subtitleKeys = computed(() => getUserSubtitleKeys(previewData.value?.user?.ui));
 const { isUserFieldHidden } = useUserFieldVisibility();
 // 身高体重为对象值，按身高与体重拼接成文本展示
 const heightWeightText = (value) => {

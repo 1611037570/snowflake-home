@@ -27,7 +27,7 @@ const positionField: FormField = {
   model: [
     { source: ["user", "ui", "position", "hidden"], prop: "hidden", defaultValue: false },
     { source: ["user", "ui", "position", "icon"], prop: "icon", defaultValue: "lucide:briefcase" },
-    { source: ["user", "ui", "subtitle"], prop: "subtitleKeys", defaultValue: [] },
+    { source: ["user", "ui", "shared"], prop: "sharedValue", defaultValue: [] },
   ],
   fields: [
     {
@@ -128,7 +128,7 @@ describe("fieldData", () => {
       user: {
         ui: {
           position: { hidden: true, icon: "lucide:briefcase" },
-          subtitle: ["position"],
+          shared: ["position"],
         },
         data: { position: "前端开发" },
       },
@@ -139,8 +139,8 @@ describe("fieldData", () => {
     expect(container.fields).toEqual([]);
     expect(data.user.data.position).toBeUndefined();
     expect(data.user.ui.position).toBeUndefined();
-    // 多字段共享的副标题标记不属于该节点，需保留
-    expect(data.user.ui.subtitle).toEqual(["position"]);
+    // 共享绑定由多个节点声明，不属于该节点
+    expect(data.user.ui.shared).toEqual(["position"]);
   });
 
   it("节点不在容器内时不改动数据", () => {

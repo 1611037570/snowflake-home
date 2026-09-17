@@ -34,11 +34,11 @@ export function createUserCustomField(key: string, label: string): GroupFormFiel
         prop: "icon",
         defaultValue: "lucide:tag",
       },
-      // 副标题标记：所有字段共用同一路径，数组内为已标记字段的标识
+      // 副标题标记：序号存在字段自身的界面配置里，仅用于排序
       {
-        source: ["ui", "subtitle"],
-        prop: "subtitleKeys",
-        defaultValue: [],
+        source: ["ui", key, "subtitle"],
+        prop: "subtitleOrder",
+        defaultValue: 0,
       },
     ],
     // 字段隐藏时的置灰判断
@@ -99,7 +99,7 @@ export function renameUserCustomField(runtimeConfig: any, key: string, label: st
   return true;
 }
 
-// 删除自定义字段时同时清理字段节点、值、界面配置与副标题标记
+// 删除自定义字段时同时清理字段节点、值与界面配置
 export function removeUserCustomField(runtimeConfig: any, data: any, key: string) {
   const moreField = getMoreField(runtimeConfig);
   const index = moreField?.fields?.findIndex((item: any) => item?.key === key) ?? -1;
@@ -108,10 +108,5 @@ export function removeUserCustomField(runtimeConfig: any, data: any, key: string
   moreField.fields.splice(index, 1);
   delete data?.user?.data?.[key];
   delete data?.user?.ui?.[key];
-  // 副标题标记按字段标识记录，删除字段后需去掉残留项
-  const subtitle = data?.user?.ui?.subtitle;
-  if (Array.isArray(subtitle)) {
-    data.user.ui.subtitle = subtitle.filter((item: string) => item !== key);
-  }
   return true;
 }

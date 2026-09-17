@@ -98,8 +98,8 @@ const createMoreField = (options: {
     model: [
       { source: ["ui", key, "hidden"], prop: "hidden", defaultValue: false },
       { source: ["ui", key, "icon"], prop: "icon", defaultValue: icon },
-      // 副标题标记：所有字段共用同一路径，数组内为已标记字段的标识
-      { source: ["ui", "subtitle"], prop: "subtitleKeys", defaultValue: [] },
+      // 副标题标记：序号存在字段自身的界面配置里，仅用于排序
+      { source: ["ui", key, "subtitle"], prop: "subtitleOrder", defaultValue: 0 },
     ],
     // 字段隐藏时的置灰判断
     checks: { hidden: { path: ["ui", key, "hidden"], equals: true } },

@@ -2,6 +2,7 @@
 import dayjs from "dayjs";
 import { computed, inject } from "vue";
 import { isUserCustomFieldKey } from "@/stores/modules/resume/hooks/useUserCustomField";
+import { getUserSubtitleKeys } from "@/stores/modules/resume/hooks/useUserSubtitle";
 import { getPreviewText } from "../../../i18n";
 import UserContactItem from "./userContactItem.vue";
 import { useUserFieldVisibility } from "../useUserFieldVisibility";
@@ -27,7 +28,7 @@ const ui = computed(() => previewData.value?.user?.ui || {});
 // 读取字段配置中的图标，未配置时为 undefined 由图标组件兜底处理
 const fieldIcon = (key) => ui.value?.[key]?.icon;
 // 副标题字段在姓名下方单独展示，不再出现在信息行
-const subtitleKeys = computed(() => ui.value?.subtitle || []);
+const subtitleKeys = computed(() => getUserSubtitleKeys(ui.value));
 const { isUserFieldHidden } = useUserFieldVisibility();
 const userFieldOrder = inject("userFieldOrder", computed(() => []));
 const userFieldLabels = inject("userFieldLabels", computed(() => new Map()));
