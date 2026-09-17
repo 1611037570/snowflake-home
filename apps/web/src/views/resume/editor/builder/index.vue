@@ -12,7 +12,6 @@ import {
 import { storeToRefs } from "pinia";
 import eventBus from "@/utils/modules/eventBus";
 const AsyncEditor = markRaw(defineAsyncComponent(() => import("./editor/index.vue")));
-const AsyncCustom = markRaw(defineAsyncComponent(() => import("./custom/index.vue")));
 const AsyncTemplate = markRaw(defineAsyncComponent(() => import("./template/index.vue")));
 const AsyncAi = markRaw(defineAsyncComponent(() => import("../assistant/chat/index.vue")));
 // 当前选中的菜单索引
@@ -47,11 +46,6 @@ const menuList = computed(() => [
     name: "AI",
     icon: "lucide:sparkles",
     component: AsyncAi,
-  },
-  {
-    name: "设计",
-    icon: "lucide:palette",
-    component: AsyncCustom,
   },
   {
     name: "模板",
