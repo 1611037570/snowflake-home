@@ -3,6 +3,8 @@ import { inject } from "vue";
 import UserHeading from "../components/userHeading.vue";
 
 const themeColor = inject("themeColor");
+// 线条色：统一由主题色推导
+const themeColorLine = inject("themeColorLine");
 </script>
 
 <template>
@@ -10,7 +12,7 @@ const themeColor = inject("themeColor");
   <div class="flex justify-center pb-3">
     <div class="w-full max-w-full min-w-0">
       <UserHeading />
-      <div class="mt-3 h-px w-full" :style="{ background: themeColor + '66' }"></div>
+      <div class="mt-3 h-px w-full" :style="{ background: themeColorLine }"></div>
       <div class="mt-1 h-px w-full" :style="{ background: themeColor }"></div>
     </div>
   </div>

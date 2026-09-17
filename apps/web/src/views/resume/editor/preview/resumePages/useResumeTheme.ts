@@ -14,6 +14,7 @@ import {
   defaultLineHeight,
   defaultPaddingHorizontal,
   defaultPaddingVertical,
+  defaultThemeColor,
   defaultTitleFontSize,
   defaultTitleIcon,
   defaultUserInfoLayout,
@@ -22,6 +23,16 @@ import {
 
 /** 简历主题配置（item.ui） */
 type ResumeUi = Record<string, any>;
+
+/** 颜色亮度是否偏亮：决定主题色块上的文字取深色还是白色 */
+const isLightColor = (color: string) => {
+  const hex = String(color ?? "").replace("#", "");
+  if (hex.length < 6) return false;
+  const r = parseInt(hex.slice(0, 2), 16);
+  const g = parseInt(hex.slice(2, 4), 16);
+  const b = parseInt(hex.slice(4, 6), 16);
+  return (r * 299 + g * 587 + b * 114) / 1000 > 140;
+};
 
 /** 返回的主题样式值集合 */
 export interface ResumeTheme {
@@ -107,8 +118,15 @@ export const useResumeTheme = (ui: ComputedRef<ResumeUi>): ResumeTheme => {
     const base = lineHeightStyle.value;
     return () => base;
   });
-  // 主题色统一读取 ui 的 themeColor
-  const themeColor = computed(() => ui.value.themeColor);
+  // 主题色统一读取 ui 的 themeColor，缺失时回退默认值
+  const themeColor = computed(() => ui.value.themeColor ?? defaultThemeColor);
+  // 主题色派生色：统一由主题色推导，避免各风格主题各自拼接透明度导致难以管理
+  // 浅底色：色块底托，主题色 10% 透明度
+  const themeColorSoft = computed(() => `${themeColor.value}1a`);
+  // 线条色：分隔线、描边，主题色 40% 透明度
+  const themeColorLine = computed(() => `${themeColor.value}66`);
+  // 对比文字色：主题色块上的文字按亮度自动取深色或白色
+  const themeColorContrast = computed(() => (isLightColor(themeColor.value) ? "#1f2937" : "#ffffff"));
   const themeTemplate = computed(() => ui.value.themeTemplate);
 
   // 个人信息展示模式（图标/文字/隐藏），缺失时回退默认值
@@ -129,6 +147,9 @@ export const useResumeTheme = (ui: ComputedRef<ResumeUi>): ResumeTheme => {
   provide("lineHeightValue", lineHeightValue);
   provide("paragraphSpacingStyle", paragraphSpacingStyle);
   provide("themeColor", themeColor);
+  provide("themeColorSoft", themeColorSoft);
+  provide("themeColorLine", themeColorLine);
+  provide("themeColorContrast", themeColorContrast);
   provide("themeTemplate", themeTemplate);
   provide("userInfoMode", userInfoMode);
   provide("userInfoLayout", userInfoLayout);
