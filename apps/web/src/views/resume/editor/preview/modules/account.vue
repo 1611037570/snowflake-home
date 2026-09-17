@@ -3,6 +3,7 @@ import { computed, inject } from "vue";
 import ResumeField from "../components/resumeField/index.vue";
 import { getValidData } from "./validData";
 import Title from "../components/title/index.vue";
+import ItemTitle from "../components/itemTitle.vue";
 
 // 从上层注入获取原始简历数据
 const previewData = inject("previewData");
@@ -42,7 +43,7 @@ const safeUrl = (value) => {
       :style="paragraphSpacingStyle"
     >
       <span v-if="item.name" class="inline-block whitespace-nowrap">
-        <ResumeField :model-value="item.name" class="inline" />
+        <ItemTitle :name="item.name" class="inline-block" />
         <span v-if="item.url">：</span>
       </span>
       <a
