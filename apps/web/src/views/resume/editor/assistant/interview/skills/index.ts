@@ -1,15 +1,10 @@
-import type { SkillFactory } from "../../types";
-import { aptitudeHrInterview } from "./skill_aptitude_hr_interview";
-import { interviewPrediction } from "./skill_interview_prediction";
-import { resumeInterview } from "./skill_resume_interview";
-import { selfIntro } from "./skill_self_intro";
-import { specializedInterview } from "./skill_specialized_interview";
+import type { SkillLoader } from "../../types";
 
-// 面试域技能通过单一列表注册，未来迁移页面时无需改动技能内容
-export const interviewSkills: SkillFactory[] = [
-  selfIntro,
-  interviewPrediction,
-  specializedInterview,
-  resumeInterview,
-  aptitudeHrInterview,
+// 面试域技能通过单一列表注册，只登记懒加载入口，技能正文在组装工具列表时才拉取
+export const interviewSkills: SkillLoader[] = [
+  () => import("./skill_self_intro").then((module) => module.selfIntro()),
+  () => import("./skill_interview_prediction").then((module) => module.interviewPrediction()),
+  () => import("./skill_specialized_interview").then((module) => module.specializedInterview()),
+  () => import("./skill_resume_interview").then((module) => module.resumeInterview()),
+  () => import("./skill_aptitude_hr_interview").then((module) => module.aptitudeHrInterview()),
 ];

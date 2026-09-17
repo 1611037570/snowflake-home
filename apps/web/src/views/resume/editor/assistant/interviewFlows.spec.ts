@@ -10,6 +10,10 @@ vi.mock("@/stores", () => ({
   useResumeStore: () => ({ selectedModule: [], currentData: undefined }),
 }));
 
+// 按需技能改为懒加载入口，断言注册结果前先解析出技能 id
+const loadOnDemandSkillIds = async () =>
+  (await Promise.all(onDemandSkills.map((load) => load()))).map((skill) => skill.id);
+
 // 面试功能需同时具备入口、引导流程与专用技能
 describe("interviewFlows", () => {
   it("逐题面试流程均支持提前结束", () => {
@@ -28,11 +32,9 @@ describe("interviewFlows", () => {
     expect(result.requestContext).toEqual({ resumeScope: "all" });
   });
 
-  it("面试押题入口与技能均已注册", () => {
+  it("面试押题入口与技能均已注册", async () => {
     expect(suggestions.some((item) => item.flow === "interviewPrediction")).toBe(true);
-    expect(onDemandSkills.some((createSkill) => createSkill().id === "interview_prediction")).toBe(
-      true,
-    );
+    expect(await loadOnDemandSkillIds()).toContain("interview_prediction");
   });
 
   it("面试押题约束题型、答案依据与输出报告", () => {
@@ -52,13 +54,11 @@ describe("interviewFlows", () => {
     expect(result.requestContext).toEqual({ resumeScope: "all" });
   });
 
-  it("专项面试入口与技能均已注册", () => {
+  it("专项面试入口与技能均已注册", async () => {
     const suggestion = suggestions.find((item) => item.flow === "specializedInterview");
 
     expect(suggestion?.intro?.badge).toBe("🔥 最受欢迎");
-    expect(onDemandSkills.some((createSkill) => createSkill().id === "specialized_interview")).toBe(
-      true,
-    );
+    expect(await loadOnDemandSkillIds()).toContain("specialized_interview");
   });
 
   it("专项面试约束逐轮追问、即时评分与事实边界", () => {
@@ -87,13 +87,11 @@ describe("interviewFlows", () => {
     expect(result.requestContext).toEqual({ resumeScope: "all" });
   });
 
-  it("行测与 HR 面试入口和技能均已注册", () => {
+  it("行测与 HR 面试入口和技能均已注册", async () => {
     const suggestion = suggestions.find((item) => item.flow === "aptitudeHrInterview");
 
     expect(suggestion?.intro?.badge).toBe("综合评估");
-    expect(onDemandSkills.some((createSkill) => createSkill().id === "aptitude_hr_interview")).toBe(
-      true,
-    );
+    expect(await loadOnDemandSkillIds()).toContain("aptitude_hr_interview");
   });
 
   it("行测与 HR 面试约束双阶段、限时说明与综合报告", () => {

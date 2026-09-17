@@ -8,9 +8,11 @@ vi.mock("@/stores", () => ({
 }));
 
 describe("planningPrompts", () => {
-  it("职业规划与人生总结均注册专用技能", () => {
+  it("职业规划与人生总结均注册专用技能", async () => {
     // 技能注册与默认任务分派必须同步，避免入口请求回退到无约束回答
-    const ids = onDemandSkills.map((createSkill) => createSkill().id);
+    // 按需技能改为懒加载入口，断言前先解析技能
+    const skills = await Promise.all(onDemandSkills.map((load) => load()));
+    const ids = skills.map((skill) => skill.id);
     const instructions = defaultPrompt().instructions;
 
     expect(ids).toContain("career_planning");

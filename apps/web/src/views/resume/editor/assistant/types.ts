@@ -13,6 +13,9 @@ export interface Skill {
 // 技能工厂：每个技能文件导出一个无参函数，返回统一 Skill 结构
 export type SkillFactory = () => Skill;
 
+// 技能懒加载入口：首次组装工具列表时才 import 技能模块并取其工厂
+export type SkillLoader = () => Promise<Skill>;
+
 // 引导流程步骤：预设询问或自由输入；options 为函数时在步骤展示前求值（如按当前简历动态生成）
 export type FlowStep = {
   question: string;
@@ -59,8 +62,8 @@ export type SuggestCard = {
 export interface AssistantConfig {
   // 请求期间置为 true 的生成状态
   generating: Ref<boolean>;
-  // ReAct 可用工具
-  tools: ReactTool[];
+  // ReAct 可用工具：首次请求时才解析，避免技能正文与工具实现进入 AI 面板首屏
+  resolveTools: () => Promise<ReactTool[]>;
   // 反思轮提示词：反思口径由宿主按业务提供，请求引擎不内置
   reflectPrompt: string;
   // 工具执行错误回调：由宿主决定恢复或中断，引擎只负责转交
