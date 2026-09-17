@@ -17,7 +17,7 @@ const list = [
     type: "system",
   },
   {
-    name: "轻舟简历",
+    name: $t("router.resume"),
     component: defineAsyncComponent(() => import("./components/writeResume.vue")),
     type: "system",
   },
