@@ -1,6 +1,6 @@
-import type { FormField } from "../types";
+import type { FormField, ModelBinding } from "../types";
 import { resolveDataPath, type DataPath, type DataPathContext } from "./pathContext";
-import { getPrimaryModelBinding } from "./schemaAccess";
+import { getModelBindings, getPrimaryModelBinding } from "./schemaAccess";
 import { resolveDefaultValue } from "./schemaData";
 
 type DataContainer = Record<string, any>;
@@ -85,14 +85,9 @@ export function addFieldData(
   return true;
 }
 
-// 删除字段主数据，删除后字段会回到可添加列表
-export function removeFieldData(
-  rootData: unknown,
-  field: FormField,
-  context?: DataPathContext,
-): boolean {
-  const path = getFieldDataPath(field, context);
-  if (!path || !isDataContainer(rootData)) return false;
+// 按路径删除数据，路径不存在时忽略
+export function removeDataPath(rootData: unknown, path: DataPath): boolean {
+  if (!path.length || !isDataContainer(rootData)) return false;
 
   let current: DataContainer = rootData;
   for (let pathIndex = 0; pathIndex < path.length - 1; pathIndex++) {
@@ -104,7 +99,67 @@ export function removeFieldData(
   }
 
   const lastKey = path[path.length - 1];
-  if (!lastKey || !Object.prototype.hasOwnProperty.call(current, lastKey)) return false;
+  if (lastKey === undefined || !Object.prototype.hasOwnProperty.call(current, lastKey)) return false;
   delete current[lastKey];
   return true;
+}
+
+// 节点独占的绑定路径：路径中出现字段标识的绑定才属于该节点，多字段共享的绑定不参与删除
+export function getFieldOwnPaths(field: FormField, context?: DataPathContext): DataPath[] {
+  const fieldKey = field.key;
+  // 无字段标识时按主数据路径处理，避免误删共享绑定
+  if (!fieldKey) {
+    const path = getFieldDataPath(field, context);
+    return path ? [path] : [];
+  }
+
+  const paths = new Map<string, DataPath>();
+  // 节点自身与其包裹的内层字段声明的绑定同属该节点
+  const collect = (node?: FormField) => {
+    if (!node) return;
+    const bindings: (ModelBinding | undefined)[] = [
+      ...getModelBindings(node),
+      node.ui?.icon,
+      node.ui?.hidden,
+    ];
+    bindings.forEach((binding) => {
+      // 外部字典绑定不落数据
+      if (!binding || binding.raw || !binding.source?.length) return;
+      const segmentIndex = binding.source.indexOf(fieldKey);
+      if (segmentIndex < 0) return;
+      // 按字段标识截断：界面配置以字段标识为节点，避免删除后留下空对象
+      const path = resolveDataPath(binding.source.slice(0, segmentIndex + 1), context);
+      paths.set(path.join("."), path);
+    });
+  };
+  collect(field);
+  if (field.type === "group") field.fields?.forEach(collect);
+  return [...paths.values()];
+}
+
+// 删除字段节点：摘掉容器内的节点，并清理该节点独占的绑定数据
+export function removeFieldNode(
+  container: { fields?: FormField[] } | undefined,
+  field: FormField,
+  rootData: unknown,
+  context?: DataPathContext,
+): boolean {
+  const fields = container?.fields;
+  const index = fields?.indexOf(field) ?? -1;
+  if (!fields || index < 0) return false;
+
+  getFieldOwnPaths(field, context).forEach((path) => removeDataPath(rootData, path));
+  fields.splice(index, 1);
+  return true;
+}
+
+// 删除字段主数据，删除后字段会回到可添加列表
+export function removeFieldData(
+  rootData: unknown,
+  field: FormField,
+  context?: DataPathContext,
+): boolean {
+  const path = getFieldDataPath(field, context);
+  if (!path) return false;
+  return removeDataPath(rootData, path);
 }

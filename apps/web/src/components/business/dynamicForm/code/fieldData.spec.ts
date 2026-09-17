@@ -1,7 +1,13 @@
 import { computed, reactive } from "vue";
 import { describe, expect, it } from "vitest";
 import type { FormField } from "../types";
-import { addFieldData, getFieldDataKey, hasFieldData } from "./fieldData";
+import {
+  addFieldData,
+  getFieldDataKey,
+  getFieldOwnPaths,
+  hasFieldData,
+  removeFieldNode,
+} from "./fieldData";
 
 const emailField: FormField = {
   type: "object",
@@ -11,6 +17,26 @@ const emailField: FormField = {
     source: ["user", "data", "email"],
     prop: "modelValue",
   },
+};
+
+// 包裹组：字段状态绑定在包裹组上，共享绑定与字段绑定混在一起
+const positionField: FormField = {
+  type: "group",
+  component: "fieldItem",
+  key: "position",
+  model: [
+    { source: ["user", "ui", "position", "hidden"], prop: "hidden", defaultValue: false },
+    { source: ["user", "ui", "position", "icon"], prop: "icon", defaultValue: "lucide:briefcase" },
+    { source: ["user", "ui", "subtitle"], prop: "subtitleKeys", defaultValue: [] },
+  ],
+  fields: [
+    {
+      type: "object",
+      key: "position",
+      component: "input",
+      model: { source: ["user", "data", "position"], prop: "modelValue" },
+    },
+  ],
 };
 
 describe("fieldData", () => {
@@ -88,5 +114,45 @@ describe("fieldData", () => {
 
     expect(addFieldData(data, emailField)).toBe(false);
     expect(data.user).toBe("已有内容");
+  });
+
+  it("只收集节点独占的绑定路径，共享路径不参与删除", () => {
+    expect(getFieldOwnPaths(positionField)).toEqual([
+      ["user", "ui", "position"],
+      ["user", "data", "position"],
+    ]);
+  });
+
+  it("删除节点时清理节点独占的数据与界面配置", () => {
+    const data = {
+      user: {
+        ui: {
+          position: { hidden: true, icon: "lucide:briefcase" },
+          subtitle: ["position"],
+        },
+        data: { position: "前端开发" },
+      },
+    };
+    const container = { fields: [positionField] };
+
+    expect(removeFieldNode(container, positionField, data)).toBe(true);
+    expect(container.fields).toEqual([]);
+    expect(data.user.data.position).toBeUndefined();
+    expect(data.user.ui.position).toBeUndefined();
+    // 多字段共享的副标题标记不属于该节点，需保留
+    expect(data.user.ui.subtitle).toEqual(["position"]);
+  });
+
+  it("节点不在容器内时不改动数据", () => {
+    const data = {
+      user: {
+        ui: { position: { hidden: true } },
+        data: { position: "前端开发" },
+      },
+    };
+
+    expect(removeFieldNode({ fields: [] }, positionField, data)).toBe(false);
+    expect(data.user.data.position).toBe("前端开发");
+    expect(data.user.ui.position).toEqual({ hidden: true });
   });
 });
