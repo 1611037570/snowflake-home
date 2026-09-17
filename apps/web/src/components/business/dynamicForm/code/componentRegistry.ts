@@ -69,7 +69,8 @@ export class ComponentRegistry {
     }
     const loader = getComponentLoader(name);
     if (loader) {
-      const asyncComp = defineAsyncComponent(loader);
+      // glob 的加载函数类型为 Promise<unknown>，此处按组件加载器约定收窄
+      const asyncComp = defineAsyncComponent(loader as ComponentLoader);
       this.lazyComponents.set(name, asyncComp);
       return asyncComp;
     }

@@ -50,13 +50,17 @@ const selectedKey = ref<string | null>(null);
 const selectModule = (key: string | null) => {
   selectedKey.value = key;
 };
+// 事件总线未类型化，入参在边界处收窄后再交给选中逻辑
+const handleSelectModuleEvent = (key: unknown) => {
+  selectModule(typeof key === "string" ? key : null);
+};
 provide(DF_MODULE_SELECT, { selectedKey, selectModule });
 // 监听全局事件：外部（如完成度"去填写"）触发选中模块时联动边框闪烁
 onMounted(() => {
-  eventBus.on("df-select-module", selectModule);
+  eventBus.on("df-select-module", handleSelectModuleEvent);
 });
 onUnmounted(() => {
-  eventBus.off("df-select-module", selectModule);
+  eventBus.off("df-select-module", handleSelectModuleEvent);
 });
 
 // 对外上下文读取器：根组件统一提供，业务组件调用时基于自身实例解析最近容器的能力，无需容器聚合

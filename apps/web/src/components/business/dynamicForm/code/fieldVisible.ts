@@ -73,9 +73,13 @@ export const setFieldCheckValue = (
   const rule = field.checks?.[checkKey];
   if (!rule?.path?.length) return;
   const path = resolveDataPath(rule.path, getFieldContext(field, context));
+  const lastKey = path[path.length - 1];
+  if (lastKey === undefined) return;
   let current = data;
   for (let i = 0; i < path.length - 1; i++) {
-    current = current?.[path[i]];
+    const key = path[i];
+    if (key === undefined) return;
+    current = current?.[key];
   }
-  if (current) current[path[path.length - 1]] = value;
+  if (current) current[lastKey] = value;
 };
