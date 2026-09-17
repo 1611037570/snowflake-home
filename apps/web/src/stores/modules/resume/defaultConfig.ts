@@ -59,6 +59,8 @@ export const DEFAULT_SYSTEM = {
   showProgress: true,
   // 是否展示页码
   showPageNumber: true,
+  // 打印模式：开启后预览去色，模拟黑白打印效果
+  printMode: false,
   // 是否展示调试控制台
   showDebug: false,
   // 是否展示工具栏工具名称
