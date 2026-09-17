@@ -196,81 +196,6 @@ export const DEFAULT_USER_FORM = [
           },
         ],
       }),
-      // 出生日期
-      createUserField("birthday", "出生日期", {
-        type: "object",
-        key: "birthday",
-        component: "datePicker",
-        span: 24,
-        model: {
-          source: ["data", "birthday"],
-          prop: "modelValue",
-        },
-        props: {
-          placeholder: "请选择出生日期",
-          valueFormat: "YYYY.MM",
-          type: "month",
-        },
-      }),
-
-      // 性别
-      createUserField("sex", "性别", {
-        type: "object",
-        key: "sex",
-        component: "select",
-        span: 24,
-        model: [
-          {
-            source: ["data", "sex"],
-            prop: "modelValue",
-          },
-          {
-            source: ["__options", "sex"],
-            prop: "list",
-            raw: true,
-          },
-        ],
-        props: {
-          placeholder: "请选择性别",
-          clearable: true,
-        },
-      }),
-      // 求职岗位
-      createUserField("position", "求职岗位", {
-        type: "object",
-        key: "position",
-        component: "input",
-        span: 24,
-        model: {
-          source: ["data", "position"],
-          prop: "modelValue",
-        },
-        props: {
-          placeholder: "请输入求职岗位",
-          clearable: true,
-        },
-      }),
-      createUserField(
-        "workTime",
-        "参加工作时间",
-        {
-          type: "object",
-          key: "workTime",
-          component: "datePicker",
-          span: 24,
-          model: {
-            source: ["data", "workTime"],
-            prop: "modelValue",
-          },
-          props: {
-            placeholder: "请选择参加工作时间",
-            valueFormat: "YYYY.MM",
-            type: "month",
-          },
-        },
-        // 可添加字段：数据存在才渲染
-        { addable: true },
-      ),
       // 可添加信息：数据路径存在后渲染在选择入口上方
       {
         type: "group",
@@ -291,6 +216,61 @@ export const DEFAULT_USER_FORM = [
           },
         ],
         fields: [
+          // 出生日期
+          createMoreField({
+            key: "birthday",
+            label: "出生日期",
+            component: "datePicker",
+            icon: "mdi:calendar-clock",
+            tip: "推荐必填",
+            addable: true,
+            props: {
+              placeholder: "请选择出生日期",
+              valueFormat: "YYYY.MM",
+              type: "month",
+            },
+          }),
+          // 性别
+          createMoreField({
+            key: "sex",
+            label: "性别",
+            component: "select",
+            icon: "mdi:account",
+            tip: "推荐必填",
+            addable: true,
+            dict: "sex",
+            props: {
+              placeholder: "请选择性别",
+              clearable: true,
+            },
+          }),
+          // 求职岗位
+          createMoreField({
+            key: "position",
+            label: "求职岗位",
+            component: "input",
+            icon: "lucide:briefcase",
+            tip: "推荐必填",
+            addable: true,
+            props: {
+              placeholder: "请输入求职岗位",
+              clearable: true,
+            },
+          }),
+          // 参加工作时间
+          createMoreField({
+            key: "workTime",
+            label: "参加工作时间",
+            component: "datePicker",
+            icon: "mdi:briefcase-clock",
+            tip: "推荐必填",
+            addable: true,
+            props: {
+              placeholder: "请选择参加工作时间",
+              valueFormat: "YYYY.MM",
+              type: "month",
+            },
+          }),
           // 手机号
           createMoreField({
             key: "phone",

@@ -2,7 +2,6 @@
 import { computed, inject } from "vue";
 import UserAvatar from "./userAvatar.vue";
 import UserContact from "./userContact.vue";
-import UserMeta from "./userMeta.vue";
 import UserName from "./userName.vue";
 
 defineProps({
@@ -31,12 +30,11 @@ const themeColor = inject("themeColor");
 </script>
 
 <template>
-  <!-- 左：头像在左，信息区在右，元信息撑满剩余宽度避免导出换行错位 -->
+  <!-- 左：头像在左，信息区在右，信息区撑满剩余宽度避免导出换行错位 -->
   <div v-if="position === 'left'" class="flex w-full flex-wrap items-center">
     <UserAvatar class="mr-3" />
     <div class="flex max-w-full min-w-0 flex-1 flex-col gap-3" :class="infoAlignClass">
       <UserName />
-      <UserMeta class="w-full" :align="infoPosition" />
       <UserContact class="w-full" :align="infoPosition" />
     </div>
   </div>
@@ -50,15 +48,13 @@ const themeColor = inject("themeColor");
         class="my-1 h-1 w-10 rounded-full"
         :style="{ background: themeColor }"
       ></div>
-      <UserMeta class="w-full" :align="infoPosition" />
       <UserContact class="w-full" :align="infoPosition" />
     </div>
   </div>
-  <!-- 右：信息区在左，头像在右，元信息撑满剩余宽度 -->
+  <!-- 右：信息区在左，头像在右，信息区撑满剩余宽度 -->
   <div v-else class="flex w-full flex-wrap items-center">
     <div class="flex max-w-full min-w-0 flex-1 flex-col gap-3" :class="infoAlignClass">
       <UserName />
-      <UserMeta class="w-full" :align="infoPosition" />
       <UserContact class="w-full" :align="infoPosition" />
     </div>
     <UserAvatar class="ml-3" />
