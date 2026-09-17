@@ -11,11 +11,13 @@ const emit = defineEmits(["click"]);
 
 <template>
   <div
-    class="group flex min-w-0 cursor-pointer flex-col gap-3 rounded-3xl border border-sf-b p-3 transition-colors hover:border-sf-theme hover:bg-sf-theme-2"
+    class="group flex min-w-0 cursor-pointer flex-col gap-3 rounded-3xl border border-sf-b p-3 transition-all duration-300 hover:-translate-y-1 hover:border-sf-theme"
     @click="emit('click')"
   >
     <div class="flex w-full min-w-0 items-center gap-3">
-      <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-sf-theme-2 text-sf-theme">
+      <div
+        class="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-sf-theme-2 text-sf-theme"
+      >
         <SfIcon :icon="item.icon" size="6" />
       </div>
       <div class="min-w-0 flex-1">
