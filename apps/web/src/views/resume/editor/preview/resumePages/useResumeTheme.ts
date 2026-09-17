@@ -11,9 +11,9 @@ import {
   defaultFontSize,
   defaultLineHeight,
   defaultPadding,
+  defaultTitleFontSize,
   defaultUserInfoLayout,
   defaultUserInfoMode,
-  titleFontSizeOffset,
 } from "@/stores/modules/resume/uiConfig";
 
 /** 简历主题配置（item.ui） */
@@ -76,10 +76,8 @@ export const useResumeTheme = (ui: ComputedRef<ResumeUi>): ResumeTheme => {
   const fontStyle = computed(() => ({
     fontSize: `${fontSize.value}px`,
   }));
-  // 模块标题字号：未设置时按正文加默认增量兜底，保持既有视觉关系
-  const titleFontSize = computed(() =>
-    toNumber(ui.value.titleFontSize, fontSize.value + titleFontSizeOffset),
-  );
+  // 模块标题字号：缺失时回退默认值
+  const titleFontSize = computed(() => toNumber(ui.value.titleFontSize, defaultTitleFontSize));
   // 模块标题样式：独立字号，不随正文字号变化
   const titleFontStyle = computed(() => ({
     fontSize: `${titleFontSize.value}px`,

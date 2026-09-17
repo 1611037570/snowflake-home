@@ -123,6 +123,7 @@ export const xiaoZhouForm = {
 export const xiaoZhouUI = {
   padding: 24,
   fontSize: 16,
+  titleFontSize: 22,
   lineHeight: 1.2,
   paragraphSpacing: 12,
   moduleSpacing: 12,
