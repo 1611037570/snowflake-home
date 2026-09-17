@@ -1,18 +1,20 @@
 import { mount } from "@vue/test-utils";
+import { createPinia } from "pinia";
 import { ref } from "vue";
 import { describe, expect, it, vi } from "vitest";
 import { DF_CONTEXT } from "@/components/business/dynamicForm/api";
 import More from "./more.vue";
 
+// 可添加字段与真实配置一致：标题由包裹组通过 props 声明
 const emailField = {
-  label: "邮箱",
   addable: true,
   model: { source: ["data", "email"], prop: "modelValue" },
+  props: { label: "邮箱" },
 };
 const wechatField = {
-  label: "微信号",
   addable: true,
   model: { source: ["data", "wechat"], prop: "modelValue" },
+  props: { label: "微信号" },
 };
 
 const mountMore = (collapsed: string[], addField = vi.fn()) =>
@@ -20,10 +22,14 @@ const mountMore = (collapsed: string[], addField = vi.fn()) =>
     props: { collapsed },
     slots: { default: "<div data-test='active-field'>已添加字段</div>" },
     global: {
+      // 组件内部读取应用状态，需提供独立的 pinia 实例
+      plugins: [createPinia()],
       provide: {
         [DF_CONTEXT]: () => ({
-          currentForm: ref({ fields: [emailField, wechatField, { label: "姓名" }] }),
-          hasFieldData: (field: any) => field.label === wechatField.label,
+          currentForm: ref({
+            fields: [emailField, wechatField, { props: { label: "姓名" } }],
+          }),
+          hasFieldData: (field: any) => field.props?.label === wechatField.props.label,
           addField,
           getFieldDataKey: (field: any) => field.model?.source?.join("."),
         }),
