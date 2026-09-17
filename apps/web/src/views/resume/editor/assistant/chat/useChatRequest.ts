@@ -77,7 +77,8 @@ export const useChatRequest = ({
         }
       });
     }
-    item.config = backup.config ?? {};
+    // 配置恢复统一走 store 动作：结构变化时同步重建运行时配置
+    resumeStore.restoreConfig(backup.config);
   };
   // 每条 AI 回复对应的请求前简历备份，用于“撤回修改”
   const requestBackups = new WeakMap<object, unknown>();
