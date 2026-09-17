@@ -42,39 +42,39 @@ const dynamicComponents = {
 const { currentItem } = storeToRefs(resumeStore);
 // 配置同步中：展示加载效果
 const configSyncing = ref(true);
-// 配置同步定时器：离开组件时取消，避免卸载后继续同步或误开历史记录
-let syncTimer;
-// 组件挂载状态：卸载后不再执行开启历史记录
-let mounted = true;
+// 待完成的同步目标简历：由表单渲染完成事件收口，切换简历时丢弃过期回调
+let syncItem = null;
+// 同步收口：表单渲染结束后调用，此时引擎的初始默认值写入已完成，才开启历史记录
+const finishConfigSync = () => {
+  if (!syncItem || currentItem.value !== syncItem) return;
+  syncItem = null;
+  resumeStore.enableHistory();
+  configSyncing.value = false;
+};
 watch(
   () => currentItem.value,
   (item) => {
-    if (!item) return;
+    // 无选中简历：无需等待渲染，直接结束同步
+    if (!item) {
+      syncItem = null;
+      resumeStore.disableHistory();
+      configSyncing.value = false;
+      return;
+    }
     configSyncing.value = true;
     // 同步期间暂停历史记录，避免初始化与同步产生的自动变更写入历史
     resumeStore.disableHistory();
-    // 延后到加载效果渲染后再同步，避免同步期间内容区白屏
-    const targetItem = item;
-    clearTimeout(syncTimer);
-    syncTimer = setTimeout(() => {
-      if (currentItem.value !== targetItem) return;
-
-      // 表单完成渲染后开启历史记录开关
-      nextTick(() => {
-        nextTick(() => {
-          if (!mounted || currentItem.value !== targetItem) return;
-          resumeStore.enableHistory();
-          configSyncing.value = false;
-        });
-      });
-    }, 0);
+    // 同步完成交由表单渲染事件判定，避免固定时序下初始写入被记为历史
+    syncItem = item;
   },
   { immediate: true },
 );
+// KeepAlive 缓存期间可能不触发渲染，重新激活时补齐收口
+onActivated(finishConfigSync);
 
 onBeforeUnmount(() => {
-  mounted = false;
-  clearTimeout(syncTimer);
+  // 失效待完成的同步，避免卸载后开启历史记录
+  syncItem = null;
   resumeStore.disableHistory();
 });
 </script>
@@ -97,6 +97,8 @@ onBeforeUnmount(() => {
           v-model:data="currentData"
           :components="dynamicComponents"
           :options="RESUME_OPTIONS"
+          @vue:mounted="finishConfigSync"
+          @vue:updated="finishConfigSync"
         />
         <ArchivedModules />
         <AddModule />
