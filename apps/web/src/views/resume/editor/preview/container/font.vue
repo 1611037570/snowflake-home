@@ -55,14 +55,12 @@ const setParam = (key, value) => {
         <div class="flex flex-col gap-1">
           <div class="flex items-center gap-1 text-sm text-sf-text-2">
             <span>字体类型</span>
-            <SfTooltip content="恢复默认值">
-              <SfIcon
-                icon="material-symbols:restart-alt"
-                size="4"
-                class="cursor-pointer text-sf-text-2 transition-colors hover:text-sf-theme"
-                @click="fontFamily = defaultFontFamily"
-              />
-            </SfTooltip>
+            <SfIcon
+              icon="material-symbols:restart-alt"
+              size="4"
+              class="cursor-pointer text-sf-text-2 transition-colors hover:text-sf-theme"
+              @click="fontFamily = defaultFontFamily"
+            />
           </div>
           <SfSelect v-model="fontFamily" :list="fontFamilyList" />
         </div>
@@ -71,14 +69,12 @@ const setParam = (key, value) => {
           <div class="flex items-center justify-between text-sm text-sf-text-2">
             <span class="flex items-center gap-1">
               <span>{{ item.label }}</span>
-              <SfTooltip content="恢复默认值">
-                <SfIcon
-                  icon="material-symbols:restart-alt"
-                  size="4"
-                  class="cursor-pointer text-sf-text-2 transition-colors hover:text-sf-theme"
-                  @click="setParam(item.key, item.defaultValue)"
-                />
-              </SfTooltip>
+              <SfIcon
+                icon="material-symbols:restart-alt"
+                size="4"
+                class="cursor-pointer text-sf-text-2 transition-colors hover:text-sf-theme"
+                @click="setParam(item.key, item.defaultValue)"
+              />
             </span>
             <span>{{ getNumberValue(item.key) }}px</span>
           </div>
