@@ -19,6 +19,8 @@ const previewData = inject("previewData");
 const fontValue = inject("fontValue");
 const lineHeightValue = inject("lineHeightValue");
 const paragraphSpacingStyle = inject("paragraphSpacingStyle");
+// 日期样式（2026.9 / 2026年9月），由设计配置注入
+const dateStyle = inject("dateStyle");
 
 // 自定义模块与内置数组模块统一直接读取 list
 const customList = computed(() => getValidData(previewData.value?.[props.name]?.list || []));
@@ -38,7 +40,7 @@ const customList = computed(() => getValidData(previewData.value?.[props.name]?.
           </div>
         </div>
         <div class="flex max-w-full min-w-0 flex-wrap items-center">
-          <span>{{ getTime(item.startTime, item.endTime) }}</span>
+          <span>{{ getTime(item.startTime, item.endTime, dateStyle) }}</span>
         </div>
       </div>
       <!-- 补充描述/经历 -->

@@ -25,6 +25,8 @@ const previewData = inject("previewData");
 const fontValue = inject("fontValue");
 const lineHeightValue = inject("lineHeightValue");
 const paragraphSpacingStyle = inject("paragraphSpacingStyle");
+// 日期样式（2026.9 / 2026年9月），由设计配置注入
+const dateStyle = inject("dateStyle");
 
 // 数组记录统一由 getValidData 过滤并提取业务内容
 const list = computed(() => getValidData(previewData.value?.[props.dataKey]?.list || []));
@@ -45,7 +47,7 @@ const list = computed(() => getValidData(previewData.value?.[props.dataKey]?.lis
           </div>
         </div>
         <div class="flex max-w-full min-w-0 flex-wrap items-center">
-          <span>{{ getTime(item.startTime, item.endTime) }}</span>
+          <span>{{ getTime(item.startTime, item.endTime, dateStyle) }}</span>
         </div>
       </div>
       <!-- 补充描述/经历 -->

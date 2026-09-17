@@ -123,6 +123,17 @@ export const infoPositionList = [
     value: "right",
   },
 ];
+// 日期样式列表（经历日期展示格式）
+export const dateStyleList = [
+  {
+    name: "2026.9",
+    value: "dot",
+  },
+  {
+    name: "2026年9月",
+    value: "cn",
+  },
+];
 // ===========默认值=====================
 export const defaultThemeColor = themeColors[0].value;
 // 默认自定义页尾品牌名（留空表示使用默认品牌名）
@@ -150,6 +161,8 @@ export const defaultUserInfoLayout = "flex";
 export const defaultAvatarPosition = "right";
 // 默认信息位置
 export const defaultInfoPosition = "left";
+// 默认日期样式
+export const defaultDateStyle = "dot";
 // ===========参数范围（编辑器滑杆与一页纸压缩共用，只维护这一处）=====================
 export const uiParamRanges = {
   // 页边距
@@ -196,4 +209,6 @@ export const DEFAULT_UI = {
   avatarPosition: defaultAvatarPosition,
   // 信息位置
   infoPosition: defaultInfoPosition,
+  // 日期样式
+  dateStyle: defaultDateStyle,
 };

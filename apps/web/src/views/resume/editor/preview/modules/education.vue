@@ -13,6 +13,8 @@ const previewData = inject("previewData");
 const fontValue = inject("fontValue");
 const lineHeightValue = inject("lineHeightValue");
 const paragraphSpacingStyle = inject("paragraphSpacingStyle");
+// 日期样式（2026.9 / 2026年9月），由设计配置注入
+const dateStyle = inject("dateStyle");
 
 // 数组记录统一由 getValidData 过滤并提取业务内容
 const education = computed(() => {
@@ -36,13 +38,13 @@ const hasField = (item, key) => {
       <div
         :style="paragraphSpacingStyle"
         class="flex flex-wrap items-center justify-between"
-        v-if="item.name || getTime(item.startTime, item.endTime)"
+        v-if="item.name || getTime(item.startTime, item.endTime, dateStyle)"
       >
         <div class="flex max-w-full min-w-0 flex-wrap items-baseline gap-3">
           <ItemTitle :name="item.name" />
         </div>
         <div class="flex max-w-full min-w-0 flex-wrap items-center gap-2">
-          <span>{{ getTime(item.startTime, item.endTime) }}</span>
+          <span>{{ getTime(item.startTime, item.endTime, dateStyle) }}</span>
         </div>
       </div>
       <!-- 次信息行：post / education / mode，不创建临时对象，直接基于原字段渲染 -->
