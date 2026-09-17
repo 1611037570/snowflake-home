@@ -5,7 +5,7 @@ import { storeToRefs } from "pinia";
 import { useResumeStore } from "@/stores";
 import { RESUME_HEIGHT, RESUME_WIDTH } from "../constants";
 import ThemeColor from "./themeColor.vue";
-import FontSize from "./fontSize.vue";
+import Font from "./font.vue";
 import Settings from "./settings.vue";
 import PageNumber from "./pageNumber.vue";
 import PrintMode from "./printMode.vue";
@@ -173,7 +173,7 @@ useResizeObserver(contentRef, ([entry]) => {
       v-show="showToolbar"
     >
       <ThemeColor />
-      <FontSize />
+      <Font />
       <Settings />
       <PageNumber />
       <PrintMode />
