@@ -2,13 +2,13 @@ import confirm from "@/components/business/confirm";
 import { ElMessage } from "element-plus";
 import {
   addArrayRecord,
+  createDataPathContext,
+  getFieldDataPath,
   moveArrayRecord,
   removeArrayRecord,
-} from "@/components/business/dynamicForm/code/arrayData";
-import { getFieldDataPath } from "@/components/business/dynamicForm/code/fieldData";
-import { setFieldCheckValue } from "@/components/business/dynamicForm/code/fieldVisible";
-import { walkFormFields } from "@/components/business/dynamicForm/code/schemaAccess";
-import { createDataPathContext } from "@/components/business/dynamicForm/code/pathContext";
+  setFieldCheckValue,
+  walkFormFields,
+} from "@/components/business/dynamicForm/api";
 import router from "@/routers";
 import { useAiStore } from "@/stores/modules/ai";
 import { getUUID } from "@/utils";

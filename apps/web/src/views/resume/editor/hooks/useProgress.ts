@@ -1,13 +1,13 @@
 import { toValue, type MaybeRefOrGetter } from "vue";
-import { unwrapField } from "@/components/business/dynamicForm/code/fieldData";
-import { getFieldLabel } from "@/components/business/dynamicForm/code/schemaAccess";
 import {
   createDataPathContext,
   getArrayDataPath,
+  getFieldLabel,
   getModelBindings,
   resolveDataPath,
+  unwrapField,
   walkFormFields,
-} from "@/components/business/dynamicForm";
+} from "@/components/business/dynamicForm/api";
 
 // ==================== 工具函数 ====================
 

@@ -3,9 +3,11 @@
 // 数据源由 props 传入，不依赖 resume store；供编辑器预览、模板缩略图、全屏查看复用
 // 本组件只做渲染编排（数据注入/主题注入/测量分页），导出、智能一页等编辑功能由上层 page.vue 注册
 import { computed, provide, ref } from "vue";
-import { isFieldHidden } from "@/components/business/dynamicForm/code/fieldVisible";
-import { createDataPathContext } from "@/components/business/dynamicForm/code/pathContext";
-import { getFieldLabel } from "@/components/business/dynamicForm/code/schemaAccess";
+import {
+  createDataPathContext,
+  getFieldLabel,
+  isFieldHidden,
+} from "@/components/business/dynamicForm/api";
 import { expandConfigFields } from "@/stores/modules/resume/hooks/useConfigTemplate";
 import MeasureContent from "../components/measureContent.vue";
 import PreviewSinglePage from "./previewSinglePage.vue";

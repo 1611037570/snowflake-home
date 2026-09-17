@@ -1,9 +1,9 @@
-import { unwrapField } from "@/components/business/dynamicForm/code/fieldData";
 import {
   getFieldLabel,
   getModelBindings,
-} from "@/components/business/dynamicForm/code/schemaAccess";
-import type { FormField, ModelBinding } from "@/components/business/dynamicForm/types";
+  unwrapField,
+} from "@/components/business/dynamicForm/api";
+import type { FormField, ModelBinding } from "@/components/business/dynamicForm/api";
 
 export type ResumeModuleKind = "object" | "array" | "custom";
 export type ResumeFieldValueType = "string" | "number" | "array" | "object" | "unknown";

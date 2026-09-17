@@ -1,4 +1,4 @@
-import type { GroupFormField } from "@/components/business/dynamicForm/types";
+import type { GroupFormField } from "@/components/business/dynamicForm/api";
 
 export const USER_CUSTOM_FIELD_PREFIX = "custom_";
 

@@ -3,7 +3,7 @@ import { storeToRefs } from "pinia";
 import { useResumeStore } from "@/stores";
 import { CUSTOM_MODULE_ICON, DEFAULT_MODULE_NAMES } from "@/stores/modules/resume/defaultConfig";
 import eventBus from "@/utils/modules/eventBus";
-import { isFieldHidden, isFieldRemoved } from "@/components/business/dynamicForm/code/fieldVisible";
+import { isFieldHidden, isFieldRemoved } from "@/components/business/dynamicForm/api";
 import { ElNotification } from "element-plus";
 
 // store 为全局单例：模块列表与跳转逻辑无组件级状态，抽为模块级共享，避免各组件重复创建 hook

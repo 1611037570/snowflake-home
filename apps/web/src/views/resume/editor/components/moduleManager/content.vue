@@ -2,7 +2,7 @@
 import { computed, getCurrentInstance, nextTick, onMounted, onUnmounted, ref, watch } from "vue";
 import { storeToRefs } from "pinia";
 import { useDraggable } from "vue-draggable-plus";
-import { moveFieldByKey } from "@/components/business/dynamicForm";
+import { moveFieldByKey } from "@/components/business/dynamicForm/api";
 import { useResumeStore } from "@/stores";
 import { useModuleNav } from "../../useModuleNav";
 
