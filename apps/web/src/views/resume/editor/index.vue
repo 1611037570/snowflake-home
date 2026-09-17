@@ -1,5 +1,5 @@
 <template>
-  <div class="flex h-full w-full flex-col bg-sf-page" v-if="currentIndex != -1">
+  <div class="flex h-full w-full flex-col overflow-hidden bg-sf-page" v-if="currentIndex != -1">
     <Transition name="resume-header" appear>
       <Header v-if="!focusMode" />
     </Transition>
