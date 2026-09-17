@@ -43,7 +43,7 @@
 import { getUUID } from "@/utils";
 import { useDraggable } from "vue-draggable-plus";
 import { checkForm } from "../code/checkForm.ts";
-import { hasFieldData, removeFieldData } from "../code/fieldData";
+import { hasFieldData, removeFieldData, removeFieldNode } from "../code/fieldData";
 import { getFormItemStyles } from "../code/formItemStyle";
 import { isFieldRemoved } from "../code/fieldVisible";
 import { DF_MODULE_SELECT, DF_ROOT_DATA } from "../code/injectionKeys.ts";
@@ -141,10 +141,8 @@ const draggable = useDraggable(null, sortableFields, {
 
 // 当前字段由渲染节点直接绑定，删除时不依赖过滤前后的数组索引
 function removeObject(field: any) {
-  // 按字段主数据路径删除数据，保证嵌套模块与包裹组同样删得干净
-  removeFieldData(rootData.data, field, getFieldPathContext(field));
-  const index = items.value.fields.indexOf(field);
-  if (index >= 0) items.value.fields.splice(index, 1);
+  // 节点删除由引擎统一处理：摘掉配置节点并清理该节点独占的绑定数据
+  removeFieldNode(items.value, field, rootData.data, getFieldPathContext(field));
 }
 // 删除可添加字段的数据，保留字段模板以便后续重新添加
 function removeField(field: any) {
