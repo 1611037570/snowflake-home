@@ -33,11 +33,11 @@ describe("promptSafety", () => {
     expect(resumeOptimization().instructions).toContain("均不得迁移到用户简历");
   });
 
-  it("全部行业示例声明完整事实隔离边界", () => {
+  it("全部行业示例声明完整事实隔离边界", async () => {
     // 行业提示统一声明示例边界，避免模型把演示数据写入用户简历
-    const industries = onDemandSkills
-      .map((createSkill) => createSkill())
-      .filter((skill) => skill.id.startsWith("industry_"));
+    // 按需技能改为懒加载入口，断言前先解析技能
+    const skills = await Promise.all(onDemandSkills.map((load) => load()));
+    const industries = skills.filter((skill) => skill.id.startsWith("industry_"));
 
     expect(industries).toHaveLength(11);
     industries.forEach((skill) => {

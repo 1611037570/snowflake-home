@@ -31,7 +31,8 @@ export const useChatRequest = ({
   const aiStore = useAiStore();
   const resumeStore = useResumeStore();
   const { thinkMode } = storeToRefs(aiStore);
-  const { generating, beforeRequest, afterRequest, tools, reflectPrompt, onToolError } = config;
+  const { generating, beforeRequest, afterRequest, resolveTools, reflectPrompt, onToolError } =
+    config;
   // 深拷贝简历数据时跳过 base64 大字段（user.avatar、image[].img），避免每请求全量序列化
   const cloneDataSkippingMedia = (value: any, parentKey?: string): any => {
     if (Array.isArray(value)) {
@@ -264,6 +265,8 @@ export const useChatRequest = ({
       // 请求开始即启动计时，避免首个模型事件返回前没有耗时
       state.onEvent("reasoning", null);
 
+      // 首次请求时才加载技能与简历工具清单
+      const tools = await resolveTools();
       // 所有请求统一走 React 编排，技能规范已随对话系统消息提供
       const llm = getXiaoZhouLLM();
       // 未配置模型时抛出明确提示，由统一错误处理呈现
