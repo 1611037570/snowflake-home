@@ -36,10 +36,8 @@ const dynamicComponents = {
   cityPicker: CityPicker,
 };
 
-// 配置同步：进入或切换简历时由本组件触发，完成前展示加载效果避免白屏
+// 配置同步：进入或切换简历时由本组件触发，完成前由外壳展示加载提示
 const { currentItem } = storeToRefs(resumeStore);
-// 配置同步中：展示加载效果
-const configSyncing = ref(true);
 // 待完成的同步目标简历：由表单渲染完成事件收口，切换简历时丢弃过期回调
 let syncItem = null;
 // 同步收口：表单渲染结束后调用，此时引擎的初始默认值写入已完成，才开启历史记录
@@ -47,7 +45,7 @@ const finishConfigSync = () => {
   if (!syncItem || currentItem.value !== syncItem) return;
   syncItem = null;
   resumeStore.enableHistory();
-  configSyncing.value = false;
+  resumeStore.setConfigSyncing(false);
 };
 watch(
   () => currentItem.value,
@@ -56,10 +54,10 @@ watch(
     if (!item) {
       syncItem = null;
       resumeStore.disableHistory();
-      configSyncing.value = false;
+      resumeStore.setConfigSyncing(false);
       return;
     }
-    configSyncing.value = true;
+    resumeStore.setConfigSyncing(true);
     // 同步期间暂停历史记录，避免初始化与同步产生的自动变更写入历史
     resumeStore.disableHistory();
     // 同步完成交由表单渲染事件判定，避免固定时序下初始写入被记为历史
@@ -80,14 +78,6 @@ onBeforeUnmount(() => {
 <template>
   <div class="relative h-full">
     <SfScrollbar class="relative h-full">
-      <!-- 配置同步完成前展示加载效果，避免内容区白屏 -->
-      <div
-        v-if="configSyncing"
-        class="absolute top-1/2 left-1/2 z-20 flex w-full flex-1 -translate-x-1/2 -translate-y-1/2 items-center justify-center gap-3"
-      >
-        <SfIcon icon="line-md:loading-twotone-loop" size="6" />
-        <span class="text-sm text-sf-text-2">正在加载配置</span>
-      </div>
       <div class="flex w-full flex-col">
         <SfDynamicForm
           v-if="runtimeConfig"
