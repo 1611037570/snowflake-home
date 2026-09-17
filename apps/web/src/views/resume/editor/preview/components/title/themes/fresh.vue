@@ -9,7 +9,8 @@ defineProps({
   },
 });
 const fontValue = inject("fontValue");
-const themeColor = inject("themeColor");
+// 浅底色：统一由主题色推导
+const themeColorSoft = inject("themeColorSoft");
 </script>
 
 <template>
@@ -17,7 +18,7 @@ const themeColor = inject("themeColor");
   <div v-if="title">
     <h2
       class="inline-block max-w-full min-w-0 rounded-full px-4 py-1 font-bold tracking-wide break-words"
-      :style="[{ background: themeColor + '1a' }]"
+      :style="[{ background: themeColorSoft }]"
     >
       <TitleText :title="title" />
     </h2>

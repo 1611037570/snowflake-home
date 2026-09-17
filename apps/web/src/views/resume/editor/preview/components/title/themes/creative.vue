@@ -8,14 +8,14 @@ defineProps({
     default: "",
   },
 });
-const fontValue = inject("fontValue");
-const themeColor = inject("themeColor");
+// 线条色：统一由主题色推导
+const themeColorLine = inject("themeColorLine");
 </script>
 
 <template>
   <!-- 创意风格：标题靠右，左侧延伸主题色细线形成不对称节奏 -->
   <div v-if="title" class="flex items-center">
-    <div class="mr-3 h-px min-w-0 flex-1" :style="{ background: themeColor + '66' }"></div>
+    <div class="mr-3 h-px min-w-0 flex-1" :style="{ background: themeColorLine }"></div>
     <h2 class="max-w-full min-w-0 font-bold tracking-wide break-words">
       <TitleText :title="title" />
     </h2>
