@@ -145,6 +145,7 @@ export const ICON_LIST: Record<string, IconItem> = {
   "lucide:eye-off": { icon: "lucide:eye-off" },
   "lucide:pencil": { icon: "lucide:pencil" },
   "lucide:sparkles": { icon: "lucide:sparkles" },
+  "lucide:star": { icon: "lucide:star", name: "星星" },
   "lucide:trash-2": { icon: "lucide:trash-2" },
   "lucide:x": { icon: "lucide:x" },
   "mdi:account": { icon: "mdi:account" },
@@ -226,5 +227,6 @@ export const ICON_LIST: Record<string, IconItem> = {
   "mdi:home-outline": { icon: "mdi:home-outline", name: "籍贯" },
   "mdi:human-male-height": { icon: "mdi:human-male-height", name: "身高体重" },
   "mdi:currency-cny": { icon: "mdi:currency-cny", name: "期望薪资" },
+  "mdi:cake-variant": { icon: "mdi:cake-variant", name: "生日蛋糕" },
   "lucide:tag": { icon: "lucide:tag", name: "标签" },
 };
