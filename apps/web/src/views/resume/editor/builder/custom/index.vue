@@ -4,6 +4,7 @@ import { useResumeStore } from "@/stores";
 import {
   avatarPositionList,
   fontFamilyList,
+  infoPositionList,
   uiParamRanges,
   userInfoLayoutList,
   userInfoModeList,
@@ -18,6 +19,7 @@ import {
   defaultUserInfoMode,
   defaultUserInfoLayout,
   defaultAvatarPosition,
+  defaultInfoPosition,
   defaultFooter,
 } from "@/stores/modules/resume/uiConfig";
 import { storeToRefs } from "pinia";
@@ -51,6 +53,14 @@ const avatarPosition = computed({
   get: () => currentUI.value?.avatarPosition,
   set: (value) => {
     currentUI.value.avatarPosition = value;
+  },
+});
+
+// 信息位置（左/居中/右），独立于头像位置
+const infoPosition = computed({
+  get: () => currentUI.value?.infoPosition,
+  set: (value) => {
+    currentUI.value.infoPosition = value;
   },
 });
 
@@ -113,6 +123,19 @@ const footer = computed({
             border
             v-for="mode in avatarPositionList"
             :type="avatarPosition === mode.value ? 'theme' : 'bg'"
+            :key="mode.value"
+            >{{ mode.name }}</SfButton
+          >
+        </div>
+        <!-- 信息位置切换：左 / 居中 / 右，与头像位置各管各的 -->
+        <ConfigLabel label="信息位置" v-model="infoPosition" :default-value="defaultInfoPosition" />
+        <div class="flex gap-3">
+          <SfButton
+            class="flex-1"
+            @click="infoPosition = mode.value"
+            border
+            v-for="mode in infoPositionList"
+            :type="infoPosition === mode.value ? 'theme' : 'bg'"
             :key="mode.value"
             >{{ mode.name }}</SfButton
           >

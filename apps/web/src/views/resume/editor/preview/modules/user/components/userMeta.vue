@@ -7,9 +7,10 @@ import { useUserFieldVisibility } from "../useUserFieldVisibility";
 
 // 元信息组件：展示姓名旁的基础信息，宽度策略由使用方通过 class 控制
 const props = defineProps({
-  centered: {
-    type: Boolean,
-    default: false,
+  // 信息内容水平对齐：左 / 居中 / 右
+  align: {
+    type: String,
+    default: "left",
   },
 });
 const previewData = inject("previewData");
@@ -62,13 +63,19 @@ const metaItems = computed(() => {
   return items;
 });
 
-// 根据用户选择切换布局，并保持居中模式的对齐方式
+// 根据信息位置切换布局，并保持对应的水平对齐方式
 const layoutClass = computed(() => {
-  const isCentered = props.centered;
+  const align = props.align || "left";
+  const centered = align === "center";
+  const alignEnd = align === "right";
   if (userInfoLayout?.value === "flex") {
-    return isCentered ? "flex flex-wrap justify-center gap-3" : "flex flex-wrap gap-3";
+    return ["flex flex-wrap gap-3", centered && "justify-center", alignEnd && "justify-end"];
   }
-  return isCentered ? "grid grid-cols-2 justify-items-center gap-3" : "grid grid-cols-2 gap-3";
+  return [
+    "grid grid-cols-2 gap-3",
+    centered && "justify-items-center",
+    alignEnd && "justify-items-end",
+  ];
 });
 </script>
 

@@ -108,6 +108,21 @@ export const avatarPositionList = [
     value: "right",
   },
 ];
+// 信息位置列表（信息内容的水平对齐）
+export const infoPositionList = [
+  {
+    name: "左",
+    value: "left",
+  },
+  {
+    name: "居中",
+    value: "center",
+  },
+  {
+    name: "右",
+    value: "right",
+  },
+];
 // ===========默认值=====================
 export const defaultThemeColor = themeColors[0].value;
 // 默认自定义页尾品牌名（留空表示使用默认品牌名）
@@ -133,6 +148,8 @@ export const defaultUserInfoMode = "text";
 export const defaultUserInfoLayout = "flex";
 // 默认头像位置
 export const defaultAvatarPosition = "right";
+// 默认信息位置
+export const defaultInfoPosition = "left";
 // ===========参数范围（编辑器滑杆与一页纸压缩共用，只维护这一处）=====================
 export const uiParamRanges = {
   // 页边距
@@ -177,4 +194,6 @@ export const DEFAULT_UI = {
   userInfoLayout: defaultUserInfoLayout,
   // 头像位置
   avatarPosition: defaultAvatarPosition,
+  // 信息位置
+  infoPosition: defaultInfoPosition,
 };
