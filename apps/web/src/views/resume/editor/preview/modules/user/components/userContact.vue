@@ -166,6 +166,8 @@ const secondaryItems = computed(() => {
   }
   if (heightWeightText.value) {
     items.push({
+      // 身高体重没有对应的原始字段项，去重时按字段标识匹配
+      fieldKey: "heightWeight",
       sortKey: "heightWeight",
       text: heightWeightText.value,
       icon: fieldIcon("heightWeight"),
@@ -219,7 +221,8 @@ const contactItems = computed(() => {
   }
   const order = new Map(userFieldOrder.value.map((key, index) => [key, index]));
   return [...metaItems.value, ...items, ...secondaryItems.value, ...customItems.value]
-    .filter((item) => item.key !== subtitleKey.value)
+    // 副标题字段不再出现在信息行，年龄与工作年限等衍生项保留
+    .filter((item) => (item.key || item.fieldKey) !== subtitleKey.value)
     .sort(
       (a, b) =>
         (order.get(a.sortKey || a.key) ?? Number.MAX_SAFE_INTEGER) -
