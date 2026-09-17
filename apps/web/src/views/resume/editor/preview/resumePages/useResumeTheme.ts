@@ -9,6 +9,7 @@ import { loadFont } from "@/utils";
 import {
   defaultAvatarPosition,
   defaultFontSize,
+  defaultInfoPosition,
   defaultLineHeight,
   defaultPadding,
   defaultTitleFontSize,
@@ -109,6 +110,8 @@ export const useResumeTheme = (ui: ComputedRef<ResumeUi>): ResumeTheme => {
   const userInfoLayout = computed(() => ui.value.userInfoLayout ?? defaultUserInfoLayout);
   // 头像位置（左/居中/右），缺失时回退默认值
   const avatarPosition = computed(() => ui.value.avatarPosition ?? defaultAvatarPosition);
+  // 信息位置（左/居中/右），独立于头像位置，缺失时回退默认值
+  const infoPosition = computed(() => ui.value.infoPosition ?? defaultInfoPosition);
 
   provide("fontValue", fontValue);
   provide("titleFontStyle", titleFontStyle);
@@ -119,6 +122,7 @@ export const useResumeTheme = (ui: ComputedRef<ResumeUi>): ResumeTheme => {
   provide("userInfoMode", userInfoMode);
   provide("userInfoLayout", userInfoLayout);
   provide("avatarPosition", avatarPosition);
+  provide("infoPosition", infoPosition);
 
   return {
     paddingStyle,

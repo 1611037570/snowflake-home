@@ -10,9 +10,10 @@ const previewData = inject("previewData");
 const userInfoMode = inject("userInfoMode");
 const userInfoLayout = inject("userInfoLayout");
 const props = defineProps({
-  centered: {
-    type: Boolean,
-    default: false,
+  // 信息内容水平对齐：左 / 居中 / 右
+  align: {
+    type: String,
+    default: "left",
   },
 });
 const previewLang = inject(
@@ -30,15 +31,21 @@ const userFieldLabels = inject("userFieldLabels", computed(() => new Map()));
 const isIconMode = computed(() => userInfoMode?.value === "icon");
 // 隐藏模式仅保留个人信息字段值
 const isLabelHidden = computed(() => userInfoMode?.value === "none");
-// 根据用户选择切换布局，并保持居中模式的对齐方式
+// 根据信息位置切换布局，并保持对应的水平对齐方式
 const layoutClass = computed(() => {
-  const isCentered = props.centered;
+  const align = props.align || "left";
+  const centered = align === "center";
+  const alignEnd = align === "right";
   if (userInfoLayout?.value === "flex") {
-    return isCentered ? "flex flex-wrap justify-center gap-3" : "block";
+    // 弹性布局下非居中时按行内流式排布，靠对齐方式控制水平位置
+    if (!centered) return alignEnd ? "block text-right" : "block";
+    return ["flex flex-wrap gap-3", "justify-center"];
   }
-  return isCentered
-    ? "grid grid-cols-2 justify-items-center gap-3"
-    : "grid grid-cols-2 gap-3";
+  return [
+    "grid grid-cols-2 gap-3",
+    centered && "justify-items-center",
+    alignEnd && "justify-items-end",
+  ];
 });
 const hasPhone = computed(() => !isUserFieldHidden("phone") && !!user.value?.phone);
 const hasEmail = computed(() => !isUserFieldHidden("email") && !!user.value?.email);
@@ -174,7 +181,7 @@ const contactItems = computed(() => {
       :text="item.text"
       :icon-mode="isIconMode"
       :hide-label="isLabelHidden"
-      :flow-mode="userInfoLayout === 'flex' && !centered"
+      :flow-mode="userInfoLayout === 'flex' && align !== 'center'"
     />
   </div>
 </template>
