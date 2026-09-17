@@ -78,12 +78,14 @@ const createMoreField = (options: {
   icon: string;
   tip?: string;
   addable?: boolean;
+  // 是否可标记为副标题：对象型字段无单一文本值，不支持
+  subtitle?: boolean;
   // 字典 key：存在时内层字段同时绑定选项列表
   dict?: string;
   props?: Record<string, any>;
   rules?: any[];
 }): GroupFormField => {
-  const { key, label, component, icon, tip, addable, dict, props, rules } = options;
+  const { key, label, component, icon, tip, addable, subtitle = true, dict, props, rules } = options;
   return {
     type: "group",
     component: "fieldItem",
@@ -98,6 +100,8 @@ const createMoreField = (options: {
     model: [
       { source: ["ui", key, "hidden"], prop: "hidden", defaultValue: false },
       { source: ["ui", key, "icon"], prop: "icon", defaultValue: icon },
+      // 副标题标记：所有字段共用同一路径，值即被标记字段的标识
+      ...(subtitle ? [{ source: ["ui", "subtitle"], prop: "subtitleKey", defaultValue: "" }] : []),
     ],
     // 字段隐藏时的置灰判断
     checks: { hidden: { path: ["ui", key, "hidden"], equals: true } },
@@ -403,6 +407,7 @@ export const DEFAULT_USER_FORM = [
             component: "heightWeight",
             icon: "mdi:human-male-height",
             addable: true,
+            subtitle: false,
           }),
         ],
       },

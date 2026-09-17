@@ -229,4 +229,5 @@ export const ICON_LIST: Record<string, IconItem> = {
   "mdi:currency-cny": { icon: "mdi:currency-cny", name: "期望薪资" },
   "mdi:cake-variant": { icon: "mdi:cake-variant", name: "生日蛋糕" },
   "lucide:tag": { icon: "lucide:tag", name: "标签" },
+  "lucide:heading-2": { icon: "lucide:heading-2", name: "副标题" },
 };
