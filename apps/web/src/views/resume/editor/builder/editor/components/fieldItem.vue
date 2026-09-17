@@ -1,6 +1,13 @@
 <script setup lang="ts">
 import Icon from "../icon.vue";
 import { useFormContext } from "@/components/business/dynamicForm/api";
+import { useResumeStore } from "@/stores";
+import {
+  isUserCustomFieldKey,
+  removeUserCustomField,
+  renameUserCustomField,
+} from "@/stores/modules/resume/hooks/useUserCustomField";
+import { storeToRefs } from "pinia";
 // 包裹组的模型绑定只用于状态透传，不落成根元素属性
 defineOptions({ inheritAttrs: false });
 // 字段包裹组件：定制水平布局的标签与操作区，字段内容通过插槽嵌套
@@ -26,6 +33,10 @@ const subtitleKeys = defineModel<string[] | undefined>("subtitleKeys");
 const MAX_SUBTITLE = 3;
 // 被包裹的字段：数据绑定与渲染条件以字段自身配置为准
 const field = computed(() => currentForm.value?.fields?.[0]);
+// 字段标识：包裹组与内层字段共用同一标识
+const fieldKey = computed(() => field.value?.key);
+// 自定义字段：与预设字段共用包裹与操作，仅重命名与删除语义不同
+const isCustomField = computed(() => isUserCustomFieldKey(fieldKey.value));
 // 可添加字段：数据存在才渲染，与编辑器的添加逻辑保持一致
 const renderable = computed(() => !field.value?.addable || hasFieldData(field.value));
 // 当前字段是否为副标题
@@ -41,6 +52,24 @@ const subtitleTip = computed(() => {
   if (isSubtitle.value) return "取消副标题";
   return subtitleFull.value ? `最多标记 ${MAX_SUBTITLE} 个副标题` : "标记为副标题";
 });
+// 简历运行时配置与数据：自定义字段的重命名与删除都落在配置和数据上
+const resumeStore = useResumeStore();
+const { runtimeConfig, currentData } = storeToRefs(resumeStore);
+// 重命名弹窗与临时标题
+const showRenameModal = ref(false);
+const fieldLabel = ref("");
+// 打开重命名弹窗：以当前标题回填
+const openRenameModal = () => {
+  fieldLabel.value = label || "";
+  showRenameModal.value = true;
+};
+// 保存标题：仅自定义字段的标题会被持久化
+const handleRename = () => {
+  const value = fieldLabel.value.trim();
+  if (!value || !runtimeConfig.value || !fieldKey.value) return;
+  renameUserCustomField(runtimeConfig.value, fieldKey.value, value);
+  showRenameModal.value = false;
+};
 // 切换隐藏状态：写回字段的隐藏路径
 const toggleHidden = () => (hidden.value = !hidden.value);
 // 更新图标：写回字段的图标路径
@@ -57,8 +86,15 @@ const toggleSubtitle = () => {
   if (subtitleFull.value) return;
   subtitleKeys.value = [...keys, key];
 };
-// 删除：清空被包裹字段的数据，字段模板保留
-const clearField = () => removeField(field.value);
+// 删除：自定义字段彻底移除，预设字段只清空数据以便重新添加
+const clearField = () => {
+  if (!isCustomField.value) {
+    removeField(field.value);
+    return;
+  }
+  if (!runtimeConfig.value || !currentData.value || !fieldKey.value) return;
+  removeUserCustomField(runtimeConfig.value, currentData.value, fieldKey.value);
+};
 </script>
 
 <template>
@@ -102,9 +138,23 @@ const clearField = () => removeField(field.value);
           :icon="hidden ? 'lucide:eye' : 'lucide:eye-off'"
         />
       </SfTooltip>
+      <!-- 重命名仅对自定义字段开放：预设字段标题来自模板配置，不会持久化 -->
+      <Icon v-if="isCustomField" @pointerdown.stop.prevent @click="openRenameModal" icon="lucide:pencil" />
       <Icon v-if="removable" @pointerdown.stop.prevent @click="clearField" icon="ic:round-delete" />
     </div>
   </div>
+  <!-- 重命名弹窗：仅自定义字段需要 -->
+  <SfModal v-if="isCustomField" v-model="showRenameModal" title="修改字段名称">
+    <form class="flex w-80 flex-col gap-3 p-3" @submit.prevent="handleRename">
+      <SfInput v-model="fieldLabel" placeholder="请输入字段名称" />
+      <footer class="flex justify-end gap-3">
+        <el-button @click="showRenameModal = false">取消</el-button>
+        <el-button type="primary" :disabled="!fieldLabel.trim()" @click="handleRename"
+          >保存</el-button
+        >
+      </footer>
+    </form>
+  </SfModal>
 </template>
 
 <style lang="scss" scoped></style>
