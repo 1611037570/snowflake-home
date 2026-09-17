@@ -81,7 +81,7 @@ onUnmounted(() => {
           v-for="module in filteredList"
           :key="module.key"
           :data-fixed="module.field.fixed ? 'true' : undefined"
-          class="group flex h-12 items-center gap-3 rounded-3xl bg-sf-bg px-3"
+          class="group flex h-10 items-center gap-3 rounded-3xl bg-sf-bg px-3"
           :class="module.hidden || module.archived ? 'opacity-60' : ''"
         >
           <SfIcon
