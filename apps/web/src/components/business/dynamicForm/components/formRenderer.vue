@@ -141,7 +141,8 @@ const draggable = useDraggable(null, sortableFields, {
 
 // 当前字段由渲染节点直接绑定，删除时不依赖过滤前后的数组索引
 function removeObject(field: any) {
-  rootData.removeObject(field);
+  // 按字段主数据路径删除数据，保证嵌套模块与包裹组同样删得干净
+  removeFieldData(rootData.data, field, getFieldPathContext(field));
   const index = items.value.fields.indexOf(field);
   if (index >= 0) items.value.fields.splice(index, 1);
 }
