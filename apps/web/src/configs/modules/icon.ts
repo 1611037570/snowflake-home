@@ -26,9 +26,6 @@ export const ICON_LIST: Record<string, IconItem> = {
   "logos:tiktok-icon": { icon: "logos:tiktok-icon", name: "抖音" },
   "lucide:pause": { icon: "lucide:pause", name: "暂停" },
   "lucide:play": { icon: "lucide:play", name: "播放" },
-  "lucide:orbit": { icon: "lucide:orbit" },
-  "lucide:radar": { icon: "lucide:radar" },
-  "lucide:star": { icon: "lucide:star" },
   "lucide:briefcase": { icon: "lucide:briefcase" },
   "material-symbols:image-outline": {
     icon: "material-symbols:image-outline",
