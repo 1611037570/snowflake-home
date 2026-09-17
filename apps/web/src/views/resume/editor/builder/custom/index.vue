@@ -9,6 +9,7 @@ import {
   userInfoModeList,
   defaultPadding,
   defaultFontSize,
+  defaultTitleFontSize,
   defaultLineHeight,
   defaultParagraphSpacing,
   defaultModuleSpacing,
@@ -165,6 +166,15 @@ const footer = computed({
           :step="uiParamRanges.fontSize.step"
           :default-value="defaultFontSize"
           tip="正文的基础字号"
+        />
+        <ConfigItem
+          label="模块标题字号"
+          v-model="currentUI.titleFontSize"
+          :min="uiParamRanges.titleFontSize.min"
+          :max="uiParamRanges.titleFontSize.max"
+          :step="uiParamRanges.titleFontSize.step"
+          :default-value="defaultTitleFontSize"
+          tip="各模块标题文字的大小"
         />
         <ConfigItem
           label="行间距"

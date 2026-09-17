@@ -45,7 +45,11 @@ const previewData = inject(
   "previewData",
   computed(() => ({})),
 );
-const fontValue = inject("fontValue");
+// 模块标题字号：由 ResumePages 注入，独立控制标题大小
+const titleFontStyle = inject(
+  "titleFontStyle",
+  computed(() => ({})),
+);
 
 const displayTitle = computed(() => {
   const moduleData = previewData.value?.[props.moduleKey];
@@ -61,7 +65,7 @@ const current = computed(() => themeComponents[themeTemplate.value] || themeComp
 </script>
 
 <template>
-  <component :is="current" :title="displayTitle" :style="[fontValue(6)]" />
+  <component :is="current" :title="displayTitle" :style="[titleFontStyle]" />
 </template>
 
 <style lang="scss" scoped></style>
