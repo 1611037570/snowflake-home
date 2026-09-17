@@ -18,7 +18,7 @@ const longImageExportType = ref("png");
 
 const pdfExportOptions = computed(() => [
   { name: "本地", value: "local" },
-  { name: "服务器", value: "server", disabled: !isConnected.value },
+  { name: "云端", value: "server", disabled: !isConnected.value },
 ]);
 const longImageExportOptions = [
   { name: "PNG", value: "png" },
@@ -64,7 +64,7 @@ const list = computed(() => [
   {
     name: "PDF",
     icon: "mdi:file-pdf-box",
-    desc: "本地或服务器排版导出",
+    desc: "高精度渲染生成，适合打印，ATS解析。",
     options: pdfExportOptions.value,
     modelValue: pdfExportType.value,
     onChange: changePdfExportType,
@@ -78,25 +78,23 @@ const list = computed(() => [
   {
     name: "长图",
     icon: "material-symbols:image-outline",
-    desc: "PNG 或 PDF图片，适合快速分享",
+    desc: "单张长图片，适合快速分享和图片上传",
     options: longImageExportOptions,
     modelValue: longImageExportType.value,
     onChange: (value) => (longImageExportType.value = value),
     fn: () =>
-      emitExport(
-        longImageExportType.value === "pdf" ? "resume-print-pdf" : "resume-print-image",
-      ),
+      emitExport(longImageExportType.value === "pdf" ? "resume-print-pdf" : "resume-print-image"),
   },
   {
     name: "Markdown",
     icon: "mdi:language-markdown",
-    desc: "适合编辑和分享的文本",
+    desc: "适合编辑的文本",
     fn: () => emitExport("resume-print-markdown"),
   },
   {
     name: "HTML",
     icon: "mdi:language-html5",
-    desc: "适合编辑和分享的网页",
+    desc: "适合分享的网页",
     fn: () => emitExport("resume-print-html"),
   },
 ]);
@@ -129,7 +127,6 @@ const a = {
         <div class="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2">
           <ExportItem v-for="item in list" :key="item.name" :item="item" @click="item.fn" />
         </div>
-
       </div>
 
       <div>
