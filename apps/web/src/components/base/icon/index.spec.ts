@@ -3,7 +3,7 @@ import { mount } from "@vue/test-utils";
 // Vitest 基本断言与测试
 import { describe, expect, it, vi } from "vitest";
 // 被测组件
-import BaseIcon from "./index.vue";
+import BaseIcon from "./index";
 
 // 模拟 Iconify，确保 loadIcon 成功
 vi.mock("@iconify/vue", () => ({
