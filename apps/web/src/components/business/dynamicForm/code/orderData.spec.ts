@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { applyVisibleOrder, keepFixedFirst } from "./orderData";
+import type { FormField } from "../types";
+import { applyVisibleOrder, keepFixedFirst, moveFieldByKey } from "./orderData";
 
 describe("orderData", () => {
   it("按可见顺序回填完整列表，未渲染项保留原槽位", () => {
@@ -39,5 +40,65 @@ describe("orderData", () => {
     keepFixedFirst(list, () => false);
 
     expect(list).toEqual(["甲", "乙"]);
+  });
+});
+
+// 生成仅含 key 与固定标记的模块列表
+const createFields = (keys: string[], fixedKeys: string[] = []): FormField[] =>
+  keys.map(
+    (key) =>
+      ({
+        type: "group",
+        key,
+        fields: [],
+        fixed: fixedKeys.includes(key),
+      }) as unknown as FormField,
+  );
+const keysOf = (fields: FormField[]) => fields.map((field) => field.key);
+
+describe("moveFieldByKey", () => {
+  it("把后面的模块移到目标模块之前", () => {
+    const fields = createFields(["甲", "乙", "丙", "丁"]);
+
+    expect(moveFieldByKey(fields, "丁", "乙", "before")).toBe(true);
+    expect(keysOf(fields)).toEqual(["甲", "丁", "乙", "丙"]);
+  });
+
+  it("把前面的模块移到目标模块之后", () => {
+    const fields = createFields(["甲", "乙", "丙", "丁"]);
+
+    expect(moveFieldByKey(fields, "甲", "丙", "after")).toBe(true);
+    expect(keysOf(fields)).toEqual(["乙", "丙", "甲", "丁"]);
+  });
+
+  it("缺省落到目标模块之前", () => {
+    const fields = createFields(["甲", "乙", "丙"]);
+
+    expect(moveFieldByKey(fields, "丙", "乙")).toBe(true);
+    expect(keysOf(fields)).toEqual(["甲", "丙", "乙"]);
+  });
+
+  it("键相同、缺失或不存在时不修改列表", () => {
+    const fields = createFields(["甲", "乙"]);
+
+    expect(moveFieldByKey(fields, "甲", "甲")).toBe(false);
+    expect(moveFieldByKey(fields, "甲", "丙")).toBe(false);
+    expect(moveFieldByKey(fields, "", "乙")).toBe(false);
+    expect(keysOf(fields)).toEqual(["甲", "乙"]);
+  });
+
+  it("固定模块不参与移动，也不允许插到固定模块之前", () => {
+    const fields = createFields(["甲", "乙", "丙"], ["甲"]);
+
+    expect(moveFieldByKey(fields, "甲", "丙", "after")).toBe(false);
+    expect(moveFieldByKey(fields, "丙", "甲", "before")).toBe(false);
+    expect(keysOf(fields)).toEqual(["甲", "乙", "丙"]);
+  });
+
+  it("允许移动到固定模块之后", () => {
+    const fields = createFields(["甲", "乙", "丙"], ["甲"]);
+
+    expect(moveFieldByKey(fields, "丙", "甲", "after")).toBe(true);
+    expect(keysOf(fields)).toEqual(["甲", "丙", "乙"]);
   });
 });

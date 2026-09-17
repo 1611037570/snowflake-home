@@ -2,7 +2,7 @@
 import { computed, getCurrentInstance, nextTick, onMounted, onUnmounted, ref, watch } from "vue";
 import { storeToRefs } from "pinia";
 import { useDraggable } from "vue-draggable-plus";
-import { applyVisibleOrder, keepFixedFirst } from "@/components/business/dynamicForm";
+import { moveFieldByKey } from "@/components/business/dynamicForm";
 import { useResumeStore } from "@/stores";
 import { useModuleNav } from "../../useModuleNav";
 
@@ -14,8 +14,10 @@ const { runtimeConfig } = storeToRefs(resumeStore);
 const { keyword, filteredList, moduleList, jumpAll } = useModuleNav();
 const listRef = ref(null);
 const moduleFields = computed(() => runtimeConfig.value?.fields || []);
-// 拖拽排序作用于可导航模块，结束后按引擎统一规则回填完整字段列表
+// 拖拽排序作用于可导航模块，结束后按 key 回填完整字段列表
 const visibleModules = ref([]);
+// 拖拽前的可见模块 key 顺序：用于按下标还原起止模块
+let draggedKeys = [];
 watch(
   moduleList,
   (list) => {
@@ -57,15 +59,20 @@ onMounted(async () => {
     ghostClass: "module-manager-ghost",
     handle: ".module-manager-drag",
     onMove: (event) => !event.related?.dataset?.fixed,
-    // 拖拽结束按可见顺序回填完整字段列表，并让固定模块保底排在最前
-    onEnd: () => {
-      const fields = moduleFields.value;
-      applyVisibleOrder(
-        fields,
-        visibleModules.value.map((item) => item.field),
-        (field) => !!field?.key,
+    onStart: () => {
+      draggedKeys = visibleModules.value.map((item) => item.field.key);
+    },
+    // 前移落到目标模块之后、后移落到目标模块之前，与拖拽结果一致
+    onEnd: (event) => {
+      const fromKey = draggedKeys[event.oldIndex];
+      const toKey = draggedKeys[event.newIndex];
+      if (!fromKey || !toKey) return;
+      moveFieldByKey(
+        moduleFields.value,
+        fromKey,
+        toKey,
+        event.oldIndex < event.newIndex ? "after" : "before",
       );
-      keepFixedFirst(fields, (field) => field.fixed);
     },
   });
 });
