@@ -1,18 +1,40 @@
-本项目基于 Apache License 2.0 开源分发，并附加额外许可限制条款。Apache License 2.0 与附加条款共同构成本项目的完整许可协议，二者应一并阅读并遵守。
+=============================================================================
 
-附加条款完整内容（中英对照）见 [LICENSE-ADDITIONAL.md](LICENSE-ADDITIONAL.md)。除该附加条款明确作出的限制外，其余权利与限制均遵循 Apache License 2.0。
+ 本项目基于 Apache License 2.0 开源分发，并附加额外许可条件。Apache License 2.0 与
+ 附加条款共同构成本项目的完整许可协议，二者应一并阅读并遵守。
 
-您下载、复制、修改、编译、部署、分发或以其他任何方式使用本项目源代码及其衍生作品，即视为您已阅读、理解并同意接受 Apache License 2.0 与附加条款的全部约束。若您不同意其中任何一条，请立即停止使用本项目；在此情形下，本项目不向您授予任何使用许可。
+ 附加条款完整内容（中英对照）见 LICENSE-ADDITIONAL.md：
+ https://github.com/1611037570/snowflake-home/blob/main/LICENSE-ADDITIONAL.md
 
-This project is distributed under the Apache License 2.0 with additional license restrictions. The Apache License 2.0 and the additional terms together constitute the complete license agreement for this project, and both must be read and complied with.
+ 附加条款仅在其明确说明的范围内，为特定使用情形设定取得授权的前置条件，不缩减
+ Apache License 2.0 已授予的其余权利；其中第 3 条授予的专利许可维持不变。
 
-The full bilingual additional terms are set out in [LICENSE-ADDITIONAL.md](LICENSE-ADDITIONAL.md). Except for the restrictions expressly set out in those additional terms, all other rights and limitations follow the Apache License 2.0.
+ 您下载、复制、修改、编译、部署、分发或以其他任何方式使用本项目源代码及其衍生作品，
+ 以您已阅读、理解并同意接受 Apache License 2.0 与附加条款的全部内容为条件。若您不
+ 同意其中任何一条，则本项目许可未向您成立，您应立即停止使用本项目。
 
-By downloading, copying, modifying, compiling, deploying, distributing, or otherwise using the source code of this project or any derivative work thereof, you acknowledge that you have read, understood, and agreed to be bound by all terms of the Apache License 2.0 and the additional terms. If you do not agree to any of them, you must immediately stop using this project, and no license to use it is granted to you.
+ This project is distributed under the Apache License 2.0 with additional license
+ conditions. The Apache License 2.0 and the additional terms together constitute
+ the complete license agreement for this project, and both must be read and
+ complied with.
 
----
+ The full bilingual additional terms are set out in LICENSE-ADDITIONAL.md:
+ https://github.com/1611037570/snowflake-home/blob/main/LICENSE-ADDITIONAL.md
 
-```
+ The additional terms only set preconditions for obtaining authorization for
+ specific uses within the scope they expressly describe. They do not narrow any
+ other rights granted by the Apache License 2.0, and the patent license granted
+ in Section 3 of the Apache License 2.0 remains unchanged.
+
+ Your downloading, copying, modifying, compiling, deploying, distributing, or
+ otherwise using the source code of this project or any derivative work thereof
+ is conditioned on your having read, understood, and agreed to all terms of the
+ Apache License 2.0 and the additional terms. If you do not agree to any of them,
+ no license for this project is granted to you and you must immediately stop
+ using it.
+
+=============================================================================
+
  Apache License
  Version 2.0, January 2004
  http://www.apache.org/licenses/
@@ -214,4 +236,3 @@ By downloading, copying, modifying, compiling, deploying, distributing, or other
  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  See the License for the specific language governing permissions and
  limitations under the License.
-```

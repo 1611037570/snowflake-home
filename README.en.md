@@ -2,7 +2,7 @@
 
 [Simplified Chinese](README.md) | [English](README.en.md)
 
-[![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE.md) ![Vue](https://img.shields.io/badge/Vue-3.5-42b883) ![Vite](https://img.shields.io/badge/Vite-7.1-646CFF) ![NestJS](https://img.shields.io/badge/NestJS-11-E0234E)
+[![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE) ![Vue](https://img.shields.io/badge/Vue-3.5-42b883) ![Vite](https://img.shields.io/badge/Vite-7.1-646CFF) ![NestJS](https://img.shields.io/badge/NestJS-11-E0234E)
 
 ## 📌 Project Introduction
 
@@ -57,7 +57,7 @@ pnpm build
 
 ## 📜 License & Commercial Licensing
 
-This project is open-sourced under the [Apache License 2.0](LICENSE.md), with additional restrictions on commercial use. See the [Additional Commercial Restrictions & User Agreement](LICENSE-ADDITIONAL.md) for details.
+This project is open-sourced under the [Apache License 2.0](LICENSE), with additional restrictions on commercial use. See the [Additional Commercial Restrictions & User Agreement](LICENSE-ADDITIONAL.md) for details.
 
 - Free for personal, non-commercial use (such as personal learning and exchange, creating a personal resume, or personal use as a browser start page)
 - Any organization or individual that provides this project to the public as a service, embeds it into commercial software or closed-source products, or uses its derivatives for commercial operations must contact the author in advance to obtain a commercial license

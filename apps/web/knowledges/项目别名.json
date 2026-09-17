@@ -193,7 +193,7 @@
   "env.d.ts": "环境变量 TS 类型支持",
   "eslint.config.ts": "ESLint 代码质量检查配置",
   "index.html": "单页面应用主 HTML 入口",
-  "LICENSE.md": "项目开源许可证文件",
+  "LICENSE": "项目开源许可证文件",
   "lint-staged.config.js": "暂存区文件 Lint 任务配置",
   "manifest.ts": "浏览器插件/PWA 清单配置",
   "package.json": "项目元数据与依赖管理文件",
