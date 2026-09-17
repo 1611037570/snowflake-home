@@ -17,7 +17,7 @@ const fontSize = computed({
 </script>
 
 <template>
-  <SfDropdown trigger="hover" placement="bottom-start" :show-arrow="false">
+  <SfDropdown trigger="click" placement="bottom-start" :show-arrow="false">
     <SfTooltip content="字体大小">
       <SfIcon
         icon="lucide:type"

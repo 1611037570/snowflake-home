@@ -19,12 +19,7 @@ const themeColor = computed({
 </script>
 
 <template>
-  <SfDropdown
-    v-if="currentUI"
-    trigger="hover"
-    placement="bottom-start"
-    :show-arrow="false"
-  >
+  <SfDropdown v-if="currentUI" trigger="click" placement="bottom-start" :show-arrow="false">
     <SfTooltip :content="`主题颜色`">
       <div
         class="box-border h-7 w-7 cursor-pointer rounded-full border-3 border-sf-b bg-sf-theme-2"
