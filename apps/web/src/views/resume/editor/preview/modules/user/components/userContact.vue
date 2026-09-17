@@ -1,11 +1,12 @@
 <script setup>
+import dayjs from "dayjs";
 import { computed, inject } from "vue";
 import { isUserCustomFieldKey } from "@/stores/modules/resume/hooks/useUserCustomField";
 import { getPreviewText } from "../../../i18n";
 import UserContactItem from "./userContactItem.vue";
 import { useUserFieldVisibility } from "../useUserFieldVisibility";
 
-// 联系方式组件：标签支持图标、文字和隐藏模式，对齐方式由使用方通过 class 控制
+// 个人信息组件：基础信息与联系方式统一排序展示，标签支持图标、文字和隐藏模式，对齐方式由使用方通过 class 控制
 const previewData = inject("previewData");
 const userInfoMode = inject("userInfoMode");
 const userInfoLayout = inject("userInfoLayout");
@@ -31,6 +32,25 @@ const userFieldLabels = inject("userFieldLabels", computed(() => new Map()));
 const isIconMode = computed(() => userInfoMode?.value === "icon");
 // 隐藏模式仅保留个人信息字段值
 const isLabelHidden = computed(() => userInfoMode?.value === "none");
+// 计算年龄
+const age = computed(() => {
+  if (isUserFieldHidden("birthday")) return 0;
+  const birthday = user.value?.birthday;
+  if (!birthday || !dayjs(birthday).isValid()) return 0;
+  const ageDiff = dayjs().diff(dayjs(birthday), "year");
+  return Math.max(0, ageDiff);
+});
+// 按个人资料中的参加工作时间计算工作经验，避免依赖全局当前简历状态
+const workYearsNumber = computed(() => {
+  if (isUserFieldHidden("workTime")) return 0;
+  const workTime = user.value?.workTime;
+  if (!workTime) return 0;
+  const startDate = dayjs(workTime);
+  if (!startDate.isValid()) return 0;
+  const diffInMonths = dayjs().diff(startDate, "month");
+  const years = Math.floor((diffInMonths + 7) / 12);
+  return years > 0 ? years : 0;
+});
 // 根据信息位置切换布局，并保持对应的水平对齐方式
 const layoutClass = computed(() => {
   const align = props.align || "left";
@@ -56,7 +76,41 @@ const emailLabel = computed(() => getPreviewText("emailLabel", previewLang.value
 const wechatLabel = computed(() => getPreviewText("wechatLabel", previewLang.value));
 const githubLabel = computed(() => getPreviewText("githubLabel", previewLang.value));
 
-// 第二行展示电话、邮箱及其他个人信息
+// 基础信息（性别、年龄、工作年限、求职岗位）与联系方式合并为同一列表
+const metaItems = computed(() => {
+  const items = [];
+  if (!isUserFieldHidden("sex") && user.value?.sex) {
+    items.push({
+      key: "sex",
+      icon: fieldIcon("sex"),
+      label: userFieldLabels.value.get("sex") || "性别",
+    });
+  }
+  if (age.value) {
+    items.push({
+      // 年龄跟随出生日期排序
+      sortKey: "birthday",
+      text: getPreviewText("age", previewLang.value, { age: age.value }),
+    });
+  }
+  if (workYearsNumber.value) {
+    items.push({
+      // 工作年限跟随参加工作时间排序
+      sortKey: "workTime",
+      text: getPreviewText("expYears", previewLang.value, { years: workYearsNumber.value }),
+    });
+  }
+  if (!isUserFieldHidden("position") && user.value?.position) {
+    items.push({
+      key: "position",
+      icon: fieldIcon("position"),
+      label: userFieldLabels.value.get("position") || "求职岗位",
+    });
+  }
+  return items;
+});
+
+// 身高体重按身高与体重拼接展示
 const heightWeightText = computed(() => {
   if (isUserFieldHidden("heightWeight")) return "";
   const value = user.value?.heightWeight;
@@ -125,7 +179,7 @@ const customItems = computed(() =>
       label: userFieldLabels.value.get(key) || "自定义字段",
     })),
 );
-// 统一整理联系方式和扩展信息，交由通用单项组件渲染
+// 统一整理基础信息、联系方式和扩展信息，交由通用单项组件渲染
 const contactItems = computed(() => {
   const items = [];
   if (hasPhone.value) {
@@ -158,7 +212,7 @@ const contactItems = computed(() => {
     });
   }
   const order = new Map(userFieldOrder.value.map((key, index) => [key, index]));
-  return [...items, ...secondaryItems.value, ...customItems.value].sort(
+  return [...metaItems.value, ...items, ...secondaryItems.value, ...customItems.value].sort(
     (a, b) =>
       (order.get(a.sortKey || a.key) ?? Number.MAX_SAFE_INTEGER) -
       (order.get(b.sortKey || b.key) ?? Number.MAX_SAFE_INTEGER),
