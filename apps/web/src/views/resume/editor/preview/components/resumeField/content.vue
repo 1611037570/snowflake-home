@@ -2,6 +2,9 @@
 import { computed, inject, useAttrs } from "vue";
 import DOMPurify from "dompurify";
 
+// 透传属性已在组件内部逐块合并，关闭自动继承，避免多根节点无法继承导致 class 被丢弃并告警
+defineOptions({ inheritAttrs: false });
+
 // 上层透传（class 高亮与悬浮监听），与各块原始属性合并渲染
 const attrs = useAttrs();
 
