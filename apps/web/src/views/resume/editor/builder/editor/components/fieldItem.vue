@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import Icon from "../icon.vue";
+import { useFormContext } from "@/components/business/dynamicForm/api";
 // 包裹组的模型绑定只用于状态透传，不落成根元素属性
 defineOptions({ inheritAttrs: false });
 // 字段包裹组件：定制水平布局的标签与操作区，字段内容通过插槽嵌套
@@ -14,7 +15,7 @@ const {
   removable?: boolean;
   draggable?: boolean;
 }>();
-const { currentForm, hasFieldData, removeField } = inject("df/context")();
+const { currentForm, hasFieldData, removeField } = useFormContext();
 // 隐藏开关：绑定被包裹字段的隐藏路径，未声明绑定时不渲染开关
 const hidden = defineModel<boolean | undefined>("hidden");
 // 字段图标：绑定被包裹字段的图标路径，未声明绑定时不渲染图标选择

@@ -1,4 +1,5 @@
 import type { InjectionKey, MaybeRef, Ref } from "vue";
+import type { FormContext } from "../types";
 import type DataProxy from "./dataProxy";
 import type { DataPathContext } from "./pathContext";
 
@@ -22,10 +23,10 @@ export const DF_CURRENT_LENGTH: InjectionKey<any> = Symbol("df/current/length");
 /** 对象容器删除方法 */
 export const DF_REMOVE: InjectionKey<() => void> = Symbol("df/remove");
 /**
- * 对外上下文契约（字符串 key，业务组件按约定直接 inject 使用，无需导入）
- * 由各容器节点提供：聚合父级上下文 + 当前容器能力
+ * 组件树内上下文契约（由 SfDynamicForm 提供读取器，业务组件经 useFormContext 调用）
+ * 读取器内部按业务组件自身实例解析最近容器的能力，无需容器聚合
  */
-export const DF_CONTEXT = "df/context";
+export const DF_CONTEXT: InjectionKey<() => FormContext> = Symbol("df/context");
 /**
  * 模块选中能力（内部机制，不对外导出）：根组件 provide，渲染层 inject，
  * selectModule(key) 触发选中后模块边框持续闪烁，鼠标经过模块后恢复正常

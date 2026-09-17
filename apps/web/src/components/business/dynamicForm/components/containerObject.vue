@@ -44,7 +44,10 @@ provide(
   computed(() => pathContext),
 );
 // 提供当前容器的表单数据（统一提供 ref，与 container/containerArray 保持一致）
-provide(DF_CURRENT_FORM, currentForm);
+provide(
+  DF_CURRENT_FORM,
+  computed(() => currentForm),
+);
 // 提供当前容器的类型
 provide(DF_CURRENT_TYPE, "object");
 // 提供删除方法

@@ -1,7 +1,9 @@
 /**
  * 动态表单配置 DSL 类型（对外契约）
- * 由 SfDynamicForm 组件统一导出，业务侧配置（如 stores/modules/resume/formConfig.ts）import 使用
+ * 由 ./api 统一导出，业务侧配置（如 stores/modules/resume/formConfig.ts）import 使用
  */
+
+import type { Ref } from "vue";
 
 /** 数据绑定：source 为当前容器内的数据路径，prop 为组件上的绑定属性名 */
 export interface ModelBinding {
@@ -126,4 +128,25 @@ export interface FormConfig {
   dragClass?: string;
   /** 表单中所渲染的字段 */
   fields: FormField[];
+}
+
+/**
+ * 组件树内上下文契约：由 SfDynamicForm 统一提供，业务组件经 useFormContext 读取
+ * 各能力按所在容器提供，未提供的能力为 undefined
+ */
+export interface FormContext {
+  /** 当前容器配置（各容器均提供，统一为 ref） */
+  currentForm: Ref<FormField | undefined>;
+  /** 当前容器类型 */
+  currentType?: string;
+  /** 仅数组容器提供：当前数组记录数 */
+  currentLength?: Ref<number>;
+  /** 仅被容器绑定目标的节点提供：删除当前节点 */
+  removeCurrent?: () => void;
+  /** 向当前容器的数组子字段新增记录，返回新记录下标 */
+  addItem: () => number | undefined;
+  hasFieldData: (field?: FormField) => boolean;
+  addField: (field?: FormField) => boolean;
+  removeField: (field?: FormField) => void;
+  getFieldDataKey: (field?: FormField) => string | undefined;
 }

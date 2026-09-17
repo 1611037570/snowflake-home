@@ -1,5 +1,6 @@
 <script setup>
 import { getCurrentInstance } from "vue";
+import { useFormContext } from "@/components/business/dynamicForm/api";
 
 const { proxy } = getCurrentInstance();
 
@@ -13,7 +14,7 @@ const hidden = defineModel("hidden", {
   type: Boolean,
   default: false,
 });
-const { removeCurrent } = inject("df/context")();
+const { removeCurrent } = useFormContext();
 
 // 删除当前荣誉证书
 const removeHonor = () => {
