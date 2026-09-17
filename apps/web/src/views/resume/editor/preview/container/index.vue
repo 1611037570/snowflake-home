@@ -4,9 +4,9 @@ import { computed, ref } from "vue";
 import { storeToRefs } from "pinia";
 import { useResumeStore } from "@/stores";
 import { RESUME_HEIGHT, RESUME_WIDTH } from "../constants";
-import ThemeColor from "./themeColor.vue";
 import Font from "./font.vue";
 import Settings from "./settings.vue";
+import TemplateSettings from "./templateSettings.vue";
 import PageNumber from "./pageNumber.vue";
 import PrintMode from "./printMode.vue";
 import Language from "./language.vue";
@@ -172,9 +172,9 @@ useResizeObserver(contentRef, ([entry]) => {
       class="mx-auto mb-3 flex items-center gap-1 self-stretch rounded-full border border-sf-b bg-sf-primary p-1.5 select-none"
       v-show="showToolbar"
     >
-      <ThemeColor />
       <Font />
       <Settings />
+      <TemplateSettings />
       <PageNumber />
       <PrintMode />
       <Language />
