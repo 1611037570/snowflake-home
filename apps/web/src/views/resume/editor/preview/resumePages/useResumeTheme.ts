@@ -13,6 +13,7 @@ import {
   defaultPadding,
   defaultUserInfoLayout,
   defaultUserInfoMode,
+  titleFontSizeOffset,
 } from "@/stores/modules/resume/uiConfig";
 
 /** 简历主题配置（item.ui） */
@@ -22,6 +23,7 @@ type ResumeUi = Record<string, any>;
 export interface ResumeTheme {
   paddingStyle: ComputedRef<Record<string, string>>;
   fontStyle: ComputedRef<Record<string, string>>;
+  titleFontStyle: ComputedRef<Record<string, string>>;
   lineHeightStyle: ComputedRef<Record<string, string>>;
   paragraphSpacingStyle: ComputedRef<Record<string, string>>;
   fontReadyVersion: Ref<number>;
@@ -74,6 +76,14 @@ export const useResumeTheme = (ui: ComputedRef<ResumeUi>): ResumeTheme => {
   const fontStyle = computed(() => ({
     fontSize: `${fontSize.value}px`,
   }));
+  // 模块标题字号：未设置时按正文加默认增量兜底，保持既有视觉关系
+  const titleFontSize = computed(() =>
+    toNumber(ui.value.titleFontSize, fontSize.value + titleFontSizeOffset),
+  );
+  // 模块标题样式：独立字号，不随正文字号变化
+  const titleFontStyle = computed(() => ({
+    fontSize: `${titleFontSize.value}px`,
+  }));
   const lineHeightStyle = computed(() => ({
     lineHeight: `${lineHeight.value}`,
   }));
@@ -103,6 +113,7 @@ export const useResumeTheme = (ui: ComputedRef<ResumeUi>): ResumeTheme => {
   const avatarPosition = computed(() => ui.value.avatarPosition ?? defaultAvatarPosition);
 
   provide("fontValue", fontValue);
+  provide("titleFontStyle", titleFontStyle);
   provide("lineHeightValue", lineHeightValue);
   provide("paragraphSpacingStyle", paragraphSpacingStyle);
   provide("themeColor", themeColor);
@@ -114,6 +125,7 @@ export const useResumeTheme = (ui: ComputedRef<ResumeUi>): ResumeTheme => {
   return {
     paddingStyle,
     fontStyle,
+    titleFontStyle,
     lineHeightStyle,
     paragraphSpacingStyle,
     fontReadyVersion,
