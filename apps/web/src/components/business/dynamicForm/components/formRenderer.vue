@@ -122,8 +122,27 @@ const handleModuleMouseEnter = (item: any) => {
     moduleSelect.selectModule(null);
   }
 };
-// 拖拽实例
-let draggable: ReturnType<typeof useDraggable> | null = null;
+// 拖拽实例：延迟到真实根元素挂载完成后再启动
+const draggable = useDraggable(null, sortableFields, {
+  immediate: false,
+  animation: 300,
+  easing: "cubic-bezier(.2, .8, .2, 1)",
+  ghostClass: "ghost",
+  handle: items.value?.dragClass || "",
+  // 用克隆体跟手拖拽，才能给拖拽中的模块加缩放与投影
+  forceFallback: true,
+  fallbackClass: "df-drag-fallback",
+  fallbackOnBody: true,
+  // 固定模块不可被其它模块越过或交换
+  onMove: (evt) => !evt.related?.dataset?.fixed,
+  onStart() {
+    isDragging.value = true;
+  },
+  onEnd() {
+    keepFixedFirst();
+    isDragging.value = false;
+  },
+});
 
 // 当前字段由渲染节点直接绑定，删除时不依赖过滤前后的数组索引
 function removeObject(field: any) {
@@ -171,30 +190,15 @@ onMounted(async () => {
   if (!items.value?.drag) {
     return;
   }
-  // 初始化拖拽
-  draggable = useDraggable(row, sortableFields, {
-    animation: 300,
-    easing: "cubic-bezier(.2, .8, .2, 1)",
-    ghostClass: "ghost",
-    handle: items.value?.dragClass || "",
-    // 用克隆体跟手拖拽，才能给拖拽中的模块加缩放与投影
-    forceFallback: true,
-    fallbackClass: "df-drag-fallback",
-    fallbackOnBody: true,
-    // 固定模块不可被其它模块越过或交换
-    onMove: (evt) => !evt.related?.dataset?.fixed,
-    onStart() {
-      isDragging.value = true;
-    },
-    onEnd() {
-      keepFixedFirst();
-      isDragging.value = false;
-    },
-  });
+
+  const element = row.value?.$el ?? row.value;
+  if (!(element instanceof HTMLElement)) return;
+
+  // 根元素就绪后再启动拖拽
+  draggable.start(element);
 });
 onUnmounted(() => {
-  draggable?.destroy();
-  draggable = null;
+  draggable.destroy();
 });
 </script>
 
