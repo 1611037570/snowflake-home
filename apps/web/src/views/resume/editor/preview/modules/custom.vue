@@ -5,6 +5,7 @@ import ResumeField from "../components/resumeField/index.vue";
 import Title from "../components/title/index.vue";
 import { getValidData } from "./validData";
 import { isContentEmpty } from "../modules/validData";
+import ItemTitle from "../components/itemTitle.vue";
 
 const props = defineProps({
   name: {
@@ -30,10 +31,8 @@ const customList = computed(() => getValidData(previewData.value?.[props.name]?.
     <!-- 内容区 -->
     <template v-for="(item, index) in customList" :key="index">
       <div :style="paragraphSpacingStyle" class="flex flex-wrap items-center justify-between">
-        <div class="flex max-w-full min-w-0 flex-wrap items-center gap-4">
-          <div class="font-bold" :style="[fontValue(3)]">
-            <ResumeField :model-value="item.name" />
-          </div>
+        <div class="flex max-w-full min-w-0 flex-wrap items-center gap-3">
+          <ItemTitle :name="item.name" />
           <div>
             <ResumeField :model-value="item.post" />
           </div>
