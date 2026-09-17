@@ -1,5 +1,6 @@
 import { nextTick } from "vue";
 import { useResumeStore } from "@/stores";
+import { getExportFileName, resumeTitle } from "../../resumeName";
 
 type ResumeRootRef = { value: HTMLElement | null };
 
@@ -67,10 +68,13 @@ export const printResume = async (
   printFrame.style.left = "-9999px";
   printFrame.style.visibility = "hidden";
 
+  // iframe 打印时浏览器取顶层 document.title 作为默认文件名，打印结束后还原
+  const originalTitle = document.title;
   let restored = false;
   const restorePrintState = (success = false) => {
     if (restored) return;
     restored = true;
+    document.title = originalTitle;
     printFrame.remove();
     resumeStore.finishPrinting(signal);
     if (success) onSuccess?.();
@@ -155,6 +159,8 @@ export const printResume = async (
     if (signal.aborted) return;
 
     printWindow.onafterprint = () => restorePrintState(true);
+    // 仅在此刻改标题，避免简历标题中的特殊字符写入打印文档
+    document.title = getExportFileName(resumeTitle.value, "pdf");
     printWindow.focus();
     printWindow.print();
   } catch (error) {
