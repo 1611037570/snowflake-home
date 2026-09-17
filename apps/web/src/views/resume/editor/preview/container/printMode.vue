@@ -12,9 +12,9 @@ const togglePrintMode = () => {
 </script>
 
 <template>
-  <SfTooltip :content="system.printMode ? '彩色模式' : '打印模式'">
+  <SfTooltip :content="system.printMode ? '彩色模式' : '灰度模式(模拟黑白打印效果)'">
     <SfIcon
-      :icon="system.printMode ? 'lucide:printer' : 'lucide:palette'"
+      :icon="system.printMode ? 'lucide:contrast' : 'lucide:palette'"
       size="5"
       boxSize="7"
       class="rounded-full"
