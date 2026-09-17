@@ -44,8 +44,8 @@ const menuList = computed(() => [
     component: AsyncEditor,
   },
   {
-    name: "AI编辑",
-    icon: "lucide:palette",
+    name: "AI",
+    icon: "lucide:sparkles",
     component: AsyncAi,
   },
   {
