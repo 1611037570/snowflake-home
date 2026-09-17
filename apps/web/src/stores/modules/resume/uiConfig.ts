@@ -118,10 +118,8 @@ export const defaultPadding = 24;
 export const defaultFontFamily = "text-puhui";
 // 默认字体大小
 export const defaultFontSize = 16;
-// 模块标题字号相对正文字号的默认增量
-export const titleFontSizeOffset = 6;
 // 默认模块标题字号
-export const defaultTitleFontSize = defaultFontSize + titleFontSizeOffset;
+export const defaultTitleFontSize = 22;
 export const defaultLineHeight = 1.2;
 // 默认段落间距，延续现有 mt-3 的视觉间距
 export const defaultParagraphSpacing = 12;
