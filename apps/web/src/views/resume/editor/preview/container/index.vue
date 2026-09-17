@@ -8,6 +8,7 @@ import ThemeColor from "./themeColor.vue";
 import FontSize from "./fontSize.vue";
 import Padding from "./padding.vue";
 import PageNumber from "./pageNumber.vue";
+import PrintMode from "./printMode.vue";
 import Language from "./language.vue";
 import OnePage from "./onePage.vue";
 
@@ -23,6 +24,7 @@ defineEmits(["fullscreen"]);
 const containerRef = ref(null);
 const resumeStore = useResumeStore();
 const { selectedModule } = storeToRefs(resumeStore);
+const { system } = storeToRefs(resumeStore);
 // 清空选中模块：直接调用 store 操作
 const { clearSelectedModules } = resumeStore;
 const contentRef = ref(null);
@@ -174,6 +176,7 @@ useResizeObserver(contentRef, ([entry]) => {
       <FontSize />
       <Padding />
       <PageNumber />
+      <PrintMode />
       <Language />
       <OnePage />
       <SfTooltip content="缩小">
@@ -253,6 +256,7 @@ useResizeObserver(contentRef, ([entry]) => {
         <div
           ref="contentRef"
           class="w-fit pb-3!"
+          :class="{ grayscale: system.printMode }"
           :style="{
             transform: `scale(${scale})`,
             transformOrigin: 'top left',
