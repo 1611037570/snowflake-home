@@ -1,18 +1,16 @@
 <script setup>
 import { TransitionPresets, useDebounceFn, useResizeObserver, useTransition } from "@vueuse/core";
-import { computed, defineAsyncComponent, ref } from "vue";
+import { computed, ref } from "vue";
 import { storeToRefs } from "pinia";
 import { useResumeStore } from "@/stores";
 import { RESUME_HEIGHT, RESUME_WIDTH } from "../constants";
-
-// 工具栏子组件异步加载，避免首屏一次性加载全部面板
-const Font = defineAsyncComponent(() => import("./font.vue"));
-const Settings = defineAsyncComponent(() => import("./settings.vue"));
-const TemplateSettings = defineAsyncComponent(() => import("./templateSettings.vue"));
-const PageNumber = defineAsyncComponent(() => import("./pageNumber.vue"));
-const PrintMode = defineAsyncComponent(() => import("./printMode.vue"));
-const Language = defineAsyncComponent(() => import("./language.vue"));
-const OnePage = defineAsyncComponent(() => import("./onePage.vue"));
+import Font from "./font.vue";
+import Settings from "./settings.vue";
+import TemplateSettings from "./templateSettings.vue";
+import PageNumber from "./pageNumber.vue";
+import PrintMode from "./printMode.vue";
+import Language from "./language.vue";
+import OnePage from "./onePage.vue";
 
 defineOptions({ name: "ScaleContainer" });
 

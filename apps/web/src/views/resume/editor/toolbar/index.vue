@@ -4,14 +4,14 @@ import { useRouter } from "vue-router";
 import { storeToRefs } from "pinia";
 import { defineAsyncComponent } from "vue";
 import Icon from "./components/icon.vue";
+import Ai from "./modules/ai/index.vue";
+import System from "./modules/system/index.vue";
+import CopyResume from "./modules/copyResume.vue";
+import Progress from "./modules/progress/index.vue";
+import ModuleNavigator from "./modules/moduleNavigator.vue";
+import QaAnswer from "./modules/qaAnswer.vue";
 
-// 工具栏各模块按需分包：独立 chunk 便于缓存，避免全部合并进编辑页主包
-const Ai = defineAsyncComponent(() => import("./modules/ai/index.vue"));
-const System = defineAsyncComponent(() => import("./modules/system/index.vue"));
-const CopyResume = defineAsyncComponent(() => import("./modules/copyResume.vue"));
-const Progress = defineAsyncComponent(() => import("./modules/progress/index.vue"));
-const ModuleNavigator = defineAsyncComponent(() => import("./modules/moduleNavigator.vue"));
-const QaAnswer = defineAsyncComponent(() => import("./modules/qaAnswer.vue"));
+// 调试面板默认关闭，保持异步按需加载
 const Debug = defineAsyncComponent(() => import("./modules/debug.vue"));
 
 defineOptions({ name: "ResumeToolbar" });
