@@ -11,7 +11,7 @@ import {
 } from "vue";
 import { storeToRefs } from "pinia";
 import eventBus from "@/utils/modules/eventBus";
-const AsyncEditor = markRaw(defineAsyncComponent(() => import("./editor/index.vue")));
+import AsyncEditor from "./editor/index.vue";
 const AsyncTemplate = markRaw(defineAsyncComponent(() => import("./template/index.vue")));
 const AsyncAi = markRaw(defineAsyncComponent(() => import("../assistant/chat/index.vue")));
 // 当前选中的菜单索引
