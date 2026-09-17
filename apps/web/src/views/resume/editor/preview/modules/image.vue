@@ -4,6 +4,7 @@ import ResumeField from "../components/resumeField/index.vue";
 import Title from "../components/title/index.vue";
 import { getPreviewTitle } from "../i18n";
 import { getValidData } from "./validData";
+import ItemTitle from "../components/itemTitle.vue";
 
 // 从上层注入获取原始简历数据
 const previewData = inject("previewData");
@@ -39,7 +40,7 @@ const images = computed(() => getValidData(previewData.value?.image?.list || [])
         class="flex min-w-0 flex-col gap-1"
       >
         <img v-if="item.img" :src="item.img" :alt="imageAlt" class="h-auto w-full rounded" />
-        <ResumeField class="text-center" :model-value="item.name" />
+        <ItemTitle :name="item.name" />
         <ResumeField class="text-center" :model-value="item.desc" />
       </div>
     </template>

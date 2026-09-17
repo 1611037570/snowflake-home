@@ -5,6 +5,8 @@ import ResumeField from "../components/resumeField/index.vue";
 import Title from "../components/title/index.vue";
 import { getValidData } from "./validData";
 import { isContentEmpty } from "../modules/validData";
+import ItemTitle from "../components/itemTitle.vue";
+
 // 属性：模块标识、标题、数据 key
 const props = defineProps({
   moduleName: {
@@ -36,10 +38,8 @@ const list = computed(() => getValidData(previewData.value?.[props.dataKey]?.lis
     <template v-for="(item, index) in list" :key="index">
       <div :style="paragraphSpacingStyle" class="flex flex-wrap items-center justify-between">
         <!-- 信息容器撑满行内剩余宽度，避免导出渲染时子项宽度取整触发换行错位 -->
-        <div class="flex max-w-full min-w-0 flex-1 flex-wrap items-center gap-4">
-          <div class="font-bold" :style="[fontValue(3)]">
-            <ResumeField :model-value="item.name" />
-          </div>
+        <div class="flex max-w-full min-w-0 flex-1 flex-wrap items-center gap-3">
+          <ItemTitle :name="item.name" />
           <div>
             <ResumeField :model-value="item.post" />
           </div>
