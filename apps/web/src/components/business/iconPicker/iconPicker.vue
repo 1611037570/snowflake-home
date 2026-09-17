@@ -76,7 +76,9 @@ const selectIcon = (icon: string) => {
               @click="selectIcon(item.icon)"
               class="rounded-3xl"
               :class="[
-                modelValue === item.icon ? ' bg-sf-theme text-sf-theme-text' : 'hover:bg-sf-bg',
+                modelValue === item.icon
+                  ? ' bg-sf-theme text-sf-theme-text'
+                  : 'text-sf-text! hover:bg-sf-bg',
               ]"
             />
           </div>
