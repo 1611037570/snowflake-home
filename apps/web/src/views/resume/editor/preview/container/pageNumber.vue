@@ -50,14 +50,12 @@ const footer = computed({
         <div class="flex flex-col gap-1">
           <div class="flex items-center gap-1 text-sm text-sf-text-2">
             <span>自定义页尾</span>
-            <SfTooltip content="恢复默认值">
-              <SfIcon
-                icon="material-symbols:restart-alt"
-                size="4"
-                class="cursor-pointer text-sf-text-2 transition-colors hover:text-sf-theme"
-                @click="footer = defaultFooter"
-              />
-            </SfTooltip>
+            <SfIcon
+              icon="material-symbols:restart-alt"
+              size="4"
+              class="cursor-pointer text-sf-text-2 transition-colors hover:text-sf-theme"
+              @click="footer = defaultFooter"
+            />
             <SfTooltip content="仅自定义开头的品牌名，页码部分固定展示，留空恢复「轻舟简历」" />
           </div>
           <SfInput v-model="footer" placeholder="例如：我的简历" clearable />

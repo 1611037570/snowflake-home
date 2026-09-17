@@ -3,12 +3,7 @@ import { computed } from "vue";
 import { ElMessage } from "element-plus";
 import { storeToRefs } from "pinia";
 import { useResumeStore } from "@/stores";
-import {
-  dateStyleList,
-  defaultDateStyle,
-  defaultTitleIcon,
-  titleIconList,
-} from "@/stores/modules/resume/uiConfig";
+import { dateStyleList, defaultDateStyle } from "@/stores/modules/resume/uiConfig";
 import ThemeColorPicker from "@/components/business/themeColorPicker/themeColorPicker.vue";
 
 const resumeStore = useResumeStore();
@@ -118,43 +113,21 @@ const dateStyle = computed({
         </div>
 
         <div class="text-xs font-bold text-sf-text">细节调整</div>
-        <!-- 标题图标切换：关闭 / 开启 -->
-        <div class="flex flex-col gap-1">
-          <div class="flex items-center gap-1 text-sm text-sf-text-2">
-            <span>标题图标</span>
-            <SfTooltip content="恢复默认值">
-              <SfIcon
-                icon="material-symbols:restart-alt"
-                size="4"
-                class="cursor-pointer text-sf-text-2 transition-colors hover:text-sf-theme"
-                @click="titleIcon = defaultTitleIcon"
-              />
-            </SfTooltip>
-          </div>
-          <div class="flex gap-3">
-            <SfButton
-              v-for="mode in titleIconList"
-              :key="mode.name"
-              class="flex-1"
-              border
-              @click="titleIcon = mode.value"
-              :type="titleIcon === mode.value ? 'theme' : 'bg'"
-              >{{ mode.name }}</SfButton
-            >
-          </div>
+        <!-- 标题图标开关：仅在模块标题前展示/隐藏图标 -->
+        <div class="flex items-center justify-between text-sm text-sf-text-2">
+          <span>标题图标</span>
+          <ElSwitch v-model="titleIcon" />
         </div>
         <!-- 日期样式切换：点号 / 中文 -->
         <div class="flex flex-col gap-1">
           <div class="flex items-center gap-1 text-sm text-sf-text-2">
             <span>日期样式</span>
-            <SfTooltip content="恢复默认值">
-              <SfIcon
-                icon="material-symbols:restart-alt"
-                size="4"
-                class="cursor-pointer text-sf-text-2 transition-colors hover:text-sf-theme"
-                @click="dateStyle = defaultDateStyle"
-              />
-            </SfTooltip>
+            <SfIcon
+              icon="material-symbols:restart-alt"
+              size="4"
+              class="cursor-pointer text-sf-text-2 transition-colors hover:text-sf-theme"
+              @click="dateStyle = defaultDateStyle"
+            />
           </div>
           <div class="flex gap-3">
             <SfButton
