@@ -19,6 +19,8 @@ export function createUserCustomField(key: string, label: string): GroupFormFiel
     props: {
       label,
       draggable: true,
+      // 自定义字段可彻底删除，删除语义由包裹组件按字段标识分发
+      removable: true,
     },
     // 字段状态绑定到包裹组，供包裹组件双向绑定
     model: [
@@ -50,15 +52,16 @@ export function createUserCustomField(key: string, label: string): GroupFormFiel
       {
         type: "object",
         key,
-        component: "userCustomField",
+        // 与预设字段共用通用输入组件，保证编辑区布局一致
+        component: "input",
         span: 24,
         model: {
           source: ["data", key],
           prop: "modelValue",
         },
         props: {
-          fieldKey: key,
           placeholder: "请输入内容",
+          clearable: true,
         },
       },
     ],
@@ -96,7 +99,7 @@ export function renameUserCustomField(runtimeConfig: any, key: string, label: st
   return true;
 }
 
-// 删除自定义字段时同时清理字段节点和值
+// 删除自定义字段时同时清理字段节点、值、界面配置与副标题标记
 export function removeUserCustomField(runtimeConfig: any, data: any, key: string) {
   const moreField = getMoreField(runtimeConfig);
   const index = moreField?.fields?.findIndex((item: any) => item?.key === key) ?? -1;
@@ -105,5 +108,10 @@ export function removeUserCustomField(runtimeConfig: any, data: any, key: string
   moreField.fields.splice(index, 1);
   delete data?.user?.data?.[key];
   delete data?.user?.ui?.[key];
+  // 副标题标记按字段标识记录，删除字段后需去掉残留项
+  const subtitle = data?.user?.ui?.subtitle;
+  if (Array.isArray(subtitle)) {
+    data.user.ui.subtitle = subtitle.filter((item: string) => item !== key);
+  }
   return true;
 }
