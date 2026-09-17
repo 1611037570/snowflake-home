@@ -288,10 +288,6 @@ export const useResumeStore = defineStore(
     const setSelectedModules = (modules: any[]) => {
       selectedModule.value = modules;
     };
-    // 添加选中模块：兼容旧入口
-    const pushSelectedModule = (key: string) => {
-      selectModule(key);
-    };
     // 新增简历：jump 控制是否跳转编辑器，select 控制是否选中新简历
     const addResume = (config: any, jump = true, select = true) => {
       if (list.value.length >= maxCount) {
@@ -672,12 +668,7 @@ export const useResumeStore = defineStore(
     const setGenerating = (val: boolean) => {
       isGenerating.value = val;
     };
-    const mergeResumeItem = (item: any) => {
-      const merged = merge(structuredClone(DEFAULT_RESUME_ITEM), item);
-      // 旧结构字段不再保留，统一以模板展开为准
-      delete merged.fixedConfig;
-      return merged;
-    };
+    const mergeResumeItem = (item: any) => merge(structuredClone(DEFAULT_RESUME_ITEM), item);
 
     // 合并默认配置并从 ID 索引加载完整简历
     const init = () => {
@@ -754,7 +745,6 @@ export const useResumeStore = defineStore(
       unselectModule,
       clearSelectedModules,
       setSelectedModules,
-      pushSelectedModule,
       setModuleHidden,
       setModuleArchived,
       removeModule,
