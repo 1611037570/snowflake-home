@@ -585,6 +585,21 @@ export const DEFAULT_EDUCATION_FORM = {
               clearable: true,
             },
           },
+          // 学校标签：可选标签由字段配置注入
+          {
+            type: "object",
+            label: "学校标签",
+            component: "tag",
+            span: 24,
+            model: {
+              source: ["data", "tags"],
+              prop: "modelValue",
+              defaultValue: [],
+            },
+            props: {
+              list: ["985", "211", "双一流", "C9联盟", "省重点"],
+            },
+          },
           // 学院名称
           {
             type: "object",
