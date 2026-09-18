@@ -28,6 +28,9 @@ const lineHeightValue = inject("lineHeightValue");
 const paragraphSpacingStyle = inject("paragraphSpacingStyle");
 // 日期样式（2026.9 / 2026年9月），由设计配置注入
 const dateStyle = inject("dateStyle");
+// 日期位置（左/右），由设计配置注入
+const datePosition = inject("datePosition");
+const dateLeft = computed(() => datePosition?.value === "left");
 
 // 数组记录统一由 getValidData 过滤并提取业务内容
 const list = computed(() => getValidData(previewData.value?.[props.dataKey]?.list || []));
@@ -47,13 +50,19 @@ const hasItemHeader = (item) =>
         <!-- 首行：名称与部门，右侧时间 -->
         <div class="flex flex-wrap items-center justify-between">
           <!-- 信息容器撑满行内剩余宽度，避免导出渲染时子项宽度取整触发换行错位 -->
-          <div class="flex max-w-full min-w-0 flex-1 flex-wrap items-center gap-3">
+          <div
+            class="flex max-w-full min-w-0 flex-1 flex-wrap items-center gap-3"
+            :class="dateLeft ? 'justify-end' : ''"
+          >
             <ItemTitle :name="item.name" />
             <ResumeField :model-value="item.department" />
             <!-- 条目标签：仅声明标签的模块有数据时渲染 -->
             <ItemTags :tags="item.tags" />
           </div>
-          <div class="flex max-w-full min-w-0 flex-wrap items-center">
+          <div
+            class="flex max-w-full min-w-0 flex-wrap items-center"
+            :class="dateLeft ? 'order-first' : ''"
+          >
             <span>{{ getTime(item.startTime, item.endTime, dateStyle) }}</span>
           </div>
         </div>

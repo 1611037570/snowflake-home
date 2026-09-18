@@ -3,7 +3,9 @@ import { storeToRefs } from "pinia";
 import { useResumeStore } from "@/stores";
 import {
   avatarPositionList,
+  datePositionList,
   defaultAvatarPosition,
+  defaultDatePosition,
   defaultInfoPosition,
   defaultLineHeight,
   defaultModuleSpacing,
@@ -69,6 +71,16 @@ const userInfoParams = [
   },
 ];
 
+// 经历信息选项参数：日期在条目内的水平位置
+const dateParams = [
+  {
+    label: "日期位置",
+    key: "datePosition",
+    defaultValue: defaultDatePosition,
+    list: datePositionList,
+  },
+];
+
 // 读取参数当前值
 const getValue = (key) => currentUI.value?.[key];
 
@@ -122,6 +134,30 @@ const setParam = (key, value) => {
 
         <div class="text-xs font-bold text-sf-text">个人信息</div>
         <div v-for="item in userInfoParams" :key="item.key" class="flex flex-col gap-1">
+          <div class="flex items-center gap-1 text-sm text-sf-text-2">
+            <span>{{ item.label }}</span>
+            <SfIcon
+              icon="material-symbols:restart-alt"
+              size="4"
+              class="cursor-pointer text-sf-text-2 transition-colors hover:text-sf-theme"
+              @click="setParam(item.key, item.defaultValue)"
+            />
+          </div>
+          <div class="flex gap-3">
+            <SfButton
+              v-for="option in item.list"
+              :key="option.value"
+              class="flex-1"
+              size="small"
+              border
+              @click="setParam(item.key, option.value)"
+              :type="getValue(item.key) === option.value ? 'theme' : 'bg'"
+              >{{ option.name }}</SfButton
+            >
+          </div>
+        </div>
+        <div class="text-xs font-bold text-sf-text">经历信息</div>
+        <div v-for="item in dateParams" :key="item.key" class="flex flex-col gap-1">
           <div class="flex items-center gap-1 text-sm text-sf-text-2">
             <span>{{ item.label }}</span>
             <SfIcon
