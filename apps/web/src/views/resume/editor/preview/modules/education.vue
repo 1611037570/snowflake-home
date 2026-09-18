@@ -60,19 +60,22 @@ const contentIsFirst = (item) => !hasItemHeader(item) && !hasSubInfo(item);
         class="flex flex-wrap items-center justify-between"
       >
         <!-- 信息容器撑满行内剩余宽度，避免导出渲染时子项宽度取整触发换行错位 -->
-        <div class="flex max-w-full min-w-0 flex-1 flex-wrap items-baseline gap-3">
+        <!-- 统一按行居中：标签字号小于正文，基线对齐会让它在被撑开的行里偏移 -->
+        <div class="flex max-w-full min-w-0 flex-1 flex-wrap items-center gap-3">
           <ItemTitle :name="item.name" />
-          <!-- 学校标签：跟随首行排布，超出宽度自动换行 -->
-          <span
-            v-for="tag in item.tags || []"
-            :key="tag"
-            class="rounded-3xl border border-current px-1"
-          >
-            {{ tag }}
-          </span>
+
           <ResumeField v-if="hasField(item, 'college')" :model-value="item.college" />
           <ResumeField v-if="hasField(item, 'education')" :model-value="item.education" />
           <ResumeField v-if="hasField(item, 'mode')" :model-value="item.mode" />
+          <!-- 学校标签：跟随首行排布，锁死自身行高避免被主题行高撑高 -->
+          <div
+            v-for="tag in item.tags || []"
+            :key="tag"
+            :style="fontValue(-5)"
+            class="flex-c rounded-3xl bg-sf-theme p-1 leading-none text-sf-theme-text"
+          >
+            {{ tag }}
+          </div>
         </div>
         <div class="flex max-w-full min-w-0 flex-wrap items-center gap-2">
           <span>{{ getTime(item.startTime, item.endTime, dateStyle) }}</span>
