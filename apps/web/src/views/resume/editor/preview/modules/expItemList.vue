@@ -31,8 +31,11 @@ const dateStyle = inject("dateStyle");
 // 数组记录统一由 getValidData 过滤并提取业务内容
 const list = computed(() => getValidData(previewData.value?.[props.dataKey]?.list || []));
 
-// 条目是否含首行信息（名称/岗位/时间），为空时不渲染首行，避免多出空行间距
-const hasItemHeader = (item) => Boolean(item.name || item.post || item.startTime || item.endTime);
+// 条目是否含首行信息（名称/部门/岗位/时间），为空时不渲染首行，避免多出空行间距
+const hasItemHeader = (item) =>
+  Boolean(
+    item.name || item.department || item.post || item.startTime || item.endTime,
+  );
 </script>
 
 <template>
@@ -44,17 +47,28 @@ const hasItemHeader = (item) => Boolean(item.name || item.post || item.startTime
       <div
         v-if="hasItemHeader(item)"
         :style="paragraphSpacingStyle"
-        class="flex flex-wrap items-center justify-between"
       >
-        <!-- 信息容器撑满行内剩余宽度，避免导出渲染时子项宽度取整触发换行错位 -->
-        <div class="flex max-w-full min-w-0 flex-1 flex-wrap items-center gap-3">
-          <ItemTitle :name="item.name" />
-          <div>
-            <ResumeField :model-value="item.post" />
+        <!-- 首行：名称与部门，右侧时间 -->
+        <div class="flex flex-wrap items-center justify-between">
+          <!-- 信息容器撑满行内剩余宽度，避免导出渲染时子项宽度取整触发换行错位 -->
+          <div class="flex max-w-full min-w-0 flex-1 flex-wrap items-center gap-3">
+            <ItemTitle :name="item.name" />
+            <div>
+              <ResumeField :model-value="item.department" />
+            </div>
+          </div>
+          <div class="flex max-w-full min-w-0 flex-wrap items-center">
+            <span>{{ getTime(item.startTime, item.endTime, dateStyle) }}</span>
           </div>
         </div>
-        <div class="flex max-w-full min-w-0 flex-wrap items-center">
-          <span>{{ getTime(item.startTime, item.endTime, dateStyle) }}</span>
+        <!-- 次行：岗位居左，城市居右 -->
+        <div class="flex flex-wrap items-center justify-between">
+          <div class="flex max-w-full min-w-0 flex-1 flex-wrap items-center">
+            <ResumeField :model-value="item.post" />
+          </div>
+          <div class="flex max-w-full min-w-0 flex-wrap items-center">
+            <ResumeField :model-value="item.city" />
+          </div>
         </div>
       </div>
       <!-- 补充描述/经历：无首行时由段间距承担上间距，有首行时用固定 mt-3 与首行贴合 -->
