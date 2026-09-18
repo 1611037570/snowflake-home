@@ -27,6 +27,19 @@ const hasField = (item, key) => {
   const v = item?.[key];
   return v && typeof v === "string" && v.trim();
 };
+
+// 条目是否含首行信息（名称/时间），为空时不渲染首行，避免多出空行间距
+const hasItemHeader = (item) => Boolean(item.name || getTime(item.startTime, item.endTime, dateStyle));
+
+// 次信息行是否可渲染
+const hasSubInfo = (item) =>
+  Boolean(hasField(item, "post") || hasField(item, "education") || hasField(item, "mode"));
+
+// 次信息行成为条目首块时，由它承担段间距
+const subInfoIsFirst = (item) => !hasItemHeader(item);
+
+// 内容行成为条目首块（首行与次信息行都不渲染）时，由它承担段间距
+const contentIsFirst = (item) => !hasItemHeader(item) && !hasSubInfo(item);
 </script>
 
 <template>
@@ -36,11 +49,12 @@ const hasField = (item, key) => {
     <!-- 内容区：直接渲染已过滤的业务数据 -->
     <template v-for="(item, index) in education" :key="index">
       <div
+        v-if="hasItemHeader(item)"
         :style="paragraphSpacingStyle"
         class="flex flex-wrap items-center justify-between"
-        v-if="item.name || getTime(item.startTime, item.endTime, dateStyle)"
       >
-        <div class="flex max-w-full min-w-0 flex-wrap items-baseline gap-3">
+        <!-- 信息容器撑满行内剩余宽度，避免导出渲染时子项宽度取整触发换行错位 -->
+        <div class="flex max-w-full min-w-0 flex-1 flex-wrap items-baseline gap-3">
           <ItemTitle :name="item.name" />
         </div>
         <div class="flex max-w-full min-w-0 flex-wrap items-center gap-2">
@@ -48,9 +62,11 @@ const hasField = (item, key) => {
         </div>
       </div>
       <!-- 次信息行：post / education / mode，不创建临时对象，直接基于原字段渲染 -->
+      <!-- 首行未渲染时由本行承担段间距（内联段距覆盖固定 mt-3） -->
       <div
         class="mt-3 flex max-w-full min-w-0 flex-wrap items-center gap-3"
-        v-if="hasField(item, 'post') || hasField(item, 'education') || hasField(item, 'mode')"
+        :style="subInfoIsFirst(item) ? paragraphSpacingStyle : undefined"
+        v-if="hasSubInfo(item)"
       >
         <template v-if="hasField(item, 'education')">
           <ResumeField :model-value="item.education" />
@@ -67,11 +83,12 @@ const hasField = (item, key) => {
           <ResumeField :model-value="item.mode" />
         </template>
       </div>
-      <!-- 补充描述/经历 -->
+      <!-- 补充描述/经历：成为条目首块时由段间距承担上间距 -->
       <ResumeField
         :model-value="item.content"
         html
         class="mt-3"
+        :style="contentIsFirst(item) ? paragraphSpacingStyle : undefined"
         v-if="!isContentEmpty(item.content)"
       />
     </template>
