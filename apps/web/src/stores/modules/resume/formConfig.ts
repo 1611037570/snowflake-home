@@ -284,6 +284,18 @@ export const DEFAULT_USER_FORM = [
               clearable: true,
             },
           }),
+          // MBTI
+          createMoreField({
+            key: "mbti",
+            label: "MBTI",
+            component: "input",
+            icon: "ph:brain-duotone",
+            addable: true,
+            props: {
+              placeholder: "请输入 MBTI",
+              clearable: true,
+            },
+          }),
           // 求职岗位
           createMoreField({
             key: "position",
