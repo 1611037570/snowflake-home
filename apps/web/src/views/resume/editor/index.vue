@@ -116,9 +116,10 @@ watch(
   { immediate: true },
 );
 
-// 采集简历编辑器首屏首帧
-const { collectFirstFrame } = useRuntimeData();
+// 采集简历编辑器首屏首帧与运行环境
+const { collectFirstFrame, collectEnv } = useRuntimeData();
 collectFirstFrame();
+collectEnv();
 
 // 向下游组件注入简历原始数据，预览层只读使用
 provide("previewData", currentData);
