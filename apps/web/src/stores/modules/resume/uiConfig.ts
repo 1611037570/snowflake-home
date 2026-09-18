@@ -134,6 +134,17 @@ export const datePositionList = [
     value: "right",
   },
 ];
+// 文本对齐列表（正文富文本的水平对齐方式）
+export const textAlignList = [
+  {
+    name: "系统对齐",
+    value: "auto",
+  },
+  {
+    name: "两端对齐",
+    value: "justify",
+  },
+];
 // 日期样式列表（经历日期展示格式）
 export const dateStyleList = [
   {
@@ -189,6 +200,8 @@ export const defaultInfoPosition = "left";
 export const defaultDateStyle = "dot";
 // 默认日期位置
 export const defaultDatePosition = "right";
+// 默认文本对齐
+export const defaultTextAlign = "auto";
 // 默认标题图标开关
 export const defaultTitleIcon = false;
 // ===========参数范围（编辑器滑杆与一页纸压缩共用，只维护这一处）=====================
@@ -245,6 +258,8 @@ export const DEFAULT_UI = {
   dateStyle: defaultDateStyle,
   // 日期位置
   datePosition: defaultDatePosition,
+  // 文本对齐
+  textAlign: defaultTextAlign,
   // 标题图标：开启后在模块标题前展示模块图标
   titleIcon: defaultTitleIcon,
 };
