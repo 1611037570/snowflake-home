@@ -84,17 +84,15 @@ function handleAdd() {
             />
             <EditableTitle v-model="title" />
           </div>
-          <div
-            class="flex items-center opacity-0 transition-all duration-300 group-hover:opacity-100"
-          >
+          <div class="flex items-center">
             <SfTooltip content="定位预览" v-if="!hidden">
               <Icon @click.stop="handlePreviewJump" icon="mdi:map-search-outline" />
             </SfTooltip>
-            <SfTooltip :content="hidden ? '显示' : '隐藏'">
-              <Icon @click.stop="toggleHidden" :icon="hidden ? 'lucide:eye' : 'lucide:eye-off'" />
-            </SfTooltip>
             <SfTooltip content="归档">
               <Icon @click.stop="archiveModule" icon="lucide:archive" size="4" />
+            </SfTooltip>
+            <SfTooltip :content="hidden ? '显示' : '隐藏'">
+              <Icon @click.stop="toggleHidden" :icon="hidden ? 'lucide:eye' : 'lucide:eye-off'" />
             </SfTooltip>
             <Icon
               v-if="currentForm.key !== 'user'"
