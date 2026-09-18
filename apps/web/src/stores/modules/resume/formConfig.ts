@@ -848,10 +848,10 @@ export const DEFAULT_WORK_FORM = {
         fields: [
           {
             type: "object",
-            label: "公司",
+            label: "公司名称",
             component: "input",
             required: true,
-            span: 12,
+            span: 24,
             model: {
               source: ["data", "name"],
               prop: "modelValue",
@@ -859,6 +859,21 @@ export const DEFAULT_WORK_FORM = {
             props: {
               placeholder: "请输入公司",
               clearable: true,
+            },
+          },
+          // 工作标签：可选标签由字段配置注入
+          {
+            type: "object",
+            label: "工作标签",
+            component: "tag",
+            span: 24,
+            model: {
+              source: ["data", "tags"],
+              prop: "modelValue",
+              defaultValue: [],
+            },
+            props: {
+              list: ["核心成员", "团队管理", "独立负责", "跨部门协作", "从0到1"],
             },
           },
           // 所在部门
