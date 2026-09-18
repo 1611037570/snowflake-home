@@ -10,11 +10,10 @@ import {
   isFieldHidden,
 } from "@/components/business/dynamicForm/api";
 import { expandConfigFields } from "@/stores/modules/resume/hooks/useConfigTemplate";
-import MeasureContent from "../components/measureContent.vue";
+import MeasureTree from "./measureTree.vue";
 import PreviewSinglePage from "./previewSinglePage.vue";
 import ResumePageShell from "./resumePageShell.vue";
 import ModuleSlot from "./moduleSlot.vue";
-import { PAGE_NUMBER_HEIGHT, RESUME_CONTAINER_WIDTH, RESUME_HEIGHT } from "../constants";
 import { useResumePages } from "./useResumePages";
 import { useResumeTheme } from "./useResumeTheme";
 import { useResumeStore } from "@/stores";
@@ -185,6 +184,8 @@ const handleModuleMouseEnter = (key) => {
 // 单页组件根元素回传：rootRef 限定导出范围，measureRef 供测量与图片导出
 const setSingleRoot = (el) => (rootRef.value = el);
 const setSingleMeasure = (el) => (measureRef.value = el);
+// 分页模式的测量容器元素回传：与缩略图单页共用同一个 measureRef
+const setMeasureEl = (el) => (measureRef.value = el);
 // 向上暴露导出范围与测量结果，供上层（page.vue）注册的导出/智能一页功能读取
 defineExpose({ rootEl: rootRef, measureEl: measureRef, moduleList, pages });
 </script>
@@ -225,22 +226,16 @@ defineExpose({ rootEl: rootRef, measureEl: measureRef, moduleList, pages });
     <!-- 隐藏的测量容器：用于 useRowInfo 读取行高；多页时存在，缩略图测量完成后销毁 -->
     <!-- 编辑态页面外壳带 1px 边框会收窄内容宽度，测量容器同步补透明边框，保证测量与真实排版宽度一致 -->
     <template v-else>
-      <div
+      <MeasureTree
         v-if="!measureDone"
-        class="fixed -top-999 -left-999 flex h-auto flex-col bg-white text-black"
-        ref="measureRef"
-        :class="[ui.fontFamily, { 'border border-transparent': isEdit }]"
-        :style="[paddingStyle, RESUME_CONTAINER_WIDTH, { minHeight: `${RESUME_HEIGHT}px` }]"
-      >
-        <MeasureContent :all-modules="allModules" />
-        <div
-          v-if="showPageNumber"
-          class="flex flex-1 items-end justify-center py-3 text-xs opacity-50"
-          :style="{ height: `${PAGE_NUMBER_HEIGHT}px` }"
-        >
-          {{ brandText }}
-        </div>
-      </div>
+        :all-modules="allModules"
+        :ui="ui"
+        :padding-style="paddingStyle"
+        :show-page-number="showPageNumber"
+        :brand-text="brandText"
+        :is-edit="isEdit"
+        :on-measure-el="setMeasureEl"
+      />
       <!-- 实际渲染的分页内容 -->
       <div ref="rootRef" class="relative flex flex-col gap-3">
         <ResumePageShell
