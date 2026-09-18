@@ -227,7 +227,8 @@ export const DEFAULT_USER_FORM = [
           {
             source: ["ui", "moreCollapsed"],
             prop: "collapsed",
-            defaultValue: [],
+            // 默认展开，便于直接看到可添加字段
+            defaultValue: EXPANDED,
           },
         ],
         fields: [
