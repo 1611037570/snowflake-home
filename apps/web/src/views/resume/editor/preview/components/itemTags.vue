@@ -7,14 +7,17 @@ defineProps({
   },
 });
 const fontValue = inject("fontValue");
+// 简历主题色与其浅色派生底：标签配色跟随用户选择的主题
+const themeColor = inject < any > "themeColor";
+const themeColorSoft = inject < any > "themeColorSoft";
 </script>
 
 <template>
   <div
     v-for="tag in tags"
     :key="tag"
-    :style="fontValue(-5)"
-    class="flex-c rounded-3xl bg-sf-theme p-1 leading-none text-sf-theme-text"
+    :style="[fontValue(-5), { backgroundColor: themeColorSoft, color: themeColor }]"
+    class="flex-c rounded-3xl p-1 leading-none"
   >
     {{ tag }}
   </div>
