@@ -572,16 +572,31 @@ export const DEFAULT_EDUCATION_FORM = {
         fields: [
           {
             type: "object",
-            label: "学校",
+            label: "学校名称",
             component: "input",
             required: true,
-            span: 12,
+            span: 24,
             model: {
               source: ["data", "name"],
               prop: "modelValue",
             },
             props: {
-              placeholder: "请输入学校",
+              placeholder: "如：北京大学",
+              clearable: true,
+            },
+          },
+          // 学院名称
+          {
+            type: "object",
+            label: "学院名称",
+            component: "input",
+            span: 12,
+            model: {
+              source: ["data", "college"],
+              prop: "modelValue",
+            },
+            props: {
+              placeholder: "请输入学院名称",
               clearable: true,
             },
           },
@@ -589,7 +604,7 @@ export const DEFAULT_EDUCATION_FORM = {
             type: "object",
             label: "学位",
             component: "select",
-            span: 12,
+            span: 6,
             required: true,
             model: [
               {
@@ -611,25 +626,10 @@ export const DEFAULT_EDUCATION_FORM = {
           },
           {
             type: "object",
-            label: "专业",
-            component: "input",
-            required: true,
-            span: 12,
-            model: {
-              source: ["data", "post"],
-              prop: "modelValue",
-            },
-            props: {
-              placeholder: "请输入专业",
-              clearable: true,
-            },
-          },
-          {
-            type: "object",
             label: "学制",
             component: "select",
             required: true,
-            span: 12,
+            span: 6,
             model: [
               {
                 source: ["data", "mode"],
@@ -646,42 +646,6 @@ export const DEFAULT_EDUCATION_FORM = {
               clearable: true,
               filterable: true,
               allowCreate: true,
-            },
-          },
-          // 所在城市：省市字典由业务域注入
-          {
-            type: "object",
-            label: "所在城市",
-            component: "cityPicker",
-            span: 12,
-            model: [
-              {
-                source: ["data", "city"],
-                prop: "modelValue",
-              },
-              {
-                source: ["__options", "city"],
-                prop: "list",
-                raw: true,
-              },
-            ],
-            props: {
-              placeholder: "请选择所在城市",
-            },
-          },
-          // 学院名称
-          {
-            type: "object",
-            label: "学院名称",
-            component: "input",
-            span: 12,
-            model: {
-              source: ["data", "college"],
-              prop: "modelValue",
-            },
-            props: {
-              placeholder: "请输入学院名称",
-              clearable: true,
             },
           },
           {
@@ -717,6 +681,43 @@ export const DEFAULT_EDUCATION_FORM = {
               valueFormat: "YYYY.MM",
               placeholder: "请选择结束时间",
               presentText: "至今",
+            },
+          },
+          {
+            type: "object",
+            label: "专业",
+            component: "input",
+            required: true,
+            span: 12,
+            model: {
+              source: ["data", "post"],
+              prop: "modelValue",
+            },
+            props: {
+              placeholder: "请输入专业",
+              clearable: true,
+            },
+          },
+
+          // 所在城市：省市字典由业务域注入
+          {
+            type: "object",
+            label: "所在城市",
+            component: "cityPicker",
+            span: 12,
+            model: [
+              {
+                source: ["data", "city"],
+                prop: "modelValue",
+              },
+              {
+                source: ["__options", "city"],
+                prop: "list",
+                raw: true,
+              },
+            ],
+            props: {
+              placeholder: "请选择所在城市",
             },
           },
           {
