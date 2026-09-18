@@ -3,12 +3,17 @@ import { moveFieldToContainer } from "@/components/business/dynamicForm/api";
 // 副标题标记上限
 export const MAX_USER_SUBTITLE = 3;
 
-// 读取已标记的副标题字段：按标记序号升序，序号只用于排序，允许出现空洞
+// 读取副标题顺序：user.ui.subtitleOrder 是顺序的唯一来源
 export function getUserSubtitleKeys(ui?: Record<string, any>): string[] {
-  return Object.entries(ui ?? {})
-    .filter(([, config]) => config?.subtitle > 0)
-    .sort((first, second) => first[1].subtitle - second[1].subtitle)
-    .map(([key]) => key);
+  const order = ui?.subtitleOrder;
+  return Array.isArray(order) ? order.filter((key: any) => typeof key === "string") : [];
+}
+
+// 写入副标题顺序：顺序变化只改这一个数组
+export function setUserSubtitleOrder(data: any, keys: string[]) {
+  const ui = data?.user?.ui;
+  if (!ui) return;
+  ui.subtitleOrder = [...keys];
 }
 
 // 字段值是否有内容：空字符串、空数组、空对象都视为无内容
@@ -41,17 +46,15 @@ function locateSubtitleField(moreBox: any, subtitleBox: any, key: string) {
   return { box: undefined, field: undefined };
 }
 
-// 按副标题分区内的字段顺序回写序号：预览按序号在姓名下方依次展示
-export function syncUserSubtitleOrder(data: any, keys: string[]) {
-  const ui = data?.user?.ui;
-  if (!ui) return;
-  keys.forEach((key, index) => {
-    ui[key] ??= {};
-    ui[key].subtitle = index + 1;
-  });
+// 字段是否属于「更多」体系：只有这类字段支持置顶到姓名下方
+export function isUserSubtitleCapable(runtimeConfig: any, key?: string): boolean {
+  if (!key) return false;
+  const moreBox = getUserContainer(runtimeConfig, "more");
+  const subtitleBox = getUserContainer(runtimeConfig, "subtitle");
+  return Boolean(locateSubtitleField(moreBox, subtitleBox, key).field);
 }
 
-// 标记为副标题：字段配置从更多分区移入副标题分区，序号按分区顺序重排
+// 标记为副标题：字段移入副标题分区，并追加到顺序末尾
 export function markUserSubtitle(runtimeConfig: any, data: any, key?: string) {
   if (!key) return false;
   // 无内容的字段不参与置顶，避免分区里出现空行占位
@@ -59,32 +62,28 @@ export function markUserSubtitle(runtimeConfig: any, data: any, key?: string) {
   const moreBox = getUserContainer(runtimeConfig, "more");
   const subtitleBox = getUserContainer(runtimeConfig, "subtitle");
   if (!moreBox || !subtitleBox) return false;
-
   if (!moveFieldToContainer(moreBox, subtitleBox, key)) return false;
-  syncUserSubtitleOrder(
-    data,
-    subtitleBox.fields.map((item: any) => item.key),
-  );
+
+  setUserSubtitleOrder(data, [...getUserSubtitleKeys(data?.user?.ui), key]);
   return true;
 }
 
-// 取消副标题：字段配置移回更多分区末尾，序号按剩余分区顺序重排
+// 取消副标题：字段移回更多分区，并从顺序中移除
 export function unmarkUserSubtitle(runtimeConfig: any, data: any, key?: string) {
   if (!key) return false;
   const moreBox = getUserContainer(runtimeConfig, "more");
   const subtitleBox = getUserContainer(runtimeConfig, "subtitle");
   if (!moreBox || !subtitleBox) return false;
-
   if (!moveFieldToContainer(subtitleBox, moreBox, key)) return false;
-  if (data?.user?.ui?.[key]) data.user.ui[key].subtitle = 0;
-  syncUserSubtitleOrder(
+
+  setUserSubtitleOrder(
     data,
-    subtitleBox.fields.map((item: any) => item.key),
+    getUserSubtitleKeys(data?.user?.ui).filter((item) => item !== key),
   );
   return true;
 }
 
-// 初始化校正：无内容的标记字段取消标记并回到更多分区，有内容的字段迁入副标题分区
+// 初始化校正：无内容字段取消置顶，顺序只保留有内容字段，并让分区按顺序排列
 export function restoreUserSubtitleFields(runtimeConfig: any, data: any) {
   const keys = getUserSubtitleKeys(data?.user?.ui);
   if (!keys.length) return false;
@@ -92,30 +91,29 @@ export function restoreUserSubtitleFields(runtimeConfig: any, data: any) {
   const subtitleBox = getUserContainer(runtimeConfig, "subtitle");
   if (!moreBox || !subtitleBox) return false;
 
-  let changed = false;
+  const kept: string[] = [];
+  let moved = false;
   keys.forEach((key) => {
     const { box, field } = locateSubtitleField(moreBox, subtitleBox, key);
     if (!box || !field) return;
 
-    // 无内容：取消标记并回到更多分区，避免空内容占位且无法重新添加
+    // 无内容：字段回到更多分区，且不进入顺序
     if (!hasUserFieldContent(data, key)) {
-      const moved = moveFieldToContainer(box, moreBox, key);
-      if (data?.user?.ui?.[key]) data.user.ui[key].subtitle = 0;
-      changed = moved || changed;
+      moved = moveFieldToContainer(box, moreBox, key) || moved;
       return;
     }
-    // 有内容但仍留在更多分区：迁入副标题分区
-    if (box === moreBox && moveFieldToContainer(moreBox, subtitleBox, key)) changed = true;
+    if (box === moreBox) moved = moveFieldToContainer(moreBox, subtitleBox, key) || moved;
+    kept.push(key);
   });
-  if (!changed) return false;
 
+  const orderChanged = kept.length !== keys.length;
+  if (orderChanged) setUserSubtitleOrder(data, kept);
+  if (!moved && !orderChanged) return false;
+
+  // 分区内字段按顺序数组排列，保证编辑区渲染顺序与预览一致
   const ordered = [...subtitleBox.fields].sort(
-    (first: any, second: any) => keys.indexOf(first.key) - keys.indexOf(second.key),
+    (first: any, second: any) => kept.indexOf(first.key) - kept.indexOf(second.key),
   );
   subtitleBox.fields.splice(0, subtitleBox.fields.length, ...ordered);
-  syncUserSubtitleOrder(
-    data,
-    subtitleBox.fields.map((item: any) => item.key),
-  );
   return true;
 }

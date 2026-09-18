@@ -10,6 +10,7 @@ import {
 import {
   getUserSubtitleKeys,
   hasUserFieldContent,
+  isUserSubtitleCapable,
   markUserSubtitle,
   unmarkUserSubtitle,
   MAX_USER_SUBTITLE,
@@ -34,8 +35,6 @@ const { currentForm, hasFieldData, removeField } = useFormContext();
 const hidden = defineModel<boolean | undefined>("hidden");
 // 字段图标：绑定被包裹字段的图标路径，未声明绑定时不渲染图标选择
 const icon = defineModel<string | undefined>("icon");
-// 副标题标记：序号存在字段自身的界面配置里，未标记为 0
-const subtitleOrder = defineModel<number | undefined>("subtitleOrder");
 // 被包裹的字段：数据绑定与渲染条件以字段自身配置为准
 const field = computed(() => currentForm.value?.fields?.[0]);
 // 字段标识：包裹组与内层字段共用同一标识
@@ -47,8 +46,12 @@ const renderable = computed(() => !field.value?.addable || hasFieldData(field.va
 // 简历运行时配置与数据：副标题标记、自定义字段的重命名与删除都落在配置与数据上
 const resumeStore = useResumeStore();
 const { runtimeConfig, currentData } = storeToRefs(resumeStore);
-// 当前字段是否为副标题
-const isSubtitle = computed(() => (subtitleOrder.value ?? 0) > 0);
+// 当前字段是否已置顶：以顺序数组为唯一判据
+const isSubtitle = computed(() =>
+  getUserSubtitleKeys(currentData.value?.user?.ui).includes(fieldKey.value ?? ""),
+);
+// 字段属于「更多」体系时支持置顶到姓名下方
+const subtitleCapable = computed(() => isUserSubtitleCapable(runtimeConfig.value, fieldKey.value));
 // 已标记的副标题数量：上限按标记个数判断，与序号是否连续无关
 const subtitleCount = computed(() => getUserSubtitleKeys(currentData.value?.user?.ui).length);
 // 副标题已达上限且当前字段未标记
@@ -125,7 +128,7 @@ const clearField = () => {
     </div>
     <!-- 操作区固定在右侧，避免字段宽度变化导致按钮位移 -->
     <div
-      v-if="hidden !== undefined || removable || subtitleOrder !== undefined"
+      v-if="hidden !== undefined || removable || subtitleCapable"
       class="flex shrink-0 items-center"
     >
       <!-- 重命名仅对自定义字段开放：预设字段标题来自模板配置，不会持久化 -->
@@ -137,7 +140,7 @@ const clearField = () => {
       />
       <SfTooltip :content="subtitleTip">
         <Icon
-          v-if="subtitleOrder !== undefined"
+          v-if="subtitleCapable"
           @pointerdown.stop.prevent
           @click="toggleSubtitle"
           icon="lucide:heading-2"

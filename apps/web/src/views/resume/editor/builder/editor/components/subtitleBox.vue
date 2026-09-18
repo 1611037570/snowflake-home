@@ -5,7 +5,7 @@ import {
   getUserSubtitleKeys,
   hasUserFieldContent,
   restoreUserSubtitleFields,
-  syncUserSubtitleOrder,
+  setUserSubtitleOrder,
 } from "@/stores/modules/resume/hooks/useUserSubtitle";
 import { storeToRefs } from "pinia";
 
@@ -17,12 +17,12 @@ const { runtimeConfig, currentData } = storeToRefs(useResumeStore());
 const renderable = computed(() =>
   (currentForm.value?.fields ?? []).some((field) => hasUserFieldContent(currentData.value, field.key)),
 );
-// 分区内字段顺序：拖拽结束后按顺序回写序号，预览据此在姓名下方依次展示
+// 分区内字段顺序：拖拽结束后写回顺序数组，顺序数组是唯一来源
 const fieldKeys = computed(() =>
   (currentForm.value?.fields ?? []).map((field) => field.key).join(","),
 );
 
-// 编辑器初始化时迁移历史数据：已标记但仍留在更多分区的字段搬入本分区
+// 编辑器初始化时校正：无内容字段取消置顶，有内容字段迁入本分区
 onMounted(() => {
   if (!runtimeConfig.value || !currentData.value) return;
   if (!getUserSubtitleKeys(currentData.value?.user?.ui).length) return;
@@ -30,7 +30,7 @@ onMounted(() => {
 });
 
 watch(fieldKeys, () => {
-  syncUserSubtitleOrder(
+  setUserSubtitleOrder(
     currentData.value,
     (currentForm.value?.fields ?? []).map((field) => field.key),
   );
