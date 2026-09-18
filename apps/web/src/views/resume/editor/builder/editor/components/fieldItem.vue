@@ -9,6 +9,7 @@ import {
 } from "@/stores/modules/resume/hooks/useUserCustomField";
 import {
   getUserSubtitleKeys,
+  isEmptyFieldValue,
   markUserSubtitle,
   unmarkUserSubtitle,
   MAX_USER_SUBTITLE,
@@ -52,10 +53,12 @@ const isSubtitle = computed(() => (subtitleOrder.value ?? 0) > 0);
 const subtitleCount = computed(() => getUserSubtitleKeys(currentData.value?.user?.ui).length);
 // 副标题已达上限且当前字段未标记
 const subtitleFull = computed(() => !isSubtitle.value && subtitleCount.value >= MAX_USER_SUBTITLE);
-// 副标题按钮提示：区分取消、已达上限与可标记
+// 副标题按钮提示：区分取消、已达上限、内容为空与可标记
 const subtitleTip = computed(() => {
   if (isSubtitle.value) return "取消副标题";
-  return subtitleFull.value ? `最多标记 ${MAX_USER_SUBTITLE} 个副标题` : "标记为副标题";
+  if (subtitleFull.value) return `最多标记 ${MAX_USER_SUBTITLE} 个副标题`;
+  if (isEmptyFieldValue(currentData.value?.user?.data?.[fieldKey.value])) return "填写内容后可置顶";
+  return "标记为副标题";
 });
 // 重命名弹窗与临时标题
 const showRenameModal = ref(false);
