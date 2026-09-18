@@ -588,7 +588,6 @@ export const DEFAULT_EDUCATION_FORM = {
           // 学校标签：可选标签由字段配置注入
           {
             type: "object",
-            label: "学校标签",
             component: "tag",
             span: 24,
             model: {
@@ -864,7 +863,6 @@ export const DEFAULT_WORK_FORM = {
           // 工作标签：可选标签由字段配置注入
           {
             type: "object",
-            label: "工作标签",
             component: "tag",
             span: 24,
             model: {
@@ -1044,7 +1042,6 @@ export const DEFAULT_PROJECT_FORM = {
           // 项目标签：可选标签由字段配置注入
           {
             type: "object",
-            label: "项目标签",
             component: "tag",
             span: 24,
             model: {
