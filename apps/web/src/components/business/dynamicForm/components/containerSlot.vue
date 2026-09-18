@@ -4,7 +4,7 @@
     v-if="!currentForm.component"
     v-model:items="currentForm"
     :pathContext="pathContext"
-    :class="currentForm.rowClass"
+    :class="currentForm.rowClass || DEFAULT_ROW_CLASS"
   />
   <!-- 分组有包裹组件：渲染组件并在槽内递归渲染子字段 -->
   <component
@@ -21,7 +21,7 @@
       <FormRenderer
         v-model:items="currentForm"
         :pathContext="pathContext"
-        :class="currentForm.rowClass"
+        :class="currentForm.rowClass || DEFAULT_ROW_CLASS"
       />
     </template>
   </component>
@@ -32,6 +32,7 @@ import { isString } from "@/utils";
 import type { DataPathContext } from "../code/pathContext";
 import { DF_ROOT_DATA } from "../code/injectionKeys.ts";
 import { getComponent } from "../code/getComponent.ts";
+import { DEFAULT_ROW_CLASS } from "../code/formItemStyle";
 import { provideContainerContext } from "../code/provideContainerContext";
 import FormRenderer from "./formRenderer.vue";
 
