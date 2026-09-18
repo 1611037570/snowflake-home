@@ -12,6 +12,8 @@ describe("checkForm", () => {
   it("分组字段校验 fields", () => {
     expect(checkForm({ type: "group", fields: [{ type: "object" }] })).toBe(true);
     expect(checkForm({ type: "group", fields: [] })).toBe("缺少 fields");
+    // 带包裹组件的容器字段由业务在运行时填充，允许暂时为空
+    expect(checkForm({ type: "group", component: "subtitleBox", fields: [] })).toBe(true);
   });
 
   it("数组字段校验 itemSchema", () => {
