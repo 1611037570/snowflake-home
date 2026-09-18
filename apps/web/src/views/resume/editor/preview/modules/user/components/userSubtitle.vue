@@ -6,6 +6,8 @@ import { useUserFieldVisibility } from "../useUserFieldVisibility";
 
 // 副标题：渲染编辑器中标记的字段值，按标记序号在姓名下方并排展示
 const previewData = inject("previewData");
+const fontValue = inject("fontValue");
+const lineHeightValue = inject("lineHeightValue");
 const user = computed(() => previewData.value?.user?.data || {});
 // 已标记的副标题字段：按标记序号升序
 const subtitleKeys = computed(() => getUserSubtitleKeys(previewData.value?.user?.ui));
@@ -32,7 +34,8 @@ const items = computed(() => subtitleKeys.value.map((key) => textOf(key)).filter
 <template>
   <div
     v-if="items.length"
-    class="flex max-w-full min-w-0 flex-wrap items-center gap-3 font-normal"
+    :style="[fontValue(), lineHeightValue()]"
+    class="mt-3 flex max-w-full min-w-0 flex-wrap items-center gap-3 font-normal"
   >
     <ResumeField v-for="(item, index) in items" :key="index" :model-value="item" />
   </div>
