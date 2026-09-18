@@ -92,7 +92,7 @@ const handleConfirm = () => {
       v-for="item in moduleOptions"
       :key="item.name"
       type="button"
-      class="border-sf-border flex h-9 cursor-pointer items-center justify-center gap-1 rounded-3xl border bg-sf-primary px-3 text-sm text-sf-text-2 transition-colors hover:border-sf-theme hover:text-sf-theme"
+      class="border-sf-border flex h-7 cursor-pointer items-center justify-center gap-1 rounded-3xl border bg-sf-primary px-2 text-xs text-sf-text-2 transition-colors hover:border-sf-theme hover:text-sf-theme"
       :class="item.value === 'custom' ? 'border-dashed' : ''"
       @click="handleAdd(item)"
     >
