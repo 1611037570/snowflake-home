@@ -76,7 +76,7 @@ const confirmCustom = () => {
     </template>
     <span
       v-else
-      class="cursor-pointer rounded-3xl border border-dashed border-sf-border px-3 py-1 text-sm text-sf-text-2 transition-colors hover:border-sf-theme hover:text-sf-theme"
+      class="cursor-pointer rounded-3xl border border-sf-border px-3 py-1 text-sm text-sf-text-2 transition-colors hover:border-sf-theme hover:text-sf-theme"
       @click="openCustom"
     >
       自定义
