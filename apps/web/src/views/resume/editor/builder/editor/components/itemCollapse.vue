@@ -39,9 +39,7 @@ function del() {
             <Icon icon="icon-park-outline:drag" class="item-drag cursor-move!" />
             {{ displayTitle }}
           </div>
-          <div
-            class="flex items-center opacity-0 transition-all duration-300 group-hover:opacity-100"
-          >
+          <div class="flex items-center">
             <SfTooltip :content="hidden ? '显示' : '隐藏'">
               <Icon
                 :icon="hidden ? 'lucide:eye' : 'lucide:eye-off'"

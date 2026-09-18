@@ -1,6 +1,7 @@
 <script setup>
 import { getCurrentInstance } from "vue";
 import { useFormContext } from "@/components/business/dynamicForm/api";
+import Icon from "../icon.vue";
 
 const { proxy } = getCurrentInstance();
 
@@ -38,19 +39,11 @@ const removeHonor = () => {
       <SfInput v-model="name" placeholder="荣誉证书名称" />
     </div>
     <!-- 隐藏当前荣誉证书 -->
-    <SfIcon
-      :icon="hidden ? 'lucide:eye' : 'lucide:eye-off'"
-      size="4"
-      class="shrink-0 cursor-pointer rounded-lg transition-colors hover:text-sf-theme"
-      @click.stop="hidden = !hidden"
-    />
+    <SfTooltip :content="hidden ? '显示' : '隐藏'">
+      <Icon :icon="hidden ? 'lucide:eye' : 'lucide:eye-off'" @click.stop="hidden = !hidden" />
+    </SfTooltip>
     <!-- 删除按钮 -->
-    <SfIcon
-      icon="ic:round-delete"
-      size="4"
-      class="shrink-0 cursor-pointer rounded-lg transition-colors hover:text-sf-theme"
-      @click="removeHonor"
-    />
+    <Icon icon="ic:round-delete" @click="removeHonor" />
   </div>
 </template>
 
