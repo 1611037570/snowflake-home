@@ -1016,7 +1016,7 @@ export const DEFAULT_PROJECT_FORM = {
             label: "项目名称",
             component: "input",
             required: true,
-            span: 12,
+            span: 24,
             model: {
               source: ["data", "name"],
               prop: "modelValue",
@@ -1024,6 +1024,21 @@ export const DEFAULT_PROJECT_FORM = {
             props: {
               placeholder: "请输入项目名称",
               clearable: true,
+            },
+          },
+          // 项目标签：可选标签由字段配置注入
+          {
+            type: "object",
+            label: "项目标签",
+            component: "tag",
+            span: 24,
+            model: {
+              source: ["data", "tags"],
+              prop: "modelValue",
+              defaultValue: [],
+            },
+            props: {
+              list: ["核心项目", "独立负责", "已上线", "开源项目", "团队协作"],
             },
           },
           // 所在部门

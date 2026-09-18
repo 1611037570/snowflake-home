@@ -6,6 +6,7 @@ import { isContentEmpty } from "../modules/validData";
 import { getTime } from "../../utils";
 import { getValidData } from "./validData";
 import ItemTitle from "../components/itemTitle.vue";
+import ItemTags from "../components/itemTags.vue";
 
 // 从上层注入获取原始简历数据
 const previewData = inject("previewData");
@@ -67,15 +68,8 @@ const contentIsFirst = (item) => !hasItemHeader(item) && !hasSubInfo(item);
           <ResumeField v-if="hasField(item, 'college')" :model-value="item.college" />
           <ResumeField v-if="hasField(item, 'education')" :model-value="item.education" />
           <ResumeField v-if="hasField(item, 'mode')" :model-value="item.mode" />
-          <!-- 学校标签：跟随首行排布，锁死自身行高避免被主题行高撑高 -->
-          <div
-            v-for="tag in item.tags || []"
-            :key="tag"
-            :style="fontValue(-5)"
-            class="flex-c rounded-3xl bg-sf-theme p-1 leading-none text-sf-theme-text"
-          >
-            {{ tag }}
-          </div>
+          <!-- 学校标签：跟随首行排布 -->
+          <ItemTags :tags="item.tags" />
         </div>
         <div class="flex max-w-full min-w-0 flex-wrap items-center gap-2">
           <span>{{ getTime(item.startTime, item.endTime, dateStyle) }}</span>
