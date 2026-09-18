@@ -846,21 +846,6 @@ export const DEFAULT_WORK_FORM = {
               clearable: true,
             },
           },
-          {
-            type: "object",
-            label: "岗位",
-            component: "input",
-            required: true,
-            span: 12,
-            model: {
-              source: ["data", "post"],
-              prop: "modelValue",
-            },
-            props: {
-              placeholder: "请输入岗位",
-              clearable: true,
-            },
-          },
           // 所在部门
           {
             type: "object",
@@ -874,27 +859,6 @@ export const DEFAULT_WORK_FORM = {
             props: {
               placeholder: "请输入所在部门",
               clearable: true,
-            },
-          },
-          // 所在城市：省市字典由业务域注入
-          {
-            type: "object",
-            label: "所在城市",
-            component: "cityPicker",
-            span: 12,
-            model: [
-              {
-                source: ["data", "city"],
-                prop: "modelValue",
-              },
-              {
-                source: ["__options", "city"],
-                prop: "list",
-                raw: true,
-              },
-            ],
-            props: {
-              placeholder: "请选择所在城市",
             },
           },
           {
@@ -930,6 +894,42 @@ export const DEFAULT_WORK_FORM = {
               valueFormat: "YYYY.MM",
               placeholder: "请选择结束时间",
               presentText: "至今",
+            },
+          },
+          {
+            type: "object",
+            label: "岗位",
+            component: "input",
+            required: true,
+            span: 12,
+            model: {
+              source: ["data", "post"],
+              prop: "modelValue",
+            },
+            props: {
+              placeholder: "请输入岗位",
+              clearable: true,
+            },
+          },
+          // 所在城市：省市字典由业务域注入
+          {
+            type: "object",
+            label: "所在城市",
+            component: "cityPicker",
+            span: 12,
+            model: [
+              {
+                source: ["data", "city"],
+                prop: "modelValue",
+              },
+              {
+                source: ["__options", "city"],
+                prop: "list",
+                raw: true,
+              },
+            ],
+            props: {
+              placeholder: "请选择所在城市",
             },
           },
           {
@@ -1011,21 +1011,6 @@ export const DEFAULT_PROJECT_FORM = {
               clearable: true,
             },
           },
-          {
-            type: "object",
-            label: "岗位",
-            component: "input",
-            required: true,
-            span: 12,
-            model: {
-              source: ["data", "post"],
-              prop: "modelValue",
-            },
-            props: {
-              placeholder: "请输入岗位",
-              clearable: true,
-            },
-          },
           // 所在部门
           {
             type: "object",
@@ -1039,27 +1024,6 @@ export const DEFAULT_PROJECT_FORM = {
             props: {
               placeholder: "请输入所在部门",
               clearable: true,
-            },
-          },
-          // 所在城市：省市字典由业务域注入
-          {
-            type: "object",
-            label: "所在城市",
-            component: "cityPicker",
-            span: 12,
-            model: [
-              {
-                source: ["data", "city"],
-                prop: "modelValue",
-              },
-              {
-                source: ["__options", "city"],
-                prop: "list",
-                raw: true,
-              },
-            ],
-            props: {
-              placeholder: "请选择所在城市",
             },
           },
           {
@@ -1095,6 +1059,42 @@ export const DEFAULT_PROJECT_FORM = {
               valueFormat: "YYYY.MM",
               placeholder: "请选择结束时间",
               presentText: "至今",
+            },
+          },
+          {
+            type: "object",
+            label: "岗位",
+            component: "input",
+            required: true,
+            span: 12,
+            model: {
+              source: ["data", "post"],
+              prop: "modelValue",
+            },
+            props: {
+              placeholder: "请输入岗位",
+              clearable: true,
+            },
+          },
+          // 所在城市：省市字典由业务域注入
+          {
+            type: "object",
+            label: "所在城市",
+            component: "cityPicker",
+            span: 12,
+            model: [
+              {
+                source: ["data", "city"],
+                prop: "modelValue",
+              },
+              {
+                source: ["__options", "city"],
+                prop: "list",
+                raw: true,
+              },
+            ],
+            props: {
+              placeholder: "请选择所在城市",
             },
           },
           {
