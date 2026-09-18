@@ -20,6 +20,8 @@ import Video from "./components/video.vue";
 
 const resumeStore = useResumeStore();
 const { currentData, runtimeConfig } = storeToRefs(resumeStore);
+// 编辑区加载开始：组件初始化即记录，作为编辑区加载耗时起点
+resumeStore.setRuntimeData("editorStart", Math.round(performance.now()));
 
 // 注入到动态表单的自定义组件库
 const dynamicComponents = {
@@ -46,6 +48,8 @@ const finishConfigSync = () => {
   syncItem = null;
   resumeStore.enableHistory();
   resumeStore.setConfigSyncing(false);
+  // 编辑区表单渲染完成：记录加载完成时间
+  resumeStore.setRuntimeData("editorEnd", Math.round(performance.now()));
 };
 watch(
   () => currentItem.value,
