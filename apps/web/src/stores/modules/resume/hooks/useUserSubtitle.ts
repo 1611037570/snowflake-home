@@ -1,3 +1,5 @@
+import { moveFieldToContainer } from "@/components/business/dynamicForm/api";
+
 // 副标题标记上限
 export const MAX_USER_SUBTITLE = 3;
 
@@ -58,11 +60,7 @@ export function markUserSubtitle(runtimeConfig: any, data: any, key?: string) {
   const subtitleBox = getUserContainer(runtimeConfig, "subtitle");
   if (!moreBox || !subtitleBox) return false;
 
-  const index = moreBox.fields?.findIndex((field: any) => field?.key === key) ?? -1;
-  if (index < 0) return false;
-
-  const [field] = moreBox.fields.splice(index, 1);
-  subtitleBox.fields.push(field);
+  if (!moveFieldToContainer(moreBox, subtitleBox, key)) return false;
   syncUserSubtitleOrder(
     data,
     subtitleBox.fields.map((item: any) => item.key),
@@ -77,11 +75,7 @@ export function unmarkUserSubtitle(runtimeConfig: any, data: any, key?: string) 
   const subtitleBox = getUserContainer(runtimeConfig, "subtitle");
   if (!moreBox || !subtitleBox) return false;
 
-  const index = subtitleBox.fields?.findIndex((field: any) => field?.key === key) ?? -1;
-  if (index < 0) return false;
-
-  const [field] = subtitleBox.fields.splice(index, 1);
-  moreBox.fields.push(field);
+  if (!moveFieldToContainer(subtitleBox, moreBox, key)) return false;
   if (data?.user?.ui?.[key]) data.user.ui[key].subtitle = 0;
   syncUserSubtitleOrder(
     data,
@@ -105,18 +99,13 @@ export function restoreUserSubtitleFields(runtimeConfig: any, data: any) {
 
     // 无内容：取消标记并回到更多分区，避免空内容占位且无法重新添加
     if (!hasUserFieldContent(data, key)) {
-      box.fields.splice(box.fields.indexOf(field), 1);
-      moreBox.fields.push(field);
+      const moved = moveFieldToContainer(box, moreBox, key);
       if (data?.user?.ui?.[key]) data.user.ui[key].subtitle = 0;
-      changed = true;
+      changed = moved || changed;
       return;
     }
     // 有内容但仍留在更多分区：迁入副标题分区
-    if (box === moreBox) {
-      moreBox.fields.splice(moreBox.fields.indexOf(field), 1);
-      subtitleBox.fields.push(field);
-      changed = true;
-    }
+    if (box === moreBox && moveFieldToContainer(moreBox, subtitleBox, key)) changed = true;
   });
   if (!changed) return false;
 

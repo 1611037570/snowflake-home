@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import type { FormField } from "../types";
-import { applyVisibleOrder, keepFixedFirst, moveFieldByKey } from "./orderData";
+import { applyVisibleOrder, keepFixedFirst, moveFieldByKey, moveFieldToContainer } from "./orderData";
 
 describe("orderData", () => {
   it("按可见顺序回填完整列表，未渲染项保留原槽位", () => {
@@ -100,5 +100,26 @@ describe("moveFieldByKey", () => {
 
     expect(moveFieldByKey(fields, "丙", "甲", "after")).toBe(true);
     expect(keysOf(fields)).toEqual(["甲", "丙", "乙"]);
+  });
+});
+
+describe("moveFieldToContainer", () => {
+  it("把字段从来源容器移到目标容器末尾", () => {
+    const from = { fields: createFields(["甲", "乙"]) };
+    const to = { fields: createFields(["丙"]) };
+
+    expect(moveFieldToContainer(from, to, "甲")).toBe(true);
+    expect(keysOf(from.fields)).toEqual(["乙"]);
+    expect(keysOf(to.fields)).toEqual(["丙", "甲"]);
+  });
+
+  it("字段不存在或两个容器相同时不做修改", () => {
+    const from = { fields: createFields(["甲"]) };
+    const to = { fields: createFields(["乙"]) };
+
+    expect(moveFieldToContainer(from, to, "丙")).toBe(false);
+    expect(moveFieldToContainer(from, from, "甲")).toBe(false);
+    expect(keysOf(from.fields)).toEqual(["甲"]);
+    expect(keysOf(to.fields)).toEqual(["乙"]);
   });
 });
