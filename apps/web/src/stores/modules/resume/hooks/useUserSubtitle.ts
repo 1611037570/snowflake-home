@@ -18,6 +18,12 @@ export function isEmptyFieldValue(value: any): boolean {
   return false;
 }
 
+// 个人信息字段是否有可展示内容：置顶校验、回收清理与分区渲染共用同一判据
+export function hasUserFieldContent(data: any, key?: string): boolean {
+  if (!key) return false;
+  return !isEmptyFieldValue(data?.user?.data?.[key]);
+}
+
 // 在个人信息模块内按标识定位字段容器
 function getUserContainer(runtimeConfig: any, key: string) {
   const userField = runtimeConfig?.fields?.find((field: any) => field?.key === "user");
@@ -47,7 +53,7 @@ export function syncUserSubtitleOrder(data: any, keys: string[]) {
 export function markUserSubtitle(runtimeConfig: any, data: any, key?: string) {
   if (!key) return false;
   // 无内容的字段不参与置顶，避免分区里出现空行占位
-  if (isEmptyFieldValue(data?.user?.data?.[key])) return false;
+  if (!hasUserFieldContent(data, key)) return false;
   const moreBox = getUserContainer(runtimeConfig, "more");
   const subtitleBox = getUserContainer(runtimeConfig, "subtitle");
   if (!moreBox || !subtitleBox) return false;
@@ -98,7 +104,7 @@ export function restoreUserSubtitleFields(runtimeConfig: any, data: any) {
     if (!box || !field) return;
 
     // 无内容：取消标记并回到更多分区，避免空内容占位且无法重新添加
-    if (isEmptyFieldValue(data?.user?.data?.[key])) {
+    if (!hasUserFieldContent(data, key)) {
       box.fields.splice(box.fields.indexOf(field), 1);
       moreBox.fields.push(field);
       if (data?.user?.ui?.[key]) data.user.ui[key].subtitle = 0;

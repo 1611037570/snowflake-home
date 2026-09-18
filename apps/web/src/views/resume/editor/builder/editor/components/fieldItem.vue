@@ -9,7 +9,7 @@ import {
 } from "@/stores/modules/resume/hooks/useUserCustomField";
 import {
   getUserSubtitleKeys,
-  isEmptyFieldValue,
+  hasUserFieldContent,
   markUserSubtitle,
   unmarkUserSubtitle,
   MAX_USER_SUBTITLE,
@@ -57,7 +57,7 @@ const subtitleFull = computed(() => !isSubtitle.value && subtitleCount.value >= 
 const subtitleTip = computed(() => {
   if (isSubtitle.value) return "取消副标题";
   if (subtitleFull.value) return `最多标记 ${MAX_USER_SUBTITLE} 个副标题`;
-  if (isEmptyFieldValue(currentData.value?.user?.data?.[fieldKey.value])) return "填写内容后可置顶";
+  if (!hasUserFieldContent(currentData.value, fieldKey.value)) return "填写内容后可置顶";
   return "标记为副标题";
 });
 // 重命名弹窗与临时标题
