@@ -14,6 +14,12 @@ export const RESUME_VALUE_OPTIONS = {
     { name: "离职", value: "离职" },
     { name: "应届生", value: "应届生" },
   ],
+  // 婚姻状况
+  marital: [
+    { name: "未婚", value: "未婚" },
+    { name: "已婚", value: "已婚" },
+    { name: "离异", value: "离异" },
+  ],
   // 政治面貌
   political: [
     { name: "共产党员", value: "共产党员" },

@@ -246,6 +246,19 @@ export const DEFAULT_USER_FORM = [
               clearable: true,
             },
           }),
+          // 婚姻状况
+          createMoreField({
+            key: "marital",
+            label: "婚姻状况",
+            component: "select",
+            icon: "mdi:heart-outline",
+            addable: true,
+            dict: "marital",
+            props: {
+              placeholder: "请选择婚姻状况",
+              clearable: true,
+            },
+          }),
           // 求职岗位
           createMoreField({
             key: "position",
