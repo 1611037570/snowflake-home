@@ -52,7 +52,14 @@ const doBackup = async () => {
 
 // 简历数据变化后防抖执行备份
 const debouncedBackup = useDebounceFn(doBackup, 3000);
-watch(currentItem, debouncedBackup, { deep: true });
+// 订阅简历内容变更脉冲：编辑中不调度，停顿后统一备份，避免对整份简历做深监听
+watch(
+  () => [resumeStore.isEditing, resumeStore.contentVersion],
+  () => {
+    if (resumeStore.isEditing) return;
+    debouncedBackup();
+  },
+);
 
 // 初始化绑定状态
 onMounted(async () => {

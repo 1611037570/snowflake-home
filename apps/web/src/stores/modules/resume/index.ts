@@ -54,15 +54,19 @@ export const useResumeStore = defineStore(
     const getResumeStorage = (id: string, initialValue: any = null, writeDefaults = false) => {
       const existing = resumeStorageMap.get(id);
       if (existing) return existing;
-      // 关闭内置深监听自动写入，改由下方防抖手动写入，避免每次按键都触发整份简历的存储写入
-      const storage = useIDBKeyval(resumeStorageKey(id), initialValue, { writeDefaults, deep: false });
-      // 简历内容变化后 200ms 防抖写入 IndexedDB，把连续编辑合并为一次写入
-      const persistResume = debounce(() => {
-        void storage.set(storage.data.value);
-      }, 200);
-      watch(storage.data, persistResume, { deep: true });
+      // 关闭内置深监听自动写入，改由统一的内容变更监听防抖写入，避免每次按键都触发整份简历的存储写入
+      const storage = useIDBKeyval(resumeStorageKey(id), initialValue, {
+        writeDefaults,
+        deep: false,
+      });
       resumeStorageMap.set(id, storage);
       return storage;
+    };
+    // 指定简历写回 IndexedDB：非当前简历（如回收站）的改动不在内容变更监听范围内，需显式落库
+    const persistResumeItem = (item: any) => {
+      if (!item?.id) return;
+      const storage = resumeStorageMap.get(item.id);
+      if (storage) void storage.set(storage.data.value);
     };
     const waitForResumeStorage = (storage: any) => {
       if (storage.isFinished.value) return Promise.resolve();
@@ -220,6 +224,20 @@ export const useResumeStore = defineStore(
       const item = currentItem.value;
       return item ? item.data : undefined;
     });
+
+    // 待落库简历：防抖回调执行时当前简历可能已切换，按简历记录避免丢失上一次的待写入内容
+    const pendingPersistItems = new Map<string, any>();
+    // 200ms 防抖把连续编辑合并为一次写入，逐份写回 IndexedDB
+    const flushPendingPersist = debounce(() => {
+      pendingPersistItems.forEach((item) => persistResumeItem(item));
+      pendingPersistItems.clear();
+    }, 200);
+    // 将指定简历排入落库队列
+    const schedulePersistResume = (item: any) => {
+      if (!item?.id) return;
+      pendingPersistItems.set(item.id, item);
+      flushPendingPersist();
+    };
 
     // 获取当前选中的表单配置
     const currentConfig = computed({
@@ -515,6 +533,8 @@ export const useResumeStore = defineStore(
       const deletedItem = list.value[currentIndex.value];
       deletedItem._deletedAt = Date.now();
       trashList.value.push(deletedItem);
+      // 删除时间需立即落库：回收站按 _deletedAt 判断是否过期，该项已移出当前简历监听范围
+      persistResumeItem(deletedItem);
       // 简历删除后同步清理该简历的助手对话
       useAiStore().removeResumeAssistantChats(deletedItem.id);
       list.value.splice(currentIndex.value, 1);
@@ -533,6 +553,8 @@ export const useResumeStore = defineStore(
       delete item._deletedAt;
       list.value.push(item);
       trashList.value.splice(trashIndex, 1);
+      // 恢复后需立即落库：该项已不在当前简历监听范围，避免刷新后又按旧删除时间被清理
+      persistResumeItem(item);
       syncResumeIds();
       syncTrashResumeIds();
     };
@@ -723,10 +745,24 @@ export const useResumeStore = defineStore(
       return initPromise;
     };
 
-    // 监听当前简历内容变化（data/config/ui 任意嵌套字段），冒泡记录撤销历史
+    // 内容变更脉冲：整份简历任一嵌套字段变化后自增，供派生逻辑在编辑停顿后统一刷新
+    const contentVersion = ref(0);
+    // 是否处于编辑中：内容变化后置真，停顿 EDIT_IDLE_DELAY 后置否
+    const isEditing = ref(false);
+    const EDIT_IDLE_DELAY = 400;
+    const markEditingIdle = debounce(() => (isEditing.value = false), EDIT_IDLE_DELAY);
+    // 唯一的简历内容变更来源：整份 currentItem 的 data/config/ui 任一嵌套字段变化都收敛到这里
     watch(
       () => currentItem.value,
       (item) => {
+        // 广播变更脉冲后由各派生逻辑统一订阅处理
+        contentVersion.value += 1;
+        isEditing.value = true;
+        markEditingIdle();
+        // 无选中简历时只广播，不落库也不入历史
+        if (!item) return;
+        // 内容变化写回 IndexedDB（内部防抖合并连续编辑）
+        schedulePersistResume(item);
         // 历史开关关闭时暂停记录（初始化、同步及离开编辑器期间的变更不入历史）
         if (!historyEnabled.value) return;
         // 撤销/重做恢复触发的变化：消费标志并跳过，避免恢复动作又入栈
@@ -734,8 +770,8 @@ export const useResumeStore = defineStore(
           skipNextWatch = false;
           return;
         }
-        // 无选中简历或尚未建立基准快照时忽略
-        if (!item || !lastSnapshot) return;
+        // 尚未建立基准快照时忽略
+        if (!lastSnapshot) return;
         // 防抖记录历史：序列化比较与深拷贝延迟到停顿后统一执行
         recordHistory(item);
       },
@@ -808,6 +844,8 @@ export const useResumeStore = defineStore(
       setConfigSyncing,
       previewSyncing,
       setPreviewSyncing,
+      contentVersion,
+      isEditing,
       resetSettings,
     };
   },
