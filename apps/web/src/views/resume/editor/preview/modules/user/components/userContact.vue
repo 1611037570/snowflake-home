@@ -165,6 +165,13 @@ const secondaryItems = computed(() => {
       label: getPreviewText("zodiacLabel", previewLang.value),
     });
   }
+  if (!isUserFieldHidden("mbti") && user.value?.mbti) {
+    items.push({
+      key: "mbti",
+      icon: fieldIcon("mbti"),
+      label: getPreviewText("mbtiLabel", previewLang.value),
+    });
+  }
   if (!isUserFieldHidden("city") && user.value?.city) {
     items.push({
       key: "city",
