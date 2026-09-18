@@ -42,7 +42,15 @@ export interface FieldUIConfig {
   removable?: boolean;
 }
 
-/** 表单字段共享配置 */
+/**
+ * 表单字段共享配置
+ *
+ * 字段渲染控制总览（四类语义互不重叠，新增字段优先复用，不要自造开关）：
+ * - addable：按需添加字段，数据路径存在才渲染
+ * - hideWhenEmpty：分组容器子字段全部不可渲染时，连同外层表单项整块不渲染
+ * - checks.hidden：条件满足时渲染但置灰，仍保留在编辑器中
+ * - checks.removed：条件满足时从当前表单移除（归档）
+ */
 interface BaseFormField {
   /** 静态透传给组件的属性 */
   props?: Record<string, any>;
@@ -66,7 +74,7 @@ interface BaseFormField {
   key?: string;
   /** 模块名 */
   name?: string;
-  /** 是否可由用户按需添加 */
+  /** 是否可由用户按需添加：开启后数据路径存在才渲染 */
   addable?: boolean;
   /** 表单控制配置（与 model/props 同级）：由动态表单处理 removed、hidden */
   checks?: FieldChecks;
@@ -100,8 +108,10 @@ export interface GroupFormField extends BaseFormField {
   /** 当前对象节点的数据路径，子字段在该节点内使用相对路径 */
   context?: string[];
   component?: string;
+  /** 容器状态绑定：仅在需要折叠、隐藏等状态透传时声明 */
   model?: ModelBinding | ModelBinding[];
   slot?: string;
+  /** 容器子字段：允许为空，内容由业务在运行时填充 */
   fields: FormField[];
   source?: never;
   itemSchema?: never;
