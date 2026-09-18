@@ -2,8 +2,10 @@
   <SfDatePicker
     v-model="innerValue"
     v-bind="$attrs"
+    :class="{ 'is-present': isPresent }"
+    :placeholder="isPresent ? presentText : $attrs.placeholder"
     :shortcuts="shortcuts"
-    popper-class="date-picker-present-popper"
+    :popper-class="popperClass"
   />
 </template>
 
@@ -23,6 +25,11 @@ const model = defineModel<any>("modelValue");
 let byPresent = false;
 
 const isPresent = computed(() => Boolean(props.presentText) && model.value === props.presentText);
+
+// 选中"持续至今"时，面板标记选中态用于高亮快捷项
+const popperClass = computed(() =>
+  isPresent.value ? "date-picker-present-popper is-present" : "date-picker-present-popper",
+);
 
 // 面板左侧栏快捷项
 const shortcuts = computed(() =>
@@ -70,9 +77,10 @@ const innerValue = computed({
   position: static;
   order: 1;
   display: flex;
+  justify-content: center;
   gap: 12px;
   width: auto;
-  padding-bottom: 6px;
+  padding: 6px 0;
   border-right: none;
   border-top: 1px solid var(--sf-border);
 }
@@ -81,7 +89,34 @@ const innerValue = computed({
   margin-left: 0;
 }
 
+/* 快捷项按按钮样式呈现并居中文字 */
 .date-picker-present-popper .el-picker-panel__shortcut {
   width: auto;
+  padding: 3px 18px;
+  line-height: 24px;
+  text-align: center;
+  color: var(--sf-text);
+  background-color: transparent;
+  border: 1px solid var(--sf-border);
+  border-radius: 12px;
+  transition: all 0.2s;
+}
+
+.date-picker-present-popper .el-picker-panel__shortcut:hover {
+  color: var(--sf-theme);
+  background-color: var(--sf-theme-3);
+  border-color: var(--sf-theme);
+}
+
+/* 当前值为快捷项时高亮，表示已选中 */
+.date-picker-present-popper.is-present .el-picker-panel__shortcut {
+  color: var(--sf-theme);
+  background-color: var(--sf-theme-3);
+  border-color: var(--sf-theme);
+}
+
+/* 选中"持续至今"时，输入框以正文色显示该文案 */
+.el-date-editor.is-present .el-input__inner::placeholder {
+  color: var(--sf-text);
 }
 </style>
