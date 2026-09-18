@@ -187,16 +187,12 @@ export const useResumeStore = defineStore(
     const setPreviewSyncing = (value: boolean) => {
       previewSyncing.value = value;
     };
-    // 运行性能数据：记录简历编辑器与预览区的加载时间点及首屏首帧
+    // 运行性能数据：记录简历编辑器与预览区的加载耗时及首屏首帧
     const runtimeData = ref({
-      // 编辑区加载开始时间
-      editorStart: 0,
-      // 编辑区加载完成时间
-      editorEnd: 0,
-      // 预览区加载开始时间
-      previewStart: 0,
-      // 预览区加载完成时间
-      previewEnd: 0,
+      // 编辑区加载耗时
+      editorDuration: 0,
+      // 预览区加载耗时
+      previewDuration: 0,
       // 简历编辑器首屏首帧时间
       firstFrame: 0,
       // 运行环境信息

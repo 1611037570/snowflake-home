@@ -153,18 +153,13 @@ const performanceActiveNames = ref(["runtime", "env"]);
 const resumeStore = useResumeStore();
 const { currentData, currentConfig, system, runtimeData } = storeToRefs(resumeStore);
 
-// 运行性能数据展示：时间点展示耗时，加载项额外展示开始到完成的耗时
+// 运行性能数据展示：耗时统一按毫秒展示
 const performanceRows = computed(() => {
   const data = runtimeData.value;
   const time = (value) => (value ? `${value}ms` : "—");
-  const duration = (start, end) => (start && end ? `${end - start}ms` : "—");
   return [
-    { label: "编辑区加载开始", value: time(data.editorStart) },
-    { label: "编辑区加载完成", value: time(data.editorEnd) },
-    { label: "编辑区加载耗时", value: duration(data.editorStart, data.editorEnd) },
-    { label: "预览区加载开始", value: time(data.previewStart) },
-    { label: "预览区加载完成", value: time(data.previewEnd) },
-    { label: "预览区加载耗时", value: duration(data.previewStart, data.previewEnd) },
+    { label: "编辑区加载耗时", value: time(data.editorDuration) },
+    { label: "预览区加载耗时", value: time(data.previewDuration) },
     { label: "编辑器首屏首帧", value: time(data.firstFrame) },
   ];
 });
