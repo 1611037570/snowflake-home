@@ -13,7 +13,7 @@ import router from "@/routers";
 import { useAiStore } from "@/stores/modules/ai";
 import { getUUID } from "@/utils";
 import { defineStore } from "pinia";
-import { computed, ref, toRaw, watch } from "vue";
+import { computed, ref, shallowRef, toRaw, watch } from "vue";
 import { useStorage } from "@vueuse/core";
 import { useIDBKeyval } from "@vueuse/integrations/useIDBKeyval";
 import {
@@ -745,6 +745,12 @@ export const useResumeStore = defineStore(
       return initPromise;
     };
 
+    // 内容快照：编辑停顿后基于实时数据生成的只读副本，供进度、字数等派生统计读取，避免每次输入都全量重算
+    const contentSnapshot = shallowRef<any>(null);
+    const refreshContentSnapshot = () => {
+      const item = currentItem.value;
+      contentSnapshot.value = item?.data ? deepClone(item.data) : null;
+    };
     // 内容变更脉冲：整份简历任一嵌套字段变化后自增，供派生逻辑在编辑停顿后统一刷新
     const contentVersion = ref(0);
     // 是否处于编辑中：内容变化后置真，停顿 EDIT_IDLE_DELAY 后置否
@@ -777,6 +783,12 @@ export const useResumeStore = defineStore(
       },
       { deep: true },
     );
+    // 切换简历后立即重建内容快照，避免进入编辑器时派生统计短暂为空
+    watch(currentIndex, refreshContentSnapshot, { immediate: true });
+    // 编辑停顿后重建内容快照：进度、字数等派生统计在此时统一重算
+    watch(isEditing, (editing) => {
+      if (!editing) refreshContentSnapshot();
+    });
     // 切换简历时：取消防抖等待中的历史、清空历史栈并重置基准快照
     watch(currentIndex, () => {
       resetHistoryBase();
@@ -846,6 +858,7 @@ export const useResumeStore = defineStore(
       setPreviewSyncing,
       contentVersion,
       isEditing,
+      contentSnapshot,
       resetSettings,
     };
   },
