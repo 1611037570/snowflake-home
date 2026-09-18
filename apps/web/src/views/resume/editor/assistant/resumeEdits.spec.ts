@@ -27,10 +27,10 @@ describe("validateResumeEdits", () => {
       validateUserOperation({
         op: "updateModule",
         module: "user",
-        field: "birthday",
-        value: "2000.01",
+        field: "avatar",
+        value: "任意内容",
       }),
-    ).toContain("第 1 条操作：模块 user 不存在模块级字段 birthday");
+    ).toContain("第 1 条操作：模块 user 不存在模块级字段 avatar");
     expect(
       validateUserOperation({
         op: "updateModule",
