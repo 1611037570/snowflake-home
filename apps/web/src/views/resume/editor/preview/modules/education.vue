@@ -16,6 +16,9 @@ const lineHeightValue = inject("lineHeightValue");
 const paragraphSpacingStyle = inject("paragraphSpacingStyle");
 // 日期样式（2026.9 / 2026年9月），由设计配置注入
 const dateStyle = inject("dateStyle");
+// 日期位置（左/右），由设计配置注入
+const datePosition = inject("datePosition");
+const dateLeft = computed(() => datePosition?.value === "left");
 
 // 数组记录统一由 getValidData 过滤并提取业务内容
 const education = computed(() => {
@@ -62,7 +65,10 @@ const contentIsFirst = (item) => !hasItemHeader(item) && !hasSubInfo(item);
       >
         <!-- 信息容器撑满行内剩余宽度，避免导出渲染时子项宽度取整触发换行错位 -->
         <!-- 统一按行居中：标签字号小于正文，基线对齐会让它在被撑开的行里偏移 -->
-        <div class="flex max-w-full min-w-0 flex-1 flex-wrap items-center gap-3">
+        <div
+          class="flex max-w-full min-w-0 flex-1 flex-wrap items-center gap-3"
+          :class="dateLeft ? 'justify-end' : ''"
+        >
           <ItemTitle :name="item.name" />
 
           <ResumeField v-if="hasField(item, 'college')" :model-value="item.college" />
@@ -71,7 +77,10 @@ const contentIsFirst = (item) => !hasItemHeader(item) && !hasSubInfo(item);
           <!-- 学校标签：跟随首行排布 -->
           <ItemTags :tags="item.tags" />
         </div>
-        <div class="flex max-w-full min-w-0 flex-wrap items-center gap-2">
+        <div
+          class="flex max-w-full min-w-0 flex-wrap items-center gap-2"
+          :class="dateLeft ? 'order-first' : ''"
+        >
           <span>{{ getTime(item.startTime, item.endTime, dateStyle) }}</span>
         </div>
       </div>

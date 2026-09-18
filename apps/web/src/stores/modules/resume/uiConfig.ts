@@ -123,6 +123,17 @@ export const infoPositionList = [
     value: "right",
   },
 ];
+// 日期位置列表（经历日期在条目内的水平位置）
+export const datePositionList = [
+  {
+    name: "左",
+    value: "left",
+  },
+  {
+    name: "右",
+    value: "right",
+  },
+];
 // 日期样式列表（经历日期展示格式）
 export const dateStyleList = [
   {
@@ -176,6 +187,8 @@ export const defaultAvatarPosition = "right";
 export const defaultInfoPosition = "left";
 // 默认日期样式
 export const defaultDateStyle = "dot";
+// 默认日期位置
+export const defaultDatePosition = "right";
 // 默认标题图标开关
 export const defaultTitleIcon = false;
 // ===========参数范围（编辑器滑杆与一页纸压缩共用，只维护这一处）=====================
@@ -230,6 +243,8 @@ export const DEFAULT_UI = {
   infoPosition: defaultInfoPosition,
   // 日期样式
   dateStyle: defaultDateStyle,
+  // 日期位置
+  datePosition: defaultDatePosition,
   // 标题图标：开启后在模块标题前展示模块图标
   titleIcon: defaultTitleIcon,
 };

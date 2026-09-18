@@ -8,6 +8,7 @@ import { computed, provide, ref, watch, type ComputedRef, type Ref } from "vue";
 import { loadFont } from "@/utils";
 import {
   defaultAvatarPosition,
+  defaultDatePosition,
   defaultDateStyle,
   defaultFontSize,
   defaultInfoPosition,
@@ -126,7 +127,9 @@ export const useResumeTheme = (ui: ComputedRef<ResumeUi>): ResumeTheme => {
   // 线条色：分隔线、描边，主题色 40% 透明度
   const themeColorLine = computed(() => `${themeColor.value}66`);
   // 对比文字色：主题色块上的文字按亮度自动取深色或白色
-  const themeColorContrast = computed(() => (isLightColor(themeColor.value) ? "#1f2937" : "#ffffff"));
+  const themeColorContrast = computed(() =>
+    isLightColor(themeColor.value) ? "#1f2937" : "#ffffff",
+  );
   const themeTemplate = computed(() => ui.value.themeTemplate);
 
   // 个人信息展示模式（图标/文字/隐藏），缺失时回退默认值
@@ -139,6 +142,8 @@ export const useResumeTheme = (ui: ComputedRef<ResumeUi>): ResumeTheme => {
   const infoPosition = computed(() => ui.value.infoPosition ?? defaultInfoPosition);
   // 日期样式（2026.9 / 2026年9月），缺失时回退默认值
   const dateStyle = computed(() => ui.value.dateStyle ?? defaultDateStyle);
+  // 日期位置（左/右），缺失时回退默认值
+  const datePosition = computed(() => ui.value.datePosition ?? defaultDatePosition);
   // 标题图标开关，缺失时回退默认值
   const titleIconEnabled = computed(() => ui.value.titleIcon ?? defaultTitleIcon);
 
@@ -156,6 +161,7 @@ export const useResumeTheme = (ui: ComputedRef<ResumeUi>): ResumeTheme => {
   provide("avatarPosition", avatarPosition);
   provide("infoPosition", infoPosition);
   provide("dateStyle", dateStyle);
+  provide("datePosition", datePosition);
   provide("titleIconEnabled", titleIconEnabled);
 
   return {

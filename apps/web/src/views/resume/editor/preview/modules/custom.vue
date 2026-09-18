@@ -21,6 +21,9 @@ const lineHeightValue = inject("lineHeightValue");
 const paragraphSpacingStyle = inject("paragraphSpacingStyle");
 // 日期样式（2026.9 / 2026年9月），由设计配置注入
 const dateStyle = inject("dateStyle");
+// 日期位置（左/右），由设计配置注入
+const datePosition = inject("datePosition");
+const dateLeft = computed(() => datePosition?.value === "left");
 
 // 自定义模块与内置数组模块统一直接读取 list
 const customList = computed(() => getValidData(previewData.value?.[props.name]?.list || []));
@@ -43,6 +46,7 @@ const hasItemHeader = (item) => Boolean(item.name || item.post || item.startTime
         <!-- 信息容器撑满行内剩余宽度，避免导出渲染时子项宽度取整触发换行错位 -->
         <div
           class="flex max-w-full min-w-0 flex-1 flex-wrap items-center gap-3"
+          :class="dateLeft ? 'justify-end' : ''"
           v-if="item.name || item.post"
         >
           <ItemTitle :name="item.name" />
@@ -52,6 +56,7 @@ const hasItemHeader = (item) => Boolean(item.name || item.post || item.startTime
         </div>
         <div
           class="flex max-w-full min-w-0 flex-wrap items-center"
+          :class="dateLeft ? 'order-first' : ''"
           v-if="item.startTime || item.endTime"
         >
           <span>{{ getTime(item.startTime, item.endTime, dateStyle) }}</span>
