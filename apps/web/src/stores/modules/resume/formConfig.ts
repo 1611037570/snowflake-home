@@ -244,6 +244,8 @@ export const DEFAULT_USER_FORM = [
             props: {
               placeholder: "请选择性别",
               clearable: true,
+              filterable: true,
+              allowCreate: true,
             },
           }),
           // 婚姻状况
@@ -257,6 +259,8 @@ export const DEFAULT_USER_FORM = [
             props: {
               placeholder: "请选择婚姻状况",
               clearable: true,
+              filterable: true,
+              allowCreate: true,
             },
           }),
           // 民族
@@ -282,6 +286,8 @@ export const DEFAULT_USER_FORM = [
             props: {
               placeholder: "请选择星座",
               clearable: true,
+              filterable: true,
+              allowCreate: true,
             },
           }),
           // MBTI
@@ -399,6 +405,8 @@ export const DEFAULT_USER_FORM = [
             props: {
               placeholder: "请选择求职状态",
               clearable: true,
+              filterable: true,
+              allowCreate: true,
             },
           }),
           // 政治面貌
@@ -412,6 +420,8 @@ export const DEFAULT_USER_FORM = [
             props: {
               placeholder: "请选择政治面貌",
               clearable: true,
+              filterable: true,
+              allowCreate: true,
             },
           }),
           // 所在城市
@@ -595,6 +605,8 @@ export const DEFAULT_EDUCATION_FORM = {
             props: {
               placeholder: "请选择学位",
               clearable: true,
+              filterable: true,
+              allowCreate: true,
             },
           },
           {
@@ -631,6 +643,44 @@ export const DEFAULT_EDUCATION_FORM = {
             ],
             props: {
               placeholder: "请选择学制",
+              clearable: true,
+              filterable: true,
+              allowCreate: true,
+            },
+          },
+          // 所在城市：省市字典由业务域注入
+          {
+            type: "object",
+            label: "所在城市",
+            component: "cityPicker",
+            span: 12,
+            model: [
+              {
+                source: ["data", "city"],
+                prop: "modelValue",
+              },
+              {
+                source: ["__options", "city"],
+                prop: "list",
+                raw: true,
+              },
+            ],
+            props: {
+              placeholder: "请选择所在城市",
+            },
+          },
+          // 学院名称
+          {
+            type: "object",
+            label: "学院名称",
+            component: "input",
+            span: 12,
+            model: {
+              source: ["data", "college"],
+              prop: "modelValue",
+            },
+            props: {
+              placeholder: "请输入学院名称",
               clearable: true,
             },
           },
