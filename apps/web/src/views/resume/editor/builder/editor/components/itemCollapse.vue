@@ -35,11 +35,11 @@ function del() {
     <SfCollapseItem name="1">
       <template #title>
         <div class="group flex h-full w-full items-center justify-between text-sf-text">
-          <div class="flex flex-1 items-center text-[15px] font-bold">
-            <Icon icon="icon-park-outline:drag" class="item-drag cursor-move!" />
-            {{ displayTitle }}
+          <div class="flex min-w-0 flex-1 items-center text-[15px] font-bold">
+            <Icon icon="icon-park-outline:drag" class="item-drag shrink-0 cursor-move!" />
+            <span class="truncate">{{ displayTitle }}</span>
           </div>
-          <div class="flex items-center">
+          <div class="flex shrink-0 items-center">
             <SfTooltip :content="hidden ? '显示' : '隐藏'">
               <Icon
                 :icon="hidden ? 'lucide:eye' : 'lucide:eye-off'"
