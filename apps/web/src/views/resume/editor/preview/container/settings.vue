@@ -12,9 +12,11 @@ import {
   defaultPaddingHorizontal,
   defaultPaddingVertical,
   defaultParagraphSpacing,
+  defaultTextAlign,
   defaultUserInfoLayout,
   defaultUserInfoMode,
   infoPositionList,
+  textAlignList,
   uiParamRanges,
   userInfoLayoutList,
   userInfoModeList,
@@ -78,6 +80,16 @@ const dateParams = [
     key: "datePosition",
     defaultValue: defaultDatePosition,
     list: datePositionList,
+  },
+];
+
+// 正文排版选项参数：富文本正文的水平对齐方式
+const textParams = [
+  {
+    label: "文本对齐",
+    key: "textAlign",
+    defaultValue: defaultTextAlign,
+    list: textAlignList,
   },
 ];
 
@@ -158,6 +170,30 @@ const setParam = (key, value) => {
         </div>
         <div class="text-xs font-bold text-sf-text">经历信息</div>
         <div v-for="item in dateParams" :key="item.key" class="flex flex-col gap-1">
+          <div class="flex items-center gap-1 text-sm text-sf-text-2">
+            <span>{{ item.label }}</span>
+            <SfIcon
+              icon="material-symbols:restart-alt"
+              size="4"
+              class="cursor-pointer text-sf-text-2 transition-colors hover:text-sf-theme"
+              @click="setParam(item.key, item.defaultValue)"
+            />
+          </div>
+          <div class="flex gap-3">
+            <SfButton
+              v-for="option in item.list"
+              :key="option.value"
+              class="flex-1"
+              size="small"
+              border
+              @click="setParam(item.key, option.value)"
+              :type="getValue(item.key) === option.value ? 'theme' : 'bg'"
+              >{{ option.name }}</SfButton
+            >
+          </div>
+        </div>
+        <div class="text-xs font-bold text-sf-text">正文排版</div>
+        <div v-for="item in textParams" :key="item.key" class="flex flex-col gap-1">
           <div class="flex items-center gap-1 text-sm text-sf-text-2">
             <span>{{ item.label }}</span>
             <SfIcon
