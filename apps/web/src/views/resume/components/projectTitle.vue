@@ -3,9 +3,14 @@ import { useRouter } from "vue-router";
 
 const router = useRouter();
 
+// 跳转地址由调用方指定，默认回到我的简历
+const props = defineProps({
+  url: { type: String, default: "/resume/mine" },
+});
+
 // 统一简历模块入口，复用项目标识与返回行为
 const handleBack = () => {
-  router.push("/resume/mine");
+  router.push(props.url);
 };
 </script>
 
