@@ -6,9 +6,9 @@
       :class="['w-full max-w-[1200px]', { 'mb-10': idx !== sections.length - 1 }]"
     >
       <div class="mb-3 flex items-center">
-        <div class="mr-6 h-[1px] flex-1 bg-gradient-to-l from-sf-border/50 to-transparent"></div>
+        <div class="from-sf-border/50 mr-6 h-[1px] flex-1 bg-gradient-to-l to-transparent"></div>
         <SmallTitle :title="section.title" />
-        <div class="ml-6 h-[1px] flex-1 bg-gradient-to-r from-sf-border/50 to-transparent"></div>
+        <div class="from-sf-border/50 ml-6 h-[1px] flex-1 bg-gradient-to-r to-transparent"></div>
       </div>
       <div class="grid grid-cols-2 gap-6">
         <ProjectCard v-for="(item, index) in section.list" :key="index" :data="item" />
@@ -30,15 +30,11 @@ const projectList = [
     name: "**社区",
     desc: "AI驱动的新一代社区平台",
     urlType: "web",
-    // 官网: 'https://osx.aisns.net/',
-    // 体验: 'https://h5.opensns.cn/#/',
   },
   {
     name: "**工作台",
     desc: '副屏"操作系统"',
     urlType: "web",
-    // 官网: 'https://www.apps.vip/',
-    // 体验: 'https://web.apps.vip/',
   },
 ];
 
