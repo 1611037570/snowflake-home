@@ -10,6 +10,7 @@ import CopyResume from "./modules/copyResume.vue";
 import Progress from "./modules/progress/index.vue";
 import ModuleNavigator from "./modules/moduleNavigator.vue";
 import QaAnswer from "./modules/qaAnswer.vue";
+import LiuyaoWenxin from "./modules/liuyaoWenxin.vue";
 
 // 调试面板默认关闭，保持异步按需加载
 const Debug = defineAsyncComponent(() => import("./modules/debug.vue"));
@@ -50,6 +51,8 @@ function goGitHub() {
     </div>
     <!-- QA 解答 -->
     <QaAnswer />
+    <!-- 六爻问心：仅调试模式下展示 -->
+    <LiuyaoWenxin />
   </div>
 </template>
 

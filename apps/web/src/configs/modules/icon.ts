@@ -59,6 +59,7 @@ export const ICON_LIST: Record<string, IconItem> = {
   "iconamoon:settings-fill": { icon: "iconamoon:settings-fill", name: "设置" },
   "mdi:google-chrome": { icon: "mdi:google-chrome", name: "谷歌浏览器" },
   "mdi:chat-question-outline": { icon: "mdi:chat-question-outline", name: "QA解答" },
+  "mdi:yin-yang": { icon: "mdi:yin-yang", name: "六爻问心" },
   "mdi:account-box-outline": { icon: "mdi:account-box-outline", name: "社交账号" },
   "mdi:school-outline": { icon: "mdi:school-outline", name: "教育经历" },
   "mdi:puzzle-outline": { icon: "mdi:puzzle-outline", name: "自定义模块" },
