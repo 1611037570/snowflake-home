@@ -6,6 +6,7 @@ import Title from "../components/title/index.vue";
 import { getValidData } from "./validData";
 import { isContentEmpty } from "../modules/validData";
 import ItemTitle from "../components/itemTitle.vue";
+import ItemTags from "../components/itemTags.vue";
 
 // 属性：模块标识、标题、数据 key
 const props = defineProps({
@@ -56,6 +57,8 @@ const hasItemHeader = (item) =>
             <div>
               <ResumeField :model-value="item.department" />
             </div>
+            <!-- 条目标签：仅声明标签的模块有数据时渲染 -->
+            <ItemTags :tags="item.tags" />
           </div>
           <div class="flex max-w-full min-w-0 flex-wrap items-center">
             <span>{{ getTime(item.startTime, item.endTime, dateStyle) }}</span>
