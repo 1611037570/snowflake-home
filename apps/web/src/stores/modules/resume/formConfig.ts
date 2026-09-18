@@ -271,6 +271,19 @@ export const DEFAULT_USER_FORM = [
               clearable: true,
             },
           }),
+          // 星座
+          createMoreField({
+            key: "zodiac",
+            label: "星座",
+            component: "select",
+            icon: "lucide:star",
+            addable: true,
+            dict: "zodiac",
+            props: {
+              placeholder: "请选择星座",
+              clearable: true,
+            },
+          }),
           // 求职岗位
           createMoreField({
             key: "position",

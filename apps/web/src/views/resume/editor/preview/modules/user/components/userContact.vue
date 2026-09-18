@@ -158,6 +158,13 @@ const secondaryItems = computed(() => {
       label: getPreviewText("nationLabel", previewLang.value),
     });
   }
+  if (!isUserFieldHidden("zodiac") && user.value?.zodiac) {
+    items.push({
+      key: "zodiac",
+      icon: fieldIcon("zodiac"),
+      label: getPreviewText("zodiacLabel", previewLang.value),
+    });
+  }
   if (!isUserFieldHidden("city") && user.value?.city) {
     items.push({
       key: "city",
