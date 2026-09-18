@@ -8,8 +8,8 @@ defineProps({
 });
 const fontValue = inject("fontValue");
 // 简历主题色与其浅色派生底：标签配色跟随用户选择的主题
-const themeColor = inject < any > "themeColor";
-const themeColorSoft = inject < any > "themeColorSoft";
+const themeColor = inject("themeColor");
+const themeColorSoft = inject("themeColorSoft");
 </script>
 
 <template>
