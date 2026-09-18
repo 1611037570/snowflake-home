@@ -204,6 +204,8 @@ export const DEFAULT_USER_FORM = [
         component: "subtitleBox",
         slot: "default",
         key: "subtitle",
+        // 无字段或字段均未添加数据时不渲染，避免外层表单项空占位
+        hideWhenEmpty: true,
         drag: true,
         dragClass: DEFAULT_DRAG_CLASS,
         itemClass: DEFAULT_COL_CLASS + " py-1 px-1!",

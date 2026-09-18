@@ -75,6 +75,8 @@ interface BaseFormField {
   drag?: boolean;
   /** 模块是否固定：固定模块不参与容器拖拽排序 */
   fixed?: boolean;
+  /** 分组容器：子字段全部不可渲染时整块不渲染，避免外层表单项空占位 */
+  hideWhenEmpty?: boolean;
   /** 拖拽手柄 class */
   dragClass?: string;
   /** 运行时 id（引擎自动补充） */

@@ -17,11 +17,7 @@
       @remove="removeField(item.field)"
     >
       <!-- 校验失败：展示友好的错误提示 -->
-      <FormError
-        v-if="item.error"
-        :error-msg="item.error"
-        :raw="item.field"
-      />
+      <FormError v-if="item.error" :error-msg="item.error" :raw="item.field" />
       <ContainerSlot
         v-else-if="item.field.type === 'group'"
         :currentForm="item.field"
@@ -70,12 +66,17 @@ const getFieldPathContext = (field: any): DataPathContext | undefined => {
   }
   return createDataPathContext(field.context, pathContext);
 };
-const isFieldRenderable = (field: any) => {
+// 字段自身是否满足渲染条件：未被归档，且可添加字段需已有数据
+const isFieldSelfRenderable = (field: any): boolean => {
   const fieldPathContext = getFieldPathContext(field);
-  return (
-    !isFieldRemoved(rootData.data, field, fieldPathContext) &&
-    (!field.addable || hasFieldData(rootData.data, field, fieldPathContext))
-  );
+  if (isFieldRemoved(rootData.data, field, fieldPathContext)) return false;
+  return !field.addable || hasFieldData(rootData.data, field, fieldPathContext);
+};
+// 字段是否渲染：声明空容器隐藏时，子字段全部不可渲染则整块不渲染
+const isFieldRenderable = (field: any): boolean => {
+  if (!isFieldSelfRenderable(field)) return false;
+  if (field.hideWhenEmpty !== true) return true;
+  return (field.fields ?? []).some((child: any) => isFieldSelfRenderable(child));
 };
 // 编辑器移除已归档模块与尚未添加的字段，隐藏模块仍保留在编辑器中
 const renderFields = computed(() => {
