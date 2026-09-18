@@ -199,6 +199,8 @@ export const useResumeStore = defineStore(
       previewEnd: 0,
       // 简历编辑器首屏首帧时间
       firstFrame: 0,
+      // 运行环境信息
+      env: {} as Record<string, any>,
     });
     // 撤销历史栈：每个元素为修改前的内容快照字符串（data/config/ui），撤销时解析还原
     const undoStack = ref<string[]>([]);

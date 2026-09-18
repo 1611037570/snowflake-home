@@ -27,6 +27,15 @@
                 </div>
               </div>
             </SfCollapseItem>
+            <SfCollapseItem name="env">
+              <template #title>运行环境 (env)</template>
+              <SfMdPreview
+                :modelValue="fieldMd(runtimeData.env)"
+                editorId="debug-env"
+                :codeFoldable="false"
+                class="bg-transparent! p-0!"
+              />
+            </SfCollapseItem>
           </SfCollapse>
         </SfTabPane>
         <SfTabPane value="data">
@@ -138,7 +147,7 @@ const tabList = [
   { name: "消息对话", value: "chat" },
 ];
 // 性能折叠面板：默认展开
-const performanceActiveNames = ref(["runtime"]);
+const performanceActiveNames = ref(["runtime", "env"]);
 
 // 获取原始数据
 const resumeStore = useResumeStore();

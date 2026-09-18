@@ -1,5 +1,6 @@
 import { usePerformanceObserver } from "@vueuse/core";
 import { useResumeStore } from "@/stores";
+import { getBrowser } from "@/utils";
 
 // 运行性能数据记录：store 只负责保存，写入与去重逻辑统一在此处理
 export function useRuntimeData() {
@@ -28,5 +29,53 @@ export function useRuntimeData() {
     });
   };
 
-  return { markEditorStart, markEditorEnd, markPreviewStart, markPreviewEnd, collectFirstFrame };
+  // 采集运行环境：延后到浏览器空闲时执行，避免占用渲染关键路径
+  const collectEnv = () => {
+    // 采集过程整体容错，任何取值失败都不影响编辑器使用
+    const run = () => {
+      try {
+        const browser = getBrowser();
+        resumeStore.runtimeData.env = {
+          // 设备类型（电脑/平板/手机）
+          device: browser.deviceType,
+          // 浏览器类型
+          browser: browser.type,
+          // 操作系统平台
+          platform: browser.plat,
+          // 屏幕档位
+          screenGrade: browser.screen,
+          // 视口尺寸
+          viewport: `${browser.width}x${browser.height}`,
+          // 屏幕分辨率
+          resolution: `${screen.width}x${screen.height}`,
+          // 设备像素比
+          dpr: window.devicePixelRatio,
+          // CPU 逻辑核心数
+          cores: navigator.hardwareConcurrency,
+          // 设备内存（GB）
+          memory: (navigator as any).deviceMemory,
+          // 网络类型
+          network: (navigator as any).connection?.effectiveType,
+          // 界面语言
+          language: navigator.language,
+          // 时区
+          timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+          // 是否触屏设备
+          touch: "ontouchstart" in window,
+        };
+      } catch {}
+    };
+    const idle = (window as any).requestIdleCallback;
+    if (idle) idle(run, { timeout: 3000 });
+    else setTimeout(run, 300);
+  };
+
+  return {
+    markEditorStart,
+    markEditorEnd,
+    markPreviewStart,
+    markPreviewEnd,
+    collectFirstFrame,
+    collectEnv,
+  };
 }
