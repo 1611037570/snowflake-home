@@ -8,14 +8,19 @@ import { computed, ref } from "vue";
 import { useResumeStats } from "./useResumeStats";
 
 const resumeStore = useResumeStore();
-const { system, currentData, runtimeFields } = storeToRefs(resumeStore);
+const { system, runtimeFields, contentSnapshot } = storeToRefs(resumeStore);
 
 // 弹窗显隐控制
 const visible = ref(false);
 
 // 计算简历完成度进度及各模块进度（含时间线一致性检查结果）
-const progressData = computed(() => useProgress(runtimeFields.value || [], currentData.value));
-const resumeStats = useResumeStats(currentData.value);
+// 基于编辑停顿后刷新的内容快照计算，避免每次输入都全量重算
+const progressData = computed(() =>
+  useProgress(runtimeFields.value || [], contentSnapshot.value || {}),
+);
+// 快照未就绪时以空对象兜底，保证统计结构完整
+const statsData = computed(() => contentSnapshot.value || {});
+const resumeStats = useResumeStats(statsData);
 // 时间线一致性检查结果（随进度一起返回）
 const timelineData = computed(() => progressData.value.timeline);
 
