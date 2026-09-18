@@ -32,23 +32,39 @@ export function expandConfigFields(fields: any[], data: any) {
     }
     appendUserCustomFields(field, item);
     restoreFieldOrder(field, item);
+    placeUserSubtitle(field);
     return field;
   });
+}
+
+// 副标题分区固定跟随姓名之后：模板新增的分区不能按"追加到末尾"的默认规则落位
+function placeUserSubtitle(field: any) {
+  if (field?.key !== "user") return;
+  const fields = field.fields ?? [];
+  const subtitleIndex = fields.findIndex((item: any) => item?.key === "subtitle");
+  const nameIndex = fields.findIndex((item: any) => item?.key === "name");
+  if (subtitleIndex < 0 || nameIndex < 0 || subtitleIndex === nameIndex + 1) return;
+
+  const [subtitle] = fields.splice(subtitleIndex, 1);
+  fields.splice(nameIndex + 1, 0, subtitle);
 }
 
 // 自定义个人字段仅持久化 key 与标题，展开时补全为可渲染配置
 function appendUserCustomFields(field: any, persisted: any) {
   if (field?.key !== "user") return;
 
-  const moreField = field.fields?.find((item: any) => item?.key === "more");
-  const persistedMoreField = persisted?.fields?.find((item: any) => item?.key === "more");
-  if (!moreField || !Array.isArray(persistedMoreField?.fields)) return;
+  // 自定义字段可能位于更多分区或副标题分区，按所在容器分别恢复
+  ["more", "subtitle"].forEach((boxKey) => {
+    const box = field.fields?.find((item: any) => item?.key === boxKey);
+    const persistedBox = persisted?.fields?.find((item: any) => item?.key === boxKey);
+    if (!box || !Array.isArray(persistedBox?.fields)) return;
 
-  persistedMoreField.fields
-    .filter((item: any) => isUserCustomFieldKey(item?.key))
-    .forEach((item: any) => {
-      moreField.fields.push(createUserCustomField(item.key, item.label || "自定义字段"));
-    });
+    persistedBox.fields
+      .filter((item: any) => isUserCustomFieldKey(item?.key))
+      .forEach((item: any) => {
+        box.fields.push(createUserCustomField(item.key, item.label || "自定义字段"));
+      });
+  });
 }
 
 // 包含可拖拽子项的容器需要保留嵌套字段顺序
@@ -62,7 +78,10 @@ function hasSortableFields(field: any) {
 export function compactConfigFields(fields: any[], parentKey?: string) {
   return fields.map((field: any) => {
     const compactField: any = { key: field.key };
-    if (parentKey === "more" && isUserCustomFieldKey(field.key)) {
+    if (
+      (parentKey === "more" || parentKey === "subtitle") &&
+      isUserCustomFieldKey(field.key)
+    ) {
       // 标题保存在包裹组配置上
       compactField.label = field.props.label;
     }

@@ -50,7 +50,9 @@ export function checkForm(form: any) {
     return checkObjectForm(form);
   }
   if (type === "group") {
-    return Array.isArray(fields) && fields.length > 0 ? true : "缺少 fields";
+    if (!Array.isArray(fields)) return "缺少 fields";
+    // 带包裹组件的容器字段由业务在运行时填充，允许暂时为空
+    return fields.length > 0 || form.component ? true : "缺少 fields";
   }
   if (type === "array") {
     return checkArrayForm(form);

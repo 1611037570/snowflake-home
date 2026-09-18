@@ -9,7 +9,8 @@ import {
 } from "@/stores/modules/resume/hooks/useUserCustomField";
 import {
   getUserSubtitleKeys,
-  getNextUserSubtitleOrder,
+  markUserSubtitle,
+  unmarkUserSubtitle,
   MAX_USER_SUBTITLE,
 } from "@/stores/modules/resume/hooks/useUserSubtitle";
 import { storeToRefs } from "pinia";
@@ -75,22 +76,27 @@ const handleRename = () => {
 const toggleHidden = () => (hidden.value = !hidden.value);
 // 更新图标：写回字段的图标路径
 const updateIcon = (value: string) => (icon.value = value);
-// 切换副标题：序号取当前最大值加一，取消标记不重排其余字段
+// 切换副标题：标记后字段移入副标题分区，取消后回到更多分区末尾
 const toggleSubtitle = () => {
+  if (!runtimeConfig.value || !currentData.value || !fieldKey.value) return;
   if (isSubtitle.value) {
-    subtitleOrder.value = 0;
+    unmarkUserSubtitle(runtimeConfig.value, currentData.value, fieldKey.value);
     return;
   }
   if (subtitleFull.value) return;
-  subtitleOrder.value = getNextUserSubtitleOrder(currentData.value?.user?.ui);
+  markUserSubtitle(runtimeConfig.value, currentData.value, fieldKey.value);
 };
 // 删除：自定义字段彻底移除，预设字段只清空数据以便重新添加
 const clearField = () => {
+  if (!runtimeConfig.value || !currentData.value || !fieldKey.value) return;
+  // 先取消副标题标记，字段回到更多分区后再按各自语义移除
+  if (isSubtitle.value) {
+    unmarkUserSubtitle(runtimeConfig.value, currentData.value, fieldKey.value);
+  }
   if (!isCustomField.value) {
     removeField(field.value);
     return;
   }
-  if (!runtimeConfig.value || !currentData.value || !fieldKey.value) return;
   removeUserCustomField(runtimeConfig.value, currentData.value, fieldKey.value);
 };
 </script>

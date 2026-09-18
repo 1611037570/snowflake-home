@@ -198,6 +198,19 @@ export const DEFAULT_USER_FORM = [
           },
         ],
       }),
+      // 副标题分区：承载已标记为副标题的更多字段，顺序即姓名下方展示顺序
+      {
+        type: "group",
+        component: "subtitleBox",
+        slot: "default",
+        key: "subtitle",
+        drag: true,
+        dragClass: DEFAULT_DRAG_CLASS,
+        itemClass: DEFAULT_COL_CLASS + " py-1 px-1!",
+        rowClass: "gap-y-3",
+        span: 24,
+        fields: [],
+      },
       // 可添加信息：数据路径存在后渲染在选择入口上方
       {
         type: "group",

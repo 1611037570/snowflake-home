@@ -11,7 +11,7 @@
     v-else
     :is="getComponent(currentForm.component)"
     v-bind="{
-      ...rootData.getDataProxy(currentForm.model, pathContext),
+      ...(currentForm.model ? rootData.getDataProxy(currentForm.model, pathContext) : {}),
       ...currentForm.props,
     }"
     v-on="bindEvent"
@@ -46,7 +46,9 @@ const slotName = computed(() => {
   return isString(slot) && slot.length ? slot : "default";
 });
 const rootData: any = inject(DF_ROOT_DATA);
+// 容器未声明 model 时不建立数据代理，仅透传配置
 const bindEvent = computed(() => {
+  if (!currentForm.value?.model) return {};
   return rootData.setDataProxy(currentForm.value.model, pathContext);
 });
 const emit = defineEmits(["removeObject"]);
