@@ -86,7 +86,7 @@ const metaItems = computed(() => {
     items.push({
       key: "sex",
       icon: fieldIcon("sex"),
-      label: userFieldLabels.value.get("sex") || "性别",
+      label: getPreviewText("sexLabel", previewLang.value),
     });
   }
   if (age.value) {
@@ -111,7 +111,7 @@ const metaItems = computed(() => {
     items.push({
       key: "position",
       icon: fieldIcon("position"),
-      label: userFieldLabels.value.get("position") || "求职岗位",
+      label: getPreviewText("positionLabel", previewLang.value),
     });
   }
   return items;
