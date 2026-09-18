@@ -25,6 +25,27 @@ export const xiaoZhouData: any = {
       {
         ui: {},
         data: {
+          name: "小红书",
+          url: "https://xhslink.cn/o/5x9OVDfiAfc",
+        },
+      },
+      {
+        ui: {},
+        data: {
+          name: "bilibili",
+          url: "https://space.bilibili.com/272381122",
+        },
+      },
+      {
+        ui: {},
+        data: {
+          name: "抖音",
+          url: "https://www.douyin.com/user/MS4wLjABAAAAre0YOu4w-m9z260-GU-cTZbAl0yDgtZEFeoY1YSBdG6l5l9jWyo2APQBtfU6Ln38",
+        },
+      },
+      {
+        ui: {},
+        data: {
           name: "github",
           url: "https://github.com/1611037570",
         },
