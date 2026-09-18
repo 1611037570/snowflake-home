@@ -745,7 +745,7 @@ export const useResumeStore = defineStore(
       return initPromise;
     };
 
-    // 内容快照：编辑停顿后基于实时数据生成的只读副本，供进度、字数等派生统计读取，避免每次输入都全量重算
+    // 内容快照：编辑停顿后基于实时数据生成的只读副本，供预览测量树等派生逻辑读取
     const contentSnapshot = shallowRef<any>(null);
     const refreshContentSnapshot = () => {
       const item = currentItem.value;
@@ -783,9 +783,9 @@ export const useResumeStore = defineStore(
       },
       { deep: true },
     );
-    // 切换简历后立即重建内容快照，避免进入编辑器时派生统计短暂为空
+    // 切换简历后立即重建内容快照，避免进入编辑器时预览测量树读到空数据
     watch(currentIndex, refreshContentSnapshot, { immediate: true });
-    // 编辑停顿后重建内容快照：进度、字数等派生统计在此时统一重算
+    // 编辑停顿后重建内容快照：预览测量树在此时统一刷新
     watch(isEditing, (editing) => {
       if (!editing) refreshContentSnapshot();
     });
