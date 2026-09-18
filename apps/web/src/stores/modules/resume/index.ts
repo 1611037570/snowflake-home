@@ -200,11 +200,6 @@ export const useResumeStore = defineStore(
       // 简历编辑器首屏首帧时间
       firstFrame: 0,
     });
-    // 写入运行性能数据，仅在未记录时写入，避免后续渲染覆盖首次数据
-    const setRuntimeData = (key: keyof typeof runtimeData.value, value: number) => {
-      if (runtimeData.value[key]) return;
-      runtimeData.value[key] = value;
-    };
     // 撤销历史栈：每个元素为修改前的内容快照字符串（data/config/ui），撤销时解析还原
     const undoStack = ref<string[]>([]);
     // 重做历史栈：结构与撤销栈相同
@@ -875,7 +870,6 @@ export const useResumeStore = defineStore(
       previewSyncing,
       setPreviewSyncing,
       runtimeData,
-      setRuntimeData,
       contentVersion,
       isEditing,
       contentSnapshot,

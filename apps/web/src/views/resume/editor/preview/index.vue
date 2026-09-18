@@ -6,18 +6,20 @@ import ScaleContainer from "./container/index.vue";
 import { useResumeStore } from "@/stores";
 import { storeToRefs } from "pinia";
 import { computed, ref, watch } from "vue";
+import { useRuntimeData } from "../hooks/useRuntimeData";
 // 全屏预览组件
 const FullscreenPreview = markRaw(defineAsyncComponent(() => import("./fullscreenPreview.vue")));
 const resumeStore = useResumeStore();
 const { currentData, currentConfig, currentUI, runtimeConfig, previewSyncing } =
   storeToRefs(resumeStore);
+const { markPreviewStart, markPreviewEnd } = useRuntimeData();
 // 预览区加载开始：组件初始化即记录，作为预览区加载耗时起点
-resumeStore.setRuntimeData("previewStart", Math.round(performance.now()));
+markPreviewStart();
 // 预览区渲染完成（测量收口）时记录加载完成时间
 watch(
   previewSyncing,
   (syncing) => {
-    if (!syncing) resumeStore.setRuntimeData("previewEnd", Math.round(performance.now()));
+    if (!syncing) markPreviewEnd();
   },
   { immediate: true },
 );

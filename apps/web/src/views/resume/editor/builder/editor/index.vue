@@ -4,6 +4,7 @@ defineOptions({ name: "BuilderEditor" });
 import { useResumeStore } from "@/stores";
 import { storeToRefs } from "pinia";
 import { RESUME_OPTIONS } from "@/stores/modules/resume/resumeOptions";
+import { useRuntimeData } from "../../hooks/useRuntimeData";
 import Account from "./components/account.vue";
 import AddModule from "./components/addModule.vue";
 import BoxCollapse from "./components/boxCollapse.vue";
@@ -20,8 +21,9 @@ import Video from "./components/video.vue";
 
 const resumeStore = useResumeStore();
 const { currentData, runtimeConfig } = storeToRefs(resumeStore);
+const { markEditorStart, markEditorEnd } = useRuntimeData();
 // 编辑区加载开始：组件初始化即记录，作为编辑区加载耗时起点
-resumeStore.setRuntimeData("editorStart", Math.round(performance.now()));
+markEditorStart();
 
 // 注入到动态表单的自定义组件库
 const dynamicComponents = {
@@ -49,7 +51,7 @@ const finishConfigSync = () => {
   resumeStore.enableHistory();
   resumeStore.setConfigSyncing(false);
   // 编辑区表单渲染完成：记录加载完成时间
-  resumeStore.setRuntimeData("editorEnd", Math.round(performance.now()));
+  markEditorEnd();
 };
 watch(
   () => currentItem.value,
