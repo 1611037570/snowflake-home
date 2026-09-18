@@ -20,6 +20,21 @@ export const RESUME_VALUE_OPTIONS = {
     { name: "已婚", value: "已婚" },
     { name: "离异", value: "离异" },
   ],
+  // 星座
+  zodiac: [
+    { name: "白羊座", value: "白羊座" },
+    { name: "金牛座", value: "金牛座" },
+    { name: "双子座", value: "双子座" },
+    { name: "巨蟹座", value: "巨蟹座" },
+    { name: "狮子座", value: "狮子座" },
+    { name: "处女座", value: "处女座" },
+    { name: "天秤座", value: "天秤座" },
+    { name: "天蝎座", value: "天蝎座" },
+    { name: "射手座", value: "射手座" },
+    { name: "摩羯座", value: "摩羯座" },
+    { name: "水瓶座", value: "水瓶座" },
+    { name: "双鱼座", value: "双鱼座" },
+  ],
   // 政治面貌
   political: [
     { name: "共产党员", value: "共产党员" },
