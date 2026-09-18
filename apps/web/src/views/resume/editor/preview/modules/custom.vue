@@ -24,6 +24,9 @@ const dateStyle = inject("dateStyle");
 
 // 自定义模块与内置数组模块统一直接读取 list
 const customList = computed(() => getValidData(previewData.value?.[props.name]?.list || []));
+
+// 条目是否含首行信息（名称/岗位/时间），为空时不渲染首行，避免多出空行间距
+const hasItemHeader = (item) => Boolean(item.name || item.post || item.startTime || item.endTime);
 </script>
 
 <template>
@@ -32,23 +35,34 @@ const customList = computed(() => getValidData(previewData.value?.[props.name]?.
     <Title :module-key="name"></Title>
     <!-- 内容区 -->
     <template v-for="(item, index) in customList" :key="index">
-      <div :style="paragraphSpacingStyle" class="flex flex-wrap items-center justify-between">
-        <div class="flex max-w-full min-w-0 flex-wrap items-center gap-3">
+      <div
+        v-if="hasItemHeader(item)"
+        :style="paragraphSpacingStyle"
+        class="flex flex-wrap items-center justify-between"
+      >
+        <div
+          class="flex max-w-full min-w-0 flex-wrap items-center gap-3"
+          v-if="item.name || item.post"
+        >
           <ItemTitle :name="item.name" />
           <div>
             <ResumeField :model-value="item.post" />
           </div>
         </div>
-        <div class="flex max-w-full min-w-0 flex-wrap items-center">
+        <div
+          class="flex max-w-full min-w-0 flex-wrap items-center"
+          v-if="item.startTime || item.endTime"
+        >
           <span>{{ getTime(item.startTime, item.endTime, dateStyle) }}</span>
         </div>
       </div>
-      <!-- 补充描述/经历 -->
+      <!-- 补充描述/经历：无首行时由段间距承担上间距，有首行时用固定 mt-3 与首行贴合 -->
       <ResumeField
         :model-value="item.content"
         html
         v-if="!isContentEmpty(item.content)"
-        class="mt-3"
+        :style="hasItemHeader(item) ? undefined : paragraphSpacingStyle"
+        :class="hasItemHeader(item) ? 'mt-3' : ''"
       />
     </template>
   </div>
