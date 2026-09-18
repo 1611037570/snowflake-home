@@ -34,12 +34,6 @@ export function createUserCustomField(key: string, label: string): GroupFormFiel
         prop: "icon",
         defaultValue: "lucide:tag",
       },
-      // 副标题标记：序号存在字段自身的界面配置里，仅用于排序
-      {
-        source: ["ui", key, "subtitle"],
-        prop: "subtitleOrder",
-        defaultValue: 0,
-      },
     ],
     // 字段隐藏时的置灰判断
     checks: {
