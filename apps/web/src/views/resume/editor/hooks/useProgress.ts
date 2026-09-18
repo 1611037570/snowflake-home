@@ -27,8 +27,14 @@ const isEmpty = (val: any): boolean =>
   (typeof val === "object" && !Array.isArray(val) && Object.keys(val).length === 0);
 
 const isContentEmpty = (val: any): boolean => {
-  if (typeof val !== "string") return false;
-  return val === "<p><br></p>";
+  if (typeof val !== "string") return true;
+  // 去掉全部标签与占位空格后无文本即为空，判定口径与预览侧保持一致
+  return (
+    val
+      .replace(/<[^>]*>/g, "")
+      .replace(/&nbsp;/gi, " ")
+      .trim() === ""
+  );
 };
 
 const getLabel = (field: any, prop: string): string => getFieldLabel(field) || prop || "字段";
