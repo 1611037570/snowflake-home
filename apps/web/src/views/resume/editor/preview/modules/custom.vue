@@ -40,8 +40,9 @@ const hasItemHeader = (item) => Boolean(item.name || item.post || item.startTime
         :style="paragraphSpacingStyle"
         class="flex flex-wrap items-center justify-between"
       >
+        <!-- 信息容器撑满行内剩余宽度，避免导出渲染时子项宽度取整触发换行错位 -->
         <div
-          class="flex max-w-full min-w-0 flex-wrap items-center gap-3"
+          class="flex max-w-full min-w-0 flex-1 flex-wrap items-center gap-3"
           v-if="item.name || item.post"
         >
           <ItemTitle :name="item.name" />
