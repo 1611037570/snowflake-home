@@ -151,6 +151,13 @@ const secondaryItems = computed(() => {
       label: getPreviewText("maritalLabel", previewLang.value),
     });
   }
+  if (!isUserFieldHidden("nation") && user.value?.nation) {
+    items.push({
+      key: "nation",
+      icon: fieldIcon("nation"),
+      label: getPreviewText("nationLabel", previewLang.value),
+    });
+  }
   if (!isUserFieldHidden("city") && user.value?.city) {
     items.push({
       key: "city",

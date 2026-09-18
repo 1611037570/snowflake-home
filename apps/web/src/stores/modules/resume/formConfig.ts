@@ -259,6 +259,18 @@ export const DEFAULT_USER_FORM = [
               clearable: true,
             },
           }),
+          // 民族
+          createMoreField({
+            key: "nation",
+            label: "民族",
+            component: "input",
+            icon: "mdi:account-group-outline",
+            addable: true,
+            props: {
+              placeholder: "请输入民族",
+              clearable: true,
+            },
+          }),
           // 求职岗位
           createMoreField({
             key: "position",
