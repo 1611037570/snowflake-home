@@ -9,10 +9,28 @@ export function getUserSubtitleKeys(ui?: Record<string, any>): string[] {
     .map(([key]) => key);
 }
 
+// 字段值是否有内容：空字符串、空数组、空对象都视为无内容
+export function isEmptyFieldValue(value: any): boolean {
+  if (value == null) return true;
+  if (typeof value === "string") return value.trim() === "";
+  if (Array.isArray(value)) return value.length === 0;
+  if (typeof value === "object") return Object.values(value).every(isEmptyFieldValue);
+  return false;
+}
+
 // 在个人信息模块内按标识定位字段容器
 function getUserContainer(runtimeConfig: any, key: string) {
   const userField = runtimeConfig?.fields?.find((field: any) => field?.key === "user");
   return userField?.fields?.find((field: any) => field?.key === key);
+}
+
+// 在副标题分区与更多分区中定位字段所在容器
+function locateSubtitleField(moreBox: any, subtitleBox: any, key: string) {
+  const inSubtitle = subtitleBox?.fields?.findIndex((field: any) => field?.key === key) ?? -1;
+  if (inSubtitle >= 0) return { box: subtitleBox, field: subtitleBox.fields[inSubtitle] };
+  const inMore = moreBox?.fields?.findIndex((field: any) => field?.key === key) ?? -1;
+  if (inMore >= 0) return { box: moreBox, field: moreBox.fields[inMore] };
+  return { box: undefined, field: undefined };
 }
 
 // 按副标题分区内的字段顺序回写序号：预览按序号在姓名下方依次展示
@@ -28,6 +46,8 @@ export function syncUserSubtitleOrder(data: any, keys: string[]) {
 // 标记为副标题：字段配置从更多分区移入副标题分区，序号按分区顺序重排
 export function markUserSubtitle(runtimeConfig: any, data: any, key?: string) {
   if (!key) return false;
+  // 无内容的字段不参与置顶，避免分区里出现空行占位
+  if (isEmptyFieldValue(data?.user?.data?.[key])) return false;
   const moreBox = getUserContainer(runtimeConfig, "more");
   const subtitleBox = getUserContainer(runtimeConfig, "subtitle");
   if (!moreBox || !subtitleBox) return false;
@@ -64,7 +84,7 @@ export function unmarkUserSubtitle(runtimeConfig: any, data: any, key?: string) 
   return true;
 }
 
-// 迁移历史数据：把已标记但仍留在更多分区里的字段搬入副标题分区，并按序号排列
+// 初始化校正：无内容的标记字段取消标记并回到更多分区，有内容的字段迁入副标题分区
 export function restoreUserSubtitleFields(runtimeConfig: any, data: any) {
   const keys = getUserSubtitleKeys(data?.user?.ui);
   if (!keys.length) return false;
@@ -74,11 +94,23 @@ export function restoreUserSubtitleFields(runtimeConfig: any, data: any) {
 
   let changed = false;
   keys.forEach((key) => {
-    const index = moreBox.fields?.findIndex((field: any) => field?.key === key) ?? -1;
-    if (index < 0) return;
-    const [field] = moreBox.fields.splice(index, 1);
-    subtitleBox.fields.push(field);
-    changed = true;
+    const { box, field } = locateSubtitleField(moreBox, subtitleBox, key);
+    if (!box || !field) return;
+
+    // 无内容：取消标记并回到更多分区，避免空内容占位且无法重新添加
+    if (isEmptyFieldValue(data?.user?.data?.[key])) {
+      box.fields.splice(box.fields.indexOf(field), 1);
+      moreBox.fields.push(field);
+      if (data?.user?.ui?.[key]) data.user.ui[key].subtitle = 0;
+      changed = true;
+      return;
+    }
+    // 有内容但仍留在更多分区：迁入副标题分区
+    if (box === moreBox) {
+      moreBox.fields.splice(moreBox.fields.indexOf(field), 1);
+      subtitleBox.fields.push(field);
+      changed = true;
+    }
   });
   if (!changed) return false;
 
@@ -86,6 +118,9 @@ export function restoreUserSubtitleFields(runtimeConfig: any, data: any) {
     (first: any, second: any) => keys.indexOf(first.key) - keys.indexOf(second.key),
   );
   subtitleBox.fields.splice(0, subtitleBox.fields.length, ...ordered);
-  syncUserSubtitleOrder(data, keys);
+  syncUserSubtitleOrder(
+    data,
+    subtitleBox.fields.map((item: any) => item.key),
+  );
   return true;
 }

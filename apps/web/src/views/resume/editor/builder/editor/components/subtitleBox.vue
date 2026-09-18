@@ -3,6 +3,7 @@ import { useFormContext } from "@/components/business/dynamicForm/api";
 import { useResumeStore } from "@/stores";
 import {
   getUserSubtitleKeys,
+  isEmptyFieldValue,
   restoreUserSubtitleFields,
   syncUserSubtitleOrder,
 } from "@/stores/modules/resume/hooks/useUserSubtitle";
@@ -12,9 +13,12 @@ import { storeToRefs } from "pinia";
 const { currentForm, hasFieldData } = useFormContext();
 const { runtimeConfig, currentData } = storeToRefs(useResumeStore());
 
-// 分区内有数据才渲染，避免空分区占用间距
+// 分区内出现有内容的字段才渲染，避免空内容占位
 const renderable = computed(() =>
-  (currentForm.value?.fields ?? []).some((field) => hasFieldData(field)),
+  (currentForm.value?.fields ?? []).some(
+    (field) =>
+      hasFieldData(field) && !isEmptyFieldValue(currentData.value?.user?.data?.[field.key]),
+  ),
 );
 // 分区内字段顺序：拖拽结束后按顺序回写序号，预览据此在姓名下方依次展示
 const fieldKeys = computed(() =>
