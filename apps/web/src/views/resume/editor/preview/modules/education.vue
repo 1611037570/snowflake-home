@@ -62,6 +62,14 @@ const contentIsFirst = (item) => !hasItemHeader(item) && !hasSubInfo(item);
         <!-- 信息容器撑满行内剩余宽度，避免导出渲染时子项宽度取整触发换行错位 -->
         <div class="flex max-w-full min-w-0 flex-1 flex-wrap items-baseline gap-3">
           <ItemTitle :name="item.name" />
+          <!-- 学校标签：跟随首行排布，超出宽度自动换行 -->
+          <span
+            v-for="tag in item.tags || []"
+            :key="tag"
+            class="rounded-3xl border border-current px-1"
+          >
+            {{ tag }}
+          </span>
           <ResumeField v-if="hasField(item, 'college')" :model-value="item.college" />
           <ResumeField v-if="hasField(item, 'education')" :model-value="item.education" />
           <ResumeField v-if="hasField(item, 'mode')" :model-value="item.mode" />
