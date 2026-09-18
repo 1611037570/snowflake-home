@@ -12,6 +12,23 @@
   <el-drawer v-model="drawerVisible" title="控制台" direction="rtl" size="50%" destroy-on-close>
     <div v-if="drawerVisible" class="flex flex-col gap-3 p-3">
       <SfTab :list="tabList" v-model="activeTab">
+        <SfTabPane value="performance">
+          <SfCollapse v-model="performanceActiveNames">
+            <SfCollapseItem name="runtime">
+              <template #title>运行性能数据 (runtimeData)</template>
+              <div class="flex flex-col gap-3">
+                <div
+                  v-for="item in performanceRows"
+                  :key="item.label"
+                  class="flex items-center justify-between gap-3 rounded-2xl bg-sf-bg px-3 py-2"
+                >
+                  <span class="text-sm text-sf-text-2">{{ item.label }}</span>
+                  <span class="text-sm font-medium">{{ item.value }}</span>
+                </div>
+              </div>
+            </SfCollapseItem>
+          </SfCollapse>
+        </SfTabPane>
         <SfTabPane value="data">
           <SfCollapse v-model="activeNames">
             <SfCollapseItem name="raw">
@@ -112,17 +129,36 @@ import Icon from "../components/icon.vue";
 const drawerVisible = ref(false);
 const activeNames = ref(["raw"]);
 
-// 顶部 Tab：数据 / 配置
-const activeTab = ref("data");
+// 顶部 Tab：性能 / 数据 / 配置 / 消息对话
+const activeTab = ref("performance");
 const tabList = [
+  { name: "性能", value: "performance" },
   { name: "数据", value: "data" },
   { name: "配置", value: "config" },
   { name: "消息对话", value: "chat" },
 ];
+// 性能折叠面板：默认展开
+const performanceActiveNames = ref(["runtime"]);
 
 // 获取原始数据
 const resumeStore = useResumeStore();
-const { currentData, currentConfig, system } = storeToRefs(resumeStore);
+const { currentData, currentConfig, system, runtimeData } = storeToRefs(resumeStore);
+
+// 运行性能数据展示：时间点展示耗时，加载项额外展示开始到完成的耗时
+const performanceRows = computed(() => {
+  const data = runtimeData.value;
+  const time = (value) => (value ? `${value}ms` : "—");
+  const duration = (start, end) => (start && end ? `${end - start}ms` : "—");
+  return [
+    { label: "编辑区加载开始", value: time(data.editorStart) },
+    { label: "编辑区加载完成", value: time(data.editorEnd) },
+    { label: "编辑区加载耗时", value: duration(data.editorStart, data.editorEnd) },
+    { label: "预览区加载开始", value: time(data.previewStart) },
+    { label: "预览区加载完成", value: time(data.previewEnd) },
+    { label: "预览区加载耗时", value: duration(data.previewStart, data.previewEnd) },
+    { label: "编辑器首屏首帧", value: time(data.firstFrame) },
+  ];
+});
 
 // 获取简历助手的 LLM 对话（编辑器当前正在使用的对话）
 const aiStore = useAiStore();

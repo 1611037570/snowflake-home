@@ -60,7 +60,7 @@
 
 <script setup>
 import { useResumeStore } from "@/stores";
-import { onKeyStroke } from "@vueuse/core";
+import { onKeyStroke, usePerformanceObserver } from "@vueuse/core";
 import { storeToRefs } from "pinia";
 import { provide, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
@@ -114,6 +114,15 @@ watch(
   },
   { immediate: true },
 );
+
+// 简历编辑器首屏首帧：buffered 读取历史绘制条目，避免注册时机错过首次绘制
+usePerformanceObserver({ type: "paint", buffered: true }, (list) => {
+  for (const entry of list.getEntries()) {
+    if (entry.name === "first-contentful-paint") {
+      resumeStore.setRuntimeData("firstFrame", Math.round(entry.startTime));
+    }
+  }
+});
 
 // 向下游组件注入简历原始数据，预览层只读使用
 provide("previewData", currentData);

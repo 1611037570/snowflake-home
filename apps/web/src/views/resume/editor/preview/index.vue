@@ -5,11 +5,22 @@ import ResumePage from "./page.vue";
 import ScaleContainer from "./container/index.vue";
 import { useResumeStore } from "@/stores";
 import { storeToRefs } from "pinia";
-import { computed, ref } from "vue";
+import { computed, ref, watch } from "vue";
 // 全屏预览组件
 const FullscreenPreview = markRaw(defineAsyncComponent(() => import("./fullscreenPreview.vue")));
 const resumeStore = useResumeStore();
-const { currentData, currentConfig, currentUI, runtimeConfig } = storeToRefs(resumeStore);
+const { currentData, currentConfig, currentUI, runtimeConfig, previewSyncing } =
+  storeToRefs(resumeStore);
+// 预览区加载开始：组件初始化即记录，作为预览区加载耗时起点
+resumeStore.setRuntimeData("previewStart", Math.round(performance.now()));
+// 预览区渲染完成（测量收口）时记录加载完成时间
+watch(
+  previewSyncing,
+  (syncing) => {
+    if (!syncing) resumeStore.setRuntimeData("previewEnd", Math.round(performance.now()));
+  },
+  { immediate: true },
+);
 
 // 组装全屏预览所需的简历项
 const resumeItem = computed(() => ({
