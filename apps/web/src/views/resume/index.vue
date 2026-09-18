@@ -39,7 +39,7 @@ const activeNavIndex = computed(() => navList.findIndex((item) => route.path ===
       class="fixed top-0 right-0 left-0 z-50 h-12 w-full rounded-b-3xl border-b-[0.5px] border-sf-b bg-sf-primary font-extrabold text-sf-base"
     >
       <div class="mx-auto flex h-full w-full max-w-7xl items-center gap-5 px-4">
-        <ProjectTitle />
+        <ProjectTitle url="/resume" />
 
         <nav class="flex items-center gap-5">
           <SfSpan
