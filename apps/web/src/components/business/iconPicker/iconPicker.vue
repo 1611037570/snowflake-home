@@ -42,7 +42,7 @@ const selectIcon = (icon: string) => {
     <SfIcon
       :icon="activeIcon?.icon || 'mdi:shape-outline'"
       :size="size"
-      class="rounded-3xl hover:bg-sf-theme-2 hover:text-sf-theme-text"
+      class="rounded-3xl text-sf-text! hover:bg-sf-theme-2 hover:text-sf-theme-text"
       :boxSize="size + 2"
     />
 
