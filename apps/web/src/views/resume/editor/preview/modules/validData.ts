@@ -1,7 +1,13 @@
-// Rich text uses the editor's only empty value.
+// 富文本空值：兼容编辑器空段落与模板、导入数据中的多种空形态
 export const isContentEmpty = (val: any): boolean => {
-  if (typeof val !== "string") return false;
-  return val === "<p><br></p>";
+  if (typeof val !== "string") return true;
+  // 去掉全部标签与占位空格后无文本即为空
+  return (
+    val
+      .replace(/<[^>]*>/g, "")
+      .replace(/&nbsp;/gi, " ")
+      .trim() === ""
+  );
 };
 
 // Evaluate whether one field contains data that can be rendered.

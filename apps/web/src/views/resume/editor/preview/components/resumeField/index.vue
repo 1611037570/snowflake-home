@@ -18,6 +18,8 @@ const hasContent = computed(() => {
   const value = fieldValue.value;
   // Skip the editor's canonical empty paragraph before mounting HTML blocks.
   if (props.html && isContentEmpty(value)) return false;
+  // 纯文本字段同样忽略纯空白，避免渲染出空白行
+  if (typeof value === "string") return value.trim() !== "";
   return value != null && value !== "";
 });
 </script>
