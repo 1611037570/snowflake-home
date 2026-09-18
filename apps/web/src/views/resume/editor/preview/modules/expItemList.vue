@@ -34,9 +34,7 @@ const list = computed(() => getValidData(previewData.value?.[props.dataKey]?.lis
 
 // 条目是否含首行信息（名称/部门/岗位/时间），为空时不渲染首行，避免多出空行间距
 const hasItemHeader = (item) =>
-  Boolean(
-    item.name || item.department || item.post || item.startTime || item.endTime,
-  );
+  Boolean(item.name || item.department || item.post || item.startTime || item.endTime);
 </script>
 
 <template>
@@ -45,18 +43,13 @@ const hasItemHeader = (item) =>
     <Title :module-key="moduleName"></Title>
     <!-- 内容区 -->
     <template v-for="(item, index) in list" :key="index">
-      <div
-        v-if="hasItemHeader(item)"
-        :style="paragraphSpacingStyle"
-      >
+      <div v-if="hasItemHeader(item)" :style="paragraphSpacingStyle">
         <!-- 首行：名称与部门，右侧时间 -->
         <div class="flex flex-wrap items-center justify-between">
           <!-- 信息容器撑满行内剩余宽度，避免导出渲染时子项宽度取整触发换行错位 -->
           <div class="flex max-w-full min-w-0 flex-1 flex-wrap items-center gap-3">
             <ItemTitle :name="item.name" />
-            <div>
-              <ResumeField :model-value="item.department" />
-            </div>
+            <ResumeField :model-value="item.department" />
             <!-- 条目标签：仅声明标签的模块有数据时渲染 -->
             <ItemTags :tags="item.tags" />
           </div>

@@ -51,7 +51,7 @@ const confirmCustom = () => {
     <span
       v-for="tag in options"
       :key="tag"
-      class="cursor-pointer rounded-3xl border px-3 py-1 text-sm transition-colors"
+      class="flex-c h-6 cursor-pointer rounded-3xl border px-3 text-xs transition-colors"
       :class="
         isActive(tag)
           ? 'border-sf-theme bg-sf-theme text-sf-theme-text'
@@ -62,7 +62,7 @@ const confirmCustom = () => {
       {{ tag }}
     </span>
     <!-- 自定义入口：展开后为输入框与确认按钮 -->
-    <template v-if="editing">
+    <div class="flex items-center gap-2" v-if="editing">
       <div class="w-36">
         <SfInput
           ref="inputRef"
@@ -72,15 +72,17 @@ const confirmCustom = () => {
           @keyup.enter="confirmCustom"
         />
       </div>
-      <SfButton size="small" :disabled="!custom.trim()" @click="confirmCustom">确认</SfButton>
-    </template>
-    <span
+      <SfButton size="small" class="h-6! px-3!" :disabled="!custom.trim()" @click="confirmCustom"
+        >确认</SfButton
+      >
+    </div>
+    <div
       v-else
-      class="cursor-pointer rounded-3xl border border-sf-border px-3 py-1 text-sm text-sf-text-2 transition-colors hover:border-sf-theme hover:text-sf-theme"
+      class="border-sf-border flex-c h-6 cursor-pointer rounded-3xl border px-3 text-xs text-sf-text-2 transition-colors hover:border-sf-theme hover:text-sf-theme"
       @click="openCustom"
     >
       自定义
-    </span>
+    </div>
   </div>
 </template>
 
