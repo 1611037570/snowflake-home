@@ -56,3 +56,24 @@ export function moveFieldByKey(
   keepFixedFirst(fields, (item) => item.fixed === true);
   return true;
 }
+
+// 跨容器移动字段节点：从来源容器摘出并追加到目标容器末尾
+export function moveFieldToContainer(
+  fromContainer: { fields?: FormField[] } | undefined,
+  toContainer: { fields?: FormField[] } | undefined,
+  fieldKey: string,
+): boolean {
+  const fromFields = fromContainer?.fields;
+  const toFields = toContainer?.fields;
+  if (!fromFields || !toFields || !fieldKey) return false;
+  // 同容器内的位置调整由 moveFieldByKey 处理，避免被末尾追加改写顺序
+  if (fromFields === toFields) return false;
+
+  const index = fromFields.findIndex((field) => field.key === fieldKey);
+  if (index < 0) return false;
+
+  const [field] = fromFields.splice(index, 1);
+  if (!field) return false;
+  toFields.push(field);
+  return true;
+}

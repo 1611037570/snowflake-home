@@ -24,4 +24,4 @@ export {
 export { getFieldDataPath, unwrapField } from "./code/fieldData";
 export { createDataPathContext, resolveDataPath } from "./code/pathContext";
 export { addArrayRecord, moveArrayRecord, removeArrayRecord } from "./code/arrayData";
-export { moveFieldByKey } from "./code/orderData";
+export { moveFieldByKey, moveFieldToContainer } from "./code/orderData";
