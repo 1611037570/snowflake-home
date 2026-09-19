@@ -11,12 +11,17 @@ const resumeStore = useResumeStore();
 const { currentData, runtimeFields } = storeToRefs(resumeStore);
 const PREVIEW_SCROLL_OFFSET = 24;
 const PREVIEW_HIGHLIGHT_DELAY = 10;
+// 定位滚动期间的保护时长：滚动结束前的鼠标进入不应清除定位边框
+const PREVIEW_HIGHLIGHT_LOCK = 500;
 let previewHighlightTimer: number | null = null;
+let previewHighlightLock = 0;
 // 左侧搜索定位使用独立状态，不写入预览选择按钮使用的 selectedModule
 export const previewSelectedModule = ref<string | null>(null);
 
 // 鼠标进入定位模块后清除预览边框
 export const clearPreviewSelection = (key: string) => {
+  // 滚动定位尚未结束时忽略鼠标进入，避免边框刚出现就被清除
+  if (Date.now() < previewHighlightLock) return;
   if (previewSelectedModule.value === key) previewSelectedModule.value = null;
 };
 
@@ -52,6 +57,8 @@ const moduleList = computed(() => {
 export const jumpPreview = (key: string) => {
   if (previewHighlightTimer !== null) window.clearTimeout(previewHighlightTimer);
   previewSelectedModule.value = null;
+  // 滚动动画期间锁住鼠标进入的清除行为
+  previewHighlightLock = Date.now() + PREVIEW_HIGHLIGHT_LOCK;
   // 延迟添加边框，避开查找滚动触发的鼠标进入事件
   previewHighlightTimer = window.setTimeout(() => {
     previewSelectedModule.value = key;
