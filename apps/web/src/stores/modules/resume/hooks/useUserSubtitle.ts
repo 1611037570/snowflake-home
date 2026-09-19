@@ -1,7 +1,7 @@
 import { moveFieldToContainer } from "@/components/business/dynamicForm/api";
 
 // 副标题标记上限
-export const MAX_USER_SUBTITLE = 3;
+export const MAX_USER_SUBTITLE = 5;
 
 // 读取副标题顺序：user.ui.subtitleOrder 是顺序的唯一来源
 export function getUserSubtitleKeys(ui?: Record<string, any>): string[] {
