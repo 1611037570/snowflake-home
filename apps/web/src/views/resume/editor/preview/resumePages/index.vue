@@ -32,6 +32,11 @@ const props = defineProps({
     type: Object,
     required: true,
   },
+  // 编辑器运行时已展开的字段配置，避免预览重复展开并深拷贝
+  expandedFields: {
+    type: Array,
+    default: undefined,
+  },
   // 场景模式：'editor' 编辑器交互预览（默认），'preview' 全屏只读，'thumb' 缩略图只读（仅渲染第一页）
   mode: {
     type: String,
@@ -72,8 +77,11 @@ const { paddingStyle, fontStyle, lineHeightStyle, fontReadyVersion } = themeStyl
 
 // ---------- 分页（测量 + 分页算法 + 裁剪样式）----------
 const allModules = computed(() => {
-  // 展开完整模块配置后再过滤隐藏模块，避免持久化 key 配置缺少隐藏规则
-  const fields = expandConfigFields(props.item.config?.fields || [], props.item.data);
+  // 优先复用编辑器已展开的字段配置，模板缩略图等场景仍按持久化配置展开
+  const fields =
+    props.expandedFields !== undefined
+      ? props.expandedFields
+      : expandConfigFields(props.item.config?.fields || [], props.item.data);
   return fields.filter((field) => !isFieldHidden(props.item.data, field));
 });
 const userHiddenFields = computed(() => {

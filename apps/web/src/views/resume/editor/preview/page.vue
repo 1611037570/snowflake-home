@@ -10,7 +10,8 @@ import { useSmartOnePage } from "./resumePages/useSmartOnePage";
 defineOptions({ name: "ResumePage" });
 
 const resumeStore = useResumeStore();
-const { currentData, currentConfig, currentUI, runtimeConfig } = storeToRefs(resumeStore);
+const { currentData, currentConfig, currentUI, runtimeConfig, runtimeFields } =
+  storeToRefs(resumeStore);
 
 const exportSuccessModalRef = ref(null);
 
@@ -51,7 +52,7 @@ useSmartOnePage({
 </script>
 
 <template>
-  <ResumePages ref="pagesRef" :item="resumeItem" />
+  <ResumePages ref="pagesRef" :item="resumeItem" :expanded-fields="runtimeFields" />
   <!-- 导出成功弹窗（含投递简历入口）由该组件统一管理 -->
   <ExportSuccessModal ref="exportSuccessModalRef" />
 </template>

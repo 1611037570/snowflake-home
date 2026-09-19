@@ -21,6 +21,11 @@ const props = defineProps({
     type: Object,
     required: true,
   },
+  // 复用编辑器已展开的字段配置，避免全屏预览再次展开
+  expandedFields: {
+    type: Array,
+    default: undefined,
+  },
 });
 
 const handleKeydown = (e) => {
@@ -69,7 +74,7 @@ onBeforeUnmount(() => {
       <!-- 缩放预览内容 -->
       <div class="min-h-0 flex-1">
         <ScaleContainer :show-toolbar="false">
-          <ResumePages :item="item" mode="preview" />
+          <ResumePages :item="item" :expanded-fields="expandedFields" mode="preview" />
         </ScaleContainer>
       </div>
     </div>
