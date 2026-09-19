@@ -91,9 +91,8 @@ export function useImageUpload(options: UseImageUploadOptions = {}) {
     }
   };
 
-  // 监听文件选择：按是否裁切走不同流程
-  onChange(async (files) => {
-    const file = files?.[0];
+  // 处理单个文件：按是否裁切走不同流程
+  const handleFile = async (file?: File) => {
     if (!file) return;
     logFileSize(file);
     try {
@@ -108,7 +107,10 @@ export function useImageUpload(options: UseImageUploadOptions = {}) {
     } finally {
       loading.value = false;
     }
-  });
+  };
+
+  // 监听文件选择：按是否裁切走不同流程
+  onChange((files) => handleFile(files?.[0]));
 
   // 打开图片选择
   const openPicker = () => open({ accept: "image/*" });
@@ -134,6 +136,7 @@ export function useImageUpload(options: UseImageUploadOptions = {}) {
 
   return {
     openPicker,
+    handleFile,
     loading,
     cropVisible,
     cropSrc,
