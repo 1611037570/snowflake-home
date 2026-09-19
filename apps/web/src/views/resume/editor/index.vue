@@ -110,7 +110,10 @@ watch(
       return;
     }
     // 切换简历前取消上一份简历的打印任务
-    if (currentIndex.value !== index) cancelPrinting();
+    if (currentIndex.value !== index) {
+      cancelPrinting();
+      cancelFittingOnePage();
+    }
     // 先定位当前简历，再初始化状态；配置同步由 Builder 执行
     currentIndex.value = index;
     initResumeStatus();
@@ -136,6 +139,8 @@ onMounted(() => {});
 onUnmounted(() => {
   // 离开编辑器时取消未完成的打印任务
   cancelPrinting();
+  // 离开编辑器时取消未完成的智能一页压缩
+  cancelFittingOnePage();
   if (currentUsage.value) {
     currentUsage.value.lastUseTime = Date.now();
   }
