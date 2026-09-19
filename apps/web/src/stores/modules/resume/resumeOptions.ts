@@ -13,6 +13,9 @@ export const RESUME_VALUE_OPTIONS = {
     { name: "在职", value: "在职" },
     { name: "离职", value: "离职" },
     { name: "应届生", value: "应届生" },
+    { name: "随时到岗", value: "随时到岗" },
+    { name: "一月内到岗", value: "一月内到岗" },
+    { name: "在职看机会", value: "在职看机会" },
   ],
   // 婚姻状况
   marital: [

@@ -60,7 +60,9 @@ describe("validateResumeEdits", () => {
         field: "status",
         value: "未知状态",
       }),
-    ).toContain("模块 user 字段 status 可选值应为：在职 / 离职 / 应届生");
+    ).toContain(
+      "模块 user 字段 status 可选值应为：在职 / 离职 / 应届生 / 随时到岗 / 一月内到岗 / 在职看机会",
+    );
   });
 
   it("校验身高体重字段的对象结构", () => {

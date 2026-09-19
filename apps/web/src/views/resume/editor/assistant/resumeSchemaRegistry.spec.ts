@@ -10,7 +10,7 @@ describe("resumeSchemaRegistry", () => {
     expect(status).toMatchObject({
       label: "求职状态",
       addable: true,
-      options: ["在职", "离职", "应届生"],
+      options: ["在职", "离职", "应届生", "随时到岗", "一月内到岗", "在职看机会"],
     });
   });
 
