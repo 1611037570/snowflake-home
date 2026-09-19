@@ -6,6 +6,7 @@ import { EXPANDED, MORE_CATEGORIES } from "@/stores/modules/resume/formConfig";
 import { addUserCustomField } from "@/stores/modules/resume/hooks/useUserCustomField";
 import { getUUID } from "@/utils";
 import eventBus from "@/utils/modules/eventBus";
+import { scrollEditorTo } from "../../../scrollEditorTo";
 import { storeToRefs } from "pinia";
 
 const { currentForm, hasFieldData, addField, getFieldDataKey } = useFormContext();
@@ -49,10 +50,8 @@ function toggle() {
 function locateAddedField(fieldKey) {
   if (!fieldKey) return;
   nextTick(() => {
-    document
-      .querySelector(`[data-field-key="${fieldKey}"]`)
-      ?.scrollIntoView({ behavior: "smooth", block: "start" });
-    // 选中落到字段所在行，边框由外层字段容器承载
+    // 定位取字段的卡片外圈，与选中边框范围保持一致
+    scrollEditorTo(document.querySelector(`[data-module-key="${fieldKey}"]`));
     eventBus.emit("df-select-module", fieldKey);
   });
 }

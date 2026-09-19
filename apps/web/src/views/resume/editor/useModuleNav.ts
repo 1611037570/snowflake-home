@@ -6,6 +6,7 @@ import eventBus from "@/utils/modules/eventBus";
 import { isFieldHidden, isFieldRemoved } from "@/components/business/dynamicForm/api";
 import { ElNotification } from "element-plus";
 import { useResumeSearch, type ResumeSearchHit } from "./hooks/useResumeSearch";
+import { scrollEditorTo } from "./scrollEditorTo";
 
 // store 为全局单例：模块列表与跳转逻辑无组件级状态，抽为模块级共享，避免各组件重复创建 hook
 const resumeStore = useResumeStore();
@@ -107,18 +108,16 @@ const activateModule = (key: string) => {
   eventBus.emit("df-select-module", key);
 };
 
-// 滚动到编辑区锚点：内容命中优先命中行，其次字段行，最后回退模块
+// 滚动到编辑区锚点：记录命中取该条记录外圈，字段命中取字段外圈，其余回退模块外圈
 const scrollEditorTarget = (key: string, hit?: ResumeSearchHit) => {
   const selector =
     hit?.itemIndex != null
       ? `[data-module-key="${key}"] [data-item-index="${hit.itemIndex}"]`
-      : hit?.fieldKey
-        ? `[data-module-key="${key}"] [data-field-key="${hit.fieldKey}"]`
-        : `[data-module-key="${key}"]`;
-  const target =
+      : `[data-module-key="${hit?.fieldKey ?? key}"]`;
+  scrollEditorTo(
     document.querySelector<HTMLElement>(selector) ??
-    document.querySelector<HTMLElement>(`[data-module-key="${key}"]`);
-  target?.scrollIntoView({ behavior: "smooth", block: "start" });
+      document.querySelector<HTMLElement>(`[data-module-key="${key}"]`),
+  );
 };
 
 // 跳转编辑区：展开折叠 + 选中闪烁 + 滚动定位

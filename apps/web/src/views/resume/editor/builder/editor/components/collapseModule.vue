@@ -2,6 +2,7 @@
 import { useResumeStore } from "@/stores";
 import { useFormContext } from "@/components/business/dynamicForm/api";
 import { jumpPreview } from "../../../useModuleNav";
+import { scrollEditorTo } from "../../../scrollEditorTo";
 import eventBus from "@/utils/modules/eventBus";
 import Icon from "../icon.vue";
 import EditableTitle from "./editableTitle.vue";
@@ -71,11 +72,9 @@ function locateAddedItem(index) {
   if (index == null) return;
   nextTick(() => {
     const moduleKey = currentForm.value?.key;
-    const row = document.querySelector(
-      `[data-module-key="${moduleKey}"] [data-item-index="${index}"]`,
+    scrollEditorTo(
+      document.querySelector(`[data-module-key="${moduleKey}"] [data-item-index="${index}"]`),
     );
-    if (!row) return;
-    row.scrollIntoView({ behavior: "smooth", block: "start" });
     eventBus.emit("df-select-module", moduleKey);
   });
 }
