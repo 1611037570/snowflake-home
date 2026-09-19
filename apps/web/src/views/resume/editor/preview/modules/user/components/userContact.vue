@@ -27,6 +27,8 @@ const user = computed(() => previewData.value?.user?.data || {});
 const ui = computed(() => previewData.value?.user?.ui || {});
 // 读取字段配置中的图标，未配置时为 undefined 由图标组件兜底处理
 const fieldIcon = (key) => ui.value?.[key]?.icon;
+// 出生日期展示形态：年龄或出生日期，未配置时按年龄展示
+const birthdayDisplay = computed(() => ui.value?.birthday?.display || "age");
 // 副标题字段在姓名下方单独展示，不再出现在信息行
 const subtitleKeys = computed(() => getUserSubtitleKeys(ui.value));
 const { isUserFieldHidden } = useUserFieldVisibility();
@@ -35,11 +37,11 @@ const userFieldLabels = inject("userFieldLabels", computed(() => new Map()));
 const isIconMode = computed(() => userInfoMode?.value === "icon");
 // 隐藏模式仅保留个人信息字段值
 const isLabelHidden = computed(() => userInfoMode?.value === "none");
-// 计算年龄
+// 计算年龄：出生日期缺失或不可解析时返回 null，0 岁是合法年龄
 const age = computed(() => {
-  if (isUserFieldHidden("birthday")) return 0;
+  if (isUserFieldHidden("birthday")) return null;
   const birthday = user.value?.birthday;
-  if (!birthday || !dayjs(birthday).isValid()) return 0;
+  if (!birthday || !dayjs(birthday).isValid()) return null;
   const ageDiff = dayjs().diff(dayjs(birthday), "year");
   return Math.max(0, ageDiff);
 });
@@ -91,7 +93,16 @@ const metaItems = computed(() => {
       label: getPreviewText("sexLabel", previewLang.value),
     });
   }
-  if (age.value) {
+  // 出生日期展示形态为日期时直接展示字段值，否则展示推导出的年龄
+  if (birthdayDisplay.value === "date") {
+    if (!isUserFieldHidden("birthday") && user.value?.birthday) {
+      items.push({
+        key: "birthday",
+        icon: fieldIcon("birthday"),
+        label: getPreviewText("birthdayLabel", previewLang.value),
+      });
+    }
+  } else if (age.value !== null) {
     items.push({
       // 年龄跟随出生日期排序，图标与标签沿用出生日期字段配置
       sortKey: "birthday",

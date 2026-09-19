@@ -82,12 +82,26 @@ const createMoreField = (options: {
   addable?: boolean;
   // 所属分类：供编辑器「更多」分区归类展示
   category?: string;
+  // 展示形态选项：声明后编辑器提供切换，预览按选中形态展示
+  displayOptions?: { label: string; value: string }[];
   // 字典 key：存在时内层字段同时绑定选项列表
   dict?: string;
   props?: Record<string, any>;
   rules?: any[];
 }): GroupFormField => {
-  const { key, label, component, icon, tip, addable, category, dict, props, rules } = options;
+  const {
+    key,
+    label,
+    component,
+    icon,
+    tip,
+    addable,
+    category,
+    displayOptions,
+    dict,
+    props,
+    rules,
+  } = options;
   return {
     type: "group",
     component: "fieldItem",
@@ -99,6 +113,7 @@ const createMoreField = (options: {
       label,
       ...(tip ? { tip } : {}),
       ...(category ? { category } : {}),
+      ...(displayOptions ? { displayOptions } : {}),
       removable: true,
       draggable: true,
     },
@@ -108,6 +123,16 @@ const createMoreField = (options: {
     model: [
       { source: ["ui", key, "hidden"], prop: "hidden", defaultValue: false },
       { source: ["ui", key, "icon"], prop: "icon", defaultValue: icon },
+      // 展示形态：默认取首个选项，保证初始展示与预览口径一致
+      ...(displayOptions
+        ? [
+            {
+              source: ["ui", key, "display"],
+              prop: "display",
+              defaultValue: displayOptions[0]?.value,
+            },
+          ]
+        : []),
     ],
     // 字段隐藏时的置灰判断
     checks: { hidden: { path: ["ui", key, "hidden"], equals: true } },
@@ -251,6 +276,11 @@ export const DEFAULT_USER_FORM = [
             icon: "mdi:cake-variant",
             tip: "推荐必填",
             addable: true,
+            // 展示形态：简历上展示年龄或出生日期
+            displayOptions: [
+              { label: "年龄", value: "age" },
+              { label: "出生日期", value: "date" },
+            ],
             props: {
               placeholder: "请选择出生日期",
               valueFormat: "YYYY.MM",
