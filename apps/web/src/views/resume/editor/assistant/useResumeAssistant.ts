@@ -18,6 +18,7 @@ export const useResumeAssistant = () => {
   const resumeContext = useResumeContext();
   // 每次请求独立记录写入结果，语言工具只能在本轮完整写入成功后执行
   let hasSuccessfulWrite = false;
+  let activeTaskId = "";
 
   const updateCurrentLang = (language: string): boolean => {
     const ui = resumeStore.currentUI;
@@ -60,14 +61,18 @@ export const useResumeAssistant = () => {
       }
       return undefined;
     },
-    beforeRequest: (options) => {
+    beforeRequest: (options, taskId) => {
       // 新请求开始时清空上轮写入凭据，禁止跨请求复用
       hasSuccessfulWrite = false;
-      resumeContext.beforeRequest(options);
+      activeTaskId = taskId || "";
+      resumeContext.beforeRequest(options, taskId);
     },
-    afterRequest: () => {
-      hasSuccessfulWrite = false;
-      resumeContext.afterRequest();
+    afterRequest: (taskId) => {
+      resumeContext.afterRequest(taskId);
+      if (!taskId || taskId === activeTaskId) {
+        hasSuccessfulWrite = false;
+        activeTaskId = "";
+      }
     },
   };
 

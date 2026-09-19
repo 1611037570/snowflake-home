@@ -44,14 +44,6 @@ const selectedModules = computed(() =>
 const removeSelectedModule = (key: string) => {
   resumeStore.unselectModule(key);
 };
-// 切换简历时恢复该简历最近一次助手对话
-watch(
-  resumeId,
-  (id) => {
-    if (id) aiStore.initializeResumeAssistantChat(id);
-  },
-  { immediate: true },
-);
 const chat = computed({
   get: () => resumeAssistantChat.value!,
   set: (value) => {
@@ -244,6 +236,16 @@ const { handleAIResponse, stopGenerating, withdrawAI, hasWriteChanges } = useCha
   scrollToBottom: followContentScroll,
   config: assistantConfig,
 });
+
+// 切换简历时先取消旧会话请求，再恢复目标简历的助手对话
+watch(
+  resumeId,
+  (id, previousId) => {
+    if (previousId && id !== previousId) stopGenerating();
+    if (id) aiStore.initializeResumeAssistantChat(id);
+  },
+  { immediate: true },
+);
 
 /**
  * 处理发送消息

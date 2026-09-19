@@ -55,13 +55,14 @@ export const useChatRequest = ({
     const item = resumeStore.currentItem;
     if (!item) return null;
     return {
+      resumeId: item.id,
       data: cloneDataSkippingMedia(item.data ?? {}),
       config: JSON.parse(JSON.stringify(item.config ?? {})),
     };
   };
   const restoreBackup = (backup: any) => {
     const item = resumeStore.currentItem;
-    if (!item || !backup) return;
+    if (!item || !backup || item.id !== backup.resumeId) return;
     // 恢复时保留当前未被 AI 修改的大字段（头像、作品图）
     const currentData = item.data || {};
     const avatar = currentData?.user?.data?.avatar;
@@ -198,6 +199,9 @@ export const useChatRequest = ({
   const handleAIResponse = async () => {
     // 增加请求版本，用于判断当前请求是否有效
     const currentRequestVersion = ++requestVersion;
+    const requestResumeId = resumeStore.currentItem?.id || "";
+    const requestChatId = chat.value?.id || "";
+    const requestTaskId = `${requestResumeId}:${currentRequestVersion}`;
     // 请求前备份简历，撤回修改时恢复
     const backup = captureBackup?.();
     stepContent = "";
@@ -205,7 +209,11 @@ export const useChatRequest = ({
     finalContentStarted = false;
     lastToolName = "";
     // 辅助函数：检查当前请求是否仍为最新且组件未卸载
-    const isCurrentRequest = () => !isUnmounted && currentRequestVersion === requestVersion;
+    const isCurrentRequest = () =>
+      !isUnmounted &&
+      currentRequestVersion === requestVersion &&
+      resumeStore.currentItem?.id === requestResumeId &&
+      chat.value?.id === requestChatId;
     // 设置生成状态为true
     generating.value = true;
     // 最后一条消息（即AI回复消息）的引用与状态处理器
@@ -226,7 +234,7 @@ export const useChatRequest = ({
       const requestMessage = [...currentMessages.value]
         .reverse()
         .find((message) => message.role === "user");
-      beforeRequest?.(requestMessage?.requestContext);
+      beforeRequest?.(requestMessage?.requestContext, requestTaskId);
       // 构建消息列表（只复制 role 和 content，跳过带上下文标记的引导对话）
       let messages = currentMessages.value
         .filter((message) => !message.skipContext)
@@ -339,7 +347,7 @@ export const useChatRequest = ({
           streamFinalContent = false;
           scrollToBottom();
           setTimeout(() => {
-            scrollToBottom();
+            if (isCurrentRequest()) scrollToBottom();
           }, 10);
         },
       });
@@ -349,7 +357,7 @@ export const useChatRequest = ({
       stepContent = "";
       streamFinalContent = false;
       // 若已卸载则忽略
-      if (isUnmounted) return;
+      if (!isCurrentRequest()) return;
       // 主动中止不视为错误
       if (isAbortError(error)) return;
       console.error("AI 请求异常:", error);
@@ -362,17 +370,20 @@ export const useChatRequest = ({
     } finally {
       // 清理工作（无论成功或失败）
       // 请求结束还原调用方现场
-      afterRequest?.();
-      const finishTime = Date.now();
+      const isCurrent = isCurrentRequest();
+      afterRequest?.(requestTaskId);
       state?.dispose();
-      // 重置状态
-      generating.value = false;
-      abortRequest = null;
-      if (lastMsg?.typing) lastMsg.typing = false;
-      if (chat.value) chat.value.updateTime = finishTime;
-      // 按钮等尾部内容在 typing=false 后才渲染，收尾后补一次滚动避免被遮挡
-      if (!isUnmounted) {
-        await scrollToBottom();
+      if (isCurrent) {
+        const finishTime = Date.now();
+        // 仅当前任务可以收口生成状态，避免旧任务覆盖新任务
+        generating.value = false;
+        abortRequest = null;
+        if (lastMsg?.typing) lastMsg.typing = false;
+        if (chat.value) chat.value.updateTime = finishTime;
+        // 按钮等尾部内容在 typing=false 后才渲染，收尾后补一次滚动避免被遮挡
+        if (!isUnmounted) {
+          await scrollToBottom();
+        }
       }
     }
   };
@@ -381,6 +392,7 @@ export const useChatRequest = ({
    * 停止当前 AI 请求
    */
   const stopGenerating = () => {
+    requestVersion += 1;
     abortRequest?.(); // 取消请求
     abortRequest = null;
     reactRunner?.abort();
@@ -394,6 +406,7 @@ export const useChatRequest = ({
     currentMessages.value.forEach((message) => {
       if (message.typing) message.typing = false;
     });
+    generating.value = false;
   };
 
   // 组件卸载时取消请求，避免旧请求继续更新
