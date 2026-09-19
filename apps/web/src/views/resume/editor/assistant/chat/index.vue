@@ -2,7 +2,7 @@
 import { useAiStore, useResumeStore } from "@/stores";
 import { useClipboard, useScroll } from "@vueuse/core";
 import { ElMessage } from "element-plus";
-import { computed, nextTick, ref, watch } from "vue";
+import { computed, nextTick, onBeforeUnmount, ref, watch } from "vue";
 import { storeToRefs } from "pinia";
 import { useChatRequest } from "./useChatRequest";
 import { ALL_MODULE_KEY, ALL_MODULE_NAME } from "@/stores/modules/resume/defaultConfig";
@@ -160,12 +160,32 @@ const chatInputRef = ref(null);
 /**
  * 滚动到底部
  */
-const scrollToBottom = async () => {
-  await nextTick();
-  if (chatContainer.value?.wrapRef) {
-    chatContainer.value.setScrollTop(chatContainer.value.wrapRef.scrollHeight);
-  }
+let scrollFrame = 0;
+const scrollWaiters: Array<(value?: unknown) => void> = [];
+const flushScrollWaiters = () => {
+  const waiters = scrollWaiters.splice(0);
+  waiters.forEach((resolve) => resolve());
 };
+// 将流式消息触发的多次滚动合并到同一帧，避免重复读取布局与写入滚动位置
+const scrollToBottom = () => {
+  const promise = new Promise((resolve) => scrollWaiters.push(resolve));
+  if (scrollFrame) return promise;
+  scrollFrame = requestAnimationFrame(async () => {
+    scrollFrame = 0;
+    await nextTick();
+    if (chatContainer.value?.wrapRef) {
+      chatContainer.value.setScrollTop(chatContainer.value.wrapRef.scrollHeight);
+    }
+    flushScrollWaiters();
+  });
+  return promise;
+};
+
+onBeforeUnmount(() => {
+  if (scrollFrame) cancelAnimationFrame(scrollFrame);
+  scrollFrame = 0;
+  flushScrollWaiters();
+});
 
 // 左侧消息导航：滚动定位到指定消息
 function scrollToMessage(index) {
@@ -182,6 +202,24 @@ function handleNavSelect(msg) {
   const index = displayMessages.value.indexOf(msg);
   if (index > -1) scrollToMessage(index);
 }
+
+// 未变化的历史消息跳过父列表更新，生成中的消息仍按内容与状态变化刷新
+const getMessageMemo = (msg, index) => [
+  msg.id || index,
+  msg.content,
+  msg.thought,
+  msg.typing,
+  msg.requestStatus,
+  msg.stepLabel,
+  msg.contentCollapsed,
+  msg.thoughtCollapsed,
+  msg.total_tokens,
+  msg.thoughtTime,
+  msg.contentTime,
+  msg.followQuestions?.join("\u0000"),
+  index === displayMessages.value.length - 1,
+  hasWriteChanges(msg),
+];
 
 // 监听 chat 变化时滚动到底部并聚焦
 watch(
@@ -549,7 +587,8 @@ const handleCopyQuickAnswer = async () => {
         <component
           :is="msg.role === 'user' ? UserMessage : AiMessage"
           v-for="(msg, index) in displayMessages"
-          :key="index"
+          v-memo="getMessageMemo(msg, index)"
+          :key="msg.id || index"
           :msg="msg"
           :index="index"
           :data-msg-index="index"
