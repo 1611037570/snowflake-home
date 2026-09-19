@@ -3,14 +3,13 @@
 defineOptions({ name: "BuilderEditor" });
 import { useResumeStore } from "@/stores";
 import { storeToRefs } from "pinia";
+import { defineAsyncComponent } from "vue";
 import { RESUME_OPTIONS } from "@/stores/modules/resume/resumeOptions";
 import { useRuntimeData } from "../../hooks/useRuntimeData";
 import AddModule from "./components/addModule.vue";
-import CityPicker from "./components/cityPicker/index.vue";
 import ArchivedModules from "./components/archivedModules.vue";
 import HeightWeight from "./components/heightWeight.vue";
 import Image from "./components/image.vue";
-import ImageUpload from "./components/imageUpload/index.vue";
 import More from "./components/more.vue";
 import SubtitleBox from "./components/subtitleBox.vue";
 import Tag from "./components/tag.vue";
@@ -20,6 +19,10 @@ import CollapseItem from "./components/collapseItem.vue";
 import RowField from "./components/rowField.vue";
 import RowAccount from "./components/rowAccount.vue";
 import RowHonor from "./components/rowHonor.vue";
+
+// 图片裁剪与城市级联仅在对应字段出现时加载，避免占用编辑器首屏资源
+const AsyncImageUpload = defineAsyncComponent(() => import("./components/imageUpload/index.vue"));
+const AsyncCityPicker = defineAsyncComponent(() => import("./components/cityPicker/index.vue"));
 
 const resumeStore = useResumeStore();
 const { currentData, runtimeConfig } = storeToRefs(resumeStore);
@@ -38,14 +41,14 @@ const dynamicComponents = {
   rowField: RowField,
   rowAccount: RowAccount,
   rowHonor: RowHonor,
-  imageUpload: ImageUpload,
+  imageUpload: AsyncImageUpload,
   image: Image,
   heightWeight: HeightWeight,
   more: More,
   subtitleBox: SubtitleBox,
   tag: Tag,
   video: Video,
-  cityPicker: CityPicker,
+  cityPicker: AsyncCityPicker,
 };
 
 // 配置同步：进入或切换简历时由本组件触发，完成前由外壳展示加载提示
