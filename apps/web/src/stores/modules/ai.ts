@@ -18,6 +18,8 @@ export type Chat = {
   messages: Message[];
 };
 export type Message = {
+  // 消息唯一标识
+  id: string;
   // 创建时间
   createTime: number;
   // 角色
@@ -145,6 +147,7 @@ export const useAiStore = defineStore(
     // 创建默认消息
     function createDefaultMessage() {
       const message: Message = {
+        id: `msg-${getUUID().slice(0, 8)}`,
         createTime: Date.now(),
         contentCollapsed: false,
         thoughtCollapsed: false,
@@ -160,6 +163,16 @@ export const useAiStore = defineStore(
       };
       return message;
     }
+    // 为旧持久化消息补齐唯一标识，保证迁移后预览实例仍可稳定复用
+    function ensureMessageIds(chat: Chat) {
+      const ids = new Set<string>();
+      chat.messages.forEach((message) => {
+        let id = message.id;
+        while (!id || ids.has(id)) id = `msg-${getUUID().slice(0, 8)}`;
+        message.id = id;
+        ids.add(id);
+      });
+    }
     function addChat() {
       const newChat = createDefaultChat();
       chatList.value.unshift(newChat);
@@ -173,7 +186,9 @@ export const useAiStore = defineStore(
     // 初始化指定简历的助手对话，避免不同简历共用会话
     function initializeResumeAssistantChat(resumeId: string) {
       const chats = resumeAssistantChatList.value.filter((chat) => chat.resumeId === resumeId);
+      chats.forEach(ensureMessageIds);
       if (resumeAssistantChat.value?.resumeId === resumeId) {
+        ensureMessageIds(resumeAssistantChat.value);
         const savedChat = resumeAssistantChatList.value.find(
           (chat) => chat.id === resumeAssistantChat.value?.id,
         );

@@ -34,7 +34,7 @@ function getMessageBrief(msg) {
         <SfScrollbar max-height="320px" class="w-full">
           <div
             v-for="(msg, index) in messages"
-            :key="index"
+            :key="msg.id"
             type="button"
             class="block w-full min-w-0 cursor-pointer truncate py-3 text-left text-xs text-sf-text-2 transition-colors hover:text-sf-theme"
             @click="emit('select', msg)"

@@ -588,7 +588,7 @@ const handleCopyQuickAnswer = async () => {
           :is="msg.role === 'user' ? UserMessage : AiMessage"
           v-for="(msg, index) in displayMessages"
           v-memo="getMessageMemo(msg, index)"
-          :key="msg.id || index"
+          :key="msg.id"
           :msg="msg"
           :index="index"
           :data-msg-index="index"
