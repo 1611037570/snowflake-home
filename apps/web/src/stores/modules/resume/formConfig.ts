@@ -430,6 +430,18 @@ export const DEFAULT_USER_FORM = [
               clearable: true,
             },
           }),
+          createMoreField({
+            key: "linkedin",
+            label: "LinkedIn",
+            category: "联系方式",
+            component: "input",
+            icon: "mdi:linkedin",
+            addable: true,
+            props: {
+              placeholder: "请输入 LinkedIn 地址",
+              clearable: true,
+            },
+          }),
           // 求职状态
           createMoreField({
             key: "status",
@@ -485,6 +497,18 @@ export const DEFAULT_USER_FORM = [
             dict: "city",
             props: {
               placeholder: "请选择籍贯",
+            },
+          }),
+          createMoreField({
+            key: "currentCity",
+            label: "现居城市",
+            category: "基本信息",
+            component: "cityPicker",
+            icon: "mdi:home-city-outline",
+            addable: true,
+            dict: "city",
+            props: {
+              placeholder: "请选择现居城市",
             },
           }),
           // 期望薪资

@@ -226,6 +226,7 @@ export const ICON_LIST: Record<string, IconItem> = {
   "mdi:flag-outline": { icon: "mdi:flag-outline", name: "政治面貌" },
   "mdi:map-marker-outline": { icon: "mdi:map-marker-outline", name: "城市" },
   "mdi:home-outline": { icon: "mdi:home-outline", name: "籍贯" },
+  "mdi:home-city-outline": { icon: "mdi:home-city-outline", name: "现居城市" },
   "mdi:human-male-height": { icon: "mdi:human-male-height", name: "身高体重" },
   "mdi:currency-cny": { icon: "mdi:currency-cny", name: "期望薪资" },
   "mdi:cake-variant": { icon: "mdi:cake-variant", name: "生日蛋糕" },
