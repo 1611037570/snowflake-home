@@ -148,18 +148,17 @@ const clearField = () => {
           @click="openRenameModal"
           icon="lucide:pencil"
         />
-        <SfTooltip :content="subtitleTip">
+        <!-- 副标题开关：不支持置顶的字段整块不渲染，避免触发 tooltip 兜底内容 -->
+        <SfTooltip v-if="subtitleCapable" :content="subtitleTip">
           <Icon
-            v-if="subtitleCapable"
             @pointerdown.stop.prevent
             @click="toggleSubtitle"
             icon="lucide:heading-2"
             :class="[isSubtitle ? 'text-sf-theme' : '', subtitleFull ? 'opacity-50' : '']"
           />
         </SfTooltip>
-        <SfTooltip :content="hidden ? '显示' : '隐藏'">
+        <SfTooltip v-if="hidden !== undefined" :content="hidden ? '显示' : '隐藏'">
           <Icon
-            v-if="hidden !== undefined"
             @pointerdown.stop.prevent
             @click="toggleHidden"
             :icon="hidden ? 'lucide:eye' : 'lucide:eye-off'"
