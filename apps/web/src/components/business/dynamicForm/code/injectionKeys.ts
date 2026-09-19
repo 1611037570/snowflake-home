@@ -29,9 +29,11 @@ export const DF_REMOVE: InjectionKey<() => void> = Symbol("df/remove");
 export const DF_CONTEXT: InjectionKey<() => FormContext> = Symbol("df/context");
 /**
  * 模块选中能力（内部机制，不对外导出）：根组件 provide，渲染层 inject，
- * selectModule(key) 触发选中后模块边框持续闪烁，鼠标经过模块后恢复正常
+ * selectModule(key, index) 触发选中后边框持续闪烁；传入 index 表示选中该模块中的某条记录
  */
 export const DF_MODULE_SELECT: InjectionKey<{
   selectedKey: Ref<string | null>;
-  selectModule: (key: string | null) => void;
+  /** 记录级选中的记录下标，为空表示选中模块或字段本身 */
+  selectedIndex: Ref<number | null>;
+  selectModule: (key: string | null, index?: number | null) => void;
 }> = Symbol("df/module/select");

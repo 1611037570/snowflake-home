@@ -75,7 +75,8 @@ function locateAddedItem(index) {
     scrollEditorTo(
       document.querySelector(`[data-module-key="${moduleKey}"] [data-item-index="${index}"]`),
     );
-    eventBus.emit("df-select-module", moduleKey);
+    // 选中落到新增的那条记录，而不是整个模块
+    eventBus.emit("df-select-module", { key: moduleKey, index });
   });
 }
 
