@@ -154,8 +154,10 @@ export function bindCollapsedDefault(fields: any[], getDefault: () => string[]) 
 
 // 按持久化 key 配置构建编辑器会话使用的完整表单配置
 export function buildRuntimeConfig(config: any, data: any) {
+  const fields = expandConfigFields(config?.fields || [], data);
   return {
     ...config,
-    fields: expandConfigFields(config?.fields || [], data),
+    id: config?.id || "df-form",
+    fields,
   };
 }
