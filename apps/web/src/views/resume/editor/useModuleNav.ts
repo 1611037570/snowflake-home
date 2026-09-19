@@ -5,10 +5,12 @@ import { CUSTOM_MODULE_ICON, DEFAULT_MODULE_NAMES } from "@/stores/modules/resum
 import eventBus from "@/utils/modules/eventBus";
 import { isFieldHidden, isFieldRemoved } from "@/components/business/dynamicForm/api";
 import { ElNotification } from "element-plus";
+import { useResumeSearch, type ResumeSearchHit } from "./hooks/useResumeSearch";
 
 // store 为全局单例：模块列表与跳转逻辑无组件级状态，抽为模块级共享，避免各组件重复创建 hook
 const resumeStore = useResumeStore();
 const { currentData, runtimeFields } = storeToRefs(resumeStore);
+const { searchIndex } = useResumeSearch();
 const PREVIEW_SCROLL_OFFSET = 24;
 const PREVIEW_HIGHLIGHT_DELAY = 10;
 // 定位滚动期间的保护时长：滚动结束前的鼠标进入不应清除定位边框
@@ -79,21 +81,20 @@ export const jumpPreview = (key: string) => {
   });
 };
 
-// 跳转编辑区：展开折叠 + 选中闪烁 + 滚动定位
-export const jumpEditor = (key: string) => {
-  const item = moduleList.value.find((m) => m.key === key);
-  // 归档模块不在左侧编辑区展示，定位时提示用户先恢复模块
-  if (item && isFieldRemoved(currentData.value, item.field)) {
-    ElNotification({
-      title: "模块已归档",
-      message: "请先在左侧恢复归档后再编辑该模块。",
-      type: "warning",
-      position: "top-right",
-      offset: 40,
-      duration: 3000,
-    });
-    return;
-  }
+// 归档模块不在左侧编辑区展示，定位时提示用户先恢复模块
+const notifyArchived = () => {
+  ElNotification({
+    title: "模块已归档",
+    message: "请先在左侧恢复归档后再编辑该模块。",
+    type: "warning",
+    position: "top-right",
+    offset: 40,
+    duration: 3000,
+  });
+};
+
+// 展开模块折叠面板并触发编辑区选中闪烁：定位类跳转的公共前置动作
+const activateModule = (key: string) => {
   // 切换到编辑标签，避免停留设计/模板标签时编辑区不可见
   eventBus.emit("switch-builder-tab", 0);
   // 展开模块折叠面板
@@ -104,37 +105,63 @@ export const jumpEditor = (key: string) => {
   }
   // 触发编辑区模块选中闪烁
   eventBus.emit("df-select-module", key);
-  nextTick(() => {
-    document
-      .querySelector(`[data-module-key="${key}"]`)
-      ?.scrollIntoView({ behavior: "smooth", block: "start" });
-  });
+};
+
+// 滚动到编辑区锚点：内容命中优先命中行，其次字段行，最后回退模块
+const scrollEditorTarget = (key: string, hit?: ResumeSearchHit) => {
+  const selector =
+    hit?.itemIndex != null
+      ? `[data-module-key="${key}"] [data-item-index="${hit.itemIndex}"]`
+      : hit?.fieldKey
+        ? `[data-module-key="${key}"] [data-field-key="${hit.fieldKey}"]`
+        : `[data-module-key="${key}"]`;
+  const target =
+    document.querySelector<HTMLElement>(selector) ??
+    document.querySelector<HTMLElement>(`[data-module-key="${key}"]`);
+  target?.scrollIntoView({ behavior: "smooth", block: "start" });
+};
+
+// 跳转编辑区：展开折叠 + 选中闪烁 + 滚动定位
+export const jumpEditor = (key: string) => {
+  const item = moduleList.value.find((m) => m.key === key);
+  if (item && isFieldRemoved(currentData.value, item.field)) {
+    notifyArchived();
+    return;
+  }
+  activateModule(key);
+  nextTick(() => scrollEditorTarget(key));
+};
+
+// 定位到搜索命中行：展开模块与命中记录，滚动到最精确的锚点
+export const jumpToHit = (moduleKey: string, hit?: ResumeSearchHit) => {
+  const item = moduleList.value.find((m) => m.key === moduleKey);
+  if (item && isFieldRemoved(currentData.value, item.field)) {
+    notifyArchived();
+    return;
+  }
+  activateModule(moduleKey);
+  // 数组模块：展开命中所在的记录，记录处于折叠状态时看不到命中内容
+  const record =
+    hit?.itemIndex != null ? currentData.value?.[moduleKey]?.list?.[hit.itemIndex] : undefined;
+  if (record) {
+    record.ui ??= {};
+    record.ui.collapsed = ["1"];
+  }
+  nextTick(() => scrollEditorTarget(moduleKey, hit));
 };
 
 // 预览区定位编辑区：仅切标签、选中闪烁与滚动定位，不展开折叠，避免点击查找改变编辑区折叠状态
 export const locateEditor = (key: string) => {
   const item = moduleList.value.find((m) => m.key === key);
-  // 归档模块不在左侧编辑区展示，定位时提示用户先恢复模块
   if (item && isFieldRemoved(currentData.value, item.field)) {
-    ElNotification({
-      title: "模块已归档",
-      message: "请先在左侧恢复归档后再编辑该模块。",
-      type: "warning",
-      position: "top-right",
-      offset: 40,
-      duration: 3000,
-    });
+    notifyArchived();
     return;
   }
   // 切换到编辑标签，避免停留设计/模板标签时编辑区不可见
   eventBus.emit("switch-builder-tab", 0);
   // 触发编辑区模块选中闪烁
   eventBus.emit("df-select-module", key);
-  nextTick(() => {
-    document
-      .querySelector(`[data-module-key="${key}"]`)
-      ?.scrollIntoView({ behavior: "smooth", block: "start" });
-  });
+  nextTick(() => scrollEditorTarget(key));
 };
 
 // 跳转编辑区（含隐藏恢复）：供进度条等复用
@@ -153,29 +180,49 @@ export const jumpAll = (key: string) => {
   jumpPreview(key);
 };
 
-// 按关键词过滤模块锚点
-const filterModules = (kw: string) => {
-  if (!kw) return moduleList.value;
-  return moduleList.value.filter((m) => m.name.includes(kw) || m.key.includes(kw));
-};
-
 /**
  * 模块导航搜索逻辑：维护搜索关键词状态，供模块导航器使用
- * 跳转函数已抽为模块级纯函数，其他组件无需再创建 hook
+ * 同时匹配模块名称与简历内容，跳转函数已抽为模块级纯函数，其他组件无需再创建 hook
  */
 export function useModuleNav() {
   // 每个模块查找入口维护独立搜索词
   const keyword = ref("");
-  const filteredList = computed(() => filterModules(keyword.value.trim()));
+  // 搜索结果：模块名命中或内容命中，未输入关键词时等价于模块列表
+  const searchResults = computed(() => {
+    const kw = keyword.value.trim().toLowerCase();
+    if (!kw) {
+      return moduleList.value.map((item) => ({
+        ...item,
+        matchedByName: false,
+        hits: [] as ResumeSearchHit[],
+      }));
+    }
+    // 内容命中按模块归组：命中项保留记录下标与字段标识，供精确定位使用
+    const hitsByModule = new Map<string, ResumeSearchHit[]>();
+    searchIndex.value.forEach((hit) => {
+      if (!hit.text.toLowerCase().includes(kw)) return;
+      const list = hitsByModule.get(hit.moduleKey);
+      if (list) list.push(hit);
+      else hitsByModule.set(hit.moduleKey, [hit]);
+    });
+    return moduleList.value
+      .map((item) => ({
+        ...item,
+        matchedByName: item.name.toLowerCase().includes(kw) || item.key.toLowerCase().includes(kw),
+        hits: hitsByModule.get(item.key) ?? [],
+      }))
+      .filter((result) => result.matchedByName || result.hits.length);
+  });
 
   return {
     moduleList,
     keyword,
-    filteredList,
+    searchResults,
     jumpAll,
     jumpToEditor,
     jumpPreview,
     jumpEditor,
+    jumpToHit,
     locateEditor,
     previewSelectedModule,
   };

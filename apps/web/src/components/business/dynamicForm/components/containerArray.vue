@@ -6,11 +6,13 @@
     ref="row"
   >
     <!-- 数组记录样式与数组字段自身样式分离 -->
+    <!-- 记录下标作为定位锚点：搜索命中记录时可精确滚动到该条 -->
     <FormItem
       v-for="item in formListWithStyle"
       :class="currentForm?.itemClass"
       :currentForm="item.item"
       :key="item.key"
+      :data-item-index="item.index"
       :pathContext="getPathContext(item.index)"
       :style="item.style"
     >

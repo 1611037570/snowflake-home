@@ -11,7 +11,7 @@ defineOptions({ name: "ModuleManagerContent" });
 const { proxy } = getCurrentInstance();
 const resumeStore = useResumeStore();
 const { runtimeConfig } = storeToRefs(resumeStore);
-const { keyword, filteredList, moduleList, jumpAll } = useModuleNav();
+const { keyword, searchResults, moduleList, jumpAll, jumpToHit, jumpPreview } = useModuleNav();
 const listRef = ref(null);
 const moduleFields = computed(() => runtimeConfig.value?.fields || []);
 // 拖拽排序作用于可导航模块，结束后按 key 回填完整字段列表
@@ -32,6 +32,20 @@ const handleFind = async (module) => {
   if (module.archived) resumeStore.setModuleArchived(module.key, false);
   await nextTick();
   jumpAll(module.key);
+};
+
+// 查找内容命中项：恢复归档后定位到命中的记录或字段行，并同步预览区模块
+const handleFindHit = async (module, hit) => {
+  if (module.archived) resumeStore.setModuleArchived(module.key, false);
+  await nextTick();
+  jumpToHit(module.key, hit);
+  jumpPreview(module.key);
+};
+
+// 命中项标题：记录命中显示「记录标题 · 字段标签」，对象模块字段命中只显示字段标签
+const hitTitle = (hit) => {
+  const record = hit.recordTitle || (hit.itemIndex != null ? `第 ${hit.itemIndex + 1} 段` : "");
+  return record ? `${record} · ${hit.label}` : hit.label;
 };
 
 // 切换模块在简历预览中的显示状态
@@ -93,65 +107,84 @@ onUnmounted(() => {
         </div>
         <span class="text-xs text-sf-text-2">{{ moduleFields.length }} 个模块</span>
       </div>
-      <SfInput v-model="keyword" placeholder="搜索模块" clearable />
+      <SfInput v-model="keyword" placeholder="搜索模块或内容" clearable />
     </header>
     <SfScrollbar class="mt-3" max-height="388px">
       <div ref="listRef" class="flex flex-col gap-3">
-        <div
-          v-for="module in filteredList"
-          :key="module.key"
-          :data-fixed="module.field.fixed ? 'true' : undefined"
-          class="group flex h-10 items-center gap-3 rounded-3xl bg-sf-bg px-3"
-          :class="module.hidden || module.archived ? 'opacity-60' : ''"
-        >
-          <SfIcon
-            v-if="!module.field.fixed && !keyword"
-            icon="icon-park-outline:drag"
-            size="4"
-            class="module-manager-drag cursor-move! text-sf-text-3"
-          />
-          <div class="flex min-w-0 flex-1 items-center gap-3">
-            <span class="truncate text-sm text-sf-text">{{ module.name }}</span>
-            <span v-if="module.hidden" class="text-xs text-sf-text-2">已隐藏</span>
-            <span v-if="module.archived" class="text-xs text-sf-text-2">已归档</span>
+        <template v-for="module in searchResults" :key="module.key">
+          <div
+            class="flex flex-col gap-3"
+            :data-fixed="module.field.fixed ? 'true' : undefined"
+          >
+            <div
+              class="group flex h-10 items-center gap-3 rounded-3xl bg-sf-bg px-3"
+              :class="module.hidden || module.archived ? 'opacity-60' : ''"
+            >
+              <SfIcon
+                v-if="!module.field.fixed && !keyword"
+                icon="icon-park-outline:drag"
+                size="4"
+                class="module-manager-drag cursor-move! text-sf-text-3"
+              />
+              <div class="flex min-w-0 flex-1 items-center gap-3">
+                <span class="truncate text-sm text-sf-text">{{ module.name }}</span>
+                <span v-if="module.hidden" class="text-xs text-sf-text-2">已隐藏</span>
+                <span v-if="module.archived" class="text-xs text-sf-text-2">已归档</span>
+              </div>
+              <div class="flex shrink-0 items-center gap-3 text-sf-text-2">
+                <SfTooltip content="同步查找">
+                  <SfIcon
+                    icon="mdi:map-search-outline"
+                    size="4"
+                    class="cursor-pointer hover:text-sf-theme"
+                    @click.stop="handleFind(module)"
+                  />
+                </SfTooltip>
+                <SfTooltip :content="module.hidden ? '显示' : '隐藏'">
+                  <SfIcon
+                    :icon="module.hidden ? 'lucide:eye' : 'lucide:eye-off'"
+                    size="4"
+                    class="cursor-pointer hover:text-sf-theme"
+                    @click.stop="handleHidden(module)"
+                  />
+                </SfTooltip>
+                <SfTooltip :content="module.archived ? '恢复归档' : '归档'">
+                  <SfIcon
+                    :icon="module.archived ? 'lucide:archive-restore' : 'lucide:archive'"
+                    size="4"
+                    class="cursor-pointer hover:text-sf-theme"
+                    @click.stop="handleArchived(module)"
+                  />
+                </SfTooltip>
+                <SfTooltip v-if="!module.field.fixed" content="删除">
+                  <SfIcon
+                    icon="ic:round-delete"
+                    size="4"
+                    class="cursor-pointer hover:text-sf-theme"
+                    @click.stop="handleDelete(module)"
+                  />
+                </SfTooltip>
+              </div>
+            </div>
+            <!-- 内容命中：按记录或字段列出命中项，点击定位到对应行 -->
+            <div
+              v-if="module.hits.length"
+              class="ml-3 flex flex-col gap-3 border-l border-sf-border pl-3"
+            >
+              <div
+                v-for="(hit, index) in module.hits"
+                :key="`${hit.itemIndex ?? 'field'}-${hit.fieldKey}-${index}`"
+                class="flex cursor-pointer flex-col rounded-xl bg-sf-bg px-3 py-1 hover:text-sf-theme"
+                @click.stop="handleFindHit(module, hit)"
+              >
+                <span class="truncate text-xs text-sf-text-2">{{ hitTitle(hit) }}</span>
+                <span class="truncate text-xs text-sf-text-3">{{ hit.text }}</span>
+              </div>
+            </div>
           </div>
-          <div class="flex shrink-0 items-center gap-3 text-sf-text-2">
-            <SfTooltip content="同步查找">
-              <SfIcon
-                icon="mdi:map-search-outline"
-                size="4"
-                class="cursor-pointer hover:text-sf-theme"
-                @click.stop="handleFind(module)"
-              />
-            </SfTooltip>
-            <SfTooltip :content="module.hidden ? '显示' : '隐藏'">
-              <SfIcon
-                :icon="module.hidden ? 'lucide:eye' : 'lucide:eye-off'"
-                size="4"
-                class="cursor-pointer hover:text-sf-theme"
-                @click.stop="handleHidden(module)"
-              />
-            </SfTooltip>
-            <SfTooltip :content="module.archived ? '恢复归档' : '归档'">
-              <SfIcon
-                :icon="module.archived ? 'lucide:archive-restore' : 'lucide:archive'"
-                size="4"
-                class="cursor-pointer hover:text-sf-theme"
-                @click.stop="handleArchived(module)"
-              />
-            </SfTooltip>
-            <SfTooltip v-if="!module.field.fixed" content="删除">
-              <SfIcon
-                icon="ic:round-delete"
-                size="4"
-                class="cursor-pointer hover:text-sf-theme"
-                @click.stop="handleDelete(module)"
-              />
-            </SfTooltip>
-          </div>
-        </div>
-        <div v-if="!filteredList.length" class="py-3 text-center text-sm text-sf-text-2">
-          未找到相关模块
+        </template>
+        <div v-if="!searchResults.length" class="py-3 text-center text-sm text-sf-text-2">
+          未找到相关内容
         </div>
       </div>
     </SfScrollbar>
