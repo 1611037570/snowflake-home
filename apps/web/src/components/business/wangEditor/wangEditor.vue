@@ -61,7 +61,16 @@ const updateCurrentLength = (editor) => {
 onMounted(() => {});
 
 const toolbarConfig = {
-  toolbarKeys: ["bold", "italic", "underline", "bulletedList", "numberedList", "undo", "redo"],
+  toolbarKeys: [
+    "bold",
+    "italic",
+    "underline",
+    "bulletedList",
+    "numberedList",
+    "insertLink",
+    "undo",
+    "redo",
+  ],
 };
 // 关闭编辑器内部滚动，避免出现嵌套滚动条
 const editorConfig = { placeholder: "请输入内容...", scroll: false };
