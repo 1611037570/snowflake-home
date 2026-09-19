@@ -10,7 +10,7 @@ import { useRuntimeData } from "../hooks/useRuntimeData";
 // 全屏预览组件
 const FullscreenPreview = markRaw(defineAsyncComponent(() => import("./fullscreenPreview.vue")));
 const resumeStore = useResumeStore();
-const { currentData, currentConfig, currentUI, runtimeConfig, previewSyncing } =
+const { currentData, currentConfig, currentUI, runtimeConfig, runtimeFields, previewSyncing } =
   storeToRefs(resumeStore);
 const { markPreviewStart, markPreviewEnd } = useRuntimeData();
 // 预览区加载开始：组件初始化即记录，作为预览区加载耗时起点
@@ -50,6 +50,7 @@ const openFullscreen = () => {
       v-if="isFullscreen"
       :visible="isFullscreen"
       :item="resumeItem"
+      :expanded-fields="runtimeFields"
       @close="isFullscreen = false"
     />
   </div>
