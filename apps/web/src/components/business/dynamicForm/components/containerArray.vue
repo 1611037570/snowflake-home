@@ -6,7 +6,7 @@
     ref="row"
   >
     <!-- 数组记录样式与数组字段自身样式分离 -->
-    <!-- 记录下标作为定位锚点：搜索命中记录时可精确滚动到该条 -->
+    <!-- 记录下标：作为滚动定位锚点，同时用于记录级选中的匹配 -->
     <FormItem
       v-for="item in formListWithStyle"
       :class="currentForm?.itemClass"
@@ -14,7 +14,9 @@
       :key="item.key"
       :data-item-index="item.index"
       :pathContext="getPathContext(item.index)"
+      :selected="isRecordSelected(item.index)"
       :style="item.style"
+      @mouseenter="clearRecordSelect(item.index)"
     >
       <ContainerSlot
         v-if="item.item.type === 'group'"
@@ -40,7 +42,7 @@ import { getArrayRecords, removeArrayRecord } from "../code/arrayData.ts";
 import { getFormItemStyles } from "../code/formItemStyle";
 import type { DataPathContext } from "../code/pathContext";
 import { getArrayDataPath } from "../code/schemaAccess";
-import { DF_ROOT_DATA } from "../code/injectionKeys.ts";
+import { DF_MODULE_SELECT, DF_ROOT_DATA } from "../code/injectionKeys.ts";
 import { provideContainerContext } from "../code/provideContainerContext";
 import ContainerObject from "./containerObject.vue";
 import ContainerSlot from "./containerSlot.vue";
@@ -130,6 +132,19 @@ const formListWithStyle = computed(() => {
 // 删除
 const remove = (index: any) => {
   removeArrayRecord(rootData.data, currentForm.value, index, pathContext);
+};
+// 模块选中能力：记录与外层共用同一选中契约，用于高亮命中的那条记录
+const moduleSelect = inject(DF_MODULE_SELECT)!;
+// 所属模块标识：数组数据路径的首段即模块 key
+const moduleKey = computed(() => getArrayDataPath(currentForm.value, pathContext)?.[0]);
+// 记录是否处于选中状态：模块标识与记录下标同时匹配
+const isRecordSelected = (index: number) =>
+  moduleSelect.selectedKey.value != null &&
+  moduleSelect.selectedKey.value === moduleKey.value &&
+  moduleSelect.selectedIndex?.value === index;
+// 鼠标进入记录时清除选中，避免边框持续闪烁
+const clearRecordSelect = (index: number) => {
+  if (isRecordSelected(index)) moduleSelect.selectModule(null);
 };
 // 统一提供容器上下文：类型、表单配置与记录数；删除与路径由记录节点提供
 provideContainerContext({

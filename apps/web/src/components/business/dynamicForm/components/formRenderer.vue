@@ -115,6 +115,8 @@ const moduleSelect = inject(DF_MODULE_SELECT)!;
 const isModuleSelected = (item: any) => {
   // 包裹组内部字段与外层共用标识，边框只落在最外层字段容器
   if (wrapped) return false;
+  // 记录级选中由数组容器负责，模块与字段不再高亮
+  if (moduleSelect.selectedIndex?.value != null) return false;
   return moduleSelect.selectedKey.value === item.key;
 };
 // 鼠标经过模块恢复正常：清除选中状态停止闪烁

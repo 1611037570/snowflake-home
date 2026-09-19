@@ -45,16 +45,25 @@ const dataProxy = new DataProxy(data, emit, props.options);
 provide(INSTANCE_COMPONENTS, props.components);
 // 注入根数据
 provide(DF_ROOT_DATA, dataProxy);
-// 模块选中能力：外部调用 selectModule(key) 触发选中，选中后模块边框持续闪烁，鼠标经过恢复
+// 模块选中能力：外部调用 selectModule(key, index) 触发选中，选中后边框持续闪烁，鼠标经过恢复
 const selectedKey = ref<string | null>(null);
-const selectModule = (key: string | null) => {
+// 记录级选中下标：与模块标识组合，用于选中数组模块中的某条记录
+const selectedIndex = ref<number | null>(null);
+const selectModule = (key: string | null, index: number | null = null) => {
   selectedKey.value = key;
+  selectedIndex.value = index;
 };
-// 事件总线未类型化，入参在边界处收窄后再交给选中逻辑
-const handleSelectModuleEvent = (key: unknown) => {
-  selectModule(typeof key === "string" ? key : null);
+// 事件总线未类型化：载荷既支持模块标识字符串，也支持带记录下标的定位对象
+const handleSelectModuleEvent = (payload: unknown) => {
+  if (typeof payload === "string") {
+    selectModule(payload);
+    return;
+  }
+  if (!payload || typeof payload !== "object") return;
+  const { key, index } = payload as { key?: unknown; index?: unknown };
+  selectModule(typeof key === "string" ? key : null, typeof index === "number" ? index : null);
 };
-provide(DF_MODULE_SELECT, { selectedKey, selectModule });
+provide(DF_MODULE_SELECT, { selectedKey, selectedIndex, selectModule });
 // 监听全局事件：外部（如完成度"去填写"）触发选中模块时联动边框闪烁
 onMounted(() => {
   eventBus.on("df-select-module", handleSelectModuleEvent);
