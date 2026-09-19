@@ -19,25 +19,52 @@ const getStyleText = () =>
     .join("\n");
 
 // 等待打印文档中的图片加载完成，Base64 图片保持原有地址不做转换。
-const waitForImages = async (printDocument: Document) => {
+const waitForImages = async (printDocument: Document, signal: AbortSignal) => {
   await Promise.all(
     Array.from(printDocument.images).map(async (image) => {
       if (image.complete) return;
       await new Promise<void>((resolve) => {
-        image.addEventListener("load", () => resolve(), { once: true });
-        image.addEventListener("error", () => resolve(), { once: true });
+        const finish = () => {
+          image.removeEventListener("load", finish);
+          image.removeEventListener("error", finish);
+          signal.removeEventListener("abort", finish);
+          resolve();
+        };
+        image.addEventListener("load", finish, { once: true });
+        image.addEventListener("error", finish, { once: true });
+        signal.addEventListener("abort", finish, { once: true });
+        if (signal.aborted) finish();
       });
     }),
   );
 };
 
 // 等待字体、图片和两帧布局完成后再调用浏览器打印。
-const waitForPrintReady = async (printWindow: Window, printDocument: Document) => {
+const waitForPrintReady = async (
+  printWindow: Window,
+  printDocument: Document,
+  signal: AbortSignal,
+) => {
   await printDocument.fonts?.ready;
-  await waitForImages(printDocument);
+  await waitForImages(printDocument, signal);
   await new Promise<void>((resolve) => {
-    printWindow.requestAnimationFrame(() => {
-      printWindow.requestAnimationFrame(() => resolve());
+    let frame = 0;
+    const finish = () => {
+      if (frame) printWindow.cancelAnimationFrame(frame);
+      signal.removeEventListener("abort", finish);
+      resolve();
+    };
+    signal.addEventListener("abort", finish, { once: true });
+    if (signal.aborted) {
+      finish();
+      return;
+    }
+    frame = printWindow.requestAnimationFrame(() => {
+      if (signal.aborted) {
+        finish();
+        return;
+      }
+      frame = printWindow.requestAnimationFrame(finish);
     });
   });
 };
@@ -52,6 +79,9 @@ export const printResume = async (
   const resumeStore = useResumeStore();
   const signal = resumeStore.beginPrinting();
   if (!signal) return;
+  // 记录导出所属简历，避免旧打印任务继续操作新简历
+  const resumeId = resumeStore.currentItem?.id;
+  const isCurrentResume = () => resumeStore.currentItem?.id === resumeId;
 
   const root = getResumeRoot(rootRef);
   if (!root) {
@@ -74,10 +104,10 @@ export const printResume = async (
   const restorePrintState = (success = false) => {
     if (restored) return;
     restored = true;
-    document.title = originalTitle;
+    if (isCurrentResume()) document.title = originalTitle;
     printFrame.remove();
     resumeStore.finishPrinting(signal);
-    if (success) onSuccess?.();
+    if (success && isCurrentResume()) onSuccess?.();
   };
 
   signal.addEventListener(
@@ -154,9 +184,9 @@ export const printResume = async (
     printContent.appendChild(clonedRoot);
 
     await nextTick();
-    if (signal.aborted) return;
-    await waitForPrintReady(printWindow, printDocument);
-    if (signal.aborted) return;
+    if (signal.aborted || !isCurrentResume()) return;
+    await waitForPrintReady(printWindow, printDocument, signal);
+    if (signal.aborted || !isCurrentResume()) return;
 
     printWindow.onafterprint = () => restorePrintState(true);
     // 仅在此刻改标题，避免简历标题中的特殊字符写入打印文档

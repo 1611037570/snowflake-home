@@ -34,12 +34,14 @@ export const createFeedback = async (data: CreateFeedbackParams) => {
   return response;
 };
 
-export const createResumePdf = async (item: any, system?: any) => {
+export const createResumePdf = async (item: any, system?: any, signal?: AbortSignal) => {
+  // 将打印取消信号传递给服务端导出请求
   const response = await axios.post<Blob>(
     `${import.meta.env.VITE_SNOWFLAKE_API_URL}/resume/pdf`,
     { item, system },
     {
       responseType: "blob",
+      signal,
       timeout: 120000,
       headers: { "Content-Type": "application/json;charset=UTF-8" },
     },
