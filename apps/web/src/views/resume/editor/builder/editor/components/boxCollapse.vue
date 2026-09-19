@@ -92,7 +92,11 @@ function handleAdd() {
               <Icon @click.stop="archiveModule" icon="lucide:archive" size="4" />
             </SfTooltip>
             <SfTooltip :content="hidden ? '显示' : '隐藏'">
-              <Icon @click.stop="toggleHidden" :icon="hidden ? 'lucide:eye' : 'lucide:eye-off'" />
+              <Icon
+                @click.stop="toggleHidden"
+                :icon="hidden ? 'lucide:eye' : 'lucide:eye-off'"
+                :class="hidden ? 'text-sf-theme' : ''"
+              />
             </SfTooltip>
             <Icon
               v-if="currentForm.key !== 'user'"

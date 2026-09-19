@@ -43,7 +43,11 @@ const removeAccount = () => {
     <!-- 隐藏当前社交账号 -->
 
     <SfTooltip :content="hidden ? '显示' : '隐藏'">
-      <Icon :icon="hidden ? 'lucide:eye' : 'lucide:eye-off'" @click.stop="hidden = !hidden" />
+      <Icon
+        :icon="hidden ? 'lucide:eye' : 'lucide:eye-off'"
+        @click.stop="hidden = !hidden"
+        :class="hidden ? 'text-sf-theme' : ''"
+      />
     </SfTooltip>
     <!-- 删除按钮 -->
     <Icon icon="ic:round-delete" @click="removeAccount" />
