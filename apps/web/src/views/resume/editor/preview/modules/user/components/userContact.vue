@@ -74,10 +74,12 @@ const hasPhone = computed(() => !isUserFieldHidden("phone") && !!user.value?.pho
 const hasEmail = computed(() => !isUserFieldHidden("email") && !!user.value?.email);
 const hasWechat = computed(() => !isUserFieldHidden("wechat") && !!user.value?.wechat);
 const hasGithub = computed(() => !isUserFieldHidden("github") && !!user.value?.github);
+const hasLinkedin = computed(() => !isUserFieldHidden("linkedin") && !!user.value?.linkedin);
 const phoneLabel = computed(() => getPreviewText("phoneLabel", previewLang.value));
 const emailLabel = computed(() => getPreviewText("emailLabel", previewLang.value));
 const wechatLabel = computed(() => getPreviewText("wechatLabel", previewLang.value));
 const githubLabel = computed(() => getPreviewText("githubLabel", previewLang.value));
+const linkedinLabel = computed(() => getPreviewText("linkedinLabel", previewLang.value));
 
 // 基础信息（性别、年龄、工作年限、求职岗位）与联系方式合并为同一列表
 const metaItems = computed(() => {
@@ -186,6 +188,13 @@ const secondaryItems = computed(() => {
       label: getPreviewText("nativePlaceLabel", previewLang.value),
     });
   }
+  if (!isUserFieldHidden("currentCity") && user.value?.currentCity) {
+    items.push({
+      key: "currentCity",
+      icon: fieldIcon("currentCity"),
+      label: getPreviewText("currentCityLabel", previewLang.value),
+    });
+  }
   if (!isUserFieldHidden("salary") && user.value?.salary) {
     items.push({
       key: "salary",
@@ -246,6 +255,13 @@ const contactItems = computed(() => {
       key: "github",
       icon: fieldIcon("github"),
       label: githubLabel.value,
+    });
+  }
+  if (hasLinkedin.value) {
+    items.push({
+      key: "linkedin",
+      icon: fieldIcon("linkedin"),
+      label: linkedinLabel.value,
     });
   }
   const order = new Map(userFieldOrder.value.map((key, index) => [key, index]));
