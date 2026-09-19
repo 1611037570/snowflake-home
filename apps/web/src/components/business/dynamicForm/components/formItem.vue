@@ -1,7 +1,11 @@
 <template>
-  <el-col :class="{ 'dynamic-form-muted': hiddenState }" :span="getSpan(currentForm.span)">
+  <!-- 选中边框画在最外层栅格项上，与模块卡片的可见范围保持一致 -->
+  <el-col
+    :class="[{ 'dynamic-form-muted': hiddenState }, { 'module-selected-blink': selected }]"
+    :span="getSpan(currentForm.span)"
+  >
     <SfFormItem
-      :class="['w-full', { 'module-selected-blink': selected }]"
+      class="w-full"
       :label="currentForm.label"
       :prop="getProp(currentForm)"
       :rules="currentForm.rules"
@@ -124,7 +128,8 @@ const getSpan = (span: number | string | undefined) => {
   z-index: 1;
   box-sizing: border-box;
   border: 2px dashed var(--color-sf-theme);
-  border-radius: 12px;
+  /* 与卡片自身 rounded-3xl 保持一致，避免边框圆角与卡片不齐 */
+  border-radius: 24px;
   pointer-events: none;
   content: "";
 }
