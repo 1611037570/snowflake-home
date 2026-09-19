@@ -168,7 +168,7 @@ const animatedTokens = useTransition(
       <SfMdPreview
         :modelValue="msg.thought"
         :theme="theme"
-        :editorId="`thought-preview-${index}`"
+        :editorId="`thought-preview-${msg.id}`"
         class="bg-transparent! p-0!"
       />
       <!-- 完成后的思考区与正文之间加分隔线，避免内容混淆 -->
@@ -197,7 +197,7 @@ const animatedTokens = useTransition(
       v-if="(msg.requestStatus === 'success' || isGenerating) && !msg.contentCollapsed && textContent"
       :modelValue="textContent"
       :theme="theme"
-      editorId="ai-preview"
+      :editorId="`ai-preview-${msg.id}`"
       class="inline-block max-w-full min-w-0 overflow-hidden bg-transparent! p-0! align-bottom text-[14px] leading-relaxed text-sf-text"
       :class="{ 'typing-active': msg.typing }"
     />
