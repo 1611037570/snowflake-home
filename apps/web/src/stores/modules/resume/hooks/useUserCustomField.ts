@@ -11,7 +11,7 @@ export function isUserCustomFieldKey(key: unknown): key is string {
 export function createUserCustomField(key: string, label: string): GroupFormField {
   return {
     type: "group",
-    component: "fieldItem",
+    component: "rowField",
     slot: "default",
     // 包裹组沿用字段标识，供字段顺序持久化与定位
     key,

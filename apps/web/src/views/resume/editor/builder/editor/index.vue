@@ -5,21 +5,21 @@ import { useResumeStore } from "@/stores";
 import { storeToRefs } from "pinia";
 import { RESUME_OPTIONS } from "@/stores/modules/resume/resumeOptions";
 import { useRuntimeData } from "../../hooks/useRuntimeData";
-import Account from "./components/account.vue";
 import AddModule from "./components/addModule.vue";
-import BoxCollapse from "./components/boxCollapse.vue";
 import CityPicker from "./components/cityPicker/index.vue";
 import ArchivedModules from "./components/archivedModules.vue";
 import HeightWeight from "./components/heightWeight.vue";
-import Honor from "./components/honor.vue";
 import Image from "./components/image.vue";
-import FieldItem from "./components/fieldItem.vue";
-import ItemCollapse from "./components/itemCollapse.vue";
 import ImageUpload from "./components/imageUpload/index.vue";
 import More from "./components/more.vue";
 import SubtitleBox from "./components/subtitleBox.vue";
 import Tag from "./components/tag.vue";
 import Video from "./components/video.vue";
+import CollapseModule from "./components/collapseModule.vue";
+import CollapseItem from "./components/collapseItem.vue";
+import RowField from "./components/rowField.vue";
+import RowAccount from "./components/rowAccount.vue";
+import RowHonor from "./components/rowHonor.vue";
 
 const resumeStore = useResumeStore();
 const { currentData, runtimeConfig } = storeToRefs(resumeStore);
@@ -28,13 +28,17 @@ const { markEditorStart, markEditorEnd } = useRuntimeData();
 markEditorStart();
 
 // 注入到动态表单的自定义组件库
+// 编辑区组件按层级划分，配置里的 component 名对应关系如下：
+// 折叠容器 collapseModule：模块标题 + 折叠/归档/隐藏/删除，内容由插槽渲染
+// 折叠容器 collapseItem：数组模块中单条记录的标题 + 折叠/隐藏/删除，内容由插槽渲染
+// 行控件 rowField / rowAccount / rowHonor：一行内的字段编辑与隐藏/删除操作
 const dynamicComponents = {
-  boxCollapse: BoxCollapse,
-  itemCollapse: ItemCollapse,
-  fieldItem: FieldItem,
-  account: Account,
+  collapseModule: CollapseModule,
+  collapseItem: CollapseItem,
+  rowField: RowField,
+  rowAccount: RowAccount,
+  rowHonor: RowHonor,
   imageUpload: ImageUpload,
-  honor: Honor,
   image: Image,
   heightWeight: HeightWeight,
   more: More,

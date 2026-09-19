@@ -22,7 +22,7 @@ const emailField: FormField = {
 // 包裹组：字段状态绑定在包裹组上，共享绑定与字段绑定混在一起
 const positionField: FormField = {
   type: "group",
-  component: "fieldItem",
+  component: "rowField",
   key: "position",
   model: [
     { source: ["user", "ui", "position", "hidden"], prop: "hidden", defaultValue: false },
