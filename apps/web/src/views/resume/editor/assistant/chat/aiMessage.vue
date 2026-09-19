@@ -6,6 +6,7 @@ import { storeToRefs } from "pinia";
 import ToggleButton from "./toggleButton.vue";
 import ReportPanel from "./reportPanel.vue";
 import { parseResumeReport, stripResumeReportBlock } from "../resumeReport";
+import { onBeforeUnmount, ref, watch } from "vue";
 
 const props = defineProps({
   msg: {
@@ -65,10 +66,33 @@ function handleWithdrawModify() {
 
 // 消息内容：直接保存 Markdown 正文
 const content = computed(() => props.msg.content);
-// 一键优化结构化报告：从回复正文中解析
-const report = computed(() => parseResumeReport(content.value || ""));
-// 剥离报告代码块后的剩余正文
-const textContent = computed(() => stripResumeReportBlock(content.value || ""));
+const report = ref(null);
+const textContent = ref("");
+let parseTimer = null;
+const parseContent = (value) => {
+  report.value = parseResumeReport(value || "");
+  textContent.value = stripResumeReportBlock(value || "");
+};
+// 生成中降低 Markdown 附加内容解析频率，完成后立即收口到最新正文
+const scheduleContentParse = (value) => {
+  if (!props.msg.typing) {
+    if (parseTimer) clearTimeout(parseTimer);
+    parseTimer = null;
+    parseContent(value);
+    return;
+  }
+  if (parseTimer) return;
+  parseTimer = setTimeout(() => {
+    parseTimer = null;
+    parseContent(content.value || "");
+  }, 120);
+};
+watch([content, () => props.msg.typing], ([value]) => scheduleContentParse(value), {
+  immediate: true,
+});
+onBeforeUnmount(() => {
+  if (parseTimer) clearTimeout(parseTimer);
+});
 const resumeShow = computed(() => props.msg.requestStatus === "success");
 const isThinking = computed(() => props.msg.typing && props.msg.requestStatus === "thinking");
 const isGenerating = computed(() => props.msg.typing && props.msg.requestStatus === "generating");
