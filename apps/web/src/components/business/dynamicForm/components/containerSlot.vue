@@ -17,10 +17,11 @@
     v-on="bindEvent"
   >
     <template #[slotName]>
-      <!-- 递归渲染时显式下传当前数组记录上下文 -->
+      <!-- 递归渲染时显式下传当前数组记录上下文；包裹组内部字段不参与选中 -->
       <FormRenderer
         v-model:items="currentForm"
         :pathContext="pathContext"
+        :wrapped="isWrapperGroup"
         :class="currentForm.rowClass || DEFAULT_ROW_CLASS"
       />
     </template>
@@ -32,6 +33,7 @@ import { isString } from "@/utils";
 import type { DataPathContext } from "../code/pathContext";
 import { DF_ROOT_DATA } from "../code/injectionKeys.ts";
 import { getComponent } from "../code/getComponent.ts";
+import { unwrapField } from "../code/fieldData";
 import { DEFAULT_ROW_CLASS } from "../code/formItemStyle";
 import { provideContainerContext } from "../code/provideContainerContext";
 import FormRenderer from "./formRenderer.vue";
@@ -45,6 +47,11 @@ const { pathContext } = defineProps<{
 const slotName = computed(() => {
   const slot = currentForm.value?.slot;
   return isString(slot) && slot.length ? slot : "default";
+});
+// 包裹组：内部输入字段与外层共用字段标识，选中只由外层容器承载
+const isWrapperGroup = computed(() => {
+  const form = currentForm.value;
+  return Boolean(form) && unwrapField(form) !== form;
 });
 const rootData: any = inject(DF_ROOT_DATA);
 // 容器未声明 model 时不建立数据代理，仅透传配置
