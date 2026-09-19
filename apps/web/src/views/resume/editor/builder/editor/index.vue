@@ -8,6 +8,7 @@ import { RESUME_OPTIONS } from "@/stores/modules/resume/resumeOptions";
 import { useRuntimeData } from "../../hooks/useRuntimeData";
 import AddModule from "./components/addModule.vue";
 import ArchivedModules from "./components/archivedModules.vue";
+import ComponentSkeleton from "./components/componentSkeleton.vue";
 import HeightWeight from "./components/heightWeight.vue";
 import Image from "./components/image.vue";
 import More from "./components/more.vue";
@@ -21,8 +22,16 @@ import RowAccount from "./components/rowAccount.vue";
 import RowHonor from "./components/rowHonor.vue";
 
 // 图片裁剪与城市级联仅在对应字段出现时加载，避免占用编辑器首屏资源
-const AsyncImageUpload = defineAsyncComponent(() => import("./components/imageUpload/index.vue"));
-const AsyncCityPicker = defineAsyncComponent(() => import("./components/cityPicker/index.vue"));
+const AsyncImageUpload = defineAsyncComponent({
+  loader: () => import("./components/imageUpload/index.vue"),
+  loadingComponent: ComponentSkeleton,
+  delay: 0,
+});
+const AsyncCityPicker = defineAsyncComponent({
+  loader: () => import("./components/cityPicker/index.vue"),
+  loadingComponent: ComponentSkeleton,
+  delay: 0,
+});
 
 const resumeStore = useResumeStore();
 const { currentData, runtimeConfig } = storeToRefs(resumeStore);
