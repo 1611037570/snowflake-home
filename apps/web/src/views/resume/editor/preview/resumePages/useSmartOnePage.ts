@@ -126,28 +126,37 @@ export const useSmartOnePage = ({
   };
 
   // 等待下一次测量落地：参数影响行高/宽度时会替换测量结果
-  const waitForMeasure = () =>
+  const waitForMeasure = (signal: AbortSignal, isCurrentResume: () => boolean) =>
     new Promise<void>((resolve) => {
       let timer = 0;
-      const stopWatch = watch(
+      let settled = false;
+      let stopWatch = () => {};
+      const finish = () => {
+        if (settled) return;
+        settled = true;
+        window.clearTimeout(timer);
+        stopWatch();
+        signal.removeEventListener("abort", finish);
+        resolve();
+      };
+      stopWatch = watch(
         moduleList,
-        () => {
-          window.clearTimeout(timer);
-          stopWatch();
-          resolve();
-        },
+        finish,
         { flush: "post" },
       );
-      timer = window.setTimeout(() => {
-        stopWatch();
-        resolve();
-      }, MEASURE_TIMEOUT);
+      timer = window.setTimeout(finish, MEASURE_TIMEOUT);
+      if (signal.aborted || !isCurrentResume()) finish();
+      else signal.addEventListener("abort", finish, { once: true });
     });
 
   // 压缩：二分搜索最小可行强度并局部精修，工具栏通过事件触发
   const onFitOnePage = async () => {
     const signal = resumeStore.beginFittingOnePage();
     if (!signal) return;
+    // 记录压缩所属简历，避免旧任务覆盖新简历参数
+    const resumeId = resumeStore.currentItem?.id;
+    const isCurrentResume = () => resumeStore.currentItem?.id === resumeId;
+    const isCurrentTask = () => !signal.aborted && isCurrentResume();
 
     const base = pickBase(ui.value);
     // 已应用的参数：用于判断本次是否需要等重新测量
@@ -192,32 +201,39 @@ export const useSmartOnePage = ({
 
     // 应用一组参数，返回预览真实页数
     const applyParams = async (params: Record<OnePageAdjustKey, number>) => {
+      if (!isCurrentTask()) return null;
       const needsRemeasure = adjustable.some(
         (item) => item.remeasure && params[item.key] !== applied[item.key],
       );
       currentUI.value = { ...currentUI.value, ...params };
       applied = params;
-      if (needsRemeasure) await waitForMeasure();
+      if (needsRemeasure) await waitForMeasure(signal, isCurrentResume);
+      if (!isCurrentTask()) return null;
       await nextTick();
+      if (!isCurrentTask()) return null;
       return pages.value.length;
     };
 
     // 回退到压缩前的参数，避免失败或取消后留在半压缩状态
-    const rollback = () => (currentUI.value = { ...currentUI.value, ...base });
+    const rollback = () => {
+      if (isCurrentResume()) currentUI.value = { ...currentUI.value, ...base };
+    };
 
     try {
+      if (!isCurrentTask()) return;
       if (pages.value.length === 1) {
         ElMessage.success("简历已压缩为一页");
         return;
       }
       // 先探最大强度：压到极限仍放不下说明内容确实过长
-      if ((await applyParams(paramsAtLevel(COMPRESS_LEVELS))) !== 1) {
+      const maxPageCount = await applyParams(paramsAtLevel(COMPRESS_LEVELS));
+      if (!isCurrentTask()) {
         rollback();
-        if (!signal.aborted) ElMessage.error("内容过长，无法压缩到一页");
         return;
       }
-      if (signal.aborted) {
+      if (maxPageCount !== 1) {
         rollback();
+        ElMessage.error("内容过长，无法压缩到一页");
         return;
       }
       // 二分最小可行强度：0 档（未压缩）已知不可行
@@ -226,7 +242,7 @@ export const useSmartOnePage = ({
       while (low + 1 < high) {
         const mid = Math.floor((low + high) / 2);
         const pageCount = await applyParams(paramsAtLevel(mid));
-        if (signal.aborted) {
+        if (!isCurrentTask()) {
           rollback();
           return;
         }
@@ -239,6 +255,10 @@ export const useSmartOnePage = ({
       // 局部精修：按视觉敏感度逐个回退单参数，能放下一页就保留，让显眼的参数尽量少动
       let best = paramsAtLevel(high);
       await applyParams(best);
+      if (!isCurrentTask()) {
+        rollback();
+        return;
+      }
       for (const key of RESTORE_ORDER) {
         const item = adjustable.find((option) => option.key === key);
         if (!item) continue;
@@ -246,7 +266,7 @@ export const useSmartOnePage = ({
         if (next === best[key]) continue;
         const candidate = applyDerived({ ...best, [key]: next });
         const pageCount = await applyParams(candidate);
-        if (signal.aborted) {
+        if (!isCurrentTask()) {
           rollback();
           return;
         }
@@ -257,7 +277,7 @@ export const useSmartOnePage = ({
           await applyParams(best);
         }
       }
-      if (signal.aborted) {
+      if (!isCurrentTask()) {
         rollback();
         return;
       }
@@ -271,6 +291,9 @@ export const useSmartOnePage = ({
     if (isEdit.value) eventBus.on("resume-smart-one-page", onFitOnePage);
   });
   onUnmounted(() => {
-    if (isEdit.value) eventBus.off("resume-smart-one-page", onFitOnePage);
+    if (isEdit.value) {
+      eventBus.off("resume-smart-one-page", onFitOnePage);
+      resumeStore.cancelFittingOnePage();
+    }
   });
 };

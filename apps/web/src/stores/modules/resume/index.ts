@@ -222,6 +222,10 @@ export const useResumeStore = defineStore(
       printController?.abort();
       printController = null;
       isPrinting.value = false;
+      // 切换简历时取消智能一页压缩
+      onePageController?.abort();
+      onePageController = null;
+      isFittingOnePage.value = false;
       // 重置AI生成状态
       isGenerating.value = false;
       // 重置选中模块
