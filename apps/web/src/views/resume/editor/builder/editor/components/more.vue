@@ -1,10 +1,11 @@
 <script setup>
-import { computed } from "vue";
+import { computed, nextTick } from "vue";
 import { useFormContext } from "@/components/business/dynamicForm/api";
 import { useResumeStore } from "@/stores";
 import { EXPANDED, MORE_CATEGORIES } from "@/stores/modules/resume/formConfig";
 import { addUserCustomField } from "@/stores/modules/resume/hooks/useUserCustomField";
 import { getUUID } from "@/utils";
+import eventBus from "@/utils/modules/eventBus";
 import { storeToRefs } from "pinia";
 
 const { currentForm, hasFieldData, addField, getFieldDataKey } = useFormContext();
@@ -44,6 +45,19 @@ function toggle() {
   collapsed.value = expanded.value ? [] : [...EXPANDED];
 }
 
+// 新增字段追加到列表末尾，定位一次便于直接看到落点
+function locateAddedField(fieldKey) {
+  if (!fieldKey) return;
+  nextTick(() => {
+    const row = document.querySelector(`[data-field-key="${fieldKey}"]`);
+    if (!row) return;
+    row.scrollIntoView({ behavior: "smooth", block: "start" });
+    // 由最近的模块锚点反查模块标识，避免在组件内硬编码模块 key
+    const moduleKey = row.closest("[data-module-key]")?.dataset.moduleKey;
+    if (moduleKey) eventBus.emit("df-select-module", moduleKey);
+  });
+}
+
 // 字段添加交由动态表单写入真实数据
 function handleAdd(field) {
   addField(field);
@@ -54,6 +68,7 @@ function handleAdd(field) {
     fields.splice(index, 1);
     fields.push(field);
   }
+  locateAddedField(field?.key);
 }
 
 // 自定义字段直接以默认名称插入更多字段配置，并写入对应的真实数据值
@@ -63,6 +78,7 @@ function handleCreateCustomField() {
 
   const key = `custom_${getUUID().substring(0, 8)}`;
   addUserCustomField(runtimeConfig.value, currentData.value, key, label);
+  locateAddedField(key);
 }
 </script>
 
