@@ -29,6 +29,9 @@ export const printPDF = async (
   const { selectedModule } = storeToRefs(resumeStore);
   const signal = resumeStore.beginPrinting();
   if (!signal) return;
+  // 记录导出所属简历，避免旧导出任务恢复新简历的选中状态
+  const resumeId = resumeStore.currentItem?.id;
+  const isCurrentResume = () => resumeStore.currentItem?.id === resumeId;
   // 导出期间锁定编辑器，避免操作干扰导出结果
   const cachedSelectedModule = [...selectedModule.value];
   resumeStore.clearSelectedModules();
@@ -38,7 +41,7 @@ export const printPDF = async (
     // 确保DOM已渲染完成
     await nextTick();
     await document.fonts?.ready;
-    if (signal.aborted) return;
+    if (signal.aborted || !isCurrentResume()) return;
     // 动态导入PDF相关库
     const { snapdom } = await import("@zumer/snapdom");
     const { default: jsPDF } = await import("jspdf");
@@ -66,7 +69,7 @@ export const printPDF = async (
     document.body.appendChild(tempContainer);
 
     for (let i = 0; i < pages.length; i++) {
-      if (signal.aborted) return;
+      if (signal.aborted || !isCurrentResume()) return;
       const pageEl = pages[i];
 
       // 克隆页面并清除可能干扰渲染的样式 (如阴影、圆角)
@@ -88,7 +91,7 @@ export const printPDF = async (
         width: RESUME_WIDTH,
         height: RESUME_HEIGHT,
       });
-      if (signal.aborted) return;
+      if (signal.aborted || !isCurrentResume()) return;
 
       if (!canvas || canvas.width === 0 || canvas.height === 0) {
         throw new Error(`第 ${i + 1} 页渲染失败`);
@@ -124,14 +127,14 @@ export const printPDF = async (
       });
     }
 
-    if (signal.aborted) return;
+    if (signal.aborted || !isCurrentResume()) return;
     // 保存PDF，统一命名：轻舟简历-简历标题-年-月-日
     pdf.save(getExportFileName(resumeTitle.value, "pdf"));
 
     console.log(`成功导出 ${pages.length} 页 PDF`);
-    onSuccess?.();
+    if (isCurrentResume()) onSuccess?.();
   } catch (error) {
-    shouldFallback = !signal.aborted;
+    shouldFallback = !signal.aborted && isCurrentResume();
     console.error("生成PDF失败:", error);
   } finally {
     // 无论导出成功或失败都清理临时容器
@@ -139,11 +142,11 @@ export const printPDF = async (
       tempContainer.parentNode.removeChild(tempContainer);
     }
     // 导出完成或失败后还原选中的模块
-    resumeStore.setSelectedModules(cachedSelectedModule);
+    if (isCurrentResume()) resumeStore.setSelectedModules(cachedSelectedModule);
     resumeStore.finishPrinting(signal);
   }
   // 默认 PDF 失败时使用浏览器打印兜底
-  if (shouldFallback && !signal.aborted) {
+  if (shouldFallback && !signal.aborted && isCurrentResume()) {
     await printResume({ value: rootRef?.value ?? document.body }, onSuccess, scale);
   }
 };

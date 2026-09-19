@@ -75,11 +75,14 @@ export const exportHtml = async (rootRef: ResumeRootRef, onSuccess?: () => void)
   const resumeStore = useResumeStore();
   const signal = resumeStore.beginPrinting();
   if (!signal) return;
+  // 记录导出所属简历，避免旧导出任务下载新简历内容
+  const resumeId = resumeStore.currentItem?.id;
+  const isCurrentResume = () => resumeStore.currentItem?.id === resumeId;
 
   try {
     await nextTick();
     await document.fonts?.ready;
-    if (signal.aborted) return;
+    if (signal.aborted || !isCurrentResume()) return;
 
     const pages = getResumePages(rootRef);
     if (!pages.length) {
@@ -107,10 +110,10 @@ export const exportHtml = async (rootRef: ResumeRootRef, onSuccess?: () => void)
     const exportRoot = document.createElement("div");
     exportRoot.append(...clones);
     await inlineImages(exportRoot, signal);
-    if (signal.aborted) return;
+    if (signal.aborted || !isCurrentResume()) return;
 
     const styles = await getEmbeddedStyles(signal);
-    if (signal.aborted) return;
+    if (signal.aborted || !isCurrentResume()) return;
     const pageMarkup = clones.map((page) => page.outerHTML).join("\n");
     const html = `<!doctype html>
 <html lang="zh-CN">
@@ -149,7 +152,7 @@ ${pageMarkup}
     link.click();
     link.remove();
     URL.revokeObjectURL(url);
-    onSuccess?.();
+    if (isCurrentResume()) onSuccess?.();
   } catch (error) {
     console.error("生成 HTML 失败:", error);
   } finally {

@@ -33,10 +33,11 @@ const renderLongImage = async (
   rootRef: ImageExportRoot | undefined,
   signal: AbortSignal,
   scale: number,
+  isCurrentResume: () => boolean,
 ) => {
   await nextTick();
   await document.fonts?.ready;
-  if (signal.aborted) return null;
+  if (signal.aborted || !isCurrentResume()) return null;
 
   const rootEl = getRootElement(rootRef);
   if (!rootEl) throw new Error("未找到可导出的简历 DOM");
@@ -75,6 +76,7 @@ const renderLongImage = async (
       // 像素级精确布局：避免字体回退栅格化导致文本重新换行而漏出内容
       reconcile: true,
     });
+    if (signal.aborted || !isCurrentResume()) return null;
     if (!canvas || canvas.width === 0 || canvas.height === 0) {
       throw new Error("简历图片渲染失败");
     }
@@ -95,14 +97,17 @@ const exportLongImage = async (
   const { selectedModule } = storeToRefs(resumeStore);
   const signal = resumeStore.beginPrinting();
   if (!signal) return;
+  // 记录导出所属简历，避免旧导出任务写入新简历
+  const resumeId = resumeStore.currentItem?.id;
+  const isCurrentResume = () => resumeStore.currentItem?.id === resumeId;
 
   // 导出期间锁定编辑器并移除模块选中状态
   const cachedSelectedModule = [...selectedModule.value];
   resumeStore.clearSelectedModules();
 
   try {
-    const canvas = await renderLongImage(rootRef, signal, scale);
-    if (signal.aborted) return;
+    const canvas = await renderLongImage(rootRef, signal, scale, isCurrentResume);
+    if (signal.aborted || !isCurrentResume()) return;
 
     if (!canvas) return;
 
@@ -124,12 +129,13 @@ const exportLongImage = async (
         undefined,
         "FAST",
       );
+      if (signal.aborted || !isCurrentResume()) return;
       pdf.save(getExportFileName(resumeTitle.value, "pdf"));
     } else {
       const blob = await new Promise<Blob | null>((resolve) => {
         canvas.toBlob(resolve, "image/png");
       });
-      if (signal.aborted) return;
+      if (signal.aborted || !isCurrentResume()) return;
       if (!blob) throw new Error("简历图片生成失败");
 
       const url = URL.createObjectURL(blob);
@@ -142,11 +148,11 @@ const exportLongImage = async (
       link.remove();
       URL.revokeObjectURL(url);
     }
-    onSuccess?.();
+    if (isCurrentResume()) onSuccess?.();
   } catch (error) {
     console.error(format === "pdf" ? "生成长图PDF失败:" : "生成简历图片失败:", error);
   } finally {
-    resumeStore.setSelectedModules(cachedSelectedModule);
+    if (isCurrentResume()) resumeStore.setSelectedModules(cachedSelectedModule);
     resumeStore.finishPrinting(signal);
   }
 };
