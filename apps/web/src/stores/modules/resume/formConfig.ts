@@ -11,6 +11,8 @@ import type {
 export const EXPANDED = ["1"];
 // 收起状态数组：表示折叠容器为收起态
 export const COLLAPSED: string[] = [];
+// 个人信息「更多」字段的分类顺序：编辑器按此顺序分组展示
+export const MORE_CATEGORIES = ["基本信息", "联系方式", "求职意向", "个性标签"];
 
 const DEFAULT_META = {
   version: "1.0.0",
@@ -78,12 +80,14 @@ const createMoreField = (options: {
   icon: string;
   tip?: string;
   addable?: boolean;
+  // 所属分类：供编辑器「更多」分区归类展示
+  category?: string;
   // 字典 key：存在时内层字段同时绑定选项列表
   dict?: string;
   props?: Record<string, any>;
   rules?: any[];
 }): GroupFormField => {
-  const { key, label, component, icon, tip, addable, dict, props, rules } = options;
+  const { key, label, component, icon, tip, addable, category, dict, props, rules } = options;
   return {
     type: "group",
     component: "fieldItem",
@@ -91,7 +95,13 @@ const createMoreField = (options: {
     // 包裹组沿用字段标识，供字段顺序持久化与定位
     key,
     // 标签与操作区由包裹组件渲染，字段自身不再声明
-    props: { label, ...(tip ? { tip } : {}), removable: true, draggable: true },
+    props: {
+      label,
+      ...(tip ? { tip } : {}),
+      ...(category ? { category } : {}),
+      removable: true,
+      draggable: true,
+    },
     // 可添加字段：数据存在才渲染
     ...(addable ? { addable: true } : {}),
     // 字段状态绑定到包裹组，供包裹组件双向绑定
@@ -236,6 +246,7 @@ export const DEFAULT_USER_FORM = [
           createMoreField({
             key: "birthday",
             label: "出生日期",
+            category: "基本信息",
             component: "datePicker",
             icon: "mdi:cake-variant",
             tip: "推荐必填",
@@ -250,6 +261,7 @@ export const DEFAULT_USER_FORM = [
           createMoreField({
             key: "sex",
             label: "性别",
+            category: "基本信息",
             component: "select",
             icon: "mdi:account",
             tip: "推荐必填",
@@ -266,6 +278,7 @@ export const DEFAULT_USER_FORM = [
           createMoreField({
             key: "marital",
             label: "婚姻状况",
+            category: "基本信息",
             component: "select",
             icon: "mdi:heart-outline",
             addable: true,
@@ -281,6 +294,7 @@ export const DEFAULT_USER_FORM = [
           createMoreField({
             key: "nation",
             label: "民族",
+            category: "基本信息",
             component: "input",
             icon: "mdi:account-group-outline",
             addable: true,
@@ -293,6 +307,7 @@ export const DEFAULT_USER_FORM = [
           createMoreField({
             key: "zodiac",
             label: "星座",
+            category: "个性标签",
             component: "select",
             icon: "lucide:star",
             addable: true,
@@ -308,6 +323,7 @@ export const DEFAULT_USER_FORM = [
           createMoreField({
             key: "mbti",
             label: "MBTI",
+            category: "个性标签",
             component: "input",
             icon: "ph:brain-duotone",
             addable: true,
@@ -320,6 +336,7 @@ export const DEFAULT_USER_FORM = [
           createMoreField({
             key: "position",
             label: "求职岗位",
+            category: "求职意向",
             component: "input",
             icon: "lucide:briefcase",
             tip: "推荐必填",
@@ -333,6 +350,7 @@ export const DEFAULT_USER_FORM = [
           createMoreField({
             key: "workTime",
             label: "参加工作时间",
+            category: "求职意向",
             component: "datePicker",
             icon: "mdi:briefcase-clock",
             tip: "推荐必填",
@@ -347,6 +365,7 @@ export const DEFAULT_USER_FORM = [
           createMoreField({
             key: "phone",
             label: "电话",
+            category: "联系方式",
             component: "input",
             icon: "mdi:phone",
             tip: "推荐必填",
@@ -368,6 +387,7 @@ export const DEFAULT_USER_FORM = [
           createMoreField({
             key: "email",
             label: "邮箱",
+            category: "联系方式",
             component: "input",
             icon: "mdi:email-outline",
             addable: true,
@@ -388,6 +408,7 @@ export const DEFAULT_USER_FORM = [
           createMoreField({
             key: "wechat",
             label: "微信",
+            category: "联系方式",
             component: "input",
             icon: "mdi:wechat",
             addable: true,
@@ -400,6 +421,7 @@ export const DEFAULT_USER_FORM = [
           createMoreField({
             key: "github",
             label: "GitHub",
+            category: "联系方式",
             component: "input",
             icon: "simple-icons:github",
             addable: true,
@@ -412,6 +434,7 @@ export const DEFAULT_USER_FORM = [
           createMoreField({
             key: "status",
             label: "求职状态",
+            category: "求职意向",
             component: "select",
             icon: "mdi:briefcase-check-outline",
             addable: true,
@@ -427,6 +450,7 @@ export const DEFAULT_USER_FORM = [
           createMoreField({
             key: "political",
             label: "政治面貌",
+            category: "基本信息",
             component: "select",
             icon: "mdi:flag-outline",
             addable: true,
@@ -442,6 +466,7 @@ export const DEFAULT_USER_FORM = [
           createMoreField({
             key: "city",
             label: "期望城市",
+            category: "求职意向",
             component: "cityPicker",
             icon: "mdi:map-marker-outline",
             addable: true,
@@ -453,6 +478,7 @@ export const DEFAULT_USER_FORM = [
           createMoreField({
             key: "nativePlace",
             label: "籍贯",
+            category: "基本信息",
             component: "cityPicker",
             icon: "mdi:home-outline",
             addable: true,
@@ -465,6 +491,7 @@ export const DEFAULT_USER_FORM = [
           createMoreField({
             key: "salary",
             label: "期望薪资",
+            category: "求职意向",
             component: "input",
             icon: "mdi:currency-cny",
             addable: true,
@@ -476,6 +503,7 @@ export const DEFAULT_USER_FORM = [
           createMoreField({
             key: "heightWeight",
             label: "身高体重",
+            category: "基本信息",
             component: "heightWeight",
             icon: "mdi:human-male-height",
             addable: true,

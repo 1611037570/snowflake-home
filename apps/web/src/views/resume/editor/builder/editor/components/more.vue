@@ -2,7 +2,7 @@
 import { computed } from "vue";
 import { useFormContext } from "@/components/business/dynamicForm/api";
 import { useResumeStore } from "@/stores";
-import { EXPANDED } from "@/stores/modules/resume/formConfig";
+import { EXPANDED, MORE_CATEGORIES } from "@/stores/modules/resume/formConfig";
 import { addUserCustomField } from "@/stores/modules/resume/hooks/useUserCustomField";
 import { getUUID } from "@/utils";
 import { storeToRefs } from "pinia";
@@ -23,6 +23,14 @@ const availableFields = computed(() =>
   (currentForm.value?.fields ?? []).filter(
     (field) => field.addable && getFieldDataKey(field) && !hasFieldData(field),
   ),
+);
+
+// 按分类聚合可添加字段：分类顺序固定，空分类不展示
+const groupedFields = computed(() =>
+  MORE_CATEGORIES.map((category) => ({
+    category,
+    fields: availableFields.value.filter((field) => field.props?.category === category),
+  })).filter((group) => group.fields.length > 0),
 );
 
 // 切换展开/收起
@@ -65,21 +73,26 @@ function handleCreateCustomField() {
       <span>{{ expanded ? "收起更多" : "展开更多" }}</span>
       <SfIcon :icon="expanded ? 'fa6-solid:caret-up' : 'fa6-solid:caret-down'" size="3" />
     </button>
-    <!-- 展开后展示尚未添加的字段 -->
-    <div v-if="expanded" class="mt-3 flex flex-wrap gap-3">
+    <!-- 展开后按分类展示尚未添加的字段 -->
+    <div v-if="expanded" class="mt-3 flex flex-col gap-3">
+      <div v-for="group in groupedFields" :key="group.category" class="flex flex-col gap-3">
+        <span class="text-xs text-sf-text-3">{{ group.category }}</span>
+        <div class="flex flex-wrap gap-3">
+          <button
+            v-for="field in group.fields"
+            :key="getFieldDataKey(field)"
+            type="button"
+            class="border-sf-border flex h-7 cursor-pointer items-center justify-center gap-1 rounded-3xl border bg-sf-primary px-2 text-xs text-sf-text-2 transition-colors hover:border-sf-theme hover:text-sf-theme"
+            @click="handleAdd(field)"
+          >
+            <SfIcon icon="ic:round-add" size="4" />
+            <span>{{ field.props?.label }}</span>
+          </button>
+        </div>
+      </div>
       <button
-        v-for="field in availableFields"
-        :key="getFieldDataKey(field)"
         type="button"
-        class="border-sf-border flex h-7 cursor-pointer items-center justify-center gap-1 rounded-3xl border bg-sf-primary px-2 text-xs text-sf-text-2 transition-colors hover:border-sf-theme hover:text-sf-theme"
-        @click="handleAdd(field)"
-      >
-        <SfIcon icon="ic:round-add" size="4" />
-        <span>{{ field.props?.label }}</span>
-      </button>
-      <button
-        type="button"
-        class="border-sf-border flex h-7 cursor-pointer items-center justify-center gap-1 rounded-3xl border border-dashed bg-sf-primary px-2 text-xs text-sf-text-2 transition-colors hover:border-sf-theme hover:text-sf-theme"
+        class="border-sf-border flex h-7 w-fit cursor-pointer items-center justify-center gap-1 rounded-3xl border border-dashed bg-sf-primary px-2 text-xs text-sf-text-2 transition-colors hover:border-sf-theme hover:text-sf-theme"
         @click="handleCreateCustomField"
       >
         <SfIcon icon="ic:round-add" size="4" />
