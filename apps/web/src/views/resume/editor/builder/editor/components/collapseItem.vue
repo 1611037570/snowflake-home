@@ -32,7 +32,7 @@ function del() {
 
 <template>
   <SfCollapse v-model="collapsed" :border="false">
-    <SfCollapseItem name="1">
+    <SfCollapseItem name="1" lazy>
       <template #title>
         <div class="group flex h-full w-full items-center justify-between text-sf-text">
           <div class="flex min-w-0 flex-1 items-center text-[15px] font-bold">

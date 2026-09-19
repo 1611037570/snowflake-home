@@ -89,7 +89,7 @@ function handleAdd() {
 
 <template>
   <SfCollapse v-model="collapsed">
-    <SfCollapseItem name="1">
+    <SfCollapseItem name="1" lazy>
       <template #title>
         <div class="group flex h-full w-full items-center justify-between">
           <div class="flex flex-1 items-center truncate text-lg font-bold">
