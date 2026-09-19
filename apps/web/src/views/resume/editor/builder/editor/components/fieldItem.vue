@@ -24,17 +24,26 @@ const {
   tip,
   removable = false,
   draggable = false,
+  displayOptions,
 } = defineProps<{
   label?: string;
   tip?: string;
   removable?: boolean;
   draggable?: boolean;
+  // 展示形态选项：声明后渲染分段切换
+  displayOptions?: { label: string; value: string }[];
 }>();
 const { currentForm, hasFieldData, removeField } = useFormContext();
 // 隐藏开关：绑定被包裹字段的隐藏路径，未声明绑定时不渲染开关
 const hidden = defineModel<boolean | undefined>("hidden");
 // 字段图标：绑定被包裹字段的图标路径，未声明绑定时不渲染图标选择
 const icon = defineModel<string | undefined>("icon");
+// 展示形态：绑定被包裹字段的展示路径，未声明绑定时不渲染分段切换
+const display = defineModel<string | undefined>("display");
+// 分段切换项：字段标签对应配置声明的展示形态
+const displayList = computed(() =>
+  (displayOptions ?? []).map((option) => ({ name: option.label, value: option.value })),
+);
 // 被包裹的字段：数据绑定与渲染条件以字段自身配置为准
 const field = computed(() => currentForm.value?.fields?.[0]);
 // 字段标识：包裹组与内层字段共用同一标识
@@ -108,55 +117,66 @@ const clearField = () => {
 </script>
 
 <template>
-  <div v-if="renderable" class="flex w-full items-center gap-1">
-    <div v-if="label" class="flex shrink-0 items-center" @click.stop.prevent="">
-      <Icon v-if="draggable" icon="icon-park-outline:drag" class="item-drag cursor-move!" />
-      <SfIconPicker
-        v-if="icon !== undefined"
-        :modelValue="icon"
-        @update:modelValue="updateIcon"
-        :size="4"
-        class="mr-1"
-      />
-      <span class="truncate pr-1 text-[15px] text-sf-text">
-        {{ label }}
-      </span>
-      <sf-tooltip :content="tip" v-if="tip" class="text-sf-text" />
-    </div>
-    <div class="min-w-0 flex-1">
-      <slot />
-    </div>
-    <!-- 操作区固定在右侧，避免字段宽度变化导致按钮位移 -->
-    <div
-      v-if="hidden !== undefined || removable || subtitleCapable"
-      class="flex shrink-0 items-center"
-    >
-      <!-- 重命名仅对自定义字段开放：预设字段标题来自模板配置，不会持久化 -->
-      <Icon
-        v-if="isCustomField"
-        @pointerdown.stop.prevent
-        @click="openRenameModal"
-        icon="lucide:pencil"
-      />
-      <SfTooltip :content="subtitleTip">
-        <Icon
-          v-if="subtitleCapable"
-          @pointerdown.stop.prevent
-          @click="toggleSubtitle"
-          icon="lucide:heading-2"
-          :class="[isSubtitle ? 'text-sf-theme' : '', subtitleFull ? 'opacity-50' : '']"
+  <div v-if="renderable" class="flex w-full flex-col gap-3">
+    <div class="flex w-full items-center gap-1">
+      <div v-if="label" class="flex shrink-0 items-center" @click.stop.prevent="">
+        <Icon v-if="draggable" icon="icon-park-outline:drag" class="item-drag cursor-move!" />
+        <SfIconPicker
+          v-if="icon !== undefined"
+          :modelValue="icon"
+          @update:modelValue="updateIcon"
+          :size="4"
+          class="mr-1"
         />
-      </SfTooltip>
-      <SfTooltip :content="hidden ? '显示' : '隐藏'">
+        <span class="truncate pr-1 text-[15px] text-sf-text">
+          {{ label }}
+        </span>
+        <sf-tooltip :content="tip" v-if="tip" class="text-sf-text" />
+      </div>
+      <div class="min-w-0 flex-1">
+        <slot />
+      </div>
+      <!-- 操作区固定在右侧，避免字段宽度变化导致按钮位移 -->
+      <div
+        v-if="hidden !== undefined || removable || subtitleCapable"
+        class="flex shrink-0 items-center"
+      >
+        <!-- 重命名仅对自定义字段开放：预设字段标题来自模板配置，不会持久化 -->
         <Icon
-          v-if="hidden !== undefined"
+          v-if="isCustomField"
           @pointerdown.stop.prevent
-          @click="toggleHidden"
-          :icon="hidden ? 'lucide:eye' : 'lucide:eye-off'"
+          @click="openRenameModal"
+          icon="lucide:pencil"
         />
-      </SfTooltip>
+        <SfTooltip :content="subtitleTip">
+          <Icon
+            v-if="subtitleCapable"
+            @pointerdown.stop.prevent
+            @click="toggleSubtitle"
+            icon="lucide:heading-2"
+            :class="[isSubtitle ? 'text-sf-theme' : '', subtitleFull ? 'opacity-50' : '']"
+          />
+        </SfTooltip>
+        <SfTooltip :content="hidden ? '显示' : '隐藏'">
+          <Icon
+            v-if="hidden !== undefined"
+            @pointerdown.stop.prevent
+            @click="toggleHidden"
+            :icon="hidden ? 'lucide:eye' : 'lucide:eye-off'"
+          />
+        </SfTooltip>
 
-      <Icon v-if="removable" @pointerdown.stop.prevent @click="clearField" icon="ic:round-delete" />
+        <Icon
+          v-if="removable"
+          @pointerdown.stop.prevent
+          @click="clearField"
+          icon="ic:round-delete"
+        />
+      </div>
+    </div>
+    <!-- 展示形态切换：仅声明了展示选项的字段渲染 -->
+    <div v-if="displayOptions?.length" class="w-40">
+      <SfTab v-model="display" :list="displayList" class="h-8!" />
     </div>
   </div>
   <!-- 重命名弹窗：仅自定义字段需要 -->
