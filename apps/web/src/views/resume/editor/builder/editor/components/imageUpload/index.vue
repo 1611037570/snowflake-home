@@ -34,7 +34,7 @@ const image = defineModel("modelValue", {
 const previewVisible = ref(false);
 
 // 图片上传全流程 hook：vueuse 选择文件，内部完成裁切压缩并返回完整图片 Data URL
-const { openPicker, cropVisible, cropSrc, confirmCrop, closeCrop } = useImageUpload({
+const { openPicker, handleFile, cropVisible, cropSrc, confirmCrop, closeCrop } = useImageUpload({
   crop: true,
   outputWidth: props.width,
   outputHeight: props.height,
@@ -43,6 +43,25 @@ const { openPicker, cropVisible, cropSrc, confirmCrop, closeCrop } = useImageUpl
     image.value = base64;
   },
 });
+
+// 上传弹窗显隐：点击头像先打开弹窗，再从弹窗选择或拖入图片
+const uploadVisible = ref(false);
+// 弹窗内的拖拽上传区域
+const dropZoneRef = ref();
+const { isOverDropZone } = useDropZone(dropZoneRef, {
+  dataTypes: ["Files"], // 只接受文件类型
+  onDrop: (files) => {
+    if (!files || !files.length) return;
+    uploadVisible.value = false;
+    handleFile(files[0]);
+  },
+});
+
+// 从弹窗选择图片：先关闭弹窗，避免与裁剪弹窗叠加
+const pickFromModal = () => {
+  uploadVisible.value = false;
+  openPicker();
+};
 
 // ===== 裁切弹窗状态 =====
 const cropImgRef = ref(null);
@@ -111,12 +130,12 @@ const removeImage = () => {
   <!-- 固定整体高度，保证上传前后表单区域不跳动 -->
   <div class="flex flex-col" :style="{ minHeight: `${height}px` }">
     <div class="flex gap-1">
-      <!-- 始终保留上传入口：未上传展示占位，已上传时点击图片可重新上传替换 -->
+      <!-- 始终保留上传入口：未上传展示占位，已上传时点击图片进入上传弹窗 -->
       <div
         class="border-sf-border group relative flex cursor-pointer items-center justify-center overflow-hidden rounded-lg border border-dashed text-sf-text-3 transition-colors hover:border-sf-theme hover:text-sf-theme"
         :style="{ width: `${DEFAULT_WIDTH}px`, height: `${DEFAULT_HEIGHT}px` }"
-        :title="image ? '点击重新上传' : '上传图片'"
-        @click="openPicker"
+        :title="image ? '更换头像' : '上传头像'"
+        @click="uploadVisible = true"
       >
         <img
           v-if="image"
@@ -124,12 +143,12 @@ const removeImage = () => {
           alt="图片"
           class="h-full w-full shrink-0 object-cover"
         />
-        <!-- 已上传时鼠标悬停显示"重新上传"遮罩提示 -->
+        <!-- 已上传时鼠标悬停显示"更换头像"遮罩提示 -->
         <div
           v-if="image"
           class="absolute inset-0 flex items-center justify-center bg-black/50 text-xs text-white opacity-0 transition-opacity group-hover:opacity-100"
         >
-          重新上传
+          更换头像
         </div>
         <div v-else class="flex h-full w-full flex-col items-center justify-center gap-1">
           <SfIcon icon="mdi:image-plus" size="6" />
@@ -175,6 +194,20 @@ const removeImage = () => {
       :url-list="[image]"
       @close="previewVisible = false"
     />
+
+    <!-- 上传弹窗：点击头像先进入弹窗，再从弹窗选择或拖入图片 -->
+    <SfModal v-model="uploadVisible" title="上传头像" width="400px">
+      <div
+        ref="dropZoneRef"
+        class="border-sf-border flex cursor-pointer flex-col items-center justify-center gap-3 rounded-xl border border-dashed bg-sf-primary px-6 py-9 text-sf-text-2 transition-colors hover:border-sf-theme hover:text-sf-theme"
+        :class="{ 'border-sf-theme text-sf-theme': isOverDropZone }"
+        @click="pickFromModal"
+      >
+        <SfIcon icon="mdi:image-plus" size="8" />
+        <span class="text-sm">点击选择图片，或将图片拖到此处</span>
+        <span class="text-xs text-sf-text-3">支持 JPG、PNG 等常见图片格式</span>
+      </div>
+    </SfModal>
 
     <!-- 裁切弹窗：上传后先按组件宽高比裁切，确认后再压缩 -->
     <SfModal v-model="cropVisible" title="裁剪图片" width="720px">
