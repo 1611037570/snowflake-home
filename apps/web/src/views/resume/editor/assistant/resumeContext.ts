@@ -75,26 +75,35 @@ export const useResumeContext = () => {
     return result;
   };
 
-  // 整份或 user 模块请求时，临时清除头像避免请求体过大，请求结束后还原
-  let trimState: { saved: string | undefined } | null = null;
-  const beforeRequest = (context?: Record<string, unknown>) => {
+  // 整份或 user 模块请求时，临时清除头像避免请求体过大，请求结束后按任务还原
+  const trimStates = new Map<string, { item: any; saved: string | undefined }>();
+  let activeForceFullTask = "";
+  const beforeRequest = (context?: Record<string, unknown>, taskId = "default") => {
     // 一键优化在用户授权后固定读取整份简历，避免生成期间受模块选择变化影响
     forceFullResume = context?.resumeScope === "all";
+    activeForceFullTask = taskId;
     const data = resumeStore.currentData;
     const need =
       forceFullResume ||
       !selectedModule.value.length ||
       selectedModule.value.some((item: any) => item.key === "user");
     if (!need || !data?.user?.data) return;
-    trimState = { saved: data.user.data.avatar };
+    trimStates.set(taskId, {
+      item: resumeStore.currentItem,
+      saved: data.user.data.avatar,
+    });
     delete data.user.data.avatar;
   };
-  const afterRequest = () => {
-    forceFullResume = false;
+  const afterRequest = (taskId = "default") => {
+    if (taskId === activeForceFullTask) {
+      forceFullResume = false;
+      activeForceFullTask = "";
+    }
+    const trimState = trimStates.get(taskId);
     if (!trimState) return;
-    const data = resumeStore.currentData;
+    trimStates.delete(taskId);
+    const data = trimState.item?.data;
     if (data?.user?.data) data.user.data.avatar = trimState.saved;
-    trimState = null;
   };
 
   return { getResumeData, beforeRequest, afterRequest };

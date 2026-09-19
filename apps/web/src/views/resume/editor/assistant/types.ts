@@ -69,7 +69,7 @@ export interface AssistantConfig {
   // 工具执行错误回调：由宿主决定恢复或中断，引擎只负责转交
   onToolError?: ReactConfig["onToolError"];
   // 请求前准备（如裁剪头像），与 afterRequest 成对使用
-  beforeRequest?: (context?: Record<string, unknown>) => void;
+  beforeRequest?: (context?: Record<string, unknown>, taskId?: string) => void;
   // 请求结束后还原现场
-  afterRequest?: () => void;
+  afterRequest?: (taskId?: string) => void;
 }
