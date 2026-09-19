@@ -44,6 +44,7 @@ function del() {
               <Icon
                 :icon="hidden ? 'lucide:eye' : 'lucide:eye-off'"
                 @click.stop="hidden = !hidden"
+                :class="hidden ? 'text-sf-theme' : ''"
               />
             </SfTooltip>
 

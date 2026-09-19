@@ -162,6 +162,7 @@ const clearField = () => {
             @pointerdown.stop.prevent
             @click="toggleHidden"
             :icon="hidden ? 'lucide:eye' : 'lucide:eye-off'"
+            :class="hidden ? 'text-sf-theme' : ''"
           />
         </SfTooltip>
 
