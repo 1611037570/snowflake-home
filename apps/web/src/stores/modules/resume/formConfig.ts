@@ -56,7 +56,7 @@ const createUserField = (
   const { tip = "推荐必填", addable } = options;
   return {
     type: "group",
-    component: "fieldItem",
+    component: "rowField",
     slot: "default",
     // 包裹组沿用字段标识，供字段顺序持久化与定位
     key,
@@ -104,7 +104,7 @@ const createMoreField = (options: {
   } = options;
   return {
     type: "group",
-    component: "fieldItem",
+    component: "rowField",
     slot: "default",
     // 包裹组沿用字段标识，供字段顺序持久化与定位
     key,
@@ -159,7 +159,7 @@ const createMoreField = (options: {
 export const DEFAULT_USER_FORM = [
   {
     type: "group",
-    component: "boxCollapse",
+    component: "collapseModule",
     key: "user",
     context: ["user"],
     drag: false,
@@ -576,7 +576,7 @@ export const DEFAULT_ACCOUNT_FORM = {
   span: 24,
   model: createModuleState("社交账号"),
   checks: MODULE_CHECKS,
-  component: "boxCollapse",
+  component: "collapseModule",
   props: {
     add: true,
   },
@@ -607,7 +607,7 @@ export const DEFAULT_ACCOUNT_FORM = {
           },
         ],
         type: "object",
-        component: "account",
+        component: "rowAccount",
         checks: {
           hidden: {
             path: ["ui", "hidden"],
@@ -624,7 +624,7 @@ export const DEFAULT_EDUCATION_FORM = {
   key: "education",
   type: "group",
   context: ["education"],
-  component: "boxCollapse",
+  component: "collapseModule",
   props: {
     add: true,
   },
@@ -640,7 +640,7 @@ export const DEFAULT_EDUCATION_FORM = {
       itemClass: DEFAULT_COL_CLASS + " px-3!",
       itemSchema: {
         type: "group",
-        component: "itemCollapse",
+        component: "collapseItem",
         slot: "default",
         span: 24,
         checks: {
@@ -849,7 +849,7 @@ export const DEFAULT_EDUCATION_FORM = {
 // 专业技能
 export const DEFAULT_SKILL_FORM = {
   type: "group",
-  component: "boxCollapse",
+  component: "collapseModule",
   key: "skill",
   context: ["skill"],
   props: {
@@ -873,7 +873,7 @@ export const DEFAULT_SKILL_FORM = {
 // 个人优势
 export const DEFAULT_ADVANTAGE_FORM = {
   type: "group",
-  component: "boxCollapse",
+  component: "collapseModule",
   key: "advantage",
   context: ["advantage"],
   props: {
@@ -899,7 +899,7 @@ export const DEFAULT_WORK_FORM = {
   type: "group",
   key: "work",
   context: ["work"],
-  component: "boxCollapse",
+  component: "collapseModule",
   props: {
     add: true,
   },
@@ -915,7 +915,7 @@ export const DEFAULT_WORK_FORM = {
       itemClass: DEFAULT_COL_CLASS + " px-3!",
       itemSchema: {
         type: "group",
-        component: "itemCollapse",
+        component: "collapseItem",
         slot: "default",
         span: 24,
         checks: {
@@ -1077,7 +1077,7 @@ export const DEFAULT_PROJECT_FORM = {
   type: "group",
   key: "project",
   context: ["project"],
-  component: "boxCollapse",
+  component: "collapseModule",
   props: {
     add: true,
   },
@@ -1093,7 +1093,7 @@ export const DEFAULT_PROJECT_FORM = {
       itemClass: DEFAULT_COL_CLASS + " px-3!",
       itemSchema: {
         type: "group",
-        component: "itemCollapse",
+        component: "collapseItem",
         slot: "default",
         span: 24,
         checks: {
@@ -1256,7 +1256,7 @@ export const DEFAULT_VIDEO_FORM = {
   type: "group",
   key: "video",
   context: ["video"],
-  component: "boxCollapse",
+  component: "collapseModule",
   props: {
     add: true,
     tip: "该模块会将视频地址转换为二维码，方便在简历中展示",
@@ -1314,7 +1314,7 @@ export const DEFAULT_VIDEO_FORM = {
           },
         ],
         type: "group",
-        component: "itemCollapse",
+        component: "collapseItem",
         slot: "default",
         span: 24,
         checks: {
@@ -1333,7 +1333,7 @@ export const DEFAULT_IMAGE_FORM = {
   type: "group",
   key: "image",
   context: ["image"],
-  component: "boxCollapse",
+  component: "collapseModule",
   props: {
     add: true,
   },
@@ -1395,7 +1395,7 @@ export const DEFAULT_IMAGE_FORM = {
           },
         ],
         type: "group",
-        component: "itemCollapse",
+        component: "collapseItem",
         slot: "default",
         span: 24,
         checks: {
@@ -1412,7 +1412,7 @@ export const DEFAULT_IMAGE_FORM = {
 // 荣誉证书
 export const DEFAULT_HONOR_FORM = {
   type: "group",
-  component: "boxCollapse",
+  component: "collapseModule",
   key: "honor",
   context: ["honor"],
   props: {
@@ -1444,7 +1444,7 @@ export const DEFAULT_HONOR_FORM = {
           },
         ],
         type: "object",
-        component: "honor",
+        component: "rowHonor",
         checks: {
           hidden: {
             path: ["ui", "hidden"],
@@ -1461,7 +1461,7 @@ export const DEFAULT_CUSTOM_FORM = {
   type: "group",
   key: "custom",
   context: ["custom"],
-  component: "boxCollapse",
+  component: "collapseModule",
   props: {
     add: true,
   },
@@ -1477,7 +1477,7 @@ export const DEFAULT_CUSTOM_FORM = {
       itemClass: DEFAULT_COL_CLASS + " px-3!",
       itemSchema: {
         type: "group",
-        component: "itemCollapse",
+        component: "collapseItem",
         slot: "default",
         span: 24,
         checks: {
