@@ -36,7 +36,6 @@
 </template>
 
 <script setup lang="ts">
-import { getUUID } from "@/utils";
 import { useDraggable } from "vue-draggable-plus";
 import { checkForm } from "../code/checkForm.ts";
 import { hasFieldData, removeFieldData, removeFieldNode } from "../code/fieldData";
@@ -157,27 +156,8 @@ function removeObject(field: any) {
 function removeField(field: any) {
   removeFieldData(rootData.data, field, getFieldPathContext(field));
 }
-function ensureFieldIds(fields: any[]) {
-  if (!fields) return;
-  fields.forEach((item: any) => {
-    if (!item.id) {
-      item.id = getUUID().slice(0, 4);
-    }
-  });
-}
-
 onMounted(async () => {
   await nextTick();
-  if (!items.value.id) {
-    items.value.id = getUUID().slice(0, 4);
-  }
-  ensureFieldIds(items.value.fields);
-  watch(
-    () => [items.value?.fields, items.value?.fields?.length],
-    () => {
-      ensureFieldIds(items.value?.fields);
-    },
-  );
 
   if (!items.value?.drag) {
     return;

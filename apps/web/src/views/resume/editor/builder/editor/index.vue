@@ -100,7 +100,6 @@ onBeforeUnmount(() => {
           :components="dynamicComponents"
           :options="RESUME_OPTIONS"
           @vue:mounted="finishConfigSync"
-          @vue:updated="finishConfigSync"
         />
         <ArchivedModules />
         <AddModule />
