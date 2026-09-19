@@ -2,6 +2,7 @@
 import { useResumeStore } from "@/stores";
 import { useFormContext } from "@/components/business/dynamicForm/api";
 import { jumpPreview } from "../../../useModuleNav";
+import eventBus from "@/utils/modules/eventBus";
 import Icon from "../icon.vue";
 import EditableTitle from "./editableTitle.vue";
 const { proxy } = getCurrentInstance();
@@ -65,9 +66,24 @@ function archiveModule() {
     });
 }
 
+// 新增记录追加到列表末尾，定位一次便于直接看到落点
+function locateAddedItem(index) {
+  if (index == null) return;
+  nextTick(() => {
+    const moduleKey = currentForm.value?.key;
+    const row = document.querySelector(
+      `[data-module-key="${moduleKey}"] [data-item-index="${index}"]`,
+    );
+    if (!row) return;
+    row.scrollIntoView({ behavior: "smooth", block: "start" });
+    eventBus.emit("df-select-module", moduleKey);
+  });
+}
+
 function handleAdd() {
   // 新增一条子项：引擎内部深拷贝 itemSchema 后 push，避免多个子项共享同一份引用
-  addItem();
+  const index = addItem();
+  locateAddedItem(index);
 }
 </script>
 
