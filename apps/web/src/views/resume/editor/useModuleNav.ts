@@ -206,12 +206,12 @@ export function useModuleNav() {
       else hitsByModule.set(hit.moduleKey, [hit]);
     });
     return moduleList.value
-      .map((item) => ({
+      .map((item: any) => ({
         ...item,
         matchedByName: item.name.toLowerCase().includes(kw) || item.key.toLowerCase().includes(kw),
         hits: hitsByModule.get(item.key) ?? [],
       }))
-      .filter((result) => result.matchedByName || result.hits.length);
+      .filter((result: any) => result.matchedByName || result.hits.length);
   });
 
   return {

@@ -2,7 +2,7 @@ import { computed } from "vue";
 import { storeToRefs } from "pinia";
 import { getFieldLabel, getModelBindings, unwrapField, walkFormFields } from "@/components/business/dynamicForm/api";
 import { useResumeStore } from "@/stores";
-import { stripHtml } from "../../toolbar/modules/progress/useResumeStats";
+import { stripHtml } from "../toolbar/modules/progress/useResumeStats";
 
 // 搜索命中项：携带定位所需的层级信息
 export interface ResumeSearchHit {
