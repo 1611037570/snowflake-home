@@ -2,7 +2,10 @@
 import { useResumeStore } from "@/stores";
 import { allConfig } from "@/stores/modules/resume/formConfig";
 import { DEFAULT_MODULE_NAMES } from "@/stores/modules/resume/defaultConfig";
-import { bindCollapsedDefault } from "@/stores/modules/resume/hooks/useConfigTemplate";
+import {
+  bindCollapsedDefault,
+  ensureRuntimeFieldIds,
+} from "@/stores/modules/resume/hooks/useConfigTemplate";
 import { jumpToEditor } from "../../../useModuleNav";
 import { storeToRefs } from "pinia";
 import { computed } from "vue";
@@ -43,6 +46,7 @@ const handleAdd = (module) => {
   }
   if (type in allConfig) {
     const config = structuredClone(allConfig[type]);
+    ensureRuntimeFieldIds([config]);
     // 新增模块内的记录默认折叠状态跟随系统设置
     bindCollapsedDefault([config], () => resumeStore.itemDefaultCollapsed);
     runtimeConfig.value.fields.push(config);
@@ -77,6 +81,7 @@ const handleConfirm = () => {
       item.defaultValue = customModuleName;
     }
   });
+  ensureRuntimeFieldIds([config]);
   // 自定义模块内的记录默认折叠状态跟随系统设置
   bindCollapsedDefault([config], () => resumeStore.itemDefaultCollapsed);
   // 添加自定义模块到运行时配置

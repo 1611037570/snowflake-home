@@ -22,7 +22,7 @@ export function getModuleTemplate(key: string) {
 
 // 持久化字段列表展开为可渲染的完整 schema
 export function expandConfigFields(fields: any[], data: any) {
-  return fields.map((item: any) => {
+  const expanded = fields.map((item: any) => {
     const template = getModuleTemplate(item.key);
     if (!template) return item;
     const field = structuredClone(template);
@@ -35,6 +35,30 @@ export function expandConfigFields(fields: any[], data: any) {
     placeUserSubtitle(field);
     return field;
   });
+  ensureRuntimeFieldIds(expanded);
+  return expanded;
+}
+
+// 按字段路径提前生成运行时标识，避免渲染完成后再随机补充 id
+export function ensureRuntimeFieldIds(fields: any[], parentPath: string[] = []) {
+  const occurrences = new Map<string, number>();
+  fields.forEach((field: any, index: number) => {
+    if (!field || typeof field !== "object") return;
+    const binding = Array.isArray(field.model) ? field.model[0] : field.model;
+    const source = Array.isArray(binding?.source) ? binding.source.join("-") : "";
+    const base = String(field.key || `${field.type || "field"}-${source || index}`).replace(
+      /[^a-zA-Z0-9_-]/g,
+      "_",
+    );
+    const occurrence = occurrences.get(base) || 0;
+    occurrences.set(base, occurrence + 1);
+    const pathKey = occurrence ? `${base}-${occurrence}` : base;
+    if (!field.id) field.id = `df-${[...parentPath, pathKey].join("-")}`;
+    const childPath = [...parentPath, pathKey];
+    if (Array.isArray(field.fields)) ensureRuntimeFieldIds(field.fields, childPath);
+    if (field.itemSchema) ensureRuntimeFieldIds([field.itemSchema], [...childPath, "item"]);
+  });
+  return fields;
 }
 
 // 副标题分区固定跟随姓名之后：模板新增的分区不能按"追加到末尾"的默认规则落位
