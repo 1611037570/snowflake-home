@@ -4,7 +4,7 @@ import { computed, isRef } from "vue";
 /**
  * 剔除 HTML 标签及常见实体
  */
-function stripHtml(html: string): string {
+export function stripHtml(html: string): string {
   if (!html || typeof html !== "string") return "";
   return html
     .replace(

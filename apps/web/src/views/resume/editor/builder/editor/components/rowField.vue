@@ -117,7 +117,8 @@ const clearField = () => {
 </script>
 
 <template>
-  <div v-if="renderable" class="flex w-full flex-col gap-3">
+  <!-- 字段标识作为定位锚点：内容搜索命中该字段时可精确滚动到这一行 -->
+  <div v-if="renderable" class="flex w-full flex-col gap-3" :data-field-key="fieldKey">
     <div class="flex w-full items-center gap-1">
       <div v-if="label" class="flex shrink-0 items-center" @click.stop.prevent="">
         <Icon v-if="draggable" icon="icon-park-outline:drag" class="item-drag cursor-move!" />

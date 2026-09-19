@@ -26,12 +26,18 @@ const availableFields = computed(() =>
 );
 
 // 按分类聚合可添加字段：分类顺序固定，空分类不展示
-const groupedFields = computed(() =>
-  MORE_CATEGORIES.map((category) => ({
+const groupedFields = computed(() => {
+  const groups = MORE_CATEGORIES.map((category) => ({
     category,
     fields: availableFields.value.filter((field) => field.props?.category === category),
-  })).filter((group) => group.fields.length > 0),
-);
+  }));
+  // 未声明分类的字段归入末尾兜底组，避免新增字段因漏标分类而不展示
+  const rest = availableFields.value.filter(
+    (field) => !MORE_CATEGORIES.includes(field.props?.category),
+  );
+  if (rest.length) groups.push({ category: "其他", fields: rest });
+  return groups.filter((group) => group.fields.length > 0);
+});
 
 // 切换展开/收起
 function toggle() {
