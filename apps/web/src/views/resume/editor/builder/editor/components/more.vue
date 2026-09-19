@@ -49,12 +49,11 @@ function toggle() {
 function locateAddedField(fieldKey) {
   if (!fieldKey) return;
   nextTick(() => {
-    const row = document.querySelector(`[data-field-key="${fieldKey}"]`);
-    if (!row) return;
-    row.scrollIntoView({ behavior: "smooth", block: "start" });
-    // 由最近的模块锚点反查模块标识，避免在组件内硬编码模块 key
-    const moduleKey = row.closest("[data-module-key]")?.dataset.moduleKey;
-    if (moduleKey) eventBus.emit("df-select-module", moduleKey);
+    document
+      .querySelector(`[data-field-key="${fieldKey}"]`)
+      ?.scrollIntoView({ behavior: "smooth", block: "start" });
+    // 选中落到字段所在行，边框由外层字段容器承载
+    eventBus.emit("df-select-module", fieldKey);
   });
 }
 

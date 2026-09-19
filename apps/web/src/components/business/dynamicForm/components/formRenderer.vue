@@ -52,8 +52,10 @@ import FormError from "./formError.vue";
 import FormItem from "./formItem.vue";
 
 defineOptions({ name: "FormRenderer" });
-const { pathContext } = defineProps<{
+const { pathContext, wrapped = false } = defineProps<{
   pathContext?: DataPathContext;
+  // 包裹组内部字段：与外层字段共用字段标识，选中与清除只由外层容器负责
+  wrapped?: boolean;
 }>();
 const rootData: any = inject(DF_ROOT_DATA);
 const row: any = useTemplateRef("row");
@@ -110,7 +112,11 @@ const isDragging = ref(false);
 // 模块选中能力：由根组件提供，动态表单内部契约，调用方按约定传 key
 const moduleSelect = inject(DF_MODULE_SELECT)!;
 // 模块是否处于选中状态：与选中的模块 key 匹配时边框持续闪烁
-const isModuleSelected = (item: any) => moduleSelect.selectedKey.value === item.key;
+const isModuleSelected = (item: any) => {
+  // 包裹组内部字段与外层共用标识，边框只落在最外层字段容器
+  if (wrapped) return false;
+  return moduleSelect.selectedKey.value === item.key;
+};
 // 鼠标经过模块恢复正常：清除选中状态停止闪烁
 const handleModuleMouseEnter = (item: any) => {
   if (isModuleSelected(item)) {
