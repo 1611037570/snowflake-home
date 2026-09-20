@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, ref } from "vue";
-import { ICON_CATEGORIES } from "@/configs";
+import { getIconOption, ICON_CATEGORIES, ICON_ITEMS } from "@/configs";
 
 defineOptions({ name: "IconPicker" });
 
@@ -18,7 +18,7 @@ const allCategory = { key: "all", name: "全部" };
 const activeCategory = ref("all");
 
 // 全部图标平铺列表
-const allIcons = computed(() => ICON_CATEGORIES.flatMap((cat) => cat.icons));
+const allIcons = computed(() => ICON_ITEMS);
 
 // 当前分类下的图标列表
 const currentIcons = computed(() =>
@@ -28,11 +28,11 @@ const currentIcons = computed(() =>
 );
 
 // 当前选中图标信息，供触发区域展示
-const activeIcon = computed(() => allIcons.value.find((item) => item.icon === modelValue.value));
+const activeIcon = computed(() => getIconOption(modelValue.value));
 
-// 选择图标并写入 v-model
-const selectIcon = (icon: string) => {
-  modelValue.value = icon;
+// 选择图标只保存稳定标识，实际图标名称由目录解析
+const selectIcon = (key: string) => {
+  modelValue.value = key;
 };
 </script>
 
@@ -69,14 +69,14 @@ const selectIcon = (icon: string) => {
           <div class="grid grid-cols-6 gap-3">
             <SfIcon
               v-for="item in currentIcons"
-              :key="item.icon"
+              :key="item.key"
               :icon="item.icon"
               :size="size"
               :boxSize="size + 3"
-              @click="selectIcon(item.icon)"
+              @click="selectIcon(item.key)"
               class="rounded-3xl"
               :class="[
-                modelValue === item.icon
+                modelValue === item.key
                   ? ' bg-sf-theme text-sf-theme-text'
                   : 'text-sf-text! hover:bg-sf-bg',
               ]"
