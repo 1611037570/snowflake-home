@@ -2,13 +2,13 @@
 // 显式命名编辑组件，供父级 KeepAlive 按 include 命中缓存
 defineOptions({ name: "BuilderEditor" });
 import { useResumeStore } from "@/stores";
+import SfSkeleton from "@/components/el/skeleton";
 import { storeToRefs } from "pinia";
 import { defineAsyncComponent } from "vue";
 import { RESUME_OPTIONS } from "@/stores/modules/resume/resumeOptions";
 import { useRuntimeData } from "../../hooks/useRuntimeData";
 import AddModule from "./components/addModule.vue";
 import ArchivedModules from "./components/archivedModules.vue";
-import ComponentSkeleton from "./components/componentSkeleton.vue";
 import HeightWeight from "./components/heightWeight.vue";
 import Image from "./components/image.vue";
 import More from "./components/more.vue";
@@ -25,7 +25,7 @@ const loadDynamicForm = () => import("@/components/business/dynamicForm/index");
 // 动态表单加载期间立即显示骨架，避免编辑区只剩增加模块
 const AsyncDynamicForm = defineAsyncComponent({
   loader: loadDynamicForm,
-  loadingComponent: ComponentSkeleton,
+  loadingComponent: SfSkeleton,
   delay: 0,
   suspensible: false,
 });
@@ -44,12 +44,12 @@ onMounted(() => {
 // 图片裁剪与城市级联仅在对应字段出现时加载，避免占用编辑器首屏资源
 const AsyncImageUpload = defineAsyncComponent({
   loader: () => import("./components/imageUpload/index.vue"),
-  loadingComponent: ComponentSkeleton,
+  loadingComponent: SfSkeleton,
   delay: 0,
 });
 const AsyncCityPicker = defineAsyncComponent({
   loader: () => import("./components/cityPicker/index.vue"),
-  loadingComponent: ComponentSkeleton,
+  loadingComponent: SfSkeleton,
   delay: 0,
 });
 
@@ -126,7 +126,7 @@ onBeforeUnmount(() => {
   <div class="relative h-full">
     <SfScrollbar class="relative h-full">
       <div class="flex w-full flex-col">
-        <ComponentSkeleton v-if="!showDynamicForm || !runtimeConfig" />
+        <SfSkeleton v-if="!showDynamicForm || !runtimeConfig" />
         <AsyncDynamicForm
           v-else
           v-model:form="runtimeConfig"
