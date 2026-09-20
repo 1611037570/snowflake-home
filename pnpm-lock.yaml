@@ -183,12 +183,18 @@ importers:
       '@iconify-vue/akar-icons':
         specifier: ^1.0.3
         version: 1.0.3(vue@3.5.22(typescript@5.9.3))
+      '@iconify-vue/basil':
+        specifier: ^1.0.3
+        version: 1.0.3(vue@3.5.22(typescript@5.9.3))
       '@iconify-vue/bi':
         specifier: ^1.0.4
         version: 1.0.4(vue@3.5.22(typescript@5.9.3))
       '@iconify-vue/carbon':
         specifier: ^1.0.16
         version: 1.0.16(vue@3.5.22(typescript@5.9.3))
+      '@iconify-vue/clarity':
+        specifier: ^1.0.3
+        version: 1.0.3(vue@3.5.22(typescript@5.9.3))
       '@iconify-vue/eos-icons':
         specifier: ^1.0.3
         version: 1.0.3(vue@3.5.22(typescript@5.9.3))
@@ -210,9 +216,15 @@ importers:
       '@iconify-vue/line-md':
         specifier: ^1.0.7
         version: 1.0.7(vue@3.5.22(typescript@5.9.3))
+      '@iconify-vue/logos':
+        specifier: ^1.0.7
+        version: 1.0.7(vue@3.5.22(typescript@5.9.3))
       '@iconify-vue/lucide':
         specifier: ^1.0.67
         version: 1.0.67(vue@3.5.22(typescript@5.9.3))
+      '@iconify-vue/majesticons':
+        specifier: ^1.0.4
+        version: 1.0.4(vue@3.5.22(typescript@5.9.3))
       '@iconify-vue/material-symbols':
         specifier: ^1.0.50
         version: 1.0.50(vue@3.5.22(typescript@5.9.3))
@@ -1209,11 +1221,17 @@ packages:
   '@iconify-vue/akar-icons@1.0.3':
     resolution: {integrity: sha512-Z51rJTPT4mDjVyr7YUvdPiH5QimJNJarqth8wBoUlEKiQreq2rUCRP5zoyPNL6dAnWTQ9Zbg9LDgr3K41GZCQQ==}
 
+  '@iconify-vue/basil@1.0.3':
+    resolution: {integrity: sha512-ZkMXK+GJEtUywxquO6vBhsozCYTf2u79jK+MazLlid7bV12mHsIT9xs4J//hIW3Lww2+aPcStKfAJLWU9ISqtQ==}
+
   '@iconify-vue/bi@1.0.4':
     resolution: {integrity: sha512-wcIIw4fU98UeRmItyef4dacboROGIyVyhGo3Luzb6G2H/y4XdbE8sBOAmC8PSjpTHoQ2Hu4RUqfIDzQFTaxZIQ==}
 
   '@iconify-vue/carbon@1.0.16':
     resolution: {integrity: sha512-vEhqRVm8FGpp98MsWiswzW8RJ9WFNnAVSSjKONo7GYyHtKIzeyAuv40Ym0RU0gA/KMUJrxWw+OzMTi7zMaZzTg==}
+
+  '@iconify-vue/clarity@1.0.3':
+    resolution: {integrity: sha512-E8Tnn0FrmrmD6HJigaE3PVr9BWmU6zsznqvT6IzFqI4Uyt23r5XEHGgtpLZEFqZiZdORM/OsCytp89Sk9KUy8Q==}
 
   '@iconify-vue/eos-icons@1.0.3':
     resolution: {integrity: sha512-m3NpZgA+q6EQLWTPhASeUvxRHMgLtpJTwCM7MZbTEkiq4lJ/McvWkj4TgxwEvBDcH0Z8Ovs/dQkXTxpSHYAfqw==}
@@ -1236,8 +1254,14 @@ packages:
   '@iconify-vue/line-md@1.0.7':
     resolution: {integrity: sha512-hZg3PCKp9qwvTXJ1Xd+/dFCbIva9yshe92vpy1bVZm1IgdGoKhMEKSW0JCyeQZVWKUUCeGm32vsRcjX+IwaqeA==}
 
+  '@iconify-vue/logos@1.0.7':
+    resolution: {integrity: sha512-VWCADiMAQrkBqFnvq8O3otrERBxFMFzhQW2dZktHwj5qdMzvO5tdRYYuWYLGmaf3rIvuUs1wen+wGx3SYahCwg==}
+
   '@iconify-vue/lucide@1.0.67':
     resolution: {integrity: sha512-bMsDHmHRpTjPDrhdLp7sYc2X5cRAtIQWBacZcI8LItU4VW63i7uyTn/sSZLKrnEHvNJfFr16Gug8n2w2H1/btw==}
+
+  '@iconify-vue/majesticons@1.0.4':
+    resolution: {integrity: sha512-1cu5RrP8kLXFtFGvzBGUQTEuo3ZuEBWPf3fSOt4HVqhWvbH0lb+uBOwdGT3Kag11MPDXtZcymkGyu+sE2lkMOw==}
 
   '@iconify-vue/material-symbols@1.0.50':
     resolution: {integrity: sha512-lFXFTlBEQAfBoSqFDlJRY0WAtRkREgefMj+5WjqqZG7VcHsF6HzTU/LeM/xm0ks9h8FBxf8PKJ4xR0JoXIxr/g==}
@@ -8395,6 +8419,12 @@ snapshots:
     transitivePeerDependencies:
       - vue
 
+  '@iconify-vue/basil@1.0.3(vue@3.5.22(typescript@5.9.3))':
+    dependencies:
+      '@iconify/css-vue': 1.0.2(vue@3.5.22(typescript@5.9.3))
+    transitivePeerDependencies:
+      - vue
+
   '@iconify-vue/bi@1.0.4(vue@3.5.22(typescript@5.9.3))':
     dependencies:
       '@iconify/css-vue': 1.0.2(vue@3.5.22(typescript@5.9.3))
@@ -8402,6 +8432,12 @@ snapshots:
       - vue
 
   '@iconify-vue/carbon@1.0.16(vue@3.5.22(typescript@5.9.3))':
+    dependencies:
+      '@iconify/css-vue': 1.0.2(vue@3.5.22(typescript@5.9.3))
+    transitivePeerDependencies:
+      - vue
+
+  '@iconify-vue/clarity@1.0.3(vue@3.5.22(typescript@5.9.3))':
     dependencies:
       '@iconify/css-vue': 1.0.2(vue@3.5.22(typescript@5.9.3))
     transitivePeerDependencies:
@@ -8449,7 +8485,19 @@ snapshots:
     transitivePeerDependencies:
       - vue
 
+  '@iconify-vue/logos@1.0.7(vue@3.5.22(typescript@5.9.3))':
+    dependencies:
+      '@iconify/css-vue': 1.0.2(vue@3.5.22(typescript@5.9.3))
+    transitivePeerDependencies:
+      - vue
+
   '@iconify-vue/lucide@1.0.67(vue@3.5.22(typescript@5.9.3))':
+    dependencies:
+      '@iconify/css-vue': 1.0.2(vue@3.5.22(typescript@5.9.3))
+    transitivePeerDependencies:
+      - vue
+
+  '@iconify-vue/majesticons@1.0.4(vue@3.5.22(typescript@5.9.3))':
     dependencies:
       '@iconify/css-vue': 1.0.2(vue@3.5.22(typescript@5.9.3))
     transitivePeerDependencies:
