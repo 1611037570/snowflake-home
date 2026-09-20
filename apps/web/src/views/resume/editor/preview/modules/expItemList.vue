@@ -35,9 +35,22 @@ const dateLeft = computed(() => datePosition?.value === "left");
 // 数组记录统一由 getValidData 过滤并提取业务内容
 const list = computed(() => getValidData(previewData.value?.[props.dataKey]?.list || []));
 
-// 条目是否含首行信息（名称/部门/岗位/时间），为空时不渲染首行，避免多出空行间距
-const hasItemHeader = (item) =>
-  Boolean(item.name || item.department || item.post || item.startTime || item.endTime);
+// 项目链接兼容对象与旧数据中的字符串，展示内容不限制用户输入格式
+const getProjectLink = (item) => {
+  const link = item?.link;
+  if (typeof link === "string") return { name: "", url: link.trim() };
+  if (!link || typeof link !== "object") return { name: "", url: "" };
+  return {
+    name: String(link.name || "").trim(),
+    url: String(link.url || "").trim(),
+  };
+};
+
+// 条目是否含首行信息，项目链接也属于首行信息
+const hasItemHeader = (item) => {
+  const link = getProjectLink(item);
+  return Boolean(item.name || item.department || item.post || item.startTime || item.endTime || link.name || link.url);
+};
 </script>
 
 <template>
@@ -46,7 +59,58 @@ const hasItemHeader = (item) =>
     <Title :module-key="moduleName"></Title>
     <!-- 内容区 -->
     <template v-for="(item, index) in list" :key="index">
-      <div v-if="hasItemHeader(item)" :style="paragraphSpacingStyle">
+      <!-- 项目经历按名称、岗位信息、标签链接分层展示，避免首行信息过多 -->
+      <div
+        v-if="moduleName === 'project' && hasItemHeader(item)"
+        :style="paragraphSpacingStyle"
+      >
+        <div class="flex flex-wrap items-center justify-between">
+          <div class="min-w-0 flex-1">
+            <ItemTitle :name="item.name" />
+          </div>
+          <div
+            class="flex max-w-full min-w-0 flex-wrap items-center"
+            :class="dateLeft ? 'order-first' : ''"
+          >
+            <span>{{ getTime(item.startTime, item.endTime, dateStyle) }}</span>
+          </div>
+        </div>
+        <div class="flex flex-wrap items-center justify-between">
+          <div class="flex max-w-full min-w-0 flex-1 flex-wrap items-center gap-3">
+            <ResumeField :model-value="item.post" />
+            <ResumeField :model-value="item.department" />
+          </div>
+          <div class="flex max-w-full min-w-0 flex-wrap items-center">
+            <ResumeField :model-value="item.city" />
+          </div>
+        </div>
+        <div
+          v-if="item.tags?.length || getProjectLink(item).name || getProjectLink(item).url"
+          class="flex flex-wrap items-center justify-between"
+        >
+          <!-- 标签组件是多根节点，包裹后作为整体参与左右布局 -->
+          <div class="flex flex-wrap items-center gap-3">
+            <ItemTags :tags="item.tags" />
+          </div>
+          <template v-if="getProjectLink(item).url || getProjectLink(item).name">
+            <a
+              v-if="getProjectLink(item).url"
+              :href="getProjectLink(item).url"
+              :title="getProjectLink(item).name"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="inline max-w-full min-w-0 break-all hover:underline"
+            >
+              <ResumeField
+                :model-value="getProjectLink(item).name || getProjectLink(item).url"
+                class="inline max-w-full min-w-0 break-all"
+              />
+            </a>
+            <span v-else class="text-sf-theme">{{ getProjectLink(item).name }}</span>
+          </template>
+        </div>
+      </div>
+      <div v-else-if="hasItemHeader(item)" :style="paragraphSpacingStyle">
         <!-- 首行：名称与部门，右侧时间 -->
         <div class="flex flex-wrap items-center justify-between">
           <!-- 信息容器撑满行内剩余宽度，避免导出渲染时子项宽度取整触发换行错位 -->

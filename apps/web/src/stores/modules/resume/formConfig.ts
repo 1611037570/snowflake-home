@@ -1151,6 +1151,17 @@ export const DEFAULT_PROJECT_FORM = {
               clearable: true,
             },
           },
+          {
+            type: "object",
+            label: "项目链接",
+            component: "projectLink",
+            span: 24,
+            model: {
+              source: ["data", "link"],
+              prop: "modelValue",
+              defaultValue: {},
+            },
+          },
           // 项目标签：可选标签由字段配置注入
           {
             type: "object",
