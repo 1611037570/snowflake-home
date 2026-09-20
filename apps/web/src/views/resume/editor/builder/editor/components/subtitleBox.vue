@@ -15,7 +15,9 @@ const { runtimeConfig, currentData } = storeToRefs(useResumeStore());
 
 // 分区内出现有内容的字段才渲染，避免空内容占位
 const renderable = computed(() =>
-  (currentForm.value?.fields ?? []).some((field) => hasUserFieldContent(currentData.value, field.key)),
+  (currentForm.value?.fields ?? []).some((field) =>
+    hasUserFieldContent(currentData.value, field.key),
+  ),
 );
 // 分区内字段顺序：拖拽结束后写回顺序数组，顺序数组是唯一来源
 const fieldKeys = computed(() =>
@@ -38,10 +40,7 @@ watch(fieldKeys, () => {
 </script>
 
 <template>
-  <div
-    v-if="renderable"
-    class="w-full rounded-3xl border border-dashed border-sf-border bg-sf-bg-2 p-3"
-  >
+  <div v-if="renderable" class="w-full rounded-3xl border border-sf-b p-3">
     <!-- 分区标题：说明字段的展示位置与排序方式 -->
     <div class="mb-3 flex items-center gap-3 text-sm text-sf-text-2">
       <span>副标题</span>
