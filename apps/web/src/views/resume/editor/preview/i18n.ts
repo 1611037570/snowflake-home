@@ -134,6 +134,7 @@ export const PREVIEW_TEXTS: Record<PreviewLang, Record<string, string>> = {
     linkedinLabel: "LinkedIn：",
     salaryLabel: "期望薪资：",
     heightWeightLabel: "身高体重：",
+    measurementsLabel: "三围：",
   },
   en: {
     brand: "Qingzhou Resume",
@@ -162,6 +163,7 @@ export const PREVIEW_TEXTS: Record<PreviewLang, Record<string, string>> = {
     linkedinLabel: "LinkedIn: ",
     salaryLabel: "Expected salary: ",
     heightWeightLabel: "Height & weight: ",
+    measurementsLabel: "Measurements: ",
   },
   ja: {
     brand: "Qingzhou Resume",
