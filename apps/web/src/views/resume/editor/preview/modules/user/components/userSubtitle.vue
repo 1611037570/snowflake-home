@@ -28,6 +28,10 @@ const measurementsText = (value) => {
   );
   return measurements.length ? `${measurements.join("/")}cm` : "";
 };
+// 尺码按上装、下装、鞋码顺序展示，允许只填写部分数据
+const sizesText = (value) => [value?.top, value?.bottom, value?.shoes]
+  .filter((item) => item != null && item !== "")
+  .join("/");
 // 单项内容：字段被隐藏或值空时不展示
 const textOf = (key) => {
   if (!key || isUserFieldHidden(key)) return "";
@@ -35,6 +39,7 @@ const textOf = (key) => {
   if (value == null || value === "") return "";
   if (key === "heightWeight") return heightWeightText(value);
   if (key === "measurements") return measurementsText(value);
+  if (key === "sizes") return sizesText(value);
   return String(value);
 };
 const items = computed(() => subtitleKeys.value.map((key) => textOf(key)).filter(Boolean));

@@ -13,6 +13,7 @@ import HeightWeight from "./components/heightWeight.vue";
 import Image from "./components/image.vue";
 import More from "./components/more.vue";
 import Measurements from "./components/measurements.vue";
+import Sizes from "./components/sizes.vue";
 import SubtitleBox from "./components/subtitleBox.vue";
 import Tag from "./components/tag.vue";
 import Video from "./components/video.vue";
@@ -75,6 +76,7 @@ const dynamicComponents = {
   image: Image,
   heightWeight: HeightWeight,
   measurements: Measurements,
+  sizes: Sizes,
   more: More,
   subtitleBox: SubtitleBox,
   tag: Tag,
