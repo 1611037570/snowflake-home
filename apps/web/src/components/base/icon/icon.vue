@@ -21,7 +21,8 @@
 <script setup lang="ts">
 import { ICON_LIST } from "@/configs";
 import { Icon, loadIcon } from "@iconify/vue";
-import { toRaw, type Component } from "vue";
+import { inject, toRaw } from "vue";
+import { SF_ICON_LIST_KEY, SF_ICON_LOCAL_KEY } from "./context";
 
 defineOptions({ name: "SfIcon" });
 
@@ -30,11 +31,6 @@ export interface IconProps {
    * Iconify 图标名称
    */
   icon?: string;
-
-  /**
-   * 调用方导入的本地图标组件
-   */
-  list?: Record<string, Component>;
 
   /**
    * 图标大小
@@ -67,8 +63,12 @@ const boxIconStyle = computed(() => {
 
 const emit = defineEmits(["success", "fail"]);
 const iconClass = ref("");
+// 编辑器通过父级注入本地图标，未注入时保留远程图标兜底
+const localIconList = inject(SF_ICON_LIST_KEY, null);
+const localIconEnabled = inject(SF_ICON_LOCAL_KEY, true);
 const localIcon = computed(() => {
-  const component = props.list?.[props.icon];
+  if (!localIconEnabled || !localIconList) return null;
+  const component = localIconList[props.icon];
   return component ? toRaw(component) : null;
 });
 const baseStyle = (s: any) => {

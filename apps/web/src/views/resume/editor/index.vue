@@ -60,6 +60,7 @@
 
 <script setup>
 import { useResumeStore } from "@/stores";
+import { SF_ICON_LIST_KEY } from "@/components/base/icon";
 import { onKeyStroke } from "@vueuse/core";
 import { storeToRefs } from "pinia";
 import { provide, watch } from "vue";
@@ -75,11 +76,14 @@ import IssueFeedback from "../components/issueFeedback.vue";
 import Share from "../components/share.vue";
 import Preview from "./preview/index.vue";
 import Toolbar from "./toolbar/index.vue";
+import { PROJECT_ICON_LIST } from "./icons";
 
 const router = useRouter();
 const route = useRoute();
 
 const resumeStore = useResumeStore();
+// 编辑器统一注入本地图标，子组件无需逐层传递
+provide(SF_ICON_LIST_KEY, PROJECT_ICON_LIST);
 // 补齐旧版本系统配置，确保新增开关立即参与渲染
 resumeStore.init();
 const { initResumeStatus, setFocusMode, cancelPrinting, cancelFittingOnePage } = resumeStore;
