@@ -22,7 +22,7 @@
 import { ICON_LIST } from "@/configs";
 import { Icon, loadIcon } from "@iconify/vue";
 import { inject, toRaw } from "vue";
-import { SF_ICON_LIST_KEY, SF_ICON_LOCAL_KEY } from "./context";
+import { SF_ICON_LIST_KEY } from "./context";
 import { LOCAL_ICON_LIST } from "./localIcons";
 
 defineOptions({ name: "SfIcon" });
@@ -66,9 +66,7 @@ const emit = defineEmits(["success", "fail"]);
 const iconClass = ref("");
 // 优先使用父级注入图标，其次使用基础组件内置图标
 const localIconList = inject(SF_ICON_LIST_KEY, null);
-const localIconEnabled = inject(SF_ICON_LOCAL_KEY, true);
 const localIcon = computed(() => {
-  if (!localIconEnabled) return null;
   const component = localIconList?.[props.icon] ?? LOCAL_ICON_LIST[props.icon];
   return component ? toRaw(component) : null;
 });
