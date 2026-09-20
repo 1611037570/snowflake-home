@@ -124,6 +124,44 @@ import PhUserDuotoneIcon from "@iconify-vue/ph/user-duotone";
 import PhWarningFillIcon from "@iconify-vue/ph/warning-fill";
 import SimpleIconsGithubIcon from "@iconify-vue/simple-icons/github";
 import SolarPenLinearIcon from "@iconify-vue/solar/pen-linear";
+import BasilFileUserSolidIcon from "@iconify-vue/basil/file-user-solid";
+import CarbonDataViewAltIcon from "@iconify-vue/carbon/data-view-alt";
+import ClarityEmailSolidIcon from "@iconify-vue/clarity/email-solid";
+import Fa6SolidBullseyeIcon from "@iconify-vue/fa6-solid/bullseye";
+import Fa6SolidFireIcon from "@iconify-vue/fa6-solid/fire";
+import Fa6SolidMountainIcon from "@iconify-vue/fa6-solid/mountain";
+import Fa6SolidPenIcon from "@iconify-vue/fa6-solid/pen";
+import Fa6SolidRocketIcon from "@iconify-vue/fa6-solid/rocket";
+import LogosTiktokIconIcon from "@iconify-vue/logos/tiktok-icon";
+import LucideCameraIcon from "@iconify-vue/lucide/camera";
+import LucideTagIcon from "@iconify-vue/lucide/tag";
+import MajesticonsMusicIcon from "@iconify-vue/majesticons/music";
+import MaterialSymbolsWorkspacePremiumOutlineIcon from "@iconify-vue/material-symbols/workspace-premium-outline";
+import MdiAtomIcon from "@iconify-vue/mdi/atom";
+import MdiBookOpenPageVariantIcon from "@iconify-vue/mdi/book-open-page-variant";
+import MdiCalendarClockIcon from "@iconify-vue/mdi/calendar-clock";
+import MdiCertificateOutlineIcon from "@iconify-vue/mdi/certificate-outline";
+import MdiChartPieIcon from "@iconify-vue/mdi/chart-pie";
+import MdiClockOutlineIcon from "@iconify-vue/mdi/clock-outline";
+import MdiCodeBracesIcon from "@iconify-vue/mdi/code-braces";
+import MdiDatabaseIcon from "@iconify-vue/mdi/database";
+import MdiGamepadVariantIcon from "@iconify-vue/mdi/gamepad-variant";
+import MdiMedalOutlineIcon from "@iconify-vue/mdi/medal-outline";
+import MdiMicrophoneIcon from "@iconify-vue/mdi/microphone";
+import MdiMonitorDashboardIcon from "@iconify-vue/mdi/monitor-dashboard";
+import MdiNotebookOutlineIcon from "@iconify-vue/mdi/notebook-outline";
+import MdiOfficeBuildingIcon from "@iconify-vue/mdi/office-building";
+import MdiPaletteIcon from "@iconify-vue/mdi/palette";
+import MdiSchoolIcon from "@iconify-vue/mdi/school";
+import MdiShapeOutlineIcon from "@iconify-vue/mdi/shape-outline";
+import MdiTrophyOutlineIcon from "@iconify-vue/mdi/trophy-outline";
+import PhGearDuotoneIcon from "@iconify-vue/ph/gear-duotone";
+import PhGraduationCapDuotoneIcon from "@iconify-vue/ph/graduation-cap-duotone";
+import PhLightningDuotoneIcon from "@iconify-vue/ph/lightning-duotone";
+import PhUserCircleDuotoneIcon from "@iconify-vue/ph/user-circle-duotone";
+import SimpleIconsJuejinIcon from "@iconify-vue/simple-icons/juejin";
+import SimpleIconsXiaohongshuIcon from "@iconify-vue/simple-icons/xiaohongshu";
+import SolarHeartBoldIcon from "@iconify-vue/solar/heart-bold";
 
 export const PROJECT_ICON_LIST: Record<string, Component> = {
   "akar-icons:home-alt1": AkarIconsHomeAlt1Icon,
@@ -250,4 +288,42 @@ export const PROJECT_ICON_LIST: Record<string, Component> = {
   "ph:warning-fill": PhWarningFillIcon,
   "simple-icons:github": SimpleIconsGithubIcon,
   "solar:pen-linear": SolarPenLinearIcon,
+  "basil:file-user-solid": BasilFileUserSolidIcon,
+  "carbon:data-view-alt": CarbonDataViewAltIcon,
+  "clarity:email-solid": ClarityEmailSolidIcon,
+  "fa6-solid:bullseye": Fa6SolidBullseyeIcon,
+  "fa6-solid:fire": Fa6SolidFireIcon,
+  "fa6-solid:mountain": Fa6SolidMountainIcon,
+  "fa6-solid:pen": Fa6SolidPenIcon,
+  "fa6-solid:rocket": Fa6SolidRocketIcon,
+  "logos:tiktok-icon": LogosTiktokIconIcon,
+  "lucide:camera": LucideCameraIcon,
+  "lucide:tag": LucideTagIcon,
+  "majesticons:music": MajesticonsMusicIcon,
+  "material-symbols:workspace-premium-outline": MaterialSymbolsWorkspacePremiumOutlineIcon,
+  "mdi:atom": MdiAtomIcon,
+  "mdi:book-open-page-variant": MdiBookOpenPageVariantIcon,
+  "mdi:calendar-clock": MdiCalendarClockIcon,
+  "mdi:certificate-outline": MdiCertificateOutlineIcon,
+  "mdi:chart-pie": MdiChartPieIcon,
+  "mdi:clock-outline": MdiClockOutlineIcon,
+  "mdi:code-braces": MdiCodeBracesIcon,
+  "mdi:database": MdiDatabaseIcon,
+  "mdi:gamepad-variant": MdiGamepadVariantIcon,
+  "mdi:medal-outline": MdiMedalOutlineIcon,
+  "mdi:microphone": MdiMicrophoneIcon,
+  "mdi:monitor-dashboard": MdiMonitorDashboardIcon,
+  "mdi:notebook-outline": MdiNotebookOutlineIcon,
+  "mdi:office-building": MdiOfficeBuildingIcon,
+  "mdi:palette": MdiPaletteIcon,
+  "mdi:school": MdiSchoolIcon,
+  "mdi:shape-outline": MdiShapeOutlineIcon,
+  "mdi:trophy-outline": MdiTrophyOutlineIcon,
+  "ph:gear-duotone": PhGearDuotoneIcon,
+  "ph:graduation-cap-duotone": PhGraduationCapDuotoneIcon,
+  "ph:lightning-duotone": PhLightningDuotoneIcon,
+  "ph:user-circle-duotone": PhUserCircleDuotoneIcon,
+  "simple-icons:juejin": SimpleIconsJuejinIcon,
+  "simple-icons:xiaohongshu": SimpleIconsXiaohongshuIcon,
+  "solar:heart-bold": SolarHeartBoldIcon,
 };
