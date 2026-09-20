@@ -22,7 +22,13 @@ import RowAccount from "./components/rowAccount.vue";
 import RowHonor from "./components/rowHonor.vue";
 
 const loadDynamicForm = () => import("@/components/business/dynamicForm/index");
-const AsyncDynamicForm = defineAsyncComponent(loadDynamicForm);
+// 动态表单加载期间立即显示骨架，避免编辑区只剩增加模块
+const AsyncDynamicForm = defineAsyncComponent({
+  loader: loadDynamicForm,
+  loadingComponent: ComponentSkeleton,
+  delay: 0,
+  suspensible: false,
+});
 const showDynamicForm = ref(false);
 let dynamicFormTimer = null;
 
@@ -120,8 +126,9 @@ onBeforeUnmount(() => {
   <div class="relative h-full">
     <SfScrollbar class="relative h-full">
       <div class="flex w-full flex-col">
+        <ComponentSkeleton v-if="!showDynamicForm || !runtimeConfig" />
         <AsyncDynamicForm
-          v-if="showDynamicForm && runtimeConfig"
+          v-else
           v-model:form="runtimeConfig"
           v-model:data="currentData"
           :components="dynamicComponents"
