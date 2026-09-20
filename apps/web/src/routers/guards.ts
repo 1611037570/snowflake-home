@@ -1,4 +1,5 @@
 import { loadPageLang } from "@/locales";
+import { startRouteLoading } from "@/utils/modules/routeLoading";
 // 版本检测已注释，暂不引入 useSystemStore
 // import { useSystemStore } from "@/stores";
 
@@ -9,6 +10,7 @@ import { loadPageLang } from "@/locales";
  * @param next 路由放行函数
  */
 export async function beforeEachGuard(to: any, from: any, next: any) {
+  startRouteLoading();
   // 二级路由没有名称时复用一级页面标识
   const pageName = to.meta.pageName || to.name;
   // 语言包后台加载，不阻塞路由放行，避免线上跳转停顿
