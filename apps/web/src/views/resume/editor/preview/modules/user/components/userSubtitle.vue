@@ -29,9 +29,14 @@ const measurementsText = (value) => {
   return measurements.length ? `${measurements.join("/")}cm` : "";
 };
 // 尺码按上装、下装、鞋码顺序展示，允许只填写部分数据
-const sizesText = (value) => [value?.top, value?.bottom, value?.shoes]
-  .filter((item) => item != null && item !== "")
-  .join("/");
+const sizesText = (value) => [
+  { key: "top", value: value?.top },
+  { key: "bottom", value: value?.bottom },
+  { key: "shoes", value: value?.shoes },
+]
+  .filter((item) => item.value != null && item.value !== "")
+  .map((item) => (item.key === "shoes" ? `${item.value}码` : item.value))
+  .join(" · ");
 // 单项内容：字段被隐藏或值空时不展示
 const textOf = (key) => {
   if (!key || isUserFieldHidden(key)) return "";

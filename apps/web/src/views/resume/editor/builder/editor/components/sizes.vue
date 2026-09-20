@@ -27,21 +27,51 @@ const shoes = computed({
     modelValue.value = { ...modelValue.value, shoes: value };
   },
 });
+
+const topSizeOptions = [
+  { name: "155/80A", value: "155/80A" },
+  { name: "160/84A", value: "160/84A" },
+  { name: "165/88A", value: "165/88A" },
+  { name: "170/92A", value: "170/92A" },
+  { name: "175/96A", value: "175/96A" },
+  { name: "180/100A", value: "180/100A" },
+  { name: "185/104A", value: "185/104A" },
+];
+
+// 下装使用带 W 前缀的腰围尺码
+const bottomSizeOptions = Array.from({ length: 31 }, (_, index) => {
+  const value = `W${index + 10}`;
+  return { name: value, value };
+});
 </script>
 
 <template>
-  <div class="grid w-full grid-cols-3 gap-3">
-    <label class="min-w-0">
-      <span class="mb-1 block text-xs text-sf-text-3">上装</span>
-      <SfInput v-model="top" placeholder="上装" class="w-full" />
+  <div class="grid w-full gap-3">
+    <label class="grid grid-cols-[3rem_minmax(0,1fr)] items-center gap-3">
+      <span class="text-sm text-sf-text-3">上装</span>
+      <SfSelect
+        v-model="top"
+        :list="topSizeOptions"
+        placeholder="选择尺码"
+        class="w-full"
+      />
     </label>
-    <label class="min-w-0">
-      <span class="mb-1 block text-xs text-sf-text-3">下装</span>
-      <SfInput v-model="bottom" placeholder="下装" class="w-full" />
+    <label class="grid grid-cols-[3rem_minmax(0,1fr)] items-center gap-3">
+      <span class="text-sm text-sf-text-3">下装</span>
+      <SfSelect
+        v-model="bottom"
+        :list="bottomSizeOptions"
+        placeholder="选择尺码"
+        class="w-full"
+      />
     </label>
-    <label class="min-w-0">
-      <span class="mb-1 block text-xs text-sf-text-3">鞋码</span>
-      <SfInput v-model="shoes" placeholder="鞋码" class="w-full" />
+    <label class="grid grid-cols-[3rem_minmax(0,1fr)] items-center gap-3">
+      <span class="text-sm text-sf-text-3">鞋码</span>
+      <SfInput v-model="shoes" placeholder="如 42" class="w-full">
+        <template #suffix>
+          <span class="text-xs text-sf-text-3">码</span>
+        </template>
+      </SfInput>
     </label>
   </div>
 </template>
