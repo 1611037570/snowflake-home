@@ -22,6 +22,8 @@ checkConnection();
 <template>
   <!-- 应用根元素 -->
   <SfConfigProvider>
+    <!-- 路由切换期间显示顶部进度条，避免页面无反馈 -->
+    <SfTopLoading />
     <!-- 全局控制器 -->
     <SfGlobalController />
     <!-- 路由视图 -->
