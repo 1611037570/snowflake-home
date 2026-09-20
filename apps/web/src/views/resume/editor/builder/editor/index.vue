@@ -21,6 +21,20 @@ import RowField from "./components/rowField.vue";
 import RowAccount from "./components/rowAccount.vue";
 import RowHonor from "./components/rowHonor.vue";
 
+const loadDynamicForm = () => import("@/components/business/dynamicForm/index");
+const AsyncDynamicForm = defineAsyncComponent(loadDynamicForm);
+const showDynamicForm = ref(false);
+let dynamicFormTimer = null;
+
+// 延后动态表单挂载，让编辑区外壳先完成首帧绘制
+onMounted(() => {
+  dynamicFormTimer = window.setTimeout(() => {
+    // 提前下载动态表单代码，实际渲染仍等待配置数据就绪
+    loadDynamicForm();
+    showDynamicForm.value = true;
+  }, 0);
+});
+
 // 图片裁剪与城市级联仅在对应字段出现时加载，避免占用编辑器首屏资源
 const AsyncImageUpload = defineAsyncComponent({
   loader: () => import("./components/imageUpload/index.vue"),
@@ -60,7 +74,7 @@ const dynamicComponents = {
   cityPicker: AsyncCityPicker,
 };
 
-// 配置同步：进入或切换简历时由本组件触发，完成前由外壳展示加载提示
+// 配置同步：进入或切换简历时由本组件触发，完成状态由表单渲染事件收口
 const { currentItem } = storeToRefs(resumeStore);
 // 待完成的同步目标简历：由表单渲染完成事件收口，切换简历时丢弃过期回调
 let syncItem = null;
@@ -95,6 +109,7 @@ watch(
 onActivated(finishConfigSync);
 
 onBeforeUnmount(() => {
+  if (dynamicFormTimer !== null) window.clearTimeout(dynamicFormTimer);
   // 失效待完成的同步，避免卸载后开启历史记录
   syncItem = null;
   resumeStore.disableHistory();
@@ -105,8 +120,8 @@ onBeforeUnmount(() => {
   <div class="relative h-full">
     <SfScrollbar class="relative h-full">
       <div class="flex w-full flex-col">
-        <SfDynamicForm
-          v-if="runtimeConfig"
+        <AsyncDynamicForm
+          v-if="showDynamicForm && runtimeConfig"
           v-model:form="runtimeConfig"
           v-model:data="currentData"
           :components="dynamicComponents"

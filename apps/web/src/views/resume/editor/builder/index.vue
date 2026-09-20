@@ -11,9 +11,9 @@ import {
 } from "vue";
 import { storeToRefs } from "pinia";
 import eventBus from "@/utils/modules/eventBus";
-import LoadingTip from "../components/loadingTip.vue";
-// 编辑标签页依赖动态表单等重型模块，异步加载让左侧外壳先渲染
-const AsyncEditor = markRaw(defineAsyncComponent(() => import("./editor/index.vue")));
+import BuilderEditorComponent from "./editor/index.vue";
+// 编辑标签页外壳同步加载，动态表单在首帧后异步挂载
+const BuilderEditor = markRaw(BuilderEditorComponent);
 const AsyncTemplate = markRaw(defineAsyncComponent(() => import("./template/index.vue")));
 const AsyncAi = markRaw(defineAsyncComponent(() => import("../assistant/chat/index.vue")));
 // 当前选中的菜单索引
@@ -35,14 +35,14 @@ onBeforeUnmount(() => {
 });
 
 const resumeStore = useResumeStore();
-const { editorWidth, isGenerating, configSyncing } = storeToRefs(resumeStore);
+const { editorWidth, isGenerating } = storeToRefs(resumeStore);
 
 // 菜单配置
 const menuList = computed(() => [
   {
     name: "编辑",
     icon: "lucide:file-text",
-    component: AsyncEditor,
+    component: BuilderEditor,
   },
   {
     name: "AI",
@@ -77,11 +77,6 @@ const activeMenu = computed(() => menuList.value[activeIndex.value] || menuList.
     <div
       class="relative flex min-h-0 w-full flex-1 flex-col rounded-r-3xl border-y border-r border-sf-b bg-sf-primary py-3 text-sf-base"
     >
-      <!-- 配置同步完成前展示加载提示，编辑标签页加载完成前即可见 -->
-      <LoadingTip
-        v-if="configSyncing"
-        class="absolute top-1/2 left-1/2 z-20 w-full -translate-x-1/2 -translate-y-1/2"
-      />
       <div class="flex min-h-0 w-full flex-1 flex-col">
         <Transition :name="`tab-slide-${direction}`" mode="out-in">
           <!-- 仅缓存编辑与模板组件：编辑器默认加载并缓存，模板首次打开才异步加载，之后缓存 -->
