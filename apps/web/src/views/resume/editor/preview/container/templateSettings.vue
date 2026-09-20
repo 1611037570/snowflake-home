@@ -3,7 +3,11 @@ import { computed } from "vue";
 import { ElMessage } from "element-plus";
 import { storeToRefs } from "pinia";
 import { useResumeStore } from "@/stores";
-import { dateStyleList, defaultDateStyle } from "@/stores/modules/resume/uiConfig";
+import {
+  dateStyleList,
+  defaultDateStyle,
+  defaultLinkUnderline,
+} from "@/stores/modules/resume/uiConfig";
 import ThemeColorPicker from "@/components/business/themeColorPicker/themeColorPicker.vue";
 
 const resumeStore = useResumeStore();
@@ -72,6 +76,14 @@ const dateStyle = computed({
     currentUI.value.dateStyle = value;
   },
 });
+
+// 链接下划线开关
+const linkUnderline = computed({
+  get: () => currentUI.value?.linkUnderline ?? defaultLinkUnderline,
+  set: (value) => {
+    currentUI.value.linkUnderline = value;
+  },
+});
 </script>
 
 <template>
@@ -117,6 +129,11 @@ const dateStyle = computed({
         <div class="flex items-center justify-between text-sm text-sf-text-2">
           <span>标题图标</span>
           <ElSwitch v-model="titleIcon" />
+        </div>
+        <!-- 链接下划线开关：统一控制预览中的可点击链接样式 -->
+        <div class="flex items-center justify-between text-sm text-sf-text-2">
+          <span>链接下划线</span>
+          <ElSwitch v-model="linkUnderline" />
         </div>
         <!-- 日期样式切换：点号 / 中文 -->
         <div class="flex flex-col gap-1">

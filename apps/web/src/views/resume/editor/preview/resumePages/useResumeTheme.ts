@@ -12,6 +12,7 @@ import {
   defaultDateStyle,
   defaultFontSize,
   defaultInfoPosition,
+  defaultLinkUnderline,
   defaultLineHeight,
   defaultPaddingHorizontal,
   defaultPaddingVertical,
@@ -149,6 +150,8 @@ export const useResumeTheme = (ui: ComputedRef<ResumeUi>): ResumeTheme => {
   const textAlign = computed(() => ui.value.textAlign ?? defaultTextAlign);
   // 标题图标开关，缺失时回退默认值
   const titleIconEnabled = computed(() => ui.value.titleIcon ?? defaultTitleIcon);
+  // 链接下划线开关，缺失时回退默认值
+  const linkUnderline = computed(() => ui.value.linkUnderline ?? defaultLinkUnderline);
 
   provide("fontValue", fontValue);
   provide("titleFontStyle", titleFontStyle);
@@ -167,6 +170,7 @@ export const useResumeTheme = (ui: ComputedRef<ResumeUi>): ResumeTheme => {
   provide("datePosition", datePosition);
   provide("textAlign", textAlign);
   provide("titleIconEnabled", titleIconEnabled);
+  provide("linkUnderline", linkUnderline);
 
   return {
     paddingStyle,

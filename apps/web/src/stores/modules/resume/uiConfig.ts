@@ -204,6 +204,8 @@ export const defaultDatePosition = "right";
 export const defaultTextAlign = "auto";
 // 默认标题图标开关
 export const defaultTitleIcon = false;
+// 默认链接下划线开关
+export const defaultLinkUnderline = false;
 // ===========参数范围（编辑器滑杆与一页纸压缩共用，只维护这一处）=====================
 export const uiParamRanges = {
   // 上下页边距
@@ -262,4 +264,6 @@ export const DEFAULT_UI = {
   textAlign: defaultTextAlign,
   // 标题图标：开启后在模块标题前展示模块图标
   titleIcon: defaultTitleIcon,
+  // 链接下划线：开启后在预览中显示链接下划线
+  linkUnderline: defaultLinkUnderline,
 };
