@@ -41,15 +41,14 @@ const hasItemHeader = (item) => Boolean(item.name || item.post || item.startTime
       <div
         v-if="hasItemHeader(item)"
         :style="paragraphSpacingStyle"
-        class="flex flex-wrap items-center justify-between"
+        class="flex flex-wrap items-center justify-between gap-3"
       >
         <!-- 信息容器撑满行内剩余宽度，避免导出渲染时子项宽度取整触发换行错位 -->
         <div
           class="flex max-w-full min-w-0 flex-1 flex-wrap items-center gap-3"
-          :class="dateLeft ? 'justify-end' : ''"
           v-if="item.name || item.post"
         >
-          <ItemTitle :name="item.name" />
+          <ItemTitle :name="item.name" :emphasis="!dateLeft" />
           <div>
             <ResumeField :model-value="item.post" />
           </div>
@@ -59,7 +58,9 @@ const hasItemHeader = (item) => Boolean(item.name || item.post || item.startTime
           :class="dateLeft ? 'order-first' : ''"
           v-if="item.startTime || item.endTime"
         >
-          <span>{{ getTime(item.startTime, item.endTime, dateStyle) }}</span>
+          <span :class="{ 'font-bold': dateLeft }" :style="dateLeft ? fontValue(1) : undefined">
+            {{ getTime(item.startTime, item.endTime, dateStyle) }}
+          </span>
         </div>
       </div>
       <!-- 补充描述/经历：无首行时由段间距承担上间距，有首行时用固定 mt-3 与首行贴合 -->

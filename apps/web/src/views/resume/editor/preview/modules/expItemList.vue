@@ -63,18 +63,20 @@ const hasItemHeader = (item) => {
     <template v-for="(item, index) in list" :key="index">
       <!-- 项目与工作经历按名称、岗位信息、标签链接分层展示，避免首行信息过多 -->
       <div v-if="hasStructuredLayout && hasItemHeader(item)" :style="paragraphSpacingStyle">
-        <div class="flex flex-wrap items-center justify-between">
+        <div class="flex flex-wrap items-center justify-between gap-3">
           <div class="min-w-0 flex-1">
-            <ItemTitle :name="item.name" />
+            <ItemTitle :name="item.name" :emphasis="!dateLeft" />
           </div>
           <div
             class="flex max-w-full min-w-0 flex-wrap items-center"
             :class="dateLeft ? 'order-first' : ''"
           >
-            <span>{{ getTime(item.startTime, item.endTime, dateStyle) }}</span>
+            <span :class="{ 'font-bold': dateLeft }" :style="dateLeft ? fontValue(1) : undefined">
+              {{ getTime(item.startTime, item.endTime, dateStyle) }}
+            </span>
           </div>
         </div>
-        <div class="mt-3 flex flex-wrap items-center justify-between">
+        <div class="mt-3 flex flex-wrap items-center justify-between gap-3">
           <div class="flex max-w-full min-w-0 flex-1 flex-wrap items-center gap-3">
             <ResumeField :model-value="item.post" />
             <ResumeField :model-value="item.department" />
@@ -88,7 +90,7 @@ const hasItemHeader = (item) => {
             item.tags?.length ||
             (moduleName === 'project' && (getProjectLink(item).name || getProjectLink(item).url))
           "
-          class="mt-3 flex flex-wrap items-center justify-between"
+          class="mt-3 flex flex-wrap items-center justify-between gap-3"
         >
           <!-- 标签组件是多根节点，包裹后作为整体参与左右布局 -->
           <div class="flex flex-wrap items-center gap-3">
@@ -119,13 +121,12 @@ const hasItemHeader = (item) => {
       </div>
       <div v-else-if="hasItemHeader(item)" :style="paragraphSpacingStyle">
         <!-- 首行：名称与部门，右侧时间 -->
-        <div class="flex flex-wrap items-center justify-between">
+        <div class="flex flex-wrap items-center justify-between gap-3">
           <!-- 信息容器撑满行内剩余宽度，避免导出渲染时子项宽度取整触发换行错位 -->
           <div
             class="flex max-w-full min-w-0 flex-1 flex-wrap items-center gap-3"
-            :class="dateLeft ? 'justify-end' : ''"
           >
-            <ItemTitle :name="item.name" />
+            <ItemTitle :name="item.name" :emphasis="!dateLeft" />
             <ResumeField :model-value="item.department" />
             <!-- 条目标签：仅声明标签的模块有数据时渲染 -->
             <ItemTags :tags="item.tags" />
@@ -134,11 +135,13 @@ const hasItemHeader = (item) => {
             class="flex max-w-full min-w-0 flex-wrap items-center"
             :class="dateLeft ? 'order-first' : ''"
           >
-            <span>{{ getTime(item.startTime, item.endTime, dateStyle) }}</span>
+            <span :class="{ 'font-bold': dateLeft }" :style="dateLeft ? fontValue(1) : undefined">
+              {{ getTime(item.startTime, item.endTime, dateStyle) }}
+            </span>
           </div>
         </div>
         <!-- 次行：岗位居左，城市居右 -->
-        <div class="flex flex-wrap items-center justify-between">
+        <div class="flex flex-wrap items-center justify-between gap-3">
           <div class="flex max-w-full min-w-0 flex-1 flex-wrap items-center">
             <ResumeField :model-value="item.post" />
           </div>

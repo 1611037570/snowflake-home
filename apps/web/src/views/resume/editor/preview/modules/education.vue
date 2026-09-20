@@ -71,21 +71,26 @@ const hasEducationMeta = (item) =>
         :style="paragraphSpacingStyle"
       >
         <!-- 学校名称与时间独立成首行，保持教育经历标题清晰 -->
-        <div v-if="hasItemHeader(item)" class="flex flex-wrap items-center justify-between">
+        <div
+          v-if="hasItemHeader(item)"
+          class="flex flex-wrap items-center justify-between gap-3"
+        >
           <div class="min-w-0 flex-1">
-            <ItemTitle :name="item.name" />
+            <ItemTitle :name="item.name" :emphasis="!dateLeft" />
           </div>
           <div
             class="flex max-w-full min-w-0 flex-wrap items-center gap-2"
             :class="dateLeft ? 'order-first' : ''"
           >
-            <span>{{ getTime(item.startTime, item.endTime, dateStyle) }}</span>
+            <span :class="{ 'font-bold': dateLeft }" :style="dateLeft ? fontValue(1) : undefined">
+              {{ getTime(item.startTime, item.endTime, dateStyle) }}
+            </span>
           </div>
         </div>
         <!-- 专业、学院与学历信息统一放在第二行，城市保持右侧对齐 -->
         <div
           v-if="hasEducationMeta(item)"
-          class="mt-3 flex flex-wrap items-center justify-between"
+          class="mt-3 flex flex-wrap items-center justify-between gap-3"
         >
           <div class="flex max-w-full min-w-0 flex-1 flex-wrap items-center gap-3">
             <ResumeField v-if="hasField(item, 'post')" :model-value="item.post" />
