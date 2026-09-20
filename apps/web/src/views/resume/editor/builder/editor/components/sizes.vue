@@ -46,32 +46,24 @@ const bottomSizeOptions = Array.from({ length: 31 }, (_, index) => {
 </script>
 
 <template>
-  <div class="grid w-full gap-3">
-    <label class="grid grid-cols-[3rem_minmax(0,1fr)] items-center gap-3">
+  <div class="flex w-full flex-col gap-3">
+    <label class="flex items-center gap-1">
       <span class="text-sm text-sf-text-3">上装</span>
-      <SfSelect
-        v-model="top"
-        :list="topSizeOptions"
-        placeholder="选择尺码"
-        class="w-full"
-      />
+      <SfSelect v-model="top" :list="topSizeOptions" placeholder="选择尺码" class="w-full" />
     </label>
-    <label class="grid grid-cols-[3rem_minmax(0,1fr)] items-center gap-3">
+    <label class="flex items-center gap-1">
       <span class="text-sm text-sf-text-3">下装</span>
-      <SfSelect
-        v-model="bottom"
-        :list="bottomSizeOptions"
-        placeholder="选择尺码"
-        class="w-full"
-      />
+      <SfSelect v-model="bottom" :list="bottomSizeOptions" placeholder="选择尺码" class="w-full" />
     </label>
-    <label class="grid grid-cols-[3rem_minmax(0,1fr)] items-center gap-3">
+    <label class="flex items-center gap-1">
       <span class="text-sm text-sf-text-3">鞋码</span>
-      <SfInput v-model="shoes" placeholder="如 42" class="w-full">
-        <template #suffix>
-          <span class="text-xs text-sf-text-3">码</span>
-        </template>
-      </SfInput>
+      <div class="flex-1">
+        <SfInput v-model="shoes" placeholder="如 42" class="w-full">
+          <template #suffix>
+            <span class="text-xs text-sf-text-3">码</span>
+          </template>
+        </SfInput>
+      </div>
     </label>
   </div>
 </template>
