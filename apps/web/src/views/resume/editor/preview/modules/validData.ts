@@ -13,6 +13,9 @@ export const isContentEmpty = (val: any): boolean => {
 // Evaluate whether one field contains data that can be rendered.
 const hasValidValue = (key: string, rawValue: any): boolean => {
   if (key === "content") return !isContentEmpty(rawValue);
+  if (key === "link" && rawValue && typeof rawValue === "object") {
+    return Boolean(rawValue.name?.trim?.() || rawValue.url?.trim?.());
+  }
   if (Array.isArray(rawValue)) return rawValue.some((item) => hasValidValue("", item));
   if (typeof rawValue === "string") return rawValue.trim() !== "";
   return false;
