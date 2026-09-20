@@ -1,5 +1,5 @@
 /**
- * 图标选择器分类映射表
+ * 编辑区图标选择器分类映射表
  * 分类按简历模块与用途划分，key 作为用户数据稳定标识，icon 仅作为当前渲染名称
  */
 
@@ -164,7 +164,6 @@ export const ICON_CATEGORIES: IconCategory[] = [
 export const ICON_ITEMS = ICON_CATEGORIES.flatMap((category) => category.icons);
 
 // 根据用户保存的稳定标识解析当前图标
-export const getIconOption = (value?: string) =>
-  ICON_ITEMS.find((item) => item.key === value);
+export const getIconOption = (value?: string) => ICON_ITEMS.find((item) => item.key === value);
 
 export const resolveIcon = (value?: string) => getIconOption(value)?.icon || value || "";

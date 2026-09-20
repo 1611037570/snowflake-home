@@ -16,6 +16,7 @@ import {
   MAX_USER_SUBTITLE,
 } from "@/stores/modules/resume/hooks/useUserSubtitle";
 import { storeToRefs } from "pinia";
+import { ICON_CATEGORIES } from "../../../icons/iconCategories";
 // 包裹组的模型绑定只用于状态透传，不落成根元素属性
 defineOptions({ inheritAttrs: false });
 // 字段包裹组件：定制水平布局的标签与操作区，字段内容通过插槽嵌套
@@ -123,6 +124,7 @@ const clearField = () => {
         <Icon v-if="draggable" icon="icon-park-outline:drag" class="item-drag cursor-move!" />
         <SfIconPicker
           v-if="icon !== undefined"
+          :categories="ICON_CATEGORIES"
           :modelValue="icon"
           @update:modelValue="updateIcon"
           :size="4"

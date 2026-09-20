@@ -1,7 +1,7 @@
 <script setup>
 import dayjs from "dayjs";
 import { computed, inject } from "vue";
-import { resolveIcon } from "@/configs";
+import { resolveIcon } from "@/views/resume/editor/icons/iconCategories";
 import { isUserCustomFieldKey } from "@/stores/modules/resume/hooks/useUserCustomField";
 import { getUserSubtitleKeys } from "@/stores/modules/resume/hooks/useUserSubtitle";
 import { getPreviewText } from "../../../i18n";
