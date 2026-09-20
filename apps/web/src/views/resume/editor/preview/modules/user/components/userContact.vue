@@ -152,6 +152,15 @@ const measurementsText = computed(() => {
   if (!measurements.length) return "";
   return `${measurements.join("/")}cm`;
 });
+// 尺码按上装、下装、鞋码顺序展示，允许只填写部分数据
+const sizesText = computed(() => {
+  if (isUserFieldHidden("sizes")) return "";
+  const value = user.value?.sizes;
+  const sizes = [value?.top, value?.bottom, value?.shoes].filter(
+    (item) => item != null && item !== "",
+  );
+  return sizes.join("/");
+});
 const secondaryItems = computed(() => {
   const items = [];
   if (!isUserFieldHidden("status") && user.value?.status) {
@@ -241,6 +250,15 @@ const secondaryItems = computed(() => {
       text: measurementsText.value,
       icon: fieldIcon("measurements"),
       label: getPreviewText("measurementsLabel", previewLang.value),
+    });
+  }
+  if (sizesText.value) {
+    items.push({
+      fieldKey: "sizes",
+      sortKey: "sizes",
+      text: sizesText.value,
+      icon: fieldIcon("sizes"),
+      label: getPreviewText("sizesLabel", previewLang.value),
     });
   }
   return items;

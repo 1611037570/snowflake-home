@@ -135,6 +135,7 @@ export const PREVIEW_TEXTS: Record<PreviewLang, Record<string, string>> = {
     salaryLabel: "期望薪资：",
     heightWeightLabel: "身高体重：",
     measurementsLabel: "三围：",
+    sizesLabel: "尺码：",
   },
   en: {
     brand: "Qingzhou Resume",
@@ -164,6 +165,7 @@ export const PREVIEW_TEXTS: Record<PreviewLang, Record<string, string>> = {
     salaryLabel: "Expected salary: ",
     heightWeightLabel: "Height & weight: ",
     measurementsLabel: "Measurements: ",
+    sizesLabel: "Sizes: ",
   },
   ja: {
     brand: "Qingzhou Resume",
@@ -192,6 +194,7 @@ export const PREVIEW_TEXTS: Record<PreviewLang, Record<string, string>> = {
     linkedinLabel: "LinkedIn：",
     salaryLabel: "希望給与：",
     heightWeightLabel: "身長・体重：",
+    sizesLabel: "サイズ：",
   },
   ko: {
     brand: "Qingzhou Resume",
@@ -220,6 +223,7 @@ export const PREVIEW_TEXTS: Record<PreviewLang, Record<string, string>> = {
     linkedinLabel: "LinkedIn: ",
     salaryLabel: "희망 급여: ",
     heightWeightLabel: "키·몸무게: ",
+    sizesLabel: "사이즈: ",
   },
   fr: {
     brand: "Qingzhou Resume",
@@ -248,6 +252,7 @@ export const PREVIEW_TEXTS: Record<PreviewLang, Record<string, string>> = {
     linkedinLabel: "LinkedIn : ",
     salaryLabel: "Salaire souhaité : ",
     heightWeightLabel: "Taille et poids : ",
+    sizesLabel: "Tailles : ",
   },
   de: {
     brand: "Qingzhou Resume",
@@ -276,6 +281,7 @@ export const PREVIEW_TEXTS: Record<PreviewLang, Record<string, string>> = {
     linkedinLabel: "LinkedIn: ",
     salaryLabel: "Gehaltswunsch: ",
     heightWeightLabel: "Größe und Gewicht: ",
+    sizesLabel: "Größen: ",
   },
   es: {
     brand: "Qingzhou Resume",
@@ -304,6 +310,7 @@ export const PREVIEW_TEXTS: Record<PreviewLang, Record<string, string>> = {
     linkedinLabel: "LinkedIn: ",
     salaryLabel: "Salario deseado: ",
     heightWeightLabel: "Altura y peso: ",
+    sizesLabel: "Tallas: ",
   },
   ru: {
     brand: "Qingzhou Resume",
@@ -332,6 +339,7 @@ export const PREVIEW_TEXTS: Record<PreviewLang, Record<string, string>> = {
     linkedinLabel: "LinkedIn: ",
     salaryLabel: "Ожидаемая зарплата: ",
     heightWeightLabel: "Рост и вес: ",
+    sizesLabel: "Размеры: ",
   },
 };
 
