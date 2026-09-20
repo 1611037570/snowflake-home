@@ -211,9 +211,9 @@ export const uiParamRanges = {
   // 左右页边距
   paddingHorizontal: { min: 12, max: 96, step: 1 },
   // 字体大小
-  fontSize: { min: 10, max: 24, step: 2 },
+  fontSize: { min: 12, max: 48, step: 2 },
   // 模块标题字号
-  titleFontSize: { min: 12, max: 40, step: 2 },
+  titleFontSize: { min: 12, max: 48, step: 2 },
   // 行高
   lineHeight: { min: 1, max: 2, step: 0.1 },
   // 段落间距
