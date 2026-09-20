@@ -1,13 +1,24 @@
 <script setup lang="ts">
 import { computed, ref } from "vue";
-import { getIconOption, ICON_CATEGORIES, ICON_ITEMS } from "@/configs";
 
 defineOptions({ name: "IconPicker" });
 
 const modelValue = defineModel("modelValue", { type: String, default: "" });
 
+interface IconOption {
+  key: string;
+  icon: string;
+  name?: string;
+}
+
+interface IconCategory {
+  key: string;
+  name: string;
+  icons: IconOption[];
+}
+
 // 图标展示尺寸（Tailwind 间距单位，即设计稿 px ÷ 4）
-const props = withDefaults(defineProps<{ size?: number }>(), {
+const props = withDefaults(defineProps<{ size?: number; categories: IconCategory[] }>(), {
   size: 5,
 });
 
@@ -18,17 +29,17 @@ const allCategory = { key: "all", name: "全部" };
 const activeCategory = ref("all");
 
 // 全部图标平铺列表
-const allIcons = computed(() => ICON_ITEMS);
+const allIcons = computed(() => props.categories.flatMap((category) => category.icons));
 
 // 当前分类下的图标列表
 const currentIcons = computed(() =>
   activeCategory.value === "all"
     ? allIcons.value
-    : (ICON_CATEGORIES.find((cat) => cat.key === activeCategory.value)?.icons ?? []),
+    : (props.categories.find((cat) => cat.key === activeCategory.value)?.icons ?? []),
 );
 
 // 当前选中图标信息，供触发区域展示
-const activeIcon = computed(() => getIconOption(modelValue.value));
+const activeIcon = computed(() => allIcons.value.find((item) => item.key === modelValue.value));
 
 // 选择图标只保存稳定标识，实际图标名称由目录解析
 const selectIcon = (key: string) => {
@@ -51,7 +62,7 @@ const selectIcon = (key: string) => {
         <!-- 分类切换：全部 + 各业务分类 -->
         <div class="mb-3 flex flex-wrap gap-2">
           <button
-            v-for="item in [allCategory, ...ICON_CATEGORIES]"
+            v-for="item in [allCategory, ...props.categories]"
             :key="item.key"
             class="h-7 cursor-pointer rounded-full px-2 text-xs font-medium transition-all duration-200"
             :class="
