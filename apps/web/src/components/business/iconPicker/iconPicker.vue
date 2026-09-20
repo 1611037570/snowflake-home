@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { computed, ref } from "vue";
+import { computed, provide, ref } from "vue";
 import { ICON_CATEGORIES } from "@/configs";
+import { SF_ICON_LOCAL_KEY } from "@/components/base/icon";
 
 defineOptions({ name: "IconPicker" });
 
@@ -16,6 +17,9 @@ const allCategory = { key: "all", name: "全部" };
 
 // 当前选中的分类 key，all 表示显示全部
 const activeCategory = ref("all");
+
+// 图标选择器保留在线图标，避免加载整套项目图标
+provide(SF_ICON_LOCAL_KEY, false);
 
 // 全部图标平铺列表
 const allIcons = computed(() => ICON_CATEGORIES.flatMap((cat) => cat.icons));
