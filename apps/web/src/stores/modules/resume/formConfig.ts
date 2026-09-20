@@ -77,7 +77,7 @@ const createMoreField = (options: {
   key: string;
   label: string;
   component: string;
-  icon: string;
+  iconKey: string;
   tip?: string;
   addable?: boolean;
   // 所属分类：供编辑器「更多」分区归类展示
@@ -93,7 +93,7 @@ const createMoreField = (options: {
     key,
     label,
     component,
-    icon,
+    iconKey,
     tip,
     addable,
     category,
@@ -122,7 +122,7 @@ const createMoreField = (options: {
     // 字段状态绑定到包裹组，供包裹组件双向绑定
     model: [
       { source: ["ui", key, "hidden"], prop: "hidden", defaultValue: false },
-      { source: ["ui", key, "icon"], prop: "icon", defaultValue: icon },
+      { source: ["ui", key, "icon"], prop: "icon", defaultValue: iconKey },
       // 展示形态：默认取首个选项，保证初始展示与预览口径一致
       ...(displayOptions
         ? [
@@ -273,7 +273,7 @@ export const DEFAULT_USER_FORM = [
             label: "出生日期",
             category: "基本信息",
             component: "datePicker",
-            icon: "mdi:cake-variant",
+            iconKey: "personal-birthday",
             tip: "推荐必填",
             addable: true,
             // 展示形态：简历上展示年龄或出生日期
@@ -293,7 +293,7 @@ export const DEFAULT_USER_FORM = [
             label: "性别",
             category: "基本信息",
             component: "select",
-            icon: "mdi:account",
+            iconKey: "personal-account",
             tip: "推荐必填",
             addable: true,
             dict: "sex",
@@ -310,7 +310,7 @@ export const DEFAULT_USER_FORM = [
             label: "婚姻状况",
             category: "基本信息",
             component: "select",
-            icon: "mdi:heart-outline",
+            iconKey: "personal-marital",
             addable: true,
             dict: "marital",
             props: {
@@ -326,7 +326,7 @@ export const DEFAULT_USER_FORM = [
             label: "民族",
             category: "基本信息",
             component: "input",
-            icon: "mdi:account-group-outline",
+            iconKey: "personal-nation",
             addable: true,
             props: {
               placeholder: "请输入民族",
@@ -339,7 +339,7 @@ export const DEFAULT_USER_FORM = [
             label: "星座",
             category: "个性标签",
             component: "select",
-            icon: "lucide:star",
+            iconKey: "hobby-star",
             addable: true,
             dict: "zodiac",
             props: {
@@ -355,7 +355,7 @@ export const DEFAULT_USER_FORM = [
             label: "MBTI",
             category: "个性标签",
             component: "input",
-            icon: "ph:brain-duotone",
+            iconKey: "skill-brain",
             addable: true,
             props: {
               placeholder: "请输入 MBTI",
@@ -368,7 +368,7 @@ export const DEFAULT_USER_FORM = [
             label: "求职岗位",
             category: "求职意向",
             component: "input",
-            icon: "lucide:briefcase",
+            iconKey: "work-briefcase",
             tip: "推荐必填",
             addable: true,
             props: {
@@ -382,7 +382,7 @@ export const DEFAULT_USER_FORM = [
             label: "参加工作时间",
             category: "求职意向",
             component: "datePicker",
-            icon: "mdi:briefcase-clock",
+            iconKey: "work-time",
             tip: "推荐必填",
             addable: true,
             props: {
@@ -397,7 +397,7 @@ export const DEFAULT_USER_FORM = [
             label: "电话",
             category: "联系方式",
             component: "input",
-            icon: "mdi:phone",
+            iconKey: "contact-phone",
             tip: "推荐必填",
             // 可添加字段：数据存在才渲染，删除后可从更多中重新添加
             addable: true,
@@ -419,7 +419,7 @@ export const DEFAULT_USER_FORM = [
             label: "邮箱",
             category: "联系方式",
             component: "input",
-            icon: "mdi:email-outline",
+            iconKey: "contact-email",
             addable: true,
             props: {
               placeholder: "请输入邮箱",
@@ -440,7 +440,7 @@ export const DEFAULT_USER_FORM = [
             label: "微信",
             category: "联系方式",
             component: "input",
-            icon: "mdi:wechat",
+            iconKey: "social-wechat",
             addable: true,
             props: {
               placeholder: "请输入微信",
@@ -453,7 +453,7 @@ export const DEFAULT_USER_FORM = [
             label: "GitHub",
             category: "联系方式",
             component: "input",
-            icon: "simple-icons:github",
+            iconKey: "social-github",
             addable: true,
             props: {
               placeholder: "请输入 GitHub 地址",
@@ -465,7 +465,7 @@ export const DEFAULT_USER_FORM = [
             label: "LinkedIn",
             category: "联系方式",
             component: "input",
-            icon: "mdi:linkedin",
+            iconKey: "social-linkedin",
             addable: true,
             props: {
               placeholder: "请输入 LinkedIn 地址",
@@ -478,7 +478,7 @@ export const DEFAULT_USER_FORM = [
             label: "求职状态",
             category: "求职意向",
             component: "select",
-            icon: "mdi:briefcase-check-outline",
+            iconKey: "work-status",
             addable: true,
             dict: "status",
             props: {
@@ -494,7 +494,7 @@ export const DEFAULT_USER_FORM = [
             label: "政治面貌",
             category: "基本信息",
             component: "select",
-            icon: "mdi:flag-outline",
+            iconKey: "personal-political",
             addable: true,
             dict: "political",
             props: {
@@ -510,7 +510,7 @@ export const DEFAULT_USER_FORM = [
             label: "期望城市",
             category: "求职意向",
             component: "cityPicker",
-            icon: "mdi:map-marker-outline",
+            iconKey: "contact-city",
             addable: true,
             dict: "city",
             props: {
@@ -522,7 +522,7 @@ export const DEFAULT_USER_FORM = [
             label: "籍贯",
             category: "基本信息",
             component: "cityPicker",
-            icon: "mdi:home-outline",
+            iconKey: "contact-native-place",
             addable: true,
             dict: "city",
             props: {
@@ -534,7 +534,7 @@ export const DEFAULT_USER_FORM = [
             label: "现居城市",
             category: "基本信息",
             component: "cityPicker",
-            icon: "mdi:home-city-outline",
+            iconKey: "personal-current-city",
             addable: true,
             dict: "city",
             props: {
@@ -547,7 +547,7 @@ export const DEFAULT_USER_FORM = [
             label: "期望薪资",
             category: "求职意向",
             component: "input",
-            icon: "mdi:currency-cny",
+            iconKey: "personal-salary",
             addable: true,
             props: {
               placeholder: "请输入期望薪资",
@@ -559,7 +559,7 @@ export const DEFAULT_USER_FORM = [
             label: "身高体重",
             category: "基本信息",
             component: "heightWeight",
-            icon: "mdi:human-male-height",
+            iconKey: "personal-height-weight",
             addable: true,
           }),
         ],

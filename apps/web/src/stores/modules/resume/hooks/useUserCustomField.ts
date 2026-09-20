@@ -33,7 +33,7 @@ export function createUserCustomField(key: string, label: string): GroupFormFiel
       {
         source: ["ui", key, "icon"],
         prop: "icon",
-        defaultValue: "lucide:tag",
+        defaultValue: "other-tag",
       },
     ],
     // 字段隐藏时的置灰判断

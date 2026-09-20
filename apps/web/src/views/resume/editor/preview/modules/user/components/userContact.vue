@@ -1,6 +1,7 @@
 <script setup>
 import dayjs from "dayjs";
 import { computed, inject } from "vue";
+import { resolveIcon } from "@/configs";
 import { isUserCustomFieldKey } from "@/stores/modules/resume/hooks/useUserCustomField";
 import { getUserSubtitleKeys } from "@/stores/modules/resume/hooks/useUserSubtitle";
 import { getPreviewText } from "../../../i18n";
@@ -25,8 +26,8 @@ const previewLang = inject(
 const user = computed(() => previewData.value?.user?.data || {});
 // 字段级 UI 配置（图标等），与编辑器同读个人信息模块 ui 层级
 const ui = computed(() => previewData.value?.user?.ui || {});
-// 读取字段配置中的图标，未配置时为 undefined 由图标组件兜底处理
-const fieldIcon = (key) => ui.value?.[key]?.icon;
+// 读取字段配置中的稳定标识，并解析为当前图标名称
+const fieldIcon = (key) => resolveIcon(ui.value?.[key]?.icon);
 // 出生日期展示形态：年龄或出生日期，未配置时按年龄展示
 const birthdayDisplay = computed(() => ui.value?.birthday?.display || "age");
 // 副标题字段在姓名下方单独展示，不再出现在信息行
