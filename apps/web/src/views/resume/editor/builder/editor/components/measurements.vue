@@ -27,33 +27,61 @@ const hip = computed({
     modelValue.value = { ...modelValue.value, hip: value };
   },
 });
+
+// 三围使用固定厘米选项，同时允许输入特殊数值
+const measurementOptions = Array.from({ length: 101 }, (_, index) => {
+  const value = String(index + 50);
+  return { name: value, value };
+});
 </script>
 
 <template>
   <div class="flex w-full flex-col gap-3">
-    <div class="grid w-full grid-cols-3 gap-3">
-      <label class="min-w-0">
-        <span class="mb-1 block text-xs text-sf-text-3">胸围</span>
-        <div class="flex min-w-0 items-center gap-1">
-          <SfInput v-model="bust" inputmode="decimal" placeholder="胸围" class="min-w-0 flex-1" />
-          <span class="shrink-0 text-xs text-sf-text-2">cm</span>
-        </div>
-      </label>
-      <label class="min-w-0">
-        <span class="mb-1 block text-xs text-sf-text-3">腰围</span>
-        <div class="flex min-w-0 items-center gap-1">
-          <SfInput v-model="waist" inputmode="decimal" placeholder="腰围" class="min-w-0 flex-1" />
-          <span class="shrink-0 text-xs text-sf-text-2">cm</span>
-        </div>
-      </label>
-      <label class="min-w-0">
-        <span class="mb-1 block text-xs text-sf-text-3">臀围</span>
-        <div class="flex min-w-0 items-center gap-1">
-          <SfInput v-model="hip" inputmode="decimal" placeholder="臀围" class="min-w-0 flex-1" />
-          <span class="shrink-0 text-xs text-sf-text-2">cm</span>
-        </div>
-      </label>
-    </div>
+    <label class="flex items-center gap-1">
+      <span class="text-sm text-sf-text-3">胸围</span>
+      <div class="flex-1">
+        <SfSelect
+          v-model="bust"
+          :list="measurementOptions"
+          filterable
+          allow-create
+          default-first-option
+          placeholder="选择或输入胸围"
+          class="w-full"
+        />
+      </div>
+      <span class="shrink-0 text-xs text-sf-text-2">cm</span>
+    </label>
+    <label class="flex items-center gap-1">
+      <span class="text-sm text-sf-text-3">腰围</span>
+      <div class="flex-1">
+        <SfSelect
+          v-model="waist"
+          :list="measurementOptions"
+          filterable
+          allow-create
+          default-first-option
+          placeholder="选择或输入腰围"
+          class="w-full"
+        />
+      </div>
+      <span class="shrink-0 text-xs text-sf-text-2">cm</span>
+    </label>
+    <label class="flex items-center gap-1">
+      <span class="text-sm text-sf-text-3">臀围</span>
+      <div class="flex-1">
+        <SfSelect
+          v-model="hip"
+          :list="measurementOptions"
+          filterable
+          allow-create
+          default-first-option
+          placeholder="选择或输入臀围"
+          class="w-full"
+        />
+      </div>
+      <span class="shrink-0 text-xs text-sf-text-2">cm</span>
+    </label>
   </div>
 </template>
 
