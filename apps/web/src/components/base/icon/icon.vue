@@ -4,7 +4,13 @@
     :class="[iconClass]"
     :style="[boxIconStyle]"
   >
-    <Icon ref="iconify" :icon="icon" class="bg-transparent" :style="[baseStyle(size)]" />
+    <component
+      v-if="localIcon"
+      :is="localIcon"
+      class="bg-transparent"
+      :style="[baseStyle(size)]"
+    />
+    <Icon v-else ref="iconify" :icon="icon" class="bg-transparent" :style="[baseStyle(size)]" />
     <!-- class="iconify-icon"
            :rotate="rotate"
         :flip="flip"
@@ -15,6 +21,7 @@
 <script setup lang="ts">
 import { ICON_LIST } from "@/configs";
 import { Icon, loadIcon } from "@iconify/vue";
+import { toRaw, type Component } from "vue";
 
 defineOptions({ name: "SfIcon" });
 
@@ -23,6 +30,11 @@ export interface IconProps {
    * Iconify 图标名称
    */
   icon?: string;
+
+  /**
+   * 调用方导入的本地图标组件
+   */
+  list?: Record<string, Component>;
 
   /**
    * 图标大小
@@ -55,6 +67,10 @@ const boxIconStyle = computed(() => {
 
 const emit = defineEmits(["success", "fail"]);
 const iconClass = ref("");
+const localIcon = computed(() => {
+  const component = props.list?.[props.icon];
+  return component ? toRaw(component) : null;
+});
 const baseStyle = (s: any) => {
   s = Number(s) * 4;
   return {
@@ -69,12 +85,16 @@ const baseStyle = (s: any) => {
 };
 function init() {
   const item = ICON_LIST[props.icon];
+  iconClass.value = item?.color || "";
+  if (localIcon.value) {
+    emit("success");
+    return;
+  }
   if (!item) {
     emit("fail");
     return;
   }
 
-  iconClass.value = item.color || "";
   loadIcon(item.icon)
     .then(() => {
       emit("success");
