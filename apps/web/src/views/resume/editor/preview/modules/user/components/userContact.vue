@@ -142,6 +142,16 @@ const heightWeightText = computed(() => {
   if (!hasHeight && !hasWeight) return "";
   return [hasHeight ? `${height}cm` : "", hasWeight ? `${weight}kg` : ""].filter(Boolean).join("/");
 });
+// 模特三围按胸围、腰围、臀围顺序展示，允许只填写部分数据
+const measurementsText = computed(() => {
+  if (isUserFieldHidden("measurements")) return "";
+  const value = user.value?.measurements;
+  const measurements = [value?.bust, value?.waist, value?.hip].filter(
+    (item) => item != null && item !== "",
+  );
+  if (!measurements.length) return "";
+  return `${measurements.join("/")}cm`;
+});
 const secondaryItems = computed(() => {
   const items = [];
   if (!isUserFieldHidden("status") && user.value?.status) {
@@ -222,6 +232,15 @@ const secondaryItems = computed(() => {
       text: heightWeightText.value,
       icon: fieldIcon("heightWeight"),
       label: getPreviewText("heightWeightLabel", previewLang.value),
+    });
+  }
+  if (measurementsText.value) {
+    items.push({
+      fieldKey: "measurements",
+      sortKey: "measurements",
+      text: measurementsText.value,
+      icon: fieldIcon("measurements"),
+      label: getPreviewText("measurementsLabel", previewLang.value),
     });
   }
   return items;

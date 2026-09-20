@@ -21,12 +21,21 @@ const heightWeightText = (value) => {
   if (!hasHeight && !hasWeight) return "";
   return [hasHeight ? `${height}cm` : "", hasWeight ? `${weight}kg` : ""].filter(Boolean).join("/");
 };
+// 模特三围按胸围、腰围、臀围顺序展示，允许只填写部分数据
+const measurementsText = (value) => {
+  const measurements = [value?.bust, value?.waist, value?.hip].filter(
+    (item) => item != null && item !== "",
+  );
+  return measurements.length ? `${measurements.join("/")}cm` : "";
+};
 // 单项内容：字段被隐藏或值空时不展示
 const textOf = (key) => {
   if (!key || isUserFieldHidden(key)) return "";
   const value = user.value?.[key];
   if (value == null || value === "") return "";
-  return key === "heightWeight" ? heightWeightText(value) : String(value);
+  if (key === "heightWeight") return heightWeightText(value);
+  if (key === "measurements") return measurementsText(value);
+  return String(value);
 };
 const items = computed(() => subtitleKeys.value.map((key) => textOf(key)).filter(Boolean));
 </script>
