@@ -46,6 +46,8 @@ function versionPlugin() {
         // 注入全局常量，供 src/configs/modules/version.ts 使用
         define: {
           __APP_VERSION__: JSON.stringify(version),
+          // 注入 TINY_MODE 环境变量，用于判断平台
+          "process.env": { TINY_MODE: "mobile" },
         },
       };
     },

@@ -26,5 +26,8 @@
     "commitizen": {
       "path": "node_modules/cz-git"
     }
+  },
+  "dependencies": {
+    "@opentiny/vue": "^3.32.0"
   }
 }
