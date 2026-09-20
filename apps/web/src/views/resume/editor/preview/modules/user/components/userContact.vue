@@ -140,7 +140,9 @@ const heightWeightText = computed(() => {
   const hasHeight = height != null && height !== "";
   const hasWeight = weight != null && weight !== "";
   if (!hasHeight && !hasWeight) return "";
-  return [hasHeight ? `${height}cm` : "", hasWeight ? `${weight}kg` : ""].filter(Boolean).join("/");
+  return [hasHeight ? `${height}cm` : "", hasWeight ? `${weight}kg` : ""]
+    .filter(Boolean)
+    .join(" · ");
 });
 // 模特三围按胸围、腰围、臀围顺序展示，允许只填写部分数据
 const measurementsText = computed(() => {
@@ -150,7 +152,7 @@ const measurementsText = computed(() => {
     (item) => item != null && item !== "",
   );
   if (!measurements.length) return "";
-  return `${measurements.join("/")}cm`;
+  return measurements.map((item) => `${item}cm`).join(" · ");
 });
 // 尺码按上装、下装、鞋码顺序展示，允许只填写部分数据
 const sizesText = computed(() => {
