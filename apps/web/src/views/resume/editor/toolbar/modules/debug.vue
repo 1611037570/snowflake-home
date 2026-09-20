@@ -58,6 +58,21 @@
         </SfTabPane>
         <SfTabPane value="config">
           <SfCollapse>
+            <!-- 运行时配置展示编辑器实际使用的完整表单结构 -->
+            <SfCollapseItem name="runtimeConfig">
+              <template #title>运行时配置 (runtimeConfig)</template>
+              <div class="max-h-[50vh] overflow-y-auto">
+                <div v-for="(value, key) in runtimeConfig ?? {}" :key="key" class="mb-3">
+                  <div class="mb-3 font-medium">{{ key }}</div>
+                  <SfMdPreview
+                    :modelValue="fieldMd(value)"
+                    editorId="debug-runtime-config"
+                    :codeFoldable="false"
+                    class="bg-transparent! p-0!"
+                  />
+                </div>
+              </div>
+            </SfCollapseItem>
             <SfCollapseItem name="currentConfig">
               <template #title>当前配置 (currentConfig)</template>
               <div class="max-h-[50vh] overflow-y-auto">
@@ -151,7 +166,8 @@ const performanceActiveNames = ref(["runtime", "env"]);
 
 // 获取原始数据
 const resumeStore = useResumeStore();
-const { currentData, currentConfig, system, runtimeData } = storeToRefs(resumeStore);
+const { currentData, currentConfig, runtimeConfig, system, runtimeData } =
+  storeToRefs(resumeStore);
 
 // 运行性能数据展示：耗时统一按毫秒展示
 const performanceRows = computed(() => {
