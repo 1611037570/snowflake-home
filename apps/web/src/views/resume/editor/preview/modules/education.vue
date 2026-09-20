@@ -32,7 +32,7 @@ const hasField = (item, key) => {
   return v && typeof v === "string" && v.trim();
 };
 
-// 条目是否含首行信息（名称/学院/学历/学制/时间），为空时不渲染首行，避免多出空行间距
+// 条目是否含首行信息（名称/专业/学院/学历/学制/时间），为空时不渲染首行，避免多出空行间距
 const hasItemHeader = (item) =>
   Boolean(
     item.name ||
@@ -45,11 +45,19 @@ const hasItemHeader = (item) =>
 // 次信息行是否可渲染
 const hasSubInfo = (item) => Boolean(hasField(item, "post") || hasField(item, "city"));
 
-// 次信息行成为条目首块时，由它承担段间距
-const subInfoIsFirst = (item) => !hasItemHeader(item);
-
 // 内容行成为条目首块（首行与次信息行都不渲染）时，由它承担段间距
 const contentIsFirst = (item) => !hasItemHeader(item) && !hasSubInfo(item);
+
+// 教育条目存在任一可展示信息时才创建条目容器
+const hasEducationItem = (item) => hasItemHeader(item) || hasSubInfo(item) || item.tags?.length;
+
+// 教育条目的第二行包含专业、学院、学历、学制或城市
+const hasEducationMeta = (item) =>
+  hasField(item, "post") ||
+  hasField(item, "college") ||
+  hasField(item, "education") ||
+  hasField(item, "mode") ||
+  hasField(item, "city");
 </script>
 
 <template>
@@ -59,43 +67,39 @@ const contentIsFirst = (item) => !hasItemHeader(item) && !hasSubInfo(item);
     <!-- 内容区：直接渲染已过滤的业务数据 -->
     <template v-for="(item, index) in education" :key="index">
       <div
-        v-if="hasItemHeader(item)"
+        v-if="hasEducationItem(item)"
         :style="paragraphSpacingStyle"
-        class="flex flex-wrap items-center justify-between"
       >
-        <!-- 信息容器撑满行内剩余宽度，避免导出渲染时子项宽度取整触发换行错位 -->
-        <!-- 统一按行居中：标签字号小于正文，基线对齐会让它在被撑开的行里偏移 -->
+        <!-- 学校名称与时间独立成首行，保持教育经历标题清晰 -->
+        <div v-if="hasItemHeader(item)" class="flex flex-wrap items-center justify-between">
+          <div class="min-w-0 flex-1">
+            <ItemTitle :name="item.name" />
+          </div>
+          <div
+            class="flex max-w-full min-w-0 flex-wrap items-center gap-2"
+            :class="dateLeft ? 'order-first' : ''"
+          >
+            <span>{{ getTime(item.startTime, item.endTime, dateStyle) }}</span>
+          </div>
+        </div>
+        <!-- 专业、学院与学历信息统一放在第二行，城市保持右侧对齐 -->
         <div
-          class="flex max-w-full min-w-0 flex-1 flex-wrap items-center gap-3"
-          :class="dateLeft ? 'justify-end' : ''"
+          v-if="hasEducationMeta(item)"
+          class="mt-3 flex flex-wrap items-center justify-between"
         >
-          <ItemTitle :name="item.name" />
-
-          <ResumeField v-if="hasField(item, 'college')" :model-value="item.college" />
-          <ResumeField v-if="hasField(item, 'education')" :model-value="item.education" />
-          <ResumeField v-if="hasField(item, 'mode')" :model-value="item.mode" />
-          <!-- 学校标签：跟随首行排布 -->
+          <div class="flex max-w-full min-w-0 flex-1 flex-wrap items-center gap-3">
+            <ResumeField v-if="hasField(item, 'post')" :model-value="item.post" />
+            <ResumeField v-if="hasField(item, 'college')" :model-value="item.college" />
+            <ResumeField v-if="hasField(item, 'education')" :model-value="item.education" />
+            <ResumeField v-if="hasField(item, 'mode')" :model-value="item.mode" />
+          </div>
+          <div class="flex max-w-full min-w-0 flex-wrap items-center">
+            <ResumeField v-if="hasField(item, 'city')" :model-value="item.city" />
+          </div>
+        </div>
+        <!-- 学校标签独立成行，避免和学校名称及时间争抢空间 -->
+        <div v-if="item.tags?.length" class="mt-3 flex flex-wrap items-center gap-3">
           <ItemTags :tags="item.tags" />
-        </div>
-        <div
-          class="flex max-w-full min-w-0 flex-wrap items-center gap-2"
-          :class="dateLeft ? 'order-first' : ''"
-        >
-          <span>{{ getTime(item.startTime, item.endTime, dateStyle) }}</span>
-        </div>
-      </div>
-      <!-- 次信息行：左侧专业，右侧所在城市，直接基于原字段渲染 -->
-      <!-- 首行未渲染时由本行承担段间距（内联段距覆盖固定 mt-3） -->
-      <div
-        class="mt-3 flex flex-wrap items-center justify-between"
-        :style="subInfoIsFirst(item) ? paragraphSpacingStyle : undefined"
-        v-if="hasSubInfo(item)"
-      >
-        <div class="flex max-w-full min-w-0 flex-1 flex-wrap items-center gap-3">
-          <ResumeField v-if="hasField(item, 'post')" :model-value="item.post" />
-        </div>
-        <div class="flex max-w-full min-w-0 flex-wrap items-center">
-          <ResumeField v-if="hasField(item, 'city')" :model-value="item.city" />
         </div>
       </div>
       <!-- 补充描述/经历：成为条目首块时由段间距承担上间距 -->
