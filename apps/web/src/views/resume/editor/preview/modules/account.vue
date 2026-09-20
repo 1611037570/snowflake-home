@@ -11,6 +11,7 @@ const previewData = inject("previewData");
 const fontValue = inject("fontValue");
 const lineHeightValue = inject("lineHeightValue");
 const paragraphSpacingStyle = inject("paragraphSpacingStyle");
+const linkUnderline = inject("linkUnderline", computed(() => false));
 
 // 数组记录统一由 getValidData 过滤并提取业务内容
 const account = computed(() => getValidData(previewData.value?.account?.list || []));
@@ -50,7 +51,8 @@ const safeUrl = (value) => {
         :href="safeUrl(item.url)"
         target="_blank"
         rel="noopener noreferrer"
-        class="inline max-w-full min-w-0 break-all hover:underline"
+        class="inline max-w-full min-w-0 break-all"
+        :class="{ underline: linkUnderline }"
       >
         <ResumeField :model-value="item.url" class="inline max-w-full min-w-0 break-all" />
       </a>

@@ -26,6 +26,7 @@ const previewData = inject("previewData");
 const fontValue = inject("fontValue");
 const lineHeightValue = inject("lineHeightValue");
 const paragraphSpacingStyle = inject("paragraphSpacingStyle");
+const linkUnderline = inject("linkUnderline", computed(() => false));
 // 日期样式（2026.9 / 2026年9月），由设计配置注入
 const dateStyle = inject("dateStyle");
 // 日期位置（左/右），由设计配置注入
@@ -108,7 +109,8 @@ const hasItemHeader = (item) => {
               :title="getProjectLink(item).name"
               target="_blank"
               rel="noopener noreferrer"
-              class="inline max-w-full min-w-0 break-all hover:underline"
+              class="inline max-w-full min-w-0 break-all"
+              :class="{ underline: linkUnderline }"
             >
               <ResumeField
                 :model-value="getProjectLink(item).name || getProjectLink(item).url"
