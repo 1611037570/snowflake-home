@@ -156,10 +156,14 @@ const measurementsText = computed(() => {
 const sizesText = computed(() => {
   if (isUserFieldHidden("sizes")) return "";
   const value = user.value?.sizes;
-  const sizes = [value?.top, value?.bottom, value?.shoes].filter(
-    (item) => item != null && item !== "",
-  );
-  return sizes.join("/");
+  const sizes = [
+    { key: "top", value: value?.top },
+    { key: "bottom", value: value?.bottom },
+    { key: "shoes", value: value?.shoes },
+  ]
+    .filter((item) => item.value != null && item.value !== "")
+    .map((item) => (item.key === "shoes" ? `${item.value}码` : item.value));
+  return sizes.join(" · ");
 });
 const secondaryItems = computed(() => {
   const items = [];
