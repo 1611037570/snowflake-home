@@ -74,7 +74,7 @@ const hasItemHeader = (item) => {
             <span>{{ getTime(item.startTime, item.endTime, dateStyle) }}</span>
           </div>
         </div>
-        <div class="flex flex-wrap items-center justify-between">
+        <div class="mt-3 flex flex-wrap items-center justify-between">
           <div class="flex max-w-full min-w-0 flex-1 flex-wrap items-center gap-3">
             <ResumeField :model-value="item.post" />
             <ResumeField :model-value="item.department" />
@@ -88,7 +88,7 @@ const hasItemHeader = (item) => {
             item.tags?.length ||
             (moduleName === 'project' && (getProjectLink(item).name || getProjectLink(item).url))
           "
-          class="flex flex-wrap items-center justify-between"
+          class="mt-3 flex flex-wrap items-center justify-between"
         >
           <!-- 标签组件是多根节点，包裹后作为整体参与左右布局 -->
           <div class="flex flex-wrap items-center gap-3">
