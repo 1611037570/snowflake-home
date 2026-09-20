@@ -14,8 +14,6 @@
           <Transition name="resume-preview" appear>
             <Preview :class="{ 'ai-generating': isGenerating }" />
           </Transition>
-          <!-- 预览渲染完成前展示加载提示，预览组件加载完成前即可见 -->
-          <LoadingTip v-if="previewSyncing" text="正在加载预览" class="absolute inset-0 z-20" />
         </div>
         <!-- 最右侧系统配置栏：工具栏与 QA 入口整体垂直居中 -->
         <Transition name="resume-toolbar" appear>
@@ -69,7 +67,6 @@ import { useRuntimeData } from "./hooks/useRuntimeData";
 import Builder from "./builder/index.vue";
 import AiMask from "./components/aiMask.vue";
 import Header from "./components/header/index.vue";
-import LoadingTip from "./components/loadingTip.vue";
 import ExportMask from "./components/exportMask.vue";
 import DetectTip from "./components/detectTip.vue";
 import IssueFeedback from "../components/issueFeedback.vue";
@@ -96,7 +93,6 @@ const {
   isPrinting,
   isFittingOnePage,
   currentData,
-  previewSyncing,
 } = storeToRefs(resumeStore);
 
 // 切换简历时清空上一个简历的模块选中状态
