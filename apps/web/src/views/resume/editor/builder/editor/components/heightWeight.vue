@@ -22,20 +22,51 @@ const weight = computed({
     modelValue.value = { ...modelValue.value, weight: value };
   },
 });
+
+// 身高体重提供常用范围，同时允许输入特殊数值
+const heightOptions = Array.from({ length: 81 }, (_, index) => {
+  const value = String(index + 140);
+  return { name: value, value };
+});
+
+const weightOptions = Array.from({ length: 121 }, (_, index) => {
+  const value = String(index + 30);
+  return { name: value, value };
+});
 </script>
 
 <template>
-  <div class="flex w-full items-center gap-1">
-    <!-- 身高数值输入 -->
-    <div class="min-w-0 flex-1">
-      <SfInput v-model="height" placeholder="身高" class="w-full" />
-    </div>
-    <span class="shrink-0 text-sm text-sf-text-2">cm</span>
-    <!-- 体重数值输入 -->
-    <div class="min-w-0 flex-1">
-      <SfInput v-model="weight" placeholder="体重" class="w-full" />
-    </div>
-    <span class="shrink-0 text-sm text-sf-text-2">kg</span>
+  <div class="flex w-full flex-col gap-3">
+    <label class="flex items-center gap-1">
+      <span class="text-sm text-sf-text-3">身高</span>
+      <div class="flex-1">
+        <SfSelect
+          v-model="height"
+          :list="heightOptions"
+          filterable
+          allow-create
+          default-first-option
+          placeholder="选择或输入身高"
+          class="w-full"
+        />
+      </div>
+      <span class="shrink-0 text-sm text-sf-text-2">cm</span>
+    </label>
+    <label class="flex items-center gap-1">
+      <span class="text-sm text-sf-text-3">体重</span>
+      <div class="flex-1">
+        <SfSelect
+          v-model="weight"
+          :list="weightOptions"
+          filterable
+          allow-create
+          default-first-option
+          placeholder="选择或输入体重"
+          class="w-full"
+        />
+      </div>
+      <span class="shrink-0 text-sm text-sf-text-2">kg</span>
+    </label>
   </div>
 </template>
 
