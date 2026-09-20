@@ -31,6 +31,8 @@ import vueDevTools from "vite-plugin-vue-devtools";
 import { dynamicComponentResolver } from "./src/components";
 // Element Plus 按需样式导入
 import ElementPlus from "unplugin-element-plus/vite";
+// Tiny Vue 组件解析器
+import { TinyVueSingleResolver } from "@opentiny/unplugin-tiny-vue";
 
 /**
  * 版本注入插件
@@ -121,7 +123,7 @@ export default ({ mode }: { mode: string }) => {
       }),
       // 自动导入配置
       AutoImport({
-        resolvers: [ElementPlusResolver()], // Element Plus解析器
+        resolvers: [ElementPlusResolver(), TinyVueSingleResolver], // Element Plus解析器
         imports: [
           "vue",
           "vue-router",
@@ -136,7 +138,7 @@ export default ({ mode }: { mode: string }) => {
       }),
       // 组件自动注册配置
       Components({
-        resolvers: [ElementPlusResolver(), dynamicComponentResolver()], // 组件解析器列表
+        resolvers: [ElementPlusResolver(), dynamicComponentResolver(), TinyVueSingleResolver], // 组件解析器列表
         dts: "src/types/components.d.ts", // 类型声明文件路径
         dirs: ["src/components"], // 要搜索组件的目录
         extensions: [".vue"], // 要处理的组件文件扩展名
