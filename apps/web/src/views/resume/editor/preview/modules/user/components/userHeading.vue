@@ -2,6 +2,7 @@
 import { computed, inject } from "vue";
 import UserAvatar from "./userAvatar.vue";
 import UserContact from "./userContact.vue";
+// import UserLogo from "./userLogo.vue";
 import UserName from "./userName.vue";
 
 defineProps({
@@ -30,16 +31,18 @@ const themeColor = inject("themeColor");
 </script>
 
 <template>
-  <!-- 左：头像在左，信息区在右，信息区撑满剩余宽度避免导出换行错位 -->
+  <!-- 左：头像在左，校徽固定在右侧，信息区撑满剩余宽度避免导出换行错位 -->
   <div v-if="position === 'left'" class="flex w-full flex-wrap items-center">
     <UserAvatar class="mr-3" />
     <div class="flex max-w-full min-w-0 flex-1 flex-col gap-3" :class="infoAlignClass">
       <UserName />
       <UserContact class="w-full" :align="infoPosition" />
     </div>
+    <!-- <UserLogo class="ml-3" /> -->
   </div>
-  <!-- 居中：头像在上，信息区对齐由信息位置独立控制 -->
-  <div v-else-if="position === 'center'" class="flex w-full flex-col items-center">
+  <!-- 居中：校徽固定在左上角，头像保持居中，信息区对齐由信息位置独立控制 -->
+  <div v-else-if="position === 'center'" class="relative flex w-full flex-col items-center">
+    <!-- <UserLogo class="absolute left-0 top-0" /> -->
     <UserAvatar />
     <div class="flex w-full max-w-full min-w-0 flex-col gap-3" :class="infoAlignClass">
       <UserName />
@@ -51,8 +54,9 @@ const themeColor = inject("themeColor");
       <UserContact class="w-full" :align="infoPosition" />
     </div>
   </div>
-  <!-- 右：信息区在左，头像在右，信息区撑满剩余宽度 -->
+  <!-- 右：校徽固定在左侧，信息区居中占据剩余空间，头像在右侧 -->
   <div v-else class="flex w-full flex-wrap items-center">
+    <!-- <UserLogo class="mr-3" /> -->
     <div class="flex max-w-full min-w-0 flex-1 flex-col gap-3" :class="infoAlignClass">
       <UserName />
       <UserContact class="w-full" :align="infoPosition" />
