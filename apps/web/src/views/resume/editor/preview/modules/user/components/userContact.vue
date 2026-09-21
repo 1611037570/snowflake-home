@@ -321,8 +321,8 @@ const contactItems = computed(() => {
   }
   const order = new Map(userFieldOrder.value.map((key, index) => [key, index]));
   return [...metaItems.value, ...items, ...secondaryItems.value, ...customItems.value]
-    // 副标题字段不再出现在信息行，年龄与工作年限等衍生项保留
-    .filter((item) => !subtitleKeys.value.includes(item.key || item.fieldKey))
+    // 副标题字段及其派生项不再出现在信息行
+    .filter((item) => !subtitleKeys.value.includes(item.key || item.fieldKey || item.sortKey))
     .sort(
       (a, b) =>
         (order.get(a.sortKey || a.key) ?? Number.MAX_SAFE_INTEGER) -

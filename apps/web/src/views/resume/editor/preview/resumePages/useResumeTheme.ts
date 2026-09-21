@@ -100,9 +100,9 @@ export const useResumeTheme = (ui: ComputedRef<ResumeUi>): ResumeTheme => {
   }));
   // 模块标题字号：缺失时回退默认值
   const titleFontSize = computed(() => toNumber(ui.value.titleFontSize, defaultTitleFontSize));
-  // 模块标题样式：独立字号，不随正文字号变化
+  // 模块标题样式：独立字号，并在配置值基础上增加 1px
   const titleFontStyle = computed(() => ({
-    fontSize: `${titleFontSize.value}px`,
+    fontSize: `${titleFontSize.value + 1}px`,
   }));
   const lineHeightStyle = computed(() => ({
     lineHeight: `${lineHeight.value}`,
