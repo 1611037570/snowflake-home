@@ -46,6 +46,7 @@ const measurementOptions = Array.from({ length: 101 }, (_, index) => {
           filterable
           allow-create
           default-first-option
+          clearable
           placeholder="选择或输入胸围"
           class="w-full"
         />
@@ -61,6 +62,7 @@ const measurementOptions = Array.from({ length: 101 }, (_, index) => {
           filterable
           allow-create
           default-first-option
+          clearable
           placeholder="选择或输入腰围"
           class="w-full"
         />
@@ -76,6 +78,7 @@ const measurementOptions = Array.from({ length: 101 }, (_, index) => {
           filterable
           allow-create
           default-first-option
+          clearable
           placeholder="选择或输入臀围"
           class="w-full"
         />
