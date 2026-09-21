@@ -50,17 +50,18 @@ const safeUrl = (value) => {
         <ItemTitle :name="item.name" class="inline-block" />
         <span v-if="item.url">：</span>
       </span>
-      <div class="min-w-0 flex-1 overflow-hidden">
+      <div class="flex min-w-0 flex-1 items-center overflow-hidden">
         <a
           :href="safeUrl(item.url)"
           target="_blank"
           rel="noopener noreferrer"
-          class="flex max-w-full truncate whitespace-nowrap hover:underline"
+          class="inline-block max-w-full truncate whitespace-nowrap hover:underline"
           :class="{ underline: linkUnderline }"
         >
           <ResumeField
             :model-value="item.url"
-            class="inline-block max-w-full truncate whitespace-nowrap hover:underline"
+            class="flex max-w-full items-center truncate whitespace-nowrap hover:underline"
+            boxClass="truncate"
             :class="{ underline: linkUnderline }"
           />
         </a>
