@@ -109,7 +109,7 @@ const hasItemHeader = (item) => {
               :title="getProjectLink(item).name"
               target="_blank"
               rel="noopener noreferrer"
-              class="inline max-w-full min-w-0 break-all"
+              class="inline max-w-full min-w-0 break-all hover:underline"
               :class="{ underline: linkUnderline }"
             >
               <ResumeField
