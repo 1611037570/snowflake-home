@@ -51,11 +51,10 @@ const contentIsFirst = (item) => !hasItemHeader(item) && !hasSubInfo(item);
 // 教育条目存在任一可展示信息时才创建条目容器
 const hasEducationItem = (item) => hasItemHeader(item) || hasSubInfo(item) || item.tags?.length;
 
-// 教育条目的第二行包含专业、学院、学制或城市
+// 教育条目的第二行包含专业、学院或城市
 const hasEducationMeta = (item) =>
   hasField(item, "post") ||
   hasField(item, "college") ||
-  hasField(item, "mode") ||
   hasField(item, "city");
 </script>
 
@@ -69,7 +68,7 @@ const hasEducationMeta = (item) =>
         v-if="hasEducationItem(item)"
         :style="paragraphSpacingStyle"
       >
-        <!-- 学校名称与学历放在同一行，时间保持右侧对齐 -->
+        <!-- 学校名称、学历与学制放在同一行，时间保持右侧对齐 -->
         <div
           v-if="hasItemHeader(item)"
           class="flex flex-wrap items-center justify-between gap-3"
@@ -77,6 +76,7 @@ const hasEducationMeta = (item) =>
           <div class="flex max-w-full min-w-0 flex-1 flex-wrap items-center gap-3">
             <ItemTitle :name="item.name" :emphasis="!dateLeft" />
             <ResumeField v-if="hasField(item, 'education')" :model-value="item.education" />
+            <ResumeField v-if="hasField(item, 'mode')" :model-value="item.mode" />
           </div>
           <div
             class="flex max-w-full min-w-0 flex-wrap items-center gap-2"
@@ -87,7 +87,7 @@ const hasEducationMeta = (item) =>
             </span>
           </div>
         </div>
-        <!-- 专业、学院与学制信息统一放在第二行，城市保持右侧对齐 -->
+        <!-- 专业与学院信息放在第二行，城市保持右侧对齐 -->
         <div
           v-if="hasEducationMeta(item)"
           class="mt-3 flex flex-wrap items-center justify-between gap-3"
@@ -95,8 +95,6 @@ const hasEducationMeta = (item) =>
           <div class="flex max-w-full min-w-0 flex-1 flex-wrap items-center gap-3">
             <ResumeField v-if="hasField(item, 'post')" :model-value="item.post" />
             <ResumeField v-if="hasField(item, 'college')" :model-value="item.college" />
-            <ResumeField v-if="hasField(item, 'education')" :model-value="item.education" />
-            <ResumeField v-if="hasField(item, 'mode')" :model-value="item.mode" />
           </div>
           <div class="flex max-w-full min-w-0 flex-wrap items-center">
             <ResumeField v-if="hasField(item, 'city')" :model-value="item.city" />
