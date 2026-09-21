@@ -1,6 +1,6 @@
 <script setup>
 import { useResumeStore } from "@/stores";
-import { themeTemplateList, themeColors } from "@/stores/modules/resume/uiConfig";
+import { themeTemplateList } from "@/stores/modules/resume/uiConfig";
 import { xiaoZhouResumeItem } from "@/stores/modules/resume/xiaoZhouData";
 import ResumeCardContainer from "@/views/resume/mine/components/resumeCardContainer.vue";
 import RevealGrid from "@/views/resume/components/revealGrid.vue";
@@ -14,11 +14,6 @@ const resumeStore = useResumeStore();
 
 // 深拷贝：套用模板时隔离示例数据，避免与模板预览共享引用导致互相串改
 const deepClone = (value) => JSON.parse(JSON.stringify(value));
-// 切换主题色并同步模板预览。
-const switchColor = (value) => {
-  color.value = value;
-};
-const color = ref(themeColors[0].value);
 // 全部模板：遍历风格模板，统一使用小舟示例数据预览，仅覆盖风格
 const templates = computed(() =>
   themeTemplateList.map((style, index) => ({
@@ -32,7 +27,6 @@ const templates = computed(() =>
       ui: {
         ...xiaoZhouResumeItem.ui,
         themeTemplate: style.value,
-        themeColor: color.value,
       },
     },
   })),
@@ -77,43 +71,23 @@ const gridClass = ref("default");
         <TemplateCategory />
         <div class="mb-6 flex w-full min-w-full items-center justify-between">
           <h2 class="text-[20px] font-black text-sf-theme">简历模板 {{ total }} 款</h2>
-          <div class="flex items-center gap-6">
+          <div class="flex items-center gap-3">
+            <span class="text-sm font-bold text-sf-text-2">预览尺寸</span>
             <div class="flex items-center gap-3">
-              <span class="text-sm font-bold text-sf-text-2">预览尺寸</span>
-              <div class="flex items-center gap-3">
-                <SfButton
-                  :plain="gridClass !== 'small'"
-                  :round="false"
-                  @click="switchSize('small')"
-                >
-                  大图
-                </SfButton>
-                <SfButton
-                  :plain="gridClass !== 'default'"
-                  :round="false"
-                  @click="switchSize('default')"
-                >
-                  小图
-                </SfButton>
-              </div>
-            </div>
-            <div class="h-6 w-px bg-sf-b"></div>
-            <div class="flex items-center gap-3">
-              <span class="text-sm font-bold text-sf-text-2">主题色</span>
-              <button
-                v-for="colorItem in themeColors"
-                :key="colorItem.value"
-                class="h-9 w-9 cursor-pointer rounded-full transition-all duration-200 hover:scale-110"
-                :class="{
-                  'ring-2 ring-sf-theme ring-offset-3': color === colorItem.value,
-                }"
-                :style="{
-                  backgroundColor: colorItem.value,
-                }"
-                type="button"
-                :aria-label="`切换为${colorItem.name}主题色`"
-                @click="switchColor(colorItem.value)"
-              ></button>
+              <SfButton
+                :plain="gridClass !== 'small'"
+                :round="false"
+                @click="switchSize('small')"
+              >
+                大图
+              </SfButton>
+              <SfButton
+                :plain="gridClass !== 'default'"
+                :round="false"
+                @click="switchSize('default')"
+              >
+                小图
+              </SfButton>
             </div>
           </div>
         </div>
