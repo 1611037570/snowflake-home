@@ -6,14 +6,16 @@ export const MAX_USER_SUBTITLE = 5;
 // 读取副标题顺序：user.ui.subtitleOrder 是顺序的唯一来源
 export function getUserSubtitleKeys(ui?: Record<string, any>): string[] {
   const order = ui?.subtitleOrder;
-  return Array.isArray(order) ? order.filter((key: any) => typeof key === "string") : [];
+  return Array.isArray(order)
+    ? [...new Set(order.filter((key: any) => typeof key === "string"))]
+    : [];
 }
 
 // 写入副标题顺序：顺序变化只改这一个数组
 export function setUserSubtitleOrder(data: any, keys: string[]) {
   const ui = data?.user?.ui;
   if (!ui) return;
-  ui.subtitleOrder = [...keys];
+  ui.subtitleOrder = [...new Set(keys)];
 }
 
 // 字段值是否有内容：空字符串、空数组、空对象都视为无内容
