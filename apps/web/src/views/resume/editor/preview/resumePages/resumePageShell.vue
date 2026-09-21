@@ -72,12 +72,15 @@ watch(
       styles.lineHeightStyle,
       RESUME_CONTAINER_WIDTH,
       RESUME_CONTAINER_HEIGHT,
+      { paddingBottom: '0px' },
     ]"
   >
     <!-- 模块之间的间距由 ui.moduleSpacing 控制，与分页计算保持一致 -->
     <div class="flex flex-1 flex-col" :style="{ gap: `${ui.moduleSpacing}px` }">
       <slot />
     </div>
+    <!-- 底边距只保留正文可用空间，页尾始终贴合页面底部 -->
+    <div class="shrink-0" :style="{ height: styles.paddingStyle.paddingBottom }" />
     <!-- 页码区固定不伸缩：内容超高时只触发分页，不压缩页脚，保证页码位置恒定 -->
     <div
       v-if="showPageNumber"
