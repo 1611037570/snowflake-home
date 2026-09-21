@@ -2,16 +2,14 @@
 import { useFormContext } from "@/components/business/dynamicForm/api";
 import { useResumeStore } from "@/stores";
 import {
-  getUserSubtitleKeys,
   hasUserFieldContent,
-  restoreUserSubtitleFields,
   setUserSubtitleOrder,
 } from "@/stores/modules/resume/hooks/useUserSubtitle";
 import { storeToRefs } from "pinia";
 
 // 副标题分区：承载置顶到姓名下方的更多字段，支持独立拖拽排序
 const { currentForm } = useFormContext();
-const { runtimeConfig, currentData } = storeToRefs(useResumeStore());
+const { currentData } = storeToRefs(useResumeStore());
 
 // 分区内出现有内容的字段才渲染，避免空内容占位
 const renderable = computed(() =>
@@ -23,13 +21,6 @@ const renderable = computed(() =>
 const fieldKeys = computed(() =>
   (currentForm.value?.fields ?? []).map((field) => field.key).join(","),
 );
-
-// 编辑器初始化时校正：无内容字段取消置顶，有内容字段迁入本分区
-onMounted(() => {
-  if (!runtimeConfig.value || !currentData.value) return;
-  if (!getUserSubtitleKeys(currentData.value?.user?.ui).length) return;
-  restoreUserSubtitleFields(runtimeConfig.value, currentData.value);
-});
 
 watch(fieldKeys, () => {
   setUserSubtitleOrder(

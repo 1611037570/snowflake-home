@@ -1,6 +1,6 @@
 import { allConfig, DEFAULT_USER_FORM } from "../formConfig";
 import { createUserCustomField, isUserCustomFieldKey } from "./useUserCustomField";
-import { restoreUserSubtitleFields } from "./useUserSubtitle";
+import { applyUserSubtitleOrder } from "./useUserSubtitle";
 
 // 自定义模块：按实际 key 重写模板，标题取自模块 ui
 function rewriteCustomFieldByKey(field: any, customKey: string, customTitle: string) {
@@ -161,6 +161,6 @@ export function buildRuntimeConfig(config: any, data: any) {
     id: config?.id || "df-form",
     fields,
   };
-  restoreUserSubtitleFields(runtimeConfig, data);
+  applyUserSubtitleOrder(runtimeConfig, data);
   return runtimeConfig;
 }
