@@ -17,14 +17,18 @@ const iconSize = inject(
   "titleIconSize",
   computed(() => 0),
 );
-const fontValue = inject("fontValue");
+// 标题文字直接使用模块标题字号，避免被正文字号覆盖
+const titleFontStyle = inject(
+  "titleFontStyle",
+  computed(() => ({})),
+);
 </script>
 
 <template>
   <!-- 图标独立于文字排版，不参与标题换行；关闭图标开关时仅隐藏图标 -->
   <div class="flex shrink-0 items-center">
     <SfIcon v-if="icon" :icon="icon" :size="iconSize" class="mr-1" />
-    <span :style="[fontValue(1)]">{{ title }}</span>
+    <span :style="[titleFontStyle]">{{ title }}</span>
   </div>
 </template>
 
