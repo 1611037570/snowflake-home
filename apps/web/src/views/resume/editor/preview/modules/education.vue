@@ -51,11 +51,10 @@ const contentIsFirst = (item) => !hasItemHeader(item) && !hasSubInfo(item);
 // 教育条目存在任一可展示信息时才创建条目容器
 const hasEducationItem = (item) => hasItemHeader(item) || hasSubInfo(item) || item.tags?.length;
 
-// 教育条目的第二行包含专业、学院、学历、学制或城市
+// 教育条目的第二行包含专业、学院、学制或城市
 const hasEducationMeta = (item) =>
   hasField(item, "post") ||
   hasField(item, "college") ||
-  hasField(item, "education") ||
   hasField(item, "mode") ||
   hasField(item, "city");
 </script>
@@ -70,13 +69,14 @@ const hasEducationMeta = (item) =>
         v-if="hasEducationItem(item)"
         :style="paragraphSpacingStyle"
       >
-        <!-- 学校名称与时间独立成首行，保持教育经历标题清晰 -->
+        <!-- 学校名称与学历放在同一行，时间保持右侧对齐 -->
         <div
           v-if="hasItemHeader(item)"
           class="flex flex-wrap items-center justify-between gap-3"
         >
-          <div class="min-w-0 flex-1">
+          <div class="flex max-w-full min-w-0 flex-1 flex-wrap items-center gap-3">
             <ItemTitle :name="item.name" :emphasis="!dateLeft" />
+            <ResumeField v-if="hasField(item, 'education')" :model-value="item.education" />
           </div>
           <div
             class="flex max-w-full min-w-0 flex-wrap items-center gap-2"
@@ -87,7 +87,7 @@ const hasEducationMeta = (item) =>
             </span>
           </div>
         </div>
-        <!-- 专业、学院与学历信息统一放在第二行，城市保持右侧对齐 -->
+        <!-- 专业、学院与学制信息统一放在第二行，城市保持右侧对齐 -->
         <div
           v-if="hasEducationMeta(item)"
           class="mt-3 flex flex-wrap items-center justify-between gap-3"
