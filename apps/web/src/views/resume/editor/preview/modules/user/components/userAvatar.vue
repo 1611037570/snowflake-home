@@ -19,7 +19,7 @@ const { isUserFieldHidden } = useUserFieldVisibility();
     v-if="!isUserFieldHidden('avatar') && user.avatar"
     :src="user.avatar"
     :alt="avatarAlt"
-    class="h-[98px] w-[70px] shrink-0 rounded object-cover"
+    class="h-[132px] w-[94px] shrink-0 rounded object-cover"
   />
 </template>
 
