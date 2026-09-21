@@ -38,7 +38,7 @@ const video = computed(() => getValidData(previewData.value?.video?.list || []))
             :href="item.url"
             target="_blank"
             rel="noopener noreferrer"
-            class="inline max-w-full min-w-0 break-all"
+            class="inline max-w-full min-w-0 break-all hover:underline"
             :class="{ underline: linkUnderline }"
           >
             <ResumeField :model-value="item.url" class="inline max-w-full min-w-0 break-all" />
