@@ -137,12 +137,7 @@ const removeImage = () => {
         :title="image ? '更换头像' : '上传头像'"
         @click="uploadVisible = true"
       >
-        <img
-          v-if="image"
-          :src="image"
-          alt="图片"
-          class="h-full w-full shrink-0 object-cover"
-        />
+        <img v-if="image" :src="image" alt="图片" class="h-full w-full shrink-0 object-cover" />
         <!-- 已上传时鼠标悬停显示"更换头像"遮罩提示 -->
         <div
           v-if="image"
@@ -189,11 +184,7 @@ const removeImage = () => {
       提供技术支持
     </div>
     <!-- 图片查看器：点击查看上传的大图 -->
-    <el-image-viewer
-      v-if="previewVisible"
-      :url-list="[image]"
-      @close="previewVisible = false"
-    />
+    <el-image-viewer v-if="previewVisible" :url-list="[image]" @close="previewVisible = false" />
 
     <!-- 上传弹窗：点击头像先进入弹窗，再从弹窗选择或拖入图片 -->
     <SfModal v-model="uploadVisible" title="上传头像" width="400px">
@@ -208,7 +199,7 @@ const removeImage = () => {
         <span class="text-xs text-sf-text-3">支持 JPG、PNG 等常见图片格式</span>
       </div>
       <!-- 上传建议默认收起，避免干扰用户选择图片 -->
-      <SfCollapse :border="false" class="mt-3 rounded-xl bg-sf-bg px-3">
+      <SfCollapse :border="true" class="mt-3 rounded-xl bg-sf-bg px-3">
         <SfCollapseItem name="avatar-need">
           <template #title>
             <div class="flex items-center gap-3 text-sm text-sf-text-2">
@@ -216,9 +207,9 @@ const removeImage = () => {
               <span>简历是否需要放照片？</span>
             </div>
           </template>
-          <div class="flex flex-col gap-3 pb-3 text-xs leading-6 text-sf-text-2">
-            <p>是否放照片：民企、国企和中文简历一般建议放；外企和英文简历通常可不放。</p>
-            <p>如果决定放照片，请使用证件照或职业照，避免使用生活照。</p>
+          <div class="flex flex-col gap-3 text-xs leading-6 text-sf-text-2">
+            <p>是否放照片：私企、国企和中文简历一般建议放；外企和英文简历通常可不放。</p>
+            <p>如果决定放照片，请使用证件照或职业照，避免使用生活照和AI生成的照片。</p>
           </div>
         </SfCollapseItem>
         <SfCollapseItem name="avatar-tips">
@@ -228,7 +219,7 @@ const removeImage = () => {
               <span>照片拍摄建议</span>
             </div>
           </template>
-          <div class="flex flex-col gap-3 pb-3 text-xs leading-6 text-sf-text-2">
+          <div class="flex flex-col gap-3 text-xs leading-6 text-sf-text-2">
             <p>裁剪：头顶留少量空间，露出肩部，避免只拍大头照。</p>
             <p>底色：推荐白色、蓝色或灰色，红色背景一般不建议。</p>
             <p>形象：自然微笑，头发整洁，尽量不要遮挡面部。</p>
