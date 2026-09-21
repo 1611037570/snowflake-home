@@ -74,7 +74,10 @@ export function unmarkUserSubtitle(runtimeConfig: any, data: any, key?: string) 
   const moreBox = getUserContainer(runtimeConfig, "more");
   const subtitleBox = getUserContainer(runtimeConfig, "subtitle");
   if (!moreBox || !subtitleBox) return false;
-  if (!moveFieldToContainer(subtitleBox, moreBox, key)) return false;
+  const { box, field } = locateSubtitleField(moreBox, subtitleBox, key);
+  if (!box || !field) return false;
+  // 字段已在更多分区时仍应清除副标题标记，避免配置与状态不一致导致取消失败
+  if (box === subtitleBox && !moveFieldToContainer(subtitleBox, moreBox, key)) return false;
 
   setUserSubtitleOrder(
     data,
