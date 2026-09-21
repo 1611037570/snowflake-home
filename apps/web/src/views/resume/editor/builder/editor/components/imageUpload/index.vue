@@ -8,20 +8,20 @@ import { routerNavigation } from "@/utils";
 // 新窗口打开 image 工具页
 const goImageTools = () => routerNavigation("/image");
 
-// 默认 1 寸照尺寸：25mm x 35mm @96dpi ≈ 96 x 132px
-const DEFAULT_WIDTH = 72;
-const DEFAULT_HEIGHT = 98;
+// 头像显示尺寸保持不变，裁剪输出使用三倍分辨率提升预览与导出清晰度
+const DISPLAY_WIDTH = 94;
+const DISPLAY_HEIGHT = 132;
 
 const props = defineProps({
-  /** 显示宽度（px），默认 1 寸照宽度 */
+  /** 裁剪输出宽度（px），默认使用显示尺寸的三倍 */
   width: {
     type: Number,
-    default: 72,
+    default: 282,
   },
-  /** 显示高度（px），默认 1 寸照高度 */
+  /** 裁剪输出高度（px），默认使用显示尺寸的三倍 */
   height: {
     type: Number,
-    default: 98,
+    default: 396,
   },
 });
 
@@ -128,12 +128,12 @@ const removeImage = () => {
 
 <template>
   <!-- 固定整体高度，保证上传前后表单区域不跳动 -->
-  <div class="flex flex-col" :style="{ minHeight: `${height}px` }">
+  <div class="flex flex-col" :style="{ minHeight: `${DISPLAY_HEIGHT}px` }">
     <div class="flex gap-1">
       <!-- 始终保留上传入口：未上传展示占位，已上传时点击图片进入上传弹窗 -->
       <div
         class="border-sf-border group relative flex cursor-pointer items-center justify-center overflow-hidden rounded-lg border border-dashed text-sf-text-3 transition-colors hover:border-sf-theme hover:text-sf-theme"
-        :style="{ width: `${DEFAULT_WIDTH}px`, height: `${DEFAULT_HEIGHT}px` }"
+        :style="{ width: `${DISPLAY_WIDTH}px`, height: `${DISPLAY_HEIGHT}px` }"
         :title="image ? '更换头像' : '上传头像'"
         @click="uploadVisible = true"
       >
