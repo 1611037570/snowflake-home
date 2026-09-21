@@ -74,10 +74,7 @@ export function unmarkUserSubtitle(runtimeConfig: any, data: any, key?: string) 
   const moreBox = getUserContainer(runtimeConfig, "more");
   const subtitleBox = getUserContainer(runtimeConfig, "subtitle");
   if (!moreBox || !subtitleBox) return false;
-  const { box, field } = locateSubtitleField(moreBox, subtitleBox, key);
-  if (!box || !field) return false;
-  // 字段已在更多分区时仍应清除副标题标记，避免配置与状态不一致导致取消失败
-  if (box === subtitleBox && !moveFieldToContainer(subtitleBox, moreBox, key)) return false;
+  if (!moveFieldToContainer(subtitleBox, moreBox, key)) return false;
 
   setUserSubtitleOrder(
     data,
@@ -86,37 +83,21 @@ export function unmarkUserSubtitle(runtimeConfig: any, data: any, key?: string) 
   return true;
 }
 
-// 初始化校正：无内容字段取消置顶，顺序只保留有内容字段，并让分区按顺序排列
-export function restoreUserSubtitleFields(runtimeConfig: any, data: any) {
+// 运行时分区由副标题顺序直接构建，配置持久化只保存编辑器字段顺序
+export function applyUserSubtitleOrder(runtimeConfig: any, data: any) {
   const keys = getUserSubtitleKeys(data?.user?.ui);
-  if (!keys.length) return false;
   const moreBox = getUserContainer(runtimeConfig, "more");
   const subtitleBox = getUserContainer(runtimeConfig, "subtitle");
-  if (!moreBox || !subtitleBox) return false;
+  if (!moreBox || !subtitleBox) return;
 
-  const kept: string[] = [];
-  let moved = false;
-  keys.forEach((key) => {
-    const { box, field } = locateSubtitleField(moreBox, subtitleBox, key);
-    if (!box || !field) return;
+  const fields = [...subtitleBox.fields, ...moreBox.fields];
+  const fieldsByKey = new Map(fields.map((field: any) => [field.key, field]));
+  const subtitleFields = keys
+    .map((key) => fieldsByKey.get(key))
+    .filter((field): field is any => Boolean(field));
+  const subtitleKeys = new Set(subtitleFields.map((field) => field.key));
+  const moreFields = fields.filter((field: any) => !subtitleKeys.has(field.key));
 
-    // 无内容：字段回到更多分区，且不进入顺序
-    if (!hasUserFieldContent(data, key)) {
-      moved = moveFieldToContainer(box, moreBox, key) || moved;
-      return;
-    }
-    if (box === moreBox) moved = moveFieldToContainer(moreBox, subtitleBox, key) || moved;
-    kept.push(key);
-  });
-
-  const orderChanged = kept.length !== keys.length;
-  if (orderChanged) setUserSubtitleOrder(data, kept);
-  if (!moved && !orderChanged) return false;
-
-  // 分区内字段按顺序数组排列，保证编辑区渲染顺序与预览一致
-  const ordered = [...subtitleBox.fields].sort(
-    (first: any, second: any) => kept.indexOf(first.key) - kept.indexOf(second.key),
-  );
-  subtitleBox.fields.splice(0, subtitleBox.fields.length, ...ordered);
-  return true;
+  subtitleBox.fields.splice(0, subtitleBox.fields.length, ...subtitleFields);
+  moreBox.fields.splice(0, moreBox.fields.length, ...moreFields);
 }
