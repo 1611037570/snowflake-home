@@ -5,7 +5,7 @@ import { useResumeStore } from "@/stores";
 import { storeToRefs } from "pinia";
 import ThumbPreview from "../../preview/thumbPreview.vue";
 import { themeTemplateList } from "@/stores/modules/resume/uiConfig";
-import { xiaoZhouResumeItem } from "@/stores/modules/resume/xiaoZhouData";
+import { xiaoZhouResumeItem } from "@/views/resume/template/data/items/xiaoZhou";
 const resumeStore = useResumeStore();
 const { currentUI } = storeToRefs(resumeStore);
 

@@ -1,3 +1,5 @@
+import { xiaoZhouResumeTemplate } from "./items/xiaoZhou";
+
 type ResumeTemplateOption = {
   key: string;
   value: string;
@@ -139,20 +141,8 @@ export const resumeTemplateCategoryGroups: ResumeTemplateCategoryGroup[] = [
   { key: "design", name: "设计", icon: "lucide:palette", options: resumeTemplateDesignOptions },
 ];
 
-export const resumeTemplateList: ResumeTemplate[] = [
-  {
-    id: "campus-general",
-    name: "通用应届生简历",
-    scene: ["campus", "internship"],
-    industry: ["all"],
-    position: ["all"],
-    workExperience: ["student", "0-1"],
-    design: ["single-column", "minimal"],
-    tags: ["education", "campus-experience", "no-work-experience"],
-    item: {
-      data: {},
-      config: {},
-      ui: {},
-    },
-  },
+export const resumeTemplateHotList: ResumeTemplate[] = [
+  xiaoZhouResumeTemplate,
 ];
+
+export const resumeTemplateList: ResumeTemplate[] = [...resumeTemplateHotList];

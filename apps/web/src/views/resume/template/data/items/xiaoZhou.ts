@@ -381,3 +381,15 @@ export const xiaoZhouResumeItem: any = {
     },
   },
 };
+
+export const xiaoZhouResumeTemplate = {
+  id: "general-xiao-zhou",
+  name: "通用简历",
+  scene: ["social-recruitment"],
+  industry: ["all"],
+  position: ["all"],
+  workExperience: [],
+  design: ["single-column"],
+  tags: ["通用简历"],
+  item: xiaoZhouResumeItem,
+};

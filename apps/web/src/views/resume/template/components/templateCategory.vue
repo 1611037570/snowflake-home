@@ -2,6 +2,7 @@
 import { resumeTemplateCategoryGroups } from "../data";
 import { computed, ref } from "vue";
 
+const emit = defineEmits(["change"]);
 const currentCategory = ref("scene");
 const selectedCategoryOptions = ref({});
 const currentCategoryGroup = computed(
@@ -20,6 +21,7 @@ const toggleCategoryOption = (groupKey, optionKey) => {
     ...selectedCategoryOptions.value,
     [groupKey]: isCategoryOptionSelected(groupKey, optionKey) ? undefined : optionKey,
   };
+  emit("change", selectedCategoryOptions.value);
 };
 </script>
 
