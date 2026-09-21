@@ -385,6 +385,7 @@ export const xiaoZhouResumeItem: any = {
 export const xiaoZhouResumeTemplate = {
   id: "general-xiao-zhou",
   name: "通用简历",
+  description: "适合通用求职场景的完整简历模板",
   scene: ["social-recruitment"],
   industry: ["all"],
   position: ["all"],

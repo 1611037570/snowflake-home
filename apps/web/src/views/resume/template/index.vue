@@ -5,7 +5,7 @@ import ResumeCardContainer from "@/views/resume/mine/components/resumeCardContai
 import RevealGrid from "@/views/resume/components/revealGrid.vue";
 import TemplateCategory from "./components/templateCategory.vue";
 import { resumeTemplateHotList } from "./data";
-import { xiaoZhouResumeItem } from "./data/items/xiaoZhou";
+import { xiaoZhouResumeItem } from "./data/characters/xiaoZhou";
 
 // 模板页专用全屏预览组件：异步加载，避免首屏打包体积过大
 const TemplatePreview = markRaw(defineAsyncComponent(() => import("./templatePreview.vue")));
@@ -101,6 +101,12 @@ const gridClass = ref("default");
               <div class="flex flex-col">
                 <div class="truncate text-base font-black text-black">
                   {{ card.name }}
+                </div>
+                <div class="mt-3 line-clamp-2 text-sm text-sf-text-2">
+                  {{ card.description }}
+                </div>
+                <div class="mt-3 flex flex-wrap gap-3 text-sm text-sf-text-2">
+                  <span v-for="tag in card.tags" :key="tag">{{ tag }}</span>
                 </div>
                 <div class="mt-3 flex items-center justify-between gap-2">
                   <SfButton class="flex-1" @click.stop="openFullscreen(card, 'content')">
