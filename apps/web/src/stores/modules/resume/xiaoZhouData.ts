@@ -1,5 +1,7 @@
-// 小舟数据
-export const xiaoZhouResumeItem: any = {
+import dayjs from "dayjs";
+
+// 小舟默认数据
+const defaultData: any = {
   data: {
     user: {
       ui: {
@@ -311,5 +313,20 @@ export const xiaoZhouResumeItem: any = {
     textAlign: "auto",
     titleIcon: true,
     linkUnderline: false,
+  },
+};
+
+// 小舟数据：出生日期按当前时间倒推 18 年生成，保证年龄恒为 18 岁
+export const xiaoZhouResumeItem: any = {
+  ...defaultData,
+  data: {
+    ...defaultData.data,
+    user: {
+      ...defaultData.data.user,
+      data: {
+        ...defaultData.data.user.data,
+        birthday: dayjs().subtract(18, "year").format("YYYY-MM"),
+      },
+    },
   },
 };
