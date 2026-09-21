@@ -46,6 +46,7 @@ const weightOptions = Array.from({ length: 121 }, (_, index) => {
           filterable
           allow-create
           default-first-option
+          clearable
           placeholder="选择或输入身高"
           class="w-full"
         />
@@ -61,6 +62,7 @@ const weightOptions = Array.from({ length: 121 }, (_, index) => {
           filterable
           allow-create
           default-first-option
+          clearable
           placeholder="选择或输入体重"
           class="w-full"
         />

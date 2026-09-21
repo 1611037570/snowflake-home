@@ -87,6 +87,7 @@ const shoesSizeOptions = [
         filterable
         allow-create
         default-first-option
+        clearable
         placeholder="选择或输入尺码"
         class="w-full"
       />
@@ -99,6 +100,7 @@ const shoesSizeOptions = [
         filterable
         allow-create
         default-first-option
+        clearable
         placeholder="选择或输入尺码"
         class="w-full"
       />
@@ -111,6 +113,7 @@ const shoesSizeOptions = [
         filterable
         allow-create
         default-first-option
+        clearable
         placeholder="选择或输入鞋码"
         class="w-full"
       />
