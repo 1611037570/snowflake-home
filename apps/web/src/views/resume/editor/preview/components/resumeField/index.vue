@@ -11,6 +11,10 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  boxClass: {
+    type: String,
+    default: "",
+  },
 });
 
 const fieldValue = computed(() => model.value);
@@ -29,6 +33,6 @@ const hasContent = computed(() => {
     <FieldContent :content="fieldValue" :html="html" />
   </template>
   <div v-else-if="hasContent" class="relative max-w-full min-w-0 break-words">
-    <FieldContent :content="fieldValue" :html="html" />
+    <FieldContent :content="fieldValue" :html="html" :class="boxClass" />
   </div>
 </template>
