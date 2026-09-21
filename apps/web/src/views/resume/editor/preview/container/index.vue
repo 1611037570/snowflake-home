@@ -33,24 +33,24 @@ const availableSize = ref({ width: 0, height: 0 });
 const showBackTop = ref(false);
 const manualScale = ref(1);
 const maxScale = ref(1);
-const scaleMode = ref("auto");
+const scaleMode = ref("onePage");
 
 const PADDING = 20;
 const BACK_TOP_THRESHOLD = 200;
 const MIN_SCALE = 0.5;
 const percent = (value) => `${Math.round(value * 100)}%`;
 const SCALE_LIST = computed(() => [
+  // 一页模式默认展示，并同时根据当前可用宽高计算页面缩放比例
+  {
+    value: "onePage",
+    name: "自适应一页",
+    active: scaleMode.value === "onePage",
+  },
   // 自适应选项
   {
     value: "auto",
     name: "自适应最大",
     active: scaleMode.value === "auto",
-  },
-  // 一页模式同时根据当前可用宽高计算页面缩放比例
-  {
-    value: "onePage",
-    name: "自适应一页",
-    active: scaleMode.value === "onePage",
   },
   { divider: true },
   ...[0.5, 0.6, 0.7, 0.8, 0.9, 1].map((value) => {
