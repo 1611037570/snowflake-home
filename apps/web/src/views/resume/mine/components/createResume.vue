@@ -1,7 +1,7 @@
 <script setup>
 import { useResumeStore } from "@/stores";
 import { themeTemplateList } from "@/stores/modules/resume/uiConfig";
-import { xiaoZhouResumeItem } from "@/views/resume/template/data/items/xiaoZhou";
+import { xiaoZhouResumeItem } from "@/views/resume/template/data/characters/xiaoZhou";
 import { useRouter } from "vue-router";
 import ResumeCardContainer from "./resumeCardContainer.vue";
 

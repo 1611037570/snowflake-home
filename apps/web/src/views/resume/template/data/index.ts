@@ -1,4 +1,6 @@
-import { xiaoZhouResumeTemplate } from "./items/xiaoZhou";
+import { xiaoZhouResumeTemplate } from "./characters/xiaoZhou";
+import { modelResumeTemplate } from "./items/model";
+import { xiaoYangProgrammerResumeTemplate } from "./characters/xiaoYang";
 
 type ResumeTemplateOption = {
   key: string;
@@ -21,6 +23,7 @@ type ResumeTemplateItem = {
 export type ResumeTemplate = {
   id: string;
   name: string;
+  description: string;
   scene: string[];
   industry: string[];
   position: string[];
@@ -96,6 +99,7 @@ export const resumeTemplatePositionOptions: ResumeTemplateOption[] = [
     { key: "product-manager", value: "产品经理" },
     { key: "ui-ux", value: "UI/UX" },
     { key: "graphic-design", value: "平面设计/美工" },
+    { key: "model", value: "模特" },
     // 运营/市场
     { key: "operation", value: "运营" },
     { key: "new-media", value: "新媒体" },
@@ -143,6 +147,8 @@ export const resumeTemplateCategoryGroups: ResumeTemplateCategoryGroup[] = [
 
 export const resumeTemplateHotList: ResumeTemplate[] = [
   xiaoZhouResumeTemplate,
+  xiaoYangProgrammerResumeTemplate,
+  modelResumeTemplate,
 ];
 
 export const resumeTemplateList: ResumeTemplate[] = [...resumeTemplateHotList];
