@@ -39,23 +39,29 @@ const safeUrl = (value) => {
     <div
       v-for="(item, index) in account"
       :key="index"
-      class="max-w-full min-w-0"
+      class="flex max-w-full min-w-0 items-baseline"
       data-module="user"
       :style="paragraphSpacingStyle"
     >
-      <span v-if="item.name" class="inline-block whitespace-nowrap">
+      <span v-if="item.name" class="shrink-0 whitespace-nowrap">
         <ItemTitle :name="item.name" class="inline-block" />
         <span v-if="item.url">：</span>
       </span>
-      <a
-        :href="safeUrl(item.url)"
-        target="_blank"
-        rel="noopener noreferrer"
-        class="inline max-w-full min-w-0 break-all hover:underline"
-        :class="{ underline: linkUnderline }"
-      >
-        <ResumeField :model-value="item.url" class="inline max-w-full min-w-0 break-all" />
-      </a>
+      <div class="min-w-0 flex-1 overflow-hidden">
+        <a
+          :href="safeUrl(item.url)"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="inline-block max-w-full truncate whitespace-nowrap align-bottom hover:underline"
+          :class="{ underline: linkUnderline }"
+        >
+          <ResumeField
+            :model-value="item.url"
+            class="inline-block max-w-full truncate whitespace-nowrap hover:underline"
+            :class="{ underline: linkUnderline }"
+          />
+        </a>
+      </div>
     </div>
   </div>
 </template>
