@@ -1,4 +1,5 @@
 <script setup>
+import dayjs from "dayjs";
 import { computed, inject } from "vue";
 import ResumeField from "../../../components/resumeField/index.vue";
 import { getUserSubtitleKeys } from "@/stores/modules/resume/hooks/useUserSubtitle";
@@ -9,6 +10,8 @@ const previewData = inject("previewData");
 const fontValue = inject("fontValue");
 const lineHeightValue = inject("lineHeightValue");
 const user = computed(() => previewData.value?.user?.data || {});
+// 出生日期副标题沿用字段展示形态，保证切换后即时反映在预览中
+const birthdayDisplay = computed(() => previewData.value?.user?.ui?.birthday?.display || "age");
 // 已标记的副标题字段：按标记序号升序
 const subtitleKeys = computed(() => getUserSubtitleKeys(previewData.value?.user?.ui));
 const { isUserFieldHidden } = useUserFieldVisibility();
@@ -39,6 +42,13 @@ const sizesText = (value) => [
   .filter((item) => item.value != null && item.value !== "")
   .map((item) => (item.key === "shoes" ? `${item.value}码` : item.value))
   .join(" · ");
+// 出生日期按所选展示形态转换为日期或年龄
+const birthdayText = (value) => {
+  if (birthdayDisplay.value === "date") return String(value);
+  const birthday = dayjs(value);
+  if (!birthday.isValid()) return "";
+  return `${Math.max(0, dayjs().diff(birthday, "year"))}岁`;
+};
 // 单项内容：字段被隐藏或值空时不展示
 const textOf = (key) => {
   if (!key || isUserFieldHidden(key)) return "";
@@ -47,6 +57,7 @@ const textOf = (key) => {
   if (key === "heightWeight") return heightWeightText(value);
   if (key === "measurements") return measurementsText(value);
   if (key === "sizes") return sizesText(value);
+  if (key === "birthday") return birthdayText(value);
   return String(value);
 };
 const items = computed(() => subtitleKeys.value.map((key) => textOf(key)).filter(Boolean));
