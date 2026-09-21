@@ -708,7 +708,7 @@ export const DEFAULT_EDUCATION_FORM = {
               defaultValue: [],
             },
             props: {
-              list: ["985", "211", "双一流", "C9联盟", "省重点"],
+              list: ["985", "211", "双一流"],
             },
           },
           // 学院名称
@@ -1173,7 +1173,7 @@ export const DEFAULT_PROJECT_FORM = {
               defaultValue: [],
             },
             props: {
-              list: ["核心项目", "独立负责", "已上线", "开源项目", "团队协作"],
+              list: ["已上线", "开源项目", "独立负责", "团队协作", "性能优化"],
             },
           },
           // 所在部门
