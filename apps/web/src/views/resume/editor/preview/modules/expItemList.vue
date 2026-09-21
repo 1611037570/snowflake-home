@@ -26,6 +26,7 @@ const previewData = inject("previewData");
 const fontValue = inject("fontValue");
 const lineHeightValue = inject("lineHeightValue");
 const paragraphSpacingStyle = inject("paragraphSpacingStyle");
+const innerSpacingStyle = inject("innerSpacingStyle");
 const linkUnderline = inject("linkUnderline", computed(() => false));
 // 日期样式（2026.9 / 2026年9月），由设计配置注入
 const dateStyle = inject("dateStyle");
@@ -77,7 +78,10 @@ const hasItemHeader = (item) => {
             </span>
           </div>
         </div>
-        <div class="mt-3 flex flex-wrap items-center justify-between gap-3">
+        <div
+          class="flex flex-wrap items-center justify-between gap-3"
+          :style="innerSpacingStyle"
+        >
           <div class="flex max-w-full min-w-0 flex-1 flex-wrap items-center gap-3">
             <ResumeField :model-value="item.post" />
             <ResumeField :model-value="item.department" />
@@ -91,7 +95,8 @@ const hasItemHeader = (item) => {
             item.tags?.length ||
             (moduleName === 'project' && (getProjectLink(item).name || getProjectLink(item).url))
           "
-          class="mt-3 flex flex-wrap items-center justify-between gap-3"
+          class="flex flex-wrap items-center justify-between gap-3"
+          :style="innerSpacingStyle"
         >
           <!-- 标签组件是多根节点，包裹后作为整体参与左右布局 -->
           <div class="flex flex-wrap items-center gap-3">
@@ -152,13 +157,12 @@ const hasItemHeader = (item) => {
           </div>
         </div>
       </div>
-      <!-- 补充描述/经历：无首行时由段间距承担上间距，有首行时用固定 mt-3 与首行贴合 -->
+      <!-- 补充描述/经历：无首行时由段间距承担上间距，有首行时使用内部间距贴合 -->
       <ResumeField
         :model-value="item.content"
         html
         v-if="!isContentEmpty(item.content)"
-        :style="hasItemHeader(item) ? undefined : paragraphSpacingStyle"
-        :class="hasItemHeader(item) ? 'mt-3' : ''"
+        :style="hasItemHeader(item) ? innerSpacingStyle : paragraphSpacingStyle"
       />
     </template>
   </div>

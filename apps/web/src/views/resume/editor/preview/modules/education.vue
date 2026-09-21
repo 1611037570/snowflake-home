@@ -14,6 +14,7 @@ const previewData = inject("previewData");
 const fontValue = inject("fontValue");
 const lineHeightValue = inject("lineHeightValue");
 const paragraphSpacingStyle = inject("paragraphSpacingStyle");
+const innerSpacingStyle = inject("innerSpacingStyle");
 // 日期样式（2026.9 / 2026年9月），由设计配置注入
 const dateStyle = inject("dateStyle");
 // 日期位置（左/右），由设计配置注入
@@ -90,7 +91,8 @@ const hasEducationMeta = (item) =>
         <!-- 专业与学院信息放在第二行，城市保持右侧对齐 -->
         <div
           v-if="hasEducationMeta(item)"
-          class="mt-3 flex flex-wrap items-center justify-between gap-3"
+          class="flex flex-wrap items-center justify-between gap-3"
+          :style="innerSpacingStyle"
         >
           <div class="flex max-w-full min-w-0 flex-1 flex-wrap items-center gap-3">
             <ResumeField v-if="hasField(item, 'post')" :model-value="item.post" />
@@ -101,7 +103,11 @@ const hasEducationMeta = (item) =>
           </div>
         </div>
         <!-- 学校标签独立成行，避免和学校名称及时间争抢空间 -->
-        <div v-if="item.tags?.length" class="mt-3 flex flex-wrap items-center gap-3">
+        <div
+          v-if="item.tags?.length"
+          class="flex flex-wrap items-center gap-3"
+          :style="innerSpacingStyle"
+        >
           <ItemTags :tags="item.tags" />
         </div>
       </div>
@@ -109,8 +115,7 @@ const hasEducationMeta = (item) =>
       <ResumeField
         :model-value="item.content"
         html
-        class="mt-3"
-        :style="contentIsFirst(item) ? paragraphSpacingStyle : undefined"
+        :style="contentIsFirst(item) ? paragraphSpacingStyle : innerSpacingStyle"
         v-if="!isContentEmpty(item.content)"
       />
     </template>

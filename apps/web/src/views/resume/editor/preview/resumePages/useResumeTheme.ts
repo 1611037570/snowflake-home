@@ -44,6 +44,7 @@ export interface ResumeTheme {
   titleFontStyle: ComputedRef<Record<string, string>>;
   lineHeightStyle: ComputedRef<Record<string, string>>;
   paragraphSpacingStyle: ComputedRef<Record<string, string>>;
+  innerSpacingStyle: ComputedRef<Record<string, string>>;
   fontReadyVersion: Ref<number>;
   fontValue: ComputedRef<(offset?: number) => Record<string, string>>;
   lineHeightValue: ComputedRef<() => Record<string, string>>;
@@ -111,6 +112,10 @@ export const useResumeTheme = (ui: ComputedRef<ResumeUi>): ResumeTheme => {
   const paragraphSpacingStyle = computed(() => ({
     marginTop: `${paragraphSpacing.value}px`,
   }));
+  // 条目内部纵向间距固定为 4px，与模块段落间距分开控制
+  const innerSpacingStyle = computed(() => ({
+    marginTop: "4px",
+  }));
 
   const fontValue = computed(() => {
     const base = fontStyle.value;
@@ -157,6 +162,7 @@ export const useResumeTheme = (ui: ComputedRef<ResumeUi>): ResumeTheme => {
   provide("titleFontStyle", titleFontStyle);
   provide("lineHeightValue", lineHeightValue);
   provide("paragraphSpacingStyle", paragraphSpacingStyle);
+  provide("innerSpacingStyle", innerSpacingStyle);
   provide("themeColor", themeColor);
   provide("themeColorSoft", themeColorSoft);
   provide("themeColorLine", themeColorLine);
@@ -178,6 +184,7 @@ export const useResumeTheme = (ui: ComputedRef<ResumeUi>): ResumeTheme => {
     titleFontStyle,
     lineHeightStyle,
     paragraphSpacingStyle,
+    innerSpacingStyle,
     fontReadyVersion,
     fontValue,
     lineHeightValue,
