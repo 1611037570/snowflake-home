@@ -1,5 +1,6 @@
 import { allConfig, DEFAULT_USER_FORM } from "../formConfig";
 import { createUserCustomField, isUserCustomFieldKey } from "./useUserCustomField";
+import { restoreUserSubtitleFields } from "./useUserSubtitle";
 
 // 自定义模块：按实际 key 重写模板，标题取自模块 ui
 function rewriteCustomFieldByKey(field: any, customKey: string, customTitle: string) {
@@ -155,9 +156,11 @@ export function bindCollapsedDefault(fields: any[], getDefault: () => string[]) 
 // 按持久化 key 配置构建编辑器会话使用的完整表单配置
 export function buildRuntimeConfig(config: any, data: any) {
   const fields = expandConfigFields(config?.fields || [], data);
-  return {
+  const runtimeConfig = {
     ...config,
     id: config?.id || "df-form",
     fields,
   };
+  restoreUserSubtitleFields(runtimeConfig, data);
+  return runtimeConfig;
 }
