@@ -166,9 +166,9 @@ useResizeObserver(contentRef, ([entry]) => {
       class="mx-auto mb-3 flex items-center gap-1 self-stretch rounded-full border border-sf-b bg-sf-primary p-1.5 select-none"
       v-show="showToolbar"
     >
+      <TemplateSettings />
       <Font />
       <Settings />
-      <TemplateSettings />
       <PageNumber />
       <PrintMode />
       <Language />

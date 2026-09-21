@@ -26,19 +26,12 @@ const footer = computed({
 
 <template>
   <SfDropdown trigger="click" placement="bottom-start" :show-arrow="false">
-    <SfTooltip content="页尾设置">
-      <SfIcon
-        icon="lucide:hash"
-        size="5"
-        boxSize="7"
-        class="rounded-full"
-        :class="
-          system.showPageNumber
-            ? 'text-sf-theme hover:bg-sf-theme-2'
-            : 'text-sf-text-2 hover:bg-sf-theme-2 hover:text-sf-theme-text'
-        "
-      />
-    </SfTooltip>
+    <span
+      class="flex cursor-pointer items-center gap-1 rounded-full px-1.5 py-1 text-sm text-sf-text-2 hover:bg-sf-theme-2 hover:text-sf-theme-text"
+    >
+      <SfIcon icon="lucide:hash" size="5" />
+      <span>页尾</span>
+    </span>
     <template #dropdown>
       <div class="flex w-[240px] flex-col gap-3 rounded-3xl border border-sf-b bg-sf-primary p-3">
         <!-- 页码显示开关 -->
