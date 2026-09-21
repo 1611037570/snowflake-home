@@ -8,9 +8,9 @@ import { routerNavigation } from "@/utils";
 // 新窗口打开 image 工具页
 const goImageTools = () => routerNavigation("/image");
 
-// 头像显示尺寸保持不变，裁剪输出使用三倍分辨率提升预览与导出清晰度
-const DISPLAY_WIDTH = 94;
-const DISPLAY_HEIGHT = 132;
+// 编辑区头像保持紧凑显示，裁剪输出继续使用高分辨率提升预览与导出清晰度
+const DISPLAY_WIDTH = 70;
+const DISPLAY_HEIGHT = 98;
 
 const props = defineProps({
   /** 裁剪输出宽度（px），默认使用显示尺寸的三倍 */
