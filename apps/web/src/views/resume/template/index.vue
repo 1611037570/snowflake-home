@@ -4,6 +4,7 @@ import { themeTemplateList, themeColors } from "@/stores/modules/resume/uiConfig
 import { xiaoZhouResumeItem } from "@/stores/modules/resume/xiaoZhouData";
 import ResumeCardContainer from "@/views/resume/mine/components/resumeCardContainer.vue";
 import RevealGrid from "@/views/resume/components/revealGrid.vue";
+import TemplateCategory from "./components/templateCategory.vue";
 
 // 模板页专用全屏预览组件：异步加载，避免首屏打包体积过大
 const TemplatePreview = markRaw(defineAsyncComponent(() => import("./templatePreview.vue")));
@@ -71,50 +72,51 @@ const gridClass = ref("default");
 
 <template>
   <div class="relative mx-auto flex h-full w-full max-w-7xl flex-col gap-3">
-    <div class="mt-2 flex w-full min-w-full items-center justify-between px-6">
-      <h2 class="text-[20px] font-black text-sf-theme">简历模板 {{ total }} 款</h2>
-      <div class="flex items-center gap-6">
-        <div class="flex items-center gap-3">
-          <span class="text-sm font-bold text-sf-text-2">预览尺寸</span>
-          <div class="flex items-center gap-3">
-            <SfButton
-              :plain="gridClass !== 'small'"
-              :round="false"
-              @click="switchSize('small')"
-            >
-              大图
-            </SfButton>
-            <SfButton
-              :plain="gridClass !== 'default'"
-              :round="false"
-              @click="switchSize('default')"
-            >
-              小图
-            </SfButton>
-          </div>
-        </div>
-        <div class="h-6 w-px bg-sf-b"></div>
-        <div class="flex items-center gap-3">
-          <span class="text-sm font-bold text-sf-text-2">主题色</span>
-          <button
-            v-for="colorItem in themeColors"
-            :key="colorItem.value"
-            class="h-9 w-9 cursor-pointer rounded-full transition-all duration-200 hover:scale-110"
-            :class="{
-              'ring-2 ring-sf-theme ring-offset-3': color === colorItem.value,
-            }"
-            :style="{
-              backgroundColor: colorItem.value,
-            }"
-            type="button"
-            :aria-label="`切换为${colorItem.name}主题色`"
-            @click="switchColor(colorItem.value)"
-          ></button>
-        </div>
-      </div>
-    </div>
     <SfScrollbar class="flex-1">
       <div class="flex h-full flex-col py-2">
+        <TemplateCategory />
+        <div class="mb-6 flex w-full min-w-full items-center justify-between">
+          <h2 class="text-[20px] font-black text-sf-theme">简历模板 {{ total }} 款</h2>
+          <div class="flex items-center gap-6">
+            <div class="flex items-center gap-3">
+              <span class="text-sm font-bold text-sf-text-2">预览尺寸</span>
+              <div class="flex items-center gap-3">
+                <SfButton
+                  :plain="gridClass !== 'small'"
+                  :round="false"
+                  @click="switchSize('small')"
+                >
+                  大图
+                </SfButton>
+                <SfButton
+                  :plain="gridClass !== 'default'"
+                  :round="false"
+                  @click="switchSize('default')"
+                >
+                  小图
+                </SfButton>
+              </div>
+            </div>
+            <div class="h-6 w-px bg-sf-b"></div>
+            <div class="flex items-center gap-3">
+              <span class="text-sm font-bold text-sf-text-2">主题色</span>
+              <button
+                v-for="colorItem in themeColors"
+                :key="colorItem.value"
+                class="h-9 w-9 cursor-pointer rounded-full transition-all duration-200 hover:scale-110"
+                :class="{
+                  'ring-2 ring-sf-theme ring-offset-3': color === colorItem.value,
+                }"
+                :style="{
+                  backgroundColor: colorItem.value,
+                }"
+                type="button"
+                :aria-label="`切换为${colorItem.name}主题色`"
+                @click="switchColor(colorItem.value)"
+              ></button>
+            </div>
+          </div>
+        </div>
         <RevealGrid :items="templates" :size="gridClass" :interval="120" key-field="id">
           <template #default="{ item: card }">
             <ResumeCardContainer :item="card.item" :size="gridClass" @click="useTemplate(card)">

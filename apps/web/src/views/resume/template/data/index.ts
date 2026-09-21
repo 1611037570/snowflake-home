@@ -3,6 +3,13 @@ type ResumeTemplateOption = {
   value: string;
 };
 
+type ResumeTemplateCategoryGroup = {
+  key: string;
+  name: string;
+  icon: string;
+  options: ResumeTemplateOption[];
+};
+
 type ResumeTemplateItem = {
   data: Record<string, unknown>;
   config: Record<string, unknown>;
@@ -13,7 +20,6 @@ export type ResumeTemplate = {
   id: string;
   name: string;
   scene: string[];
-  language: string;
   industry: string[];
   position: string[];
   workExperience: string[];
@@ -28,11 +34,7 @@ export const resumeTemplateSceneOptions: ResumeTemplateOption[] = [
   { key: "social-recruitment", value: "社会招聘" },
   { key: "further-education", value: "国内升学" },
   { key: "study-abroad", value: "留学申请" },
-];
-
-export const resumeTemplateLanguageOptions: ResumeTemplateOption[] = [
-  { key: "zh", value: "中文" },
-  { key: "en", value: "英文" },
+  { key: "english-resume", value: "英文模板" },
 ];
 
 export const resumeTemplateIndustryOptions: ResumeTemplateOption[] = [
@@ -127,13 +129,14 @@ export const resumeTemplateDesignOptions: ResumeTemplateOption[] = [
     { key: "two-column", value: "双栏" },
     { key: "minimal", value: "简约" },
     { key: "timeline", value: "时间轴" },
-    { key: "polished", value: "精美" },
+  { key: "polished", value: "精美" },
 ];
 
-export const resumeTemplateTagOptions: ResumeTemplateOption[] = [
-    { key: "education", value: "教育经历" },
-    { key: "campus-experience", value: "校园经历" },
-    { key: "no-work-experience", value: "无工作经验" },
+export const resumeTemplateCategoryGroups: ResumeTemplateCategoryGroup[] = [
+  { key: "scene", name: "热门模板", icon: "lucide:flame", options: resumeTemplateSceneOptions },
+  { key: "industry", name: "行业", icon: "lucide:building-2", options: resumeTemplateIndustryOptions },
+  { key: "position", name: "职位", icon: "lucide:briefcase-business", options: resumeTemplatePositionOptions },
+  { key: "design", name: "设计", icon: "lucide:palette", options: resumeTemplateDesignOptions },
 ];
 
 export const resumeTemplateList: ResumeTemplate[] = [
@@ -141,7 +144,6 @@ export const resumeTemplateList: ResumeTemplate[] = [
     id: "campus-general",
     name: "通用应届生简历",
     scene: ["campus", "internship"],
-    language: "zh",
     industry: ["all"],
     position: ["all"],
     workExperience: ["student", "0-1"],
