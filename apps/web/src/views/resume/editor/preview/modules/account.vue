@@ -11,7 +11,10 @@ const previewData = inject("previewData");
 const fontValue = inject("fontValue");
 const lineHeightValue = inject("lineHeightValue");
 const paragraphSpacingStyle = inject("paragraphSpacingStyle");
-const linkUnderline = inject("linkUnderline", computed(() => false));
+const linkUnderline = inject(
+  "linkUnderline",
+  computed(() => false),
+);
 
 // 数组记录统一由 getValidData 过滤并提取业务内容
 const account = computed(() => getValidData(previewData.value?.account?.list || []));
@@ -39,7 +42,7 @@ const safeUrl = (value) => {
     <div
       v-for="(item, index) in account"
       :key="index"
-      class="flex max-w-full min-w-0 items-baseline"
+      class="flex max-w-full min-w-0 items-center"
       data-module="user"
       :style="paragraphSpacingStyle"
     >
@@ -52,7 +55,7 @@ const safeUrl = (value) => {
           :href="safeUrl(item.url)"
           target="_blank"
           rel="noopener noreferrer"
-          class="inline-block max-w-full truncate whitespace-nowrap align-bottom hover:underline"
+          class="flex max-w-full truncate whitespace-nowrap hover:underline"
           :class="{ underline: linkUnderline }"
         >
           <ResumeField
