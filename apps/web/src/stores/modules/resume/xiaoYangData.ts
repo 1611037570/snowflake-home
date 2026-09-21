@@ -1,5 +1,6 @@
 // 小羊数据
-export const xiaoYangData: any = {
+export const xiaoYangResumeItem: any = {
+  data: {
   user: {
     ui: {
       archived: false,
@@ -140,9 +141,9 @@ export const xiaoYangData: any = {
     },
     list: [],
   },
-};
+  },
+  config: {
 
-export const xiaoYangForm = {
   meta: {
     version: "1.0.0",
   },
@@ -159,9 +160,9 @@ export const xiaoYangForm = {
     // 视频作品：数据已存在，需登记模块 key 才能在编辑区与预览区渲染
     { key: "video" },
   ],
-};
+  },
+  ui: {
 
-export const xiaoYangUI = {
   paddingVertical: 24,
   paddingHorizontal: 24,
   fontSize: 16,
@@ -174,10 +175,5 @@ export const xiaoYangUI = {
   themeTemplate: "default",
   userInfoMode: "text",
   avatarPosition: "right",
-};
-
-export const xiaoYangResumeItem = {
-  data: xiaoYangData,
-  config: xiaoYangForm,
-  ui: xiaoYangUI,
+  },
 };

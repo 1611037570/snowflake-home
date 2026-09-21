@@ -1,5 +1,6 @@
 // 小舟数据
-export const xiaoZhouData: any = {
+export const xiaoZhouResumeItem: any = {
+  data: {
   user: {
     ui: {
       archived: false,
@@ -121,9 +122,9 @@ export const xiaoZhouData: any = {
       },
     ],
   },
-};
+  },
+  config: {
 
-export const xiaoZhouForm = {
   meta: {
     version: "1.0.0",
   },
@@ -139,9 +140,9 @@ export const xiaoZhouForm = {
     // 视频作品：数据已存在，需登记模块 key 才能在编辑区与预览区渲染
     { key: "video" },
   ],
-};
+  },
+  ui: {
 
-export const xiaoZhouUI = {
   paddingVertical: 24,
   paddingHorizontal: 24,
   fontSize: 16,
@@ -154,10 +155,5 @@ export const xiaoZhouUI = {
   themeTemplate: "default",
   userInfoMode: "text",
   avatarPosition: "right",
-};
-
-export const xiaoZhouResumeItem = {
-  data: xiaoZhouData,
-  config: xiaoZhouForm,
-  ui: xiaoZhouUI,
+  },
 };
