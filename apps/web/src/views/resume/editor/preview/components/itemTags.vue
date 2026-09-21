@@ -16,8 +16,8 @@ const themeColorSoft = inject("themeColorSoft");
   <div
     v-for="tag in tags"
     :key="tag"
-    :style="[fontValue(-5), { backgroundColor: themeColorSoft, color: themeColor }]"
-    class="flex-c rounded-3xl p-1 leading-none"
+    :style="[fontValue(-6), { backgroundColor: themeColorSoft, color: themeColor }]"
+    class="flex-c rounded-3xl px-2 py-1"
   >
     {{ tag }}
   </div>
