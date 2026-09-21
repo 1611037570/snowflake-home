@@ -3,10 +3,12 @@ import { computed } from "vue";
 import { storeToRefs } from "pinia";
 import { useResumeStore } from "@/stores";
 import {
+  defaultTextAlign,
   defaultFontFamily,
   defaultFontSize,
   defaultTitleFontSize,
   fontFamilyList,
+  textAlignList,
   uiParamRanges,
 } from "@/stores/modules/resume/uiConfig";
 
@@ -27,6 +29,14 @@ const fontFamily = computed({
   },
 });
 
+// 文本对齐属于正文排版，与字体配置放在同一入口
+const textAlign = computed({
+  get: () => currentUI.value?.textAlign,
+  set: (value) => {
+    currentUI.value.textAlign = value;
+  },
+});
+
 // 读取数值型参数：统一转为数值，缺失时回退默认值，避免出现 NaN
 const getNumberValue = (key, defaultValue) => {
   const value = Number(currentUI.value?.[key]);
@@ -42,14 +52,12 @@ const setParam = (key, value) => {
 
 <template>
   <SfDropdown trigger="click" placement="bottom-start" :show-arrow="false">
-    <SfTooltip content="字体设置">
-      <SfIcon
-        icon="lucide:type"
-        size="5"
-        boxSize="7"
-        class="rounded-full text-sf-text-2 hover:bg-sf-theme-2 hover:text-sf-theme-text"
-      />
-    </SfTooltip>
+    <span
+      class="flex cursor-pointer items-center gap-1 rounded-full px-1.5 py-1 text-sm text-sf-text-2 hover:bg-sf-theme-2 hover:text-sf-theme-text"
+    >
+      <SfIcon icon="lucide:type" size="5" />
+      <span>排版</span>
+    </span>
     <template #dropdown>
       <div
         class="flex w-[240px] flex-col gap-3 overflow-hidden rounded-3xl border border-sf-b bg-sf-primary p-3"
@@ -89,6 +97,30 @@ const setParam = (key, value) => {
             :step="uiParamRanges[item.key].step"
             size="small"
           />
+        </div>
+
+        <div class="flex flex-col gap-1">
+          <div class="flex items-center gap-1 text-sm text-sf-text-2">
+            <span>文本对齐</span>
+            <SfIcon
+              icon="material-symbols:restart-alt"
+              size="4"
+              class="cursor-pointer text-sf-text-2 transition-colors hover:text-sf-theme"
+              @click="textAlign = defaultTextAlign"
+            />
+          </div>
+          <div class="flex gap-3">
+            <SfButton
+              v-for="option in textAlignList"
+              :key="option.value"
+              class="flex-1"
+              size="small"
+              border
+              @click="textAlign = option.value"
+              :type="textAlign === option.value ? 'theme' : 'bg'"
+              >{{ option.name }}</SfButton
+            >
+          </div>
         </div>
       </div>
     </template>

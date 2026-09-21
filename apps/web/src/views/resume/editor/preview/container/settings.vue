@@ -2,24 +2,12 @@
 import { storeToRefs } from "pinia";
 import { useResumeStore } from "@/stores";
 import {
-  avatarPositionList,
-  datePositionList,
-  defaultAvatarPosition,
-  defaultDatePosition,
-  defaultInfoPosition,
   defaultLineHeight,
   defaultModuleSpacing,
   defaultPaddingHorizontal,
   defaultPaddingVertical,
   defaultParagraphSpacing,
-  defaultTextAlign,
-  defaultUserInfoLayout,
-  defaultUserInfoMode,
-  infoPositionList,
-  textAlignList,
   uiParamRanges,
-  userInfoLayoutList,
-  userInfoModeList,
 } from "@/stores/modules/resume/uiConfig";
 
 const resumeStore = useResumeStore();
@@ -45,54 +33,6 @@ const layoutParams = [
   { label: "行间距", key: "lineHeight", defaultValue: defaultLineHeight, unit: "倍" },
 ];
 
-// 个人信息选项参数：左侧标签加重置按钮，右侧按选项按钮组渲染
-const userInfoParams = [
-  {
-    label: "展示模式",
-    key: "userInfoMode",
-    defaultValue: defaultUserInfoMode,
-    list: userInfoModeList,
-  },
-  {
-    label: "布局方式",
-    key: "userInfoLayout",
-    defaultValue: defaultUserInfoLayout,
-    list: userInfoLayoutList,
-  },
-  {
-    label: "头像位置",
-    key: "avatarPosition",
-    defaultValue: defaultAvatarPosition,
-    list: avatarPositionList,
-  },
-  {
-    label: "信息位置",
-    key: "infoPosition",
-    defaultValue: defaultInfoPosition,
-    list: infoPositionList,
-  },
-];
-
-// 经历信息选项参数：日期在条目内的水平位置
-const dateParams = [
-  {
-    label: "日期位置",
-    key: "datePosition",
-    defaultValue: defaultDatePosition,
-    list: datePositionList,
-  },
-];
-
-// 正文排版选项参数：富文本正文的水平对齐方式
-const textParams = [
-  {
-    label: "文本对齐",
-    key: "textAlign",
-    defaultValue: defaultTextAlign,
-    list: textAlignList,
-  },
-];
-
 // 读取参数当前值
 const getValue = (key) => currentUI.value?.[key];
 
@@ -108,14 +48,12 @@ const setParam = (key, value) => {
 
 <template>
   <SfDropdown trigger="click" placement="bottom-start" :show-arrow="false">
-    <SfTooltip content="页面设置">
-      <SfIcon
-        icon="lucide:settings-2"
-        size="5"
-        boxSize="7"
-        class="rounded-full text-sf-text-2 hover:bg-sf-theme-2 hover:text-sf-theme-text"
-      />
-    </SfTooltip>
+    <span
+      class="flex cursor-pointer items-center gap-1 rounded-full px-1.5 py-1 text-sm text-sf-text-2 hover:bg-sf-theme-2 hover:text-sf-theme-text"
+    >
+      <SfIcon icon="lucide:settings-2" size="5" />
+      <span>布局</span>
+    </span>
     <template #dropdown>
       <div
         class="flex w-[240px] flex-col gap-3 overflow-hidden rounded-3xl border border-sf-b bg-sf-primary p-3"
@@ -144,78 +82,6 @@ const setParam = (key, value) => {
           />
         </div>
 
-        <div class="text-xs font-bold text-sf-text">个人信息</div>
-        <div v-for="item in userInfoParams" :key="item.key" class="flex flex-col gap-1">
-          <div class="flex items-center gap-1 text-sm text-sf-text-2">
-            <span>{{ item.label }}</span>
-            <SfIcon
-              icon="material-symbols:restart-alt"
-              size="4"
-              class="cursor-pointer text-sf-text-2 transition-colors hover:text-sf-theme"
-              @click="setParam(item.key, item.defaultValue)"
-            />
-          </div>
-          <div class="flex gap-3">
-            <SfButton
-              v-for="option in item.list"
-              :key="option.value"
-              class="flex-1"
-              size="small"
-              border
-              @click="setParam(item.key, option.value)"
-              :type="getValue(item.key) === option.value ? 'theme' : 'bg'"
-              >{{ option.name }}</SfButton
-            >
-          </div>
-        </div>
-        <div class="text-xs font-bold text-sf-text">经历信息</div>
-        <div v-for="item in dateParams" :key="item.key" class="flex flex-col gap-1">
-          <div class="flex items-center gap-1 text-sm text-sf-text-2">
-            <span>{{ item.label }}</span>
-            <SfIcon
-              icon="material-symbols:restart-alt"
-              size="4"
-              class="cursor-pointer text-sf-text-2 transition-colors hover:text-sf-theme"
-              @click="setParam(item.key, item.defaultValue)"
-            />
-          </div>
-          <div class="flex gap-3">
-            <SfButton
-              v-for="option in item.list"
-              :key="option.value"
-              class="flex-1"
-              size="small"
-              border
-              @click="setParam(item.key, option.value)"
-              :type="getValue(item.key) === option.value ? 'theme' : 'bg'"
-              >{{ option.name }}</SfButton
-            >
-          </div>
-        </div>
-        <div class="text-xs font-bold text-sf-text">正文排版</div>
-        <div v-for="item in textParams" :key="item.key" class="flex flex-col gap-1">
-          <div class="flex items-center gap-1 text-sm text-sf-text-2">
-            <span>{{ item.label }}</span>
-            <SfIcon
-              icon="material-symbols:restart-alt"
-              size="4"
-              class="cursor-pointer text-sf-text-2 transition-colors hover:text-sf-theme"
-              @click="setParam(item.key, item.defaultValue)"
-            />
-          </div>
-          <div class="flex gap-3">
-            <SfButton
-              v-for="option in item.list"
-              :key="option.value"
-              class="flex-1"
-              size="small"
-              border
-              @click="setParam(item.key, option.value)"
-              :type="getValue(item.key) === option.value ? 'theme' : 'bg'"
-              >{{ option.name }}</SfButton
-            >
-          </div>
-        </div>
       </div>
     </template>
   </SfDropdown>
