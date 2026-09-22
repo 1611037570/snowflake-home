@@ -3,6 +3,7 @@ export * from "./pageLayoutTypes";
 export * from "./adapter";
 export * from "./adapter/buildLayoutNodes";
 export * from "./layout/createSingleColumnLayout";
+export * from "./layout/createTwoColumnLayout";
 export * from "./layout/validateLayoutConfig";
 export * from "./measure/types";
 export * from "./measure/measureLayoutNodes";
