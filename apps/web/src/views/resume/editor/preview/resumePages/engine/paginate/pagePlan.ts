@@ -7,7 +7,7 @@ export type PagePlanStatus = "ready" | "invalid" | "overflow";
 /** 分页布局过程中的问题。 */
 export interface LayoutWarning {
   /** 问题类型。 */
-  code: "missingRegion" | "missingColumn" | "overflow";
+  code: "missingRegion" | "missingColumn" | "overflow" | "invalidLayout";
   /** 面向开发者的详细说明。 */
   message: string;
   /** 产生问题的节点编号。 */
