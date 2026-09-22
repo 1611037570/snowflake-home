@@ -1,8 +1,8 @@
 import type { MeasuredNode } from "../measure/types";
 import type { LayoutNode } from "../types";
 
-/** 分片在当前节点中的连续位置 */
-export type FlowFragmentKind = "single" | "first" | "middle" | "last";
+/** 分片在当前节点中的连续位置；title 表示标题单独留在页尾的分片 */
+export type FlowFragmentKind = "single" | "first" | "middle" | "last" | "title";
 
 /** 单栏页面中的节点分片 */
 export interface FlowPageItem {
@@ -161,11 +161,14 @@ export const paginateFlow = ({
     const canSplit = node.breakPolicy.splittable && measurement.breakPoints.length > 0;
     let consumedHeight = 0;
     let consumedOffset = 0;
+    // 标题已经单独留在上一页时，正文分片不再重复携带标题
+    let titlePlaced = false;
 
     while (consumedHeight < fullHeight || (fullHeight === 0 && consumedHeight === 0)) {
       const isFirst = consumedHeight === 0;
       const remainingHeight = Math.max(0, fullHeight - consumedHeight);
-      const title = isFirst ? titleHeight : 0;
+      const withTitle = isFirst && !titlePlaced;
+      const title = withTitle ? titleHeight : 0;
       const wholeFragmentHeight = title + remainingHeight;
       const wholeFragmentKind: FlowFragmentKind = isFirst
         ? "single"
@@ -174,11 +177,11 @@ export const paginateFlow = ({
         fragmentId: `${node.id}:${wholeFragmentKind}:${consumedOffset}:${contentEnd}`,
         nodeId: node.id,
         sourceModuleKey: node.sourceModuleKey,
-        titleNodeId: isFirst ? node.title?.id : undefined,
+        titleNodeId: withTitle ? node.title?.id : undefined,
         fragment: wholeFragmentKind,
         height: wholeFragmentHeight,
         payload: node.payload,
-        titlePayload: isFirst ? node.title?.payload : undefined,
+        titlePayload: withTitle ? node.title?.payload : undefined,
         contentRange: contentEnd
           ? { start: consumedOffset, end: contentEnd }
           : undefined,
@@ -191,6 +194,26 @@ export const paginateFlow = ({
           : currentPage.usedHeight + wholeFragmentGap + wholeFragmentHeight <=
             getCurrentAvailableHeight();
       if (wholeFragmentFits && tryAddItem(wholeFragment, !isFirst)) break;
+
+      // 标题不跟着正文换页：首段放不下时先把标题留在当前页，正文顺延到下一页
+      if (withTitle && node.title && currentPage.items.length > 0 && !canSplit) {
+        const titleItem: FlowPageItem = {
+          fragmentId: `${node.id}:title:${node.title.id}`,
+          nodeId: node.id,
+          sourceModuleKey: node.sourceModuleKey,
+          titleNodeId: node.title.id,
+          fragment: "title",
+          height: titleHeight,
+          payload: node.payload,
+          titlePayload: node.title.payload,
+        };
+        if (currentPage.usedHeight + safeGap + titleHeight <= getCurrentAvailableHeight()) {
+          if (tryAddItem(titleItem, false)) {
+            titlePlaced = true;
+            continue;
+          }
+        }
+      }
 
       // 不可拆节点或没有可用断点时，当前页放不下就换页，空页则允许溢出。
       if (!canSplit) {
