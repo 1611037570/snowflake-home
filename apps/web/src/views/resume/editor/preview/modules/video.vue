@@ -3,7 +3,10 @@ import { computed, inject } from "vue";
 import Title from "../components/title/index.vue";
 import ResumeField from "../components/resumeField/index.vue";
 import { getValidData } from "./validData";
-import InlineInfoList from "../components/inlineInfoList.vue";
+import {
+  defaultInfoSeparator,
+  getInfoSeparatorMark,
+} from "@/stores/modules/resume/uiConfig";
 
 // 从上层注入获取原始简历数据
 const previewData = inject("previewData");
@@ -12,6 +15,9 @@ const fontValue = inject("fontValue");
 const lineHeightValue = inject("lineHeightValue");
 const paragraphSpacingStyle = inject("paragraphSpacingStyle");
 const linkUnderline = inject("linkUnderline", computed(() => false));
+const infoSeparator = inject("infoSeparator", computed(() => defaultInfoSeparator));
+// 视频名称与说明保持同一文本流，说明过长时仅换行溢出的部分。
+const separatorMark = computed(() => getInfoSeparatorMark(infoSeparator.value));
 
 // 数组记录统一由 getValidData 过滤并提取业务内容
 const video = computed(() => getValidData(previewData.value?.video?.list || []));
@@ -27,8 +33,14 @@ const video = computed(() => getValidData(previewData.value?.video?.list || []))
         :style="paragraphSpacingStyle"
         class="flex h-auto max-w-full min-w-0 flex-wrap items-center justify-between gap-3"
       >
-        <div class="flex min-w-0 flex-1 flex-col gap-3" :style="[fontValue()]">
-          <InlineInfoList :items="[{ value: item.name, emphasis: true }, item.desc]" />
+        <div class="min-w-0 flex-1" :style="[fontValue()]">
+          <span v-if="item.name" class="font-bold" :style="fontValue(1)">
+            {{ item.name }}
+          </span>
+          <span v-if="item.name && item.desc" class="text-sf-text-3">
+            {{ separatorMark ? ` ${separatorMark} ` : " " }}
+          </span>
+          <span v-if="item.desc">{{ item.desc }}</span>
         </div>
         <div v-if="item.url" class="max-w-[45%] min-w-0 shrink-0 text-right">
           <a
