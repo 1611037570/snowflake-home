@@ -195,6 +195,13 @@ const handleModuleMouseEnter = (key) => {
   clearPreviewSelection(key);
 };
 
+// 预览区上下移动模块：交换配置里的模块顺序；个人信息模块由布局规则固定，不参与交换
+const handleModuleMove = ({ moduleKey, targetModuleKey, direction }) => {
+  if (direction !== "up" && direction !== "down") return;
+  if (!targetModuleKey) return;
+  resumeStore.swapModuleOrder(moduleKey, targetModuleKey);
+};
+
 // 新引擎测量容器元素回传，分页算法只通过 hook 读取该元素。
 const setLayoutMeasureEl = (el) => (layoutMeasureRef.value = el);
 // 向上暴露导出范围与测量结果，供上层（page.vue）注册的导出/智能一页功能读取
@@ -266,7 +273,7 @@ defineExpose({ rootEl: rootRef, measureEl: rootRef, pages, pagePlan });
                 :style="{ gap: `${layoutColumnGap}px` }"
               >
                 <div
-                  v-for="column in region.columns"
+                  v-for="(column, columnIndex) in region.columns"
                   :key="column.columnId"
                   class="min-w-0"
                   :style="getColumnStyle(column.columnId)"
@@ -277,7 +284,10 @@ defineExpose({ rootEl: rootRef, measureEl: rootRef, pages, pagePlan });
                     :is-edit="isEdit"
                     :module-class-map="moduleClassMap"
                     :gap="getColumnGap(column.columnId)"
+                    :column-index="columnIndex"
+                    :column-count="region.columns.length"
                     @mouseenter="handleModuleMouseEnter"
+                    @move="handleModuleMove"
                   />
                 </div>
               </div>

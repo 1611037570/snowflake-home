@@ -510,6 +510,18 @@ export const useResumeStore = defineStore(
       unselectModule(moduleKey);
       return true;
     }
+    // 交换两个模块的配置顺序：供预览区上下移动使用，个人信息模块固定不参与交换
+    function swapModuleOrder(firstKey: string, secondKey: string): boolean {
+      const fields = runtimeConfig.value?.fields;
+      if (!Array.isArray(fields)) return false;
+      if (firstKey === "user" || secondKey === "user") return false;
+      const firstIndex = fields.findIndex((field: any) => field?.key === firstKey);
+      const secondIndex = fields.findIndex((field: any) => field?.key === secondKey);
+      if (firstIndex < 0 || secondIndex < 0) return false;
+      const [first] = fields.splice(firstIndex, 1);
+      fields.splice(secondIndex, 0, first);
+      return true;
+    }
     // 修改数组模块记录字段
     function updateRecordField(
       moduleKey: string,
@@ -848,6 +860,7 @@ export const useResumeStore = defineStore(
       setModuleHidden,
       setModuleArchived,
       removeModule,
+      swapModuleOrder,
       addResume,
       duplicateResume,
       deleteResume,
