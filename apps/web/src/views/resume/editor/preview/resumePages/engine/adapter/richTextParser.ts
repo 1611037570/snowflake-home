@@ -29,8 +29,16 @@ export interface ParsedRichText {
   textLength: number;
 }
 
-/** 按纯文本偏移截取安全富文本，并保留截取范围内的标签结构。 */
-export const sliceRichTextHtml = (html: string, start = 0, end?: number): string => {
+/** 切片解析缓存：同一份 HTML 只解析一次，分片与断点探针复用同一批文本节点 */
+const sliceCache = new Map<string, { textNodes: Text[]; total: number }>();
+/** 切片缓存条目上限，避免超长正文长期占用内存 */
+const SLICE_CACHE_MAX = 200;
+
+/** 解析切片所需的文本节点，命中缓存时直接复用 */
+const parseSliceNodes = (html: string) => {
+  const cached = sliceCache.get(html);
+  if (cached) return cached;
+
   const container = document.createElement("div");
   container.innerHTML = DOMPurify.sanitize(html || "", sanitizeConfig);
   const textNodes: Text[] = [];
@@ -44,6 +52,15 @@ export const sliceRichTextHtml = (html: string, start = 0, end?: number): string
     }
   });
   const total = textNodes.reduce((sum, node) => sum + (node.nodeValue?.length || 0), 0);
+  const entry = { textNodes, total };
+  if (sliceCache.size >= SLICE_CACHE_MAX) sliceCache.clear();
+  sliceCache.set(html, entry);
+  return entry;
+};
+
+/** 按纯文本偏移截取安全富文本，并保留截取范围内的标签结构。 */
+export const sliceRichTextHtml = (html: string, start = 0, end?: number): string => {
+  const { textNodes, total } = parseSliceNodes(html || "");
   const safeStart = Math.max(0, Math.min(start, total));
   const safeEnd = Math.max(safeStart, Math.min(end ?? total, total));
   if (safeStart >= safeEnd) return "";
