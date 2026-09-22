@@ -1,7 +1,6 @@
 <script setup>
 import { useResumeStore } from "@/stores";
-import { themeTemplateList } from "@/stores/modules/resume/uiConfig";
-import { xiaoZhouResumeItem } from "@/views/resume/template/data/characters/xiaoZhou";
+import { resumeTemplateList } from "@/views/resume/template/data";
 import { useRouter } from "vue-router";
 import ResumeCardContainer from "./resumeCardContainer.vue";
 
@@ -34,18 +33,8 @@ const createOptions = [
   },
 ];
 
-// 模板数据与简历模板页保持一致，仅展示前六条。
-const templates = computed(() =>
-  themeTemplateList.slice(0, 6).map((style) => ({
-    id: style.id,
-    name: style.name,
-    item: {
-      data: xiaoZhouResumeItem.data,
-      config: xiaoZhouResumeItem.config,
-      ui: style.item.ui,
-    },
-  })),
-);
+// 首页直接展示简历数据模板，不将样式模板展开为重复卡片。
+const templates = computed(() => resumeTemplateList);
 
 const reset = () => {
   mode.value = "options";
@@ -94,11 +83,7 @@ const createQuickResume = () => {
 };
 
 const useTemplate = (template) => {
-  resumeStore.addResume({
-    data: structuredClone(xiaoZhouResumeItem.data),
-    config: structuredClone(xiaoZhouResumeItem.config),
-    ui: structuredClone(template.item.ui),
-  });
+  resumeStore.addResume(structuredClone(template.item));
   close();
 };
 
@@ -156,15 +141,15 @@ const goTemplate = () => {
       </footer>
     </form>
 
-    <div v-else class="flex w-[768px] flex-col gap-3 p-6">
+    <div v-else class="flex w-[1024px] flex-col gap-3 p-6">
       <div class="flex items-center justify-between gap-3">
         <div class="flex items-center gap-3">
           <SfButton plain @click="mode = 'options'">返回</SfButton>
-          <span class="text-base font-black text-sf-text">选择简历模板</span>
+          <span class="text-base font-black text-sf-text">简历数据模板（{{ templates.length }}）</span>
         </div>
         <SfButton plain @click="goTemplate">查看更多</SfButton>
       </div>
-      <div class="grid grid-cols-3 gap-3">
+      <div class="grid grid-cols-4 gap-3">
         <ResumeCardContainer
           v-for="template in templates"
           :key="template.id"
@@ -173,6 +158,10 @@ const goTemplate = () => {
           @click="useTemplate(template)"
         >
           <div class="truncate text-sm font-black text-black">{{ template.name }}</div>
+          <div class="mt-3 line-clamp-2 text-sm text-sf-text-2">{{ template.description }}</div>
+          <div class="mt-3 flex flex-wrap gap-3 text-xs text-sf-text-2">
+            <span v-for="tag in template.tags" :key="tag">{{ tag }}</span>
+          </div>
         </ResumeCardContainer>
       </div>
     </div>
