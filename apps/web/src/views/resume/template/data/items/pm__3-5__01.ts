@@ -214,7 +214,7 @@ export const fullDataProductManagerResumeItem: any = {
     dateStyle: "dot",
     datePosition: "right",
     textAlign: "auto",
-    titleIcon: false,
+    titleIconMode: "none",
     linkUnderline: false,
     infoSeparator: "dot",
   },

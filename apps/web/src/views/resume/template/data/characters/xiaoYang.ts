@@ -319,7 +319,7 @@ export const xiaoYangResumeItem: any = {
     dateStyle: "dot",
     datePosition: "right",
     textAlign: "auto",
-    titleIcon: false,
+    titleIconMode: "none",
     linkUnderline: false,
   },
 };

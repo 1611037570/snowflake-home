@@ -362,7 +362,7 @@ const defaultData: any = {
     dateStyle: "dot",
     datePosition: "right",
     textAlign: "auto",
-    titleIcon: true,
+    titleIconMode: "plain",
     linkUnderline: false,
   },
 };

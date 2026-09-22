@@ -20,7 +20,7 @@ import {
   defaultThemeColor,
   defaultTextAlign,
   defaultTitleFontSize,
-  defaultTitleIcon,
+  defaultTitleIconMode,
   defaultUserInfoLayout,
   defaultUserInfoMode,
 } from "@/stores/modules/resume/uiConfig";
@@ -61,7 +61,7 @@ export interface ResumeTheme {
   dateStyle: ComputedRef<string>;
   datePosition: ComputedRef<string>;
   textAlign: ComputedRef<string>;
-  titleIconEnabled: ComputedRef<boolean>;
+  titleIconMode: ComputedRef<string>;
   linkUnderline: ComputedRef<boolean>;
   infoSeparator: ComputedRef<string>;
 }
@@ -167,8 +167,8 @@ export const useResumeTheme = (ui: ComputedRef<ResumeUi>): ResumeTheme => {
   const datePosition = computed(() => ui.value.datePosition ?? defaultDatePosition);
   // 文本对齐（系统/两端），缺失时回退默认值
   const textAlign = computed(() => ui.value.textAlign ?? defaultTextAlign);
-  // 标题图标开关，缺失时回退默认值
-  const titleIconEnabled = computed(() => ui.value.titleIcon ?? defaultTitleIcon);
+  // 模块标题图标模式，缺失时回退默认值
+  const titleIconMode = computed(() => ui.value.titleIconMode ?? defaultTitleIconMode);
   // 链接下划线开关，缺失时回退默认值
   const linkUnderline = computed(() => ui.value.linkUnderline ?? defaultLinkUnderline);
   // 并列信息分隔符，缺失时保留默认留白样式。
@@ -196,7 +196,7 @@ export const useResumeTheme = (ui: ComputedRef<ResumeUi>): ResumeTheme => {
     dateStyle,
     datePosition,
     textAlign,
-    titleIconEnabled,
+    titleIconMode,
     linkUnderline,
     infoSeparator,
   };
