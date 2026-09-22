@@ -16,27 +16,21 @@
             助你渡过万重山
           </h1>
           <dl
-            class="animate-rise animate-rise--delay-three grid grid-cols-1 pt-8 text-left sm:grid-cols-3"
+            class="animate-rise animate-rise--delay-three grid max-w-md grid-cols-1 pt-8 text-left sm:grid-cols-2"
           >
-            <div class="flex flex-col justify-center border-r border-sf-b pr-3">
-              <dt class="text-xl font-black sm:text-2xl">
-                <span class="text-sf-theme">10</span> 款专业模板
-              </dt>
-              <dd class="mt-3 text-xs text-sf-text-3 sm:text-sm">总有你喜欢的</dd>
-            </div>
-            <div class="flex flex-col justify-center border-r border-sf-b px-3">
-              <dt class="text-xl font-black sm:text-2xl">
-                <span class="text-sf-theme">5</span> 个导出方式
-              </dt>
-              <dd class="mt-3 text-xs text-sf-text-3 sm:text-sm">应对不同场景</dd>
-            </div>
             <div
-              class="flex flex-col justify-center border-r border-sf-b pt-6 pr-3 sm:border-r sm:border-r-0 sm:px-3 sm:pt-0"
+              v-for="(stat, index) in headlineStats"
+              :key="stat.label"
+              :class="[
+                index % 2 === 0 ? 'sm:border-r' : '',
+                index < 2 ? 'border-b' : '',
+              ]"
+              class="flex flex-col items-center justify-center border-sf-b py-3 text-center sm:px-3 sm:first:pl-0"
             >
               <dt class="text-xl font-black sm:text-2xl">
-                <span class="text-sf-theme">2</span> 种编辑方式
+                <span class="text-sf-theme">{{ stat.count }}</span> {{ stat.label }}
               </dt>
-              <dd class="mt-3 text-xs text-sf-text-3 sm:text-sm">内置AI和强大编辑器</dd>
+              <dd class="mt-3 text-xs text-sf-text-3 sm:text-sm">{{ stat.description }}</dd>
             </div>
           </dl>
           <div
@@ -234,6 +228,8 @@
 
 <script setup>
 import { useIntersectionObserver } from "@vueuse/core";
+import { themeTemplateList } from "@/stores/modules/resume/uiConfig";
+import { resumeTemplateList } from "../template/data";
 import { useRouter } from "vue-router";
 import { ref } from "vue";
 import IssueFeedback from "../components/issueFeedback.vue";
@@ -241,6 +237,30 @@ import Share from "../components/share.vue";
 
 const router = useRouter();
 const revealSections = ref([]);
+
+// 首页分别呈现内容范本与排版样式，避免将两者相乘成不真实的模板数量。
+const headlineStats = computed(() => [
+  {
+    count: resumeTemplateList.length,
+    label: "份简历范本",
+    description: "覆盖不同求职场景",
+  },
+  {
+    count: themeTemplateList.length,
+    label: "种排版样式",
+    description: "创建后可自由切换",
+  },
+  {
+    count: 5,
+    label: "个导出方式",
+    description: "应对不同场景",
+  },
+  {
+    count: 2,
+    label: "种编辑方式",
+    description: "内置 AI 与编辑器",
+  },
+]);
 
 // 页面每次进出视口都切换入场状态，让长页面滚动保持节奏感。
 function registerRevealSection(element) {
