@@ -31,6 +31,8 @@ const {
     fontValue,
     moduleContentStyle,
     textAlign,
+    themeColor,
+    themeColorSoft,
   },
 } = useResumePreviewContext();
 
@@ -164,7 +166,7 @@ const itemContentSpacingStyle = computed(() => {
           :href="safeUrl(getItemLink(item).url)"
           target="_blank"
           rel="noopener noreferrer"
-          class="hover:underline"
+          class="inline max-w-full min-w-0 break-all hover:underline"
           :class="{ underline: linkUnderline }"
         >
           <ResumeField :model-value="getItemLink(item).name || getItemLink(item).url" />
@@ -205,20 +207,31 @@ const itemContentSpacingStyle = computed(() => {
         </div>
       </div>
     </template>
-    <div v-else-if="node.sourceModuleKey === 'honor'" class="inline-flex rounded-xl px-3 py-2" :style="{ ...fontValue(), ...paragraphSpacingStyle }">
+    <div
+      v-else-if="node.sourceModuleKey === 'honor'"
+      class="inline-flex rounded-xl px-3 py-2"
+      :style="{
+        backgroundColor: themeColorSoft,
+        color: themeColor,
+        ...fontValue(),
+        ...paragraphSpacingStyle,
+      }"
+    >
       <ResumeField :model-value="item.name" />
     </div>
     <ResumeField v-else :model-value="nodePayload.value" />
   </template>
 
   <template v-else-if="node.type === 'media'">
-    <div class="flex flex-col gap-3" :style="[paragraphSpacingStyle, mediaWidthStyle]">
-      <img v-if="nodePayload.item?.img" :src="nodePayload.item.img" :alt="nodePayload.item.name || ''" class="max-w-full" />
-      <a v-if="safeUrl(nodePayload.item?.url)" :href="safeUrl(nodePayload.item.url)" target="_blank" rel="noopener noreferrer" class="hover:underline" :class="{ underline: linkUnderline }">
-        {{ nodePayload.item.name || nodePayload.item.url }}
-      </a>
-      <span v-if="nodePayload.item?.desc">{{ nodePayload.item.desc }}</span>
-    </div>
+    <ModuleContentContainer>
+      <div class="flex flex-col gap-3" :style="[paragraphSpacingStyle, mediaWidthStyle]">
+        <img v-if="nodePayload.item?.img" :src="nodePayload.item.img" :alt="nodePayload.item.name || ''" class="max-w-full" />
+        <a v-if="safeUrl(nodePayload.item?.url)" :href="safeUrl(nodePayload.item.url)" target="_blank" rel="noopener noreferrer" class="hover:underline" :class="{ underline: linkUnderline }">
+          {{ nodePayload.item.name || nodePayload.item.url }}
+        </a>
+        <span v-if="nodePayload.item?.desc">{{ nodePayload.item.desc }}</span>
+      </div>
+    </ModuleContentContainer>
   </template>
 </template>
 
