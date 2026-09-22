@@ -48,6 +48,10 @@ const filteredResumeTemplates = computed(() =>
 const displayedTemplates = computed(() =>
   currentCategory.value === "style" ? templates.value : filteredResumeTemplates.value,
 );
+// 分类或筛选变化时重建揭示列表，避免新旧卡片在 TransitionGroup 中同时出现。
+const templateGridKey = computed(
+  () => `${currentCategory.value}-${JSON.stringify(templateFilters.value)}`,
+);
 const setTemplateFilters = (value) => {
   templateFilters.value = value;
 };
@@ -105,7 +109,13 @@ const gridClass = ref("default");
           @category-change="setCurrentCategory"
           @size-change="setPreviewSize"
         />
-        <RevealGrid :items="displayedTemplates" :size="gridClass" :interval="120" key-field="id">
+        <RevealGrid
+          :key="templateGridKey"
+          :items="displayedTemplates"
+          :size="gridClass"
+          :interval="120"
+          key-field="id"
+        >
           <template #default="{ item: card }">
             <ResumeCardContainer
               :item="card.item"
