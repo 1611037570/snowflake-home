@@ -7,8 +7,6 @@ export type PageLayoutTemplateId = "topUserTwoColumn" | "twoColumn";
 
 /** 双栏模板左侧固定展示的模块顺序。 */
 const LEFT_MODULE_KEYS = ["account", "education", "skill", "advantage"];
-/** 双栏模板右侧固定展示的模块顺序。 */
-const RIGHT_MODULE_KEYS = ["work", "project", "honor", "video", "image"];
 
 interface CreatePageLayoutTemplateOptions {
   /** 当前简历实际存在的模块 key。 */
@@ -25,15 +23,13 @@ interface CreatePageLayoutTemplateOptions {
   columnGap: number;
 }
 
-/** 按固定清单分栏，不按内容高度自动均衡。 */
+/** 按左侧清单分栏：清单内的模块进左栏，其余模块（含未声明的自定义模块）按原顺序全部进右栏 */
 const splitFixedColumnModules = (moduleKeys: string[]) => {
   const orderedKeys = [...new Set(moduleKeys)].filter((moduleKey) => moduleKey !== "user");
   const leftModuleKeys = orderedKeys.filter((moduleKey) => LEFT_MODULE_KEYS.includes(moduleKey));
-  const rightModuleKeys = orderedKeys.filter((moduleKey) => RIGHT_MODULE_KEYS.includes(moduleKey));
-  const assignedKeys = new Set([...leftModuleKeys, ...rightModuleKeys]);
-
-  // 未内置的自定义模块按当前简历配置顺序放入右栏，避免模板应用后丢失模块。
-  rightModuleKeys.push(...orderedKeys.filter((moduleKey) => !assignedKeys.has(moduleKey)));
+  const rightModuleKeys = orderedKeys.filter(
+    (moduleKey) => !LEFT_MODULE_KEYS.includes(moduleKey),
+  );
 
   return { leftModuleKeys, rightModuleKeys };
 };

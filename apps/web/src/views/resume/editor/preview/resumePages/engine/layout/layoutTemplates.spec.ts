@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { validateLayoutConfig } from "./validateLayoutConfig";
 import { createDefaultPageLayoutTemplate } from "./layoutTemplates";
 
 const moduleKeys = [
@@ -27,6 +28,7 @@ describe("layoutTemplates", () => {
       ["account", "education", "skill"],
       ["work", "project", "custom_research"],
     ]);
+    expect(validateLayoutConfig(layout, moduleKeys).missingModuleKeys).toEqual([]);
   });
 
   it("将 user 明确放入只有两栏的左栏", () => {
@@ -43,5 +45,6 @@ describe("layoutTemplates", () => {
       ["user", "account", "education", "skill"],
       ["work", "project", "custom_research"],
     ]);
+    expect(validateLayoutConfig(layout, moduleKeys).missingModuleKeys).toEqual([]);
   });
 });
