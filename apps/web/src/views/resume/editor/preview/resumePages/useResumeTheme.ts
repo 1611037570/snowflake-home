@@ -50,7 +50,20 @@ export interface ResumeTheme {
   fontValue: ComputedRef<(offset?: number) => Record<string, string>>;
   lineHeightValue: ComputedRef<() => Record<string, string>>;
   themeColor: ComputedRef<string | undefined>;
+  themeColorSoft: ComputedRef<string>;
+  themeColorLine: ComputedRef<string>;
+  themeColorContrast: ComputedRef<string>;
   themeTemplate: ComputedRef<any>;
+  userInfoMode: ComputedRef<string>;
+  userInfoLayout: ComputedRef<string>;
+  avatarPosition: ComputedRef<string>;
+  infoPosition: ComputedRef<string>;
+  dateStyle: ComputedRef<string>;
+  datePosition: ComputedRef<string>;
+  textAlign: ComputedRef<string>;
+  titleIconEnabled: ComputedRef<boolean>;
+  linkUnderline: ComputedRef<boolean>;
+  infoSeparator: ComputedRef<string>;
 }
 
 /**
@@ -193,6 +206,19 @@ export const useResumeTheme = (ui: ComputedRef<ResumeUi>): ResumeTheme => {
     fontValue,
     lineHeightValue,
     themeColor,
+    themeColorSoft,
+    themeColorLine,
+    themeColorContrast,
     themeTemplate,
+    userInfoMode,
+    userInfoLayout,
+    avatarPosition,
+    infoPosition,
+    dateStyle,
+    datePosition,
+    textAlign,
+    titleIconEnabled,
+    linkUnderline,
+    infoSeparator,
   };
 };

@@ -1,6 +1,7 @@
 <script setup>
-import { computed, inject, useAttrs } from "vue";
+import { computed, useAttrs } from "vue";
 import DOMPurify from "dompurify";
+import { useResumePreviewContext } from "../../previewContext";
 
 // 透传属性已在组件内部逐块合并，关闭自动继承，避免多根节点无法继承导致 class 被丢弃并告警
 defineOptions({ inheritAttrs: false });
@@ -23,9 +24,10 @@ const props = defineProps({
 
 // 行高随各字段实际字号自动缩放；字号由外层包装继承，避免强制基础字号覆盖 name 等字段的加大字号
 // 行高样式继承自预览容器；外部未注入时回退空样式，避免渲染抛错
-const lineHeightValue = inject("lineHeightValue", () => ({}));
+const {
+  theme: { lineHeightValue, textAlign },
+} = useResumePreviewContext();
 // 文本对齐：仅两端对齐时覆盖富文本块的默认排版，纯文本字段不受影响
-const textAlign = inject("textAlign");
 const textAlignStyle = computed(() =>
   textAlign?.value === "justify" ? { textAlign: "justify" } : {},
 );

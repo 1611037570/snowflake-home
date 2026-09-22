@@ -1,6 +1,7 @@
 <script setup>
 // 统一条目标题组件，强调样式由日期位置动态决定
 import ResumeField from "./resumeField/index.vue";
+import { useResumePreviewContext } from "../previewContext";
 const { emphasis = true } = defineProps({
   name: {
     default: "",
@@ -10,7 +11,9 @@ const { emphasis = true } = defineProps({
     default: true,
   },
 });
-const fontValue = inject("fontValue");
+const {
+  theme: { fontValue },
+} = useResumePreviewContext();
 </script>
 
 <template>
