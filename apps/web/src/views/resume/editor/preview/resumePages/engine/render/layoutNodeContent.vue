@@ -139,9 +139,15 @@ const itemContentSpacingStyle = computed(() => {
         <div class="min-w-0 flex-1">
           <ItemTitle :name="item.name" :emphasis="datePosition !== 'left'" />
         </div>
-        <span :class="{ 'font-bold': datePosition === 'left' }" :style="datePosition === 'left' ? fontValue(1) : undefined">
-          {{ getTime(item.startTime, item.endTime, dateStyle) }}
-        </span>
+        <!-- 日期位置由 order 控制：置左时提到名称之前 -->
+        <div
+          class="flex max-w-full min-w-0 flex-wrap items-center"
+          :class="datePosition === 'left' ? 'order-first' : ''"
+        >
+          <span :class="{ 'font-bold': datePosition === 'left' }" :style="datePosition === 'left' ? fontValue(1) : undefined">
+            {{ getTime(item.startTime, item.endTime, dateStyle) }}
+          </span>
+        </div>
       </div>
       <div class="flex flex-wrap items-center justify-between gap-3" :style="innerSpacingStyle">
         <div class="max-w-full min-w-0 flex-1">
