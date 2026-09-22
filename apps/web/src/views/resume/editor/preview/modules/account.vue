@@ -5,6 +5,7 @@ import { getValidData } from "./validData";
 import Title from "../components/title/index.vue";
 import ItemTitle from "../components/itemTitle.vue";
 import { useResumePreviewContext } from "../previewContext";
+import ModuleContentContainer from "../components/moduleContentContainer.vue";
 
 // 社交账号模块统一读取预览共享上下文。
 const {
@@ -35,34 +36,36 @@ const safeUrl = (value) => {
   >
     <Title module-key="account"></Title>
     <!-- 社交链接 -->
-    <div
-      v-for="(item, index) in account"
-      :key="index"
-      class="flex max-w-full min-w-0 items-center"
-      data-module="user"
-      :style="paragraphSpacingStyle"
-    >
-      <span v-if="item.name" class="shrink-0 whitespace-nowrap">
-        <ItemTitle :name="item.name" class="inline-block" />
-        <span v-if="item.url">：</span>
-      </span>
-      <div class="flex min-w-0 flex-1 items-center overflow-hidden">
-        <a
-          :href="safeUrl(item.url)"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="inline-block max-w-full truncate whitespace-nowrap hover:underline"
-          :class="{ underline: linkUnderline }"
-        >
-          <ResumeField
-            :model-value="item.url"
-            class="flex max-w-full items-center truncate whitespace-nowrap hover:underline"
-            boxClass="truncate"
+    <ModuleContentContainer v-if="account.length">
+      <div
+        v-for="(item, index) in account"
+        :key="index"
+        class="flex max-w-full min-w-0 items-center"
+        data-module="user"
+        :style="paragraphSpacingStyle"
+      >
+        <span v-if="item.name" class="shrink-0 whitespace-nowrap">
+          <ItemTitle :name="item.name" class="inline-block" />
+          <span v-if="item.url">：</span>
+        </span>
+        <div class="flex min-w-0 flex-1 items-center overflow-hidden">
+          <a
+            :href="safeUrl(item.url)"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="inline-block max-w-full truncate whitespace-nowrap hover:underline"
             :class="{ underline: linkUnderline }"
-          />
-        </a>
+          >
+            <ResumeField
+              :model-value="item.url"
+              class="flex max-w-full items-center truncate whitespace-nowrap hover:underline"
+              boxClass="truncate"
+              :class="{ underline: linkUnderline }"
+            />
+          </a>
+        </div>
       </div>
-    </div>
+    </ModuleContentContainer>
   </div>
 </template>
 

@@ -25,7 +25,12 @@ export const fontFamilyList = [
 ];
 
 // 样式模板统一提供完整 UI，避免依赖示例简历自身的 UI 配置。
-const createThemeTemplate = (name: string, id: string, description: string, ui: Record<string, unknown>) => ({
+const createThemeTemplate = (
+  name: string,
+  id: string,
+  description: string,
+  ui: Record<string, unknown>,
+) => ({
   name,
   id,
   description,

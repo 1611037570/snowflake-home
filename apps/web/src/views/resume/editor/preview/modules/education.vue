@@ -7,6 +7,7 @@ import { getTime } from "../../utils";
 import { getValidData } from "./validData";
 import ItemTags from "../components/itemTags.vue";
 import InlineInfoList from "../components/inlineInfoList.vue";
+import ModuleContentContainer from "../components/moduleContentContainer.vue";
 import { useResumePreviewContext } from "../previewContext";
 
 // 教育经历模块统一读取预览共享上下文。
@@ -81,7 +82,8 @@ const hasEducationMeta = (item) =>
     <!-- 标题栏 -->
     <Title module-key="education"></Title>
     <!-- 内容区：直接渲染已过滤的业务数据 -->
-    <template v-for="(item, index) in education" :key="index">
+    <ModuleContentContainer v-if="education.length">
+      <template v-for="(item, index) in education" :key="index">
       <div
         v-if="hasEducationItem(item)"
         :style="paragraphSpacingStyle"
@@ -157,7 +159,8 @@ const hasEducationMeta = (item) =>
         :style="contentIsFirst(item) ? paragraphSpacingStyle : innerSpacingStyle"
         v-if="!isContentEmpty(item.content)"
       />
-    </template>
+      </template>
+    </ModuleContentContainer>
   </div>
 </template>
 
