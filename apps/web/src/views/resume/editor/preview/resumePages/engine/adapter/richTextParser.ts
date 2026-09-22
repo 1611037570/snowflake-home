@@ -79,6 +79,9 @@ const sanitizeConfig = {
   ALLOWED_URI_REGEXP: /^(?:(?:https?|mailto):)/i,
 };
 
+/** 字符级兜底断点最多保留的采样数量，避免超长正文生成过大的测量树。 */
+const MAX_CHAR_BREAK_POINTS = 512;
+
 /** 读取节点的纯文本长度 */
 const getTextLength = (node: Node): number => node.textContent?.length || 0;
 
@@ -150,6 +153,17 @@ const parseBlocks = (html: string) => {
   return { blocks, breakPoints, textLength: offset };
 };
 
+/** 为语义断点之间的超长文本补充字符级断点。 */
+const appendCharacterBreakPoints = (points: BreakPoint[], textLength: number) => {
+  if (textLength <= 1) return;
+
+  const step = Math.max(1, Math.ceil(textLength / MAX_CHAR_BREAK_POINTS));
+  for (let offset = step; offset < textLength; offset += step) {
+    appendBreakPoint(points, { offset, type: "char" });
+  }
+  points.sort((left, right) => left.offset - right.offset);
+};
+
 /** 清洗并解析富文本，供排版节点适配器使用 */
 export const parseRichText = (content: string): ParsedRichText => {
   const html = DOMPurify.sanitize(content || "", sanitizeConfig);
@@ -158,6 +172,7 @@ export const parseRichText = (content: string): ParsedRichText => {
   if (textLength > 0 && !breakPoints.some((point) => point.offset === textLength)) {
     breakPoints.push({ offset: textLength, type: "textRange" });
   }
+  appendCharacterBreakPoints(breakPoints, textLength);
 
   return {
     html,
