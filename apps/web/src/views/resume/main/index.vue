@@ -28,7 +28,8 @@
               class="flex flex-col items-center justify-center border-sf-b py-3 text-center sm:px-3 sm:first:pl-0"
             >
               <dt class="text-xl font-black sm:text-2xl">
-                <span class="text-sf-theme">{{ stat.count }}</span> {{ stat.label }}
+                <span class="text-sf-theme">{{ Math.round(animatedHeadlineStats[index]) }}</span>
+                {{ stat.label }}
               </dt>
               <dd class="mt-3 text-xs text-sf-text-3 sm:text-sm">{{ stat.description }}</dd>
             </div>
@@ -227,11 +228,11 @@
 </template>
 
 <script setup>
-import { useIntersectionObserver } from "@vueuse/core";
+import { TransitionPresets, useIntersectionObserver, useTransition } from "@vueuse/core";
 import { themeTemplateList } from "@/stores/modules/resume/uiConfig";
 import { resumeTemplateList } from "../template/data";
 import { useRouter } from "vue-router";
-import { ref } from "vue";
+import { computed, onMounted, ref } from "vue";
 import IssueFeedback from "../components/issueFeedback.vue";
 import Share from "../components/share.vue";
 
@@ -261,6 +262,17 @@ const headlineStats = computed(() => [
     description: "内置 AI 与编辑器",
   },
 ]);
+
+// 首页统计数字从零开始平滑滚动。
+const headlineStatCounts = ref([0, 0, 0, 0]);
+const animatedHeadlineStats = useTransition(headlineStatCounts, {
+  duration: 1500,
+  transition: TransitionPresets.easeOutCubic,
+});
+
+onMounted(() => {
+  headlineStatCounts.value = headlineStats.value.map((stat) => stat.count);
+});
 
 // 页面每次进出视口都切换入场状态，让长页面滚动保持节奏感。
 function registerRevealSection(element) {
