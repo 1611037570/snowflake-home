@@ -1,0 +1,204 @@
+<script setup lang="ts">
+import { computed } from "vue";
+import ItemTags from "../../../components/itemTags.vue";
+import ItemTitle from "../../../components/itemTitle.vue";
+import InlineInfoList from "../../../components/inlineInfoList.vue";
+import ModuleContentContainer from "../../../components/moduleContentContainer.vue";
+import ResumeField from "../../../components/resumeField/index.vue";
+import User from "../../../modules/user/index.vue";
+import { getTime } from "../../../../utils";
+import { isContentEmpty } from "../../../modules/validData";
+import { useResumePreviewContext } from "../../../previewContext";
+import { sliceRichTextHtml } from "../adapter/richTextParser";
+import type { LayoutNode } from "../types";
+
+interface Props {
+  node: LayoutNode;
+  payload?: unknown;
+  contentRange?: { start: number; end: number };
+  decoration?: "full" | "top" | "middle" | "bottom";
+}
+
+const props = defineProps<Props>();
+
+const {
+  theme: {
+    paragraphSpacingStyle,
+    innerSpacingStyle,
+    dateStyle,
+    datePosition,
+    linkUnderline,
+    fontValue,
+    moduleContentStyle,
+    textAlign,
+  },
+} = useResumePreviewContext();
+
+const nodePayload = computed(() => (props.payload ?? props.node.payload) as any);
+const item = computed(() => nodePayload.value?.item || {});
+const richTextHtml = computed(() => {
+  const parsed = nodePayload.value;
+  if (!parsed?.html) return "";
+  return sliceRichTextHtml(
+    parsed.html,
+    props.contentRange?.start || 0,
+    props.contentRange?.end,
+  );
+});
+const isExperience = computed(() =>
+  ["work", "project", "education"].includes(props.node.sourceModuleKey) ||
+  props.node.sourceModuleKey.startsWith("custom_"),
+);
+const hasItemHeader = computed(() => {
+  const value = item.value;
+  return Boolean(
+    value.name ||
+      value.department ||
+      value.post ||
+      value.startTime ||
+      value.endTime ||
+      value.city ||
+      value.tags?.length ||
+      value.link?.name ||
+      value.link?.url,
+  );
+});
+const getItemLink = (value: any) => {
+  const link = value?.link;
+  if (typeof link === "string") return { name: "", url: link.trim() };
+  return {
+    name: String(link?.name || "").trim(),
+    url: String(link?.url || "").trim(),
+  };
+};
+const safeUrl = (value: unknown) => {
+  try {
+    const url = new URL(String(value || "").trim());
+    return ["http:", "https:", "mailto:"].includes(url.protocol.toLowerCase()) ? url.href : "";
+  } catch {
+    return "";
+  }
+};
+const fragmentContentStyle = computed(() => {
+  const base = { ...moduleContentStyle.value };
+  if (props.decoration === "top") base.paddingBottom = "0px";
+  if (props.decoration === "middle") {
+    base.paddingTop = "0px";
+    base.paddingBottom = "0px";
+  }
+  if (props.decoration === "bottom") base.paddingTop = "0px";
+  return base;
+});
+</script>
+
+<template>
+  <template v-if="node.type === 'richText'">
+    <ModuleContentContainer
+      v-if="richTextHtml"
+      :style="[fragmentContentStyle, paragraphSpacingStyle]"
+      class="layout-rich-text"
+      :class="`layout-rich-text--${decoration || 'full'}`"
+    >
+      <div
+        class="break-words whitespace-pre-wrap"
+        :style="{ textAlign: textAlign === 'justify' ? 'justify' : undefined }"
+        v-html="richTextHtml"
+      />
+    </ModuleContentContainer>
+  </template>
+
+  <User v-else-if="node.type === 'group' && node.sourceModuleKey === 'user'" />
+
+  <ModuleContentContainer
+    v-else-if="node.type === 'group' && isExperience"
+    :style="[fragmentContentStyle, paragraphSpacingStyle]"
+    class="layout-experience-item"
+  >
+    <div v-if="hasItemHeader" :style="paragraphSpacingStyle">
+      <div class="flex flex-wrap items-center justify-between gap-3">
+        <div class="min-w-0 flex-1">
+          <ItemTitle :name="item.name" :emphasis="datePosition !== 'left'" />
+        </div>
+        <span :class="{ 'font-bold': datePosition === 'left' }" :style="datePosition === 'left' ? fontValue(1) : undefined">
+          {{ getTime(item.startTime, item.endTime, dateStyle) }}
+        </span>
+      </div>
+      <div class="flex flex-wrap items-center justify-between gap-3" :style="innerSpacingStyle">
+        <div class="max-w-full min-w-0 flex-1">
+          <InlineInfoList :items="[item.post, item.department]" />
+        </div>
+        <ResumeField :model-value="item.city" />
+      </div>
+      <div v-if="item.tags?.length || item.link?.name || item.link?.url" class="flex flex-wrap items-center justify-between gap-3" :style="innerSpacingStyle">
+        <div class="flex flex-wrap items-center gap-3">
+          <ItemTags :tags="item.tags" />
+        </div>
+        <a
+          v-if="safeUrl(getItemLink(item).url)"
+          :href="safeUrl(getItemLink(item).url)"
+          target="_blank"
+          rel="noopener noreferrer"
+          :class="{ underline: linkUnderline }"
+        >
+          <ResumeField :model-value="getItemLink(item).name || getItemLink(item).url" />
+        </a>
+      </div>
+    </div>
+    <ResumeField
+      v-if="!isContentEmpty(item.content)"
+      :model-value="item.content"
+      html
+      :style="hasItemHeader ? innerSpacingStyle : paragraphSpacingStyle"
+    />
+  </ModuleContentContainer>
+
+  <template v-else-if="node.type === 'block'">
+    <template v-if="node.sourceModuleKey === 'account'">
+      <div class="flex max-w-full min-w-0 items-center" :style="paragraphSpacingStyle">
+        <span v-if="item.name" class="shrink-0 whitespace-nowrap">
+          <ItemTitle :name="item.name" class="inline-block" />
+          <span v-if="item.url">：</span>
+        </span>
+        <a
+          :href="safeUrl(item.url)"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="min-w-0 truncate"
+          :class="{ underline: linkUnderline }"
+        >
+          <ResumeField :model-value="item.url" />
+        </a>
+      </div>
+    </template>
+    <div v-else-if="node.sourceModuleKey === 'honor'" class="inline-flex rounded-xl px-3 py-2" :style="{ ...fontValue(), ...paragraphSpacingStyle }">
+      <ResumeField :model-value="item.name" />
+    </div>
+    <ResumeField v-else :model-value="nodePayload.value" />
+  </template>
+
+  <template v-else-if="node.type === 'media'">
+    <div class="flex flex-col gap-3" :style="paragraphSpacingStyle">
+      <img v-if="nodePayload.item?.img" :src="nodePayload.item.img" :alt="nodePayload.item.name || ''" class="max-w-full" />
+      <a v-if="safeUrl(nodePayload.item?.url)" :href="safeUrl(nodePayload.item.url)" target="_blank" rel="noopener noreferrer" :class="{ underline: linkUnderline }">
+        {{ nodePayload.item.name || nodePayload.item.url }}
+      </a>
+      <span v-if="nodePayload.item?.desc">{{ nodePayload.item.desc }}</span>
+    </div>
+  </template>
+</template>
+
+<style scoped>
+.layout-rich-text :deep(p),
+.layout-rich-text :deep(ul),
+.layout-rich-text :deep(ol) {
+  margin: 0;
+}
+
+.layout-rich-text :deep(p + p),
+.layout-rich-text :deep(ul + p),
+.layout-rich-text :deep(p + ul),
+.layout-rich-text :deep(ol + p),
+.layout-rich-text :deep(p + ol) {
+  margin-top: 0.75em;
+}
+</style>
