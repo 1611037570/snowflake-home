@@ -1558,13 +1558,51 @@ export const DEFAULT_CUSTOM_FORM = {
             required: true,
             label: "名称",
             component: "input",
-            span: 12,
+            span: 24,
             model: {
               source: ["data", "name"],
               prop: "modelValue",
             },
             props: {
               placeholder: "请输入名称",
+              clearable: true,
+            },
+          },
+          {
+            type: "object",
+            label: "项目链接",
+            component: "projectLink",
+            span: 24,
+            model: {
+              source: ["data", "link"],
+              prop: "modelValue",
+              defaultValue: {},
+            },
+          },
+          {
+            type: "object",
+            component: "tag",
+            span: 24,
+            model: {
+              source: ["data", "tags"],
+              prop: "modelValue",
+              defaultValue: [],
+            },
+            props: {
+              list: ["核心成员", "团队管理", "独立负责", "跨部门协作", "从0到1"],
+            },
+          },
+          {
+            type: "object",
+            label: "所在部门",
+            component: "input",
+            span: 12,
+            model: {
+              source: ["data", "department"],
+              prop: "modelValue",
+            },
+            props: {
+              placeholder: "请输入所在部门",
               clearable: true,
             },
           },
@@ -1616,6 +1654,26 @@ export const DEFAULT_CUSTOM_FORM = {
               valueFormat: "YYYY.MM",
               placeholder: "请选择结束时间",
               presentText: "至今",
+            },
+          },
+          {
+            type: "object",
+            label: "所在城市",
+            component: "cityPicker",
+            span: 12,
+            model: [
+              {
+                source: ["data", "city"],
+                prop: "modelValue",
+              },
+              {
+                source: ["__options", "city"],
+                prop: "list",
+                raw: true,
+              },
+            ],
+            props: {
+              placeholder: "请选择所在城市",
             },
           },
           {
