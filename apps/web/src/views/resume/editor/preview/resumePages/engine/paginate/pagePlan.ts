@@ -175,7 +175,7 @@ export const buildPagePlan = ({
       );
       return getFlowPages(column.id).flatMap((page) =>
         page.items
-          .filter((item) => item.height > columnHeight)
+          .filter((item) => item.height > (page.availableHeight ?? columnHeight))
           .map<LayoutWarning>((item) => ({
             code: "overflow",
             message: `节点 ${item.nodeId} 超出栏 ${column.id} 的可用高度`,
@@ -197,7 +197,7 @@ export const buildPagePlan = ({
         );
         return {
           columnId: column.id,
-          availableHeight: columnHeight,
+          availableHeight: sourcePage.availableHeight ?? columnHeight,
           usedHeight: sourcePage.usedHeight,
           fragments: sourcePage.items.map(toFragmentPlan),
         };

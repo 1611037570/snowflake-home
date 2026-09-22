@@ -1,6 +1,10 @@
 import { RESUME_HEIGHT, RESUME_WIDTH } from "../../../constants";
 import type { PageLayoutConfig } from "../pageLayoutTypes";
 import { createSingleColumnLayout } from "./createSingleColumnLayout";
+import {
+  createDefaultPageLayoutTemplate,
+  type PageLayoutTemplateId,
+} from "./layoutTemplates";
 
 /** 创建当前简历使用的页面布局。 */
 export const createResumeLayout = ({
@@ -21,6 +25,20 @@ export const createResumeLayout = ({
   /** 单栏节点间距。 */
   gap: number;
 }): PageLayoutConfig => {
+  if (
+    ui.pageLayoutTemplate &&
+    ui.themeTemplate === ui.pageLayoutTemplate &&
+    ["topUserTwoColumn", "twoColumn"].includes(ui.pageLayoutTemplate)
+  ) {
+    return createDefaultPageLayoutTemplate({
+      templateId: ui.pageLayoutTemplate as PageLayoutTemplateId,
+      moduleKeys,
+      paddingVertical,
+      paddingHorizontal,
+      gap,
+    });
+  }
+
   const explicitLayout = ui.pageLayout;
   if (explicitLayout && Array.isArray(explicitLayout.regions)) {
     return explicitLayout as PageLayoutConfig;

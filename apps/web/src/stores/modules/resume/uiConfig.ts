@@ -128,6 +128,14 @@ export const themeTemplateList = [
     moduleSpacing: 18,
     dateStyle: "cn",
   }),
+  createThemeTemplate("通栏双栏", "topUserTwoColumn", "个人信息顶部通栏，其余模块固定分到左右两栏。", {
+    themeColor: "#0F766E",
+    pageLayoutTemplate: "topUserTwoColumn",
+  }),
+  createThemeTemplate("双栏", "twoColumn", "所有模块固定分到左右两栏，适合内容较多的简历。", {
+    themeColor: "#7C3AED",
+    pageLayoutTemplate: "twoColumn",
+  }),
 ];
 // 个人信息展示模式列表
 export const userInfoModeList = [
