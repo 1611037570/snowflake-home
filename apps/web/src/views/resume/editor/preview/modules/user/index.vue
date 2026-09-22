@@ -36,10 +36,9 @@ const current = computed(() => themeComponents[themeTemplate.value] || themeComp
 </script>
 
 <template>
-  <!-- 主题组件根元素统一挂载行容器样式与模块标识 -->
+  <!-- 主题组件根元素统一挂载模块标识 -->
   <component
     :is="current"
-    class="resume-row"
     data-module="user"
     :style="[lineHeightValue(), fontValue()]"
   />
