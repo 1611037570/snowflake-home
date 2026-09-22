@@ -1,9 +1,10 @@
 <script setup>
 // 简历页面外壳：页面容器样式 + 页码页脚，多页渲染与缩略图单页共用
 // 仅排版展示，不感知分页/测量逻辑；根元素回传供缩略图测量与导出使用
-import { computed, inject, useTemplateRef, watch } from "vue";
+import { computed, useTemplateRef, watch } from "vue";
 import { getPreviewText } from "../i18n";
 import { PAGE_NUMBER_HEIGHT, RESUME_CONTAINER_HEIGHT, RESUME_CONTAINER_WIDTH } from "../constants";
+import { useResumePreviewContext } from "../previewContext";
 
 const props = defineProps({
   // 简历 ui（fontFamily / moduleSpacing）
@@ -37,10 +38,7 @@ const props = defineProps({
 
 const rootEl = useTemplateRef("rootRef");
 // 简历展示语言：与模块标题语言包保持一致
-const previewLang = inject(
-  "previewLang",
-  computed(() => "zh"),
-);
+const { lang: previewLang } = useResumePreviewContext();
 const footerText = computed(() => {
   const defaultFooter = getPreviewText("footer", previewLang.value, {
     page: props.pageIndex + 1,

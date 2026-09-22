@@ -1,10 +1,11 @@
 <script setup>
 // 隐藏测量容器：为 useRowInfo 提供未被分页裁剪的行高来源
 // 编辑态数据源取编辑停顿后刷新的内容快照，打字期间引用不变，避免测量树反复重渲染并触发重新测量
-import { computed, inject, provide, useTemplateRef, watch } from "vue";
+import { computed, useTemplateRef, watch } from "vue";
 import { useResumeStore } from "@/stores";
 import MeasureContent from "../components/measureContent.vue";
 import { PAGE_NUMBER_HEIGHT, RESUME_CONTAINER_WIDTH, RESUME_HEIGHT } from "../constants";
+import { provideResumePreviewContext, useResumePreviewContext } from "../previewContext";
 
 defineOptions({ name: "ResumeMeasureTree" });
 
@@ -45,13 +46,15 @@ const props = defineProps({
 
 const resumeStore = useResumeStore();
 // 上层注入的实时数据，作为只读场景与快照未就绪时的数据源
-const liveData = inject("previewData");
+const previewContext = useResumePreviewContext();
+const liveData = previewContext.data;
 
 // 测量树数据源：编辑态用编辑停顿后刷新的内容快照，其余场景数据静态直接用实时数据
 const previewData = computed(() =>
   props.isEdit ? resumeStore.contentSnapshot || liveData.value : liveData.value,
 );
-provide("previewData", previewData);
+// 测量树仅替换数据快照，其余主题与字段配置继续复用当前预览上下文。
+provideResumePreviewContext({ ...previewContext, data: previewData });
 
 const measureEl = useTemplateRef("measureRef");
 // 容器就绪后回传元素，供测量逻辑读取行高

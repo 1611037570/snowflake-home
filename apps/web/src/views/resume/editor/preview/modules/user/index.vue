@@ -1,5 +1,5 @@
 <script setup>
-import { computed, inject } from "vue";
+import { computed } from "vue";
 import Academic from "./themes/academic.vue";
 import Business from "./themes/business.vue";
 import Classic from "./themes/classic.vue";
@@ -10,6 +10,7 @@ import Minimal from "./themes/minimal.vue";
 import Modern from "./themes/modern.vue";
 import Steady from "./themes/steady.vue";
 import Vivid from "./themes/vivid.vue";
+import { useResumePreviewContext } from "../../previewContext";
 
 // 主题组件映射：同步加载常用个人信息模块，切换风格时直接复用已加载组件
 // 新增主题在此注册并新建对应主题组件，无需改动模板
@@ -25,13 +26,13 @@ const themeComponents = {
   creative: Creative,
   steady: Steady,
 };
-const themeTemplateRef = inject("themeTemplate");
+const {
+  theme: { themeTemplate: themeTemplateRef, fontValue, lineHeightValue },
+} = useResumePreviewContext();
 // 风格模板：未提供时按默认样式处理
-const themeTemplate = computed(() => themeTemplateRef?.value || "default");
+const themeTemplate = computed(() => themeTemplateRef.value || "default");
 // 当前主题组件：未匹配时回退默认主题
 const current = computed(() => themeComponents[themeTemplate.value] || themeComponents.default);
-const fontValue = inject("fontValue");
-const lineHeightValue = inject("lineHeightValue");
 </script>
 
 <template>
