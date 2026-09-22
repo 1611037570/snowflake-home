@@ -15,9 +15,10 @@ const props = defineProps({
     type: String,
     default: "",
   },
-  inline: {
-    type: Boolean,
-    default: false,
+  // 外层标签由调用方声明，字段组件不自行决定文字布局。
+  tag: {
+    type: String,
+    default: "div",
   },
 });
 
@@ -38,7 +39,7 @@ const hasContent = computed(() => {
   </template>
   <component
     v-else-if="hasContent"
-    :is="inline ? 'span' : 'div'"
+    :is="tag"
     class="relative max-w-full min-w-0 break-words"
   >
     <FieldContent :content="fieldValue" :html="html" :class="boxClass" />
