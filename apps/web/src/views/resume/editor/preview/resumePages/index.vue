@@ -260,28 +260,31 @@ defineExpose({ rootEl: rootRef, measureEl: rootRef, pages, pagePlan });
             },
           ]"
         >
-          <div
-            v-for="region in page.regions"
-            :key="region.regionId"
-            class="flex min-w-0 flex-1"
-            :style="{ gap: `${layoutColumnGap}px` }"
-          >
-            <div
-              v-for="column in region.columns"
-              :key="column.columnId"
-              class="min-w-0"
-              :style="getColumnStyle(column.columnId)"
-            >
-              <LayoutColumn
-                :column="column"
-                :nodes="nodeMap"
-                :first-fragment-ids="firstFragmentIds"
-                :is-edit="isEdit"
-                :module-class-map="moduleClassMap"
-                :gap="getColumnGap(column.columnId)"
-                @mouseenter="handleModuleMouseEnter"
-              />
-            </div>
+          <div class="flex min-w-0 flex-col" :style="{ gap: `${layout.regionGap}px` }">
+            <template v-for="region in page.regions" :key="region.regionId">
+              <div
+                v-if="region.columns.some((column) => column.fragments.length > 0)"
+                class="flex min-w-0 w-full"
+                :style="{ gap: `${layoutColumnGap}px` }"
+              >
+                <div
+                  v-for="column in region.columns"
+                  :key="column.columnId"
+                  class="min-w-0"
+                  :style="getColumnStyle(column.columnId)"
+                >
+                  <LayoutColumn
+                    :column="column"
+                    :nodes="nodeMap"
+                    :first-fragment-ids="firstFragmentIds"
+                    :is-edit="isEdit"
+                    :module-class-map="moduleClassMap"
+                    :gap="getColumnGap(column.columnId)"
+                    @mouseenter="handleModuleMouseEnter"
+                  />
+                </div>
+              </div>
+            </template>
           </div>
         </ResumePageShell>
       </div>

@@ -127,19 +127,47 @@ export const useResumeLayout = ({
         warnings: [],
       };
     }
-    const flowPagesByColumn = new Map(
-      layout.value.regions.flatMap((region) =>
-        region.columns.map((column) => [
-          column.id,
-          paginateFlow({
-            nodes: nodes.value.filter((node) => column.moduleKeys.includes(node.sourceModuleKey)),
-            measurements: measurements.value,
-            availableHeight: availableHeight.value,
-            gap: column.gap,
-          }),
-        ] as const),
-      ),
-    );
+    const orderedRegions = [...layout.value.regions].sort((left, right) => left.order - right.order);
+    const flowPagesByColumn = new Map<string, ReturnType<typeof paginateFlow>>();
+    let firstPageConsumedHeight = 0;
+
+    orderedRegions.forEach((region, regionIndex) => {
+      const firstPageAvailableHeight = Math.max(
+        0,
+        availableHeight.value - firstPageConsumedHeight,
+      );
+      const regionFlows = region.columns.map((column) => {
+        const columnNodes = nodes.value.filter((node) =>
+          column.moduleKeys.includes(node.sourceModuleKey),
+        );
+        const flowPages = paginateFlow({
+          nodes: columnNodes,
+          measurements: measurements.value,
+          availableHeight: firstPageAvailableHeight,
+          availableHeightByPage: (pageIndex) =>
+            pageIndex === 0 ? firstPageAvailableHeight : availableHeight.value,
+          gap: column.gap,
+        });
+        flowPagesByColumn.set(column.id, flowPages);
+        return flowPages;
+      });
+
+      const firstPageRegionHeight = Math.max(
+        ...regionFlows.map((flowPages) => flowPages[0]?.usedHeight || 0),
+        0,
+      );
+      if (region.height.mode === "auto") {
+        firstPageConsumedHeight += firstPageRegionHeight;
+      } else if (region.height.mode === "fixed") {
+        firstPageConsumedHeight += region.height.value;
+      } else {
+        firstPageConsumedHeight = availableHeight.value;
+      }
+
+      if (regionIndex < orderedRegions.length - 1) {
+        firstPageConsumedHeight += Math.max(0, layout.value.regionGap);
+      }
+    });
     return buildPagePlan({
       layout: layout.value,
       availableHeight: availableHeight.value,

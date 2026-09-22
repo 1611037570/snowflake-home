@@ -35,6 +35,8 @@ export interface FlowPage {
   pageIndex: number;
   /** 当前页已经使用的高度 */
   usedHeight: number;
+  /** 当前页实际使用的可用高度 */
+  availableHeight?: number;
   /** 当前页中的节点 */
   items: FlowPageItem[];
 }
@@ -47,6 +49,8 @@ export interface PaginateFlowOptions {
   measurements: ReadonlyMap<string, MeasuredNode>;
   /** 当前栏可用高度 */
   availableHeight: number;
+  /** 按页提供可用高度，未提供时所有页面使用 availableHeight。 */
+  availableHeightByPage?: (pageIndex: number) => number;
   /** 不同节点之间的间距 */
   gap: number;
 }
@@ -101,6 +105,7 @@ export const paginateFlow = ({
   nodes,
   measurements,
   availableHeight,
+  availableHeightByPage,
   gap,
 }: PaginateFlowOptions): FlowPage[] => {
   const safeAvailableHeight = Math.max(0, availableHeight);
@@ -109,14 +114,22 @@ export const paginateFlow = ({
   let currentPage: FlowPage = {
     pageIndex: 0,
     usedHeight: 0,
+    availableHeight: Math.max(0, availableHeightByPage?.(0) ?? safeAvailableHeight),
     items: [],
   };
+  const getCurrentAvailableHeight = () =>
+    Math.max(0, availableHeightByPage?.(currentPage.pageIndex) ?? safeAvailableHeight);
 
   const pushPage = () => {
     if (currentPage.items.length > 0) pages.push(currentPage);
+    const nextPageIndex = pages.length;
     currentPage = {
-      pageIndex: pages.length,
+      pageIndex: nextPageIndex,
       usedHeight: 0,
+      availableHeight: Math.max(
+        0,
+        availableHeightByPage?.(nextPageIndex) ?? safeAvailableHeight,
+      ),
       items: [],
     };
   };
@@ -126,7 +139,7 @@ export const paginateFlow = ({
     const nodeGap = currentPage.items.length > 0 && !isContinuation ? safeGap : 0;
     if (
       currentPage.items.length > 0 &&
-      currentPage.usedHeight + nodeGap + item.height > safeAvailableHeight
+      currentPage.usedHeight + nodeGap + item.height > getCurrentAvailableHeight()
     ) {
       return false;
     }
@@ -174,8 +187,9 @@ export const paginateFlow = ({
       const wholeFragmentGap = currentPage.items.length > 0 && !isFirst ? 0 : safeGap;
       const wholeFragmentFits =
         currentPage.items.length === 0
-          ? wholeFragmentHeight <= safeAvailableHeight
-          : currentPage.usedHeight + wholeFragmentGap + wholeFragmentHeight <= safeAvailableHeight;
+          ? wholeFragmentHeight <= getCurrentAvailableHeight()
+          : currentPage.usedHeight + wholeFragmentGap + wholeFragmentHeight <=
+            getCurrentAvailableHeight();
       if (wholeFragmentFits && tryAddItem(wholeFragment, !isFirst)) break;
 
       // 不可拆节点或没有可用断点时，当前页放不下就换页，空页则允许溢出。
@@ -191,7 +205,7 @@ export const paginateFlow = ({
       const nodeGap = currentPage.items.length > 0 && !isFirst ? safeGap : 0;
       const availableForContent = Math.max(
         0,
-        safeAvailableHeight - currentPage.usedHeight - nodeGap - title,
+        getCurrentAvailableHeight() - currentPage.usedHeight - nodeGap - title,
       );
       const breakPoint =
         findBestBreakPoint(measurement, consumedHeight, availableForContent) ||
