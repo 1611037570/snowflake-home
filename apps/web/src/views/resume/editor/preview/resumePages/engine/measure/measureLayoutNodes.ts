@@ -23,18 +23,22 @@ export const measureLayoutNodes = (
 ): Map<string, MeasuredNode> => {
   const result = new Map<string, MeasuredNode>();
   const elements = Array.from(root.querySelectorAll<HTMLElement>(NODE_SELECTOR));
+  const elementById = new Map(elements.map((element) => [element.dataset.layoutNodeId || "", element]));
 
   nodes.forEach((node) => {
-    const element = elements.find((item) => item.dataset.layoutNodeId === node.id);
+    const element = elementById.get(node.id);
     if (!element) return;
     const rect = readRect(element);
+    const breakPointTypes = new Map(
+      node.breakPoints?.map((point) => [point.offset, point.type]) || [],
+    );
     const breakPoints = Array.from(
       element.querySelectorAll<HTMLElement>("[data-layout-breakpoint-offset]"),
     )
       .map((point) => {
         const offset = Number(point.dataset.layoutBreakpointOffset);
         const height = point.getBoundingClientRect().height;
-        return { offset, type: "textRange" as const, height };
+        return { offset, type: breakPointTypes.get(offset) || "textRange", height };
       })
       .filter((point) => Number.isFinite(point.offset) && point.height > 0);
 
@@ -42,16 +46,14 @@ export const measureLayoutNodes = (
       nodeId: node.id,
       width: rect.width,
       fullHeight: rect.height,
-      minHeight: Math.min(rect.height, node.breakPolicy.minHeight || rect.height),
+      minHeight: Math.max(rect.height, node.breakPolicy.minHeight || 0),
       breakPoints,
     });
   });
 
   nodes.forEach((node) => {
     if (!node.title) return;
-    const titleElement = root.querySelector<HTMLElement>(
-      `[data-layout-node-id="${CSS.escape(node.title.id)}"]`,
-    );
+    const titleElement = elementById.get(node.title.id);
     if (!titleElement) return;
     const rect = readRect(titleElement);
     result.set(node.title.id, {
