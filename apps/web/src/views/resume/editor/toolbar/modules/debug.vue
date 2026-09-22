@@ -39,19 +39,30 @@
           </SfCollapse>
         </SfTabPane>
         <SfTabPane value="data">
-          <SfCollapse v-model="activeNames">
-            <SfCollapseItem name="raw">
-              <template #title>原始数据 (currentData)</template>
+          <SfCollapse v-model="dataActiveNames">
+            <!-- 顶层 key 各自独立折叠，便于只看某一项数据 -->
+            <SfCollapseItem v-for="(value, key) in currentData ?? {}" :key="key" :name="key">
+              <template #title>{{ key }}</template>
+              <SfMdPreview
+                :modelValue="fieldMd(value)"
+                :editorId="`debug-raw-${key}`"
+                :codeFoldable="false"
+                class="bg-transparent! p-0!"
+              />
+            </SfCollapseItem>
+          </SfCollapse>
+        </SfTabPane>
+        <SfTabPane value="ui">
+          <SfCollapse v-model="uiActiveNames">
+            <SfCollapseItem name="ui">
+              <template #title>界面配置 (currentUI)</template>
               <div class="max-h-[50vh] overflow-y-auto">
-                <div v-for="(value, key) in currentData ?? {}" :key="key" class="mb-3">
-                  <div class="mb-3 font-medium">{{ key }}</div>
-                  <SfMdPreview
-                    :modelValue="fieldMd(value)"
-                    editorId="debug-raw"
-                    :codeFoldable="false"
-                    class="bg-transparent! p-0!"
-                  />
-                </div>
+                <SfMdPreview
+                  :modelValue="fieldMd(currentUI)"
+                  editorId="debug-ui"
+                  :codeFoldable="false"
+                  class="bg-transparent! p-0!"
+                />
               </div>
             </SfCollapseItem>
           </SfCollapse>
@@ -151,13 +162,16 @@ import confirm from "@/components/business/confirm";
 import Icon from "../components/icon.vue";
 
 const drawerVisible = ref(false);
-const activeNames = ref(["raw"]);
+// 数据 Tab 按顶层 key 各自折叠；界面配置数据量小，整块折叠即可
+const dataActiveNames = ref([]);
+const uiActiveNames = ref(["ui"]);
 
-// 顶部 Tab：性能 / 数据 / 配置 / 消息对话
+// 顶部 Tab：性能 / 数据 / 界面 / 配置 / 消息对话
 const activeTab = ref("performance");
 const tabList = [
   { name: "性能", value: "performance" },
   { name: "数据", value: "data" },
+  { name: "界面", value: "ui" },
   { name: "配置", value: "config" },
   { name: "消息对话", value: "chat" },
 ];
@@ -166,7 +180,7 @@ const performanceActiveNames = ref(["runtime", "env"]);
 
 // 获取原始数据
 const resumeStore = useResumeStore();
-const { currentData, currentConfig, runtimeConfig, system, runtimeData } =
+const { currentData, currentConfig, currentUI, runtimeConfig, system, runtimeData } =
   storeToRefs(resumeStore);
 
 // 运行性能数据展示：耗时统一按毫秒展示
