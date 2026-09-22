@@ -29,6 +29,49 @@ export interface ParsedRichText {
   textLength: number;
 }
 
+/** 按纯文本偏移截取安全富文本，并保留截取范围内的标签结构。 */
+export const sliceRichTextHtml = (html: string, start = 0, end?: number): string => {
+  const container = document.createElement("div");
+  container.innerHTML = DOMPurify.sanitize(html || "", sanitizeConfig);
+  const textNodes: Text[] = [];
+  const walker = document.createTreeWalker(container, NodeFilter.SHOW_TEXT);
+  let textNode: Node | null;
+  while ((textNode = walker.nextNode())) {
+    if (textNode.nodeValue) textNodes.push(textNode as Text);
+  }
+  const total = textNodes.reduce((sum, node) => sum + (node.nodeValue?.length || 0), 0);
+  const safeStart = Math.max(0, Math.min(start, total));
+  const safeEnd = Math.max(safeStart, Math.min(end ?? total, total));
+  if (safeStart >= safeEnd) return "";
+
+  const range = document.createRange();
+  let offset = 0;
+  let started = false;
+  let ended = false;
+  textNodes.forEach((node) => {
+    if (ended) return;
+    const length = node.nodeValue?.length || 0;
+    if (!started && offset + length >= safeStart) {
+      range.setStart(node, safeStart - offset);
+      started = true;
+    }
+    if (started && offset + length >= safeEnd) {
+      range.setEnd(node, safeEnd - offset);
+      ended = true;
+    }
+    offset += length;
+  });
+
+  if (!started) return "";
+  if (!ended) {
+    const lastNode = textNodes[textNodes.length - 1];
+    range.setEnd(lastNode, lastNode.nodeValue?.length || 0);
+  }
+  const result = document.createElement("div");
+  result.appendChild(range.cloneContents());
+  return result.innerHTML;
+};
+
 /** 预览富文本允许的标签和属性 */
 const sanitizeConfig = {
   ALLOWED_TAGS: ["p", "br", "strong", "b", "em", "i", "u", "ul", "ol", "li", "a", "span"],
