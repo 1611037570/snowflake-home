@@ -89,13 +89,19 @@ const fragmentContentStyle = computed(() => {
   if (props.decoration === "bottom") base.paddingTop = "0px";
   return base;
 });
+const contentOuterStyle = computed(() => ({
+  ...fragmentContentStyle.value,
+  ...(props.decoration === "middle" || props.decoration === "bottom"
+    ? { marginTop: "0px" }
+    : paragraphSpacingStyle.value),
+}));
 </script>
 
 <template>
   <template v-if="node.type === 'richText'">
     <ModuleContentContainer
       v-if="richTextHtml"
-      :style="[fragmentContentStyle, paragraphSpacingStyle]"
+      :style="contentOuterStyle"
       class="layout-rich-text"
       :class="`layout-rich-text--${decoration || 'full'}`"
     >

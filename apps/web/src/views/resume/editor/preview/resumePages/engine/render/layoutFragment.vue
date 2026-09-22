@@ -25,7 +25,7 @@ const emit = defineEmits<{ mouseenter: [moduleKey: string] }>();
   >
     <ModuleActions v-if="isEdit" :model-key="fragment.sourceModuleKey" />
     <Title
-      v-if="showModuleTitle || fragment.titlePayload"
+      v-if="node.sourceModuleKey !== 'user' && (showModuleTitle || fragment.titlePayload)"
       :module-key="fragment.sourceModuleKey"
     />
     <LayoutNodeContent
