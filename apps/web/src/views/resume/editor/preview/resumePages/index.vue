@@ -235,8 +235,15 @@ defineExpose({ rootEl: rootRef, measureEl: rootRef, moduleList, pages, pagePlan 
         :root-style="{ fontSize: fontStyle.fontSize, lineHeight: lineHeightStyle.lineHeight }"
         :on-measure-el="setLayoutMeasureEl"
       />
+      <div
+        v-if="pagePlan.status === 'invalid'"
+        class="flex min-h-30 flex-col items-center justify-center gap-3 rounded-3xl bg-white p-6 text-center text-sm text-red-600"
+      >
+        <span class="font-bold">页面布局配置有误</span>
+        <span v-for="warning in pagePlan.warnings" :key="warning.message">{{ warning.message }}</span>
+      </div>
       <!-- 实际渲染的分页内容，页面只消费 PagePlan 中的分片。 -->
-      <div ref="rootRef" class="relative flex flex-col gap-3">
+      <div v-else ref="rootRef" class="relative flex flex-col gap-3">
         <ResumePageShell
           v-for="page in visiblePages"
           class="cursor-pointer"

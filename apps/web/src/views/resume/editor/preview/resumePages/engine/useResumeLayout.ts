@@ -86,6 +86,34 @@ export const useResumeLayout = ({
     }),
   );
   const validation = computed(() => validateLayoutConfig(layout.value, activeModuleKeys.value));
+  const validationWarnings = computed(() => [
+    ...validation.value.missingModuleKeys.map((moduleKey) => ({
+      code: "missingColumn" as const,
+      message: `模块 ${moduleKey} 没有明确分配到栏位`,
+    })),
+    ...validation.value.duplicateModuleKeys.map((moduleKey) => ({
+      code: "invalidLayout" as const,
+      message: `模块 ${moduleKey} 被重复分配到多个栏位`,
+    })),
+    ...validation.value.unknownModuleKeys.map((moduleKey) => ({
+      code: "invalidLayout" as const,
+      message: `布局配置包含不存在的模块 ${moduleKey}`,
+    })),
+    ...validation.value.duplicateRegionIds.map((regionId) => ({
+      code: "invalidLayout" as const,
+      message: `页面区域编号重复：${regionId}`,
+    })),
+    ...validation.value.duplicateColumnIds.map((columnId) => ({
+      code: "invalidLayout" as const,
+      message: `页面栏编号重复：${columnId}`,
+    })),
+    ...(validation.value.invalidLayoutFields.length > 0
+      ? [{
+          code: "invalidLayout" as const,
+          message: `布局配置数值错误：${validation.value.invalidLayoutFields.join("、")}`,
+        }]
+      : []),
+  ]);
   const contentWidth = computed(
     () => RESUME_WIDTH - (Number(ui.value.paddingHorizontal) || 0) * 2,
   );
@@ -112,10 +140,7 @@ export const useResumeLayout = ({
         status: validation.value.valid ? "ready" : "invalid",
         version: fontReadyVersion.value,
         pages: [],
-        warnings: validation.value.missingModuleKeys.map((moduleKey) => ({
-          code: "missingColumn" as const,
-          message: `模块 ${moduleKey} 没有明确分配到栏位`,
-        })),
+        warnings: validationWarnings.value,
       };
     }
     if (!measureDone.value) {
