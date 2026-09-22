@@ -5,7 +5,7 @@ import { computed, useTemplateRef, watch } from "vue";
 import { getPreviewText } from "../i18n";
 import { PAGE_NUMBER_HEIGHT, RESUME_CONTAINER_HEIGHT, RESUME_CONTAINER_WIDTH } from "../constants";
 import { useResumePreviewContext } from "../previewContext";
-import { useSystemStore } from "@/stores";
+import { useResumeStore } from "@/stores";
 
 const props = defineProps({
   // 简历 ui（fontFamily / moduleSpacing）
@@ -38,8 +38,11 @@ const props = defineProps({
 });
 
 const rootEl = useTemplateRef("rootRef");
-// 调试模式下标注正文可用区，供排查分页与边距
-const { debugMode } = storeToRefs(useSystemStore());
+// 调试开关：开启后标注正文可用区，方便排查分页与边距
+const { system } = storeToRefs(useResumeStore());
+const showDebug = computed(() => !!system.value.showDebug);
+// 预览整体带 scale 缩放，线宽会被一起缩小，按足够醒目的宽度标注
+const debugOutlineStyle = { outline: "4px dashed var(--sf-error)", outlineOffset: "-1px" };
 // 底部空间由页尾与下边距共用：页尾更高时不再叠加下边距，下边距更大时只补足超出的部分
 const bottomSpacerHeight = computed(() => {
   const paddingBottom = parseFloat(props.styles.paddingStyle.paddingBottom) || 0;
@@ -86,8 +89,7 @@ watch(
     <!-- 调试模式下用 outline 标注正文可用区：outline 不参与布局，不会挤压内容，内容溢出时也会显示出来 -->
     <div
       class="flex flex-1 flex-col"
-      :class="{ 'outline-1 outline-offset-[-1px] outline-dashed outline-sf-theme-2': debugMode }"
-      :style="{ gap: `${ui.moduleSpacing}px` }"
+      :style="[{ gap: `${ui.moduleSpacing}px` }, showDebug ? debugOutlineStyle : undefined]"
     >
       <slot />
     </div>
