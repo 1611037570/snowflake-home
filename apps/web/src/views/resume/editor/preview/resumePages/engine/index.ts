@@ -7,5 +7,6 @@ export * from "./layout/validateLayoutConfig";
 export * from "./measure/types";
 export * from "./measure/measureLayoutNodes";
 export * from "./measure/useLayoutMeasurements";
+export * from "./useResumeLayout";
 export * from "./paginate/paginateFlow";
 export * from "./paginate/pagePlan";
