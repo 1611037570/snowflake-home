@@ -39,27 +39,25 @@ const toggleCategoryOption = (groupKey, optionKey) => {
           v-for="group in resumeTemplateCategoryGroups"
           :key="group.key"
           :plain="currentCategory !== group.key"
-          :round="false"
+          :round="true"
+          :icon="group.icon"
           @click="selectCategory(group.key)"
         >
-          <span class="flex items-center gap-3">
-            <SfIcon :icon="group.icon" size="5" />
-            {{ group.name }}
-          </span>
+          {{ group.name }}
         </SfButton>
       </nav>
       <div class="flex shrink-0 items-center gap-3">
         <span class="text-sm font-bold text-sf-text-2">预览尺寸</span>
         <SfButton
           :plain="previewSize !== 'default'"
-          :round="false"
+          :round="true"
           @click="selectPreviewSize('default')"
         >
           小图
         </SfButton>
         <SfButton
           :plain="previewSize !== 'small'"
-          :round="false"
+          :round="true"
           @click="selectPreviewSize('small')"
         >
           大图
