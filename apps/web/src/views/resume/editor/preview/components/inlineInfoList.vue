@@ -18,6 +18,7 @@ const infoSeparator = inject("infoSeparator", computed(() => defaultInfoSeparato
 const slots = useSlots();
 const separatorMark = computed(() => getInfoSeparatorMark(infoSeparator.value));
 
+// 每项保持行内元素，让文字按可用宽度自然续行。
 // 统一过滤空字段，避免切换分隔符后产生多余符号。
 const infoItems = computed(() =>
   props.items
@@ -27,32 +28,29 @@ const infoItems = computed(() =>
 </script>
 
 <template>
-  <div
-    class="flex max-w-full min-w-0 flex-wrap items-center"
-    :class="separatorMark ? '' : 'gap-3'"
-  >
-    <div
+  <span class="max-w-full min-w-0">
+    <template
       v-for="(item, index) in infoItems"
       :key="item.key || index"
-      class="flex min-w-0 items-center"
     >
       <span
-        v-if="index && separatorMark"
-        class="mx-3 shrink-0 text-sf-text-3"
+        v-if="index"
+        class="text-sf-text-3"
+        :class="separatorMark ? 'mx-3' : 'inline-block w-3'"
         aria-hidden="true"
       >
         {{ separatorMark }}
       </span>
       <slot v-if="$slots.default" :item="item" />
-      <div
+      <span
         v-else
         :class="{ 'font-bold': item.emphasis }"
         :style="item.emphasis ? fontValue(1) : undefined"
       >
-        <ResumeField :model-value="item.value" />
-      </div>
-    </div>
-  </div>
+        <ResumeField inline :model-value="item.value" />
+      </span>
+    </template>
+  </span>
 </template>
 
 <style lang="scss" scoped></style>

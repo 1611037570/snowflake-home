@@ -15,6 +15,10 @@ const props = defineProps({
     type: String,
     default: "",
   },
+  inline: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 const fieldValue = computed(() => model.value);
@@ -32,7 +36,11 @@ const hasContent = computed(() => {
   <template v-if="html && hasContent">
     <FieldContent :content="fieldValue" :html="html" />
   </template>
-  <div v-else-if="hasContent" class="relative max-w-full min-w-0 break-words">
+  <component
+    v-else-if="hasContent"
+    :is="inline ? 'span' : 'div'"
+    class="relative max-w-full min-w-0 break-words"
+  >
     <FieldContent :content="fieldValue" :html="html" :class="boxClass" />
-  </div>
+  </component>
 </template>
