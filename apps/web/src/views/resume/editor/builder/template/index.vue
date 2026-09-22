@@ -25,7 +25,7 @@ const isActive = (id) => (currentUI.value?.themeTemplate ?? "default") === id;
 
 // 应用风格：修改当前简历主题，预览层响应式渲染
 const applyTemplate = (template) => {
-  Object.assign(currentUI.value, structuredClone(template.ui));
+  Object.assign(currentUI.value, structuredClone(template.item.ui));
 };
 </script>
 
