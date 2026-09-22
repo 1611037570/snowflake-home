@@ -17,6 +17,7 @@ import { nextTick, onMounted, onUnmounted, watch, type ComputedRef, type Ref } f
 import { ElMessage } from "element-plus";
 import eventBus from "@/utils/modules/eventBus";
 import { useResumeStore } from "@/stores";
+import type { PagePlan } from "./engine/paginate/pagePlan";
 import {
   defaultFontSize,
   defaultLineHeight,
@@ -93,10 +94,8 @@ const floorByStep = (value: number, step: number) => {
 interface UseSmartOnePageOptions {
   /** 用户设置的 ui（响应式） */
   ui: ComputedRef<Record<string, any>>;
-  /** 预览层测量结果（模块+行高），由编辑态 ResumePages 实例传入 */
-  moduleList: Ref<any[]>;
-  /** 预览层真实分页结果，判定是否已压到一页 */
-  pages: ComputedRef<any[]>;
+  /** 预览层统一页面计划，判定是否已压到一页并等待重新排版 */
+  pagePlan: ComputedRef<PagePlan>;
   /** 压缩结果写入的目标 ui（编辑态简历 store 的 currentUI） */
   currentUI: Ref<Record<string, any>>;
   /** 编辑态才注册工具栏事件，其余模式（缩略图/全屏预览）不注册 */
@@ -107,8 +106,7 @@ interface UseSmartOnePageOptions {
 
 export const useSmartOnePage = ({
   ui,
-  moduleList,
-  pages,
+  pagePlan,
   currentUI,
   isEdit,
   adjustable = defaultOnePageAdjustable,
@@ -140,7 +138,7 @@ export const useSmartOnePage = ({
         resolve();
       };
       stopWatch = watch(
-        moduleList,
+        pagePlan,
         finish,
         { flush: "post" },
       );
@@ -211,7 +209,7 @@ export const useSmartOnePage = ({
       if (!isCurrentTask()) return null;
       await nextTick();
       if (!isCurrentTask()) return null;
-      return pages.value.length;
+      return pagePlan.value.pages.length;
     };
 
     // 回退到压缩前的参数，避免失败或取消后留在半压缩状态
@@ -221,7 +219,7 @@ export const useSmartOnePage = ({
 
     try {
       if (!isCurrentTask()) return;
-      if (pages.value.length === 1) {
+      if (pagePlan.value.pages.length === 1) {
         ElMessage.success("简历已压缩为一页");
         return;
       }

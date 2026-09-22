@@ -4,7 +4,6 @@ import { buildLayoutNodes } from "./adapter/buildLayoutNodes";
 import { createResumeLayout } from "./layout/createResumeLayout";
 import { validateLayoutConfig } from "./layout/validateLayoutConfig";
 import { useLayoutMeasurements } from "./measure/useLayoutMeasurements";
-import type { MeasuredNode } from "./measure/types";
 import { buildPagePlan } from "./paginate/pagePlan";
 import { paginateFlow } from "./paginate/paginateFlow";
 import type { PagePlan } from "./paginate/pagePlan";
@@ -26,29 +25,6 @@ export interface UseResumeLayoutOptions {
   /** 字体加载版本。 */
   fontReadyVersion: Ref<number>;
 }
-
-/** 将新分页计划转换为旧智能一页功能暂时需要的模块高度快照。 */
-const buildModuleList = (
-  nodes: LayoutNode[],
-  measurements: ReadonlyMap<string, MeasuredNode>,
-) => {
-  const list = new Map<string, any>();
-  nodes.forEach((node) => {
-    const measurement = measurements.get(node.id);
-    if (!measurement) return;
-    const current = list.get(node.sourceModuleKey) || {
-      moduleKey: node.sourceModuleKey,
-      rows: [],
-    };
-    current.rows.push({
-      height: measurement.fullHeight,
-      margin: 0,
-      index: current.rows.length,
-    });
-    list.set(node.sourceModuleKey, current);
-  });
-  return [...list.values()];
-};
 
 /**
  * 新预览排版接线层。
@@ -188,8 +164,6 @@ export const useResumeLayout = ({
     );
     return result;
   });
-  const moduleList = computed(() => buildModuleList(nodes.value, measurements.value));
-
   return {
     nodes,
     nodeMap,
@@ -199,7 +173,7 @@ export const useResumeLayout = ({
     measureDone,
     pagePlan,
     firstFragmentIds,
-    moduleList,
+    moduleKeys: activeModuleKeys,
     contentWidth,
   };
 };
