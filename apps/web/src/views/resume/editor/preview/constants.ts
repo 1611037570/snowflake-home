@@ -11,13 +11,15 @@ export const RESUME_HEIGHT = 1123;
 export const PAGE_NUMBER_HEIGHT = 36;
 
 /**
- * 页面可用内容高度：页面高 - 上下页边距（顶部与底部各一份） - 页码区高
+ * 页面可用内容高度：页面高 - 上边距 - 底部占用
+ * 底部占用取「下边距」与「页尾高度」中的较大者：页尾更高时由页尾占满底部，
+ * 下边距更大时只补足超出的部分，避免页尾与下边距各扣一次把内容区压两次
  * 分页算法与智能一页共用同一公式，避免两处独立维护导致分页判定不一致
  * @param paddingVertical - 上下页边距（px）
  * @param showPageNumber - 是否渲染页码区
  */
 export const getContentHeight = (paddingVertical: number, showPageNumber: boolean): number =>
-  RESUME_HEIGHT - paddingVertical * 2 - (showPageNumber ? PAGE_NUMBER_HEIGHT : 0);
+  RESUME_HEIGHT - paddingVertical - Math.max(paddingVertical, showPageNumber ? PAGE_NUMBER_HEIGHT : 0);
 /** PDF A4 页面宽度（mm） */
 export const PDF_PAGE_WIDTH = 210;
 /** PDF A4 页面高度（mm） */

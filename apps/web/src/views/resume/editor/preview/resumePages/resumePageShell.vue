@@ -37,6 +37,12 @@ const props = defineProps({
 });
 
 const rootEl = useTemplateRef("rootRef");
+// 底部空间由页尾与下边距共用：页尾更高时不再叠加下边距，下边距更大时只补足超出的部分
+const bottomSpacerHeight = computed(() => {
+  const paddingBottom = parseFloat(props.styles.paddingStyle.paddingBottom) || 0;
+  const footerHeight = props.showPageNumber ? PAGE_NUMBER_HEIGHT : 0;
+  return `${Math.max(0, paddingBottom - footerHeight)}px`;
+});
 // 简历展示语言：与模块标题语言包保持一致
 const { lang: previewLang } = useResumePreviewContext();
 const footerText = computed(() => {
@@ -77,8 +83,8 @@ watch(
     <div class="flex flex-1 flex-col" :style="{ gap: `${ui.moduleSpacing}px` }">
       <slot />
     </div>
-    <!-- 底边距只保留正文可用空间，页尾始终贴合页面底部 -->
-    <div class="shrink-0" :style="{ height: styles.paddingStyle.paddingBottom }" />
+    <!-- 底部空间与页尾共用：只补足下边距超出页尾高度的部分 -->
+    <div class="shrink-0" :style="{ height: bottomSpacerHeight }" />
     <!-- 页码区固定不伸缩：内容超高时只触发分页，不压缩页脚，保证页码位置恒定 -->
     <div
       v-if="showPageNumber"
