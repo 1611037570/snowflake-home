@@ -37,6 +37,11 @@ const props = defineProps({
     type: String,
     default: "返回模板列表",
   },
+  // 模板预览只展示第一页，草稿预览仍保留完整分页
+  singlePage: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 const emit = defineEmits(["close", "action"]);
@@ -113,7 +118,7 @@ onBeforeUnmount(() => {
               class="absolute top-0 left-0 origin-top-left"
               :style="{ transform: `scale(${scale})` }"
             >
-              <ResumePages :item="item" mode="preview" />
+              <ResumePages :item="item" :mode="singlePage ? 'single' : 'preview'" />
             </div>
           </div>
         </div>

@@ -37,7 +37,7 @@ const props = defineProps({
     type: Array,
     default: undefined,
   },
-  // 场景模式：'editor' 编辑器交互预览（默认），'preview' 全屏只读，'thumb' 缩略图只读（仅渲染第一页）
+  // 场景模式：'editor' 编辑器交互预览（默认），'preview' 全屏只读，'thumb' 缩略图只读，'single' 只读单页
   mode: {
     type: String,
     default: "editor",
@@ -46,6 +46,8 @@ const props = defineProps({
 
 // 缩略图模式：仅渲染第一页，测量完成后冻结行数据
 const isThumb = computed(() => props.mode === "thumb");
+// 单页预览复用正常分页结果，仅渲染第一页，避免内容超出页面后被直接裁掉
+const isSinglePage = computed(() => props.mode === "single");
 // 编辑态标记：直接以 mode 判断编辑场景，仅编辑态开放模块选择交互
 const isEdit = computed(() => props.mode === "editor");
 
@@ -247,14 +249,14 @@ defineExpose({ rootEl: rootRef, measureEl: measureRef, moduleList, pages });
       <!-- 实际渲染的分页内容 -->
       <div ref="rootRef" class="relative flex flex-col gap-3">
         <ResumePageShell
-          v-for="(pageSlices, pageIndex) in pages"
+          v-for="(pageSlices, pageIndex) in isSinglePage ? pages.slice(0, 1) : pages"
           class="cursor-pointer"
           :key="pageIndex"
           :ui="ui"
           :styles="{ paddingStyle, fontStyle, lineHeightStyle }"
           :show-page-number="showPageNumber"
           :page-index="pageIndex"
-          :page-count="pages.length"
+          :page-count="isSinglePage ? 1 : pages.length"
           @click="handlePageClick"
           :class="[
             `${uid}-page-${pageIndex}`,
