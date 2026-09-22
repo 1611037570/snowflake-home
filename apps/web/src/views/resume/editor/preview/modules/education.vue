@@ -1,5 +1,5 @@
 <script setup>
-import { computed, inject } from "vue";
+import { computed } from "vue";
 import ResumeField from "../components/resumeField/index.vue";
 import Title from "../components/title/index.vue";
 import { isContentEmpty } from "../modules/validData";
@@ -7,19 +7,21 @@ import { getTime } from "../../utils";
 import { getValidData } from "./validData";
 import ItemTags from "../components/itemTags.vue";
 import InlineInfoList from "../components/inlineInfoList.vue";
+import { useResumePreviewContext } from "../previewContext";
 
-// 从上层注入获取原始简历数据
-const previewData = inject("previewData");
-
-const fontValue = inject("fontValue");
-const lineHeightValue = inject("lineHeightValue");
-const paragraphSpacingStyle = inject("paragraphSpacingStyle");
-const innerSpacingStyle = inject("innerSpacingStyle");
-const linkUnderline = inject("linkUnderline", computed(() => false));
-// 日期样式（2026.9 / 2026年9月），由设计配置注入
-const dateStyle = inject("dateStyle");
-// 日期位置（左/右），由设计配置注入
-const datePosition = inject("datePosition");
+// 教育经历模块统一读取预览共享上下文。
+const {
+  data: previewData,
+  theme: {
+    fontValue,
+    lineHeightValue,
+    paragraphSpacingStyle,
+    innerSpacingStyle,
+    linkUnderline,
+    dateStyle,
+    datePosition,
+  },
+} = useResumePreviewContext();
 const dateLeft = computed(() => datePosition?.value === "left");
 
 // 数组记录统一由 getValidData 过滤并提取业务内容

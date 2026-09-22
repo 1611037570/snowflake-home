@@ -1,8 +1,9 @@
 <script setup>
-import { computed, inject } from "vue";
+import { computed } from "vue";
 import ResumeField from "../components/resumeField/index.vue";
 import Title from "../components/title/index.vue";
 import { getValidData } from "./validData";
+import { useResumePreviewContext } from "../previewContext";
 
 // 通用富文本单块：供 skill、个人优势等「标题 + 富文本」模块复用，结构对齐 expItemList
 const props = defineProps({
@@ -16,12 +17,11 @@ const props = defineProps({
   },
 });
 
-// 从上层注入获取原始简历数据
-const previewData = inject("previewData");
-
-const fontValue = inject("fontValue");
-const lineHeightValue = inject("lineHeightValue");
-const paragraphSpacingStyle = inject("paragraphSpacingStyle");
+// 富文本模块统一读取预览共享上下文。
+const {
+  data: previewData,
+  theme: { fontValue, lineHeightValue, paragraphSpacingStyle },
+} = useResumePreviewContext();
 
 // 富文本内容统一存放于 data.content（与列表项 content 字段保持一致）
 const contentData = computed(() =>

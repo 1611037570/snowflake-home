@@ -1,18 +1,16 @@
 <script setup>
-import { computed, inject } from "vue";
+import { computed } from "vue";
 import ResumeField from "../components/resumeField/index.vue";
 import Title from "../components/title/index.vue";
 import { getValidData } from "./validData";
+import { useResumePreviewContext } from "../previewContext";
 
-// 从上层注入获取原始简历数据
-const previewData = inject("previewData");
-
-const fontValue = inject("fontValue");
-const lineHeightValue = inject("lineHeightValue");
-const paragraphSpacingStyle = inject("paragraphSpacingStyle");
+// 荣誉模块统一读取预览共享上下文。
+const {
+  data: previewData,
+  theme: { fontValue, lineHeightValue, paragraphSpacingStyle, themeColor, themeColorSoft },
+} = useResumePreviewContext();
 // 简历主题色与其浅色派生底：荣誉证书配色跟随用户选择的主题
-const themeColor = inject("themeColor");
-const themeColorSoft = inject("themeColorSoft");
 
 const honors = computed(() => {
   const list = previewData.value?.honor?.list || [];

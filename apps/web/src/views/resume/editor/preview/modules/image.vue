@@ -1,21 +1,18 @@
 <script setup>
-import { computed, inject } from "vue";
+import { computed } from "vue";
 import ResumeField from "../components/resumeField/index.vue";
 import Title from "../components/title/index.vue";
 import { getPreviewTitle } from "../i18n";
 import { getValidData } from "./validData";
 import ItemTitle from "../components/itemTitle.vue";
+import { useResumePreviewContext } from "../previewContext";
 
-// 从上层注入获取原始简历数据
-const previewData = inject("previewData");
-
-const fontValue = inject("fontValue");
-const lineHeightValue = inject("lineHeightValue");
-const paragraphSpacingStyle = inject("paragraphSpacingStyle");
-const previewLang = inject(
-  "previewLang",
-  computed(() => "zh"),
-);
+// 图片模块统一读取预览共享上下文。
+const {
+  data: previewData,
+  lang: previewLang,
+  theme: { fontValue, lineHeightValue, paragraphSpacingStyle },
+} = useResumePreviewContext();
 const imageAlt = computed(() => getPreviewTitle("image", previewLang.value));
 
 // 数组记录统一由 getValidData 过滤并提取业务内容
