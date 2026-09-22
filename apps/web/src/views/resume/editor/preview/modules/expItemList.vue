@@ -8,6 +8,7 @@ import { isContentEmpty } from "../modules/validData";
 import ItemTitle from "../components/itemTitle.vue";
 import ItemTags from "../components/itemTags.vue";
 import InlineInfoList from "../components/inlineInfoList.vue";
+import ModuleContentContainer from "../components/moduleContentContainer.vue";
 import { useResumePreviewContext } from "../previewContext";
 
 // 属性：模块标识、标题、数据 key
@@ -66,7 +67,8 @@ const hasItemHeader = (item) => {
     <!-- 标题栏 -->
     <Title :module-key="moduleName"></Title>
     <!-- 内容区 -->
-    <template v-for="(item, index) in list" :key="index">
+    <ModuleContentContainer v-if="list.length">
+      <template v-for="(item, index) in list" :key="index">
       <!-- 项目、工作与自定义经历按名称、岗位信息、标签链接分层展示，避免首行信息过多 -->
       <div v-if="hasStructuredLayout && hasItemHeader(item)" :style="paragraphSpacingStyle">
         <div class="flex flex-wrap items-center justify-between gap-3">
@@ -167,7 +169,8 @@ const hasItemHeader = (item) => {
         v-if="!isContentEmpty(item.content)"
         :style="hasItemHeader(item) ? innerSpacingStyle : paragraphSpacingStyle"
       />
-    </template>
+      </template>
+    </ModuleContentContainer>
   </div>
 </template>
 

@@ -21,12 +21,22 @@ export interface RowInfo {
   height: number; // 行高度（offsetHeight + marginTop + marginBottom）
   margin: number; // 行外边距，固定不随字号缩放，供按比例估算时保留固定部分
   index: number; // 行在模块内的序号（从 0 开始，用于分页裁剪 :nth-child）
+  selector: string; // 行相对 .resume-row 的选择器，用于裁剪嵌套内容容器内的行
+}
+
+/** 内容容器在模块行中的范围与内边距 */
+export interface ContentContainerInfo {
+  startIndex: number;
+  endIndex: number;
+  paddingTop: number;
+  paddingBottom: number;
 }
 
 /** 单个"模块"的信息（.resume-module-wrapper 包装元素） */
 export interface ModuleInfo {
   moduleKey: string; // 模块类型 key（来自 data-module，如 "user"、"custom_xxx"）
   rows: RowInfo[]; // 模块下的所有行
+  contentContainer?: ContentContainerInfo;
 }
 
 /** 判断两次测量结果的结构与行高是否发生变化（直接复用上一次 moduleList，避免额外快照冗余） */
@@ -36,8 +46,21 @@ const isSnapshotChanged = (prev: ModuleInfo[] | null, curr: ModuleInfo[]): boole
     const p = prev[i]!;
     const c = curr[i]!;
     if (p.moduleKey !== c.moduleKey || p.rows.length !== c.rows.length) return true;
+    if (
+      p.contentContainer?.startIndex !== c.contentContainer?.startIndex ||
+      p.contentContainer?.endIndex !== c.contentContainer?.endIndex ||
+      p.contentContainer?.paddingTop !== c.contentContainer?.paddingTop ||
+      p.contentContainer?.paddingBottom !== c.contentContainer?.paddingBottom
+    ) {
+      return true;
+    }
     for (let j = 0; j < c.rows.length; j++) {
-      if (p.rows[j]!.height !== c.rows[j]!.height) return true;
+      if (
+        p.rows[j]!.height !== c.rows[j]!.height ||
+        p.rows[j]!.selector !== c.rows[j]!.selector
+      ) {
+        return true;
+      }
     }
   }
   return false;
@@ -109,19 +132,65 @@ export function useRowInfo(
   const measureModule = (wrapper: HTMLElement): ModuleInfo => {
     // 统一包装结构下，实际分页行位于外层包装直属的 .resume-row 中；旧结构仍以包装自身为准。
     const moduleContent = wrapper.querySelector<HTMLElement>(":scope > .resume-row") || wrapper;
-    const rows = Array.from(moduleContent.children) as HTMLElement[];
+    const rowEntries: Array<{ element: HTMLElement; selector: string }> = [];
+    let contentContainer: ContentContainerInfo | undefined;
+    Array.from(moduleContent.children).forEach((element, index) => {
+      const child = element as HTMLElement;
+      if (child.classList.contains("module-content-container")) {
+        const startIndex = rowEntries.length;
+        Array.from(child.children).forEach((nested, nestedIndex) => {
+          rowEntries.push({
+            element: nested as HTMLElement,
+            selector: `> .module-content-container > :nth-child(${nestedIndex + 1})`,
+          });
+        });
+        const endIndex = rowEntries.length - 1;
+        if (endIndex >= startIndex) {
+          const style = window.getComputedStyle(child);
+          contentContainer = {
+            startIndex,
+            endIndex,
+            paddingTop: parseFloat(style.paddingTop) || 0,
+            paddingBottom: parseFloat(style.paddingBottom) || 0,
+          };
+        }
+        return;
+      }
+      rowEntries.push({
+        element: child,
+        selector: `> :nth-child(${index + 1})`,
+      });
+    });
+    const rows = rowEntries.map(({ element }) => element);
     const heights = batchRowHeights(rows);
     // 外边距单独留存：字号缩放估算需要区分随字号缩放的文字部分
     const margins = rows.map(getRowMargin);
+    if (contentContainer) {
+      const container = moduleContent.querySelector<HTMLElement>(":scope > .module-content-container");
+      if (container && rows.length > 0) {
+        const containerStyle = window.getComputedStyle(container);
+        const marginTop = parseFloat(containerStyle.marginTop) || 0;
+        const marginBottom = parseFloat(containerStyle.marginBottom) || 0;
+        heights[contentContainer.startIndex] =
+          heights[contentContainer.startIndex]! + marginTop;
+        heights[contentContainer.endIndex] =
+          heights[contentContainer.endIndex]! + marginBottom;
+      }
+    }
     // 行高和锚定模块真实渲染高度，消除逐行整数取整累积误差
-    alignHeights(heights, moduleContent.offsetHeight);
+    const contentPadding = contentContainer
+      ? contentContainer.paddingTop + contentContainer.paddingBottom
+      : 0;
+    alignHeights(heights, Math.max(moduleContent.offsetHeight - contentPadding, 0));
     return {
       moduleKey: wrapper.dataset.module || "",
       rows: rows.map((_, index) => ({
         height: heights[index]!,
         margin: margins[index]!,
         index,
+        selector: rowEntries[index]!.selector,
       })),
+      contentContainer,
     };
   };
 

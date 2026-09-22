@@ -2,6 +2,7 @@
 import { computed } from "vue";
 import ResumeField from "../components/resumeField/index.vue";
 import Title from "../components/title/index.vue";
+import ModuleContentContainer from "../components/moduleContentContainer.vue";
 import { getValidData } from "./validData";
 import { useResumePreviewContext } from "../previewContext";
 
@@ -33,9 +34,9 @@ const content = computed(() => contentData.value?.content);
 <template>
   <div class="resume-row" :data-module="moduleName" :style="[lineHeightValue(), fontValue()]">
     <Title :module-key="moduleName" />
-    <div v-if="contentData" :style="paragraphSpacingStyle">
+    <ModuleContentContainer v-if="contentData" :style="paragraphSpacingStyle">
       <ResumeField :model-value="content" html />
-    </div>
+    </ModuleContentContainer>
   </div>
 </template>
 

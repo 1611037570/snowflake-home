@@ -5,6 +5,7 @@ import ResumeField from "../components/resumeField/index.vue";
 import { getValidData } from "./validData";
 import InlineInfoList from "../components/inlineInfoList.vue";
 import { useResumePreviewContext } from "../previewContext";
+import ModuleContentContainer from "../components/moduleContentContainer.vue";
 
 // 视频作品模块统一读取预览共享上下文。
 const {
@@ -21,7 +22,8 @@ const video = computed(() => getValidData(previewData.value?.video?.list || []))
     <!-- 标题栏 -->
     <Title module-key="video"></Title>
     <!-- 视频作品：右侧统一展示可直接点击的原始链接，二维码暂时保留注释 -->
-    <template v-for="(item, index) in video" :key="index">
+    <ModuleContentContainer v-if="video.length">
+      <template v-for="(item, index) in video" :key="index">
       <div
         :style="paragraphSpacingStyle"
         class="flex h-auto max-w-full min-w-0 flex-wrap items-center justify-between gap-3"
@@ -43,7 +45,8 @@ const video = computed(() => getValidData(previewData.value?.video?.list || []))
           <!-- <div class="mt-3 ml-auto h-16 w-16"><SfQrcode :value="item.url" /></div> -->
         </div>
       </div>
-    </template>
+      </template>
+    </ModuleContentContainer>
   </div>
 </template>
 

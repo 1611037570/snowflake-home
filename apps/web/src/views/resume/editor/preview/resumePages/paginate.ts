@@ -5,7 +5,7 @@
  * 纯函数无 DOM/响应式依赖，可独立单测，由 useResumePages 接线调用。
  */
 import { getContentHeight } from "../constants";
-import type { ModuleInfo } from "./useRowInfo";
+import type { ContentContainerInfo, ModuleInfo } from "./useRowInfo";
 
 /** 单页内一个模块的切片信息 */
 export interface PageSlice {
@@ -16,6 +16,12 @@ export interface PageSlice {
   visibleEnd: number;
   /** 模块总行数，用于判断区间之后是否还有隐藏行 */
   totalRows: number;
+  /** 本页实际可见行的相对选择器 */
+  rowSelectors: string[];
+  /** 模块内容容器的行范围，用于分页后隐藏空容器 */
+  contentContainer?: ContentContainerInfo;
+  /** 内容容器在本页的分片形态 */
+  contentFragment?: "first" | "middle" | "last" | "single";
 }
 
 /** 分页入参 */
@@ -53,6 +59,31 @@ export const paginateModules = ({
   let sliceStart = -1;
   let sliceEnd = -1;
 
+  // 内容容器按本页可见行范围拆成首段、中段、末段或单页分片。
+  const getContentFragment = (
+    group: ModuleInfo,
+    start: number,
+    end: number,
+  ): PageSlice["contentFragment"] => {
+    const container = group.contentContainer;
+    if (!container || end < container.startIndex || start > container.endIndex) return undefined;
+    const starts = start <= container.startIndex;
+    const ends = end >= container.endIndex;
+    if (starts && ends) return "single";
+    if (starts) return "first";
+    if (ends) return "last";
+    return "middle";
+  };
+
+  // 内容容器的内边距只在对应分片的首行或末行计入分页高度。
+  const getRowHeight = (group: ModuleInfo, row: ModuleInfo["rows"][number]): number => {
+    const container = group.contentContainer;
+    let height = row.height;
+    if (container && row.index === container.startIndex) height += container.paddingTop;
+    if (container && row.index === container.endIndex) height += container.paddingBottom;
+    return height;
+  };
+
   // 把当前切片提交为页上的一个模块块
   const commitSlice = () => {
     if (!sliceModule || sliceEnd < 0) return;
@@ -62,6 +93,9 @@ export const paginateModules = ({
       visibleStart: sliceStart,
       visibleEnd: sliceEnd,
       totalRows: sliceModule.rows.length,
+      rowSelectors: sliceModule.rows.map((row) => row.selector),
+      contentContainer: sliceModule.contentContainer,
+      contentFragment: getContentFragment(sliceModule, sliceStart, sliceEnd),
     });
     sliceModule = null;
     sliceEnd = -1;
@@ -105,14 +139,14 @@ export const paginateModules = ({
   for (const group of moduleList) {
     if (group.moduleKey === "user" && group.rows.length > 0) {
       // user 模块整体不可拆分，防止跨页切分
-      const height = group.rows.reduce((sum, row) => sum + row.height, 0);
+      const height = group.rows.reduce((sum, row) => sum + getRowHeight(group, row), 0);
       const firstRow = group.rows[0]!;
       const lastRow = group.rows[group.rows.length - 1]!;
       if (!placeRows(group, firstRow.index, lastRow.index, height)) return result;
       continue;
     }
     for (const row of group.rows) {
-      if (!placeRows(group, row.index, row.index, row.height)) return result;
+      if (!placeRows(group, row.index, row.index, getRowHeight(group, row))) return result;
     }
   }
 
@@ -128,20 +162,56 @@ export const buildPageStyle = (pageSlices: PageSlice[], pageIndex: number, uid: 
   return pageSlices
     .flatMap((slice) => {
       const base = `.${uid}-page-${pageIndex} .resume-module-wrapper[data-module="${slice.moduleKey}"] > .resume-row`;
+      const container = `${base} > .module-content-container`;
       const rules: string[] = [];
       // 隐藏区间之前的行
       if (slice.visibleStart > 0) {
-        rules.push(`${base} > :nth-child(-n+${slice.visibleStart}) { display: none !important; }`);
+        rules.push(
+          slice.rowSelectors
+            .slice(0, slice.visibleStart)
+            .map((selector) => `${base}${selector}`)
+            .join(",\n") + " { display: none !important; }",
+        );
       }
       // 隐藏区间之后的行
       if (slice.visibleEnd < slice.totalRows - 1) {
         rules.push(
-          `${base} > :nth-child(n+${slice.visibleEnd + 2}) { display: none !important; }`,
+          slice.rowSelectors
+            .slice(slice.visibleEnd + 1)
+            .map((selector) => `${base}${selector}`)
+            .join(",\n") + " { display: none !important; }",
         );
+      }
+      if (slice.contentContainer && !slice.contentFragment) {
+        rules.push(`${container} { display: none !important; }`);
+      } else if (slice.contentFragment && slice.contentFragment !== "single") {
+        rules.push(...buildContentFragmentRules(container, slice.contentFragment));
       }
       return rules;
     })
     .join("\n");
+};
+
+const buildContentFragmentRules = (
+  container: string,
+  fragment: Exclude<PageSlice["contentFragment"], undefined | "single">,
+): string[] => {
+  if (fragment === "first") {
+    return [
+      `${container} { border-radius: var(--module-content-radius) var(--module-content-radius) 0 0 !important; padding-bottom: 0 !important; }`,
+      `${container}::after { border-bottom: 0; border-radius: var(--module-content-radius) var(--module-content-radius) 0 0; }`,
+    ];
+  }
+  if (fragment === "middle") {
+    return [
+      `${container} { border-radius: 0 !important; padding-top: 0 !important; padding-bottom: 0 !important; }`,
+      `${container}::after { border-top: 0; border-bottom: 0; border-radius: 0; }`,
+    ];
+  }
+  return [
+    `${container} { border-radius: 0 0 var(--module-content-radius) var(--module-content-radius) !important; padding-top: 0 !important; }`,
+    `${container}::after { border-top: 0; border-radius: 0 0 var(--module-content-radius) var(--module-content-radius); }`,
+  ];
 };
 
 /** 汇总全部页的裁剪样式文本 */

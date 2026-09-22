@@ -4,6 +4,7 @@ import ResumeField from "../components/resumeField/index.vue";
 import Title from "../components/title/index.vue";
 import { getValidData } from "./validData";
 import { useResumePreviewContext } from "../previewContext";
+import ModuleContentContainer from "../components/moduleContentContainer.vue";
 
 // 荣誉模块统一读取预览共享上下文。
 const {
@@ -23,7 +24,7 @@ const honors = computed(() => {
     <!-- 标题栏 -->
     <Title module-key="honor"></Title>
     <!-- 荣誉证书名称流式排列：容器放不下时才换行 -->
-    <div
+    <ModuleContentContainer
       v-if="honors.length"
       :style="paragraphSpacingStyle"
       class="flex max-w-full min-w-0 flex-wrap items-center gap-3"
@@ -36,7 +37,7 @@ const honors = computed(() => {
       >
         <ResumeField :model-value="item.name" />
       </div>
-    </div>
+    </ModuleContentContainer>
   </div>
 </template>
 

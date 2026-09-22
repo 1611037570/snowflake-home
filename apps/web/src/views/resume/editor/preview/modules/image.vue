@@ -6,6 +6,7 @@ import { getPreviewTitle } from "../i18n";
 import { getValidData } from "./validData";
 import ItemTitle from "../components/itemTitle.vue";
 import { useResumePreviewContext } from "../previewContext";
+import ModuleContentContainer from "../components/moduleContentContainer.vue";
 
 // 图片模块统一读取预览共享上下文。
 const {
@@ -31,7 +32,8 @@ const images = computed(() => getValidData(previewData.value?.image?.list || [])
       <Title module-key="image"></Title>
     </div>
     <!-- 单个作品：图片在上、名称在下，暂不展示描述 -->
-    <template v-for="(item, index) in images" :key="index">
+    <ModuleContentContainer v-if="images.length" class="flex w-full flex-wrap items-start gap-x-3">
+      <template v-for="(item, index) in images" :key="index">
       <div
         :style="[paragraphSpacingStyle, { width: `${item.size ?? 50}%` }]"
         class="flex min-w-0 flex-col gap-1"
@@ -40,7 +42,8 @@ const images = computed(() => getValidData(previewData.value?.image?.list || [])
         <ItemTitle :name="item.name" />
         <ResumeField class="text-center" :model-value="item.desc" />
       </div>
-    </template>
+      </template>
+    </ModuleContentContainer>
   </div>
 </template>
 

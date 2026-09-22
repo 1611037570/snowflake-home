@@ -54,6 +54,7 @@ export interface ResumeTheme {
   themeColorLine: ComputedRef<string>;
   themeColorContrast: ComputedRef<string>;
   themeTemplate: ComputedRef<any>;
+  moduleContentStyle: ComputedRef<Record<string, string>>;
   userInfoMode: ComputedRef<string>;
   userInfoLayout: ComputedRef<string>;
   avatarPosition: ComputedRef<string>;
@@ -152,6 +153,20 @@ export const useResumeTheme = (ui: ComputedRef<ResumeUi>): ResumeTheme => {
     isLightColor(themeColor.value) ? "#1f2937" : "#ffffff",
   );
   const themeTemplate = computed(() => ui.value.themeTemplate);
+  // 内容容器默认仅在预览运行时生效，不写入用户简历数据；空边框颜色表示不绘制边框
+  const moduleContentStyle = computed(() => {
+    const content = ui.value.moduleContent || {};
+    const borderColor = content.borderColor ?? "#dbe4ee";
+    const radius = content.radius ?? "12px";
+    const padding = Number.isFinite(Number(content.padding)) ? Number(content.padding) : 12;
+    return {
+      backgroundColor: content.background ?? "pink",
+      borderRadius: radius,
+      padding: `${padding}px`,
+      "--module-content-border-color": borderColor || "transparent",
+      "--module-content-radius": radius,
+    };
+  });
 
   // 个人信息展示模式（图标/文字/隐藏），缺失时回退默认值
   const userInfoMode = computed(() => ui.value.userInfoMode ?? defaultUserInfoMode);
@@ -189,6 +204,7 @@ export const useResumeTheme = (ui: ComputedRef<ResumeUi>): ResumeTheme => {
     themeColorLine,
     themeColorContrast,
     themeTemplate,
+    moduleContentStyle,
     userInfoMode,
     userInfoLayout,
     avatarPosition,
