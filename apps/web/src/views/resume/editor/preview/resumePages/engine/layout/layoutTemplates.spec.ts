@@ -13,6 +13,21 @@ const moduleKeys = [
 ];
 
 describe("layoutTemplates", () => {
+  it("单栏模板把所有模块放进同一栏", () => {
+    const layout = createDefaultPageLayoutTemplate({
+      templateId: "single",
+      moduleKeys,
+      paddingVertical: 24,
+      paddingHorizontal: 24,
+      gap: 12,
+    });
+
+    expect(layout.regions).toHaveLength(1);
+    expect(layout.regions[0]?.columns).toHaveLength(1);
+    expect(layout.regions[0]?.columns[0]?.moduleKeys).toEqual(moduleKeys);
+    expect(validateLayoutConfig(layout, moduleKeys).missingModuleKeys).toEqual([]);
+  });
+
   it("将 user 单独放在顶部通栏，其余模块分到两栏", () => {
     const layout = createDefaultPageLayoutTemplate({
       templateId: "topUserTwoColumn",

@@ -132,7 +132,7 @@ provideResumePreviewContext({
   userFieldOrder,
   userFieldLabels,
 });
-const { measureDone, pages, pagePlan, layout, nodeMap, moduleKeys, contentWidth, measureGroups } = useResumePages({
+const { measureDone, pages, pagePlan, layout, nodeMap, moduleKeys, contentWidth, columnWidths, measureGroups } = useResumePages({
   measureRef: layoutMeasureRef,
   data: dataRef,
   ui,
@@ -145,13 +145,11 @@ const layoutColumnGap = computed(() => layout.value.columnGap || 0);
 const columnConfigMap = computed(
   () => new Map(layout.value.regions.flatMap((region) => region.columns.map((column) => [column.id, column]))),
 );
+// 栏宽由引擎解析后下发，渲染与测量使用同一份数值，避免两处各算一遍
 const getColumnStyle = (columnId) => {
-  const column = columnConfigMap.value.get(columnId);
-  if (!column) return { flex: "1 1 0%" };
-  if (column.width.mode === "fixed") {
-    return { flex: `0 0 ${column.width.value}px`, width: `${column.width.value}px` };
-  }
-  return { flex: `${column.width.value} ${column.width.value} 0%` };
+  const width = columnWidths.value.get(columnId);
+  if (width === undefined) return { flex: "1 1 0%" };
+  return { flex: `0 0 ${width}px`, width: `${width}px` };
 };
 const getColumnGap = (columnId) => columnConfigMap.value.get(columnId)?.gap || 0;
 // 预览就绪：空简历直接展示提示页，其余以新引擎完成测量为准。

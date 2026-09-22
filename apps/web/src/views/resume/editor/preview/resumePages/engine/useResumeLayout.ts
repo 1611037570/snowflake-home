@@ -94,17 +94,18 @@ export const useResumeLayout = ({
   const contentWidth = computed(
     () => RESUME_WIDTH - (Number(ui.value.paddingHorizontal) || 0) * 2,
   );
+  // 栏宽解析只做一次：测量宿主与真实渲染共用同一份栏宽，避免两处各算一遍
+  const columnWidths = computed(() => resolveColumnWidths(layout.value, contentWidth.value));
   // 测量宿主按栏位分组渲染：每个节点在自己的栏宽下测量，节点与栏位一一对应，测量结果仍是扁平表
-  const measureGroups = computed(() => {
-    const columnWidths = resolveColumnWidths(layout.value, contentWidth.value);
-    return layout.value.regions.flatMap((region) =>
+  const measureGroups = computed(() =>
+    layout.value.regions.flatMap((region) =>
       region.columns.map((column) => ({
         id: column.id,
-        width: columnWidths.get(column.id) ?? contentWidth.value,
+        width: columnWidths.value.get(column.id) ?? contentWidth.value,
         nodes: nodes.value.filter((node) => column.moduleKeys.includes(node.sourceModuleKey)),
       })),
-    );
-  });
+    ),
+  );
   const watchSource = computed(() => ({
     paddingVertical: ui.value.paddingVertical,
     paddingHorizontal: ui.value.paddingHorizontal,
@@ -198,6 +199,7 @@ export const useResumeLayout = ({
     pagePlan,
     moduleKeys: activeModuleKeys,
     contentWidth,
+    columnWidths,
     measureGroups,
   };
 };

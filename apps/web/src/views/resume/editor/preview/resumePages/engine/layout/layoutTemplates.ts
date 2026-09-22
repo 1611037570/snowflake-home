@@ -1,9 +1,10 @@
 import { RESUME_HEIGHT, RESUME_WIDTH } from "../../../constants";
 import type { BoxSpacing, PageLayoutConfig, PageSize } from "../pageLayoutTypes";
+import { createSingleColumnLayout } from "./createSingleColumnLayout";
 import { createTwoColumnLayout } from "./createTwoColumnLayout";
 
-/** 模板中可用的页面布局编号。 */
-export type PageLayoutTemplateId = "topUserTwoColumn" | "twoColumn";
+/** 模板中可用的页面布局编号：单栏与双栏走同一套模板入口 */
+export type PageLayoutTemplateId = "single" | "topUserTwoColumn" | "twoColumn";
 
 /** 双栏模板左侧固定展示的模块顺序。 */
 const LEFT_MODULE_KEYS = ["account", "education", "skill", "advantage"];
@@ -33,6 +34,21 @@ const splitFixedColumnModules = (moduleKeys: string[]) => {
 
   return { leftModuleKeys, rightModuleKeys };
 };
+
+/** 创建单栏布局：所有模块按简历顺序进入同一栏。 */
+const createSingleColumnLayoutTemplate = ({
+  moduleKeys,
+  pageSize,
+  pagePadding,
+  gap,
+}: CreatePageLayoutTemplateOptions): PageLayoutConfig =>
+  createSingleColumnLayout({
+    moduleKeys,
+    pageSize,
+    pagePadding,
+    gap,
+    regionGap: 0,
+  });
 
 /** 创建个人信息顶部通栏、其他模块双栏的布局。 */
 const createTopUserTwoColumnLayout = ({
@@ -106,6 +122,9 @@ export const createPageLayoutTemplate = ({
   /** 页面布局模板编号。 */
   templateId: PageLayoutTemplateId;
 }): PageLayoutConfig => {
+  if (templateId === "single") {
+    return createSingleColumnLayoutTemplate(options);
+  }
   if (templateId === "topUserTwoColumn") {
     return createTopUserTwoColumnLayout(options);
   }
