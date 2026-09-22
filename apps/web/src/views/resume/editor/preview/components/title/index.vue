@@ -33,7 +33,7 @@ const props = defineProps({
 const {
   data: previewData,
   lang: previewLang,
-  theme: { titleFontStyle, themeTemplate: themeTemplateRef, titleIconEnabled },
+  theme: { titleFontStyle, themeTemplate: themeTemplateRef, titleIconMode },
 } = useResumePreviewContext();
 
 const displayTitle = computed(() => {
@@ -47,10 +47,9 @@ const themeTemplate = computed(() => themeTemplateRef.value || "default");
 // 当前主题组件：未匹配时回退默认主题
 const current = computed(() => themeComponents[themeTemplate.value] || themeComponents.default);
 
-// 标题图标开关：关闭时不展示模块图标
 // 模块图标：取模块默认图标表，自定义模块用统一图标，未知模块不展示
-const titleIcon = computed(() => {
-  if (!titleIconEnabled.value) return "";
+const moduleIcon = computed(() => {
+  if (titleIconMode.value === "none") return "";
   const key = props.moduleKey;
   return (
     DEFAULT_MODULE_NAMES.find((item) => item.key === key)?.icon ||
@@ -62,7 +61,7 @@ const titleIconSize = computed(() => {
   const size = parseFloat(titleFontStyle.value?.fontSize);
   return Number.isFinite(size) ? size / 4 : 4;
 });
-provide("titleIcon", titleIcon);
+provide("moduleIcon", moduleIcon);
 provide("titleIconSize", titleIconSize);
 </script>
 

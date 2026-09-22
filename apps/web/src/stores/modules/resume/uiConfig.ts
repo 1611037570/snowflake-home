@@ -52,7 +52,7 @@ const createThemeTemplate = (name: string, id: string, description: string, ui: 
       dateStyle: "dot",
       datePosition: "right",
       textAlign: "auto",
-      titleIcon: false,
+      titleIconMode: "none",
       linkUnderline: false,
       infoSeparator: "space",
       ...ui,
@@ -63,15 +63,66 @@ const createThemeTemplate = (name: string, id: string, description: string, ui: 
 // 主题样式列表
 export const themeTemplateList = [
   createThemeTemplate("默认", "default", "清晰通用的基础简历样式。", {}),
-  createThemeTemplate("现代", "modern", "适合互联网与技术岗位的现代简历样式。", { themeColor: "#2563EB", avatarPosition: "center", infoPosition: "center", titleIcon: true }),
-  createThemeTemplate("商务", "business", "适合职场与商务场景的正式简历样式。", { themeColor: "#1E3A5F", fontSize: 15, titleFontSize: 21, moduleSpacing: 18, dateStyle: "cn" }),
-  createThemeTemplate("简约", "minimal", "减少视觉干扰，突出内容本身的简历样式。", { themeColor: "#111827", paddingVertical: 30, paddingHorizontal: 30, paragraphSpacing: 6, moduleSpacing: 9 }),
-  createThemeTemplate("经典", "classic", "适合传统行业与正式投递的经典简历样式。", { themeColor: "#7C3AED", fontFamily: "text-yyqx", titleIcon: true, dateStyle: "cn" }),
-  createThemeTemplate("学术", "academic", "强调研究经历与文字内容的学术简历样式。", { themeColor: "#0F766E", fontSize: 15, lineHeight: 1.4, textAlign: "justify", dateStyle: "cn" }),
-  createThemeTemplate("清新", "fresh", "适合教育、设计与初入职场场景的简历样式。", { themeColor: "#16A34A", avatarPosition: "center", infoPosition: "center", titleIcon: true }),
-  createThemeTemplate("活力", "vivid", "适合运营、市场与创意岗位的活力简历样式。", { themeColor: "#EA580C", fontSize: 17, titleFontSize: 24, userInfoMode: "icon", titleIcon: true }),
-  createThemeTemplate("创意", "creative", "突出个人表达与作品展示的创意简历样式。", { themeColor: "#DB2777", avatarPosition: "center", infoPosition: "center", userInfoMode: "icon", titleIcon: true }),
-  createThemeTemplate("稳重", "steady", "适合经验型岗位与正式求职的稳重简历样式。", { themeColor: "#475569", fontSize: 15, lineHeight: 1.3, moduleSpacing: 18, dateStyle: "cn" }),
+  createThemeTemplate("现代", "modern", "适合互联网与技术岗位的现代简历样式。", {
+    themeColor: "#2563EB",
+    avatarPosition: "center",
+    infoPosition: "center",
+    titleIconMode: "plain",
+  }),
+  createThemeTemplate("商务", "business", "适合职场与商务场景的正式简历样式。", {
+    themeColor: "#1E3A5F",
+    fontSize: 15,
+    titleFontSize: 21,
+    moduleSpacing: 18,
+    dateStyle: "cn",
+  }),
+  createThemeTemplate("简约", "minimal", "减少视觉干扰，突出内容本身的简历样式。", {
+    themeColor: "#111827",
+    paddingVertical: 30,
+    paddingHorizontal: 30,
+    paragraphSpacing: 6,
+    moduleSpacing: 9,
+  }),
+  createThemeTemplate("经典", "classic", "适合传统行业与正式投递的经典简历样式。", {
+    themeColor: "#7C3AED",
+    fontFamily: "text-yyqx",
+    titleIconMode: "plain",
+    dateStyle: "cn",
+  }),
+  createThemeTemplate("学术", "academic", "强调研究经历与文字内容的学术简历样式。", {
+    themeColor: "#0F766E",
+    fontSize: 15,
+    lineHeight: 1.4,
+    textAlign: "justify",
+    dateStyle: "cn",
+  }),
+  createThemeTemplate("清新", "fresh", "适合教育、设计与初入职场场景的简历样式。", {
+    themeColor: "#16A34A",
+    avatarPosition: "center",
+    infoPosition: "center",
+    titleIconMode: "plain",
+  }),
+  createThemeTemplate("活力", "vivid", "适合运营、市场与创意岗位的活力简历样式。", {
+    themeColor: "#EA580C",
+    fontSize: 17,
+    titleFontSize: 24,
+    userInfoMode: "icon",
+    titleIconMode: "plain",
+  }),
+  createThemeTemplate("创意", "creative", "突出个人表达与作品展示的创意简历样式。", {
+    themeColor: "#DB2777",
+    avatarPosition: "center",
+    infoPosition: "center",
+    userInfoMode: "icon",
+    titleIconMode: "plain",
+  }),
+  createThemeTemplate("稳重", "steady", "适合经验型岗位与正式求职的稳重简历样式。", {
+    themeColor: "#475569",
+    fontSize: 15,
+    lineHeight: 1.3,
+    moduleSpacing: 18,
+    dateStyle: "cn",
+  }),
 ];
 // 个人信息展示模式列表
 export const userInfoModeList = [
@@ -173,19 +224,23 @@ export const infoSeparatorList = [
 // 未配置或未知值均回退为留白，供预览中的组合字段统一拼接。
 export const getInfoSeparatorMark = (value: string) =>
   infoSeparatorList.find((option) => option.value === value)?.mark || "";
-// 标题图标列表（是否在模块标题前展示模块图标）
-export const titleIconList = [
+// 模块标题图标模式列表
+export const titleIconModeList = [
   {
-    name: "关闭",
-    value: false,
+    name: "无图标",
+    value: "none",
   },
   {
-    name: "开启",
-    value: true,
+    name: "有图标",
+    value: "plain",
+  },
+  {
+    name: "图标带背景",
+    value: "filled",
   },
 ];
 // ===========默认值=====================
-export const defaultThemeColor = themeColors[0].value;
+export const defaultThemeColor = "#50A2FF";
 // 默认自定义页尾品牌名（留空表示使用默认品牌名）
 export const defaultFooter = "";
 // 默认上下页边距
@@ -219,8 +274,8 @@ export const defaultDateStyle = "dot";
 export const defaultDatePosition = "right";
 // 默认文本对齐
 export const defaultTextAlign = "auto";
-// 默认标题图标开关
-export const defaultTitleIcon = false;
+// 默认模块标题图标模式
+export const defaultTitleIconMode = "none";
 // 默认链接下划线开关
 export const defaultLinkUnderline = false;
 // 默认并列信息使用留白分隔，保持既有模板视觉。
@@ -281,8 +336,8 @@ export const DEFAULT_UI = {
   datePosition: defaultDatePosition,
   // 文本对齐
   textAlign: defaultTextAlign,
-  // 标题图标：开启后在模块标题前展示模块图标
-  titleIcon: defaultTitleIcon,
+  // 模块标题图标模式
+  titleIconMode: defaultTitleIconMode,
   // 链接下划线：开启后在预览中显示链接下划线
   linkUnderline: defaultLinkUnderline,
   // 并列信息分隔符：岗位、部门、专业等字段统一使用

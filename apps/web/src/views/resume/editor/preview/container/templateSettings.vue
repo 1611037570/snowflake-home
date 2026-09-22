@@ -12,10 +12,12 @@ import {
   defaultInfoSeparator,
   defaultInfoPosition,
   defaultLinkUnderline,
+  defaultTitleIconMode,
   defaultUserInfoLayout,
   defaultUserInfoMode,
   infoPositionList,
   infoSeparatorList,
+  titleIconModeList,
   userInfoLayoutList,
   userInfoModeList,
 } from "@/stores/modules/resume/uiConfig";
@@ -42,11 +44,11 @@ const themeColor = computed({
   },
 });
 
-// 标题图标（关闭/开启）
-const titleIcon = computed({
-  get: () => currentUI.value?.titleIcon,
+// 模块标题图标模式
+const titleIconMode = computed({
+  get: () => currentUI.value?.titleIconMode,
   set: (value) => {
-    currentUI.value.titleIcon = value;
+    currentUI.value.titleIconMode = value;
   },
 });
 
@@ -108,10 +110,18 @@ const setParam = (key, value) => {
         <ThemeColorPicker v-model="themeColor" :teleported="false" />
 
         <div class="text-xs font-bold text-sf-text">细节调整</div>
-        <!-- 标题图标开关：仅在模块标题前展示/隐藏图标 -->
-        <div class="flex items-center justify-between text-sm text-sf-text-2">
-          <span>标题图标</span>
-          <ElSwitch v-model="titleIcon" />
+        <!-- 模块标题图标模式 -->
+        <div class="flex flex-col gap-1">
+          <div class="flex items-center gap-1 text-sm text-sf-text-2">
+            <span>标题图标</span>
+            <SfIcon
+              icon="material-symbols:restart-alt"
+              size="4"
+              class="cursor-pointer text-sf-text-2 transition-colors hover:text-sf-theme"
+              @click="titleIconMode = defaultTitleIconMode"
+            />
+          </div>
+          <SfSelect v-model="titleIconMode" :list="titleIconModeList" />
         </div>
         <!-- 链接下划线开关：统一控制预览中的可点击链接样式 -->
         <div class="flex items-center justify-between text-sm text-sf-text-2">
