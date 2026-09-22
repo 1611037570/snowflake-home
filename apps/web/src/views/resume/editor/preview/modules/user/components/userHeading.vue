@@ -1,9 +1,10 @@
 <script setup>
-import { computed, inject } from "vue";
+import { computed } from "vue";
 import UserAvatar from "./userAvatar.vue";
 import UserContact from "./userContact.vue";
 // import UserLogo from "./userLogo.vue";
 import UserName from "./userName.vue";
+import { useResumePreviewContext } from "../../../previewContext";
 
 defineProps({
   // 是否显示姓名下主题色短横线（仅信息居中时展示）
@@ -20,14 +21,13 @@ const INFO_ALIGN_CLASS = {
   right: "items-end",
 };
 
-// 头像位置：由全局 avatarPosition 配置控制，左 / 居中 / 右
-const avatarPositionRef = inject("avatarPosition");
-const position = computed(() => avatarPositionRef?.value || "left");
-// 信息位置：独立控制信息内容的水平对齐，与头像位置各管各的
-const infoPositionRef = inject("infoPosition");
-const infoPosition = computed(() => infoPositionRef?.value || "left");
+// 头像与信息位置统一读取预览共享上下文。
+const {
+  theme: { avatarPosition: avatarPositionRef, infoPosition: infoPositionRef, themeColor },
+} = useResumePreviewContext();
+const position = computed(() => avatarPositionRef.value || "left");
+const infoPosition = computed(() => infoPositionRef.value || "left");
 const infoAlignClass = computed(() => INFO_ALIGN_CLASS[infoPosition.value] || "items-start");
-const themeColor = inject("themeColor");
 </script>
 
 <template>

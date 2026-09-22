@@ -1,19 +1,19 @@
 <script setup>
 import dayjs from "dayjs";
-import { computed, inject } from "vue";
+import { computed } from "vue";
 import InlineInfoList from "../../../components/inlineInfoList.vue";
 import { getUserSubtitleKeys } from "@/stores/modules/resume/hooks/useUserSubtitle";
 import { useUserFieldVisibility } from "../useUserFieldVisibility";
 import {
-  defaultInfoSeparator,
   getInfoSeparatorMark,
 } from "@/stores/modules/resume/uiConfig";
+import { useResumePreviewContext } from "../../../previewContext";
 
 // 副标题：渲染编辑器中标记的字段值，按标记序号在姓名下方并排展示
-const previewData = inject("previewData");
-const fontValue = inject("fontValue");
-const lineHeightValue = inject("lineHeightValue");
-const infoSeparator = inject("infoSeparator", computed(() => defaultInfoSeparator));
+const {
+  data: previewData,
+  theme: { fontValue, lineHeightValue, infoSeparator },
+} = useResumePreviewContext();
 const user = computed(() => previewData.value?.user?.data || {});
 // 出生日期副标题沿用字段展示形态，保证切换后即时反映在预览中
 const birthdayDisplay = computed(() => previewData.value?.user?.ui?.birthday?.display || "age");

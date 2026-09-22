@@ -1,5 +1,6 @@
 <script setup>
 import { computed, inject } from "vue";
+import { useResumePreviewContext } from "../../previewContext";
 
 // 标题文本：按「标题图标」开关在文字前展示模块图标，各风格主题统一复用
 defineProps({
@@ -18,10 +19,9 @@ const iconSize = inject(
   computed(() => 0),
 );
 // 标题文字直接使用模块标题字号，避免被正文字号覆盖
-const titleFontStyle = inject(
-  "titleFontStyle",
-  computed(() => ({})),
-);
+const {
+  theme: { titleFontStyle },
+} = useResumePreviewContext();
 </script>
 
 <template>

@@ -1,23 +1,26 @@
 <script setup>
 import dayjs from "dayjs";
-import { computed, inject } from "vue";
+import { computed } from "vue";
 import { resolveIcon } from "@/views/resume/editor/icons/iconCategories";
 import { isUserCustomFieldKey } from "@/stores/modules/resume/hooks/useUserCustomField";
 import { getUserSubtitleKeys } from "@/stores/modules/resume/hooks/useUserSubtitle";
 import {
-  defaultInfoSeparator,
   getInfoSeparatorMark,
 } from "@/stores/modules/resume/uiConfig";
 import { getPreviewText } from "../../../i18n";
 import UserContactItem from "./userContactItem.vue";
 import { useUserFieldVisibility } from "../useUserFieldVisibility";
 import InlineInfoList from "../../../components/inlineInfoList.vue";
+import { useResumePreviewContext } from "../../../previewContext";
 
 // 个人信息组件：基础信息与联系方式统一排序展示，标签支持图标、文字和隐藏模式，对齐方式由使用方通过 class 控制
-const previewData = inject("previewData");
-const userInfoMode = inject("userInfoMode");
-const userInfoLayout = inject("userInfoLayout");
-const infoSeparator = inject("infoSeparator", computed(() => defaultInfoSeparator));
+const {
+  data: previewData,
+  lang: previewLang,
+  userFieldOrder,
+  userFieldLabels,
+  theme: { userInfoMode, userInfoLayout, infoSeparator },
+} = useResumePreviewContext();
 const props = defineProps({
   // 信息内容水平对齐：左 / 居中 / 右
   align: {
@@ -25,10 +28,6 @@ const props = defineProps({
     default: "left",
   },
 });
-const previewLang = inject(
-  "previewLang",
-  computed(() => "zh"),
-);
 const user = computed(() => previewData.value?.user?.data || {});
 // 字段级 UI 配置（图标等），与编辑器同读个人信息模块 ui 层级
 const ui = computed(() => previewData.value?.user?.ui || {});
@@ -44,8 +43,6 @@ const joinInfo = (items) => {
 // 副标题字段在姓名下方单独展示，不再出现在信息行
 const subtitleKeys = computed(() => getUserSubtitleKeys(ui.value));
 const { isUserFieldHidden } = useUserFieldVisibility();
-const userFieldOrder = inject("userFieldOrder", computed(() => []));
-const userFieldLabels = inject("userFieldLabels", computed(() => new Map()));
 const isIconMode = computed(() => userInfoMode?.value === "icon");
 // 隐藏模式仅保留个人信息字段值
 const isLabelHidden = computed(() => userInfoMode?.value === "none");
