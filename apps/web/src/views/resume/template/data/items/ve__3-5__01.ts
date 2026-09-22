@@ -9,8 +9,8 @@ export const videoEditorResumeItem: any = {
         position: "视频剪辑师",
         name: "周予",
         birthday: "1998-10",
-        phone: "136****7932",
-        email: "zhouyu@example.com",
+        phone: "15888888888",
+        email: "16****70@qq.com",
         workTime: "2020.07.01",
         sex: "女",
         avatar: xiaozhou,
@@ -29,7 +29,7 @@ export const videoEditorResumeItem: any = {
         {
           ui: {},
           data: {
-            name: "***艺术大学",
+            name: "南京艺术学院",
             education: "本科",
             post: "数字媒体艺术",
             startTime: "2016.09",
