@@ -1,5 +1,6 @@
 import { computed, type ComputedRef, type Ref } from "vue";
 import { getContentHeight, RESUME_WIDTH } from "../../constants";
+import { defaultLeftColumnWidth } from "@/stores/modules/resume/uiConfig";
 import { buildLayoutNodes } from "./adapter/buildLayoutNodes";
 import { createResumeLayout } from "./layout/createResumeLayout";
 import { resolveColumnWidths } from "./layout/resolveColumnWidths";
@@ -60,6 +61,7 @@ export const useResumeLayout = ({
       paddingVertical: Number(ui.value.paddingVertical) || 0,
       paddingHorizontal: Number(ui.value.paddingHorizontal) || 0,
       gap: Number(ui.value.moduleSpacing) || 0,
+      leftColumnWidth: Number(ui.value.leftColumnWidth) || defaultLeftColumnWidth,
     }),
   );
   const validation = computed(() => validateLayoutConfig(layout.value, activeModuleKeys.value));
