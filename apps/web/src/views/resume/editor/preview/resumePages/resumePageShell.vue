@@ -5,6 +5,7 @@ import { computed, useTemplateRef, watch } from "vue";
 import { getPreviewText } from "../i18n";
 import { PAGE_NUMBER_HEIGHT, RESUME_CONTAINER_HEIGHT, RESUME_CONTAINER_WIDTH } from "../constants";
 import { useResumePreviewContext } from "../previewContext";
+import { useSystemStore } from "@/stores";
 
 const props = defineProps({
   // 简历 ui（fontFamily / moduleSpacing）
@@ -37,6 +38,8 @@ const props = defineProps({
 });
 
 const rootEl = useTemplateRef("rootRef");
+// 调试模式下标注正文可用区，供排查分页与边距
+const { debugMode } = storeToRefs(useSystemStore());
 // 底部空间由页尾与下边距共用：页尾更高时不再叠加下边距，下边距更大时只补足超出的部分
 const bottomSpacerHeight = computed(() => {
   const paddingBottom = parseFloat(props.styles.paddingStyle.paddingBottom) || 0;
@@ -80,7 +83,12 @@ watch(
     ]"
   >
     <!-- 模块之间的间距由 ui.moduleSpacing 控制，与分页计算保持一致 -->
-    <div class="flex flex-1 flex-col" :style="{ gap: `${ui.moduleSpacing}px` }">
+    <!-- 调试模式下用 outline 标注正文可用区：outline 不参与布局，不会挤压内容，内容溢出时也会显示出来 -->
+    <div
+      class="flex flex-1 flex-col"
+      :class="{ 'outline-1 outline-offset-[-1px] outline-dashed outline-sf-theme-2': debugMode }"
+      :style="{ gap: `${ui.moduleSpacing}px` }"
+    >
       <slot />
     </div>
     <!-- 底部空间与页尾共用：只补足下边距超出页尾高度的部分 -->
