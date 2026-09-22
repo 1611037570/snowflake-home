@@ -128,10 +128,15 @@ export const themeTemplateList = [
     moduleSpacing: 18,
     dateStyle: "cn",
   }),
-  createThemeTemplate("通栏双栏", "topUserTwoColumn", "个人信息顶部通栏，其余模块固定分到左右两栏。", {
-    themeColor: "#0F766E",
-    pageLayoutTemplate: "topUserTwoColumn",
-  }),
+  createThemeTemplate(
+    "通栏双栏",
+    "topUserTwoColumn",
+    "个人信息顶部通栏，其余模块固定分到左右两栏。",
+    {
+      themeColor: "#0F766E",
+      pageLayoutTemplate: "topUserTwoColumn",
+    },
+  ),
   createThemeTemplate("双栏", "twoColumn", "所有模块固定分到左右两栏，适合内容较多的简历。", {
     themeColor: "#7C3AED",
     pageLayoutTemplate: "twoColumn",
@@ -271,6 +276,8 @@ export const defaultLineHeight = 1.2;
 export const defaultParagraphSpacing = 12;
 // 默认模块间距
 export const defaultModuleSpacing = 12;
+// 默认左栏宽度占比（双栏布局），左栏保持为较窄的一栏
+export const defaultLeftColumnWidth = 40;
 // 默认主题样式
 export const defaultThemeTemplate = "default";
 // 默认个人信息展示模式
@@ -299,6 +306,8 @@ export const uiParamRanges = {
   paddingVertical: { min: 12, max: 96, step: 1 },
   // 左右页边距
   paddingHorizontal: { min: 12, max: 96, step: 1 },
+  // 左栏宽度占比（双栏布局）
+  leftColumnWidth: { min: 20, max: 40, step: 1 },
   // 字体大小
   fontSize: { min: 12, max: 48, step: 2 },
   // 模块标题字号

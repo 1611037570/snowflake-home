@@ -1,7 +1,7 @@
 import { RESUME_HEIGHT, RESUME_WIDTH } from "../../../constants";
 import type { BoxSpacing, PageLayoutConfig, PageSize } from "../pageLayoutTypes";
 import { createSingleColumnLayout } from "./createSingleColumnLayout";
-import { createTwoColumnLayout } from "./createTwoColumnLayout";
+import { createTwoColumnLayout, resolveColumnRatios } from "./createTwoColumnLayout";
 
 /** 模板中可用的页面布局编号：单栏与双栏走同一套模板入口 */
 export type PageLayoutTemplateId = "single" | "topUserTwoColumn" | "twoColumn";
@@ -22,6 +22,8 @@ interface CreatePageLayoutTemplateOptions {
   regionGap: number;
   /** 页面栏之间的水平间距。 */
   columnGap: number;
+  /** 左栏宽度占比（百分比），缺省时两栏等宽。 */
+  leftWidthPercent?: number;
 }
 
 /** 按左侧清单分栏：清单内的模块进左栏，其余模块（含未声明的自定义模块）按原顺序全部进右栏 */
@@ -58,6 +60,7 @@ const createTopUserTwoColumnLayout = ({
   gap,
   regionGap,
   columnGap,
+  leftWidthPercent,
 }: CreatePageLayoutTemplateOptions): PageLayoutConfig => {
   const { leftModuleKeys, rightModuleKeys } = splitFixedColumnModules(moduleKeys);
   if (!moduleKeys.includes("user")) {
@@ -69,9 +72,11 @@ const createTopUserTwoColumnLayout = ({
       columnGap,
       gap,
       regionGap,
+      leftWidthPercent,
     });
   }
 
+  const ratios = resolveColumnRatios(leftWidthPercent);
   return {
     pageSize,
     pagePadding,
@@ -98,13 +103,13 @@ const createTopUserTwoColumnLayout = ({
         columns: [
           {
             id: "left",
-            width: { mode: "ratio", value: 1 },
+            width: { mode: "ratio", value: ratios.left },
             gap,
             moduleKeys: leftModuleKeys,
           },
           {
             id: "right",
-            width: { mode: "ratio", value: 1 },
+            width: { mode: "ratio", value: ratios.right },
             gap,
             moduleKeys: rightModuleKeys,
           },
@@ -150,6 +155,7 @@ export const createDefaultPageLayoutTemplate = ({
   gap,
   regionGap = gap,
   columnGap = 24,
+  leftWidthPercent,
 }: {
   /** 页面布局模板编号。 */
   templateId: PageLayoutTemplateId;
@@ -165,6 +171,8 @@ export const createDefaultPageLayoutTemplate = ({
   regionGap?: number;
   /** 页面栏之间的水平间距。 */
   columnGap?: number;
+  /** 左栏宽度占比（百分比）。 */
+  leftWidthPercent?: number;
 }) =>
   createPageLayoutTemplate({
     templateId,
@@ -179,4 +187,5 @@ export const createDefaultPageLayoutTemplate = ({
     gap,
     regionGap,
     columnGap,
+    leftWidthPercent,
   });

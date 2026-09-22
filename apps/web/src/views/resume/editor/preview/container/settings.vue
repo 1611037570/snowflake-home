@@ -2,6 +2,7 @@
 import { storeToRefs } from "pinia";
 import { useResumeStore } from "@/stores";
 import {
+  defaultLeftColumnWidth,
   defaultLineHeight,
   defaultModuleSpacing,
   defaultPaddingHorizontal,
@@ -23,6 +24,13 @@ const layoutParams = [
     unit: "px",
   },
   { label: "模块上下间距", key: "moduleSpacing", defaultValue: defaultModuleSpacing, unit: "px" },
+  // 左栏宽度占比：仅双栏布局生效，左栏保持为较窄的一栏
+  {
+    label: "左栏宽度",
+    key: "leftColumnWidth",
+    defaultValue: defaultLeftColumnWidth,
+    unit: "%",
+  },
   {
     label: "模块段落间距",
     key: "paragraphSpacing",
@@ -36,8 +44,13 @@ const layoutParams = [
 // 读取参数当前值
 const getValue = (key) => currentUI.value?.[key];
 
-// 读取数值型参数：统一转为数值，避免字符串参与滑块内部计算
-const getNumberValue = (key) => Number(currentUI.value?.[key]);
+// 读取数值型参数：统一转为数值，避免字符串参与滑块内部计算；字段缺失时回退该参数的默认值
+const getNumberValue = (key) => {
+  const value = Number(currentUI.value?.[key]);
+  if (Number.isFinite(value)) return value;
+  const fallback = Number(layoutParams.find((item) => item.key === key)?.defaultValue);
+  return Number.isFinite(fallback) ? fallback : 0;
+};
 
 // 写入参数：数值型统一使用数值类型
 const setParam = (key, value) => {

@@ -28,6 +28,7 @@ export const createResumeLayout = ({
   paddingVertical,
   paddingHorizontal,
   gap,
+  leftColumnWidth,
 }: {
   /** 简历主题配置，pageLayoutTemplate 决定布局模板，pageLayout 是显式布局入口。 */
   ui: Record<string, any>;
@@ -39,6 +40,8 @@ export const createResumeLayout = ({
   paddingHorizontal: number;
   /** 栏内节点间距。 */
   gap: number;
+  /** 双栏布局的左栏宽度占比（百分比）。 */
+  leftColumnWidth?: number;
 }): PageLayoutConfig => {
   const templateId = resolvePageLayoutTemplate(ui);
   if (templateId) {
@@ -48,6 +51,7 @@ export const createResumeLayout = ({
       paddingVertical,
       paddingHorizontal,
       gap,
+      leftWidthPercent: leftColumnWidth,
     });
   }
   return ui.pageLayout as PageLayoutConfig;
