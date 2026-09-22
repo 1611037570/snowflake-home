@@ -18,13 +18,6 @@ export const modelResumeItem: any = {
         avatar: xiaozhou,
       },
     },
-    account: {
-      ui: {
-        collapsed: ["1"],
-        archived: false,
-      },
-      list: [],
-    },
     skill: {
       ui: {
         collapsed: ["1"],
@@ -102,31 +95,6 @@ export const modelResumeItem: any = {
         },
       ],
     },
-    video: {
-      ui: {
-        collapsed: [],
-        hidden: false,
-        archived: false,
-      },
-      list: [
-        {
-          ui: {},
-          data: {
-            name: "作品展示",
-            url: "",
-            desc: "平面与短视频作品展示",
-          },
-        },
-      ],
-    },
-    image: {
-      ui: {
-        collapsed: [],
-        hidden: false,
-        archived: false,
-      },
-      list: [],
-    },
   },
   config: {
     meta: {
@@ -136,12 +104,10 @@ export const modelResumeItem: any = {
     dragClass: ".container-drag",
     fields: [
       { key: "user" },
-      { key: "account" },
       { key: "education" },
       { key: "skill" },
       { key: "work" },
       { key: "project" },
-      { key: "video" },
     ],
   },
   ui: {
