@@ -34,11 +34,15 @@ export const sliceRichTextHtml = (html: string, start = 0, end?: number): string
   const container = document.createElement("div");
   container.innerHTML = DOMPurify.sanitize(html || "", sanitizeConfig);
   const textNodes: Text[] = [];
-  const walker = document.createTreeWalker(container, NodeFilter.SHOW_TEXT);
-  let textNode: Node | null;
-  while ((textNode = walker.nextNode())) {
-    if (textNode.nodeValue) textNodes.push(textNode as Text);
-  }
+  // 只统计参与断点偏移的内容：顶层空白节点不计入字符数，与 parseRichText 的块口径保持一致
+  Array.from(container.childNodes).forEach((child) => {
+    if (!(child.textContent || "").trim()) return;
+    const walker = document.createTreeWalker(child, NodeFilter.SHOW_TEXT);
+    let textNode: Node | null;
+    while ((textNode = walker.nextNode())) {
+      if (textNode.nodeValue) textNodes.push(textNode as Text);
+    }
+  });
   const total = textNodes.reduce((sum, node) => sum + (node.nodeValue?.length || 0), 0);
   const safeStart = Math.max(0, Math.min(start, total));
   const safeEnd = Math.max(safeStart, Math.min(end ?? total, total));

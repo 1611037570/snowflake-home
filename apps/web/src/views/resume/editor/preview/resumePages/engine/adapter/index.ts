@@ -15,6 +15,19 @@ export interface LayoutAdapterContext {
 /** 将一个业务模块转换为通用排版节点 */
 export type LayoutAdapter = (context: LayoutAdapterContext) => LayoutNode[];
 
+/** 创建模块标题节点：标题只随模块首个分片渲染，分页需要计入它的高度 */
+export const createModuleTitleNode = (moduleKey: string): LayoutNode => ({
+  id: `${moduleKey}.title`,
+  sourceModuleKey: moduleKey,
+  type: "block",
+  breakPolicy: {
+    splittable: false,
+    keepWithNext: true,
+    keepTitleWithFirst: false,
+  },
+  payload: { moduleKey },
+});
+
 /** 排版适配器注册表 */
 export interface LayoutAdapterRegistry {
   /** 注册指定模块 key 的适配器 */

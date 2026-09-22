@@ -4,12 +4,24 @@ import type { MeasuredNode } from "./types";
 /** 测量宿主中每个节点的 DOM 结构标识。 */
 const NODE_SELECTOR = "[data-layout-node-id]";
 
-/** 读取一个 DOM 节点的实际高度和宽度。 */
-const readRect = (element: HTMLElement) => {
+/**
+ * 计算测量宿主的布局缩放比例。
+ * 预览区用 transform: scale() 缩放整页，该变换不改变布局尺寸但会缩放 getBoundingClientRect 的结果，
+ * 因此按测量宿主自身换算回未缩放的布局像素，分页高度才能与真实页面像素一致。
+ */
+const getLayoutScale = (root: HTMLElement): number => {
+  const layoutWidth = root.offsetWidth;
+  if (!layoutWidth) return 1;
+  const scale = root.getBoundingClientRect().width / layoutWidth;
+  return Number.isFinite(scale) && scale > 0 ? scale : 1;
+};
+
+/** 读取一个 DOM 节点的实际高度和宽度（已换算回未缩放的布局像素）。 */
+const readRect = (element: HTMLElement, scale: number) => {
   const rect = element.getBoundingClientRect();
   return {
-    width: rect.width,
-    height: rect.height,
+    width: rect.width / scale,
+    height: rect.height / scale,
   };
 };
 
@@ -22,13 +34,14 @@ export const measureLayoutNodes = (
   nodes: LayoutNode[],
 ): Map<string, MeasuredNode> => {
   const result = new Map<string, MeasuredNode>();
+  const scale = getLayoutScale(root);
   const elements = Array.from(root.querySelectorAll<HTMLElement>(NODE_SELECTOR));
   const elementById = new Map(elements.map((element) => [element.dataset.layoutNodeId || "", element]));
 
   nodes.forEach((node) => {
     const element = elementById.get(node.id);
     if (!element) return;
-    const rect = readRect(element);
+    const rect = readRect(element, scale);
     const breakPointTypes = new Map(
       node.breakPoints?.map((point) => [point.offset, point.type]) || [],
     );
@@ -37,7 +50,7 @@ export const measureLayoutNodes = (
     )
       .map((point) => {
         const offset = Number(point.dataset.layoutBreakpointOffset);
-        const height = point.getBoundingClientRect().height;
+        const height = point.getBoundingClientRect().height / scale;
         return { offset, type: breakPointTypes.get(offset) || "textRange", height };
       })
       .filter((point) => Number.isFinite(point.offset) && point.height > 0);
@@ -55,7 +68,7 @@ export const measureLayoutNodes = (
     if (!node.title) return;
     const titleElement = elementById.get(node.title.id);
     if (!titleElement) return;
-    const rect = readRect(titleElement);
+    const rect = readRect(titleElement, scale);
     result.set(node.title.id, {
       nodeId: node.title.id,
       width: rect.width,

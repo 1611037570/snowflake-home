@@ -1,23 +1,14 @@
 import { isContentEmpty } from "../../../modules/validData";
-import type { LayoutAdapter, LayoutAdapterContext, LayoutAdapterRegistry } from "./index";
+import {
+  createModuleTitleNode,
+  type LayoutAdapter,
+  type LayoutAdapterContext,
+  type LayoutAdapterRegistry,
+} from "./index";
 import { parseRichText } from "./richTextParser";
-import type { LayoutNode } from "../types";
 
 /** 当前使用通用富文本模块渲染的模块 key */
 export const RICH_TEXT_MODULE_KEYS = ["skill", "advantage"] as const;
-
-/** 创建富文本模块的标题节点 */
-const createTitleNode = (moduleKey: string): LayoutNode => ({
-  id: `${moduleKey}.title`,
-  sourceModuleKey: moduleKey,
-  type: "block",
-  breakPolicy: {
-    splittable: false,
-    keepWithNext: true,
-    keepTitleWithFirst: false,
-  },
-  payload: { moduleKey },
-});
 
 /** 读取富文本模块中的正文内容 */
 const getModuleContent = (context: LayoutAdapterContext): string => {
@@ -35,7 +26,7 @@ export const createRichTextModuleAdapter = (moduleKey: string): LayoutAdapter =>
   if (!content) return [];
 
   const parsed = parseRichText(content);
-  const title = createTitleNode(moduleKey);
+  const title = createModuleTitleNode(moduleKey);
 
   return [
     {

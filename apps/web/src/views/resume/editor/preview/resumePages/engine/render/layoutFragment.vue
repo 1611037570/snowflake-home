@@ -11,6 +11,8 @@ const props = defineProps<{
   isEdit?: boolean;
   outlineClass?: string;
   showModuleTitle?: boolean;
+  // 当前分片与上方内容的间距，续段固定为零
+  gapTop?: number;
 }>();
 
 const emit = defineEmits<{ mouseenter: [moduleKey: string] }>();
@@ -21,6 +23,7 @@ const emit = defineEmits<{ mouseenter: [moduleKey: string] }>();
     class="resume-module-wrapper group group/module relative rounded-xl"
     :data-module="fragment.sourceModuleKey"
     :class="outlineClass"
+    :style="gapTop ? { marginTop: `${gapTop}px` } : undefined"
     @mouseenter="emit('mouseenter', fragment.sourceModuleKey)"
   >
     <ModuleActions v-if="isEdit" :model-key="fragment.sourceModuleKey" />
