@@ -41,9 +41,6 @@ const layoutParams = [
   { label: "行间距", key: "lineHeight", defaultValue: defaultLineHeight, unit: "倍" },
 ];
 
-// 读取参数当前值
-const getValue = (key) => currentUI.value?.[key];
-
 // 读取数值型参数：统一转为数值，避免字符串参与滑块内部计算；字段缺失时回退该参数的默认值
 const getNumberValue = (key) => {
   const value = Number(currentUI.value?.[key]);
