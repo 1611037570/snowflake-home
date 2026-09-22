@@ -158,6 +158,7 @@ const itemContentSpacingStyle = computed(() => {
           :href="safeUrl(getItemLink(item).url)"
           target="_blank"
           rel="noopener noreferrer"
+          class="hover:underline"
           :class="{ underline: linkUnderline }"
         >
           <ResumeField :model-value="getItemLink(item).name || getItemLink(item).url" />
@@ -179,15 +180,23 @@ const itemContentSpacingStyle = computed(() => {
           <ItemTitle :name="item.name" class="inline-block" />
           <span v-if="item.url">：</span>
         </span>
-        <a
-          :href="safeUrl(item.url)"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="min-w-0 truncate"
-          :class="{ underline: linkUnderline }"
-        >
-          <ResumeField :model-value="item.url" />
-        </a>
+        <!-- 链接需要 flex-1 + overflow-hidden 的包裹层，窄栏内才能截断溢出 -->
+        <div class="flex min-w-0 flex-1 items-center overflow-hidden">
+          <a
+            :href="safeUrl(item.url)"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="inline-block max-w-full truncate whitespace-nowrap hover:underline"
+            :class="{ underline: linkUnderline }"
+          >
+            <ResumeField
+              :model-value="item.url"
+              class="flex max-w-full items-center truncate whitespace-nowrap hover:underline"
+              boxClass="truncate"
+              :class="{ underline: linkUnderline }"
+            />
+          </a>
+        </div>
       </div>
     </template>
     <div v-else-if="node.sourceModuleKey === 'honor'" class="inline-flex rounded-xl px-3 py-2" :style="{ ...fontValue(), ...paragraphSpacingStyle }">
@@ -199,7 +208,7 @@ const itemContentSpacingStyle = computed(() => {
   <template v-else-if="node.type === 'media'">
     <div class="flex flex-col gap-3" :style="[paragraphSpacingStyle, mediaWidthStyle]">
       <img v-if="nodePayload.item?.img" :src="nodePayload.item.img" :alt="nodePayload.item.name || ''" class="max-w-full" />
-      <a v-if="safeUrl(nodePayload.item?.url)" :href="safeUrl(nodePayload.item.url)" target="_blank" rel="noopener noreferrer" :class="{ underline: linkUnderline }">
+      <a v-if="safeUrl(nodePayload.item?.url)" :href="safeUrl(nodePayload.item.url)" target="_blank" rel="noopener noreferrer" class="hover:underline" :class="{ underline: linkUnderline }">
         {{ nodePayload.item.name || nodePayload.item.url }}
       </a>
       <span v-if="nodePayload.item?.desc">{{ nodePayload.item.desc }}</span>
@@ -208,6 +217,11 @@ const itemContentSpacingStyle = computed(() => {
 </template>
 
 <style scoped>
+/* 正文富文本里写的链接，悬停时同样显示下划线 */
+:deep(a:hover) {
+  text-decoration: underline;
+}
+
 .layout-rich-text :deep(p),
 .layout-rich-text :deep(ul),
 .layout-rich-text :deep(ol) {
