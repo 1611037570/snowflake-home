@@ -2,7 +2,7 @@
 // 单页快路径组件：内容放入一页时测量与渲染合一，不再常驻隐藏测量容器与分页裁剪
 // 由 ResumePages 在 thumb 模式挂载；根元素通过回调上报，供测量（useRowInfo）与导出复用
 import { useTemplateRef, watch } from "vue";
-import ResumeModule from "../modules/index.vue";
+import ModuleSlot from "./moduleSlot.vue";
 import ResumePageShell from "./resumePageShell.vue";
 
 defineOptions({ name: "PreviewSinglePage" });
@@ -59,14 +59,8 @@ const setMeasureEl = (el) => {
       :page-count="1"
       :on-el="setMeasureEl"
     >
-      <div
-        v-for="item in allModules"
-        :key="item.key"
-        class="group group/module relative rounded-xl"
-      >
-        <!-- 测量包装与测量容器一致：resume-module-wrapper 直接挂在模块根元素上 -->
-        <ResumeModule :name="item.key" class="resume-module-wrapper" />
-      </div>
+      <!-- 缩略图与测量、分页复用同一模块包装，保证行高结构一致。 -->
+      <ModuleSlot v-for="item in allModules" :key="item.key" :module-key="item.key" />
     </ResumePageShell>
   </div>
 </template>
