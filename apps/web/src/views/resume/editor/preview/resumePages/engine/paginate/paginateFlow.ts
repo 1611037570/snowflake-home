@@ -18,6 +18,10 @@ export interface FlowPageItem {
   fragment: FlowFragmentKind;
   /** 当前分片占用的高度 */
   height: number;
+  /** 当前分片对应的节点内容 */
+  payload: unknown;
+  /** 首次分片对应的标题内容 */
+  titlePayload?: unknown;
   /** 当前分片对应的内容范围 */
   contentRange?: {
     start: number;
@@ -160,6 +164,8 @@ export const paginateFlow = ({
         titleNodeId: isFirst ? node.title?.id : undefined,
         fragment: wholeFragmentKind,
         height: wholeFragmentHeight,
+        payload: node.payload,
+        titlePayload: isFirst ? node.title?.payload : undefined,
         contentRange: contentEnd
           ? { start: consumedOffset, end: contentEnd }
           : undefined,
@@ -212,6 +218,8 @@ export const paginateFlow = ({
         titleNodeId: isFirst ? node.title?.id : undefined,
         fragment: fragmentKind,
         height: fragmentHeight,
+        payload: node.payload,
+        titlePayload: isFirst ? node.title?.payload : undefined,
         contentRange: {
           start: consumedOffset,
           end: breakPoint.offset,
