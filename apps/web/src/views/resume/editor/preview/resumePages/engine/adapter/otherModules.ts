@@ -11,7 +11,8 @@ const MEDIA_MODULE_KEYS = ["image", "video"] as const;
 
 /** 创建个人信息模块适配器 */
 const createUserModuleAdapter = (context: LayoutAdapterContext): LayoutNode[] => {
-  const userData = context.data.user;
+  const moduleData = context.data.user;
+  const userData = getValidData((moduleData as { data?: unknown })?.data);
   if (!userData || typeof userData !== "object" || Array.isArray(userData)) return [];
 
   const children = Object.entries(userData as Record<string, unknown>)
