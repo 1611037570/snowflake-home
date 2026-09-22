@@ -21,6 +21,11 @@ const props = defineProps({
   },
   // 测量容器元素回传给上层测量逻辑
   onMeasureEl: Function,
+  // 测量宿主的字体类名必须和真实页面一致。
+  className: {
+    type: String,
+    default: "",
+  },
 });
 
 const measureRef = useTemplateRef("measureRef");
@@ -50,7 +55,7 @@ watch(
 </script>
 
 <template>
-  <div ref="measureRef" class="flex h-auto flex-col bg-white text-black" :style="[measureStyle, rootStyle]">
+  <div ref="measureRef" :class="['flex h-auto flex-col bg-white text-black', className]" :style="[measureStyle, rootStyle]">
     <slot />
   </div>
 </template>

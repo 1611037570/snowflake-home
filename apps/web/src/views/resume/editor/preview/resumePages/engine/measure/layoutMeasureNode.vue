@@ -10,21 +10,23 @@ const richText = computed(() => props.node.payload as { html?: string; breakPoin
 </script>
 
 <template>
-  <div class="layout-measure-node" :data-layout-node-id="node.id">
+  <div class="layout-measure-record">
     <div v-if="node.title" class="layout-measure-title" :data-layout-node-id="node.title.id">
       <Title :module-key="node.title.sourceModuleKey" />
     </div>
-    <LayoutNodeContent :node="node" />
-    <template v-if="node.type === 'richText' && richText.html">
-      <div
-        v-for="point in node.breakPoints"
-        :key="point.offset"
-        class="layout-measure-breakpoint"
-        :data-layout-breakpoint-offset="point.offset"
-        :style="{ width: '100%' }"
-        v-html="sliceRichTextHtml(richText.html, 0, point.offset)"
-      />
-    </template>
+    <div class="layout-measure-node" :data-layout-node-id="node.id">
+      <LayoutNodeContent :node="node" />
+      <template v-if="node.type === 'richText' && richText.html">
+        <div
+          v-for="point in node.breakPoints"
+          :key="point.offset"
+          class="layout-measure-breakpoint"
+          :data-layout-breakpoint-offset="point.offset"
+          :style="{ width: '100%' }"
+          v-html="sliceRichTextHtml(richText.html, 0, point.offset)"
+        />
+      </template>
+    </div>
   </div>
 </template>
 
