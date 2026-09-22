@@ -4,14 +4,20 @@ import { computed, inject } from "vue";
 import { resolveIcon } from "@/views/resume/editor/icons/iconCategories";
 import { isUserCustomFieldKey } from "@/stores/modules/resume/hooks/useUserCustomField";
 import { getUserSubtitleKeys } from "@/stores/modules/resume/hooks/useUserSubtitle";
+import {
+  defaultInfoSeparator,
+  getInfoSeparatorMark,
+} from "@/stores/modules/resume/uiConfig";
 import { getPreviewText } from "../../../i18n";
 import UserContactItem from "./userContactItem.vue";
 import { useUserFieldVisibility } from "../useUserFieldVisibility";
+import InlineInfoList from "../../../components/inlineInfoList.vue";
 
 // 个人信息组件：基础信息与联系方式统一排序展示，标签支持图标、文字和隐藏模式，对齐方式由使用方通过 class 控制
 const previewData = inject("previewData");
 const userInfoMode = inject("userInfoMode");
 const userInfoLayout = inject("userInfoLayout");
+const infoSeparator = inject("infoSeparator", computed(() => defaultInfoSeparator));
 const props = defineProps({
   // 信息内容水平对齐：左 / 居中 / 右
   align: {
@@ -30,6 +36,11 @@ const ui = computed(() => previewData.value?.user?.ui || {});
 const fieldIcon = (key) => resolveIcon(ui.value?.[key]?.icon);
 // 出生日期展示形态：年龄或出生日期，未配置时按年龄展示
 const birthdayDisplay = computed(() => ui.value?.birthday?.display || "age");
+// 组合字段沿用全局分隔符，避免内部仍固定为圆点。
+const joinInfo = (items) => {
+  const mark = getInfoSeparatorMark(infoSeparator.value);
+  return items.filter(Boolean).join(mark ? ` ${mark} ` : " ");
+};
 // 副标题字段在姓名下方单独展示，不再出现在信息行
 const subtitleKeys = computed(() => getUserSubtitleKeys(ui.value));
 const { isUserFieldHidden } = useUserFieldVisibility();
@@ -63,9 +74,10 @@ const layoutClass = computed(() => {
   const centered = align === "center";
   const alignEnd = align === "right";
   if (userInfoLayout?.value === "flex") {
-    // 弹性布局下非居中时按行内流式排布，靠对齐方式控制水平位置
-    if (!centered) return alignEnd ? "block text-right" : "block";
-    return ["flex flex-wrap gap-3", "justify-center"];
+    return [
+      "flex flex-wrap",
+      centered ? "justify-center" : alignEnd ? "justify-end" : "justify-start",
+    ];
   }
   return [
     "grid grid-cols-2 gap-3",
@@ -140,9 +152,7 @@ const heightWeightText = computed(() => {
   const hasHeight = height != null && height !== "";
   const hasWeight = weight != null && weight !== "";
   if (!hasHeight && !hasWeight) return "";
-  return [hasHeight ? `${height}cm` : "", hasWeight ? `${weight}kg` : ""]
-    .filter(Boolean)
-    .join(" · ");
+  return joinInfo([hasHeight ? `${height}cm` : "", hasWeight ? `${weight}kg` : ""]);
 });
 // 模特三围按胸围、腰围、臀围顺序展示，允许只填写部分数据
 const measurementsText = computed(() => {
@@ -152,7 +162,7 @@ const measurementsText = computed(() => {
     (item) => item != null && item !== "",
   );
   if (!measurements.length) return "";
-  return measurements.map((item) => `${item}cm`).join(" · ");
+  return joinInfo(measurements.map((item) => `${item}cm`));
 });
 // 尺码按上装、下装、鞋码顺序展示，允许只填写部分数据
 const sizesText = computed(() => {
@@ -165,7 +175,7 @@ const sizesText = computed(() => {
   ]
     .filter((item) => item.value != null && item.value !== "")
     .map((item) => (item.key === "shoes" ? `${item.value}码` : item.value));
-  return sizes.join(" · ");
+  return joinInfo(sizes);
 });
 const secondaryItems = computed(() => {
   const items = [];
@@ -332,11 +342,24 @@ const contactItems = computed(() => {
 </script>
 
 <template>
-  <div
-    v-if="contactItems.length"
-    class="max-w-full min-w-0 items-center"
+  <InlineInfoList
+    v-if="contactItems.length && userInfoLayout === 'flex'"
+    :items="contactItems"
     :class="layoutClass"
   >
+    <template #default="{ item }">
+      <UserContactItem
+        :icon="item.icon"
+        :label="item.label"
+        :model-value="item.key ? user[item.key] : null"
+        :text="item.text"
+        :icon-mode="isIconMode"
+        :hide-label="isLabelHidden"
+        flow-mode
+      />
+    </template>
+  </InlineInfoList>
+  <div v-else-if="contactItems.length" class="max-w-full min-w-0 items-center" :class="layoutClass">
     <UserContactItem
       v-for="item in contactItems"
       :key="item.key || item.text"
@@ -346,7 +369,6 @@ const contactItems = computed(() => {
       :text="item.text"
       :icon-mode="isIconMode"
       :hide-label="isLabelHidden"
-      :flow-mode="userInfoLayout === 'flex' && align !== 'center'"
     />
   </div>
 </template>

@@ -38,7 +38,7 @@ defineProps({
   <span
     :class="
       flowMode
-        ? 'mr-3 inline-flex min-w-0 items-center gap-1'
+        ? 'inline-flex min-w-0 items-center gap-1'
         : 'grid min-w-0 grid-cols-[auto_minmax(0,1fr)] items-center gap-x-1'
     "
   >

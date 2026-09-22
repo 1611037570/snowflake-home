@@ -5,8 +5,8 @@ import Title from "../components/title/index.vue";
 import { isContentEmpty } from "../modules/validData";
 import { getTime } from "../../utils";
 import { getValidData } from "./validData";
-import ItemTitle from "../components/itemTitle.vue";
 import ItemTags from "../components/itemTags.vue";
+import InlineInfoList from "../components/inlineInfoList.vue";
 
 // 从上层注入获取原始简历数据
 const previewData = inject("previewData");
@@ -89,10 +89,14 @@ const hasEducationMeta = (item) =>
           v-if="hasItemHeader(item)"
           class="flex flex-wrap items-center justify-between gap-3"
         >
-          <div class="flex max-w-full min-w-0 flex-1 flex-wrap items-center gap-3">
-            <ItemTitle :name="item.name" :emphasis="!dateLeft" />
-            <ResumeField v-if="hasField(item, 'education')" :model-value="item.education" />
-            <ResumeField v-if="hasField(item, 'mode')" :model-value="item.mode" />
+          <div class="max-w-full min-w-0 flex-1">
+            <InlineInfoList
+              :items="[
+                { value: item.name, emphasis: !dateLeft },
+                item.education,
+                item.mode,
+              ]"
+            />
           </div>
           <div
             class="flex max-w-full min-w-0 flex-wrap items-center gap-2"
@@ -109,9 +113,8 @@ const hasEducationMeta = (item) =>
           class="flex flex-wrap items-center justify-between gap-3"
           :style="innerSpacingStyle"
         >
-          <div class="flex max-w-full min-w-0 flex-1 flex-wrap items-center gap-3">
-            <ResumeField v-if="hasField(item, 'post')" :model-value="item.post" />
-            <ResumeField v-if="hasField(item, 'college')" :model-value="item.college" />
+          <div class="max-w-full min-w-0 flex-1">
+            <InlineInfoList :items="[item.post, item.college]" />
           </div>
           <div class="flex max-w-full min-w-0 flex-wrap items-center">
             <ResumeField v-if="hasField(item, 'city')" :model-value="item.city" />

@@ -7,6 +7,7 @@ import { getValidData } from "./validData";
 import { isContentEmpty } from "../modules/validData";
 import ItemTitle from "../components/itemTitle.vue";
 import ItemTags from "../components/itemTags.vue";
+import InlineInfoList from "../components/inlineInfoList.vue";
 
 // 属性：模块标识、标题、数据 key
 const props = defineProps({
@@ -83,9 +84,8 @@ const hasItemHeader = (item) => {
           class="flex flex-wrap items-center justify-between gap-3"
           :style="innerSpacingStyle"
         >
-          <div class="flex max-w-full min-w-0 flex-1 flex-wrap items-center gap-3">
-            <ResumeField :model-value="item.post" />
-            <ResumeField :model-value="item.department" />
+          <div class="max-w-full min-w-0 flex-1">
+            <InlineInfoList :items="[item.post, item.department]" />
           </div>
           <div class="flex max-w-full min-w-0 flex-wrap items-center">
             <ResumeField :model-value="item.city" />
