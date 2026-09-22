@@ -44,7 +44,6 @@ const buildModuleList = (
       height: measurement.fullHeight,
       margin: 0,
       index: current.rows.length,
-      selector: `:nth-child(${current.rows.length + 1})`,
     });
     list.set(node.sourceModuleKey, current);
   });
