@@ -1,13 +1,14 @@
 import { computed, type ComputedRef, type Ref } from "vue";
-import { getContentHeight, RESUME_HEIGHT, RESUME_WIDTH } from "../../constants";
+import { getContentHeight, RESUME_WIDTH } from "../../constants";
 import { buildLayoutNodes } from "./adapter/buildLayoutNodes";
-import { createSingleColumnLayout } from "./layout/createSingleColumnLayout";
+import { createResumeLayout } from "./layout/createResumeLayout";
 import { validateLayoutConfig } from "./layout/validateLayoutConfig";
 import { useLayoutMeasurements } from "./measure/useLayoutMeasurements";
 import type { MeasuredNode } from "./measure/types";
 import { buildPagePlan } from "./paginate/pagePlan";
 import { paginateFlow } from "./paginate/paginateFlow";
 import type { PagePlan } from "./paginate/pagePlan";
+import type { PageLayoutConfig } from "./pageLayoutTypes";
 import type { LayoutNode } from "./types";
 
 /** 新排版链路的接入参数。 */
@@ -76,18 +77,13 @@ export const useResumeLayout = ({
   const availableHeight = computed(() =>
     getContentHeight(Number(ui.value.paddingVertical) || 0, showPageNumber.value),
   );
-  const layout = computed(() =>
-    createSingleColumnLayout({
+  const layout = computed<PageLayoutConfig>(() =>
+    createResumeLayout({
+      ui: ui.value,
       moduleKeys: activeModuleKeys.value,
-      pageSize: { width: RESUME_WIDTH, height: RESUME_HEIGHT },
-      pagePadding: {
-        top: Number(ui.value.paddingVertical) || 0,
-        right: Number(ui.value.paddingHorizontal) || 0,
-        bottom: Number(ui.value.paddingVertical) || 0,
-        left: Number(ui.value.paddingHorizontal) || 0,
-      },
+      paddingVertical: Number(ui.value.paddingVertical) || 0,
+      paddingHorizontal: Number(ui.value.paddingHorizontal) || 0,
       gap: Number(ui.value.moduleSpacing) || 0,
-      regionGap: 0,
     }),
   );
   const validation = computed(() => validateLayoutConfig(layout.value, activeModuleKeys.value));
@@ -131,16 +127,23 @@ export const useResumeLayout = ({
         warnings: [],
       };
     }
-    const flowPages = paginateFlow({
-      nodes: nodes.value,
-      measurements: measurements.value,
-      availableHeight: availableHeight.value,
-      gap: Number(ui.value.moduleSpacing) || 0,
-    });
+    const flowPagesByColumn = new Map(
+      layout.value.regions.flatMap((region) =>
+        region.columns.map((column) => [
+          column.id,
+          paginateFlow({
+            nodes: nodes.value.filter((node) => column.moduleKeys.includes(node.sourceModuleKey)),
+            measurements: measurements.value,
+            availableHeight: availableHeight.value,
+            gap: column.gap,
+          }),
+        ] as const),
+      ),
+    );
     return buildPagePlan({
       layout: layout.value,
-      flowPages,
       availableHeight: availableHeight.value,
+      flowPagesByColumn,
       version: fontReadyVersion.value,
     });
   });
