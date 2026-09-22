@@ -45,7 +45,6 @@ export const useResumePages = ({
     layout: layout.layout,
     nodes: layout.nodes,
     nodeMap: layout.nodeMap,
-    firstFragmentIds: layout.firstFragmentIds,
     moduleKeys: layout.moduleKeys,
     contentWidth: layout.contentWidth,
   };

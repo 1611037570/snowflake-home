@@ -176,22 +176,6 @@ export const useResumeLayout = ({
     });
   });
   const nodeMap = computed(() => new Map(nodes.value.map((node) => [node.id, node])));
-  const firstFragmentIds = computed(() => {
-    const result = new Set<string>();
-    const seenModules = new Set<string>();
-    pagePlan.value.pages.forEach((page) =>
-      page.regions.forEach((region) =>
-        region.columns.forEach((column) =>
-          column.fragments.forEach((fragment) => {
-            if (seenModules.has(fragment.sourceModuleKey)) return;
-            seenModules.add(fragment.sourceModuleKey);
-            result.add(fragment.fragmentId);
-          }),
-        ),
-      ),
-    );
-    return result;
-  });
   return {
     nodes,
     nodeMap,
@@ -200,7 +184,6 @@ export const useResumeLayout = ({
     measurements,
     measureDone,
     pagePlan,
-    firstFragmentIds,
     moduleKeys: activeModuleKeys,
     contentWidth,
   };

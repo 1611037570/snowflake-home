@@ -132,7 +132,7 @@ provideResumePreviewContext({
   userFieldOrder,
   userFieldLabels,
 });
-const { measureDone, pages, pagePlan, layout, nodes, nodeMap, firstFragmentIds, moduleKeys, contentWidth } = useResumePages({
+const { measureDone, pages, pagePlan, layout, nodes, nodeMap, moduleKeys, contentWidth } = useResumePages({
   measureRef: layoutMeasureRef,
   data: dataRef,
   ui,
@@ -276,7 +276,6 @@ defineExpose({ rootEl: rootRef, measureEl: rootRef, pages, pagePlan });
                   <LayoutColumn
                     :column="column"
                     :nodes="nodeMap"
-                    :first-fragment-ids="firstFragmentIds"
                     :is-edit="isEdit"
                     :module-class-map="moduleClassMap"
                     :gap="getColumnGap(column.columnId)"

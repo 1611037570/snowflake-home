@@ -15,24 +15,11 @@ const createUserModuleAdapter = (context: LayoutAdapterContext): LayoutNode[] =>
   const userData = getValidData((moduleData as { data?: unknown })?.data);
   if (!userData || typeof userData !== "object" || Array.isArray(userData)) return [];
 
-  const children = Object.entries(userData as Record<string, unknown>)
-    .filter(([, value]) => value !== undefined && value !== null && value !== "")
-    .map(([fieldKey, value]) => ({
-      id: `user.${fieldKey}`,
-      sourceModuleKey: "user",
-      type: "block" as const,
-      breakPolicy: {
-        splittable: false,
-        keepWithNext: false,
-        keepTitleWithFirst: false,
-      },
-      payload: {
-        fieldKey,
-        value,
-      },
-    }));
+  const hasUserField = Object.values(userData as Record<string, unknown>).some(
+    (value) => value !== undefined && value !== null && value !== "",
+  );
+  if (!hasUserField) return [];
 
-  if (children.length === 0) return [];
   return [
     {
       id: "user",
@@ -44,7 +31,6 @@ const createUserModuleAdapter = (context: LayoutAdapterContext): LayoutNode[] =>
         keepTitleWithFirst: false,
       },
       payload: { moduleKey: "user" },
-      children,
     },
   ];
 };

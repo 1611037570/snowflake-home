@@ -10,7 +10,6 @@ const props = defineProps<{
   node: LayoutNode;
   isEdit?: boolean;
   outlineClass?: string;
-  showModuleTitle?: boolean;
   // 当前分片与上方内容的间距，续段固定为零
   gapTop?: number;
 }>();
@@ -27,10 +26,7 @@ const emit = defineEmits<{ mouseenter: [moduleKey: string] }>();
     @mouseenter="emit('mouseenter', fragment.sourceModuleKey)"
   >
     <ModuleActions v-if="isEdit" :model-key="fragment.sourceModuleKey" />
-    <Title
-      v-if="node.sourceModuleKey !== 'user' && (showModuleTitle || fragment.titlePayload)"
-      :module-key="fragment.sourceModuleKey"
-    />
+    <Title v-if="fragment.titlePayload" :module-key="fragment.sourceModuleKey" />
     <LayoutNodeContent
       v-if="fragment.fragment !== 'title'"
       :node="node"

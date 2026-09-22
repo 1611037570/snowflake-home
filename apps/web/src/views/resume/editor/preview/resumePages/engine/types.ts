@@ -54,8 +54,6 @@ export interface LayoutNode {
   breakPolicy: BreakPolicy;
   /** 节点实际内容，由具体节点类型自行约定结构 */
   payload: unknown;
-  /** group、repeat 类型使用的子节点 */
-  children?: LayoutNode[];
   /** 当前节点的标题，只在第一次分片中渲染 */
   title?: LayoutNode;
   /** 富文本节点使用的可拆分断点 */
