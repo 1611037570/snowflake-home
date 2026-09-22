@@ -65,7 +65,7 @@ export const sliceRichTextHtml = (html: string, start = 0, end?: number): string
   if (!started) return "";
   if (!ended) {
     const lastNode = textNodes[textNodes.length - 1];
-    range.setEnd(lastNode, lastNode.nodeValue?.length || 0);
+    if (lastNode) range.setEnd(lastNode, lastNode.nodeValue?.length || 0);
   }
   const result = document.createElement("div");
   result.appendChild(range.cloneContents());
