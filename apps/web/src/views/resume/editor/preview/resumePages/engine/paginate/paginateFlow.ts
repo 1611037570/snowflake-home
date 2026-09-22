@@ -7,6 +7,8 @@ export interface FlowPageItem {
   nodeId: string;
   /** 来源模块 key */
   sourceModuleKey: string;
+  /** 首次出现时一并渲染的标题节点编号 */
+  titleNodeId?: string;
   /** 当前节点占用的高度 */
   height: number;
 }
@@ -45,6 +47,15 @@ const getMeasurement = (
   return measurement;
 };
 
+/** 读取节点标题高度；标题只参与节点第一次出现时的高度计算 */
+const getTitleHeight = (
+  node: LayoutNode,
+  measurements: ReadonlyMap<string, MeasuredNode>,
+): number => {
+  if (!node.title) return 0;
+  return Math.max(0, getMeasurement(node.title, measurements).fullHeight);
+};
+
 /**
  * 按节点顺序进行单栏贪心分页。
  * 当前阶段只处理完整节点，节点分片将在后续步骤中加入。
@@ -74,8 +85,13 @@ export const paginateFlow = ({
   };
 
   for (const node of nodes) {
+    if (node.title && !node.breakPolicy.keepTitleWithFirst) {
+      throw new Error(`带标题节点必须绑定首段内容：${node.id}`);
+    }
     const measurement = getMeasurement(node, measurements);
-    const height = Math.max(0, measurement.fullHeight);
+    const titleHeight = getTitleHeight(node, measurements);
+    // 当前阶段节点仍然整体放置，但标题已经绑定到首次出现的节点上。
+    const height = titleHeight + Math.max(0, measurement.fullHeight);
     const nodeGap = currentPage.items.length > 0 ? safeGap : 0;
     const doesNotFit = currentPage.usedHeight + nodeGap + height > safeAvailableHeight;
 
@@ -87,6 +103,7 @@ export const paginateFlow = ({
     currentPage.items.push({
       nodeId: node.id,
       sourceModuleKey: node.sourceModuleKey,
+      titleNodeId: node.title?.id,
       height,
     });
     currentPage.usedHeight += pageGap + height;
