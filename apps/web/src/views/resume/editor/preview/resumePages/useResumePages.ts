@@ -42,6 +42,7 @@ export const useResumePages = ({
     measureDone: layout.measureDone,
     pages: computed(() => layout.pagePlan.value.pages),
     pagePlan: layout.pagePlan,
+    layout: layout.layout,
     nodes: layout.nodes,
     nodeMap: layout.nodeMap,
     firstFragmentIds: layout.firstFragmentIds,
