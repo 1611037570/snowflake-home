@@ -2,9 +2,9 @@
  * useResumeTheme —— 简历主题样式注入
  *
  * 根据 item.ui 计算主题样式（内边距、字号、行高、主题色、风格模板），
- * 通过 provide 提供给模块子组件使用。
+ * 由预览上下文提供给模块子组件使用。
  */
-import { computed, provide, ref, watch, type ComputedRef, type Ref } from "vue";
+import { computed, ref, watch, type ComputedRef, type Ref } from "vue";
 import { loadFont } from "@/utils";
 import {
   defaultAvatarPosition,
@@ -173,27 +173,6 @@ export const useResumeTheme = (ui: ComputedRef<ResumeUi>): ResumeTheme => {
   const linkUnderline = computed(() => ui.value.linkUnderline ?? defaultLinkUnderline);
   // 并列信息分隔符，缺失时保留默认留白样式。
   const infoSeparator = computed(() => ui.value.infoSeparator ?? defaultInfoSeparator);
-
-  provide("fontValue", fontValue);
-  provide("titleFontStyle", titleFontStyle);
-  provide("lineHeightValue", lineHeightValue);
-  provide("paragraphSpacingStyle", paragraphSpacingStyle);
-  provide("innerSpacingStyle", innerSpacingStyle);
-  provide("themeColor", themeColor);
-  provide("themeColorSoft", themeColorSoft);
-  provide("themeColorLine", themeColorLine);
-  provide("themeColorContrast", themeColorContrast);
-  provide("themeTemplate", themeTemplate);
-  provide("userInfoMode", userInfoMode);
-  provide("userInfoLayout", userInfoLayout);
-  provide("avatarPosition", avatarPosition);
-  provide("infoPosition", infoPosition);
-  provide("dateStyle", dateStyle);
-  provide("datePosition", datePosition);
-  provide("textAlign", textAlign);
-  provide("titleIconEnabled", titleIconEnabled);
-  provide("linkUnderline", linkUnderline);
-  provide("infoSeparator", infoSeparator);
 
   return {
     paddingStyle,
