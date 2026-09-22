@@ -1,5 +1,10 @@
 import { xiaoZhouResumeTemplate } from "./characters/xiaoZhou";
-import { modelResumeTemplate } from "./items/model";
+import { furtherEducationResumeTemplate } from "./items/all__0__01";
+import { studyAbroadResumeTemplate } from "./items/all__0__02";
+import { englishResumeTemplate } from "./items/fe__0-1__01";
+import { campusZeroToOneResumeTemplate } from "./items/fe__0__01";
+import { modelResumeTemplate } from "./items/model__3-5__01";
+import { internshipZeroToOneResumeTemplate } from "./items/op__0-1__01";
 import { xiaoYangProgrammerResumeTemplate } from "./characters/xiaoYang";
 
 type ResumeTemplateOption = {
@@ -34,9 +39,9 @@ export type ResumeTemplate = {
 };
 
 export const resumeTemplateSceneOptions: ResumeTemplateOption[] = [
+  { key: "social-recruitment", value: "社会招聘" },
   { key: "campus", value: "校园招聘" },
   { key: "internship", value: "实习" },
-  { key: "social-recruitment", value: "社会招聘" },
   { key: "further-education", value: "国内升学" },
   { key: "study-abroad", value: "留学申请" },
   { key: "english-resume", value: "英文模板" },
@@ -149,6 +154,11 @@ export const resumeTemplateHotList: ResumeTemplate[] = [
   xiaoZhouResumeTemplate,
   xiaoYangProgrammerResumeTemplate,
   modelResumeTemplate,
+  campusZeroToOneResumeTemplate,
+  internshipZeroToOneResumeTemplate,
+  furtherEducationResumeTemplate,
+  studyAbroadResumeTemplate,
+  englishResumeTemplate,
 ];
 
 export const resumeTemplateList: ResumeTemplate[] = [...resumeTemplateHotList];
