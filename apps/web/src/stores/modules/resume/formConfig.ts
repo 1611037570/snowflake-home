@@ -697,6 +697,17 @@ export const DEFAULT_EDUCATION_FORM = {
               clearable: true,
             },
           },
+          {
+            type: "object",
+            label: "项目链接",
+            component: "projectLink",
+            span: 24,
+            model: {
+              source: ["data", "link"],
+              prop: "modelValue",
+              defaultValue: {},
+            },
+          },
           // 学校标签：可选标签由字段配置注入
           {
             type: "object",
@@ -970,6 +981,17 @@ export const DEFAULT_WORK_FORM = {
             props: {
               placeholder: "请输入公司",
               clearable: true,
+            },
+          },
+          {
+            type: "object",
+            label: "项目链接",
+            component: "projectLink",
+            span: 24,
+            model: {
+              source: ["data", "link"],
+              prop: "modelValue",
+              defaultValue: {},
             },
           },
           // 工作标签：可选标签由字段配置注入

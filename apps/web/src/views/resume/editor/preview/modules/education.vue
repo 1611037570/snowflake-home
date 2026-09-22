@@ -15,6 +15,7 @@ const fontValue = inject("fontValue");
 const lineHeightValue = inject("lineHeightValue");
 const paragraphSpacingStyle = inject("paragraphSpacingStyle");
 const innerSpacingStyle = inject("innerSpacingStyle");
+const linkUnderline = inject("linkUnderline", computed(() => false));
 // 日期样式（2026.9 / 2026年9月），由设计配置注入
 const dateStyle = inject("dateStyle");
 // 日期位置（左/右），由设计配置注入
@@ -31,6 +32,17 @@ const education = computed(() => {
 const hasField = (item, key) => {
   const v = item?.[key];
   return v && typeof v === "string" && v.trim();
+};
+
+// 教育经历链接兼容对象与旧数据中的字符串。
+const getItemLink = (item) => {
+  const link = item?.link;
+  if (typeof link === "string") return { name: "", url: link.trim() };
+  if (!link || typeof link !== "object") return { name: "", url: "" };
+  return {
+    name: String(link.name || "").trim(),
+    url: String(link.url || "").trim(),
+  };
 };
 
 // 条目是否含首行信息（名称/专业/学院/学历/学制/时间），为空时不渲染首行，避免多出空行间距
@@ -50,7 +62,10 @@ const hasSubInfo = (item) => Boolean(hasField(item, "post") || hasField(item, "c
 const contentIsFirst = (item) => !hasItemHeader(item) && !hasSubInfo(item);
 
 // 教育条目存在任一可展示信息时才创建条目容器
-const hasEducationItem = (item) => hasItemHeader(item) || hasSubInfo(item) || item.tags?.length;
+const hasEducationItem = (item) => {
+  const link = getItemLink(item);
+  return hasItemHeader(item) || hasSubInfo(item) || item.tags?.length || link.name || link.url;
+};
 
 // 教育条目的第二行包含专业、学院或城市
 const hasEducationMeta = (item) =>
@@ -102,13 +117,32 @@ const hasEducationMeta = (item) =>
             <ResumeField v-if="hasField(item, 'city')" :model-value="item.city" />
           </div>
         </div>
-        <!-- 学校标签独立成行，避免和学校名称及时间争抢空间 -->
+        <!-- 学校标签与链接独立成行，避免和学校名称及时间争抢空间 -->
         <div
-          v-if="item.tags?.length"
-          class="flex flex-wrap items-center gap-3"
+          v-if="item.tags?.length || getItemLink(item).name || getItemLink(item).url"
+          class="flex flex-wrap items-center justify-between gap-3"
           :style="innerSpacingStyle"
         >
-          <ItemTags :tags="item.tags" />
+          <div class="flex flex-wrap items-center gap-3">
+            <ItemTags :tags="item.tags" />
+          </div>
+          <template v-if="getItemLink(item).url || getItemLink(item).name">
+            <a
+              v-if="getItemLink(item).url"
+              :href="getItemLink(item).url"
+              :title="getItemLink(item).name"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="inline max-w-full min-w-0 break-all hover:underline"
+              :class="{ underline: linkUnderline }"
+            >
+              <ResumeField
+                :model-value="getItemLink(item).name || getItemLink(item).url"
+                class="inline max-w-full min-w-0 break-all"
+              />
+            </a>
+            <span v-else class="text-sf-theme">{{ getItemLink(item).name }}</span>
+          </template>
         </div>
       </div>
       <!-- 补充描述/经历：成为条目首块时由段间距承担上间距 -->

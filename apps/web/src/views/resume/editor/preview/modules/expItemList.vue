@@ -39,8 +39,8 @@ const hasStructuredLayout = ["project", "work"].includes(props.moduleName);
 // 数组记录统一由 getValidData 过滤并提取业务内容
 const list = computed(() => getValidData(previewData.value?.[props.dataKey]?.list || []));
 
-// 项目链接兼容对象与旧数据中的字符串，展示内容不限制用户输入格式
-const getProjectLink = (item) => {
+// 条目链接兼容对象与旧数据中的字符串，展示内容不限制用户输入格式
+const getItemLink = (item) => {
   const link = item?.link;
   if (typeof link === "string") return { name: "", url: link.trim() };
   if (!link || typeof link !== "object") return { name: "", url: "" };
@@ -50,9 +50,9 @@ const getProjectLink = (item) => {
   };
 };
 
-// 条目是否含首行信息，项目链接也属于首行信息
+// 条目是否含首行信息，链接也属于首行信息
 const hasItemHeader = (item) => {
-  const link = getProjectLink(item);
+  const link = getItemLink(item);
   return Boolean(item.name || item.department || item.post || item.startTime || item.endTime || link.name || link.url);
 };
 </script>
@@ -93,7 +93,7 @@ const hasItemHeader = (item) => {
         <div
           v-if="
             item.tags?.length ||
-            (moduleName === 'project' && (getProjectLink(item).name || getProjectLink(item).url))
+            (['project', 'work'].includes(moduleName) && (getItemLink(item).name || getItemLink(item).url))
           "
           class="flex flex-wrap items-center justify-between gap-3"
           :style="innerSpacingStyle"
@@ -104,25 +104,25 @@ const hasItemHeader = (item) => {
           </div>
           <template
             v-if="
-              moduleName === 'project' &&
-              (getProjectLink(item).url || getProjectLink(item).name)
+              ['project', 'work'].includes(moduleName) &&
+              (getItemLink(item).url || getItemLink(item).name)
             "
           >
             <a
-              v-if="getProjectLink(item).url"
-              :href="getProjectLink(item).url"
-              :title="getProjectLink(item).name"
+              v-if="getItemLink(item).url"
+              :href="getItemLink(item).url"
+              :title="getItemLink(item).name"
               target="_blank"
               rel="noopener noreferrer"
               class="inline max-w-full min-w-0 break-all hover:underline"
               :class="{ underline: linkUnderline }"
             >
               <ResumeField
-                :model-value="getProjectLink(item).name || getProjectLink(item).url"
+                :model-value="getItemLink(item).name || getItemLink(item).url"
                 class="inline max-w-full min-w-0 break-all"
               />
             </a>
-            <span v-else class="text-sf-theme">{{ getProjectLink(item).name }}</span>
+            <span v-else class="text-sf-theme">{{ getItemLink(item).name }}</span>
           </template>
         </div>
       </div>
