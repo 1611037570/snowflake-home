@@ -1,12 +1,9 @@
 <script setup lang="ts">
-import { computed } from "vue";
 import Title from "../../../components/title/index.vue";
-import { sliceRichTextHtml } from "../adapter/richTextParser";
 import LayoutNodeContent from "../render/layoutNodeContent.vue";
 import type { LayoutNode } from "../types";
 
-const props = defineProps<{ node: LayoutNode }>();
-const richText = computed(() => props.node.payload as { html?: string; breakPoints?: { offset: number }[] });
+defineProps<{ node: LayoutNode }>();
 </script>
 
 <template>
@@ -16,16 +13,20 @@ const richText = computed(() => props.node.payload as { html?: string; breakPoin
     </div>
     <div class="layout-measure-node" :data-layout-node-id="node.id">
       <LayoutNodeContent :node="node" />
-      <template v-if="node.type === 'richText' && richText.html">
-        <div
-          v-for="point in node.breakPoints"
-          :key="point.offset"
-          class="layout-measure-breakpoint"
-          :data-layout-breakpoint-offset="point.offset"
-          :style="{ width: '100%' }"
-          v-html="sliceRichTextHtml(richText.html, 0, point.offset)"
+      <!-- 断点探针按首段内容样式渲染，量出的高度与真实首段一致（含容器外边距与上内边距） -->
+      <div
+        v-for="point in node.breakPoints"
+        :key="point.offset"
+        class="layout-measure-breakpoint"
+        :data-layout-breakpoint-offset="point.offset"
+        :style="{ width: '100%' }"
+      >
+        <LayoutNodeContent
+          :node="node"
+          :decoration="'top'"
+          :content-range="{ start: 0, end: point.offset }"
         />
-      </template>
+      </div>
     </div>
   </div>
 </template>
@@ -34,6 +35,8 @@ const richText = computed(() => props.node.payload as { html?: string; breakPoin
 .layout-measure-node {
   position: relative;
   width: 100%;
+  /* 独立格式化上下文：让内容容器的上外边距计入节点高度，与真实首段渲染高度对齐 */
+  display: flow-root;
 }
 
 .layout-measure-breakpoint {

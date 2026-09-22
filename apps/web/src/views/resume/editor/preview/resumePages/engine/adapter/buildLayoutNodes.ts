@@ -1,6 +1,7 @@
 import type { LayoutNode } from "../types";
 import {
   createLayoutAdapterRegistry,
+  createModuleTitleNode,
   type LayoutAdapterRegistry,
 } from "./index";
 import { registerExperienceModuleAdapters } from "./experienceModules";
@@ -14,6 +15,19 @@ export const createResumeLayoutAdapterRegistry = (): LayoutAdapterRegistry => {
   registerExperienceModuleAdapters(registry);
   registerOtherModuleAdapters(registry);
   return registry;
+};
+
+/** 标题只在模块首个分片渲染，挂到首个节点上让分页计入标题高度；个人信息模块没有标题 */
+const attachModuleTitle = (moduleKey: string, nodes: LayoutNode[]): LayoutNode[] => {
+  if (nodes.length === 0 || moduleKey === "user" || nodes[0].title) return nodes;
+  return [
+    {
+      ...nodes[0],
+      title: createModuleTitleNode(moduleKey),
+      breakPolicy: { ...nodes[0].breakPolicy, keepTitleWithFirst: true },
+    },
+    ...nodes.slice(1),
+  ];
 };
 
 /**
@@ -36,5 +50,5 @@ export const buildLayoutNodes = ({
   moduleKeys.flatMap((moduleKey) => {
     const adapter = registry.resolve(moduleKey);
     if (!adapter) return [];
-    return adapter({ moduleKey, data, ui, config });
+    return attachModuleTitle(moduleKey, adapter({ moduleKey, data, ui, config }));
   });

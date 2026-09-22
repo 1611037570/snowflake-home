@@ -36,8 +36,15 @@ const {
 
 const nodePayload = computed(() => (props.payload ?? props.node.payload) as any);
 const item = computed(() => nodePayload.value?.item || {});
+// 图片作品按条目尺寸占比渲染，和模块原实现的宽度口径保持一致
+const mediaWidthStyle = computed(() => {
+  const payload = nodePayload.value;
+  if (payload?.mediaType !== "image") return undefined;
+  return { width: `${payload.item?.size ?? 50}%` };
+});
 const richTextHtml = computed(() => {
-  const parsed = nodePayload.value;
+  // 富文本节点的载荷即解析结果，经历条目则读取条目正文的解析结果
+  const parsed = nodePayload.value?.content ?? nodePayload.value;
   if (!parsed?.html) return "";
   return sliceRichTextHtml(
     parsed.html,
@@ -95,6 +102,13 @@ const contentOuterStyle = computed(() => ({
     ? { marginTop: "0px" }
     : paragraphSpacingStyle.value),
 }));
+// 经历条目头部只在首段渲染，正文续段不再重复头部
+const showItemHeader = computed(() => !props.contentRange || props.contentRange.start === 0);
+// 正文与头部的间距只计在首段，续段紧接上文，与分页高度口径一致
+const itemContentSpacingStyle = computed(() => {
+  if (props.decoration === "middle" || props.decoration === "bottom") return { marginTop: "0px" };
+  return hasItemHeader.value ? innerSpacingStyle.value : paragraphSpacingStyle.value;
+});
 </script>
 
 <template>
@@ -117,10 +131,10 @@ const contentOuterStyle = computed(() => ({
 
   <ModuleContentContainer
     v-else-if="node.type === 'group' && isExperience"
-    :style="[fragmentContentStyle, paragraphSpacingStyle]"
+    :style="contentOuterStyle"
     class="layout-experience-item"
   >
-    <div v-if="hasItemHeader" :style="paragraphSpacingStyle">
+    <div v-if="hasItemHeader && showItemHeader" :style="paragraphSpacingStyle">
       <div class="flex flex-wrap items-center justify-between gap-3">
         <div class="min-w-0 flex-1">
           <ItemTitle :name="item.name" :emphasis="datePosition !== 'left'" />
@@ -152,9 +166,9 @@ const contentOuterStyle = computed(() => ({
     </div>
     <ResumeField
       v-if="!isContentEmpty(item.content)"
-      :model-value="item.content"
+      :model-value="richTextHtml"
       html
-      :style="hasItemHeader ? innerSpacingStyle : paragraphSpacingStyle"
+      :style="itemContentSpacingStyle"
     />
   </ModuleContentContainer>
 
@@ -183,7 +197,7 @@ const contentOuterStyle = computed(() => ({
   </template>
 
   <template v-else-if="node.type === 'media'">
-    <div class="flex flex-col gap-3" :style="paragraphSpacingStyle">
+    <div class="flex flex-col gap-3" :style="[paragraphSpacingStyle, mediaWidthStyle]">
       <img v-if="nodePayload.item?.img" :src="nodePayload.item.img" :alt="nodePayload.item.name || ''" class="max-w-full" />
       <a v-if="safeUrl(nodePayload.item?.url)" :href="safeUrl(nodePayload.item.url)" target="_blank" rel="noopener noreferrer" :class="{ underline: linkUnderline }">
         {{ nodePayload.item.name || nodePayload.item.url }}

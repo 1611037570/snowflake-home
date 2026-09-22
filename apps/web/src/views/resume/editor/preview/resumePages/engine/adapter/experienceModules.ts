@@ -1,7 +1,7 @@
 import { getValidData, isContentEmpty } from "../../../modules/validData";
 import type { LayoutNode } from "../types";
 import type { LayoutAdapter, LayoutAdapterContext, LayoutAdapterRegistry } from "./index";
-import { parseRichText } from "./richTextParser";
+import { parseRichText, type ParsedRichText } from "./richTextParser";
 
 /** 当前使用统一经历列表结构的模块 key */
 export const EXPERIENCE_MODULE_KEYS = ["work", "project", "education"] as const;
@@ -40,22 +40,19 @@ const createExperienceHeader = (
 const createExperienceContent = (
   moduleKey: string,
   index: number,
-  content: string,
-): LayoutNode => {
-  const parsed = parseRichText(content);
-  return {
-    id: `${moduleKey}.item-${index}.content`,
-    sourceModuleKey: moduleKey,
-    type: "richText",
-    breakPolicy: {
-      splittable: true,
-      keepWithNext: false,
-      keepTitleWithFirst: false,
-    },
-    payload: parsed,
-    breakPoints: parsed.breakPoints,
-  };
-};
+  parsed: ParsedRichText,
+): LayoutNode => ({
+  id: `${moduleKey}.item-${index}.content`,
+  sourceModuleKey: moduleKey,
+  type: "richText",
+  breakPolicy: {
+    splittable: true,
+    keepWithNext: false,
+    keepTitleWithFirst: false,
+  },
+  payload: parsed,
+  breakPoints: parsed.breakPoints,
+});
 
 /** 创建工作、项目、教育经历共用的条目适配器 */
 export const createExperienceModuleAdapter = (moduleKey: string): LayoutAdapter => (
@@ -65,9 +62,11 @@ export const createExperienceModuleAdapter = (moduleKey: string): LayoutAdapter 
 
   return items.map((item, index) => {
     const content = typeof item.content === "string" ? item.content : "";
+    // 条目正文参与分片：断点与首段截取共用同一份解析结果
+    const parsed = isContentEmpty(content) ? undefined : parseRichText(content);
     const children: LayoutNode[] = [createExperienceHeader(moduleKey, index, item)];
-    if (!isContentEmpty(content)) {
-      children.push(createExperienceContent(moduleKey, index, content));
+    if (parsed) {
+      children.push(createExperienceContent(moduleKey, index, parsed));
     }
 
     return {
@@ -75,14 +74,17 @@ export const createExperienceModuleAdapter = (moduleKey: string): LayoutAdapter 
       sourceModuleKey: moduleKey,
       type: "group",
       breakPolicy: {
-        splittable: true,
+        // 有正文的条目按正文断点拆分，头部随首段一起留在原页
+        splittable: Boolean(parsed),
         keepWithNext: false,
         keepTitleWithFirst: false,
       },
       payload: {
         part: "item",
         item,
+        content: parsed,
       },
+      breakPoints: parsed?.breakPoints,
       children,
     };
   });
