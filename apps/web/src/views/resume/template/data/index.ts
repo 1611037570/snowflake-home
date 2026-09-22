@@ -5,6 +5,8 @@ import { englishResumeTemplate } from "./items/fe__0-1__01";
 import { campusZeroToOneResumeTemplate } from "./items/fe__0__01";
 import { modelResumeTemplate } from "./items/model__3-5__01";
 import { internshipZeroToOneResumeTemplate } from "./items/op__0-1__01";
+import { photographerResumeTemplate } from "./items/photo__3-5__01";
+import { videoEditorResumeTemplate } from "./items/ve__3-5__01";
 import { xiaoYangProgrammerResumeTemplate } from "./characters/xiaoYang";
 
 type ResumeTemplateOption = {
@@ -105,6 +107,8 @@ export const resumeTemplatePositionOptions: ResumeTemplateOption[] = [
     { key: "ui-ux", value: "UI/UX" },
     { key: "graphic-design", value: "平面设计/美工" },
     { key: "model", value: "模特" },
+    { key: "photographer", value: "摄影师" },
+    { key: "video-editor", value: "视频剪辑" },
     // 运营/市场
     { key: "operation", value: "运营" },
     { key: "new-media", value: "新媒体" },
@@ -155,6 +159,8 @@ export const resumeTemplateHotList: ResumeTemplate[] = [
   xiaoZhouResumeTemplate,
   xiaoYangProgrammerResumeTemplate,
   modelResumeTemplate,
+  photographerResumeTemplate,
+  videoEditorResumeTemplate,
   campusZeroToOneResumeTemplate,
   internshipZeroToOneResumeTemplate,
   furtherEducationResumeTemplate,

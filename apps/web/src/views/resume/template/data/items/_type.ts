@@ -23,6 +23,8 @@ export const resumeTemplatePositionCode = {
   "ui-ux": "ux",
   "graphic-design": "gd",
   model: "model",
+  photographer: "photo",
+  "video-editor": "ve",
   operation: "op",
   "new-media": "nm",
   "copywriting-planning": "cp",
