@@ -132,7 +132,7 @@ provideResumePreviewContext({
   userFieldOrder,
   userFieldLabels,
 });
-const { measureDone, pages, pagePlan, nodes, nodeMap, firstFragmentIds, moduleList, contentWidth } = useResumePages({
+const { measureDone, pages, pagePlan, layout, nodes, nodeMap, firstFragmentIds, moduleList, contentWidth } = useResumePages({
   measureRef: layoutMeasureRef,
   data: dataRef,
   ui,
@@ -141,6 +141,19 @@ const { measureDone, pages, pagePlan, nodes, nodeMap, firstFragmentIds, moduleLi
   fontReadyVersion,
   allModules,
 });
+const layoutColumnGap = computed(() => layout.value.columnGap || 0);
+const columnConfigMap = computed(
+  () => new Map(layout.value.regions.flatMap((region) => region.columns.map((column) => [column.id, column]))),
+);
+const getColumnStyle = (columnId) => {
+  const column = columnConfigMap.value.get(columnId);
+  if (!column) return { flex: "1 1 0%" };
+  if (column.width.mode === "fixed") {
+    return { flex: `0 0 ${column.width.value}px`, width: `${column.width.value}px` };
+  }
+  return { flex: `${column.width.value} ${column.width.value} 0%` };
+};
+const getColumnGap = (columnId) => columnConfigMap.value.get(columnId)?.gap || 0;
 // 预览就绪：空简历直接展示提示页，其余以新引擎完成测量为准。
 const previewMeasured = computed(() => isEmpty.value || measureDone.value);
 const visiblePages = computed(() => (isThumb.value ? pages.value.slice(0, 1) : pages.value));
@@ -244,19 +257,24 @@ defineExpose({ rootEl: rootRef, measureEl: rootRef, moduleList, pages, pagePlan 
             v-for="region in page.regions"
             :key="region.regionId"
             class="flex min-w-0 flex-1"
-            :style="{ gap: `${ui.columnGap || 24}px` }"
+            :style="{ gap: `${layoutColumnGap}px` }"
           >
-            <LayoutColumn
+            <div
               v-for="column in region.columns"
               :key="column.columnId"
-              :column="column"
-              :nodes="nodeMap"
-              :first-fragment-ids="firstFragmentIds"
-              :is-edit="isEdit"
-              :module-class-map="moduleClassMap"
-              :gap="0"
-              @mouseenter="handleModuleMouseEnter"
-            />
+              class="min-w-0"
+              :style="getColumnStyle(column.columnId)"
+            >
+              <LayoutColumn
+                :column="column"
+                :nodes="nodeMap"
+                :first-fragment-ids="firstFragmentIds"
+                :is-edit="isEdit"
+                :module-class-map="moduleClassMap"
+                :gap="getColumnGap(column.columnId)"
+                @mouseenter="handleModuleMouseEnter"
+              />
+            </div>
           </div>
         </ResumePageShell>
       </div>
