@@ -1,6 +1,6 @@
 <script setup>
-import { inject } from "vue";
 import TitleText from "../titleText.vue";
+import { useResumePreviewContext } from "../../../previewContext";
 
 defineProps({
   title: {
@@ -8,7 +8,9 @@ defineProps({
     default: "",
   },
 });
-const themeColor = inject("themeColor");
+const {
+  theme: { themeColor },
+} = useResumePreviewContext();
 </script>
 
 <template>

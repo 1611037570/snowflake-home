@@ -1,5 +1,4 @@
 <script setup>
-import { inject } from "vue";
 import TitleText from "../titleText.vue";
 
 defineProps({
@@ -8,7 +7,6 @@ defineProps({
     default: "",
   },
 });
-const fontValue = inject("fontValue");
 </script>
 
 <template>

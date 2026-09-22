@@ -1,10 +1,11 @@
 <script setup>
-import { inject } from "vue";
 import UserHeading from "../components/userHeading.vue";
+import { useResumePreviewContext } from "../../../previewContext";
 
-const themeColor = inject("themeColor");
 // 浅底色：统一由主题色推导
-const themeColorSoft = inject("themeColorSoft");
+const {
+  theme: { themeColor, themeColorSoft },
+} = useResumePreviewContext();
 </script>
 
 <template>
