@@ -22,6 +22,16 @@ const props = defineProps({
     type: String,
     default: "简历模板",
   },
+  // 模板描述
+  description: {
+    type: String,
+    default: "",
+  },
+  // 模板标签
+  tags: {
+    type: Array,
+    default: () => [],
+  },
   // 右侧标题上方的场景文案
   eyebrowText: {
     type: String,
@@ -138,6 +148,20 @@ onBeforeUnmount(() => {
           >
             <SfIcon icon="lucide:x" size="5" />
           </button>
+        </div>
+        <div v-if="tags.length || description" class="mt-6 flex flex-col gap-3">
+          <div v-if="tags.length" class="flex flex-wrap gap-3">
+            <span
+              v-for="tag in tags"
+              :key="tag"
+              class="rounded-full bg-sf-bg-2 px-3 py-1 text-xs text-sf-text-2"
+            >
+              {{ tag }}
+            </span>
+          </div>
+          <p v-if="description" class="text-sm leading-7 text-sf-text-2">
+            {{ description }}
+          </p>
         </div>
         <div class="mt-auto flex flex-col gap-3">
           <SfButton

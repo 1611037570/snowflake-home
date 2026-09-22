@@ -148,6 +148,7 @@ export const resumeTemplateCategoryGroups: ResumeTemplateCategoryGroup[] = [
   { key: "industry", name: "行业", icon: "lucide:building-2", options: resumeTemplateIndustryOptions },
   { key: "position", name: "职位", icon: "lucide:briefcase-business", options: resumeTemplatePositionOptions },
   { key: "design", name: "设计", icon: "lucide:palette", options: resumeTemplateDesignOptions },
+  { key: "style", name: "简历模板", icon: "lucide:layout-template", options: [] },
 ];
 
 export const resumeTemplateHotList: ResumeTemplate[] = [

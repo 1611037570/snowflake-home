@@ -15,37 +15,44 @@ const resumeStore = useResumeStore();
 
 // 深拷贝：套用模板时隔离示例数据，避免与模板预览共享引用导致互相串改
 const deepClone = (value) => JSON.parse(JSON.stringify(value));
-// 全部模板：遍历风格模板，统一使用小舟示例数据预览，仅覆盖风格
+// 全部模板：小舟提供示例内容，样式模板提供完整 UI。
 const templates = computed(() =>
   themeTemplateList.map((style, index) => ({
-    id: style.value,
+    id: style.id,
     name: style.name,
-    value: style.value,
+    description: style.description,
+    tags: [],
+    type: "style",
     revealIndex: index,
     item: {
       data: xiaoZhouResumeItem.data,
       config: xiaoZhouResumeItem.config,
-      ui: {
-        ...xiaoZhouResumeItem.ui,
-        themeTemplate: style.value,
-      },
+      ui: style.item.ui,
     },
   })),
 );
 
-const total = computed(() => templates.value.length);
 const templateFilters = ref({});
+const currentCategory = ref("scene");
 const filteredResumeTemplates = computed(() =>
-  resumeTemplateHotList.filter((template) =>
-    Object.entries(templateFilters.value).every(([key, value]) => {
-      if (!value) return true;
-      const values = template[key];
-      return !Array.isArray(values) || values.includes("all") || values.includes(value);
-    }),
-  ),
+  resumeTemplateHotList
+    .filter((template) =>
+      Object.entries(templateFilters.value).every(([key, value]) => {
+        if (!value) return true;
+        const values = template[key];
+        return !Array.isArray(values) || values.includes("all") || values.includes(value);
+      }),
+    )
+    .map((template) => ({ ...template, type: "content" })),
+);
+const displayedTemplates = computed(() =>
+  currentCategory.value === "style" ? templates.value : filteredResumeTemplates.value,
 );
 const setTemplateFilters = (value) => {
   templateFilters.value = value;
+};
+const setCurrentCategory = (value) => {
+  currentCategory.value = value;
 };
 
 // 套用模板：携带风格，深拷贝数据后新增简历并进入编辑
@@ -53,11 +60,15 @@ const useTemplate = (card) => {
   resumeStore.addResume({
     data: deepClone(xiaoZhouResumeItem.data),
     config: deepClone(xiaoZhouResumeItem.config),
-    ui: { ...xiaoZhouResumeItem.ui, themeTemplate: card.value },
+    ui: deepClone(card.item.ui),
   });
 };
 const useContentTemplate = (card) => {
   resumeStore.addResume(deepClone(card.item));
+};
+const useTemplateCard = (card) => {
+  if (card.type === "style") useTemplate(card);
+  else useContentTemplate(card);
 };
 
 // 全屏预览：记录当前展开的模板卡片，visible 由其是否存在派生
@@ -79,8 +90,7 @@ const useFullscreenTemplate = () => {
   closeFullscreen();
 };
 
-// 切换大小：切换模板预览大小
-const switchSize = (size) => {
+const setPreviewSize = (size) => {
   gridClass.value = size;
 };
 const gridClass = ref("default");
@@ -90,13 +100,17 @@ const gridClass = ref("default");
   <div class="relative mx-auto flex h-full w-full max-w-7xl flex-col gap-3">
     <SfScrollbar class="flex-1">
       <div class="flex h-full flex-col py-2">
-        <TemplateCategory @change="setTemplateFilters" />
-        <RevealGrid :items="filteredResumeTemplates" :size="gridClass" :interval="120" key-field="id">
+        <TemplateCategory
+          @change="setTemplateFilters"
+          @category-change="setCurrentCategory"
+          @size-change="setPreviewSize"
+        />
+        <RevealGrid :items="displayedTemplates" :size="gridClass" :interval="120" key-field="id">
           <template #default="{ item: card }">
             <ResumeCardContainer
               :item="card.item"
               :size="gridClass"
-              @click="useContentTemplate(card)"
+              @click="useTemplateCard(card)"
             >
               <div class="flex flex-col">
                 <div class="truncate text-base font-black text-black">
@@ -105,11 +119,11 @@ const gridClass = ref("default");
                 <div class="mt-3 line-clamp-2 text-sm text-sf-text-2">
                   {{ card.description }}
                 </div>
-                <div class="mt-3 flex flex-wrap gap-3 text-sm text-sf-text-2">
+                <div v-if="card.tags.length" class="mt-3 flex flex-wrap gap-3 text-sm text-sf-text-2">
                   <span v-for="tag in card.tags" :key="tag">{{ tag }}</span>
                 </div>
                 <div class="mt-3 flex items-center justify-between gap-2">
-                  <SfButton class="flex-1" @click.stop="openFullscreen(card, 'content')">
+                  <SfButton class="flex-1" @click.stop="openFullscreen(card, card.type)">
                     预览
                   </SfButton>
                   <SfButton class="flex-1">使用模板</SfButton>
@@ -123,43 +137,6 @@ const gridClass = ref("default");
             </div>
           </template>
         </RevealGrid>
-        <div class="mt-6 mb-6 flex w-full min-w-full items-center justify-between">
-          <h2 class="text-[20px] font-black text-sf-theme">简历模板 {{ total }} 款</h2>
-          <div class="flex items-center gap-3">
-            <span class="text-sm font-bold text-sf-text-2">预览尺寸</span>
-            <div class="flex items-center gap-3">
-              <SfButton
-                :plain="gridClass !== 'small'"
-                :round="false"
-                @click="switchSize('small')"
-              >
-                大图
-              </SfButton>
-              <SfButton
-                :plain="gridClass !== 'default'"
-                :round="false"
-                @click="switchSize('default')"
-              >
-                小图
-              </SfButton>
-            </div>
-          </div>
-        </div>
-        <RevealGrid :items="templates" :size="gridClass" :interval="120" key-field="id">
-          <template #default="{ item: card }">
-            <ResumeCardContainer :item="card.item" :size="gridClass" @click="useTemplate(card)">
-              <div class="flex flex-col">
-                <div class="truncate text-base font-black text-black">
-                  {{ card.name }}
-                </div>
-                <div class="mt-3 flex items-center justify-between gap-2">
-                  <SfButton class="flex-1" @click.stop="openFullscreen(card)">预览</SfButton>
-                  <SfButton class="flex-1">使用模板</SfButton>
-                </div>
-              </div>
-            </ResumeCardContainer>
-          </template>
-        </RevealGrid>
         <div class="flex flex-1 flex-col items-center justify-end">
           <SfFooter />
         </div>
@@ -169,7 +146,11 @@ const gridClass = ref("default");
     <TemplatePreview
       :visible="isFullscreen"
       :item="fullscreenCard?.item || {}"
+      single-page
+      :eyebrow-text="fullscreenType === 'content' ? '内容模板' : '样式模板'"
       :title="fullscreenCard?.name || '简历模板'"
+      :description="fullscreenCard?.description || ''"
+      :tags="fullscreenCard?.tags || []"
       @close="closeFullscreen"
       @action="useFullscreenTemplate"
     />

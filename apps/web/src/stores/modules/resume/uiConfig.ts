@@ -24,48 +24,53 @@ export const fontFamilyList = [
   },
 ];
 
+// 样式模板统一提供完整 UI，避免依赖示例简历自身的 UI 配置。
+const createThemeTemplate = (name: string, id: string, description: string, ui: Record<string, unknown>) => ({
+  name,
+  id,
+  description,
+  item: {
+    data: {},
+    config: {},
+    ui: {
+      language: "zh",
+      footer: "",
+      paddingVertical: 24,
+      paddingHorizontal: 24,
+      fontSize: 16,
+      titleFontSize: 22,
+      lineHeight: 1.2,
+      paragraphSpacing: 12,
+      moduleSpacing: 12,
+      themeColor: "#50A2FF",
+      themeTemplate: id,
+      fontFamily: "text-puhui",
+      userInfoMode: "text",
+      userInfoLayout: "flex",
+      avatarPosition: "right",
+      infoPosition: "left",
+      dateStyle: "dot",
+      datePosition: "right",
+      textAlign: "auto",
+      titleIcon: false,
+      linkUnderline: false,
+      ...ui,
+    },
+  },
+});
+
 // 主题样式列表
 export const themeTemplateList = [
-  {
-    name: "默认",
-    value: "default",
-  },
-  {
-    name: "现代",
-    value: "modern",
-  },
-  {
-    name: "商务",
-    value: "business",
-  },
-  {
-    name: "简约",
-    value: "minimal",
-  },
-  {
-    name: "经典",
-    value: "classic",
-  },
-  {
-    name: "学术",
-    value: "academic",
-  },
-  {
-    name: "清新",
-    value: "fresh",
-  },
-  {
-    name: "活力",
-    value: "vivid",
-  },
-  {
-    name: "创意",
-    value: "creative",
-  },
-  {
-    name: "稳重",
-    value: "steady",
-  },
+  createThemeTemplate("默认", "default", "清晰通用的基础简历样式。", {}),
+  createThemeTemplate("现代", "modern", "适合互联网与技术岗位的现代简历样式。", { themeColor: "#2563EB", avatarPosition: "left", titleIcon: true }),
+  createThemeTemplate("商务", "business", "适合职场与商务场景的正式简历样式。", { themeColor: "#1E3A5F", fontSize: 15, titleFontSize: 21, moduleSpacing: 18, dateStyle: "cn" }),
+  createThemeTemplate("简约", "minimal", "减少视觉干扰，突出内容本身的简历样式。", { themeColor: "#111827", paddingVertical: 30, paddingHorizontal: 30, paragraphSpacing: 6, moduleSpacing: 9 }),
+  createThemeTemplate("经典", "classic", "适合传统行业与正式投递的经典简历样式。", { themeColor: "#7C3AED", fontFamily: "text-yyqx", titleIcon: true, dateStyle: "cn" }),
+  createThemeTemplate("学术", "academic", "强调研究经历与文字内容的学术简历样式。", { themeColor: "#0F766E", fontSize: 15, lineHeight: 1.4, textAlign: "justify", dateStyle: "cn" }),
+  createThemeTemplate("清新", "fresh", "适合教育、设计与初入职场场景的简历样式。", { themeColor: "#16A34A", avatarPosition: "center", infoPosition: "center", titleIcon: true }),
+  createThemeTemplate("活力", "vivid", "适合运营、市场与创意岗位的活力简历样式。", { themeColor: "#EA580C", fontSize: 17, titleFontSize: 24, userInfoMode: "icon", titleIcon: true }),
+  createThemeTemplate("创意", "creative", "突出个人表达与作品展示的创意简历样式。", { themeColor: "#DB2777", avatarPosition: "center", infoPosition: "center", userInfoMode: "icon", titleIcon: true }),
+  createThemeTemplate("稳重", "steady", "适合经验型岗位与正式求职的稳重简历样式。", { themeColor: "#475569", fontSize: 15, lineHeight: 1.3, moduleSpacing: 18, dateStyle: "cn" }),
 ];
 // 个人信息展示模式列表
 export const userInfoModeList = [
