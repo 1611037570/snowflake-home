@@ -63,7 +63,7 @@ const createThemeTemplate = (name: string, id: string, description: string, ui: 
 // 主题样式列表
 export const themeTemplateList = [
   createThemeTemplate("默认", "default", "清晰通用的基础简历样式。", {}),
-  createThemeTemplate("现代", "modern", "适合互联网与技术岗位的现代简历样式。", { themeColor: "#2563EB", avatarPosition: "left", titleIcon: true }),
+  createThemeTemplate("现代", "modern", "适合互联网与技术岗位的现代简历样式。", { themeColor: "#2563EB", avatarPosition: "center", infoPosition: "center", titleIcon: true }),
   createThemeTemplate("商务", "business", "适合职场与商务场景的正式简历样式。", { themeColor: "#1E3A5F", fontSize: 15, titleFontSize: 21, moduleSpacing: 18, dateStyle: "cn" }),
   createThemeTemplate("简约", "minimal", "减少视觉干扰，突出内容本身的简历样式。", { themeColor: "#111827", paddingVertical: 30, paddingHorizontal: 30, paragraphSpacing: 6, moduleSpacing: 9 }),
   createThemeTemplate("经典", "classic", "适合传统行业与正式投递的经典简历样式。", { themeColor: "#7C3AED", fontFamily: "text-yyqx", titleIcon: true, dateStyle: "cn" }),
