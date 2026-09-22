@@ -37,13 +37,12 @@ const createOptions = [
 // 模板数据与简历模板页保持一致，仅展示前六条。
 const templates = computed(() =>
   themeTemplateList.slice(0, 6).map((style) => ({
-    id: style.value,
+    id: style.id,
     name: style.name,
-    value: style.value,
     item: {
       data: xiaoZhouResumeItem.data,
       config: xiaoZhouResumeItem.config,
-      ui: { ...xiaoZhouResumeItem.ui, themeTemplate: style.value },
+      ui: style.item.ui,
     },
   })),
 );
@@ -98,7 +97,7 @@ const useTemplate = (template) => {
   resumeStore.addResume({
     data: structuredClone(xiaoZhouResumeItem.data),
     config: structuredClone(xiaoZhouResumeItem.config),
-    ui: { ...xiaoZhouResumeItem.ui, themeTemplate: template.value },
+    ui: structuredClone(template.item.ui),
   });
   close();
 };
