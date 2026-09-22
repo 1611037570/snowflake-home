@@ -1,5 +1,5 @@
 <script setup>
-import ResumeModule from "../modules/index.vue";
+import ModuleSlot from "../resumePages/moduleSlot.vue";
 
 defineProps({
   allModules: {
@@ -13,7 +13,7 @@ defineProps({
 <template>
   <div class="flex flex-col">
     <template v-for="(item, index) in allModules" :key="index">
-      <ResumeModule :name="item.key" class="resume-module-wrapper" />
+      <ModuleSlot :module-key="item.key" />
     </template>
   </div>
 </template>
