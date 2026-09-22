@@ -1,10 +1,8 @@
 <script setup>
-import { computed, inject, useSlots } from "vue";
-import {
-  defaultInfoSeparator,
-  getInfoSeparatorMark,
-} from "@/stores/modules/resume/uiConfig";
+import { computed, useSlots } from "vue";
+import { getInfoSeparatorMark } from "@/stores/modules/resume/uiConfig";
 import ResumeField from "./resumeField/index.vue";
+import { useResumePreviewContext } from "../previewContext";
 
 const props = defineProps({
   items: {
@@ -13,8 +11,9 @@ const props = defineProps({
   },
 });
 
-const fontValue = inject("fontValue");
-const infoSeparator = inject("infoSeparator", computed(() => defaultInfoSeparator));
+const {
+  theme: { fontValue, infoSeparator },
+} = useResumePreviewContext();
 const slots = useSlots();
 const separatorMark = computed(() => getInfoSeparatorMark(infoSeparator.value));
 
