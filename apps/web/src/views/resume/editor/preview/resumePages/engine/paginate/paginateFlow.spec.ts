@@ -111,4 +111,44 @@ describe("paginateFlow", () => {
       }),
     ).toThrow("缺少排版节点测量结果：missing");
   });
+
+  it("长段落存在字符级断点时不会整段溢出空页", () => {
+    const node = createNode("long-text", {
+      breakPolicy: {
+        splittable: true,
+        keepWithNext: false,
+        keepTitleWithFirst: false,
+      },
+    });
+    const pages = paginateFlow({
+      nodes: [node],
+      measurements: new Map([
+        [
+          node.id,
+          {
+            nodeId: node.id,
+            width: 300,
+            fullHeight: 180,
+            minHeight: 20,
+            breakPoints: [
+              { offset: 4, type: "char", height: 20 },
+              { offset: 8, type: "char", height: 40 },
+              { offset: 12, type: "char", height: 60 },
+              { offset: 16, type: "char", height: 80 },
+              { offset: 20, type: "char", height: 100 },
+              { offset: 24, type: "char", height: 120 },
+              { offset: 28, type: "char", height: 140 },
+              { offset: 32, type: "char", height: 160 },
+              { offset: 36, type: "textRange", height: 180 },
+            ],
+          },
+        ],
+      ]),
+      availableHeight: 60,
+      gap: 0,
+    });
+
+    expect(pages.length).toBeGreaterThan(1);
+    expect(pages.every((page) => page.usedHeight <= 60)).toBe(true);
+  });
 });
