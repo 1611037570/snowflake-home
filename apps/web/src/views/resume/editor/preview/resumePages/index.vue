@@ -16,6 +16,7 @@ import ResumePageShell from "./resumePageShell.vue";
 import ModuleSlot from "./moduleSlot.vue";
 import { useResumePages } from "./useResumePages";
 import { useResumeTheme } from "./useResumeTheme";
+import { provideResumePreviewContext } from "../previewContext";
 import { useResumeStore } from "@/stores";
 import { useModuleInteractions } from "./useModuleInteractions";
 import { getPreviewText } from "../i18n";
@@ -68,10 +69,8 @@ const isEmpty = computed(() => isEmptyResume(dataRef.value));
 // ---------- 主题样式注入（数据源为 item.ui）----------
 const ui = computed(() => props.item.ui || {});
 // 简历展示语言：供预览标题语言包使用
-provide(
-  "previewLang",
-  computed(() => ui.value.language || "zh"),
-);
+const previewLang = computed(() => ui.value.language || "zh");
+provide("previewLang", previewLang);
 const brandText = computed(() => getPreviewText("brand", ui.value.language || "zh"));
 const showPageNumber = computed(() => system.value.showPageNumber);
 const themeStyles = useResumeTheme(ui);
@@ -140,6 +139,16 @@ provide("userHiddenFields", userHiddenFields);
 provide("userFieldOrder", userFieldOrder);
 // 预览标签从字段配置读取，避免复制到个人信息数据中
 provide("userFieldLabels", userFieldLabels);
+// 预览模块统一从上下文读取运行时数据，旧注入暂留给迁移中的组件。
+provideResumePreviewContext({
+  data: dataRef,
+  lang: previewLang,
+  ui,
+  theme: themeStyles,
+  userHiddenFields,
+  userFieldOrder,
+  userFieldLabels,
+});
 const { measureDone, pages, pageStyleText, moduleList } = useResumePages({
   measureRef,
   ui,
