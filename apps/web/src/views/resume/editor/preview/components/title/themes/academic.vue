@@ -1,6 +1,6 @@
 <script setup>
-import { inject } from "vue";
 import TitleText from "../titleText.vue";
+import { useResumePreviewContext } from "../../../previewContext";
 
 defineProps({
   title: {
@@ -9,7 +9,9 @@ defineProps({
   },
 });
 // 线条色：统一由主题色推导
-const themeColorLine = inject("themeColorLine");
+const {
+  theme: { themeColorLine },
+} = useResumePreviewContext();
 </script>
 
 <template>

@@ -1,6 +1,6 @@
 <script setup>
-import { inject } from "vue";
 import TitleText from "../titleText.vue";
+import { useResumePreviewContext } from "../../../previewContext";
 
 defineProps({
   title: {
@@ -8,9 +8,10 @@ defineProps({
     default: "",
   },
 });
-const themeColor = inject("themeColor");
+const {
+  theme: { themeColor, themeColorContrast },
+} = useResumePreviewContext();
 // 对比文字色：统一由主题色推导，保证深浅主题色下文字均可读
-const themeColorContrast = inject("themeColorContrast");
 </script>
 
 <template>
