@@ -37,6 +37,8 @@ export interface PageLayoutConfig {
   pagePadding: BoxSpacing;
   /** 页面区域之间的垂直间距 */
   regionGap: number;
+  /** 页面同一区域中各栏之间的水平间距 */
+  columnGap: number;
   /** 页面区域配置 */
   regions: RegionConfig[];
 }
