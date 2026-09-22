@@ -33,8 +33,9 @@ const dateStyle = inject("dateStyle");
 // 日期位置（左/右），由设计配置注入
 const datePosition = inject("datePosition");
 const dateLeft = computed(() => datePosition?.value === "left");
-// 项目与工作经历使用统一的分层信息布局
-const hasStructuredLayout = ["project", "work"].includes(props.moduleName);
+// 项目、工作与自定义经历使用统一的分层信息布局。
+const hasStructuredLayout =
+  ["project", "work"].includes(props.moduleName) || props.moduleName.startsWith("custom_");
 
 // 数组记录统一由 getValidData 过滤并提取业务内容
 const list = computed(() => getValidData(previewData.value?.[props.dataKey]?.list || []));
@@ -63,7 +64,7 @@ const hasItemHeader = (item) => {
     <Title :module-key="moduleName"></Title>
     <!-- 内容区 -->
     <template v-for="(item, index) in list" :key="index">
-      <!-- 项目与工作经历按名称、岗位信息、标签链接分层展示，避免首行信息过多 -->
+      <!-- 项目、工作与自定义经历按名称、岗位信息、标签链接分层展示，避免首行信息过多 -->
       <div v-if="hasStructuredLayout && hasItemHeader(item)" :style="paragraphSpacingStyle">
         <div class="flex flex-wrap items-center justify-between gap-3">
           <div class="min-w-0 flex-1">
@@ -93,7 +94,7 @@ const hasItemHeader = (item) => {
         <div
           v-if="
             item.tags?.length ||
-            (['project', 'work'].includes(moduleName) && (getItemLink(item).name || getItemLink(item).url))
+            (hasStructuredLayout && (getItemLink(item).name || getItemLink(item).url))
           "
           class="flex flex-wrap items-center justify-between gap-3"
           :style="innerSpacingStyle"
@@ -104,7 +105,7 @@ const hasItemHeader = (item) => {
           </div>
           <template
             v-if="
-              ['project', 'work'].includes(moduleName) &&
+              hasStructuredLayout &&
               (getItemLink(item).url || getItemLink(item).name)
             "
           >

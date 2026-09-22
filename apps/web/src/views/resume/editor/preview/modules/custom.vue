@@ -1,11 +1,5 @@
 <script setup>
-import { computed, inject } from "vue";
-import { getTime } from "../../utils";
-import ResumeField from "../components/resumeField/index.vue";
-import Title from "../components/title/index.vue";
-import { getValidData } from "./validData";
-import { isContentEmpty } from "../modules/validData";
-import ItemTitle from "../components/itemTitle.vue";
+import ExpItemList from "./expItemList.vue";
 
 const props = defineProps({
   name: {
@@ -13,66 +7,10 @@ const props = defineProps({
     required: true,
   },
 });
-// 从上层注入获取原始简历数据
-const previewData = inject("previewData");
-
-const fontValue = inject("fontValue");
-const lineHeightValue = inject("lineHeightValue");
-const paragraphSpacingStyle = inject("paragraphSpacingStyle");
-// 日期样式（2026.9 / 2026年9月），由设计配置注入
-const dateStyle = inject("dateStyle");
-// 日期位置（左/右），由设计配置注入
-const datePosition = inject("datePosition");
-const dateLeft = computed(() => datePosition?.value === "left");
-
-// 自定义模块与内置数组模块统一直接读取 list
-const customList = computed(() => getValidData(previewData.value?.[props.name]?.list || []));
-
-// 条目是否含首行信息（名称/岗位/时间），为空时不渲染首行，避免多出空行间距
-const hasItemHeader = (item) => Boolean(item.name || item.post || item.startTime || item.endTime);
 </script>
 
 <template>
-  <div class="resume-row" :data-module="name" :style="[lineHeightValue(), fontValue()]">
-    <!-- 标题栏 -->
-    <Title :module-key="name"></Title>
-    <!-- 内容区 -->
-    <template v-for="(item, index) in customList" :key="index">
-      <div
-        v-if="hasItemHeader(item)"
-        :style="paragraphSpacingStyle"
-        class="flex flex-wrap items-center justify-between gap-3"
-      >
-        <!-- 信息容器撑满行内剩余宽度，避免导出渲染时子项宽度取整触发换行错位 -->
-        <div
-          class="flex max-w-full min-w-0 flex-1 flex-wrap items-center gap-3"
-          v-if="item.name || item.post"
-        >
-          <ItemTitle :name="item.name" :emphasis="!dateLeft" />
-          <div>
-            <ResumeField :model-value="item.post" />
-          </div>
-        </div>
-        <div
-          class="flex max-w-full min-w-0 flex-wrap items-center"
-          :class="dateLeft ? 'order-first' : ''"
-          v-if="item.startTime || item.endTime"
-        >
-          <span :class="{ 'font-bold': dateLeft }" :style="dateLeft ? fontValue(1) : undefined">
-            {{ getTime(item.startTime, item.endTime, dateStyle) }}
-          </span>
-        </div>
-      </div>
-      <!-- 补充描述/经历：无首行时由段间距承担上间距，有首行时用固定 mt-3 与首行贴合 -->
-      <ResumeField
-        :model-value="item.content"
-        html
-        v-if="!isContentEmpty(item.content)"
-        :style="hasItemHeader(item) ? undefined : paragraphSpacingStyle"
-        :class="hasItemHeader(item) ? 'mt-3' : ''"
-      />
-    </template>
-  </div>
+  <ExpItemList :module-name="props.name" :data-key="props.name" />
 </template>
 
 <style lang="scss" scoped></style>
