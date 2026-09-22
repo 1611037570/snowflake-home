@@ -107,12 +107,14 @@ export function useRowInfo(
 
   /** 读取单个模块内所有行的高度信息 */
   const measureModule = (wrapper: HTMLElement): ModuleInfo => {
-    const rows = Array.from(wrapper.children) as HTMLElement[];
+    // 统一包装结构下，实际分页行位于外层包装直属的 .resume-row 中；旧结构仍以包装自身为准。
+    const moduleContent = wrapper.querySelector<HTMLElement>(":scope > .resume-row") || wrapper;
+    const rows = Array.from(moduleContent.children) as HTMLElement[];
     const heights = batchRowHeights(rows);
     // 外边距单独留存：字号缩放估算需要区分随字号缩放的文字部分
     const margins = rows.map(getRowMargin);
     // 行高和锚定模块真实渲染高度，消除逐行整数取整累积误差
-    alignHeights(heights, wrapper.offsetHeight);
+    alignHeights(heights, moduleContent.offsetHeight);
     return {
       moduleKey: wrapper.dataset.module || "",
       rows: rows.map((_, index) => ({
