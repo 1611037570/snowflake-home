@@ -46,7 +46,7 @@ const infoItems = computed(() =>
         :class="{ 'font-bold': item.emphasis }"
         :style="item.emphasis ? fontValue(1) : undefined"
       >
-        <ResumeField inline :model-value="item.value" />
+        <ResumeField tag="span" :model-value="item.value" />
       </span>
     </template>
   </span>

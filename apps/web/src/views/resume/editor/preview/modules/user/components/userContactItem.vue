@@ -46,7 +46,7 @@ defineProps({
     <span v-else-if="!hideLabel" class="shrink-0">{{ label }}</span>
     <span v-if="modelValue" class="min-w-0 font-medium">
       <ResumeField
-        :inline="flowMode"
+        :tag="flowMode ? 'span' : 'div'"
         :model-value="modelValue"
         class="max-w-full min-w-0 break-words"
       />
