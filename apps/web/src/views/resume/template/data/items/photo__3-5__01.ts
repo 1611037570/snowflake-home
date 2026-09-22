@@ -9,8 +9,8 @@ export const photographerResumeItem: any = {
         position: "商业摄影师",
         name: "陈川",
         birthday: "1998-04",
-        phone: "135****4178",
-        email: "chenchuan@example.com",
+        phone: "15888888888",
+        email: "16****70@qq.com",
         workTime: "2020.07.01",
         sex: "男",
         avatar: xiaoyang,
@@ -29,7 +29,7 @@ export const photographerResumeItem: any = {
         {
           ui: {},
           data: {
-            name: "***传媒学院",
+            name: "中国传媒大学",
             education: "本科",
             post: "摄影与数字媒体艺术",
             startTime: "2016.09",

@@ -11,8 +11,8 @@ export const modelResumeItem: any = {
         position: "平面模特",
         name: "林妍",
         birthday: "2000-07",
-        phone: "158****2637",
-        email: "linyan@example.com",
+        phone: "15888888888",
+        email: "16****70@qq.com",
         workTime: "2022.08.01",
         sex: "女",
         avatar: xiaozhou,
@@ -37,7 +37,7 @@ export const modelResumeItem: any = {
         {
           ui: {},
           data: {
-            name: "***艺术学院",
+            name: "广州美术学院",
             education: "本科",
             post: "表演与时尚艺术",
             startTime: "2021.09",
