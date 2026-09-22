@@ -54,6 +54,7 @@ const createThemeTemplate = (name: string, id: string, description: string, ui: 
       textAlign: "auto",
       titleIcon: false,
       linkUnderline: false,
+      infoSeparator: "space",
       ...ui,
     },
   },
@@ -161,6 +162,17 @@ export const dateStyleList = [
     value: "cn",
   },
 ];
+// 并列信息的分隔方式，留白保持当前简历的默认视觉。
+export const infoSeparatorList = [
+  { name: "留白", value: "space", mark: "" },
+  { name: "圆点", value: "dot", mark: "·" },
+  { name: "竖线", value: "line", mark: "|" },
+  { name: "斜线", value: "slash", mark: "/" },
+  { name: "逗号", value: "comma", mark: "，" },
+];
+// 未配置或未知值均回退为留白，供预览中的组合字段统一拼接。
+export const getInfoSeparatorMark = (value: string) =>
+  infoSeparatorList.find((option) => option.value === value)?.mark || "";
 // 标题图标列表（是否在模块标题前展示模块图标）
 export const titleIconList = [
   {
@@ -211,6 +223,8 @@ export const defaultTextAlign = "auto";
 export const defaultTitleIcon = false;
 // 默认链接下划线开关
 export const defaultLinkUnderline = false;
+// 默认并列信息使用留白分隔，保持既有模板视觉。
+export const defaultInfoSeparator = "space";
 // ===========参数范围（编辑器滑杆与一页纸压缩共用，只维护这一处）=====================
 export const uiParamRanges = {
   // 上下页边距
@@ -271,4 +285,6 @@ export const DEFAULT_UI = {
   titleIcon: defaultTitleIcon,
   // 链接下划线：开启后在预览中显示链接下划线
   linkUnderline: defaultLinkUnderline,
+  // 并列信息分隔符：岗位、部门、专业等字段统一使用
+  infoSeparator: defaultInfoSeparator,
 };

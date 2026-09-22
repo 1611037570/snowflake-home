@@ -3,7 +3,7 @@ import { computed, inject } from "vue";
 import Title from "../components/title/index.vue";
 import ResumeField from "../components/resumeField/index.vue";
 import { getValidData } from "./validData";
-import ItemTitle from "../components/itemTitle.vue";
+import InlineInfoList from "../components/inlineInfoList.vue";
 
 // 从上层注入获取原始简历数据
 const previewData = inject("previewData");
@@ -28,10 +28,7 @@ const video = computed(() => getValidData(previewData.value?.video?.list || []))
         class="flex h-auto max-w-full min-w-0 flex-wrap items-center justify-between gap-3"
       >
         <div class="flex min-w-0 flex-1 flex-col gap-3" :style="[fontValue()]">
-          <div class="flex min-w-0 flex-wrap items-center gap-3">
-            <ItemTitle :name="item.name" />
-            <ResumeField :model-value="item.desc" />
-          </div>
+          <InlineInfoList :items="[{ value: item.name, emphasis: true }, item.desc]" />
         </div>
         <div v-if="item.url" class="max-w-[45%] min-w-0 shrink-0 text-right">
           <a

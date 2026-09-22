@@ -6,6 +6,7 @@ import { campusZeroToOneResumeTemplate } from "./items/fe__0__01";
 import { modelResumeTemplate } from "./items/model__3-5__01";
 import { internshipZeroToOneResumeTemplate } from "./items/op__0-1__01";
 import { photographerResumeTemplate } from "./items/photo__3-5__01";
+import { fullDataProductManagerResumeTemplate } from "./items/pm__3-5__01";
 import { videoEditorResumeTemplate } from "./items/ve__3-5__01";
 import { xiaoYangProgrammerResumeTemplate } from "./characters/xiaoYang";
 
@@ -161,6 +162,7 @@ export const resumeTemplateHotList: ResumeTemplate[] = [
   modelResumeTemplate,
   photographerResumeTemplate,
   videoEditorResumeTemplate,
+  fullDataProductManagerResumeTemplate,
   campusZeroToOneResumeTemplate,
   internshipZeroToOneResumeTemplate,
   furtherEducationResumeTemplate,

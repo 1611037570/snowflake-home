@@ -9,11 +9,13 @@ import {
   defaultAvatarPosition,
   defaultDatePosition,
   defaultDateStyle,
+  defaultInfoSeparator,
   defaultInfoPosition,
   defaultLinkUnderline,
   defaultUserInfoLayout,
   defaultUserInfoMode,
   infoPositionList,
+  infoSeparatorList,
   userInfoLayoutList,
   userInfoModeList,
 } from "@/stores/modules/resume/uiConfig";
@@ -68,6 +70,13 @@ const dateStyle = computed({
   get: () => currentUI.value?.dateStyle,
   set: (value) => {
     currentUI.value.dateStyle = value;
+  },
+});
+
+const infoSeparator = computed({
+  get: () => currentUI.value?.infoSeparator ?? defaultInfoSeparator,
+  set: (value) => {
+    currentUI.value.infoSeparator = value;
   },
 });
 
@@ -179,6 +188,29 @@ const setParam = (key, value) => {
               border
               @click="dateStyle = option.value"
               :type="dateStyle === option.value ? 'theme' : 'bg'"
+              >{{ option.name }}</SfButton
+            >
+          </div>
+        </div>
+
+        <div class="flex flex-col gap-1">
+          <div class="flex items-center gap-1 text-sm text-sf-text-2">
+            <span>信息分隔</span>
+            <SfIcon
+              icon="material-symbols:restart-alt"
+              size="4"
+              class="cursor-pointer text-sf-text-2 transition-colors hover:text-sf-theme"
+              @click="infoSeparator = defaultInfoSeparator"
+            />
+          </div>
+          <div class="grid grid-cols-3 gap-3">
+            <SfButton
+              v-for="option in infoSeparatorList"
+              :key="option.value"
+              size="small"
+              border
+              @click="infoSeparator = option.value"
+              :type="infoSeparator === option.value ? 'theme' : 'bg'"
               >{{ option.name }}</SfButton
             >
           </div>
