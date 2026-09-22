@@ -132,7 +132,7 @@ provideResumePreviewContext({
   userFieldOrder,
   userFieldLabels,
 });
-const { measureDone, pages, pagePlan, layout, nodes, nodeMap, moduleKeys, contentWidth } = useResumePages({
+const { measureDone, pages, pagePlan, layout, nodeMap, moduleKeys, contentWidth, measureGroups } = useResumePages({
   measureRef: layoutMeasureRef,
   data: dataRef,
   ui,
@@ -229,7 +229,7 @@ defineExpose({ rootEl: rootRef, measureEl: rootRef, pages, pagePlan });
     <!-- 隐藏测量树始终保留，确保内容变化后能重新测量并生成新的页面计划。 -->
     <template v-else>
       <LayoutMeasureTree
-        :nodes="nodes"
+        :groups="measureGroups"
         :width="contentWidth"
         :root-class="ui.fontFamily"
         :root-style="{ fontSize: fontStyle.fontSize, lineHeight: lineHeightStyle.lineHeight }"

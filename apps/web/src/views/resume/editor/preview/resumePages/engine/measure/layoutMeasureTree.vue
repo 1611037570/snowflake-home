@@ -3,9 +3,11 @@ import LayoutMeasureHost from "./layoutMeasureHost.vue";
 import LayoutMeasureNode from "./layoutMeasureNode.vue";
 import type { LayoutNode } from "../types";
 
-const props = defineProps<{
-  nodes: LayoutNode[];
+defineProps<{
+  /** 测量宿主宽度，等于页面内容宽度 */
   width: number;
+  /** 按栏位分组的节点：每个分组按自己的栏宽渲染，保证测量宽度与真实排版一致 */
+  groups: Array<{ id: string; width: number; nodes: LayoutNode[] }>;
   rootStyle?: Record<string, string>;
   rootClass?: string;
   onMeasureEl?: (element: HTMLElement | null) => void;
@@ -14,8 +16,13 @@ const props = defineProps<{
 
 <template>
   <LayoutMeasureHost :width="width" :root-style="rootStyle" :class-name="rootClass" :on-measure-el="onMeasureEl">
-    <div class="flex flex-col w-full">
-      <LayoutMeasureNode v-for="node in nodes" :key="node.id" :node="node" />
+    <div
+      v-for="group in groups"
+      :key="group.id"
+      class="flex flex-col"
+      :style="{ width: `${group.width}px` }"
+    >
+      <LayoutMeasureNode v-for="node in group.nodes" :key="node.id" :node="node" />
     </div>
   </LayoutMeasureHost>
 </template>
