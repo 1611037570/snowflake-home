@@ -1,5 +1,5 @@
 import { computed, type ComputedRef, type Ref } from "vue";
-import { getContentHeight, RESUME_HEIGHT, RESUME_WIDTH } from "../constants";
+import { getContentHeight, RESUME_HEIGHT, RESUME_WIDTH } from "../../constants";
 import { buildLayoutNodes } from "./adapter/buildLayoutNodes";
 import { createSingleColumnLayout } from "./layout/createSingleColumnLayout";
 import { validateLayoutConfig } from "./layout/validateLayoutConfig";
@@ -87,6 +87,7 @@ export const useResumeLayout = ({
         left: Number(ui.value.paddingHorizontal) || 0,
       },
       gap: Number(ui.value.moduleSpacing) || 0,
+      regionGap: 0,
     }),
   );
   const validation = computed(() => validateLayoutConfig(layout.value, activeModuleKeys.value));

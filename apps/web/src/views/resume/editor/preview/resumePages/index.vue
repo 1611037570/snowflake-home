@@ -10,16 +10,14 @@ import {
   isFieldHidden,
 } from "@/components/business/dynamicForm/api";
 import { expandConfigFields } from "@/stores/modules/resume/hooks/useConfigTemplate";
-import MeasureTree from "./measureTree.vue";
-import PreviewSinglePage from "./previewSinglePage.vue";
 import ResumePageShell from "./resumePageShell.vue";
-import ModuleSlot from "./moduleSlot.vue";
+import LayoutMeasureTree from "./engine/measure/layoutMeasureTree.vue";
+import LayoutColumn from "./engine/render/layoutColumn.vue";
 import { useResumePages } from "./useResumePages";
 import { useResumeTheme } from "./useResumeTheme";
 import { provideResumePreviewContext } from "../previewContext";
 import { useResumeStore } from "@/stores";
 import { useModuleInteractions } from "./useModuleInteractions";
-import { getPreviewText } from "../i18n";
 import { isEmptyResume } from "../../toolbar/modules/progress/useResumeStats";
 import { clearPreviewSelection, locateEditor, previewSelectedModule } from "../../useModuleNav";
 
@@ -47,17 +45,12 @@ const props = defineProps({
 
 // 缩略图模式：仅渲染第一页，测量完成后冻结行数据
 const isThumb = computed(() => props.mode === "thumb");
-// 单页预览复用正常分页结果，仅渲染第一页，避免内容超出页面后被直接裁掉
-const isSinglePage = computed(() => props.mode === "single");
 // 编辑态标记：直接以 mode 判断编辑场景，仅编辑态开放模块选择交互
 const isEdit = computed(() => props.mode === "editor");
 
 // 根元素 ref：导出时限定为当前实例的分页元素，避免误选其他 ResumePages 实例的页面
 const rootRef = ref(null);
-const measureRef = ref(null);
-
-// 实例唯一前缀，避免多实例分页裁剪样式互相干扰
-const uid = `rp-${Math.random().toString(36).slice(2, 8)}`;
+const layoutMeasureRef = ref(null);
 
 // ---------- 数据注入（始终基于 props 传入的数据，多实例互不干扰）----------
 const dataRef = computed(() => props.item.data);
@@ -68,12 +61,11 @@ const isEmpty = computed(() => isEmptyResume(dataRef.value));
 const ui = computed(() => props.item.ui || {});
 // 简历展示语言：供预览标题语言包使用
 const previewLang = computed(() => ui.value.language || "zh");
-const brandText = computed(() => getPreviewText("brand", ui.value.language || "zh"));
 const showPageNumber = computed(() => system.value.showPageNumber);
 const themeStyles = useResumeTheme(ui);
 const { paddingStyle, fontStyle, lineHeightStyle, fontReadyVersion } = themeStyles;
 
-// ---------- 分页（测量 + 分页算法 + 裁剪样式）----------
+// ---------- 分页（节点树 + 真实测量 + PagePlan）----------
 const allModules = computed(() => {
   // 优先复用编辑器已展开的字段配置，模板缩略图等场景仍按持久化配置展开
   const fields =
@@ -140,17 +132,18 @@ provideResumePreviewContext({
   userFieldOrder,
   userFieldLabels,
 });
-const { measureDone, pages, pageStyleText, moduleList } = useResumePages({
-  measureRef,
+const { measureDone, pages, pagePlan, nodes, nodeMap, firstFragmentIds, moduleList, contentWidth } = useResumePages({
+  measureRef: layoutMeasureRef,
+  data: dataRef,
   ui,
   showPageNumber,
   isThumb,
   fontReadyVersion,
-  uid,
   allModules,
 });
-// 预览就绪：空简历直接展示提示页，其余以首次测量出模块行为准
-const previewMeasured = computed(() => isEmpty.value || moduleList.value.length > 0);
+// 预览就绪：空简历直接展示提示页，其余以新引擎完成测量为准。
+const previewMeasured = computed(() => isEmpty.value || measureDone.value);
+const visiblePages = computed(() => (isThumb.value ? pages.value.slice(0, 1) : pages.value));
 // 测量会随内容变化持续触发，静默一段时间后才认定为渲染完成
 const SETTLE_DELAY = 200;
 const settlePreviewSync = useDebounceFn(() => {
@@ -191,13 +184,10 @@ const handleModuleMouseEnter = (key) => {
   clearPreviewSelection(key);
 };
 
-// 单页组件根元素回传：rootRef 限定导出范围，measureRef 供测量与图片导出
-const setSingleRoot = (el) => (rootRef.value = el);
-const setSingleMeasure = (el) => (measureRef.value = el);
-// 分页模式的测量容器元素回传：与缩略图单页共用同一个 measureRef
-const setMeasureEl = (el) => (measureRef.value = el);
+// 新引擎测量容器元素回传，分页算法只通过 hook 读取该元素。
+const setLayoutMeasureEl = (el) => (layoutMeasureRef.value = el);
 // 向上暴露导出范围与测量结果，供上层（page.vue）注册的导出/智能一页功能读取
-defineExpose({ rootEl: rootRef, measureEl: measureRef, moduleList, pages });
+defineExpose({ rootEl: rootRef, measureEl: rootRef, moduleList, pages, pagePlan });
 </script>
 
 <template>
@@ -223,60 +213,53 @@ defineExpose({ rootEl: rootRef, measureEl: measureRef, moduleList, pages });
         </div>
       </ResumePageShell>
     </div>
-    <!-- 缩略图视为单页：仅渲染第一页内容，测量与渲染合一，无需分页裁剪；根元素由组件回传 -->
-    <PreviewSinglePage
-      v-else-if="isThumb"
-      :all-modules="allModules"
-      :ui="ui"
-      :styles="{ paddingStyle, fontStyle, lineHeightStyle }"
-      :show-page-number="showPageNumber"
-      :on-root-el="setSingleRoot"
-      :on-measure-el="setSingleMeasure"
-    />
-    <!-- 隐藏的测量容器：用于 useRowInfo 读取行高；多页时存在，缩略图测量完成后销毁 -->
-    <!-- 编辑态页面外壳带 1px 边框会收窄内容宽度，测量容器同步补透明边框，保证测量与真实排版宽度一致 -->
+    <!-- 隐藏测量树始终保留，确保内容变化后能重新测量并生成新的页面计划。 -->
     <template v-else>
-      <MeasureTree
-        v-if="!measureDone"
-        :all-modules="allModules"
-        :ui="ui"
-        :padding-style="paddingStyle"
-        :show-page-number="showPageNumber"
-        :brand-text="brandText"
-        :is-edit="isEdit"
-        :on-measure-el="setMeasureEl"
+      <LayoutMeasureTree
+        :nodes="nodes"
+        :width="contentWidth"
+        :root-class="ui.fontFamily"
+        :root-style="{ fontSize: fontStyle.fontSize, lineHeight: lineHeightStyle.lineHeight }"
+        :on-measure-el="setLayoutMeasureEl"
       />
-      <!-- 实际渲染的分页内容 -->
+      <!-- 实际渲染的分页内容，页面只消费 PagePlan 中的分片。 -->
       <div ref="rootRef" class="relative flex flex-col gap-3">
         <ResumePageShell
-          v-for="(pageSlices, pageIndex) in isSinglePage ? pages.slice(0, 1) : pages"
+          v-for="page in visiblePages"
           class="cursor-pointer"
-          :key="pageIndex"
+          :key="page.pageIndex"
           :ui="ui"
           :styles="{ paddingStyle, fontStyle, lineHeightStyle }"
           :show-page-number="showPageNumber"
-          :page-index="pageIndex"
-          :page-count="isSinglePage ? 1 : pages.length"
+          :page-index="page.pageIndex"
+          :page-count="visiblePages.length"
           @click="handlePageClick"
           :class="[
-            `${uid}-page-${pageIndex}`,
             {
               'border border-sf-b': mode === 'editor',
             },
           ]"
         >
-          <ModuleSlot
-            v-for="slice in pageSlices"
-            :key="slice.moduleKey"
-            :module-key="slice.moduleKey"
-            :is-edit="isEdit"
-            :outline-class="moduleClassMap[slice.moduleKey]"
-            @mouseenter="handleModuleMouseEnter"
-          />
+          <div
+            v-for="region in page.regions"
+            :key="region.regionId"
+            class="flex min-w-0 flex-1"
+            :style="{ gap: `${ui.columnGap || 24}px` }"
+          >
+            <LayoutColumn
+              v-for="column in region.columns"
+              :key="column.columnId"
+              :column="column"
+              :nodes="nodeMap"
+              :first-fragment-ids="firstFragmentIds"
+              :is-edit="isEdit"
+              :module-class-map="moduleClassMap"
+              :gap="0"
+              @mouseenter="handleModuleMouseEnter"
+            />
+          </div>
         </ResumePageShell>
       </div>
-      <!-- 每页可见行裁剪样式 -->
-      <component :is="'style'">{{ pageStyleText }}</component>
     </template>
   </div>
 </template>
