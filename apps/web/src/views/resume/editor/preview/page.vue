@@ -29,13 +29,12 @@ const onExportSuccess = () => {
 };
 // ---------- 编辑功能注册（导出 / 智能一页）----------
 // 依赖预览实例的测量结果与导出范围，经组件实例 expose 代理读取，读取时始终取最新值
-// 字段与 resumePages/index.vue 的 defineExpose 保持一致：rootEl / measureEl / moduleList / pages
+// 字段与 resumePages/index.vue 的 defineExpose 保持一致：rootEl / measureEl / pages / pagePlan
 const pagesRef = ref(null);
 const isEdit = computed(() => true);
 const previewRootRef = computed(() => pagesRef.value?.rootEl ?? null);
 const previewMeasureRef = computed(() => pagesRef.value?.measureEl ?? null);
-const previewModuleList = computed(() => pagesRef.value?.moduleList ?? []);
-const previewPages = computed(() => pagesRef.value?.pages ?? []);
+const previewPagePlan = computed(() => pagesRef.value?.pagePlan ?? { pages: [] });
 useResumeExport({
   isEdit,
   rootRef: previewRootRef,
@@ -44,8 +43,7 @@ useResumeExport({
 });
 useSmartOnePage({
   ui: currentUI,
-  moduleList: previewModuleList,
-  pages: previewPages,
+  pagePlan: previewPagePlan,
   currentUI,
   isEdit,
 });

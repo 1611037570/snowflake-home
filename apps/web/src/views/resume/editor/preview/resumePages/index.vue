@@ -132,7 +132,7 @@ provideResumePreviewContext({
   userFieldOrder,
   userFieldLabels,
 });
-const { measureDone, pages, pagePlan, layout, nodes, nodeMap, firstFragmentIds, moduleList, contentWidth } = useResumePages({
+const { measureDone, pages, pagePlan, layout, nodes, nodeMap, firstFragmentIds, moduleKeys, contentWidth } = useResumePages({
   measureRef: layoutMeasureRef,
   data: dataRef,
   ui,
@@ -164,7 +164,7 @@ const settlePreviewSync = useDebounceFn(() => {
 }, SETTLE_DELAY);
 // 预览加载状态交由外壳统一展示，仅编辑态实例上报，避免缩略图/全屏实例覆盖
 watch(
-  [previewMeasured, moduleList],
+  [previewMeasured, measureDone],
   () => {
     if (!isEdit.value) return;
     if (!previewMeasured.value) {
@@ -179,7 +179,7 @@ watch(
 // ---------- 编辑态模块交互（选中高亮）----------
 const { moduleClassMap } = useModuleInteractions({
   isEdit,
-  moduleList,
+  moduleKeys,
   selectedModule,
   activeModuleKey: previewSelectedModule,
 });
@@ -200,7 +200,7 @@ const handleModuleMouseEnter = (key) => {
 // 新引擎测量容器元素回传，分页算法只通过 hook 读取该元素。
 const setLayoutMeasureEl = (el) => (layoutMeasureRef.value = el);
 // 向上暴露导出范围与测量结果，供上层（page.vue）注册的导出/智能一页功能读取
-defineExpose({ rootEl: rootRef, measureEl: rootRef, moduleList, pages, pagePlan });
+defineExpose({ rootEl: rootRef, measureEl: rootRef, pages, pagePlan });
 </script>
 
 <template>

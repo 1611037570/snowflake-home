@@ -46,7 +46,7 @@ export const useResumePages = ({
     nodes: layout.nodes,
     nodeMap: layout.nodeMap,
     firstFragmentIds: layout.firstFragmentIds,
-    moduleList: layout.moduleList,
+    moduleKeys: layout.moduleKeys,
     contentWidth: layout.contentWidth,
   };
 };
