@@ -47,5 +47,6 @@ export const useResumePages = ({
     nodeMap: layout.nodeMap,
     moduleKeys: layout.moduleKeys,
     contentWidth: layout.contentWidth,
+    measureGroups: layout.measureGroups,
   };
 };

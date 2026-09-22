@@ -2,6 +2,7 @@ import { computed, type ComputedRef, type Ref } from "vue";
 import { getContentHeight, RESUME_WIDTH } from "../../constants";
 import { buildLayoutNodes } from "./adapter/buildLayoutNodes";
 import { createResumeLayout } from "./layout/createResumeLayout";
+import { resolveColumnWidths } from "./layout/resolveColumnWidths";
 import { validateLayoutConfig } from "./layout/validateLayoutConfig";
 import { useLayoutMeasurements } from "./measure/useLayoutMeasurements";
 import { buildPagePlan } from "./paginate/pagePlan";
@@ -93,6 +94,17 @@ export const useResumeLayout = ({
   const contentWidth = computed(
     () => RESUME_WIDTH - (Number(ui.value.paddingHorizontal) || 0) * 2,
   );
+  // 测量宿主按栏位分组渲染：每个节点在自己的栏宽下测量，节点与栏位一一对应，测量结果仍是扁平表
+  const measureGroups = computed(() => {
+    const columnWidths = resolveColumnWidths(layout.value, contentWidth.value);
+    return layout.value.regions.flatMap((region) =>
+      region.columns.map((column) => ({
+        id: column.id,
+        width: columnWidths.get(column.id) ?? contentWidth.value,
+        nodes: nodes.value.filter((node) => column.moduleKeys.includes(node.sourceModuleKey)),
+      })),
+    );
+  });
   const watchSource = computed(() => ({
     paddingVertical: ui.value.paddingVertical,
     paddingHorizontal: ui.value.paddingHorizontal,
@@ -186,5 +198,6 @@ export const useResumeLayout = ({
     pagePlan,
     moduleKeys: activeModuleKeys,
     contentWidth,
+    measureGroups,
   };
 };
