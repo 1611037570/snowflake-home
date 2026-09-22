@@ -1,7 +1,6 @@
 import { getValidData, isContentEmpty } from "../../../modules/validData";
-import type { LayoutNode } from "../types";
 import type { LayoutAdapter, LayoutAdapterContext, LayoutAdapterRegistry } from "./index";
-import { parseRichText, type ParsedRichText } from "./richTextParser";
+import { parseRichText } from "./richTextParser";
 
 /** 当前使用统一经历列表结构的模块 key */
 export const EXPERIENCE_MODULE_KEYS = ["work", "project", "education"] as const;
@@ -16,44 +15,6 @@ const getExperienceItems = (context: LayoutAdapterContext): Record<string, unkno
   return Array.isArray(validList) ? (validList as Record<string, unknown>[]) : [];
 };
 
-/** 创建经历条目的头部节点 */
-const createExperienceHeader = (
-  moduleKey: string,
-  index: number,
-  item: Record<string, unknown>,
-): LayoutNode => ({
-  id: `${moduleKey}.item-${index}.header`,
-  sourceModuleKey: moduleKey,
-  type: "block",
-  breakPolicy: {
-    splittable: false,
-    keepWithNext: Boolean(item.content),
-    keepTitleWithFirst: false,
-  },
-  payload: {
-    part: "header",
-    item,
-  },
-});
-
-/** 创建经历条目的富文本描述节点 */
-const createExperienceContent = (
-  moduleKey: string,
-  index: number,
-  parsed: ParsedRichText,
-): LayoutNode => ({
-  id: `${moduleKey}.item-${index}.content`,
-  sourceModuleKey: moduleKey,
-  type: "richText",
-  breakPolicy: {
-    splittable: true,
-    keepWithNext: false,
-    keepTitleWithFirst: false,
-  },
-  payload: parsed,
-  breakPoints: parsed.breakPoints,
-});
-
 /** 创建工作、项目、教育经历共用的条目适配器 */
 export const createExperienceModuleAdapter = (moduleKey: string): LayoutAdapter => (
   context,
@@ -64,10 +25,6 @@ export const createExperienceModuleAdapter = (moduleKey: string): LayoutAdapter 
     const content = typeof item.content === "string" ? item.content : "";
     // 条目正文参与分片：断点与首段截取共用同一份解析结果
     const parsed = isContentEmpty(content) ? undefined : parseRichText(content);
-    const children: LayoutNode[] = [createExperienceHeader(moduleKey, index, item)];
-    if (parsed) {
-      children.push(createExperienceContent(moduleKey, index, parsed));
-    }
 
     return {
       id: `${moduleKey}.item-${index}`,
@@ -85,7 +42,6 @@ export const createExperienceModuleAdapter = (moduleKey: string): LayoutAdapter 
         content: parsed,
       },
       breakPoints: parsed?.breakPoints,
-      children,
     };
   });
 };

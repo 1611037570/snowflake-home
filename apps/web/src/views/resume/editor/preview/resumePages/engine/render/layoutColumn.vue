@@ -7,7 +7,6 @@ import LayoutFragment from "./layoutFragment.vue";
 const props = defineProps<{
   column: ColumnPlan;
   nodes: Map<string, LayoutNode>;
-  firstFragmentIds: Set<string>;
   isEdit?: boolean;
   moduleClassMap?: Record<string, string>;
   gap: number;
@@ -30,7 +29,6 @@ const getGapTop = (fragment: FragmentPlan, index: number) =>
         :node="getNode(fragment)!"
         :is-edit="isEdit"
         :outline-class="moduleClassMap?.[fragment.sourceModuleKey]"
-        :show-module-title="firstFragmentIds.has(fragment.fragmentId) && !fragment.titlePayload"
         :gap-top="getGapTop(fragment, index)"
         @mouseenter="emit('mouseenter', $event)"
       />

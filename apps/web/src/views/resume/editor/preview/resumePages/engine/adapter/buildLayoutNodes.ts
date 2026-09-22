@@ -19,12 +19,13 @@ export const createResumeLayoutAdapterRegistry = (): LayoutAdapterRegistry => {
 
 /** 标题只在模块首个分片渲染，挂到首个节点上让分页计入标题高度；个人信息模块没有标题 */
 const attachModuleTitle = (moduleKey: string, nodes: LayoutNode[]): LayoutNode[] => {
-  if (nodes.length === 0 || moduleKey === "user" || nodes[0].title) return nodes;
+  const first = nodes[0];
+  if (!first || moduleKey === "user" || first.title) return nodes;
   return [
     {
-      ...nodes[0],
+      ...first,
       title: createModuleTitleNode(moduleKey),
-      breakPolicy: { ...nodes[0].breakPolicy, keepTitleWithFirst: true },
+      breakPolicy: { ...first.breakPolicy, keepTitleWithFirst: true },
     },
     ...nodes.slice(1),
   ];
