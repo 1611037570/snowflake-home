@@ -45,7 +45,11 @@ defineProps({
     <SfIcon v-if="iconMode" :icon="icon" size="4.5" class="shrink-0" />
     <span v-else-if="!hideLabel" class="shrink-0">{{ label }}</span>
     <span v-if="modelValue" class="min-w-0 font-medium">
-      <ResumeField :model-value="modelValue" class="max-w-full min-w-0 break-words" />
+      <ResumeField
+        :inline="flowMode"
+        :model-value="modelValue"
+        class="max-w-full min-w-0 break-words"
+      />
     </span>
     <span v-else class="break-words">{{ text }}</span>
   </span>
