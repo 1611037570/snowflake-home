@@ -2,7 +2,7 @@
 // 简历分页渲染可复用组件：接收 resumeItem（data/config/ui），渲染分页后的简历页面
 // 数据源由 props 传入，不依赖 resume store；供编辑器预览、模板缩略图、全屏查看复用
 // 本组件只做渲染编排（数据注入/主题注入/测量分页），导出、智能一页等编辑功能由上层 page.vue 注册
-import { computed, provide, ref, watch } from "vue";
+import { computed, ref, watch } from "vue";
 import { useDebounceFn } from "@vueuse/core";
 import {
   createDataPathContext,
@@ -61,8 +61,6 @@ const uid = `rp-${Math.random().toString(36).slice(2, 8)}`;
 
 // ---------- 数据注入（始终基于 props 传入的数据，多实例互不干扰）----------
 const dataRef = computed(() => props.item.data);
-// 预览直接读取简历原始数据，不再构造字段代理副本
-provide("previewData", dataRef);
 // 轻量判空：命中第一处正文文本即结束，避免为判空执行全量字数统计
 const isEmpty = computed(() => isEmptyResume(dataRef.value));
 
@@ -70,7 +68,6 @@ const isEmpty = computed(() => isEmptyResume(dataRef.value));
 const ui = computed(() => props.item.ui || {});
 // 简历展示语言：供预览标题语言包使用
 const previewLang = computed(() => ui.value.language || "zh");
-provide("previewLang", previewLang);
 const brandText = computed(() => getPreviewText("brand", ui.value.language || "zh"));
 const showPageNumber = computed(() => system.value.showPageNumber);
 const themeStyles = useResumeTheme(ui);
@@ -133,13 +130,7 @@ const userFieldLabels = computed(() => {
   collectFields(userField?.fields);
   return labels;
 });
-// 将用户模块字段的隐藏状态提供给预览子组件
-provide("userHiddenFields", userHiddenFields);
-// 将用户模块字段顺序提供给预览子组件
-provide("userFieldOrder", userFieldOrder);
-// 预览标签从字段配置读取，避免复制到个人信息数据中
-provide("userFieldLabels", userFieldLabels);
-// 预览模块统一从上下文读取运行时数据，旧注入暂留给迁移中的组件。
+// 预览模块统一从上下文读取运行时数据。
 provideResumePreviewContext({
   data: dataRef,
   lang: previewLang,
