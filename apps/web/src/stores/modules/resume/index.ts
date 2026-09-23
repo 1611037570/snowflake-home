@@ -510,10 +510,11 @@ export const useResumeStore = defineStore(
       unselectModule(moduleKey);
       return true;
     }
-    // 写入显式页面布局：预览区左右移动模块后，布局从主题模板物化为 ui.pageLayout
+    // 写入显式页面布局：预览区左右移动模块后，布局从主题模板物化为 ui.pageLayout。
+    // 落库前深拷贝为纯对象，避免响应式代理导致持久化无法结构化克隆。
     function setPageLayout(pageLayout: Record<string, any> | null): boolean {
       if (!currentUI.value) return false;
-      currentUI.value.pageLayout = pageLayout;
+      currentUI.value.pageLayout = pageLayout ? JSON.parse(JSON.stringify(pageLayout)) : null;
       return true;
     }
     // 交换两个模块的配置顺序：供预览区上下移动使用，个人信息模块固定不参与交换
