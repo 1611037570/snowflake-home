@@ -22,7 +22,7 @@ import { isEmptyResume } from "../../toolbar/modules/progress/useResumeStats";
 import { clearPreviewSelection, locateEditor, previewSelectedModule } from "../../useModuleNav";
 
 const resumeStore = useResumeStore();
-const { selectedModule, system } = storeToRefs(resumeStore);
+const { system } = storeToRefs(resumeStore);
 defineOptions({ name: "ResumePages" });
 
 const props = defineProps({
@@ -214,7 +214,6 @@ watch(
 const { moduleClassMap } = useModuleInteractions({
   isEdit,
   moduleKeys,
-  selectedModule,
   activeModuleKey: previewSelectedModule,
 });
 
