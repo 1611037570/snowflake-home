@@ -2,7 +2,7 @@
 // 简历分页渲染可复用组件：接收 resumeItem（data/config/ui），渲染分页后的简历页面
 // 数据源由 props 传入，不依赖 resume store；供编辑器预览、模板缩略图、全屏查看复用
 // 本组件只做渲染编排（数据注入/主题注入/测量分页），导出、智能一页等编辑功能由上层 page.vue 注册
-import { computed, ref, watch } from "vue";
+import { computed, onMounted, onUnmounted, ref, watch } from "vue";
 import { useDebounceFn } from "@vueuse/core";
 import {
   createDataPathContext,
@@ -19,7 +19,13 @@ import { provideResumePreviewContext } from "../previewContext";
 import { useResumeStore } from "@/stores";
 import { useModuleInteractions } from "./useModuleInteractions";
 import { isEmptyResume } from "../../toolbar/modules/progress/useResumeStats";
-import { clearPreviewSelection, locateEditor, previewSelectedModule } from "../../useModuleNav";
+import {
+  clearPreviewSelection,
+  jumpPreview,
+  locateEditor,
+  previewSelectedModule,
+} from "../../useModuleNav";
+import eventBus from "@/utils/modules/eventBus";
 
 const resumeStore = useResumeStore();
 const { system } = storeToRefs(resumeStore);
@@ -224,6 +230,13 @@ const handlePageClick = (event) => {
   const moduleKey = moduleEl?.dataset.module;
   if (moduleKey) locateEditor(moduleKey);
 };
+
+// 编辑区新增 user 子字段后，由编辑态预览响应定位请求
+const handleLocatePreviewModule = (key) => {
+  if (isEdit.value) jumpPreview(key);
+};
+onMounted(() => eventBus.on("resume-locate-preview-module", handleLocatePreviewModule));
+onUnmounted(() => eventBus.off("resume-locate-preview-module", handleLocatePreviewModule));
 
 // 鼠标进入模块内容时清除查找定位边框
 const handleModuleMouseEnter = (key) => {

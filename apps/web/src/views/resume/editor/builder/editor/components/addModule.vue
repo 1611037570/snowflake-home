@@ -6,7 +6,7 @@ import {
   bindCollapsedDefault,
   ensureRuntimeFieldIds,
 } from "@/stores/modules/resume/hooks/useConfigTemplate";
-import { jumpToEditor } from "../../../useModuleNav";
+import { jumpAll } from "../../../useModuleNav";
 import { storeToRefs } from "pinia";
 import { computed } from "vue";
 import { getUUID } from "@/utils";
@@ -50,8 +50,8 @@ const handleAdd = (module) => {
     // 新增模块内的记录默认折叠状态跟随系统设置
     bindCollapsedDefault([config], () => resumeStore.itemDefaultCollapsed);
     runtimeConfig.value.fields.push(config);
-    // 新增模块落到列表末尾，定位一次便于直接看到落点
-    jumpToEditor(type);
+    // 新增模块落到列表末尾，同步定位编辑区与预览区
+    jumpAll(type);
   }
 };
 
@@ -86,8 +86,8 @@ const handleConfirm = () => {
   bindCollapsedDefault([config], () => resumeStore.itemDefaultCollapsed);
   // 添加自定义模块到运行时配置
   runtimeConfig.value.fields.push(config);
-  // 新增模块落到列表末尾，定位一次便于直接看到落点
-  jumpToEditor(customKey);
+  // 新增模块落到列表末尾，同步定位编辑区与预览区
+  jumpAll(customKey);
 };
 </script>
 
