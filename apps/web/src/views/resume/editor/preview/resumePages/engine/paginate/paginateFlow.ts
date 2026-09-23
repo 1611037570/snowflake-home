@@ -283,9 +283,13 @@ export const paginateFlow = ({
       const fragmentHeight =
         title +
         Math.max(0, breakPoint.height - consumedHeight - continuationGap);
-      // 块断点只覆盖块（不含正文区间），字符断点覆盖剩余全部块 + 正文区间
+      // 正文未结束时保留最后一个正文块供续页渲染，完成正文后再消费全部结构块
       const isBlockPoint = typeof breakPoint.blockEnd === "number";
       const nextBlocks = isBlockPoint ? Number(breakPoint.blockEnd) : blockCount;
+      const consumedBlockEnd =
+        isBlockPoint || breakPoint.offset >= contentEnd
+          ? nextBlocks
+          : Math.max(consumedBlocks, blockCount - 1);
       const fragment: FlowPageItem = {
         fragmentId: `${node.id}:${fragmentKind}:${consumedOffset}:${breakPoint.offset}`,
         nodeId: node.id,
@@ -305,7 +309,7 @@ export const paginateFlow = ({
       }
 
       consumedHeight = breakPoint.height;
-      consumedBlocks = nextBlocks;
+      consumedBlocks = consumedBlockEnd;
       if (!isBlockPoint) consumedOffset = breakPoint.offset;
       // 块与正文都已切到末尾时结束，避免产生高度不为零但内容为空的尾分片
       if (consumedOffset >= contentEnd && consumedBlocks >= blockCount) break;

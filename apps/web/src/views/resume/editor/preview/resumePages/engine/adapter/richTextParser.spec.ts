@@ -57,4 +57,15 @@ describe("parseRichText", () => {
     ]);
     expect(container.innerHTML).toBe("<p><br></p><p><br></p>");
   });
+
+  it("经历正文有连续空行时切到续页仍保留后续段落", () => {
+    const html = `<p>完成高中阶段课程</p>${"<p><br></p>".repeat(8)}<p>学习，打下扎实的数理与人文基础。</p><p>积极参与校‘’</p>${"<p><br></p>".repeat(5)}<p>园社团活动，培养沟通</p><p>协</p><p>作与组织能力。322313132312321312</p><p><br></p>`;
+    const parsed = parseRichText(html);
+    const pageOne = sliceRichTextHtml(parsed.html, 0, 11);
+    const pageTwo = sliceRichTextHtml(parsed.html, 11, parsed.textLength);
+
+    expect(pageOne).toContain("完成高中阶段课程");
+    expect(pageTwo).toContain("学习，打下扎实的数理与人文基础。");
+    expect(pageTwo).toContain("作与组织能力。322313132312321312");
+  });
 });
