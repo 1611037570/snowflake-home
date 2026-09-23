@@ -48,7 +48,7 @@ export const fullDataProductManagerResumeItem: any = {
     advantage: {
       ui: { collapsed: ["1"], archived: false },
       data: {
-        content: "<p>具备跨团队协作与复杂项目拆解能力，能够在业务目标、用户体验与研发成本之间完成平衡。</p>",
+        content: "<p>具备跨团队协作与复杂项目拆解能力，能够在业务目标、用户体验与研发成本之间完成平衡。</p><p>擅长通过数据分析定位增长机会，并推动策略从验证到规模化落地。</p>",
       },
     },
     education: {
@@ -67,7 +67,19 @@ export const fullDataProductManagerResumeItem: any = {
             endTime: "2019.06",
             tags: ["985", "双一流"],
             link: { name: "毕业设计", url: "https://portfolio.example.com/li-ran/graduation" },
-            content: "<p>GPA 3.7/4.0，主修管理信息系统、数据分析与用户行为研究。</p>",
+            content: "<p>GPA 3.7/4.0，主修管理信息系统、数据分析与用户行为研究。</p><p>参与校园创新项目，负责用户调研与产品方案设计。</p>",
+          },
+        },
+        {
+          ui: {},
+          data: {
+            name: "南京市金陵中学",
+            education: "高中",
+            mode: "全日制",
+            city: "南京",
+            startTime: "2012.09",
+            endTime: "2015.06",
+            content: "<p>完成高中阶段课程学习，打下扎实的数理与人文基础。</p><p>积极参与校园社团活动，培养沟通协作与组织能力。</p>",
           },
         },
       ],
@@ -86,7 +98,7 @@ export const fullDataProductManagerResumeItem: any = {
             endTime: "至今",
             tags: ["核心成员", "跨部门协作"],
             link: { name: "产品案例", url: "https://portfolio.example.com/li-ran/growth" },
-            content: "<p>负责会员增长与营销自动化产品，搭建分层触达策略和实验平台，推动核心转化链路持续优化。</p>",
+            content: "<p>负责会员增长与营销自动化产品，搭建分层触达策略和实验平台，推动核心转化链路持续优化。</p><p>协同运营、研发与数据团队迭代关键场景，提升会员激活与复购表现。</p>",
           },
         },
         {
@@ -99,7 +111,7 @@ export const fullDataProductManagerResumeItem: any = {
             startTime: "2019.07",
             endTime: "2022.02",
             tags: ["独立负责", "从0到1"],
-            content: "<p>负责商家后台和数据报表产品，完成需求调研、原型设计、研发协同及上线后的数据复盘。</p>",
+            content: "<p>负责商家后台和数据报表产品，完成需求调研、原型设计、研发协同及上线后的数据复盘。</p><p>梳理商家核心工作流程，持续优化功能易用性与业务处理效率。</p>",
           },
         },
       ],
@@ -118,7 +130,20 @@ export const fullDataProductManagerResumeItem: any = {
             endTime: "2024.11",
             tags: ["已上线", "团队协作"],
             link: { name: "项目复盘", url: "https://portfolio.example.com/li-ran/lifecycle" },
-            content: "<p>整合用户分群、自动化触达与实验分析能力，支持运营团队自助配置活动并追踪转化效果。</p>",
+            content: "<p>整合用户分群、自动化触达与实验分析能力，支持运营团队自助配置活动并追踪转化效果。</p><p>项目上线后运营配置效率提升，关键营销活动转化率得到改善。</p>",
+          },
+        },
+        {
+          ui: {},
+          data: {
+            name: "商家经营数据看板",
+            department: "商业产品部",
+            post: "产品负责人",
+            city: "杭州",
+            startTime: "2021.03",
+            endTime: "2021.10",
+            tags: ["数据产品", "已上线"],
+            content: "<p>整合订单、用户与营销数据，帮助商家及时了解经营表现和变化趋势。</p><p>通过指标体系与异常提醒优化日常经营决策效率。</p>",
           },
         },
       ],
@@ -138,7 +163,15 @@ export const fullDataProductManagerResumeItem: any = {
           data: {
             name: "产品方案讲解",
             url: "https://www.example.com/product-demo",
-            desc: "会员生命周期运营平台的方案讲解与演示视频。",
+            desc: "会员生命周期运营平台的方案讲解与演示视频。介绍用户分层、自动触达和效果分析流程。",
+          },
+        },
+        {
+          ui: {},
+          data: {
+            name: "用户增长复盘",
+            url: "https://www.example.com/growth-review",
+            desc: "拆解会员增长实验的设计与结果。总结关键指标变化及后续优化方向。",
           },
         },
       ],
@@ -151,7 +184,16 @@ export const fullDataProductManagerResumeItem: any = {
           data: {
             name: "产品原型展示",
             img: xiaoyang,
-            desc: "会员运营后台核心页面原型。",
+            desc: "会员运营后台核心页面原型。展示运营配置与活动效果分析视图。",
+            size: 50,
+          },
+        },
+        {
+          ui: {},
+          data: {
+            name: "用户增长数据看板",
+            img: xiaoyang,
+            desc: "展示用户分层与转化漏斗原型。覆盖核心增长指标及运营分析视图。",
             size: 50,
           },
         },
@@ -171,7 +213,7 @@ export const fullDataProductManagerResumeItem: any = {
             endTime: "2023.09",
             tags: ["独立负责", "跨部门协作"],
             link: { name: "研究报告", url: "https://portfolio.example.com/li-ran/research" },
-            content: "<p>访谈商家与消费者并完成竞品分析，为下一阶段业务增长策略提供决策依据。</p>",
+            content: "<p>访谈商家与消费者并完成竞品分析，为下一阶段业务增长策略提供决策依据。</p><p>结合行业数据识别重点细分场景，输出可执行的产品机会与验证建议。</p>",
           },
         },
       ],
