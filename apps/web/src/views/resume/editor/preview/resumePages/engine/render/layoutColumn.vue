@@ -105,6 +105,13 @@ const handleMove = (moduleKey: string, direction: string) => {
         </template>
       </div>
     </template>
+    <!-- 下一个模块换页时，本页剩余空间仍装得下的模块间距落在页尾单独占一行 -->
+    <div
+      v-if="column.trailingGap > 0"
+      class="shrink-0"
+      :class="{ 'resume-debug-gap': showDebug }"
+      :style="{ height: `${column.trailingGap}px` }"
+    />
   </div>
 </template>
 
