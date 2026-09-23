@@ -67,7 +67,7 @@ function archiveModule() {
     });
 }
 
-// 新增记录追加到列表末尾，定位一次便于直接看到落点
+// 新增记录追加到列表末尾，同步定位编辑区与预览区
 function locateAddedItem(index) {
   if (index == null) return;
   nextTick(() => {
@@ -77,6 +77,8 @@ function locateAddedItem(index) {
     );
     // 选中落到新增的那条记录，而不是整个模块
     eventBus.emit("df-select-module", { key: moduleKey, index });
+    // 新增模块记录后定位预览区对应模块
+    jumpPreview(moduleKey);
   });
 }
 
