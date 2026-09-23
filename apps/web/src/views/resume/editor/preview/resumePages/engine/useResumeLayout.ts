@@ -26,6 +26,8 @@ export interface UseResumeLayoutOptions {
   showPageNumber: ComputedRef<boolean>;
   /** 字体加载版本。 */
   fontReadyVersion: Ref<number>;
+  /** 是否为缩略图模式。 */
+  isThumb: ComputedRef<boolean> | Ref<boolean>;
 }
 
 /**
@@ -39,15 +41,23 @@ export const useResumeLayout = ({
   ui,
   showPageNumber,
   fontReadyVersion,
+  isThumb,
 }: UseResumeLayoutOptions) => {
   const moduleKeys = computed(() => allModules.value.map((module) => module.key).filter(Boolean));
-  const nodes = computed(() =>
-    buildLayoutNodes({
+  const nodes = computed<LayoutNode[]>(() => {
+    const built = buildLayoutNodes({
       moduleKeys: moduleKeys.value,
       data: data.value,
       ui: ui.value,
-    }),
-  );
+    });
+    // 缩略图只需首屏观感，跳过字符级断点，避免每张卡片挂载一棵过大的测量树
+    if (!isThumb) return built;
+    return built.map((node) =>
+      node.breakPoints
+        ? { ...node, breakPoints: node.breakPoints.filter((point) => point.type !== "char") }
+        : node,
+    );
+  });
   const activeModuleKeys = computed(() => [
     ...new Set(nodes.value.map((node) => node.sourceModuleKey)),
   ]);
