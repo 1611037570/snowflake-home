@@ -19,6 +19,8 @@ interface UseResumePagesOptions {
   fontReadyVersion: Ref<number>;
   /** 展开后的模块字段配置。 */
   allModules: ComputedRef<any[]>;
+  /** 是否为缩略图模式。 */
+  isThumb: ComputedRef<boolean> | Ref<boolean>;
 }
 
 export const useResumePages = ({
@@ -28,6 +30,7 @@ export const useResumePages = ({
   showPageNumber,
   fontReadyVersion,
   allModules,
+  isThumb,
 }: UseResumePagesOptions) => {
   const layout = useResumeLayout({
     measureRef,
@@ -36,6 +39,7 @@ export const useResumePages = ({
     ui,
     showPageNumber,
     fontReadyVersion,
+    isThumb,
   });
 
   return {
