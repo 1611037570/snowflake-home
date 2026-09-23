@@ -22,6 +22,8 @@ interface Props {
   blockRange?: { start: number; end: number };
   decoration?: "full" | "top" | "middle" | "bottom";
   showDebug?: boolean;
+  /** 当前分片是否位于所在页面的第一位：此时不绘制顶部间距占位 */
+  leadingOnPage?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -125,8 +127,12 @@ const fragmentContentStyle = computed(() => {
   }
   return base;
 });
+// 顶部间距占位：续段（中片/末片）不绘制；分片本身是该页第一个内容时也不绘制
 const showParagraphGap = computed(
-  () => props.decoration !== "middle" && props.decoration !== "bottom",
+  () =>
+    !props.leadingOnPage &&
+    props.decoration !== "middle" &&
+    props.decoration !== "bottom",
 );
 // 经历条目头部只在首段渲染，正文续段不再重复头部
 const showItemHeader = computed(() => !props.contentRange || props.contentRange.start === 0);
