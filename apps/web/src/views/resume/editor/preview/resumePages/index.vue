@@ -152,6 +152,51 @@ const getColumnStyle = (columnId) => {
   return { flex: `0 0 ${width}px`, width: `${width}px` };
 };
 const getColumnGap = (columnId) => columnConfigMap.value.get(columnId)?.gap || 0;
+
+// 栏内跨页的模块顺序与各模块起始页：上下移动以整栏顺序为准，而不是单页可见顺序
+const columnMoveContext = computed(() => {
+  const orderByColumn = new Map();
+  const startPageByModule = new Map();
+  pagePlan.value.pages.forEach((page, pageIndex) => {
+    page.regions.forEach((region) => {
+      region.columns.forEach((column) => {
+        let order = orderByColumn.get(column.columnId);
+        if (!order) {
+          order = [];
+          orderByColumn.set(column.columnId, order);
+        }
+        column.fragments.forEach((fragment) => {
+          // 仅首段代表模块位置，续段不重复登记
+          if (fragment.fragment === "middle" || fragment.fragment === "last") return;
+          if (!order.includes(fragment.sourceModuleKey)) order.push(fragment.sourceModuleKey);
+          if (!startPageByModule.has(fragment.sourceModuleKey)) {
+            startPageByModule.set(fragment.sourceModuleKey, pageIndex);
+          }
+        });
+      });
+    });
+  });
+  const directions = new Map();
+  const modulePage = new Map();
+  orderByColumn.forEach((order, columnId) => {
+    order.forEach((moduleKey) => {
+      modulePage.set(`${columnId}:${moduleKey}`, { pageIndex: startPageByModule.get(moduleKey) ?? 0 });
+    });
+    const list = {};
+    order.forEach((moduleKey, index) => {
+      const previous = index > 0 ? order[index - 1] : null;
+      // 上移只在同页存在前一个模块时可用，避免跨页把模块提到上一页
+      const previousSamePage =
+        previous !== null &&
+        previous !== "user" &&
+        modulePage.get(`${columnId}:${previous}`)?.pageIndex === modulePage.get(`${columnId}:${moduleKey}`)?.pageIndex;
+      list[moduleKey] = { up: previousSamePage, down: index < order.length - 1 };
+    });
+    directions.set(columnId, list);
+  });
+  return { orderByColumn, directions };
+});
+const getColumnDirections = (columnId) => columnMoveContext.value.directions.get(columnId) ?? {};
 // 预览就绪：空简历直接展示提示页，其余以新引擎完成测量为准。
 const previewMeasured = computed(() => isEmpty.value || measureDone.value);
 const visiblePages = computed(() => (isThumb.value ? pages.value.slice(0, 1) : pages.value));
@@ -195,11 +240,15 @@ const handleModuleMouseEnter = (key) => {
   clearPreviewSelection(key);
 };
 
-// 预览区上下移动模块：交换配置里的模块顺序；个人信息模块由布局规则固定，不参与交换
-const handleModuleMove = ({ moduleKey, targetModuleKey, direction }) => {
+// 预览区上下移动模块：按整栏跨页顺序交换配置里的模块顺序；个人信息模块不参与交换
+const handleModuleMove = ({ moduleKey, direction, columnId }) => {
   if (direction !== "up" && direction !== "down") return;
-  if (!targetModuleKey) return;
-  resumeStore.swapModuleOrder(moduleKey, targetModuleKey);
+  const order = columnMoveContext.value.orderByColumn.get(columnId) ?? [];
+  const index = order.indexOf(moduleKey);
+  if (index < 0) return;
+  const target = direction === "up" ? order[index - 1] : order[index + 1];
+  if (!target) return;
+  resumeStore.swapModuleOrder(moduleKey, target);
 };
 
 // 新引擎测量容器元素回传，分页算法只通过 hook 读取该元素。
@@ -273,7 +322,7 @@ defineExpose({ rootEl: rootRef, measureEl: rootRef, pages, pagePlan });
                 :style="{ gap: `${layoutColumnGap}px` }"
               >
                 <div
-                  v-for="(column, columnIndex) in region.columns"
+                  v-for="column in region.columns"
                   :key="column.columnId"
                   class="min-w-0"
                   :style="getColumnStyle(column.columnId)"
@@ -284,10 +333,9 @@ defineExpose({ rootEl: rootRef, measureEl: rootRef, pages, pagePlan });
                     :is-edit="isEdit"
                     :module-class-map="moduleClassMap"
                     :gap="getColumnGap(column.columnId)"
-                    :column-index="columnIndex"
-                    :column-count="region.columns.length"
+                    :move-directions="getColumnDirections(column.columnId)"
                     @mouseenter="handleModuleMouseEnter"
-                    @move="handleModuleMove"
+                    @move="(payload) => handleModuleMove({ ...payload, columnId: column.columnId })"
                   />
                 </div>
               </div>
