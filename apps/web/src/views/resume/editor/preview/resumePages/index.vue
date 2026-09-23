@@ -28,7 +28,7 @@ import {
 import eventBus from "@/utils/modules/eventBus";
 
 const resumeStore = useResumeStore();
-const { system } = storeToRefs(resumeStore);
+const { selectedModule, system } = storeToRefs(resumeStore);
 defineOptions({ name: "ResumePages" });
 
 const props = defineProps({
@@ -220,6 +220,7 @@ watch(
 const { moduleClassMap } = useModuleInteractions({
   isEdit,
   moduleKeys,
+  selectedModule,
   activeModuleKey: previewSelectedModule,
 });
 
