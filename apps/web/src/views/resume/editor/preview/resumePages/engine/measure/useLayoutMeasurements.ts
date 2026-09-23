@@ -53,24 +53,31 @@ export const useLayoutMeasurements = ({
     }
     const nextMeasurements = measureLayoutNodes(root, nodes.value);
     measurements.value = nextMeasurements;
-    measureDone.value = nodes.value.every((node) => nextMeasurements.has(node.id));
+    measureDone.value = nodes.value.every(
+      (node) => nextMeasurements.has(node.id) && (!node.title || nextMeasurements.has(node.title.id)),
+    );
     measuring = false;
   };
 
   const scheduleMeasure = useDebounceFn(() => {
     void measure();
   }, 0);
+  // 节点更新后先同步作废旧测量结果，避免分页用旧 Map 处理新节点
+  const requestMeasure = () => {
+    measureDone.value = false;
+    void scheduleMeasure();
+  };
 
-  watch([measureRef, nodes, watchSource], scheduleMeasure, {
+  watch([measureRef, nodes, watchSource], requestMeasure, {
     immediate: true,
-    flush: "post",
+    flush: "sync",
   });
 
-  const { stop: stopMutation } = useMutationObserver(measureRef, scheduleMeasure, {
+  const { stop: stopMutation } = useMutationObserver(measureRef, requestMeasure, {
     childList: true,
     subtree: true,
   });
-  const { stop: stopResize } = useResizeObserver(measureRef, scheduleMeasure);
+  const { stop: stopResize } = useResizeObserver(measureRef, requestMeasure);
 
   return {
     measurements,
