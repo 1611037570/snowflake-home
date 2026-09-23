@@ -278,7 +278,10 @@ const itemContentSpacingStyle = computed(() => {
         class="flex h-auto max-w-full min-w-0 flex-wrap items-center justify-between gap-3"
       >
         <div class="min-w-0 flex-1" :style="[fontValue()]">
-          <InlineInfoList :items="[{ value: nodePayload.item?.name, emphasis: true }, nodePayload.item?.desc]" />
+          <ItemTitle v-if="nodePayload.item?.name" :name="nodePayload.item.name" />
+          <div v-if="nodePayload.item?.desc" :style="innerSpacingStyle">
+            <ResumeField :model-value="nodePayload.item.desc" />
+          </div>
         </div>
         <div v-if="safeUrl(nodePayload.item?.url)" class="max-w-[45%] min-w-0 shrink-0 text-right">
           <a
@@ -309,6 +312,7 @@ const itemContentSpacingStyle = computed(() => {
         >
           {{ nodePayload.item.name || nodePayload.item.url }}
         </a>
+        <span v-else-if="nodePayload.item?.name">{{ nodePayload.item.name }}</span>
         <span v-if="nodePayload.item?.desc">{{ nodePayload.item.desc }}</span>
       </div>
     </ModuleContentContainer>
