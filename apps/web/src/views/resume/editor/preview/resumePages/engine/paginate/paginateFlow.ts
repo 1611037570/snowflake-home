@@ -204,7 +204,8 @@ export const paginateFlow = ({
         break;
       }
 
-      const nodeGap = currentPage.items.length > 0 && !isFirst ? safeGap : 0;
+      // 与 tryAddItem 的间距口径保持一致：首片在非空页上要计入模块间距，续段不计
+      const nodeGap = currentPage.items.length > 0 && isFirst ? safeGap : 0;
       const availableForContent = Math.max(
         0,
         getCurrentAvailableHeight() - currentPage.usedHeight - nodeGap - title,
