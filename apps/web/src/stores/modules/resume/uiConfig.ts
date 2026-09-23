@@ -60,6 +60,7 @@ const createThemeTemplate = (
       titleIconMode: "none",
       linkUnderline: false,
       infoSeparator: "space",
+      moduleContent: {},
       ...ui,
     },
   },
@@ -113,6 +114,7 @@ export const themeTemplateList = [
     titleFontSize: 24,
     userInfoMode: "icon",
     titleIconMode: "plain",
+    moduleContent: { variant: "card" },
   }),
   createThemeTemplate("创意", "creative", "突出个人表达与作品展示的创意简历样式。", {
     themeColor: "#DB2777",

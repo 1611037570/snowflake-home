@@ -153,14 +153,19 @@ export const useResumeTheme = (ui: ComputedRef<ResumeUi>): ResumeTheme => {
     isLightColor(themeColor.value) ? "#1f2937" : "#ffffff",
   );
   const themeTemplate = computed(() => ui.value.themeTemplate);
-  // 内容容器默认仅在预览运行时生效，不写入用户简历数据；空边框颜色表示不绘制边框
+  // 内容容器样式由主题提供默认值，用户显式设置优先
   const moduleContentStyle = computed(() => {
     const content = ui.value.moduleContent || {};
-    const borderColor = content.borderColor ?? "#dbe4ee";
-    const radius = content.radius ?? "12px";
-    const padding = Number.isFinite(Number(content.padding)) ? Number(content.padding) : 12;
+    const isCard = content.variant === "card";
+    const borderColor = content.borderColor ?? (isCard ? themeColorLine.value : "");
+    const radius = content.radius ?? (isCard ? "12px" : "0");
+    const padding = Number.isFinite(Number(content.padding))
+      ? Number(content.padding)
+      : isCard
+        ? 12
+        : 0;
     return {
-      backgroundColor: content.background ?? "pink",
+      backgroundColor: content.background ?? (isCard ? themeColorSoft.value : "transparent"),
       borderRadius: radius,
       padding: `${padding}px`,
       "--module-content-border-color": borderColor || "transparent",

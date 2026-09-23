@@ -9,6 +9,14 @@ describe("parseRichText", () => {
     expect(result.breakPoints.at(-1)?.offset).toBe(result.textLength);
   });
 
+  it("大量段落的断点仍保持唯一且有序", () => {
+    const result = parseRichText("<p>段</p>".repeat(500));
+    const offsets = result.breakPoints.map((point) => point.offset);
+
+    expect(new Set(offsets).size).toBe(offsets.length);
+    expect(offsets).toEqual([...offsets].sort((left, right) => left - right));
+  });
+
   it("续段从下一段文字开始且不复制上一段空壳", () => {
     const parsed = parseRichText("<p>产品能力</p><p><br></p><p>工具</p>");
     const html = sliceRichTextHtml(
