@@ -257,7 +257,28 @@ const itemContentSpacingStyle = computed(() => {
 
   <template v-else-if="node.type === 'media'">
     <ModuleContentContainer>
-      <div class="flex flex-col gap-3" :style="[paragraphSpacingStyle, mediaWidthStyle]">
+      <!-- 视频作品保留原始网址文本，避免显示为作品名称。 -->
+      <div
+        v-if="nodePayload.mediaType === 'video'"
+        :style="paragraphSpacingStyle"
+        class="flex h-auto max-w-full min-w-0 flex-wrap items-center justify-between gap-3"
+      >
+        <div class="min-w-0 flex-1" :style="[fontValue()]">
+          <InlineInfoList :items="[{ value: nodePayload.item?.name, emphasis: true }, nodePayload.item?.desc]" />
+        </div>
+        <div v-if="safeUrl(nodePayload.item?.url)" class="max-w-[45%] min-w-0 shrink-0 text-right">
+          <a
+            :href="safeUrl(nodePayload.item.url)"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="inline max-w-full min-w-0 break-all hover:underline"
+            :class="{ underline: linkUnderline }"
+          >
+            <ResumeField :model-value="nodePayload.item.url" class="inline max-w-full min-w-0 break-all" />
+          </a>
+        </div>
+      </div>
+      <div v-else class="flex flex-col gap-3" :style="[paragraphSpacingStyle, mediaWidthStyle]">
         <img
           v-if="nodePayload.item?.img"
           :src="nodePayload.item.img"
