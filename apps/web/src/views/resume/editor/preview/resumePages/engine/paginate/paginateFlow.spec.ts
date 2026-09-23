@@ -9,7 +9,6 @@ const createNode = (id: string, overrides: Partial<LayoutNode> = {}): LayoutNode
   type: "block",
   breakPolicy: {
     splittable: false,
-    keepWithNext: false,
     keepTitleWithFirst: false,
   },
   payload: { id },
@@ -56,7 +55,6 @@ describe("paginateFlow", () => {
       title,
       breakPolicy: {
         splittable: true,
-        keepWithNext: false,
         keepTitleWithFirst: true,
       },
     });
@@ -102,7 +100,6 @@ describe("paginateFlow", () => {
       payload: "模块标题",
       breakPolicy: {
         splittable: false,
-        keepWithNext: false,
         keepTitleWithFirst: false,
       },
     });
@@ -111,7 +108,6 @@ describe("paginateFlow", () => {
       title,
       breakPolicy: {
         splittable: true,
-        keepWithNext: false,
         keepTitleWithFirst: true,
       },
     });
@@ -163,7 +159,6 @@ describe("paginateFlow", () => {
     const node = createNode("long-text", {
       breakPolicy: {
         splittable: true,
-        keepWithNext: false,
         keepTitleWithFirst: false,
       },
     });
@@ -204,7 +199,6 @@ describe("paginateFlow", () => {
       type: "group",
       breakPolicy: {
         splittable: true,
-        keepWithNext: false,
         keepTitleWithFirst: false,
       },
     });
@@ -246,7 +240,6 @@ describe("paginateFlow", () => {
       type: "richText",
       breakPolicy: {
         splittable: true,
-        keepWithNext: false,
         keepTitleWithFirst: false,
       },
     });
