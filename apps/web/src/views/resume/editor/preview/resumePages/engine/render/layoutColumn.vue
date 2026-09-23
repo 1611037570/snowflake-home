@@ -41,14 +41,9 @@ const fragmentGroups = computed(() => {
   });
   return groups;
 });
-// 移动方向：由预览层按整栏跨页顺序下发；续段不提供移动，避免与模块首段重复
-const getDirections = (group) => {
-  const kind = group.items[0]?.fragment?.fragment;
-  if (kind === "middle" || kind === "last") {
-    return { up: false, down: false, left: false, right: false };
-  }
-  return props.moveDirections?.[group.moduleKey] ?? { up: false, down: false, left: false, right: false };
-};
+// 移动方向：由预览层按整栏跨页顺序下发，缺省时不可用
+const getDirections = (group) =>
+  props.moveDirections?.[group.moduleKey] ?? { up: false, down: false, left: false, right: false };
 // 上下移动交给上层按整栏顺序交换模块位置
 const handleMove = (moduleKey: string, direction: string) => {
   emit("move", { moduleKey, direction });

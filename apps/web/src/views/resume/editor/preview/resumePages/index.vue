@@ -153,11 +153,10 @@ const getColumnStyle = (columnId) => {
 };
 const getColumnGap = (columnId) => columnConfigMap.value.get(columnId)?.gap || 0;
 
-// 栏内跨页的模块顺序与各模块起始页：上下移动以整栏顺序为准，而不是单页可见顺序
+// 栏内跨页的模块顺序：上下移动以整栏顺序为准，跨页也可移动
 const columnMoveContext = computed(() => {
   const orderByColumn = new Map();
-  const startPageByModule = new Map();
-  pagePlan.value.pages.forEach((page, pageIndex) => {
+  pagePlan.value.pages.forEach((page) => {
     page.regions.forEach((region) => {
       region.columns.forEach((column) => {
         let order = orderByColumn.get(column.columnId);
@@ -169,28 +168,20 @@ const columnMoveContext = computed(() => {
           // 仅首段代表模块位置，续段不重复登记
           if (fragment.fragment === "middle" || fragment.fragment === "last") return;
           if (!order.includes(fragment.sourceModuleKey)) order.push(fragment.sourceModuleKey);
-          if (!startPageByModule.has(fragment.sourceModuleKey)) {
-            startPageByModule.set(fragment.sourceModuleKey, pageIndex);
-          }
         });
       });
     });
   });
   const directions = new Map();
-  const modulePage = new Map();
   orderByColumn.forEach((order, columnId) => {
-    order.forEach((moduleKey) => {
-      modulePage.set(`${columnId}:${moduleKey}`, { pageIndex: startPageByModule.get(moduleKey) ?? 0 });
-    });
     const list = {};
     order.forEach((moduleKey, index) => {
       const previous = index > 0 ? order[index - 1] : null;
-      // 上移只在同页存在前一个模块时可用，避免跨页把模块提到上一页
-      const previousSamePage =
-        previous !== null &&
-        previous !== "user" &&
-        modulePage.get(`${columnId}:${previous}`)?.pageIndex === modulePage.get(`${columnId}:${moduleKey}`)?.pageIndex;
-      list[moduleKey] = { up: previousSamePage, down: index < order.length - 1 };
+      // 上移下限栏内还有相邻模块即可，跨页同样可移动；个人信息模块不可被替换
+      list[moduleKey] = {
+        up: previous !== null && previous !== "user",
+        down: index < order.length - 1,
+      };
     });
     directions.set(columnId, list);
   });
