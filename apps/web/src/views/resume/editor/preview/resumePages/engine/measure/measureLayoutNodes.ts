@@ -45,13 +45,35 @@ export const measureLayoutNodes = (
     const breakPointTypes = new Map(
       node.breakPoints?.map((point) => [point.offset, point.type]) || [],
     );
+    const richTextBlocks =
+      node.type === "richText"
+        ? (node.payload as { blocks?: { startOffset: number }[] }).blocks || []
+        : [];
+    const richTextContent = element.querySelector<HTMLElement>(".layout-rich-text > div");
+    const continuationGaps = new Map<number, number>();
+    // 续页首段不重复计入段间距；源内容中的空段落仍按真实行高参与测量
+    richTextBlocks.forEach((block, index) => {
+      if (block.startOffset <= 0 || !richTextContent?.children[index]) return;
+      const previousBlock = richTextContent.children[index - 1];
+      const currentBlock = richTextContent.children[index];
+      if (!previousBlock || !currentBlock) return;
+      const gap =
+        (currentBlock.getBoundingClientRect().top - previousBlock.getBoundingClientRect().bottom) /
+        scale;
+      if (gap > 0) continuationGaps.set(block.startOffset, gap);
+    });
     const breakPoints = Array.from(
       element.querySelectorAll<HTMLElement>("[data-layout-breakpoint-offset]"),
     )
       .map((point) => {
         const offset = Number(point.dataset.layoutBreakpointOffset);
         const height = point.getBoundingClientRect().height / scale;
-        return { offset, type: breakPointTypes.get(offset) || "textRange", height };
+        return {
+          offset,
+          type: breakPointTypes.get(offset) || "textRange",
+          height,
+          continuationGap: continuationGaps.get(offset),
+        };
       })
       .filter((point) => Number.isFinite(point.offset) && point.height > 0);
 

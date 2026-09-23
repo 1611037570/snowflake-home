@@ -8,6 +8,8 @@ export interface BreakPointMeasure {
   type: BreakPointType;
   /** 从节点起点到当前断点的实际高度 */
   height: number;
+  /** 续页首段不重复计算的段落间距；空行保留，不为段落分页预留行数 */
+  continuationGap?: number;
   /** 块断点覆盖的块数量：区间为 [0, blockEnd)，仅块断点存在 */
   blockEnd?: number;
 }

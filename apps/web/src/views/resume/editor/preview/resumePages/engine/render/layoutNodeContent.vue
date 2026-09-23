@@ -320,4 +320,10 @@ const itemContentSpacingStyle = computed(() => {
 .layout-rich-text :deep(p + ol) {
   margin-top: 0.75em;
 }
+
+/* 空段落保留一行；不额外叠加空行前后的段落间距，给正文尽量多留可用行高 */
+.layout-rich-text :deep(p:has(> br:only-child)),
+.layout-rich-text :deep(p:has(> br:only-child) + p) {
+  margin-top: 0;
+}
 </style>
