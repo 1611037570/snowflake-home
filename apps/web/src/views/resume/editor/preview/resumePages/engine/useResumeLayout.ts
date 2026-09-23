@@ -51,7 +51,7 @@ export const useResumeLayout = ({
       ui: ui.value,
     });
     // 缩略图只需首屏观感，跳过字符级断点，避免每张卡片挂载一棵过大的测量树
-    if (!isThumb) return built;
+    if (!isThumb.value) return built;
     return built.map((node) =>
       node.breakPoints
         ? { ...node, breakPoints: node.breakPoints.filter((point) => point.type !== "char") }
