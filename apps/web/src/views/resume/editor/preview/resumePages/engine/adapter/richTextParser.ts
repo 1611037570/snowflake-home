@@ -250,7 +250,10 @@ const appendCharacterBreakPoints = (
   points.sort((left, right) => left.offset - right.offset);
 };
 
-/** 清洗并解析富文本，供排版节点适配器使用 */
+/**
+ * 清洗并解析富文本，供排版节点适配器使用。
+ * 偏移口径（文字与 <br> 各占一位、顶层纯空白文本不计）被预览切片与分页断点共用，改动必须两边同步。
+ */
 export const parseRichText = (content: string): ParsedRichText => {
   const html = DOMPurify.sanitize(content || "", sanitizeConfig);
   const { blocks, breakPoints, breakPointOffsets, textLength } = parseBlocks(html);

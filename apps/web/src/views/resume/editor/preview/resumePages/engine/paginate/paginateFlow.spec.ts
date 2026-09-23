@@ -415,4 +415,106 @@ describe("paginateFlow", () => {
       height: 50,
     });
   });
+
+  it("顶部间距块可以单独留在上一页，块区间 [0, 0) 不渲染内容块", () => {
+    const item = createNode("item", {
+      breakPolicy: {
+        splittable: true,
+        keepTitleWithFirst: false,
+      },
+    });
+    const pages = paginateFlow({
+      nodes: [createNode("previous"), item],
+      measurements: new Map([
+        ["previous", createMeasurement("previous", 40)],
+        [
+          "item",
+          createMeasurement("item", 60, {
+            breakPoints: [
+              { offset: 0, type: "block", height: 10, blockEnd: 0 },
+              { offset: 0, type: "block", height: 40, blockEnd: 1 },
+              { offset: 20, type: "paragraph", height: 60 },
+            ],
+          }),
+        ],
+      ]),
+      availableHeight: 60,
+      gap: 0,
+    });
+
+    // 上一页只剩 20：内容块（40）放不下，间距块（10）放得下，于是间距单独成片
+    expect(pages).toHaveLength(2);
+    expect(pages[0]?.items[1]).toMatchObject({
+      blockRange: { start: 0, end: 0 },
+      height: 10,
+    });
+    expect(pages[1]?.items[0]).toMatchObject({ blockRange: { start: 0, end: 1 } });
+  });
+
+  it("内容盒首块已在前片渲染时，续段才扣除顶部留白", () => {
+    const item = createNode("item", {
+      breakPolicy: {
+        splittable: true,
+        keepTitleWithFirst: false,
+      },
+    });
+    const breakPoints = [
+      { offset: 0, type: "block" as const, height: 10, blockEnd: 0 },
+      { offset: 0, type: "block" as const, height: 60, blockEnd: 1 },
+      { offset: 20, type: "paragraph" as const, height: 120 },
+    ];
+
+    // 只放下间距块：内容盒首块还没渲染，续段按完整盒顶计算，不扣顶部留白（60 - 10 - 0）
+    const onlyGap = paginateFlow({
+      nodes: [createNode("previous"), item],
+      measurements: new Map([
+        ["previous", createMeasurement("previous", 50)],
+        [
+          "item",
+          createMeasurement("item", 60, {
+            breakPoints: [
+              { offset: 0, type: "block" as const, height: 10, blockEnd: 0 },
+              { offset: 0, type: "block" as const, height: 60, blockEnd: 1 },
+              { offset: 20, type: "paragraph" as const, height: 60 },
+            ],
+            droppedTopSpacing: 10,
+          }),
+        ],
+      ]),
+      availableHeight: 60,
+      gap: 0,
+    });
+    expect(onlyGap[1]?.items[0]?.height).toBe(50);
+
+    // 放下间距 + 内容块：内容盒已开始，续段扣除顶部留白
+    const boxStarted = paginateFlow({
+      nodes: [createNode("previous"), item],
+      measurements: new Map([
+        ["previous", createMeasurement("previous", 30)],
+        ["item", createMeasurement("item", 120, { breakPoints, droppedTopSpacing: 10 })],
+      ]),
+      availableHeight: 95,
+      gap: 0,
+    });
+    expect(boxStarted[1]?.items[0]?.height).toBe(50);
+  });
+
+  it("下一个模块换页时，模块间距落在上一页页尾", () => {
+    const first = createNode("first", { sourceModuleKey: "alpha" });
+    const second = createNode("second", { sourceModuleKey: "beta" });
+    const pages = paginateFlow({
+      nodes: [first, second],
+      measurements: new Map([
+        ["first", createMeasurement("first", 40)],
+        ["second", createMeasurement("second", 60)],
+      ]),
+      availableHeight: 70,
+      gap: 12,
+    });
+
+    expect(pages).toHaveLength(2);
+    expect(pages[0]?.trailingGap).toBe(12);
+    expect(pages[0]?.usedHeight).toBe(52);
+    expect(pages[1]?.items.map((item) => item.nodeId)).toEqual(["second"]);
+  });
 });
