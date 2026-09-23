@@ -8,6 +8,8 @@ defineProps<{
   fragment: FragmentPlan;
   node: LayoutNode;
   showDebug?: boolean;
+  /** 当前分片是否位于所在页面的第一位：此时不绘制顶部间距占位 */
+  leadingOnPage?: boolean;
 }>();
 
 const emit = defineEmits<{ mouseenter: [moduleKey: string] }>();
@@ -28,6 +30,7 @@ const emit = defineEmits<{ mouseenter: [moduleKey: string] }>();
       :block-range="fragment.blockRange"
       :decoration="fragment.decoration"
       :show-debug="showDebug"
+      :leading-on-page="leadingOnPage"
     />
   </div>
 </template>

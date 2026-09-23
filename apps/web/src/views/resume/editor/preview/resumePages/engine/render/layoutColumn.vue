@@ -76,7 +76,7 @@ const handleMove = (moduleKey: string, direction: string) => {
 
 <template>
   <div class="flex min-w-0 flex-1 flex-col">
-    <template v-for="group in fragmentGroups" :key="group.key">
+    <template v-for="(group, groupIndex) in fragmentGroups" :key="group.key">
       <div
         v-if="group.gapTop > 0"
         class="shrink-0"
@@ -94,12 +94,15 @@ const handleMove = (moduleKey: string, direction: string) => {
           :directions="getDirections(group)"
           @move="handleMove(group.moduleKey, $event)"
         />
-        <template v-for="item in group.items" :key="item.fragment.fragmentId">
+        <template v-for="(item, itemIndex) in group.items" :key="item.fragment.fragmentId">
           <LayoutFragment
             v-if="getNode(item.fragment)"
             :fragment="item.fragment"
             :node="getNode(item.fragment)!"
             :show-debug="showDebug"
+            :leading-on-page="
+              groupIndex === 0 && itemIndex === 0 && !item.fragment.titlePayload
+            "
             @mouseenter="emit('mouseenter', $event)"
           />
         </template>
