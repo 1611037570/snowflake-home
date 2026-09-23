@@ -15,6 +15,7 @@ describe("buildLayoutNodes media modules", () => {
       ["image.media-0", "media"],
       ["video.media-0", "media"],
     ]);
+    expect(nodes.every((node) => node.breakPolicy.splittable)).toBe(true);
     expect(nodes.map((node) => (node.payload as { mediaType: string }).mediaType)).toEqual([
       "image",
       "video",

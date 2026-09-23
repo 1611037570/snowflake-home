@@ -35,48 +35,52 @@ const createUserModuleAdapter = (context: LayoutAdapterContext): LayoutNode[] =>
 };
 
 /** 创建账号、荣誉等普通列表模块适配器 */
-const createListModuleAdapter = (moduleKey: string): LayoutAdapter => (context) => {
-  const moduleData = context.data[moduleKey];
-  if (!moduleData || typeof moduleData !== "object") return [];
-  const list = getValidData((moduleData as { list?: unknown }).list);
-  if (!Array.isArray(list)) return [];
+const createListModuleAdapter =
+  (moduleKey: string): LayoutAdapter =>
+  (context) => {
+    const moduleData = context.data[moduleKey];
+    if (!moduleData || typeof moduleData !== "object") return [];
+    const list = getValidData((moduleData as { list?: unknown }).list);
+    if (!Array.isArray(list)) return [];
 
-  return list.map((item, index) => ({
-    id: `${moduleKey}.item-${index}`,
-    sourceModuleKey: moduleKey,
-    type: "block" as const,
-    breakPolicy: {
-      splittable: false,
-      keepTitleWithFirst: false,
-    },
-    payload: {
-      part: "item",
-      item,
-    },
-  }));
-};
+    return list.map((item, index) => ({
+      id: `${moduleKey}.item-${index}`,
+      sourceModuleKey: moduleKey,
+      type: "block" as const,
+      breakPolicy: {
+        splittable: false,
+        keepTitleWithFirst: false,
+      },
+      payload: {
+        part: "item",
+        item,
+      },
+    }));
+  };
 
 /** 创建图片、视频等媒体模块适配器 */
-const createMediaModuleAdapter = (moduleKey: string): LayoutAdapter => (context) => {
-  const moduleData = context.data[moduleKey];
-  if (!moduleData || typeof moduleData !== "object") return [];
-  const list = getValidData((moduleData as { list?: unknown }).list);
-  if (!Array.isArray(list)) return [];
+const createMediaModuleAdapter =
+  (moduleKey: string): LayoutAdapter =>
+  (context) => {
+    const moduleData = context.data[moduleKey];
+    if (!moduleData || typeof moduleData !== "object") return [];
+    const list = getValidData((moduleData as { list?: unknown }).list);
+    if (!Array.isArray(list)) return [];
 
-  return list.map((item, index) => ({
-    id: `${moduleKey}.media-${index}`,
-    sourceModuleKey: moduleKey,
-    type: "media" as const,
-    breakPolicy: {
-      splittable: false,
-      keepTitleWithFirst: false,
-    },
-    payload: {
-      mediaType: moduleKey,
-      item,
-    },
-  }));
-};
+    return list.map((item, index) => ({
+      id: `${moduleKey}.media-${index}`,
+      sourceModuleKey: moduleKey,
+      type: "media" as const,
+      breakPolicy: {
+        splittable: true,
+        keepTitleWithFirst: false,
+      },
+      payload: {
+        mediaType: moduleKey,
+        item,
+      },
+    }));
+  };
 
 /** 为未单独注册的自定义模块生成经历结构 */
 const createCustomModuleFallback = (context: LayoutAdapterContext): LayoutNode[] => {

@@ -24,6 +24,6 @@ export interface MeasuredNode {
   minHeight: number;
   /** 当前节点可用的拆分断点 */
   breakPoints: BreakPointMeasure[];
-  /** 节点内容容器被去掉的上下内边距：续段按装饰口径不重复计入 */
-  droppedPadding?: { top: number; bottom: number };
+  /** 续段渲染时被去掉的顶部留白高度 */
+  droppedTopSpacing?: number;
 }

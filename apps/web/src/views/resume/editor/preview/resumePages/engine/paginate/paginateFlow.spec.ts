@@ -266,4 +266,153 @@ describe("paginateFlow", () => {
     expect(pages[0]?.items[1]?.contentRange).toEqual({ start: 0, end: 5 });
     expect(pages[0]?.usedHeight).toBe(80);
   });
+
+  it("续页扣除被移除的顶部内边距后继续填满当前页", () => {
+    const content = createNode("content", {
+      type: "richText",
+      breakPolicy: {
+        splittable: true,
+        keepTitleWithFirst: false,
+      },
+    });
+    const breakPoints = Array.from({ length: 10 }, (_, index) => ({
+      offset: (index + 1) * 10,
+      type: "char" as const,
+      height: (index + 1) * 10,
+    }));
+    const pages = paginateFlow({
+      nodes: [content],
+      measurements: new Map([
+        [
+          content.id,
+          createMeasurement("content", 100, {
+            breakPoints,
+            droppedTopSpacing: 10,
+          }),
+        ],
+      ]),
+      availableHeight: 50,
+      availableHeightByPage: (pageIndex) => (pageIndex === 0 ? 50 : 45),
+      gap: 0,
+    });
+
+    expect(pages).toHaveLength(2);
+    expect(pages[1]?.items[0]).toMatchObject({
+      contentRange: { start: 50, end: 100 },
+      height: 40,
+    });
+    expect(pages[1]?.usedHeight).toBe(40);
+  });
+
+  it("断点顺序不固定时选择当前页能容纳的最大断点", () => {
+    const content = createNode("content", {
+      type: "richText",
+      breakPolicy: {
+        splittable: true,
+        keepTitleWithFirst: false,
+      },
+    });
+    const pages = paginateFlow({
+      nodes: [content],
+      measurements: new Map([
+        [
+          content.id,
+          createMeasurement("content", 60, {
+            breakPoints: [
+              { offset: 4, type: "char", height: 40 },
+              { offset: 6, type: "char", height: 60 },
+              { offset: 2, type: "char", height: 20 },
+            ],
+          }),
+        ],
+      ]),
+      availableHeight: 50,
+      gap: 0,
+    });
+
+    expect(pages[0]?.items[0]).toMatchObject({
+      contentRange: { start: 0, end: 4 },
+      height: 40,
+    });
+  });
+
+  it("同一模块标题和内容之间不重复加入模块间距", () => {
+    const title = createNode("video.title", {
+      sourceModuleKey: "video",
+      payload: "视频作品",
+    });
+    const content = createNode("video.media-0", {
+      sourceModuleKey: "video",
+      type: "media",
+      title,
+      breakPolicy: {
+        splittable: false,
+        keepTitleWithFirst: true,
+      },
+    });
+    const pages = paginateFlow({
+      nodes: [createNode("video.previous", { sourceModuleKey: "video" }), content],
+      measurements: new Map([
+        ["video.previous", createMeasurement("video.previous", 50)],
+        ["video.title", createMeasurement("video.title", 10)],
+        ["video.media-0", createMeasurement("video.media-0", 40)],
+      ]),
+      availableHeight: 100,
+      gap: 10,
+    });
+
+    expect(pages).toHaveLength(1);
+    expect(pages[0]?.items.map((item) => item.fragment)).toEqual(["single", "single"]);
+    expect(pages[0]?.usedHeight).toBe(100);
+  });
+
+  it("当前页放得下媒体条目的首个内容块时不整条顺延", () => {
+    const title = createNode("video.title", {
+      sourceModuleKey: "video",
+      payload: "视频作品",
+    });
+    const content = createNode("video.media-0", {
+      sourceModuleKey: "video",
+      type: "media",
+      title,
+      breakPolicy: {
+        splittable: true,
+        keepTitleWithFirst: true,
+      },
+    });
+    const pages = paginateFlow({
+      nodes: [content],
+      measurements: new Map([
+        ["video.title", createMeasurement("video.title", 20)],
+        [
+          "video.media-0",
+          createMeasurement("video.media-0", 100, {
+            breakPoints: [
+              { offset: 0, type: "block", height: 40, blockEnd: 1 },
+              { offset: 0, type: "block", height: 100, blockEnd: 2 },
+            ],
+            droppedTopSpacing: 10,
+          }),
+        ],
+      ]),
+      availableHeight: 60,
+      availableHeightByPage: (pageIndex) => (pageIndex === 0 ? 60 : 50),
+      gap: 10,
+    });
+
+    expect(pages).toHaveLength(2);
+    expect(pages[0]?.items[0]).toMatchObject({
+      fragment: "first",
+      titlePayload: "视频作品",
+      blockRange: { start: 0, end: 1 },
+      height: 60,
+    });
+    expect(pages[0]?.usedHeight).toBe(60);
+    expect(pages[1]?.items[0]).toMatchObject({
+      fragment: "last",
+      titlePayload: undefined,
+      blockRange: { start: 1, end: 2 },
+      height: 50,
+    });
+  });
 });
