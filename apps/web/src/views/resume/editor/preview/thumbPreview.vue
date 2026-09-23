@@ -26,13 +26,41 @@ useResizeObserver(wrapRef, ([entry]) => {
 // 根节点与挂载标记：进入视口后才渲染缩略图，避免同屏多实例一次性渲染整份简历
 const rootRef = ref(null);
 const mounted = ref(false);
+
+// 缩略图挂载队列：同屏卡片逐个交给空闲时段挂载，避免主线程被连续阻塞成一帧一张
+const mountQueue = [];
+let mounting = false;
+const flushMountQueue = () => {
+  mountQueue.shift()?.();
+  if (mountQueue.length) {
+    scheduleMount();
+    return;
+  }
+  mounting = false;
+};
+const scheduleMount = () => {
+  if (typeof window.requestIdleCallback === "function") {
+    window.requestIdleCallback(flushMountQueue, { timeout: 300 });
+    return;
+  }
+  window.setTimeout(flushMountQueue, 16);
+};
+const enqueueMount = (task) => {
+  mountQueue.push(task);
+  if (mounting) return;
+  mounting = true;
+  scheduleMount();
+};
+
 // 提前一屏高度预加载；挂载后立即停止观察，已挂载内容不再卸载
 const { stop: stopVisibleObserve } = useIntersectionObserver(
   rootRef,
   ([entry]) => {
     if (!entry?.isIntersecting) return;
-    mounted.value = true;
     stopVisibleObserve();
+    enqueueMount(() => {
+      mounted.value = true;
+    });
   },
   { rootMargin: "200px" },
 );
