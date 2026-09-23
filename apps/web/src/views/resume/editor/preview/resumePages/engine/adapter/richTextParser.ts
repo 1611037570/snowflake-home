@@ -101,7 +101,9 @@ const sanitizeConfig = {
 };
 
 /** 字符级兜底断点最多保留的采样数量，避免超长正文生成过大的测量树。 */
-const MAX_CHAR_BREAK_POINTS = 512;
+const MAX_CHAR_BREAK_POINTS = 64;
+/** 字符级断点的最小步长：分页填充精度到几个字即可，过密会拖慢测量与缩略图渲染。 */
+const MIN_CHAR_BREAK_POINT_STEP = 4;
 
 /** 读取节点的纯文本长度 */
 const getTextLength = (node: Node): number => node.textContent?.length || 0;
@@ -178,7 +180,10 @@ const parseBlocks = (html: string) => {
 const appendCharacterBreakPoints = (points: BreakPoint[], textLength: number) => {
   if (textLength <= 1) return;
 
-  const step = Math.max(1, Math.ceil(textLength / MAX_CHAR_BREAK_POINTS));
+  const step = Math.max(
+    MIN_CHAR_BREAK_POINT_STEP,
+    Math.ceil(textLength / MAX_CHAR_BREAK_POINTS),
+  );
   for (let offset = step; offset < textLength; offset += step) {
     appendBreakPoint(points, { offset, type: "char" });
   }
