@@ -68,7 +68,7 @@ const handleMove = (moduleKey: string, direction: string) => {
     <div
       v-for="group in fragmentGroups"
       :key="group.key"
-      class="group/module relative flex min-w-0 flex-col"
+      class="group/module relative flex min-w-0 flex-col rounded-3xl"
       :class="moduleClassMap?.[group.moduleKey]"
     >
       <!-- 模块级操作按钮按模块渲染一次，避免多条目模块出现多个图标 -->

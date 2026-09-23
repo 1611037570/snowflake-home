@@ -101,7 +101,7 @@ export const exportHtml = async (rootRef: ResumeRootRef, onSuccess?: () => void)
       clone.setAttribute("contenteditable", "true");
       clone.setAttribute("spellcheck", "false");
       clone.querySelectorAll<HTMLElement>(".resume-module-wrapper").forEach((module) => {
-        module.classList.remove("outline-2", "outline-offset-3", "outline-dashed", "outline-sf-theme");
+        module.classList.remove("outline-4", "outline-offset-3", "outline-dashed", "outline-sf-theme");
         module.querySelectorAll(":scope > .absolute").forEach((action) => action.remove());
       });
       return clone;
