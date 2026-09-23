@@ -27,6 +27,11 @@ export interface FlowPageItem {
     start: number;
     end: number;
   };
+  /** 当前分片覆盖的块区间，缺省表示全部块 */
+  blockRange?: {
+    start: number;
+    end: number;
+  };
 }
 
 /** 单栏分页结果 */
@@ -159,8 +164,14 @@ export const paginateFlow = ({
     const fullHeight = Math.max(0, measurement.fullHeight);
     const contentEnd = getContentEnd(measurement);
     const canSplit = node.breakPolicy.splittable && measurement.breakPoints.length > 0;
+    /** 节点渲染块总数：块区间以此为界，块序由渲染结构决定 */
+    const blockCount = measurement.breakPoints.reduce(
+      (max, point) => Math.max(max, point.blockEnd ?? 0),
+      0,
+    );
     let consumedHeight = 0;
     let consumedOffset = 0;
+    let consumedBlocks = 0;
 
     while (consumedHeight < fullHeight || (fullHeight === 0 && consumedHeight === 0)) {
       const isFirst = consumedHeight === 0;
@@ -184,6 +195,7 @@ export const paginateFlow = ({
         contentRange: contentEnd
           ? { start: consumedOffset, end: contentEnd }
           : undefined,
+        blockRange: blockCount ? { start: consumedBlocks, end: blockCount } : undefined,
       };
 
       const wholeFragmentGap = currentPage.items.length > 0 && !isFirst ? 0 : safeGap;
@@ -228,6 +240,9 @@ export const paginateFlow = ({
 
       const fragmentKind: FlowFragmentKind = isFirst ? "first" : "middle";
       const fragmentHeight = title + Math.max(0, breakPoint.height - consumedHeight);
+      // 块断点只覆盖块（不含正文区间），字符断点覆盖剩余全部块 + 正文区间
+      const isBlockPoint = typeof breakPoint.blockEnd === "number";
+      const nextBlocks = isBlockPoint ? Number(breakPoint.blockEnd) : blockCount;
       const fragment: FlowPageItem = {
         fragmentId: `${node.id}:${fragmentKind}:${consumedOffset}:${breakPoint.offset}`,
         nodeId: node.id,
@@ -237,10 +252,8 @@ export const paginateFlow = ({
         height: fragmentHeight,
         payload: node.payload,
         titlePayload: isFirst ? node.title?.payload : undefined,
-        contentRange: {
-          start: consumedOffset,
-          end: breakPoint.offset,
-        },
+        contentRange: isBlockPoint ? undefined : { start: consumedOffset, end: breakPoint.offset },
+        blockRange: blockCount ? { start: consumedBlocks, end: nextBlocks } : undefined,
       };
 
       if (!tryAddItem(fragment, !isFirst)) {
@@ -249,7 +262,10 @@ export const paginateFlow = ({
       }
 
       consumedHeight = breakPoint.height;
-      consumedOffset = breakPoint.offset;
+      consumedBlocks = nextBlocks;
+      if (!isBlockPoint) consumedOffset = breakPoint.offset;
+      // 块与正文都已切到末尾时结束，避免产生高度不为零但内容为空的尾分片
+      if (consumedOffset >= contentEnd && consumedBlocks >= blockCount) break;
     }
   }
 

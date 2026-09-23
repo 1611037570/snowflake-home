@@ -55,12 +55,27 @@ export const measureLayoutNodes = (
       })
       .filter((point) => Number.isFinite(point.offset) && point.height > 0);
 
+    // 块断点：只读取渲染层声明了块区间的容器（由 BlockRange 渲染结构声明，与模块定义无关），
+    // 分页据此把"能放下的块"放进当前页，块区间交给渲染层裁剪
+    const blockHost = element.querySelector<HTMLElement>("[data-layout-block-range]");
+    const nodeTop = element.getBoundingClientRect().top;
+    const blockBreakPoints = blockHost
+      ? Array.from(blockHost.children)
+          .map((child, index) => ({
+            offset: 0,
+            type: "block" as const,
+            height: (child.getBoundingClientRect().bottom - nodeTop) / scale,
+            blockEnd: index + 1,
+          }))
+          .filter((point) => Number.isFinite(point.height) && point.height > 0)
+      : [];
+
     result.set(node.id, {
       nodeId: node.id,
       width: rect.width,
       fullHeight: rect.height,
       minHeight: Math.max(rect.height, node.breakPolicy.minHeight || 0),
-      breakPoints,
+      breakPoints: [...blockBreakPoints, ...breakPoints],
     });
   });
 

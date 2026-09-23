@@ -11,15 +11,20 @@ import { isContentEmpty } from "../../../modules/validData";
 import { useResumePreviewContext } from "../../../previewContext";
 import { sliceRichTextHtml } from "../adapter/richTextParser";
 import type { LayoutNode } from "../types";
+import LayoutBlockRange from "./layoutBlockRange.vue";
 
 interface Props {
   node: LayoutNode;
   payload?: unknown;
   contentRange?: { start: number; end: number };
+  /** 块区间：只渲染该区间内的块，区间由测量层从真实 DOM 读到的块边界给出 */
+  blockRange?: { start: number; end: number };
   decoration?: "full" | "top" | "middle" | "bottom";
 }
 
-const props = defineProps<Props>();
+const props = withDefaults(defineProps<Props>(), {
+  blockRange: () => ({ start: 0, end: Number.MAX_SAFE_INTEGER }),
+});
 
 const {
   theme: {
@@ -48,15 +53,12 @@ const richTextHtml = computed(() => {
   // 富文本节点的载荷即解析结果，经历条目则读取条目正文的解析结果
   const parsed = nodePayload.value?.content ?? nodePayload.value;
   if (!parsed?.html) return "";
-  return sliceRichTextHtml(
-    parsed.html,
-    props.contentRange?.start || 0,
-    props.contentRange?.end,
-  );
+  return sliceRichTextHtml(parsed.html, props.contentRange?.start || 0, props.contentRange?.end);
 });
-const isExperience = computed(() =>
-  ["work", "project", "education"].includes(props.node.sourceModuleKey) ||
-  props.node.sourceModuleKey.startsWith("custom_"),
+const isExperience = computed(
+  () =>
+    ["work", "project", "education"].includes(props.node.sourceModuleKey) ||
+    props.node.sourceModuleKey.startsWith("custom_"),
 );
 const hasItemHeader = computed(() => {
   const value = item.value;
@@ -135,9 +137,14 @@ const itemContentSpacingStyle = computed(() => {
     v-else-if="node.type === 'group' && isExperience"
     :style="contentOuterStyle"
     class="layout-experience-item"
+    data-layout-block-range
   >
-    <div v-if="hasItemHeader && showItemHeader" :style="paragraphSpacingStyle">
-      <div class="flex flex-wrap items-center justify-between gap-3">
+    <!-- 块序：0 名称+时间 / 1 职位部门+城市 / 2 标签+链接 / 3 正文；块区间由测量层从 DOM 读到的块边界决定 -->
+    <LayoutBlockRange :start="blockRange.start" :end="blockRange.end">
+      <div
+        v-if="hasItemHeader && showItemHeader"
+        class="flex flex-wrap items-center justify-between gap-3"
+      >
         <div class="min-w-0 flex-1">
           <ItemTitle :name="item.name" :emphasis="datePosition !== 'left'" />
         </div>
@@ -146,18 +153,33 @@ const itemContentSpacingStyle = computed(() => {
           class="flex max-w-full min-w-0 flex-wrap items-center"
           :class="datePosition === 'left' ? 'order-first' : ''"
         >
-          <span :class="{ 'font-bold': datePosition === 'left' }" :style="datePosition === 'left' ? fontValue(1) : undefined">
+          <span
+            :class="{ 'font-bold': datePosition === 'left' }"
+            :style="datePosition === 'left' ? fontValue(1) : undefined"
+          >
             {{ getTime(item.startTime, item.endTime, dateStyle) }}
           </span>
         </div>
       </div>
-      <div class="flex flex-wrap items-center justify-between gap-3" :style="innerSpacingStyle">
+      <div
+        v-if="hasItemHeader && showItemHeader"
+        class="flex flex-wrap items-center justify-between gap-3"
+        :style="innerSpacingStyle"
+      >
         <div class="max-w-full min-w-0 flex-1">
           <InlineInfoList :items="[item.post, item.department]" />
         </div>
         <ResumeField :model-value="item.city" />
       </div>
-      <div v-if="item.tags?.length || item.link?.name || item.link?.url" class="flex flex-wrap items-center justify-between gap-3" :style="innerSpacingStyle">
+      <div
+        v-if="
+          hasItemHeader &&
+          showItemHeader &&
+          (item.tags?.length || item.link?.name || item.link?.url)
+        "
+        class="flex flex-wrap items-center justify-between gap-3"
+        :style="[innerSpacingStyle, paragraphSpacingStyle]"
+      >
         <div class="flex flex-wrap items-center gap-3">
           <ItemTags :tags="item.tags" />
         </div>
@@ -172,13 +194,11 @@ const itemContentSpacingStyle = computed(() => {
           <ResumeField :model-value="getItemLink(item).name || getItemLink(item).url" />
         </a>
       </div>
-    </div>
-    <ResumeField
-      v-if="!isContentEmpty(item.content)"
-      :model-value="richTextHtml"
-      html
-      :style="itemContentSpacingStyle"
-    />
+      <!-- 正文作为一个块：内部段落由字符区间切分，保证块序与测量层一致 -->
+      <div v-if="!isContentEmpty(item.content)" :style="itemContentSpacingStyle">
+        <ResumeField :model-value="richTextHtml" html />
+      </div>
+    </LayoutBlockRange>
   </ModuleContentContainer>
 
   <template v-else-if="node.type === 'block'">
@@ -225,8 +245,20 @@ const itemContentSpacingStyle = computed(() => {
   <template v-else-if="node.type === 'media'">
     <ModuleContentContainer>
       <div class="flex flex-col gap-3" :style="[paragraphSpacingStyle, mediaWidthStyle]">
-        <img v-if="nodePayload.item?.img" :src="nodePayload.item.img" :alt="nodePayload.item.name || ''" class="max-w-full" />
-        <a v-if="safeUrl(nodePayload.item?.url)" :href="safeUrl(nodePayload.item.url)" target="_blank" rel="noopener noreferrer" class="hover:underline" :class="{ underline: linkUnderline }">
+        <img
+          v-if="nodePayload.item?.img"
+          :src="nodePayload.item.img"
+          :alt="nodePayload.item.name || ''"
+          class="max-w-full"
+        />
+        <a
+          v-if="safeUrl(nodePayload.item?.url)"
+          :href="safeUrl(nodePayload.item.url)"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="hover:underline"
+          :class="{ underline: linkUnderline }"
+        >
           {{ nodePayload.item.name || nodePayload.item.url }}
         </a>
         <span v-if="nodePayload.item?.desc">{{ nodePayload.item.desc }}</span>
