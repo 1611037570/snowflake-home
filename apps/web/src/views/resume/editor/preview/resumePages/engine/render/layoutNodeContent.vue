@@ -92,12 +92,25 @@ const safeUrl = (value: unknown) => {
 };
 const fragmentContentStyle = computed(() => {
   const base = { ...moduleContentStyle.value };
-  if (props.decoration === "top") base.paddingBottom = "0px";
+  // 分片的圆角与相邻边框按上下拼接分配：首片只留上圆角、续段只留下圆角、中段不留圆角
+  const radius = String((moduleContentStyle.value as { borderRadius?: string }).borderRadius || "0");
+  if (props.decoration === "top") {
+    base.paddingBottom = "0px";
+    base.borderRadius = `${radius} ${radius} 0 0`;
+    base.borderBottomWidth = "0px";
+  }
   if (props.decoration === "middle") {
     base.paddingTop = "0px";
     base.paddingBottom = "0px";
+    base.borderRadius = "0";
+    base.borderTopWidth = "0px";
+    base.borderBottomWidth = "0px";
   }
-  if (props.decoration === "bottom") base.paddingTop = "0px";
+  if (props.decoration === "bottom") {
+    base.paddingTop = "0px";
+    base.borderRadius = `0 0 ${radius} ${radius}`;
+    base.borderTopWidth = "0px";
+  }
   return base;
 });
 const contentOuterStyle = computed(() => ({
