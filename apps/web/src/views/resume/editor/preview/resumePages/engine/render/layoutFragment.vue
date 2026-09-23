@@ -26,6 +26,7 @@ const emit = defineEmits<{ mouseenter: [moduleKey: string] }>();
       :node="node"
       :payload="fragment.payload"
       :content-range="fragment.contentRange"
+      :block-range="fragment.blockRange"
       :decoration="fragment.decoration"
     />
   </div>

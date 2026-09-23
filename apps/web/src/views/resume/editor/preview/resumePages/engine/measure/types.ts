@@ -8,6 +8,8 @@ export interface BreakPointMeasure {
   type: BreakPointType;
   /** 从节点起点到当前断点的实际高度 */
   height: number;
+  /** 块断点覆盖的块数量：区间为 [0, blockEnd)，仅块断点存在 */
+  blockEnd?: number;
 }
 
 /** 分页前用于计算节点占用空间的测量结果 */

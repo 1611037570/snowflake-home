@@ -26,7 +26,7 @@ export interface BreakPolicy {
 }
 
 /** 富文本内容中的可拆分断点类型 */
-export type BreakPointType = "paragraph" | "listItem" | "textRange" | "char";
+export type BreakPointType = "paragraph" | "listItem" | "textRange" | "char" | "block";
 
 /**
  * 富文本内容中的可拆分位置。

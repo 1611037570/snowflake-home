@@ -32,6 +32,8 @@ export interface FragmentPlan {
   height: number;
   /** 当前分片对应的内容范围。 */
   contentRange?: { start: number; end: number };
+  /** 分片覆盖的块区间，缺省表示全部块。 */
+  blockRange?: { start: number; end: number };
   /** 由分片位置推导出的视觉装饰类型。 */
   decoration: "full" | "top" | "middle" | "bottom";
 }
@@ -94,6 +96,7 @@ const toFragmentPlan = (item: FlowPageItem): FragmentPlan => ({
   titlePayload: item.titlePayload,
   height: item.height,
   contentRange: item.contentRange,
+  blockRange: item.blockRange,
   decoration: getDecoration(item.fragment),
 });
 
