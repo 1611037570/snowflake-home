@@ -17,8 +17,6 @@ export type LayoutNodeType =
 export interface BreakPolicy {
   /** 当前节点是否允许被拆成多个分片 */
   splittable: boolean;
-  /** 当前节点是否必须和下一个节点放在同一页 */
-  keepWithNext: boolean;
   /** 节点标题是否必须和第一段内容放在一起 */
   keepTitleWithFirst: boolean;
   /** 当前节点允许的最小高度 */
