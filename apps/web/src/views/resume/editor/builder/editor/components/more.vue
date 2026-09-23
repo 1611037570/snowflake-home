@@ -53,6 +53,8 @@ function locateAddedField(fieldKey) {
     // 定位取字段的卡片外圈，与选中边框范围保持一致
     scrollEditorTo(document.querySelector(`[data-module-key="${fieldKey}"]`));
     eventBus.emit("df-select-module", fieldKey);
+    // user 子字段添加后同步定位预览区的 user 模块
+    eventBus.emit("resume-locate-preview-module", "user");
   });
 }
 
