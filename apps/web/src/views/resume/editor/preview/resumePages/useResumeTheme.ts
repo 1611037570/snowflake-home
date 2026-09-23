@@ -123,10 +123,9 @@ export const useResumeTheme = (ui: ComputedRef<ResumeUi>): ResumeTheme => {
   const lineHeightStyle = computed(() => ({
     lineHeight: `${lineHeight.value}`,
   }));
-  // 内部纵向间距统一使用上边距，避免与模块间距混用
+  // 模块段落间距作为独立占位高度使用
   const paragraphSpacingStyle = computed(() => ({
-    marginTop: `${paragraphSpacing.value}px`,
-    "--resume-paragraph-spacing": `${paragraphSpacing.value}px`,
+    height: `${paragraphSpacing.value}px`,
   }));
   // 条目内部纵向间距固定为 4px，与模块段落间距分开控制
   const innerSpacingStyle = computed(() => ({

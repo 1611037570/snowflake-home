@@ -32,6 +32,7 @@ const fragmentGroups = computed(() => {
   const groups: Array<{
     key: string;
     moduleKey: string;
+    gapTop: number;
     items: Array<{ fragment: FragmentPlan; columnIndex: number }>;
   }> = [];
   props.column.fragments.forEach((fragment, columnIndex) => {
@@ -71,55 +72,43 @@ const handleMove = (moduleKey: string, direction: string) => {
 
 <template>
   <div class="flex min-w-0 flex-1 flex-col">
-    <div
-      v-for="group in fragmentGroups"
-      :key="group.key"
-      class="group/module relative flex min-w-0 flex-col rounded-3xl"
-      :class="[
-        moduleClassMap?.[group.moduleKey],
-        { 'resume-debug-gap': showDebug && group.gapTop > 0 },
-      ]"
-      :style="
-        group.gapTop
-          ? {
-              marginTop: `${group.gapTop}px`,
-              '--resume-debug-gap-top': `${group.gapTop}px`,
-            }
-          : undefined
-      "
-    >
-      <!-- 模块级操作按钮按模块渲染一次，避免多条目模块出现多个图标 -->
-      <ModuleActions
-        v-if="isEdit"
-        :model-key="group.moduleKey"
-        :directions="getDirections(group)"
-        @move="handleMove(group.moduleKey, $event)"
+    <template v-for="group in fragmentGroups" :key="group.key">
+      <div
+        v-if="group.gapTop > 0"
+        class="shrink-0"
+        :class="{ 'resume-debug-gap': showDebug }"
+        :style="{ height: `${group.gapTop}px` }"
       />
-      <template v-for="item in group.items" :key="item.fragment.fragmentId">
-        <LayoutFragment
-          v-if="getNode(item.fragment)"
-          :fragment="item.fragment"
-          :node="getNode(item.fragment)!"
-          :show-debug="showDebug"
-          @mouseenter="emit('mouseenter', $event)"
+      <div
+        class="group/module relative flex min-w-0 flex-col rounded-3xl"
+        :class="moduleClassMap?.[group.moduleKey]"
+      >
+        <!-- 模块级操作按钮按模块渲染一次，避免多条目模块出现多个图标 -->
+        <ModuleActions
+          v-if="isEdit"
+          :model-key="group.moduleKey"
+          :directions="getDirections(group)"
+          @move="handleMove(group.moduleKey, $event)"
         />
-      </template>
-    </div>
+        <template v-for="item in group.items" :key="item.fragment.fragmentId">
+          <LayoutFragment
+            v-if="getNode(item.fragment)"
+            :fragment="item.fragment"
+            :node="getNode(item.fragment)!"
+            :show-debug="showDebug"
+            @mouseenter="emit('mouseenter', $event)"
+          />
+        </template>
+      </div>
+    </template>
   </div>
 </template>
 
 <style scoped>
 @reference "@/styles/tailwind.css";
 
-/* 间距色带只绘制在真实间距范围内，不改变布局尺寸 */
-.resume-debug-gap::before {
-  position: absolute;
-  top: calc(0px - var(--resume-debug-gap-top));
-  right: 0;
-  left: 0;
-  height: var(--resume-debug-gap-top);
-  content: "";
-  pointer-events: none;
+/* 模块间距色带直接绘制在占位元素上 */
+.resume-debug-gap {
   @apply bg-sf-warning;
 }
 </style>

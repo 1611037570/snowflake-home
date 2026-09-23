@@ -21,6 +21,7 @@ interface Props {
   /** 块区间：只渲染该区间内的块，区间由测量层从真实 DOM 读到的块边界给出 */
   blockRange?: { start: number; end: number };
   decoration?: "full" | "top" | "middle" | "bottom";
+  showDebug?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -125,26 +126,29 @@ const fragmentContentStyle = computed(() => {
   }
   return base;
 });
-const contentOuterStyle = computed(() => ({
-  ...fragmentContentStyle.value,
-  ...(props.decoration === "middle" || props.decoration === "bottom"
-    ? { marginTop: "0px" }
-    : paragraphSpacingStyle.value),
-}));
+const showParagraphGap = computed(
+  () => props.decoration !== "middle" && props.decoration !== "bottom",
+);
 // 经历条目头部只在首段渲染，正文续段不再重复头部
 const showItemHeader = computed(() => !props.contentRange || props.contentRange.start === 0);
 // 正文与头部的间距只计在首段，续段紧接上文，与分页高度口径一致
 const itemContentSpacingStyle = computed(() => {
   if (props.decoration === "middle" || props.decoration === "bottom") return { marginTop: "0px" };
-  return hasItemHeader.value ? innerSpacingStyle.value : paragraphSpacingStyle.value;
+  return hasItemHeader.value ? innerSpacingStyle.value : { marginTop: "0px" };
 });
 </script>
 
 <template>
   <template v-if="node.type === 'richText'">
+    <div
+      v-if="richTextHtml && showParagraphGap"
+      class="shrink-0"
+      :class="{ 'resume-debug-paragraph-gap': showDebug }"
+      :style="paragraphSpacingStyle"
+    />
     <ModuleContentContainer
       v-if="richTextHtml"
-      :style="contentOuterStyle"
+      :style="fragmentContentStyle"
       class="layout-rich-text"
       :class="`layout-rich-text--${decoration || 'full'}`"
     >
@@ -156,14 +160,22 @@ const itemContentSpacingStyle = computed(() => {
     </ModuleContentContainer>
   </template>
 
-  <User v-else-if="node.type === 'group' && node.sourceModuleKey === 'user'" />
+  <template v-else-if="node.type === 'group' && node.sourceModuleKey === 'user'">
+    <User />
+  </template>
 
-  <ModuleContentContainer
-    v-else-if="node.type === 'group' && isExperience"
-    :style="contentOuterStyle"
-    class="layout-experience-item"
-    data-layout-block-range
-  >
+  <template v-else-if="node.type === 'group' && isExperience">
+    <div
+      v-if="showParagraphGap"
+      class="shrink-0"
+      :class="{ 'resume-debug-paragraph-gap': showDebug }"
+      :style="paragraphSpacingStyle"
+    />
+    <ModuleContentContainer
+      :style="fragmentContentStyle"
+      class="layout-experience-item"
+      data-layout-block-range
+    >
     <!-- 块区间按实际存在的头部、标签链接和正文顺序，与测量层 DOM 块序保持一致 -->
     <div
       v-if="hasItemHeader && showItemHeader && isBlockVisible(0)"
@@ -224,13 +236,25 @@ const itemContentSpacingStyle = computed(() => {
       v-if="!isContentEmpty(item.content) && isBlockVisible(bodyBlockIndex)"
       :style="itemContentSpacingStyle"
     >
+      <div
+        v-if="!hasItemHeader && showParagraphGap"
+        class="shrink-0"
+        :class="{ 'resume-debug-paragraph-gap': showDebug }"
+        :style="paragraphSpacingStyle"
+      />
       <ResumeField :model-value="richTextHtml" html />
     </div>
-  </ModuleContentContainer>
+    </ModuleContentContainer>
+  </template>
 
   <template v-else-if="node.type === 'block'">
     <template v-if="node.sourceModuleKey === 'account'">
-      <div class="flex max-w-full min-w-0 items-center" :style="paragraphSpacingStyle">
+      <div
+        class="shrink-0"
+        :class="{ 'resume-debug-paragraph-gap': showDebug }"
+        :style="paragraphSpacingStyle"
+      />
+      <div class="flex max-w-full min-w-0 items-center">
         <span v-if="item.name" class="shrink-0 whitespace-nowrap">
           <ItemTitle :name="item.name" class="inline-block" />
           <span v-if="item.url">：</span>
@@ -254,72 +278,94 @@ const itemContentSpacingStyle = computed(() => {
         </div>
       </div>
     </template>
-    <div
-      v-else-if="node.sourceModuleKey === 'honor'"
-      class="inline-flex rounded-xl px-3 py-2"
-      :style="{
-        backgroundColor: themeColorSoft,
-        color: themeColor,
-        ...fontValue(),
-        ...paragraphSpacingStyle,
-      }"
-    >
-      <ResumeField :model-value="item.name" />
-    </div>
+    <template v-else-if="node.sourceModuleKey === 'honor'">
+      <div
+        class="shrink-0"
+        :class="{ 'resume-debug-paragraph-gap': showDebug }"
+        :style="paragraphSpacingStyle"
+      />
+      <div
+        class="inline-flex rounded-xl px-3 py-2"
+        :style="{
+          backgroundColor: themeColorSoft,
+          color: themeColor,
+          ...fontValue(),
+        }"
+      >
+        <ResumeField :model-value="item.name" />
+      </div>
+    </template>
     <ResumeField v-else :model-value="nodePayload.value" />
   </template>
 
   <template v-else-if="node.type === 'media'">
     <ModuleContentContainer>
-      <!-- 视频作品保留原始网址文本，避免显示为作品名称。 -->
-      <div
-        v-if="nodePayload.mediaType === 'video'"
-        :style="paragraphSpacingStyle"
-        class="flex h-auto max-w-full min-w-0 flex-wrap items-center justify-between gap-3"
-      >
-        <div class="min-w-0 flex-1" :style="[fontValue()]">
-          <ItemTitle v-if="nodePayload.item?.name" :name="nodePayload.item.name" />
-          <div v-if="nodePayload.item?.desc" :style="innerSpacingStyle">
-            <ResumeField :model-value="nodePayload.item.desc" />
+      <template v-if="nodePayload.mediaType === 'video'">
+        <div
+          class="shrink-0"
+          :class="{ 'resume-debug-paragraph-gap': showDebug }"
+          :style="paragraphSpacingStyle"
+        />
+        <!-- 视频作品保留原始网址文本，避免显示为作品名称。 -->
+        <div class="flex h-auto max-w-full min-w-0 flex-wrap items-center justify-between gap-3">
+          <div class="min-w-0 flex-1" :style="[fontValue()]">
+            <ItemTitle v-if="nodePayload.item?.name" :name="nodePayload.item.name" />
+            <div v-if="nodePayload.item?.desc" :style="innerSpacingStyle">
+              <ResumeField :model-value="nodePayload.item.desc" />
+            </div>
+          </div>
+          <div v-if="safeUrl(nodePayload.item?.url)" class="max-w-[45%] min-w-0 shrink-0 text-right">
+            <a
+              :href="safeUrl(nodePayload.item.url)"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="inline max-w-full min-w-0 break-all hover:underline"
+              :class="{ underline: linkUnderline }"
+            >
+              <ResumeField :model-value="nodePayload.item.url" class="inline max-w-full min-w-0 break-all" />
+            </a>
           </div>
         </div>
-        <div v-if="safeUrl(nodePayload.item?.url)" class="max-w-[45%] min-w-0 shrink-0 text-right">
+      </template>
+      <template v-else>
+        <div
+          class="shrink-0"
+          :class="{ 'resume-debug-paragraph-gap': showDebug }"
+          :style="paragraphSpacingStyle"
+        />
+        <div class="flex flex-col gap-3" :style="mediaWidthStyle">
+          <img
+            v-if="nodePayload.item?.img"
+            :src="nodePayload.item.img"
+            :alt="nodePayload.item.name || ''"
+            class="max-w-full"
+          />
           <a
+            v-if="safeUrl(nodePayload.item?.url)"
             :href="safeUrl(nodePayload.item.url)"
             target="_blank"
             rel="noopener noreferrer"
-            class="inline max-w-full min-w-0 break-all hover:underline"
+            class="block text-center hover:underline"
             :class="{ underline: linkUnderline }"
           >
-            <ResumeField :model-value="nodePayload.item.url" class="inline max-w-full min-w-0 break-all" />
+            {{ nodePayload.item.name || nodePayload.item.url }}
           </a>
+          <span v-else-if="nodePayload.item?.name" class="block text-center">{{ nodePayload.item.name }}</span>
+          <span v-if="nodePayload.item?.desc">{{ nodePayload.item.desc }}</span>
         </div>
-      </div>
-      <div v-else class="flex flex-col gap-3" :style="[paragraphSpacingStyle, mediaWidthStyle]">
-        <img
-          v-if="nodePayload.item?.img"
-          :src="nodePayload.item.img"
-          :alt="nodePayload.item.name || ''"
-          class="max-w-full"
-        />
-        <a
-          v-if="safeUrl(nodePayload.item?.url)"
-          :href="safeUrl(nodePayload.item.url)"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="block text-center hover:underline"
-          :class="{ underline: linkUnderline }"
-        >
-          {{ nodePayload.item.name || nodePayload.item.url }}
-        </a>
-        <span v-else-if="nodePayload.item?.name" class="block text-center">{{ nodePayload.item.name }}</span>
-        <span v-if="nodePayload.item?.desc">{{ nodePayload.item.desc }}</span>
-      </div>
+      </template>
     </ModuleContentContainer>
   </template>
 </template>
 
 <style scoped>
+@reference "@/styles/tailwind.css";
+
+/* 段落间距色带直接绘制在占位元素上 */
+.resume-debug-paragraph-gap {
+  @apply bg-sf-theme;
+}
+
 /* 正文富文本里写的链接，悬停时同样显示下划线 */
 :deep(a:hover) {
   text-decoration: underline;
