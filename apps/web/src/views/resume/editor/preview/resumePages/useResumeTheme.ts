@@ -126,6 +126,7 @@ export const useResumeTheme = (ui: ComputedRef<ResumeUi>): ResumeTheme => {
   // 内部纵向间距统一使用上边距，避免与模块间距混用
   const paragraphSpacingStyle = computed(() => ({
     marginTop: `${paragraphSpacing.value}px`,
+    "--resume-paragraph-spacing": `${paragraphSpacing.value}px`,
   }));
   // 条目内部纵向间距固定为 4px，与模块段落间距分开控制
   const innerSpacingStyle = computed(() => ({

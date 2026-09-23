@@ -53,6 +53,8 @@ const props = defineProps({
 const isThumb = computed(() => props.mode === "thumb");
 // 编辑态标记：直接以 mode 判断编辑场景，仅编辑态开放模块选择交互
 const isEdit = computed(() => props.mode === "editor");
+// 调试色只用于编辑预览，避免影响缩略图和导出内容
+const showLayoutDebug = computed(() => isEdit.value && !!system.value.showDebug);
 
 // 根元素 ref：导出时限定为当前实例的分页元素，避免误选其他 ResumePages 实例的页面
 const rootRef = ref(null);
@@ -358,6 +360,7 @@ defineExpose({ rootEl: rootRef, measureEl: rootRef, pages, pagePlan });
                     :column="column"
                     :nodes="nodeMap"
                     :is-edit="isEdit"
+                    :show-debug="showLayoutDebug"
                     :module-class-map="moduleClassMap"
                     :gap="getColumnGap(column.columnId)"
                     :move-directions="getColumnDirections(column.columnId)"

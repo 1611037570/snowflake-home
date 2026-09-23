@@ -203,7 +203,7 @@ const itemContentSpacingStyle = computed(() => {
         isBlockVisible(2)
       "
       class="flex flex-wrap items-center justify-between gap-3"
-      :style="[innerSpacingStyle, paragraphSpacingStyle]"
+      :style="innerSpacingStyle"
     >
       <div class="flex flex-wrap items-center gap-3">
         <ItemTags :tags="item.tags" />
