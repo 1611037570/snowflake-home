@@ -11,13 +11,12 @@ const props = defineProps<{
   isEdit?: boolean;
   moduleClassMap?: Record<string, string>;
   gap: number;
-  /** 当前栏在区域中的位置与总栏数，用于决定左右移动是否可用 */
-  columnIndex?: number;
-  columnCount?: number;
+  /** 各模块可用的移动方向，由预览层按整栏跨页顺序计算 */
+  moveDirections?: Record<string, { up: boolean; down: boolean }>;
 }>();
 const emit = defineEmits<{
   mouseenter: [moduleKey: string];
-  move: [payload: { moduleKey: string; targetModuleKey: string | null; direction: string }];
+  move: [payload: { moduleKey: string; direction: string }];
 }>();
 
 const getNode = (fragment: FragmentPlan) => props.nodes.get(fragment.sourceNodeId);
@@ -42,36 +41,24 @@ const fragmentGroups = computed(() => {
   });
   return groups;
 });
-// 移动方向：上下限同栏相邻模块（个人信息模块不能被替换），左右限存在相邻栏位
-const getDirections = (groupIndex: number) => {
-  const groups = fragmentGroups.value;
-  const prev = groups[groupIndex - 1];
-  return {
-    up: Boolean(prev && prev.moduleKey !== "user"),
-    down: groupIndex < groups.length - 1,
-    left: false,
-    right: false,
-  };
+// 移动方向：由预览层按整栏跨页顺序下发；续段不提供移动，避免与模块首段重复
+const getDirections = (group) => {
+  const kind = group.items[0]?.fragment?.fragment;
+  if (kind === "middle" || kind === "last") {
+    return { up: false, down: false, left: false, right: false };
+  }
+  return props.moveDirections?.[group.moduleKey] ?? { up: false, down: false, left: false, right: false };
 };
-// 上下移动交给上层交换模块顺序，左右移动需要换栏，由上层处理
-const handleMove = (groupIndex: number, direction: string) => {
-  const groups = fragmentGroups.value;
-  const group = groups[groupIndex];
-  if (!group) return;
-  const target =
-    direction === "up" ? groups[groupIndex - 1] : direction === "down" ? groups[groupIndex + 1] : null;
-  emit("move", {
-    moduleKey: group.moduleKey,
-    targetModuleKey: target?.moduleKey ?? null,
-    direction,
-  });
+// 上下移动交给上层按整栏顺序交换模块位置
+const handleMove = (moduleKey: string, direction: string) => {
+  emit("move", { moduleKey, direction });
 };
 </script>
 
 <template>
   <div class="flex min-w-0 flex-1 flex-col">
     <div
-      v-for="(group, groupIndex) in fragmentGroups"
+      v-for="group in fragmentGroups"
       :key="group.key"
       class="group/module relative flex min-w-0 flex-col"
       :class="moduleClassMap?.[group.moduleKey]"
@@ -80,8 +67,8 @@ const handleMove = (groupIndex: number, direction: string) => {
       <ModuleActions
         v-if="isEdit"
         :model-key="group.moduleKey"
-        :directions="getDirections(groupIndex)"
-        @move="handleMove(groupIndex, $event)"
+        :directions="getDirections(group)"
+        @move="handleMove(group.moduleKey, $event)"
       />
       <template v-for="item in group.items" :key="item.fragment.fragmentId">
         <LayoutFragment
