@@ -85,10 +85,8 @@ const bodyBlockIndex = computed(
 );
 const isBlockVisible = (index: number) =>
   index >= props.blockRange.start && index < props.blockRange.end;
-// 图片作品的块宿主在内容盒外层，内容盒只在对应块可见时渲染，避免只剩顶部间距时留下空盒
-const showMediaContentBox = computed(
-  () => nodePayload.value?.mediaType === "video" || isBlockVisible(1),
-);
+// 间距分片的块区间是 [0, 0)，此时不渲染内容盒，避免只剩顶部间距的空盒把页面撑高
+const hasContentBlock = computed(() => props.blockRange.end > 0);
 const getItemLink = (value: any) => {
   const link = value?.link;
   if (typeof link === "string") return { name: "", url: link.trim() };
@@ -109,24 +107,21 @@ const safeUrl = (value: unknown) => {
 const safeItemLinkUrl = computed(() => safeUrl(itemLink.value.url));
 const fragmentContentStyle = computed(() => {
   const base = { ...moduleContentStyle.value };
-  // 分片的圆角与相邻边框按上下拼接分配：首片只留上圆角、续段只留下圆角、中段不留圆角
+  // 分片的圆角与相邻边框按上下拼接分配：两端都在本片时保留完整圆角
   const radius = String((moduleContentStyle.value as { borderRadius?: string }).borderRadius || "0");
-  if (props.decoration === "top") {
-    base.paddingBottom = "0px";
-    base.borderRadius = `${radius} ${radius} 0 0`;
-    base.borderBottomWidth = "0px";
-  }
-  if (props.decoration === "middle") {
+  // 内容盒首块已在前面分片渲染过时，续段才去掉上内边距与上边框；只放间距的分片不渲染内容盒
+  const boxTopRendered = props.blockRange.start > 0 || (props.contentRange?.start ?? 0) > 0;
+  const boxBottomFinal = props.decoration !== "top" && props.decoration !== "middle";
+  const topRadius = boxTopRendered ? "0" : radius;
+  const bottomRadius = boxBottomFinal ? radius : "0";
+  base.borderRadius = `${topRadius} ${topRadius} ${bottomRadius} ${bottomRadius}`;
+  if (boxTopRendered) {
     base.paddingTop = "0px";
-    base.paddingBottom = "0px";
-    base.borderRadius = "0";
     base.borderTopWidth = "0px";
-    base.borderBottomWidth = "0px";
   }
-  if (props.decoration === "bottom") {
-    base.paddingTop = "0px";
-    base.borderRadius = `0 0 ${radius} ${radius}`;
-    base.borderTopWidth = "0px";
+  if (!boxBottomFinal) {
+    base.paddingBottom = "0px";
+    base.borderBottomWidth = "0px";
   }
   return base;
 });
@@ -152,10 +147,11 @@ const itemContentSpacingStyle = computed(() => {
       data-layout-leading-gap
     />
     <ModuleContentContainer
-      v-if="richTextHtml"
+      v-if="richTextHtml && hasContentBlock"
       :style="fragmentContentStyle"
       class="layout-rich-text"
       :class="`layout-rich-text--${decoration || 'full'}`"
+      data-layout-block-range
     >
       <div
         class="break-words whitespace-pre-wrap"
@@ -178,6 +174,7 @@ const itemContentSpacingStyle = computed(() => {
       data-layout-leading-gap
     />
     <ModuleContentContainer
+      v-if="hasContentBlock"
       :style="fragmentContentStyle"
       class="layout-experience-item"
       data-layout-block-range
@@ -308,76 +305,74 @@ const itemContentSpacingStyle = computed(() => {
   </template>
 
   <template v-else-if="node.type === 'media'">
-    <!-- 图片作品的块宿主同时包住顶部间距与内容盒：剩余空间只放得下间距时，间距留在上一页、图片内容顺延下一页 -->
-    <div :data-layout-block-range="nodePayload.mediaType === 'video' ? undefined : ''">
-      <!-- 作品条目的段间距属于盒子外部留白，不绘制在内容盒背景和边框内。 -->
-      <div
-        class="shrink-0"
-        :class="{ 'resume-debug-paragraph-gap': showDebug }"
-        :style="paragraphSpacingStyle"
-        v-if="showParagraphGap"
-        data-layout-leading-gap
-      />
-      <ModuleContentContainer
-        v-if="showMediaContentBox"
-        :data-layout-block-range="nodePayload.mediaType === 'video' ? '' : undefined"
-        :style="contentOuterStyle"
-      >
-        <template v-if="nodePayload.mediaType === 'video'">
-          <!-- 视频作品保留原始网址文本，避免显示为作品名称。 -->
-          <div
-            v-if="isBlockVisible(0)"
-            class="flex h-auto max-w-full min-w-0 flex-wrap items-center justify-between gap-3"
-          >
-            <div class="min-w-0 flex-1" :style="fontValue()">
-              <ItemTitle v-if="nodePayload.item?.name" :name="nodePayload.item.name" />
-            </div>
-            <div v-if="safeUrl(nodePayload.item?.url)" class="max-w-[45%] min-w-0 shrink-0 text-right">
-              <a
-                :href="safeUrl(nodePayload.item.url)"
-                target="_blank"
-                rel="noopener noreferrer"
-                class="inline max-w-full min-w-0 break-all hover:underline"
-                :class="{ underline: linkUnderline }"
-              >
-                <ResumeField :model-value="nodePayload.item.url" class="inline max-w-full min-w-0 break-all" />
-              </a>
-            </div>
+    <!-- 作品条目的段间距属于盒子外部留白，不绘制在内容盒背景和边框内。 -->
+    <div
+      class="shrink-0"
+      :class="{ 'resume-debug-paragraph-gap': showDebug }"
+      :style="paragraphSpacingStyle"
+      v-if="showParagraphGap"
+      data-layout-leading-gap
+    />
+    <ModuleContentContainer
+      v-if="hasContentBlock"
+      data-layout-block-range
+      :style="fragmentContentStyle"
+    >
+      <template v-if="nodePayload.mediaType === 'video'">
+        <!-- 视频作品保留原始网址文本，避免显示为作品名称。 -->
+        <div
+          v-if="isBlockVisible(0)"
+          class="flex h-auto max-w-full min-w-0 flex-wrap items-center justify-between gap-3"
+        >
+          <div class="min-w-0 flex-1" :style="fontValue()">
+            <ItemTitle v-if="nodePayload.item?.name" :name="nodePayload.item.name" />
           </div>
-          <div
-            v-if="nodePayload.item?.desc && isBlockVisible(1)"
-            :style="decoration === 'middle' || decoration === 'bottom' ? undefined : innerSpacingStyle"
-          >
-            <ResumeField :model-value="nodePayload.item.desc" />
-          </div>
-        </template>
-        <template v-else>
-          <div class="flex flex-col gap-3" :style="mediaWidthStyle">
-            <img
-              v-if="nodePayload.item?.img"
-              :src="nodePayload.item.img"
-              :alt="nodePayload.item.name || ''"
-              class="max-w-full"
-            />
+          <div v-if="safeUrl(nodePayload.item?.url)" class="max-w-[45%] min-w-0 shrink-0 text-right">
             <a
-              v-if="safeUrl(nodePayload.item?.url)"
               :href="safeUrl(nodePayload.item.url)"
               target="_blank"
               rel="noopener noreferrer"
-              class="block text-center hover:underline"
+              class="inline max-w-full min-w-0 break-all hover:underline"
               :class="{ underline: linkUnderline }"
-              >
-              {{ nodePayload.item.name || nodePayload.item.url }}
+            >
+              <ResumeField :model-value="nodePayload.item.url" class="inline max-w-full min-w-0 break-all" />
             </a>
-            <span
-              v-else-if="nodePayload.item?.name"
-              class="block text-center"
-            >{{ nodePayload.item.name }}</span>
-            <span v-if="nodePayload.item?.desc">{{ nodePayload.item.desc }}</span>
           </div>
-        </template>
-      </ModuleContentContainer>
-    </div>
+        </div>
+        <div
+          v-if="nodePayload.item?.desc && isBlockVisible(1)"
+          :style="decoration === 'middle' || decoration === 'bottom' ? undefined : innerSpacingStyle"
+        >
+          <ResumeField :model-value="nodePayload.item.desc" />
+        </div>
+      </template>
+      <template v-else>
+        <!-- 图片条目内容盒整体作为一个块，与顶部间距分离后间距可以单独留在上一页 -->
+        <div class="flex flex-col gap-3" :style="mediaWidthStyle">
+          <img
+            v-if="nodePayload.item?.img"
+            :src="nodePayload.item.img"
+            :alt="nodePayload.item.name || ''"
+            class="max-w-full"
+          />
+          <a
+            v-if="safeUrl(nodePayload.item?.url)"
+            :href="safeUrl(nodePayload.item.url)"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="block text-center hover:underline"
+            :class="{ underline: linkUnderline }"
+            >
+            {{ nodePayload.item.name || nodePayload.item.url }}
+          </a>
+          <span
+            v-else-if="nodePayload.item?.name"
+            class="block text-center"
+          >{{ nodePayload.item.name }}</span>
+          <span v-if="nodePayload.item?.desc">{{ nodePayload.item.desc }}</span>
+        </div>
+      </template>
+    </ModuleContentContainer>
   </template>
 </template>
 

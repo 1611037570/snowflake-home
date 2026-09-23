@@ -206,9 +206,12 @@ export const paginateFlow = ({
     while (consumedHeight < fullHeight || (fullHeight === 0 && consumedHeight === 0)) {
       const isFirst = consumedHeight === 0;
       const remainingHeight = Math.max(0, fullHeight - consumedHeight);
-      // 顶部占位与上内边距只在分片位于页首时才真正被移除：页中间的续段会多出一次换行，不能按页首口径扣除
+      // 顶部留白只在续段位于页首、且内容盒首块已由前面分片渲染过时才真正被移除：
+      // 只放间距的分片不渲染内容盒，此时续段仍是完整的盒顶，不能扣除
       const activeDroppedTopSpacing =
-        !isFirst && currentPage.items.length === 0 ? droppedTopSpacing : 0;
+        !isFirst && currentPage.items.length === 0 && (consumedBlocks > 0 || consumedOffset > 0)
+          ? droppedTopSpacing
+          : 0;
       // 标题是独立的一行：跟随内容首片，若首片放不下则单独留在当前页
       const withTitle = isFirst && !titlePlaced;
       const title = withTitle ? titleHeight : 0;
