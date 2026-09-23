@@ -1,8 +1,8 @@
 import type { MeasuredNode } from "../measure/types";
 import type { LayoutNode } from "../types";
 
-/** 分片在当前节点中的连续位置 */
-export type FlowFragmentKind = "single" | "first" | "middle" | "last";
+/** 分片在当前节点中的连续位置；title 表示标题单独留在当前页的分片 */
+export type FlowFragmentKind = "single" | "first" | "middle" | "last" | "title";
 
 /** 单栏页面中的节点分片 */
 export interface FlowPageItem {
@@ -172,14 +172,16 @@ export const paginateFlow = ({
     let consumedHeight = 0;
     let consumedOffset = 0;
     let consumedBlocks = 0;
+    // 标题已经单独留在当前页后，正文分片不再重复携带标题
+    let titlePlaced = false;
     // 续段渲染会去掉内容容器上内边距，分页高度按同一口径扣减，避免高估续段占用
     const droppedTopPadding = measurement.droppedPadding?.top ?? 0;
 
     while (consumedHeight < fullHeight || (fullHeight === 0 && consumedHeight === 0)) {
       const isFirst = consumedHeight === 0;
       const remainingHeight = Math.max(0, fullHeight - consumedHeight);
-      // 标题始终跟随内容首片，不单独留在上一页
-      const withTitle = isFirst;
+      // 标题是独立的一行：跟随内容首片，若首片放不下则单独留在当前页
+      const withTitle = isFirst && !titlePlaced;
       const title = withTitle ? titleHeight : 0;
       const wholeFragmentHeight = title + remainingHeight;
       const wholeFragmentKind: FlowFragmentKind = isFirst
@@ -208,9 +210,31 @@ export const paginateFlow = ({
             getCurrentAvailableHeight();
       if (wholeFragmentFits && tryAddItem(wholeFragment, !isFirst)) break;
 
+      /** 标题放得下就留在当前页，正文顺延到下一页 */
+      const placeTitle = () => {
+        if (!withTitle || !node.title || currentPage.items.length === 0) return false;
+        if (currentPage.usedHeight + safeGap + titleHeight > getCurrentAvailableHeight()) {
+          return false;
+        }
+        const titleItem: FlowPageItem = {
+          fragmentId: `${node.id}:title:${node.title.id}`,
+          nodeId: node.id,
+          sourceModuleKey: node.sourceModuleKey,
+          titleNodeId: node.title.id,
+          fragment: "title",
+          height: titleHeight,
+          payload: node.payload,
+          titlePayload: node.title.payload,
+        };
+        if (!tryAddItem(titleItem, false)) return false;
+        titlePlaced = true;
+        return true;
+      };
+
       // 不可拆节点或没有可用断点时，当前页放不下就换页，空页则允许溢出。
       if (!canSplit) {
         if (currentPage.items.length > 0) {
+          if (placeTitle()) continue;
           pushPage();
           continue;
         }
@@ -232,6 +256,7 @@ export const paginateFlow = ({
 
       if (!breakPoint) {
         if (currentPage.items.length > 0) {
+          if (placeTitle()) continue;
           pushPage();
           continue;
         }
@@ -252,11 +277,11 @@ export const paginateFlow = ({
         fragmentId: `${node.id}:${fragmentKind}:${consumedOffset}:${breakPoint.offset}`,
         nodeId: node.id,
         sourceModuleKey: node.sourceModuleKey,
-        titleNodeId: isFirst ? node.title?.id : undefined,
+        titleNodeId: isFirst && !titlePlaced ? node.title?.id : undefined,
         fragment: fragmentKind,
         height: fragmentHeight,
         payload: node.payload,
-        titlePayload: isFirst ? node.title?.payload : undefined,
+        titlePayload: isFirst && !titlePlaced ? node.title?.payload : undefined,
         contentRange: isBlockPoint ? undefined : { start: consumedOffset, end: breakPoint.offset },
         blockRange: blockCount ? { start: consumedBlocks, end: nextBlocks } : undefined,
       };
