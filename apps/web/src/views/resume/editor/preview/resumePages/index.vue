@@ -177,11 +177,11 @@ const columnMoveContext = computed(() => {
     const list = {};
     order.forEach((moduleKey, index) => {
       const previous = index > 0 ? order[index - 1] : null;
-      // 上移下限栏内还有相邻模块即可，跨页同样可移动；个人信息模块不可被替换
-      list[moduleKey] = {
-        up: previous !== null && previous !== "user",
-        down: index < order.length - 1,
-      };
+      // 个人信息模块固定在栏首，不提供移动；其余模块上移不越过个人信息
+      list[moduleKey] =
+        moduleKey === "user"
+          ? { up: false, down: false }
+          : { up: previous !== null && previous !== "user", down: index < order.length - 1 };
     });
     directions.set(columnId, list);
   });
