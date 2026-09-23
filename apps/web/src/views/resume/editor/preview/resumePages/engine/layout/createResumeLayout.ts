@@ -9,15 +9,15 @@ const LAYOUT_TEMPLATE_IDS: PageLayoutTemplateId[] = ["topUserTwoColumn", "twoCol
 
 /**
  * 解析当前生效的布局模板编号。
- * 布局模板由主题带入，主题与模板一致时才生效，避免切换主题后残留上一套布局；
- * 显式 ui.pageLayout 返回 null 交由调用方直接使用，其余情况统一回退单栏模板。
+ * 显式 ui.pageLayout 优先，保证用户手动调整过的栏位不被主题模板覆盖；
+ * 否则布局模板由主题带入，主题与模板一致时才生效，避免切换主题后残留上一套布局。
  */
 const resolvePageLayoutTemplate = (ui: Record<string, any>): PageLayoutTemplateId | null => {
+  if (ui.pageLayout && Array.isArray(ui.pageLayout.regions)) return null;
   const templateId = ui.pageLayoutTemplate;
   if (LAYOUT_TEMPLATE_IDS.includes(templateId) && ui.themeTemplate === templateId) {
     return templateId as PageLayoutTemplateId;
   }
-  if (ui.pageLayout && Array.isArray(ui.pageLayout.regions)) return null;
   return "single";
 };
 
