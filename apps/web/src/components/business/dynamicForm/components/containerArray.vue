@@ -16,7 +16,7 @@
       :pathContext="getPathContext(item.index)"
       :selected="isRecordSelected(item.index)"
       :style="item.style"
-      @pointermove="clearRecordSelect(item.index)"
+      @mouseenter="clearRecordSelect(item.index)"
     >
       <ContainerSlot
         v-if="item.item.type === 'group'"
@@ -142,7 +142,7 @@ const isRecordSelected = (index: number) =>
   moduleSelect.selectedKey.value != null &&
   moduleSelect.selectedKey.value === moduleKey.value &&
   moduleSelect.selectedIndex?.value === index;
-// 鼠标真实移动到记录时清除选中，滚动经过指针时保留定位边框
+// 鼠标进入记录时清除选中，避免边框持续闪烁
 const clearRecordSelect = (index: number) => {
   if (isRecordSelected(index)) moduleSelect.selectModule(null);
 };
