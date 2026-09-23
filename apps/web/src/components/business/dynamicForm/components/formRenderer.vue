@@ -13,7 +13,7 @@
       :draggable="items.drag === true"
       :drag-class="items.dragClass"
       :style="item.style"
-      @mouseenter="handleModuleMouseEnter(item.field)"
+      @pointermove="handleModuleMouseEnter(item.field)"
       @remove="removeField(item.field)"
     >
       <!-- 校验失败：展示友好的错误提示 -->
@@ -118,7 +118,7 @@ const isModuleSelected = (item: any) => {
   if (moduleSelect.selectedIndex?.value != null) return false;
   return moduleSelect.selectedKey.value === item.key;
 };
-// 鼠标经过模块恢复正常：清除选中状态停止闪烁
+// 鼠标真实移动到模块时清除选中；仅滚动内容经过指针不应清除定位边框
 const handleModuleMouseEnter = (item: any) => {
   if (isModuleSelected(item)) {
     moduleSelect.selectModule(null);
