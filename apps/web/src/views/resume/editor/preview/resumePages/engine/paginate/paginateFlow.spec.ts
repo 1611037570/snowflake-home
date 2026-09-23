@@ -198,4 +198,45 @@ describe("paginateFlow", () => {
     expect(pages.length).toBeGreaterThan(1);
     expect(pages.every((page) => page.usedHeight <= 60)).toBe(true);
   });
+
+  it("续段不重复计算断点前的段落间距并填充当前页", () => {
+    const previous = createNode("previous");
+    const content = createNode("content", {
+      type: "richText",
+      breakPolicy: {
+        splittable: true,
+        keepWithNext: false,
+        keepTitleWithFirst: false,
+      },
+    });
+    const pages = paginateFlow({
+      nodes: [previous, content],
+      measurements: new Map([
+        ["previous", createMeasurement("previous", 60)],
+        [
+          "content",
+          createMeasurement("content", 100, {
+            breakPoints: [
+              { offset: 5, type: "paragraph", height: 20, continuationGap: 10 },
+              { offset: 7, type: "char", height: 43 },
+              { offset: 10, type: "paragraph", height: 56 },
+            ],
+          }),
+        ],
+      ]),
+      availableHeight: 100,
+      gap: 0,
+    });
+
+    expect(pages[0]?.items.map((item) => item.nodeId)).toEqual([
+      "previous",
+      "content",
+      "content",
+    ]);
+    expect(pages[0]?.items.slice(1).map((item) => item.contentRange)).toEqual([
+      { start: 0, end: 5 },
+      { start: 5, end: 7 },
+    ]);
+    expect(pages[0]?.usedHeight).toBe(93);
+  });
 });

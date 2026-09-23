@@ -11,9 +11,9 @@ export interface RichTextBlock {
   html: string;
   /** 当前块的纯文本内容 */
   text: string;
-  /** 当前块在完整文本中的起始位置 */
+  /** 当前块在分页内容中的起始位置，显式换行也计入偏移 */
   startOffset: number;
-  /** 当前块在完整文本中的结束位置 */
+  /** 当前块在分页内容中的结束位置，显式换行也计入偏移 */
   endOffset: number;
 }
 
@@ -25,12 +25,23 @@ export interface ParsedRichText {
   blocks: RichTextBlock[];
   /** 可用于分页的语义断点 */
   breakPoints: BreakPoint[];
-  /** 完整纯文本长度 */
+  /** 完整内容的分页偏移长度，包含文字和显式换行 */
   textLength: number;
 }
 
-/** 切片解析缓存：同一份 HTML 只解析一次，分片与断点探针复用同一批文本节点 */
-const sliceCache = new Map<string, { textNodes: Text[]; total: number }>();
+/** 富文本切片偏移对应的 DOM 区间，一个 br 也占一个可分页位置。 */
+interface SlicePosition {
+  startNode: Node;
+  startOffset: number;
+  endNode: Node;
+  endOffset: number;
+}
+
+/** 切片解析缓存：同一份 HTML 只解析一次，分片与断点探针复用同一批位置映射 */
+const sliceCache = new Map<
+  string,
+  { container: HTMLDivElement; positions: SlicePosition[]; total: number }
+>();
 /** 切片缓存条目上限，避免超长正文长期占用内存 */
 const SLICE_CACHE_MAX = 200;
 
@@ -41,53 +52,61 @@ const parseSliceNodes = (html: string) => {
 
   const container = document.createElement("div");
   container.innerHTML = DOMPurify.sanitize(html || "", sanitizeConfig);
-  const textNodes: Text[] = [];
-  // 只统计参与断点偏移的内容：顶层空白节点不计入字符数，与 parseRichText 的块口径保持一致
-  Array.from(container.childNodes).forEach((child) => {
-    if (!(child.textContent || "").trim()) return;
-    const walker = document.createTreeWalker(child, NodeFilter.SHOW_TEXT);
-    let textNode: Node | null;
-    while ((textNode = walker.nextNode())) {
-      if (textNode.nodeValue) textNodes.push(textNode as Text);
+  const positions: SlicePosition[] = [];
+  const appendPositions = (node: Node) => {
+    if (node.nodeType === Node.TEXT_NODE) {
+      const textNode = node as Text;
+      for (let index = 0; index < (textNode.nodeValue?.length || 0); index += 1) {
+        positions.push({
+          startNode: textNode,
+          startOffset: index,
+          endNode: textNode,
+          endOffset: index + 1,
+        });
+      }
+      return;
     }
+    if (node.nodeType !== Node.ELEMENT_NODE) return;
+    const element = node as Element;
+    if (element.tagName.toLowerCase() === "br") {
+      const parent = element.parentNode;
+      if (!parent) return;
+      const index = Array.from(parent.childNodes).indexOf(element);
+      positions.push({
+        startNode: parent,
+        startOffset: index,
+        endNode: parent,
+        endOffset: index + 1,
+      });
+      return;
+    }
+    Array.from(element.childNodes).forEach(appendPositions);
+  };
+  // 顶层空白文本不参与偏移；段落内文字和 br 都计入，确保空行有独立分页位置
+  Array.from(container.childNodes).forEach((child) => {
+    if (child.nodeType === Node.TEXT_NODE && !(child.textContent || "").trim()) return;
+    appendPositions(child);
   });
-  const total = textNodes.reduce((sum, node) => sum + (node.nodeValue?.length || 0), 0);
-  const entry = { textNodes, total };
+  const total = positions.length;
+  const entry = { container, positions, total };
   if (sliceCache.size >= SLICE_CACHE_MAX) sliceCache.clear();
   sliceCache.set(html, entry);
   return entry;
 };
 
-/** 按纯文本偏移截取安全富文本，并保留截取范围内的标签结构。 */
+/** 按包含显式换行的内容偏移截取安全富文本，并保留对应标签结构。 */
 export const sliceRichTextHtml = (html: string, start = 0, end?: number): string => {
-  const { textNodes, total } = parseSliceNodes(html || "");
+  const { container, positions, total } = parseSliceNodes(html || "");
   const safeStart = Math.max(0, Math.min(start, total));
   const safeEnd = Math.max(safeStart, Math.min(end ?? total, total));
   if (safeStart >= safeEnd) return "";
 
   const range = document.createRange();
-  let offset = 0;
-  let started = false;
-  let ended = false;
-  textNodes.forEach((node) => {
-    if (ended) return;
-    const length = node.nodeValue?.length || 0;
-    if (!started && offset + length >= safeStart) {
-      range.setStart(node, safeStart - offset);
-      started = true;
-    }
-    if (started && offset + length >= safeEnd) {
-      range.setEnd(node, safeEnd - offset);
-      ended = true;
-    }
-    offset += length;
-  });
-
-  if (!started) return "";
-  if (!ended) {
-    const lastNode = textNodes[textNodes.length - 1];
-    if (lastNode) range.setEnd(lastNode, lastNode.nodeValue?.length || 0);
-  }
+  const first = positions[safeStart];
+  const last = positions[safeEnd - 1];
+  if (!first || !last) return "";
+  range.setStart(first.startNode, first.startOffset);
+  range.setEnd(last.endNode, last.endOffset);
   const result = document.createElement("div");
   result.appendChild(range.cloneContents());
   return result.innerHTML;
@@ -105,8 +124,14 @@ const MAX_CHAR_BREAK_POINTS = 64;
 /** 字符级断点的最小步长：分页填充精度到几个字即可，过密会拖慢测量与缩略图渲染。 */
 const MIN_CHAR_BREAK_POINT_STEP = 4;
 
-/** 读取节点的纯文本长度 */
-const getTextLength = (node: Node): number => node.textContent?.length || 0;
+/** 读取节点分页偏移长度：文字和显式换行都占一个位置。 */
+const getLogicalLength = (node: Node): number => {
+  if (node.nodeType === Node.TEXT_NODE) return node.nodeValue?.length || 0;
+  if (node.nodeType !== Node.ELEMENT_NODE) return 0;
+  const element = node as Element;
+  if (element.tagName.toLowerCase() === "br") return 1;
+  return Array.from(element.childNodes).reduce((sum, child) => sum + getLogicalLength(child), 0);
+};
 
 /** 将元素属性转换为普通对象 */
 const getAttributes = (element: Element): Record<string, string> =>
@@ -120,6 +145,26 @@ const appendBreakPoint = (points: BreakPoint[], point: BreakPoint) => {
   points.push(point);
 };
 
+/** 为富文本中的每个显式换行建立断点，分页可在换行处逐行推进。 */
+const collectLineBreakPoints = (node: Node, startOffset: number, points: BreakPoint[]) => {
+  let offset = startOffset;
+  const visit = (current: Node) => {
+    if (current.nodeType === Node.TEXT_NODE) {
+      offset += current.nodeValue?.length || 0;
+      return;
+    }
+    if (current.nodeType !== Node.ELEMENT_NODE) return;
+    const element = current as Element;
+    if (element.tagName.toLowerCase() === "br") {
+      offset += 1;
+      appendBreakPoint(points, { offset, type: "paragraph" });
+      return;
+    }
+    Array.from(element.childNodes).forEach(visit);
+  };
+  visit(node);
+};
+
 /** 提取列表中的列表项断点 */
 const collectListItemBreakPoints = (
   element: Element,
@@ -129,7 +174,8 @@ const collectListItemBreakPoints = (
   let offset = startOffset;
   Array.from(element.children).forEach((child) => {
     if (child.tagName.toLowerCase() !== "li") return;
-    offset += getTextLength(child);
+    collectLineBreakPoints(child, offset, points);
+    offset += getLogicalLength(child);
     appendBreakPoint(points, { offset, type: "listItem" });
   });
 };
@@ -145,10 +191,11 @@ const parseBlocks = (html: string) => {
 
   Array.from(template.content.childNodes).forEach((node) => {
     const text = node.textContent || "";
-    if (!text.trim()) return;
+    const logicalLength = getLogicalLength(node);
+    if (!logicalLength || (!text.trim() && node.nodeType === Node.TEXT_NODE)) return;
 
     const startOffset = offset;
-    const endOffset = startOffset + text.length;
+    const endOffset = startOffset + logicalLength;
     const element = node.nodeType === Node.ELEMENT_NODE ? (node as Element) : undefined;
     const tag = element?.tagName.toLowerCase() || "span";
 
@@ -164,6 +211,7 @@ const parseBlocks = (html: string) => {
     if (element?.tagName.toLowerCase() === "ul" || element?.tagName.toLowerCase() === "ol") {
       collectListItemBreakPoints(element, startOffset, breakPoints);
     } else {
+      collectLineBreakPoints(node, startOffset, breakPoints);
       appendBreakPoint(breakPoints, {
         offset: endOffset,
         type: "paragraph",
