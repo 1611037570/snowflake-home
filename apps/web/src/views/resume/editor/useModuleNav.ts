@@ -14,10 +14,12 @@ const { currentData, runtimeFields } = storeToRefs(resumeStore);
 const { searchIndex } = useResumeSearch();
 const PREVIEW_SCROLL_OFFSET = 24;
 const PREVIEW_HIGHLIGHT_DELAY = 10;
+const EDITOR_HIGHLIGHT_DELAY = 0;
 // 定位滚动期间的保护时长：滚动结束前的鼠标进入不应清除定位边框
 const PREVIEW_HIGHLIGHT_LOCK = 500;
 let previewHighlightTimer: number | null = null;
 let previewHighlightLock = 0;
+let editorHighlightTimer: number | null = null;
 // 左侧搜索定位使用独立状态，不写入预览选择按钮使用的 selectedModule
 export const previewSelectedModule = ref<string | null>(null);
 
@@ -105,7 +107,7 @@ const activateModule = (key: string) => {
     moduleData.ui.collapsed = ["1"];
   }
   // 触发编辑区模块选中闪烁
-  eventBus.emit("df-select-module", key);
+  scheduleEditorHighlight(key);
 };
 
 // 滚动到编辑区锚点：记录命中取该条记录外圈，字段命中取字段外圈，其余回退模块外圈
@@ -118,6 +120,15 @@ const scrollEditorTarget = (key: string, hit?: ResumeSearchHit) => {
     document.querySelector<HTMLElement>(selector) ??
       document.querySelector<HTMLElement>(`[data-module-key="${key}"]`),
   );
+};
+
+// 延时 0 添加选中状态，避开同一轮定位滚动触发的鼠标进入事件
+const scheduleEditorHighlight = (key: string) => {
+  if (editorHighlightTimer !== null) window.clearTimeout(editorHighlightTimer);
+  editorHighlightTimer = window.setTimeout(() => {
+    eventBus.emit("df-select-module", key);
+    editorHighlightTimer = null;
+  }, EDITOR_HIGHLIGHT_DELAY);
 };
 
 // 跳转编辑区：展开折叠 + 选中闪烁 + 滚动定位
@@ -159,7 +170,7 @@ export const locateEditor = (key: string) => {
   // 切换到编辑标签，避免停留设计/模板标签时编辑区不可见
   eventBus.emit("switch-builder-tab", 0);
   // 触发编辑区模块选中闪烁
-  eventBus.emit("df-select-module", key);
+  scheduleEditorHighlight(key);
   nextTick(() => scrollEditorTarget(key));
 };
 
