@@ -41,7 +41,10 @@ export const createExperienceModuleAdapter = (moduleKey: string): LayoutAdapter 
         item,
         content: parsed,
       },
-      breakPoints: parsed?.breakPoints,
+      // 正文起点也作为断点：放不下正文时允许“标题 + 条目头”留在当前页，正文顺延到下一页
+      breakPoints: parsed
+        ? [{ offset: 0, type: "paragraph" as const }, ...parsed.breakPoints]
+        : undefined,
     };
   });
 };

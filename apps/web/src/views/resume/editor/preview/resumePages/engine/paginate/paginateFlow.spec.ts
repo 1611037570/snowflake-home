@@ -49,6 +49,53 @@ describe("paginateFlow", () => {
     expect(pages[1]?.items.map((item) => item.nodeId)).toEqual(["second"]);
   });
 
+  it("正文放不下时标题与条目头留在当前页，正文顺延下一页", () => {
+    const title = createNode("title", { payload: "模块标题" });
+    const item = createNode("item", {
+      type: "group",
+      title,
+      breakPolicy: {
+        splittable: true,
+        keepWithNext: false,
+        keepTitleWithFirst: true,
+      },
+    });
+    const measurements = new Map([
+      ["first", createMeasurement("first", 40)],
+      ["title", createMeasurement("title", 20)],
+      [
+        "item",
+        createMeasurement("item", 160, {
+          breakPoints: [
+            { offset: 0, type: "paragraph", height: 75 },
+            { offset: 5, type: "paragraph", height: 120 },
+            { offset: 10, type: "paragraph", height: 160 },
+          ],
+        }),
+      ],
+    ]);
+
+    const pages = paginateFlow({
+      nodes: [createNode("first"), item],
+      measurements,
+      availableHeight: 150,
+      gap: 10,
+    });
+
+    // 标题与条目头留在第一页，正文到第二页
+    expect(pages).toHaveLength(2);
+    expect(pages[0]?.items.map((flowItem) => [flowItem.nodeId, flowItem.fragment])).toEqual([
+      ["first", "single"],
+      ["item", "first"],
+    ]);
+    expect(pages[0]?.items[1]?.contentRange).toEqual({ start: 0, end: 0 });
+    expect(pages[0]?.items[1]?.titlePayload).toBe("模块标题");
+    expect(pages[1]?.items.map((flowItem) => [flowItem.nodeId, flowItem.fragment])).toEqual([
+      ["item", "last"],
+    ]);
+    expect(pages[1]?.items[0]?.titlePayload).toBeUndefined();
+  });
+
   it("标题只出现在首片，内容续段不重复标题", () => {
     const title = createNode("title", {
       type: "block",
