@@ -70,12 +70,20 @@ export const measureLayoutNodes = (
           .filter((point) => Number.isFinite(point.height) && point.height > 0)
       : [];
 
+    // 续段装饰会去掉上内边距（中段同时去掉下内边距），分页估算续段高度时需扣除，才能与真实渲染一致
+    const style = getComputedStyle(blockHost ?? element);
+    const droppedPadding = {
+      top: Number.parseFloat(style.paddingTop) || 0,
+      bottom: Number.parseFloat(style.paddingBottom) || 0,
+    };
+
     result.set(node.id, {
       nodeId: node.id,
       width: rect.width,
       fullHeight: rect.height,
       minHeight: Math.max(rect.height, node.breakPolicy.minHeight || 0),
       breakPoints: [...blockBreakPoints, ...breakPoints],
+      droppedPadding,
     });
   });
 
