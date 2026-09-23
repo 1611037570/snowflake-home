@@ -172,6 +172,8 @@ export const paginateFlow = ({
     let consumedHeight = 0;
     let consumedOffset = 0;
     let consumedBlocks = 0;
+    // 续段渲染会去掉内容容器上内边距，分页高度按同一口径扣减，避免高估续段占用
+    const droppedTopPadding = measurement.droppedPadding?.top ?? 0;
 
     while (consumedHeight < fullHeight || (fullHeight === 0 && consumedHeight === 0)) {
       const isFirst = consumedHeight === 0;
@@ -189,7 +191,7 @@ export const paginateFlow = ({
         sourceModuleKey: node.sourceModuleKey,
         titleNodeId: withTitle ? node.title?.id : undefined,
         fragment: wholeFragmentKind,
-        height: wholeFragmentHeight,
+        height: Math.max(0, wholeFragmentHeight - (isFirst ? 0 : droppedTopPadding)),
         payload: node.payload,
         titlePayload: withTitle ? node.title?.payload : undefined,
         contentRange: contentEnd
@@ -239,7 +241,10 @@ export const paginateFlow = ({
       }
 
       const fragmentKind: FlowFragmentKind = isFirst ? "first" : "middle";
-      const fragmentHeight = title + Math.max(0, breakPoint.height - consumedHeight);
+      const fragmentHeight =
+        title +
+        Math.max(0, breakPoint.height - consumedHeight) -
+        (isFirst ? 0 : droppedTopPadding);
       // 块断点只覆盖块（不含正文区间），字符断点覆盖剩余全部块 + 正文区间
       const isBlockPoint = typeof breakPoint.blockEnd === "number";
       const nextBlocks = isBlockPoint ? Number(breakPoint.blockEnd) : blockCount;

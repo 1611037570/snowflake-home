@@ -323,7 +323,8 @@ defineExpose({ rootEl: rootRef, measureEl: rootRef, pages, pagePlan });
           @click="handlePageClick"
           :class="[
             {
-              'border border-sf-b': mode === 'editor',
+              // 用 outline 绘制编辑器页边线：不占内容盒，保证测量宽度与真实渲染一致
+              'outline outline-1 -outline-offset-1 outline-sf-b': mode === 'editor',
             },
           ]"
         >
