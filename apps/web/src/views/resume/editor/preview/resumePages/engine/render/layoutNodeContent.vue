@@ -12,6 +12,8 @@ import { useResumePreviewContext } from "../../../previewContext";
 import { sliceRichTextHtml } from "../adapter/richTextParser";
 import type { LayoutNode } from "../types";
 
+const safeUrlProtocols = new Set(["http:", "https:", "mailto:"]);
+
 interface Props {
   node: LayoutNode;
   payload?: unknown;
@@ -90,14 +92,16 @@ const getItemLink = (value: any) => {
     url: String(link?.url || "").trim(),
   };
 };
+const itemLink = computed(() => getItemLink(item.value));
 const safeUrl = (value: unknown) => {
   try {
     const url = new URL(String(value || "").trim());
-    return ["http:", "https:", "mailto:"].includes(url.protocol.toLowerCase()) ? url.href : "";
+    return safeUrlProtocols.has(url.protocol.toLowerCase()) ? url.href : "";
   } catch {
     return "";
   }
 };
+const safeItemLinkUrl = computed(() => safeUrl(itemLink.value.url));
 const fragmentContentStyle = computed(() => {
   const base = { ...moduleContentStyle.value };
   // 分片的圆角与相邻边框按上下拼接分配：首片只留上圆角、续段只留下圆角、中段不留圆角
@@ -160,68 +164,68 @@ const itemContentSpacingStyle = computed(() => {
     class="layout-experience-item"
     data-layout-block-range
   >
-    <!-- 块序：0 名称+时间 / 1 职位部门+城市 / 2 标签+链接 / 3 正文；块区间由测量层从 DOM 读到的块边界决定 -->
+    <!-- 块区间按实际存在的头部、标签链接和正文顺序，与测量层 DOM 块序保持一致 -->
+    <div
+      v-if="hasItemHeader && showItemHeader && isBlockVisible(0)"
+      class="flex flex-wrap items-center justify-between gap-3"
+    >
+      <div class="min-w-0 flex-1">
+        <ItemTitle :name="item.name" :emphasis="datePosition !== 'left'" />
+      </div>
+      <!-- 日期位置由 order 控制：置左时提到名称之前 -->
       <div
-        v-if="hasItemHeader && showItemHeader && isBlockVisible(0)"
-        class="flex flex-wrap items-center justify-between gap-3"
+        class="flex max-w-full min-w-0 flex-wrap items-center"
+        :class="datePosition === 'left' ? 'order-first' : ''"
       >
-        <div class="min-w-0 flex-1">
-          <ItemTitle :name="item.name" :emphasis="datePosition !== 'left'" />
-        </div>
-        <!-- 日期位置由 order 控制：置左时提到名称之前 -->
-        <div
-          class="flex max-w-full min-w-0 flex-wrap items-center"
-          :class="datePosition === 'left' ? 'order-first' : ''"
+        <span
+          :class="{ 'font-bold': datePosition === 'left' }"
+          :style="datePosition === 'left' ? fontValue(1) : undefined"
         >
-          <span
-            :class="{ 'font-bold': datePosition === 'left' }"
-            :style="datePosition === 'left' ? fontValue(1) : undefined"
-          >
-            {{ getTime(item.startTime, item.endTime, dateStyle) }}
-          </span>
-        </div>
+          {{ getTime(item.startTime, item.endTime, dateStyle) }}
+        </span>
       </div>
-      <div
-        v-if="hasItemHeader && showItemHeader && isBlockVisible(1)"
-        class="flex flex-wrap items-center justify-between gap-3"
-        :style="innerSpacingStyle"
+    </div>
+    <div
+      v-if="hasItemHeader && showItemHeader && isBlockVisible(1)"
+      class="flex flex-wrap items-center justify-between gap-3"
+      :style="innerSpacingStyle"
+    >
+      <div class="max-w-full min-w-0 flex-1">
+        <InlineInfoList :items="[item.post, item.department]" />
+      </div>
+      <ResumeField :model-value="item.city" />
+    </div>
+    <div
+      v-if="
+        hasItemHeader &&
+        showItemHeader &&
+        hasItemMeta &&
+        isBlockVisible(2)
+      "
+      class="flex flex-wrap items-center justify-between gap-3"
+      :style="[innerSpacingStyle, paragraphSpacingStyle]"
+    >
+      <div class="flex flex-wrap items-center gap-3">
+        <ItemTags :tags="item.tags" />
+      </div>
+      <a
+        v-if="safeItemLinkUrl"
+        :href="safeItemLinkUrl"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="inline max-w-full min-w-0 break-all hover:underline"
+        :class="{ underline: linkUnderline }"
       >
-        <div class="max-w-full min-w-0 flex-1">
-          <InlineInfoList :items="[item.post, item.department]" />
-        </div>
-        <ResumeField :model-value="item.city" />
-      </div>
-      <div
-        v-if="
-          hasItemHeader &&
-          showItemHeader &&
-          hasItemMeta &&
-          isBlockVisible(2)
-        "
-        class="flex flex-wrap items-center justify-between gap-3"
-        :style="[innerSpacingStyle, paragraphSpacingStyle]"
-      >
-        <div class="flex flex-wrap items-center gap-3">
-          <ItemTags :tags="item.tags" />
-        </div>
-        <a
-          v-if="safeUrl(getItemLink(item).url)"
-          :href="safeUrl(getItemLink(item).url)"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="inline max-w-full min-w-0 break-all hover:underline"
-          :class="{ underline: linkUnderline }"
-        >
-          <ResumeField :model-value="getItemLink(item).name || getItemLink(item).url" />
-        </a>
-      </div>
-      <!-- 正文作为一个块：内部段落由字符区间切分，保证块序与测量层一致 -->
-      <div
-        v-if="!isContentEmpty(item.content) && isBlockVisible(bodyBlockIndex)"
-        :style="itemContentSpacingStyle"
-      >
-        <ResumeField :model-value="richTextHtml" html />
-      </div>
+        <ResumeField :model-value="itemLink.name || itemLink.url" />
+      </a>
+    </div>
+    <!-- 正文作为一个块：内部段落由字符区间切分，保证块序与测量层一致 -->
+    <div
+      v-if="!isContentEmpty(item.content) && isBlockVisible(bodyBlockIndex)"
+      :style="itemContentSpacingStyle"
+    >
+      <ResumeField :model-value="richTextHtml" html />
+    </div>
   </ModuleContentContainer>
 
   <template v-else-if="node.type === 'block'">
