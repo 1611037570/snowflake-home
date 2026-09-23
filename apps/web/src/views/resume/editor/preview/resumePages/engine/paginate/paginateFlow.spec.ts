@@ -199,6 +199,47 @@ describe("paginateFlow", () => {
     expect(pages.every((page) => page.usedHeight <= 60)).toBe(true);
   });
 
+  it("经历正文跨页后续页继续渲染正文块，不重复头部块", () => {
+    const node = createNode("education-item", {
+      type: "group",
+      breakPolicy: {
+        splittable: true,
+        keepWithNext: false,
+        keepTitleWithFirst: false,
+      },
+    });
+    const pages = paginateFlow({
+      nodes: [node],
+      measurements: new Map([
+        [
+          node.id,
+          createMeasurement("education-item", 100, {
+            breakPoints: [
+              { offset: 0, type: "block", height: 20, blockEnd: 1 },
+              { offset: 0, type: "block", height: 30, blockEnd: 2 },
+              { offset: 0, type: "block", height: 40, blockEnd: 3 },
+              { offset: 20, type: "paragraph", height: 60 },
+              { offset: 40, type: "paragraph", height: 80 },
+              { offset: 60, type: "paragraph", height: 100 },
+            ],
+          }),
+        ],
+      ]),
+      availableHeight: 65,
+      gap: 0,
+    });
+
+    expect(pages).toHaveLength(2);
+    expect(pages[0]?.items[0]).toMatchObject({
+      contentRange: { start: 0, end: 20 },
+      blockRange: { start: 0, end: 3 },
+    });
+    expect(pages[1]?.items[0]).toMatchObject({
+      contentRange: { start: 20, end: 60 },
+      blockRange: { start: 2, end: 3 },
+    });
+  });
+
   it("续段不重复计算断点前的段落间距并填充当前页", () => {
     const previous = createNode("previous");
     const content = createNode("content", {

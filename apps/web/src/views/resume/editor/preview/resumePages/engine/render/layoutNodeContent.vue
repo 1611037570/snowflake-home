@@ -11,7 +11,6 @@ import { isContentEmpty } from "../../../modules/validData";
 import { useResumePreviewContext } from "../../../previewContext";
 import { sliceRichTextHtml } from "../adapter/richTextParser";
 import type { LayoutNode } from "../types";
-import LayoutBlockRange from "./layoutBlockRange.vue";
 
 interface Props {
   node: LayoutNode;
@@ -74,6 +73,15 @@ const hasItemHeader = computed(() => {
       value.link?.url,
   );
 });
+const hasItemMeta = computed(() => {
+  const value = item.value;
+  return Boolean(value.tags?.length || value.link?.name || value.link?.url);
+});
+const bodyBlockIndex = computed(
+  () => (hasItemHeader.value ? 2 : 0) + (hasItemMeta.value ? 1 : 0),
+);
+const isBlockVisible = (index: number) =>
+  index >= props.blockRange.start && index < props.blockRange.end;
 const getItemLink = (value: any) => {
   const link = value?.link;
   if (typeof link === "string") return { name: "", url: link.trim() };
@@ -153,9 +161,8 @@ const itemContentSpacingStyle = computed(() => {
     data-layout-block-range
   >
     <!-- 块序：0 名称+时间 / 1 职位部门+城市 / 2 标签+链接 / 3 正文；块区间由测量层从 DOM 读到的块边界决定 -->
-    <LayoutBlockRange :start="blockRange.start" :end="blockRange.end">
       <div
-        v-if="hasItemHeader && showItemHeader"
+        v-if="hasItemHeader && showItemHeader && isBlockVisible(0)"
         class="flex flex-wrap items-center justify-between gap-3"
       >
         <div class="min-w-0 flex-1">
@@ -175,7 +182,7 @@ const itemContentSpacingStyle = computed(() => {
         </div>
       </div>
       <div
-        v-if="hasItemHeader && showItemHeader"
+        v-if="hasItemHeader && showItemHeader && isBlockVisible(1)"
         class="flex flex-wrap items-center justify-between gap-3"
         :style="innerSpacingStyle"
       >
@@ -188,7 +195,8 @@ const itemContentSpacingStyle = computed(() => {
         v-if="
           hasItemHeader &&
           showItemHeader &&
-          (item.tags?.length || item.link?.name || item.link?.url)
+          hasItemMeta &&
+          isBlockVisible(2)
         "
         class="flex flex-wrap items-center justify-between gap-3"
         :style="[innerSpacingStyle, paragraphSpacingStyle]"
@@ -208,10 +216,12 @@ const itemContentSpacingStyle = computed(() => {
         </a>
       </div>
       <!-- 正文作为一个块：内部段落由字符区间切分，保证块序与测量层一致 -->
-      <div v-if="!isContentEmpty(item.content)" :style="itemContentSpacingStyle">
+      <div
+        v-if="!isContentEmpty(item.content) && isBlockVisible(bodyBlockIndex)"
+        :style="itemContentSpacingStyle"
+      >
         <ResumeField :model-value="richTextHtml" html />
       </div>
-    </LayoutBlockRange>
   </ModuleContentContainer>
 
   <template v-else-if="node.type === 'block'">
