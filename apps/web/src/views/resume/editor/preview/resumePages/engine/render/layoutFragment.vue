@@ -7,8 +7,7 @@ import LayoutNodeContent from "./layoutNodeContent.vue";
 defineProps<{
   fragment: FragmentPlan;
   node: LayoutNode;
-  // 当前分片与上方内容的间距，续段固定为零
-  gapTop?: number;
+  showDebug?: boolean;
 }>();
 
 const emit = defineEmits<{ mouseenter: [moduleKey: string] }>();
@@ -17,8 +16,8 @@ const emit = defineEmits<{ mouseenter: [moduleKey: string] }>();
 <template>
   <div
     class="resume-module-wrapper group group/module relative rounded-xl"
+    :class="{ 'resume-debug-paragraph-spacing': showDebug }"
     :data-module="fragment.sourceModuleKey"
-    :style="gapTop ? { marginTop: `${gapTop}px` } : undefined"
     @mouseenter="emit('mouseenter', fragment.sourceModuleKey)"
   >
     <Title v-if="fragment.titlePayload" :module-key="fragment.sourceModuleKey" />
@@ -32,3 +31,23 @@ const emit = defineEmits<{ mouseenter: [moduleKey: string] }>();
     />
   </div>
 </template>
+
+<style scoped>
+@reference "@/styles/tailwind.css";
+
+/* 模块段落间距使用独立色带，标记只覆盖真实间距区域 */
+.resume-debug-paragraph-spacing :deep([style*="--resume-paragraph-spacing"]) {
+  position: relative;
+}
+
+.resume-debug-paragraph-spacing :deep([style*="--resume-paragraph-spacing"])::before {
+  position: absolute;
+  top: calc(0px - var(--resume-paragraph-spacing));
+  right: 0;
+  left: 0;
+  height: var(--resume-paragraph-spacing);
+  content: "";
+  pointer-events: none;
+  @apply bg-sf-theme;
+}
+</style>

@@ -9,6 +9,7 @@ const props = defineProps<{
   column: ColumnPlan;
   nodes: Map<string, LayoutNode>;
   isEdit?: boolean;
+  showDebug?: boolean;
   moduleClassMap?: Record<string, string>;
   gap: number;
   /** 各模块可用的移动方向，由预览层按整栏跨页顺序计算 */
@@ -40,12 +41,17 @@ const fragmentGroups = computed(() => {
       lastGroup.items.push(item);
       return;
     }
-    groups.push({ key: fragment.fragmentId, moduleKey: fragment.sourceModuleKey, items: [item] });
+    groups.push({
+      key: fragment.fragmentId,
+      moduleKey: fragment.sourceModuleKey,
+      gapTop: getGapTop(fragment, columnIndex),
+      items: [item],
+    });
   });
   return groups;
 });
 // 移动方向：上下由预览层按整栏跨页顺序下发，左右由相邻栏位决定；个人信息模块不参与移动
-const getDirections = (group) => {
+const getDirections = (group: { moduleKey: string }) => {
   if (group.moduleKey === "user") {
     return { up: false, down: false, left: false, right: false };
   }
@@ -69,7 +75,18 @@ const handleMove = (moduleKey: string, direction: string) => {
       v-for="group in fragmentGroups"
       :key="group.key"
       class="group/module relative flex min-w-0 flex-col rounded-3xl"
-      :class="moduleClassMap?.[group.moduleKey]"
+      :class="[
+        moduleClassMap?.[group.moduleKey],
+        { 'resume-debug-gap': showDebug && group.gapTop > 0 },
+      ]"
+      :style="
+        group.gapTop
+          ? {
+              marginTop: `${group.gapTop}px`,
+              '--resume-debug-gap-top': `${group.gapTop}px`,
+            }
+          : undefined
+      "
     >
       <!-- 模块级操作按钮按模块渲染一次，避免多条目模块出现多个图标 -->
       <ModuleActions
@@ -83,10 +100,26 @@ const handleMove = (moduleKey: string, direction: string) => {
           v-if="getNode(item.fragment)"
           :fragment="item.fragment"
           :node="getNode(item.fragment)!"
-          :gap-top="getGapTop(item.fragment, item.columnIndex)"
+          :show-debug="showDebug"
           @mouseenter="emit('mouseenter', $event)"
         />
       </template>
     </div>
   </div>
 </template>
+
+<style scoped>
+@reference "@/styles/tailwind.css";
+
+/* 间距色带只绘制在真实间距范围内，不改变布局尺寸 */
+.resume-debug-gap::before {
+  position: absolute;
+  top: calc(0px - var(--resume-debug-gap-top));
+  right: 0;
+  left: 0;
+  height: var(--resume-debug-gap-top);
+  content: "";
+  pointer-events: none;
+  @apply bg-sf-warning;
+}
+</style>
