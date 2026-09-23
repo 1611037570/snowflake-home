@@ -44,6 +44,8 @@ export interface FlowPage {
   availableHeight?: number;
   /** 当前页中的节点 */
   items: FlowPageItem[];
+  /** 落在页尾的模块间距：下一个模块换页时，本页剩余空间仍能容纳的间距 */
+  trailingGap?: number;
 }
 
 /** 单栏分页的输入参数 */
@@ -155,8 +157,17 @@ export const paginateFlow = ({
       : 0;
   };
 
-  const pushPage = () => {
-    if (currentPage.items.length > 0) pages.push(currentPage);
+  /** 换页前把模块间距留在上一页页尾：下一个模块换页时这段间距不应凭空消失 */
+  const pushPage = (nextModuleKey?: string) => {
+    if (currentPage.items.length > 0) {
+      const lastItem = currentPage.items[currentPage.items.length - 1];
+      const isModuleBoundary = Boolean(nextModuleKey) && lastItem.sourceModuleKey !== nextModuleKey;
+      if (isModuleBoundary && currentPage.usedHeight + safeGap <= getCurrentAvailableHeight()) {
+        currentPage.trailingGap = safeGap;
+        currentPage.usedHeight += safeGap;
+      }
+      pages.push(currentPage);
+    }
     const nextPageIndex = pages.length;
     currentPage = {
       pageIndex: nextPageIndex,
@@ -266,7 +277,7 @@ export const paginateFlow = ({
       if (!canSplit) {
         if (currentPage.items.length > 0) {
           if (placeTitle()) continue;
-          pushPage();
+          pushPage(node.sourceModuleKey);
           continue;
         }
         tryAddItem(wholeFragment, !isFirst);
@@ -292,7 +303,7 @@ export const paginateFlow = ({
       if (!breakPoint) {
         if (currentPage.items.length > 0) {
           if (placeTitle()) continue;
-          pushPage();
+          pushPage(node.sourceModuleKey);
           continue;
         }
         // 没有可继续拆分的断点时，空页允许放入当前分片，避免分页循环无法结束。

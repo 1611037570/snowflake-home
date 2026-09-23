@@ -48,6 +48,8 @@ export interface ColumnPlan {
   usedHeight: number;
   /** 当前栏中的内容分片。 */
   fragments: FragmentPlan[];
+  /** 落在页尾的模块间距。 */
+  trailingGap?: number;
 }
 
 /** 分页计划中的区域。 */
@@ -203,6 +205,7 @@ export const buildPagePlan = ({
           availableHeight: sourcePage.availableHeight ?? columnHeight,
           usedHeight: sourcePage.usedHeight,
           fragments: sourcePage.items.map(toFragmentPlan),
+          trailingGap: sourcePage.trailingGap,
         };
       });
       return {
