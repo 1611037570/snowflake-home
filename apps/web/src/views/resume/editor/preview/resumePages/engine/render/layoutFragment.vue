@@ -23,6 +23,7 @@ const emit = defineEmits<{ mouseenter: [moduleKey: string] }>();
   >
     <Title v-if="fragment.titlePayload" :module-key="fragment.sourceModuleKey" />
     <LayoutNodeContent
+      v-if="fragment.fragment !== 'title'"
       :node="node"
       :payload="fragment.payload"
       :content-range="fragment.contentRange"
