@@ -95,6 +95,7 @@ const handleMove = (moduleKey: string, direction: string) => {
           @move="handleMove(group.moduleKey, $event)"
         />
         <template v-for="(item, itemIndex) in group.items" :key="item.fragment.fragmentId">
+          <!-- 本页第一个内容若是本分片，它前面的间距占位没有承接对象，不再绘制；自带模块标题时标题才是首位，间距照常 -->
           <LayoutFragment
             v-if="getNode(item.fragment)"
             :fragment="item.fragment"
