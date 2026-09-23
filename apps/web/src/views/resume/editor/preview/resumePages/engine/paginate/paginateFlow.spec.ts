@@ -517,4 +517,33 @@ describe("paginateFlow", () => {
     expect(pages[0]?.usedHeight).toBe(52);
     expect(pages[1]?.items.map((item) => item.nodeId)).toEqual(["second"]);
   });
+
+  it("页面第一个内容不绘制间距占位，按去掉间距后的高度分页", () => {
+    const item = createNode("item", {
+      breakPolicy: {
+        splittable: true,
+        keepTitleWithFirst: false,
+      },
+    });
+    const pages = paginateFlow({
+      nodes: [item],
+      measurements: new Map([
+        [
+          "item",
+          createMeasurement("item", 60, {
+            breakPoints: [
+              { offset: 0, type: "block", height: 10, blockEnd: 0 },
+              { offset: 0, type: "block", height: 60, blockEnd: 1 },
+            ],
+          }),
+        ],
+      ]),
+      availableHeight: 50,
+      gap: 0,
+    });
+
+    // 整条按 60-10=50 计算正好放下，不会因为间距被挤到下一页
+    expect(pages).toHaveLength(1);
+    expect(pages[0]?.items[0]).toMatchObject({ fragment: "single", height: 50 });
+  });
 });

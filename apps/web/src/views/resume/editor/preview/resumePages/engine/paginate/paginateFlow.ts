@@ -93,10 +93,13 @@ const findBestBreakPoint = (
   startHeight: number,
   droppedTopSpacing: number,
   availableHeight: number,
+  skipLeadingGap: boolean,
 ) => {
   let bestBreakPoint: (typeof measurement.breakPoints)[number] | undefined;
   let bestHeight = 0;
   for (const point of measurement.breakPoints) {
+    // 页面首位不绘制间距占位，0 号块分片在此时不可用
+    if (skipLeadingGap && point.blockEnd === 0) continue;
     const height = point.height - startHeight - (startHeight > 0 ? droppedTopSpacing : 0);
     if (height <= 0 || height > availableHeight) continue;
     // 同一行内的多个断点高度相同，取最靠后的偏移让首片段尽量填满整行
@@ -115,10 +118,12 @@ const findNextBreakPoint = (
   measurement: MeasuredNode,
   startHeight: number,
   droppedTopSpacing: number,
+  skipLeadingGap: boolean,
 ) => {
   let nextBreakPoint: (typeof measurement.breakPoints)[number] | undefined;
   let nextHeight = Number.POSITIVE_INFINITY;
   for (const point of measurement.breakPoints) {
+    if (skipLeadingGap && point.blockEnd === 0) continue;
     const height = point.height - startHeight - (startHeight > 0 ? droppedTopSpacing : 0);
     if (height > 0 && height < nextHeight) {
       nextBreakPoint = point;
@@ -226,7 +231,14 @@ export const paginateFlow = ({
       // 标题是独立的一行：跟随内容首片，若首片放不下则单独留在当前页
       const withTitle = isFirst && !titlePlaced;
       const title = withTitle ? titleHeight : 0;
-      const wholeFragmentHeight = title + remainingHeight;
+      // 页面第一个内容不绘制顶部间距占位（渲染层同规则），分页高度与可用断点都要按去掉间距计算。
+      // 判定条件与渲染层一致：本片是页面首个内容，且本片没有携带模块标题
+      const titleRendered = withTitle && Boolean(node.title);
+      const hideLeadingGap = isFirst && currentPage.items.length === 0 && !titleRendered;
+      const leadingGapHeight = hideLeadingGap
+        ? (measurement.breakPoints.find((point) => point.blockEnd === 0)?.height ?? 0)
+        : 0;
+      const wholeFragmentHeight = title + remainingHeight - leadingGapHeight;
       const wholeFragmentKind: FlowFragmentKind = isFirst ? "single" : "last";
       const wholeFragment: FlowPageItem = {
         fragmentId: `${node.id}:${wholeFragmentKind}:${consumedOffset}:${contentEnd}`,
@@ -295,9 +307,10 @@ export const paginateFlow = ({
           consumedHeight,
           activeDroppedTopSpacing,
           availableForContent,
+          hideLeadingGap,
         ) ||
         (currentPage.items.length === 0
-          ? findNextBreakPoint(measurement, consumedHeight, activeDroppedTopSpacing)
+          ? findNextBreakPoint(measurement, consumedHeight, activeDroppedTopSpacing, hideLeadingGap)
           : undefined);
 
       if (!breakPoint) {
