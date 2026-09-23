@@ -140,13 +140,19 @@ const getAttributes = (element: Element): Record<string, string> =>
   );
 
 /** 生成一个不重复的语义断点 */
-const appendBreakPoint = (points: BreakPoint[], point: BreakPoint) => {
-  if (point.offset <= 0 || points.some((item) => item.offset === point.offset)) return;
+const appendBreakPoint = (points: BreakPoint[], offsets: Set<number>, point: BreakPoint) => {
+  if (point.offset <= 0 || offsets.has(point.offset)) return;
+  offsets.add(point.offset);
   points.push(point);
 };
 
 /** 为富文本中的每个显式换行建立断点，分页可在换行处逐行推进。 */
-const collectLineBreakPoints = (node: Node, startOffset: number, points: BreakPoint[]) => {
+const collectLineBreakPoints = (
+  node: Node,
+  startOffset: number,
+  points: BreakPoint[],
+  offsets: Set<number>,
+) => {
   let offset = startOffset;
   const visit = (current: Node) => {
     if (current.nodeType === Node.TEXT_NODE) {
@@ -157,7 +163,7 @@ const collectLineBreakPoints = (node: Node, startOffset: number, points: BreakPo
     const element = current as Element;
     if (element.tagName.toLowerCase() === "br") {
       offset += 1;
-      appendBreakPoint(points, { offset, type: "paragraph" });
+      appendBreakPoint(points, offsets, { offset, type: "paragraph" });
       return;
     }
     Array.from(element.childNodes).forEach(visit);
@@ -170,13 +176,14 @@ const collectListItemBreakPoints = (
   element: Element,
   startOffset: number,
   points: BreakPoint[],
+  offsets: Set<number>,
 ) => {
   let offset = startOffset;
   Array.from(element.children).forEach((child) => {
     if (child.tagName.toLowerCase() !== "li") return;
-    collectLineBreakPoints(child, offset, points);
+    collectLineBreakPoints(child, offset, points, offsets);
     offset += getLogicalLength(child);
-    appendBreakPoint(points, { offset, type: "listItem" });
+    appendBreakPoint(points, offsets, { offset, type: "listItem" });
   });
 };
 
@@ -187,6 +194,7 @@ const parseBlocks = (html: string) => {
 
   const blocks: RichTextBlock[] = [];
   const breakPoints: BreakPoint[] = [];
+  const breakPointOffsets = new Set<number>();
   let offset = 0;
 
   Array.from(template.content.childNodes).forEach((node) => {
@@ -209,10 +217,10 @@ const parseBlocks = (html: string) => {
     });
 
     if (element?.tagName.toLowerCase() === "ul" || element?.tagName.toLowerCase() === "ol") {
-      collectListItemBreakPoints(element, startOffset, breakPoints);
+      collectListItemBreakPoints(element, startOffset, breakPoints, breakPointOffsets);
     } else {
-      collectLineBreakPoints(node, startOffset, breakPoints);
-      appendBreakPoint(breakPoints, {
+      collectLineBreakPoints(node, startOffset, breakPoints, breakPointOffsets);
+      appendBreakPoint(breakPoints, breakPointOffsets, {
         offset: endOffset,
         type: "paragraph",
       });
@@ -221,11 +229,15 @@ const parseBlocks = (html: string) => {
     offset = endOffset;
   });
 
-  return { blocks, breakPoints, textLength: offset };
+  return { blocks, breakPoints, breakPointOffsets, textLength: offset };
 };
 
 /** 为语义断点之间的超长文本补充字符级断点。 */
-const appendCharacterBreakPoints = (points: BreakPoint[], textLength: number) => {
+const appendCharacterBreakPoints = (
+  points: BreakPoint[],
+  offsets: Set<number>,
+  textLength: number,
+) => {
   if (textLength <= 1) return;
 
   const step = Math.max(
@@ -233,7 +245,7 @@ const appendCharacterBreakPoints = (points: BreakPoint[], textLength: number) =>
     Math.ceil(textLength / MAX_CHAR_BREAK_POINTS),
   );
   for (let offset = step; offset < textLength; offset += step) {
-    appendBreakPoint(points, { offset, type: "char" });
+    appendBreakPoint(points, offsets, { offset, type: "char" });
   }
   points.sort((left, right) => left.offset - right.offset);
 };
@@ -241,12 +253,13 @@ const appendCharacterBreakPoints = (points: BreakPoint[], textLength: number) =>
 /** 清洗并解析富文本，供排版节点适配器使用 */
 export const parseRichText = (content: string): ParsedRichText => {
   const html = DOMPurify.sanitize(content || "", sanitizeConfig);
-  const { blocks, breakPoints, textLength } = parseBlocks(html);
+  const { blocks, breakPoints, breakPointOffsets, textLength } = parseBlocks(html);
 
-  if (textLength > 0 && !breakPoints.some((point) => point.offset === textLength)) {
+  if (textLength > 0 && !breakPointOffsets.has(textLength)) {
+    breakPointOffsets.add(textLength);
     breakPoints.push({ offset: textLength, type: "textRange" });
   }
-  appendCharacterBreakPoints(breakPoints, textLength);
+  appendCharacterBreakPoints(breakPoints, breakPointOffsets, textLength);
 
   return {
     html,
