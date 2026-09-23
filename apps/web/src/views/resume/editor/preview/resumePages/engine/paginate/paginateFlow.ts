@@ -1,8 +1,8 @@
 import type { MeasuredNode } from "../measure/types";
 import type { LayoutNode } from "../types";
 
-/** 分片在当前节点中的连续位置；title 表示标题单独留在页尾的分片 */
-export type FlowFragmentKind = "single" | "first" | "middle" | "last" | "title";
+/** 分片在当前节点中的连续位置 */
+export type FlowFragmentKind = "single" | "first" | "middle" | "last";
 
 /** 单栏页面中的节点分片 */
 export interface FlowPageItem {
@@ -161,13 +161,12 @@ export const paginateFlow = ({
     const canSplit = node.breakPolicy.splittable && measurement.breakPoints.length > 0;
     let consumedHeight = 0;
     let consumedOffset = 0;
-    // 标题已经单独留在上一页时，正文分片不再重复携带标题
-    let titlePlaced = false;
 
     while (consumedHeight < fullHeight || (fullHeight === 0 && consumedHeight === 0)) {
       const isFirst = consumedHeight === 0;
       const remainingHeight = Math.max(0, fullHeight - consumedHeight);
-      const withTitle = isFirst && !titlePlaced;
+      // 标题始终跟随内容首片，不单独留在上一页
+      const withTitle = isFirst;
       const title = withTitle ? titleHeight : 0;
       const wholeFragmentHeight = title + remainingHeight;
       const wholeFragmentKind: FlowFragmentKind = isFirst
@@ -195,32 +194,9 @@ export const paginateFlow = ({
             getCurrentAvailableHeight();
       if (wholeFragmentFits && tryAddItem(wholeFragment, !isFirst)) break;
 
-      /** 标题不跟着正文换页：正文放不下时先把标题留在当前页，正文顺延到下一页 */
-      const placeTitle = () => {
-        if (!withTitle || !node.title || currentPage.items.length === 0) return false;
-        if (currentPage.usedHeight + safeGap + titleHeight > getCurrentAvailableHeight()) {
-          return false;
-        }
-        const titleItem: FlowPageItem = {
-          fragmentId: `${node.id}:title:${node.title.id}`,
-          nodeId: node.id,
-          sourceModuleKey: node.sourceModuleKey,
-          titleNodeId: node.title.id,
-          fragment: "title",
-          height: titleHeight,
-          payload: node.payload,
-          titlePayload: node.title.payload,
-        };
-        if (!tryAddItem(titleItem, false)) return false;
-        titlePlaced = true;
-        return true;
-      };
-
       // 不可拆节点或没有可用断点时，当前页放不下就换页，空页则允许溢出。
       if (!canSplit) {
         if (currentPage.items.length > 0) {
-          // 标题不跟着正文换页：正文放不下时先把标题留在当前页
-          if (placeTitle()) continue;
           pushPage();
           continue;
         }
@@ -241,8 +217,6 @@ export const paginateFlow = ({
 
       if (!breakPoint) {
         if (currentPage.items.length > 0) {
-          // 正文放不下时同样先把标题留在当前页
-          if (placeTitle()) continue;
           pushPage();
           continue;
         }
@@ -257,11 +231,11 @@ export const paginateFlow = ({
         fragmentId: `${node.id}:${fragmentKind}:${consumedOffset}:${breakPoint.offset}`,
         nodeId: node.id,
         sourceModuleKey: node.sourceModuleKey,
-        titleNodeId: isFirst && !titlePlaced ? node.title?.id : undefined,
+        titleNodeId: isFirst ? node.title?.id : undefined,
         fragment: fragmentKind,
         height: fragmentHeight,
         payload: node.payload,
-        titlePayload: isFirst && !titlePlaced ? node.title?.payload : undefined,
+        titlePayload: isFirst ? node.title?.payload : undefined,
         contentRange: {
           start: consumedOffset,
           end: breakPoint.offset,
