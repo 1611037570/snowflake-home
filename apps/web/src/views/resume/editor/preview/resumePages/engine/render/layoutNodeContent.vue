@@ -299,13 +299,14 @@ const itemContentSpacingStyle = computed(() => {
   </template>
 
   <template v-else-if="node.type === 'media'">
+    <!-- 作品条目的段间距属于盒子外部留白，不绘制在内容盒背景和边框内。 -->
+    <div
+      class="shrink-0"
+      :class="{ 'resume-debug-paragraph-gap': showDebug }"
+      :style="paragraphSpacingStyle"
+    />
     <ModuleContentContainer>
       <template v-if="nodePayload.mediaType === 'video'">
-        <div
-          class="shrink-0"
-          :class="{ 'resume-debug-paragraph-gap': showDebug }"
-          :style="paragraphSpacingStyle"
-        />
         <!-- 视频作品保留原始网址文本，避免显示为作品名称。 -->
         <div class="flex h-auto max-w-full min-w-0 flex-wrap items-center justify-between gap-3">
           <div class="min-w-0 flex-1" :style="[fontValue()]">
@@ -328,11 +329,6 @@ const itemContentSpacingStyle = computed(() => {
         </div>
       </template>
       <template v-else>
-        <div
-          class="shrink-0"
-          :class="{ 'resume-debug-paragraph-gap': showDebug }"
-          :style="paragraphSpacingStyle"
-        />
         <div class="flex flex-col gap-3" :style="mediaWidthStyle">
           <img
             v-if="nodePayload.item?.img"
