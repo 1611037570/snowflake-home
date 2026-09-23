@@ -234,7 +234,7 @@ describe("paginateFlow", () => {
     });
   });
 
-  it("续段不重复计算断点前的段落间距并填充当前页", () => {
+  it("续段不重复计算断点前的段落间距，当前页不预留额外空间", () => {
     const previous = createNode("previous");
     const content = createNode("content", {
       type: "richText",
@@ -251,7 +251,7 @@ describe("paginateFlow", () => {
           "content",
           createMeasurement("content", 100, {
             breakPoints: [
-              { offset: 5, type: "paragraph", height: 20, continuationGap: 10 },
+              { offset: 5, type: "paragraph", height: 20 },
               { offset: 7, type: "char", height: 43 },
               { offset: 10, type: "paragraph", height: 56 },
             ],
@@ -262,15 +262,8 @@ describe("paginateFlow", () => {
       gap: 0,
     });
 
-    expect(pages[0]?.items.map((item) => item.nodeId)).toEqual([
-      "previous",
-      "content",
-      "content",
-    ]);
-    expect(pages[0]?.items.slice(1).map((item) => item.contentRange)).toEqual([
-      { start: 0, end: 5 },
-      { start: 5, end: 7 },
-    ]);
-    expect(pages[0]?.usedHeight).toBe(93);
+    expect(pages[0]?.items.map((item) => item.nodeId)).toEqual(["previous", "content"]);
+    expect(pages[0]?.items[1]?.contentRange).toEqual({ start: 0, end: 5 });
+    expect(pages[0]?.usedHeight).toBe(80);
   });
 });

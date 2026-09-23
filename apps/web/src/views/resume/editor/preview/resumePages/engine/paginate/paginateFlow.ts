@@ -89,31 +89,18 @@ const getContentEnd = (measurement: MeasuredNode): number =>
 const findBestBreakPoint = (
   measurement: MeasuredNode,
   startHeight: number,
-  startOffset: number,
   availableHeight: number,
 ) => {
-  const continuationGap =
-    measurement.breakPoints.find((point) => point.offset === startOffset)?.continuationGap ?? 0;
-  // 只取当前页能放下的最后一个断点，不为下一段首行或段间距预留空间
   const candidates = measurement.breakPoints.filter((point) => {
-    const height = point.height - startHeight - continuationGap;
+    const height = point.height - startHeight;
     return point.height > startHeight && height <= availableHeight;
   });
   return candidates[candidates.length - 1];
 };
 
 /** 查找当前偏移之后的第一个断点，用于空页强制推进内容 */
-const findNextBreakPoint = (
-  measurement: MeasuredNode,
-  startHeight: number,
-  startOffset: number,
-) => {
-  const continuationGap =
-    measurement.breakPoints.find((point) => point.offset === startOffset)?.continuationGap ?? 0;
-  return measurement.breakPoints.find(
-    (point) => point.height - startHeight - continuationGap > 0,
-  );
-};
+const findNextBreakPoint = (measurement: MeasuredNode, startHeight: number) =>
+  measurement.breakPoints.find((point) => point.height > startHeight);
 
 /**
  * 按节点顺序进行单栏贪心分页。
@@ -144,10 +131,7 @@ export const paginateFlow = ({
     currentPage = {
       pageIndex: nextPageIndex,
       usedHeight: 0,
-      availableHeight: Math.max(
-        0,
-        availableHeightByPage?.(nextPageIndex) ?? safeAvailableHeight,
-      ),
+      availableHeight: Math.max(0, availableHeightByPage?.(nextPageIndex) ?? safeAvailableHeight),
       items: [],
     };
   };
@@ -187,32 +171,27 @@ export const paginateFlow = ({
     let consumedBlocks = 0;
     // 标题已经单独留在当前页后，正文分片不再重复携带标题
     let titlePlaced = false;
+    // 续段渲染会去掉内容容器上内边距，分页高度按同一口径扣减，避免高估续段占用
+    const droppedTopPadding = measurement.droppedPadding?.top ?? 0;
+
     while (consumedHeight < fullHeight || (fullHeight === 0 && consumedHeight === 0)) {
       const isFirst = consumedHeight === 0;
-      const continuationGap =
-        measurement.breakPoints.find((point) => point.offset === consumedOffset)
-          ?.continuationGap ?? 0;
-      // 只扣除续页重复的段间距，行数不预留，当前页能放下的文字继续放入
-      const remainingHeight = Math.max(0, fullHeight - consumedHeight - continuationGap);
+      const remainingHeight = Math.max(0, fullHeight - consumedHeight);
       // 标题是独立的一行：跟随内容首片，若首片放不下则单独留在当前页
       const withTitle = isFirst && !titlePlaced;
       const title = withTitle ? titleHeight : 0;
       const wholeFragmentHeight = title + remainingHeight;
-      const wholeFragmentKind: FlowFragmentKind = isFirst
-        ? "single"
-        : "last";
+      const wholeFragmentKind: FlowFragmentKind = isFirst ? "single" : "last";
       const wholeFragment: FlowPageItem = {
         fragmentId: `${node.id}:${wholeFragmentKind}:${consumedOffset}:${contentEnd}`,
         nodeId: node.id,
         sourceModuleKey: node.sourceModuleKey,
         titleNodeId: withTitle ? node.title?.id : undefined,
         fragment: wholeFragmentKind,
-        height: Math.max(0, wholeFragmentHeight),
+        height: Math.max(0, wholeFragmentHeight - (isFirst ? 0 : droppedTopPadding)),
         payload: node.payload,
         titlePayload: withTitle ? node.title?.payload : undefined,
-        contentRange: contentEnd
-          ? { start: consumedOffset, end: contentEnd }
-          : undefined,
+        contentRange: contentEnd ? { start: consumedOffset, end: contentEnd } : undefined,
         blockRange: blockCount ? { start: consumedBlocks, end: blockCount } : undefined,
       };
 
@@ -263,9 +242,9 @@ export const paginateFlow = ({
         getCurrentAvailableHeight() - currentPage.usedHeight - nodeGap - title,
       );
       const breakPoint =
-        findBestBreakPoint(measurement, consumedHeight, consumedOffset, availableForContent) ||
+        findBestBreakPoint(measurement, consumedHeight, availableForContent) ||
         (currentPage.items.length === 0
-          ? findNextBreakPoint(measurement, consumedHeight, consumedOffset)
+          ? findNextBreakPoint(measurement, consumedHeight)
           : undefined);
 
       if (!breakPoint) {
@@ -281,9 +260,8 @@ export const paginateFlow = ({
 
       const fragmentKind: FlowFragmentKind = isFirst ? "first" : "middle";
       const fragmentHeight =
-        title +
-        Math.max(0, breakPoint.height - consumedHeight - continuationGap);
-      // 正文未结束时保留最后一个正文块供续页渲染，完成正文后再消费全部结构块
+        title + Math.max(0, breakPoint.height - consumedHeight) - (isFirst ? 0 : droppedTopPadding);
+      // 块断点只覆盖块（不含正文区间），字符断点覆盖剩余全部块 + 正文区间
       const isBlockPoint = typeof breakPoint.blockEnd === "number";
       const nextBlocks = isBlockPoint ? Number(breakPoint.blockEnd) : blockCount;
       const consumedBlockEnd =

@@ -24,9 +24,13 @@ const emit = defineEmits<{
 }>();
 
 const getNode = (fragment: FragmentPlan) => props.nodes.get(fragment.sourceNodeId);
-// 同一节点的续段之间不留模块间距，让分片在页面上连成一块，与分页高度口径一致
-const getGapTop = (fragment: FragmentPlan, index: number) =>
-  index === 0 || fragment.fragment === "middle" || fragment.fragment === "last" ? 0 : props.gap;
+// 模块间距只作用于不同模块，同一模块内的条目间距由内容样式控制
+const getGapTop = (fragment: FragmentPlan, index: number) => {
+  if (index === 0 || fragment.fragment === "middle" || fragment.fragment === "last") return 0;
+  return props.column.fragments[index - 1]?.sourceModuleKey === fragment.sourceModuleKey
+    ? 0
+    : props.gap;
+};
 // 同一模块的连续分片归为一组：高亮轮廓按模块整体绘制，避免一个模块出现多个独立框
 const fragmentGroups = computed(() => {
   const groups: Array<{
