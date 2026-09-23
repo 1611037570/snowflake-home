@@ -307,12 +307,12 @@ const itemContentSpacingStyle = computed(() => {
           :href="safeUrl(nodePayload.item.url)"
           target="_blank"
           rel="noopener noreferrer"
-          class="hover:underline"
+          class="block text-center hover:underline"
           :class="{ underline: linkUnderline }"
         >
           {{ nodePayload.item.name || nodePayload.item.url }}
         </a>
-        <span v-else-if="nodePayload.item?.name">{{ nodePayload.item.name }}</span>
+        <span v-else-if="nodePayload.item?.name" class="block text-center">{{ nodePayload.item.name }}</span>
         <span v-if="nodePayload.item?.desc">{{ nodePayload.item.desc }}</span>
       </div>
     </ModuleContentContainer>
