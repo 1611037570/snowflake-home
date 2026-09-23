@@ -70,12 +70,11 @@ export const measureLayoutNodes = (
           .filter((point) => Number.isFinite(point.height) && point.height > 0)
       : [];
 
-    // 续段装饰会去掉上内边距（中段同时去掉下内边距），分页估算续段高度时需扣除，才能与真实渲染一致
+    // 续段会去掉顶部占位和内容上内边距，测量分页高度时一并扣除
     const style = getComputedStyle(blockHost ?? element);
-    const droppedPadding = {
-      top: Number.parseFloat(style.paddingTop) || 0,
-      bottom: Number.parseFloat(style.paddingBottom) || 0,
-    };
+    const leadingGap = element.querySelector<HTMLElement>("[data-layout-leading-gap]");
+    const droppedTopSpacing =
+      (Number.parseFloat(style.paddingTop) || 0) + (leadingGap ? readRect(leadingGap, scale).height : 0);
 
     result.set(node.id, {
       nodeId: node.id,
@@ -83,7 +82,7 @@ export const measureLayoutNodes = (
       fullHeight: rect.height,
       minHeight: Math.max(rect.height, node.breakPolicy.minHeight || 0),
       breakPoints: [...blockBreakPoints, ...breakPoints],
-      droppedPadding,
+      droppedTopSpacing,
     });
   });
 

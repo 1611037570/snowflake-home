@@ -145,6 +145,7 @@ const itemContentSpacingStyle = computed(() => {
       class="shrink-0"
       :class="{ 'resume-debug-paragraph-gap': showDebug }"
       :style="paragraphSpacingStyle"
+      data-layout-leading-gap
     />
     <ModuleContentContainer
       v-if="richTextHtml"
@@ -170,6 +171,7 @@ const itemContentSpacingStyle = computed(() => {
       class="shrink-0"
       :class="{ 'resume-debug-paragraph-gap': showDebug }"
       :style="paragraphSpacingStyle"
+      data-layout-leading-gap
     />
     <ModuleContentContainer
       :style="fragmentContentStyle"
@@ -241,6 +243,7 @@ const itemContentSpacingStyle = computed(() => {
         class="shrink-0"
         :class="{ 'resume-debug-paragraph-gap': showDebug }"
         :style="paragraphSpacingStyle"
+        data-layout-leading-gap
       />
       <ResumeField :model-value="richTextHtml" html />
     </div>
@@ -253,6 +256,7 @@ const itemContentSpacingStyle = computed(() => {
         class="shrink-0"
         :class="{ 'resume-debug-paragraph-gap': showDebug }"
         :style="paragraphSpacingStyle"
+        data-layout-leading-gap
       />
       <div class="flex max-w-full min-w-0 items-center">
         <span v-if="item.name" class="shrink-0 whitespace-nowrap">
@@ -283,6 +287,7 @@ const itemContentSpacingStyle = computed(() => {
         class="shrink-0"
         :class="{ 'resume-debug-paragraph-gap': showDebug }"
         :style="paragraphSpacingStyle"
+        data-layout-leading-gap
       />
       <div
         class="inline-flex rounded-xl px-3 py-2"
@@ -304,16 +309,21 @@ const itemContentSpacingStyle = computed(() => {
       class="shrink-0"
       :class="{ 'resume-debug-paragraph-gap': showDebug }"
       :style="paragraphSpacingStyle"
+      v-if="showParagraphGap"
+      data-layout-leading-gap
     />
-    <ModuleContentContainer>
+    <ModuleContentContainer
+      :data-layout-block-range="nodePayload.mediaType === 'video' ? '' : undefined"
+      :style="contentOuterStyle"
+    >
       <template v-if="nodePayload.mediaType === 'video'">
         <!-- 视频作品保留原始网址文本，避免显示为作品名称。 -->
-        <div class="flex h-auto max-w-full min-w-0 flex-wrap items-center justify-between gap-3">
-          <div class="min-w-0 flex-1" :style="[fontValue()]">
+        <div
+          v-if="isBlockVisible(0)"
+          class="flex h-auto max-w-full min-w-0 flex-wrap items-center justify-between gap-3"
+        >
+          <div class="min-w-0 flex-1" :style="fontValue()">
             <ItemTitle v-if="nodePayload.item?.name" :name="nodePayload.item.name" />
-            <div v-if="nodePayload.item?.desc" :style="innerSpacingStyle">
-              <ResumeField :model-value="nodePayload.item.desc" />
-            </div>
           </div>
           <div v-if="safeUrl(nodePayload.item?.url)" class="max-w-[45%] min-w-0 shrink-0 text-right">
             <a
@@ -327,27 +337,36 @@ const itemContentSpacingStyle = computed(() => {
             </a>
           </div>
         </div>
+        <div
+          v-if="nodePayload.item?.desc && isBlockVisible(1)"
+          :style="decoration === 'middle' || decoration === 'bottom' ? undefined : innerSpacingStyle"
+        >
+          <ResumeField :model-value="nodePayload.item.desc" />
+        </div>
       </template>
       <template v-else>
         <div class="flex flex-col gap-3" :style="mediaWidthStyle">
           <img
-            v-if="nodePayload.item?.img"
+            v-if="nodePayload.item?.img && isBlockVisible(0)"
             :src="nodePayload.item.img"
             :alt="nodePayload.item.name || ''"
             class="max-w-full"
           />
           <a
-            v-if="safeUrl(nodePayload.item?.url)"
+            v-if="safeUrl(nodePayload.item?.url) && isBlockVisible(1)"
             :href="safeUrl(nodePayload.item.url)"
             target="_blank"
             rel="noopener noreferrer"
             class="block text-center hover:underline"
             :class="{ underline: linkUnderline }"
-          >
+            >
             {{ nodePayload.item.name || nodePayload.item.url }}
           </a>
-          <span v-else-if="nodePayload.item?.name" class="block text-center">{{ nodePayload.item.name }}</span>
-          <span v-if="nodePayload.item?.desc">{{ nodePayload.item.desc }}</span>
+          <span
+            v-else-if="nodePayload.item?.name && isBlockVisible(1)"
+            class="block text-center"
+          >{{ nodePayload.item.name }}</span>
+          <span v-if="nodePayload.item?.desc && isBlockVisible(2)">{{ nodePayload.item.desc }}</span>
         </div>
       </template>
     </ModuleContentContainer>
