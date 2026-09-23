@@ -195,8 +195,12 @@ export const paginateFlow = ({
             getCurrentAvailableHeight();
       if (wholeFragmentFits && tryAddItem(wholeFragment, !isFirst)) break;
 
-      // 标题不跟着正文换页：首段放不下时先把标题留在当前页，正文顺延到下一页
-      if (withTitle && node.title && currentPage.items.length > 0 && !canSplit) {
+      /** 标题不跟着正文换页：正文放不下时先把标题留在当前页，正文顺延到下一页 */
+      const placeTitle = () => {
+        if (!withTitle || !node.title || currentPage.items.length === 0) return false;
+        if (currentPage.usedHeight + safeGap + titleHeight > getCurrentAvailableHeight()) {
+          return false;
+        }
         const titleItem: FlowPageItem = {
           fragmentId: `${node.id}:title:${node.title.id}`,
           nodeId: node.id,
@@ -207,17 +211,16 @@ export const paginateFlow = ({
           payload: node.payload,
           titlePayload: node.title.payload,
         };
-        if (currentPage.usedHeight + safeGap + titleHeight <= getCurrentAvailableHeight()) {
-          if (tryAddItem(titleItem, false)) {
-            titlePlaced = true;
-            continue;
-          }
-        }
-      }
+        if (!tryAddItem(titleItem, false)) return false;
+        titlePlaced = true;
+        return true;
+      };
 
       // 不可拆节点或没有可用断点时，当前页放不下就换页，空页则允许溢出。
       if (!canSplit) {
         if (currentPage.items.length > 0) {
+          // 标题不跟着正文换页：正文放不下时先把标题留在当前页
+          if (placeTitle()) continue;
           pushPage();
           continue;
         }
@@ -238,6 +241,8 @@ export const paginateFlow = ({
 
       if (!breakPoint) {
         if (currentPage.items.length > 0) {
+          // 正文放不下时同样先把标题留在当前页
+          if (placeTitle()) continue;
           pushPage();
           continue;
         }
@@ -252,11 +257,11 @@ export const paginateFlow = ({
         fragmentId: `${node.id}:${fragmentKind}:${consumedOffset}:${breakPoint.offset}`,
         nodeId: node.id,
         sourceModuleKey: node.sourceModuleKey,
-        titleNodeId: isFirst ? node.title?.id : undefined,
+        titleNodeId: isFirst && !titlePlaced ? node.title?.id : undefined,
         fragment: fragmentKind,
         height: fragmentHeight,
         payload: node.payload,
-        titlePayload: isFirst ? node.title?.payload : undefined,
+        titlePayload: isFirst && !titlePlaced ? node.title?.payload : undefined,
         contentRange: {
           start: consumedOffset,
           end: breakPoint.offset,
