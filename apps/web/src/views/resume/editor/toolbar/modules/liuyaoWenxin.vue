@@ -55,16 +55,30 @@ onUnmounted(stopBreathing);
 </script>
 
 <template>
-  <!-- 调试模式下的六爻问心入口：同 QA 样式圆形图标，位于 QA 下方 -->
+  <!-- 调试模式下的六爻问心入口：展示易经第64卦未济，位于 QA 下方 -->
   <div v-if="system.showDebug" class="absolute -bottom-24 left-1/2 -translate-x-1/2">
     <SfTooltip content="六爻问心" placement="left">
-      <SfIcon
-        icon="mdi:yin-yang"
-        size="5"
-        boxSize="10"
-        class="relative cursor-pointer rounded-full bg-gradient-to-br from-sf-theme to-sf-theme-2 text-sf-theme-text"
+      <div
+        class="relative flex h-10 w-10 cursor-pointer flex-col items-center justify-evenly text-sf-theme-text"
         @click="visible = true"
-      />
+      >
+        <!-- 未济卦象：离上坎下，六爻自上而下阴阳交错 -->
+        <span class="h-1 w-7 rounded-sm bg-sf-theme" />
+        <span class="flex w-7 gap-3">
+          <span class="h-1 flex-1 rounded-sm bg-sf-theme" />
+          <span class="h-1 flex-1 rounded-sm bg-sf-theme" />
+        </span>
+        <span class="h-1 w-7 rounded-sm bg-sf-theme" />
+        <span class="flex w-7 gap-3">
+          <span class="h-1 flex-1 rounded-sm bg-sf-theme" />
+          <span class="h-1 flex-1 rounded-sm bg-sf-theme" />
+        </span>
+        <span class="h-1 w-7 rounded-sm bg-sf-theme" />
+        <span class="flex w-7 gap-3">
+          <span class="h-1 flex-1 rounded-sm bg-sf-theme" />
+          <span class="h-1 flex-1 rounded-sm bg-sf-theme" />
+        </span>
+      </div>
     </SfTooltip>
   </div>
 
