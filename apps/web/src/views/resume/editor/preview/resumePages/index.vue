@@ -231,8 +231,30 @@ const handleModuleMouseEnter = (key) => {
   clearPreviewSelection(key);
 };
 
-// 预览区上下移动模块：按整栏跨页顺序交换配置里的模块顺序；个人信息模块不参与交换
+// 左右移动：把当前布局物化为显式 pageLayout，并把模块移到相邻栏
+const moveModuleAcrossColumn = (moduleKey, columnId, direction) => {
+  const current = layout.value;
+  if (!current?.regions) return;
+  const regions = current.regions.map((region) => ({
+    ...region,
+    columns: region.columns.map((column) => ({ ...column, moduleKeys: [...column.moduleKeys] })),
+  }));
+  const region = regions.find((item) => item.columns.some((column) => column.id === columnId));
+  if (!region) return;
+  const index = region.columns.findIndex((column) => column.id === columnId);
+  const source = region.columns[index];
+  const target = region.columns[direction === "left" ? index - 1 : index + 1];
+  if (!source || !target) return;
+  source.moduleKeys = source.moduleKeys.filter((key) => key !== moduleKey);
+  if (!target.moduleKeys.includes(moduleKey)) target.moduleKeys.push(moduleKey);
+  resumeStore.setPageLayout({ ...current, regions });
+};
+// 预览区移动模块：上下按整栏顺序交换配置，左右写入显式布局换栏
 const handleModuleMove = ({ moduleKey, direction, columnId }) => {
+  if (direction === "left" || direction === "right") {
+    moveModuleAcrossColumn(moduleKey, columnId, direction);
+    return;
+  }
   if (direction !== "up" && direction !== "down") return;
   const order = columnMoveContext.value.orderByColumn.get(columnId) ?? [];
   const index = order.indexOf(moduleKey);
@@ -313,7 +335,7 @@ defineExpose({ rootEl: rootRef, measureEl: rootRef, pages, pagePlan });
                 :style="{ gap: `${layoutColumnGap}px` }"
               >
                 <div
-                  v-for="column in region.columns"
+                  v-for="(column, columnIndex) in region.columns"
                   :key="column.columnId"
                   class="min-w-0"
                   :style="getColumnStyle(column.columnId)"
@@ -325,6 +347,8 @@ defineExpose({ rootEl: rootRef, measureEl: rootRef, pages, pagePlan });
                     :module-class-map="moduleClassMap"
                     :gap="getColumnGap(column.columnId)"
                     :move-directions="getColumnDirections(column.columnId)"
+                    :can-move-left="columnIndex > 0"
+                    :can-move-right="columnIndex < region.columns.length - 1"
                     @mouseenter="handleModuleMouseEnter"
                     @move="(payload) => handleModuleMove({ ...payload, columnId: column.columnId })"
                   />

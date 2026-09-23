@@ -13,6 +13,9 @@ const props = defineProps<{
   gap: number;
   /** 各模块可用的移动方向，由预览层按整栏跨页顺序计算 */
   moveDirections?: Record<string, { up: boolean; down: boolean }>;
+  /** 当前栏是否存在相邻栏位，决定左右移动是否可用 */
+  canMoveLeft?: boolean;
+  canMoveRight?: boolean;
 }>();
 const emit = defineEmits<{
   mouseenter: [moduleKey: string];
@@ -41,9 +44,19 @@ const fragmentGroups = computed(() => {
   });
   return groups;
 });
-// 移动方向：由预览层按整栏跨页顺序下发，缺省时不可用
-const getDirections = (group) =>
-  props.moveDirections?.[group.moduleKey] ?? { up: false, down: false, left: false, right: false };
+// 移动方向：上下由预览层按整栏跨页顺序下发，左右由相邻栏位决定；个人信息模块不参与移动
+const getDirections = (group) => {
+  if (group.moduleKey === "user") {
+    return { up: false, down: false, left: false, right: false };
+  }
+  const base = props.moveDirections?.[group.moduleKey] ?? { up: false, down: false };
+  return {
+    up: base.up,
+    down: base.down,
+    left: Boolean(props.canMoveLeft),
+    right: Boolean(props.canMoveRight),
+  };
+};
 // 上下移动交给上层按整栏顺序交换模块位置
 const handleMove = (moduleKey: string, direction: string) => {
   emit("move", { moduleKey, direction });
