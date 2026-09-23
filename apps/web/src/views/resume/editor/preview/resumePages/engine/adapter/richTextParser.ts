@@ -121,8 +121,8 @@ const sanitizeConfig = {
 
 /** 字符级兜底断点最多保留的采样数量，避免超长正文生成过大的测量树。 */
 const MAX_CHAR_BREAK_POINTS = 64;
-/** 字符级断点的最小步长：分页填充精度到几个字即可，过密会拖慢测量与缩略图渲染。 */
-const MIN_CHAR_BREAK_POINT_STEP = 4;
+/** 字符级断点最小步长：逐字采样，分片才能落在真实行尾，不会把整段从词中间切断；超长正文再按总数降密 */
+const MIN_CHAR_BREAK_POINT_STEP = 1;
 
 /** 读取节点分页偏移长度：文字和显式换行都占一个位置。 */
 const getLogicalLength = (node: Node): number => {
