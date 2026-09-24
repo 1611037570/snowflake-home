@@ -1,6 +1,7 @@
 import dayjs from "dayjs";
 import { defineStore } from "pinia";
 import { ref } from "vue";
+import { useMediaQuery } from "@vueuse/core";
 import version from "@/configs/modules/version";
 const start = "2020-09-03";
 export const useSystemStore = defineStore(
@@ -28,6 +29,8 @@ export const useSystemStore = defineStore(
     const currentVersion = ref(version);
     // 服务器连接状态
     const isConnected = ref<boolean>(false);
+    // 记录主要输入设备是否支持悬停。
+    const canHover = useMediaQuery("(hover: hover)");
 
     /**
      * 获取最新版本号
@@ -96,6 +99,7 @@ export const useSystemStore = defineStore(
       currentVersion,
       performanceMode,
       isConnected,
+      canHover,
       getVersion,
       checkVersionUpdate,
       // initVersion,
