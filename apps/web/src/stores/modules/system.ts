@@ -1,9 +1,10 @@
 import dayjs from "dayjs";
 import { defineStore } from "pinia";
-import { ref } from "vue";
+import { computed, ref } from "vue";
 import { useMediaQuery } from "@vueuse/core";
 import version from "@/configs/modules/version";
 const start = "2020-09-03";
+const MOBILE_WIDTH = 768;
 export const useSystemStore = defineStore(
   "system",
   () => {
@@ -23,6 +24,8 @@ export const useSystemStore = defineStore(
       width: window.innerWidth,
       height: window.innerHeight,
     });
+    // 按 Tailwind 默认中等屏幕断点记录移动端状态。
+    const isMobile = computed(() => Number(windowSize.value.width) < MOBILE_WIDTH);
     // 浏览器信息
     const browserInfo = ref();
     // 当前版本
@@ -95,6 +98,7 @@ export const useSystemStore = defineStore(
       monitorWatch,
       debugMode,
       windowSize,
+      isMobile,
       browserInfo,
       currentVersion,
       performanceMode,

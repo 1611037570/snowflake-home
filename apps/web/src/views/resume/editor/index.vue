@@ -69,9 +69,9 @@
 </template>
 
 <script setup>
-import { useResumeStore } from "@/stores";
+import { useResumeStore, useSystemStore } from "@/stores";
 import { SF_ICON_LIST_KEY } from "@/components/base/icon";
-import { onKeyStroke, useMediaQuery } from "@vueuse/core";
+import { onKeyStroke } from "@vueuse/core";
 import { storeToRefs } from "pinia";
 import { provide, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
@@ -91,7 +91,8 @@ import { PROJECT_ICON_LIST } from "./icons";
 
 const router = useRouter();
 const route = useRoute();
-const isMobile = useMediaQuery("(max-width: 767px)");
+const systemStore = useSystemStore();
+const { isMobile } = storeToRefs(systemStore);
 const mobilePanel = ref("preview");
 
 const resumeStore = useResumeStore();
