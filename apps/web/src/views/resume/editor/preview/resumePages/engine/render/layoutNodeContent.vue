@@ -140,6 +140,17 @@ const showParagraphGap = computed(
     props.decoration !== "middle" &&
     props.decoration !== "bottom",
 );
+// 间距占位统一在根层渲染，规则只此一处，各内容分支不再重复判断，避免新增分支漏写
+const showsLeadingGap = computed(() => {
+  if (!showParagraphGap.value) return false;
+  if (props.node.type === "richText") return Boolean(richTextHtml.value);
+  if (props.node.type === "media") return true;
+  if (props.node.type === "group") return isExperience.value;
+  if (props.node.type === "block") {
+    return props.node.sourceModuleKey === "account" || props.node.sourceModuleKey === "honor";
+  }
+  return false;
+});
 // 经历条目头部只在首段渲染，正文续段不再重复头部
 const showItemHeader = computed(() => !props.contentRange || props.contentRange.start === 0);
 // 正文与头部的间距只计在首段，续段紧接上文，与分页高度口径一致
@@ -150,14 +161,15 @@ const itemContentSpacingStyle = computed(() => {
 </script>
 
 <template>
+  <!-- 顶部间距占位统一在此渲染，各内容分支只渲染自身内容，避免规则重复与漏写 -->
+  <div
+    v-if="showsLeadingGap"
+    class="shrink-0"
+    :class="{ 'resume-debug-paragraph-gap': showDebug }"
+    :style="paragraphSpacingStyle"
+    data-layout-leading-gap
+  />
   <template v-if="node.type === 'richText'">
-    <div
-      v-if="richTextHtml && showParagraphGap"
-      class="shrink-0"
-      :class="{ 'resume-debug-paragraph-gap': showDebug }"
-      :style="paragraphSpacingStyle"
-      data-layout-leading-gap
-    />
     <ModuleContentContainer
       v-if="richTextHtml && hasContentBlock"
       :style="fragmentContentStyle"
@@ -178,13 +190,6 @@ const itemContentSpacingStyle = computed(() => {
   </template>
 
   <template v-else-if="node.type === 'group' && isExperience">
-    <div
-      v-if="showParagraphGap"
-      class="shrink-0"
-      :class="{ 'resume-debug-paragraph-gap': showDebug }"
-      :style="paragraphSpacingStyle"
-      data-layout-leading-gap
-    />
     <ModuleContentContainer
       v-if="hasContentBlock"
       :style="fragmentContentStyle"
@@ -265,13 +270,6 @@ const itemContentSpacingStyle = computed(() => {
 
   <template v-else-if="node.type === 'block'">
     <template v-if="node.sourceModuleKey === 'account'">
-      <div
-        v-if="showParagraphGap"
-        class="shrink-0"
-        :class="{ 'resume-debug-paragraph-gap': showDebug }"
-        :style="paragraphSpacingStyle"
-        data-layout-leading-gap
-      />
       <div class="flex max-w-full min-w-0 items-center">
         <span v-if="item.name" class="shrink-0 whitespace-nowrap">
           <ItemTitle :name="item.name" class="inline-block" />
@@ -298,13 +296,6 @@ const itemContentSpacingStyle = computed(() => {
     </template>
     <template v-else-if="node.sourceModuleKey === 'honor'">
       <div
-        v-if="showParagraphGap"
-        class="shrink-0"
-        :class="{ 'resume-debug-paragraph-gap': showDebug }"
-        :style="paragraphSpacingStyle"
-        data-layout-leading-gap
-      />
-      <div
         class="inline-flex rounded-xl px-3 py-2"
         :style="{
           backgroundColor: themeColorSoft,
@@ -319,14 +310,6 @@ const itemContentSpacingStyle = computed(() => {
   </template>
 
   <template v-else-if="node.type === 'media'">
-    <!-- 作品条目的段间距属于盒子外部留白，不绘制在内容盒背景和边框内。 -->
-    <div
-      class="shrink-0"
-      :class="{ 'resume-debug-paragraph-gap': showDebug }"
-      :style="paragraphSpacingStyle"
-      v-if="showParagraphGap"
-      data-layout-leading-gap
-    />
     <ModuleContentContainer
       v-if="hasContentBlock"
       data-layout-block-range
