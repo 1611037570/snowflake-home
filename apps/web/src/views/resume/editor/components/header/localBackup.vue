@@ -84,8 +84,8 @@ const backupState = computed(() => {
     };
   }
   return {
-    label: "等待首次备份",
-    icon: "bi:shield-exclamation",
+    label: "已开启",
+    icon: "bi:shield-check",
     class: "text-sf-text-2",
   };
 });
@@ -142,7 +142,11 @@ const handleBind = async () => {
     backupPath.value = "";
   } else {
     const name = await enableLocalBackup();
-    if (name) backupPath.value = name;
+    if (name) {
+      backupPath.value = name;
+      // 绑定后立即备份一次，不再等待简历内容变更
+      await doBackup();
+    }
   }
 };
 </script>
