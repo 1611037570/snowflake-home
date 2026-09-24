@@ -20,26 +20,42 @@ const expanded = ref(false);
 
 <template>
   <nav
-    class="relative z-30 flex shrink-0 items-center gap-1 self-center rounded-3xl border border-sf-b bg-sf-primary p-1"
-    :style="{ marginBottom: 'max(0.75rem, env(safe-area-inset-bottom))' }"
-    aria-label="简历工作区"
+    class="relative w-full"
+    :style="{ marginBottom: 'max(0.75rem,env(safe-area-inset-bottom))' }"
   >
-    <!-- 底部切换只控制编辑与预览面板。 -->
-    <button
-      v-for="option in panelOptions"
-      :key="option.value"
-      type="button"
-      class="flex h-8 w-18 items-center justify-center gap-1 rounded-2xl px-2 text-xs transition-colors"
-      :class="
-        props.activePanel === option.value ? 'bg-sf-theme text-sf-theme-text' : 'text-sf-text-2'
-      "
-      :aria-pressed="props.activePanel === option.value"
-      @click="emit('select', option.value)"
+    <div
+      class="relative z-30 mx-auto flex w-fit shrink-0 items-center gap-1 self-center rounded-3xl border border-sf-b bg-sf-primary p-1"
+      aria-label="简历工作区"
     >
-      <SfIcon :icon="option.icon" size="4" />
-      <span>{{ option.label }}</span>
+      <!-- 底部切换只控制编辑与预览面板。 -->
+      <button
+        v-for="option in panelOptions"
+        :key="option.value"
+        type="button"
+        class="flex h-8 w-18 items-center justify-center gap-1 rounded-2xl px-2 text-xs transition-colors"
+        :class="
+          props.activePanel === option.value ? 'bg-sf-theme text-sf-theme-text' : 'text-sf-text-2'
+        "
+        :aria-pressed="props.activePanel === option.value"
+        @click="emit('select', option.value)"
+      >
+        <SfIcon :icon="option.icon" size="4" />
+        <span>{{ option.label }}</span>
+      </button>
+    </div>
+
+    <button
+      type="button"
+      class="absolute top-1/2 right-3 z-50 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full border border-sf-b bg-sf-primary text-sf-text-2 shadow-md transition-colors hover:text-sf-theme"
+      :style="{ bottom: 'max(0.75rem, env(safe-area-inset-bottom))' }"
+      aria-label="打开右侧工具栏"
+      :aria-expanded="expanded"
+      @click="expanded = !expanded"
+    >
+      <SfIcon :icon="expanded ? 'lucide:x' : 'lucide:ellipsis-vertical'" size="5" />
     </button>
   </nav>
+
   <Transition name="mobile-toolbar-drawer">
     <div v-if="expanded" class="fixed inset-0 z-40 bg-black/20" @click="expanded = false">
       <aside
@@ -51,16 +67,6 @@ const expanded = ref(false);
       </aside>
     </div>
   </Transition>
-  <button
-    type="button"
-    class="fixed right-3 z-50 flex h-10 w-10 items-center justify-center rounded-full border border-sf-b bg-sf-primary text-sf-text-2 shadow-md transition-colors hover:text-sf-theme"
-    :style="{ bottom: 'max(0.75rem, env(safe-area-inset-bottom))' }"
-    aria-label="打开右侧工具栏"
-    :aria-expanded="expanded"
-    @click="expanded = !expanded"
-  >
-    <SfIcon :icon="expanded ? 'lucide:x' : 'lucide:ellipsis-vertical'" size="5" />
-  </button>
 </template>
 
 <style scoped>
