@@ -23,7 +23,7 @@ import {
   defaultTitleIconMode,
   defaultUserInfoLayout,
   defaultUserInfoMode,
-} from "@/stores/modules/resume/uiConfig";
+} from "@/stores/modules/resume/config/uiConfig";
 
 /** 简历主题配置（item.ui） */
 type ResumeUi = Record<string, any>;

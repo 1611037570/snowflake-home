@@ -2,7 +2,7 @@ import { mount } from "@vue/test-utils";
 import { describe, expect, it, vi } from "vitest";
 import EmptyState from "./index.vue";
 
-vi.mock("@/stores/modules/resume/defaultConfig", () => ({
+vi.mock("@/stores/modules/resume/config/defaultConfig", () => ({
   ALL_MODULE_KEY: "all",
 }));
 

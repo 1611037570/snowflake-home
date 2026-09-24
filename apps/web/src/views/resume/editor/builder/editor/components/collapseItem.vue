@@ -1,5 +1,5 @@
 <script setup>
-import { EXPANDED } from "@/stores/modules/resume/formConfig";
+import { EXPANDED } from "@/stores/modules/resume/config/formConfig";
 import { useFormContext } from "@/components/business/dynamicForm/api";
 import Icon from "../icon.vue";
 

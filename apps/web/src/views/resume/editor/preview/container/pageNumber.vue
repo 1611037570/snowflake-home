@@ -2,7 +2,7 @@
 import { computed } from "vue";
 import { storeToRefs } from "pinia";
 import { useResumeStore } from "@/stores";
-import { defaultFooter } from "@/stores/modules/resume/uiConfig";
+import { defaultFooter } from "@/stores/modules/resume/config/uiConfig";
 
 const resumeStore = useResumeStore();
 const { system, currentUI } = storeToRefs(resumeStore);

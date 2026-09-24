@@ -6,7 +6,7 @@ import { isUserCustomFieldKey } from "@/stores/modules/resume/hooks/useUserCusto
 import { getUserSubtitleKeys } from "@/stores/modules/resume/hooks/useUserSubtitle";
 import {
   getInfoSeparatorMark,
-} from "@/stores/modules/resume/uiConfig";
+} from "@/stores/modules/resume/config/uiConfig";
 import { getPreviewText } from "../../../i18n";
 import UserContactItem from "./userContactItem.vue";
 import { useUserFieldVisibility } from "../useUserFieldVisibility";

@@ -1,6 +1,6 @@
 // 引导式 AI 流程配置：点击建议卡片后，先通过预设问答收集信息，再发起真实请求
 import { useResumeStore } from "@/stores";
-import { DEFAULT_MODULE_NAMES } from "@/stores/modules/resume/defaultConfig";
+import { DEFAULT_MODULE_NAMES } from "@/stores/modules/resume/config/defaultConfig";
 import { interviewFlows } from "./interview/flows";
 import { interviewSuggestions } from "./interview/suggestions";
 import type { Flow, SuggestCard } from "./types";

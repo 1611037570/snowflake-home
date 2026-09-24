@@ -6,7 +6,7 @@ import { getUserSubtitleKeys } from "@/stores/modules/resume/hooks/useUserSubtit
 import { useUserFieldVisibility } from "../useUserFieldVisibility";
 import {
   getInfoSeparatorMark,
-} from "@/stores/modules/resume/uiConfig";
+} from "@/stores/modules/resume/config/uiConfig";
 import { useResumePreviewContext } from "../../../previewContext";
 
 // 副标题：渲染编辑器中标记的字段值，按标记序号在姓名下方并排展示

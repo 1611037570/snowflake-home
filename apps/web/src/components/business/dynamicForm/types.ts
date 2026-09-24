@@ -1,6 +1,6 @@
 /**
  * 动态表单配置 DSL 类型（对外契约）
- * 由 ./api 统一导出，业务侧配置（如 stores/modules/resume/formConfig.ts）import 使用
+ * 由 ./api 统一导出，业务侧配置（如 stores/modules/resume/config/formConfig.ts）import 使用
  */
 
 import type { Ref } from "vue";

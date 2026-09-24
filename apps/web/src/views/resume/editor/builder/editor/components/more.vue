@@ -2,7 +2,7 @@
 import { computed, nextTick } from "vue";
 import { useFormContext } from "@/components/business/dynamicForm/api";
 import { useResumeStore } from "@/stores";
-import { EXPANDED, MORE_CATEGORIES } from "@/stores/modules/resume/formConfig";
+import { EXPANDED, MORE_CATEGORIES } from "@/stores/modules/resume/config/formConfig";
 import { addUserCustomField } from "@/stores/modules/resume/hooks/useUserCustomField";
 import { getUUID } from "@/utils";
 import eventBus from "@/utils/modules/eventBus";

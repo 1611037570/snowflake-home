@@ -1,5 +1,5 @@
 import { getResumeParseLLM } from "@/apis";
-import { DEFAULT_MODULE_NAMES } from "@/stores/modules/resume/defaultConfig";
+import { DEFAULT_MODULE_NAMES } from "@/stores/modules/resume/config/defaultConfig";
 import type { ResumeModuleSchema } from "../editor/assistant/resumeSchema";
 import { RESUME_SCHEMA } from "../editor/assistant/resumeSchemaRegistry";
 import { resumeDataContract } from "../editor/assistant/skills/skill_resume_data_contract";

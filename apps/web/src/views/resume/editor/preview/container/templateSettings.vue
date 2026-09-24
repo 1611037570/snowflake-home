@@ -20,7 +20,7 @@ import {
   titleIconModeList,
   userInfoLayoutList,
   userInfoModeList,
-} from "@/stores/modules/resume/uiConfig";
+} from "@/stores/modules/resume/config/uiConfig";
 import ThemeColorPicker from "@/components/business/themeColorPicker/themeColorPicker.vue";
 
 const resumeStore = useResumeStore();

@@ -6,7 +6,7 @@ import {
   ALL_MODULE_ICON,
   ALL_MODULE_KEY,
   ALL_MODULE_NAME,
-} from "@/stores/modules/resume/defaultConfig";
+} from "@/stores/modules/resume/config/defaultConfig";
 import { useModuleNav } from "../../../useModuleNav";
 
 const resumeStore = useResumeStore();

@@ -1,7 +1,7 @@
 <script setup>
 import { useResumeStore } from "@/stores";
-import { allConfig } from "@/stores/modules/resume/formConfig";
-import { DEFAULT_MODULE_NAMES } from "@/stores/modules/resume/defaultConfig";
+import { allConfig } from "@/stores/modules/resume/config/formConfig";
+import { DEFAULT_MODULE_NAMES } from "@/stores/modules/resume/config/defaultConfig";
 import {
   bindCollapsedDefault,
   ensureRuntimeFieldIds,

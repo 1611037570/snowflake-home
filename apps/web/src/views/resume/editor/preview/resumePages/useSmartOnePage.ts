@@ -27,7 +27,7 @@ import {
   defaultParagraphSpacing,
   defaultTitleFontSize,
   uiParamRanges,
-} from "@/stores/modules/resume/uiConfig";
+} from "@/stores/modules/resume/config/uiConfig";
 
 /** 可被智能压缩的 ui 字段 */
 export type OnePageAdjustKey =

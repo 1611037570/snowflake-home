@@ -5,7 +5,7 @@ import { useResumeStore } from "@/stores";
 import SfSkeleton from "@/components/el/skeleton";
 import { storeToRefs } from "pinia";
 import { defineAsyncComponent } from "vue";
-import { RESUME_OPTIONS } from "@/stores/modules/resume/resumeOptions";
+import { RESUME_OPTIONS } from "@/stores/modules/resume/config/resumeOptions";
 import { useRuntimeData } from "../../hooks/useRuntimeData";
 import AddModule from "./components/addModule.vue";
 import ArchivedModules from "./components/archivedModules.vue";

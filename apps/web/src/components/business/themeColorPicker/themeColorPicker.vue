@@ -1,5 +1,5 @@
 <script setup>
-import { themeColors } from "@/stores/modules/resume/uiConfig";
+import { themeColors } from "@/stores/modules/resume/config/uiConfig";
 
 // 取色器面板是否挂载到 body；弹层内使用时改为内联渲染，避免面板交互被判定为弹层外部点击
 const props = defineProps({

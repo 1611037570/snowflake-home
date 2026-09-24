@@ -5,7 +5,7 @@ import {
   walkFormFields,
 } from "@/components/business/dynamicForm/api";
 import { useResumeStore } from "@/stores";
-import { allConfig } from "@/stores/modules/resume/formConfig";
+import { allConfig } from "@/stores/modules/resume/config/formConfig";
 import { getExportFileName, resumeTitle } from "../../resumeName";
 
 type FieldDefinition = { key: string; label: string };

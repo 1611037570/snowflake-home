@@ -1,6 +1,6 @@
 <script setup>
 import { computed, defineAsyncComponent, provide } from "vue";
-import { CUSTOM_MODULE_ICON, DEFAULT_MODULE_NAMES } from "@/stores/modules/resume/defaultConfig";
+import { CUSTOM_MODULE_ICON, DEFAULT_MODULE_NAMES } from "@/stores/modules/resume/config/defaultConfig";
 import { getPreviewTitle } from "../../i18n";
 import { useResumePreviewContext } from "../../previewContext";
 

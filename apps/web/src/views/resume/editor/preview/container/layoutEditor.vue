@@ -12,7 +12,7 @@ import {
   defaultPaddingVertical,
   defaultParagraphSpacing,
   uiParamRanges,
-} from "@/stores/modules/resume/uiConfig";
+} from "@/stores/modules/resume/config/uiConfig";
 import { RESUME_HEIGHT, RESUME_WIDTH } from "../constants";
 import { getPreviewTitle } from "../i18n";
 import { buildLayoutNodes } from "../resumePages/engine/adapter/buildLayoutNodes";
