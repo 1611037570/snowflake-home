@@ -59,6 +59,12 @@ const richTextHtml = computed(() => {
   if (!parsed?.html) return "";
   return sliceRichTextHtml(parsed.html, props.contentRange?.start || 0, props.contentRange?.end);
 });
+// 描述按行拆分：分片只渲染自己区间内的文本，放不下的行移到下一页而不是整块被推走
+const slicedItemDesc = computed(() => {
+  const desc = String(nodePayload.value?.item?.desc || "");
+  if (!props.contentRange) return desc;
+  return desc.slice(props.contentRange.start, props.contentRange.end);
+});
 const isExperience = computed(
   () =>
     ["work", "project", "education"].includes(props.node.sourceModuleKey) ||
@@ -347,9 +353,10 @@ const itemContentSpacingStyle = computed(() => {
         </div>
         <div
           v-if="nodePayload.item?.desc && isBlockVisible(1)"
+          data-layout-split-lines
           :style="decoration === 'middle' || decoration === 'bottom' ? undefined : innerSpacingStyle"
         >
-          <ResumeField :model-value="nodePayload.item.desc" />
+          <ResumeField :model-value="slicedItemDesc" />
         </div>
       </template>
       <template v-else>

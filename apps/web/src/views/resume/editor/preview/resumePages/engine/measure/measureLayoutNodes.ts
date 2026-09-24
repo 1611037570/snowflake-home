@@ -26,6 +26,37 @@ const readRect = (element: HTMLElement, scale: number) => {
 };
 
 /**
+ * 采集纯文本容器每一行的结束偏移（相对容器文本起点）与行底边。
+ * 用于让描述类文本按行拆分：放不下的行移到下一页，而不是整块被推走
+ */
+const collectLineEndOffsets = (element: HTMLElement) => {
+  const walker = element.ownerDocument.createTreeWalker(element, NodeFilter.SHOW_TEXT);
+  const textNode = walker.nextNode() as Text | null;
+  const text = textNode?.textContent || "";
+  if (!textNode || !text) return [];
+  const range = document.createRange();
+  const result: Array<{ offset: number; bottom: number }> = [];
+  let currentTop: number | null = null;
+  let currentBottom = 0;
+  for (let index = 0; index < text.length; index += 1) {
+    range.setStart(textNode, index);
+    range.setEnd(textNode, index + 1);
+    const rects = range.getClientRects();
+    const rect = rects[rects.length - 1];
+    if (!rect) continue;
+    // 字符落到新的一行时，上一个字符的位置就是上一行的行尾偏移
+    if (currentTop !== null && rect.top > currentTop + 0.5) {
+      result.push({ offset: index, bottom: currentBottom });
+    }
+    currentTop = rect.top;
+    currentBottom = rect.bottom;
+  }
+  // 最后一行同样是一个可拆分点
+  if (currentTop !== null) result.push({ offset: text.length, bottom: currentBottom });
+  return result.filter((line, index, list) => index === 0 || line.offset > list[index - 1].offset);
+};
+
+/**
  * 从测量宿主读取节点高度和语义断点。
  * 该函数只读取 DOM，不改变节点、不执行分页，也不依赖业务模块名称。
  */
@@ -80,6 +111,8 @@ export const measureLayoutNodes = (
             type: "block" as const,
             height: (child.getBoundingClientRect().bottom - nodeTop) / scale,
             blockEnd: index + 1,
+            // 续段落在页首时渲染层会去掉该块的上外边距，这里上报供分页同步扣除
+            leadingMargin: Number.parseFloat(getComputedStyle(child).marginTop) || 0,
           }))
           .filter((point) => Number.isFinite(point.height) && point.height > 0)
       : [];
@@ -89,12 +122,27 @@ export const measureLayoutNodes = (
     const style = getComputedStyle(blockHost ?? element);
     const droppedTopSpacing = Number.parseFloat(style.paddingTop) || 0;
 
+    // 行级断点：声明了按行拆分的纯文本容器（如媒体描述）逐行上报偏移，
+    // 分页据此只把放不下的行移到下一页；探针内的副本要排除，否则偏移会重复
+    const lineBreakPoints = Array.from(
+      element.querySelectorAll<HTMLElement>("[data-layout-split-lines]"),
+    )
+      .filter((text) => !text.closest(".layout-measure-breakpoint"))
+      .flatMap((text) =>
+        collectLineEndOffsets(text).map((line) => ({
+          offset: line.offset,
+          type: "textRange" as const,
+          height: (line.bottom - nodeTop) / scale,
+        })),
+      )
+      .filter((point) => Number.isFinite(point.offset) && point.height > 0);
+
     result.set(node.id, {
       nodeId: node.id,
       width: rect.width,
       fullHeight: rect.height,
       minHeight: Math.max(rect.height, node.breakPolicy.minHeight || 0),
-      breakPoints: [...gapBreakPoints, ...blockBreakPoints, ...breakPoints],
+      breakPoints: [...gapBreakPoints, ...blockBreakPoints, ...breakPoints, ...lineBreakPoints],
       droppedTopSpacing,
     });
   });
