@@ -65,7 +65,7 @@ const activeMenu = computed(() => menuList.value[activeIndex.value] || menuList.
     :min="360"
     :max="500"
     position="right"
-    class="relative flex h-full flex-col py-3"
+    class="mobile-resume-builder relative flex h-full flex-col py-3"
   >
     <SfTab
       :list="menuList"
@@ -118,5 +118,17 @@ const activeMenu = computed(() => menuList.value[activeIndex.value] || menuList.
 .tab-slide-left-leave-to {
   transform: translateX(24px);
   opacity: 0;
+}
+</style>
+
+<style scoped>
+@media (max-width: 767px) {
+  :deep(.mobile-resume-builder) {
+    width: 100% !important;
+  }
+
+  :deep(.mobile-resume-builder > div:last-child) {
+    display: none;
+  }
 }
 </style>
