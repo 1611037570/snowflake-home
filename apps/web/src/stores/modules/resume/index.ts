@@ -11,6 +11,7 @@ import { debounce, isEqual, merge } from "lodash-es";
 import { createResumeStorage } from "./resumeStorage";
 import { createResumeLifecycle } from "./resumeLifecycle";
 import { createResumeEditor } from "./resumeEditor";
+import { createResumeHistory } from "./resumeHistory";
 import type { ResumeListItem } from "./resumeCatalog";
 export type DesensitizeLevel = "normal" | "strict";
 export type DesensitizeConfig = {
@@ -130,18 +131,6 @@ export const useResumeStore = defineStore(
       // 运行环境信息
       env: {} as Record<string, any>,
     });
-    // 撤销历史栈：每个元素为修改前的内容快照字符串（data/config/ui），撤销时解析还原
-    const undoStack = ref<string[]>([]);
-    // 重做历史栈：结构与撤销栈相同
-    const redoStack = ref<string[]>([]);
-    // 撤销历史最大条数
-    const maxHistory = 12;
-    // 恢复快照时跳过下次监听的标志（撤销/重做触发的响应式变化不应再入栈）
-    let skipNextWatch = false;
-    // 上一次的内容快照字符串（data/config/ui），作为撤销历史基准：每次内容变化时把这份基准入栈
-    let lastSnapshot: string | null = null;
-    // 历史记录开关：仅在编辑器初始化完成后由 Builder 开启，离开编辑器时关闭
-    const historyEnabled = ref(false);
     // 系统配置
     const system = ref(structuredClone(DEFAULT_SYSTEM));
     // 新增记录的默认折叠状态：由系统设置统一决定
@@ -201,6 +190,17 @@ export const useResumeStore = defineStore(
       applyResumeOperations,
       compactConfigFields,
     } = editor;
+    const history = createResumeHistory({ currentItem, refreshRuntime: editor.refreshRuntime });
+    const {
+      undoStack,
+      redoStack,
+      onContentChange,
+      resetHistoryBase,
+      enableHistory,
+      disableHistory,
+      undo,
+      redo,
+    } = history;
     // 深拷贝快照：先脱响应式代理再递归克隆，原始字符串直接复用引用，避免 JSON 中转大字段开销
     const deepClone = (value: any): any => {
       if (value == null) return value;
@@ -260,129 +260,9 @@ export const useResumeStore = defineStore(
       updateResumeAiChatSummary,
       clearResumeAiChatSummaries,
     } = lifecycle;
-    // 移除表单引擎渲染期补充的运行时 id（不参与内容差异比较）
-    const removeRuntimeIds = (value: any): any => {
-      if (Array.isArray(value)) {
-        return value.map(removeRuntimeIds);
-      }
-      if (value && typeof value === "object") {
-        return Object.fromEntries(
-          Object.entries(value)
-            .filter(([key]) => key !== "id")
-            .map(([key, item]) => [key, removeRuntimeIds(item)]),
-        );
-      }
-      return value;
-    };
-    // 序列化简历内容（排除 usage 与引擎补充的运行时 id），用于历史去重比较
-    const serializeForCompare = (item: any) => {
-      if (!item) return "";
-      return JSON.stringify({
-        data: item.data,
-        config: removeRuntimeIds(item.config),
-        ui: item.ui,
-      });
-    };
-    // 防抖写入撤销历史：把 300ms 内的连续编辑合并为一条，防抖到期后才真正入栈
-    const pushHistory = debounce((snapshot: string, resumeId: string) => {
-      const item = currentItem.value;
-      // 已切换简历则丢弃本次历史（避免旧简历内容记入新简历）
-      if (!item || !snapshot || item.id !== resumeId) return;
-      // 与栈顶内容相同则不重复记录
-      if (undoStack.value[undoStack.value.length - 1] === snapshot) return;
-      // 入栈内容快照字符串，撤销时解析还原，避免深拷贝整份简历
-      undoStack.value.push(snapshot);
-      // 超出上限丢最旧一条
-      if (undoStack.value.length > maxHistory) {
-        undoStack.value.shift();
-      }
-      // 出现新编辑后清空重做栈，避免前进到旧状态
-      redoStack.value = [];
-    }, 100);
     // 重置所有设置为默认值
     const resetSettings = () => {
       system.value = structuredClone(DEFAULT_SYSTEM);
-    };
-    // 防抖记录历史：连续编辑合并为一条，防抖到期后只对当前内容做一次序列化比较，不再深拷贝快照
-    const recordHistory = debounce((item: any) => {
-      const snapshot = serializeForCompare(item);
-      // 内容相对上次快照有变化才记录一条历史，避免 usage 时间戳等无关变化入栈
-      if (snapshot === lastSnapshot) return;
-      // 将修改前的内容快照作为历史（防抖合并后入栈）
-      pushHistory(lastSnapshot!, item?.id);
-      // 更新基准快照为当前内容，作为下次变化时的"修改前状态"
-      lastSnapshot = snapshot;
-    }, 300);
-    // 重置历史基准：取消防抖、清空历史栈并对齐当前简历快照（编辑器初始化完成后调用）
-    const resetHistoryBase = () => {
-      recordHistory.cancel();
-      pushHistory.cancel();
-      undoStack.value = [];
-      redoStack.value = [];
-      lastSnapshot = currentItem.value ? serializeForCompare(currentItem.value) : null;
-    };
-    // 开启历史记录：取消防抖等待并对齐当前简历快照（由 Builder 在同步完成后调用）
-    const enableHistory = () => {
-      recordHistory.cancel();
-      pushHistory.cancel();
-      lastSnapshot = currentItem.value ? serializeForCompare(currentItem.value) : null;
-      historyEnabled.value = true;
-    };
-    // 关闭历史记录：取消防抖等待、清空历史栈并暂停记录（离开编辑器时调用）
-    const disableHistory = () => {
-      recordHistory.cancel();
-      pushHistory.cancel();
-      undoStack.value = [];
-      redoStack.value = [];
-      lastSnapshot = null;
-      historyEnabled.value = false;
-    };
-    // 应用历史快照：只恢复内容字段（data/config/ui），保留 id 与 usage
-    const applySnapshot = (snapshot: string) => {
-      const item = currentItem.value;
-      if (!item) return;
-      const snapItem = JSON.parse(snapshot);
-      // 模块配置是否变化：仅增删模块或调整顺序时才需要重建运行时配置（重建会重排表单 key 导致整表重建）
-      const configChanged =
-        JSON.stringify(removeRuntimeIds(item.config)) !== JSON.stringify(snapItem.config);
-      // 恢复引发的响应式变化不应被记为新的历史，跳过下一次监听
-      skipNextWatch = true;
-      item.data = snapItem.data;
-      item.config = snapItem.config;
-      item.ui = snapItem.ui;
-      // 恢复后同步基准快照，保证下次编辑以恢复后的状态为历史基准
-      lastSnapshot = serializeForCompare(item);
-      // 内容类改动无需重建运行时配置，避免撤回时整表重建造成卡顿
-      if (configChanged) refreshRuntime();
-    };
-    // 撤回：当前状态入重做栈，再恢复撤销栈顶的修改前状态
-    const undo = () => {
-      // 先落库防抖等待中的历史，保证编辑后立即撤回也能生效
-      recordHistory.flush();
-      pushHistory.flush();
-      const item = currentItem.value;
-      if (!item || undoStack.value.length === 0) return;
-      // 当前状态保存进重做栈，供"前进"恢复
-      redoStack.value.push(serializeForCompare(item));
-      if (redoStack.value.length > maxHistory) {
-        redoStack.value.shift();
-      }
-      // 弹出并恢复最近一条历史快照
-      applySnapshot(undoStack.value.pop()!);
-    };
-    // 重做：与撤回对称，恢复重做栈顶的快照
-    const redo = () => {
-      // 先落库防抖等待中的历史，保证操作顺序一致
-      recordHistory.flush();
-      pushHistory.flush();
-      const item = currentItem.value;
-      if (!item || redoStack.value.length === 0) return;
-      // 当前状态保存进撤销栈，供再次"撤回"
-      undoStack.value.push(serializeForCompare(item));
-      if (undoStack.value.length > maxHistory) {
-        undoStack.value.shift();
-      }
-      applySnapshot(redoStack.value.pop()!);
     };
     const setFocusMode = (value: boolean) => {
       focusMode.value = value;
@@ -427,17 +307,7 @@ export const useResumeStore = defineStore(
         if (!item) return;
         // 内容变化写回 IndexedDB（内部防抖合并连续编辑）
         schedulePersistResume(item);
-        // 历史开关关闭时暂停记录（初始化、同步及离开编辑器期间的变更不入历史）
-        if (!historyEnabled.value) return;
-        // 撤销/重做恢复触发的变化：消费标志并跳过，避免恢复动作又入栈
-        if (skipNextWatch) {
-          skipNextWatch = false;
-          return;
-        }
-        // 尚未建立基准快照时忽略
-        if (!lastSnapshot) return;
-        // 防抖记录历史：序列化比较与深拷贝延迟到停顿后统一执行
-        recordHistory(item);
+        onContentChange(item);
       },
       { deep: true },
     );

@@ -254,6 +254,7 @@ export const createResumeEditor = ({
     currentConfig,
     runtimeConfig,
     runtimeFields,
+    refreshRuntime,
     setConfigFields,
     restoreConfig,
     currentUI,
