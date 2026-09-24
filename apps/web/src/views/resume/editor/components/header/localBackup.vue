@@ -37,9 +37,7 @@ const restoreBackupStatus = () => {
     return;
   }
   try {
-    const status = JSON.parse(
-      localStorage.getItem(getBackupStatusKey(resumeId, backupPath.value)),
-    );
+    const status = JSON.parse(localStorage.getItem(getBackupStatusKey(resumeId, backupPath.value)));
     backupStatus.value =
       status?.success === true ? "success" : status?.success === false ? "failed" : "";
     lastBackupTime.value = status?.time || "";
@@ -49,11 +47,7 @@ const restoreBackupStatus = () => {
   }
 };
 
-watch(
-  () => [currentItem.value?.id, backupPath.value],
-  restoreBackupStatus,
-  { immediate: true },
-);
+watch(() => [currentItem.value?.id, backupPath.value], restoreBackupStatus, { immediate: true });
 
 // 悬浮提示
 const tooltipContent = computed(() =>
@@ -169,13 +163,9 @@ const handleBind = async () => {
           <span class="text-sm text-sf-text-3">绑定位置</span>
           <span class="text-sm text-sf-text">{{ backupPath || "未绑定" }}</span>
         </div>
-        <el-button
-          class="w-full"
-          :type="localBackupEnabled ? 'danger' : 'primary'"
-          @click="handleBind"
-        >
+        <SfButton class="w-full" :type="localBackupEnabled ? 'error' : 'theme'" @click="handleBind">
           {{ localBackupEnabled ? "解绑" : "选择目录并绑定" }}
-        </el-button>
+        </SfButton>
       </div>
     </SfModal>
   </div>
