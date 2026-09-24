@@ -50,11 +50,11 @@ function handleCancel() {
 
 <template>
   <div
-    class="flex h-9 min-w-0 max-w-full cursor-pointer items-center gap-1 rounded-3xl p-3 hover:bg-sf-page hover:text-sf-theme md:max-w-[300px]"
+    class="flex h-9 max-w-full min-w-0 cursor-pointer items-center gap-1 rounded-3xl p-3 hover:bg-sf-page hover:text-sf-theme md:max-w-[300px]"
     @click="openModal"
   >
     <SfIcon icon="solar:pen-linear" class="shrink-0 hover:text-sf-theme-2" size="4" />
-    <div class="min-w-0 truncate text-auto text-sm">
+    <div class="text-auto hidden min-w-0 truncate text-sm md:flex">
       {{ title }}
     </div>
   </div>

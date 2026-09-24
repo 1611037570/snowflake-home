@@ -32,7 +32,7 @@ const activeNavIndex = computed(() => navList.findIndex((item) => route.path ===
 </script>
 
 <template>
-  <LoadingComponent v-if="!resumeReady" class="h-screen w-full" />
+  <LoadingComponent v-if="!resumeReady" class="h-svh w-full" />
   <router-view v-else-if="route.meta.hideResumeLayout" class="h-screen w-full" />
   <main v-else class="relative flex h-screen min-w-full flex-col bg-sf-page">
     <header
