@@ -11,7 +11,6 @@ import {
 } from "@/components/business/dynamicForm/api";
 import router from "@/routers";
 import { useAiStore } from "@/stores/modules/ai";
-import { getUUID } from "@/utils";
 import { defineStore } from "pinia";
 import { computed, ref, shallowRef, toRaw, watch } from "vue";
 import {
@@ -30,15 +29,10 @@ import {
 } from "./hooks/useConfigTemplate";
 import { debounce, isEqual, merge } from "lodash-es";
 import { createResumeStorage } from "./resumeStorage";
+import { createResumeLifecycle } from "./resumeLifecycle";
 import { executeResumeOperations, type ResumeWriteOp } from "./resumeOperations";
 import {
-  createResumeListItem,
-  removeAiChatSummaries,
-  removeResumeListItem,
-  setResumeDeletedAt,
-  type AiChatSummary,
   type ResumeListItem,
-  upsertAiChatSummary,
 } from "./resumeCatalog";
 export type DesensitizeLevel = "normal" | "strict";
 export type DesensitizeConfig = {
@@ -300,29 +294,6 @@ export const useResumeStore = defineStore(
     const setSelectedModules = (modules: any[]) => {
       selectedModule.value = modules;
     };
-    // 新增简历：jump 控制是否跳转编辑器，select 控制是否选中新简历
-    const addResume = (config: any, jump = true, select = true) => {
-      if (resumeList.value.length >= maxCount) {
-        confirm(`请前往我的简历管理删除后再新建。`, "容量已满").then(() => {
-          router.push("/resume/mine");
-        });
-        return false;
-      }
-      const res = config ? mergeResumeItem(config) : structuredClone(DEFAULT_RESUME_ITEM);
-      // 持久化只保留模块 key，完整 schema 由运行时按模板展开
-      setConfigFields(res, compactConfigFields(res.config.fields));
-      // 每次新增都重新生成唯一ID，避免多份简历共用一个ID
-      res.id = getUUID().slice(0, 6);
-      // 新简历使用独立 IndexedDB key 保存完整对象
-      const storage = getResumeStorage(res.id, res, true);
-      resumeRecords.value.push(storage.data.value);
-      list.value.unshift(createResumeListItem(res.id));
-      if (select) {
-        currentIndex.value = resumeList.value.length - 1;
-        if (jump) router.push({ path: "/resume/editor", query: { id: res.id } });
-      }
-      return true;
-    };
     // 深拷贝快照：先脱响应式代理再递归克隆，原始字符串直接复用引用，避免 JSON 中转大字段开销
     const deepClone = (value: any): any => {
       if (value == null) return value;
@@ -341,17 +312,6 @@ export const useResumeStore = defineStore(
         result[key] = deepClone(raw[key]);
       }
       return result;
-    };
-    // 深拷贝指定简历（缺省为当前简历）并创建独立的新简历
-    const duplicateResume = (item?: any) => {
-      const source = item ?? currentItem.value;
-      if (!source) return false;
-      const copy = deepClone(source);
-      const now = Date.now();
-      copy.usage = { ...copy.usage, createTime: now, lastUseTime: now };
-      const currentCount = resumeList.value.length;
-      if (!addResume(copy, false, false)) return "";
-      return resumeList.value[currentCount]?.id || "";
     };
     // 所有数组模块统一将记录存放在 list
     const resolveModuleRecords = (module: any): any[] | null => {
@@ -499,92 +459,46 @@ export const useResumeStore = defineStore(
         updateRecordField,
       });
     }
-    // 删除简历：移入回收站（回收站已满时阻止并提示）
-    const deleteResume = () => {
-      if (currentIndex.value == -1) {
-        return;
-      }
-      // 回收站已满：阻止删除并提示先清理回收站
-      if (trashList.value.length >= maxTrashCount) {
-        confirm("回收站已满，请先清理回收站后再删除。", "回收站已满");
-        return;
-      }
-      // 保留同一份完整简历数据，仅通过索引移动到回收站
-      const deletedItem = resumeList.value[currentIndex.value];
-      const entry = list.value.find((item) => item.id === deletedItem?.id);
-      if (!entry) return;
-      list.value[list.value.indexOf(entry)] = setResumeDeletedAt(entry, Date.now());
-      useAiStore().clearCurrentResumeAssistantChat(deletedItem.id);
-      currentIndex.value = -1;
-    };
-    // 从回收站恢复简历
-    const restoreResume = (trashIndex: number) => {
-      if (trashIndex < 0 || trashIndex >= trashList.value.length) return;
-      if (resumeList.value.length >= maxCount) {
-        ElMessage.warning(`简历数量已达到上限（${maxCount}个），请先删除其他简历。`);
-        return;
-      }
-      const item = trashList.value[trashIndex];
-      const entry = list.value.find((value) => value.id === item?.id);
-      const resume = resumeRecords.value.find((value) => value.id === item?.id);
-      if (!entry || !resume) return;
-      list.value[list.value.indexOf(entry)] = setResumeDeletedAt(entry, null);
-    };
-    // 永久删除回收站中的简历
-    const permanentlyDeleteResume = async (trashIndex: number) => {
-      if (trashIndex < 0 || trashIndex >= trashList.value.length) return;
-      const item = trashList.value[trashIndex];
-      await useAiStore().removeResumeAssistantChats(item.id);
-      list.value = removeResumeListItem(list.value, item.id);
-      resumeRecords.value = resumeRecords.value.filter((resume) => resume.id !== item.id);
-      await removeResumeStorage(item.id);
-    };
-    // 清空回收站内全部简历。
-    const clearTrash = async () => {
-      const ids = trashList.value.map((item) => item.id);
-      for (const id of ids) {
-        await useAiStore().removeResumeAssistantChats(id);
-        await removeResumeStorage(id);
-      }
-      list.value = list.value.filter((entry) => !ids.includes(entry.id));
-      resumeRecords.value = resumeRecords.value.filter((item) => !ids.includes(item.id));
-    };
-    // 清理回收站中超过保留天数的简历（每次进入简历页时调用）
-    const cleanExpiredTrash = async () => {
-      const now = Date.now();
-      const expiredIds = list.value
-        .filter((item) => item.deletedAt !== null && now - item.deletedAt >= trashRetentionMs)
-        .map((item) => item.id);
-      for (const id of expiredIds) {
-        await useAiStore().removeResumeAssistantChats(id);
-        await removeResumeStorage(id);
-      }
-      if (!expiredIds.length) return;
-      list.value = list.value.filter((item) => !expiredIds.includes(item.id));
-      resumeRecords.value = resumeRecords.value.filter((item) => !expiredIds.includes(item.id));
-    };
-    // 计算回收站简历剩余保留天数（0 表示即将清理）
-    const getTrashRemainingDays = (item: any) => {
-      const deletedAt = item?._deletedAt || 0;
-      if (!deletedAt) return 0;
-      const remaining = trashRetentionMs - (Date.now() - deletedAt);
-      return remaining <= 0 ? 0 : Math.ceil(remaining / (24 * 60 * 60 * 1000));
-    };
-    const updateResumeAiChatSummary = async (resumeId: string, summary: AiChatSummary) => {
-      const index = list.value.findIndex((item) => item.id === resumeId);
-      const item = list.value[index];
-      if (!item || item.deletedAt !== null) return false;
-      list.value[index] = upsertAiChatSummary(item, summary);
-      return true;
-    };
-    const clearResumeAiChatSummaries = async (resumeId: string) => {
-      const index = list.value.findIndex((item) => item.id === resumeId);
-      const item = list.value[index];
-      if (!item) return [] as string[];
-      const ids = item.ai.map((chat) => chat.id);
-      list.value[index] = removeAiChatSummaries(item);
-      return ids;
-    };
+    const lifecycle = createResumeLifecycle({
+      list,
+      resumeRecords,
+      resumeList,
+      trashList,
+      currentIndex,
+      maxCount,
+      maxTrashCount,
+      trashRetentionMs,
+      defaultResumeItem: DEFAULT_RESUME_ITEM,
+      getResumeStorage,
+      removeResumeStorage,
+      setConfigFields,
+      compactConfigFields,
+      deepClone,
+      clearCurrentAssistantChat: (resumeId) =>
+        useAiStore().clearCurrentResumeAssistantChat(resumeId),
+      removeAssistantChats: (resumeId) => useAiStore().removeResumeAssistantChats(resumeId),
+      onResumeLimit: () => {
+        confirm(`请前往我的简历管理删除后再新建。`, "容量已满").then(() => {
+          router.push("/resume/mine");
+        });
+      },
+      onTrashLimit: () => confirm("回收站已满，请先清理回收站后再删除。", "回收站已满"),
+      onRestoreLimit: () => ElMessage.warning(`简历数量已达到上限（${maxCount}个），请先删除其他简历。`),
+      navigateToEditor: (resumeId) =>
+        router.push({ path: "/resume/editor", query: { id: resumeId } }),
+    });
+    const {
+      addResume,
+      duplicateResume,
+      deleteResume,
+      restoreResume,
+      permanentlyDeleteResume,
+      clearTrash,
+      cleanExpiredTrash,
+      getTrashRemainingDays,
+      updateResumeAiChatSummary,
+      clearResumeAiChatSummaries,
+    } = lifecycle;
     // 移除表单引擎渲染期补充的运行时 id（不参与内容差异比较）
     const removeRuntimeIds = (value: any): any => {
       if (Array.isArray(value)) {
@@ -715,8 +629,6 @@ export const useResumeStore = defineStore(
     const setGenerating = (val: boolean) => {
       isGenerating.value = val;
     };
-    const mergeResumeItem = (item: any) => merge(structuredClone(DEFAULT_RESUME_ITEM), item);
-
     // 从目录读取简历索引并加载对应的完整简历
     const init = () => {
       if (initPromise) return initPromise;
