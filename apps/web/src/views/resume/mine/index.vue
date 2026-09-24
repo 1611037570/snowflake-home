@@ -20,7 +20,7 @@ const TemplatePreview = markRaw(
 const router = useRouter();
 
 const resumeStore = useResumeStore();
-const { list, currentIndex } = storeToRefs(resumeStore);
+const { resumeList: list, currentIndex } = storeToRefs(resumeStore);
 const { maxCount, maxTrashCount } = resumeStore;
 const { proxy } = getCurrentInstance();
 

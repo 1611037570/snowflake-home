@@ -87,7 +87,7 @@ const { initResumeStatus, setFocusMode, cancelPrinting, cancelFittingOnePage } =
 const {
   currentIndex,
   focusMode,
-  list,
+  resumeList: list,
   currentUsage,
   isGenerating,
   isPrinting,
@@ -98,12 +98,14 @@ const {
 // 切换简历时清空上一个简历的模块选中状态
 watch(
   () => route.query.id,
-  (id) => {
+  async (id) => {
     // 根据路由参数定位当前编辑的简历
     if (!id) {
       router.push("/resume/mine");
       return;
     }
+    await resumeStore.init();
+    if (String(route.query.id || "") !== String(id)) return;
     const index = list.value.findIndex((item) => item.id === id);
     if (index == -1) {
       router.push("/resume/mine");

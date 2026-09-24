@@ -50,7 +50,7 @@ watch(visible, (value) => {
 });
 
 const open = () => {
-  if (resumeStore.list.length >= resumeStore.maxCount) {
+  if (resumeStore.resumeList.length >= resumeStore.maxCount) {
     ElMessage.warning(`简历数量已达上限（${resumeStore.maxCount}个），请先删除后再新建`);
     return;
   }
