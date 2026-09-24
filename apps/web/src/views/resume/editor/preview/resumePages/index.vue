@@ -358,6 +358,7 @@ defineExpose({ rootEl: rootRef, measureEl: rootRef, pages, pagePlan });
                 >
                   <LayoutColumn
                     :column="column"
+                    :page-index="page.pageIndex"
                     :nodes="nodeMap"
                     :is-edit="isEdit"
                     :show-debug="showLayoutDebug"

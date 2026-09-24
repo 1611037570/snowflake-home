@@ -32,7 +32,6 @@ const props = withDefaults(defineProps<Props>(), {
 
 const {
   theme: {
-    paragraphSpacingStyle,
     innerSpacingStyle,
     dateStyle,
     datePosition,
@@ -133,24 +132,7 @@ const fragmentContentStyle = computed(() => {
   }
   return base;
 });
-// 顶部间距占位：续段（中片/末片）不绘制；分片本身是该页第一个内容时也不绘制
-const showParagraphGap = computed(
-  () =>
-    !props.leadingOnPage &&
-    props.decoration !== "middle" &&
-    props.decoration !== "bottom",
-);
-// 间距占位统一在根层渲染，规则只此一处，各内容分支不再重复判断，避免新增分支漏写
-const showsLeadingGap = computed(() => {
-  if (!showParagraphGap.value) return false;
-  if (props.node.type === "richText") return Boolean(richTextHtml.value);
-  if (props.node.type === "media") return true;
-  if (props.node.type === "group") return isExperience.value;
-  if (props.node.type === "block") {
-    return props.node.sourceModuleKey === "account" || props.node.sourceModuleKey === "honor";
-  }
-  return false;
-});
+const spacerHeight = computed(() => Number(nodePayload.value?.height) || 0);
 // 经历条目头部只在首段渲染，正文续段不再重复头部
 const showItemHeader = computed(() => !props.contentRange || props.contentRange.start === 0);
 // 正文与头部的间距只计在首段，续段紧接上文，与分页高度口径一致
@@ -161,15 +143,15 @@ const itemContentSpacingStyle = computed(() => {
 </script>
 
 <template>
-  <!-- 顶部间距占位统一在此渲染，各内容分支只渲染自身内容，避免规则重复与漏写 -->
-  <div
-    v-if="showsLeadingGap"
-    class="shrink-0"
-    :class="{ 'resume-debug-paragraph-gap': showDebug }"
-    :style="paragraphSpacingStyle"
-    data-layout-leading-gap
-  />
-  <template v-if="node.type === 'richText'">
+  <template v-if="node.type === 'spacer'">
+    <div
+      v-if="!leadingOnPage"
+      class="shrink-0"
+      :class="{ 'resume-debug-paragraph-gap': showDebug }"
+      :style="{ height: `${spacerHeight}px` }"
+    />
+  </template>
+  <template v-else-if="node.type === 'richText'">
     <ModuleContentContainer
       v-if="richTextHtml && hasContentBlock"
       :style="fragmentContentStyle"
@@ -252,19 +234,12 @@ const itemContentSpacingStyle = computed(() => {
       </a>
     </div>
     <!-- 正文作为一个块：内部段落由字符区间切分，保证块序与测量层一致 -->
-    <div
-      v-if="!isContentEmpty(item.content) && isBlockVisible(bodyBlockIndex)"
-      :style="itemContentSpacingStyle"
-    >
       <div
-        v-if="!hasItemHeader && showParagraphGap"
-        class="shrink-0"
-        :class="{ 'resume-debug-paragraph-gap': showDebug }"
-        :style="paragraphSpacingStyle"
-        data-layout-leading-gap
-      />
-      <ResumeField :model-value="richTextHtml" html />
-    </div>
+        v-if="!isContentEmpty(item.content) && isBlockVisible(bodyBlockIndex)"
+        :style="itemContentSpacingStyle"
+      >
+        <ResumeField :model-value="richTextHtml" html />
+      </div>
     </ModuleContentContainer>
   </template>
 
@@ -377,7 +352,7 @@ const itemContentSpacingStyle = computed(() => {
 <style scoped>
 @reference "@/styles/tailwind.css";
 
-/* 段落间距色带直接绘制在占位元素上 */
+/* 段落间距色带直接绘制在独立占位行上 */
 .resume-debug-paragraph-gap {
   @apply bg-sf-theme;
 }

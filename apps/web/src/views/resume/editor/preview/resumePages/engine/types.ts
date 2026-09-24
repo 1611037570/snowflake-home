@@ -11,12 +11,9 @@ export type LayoutNodeType =
   | "spacer";
 
 /**
- * 节点的分页规则。
- * 标题与顶部间距占位都只是"独立行"，一律按"本页放得下就放、放不下顺延"处理，没有绑定约束。
+ * 节点的最小布局约束。
  */
 export interface BreakPolicy {
-  /** 当前节点是否允许被拆成多个分片 */
-  splittable: boolean;
   /** 当前节点允许的最小高度 */
   minHeight?: number;
 }
@@ -48,6 +45,8 @@ export interface LayoutNode {
   type: LayoutNodeType;
   /** 当前节点的分页规则 */
   breakPolicy: BreakPolicy;
+  /** 节点落在后续页面首位时隐藏自身占位 */
+  hideWhenPageLeading?: boolean;
   /** 节点实际内容，由具体节点类型自行约定结构 */
   payload: unknown;
   /** 当前节点的标题，只在第一次分片中渲染 */

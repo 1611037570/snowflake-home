@@ -99,14 +99,11 @@ const findBestBreakPoint = (
   startHeight: number,
   droppedTopSpacing: number,
   availableHeight: number,
-  skipLeadingGap: boolean,
   dropBlockMargin: boolean,
 ) => {
   let bestBreakPoint: (typeof measurement.breakPoints)[number] | undefined;
   let bestHeight = 0;
   for (const point of measurement.breakPoints) {
-    // 页面首位不绘制间距占位，0 号块分片在此时不可用
-    if (skipLeadingGap && point.blockEnd === 0) continue;
     // 页面首位的续段不绘制该块上外边距，计价同步扣除
     const blockMargin = dropBlockMargin ? (point.leadingMargin ?? 0) : 0;
     const height =
@@ -128,13 +125,11 @@ const findNextBreakPoint = (
   measurement: MeasuredNode,
   startHeight: number,
   droppedTopSpacing: number,
-  skipLeadingGap: boolean,
   dropBlockMargin: boolean,
 ) => {
   let nextBreakPoint: (typeof measurement.breakPoints)[number] | undefined;
   let nextHeight = Number.POSITIVE_INFINITY;
   for (const point of measurement.breakPoints) {
-    if (skipLeadingGap && point.blockEnd === 0) continue;
     const blockMargin = dropBlockMargin ? (point.leadingMargin ?? 0) : 0;
     const height =
       point.height - startHeight - (startHeight > 0 ? droppedTopSpacing : 0) - blockMargin;
@@ -147,8 +142,7 @@ const findNextBreakPoint = (
 };
 
 /**
- * 按节点顺序进行单栏贪心分页。
- * 可拆分节点优先使用测量结果中的语义断点，避免从任意位置截断内容。
+ * 按节点顺序进行单栏贪心分页，所有节点都按测量断点参与分页。
  */
 export const paginateFlow = ({
   nodes,
@@ -216,7 +210,6 @@ export const paginateFlow = ({
     const titleHeight = getTitleHeight(node, measurements);
     const fullHeight = Math.max(0, measurement.fullHeight);
     const contentEnd = getContentEnd(measurement);
-    const canSplit = node.breakPolicy.splittable && measurement.breakPoints.length > 0;
     /** 节点渲染块总数：块区间以此为界，块序由渲染结构决定 */
     const blockCount = measurement.breakPoints.reduce(
       (max, point) => Math.max(max, point.blockEnd ?? 0),
@@ -242,13 +235,13 @@ export const paginateFlow = ({
       // 标题也是独立行，和间距占位一样没有绑定：能放本页就放，放不下顺延下一页
       const withTitle = isFirst && !titlePlaced;
       const title = withTitle ? titleHeight : 0;
-      // 页面第一个内容不绘制顶部间距占位（渲染层同规则），分页高度与可用断点都要按去掉间距计算。
-      // 判定条件与渲染层一致：本片是页面首个内容，且本片没有携带模块标题
-      const titleRendered = withTitle && Boolean(node.title);
-      const hideLeadingGap = isFirst && currentPage.items.length === 0 && !titleRendered;
-      const leadingGapHeight = hideLeadingGap
-        ? (measurement.breakPoints.find((point) => point.blockEnd === 0)?.height ?? 0)
-        : 0;
+      // 独立间距行位于后续页面首位时不占空间，与渲染层隐藏规则一致。
+      const hideLeadingSpacer =
+        isFirst &&
+        node.hideWhenPageLeading &&
+        currentPage.pageIndex > 0 &&
+        currentPage.items.length === 0;
+      const hiddenSpacerHeight = hideLeadingSpacer ? fullHeight : 0;
       // 续段的装饰是 middle/last，渲染层不绘制它所在块的上外边距（无论是否在页首），计价同步扣除
       const dropBlockMargin = !isFirst;
       const nextBlockMargin = dropBlockMargin
@@ -257,7 +250,7 @@ export const paginateFlow = ({
           )?.leadingMargin ?? 0)
         : 0;
       const wholeFragmentHeight =
-        title + remainingHeight - leadingGapHeight - nextBlockMargin;
+        title + remainingHeight - hiddenSpacerHeight - nextBlockMargin;
       const wholeFragmentKind: FlowFragmentKind = isFirst ? "single" : "last";
       const wholeFragment: FlowPageItem = {
         fragmentId: `${node.id}:${wholeFragmentKind}:${consumedOffset}:${contentEnd}`,
@@ -304,17 +297,6 @@ export const paginateFlow = ({
         return true;
       };
 
-      // 不可拆节点或没有可用断点时，当前页放不下就换页，空页则允许溢出。
-      if (!canSplit) {
-        if (currentPage.items.length > 0) {
-          if (placeTitle()) continue;
-          pushPage(node.sourceModuleKey);
-          continue;
-        }
-        tryAddItem(wholeFragment, !isFirst);
-        break;
-      }
-
       const nodeGap = getGapBeforeItem(node.sourceModuleKey, !isFirst);
       const availableForContent = Math.max(
         0,
@@ -326,7 +308,6 @@ export const paginateFlow = ({
           consumedHeight,
           activeDroppedTopSpacing,
           availableForContent,
-          hideLeadingGap,
           dropBlockMargin,
         ) ||
         (currentPage.items.length === 0
@@ -334,7 +315,6 @@ export const paginateFlow = ({
               measurement,
               consumedHeight,
               activeDroppedTopSpacing,
-              hideLeadingGap,
               dropBlockMargin,
             )
           : undefined);

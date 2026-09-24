@@ -7,6 +7,7 @@ import LayoutFragment from "./layoutFragment.vue";
 
 const props = defineProps<{
   column: ColumnPlan;
+  pageIndex: number;
   nodes: Map<string, LayoutNode>;
   isEdit?: boolean;
   showDebug?: boolean;
@@ -102,7 +103,7 @@ const handleMove = (moduleKey: string, direction: string) => {
             :node="getNode(item.fragment)!"
             :show-debug="showDebug"
             :leading-on-page="
-              groupIndex === 0 && itemIndex === 0 && !item.fragment.titlePayload
+              pageIndex > 0 && groupIndex === 0 && itemIndex === 0
             "
             @mouseenter="emit('mouseenter', $event)"
           />
