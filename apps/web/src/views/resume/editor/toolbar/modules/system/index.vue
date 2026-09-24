@@ -62,12 +62,6 @@ function resetSettings() {
       <SfSetTitle title="检测设置" />
       <SfSetBox>
         <SfSetItem
-          title="窗口过小检测"
-          info="窗口过小时弹出提醒"
-          v-model="system.showWindowTip"
-          type="switch"
-        />
-        <SfSetItem
           title="浏览器建议检测"
           info="非谷歌浏览器时弹出建议"
           v-model="system.showBrowserTip"

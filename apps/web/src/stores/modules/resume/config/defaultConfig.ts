@@ -67,8 +67,6 @@ export const DEFAULT_SYSTEM = {
   showDebug: false,
   // 是否展示工具栏工具名称
   showToolName: false,
-  // 是否启用窗口过小检测提示
-  showWindowTip: true,
   // 是否启用浏览器建议提示
   showBrowserTip: true,
 };
