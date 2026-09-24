@@ -173,7 +173,7 @@ useResizeObserver(contentRef, ([entry]) => {
       <OnePage />
       <SfDropdown trigger="hover" placement="bottom-start" :show-arrow="false">
         <div
-          class="flex h-7 w-15 cursor-default items-center justify-center rounded-full px-3 text-xs font-medium text-sf-theme"
+          class="flex h-7 w-13 cursor-default items-center justify-center rounded-full text-xs font-medium text-sf-theme"
         >
           {{ scaleLabel }}
         </div>
