@@ -32,7 +32,7 @@ function goGitHub() {
 </script>
 
 <template>
-  <div class="relative flex items-center p-3">
+  <div class="relative flex items-center overflow-hidden p-3">
     <div
       class="relative flex w-[50px] flex-col items-center gap-2 rounded-3xl border border-sf-b bg-sf-transparent py-2 text-sf-text-3"
     >
