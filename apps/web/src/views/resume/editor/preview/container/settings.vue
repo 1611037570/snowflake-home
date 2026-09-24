@@ -1,6 +1,8 @@
 <script setup>
+import { computed } from "vue";
 import { storeToRefs } from "pinia";
 import { useResumeStore } from "@/stores";
+import { defaultFooter } from "@/stores/modules/resume/config/uiConfig";
 import {
   defaultLeftColumnWidth,
   defaultLineHeight,
@@ -12,7 +14,21 @@ import {
 } from "@/stores/modules/resume/config/uiConfig";
 
 const resumeStore = useResumeStore();
-const { currentUI } = storeToRefs(resumeStore);
+const { system, currentUI } = storeToRefs(resumeStore);
+
+// 页尾显示设置与布局参数集中在同一面板。
+const showPageNumber = computed({
+  get: () => system.value.showPageNumber,
+  set: (value) => {
+    system.value.showPageNumber = value;
+  },
+});
+const footer = computed({
+  get: () => currentUI.value?.footer ?? "",
+  set: (value) => {
+    currentUI.value.footer = value;
+  },
+});
 
 // 页面布局数值参数：标签、绑定字段、默认值与单位集中维护，模板统一渲染
 const layoutParams = [
@@ -61,7 +77,7 @@ const setParam = (key, value) => {
     <span
       class="flex cursor-pointer items-center gap-1 rounded-full px-1.5 py-1 text-sm text-sf-text-2 hover:bg-sf-theme-2 hover:text-sf-theme-text"
     >
-      <SfIcon icon="lucide:settings-2" size="5" />
+      <SfIcon icon="lucide:layout-template" size="5" />
       <span>布局</span>
     </span>
     <template #dropdown>
@@ -91,7 +107,23 @@ const setParam = (key, value) => {
             size="small"
           />
         </div>
-
+        <div class="flex items-center justify-between text-sm text-sf-text-2">
+          <span>显示页码</span>
+          <ElSwitch v-model="showPageNumber" />
+        </div>
+        <div class="flex flex-col gap-1">
+          <div class="flex items-center gap-1 text-sm text-sf-text-2">
+            <span>自定义页尾</span>
+            <SfIcon
+              icon="material-symbols:restart-alt"
+              size="4"
+              class="cursor-pointer text-sf-text-2 transition-colors hover:text-sf-theme"
+              @click="footer = defaultFooter"
+            />
+            <SfTooltip content="仅自定义开头的品牌名，页码部分固定展示，留空恢复「轻舟简历」" />
+          </div>
+          <SfInput v-model="footer" placeholder="例如：我的简历" clearable />
+        </div>
       </div>
     </template>
   </SfDropdown>

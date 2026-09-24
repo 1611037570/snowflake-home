@@ -6,9 +6,7 @@ import { useResumeStore } from "@/stores";
 import { RESUME_HEIGHT, RESUME_WIDTH } from "../constants";
 import Font from "./font.vue";
 import Settings from "./settings.vue";
-import LayoutEditor from "./layoutEditor.vue";
 import TemplateSettings from "./templateSettings.vue";
-import PageNumber from "./pageNumber.vue";
 import PrintMode from "./printMode.vue";
 import Language from "./language.vue";
 import OnePage from "./onePage.vue";
@@ -170,8 +168,6 @@ useResizeObserver(contentRef, ([entry]) => {
       <TemplateSettings />
       <Font />
       <Settings />
-      <LayoutEditor />
-      <PageNumber />
       <PrintMode />
       <Language />
       <OnePage />
