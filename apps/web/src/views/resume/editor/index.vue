@@ -83,7 +83,7 @@
       <SfIcon icon="carbon:minimize" size="5" />
       <span>退出专注</span>
     </div>
-    <!-- 环境检测：浏览器与窗口尺寸不符合时右侧弹窗提示 -->
+    <!-- 非推荐浏览器时显示建议提示 -->
     <DetectTip />
     <!-- 问题反馈与分享入口：固定在编辑器视口右下角 -->
     <IssueFeedback v-if="!focusMode" />
