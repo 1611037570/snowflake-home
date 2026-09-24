@@ -59,15 +59,17 @@ function handleCancel() {
     </div>
   </div>
   <SfModal v-model="editTitleVisible" title="重命名简历">
-    <div class="flex w-100 flex-col gap-3 p-3">
+    <div class="wf flex max-w-100 flex-col gap-3">
       <div class="flex items-center gap-3">
-        <SfInput
-          @input="handleInput"
-          v-model="tempTitle"
-          placeholder="请输入标题"
-          class="w-full rounded-lg border border-sf-b bg-sf-bg"
-        />
-        <ElButton @click="handleAutoTitle">一键自动</ElButton>
+        <div class="flex-1">
+          <SfInput
+            @input="handleInput"
+            v-model="tempTitle"
+            placeholder="请输入标题"
+            class="w-full rounded-lg border border-sf-b bg-sf-bg"
+          />
+        </div>
+        <SfButton @click="handleAutoTitle">一键自动</SfButton>
       </div>
       <div class="flex justify-end gap-3">
         <SfButton type="bg" @click="handleCancel">取消</SfButton>
