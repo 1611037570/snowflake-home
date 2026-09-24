@@ -14,8 +14,8 @@ const panelOptions = [
 
 <template>
   <nav
-    class="fixed bottom-3 left-1/2 z-30 flex -translate-x-1/2 items-center gap-1 rounded-3xl border border-sf-b bg-sf-primary p-1 shadow-md"
-    :style="{ bottom: 'max(0.75rem, env(safe-area-inset-bottom))' }"
+    class="relative z-30 flex shrink-0 self-center items-center gap-1 rounded-3xl border border-sf-b bg-sf-primary p-1 shadow-md"
+    :style="{ paddingBottom: 'max(0.75rem, env(safe-area-inset-bottom))' }"
     aria-label="简历工作区"
   >
     <!-- 底部切换只控制编辑与预览面板。 -->
