@@ -1,5 +1,4 @@
 <script setup>
-import { useAiStore } from "@/stores";
 import MessageNav from "./messageNav.vue";
 
 const props = defineProps({
@@ -12,13 +11,11 @@ const props = defineProps({
     default: false,
   },
 });
-const emit = defineEmits(["select", "openChatList"]);
-
-const aiStore = useAiStore();
+const emit = defineEmits(["select", "openChatList", "newChat"]);
 
 function createNewChat() {
   if (props.isGenerating) return;
-  aiStore.createNewResumeAssistantChat();
+  emit("newChat");
 }
 </script>
 

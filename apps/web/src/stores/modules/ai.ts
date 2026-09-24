@@ -183,32 +183,43 @@ export const useAiStore = defineStore(
     function registerResumeAssistantChatFactory(factory: () => Chat) {
       resumeAssistantChatFactory = factory;
     }
-    // 初始化指定简历的助手对话，避免不同简历共用会话
+    // 初始化指定简历的已保存助手对话，不存在时保持空状态
     function initializeResumeAssistantChat(resumeId: string) {
       const chats = resumeAssistantChatList.value.filter((chat) => chat.resumeId === resumeId);
       chats.forEach(ensureMessageIds);
-      if (resumeAssistantChat.value?.resumeId === resumeId) {
-        ensureMessageIds(resumeAssistantChat.value);
+      const activeChat = resumeAssistantChat.value;
+      if (activeChat?.resumeId === resumeId) {
+        ensureMessageIds(activeChat);
         const savedChat = resumeAssistantChatList.value.find(
-          (chat) => chat.id === resumeAssistantChat.value?.id,
+          (chat) => chat.id === activeChat.id,
         );
         if (savedChat) {
           resumeAssistantChat.value = savedChat;
-        } else {
-          resumeAssistantChatList.value.unshift(resumeAssistantChat.value);
+          return savedChat;
         }
-        return resumeAssistantChat.value;
+        if (activeChat.messages.some((message) => message.role !== "system")) {
+          resumeAssistantChatList.value.unshift(activeChat);
+          return activeChat;
+        }
       }
       if (chats.length) {
         resumeAssistantChat.value = chats[0];
-        return resumeAssistantChat.value;
+        return chats[0];
       }
-      return createNewResumeAssistantChat();
+      return null;
     }
-    // 新建简历助手话题
+    // 创建未持久化的简历助手话题草稿
     function createNewResumeAssistantChat() {
       if (!resumeAssistantChatFactory) return;
-      const chat = resumeAssistantChatFactory();
+      return resumeAssistantChatFactory();
+    }
+    // 首次产生用户消息后保存简历助手话题
+    function saveResumeAssistantChat(chat: Chat) {
+      const savedChat = resumeAssistantChatList.value.find((item) => item.id === chat.id);
+      if (savedChat) {
+        resumeAssistantChat.value = savedChat;
+        return savedChat;
+      }
       resumeAssistantChatList.value.unshift(chat);
       resumeAssistantChat.value = chat;
       return chat;
@@ -343,6 +354,7 @@ export const useAiStore = defineStore(
       registerResumeAssistantChatFactory,
       initializeResumeAssistantChat,
       createNewResumeAssistantChat,
+      saveResumeAssistantChat,
       switchResumeAssistantChat,
       removeResumeAssistantChats,
       updateResumeAssistantChatTitle,
