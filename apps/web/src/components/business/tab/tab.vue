@@ -1,6 +1,9 @@
 <template>
   <div class="flex w-full flex-col">
-    <div class="relative h-full overflow-hidden rounded-3xl bg-sf-bg p-1" :class="boxClass">
+    <div
+      class="relative h-full overflow-hidden rounded-3xl bg-sf-bg p-1"
+      :class="[boxClass, sfBorder]"
+    >
       <!-- Tab列表容器 -->
       <div class="relative z-10 flex h-full w-full">
         <!-- 循环渲染Tab项 -->
@@ -39,7 +42,7 @@
 import { computed, onMounted, provide, ref, watch } from "vue";
 
 defineOptions({ name: "SfTab" });
-
+const sfBorder = inject("sfBorder");
 // 定义组件接收的props
 const { list } = defineProps<{
   // Tab列表数据

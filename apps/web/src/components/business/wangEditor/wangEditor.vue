@@ -1,5 +1,5 @@
 <template>
-  <div style="" class="relative w-full rounded-2xl" :class="bg">
+  <div style="" class="sf-wang-editor relative w-full rounded-2xl" :class="[bg, sfBorder]">
     <!-- 编辑器实例创建成功后再挂载工具栏，避免工具栏在 editor 就绪前初始化报错 -->
     <Toolbar v-if="editorRef" :editor="editorRef" :defaultConfig="toolbarConfig" :mode="mode" />
     <!-- 使用项目统一滚动条承载编辑器内容 -->
@@ -22,6 +22,7 @@
 
 <script setup>
 import { defineAsyncComponent, onBeforeUnmount, onMounted, ref, shallowRef } from "vue";
+const sfBorder = inject("sfBorder", "");
 
 // 延迟加载 wangeditor 库及样式：组件实际渲染时才引入，避免编辑资源提前进包
 const Editor = defineAsyncComponent(() =>
