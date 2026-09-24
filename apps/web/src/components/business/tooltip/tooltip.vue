@@ -2,7 +2,13 @@
   <div class="">
     <Component
       :effect="theme"
-      :is="h(ElTooltip, { placement: 'top', ...$attrs, ref: changeRef }, $slots)"
+      :is="
+        h(
+          ElTooltip,
+          { placement: 'top', ...$attrs, disabled: isMobile || $attrs.disabled, ref: changeRef },
+          $slots,
+        )
+      "
     >
       <template #default>
         <slot>
@@ -17,7 +23,7 @@
 </template>
 
 <script setup lang="ts">
-import { useThemeStore } from "@/stores";
+import { useSystemStore, useThemeStore } from "@/stores";
 import { storeToRefs } from "pinia";
 import { ElTooltip } from "element-plus";
 import type { ComponentInstance } from "vue";
@@ -27,6 +33,10 @@ defineOptions({ name: "SfTooltip" });
 
 const themeStore = useThemeStore();
 const { theme } = storeToRefs(themeStore);
+
+// 移动端无悬停交互，直接禁用提示气泡
+const systemStore = useSystemStore();
+const { isMobile } = storeToRefs(systemStore);
 
 const vm: any = getCurrentInstance();
 
