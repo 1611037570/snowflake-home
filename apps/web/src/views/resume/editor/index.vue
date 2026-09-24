@@ -24,8 +24,8 @@
         <!-- 最右侧系统配置栏：工具栏与 QA 入口整体垂直居中 -->
         <Transition name="resume-toolbar" appear>
           <div
-            v-if="!focusMode"
-            class="relative hidden h-full flex-col items-center justify-center gap-3 md:flex"
+            v-if="!focusMode && !isMobile"
+            class="relative flex h-full flex-col items-center justify-center gap-3"
           >
             <Toolbar />
           </div>
@@ -45,35 +45,12 @@
         />
       </Teleport>
     </div>
-    <Transition name="resume-mobile-nav">
-      <nav
-        v-if="isMobile"
-        class="z-20 flex shrink-0 items-center gap-3 border-t border-sf-b bg-sf-primary p-3"
-        :style="{ paddingBottom: 'max(0.75rem, env(safe-area-inset-bottom))' }"
-        aria-label="简历工作区"
-      >
-        <button
-          type="button"
-          class="flex h-12 flex-1 items-center justify-center gap-2 rounded-2xl text-sm transition-colors"
-          :class="mobilePanel === 'edit' ? 'bg-sf-theme text-sf-theme-text' : 'text-sf-text-2'"
-          :aria-pressed="mobilePanel === 'edit'"
-          @click="mobilePanel = 'edit'"
-        >
-          <SfIcon icon="lucide:file-text" size="5" />
-          <span>编辑</span>
-        </button>
-        <button
-          type="button"
-          class="flex h-12 flex-1 items-center justify-center gap-2 rounded-2xl text-sm transition-colors"
-          :class="mobilePanel === 'preview' ? 'bg-sf-theme text-sf-theme-text' : 'text-sf-text-2'"
-          :aria-pressed="mobilePanel === 'preview'"
-          @click="mobilePanel = 'preview'"
-        >
-          <SfIcon icon="lucide:eye" size="5" />
-          <span>预览</span>
-        </button>
-      </nav>
-    </Transition>
+    <MobileWorkspaceNav
+      v-if="isMobile"
+      :active-panel="mobilePanel"
+      @select="mobilePanel = $event"
+    />
+    <MobileToolbar v-if="isMobile" />
     <!-- 专注写作模式：右上角浮动退出按钮 -->
     <div
       v-if="focusMode"
@@ -86,8 +63,8 @@
     <!-- 非推荐浏览器时显示建议提示 -->
     <DetectTip />
     <!-- 问题反馈与分享入口：固定在编辑器视口右下角 -->
-    <IssueFeedback v-if="!focusMode" />
-    <Share v-if="!focusMode" />
+    <IssueFeedback v-if="!focusMode && !isMobile" />
+    <Share v-if="!focusMode && !isMobile" />
   </div>
 </template>
 
@@ -104,6 +81,8 @@ import AiMask from "./components/aiMask.vue";
 import Header from "./components/header/index.vue";
 import ExportMask from "./components/exportMask.vue";
 import DetectTip from "./components/detectTip.vue";
+import MobileWorkspaceNav from "./components/mobileWorkspaceNav.vue";
+import MobileToolbar from "./components/mobileToolbar.vue";
 import IssueFeedback from "../components/issueFeedback.vue";
 import Share from "../components/share.vue";
 import Preview from "./preview/index.vue";
@@ -263,16 +242,4 @@ onUnmounted(() => {
   opacity: 0;
 }
 
-.resume-mobile-nav-enter-active,
-.resume-mobile-nav-leave-active {
-  transition:
-    transform 0.24s ease,
-    opacity 0.24s ease;
-}
-
-.resume-mobile-nav-enter-from,
-.resume-mobile-nav-leave-to {
-  transform: translateY(100%);
-  opacity: 0;
-}
 </style>
