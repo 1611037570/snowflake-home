@@ -15,6 +15,7 @@ import {
 
 const resumeStore = useResumeStore();
 const { system, currentUI } = storeToRefs(resumeStore);
+const { setPageLayout } = resumeStore;
 
 // 页尾显示设置与布局参数集中在同一面板。
 const showPageNumber = computed({
@@ -65,10 +66,59 @@ const getNumberValue = (key) => {
   return Number.isFinite(fallback) ? fallback : 0;
 };
 
+// 恢复当前主题默认布局与全部数值参数
+const resetLayout = () => {
+  if (!currentUI.value) return;
+  layoutParams.forEach((item) => {
+    currentUI.value[item.key] = item.defaultValue;
+  });
+  setPageLayout(null);
+};
+
+// 显式布局下同步更新页边距、栏宽与模块间距
+const syncPageLayoutParam = (key, value) => {
+  const pageLayout = currentUI.value?.pageLayout;
+  if (!pageLayout?.regions) return;
+  const nextValue = Number(value);
+  const nextLayout = {
+    ...pageLayout,
+    regions: pageLayout.regions.map((region) => ({
+      ...region,
+      columns: region.columns.map((column, index) => {
+        if (key === "moduleSpacing") return { ...column, gap: nextValue };
+        if (key === "leftColumnWidth" && region.columns.length === 2) {
+          return {
+            ...column,
+            width: { mode: "ratio", value: index === 0 ? nextValue : 100 - nextValue },
+          };
+        }
+        return column;
+      }),
+    })),
+  };
+  if (key === "paddingVertical") {
+    nextLayout.pagePadding = {
+      ...pageLayout.pagePadding,
+      top: nextValue,
+      bottom: nextValue,
+    };
+  }
+  if (key === "paddingHorizontal") {
+    nextLayout.pagePadding = {
+      ...pageLayout.pagePadding,
+      left: nextValue,
+      right: nextValue,
+    };
+  }
+  if (key === "moduleSpacing") nextLayout.regionGap = nextValue;
+  setPageLayout(nextLayout);
+};
+
 // 写入参数：数值型统一使用数值类型
 const setParam = (key, value) => {
   if (!currentUI.value) return;
   currentUI.value[key] = typeof value === "number" ? Number(value) : value;
+  syncPageLayoutParam(key, value);
 };
 </script>
 
@@ -84,7 +134,17 @@ const setParam = (key, value) => {
       <div
         class="flex w-[240px] flex-col gap-3 overflow-hidden rounded-3xl border border-sf-b bg-sf-primary p-3"
       >
-        <div class="text-xs font-bold text-sf-text">页面布局</div>
+        <div class="flex items-center justify-between text-xs font-bold text-sf-text">
+          <span>页面布局</span>
+          <button
+            type="button"
+            class="flex items-center gap-3 rounded-lg px-3 py-1 font-normal text-sf-text-2 hover:bg-sf-bg-2 hover:text-sf-theme"
+            @click="resetLayout"
+          >
+            <SfIcon icon="material-symbols:restart-alt" size="4" />
+            恢复布局默认
+          </button>
+        </div>
         <div v-for="item in layoutParams" :key="item.key" class="flex flex-col gap-1">
           <div class="flex items-center justify-between text-sm text-sf-text-2">
             <span class="flex items-center gap-1">
