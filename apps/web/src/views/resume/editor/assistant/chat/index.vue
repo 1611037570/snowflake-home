@@ -1,9 +1,15 @@
 <script setup lang="ts">
-import { useAiStore, useResumeStore, type Chat } from "@/stores";
+import {
+  useAiStore,
+  useResumeStore,
+  type Chat,
+  type ResumeAssistantChatRecord,
+} from "@/stores";
 import { useClipboard, useScroll } from "@vueuse/core";
 import { ElMessage } from "element-plus";
 import { computed, nextTick, onBeforeUnmount, ref, watch } from "vue";
 import { storeToRefs } from "pinia";
+import { debounce } from "lodash-es";
 import { useChatRequest } from "./useChatRequest";
 import { ALL_MODULE_KEY, ALL_MODULE_NAME } from "@/stores/modules/resume/defaultConfig";
 import { flows, suggestions } from "../flows";
@@ -27,14 +33,16 @@ const { config: assistantConfig, createChat: createAssistantChat } = useResumeAs
 const { requestQuickAnswer } = useInterviewQuickAnswer();
 // 把会话工厂注册到 ai store，供新建话题入口调用
 aiStore.registerResumeAssistantChatFactory(createAssistantChat);
-const { resumeAssistantChat, resumeAssistantChatList } = storeToRefs(aiStore);
+const { resumeAssistantChat } = storeToRefs(aiStore);
 const { selectedModule } = storeToRefs(resumeStore);
 // 当前话题未产生用户消息前仅保存在组件内，避免空会话写入持久化列表
 const draftChat = ref<Chat | null>(null);
+const isChatLoading = ref(false);
+let chatLoadToken = 0;
 // 当前简历只展示自身的助手对话
 const resumeId = computed(() => resumeStore.currentItem?.id || "");
 const resumeAssistantChats = computed(() =>
-  resumeAssistantChatList.value.filter((item) => item.resumeId === resumeId.value),
+  resumeStore.list.find((item) => item.id === resumeId.value)?.ai || [],
 );
 // 当前操作模块列表：有选中模块时展示真实模块，无选中时补“整个简历”兜底项
 const selectedModules = computed(() =>
@@ -50,7 +58,7 @@ const chat = computed({
   get: () => draftChat.value ?? resumeAssistantChat.value!,
   set: (value) => {
     if (draftChat.value?.id === value.id) draftChat.value = value;
-    else resumeAssistantChat.value = value;
+    else resumeAssistantChat.value = value as ResumeAssistantChatRecord;
   },
 });
 // 生成状态来自宿主注入的引用，模板与输入框共用
@@ -83,10 +91,16 @@ function createNewChat() {
   chatListVisible.value = false;
 }
 
-function selectChat(id: string) {
+async function selectChat(id: string) {
   if (generating.value || quickAnswerLoading.value) return;
-  draftChat.value = null;
-  aiStore.switchResumeAssistantChat(id);
+  const draft = aiStore.createNewResumeAssistantChat() ?? null;
+  draftChat.value = draft;
+  isChatLoading.value = true;
+  const token = ++chatLoadToken;
+  const selected = await aiStore.switchResumeAssistantChat(id);
+  if (token !== chatLoadToken) return;
+  if (selected) draftChat.value = null;
+  isChatLoading.value = false;
   voiceInputEnabled.value = false;
   earlyEndEnabled.value = false;
   quickAnswerEnabled.value = false;
@@ -124,22 +138,34 @@ function updateCollapsedStatus(index, type) {
  * 向当前对话追加一条消息
  */
 function addMessage(msg) {
+  if (!chat.value) return;
   chat.value.messages.push({
     ...createDefaultMessage(),
     ...msg,
   });
   chat.value.updateTime = Date.now();
   aiStore.updateResumeAssistantChatTitle(chat.value);
-  if (msg.role === "user") saveDraftChat();
+  if (msg.role === "user") void saveDraftChat();
 }
 
 // 用户首次发起对话时，将草稿转入现有持久化列表
-function saveDraftChat() {
+async function saveDraftChat() {
   const draft = draftChat.value;
   if (!draft || draft.resumeId !== resumeId.value) return;
-  aiStore.saveResumeAssistantChat(draft);
-  draftChat.value = null;
+  const savedChat = await aiStore.saveResumeAssistantChat(draft);
+  if (savedChat) draftChat.value = null;
 }
+const persistSavedChat = debounce((savedChat: Chat) => {
+  void aiStore.persistResumeAssistantChat(savedChat);
+}, 300);
+watch(
+  chat,
+  (value) => {
+    if (!value || draftChat.value) return;
+    persistSavedChat(value);
+  },
+  { deep: true },
+);
 // 聊天容器的引用，用于滚动
 const chatContainer = ref(null);
 
@@ -187,6 +213,7 @@ const scrollToBottom = () => {
 };
 
 onBeforeUnmount(() => {
+  persistSavedChat.flush();
   if (scrollFrame) cancelAnimationFrame(scrollFrame);
   scrollFrame = 0;
   flushScrollWaiters();
@@ -253,10 +280,20 @@ const { handleAIResponse, stopGenerating, withdrawAI, hasWriteChanges } = useCha
 // 切换简历时先取消旧会话请求，再恢复目标简历的助手对话
 watch(
   resumeId,
-  (id, previousId) => {
+  async (id, previousId) => {
+    const token = ++chatLoadToken;
     if (previousId && id !== previousId) stopGenerating();
-    const savedChat = id ? aiStore.initializeResumeAssistantChat(id) : null;
-    draftChat.value = savedChat || !id ? null : (aiStore.createNewResumeAssistantChat() ?? null);
+    const draft = id ? aiStore.createNewResumeAssistantChat() ?? null : null;
+    draftChat.value = draft;
+    if (!id) {
+      isChatLoading.value = false;
+      return;
+    }
+    isChatLoading.value = true;
+    const savedChat = await aiStore.initializeResumeAssistantChat(id);
+    if (token !== chatLoadToken || resumeId.value !== id) return;
+    draftChat.value = savedChat ? null : draft;
+    isChatLoading.value = false;
   },
   { immediate: true },
 );
@@ -268,7 +305,7 @@ const handleSend = (content) => {
   // 确保输入内容不为空
   if (!content) return;
   // 确保当前没有正在发送的消息
-  if (generating.value || quickAnswerLoading.value) return;
+  if (generating.value || quickAnswerLoading.value || isChatLoading.value) return;
   // 引导流程的自由输入步骤：把输入内容作为答案推进流程
   const flowStep = activeFlow.value?.steps?.[activeFlow.value.stepIndex];
   if (flowStep) {
@@ -698,7 +735,7 @@ const handleCopyQuickAnswer = async () => {
       <div v-if="chatListVisible" class="absolute inset-0 z-20 bg-sf-primary">
         <ChatList
           :chats="resumeAssistantChats"
-          :active-chat-id="chat.id"
+          :active-chat-id="chat?.id || ''"
           :disabled="isGenerating"
           @close="chatListVisible = false"
           @create="createNewChat"

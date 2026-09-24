@@ -1,8 +1,11 @@
 import { getUUID } from "@/utils";
 import { ElMessageBox } from "element-plus";
 import { useIDBKeyval } from "@vueuse/integrations/useIDBKeyval";
+import { del, get, set } from "idb-keyval";
 import { defineStore } from "pinia";
 import { computed, ref } from "vue";
+import { useResumeStore } from "@/stores/modules/resume";
+import type { AiChatSummary } from "@/stores/modules/resume/resumeCatalog";
 export type Chat = {
   // 对话记录id
   id: string;
@@ -17,6 +20,7 @@ export type Chat = {
   // 消息列表
   messages: Message[];
 };
+export type ResumeAssistantChatRecord = Omit<Chat, "resumeId"> & { resumeId: string };
 export type Message = {
   // 消息唯一标识
   id: string;
@@ -83,6 +87,8 @@ const DEFAULT_SYSTEM_PROMPT =
 
 // 简历助手会话工厂：由简历助手组装器注册，Pinia 只负责调用
 let resumeAssistantChatFactory: (() => Chat) | null = null;
+let resumeAssistantChatLoadId = 0;
+const resumeAssistantChatKey = (id: string) => `resume-assistant-chat:${id}`;
 
 export const useAiStore = defineStore(
   "ai",
@@ -103,10 +109,14 @@ export const useAiStore = defineStore(
     const currentChatId = ref<string>("");
     // 是否开启思考模式：默认快速模式，需要深度思考时由开关开启
     const thinkMode = ref<boolean>(false);
-    // 简历助手对话：随 ai store 持久化保存，重进编辑器时恢复
-    const resumeAssistantChat = ref<Chat | null>(null);
-    // 简历助手对话列表：保留多个话题，当前会话始终来自该列表
-    const resumeAssistantChatList = ref<Chat[]>([]);
+    // 当前简历助手对话只在运行时加载，正文按会话 ID 独立保存到 IndexedDB
+    const resumeAssistantChat = ref<ResumeAssistantChatRecord | null>(null);
+    // 会话摘要从简历目录动态汇总，不在 ai store 重复持久化
+    const resumeAssistantChatList = computed(() =>
+      useResumeStore().list.flatMap((resume) =>
+        resume.ai.map((chat) => ({ ...chat, resumeId: resume.id })),
+      ),
+    );
 
     const currentChat = computed(() => chatList.value.find((c) => c.id === currentChatId.value));
 
@@ -183,30 +193,31 @@ export const useAiStore = defineStore(
     function registerResumeAssistantChatFactory(factory: () => Chat) {
       resumeAssistantChatFactory = factory;
     }
-    // 初始化指定简历的已保存助手对话，不存在时保持空状态
-    function initializeResumeAssistantChat(resumeId: string) {
-      const chats = resumeAssistantChatList.value.filter((chat) => chat.resumeId === resumeId);
-      chats.forEach(ensureMessageIds);
-      const activeChat = resumeAssistantChat.value;
-      if (activeChat?.resumeId === resumeId) {
-        ensureMessageIds(activeChat);
-        const savedChat = resumeAssistantChatList.value.find(
-          (chat) => chat.id === activeChat.id,
-        );
-        if (savedChat) {
-          resumeAssistantChat.value = savedChat;
-          return savedChat;
-        }
-        if (activeChat.messages.some((message) => message.role !== "system")) {
-          resumeAssistantChatList.value.unshift(activeChat);
-          return activeChat;
-        }
+    // 加载指定简历的最近会话正文；没有会话时保持空状态
+    async function initializeResumeAssistantChat(resumeId: string, chatId?: string) {
+      const loadId = ++resumeAssistantChatLoadId;
+      resumeAssistantChat.value = null;
+      const summaries = useResumeStore().list.find((resume) => resume.id === resumeId)?.ai || [];
+      const summary = summaries.find((chat) => chat.id === chatId) || summaries[0];
+      if (!summary) {
+        resumeAssistantChat.value = null;
+        return null;
       }
-      if (chats.length) {
-        resumeAssistantChat.value = chats[0];
-        return chats[0];
+      const chat = await get<ResumeAssistantChatRecord>(resumeAssistantChatKey(summary.id));
+      if (loadId !== resumeAssistantChatLoadId) return null;
+      if (!chat || chat.id !== summary.id || chat.resumeId !== resumeId) {
+        resumeAssistantChat.value = null;
+        return null;
       }
-      return null;
+      ensureMessageIds(chat);
+      resumeAssistantChat.value = chat;
+      return chat;
+    }
+    // 切换当前简历下的助手话题
+    async function switchResumeAssistantChat(id: string) {
+      const resumeId = useResumeStore().currentItem?.id;
+      if (!resumeId) return null;
+      return initializeResumeAssistantChat(resumeId, id);
     }
     // 创建未持久化的简历助手话题草稿
     function createNewResumeAssistantChat() {
@@ -214,27 +225,61 @@ export const useAiStore = defineStore(
       return resumeAssistantChatFactory();
     }
     // 首次产生用户消息后保存简历助手话题
-    function saveResumeAssistantChat(chat: Chat) {
-      const savedChat = resumeAssistantChatList.value.find((item) => item.id === chat.id);
-      if (savedChat) {
-        resumeAssistantChat.value = savedChat;
-        return savedChat;
+    async function saveResumeAssistantChat(chat: Chat) {
+      if (!chat.resumeId) return null;
+      const directory = useResumeStore().list.find((resume) => resume.id === chat.resumeId);
+      if (!directory || directory.deletedAt !== null) return null;
+      const record = chat as ResumeAssistantChatRecord;
+      await set(
+        resumeAssistantChatKey(chat.id),
+        JSON.parse(JSON.stringify(record)) as ResumeAssistantChatRecord,
+      );
+      const updated = await useResumeStore().updateResumeAiChatSummary(chat.resumeId, {
+        id: chat.id,
+        title: chat.title,
+        createTime: chat.createTime,
+        updateTime: chat.updateTime,
+      } satisfies AiChatSummary);
+      if (!updated) {
+        await del(resumeAssistantChatKey(chat.id));
+        return null;
       }
-      resumeAssistantChatList.value.unshift(chat);
-      resumeAssistantChat.value = chat;
+      resumeAssistantChat.value = record;
       return chat;
     }
-    // 切换当前简历助手话题
-    function switchResumeAssistantChat(id: string) {
-      const chat = resumeAssistantChatList.value.find((item) => item.id === id);
-      if (!chat) return;
-      resumeAssistantChat.value = chat;
-    }
-    // 删除简历时同步移除其所属的助手对话
-    function removeResumeAssistantChats(resumeId: string) {
-      resumeAssistantChatList.value = resumeAssistantChatList.value.filter(
-        (chat) => chat.resumeId !== resumeId,
+    // 持久化已创建的会话正文及目录摘要
+    async function persistResumeAssistantChat(chat: Chat) {
+      if (!chat.resumeId) return;
+      const directory = useResumeStore().list.find((resume) => resume.id === chat.resumeId);
+      if (!directory || directory.deletedAt !== null) return;
+      const record = chat as ResumeAssistantChatRecord;
+      await set(
+        resumeAssistantChatKey(chat.id),
+        JSON.parse(JSON.stringify(record)) as ResumeAssistantChatRecord,
       );
+      await useResumeStore().updateResumeAiChatSummary(chat.resumeId, {
+        id: chat.id,
+        title: chat.title,
+        createTime: chat.createTime,
+        updateTime: chat.updateTime,
+      });
+    }
+    // 按会话 ID 读取完整正文，供历史会话查看使用
+    function getResumeAssistantChat(id: string) {
+      return get<ResumeAssistantChatRecord>(resumeAssistantChatKey(id));
+    }
+    // 彻底删除简历时清理其关联会话正文和目录摘要
+    async function removeResumeAssistantChats(resumeId: string) {
+      const resumeStore = useResumeStore();
+      const ids = resumeStore.list.find((resume) => resume.id === resumeId)?.ai.map((chat) => chat.id) || [];
+      await Promise.all(ids.map((id) => del(resumeAssistantChatKey(id))));
+      await resumeStore.clearResumeAiChatSummaries(resumeId);
+      if (resumeAssistantChat.value?.resumeId === resumeId) {
+        resumeAssistantChat.value = null;
+      }
+    }
+    // 软删除只清除当前运行时指针，保留 IndexedDB 会话和目录摘要
+    function clearCurrentResumeAssistantChat(resumeId: string) {
       if (resumeAssistantChat.value?.resumeId === resumeId) {
         resumeAssistantChat.value = null;
       }
@@ -355,8 +400,11 @@ export const useAiStore = defineStore(
       initializeResumeAssistantChat,
       createNewResumeAssistantChat,
       saveResumeAssistantChat,
+      persistResumeAssistantChat,
       switchResumeAssistantChat,
+      getResumeAssistantChat,
       removeResumeAssistantChats,
+      clearCurrentResumeAssistantChat,
       updateResumeAssistantChatTitle,
       prepareNewChat,
       switchChat,
@@ -380,8 +428,6 @@ export const useAiStore = defineStore(
         "currentChatId",
         "modelList",
         "agentModels",
-        "resumeAssistantChat",
-        "resumeAssistantChatList",
         "thinkMode",
       ],
     },

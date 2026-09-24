@@ -6,34 +6,46 @@ import { getResumeTitle } from "../../editor/resumeName";
 
 const aiStore = useAiStore();
 const resumeStore = useResumeStore();
-const { resumeAssistantChatList } = storeToRefs(aiStore);
-const { list } = storeToRefs(resumeStore);
+const { resumeList, list } = storeToRefs(resumeStore);
 const activeChatId = ref("");
+const activeChat = ref<Chat | null>(null);
+const resumeAssistantChatList = computed(() =>
+  list.value.flatMap((resume) => resume.ai.map((chat) => ({ ...chat, resumeId: resume.id }))),
+);
 
 // 对话记录更新后优先保留当前选择，首次进入默认展示最新一条。
 watch(
   resumeAssistantChatList,
-  (chatList) => {
+  async (chatList) => {
     if (!chatList.some((chat) => chat.id === activeChatId.value)) {
       activeChatId.value = chatList[0]?.id || "";
     }
+    const id = activeChatId.value;
+    const loaded = id ? await aiStore.getResumeAssistantChat(id) : null;
+    if (activeChatId.value === id) activeChat.value = loaded || null;
   },
   { immediate: true },
 );
 
-const activeChat = computed<Chat | undefined>(() =>
-  resumeAssistantChatList.value.find((chat) => chat.id === activeChatId.value),
-);
 const messages = computed(
   () => activeChat.value?.messages.filter((message) => message.role !== "system") || [],
 );
 const resumeTitles = computed(
-  () => new Map(list.value.map((item) => [item.id, getResumeTitle(item)])),
+  () =>
+    new Map(
+      [...resumeList.value, ...resumeStore.trashList].map((item) => [item.id, getResumeTitle(item)]),
+    ),
 );
 
-function getChatResumeTitle(chat: Chat) {
+function getChatResumeTitle(chat: Pick<Chat, "resumeId">) {
   if (!chat.resumeId) return "未关联简历";
   return resumeTitles.value.get(chat.resumeId) || "已删除简历";
+}
+
+async function selectChat(id: string) {
+  activeChatId.value = id;
+  const loaded = await aiStore.getResumeAssistantChat(id);
+  if (activeChatId.value === id) activeChat.value = loaded || null;
 }
 
 function formatTime(time: number) {
@@ -59,7 +71,7 @@ function formatTime(time: number) {
                 : 'text-sf-text hover:bg-sf-bg'
             "
             type="button"
-            @click="activeChatId = chat.id"
+            @click="selectChat(chat.id)"
           >
             <strong class="block truncate text-sm">{{ chat.title }}</strong>
             <small class="mt-3 block truncate text-xs text-sf-text-3">
