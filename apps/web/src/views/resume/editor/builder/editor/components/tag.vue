@@ -1,5 +1,5 @@
 <script setup>
-// 标签选择：默认标签点选切换，最右侧支持自定义输入后确认新增
+// 标签选择：保留预设标签，回车添加自定义标签
 const props = defineProps({
   // 可选标签：由字段配置注入，组件自身不内置业务标签
   list: {
@@ -12,78 +12,49 @@ const tags = defineModel("modelValue", {
   type: Array,
   default: () => [],
 });
-// 自定义输入区是否展开
-const editing = ref(false);
-const custom = ref("");
-const inputRef = useTemplateRef("inputRef");
+const inputValue = ref("");
 
-// 标签池：默认标签在前，已选的自定义标签追加在后
 const options = computed(() => [
   ...props.list,
   ...tags.value.filter((tag) => !props.list.includes(tag)),
 ]);
-// 当前标签是否选中
 const isActive = (tag) => tags.value.includes(tag);
-// 点选标签：已选则移除，未选则追加
 const toggle = (tag) => {
   tags.value = isActive(tag) ? tags.value.filter((item) => item !== tag) : [...tags.value, tag];
 };
-// 展开自定义输入并聚焦
-const openCustom = async () => {
-  editing.value = true;
-  await nextTick();
-  inputRef.value?.focus?.();
-};
-// 确认自定义标签：去重后追加并选中
-const confirmCustom = () => {
-  const value = custom.value.trim();
+
+// 输入标签后回车添加并选中
+const addTag = () => {
+  const value = inputValue.value.trim();
   if (value && !tags.value.includes(value)) {
     tags.value = [...tags.value, value];
   }
-  custom.value = "";
-  editing.value = false;
+  inputValue.value = "";
 };
 </script>
 
 <template>
-  <div class="flex w-full flex-wrap items-center gap-3">
-    <!-- 标签池：点选切换选中状态，超出宽度自动换行 -->
-    <span
+  <div
+    class="flex min-h-12 w-full flex-wrap items-center gap-3 rounded-3xl border border-sf-b px-3 py-3 transition-colors hover:border-sf-theme"
+  >
+    <div
       v-for="tag in options"
       :key="tag"
       class="flex-c h-6 cursor-pointer rounded-3xl border px-3 text-xs transition-colors"
       :class="
         isActive(tag)
-          ? 'border-sf-theme bg-sf-theme text-sf-theme-text'
+          ? 'border-none border-sf-theme bg-sf-theme text-sf-theme-text hover:bg-sf-theme-2'
           : 'border-sf-border text-sf-text-2 hover:border-sf-theme hover:text-sf-theme'
       "
       @click="toggle(tag)"
     >
       {{ tag }}
-    </span>
-    <!-- 自定义入口：展开后为输入框与确认按钮 -->
-    <div class="flex items-center gap-2" v-if="editing">
-      <div class="w-36">
-        <SfInput
-          ref="inputRef"
-          v-model="custom"
-          size="small"
-          placeholder="输入自定义标签"
-          @keyup.enter="confirmCustom"
-        />
-      </div>
-      <SfButton size="small" class="h-6! px-3!" :disabled="!custom.trim()" @click="confirmCustom"
-        >确认</SfButton
-      >
     </div>
-    <div
-      v-else
-      class="border-sf-border flex-c h-6 cursor-pointer rounded-3xl border px-3 text-xs text-sf-text-2 transition-colors hover:border-sf-theme hover:text-sf-theme"
-      @click="openCustom"
-    >
-      自定义
-    </div>
+    <input
+      v-model="inputValue"
+      class="min-w-32 flex-1 bg-transparent text-sm text-sf-text outline-none placeholder:text-sf-text-3"
+      placeholder="回车添加，再次点击标签可取消"
+      @keydown.enter.prevent="addTag"
+    />
   </div>
 </template>
-
-<style lang="scss" scoped></style>
