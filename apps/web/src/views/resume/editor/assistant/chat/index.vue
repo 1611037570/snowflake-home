@@ -153,7 +153,7 @@ async function saveDraftChat() {
   const draft = draftChat.value;
   if (!draft || draft.resumeId !== resumeId.value) return;
   const savedChat = await aiStore.saveResumeAssistantChat(draft);
-  if (savedChat) draftChat.value = null;
+  if (savedChat && draftChat.value?.id === draft.id) draftChat.value = null;
 }
 const persistSavedChat = debounce((savedChat: Chat) => {
   void aiStore.persistResumeAssistantChat(savedChat);
