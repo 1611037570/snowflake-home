@@ -14,6 +14,8 @@ const resumeStore = useResumeStore();
 const { runtimeConfig, currentData } = storeToRefs(resumeStore);
 defineOptions({ name: "AddModule" });
 
+const BASIC_MODULE_KEYS = ["skill", "education", "project", "work"];
+
 // 预设模块列表：复用 DEFAULT_MODULE_NAMES 统一维护 key 与名称，user 为固定模块不可添加
 const presets = DEFAULT_MODULE_NAMES.filter((item) => item.key !== "user").map((item) => ({
   name: item.name,
@@ -21,7 +23,7 @@ const presets = DEFAULT_MODULE_NAMES.filter((item) => item.key !== "user").map((
 }));
 
 // 过滤后的预设模块：只显示尚未添加到当前表单中的模块
-const filteredPresets = computed(() => {
+const availableModules = computed(() => {
   if (!runtimeConfig.value) return presets;
   return presets.filter((item) => {
     // 检查运行时配置中是否已存在该模块
@@ -29,14 +31,15 @@ const filteredPresets = computed(() => {
   });
 });
 
-const moduleOptions = computed(() => [
-  ...filteredPresets.value,
-  {
-    name: "自定义模块",
-    value: "custom",
-  },
-]);
-
+const basicModules = computed(() =>
+  BASIC_MODULE_KEYS.flatMap((key) => {
+    const item = availableModules.value.find((module) => module.value === key);
+    return item ? [item] : [];
+  }),
+);
+const otherModules = computed(() =>
+  availableModules.value.filter((item) => !BASIC_MODULE_KEYS.includes(item.value)),
+);
 const handleAdd = (module) => {
   const type = module.value;
   // 自定义模块需要特殊处理
@@ -97,20 +100,47 @@ const handleConfirm = () => {
     <div>增加模块</div>
   </header>
 
-  <div class="flex flex-wrap gap-3">
-    <button
-      v-for="item in moduleOptions"
-      :key="item.name"
-      type="button"
-      class="border-sf-border flex h-7 cursor-pointer items-center justify-center gap-1 rounded-3xl border bg-sf-primary px-2 text-xs text-sf-text-2 transition-colors hover:border-sf-theme hover:text-sf-theme"
-      :class="item.value === 'custom' ? 'border-dashed' : ''"
-      @click="handleAdd(item)"
-    >
-      <SfIcon icon="ic:round-add" size="4" />
-      <span>
-        {{ item.name }}
-      </span>
-    </button>
+  <div class="flex w-full flex-col gap-3">
+    <div v-if="basicModules.length" class="flex flex-col gap-3">
+      <span class="text-xs text-sf-text-3">基础模块</span>
+      <div class="flex flex-wrap gap-3">
+        <button
+          v-for="item in basicModules"
+          :key="item.name"
+          type="button"
+          class="border-sf-border flex h-7 cursor-pointer items-center justify-center gap-1 rounded-3xl border bg-sf-primary px-2 text-xs text-sf-text-2 transition-colors hover:border-sf-theme hover:text-sf-theme"
+          @click="handleAdd(item)"
+        >
+          <SfIcon icon="ic:round-add" size="4" />
+          <span>{{ item.name }}</span>
+        </button>
+      </div>
+    </div>
+    <div v-if="otherModules.length" class="flex flex-col gap-3">
+      <div class="flex flex-col gap-3">
+        <span class="text-xs text-sf-text-3">其他模块</span>
+        <div class="flex flex-wrap gap-3">
+          <button
+            v-for="item in otherModules"
+            :key="item.name"
+            type="button"
+            class="border-sf-border flex h-7 cursor-pointer items-center justify-center gap-1 rounded-3xl border bg-sf-primary px-2 text-xs text-sf-text-2 transition-colors hover:border-sf-theme hover:text-sf-theme"
+            @click="handleAdd(item)"
+          >
+            <SfIcon icon="ic:round-add" size="4" />
+            <span>{{ item.name }}</span>
+          </button>
+          <button
+            type="button"
+            class="border-sf-border flex h-7 w-fit cursor-pointer items-center justify-center gap-1 rounded-3xl border border-dashed bg-sf-primary px-2 text-xs text-sf-text-2 transition-colors hover:border-sf-theme hover:text-sf-theme"
+            @click="handleAdd({ value: 'custom' })"
+          >
+            <SfIcon icon="ic:round-add" size="4" />
+            <span>自定义模块</span>
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
