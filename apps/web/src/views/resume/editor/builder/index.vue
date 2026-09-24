@@ -71,11 +71,11 @@ const activeMenu = computed(() => menuList.value[activeIndex.value] || menuList.
       :list="menuList"
       v-model:index="activeIndex"
       v-model:disabled="isGenerating"
-      boxClass=" border-y border-r border-sf-b bg-sf-primary rounded-none  rounded-r-3xl!"
-      class="mb-3 rounded-r-3xl!"
+      boxClass="border-y border-r border-sf-b bg-sf-primary rounded-none md:rounded-r-3xl!"
+      class="mb-3 rounded-none md:rounded-r-3xl!"
     />
     <div
-      class="relative flex min-h-0 w-full flex-1 flex-col rounded-r-3xl border-y border-r border-sf-b bg-sf-primary py-3 text-sf-base"
+      class="relative flex min-h-0 w-full flex-1 flex-col rounded-none border-y border-r border-sf-b bg-sf-primary py-3 text-sf-base md:rounded-r-3xl"
     >
       <div class="flex min-h-0 w-full flex-1 flex-col">
         <Transition :name="`tab-slide-${direction}`" mode="out-in">
@@ -123,11 +123,11 @@ const activeMenu = computed(() => menuList.value[activeIndex.value] || menuList.
 
 <style scoped>
 @media (max-width: 767px) {
-  :deep(.mobile-resume-builder) {
+  :global(.mobile-resume-builder) {
     width: 100% !important;
   }
 
-  :deep(.mobile-resume-builder > div:last-child) {
+  :global(.mobile-resume-builder > div:last-child) {
     display: none;
   }
 }
