@@ -173,11 +173,14 @@ export const locateEditor = (key: string, hit?: Pick<ResumeSearchHit, "itemIndex
     notifyArchived();
     return;
   }
+  // 模块折叠时子记录可能仍在 DOM 中，定位应回到主模块
+  const collapsed = currentData.value?.[key]?.ui?.collapsed;
+  const targetHit = Array.isArray(collapsed) && !collapsed.includes("1") ? undefined : hit;
   // 切换到编辑标签，避免停留设计/模板标签时编辑区不可见
   eventBus.emit("switch-builder-tab", 0);
   // 触发编辑区模块选中闪烁
-  scheduleEditorHighlight(key, hit);
-  nextTick(() => scrollEditorTarget(key, hit));
+  scheduleEditorHighlight(key, targetHit);
+  nextTick(() => scrollEditorTarget(key, targetHit));
 };
 
 // 跳转编辑区（含隐藏恢复）：供进度条等复用
