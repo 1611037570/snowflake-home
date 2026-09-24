@@ -92,18 +92,6 @@ export const measureLayoutNodes = (
     // 分页据此把"能放下的块"放进当前页，块区间交给渲染层裁剪
     const blockHost = element.querySelector<HTMLElement>("[data-layout-block-range]");
     const nodeTop = element.getBoundingClientRect().top;
-    const leadingGap = element.querySelector<HTMLElement>("[data-layout-leading-gap]");
-    // 段间距占位作为 0 号块：它位于内容盒外，单独成块后可以只把间距留在上一页，块区间 [0, 0) 不渲染内容块
-    const gapBreakPoints = leadingGap
-      ? [
-          {
-            offset: 0,
-            type: "block" as const,
-            height: (leadingGap.getBoundingClientRect().bottom - nodeTop) / scale,
-            blockEnd: 0,
-          },
-        ].filter((point) => Number.isFinite(point.height) && point.height > 0)
-      : [];
     const blockBreakPoints = blockHost
       ? Array.from(blockHost.children)
           .map((child, index) => ({
@@ -117,8 +105,7 @@ export const measureLayoutNodes = (
           .filter((point) => Number.isFinite(point.height) && point.height > 0)
       : [];
 
-    // 续段会去掉内容盒上内边距，测量分页高度时一并扣除；
-    // 段间距已作为 0 号块单独参与分页，续段高度里不再重复扣一次
+    // 续段会去掉内容盒上内边距，测量分页高度时一并扣除
     const style = getComputedStyle(blockHost ?? element);
     const droppedTopSpacing = Number.parseFloat(style.paddingTop) || 0;
 
@@ -142,7 +129,7 @@ export const measureLayoutNodes = (
       width: rect.width,
       fullHeight: rect.height,
       minHeight: Math.max(rect.height, node.breakPolicy.minHeight || 0),
-      breakPoints: [...gapBreakPoints, ...blockBreakPoints, ...breakPoints, ...lineBreakPoints],
+      breakPoints: [...blockBreakPoints, ...breakPoints, ...lineBreakPoints],
       droppedTopSpacing,
     });
   });

@@ -8,7 +8,6 @@ const createNode = (id: string, overrides: Partial<LayoutNode> = {}): LayoutNode
   sourceModuleKey: "test",
   type: "block",
   breakPolicy: {
-    splittable: false,
   },
   payload: { id },
   ...overrides,
@@ -53,7 +52,6 @@ describe("paginateFlow", () => {
       type: "group",
       title,
       breakPolicy: {
-        splittable: true,
       },
     });
     const measurements = new Map([
@@ -97,14 +95,12 @@ describe("paginateFlow", () => {
       type: "block",
       payload: "模块标题",
       breakPolicy: {
-        splittable: false,
       },
     });
     const content = createNode("content", {
       type: "richText",
       title,
       breakPolicy: {
-        splittable: true,
       },
     });
     const measurements = new Map([
@@ -154,7 +150,6 @@ describe("paginateFlow", () => {
   it("长段落存在字符级断点时不会整段溢出空页", () => {
     const node = createNode("long-text", {
       breakPolicy: {
-        splittable: true,
       },
     });
     const pages = paginateFlow({
@@ -193,7 +188,6 @@ describe("paginateFlow", () => {
     const node = createNode("education-item", {
       type: "group",
       breakPolicy: {
-        splittable: true,
       },
     });
     const pages = paginateFlow({
@@ -233,7 +227,6 @@ describe("paginateFlow", () => {
     const content = createNode("content", {
       type: "richText",
       breakPolicy: {
-        splittable: true,
       },
     });
     const pages = paginateFlow({
@@ -264,7 +257,6 @@ describe("paginateFlow", () => {
     const content = createNode("content", {
       type: "richText",
       breakPolicy: {
-        splittable: true,
       },
     });
     const breakPoints = Array.from({ length: 10 }, (_, index) => ({
@@ -300,7 +292,6 @@ describe("paginateFlow", () => {
     const content = createNode("content", {
       type: "richText",
       breakPolicy: {
-        splittable: true,
       },
     });
     const pages = paginateFlow({
@@ -337,7 +328,6 @@ describe("paginateFlow", () => {
       type: "media",
       title,
       breakPolicy: {
-        splittable: false,
       },
     });
     const pages = paginateFlow({
@@ -366,7 +356,6 @@ describe("paginateFlow", () => {
       type: "media",
       title,
       breakPolicy: {
-        splittable: true,
       },
     });
     const pages = paginateFlow({
@@ -408,7 +397,6 @@ describe("paginateFlow", () => {
   it("顶部间距块可以单独留在上一页，块区间 [0, 0) 不渲染内容块", () => {
     const item = createNode("item", {
       breakPolicy: {
-        splittable: true,
       },
     });
     const pages = paginateFlow({
@@ -442,7 +430,6 @@ describe("paginateFlow", () => {
   it("内容盒首块已在前片渲染时，续段才扣除顶部留白", () => {
     const item = createNode("item", {
       breakPolicy: {
-        splittable: true,
       },
     });
     const breakPoints = [
@@ -508,7 +495,6 @@ describe("paginateFlow", () => {
   it("页面第一个内容不绘制间距占位，按去掉间距后的高度分页", () => {
     const item = createNode("item", {
       breakPolicy: {
-        splittable: true,
       },
     });
     const pages = paginateFlow({

@@ -33,9 +33,7 @@ export const createRichTextModuleAdapter = (moduleKey: string): LayoutAdapter =>
       id: `${moduleKey}.content`,
       sourceModuleKey: moduleKey,
       type: "richText",
-      breakPolicy: {
-        splittable: true,
-      },
+      breakPolicy: {},
       payload: parsed,
       title,
       breakPoints: parsed.breakPoints,

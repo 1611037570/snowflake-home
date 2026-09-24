@@ -30,10 +30,7 @@ export const createExperienceModuleAdapter = (moduleKey: string): LayoutAdapter 
       id: `${moduleKey}.item-${index}`,
       sourceModuleKey: moduleKey,
       type: "group",
-      breakPolicy: {
-        // 有正文的条目按正文断点拆分，头部随首段一起留在原页
-        splittable: Boolean(parsed),
-      },
+      breakPolicy: {},
       payload: {
         part: "item",
         item,

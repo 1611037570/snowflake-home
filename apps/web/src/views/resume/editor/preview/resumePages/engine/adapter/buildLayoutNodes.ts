@@ -8,6 +8,32 @@ import { registerExperienceModuleAdapters } from "./experienceModules";
 import { registerOtherModuleAdapters } from "./otherModules";
 import { registerRichTextModuleAdapters } from "./richTextModules";
 
+/** 判断节点原本是否在内容前绘制段间距。 */
+const usesParagraphSpacing = (node: LayoutNode): boolean =>
+  node.type === "richText" ||
+  node.type === "media" ||
+  (node.type === "group" && node.sourceModuleKey !== "user") ||
+  (node.type === "block" && ["account", "honor"].includes(node.sourceModuleKey));
+
+/** 将段间距转换成独立分页行，交由通用分页逻辑按高度放置。 */
+const addParagraphSpacingRows = (nodes: LayoutNode[], height: number): LayoutNode[] =>
+  nodes.flatMap((node) => {
+    if (!usesParagraphSpacing(node) || height <= 0) return [node];
+    const { title, ...contentNode } = node;
+    return [
+      {
+        id: `${node.id}.paragraph-spacing`,
+        sourceModuleKey: node.sourceModuleKey,
+        type: "spacer",
+        breakPolicy: {},
+        hideWhenPageLeading: true,
+        payload: { height },
+        title,
+      },
+      contentNode,
+    ];
+  });
+
 /** 创建内置简历模块适配器注册表。 */
 export const createResumeLayoutAdapterRegistry = (): LayoutAdapterRegistry => {
   const registry = createLayoutAdapterRegistry();
@@ -51,5 +77,10 @@ export const buildLayoutNodes = ({
   moduleKeys.flatMap((moduleKey) => {
     const adapter = registry.resolve(moduleKey);
     if (!adapter) return [];
-    return attachModuleTitle(moduleKey, adapter({ moduleKey, data, ui, config }));
+    const nodes = adapter({ moduleKey, data, ui, config });
+    const spacing = Number(ui?.paragraphSpacing);
+    return attachModuleTitle(
+      moduleKey,
+      addParagraphSpacingRows(nodes, Number.isFinite(spacing) ? Math.max(0, spacing) : 0),
+    );
   });
