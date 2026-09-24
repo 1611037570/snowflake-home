@@ -266,6 +266,7 @@ const itemContentSpacingStyle = computed(() => {
   <template v-else-if="node.type === 'block'">
     <template v-if="node.sourceModuleKey === 'account'">
       <div
+        v-if="showParagraphGap"
         class="shrink-0"
         :class="{ 'resume-debug-paragraph-gap': showDebug }"
         :style="paragraphSpacingStyle"
@@ -297,6 +298,7 @@ const itemContentSpacingStyle = computed(() => {
     </template>
     <template v-else-if="node.sourceModuleKey === 'honor'">
       <div
+        v-if="showParagraphGap"
         class="shrink-0"
         :class="{ 'resume-debug-paragraph-gap': showDebug }"
         :style="paragraphSpacingStyle"
