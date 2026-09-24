@@ -1,39 +1,17 @@
 import confirm from "@/components/business/confirm";
 import { ElMessage } from "element-plus";
-import {
-  addArrayRecord,
-  createDataPathContext,
-  getFieldDataPath,
-  moveArrayRecord,
-  removeArrayRecord,
-  setFieldCheckValue,
-  walkFormFields,
-} from "@/components/business/dynamicForm/api";
 import router from "@/routers";
 import { useAiStore } from "@/stores/modules/ai";
 import { defineStore } from "pinia";
 import { computed, ref, shallowRef, toRaw, watch } from "vue";
-import {
-  ALL_MODULE_KEY,
-  DEFAULT_MODULE_NAMES,
-  DEFAULT_RESUME_ITEM,
-  DEFAULT_EDITOR,
-  DEFAULT_SYSTEM,
-} from "./defaultConfig";
+import { DEFAULT_RESUME_ITEM, DEFAULT_EDITOR, DEFAULT_SYSTEM } from "./defaultConfig";
 import { COLLAPSED, EXPANDED } from "./formConfig";
 import { DEFAULT_UI } from "./uiConfig";
-import {
-  bindCollapsedDefault,
-  buildRuntimeConfig,
-  compactConfigFields,
-} from "./hooks/useConfigTemplate";
 import { debounce, isEqual, merge } from "lodash-es";
 import { createResumeStorage } from "./resumeStorage";
 import { createResumeLifecycle } from "./resumeLifecycle";
-import { executeResumeOperations, type ResumeWriteOp } from "./resumeOperations";
-import {
-  type ResumeListItem,
-} from "./resumeCatalog";
+import { createResumeEditor } from "./resumeEditor";
+import type { ResumeListItem } from "./resumeCatalog";
 export type DesensitizeLevel = "normal" | "strict";
 export type DesensitizeConfig = {
   disabled: boolean;
@@ -194,106 +172,35 @@ export const useResumeStore = defineStore(
       return item ? item.data : undefined;
     });
 
-    // 获取当前选中的表单配置
-    const currentConfig = computed({
-      get() {
-        const item = currentItem.value;
-        return item ? item.config : undefined;
-      },
-      set(newConfig: any) {
-        const item = currentItem.value;
-        if (item) {
-          item.config = newConfig;
-        }
-      },
-    });
-    // 编辑器会话配置：从持久化 key 展开，完整 schema 只存在于运行时
-    const runtimeConfig = ref<any>(null);
-    const runtimeFields = computed(() => runtimeConfig.value?.fields || []);
-    const refreshRuntime = () => {
-      const item = currentItem.value;
-      if (!item) {
-        runtimeConfig.value = null;
-        return;
-      }
-      const runtime = buildRuntimeConfig(item.config, item.data);
-      // 记录折叠默认值按系统设置读取，仅影响新增记录
-      bindCollapsedDefault(runtime.fields, () => itemDefaultCollapsed.value);
-      runtimeConfig.value = runtime;
-    };
-    // 切简历/新建/恢复时按最新模板重建运行时配置
-    watch(currentItem, refreshRuntime, { immediate: true });
-    // 持久化字段列表写入：内容一致时跳过，避免无谓变更（入参须为已投影的字段列表）
-    const setConfigFields = (item: any, fields: any[]) => {
-      if (!item) return;
-      const config = item.config && typeof item.config === "object" ? item.config : {};
-      if (isEqual(config.fields || [], fields)) return;
-      config.fields = structuredClone(fields);
-    };
-    // 模块与内部字段排序只改运行时 fields，变化后按投影回写持久化顺序
-    watch(
-      () => compactConfigFields(runtimeConfig.value?.fields || []),
-      (projectedFields) => setConfigFields(currentItem.value, projectedFields),
-    );
-    // 整体恢复配置：AI 撤回等场景使用，结构变化时同步重建运行时配置
-    const restoreConfig = (config: any) => {
-      const item = currentItem.value;
-      if (!item) return;
-      const next = config && typeof config === "object" ? structuredClone(toRaw(config)) : {};
-      // 仅结构变化才重建运行时配置，避免无关恢复触发表单整表重建
-      const configChanged = !isEqual(toRaw(item.config), next);
-      item.config = next;
-      if (configChanged) refreshRuntime();
-    };
-    // 获取当前选中的UI配置
-    const currentUI = computed({
-      get() {
-        const item = currentItem.value;
-        return item ? item.ui : undefined;
-      },
-      set(newUI: any) {
-        const item = currentItem.value;
-        if (item) {
-          item.ui = newUI;
-        }
-      },
-    });
-    const currentUsage = computed(() => {
-      const item = currentItem.value;
-      return item ? item.usage : undefined;
-    });
-    // 选中模块的名称列表
-    const selectedModule = ref<any[]>([]);
-    // 获取模块名称
-    const getModel = (key: string): any => {
-      if (!key) return;
-      // 模块展示标题统一读取 ui.title
-      const moduleTitle = currentData.value?.[key]?.ui?.title;
-      const found = DEFAULT_MODULE_NAMES.find((item) => item.key === key);
-      if (moduleTitle) return { key, name: moduleTitle };
-      return found ? { key: found.key, name: found.name } : undefined;
-    };
-    // 选中模块：已存在则忽略，名称由 getModel 统一解析
-    const selectModule = (key: string) => {
-      const model = getModel(key);
-      if (!model?.key) return;
-      if (!selectedModule.value.some((item) => item.key === key)) {
-        selectedModule.value.push(model);
-      }
-    };
-    // 取消选中模块：“整个简历”占位项不允许移除
-    const unselectModule = (key: string) => {
-      if (key === ALL_MODULE_KEY) return;
-      selectedModule.value = selectedModule.value.filter((item) => item.key !== key);
-    };
-    // 清空选中模块
-    const clearSelectedModules = () => {
-      selectedModule.value = [];
-    };
-    // 整体替换选中模块：导出恢复、跳转定位等场景使用
-    const setSelectedModules = (modules: any[]) => {
-      selectedModule.value = modules;
-    };
+    const editor = createResumeEditor({ currentItem, currentData, itemDefaultCollapsed });
+    const {
+      currentConfig,
+      runtimeConfig,
+      runtimeFields,
+      setConfigFields,
+      restoreConfig,
+      currentUI,
+      currentUsage,
+      selectedModule,
+      getModel,
+      selectModule,
+      unselectModule,
+      clearSelectedModules,
+      setSelectedModules,
+      addDataRecord,
+      removeDataRecord,
+      moveDataRecord,
+      updateModuleField,
+      updateModuleTitle,
+      setModuleHidden,
+      setModuleArchived,
+      removeModule,
+      setPageLayout,
+      swapModuleOrder,
+      updateRecordField,
+      applyResumeOperations,
+      compactConfigFields,
+    } = editor;
     // 深拷贝快照：先脱响应式代理再递归克隆，原始字符串直接复用引用，避免 JSON 中转大字段开销
     const deepClone = (value: any): any => {
       if (value == null) return value;
@@ -313,152 +220,6 @@ export const useResumeStore = defineStore(
       }
       return result;
     };
-    // 所有数组模块统一将记录存放在 list
-    const resolveModuleRecords = (module: any): any[] | null => {
-      if (!module || typeof module !== "object") return null;
-      if (Array.isArray(module.list)) return module.list;
-      return null;
-    };
-    // 数组型模块新增记录：统一按运行时结构向真实数据追加默认记录
-    function addDataRecord(moduleKey: string): number {
-      const target = findModuleArrayField(runtimeConfig.value?.fields, moduleKey);
-      if (!target) return -1;
-      return addArrayRecord(currentData.value, target.field, target.context);
-    }
-    // 从运行时模块结构定位数组字段
-    const findModuleArrayField = (fields: any[] | undefined, moduleKey: string) => {
-      const moduleField = fields?.find((f: any) => f?.key === moduleKey);
-      const field = moduleField?.fields?.find((item: any) => item?.type === "array");
-      if (!field || !Array.isArray(moduleField?.context)) return;
-      return { field, context: createDataPathContext(moduleField.context) };
-    };
-    // 从运行时表单结构定位模块级可添加字段
-    const findAddableModuleField = (
-      fields: any[] | undefined,
-      moduleKey: string,
-      field: string,
-    ) => {
-      const moduleField = fields?.find((item: any) => item?.key === moduleKey);
-      let result: any;
-      walkFormFields(moduleField, (item) => {
-        if (result || item.addable !== true) return;
-        const source = getFieldDataPath(item);
-        if (source?.length === 2 && source[0] === "data" && source[1] === field) {
-          result = item;
-        }
-      });
-      return result;
-    };
-    // AI 删除记录：统一修改真实数据数组
-    function removeDataRecord(moduleKey: string, index: number): boolean {
-      const target = findModuleArrayField(runtimeConfig.value?.fields, moduleKey);
-      if (!target) return false;
-      return removeArrayRecord(currentData.value, target.field, index, target.context);
-    }
-    // AI 移动记录：统一调整真实数据数组顺序
-    function moveDataRecord(moduleKey: string, from: number, to: number): boolean {
-      const target = findModuleArrayField(runtimeConfig.value?.fields, moduleKey);
-      if (!target) return false;
-      return moveArrayRecord(currentData.value, target.field, from, to, target.context);
-    }
-    // 修改模块级 data 字段
-    function updateModuleField(moduleKey: string, field: string, value: unknown): boolean {
-      const module = currentData.value?.[moduleKey];
-      if (
-        !module ||
-        !module.data ||
-        typeof module.data !== "object" ||
-        Array.isArray(module.data)
-      ) {
-        return false;
-      }
-      const hasField = Object.prototype.hasOwnProperty.call(module.data, field);
-      if (!hasField && !findAddableModuleField(runtimeConfig.value?.fields, moduleKey, field)) {
-        return false;
-      }
-      module.data[field] = value;
-      return true;
-    }
-    // 修改模块展示标题，标题统一存放在模块 ui.title
-    function updateModuleTitle(moduleKey: string, title: string): boolean {
-      const module = currentData.value?.[moduleKey];
-      const value = title.trim();
-      if (!module || typeof module !== "object" || !value) return false;
-      module.ui ||= {};
-      module.ui.title = value;
-      return true;
-    }
-    // 从运行时配置定位模块字段：模块级状态操作统一按 key 查找
-    const findModuleField = (moduleKey: string) =>
-      runtimeConfig.value?.fields?.find((field: any) => field?.key === moduleKey);
-    // 设置模块显隐：预览区按同一数据路径同步显隐
-    function setModuleHidden(moduleKey: string, hidden: boolean): boolean {
-      const field = findModuleField(moduleKey);
-      if (!field) return false;
-      setFieldCheckValue(currentData.value, field, "hidden", hidden);
-      return true;
-    }
-    // 设置模块归档：归档后模块从编辑区移除，并同步取消模块选中
-    function setModuleArchived(moduleKey: string, archived: boolean): boolean {
-      const field = findModuleField(moduleKey);
-      if (!field) return false;
-      setFieldCheckValue(currentData.value, field, "removed", archived);
-      if (archived) unselectModule(moduleKey);
-      return true;
-    }
-    // 删除模块：移除运行时配置节点与数据，并同步取消模块选中
-    function removeModule(moduleKey: string): boolean {
-      const fields = runtimeConfig.value?.fields;
-      const index = fields?.findIndex((field: any) => field?.key === moduleKey) ?? -1;
-      if (index < 0) return false;
-      fields.splice(index, 1);
-      if (currentData.value) delete currentData.value[moduleKey];
-      unselectModule(moduleKey);
-      return true;
-    }
-    // 写入显式页面布局：预览区左右移动模块后，布局从主题模板物化为 ui.pageLayout。
-    // 落库前深拷贝为纯对象，避免响应式代理导致持久化无法结构化克隆。
-    function setPageLayout(pageLayout: Record<string, any> | null): boolean {
-      if (!currentUI.value) return false;
-      currentUI.value.pageLayout = pageLayout ? JSON.parse(JSON.stringify(pageLayout)) : null;
-      return true;
-    }
-    // 交换两个模块的配置顺序：供预览区上下移动使用，个人信息模块固定不参与交换
-    function swapModuleOrder(firstKey: string, secondKey: string): boolean {
-      const fields = runtimeConfig.value?.fields;
-      if (!Array.isArray(fields)) return false;
-      if (firstKey === "user" || secondKey === "user") return false;
-      const firstIndex = fields.findIndex((field: any) => field?.key === firstKey);
-      const secondIndex = fields.findIndex((field: any) => field?.key === secondKey);
-      if (firstIndex < 0 || secondIndex < 0) return false;
-      const [first] = fields.splice(firstIndex, 1);
-      fields.splice(secondIndex, 0, first);
-      return true;
-    }
-    // 修改数组模块记录字段
-    function updateRecordField(
-      moduleKey: string,
-      index: number,
-      field: string,
-      value: unknown,
-    ): boolean {
-      const records = resolveModuleRecords(currentData.value?.[moduleKey]);
-      const record = records?.[index];
-      if (!record?.data || typeof record.data !== "object" || !(field in record.data)) return false;
-      record.data[field] = value;
-      return true;
-    }
-    // 批量写操作统一通过领域执行器落到当前简历
-    function applyResumeOperations(operations: ResumeWriteOp[]) {
-      return executeResumeOperations(operations, {
-        addDataRecord,
-        removeDataRecord,
-        moveDataRecord,
-        updateModuleField,
-        updateModuleTitle,
-        updateRecordField,
-      });
-    }
     const lifecycle = createResumeLifecycle({
       list,
       resumeRecords,
