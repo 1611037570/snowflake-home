@@ -14,8 +14,6 @@ import { useAiStore } from "@/stores/modules/ai";
 import { getUUID } from "@/utils";
 import { defineStore } from "pinia";
 import { computed, ref, shallowRef, toRaw, watch } from "vue";
-import { useIDBKeyval } from "@vueuse/integrations/useIDBKeyval";
-import { del } from "idb-keyval";
 import {
   ALL_MODULE_KEY,
   DEFAULT_MODULE_NAMES,
@@ -31,6 +29,7 @@ import {
   compactConfigFields,
 } from "./hooks/useConfigTemplate";
 import { debounce, isEqual, merge } from "lodash-es";
+import { createResumeStorage } from "./resumeStorage";
 import { executeResumeOperations, type ResumeWriteOp } from "./resumeOperations";
 import {
   createResumeListItem,
@@ -68,63 +67,8 @@ export const useResumeStore = defineStore(
         })
         .filter(Boolean),
     );
-    // 为每份简历复用同一个 VueUse IndexedDB 响应式实例
-    const resumeStorageMap = new Map<string, any>();
-    const resumeStorageKey = (id: string) => `snowflake-resume:${id}`;
-    const getResumeStorage = (id: string, initialValue: any = null, writeDefaults = false) => {
-      const existing = resumeStorageMap.get(id);
-      if (existing) return existing;
-      // 关闭内置深监听自动写入，改由统一的内容变更监听防抖写入，避免每次按键都触发整份简历的存储写入
-      const storage = useIDBKeyval(resumeStorageKey(id), initialValue, {
-        writeDefaults,
-        deep: false,
-      });
-      resumeStorageMap.set(id, storage);
-      return storage;
-    };
-    // 指定简历写回 IndexedDB：非当前简历（如回收站）的改动不在内容变更监听范围内，需显式落库
-    const persistResumeItem = (item: any) => {
-      if (!item?.id) return;
-      const storage = resumeStorageMap.get(item.id);
-      if (storage) void storage.set(storage.data.value);
-    };
-    const waitForResumeStorage = (storage: any) => {
-      if (storage.isFinished.value) return Promise.resolve();
-      return new Promise<void>((resolve) => {
-        const stop = watch(storage.isFinished, (finished) => {
-          if (!finished) return;
-          stop();
-          resolve();
-        });
-      });
-    };
-    // 历史简历可能缺少后续新增的 UI 字段，加载时按默认值原地补齐
-    const fillResumeUiDefaults = (item: any) => {
-      if (!item.ui || typeof item.ui !== "object") item.ui = structuredClone(DEFAULT_UI);
-      Object.entries(DEFAULT_UI).forEach(([key, value]) => {
-        if (item.ui[key] === undefined) item.ui[key] = value;
-      });
-      return item;
-    };
-    const loadResumeItems = async (ids: string[]) => {
-      const items = await Promise.all(
-        ids.map(async (id) => {
-          const storage = getResumeStorage(id);
-          await waitForResumeStorage(storage);
-          const item = storage.data.value;
-          return item?.id === id ? fillResumeUiDefaults(item) : null;
-        }),
-      );
-      return items.filter(Boolean);
-    };
-    const removeResumeStorage = async (id: string) => {
-      pendingPersistItems.delete(id);
-      flushPendingPersist.flush();
-      const storage = resumeStorageMap.get(id);
-      await del(resumeStorageKey(id));
-      if (!storage) return;
-      resumeStorageMap.delete(id);
-    };
+    const { getResumeStorage, loadResumeItems, removeResumeStorage, schedulePersistResume } =
+      createResumeStorage({ defaultUI: DEFAULT_UI });
     let initPromise: Promise<void> | null = null;
     // 简历最大数量
     const maxCount = 10;
@@ -255,20 +199,6 @@ export const useResumeStore = defineStore(
       const item = currentItem.value;
       return item ? item.data : undefined;
     });
-
-    // 待落库简历：防抖回调执行时当前简历可能已切换，按简历记录避免丢失上一次的待写入内容
-    const pendingPersistItems = new Map<string, any>();
-    // 200ms 防抖把连续编辑合并为一次写入，逐份写回 IndexedDB
-    const flushPendingPersist = debounce(() => {
-      pendingPersistItems.forEach((item) => persistResumeItem(item));
-      pendingPersistItems.clear();
-    }, 200);
-    // 将指定简历排入落库队列
-    const schedulePersistResume = (item: any) => {
-      if (!item?.id) return;
-      pendingPersistItems.set(item.id, item);
-      flushPendingPersist();
-    };
 
     // 获取当前选中的表单配置
     const currentConfig = computed({
