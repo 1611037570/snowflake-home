@@ -25,6 +25,8 @@ const isActive = (id) => (currentUI.value?.themeTemplate ?? "default") === id;
 
 // 应用风格：修改当前简历主题，预览层响应式渲染
 const applyTemplate = (template) => {
+  // 切换模板时清除手动布局，避免旧栏位配置覆盖新模板
+  currentUI.value.pageLayout = null;
   Object.assign(currentUI.value, structuredClone(template.item.ui));
 };
 </script>
