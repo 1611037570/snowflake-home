@@ -25,7 +25,7 @@ const attachModuleTitle = (moduleKey: string, nodes: LayoutNode[]): LayoutNode[]
     {
       ...first,
       title: createModuleTitleNode(moduleKey),
-      breakPolicy: { ...first.breakPolicy, keepTitleWithFirst: true },
+      breakPolicy: { ...first.breakPolicy },
     },
     ...nodes.slice(1),
   ];
