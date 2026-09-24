@@ -116,7 +116,7 @@ const a = {
     class="flex h-9 cursor-pointer items-center gap-1 rounded-3xl border border-sf-b bg-sf-page p-1 px-2 text-sm transition-colors hover:bg-sf-theme hover:text-white"
   >
     <SfIcon icon="material-symbols:download" size="4" />
-    <span> 导出简历 </span>
+    <span class="hidden sm:inline"> 导出简历 </span>
     <SfIcon icon="mingcute:down-line" size="4" />
   </div>
 

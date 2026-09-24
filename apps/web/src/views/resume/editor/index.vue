@@ -6,9 +6,15 @@
     <div v-if="currentIndex >= 0" class="relative flex w-full min-w-0 flex-1 overflow-hidden">
       <!-- 左侧操作栏 -->
       <Transition name="resume-builder" appear>
-        <Builder :class="{ 'ai-generating': isGenerating }" />
+        <Builder
+          v-show="!isMobile || mobilePanel === 'edit'"
+          :class="{ 'ai-generating': isGenerating }"
+        />
       </Transition>
-      <div class="relative flex min-w-0 flex-1 overflow-hidden">
+      <div
+        v-show="!isMobile || mobilePanel === 'preview'"
+        class="relative flex min-w-0 flex-1 overflow-hidden"
+      >
         <!-- 中间预览栏 -->
         <div class="relative flex min-w-0 flex-1">
           <Transition name="resume-preview" appear>
@@ -19,7 +25,7 @@
         <Transition name="resume-toolbar" appear>
           <div
             v-if="!focusMode"
-            class="relative flex h-full flex-col items-center justify-center gap-3"
+            class="relative hidden h-full flex-col items-center justify-center gap-3 md:flex"
           >
             <Toolbar />
           </div>
@@ -39,6 +45,35 @@
         />
       </Teleport>
     </div>
+    <Transition name="resume-mobile-nav">
+      <nav
+        v-if="isMobile"
+        class="z-20 flex shrink-0 items-center gap-3 border-t border-sf-b bg-sf-primary p-3"
+        :style="{ paddingBottom: 'max(0.75rem, env(safe-area-inset-bottom))' }"
+        aria-label="简历工作区"
+      >
+        <button
+          type="button"
+          class="flex h-12 flex-1 items-center justify-center gap-2 rounded-2xl text-sm transition-colors"
+          :class="mobilePanel === 'edit' ? 'bg-sf-theme text-sf-theme-text' : 'text-sf-text-2'"
+          :aria-pressed="mobilePanel === 'edit'"
+          @click="mobilePanel = 'edit'"
+        >
+          <SfIcon icon="lucide:file-text" size="5" />
+          <span>编辑</span>
+        </button>
+        <button
+          type="button"
+          class="flex h-12 flex-1 items-center justify-center gap-2 rounded-2xl text-sm transition-colors"
+          :class="mobilePanel === 'preview' ? 'bg-sf-theme text-sf-theme-text' : 'text-sf-text-2'"
+          :aria-pressed="mobilePanel === 'preview'"
+          @click="mobilePanel = 'preview'"
+        >
+          <SfIcon icon="lucide:eye" size="5" />
+          <span>预览</span>
+        </button>
+      </nav>
+    </Transition>
     <!-- 专注写作模式：右上角浮动退出按钮 -->
     <div
       v-if="focusMode"
@@ -59,9 +94,9 @@
 <script setup>
 import { useResumeStore } from "@/stores";
 import { SF_ICON_LIST_KEY } from "@/components/base/icon";
-import { onKeyStroke } from "@vueuse/core";
+import { onKeyStroke, useMediaQuery } from "@vueuse/core";
 import { storeToRefs } from "pinia";
-import { provide, watch } from "vue";
+import { provide, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useRuntimeData } from "./hooks/useRuntimeData";
 import Builder from "./builder/index.vue";
@@ -77,6 +112,8 @@ import { PROJECT_ICON_LIST } from "./icons";
 
 const router = useRouter();
 const route = useRoute();
+const isMobile = useMediaQuery("(max-width: 767px)");
+const mobilePanel = ref("preview");
 
 const resumeStore = useResumeStore();
 // 编辑器统一注入本地图标，子组件无需逐层传递
@@ -94,6 +131,15 @@ const {
   isFittingOnePage,
   currentData,
 } = storeToRefs(resumeStore);
+
+// 移动端进入编辑器时默认先展示简历预览。
+watch(
+  isMobile,
+  (value) => {
+    if (value) mobilePanel.value = "preview";
+  },
+  { immediate: true },
+);
 
 // 切换简历时清空上一个简历的模块选中状态
 watch(
@@ -214,6 +260,19 @@ onUnmounted(() => {
 }
 
 .resume-preview-leave-to {
+  opacity: 0;
+}
+
+.resume-mobile-nav-enter-active,
+.resume-mobile-nav-leave-active {
+  transition:
+    transform 0.24s ease,
+    opacity 0.24s ease;
+}
+
+.resume-mobile-nav-enter-from,
+.resume-mobile-nav-leave-to {
+  transform: translateY(100%);
   opacity: 0;
 }
 </style>
