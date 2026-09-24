@@ -21,12 +21,17 @@ import IconamoonSettingsFillIcon from "@iconify-vue/iconamoon/settings-fill";
 import LineMdLoadingTwotoneLoopIcon from "@iconify-vue/line-md/loading-twotone-loop";
 import LucideArchiveIcon from "@iconify-vue/lucide/archive";
 import LucideArchiveRestoreIcon from "@iconify-vue/lucide/archive-restore";
+import LucideArrowDownIcon from "@iconify-vue/lucide/arrow-down";
+import LucideArrowLeftIcon from "@iconify-vue/lucide/arrow-left";
+import LucideArrowRightIcon from "@iconify-vue/lucide/arrow-right";
+import LucideArrowUpIcon from "@iconify-vue/lucide/arrow-up";
 import LucideBriefcaseIcon from "@iconify-vue/lucide/briefcase";
 import LucideCheckIcon from "@iconify-vue/lucide/check";
 import LucideChevronRightIcon from "@iconify-vue/lucide/chevron-right";
 import LucideCircleSlashIcon from "@iconify-vue/lucide/circle-slash";
 import LucideContrastIcon from "@iconify-vue/lucide/contrast";
 import LucideCopyIcon from "@iconify-vue/lucide/copy";
+import LucideEllipsisVerticalIcon from "@iconify-vue/lucide/ellipsis-vertical";
 import LucideEyeIcon from "@iconify-vue/lucide/eye";
 import LucideEyeOffIcon from "@iconify-vue/lucide/eye-off";
 import LucideFileTextIcon from "@iconify-vue/lucide/file-text";
@@ -34,6 +39,7 @@ import LucideFocusIcon from "@iconify-vue/lucide/focus";
 import LucideHashIcon from "@iconify-vue/lucide/hash";
 import LucideHeading2Icon from "@iconify-vue/lucide/heading-2";
 import LucideLayoutTemplateIcon from "@iconify-vue/lucide/layout-template";
+import LucideLoaderCircleIcon from "@iconify-vue/lucide/loader-circle";
 import LucideMaximizeIcon from "@iconify-vue/lucide/maximize";
 import LucidePaletteIcon from "@iconify-vue/lucide/palette";
 import LucidePencilIcon from "@iconify-vue/lucide/pencil";
@@ -70,6 +76,7 @@ import MdiFilePdfBoxIcon from "@iconify-vue/mdi/file-pdf-box";
 import MdiFlagOutlineIcon from "@iconify-vue/mdi/flag-outline";
 import MdiHammerWrenchIcon from "@iconify-vue/mdi/hammer-wrench";
 import MdiHeartOutlineIcon from "@iconify-vue/mdi/heart-outline";
+import MdiHelpCircleOutlineIcon from "@iconify-vue/mdi/help-circle-outline";
 import MdiHomeCityOutlineIcon from "@iconify-vue/mdi/home-city-outline";
 import MdiHomeOutlineIcon from "@iconify-vue/mdi/home-outline";
 import MdiHumanMaleHeightIcon from "@iconify-vue/mdi/human-male-height";
@@ -77,6 +84,7 @@ import MdiImageIcon from "@iconify-vue/mdi/image";
 import MdiImagePlusIcon from "@iconify-vue/mdi/image-plus";
 import MdiLanguageHtml5Icon from "@iconify-vue/mdi/language-html5";
 import MdiLanguageMarkdownIcon from "@iconify-vue/mdi/language-markdown";
+import MdiLightbulbOutlineIcon from "@iconify-vue/mdi/lightbulb-outline";
 import MdiLinkedinIcon from "@iconify-vue/mdi/linkedin";
 import MdiMapMarkerOutlineIcon from "@iconify-vue/mdi/map-marker-outline";
 import MdiMapSearchOutlineIcon from "@iconify-vue/mdi/map-search-outline";
@@ -185,12 +193,17 @@ export const PROJECT_ICON_LIST: Record<string, Component> = {
   "line-md:loading-twotone-loop": LineMdLoadingTwotoneLoopIcon,
   "lucide:archive": LucideArchiveIcon,
   "lucide:archive-restore": LucideArchiveRestoreIcon,
+  "lucide:arrow-down": LucideArrowDownIcon,
+  "lucide:arrow-left": LucideArrowLeftIcon,
+  "lucide:arrow-right": LucideArrowRightIcon,
+  "lucide:arrow-up": LucideArrowUpIcon,
   "lucide:briefcase": LucideBriefcaseIcon,
   "lucide:check": LucideCheckIcon,
   "lucide:chevron-right": LucideChevronRightIcon,
   "lucide:circle-slash": LucideCircleSlashIcon,
   "lucide:contrast": LucideContrastIcon,
   "lucide:copy": LucideCopyIcon,
+  "lucide:ellipsis-vertical": LucideEllipsisVerticalIcon,
   "lucide:eye": LucideEyeIcon,
   "lucide:eye-off": LucideEyeOffIcon,
   "lucide:file-text": LucideFileTextIcon,
@@ -198,6 +211,7 @@ export const PROJECT_ICON_LIST: Record<string, Component> = {
   "lucide:hash": LucideHashIcon,
   "lucide:heading-2": LucideHeading2Icon,
   "lucide:layout-template": LucideLayoutTemplateIcon,
+  "lucide:loader-circle": LucideLoaderCircleIcon,
   "lucide:maximize": LucideMaximizeIcon,
   "lucide:palette": LucidePaletteIcon,
   "lucide:pencil": LucidePencilIcon,
@@ -234,6 +248,7 @@ export const PROJECT_ICON_LIST: Record<string, Component> = {
   "mdi:flag-outline": MdiFlagOutlineIcon,
   "mdi:hammer-wrench": MdiHammerWrenchIcon,
   "mdi:heart-outline": MdiHeartOutlineIcon,
+  "mdi:help-circle-outline": MdiHelpCircleOutlineIcon,
   "mdi:home-city-outline": MdiHomeCityOutlineIcon,
   "mdi:home-outline": MdiHomeOutlineIcon,
   "mdi:human-male-height": MdiHumanMaleHeightIcon,
@@ -241,6 +256,7 @@ export const PROJECT_ICON_LIST: Record<string, Component> = {
   "mdi:image-plus": MdiImagePlusIcon,
   "mdi:language-html5": MdiLanguageHtml5Icon,
   "mdi:language-markdown": MdiLanguageMarkdownIcon,
+  "mdi:lightbulb-outline": MdiLightbulbOutlineIcon,
   "mdi:linkedin": MdiLinkedinIcon,
   "mdi:map-marker-outline": MdiMapMarkerOutlineIcon,
   "mdi:map-search-outline": MdiMapSearchOutlineIcon,
