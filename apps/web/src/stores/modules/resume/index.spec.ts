@@ -6,6 +6,21 @@ import { useResumeStore } from "./index";
 vi.mock("@/components/business/confirm", () => ({ default: vi.fn() }));
 vi.mock("@/routers", () => ({ default: { push: vi.fn() } }));
 vi.mock("@/utils", () => ({ getUUID: () => "test-resume-id" }));
+vi.mock("@vueuse/integrations/useIDBKeyval", async () => {
+  const { ref } = await import("vue");
+  return {
+    useIDBKeyval: (_key: string, initialValue: unknown) => {
+      const data = ref(structuredClone(initialValue));
+      const isFinished = ref(true);
+      return { data, isFinished, set: async (value: unknown) => (data.value = value) };
+    },
+  };
+});
+vi.mock("idb-keyval", () => ({
+  get: vi.fn(async () => []),
+  set: vi.fn(async () => undefined),
+  del: vi.fn(async () => undefined),
+}));
 vi.mock("./formConfig", () => {
   const user = {
     type: "group",
@@ -125,5 +140,30 @@ describe("resume store applyResumeOperations", () => {
       data: { name: "李四" },
       ui: { title: "基本资料" },
     });
+  });
+
+  it("软删除与恢复只切换目录标记，并保留 AI 会话摘要", () => {
+    const store = useResumeStore();
+    store.addResume({}, false, true);
+    store.updateResumeAiChatSummary("test-r", {
+      id: "chat-a",
+      title: "优化经历",
+      createTime: 10,
+      updateTime: 20,
+    });
+
+    store.deleteResume();
+
+    expect(store.list[0]).toMatchObject({ id: "test-r", deletedAt: expect.any(Number) });
+    expect(store.list[0]?.ai).toHaveLength(1);
+    expect(store.resumeList).toHaveLength(0);
+    expect(store.trashList[0]?._deletedAt).toEqual(store.list[0]?.deletedAt);
+
+    store.restoreResume(0);
+
+    expect(store.list[0]?.deletedAt).toBeNull();
+    expect(store.list[0]?.ai).toHaveLength(1);
+    expect(store.resumeList).toHaveLength(1);
+    expect(store.trashList).toHaveLength(0);
   });
 });

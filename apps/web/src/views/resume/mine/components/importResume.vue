@@ -21,7 +21,7 @@ const { click: clickMarkdown } = useFileDialog({
 
 // 打开导入弹窗：提前判断简历数量是否已达上限
 const handleOpenImport = () => {
-  if (resumeStore.list.length >= resumeStore.maxCount) {
+  if (resumeStore.resumeList.length >= resumeStore.maxCount) {
     ElMessage.warning(`简历数量已达上限（${resumeStore.maxCount}个），请先删除后再导入`);
     return;
   }
