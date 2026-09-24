@@ -85,7 +85,7 @@ const dynamicComponents = {
   video: Video,
   cityPicker: AsyncCityPicker,
 };
-
+provide("sfBorder", "border border-sf-b hover:border-sf-theme");
 // 配置同步：进入或切换简历时由本组件触发，完成状态由表单渲染事件收口
 const { currentItem } = storeToRefs(resumeStore);
 // 待完成的同步目标简历：由表单渲染完成事件收口，切换简历时丢弃过期回调
@@ -130,7 +130,7 @@ onBeforeUnmount(() => {
 
 <template>
   <div class="relative h-full">
-    <SfScrollbar class="relative h-full">
+    <SfScrollbar class="resume-editor-form relative h-full">
       <div class="flex w-full flex-col">
         <SfSkeleton v-if="!showDynamicForm || !runtimeConfig" />
         <AsyncDynamicForm
@@ -148,4 +148,21 @@ onBeforeUnmount(() => {
   </div>
 </template>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.resume-editor-form {
+  :deep(.el-input__wrapper),
+  :deep(.el-select__wrapper),
+  :deep(.el-textarea__inner),
+  :deep(.sf-wang-editor) {
+    border: 1px solid var(--sf-border);
+    border-radius: 24px !important;
+  }
+
+  :deep(.el-input__wrapper:hover),
+  :deep(.el-select__wrapper:hover),
+  :deep(.el-textarea__inner:hover),
+  :deep(.sf-wang-editor:hover) {
+    border-color: var(--sf-theme);
+  }
+}
+</style>
