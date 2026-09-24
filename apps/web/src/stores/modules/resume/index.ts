@@ -15,7 +15,7 @@ import { getUUID } from "@/utils";
 import { defineStore } from "pinia";
 import { computed, ref, shallowRef, toRaw, watch } from "vue";
 import { useIDBKeyval } from "@vueuse/integrations/useIDBKeyval";
-import { del, get, set } from "idb-keyval";
+import { del } from "idb-keyval";
 import {
   ALL_MODULE_KEY,
   DEFAULT_MODULE_NAMES,
@@ -50,7 +50,7 @@ export type DesensitizeConfig = {
 export const useResumeStore = defineStore(
   "resume",
   () => {
-    // 简历目录只保存简历 ID、AI 会话摘要和软删除时间
+    // 简历目录只保存简历 ID、AI 会话摘要和软删除时间，由 Pinia 持久化到 localStorage
     const list = ref<ResumeListItem[]>([]);
     // 简历正文仅在运行时按目录加载，不作为目录持久化内容
     const resumeRecords = ref<any[]>([]);
@@ -68,9 +68,6 @@ export const useResumeStore = defineStore(
         })
         .filter(Boolean),
     );
-    const resumeCatalogKey = "resume-list";
-    const persistResumeCatalog = () =>
-      set(resumeCatalogKey, JSON.parse(JSON.stringify(list.value)) as ResumeListItem[]);
     // 为每份简历复用同一个 VueUse IndexedDB 响应式实例
     const resumeStorageMap = new Map<string, any>();
     const resumeStorageKey = (id: string) => `snowflake-resume:${id}`;
@@ -390,7 +387,6 @@ export const useResumeStore = defineStore(
       const storage = getResumeStorage(res.id, res, true);
       resumeRecords.value.push(storage.data.value);
       list.value.unshift(createResumeListItem(res.id));
-      void persistResumeCatalog();
       if (select) {
         currentIndex.value = resumeList.value.length - 1;
         if (jump) router.push({ path: "/resume/editor", query: { id: res.id } });
@@ -588,7 +584,6 @@ export const useResumeStore = defineStore(
       const entry = list.value.find((item) => item.id === deletedItem?.id);
       if (!entry) return;
       list.value[list.value.indexOf(entry)] = setResumeDeletedAt(entry, Date.now());
-      void persistResumeCatalog();
       useAiStore().clearCurrentResumeAssistantChat(deletedItem.id);
       currentIndex.value = -1;
     };
@@ -604,7 +599,6 @@ export const useResumeStore = defineStore(
       const resume = resumeRecords.value.find((value) => value.id === item?.id);
       if (!entry || !resume) return;
       list.value[list.value.indexOf(entry)] = setResumeDeletedAt(entry, null);
-      void persistResumeCatalog();
     };
     // 永久删除回收站中的简历
     const permanentlyDeleteResume = async (trashIndex: number) => {
@@ -614,7 +608,6 @@ export const useResumeStore = defineStore(
       list.value = removeResumeListItem(list.value, item.id);
       resumeRecords.value = resumeRecords.value.filter((resume) => resume.id !== item.id);
       await removeResumeStorage(item.id);
-      await persistResumeCatalog();
     };
     // 清空回收站内全部简历。
     const clearTrash = async () => {
@@ -625,7 +618,6 @@ export const useResumeStore = defineStore(
       }
       list.value = list.value.filter((entry) => !ids.includes(entry.id));
       resumeRecords.value = resumeRecords.value.filter((item) => !ids.includes(item.id));
-      await persistResumeCatalog();
     };
     // 清理回收站中超过保留天数的简历（每次进入简历页时调用）
     const cleanExpiredTrash = async () => {
@@ -640,7 +632,6 @@ export const useResumeStore = defineStore(
       if (!expiredIds.length) return;
       list.value = list.value.filter((item) => !expiredIds.includes(item.id));
       resumeRecords.value = resumeRecords.value.filter((item) => !expiredIds.includes(item.id));
-      await persistResumeCatalog();
     };
     // 计算回收站简历剩余保留天数（0 表示即将清理）
     const getTrashRemainingDays = (item: any) => {
@@ -654,7 +645,6 @@ export const useResumeStore = defineStore(
       const item = list.value[index];
       if (!item || item.deletedAt !== null) return false;
       list.value[index] = upsertAiChatSummary(item, summary);
-      await persistResumeCatalog();
       return true;
     };
     const clearResumeAiChatSummaries = async (resumeId: string) => {
@@ -663,7 +653,6 @@ export const useResumeStore = defineStore(
       if (!item) return [] as string[];
       const ids = item.ai.map((chat) => chat.id);
       list.value[index] = removeAiChatSummaries(item);
-      await persistResumeCatalog();
       return ids;
     };
     // 移除表单引擎渲染期补充的运行时 id（不参与内容差异比较）
@@ -803,13 +792,10 @@ export const useResumeStore = defineStore(
       if (initPromise) return initPromise;
       initPromise = (async () => {
         system.value = merge(structuredClone(DEFAULT_SYSTEM), system.value);
-        const catalog = await get<ResumeListItem[]>(resumeCatalogKey);
-        list.value = Array.isArray(catalog) ? catalog : [];
         const items = await loadResumeItems(list.value.map((item) => item.id));
         const itemIds = new Set(items.map((item) => item.id));
         list.value = list.value.filter((item) => itemIds.has(item.id));
         resumeRecords.value = items;
-        await persistResumeCatalog();
       })();
       return initPromise;
     };
@@ -940,7 +926,7 @@ export const useResumeStore = defineStore(
   {
     persist: {
       key: "snowflake-resume-settings",
-      pick: ["editorWidth", "system", "desensitizeMode"],
+      pick: ["list", "editorWidth", "system", "desensitizeMode"],
     },
   },
 );

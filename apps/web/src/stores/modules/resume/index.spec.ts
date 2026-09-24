@@ -1,5 +1,6 @@
 import { createPinia, setActivePinia } from "pinia";
-import { nextTick } from "vue";
+import piniaPluginPersistedstate from "pinia-plugin-persistedstate";
+import { createApp, nextTick } from "vue";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { useResumeStore } from "./index";
 
@@ -51,7 +52,20 @@ vi.mock("./formConfig", () => {
 
 describe("resume store applyResumeOperations", () => {
   beforeEach(() => {
-    setActivePinia(createPinia());
+    localStorage.clear();
+    const pinia = createPinia();
+    pinia.use(piniaPluginPersistedstate);
+    pinia.install(createApp({}));
+    setActivePinia(pinia);
+  });
+
+  it("将简历目录 list 持久化到 localStorage", async () => {
+    const store = useResumeStore();
+    store.addResume({}, false, true);
+    await nextTick();
+
+    const persisted = JSON.parse(localStorage.getItem("snowflake-resume-settings") || "{}");
+    expect(persisted.list).toEqual(store.list);
   });
 
   it("允许写入运行时结构声明的可添加字段", async () => {
