@@ -45,7 +45,7 @@ const activeNavIndex = computed(() => navList.findIndex((item) => route.path ===
           <SfSpan
             v-for="(item, index) in navList"
             :key="item.path"
-            class="h-9 cursor-pointer"
+            class="h-9 cursor-pointer text-[12px] sm:text-[16px]"
             :active="index === activeNavIndex"
             :underline-height="1"
             @click="router.push(item.path)"
