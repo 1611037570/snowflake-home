@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import type { Chat } from "@/stores/modules/ai";
+import type { AiChatSummary } from "@/stores/modules/resume/resumeCatalog";
 
 defineProps<{
-  chats: Chat[];
+  chats: AiChatSummary[];
   activeChatId: string;
   disabled?: boolean;
 }>();

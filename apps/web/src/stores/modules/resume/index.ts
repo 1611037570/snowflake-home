@@ -589,6 +589,7 @@ export const useResumeStore = defineStore(
       if (!entry) return;
       list.value[list.value.indexOf(entry)] = setResumeDeletedAt(entry, Date.now());
       void persistResumeCatalog();
+      useAiStore().clearCurrentResumeAssistantChat(deletedItem.id);
       currentIndex.value = -1;
     };
     // 从回收站恢复简历
