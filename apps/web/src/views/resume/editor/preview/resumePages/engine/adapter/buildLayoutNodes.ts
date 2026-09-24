@@ -8,17 +8,26 @@ import { registerExperienceModuleAdapters } from "./experienceModules";
 import { registerOtherModuleAdapters } from "./otherModules";
 import { registerRichTextModuleAdapters } from "./richTextModules";
 
-/** 判断节点原本是否在内容前绘制段间距。 */
-const usesParagraphSpacing = (node: LayoutNode): boolean =>
-  node.type === "richText" ||
-  node.type === "media" ||
-  (node.type === "group" && node.sourceModuleKey !== "user") ||
-  (node.type === "block" && ["account", "honor"].includes(node.sourceModuleKey));
+const PARAGRAPH_SPACING_MODULE_KEYS = new Set([
+  "skill",
+  "advantage",
+  "work",
+  "project",
+  "education",
+  "account",
+  "honor",
+  "image",
+  "video",
+]);
+
+/** 判断模块是否需要在内容前添加独立段间距行。 */
+const usesParagraphSpacing = (moduleKey: string): boolean =>
+  PARAGRAPH_SPACING_MODULE_KEYS.has(moduleKey) || moduleKey.startsWith("custom_");
 
 /** 将段间距转换成独立分页行，交由通用分页逻辑按高度放置。 */
 const addParagraphSpacingRows = (nodes: LayoutNode[], height: number): LayoutNode[] =>
   nodes.flatMap((node) => {
-    if (!usesParagraphSpacing(node) || height <= 0) return [node];
+    if (!usesParagraphSpacing(node.sourceModuleKey) || height <= 0) return [node];
     const { title, ...contentNode } = node;
     return [
       {

@@ -65,9 +65,7 @@ const slicedItemDesc = computed(() => {
   return desc.slice(props.contentRange.start, props.contentRange.end);
 });
 const isExperience = computed(
-  () =>
-    ["work", "project", "education"].includes(props.node.sourceModuleKey) ||
-    props.node.sourceModuleKey.startsWith("custom_"),
+  () => props.node.type === "group" && props.node.sourceModuleKey !== "user",
 );
 const hasItemHeader = computed(() => {
   const value = item.value;
@@ -92,7 +90,6 @@ const bodyBlockIndex = computed(
 );
 const isBlockVisible = (index: number) =>
   index >= props.blockRange.start && index < props.blockRange.end;
-// 间距分片的块区间是 [0, 0)，此时不渲染内容盒，避免只剩顶部间距的空盒把页面撑高
 const hasContentBlock = computed(() => props.blockRange.end > 0);
 const getItemLink = (value: any) => {
   const link = value?.link;
@@ -171,7 +168,7 @@ const itemContentSpacingStyle = computed(() => {
     <User />
   </template>
 
-  <template v-else-if="node.type === 'group' && isExperience">
+  <template v-else-if="isExperience">
     <ModuleContentContainer
       v-if="hasContentBlock"
       :style="fragmentContentStyle"
