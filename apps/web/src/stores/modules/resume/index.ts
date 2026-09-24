@@ -12,6 +12,7 @@ import { createResumeStorage } from "./resumeStorage";
 import { createResumeLifecycle } from "./resumeLifecycle";
 import { createResumeEditor } from "./resumeEditor";
 import { createResumeHistory } from "./resumeHistory";
+import { createResumeRuntime } from "./resumeRuntime";
 import type { ResumeListItem } from "./resumeCatalog";
 export type DesensitizeLevel = "normal" | "strict";
 export type DesensitizeConfig = {
@@ -55,81 +56,10 @@ export const useResumeStore = defineStore(
     const currentIndex = ref(-1);
     // 编辑器区域宽度
     const editorWidth = ref(DEFAULT_EDITOR.editorWidth);
-    // 专注写作模式（临时状态，不持久化）
-    const focusMode = ref(false);
     // AI 请求脱敏配置：禁用时不脱敏，否则按等级过滤敏感字段
     const desensitizeMode = ref<DesensitizeConfig>({
       disabled: true,
       level: "normal",
-    });
-    // 是否正在打印
-    const isPrinting = ref(false);
-    let printController: AbortController | null = null;
-    // 开始导出并创建可取消信号
-    const beginPrinting = () => {
-      if (isPrinting.value) return null;
-      const controller = new AbortController();
-      printController = controller;
-      isPrinting.value = true;
-      return controller.signal;
-    };
-    // 取消当前导出
-    const cancelPrinting = () => {
-      printController?.abort();
-      printController = null;
-      isPrinting.value = false;
-    };
-    // 仅结束当前导出，避免旧任务影响新任务状态
-    const finishPrinting = (signal: AbortSignal) => {
-      if (printController?.signal !== signal) return;
-      printController = null;
-      isPrinting.value = false;
-    };
-    // 智能一页压缩中：复用导出遮罩，屏蔽试参数过程中的排版变化
-    const isFittingOnePage = ref(false);
-    let onePageController: AbortController | null = null;
-    // 开始压缩并创建可取消信号
-    const beginFittingOnePage = () => {
-      if (isFittingOnePage.value) return null;
-      const controller = new AbortController();
-      onePageController = controller;
-      isFittingOnePage.value = true;
-      return controller.signal;
-    };
-    // 取消当前压缩
-    const cancelFittingOnePage = () => {
-      onePageController?.abort();
-      onePageController = null;
-      isFittingOnePage.value = false;
-    };
-    // 仅结束当前压缩，避免旧任务影响新任务状态
-    const finishFittingOnePage = (signal: AbortSignal) => {
-      if (onePageController?.signal !== signal) return;
-      onePageController = null;
-      isFittingOnePage.value = false;
-    };
-    // 是否AI生成中
-    const isGenerating = ref(false);
-    // 配置同步状态：编辑器表单渲染完成前为 true，供外壳展示加载提示
-    const configSyncing = ref(true);
-    const setConfigSyncing = (value: boolean) => {
-      configSyncing.value = value;
-    };
-    // 预览渲染状态：预览页测量完成前为 true，供外壳展示加载提示
-    const previewSyncing = ref(true);
-    const setPreviewSyncing = (value: boolean) => {
-      previewSyncing.value = value;
-    };
-    // 运行性能数据：记录简历编辑器与预览区的加载耗时及首屏首帧
-    const runtimeData = ref({
-      // 编辑区加载耗时
-      editorDuration: 0,
-      // 预览区加载耗时
-      previewDuration: 0,
-      // 简历编辑器首屏首帧时间
-      firstFrame: 0,
-      // 运行环境信息
-      env: {} as Record<string, any>,
     });
     // 系统配置
     const system = ref(structuredClone(DEFAULT_SYSTEM));
@@ -137,21 +67,6 @@ export const useResumeStore = defineStore(
     const itemDefaultCollapsed = computed(() =>
       system.value.defaultItemExpanded ? EXPANDED : COLLAPSED,
     );
-    // 初始化状态
-    function initResumeStatus() {
-      // 重置打印状态
-      printController?.abort();
-      printController = null;
-      isPrinting.value = false;
-      // 切换简历时取消智能一页压缩
-      onePageController?.abort();
-      onePageController = null;
-      isFittingOnePage.value = false;
-      // 重置AI生成状态
-      isGenerating.value = false;
-      // 重置选中模块
-      selectedModule.value = [];
-    }
     // 当前选中的简历项
     const currentItem = computed(() => resumeList.value[currentIndex.value]);
 
@@ -190,6 +105,27 @@ export const useResumeStore = defineStore(
       applyResumeOperations,
       compactConfigFields,
     } = editor;
+    const runtime = createResumeRuntime({ clearSelectedModules });
+    const {
+      focusMode,
+      isPrinting,
+      beginPrinting,
+      cancelPrinting,
+      finishPrinting,
+      isFittingOnePage,
+      beginFittingOnePage,
+      cancelFittingOnePage,
+      finishFittingOnePage,
+      isGenerating,
+      setGenerating,
+      configSyncing,
+      setConfigSyncing,
+      previewSyncing,
+      setPreviewSyncing,
+      runtimeData,
+      setFocusMode,
+      initResumeStatus,
+    } = runtime;
     const history = createResumeHistory({ currentItem, refreshRuntime: editor.refreshRuntime });
     const {
       undoStack,
@@ -263,12 +199,6 @@ export const useResumeStore = defineStore(
     // 重置所有设置为默认值
     const resetSettings = () => {
       system.value = structuredClone(DEFAULT_SYSTEM);
-    };
-    const setFocusMode = (value: boolean) => {
-      focusMode.value = value;
-    };
-    const setGenerating = (val: boolean) => {
-      isGenerating.value = val;
     };
     // 从目录读取简历索引并加载对应的完整简历
     const init = () => {
