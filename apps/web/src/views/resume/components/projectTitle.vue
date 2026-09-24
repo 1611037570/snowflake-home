@@ -23,7 +23,9 @@ const handleBack = () => {
     >
       <SfLogo size="5.5" class="animate-pulse" name="resume" />
 
-      <span class="text-base font-bold tracking-wide">{{ $t("router.resume") }}</span>
+      <span class="hidden text-base font-bold tracking-wide md:flex">{{
+        $t("router.resume")
+      }}</span>
     </div>
   </SfTooltip>
 </template>

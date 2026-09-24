@@ -12,9 +12,7 @@ import ProjectTitle from "../../../components/projectTitle.vue";
   >
     <!-- 左侧占位 -->
     <div class="flex min-w-0 flex-1 items-center">
-      <div class="hidden md:flex">
-        <ProjectTitle />
-      </div>
+      <ProjectTitle />
       <div class="mx-3 hidden text-sf-text-3 md:block">/</div>
       <Title class="min-w-0 flex-1 md:flex-initial" />
       <div class="hidden md:flex">
@@ -31,9 +29,9 @@ import ProjectTitle from "../../../components/projectTitle.vue";
       <!-- 分隔线 -->
       <div class="hidden h-5 w-px bg-sf-b md:block"></div>
       <!-- 快捷图标 -->
-      <div class="hidden md:flex"><SfTheme /></div>
-      <div class="hidden md:flex"><SfDonation /></div>
-      <div class="hidden md:flex"><SfLocale /></div>
+      <div class=""><SfTheme /></div>
+      <div class=""><SfDonation /></div>
+      <div class=""><SfLocale /></div>
     </div>
   </header>
 </template>
