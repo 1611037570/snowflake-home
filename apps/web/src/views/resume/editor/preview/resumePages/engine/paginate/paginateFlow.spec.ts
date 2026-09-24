@@ -9,7 +9,6 @@ const createNode = (id: string, overrides: Partial<LayoutNode> = {}): LayoutNode
   type: "block",
   breakPolicy: {
     splittable: false,
-    keepTitleWithFirst: false,
   },
   payload: { id },
   ...overrides,
@@ -55,7 +54,6 @@ describe("paginateFlow", () => {
       title,
       breakPolicy: {
         splittable: true,
-        keepTitleWithFirst: true,
       },
     });
     const measurements = new Map([
@@ -100,7 +98,6 @@ describe("paginateFlow", () => {
       payload: "模块标题",
       breakPolicy: {
         splittable: false,
-        keepTitleWithFirst: false,
       },
     });
     const content = createNode("content", {
@@ -108,7 +105,6 @@ describe("paginateFlow", () => {
       title,
       breakPolicy: {
         splittable: true,
-        keepTitleWithFirst: true,
       },
     });
     const measurements = new Map([
@@ -159,7 +155,6 @@ describe("paginateFlow", () => {
     const node = createNode("long-text", {
       breakPolicy: {
         splittable: true,
-        keepTitleWithFirst: false,
       },
     });
     const pages = paginateFlow({
@@ -199,7 +194,6 @@ describe("paginateFlow", () => {
       type: "group",
       breakPolicy: {
         splittable: true,
-        keepTitleWithFirst: false,
       },
     });
     const pages = paginateFlow({
@@ -240,7 +234,6 @@ describe("paginateFlow", () => {
       type: "richText",
       breakPolicy: {
         splittable: true,
-        keepTitleWithFirst: false,
       },
     });
     const pages = paginateFlow({
@@ -272,7 +265,6 @@ describe("paginateFlow", () => {
       type: "richText",
       breakPolicy: {
         splittable: true,
-        keepTitleWithFirst: false,
       },
     });
     const breakPoints = Array.from({ length: 10 }, (_, index) => ({
@@ -309,7 +301,6 @@ describe("paginateFlow", () => {
       type: "richText",
       breakPolicy: {
         splittable: true,
-        keepTitleWithFirst: false,
       },
     });
     const pages = paginateFlow({
@@ -347,7 +338,6 @@ describe("paginateFlow", () => {
       title,
       breakPolicy: {
         splittable: false,
-        keepTitleWithFirst: true,
       },
     });
     const pages = paginateFlow({
@@ -377,7 +367,6 @@ describe("paginateFlow", () => {
       title,
       breakPolicy: {
         splittable: true,
-        keepTitleWithFirst: true,
       },
     });
     const pages = paginateFlow({
@@ -420,7 +409,6 @@ describe("paginateFlow", () => {
     const item = createNode("item", {
       breakPolicy: {
         splittable: true,
-        keepTitleWithFirst: false,
       },
     });
     const pages = paginateFlow({
@@ -455,7 +443,6 @@ describe("paginateFlow", () => {
     const item = createNode("item", {
       breakPolicy: {
         splittable: true,
-        keepTitleWithFirst: false,
       },
     });
     const breakPoints = [
@@ -522,7 +509,6 @@ describe("paginateFlow", () => {
     const item = createNode("item", {
       breakPolicy: {
         splittable: true,
-        keepTitleWithFirst: false,
       },
     });
     const pages = paginateFlow({

@@ -212,9 +212,6 @@ export const paginateFlow = ({
   };
 
   for (const node of nodes) {
-    if (node.title && !node.breakPolicy.keepTitleWithFirst) {
-      throw new Error(`带标题节点必须绑定首段内容：${node.id}`);
-    }
     const measurement = getMeasurement(node, measurements);
     const titleHeight = getTitleHeight(node, measurements);
     const fullHeight = Math.max(0, measurement.fullHeight);
@@ -242,7 +239,7 @@ export const paginateFlow = ({
         !isFirst && currentPage.items.length === 0 && (consumedBlocks > 0 || consumedOffset > 0)
           ? droppedTopSpacing
           : 0;
-      // 标题是独立的一行：跟随内容首片，若首片放不下则单独留在当前页
+      // 标题也是独立行，和间距占位一样没有绑定：能放本页就放，放不下顺延下一页
       const withTitle = isFirst && !titlePlaced;
       const title = withTitle ? titleHeight : 0;
       // 页面第一个内容不绘制顶部间距占位（渲染层同规则），分页高度与可用断点都要按去掉间距计算。

@@ -12,13 +12,11 @@ export type LayoutNodeType =
 
 /**
  * 节点的分页规则。
- * 标题只在第一次分片中渲染，不提供标题重复配置。
+ * 标题与顶部间距占位都只是"独立行"，一律按"本页放得下就放、放不下顺延"处理，没有绑定约束。
  */
 export interface BreakPolicy {
   /** 当前节点是否允许被拆成多个分片 */
   splittable: boolean;
-  /** 节点标题是否必须和第一段内容放在一起 */
-  keepTitleWithFirst: boolean;
   /** 当前节点允许的最小高度 */
   minHeight?: number;
 }

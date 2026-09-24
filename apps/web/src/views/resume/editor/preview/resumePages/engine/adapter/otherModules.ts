@@ -27,7 +27,6 @@ const createUserModuleAdapter = (context: LayoutAdapterContext): LayoutNode[] =>
       type: "group",
       breakPolicy: {
         splittable: true,
-        keepTitleWithFirst: false,
       },
       payload: { moduleKey: "user" },
     },
@@ -49,7 +48,6 @@ const createListModuleAdapter =
       type: "block" as const,
       breakPolicy: {
         splittable: false,
-        keepTitleWithFirst: false,
       },
       payload: {
         part: "item",
@@ -73,7 +71,6 @@ const createMediaModuleAdapter =
       type: "media" as const,
       breakPolicy: {
         splittable: true,
-        keepTitleWithFirst: false,
       },
       payload: {
         mediaType: moduleKey,
