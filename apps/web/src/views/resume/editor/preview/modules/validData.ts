@@ -27,12 +27,19 @@ const isValidData = (data: any): boolean => {
   return Object.entries(data).some(([key, value]) => hasValidValue(key, value));
 };
 
+export const getValidDataEntries = (data: any) => {
+  if (!Array.isArray(data)) return [];
+  return data.flatMap((record, index) =>
+    record?.ui?.hidden !== true && isValidData(record?.data)
+      ? [{ data: record.data, index }]
+      : [],
+  );
+};
+
 // 数组记录过滤展示状态后只向预览组件传递业务 data
 export const getValidData = (data: any) => {
   if (Array.isArray(data)) {
-    return data
-      .filter((record) => record?.ui?.hidden !== true && isValidData(record?.data))
-      .map((record) => record.data);
+    return getValidDataEntries(data).map((entry) => entry.data);
   }
   return isValidData(data) ? data : null;
 };

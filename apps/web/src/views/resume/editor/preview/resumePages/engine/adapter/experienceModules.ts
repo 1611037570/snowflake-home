@@ -1,4 +1,4 @@
-import { getValidData, isContentEmpty } from "../../../modules/validData";
+import { getValidDataEntries, isContentEmpty } from "../../../modules/validData";
 import type { LayoutAdapter, LayoutAdapterContext, LayoutAdapterRegistry } from "./index";
 import { parseRichText } from "./richTextParser";
 
@@ -6,13 +6,12 @@ import { parseRichText } from "./richTextParser";
 export const EXPERIENCE_MODULE_KEYS = ["work", "project", "education"] as const;
 
 /** 读取经历模块中的有效条目 */
-const getExperienceItems = (context: LayoutAdapterContext): Record<string, unknown>[] => {
+const getExperienceItems = (context: LayoutAdapterContext) => {
   const moduleData = context.data[context.moduleKey];
   if (!moduleData || typeof moduleData !== "object") return [];
 
   const list = (moduleData as { list?: unknown }).list;
-  const validList = getValidData(list);
-  return Array.isArray(validList) ? (validList as Record<string, unknown>[]) : [];
+  return getValidDataEntries(list) as Array<{ data: Record<string, unknown>; index: number }>;
 };
 
 /** 创建工作、项目、教育经历共用的条目适配器 */
@@ -21,7 +20,7 @@ export const createExperienceModuleAdapter = (moduleKey: string): LayoutAdapter 
 ) => {
   const items = getExperienceItems({ ...context, moduleKey });
 
-  return items.map((item, index) => {
+  return items.map(({ data: item, index }) => {
     const content = typeof item.content === "string" ? item.content : "";
     // 条目正文参与分片：断点与首段截取共用同一份解析结果
     const parsed = isContentEmpty(content) ? undefined : parseRichText(content);
@@ -29,6 +28,7 @@ export const createExperienceModuleAdapter = (moduleKey: string): LayoutAdapter 
     return {
       id: `${moduleKey}.item-${index}`,
       sourceModuleKey: moduleKey,
+      sourceItemIndex: index,
       type: "group",
       breakPolicy: {},
       payload: {
