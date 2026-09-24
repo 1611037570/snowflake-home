@@ -1,4 +1,6 @@
 import { createPinia, setActivePinia } from "pinia";
+import piniaPluginPersistedstate from "pinia-plugin-persistedstate";
+import { createApp } from "vue";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { useAiStore } from "./ai";
 import { useResumeStore } from "./resume";
@@ -25,7 +27,11 @@ vi.mock("idb-keyval", () => ({
 describe("resume assistant persistence", () => {
   beforeEach(() => {
     records.clear();
-    setActivePinia(createPinia());
+    localStorage.clear();
+    const pinia = createPinia();
+    pinia.use(piniaPluginPersistedstate);
+    pinia.install(createApp({}));
+    setActivePinia(pinia);
   });
 
   it("creates a chat only after the first message and stores its summary under its resume", async () => {
@@ -57,7 +63,9 @@ describe("resume assistant persistence", () => {
     expect(resumeStore.list[0].ai).toEqual([
       { id: "chat-a", title: "优化项目经历", createTime: 10, updateTime: 20 },
     ]);
-    expect(records.get("resume-list")).toEqual(resumeStore.list);
+    const persisted = JSON.parse(localStorage.getItem("snowflake-resume-settings") || "{}");
+    expect(persisted.list).toEqual(resumeStore.list);
+    expect(records.has("resume-list")).toBe(false);
   });
 
   it("retains chats after soft deletion and removes them with permanent resume deletion", async () => {
