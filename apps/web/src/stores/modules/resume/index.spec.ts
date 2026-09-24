@@ -64,7 +64,7 @@ describe("resume store applyResumeOperations", () => {
     store.addResume({}, false, true);
     await nextTick();
 
-    const persisted = JSON.parse(localStorage.getItem("snowflake-resume-settings") || "{}");
+    const persisted = JSON.parse(localStorage.getItem("resume") || "{}");
     expect(persisted.list).toEqual(store.list);
   });
 

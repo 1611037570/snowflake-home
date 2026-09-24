@@ -63,7 +63,7 @@ describe("resume assistant persistence", () => {
     expect(resumeStore.list[0].ai).toEqual([
       { id: "chat-a", title: "优化项目经历", createTime: 10, updateTime: 20 },
     ]);
-    const persisted = JSON.parse(localStorage.getItem("snowflake-resume-settings") || "{}");
+    const persisted = JSON.parse(localStorage.getItem("resume") || "{}");
     expect(persisted.list).toEqual(resumeStore.list);
     expect(records.has("resume-list")).toBe(false);
   });

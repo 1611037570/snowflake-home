@@ -925,7 +925,6 @@ export const useResumeStore = defineStore(
   },
   {
     persist: {
-      key: "snowflake-resume-settings",
       pick: ["list", "editorWidth", "system", "desensitizeMode"],
     },
   },
