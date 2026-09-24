@@ -111,7 +111,10 @@ const activateModule = (key: string) => {
 };
 
 // 滚动到编辑区锚点：记录命中取该条记录外圈，字段命中取字段外圈，其余回退模块外圈
-const scrollEditorTarget = (key: string, hit?: ResumeSearchHit) => {
+const scrollEditorTarget = (
+  key: string,
+  hit?: Pick<ResumeSearchHit, "itemIndex" | "fieldKey">,
+) => {
   const selector =
     hit?.itemIndex != null
       ? `[data-module-key="${key}"] [data-item-index="${hit.itemIndex}"]`
@@ -123,10 +126,13 @@ const scrollEditorTarget = (key: string, hit?: ResumeSearchHit) => {
 };
 
 // 延时 0 添加选中状态，避开同一轮定位滚动触发的鼠标进入事件
-const scheduleEditorHighlight = (key: string) => {
+const scheduleEditorHighlight = (key: string, hit?: Pick<ResumeSearchHit, "itemIndex">) => {
   if (editorHighlightTimer !== null) window.clearTimeout(editorHighlightTimer);
   editorHighlightTimer = window.setTimeout(() => {
-    eventBus.emit("df-select-module", key);
+    eventBus.emit(
+      "df-select-module",
+      hit?.itemIndex == null ? key : { key, index: hit.itemIndex },
+    );
     editorHighlightTimer = null;
   }, EDITOR_HIGHLIGHT_DELAY);
 };
@@ -161,7 +167,7 @@ export const jumpToHit = (moduleKey: string, hit?: ResumeSearchHit) => {
 };
 
 // 预览区定位编辑区：仅切标签、选中闪烁与滚动定位，不展开折叠，避免点击查找改变编辑区折叠状态
-export const locateEditor = (key: string) => {
+export const locateEditor = (key: string, hit?: Pick<ResumeSearchHit, "itemIndex">) => {
   const item = moduleList.value.find((m) => m.key === key);
   if (item && isFieldRemoved(currentData.value, item.field)) {
     notifyArchived();
@@ -170,8 +176,8 @@ export const locateEditor = (key: string) => {
   // 切换到编辑标签，避免停留设计/模板标签时编辑区不可见
   eventBus.emit("switch-builder-tab", 0);
   // 触发编辑区模块选中闪烁
-  scheduleEditorHighlight(key);
-  nextTick(() => scrollEditorTarget(key));
+  scheduleEditorHighlight(key, hit);
+  nextTick(() => scrollEditorTarget(key, hit));
 };
 
 // 跳转编辑区（含隐藏恢复）：供进度条等复用

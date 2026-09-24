@@ -1,4 +1,4 @@
-import { getValidData } from "../../../modules/validData";
+import { getValidData, getValidDataEntries } from "../../../modules/validData";
 import type { LayoutNode } from "../types";
 import type { LayoutAdapter, LayoutAdapterContext, LayoutAdapterRegistry } from "./index";
 import { createExperienceModuleAdapter } from "./experienceModules";
@@ -37,12 +37,12 @@ const createListModuleAdapter =
   (context) => {
     const moduleData = context.data[moduleKey];
     if (!moduleData || typeof moduleData !== "object") return [];
-    const list = getValidData((moduleData as { list?: unknown }).list);
-    if (!Array.isArray(list)) return [];
+    const list = getValidDataEntries((moduleData as { list?: unknown }).list);
 
-    return list.map((item, index) => ({
+    return list.map(({ data: item, index }) => ({
       id: `${moduleKey}.item-${index}`,
       sourceModuleKey: moduleKey,
+      sourceItemIndex: index,
       type: "block" as const,
       breakPolicy: {},
       payload: {
@@ -58,12 +58,12 @@ const createMediaModuleAdapter =
   (context) => {
     const moduleData = context.data[moduleKey];
     if (!moduleData || typeof moduleData !== "object") return [];
-    const list = getValidData((moduleData as { list?: unknown }).list);
-    if (!Array.isArray(list)) return [];
+    const list = getValidDataEntries((moduleData as { list?: unknown }).list);
 
-    return list.map((item, index) => ({
+    return list.map(({ data: item, index }) => ({
       id: `${moduleKey}.media-${index}`,
       sourceModuleKey: moduleKey,
+      sourceItemIndex: index,
       type: "media" as const,
       breakPolicy: {},
       payload: {

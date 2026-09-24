@@ -234,6 +234,11 @@ const handlePageClick = (event) => {
   if (moduleKey) locateEditor(moduleKey);
 };
 
+const handleSubmoduleClick = ({ moduleKey, itemIndex }) => {
+  if (!system.value.previewClickLocate) return;
+  locateEditor(moduleKey, itemIndex == null ? undefined : { itemIndex });
+};
+
 // 编辑区新增 user 子字段后，由编辑态预览响应定位请求
 const handleLocatePreviewModule = (key) => {
   if (isEdit.value) jumpPreview(key);
@@ -368,6 +373,7 @@ defineExpose({ rootEl: rootRef, measureEl: rootRef, pages, pagePlan });
                     :can-move-left="columnIndex > 0"
                     :can-move-right="columnIndex < region.columns.length - 1"
                     @mouseenter="handleModuleMouseEnter"
+                    @click="handleSubmoduleClick"
                     @move="(payload) => handleModuleMove({ ...payload, columnId: column.columnId })"
                   />
                 </div>

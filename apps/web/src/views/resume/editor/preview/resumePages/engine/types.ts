@@ -41,6 +41,8 @@ export interface LayoutNode {
   id: string;
   /** 节点所属的简历模块 key */
   sourceModuleKey: string;
+  /** 数组型子模块在编辑区中的原始记录下标 */
+  sourceItemIndex?: number;
   /** 节点类型 */
   type: LayoutNodeType;
   /** 当前节点的分页规则 */

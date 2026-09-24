@@ -21,6 +21,7 @@ const props = defineProps<{
 }>();
 const emit = defineEmits<{
   mouseenter: [moduleKey: string];
+  click: [payload: { moduleKey: string; itemIndex?: number }];
   move: [payload: { moduleKey: string; direction: string }];
 }>();
 
@@ -106,6 +107,7 @@ const handleMove = (moduleKey: string, direction: string) => {
               pageIndex > 0 && groupIndex === 0 && itemIndex === 0
             "
             @mouseenter="emit('mouseenter', $event)"
+            @click="emit('click', $event)"
           />
         </template>
       </div>

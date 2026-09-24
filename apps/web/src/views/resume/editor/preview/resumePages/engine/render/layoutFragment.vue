@@ -4,7 +4,7 @@ import type { LayoutNode } from "../types";
 import type { FragmentPlan } from "../paginate/pagePlan";
 import LayoutNodeContent from "./layoutNodeContent.vue";
 
-defineProps<{
+const props = defineProps<{
   fragment: FragmentPlan;
   node: LayoutNode;
   showDebug?: boolean;
@@ -12,7 +12,18 @@ defineProps<{
   leadingOnPage?: boolean;
 }>();
 
-const emit = defineEmits<{ mouseenter: [moduleKey: string] }>();
+const emit = defineEmits<{
+  mouseenter: [moduleKey: string];
+  click: [payload: { moduleKey: string; itemIndex?: number }];
+}>();
+
+const handleContentClick = () => {
+  if (props.node.type === "spacer") return;
+  emit("click", {
+    moduleKey: props.fragment.sourceModuleKey,
+    itemIndex: props.node.sourceItemIndex,
+  });
+};
 </script>
 
 <template>
@@ -22,15 +33,30 @@ const emit = defineEmits<{ mouseenter: [moduleKey: string] }>();
     @mouseenter="emit('mouseenter', fragment.sourceModuleKey)"
   >
     <Title v-if="fragment.titlePayload" :module-key="fragment.sourceModuleKey" />
-    <LayoutNodeContent
+    <div
       v-if="fragment.fragment !== 'title'"
-      :node="node"
-      :payload="fragment.payload"
-      :content-range="fragment.contentRange"
-      :block-range="fragment.blockRange"
-      :decoration="fragment.decoration"
-      :show-debug="showDebug"
-      :leading-on-page="leadingOnPage"
-    />
+      @click.stop="handleContentClick"
+      :class="
+        node.type === 'spacer'
+          ? ''
+          : 'resume-submodule-content relative rounded-xl hover:bg-sf-theme-2!'
+      "
+    >
+      <LayoutNodeContent
+        :node="node"
+        :payload="fragment.payload"
+        :content-range="fragment.contentRange"
+        :block-range="fragment.blockRange"
+        :decoration="fragment.decoration"
+        :show-debug="showDebug"
+        :leading-on-page="leadingOnPage"
+      />
+    </div>
   </div>
 </template>
+
+<style scoped>
+.resume-submodule-content:hover :deep(.module-content-container) {
+  background-color: var(--color-sf-theme-2) !important;
+}
+</style>
