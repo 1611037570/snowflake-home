@@ -50,7 +50,6 @@
       :active-panel="mobilePanel"
       @select="mobilePanel = $event"
     />
-    <MobileToolbar v-if="isMobile" />
     <!-- 专注写作模式：右上角浮动退出按钮 -->
     <div
       v-if="focusMode"
@@ -82,7 +81,6 @@ import Header from "./components/header/index.vue";
 import ExportMask from "./components/exportMask.vue";
 import DetectTip from "./components/detectTip.vue";
 import MobileWorkspaceNav from "./components/mobileWorkspaceNav.vue";
-import MobileToolbar from "./components/mobileToolbar.vue";
 import IssueFeedback from "../components/issueFeedback.vue";
 import Share from "../components/share.vue";
 import Preview from "./preview/index.vue";
