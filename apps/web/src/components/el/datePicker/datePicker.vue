@@ -38,4 +38,8 @@ defineExpose({} as ComponentInstance<typeof ElDatePicker>);
   //
   background-color: revert-layer !important;
 }
+
+.el-date-picker {
+  border-radius: 24px !important;
+}
 </style>
