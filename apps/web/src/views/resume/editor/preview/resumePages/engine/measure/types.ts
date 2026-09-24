@@ -10,6 +10,8 @@ export interface BreakPointMeasure {
   height: number;
   /** 块断点覆盖的块数量：区间为 [0, blockEnd)，仅块断点存在 */
   blockEnd?: number;
+  /** 块自身的外边距：续段落在页首时渲染层会去掉它，分页计价需同步扣除 */
+  leadingMargin?: number;
 }
 
 /** 分页前用于计算节点占用空间的测量结果 */
