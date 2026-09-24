@@ -41,4 +41,8 @@ defineExpose({} as ComponentInstance<typeof ElCascader>);
   /* 更改文本颜色 */
   color: var(--color-sf-text);
 }
+:global(.el-cascader-menu .el-cascader-node) {
+  border-radius: 24px !important;
+  margin: 0 12px !important;
+}
 </style>
