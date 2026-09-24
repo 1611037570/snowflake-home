@@ -9,7 +9,7 @@ import {
   defaultPaddingVertical,
   defaultParagraphSpacing,
   uiParamRanges,
-} from "@/stores/modules/resume/uiConfig";
+} from "@/stores/modules/resume/config/uiConfig";
 
 const resumeStore = useResumeStore();
 const { currentUI } = storeToRefs(resumeStore);

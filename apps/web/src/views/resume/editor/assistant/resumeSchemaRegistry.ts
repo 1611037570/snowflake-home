@@ -1,5 +1,5 @@
-import { allConfig } from "@/stores/modules/resume/formConfig";
-import { RESUME_VALUE_OPTIONS } from "@/stores/modules/resume/resumeOptions";
+import { allConfig } from "@/stores/modules/resume/config/formConfig";
+import { RESUME_VALUE_OPTIONS } from "@/stores/modules/resume/config/resumeOptions";
 import { buildResumeSchema, getResumeModuleSchema } from "./resumeSchema";
 
 // 简历业务域负责注入表单配置与字典，引擎解析器不依赖具体业务字段

@@ -1,7 +1,7 @@
 import { computed, nextTick, ref } from "vue";
 import { storeToRefs } from "pinia";
 import { useResumeStore } from "@/stores";
-import { CUSTOM_MODULE_ICON, DEFAULT_MODULE_NAMES } from "@/stores/modules/resume/defaultConfig";
+import { CUSTOM_MODULE_ICON, DEFAULT_MODULE_NAMES } from "@/stores/modules/resume/config/defaultConfig";
 import eventBus from "@/utils/modules/eventBus";
 import { isFieldHidden, isFieldRemoved } from "@/components/business/dynamicForm/api";
 import { ElNotification } from "element-plus";

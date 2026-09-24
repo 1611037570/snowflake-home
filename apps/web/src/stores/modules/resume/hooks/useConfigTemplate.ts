@@ -1,4 +1,4 @@
-import { allConfig, DEFAULT_USER_FORM } from "../formConfig";
+import { allConfig, DEFAULT_USER_FORM } from "../config/formConfig";
 import { createUserCustomField, isUserCustomFieldKey } from "./useUserCustomField";
 import { applyUserSubtitleOrder } from "./useUserSubtitle";
 

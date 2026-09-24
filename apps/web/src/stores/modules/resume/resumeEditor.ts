@@ -11,7 +11,7 @@ import { computed, ref, toRaw, watch, type ComputedRef } from "vue";
 import {
   ALL_MODULE_KEY,
   DEFAULT_MODULE_NAMES,
-} from "./defaultConfig";
+} from "./config/defaultConfig";
 import {
   bindCollapsedDefault,
   buildRuntimeConfig,

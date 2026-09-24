@@ -11,7 +11,7 @@ import { computed, nextTick, onBeforeUnmount, ref, watch } from "vue";
 import { storeToRefs } from "pinia";
 import { debounce } from "lodash-es";
 import { useChatRequest } from "./useChatRequest";
-import { ALL_MODULE_KEY, ALL_MODULE_NAME } from "@/stores/modules/resume/defaultConfig";
+import { ALL_MODULE_KEY, ALL_MODULE_NAME } from "@/stores/modules/resume/config/defaultConfig";
 import { flows, suggestions } from "../flows";
 import { supportsInterviewEarlyEnd } from "../interview/flows";
 import { supportsQuickAnswer, useInterviewQuickAnswer } from "../interview/quickAnswer";

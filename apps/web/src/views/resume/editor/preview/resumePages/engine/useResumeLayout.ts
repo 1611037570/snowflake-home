@@ -1,6 +1,6 @@
 import { computed, type ComputedRef, type Ref } from "vue";
 import { getContentHeight, RESUME_WIDTH } from "../../constants";
-import { defaultLeftColumnWidth } from "@/stores/modules/resume/uiConfig";
+import { defaultLeftColumnWidth } from "@/stores/modules/resume/config/uiConfig";
 import { buildLayoutNodes } from "./adapter/buildLayoutNodes";
 import { createResumeLayout } from "./layout/createResumeLayout";
 import { resolveColumnWidths } from "./layout/resolveColumnWidths";

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ALL_MODULE_KEY } from "@/stores/modules/resume/defaultConfig";
+import { ALL_MODULE_KEY } from "@/stores/modules/resume/config/defaultConfig";
 import { computed, ref } from "vue";
 import type { SuggestCard } from "../../types";
 import OneVOne from "./oneVOne.vue";

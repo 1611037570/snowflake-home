@@ -22,7 +22,7 @@ vi.mock("idb-keyval", () => ({
   set: vi.fn(async () => undefined),
   del: vi.fn(async () => undefined),
 }));
-vi.mock("./formConfig", () => {
+vi.mock("./config/formConfig", () => {
   const user = {
     type: "group",
     key: "user",
