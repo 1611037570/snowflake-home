@@ -23,7 +23,7 @@
       </div>
       <!-- 加载提示 -->
       <div class="mt-8 flex flex-col items-center gap-2">
-        <p class="text-lg font-medium tracking-wide text-sf-text-3">"{{ $t("load") }}"</p>
+        <p class="text-lg font-medium tracking-wide text-sf-text-3">"{{ $t("core.load") }}"</p>
       </div>
     </div>
   </div>

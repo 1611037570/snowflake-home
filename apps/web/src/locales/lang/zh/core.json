@@ -1,5 +1,6 @@
 {
-  "router": {
+  "core": {
+    "router": {
     "messageBoard": "留言板",
     "image": "图省事",
     "imageDesc": "快速处理图片格式与大小",
@@ -36,19 +37,20 @@
     "init": "初始化",
     "llmMonitor": "请求观测",
     "llmMonitorDesc": "查看模型请求与工具执行过程"
-  },
-  "moreTools": "更多内容",
-  "load": "逆转时空的公式就是珍惜现在",
-  "theme": {
+    },
+    "moreTools": "更多内容",
+    "load": "逆转时空的公式就是珍惜现在",
+    "theme": {
     "system": "跟随系统",
     "dark": "暗黑模式",
     "light": "白天模式"
-  },
-  "user": {
+    },
+    "user": {
     "name": "小羊",
     "location": "乌镇",
     "job": "前端开发 & 人像摄影师"
-  },
-  "copyright": "版权所有",
-  "allRightsReserved": "保留所有权利"
+    },
+    "copyright": "版权所有",
+    "allRightsReserved": "保留所有权利"
+  }
 }

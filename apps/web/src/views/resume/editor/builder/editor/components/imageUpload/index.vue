@@ -180,7 +180,7 @@ const removeImage = () => {
     </div>
     <div class="flex cursor-pointer items-center gap-1 text-[11px] text-sf-text-2">
       该功能由
-      <span @click="goImageTools" class="hover:text-sf-theme">{{ $t("router.image") }}</span>
+      <span @click="goImageTools" class="hover:text-sf-theme">{{ $t("core.router.image") }}</span>
       提供技术支持
     </div>
     <!-- 图片查看器：点击查看上传的大图 -->

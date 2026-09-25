@@ -2,13 +2,13 @@
   <footer class="flex-c relative flex-col overflow-hidden px-3 py-1 text-xs text-sf-text">
     <div class="flex items-center gap-3">
       <div class="flex items-center">
-        {{ $t("copyright") }} © 2019-{{ currentYear }}
+        {{ $t("core.copyright") }} © 2019-{{ currentYear }}
         <SfTooltip content="网站作者">
           <SfSpan class="mx-1" @click="userNavigation">
-            {{ $t("user.name") }}
+          {{ $t("core.user.name") }}
           </SfSpan>
         </SfTooltip>
-        {{ $t("allRightsReserved") }}
+        {{ $t("core.allRightsReserved") }}
       </div>
 
       <SfAbout>

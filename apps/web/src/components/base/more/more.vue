@@ -39,10 +39,10 @@ function handleReset() {
         type="button"
         class="h-8 cursor-pointer rounded-full border-2 border-sf-theme bg-sf-theme/10 px-[18px] text-sm font-black text-sf-theme"
       >
-        {{ $t("moreTools") }}
+        {{ $t("core.moreTools") }}
       </button>
     </slot>
-    <SfModal v-model="showMore" :title="$t('moreTools')">
+    <SfModal v-model="showMore" :title="$t('core.moreTools')">
       <div class="flex w-[460px] flex-col">
         <MoreList v-for="item in list" :key="item.name" :data="item" />
         <button

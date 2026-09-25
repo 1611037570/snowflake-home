@@ -128,7 +128,7 @@ const animatedTokens = useTransition(
     <header class="flex w-full flex-row items-center justify-between gap-1 select-none">
       <div class="flex items-center gap-1">
         <div class="text-[12px] leading-tight font-black text-sf-text">
-          {{ $t("router.resumeAI") }}
+          {{ $t("core.router.resumeAI") }}
         </div>
 
         <!-- 回复内容切换 (美化后的胶囊风格) -->
