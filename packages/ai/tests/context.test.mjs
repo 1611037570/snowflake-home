@@ -45,6 +45,19 @@ test("工具调用与结果作为整体压缩", async () => {
   assert.ok(countTokens(compacted) <= 22);
 });
 
+// 最近的工具结果独自占满预算时，仍按调用与结果的完整消息组生成摘要。
+test("必要时压缩最近的工具结果", async () => {
+  const messages = [
+    { role: "user", content: "当前问题" },
+    { role: "assistant", content: null, tool_calls: [{ id: "call-1", type: "function", function: { name: "echo", arguments: "{}" } }] },
+    { role: "tool", content: "很长的工具输出内容很多很多很多", tool_call_id: "call-1" },
+  ];
+  const compacted = await prepareContext(messages, { maxInputTokens: 18, countTokens, summarize });
+  assert.equal(compacted[0], messages[0]);
+  assert.equal(compacted[1].role, "assistant");
+  assert.equal(compacted.length, 2);
+});
+
 // 当前消息本身超出预算时明确报错，不丢弃用户输入。
 test("没有可压缩历史时拒绝静默裁剪", async () => {
   await assert.rejects(

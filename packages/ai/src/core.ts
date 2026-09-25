@@ -1,4 +1,5 @@
 import { createRequest } from "./request/request.js";
+import { prepareContext } from "./context.js";
 import { AbortError } from "./errors.js";
 import { noopLlmObserver, type LlmObserver } from "./observer.js";
 
@@ -333,18 +334,20 @@ class LLM {
       throw new Error("启用反思时必须提供 reflectPrompt");
     }
     let aborted = false;
+    const contextAbort = new AbortController();
     const abortRef: { current: (() => void) | null } = { current: null };
     const registry = new ToolRegistry();
     config.tools.forEach((t) => registry.register(t));
 
     const abort = () => {
       aborted = true;
+      contextAbort.abort();
       abortRef.current?.();
     };
 
     const run = async (initialMessages: ChatMessage[]): Promise<string> => {
       const maxSteps = config.maxSteps ?? 6;
-      const history: ChatMessage[] = [...initialMessages];
+      let history: ChatMessage[] = [...initialMessages];
       const traceId = this.observer.createLlmTrace({
         provider: this.provider,
         model: config.model || this.model,
@@ -379,6 +382,14 @@ class LLM {
           activeRound = { round, startTime: Date.now() };
           this.observer.recordLlmTraceEvent(traceId, "round_start", { round });
           console.log(`[ReAct] 第 ${round}/${maxSteps} 步 Think`);
+          // 每轮推理前只压缩请求历史副本，不修改调用方保存的原始消息。
+          if (config.context) {
+            history = await prepareContext(history, {
+              ...config.context,
+              signal: contextAbort.signal,
+            });
+          }
+          if (aborted) throw new AbortError();
           const result = await think(this, history, {
             tools: config.tools,
             model: config.model,
