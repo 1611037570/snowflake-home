@@ -183,13 +183,11 @@ const clearField = () => {
   </div>
   <!-- 重命名弹窗：仅自定义字段需要 -->
   <SfModal v-if="isCustomField" v-model="showRenameModal" title="修改字段名称">
-    <form class="flex w-80 flex-col gap-3 p-3" @submit.prevent="handleRename">
+    <form class="flex w-80 flex-col gap-3" @submit.prevent="handleRename">
       <SfInput v-model="fieldLabel" placeholder="请输入字段名称" />
       <footer class="flex justify-end gap-3">
-        <el-button @click="showRenameModal = false">取消</el-button>
-        <el-button type="primary" :disabled="!fieldLabel.trim()" @click="handleRename"
-          >保存</el-button
-        >
+        <SfButton type="bg" @click="showRenameModal = false">取消</SfButton>
+        <SfButton :disabled="!fieldLabel.trim()" @click="handleRename">保存</SfButton>
       </footer>
     </form>
   </SfModal>
