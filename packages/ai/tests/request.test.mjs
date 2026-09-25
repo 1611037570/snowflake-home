@@ -1,6 +1,8 @@
 import assert from "node:assert/strict";
 import { afterEach, test } from "node:test";
-import { ApiError, createRequest, LLM } from "../dist/index.js";
+import { ApiError, LLM } from "../dist/index.js";
+import { createRequest } from "../dist/request/request.js";
+import { getParser } from "../dist/parser/index.js";
 
 const originalFetch = globalThis.fetch;
 
@@ -111,4 +113,19 @@ test("分别回调思考、正文与令牌", async () => {
     token: [7],
     event: [["tool_call_delta", { index: 0, id: "call-1" }]],
   });
+});
+
+// 校验同一服务商可按所选接口协议解析模型响应。
+test("按接口协议选择解析器", () => {
+  const chatParser = getParser({ provider: "ark", protocol: "chatCompletions" });
+  const responsesParser = getParser({ provider: "openai", protocol: "responses" });
+
+  assert.equal(
+    chatParser('data: {"choices":[{"delta":{"content":"对话"}}]}', {}).content,
+    "对话",
+  );
+  assert.equal(
+    responsesParser('data: {"type":"response.output_text.delta","delta":"响应"}', {}).content,
+    "响应",
+  );
 });

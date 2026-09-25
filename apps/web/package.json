@@ -9,11 +9,11 @@
   },
   "scripts": {
     "snow": "node scripts/snow.js",
-    "dev": "vite",
-    "build": "vite build",
+    "dev": "pnpm --filter @snowflake/ai build && vite",
+    "build": "pnpm --filter @snowflake/ai build && vite build",
     "preview": "vite preview",
-    "build-only": "vite build",
-    "type-check": "vue-tsc --build",
+    "build-only": "pnpm --filter @snowflake/ai build && vite build",
+    "type-check": "pnpm --filter @snowflake/ai build && vue-tsc --build",
     "lint:oxlint": "oxlint . --fix -D correctness --ignore-path .gitignore",
     "lint:eslint": "eslint . --fix",
     "lint": "run-s lint:*",
@@ -22,7 +22,7 @@
     "test:unit": "vitest",
     "preview:test": "vite preview --outDir test",
     "vitest:ui": "vitest --ui",
-    "build:ext": "vite build --mode extension"
+    "build:ext": "pnpm --filter @snowflake/ai build && vite build --mode extension"
   },
   "dependencies": {
     "@snowflake/ai": "workspace:*",
