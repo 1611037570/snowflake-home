@@ -48,6 +48,7 @@ const i18nOptions: I18nOptions = {
   legacy: false, // 启用组合式 API 模式
   globalInjection: true, // 全局注入 $t 函数
   locale: DEFAULT_LANG_KEY, // 设置默认语言
+  fallbackLocale: "zh", // 英文缺失字段回退到中文
   messages, // 语言包映射
   missingWarn: false, // 关闭缺失键警告
   fallbackWarn: false, // 关闭后备键警告
