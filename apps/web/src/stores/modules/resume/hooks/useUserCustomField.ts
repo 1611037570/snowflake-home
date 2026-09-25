@@ -36,13 +36,6 @@ export function createUserCustomField(key: string, label: string): GroupFormFiel
         defaultValue: "other-tag",
       },
     ],
-    // 字段隐藏时的置灰判断
-    checks: {
-      hidden: {
-        path: ["ui", key, "hidden"],
-        equals: true,
-      },
-    },
     fields: [
       {
         type: "object",
