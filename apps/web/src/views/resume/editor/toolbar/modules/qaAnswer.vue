@@ -1,13 +1,8 @@
 <script setup>
 import { computed, ref } from "vue";
-import { storeToRefs } from "pinia";
-import { useSystemStore } from "@/stores";
 import { isChrome } from "@/utils";
 import { DOWNLOAD_URL, RECOMMEND_BROWSER } from "@/components/business/browserTip";
 
-// 移动端入口参与抽屉布局，避免被工具栏视口裁切
-const systemStore = useSystemStore();
-const { isMobile } = storeToRefs(systemStore);
 // QA 解答弹窗可见性
 const visible = ref(false);
 // 非推荐浏览器：QA 图标切换为感叹号，弹窗内展示浏览器建议
@@ -16,21 +11,19 @@ const notChrome = computed(() => !isChrome());
 
 <template>
   <!-- 右侧工具栏区域的 QA 解答入口 -->
-  <div :class="isMobile ? 'relative' : 'absolute -bottom-12 left-1/2 -translate-x-1/2'">
-    <SfTooltip content="QA解答" placement="left">
-      <SfIcon
-        :icon="notChrome ? 'mdi:alert-circle' : 'mdi:chat-question-outline'"
-        size="5"
-        boxSize="10"
-        :class="
-          notChrome
-            ? 'relative cursor-pointer rounded-full bg-sf-warning-2 text-sf-warning'
-            : 'relative cursor-pointer rounded-full bg-gradient-to-br from-sf-theme to-sf-theme-2 text-sf-theme-text'
-        "
-        @click="visible = true"
-      />
-    </SfTooltip>
-  </div>
+  <SfTooltip content="QA解答" placement="left">
+    <SfIcon
+      :icon="notChrome ? 'mdi:alert-circle' : 'mdi:chat-question-outline'"
+      size="5"
+      boxSize="10"
+      :class="
+        notChrome
+          ? 'relative cursor-pointer rounded-full bg-sf-warning-2 text-sf-warning'
+          : 'relative cursor-pointer rounded-full bg-gradient-to-br from-sf-theme to-sf-theme-2 text-sf-theme-text'
+      "
+      @click="visible = true"
+    />
+  </SfTooltip>
 
   <!-- QA 解答弹窗：内容待补充 -->
   <SfModal v-model="visible" title="QA解答">
