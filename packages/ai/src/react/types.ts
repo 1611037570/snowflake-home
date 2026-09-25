@@ -1,4 +1,5 @@
 // ReAct（思考-执行-观察）编排层类型定义
+import type { ContextCompactionOptions } from "../context.js";
 
 // 单个工具定义，遵循 OpenAI function calling 约定
 export interface ReactTool {
@@ -50,6 +51,8 @@ export interface ReactConfig {
   tools: ReactTool[];
   // 最大循环步数，防止死循环
   maxSteps?: number;
+  // 可选的上下文预算与摘要策略，每轮请求前处理待发送历史。
+  context?: ContextCompactionOptions;
   // 模型名，存在时透传到请求 options
   model?: string;
   // 思考模式，不传时默认禁用
