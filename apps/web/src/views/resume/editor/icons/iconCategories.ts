@@ -3,6 +3,8 @@
  * 分类按简历模块与用途划分，key 作为用户数据稳定标识，icon 仅作为当前渲染名称
  */
 
+import { $t } from "@/locales";
+
 export interface IconOption {
   /** 用户数据保存的稳定标识，图标替换时不可修改 */
   key: string;
@@ -19,6 +21,19 @@ export interface IconCategory {
   /** 该分类下的图标列表 */
   icons: IconOption[];
 }
+
+const ICON_CATEGORY_KEYS: Record<string, string> = {
+  personal: "personalIconCategory",
+  contact: "contactIconCategory",
+  social: "socialIconCategory",
+  education: "educationIconCategory",
+  work: "workIconCategory",
+  project: "projectIconCategory",
+  skill: "skillIconCategory",
+  honor: "honorIconCategory",
+  hobby: "hobbyIconCategory",
+  other: "otherIconCategory",
+};
 
 export const ICON_CATEGORIES: IconCategory[] = [
   {
@@ -162,6 +177,14 @@ export const ICON_CATEGORIES: IconCategory[] = [
 ];
 
 export const ICON_ITEMS = ICON_CATEGORIES.flatMap((category) => category.icons);
+
+// 图标分类名称只在选择器展示时翻译，分类标识和图标数据保持不变。
+export function getLocalizedIconCategories(translate: (key: string) => string = $t): IconCategory[] {
+  return ICON_CATEGORIES.map((category) => ({
+    ...category,
+    name: translate(ICON_CATEGORY_KEYS[category.key] || category.name),
+  }));
+}
 
 // 根据用户保存的稳定标识解析当前图标
 export const getIconOption = (value?: string) => ICON_ITEMS.find((item) => item.key === value);

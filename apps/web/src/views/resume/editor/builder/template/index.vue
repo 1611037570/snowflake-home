@@ -7,6 +7,8 @@ import ThumbPreview from "../../preview/thumbPreview.vue";
 import { themeTemplateList } from "@/stores/modules/resume/config/uiConfig";
 import { loadResumeTemplateData } from "@/views/resume/template/data/resumeData";
 import { onMounted, ref } from "vue";
+import i18n from "@/locales";
+import { translateResumeEditorText } from "@/stores/modules/resume/hooks/useResumeEditorLocale";
 const resumeStore = useResumeStore();
 const { currentUI } = storeToRefs(resumeStore);
 const previewBase = ref(null);
@@ -20,15 +22,18 @@ onMounted(async () => {
   }
 });
 
-const templates = computed(() => themeTemplateList.map((t) => ({
-  name: t.name,
-  id: t.id,
-  item: {
-    data: previewBase.value?.data || {},
-    config: previewBase.value?.config || {},
-    ui: t.item.ui,
-  },
-})));
+const templates = computed(() => {
+  i18n.global.locale.value;
+  return themeTemplateList.map((t) => ({
+    name: translateResumeEditorText(t.name),
+    id: t.id,
+    item: {
+      data: previewBase.value?.data || {},
+      config: previewBase.value?.config || {},
+      ui: t.item.ui,
+    },
+  }));
+});
 
 // 是否为当前选中的风格模板
 const isActive = (id) => (currentUI.value?.themeTemplate ?? "default") === id;

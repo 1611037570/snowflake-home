@@ -1,6 +1,7 @@
 <script setup>
 import { computed } from "vue";
 import { storeToRefs } from "pinia";
+import i18n, { $t } from "@/locales";
 import { useResumeStore } from "@/stores";
 import {
   defaultTextAlign,
@@ -11,15 +12,29 @@ import {
   textAlignList,
   uiParamRanges,
 } from "@/stores/modules/resume/config/uiConfig";
+import { localizeResumeEditorOptionList } from "@/stores/modules/resume/hooks/useResumeEditorLocale";
 
 const resumeStore = useResumeStore();
 const { currentUI } = storeToRefs(resumeStore);
 
 // 字体类数值参数：标签、绑定字段与默认值集中维护，模板统一渲染
-const fontParams = [
-  { label: "字体大小", key: "fontSize", defaultValue: defaultFontSize },
-  { label: "模块标题字号", key: "titleFontSize", defaultValue: defaultTitleFontSize },
-];
+const fontParams = computed(() => {
+  i18n.global.locale.value;
+  return [
+    { label: $t("fontSize"), key: "fontSize", defaultValue: defaultFontSize },
+    { label: $t("moduleTitleFontSize"), key: "titleFontSize", defaultValue: defaultTitleFontSize },
+  ];
+});
+
+const localizedFontFamilyList = computed(() => {
+  i18n.global.locale.value;
+  return localizeResumeEditorOptionList(fontFamilyList);
+});
+
+const localizedTextAlignList = computed(() => {
+  i18n.global.locale.value;
+  return localizeResumeEditorOptionList(textAlignList);
+});
 
 // 字体类型（阿里普惠体 / 汉仪易烊千玺体 / 跟随系统）
 const fontFamily = computed({
@@ -56,7 +71,7 @@ const setParam = (key, value) => {
       class="flex cursor-pointer items-center gap-1 rounded-full px-1.5 py-1 text-sm text-sf-text-2 hover:bg-sf-theme-2 hover:text-sf-theme-text"
     >
       <SfIcon icon="lucide:type" size="5" />
-      <span>排版</span>
+      <span>{{ $t("layout") }}</span>
     </span>
     <template #dropdown>
       <div
@@ -65,7 +80,7 @@ const setParam = (key, value) => {
         <!-- 字体类型选择 -->
         <div class="flex flex-col gap-1">
           <div class="flex items-center gap-1 text-sm text-sf-text-2">
-            <span>字体类型</span>
+            <span>{{ $t("fontTypes") }}</span>
             <SfIcon
               icon="material-symbols:restart-alt"
               size="4"
@@ -73,7 +88,7 @@ const setParam = (key, value) => {
               @click="fontFamily = defaultFontFamily"
             />
           </div>
-          <SfSelect v-model="fontFamily" :list="fontFamilyList" />
+          <SfSelect v-model="fontFamily" :list="localizedFontFamilyList" />
         </div>
 
         <div v-for="item in fontParams" :key="item.key" class="flex flex-col gap-1">
@@ -101,7 +116,7 @@ const setParam = (key, value) => {
 
         <div class="flex flex-col gap-1">
           <div class="flex items-center gap-1 text-sm text-sf-text-2">
-            <span>文本对齐</span>
+            <span>{{ $t("textAlign") }}</span>
             <SfIcon
               icon="material-symbols:restart-alt"
               size="4"
@@ -111,7 +126,7 @@ const setParam = (key, value) => {
           </div>
           <div class="flex gap-3">
             <SfButton
-              v-for="option in textAlignList"
+              v-for="option in localizedTextAlignList"
               :key="option.value"
               class="flex-1"
               size="small"
