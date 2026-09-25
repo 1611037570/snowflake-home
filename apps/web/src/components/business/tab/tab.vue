@@ -10,7 +10,7 @@
         <div
           v-for="(item, index) in list"
           :key="index"
-          class="tab-item relative z-10 flex flex-1 cursor-pointer items-center justify-center gap-1 rounded-2xl px-2 py-1 text-center transition-all duration-100"
+          class="tab-item relative z-10 flex min-w-0 flex-1 cursor-pointer items-center justify-center gap-1 rounded-2xl px-2 py-1 text-center transition-all duration-100"
           :class="[
             disabled
               ? 'cursor-not-allowed! text-sf-text-3 opacity-60'
@@ -21,7 +21,7 @@
           @click="handleClick(index)"
         >
           <SfIcon :icon="item.icon" size="4" v-if="item.icon" />
-          {{ item.name }}
+          <span class="truncate whitespace-nowrap">{{ item.name }}</span>
         </div>
         <!-- 背景指示器，实现跟随动画效果 -->
         <div
