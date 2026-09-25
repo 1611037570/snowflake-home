@@ -54,6 +54,19 @@ const i18nOptions: I18nOptions = {
 };
 const i18n: I18n = createI18n(i18nOptions);
 
+interface LocaleRoute {
+  meta?: {
+    localeFile?: unknown;
+    pageName?: unknown;
+  };
+  name?: unknown;
+}
+
+export function getPageLocaleFile(route: LocaleRoute): string {
+  const pageName = route.meta?.localeFile || route.meta?.pageName || route.name;
+  return typeof pageName === "string" ? pageName : "";
+}
+
 async function dynamicLoadPageLang(name: string, langKey: string) {
   try {
     const pageLangModule = await import(`./lang/${langKey}/${name}.json`);
