@@ -5,6 +5,7 @@ import { useDraggable } from "vue-draggable-plus";
 import { moveFieldByKey } from "@/components/business/dynamicForm/api";
 import { useResumeStore } from "@/stores";
 import { useModuleNav } from "../../useModuleNav";
+import { $t } from "@/locales";
 
 defineOptions({ name: "ModuleManagerContent" });
 
@@ -44,7 +45,8 @@ const handleFindHit = async (module, hit) => {
 
 // 命中项标题：记录命中显示「记录标题 · 字段标签」，对象模块字段命中只显示字段标签
 const hitTitle = (hit) => {
-  const record = hit.recordTitle || (hit.itemIndex != null ? `第 ${hit.itemIndex + 1} 段` : "");
+  const record =
+    hit.recordTitle || (hit.itemIndex != null ? $t("recordNumber", { number: hit.itemIndex + 1 }) : "");
   return record ? `${record} · ${hit.label}` : hit.label;
 };
 
@@ -60,7 +62,7 @@ const handleArchived = (module) => {
 
 // 删除模块时同步移除模块数据与运行时配置
 const handleDelete = (module) => {
-  proxy.$confirm(`确定要删除${module.name}模块吗？`, "删除确认").then(() => {
+  proxy.$confirm($t("deleteModuleConfirm", { name: module.name }), $t("deleteConfirm")).then(() => {
     resumeStore.removeModule(module.key);
   });
 };
@@ -103,11 +105,11 @@ onUnmounted(() => {
       <div class="mb-3 flex items-center justify-between">
         <div class="flex items-center gap-3 font-bold text-sf-text">
           <SfIcon icon="mdi:widgets" size="4" />
-          <span>模块管理</span>
+          <span>{{ $t("moduleManager") }}</span>
         </div>
-        <span class="text-xs text-sf-text-2">{{ moduleFields.length }} 个模块</span>
+        <span class="text-xs text-sf-text-2">{{ $t("moduleCount", { count: moduleFields.length }) }}</span>
       </div>
-      <SfInput v-model="keyword" placeholder="搜索模块或内容" clearable />
+      <SfInput v-model="keyword" :placeholder="$t('searchModuleOrContent')" clearable />
     </header>
     <SfScrollbar class="mt-3" max-height="388px">
       <div ref="listRef" class="flex flex-col gap-3">
@@ -128,11 +130,11 @@ onUnmounted(() => {
               />
               <div class="flex min-w-0 flex-1 items-center gap-3">
                 <span class="truncate text-sm text-sf-text">{{ module.name }}</span>
-                <span v-if="module.hidden" class="text-xs text-sf-text-2">已隐藏</span>
-                <span v-if="module.archived" class="text-xs text-sf-text-2">已归档</span>
+                <span v-if="module.hidden" class="text-xs text-sf-text-2">{{ $t("hidden") }}</span>
+                <span v-if="module.archived" class="text-xs text-sf-text-2">{{ $t("archived") }}</span>
               </div>
               <div class="flex shrink-0 items-center gap-3 text-sf-text-2">
-                <SfTooltip content="同步查找">
+                <SfTooltip :content="$t('syncSearch')">
                   <SfIcon
                     icon="mdi:map-search-outline"
                     size="4"
@@ -140,7 +142,7 @@ onUnmounted(() => {
                     @click.stop="handleFind(module)"
                   />
                 </SfTooltip>
-                <SfTooltip :content="module.hidden ? '显示' : '隐藏'">
+                <SfTooltip :content="module.hidden ? $t('show') : $t('hide')">
                   <SfIcon
                     :icon="module.hidden ? 'lucide:eye' : 'lucide:eye-off'"
                     size="4"
@@ -148,7 +150,7 @@ onUnmounted(() => {
                     @click.stop="handleHidden(module)"
                   />
                 </SfTooltip>
-                <SfTooltip :content="module.archived ? '恢复归档' : '归档'">
+                <SfTooltip :content="module.archived ? $t('restoreArchive') : $t('archive')">
                   <SfIcon
                     :icon="module.archived ? 'lucide:archive-restore' : 'lucide:archive'"
                     size="4"
@@ -156,7 +158,7 @@ onUnmounted(() => {
                     @click.stop="handleArchived(module)"
                   />
                 </SfTooltip>
-                <SfTooltip v-if="!module.field.fixed" content="删除">
+                <SfTooltip v-if="!module.field.fixed" :content="$t('delete')">
                   <SfIcon
                     icon="ic:round-delete"
                     size="4"
@@ -184,7 +186,7 @@ onUnmounted(() => {
           </div>
         </template>
         <div v-if="!searchResults.length" class="py-3 text-center text-sm text-sf-text-2">
-          未找到相关内容
+          {{ $t("notFound") }}
         </div>
       </div>
     </SfScrollbar>

@@ -11,6 +11,7 @@ import Progress from "./modules/progress/index.vue";
 import ModuleNavigator from "./modules/moduleNavigator.vue";
 import QaAnswer from "./modules/qaAnswer.vue";
 import LiuyaoWenxin from "./modules/liuyaoWenxin.vue";
+import { $t } from "@/locales";
 
 // 调试面板默认关闭，保持异步按需加载
 const Debug = defineAsyncComponent(() => import("./modules/debug.vue"));
@@ -52,7 +53,7 @@ const toolbarItems = computed(() => [
           attrs: {
             icon: "lucide:focus",
             size: "5",
-            content: "专注模式",
+            content: $t("focusMode"),
             onOnClick: enterFocusMode,
           },
         },
@@ -65,7 +66,7 @@ const toolbarItems = computed(() => [
     attrs: {
       icon: "akar-icons:home-alt1",
       size: "5",
-      content: "返回首页",
+      content: $t("backHome"),
       onOnClick: goHome,
     },
   },
@@ -103,7 +104,7 @@ const toolbarItems = computed(() => [
       type="button"
       class="relative z-10 flex h-12 w-6 shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-l-2xl border border-r-0 border-sf-b bg-sf-primary text-sf-text-2 transition-colors hover:text-sf-theme"
       :aria-expanded="expanded"
-      :aria-label="expanded ? '收起工具栏' : '展开工具栏'"
+      :aria-label="expanded ? $t('collapseToolbar') : $t('expandToolbar')"
       @click="expanded = !expanded"
     >
       <SfIcon :icon="expanded ? 'lucide:chevron-right' : 'lucide:chevron-left'" size="4" />
