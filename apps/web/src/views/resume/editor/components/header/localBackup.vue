@@ -17,6 +17,9 @@ import {
 // 是否支持本地文件系统接口
 const supported = isFileSystemAccessSupported();
 
+// "正在备份"状态的最短展示时长（毫秒）
+const BACKUP_PENDING_MIN_DURATION = 1500;
+
 const resumeStore = useResumeStore();
 const { currentItem } = storeToRefs(resumeStore);
 
@@ -91,6 +94,7 @@ const doBackup = async () => {
   if (!item) return;
   const path = backupPath.value;
   const statusKey = getBackupStatusKey(item.id, path);
+  const startTime = Date.now();
   backupStatus.value = "pending";
   // 备份文件名：轻舟简历备份-时间-简历ID（时间精确到秒，避免同名覆盖）
   const filename = `轻舟简历备份-${dayjs().format("YYYY-MM-DD_HH-mm-ss")}-${item.id}.json`;
@@ -100,6 +104,11 @@ const doBackup = async () => {
     config: { ...item.config, fields: compactConfigFields(item.config?.fields || []) },
   };
   const success = await writeLocalBackup(filename, JSON.stringify(backupItem, null, 2));
+  // 备份耗时极短，补足最短展示时长，避免"正在备份"一闪而过
+  const elapsed = Date.now() - startTime;
+  if (elapsed < BACKUP_PENDING_MIN_DURATION) {
+    await new Promise((resolve) => setTimeout(resolve, BACKUP_PENDING_MIN_DURATION - elapsed));
+  }
   const time = dayjs().format("YYYY-MM-DD HH:mm:ss");
   try {
     localStorage.setItem(statusKey, JSON.stringify({ success, time }));
