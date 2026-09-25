@@ -223,7 +223,7 @@ export const useResumeStore = defineStore(
     const contentVersion = ref(0);
     // 是否处于编辑中：内容变化后置真，停顿 EDIT_IDLE_DELAY 后置否
     const isEditing = ref(false);
-    const EDIT_IDLE_DELAY = 400;
+    const EDIT_IDLE_DELAY = 200;
     const markEditingIdle = debounce(() => (isEditing.value = false), EDIT_IDLE_DELAY);
     // 唯一的简历内容变更来源：整份 currentItem 的 data/config/ui 任一嵌套字段变化都收敛到这里
     watch(
