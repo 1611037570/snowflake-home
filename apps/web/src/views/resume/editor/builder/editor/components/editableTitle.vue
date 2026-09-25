@@ -59,7 +59,7 @@ function handleKeydown(e) {
     >
       {{ modelValue }}
     </span>
-    <div ref="editBox" v-else class="w-full">
+    <div ref="editBox" v-else class="w-[120px]">
       <SfInput
         v-model="modelValue"
         class="rounded border border-sf-theme outline-none"
