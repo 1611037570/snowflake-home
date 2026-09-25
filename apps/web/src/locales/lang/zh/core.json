@@ -50,6 +50,19 @@
     "location": "乌镇",
     "job": "前端开发 & 人像摄影师"
     },
+    "donation": {
+    "supportProject": "支持项目",
+    "otherWays": "其他支持方式",
+    "otherWaysDescription": "除了资金赞助，您还可以通过以下方式支持项目：",
+    "githubStars": "在 GitHub 上给项目点",
+    "recommendProject": "向朋友和同事推荐",
+    "thanks": "感谢您的支持！",
+    "donationDescription": "如果您也喜欢我的项目，一份捐赠就是对项目最大的物质支持与精神鼓励。",
+    "donationImpact": "您的每一份支持都将帮助项目持续发展和改进。",
+    "alipay": "支付宝",
+    "wechatPay": "微信支付",
+    "go": "前往"
+    },
     "copyright": "版权所有",
     "allRightsReserved": "保留所有权利"
   }

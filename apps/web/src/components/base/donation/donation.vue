@@ -11,7 +11,7 @@ const color = inject("color", "text-sf-base");
 <template>
   <div class="flex items-center" @click="modalValue = true">
     <slot>
-      <SfTooltip content="支持项目">
+      <SfTooltip :content="$t('core.donation.supportProject')">
         <SfIcon
           icon="solar:heart-bold"
           size="8"
@@ -20,7 +20,7 @@ const color = inject("color", "text-sf-base");
         />
       </SfTooltip>
     </slot>
-    <SfModal v-model="modalValue" title="支持项目">
+    <SfModal v-model="modalValue" :title="$t('core.donation.supportProject')">
       <Money />
       <Donation />
     </SfModal>

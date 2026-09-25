@@ -49,6 +49,19 @@
     "location": "Wuzhen",
     "job": "Front-end Developer & Portrait Photographer"
     },
+    "donation": {
+    "supportProject": "Support Project",
+    "otherWays": "Other Ways to Support",
+    "otherWaysDescription": "Besides financial support, you can also support the project in the following ways:",
+    "githubStars": "Star the project on GitHub",
+    "recommendProject": "Recommend it to friends and colleagues",
+    "thanks": "Thank you for your support!",
+    "donationDescription": "If you enjoy this project, a donation is both material and emotional support.",
+    "donationImpact": "Every contribution helps the project continue to grow and improve.",
+    "alipay": "Alipay",
+    "wechatPay": "WeChat Pay",
+    "go": "Go"
+    },
     "copyright": "Copyright",
     "allRightsReserved": "All Rights Reserved"
   }

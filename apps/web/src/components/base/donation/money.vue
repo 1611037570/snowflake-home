@@ -1,21 +1,26 @@
 <script setup>
+import { computed } from "vue";
+import i18n, { $t } from "@/locales";
 // 导入支付图片
 import aliPay from "@/assets/images/aliPay.webp";
 import weChatPay from "@/assets/images/weChatPay.webp";
 
 // 支付方式列表
-const list = [
-  { name: "支付宝", value: aliPay },
-  { name: "微信支付", value: weChatPay },
-];
+const list = computed(() => {
+  i18n.global.locale.value;
+  return [
+    { name: $t("core.donation.alipay"), value: aliPay },
+    { name: $t("core.donation.wechatPay"), value: weChatPay },
+  ];
+});
 </script>
 
 <template>
   <!-- 描述 -->
   <div class="mb-3 text-center leading-relaxed text-sf-text">
-    如果您也喜欢我的项目，一份捐赠就是对我最大的物质支持与精神鼓励。
+    {{ $t("core.donation.donationDescription") }}
     <br />
-    您的每一份支持都将帮助项目持续发展和改进。
+    {{ $t("core.donation.donationImpact") }}
   </div>
 
   <!-- 支付方式容器 -->
