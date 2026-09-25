@@ -90,7 +90,7 @@ function handleAdd() {
 </script>
 
 <template>
-  <SfCollapse v-model="collapsed">
+  <SfCollapse v-model="collapsed" class="bg-sf-primary!">
     <SfCollapseItem name="1" lazy>
       <template #title>
         <div class="group flex h-full w-full items-center justify-between">
