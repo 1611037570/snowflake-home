@@ -1,34 +1,38 @@
 <template>
   <div class="flex h-svh w-full flex-col overflow-hidden bg-sf-page" v-if="currentIndex != -1">
-    <Transition name="resume-header" appear>
-      <Header v-if="!focusMode" />
+    <Transition name="resume-motion" appear>
+      <Header v-if="!focusMode" class="motion-header" />
     </Transition>
     <div v-if="currentIndex >= 0" class="relative flex w-full min-w-0 flex-1 overflow-hidden">
       <!-- 左侧操作栏：移动端自左侧滑动进出 -->
-      <Transition :name="isMobile ? 'mobile-panel-left' : 'resume-builder'" appear>
+      <Transition name="resume-motion" appear>
         <Builder
           v-show="!isMobile || mobilePanel === 'edit'"
           class="mobile-panel"
-          :class="{ 'ai-generating': isGenerating }"
+          :class="[
+            isMobile ? 'motion-mobile-left' : 'motion-builder',
+            { 'ai-generating': isGenerating },
+          ]"
         />
       </Transition>
       <!-- 预览栏：移动端自右侧滑动进出，非移动端不需要切换动画 -->
-      <Transition :name="isMobile ? 'mobile-panel-right' : ''">
+      <Transition :name="isMobile ? 'resume-motion' : ''">
         <div
           v-show="!isMobile || mobilePanel === 'preview'"
           class="mobile-panel relative flex min-w-0 flex-1 overflow-hidden"
+          :class="{ 'motion-mobile-right': isMobile }"
         >
           <!-- 中间预览栏 -->
           <div class="relative flex min-w-0 flex-1">
-            <Transition name="resume-preview" appear>
-              <Preview :class="{ 'ai-generating': isGenerating }" />
+            <Transition name="resume-motion" appear>
+              <Preview class="motion-preview" :class="{ 'ai-generating': isGenerating }" />
             </Transition>
           </div>
           <!-- 最右侧系统配置栏：工具栏与 QA 入口整体垂直居中 -->
-          <Transition name="resume-toolbar" appear>
+          <Transition name="resume-motion" appear>
             <div
               v-if="!focusMode && !isMobile"
-              class="relative flex h-full flex-col items-center justify-center gap-3"
+              class="motion-toolbar relative flex h-full flex-col items-center justify-center gap-3"
             >
               <Toolbar />
             </div>
@@ -178,71 +182,82 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
-/* 进入：错峰起步，同一时刻到达终点 */
-.resume-header-enter-active {
+/* 各区域仅提供动画参数，进入、离开统一由同一套过渡规则处理 */
+.motion-header {
+  --motion-enter-transform: translateY(-100%);
+  --motion-leave-transform: translateY(-100%);
+  --motion-enter-duration: 0.48s;
+}
+
+.motion-builder {
+  --motion-enter-transform: translateX(-100%);
+  --motion-leave-transform: translateX(-100%);
+  --motion-enter-duration: 0.42s;
+  --motion-enter-delay: 0.06s;
+}
+
+.motion-preview {
+  --motion-enter-transform: translateY(100px);
+  --motion-leave-transform: none;
+  --motion-enter-duration: 0.36s;
+  --motion-enter-delay: 0.12s;
+}
+
+.motion-toolbar {
+  --motion-enter-transform: translateX(100%);
+  --motion-leave-transform: translateX(100%);
+  --motion-enter-duration: 0.24s;
+  --motion-enter-delay: 0.24s;
+}
+
+.motion-mobile-left {
+  --motion-enter-transform: translateX(-100%);
+  --motion-leave-transform: translateX(-100%);
+  --motion-enter-opacity: 1;
+  --motion-leave-opacity: 1;
+  --motion-enter-duration: 0.3s;
+  --motion-leave-duration: 0.3s;
+  --motion-leave-easing: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.motion-mobile-right {
+  --motion-enter-transform: translateX(100%);
+  --motion-leave-transform: translateX(100%);
+  --motion-enter-opacity: 1;
+  --motion-leave-opacity: 1;
+  --motion-enter-duration: 0.3s;
+  --motion-leave-duration: 0.3s;
+  --motion-leave-easing: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.resume-motion-enter-active,
+.resume-motion-leave-active {
+  will-change: transform, opacity;
+}
+
+.resume-motion-enter-active {
   transition:
-    transform 0.48s cubic-bezier(0.22, 1, 0.36, 1),
-    opacity 0.48s cubic-bezier(0.22, 1, 0.36, 1);
+    transform var(--motion-enter-duration, 0.36s) cubic-bezier(0.22, 1, 0.36, 1) var(--motion-enter-delay, 0s),
+    opacity var(--motion-enter-duration, 0.36s) cubic-bezier(0.22, 1, 0.36, 1) var(--motion-enter-delay, 0s);
 }
 
-.resume-builder-enter-active {
+.resume-motion-leave-active {
   transition:
-    transform 0.42s cubic-bezier(0.22, 1, 0.36, 1) 0.06s,
-    opacity 0.42s cubic-bezier(0.22, 1, 0.36, 1) 0.06s;
+    transform var(--motion-leave-duration, 0.25s) var(--motion-leave-easing, ease),
+    opacity var(--motion-leave-duration, 0.25s) var(--motion-leave-easing, ease);
 }
 
-/* 预览面板：自下向上滑动淡入（仅位移与透明度，避免缩放导致重栅格化卡顿） */
-.resume-preview-enter-active {
-  transition:
-    transform 0.36s cubic-bezier(0.22, 1, 0.36, 1) 0.12s,
-    opacity 0.36s cubic-bezier(0.22, 1, 0.36, 1) 0.12s;
+.resume-motion-enter-from {
+  opacity: var(--motion-enter-opacity, 0);
 }
 
-.resume-toolbar-enter-active {
-  transition:
-    transform 0.24s cubic-bezier(0.22, 1, 0.36, 1) 0.24s,
-    opacity 0.24s cubic-bezier(0.22, 1, 0.36, 1) 0.24s;
+.resume-motion-enter-from {
+  transform: var(--motion-enter-transform, translateY(16px));
 }
 
-/* 离开：保持快速退场，不受进入错峰影响 */
-.resume-builder-leave-active,
-.resume-header-leave-active,
-.resume-toolbar-leave-active {
-  transition:
-    transform 0.25s ease,
-    opacity 0.25s ease;
-}
-
-/* 预览面板退场：仅淡出 */
-.resume-preview-leave-active {
-  transition: opacity 0.25s ease;
-}
-
-.resume-header-enter-from,
-.resume-header-leave-to {
-  transform: translateY(-100%);
-  opacity: 0;
-}
-
-.resume-toolbar-enter-from,
-.resume-toolbar-leave-to {
-  transform: translateX(100%);
-  opacity: 0;
-}
-
-.resume-builder-enter-from,
-.resume-builder-leave-to {
-  transform: translateX(-100%);
-  opacity: 0;
-}
-
-.resume-preview-enter-from {
-  transform: translateY(100px);
-  opacity: 0;
-}
-
-.resume-preview-leave-to {
-  opacity: 0;
+.resume-motion-leave-to {
+  transform: var(--motion-leave-transform, translateY(16px));
+  opacity: var(--motion-leave-opacity, 0);
 }
 
 /* 移动端两面板改为叠层：切换过程中互不挤压布局 */
@@ -253,22 +268,4 @@ onUnmounted(() => {
   }
 }
 
-/* 移动端切换：编辑区自左侧、预览区自右侧进出，形成滑块式滑动 */
-.mobile-panel-left-enter-active,
-.mobile-panel-left-leave-active,
-.mobile-panel-right-enter-active,
-.mobile-panel-right-leave-active {
-  transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
-  will-change: transform;
-}
-
-.mobile-panel-left-enter-from,
-.mobile-panel-left-leave-to {
-  transform: translateX(-100%);
-}
-
-.mobile-panel-right-enter-from,
-.mobile-panel-right-leave-to {
-  transform: translateX(100%);
-}
 </style>
