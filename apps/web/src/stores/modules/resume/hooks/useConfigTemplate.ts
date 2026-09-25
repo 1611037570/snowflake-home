@@ -1,6 +1,7 @@
 import { allConfig, DEFAULT_USER_FORM } from "../config/formConfig";
 import { createUserCustomField, isUserCustomFieldKey } from "./useUserCustomField";
 import { applyUserSubtitleOrder } from "./useUserSubtitle";
+import { localizeResumeConfig } from "./useResumeEditorLocale";
 
 // 自定义模块：按实际 key 重写模板，标题取自模块 ui
 function rewriteCustomFieldByKey(field: any, customKey: string, customTitle: string) {
@@ -162,5 +163,5 @@ export function buildRuntimeConfig(config: any, data: any) {
     fields,
   };
   applyUserSubtitleOrder(runtimeConfig, data);
-  return runtimeConfig;
+  return localizeResumeConfig(runtimeConfig);
 }

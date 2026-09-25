@@ -12,8 +12,8 @@ import { startRouteLoading } from "@/utils/modules/routeLoading";
 export async function beforeEachGuard(to: any, from: any, next: any) {
   startRouteLoading();
   const pageName = getPageLocaleFile(to);
-  // 语言包后台加载，不阻塞路由放行，避免线上跳转停顿
-  loadPageLang(pageName);
+  // 页面语言包加载完成后再放行，保证页面业务配置首次渲染即可读取当前语言
+  await loadPageLang(pageName);
 
   // 每次进入页面前检查系统版本状态
   // 暂时注释掉版本检测，避免版本检查阻塞路由跳转

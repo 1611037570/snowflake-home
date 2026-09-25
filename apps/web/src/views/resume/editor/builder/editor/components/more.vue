@@ -8,6 +8,7 @@ import { getUUID } from "@/utils";
 import eventBus from "@/utils/modules/eventBus";
 import { scrollEditorTo } from "../../../scrollEditorTo";
 import { storeToRefs } from "pinia";
+import { translateResumeEditorText } from "@/stores/modules/resume/hooks/useResumeEditorLocale";
 
 const { currentForm, hasFieldData, addField, getFieldDataKey } = useFormContext();
 const resumeStore = useResumeStore();
@@ -98,7 +99,7 @@ function handleCreateCustomField() {
     <!-- 展开后按分类展示尚未添加的字段 -->
     <div v-if="expanded" class="mt-3 flex flex-col gap-3">
       <div v-for="group in groupedFields" :key="group.category" class="flex flex-col gap-3">
-        <span class="text-xs text-sf-text-3">{{ group.category }}</span>
+        <span class="text-xs text-sf-text-3">{{ translateResumeEditorText(group.category) }}</span>
         <div class="flex flex-wrap gap-3">
           <button
             v-for="field in group.fields"
