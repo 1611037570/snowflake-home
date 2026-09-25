@@ -1,6 +1,7 @@
 <script setup>
 import { computed } from "vue";
 import { storeToRefs } from "pinia";
+import i18n, { $t } from "@/locales";
 import { useResumeStore } from "@/stores";
 import {
   avatarPositionList,
@@ -22,17 +23,43 @@ import {
   userInfoModeList,
 } from "@/stores/modules/resume/config/uiConfig";
 import ThemeColorPicker from "@/components/business/themeColorPicker/themeColorPicker.vue";
+import { localizeResumeEditorOptionList } from "@/stores/modules/resume/hooks/useResumeEditorLocale";
 
 const resumeStore = useResumeStore();
 const { currentUI } = storeToRefs(resumeStore);
 
 // 个人信息属于简历视觉设计，与模板和模块样式统一管理
-const userInfoParams = [
-  { label: "联系方式显示", key: "userInfoMode", defaultValue: defaultUserInfoMode, list: userInfoModeList },
-  { label: "联系方式布局", key: "userInfoLayout", defaultValue: defaultUserInfoLayout, list: userInfoLayoutList },
-  { label: "头像位置", key: "avatarPosition", defaultValue: defaultAvatarPosition, list: avatarPositionList },
-  { label: "信息对齐", key: "infoPosition", defaultValue: defaultInfoPosition, list: infoPositionList },
-];
+const localizeOptions = (options) => localizeResumeEditorOptionList(options);
+
+const userInfoParams = computed(() => {
+  i18n.global.locale.value;
+  return [
+    { label: $t("contactDisplay"), key: "userInfoMode", defaultValue: defaultUserInfoMode, list: localizeOptions(userInfoModeList) },
+    { label: $t("contactLayout"), key: "userInfoLayout", defaultValue: defaultUserInfoLayout, list: localizeOptions(userInfoLayoutList) },
+    { label: $t("avatarPosition"), key: "avatarPosition", defaultValue: defaultAvatarPosition, list: localizeOptions(avatarPositionList) },
+    { label: $t("infoAlign"), key: "infoPosition", defaultValue: defaultInfoPosition, list: localizeOptions(infoPositionList) },
+  ];
+});
+
+const localizedTitleIconModeList = computed(() => {
+  i18n.global.locale.value;
+  return localizeOptions(titleIconModeList);
+});
+
+const localizedDatePositionList = computed(() => {
+  i18n.global.locale.value;
+  return localizeOptions(datePositionList);
+});
+
+const localizedDateStyleList = computed(() => {
+  i18n.global.locale.value;
+  return localizeOptions(dateStyleList);
+});
+
+const localizedInfoSeparatorList = computed(() => {
+  i18n.global.locale.value;
+  return localizeOptions(infoSeparatorList);
+});
 
 // 通过独立计算属性绑定主题色，避免嵌套修改可写计算属性引发递归更新
 const themeColor = computed({
@@ -102,18 +129,18 @@ const setParam = (key, value) => {
       class="flex cursor-pointer items-center gap-1 rounded-full px-1.5 py-1 text-sm text-sf-text-2 hover:bg-sf-theme-2 hover:text-sf-theme-text"
     >
       <SfIcon icon="lucide:swatch-book" size="5" />
-      <span>设计</span>
+      <span>{{ $t("design") }}</span>
     </span>
     <template #dropdown>
       <div class="flex w-[240px] flex-col gap-3 rounded-3xl border border-sf-b bg-sf-primary p-3">
-        <div class="text-xs font-bold text-sf-text">主题配色</div>
+        <div class="text-xs font-bold text-sf-text">{{ $t("themeColors") }}</div>
         <ThemeColorPicker v-model="themeColor" :teleported="false" />
 
-        <div class="text-xs font-bold text-sf-text">细节调整</div>
+        <div class="text-xs font-bold text-sf-text">{{ $t("detailAdjustments") }}</div>
         <!-- 模块标题图标模式 -->
         <div class="flex flex-col gap-1">
           <div class="flex items-center gap-1 text-sm text-sf-text-2">
-            <span>标题图标</span>
+            <span>{{ $t("titleIcon") }}</span>
             <SfIcon
               icon="material-symbols:restart-alt"
               size="4"
@@ -121,15 +148,15 @@ const setParam = (key, value) => {
               @click="titleIconMode = defaultTitleIconMode"
             />
           </div>
-          <SfSelect v-model="titleIconMode" :list="titleIconModeList" />
+          <SfSelect v-model="titleIconMode" :list="localizedTitleIconModeList" />
         </div>
         <!-- 链接下划线开关：统一控制预览中的可点击链接样式 -->
         <div class="flex items-center justify-between text-sm text-sf-text-2">
-          <span>链接下划线</span>
+          <span>{{ $t("linkUnderline") }}</span>
           <ElSwitch v-model="linkUnderline" />
         </div>
 
-        <div class="text-xs font-bold text-sf-text">个人信息</div>
+        <div class="text-xs font-bold text-sf-text">{{ $t("personalInfo") }}</div>
         <div v-for="item in userInfoParams" :key="item.key" class="flex flex-col gap-1">
           <div class="flex items-center gap-1 text-sm text-sf-text-2">
             <span>{{ item.label }}</span>
@@ -154,10 +181,10 @@ const setParam = (key, value) => {
           </div>
         </div>
 
-        <div class="text-xs font-bold text-sf-text">经历排版</div>
+        <div class="text-xs font-bold text-sf-text">{{ $t("experienceLayout") }}</div>
         <div class="flex flex-col gap-1">
           <div class="flex items-center gap-1 text-sm text-sf-text-2">
-            <span>时间位置</span>
+            <span>{{ $t("timePosition") }}</span>
             <SfIcon
               icon="material-symbols:restart-alt"
               size="4"
@@ -167,7 +194,7 @@ const setParam = (key, value) => {
           </div>
           <div class="flex gap-3">
             <SfButton
-              v-for="option in datePositionList"
+              v-for="option in localizedDatePositionList"
               :key="option.value"
               class="flex-1"
               size="small"
@@ -181,7 +208,7 @@ const setParam = (key, value) => {
 
         <div class="flex flex-col gap-1">
           <div class="flex items-center gap-1 text-sm text-sf-text-2">
-            <span>时间格式</span>
+            <span>{{ $t("timeFormat") }}</span>
             <SfIcon
               icon="material-symbols:restart-alt"
               size="4"
@@ -191,7 +218,7 @@ const setParam = (key, value) => {
           </div>
           <div class="flex gap-3">
             <SfButton
-              v-for="option in dateStyleList"
+              v-for="option in localizedDateStyleList"
               :key="option.value"
               class="flex-1"
               size="small"
@@ -205,7 +232,7 @@ const setParam = (key, value) => {
 
         <div class="flex flex-col gap-1">
           <div class="flex items-center gap-1 text-sm text-sf-text-2">
-            <span>信息分隔</span>
+            <span>{{ $t("infoSeparator") }}</span>
             <SfIcon
               icon="material-symbols:restart-alt"
               size="4"
@@ -215,7 +242,7 @@ const setParam = (key, value) => {
           </div>
           <div class="grid grid-cols-3 gap-3">
             <SfButton
-              v-for="option in infoSeparatorList"
+              v-for="option in localizedInfoSeparatorList"
               :key="option.value"
               size="small"
               border

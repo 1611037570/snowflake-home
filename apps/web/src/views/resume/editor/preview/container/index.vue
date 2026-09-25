@@ -2,6 +2,7 @@
 import { TransitionPresets, useDebounceFn, useResizeObserver, useTransition } from "@vueuse/core";
 import { computed, ref } from "vue";
 import { storeToRefs } from "pinia";
+import i18n, { $t } from "@/locales";
 import { useResumeStore } from "@/stores";
 import { RESUME_HEIGHT, RESUME_WIDTH } from "../constants";
 import Font from "./font.vue";
@@ -38,17 +39,19 @@ const PADDING = 20;
 const BACK_TOP_THRESHOLD = 200;
 const MIN_SCALE = 0.5;
 const percent = (value) => `${Math.round(value * 100)}%`;
-const SCALE_LIST = computed(() => [
+const SCALE_LIST = computed(() => {
+  i18n.global.locale.value;
+  return [
   // 一页模式默认展示，并同时根据当前可用宽高计算页面缩放比例
   {
     value: "onePage",
-    name: "自适应一页",
+    name: $t("adaptiveOnePage"),
     active: scaleMode.value === "onePage",
   },
   // 自适应选项
   {
     value: "auto",
-    name: "自适应最大",
+    name: $t("adaptiveMax"),
     active: scaleMode.value === "auto",
   },
   { divider: true },
@@ -64,7 +67,8 @@ const SCALE_LIST = computed(() => [
       active: isSelected,
     };
   }),
-]);
+  ];
+});
 
 const onePageScale = computed(() => {
   const { width, height } = availableSize.value;
@@ -83,9 +87,9 @@ const transitionScale = useTransition(scale, {
 });
 const scaleLabel = computed(() =>
   scaleMode.value === "auto"
-    ? "自适应"
+    ? $t("adaptive")
     : scaleMode.value === "onePage"
-      ? "一页"
+      ? $t("onePage")
       : percent(transitionScale.value),
 );
 const minScale = computed(() => Math.min(MIN_SCALE, maxScale.value));

@@ -18,12 +18,16 @@ interface IconCategory {
 }
 
 // 图标展示尺寸（Tailwind 间距单位，即设计稿 px ÷ 4）
-const props = withDefaults(defineProps<{ size?: number; categories: IconCategory[] }>(), {
-  size: 5,
-});
+const props = withDefaults(
+  defineProps<{ size?: number; categories: IconCategory[]; allCategoryName?: string }>(),
+  {
+    size: 5,
+    allCategoryName: "全部",
+  },
+);
 
 // 内建的"全部"分类，展示所有图标
-const allCategory = { key: "all", name: "全部" };
+const allCategory = computed(() => ({ key: "all", name: props.allCategoryName }));
 
 // 当前选中的分类 key，all 表示显示全部
 const activeCategory = ref("all");

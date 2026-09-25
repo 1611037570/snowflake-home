@@ -16,7 +16,8 @@ import {
   MAX_USER_SUBTITLE,
 } from "@/stores/modules/resume/hooks/useUserSubtitle";
 import { storeToRefs } from "pinia";
-import { ICON_CATEGORIES } from "../../../icons/iconCategories";
+import i18n from "@/locales";
+import { getLocalizedIconCategories } from "../../../icons/iconCategories";
 // 包裹组的模型绑定只用于状态透传，不落成根元素属性
 defineOptions({ inheritAttrs: false });
 // 字段包裹组件：定制水平布局的标签与操作区，字段内容通过插槽嵌套
@@ -56,6 +57,10 @@ const renderable = computed(() => !field.value?.addable || hasFieldData(field.va
 // 简历运行时配置与数据：副标题标记、自定义字段的重命名与删除都落在配置与数据上
 const resumeStore = useResumeStore();
 const { runtimeConfig, currentData } = storeToRefs(resumeStore);
+const localizedIconCategories = computed(() => {
+  (i18n.global.locale as any).value;
+  return getLocalizedIconCategories();
+});
 // 当前字段是否已置顶：以顺序数组为唯一判据
 const isSubtitle = computed(() =>
   getUserSubtitleKeys(currentData.value?.user?.ui).includes(fieldKey.value ?? ""),
@@ -124,7 +129,8 @@ const clearField = () => {
         <Icon v-if="draggable" icon="icon-park-outline:drag" class="item-drag cursor-move!" />
         <SfIconPicker
           v-if="icon !== undefined"
-          :categories="ICON_CATEGORIES"
+          :categories="localizedIconCategories"
+          :all-category-name="$t('allIcons')"
           :modelValue="icon"
           @update:modelValue="updateIcon"
           :size="4"
