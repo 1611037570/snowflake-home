@@ -15,6 +15,7 @@ type RequestConfig = {
   onEvent?: any;
   isDebug: boolean;
   provider: string;
+  protocol?: "chatCompletions" | "responses";
   timeout: number;
 };
 
@@ -85,6 +86,7 @@ export function createRequest(token: string, isStream = true, observer: RequestO
     onEvent,
     isDebug,
     provider,
+    protocol,
     timeout,
   }: RequestConfig) {
     let timeoutId: ReturnType<typeof setTimeout> | null = null;
@@ -136,7 +138,7 @@ export function createRequest(token: string, isStream = true, observer: RequestO
         // 获取读取器和解码器
         const reader = response.body.getReader();
         const decoder = new TextDecoder("utf-8");
-        const parser = createStreamParser({ onEvent, isDebug, provider }); // 初始化解析器
+        const parser = createStreamParser({ onEvent, isDebug, provider, protocol }); // 初始化解析器
 
         let currentContent = "";
         let finalUsage = null;
@@ -174,7 +176,7 @@ export function createRequest(token: string, isStream = true, observer: RequestO
 
       // 非流式：解析 JSON 响应并通过非流式解析器处理
       const json = await response.json();
-      const parser = getParser({ provider, isStream: false });
+      const parser = getParser({ provider, protocol, isStream: false });
       return parser(json);
     } catch (error: any) {
       observer.onError?.(error);

@@ -254,6 +254,7 @@ class LLM {
               method,
               isDebug,
               provider: this.provider,
+              protocol: this.protocol,
               timeout,
               traceId,
             };

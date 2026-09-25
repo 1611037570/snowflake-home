@@ -1,5 +1,5 @@
-// 引擎层仅提供机制：工具执行结果与错误恢复策略由宿主回调决定，业务提示文案不在此层内置
-export { ToolRegistry } from "./tools";
+// 旧路径转导出独立包的通用调度类型，保持业务工具引用不变。
+export { ToolRegistry } from "@snowflake/ai";
 export type {
   ChatMessage,
   ReactConfig,
@@ -7,4 +7,4 @@ export type {
   ThinkResult,
   ToolCall,
   Observation,
-} from "./types";
+} from "@snowflake/ai";

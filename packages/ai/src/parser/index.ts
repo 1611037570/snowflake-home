@@ -19,13 +19,29 @@ export const notStreamParsers = {
  * 获取解析器的工厂函数
  * @param {Object} params
  * @param {string} params.provider - 供应商名称
+ * @param {string} params.protocol - 接口协议类型
  * @param {boolean} [params.isStream=true] - 是否为流式解析
  * @returns {Function} 解析器函数
  */
-export const getParser = ({ provider = "ark", isStream = true }) => {
+export const getParser = ({ provider = "ark", protocol, isStream = true }: {
+  provider?: string;
+  protocol?: "chatCompletions" | "responses";
+  isStream?: boolean;
+}) => {
   const parserGroup = isStream ? streamParsers : notStreamParsers;
 
-  const parser = (parserGroup as Record<string, any>)[provider];
+  // 解析格式由接口协议决定，工作流使用自身的专用格式。
+  const parserKey =
+    provider === "cozeWorkflow"
+      ? provider
+      : protocol === "responses"
+        ? "ark"
+        : protocol === "chatCompletions"
+          ? "openai"
+          : provider === "ark"
+            ? "ark"
+            : "openai";
+  const parser = (parserGroup as Record<string, any>)[parserKey];
 
   if (!parser) {
     throw new Error(`未找到供应商 ${provider} 的${isStream ? "流式" : "非流式"}解析器`);
@@ -35,16 +51,16 @@ export const getParser = ({ provider = "ark", isStream = true }) => {
 };
 
 /**
- * 创建流式解析器：缓冲不完整的行，逐行交给 provider 解析器，汇总内容与 token
+ * 创建流式解析器：缓冲不完整的行，逐行交给协议解析器，汇总内容与 token
  */
-export function createStreamParser({ onEvent, isDebug, provider }: any) {
+export function createStreamParser({ onEvent, isDebug, provider, protocol }: any) {
   let buffer = "";
 
   // 解析器固定，仅查找一次
-  const parser = getParser({ provider, isStream: true });
+  const parser = getParser({ provider, protocol, isStream: true });
   const options = { onEvent, isDebug };
 
-  // 根据 provider 选择解析函数
+  // 根据接口协议选择解析函数
   const params = (line: string) => {
     if (!parser) {
       const msg = `未找到供应商 ${provider} 的解析器`;
