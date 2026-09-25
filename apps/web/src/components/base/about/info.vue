@@ -3,7 +3,7 @@
   <div class="px-3 text-center">
     <div class="mb-3">
       作者<span class="cursor-pointer text-sf-theme" @click="userNavigation">{{
-        $t("user.name")
+        $t("core.user.name")
       }}</span>
     </div>
     <div class="mb-3 flex items-center justify-center text-base font-medium text-sf-text">

@@ -17,7 +17,7 @@ const list = [
     type: "system",
   },
   {
-    name: $t("router.resume"),
+    name: $t("core.router.resume"),
     component: defineAsyncComponent(() => import("./components/writeResume.vue")),
     type: "system",
   },

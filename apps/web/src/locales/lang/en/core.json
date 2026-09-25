@@ -1,5 +1,6 @@
 {
-  "router": {
+  "core": {
+    "router": {
     "messageBoard": "Message Board",
     "image": "Image Processing",
     "imageDesc": "A clean and efficient local image editing tool",
@@ -31,19 +32,20 @@
     "formDesc": "Quickly generate forms",
     "llmMonitor": "LLM Monitor",
     "llmMonitorDesc": "Inspect model requests and tool execution"
-  },
-  "moreTools": "More Tools",
-  "load": "The formula for reversing time and space is to cherish the present",
-  "theme": {
+    },
+    "moreTools": "More Tools",
+    "load": "The formula for reversing time and space is to cherish the present",
+    "theme": {
     "system": "Follow System",
     "dark": "Dark Mode",
     "light": "Light Mode"
-  },
-  "user": {
+    },
+    "user": {
     "name": "XiaoYang",
     "location": "Wuzhen",
     "job": "Front-end Developer & Portrait Photographer"
-  },
-  "copyright": "Copyright",
-  "allRightsReserved": "All Rights Reserved"
+    },
+    "copyright": "Copyright",
+    "allRightsReserved": "All Rights Reserved"
+  }
 }

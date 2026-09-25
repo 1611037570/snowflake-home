@@ -34,7 +34,7 @@ const saveQrCode = async () => {
     @click="visible = true"
   >
     <SfIcon icon="ph:paper-plane-right-fill" size="5" />
-    <span class="pr-6 pl-3 text-sm whitespace-nowrap">分享{{ $t("router.resume") }}</span>
+    <span class="pr-6 pl-3 text-sm whitespace-nowrap">分享{{ $t("core.router.resume") }}</span>
   </div>
 
   <SfModal v-model="visible" title="分享轻舟简历">

@@ -39,9 +39,9 @@ const toggleTheme = () => {
 // 主题选项
 const list = computed(() => {
   return [
-    { name: $t("theme.system"), value: "system" },
-    { name: $t("theme.light"), value: "light" },
-    { name: $t("theme.dark"), value: "dark" },
+    { name: $t("core.theme.system"), value: "system" },
+    { name: $t("core.theme.light"), value: "light" },
+    { name: $t("core.theme.dark"), value: "dark" },
   ];
 });
 

@@ -20,14 +20,14 @@ interface PageItem {
  * @returns 是否存在描述字段
  */
 const getRouterInfo = (item: any) => {
-  const router: any = pageConfig.router;
+  const router: any = pageConfig.core.router;
   const itemName = item.name;
   const desc = router[`${itemName}Desc`];
   const name = router[`${itemName}`];
   return {
     ...item,
-    desc: desc ? $t(`router.${itemName}Desc`) : undefined,
-    name: name ? $t(`router.${itemName}`) : itemName,
+    desc: desc ? $t(`core.router.${itemName}Desc`) : undefined,
+    name: name ? $t(`core.router.${itemName}`) : itemName,
     url: `/${itemName}`,
   };
 };
