@@ -66,8 +66,6 @@ const createUserField = (
     ...(addable ? { addable: true } : {}),
     // 字段状态绑定到包裹组，供包裹组件双向绑定
     model: [{ source: ["ui", key, "hidden"], prop: "hidden", defaultValue: false }],
-    // 字段隐藏时的置灰判断
-    checks: { hidden: { path: ["ui", key, "hidden"], equals: true } },
     fields: [{ ...field, ...(addable ? { addable: true } : {}) }],
   };
 };
@@ -134,8 +132,6 @@ const createMoreField = (options: {
           ]
         : []),
     ],
-    // 字段隐藏时的置灰判断
-    checks: { hidden: { path: ["ui", key, "hidden"], equals: true } },
     fields: [
       {
         type: "object",
@@ -189,12 +185,6 @@ export const DEFAULT_USER_FORM = [
             source: ["ui", "avatar", "hidden"],
             prop: "hidden",
             defaultValue: false,
-          },
-        },
-        checks: {
-          hidden: {
-            path: ["ui", "avatar", "hidden"],
-            equals: true,
           },
         },
         model: [
@@ -624,12 +614,6 @@ export const DEFAULT_ACCOUNT_FORM = {
         ],
         type: "object",
         component: "rowAccount",
-        checks: {
-          hidden: {
-            path: ["ui", "hidden"],
-            equals: true,
-          },
-        },
         required: true,
       },
     },
@@ -659,12 +643,6 @@ export const DEFAULT_EDUCATION_FORM = {
         component: "collapseItem",
         slot: "default",
         span: 24,
-        checks: {
-          hidden: {
-            path: ["ui", "hidden"],
-            equals: true,
-          },
-        },
         model: [
           {
             source: ["ui", "collapsed"],
@@ -945,12 +923,6 @@ export const DEFAULT_WORK_FORM = {
         component: "collapseItem",
         slot: "default",
         span: 24,
-        checks: {
-          hidden: {
-            path: ["ui", "hidden"],
-            equals: true,
-          },
-        },
         model: [
           {
             source: ["ui", "collapsed"],
@@ -1134,12 +1106,6 @@ export const DEFAULT_PROJECT_FORM = {
         component: "collapseItem",
         slot: "default",
         span: 24,
-        checks: {
-          hidden: {
-            path: ["ui", "hidden"],
-            equals: true,
-          },
-        },
         model: [
           {
             source: ["ui", "collapsed"],
@@ -1366,12 +1332,6 @@ export const DEFAULT_VIDEO_FORM = {
         component: "collapseItem",
         slot: "default",
         span: 24,
-        checks: {
-          hidden: {
-            path: ["ui", "hidden"],
-            equals: true,
-          },
-        },
         required: true,
       },
     },
@@ -1447,12 +1407,6 @@ export const DEFAULT_IMAGE_FORM = {
         component: "collapseItem",
         slot: "default",
         span: 24,
-        checks: {
-          hidden: {
-            path: ["ui", "hidden"],
-            equals: true,
-          },
-        },
         required: true,
       },
     },
@@ -1494,12 +1448,6 @@ export const DEFAULT_HONOR_FORM = {
         ],
         type: "object",
         component: "rowHonor",
-        checks: {
-          hidden: {
-            path: ["ui", "hidden"],
-            equals: true,
-          },
-        },
         required: true,
       },
     },
@@ -1529,12 +1477,6 @@ export const DEFAULT_CUSTOM_FORM = {
         component: "collapseItem",
         slot: "default",
         span: 24,
-        checks: {
-          hidden: {
-            path: ["ui", "hidden"],
-            equals: true,
-          },
-        },
         model: [
           {
             source: ["ui", "collapsed"],
