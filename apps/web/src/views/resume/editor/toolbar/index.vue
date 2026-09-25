@@ -25,8 +25,6 @@ const { isMobile } = storeToRefs(systemStore);
 
 // 移动端工具栏抽屉展开状态：移动端默认收起，由右侧把手按钮控制
 const expanded = ref(false);
-// 竖排简历ID：ID前缀水平展示，简历ID逐字往下排
-const idChars = computed(() => (currentItem.value?.id || "").split(""));
 function goHome() {
   router.push("/resume");
 }
@@ -87,11 +85,11 @@ const toolbarItems = computed(() => [
 <template>
   <!-- 移动端把手与工具栏共用悬浮容器，展开时整组从屏幕右侧滑入 -->
   <div
-    class="flex-c flex items-center"
+    class="flex items-center justify-center"
     :class="
       isMobile
         ? 'fixed inset-y-0 right-0 z-50 transition-transform duration-300 ease-out'
-        : 'relative flex-col items-center gap-3 overflow-hidden p-3'
+        : 'relative flex-col items-center gap-3 p-3'
     "
     :style="
       isMobile && {
@@ -112,15 +110,9 @@ const toolbarItems = computed(() => [
     </button>
 
     <div
-      class="flex-c flex flex-col gap-3"
+      class="flex flex-col items-center justify-center gap-3"
       :class="isMobile && 'mobile-toolbar-panel h-svh  border-l border-sf-b bg-sf-primary p-3'"
     >
-      <!-- 工具栏上方展示简历ID：ID前缀水平展示，简历ID逐字往下排 -->
-      <!-- <div class="flex flex-col items-center pb-23 text-xs leading-none text-sf-text-3">
-        <span class="pb-1.5">ID</span>
-        <span v-for="(char, index) in idChars" :key="index">{{ char }}</span>
-      </div> -->
-
       <div
         class="relative flex w-[50px] flex-col items-center gap-2 rounded-3xl border border-sf-b bg-sf-transparent py-2 text-sf-text-3"
         :class="{ 'shrink-0': isMobile }"
@@ -129,10 +121,16 @@ const toolbarItems = computed(() => [
           <div v-if="item.type === 'separator'" class="h-[0.5px] w-full bg-sf-bg-2"></div>
           <component v-else :is="item.component" v-bind="item.attrs" />
         </template>
+        <!-- 将简历 ID 放在工具项下方，避免遮挡顶部进度组件 -->
+        <span
+          class="w-full border-t border-sf-b pt-3 text-center text-[9px] leading-3 text-sf-text-3"
+          :title="`ID ${currentItem?.id || ''}`"
+        >
+          ID<br />{{ currentItem?.id }}
+        </span>
       </div>
-      <!-- QA 解答 -->
+      <!-- QA 解答与六爻入口按正常纵向布局排列 -->
       <QaAnswer />
-      <!-- 六爻问心：仅调试模式下展示 -->
       <LiuyaoWenxin />
     </div>
   </div>
