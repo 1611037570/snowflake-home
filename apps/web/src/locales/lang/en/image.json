@@ -1,5 +1,4 @@
 {
-  "image": {
     "name": "Image Processing",
     "previewLabel": "Preview",
     "changeImage": "Change Image",
@@ -44,5 +43,4 @@
     "size": "Size:",
     "loading": "Loading…",
     "loadFailed": "Load failed"
-  }
 }

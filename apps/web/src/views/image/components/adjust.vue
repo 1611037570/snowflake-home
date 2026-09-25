@@ -1,9 +1,9 @@
 <template>
   <div class="mb-3 flex w-full flex-col" v-if="hasOriginalSize">
-    <Title :name="$t('image.sizeAdjust')" reset @reset="reset">
+    <Title :name="$t('sizeAdjust')" reset @reset="reset">
       <template #right>
         <div class="flex items-center gap-1 text-xs">
-          <span class="text-xs">{{ $t("image.keepAspect") }}</span>
+          <span class="text-xs">{{ $t("keepAspect") }}</span>
           <ElSwitch v-model="keepAspectRatio" />
         </div>
       </template>
@@ -21,25 +21,25 @@
     <!-- 像素模式（编辑本地值，失焦后提交） -->
     <template v-if="currentValue === 'pixel'">
       <div class="flex items-center gap-2">
-        <span class="text-sf-secondary w-8 text-sm">{{ $t("image.width") }}</span>
+        <span class="text-sf-secondary w-8 text-sm">{{ $t("width") }}</span>
         <SfInputNumber
           v-model="localW"
           :min="1"
           :max="initialW"
           @change="handleWidthChange"
           class="flex-1"
-          :placeholder="$t('image.pixelPlaceholder')"
+          :placeholder="$t('pixelPlaceholder')"
         />
       </div>
       <div class="flex items-center gap-2">
-        <span class="text-sf-secondary w-8 text-sm">{{ $t("image.height") }}</span>
+        <span class="text-sf-secondary w-8 text-sm">{{ $t("height") }}</span>
         <SfInputNumber
           v-model="localH"
           :min="1"
           :max="initialH"
           @change="handleHeightChange"
           class="flex-1"
-          :placeholder="$t('image.pixelPlaceholder')"
+          :placeholder="$t('pixelPlaceholder')"
         />
       </div>
     </template>
@@ -47,14 +47,14 @@
     <!-- 百分比模式（单输入，失焦后提交） -->
     <template v-else>
       <div class="flex items-center gap-2">
-        <span class="text-sf-secondary w-8 text-sm">{{ $t("image.ratio") }}</span>
+        <span class="text-sf-secondary w-8 text-sm">{{ $t("ratio") }}</span>
         <SfInputNumber
           v-model="percent"
           :min="1"
           :max="100"
           class="flex-1"
           @change="handlePercentChange"
-          :placeholder="$t('image.percentPlaceholder')"
+          :placeholder="$t('percentPlaceholder')"
         />
       </div>
     </template>

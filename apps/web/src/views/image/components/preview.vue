@@ -15,19 +15,19 @@
           <span>{{ label }}</span>
         </div>
         <div v-if="originalInfo" class="flex items-center">
-          <span class="text-sf-secondary">{{ $t("image.actual") }}</span>
+          <span class="text-sf-secondary">{{ $t("actual") }}</span>
           <span>{{ originalInfo }}</span>
         </div>
         <div v-if="renderedInfo" class="flex items-center">
-          <span class="text-sf-secondary">{{ $t("image.displayed") }}</span>
+          <span class="text-sf-secondary">{{ $t("displayed") }}</span>
           <span>{{ renderedInfo }}</span>
         </div>
         <div v-if="props.data.format" class="text-sf-secondary flex items-center">
-          <span>{{ $t("image.format") }}</span>
+          <span>{{ $t("format") }}</span>
           <span>{{ props.data.format.toUpperCase() }}</span>
         </div>
         <div v-if="props.data.size" class="text-sf-secondary flex items-center">
-          <span>{{ $t("image.size") }}</span>
+          <span>{{ $t("size") }}</span>
           <span>{{ formatFileSize(props.data.size) }}</span>
         </div>
       </div>
@@ -47,7 +47,7 @@
         v-if="props.data.url && !isShowImage"
         class="text-sf-secondary flex items-center justify-center text-sm"
       >
-        {{ isLoading || isResizing ? $t("image.loading") : $t("image.loadFailed") }}
+        {{ isLoading || isResizing ? $t("loading") : $t("loadFailed") }}
       </div>
     </div>
   </div>

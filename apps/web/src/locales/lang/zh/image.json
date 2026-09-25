@@ -1,5 +1,4 @@
 {
-  "image": {
     "name": "图省事",
     "previewLabel": "预览图",
     "changeImage": "更换图片",
@@ -44,5 +43,4 @@
     "size": "大小：",
     "loading": "加载中…",
     "loadFailed": "加载失败"
-  }
 }

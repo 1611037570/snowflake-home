@@ -15,7 +15,7 @@
         :class="[show || live ? 'flex' : 'hidden!']"
       >
         <el-splitter-panel :size="previewVisible ? '50%' : '100%'" min="20%" v-if="show">
-          <Preview :data="original" :label="$t('image.original')" />
+          <Preview :data="original" :label="$t('original')" />
         </el-splitter-panel>
         <el-splitter-panel
           v-if="previewVisible"
@@ -23,7 +23,7 @@
           :resizable="previewVisible"
           min="20%"
         >
-          <Preview :data="converted" :label="$t('image.previewLabel')" />
+          <Preview :data="converted" :label="$t('previewLabel')" />
         </el-splitter-panel>
       </el-splitter>
       <ImageSelector
@@ -46,7 +46,7 @@
               name="line-md:loading-twotone-loop"
               class="animate-spin text-xl text-sf-theme"
             />
-            <span class="text-sm font-medium">{{ $t("image.processing") }}</span>
+            <span class="text-sm font-medium">{{ $t("processing") }}</span>
           </div>
         </div>
         <ElScrollbar class="relative h-full flex-1 flex-col gap-4 overflow-hidden pr-3">
@@ -63,7 +63,7 @@
                 class="inline-flex cursor-pointer items-center gap-1 rounded-md bg-sf-theme-2/10 px-2.5 py-1 text-xs font-semibold text-sf-theme transition-colors hover:bg-sf-theme-2/20"
                 @click="open({ accept: 'image/*', multiple: false })"
               >
-                <span>{{ $t("image.changeImage") }}</span>
+                <span>{{ $t("changeImage") }}</span>
               </button>
             </div>
             <!-- 推荐设置 -->
@@ -467,7 +467,7 @@ const handleApplyPreset = (options) => {
   converted.value.width = size.w;
   converted.value.height = size.h;
   // 显示成功消息
-  ElMessage.success($t("image.appliedRecommendation"));
+  ElMessage.success($t("appliedRecommendation"));
 };
 
 // 保存文件函数（处理并下载转换后的图片）

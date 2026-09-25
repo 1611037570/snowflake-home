@@ -6,7 +6,7 @@
     @click="handleClick"
   >
     <SfIcon icon="material-symbols:image-outline" size="34" class="mb-3 text-sf-theme" />
-    <div class="text-base text-sf-theme">{{ $t("image.selectorHint") }}</div>
+    <div class="text-base text-sf-theme">{{ $t("selectorHint") }}</div>
     <div class="flex gap-2">
       <span>支持JPG、PNG、WebP、SVG，建议大小≤60MB。</span>
     </div>
@@ -45,7 +45,7 @@ const { isOverDropZone } = useDropZone(dropZoneRef, {
         emit("file-selected", fileList[0]);
       } else {
         // 多个文件：显示警告信息
-        ElMessage.warning($t("image.selectorOneFile"));
+        ElMessage.warning($t("selectorOneFile"));
       }
     }
   },
