@@ -19,18 +19,18 @@ const desc = defineModel("desc", {
   <div class="flex w-full flex-col gap-1">
     <div class="flex items-center gap-3">
       <div class="w-[100px] min-w-0">
-        <SfFormItem label="视频名称" prop="url">
-          <SfInput v-model="name" placeholder="请输入视频名称" />
+        <SfFormItem :label="$t('videoName')" prop="url">
+          <SfInput v-model="name" :placeholder="$t('videoNamePlaceholder')" />
         </SfFormItem>
       </div>
       <div class="min-w-0 flex-1">
-        <SfFormItem label="视频链接" prop="url">
-          <SfInput v-model="url" placeholder="请输入视频链接" />
+        <SfFormItem :label="$t('videoLink')" prop="url">
+          <SfInput v-model="url" :placeholder="$t('videoLinkPlaceholder')" />
         </SfFormItem>
       </div>
     </div>
-    <SfFormItem label="视频介绍" prop="desc">
-      <SfInput v-model="desc" placeholder="请输入视频介绍" />
+    <SfFormItem :label="$t('videoIntro')" prop="desc">
+      <SfInput v-model="desc" :placeholder="$t('videoIntroPlaceholder')" />
     </SfFormItem>
   </div>
 </template>

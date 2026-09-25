@@ -24,10 +24,10 @@ const url = computed({
 
 <template>
   <div class="flex w-full items-start gap-3">
-    <SfFormItem label="链接名称" class="min-w-0 flex-1">
-      <SfInput v-model="name" placeholder="如官网" />
+    <SfFormItem :label="$t('linkName')" class="min-w-0 flex-1">
+      <SfInput v-model="name" :placeholder="$t('websiteExample')" />
     </SfFormItem>
-    <SfFormItem label="链接地址" class="min-w-0 flex-1">
+    <SfFormItem :label="$t('linkAddress')" class="min-w-0 flex-1">
       <SfInput v-model="url" placeholder="如 https://example.com" />
     </SfFormItem>
   </div>

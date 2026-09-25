@@ -9,7 +9,7 @@ const onFitOnePage = () => {
 </script>
 
 <template>
-  <SfTooltip content="智能一页纸">
+  <SfTooltip :content="$t('smartOnePage')">
     <SfIcon
       icon="fa6-solid:compress"
       @click="onFitOnePage"

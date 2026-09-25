@@ -42,7 +42,7 @@ const handleLangSelect = (item) => {
 
 <template>
   <SfDropdown trigger="click" placement="bottom-start" :show-arrow="false">
-    <SfTooltip content="切换简历语言">
+    <SfTooltip :content="$t('switchResumeLanguage')">
       <SfIcon
         icon="mdi:translate"
         size="5"

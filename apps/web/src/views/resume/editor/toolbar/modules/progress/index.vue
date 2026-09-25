@@ -6,6 +6,7 @@ import { jumpToEditor } from "../../../useModuleNav";
 import { TransitionPresets, useTransition } from "@vueuse/core";
 import { computed, ref } from "vue";
 import { useResumeStats } from "./useResumeStats";
+import { $t } from "@/locales";
 
 const resumeStore = useResumeStore();
 const { system, currentData, runtimeFields } = storeToRefs(resumeStore);
@@ -49,8 +50,8 @@ const animatedWords = useTransition(
 // 弹窗外提示文案：时间线存在问题时提醒
 const tooltipText = computed(() =>
   timelineData.value.issueCount
-    ? `时间线存在 ${timelineData.value.issueCount} 处问题，点击查看`
-    : "查看完成度详情",
+    ? $t("timelineIssue", { count: timelineData.value.issueCount })
+    : $t("viewProgressDetail"),
 );
 
 // 跳转编辑对应模块：复用模块导航的编辑区跳转逻辑（不处理预览区）
@@ -66,7 +67,7 @@ const goTimelineFill = (key) => {
 };
 
 // 时间线问题类型标签（仅保留间隙过大）
-const getTypeLabel = () => "间隙过大";
+const getTypeLabel = () => $t("issueGap");
 
 // 按进度区间返回进度条颜色
 const getProgressColor = (progress) => {
@@ -101,13 +102,15 @@ const getProgressColor = (progress) => {
           </div>
           <!-- <div class="text-[11px] opacity-90">完成度</div> -->
           <!-- 简历总字数 -->
-          <div class="text-[10px] opacity-80">{{ Math.round(animatedWords) }}字</div>
+          <div class="text-[10px] opacity-80">
+            {{ Math.round(animatedWords) }}{{ $t("words") }}
+          </div>
         </div>
       </div>
     </SfTooltip>
   </div>
 
-  <SfModal v-model="visible" title="完成度详情">
+  <SfModal v-model="visible" :title="$t('progressDetail')">
     <div class="flex w-[400px] flex-col gap-1.5">
       <!-- 各模块进度列表 -->
       <template v-for="item in progressData.list" :key="item.key">
@@ -115,7 +118,9 @@ const getProgressColor = (progress) => {
           <div class="flex items-center justify-between">
             <div class="text-lg">
               {{ item.name }}
-              <span class="text-sm text-sf-text-2"> 编写{{ resumeStats[item.key]?.total ?? 0 }}字 </span>
+              <span class="text-sm text-sf-text-2">
+                {{ $t("writingWords", { count: resumeStats[item.key]?.total ?? 0 }) }}
+              </span>
             </div>
             <div class="text-lg font-bold">{{ item.progress }}%</div>
           </div>
@@ -144,7 +149,7 @@ const getProgressColor = (progress) => {
               <span class="text-sf-text">{{ issue.text }}</span>
             </div>
             <div class="cursor-pointer text-sm text-sf-theme" @click="goTimelineFill(item.key)">
-              去修改
+              {{ $t("modify") }}
             </div>
           </div>
           <template v-if="item.progress < 100">
@@ -154,11 +159,11 @@ const getProgressColor = (progress) => {
                 :key="index"
                 class="rounded-full bg-sf-bg-2 px-2 py-0.5"
               >
-                缺：{{ field }}
+                {{ $t("missingPrefix") }}{{ field }}
               </span>
             </div>
             <div class="mt-2 cursor-pointer text-sm text-sf-theme" @click="goFill(item)">
-              去填写
+              {{ $t("fillIn") }}
             </div>
           </template>
         </div>

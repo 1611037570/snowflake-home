@@ -80,7 +80,7 @@ const shoesSizeOptions = [
 <template>
   <div class="flex w-full flex-col gap-3">
     <label class="flex items-center gap-1">
-      <span class="text-sm text-sf-text-3">上装</span>
+      <span class="text-sm text-sf-text-3">{{ $t("topSize") }}</span>
       <SfSelect
         v-model="top"
         :list="topSizeOptions"
@@ -88,12 +88,12 @@ const shoesSizeOptions = [
         allow-create
         default-first-option
         clearable
-        placeholder="选择或输入尺码"
+        :placeholder="$t('topSizePlaceholder')"
         class="w-full"
       />
     </label>
     <label class="flex items-center gap-1">
-      <span class="text-sm text-sf-text-3">下装</span>
+      <span class="text-sm text-sf-text-3">{{ $t("bottomSize") }}</span>
       <SfSelect
         v-model="bottom"
         :list="bottomSizeOptions"
@@ -101,12 +101,12 @@ const shoesSizeOptions = [
         allow-create
         default-first-option
         clearable
-        placeholder="选择或输入尺码"
+        :placeholder="$t('bottomSizePlaceholder')"
         class="w-full"
       />
     </label>
     <label class="flex items-center gap-1">
-      <span class="text-sm text-sf-text-3">鞋码</span>
+      <span class="text-sm text-sf-text-3">{{ $t("shoeSize") }}</span>
       <SfSelect
         v-model="shoes"
         :list="shoesSizeOptions"
@@ -114,7 +114,7 @@ const shoesSizeOptions = [
         allow-create
         default-first-option
         clearable
-        placeholder="选择或输入鞋码"
+        :placeholder="$t('shoeSizePlaceholder')"
         class="w-full"
       />
     </label>

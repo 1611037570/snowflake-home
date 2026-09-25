@@ -2,6 +2,7 @@
 // 简历放大预览组件：全屏遮罩内用 ScaleContainer 缩放展示 resumePages 渲染的全部页
 // 数据源由 props 传入，供模板页预览、编辑器全屏查看等场景复用
 import { onBeforeUnmount, watch } from "vue";
+import { $t } from "@/locales";
 import ResumePages from "./resumePages/index.vue";
 import ScaleContainer from "./container/index.vue";
 
@@ -62,7 +63,7 @@ onBeforeUnmount(() => {
     >
       <!-- 顶部栏 -->
       <div class="flex h-12 shrink-0 items-center justify-between px-4">
-        <span class="text-sm font-medium text-sf-text">简历预览</span>
+        <span class="text-sm font-medium text-sf-text">{{ $t("resumePreview") }}</span>
         <button
           type="button"
           class="flex h-8 w-8 cursor-pointer! items-center justify-center rounded-full text-sf-text transition-colors hover:bg-sf-bg-2"

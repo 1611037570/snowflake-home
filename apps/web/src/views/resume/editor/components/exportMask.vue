@@ -5,15 +5,15 @@ import { onMounted, onUnmounted, ref } from "vue";
 defineProps({
   title: {
     type: String,
-    default: "正在导出简历",
+    default: "",
   },
   tip: {
     type: String,
-    default: "请稍候，文件即将下载",
+    default: "",
   },
   cancelText: {
     type: String,
-    default: "取消导出",
+    default: "",
   },
 });
 
@@ -51,7 +51,7 @@ onUnmounted(clearProgressTimer);
     class="flex-c fixed inset-0 z-90 cursor-not-allowed p-4 backdrop-blur-[2px] select-none"
     role="status"
     aria-live="polite"
-    :aria-label="title"
+    :aria-label="title || $t('exportingResume')"
   >
     <div
       class="flex w-52 flex-col items-center gap-4 rounded-2xl border border-sf-theme-2 bg-sf-primary px-5 py-5 text-center shadow-xl"
@@ -59,7 +59,7 @@ onUnmounted(clearProgressTimer);
       <div
         class="relative flex h-12 w-12 items-center justify-center"
         role="progressbar"
-        aria-label="导出进度"
+        :aria-label="$t('exportProgress')"
         aria-valuemin="0"
         aria-valuemax="100"
         :aria-valuenow="progress"
@@ -91,8 +91,10 @@ onUnmounted(clearProgressTimer);
       </div>
 
       <div class="flex flex-col items-center gap-1">
-        <p class="text-sm font-semibold text-sf-text">{{ title }}</p>
-        <p class="text-xs text-sf-text-3">{{ tip }} {{ progress }}%</p>
+        <p class="text-sm font-semibold text-sf-text">{{ title || $t("exportingResume") }}</p>
+        <p class="text-xs text-sf-text-3">
+          {{ tip || $t("exportTip") }} {{ progress }}%
+        </p>
       </div>
 
       <div class="flex items-center gap-1.5" aria-hidden="true">
@@ -104,10 +106,10 @@ onUnmounted(clearProgressTimer);
       <button
         type="button"
         class="rounded-lg border border-sf-b px-3 py-1.5 text-xs text-sf-text-2 transition-colors hover:border-sf-theme hover:text-sf-theme"
-        :aria-label="cancelText"
+        :aria-label="cancelText || $t('cancelExport')"
         @click="emit('cancel')"
       >
-        {{ cancelText }}
+        {{ cancelText || $t("cancelExport") }}
       </button>
     </div>
   </div>

@@ -30,12 +30,12 @@ defineExpose({ open });
 </script>
 
 <template>
-  <SfModal v-model="visible" title="导出成功">
+  <SfModal v-model="visible" :title="$t('exportSuccess')">
     <Money />
     <div class="flex-c gap-3">
-      <SfButton type="bg" @click="visible = false"> 没写完 继续编辑 </SfButton>
-      <SfButton @click="continueExport">继续导出</SfButton>
-      <SfButton @click="goDeliverResume"> 写完了 投递简历 </SfButton>
+      <SfButton type="bg" @click="visible = false">{{ $t("continueEditing") }}</SfButton>
+      <SfButton @click="continueExport">{{ $t("continueExport") }}</SfButton>
+      <SfButton @click="goDeliverResume">{{ $t("deliverResume") }}</SfButton>
     </div>
   </SfModal>
   <!-- 投递简历弹窗由本组件统一管理 -->

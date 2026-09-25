@@ -44,7 +44,7 @@ const addTag = () => {
       :class="
         isActive(tag)
           ? 'border-none border-sf-theme bg-sf-theme text-sf-theme-text hover:bg-sf-theme-2'
-          : 'border-sf-border text-sf-text-2 hover:border-sf-theme hover:text-sf-theme'
+          : 'border-sf-b text-sf-text-2 hover:border-sf-theme hover:text-sf-theme'
       "
       @click="toggle(tag)"
     >
@@ -53,7 +53,7 @@ const addTag = () => {
     <input
       v-model="inputValue"
       class="min-w-32 flex-1 bg-transparent text-sm text-sf-text outline-none placeholder:text-sf-text-3"
-      placeholder="回车添加，再次点击标签可取消"
+      :placeholder="$t('tagPlaceholder')"
       @keydown.enter.prevent="addTag"
     />
   </div>

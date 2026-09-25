@@ -10,7 +10,7 @@ const props = defineProps({
   },
   placeholder: {
     type: String,
-    default: "请选择城市",
+    default: "",
   },
   clearable: {
     type: Boolean,
@@ -49,7 +49,7 @@ const selected = computed({
     :options="list"
     filterable
     class="w-full"
-    :placeholder="placeholder"
+    :placeholder="placeholder || $t('cityPlaceholder')"
     :clearable="clearable"
   />
 </template>

@@ -7,7 +7,7 @@ import ThumbPreview from "../../preview/thumbPreview.vue";
 import { themeTemplateList } from "@/stores/modules/resume/config/uiConfig";
 import { loadResumeTemplateData } from "@/views/resume/template/data/resumeData";
 import { onMounted, ref } from "vue";
-import i18n from "@/locales";
+import i18n, { $t } from "@/locales";
 import { translateResumeEditorText } from "@/stores/modules/resume/hooks/useResumeEditorLocale";
 const resumeStore = useResumeStore();
 const { currentUI } = storeToRefs(resumeStore);
@@ -18,7 +18,7 @@ onMounted(async () => {
   try {
     previewBase.value = await loadResumeTemplateData("xiaoZhou.ts");
   } catch {
-    ElMessage.error("简历预览暂时无法加载");
+    ElMessage.error($t("previewLoadFailed"));
   }
 });
 

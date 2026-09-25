@@ -36,13 +36,13 @@ const { openPicker, loading } = useImageUpload({
     <!-- 名称与描述 -->
     <div class="flex items-center gap-3">
       <div class="w-[100px] min-w-0">
-        <SfFormItem label="图片名称">
-          <SfInput v-model="name" placeholder="图片名称" />
+        <SfFormItem :label="$t('imageName')">
+          <SfInput v-model="name" :placeholder="$t('imageName')" />
         </SfFormItem>
       </div>
       <div class="min-w-0 flex-1">
-        <SfFormItem label="图片描述">
-          <SfInput v-model="desc" placeholder="图片描述" />
+        <SfFormItem :label="$t('imageDescription')">
+          <SfInput v-model="desc" :placeholder="$t('imageDescription')" />
         </SfFormItem>
       </div>
     </div>
@@ -51,7 +51,7 @@ const { openPicker, loading } = useImageUpload({
       <!-- 图片预览或上传入口：固定宽度 -->
       <div
         class="group border-sf-border relative flex w-32 shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-lg border border-dashed text-sf-text-3 transition-colors hover:border-sf-theme hover:text-sf-theme"
-        :title="img ? '点击重新上传' : '上传图片'"
+        :title="img ? $t('reuploadImage') : $t('uploadImage')"
         @click="openPicker"
       >
         <img v-if="img" :src="img" alt="图片" class="h-auto w-full object-cover" />
@@ -60,12 +60,12 @@ const { openPicker, loading } = useImageUpload({
           v-if="img"
           class="absolute inset-0 flex items-center justify-center bg-black/50 text-xs text-white opacity-0 transition-opacity group-hover:opacity-100"
         >
-          重新上传
+          {{ $t("reuploadImage") }}
         </div>
         <div v-else class="flex h-24 w-full flex-col items-center justify-center gap-1">
           <SfIcon v-if="loading" icon="line-md:loading-twotone-loop" size="6" />
           <SfIcon v-else icon="mdi:image-plus" size="6" />
-          <span class="text-xs">{{ loading ? "处理中" : "上传图片" }}</span>
+          <span class="text-xs">{{ loading ? $t("processing") : $t("uploadImage") }}</span>
         </div>
       </div>
       <!-- 显示大小：百分比滑杆控制，不用输入框 -->

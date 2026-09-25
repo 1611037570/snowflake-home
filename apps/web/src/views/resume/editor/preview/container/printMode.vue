@@ -1,6 +1,7 @@
 <script setup>
 import { storeToRefs } from "pinia";
 import { useResumeStore } from "@/stores";
+import { $t } from "@/locales";
 
 const resumeStore = useResumeStore();
 const { system } = storeToRefs(resumeStore);
@@ -12,7 +13,7 @@ const togglePrintMode = () => {
 </script>
 
 <template>
-  <SfTooltip :content="system.printMode ? '彩色模式' : '灰度模式(模拟黑白打印效果)'">
+  <SfTooltip :content="system.printMode ? $t('printColorMode') : $t('printGrayMode')">
     <SfIcon
       :icon="system.printMode ? 'lucide:contrast' : 'lucide:palette'"
       size="5"

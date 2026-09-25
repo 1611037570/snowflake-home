@@ -33,12 +33,12 @@ function handleRestore(field) {
     <header class="flex h-10 items-center justify-between">
       <div class="flex items-center gap-1 font-bold">
         <SfIcon icon="lucide:archive" size="3" />
-        <div class="text-lg">已归档模块{{ archivedList.length }} 个</div>
+        <div class="text-lg">{{ $t("archiveCount", { count: archivedList.length }) }}</div>
       </div>
       <el-popover v-model:visible="panelVisible" placement="right" :width="208" trigger="click">
         <template #reference>
           <div class="mr-1.5 flex cursor-pointer items-center gap-1 text-sm text-sf-theme">
-            <span>恢复归档</span>
+            <span>{{ $t("restoreArchive") }}</span>
             <SfIcon icon="lucide:chevron-right" size="4" />
           </div>
         </template>
@@ -50,7 +50,7 @@ function handleRestore(field) {
             class="flex items-center justify-between gap-3"
           >
             <span class="truncate text-sm text-sf-text">{{ getModuleName(field) }}</span>
-            <el-button size="small" @click="handleRestore(field)">恢复</el-button>
+            <el-button size="small" @click="handleRestore(field)">{{ $t("restore") }}</el-button>
           </li>
         </ul>
       </el-popover>

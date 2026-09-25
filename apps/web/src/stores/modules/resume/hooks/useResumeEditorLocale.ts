@@ -225,6 +225,8 @@ const TEXT_KEYS_SOURCE = `
   模块标题字号: "moduleTitleFontSize",
   文本对齐: "textAlign",
   "2026年9月": "cnDateFormat",
+  尚未填写: "notFilled",
+  自定义字段: "customField",
 `;
 
 const TEXT_KEYS = Object.fromEntries(
@@ -263,6 +265,9 @@ function localizeField(field: any, translate: Translate) {
     }
     if (typeof field.props.placeholder === "string") {
       field.props.placeholder = translateResumeEditorText(field.props.placeholder, translate);
+    }
+    if (typeof field.props.presentText === "string") {
+      field.props.presentText = translateResumeEditorText(field.props.presentText, translate);
     }
     if (Array.isArray(field.props.displayOptions)) {
       field.props.displayOptions.forEach((option: any) => {

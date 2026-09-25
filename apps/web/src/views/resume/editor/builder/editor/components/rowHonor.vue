@@ -1,4 +1,5 @@
 <script setup>
+import { $t } from "@/locales";
 import { getCurrentInstance } from "vue";
 import { useFormContext } from "@/components/business/dynamicForm/api";
 import Icon from "../icon.vue";
@@ -19,7 +20,7 @@ const { removeCurrent } = useFormContext();
 
 // 删除当前荣誉证书
 const removeHonor = () => {
-  proxy.$confirm("确定要删除当前内容吗？", "删除确认").then(() => {
+  proxy.$confirm($t("deleteCurrentContent"), $t("deleteConfirm")).then(() => {
     removeCurrent();
   });
 };
@@ -36,10 +37,10 @@ const removeHonor = () => {
     />
     <!-- 名称 -->
     <div class="min-w-0 flex-1">
-      <SfInput v-model="name" placeholder="荣誉证书名称" />
+      <SfInput v-model="name" :placeholder="$t('honorName')" />
     </div>
     <!-- 隐藏当前荣誉证书 -->
-    <SfTooltip :content="hidden ? '显示' : '隐藏'">
+    <SfTooltip :content="hidden ? $t('show') : $t('hide')">
       <Icon
         :icon="hidden ? 'lucide:eye' : 'lucide:eye-off'"
         @click.stop="hidden = !hidden"
