@@ -183,7 +183,7 @@ const clearField = () => {
       </div>
     </div>
     <!-- 展示形态切换：仅声明了展示选项的字段渲染 -->
-    <div v-if="displayOptions?.length" class="w-40">
+    <div v-if="displayOptions?.length" class="w-full max-w-60">
       <SfTab v-model="display" :list="displayList" class="h-8!" />
     </div>
   </div>
