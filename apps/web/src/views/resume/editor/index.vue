@@ -28,19 +28,9 @@
               <Preview class="motion-preview" :class="{ 'ai-generating': isGenerating }" />
             </Transition>
           </div>
-          <!-- 最右侧系统配置栏：工具栏与 QA 入口整体垂直居中 -->
-          <Transition name="resume-motion" appear>
-            <div
-              v-if="!focusMode && !isMobile"
-              class="motion-toolbar relative flex h-full flex-col items-center justify-center gap-3"
-            >
-              <!-- 工具栏上方展示简历ID：ID前缀水平展示，ID值逐字往下排 -->
-              <div class="flex flex-col items-center text-xs leading-none text-sf-text-3">
-                <span class="pb-1.5">ID</span>
-                <span v-for="(char, index) in idChars" :key="index">{{ char }}</span>
-              </div>
-              <Toolbar />
-            </div>
+          <!-- 最右侧系统配置栏：工具栏与 QA 入口整体垂直居中；移动端由工具栏自身收起为抽屉 -->
+          <Transition :name="isMobile ? '' : 'resume-motion'" appear>
+            <Toolbar />
           </Transition>
           <AiMask :visible="isGenerating" />
         </div>
@@ -85,7 +75,7 @@ import { useResumeStore, useSystemStore } from "@/stores";
 import { SF_ICON_LIST_KEY } from "@/components/base/icon";
 import { onKeyStroke } from "@vueuse/core";
 import { storeToRefs } from "pinia";
-import { computed, provide, ref, watch } from "vue";
+import { provide, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useRuntimeData } from "./hooks/useRuntimeData";
 import Builder from "./builder/index.vue";
@@ -114,7 +104,6 @@ resumeStore.init();
 const { initResumeStatus, setFocusMode, cancelPrinting, cancelFittingOnePage } = resumeStore;
 const {
   currentIndex,
-  currentItem,
   focusMode,
   resumeList: list,
   currentUsage,
@@ -123,9 +112,6 @@ const {
   isFittingOnePage,
   currentData,
 } = storeToRefs(resumeStore);
-
-// 竖排简历ID：ID前缀水平展示，简历ID逐字往下排
-const idChars = computed(() => (currentItem.value?.id || "").split(""));
 
 // 移动端进入编辑器时默认先展示简历预览。
 watch(
