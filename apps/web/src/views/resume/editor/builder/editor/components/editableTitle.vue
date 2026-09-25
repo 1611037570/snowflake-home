@@ -1,75 +1,40 @@
 <script setup>
-import { ref, nextTick } from "vue";
+import { ref } from "vue";
+import Icon from "../icon.vue";
 
 const modelValue = defineModel();
+// 标题编辑弹窗与临时输入值
+const showEditModal = ref(false);
+const editedTitle = ref("");
 
-// 是否正在编辑
-const isEditing = ref(false);
-// 编辑态输入框容器：用于判断点击是否落在输入框内
-const editBox = ref();
-// 文档级点击监听停止函数
-let stopDocListen;
-
-// 进入编辑模式
-function startEdit() {
-  isEditing.value = true;
-  // 文档级捕获点击：点击输入框外部任意处退出编辑，规避拖拽手柄 preventDefault 导致失焦丢失
-  stopDocListen = useEventListener(
-    document,
-    "mousedown",
-    (e) => {
-      if (editBox.value?.contains(e.target)) return;
-      finishEdit();
-    },
-    { capture: true },
-  );
-  // 下一帧自动聚焦：直接定位容器内 input，避免依赖组件 expose 的时序
-  nextTick(() => {
-    setTimeout(() => {
-      editBox.value?.querySelector("input")?.focus();
-    }, 0);
-  });
+// 打开弹窗时回填当前标题
+function openEditModal() {
+  editedTitle.value = modelValue.value || "";
+  showEditModal.value = true;
 }
 
-// 退出编辑模式
-function finishEdit() {
-  stopDocListen?.();
-  stopDocListen = null;
-  isEditing.value = false;
-}
-
-// 卸载时清理文档监听，避免编辑态残留
-onBeforeUnmount(() => stopDocListen?.());
-
-// 处理键盘回车：仅在回车时阻止默认行为（避免触发外层表单提交）并退出编辑
-function handleKeydown(e) {
-  if (e.key === "Enter") {
-    e.preventDefault();
-    finishEdit();
-  }
+// 保存非空标题
+function saveTitle() {
+  const value = editedTitle.value.trim();
+  if (!value) return;
+  modelValue.value = value;
+  showEditModal.value = false;
 }
 </script>
 <template>
-  <div class="flex-1 truncate">
-    <span
-      v-if="!isEditing"
-      class="border-sf-border cursor-pointer rounded-3xl border border-dashed border-transparent px-1 hover:border-dashed hover:border-sf-theme hover:outline-offset-1"
-      @click.stop.prevent="startEdit"
-      @focus.stop.prevent
-    >
-      {{ modelValue }}
-    </span>
-    <div ref="editBox" v-else class="w-[120px]">
-      <SfInput
-        v-model="modelValue"
-        class="rounded border border-sf-theme outline-none"
-        @click.stop.prevent
-        @focus.stop
-        @blur="finishEdit"
-        @keydown.stop="handleKeydown"
-      />
-    </div>
+  <div class="flex min-w-0 flex-1 items-center gap-1">
+    <span class="min-w-0 truncate">{{ modelValue }}</span>
+    <Icon @click="openEditModal" icon="lucide:pencil" />
   </div>
+  <SfModal v-model="showEditModal" title="修改标题">
+    <form class="flex w-80 flex-col gap-3" @submit.prevent="saveTitle">
+      <SfInput v-model="editedTitle" placeholder="请输入标题" />
+      <footer class="flex justify-end gap-3">
+        <SfButton type="bg" @click="showEditModal = false">取消</SfButton>
+        <SfButton :disabled="!editedTitle.trim()" @click="saveTitle">保存</SfButton>
+      </footer>
+    </form>
+  </SfModal>
 </template>
 
 <style lang="scss" scoped></style>
