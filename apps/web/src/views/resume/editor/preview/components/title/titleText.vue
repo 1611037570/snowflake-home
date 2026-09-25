@@ -26,7 +26,7 @@ const {
 
 <template>
   <!-- 图标独立于文字排版，不参与标题换行；背景模式使用主题色填充 -->
-  <div class="flex shrink-0 items-center">
+  <div class="flex shrink-0 items-baseline">
     <span
       v-if="icon"
       class="mr-1 inline-flex items-center justify-center rounded"
