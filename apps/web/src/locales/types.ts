@@ -7,6 +7,8 @@ export interface LangItem {
   value: string;
 }
 
+export type TranslationParams = Record<string, unknown> | unknown[];
+
 export interface Translation {
-  (key: string): string;
+  (key: string, params?: TranslationParams): string;
 }
