@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { afterEach, test } from "node:test";
-import { ApiError, createRequest } from "../dist/index.js";
+import { ApiError, createRequest, LLM } from "../dist/index.js";
 
 const originalFetch = globalThis.fetch;
 
@@ -76,4 +76,39 @@ test("透传接口状态与错误码", async () => {
       error.status === 400 &&
       error.code === "invalid_model",
   );
+});
+
+// 校验公开请求接口将三类模型输出从通用事件中分离。
+test("分别回调思考、正文与令牌", async () => {
+  globalThis.fetch = async () =>
+    new Response(
+      'data: {"choices":[{"delta":{"reasoning_content":"思考","content":"回答","tool_calls":[{"index":0,"id":"call-1"}]}}],"usage":{"total_tokens":7}}\n\n',
+      { status: 200 },
+    );
+
+  const llm = new LLM({
+    url: "https://example.com/chat",
+    provider: "openai",
+    apiKey: "key",
+    model: "test-model",
+  });
+  const received = { reasoning: [], content: [], token: [], event: [] };
+  const { sendFn } = await llm.request({
+    options: { messages: [{ role: "user", content: "你好" }] },
+    isJson: false,
+    isDebug: false,
+    retryCount: 0,
+    onReasoning: (delta) => received.reasoning.push(delta),
+    onContent: (delta) => received.content.push(delta),
+    onToken: (total) => received.token.push(total),
+    onEvent: (type, data) => received.event.push([type, data]),
+  });
+  await sendFn();
+
+  assert.deepEqual(received, {
+    reasoning: ["思考"],
+    content: ["回答"],
+    token: [7],
+    event: [["tool_call_delta", { index: 0, id: "call-1" }]],
+  });
 });

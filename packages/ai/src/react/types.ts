@@ -74,7 +74,11 @@ export interface ReactConfig {
   onReflect?: (answer: string) => void;
   // 反思轮开始回调：用于前端把该轮 content 作为最终正文实时渲染
   onReflectStart?: () => void;
-  // 流式事件回调：透传 reasoning/content/total_tokens 等底层事件，用于计时与统计
+  // 思考、正文和总令牌数的流式增量分别回调，避免调用方解析事件类型
+  onReasoning?: (delta: string) => void;
+  onContent?: (delta: string) => void;
+  onToken?: (totalTokens: number) => void;
+  // 通用事件仅透传工具调用等其他事件
   onEvent?: (type: string, data: any) => void;
   // 最终答案回调
   onFinal?: (answer: string) => void;
