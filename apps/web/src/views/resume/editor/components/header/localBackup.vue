@@ -96,8 +96,8 @@ const doBackup = async () => {
   const statusKey = getBackupStatusKey(item.id, path);
   const startTime = Date.now();
   backupStatus.value = "pending";
-  // 备份文件名：轻舟简历备份-时间-简历ID（时间精确到秒，避免同名覆盖）
-  const filename = `轻舟简历备份-${dayjs().format("YYYY-MM-DD_HH-mm-ss")}-${item.id}.json`;
+  // 备份文件名：轻舟简历备份-简历ID（固定文件名，重复备份直接覆盖同一文件）
+  const filename = `轻舟简历备份-${item.id}.json`;
   // 备份时配置只保留模块 key，减小文件体积
   const backupItem = {
     ...item,
