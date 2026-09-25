@@ -25,6 +25,7 @@
     "build:ext": "vite build --mode extension"
   },
   "dependencies": {
+    "@snowflake/ai": "workspace:*",
     "@iconify-vue/akar-icons": "^1.0.3",
     "@iconify-vue/basil": "^1.0.3",
     "@iconify-vue/bi": "^1.0.4",

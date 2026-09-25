@@ -1,10 +1,11 @@
-import { createRequest } from "./request";
+import { createRequest } from "@snowflake/ai";
 import { AbortError } from "../errors";
 import {
   appendLlmTraceOutput,
   appendLlmTraceReasoning,
   createLlmTrace,
   finishLlmTrace,
+  markLlmTraceFirstToken,
   recordLlmTraceEvent,
   setLlmTraceOutput,
   updateLlmTraceStatus,
@@ -201,7 +202,13 @@ class LLM {
     };
 
     // 提前创建处理器，确保调用方在 sendFn 执行前即可获取 abort
-    const handler = createRequest(token, isStream);
+    const handler = createRequest(token, isStream, {
+      onRequest: () => recordLlmTraceEvent(traceId, "request"),
+      onResponse: (status) => recordLlmTraceEvent(traceId, "response", { status }),
+      onFirstToken: () => markLlmTraceFirstToken(traceId),
+      onError: (error) =>
+        recordLlmTraceEvent(traceId, "error", (error as Error)?.message || "请求失败"),
+    });
     const send = handler.send;
     const abort = handler.abort;
 

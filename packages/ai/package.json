@@ -13,6 +13,7 @@
   },
   "scripts": {
     "build": "tsc -p tsconfig.json",
+    "test": "node --test tests",
     "type-check": "tsc -p tsconfig.json --noEmit"
   },
   "devDependencies": {

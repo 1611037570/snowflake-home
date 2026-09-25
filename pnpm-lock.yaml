@@ -261,6 +261,9 @@ importers:
       '@opentiny/vue':
         specifier: ^3.32.0
         version: 3.32.0
+      '@snowflake/ai':
+        specifier: workspace:*
+        version: link:../../packages/ai
       '@vueuse/core':
         specifier: 13.9.0
         version: 13.9.0(vue@3.5.22(typescript@5.9.3))
