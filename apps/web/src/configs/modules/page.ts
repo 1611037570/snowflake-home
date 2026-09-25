@@ -1,5 +1,4 @@
 import { $t } from "@/locales";
-import pageConfig from "@/locales/lang/zh/core.json";
 import { computed } from "vue";
 import { BASE_ROUTES, MUSE_ROUTES, PROJECT_ROUTES } from "./routes";
 type PageType = "project" | "base" | "light";
@@ -20,14 +19,15 @@ interface PageItem {
  * @returns 是否存在描述字段
  */
 const getRouterInfo = (item: any) => {
-  const router: any = pageConfig.core.router;
   const itemName = item.name;
-  const desc = router[`${itemName}Desc`];
-  const name = router[`${itemName}`];
+  const nameKey = `core.router.${itemName}`;
+  const descKey = `core.router.${itemName}Desc`;
+  const name = $t(nameKey);
+  const desc = $t(descKey);
   return {
     ...item,
-    desc: desc ? $t(`core.router.${itemName}Desc`) : undefined,
-    name: name ? $t(`core.router.${itemName}`) : itemName,
+    desc: desc === descKey ? undefined : desc,
+    name: name === nameKey ? itemName : name,
     url: `/${itemName}`,
   };
 };
