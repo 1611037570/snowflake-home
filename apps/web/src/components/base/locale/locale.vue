@@ -20,17 +20,14 @@
 </template>
 
 <script setup>
-import { LANG_LIST, loadPageLang } from "@/locales";
+import { getPageLocaleFile, LANG_LIST, loadPageLang } from "@/locales";
 import { useRouter } from "vue-router";
 
 const color = inject("color", "text-sf-base");
 defineOptions({ name: "SfLocale" });
 
 const router = useRouter();
-// 二级路由没有名称时复用一级页面标识
-const currentPageName = computed(
-  () => router.currentRoute.value.meta.pageName || router.currentRoute.value.name,
-);
+const currentPageName = computed(() => getPageLocaleFile(router.currentRoute.value));
 
 import { language } from "@/utils";
 const currentLocale = computed(() => language.value);

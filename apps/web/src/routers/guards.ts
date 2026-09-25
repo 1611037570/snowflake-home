@@ -1,4 +1,4 @@
-import { loadPageLang } from "@/locales";
+import { getPageLocaleFile, loadPageLang } from "@/locales";
 import { startRouteLoading } from "@/utils/modules/routeLoading";
 // 版本检测已注释，暂不引入 useSystemStore
 // import { useSystemStore } from "@/stores";
@@ -11,8 +11,7 @@ import { startRouteLoading } from "@/utils/modules/routeLoading";
  */
 export async function beforeEachGuard(to: any, from: any, next: any) {
   startRouteLoading();
-  // 优先使用路由指定的语言包文件，否则复用页面标识或路由名称
-  const pageName = to.meta.localeFile || to.meta.pageName || to.name;
+  const pageName = getPageLocaleFile(to);
   // 语言包后台加载，不阻塞路由放行，避免线上跳转停顿
   loadPageLang(pageName);
 
