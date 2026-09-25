@@ -1,10 +1,13 @@
 <script setup>
 import { computed, onUnmounted, ref } from "vue";
-import { useResumeStore } from "@/stores";
+import { useResumeStore, useSystemStore } from "@/stores";
 import { storeToRefs } from "pinia";
 
 const resumeStore = useResumeStore();
 const { system } = storeToRefs(resumeStore);
+// 移动端入口参与抽屉布局，避免被工具栏视口裁切
+const systemStore = useSystemStore();
+const { isMobile } = storeToRefs(systemStore);
 
 // 六爻问心弹窗可见性
 const visible = ref(false);
@@ -89,7 +92,11 @@ onUnmounted(() => {
   <!-- 调试模式下的六爻问心入口：展示易经第64卦未济，位于 QA 下方 -->
   <div
     v-if="system.showDebug"
-    class="absolute -bottom-24 left-1/2 z-50 h-10 w-10 -translate-x-1/2"
+    :class="
+      isMobile
+        ? 'relative z-50 h-10 w-10'
+        : 'absolute -bottom-24 left-1/2 z-50 h-10 w-10 -translate-x-1/2'
+    "
     @mouseleave="closeEntry"
   >
     <div
