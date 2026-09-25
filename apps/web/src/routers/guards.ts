@@ -11,8 +11,8 @@ import { startRouteLoading } from "@/utils/modules/routeLoading";
  */
 export async function beforeEachGuard(to: any, from: any, next: any) {
   startRouteLoading();
-  // 二级路由没有名称时复用一级页面标识
-  const pageName = to.meta.pageName || to.name;
+  // 优先使用路由指定的语言包文件，否则复用页面标识或路由名称
+  const pageName = to.meta.localeFile || to.meta.pageName || to.name;
   // 语言包后台加载，不阻塞路由放行，避免线上跳转停顿
   loadPageLang(pageName);
 
