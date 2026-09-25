@@ -34,7 +34,7 @@ const resumeChildren: RouteRecordRaw[] = [
     path: "editor",
     name: "editor",
     component: () => import("@/views/resume/editor/index.vue"),
-    meta: { hideResumeLayout: true },
+    meta: { hideResumeLayout: true, localeFile: "resumeEditor" },
   },
   {
     path: "print",
