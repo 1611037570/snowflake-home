@@ -11,6 +11,8 @@ import {
   initLocalBackup,
   isFileSystemAccessSupported,
   localBackupEnabled,
+  localBackupNeedsAuth,
+  requestLocalBackupPermission,
   writeLocalBackup,
 } from "@/utils/modules/localBackup";
 
@@ -52,12 +54,12 @@ const restoreBackupStatus = () => {
 
 watch(() => [currentItem.value?.id, backupPath.value], restoreBackupStatus, { immediate: true });
 
-// 悬浮提示
-const tooltipContent = computed(() =>
-  localBackupEnabled.value
-    ? `备份目录：${backupPath.value}${lastBackupTime.value ? `；最近备份：${lastBackupTime.value}` : ""}`
-    : "点击开启本地自动备份",
-);
+// 悬浮提示：备份失败时不展示失败时间，改为提示重新授权
+const tooltipContent = computed(() => {
+  if (!localBackupEnabled.value) return "点击开启本地自动备份";
+  if (backupStatus.value === "failed") return `备份目录：${backupPath.value}；备份失败，请重新授权`;
+  return `备份目录：${backupPath.value}${lastBackupTime.value ? `；最近备份：${lastBackupTime.value}` : ""}`;
+});
 
 const backupState = computed(() => {
   if (!localBackupEnabled.value) {
@@ -75,7 +77,8 @@ const backupState = computed(() => {
   }
   if (backupStatus.value === "failed") {
     return {
-      label: `备份失败 ${dayjs(lastBackupTime.value).format("HH:mm:ss")}`,
+      // 备份失败不展示失败时间，改为引导用户去重新授权
+      label: "备份失败，请重新授权",
       icon: "bi:shield-exclamation",
       class: "text-sf-error",
     };
@@ -152,6 +155,12 @@ const handleBind = async () => {
     }
   }
 };
+
+// 备份失败后重新授权目录权限，授权成功立即补一次备份
+const handleReauthorize = async () => {
+  const granted = await requestLocalBackupPermission();
+  if (granted) await doBackup();
+};
 </script>
 
 <template>
@@ -172,6 +181,17 @@ const handleBind = async () => {
           <span class="text-sm text-sf-text-3">绑定位置</span>
           <span class="text-sm text-sf-text">{{ backupPath || "未绑定" }}</span>
         </div>
+        <span v-if="localBackupNeedsAuth" class="text-xs text-sf-warning">
+          备份目录权限已失效，需重新授权后才能继续备份
+        </span>
+        <SfButton
+          v-if="localBackupNeedsAuth"
+          class="w-full"
+          type="theme"
+          @click="handleReauthorize"
+        >
+          重新授权
+        </SfButton>
         <SfButton class="w-full" :type="localBackupEnabled ? 'error' : 'theme'" @click="handleBind">
           {{ localBackupEnabled ? "解绑" : "选择目录并绑定" }}
         </SfButton>
