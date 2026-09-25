@@ -20,7 +20,7 @@ import {
 const supported = isFileSystemAccessSupported();
 
 // "正在备份"状态的最短展示时长（毫秒）
-const BACKUP_PENDING_MIN_DURATION = 1500;
+const BACKUP_PENDING_MIN_DURATION = 500;
 
 const resumeStore = useResumeStore();
 const { currentItem } = storeToRefs(resumeStore);
@@ -124,8 +124,8 @@ const doBackup = async () => {
   }
 };
 
-// 简历数据变化后防抖执行备份
-const debouncedBackup = useDebounceFn(doBackup, 3000);
+// 简历数据变化后防抖执行备份：编辑空闲判定已等待 200ms，此处只需合并极短的连续停顿
+const debouncedBackup = useDebounceFn(doBackup, 1000);
 // 订阅简历内容变更脉冲：编辑中不调度，停顿后统一备份，避免对整份简历做深监听
 watch(
   () => [resumeStore.isEditing, resumeStore.contentVersion],
