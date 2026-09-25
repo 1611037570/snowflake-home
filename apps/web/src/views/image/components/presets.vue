@@ -31,8 +31,8 @@ const emit = defineEmits(["apply"]);
 
 const options = computed(() => {
   return [
-    { name: $t("image.rec2k"), value: 2560 },
-    { name: $t("image.rec1080p"), value: 1920 },
+    { name: $t("rec2k"), value: 2560 },
+    { name: $t("rec1080p"), value: 1920 },
   ];
 });
 const maxSize = computed(() => {

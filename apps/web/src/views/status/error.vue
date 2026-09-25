@@ -5,9 +5,9 @@
 
     <div class="flex-c flex-col gap-2">
       <!-- 错误提示 -->
-      <div class="text-2xl font-bold text-sf-text">{{ $t("error.loadFailed") }}</div>
+      <div class="text-2xl font-bold text-sf-text">{{ $t("loadFailed") }}</div>
       <!-- 倒计时提示 -->
-      <div class="text-sm text-sf-text-2">{{ $t("error.autoRedirect", { count }) }}</div>
+      <div class="text-sm text-sf-text-2">{{ $t("autoRedirect", { count }) }}</div>
     </div>
 
     <!-- 跳转按钮 -->
@@ -15,7 +15,7 @@
       class="sf-theme-element rounded-lg px-8 py-2.5 text-sm font-medium shadow-sm transition-all hover:opacity-90 active:scale-95"
       @click="jump"
     >
-      {{ $t("error.redirectNow") }}
+      {{ $t("redirectNow") }}
     </button>
   </div>
 </template>

@@ -9,7 +9,7 @@
       <ElSwitch v-model="show" />
     </div>
     <div class="flex items-center">
-      <span class="text-sm font-medium">{{ $t("image.realtimePreview") }}</span>
+      <span class="text-sm font-medium">{{ $t("realtimePreview") }}</span>
       <ElSwitch v-model="live" />
     </div>
   </div>
@@ -17,7 +17,7 @@
     <ElButton
       class="bg-sf-theme py-2.5 font-medium text-sf-primary transition-all duration-200 hover:bg-sf-theme-2 hover:shadow-lg active:scale-[0.99]"
       @click="save"
-      >{{ $t("image.saveImage") }}</ElButton
+      >{{ $t("saveImage") }}</ElButton
     >
     <!-- <ElButton
       class="bg-sf-theme py-2.5 font-medium text-sf-primary transition-all duration-200 hover:bg-sf-theme-2 hover:shadow-lg active:scale-[0.99]"

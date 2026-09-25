@@ -1,5 +1,5 @@
 <template>
-  <Title :name="$t('image.adjust')" />
+  <Title :name="$t('adjust')" />
   <div class="mb-3 flex gap-3 text-[14px]">
     <div class="flex flex-1 flex-col">
       <div class="mb-1 flex items-center">
@@ -11,7 +11,7 @@
           @click.stop="resetFormat"
         />
       </div>
-      <SfSelect v-model="format" :placeholder="$t('image.formatSelectPlaceholder')" class="w-full">
+      <SfSelect v-model="format" :placeholder="$t('formatSelectPlaceholder')" class="w-full">
         <ElOption v-for="opt in formats" :key="opt" :label="opt" :value="opt" />
       </SfSelect>
     </div>
@@ -28,7 +28,7 @@
       <SfSelect
         v-model="quality"
         :list="qualityOptions"
-        :placeholder="$t('image.qualitySelectPlaceholder')"
+        :placeholder="$t('qualitySelectPlaceholder')"
         class="w-full"
       >
       </SfSelect>
@@ -57,11 +57,11 @@ function resetFormat() {
 
 // 质量选项配置
 const qualityOptions = [
-  { name: $t("image.quality.lossless"), value: 1 },
-  { name: $t("image.quality.high"), value: 0.8 },
-  { name: $t("image.quality.medium"), value: 0.6 },
-  { name: $t("image.quality.low"), value: 0.4 },
-  { name: $t("image.quality.veryLow"), value: 0.2 },
+    { name: $t("quality.lossless"), value: 1 },
+    { name: $t("quality.high"), value: 0.8 },
+    { name: $t("quality.medium"), value: 0.6 },
+    { name: $t("quality.low"), value: 0.4 },
+    { name: $t("quality.veryLow"), value: 0.2 },
 ];
 
 // 支持的图片格式列表
