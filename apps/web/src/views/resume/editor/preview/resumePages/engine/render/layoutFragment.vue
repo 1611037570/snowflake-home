@@ -39,7 +39,7 @@ const handleContentClick = () => {
       :class="
         node.type === 'spacer'
           ? ''
-          : 'resume-submodule-content relative rounded-xl hover:bg-sf-theme-2!'
+          : 'resume-submodule-content relative rounded-3xl hover:bg-sf-theme-2!'
       "
     >
       <LayoutNodeContent
@@ -55,8 +55,4 @@ const handleContentClick = () => {
   </div>
 </template>
 
-<style scoped>
-.resume-submodule-content:hover :deep(.module-content-container) {
-  background-color: var(--color-sf-theme-2) !important;
-}
-</style>
+<style scoped></style>

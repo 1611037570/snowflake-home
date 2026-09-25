@@ -130,7 +130,7 @@ function handleAdd() {
         <div v-if="tip" class="mb-2">{{ tip }}</div>
         <slot />
         <div
-          class="mt-1 flex cursor-pointer items-center gap-1 text-sf-theme"
+          class="mt-1 flex w-fit cursor-pointer items-center gap-1 rounded-3xl border border-transparent bg-sf-theme-3 px-3 py-1 text-sf-theme hover:border-sf-theme"
           @click="handleAdd"
           v-if="add"
         >
