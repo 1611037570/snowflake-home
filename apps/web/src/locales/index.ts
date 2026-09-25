@@ -67,15 +67,40 @@ export function getPageLocaleFile(route: LocaleRoute): string {
   return typeof pageName === "string" ? pageName : "";
 }
 
-async function dynamicLoadPageLang(name: string, langKey: string) {
-  try {
-    const pageLangModule = await import(`./lang/${langKey}/${name}.json`);
-    const pageLang = pageLangModule.default;
-    return pageLang;
-  } catch {
-    // console.error(`加载 ${name}的${langKey} 包失败:`, error);
-    // return;
+type LocaleMessage = Record<string, any>;
+
+const localeMessageCache = new Map<string, LocaleMessage | null>();
+const localeMessageLoading = new Map<string, Promise<LocaleMessage | null>>();
+
+async function dynamicLoadPageLang(name: string, langKey: string): Promise<LocaleMessage | null> {
+  const cacheKey = `${langKey}/${name}`;
+  if (localeMessageCache.has(cacheKey)) {
+    return localeMessageCache.get(cacheKey) || null;
   }
+  const loadingMessage = localeMessageLoading.get(cacheKey);
+  if (loadingMessage) {
+    return loadingMessage;
+  }
+
+  const loading = import(`./lang/${langKey}/${name}.json`)
+    .then((pageLangModule) => {
+      const pageLang = pageLangModule.default as LocaleMessage;
+      localeMessageCache.set(cacheKey, pageLang);
+      return pageLang;
+    })
+    .catch((error) => {
+      localeMessageCache.set(cacheKey, null);
+      if (import.meta.env.DEV) {
+        console.warn(`[i18n] 加载语言包失败: ${langKey}/${name}.json`, error);
+      }
+      return null;
+    })
+    .finally(() => {
+      localeMessageLoading.delete(cacheKey);
+    });
+
+  localeMessageLoading.set(cacheKey, loading);
+  return loading;
 }
 
 function loadDefaultTitle() {
