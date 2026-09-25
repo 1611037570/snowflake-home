@@ -17,7 +17,7 @@ const handleRedo = () => {
 
 <template>
   <div class="flex items-center gap-1">
-    <SfTooltip content="撤回">
+    <SfTooltip :content="$t('undo')">
       <SfIcon
         icon="lucide:undo-2"
         size="4"
@@ -29,7 +29,7 @@ const handleRedo = () => {
         @click="canUndo && handleUndo()"
       />
     </SfTooltip>
-    <SfTooltip content="前进">
+    <SfTooltip :content="$t('redo')">
       <SfIcon
         icon="lucide:redo-2"
         size="4"

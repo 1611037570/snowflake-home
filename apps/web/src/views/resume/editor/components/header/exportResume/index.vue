@@ -5,6 +5,7 @@ import { useSystemStore, useResumeStore } from "@/stores";
 import { storeToRefs } from "pinia";
 import { computed, onMounted, onUnmounted, ref } from "vue";
 import ExportItem from "./exportItem.vue";
+import { $t } from "@/locales";
 
 const visible = ref(false);
 // 所有支持清晰度的导出统一使用 2 倍，减少用户选择成本。
@@ -17,8 +18,8 @@ const pdfExportType = ref("local");
 const longImageExportType = ref("png");
 
 const pdfExportOptions = computed(() => [
-  { name: "本地", value: "local" },
-  { name: "云端", value: "server", disabled: !isConnected.value },
+  { name: $t("local"), value: "local" },
+  { name: $t("cloud"), value: "server", disabled: !isConnected.value },
 ]);
 const longImageExportOptions = [
   { name: "PNG", value: "png" },
@@ -64,7 +65,7 @@ const list = computed(() => [
   {
     name: "PDF",
     icon: "mdi:file-pdf-box",
-    desc: "高精度渲染生成，适合打印，ATS解析。",
+    desc: $t("pdfDescription"),
     options: pdfExportOptions.value,
     modelValue: pdfExportType.value,
     onChange: changePdfExportType,
@@ -76,9 +77,9 @@ const list = computed(() => [
       ),
   },
   {
-    name: "长图",
+    name: $t("longImage"),
     icon: "material-symbols:image-outline",
-    desc: "单张长图片，适合快速分享和图片上传",
+    desc: $t("longImageDescription"),
     options: longImageExportOptions,
     modelValue: longImageExportType.value,
     onChange: (value) => (longImageExportType.value = value),
@@ -88,20 +89,20 @@ const list = computed(() => [
   {
     name: "Markdown",
     icon: "mdi:language-markdown",
-    desc: "适合编辑的文本",
+    desc: $t("markdownDescription"),
     fn: () => emitExport("resume-print-markdown"),
   },
   {
     name: "HTML",
     icon: "mdi:language-html5",
-    desc: "适合分享的网页",
+    desc: $t("htmlDescription"),
     fn: () => emitExport("resume-print-html"),
   },
 ]);
 const a = {
   name: "JSON",
   icon: "mdi:file-code-outline",
-  desc: "适合备份和恢复的完整简历数据",
+  desc: $t("jsonDescription"),
   fn: () => {
     // 导出配置后关闭弹窗
     visible.value = false;
@@ -116,21 +117,21 @@ const a = {
     class="flex h-9 cursor-pointer items-center gap-1 rounded-3xl border border-sf-b bg-sf-page p-1 px-2 text-sm transition-colors hover:bg-sf-theme hover:text-white"
   >
     <SfIcon icon="material-symbols:download" size="4" />
-    <span class="hidden sm:inline"> 导出简历 </span>
+    <span class="hidden sm:inline"> {{ $t("exportResume") }} </span>
     <SfIcon icon="mingcute:down-line" size="4" />
   </div>
 
-  <SfModal v-model="visible" title="导出简历">
+  <SfModal v-model="visible" :title="$t('exportResume')">
     <div class="flex w-[600px] max-w-[90vw] flex-col gap-6">
       <div>
-        <div class="text-lg font-bold">导出格式</div>
+        <div class="text-lg font-bold">{{ $t("exportFormat") }}</div>
         <div class="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2">
           <ExportItem v-for="item in list" :key="item.name" :item="item" @click="item.fn" />
         </div>
       </div>
 
       <div>
-        <div class="text-lg font-bold">简历配置</div>
+        <div class="text-lg font-bold">{{ $t("resumeConfig") }}</div>
         <ExportItem :item="a" @click="a.fn" />
       </div>
     </div>

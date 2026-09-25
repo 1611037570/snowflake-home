@@ -5,6 +5,7 @@ import { CUSTOM_MODULE_ICON, DEFAULT_MODULE_NAMES } from "@/stores/modules/resum
 import eventBus from "@/utils/modules/eventBus";
 import { isFieldHidden, isFieldRemoved } from "@/components/business/dynamicForm/api";
 import { ElNotification } from "element-plus";
+import { $t } from "@/locales";
 import { useResumeSearch, type ResumeSearchHit } from "./hooks/useResumeSearch";
 import { scrollEditorTo } from "./scrollEditorTo";
 
@@ -87,8 +88,8 @@ export const jumpPreview = (key: string) => {
 // 归档模块不在左侧编辑区展示，定位时提示用户先恢复模块
 const notifyArchived = () => {
   ElNotification({
-    title: "模块已归档",
-    message: "请先在左侧恢复归档后再编辑该模块。",
+    title: $t("archived"),
+    message: $t("restoreArchivedBeforeEdit"),
     type: "warning",
     position: "top-right",
     offset: 40,

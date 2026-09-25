@@ -11,6 +11,7 @@ import {
 } from "vue";
 import { storeToRefs } from "pinia";
 import eventBus from "@/utils/modules/eventBus";
+import { $t } from "@/locales";
 import BuilderEditorComponent from "./editor/index.vue";
 // 编辑标签页外壳同步加载，动态表单在首帧后异步挂载
 const BuilderEditor = markRaw(BuilderEditorComponent);
@@ -40,17 +41,17 @@ const { editorWidth, isGenerating } = storeToRefs(resumeStore);
 // 菜单配置
 const menuList = computed(() => [
   {
-    name: "编辑",
+    name: $t("edit"),
     icon: "lucide:file-text",
     component: BuilderEditor,
   },
   {
-    name: "AI",
+    name: $t("ai"),
     icon: "lucide:sparkles",
     component: AsyncAi,
   },
   {
-    name: "模板",
+    name: $t("template"),
     icon: "lucide:layout-template",
     component: AsyncTemplate,
   },

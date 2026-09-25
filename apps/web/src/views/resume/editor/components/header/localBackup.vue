@@ -5,6 +5,7 @@ import { useDebounceFn } from "@vueuse/core";
 import dayjs from "dayjs";
 import { useResumeStore } from "@/stores";
 import { compactConfigFields } from "@/stores/modules/resume/hooks/useConfigTemplate";
+import { $t } from "@/locales";
 import {
   disableLocalBackup,
   enableLocalBackup,
@@ -56,21 +57,23 @@ watch(() => [currentItem.value?.id, backupPath.value], restoreBackupStatus, { im
 
 // 悬浮提示：备份失败时不展示失败时间，改为提示重新授权
 const tooltipContent = computed(() => {
-  if (!localBackupEnabled.value) return "点击开启本地自动备份";
-  if (backupStatus.value === "failed") return `备份目录：${backupPath.value}；备份失败，请重新授权`;
-  return `备份目录：${backupPath.value}${lastBackupTime.value ? `；最近备份：${lastBackupTime.value}` : ""}`;
+  if (!localBackupEnabled.value) return $t("enableLocalBackup");
+  if (backupStatus.value === "failed") {
+    return `${$t("backupDirectory", { path: backupPath.value })}；${$t("backupFailedReauthorize")}`;
+  }
+  return `${$t("backupDirectory", { path: backupPath.value })}${lastBackupTime.value ? $t("latestBackup", { time: lastBackupTime.value }) : ""}`;
 });
 
 const backupState = computed(() => {
   if (!localBackupEnabled.value) {
-    return { label: "未开启", icon: "bi:shield-exclamation", class: "text-sf-warning" };
+    return { label: $t("backupDisabled"), icon: "bi:shield-exclamation", class: "text-sf-warning" };
   }
   if (backupStatus.value === "pending") {
-    return { label: "正在备份", icon: "lucide:loader-circle", class: "text-sf-theme" };
+    return { label: $t("backupPending"), icon: "lucide:loader-circle", class: "text-sf-theme" };
   }
   if (backupStatus.value === "success") {
     return {
-      label: `备份成功 ${dayjs(lastBackupTime.value).format("HH:mm:ss")}`,
+      label: $t("backupSuccess", { time: dayjs(lastBackupTime.value).format("HH:mm:ss") }),
       icon: "bi:shield-check",
       class: "text-sf-success",
     };
@@ -78,13 +81,13 @@ const backupState = computed(() => {
   if (backupStatus.value === "failed") {
     return {
       // 备份失败不展示失败时间，改为引导用户去重新授权
-      label: "备份失败，请重新授权",
+      label: $t("backupFailedReauthorize"),
       icon: "bi:shield-exclamation",
       class: "text-sf-error",
     };
   }
   return {
-    label: "已开启",
+    label: $t("backupEnabled"),
     icon: "bi:shield-check",
     class: "text-sf-text-2",
   };
@@ -175,14 +178,14 @@ const handleReauthorize = async () => {
       </div>
     </SfTooltip>
 
-    <SfModal v-model="visible" title="本地自动备份">
+    <SfModal v-model="visible" :title="$t('localBackup')">
       <div class="flex w-[360px] flex-col gap-4 p-4">
         <div class="flex items-center justify-between">
-          <span class="text-sm text-sf-text-3">绑定位置</span>
-          <span class="text-sm text-sf-text">{{ backupPath || "未绑定" }}</span>
+          <span class="text-sm text-sf-text-3">{{ $t("backupLocation") }}</span>
+          <span class="text-sm text-sf-text">{{ backupPath || $t("unbound") }}</span>
         </div>
         <span v-if="localBackupNeedsAuth" class="text-xs text-sf-warning">
-          备份目录权限已失效，需重新授权后才能继续备份
+          {{ $t("backupPermissionExpired") }}
         </span>
         <SfButton
           v-if="localBackupNeedsAuth"
@@ -190,10 +193,10 @@ const handleReauthorize = async () => {
           type="theme"
           @click="handleReauthorize"
         >
-          重新授权
+          {{ $t("reauthorize") }}
         </SfButton>
         <SfButton class="w-full" :type="localBackupEnabled ? 'error' : 'theme'" @click="handleBind">
-          {{ localBackupEnabled ? "解绑" : "选择目录并绑定" }}
+          {{ localBackupEnabled ? $t("unbind") : $t("chooseAndBind") }}
         </SfButton>
       </div>
     </SfModal>

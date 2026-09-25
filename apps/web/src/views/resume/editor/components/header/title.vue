@@ -58,22 +58,22 @@ function handleCancel() {
       {{ title }}
     </div>
   </div>
-  <SfModal v-model="editTitleVisible" title="重命名简历">
+  <SfModal v-model="editTitleVisible" :title="$t('renameResume')">
     <div class="wf flex max-w-100 flex-col gap-3">
       <div class="flex items-center gap-3">
         <div class="flex-1">
           <SfInput
             @input="handleInput"
             v-model="tempTitle"
-            placeholder="请输入标题"
+            :placeholder="$t('titlePlaceholder')"
             class="w-full rounded-lg border border-sf-b bg-sf-bg"
           />
         </div>
-        <SfButton @click="handleAutoTitle">一键自动</SfButton>
+        <SfButton @click="handleAutoTitle">{{ $t("autoGenerate") }}</SfButton>
       </div>
       <div class="flex justify-end gap-3">
-        <SfButton type="bg" @click="handleCancel">取消</SfButton>
-        <SfButton @click="handleSaveTitle">保存</SfButton>
+        <SfButton type="bg" @click="handleCancel">{{ $t("cancel") }}</SfButton>
+        <SfButton @click="handleSaveTitle">{{ $t("save") }}</SfButton>
       </div>
     </div>
   </SfModal>

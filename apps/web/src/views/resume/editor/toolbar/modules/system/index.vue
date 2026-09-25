@@ -3,6 +3,7 @@ import { ref } from "vue";
 import { storeToRefs } from "pinia";
 import { useResumeStore } from "@/stores";
 import Icon from "../../components/icon.vue";
+import { $t } from "@/locales";
 const { proxy } = getCurrentInstance();
 // 设置弹窗可见性
 const drawerVisible = ref(false);
@@ -11,7 +12,7 @@ const resumeStore = useResumeStore();
 const { system } = storeToRefs(resumeStore);
 
 function resetSettings() {
-  proxy.$confirm(`确认重置所有设置为默认值吗？`, "重置设置确认").then(() => {
+  proxy.$confirm($t("resetAllSettings"), $t("resetSettingsConfirm")).then(() => {
     resumeStore.resetSettings();
   });
 }
@@ -19,63 +20,67 @@ function resetSettings() {
 
 <template>
   <!-- 设置按钮 -->
-  <Icon icon="iconamoon:settings-fill" content="系统设置" @click="drawerVisible = true" />
+  <Icon
+    icon="iconamoon:settings-fill"
+    :content="$t('systemSettings')"
+    @click="drawerVisible = true"
+  />
 
   <!-- 设置弹窗 -->
-  <SfModal v-model="drawerVisible" title="系统设置">
+  <SfModal v-model="drawerVisible" :title="$t('systemSettings')">
     <div class="flex w-[400px] flex-col">
       <!-- 显示设置 -->
-      <SfSetTitle title="显示设置" />
+      <SfSetTitle :title="$t('displaySettings')" />
       <SfSetBox>
         <SfSetItem
-          title="简历完成进度"
-          info="右侧显示简历完成进度"
+          :title="$t('resumeProgress')"
+          :info="$t('resumeProgressInfo')"
           v-model="system.showProgress"
           type="switch"
         />
         <SfSetItem
-          title="调试控制台"
-          info="工具栏显示调试入口"
+          :title="$t('debugConsole')"
+          :info="$t('debugConsoleInfo')"
           v-model="system.showDebug"
           type="switch"
         />
         <SfSetItem
-          title="工具栏工具名称"
-          info="工具按钮旁显示名称"
+          :title="$t('toolbarToolName')"
+          :info="$t('toolbarToolNameInfo')"
           v-model="system.showToolName"
           type="switch"
         />
         <SfSetItem
-          title="新记录默认展开"
-          info="新添加的记录默认展开"
+          :title="$t('newRecordExpanded')"
+          :info="$t('newRecordExpandedInfo')"
           v-model="system.defaultItemExpanded"
           type="switch"
         />
         <SfSetItem
-          title="点击预览定位"
-          info="点击预览模块，定位到左侧编辑区"
+          :title="$t('previewLocate')"
+          :info="$t('previewLocateInfo')"
           v-model="system.previewClickLocate"
           type="switch"
         />
       </SfSetBox>
 
-      <SfSetTitle title="检测设置" />
+      <SfSetTitle :title="$t('detectionSettings')" />
       <SfSetBox>
         <SfSetItem
-          title="浏览器建议检测"
-          info="非谷歌浏览器时弹出建议"
+          :title="$t('browserSuggestion')"
+          :info="$t('browserSuggestionInfo')"
           v-model="system.showBrowserTip"
           type="switch"
         />
       </SfSetBox>
 
       <!-- 数据管理 -->
-      <SfSetTitle title="数据管理" />
+      <SfSetTitle :title="$t('dataManagement')" />
       <SfSetBox>
         <SfSetItem
-          title="重置设置"
-          info="恢复所有设置为默认值"
-          modelValue="重置"
+          :title="$t('resetSettings')"
+          :info="$t('resetSettingsInfo')"
+          :modelValue="$t('reset')"
           @click="resetSettings"
           type="button"
         />

@@ -8,7 +8,7 @@ defineOptions({ name: "ModuleManager" });
   <!-- 原生定位层承载悬浮位置，避免下拉组件内部定位样式使入口占据文档流 -->
   <div class="absolute -top-6 -right-3 z-10">
     <SfDropdown trigger="click" placement="bottom-end" :show-arrow="false">
-      <SfTooltip content="模块管理">
+      <SfTooltip :content="$t('moduleManager')">
         <SfIcon
           icon="mdi:widgets"
           size="5"
