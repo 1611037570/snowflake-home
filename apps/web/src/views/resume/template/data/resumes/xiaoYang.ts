@@ -1,7 +1,7 @@
 import { xiaoyang } from "../avatar";
 
 // 小羊数据
-export const xiaoYangResumeItem: any = {
+const resumeData: any = {
   data: {
     user: {
       ui: {
@@ -324,15 +324,4 @@ export const xiaoYangResumeItem: any = {
   },
 };
 
-export const xiaoYangProgrammerResumeTemplate = {
-  id: "programmer-xiao-yang",
-  name: "小羊",
-  description: "适合前端开发岗位投递的项目经历简历模板",
-  scene: ["social-recruitment"],
-  industry: ["internet"],
-  position: ["web-frontend"],
-  workExperience: ["3-5"],
-  design: ["single-column"],
-  tags: ["前端开发", "项目经历"],
-  item: xiaoYangResumeItem,
-};
+export default resumeData;

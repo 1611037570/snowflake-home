@@ -4,20 +4,37 @@ import { themeTemplateList } from "@/stores/modules/resume/config/uiConfig";
 import ResumeCardContainer from "@/views/resume/mine/components/resumeCardContainer.vue";
 import RevealGrid from "@/views/resume/components/revealGrid.vue";
 import TemplateCategory from "./components/templateCategory.vue";
-import { resumeTemplateHotList } from "./data";
-import { xiaoZhouResumeItem } from "./data/characters/xiaoZhou";
+import { resumeTemplateList } from "./data/list";
+import { loadResumeTemplates } from "./data/resumeData";
 
 // 模板页专用全屏预览组件：异步加载，避免首屏打包体积过大
 const TemplatePreview = markRaw(defineAsyncComponent(() => import("./templatePreview.vue")));
-import { computed, ref } from "vue";
+import { computed, onMounted, ref } from "vue";
 
 const resumeStore = useResumeStore();
+const resumeTemplates = ref([]);
+const templateLoading = ref(true);
+
+// 模板页进入时按索引懒加载范本正文，供卡片缩略图和预览共用。
+onMounted(async () => {
+  try {
+    resumeTemplates.value = await loadResumeTemplates(resumeTemplateList);
+  } catch {
+    ElMessage.error("简历范本暂时无法加载");
+  } finally {
+    templateLoading.value = false;
+  }
+});
 
 // 深拷贝：套用模板时隔离示例数据，避免与模板预览共享引用导致互相串改
 const deepClone = (value) => JSON.parse(JSON.stringify(value));
+const previewBase = computed(
+  () => resumeTemplates.value.find((template) => template.fileName === "xiaoZhou.ts")?.item,
+);
 // 全部模板：小舟提供示例内容，样式模板提供完整 UI。
 const templates = computed(() =>
   themeTemplateList.map((style, index) => ({
+    fileName: style.id,
     id: style.id,
     name: style.name,
     description: style.description,
@@ -25,8 +42,8 @@ const templates = computed(() =>
     type: "style",
     revealIndex: index,
     item: {
-      data: xiaoZhouResumeItem.data,
-      config: xiaoZhouResumeItem.config,
+      data: previewBase.value?.data || {},
+      config: previewBase.value?.config || {},
       ui: style.item.ui,
     },
   })),
@@ -35,7 +52,7 @@ const templates = computed(() =>
 const templateFilters = ref({});
 const currentCategory = ref("scene");
 const filteredResumeTemplates = computed(() =>
-  resumeTemplateHotList
+  resumeTemplates.value
     .filter((template) =>
       Object.entries(templateFilters.value).every(([key, value]) => {
         if (!value) return true;
@@ -61,9 +78,10 @@ const setCurrentCategory = (value) => {
 
 // 套用模板：携带风格，深拷贝数据后新增简历并进入编辑
 const useTemplate = (card) => {
+  if (!previewBase.value) return;
   resumeStore.addResume({
-    data: deepClone(xiaoZhouResumeItem.data),
-    config: deepClone(xiaoZhouResumeItem.config),
+    data: deepClone(previewBase.value.data),
+    config: deepClone(previewBase.value.config),
     ui: deepClone(card.item.ui),
   });
 };
@@ -109,12 +127,16 @@ const gridClass = ref("default");
           @category-change="setCurrentCategory"
           @size-change="setPreviewSize"
         />
+        <div v-if="templateLoading" class="flex h-36 items-center justify-center text-sm text-sf-text-2">
+          正在加载简历范本
+        </div>
         <RevealGrid
+          v-else
           :key="templateGridKey"
           :items="displayedTemplates"
           :size="gridClass"
           :interval="120"
-          key-field="id"
+          key-field="fileName"
         >
           <template #default="{ item: card }">
             <ResumeCardContainer

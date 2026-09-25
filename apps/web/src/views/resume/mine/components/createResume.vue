@@ -1,6 +1,7 @@
 <script setup>
 import { useResumeStore } from "@/stores";
-import { resumeTemplateList } from "@/views/resume/template/data";
+import { resumeTemplateList } from "@/views/resume/template/data/list";
+import { loadResumeTemplates } from "@/views/resume/template/data/resumeData";
 import { useRouter } from "vue-router";
 import ResumeCardContainer from "./resumeCardContainer.vue";
 
@@ -34,7 +35,8 @@ const createOptions = [
 ];
 
 // 首页直接展示简历数据模板，不将样式模板展开为重复卡片。
-const templates = computed(() => resumeTemplateList);
+const templates = ref([]);
+const templateLoading = ref(false);
 
 const reset = () => {
   mode.value = "options";
@@ -57,13 +59,24 @@ const open = () => {
   visible.value = true;
 };
 
-const selectOption = (key) => {
+const selectOption = async (key) => {
   if (key === "blank") {
     resumeStore.addResume();
     close();
     return;
   }
   mode.value = key;
+  if (key === "template") {
+    // 打开模板选择后再加载正文，首页只依赖索引列表。
+    templateLoading.value = true;
+    try {
+      templates.value = await loadResumeTemplates(resumeTemplateList);
+    } catch {
+      ElMessage.error("简历范本暂时无法加载");
+    } finally {
+      templateLoading.value = false;
+    }
+  }
 };
 
 const createQuickResume = () => {
@@ -149,10 +162,13 @@ const goTemplate = () => {
         </div>
         <SfButton plain @click="goTemplate">查看更多</SfButton>
       </div>
-      <div class="grid grid-cols-4 gap-3">
+      <div v-if="templateLoading" class="flex h-36 items-center justify-center text-sm text-sf-text-2">
+        正在加载简历范本
+      </div>
+      <div v-else class="grid grid-cols-4 gap-3">
         <ResumeCardContainer
           v-for="template in templates"
-          :key="template.id"
+          :key="template.fileName"
           :item="template.item"
           class="h-[276px]! w-full!"
           @click="useTemplate(template)"
