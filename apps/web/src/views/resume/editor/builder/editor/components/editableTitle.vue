@@ -26,12 +26,12 @@ function saveTitle() {
     <span class="min-w-0 truncate">{{ modelValue }}</span>
     <Icon @click="openEditModal" icon="lucide:pencil" />
   </div>
-  <SfModal v-model="showEditModal" title="修改标题">
+  <SfModal v-model="showEditModal" :title="$t('editTitle')">
     <form class="flex w-80 flex-col gap-3" @submit.prevent="saveTitle">
-      <SfInput v-model="editedTitle" placeholder="请输入标题" />
+      <SfInput v-model="editedTitle" :placeholder="$t('titlePlaceholder')" />
       <footer class="flex justify-end gap-3">
-        <SfButton type="bg" @click="showEditModal = false">取消</SfButton>
-        <SfButton :disabled="!editedTitle.trim()" @click="saveTitle">保存</SfButton>
+        <SfButton type="bg" @click="showEditModal = false">{{ $t("cancel") }}</SfButton>
+        <SfButton :disabled="!editedTitle.trim()" @click="saveTitle">{{ $t("save") }}</SfButton>
       </footer>
     </form>
   </SfModal>

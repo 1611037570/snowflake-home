@@ -103,12 +103,12 @@ const handleConfirm = () => {
 <template>
   <header class="mt-2 mb-3 flex items-center text-lg font-bold">
     <SfIcon icon="ic:round-add" size="4" class="mr-1" />
-    <div>增加模块</div>
+    <div>{{ $t("addModule") }}</div>
   </header>
 
   <div class="flex w-full flex-col gap-3">
     <div v-if="basicModules.length" class="flex flex-col gap-3">
-      <span class="text-xs text-sf-text-3">基础模块</span>
+        <span class="text-xs text-sf-text-3">{{ $t("basicModules") }}</span>
       <div class="flex flex-wrap gap-3">
         <button
           v-for="item in basicModules"
@@ -124,7 +124,7 @@ const handleConfirm = () => {
     </div>
     <div v-if="otherModules.length" class="flex flex-col gap-3">
       <div class="flex flex-col gap-3">
-        <span class="text-xs text-sf-text-3">其他模块</span>
+        <span class="text-xs text-sf-text-3">{{ $t("otherModules") }}</span>
         <div class="flex flex-wrap gap-3">
           <button
             v-for="item in otherModules"
@@ -142,7 +142,7 @@ const handleConfirm = () => {
             @click="handleAdd({ value: 'custom' })"
           >
             <SfIcon icon="ic:round-add" size="4" />
-            <span>自定义模块</span>
+            <span>{{ $t("customModule") }}</span>
           </button>
         </div>
       </div>

@@ -6,6 +6,7 @@ import { scrollEditorTo } from "../../../scrollEditorTo";
 import eventBus from "@/utils/modules/eventBus";
 import Icon from "../icon.vue";
 import EditableTitle from "./editableTitle.vue";
+import { $t } from "@/locales";
 const { proxy } = getCurrentInstance();
 
 defineProps({
@@ -42,7 +43,7 @@ const hidden = defineModel("hidden", {
 });
 
 function del() {
-  proxy.$confirm(`确定要删除${title.value}模块吗？`, "删除确认").then(() => {
+  proxy.$confirm($t("deleteModuleConfirm", { name: title.value }), $t("deleteConfirm")).then(() => {
     resumeStore.removeModule(currentForm.value.key);
   });
 }
@@ -59,8 +60,8 @@ function handlePreviewJump() {
 function archiveModule() {
   proxy
     .$confirm(
-      `归档后，模块将从编辑器域移除，便于专注其他模块；预览区仍会正常显示，可恢复，不影响打印效果。`,
-      "归档确认",
+      $t("archiveMessage"),
+      $t("archiveConfirm"),
     )
     .then(() => {
       resumeStore.setModuleArchived(currentForm.value.key, true);
@@ -103,13 +104,13 @@ function handleAdd() {
             <EditableTitle v-model="title" />
           </div>
           <div class="flex items-center">
-            <SfTooltip content="定位预览" v-if="!hidden">
+            <SfTooltip :content="$t('locatePreview')" v-if="!hidden">
               <Icon @click.stop="handlePreviewJump" icon="mdi:map-search-outline" />
             </SfTooltip>
-            <SfTooltip content="归档">
+            <SfTooltip :content="$t('archive')">
               <Icon @click.stop="archiveModule" icon="lucide:archive" size="4" />
             </SfTooltip>
-            <SfTooltip :content="hidden ? '显示' : '隐藏'">
+            <SfTooltip :content="hidden ? $t('show') : $t('hide')">
               <Icon
                 @click.stop="toggleHidden"
                 :icon="hidden ? 'lucide:eye' : 'lucide:eye-off'"
@@ -134,7 +135,7 @@ function handleAdd() {
           v-if="add"
         >
           <SfIcon icon="ic:round-add" size="4" />
-          <span> 增加{{ title }} </span>
+          <span>{{ $t("addRecord", { name: title }) }}</span>
         </div>
       </template>
     </SfCollapseItem>

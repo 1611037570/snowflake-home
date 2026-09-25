@@ -1,4 +1,5 @@
 <script setup>
+import { $t } from "@/locales";
 import { EXPANDED } from "@/stores/modules/resume/config/formConfig";
 import { useFormContext } from "@/components/business/dynamicForm/api";
 import Icon from "../icon.vue";
@@ -21,10 +22,10 @@ const hidden = defineModel("hidden", {
 const { removeCurrent } = useFormContext();
 
 // 标题：统一走 name 数据源，空值占位符兜底
-const displayTitle = computed(() => name.value || "尚未填写");
+const displayTitle = computed(() => name.value || $t("notFilled"));
 
 function del() {
-  proxy.$confirm(`确定要删除${name.value}吗？`, "删除确认").then(() => {
+  proxy.$confirm($t("deleteItemMessage", { name: name.value }), $t("deleteConfirm")).then(() => {
     removeCurrent();
   });
 }
@@ -40,7 +41,7 @@ function del() {
             <span class="truncate">{{ displayTitle }}</span>
           </div>
           <div class="flex shrink-0 items-center">
-            <SfTooltip :content="hidden ? '显示' : '隐藏'">
+            <SfTooltip :content="hidden ? $t('show') : $t('hide')">
               <Icon
                 :icon="hidden ? 'lucide:eye' : 'lucide:eye-off'"
                 @click.stop="hidden = !hidden"

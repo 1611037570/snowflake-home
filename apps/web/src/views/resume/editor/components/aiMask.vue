@@ -17,7 +17,7 @@ const props = defineProps({
         <SfIcon icon="lucide:sparkles" size="4" class="" />
         <span class="text-sm font-semibold">小舟AI</span>
       </div>
-      <div class="text-xs text-sf-text-3">正在处理中，请稍候，内容即将呈现</div>
+      <div class="text-xs text-sf-text-3">{{ $t("aiProcessing") }}</div>
       <SfIcon icon="ph:stop-circle-fill" size="7" class="text-sf-error" />
     </div>
   </div>

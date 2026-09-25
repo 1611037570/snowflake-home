@@ -8,6 +8,7 @@ import {
   unwrapField,
   walkFormFields,
 } from "@/components/business/dynamicForm/api";
+import { $t } from "@/locales";
 
 // ==================== 工具函数 ====================
 
@@ -37,7 +38,7 @@ const isContentEmpty = (val: any): boolean => {
   );
 };
 
-const getLabel = (field: any, prop: string): string => getFieldLabel(field) || prop || "字段";
+const getLabel = (field: any, prop: string): string => getFieldLabel(field) || prop || $t("field");
 
 // 模块名称优先读取 ui.title，缺失时回退标题模型默认值
 const getModuleTitle = (config: any, rootData: Record<string, any>, key: string): string =>
@@ -90,7 +91,7 @@ function analyzeModule(moduleConfig: any, rootData: any) {
           if (!missing.includes(label)) missing.push(label);
         }
         if (hasRequired) {
-          const groupLabel = getFieldLabel(itemSchema) || "内容";
+          const groupLabel = getFieldLabel(itemSchema) || $t("content");
           if (!missing.includes(groupLabel)) missing.push(groupLabel);
         }
         continue;
@@ -167,9 +168,9 @@ const currentMonth = () => {
 const formatGap = (months: number) => {
   const years = Math.floor(months / 12);
   const rest = months % 12;
-  if (years && rest) return `${years}年${rest}个月`;
-  if (years) return `${years}年`;
-  return `${rest}个月`;
+  if (years && rest) return $t("gapYearsMonths", { years, months: rest });
+  if (years) return $t("gapYears", { years });
+  return $t("gapMonths", { months: rest });
 };
 
 function checkTimeline(modules: Array<{ key: string; config: any }>, rootData: any) {
@@ -223,7 +224,11 @@ function checkTimeline(modules: Array<{ key: string; config: any }>, rootData: a
       if (gap > GAP_THRESHOLD_MONTHS) {
         issues.push({
           type: "gap",
-          text: `「${sorted[i + 1].name || "未命名"}」与上一段「${sorted[i].name || "未命名"}」之间存在 ${formatGap(gap)} 空档，可考虑补充或说明`,
+          text: $t("timelineGapMessage", {
+            current: sorted[i + 1].name || $t("unnamed"),
+            previous: sorted[i].name || $t("unnamed"),
+            gap: formatGap(gap),
+          }),
         });
       }
     }

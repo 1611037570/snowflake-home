@@ -16,7 +16,7 @@ import {
   MAX_USER_SUBTITLE,
 } from "@/stores/modules/resume/hooks/useUserSubtitle";
 import { storeToRefs } from "pinia";
-import i18n from "@/locales";
+import i18n, { $t } from "@/locales";
 import { getLocalizedIconCategories } from "../../../icons/iconCategories";
 // 包裹组的模型绑定只用于状态透传，不落成根元素属性
 defineOptions({ inheritAttrs: false });
@@ -73,10 +73,10 @@ const subtitleCount = computed(() => getUserSubtitleKeys(currentData.value?.user
 const subtitleFull = computed(() => !isSubtitle.value && subtitleCount.value >= MAX_USER_SUBTITLE);
 // 副标题按钮提示：区分取消、已达上限、内容为空与可标记
 const subtitleTip = computed(() => {
-  if (isSubtitle.value) return "取消副标题";
-  if (subtitleFull.value) return `最多标记 ${MAX_USER_SUBTITLE} 个副标题`;
-  if (!hasUserFieldContent(currentData.value, fieldKey.value)) return "填写内容后可置顶";
-  return "标记为副标题";
+  if (isSubtitle.value) return $t("cancelSubtitle");
+  if (subtitleFull.value) return $t("subtitleLimit", { count: MAX_USER_SUBTITLE });
+  if (!hasUserFieldContent(currentData.value, fieldKey.value)) return $t("fillBeforePin");
+  return $t("markSubtitle");
 });
 // 重命名弹窗与临时标题
 const showRenameModal = ref(false);
@@ -165,7 +165,7 @@ const clearField = () => {
             :class="[isSubtitle ? 'text-sf-theme' : '', subtitleFull ? 'opacity-50' : '']"
           />
         </SfTooltip>
-        <SfTooltip v-if="hidden !== undefined" :content="hidden ? '显示' : '隐藏'">
+        <SfTooltip v-if="hidden !== undefined" :content="hidden ? $t('show') : $t('hide')">
           <Icon
             @pointerdown.stop.prevent
             @click="toggleHidden"
@@ -188,12 +188,12 @@ const clearField = () => {
     </div>
   </div>
   <!-- 重命名弹窗：仅自定义字段需要 -->
-  <SfModal v-if="isCustomField" v-model="showRenameModal" title="修改字段名称">
+  <SfModal v-if="isCustomField" v-model="showRenameModal" :title="$t('editFieldName')">
     <form class="flex w-80 flex-col gap-3" @submit.prevent="handleRename">
-      <SfInput v-model="fieldLabel" placeholder="请输入字段名称" />
+      <SfInput v-model="fieldLabel" :placeholder="$t('fieldNamePlaceholder')" />
       <footer class="flex justify-end gap-3">
-        <SfButton type="bg" @click="showRenameModal = false">取消</SfButton>
-        <SfButton :disabled="!fieldLabel.trim()" @click="handleRename">保存</SfButton>
+        <SfButton type="bg" @click="showRenameModal = false">{{ $t("cancel") }}</SfButton>
+        <SfButton :disabled="!fieldLabel.trim()" @click="handleRename">{{ $t("save") }}</SfButton>
       </footer>
     </form>
   </SfModal>

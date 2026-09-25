@@ -7,11 +7,11 @@ import { useResumeStore } from "@/stores";
 import { storeToRefs } from "pinia";
 import { computed, h, onBeforeUnmount, onMounted, watch } from "vue";
 import { ElNotification } from "element-plus";
+import { $t } from "@/locales";
 
 const resumeStore = useResumeStore();
 const { system } = storeToRefs(resumeStore);
 
-const RECOMMEND_BROWSER = "谷歌浏览器";
 const DOWNLOAD_URL = "https://www.google.cn/intl/zh-CN/chrome/";
 
 // ---------- 浏览器检测 ----------
@@ -44,9 +44,9 @@ function closeBrowserTip() {
 function createBrowserTip() {
   if (browserTipInstance) return;
   browserTipInstance = ElNotification({
-    title: "浏览器建议",
+    title: $t("browserSuggestionTitle"),
     message: h("div", { class: "flex flex-col items-start gap-2" }, [
-      h("span", `推荐使用${RECOMMEND_BROWSER}获得最佳体验，当前浏览器可能会遇到兼容性或性能问题。`),
+      h("span", $t("browserSuggestionMessage")),
       h("div", { class: "flex items-center gap-2" }, [
         h(
           "a",
@@ -55,7 +55,7 @@ function createBrowserTip() {
             target: "_blank",
             class: "rounded-full bg-sf-theme px-3 py-1 text-sm text-sf-theme-text",
           },
-          `去下载${RECOMMEND_BROWSER}`,
+          $t("downloadBrowser"),
         ),
         h(
           "button",
@@ -68,7 +68,7 @@ function createBrowserTip() {
               closeBrowserTip();
             },
           },
-          "不再提醒",
+          $t("neverRemind"),
         ),
       ]),
     ]),

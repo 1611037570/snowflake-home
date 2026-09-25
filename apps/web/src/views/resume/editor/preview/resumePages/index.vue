@@ -26,6 +26,7 @@ import {
   previewSelectedModule,
 } from "../../useModuleNav";
 import eventBus from "@/utils/modules/eventBus";
+import { $t } from "@/locales";
 
 const resumeStore = useResumeStore();
 const { selectedModule, system } = storeToRefs(resumeStore);
@@ -307,8 +308,8 @@ defineExpose({ rootEl: rootRef, measureEl: rootRef, pages, pagePlan });
             <SfIcon icon="lucide:file-text" size="7" class="text-sf-theme" />
           </div>
           <div class="flex flex-col gap-3">
-            <span class="text-lg font-black text-black">当前还没有数据</span>
-            <span class="text-sm text-sf-text-2">尝试输入一点内容吧</span>
+            <span class="text-lg font-black text-black">{{ $t("emptyResumeTitle") }}</span>
+            <span class="text-sm text-sf-text-2">{{ $t("emptyResumeTip") }}</span>
           </div>
         </div>
       </ResumePageShell>

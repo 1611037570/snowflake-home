@@ -134,20 +134,20 @@ const removeImage = () => {
       <div
         class="border-sf-border group relative flex cursor-pointer items-center justify-center overflow-hidden rounded-lg border border-dashed text-sf-text-3 transition-colors hover:border-sf-theme hover:text-sf-theme"
         :style="{ width: `${DISPLAY_WIDTH}px`, height: `${DISPLAY_HEIGHT}px` }"
-        :title="image ? '更换头像' : '上传头像'"
+        :title="image ? $t('changeAvatar') : $t('uploadAvatar')"
         @click="uploadVisible = true"
       >
-        <img v-if="image" :src="image" alt="图片" class="h-full w-full shrink-0 object-cover" />
+        <img v-if="image" :src="image" :alt="$t('uploadAvatarImage')" class="h-full w-full shrink-0 object-cover" />
         <!-- 已上传时鼠标悬停显示"更换头像"遮罩提示 -->
         <div
           v-if="image"
           class="absolute inset-0 flex items-center justify-center bg-black/50 text-xs text-white opacity-0 transition-opacity group-hover:opacity-100"
         >
-          更换头像
+          {{ $t("changeAvatar") }}
         </div>
         <div v-else class="flex h-full w-full flex-col items-center justify-center gap-1">
           <SfIcon icon="mdi:image-plus" size="6" />
-          <span class="text-xs">上传图片</span>
+          <span class="text-xs">{{ $t("uploadAvatarImage") }}</span>
         </div>
       </div>
 
@@ -155,39 +155,39 @@ const removeImage = () => {
       <div v-if="image" class="flex h-full flex-col gap-1">
         <div
           class="flex cursor-pointer items-center gap-1 rounded-md px-1 py-1 transition-colors hover:text-sf-theme"
-          title="删除图片"
+          :title="$t('deleteImage')"
           @click="removeImage"
         >
           <SfIcon icon="ic:round-delete" size="5" />
-          <span class="text-xs">删除</span>
+          <span class="text-xs">{{ $t("delete") }}</span>
         </div>
         <div
           class="flex cursor-pointer items-center gap-1 rounded-md px-1 py-1 transition-colors hover:text-sf-theme"
-          title="重新上传"
+          :title="$t('reuploadImage')"
           @click="openPicker"
         >
           <SfIcon icon="ic:round-file-upload" size="5" />
-          <span class="text-xs">重新上传</span>
+          <span class="text-xs">{{ $t("reuploadImage") }}</span>
         </div>
         <div
           class="flex cursor-pointer items-center gap-1 rounded-md px-1 py-1 transition-colors hover:text-sf-theme"
           @click="previewVisible = true"
         >
           <SfIcon icon="ic:round-zoom-in" size="5" />
-          <span class="text-xs">查看图片</span>
+          <span class="text-xs">{{ $t("viewImage") }}</span>
         </div>
       </div>
     </div>
     <div class="flex cursor-pointer items-center gap-1 text-[11px] text-sf-text-2">
-      该功能由
+      {{ $t("providedBy") }}
       <span @click="goImageTools" class="hover:text-sf-theme">{{ $t("core.router.image") }}</span>
-      提供技术支持
+      {{ $t("techSupport") }}
     </div>
     <!-- 图片查看器：点击查看上传的大图 -->
     <el-image-viewer v-if="previewVisible" :url-list="[image]" @close="previewVisible = false" />
 
     <!-- 上传弹窗：点击头像先进入弹窗，再从弹窗选择或拖入图片 -->
-    <SfModal v-model="uploadVisible" title="上传头像" width="400px">
+    <SfModal v-model="uploadVisible" :title="$t('uploadAvatar')" width="400px">
       <div
         ref="dropZoneRef"
         class="border-sf-border flex cursor-pointer flex-col items-center justify-center gap-3 rounded-xl border border-dashed bg-sf-primary px-6 py-9 text-sf-text-2 transition-colors hover:border-sf-theme hover:text-sf-theme"
@@ -195,8 +195,8 @@ const removeImage = () => {
         @click="pickFromModal"
       >
         <SfIcon icon="mdi:image-plus" size="8" />
-        <span class="text-sm">点击选择图片，或将图片拖到此处</span>
-        <span class="text-xs text-sf-text-3">支持 JPG、PNG 等常见图片格式</span>
+        <span class="text-sm">{{ $t("chooseOrDropImage") }}</span>
+        <span class="text-xs text-sf-text-3">{{ $t("imageFormatSupport") }}</span>
       </div>
       <!-- 上传建议默认收起，避免干扰用户选择图片 -->
       <SfCollapse :border="true" class="mt-3 rounded-xl bg-sf-bg px-3">
@@ -204,34 +204,34 @@ const removeImage = () => {
           <template #title>
             <div class="flex items-center gap-3 text-sm text-sf-text-2">
               <SfIcon icon="mdi:help-circle-outline" size="4" />
-              <span>简历是否需要放照片？</span>
+              <span>{{ $t("resumePhotoQuestion") }}</span>
             </div>
           </template>
           <div class="flex flex-col gap-3 text-xs leading-6 text-sf-text-2">
-            <p>是否放照片：私企、国企和中文简历一般建议放；外企和英文简历通常可不放。</p>
-            <p>如果决定放照片，请使用证件照或职业照，避免使用生活照和AI生成的照片。</p>
+            <p>{{ $t("photoUsageTip") }}</p>
+            <p>{{ $t("photoUsageAdvice") }}</p>
           </div>
         </SfCollapseItem>
         <SfCollapseItem name="avatar-tips">
           <template #title>
             <div class="flex items-center gap-3 text-sm text-sf-text-2">
               <SfIcon icon="mdi:lightbulb-outline" size="4" />
-              <span>照片拍摄建议</span>
+              <span>{{ $t("photoAdvice") }}</span>
             </div>
           </template>
           <div class="flex flex-col gap-3 text-xs leading-6 text-sf-text-2">
-            <p>裁剪：头顶留少量空间，露出肩部，避免只拍大头照。</p>
-            <p>底色：推荐白色、蓝色或灰色，红色背景一般不建议。</p>
-            <p>形象：自然微笑，头发整洁，尽量不要遮挡面部。</p>
-            <p>着装：金融等正式行业可穿西装；互联网行业可选深色衬衫或 T 恤。</p>
-            <p class="text-sf-text-3">图片会按当前头像框比例裁剪并压缩，仅用于简历头像展示。</p>
+            <p>{{ $t("photoCropAdvice") }}</p>
+            <p>{{ $t("photoBackgroundAdvice") }}</p>
+            <p>{{ $t("photoAppearanceAdvice") }}</p>
+            <p>{{ $t("photoClothingAdvice") }}</p>
+            <p class="text-sf-text-3">{{ $t("photoProcessingTip") }}</p>
           </div>
         </SfCollapseItem>
       </SfCollapse>
     </SfModal>
 
     <!-- 裁切弹窗：上传后先按组件宽高比裁切，确认后再压缩 -->
-    <SfModal v-model="cropVisible" title="裁剪图片" width="720px">
+    <SfModal v-model="cropVisible" :title="$t('cropImage')" width="720px">
       <!-- 裁剪区域：最大化利用空间 -->
       <div
         class="cropper-box flex w-full items-center justify-center overflow-hidden rounded-xl bg-sf-bg"
@@ -240,16 +240,16 @@ const removeImage = () => {
           v-if="cropSrc"
           ref="cropImgRef"
           :src="cropSrc"
-          alt="裁剪图片"
+          :alt="$t('cropImageAlt')"
           class="max-w-full"
           @load="initCropper"
         />
       </div>
       <!-- 底部操作栏 -->
       <footer class="mt-4 flex justify-end gap-3">
-        <el-button @click="resetCrop">重置</el-button>
-        <el-button @click="handleCancelCrop">取消</el-button>
-        <el-button type="primary" @click="handleConfirmCrop">确认</el-button>
+        <el-button @click="resetCrop">{{ $t("resetCrop") }}</el-button>
+        <el-button @click="handleCancelCrop">{{ $t("cancel") }}</el-button>
+        <el-button type="primary" @click="handleConfirmCrop">{{ $t("confirmAction") }}</el-button>
       </footer>
     </SfModal>
   </div>

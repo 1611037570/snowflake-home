@@ -7,8 +7,8 @@ const props = defineProps({
 });
 const emit = defineEmits(["select"]);
 const panelOptions = [
-  { value: "edit", label: "编辑", icon: "lucide:file-text" },
-  { value: "preview", label: "预览", icon: "lucide:eye" },
+  { value: "edit", label: "edit", icon: "lucide:file-text" },
+  { value: "preview", label: "resumePreview", icon: "lucide:eye" },
 ];
 </script>
 
@@ -17,7 +17,7 @@ const panelOptions = [
   <nav class="relative w-full">
     <div
       class="relative z-30 mx-auto flex w-fit shrink-0 items-center gap-1 self-center rounded-t-3xl border border-sf-b bg-sf-primary p-1"
-      aria-label="简历工作区"
+      :aria-label="$t('resumePreview')"
     >
       <!-- 底部切换只控制编辑与预览面板。 -->
       <button
@@ -32,7 +32,7 @@ const panelOptions = [
         @click="emit('select', option.value)"
       >
         <SfIcon :icon="option.icon" size="4" />
-        <span>{{ option.label }}</span>
+        <span>{{ $t(option.label) }}</span>
       </button>
     </div>
   </nav>

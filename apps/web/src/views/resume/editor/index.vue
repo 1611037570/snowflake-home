@@ -41,9 +41,9 @@
         <!-- 智能一页压缩浮层：与导出共用遮罩，屏蔽试参数过程中的排版变化 -->
         <ExportMask
           v-if="isFittingOnePage"
-          title="正在压缩为一页"
-          tip="正在调整排版参数"
-          cancel-text="取消压缩"
+          :title="$t('compressingOnePage')"
+          :tip="$t('adjustingLayout')"
+          :cancel-text="$t('cancelCompression')"
           @cancel="cancelFittingOnePage"
         />
       </Teleport>
@@ -60,7 +60,7 @@
       @click="setFocusMode(false)"
     >
       <SfIcon icon="carbon:minimize" size="5" />
-      <span>退出专注</span>
+      <span>{{ $t("exitFocus") }}</span>
     </div>
     <!-- 非推荐浏览器时显示建议提示 -->
     <DetectTip />

@@ -38,7 +38,7 @@ const weightOptions = Array.from({ length: 121 }, (_, index) => {
 <template>
   <div class="flex w-full flex-col gap-3">
     <label class="flex items-center gap-1">
-      <span class="text-sm text-sf-text-3">身高</span>
+      <span class="text-sm text-sf-text-3">{{ $t("height") }}</span>
       <div class="flex-1">
         <SfSelect
           v-model="height"
@@ -47,14 +47,14 @@ const weightOptions = Array.from({ length: 121 }, (_, index) => {
           allow-create
           default-first-option
           clearable
-          placeholder="选择或输入身高"
+          :placeholder="$t('heightPlaceholder')"
           class="w-full"
         />
       </div>
       <span class="shrink-0 text-sm text-sf-text-2">cm</span>
     </label>
     <label class="flex items-center gap-1">
-      <span class="text-sm text-sf-text-3">体重</span>
+      <span class="text-sm text-sf-text-3">{{ $t("weight") }}</span>
       <div class="flex-1">
         <SfSelect
           v-model="weight"
@@ -63,7 +63,7 @@ const weightOptions = Array.from({ length: 121 }, (_, index) => {
           allow-create
           default-first-option
           clearable
-          placeholder="选择或输入体重"
+          :placeholder="$t('weightPlaceholder')"
           class="w-full"
         />
       </div>

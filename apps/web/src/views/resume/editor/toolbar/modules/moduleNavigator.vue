@@ -2,11 +2,12 @@
 // 模块管理：右侧工具栏入口复用统一的模块管理内容
 import Icon from "../components/icon.vue";
 import ModuleManagerContent from "../../components/moduleManager/content.vue";
+import { $t } from "@/locales";
 </script>
 
 <template>
   <SfDropdown trigger="click" placement="left-start" :show-arrow="false">
-    <Icon icon="mdi:widgets" size="5" content="模块管理" />
+    <Icon icon="mdi:widgets" size="5" :content="$t('moduleManager')" />
     <template #dropdown>
       <ModuleManagerContent />
     </template>

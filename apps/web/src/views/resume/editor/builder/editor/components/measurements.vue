@@ -38,7 +38,7 @@ const measurementOptions = Array.from({ length: 101 }, (_, index) => {
 <template>
   <div class="flex w-full flex-col gap-3">
     <label class="flex items-center gap-1">
-      <span class="text-sm text-sf-text-3">胸围</span>
+      <span class="text-sm text-sf-text-3">{{ $t("bust") }}</span>
       <div class="flex-1">
         <SfSelect
           v-model="bust"
@@ -47,14 +47,14 @@ const measurementOptions = Array.from({ length: 101 }, (_, index) => {
           allow-create
           default-first-option
           clearable
-          placeholder="选择或输入胸围"
+          :placeholder="$t('bustPlaceholder')"
           class="w-full"
         />
       </div>
       <span class="shrink-0 text-xs text-sf-text-2">cm</span>
     </label>
     <label class="flex items-center gap-1">
-      <span class="text-sm text-sf-text-3">腰围</span>
+      <span class="text-sm text-sf-text-3">{{ $t("waist") }}</span>
       <div class="flex-1">
         <SfSelect
           v-model="waist"
@@ -63,14 +63,14 @@ const measurementOptions = Array.from({ length: 101 }, (_, index) => {
           allow-create
           default-first-option
           clearable
-          placeholder="选择或输入腰围"
+          :placeholder="$t('waistPlaceholder')"
           class="w-full"
         />
       </div>
       <span class="shrink-0 text-xs text-sf-text-2">cm</span>
     </label>
     <label class="flex items-center gap-1">
-      <span class="text-sm text-sf-text-3">臀围</span>
+      <span class="text-sm text-sf-text-3">{{ $t("hip") }}</span>
       <div class="flex-1">
         <SfSelect
           v-model="hip"
@@ -79,7 +79,7 @@ const measurementOptions = Array.from({ length: 101 }, (_, index) => {
           allow-create
           default-first-option
           clearable
-          placeholder="选择或输入臀围"
+          :placeholder="$t('hipPlaceholder')"
           class="w-full"
         />
       </div>

@@ -34,27 +34,27 @@ const moveButtonClass =
 
 <template>
   <div class="absolute -top-3 -right-3 z-10 flex items-center gap-1">
-    <SfTooltip v-if="directions.up" content="上移">
+    <SfTooltip v-if="directions.up" :content="$t('moveUp')">
       <div :class="moveButtonClass" @click.stop="emit('move', 'up')">
         <SfIcon icon="lucide:arrow-up" size="3.5" />
       </div>
     </SfTooltip>
-    <SfTooltip v-if="directions.down" content="下移">
+    <SfTooltip v-if="directions.down" :content="$t('moveDown')">
       <div :class="moveButtonClass" @click.stop="emit('move', 'down')">
         <SfIcon icon="lucide:arrow-down" size="3.5" />
       </div>
     </SfTooltip>
-    <SfTooltip v-if="directions.left" content="移到左栏">
+    <SfTooltip v-if="directions.left" :content="$t('moveLeft')">
       <div :class="moveButtonClass" @click.stop="emit('move', 'left')">
         <SfIcon icon="lucide:arrow-left" size="3.5" />
       </div>
     </SfTooltip>
-    <SfTooltip v-if="directions.right" content="移到右栏">
+    <SfTooltip v-if="directions.right" :content="$t('moveRight')">
       <div :class="moveButtonClass" @click.stop="emit('move', 'right')">
         <SfIcon icon="lucide:arrow-right" size="3.5" />
       </div>
     </SfTooltip>
-    <SfTooltip :content="isSelected ? '取消选择' : '选择模块'">
+    <SfTooltip :content="isSelected ? $t('cancelSelection') : $t('selectModule')">
       <div
         class="cursor-pointer items-center justify-center rounded-full p-1.5 text-white shadow hover:bg-sf-theme"
         :class="isSelected ? 'flex bg-sf-theme ' : 'hidden bg-sf-info group-hover/module:flex '"

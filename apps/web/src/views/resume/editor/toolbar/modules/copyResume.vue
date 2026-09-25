@@ -4,6 +4,7 @@ import { ElNotification } from "element-plus";
 import { h } from "vue";
 import { useRouter } from "vue-router";
 import Icon from "../components/icon.vue";
+import { $t } from "@/locales";
 
 const router = useRouter();
 const resumeStore = useResumeStore();
@@ -17,9 +18,9 @@ function copyResume() {
     router.push({ path: "/resume/editor", query: { id: copiedId } });
   };
   notification = ElNotification({
-    title: "复制成功",
+    title: $t("copySuccess"),
     message: h("div", { class: "flex items-center gap-3" }, [
-      h("span", "已创建一份新的简历"),
+      h("span", $t("copyCreated")),
       h(
         "button",
         {
@@ -27,7 +28,7 @@ function copyResume() {
           class: "cursor-pointer rounded-full bg-sf-theme px-3 py-1 text-sm text-sf-theme-text",
           onClick: switchResume,
         },
-        "切换",
+        $t("switchResume"),
       ),
     ]),
     position: "top-right",
@@ -39,5 +40,5 @@ function copyResume() {
 </script>
 
 <template>
-  <Icon icon="lucide:copy" size="5" content="复制简历" @click="copyResume" />
+  <Icon icon="lucide:copy" size="5" :content="$t('copyResume')" @click="copyResume" />
 </template>

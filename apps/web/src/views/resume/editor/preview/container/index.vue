@@ -193,7 +193,7 @@ useResizeObserver(contentRef, ([entry]) => {
         </template>
       </SfDropdown>
 
-      <SfTooltip content="全屏">
+      <SfTooltip :content="$t('fullscreen')">
         <SfIcon
           icon="lucide:maximize"
           size="5"
@@ -203,7 +203,7 @@ useResizeObserver(contentRef, ([entry]) => {
         />
       </SfTooltip>
 
-      <SfTooltip v-if="selectedModule.length" content="清空选中">
+      <SfTooltip v-if="selectedModule.length" :content="$t('clearSelection')">
         <SfIcon
           icon="lucide:circle-slash"
           size="5"
@@ -242,7 +242,7 @@ useResizeObserver(contentRef, ([entry]) => {
         </div>
       </div>
     </SfScrollbar>
-    <SfTooltip v-if="showBackTop" content="回到顶部" class="absolute right-12 bottom-12 z-10">
+    <SfTooltip v-if="showBackTop" :content="$t('backToTop')" class="absolute right-12 bottom-12 z-10">
       <SfIcon
         @click="handleBackTop"
         icon="mingcute:up-line"

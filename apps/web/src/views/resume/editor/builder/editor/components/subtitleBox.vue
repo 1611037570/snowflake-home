@@ -34,8 +34,8 @@ watch(fieldKeys, () => {
   <div v-if="renderable" class="w-full rounded-3xl border border-sf-b p-3">
     <!-- 分区标题：说明字段的展示位置与排序方式 -->
     <div class="mb-3 flex items-center gap-3 text-sm text-sf-text-2">
-      <span>副标题</span>
-      <span>拖拽排序，展示在姓名下方</span>
+      <span>{{ $t("subtitle") }}</span>
+      <span>{{ $t("subtitleTip") }}</span>
     </div>
     <slot />
   </div>

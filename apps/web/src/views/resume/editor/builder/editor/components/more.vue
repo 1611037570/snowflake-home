@@ -93,7 +93,7 @@ function handleCreateCustomField() {
       class="flex cursor-pointer items-center gap-3 pt-3 text-sm text-sf-theme transition-colors"
       @click="toggle"
     >
-      <span>{{ expanded ? "收起更多" : "展开更多" }}</span>
+      <span>{{ expanded ? $t("collapseMore") : $t("expandMore") }}</span>
       <SfIcon :icon="expanded ? 'fa6-solid:caret-up' : 'fa6-solid:caret-down'" size="3" />
     </button>
     <!-- 展开后按分类展示尚未添加的字段 -->
@@ -119,7 +119,7 @@ function handleCreateCustomField() {
         @click="handleCreateCustomField"
       >
         <SfIcon icon="ic:round-add" size="4" />
-        <span>自定义字段</span>
+        <span>{{ $t("customField") }}</span>
       </button>
     </div>
   </div>
