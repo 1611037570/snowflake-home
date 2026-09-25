@@ -4,34 +4,38 @@
       <Header v-if="!focusMode" />
     </Transition>
     <div v-if="currentIndex >= 0" class="relative flex w-full min-w-0 flex-1 overflow-hidden">
-      <!-- 左侧操作栏 -->
-      <Transition name="resume-builder" appear>
+      <!-- 左侧操作栏：移动端自左侧滑动进出 -->
+      <Transition :name="isMobile ? 'mobile-panel-left' : 'resume-builder'" appear>
         <Builder
           v-show="!isMobile || mobilePanel === 'edit'"
+          class="mobile-panel"
           :class="{ 'ai-generating': isGenerating }"
         />
       </Transition>
-      <div
-        v-show="!isMobile || mobilePanel === 'preview'"
-        class="relative flex min-w-0 flex-1 overflow-hidden"
-      >
-        <!-- 中间预览栏 -->
-        <div class="relative flex min-w-0 flex-1">
-          <Transition name="resume-preview" appear>
-            <Preview :class="{ 'ai-generating': isGenerating }" />
-          </Transition>
-        </div>
-        <!-- 最右侧系统配置栏：工具栏与 QA 入口整体垂直居中 -->
-        <Transition name="resume-toolbar" appear>
-          <div
-            v-if="!focusMode && !isMobile"
-            class="relative flex h-full flex-col items-center justify-center gap-3"
-          >
-            <Toolbar />
+      <!-- 预览栏：移动端自右侧滑动进出，非移动端不需要切换动画 -->
+      <Transition :name="isMobile ? 'mobile-panel-right' : ''">
+        <div
+          v-show="!isMobile || mobilePanel === 'preview'"
+          class="mobile-panel relative flex min-w-0 flex-1 overflow-hidden"
+        >
+          <!-- 中间预览栏 -->
+          <div class="relative flex min-w-0 flex-1">
+            <Transition name="resume-preview" appear>
+              <Preview :class="{ 'ai-generating': isGenerating }" />
+            </Transition>
           </div>
-        </Transition>
-        <AiMask :visible="isGenerating" />
-      </div>
+          <!-- 最右侧系统配置栏：工具栏与 QA 入口整体垂直居中 -->
+          <Transition name="resume-toolbar" appear>
+            <div
+              v-if="!focusMode && !isMobile"
+              class="relative flex h-full flex-col items-center justify-center gap-3"
+            >
+              <Toolbar />
+            </div>
+          </Transition>
+          <AiMask :visible="isGenerating" />
+        </div>
+      </Transition>
       <!-- 导出加载浮层：teleport 到 body 全屏展示 -->
       <Teleport to="body">
         <ExportMask v-if="isPrinting" @cancel="cancelPrinting" />
@@ -239,5 +243,32 @@ onUnmounted(() => {
 
 .resume-preview-leave-to {
   opacity: 0;
+}
+
+/* 移动端两面板改为叠层：切换过程中互不挤压布局 */
+@media (max-width: 767px) {
+  .mobile-panel {
+    position: absolute !important;
+    inset: 0;
+  }
+}
+
+/* 移动端切换：编辑区自左侧、预览区自右侧进出，形成滑块式滑动 */
+.mobile-panel-left-enter-active,
+.mobile-panel-left-leave-active,
+.mobile-panel-right-enter-active,
+.mobile-panel-right-leave-active {
+  transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: transform;
+}
+
+.mobile-panel-left-enter-from,
+.mobile-panel-left-leave-to {
+  transform: translateX(-100%);
+}
+
+.mobile-panel-right-enter-from,
+.mobile-panel-right-leave-to {
+  transform: translateX(100%);
 }
 </style>
