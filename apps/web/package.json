@@ -9,6 +9,7 @@
   },
   "scripts": {
     "snow": "node scripts/snow.js",
+    "i18n:check": "node scripts/check-i18n.mjs",
     "dev": "pnpm --filter @snowflake/ai build && vite",
     "build": "pnpm --filter @snowflake/ai build && vite build",
     "preview": "vite preview",

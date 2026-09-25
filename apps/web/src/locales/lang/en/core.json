@@ -8,6 +8,9 @@
     "resumeDesc": "With this resume, ferry you across thousands of mountains",
     "resumeEditor": "Cloud Sail Editor",
     "resumeEditorDesc": "Ride the momentum, sail across the vast sea",
+    "resumeAI": "Skiff AI",
+    "resumeAIDesc": "AI assistant for your resume",
+    "resumeStatistics": "Resume Statistics",
     "index": "Yang",
     "indexDesc": "Xiaoyang's personal website",
     "2048": "2048 Game",
@@ -30,6 +33,7 @@
     "passwordBoxDesc": "Securely store and manage passwords",
     "form": "Form Generator",
     "formDesc": "Quickly generate forms",
+    "init": "Initialization",
     "llmMonitor": "LLM Monitor",
     "llmMonitorDesc": "Inspect model requests and tool execution"
     },
