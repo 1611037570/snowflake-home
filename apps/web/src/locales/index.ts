@@ -58,8 +58,6 @@ async function dynamicLoadPageLang(name: string, langKey: string) {
   try {
     const pageLangModule = await import(`./lang/${langKey}/${name}.json`);
     const pageLang = pageLangModule.default;
-    // 合并到全局
-    i18n.global.mergeLocaleMessage(langKey, pageLang);
     return pageLang;
   } catch {
     // console.error(`加载 ${name}的${langKey} 包失败:`, error);
@@ -92,11 +90,15 @@ export const loadPageLang = async (name: string, langKey?: string) => {
   i18n.global.locale.value = langKey;
   localStorage.setItem("snowflakeLanguage", langKey);
   // 加载核心语言包
-  await dynamicLoadPageLang("core", langKey);
+  const coreMessage = (await dynamicLoadPageLang("core", langKey)) || {};
+  const pageMessage = (await dynamicLoadPageLang(name, langKey)) || {};
+  // 每次只保留核心语言和当前页面语言
+  i18n.global.setLocaleMessage(langKey, {
+    core: coreMessage.core || {},
+    ...pageMessage,
+  });
   // 加载标题
   await dynamicLoadPageTitle(name);
-  // 加载页面专属语言包
-  await dynamicLoadPageLang(name, langKey);
 };
 
 // 导出翻译函数
