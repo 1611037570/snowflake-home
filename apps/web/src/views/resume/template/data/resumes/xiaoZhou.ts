@@ -368,7 +368,7 @@ const defaultData: any = {
 };
 
 // 小舟数据：出生日期按当前时间倒推 18 年生成，保证年龄恒为 18 岁
-export const xiaoZhouResumeItem: any = {
+const resumeData: any = {
   ...defaultData,
   data: {
     ...defaultData.data,
@@ -382,15 +382,4 @@ export const xiaoZhouResumeItem: any = {
   },
 };
 
-export const xiaoZhouResumeTemplate = {
-  id: "general-xiao-zhou",
-  name: "通用简历",
-  description: "适合通用求职场景的完整简历模板",
-  scene: ["social-recruitment"],
-  industry: ["all"],
-  position: ["all"],
-  workExperience: [],
-  design: ["single-column"],
-  tags: ["通用简历"],
-  item: xiaoZhouResumeItem,
-};
+export default resumeData;

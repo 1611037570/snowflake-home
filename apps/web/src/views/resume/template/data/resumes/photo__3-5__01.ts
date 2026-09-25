@@ -1,7 +1,7 @@
 import { xiaoyang } from "../avatar";
 
 // 大众摄影师简历示例数据。
-export const photographerResumeItem: any = {
+const resumeData: any = {
   data: {
     user: {
       ui: { archived: false },
@@ -108,15 +108,4 @@ export const photographerResumeItem: any = {
   },
 };
 
-export const photographerResumeTemplate = {
-  id: "photographer-chen-chuan",
-  name: "摄影师简历",
-  description: "适合商业摄影、品牌视觉与电商拍摄岗位的简历范本",
-  scene: ["social-recruitment"],
-  industry: ["culture-media", "advertising"],
-  position: ["photographer"],
-  workExperience: ["3-5"],
-  design: ["single-column", "minimal"],
-  tags: ["商业摄影", "视觉拍摄", "作品集"],
-  item: photographerResumeItem,
-};
+export default resumeData;

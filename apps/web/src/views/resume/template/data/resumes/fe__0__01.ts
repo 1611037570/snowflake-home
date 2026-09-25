@@ -1,6 +1,6 @@
 import { xiaoyang } from "../avatar";
 
-export const campusZeroToOneResumeItem: any = {
+const resumeData: any = {
   data: {
     user: { ui: { archived: false }, data: { position: "软件工程师（校招）", name: "陈明", birthday: "2003-05", phone: "15888888888", email: "16****70@qq.com", workTime: "2025.07.01", sex: "男", avatar: xiaoyang } },
     skill: { ui: { collapsed: ["1"], archived: false }, data: { content: "<p><strong>1、</strong>熟悉 JavaScript、TypeScript 与 Vue3，能够完成后台管理系统与移动端页面开发。</p><p><strong>2、</strong>掌握 Git 协作、接口联调与基础数据结构算法，具备良好的工程实践习惯。</p>" } },
@@ -12,15 +12,4 @@ export const campusZeroToOneResumeItem: any = {
   ui: { language: "zh", paddingVertical: 24, paddingHorizontal: 24, fontSize: 16, titleFontSize: 22, lineHeight: 1.2, paragraphSpacing: 12, moduleSpacing: 12, themeColor: "#ff4d4f", fontFamily: "text-puhui", themeTemplate: "default", userInfoMode: "text", avatarPosition: "right" },
 };
 
-export const campusZeroToOneResumeTemplate = {
-  id: "campus-0-1",
-  name: "校园简历",
-  description: "突出教育背景、课程项目与校园实践的校招简历模板",
-  scene: ["campus"],
-  industry: ["internet"],
-  position: ["web-frontend"],
-  workExperience: ["student"],
-  design: ["single-column"],
-  tags: ["校园招聘", "课程项目"],
-  item: campusZeroToOneResumeItem,
-};
+export default resumeData;

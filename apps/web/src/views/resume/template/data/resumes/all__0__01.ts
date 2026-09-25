@@ -1,6 +1,6 @@
 import { xiaoyang } from "../avatar";
 
-export const furtherEducationResumeItem: any = {
+const resumeData: any = {
   data: {
     user: { ui: { archived: false }, data: { position: "计算机科学与技术硕士申请", name: "周航", birthday: "2002-03", phone: "15888888888", email: "16****70@qq.com", workTime: "2025.07.01", sex: "男", avatar: xiaoyang } },
     skill: { ui: { collapsed: ["1"], archived: false }, data: { content: "<p><strong>1、</strong>掌握 Python、机器学习基础与数据处理方法，具备科研复现和实验分析能力。</p><p><strong>2、</strong>参与算法竞赛与课题研究，能够独立阅读论文并完成技术报告撰写。</p>" } },
@@ -12,15 +12,4 @@ export const furtherEducationResumeItem: any = {
   ui: { language: "zh", paddingVertical: 24, paddingHorizontal: 24, fontSize: 16, titleFontSize: 22, lineHeight: 1.2, paragraphSpacing: 12, moduleSpacing: 12, themeColor: "#ff4d4f", fontFamily: "text-puhui", themeTemplate: "default", userInfoMode: "text", avatarPosition: "right" },
 };
 
-export const furtherEducationResumeTemplate = {
-  id: "further-education",
-  name: "升学简历",
-  description: "突出成绩、科研课题与学术能力的国内升学简历模板",
-  scene: ["further-education"],
-  industry: ["all"],
-  position: ["all"],
-  workExperience: ["student"],
-  design: ["single-column"],
-  tags: ["国内升学", "科研经历"],
-  item: furtherEducationResumeItem,
-};
+export default resumeData;

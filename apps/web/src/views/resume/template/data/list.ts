@@ -1,35 +1,17 @@
-import { xiaoZhouResumeTemplate } from "./characters/xiaoZhou";
-import { furtherEducationResumeTemplate } from "./items/all__0__01";
-import { studyAbroadResumeTemplate } from "./items/all__0__02";
-import { englishResumeTemplate } from "./items/fe__0-1__01";
-import { campusZeroToOneResumeTemplate } from "./items/fe__0__01";
-import { modelResumeTemplate } from "./items/model__3-5__01";
-import { internshipZeroToOneResumeTemplate } from "./items/op__0-1__01";
-import { photographerResumeTemplate } from "./items/photo__3-5__01";
-import { fullDataProductManagerResumeTemplate } from "./items/pm__3-5__01";
-import { videoEditorResumeTemplate } from "./items/ve__3-5__01";
-import { xiaoYangProgrammerResumeTemplate } from "./characters/xiaoYang";
-
-type ResumeTemplateOption = {
+export type ResumeTemplateOption = {
   key: string;
   value: string;
 };
 
-type ResumeTemplateCategoryGroup = {
+export type ResumeTemplateCategoryGroup = {
   key: string;
   name: string;
   icon: string;
   options: ResumeTemplateOption[];
 };
 
-type ResumeTemplateItem = {
-  data: Record<string, unknown>;
-  config: Record<string, unknown>;
-  ui: Record<string, unknown>;
-};
-
 export type ResumeTemplate = {
-  id: string;
+  fileName: string;
   name: string;
   description: string;
   scene: string[];
@@ -38,7 +20,6 @@ export type ResumeTemplate = {
   workExperience: string[];
   design: string[];
   tags: string[];
-  item: ResumeTemplateItem;
 };
 
 export const resumeTemplateSceneOptions: ResumeTemplateOption[] = [
@@ -156,18 +137,127 @@ export const resumeTemplateCategoryGroups: ResumeTemplateCategoryGroup[] = [
   { key: "style", name: "简历模板", icon: "lucide:layout-template", options: [] },
 ];
 
-export const resumeTemplateHotList: ResumeTemplate[] = [
-  xiaoZhouResumeTemplate,
-  xiaoYangProgrammerResumeTemplate,
-  modelResumeTemplate,
-  photographerResumeTemplate,
-  videoEditorResumeTemplate,
-  fullDataProductManagerResumeTemplate,
-  campusZeroToOneResumeTemplate,
-  internshipZeroToOneResumeTemplate,
-  furtherEducationResumeTemplate,
-  studyAbroadResumeTemplate,
-  englishResumeTemplate,
+// 列表只保存模板索引和筛选信息，正文按文件名懒加载。
+export const resumeTemplateList: ResumeTemplate[] = [
+  {
+    fileName: "xiaoZhou.ts",
+    name: "通用简历",
+    description: "适合通用求职场景的完整简历模板",
+    scene: ["social-recruitment"],
+    industry: ["all"],
+    position: ["all"],
+    workExperience: [],
+    design: ["single-column"],
+    tags: ["通用简历"],
+  },
+  {
+    fileName: "xiaoYang.ts",
+    name: "小羊",
+    description: "适合前端开发岗位投递的项目经历简历模板",
+    scene: ["social-recruitment"],
+    industry: ["internet"],
+    position: ["web-frontend"],
+    workExperience: ["3-5"],
+    design: ["single-column"],
+    tags: ["前端开发", "项目经历"],
+  },
+  {
+    fileName: "model__3-5__01.ts",
+    name: "林妍",
+    description: "适合平面与商业拍摄岗位展示的简历模板",
+    scene: ["social-recruitment"],
+    industry: ["culture-media", "advertising"],
+    position: ["model"],
+    workExperience: ["3-5"],
+    design: ["single-column"],
+    tags: ["商业拍摄", "作品展示"],
+  },
+  {
+    fileName: "photo__3-5__01.ts",
+    name: "摄影师简历",
+    description: "适合商业摄影、品牌视觉与电商拍摄岗位的简历范本",
+    scene: ["social-recruitment"],
+    industry: ["culture-media", "advertising"],
+    position: ["photographer"],
+    workExperience: ["3-5"],
+    design: ["single-column", "minimal"],
+    tags: ["商业摄影", "视觉拍摄", "作品集"],
+  },
+  {
+    fileName: "ve__3-5__01.ts",
+    name: "视频剪辑师简历",
+    description: "适合品牌短片、新媒体内容与影视后期岗位的简历范本",
+    scene: ["social-recruitment"],
+    industry: ["culture-media", "advertising"],
+    position: ["video-editor"],
+    workExperience: ["3-5"],
+    design: ["single-column", "polished"],
+    tags: ["视频剪辑", "影视后期", "作品集"],
+  },
+  {
+    fileName: "pm__3-5__01.ts",
+    name: "全字段产品经理简历",
+    description: "覆盖个人信息、全部经历和作品模块的产品经理简历范本",
+    scene: ["social-recruitment"],
+    industry: ["internet"],
+    position: ["product-manager"],
+    workExperience: ["3-5"],
+    design: ["single-column", "minimal"],
+    tags: ["全字段", "产品经理", "信息分隔"],
+  },
+  {
+    fileName: "fe__0__01.ts",
+    name: "校园简历",
+    description: "突出教育背景、课程项目与校园实践的校招简历模板",
+    scene: ["campus"],
+    industry: ["internet"],
+    position: ["web-frontend"],
+    workExperience: ["student"],
+    design: ["single-column"],
+    tags: ["校园招聘", "课程项目"],
+  },
+  {
+    fileName: "op__0-1__01.ts",
+    name: "实习简历",
+    description: "突出实习职责、运营成果与可迁移技能的实习简历模板",
+    scene: ["internship"],
+    industry: ["all"],
+    position: ["operation"],
+    workExperience: ["0-1"],
+    design: ["single-column"],
+    tags: ["实习经历", "运营成果"],
+  },
+  {
+    fileName: "all__0__01.ts",
+    name: "升学简历",
+    description: "突出成绩、科研课题与学术能力的国内升学简历模板",
+    scene: ["further-education"],
+    industry: ["all"],
+    position: ["all"],
+    workExperience: ["student"],
+    design: ["single-column"],
+    tags: ["国内升学", "科研经历"],
+  },
+  {
+    fileName: "all__0__02.ts",
+    name: "留学简历",
+    description: "突出学术成绩、语言能力与实践经历的留学申请简历模板",
+    scene: ["study-abroad"],
+    industry: ["all"],
+    position: ["all"],
+    workExperience: ["student"],
+    design: ["single-column"],
+    tags: ["留学申请", "语言能力"],
+  },
+  {
+    fileName: "fe__0-1__01.ts",
+    name: "English Resume",
+    description: "An English resume focused on skills, experience and project results.",
+    scene: ["english-resume"],
+    industry: ["internet"],
+    position: ["web-frontend"],
+    workExperience: ["0-1"],
+    design: ["single-column"],
+    tags: ["English", "Project Results"],
+  },
 ];
-
-export const resumeTemplateList: ResumeTemplate[] = [...resumeTemplateHotList];

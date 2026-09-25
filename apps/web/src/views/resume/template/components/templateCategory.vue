@@ -1,5 +1,5 @@
 <script setup>
-import { resumeTemplateCategoryGroups } from "../data";
+import { resumeTemplateCategoryGroups } from "../data/list";
 import { computed, ref } from "vue";
 
 const emit = defineEmits(["change", "category-change", "size-change"]);

@@ -230,7 +230,7 @@
 <script setup>
 import { TransitionPresets, useIntersectionObserver, useTransition } from "@vueuse/core";
 import { themeTemplateList } from "@/stores/modules/resume/config/uiConfig";
-import { resumeTemplateList } from "../template/data";
+import { resumeTemplateList } from "../template/data/list";
 import { useRouter } from "vue-router";
 import { computed, onMounted, ref } from "vue";
 import IssueFeedback from "../components/issueFeedback.vue";

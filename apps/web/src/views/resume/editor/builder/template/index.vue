@@ -5,20 +5,30 @@ import { useResumeStore } from "@/stores";
 import { storeToRefs } from "pinia";
 import ThumbPreview from "../../preview/thumbPreview.vue";
 import { themeTemplateList } from "@/stores/modules/resume/config/uiConfig";
-import { xiaoZhouResumeItem } from "@/views/resume/template/data/characters/xiaoZhou";
+import { loadResumeTemplateData } from "@/views/resume/template/data/resumeData";
+import { onMounted, ref } from "vue";
 const resumeStore = useResumeStore();
 const { currentUI } = storeToRefs(resumeStore);
+const previewBase = ref(null);
 
-// 小舟提供示例内容，样式模板提供完整 UI 生成预览项。
-const templates = themeTemplateList.map((t) => ({
+// 进入样式选择时再加载一份范本作为预览内容。
+onMounted(async () => {
+  try {
+    previewBase.value = await loadResumeTemplateData("xiaoZhou.ts");
+  } catch {
+    ElMessage.error("简历预览暂时无法加载");
+  }
+});
+
+const templates = computed(() => themeTemplateList.map((t) => ({
   name: t.name,
   id: t.id,
   item: {
-    data: xiaoZhouResumeItem.data,
-    config: xiaoZhouResumeItem.config,
+    data: previewBase.value?.data || {},
+    config: previewBase.value?.config || {},
     ui: t.item.ui,
   },
-}));
+})));
 
 // 是否为当前选中的风格模板
 const isActive = (id) => (currentUI.value?.themeTemplate ?? "default") === id;

@@ -1,7 +1,7 @@
 import { xiaozhou } from "../avatar";
 
 // 大众视频剪辑师简历示例数据。
-export const videoEditorResumeItem: any = {
+const resumeData: any = {
   data: {
     user: {
       ui: { archived: false },
@@ -108,15 +108,4 @@ export const videoEditorResumeItem: any = {
   },
 };
 
-export const videoEditorResumeTemplate = {
-  id: "video-editor-zhou-yu",
-  name: "视频剪辑师简历",
-  description: "适合品牌短片、新媒体内容与影视后期岗位的简历范本",
-  scene: ["social-recruitment"],
-  industry: ["culture-media", "advertising"],
-  position: ["video-editor"],
-  workExperience: ["3-5"],
-  design: ["single-column", "polished"],
-  tags: ["视频剪辑", "影视后期", "作品集"],
-  item: videoEditorResumeItem,
-};
+export default resumeData;

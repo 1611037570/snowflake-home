@@ -1,7 +1,7 @@
 import { xiaozhou } from "../avatar";
 
 // 大众模特简历示例数据。
-export const modelResumeItem: any = {
+const resumeData: any = {
   data: {
     user: {
       ui: {
@@ -126,15 +126,4 @@ export const modelResumeItem: any = {
   },
 };
 
-export const modelResumeTemplate = {
-  id: "model-lin-yan",
-  name: "林妍",
-  description: "适合平面与商业拍摄岗位展示的简历模板",
-  scene: ["social-recruitment"],
-  industry: ["culture-media", "advertising"],
-  position: ["model"],
-  workExperience: ["3-5"],
-  design: ["single-column"],
-  tags: ["商业拍摄", "作品展示"],
-  item: modelResumeItem,
-};
+export default resumeData;

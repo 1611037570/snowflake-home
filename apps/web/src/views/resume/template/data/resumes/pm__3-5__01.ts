@@ -1,7 +1,7 @@
 import { xiaoyang } from "../avatar";
 
 // 全字段产品经理简历，用于完整展示全部模块与并列信息分隔效果。
-export const fullDataProductManagerResumeItem: any = {
+const resumeData: any = {
   data: {
     user: {
       ui: { archived: false },
@@ -262,15 +262,4 @@ export const fullDataProductManagerResumeItem: any = {
   },
 };
 
-export const fullDataProductManagerResumeTemplate = {
-  id: "product-manager-full-data",
-  name: "全字段产品经理简历",
-  description: "覆盖个人信息、全部经历和作品模块的产品经理简历范本",
-  scene: ["social-recruitment"],
-  industry: ["internet"],
-  position: ["product-manager"],
-  workExperience: ["3-5"],
-  design: ["single-column", "minimal"],
-  tags: ["全字段", "产品经理", "信息分隔"],
-  item: fullDataProductManagerResumeItem,
-};
+export default resumeData;

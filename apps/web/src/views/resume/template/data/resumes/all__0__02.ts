@@ -1,6 +1,6 @@
 import { xiaozhou } from "../avatar";
 
-export const studyAbroadResumeItem: any = {
+const resumeData: any = {
   data: {
     user: { ui: { archived: false }, data: { position: "英国商科硕士申请", name: "宋雨", birthday: "2002-11", phone: "15888888888", email: "16****70@qq.com", workTime: "2025.07.01", sex: "女", avatar: xiaozhou } },
     skill: { ui: { collapsed: ["1"], archived: false }, data: { content: "<p><strong>1、</strong>具备金融分析、商业研究与英文材料撰写能力，熟练使用 Excel 与 PowerPoint。</p><p><strong>2、</strong>雅思 7.0，能够使用英语完成课堂展示、研究报告与跨文化沟通。</p>" } },
@@ -12,15 +12,4 @@ export const studyAbroadResumeItem: any = {
   ui: { language: "zh", paddingVertical: 24, paddingHorizontal: 24, fontSize: 16, titleFontSize: 22, lineHeight: 1.2, paragraphSpacing: 12, moduleSpacing: 12, themeColor: "#ff4d4f", fontFamily: "text-puhui", themeTemplate: "default", userInfoMode: "text", avatarPosition: "right" },
 };
 
-export const studyAbroadResumeTemplate = {
-  id: "study-abroad",
-  name: "留学简历",
-  description: "突出学术成绩、语言能力与实践经历的留学申请简历模板",
-  scene: ["study-abroad"],
-  industry: ["all"],
-  position: ["all"],
-  workExperience: ["student"],
-  design: ["single-column"],
-  tags: ["留学申请", "语言能力"],
-  item: studyAbroadResumeItem,
-};
+export default resumeData;

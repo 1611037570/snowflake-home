@@ -1,6 +1,6 @@
 import { xiaozhou } from "../avatar";
 
-export const internshipZeroToOneResumeItem: any = {
+const resumeData: any = {
   data: {
     user: { ui: { archived: false }, data: { position: "产品运营实习生", name: "许宁", birthday: "2002-08", phone: "15888888888", email: "16****70@qq.com", workTime: "2025.07.01", sex: "女", avatar: xiaozhou } },
     skill: { ui: { collapsed: ["1"], archived: false }, data: { content: "<p><strong>1、</strong>熟练使用 Excel、SQL 与数据看板工具，能够完成活动复盘和用户数据分析。</p><p><strong>2、</strong>具备内容策划、社群运营与跨团队沟通能力，可独立跟进日常运营项目。</p>" } },
@@ -12,15 +12,4 @@ export const internshipZeroToOneResumeItem: any = {
   ui: { language: "zh", paddingVertical: 24, paddingHorizontal: 24, fontSize: 16, titleFontSize: 22, lineHeight: 1.2, paragraphSpacing: 12, moduleSpacing: 12, themeColor: "#ff4d4f", fontFamily: "text-puhui", themeTemplate: "default", userInfoMode: "text", avatarPosition: "right" },
 };
 
-export const internshipZeroToOneResumeTemplate = {
-  id: "internship-0-1",
-  name: "实习简历",
-  description: "突出实习职责、运营成果与可迁移技能的实习简历模板",
-  scene: ["internship"],
-  industry: ["all"],
-  position: ["operation"],
-  workExperience: ["0-1"],
-  design: ["single-column"],
-  tags: ["实习经历", "运营成果"],
-  item: internshipZeroToOneResumeItem,
-};
+export default resumeData;
