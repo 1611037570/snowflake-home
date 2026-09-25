@@ -124,10 +124,7 @@ async function dynamicLoadPageTitle(pageName: string) {
   useTitle(title);
 }
 export const loadPageLang = async (name: string, langKey?: string) => {
-  langKey = (langKey || i18n.global.locale.value) as string;
-  // 更新语言
-  i18n.global.locale.value = langKey;
-  localStorage.setItem("snowflakeLanguage", langKey);
+  langKey = (langKey || String((i18n.global.locale as any).value ?? i18n.global.locale)) as string;
   // 加载核心语言包
   const coreMessage = (await dynamicLoadPageLang("core", langKey)) || {};
   const pageMessage = (await dynamicLoadPageLang(name, langKey)) || {};
@@ -136,6 +133,9 @@ export const loadPageLang = async (name: string, langKey?: string) => {
     core: coreMessage.core || {},
     ...pageMessage,
   });
+  // 语言包准备完成后再切换语言，避免业务层先读取到未加载的页面文案
+  (i18n.global.locale as any).value = langKey;
+  localStorage.setItem("snowflakeLanguage", langKey);
   // 加载标题
   await dynamicLoadPageTitle(name);
 };

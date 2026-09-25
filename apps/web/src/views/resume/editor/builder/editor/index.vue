@@ -23,6 +23,8 @@ import CollapseItem from "./components/collapseItem.vue";
 import RowField from "./components/rowField.vue";
 import RowAccount from "./components/rowAccount.vue";
 import RowHonor from "./components/rowHonor.vue";
+import { localizeResumeOptions } from "@/stores/modules/resume/hooks/useResumeEditorLocale";
+import i18n from "@/locales";
 
 const loadDynamicForm = () => import("@/components/business/dynamicForm/index");
 // 动态表单加载期间立即显示骨架，避免编辑区只剩增加模块
@@ -58,6 +60,11 @@ const AsyncCityPicker = defineAsyncComponent({
 
 const resumeStore = useResumeStore();
 const { currentData, runtimeConfig } = storeToRefs(resumeStore);
+const localizedResumeOptions = computed(() => {
+  // 读取当前语言建立依赖，选项显示文案随语言切换更新，保存值保持不变
+  i18n.global.locale.value;
+  return localizeResumeOptions(RESUME_OPTIONS);
+});
 const { markEditorStart, markEditorEnd } = useRuntimeData();
 // 编辑区加载开始：组件初始化即记录，作为编辑区加载耗时起点
 markEditorStart();
@@ -138,7 +145,7 @@ onBeforeUnmount(() => {
           v-model:form="runtimeConfig"
           v-model:data="currentData"
           :components="dynamicComponents"
-          :options="RESUME_OPTIONS"
+          :options="localizedResumeOptions"
           @vue:mounted="finishConfigSync"
         />
         <ArchivedModules />

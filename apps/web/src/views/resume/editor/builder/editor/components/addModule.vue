@@ -10,6 +10,8 @@ import { jumpAll } from "../../../useModuleNav";
 import { storeToRefs } from "pinia";
 import { computed } from "vue";
 import { getUUID } from "@/utils";
+import i18n from "@/locales";
+import { translateResumeEditorText } from "@/stores/modules/resume/hooks/useResumeEditorLocale";
 const resumeStore = useResumeStore();
 const { runtimeConfig, currentData } = storeToRefs(resumeStore);
 defineOptions({ name: "AddModule" });
@@ -17,15 +19,19 @@ defineOptions({ name: "AddModule" });
 const BASIC_MODULE_KEYS = ["skill", "education", "project", "work"];
 
 // 预设模块列表：复用 DEFAULT_MODULE_NAMES 统一维护 key 与名称，user 为固定模块不可添加
-const presets = DEFAULT_MODULE_NAMES.filter((item) => item.key !== "user").map((item) => ({
-  name: item.name,
-  value: item.key,
-}));
+const presets = computed(() => {
+  // 模块名称只做界面翻译，模块 key 仍作为稳定业务标识
+  i18n.global.locale.value;
+  return DEFAULT_MODULE_NAMES.filter((item) => item.key !== "user").map((item) => ({
+    name: translateResumeEditorText(item.name),
+    value: item.key,
+  }));
+});
 
 // 过滤后的预设模块：只显示尚未添加到当前表单中的模块
 const availableModules = computed(() => {
-  if (!runtimeConfig.value) return presets;
-  return presets.filter((item) => {
+  if (!runtimeConfig.value) return presets.value;
+  return presets.value.filter((item) => {
     // 检查运行时配置中是否已存在该模块
     return !runtimeConfig.value.fields.some((form) => form.key === item.value);
   });

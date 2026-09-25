@@ -19,6 +19,7 @@ import {
 } from "./hooks/useConfigTemplate";
 import { isEqual } from "lodash-es";
 import { executeResumeOperations, type ResumeWriteOp } from "./resumeOperations";
+import i18n from "@/locales";
 
 type ResumeEditorOptions = {
   currentItem: ComputedRef<any>;
@@ -55,8 +56,12 @@ export const createResumeEditor = ({
     bindCollapsedDefault(runtime.fields, () => itemDefaultCollapsed.value);
     runtimeConfig.value = runtime;
   };
-  // 切简历/新建/恢复时按最新模板重建运行时配置
-  watch(currentItem, refreshRuntime, { immediate: true });
+  // 切简历或切换应用语言时按最新模板重建运行时配置
+  watch(
+    [currentItem, () => (i18n.global.locale as any).value ?? i18n.global.locale],
+    refreshRuntime,
+    { immediate: true },
+  );
   // 持久化字段列表写入：内容一致时跳过，避免无谓变更（入参须为已投影的字段列表）
   const setConfigFields = (item: any, fields: any[]) => {
     if (!item) return;
