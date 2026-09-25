@@ -73,7 +73,7 @@ export const themeTemplateList = [
     themeColor: "#2563EB",
     avatarPosition: "center",
     infoPosition: "center",
-    titleIconMode: "plain",
+    titleIconMode: "icon",
   }),
   createThemeTemplate("商务", "business", "适合职场与商务场景的正式简历样式。", {
     themeColor: "#1E3A5F",
@@ -92,7 +92,7 @@ export const themeTemplateList = [
   createThemeTemplate("经典", "classic", "适合传统行业与正式投递的经典简历样式。", {
     themeColor: "#7C3AED",
     fontFamily: "text-yyqx",
-    titleIconMode: "plain",
+    titleIconMode: "icon",
     dateStyle: "cn",
   }),
   createThemeTemplate("学术", "academic", "强调研究经历与文字内容的学术简历样式。", {
@@ -106,14 +106,14 @@ export const themeTemplateList = [
     themeColor: "#16A34A",
     avatarPosition: "center",
     infoPosition: "center",
-    titleIconMode: "plain",
+    titleIconMode: "icon",
   }),
   createThemeTemplate("活力", "vivid", "适合运营、市场与创意岗位的活力简历样式。", {
     themeColor: "#EA580C",
     fontSize: 17,
     titleFontSize: 24,
     userInfoMode: "icon",
-    titleIconMode: "plain",
+    titleIconMode: "icon",
     moduleContent: { variant: "card" },
   }),
   createThemeTemplate("创意", "creative", "突出个人表达与作品展示的创意简历样式。", {
@@ -121,7 +121,7 @@ export const themeTemplateList = [
     avatarPosition: "center",
     infoPosition: "center",
     userInfoMode: "icon",
-    titleIconMode: "plain",
+    titleIconMode: "icon",
   }),
   createThemeTemplate("稳重", "steady", "适合经验型岗位与正式求职的稳重简历样式。", {
     themeColor: "#475569",
@@ -147,7 +147,7 @@ export const themeTemplateList = [
 // 个人信息展示模式列表
 export const userInfoModeList = [
   {
-    name: "图标",
+    name: "仅图标",
     value: "icon",
   },
   {
@@ -251,12 +251,16 @@ export const titleIconModeList = [
     value: "none",
   },
   {
-    name: "有图标",
-    value: "plain",
+    name: "图标",
+    value: "icon",
   },
   {
-    name: "图标带背景",
-    value: "filled",
+    name: "方形背景",
+    value: "square",
+  },
+  {
+    name: "圆形背景",
+    value: "circle",
   },
 ];
 // ===========默认值=====================

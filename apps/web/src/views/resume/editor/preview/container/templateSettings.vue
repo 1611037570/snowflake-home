@@ -140,7 +140,7 @@ const setParam = (key, value) => {
         <!-- 模块标题图标模式 -->
         <div class="flex flex-col gap-1">
           <div class="flex items-center gap-1 text-sm text-sf-text-2">
-            <span>{{ $t("titleIcon") }}</span>
+            <span>{{ $t("titleIconMode") }}</span>
             <SfIcon
               icon="material-symbols:restart-alt"
               size="4"
