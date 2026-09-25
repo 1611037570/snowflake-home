@@ -147,25 +147,23 @@ const handleAIResponse = async () => {
       isStream: true, // 开启流式响应
       // 简历模式下，需要解析 JSON 字符串
       isJson: type === "resume" ? true : false,
-      // 流式事件回调（非JSON格式）
-      onEvent: (type, data) => {
-        if (type === "reasoning") {
-          // 追加思考内容并滚动到底部
-          lastMsg.thought += data;
-          scrollToBottom();
-        } else if (type === "content") {
-          // 思考展开，并且首次收到回复内容，标记为完成。
-          if (!lastMsg.thoughtCollapsed && !thoughtStatus) {
-            thoughtStatus = true;
-            lastMsg.thoughtCollapsed = true;
-          }
-          // 回复正文事件：逐字追加内容并滚动到底部
-          lastMsg.content += data;
-          scrollToBottom();
-        } else if (type === "total_tokens") {
-          // token 统计事件：保存本次消耗的 token 数
-          lastMsg.total_tokens = data;
+      // 思考内容增量直接写入当前消息。
+      onReasoning: (data) => {
+        lastMsg.thought += data;
+        scrollToBottom();
+      },
+      // 回答内容增量直接写入当前消息。
+      onContent: (data) => {
+        if (!lastMsg.thoughtCollapsed && !thoughtStatus) {
+          thoughtStatus = true;
+          lastMsg.thoughtCollapsed = true;
         }
+        lastMsg.content += data;
+        scrollToBottom();
+      },
+      // 令牌统计由专用回调更新。
+      onToken: (data) => {
+        lastMsg.total_tokens = data;
       },
       // 请求失败回调
       onFail: (error) => {

@@ -28,6 +28,26 @@ function processOption({ options }: any) {
   });
 }
 
+// 单次模型请求保留原有参数结构，并为独立输出回调提供明确类型。
+export type LLMRequestConfig = {
+  options?: Record<string, any>;
+  onSuccess?: (result: any) => void;
+  onFail?: (error: any) => void;
+  onEvent?: (type: string, data: any) => void;
+  onReasoning?: (delta: string) => void;
+  onContent?: (delta: string) => void;
+  onToken?: (totalTokens: number) => void;
+  onFinally?: () => void;
+  isDebug?: boolean;
+  isJson?: boolean;
+  method?: string;
+  retryCount?: number;
+  isStream?: boolean;
+  timeout?: number;
+  traceId?: string;
+  deferTraceFinish?: boolean;
+};
+
 /**
  * LLM 类用于管理与大语言模型的流式和非流式请求。
  * 支持多种 AI 供应商，提供重试机制和错误处理功能。
@@ -135,6 +155,9 @@ class LLM {
    * @param {Function} [config.onSuccess] - 请求成功回调函数，接收解析后的结果
    * @param {Function} [config.onFail] - 请求失败回调函数，接收错误对象
    * @param {Function} [config.onEvent] - 通用事件回调函数，接收事件类型和数据
+   * @param {Function} [config.onReasoning] - 思考内容增量回调
+   * @param {Function} [config.onContent] - 回答内容增量回调
+   * @param {Function} [config.onToken] - 总令牌数回调
    * @param {Function} [config.onFinally] - 请求结束回调函数（无论成功或失败）
    * @param {boolean} [config.isDebug=true] - 是否开启调试模式，开启后会打印请求日志
    * @param {boolean} [config.isJson=true] - 接口返回数据是否为 JSON 格式
@@ -144,12 +167,15 @@ class LLM {
    * @param {boolean} [config.isStream=true] - 是否开启流式响应
    * @returns {Promise<any>} 返回请求结果的 Promise，包含 abortFn 和 sendFn
    */
-  async request(config: any) {
+  async request(config: LLMRequestConfig) {
     const {
       options = {},
       onSuccess,
       onFail,
       onEvent,
+      onReasoning,
+      onContent,
+      onToken,
       onFinally,
       isDebug = true,
       isJson = true,
@@ -187,12 +213,22 @@ class LLM {
         input: requestOptions,
       });
 
+    // 模型正文、思考和令牌统计走独立回调，通用事件只透传其他事件。
     const handleEvent = (type: string, data: any) => {
-      if (type === "reasoning") this.observer.appendLlmTraceReasoning(traceId, data);
-      if (type === "content") this.observer.appendLlmTraceOutput(traceId, data);
-      if (type === "total_tokens") this.observer.updateLlmTraceUsage(traceId, data);
-      if (type === "usage") this.observer.updateLlmTraceUsage(traceId, data);
-      onEvent?.(type, data);
+      if (type === "reasoning") {
+        this.observer.appendLlmTraceReasoning(traceId, data);
+        onReasoning?.(data);
+      } else if (type === "content") {
+        this.observer.appendLlmTraceOutput(traceId, data);
+        onContent?.(data);
+      } else if (type === "total_tokens") {
+        this.observer.updateLlmTraceUsage(traceId, data);
+        onToken?.(data);
+      } else if (type === "usage") {
+        this.observer.updateLlmTraceUsage(traceId, data);
+      } else {
+        onEvent?.(type, data);
+      }
     };
 
     // 提前创建处理器，确保调用方在 sendFn 执行前即可获取 abort
@@ -348,6 +384,9 @@ class LLM {
             thinking: config.thinking,
             abortRef,
             onEvent: config.onEvent,
+            onReasoning: config.onReasoning,
+            onContent: config.onContent,
+            onToken: config.onToken,
             traceId,
           });
 

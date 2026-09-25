@@ -12,6 +12,10 @@ export interface ThinkOptions {
   abortRef?: { current: (() => void) | null };
   // 透传底层流式事件，用于上层计时与统计
   onEvent?: (type: string, data: any) => void;
+  // 模型输出增量由独立回调交给上层处理。
+  onReasoning?: (delta: string) => void;
+  onContent?: (delta: string) => void;
+  onToken?: (totalTokens: number) => void;
   // 复用 ReAct 工作流的观测标识，避免每轮推理提前结束观测。
   traceId?: string;
 }
@@ -67,10 +71,17 @@ export async function think(
     isJson: false,
     traceId: options.traceId,
     deferTraceFinish: Boolean(options.traceId),
+    onReasoning: (delta: string) => {
+      reasoning += delta;
+      options.onReasoning?.(delta);
+    },
+    onContent: (delta: string) => {
+      content += delta;
+      options.onContent?.(delta);
+    },
+    onToken: (totalTokens: number) => options.onToken?.(totalTokens),
     onEvent: (type: string, data: any) => {
-      if (type === "reasoning") reasoning += data;
-      else if (type === "content") content += data;
-      else if (type === "tool_call_delta") mergeToolCall(toolCallMap, data);
+      if (type === "tool_call_delta") mergeToolCall(toolCallMap, data);
       options.onEvent?.(type, data);
     },
   });

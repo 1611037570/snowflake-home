@@ -24,12 +24,15 @@ test("执行工具后继续模型请求", async () => {
           function: { name: "echo", arguments: '{"text":"你好"}' },
         });
       } else {
-        config.onEvent("content", "完成");
+        config.onReasoning("思考");
+        config.onContent("完成");
+        config.onToken(5);
       }
     },
   });
 
   const executed = [];
+  const received = { reasoning: [], content: [], token: [], event: [] };
   const runner = llm.react({
     tools: [
       {
@@ -43,11 +46,21 @@ test("执行工具后继续模型请求", async () => {
       },
     ],
     maxSteps: 2,
+    onReasoning: (delta) => received.reasoning.push(delta),
+    onContent: (delta) => received.content.push(delta),
+    onToken: (total) => received.token.push(total),
+    onEvent: (type) => received.event.push(type),
   });
 
   const answer = await runner.run([{ role: "user", content: "开始" }]);
   assert.equal(answer, "完成");
   assert.deepEqual(executed, [{ text: "你好" }]);
+  assert.deepEqual(received, {
+    reasoning: ["思考"],
+    content: ["完成"],
+    token: [5],
+    event: ["tool_call_delta"],
+  });
   assert.deepEqual(requests[1].at(-1), {
     role: "tool",
     content: '"你好"',

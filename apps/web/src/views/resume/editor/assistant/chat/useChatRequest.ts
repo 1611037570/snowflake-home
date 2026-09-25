@@ -136,7 +136,7 @@ export const useChatRequest = ({
     update_resume_language: "更新简历语言",
   };
 
-  // 统一状态处理器：把 reasoning/content/total_tokens 映射为请求状态与耗时计数
+  // 独立处理思考、正文和令牌回调，维护请求状态与耗时计数。
   const createChatState = (
     lastMsg: Message | null,
     isCurrent: () => boolean,
@@ -145,44 +145,48 @@ export const useChatRequest = ({
     const timers: ChatTimers = { thinking: null, reply: null };
     activeTimers = timers;
 
-    const onEvent = (type: string, data: any) => {
+    const onReasoning = () => {
       if (!isCurrent() || !lastMsg) return;
-      if (type === "reasoning") {
-        lastMsg.requestStatus = "thinking";
-        lastMsg.stepLabel = "正在深度思考…";
-        if (!timers.thinking) {
-          timers.thinking = setInterval(() => {
-            if (isCurrent()) lastMsg.thoughtTime += 1;
-          }, 1000);
-        }
-      } else if (type === "content") {
-        lastMsg.requestStatus = "generating";
-        lastMsg.stepLabel = "正在生成回复…";
-        if (data) {
-          if (streamFinalContent) {
-            // 最终回复正文开始输出：执行过程视为已结束，折叠执行过程并切换完成标记
-            if (!finalContentStarted) {
-              finalContentStarted = true;
-              lastMsg.thoughtCollapsed = true;
-            }
-            // 反思轮（最终输出）：实时写入正文，边生成边渲染
-            lastMsg.content = `${lastMsg.content || ""}${data}`;
-            scrollToBottom();
-          } else {
-            // 未确认是最终输出轮前只缓冲，不写入思考区也不写入正文
-            stepContent += data;
-          }
-        }
-        if (!timers.reply) {
-          if (timers.thinking) clearInterval(timers.thinking);
-          timers.thinking = null;
-          timers.reply = setInterval(() => {
-            if (isCurrent()) lastMsg.contentTime += 1;
-          }, 1000);
-        }
-      } else if (type === "total_tokens") {
-        onUsage(data);
+      lastMsg.requestStatus = "thinking";
+      lastMsg.stepLabel = "正在深度思考…";
+      if (!timers.thinking) {
+        timers.thinking = setInterval(() => {
+          if (isCurrent()) lastMsg.thoughtTime += 1;
+        }, 1000);
       }
+    };
+
+    const onContent = (data: string) => {
+      if (!isCurrent() || !lastMsg) return;
+      lastMsg.requestStatus = "generating";
+      lastMsg.stepLabel = "正在生成回复…";
+      if (data) {
+        if (streamFinalContent) {
+          // 最终回复正文开始输出：执行过程视为已结束，折叠执行过程并切换完成标记
+          if (!finalContentStarted) {
+            finalContentStarted = true;
+            lastMsg.thoughtCollapsed = true;
+          }
+          // 反思轮（最终输出）：实时写入正文，边生成边渲染
+          lastMsg.content = `${lastMsg.content || ""}${data}`;
+          scrollToBottom();
+        } else {
+          // 未确认是最终输出轮前只缓冲，不写入思考区也不写入正文
+          stepContent += data;
+        }
+      }
+      if (!timers.reply) {
+        if (timers.thinking) clearInterval(timers.thinking);
+        timers.thinking = null;
+        timers.reply = setInterval(() => {
+          if (isCurrent()) lastMsg.contentTime += 1;
+        }, 1000);
+      }
+    };
+
+    const onToken = (totalTokens: number) => {
+      if (!isCurrent() || !lastMsg) return;
+      onUsage(totalTokens);
     };
 
     const dispose = () => {
@@ -190,7 +194,7 @@ export const useChatRequest = ({
       if (activeTimers === timers) activeTimers = null;
     };
 
-    return { onEvent, dispose };
+    return { onReasoning, onContent, onToken, dispose };
   };
 
   /**
@@ -272,7 +276,7 @@ export const useChatRequest = ({
       if (lastMsg && backup != null) requestBackups.set(lastMsg, backup);
       state = createChatState(lastMsg, isCurrentRequest, addTokenUsage);
       // 请求开始即启动计时，避免首个模型事件返回前没有耗时
-      state.onEvent("reasoning", null);
+      state.onReasoning();
 
       // 首次请求时才加载技能与简历工具清单
       const tools = await resolveTools();
@@ -298,9 +302,9 @@ export const useChatRequest = ({
         thinking: {
           type: thinkMode.value ? "enabled" : "disabled",
         },
-        onEvent: (type, data) => {
-          state?.onEvent(type, data);
-        },
+        onReasoning: () => state?.onReasoning(),
+        onContent: (data) => state?.onContent(data),
+        onToken: (totalTokens) => state?.onToken(totalTokens),
         onThink: (reasoning) => {
           if (!isCurrentRequest() || !lastMsg || !reasoning) return;
           lastMsg.stepLabel = "正在深度思考…";
