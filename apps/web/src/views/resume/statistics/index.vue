@@ -13,7 +13,7 @@ const { applications, followUps, isLanded } = storeToRefs(statisticsStore);
 
 <template>
   <div class="relative mx-auto flex h-full w-full max-w-7xl flex-col gap-3">
-    <div class="mt-2 flex w-full min-w-full items-center justify-between px-6">
+    <div class="mt-2 flex w-full min-w-0 items-center justify-between px-3 sm:px-6">
       <h2 class="text-[20px] font-black text-sf-theme">简历情况统计</h2>
     </div>
     <SfScrollbar class="flex-1">

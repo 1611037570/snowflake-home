@@ -58,7 +58,7 @@ const cards = computed(() => [
 </script>
 
 <template>
-  <div class="grid grid-cols-4 gap-4 max-[900px]:grid-cols-2">
+  <div class="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
     <div
       v-for="card in cards"
       :key="card.label"
@@ -79,14 +79,14 @@ const cards = computed(() => [
         </button>
       </div>
       <div class="my-2 flex items-center justify-center gap-1">
-        <span class="text-6xl font-black text-sf-theme">{{ card.value }}</span>
+        <span class="text-4xl font-black text-sf-theme sm:text-6xl">{{ card.value }}</span>
         <span class="text-xs text-sf-text-2">{{ card.unit }}</span>
       </div>
     </div>
   </div>
 
   <SfModal v-model="editVisible" title="修改开始投递日期">
-    <div class="w-[360px]">
+    <div class="w-full max-w-[360px]">
       <el-date-picker
         v-model="editDate"
         type="date"

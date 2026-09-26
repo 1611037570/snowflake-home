@@ -104,7 +104,7 @@ const getStatusDotClass = (status) => {
   </el-table>
 
   <SfModal v-model="editVisible" title="修改公司名称">
-    <div class="w-[440px]">
+    <div class="w-full max-w-[440px]">
       <el-form :model="editForm" label-width="70px">
         <el-form-item label="公司名称">
           <SfInput v-model="editForm.company" placeholder="请输入公司名称" />

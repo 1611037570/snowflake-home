@@ -145,8 +145,8 @@ const handleClearTrash = () => {
 <template>
   <div class="relative mx-auto flex h-full w-full max-w-7xl flex-col gap-3">
     <!-- 标签切换栏 -->
-    <div class="mt-2 flex w-full min-w-full items-center justify-between px-6">
-      <div class="flex gap-6">
+    <div class="mt-2 flex w-full min-w-0 flex-wrap items-center justify-between gap-3 px-3 sm:flex-nowrap sm:px-6">
+      <div class="flex gap-3 sm:gap-6">
         <SfSpan
           :active="activeTab === 'draft'"
           class="flex-c h-10 text-[15px] font-extrabold"
@@ -163,7 +163,7 @@ const handleClearTrash = () => {
         </SfSpan>
       </div>
       <!-- 草稿与回收站使用对应操作入口。 -->
-      <div class="flex gap-3">
+      <div class="flex flex-wrap gap-3">
         <template v-if="activeTab === 'draft'">
           <ImportResume />
           <SendResume />

@@ -79,9 +79,9 @@ const handleSubmit = () => {
 
 <template>
   <SfModal v-model="visible" :title="editId ? '修改投递' : '添加投递'">
-    <div class="w-[440px]">
+    <div class="w-full max-w-[440px]">
       <el-form label-width="70px">
-        <div v-for="(row, index) in rows" :key="index" class="mb-3 flex items-center gap-3">
+        <div v-for="(row, index) in rows" :key="index" class="mb-3 flex flex-wrap items-center gap-3">
           <span class="flex items-center justify-center text-xs">平台 {{ index + 1 }}</span>
           <SfSelect v-model="row.platform" :list="platformOptions" class="flex-1" />
           <span class="text-xs text-sf-text-2">数量</span>

@@ -119,8 +119,10 @@ onBeforeUnmount(() => {
 
 <template>
   <Teleport to="body">
-    <div v-if="visible" class="fixed inset-0 z-50 flex h-dvh w-full overflow-hidden bg-sf-bg-2">
-      <section class="flex h-full w-2/3 min-w-0 items-center justify-center overflow-hidden p-3">
+    <div v-if="visible" class="fixed inset-0 z-50 flex h-dvh w-full flex-col overflow-hidden bg-sf-bg-2 md:flex-row">
+      <section
+        class="flex h-1/2 w-full min-w-0 items-center justify-center overflow-hidden p-3 md:h-full md:w-2/3"
+      >
         <div ref="stageRef" class="flex h-full w-full items-center justify-center overflow-hidden">
           <div class="relative shrink-0" :style="scaledContentStyle">
             <div
@@ -134,7 +136,9 @@ onBeforeUnmount(() => {
         </div>
       </section>
 
-      <aside class="flex h-full w-1/3 min-w-0 flex-col border-l border-sf-b bg-sf-primary p-6">
+      <aside
+        class="flex h-1/2 w-full min-w-0 flex-col overflow-y-auto border-t border-sf-b bg-sf-primary p-3 sm:p-6 md:h-full md:w-1/3 md:border-t-0 md:border-l"
+      >
         <div class="flex items-start justify-between gap-3">
           <div class="flex min-w-0 flex-col gap-3">
             <span class="text-sm font-medium text-sf-text-2">{{ eyebrowText }}</span>

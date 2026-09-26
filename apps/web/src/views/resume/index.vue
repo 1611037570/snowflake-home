@@ -38,14 +38,14 @@ const activeNavIndex = computed(() => navList.findIndex((item) => route.path ===
     <header
       class="fixed top-0 right-0 left-0 z-50 h-12 w-full rounded-b-3xl border-b-[0.5px] border-sf-b bg-sf-primary font-extrabold text-sf-base"
     >
-      <div class="mx-auto flex h-full w-full max-w-7xl items-center gap-5 px-4">
+      <div class="mx-auto flex h-full w-full max-w-7xl items-center gap-3 px-3 sm:gap-5 sm:px-4">
         <ProjectTitle url="/resume" />
 
-        <nav class="flex items-center gap-5">
+        <nav class="flex min-w-0 flex-1 items-center gap-3 overflow-x-auto sm:flex-none sm:gap-5">
           <SfSpan
             v-for="(item, index) in navList"
             :key="item.path"
-            class="h-9 cursor-pointer text-[12px] sm:text-[16px]"
+            class="h-9 shrink-0 cursor-pointer text-[12px] sm:text-[16px]"
             :active="index === activeNavIndex"
             :underline-height="1"
             @click="router.push(item.path)"
@@ -54,7 +54,7 @@ const activeNavIndex = computed(() => navList.findIndex((item) => route.path ===
           </SfSpan>
         </nav>
 
-        <div class="ml-auto flex items-center gap-3">
+        <div class="ml-auto flex shrink-0 items-center gap-3">
           <SfTheme />
           <SfLocale />
           <SfDonation />
