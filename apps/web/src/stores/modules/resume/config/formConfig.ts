@@ -11,8 +11,8 @@ import type {
 export const EXPANDED = ["1"];
 // 收起状态数组：表示折叠容器为收起态
 export const COLLAPSED: string[] = [];
-// 个人信息「更多」字段的分类顺序：编辑器按此顺序分组展示
-export const MORE_CATEGORIES = ["基本信息", "联系方式", "求职意向", "个性标签"];
+// 个人信息「更多」字段先展示常用项，再展示基本信息及其他分类
+export const MORE_CATEGORIES = ["常用", "基本信息", "联系方式", "求职意向", "个性标签"];
 
 const DEFAULT_META = {
   version: "1.0.0",
@@ -261,7 +261,7 @@ export const DEFAULT_USER_FORM = [
           createMoreField({
             key: "birthday",
             label: "年龄",
-            category: "基本信息",
+            category: "常用",
             component: "datePicker",
             iconKey: "personal-birthday",
             tip: "推荐必填",
@@ -281,7 +281,7 @@ export const DEFAULT_USER_FORM = [
           createMoreField({
             key: "sex",
             label: "性别",
-            category: "基本信息",
+            category: "常用",
             component: "select",
             iconKey: "personal-account",
             tip: "推荐必填",
@@ -298,7 +298,7 @@ export const DEFAULT_USER_FORM = [
           createMoreField({
             key: "educationLevel",
             label: "文化水平",
-            category: "基本信息",
+            category: "常用",
             component: "select",
             iconKey: "education-graduation",
             addable: true,
@@ -372,7 +372,7 @@ export const DEFAULT_USER_FORM = [
           createMoreField({
             key: "position",
             label: "求职岗位",
-            category: "求职意向",
+            category: "常用",
             component: "input",
             iconKey: "work-briefcase",
             tip: "推荐必填",
@@ -386,7 +386,7 @@ export const DEFAULT_USER_FORM = [
           createMoreField({
             key: "workTime",
             label: "参加工作时间",
-            category: "求职意向",
+            category: "常用",
             component: "datePicker",
             iconKey: "work-time",
             tip: "推荐必填",
@@ -401,7 +401,7 @@ export const DEFAULT_USER_FORM = [
           createMoreField({
             key: "phone",
             label: "电话",
-            category: "联系方式",
+            category: "常用",
             component: "input",
             iconKey: "contact-phone",
             tip: "推荐必填",
@@ -423,7 +423,7 @@ export const DEFAULT_USER_FORM = [
           createMoreField({
             key: "email",
             label: "邮箱",
-            category: "联系方式",
+            category: "常用",
             component: "input",
             iconKey: "contact-email",
             addable: true,
@@ -482,7 +482,7 @@ export const DEFAULT_USER_FORM = [
           createMoreField({
             key: "status",
             label: "求职状态",
-            category: "求职意向",
+            category: "常用",
             component: "select",
             iconKey: "work-status",
             addable: true,
@@ -514,7 +514,7 @@ export const DEFAULT_USER_FORM = [
           createMoreField({
             key: "city",
             label: "期望城市",
-            category: "求职意向",
+            category: "常用",
             component: "cityPicker",
             iconKey: "contact-city",
             addable: true,
