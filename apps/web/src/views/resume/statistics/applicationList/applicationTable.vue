@@ -7,6 +7,7 @@ import { storeToRefs } from "pinia";
 import { reactive } from "vue";
 import ListFilter from "./listFilter.vue";
 import { btnOutline, getPlatformLabel } from "./utils";
+import { $t } from "@/locales";
 
 const emit = defineEmits(["openBatch", "openEdit", "openFollow"]);
 
@@ -35,12 +36,18 @@ const openFollow = (item) => emit("openFollow", item);
 // 导出当前筛选结果为 CSV
 const handleExport = () => {
   if (!filteredList.value.length) {
-    ElMessage.warning("暂无数据可导出");
+    ElMessage.warning($t("resumeStatisticsNoExportData"));
     return;
   }
-  const headers = ["平台明细", "投递日期", "数量"];
+  const headers = [
+    $t("resumeStatisticsPlatformDetails"),
+    $t("resumeStatisticsApplicationDate"),
+    $t("resumeStatisticsQuantity"),
+  ];
   const rows = filteredList.value.map((item) => [
-    item.details.map((d) => `${getPlatformLabel(d.platform)} ${d.count}`).join("、"),
+    item.details
+      .map((d) => `${getPlatformLabel(d.platform)} ${d.count}`)
+      .join($t("resumeStatisticsListSeparator")),
     item.date,
     item.count,
   ]);
@@ -55,13 +62,13 @@ const handleExport = () => {
   const url = URL.createObjectURL(blob);
   const link = document.createElement("a");
   link.href = url;
-  link.download = `投递记录_${dayjs().format("YYYYMMDD")}.csv`;
+  link.download = `${$t("resumeStatisticsApplicationsFilename")}_${dayjs().format("YYYYMMDD")}.csv`;
   link.click();
   URL.revokeObjectURL(url);
 };
 // 删除投递记录
 const handleDelete = (item) => {
-  proxy.$confirm("确定要删除这条投递记录吗？", "删除确认").then(() => {
+  proxy.$confirm($t("resumeStatisticsDeleteApplicationMessage"), $t("resumeStatisticsDeleteConfirm")).then(() => {
     statisticsStore.deleteApplication(item.id);
   });
 };
@@ -72,18 +79,18 @@ const handleDelete = (item) => {
     <div class="mt-3 flex items-center justify-end gap-2">
       <button type="button" :class="btnOutline" @click="openBatch">
         <SfIcon icon="mdi:database" size="3.5" />
-        添加
+        {{ $t("resumeStatisticsAdd") }}
       </button>
       <button type="button" :class="btnOutline" @click="handleExport">
         <SfIcon icon="material-symbols:download" size="3.5" />
-        导出
+        {{ $t("resumeStatisticsExport") }}
       </button>
     </div>
 
     <ListFilter v-model:platform="filter.platform" :count="filteredList.length" />
 
-    <el-table :data="filteredList" border class="mt-3 w-full rounded-xl" empty-text="暂无投递记录">
-      <el-table-column label="平台明细" min-width="220">
+    <el-table :data="filteredList" border class="mt-3 w-full rounded-xl" :empty-text="$t('resumeStatisticsNoApplications')">
+      <el-table-column :label="$t('resumeStatisticsPlatformDetails')" min-width="220">
         <template #default="{ row }">
           <span class="flex flex-wrap gap-1.5">
             <span
@@ -96,13 +103,13 @@ const handleDelete = (item) => {
           </span>
         </template>
       </el-table-column>
-      <el-table-column prop="date" label="投递日期" width="140" sortable />
-      <el-table-column prop="count" label="数量" width="120" sortable />
-      <el-table-column label="操作" width="160">
+      <el-table-column prop="date" :label="$t('resumeStatisticsApplicationDate')" width="140" sortable />
+      <el-table-column prop="count" :label="$t('resumeStatisticsQuantity')" width="120" sortable />
+      <el-table-column :label="$t('resumeStatisticsActions')" width="160">
         <template #default="{ row }">
           <div class="flex items-center">
             <!-- 编辑：绑定 SfTooltip 提示 -->
-            <SfTooltip content="编辑" placement="top">
+            <SfTooltip :content="$t('resumeStatisticsEdit')" placement="top">
               <button
                 type="button"
                 class="mr-2 cursor-pointer border-0 bg-transparent p-0 text-sf-text-2 transition hover:text-sf-theme"
@@ -112,7 +119,7 @@ const handleDelete = (item) => {
               </button>
             </SfTooltip>
             <!-- 跟进：绑定 SfTooltip 提示 -->
-            <SfTooltip content="跟进" placement="top">
+            <SfTooltip :content="$t('resumeStatisticsFollowUp')" placement="top">
               <button
                 type="button"
                 class="mr-2 cursor-pointer border-0 bg-transparent p-0 text-sf-theme"

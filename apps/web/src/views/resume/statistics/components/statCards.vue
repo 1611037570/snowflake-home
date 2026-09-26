@@ -2,6 +2,7 @@
 // 顶部统计卡片：已投递天数、投递总数、进行中、Offer
 import { useResumeStatisticsStore } from "@/stores";
 import { storeToRefs } from "pinia";
+import { $t } from "@/locales";
 
 const statisticsStore = useResumeStatisticsStore();
 const { startDate, appliedDays, totalApplications, activeCount, offerCount } =
@@ -27,30 +28,30 @@ const handleSave = () => {
 // 统计卡片配置
 const cards = computed(() => [
   {
-    label: "已投递天数",
+    label: $t("resumeStatisticsAppliedDays"),
     value: appliedDays.value,
-    unit: "天",
+    unit: $t("resumeStatisticsDaysUnit"),
     icon: "mdi:calendar-clock",
     editable: true,
   },
   {
-    label: "投递总数",
+    label: $t("resumeStatisticsApplicationsTotal"),
     value: totalApplications.value,
-    unit: "次",
+    unit: $t("resumeStatisticsTimesUnit"),
     icon: "icon-park-outline:send-one",
     editable: false,
   },
   {
-    label: "进行中",
+    label: $t("resumeStatisticsInProgress"),
     value: activeCount.value,
-    unit: "家",
+    unit: $t("resumeStatisticsCompaniesUnit"),
     icon: "solar:hourglass-line-duotone",
     editable: false,
   },
   {
-    label: "Offer",
+    label: $t("resumeStatisticsOffer"),
     value: offerCount.value,
-    unit: "个",
+    unit: $t("resumeStatisticsItemsUnit"),
     icon: "fa6-solid:award",
     editable: false,
   },
@@ -85,18 +86,18 @@ const cards = computed(() => [
     </div>
   </div>
 
-  <SfModal v-model="editVisible" title="修改开始投递日期">
+  <SfModal v-model="editVisible" :title="$t('resumeStatisticsEditStartDate')">
     <div class="w-full max-w-[360px]">
       <el-date-picker
         v-model="editDate"
         type="date"
         value-format="YYYY-MM-DD"
-        placeholder="请选择开始投递日期"
+        :placeholder="$t('resumeStatisticsSelectStartDate')"
         class="w-full"
       />
       <div class="mt-4 flex justify-end gap-2">
-        <el-button @click="editVisible = false">取消</el-button>
-        <el-button type="primary" @click="handleSave">保存</el-button>
+        <el-button @click="editVisible = false">{{ $t("resumeStatisticsCancel") }}</el-button>
+        <el-button type="primary" @click="handleSave">{{ $t("resumeStatisticsSave") }}</el-button>
       </div>
     </div>
   </SfModal>

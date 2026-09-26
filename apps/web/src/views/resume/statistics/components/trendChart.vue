@@ -4,6 +4,7 @@ import { useResumeStatisticsStore } from "@/stores";
 import dayjs from "dayjs";
 import { storeToRefs } from "pinia";
 import { ref } from "vue";
+import { $t } from "@/locales";
 
 const statisticsStore = useResumeStatisticsStore();
 const { applications, followUps } = storeToRefs(statisticsStore);
@@ -49,7 +50,7 @@ const offerCounts = computed(() =>
 // 图表配置
 const options = computed(() => ({
   title: {
-    text: mode.value === "week" ? "近七天投递趋势" : "本月投递趋势",
+    text: mode.value === "week" ? $t("resumeStatisticsWeeklyTrend") : $t("resumeStatisticsMonthlyTrend"),
   },
   xAxis: {
     type: "category",
@@ -63,25 +64,25 @@ const options = computed(() => ({
     trigger: "axis",
   },
   legend: {
-    data: ["投递数", "被拒", "Offer"],
+    data: [$t("resumeStatisticsApplicationCount"), $t("resumeStatisticsStatusRejected"), $t("resumeStatisticsOffer")],
   },
   series: [
     {
       type: "line",
-      name: "投递数",
+      name: $t("resumeStatisticsApplicationCount"),
       data: counts.value,
       smooth: true,
       areaStyle: {},
     },
     {
       type: "line",
-      name: "被拒",
+      name: $t("resumeStatisticsStatusRejected"),
       data: rejectedCounts.value,
       smooth: true,
     },
     {
       type: "line",
-      name: "Offer",
+      name: $t("resumeStatisticsOffer"),
       data: offerCounts.value,
       smooth: true,
     },
@@ -93,8 +94,8 @@ const options = computed(() => ({
   <div class="border-sf-b rounded-xl border bg-sf-primary p-4 shadow-sm">
     <div class="mb-3">
       <el-radio-group v-model="mode">
-        <el-radio-button value="week">近7天</el-radio-button>
-        <el-radio-button value="month">本月</el-radio-button>
+        <el-radio-button value="week">{{ $t("resumeStatisticsLast7Days") }}</el-radio-button>
+        <el-radio-button value="month">{{ $t("resumeStatisticsThisMonth") }}</el-radio-button>
       </el-radio-group>
     </div>
     <SfEcharts class="h-80" :options="options" />

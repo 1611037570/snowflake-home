@@ -4,7 +4,8 @@ import { useResumeStatisticsStore } from "@/stores";
 import dayjs from "dayjs";
 import { ElMessage } from "element-plus";
 import { storeToRefs } from "pinia";
-import { btnOutline, platformOptions } from "./utils";
+import { getPlatformOptions } from "./utils";
+import { $t } from "@/locales";
 
 // 弹窗显隐（v-model 双向绑定）
 const visible = defineModel({ type: Boolean, default: false });
@@ -13,6 +14,7 @@ const props = defineProps({ editId: { type: String, default: "" } });
 
 const statisticsStore = useResumeStatisticsStore();
 const { applications } = storeToRefs(statisticsStore);
+const platformOptions = computed(getPlatformOptions);
 
 // 动态多行（每行平台 + 数量）
 const rows = ref([{ platform: "boss", count: 1 }]);
@@ -65,7 +67,7 @@ const handleSubmit = () => {
     count,
   }));
   if (!details.length) {
-    ElMessage.warning("请填写至少一条投递数量");
+    ElMessage.warning($t("resumeStatisticsEnterApplicationQuantity"));
     return;
   }
   if (props.editId) {
@@ -78,13 +80,13 @@ const handleSubmit = () => {
 </script>
 
 <template>
-  <SfModal v-model="visible" :title="editId ? '修改投递' : '添加投递'">
+  <SfModal v-model="visible" :title="$t(editId ? 'resumeStatisticsEditApplication' : 'resumeStatisticsAddApplication')">
     <div class="w-full max-w-[440px]">
       <el-form label-width="70px">
         <div v-for="(row, index) in rows" :key="index" class="mb-3 flex flex-wrap items-center gap-3">
-          <span class="flex items-center justify-center text-xs">平台 {{ index + 1 }}</span>
+          <span class="flex items-center justify-center text-xs">{{ $t("resumeStatisticsPlatformIndex", { index: index + 1 }) }}</span>
           <SfSelect v-model="row.platform" :list="platformOptions" class="flex-1" />
-          <span class="text-xs text-sf-text-2">数量</span>
+          <span class="text-xs text-sf-text-2">{{ $t("resumeStatisticsQuantity") }}</span>
           <SfInputNumber v-model="row.count" :min="1" :max="1000" class="w-28 flex-shrink-0" />
           <button
             type="button"
@@ -96,7 +98,7 @@ const handleSubmit = () => {
         </div>
         <div @click="addRow" class="flex-c cursor-pointer text-base text-sm hover:text-sf-theme">
           <SfIcon icon="lucide:plus" size="3.5" />
-          添加一行
+          {{ $t("resumeStatisticsAddRow") }}
         </div>
         <!-- 高级设置：默认收起，展开后可修改投递日期 -->
         <div class="mt-3">
@@ -109,25 +111,25 @@ const handleSubmit = () => {
               :icon="advancedVisible ? 'lucide:chevron-down' : 'lucide:chevron-right'"
               size="3.5"
             />
-            高级设置
+            {{ $t("resumeStatisticsAdvancedSettings") }}
           </button>
           <div v-show="advancedVisible" class="mt-3">
-            <el-form-item label="投递日期" class="mb-0">
+            <el-form-item :label="$t('resumeStatisticsApplicationDate')" class="mb-0">
               <SfDatePicker
                 v-model="date"
                 type="date"
                 value-format="YYYY-MM-DD"
-                placeholder="请选择投递日期"
+                :placeholder="$t('resumeStatisticsSelectApplicationDate')"
                 class="w-full"
               />
             </el-form-item>
           </div>
         </div>
       </el-form>
-      <div class="my-3 text-xs text-sf-text-2">同一天记录自动合并为一条</div>
+      <div class="my-3 text-xs text-sf-text-2">{{ $t("resumeStatisticsMergeSameDay") }}</div>
       <div class="flex justify-end gap-3">
-        <el-button @click="visible = false">取消</el-button>
-        <el-button type="primary" @click="handleSubmit">确定</el-button>
+        <el-button @click="visible = false">{{ $t("resumeStatisticsCancel") }}</el-button>
+        <el-button type="primary" @click="handleSubmit">{{ $t("resumeStatisticsConfirm") }}</el-button>
       </div>
     </div>
   </SfModal>

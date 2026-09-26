@@ -2,15 +2,16 @@
 // 上岸后展示页面：恭喜上岸，支持清空数据并重新开始记录
 import { useResumeStatisticsStore } from "@/stores";
 import { storeToRefs } from "pinia";
+import { $t } from "@/locales";
 
 const statisticsStore = useResumeStatisticsStore();
 const { landDate } = storeToRefs(statisticsStore);
 
 // 清空数据并重新开始（需二次确认）
 const handleRestart = () => {
-  ElMessageBox.confirm("清空后所有投递与跟进记录将无法恢复，确定重新开始记录吗？", "重新开始记录", {
-    confirmButtonText: "确定",
-    cancelButtonText: "取消",
+  ElMessageBox.confirm($t("resumeStatisticsRestartMessage"), $t("resumeStatisticsRestart"), {
+    confirmButtonText: $t("resumeStatisticsConfirm"),
+    cancelButtonText: $t("resumeStatisticsCancel"),
     type: "warning",
   }).then(() => {
     statisticsStore.restart();
@@ -25,10 +26,10 @@ const handleRestart = () => {
     <div class="text-sf-theme">
       <SfIcon icon="lucide:party-popper" size="12" />
     </div>
-    <h3 class="text-2xl font-black text-sf-theme">恭喜上岸</h3>
-    <p v-if="landDate" class="text-sm text-sf-text-2">上岸日期：{{ landDate }}</p>
-    <p class="text-sm text-sf-text-2">求职之旅圆满结束，愿新工作一切顺利</p>
-    <el-button type="primary" @click="handleRestart">清空数据，重新开始记录</el-button>
+    <h3 class="text-2xl font-black text-sf-theme">{{ $t("resumeStatisticsLandedTitle") }}</h3>
+    <p v-if="landDate" class="text-sm text-sf-text-2">{{ $t("resumeStatisticsLandedDate") }}{{ landDate }}</p>
+    <p class="text-sm text-sf-text-2">{{ $t("resumeStatisticsLandedDescription") }}</p>
+    <el-button type="primary" @click="handleRestart">{{ $t("resumeStatisticsRestartAction") }}</el-button>
   </div>
 </template>
 

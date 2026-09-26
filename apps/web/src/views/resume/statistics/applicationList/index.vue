@@ -6,6 +6,7 @@ import BatchModal from "./batchModal.vue";
 import FollowModal from "./followModal.vue";
 import FollowUpList from "./followUpList.vue";
 import ApplicationTable from "./applicationTable.vue";
+import { $t } from "@/locales";
 
 const statisticsStore = useResumeStatisticsStore();
 const { applications, followUps } = storeToRefs(statisticsStore);
@@ -21,8 +22,8 @@ const handleLanded = () => {
 const activeTab = ref("applications");
 // 标签名称拼接当前列表总条数
 const tabList = computed(() => [
-  { value: "applications", name: `投递记录（${applications.value.length}）` },
-  { value: "followUps", name: `状态管理（${followUps.value.length}）` },
+  { value: "applications", name: `${$t("resumeStatisticsApplicationRecords")} (${applications.value.length})` },
+  { value: "followUps", name: `${$t("resumeStatisticsFollowUpManagement")} (${followUps.value.length})` },
 ]);
 
 // 添加/修改弹窗显隐与当前编辑 id（空表示添加）
@@ -58,9 +59,9 @@ const openFollow = (item) => {
     <div class="text-sf-text-2">
       <SfIcon icon="lucide:inbox" size="10" />
     </div>
-    <p class="text-sm text-sf-text-2">开始记录你的第一条投递吧</p>
+    <p class="text-sm text-sf-text-2">{{ $t("resumeStatisticsEmptyPrompt") }}</p>
     <div class="flex items-center gap-3">
-      <el-button @click="openBatch">添加</el-button>
+      <el-button @click="openBatch">{{ $t("resumeStatisticsAdd") }}</el-button>
     </div>
   </div>
   <!-- 有数据时显示 SfTab + 表格 -->
@@ -69,7 +70,7 @@ const openFollow = (item) => {
       <div class="w-full max-w-[400px]">
         <SfTab v-model="activeTab" :list="tabList" class="bg-sf-primary"> </SfTab>
       </div>
-      <el-button type="success" plain @click="handleLanded">上岸</el-button>
+      <el-button type="success" plain @click="handleLanded">{{ $t("resumeStatisticsLanded") }}</el-button>
     </div>
 
     <ApplicationTable
