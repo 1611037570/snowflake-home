@@ -20,7 +20,7 @@ import Sizes from "./components/sizes.vue";
 import SubtitleBox from "./components/subtitleBox.vue";
 import Tag from "./components/tag.vue";
 import Video from "./components/video.vue";
-import WorkDescriptionEditor from "./components/workDescriptionEditor.vue";
+import ResumeContentEditor from "./components/resumeContentEditor.vue";
 import CollapseModule from "./components/collapseModule.vue";
 import CollapseItem from "./components/collapseItem.vue";
 import RowField from "./components/rowField.vue";
@@ -88,7 +88,7 @@ const dynamicComponents = {
   heightWeight: HeightWeight,
   measurements: Measurements,
   positionPicker: PositionPicker,
-  workDescriptionEditor: WorkDescriptionEditor,
+  resumeContentEditor: ResumeContentEditor,
   salaryRange: SalaryRange,
   projectLink: ProjectLink,
   sizes: Sizes,
