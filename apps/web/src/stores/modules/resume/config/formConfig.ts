@@ -360,12 +360,14 @@ export const DEFAULT_USER_FORM = [
             key: "mbti",
             label: "MBTI",
             category: "个性标签",
-            component: "input",
+            component: "select",
             iconKey: "skill-brain",
             addable: true,
+            dict: "mbti",
             props: {
-              placeholder: "请输入 MBTI",
+              placeholder: "请选择 MBTI",
               clearable: true,
+              filterable: true,
             },
           }),
           // 求职岗位
