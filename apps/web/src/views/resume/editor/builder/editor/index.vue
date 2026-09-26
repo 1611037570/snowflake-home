@@ -13,6 +13,7 @@ import HeightWeight from "./components/heightWeight.vue";
 import Image from "./components/image.vue";
 import More from "./components/more.vue";
 import Measurements from "./components/measurements.vue";
+import PositionPicker from "./components/positionPicker.vue";
 import SalaryRange from "./components/salaryRange.vue";
 import ProjectLink from "./components/projectLink.vue";
 import Sizes from "./components/sizes.vue";
@@ -85,6 +86,7 @@ const dynamicComponents = {
   image: Image,
   heightWeight: HeightWeight,
   measurements: Measurements,
+  positionPicker: PositionPicker,
   salaryRange: SalaryRange,
   projectLink: ProjectLink,
   sizes: Sizes,
