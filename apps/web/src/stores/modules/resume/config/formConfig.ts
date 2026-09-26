@@ -294,17 +294,17 @@ export const DEFAULT_USER_FORM = [
               allowCreate: true,
             },
           }),
-          // 文化水平复用教育经历中的学历选项
+          // 个人学历复用教育经历中的学历选项
           createMoreField({
             key: "educationLevel",
-            label: "文化水平",
+            label: "学历",
             category: "常用",
             component: "select",
             iconKey: "education-graduation",
             addable: true,
             dict: "education",
             props: {
-              placeholder: "请选择文化水平",
+              placeholder: "请选择学历",
               clearable: true,
               filterable: true,
               allowCreate: true,
@@ -774,7 +774,7 @@ export const DEFAULT_EDUCATION_FORM = {
           },
           {
             type: "object",
-            label: "学位",
+            label: "学历",
             component: "select",
             span: 6,
             required: true,
@@ -790,7 +790,7 @@ export const DEFAULT_EDUCATION_FORM = {
               },
             ],
             props: {
-              placeholder: "请选择学位",
+              placeholder: "请选择学历",
               clearable: true,
               filterable: true,
               allowCreate: true,
