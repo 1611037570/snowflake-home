@@ -60,6 +60,8 @@ const TEXT_KEYS_SOURCE = `
   "请输入 GitHub 地址": "githubPlaceholder",
   LinkedIn: "linkedin",
   "请输入 LinkedIn 地址": "linkedinPlaceholder",
+  个人网站: "personalWebsite",
+  请输入个人网站地址: "personalWebsitePlaceholder",
   求职状态: "status",
   请选择求职状态: "statusPlaceholder",
   政治面貌: "political",
