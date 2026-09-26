@@ -12,6 +12,20 @@
   // 关闭文件夹自动折叠（紧凑文件夹）功能
   "explorer.compactFolders": false,
 
+  // i18n Ally 配置
+  // 语言文件路径（指向具体的语言文件目录）
+  "i18n-ally.localesPaths": ["apps/web/src/locales/lang"],
+  // 键值对样式
+  "i18n-ally.keystyle": "nested",
+  //启用框架
+  "i18n-ally.enabledFrameworks": ["vue", "vscode"],
+  //自动解析路径
+  "i18n-ally.enabledParsers": ["ts", "json"],
+  // 源语言
+  "i18n-ally.sourceLanguage": "zh",
+  // 显示语言
+  "i18n-ally.displayLanguage": "zh",
+
   // 自动格式化设置
   "editor.formatOnSave": true,
   "editor.defaultFormatter": null,
