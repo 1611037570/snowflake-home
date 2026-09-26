@@ -28,6 +28,8 @@
   "age": "Age",
   "sex": "Gender",
   "sexPlaceholder": "Please select your gender",
+  "educationLevel": "Education Level",
+  "educationLevelPlaceholder": "Please select your education level",
   "marital": "Marital Status",
   "maritalPlaceholder": "Please select your marital status",
   "nation": "Ethnicity",

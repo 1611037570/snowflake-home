@@ -294,6 +294,22 @@ export const DEFAULT_USER_FORM = [
               allowCreate: true,
             },
           }),
+          // 文化水平复用教育经历中的学历选项
+          createMoreField({
+            key: "educationLevel",
+            label: "文化水平",
+            category: "基本信息",
+            component: "select",
+            iconKey: "education-graduation",
+            addable: true,
+            dict: "education",
+            props: {
+              placeholder: "请选择文化水平",
+              clearable: true,
+              filterable: true,
+              allowCreate: true,
+            },
+          }),
           // 婚姻状况
           createMoreField({
             key: "marital",
