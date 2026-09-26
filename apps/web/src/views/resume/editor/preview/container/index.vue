@@ -11,6 +11,7 @@ import TemplateSettings from "./templateSettings.vue";
 import PrintMode from "./printMode.vue";
 import Language from "./language.vue";
 import OnePage from "./onePage.vue";
+import SortByTime from "./sortByTime.vue";
 
 defineOptions({ name: "ScaleContainer" });
 
@@ -175,6 +176,7 @@ useResizeObserver(contentRef, ([entry]) => {
       <PrintMode />
       <Language />
       <OnePage />
+      <SortByTime />
       <SfDropdown trigger="hover" placement="bottom-start" :show-arrow="false">
         <div
           class="flex h-7 w-13 cursor-default items-center justify-center rounded-full text-xs font-medium text-sf-theme"
