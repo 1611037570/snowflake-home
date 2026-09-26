@@ -13,6 +13,7 @@ import HeightWeight from "./components/heightWeight.vue";
 import Image from "./components/image.vue";
 import More from "./components/more.vue";
 import Measurements from "./components/measurements.vue";
+import SalaryRange from "./components/salaryRange.vue";
 import ProjectLink from "./components/projectLink.vue";
 import Sizes from "./components/sizes.vue";
 import SubtitleBox from "./components/subtitleBox.vue";
@@ -84,6 +85,7 @@ const dynamicComponents = {
   image: Image,
   heightWeight: HeightWeight,
   measurements: Measurements,
+  salaryRange: SalaryRange,
   projectLink: ProjectLink,
   sizes: Sizes,
   more: More,
