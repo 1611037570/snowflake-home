@@ -13,7 +13,6 @@ import { scrollEditorTo } from "./scrollEditorTo";
 const resumeStore = useResumeStore();
 const { currentData, runtimeFields } = storeToRefs(resumeStore);
 const { searchIndex } = useResumeSearch();
-const PREVIEW_SCROLL_OFFSET = 24;
 const PREVIEW_HIGHLIGHT_DELAY = 10;
 const EDITOR_HIGHLIGHT_DELAY = 0;
 // 定位滚动期间的保护时长：滚动结束前的鼠标进入不应清除定位边框
@@ -74,14 +73,7 @@ export const jumpPreview = (key: string) => {
     const target = document.querySelector<HTMLElement>(
       `.resume-page-item .resume-module-wrapper[data-module="${key}"]`,
     );
-    const wrap = target?.closest<HTMLElement>(".el-scrollbar__wrap");
-    if (!target || !wrap) return;
-    const targetTop =
-      target.getBoundingClientRect().top - wrap.getBoundingClientRect().top + wrap.scrollTop;
-    wrap.scrollTo({
-      top: Math.max(0, targetTop - PREVIEW_SCROLL_OFFSET),
-      behavior: "smooth",
-    });
+    scrollEditorTo(target);
   });
 };
 
