@@ -31,6 +31,8 @@ const TEXT_KEYS_SOURCE = `
   请选择出生日期: "birthdayPlaceholder",
   年龄: "age",
   性别: "sex",
+  文化水平: "educationLevel",
+  请选择文化水平: "educationLevelPlaceholder",
   请选择性别: "sexPlaceholder",
   婚姻状况: "marital",
   请选择婚姻状况: "maritalPlaceholder",

@@ -28,6 +28,8 @@
   "age": "年龄",
   "sex": "性别",
   "sexPlaceholder": "请选择性别",
+  "educationLevel": "文化水平",
+  "educationLevelPlaceholder": "请选择文化水平",
   "marital": "婚姻状况",
   "maritalPlaceholder": "请选择婚姻状况",
   "nation": "民族",

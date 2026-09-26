@@ -103,6 +103,14 @@ const metaItems = computed(() => {
       label: getPreviewText("sexLabel", previewLang.value),
     });
   }
+  // 文化水平有值且未隐藏时展示在个人信息中
+  if (!isUserFieldHidden("educationLevel") && user.value?.educationLevel) {
+    items.push({
+      key: "educationLevel",
+      icon: fieldIcon("educationLevel"),
+      label: getPreviewText("educationLevelLabel", previewLang.value),
+    });
+  }
   // 出生日期展示形态为日期时直接展示字段值，否则展示推导出的年龄
   if (birthdayDisplay.value === "date") {
     if (!isUserFieldHidden("birthday") && user.value?.birthday) {
