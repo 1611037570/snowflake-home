@@ -139,7 +139,9 @@ function analyzeModule(moduleConfig: any, rootData: any) {
     if (filled) {
       done += 1;
     } else {
-      const label = target.component === "wangEditor" ? "内容" : getLabel(field, prop);
+      const label = ["wangEditor", "workDescriptionEditor"].includes(target.component)
+        ? "内容"
+        : getLabel(field, prop);
       if (!missing.includes(label)) missing.push(label);
     }
   }
