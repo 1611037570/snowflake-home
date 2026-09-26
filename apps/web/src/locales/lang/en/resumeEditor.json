@@ -77,6 +77,8 @@
   "salaryPlaceholder": "Please enter your expected salary",
   "salaryMinimum": "Minimum",
   "salaryMaximum": "Maximum",
+  "salaryMinimumFirst": "Please select the minimum salary first",
+  "salaryMaximumEmpty": "No higher salary options",
   "salaryRangeSeparator": "to",
   "heightWeight": "Height & Weight",
   "measurements": "Measurements",
