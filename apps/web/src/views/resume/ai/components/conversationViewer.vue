@@ -39,7 +39,8 @@ const resumeTitles = computed(
 
 function getChatResumeTitle(chat: Pick<Chat, "resumeId">) {
   if (!chat.resumeId) return "未关联简历";
-  return resumeTitles.value.get(chat.resumeId) || "已删除简历";
+  if (resumeTitles.value.has(chat.resumeId)) return resumeTitles.value.get(chat.resumeId);
+  return list.value.some((item) => item.id === chat.resumeId) ? "简历" : "已删除简历";
 }
 
 async function selectChat(id: string) {

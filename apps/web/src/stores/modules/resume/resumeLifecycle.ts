@@ -59,7 +59,7 @@ export const createResumeLifecycle = (options: ResumeLifecycleOptions) => {
 
   const mergeResumeItem = (item: any) => merge(structuredClone(defaultResumeItem), item);
   const addResume = (config: any, jump = true, select = true) => {
-    if (resumeList.value.length >= maxCount) {
+    if (list.value.filter((item) => item.deletedAt === null).length >= maxCount) {
       onResumeLimit();
       return false;
     }

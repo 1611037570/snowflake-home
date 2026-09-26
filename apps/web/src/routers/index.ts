@@ -19,19 +19,21 @@ const router = createRouter({
 });
 
 router.beforeEach(beforeEachGuard);
-router.afterEach(stopRouteLoading);
+const prefetchTargetsByPath: Record<string, string[]> = {
+  "/resume/mine": ["/resume/editor"],
+};
+const prefetchLikelyTargets = (path: string) => {
+  if (!import.meta.env.PROD) return;
+  const targets = prefetchTargetsByPath[path];
+  if (targets?.length) void prefetchRouteComponents(targets);
+};
+router.afterEach((to) => {
+  stopRouteLoading();
+  prefetchLikelyTargets(to.path);
+});
 router.onError(stopRouteLoading);
 
-// 生产环境浏览器空闲时预取页面 chunk，避免点击导航时现场加载造成停顿
-if (import.meta.env.PROD) {
-  router.isReady().then(() => {
-    if (typeof requestIdleCallback === "function") {
-      requestIdleCallback(() => prefetchRouteComponents());
-    } else {
-      setTimeout(() => prefetchRouteComponents(), 1500);
-    }
-  });
-}
+router.isReady().then(() => prefetchLikelyTargets(router.currentRoute.value.path));
 
 // 导出路由实例
 export default router;
