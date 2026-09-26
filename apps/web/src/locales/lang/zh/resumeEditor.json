@@ -57,6 +57,8 @@
   "githubPlaceholder": "请输入 GitHub 地址",
   "linkedin": "LinkedIn",
   "linkedinPlaceholder": "请输入 LinkedIn 地址",
+  "personalWebsite": "个人网站",
+  "personalWebsitePlaceholder": "请输入个人网站地址",
   "status": "求职状态",
   "statusPlaceholder": "请选择求职状态",
   "political": "政治面貌",

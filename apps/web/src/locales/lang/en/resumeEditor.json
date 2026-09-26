@@ -57,6 +57,8 @@
   "githubPlaceholder": "Please enter your GitHub URL",
   "linkedin": "LinkedIn",
   "linkedinPlaceholder": "Please enter your LinkedIn URL",
+  "personalWebsite": "Personal Website",
+  "personalWebsitePlaceholder": "Please enter your personal website URL",
   "status": "Job Status",
   "statusPlaceholder": "Please select your job status",
   "political": "Political Status",

@@ -87,11 +87,13 @@ const hasEmail = computed(() => !isUserFieldHidden("email") && !!user.value?.ema
 const hasWechat = computed(() => !isUserFieldHidden("wechat") && !!user.value?.wechat);
 const hasGithub = computed(() => !isUserFieldHidden("github") && !!user.value?.github);
 const hasLinkedin = computed(() => !isUserFieldHidden("linkedin") && !!user.value?.linkedin);
+const hasWebsite = computed(() => !isUserFieldHidden("website") && !!user.value?.website);
 const phoneLabel = computed(() => getPreviewText("phoneLabel", previewLang.value));
 const emailLabel = computed(() => getPreviewText("emailLabel", previewLang.value));
 const wechatLabel = computed(() => getPreviewText("wechatLabel", previewLang.value));
 const githubLabel = computed(() => getPreviewText("githubLabel", previewLang.value));
 const linkedinLabel = computed(() => getPreviewText("linkedinLabel", previewLang.value));
+const websiteLabel = computed(() => getPreviewText("websiteLabel", previewLang.value));
 
 // 基础信息（性别、年龄、工作年限、求职岗位）与联系方式合并为同一列表
 const metaItems = computed(() => {
@@ -332,6 +334,14 @@ const contactItems = computed(() => {
       key: "linkedin",
       icon: fieldIcon("linkedin"),
       label: linkedinLabel.value,
+    });
+  }
+  // 个人网站有值时与其他联系方式一同展示
+  if (hasWebsite.value) {
+    items.push({
+      key: "website",
+      icon: fieldIcon("website"),
+      label: websiteLabel.value,
     });
   }
   const order = new Map(userFieldOrder.value.map((key, index) => [key, index]));

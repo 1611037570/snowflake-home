@@ -478,6 +478,19 @@ export const DEFAULT_USER_FORM = [
               clearable: true,
             },
           }),
+          // 个人网站链接
+          createMoreField({
+            key: "website",
+            label: "个人网站",
+            category: "联系方式",
+            component: "input",
+            iconKey: "social-account",
+            addable: true,
+            props: {
+              placeholder: "请输入个人网站地址",
+              clearable: true,
+            },
+          }),
           // 求职状态
           createMoreField({
             key: "status",
