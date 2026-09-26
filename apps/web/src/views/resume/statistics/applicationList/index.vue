@@ -66,7 +66,7 @@ const openFollow = (item) => {
   <!-- 有数据时显示 SfTab + 表格 -->
   <div v-else class="flex flex-col rounded-xl border border-sf-b bg-sf-primary p-3">
     <div class="flex items-center justify-between">
-      <div class="w-[400px]">
+      <div class="w-full max-w-[400px]">
         <SfTab v-model="activeTab" :list="tabList" class="bg-sf-primary"> </SfTab>
       </div>
       <el-button type="success" plain @click="handleLanded">上岸</el-button>

@@ -12,8 +12,8 @@ const platform = defineModel("platform", { default: "" });
 </script>
 
 <template>
-  <div class="mt-3 flex items-center gap-3">
-    <ElFormItem label="平台" prop="platform" class="flex-1">
+  <div class="mt-3 flex flex-wrap items-center gap-3">
+    <ElFormItem label="平台" prop="platform" class="min-w-[150px] flex-1">
       <SfSelect v-model="platform" clearable placeholder="全部平台" :list="platformOptions" />
     </ElFormItem>
     <slot />

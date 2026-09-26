@@ -122,8 +122,8 @@ const goTemplate = () => {
   </ResumeCardContainer>
 
   <SfModal v-model="visible" title="新建简历">
-    <div v-if="mode === 'options'" class="flex w-[672px] flex-col gap-3 p-6">
-      <div class="grid grid-cols-3 gap-3">
+    <div v-if="mode === 'options'" class="flex w-full max-w-[672px] flex-col gap-3 p-3 sm:p-6">
+      <div class="grid grid-cols-1 gap-3 sm:grid-cols-3">
         <button
           v-for="item in createOptions"
           :key="item.key"
@@ -140,7 +140,11 @@ const goTemplate = () => {
       </div>
     </div>
 
-    <form v-else-if="mode === 'quick'" class="flex w-96 flex-col gap-3 p-6" @submit.prevent="createQuickResume">
+    <form
+      v-else-if="mode === 'quick'"
+      class="flex w-full max-w-96 flex-col gap-3 p-3 sm:p-6"
+      @submit.prevent="createQuickResume"
+    >
       <div class="flex items-center gap-3">
         <SfButton plain @click="mode = 'options'">返回</SfButton>
         <span class="text-base font-black text-sf-text">填写基础信息</span>
@@ -154,7 +158,7 @@ const goTemplate = () => {
       </footer>
     </form>
 
-    <div v-else class="flex w-[1024px] flex-col gap-3 p-6">
+    <div v-else class="flex w-full max-w-[1024px] flex-col gap-3 p-3 sm:p-6">
       <div class="flex items-center justify-between gap-3">
         <div class="flex items-center gap-3">
           <SfButton plain @click="mode = 'options'">返回</SfButton>
@@ -165,7 +169,7 @@ const goTemplate = () => {
       <div v-if="templateLoading" class="flex h-36 items-center justify-center text-sm text-sf-text-2">
         正在加载简历范本
       </div>
-      <div v-else class="grid grid-cols-4 gap-3">
+      <div v-else class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
         <ResumeCardContainer
           v-for="template in templates"
           :key="template.fileName"

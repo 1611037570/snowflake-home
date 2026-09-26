@@ -121,7 +121,7 @@ const gridClass = ref("default");
 <template>
   <div class="relative mx-auto flex h-full w-full max-w-7xl flex-col gap-3">
     <SfScrollbar class="flex-1">
-      <div class="flex h-full flex-col py-2">
+    <div class="flex h-full flex-col px-3 py-2 sm:px-6">
         <TemplateCategory
           @change="setTemplateFilters"
           @category-change="setCurrentCategory"

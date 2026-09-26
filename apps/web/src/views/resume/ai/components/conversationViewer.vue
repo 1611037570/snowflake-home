@@ -54,8 +54,8 @@ function formatTime(time: number) {
 </script>
 
 <template>
-  <div class="flex h-full min-w-0 overflow-hidden rounded-2xl border border-sf-b bg-sf-primary">
-    <aside class="flex w-60 shrink-0 flex-col border-r border-sf-b">
+  <div class="flex h-full min-h-0 min-w-0 flex-col overflow-hidden rounded-2xl border border-sf-b bg-sf-primary md:flex-row">
+    <aside class="flex h-36 shrink-0 flex-col border-b border-sf-b md:h-full md:w-60 md:border-r md:border-b-0">
       <div class="shrink-0 border-b border-sf-b px-3 py-3">
         <h2 class="font-bold text-sf-text">消息</h2>
       </div>
@@ -89,11 +89,11 @@ function formatTime(time: number) {
     </aside>
 
     <section class="flex min-w-0 flex-1 flex-col">
-      <header class="shrink-0 border-b border-sf-b px-6 py-3">
+      <header class="shrink-0 border-b border-sf-b px-3 py-3 sm:px-6">
         <h3 class="truncate font-bold text-sf-text">{{ activeChat?.title || "消息" }}</h3>
       </header>
       <SfScrollbar class="min-h-0 flex-1">
-        <div v-if="messages.length" class="mx-auto flex w-full max-w-3xl flex-col gap-6 p-6">
+        <div v-if="messages.length" class="mx-auto flex w-full max-w-3xl flex-col gap-6 p-3 sm:p-6">
           <article
             v-for="(message, index) in messages"
             :key="`${message.createTime}-${index}`"

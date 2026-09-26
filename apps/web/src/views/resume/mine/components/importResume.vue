@@ -83,11 +83,11 @@ const importMarkdownConfig = async () => {
     导入简历
   </SfButton>
   <SfModal v-model="visible" title="导入简历">
-    <div v-if="parsing" class="flex w-[400px] flex-col items-center gap-3 p-6">
+    <div v-if="parsing" class="flex w-full max-w-[400px] flex-col items-center gap-3 p-6">
       <SfIcon icon="line-md:loading-twotone-loop" size="8" class="text-sf-theme" />
       <div class="text-base">正在智能解析简历，请稍候</div>
     </div>
-    <div v-else class="flex w-[400px] flex-col gap-3">
+    <div v-else class="flex w-full max-w-[400px] flex-col gap-3">
       <div
         class="cursor-pointer rounded-3xl border border-sf-b p-3 transition-colors hover:bg-sf-theme-2"
         @click="importJsonConfig"

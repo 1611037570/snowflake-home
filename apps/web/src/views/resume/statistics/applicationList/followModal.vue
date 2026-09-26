@@ -65,7 +65,7 @@ const handleSubmit = () => {
 
 <template>
   <SfModal v-model="visible" title="投递跟进">
-    <div class="flex w-[440px] flex-col">
+    <div class="flex w-full max-w-[440px] flex-col">
       <el-form :model="form" label-width="70px" class="gap-3">
         <el-form-item label="公司名称" class="pb-3">
           <SfInput v-model="form.company" placeholder="留空将自动生成" />

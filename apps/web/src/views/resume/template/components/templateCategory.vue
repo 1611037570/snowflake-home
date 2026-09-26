@@ -33,7 +33,7 @@ const toggleCategoryOption = (groupKey, optionKey) => {
 
 <template>
   <section class="mb-3">
-    <div class="flex items-center justify-between gap-3">
+    <div class="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
       <nav class="flex flex-wrap gap-3">
         <SfButton
           v-for="group in resumeTemplateCategoryGroups"
@@ -46,7 +46,7 @@ const toggleCategoryOption = (groupKey, optionKey) => {
           {{ group.name }}
         </SfButton>
       </nav>
-      <div class="flex shrink-0 items-center gap-3">
+      <div class="flex flex-wrap items-center gap-3">
         <span class="text-sm font-bold text-sf-text-2">预览尺寸</span>
         <SfButton
           :plain="previewSize !== 'default'"

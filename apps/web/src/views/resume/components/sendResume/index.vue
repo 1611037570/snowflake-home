@@ -29,7 +29,7 @@ const oepn = (data) => {
     </div>
     <SfModal v-model="visible" title="投递简历">
       <SfScrollbar height="750px" class="overflow-hidden">
-        <div class="flex w-[420px] flex-col">
+        <div class="flex w-full max-w-[420px] flex-col">
           <Tip />
           <div v-for="item in jobPlatformList" :key="item.type" class="mb-3">
             <div class="mb-2 flex items-center text-base font-bold text-sf-text">
