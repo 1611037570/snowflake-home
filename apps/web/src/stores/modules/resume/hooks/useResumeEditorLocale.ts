@@ -46,6 +46,7 @@ const TEXT_KEYS_SOURCE = `
   "请选择 MBTI": "mbtiPlaceholder",
   求职岗位: "position",
   请选择求职岗位: "positionPlaceholder",
+  请选择或输入岗位: "workPositionPlaceholder",
   技术研发: "technologyEngineering",
   产品与项目: "productAndProject",
   设计: "design",

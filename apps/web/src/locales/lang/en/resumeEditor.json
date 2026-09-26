@@ -42,6 +42,7 @@
   "mbtiPlaceholder": "Please select your MBTI type",
   "position": "Target Position",
   "positionPlaceholder": "Select a target position",
+  "workPositionPlaceholder": "Select or enter a position",
   "technologyEngineering": "Technology & Engineering",
   "productAndProject": "Product & Project",
   "design": "Design",
