@@ -105,7 +105,7 @@ function handleCreateCustomField() {
             v-for="field in group.fields"
             :key="getFieldDataKey(field)"
             type="button"
-            class="border-sf-border flex h-7 cursor-pointer items-center justify-center gap-1 rounded-3xl border bg-sf-primary px-2 text-xs text-sf-text-2 transition-colors hover:border-sf-theme hover:text-sf-theme"
+            class="flex h-7 cursor-pointer items-center justify-center gap-1 rounded-3xl border border-sf-b bg-sf-primary px-2 text-xs text-sf-text-2 transition-colors hover:border-sf-theme hover:text-sf-theme"
             @click="handleAdd(field)"
           >
             <SfIcon icon="ic:round-add" size="4" />
@@ -115,7 +115,7 @@ function handleCreateCustomField() {
       </div>
       <button
         type="button"
-        class="border-sf-border flex h-7 w-fit cursor-pointer items-center justify-center gap-1 rounded-3xl border border-dashed bg-sf-primary px-2 text-xs text-sf-text-2 transition-colors hover:border-sf-theme hover:text-sf-theme"
+        class="flex h-7 w-fit cursor-pointer items-center justify-center gap-1 rounded-3xl border border-dashed border-sf-b bg-sf-primary px-2 text-xs text-sf-text-2 transition-colors hover:border-sf-theme hover:text-sf-theme"
         @click="handleCreateCustomField"
       >
         <SfIcon icon="ic:round-add" size="4" />

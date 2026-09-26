@@ -108,13 +108,13 @@ const handleConfirm = () => {
 
   <div class="flex w-full flex-col gap-3">
     <div v-if="basicModules.length" class="flex flex-col gap-3">
-        <span class="text-xs text-sf-text-3">{{ $t("basicModules") }}</span>
+      <span class="text-xs text-sf-text-3">{{ $t("basicModules") }}</span>
       <div class="flex flex-wrap gap-3">
         <button
           v-for="item in basicModules"
           :key="item.name"
           type="button"
-          class="border-sf-border flex h-7 cursor-pointer items-center justify-center gap-1 rounded-3xl border bg-sf-primary px-2 text-xs text-sf-text-2 transition-colors hover:border-sf-theme hover:text-sf-theme"
+          class="flex h-7 cursor-pointer items-center justify-center gap-1 rounded-3xl border border-sf-b bg-sf-primary px-2 text-xs text-sf-text-2 transition-colors hover:border-sf-theme hover:text-sf-theme"
           @click="handleAdd(item)"
         >
           <SfIcon icon="ic:round-add" size="4" />
@@ -122,7 +122,7 @@ const handleConfirm = () => {
         </button>
       </div>
     </div>
-    <div v-if="otherModules.length" class="flex flex-col gap-3">
+    <div class="flex flex-col gap-3">
       <div class="flex flex-col gap-3">
         <span class="text-xs text-sf-text-3">{{ $t("otherModules") }}</span>
         <div class="flex flex-wrap gap-3">
@@ -130,15 +130,16 @@ const handleConfirm = () => {
             v-for="item in otherModules"
             :key="item.name"
             type="button"
-            class="border-sf-border flex h-7 cursor-pointer items-center justify-center gap-1 rounded-3xl border bg-sf-primary px-2 text-xs text-sf-text-2 transition-colors hover:border-sf-theme hover:text-sf-theme"
+            class="flex h-7 cursor-pointer items-center justify-center gap-1 rounded-3xl border border-sf-b bg-sf-primary px-2 text-xs text-sf-text-2 transition-colors hover:border-sf-theme hover:text-sf-theme"
             @click="handleAdd(item)"
           >
             <SfIcon icon="ic:round-add" size="4" />
             <span>{{ item.name }}</span>
           </button>
+          <!-- 自定义模块不受预设模块可用数量影响，始终允许添加 -->
           <button
             type="button"
-            class="border-sf-border flex h-7 w-fit cursor-pointer items-center justify-center gap-1 rounded-3xl border border-dashed bg-sf-primary px-2 text-xs text-sf-text-2 transition-colors hover:border-sf-theme hover:text-sf-theme"
+            class="flex h-7 w-fit cursor-pointer items-center justify-center gap-1 rounded-3xl border border-dashed border-sf-b bg-sf-primary px-2 text-xs text-sf-text-2 transition-colors hover:border-sf-theme hover:text-sf-theme"
             @click="handleAdd({ value: 'custom' })"
           >
             <SfIcon icon="ic:round-add" size="4" />
