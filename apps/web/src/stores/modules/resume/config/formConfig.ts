@@ -372,7 +372,7 @@ export const DEFAULT_USER_FORM = [
           createMoreField({
             key: "position",
             label: "求职岗位",
-            category: "常用",
+            category: "求职意向",
             component: "input",
             iconKey: "work-briefcase",
             tip: "推荐必填",
@@ -386,7 +386,7 @@ export const DEFAULT_USER_FORM = [
           createMoreField({
             key: "workTime",
             label: "参加工作时间",
-            category: "常用",
+            category: "求职意向",
             component: "datePicker",
             iconKey: "work-time",
             tip: "推荐必填",
@@ -482,7 +482,7 @@ export const DEFAULT_USER_FORM = [
           createMoreField({
             key: "status",
             label: "求职状态",
-            category: "常用",
+            category: "求职意向",
             component: "select",
             iconKey: "work-status",
             addable: true,
@@ -514,7 +514,7 @@ export const DEFAULT_USER_FORM = [
           createMoreField({
             key: "city",
             label: "期望城市",
-            category: "常用",
+            category: "求职意向",
             component: "cityPicker",
             iconKey: "contact-city",
             addable: true,
