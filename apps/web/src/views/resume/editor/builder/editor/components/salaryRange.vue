@@ -65,11 +65,14 @@ const maximum = computed({
     <SfSelect
       v-model="maximum"
       :list="maximumOptions"
-      :disabled="!minimum"
       filterable
       clearable
       :placeholder="$t('salaryMaximum')"
       class="min-w-0 flex-1"
-    />
+    >
+      <template #empty>
+        <span>{{ $t(minimum ? "salaryMaximumEmpty" : "salaryMinimumFirst") }}</span>
+      </template>
+    </SfSelect>
   </div>
 </template>
