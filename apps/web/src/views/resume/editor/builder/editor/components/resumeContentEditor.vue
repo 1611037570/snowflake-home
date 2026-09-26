@@ -21,6 +21,7 @@ const { currentData } = storeToRefs(resumeStore);
 // 所有范例都按个人信息中的求职岗位匹配，避免使用经历自身的岗位或项目名称。
 const targetPosition = computed(() => currentData.value?.user?.data?.position ?? "");
 const examples = ref([]);
+const recommendedHot = ref(false);
 const isLoading = ref(false);
 // 连续输入时只采用最后一次岗位匹配结果。
 let latestRequestId = 0;
@@ -28,9 +29,14 @@ let latestRequestId = 0;
 const loadExamples = async (position) => {
   const requestId = ++latestRequestId;
   isLoading.value = true;
+  // 新搜索开始时清除上一轮的热门推荐提示。
+  recommendedHot.value = false;
   try {
-    const matchedExamples = await loadResumeExamples(props.kind, String(position ?? ""));
-    if (requestId === latestRequestId) examples.value = matchedExamples;
+    const result = await loadResumeExamples(props.kind, String(position ?? ""));
+    if (requestId === latestRequestId) {
+      examples.value = result.examples;
+      recommendedHot.value = result.recommendedHot;
+    }
   } finally {
     if (requestId === latestRequestId) isLoading.value = false;
   }
@@ -50,6 +56,7 @@ const appendExample = (example) => {
         <TemplateExamplePicker
           :examples="examples"
           :kind="props.kind"
+          :recommended-hot="recommendedHot"
           :search-term="targetPosition"
           :loading="isLoading"
           @search="loadExamples"

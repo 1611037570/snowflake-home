@@ -13,6 +13,11 @@ export type ResumeExample = {
   experiences: string[];
 };
 
+export type ResumeExampleResult = {
+  examples: ResumeExample[];
+  recommendedHot: boolean;
+};
+
 const getRecords = (template: any, kind: ResumeExampleKind) => {
   const section = template.item.data[kind];
   if (kind === "advantage") return section?.data ? [section.data] : [];
@@ -51,42 +56,8 @@ const getPositionMatchLength = (position: string, candidate: string) => {
   return 0;
 };
 
-export const loadResumeExamples = async (
-  kind: ResumeExampleKind,
-  position: string,
-): Promise<ResumeExample[]> => {
-  // 只用模板实际使用的岗位标记及其显示名称进行岗位匹配。
-  const usedPositionKeys = new Set(
-    resumeTemplateList.flatMap((template) => template.position).filter((key) => key !== "all"),
-  );
-  const positionNames = resumeTemplatePositionOptions.filter(
-    (option) => option.key !== "all" && usedPositionKeys.has(option.key),
-  );
-  const positionMatchLengths = new Map(
-    positionNames
-      .map((option) => [option.key, getPositionMatchLength(position, option.value)] as const)
-      .filter(([, length]) => length > 0),
-  );
-
-  if (!positionMatchLengths.size) return [];
-
-  const templates = await loadResumeTemplates();
-  const matchedTemplates = templates
-    .map((template, index) => ({
-      template,
-      index,
-      matchLength: Math.max(
-        0,
-        ...template.position
-          .filter((key) => key !== "all")
-          .map((key) => positionMatchLengths.get(key) ?? 0),
-      ),
-    }))
-    .filter(({ matchLength }) => matchLength > 0)
-    .sort((left, right) => right.matchLength - left.matchLength || left.index - right.index);
-
-  // 范本字段在简历业务域统一规整，选择器只消费通用范例结构。
-  return matchedTemplates.flatMap(({ template }) =>
+const getExamples = (templates: any[], kind: ResumeExampleKind): ResumeExample[] =>
+  templates.flatMap((template) =>
     getRecords(template, kind)
       .map((record: any, index: number) => {
         const content = String(record.content ?? "").trim();
@@ -103,4 +74,48 @@ export const loadResumeExamples = async (
       })
       .filter((example: ResumeExample) => example.title && example.content && example.text),
   );
+
+export const loadResumeExamples = async (
+  kind: ResumeExampleKind,
+  position: string,
+): Promise<ResumeExampleResult> => {
+  // 只用模板实际使用的岗位标记及其显示名称进行岗位匹配。
+  const usedPositionKeys = new Set(
+    resumeTemplateList.flatMap((template) => template.position).filter((key) => key !== "all"),
+  );
+  const positionNames = resumeTemplatePositionOptions.filter(
+    (option) => option.key !== "all" && usedPositionKeys.has(option.key),
+  );
+  const positionMatchLengths = new Map(
+    positionNames
+      .map((option) => [option.key, getPositionMatchLength(position, option.value)] as const)
+      .filter(([, length]) => length > 0),
+  );
+
+  const templates = await loadResumeTemplates();
+  const matchedTemplates = templates
+    .map((template, index) => ({
+      template,
+      index,
+      matchLength: Math.max(
+        0,
+        ...template.position
+          .filter((key) => key !== "all")
+          .map((key) => positionMatchLengths.get(key) ?? 0),
+      ),
+    }))
+    .filter(({ matchLength }) => matchLength > 0)
+    .sort((left, right) => right.matchLength - left.matchLength || left.index - right.index);
+
+  // 无岗位命中时按模板索引顺序提供热门兜底范例。
+  const matchedExamples = getExamples(
+    matchedTemplates.map(({ template }) => template),
+    kind,
+  );
+  if (matchedExamples.length) return { examples: matchedExamples, recommendedHot: false };
+
+  return {
+    examples: getExamples(templates, kind).slice(0, 5),
+    recommendedHot: true,
+  };
 };
