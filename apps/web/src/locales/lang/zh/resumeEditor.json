@@ -214,7 +214,7 @@
   "locatePreview": "定位预览",
   "archiveConfirm": "归档确认",
   "archiveMessage": "归档后，模块将从编辑器域移除，便于专注其他模块；预览区仍会正常显示，可恢复，不影响打印效果。",
-  "addRecord": "增加{name}",
+  "addRecord": "增加一段{name}",
   "focusMode": "专注模式",
   "backHome": "返回首页",
   "collapseToolbar": "收起工具栏",
