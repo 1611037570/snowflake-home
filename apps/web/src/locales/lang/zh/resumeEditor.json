@@ -78,7 +78,7 @@
   "salaryMinimum": "最低薪资",
   "salaryMaximum": "最高薪资",
   "salaryMinimumFirst": "请先选择最低薪资",
-  "salaryMaximumEmpty": "暂无更高的薪资档位",
+  "salaryMaximumEmpty": "暂无可用的更高薪资档位",
   "salaryRangeSeparator": "至",
   "heightWeight": "身高体重",
   "measurements": "三围",
