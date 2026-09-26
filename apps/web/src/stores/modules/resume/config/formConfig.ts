@@ -485,6 +485,7 @@ export const DEFAULT_USER_FORM = [
             category: "联系方式",
             component: "input",
             iconKey: "social-account",
+            tip: "用于展示个人主页、作品集或专业资料",
             addable: true,
             props: {
               placeholder: "请输入个人网站地址",
@@ -546,6 +547,20 @@ export const DEFAULT_USER_FORM = [
             dict: "city",
             props: {
               placeholder: "请选择籍贯",
+            },
+          }),
+          // 生源地用于校招等招聘场景填写
+          createMoreField({
+            key: "sourcePlace",
+            label: "生源地",
+            category: "基本信息",
+            component: "cityPicker",
+            iconKey: "contact-native-place",
+            tip: "用于校招等招聘场景填写生源地，一般按招聘要求填写",
+            addable: true,
+            dict: "city",
+            props: {
+              placeholder: "请选择生源地",
             },
           }),
           createMoreField({

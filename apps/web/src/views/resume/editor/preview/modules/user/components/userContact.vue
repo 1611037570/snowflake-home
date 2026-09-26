@@ -242,6 +242,14 @@ const secondaryItems = computed(() => {
       label: getPreviewText("nativePlaceLabel", previewLang.value),
     });
   }
+  // 生源地有值且未隐藏时加入预览信息
+  if (!isUserFieldHidden("sourcePlace") && user.value?.sourcePlace) {
+    items.push({
+      key: "sourcePlace",
+      icon: fieldIcon("sourcePlace"),
+      label: getPreviewText("sourcePlaceLabel", previewLang.value),
+    });
+  }
   if (!isUserFieldHidden("currentCity") && user.value?.currentCity) {
     items.push({
       key: "currentCity",
