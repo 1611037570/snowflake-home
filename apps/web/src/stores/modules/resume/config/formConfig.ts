@@ -510,6 +510,21 @@ export const DEFAULT_USER_FORM = [
               allowCreate: true,
             },
           }),
+          createMoreField({
+            key: "arrivalTime",
+            label: "到岗时间",
+            category: "求职意向",
+            component: "select",
+            iconKey: "work-time",
+            addable: true,
+            dict: "arrivalTime",
+            props: {
+              placeholder: "请选择到岗时间",
+              clearable: true,
+              filterable: true,
+              allowCreate: true,
+            },
+          }),
           // 政治面貌
           createMoreField({
             key: "political",

@@ -8,14 +8,21 @@ export const RESUME_VALUE_OPTIONS = {
     { name: "男", value: "男" },
     { name: "女", value: "女" },
   ],
-  // 求职状态
+  // 当前就业状态
   status: [
     { name: "在职", value: "在职" },
     { name: "离职", value: "离职" },
     { name: "应届生", value: "应届生" },
-    { name: "随时到岗", value: "随时到岗" },
-    { name: "一月内到岗", value: "一月内到岗" },
     { name: "在职看机会", value: "在职看机会" },
+  ],
+  // 预计到岗时间
+  arrivalTime: [
+    { name: "随时到岗", value: "随时到岗" },
+    { name: "一周内到岗", value: "一周内到岗" },
+    { name: "两周内到岗", value: "两周内到岗" },
+    { name: "一个月内到岗", value: "一个月内到岗" },
+    { name: "一个月以上到岗", value: "一个月以上到岗" },
+    { name: "到岗时间可协商", value: "到岗时间可协商" },
   ],
   // 常见求职岗位，保留自定义输入以覆盖未列出的岗位名称
   position: [

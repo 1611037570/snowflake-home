@@ -20,7 +20,7 @@ const resumeData: any = {
         wechat: "liran_pm",
         github: "https://github.com/liran-pm",
         linkedin: "https://www.linkedin.com/in/liran-pm",
-        status: "在职，考虑机会",
+        status: "在职看机会",
         political: "中共党员",
         city: "上海",
         nativePlace: "江苏南京",
