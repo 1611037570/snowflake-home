@@ -1,5 +1,5 @@
 <script setup>
-import { computed, ref, watch } from "vue";
+import { computed, nextTick, ref, watch } from "vue";
 import { resumeTemplateIndustryOptions, resumeTemplateWorkExperienceOptions } from "@/views/resume/template/data/list";
 import i18n from "@/locales";
 
@@ -15,9 +15,12 @@ const props = defineProps({
 const emit = defineEmits(["search", "select"]);
 
 const dropdownRef = ref();
+const scrollbarRef = ref();
 const query = ref("");
+const visibleCount = ref(5);
 const selectedExperience = ref("all");
 const selectedIndustry = ref("all");
+const isLoadingMore = ref(false);
 
 const getIndustryName = (key) => {
   const translationKey = `resumeExampleIndustry_${key}`;
@@ -73,11 +76,40 @@ const filteredExamples = computed(() => {
   });
 });
 
+const visibleExamples = computed(() => filteredExamples.value.slice(0, visibleCount.value));
+const hasMore = computed(() => visibleCount.value < filteredExamples.value.length);
+
 // 搜索框输入始终按岗位标记匹配，不检索范例正文。
 watch(
   query,
-  (value) => emit("search", value),
+  (value) => {
+    visibleCount.value = 5;
+    emit("search", value);
+  },
   { flush: "sync" },
+);
+
+const loadNextBatch = () => {
+  // 滚动到底部时追加五条，短列表则自动补足滚动区域。
+  if (!hasMore.value || isLoadingMore.value) return;
+  const wrap = scrollbarRef.value?.wrapRef;
+  if (!wrap || wrap.scrollTop + wrap.clientHeight < wrap.scrollHeight - 24) return;
+
+  isLoadingMore.value = true;
+  visibleCount.value += 5;
+  nextTick(() => {
+    isLoadingMore.value = false;
+    loadNextBatch();
+  });
+};
+
+watch(
+  filteredExamples,
+  async () => {
+    visibleCount.value = 5;
+    await nextTick();
+    loadNextBatch();
+  },
 );
 
 const openExamples = () => {
@@ -148,8 +180,11 @@ const selectExample = (example) => {
             {{ $t("resumeExampleCount", { count: filteredExamples.length }) }}
           </div>
         </div>
-        <SfScrollbar height="220px" class="w-full">
+        <SfScrollbar ref="scrollbarRef" height="220px" class="w-full" @scroll="loadNextBatch">
           <div v-if="loading" class="py-3 text-center text-xs text-sf-text-3">
+            <span
+              class="mx-auto mb-3 block h-4 w-4 animate-spin rounded-full border-2 border-sf-b border-t-sf-theme"
+            ></span>
             {{ $t("resumeExampleLoading") }}
           </div>
           <div v-else-if="!filteredExamples.length" class="py-3 text-center text-xs text-sf-text-3">
@@ -157,7 +192,7 @@ const selectExample = (example) => {
           </div>
           <div v-else class="flex flex-col gap-1.5">
             <button
-              v-for="example in filteredExamples"
+              v-for="example in visibleExamples"
               :key="example.id"
               type="button"
               class="w-full cursor-pointer rounded-xl border border-sf-b bg-sf-bg-2 p-1.5 text-left transition-colors hover:border-sf-theme"
@@ -171,7 +206,14 @@ const selectExample = (example) => {
                 {{ example.text }}
               </span>
             </button>
-            <div class="py-3 text-center text-xs text-sf-text-3">
+            <div v-if="hasMore || isLoadingMore" class="py-3 text-center text-xs text-sf-text-3">
+              <span
+                v-if="isLoadingMore"
+                class="mx-auto mb-3 block h-4 w-4 animate-spin rounded-full border-2 border-sf-b border-t-sf-theme"
+              ></span>
+              <span v-else>{{ $t("resumeExampleLoadMore") }}</span>
+            </div>
+            <div v-else class="py-3 text-center text-xs text-sf-text-3">
               {{ $t("resumeExampleNoMore") }}
             </div>
           </div>

@@ -115,7 +115,7 @@ export const loadResumeExamples = async (
   if (matchedExamples.length) return { examples: matchedExamples, recommendedHot: false };
 
   return {
-    examples: getExamples(templates, kind).slice(0, 5),
+    examples: getExamples(templates, kind),
     recommendedHot: true,
   };
 };
