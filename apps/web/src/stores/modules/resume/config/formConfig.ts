@@ -1105,16 +1105,22 @@ export const DEFAULT_WORK_FORM = {
           {
             type: "object",
             label: "岗位",
-            component: "input",
+            component: "positionPicker",
             required: true,
             span: 12,
-            model: {
-              source: ["data", "post"],
-              prop: "modelValue",
-            },
+            model: [
+              {
+                source: ["data", "post"],
+                prop: "modelValue",
+              },
+              {
+                source: ["__options", "position"],
+                prop: "list",
+                raw: true,
+              },
+            ],
             props: {
-              placeholder: "请输入岗位",
-              clearable: true,
+              placeholder: "请选择或输入岗位",
             },
           },
           // 所在城市：省市字典由业务域注入
@@ -1289,16 +1295,22 @@ export const DEFAULT_PROJECT_FORM = {
           {
             type: "object",
             label: "岗位",
-            component: "input",
+            component: "positionPicker",
             required: true,
             span: 12,
-            model: {
-              source: ["data", "post"],
-              prop: "modelValue",
-            },
+            model: [
+              {
+                source: ["data", "post"],
+                prop: "modelValue",
+              },
+              {
+                source: ["__options", "position"],
+                prop: "list",
+                raw: true,
+              },
+            ],
             props: {
-              placeholder: "请输入岗位",
-              clearable: true,
+              placeholder: "请选择或输入岗位",
             },
           },
           // 所在城市：省市字典由业务域注入
@@ -1624,15 +1636,21 @@ export const DEFAULT_CUSTOM_FORM = {
             type: "object",
             required: true,
             label: "职位",
-            component: "input",
+            component: "positionPicker",
             span: 12,
-            model: {
-              source: ["data", "post"],
-              prop: "modelValue",
-            },
+            model: [
+              {
+                source: ["data", "post"],
+                prop: "modelValue",
+              },
+              {
+                source: ["__options", "position"],
+                prop: "list",
+                raw: true,
+              },
+            ],
             props: {
-              placeholder: "请输入职位",
-              clearable: true,
+              placeholder: "请选择或输入职位",
             },
           },
           {
