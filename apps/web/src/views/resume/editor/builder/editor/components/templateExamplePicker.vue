@@ -8,6 +8,7 @@ defineOptions({ name: "TemplateExamplePicker" });
 const props = defineProps({
   examples: { type: Array, default: () => [] },
   kind: { type: String, required: true },
+  recommendedHot: { type: Boolean, default: false },
   searchTerm: { type: String, default: "" },
   loading: { type: Boolean, default: false },
 });
@@ -115,6 +116,9 @@ const selectExample = (example) => {
       >
         <div class="flex flex-col gap-1.5 px-2">
           <div class="px-1.5 text-xs font-medium text-sf-text">{{ title }}</div>
+          <div v-if="recommendedHot" class="px-1.5 text-xs text-sf-text-3">
+            {{ $t("resumeExampleHotRecommendation") }}
+          </div>
           <SfInput
             v-model="query"
             clearable

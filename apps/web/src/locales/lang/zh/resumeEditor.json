@@ -27,6 +27,7 @@
   "resumeExampleCount": "找到 {count} 条内容",
   "resumeExampleNoMore": "没有更多了",
   "resumeExampleLoading": "正在加载范例",
+  "resumeExampleHotRecommendation": "暂未匹配到相关范例，为你推荐热门范例",
   "resumeExampleEmpty": "没有匹配的范例",
   "projectExperience": "项目经历",
   "honorsCertificates": "荣誉证书",
