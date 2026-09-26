@@ -30,6 +30,7 @@ const TEXT_KEYS_SOURCE = `
   出生日期: "birthday",
   请选择出生日期: "birthdayPlaceholder",
   年龄: "age",
+  日期: "dateDisplay",
   性别: "sex",
   文化水平: "educationLevel",
   请选择文化水平: "educationLevelPlaceholder",

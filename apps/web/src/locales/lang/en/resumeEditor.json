@@ -26,6 +26,7 @@
   "birthday": "Date of Birth",
   "birthdayPlaceholder": "Please select your date of birth",
   "age": "Age",
+  "dateDisplay": "Date",
   "sex": "Gender",
   "sexPlaceholder": "Please select your gender",
   "educationLevel": "Education Level",

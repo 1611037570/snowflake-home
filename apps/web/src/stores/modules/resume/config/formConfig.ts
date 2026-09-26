@@ -257,19 +257,19 @@ export const DEFAULT_USER_FORM = [
           },
         ],
         fields: [
-          // 出生日期
+          // 年龄通过出生日期计算，也可切换为展示日期
           createMoreField({
             key: "birthday",
-            label: "出生日期",
+            label: "年龄",
             category: "基本信息",
             component: "datePicker",
             iconKey: "personal-birthday",
             tip: "推荐必填",
             addable: true,
-            // 展示形态：简历上展示年龄或出生日期
+            // 展示形态：简历上展示年龄或日期
             displayOptions: [
               { label: "年龄", value: "age" },
-              { label: "出生日期", value: "date" },
+              { label: "日期", value: "date" },
             ],
             props: {
               placeholder: "请选择出生日期",
