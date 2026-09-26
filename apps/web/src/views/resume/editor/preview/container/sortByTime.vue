@@ -16,11 +16,15 @@ const parseTime = (value) => {
   return match ? Number(match[1]) * 12 + Number(match[2] || 0) : null;
 };
 
-// 教育、工作与项目经历按结束时间从近到远排序，缺少结束时间时使用开始时间。
+// 教育、工作、项目及自定义模块经历按结束时间从近到远排序。
 const sortByTime = () => {
   const operations = [];
+  const modules = [
+    ...timeModules,
+    ...Object.keys(currentData.value || {}).filter((key) => key.startsWith("custom_")),
+  ];
 
-  timeModules.forEach((module) => {
+  modules.forEach((module) => {
     const records = currentData.value?.[module]?.list;
     if (!Array.isArray(records) || records.length < 2) return;
 
