@@ -6,6 +6,7 @@ import RevealGrid from "@/views/resume/components/revealGrid.vue";
 import TemplateCategory from "./components/templateCategory.vue";
 import { resumeTemplateList } from "./data/list";
 import { loadResumeTemplates } from "./data/resumeData";
+import { $t } from "@/locales";
 
 // 模板页专用全屏预览组件：异步加载，避免首屏打包体积过大
 const TemplatePreview = markRaw(defineAsyncComponent(() => import("./templatePreview.vue")));
@@ -20,7 +21,7 @@ onMounted(async () => {
   try {
     resumeTemplates.value = await loadResumeTemplates(resumeTemplateList);
   } catch {
-    ElMessage.error("简历范本暂时无法加载");
+    ElMessage.error($t("resumeTemplateLoadError"));
   } finally {
     templateLoading.value = false;
   }
@@ -36,8 +37,8 @@ const templates = computed(() =>
   themeTemplateList.map((style, index) => ({
     fileName: style.id,
     id: style.id,
-    name: style.name,
-    description: style.description,
+    name: $t(`resumeTemplateStyle_${style.id}_name`),
+    description: $t(`resumeTemplateStyle_${style.id}_description`),
     tags: [],
     type: "style",
     revealIndex: index,
@@ -60,7 +61,15 @@ const filteredResumeTemplates = computed(() =>
         return !Array.isArray(values) || values.includes("all") || values.includes(value);
       }),
     )
-    .map((template) => ({ ...template, type: "content" })),
+    .map((template) => ({
+      ...template,
+      name: $t(`resumeTemplateContent_${template.fileName}_name`),
+      description: $t(`resumeTemplateContent_${template.fileName}_description`),
+      tags: template.tags.map((_, index) =>
+        $t(`resumeTemplateContent_${template.fileName}_tag_${index + 1}`),
+      ),
+      type: "content",
+    })),
 );
 const displayedTemplates = computed(() =>
   currentCategory.value === "style" ? templates.value : filteredResumeTemplates.value,
@@ -128,7 +137,7 @@ const gridClass = ref("default");
           @size-change="setPreviewSize"
         />
         <div v-if="templateLoading" class="flex h-36 items-center justify-center text-sm text-sf-text-2">
-          正在加载简历范本
+          {{ $t("resumeTemplateLoading") }}
         </div>
         <RevealGrid
           v-else
@@ -156,16 +165,16 @@ const gridClass = ref("default");
                 </div>
                 <div class="mt-3 flex items-center justify-between gap-2">
                   <SfButton class="flex-1" @click.stop="openFullscreen(card, card.type)">
-                    预览
+                    {{ $t("resumeTemplatePreview") }}
                   </SfButton>
-                  <SfButton class="flex-1">使用模板</SfButton>
+                  <SfButton class="flex-1">{{ $t("resumeTemplateUse") }}</SfButton>
                 </div>
               </div>
             </ResumeCardContainer>
           </template>
           <template #empty>
             <div class="flex h-36 items-center justify-center text-sm text-sf-text-2">
-              暂无匹配模板
+              {{ $t("resumeTemplateEmpty") }}
             </div>
           </template>
         </RevealGrid>
@@ -179,10 +188,12 @@ const gridClass = ref("default");
       :visible="isFullscreen"
       :item="fullscreenCard?.item || {}"
       single-page
-      :eyebrow-text="fullscreenType === 'content' ? '内容模板' : '样式模板'"
-      :title="fullscreenCard?.name || '简历模板'"
+      :eyebrow-text="$t(fullscreenType === 'content' ? 'resumeTemplateContent' : 'resumeTemplateStyle')"
+      :title="fullscreenCard?.name || $t('resumeTemplateTitle')"
       :description="fullscreenCard?.description || ''"
       :tags="fullscreenCard?.tags || []"
+      :primary-action-text="$t('resumeTemplateUseThis')"
+      :secondary-action-text="$t('resumeTemplateBackToList')"
       @close="closeFullscreen"
       @action="useFullscreenTemplate"
     />
