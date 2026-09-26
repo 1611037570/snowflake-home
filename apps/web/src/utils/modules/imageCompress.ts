@@ -1,5 +1,3 @@
-import pica from "pica";
-
 /** 默认 WebP 压缩质量 (0-1) */
 const DEFAULT_QUALITY = 0.85;
 
@@ -10,11 +8,17 @@ export interface ProcessedImage {
   height: number;
 }
 
-// pica 图片处理实例：WebWorker 高质量缩放，大图更省内存
-const picaInstance = pica({
-  tileSize: 512,
-  idleTimeout: 3000,
-});
+// 首次使用图片压缩时再加载 pica，并复用实例
+let picaInstancePromise: Promise<any> | undefined;
+const getPicaInstance = () => {
+  picaInstancePromise ??= import("pica").then(({ default: pica }) =>
+    pica({
+      tileSize: 512,
+      idleTimeout: 3000,
+    }),
+  );
+  return picaInstancePromise;
+};
 
 /**
  * 将图片源缩放并导出为 WebP base64
@@ -42,6 +46,7 @@ export const compressWebp = async (
   dst.width = targetWidth;
   dst.height = targetHeight;
   // pica 高质量缩放（lanczos3 滤波 + 适度锐化）
+  const picaInstance = await getPicaInstance();
   const canvas = await picaInstance.resize(source, dst, {
     filter: "hamming",
     unsharpAmount: 160,

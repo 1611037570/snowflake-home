@@ -1,6 +1,6 @@
 import { useFileDialog } from "@vueuse/core";
 import { ref } from "vue";
-import { compressWebp } from "@/utils";
+import { compressWebp } from "@/utils/modules/imageCompress";
 
 interface UseImageUploadOptions {
   /** 是否启用裁切：头像传 true，图片作品等保持原比例传 false */

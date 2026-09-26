@@ -112,8 +112,6 @@
 <script setup>
 // 导入自 '@/utils' 的辅助函数
 import { getFormat, toMime } from "@/utils";
-// 导入 pica 库，用于高质量的图片缩放和格式转换
-import pica from "pica";
 // 导入 FormatAdjust.vue 子组件 - 格式调整组件
 import FormatAdjust from "./components/formatAdjust.vue";
 // 导入 ImageSelector.vue 子组件 - 图片选择器组件
@@ -381,11 +379,17 @@ const previewVisible = computed(() => live.value && !!converted.value.url);
 // 返回：目标格式字符串（如 'jpg', 'png' 等）
 const getTargetFormat = () => converted.value.format;
 
-// 创建 pica 实例（图片处理库）
-const picaInstance = pica({
-  tileSize: 512, // 分块大小，处理大图时减少内存占用
-  idleTimeout: 3000, // WebWorker 空闲超时时间（毫秒）
-});
+// 图片处理首次执行时再加载 pica，并复用实例
+let picaInstancePromise;
+const getPicaInstance = () => {
+  picaInstancePromise ??= import("pica").then(({ default: pica }) =>
+    pica({
+      tileSize: 512, // 分块大小，处理大图时减少内存占用
+      idleTimeout: 3000, // WebWorker 空闲超时时间（毫秒）
+    }),
+  );
+  return picaInstancePromise;
+};
 
 // 图片处理函数（核心处理逻辑）
 const processImage = async (options = {}) => {
@@ -411,6 +415,7 @@ const processImage = async (options = {}) => {
     dst.width = w;
     dst.height = h;
     // 使用 pica 进行高质量缩放
+    const picaInstance = await getPicaInstance();
     const canvas = await picaInstance.resize(
       bitmap, // 源图像
       dst, // 目标画布
