@@ -258,7 +258,7 @@ const secondaryItems = computed(() => {
     });
   }
   // 最低薪资已选但最高薪资未完成时，预览暂不展示不完整区间。
-  if (!isUserFieldHidden("salary") && user.value?.salary && !/^\d+k-$/.test(user.value.salary)) {
+  if (!isUserFieldHidden("salary") && user.value?.salary && !/^.+k-$/.test(user.value.salary)) {
     items.push({
       key: "salary",
       icon: fieldIcon("salary"),

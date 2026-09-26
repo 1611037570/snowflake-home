@@ -9,44 +9,76 @@ const modelValue = defineModel("modelValue", {
 });
 
 const parseRange = (value) => {
-  const match = typeof value === "string" ? value.match(/^(\d+)k-(?:(\d+)k)?$/) : null;
-  return match ? { minimum: match[1], maximum: match[2] ?? "" } : { minimum: "", maximum: "" };
+  if (typeof value !== "string") return { minimum: "", maximum: "" };
+  const aboveMatch = value.match(/^(.+?)k以上$/);
+  if (aboveMatch) return { minimum: aboveMatch[1], maximum: "" };
+  const rangeMatch = value.match(/^(.+?)k-(?:(.+?)k)?$/);
+  return rangeMatch
+    ? { minimum: rangeMatch[1], maximum: rangeMatch[2] ?? "" }
+    : { minimum: "", maximum: "" };
 };
 
+const normalizeAmount = (value) => String(value ?? "").trim().replace(/k$/i, "").trim();
 const range = computed(() => parseRange(modelValue.value));
-const minimumOptions = Array.from({ length: 200 }, (_, index) => {
-  const value = String(index + 1);
-  return { name: `${value}k`, value };
+const salarySteps = [
+  ...Array.from({ length: 200 }, (_, index) => index + 1),
+  250,
+  300,
+  400,
+  500,
+  800,
+  1000,
+  1500,
+  2000,
+];
+const minimumOptions = salarySteps.map((step) => {
+  const value = String(step);
+  return { name: `${value}k${step >= 200 ? "以上" : ""}`, value };
 });
 const maximumOptions = computed(() => {
-  const minimum = Number(range.value.minimum);
-  if (!minimum) return [];
-  return Array.from({ length: Math.min(5, 200 - minimum) }, (_, index) => {
-    const value = String(minimum + index + 1);
-    return { name: `${value}k`, value };
-  });
+  const minimum = Number(normalizeAmount(range.value.minimum));
+  if (!minimum || minimum >= 200) return [];
+  return salarySteps
+    .filter((step) => step > minimum)
+    .slice(0, 5)
+    .map((step) => ({ name: `${step}k`, value: String(step) }));
 });
 
 // 薪资区间统一保存为可直接展示的文本，最高薪资始终跟随最低薪资范围。
 const minimum = computed({
-  get: () => range.value.minimum,
+  get: () => normalizeAmount(range.value.minimum),
   set: (value) => {
-    if (!value) {
+    const amount = normalizeAmount(value);
+    if (!amount) {
       modelValue.value = "";
       return;
     }
-    const maximumValue = Number(range.value.maximum);
-    const nextMinimumValue = Number(value);
-    const hasValidMaximum = maximumValue > nextMinimumValue && maximumValue <= Math.min(200, nextMinimumValue + 5);
-    const maximum = hasValidMaximum ? range.value.maximum : "";
-    modelValue.value = maximum ? `${value}k-${maximum}k` : `${value}k-`;
+    const minimumValue = Number(amount);
+    if (!Number.isFinite(minimumValue) || minimumValue <= 0) {
+      modelValue.value = "";
+      return;
+    }
+    if (Number.isFinite(minimumValue) && minimumValue >= 200) {
+      modelValue.value = `${amount}k以上`;
+      return;
+    }
+    const maximum = normalizeAmount(range.value.maximum);
+    const hasValidMaximum = Number.isFinite(Number(maximum)) && Number(maximum) > minimumValue;
+    modelValue.value = hasValidMaximum ? `${amount}k-${maximum}k` : `${amount}k-`;
   },
 });
 
 const maximum = computed({
-  get: () => range.value.maximum,
+  get: () => normalizeAmount(range.value.maximum),
   set: (value) => {
-    modelValue.value = value ? `${range.value.minimum}k-${value}k` : `${range.value.minimum}k-`;
+    const minimumValue = normalizeAmount(range.value.minimum);
+    const maximumValue = normalizeAmount(value);
+    if (!maximumValue) {
+      modelValue.value = `${minimumValue}k-`;
+      return;
+    }
+    if (!Number.isFinite(Number(maximumValue)) || Number(maximumValue) <= Number(minimumValue)) return;
+    modelValue.value = `${minimumValue}k-${maximumValue}k`;
   },
 });
 </script>
@@ -57,15 +89,25 @@ const maximum = computed({
       v-model="minimum"
       :list="minimumOptions"
       filterable
+      allow-create
+      default-first-option
       clearable
       :placeholder="$t('salaryMinimum')"
       class="min-w-0 flex-1"
     />
-    <span class="shrink-0 text-sm text-sf-text-3">{{ $t("salaryRangeSeparator") }}</span>
+    <span
+      v-if="!minimum || Number(minimum) < 200"
+      class="shrink-0 text-sm text-sf-text-3"
+    >
+      {{ $t("salaryRangeSeparator") }}
+    </span>
     <SfSelect
+      v-if="!minimum || Number(minimum) < 200"
       v-model="maximum"
       :list="maximumOptions"
       filterable
+      allow-create
+      default-first-option
       clearable
       :placeholder="$t('salaryMaximum')"
       class="min-w-0 flex-1"
