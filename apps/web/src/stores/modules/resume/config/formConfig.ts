@@ -582,13 +582,9 @@ export const DEFAULT_USER_FORM = [
             key: "salary",
             label: "期望薪资",
             category: "求职意向",
-            component: "input",
+            component: "salaryRange",
             iconKey: "personal-salary",
             addable: true,
-            props: {
-              placeholder: "请输入期望薪资",
-              clearable: true,
-            },
           }),
           createMoreField({
             key: "heightWeight",
