@@ -1148,12 +1148,18 @@ export const DEFAULT_WORK_FORM = {
             type: "object",
             label: "经历",
             required: true,
-            component: "wangEditor",
+            component: "workDescriptionEditor",
             span: 24,
-            model: {
-              source: ["data", "content"],
-              prop: "modelValue",
-            },
+            model: [
+              {
+                source: ["data", "content"],
+                prop: "modelValue",
+              },
+              {
+                source: ["data", "post"],
+                prop: "position",
+              },
+            ],
           },
         ],
       },
