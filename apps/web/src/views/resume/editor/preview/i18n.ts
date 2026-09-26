@@ -117,7 +117,7 @@ export const PREVIEW_TEXTS: Record<PreviewLang, Record<string, string>> = {
     expYearsLabel: "工作年限：",
     avatarAlt: "头像",
     sexLabel: "性别：",
-    educationLevelLabel: "文化水平：",
+    educationLevelLabel: "学历：",
     positionLabel: "求职岗位：",
     phoneLabel: "电话：",
     emailLabel: "邮箱：",

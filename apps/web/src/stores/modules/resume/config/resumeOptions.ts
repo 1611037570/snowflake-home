@@ -94,11 +94,12 @@ export const RESUME_VALUE_OPTIONS = {
     { name: "共青团员", value: "共青团员" },
     { name: "群众", value: "群众" },
   ],
-  // 学位
+  // 学历
   education: [
     { name: "小学", value: "小学" },
     { name: "初中", value: "初中" },
     { name: "高中", value: "高中" },
+    { name: "中专", value: "中专" },
     { name: "大专", value: "大专" },
     { name: "专升本", value: "专升本" },
     { name: "成人本科", value: "成人本科" },
