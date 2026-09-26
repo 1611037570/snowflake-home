@@ -131,7 +131,7 @@ watch(
       router.push("/resume/mine");
       return;
     }
-    await resumeStore.init();
+    await resumeStore.loadResume(String(id));
     if (String(route.query.id || "") !== String(id)) return;
     const index = list.value.findIndex((item) => item.id === id);
     if (index == -1) {

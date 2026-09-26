@@ -44,6 +44,7 @@ export const useResumeStore = defineStore(
     const { getResumeStorage, loadResumeItems, removeResumeStorage, schedulePersistResume } =
       createResumeStorage({ defaultUI: DEFAULT_UI });
     let initPromise: Promise<void> | null = null;
+    const resumeLoadPromises = new Map<string, Promise<any>>();
     // 简历最大数量
     const maxCount = 10;
     // 回收站最大数量
@@ -200,17 +201,52 @@ export const useResumeStore = defineStore(
     const resetSettings = () => {
       system.value = structuredClone(DEFAULT_SYSTEM);
     };
-    // 从目录读取简历索引并加载对应的完整简历
+    // 初始化系统设置，不读取未使用的简历正文
     const init = () => {
       if (initPromise) return initPromise;
       initPromise = (async () => {
         system.value = merge(structuredClone(DEFAULT_SYSTEM), system.value);
-        const items = await loadResumeItems(list.value.map((item) => item.id));
-        const itemIds = new Set(items.map((item) => item.id));
-        list.value = list.value.filter((item) => itemIds.has(item.id));
-        resumeRecords.value = items;
       })();
       return initPromise;
+    };
+    const loadResumeRecord = async (id: string) => {
+      const existing = resumeRecords.value.find((item) => item.id === id);
+      if (existing) return existing;
+      const pending = resumeLoadPromises.get(id);
+      if (pending) return pending;
+      const loading = loadResumeItems([id])
+        .then(([item]) => {
+          if (!item) {
+            list.value = list.value.filter((entry) => entry.id !== id);
+            return null;
+          }
+          const records = new Map(resumeRecords.value.map((record) => [record.id, record]));
+          records.set(id, item);
+          resumeRecords.value = list.value.map((entry) => records.get(entry.id)).filter(Boolean);
+          return item;
+        })
+        .finally(() => resumeLoadPromises.delete(id));
+      resumeLoadPromises.set(id, loading);
+      return loading;
+    };
+    const loadResume = async (id: string) => {
+      await init();
+      const entry = list.value.find((item) => item.id === id && item.deletedAt === null);
+      return entry ? loadResumeRecord(id) : null;
+    };
+    const loadActiveResumes = async () => {
+      await init();
+      await Promise.all(
+        list.value.filter((item) => item.deletedAt === null).map((item) => loadResumeRecord(item.id)),
+      );
+      return resumeList.value;
+    };
+    const loadTrashResumes = async () => {
+      await init();
+      await Promise.all(
+        list.value.filter((item) => item.deletedAt !== null).map((item) => loadResumeRecord(item.id)),
+      );
+      return trashList.value;
     };
 
     // 内容快照：编辑停顿后基于实时数据生成的只读副本，供预览测量树等派生逻辑读取
@@ -315,6 +351,9 @@ export const useResumeStore = defineStore(
       enableHistory,
       disableHistory,
       init,
+      loadResume,
+      loadActiveResumes,
+      loadTrashResumes,
       configSyncing,
       setConfigSyncing,
       previewSyncing,

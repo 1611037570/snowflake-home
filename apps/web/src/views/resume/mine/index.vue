@@ -110,6 +110,14 @@ const getActionList = (item) => [
 
 // 当前标签：draft | trash
 const activeTab = ref("draft");
+const trashReady = ref(false);
+const trashCount = computed(() => resumeStore.list.filter((item) => item.deletedAt !== null).length);
+const selectTab = async (tab) => {
+  activeTab.value = tab;
+  if (tab !== "trash" || trashReady.value) return;
+  await resumeStore.loadTrashResumes();
+  trashReady.value = true;
+};
 
 // 按真实下标定位简历（displayList 中已携带 index）
 const handleEdit = (index) => {
@@ -150,16 +158,16 @@ const handleClearTrash = () => {
         <SfSpan
           :active="activeTab === 'draft'"
           class="flex-c h-10 text-[15px] font-extrabold"
-          @click="activeTab = 'draft'"
+          @click="selectTab('draft')"
         >
           简历草稿({{ list.length }}/{{ maxCount }})
         </SfSpan>
         <SfSpan
           :active="activeTab === 'trash'"
           class="flex-c h-10 text-[15px] font-extrabold"
-          @click="activeTab = 'trash'"
+          @click="selectTab('trash')"
         >
-          回收站({{ resumeStore.trashList.length }}/{{ maxTrashCount }})
+          回收站({{ trashCount }}/{{ maxTrashCount }})
         </SfSpan>
       </div>
       <!-- 草稿与回收站使用对应操作入口。 -->
@@ -231,7 +239,7 @@ const handleClearTrash = () => {
 
         <!-- 回收站列表 -->
         <RevealGrid
-          v-else-if="activeTab === 'trash' && resumeStore.trashList.length > 0"
+          v-else-if="activeTab === 'trash' && trashReady && resumeStore.trashList.length > 0"
           :items="resumeStore.trashList"
           key-field="id"
         >
@@ -272,6 +280,17 @@ const handleClearTrash = () => {
             </ResumeCardContainer>
           </template>
         </RevealGrid>
+        <div
+          v-else-if="activeTab === 'trash' && !trashReady"
+          class="flex flex-col items-center justify-center py-20 text-sf-text-2"
+        >
+          <SfIcon
+            icon="line-md:loading-twotone-loop"
+            size="8"
+            class="mb-4 animate-spin text-sf-theme"
+          />
+          <span class="text-base">正在加载回收站</span>
+        </div>
         <!-- 回收站为空 -->
         <div v-else class="flex flex-col items-center justify-center py-20 text-sf-text-2">
           <SfIcon icon="lucide:trash-2" size="12" class="mb-4 text-sf-text-3" />

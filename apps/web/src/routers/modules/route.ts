@@ -72,23 +72,26 @@ function generateRoute(item: any): RouteRecordRaw {
 const list = ALL_ROUTES.map((item) => generateRoute(item));
 routes.push(...list);
 
-/**
- * 预取所有页面组件 chunk
- * 浏览器空闲时提前下载页面代码，避免点击导航时现场加载造成停顿
- */
-export function prefetchRouteComponents() {
-  const loaders: Array<() => Promise<unknown>> = [];
-  const collect = (routeList: RouteRecordRaw[]) => {
-    routeList.forEach((item) => {
-      if (typeof item.component === "function") {
-        loaders.push(item.component as () => Promise<unknown>);
-      }
-      if (item.children?.length) collect(item.children as RouteRecordRaw[]);
-    });
+const prefetchableRouteLoaders: Record<string, () => Promise<unknown>> = {
+  "/resume/editor": resumeChildren.find((route) => route.path === "editor")
+    ?.component as () => Promise<unknown>,
+};
+const prefetchedRoutePromises = new Map<string, Promise<unknown>>();
+
+// 仅预取明确目标，并发不超过两个
+export async function prefetchRouteComponents(paths: string[]) {
+  const queue = [...new Set(paths)].filter(
+    (path) => prefetchableRouteLoaders[path] && !prefetchedRoutePromises.has(path),
+  );
+  const loadNext = async () => {
+    while (queue.length) {
+      const path = queue.shift()!;
+      const loading = prefetchableRouteLoaders[path]().catch(() => {});
+      prefetchedRoutePromises.set(path, loading);
+      await loading;
+    }
   };
-  collect(routes);
-  // 预取失败不影响正常导航
-  loaders.forEach((load) => void load().catch(() => {}));
+  await Promise.all(Array.from({ length: Math.min(2, queue.length) }, loadNext));
 }
 
 export default routes;

@@ -9,10 +9,19 @@ const router = useRouter();
 const resumeStore = useResumeStore();
 const resumeReady = ref(false);
 
-// 仅在进入简历模块时加载简历数据，避免阻塞其他模块启动。
-void resumeStore.init().then(() => {
-  resumeReady.value = true;
-});
+let resumeLoadSequence = 0;
+const loadRouteResumes = async () => {
+  const sequence = ++resumeLoadSequence;
+  resumeReady.value = false;
+  await resumeStore.init();
+  if (route.path === "/resume/editor" || route.path === "/resume/print") {
+    await resumeStore.loadResume(String(route.query.id || ""));
+  } else if (route.path === "/resume/mine") {
+    await resumeStore.loadActiveResumes();
+  }
+  if (sequence === resumeLoadSequence) resumeReady.value = true;
+};
+watch(() => [route.path, route.query.id], loadRouteResumes, { immediate: true });
 
 // 首次进入自动初始化开始投递日期
 const statisticsStore = useResumeStatisticsStore();
