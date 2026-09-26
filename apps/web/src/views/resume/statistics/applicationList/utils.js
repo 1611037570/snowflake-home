@@ -1,21 +1,35 @@
 // 投递记录模块公共工具：平台/状态选项、平台文案、按钮样式
 import { APPLICATION_PLATFORM, FOLLOW_UP_STATUS } from "@/stores";
+import { $t } from "@/locales";
 
-// 平台选项（SfSelect 所需的 { value, name } 结构）
-export const platformOptions = APPLICATION_PLATFORM.map((item) => ({
+const platformLocaleKeys = {
+  boss: "resumeStatisticsPlatformBoss",
+  zhilian: "resumeStatisticsPlatformZhilian",
+  "51job": "resumeStatisticsPlatform51job",
+  liepin: "resumeStatisticsPlatformLiepin",
+  other: "resumeStatisticsOther",
+};
+
+const statusLocaleKeys = {
+  interview: "resumeStatisticsStatusInterview",
+  offer: "resumeStatisticsStatusOffer",
+  rejected: "resumeStatisticsStatusRejected",
+};
+
+export const getPlatformOptions = () => APPLICATION_PLATFORM.map((item) => ({
   value: item.value,
-  name: item.label,
+  name: $t(platformLocaleKeys[item.value] || "resumeStatisticsOther"),
 }));
 
-// 跟进状态选项（SfSelect 所需的 { value, name } 结构）
-export const followUpStatusOptions = FOLLOW_UP_STATUS.map((item) => ({
+export const getFollowUpStatusOptions = () => FOLLOW_UP_STATUS.map((item) => ({
   value: item.value,
-  name: item.label,
+  name: $t(statusLocaleKeys[item.value] || item.label),
 }));
 
 // 平台标签文案
 export const getPlatformLabel = (platform) => {
-  return APPLICATION_PLATFORM.find((item) => item.value === platform)?.label || platform || "--";
+  const key = platformLocaleKeys[platform];
+  return key ? $t(key) : platform || "--";
 };
 
 // 按钮公共样式（完整类名字面量，可被 Tailwind 识别）

@@ -5,10 +5,12 @@ import { ElMessage } from "element-plus";
 import { storeToRefs } from "pinia";
 import { reactive } from "vue";
 import ListFilter from "./listFilter.vue";
-import { followUpStatusOptions, getPlatformLabel } from "./utils";
+import { getFollowUpStatusOptions, getPlatformLabel } from "./utils";
+import { $t } from "@/locales";
 
 const statisticsStore = useResumeStatisticsStore();
 const { followUps } = storeToRefs(statisticsStore);
+const followUpStatusOptions = computed(getFollowUpStatusOptions);
 const { proxy } = getCurrentInstance();
 
 // 筛选条件（空表示全部）
@@ -38,7 +40,7 @@ const openEdit = (item) => {
 // 保存公司名称修改
 const handleSave = () => {
   if (!editForm.company) {
-    ElMessage.warning("请填写公司名称");
+    ElMessage.warning($t("resumeStatisticsEnterCompanyName"));
     return;
   }
   statisticsStore.updateFollowUp(editId.value, { company: editForm.company });
@@ -46,7 +48,7 @@ const handleSave = () => {
 };
 // 删除跟进记录
 const handleDelete = (item) => {
-  proxy.$confirm("确定要删除这条跟进记录吗？", "删除确认").then(() => {
+  proxy.$confirm($t("resumeStatisticsDeleteFollowUpMessage"), $t("resumeStatisticsDeleteConfirm")).then(() => {
     statisticsStore.deleteFollowUp(item.id);
   });
 };
@@ -58,22 +60,22 @@ const getStatusDotClass = (status) => {
 
 <template>
   <ListFilter v-model:platform="filter.platform" :count="filteredList.length">
-    <ElFormItem label="状态" prop="status" class="flex-1">
+    <ElFormItem :label="$t('resumeStatisticsStatus')" prop="status" class="flex-1">
       <SfSelect
         v-model="filter.status"
         clearable
-        placeholder="全部状态"
+        :placeholder="$t('resumeStatisticsAllStatuses')"
         :list="followUpStatusOptions"
       />
     </ElFormItem>
   </ListFilter>
 
-  <el-table :data="filteredList" class="mt-3 w-full" empty-text="暂无跟进记录">
-    <el-table-column prop="company" label="公司" min-width="180" show-overflow-tooltip />
-    <el-table-column label="平台" width="120">
+  <el-table :data="filteredList" class="mt-3 w-full" :empty-text="$t('resumeStatisticsNoFollowUps')">
+    <el-table-column prop="company" :label="$t('resumeStatisticsCompany')" min-width="180" show-overflow-tooltip />
+    <el-table-column :label="$t('resumeStatisticsPlatform')" width="120">
       <template #default="{ row }">{{ getPlatformLabel(row.platform) }}</template>
     </el-table-column>
-    <el-table-column label="状态" width="150">
+    <el-table-column :label="$t('resumeStatisticsStatus')" width="150">
       <template #default="{ row }">
         <SfSelect v-model="row.status" size="small" class="w-28" :list="followUpStatusOptions">
           <template #prefix>
@@ -82,8 +84,8 @@ const getStatusDotClass = (status) => {
         </SfSelect>
       </template>
     </el-table-column>
-    <el-table-column prop="date" label="投递日期" width="140" sortable />
-    <el-table-column label="操作" width="110">
+    <el-table-column prop="date" :label="$t('resumeStatisticsApplicationDate')" width="140" sortable />
+    <el-table-column :label="$t('resumeStatisticsActions')" width="110">
       <template #default="{ row }">
         <button
           type="button"
@@ -103,16 +105,16 @@ const getStatusDotClass = (status) => {
     </el-table-column>
   </el-table>
 
-  <SfModal v-model="editVisible" title="修改公司名称">
+  <SfModal v-model="editVisible" :title="$t('resumeStatisticsEditCompanyName')">
     <div class="w-full max-w-[440px]">
       <el-form :model="editForm" label-width="70px">
-        <el-form-item label="公司名称">
-          <SfInput v-model="editForm.company" placeholder="请输入公司名称" />
+        <el-form-item :label="$t('resumeStatisticsCompanyName')">
+          <SfInput v-model="editForm.company" :placeholder="$t('resumeStatisticsEnterCompanyName')" />
         </el-form-item>
       </el-form>
       <div class="mt-4 flex justify-end gap-2">
-        <el-button @click="editVisible = false">取消</el-button>
-        <el-button type="primary" @click="handleSave">保存</el-button>
+        <el-button @click="editVisible = false">{{ $t("resumeStatisticsCancel") }}</el-button>
+        <el-button type="primary" @click="handleSave">{{ $t("resumeStatisticsSave") }}</el-button>
       </div>
     </div>
   </SfModal>

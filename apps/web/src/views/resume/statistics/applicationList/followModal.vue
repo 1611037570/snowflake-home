@@ -4,7 +4,8 @@ import { useResumeStatisticsStore } from "@/stores";
 import dayjs from "dayjs";
 import { storeToRefs } from "pinia";
 import { reactive } from "vue";
-import { followUpStatusOptions, getPlatformLabel } from "./utils";
+import { getFollowUpStatusOptions, getPlatformLabel } from "./utils";
+import { $t } from "@/locales";
 
 // 弹窗显隐（v-model 双向绑定）
 const visible = defineModel({ type: Boolean, default: false });
@@ -13,6 +14,7 @@ const props = defineProps({ targetId: { type: String, default: "" } });
 
 const statisticsStore = useResumeStatisticsStore();
 const { applications } = storeToRefs(statisticsStore);
+const followUpStatusOptions = computed(getFollowUpStatusOptions);
 
 // 跟进表单
 const form = reactive({ company: "", status: "interview", platform: "boss" });
@@ -26,10 +28,10 @@ const randomLetters = () => {
     "",
   );
 };
-// 生成随机公司名（xx月-xx日--随机4字母）
+// 公司名只包含数字日期与随机字母，避免生成固定中文文案
 const generateCompanyName = () => {
   const now = dayjs();
-  return `${now.format("MM")}月-${now.format("DD")}日--${randomLetters()}`;
+  return `${now.format("MM-DD")}--${randomLetters()}`;
 };
 
 // 弹窗打开时根据 targetId 初始化表单
@@ -64,22 +66,22 @@ const handleSubmit = () => {
 </script>
 
 <template>
-  <SfModal v-model="visible" title="投递跟进">
+  <SfModal v-model="visible" :title="$t('resumeStatisticsFollowUpApplication')">
     <div class="flex w-full max-w-[440px] flex-col">
       <el-form :model="form" label-width="70px" class="gap-3">
-        <el-form-item label="公司名称" class="pb-3">
-          <SfInput v-model="form.company" placeholder="留空将自动生成" />
+        <el-form-item :label="$t('resumeStatisticsCompanyName')" class="pb-3">
+          <SfInput v-model="form.company" :placeholder="$t('resumeStatisticsCompanyAutoName')" />
         </el-form-item>
-        <el-form-item label="跟进状态" class="pb-3">
+        <el-form-item :label="$t('resumeStatisticsFollowUpStatus')" class="pb-3">
           <SfSelect v-model="form.status" class="w-full" :list="followUpStatusOptions" />
         </el-form-item>
-        <el-form-item label="投递平台" class="pb-3">
+        <el-form-item :label="$t('resumeStatisticsApplicationPlatform')" class="pb-3">
           <SfSelect v-model="form.platform" class="w-full" :list="platformList" />
         </el-form-item>
       </el-form>
       <div class="flex justify-end gap-3">
-        <el-button @click="visible = false">取消</el-button>
-        <el-button type="primary" @click="handleSubmit">确定</el-button>
+        <el-button @click="visible = false">{{ $t("resumeStatisticsCancel") }}</el-button>
+        <el-button type="primary" @click="handleSubmit">{{ $t("resumeStatisticsConfirm") }}</el-button>
       </div>
     </div>
   </SfModal>
