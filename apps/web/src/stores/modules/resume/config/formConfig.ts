@@ -910,12 +910,17 @@ export const DEFAULT_EDUCATION_FORM = {
           {
             type: "object",
             label: "经历",
-            component: "wangEditor",
+            component: "resumeContentEditor",
             span: 24,
-            model: {
-              source: ["data", "content"],
-              prop: "modelValue",
+            props: {
+              kind: "education",
             },
+            model: [
+              {
+                source: ["data", "content"],
+                prop: "modelValue",
+              },
+            ],
           },
         ],
       },
@@ -938,8 +943,11 @@ export const DEFAULT_SKILL_FORM = {
   fields: [
     {
       type: "object",
-      component: "wangEditor",
+      component: "resumeContentEditor",
       required: true,
+      props: {
+        kind: "advantage",
+      },
       model: {
         source: ["data", "content"],
         prop: "modelValue",
@@ -1148,16 +1156,15 @@ export const DEFAULT_WORK_FORM = {
             type: "object",
             label: "经历",
             required: true,
-            component: "workDescriptionEditor",
+            component: "resumeContentEditor",
             span: 24,
+            props: {
+              kind: "work",
+            },
             model: [
               {
                 source: ["data", "content"],
                 prop: "modelValue",
-              },
-              {
-                source: ["data", "post"],
-                prop: "position",
               },
             ],
           },
@@ -1343,13 +1350,18 @@ export const DEFAULT_PROJECT_FORM = {
           {
             type: "object",
             label: "经历",
-            component: "wangEditor",
+            component: "resumeContentEditor",
             required: true,
             span: 24,
-            model: {
-              source: ["data", "content"],
-              prop: "modelValue",
+            props: {
+              kind: "project",
             },
+            model: [
+              {
+                source: ["data", "content"],
+                prop: "modelValue",
+              },
+            ],
           },
         ],
       },

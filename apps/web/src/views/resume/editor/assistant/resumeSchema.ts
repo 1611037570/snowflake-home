@@ -53,7 +53,7 @@ const getFormat = (field: FormField): ResumeFieldFormat | undefined => {
   ) {
     return "month";
   }
-  if (field.component === "wangEditor" || field.component === "workDescriptionEditor") return "html";
+  if (field.component === "wangEditor" || field.component === "resumeContentEditor") return "html";
   if (field.component === "heightWeight") return "heightWeight";
 };
 
