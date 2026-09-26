@@ -45,7 +45,34 @@ const TEXT_KEYS_SOURCE = `
   MBTI: "mbti",
   "请选择 MBTI": "mbtiPlaceholder",
   求职岗位: "position",
-  请输入求职岗位: "positionPlaceholder",
+  请选择求职岗位: "positionPlaceholder",
+  技术研发: "technologyEngineering",
+  产品与项目: "productAndProject",
+  设计: "design",
+  运营: "operations",
+  市场与销售: "marketingAndSales",
+  职能支持: "businessSupport",
+  自定义: "customPositionCategory",
+  前端开发: "frontEndDeveloper",
+  Java开发: "javaDeveloper",
+  后端开发: "backEndDeveloper",
+  Python开发: "pythonDeveloper",
+  全栈开发: "fullStackDeveloper",
+  测试工程师: "testEngineer",
+  算法工程师: "algorithmEngineer",
+  数据分析师: "dataAnalyst",
+  产品经理: "productManager",
+  产品助理: "productAssistant",
+  UI设计师: "uiDesigner",
+  平面设计师: "graphicDesigner",
+  运营专员: "operationsSpecialist",
+  新媒体运营: "newMediaOperations",
+  市场专员: "marketingSpecialist",
+  销售专员: "salesSpecialist",
+  人力资源专员: "humanResourcesSpecialist",
+  行政专员: "administrativeSpecialist",
+  会计: "accountant",
+  项目经理: "projectManager",
   参加工作时间: "workTime",
   请选择参加工作时间: "workTimePlaceholder",
   电话: "phone",
@@ -315,6 +342,9 @@ export function localizeResumeOptions(options: Record<string, any>, translate: T
     list.forEach((item: any) => {
       if (item && typeof item.name === "string") {
         item.name = translateResumeEditorText(item.name, translate);
+      }
+      if (item && typeof item.category === "string") {
+        item.category = translateResumeEditorText(item.category, translate);
       }
     });
   });

@@ -375,13 +375,13 @@ export const DEFAULT_USER_FORM = [
             key: "position",
             label: "求职岗位",
             category: "求职意向",
-            component: "input",
+            component: "positionPicker",
             iconKey: "work-briefcase",
             tip: "推荐必填",
             addable: true,
+            dict: "position",
             props: {
-              placeholder: "请输入求职岗位",
-              clearable: true,
+              placeholder: "请选择或输入求职岗位",
             },
           }),
           // 参加工作时间
