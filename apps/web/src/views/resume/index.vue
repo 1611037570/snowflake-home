@@ -21,11 +21,11 @@ if (!route.meta.hideResumeLayout) statisticsStore.initStartDate();
 
 // 顶部导航配置（对应 /resume 下的子路由）
 const navList = [
-  { name: "首页", path: "/resume" },
-  { name: "简历模板", path: "/resume/template" },
-  { name: "我的简历", path: "/resume/mine" },
-  { name: "小舟AI", path: "/resume/ai" },
-  { name: "求职统计", path: "/resume/statistics" },
+  { key: "resumeNavHome", path: "/resume" },
+  { key: "resumeNavTemplates", path: "/resume/template" },
+  { key: "resumeNavMyResumes", path: "/resume/mine" },
+  { key: "resumeNavAi", path: "/resume/ai" },
+  { key: "resumeNavStatistics", path: "/resume/statistics" },
 ];
 // 当前高亮导航，以当前路由路径为准
 const activeNavIndex = computed(() => navList.findIndex((item) => route.path === item.path));
@@ -50,7 +50,7 @@ const activeNavIndex = computed(() => navList.findIndex((item) => route.path ===
             :underline-height="1"
             @click="router.push(item.path)"
           >
-            {{ item.name }}
+            {{ $t(item.key) }}
           </SfSpan>
         </nav>
 
