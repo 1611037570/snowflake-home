@@ -43,24 +43,24 @@ const toggleCategoryOption = (groupKey, optionKey) => {
           :icon="group.icon"
           @click="selectCategory(group.key)"
         >
-          {{ group.name }}
+          {{ $t(`resumeTemplateCategory_${group.key}`) }}
         </SfButton>
       </nav>
       <div class="flex flex-wrap items-center gap-3">
-        <span class="text-sm font-bold text-sf-text-2">预览尺寸</span>
+        <span class="text-sm font-bold text-sf-text-2">{{ $t("resumeTemplatePreviewSize") }}</span>
         <SfButton
           :plain="previewSize !== 'default'"
           :round="true"
           @click="selectPreviewSize('default')"
         >
-          小图
+          {{ $t("resumeTemplateSmallPreview") }}
         </SfButton>
         <SfButton
           :plain="previewSize !== 'small'"
           :round="true"
           @click="selectPreviewSize('small')"
         >
-          大图
+          {{ $t("resumeTemplateLargePreview") }}
         </SfButton>
       </div>
     </div>
@@ -75,7 +75,7 @@ const toggleCategoryOption = (groupKey, optionKey) => {
         type="button"
         @click="toggleCategoryOption(currentCategoryGroup.key, option.key)"
       >
-        {{ option.value }}
+        {{ $t(`resumeTemplateOption_${currentCategoryGroup.key}_${option.key}`) }}
       </button>
     </div>
   </section>

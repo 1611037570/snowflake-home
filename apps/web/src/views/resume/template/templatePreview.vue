@@ -20,7 +20,7 @@ const props = defineProps({
   // 右侧信息标题
   title: {
     type: String,
-    default: "简历模板",
+    default: "",
   },
   // 模板描述
   description: {
@@ -35,17 +35,17 @@ const props = defineProps({
   // 右侧标题上方的场景文案
   eyebrowText: {
     type: String,
-    default: "简历模板",
+    default: "",
   },
   // 右侧主操作文案，为空时不显示主操作按钮
   primaryActionText: {
     type: String,
-    default: "使用此模板",
+    default: "",
   },
   // 右侧次操作文案
   secondaryActionText: {
     type: String,
-    default: "返回模板列表",
+    default: "",
   },
   // 模板预览只展示第一页，草稿预览仍保留完整分页
   singlePage: {
@@ -147,7 +147,7 @@ onBeforeUnmount(() => {
           <button
             type="button"
             class="flex h-9 w-9 shrink-0 cursor-pointer! items-center justify-center rounded-full text-sf-text transition-colors hover:bg-sf-bg-2"
-            aria-label="关闭预览"
+            :aria-label="$t('resumeTemplateClosePreview')"
             @click="emit('close')"
           >
             <SfIcon icon="lucide:x" size="5" />
