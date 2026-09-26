@@ -12,8 +12,8 @@
           <h1
             class="animate-rise animate-rise--delay-one text-5xl leading-[1.15] font-black tracking-[-0.06em] sm:text-6xl lg:text-7xl"
           >
-            一叶<span class="resume-home__highlight">轻舟</span>，<br />
-            助你渡过万重山
+            {{ $t("resumeHomeHeroStart") }}<span class="resume-home__highlight">{{ $t("resumeHomeHeroHighlight") }}</span>，<br />
+            {{ $t("resumeHomeHeroEnd") }}
           </h1>
           <dl
             class="animate-rise animate-rise--delay-three grid max-w-md grid-cols-1 pt-8 text-left sm:grid-cols-2"
@@ -41,7 +41,7 @@
               class="group inline-flex cursor-pointer items-center justify-center gap-3 rounded-full bg-sf-theme px-6 py-3 font-semibold text-sf-theme-text transition-transform duration-300 hover:-translate-y-1"
               @click="go"
             >
-              免费制作简历
+              {{ $t("resumeHomeCreateFree") }}
               <SfIcon
                 icon="mingcute:arrow-right-line"
                 size="4"
@@ -52,7 +52,7 @@
               class="inline-flex items-center justify-center gap-3 rounded-full border border-sf-b bg-sf-primary px-6 py-3 font-semibold transition-colors duration-300 hover:bg-sf-bg"
               href="#journey"
             >
-              探索特色
+              {{ $t("resumeHomeExploreFeatures") }}
               <SfIcon icon="mingcute:arrow-down-line" size="4" />
             </a>
           </div>
@@ -68,7 +68,7 @@
               <SfIcon icon="lucide:sparkles" size="4" />
             </span>
             <span>
-              <strong class="block text-sm">全部模板永久免费</strong>
+              <strong class="block text-sm">{{ $t("resumeHomeTemplatesFree") }}</strong>
             </span>
           </div>
           <div
@@ -93,16 +93,16 @@
                   <SfIcon icon="material-symbols:image-outline" size="8" />
                 </span>
                 <span>
-                  <strong class="block text-base">首页产品截图预留区</strong>
-                  <small class="mt-3 block text-sm text-sf-text-3"
-                    >替换为您的编辑器或简历展示截图</small
+                    <strong class="block text-base">{{ $t("resumeHomeScreenshotPlaceholder") }}</strong>
+                    <small class="mt-3 block text-sm text-sf-text-3"
+                    >{{ $t("resumeHomeScreenshotHint") }}</small
                   >
                 </span>
               </div>
               <span class="resume-home__grid absolute inset-0"></span>
               <span
                 class="absolute right-6 bottom-6 rounded-full bg-sf-primary px-3 py-3 text-xs font-medium shadow-sm"
-                >实时预览</span
+                >{{ $t("resumeHomeLivePreview") }}</span
               >
             </div>
           </div>
@@ -115,7 +115,7 @@
               >
                 <SfIcon icon="lucide:check" size="4" />
               </span>
-              <span class="text-sm font-medium">导出功能永久免费</span>
+              <span class="text-sm font-medium">{{ $t("resumeHomeExportFree") }}</span>
             </div>
           </div>
         </div>
@@ -128,9 +128,9 @@
       >
         <div class="flex flex-col justify-between gap-6 md:flex-row md:items-end">
           <div class="max-w-2xl">
-            <p class="text-sm font-semibold tracking-[0.18em] text-sf-theme">一条清晰的求职路径</p>
+            <p class="text-sm font-semibold tracking-[0.18em] text-sf-theme">{{ $t("resumeHomeJourneyEyebrow") }}</p>
             <h2 class="mt-3 text-3xl font-black tracking-[-0.04em] sm:text-4xl">
-              不只做一份简历，陪你走完整个求职过程。
+              {{ $t("resumeHomeJourneyTitle") }}
             </h2>
           </div>
         </div>
@@ -205,16 +205,16 @@
         <div class="relative w-full overflow-hidden rounded-[30px] px-6 py-12 text-center sm:px-12">
           <div class="relative mx-auto max-w-2xl">
             <h2 class="mt-6 text-3xl font-black tracking-[-0.04em] sm:text-4xl">
-              现在，写下那个更好的自己。
+              {{ $t("resumeHomeClosingTitle") }}
             </h2>
             <p class="mt-3 leading-7 text-sf-text-2">
-              你的下一份简历，值得从一个干净而有力的开始。
+              {{ $t("resumeHomeClosingDescription") }}
             </p>
             <button
               class="mt-9 inline-flex cursor-pointer items-center gap-3 rounded-full bg-sf-theme px-6 py-3 font-semibold text-sf-theme-text transition-transform duration-300 hover:-translate-y-1"
               @click="go"
             >
-              免费开始制作
+              {{ $t("resumeHomeStartFree") }}
               <SfIcon icon="mingcute:arrow-right-line" size="4" />
             </button>
           </div>
@@ -230,6 +230,7 @@
 <script setup>
 import { TransitionPresets, useIntersectionObserver, useTransition } from "@vueuse/core";
 import { themeTemplateList } from "@/stores/modules/resume/config/uiConfig";
+import { $t } from "@/locales";
 import { resumeTemplateList } from "../template/data/list";
 import { useRouter } from "vue-router";
 import { computed, onMounted, ref } from "vue";
@@ -243,23 +244,23 @@ const revealSections = ref([]);
 const headlineStats = computed(() => [
   {
     count: resumeTemplateList.length,
-    label: "份简历范本",
-    description: "覆盖不同求职场景",
+    label: $t("resumeHomeResumeCount"),
+    description: $t("resumeHomeResumeCountDescription"),
   },
   {
     count: themeTemplateList.length,
-    label: "种排版样式",
-    description: "创建后可自由切换",
+    label: $t("resumeHomeStyleCount"),
+    description: $t("resumeHomeStyleCountDescription"),
   },
   {
     count: 5,
-    label: "个导出方式",
-    description: "应对不同场景",
+    label: $t("resumeHomeExportCount"),
+    description: $t("resumeHomeExportCountDescription"),
   },
   {
     count: 2,
-    label: "种编辑方式",
-    description: "内置 AI 与编辑器",
+    label: $t("resumeHomeEditingCount"),
+    description: $t("resumeHomeEditingCountDescription"),
   },
 ]);
 
@@ -291,88 +292,88 @@ useIntersectionObserver(
   { threshold: 0.3 },
 );
 
-const journeySteps = [
+const journeySteps = computed(() => [
   {
-    title: "创建简历",
-    description: "从任意起点开始，都能找到适合自己的创建方式。",
+    title: $t("resumeHomeStepCreateTitle"),
+    description: $t("resumeHomeStepCreateDescription"),
   },
   {
-    title: "云帆编辑器",
-    description: "编辑模块、调整样式、实时预览，完成导出与备份。",
+    title: $t("resumeHomeStepEditorTitle"),
+    description: $t("resumeHomeStepEditorDescription"),
   },
   {
-    title: "小舟 AI 助手",
-    description: "支持一键优化，能面试准备提供针对性练习。",
+    title: $t("resumeHomeStepAiTitle"),
+    description: $t("resumeHomeStepAiDescription"),
   },
   {
-    title: "简历情况统计",
-    description: "记录投递、跟进与 offer，用趋势和数据看清下一步方向。",
+    title: $t("resumeHomeStepStatisticsTitle"),
+    description: $t("resumeHomeStepStatisticsDescription"),
   },
-];
+]);
 
-const featureGroups = [
+const featureGroups = computed(() => [
   {
     icon: "ph:file-md-duotone",
     id: "create",
-    eyebrow: "创建简历",
-    title: "从任意起点开始",
-    description: "不论资料是否齐全，都能找到适合自己的创建方式。",
-    shotTitle: "创建方式与模板截图预留区",
-    shotDescription: "展示新建简历、快速填写或模板选择界面",
+    eyebrow: $t("resumeHomeCreateEyebrow"),
+    title: $t("resumeHomeCreateTitle"),
+    description: $t("resumeHomeCreateDescription"),
+    shotTitle: $t("resumeHomeCreateShotTitle"),
+    shotDescription: $t("resumeHomeCreateShotDescription"),
     items: [
-      "从空白、基础信息或模板开始创建",
-      "复制已有简历，为不同岗位单独准备",
-      "AI智能解析已有简历，快速创建新版本",
-      "导入 JSON 完整备份，继续编辑旧简历",
+      $t("resumeHomeCreateFeature1"),
+      $t("resumeHomeCreateFeature2"),
+      $t("resumeHomeCreateFeature3"),
+      $t("resumeHomeCreateFeature4"),
     ],
   },
   {
     icon: "mdi:widgets",
     id: "editor",
-    eyebrow: "云帆编辑器",
-    title: "按你的方式排版",
-    description: "内容和视觉都可以细调，让信息结构真正服务于阅读。",
-    shotTitle: "编辑器截图预留区",
-    shotDescription: "展示模块编辑与实时预览的协同体验",
+    eyebrow: $t("resumeHomeEditorEyebrow"),
+    title: $t("resumeHomeEditorTitle"),
+    description: $t("resumeHomeEditorDescription"),
+    shotTitle: $t("resumeHomeEditorShotTitle"),
+    shotDescription: $t("resumeHomeEditorShotDescription"),
     items: [
-      "模块导航、隐藏归档与自定义模块管理",
-      "调整主题色、字体、边距、行距与模块间距",
-      "切换个人信息展示、布局和头像位置，支持撤销重做与智能一页纸",
-      "支持 PDF、PNG、Markdown、HTML 与 JSON 导出",
-      "生成分享链接与二维码，并支持本地自动备份",
+      $t("resumeHomeEditorFeature1"),
+      $t("resumeHomeEditorFeature2"),
+      $t("resumeHomeEditorFeature3"),
+      $t("resumeHomeEditorFeature4"),
+      $t("resumeHomeEditorFeature5"),
     ],
   },
   {
     icon: "ph:brain-duotone",
     id: "ai",
-    eyebrow: "小舟 AI 助手",
-    title: "AI 陪你准备表达",
-    description: "从内容起草到面试练习，让每次开口与落笔都有更清晰的方向。",
-    shotTitle: "AI 助手截图预留区",
-    shotDescription: "展示简历优化、JD 对标或模拟面试过程",
+    eyebrow: $t("resumeHomeAiEyebrow"),
+    title: $t("resumeHomeAiTitle"),
+    description: $t("resumeHomeAiDescription"),
+    shotTitle: $t("resumeHomeAiShotTitle"),
+    shotDescription: $t("resumeHomeAiShotDescription"),
     items: [
-      "生成经历、润色表达与一键优化报告",
-      "结合目标岗位 JD 做匹配分析和优化",
-      "支持中文、英语、日语等多语言翻译",
-      "自我介绍、面试押题与逐轮模拟训练",
+      $t("resumeHomeAiFeature1"),
+      $t("resumeHomeAiFeature2"),
+      $t("resumeHomeAiFeature3"),
+      $t("resumeHomeAiFeature4"),
     ],
   },
   {
     icon: "mdi:chart-pie",
     id: "statistics",
-    eyebrow: "简历情况统计",
-    title: "记录每一份机会",
-    description: "简历完成不是终点，投递节奏、面试进展和成果都值得被看见。",
-    shotTitle: "投递统计截图预留区",
-    shotDescription: "展示投递记录、趋势图与 offer 进度",
+    eyebrow: $t("resumeHomeStatisticsEyebrow"),
+    title: $t("resumeHomeStatisticsTitle"),
+    description: $t("resumeHomeStatisticsDescription"),
+    shotTitle: $t("resumeHomeStatisticsShotTitle"),
+    shotDescription: $t("resumeHomeStatisticsShotDescription"),
     items: [
-      "记录投递、跟进、面试与 offer 状态",
-      "查看近七天或本月的投递趋势",
-      "统计已投递天数、进行中机会与 offer 数量",
-      "批量录入投递记录，安排后续跟进事项",
+      $t("resumeHomeStatisticsFeature1"),
+      $t("resumeHomeStatisticsFeature2"),
+      $t("resumeHomeStatisticsFeature3"),
+      $t("resumeHomeStatisticsFeature4"),
     ],
   },
-];
+]);
 
 // 跳转至模板选择页开始创建简历
 function go() {
