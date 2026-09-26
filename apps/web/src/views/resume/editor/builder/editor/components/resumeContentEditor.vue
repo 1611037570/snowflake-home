@@ -22,14 +22,17 @@ const { currentData } = storeToRefs(resumeStore);
 const targetPosition = computed(() => currentData.value?.user?.data?.position ?? "");
 const examples = ref([]);
 const isLoading = ref(false);
+// 连续输入时只采用最后一次岗位匹配结果。
+let latestRequestId = 0;
 
-const loadExamples = async () => {
-  if (examples.value.length || isLoading.value) return;
+const loadExamples = async (position) => {
+  const requestId = ++latestRequestId;
   isLoading.value = true;
   try {
-    examples.value = await loadResumeExamples(props.kind);
+    const matchedExamples = await loadResumeExamples(props.kind, String(position ?? ""));
+    if (requestId === latestRequestId) examples.value = matchedExamples;
   } finally {
-    isLoading.value = false;
+    if (requestId === latestRequestId) isLoading.value = false;
   }
 };
 
@@ -49,7 +52,7 @@ const appendExample = (example) => {
           :kind="props.kind"
           :search-term="targetPosition"
           :loading="isLoading"
-          @open="loadExamples"
+          @search="loadExamples"
           @select="appendExample"
         />
       </template>

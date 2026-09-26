@@ -1,5 +1,5 @@
 <script setup>
-import { computed, ref } from "vue";
+import { computed, ref, watch } from "vue";
 import { resumeTemplateIndustryOptions, resumeTemplateWorkExperienceOptions } from "@/views/resume/template/data/list";
 import i18n from "@/locales";
 
@@ -11,7 +11,7 @@ const props = defineProps({
   searchTerm: { type: String, default: "" },
   loading: { type: Boolean, default: false },
 });
-const emit = defineEmits(["open", "select"]);
+const emit = defineEmits(["search", "select"]);
 
 const dropdownRef = ref();
 const query = ref("");
@@ -61,23 +61,28 @@ const placeholder = computed(() => {
 });
 
 const filteredExamples = computed(() => {
-  const search = query.value.trim().toLocaleLowerCase();
   return props.examples.filter((example) => {
-    const matchesSearch = !search || example.searchText.includes(search);
-    const matchesTitle = search && search.includes(example.title.toLocaleLowerCase());
     const matchesExperience =
       selectedExperience.value === "all" || example.experiences.includes(selectedExperience.value);
     const matchesIndustry =
       selectedIndustry.value === "all" ||
       example.industries.includes(selectedIndustry.value) ||
       example.industries.includes("all");
-    return (matchesSearch || matchesTitle) && matchesExperience && matchesIndustry;
+    return matchesExperience && matchesIndustry;
   });
 });
 
+// 搜索框输入始终按岗位标记匹配，不检索范例正文。
+watch(
+  query,
+  (value) => emit("search", value),
+  { flush: "sync" },
+);
+
 const openExamples = () => {
+  const queryChanged = query.value !== props.searchTerm;
   query.value = props.searchTerm;
-  emit("open");
+  if (!queryChanged) emit("search", query.value);
 };
 
 const selectExample = (example) => {

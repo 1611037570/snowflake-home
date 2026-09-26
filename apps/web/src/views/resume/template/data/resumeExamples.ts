@@ -1,4 +1,5 @@
 import { loadResumeTemplates } from "./resumeData";
+import { resumeTemplateList, resumeTemplatePositionOptions } from "./list";
 
 export type ResumeExampleKind = "education" | "work" | "project" | "advantage";
 
@@ -8,7 +9,6 @@ export type ResumeExample = {
   subtitle: string;
   content: string;
   text: string;
-  searchText: string;
   industries: string[];
   experiences: string[];
 };
@@ -37,11 +37,56 @@ const getPlainText = (content: string) => {
   return element.textContent?.trim() ?? "";
 };
 
-export const loadResumeExamples = async (kind: ResumeExampleKind): Promise<ResumeExample[]> => {
+const getPositionMatchLength = (position: string, candidate: string) => {
+  const positionCharacters = Array.from(position.trim().toLocaleLowerCase());
+  const candidateText = candidate.trim().toLocaleLowerCase();
+
+  for (let length = positionCharacters.length; length >= 2; length -= 1) {
+    for (let index = 0; index <= positionCharacters.length - length; index += 1) {
+      const ngram = positionCharacters.slice(index, index + length).join("");
+      if (candidateText.includes(ngram)) return length;
+    }
+  }
+
+  return 0;
+};
+
+export const loadResumeExamples = async (
+  kind: ResumeExampleKind,
+  position: string,
+): Promise<ResumeExample[]> => {
+  // 只用模板实际使用的岗位标记及其显示名称进行岗位匹配。
+  const usedPositionKeys = new Set(
+    resumeTemplateList.flatMap((template) => template.position).filter((key) => key !== "all"),
+  );
+  const positionNames = resumeTemplatePositionOptions.filter(
+    (option) => option.key !== "all" && usedPositionKeys.has(option.key),
+  );
+  const positionMatchLengths = new Map(
+    positionNames
+      .map((option) => [option.key, getPositionMatchLength(position, option.value)] as const)
+      .filter(([, length]) => length > 0),
+  );
+
+  if (!positionMatchLengths.size) return [];
+
   const templates = await loadResumeTemplates();
+  const matchedTemplates = templates
+    .map((template, index) => ({
+      template,
+      index,
+      matchLength: Math.max(
+        0,
+        ...template.position
+          .filter((key) => key !== "all")
+          .map((key) => positionMatchLengths.get(key) ?? 0),
+      ),
+    }))
+    .filter(({ matchLength }) => matchLength > 0)
+    .sort((left, right) => right.matchLength - left.matchLength || left.index - right.index);
 
   // 范本字段在简历业务域统一规整，选择器只消费通用范例结构。
-  return templates.flatMap((template) =>
+  return matchedTemplates.flatMap(({ template }) =>
     getRecords(template, kind)
       .map((record: any, index: number) => {
         const content = String(record.content ?? "").trim();
@@ -52,18 +97,6 @@ export const loadResumeExamples = async (kind: ResumeExampleKind): Promise<Resum
           subtitle: getSubtitle(kind, record),
           content,
           text,
-          // 搜索词补充范本岗位与标签信息，避免经历正文未重复岗位名称时被漏掉。
-          searchText: [
-            getTitle(template, kind, record),
-            getSubtitle(kind, record),
-            text,
-            template.position?.join(" "),
-            template.tags?.join(" "),
-            template.description,
-          ]
-            .filter(Boolean)
-            .join(" ")
-            .toLocaleLowerCase(),
           industries: template.industry ?? [],
           experiences: template.workExperience ?? [],
         };
