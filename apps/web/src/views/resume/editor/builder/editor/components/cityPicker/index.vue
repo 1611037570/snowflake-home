@@ -33,7 +33,7 @@ const selected = computed({
         ? item.children.some((child) => child.value === city.value)
         : item.value === city.value,
     );
-    if (!province) return [];
+    if (!province) return [city.value];
     return province.children ? [province.value, city.value] : [province.value];
   },
   set: (values) => {

@@ -867,16 +867,22 @@ export const DEFAULT_EDUCATION_FORM = {
           {
             type: "object",
             label: "专业",
-            component: "input",
+            component: "positionPicker",
             required: true,
             span: 12,
-            model: {
-              source: ["data", "post"],
-              prop: "modelValue",
-            },
+            model: [
+              {
+                source: ["data", "post"],
+                prop: "modelValue",
+              },
+              {
+                source: ["__options", "major"],
+                prop: "list",
+                raw: true,
+              },
+            ],
             props: {
-              placeholder: "请输入专业",
-              clearable: true,
+              placeholder: "请选择或输入专业",
             },
           },
 
