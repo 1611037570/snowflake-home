@@ -754,7 +754,16 @@ export const DEFAULT_EDUCATION_FORM = {
               defaultValue: [],
             },
             props: {
-              list: ["985", "211", "双一流"],
+              list: [
+                "985",
+                "211",
+                "双一流",
+                "C9",
+                "QS Top 100",
+                "US News Top 100",
+                "THE Top 100",
+                "ARWU Top 100",
+              ],
             },
           },
           // 学院名称
