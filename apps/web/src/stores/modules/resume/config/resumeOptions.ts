@@ -38,6 +38,25 @@ export const RESUME_VALUE_OPTIONS = {
     { name: "水瓶座", value: "水瓶座" },
     { name: "双鱼座", value: "双鱼座" },
   ],
+  // Myers–Briggs personality types
+  mbti: [
+    { name: "ISTJ", value: "ISTJ" },
+    { name: "ISFJ", value: "ISFJ" },
+    { name: "INFJ", value: "INFJ" },
+    { name: "INTJ", value: "INTJ" },
+    { name: "ISTP", value: "ISTP" },
+    { name: "ISFP", value: "ISFP" },
+    { name: "INFP", value: "INFP" },
+    { name: "INTP", value: "INTP" },
+    { name: "ESTP", value: "ESTP" },
+    { name: "ESFP", value: "ESFP" },
+    { name: "ENFP", value: "ENFP" },
+    { name: "ENTP", value: "ENTP" },
+    { name: "ESTJ", value: "ESTJ" },
+    { name: "ESFJ", value: "ESFJ" },
+    { name: "ENFJ", value: "ENFJ" },
+    { name: "ENTJ", value: "ENTJ" },
+  ],
   // 政治面貌
   political: [
     { name: "共产党员", value: "共产党员" },

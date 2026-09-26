@@ -43,7 +43,7 @@ const TEXT_KEYS_SOURCE = `
   星座: "zodiac",
   请选择星座: "zodiacPlaceholder",
   MBTI: "mbti",
-  "请输入 MBTI": "mbtiPlaceholder",
+  "请选择 MBTI": "mbtiPlaceholder",
   求职岗位: "position",
   请输入求职岗位: "positionPlaceholder",
   参加工作时间: "workTime",
