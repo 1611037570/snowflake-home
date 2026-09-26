@@ -282,6 +282,9 @@ const defaultData: any = {
                 key: "status",
               },
               {
+                key: "arrivalTime",
+              },
+              {
                 key: "political",
               },
               {

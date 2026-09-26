@@ -248,6 +248,9 @@ const resumeData: any = {
                 key: "status",
               },
               {
+                key: "arrivalTime",
+              },
+              {
                 key: "political",
               },
               {

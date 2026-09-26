@@ -61,7 +61,7 @@ describe("validateResumeEdits", () => {
         value: "未知状态",
       }),
     ).toContain(
-      "模块 user 字段 status 可选值应为：在职 / 离职 / 应届生 / 随时到岗 / 一月内到岗 / 在职看机会",
+      "模块 user 字段 status 可选值应为：在职 / 离职 / 应届生 / 在职看机会",
     );
   });
 

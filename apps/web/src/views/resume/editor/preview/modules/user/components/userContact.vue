@@ -193,6 +193,13 @@ const secondaryItems = computed(() => {
       label: getPreviewText("statusLabel", previewLang.value),
     });
   }
+  if (!isUserFieldHidden("arrivalTime") && user.value?.arrivalTime) {
+    items.push({
+      key: "arrivalTime",
+      icon: fieldIcon("arrivalTime"),
+      label: getPreviewText("arrivalTimeLabel", previewLang.value),
+    });
+  }
   if (!isUserFieldHidden("political") && user.value?.political) {
     items.push({
       key: "political",
