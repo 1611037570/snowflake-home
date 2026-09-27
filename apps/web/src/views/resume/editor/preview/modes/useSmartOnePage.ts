@@ -17,7 +17,7 @@ import { nextTick, onMounted, onUnmounted, watch, type ComputedRef, type Ref } f
 import { ElMessage } from "element-plus";
 import eventBus from "@/utils/modules/eventBus";
 import { useResumeStore } from "@/stores";
-import type { PagePlan } from "./engine/paginate/pagePlan";
+import type { PagePlan } from "../resumePages/engine/paginate/pagePlan";
 import {
   defaultFontSize,
   defaultLineHeight,

@@ -1,15 +1,8 @@
 <script setup>
-import { computed } from "vue";
-import { useResumeStore } from "@/stores";
-import { storeToRefs } from "pinia";
-
-const resumeStore = useResumeStore();
-const { selectedModule } = storeToRefs(resumeStore);
-
-const props = defineProps({
-  modelKey: {
-    type: String,
-    default: "",
+defineProps({
+  selected: {
+    type: Boolean,
+    default: false,
   },
   // 可用移动方向：由预览层按栏位与前后位置计算，不可用的方向不渲染按钮
   directions: {
@@ -17,15 +10,13 @@ const props = defineProps({
     default: () => ({ up: false, down: false, left: false, right: false }),
   },
 });
-const emit = defineEmits({ move: (direction) => typeof direction === "string" });
-const isSelected = computed(() => selectedModule.value.find((item) => item.key === props.modelKey));
-// 选择按钮状态独立于模块边框，点击后保持按钮自身激活显示
+const emit = defineEmits({
+  move: (direction) => typeof direction === "string",
+  toggleSelect: () => true,
+});
+// 选择状态和修改行为由编辑器模式提供与处理。
 const handleSelect = () => {
-  if (isSelected.value) {
-    resumeStore.unselectModule(props.modelKey);
-  } else {
-    resumeStore.selectModule(props.modelKey);
-  }
+  emit("toggleSelect");
 };
 // 移动按钮样式：与选择按钮一致的悬浮显示
 const moveButtonClass =
@@ -54,10 +45,10 @@ const moveButtonClass =
         <SfIcon icon="lucide:arrow-right" size="3.5" />
       </div>
     </SfTooltip>
-    <SfTooltip :content="isSelected ? $t('cancelSelection') : $t('selectModule')">
+    <SfTooltip :content="selected ? $t('cancelSelection') : $t('selectModule')">
       <div
         class="cursor-pointer items-center justify-center rounded-full p-1.5 text-white shadow hover:bg-sf-theme"
-        :class="isSelected ? 'flex bg-sf-theme ' : 'hidden bg-sf-info group-hover/module:flex '"
+        :class="selected ? 'flex bg-sf-theme ' : 'hidden bg-sf-info group-hover/module:flex '"
         @click.stop="handleSelect"
       >
         <SfIcon icon="lucide:pencil" size="3.5" />

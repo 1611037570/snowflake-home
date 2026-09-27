@@ -2,7 +2,9 @@
 // 简历放大预览组件：全屏遮罩内用 ScaleContainer 缩放展示 resumePages 渲染的全部页
 // 数据源由 props 传入，供模板页预览、编辑器全屏查看等场景复用
 import { onBeforeUnmount, watch } from "vue";
+import { storeToRefs } from "pinia";
 import { $t } from "@/locales";
+import { useResumeStore } from "@/stores";
 import ResumePages from "../resumePages/index.vue";
 import ScaleContainer from "../scaleContainer/index.vue";
 
@@ -28,6 +30,7 @@ const props = defineProps({
     default: undefined,
   },
 });
+const { system } = storeToRefs(useResumeStore());
 
 const handleKeydown = (e) => {
   if (e.key === "Escape" && props.visible) {
@@ -75,7 +78,12 @@ onBeforeUnmount(() => {
       <!-- 缩放预览内容 -->
       <div class="min-h-0 flex-1">
         <ScaleContainer :show-toolbar="false">
-          <ResumePages :item="item" :expanded-fields="expandedFields" mode="preview" />
+          <ResumePages
+            :item="item"
+            :expanded-fields="expandedFields"
+            :show-page-number="system.showPageNumber"
+            mode="preview"
+          />
         </ScaleContainer>
       </div>
     </div>

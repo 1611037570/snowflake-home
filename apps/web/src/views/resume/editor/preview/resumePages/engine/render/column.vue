@@ -14,6 +14,7 @@ const props = defineProps<{
   isEdit?: boolean;
   showDebug?: boolean;
   moduleClassMap?: Record<string, string>;
+  selectedModuleKeys?: string[];
   gap: number;
   /** 各模块可用的移动方向，由预览层按整栏跨页顺序计算 */
   moveDirections?: Record<string, { up: boolean; down: boolean }>;
@@ -24,6 +25,7 @@ const props = defineProps<{
 const emit = defineEmits<{
   mouseenter: [moduleKey: string];
   click: [payload: { moduleKey: string; itemIndex?: number }];
+  select: [moduleKey: string];
   move: [payload: { moduleKey: string; direction: string }];
 }>();
 // 编辑操作归模块级渲染编排；个人信息模块固定位置，不提供移动方向。
@@ -89,9 +91,10 @@ const fragmentGroups = computed(() => {
         <template #actions>
           <ModuleActions
             v-if="isEdit"
-            :model-key="group.moduleKey"
+            :selected="selectedModuleKeys?.includes(group.moduleKey)"
             :directions="getMoveDirections(group.moduleKey)"
             @move="emit('move', { moduleKey: group.moduleKey, direction: $event })"
+            @toggle-select="emit('select', group.moduleKey)"
           />
         </template>
         <ModuleContent
