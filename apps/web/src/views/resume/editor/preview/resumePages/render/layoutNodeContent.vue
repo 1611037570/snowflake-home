@@ -1,15 +1,15 @@
 <script setup lang="ts">
 import { computed } from "vue";
-import ItemTags from "../../../components/itemTags.vue";
-import ItemTitle from "../../../components/itemTitle.vue";
-import InlineInfoList from "../../../components/inlineInfoList.vue";
-import ResumeField from "../../../components/resumeField/index.vue";
-import UserContent from "../../../modules/user/index.vue";
+import ItemTags from "../../components/itemTags.vue";
+import ItemTitle from "../../components/itemTitle.vue";
+import InlineInfoList from "../../components/inlineInfoList.vue";
+import ResumeField from "../../components/resumeField/index.vue";
+import UserContent from "../../modules/user/index.vue";
 import { getTime } from "./getTime";
-import { isContentEmpty } from "../../../shared/validData";
-import { useResumePreviewContext } from "../../../shared/previewContext";
-import { sliceRichTextHtml } from "../adapter/richTextParser";
-import type { LayoutNode } from "../types";
+import { isContentEmpty } from "../../shared/validData";
+import { useResumePreviewContext } from "../../shared/previewContext";
+import { sliceRichTextHtml } from "../engine/adapter/richTextParser";
+import type { LayoutNode } from "../engine/types";
 
 const safeUrlProtocols = new Set(["http:", "https:", "mailto:"]);
 

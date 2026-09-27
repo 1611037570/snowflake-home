@@ -2,7 +2,7 @@
 import LayoutMeasureHost from "./layoutMeasureHost.vue";
 import LayoutMeasureNode from "./layoutMeasureNode.vue";
 import { PAGE_NUMBER_HEIGHT } from "../../../shared/constants";
-import type { LayoutNode } from "../types";
+import type { LayoutNode } from "../../engine/types";
 
 defineProps<{
   /** 测量宿主宽度，等于页面内容宽度 */

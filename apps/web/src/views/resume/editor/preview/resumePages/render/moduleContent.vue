@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import { computed } from "vue";
-import Title from "../../../components/title/index.vue";
+import Title from "./moduleTitle/index.vue";
 import Item from "./item.vue";
 import { getItemFragmentStyle, isItemNode } from "./itemStyle";
 import LayoutNodeContent from "./layoutNodeContent.vue";
-import { useResumePreviewContext } from "../../../shared/previewContext";
-import type { LayoutNode } from "../types";
-import type { FragmentPlan } from "../paginate/pagePlan";
+import { useResumePreviewContext } from "../../shared/previewContext";
+import type { LayoutNode } from "../engine/types";
+import type { FragmentPlan } from "../engine/paginate/pagePlan";
 
 const props = defineProps<{
   moduleKey: string;

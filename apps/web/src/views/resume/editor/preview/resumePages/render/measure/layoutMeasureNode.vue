@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import { computed } from "vue";
-import Item from "../render/item.vue";
-import { getItemFragmentStyle, isItemNode } from "../render/itemStyle";
-import Title from "../../../components/title/index.vue";
+import Item from "../item.vue";
+import { getItemFragmentStyle, isItemNode } from "../itemStyle";
+import Title from "../moduleTitle/index.vue";
 import { useResumePreviewContext } from "../../../shared/previewContext";
-import LayoutNodeContent from "../render/layoutNodeContent.vue";
-import UserModule from "../render/userModule.vue";
-import type { LayoutNode } from "../types";
+import LayoutNodeContent from "../layoutNodeContent.vue";
+import UserModule from "../userModule.vue";
+import type { LayoutNode } from "../../engine/types";
 
 const props = defineProps<{ node: LayoutNode }>();
 const { ui } = useResumePreviewContext();

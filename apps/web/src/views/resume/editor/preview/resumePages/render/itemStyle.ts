@@ -1,4 +1,4 @@
-import type { LayoutNode } from "../types";
+import type { LayoutNode } from "../engine/types";
 
 // user 模块保持独立渲染，其余有内容的排版节点作为单条条目处理。
 export const isItemNode = (node: LayoutNode) =>

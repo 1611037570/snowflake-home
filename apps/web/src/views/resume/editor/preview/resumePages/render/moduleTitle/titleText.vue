@@ -1,6 +1,6 @@
 <script setup>
 import { computed, inject } from "vue";
-import { useResumePreviewContext } from "../../shared/previewContext";
+import { useResumePreviewContext } from "../../../shared/previewContext";
 
 // 标题文本：按模块标题图标模式在文字前展示图标，各风格主题统一复用
 defineProps({
