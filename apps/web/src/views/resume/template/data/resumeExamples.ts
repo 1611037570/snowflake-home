@@ -1,7 +1,7 @@
 import { loadResumeTemplates } from "./resumeData";
 import { resumeTemplateList, resumeTemplatePositionOptions } from "./list";
 
-export type ResumeExampleKind = "education" | "work" | "project" | "advantage";
+export type ResumeExampleKind = "education" | "work" | "project" | "advantage" | "skill";
 
 export type ResumeExample = {
   id: string;
@@ -20,12 +20,13 @@ export type ResumeExampleResult = {
 
 const getRecords = (template: any, kind: ResumeExampleKind) => {
   const section = template.item.data[kind];
-  if (kind === "advantage") return section?.data ? [section.data] : [];
+  // 技能与优势都从单条内容模块读取范例。
+  if (kind === "advantage" || kind === "skill") return section?.data ? [section.data] : [];
   return (section?.list ?? []).map((record: any) => record.data ?? {});
 };
 
 const getTitle = (template: any, kind: ResumeExampleKind, record: any) => {
-  if (kind === "advantage") return template.name;
+  if (kind === "advantage" || kind === "skill") return template.name;
   if (kind === "project") return record.name || record.post || template.name;
   return record.post || record.name || template.name;
 };
