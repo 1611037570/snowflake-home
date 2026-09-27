@@ -3,7 +3,7 @@ import { computed } from "vue";
 import ItemTags from "../../../components/itemTags.vue";
 import ItemTitle from "../../../components/itemTitle.vue";
 import InlineInfoList from "../../../components/inlineInfoList.vue";
-import ModuleContentContainer from "../../../components/moduleContentContainer.vue";
+import ResumeContainer from "../../../components/container.vue";
 import ResumeField from "../../../components/resumeField/index.vue";
 import User from "../../../modules/user/index.vue";
 import { getTime } from "./getTime";
@@ -31,19 +31,20 @@ const props = withDefaults(defineProps<Props>(), {
 });
 
 const {
+  ui,
   theme: {
     innerSpacingStyle,
     dateStyle,
     datePosition,
     linkUnderline,
     fontValue,
-    moduleContentStyle,
     textAlign,
     themeColor,
     themeColorSoft,
   },
 } = useResumePreviewContext();
 
+const containerConfig = computed(() => ui.value.container || {});
 const nodePayload = computed(() => (props.payload ?? props.node.payload) as any);
 const item = computed(() => nodePayload.value?.item || {});
 // 图片作品按条目尺寸占比渲染，和模块原实现的宽度口径保持一致
@@ -108,26 +109,18 @@ const safeUrl = (value: unknown) => {
 };
 const safeItemLinkUrl = computed(() => safeUrl(itemLink.value.url));
 const fragmentContentStyle = computed(() => {
-  const base = { ...moduleContentStyle.value };
   // 分片的圆角与相邻边框按上下拼接分配：两端都在本片时保留完整圆角
-  const radius = String(
-    (moduleContentStyle.value as { borderRadius?: string }).borderRadius || "0",
-  );
+  const radius = String(containerConfig.value.radius || "0");
   // 内容盒首块已在前面分片渲染过时，续段才去掉上内边距与上边框；只放间距的分片不渲染内容盒
   const boxTopRendered = props.blockRange.start > 0 || (props.contentRange?.start ?? 0) > 0;
   const boxBottomFinal = props.decoration !== "top" && props.decoration !== "middle";
   const topRadius = boxTopRendered ? "0" : radius;
   const bottomRadius = boxBottomFinal ? radius : "0";
-  base.borderRadius = `${topRadius} ${topRadius} ${bottomRadius} ${bottomRadius}`;
-  if (boxTopRendered) {
-    base.paddingTop = "0px";
-    base.borderTopWidth = "0px";
-  }
-  if (!boxBottomFinal) {
-    base.paddingBottom = "0px";
-    base.borderBottomWidth = "0px";
-  }
-  return base;
+  return {
+    borderRadius: `${topRadius} ${topRadius} ${bottomRadius} ${bottomRadius}`,
+    ...(boxTopRendered ? { paddingTop: "0px", borderTopWidth: "0px" } : {}),
+    ...(!boxBottomFinal ? { paddingBottom: "0px", borderBottomWidth: "0px" } : {}),
+  };
 });
 const spacerHeight = computed(() => Number(nodePayload.value?.height) || 0);
 // 经历条目头部只在首段渲染，正文续段不再重复头部
@@ -149,8 +142,9 @@ const itemContentSpacingStyle = computed(() => {
     />
   </template>
   <template v-else-if="node.type === 'richText'">
-    <ModuleContentContainer
+    <ResumeContainer
       v-if="richTextHtml && hasContentBlock"
+      :container="containerConfig"
       :style="fragmentContentStyle"
       class="layout-rich-text"
       :class="`layout-rich-text--${decoration || 'full'}`"
@@ -161,7 +155,7 @@ const itemContentSpacingStyle = computed(() => {
         :style="{ textAlign: textAlign === 'justify' ? 'justify' : undefined }"
         v-html="richTextHtml"
       />
-    </ModuleContentContainer>
+    </ResumeContainer>
   </template>
 
   <template v-else-if="node.type === 'group' && node.sourceModuleKey === 'user'">
@@ -169,8 +163,9 @@ const itemContentSpacingStyle = computed(() => {
   </template>
 
   <template v-else-if="isExperience">
-    <ModuleContentContainer
+    <ResumeContainer
       v-if="hasContentBlock"
+      :container="containerConfig"
       :style="fragmentContentStyle"
       class="layout-experience-item"
       data-layout-block-range
@@ -232,7 +227,7 @@ const itemContentSpacingStyle = computed(() => {
       >
         <ResumeField :model-value="richTextHtml" html />
       </div>
-    </ModuleContentContainer>
+    </ResumeContainer>
   </template>
 
   <template v-else-if="node.type === 'block'">
@@ -277,8 +272,9 @@ const itemContentSpacingStyle = computed(() => {
   </template>
 
   <template v-else-if="node.type === 'media'">
-    <ModuleContentContainer
+    <ResumeContainer
       v-if="hasContentBlock"
+      :container="containerConfig"
       data-layout-block-range
       :style="fragmentContentStyle"
     >
@@ -344,7 +340,7 @@ const itemContentSpacingStyle = computed(() => {
           <span v-if="nodePayload.item?.desc">{{ nodePayload.item.desc }}</span>
         </div>
       </template>
-    </ModuleContentContainer>
+    </ResumeContainer>
   </template>
 </template>
 

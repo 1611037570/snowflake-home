@@ -60,7 +60,12 @@ const createThemeTemplate = (
       titleIconMode: "none",
       linkUnderline: false,
       infoSeparator: "space",
-      moduleContent: {},
+      container: {
+        background: "transparent",
+        borderColor: "transparent",
+        radius: "0",
+        padding: 0,
+      },
       ...ui,
     },
   },
@@ -114,7 +119,12 @@ export const themeTemplateList = [
     titleFontSize: 24,
     userInfoMode: "icon",
     titleIconMode: "icon",
-    moduleContent: { variant: "card" },
+    container: {
+      background: "#EA580C1A",
+      borderColor: "#EA580C66",
+      radius: "12px",
+      padding: 12,
+    },
   }),
   createThemeTemplate("创意", "creative", "突出个人表达与作品展示的创意简历样式。", {
     themeColor: "#DB2777",
@@ -135,11 +145,11 @@ export const themeTemplateList = [
     titleFontSize: 18,
     moduleSpacing: 48,
     dateStyle: "cn",
-    moduleContent: {
-      variant: "card",
+    container: {
       background: "transparent",
       borderColor: "transparent",
       radius: "0",
+      padding: 12,
     },
   }),
   createThemeTemplate(
@@ -382,4 +392,11 @@ export const DEFAULT_UI = {
   linkUnderline: defaultLinkUnderline,
   // 并列信息分隔符：岗位、部门、专业等字段统一使用
   infoSeparator: defaultInfoSeparator,
+  // 预览内容通用容器样式
+  container: {
+    background: "transparent",
+    borderColor: "transparent",
+    radius: "0",
+    padding: 0,
+  },
 };
