@@ -222,7 +222,7 @@ export const createResumeEditor = ({
   }
   function setPageLayout(pageLayout: Record<string, any> | null): boolean {
     if (!currentUI.value) return false;
-    currentUI.value.pageLayout = pageLayout ? JSON.parse(JSON.stringify(pageLayout)) : null;
+    currentUI.value.layout.custom = pageLayout ? JSON.parse(JSON.stringify(pageLayout)) : null;
     return true;
   }
   function swapModuleOrder(firstKey: string, secondKey: string): boolean {

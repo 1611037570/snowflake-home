@@ -9,13 +9,12 @@ const LAYOUT_TEMPLATE_IDS: PageLayoutTemplateId[] = ["topUserTwoColumn", "twoCol
 
 /**
  * 解析当前生效的布局模板编号。
- * 显式 ui.pageLayout 优先，保证用户手动调整过的栏位不被主题模板覆盖；
- * 否则布局模板由主题带入，主题与模板一致时才生效，避免切换主题后残留上一套布局。
+ * 显式布局优先；否则按 layout.template 选择布局模板。
  */
 const resolvePageLayoutTemplate = (ui: Record<string, any>): PageLayoutTemplateId | null => {
-  if (ui.pageLayout && Array.isArray(ui.pageLayout.regions)) return null;
-  const templateId = ui.pageLayoutTemplate;
-  if (LAYOUT_TEMPLATE_IDS.includes(templateId) && ui.themeTemplate === templateId) {
+  if (ui.layout?.custom && Array.isArray(ui.layout.custom.regions)) return null;
+  const templateId = ui.layout?.template;
+  if (LAYOUT_TEMPLATE_IDS.includes(templateId)) {
     return templateId as PageLayoutTemplateId;
   }
   return "single";
@@ -30,7 +29,7 @@ export const createResumeLayout = ({
   gap,
   leftColumnWidth,
 }: {
-  /** 简历主题配置，pageLayoutTemplate 决定布局模板，pageLayout 是显式布局入口。 */
+  /** 简历主题配置，layout.template 决定布局模板，layout.custom 是显式布局入口。 */
   ui: Record<string, any>;
   /** 当前存在排版节点的模块 key。 */
   moduleKeys: string[];
@@ -54,5 +53,5 @@ export const createResumeLayout = ({
       leftWidthPercent: leftColumnWidth,
     });
   }
-  return ui.pageLayout as PageLayoutConfig;
+  return ui.layout.custom as PageLayoutConfig;
 };

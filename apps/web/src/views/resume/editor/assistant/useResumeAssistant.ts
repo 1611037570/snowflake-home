@@ -23,7 +23,7 @@ export const useResumeAssistant = () => {
   const updateCurrentLang = (language: string): boolean => {
     const ui = resumeStore.currentUI;
     if (!ui || !RESUME_LANG_CODES.includes(language)) return false;
-    ui.language = language;
+    ui.content.language = language;
     return true;
   };
   // 工具在首次请求时才组装：技能正文与简历工具（含表单结构）不进入 AI 面板首屏

@@ -10,7 +10,15 @@ const resumeData: any = {
     project: { ui: { collapsed: ["1"], archived: false }, list: [{ ui: {}, data: { name: "Analytics Dashboard", post: "Front-end Engineer", startTime: "2024.03", endTime: "2025.01", content: "<p>Developed data visualizations and workflow pages for business operations.</p>" } }] },
   },
   config: { meta: { version: "1.0.0" }, drag: true, dragClass: ".container-drag", fields: [{ key: "user" }, { key: "education" }, { key: "skill" }, { key: "advantage" }, { key: "work" }, { key: "project" }] },
-  ui: { language: "en", paddingVertical: 24, paddingHorizontal: 24, fontSize: 16, titleFontSize: 22, lineHeight: 1.2, paragraphSpacing: 12, moduleSpacing: 12, themeColor: "#ff4d4f", fontFamily: "text-puhui", themeTemplate: "default", userInfoMode: "text", avatarPosition: "right" },
+  ui: {
+    page: { padding: { vertical: 24, horizontal: 24 }, footer: "" },
+    font: { family: "text-puhui", size: 16, titleSize: 22, lineHeight: 1.2 },
+    content: { language: "en", textAlign: "auto", infoSeparator: "space", linkUnderline: false, dateStyle: "dot", datePosition: "right" },
+    spacing: { paragraph: 12, module: 12 },
+    theme: { template: "default", color: "#ff4d4f", titleIconMode: "none", userModule: "auto", module: "auto", item: "auto" },
+    layout: { template: null, custom: null, leftColumnWidth: 40 },
+    user: { infoMode: "text", infoLayout: "flex", avatarPosition: "right", infoPosition: "left" },
+  },
 };
 
 export default resumeData;

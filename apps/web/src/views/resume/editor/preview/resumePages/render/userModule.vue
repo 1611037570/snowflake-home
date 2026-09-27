@@ -16,7 +16,7 @@ const emit = defineEmits(["mouseenter"]);
 
 const {
   theme: {
-    themeTemplate: themeTemplateRef,
+    userModuleTemplate: themeTemplateRef,
     fontValue,
     lineHeightValue,
     themeColor,

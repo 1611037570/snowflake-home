@@ -34,10 +34,10 @@ const localizeOptions = (options) => localizeResumeEditorOptionList(options);
 const userInfoParams = computed(() => {
   i18n.global.locale.value;
   return [
-    { label: $t("contactDisplay"), key: "userInfoMode", defaultValue: defaultUserInfoMode, list: localizeOptions(userInfoModeList) },
-    { label: $t("contactLayout"), key: "userInfoLayout", defaultValue: defaultUserInfoLayout, list: localizeOptions(userInfoLayoutList) },
-    { label: $t("avatarPosition"), key: "avatarPosition", defaultValue: defaultAvatarPosition, list: localizeOptions(avatarPositionList) },
-    { label: $t("infoAlign"), key: "infoPosition", defaultValue: defaultInfoPosition, list: localizeOptions(infoPositionList) },
+    { label: $t("contactDisplay"), key: "user.infoMode", defaultValue: defaultUserInfoMode, list: localizeOptions(userInfoModeList) },
+    { label: $t("contactLayout"), key: "user.infoLayout", defaultValue: defaultUserInfoLayout, list: localizeOptions(userInfoLayoutList) },
+    { label: $t("avatarPosition"), key: "user.avatarPosition", defaultValue: defaultAvatarPosition, list: localizeOptions(avatarPositionList) },
+    { label: $t("infoAlign"), key: "user.infoPosition", defaultValue: defaultInfoPosition, list: localizeOptions(infoPositionList) },
   ];
 });
 
@@ -63,57 +63,58 @@ const localizedInfoSeparatorList = computed(() => {
 
 // 通过独立计算属性绑定主题色，避免嵌套修改可写计算属性引发递归更新
 const themeColor = computed({
-  get: () => currentUI.value?.themeColor || "",
+  get: () => currentUI.value?.theme?.color || "",
   set: (value) => {
-    if (currentUI.value && currentUI.value.themeColor !== value) {
-      currentUI.value.themeColor = value;
+    if (currentUI.value && currentUI.value.theme.color !== value) {
+      currentUI.value.theme.color = value;
     }
   },
 });
 
 // 模块标题图标模式
 const titleIconMode = computed({
-  get: () => currentUI.value?.titleIconMode,
+  get: () => currentUI.value?.theme?.titleIconMode,
   set: (value) => {
-    currentUI.value.titleIconMode = value;
+    currentUI.value.theme.titleIconMode = value;
   },
 });
 
 // 链接下划线开关
 const linkUnderline = computed({
-  get: () => currentUI.value?.linkUnderline ?? defaultLinkUnderline,
+  get: () => currentUI.value?.content?.linkUnderline ?? defaultLinkUnderline,
   set: (value) => {
-    currentUI.value.linkUnderline = value;
+    currentUI.value.content.linkUnderline = value;
   },
 });
 
 // 经历排版属于简历视觉设计，与个人信息统一管理
 const datePosition = computed({
-  get: () => currentUI.value?.datePosition,
+  get: () => currentUI.value?.content?.datePosition,
   set: (value) => {
-    currentUI.value.datePosition = value;
+    currentUI.value.content.datePosition = value;
   },
 });
 
 const dateStyle = computed({
-  get: () => currentUI.value?.dateStyle,
+  get: () => currentUI.value?.content?.dateStyle,
   set: (value) => {
-    currentUI.value.dateStyle = value;
+    currentUI.value.content.dateStyle = value;
   },
 });
 
 const infoSeparator = computed({
-  get: () => currentUI.value?.infoSeparator ?? defaultInfoSeparator,
+  get: () => currentUI.value?.content?.infoSeparator ?? defaultInfoSeparator,
   set: (value) => {
-    currentUI.value.infoSeparator = value;
+    currentUI.value.content.infoSeparator = value;
   },
 });
 
-const getValue = (key) => currentUI.value?.[key];
+const getValue = (key) => key.split(".").reduce((value, field) => value?.[field], currentUI.value);
 
 const setParam = (key, value) => {
   if (!currentUI.value) return;
-  currentUI.value[key] = value;
+  const [group, field] = key.split(".");
+  currentUI.value[group][field] = value;
 };
 </script>
 

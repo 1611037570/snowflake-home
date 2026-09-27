@@ -21,8 +21,8 @@ const { currentUI } = storeToRefs(resumeStore);
 const fontParams = computed(() => {
   i18n.global.locale.value;
   return [
-    { label: $t("fontSize"), key: "fontSize", defaultValue: defaultFontSize },
-    { label: $t("moduleTitleFontSize"), key: "titleFontSize", defaultValue: defaultTitleFontSize },
+    { label: $t("fontSize"), key: "font.size", defaultValue: defaultFontSize },
+    { label: $t("moduleTitleFontSize"), key: "font.titleSize", defaultValue: defaultTitleFontSize },
   ];
 });
 
@@ -38,30 +38,31 @@ const localizedTextAlignList = computed(() => {
 
 // 字体类型（阿里普惠体 / 汉仪易烊千玺体 / 跟随系统）
 const fontFamily = computed({
-  get: () => currentUI.value?.fontFamily,
+  get: () => currentUI.value?.font?.family,
   set: (value) => {
-    currentUI.value.fontFamily = value;
+    currentUI.value.font.family = value;
   },
 });
 
 // 文本对齐属于正文排版，与字体配置放在同一入口
 const textAlign = computed({
-  get: () => currentUI.value?.textAlign,
+  get: () => currentUI.value?.content?.textAlign,
   set: (value) => {
-    currentUI.value.textAlign = value;
+    currentUI.value.content.textAlign = value;
   },
 });
 
 // 读取数值型参数：统一转为数值，缺失时回退默认值，避免出现 NaN
 const getNumberValue = (key, defaultValue) => {
-  const value = Number(currentUI.value?.[key]);
+  const value = Number(currentUI.value?.[key.split(".")[0]]?.[key.split(".")[1]]);
   return Number.isFinite(value) ? value : defaultValue;
 };
 
 // 写入数值型参数
 const setParam = (key, value) => {
   if (!currentUI.value) return;
-  currentUI.value[key] = Number(value);
+  const [group, field] = key.split(".");
+  currentUI.value[group][field] = Number(value);
 };
 </script>
 

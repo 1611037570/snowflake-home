@@ -62,16 +62,16 @@ export const useResumeLayout = ({
     ...new Set(nodes.value.map((node) => node.sourceModuleKey)),
   ]);
   const availableHeight = computed(() =>
-    getContentHeight(Number(ui.value.paddingVertical) || 0, showPageNumber.value),
+    getContentHeight(Number(ui.value.page?.padding?.vertical) || 0, showPageNumber.value),
   );
   const layout = computed<PageLayoutConfig>(() =>
     createResumeLayout({
       ui: ui.value,
       moduleKeys: activeModuleKeys.value,
-      paddingVertical: Number(ui.value.paddingVertical) || 0,
-      paddingHorizontal: Number(ui.value.paddingHorizontal) || 0,
-      gap: Number(ui.value.moduleSpacing) || 0,
-      leftColumnWidth: Number(ui.value.leftColumnWidth) || defaultLeftColumnWidth,
+      paddingVertical: Number(ui.value.page?.padding?.vertical) || 0,
+      paddingHorizontal: Number(ui.value.page?.padding?.horizontal) || 0,
+      gap: Number(ui.value.spacing?.module) || 0,
+      leftColumnWidth: Number(ui.value.layout?.leftColumnWidth) || defaultLeftColumnWidth,
     }),
   );
   const validation = computed(() => validateLayoutConfig(layout.value, activeModuleKeys.value));
@@ -104,7 +104,7 @@ export const useResumeLayout = ({
       : []),
   ]);
   const contentWidth = computed(
-    () => RESUME_WIDTH - (Number(ui.value.paddingHorizontal) || 0) * 2,
+    () => RESUME_WIDTH - (Number(ui.value.page?.padding?.horizontal) || 0) * 2,
   );
   // 栏宽解析只做一次：测量宿主与真实渲染共用同一份栏宽，避免两处各算一遍
   const columnWidths = computed(() => resolveColumnWidths(layout.value, contentWidth.value));
@@ -119,15 +119,11 @@ export const useResumeLayout = ({
     ),
   );
   const watchSource = computed(() => ({
-    paddingVertical: ui.value.paddingVertical,
-    paddingHorizontal: ui.value.paddingHorizontal,
-    fontSize: ui.value.fontSize,
-    titleFontSize: ui.value.titleFontSize,
-    lineHeight: ui.value.lineHeight,
-    paragraphSpacing: ui.value.paragraphSpacing,
-    item: ui.value.item,
-    moduleSpacing: ui.value.moduleSpacing,
-    themeTemplate: ui.value.themeTemplate,
+    page: ui.value.page,
+    font: ui.value.font,
+    spacing: ui.value.spacing,
+    theme: ui.value.theme,
+    layout: ui.value.layout,
     fontReadyVersion: fontReadyVersion.value,
   }));
   const { measurements, measureDone } = useLayoutMeasurements({

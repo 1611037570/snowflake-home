@@ -26,42 +26,50 @@ const showPageNumber = computed({
   },
 });
 const footer = computed({
-  get: () => currentUI.value?.footer ?? "",
+  get: () => currentUI.value?.page?.footer ?? "",
   set: (value) => {
-    currentUI.value.footer = value;
+    currentUI.value.page.footer = value;
   },
 });
 
 // 页面布局数值参数：标签、绑定字段、默认值与单位集中维护，模板统一渲染
 const layoutParams = [
-  { labelKey: "layoutTopBottomMargin", key: "paddingVertical", defaultValue: defaultPaddingVertical, unit: "px" },
+  { labelKey: "layoutTopBottomMargin", key: "page.padding.vertical", defaultValue: defaultPaddingVertical, unit: "px" },
   {
     labelKey: "layoutLeftRightMargin",
-    key: "paddingHorizontal",
+    key: "page.padding.horizontal",
     defaultValue: defaultPaddingHorizontal,
     unit: "px",
   },
-  { labelKey: "layoutModuleSpacing", key: "moduleSpacing", defaultValue: defaultModuleSpacing, unit: "px" },
+  { labelKey: "layoutModuleSpacing", key: "spacing.module", defaultValue: defaultModuleSpacing, unit: "px" },
   // 左栏宽度占比：仅双栏布局生效，左栏保持为较窄的一栏
   {
     labelKey: "layoutLeftColumnWidth",
-    key: "leftColumnWidth",
+    key: "layout.leftColumnWidth",
     defaultValue: defaultLeftColumnWidth,
     unit: "%",
   },
   {
     labelKey: "layoutParagraphSpacing",
-    key: "paragraphSpacing",
+    key: "spacing.paragraph",
     defaultValue: defaultParagraphSpacing,
     unit: "px",
   },
   // 行间距为字号倍数，单位与其它像素值不同
-  { labelKey: "layoutLineHeight", key: "lineHeight", defaultValue: defaultLineHeight, unit: "lineHeightUnit" },
+  { labelKey: "layoutLineHeight", key: "font.lineHeight", defaultValue: defaultLineHeight, unit: "lineHeightUnit" },
 ];
+
+const getPathValue = (source, path) => path.split(".").reduce((value, key) => value?.[key], source);
+const setPathValue = (source, path, value) => {
+  const keys = path.split(".");
+  const field = keys.pop();
+  const parent = keys.reduce((target, key) => target[key], source);
+  parent[field] = value;
+};
 
 // 读取数值型参数：统一转为数值，避免字符串参与滑块内部计算；字段缺失时回退该参数的默认值
 const getNumberValue = (key) => {
-  const value = Number(currentUI.value?.[key]);
+  const value = Number(getPathValue(currentUI.value, key));
   if (Number.isFinite(value)) return value;
   const fallback = Number(layoutParams.find((item) => item.key === key)?.defaultValue);
   return Number.isFinite(fallback) ? fallback : 0;
@@ -71,14 +79,14 @@ const getNumberValue = (key) => {
 const resetLayout = () => {
   if (!currentUI.value) return;
   layoutParams.forEach((item) => {
-    currentUI.value[item.key] = item.defaultValue;
+    setPathValue(currentUI.value, item.key, item.defaultValue);
   });
   setPageLayout(null);
 };
 
 // 显式布局下同步更新页边距、栏宽与模块间距
 const syncPageLayoutParam = (key, value) => {
-  const pageLayout = currentUI.value?.pageLayout;
+  const pageLayout = currentUI.value?.layout?.custom;
   if (!pageLayout?.regions) return;
   const nextValue = Number(value);
   const nextLayout = {
@@ -86,8 +94,8 @@ const syncPageLayoutParam = (key, value) => {
     regions: pageLayout.regions.map((region) => ({
       ...region,
       columns: region.columns.map((column, index) => {
-        if (key === "moduleSpacing") return { ...column, gap: nextValue };
-        if (key === "leftColumnWidth" && region.columns.length === 2) {
+        if (key === "spacing.module") return { ...column, gap: nextValue };
+        if (key === "layout.leftColumnWidth" && region.columns.length === 2) {
           return {
             ...column,
             width: { mode: "ratio", value: index === 0 ? nextValue : 100 - nextValue },
@@ -97,28 +105,28 @@ const syncPageLayoutParam = (key, value) => {
       }),
     })),
   };
-  if (key === "paddingVertical") {
+  if (key === "page.padding.vertical") {
     nextLayout.pagePadding = {
       ...pageLayout.pagePadding,
       top: nextValue,
       bottom: nextValue,
     };
   }
-  if (key === "paddingHorizontal") {
+  if (key === "page.padding.horizontal") {
     nextLayout.pagePadding = {
       ...pageLayout.pagePadding,
       left: nextValue,
       right: nextValue,
     };
   }
-  if (key === "moduleSpacing") nextLayout.regionGap = nextValue;
+  if (key === "spacing.module") nextLayout.regionGap = nextValue;
   setPageLayout(nextLayout);
 };
 
 // 写入参数：数值型统一使用数值类型
 const setParam = (key, value) => {
   if (!currentUI.value) return;
-  currentUI.value[key] = typeof value === "number" ? Number(value) : value;
+  setPathValue(currentUI.value, key, typeof value === "number" ? Number(value) : value);
   syncPageLayoutParam(key, value);
 };
 </script>

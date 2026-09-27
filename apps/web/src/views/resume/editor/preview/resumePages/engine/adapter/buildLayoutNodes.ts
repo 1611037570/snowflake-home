@@ -87,7 +87,7 @@ export const buildLayoutNodes = ({
     const adapter = registry.resolve(moduleKey);
     if (!adapter) return [];
     const nodes = adapter({ moduleKey, data, ui, config });
-    const spacing = Number(ui?.paragraphSpacing);
+    const spacing = Number((ui as any)?.spacing?.paragraph);
     return attachModuleTitle(
       moduleKey,
       addParagraphSpacingRows(nodes, Number.isFinite(spacing) ? Math.max(0, spacing) : 0),

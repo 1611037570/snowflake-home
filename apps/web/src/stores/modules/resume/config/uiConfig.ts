@@ -24,146 +24,171 @@ export const fontFamilyList = [
   },
 ];
 
+// 主题内部维护条目样式，简历数据只记录自动跟随或指定的主题来源。
+const defaultThemeItemStyle = {
+  background: "transparent",
+  borderColor: "transparent",
+  radius: "0",
+  padding: 0,
+};
+
+const themeItemStyles: Record<string, typeof defaultThemeItemStyle> = {
+  default: defaultThemeItemStyle,
+  vivid: {
+    background: "#EA580C1A",
+    borderColor: "#EA580C66",
+    radius: "12px",
+    padding: 12,
+  },
+  outline: {
+    background: "transparent",
+    borderColor: "transparent",
+    radius: "0",
+    padding: 12,
+  },
+};
+
+export const getThemeItemStyle = (templateId: string) =>
+  themeItemStyles[templateId] || defaultThemeItemStyle;
+
 // 样式模板统一提供完整 UI，避免依赖示例简历自身的 UI 配置。
 const createThemeTemplate = (
   name: string,
   id: string,
   description: string,
-  ui: Record<string, unknown>,
-) => ({
-  name,
-  id,
-  description,
-  item: {
-    data: {},
-    config: {},
-    ui: {
-      language: "zh",
+  ui: Record<string, any>,
+) => {
+  const baseUi = {
+    page: {
+      padding: { vertical: 24, horizontal: 24 },
       footer: "",
-      paddingVertical: 24,
-      paddingHorizontal: 24,
-      fontSize: 16,
-      titleFontSize: 22,
+    },
+    font: {
+      family: "text-puhui",
+      size: 16,
+      titleSize: 22,
       lineHeight: 1.2,
-      paragraphSpacing: 12,
-      moduleSpacing: 12,
-      themeColor: "#50A2FF",
-      themeTemplate: id,
-      fontFamily: "text-puhui",
-      userInfoMode: "text",
-      userInfoLayout: "flex",
-      avatarPosition: "right",
-      infoPosition: "left",
+    },
+    content: {
+      language: "zh",
+      textAlign: "auto",
+      infoSeparator: "space",
+      linkUnderline: false,
       dateStyle: "dot",
       datePosition: "right",
-      textAlign: "auto",
-      titleIconMode: "none",
-      linkUnderline: false,
-      infoSeparator: "space",
-      item: {
-        background: "transparent",
-        borderColor: "transparent",
-        radius: "0",
-        padding: 0,
-      },
-      ...ui,
     },
-  },
-});
+    spacing: {
+      paragraph: 12,
+      module: 12,
+    },
+    theme: {
+      template: id,
+      color: "#50A2FF",
+      titleIconMode: "none",
+      userModule: "auto",
+      module: "auto",
+      item: "auto",
+    },
+    layout: {
+      template: null,
+      custom: null,
+      leftColumnWidth: 40,
+    },
+    user: {
+      infoMode: "text",
+      infoLayout: "flex",
+      avatarPosition: "right",
+      infoPosition: "left",
+    },
+  };
+  const presetUi = {
+    ...baseUi,
+    ...ui,
+    page: { ...baseUi.page, ...ui.page },
+    font: { ...baseUi.font, ...ui.font },
+    content: { ...baseUi.content, ...ui.content },
+    spacing: { ...baseUi.spacing, ...ui.spacing },
+    theme: { ...baseUi.theme, ...ui.theme },
+    layout: { ...baseUi.layout, ...ui.layout },
+    user: { ...baseUi.user, ...ui.user },
+  };
+  return {
+    name,
+    id,
+    description,
+    item: {
+      data: {},
+      config: {},
+      ui: presetUi,
+    },
+  };
+};
 
 // 主题样式列表
 export const themeTemplateList = [
   createThemeTemplate("默认", "default", "清晰通用的基础简历样式。", {}),
   createThemeTemplate("现代", "modern", "适合互联网与技术岗位的现代简历样式。", {
-    themeColor: "#2563EB",
-    avatarPosition: "center",
-    infoPosition: "center",
-    titleIconMode: "icon",
+    theme: { color: "#2563EB", titleIconMode: "icon" },
+    user: { avatarPosition: "center", infoPosition: "center" },
   }),
   createThemeTemplate("商务", "business", "适合职场与商务场景的正式简历样式。", {
-    themeColor: "#1E3A5F",
-    fontSize: 15,
-    titleFontSize: 21,
-    moduleSpacing: 18,
-    dateStyle: "cn",
+    theme: { color: "#1E3A5F" },
+    font: { size: 15, titleSize: 21 },
+    spacing: { module: 18 },
+    content: { dateStyle: "cn" },
   }),
   createThemeTemplate("简约", "minimal", "减少视觉干扰，突出内容本身的简历样式。", {
-    themeColor: "#111827",
-    paddingVertical: 30,
-    paddingHorizontal: 30,
-    paragraphSpacing: 6,
-    moduleSpacing: 9,
+    theme: { color: "#111827" },
+    page: { padding: { vertical: 30, horizontal: 30 } },
+    spacing: { paragraph: 6, module: 9 },
   }),
   createThemeTemplate("经典", "classic", "适合传统行业与正式投递的经典简历样式。", {
-    themeColor: "#7C3AED",
-    fontFamily: "text-yyqx",
-    titleIconMode: "icon",
-    dateStyle: "cn",
+    theme: { color: "#7C3AED", titleIconMode: "icon" },
+    font: { family: "text-yyqx" },
+    content: { dateStyle: "cn" },
   }),
   createThemeTemplate("学术", "academic", "强调研究经历与文字内容的学术简历样式。", {
-    themeColor: "#0F766E",
-    fontSize: 15,
-    lineHeight: 1.4,
-    textAlign: "justify",
-    dateStyle: "cn",
+    theme: { color: "#0F766E" },
+    font: { size: 15, lineHeight: 1.4 },
+    content: { textAlign: "justify", dateStyle: "cn" },
   }),
   createThemeTemplate("清新", "fresh", "适合教育、设计与初入职场场景的简历样式。", {
-    themeColor: "#16A34A",
-    avatarPosition: "center",
-    infoPosition: "center",
-    titleIconMode: "icon",
+    theme: { color: "#16A34A", titleIconMode: "icon" },
+    user: { avatarPosition: "center", infoPosition: "center" },
   }),
   createThemeTemplate("活力", "vivid", "适合运营、市场与创意岗位的活力简历样式。", {
-    themeColor: "#EA580C",
-    fontSize: 17,
-    titleFontSize: 24,
-    userInfoMode: "icon",
-    titleIconMode: "icon",
-    item: {
-      background: "#EA580C1A",
-      borderColor: "#EA580C66",
-      radius: "12px",
-      padding: 12,
-    },
+    theme: { color: "#EA580C", titleIconMode: "icon" },
+    font: { size: 17, titleSize: 24 },
+    user: { infoMode: "icon" },
   }),
   createThemeTemplate("创意", "creative", "突出个人表达与作品展示的创意简历样式。", {
-    themeColor: "#DB2777",
-    avatarPosition: "center",
-    infoPosition: "center",
-    userInfoMode: "icon",
-    titleIconMode: "icon",
+    theme: { color: "#DB2777", titleIconMode: "icon" },
+    user: { avatarPosition: "center", infoPosition: "center", infoMode: "icon" },
   }),
   createThemeTemplate("稳重", "steady", "适合经验型岗位与正式求职的稳重简历样式。", {
-    themeColor: "#475569",
-    fontSize: 15,
-    lineHeight: 1.3,
-    moduleSpacing: 18,
-    dateStyle: "cn",
+    theme: { color: "#475569" },
+    font: { size: 15, lineHeight: 1.3 },
+    spacing: { module: 18 },
+    content: { dateStyle: "cn" },
   }),
   createThemeTemplate("线框", "outline", "以纯黑细线勾勒模块外边框的线框简历样式。", {
-    themeColor: "#000000",
-    titleFontSize: 18,
-    moduleSpacing: 48,
-    dateStyle: "cn",
-    item: {
-      background: "transparent",
-      borderColor: "transparent",
-      radius: "0",
-      padding: 12,
-    },
+    theme: { color: "#000000" },
+    font: { titleSize: 18 },
+    spacing: { module: 48 },
+    content: { dateStyle: "cn" },
   }),
   createThemeTemplate(
     "通栏双栏",
     "topUserTwoColumn",
     "个人信息顶部通栏，其余模块固定分到左右两栏。",
     {
-      themeColor: "#0F766E",
-      pageLayoutTemplate: "topUserTwoColumn",
+      theme: { color: "#0F766E" },
+      layout: { template: "topUserTwoColumn" },
     },
   ),
   createThemeTemplate("双栏", "twoColumn", "所有模块固定分到左右两栏，适合内容较多的简历。", {
-    themeColor: "#7C3AED",
-    pageLayoutTemplate: "twoColumn",
+    theme: { color: "#7C3AED" },
+    layout: { template: "twoColumn" },
   }),
 ];
 // 个人信息展示模式列表
@@ -331,72 +356,62 @@ export const defaultInfoSeparator = "space";
 // ===========参数范围（编辑器滑杆与一页纸压缩共用，只维护这一处）=====================
 export const uiParamRanges = {
   // 上下页边距
-  paddingVertical: { min: 12, max: 96, step: 1 },
+  "page.padding.vertical": { min: 12, max: 96, step: 1 },
   // 左右页边距
-  paddingHorizontal: { min: 12, max: 96, step: 1 },
+  "page.padding.horizontal": { min: 12, max: 96, step: 1 },
   // 左栏宽度占比（双栏布局）
-  leftColumnWidth: { min: 20, max: 40, step: 1 },
+  "layout.leftColumnWidth": { min: 20, max: 40, step: 1 },
   // 字体大小
-  fontSize: { min: 12, max: 48, step: 2 },
+  "font.size": { min: 12, max: 48, step: 2 },
   // 模块标题字号
-  titleFontSize: { min: 12, max: 48, step: 2 },
+  "font.titleSize": { min: 12, max: 48, step: 2 },
   // 行高
-  lineHeight: { min: 1, max: 2, step: 0.1 },
+  "font.lineHeight": { min: 1, max: 2, step: 0.1 },
   // 段落间距
-  paragraphSpacing: { min: 0, max: 36, step: 3 },
+  "spacing.paragraph": { min: 0, max: 36, step: 3 },
   // 模块间距
-  moduleSpacing: { min: 2, max: 48, step: 1 },
+  "spacing.module": { min: 2, max: 48, step: 1 },
 };
 export const DEFAULT_UI = {
-  // 简历展示语言（预览区模块标题语言包使用）
-  language: "zh",
-  // 自定义页尾品牌名：留空使用默认品牌，页码部分固定展示
-  footer: "",
-  // 上下页边距
-  paddingVertical: defaultPaddingVertical,
-  // 左右页边距
-  paddingHorizontal: defaultPaddingHorizontal,
-  // 字体大小
-  fontSize: defaultFontSize,
-  // 模块标题字号
-  titleFontSize: defaultTitleFontSize,
-  // 行高
-  lineHeight: defaultLineHeight,
-  // 段落间距
-  paragraphSpacing: defaultParagraphSpacing,
-  // 模块间距
-  moduleSpacing: defaultModuleSpacing,
-  // 主题颜色
-  themeColor: defaultThemeColor,
-  // 主题样式
-  themeTemplate: defaultThemeTemplate,
-  // 字体类型
-  fontFamily: defaultFontFamily,
-  // 个人信息展示模式
-  userInfoMode: defaultUserInfoMode,
-  // 个人信息布局
-  userInfoLayout: defaultUserInfoLayout,
-  // 头像位置
-  avatarPosition: defaultAvatarPosition,
-  // 信息位置
-  infoPosition: defaultInfoPosition,
-  // 日期样式
-  dateStyle: defaultDateStyle,
-  // 日期位置
-  datePosition: defaultDatePosition,
-  // 文本对齐
-  textAlign: defaultTextAlign,
-  // 模块标题图标模式
-  titleIconMode: defaultTitleIconMode,
-  // 链接下划线：开启后在预览中显示链接下划线
-  linkUnderline: defaultLinkUnderline,
-  // 并列信息分隔符：岗位、部门、专业等字段统一使用
-  infoSeparator: defaultInfoSeparator,
-  // 预览条目外观样式
-  item: {
-    background: "transparent",
-    borderColor: "transparent",
-    radius: "0",
-    padding: 0,
+  page: {
+    padding: { vertical: defaultPaddingVertical, horizontal: defaultPaddingHorizontal },
+    footer: defaultFooter,
+  },
+  font: {
+    family: defaultFontFamily,
+    size: defaultFontSize,
+    titleSize: defaultTitleFontSize,
+    lineHeight: defaultLineHeight,
+  },
+  content: {
+    language: "zh",
+    textAlign: defaultTextAlign,
+    infoSeparator: defaultInfoSeparator,
+    linkUnderline: defaultLinkUnderline,
+    dateStyle: defaultDateStyle,
+    datePosition: defaultDatePosition,
+  },
+  spacing: {
+    paragraph: defaultParagraphSpacing,
+    module: defaultModuleSpacing,
+  },
+  theme: {
+    color: defaultThemeColor,
+    template: defaultThemeTemplate,
+    titleIconMode: defaultTitleIconMode,
+    userModule: "auto",
+    module: "auto",
+    item: "auto",
+  },
+  layout: {
+    template: null,
+    custom: null,
+    leftColumnWidth: defaultLeftColumnWidth,
+  },
+  user: {
+    infoMode: defaultUserInfoMode,
+    infoLayout: defaultUserInfoLayout,
+    avatarPosition: defaultAvatarPosition,
+    infoPosition: defaultInfoPosition,
   },
 };
