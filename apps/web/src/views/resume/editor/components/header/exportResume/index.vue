@@ -1,5 +1,5 @@
 <script setup>
-import { getExportFileName, resumeTitle } from "../../../resumeName.ts";
+import { getExportFileName, resumeTitle } from "../../../../resumeName.ts";
 import eventBus from "@/utils/modules/eventBus";
 import { useSystemStore, useResumeStore } from "@/stores";
 import { storeToRefs } from "pinia";

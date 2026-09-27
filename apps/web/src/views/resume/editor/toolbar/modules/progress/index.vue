@@ -2,7 +2,7 @@
 import { storeToRefs } from "pinia";
 import { useResumeStore } from "@/stores";
 import { useProgress } from "../../../hooks/useProgress";
-import { jumpToEditor } from "../../../useModuleNav";
+import { jumpToEditor } from "../../../hooks/useModuleNav";
 import { TransitionPresets, useTransition } from "@vueuse/core";
 import { computed, ref } from "vue";
 import { useResumeStats } from "./useResumeStats";

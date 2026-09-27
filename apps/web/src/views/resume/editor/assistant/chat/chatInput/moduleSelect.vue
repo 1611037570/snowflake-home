@@ -7,7 +7,7 @@ import {
   ALL_MODULE_KEY,
   ALL_MODULE_NAME,
 } from "@/stores/modules/resume/config/defaultConfig";
-import { useModuleNav } from "../../../useModuleNav";
+import { useModuleNav } from "../../../hooks/useModuleNav";
 
 const resumeStore = useResumeStore();
 const { selectedModule } = storeToRefs(resumeStore);

@@ -4,7 +4,7 @@ import { storeToRefs } from "pinia";
 import { useDraggable } from "vue-draggable-plus";
 import { moveFieldByKey } from "@/components/business/dynamicForm/api";
 import { useResumeStore } from "@/stores";
-import { useModuleNav } from "../../useModuleNav";
+import { useModuleNav } from "../../hooks/useModuleNav";
 import { $t } from "@/locales";
 
 defineOptions({ name: "ModuleManagerContent" });

@@ -4,7 +4,7 @@ import dayjs from "dayjs";
 import { storeToRefs } from "pinia";
 import { useRouter } from "vue-router";
 import { useProgress } from "../editor/hooks/useProgress";
-import { getExportFileName, getResumeTitle } from "../editor/resumeName";
+import { getExportFileName, getResumeTitle } from "../resumeName";
 import { expandConfigFields } from "@/stores/modules/resume/hooks/useConfigTemplate";
 import ResumeCardContainer from "./components/resumeCardContainer.vue";
 import RevealGrid from "../components/revealGrid.vue";
