@@ -30,7 +30,7 @@ export const LOCAL_ICON_LIST: Record<string, Component> = {
 
 ```ts
 import { SF_ICON_LIST_KEY } from "@/components/base/icon";
-import { PROJECT_ICON_LIST } from "./icons";
+import { PROJECT_ICON_LIST } from "./data/localIcons";
 
 provide(SF_ICON_LIST_KEY, PROJECT_ICON_LIST);
 ```
