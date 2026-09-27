@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import Icon from "../../icon.vue";
+import Icon from "../icon.vue";
 import { useFormContext } from "@/components/business/dynamicForm/api";
 import { useResumeStore } from "@/stores";
 import {

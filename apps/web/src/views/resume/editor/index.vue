@@ -78,7 +78,7 @@ import { storeToRefs } from "pinia";
 import { provide, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useRuntimeData } from "./hooks/useRuntimeData";
-import Builder from "./builder/index.vue";
+import Builder from "./panel/index.vue";
 import AiMask from "./components/aiMask.vue";
 import Header from "./components/header/index.vue";
 import ExportMask from "./components/exportMask.vue";
