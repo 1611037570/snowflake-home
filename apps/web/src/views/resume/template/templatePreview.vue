@@ -2,6 +2,8 @@
 // 通用简历预览：全屏展示简历，并在右侧展示调用方提供的文字信息
 import { useResizeObserver } from "@vueuse/core";
 import { computed, onBeforeUnmount, ref, watch } from "vue";
+import { storeToRefs } from "pinia";
+import { useResumeStore } from "@/stores";
 import ResumePages from "@/views/resume/editor/preview/resumePages/index.vue";
 
 defineOptions({ name: "ResumePreview" });
@@ -55,6 +57,7 @@ const props = defineProps({
 });
 
 const emit = defineEmits(["close", "action"]);
+const { system } = storeToRefs(useResumeStore());
 
 const stageRef = ref(null);
 const contentRef = ref(null);
@@ -130,7 +133,11 @@ onBeforeUnmount(() => {
               class="absolute top-0 left-0 origin-top-left"
               :style="{ transform: `scale(${scale})` }"
             >
-              <ResumePages :item="item" :mode="singlePage ? 'single' : 'preview'" />
+              <ResumePages
+                :item="item"
+                :show-page-number="system.showPageNumber"
+                :mode="singlePage ? 'single' : 'preview'"
+              />
             </div>
           </div>
         </div>

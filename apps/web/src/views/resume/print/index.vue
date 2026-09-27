@@ -106,7 +106,12 @@ onBeforeUnmount(() => {
     data-pdf-render-root
     :data-pdf-ready="isReady ? 'true' : 'false'"
   >
-    <ResumePages v-if="item" :item="item" mode="preview" />
+    <ResumePages
+      v-if="item"
+      :item="item"
+      :show-page-number="system.showPageNumber"
+      mode="preview"
+    />
     <div v-else data-pdf-error>缺少简历数据</div>
   </main>
 </template>

@@ -1,9 +1,8 @@
 <script setup>
 // 简历分页渲染可复用组件：接收 resumeItem（data/config/ui），渲染分页后的简历页面
 // 数据源由 props 传入，不依赖 resume store；供编辑器预览、模板缩略图、全屏查看复用
-// 本组件只做渲染编排（数据注入/主题注入/测量分页），导出、智能一页等编辑功能由上层 page.vue 注册
-import { computed, onMounted, onUnmounted, ref, watch } from "vue";
-import { useDebounceFn } from "@vueuse/core";
+// 本组件只编排数据、主题、测量、分页和页面输出；编辑器行为由调用方处理。
+import { computed, ref } from "vue";
 import { getFieldLabel } from "@/components/business/dynamicForm/api";
 import { expandConfigFields } from "@/stores/modules/resume/hooks/useConfigTemplate";
 import ResumePageShell from "./resumePageShell.vue";
@@ -12,23 +11,20 @@ import Column from "./engine/render/column.vue";
 import { useResumePages } from "./useResumePages";
 import { useResumeTheme } from "./useResumeTheme";
 import { provideResumePreviewContext } from "../shared/previewContext";
-import { useResumeStore } from "@/stores";
-import { useModuleInteractions } from "./useModuleInteractions";
 import { isEmptyResume } from "../../toolbar/modules/progress/useResumeStats";
 import { getPreviewText } from "../shared/i18n";
 import { RESUME_HEIGHT, RESUME_WIDTH } from "../shared/constants";
-import {
-  clearPreviewSelection,
-  jumpPreview,
-  locateEditor,
-  previewSelectedModule,
-} from "../../hooks/useModuleNav";
-import eventBus from "@/utils/modules/eventBus";
 import { $t } from "@/locales";
 
-const resumeStore = useResumeStore();
-const { selectedModule, system } = storeToRefs(resumeStore);
 defineOptions({ name: "ResumePages" });
+
+const emit = defineEmits([
+  "module-click",
+  "module-item-click",
+  "module-mouseenter",
+  "module-move",
+  "module-select",
+]);
 
 const props = defineProps({
   // 简历项：{ data, config, ui }
@@ -46,6 +42,27 @@ const props = defineProps({
     type: String,
     default: "editor",
   },
+  // 页面显示设置和编辑态高亮由调用方提供，渲染器不读取编辑器 store。
+  showPageNumber: {
+    type: Boolean,
+    default: false,
+  },
+  showDebug: {
+    type: Boolean,
+    default: false,
+  },
+  moduleClassMap: {
+    type: Object,
+    default: () => ({}),
+  },
+  selectedModuleKeys: {
+    type: Array,
+    default: () => [],
+  },
+  moveDirectionsByColumn: {
+    type: Object,
+    default: () => ({}),
+  },
 });
 
 // 缩略图模式：仅渲染第一页，测量完成后冻结行数据
@@ -53,7 +70,7 @@ const isThumb = computed(() => props.mode === "thumb");
 // 编辑态标记：直接以 mode 判断编辑场景，仅编辑态开放模块选择交互
 const isEdit = computed(() => props.mode === "editor");
 // 调试色只用于编辑预览，避免影响缩略图和导出内容
-const showLayoutDebug = computed(() => isEdit.value && !!system.value.showDebug);
+const showLayoutDebug = computed(() => isEdit.value && props.showDebug);
 
 // 根元素 ref：导出时限定为当前实例的分页元素，避免误选其他 ResumePages 实例的页面
 const rootRef = ref(null);
@@ -68,7 +85,7 @@ const isEmpty = computed(() => isEmptyResume(dataRef.value));
 const ui = computed(() => props.item.ui || {});
 // 简历展示语言：供预览标题语言包使用
 const previewLang = computed(() => ui.value.language || "zh");
-const showPageNumber = computed(() => system.value.showPageNumber);
+const showPageNumber = computed(() => props.showPageNumber);
 const themeStyles = useResumeTheme(ui);
 const { paddingStyle, fontStyle, lineHeightStyle, fontReadyVersion } = themeStyles;
 const measureTreeStyle = computed(() => ({
@@ -185,135 +202,38 @@ const getColumnStyle = (columnId) => {
 };
 const getColumnGap = (columnId) => columnConfigMap.value.get(columnId)?.gap || 0;
 
-// 栏内跨页的模块顺序：上下移动以整栏顺序为准，跨页也可移动
-const columnMoveContext = computed(() => {
-  const orderByColumn = new Map();
-  pagePlan.value.pages.forEach((page) => {
-    page.regions.forEach((region) => {
-      region.columns.forEach((column) => {
-        let order = orderByColumn.get(column.columnId);
-        if (!order) {
-          order = [];
-          orderByColumn.set(column.columnId, order);
-        }
-        column.fragments.forEach((fragment) => {
-          // 仅首段代表模块位置，续段不重复登记
-          if (fragment.fragment === "middle" || fragment.fragment === "last") return;
-          if (!order.includes(fragment.sourceModuleKey)) order.push(fragment.sourceModuleKey);
-        });
-      });
-    });
-  });
-  const directions = new Map();
-  orderByColumn.forEach((order, columnId) => {
-    const list = {};
-    order.forEach((moduleKey, index) => {
-      const previous = index > 0 ? order[index - 1] : null;
-      // 个人信息模块固定在栏首，不提供移动；其余模块上移不越过个人信息
-      list[moduleKey] =
-        moduleKey === "user"
-          ? { up: false, down: false }
-          : { up: previous !== null && previous !== "user", down: index < order.length - 1 };
-    });
-    directions.set(columnId, list);
-  });
-  return { orderByColumn, directions };
-});
-const getColumnDirections = (columnId) => columnMoveContext.value.directions.get(columnId) ?? {};
 // 预览就绪：空简历直接展示提示页，其余以新引擎完成测量为准。
 const previewMeasured = computed(() => isEmpty.value || measureDone.value);
 const visiblePages = computed(() => (isThumb.value ? pages.value.slice(0, 1) : pages.value));
-// 测量会随内容变化持续触发，静默一段时间后才认定为渲染完成
-const SETTLE_DELAY = 200;
-const settlePreviewSync = useDebounceFn(() => {
-  if (previewMeasured.value) resumeStore.setPreviewSyncing(false);
-}, SETTLE_DELAY);
-// 预览加载状态交由外壳统一展示，仅编辑态实例上报，避免缩略图/全屏实例覆盖
-watch(
-  [previewMeasured, measureDone],
-  () => {
-    if (!isEdit.value) return;
-    if (!previewMeasured.value) {
-      resumeStore.setPreviewSyncing(true);
-      return;
-    }
-    settlePreviewSync();
-  },
-  { immediate: true },
-);
 
-// ---------- 编辑态模块交互（选中高亮）----------
-const { moduleClassMap } = useModuleInteractions({
-  isEdit,
-  moduleKeys,
-  selectedModule,
-  activeModuleKey: previewSelectedModule,
-});
-
-// 点击预览模块时定位左侧编辑模块，可在系统设置中关闭
+// 点击事件只向外报告模块信息，由编辑器模式决定是否定位字段。
 const handlePageClick = (event) => {
-  if (!system.value.previewClickLocate) return;
   const moduleEl = event.target.closest?.(".resume-module-wrapper");
   const moduleKey = moduleEl?.dataset.module;
-  if (moduleKey) locateEditor(moduleKey);
+  if (moduleKey) emit("module-click", { moduleKey });
 };
 
 const handleSubmoduleClick = ({ moduleKey, itemIndex }) => {
-  if (!system.value.previewClickLocate) return;
-  locateEditor(moduleKey, itemIndex == null ? undefined : { itemIndex });
+  emit("module-item-click", { moduleKey, itemIndex });
 };
-
-// 编辑区新增 user 子字段后，由编辑态预览响应定位请求
-const handleLocatePreviewModule = (key) => {
-  if (isEdit.value) jumpPreview(key);
-};
-onMounted(() => eventBus.on("resume-locate-preview-module", handleLocatePreviewModule));
-onUnmounted(() => eventBus.off("resume-locate-preview-module", handleLocatePreviewModule));
-
-// 鼠标进入模块内容时清除查找定位边框
-const handleModuleMouseEnter = (key) => {
-  clearPreviewSelection(key);
-};
-
-// 左右移动：把当前布局物化为显式 pageLayout，并把模块移到相邻栏
-const moveModuleAcrossColumn = (moduleKey, columnId, direction) => {
-  const current = layout.value;
-  if (!current?.regions) return;
-  const regions = current.regions.map((region) => ({
-    ...region,
-    columns: region.columns.map((column) => ({ ...column, moduleKeys: [...column.moduleKeys] })),
-  }));
-  const region = regions.find((item) => item.columns.some((column) => column.id === columnId));
-  if (!region) return;
-  const index = region.columns.findIndex((column) => column.id === columnId);
-  const source = region.columns[index];
-  const target = region.columns[direction === "left" ? index - 1 : index + 1];
-  if (!source || !target) return;
-  source.moduleKeys = source.moduleKeys.filter((key) => key !== moduleKey);
-  if (!target.moduleKeys.includes(moduleKey)) target.moduleKeys.push(moduleKey);
-  resumeStore.setPageLayout({ ...current, regions });
-};
-// 预览区移动模块：上下按整栏顺序交换配置，左右写入显式布局换栏
-const handleModuleMove = ({ moduleKey, direction, columnId }) => {
-  if (direction === "left" || direction === "right") {
-    moveModuleAcrossColumn(moduleKey, columnId, direction);
-    return;
-  }
-  if (direction !== "up" && direction !== "down") return;
-  const order = columnMoveContext.value.orderByColumn.get(columnId) ?? [];
-  const index = order.indexOf(moduleKey);
-  if (index < 0) return;
-  const target = direction === "up" ? order[index - 1] : order[index + 1];
-  if (!target) return;
-  resumeStore.swapModuleOrder(moduleKey, target);
-};
+const handleModuleMouseEnter = (key) => emit("module-mouseenter", key);
+const handleModuleMove = (payload, columnId) => emit("module-move", { ...payload, columnId });
 
 // 新引擎测量容器元素回传，分页算法只通过 hook 读取该元素。
 const setLayoutMeasureEl = (el) => (layoutMeasureRef.value = el);
 // 长图导出使用带页面留白和页尾的测量树；空简历回退到提示页。
 const imageExportRef = computed(() => (isEmpty.value ? rootRef.value : layoutMeasureRef.value));
 // 向上暴露分页根节点与长图导出源，供上层（page.vue）注册导出功能读取。
-defineExpose({ rootEl: rootRef, measureEl: imageExportRef, pages, pagePlan });
+defineExpose({
+  rootEl: rootRef,
+  measureEl: imageExportRef,
+  pages,
+  pagePlan,
+  layout,
+  moduleKeys,
+  measureDone,
+  previewMeasured,
+});
 </script>
 
 <template>
@@ -397,14 +317,16 @@ defineExpose({ rootEl: rootRef, measureEl: imageExportRef, pages, pagePlan });
                     :nodes="nodeMap"
                     :is-edit="isEdit"
                     :show-debug="showLayoutDebug"
-                    :module-class-map="moduleClassMap"
+                    :module-class-map="props.moduleClassMap"
+                    :selected-module-keys="props.selectedModuleKeys"
                     :gap="getColumnGap(column.columnId)"
-                    :move-directions="getColumnDirections(column.columnId)"
+                    :move-directions="props.moveDirectionsByColumn[column.columnId]"
                     :can-move-left="columnIndex > 0"
                     :can-move-right="columnIndex < region.columns.length - 1"
                     @mouseenter="handleModuleMouseEnter"
                     @click="handleSubmoduleClick"
-                    @move="(payload) => handleModuleMove({ ...payload, columnId: column.columnId })"
+                    @select="emit('module-select', $event)"
+                    @move="(payload) => handleModuleMove(payload, column.columnId)"
                   />
                 </div>
               </div>
