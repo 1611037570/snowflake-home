@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from "vue";
-import Item from "../../../components/item.vue";
-import { getItemFragmentStyle, isItemNode } from "../../../components/itemStyle";
+import LayoutItem from "./layoutItem.vue";
+import { getLayoutItemFragmentStyle, isLayoutItemNode } from "./layoutItemStyle";
 import Title from "../../../components/title/index.vue";
 import type { LayoutNode } from "../types";
 import type { FragmentPlan } from "../paginate/pagePlan";
@@ -19,9 +19,9 @@ const props = defineProps<{
 const { ui } = useResumePreviewContext();
 const itemConfig = computed(() => ui.value.item || {});
 // 除 user 与分页间距外，每个内容节点都作为独立条目渲染。
-const useItem = computed(() => isItemNode(props.node));
+const useItem = computed(() => isLayoutItemNode(props.node));
 const itemFragmentStyle = computed(() =>
-  getItemFragmentStyle(
+  getLayoutItemFragmentStyle(
     props.fragment.blockRange ?? { start: 0, end: Number.MAX_SAFE_INTEGER },
     props.fragment.contentRange,
     props.fragment.decoration,
@@ -44,7 +44,7 @@ const handleContentClick = () => {
 
 <template>
   <Title v-if="fragment.titlePayload" :module-key="fragment.sourceModuleKey" />
-  <Item
+  <LayoutItem
     v-if="fragment.fragment !== 'title' && useItem"
     :item="itemConfig"
     :style="itemFragmentStyle"
@@ -61,7 +61,7 @@ const handleContentClick = () => {
       :show-debug="showDebug"
       :leading-on-page="leadingOnPage"
     />
-  </Item>
+  </LayoutItem>
   <div
     v-else-if="fragment.fragment !== 'title'"
     @click.stop="handleContentClick"

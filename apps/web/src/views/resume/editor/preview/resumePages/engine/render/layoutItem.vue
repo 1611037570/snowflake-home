@@ -1,7 +1,7 @@
 <script setup>
 import { computed } from "vue";
 
-defineOptions({ inheritAttrs: false, name: "Item" });
+defineOptions({ inheritAttrs: false, name: "LayoutItem" });
 
 const props = defineProps({
   // 调用方传入的条目样式数据
