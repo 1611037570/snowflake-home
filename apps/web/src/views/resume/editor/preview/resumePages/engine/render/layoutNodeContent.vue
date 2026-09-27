@@ -3,7 +3,6 @@ import { computed } from "vue";
 import ItemTags from "../../../components/itemTags.vue";
 import ItemTitle from "../../../components/itemTitle.vue";
 import InlineInfoList from "../../../components/inlineInfoList.vue";
-import ResumeContainer from "../../../components/container.vue";
 import ResumeField from "../../../components/resumeField/index.vue";
 import User from "../../../modules/user/index.vue";
 import { getTime } from "./getTime";
@@ -31,7 +30,6 @@ const props = withDefaults(defineProps<Props>(), {
 });
 
 const {
-  ui,
   theme: {
     innerSpacingStyle,
     dateStyle,
@@ -44,7 +42,6 @@ const {
   },
 } = useResumePreviewContext();
 
-const containerConfig = computed(() => ui.value.container || {});
 const nodePayload = computed(() => (props.payload ?? props.node.payload) as any);
 const item = computed(() => nodePayload.value?.item || {});
 // 图片作品按条目尺寸占比渲染，和模块原实现的宽度口径保持一致
@@ -108,20 +105,6 @@ const safeUrl = (value: unknown) => {
   }
 };
 const safeItemLinkUrl = computed(() => safeUrl(itemLink.value.url));
-const fragmentContentStyle = computed(() => {
-  // 分片的圆角与相邻边框按上下拼接分配：两端都在本片时保留完整圆角
-  const radius = String(containerConfig.value.radius || "0");
-  // 内容盒首块已在前面分片渲染过时，续段才去掉上内边距与上边框；只放间距的分片不渲染内容盒
-  const boxTopRendered = props.blockRange.start > 0 || (props.contentRange?.start ?? 0) > 0;
-  const boxBottomFinal = props.decoration !== "top" && props.decoration !== "middle";
-  const topRadius = boxTopRendered ? "0" : radius;
-  const bottomRadius = boxBottomFinal ? radius : "0";
-  return {
-    borderRadius: `${topRadius} ${topRadius} ${bottomRadius} ${bottomRadius}`,
-    ...(boxTopRendered ? { paddingTop: "0px", borderTopWidth: "0px" } : {}),
-    ...(!boxBottomFinal ? { paddingBottom: "0px", borderBottomWidth: "0px" } : {}),
-  };
-});
 const spacerHeight = computed(() => Number(nodePayload.value?.height) || 0);
 // 经历条目头部只在首段渲染，正文续段不再重复头部
 const showItemHeader = computed(() => !props.contentRange || props.contentRange.start === 0);
@@ -142,20 +125,17 @@ const itemContentSpacingStyle = computed(() => {
     />
   </template>
   <template v-else-if="node.type === 'richText'">
-    <ResumeContainer
+    <div
       v-if="richTextHtml && hasContentBlock"
-      :container="containerConfig"
-      :style="fragmentContentStyle"
       class="layout-rich-text"
       :class="`layout-rich-text--${decoration || 'full'}`"
-      data-layout-block-range
     >
       <div
         class="break-words whitespace-pre-wrap"
         :style="{ textAlign: textAlign === 'justify' ? 'justify' : undefined }"
         v-html="richTextHtml"
       />
-    </ResumeContainer>
+    </div>
   </template>
 
   <template v-else-if="node.type === 'group' && node.sourceModuleKey === 'user'">
@@ -163,13 +143,7 @@ const itemContentSpacingStyle = computed(() => {
   </template>
 
   <template v-else-if="isExperience">
-    <ResumeContainer
-      v-if="hasContentBlock"
-      :container="containerConfig"
-      :style="fragmentContentStyle"
-      class="layout-experience-item"
-      data-layout-block-range
-    >
+    <template v-if="hasContentBlock">
       <!-- 块区间按实际存在的头部、标签链接和正文顺序，与测量层 DOM 块序保持一致 -->
       <div
         v-if="hasItemHeader && showItemHeader && isBlockVisible(0)"
@@ -227,7 +201,7 @@ const itemContentSpacingStyle = computed(() => {
       >
         <ResumeField :model-value="richTextHtml" html />
       </div>
-    </ResumeContainer>
+    </template>
   </template>
 
   <template v-else-if="node.type === 'block'">
@@ -271,13 +245,7 @@ const itemContentSpacingStyle = computed(() => {
     <ResumeField v-else :model-value="nodePayload.value" />
   </template>
 
-  <template v-else-if="node.type === 'media'">
-    <ResumeContainer
-      v-if="hasContentBlock"
-      :container="containerConfig"
-      data-layout-block-range
-      :style="fragmentContentStyle"
-    >
+  <template v-else-if="node.type === 'media' && hasContentBlock">
       <template v-if="nodePayload.mediaType === 'video'">
         <!-- 视频作品保留原始网址文本，避免显示为作品名称。 -->
         <div
@@ -340,7 +308,6 @@ const itemContentSpacingStyle = computed(() => {
           <span v-if="nodePayload.item?.desc">{{ nodePayload.item.desc }}</span>
         </div>
       </template>
-    </ResumeContainer>
   </template>
 </template>
 
