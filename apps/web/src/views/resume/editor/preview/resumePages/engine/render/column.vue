@@ -3,6 +3,9 @@ import { computed } from "vue";
 import type { LayoutNode } from "../types";
 import type { ColumnPlan, FragmentPlan } from "../paginate/pagePlan";
 import Module from "./module.vue";
+import ModuleActions from "./moduleActions.vue";
+import ModuleContent from "./moduleContent.vue";
+import UserModule from "./userModule.vue";
 
 const props = defineProps<{
   column: ColumnPlan;
@@ -23,6 +26,18 @@ const emit = defineEmits<{
   click: [payload: { moduleKey: string; itemIndex?: number }];
   move: [payload: { moduleKey: string; direction: string }];
 }>();
+// 编辑操作归模块级渲染编排；个人信息模块固定位置，不提供移动方向。
+const getMoveDirections = (moduleKey: string) => {
+  if (moduleKey === "user") {
+    return { up: false, down: false, left: false, right: false };
+  }
+  return {
+    up: props.moveDirections?.[moduleKey]?.up ?? false,
+    down: props.moveDirections?.[moduleKey]?.down ?? false,
+    left: Boolean(props.canMoveLeft),
+    right: Boolean(props.canMoveRight),
+  };
+};
 // 模块间距只作用于不同模块，同一模块内的条目间距由内容样式控制
 const getGapTop = (fragment: FragmentPlan, index: number) => {
   if (index === 0 || fragment.fragment === "middle" || fragment.fragment === "last") return 0;
@@ -65,22 +80,30 @@ const fragmentGroups = computed(() => {
         :class="{ 'resume-debug-gap': showDebug }"
         :style="{ height: `${group.gapTop}px` }"
       />
-      <Module
+      <component
+        :is="group.moduleKey === 'user' ? UserModule : Module"
         :module-key="group.moduleKey"
-        :items="group.items"
-        :nodes="nodes"
-        :page-index="pageIndex"
-        :group-index="groupIndex"
-        :is-edit="isEdit"
-        :show-debug="showDebug"
         :module-class="moduleClassMap?.[group.moduleKey]"
-        :move-directions="moveDirections?.[group.moduleKey]"
-        :can-move-left="canMoveLeft"
-        :can-move-right="canMoveRight"
         @mouseenter="emit('mouseenter', $event)"
-        @click="emit('click', $event)"
-        @move="emit('move', $event)"
-      />
+      >
+        <template #actions>
+          <ModuleActions
+            v-if="isEdit"
+            :model-key="group.moduleKey"
+            :directions="getMoveDirections(group.moduleKey)"
+            @move="emit('move', { moduleKey: group.moduleKey, direction: $event })"
+          />
+        </template>
+        <ModuleContent
+          :module-key="group.moduleKey"
+          :items="group.items"
+          :nodes="nodes"
+          :page-index="pageIndex"
+          :group-index="groupIndex"
+          :show-debug="showDebug"
+          @click="emit('click', $event)"
+        />
+      </component>
     </template>
     <!-- 下一个模块换页时，本页剩余空间仍装得下的模块间距落在页尾单独占一行 -->
     <div

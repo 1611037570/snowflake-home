@@ -1,47 +1,15 @@
 <script setup>
 import { computed } from "vue";
-import Academic from "./themes/academic.vue";
-import Business from "./themes/business.vue";
-import Classic from "./themes/classic.vue";
-import Creative from "./themes/creative.vue";
-import Default from "./themes/default.vue";
-import Fresh from "./themes/fresh.vue";
-import Minimal from "./themes/minimal.vue";
-import Modern from "./themes/modern.vue";
-import Steady from "./themes/steady.vue";
-import Vivid from "./themes/vivid.vue";
+import UserHeading from "./components/userHeading.vue";
 import { useResumePreviewContext } from "../../shared/previewContext";
 
-// 主题组件映射：同步加载常用个人信息模块，切换风格时直接复用已加载组件
-// 新增主题在此注册并新建对应主题组件，无需改动模板
-const themeComponents = {
-  default: Default,
-  modern: Modern,
-  business: Business,
-  minimal: Minimal,
-  classic: Classic,
-  academic: Academic,
-  fresh: Fresh,
-  vivid: Vivid,
-  creative: Creative,
-  steady: Steady,
-};
 const {
-  theme: { themeTemplate: themeTemplateRef, fontValue, lineHeightValue },
+  theme: { themeTemplate: themeTemplateRef },
 } = useResumePreviewContext();
-// 风格模板：未提供时按默认样式处理
-const themeTemplate = computed(() => themeTemplateRef.value || "default");
-// 当前主题组件：未匹配时回退默认主题
-const current = computed(() => themeComponents[themeTemplate.value] || themeComponents.default);
+// 个人信息内容只处理头像、姓名和联系方式的排布。
+const showDivider = computed(() => themeTemplateRef.value === "modern");
 </script>
 
 <template>
-  <!-- 主题组件根元素统一挂载模块标识 -->
-  <component
-    :is="current"
-    data-module="user"
-    :style="[lineHeightValue(), fontValue()]"
-  />
+  <UserHeading :show-divider="showDivider" />
 </template>
-
-<style lang="scss" scoped></style>

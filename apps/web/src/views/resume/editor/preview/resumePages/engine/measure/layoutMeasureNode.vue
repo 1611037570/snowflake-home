@@ -5,6 +5,7 @@ import { getItemFragmentStyle, isItemNode } from "../render/itemStyle";
 import Title from "../../../components/title/index.vue";
 import { useResumePreviewContext } from "../../../shared/previewContext";
 import LayoutNodeContent from "../render/layoutNodeContent.vue";
+import UserModule from "../render/userModule.vue";
 import type { LayoutNode } from "../types";
 
 const props = defineProps<{ node: LayoutNode }>();
@@ -12,6 +13,9 @@ const { ui } = useResumePreviewContext();
 const itemConfig = computed(() => ui.value.item || {});
 // 测量树复用同一条目样式，确保测量尺寸与实际预览一致。
 const useItem = computed(() => isItemNode(props.node));
+const isUserModule = computed(
+  () => props.node.type === "group" && props.node.sourceModuleKey === "user",
+);
 const fullItemStyle = computed(() =>
   getItemFragmentStyle(
     { start: 0, end: Number.MAX_SAFE_INTEGER },
@@ -43,6 +47,9 @@ const getBreakpointItemStyle = (offset: number) =>
       >
         <LayoutNodeContent :node="node" />
       </Item>
+      <UserModule v-else-if="isUserModule">
+        <LayoutNodeContent :node="node" />
+      </UserModule>
       <LayoutNodeContent v-else :node="node" />
       <!-- 断点探针按首段内容样式渲染，量出的高度与真实首段一致（含容器外边距与上内边距） -->
       <div
@@ -64,6 +71,13 @@ const getBreakpointItemStyle = (offset: number) =>
             :content-range="{ start: 0, end: point.offset }"
           />
         </Item>
+        <UserModule v-else-if="isUserModule">
+          <LayoutNodeContent
+            :node="node"
+            :decoration="'top'"
+            :content-range="{ start: 0, end: point.offset }"
+          />
+        </UserModule>
         <LayoutNodeContent
           v-else
           :node="node"

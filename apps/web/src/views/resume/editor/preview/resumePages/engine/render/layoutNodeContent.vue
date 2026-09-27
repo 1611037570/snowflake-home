@@ -4,7 +4,7 @@ import ItemTags from "../../../components/itemTags.vue";
 import ItemTitle from "../../../components/itemTitle.vue";
 import InlineInfoList from "../../../components/inlineInfoList.vue";
 import ResumeField from "../../../components/resumeField/index.vue";
-import User from "../../../modules/user/index.vue";
+import UserContent from "../../../modules/user/index.vue";
 import { getTime } from "./getTime";
 import { isContentEmpty } from "../../../shared/validData";
 import { useResumePreviewContext } from "../../../shared/previewContext";
@@ -139,7 +139,7 @@ const itemContentSpacingStyle = computed(() => {
   </template>
 
   <template v-else-if="node.type === 'group' && node.sourceModuleKey === 'user'">
-    <User />
+    <UserContent />
   </template>
 
   <template v-else-if="isExperience">
