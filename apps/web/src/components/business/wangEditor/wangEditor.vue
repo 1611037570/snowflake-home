@@ -1,28 +1,32 @@
 <template>
   <div style="" class="sf-wang-editor relative w-full rounded-2xl" :class="[bg, sfBorder]">
-    <!-- 编辑器实例创建成功后再挂载工具栏，避免工具栏在 editor 就绪前初始化报错 -->
-    <div v-if="editorRef && $slots.toolbar" class="flex min-w-0 items-center">
-      <div class="min-w-0 flex-1">
-        <Toolbar :editor="editorRef" :defaultConfig="toolbarConfig" :mode="mode" />
+    <div class="relative">
+      <!-- 编辑器实例创建成功后再挂载工具栏，避免工具栏在 editor 就绪前初始化报错 -->
+      <div v-if="editorRef && $slots.toolbar" class="flex min-w-0 items-center">
+        <div class="min-w-0 flex-1">
+          <Toolbar :editor="editorRef" :defaultConfig="toolbarConfig" :mode="mode" />
+        </div>
+        <slot name="toolbar" :editor="editorRef" />
       </div>
-      <slot name="toolbar" :editor="editorRef" />
+      <Toolbar v-else-if="editorRef" :editor="editorRef" :defaultConfig="toolbarConfig" :mode="mode" />
+      <!-- 使用项目统一滚动条承载编辑器内容 -->
+      <SfScrollbar :max-height="height" :class="$slots.bottom ? 'rounded-b-none' : 'rounded-b-2xl'">
+        <Editor
+          :class="$slots.bottom ? 'rounded-b-none' : 'rounded-b-2xl'"
+          :style="{ height: 'auto', minHeight: '80px' }"
+          v-model="valueHtml"
+          :defaultConfig="editorConfig"
+          :mode="mode"
+          @onCreated="handleCreated"
+          @onChange="handleChange"
+        />
+      </SfScrollbar>
+      <div class="pointer-events-none absolute right-2 bottom-2 z-10 text-xs text-sf-text-2">
+        {{ currentLength }}/{{ props.maxLength }}
+      </div>
     </div>
-    <Toolbar v-else-if="editorRef" :editor="editorRef" :defaultConfig="toolbarConfig" :mode="mode" />
-    <!-- 使用项目统一滚动条承载编辑器内容 -->
-    <SfScrollbar :max-height="height" class="rounded-b-2xl">
-      <Editor
-        class="rounded-b-2xl"
-        :style="{ height: 'auto', minHeight: '80px' }"
-        v-model="valueHtml"
-        :defaultConfig="editorConfig"
-        :mode="mode"
-        @onCreated="handleCreated"
-        @onChange="handleChange"
-      />
-    </SfScrollbar>
-    <div class="pointer-events-none absolute right-2 bottom-2 z-10 text-xs text-sf-text-2">
-      {{ currentLength }}/{{ props.maxLength }}
-    </div>
+    <!-- 底部插槽与编辑内容共用编辑器卡片外框 -->
+    <slot name="bottom" />
   </div>
 </template>
 
