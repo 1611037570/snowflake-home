@@ -270,6 +270,8 @@ const TEXT_KEYS_SOURCE = `
   "突出个人表达与作品展示的创意简历样式。": "creativeThemeDescription",
   稳重: "steadyTheme",
   "适合经验型岗位与正式求职的稳重简历样式。": "steadyThemeDescription",
+  线框: "outlineTheme",
+  "以纯黑细线勾勒模块外边框的线框简历样式。": "outlineThemeDescription",
   通栏双栏: "topUserTwoColumnTheme",
   "个人信息顶部通栏，其余模块固定分到左右两栏。": "topUserTwoColumnThemeDescription",
   双栏: "twoColumnTheme",

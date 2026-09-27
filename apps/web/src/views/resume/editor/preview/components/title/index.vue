@@ -17,6 +17,7 @@ const themeComponents = {
   vivid: defineAsyncComponent(() => import("./themes/vivid.vue")),
   creative: defineAsyncComponent(() => import("./themes/creative.vue")),
   steady: defineAsyncComponent(() => import("./themes/steady.vue")),
+  outline: defineAsyncComponent(() => import("./themes/outline.vue")),
 };
 const props = defineProps({
   title: {

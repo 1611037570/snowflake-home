@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import ModuleActions from "../../moduleActions.vue";
+import { useResumePreviewContext } from "../../../shared/previewContext";
 import type { LayoutNode } from "../types";
 import type { ColumnPlan, FragmentPlan } from "../paginate/pagePlan";
 import LayoutFragment from "./layoutFragment.vue";
@@ -26,6 +27,15 @@ const emit = defineEmits<{
 }>();
 
 const getNode = (fragment: FragmentPlan) => props.nodes.get(fragment.sourceNodeId);
+// 线框风格：外边框按模块整体（标题+全部条目）绘制，个人信息模块按默认样式处理
+const {
+  theme: { themeTemplate, themeColor },
+} = useResumePreviewContext();
+const isOutlineModule = (moduleKey: string) =>
+  themeTemplate.value === "outline" && moduleKey !== "user";
+const outlineFrameStyle = computed(() => ({
+  "--resume-module-frame-color": themeColor.value,
+}));
 // 模块间距只作用于不同模块，同一模块内的条目间距由内容样式控制
 const getGapTop = (fragment: FragmentPlan, index: number) => {
   if (index === 0 || fragment.fragment === "middle" || fragment.fragment === "last") return 0;
@@ -87,7 +97,11 @@ const handleMove = (moduleKey: string, direction: string) => {
       />
       <div
         class="group/module relative flex min-w-0 flex-col rounded-3xl"
-        :class="moduleClassMap?.[group.moduleKey]"
+        :class="[
+          moduleClassMap?.[group.moduleKey],
+          { 'resume-module-frame': isOutlineModule(group.moduleKey) },
+        ]"
+        :style="isOutlineModule(group.moduleKey) ? outlineFrameStyle : undefined"
       >
         <!-- 模块级操作按钮按模块渲染一次，避免多条目模块出现多个图标 -->
         <ModuleActions
@@ -128,5 +142,16 @@ const handleMove = (moduleKey: string, direction: string) => {
 /* 模块间距色带直接绘制在占位元素上 */
 .resume-debug-gap {
   @apply bg-sf-warning;
+}
+
+/* 线框风格：用伪元素绘制模块外边框，不参与分页测量高度 */
+.resume-module-frame::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  box-sizing: border-box;
+  border: 1px solid var(--resume-module-frame-color, #000000);
+  border-radius: 0;
+  pointer-events: none;
 }
 </style>

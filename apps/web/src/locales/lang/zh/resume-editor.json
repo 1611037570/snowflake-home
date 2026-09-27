@@ -385,6 +385,8 @@
   "creativeThemeDescription": "突出个人表达与作品展示的创意简历样式。",
   "steadyTheme": "稳重",
   "steadyThemeDescription": "适合经验型岗位与正式求职的稳重简历样式。",
+  "outlineTheme": "线框",
+  "outlineThemeDescription": "以纯黑细线勾勒模块外边框的线框简历样式。",
   "topUserTwoColumnTheme": "通栏双栏",
   "topUserTwoColumnThemeDescription": "个人信息顶部通栏，其余模块固定分到左右两栏。",
   "twoColumnTheme": "双栏",
