@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from "vue";
-import Item from "../../../components/item.vue";
-import { getItemFragmentStyle, isItemNode } from "../../../components/itemStyle";
+import LayoutItem from "../render/layoutItem.vue";
+import { getLayoutItemFragmentStyle, isLayoutItemNode } from "../render/layoutItemStyle";
 import Title from "../../../components/title/index.vue";
 import { useResumePreviewContext } from "../../../shared/previewContext";
 import LayoutNodeContent from "../render/layoutNodeContent.vue";
@@ -11,9 +11,9 @@ const props = defineProps<{ node: LayoutNode }>();
 const { ui } = useResumePreviewContext();
 const itemConfig = computed(() => ui.value.item || {});
 // 测量树复用同一条目样式，确保测量尺寸与实际预览一致。
-const useItem = computed(() => isItemNode(props.node));
+const useItem = computed(() => isLayoutItemNode(props.node));
 const fullItemStyle = computed(() =>
-  getItemFragmentStyle(
+  getLayoutItemFragmentStyle(
     { start: 0, end: Number.MAX_SAFE_INTEGER },
     undefined,
     "full",
@@ -21,7 +21,7 @@ const fullItemStyle = computed(() =>
   ),
 );
 const getBreakpointItemStyle = (offset: number) =>
-  getItemFragmentStyle(
+  getLayoutItemFragmentStyle(
     { start: 0, end: Number.MAX_SAFE_INTEGER },
     { start: 0, end: offset },
     "top",
@@ -35,14 +35,14 @@ const getBreakpointItemStyle = (offset: number) =>
       <Title :module-key="node.title.sourceModuleKey" />
     </div>
     <div class="layout-measure-node" :data-layout-node-id="node.id">
-      <Item
+      <LayoutItem
         v-if="useItem"
         :item="itemConfig"
         :style="fullItemStyle"
         data-layout-block-range
       >
         <LayoutNodeContent :node="node" />
-      </Item>
+      </LayoutItem>
       <LayoutNodeContent v-else :node="node" />
       <!-- 断点探针按首段内容样式渲染，量出的高度与真实首段一致（含容器外边距与上内边距） -->
       <div
@@ -52,7 +52,7 @@ const getBreakpointItemStyle = (offset: number) =>
         :data-layout-breakpoint-offset="point.offset"
         :style="{ width: '100%' }"
       >
-        <Item
+        <LayoutItem
           v-if="useItem"
           :item="itemConfig"
           :style="getBreakpointItemStyle(point.offset)"
@@ -63,7 +63,7 @@ const getBreakpointItemStyle = (offset: number) =>
             :decoration="'top'"
             :content-range="{ start: 0, end: point.offset }"
           />
-        </Item>
+        </LayoutItem>
         <LayoutNodeContent
           v-else
           :node="node"
