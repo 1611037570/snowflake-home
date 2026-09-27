@@ -187,6 +187,8 @@
   "resumeTemplateStyle_creative_description": "Highlight personal expression and portfolio work.",
   "resumeTemplateStyle_steady_name": "Steady",
   "resumeTemplateStyle_steady_description": "A composed style for experienced candidates and formal searches.",
+  "resumeTemplateStyle_outline_name": "Outline",
+  "resumeTemplateStyle_outline_description": "A monochrome style that separates sections with thin black rules.",
   "resumeTemplateStyle_topUserTwoColumn_name": "Full-Width Header, Two Columns",
   "resumeTemplateStyle_topUserTwoColumn_description": "Place personal details across the top, with other sections in two columns.",
   "resumeTemplateStyle_twoColumn_name": "Two Columns",

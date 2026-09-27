@@ -385,6 +385,8 @@
   "creativeThemeDescription": "Highlights personal expression and portfolio work.",
   "steadyTheme": "Steady",
   "steadyThemeDescription": "A composed resume style for experienced and formal job searches.",
+  "outlineTheme": "Outline",
+  "outlineThemeDescription": "A monochrome style that separates sections with thin black rules.",
   "topUserTwoColumnTheme": "Top Banner / Two Columns",
   "topUserTwoColumnThemeDescription": "Personal information spans the top while other modules use two fixed columns.",
   "twoColumnTheme": "Two Columns",

@@ -130,6 +130,18 @@ export const themeTemplateList = [
     moduleSpacing: 18,
     dateStyle: "cn",
   }),
+  createThemeTemplate("线框", "outline", "以纯黑细线勾勒模块外边框的线框简历样式。", {
+    themeColor: "#000000",
+    titleFontSize: 18,
+    moduleSpacing: 48,
+    dateStyle: "cn",
+    moduleContent: {
+      variant: "card",
+      background: "transparent",
+      borderColor: "transparent",
+      radius: "0",
+    },
+  }),
   createThemeTemplate(
     "通栏双栏",
     "topUserTwoColumn",

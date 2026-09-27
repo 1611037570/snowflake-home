@@ -187,6 +187,8 @@
   "resumeTemplateStyle_creative_description": "突出个人表达与作品展示的创意简历样式。",
   "resumeTemplateStyle_steady_name": "稳重",
   "resumeTemplateStyle_steady_description": "适合经验型岗位与正式求职的稳重简历样式。",
+  "resumeTemplateStyle_outline_name": "线框",
+  "resumeTemplateStyle_outline_description": "以纯黑细线勾勒模块外边框的线框简历样式。",
   "resumeTemplateStyle_topUserTwoColumn_name": "通栏双栏",
   "resumeTemplateStyle_topUserTwoColumn_description": "个人信息顶部通栏，其余模块固定分到左右两栏。",
   "resumeTemplateStyle_twoColumn_name": "双栏",
