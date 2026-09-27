@@ -946,7 +946,7 @@ export const DEFAULT_SKILL_FORM = {
       component: "resumeContentEditor",
       required: true,
       props: {
-        kind: "advantage",
+        kind: "skill",
       },
       model: {
         source: ["data", "content"],
@@ -970,8 +970,11 @@ export const DEFAULT_ADVANTAGE_FORM = {
   fields: [
     {
       type: "object",
-      component: "wangEditor",
+      component: "resumeContentEditor",
       required: true,
+      props: {
+        kind: "advantage",
+      },
       model: {
         source: ["data", "content"],
         prop: "modelValue",
