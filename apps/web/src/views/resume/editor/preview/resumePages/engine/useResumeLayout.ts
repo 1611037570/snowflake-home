@@ -125,7 +125,7 @@ export const useResumeLayout = ({
     titleFontSize: ui.value.titleFontSize,
     lineHeight: ui.value.lineHeight,
     paragraphSpacing: ui.value.paragraphSpacing,
-    moduleContent: ui.value.moduleContent,
+    container: ui.value.container,
     moduleSpacing: ui.value.moduleSpacing,
     themeTemplate: ui.value.themeTemplate,
     fontReadyVersion: fontReadyVersion.value,
