@@ -2,7 +2,7 @@
 import { createRouter, createWebHashHistory, createWebHistory } from "vue-router";
 // 导入路由配置
 import { beforeEachGuard } from "./guards";
-import routes, { prefetchRouteComponents } from "./modules/route";
+import routes from "./modules/route";
 import { stopRouteLoading } from "@/utils/modules/routeLoading";
 
 // 根据环境变量确定路由模式
@@ -19,21 +19,8 @@ const router = createRouter({
 });
 
 router.beforeEach(beforeEachGuard);
-const prefetchTargetsByPath: Record<string, string[]> = {
-  "/resume/mine": ["/resume/editor"],
-};
-const prefetchLikelyTargets = (path: string) => {
-  if (!import.meta.env.PROD) return;
-  const targets = prefetchTargetsByPath[path];
-  if (targets?.length) void prefetchRouteComponents(targets);
-};
-router.afterEach((to) => {
-  stopRouteLoading();
-  prefetchLikelyTargets(to.path);
-});
+router.afterEach(stopRouteLoading);
 router.onError(stopRouteLoading);
-
-router.isReady().then(() => prefetchLikelyTargets(router.currentRoute.value.path));
 
 // 导出路由实例
 export default router;
