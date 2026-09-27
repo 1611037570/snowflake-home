@@ -197,7 +197,11 @@ export const createResumeEditor = ({
   function setModuleHidden(moduleKey: string, hidden: boolean): boolean {
     const field = findModuleField(moduleKey);
     if (!field) return false;
-    setFieldCheckValue(currentData.value, field, "hidden", hidden);
+    const module = currentData.value?.[moduleKey];
+    if (!module || typeof module !== "object") return false;
+    // 隐藏状态由业务直接读写数据节点，不再经动态表单的 checks 协议
+    module.ui ||= {};
+    module.ui.hidden = hidden;
     return true;
   }
   function setModuleArchived(moduleKey: string, archived: boolean): boolean {

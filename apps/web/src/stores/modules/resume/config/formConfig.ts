@@ -40,9 +40,8 @@ const createModuleState = (title: string): ModelBinding[] => [
   },
 ];
 
-// 模块级显隐与归档判断：所有模块共用同一数据路径
+// 模块级归档判断：所有模块共用同一数据路径（隐藏状态改由业务直接读写 ui.hidden）
 const MODULE_CHECKS = {
-  hidden: { path: ["ui", "hidden"] },
   removed: { path: ["ui", "archived"] },
 } satisfies FieldChecks;
 
