@@ -84,7 +84,7 @@ const isEmpty = computed(() => isEmptyResume(dataRef.value));
 // ---------- 主题样式注入（数据源为 item.ui）----------
 const ui = computed(() => props.item.ui || {});
 // 简历展示语言：供预览标题语言包使用
-const previewLang = computed(() => ui.value.language || "zh");
+const previewLang = computed(() => ui.value.content?.language || "zh");
 const showPageNumber = computed(() => props.showPageNumber);
 const themeStyles = useResumeTheme(ui);
 const { paddingStyle, fontStyle, lineHeightStyle, fontReadyVersion } = themeStyles;
@@ -97,7 +97,7 @@ const measureTreeStyle = computed(() => ({
 // 测量树页尾沿用旧版单页长图文案格式。
 const measureFooterText = computed(() => {
   const defaultFooter = getPreviewText("footer", previewLang.value, { page: 1, total: 1 });
-  const customBrand = ui.value.footer?.trim();
+  const customBrand = ui.value.page?.footer?.trim();
   if (!customBrand) return defaultFooter;
   return defaultFooter.replace(getPreviewText("brand", previewLang.value), customBrand);
 });
@@ -264,7 +264,7 @@ defineExpose({
       <LayoutMeasureTree
         :groups="measureGroups"
         :width="RESUME_WIDTH"
-        :root-class="ui.fontFamily"
+        :root-class="ui.font?.family"
         :root-style="measureTreeStyle"
         :show-page-number="showPageNumber"
         :footer-text="measureFooterText"

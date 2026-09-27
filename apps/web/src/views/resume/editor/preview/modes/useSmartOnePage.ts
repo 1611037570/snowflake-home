@@ -54,14 +54,14 @@ export interface OnePageAdjustableItem {
 
 /** 默认可用参数（范围取自 uiConfig.uiParamRanges，与编辑器滑杆一致）：间距让路多、字号让路少 */
 export const defaultOnePageAdjustable: OnePageAdjustableItem[] = [
-  { key: "moduleSpacing", ...uiParamRanges.moduleSpacing, weight: 1 },
-  { key: "paddingVertical", ...uiParamRanges.paddingVertical, weight: 1 },
-  { key: "paddingHorizontal", ...uiParamRanges.paddingHorizontal, weight: 1, remeasure: true },
-  { key: "paragraphSpacing", ...uiParamRanges.paragraphSpacing, weight: 1, remeasure: true },
-  { key: "lineHeight", ...uiParamRanges.lineHeight, weight: 0.7, remeasure: true },
-  { key: "fontSize", ...uiParamRanges.fontSize, weight: 0.4, remeasure: true },
+  { key: "moduleSpacing", ...uiParamRanges["spacing.module"], weight: 1 },
+  { key: "paddingVertical", ...uiParamRanges["page.padding.vertical"], weight: 1 },
+  { key: "paddingHorizontal", ...uiParamRanges["page.padding.horizontal"], weight: 1, remeasure: true },
+  { key: "paragraphSpacing", ...uiParamRanges["spacing.paragraph"], weight: 1, remeasure: true },
+  { key: "lineHeight", ...uiParamRanges["font.lineHeight"], weight: 0.7, remeasure: true },
+  { key: "fontSize", ...uiParamRanges["font.size"], weight: 0.4, remeasure: true },
   // 标题字号跟随正文字号缩放，保持原有比例，不单独驱动
-  { key: "titleFontSize", ...uiParamRanges.titleFontSize, remeasure: true, ratioOf: "fontSize" },
+  { key: "titleFontSize", ...uiParamRanges["font.titleSize"], remeasure: true, ratioOf: "fontSize" },
 ];
 
 /** 局部回退顺序：视觉越敏感越先尝试回退，能放下一页就尽量不动它 */
@@ -112,12 +112,37 @@ export const useSmartOnePage = ({
   adjustable = defaultOnePageAdjustable,
 }: UseSmartOnePageOptions) => {
   const resumeStore = useResumeStore();
+  const uiPaths: Record<OnePageAdjustKey, string> = {
+    moduleSpacing: "spacing.module",
+    paddingVertical: "page.padding.vertical",
+    paddingHorizontal: "page.padding.horizontal",
+    paragraphSpacing: "spacing.paragraph",
+    lineHeight: "font.lineHeight",
+    titleFontSize: "font.titleSize",
+    fontSize: "font.size",
+  };
+  const getPathValue = (source: Record<string, any>, path: string) =>
+    path.split(".").reduce((value, key) => value?.[key], source);
+  const withParams = (source: Record<string, any>, params: Record<OnePageAdjustKey, number>) => {
+    const result = {
+      ...source,
+      page: { ...source.page, padding: { ...source.page.padding } },
+      font: { ...source.font },
+      spacing: { ...source.spacing },
+    };
+    for (const [key, value] of Object.entries(params) as [OnePageAdjustKey, number][]) {
+      const [group, parent, field] = uiPaths[key].split(".");
+      if (field) result[group][parent][field] = value;
+      else result[group][parent] = value;
+    }
+    return result;
+  };
 
   // 读取 ui 中可调字段的当前值，缺失时用默认值兜底
   const pickBase = (source: Record<string, any>) => {
     const result = {} as Record<OnePageAdjustKey, number>;
     for (const { key } of adjustable) {
-      const value = source[key];
+      const value = getPathValue(source, uiPaths[key]);
       result[key] = typeof value === "number" ? value : uiDefaults[key];
     }
     return result;
@@ -203,7 +228,7 @@ export const useSmartOnePage = ({
       const needsRemeasure = adjustable.some(
         (item) => item.remeasure && params[item.key] !== applied[item.key],
       );
-      currentUI.value = { ...currentUI.value, ...params };
+      currentUI.value = withParams(currentUI.value, params);
       applied = params;
       if (needsRemeasure) await waitForMeasure(signal, isCurrentResume);
       if (!isCurrentTask()) return null;
@@ -214,7 +239,7 @@ export const useSmartOnePage = ({
 
     // 回退到压缩前的参数，避免失败或取消后留在半压缩状态
     const rollback = () => {
-      if (isCurrentResume()) currentUI.value = { ...currentUI.value, ...base };
+      if (isCurrentResume()) currentUI.value = withParams(currentUI.value, base);
     };
 
     try {

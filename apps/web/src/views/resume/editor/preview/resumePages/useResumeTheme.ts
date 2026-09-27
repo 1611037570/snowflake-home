@@ -23,6 +23,7 @@ import {
   defaultTitleIconMode,
   defaultUserInfoLayout,
   defaultUserInfoMode,
+  getThemeItemStyle,
 } from "@/stores/modules/resume/config/uiConfig";
 
 /** 简历主题配置（item.ui） */
@@ -54,6 +55,9 @@ export interface ResumeTheme {
   themeColorLine: ComputedRef<string>;
   themeColorContrast: ComputedRef<string>;
   themeTemplate: ComputedRef<any>;
+  userModuleTemplate: ComputedRef<string>;
+  moduleTemplate: ComputedRef<string>;
+  itemStyle: ComputedRef<Record<string, string | number>>;
   userInfoMode: ComputedRef<string>;
   userInfoLayout: ComputedRef<string>;
   avatarPosition: ComputedRef<string>;
@@ -76,20 +80,20 @@ export const useResumeTheme = (ui: ComputedRef<ResumeUi>): ResumeTheme => {
     return Number.isFinite(number) ? number : fallback;
   };
   const paddingVertical = computed(() =>
-    toNumber(ui.value.paddingVertical, defaultPaddingVertical),
+    toNumber(ui.value.page?.padding?.vertical, defaultPaddingVertical),
   );
   const paddingHorizontal = computed(() =>
-    toNumber(ui.value.paddingHorizontal, defaultPaddingHorizontal),
+    toNumber(ui.value.page?.padding?.horizontal, defaultPaddingHorizontal),
   );
-  const fontSize = computed(() => toNumber(ui.value.fontSize, defaultFontSize));
-  const lineHeight = computed(() => toNumber(ui.value.lineHeight, defaultLineHeight));
-  const paragraphSpacing = computed(() => Number(ui.value.paragraphSpacing));
+  const fontSize = computed(() => toNumber(ui.value.font?.size, defaultFontSize));
+  const lineHeight = computed(() => toNumber(ui.value.font?.lineHeight, defaultLineHeight));
+  const paragraphSpacing = computed(() => Number(ui.value.spacing?.paragraph));
   const fontReadyVersion = ref(0);
   let fontRequestId = 0;
 
   // 字体加载完成后递增版本号，通知分页测量使用已生效的字体重新计算
   watch(
-    () => ui.value.fontFamily,
+    () => ui.value.font?.family,
     async (fontKey) => {
       const requestId = ++fontRequestId;
       try {
@@ -114,7 +118,7 @@ export const useResumeTheme = (ui: ComputedRef<ResumeUi>): ResumeTheme => {
     fontSize: `${fontSize.value}px`,
   }));
   // 模块标题字号：缺失时回退默认值
-  const titleFontSize = computed(() => toNumber(ui.value.titleFontSize, defaultTitleFontSize));
+  const titleFontSize = computed(() => toNumber(ui.value.font?.titleSize, defaultTitleFontSize));
   // 模块标题样式：独立字号，并在配置值基础上增加 1px
   const titleFontStyle = computed(() => ({
     fontSize: `${titleFontSize.value + 1}px`,
@@ -141,7 +145,7 @@ export const useResumeTheme = (ui: ComputedRef<ResumeUi>): ResumeTheme => {
     return () => base;
   });
   // 主题色统一读取 ui 的 themeColor，缺失时回退默认值
-  const themeColor = computed(() => ui.value.themeColor ?? defaultThemeColor);
+  const themeColor = computed(() => ui.value.theme?.color ?? defaultThemeColor);
   // 主题色派生色：统一由主题色推导，避免各风格主题各自拼接透明度导致难以管理
   // 浅底色：色块底托，主题色 10% 透明度
   const themeColorSoft = computed(() => `${themeColor.value}1a`);
@@ -151,27 +155,36 @@ export const useResumeTheme = (ui: ComputedRef<ResumeUi>): ResumeTheme => {
   const themeColorContrast = computed(() =>
     isLightColor(themeColor.value) ? "#1f2937" : "#ffffff",
   );
-  const themeTemplate = computed(() => ui.value.themeTemplate);
+  const themeTemplate = computed(() => ui.value.theme?.template);
+  const userModuleTemplate = computed(() =>
+    ui.value.theme?.userModule === "auto" ? themeTemplate.value : ui.value.theme?.userModule || "default",
+  );
+  const moduleTemplate = computed(() =>
+    ui.value.theme?.module === "auto" ? themeTemplate.value : ui.value.theme?.module || "default",
+  );
+  const itemStyle = computed(() =>
+    getThemeItemStyle(ui.value.theme?.item === "auto" ? themeTemplate.value : ui.value.theme?.item || "default"),
+  );
   // 个人信息展示模式（图标/文字/隐藏），缺失时回退默认值
-  const userInfoMode = computed(() => ui.value.userInfoMode ?? defaultUserInfoMode);
+  const userInfoMode = computed(() => ui.value.user?.infoMode ?? defaultUserInfoMode);
   // 个人信息布局（网格/弹性），缺失时回退默认值
-  const userInfoLayout = computed(() => ui.value.userInfoLayout ?? defaultUserInfoLayout);
+  const userInfoLayout = computed(() => ui.value.user?.infoLayout ?? defaultUserInfoLayout);
   // 头像位置（左/居中/右），缺失时回退默认值
-  const avatarPosition = computed(() => ui.value.avatarPosition ?? defaultAvatarPosition);
+  const avatarPosition = computed(() => ui.value.user?.avatarPosition ?? defaultAvatarPosition);
   // 信息位置（左/居中/右），独立于头像位置，缺失时回退默认值
-  const infoPosition = computed(() => ui.value.infoPosition ?? defaultInfoPosition);
+  const infoPosition = computed(() => ui.value.user?.infoPosition ?? defaultInfoPosition);
   // 日期样式（2026.9 / 2026年9月），缺失时回退默认值
-  const dateStyle = computed(() => ui.value.dateStyle ?? defaultDateStyle);
+  const dateStyle = computed(() => ui.value.content?.dateStyle ?? defaultDateStyle);
   // 日期位置（左/右），缺失时回退默认值
-  const datePosition = computed(() => ui.value.datePosition ?? defaultDatePosition);
+  const datePosition = computed(() => ui.value.content?.datePosition ?? defaultDatePosition);
   // 文本对齐（系统/两端），缺失时回退默认值
-  const textAlign = computed(() => ui.value.textAlign ?? defaultTextAlign);
+  const textAlign = computed(() => ui.value.content?.textAlign ?? defaultTextAlign);
   // 模块标题图标模式，缺失时回退默认值
-  const titleIconMode = computed(() => ui.value.titleIconMode ?? defaultTitleIconMode);
+  const titleIconMode = computed(() => ui.value.theme?.titleIconMode ?? defaultTitleIconMode);
   // 链接下划线开关，缺失时回退默认值
-  const linkUnderline = computed(() => ui.value.linkUnderline ?? defaultLinkUnderline);
+  const linkUnderline = computed(() => ui.value.content?.linkUnderline ?? defaultLinkUnderline);
   // 并列信息分隔符，缺失时保留默认留白样式。
-  const infoSeparator = computed(() => ui.value.infoSeparator ?? defaultInfoSeparator);
+  const infoSeparator = computed(() => ui.value.content?.infoSeparator ?? defaultInfoSeparator);
 
   return {
     paddingStyle,
@@ -188,6 +201,9 @@ export const useResumeTheme = (ui: ComputedRef<ResumeUi>): ResumeTheme => {
     themeColorLine,
     themeColorContrast,
     themeTemplate,
+    userModuleTemplate,
+    moduleTemplate,
+    itemStyle,
     userInfoMode,
     userInfoLayout,
     avatarPosition,

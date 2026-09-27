@@ -20,8 +20,8 @@ const emit = defineEmits<{
   click: [payload: { moduleKey: string; itemIndex?: number }];
 }>();
 
-const { ui } = useResumePreviewContext();
-const itemConfig = computed(() => ui.value.item || {});
+const { theme } = useResumePreviewContext();
+const itemConfig = computed(() => theme.itemStyle.value || {});
 const getNode = (fragment: FragmentPlan) => props.nodes.get(fragment.sourceNodeId);
 const getItemStyle = (fragment: FragmentPlan) =>
   getItemFragmentStyle(

@@ -10,7 +10,7 @@ const { currentUI, currentData } = storeToRefs(resumeStore);
 const langOptions = computed(() =>
   previewLangList.map((item) => ({
     ...item,
-    active: item.value === (currentUI.value?.language || "zh"),
+    active: item.value === (currentUI.value?.content?.language || "zh"),
   })),
 );
 
@@ -34,8 +34,8 @@ const syncModuleTitles = (prevLang, nextLang) => {
 // 将选择的语言同步到当前简历界面配置，并同步未自定义的模块标题
 const handleLangSelect = (item) => {
   if (!currentUI.value) return;
-  const prevLang = currentUI.value.language || "zh";
-  currentUI.value.language = item.value;
+  const prevLang = currentUI.value.content.language || "zh";
+  currentUI.value.content.language = item.value;
   syncModuleTitles(prevLang, item.value);
 };
 </script>

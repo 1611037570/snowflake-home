@@ -9,8 +9,8 @@ import UserModule from "../userModule.vue";
 import type { LayoutNode } from "../../engine/types";
 
 const props = defineProps<{ node: LayoutNode }>();
-const { ui } = useResumePreviewContext();
-const itemConfig = computed(() => ui.value.item || {});
+const { theme } = useResumePreviewContext();
+const itemConfig = computed(() => theme.itemStyle.value || {});
 // 测量树复用同一条目样式，确保测量尺寸与实际预览一致。
 const useItem = computed(() => isItemNode(props.node));
 const isUserModule = computed(

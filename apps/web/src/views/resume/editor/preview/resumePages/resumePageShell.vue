@@ -8,7 +8,7 @@ import { useResumePreviewContext } from "../shared/previewContext";
 import { useResumeStore } from "@/stores";
 
 const props = defineProps({
-  // 简历 ui（fontFamily / moduleSpacing）
+  // 简历 ui（font.family / spacing.module）
   ui: {
     type: Object,
     default: () => ({}),
@@ -57,7 +57,7 @@ const footerText = computed(() => {
     total: props.pageCount,
   });
   // 仅品牌名可自定义：用自定义文案替换默认品牌名，页码后缀保持默认格式
-  const customBrand = props.ui.footer?.trim();
+  const customBrand = props.ui.page?.footer?.trim();
   if (!customBrand) return defaultFooter;
   return defaultFooter.replace(getPreviewText("brand", previewLang.value), customBrand);
 });
@@ -75,7 +75,7 @@ watch(
   <div
     ref="rootRef"
     class="resume-page-item relative flex flex-col rounded-3xl bg-white text-black"
-    :class="[ui.fontFamily]"
+    :class="[ui.font?.family]"
     :style="[
       styles.paddingStyle,
       styles.fontStyle,
@@ -85,11 +85,11 @@ watch(
       { paddingBottom: '0px' },
     ]"
   >
-    <!-- 模块之间的间距由 ui.moduleSpacing 控制，与分页计算保持一致 -->
+    <!-- 模块之间的间距由 ui.spacing.module 控制，与分页计算保持一致 -->
     <!-- 调试模式下用 outline 标注正文可用区：outline 不参与布局，不会挤压内容，内容溢出时也会显示出来 -->
     <div
       class="flex flex-1 flex-col"
-      :style="[{ gap: `${ui.moduleSpacing}px` }, showDebug ? debugOutlineStyle : undefined]"
+      :style="[{ gap: `${ui.spacing?.module}px` }, showDebug ? debugOutlineStyle : undefined]"
     >
       <slot />
     </div>

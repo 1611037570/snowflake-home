@@ -10,7 +10,15 @@ const resumeData: any = {
     project: { ui: { collapsed: ["1"], archived: false }, list: [{ ui: {}, data: { name: "图神经网络课程研究", post: "课题成员", startTime: "2024.03", endTime: "2024.12", content: "<p>负责数据预处理、模型复现与实验结果分析，完成课程研究报告。</p>" } }] },
   },
   config: { meta: { version: "1.0.0" }, drag: true, dragClass: ".container-drag", fields: [{ key: "user" }, { key: "education" }, { key: "skill" }, { key: "advantage" }, { key: "work" }, { key: "project" }] },
-  ui: { language: "zh", paddingVertical: 24, paddingHorizontal: 24, fontSize: 16, titleFontSize: 22, lineHeight: 1.2, paragraphSpacing: 12, moduleSpacing: 12, themeColor: "#ff4d4f", fontFamily: "text-puhui", themeTemplate: "default", userInfoMode: "text", avatarPosition: "right" },
+  ui: {
+    page: { padding: { vertical: 24, horizontal: 24 }, footer: "" },
+    font: { family: "text-puhui", size: 16, titleSize: 22, lineHeight: 1.2 },
+    content: { language: "zh", textAlign: "auto", infoSeparator: "space", linkUnderline: false, dateStyle: "dot", datePosition: "right" },
+    spacing: { paragraph: 12, module: 12 },
+    theme: { template: "default", color: "#ff4d4f", titleIconMode: "none", userModule: "auto", module: "auto", item: "auto" },
+    layout: { template: null, custom: null, leftColumnWidth: 40 },
+    user: { infoMode: "text", infoLayout: "flex", avatarPosition: "right", infoPosition: "left" },
+  },
 };
 
 export default resumeData;

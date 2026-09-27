@@ -11,10 +11,10 @@ const emit = defineEmits<{
 }>();
 
 const {
-  theme: { themeTemplate, themeColor },
+  theme: { moduleTemplate, themeColor },
 } = useResumePreviewContext();
 const isOutlineModule = computed(
-  () => themeTemplate.value === "outline" && props.moduleKey !== "user",
+  () => moduleTemplate.value === "outline" && props.moduleKey !== "user",
 );
 </script>
 
