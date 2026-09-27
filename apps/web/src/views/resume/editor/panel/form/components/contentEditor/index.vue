@@ -63,6 +63,23 @@ const appendExample = (example) => {
           @select="appendExample"
         />
       </template>
+      <template #bottom>
+        <div
+          class="flex flex-wrap items-center gap-3 rounded-b-2xl bg-sf-theme px-3 py-1 text-sf-theme-text"
+        >
+          <span class="shrink-0 font-semibold">✦AI+</span>
+          <div class="flex flex-wrap items-center gap-3">
+            <button
+              v-for="action in [$t('resumeContentGenerate'), $t('resumeContentPolish'), $t('resumeContentSimplify')]"
+              :key="action"
+              type="button"
+              class="cursor-pointer rounded-3xl bg-sf-primary px-3 py-1 text-sm font-medium text-sf-text transition-colors hover:bg-sf-page"
+            >
+              {{ action }}
+            </button>
+          </div>
+        </div>
+      </template>
     </WangEditor>
   </div>
 </template>

@@ -590,5 +590,8 @@
   "gapYearsMonths": "{years} years {months} months",
   "gapYears": "{years} years",
   "gapMonths": "{months} months",
-  "timelineGapMessage": "There is a {gap} gap between “{current}” and the previous entry “{previous}”. Consider adding or explaining it."
+  "timelineGapMessage": "There is a {gap} gap between “{current}” and the previous entry “{previous}”. Consider adding or explaining it.",
+  "resumeContentGenerate": "Generate",
+  "resumeContentPolish": "Polish",
+  "resumeContentSimplify": "Simplify"
 }
