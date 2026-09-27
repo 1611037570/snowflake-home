@@ -2,7 +2,7 @@
 import { $t } from "@/locales";
 import { EXPANDED } from "@/stores/modules/resume/config/formConfig";
 import { useFormContext } from "@/components/business/dynamicForm/api";
-import Icon from "../../icon.vue";
+import Icon from "../icon.vue";
 
 const { proxy } = getCurrentInstance();
 // 记录折叠状态：复用展开常量，随记录数据持久化

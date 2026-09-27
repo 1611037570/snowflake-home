@@ -12,7 +12,7 @@ import {
 import { storeToRefs } from "pinia";
 import eventBus from "@/utils/modules/eventBus";
 import { $t } from "@/locales";
-import BuilderEditorComponent from "./editor/index.vue";
+import BuilderEditorComponent from "./form/index.vue";
 // 编辑标签页外壳同步加载，动态表单在首帧后异步挂载
 const BuilderEditor = markRaw(BuilderEditorComponent);
 const AsyncTemplate = markRaw(defineAsyncComponent(() => import("./template/index.vue")));
