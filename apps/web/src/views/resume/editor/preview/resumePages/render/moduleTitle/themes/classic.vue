@@ -18,7 +18,7 @@ const {
   <div
     v-if="title"
     class="border-b pb-[3px]"
-    :style="{ borderBottomWidth: '1px', borderColor: themeColor }"
+    :style="{ borderBottomWidth: '2px', borderColor: themeColor }"
   >
     <h2 class="max-w-full min-w-0 font-bold tracking-wide break-words">
       <TitleText :title="title" />
