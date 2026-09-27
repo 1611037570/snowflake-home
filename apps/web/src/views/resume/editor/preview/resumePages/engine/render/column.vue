@@ -1,10 +1,8 @@
 <script setup lang="ts">
 import { computed } from "vue";
-import ModuleActions from "../../moduleActions.vue";
-import { useResumePreviewContext } from "../../../shared/previewContext";
 import type { LayoutNode } from "../types";
 import type { ColumnPlan, FragmentPlan } from "../paginate/pagePlan";
-import LayoutFragment from "./layoutFragment.vue";
+import Module from "./module.vue";
 
 const props = defineProps<{
   column: ColumnPlan;
@@ -25,14 +23,6 @@ const emit = defineEmits<{
   click: [payload: { moduleKey: string; itemIndex?: number }];
   move: [payload: { moduleKey: string; direction: string }];
 }>();
-
-const getNode = (fragment: FragmentPlan) => props.nodes.get(fragment.sourceNodeId);
-// 线框风格：外边框按模块整体（标题+全部条目）绘制，个人信息模块按默认样式处理
-const {
-  theme: { themeTemplate, themeColor },
-} = useResumePreviewContext();
-const isOutlineModule = (moduleKey: string) =>
-  themeTemplate.value === "outline" && moduleKey !== "user";
 // 模块间距只作用于不同模块，同一模块内的条目间距由内容样式控制
 const getGapTop = (fragment: FragmentPlan, index: number) => {
   if (index === 0 || fragment.fragment === "middle" || fragment.fragment === "last") return 0;
@@ -64,23 +54,6 @@ const fragmentGroups = computed(() => {
   });
   return groups;
 });
-// 移动方向：上下由预览层按整栏跨页顺序下发，左右由相邻栏位决定；个人信息模块不参与移动
-const getDirections = (group: { moduleKey: string }) => {
-  if (group.moduleKey === "user") {
-    return { up: false, down: false, left: false, right: false };
-  }
-  const base = props.moveDirections?.[group.moduleKey] ?? { up: false, down: false };
-  return {
-    up: base.up,
-    down: base.down,
-    left: Boolean(props.canMoveLeft),
-    right: Boolean(props.canMoveRight),
-  };
-};
-// 上下移动交给上层按整栏顺序交换模块位置
-const handleMove = (moduleKey: string, direction: string) => {
-  emit("move", { moduleKey, direction });
-};
 </script>
 
 <template>
@@ -92,40 +65,22 @@ const handleMove = (moduleKey: string, direction: string) => {
         :class="{ 'resume-debug-gap': showDebug }"
         :style="{ height: `${group.gapTop}px` }"
       />
-      <!-- 模块悬停交互统一绑定到模块外壳。 -->
-      <div
-        class="resume-module-wrapper group group/module relative box-border flex min-w-0 flex-col rounded-3xl"
-        :data-module="group.moduleKey"
-        @mouseenter="emit('mouseenter', group.moduleKey)"
-        :class="moduleClassMap?.[group.moduleKey]"
-      >
-        <div
-          v-if="isOutlineModule(group.moduleKey)"
-          aria-hidden="true"
-          class="pointer-events-none absolute inset-0 box-border rounded-none border"
-          :style="{ borderColor: themeColor }"
-        />
-        <!-- 模块级操作按钮按模块渲染一次，避免多条目模块出现多个图标 -->
-        <ModuleActions
-          v-if="isEdit"
-          :model-key="group.moduleKey"
-          :directions="getDirections(group)"
-          @move="handleMove(group.moduleKey, $event)"
-        />
-        <template v-for="(item, itemIndex) in group.items" :key="item.fragment.fragmentId">
-          <!-- 本页第一个内容若是本分片，它前面的间距占位没有承接对象，不再绘制；自带模块标题时标题才是首位，间距照常 -->
-          <LayoutFragment
-            v-if="getNode(item.fragment)"
-            :fragment="item.fragment"
-            :node="getNode(item.fragment)!"
-            :show-debug="showDebug"
-            :leading-on-page="
-              pageIndex > 0 && groupIndex === 0 && itemIndex === 0
-            "
-            @click="emit('click', $event)"
-          />
-        </template>
-      </div>
+      <Module
+        :module-key="group.moduleKey"
+        :items="group.items"
+        :nodes="nodes"
+        :page-index="pageIndex"
+        :group-index="groupIndex"
+        :is-edit="isEdit"
+        :show-debug="showDebug"
+        :module-class="moduleClassMap?.[group.moduleKey]"
+        :move-directions="moveDirections?.[group.moduleKey]"
+        :can-move-left="canMoveLeft"
+        :can-move-right="canMoveRight"
+        @mouseenter="emit('mouseenter', $event)"
+        @click="emit('click', $event)"
+        @move="emit('move', $event)"
+      />
     </template>
     <!-- 下一个模块换页时，本页剩余空间仍装得下的模块间距落在页尾单独占一行 -->
     <div
