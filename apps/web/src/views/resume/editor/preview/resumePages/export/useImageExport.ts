@@ -44,7 +44,8 @@ const renderLongImage = async (
 
   const { snapdom } = await import("@zumer/snapdom");
   const clone = rootEl.cloneNode(true) as HTMLDivElement;
-  const rootWidth = rootEl.getBoundingClientRect().width;
+  // 预览区使用 transform: scale()，导出要取未缩放的布局宽度。
+  const rootWidth = rootEl.offsetWidth;
 
   // 克隆到文档外渲染，解除测量容器的隐藏样式
   clone.style.position = "absolute";
@@ -73,8 +74,6 @@ const renderLongImage = async (
       scale,
       backgroundColor: "#ffffff",
       embedFonts: true,
-      // 像素级精确布局：避免字体回退栅格化导致文本重新换行而漏出内容
-      reconcile: true,
     });
     if (signal.aborted || !isCurrentResume()) return null;
     if (!canvas || canvas.width === 0 || canvas.height === 0) {

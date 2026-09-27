@@ -15,6 +15,8 @@ import { provideResumePreviewContext } from "../shared/previewContext";
 import { useResumeStore } from "@/stores";
 import { useModuleInteractions } from "./useModuleInteractions";
 import { isEmptyResume } from "../../toolbar/modules/progress/useResumeStats";
+import { getPreviewText } from "../shared/i18n";
+import { RESUME_HEIGHT, RESUME_WIDTH } from "../shared/constants";
 import {
   clearPreviewSelection,
   jumpPreview,
@@ -69,6 +71,19 @@ const previewLang = computed(() => ui.value.language || "zh");
 const showPageNumber = computed(() => system.value.showPageNumber);
 const themeStyles = useResumeTheme(ui);
 const { paddingStyle, fontStyle, lineHeightStyle, fontReadyVersion } = themeStyles;
+const measureTreeStyle = computed(() => ({
+  ...paddingStyle.value,
+  ...fontStyle.value,
+  ...lineHeightStyle.value,
+  minHeight: `${RESUME_HEIGHT}px`,
+}));
+// 测量树页尾沿用旧版单页长图文案格式。
+const measureFooterText = computed(() => {
+  const defaultFooter = getPreviewText("footer", previewLang.value, { page: 1, total: 1 });
+  const customBrand = ui.value.footer?.trim();
+  if (!customBrand) return defaultFooter;
+  return defaultFooter.replace(getPreviewText("brand", previewLang.value), customBrand);
+});
 
 // ---------- 分页（节点树 + 真实测量 + PagePlan）----------
 const allModules = computed(() => {
@@ -295,8 +310,10 @@ const handleModuleMove = ({ moduleKey, direction, columnId }) => {
 
 // 新引擎测量容器元素回传，分页算法只通过 hook 读取该元素。
 const setLayoutMeasureEl = (el) => (layoutMeasureRef.value = el);
-// 向上暴露导出范围与测量结果，供上层（page.vue）注册的导出/智能一页功能读取
-defineExpose({ rootEl: rootRef, measureEl: rootRef, pages, pagePlan });
+// 长图导出使用带页面留白和页尾的测量树；空简历回退到提示页。
+const imageExportRef = computed(() => (isEmpty.value ? rootRef.value : layoutMeasureRef.value));
+// 向上暴露分页根节点与长图导出源，供上层（page.vue）注册导出功能读取。
+defineExpose({ rootEl: rootRef, measureEl: imageExportRef, pages, pagePlan });
 </script>
 
 <template>
@@ -326,9 +343,11 @@ defineExpose({ rootEl: rootRef, measureEl: rootRef, pages, pagePlan });
     <template v-else>
       <LayoutMeasureTree
         :groups="measureGroups"
-        :width="contentWidth"
+        :width="RESUME_WIDTH"
         :root-class="ui.fontFamily"
-        :root-style="{ fontSize: fontStyle.fontSize, lineHeight: lineHeightStyle.lineHeight }"
+        :root-style="measureTreeStyle"
+        :show-page-number="showPageNumber"
+        :footer-text="measureFooterText"
         :on-measure-el="setLayoutMeasureEl"
       />
       <div
