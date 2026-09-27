@@ -593,5 +593,9 @@
   "timelineGapMessage": "There is a {gap} gap between “{current}” and the previous entry “{previous}”. Consider adding or explaining it.",
   "resumeContentGenerate": "Generate",
   "resumeContentPolish": "Polish",
-  "resumeContentSimplify": "Simplify"
+  "resumeContentSimplify": "Simplify",
+  "aiUnavailableTitle": "AI unavailable",
+  "aiUnavailableMessage": "No Xiao Zhou model is bound. Configure a model before using resume AI features.",
+  "aiConfigure": "Configure",
+  "aiCancel": "Cancel"
 }

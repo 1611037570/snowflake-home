@@ -593,5 +593,9 @@
   "timelineGapMessage": "「{current}」与上一段「{previous}」之间存在 {gap} 空档，可考虑补充或说明",
   "resumeContentGenerate": "生成",
   "resumeContentPolish": "润色",
-  "resumeContentSimplify": "简化"
+  "resumeContentSimplify": "简化",
+  "aiUnavailableTitle": "AI 暂不可用",
+  "aiUnavailableMessage": "当前未绑定小舟模型，请先配置模型后再使用简历 AI 功能。",
+  "aiConfigure": "去配置",
+  "aiCancel": "取消"
 }

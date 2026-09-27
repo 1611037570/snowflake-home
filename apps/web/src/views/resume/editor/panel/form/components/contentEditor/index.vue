@@ -5,6 +5,7 @@ import { useResumeStore } from "@/stores";
 import { storeToRefs } from "pinia";
 import TemplateExamplePicker from "./templateExamplePicker.vue";
 import { loadResumeExamples } from "@/views/resume/template/data/resumeExamples";
+import { useResumeAiAvailability } from "@/views/resume/hooks/useResumeAiAvailability";
 
 defineOptions({ name: "ResumeContentEditor" });
 
@@ -15,6 +16,7 @@ const content = defineModel("modelValue", {
 const props = defineProps({
   kind: { type: String, default: "work" },
 });
+const { ensureAiAvailable } = useResumeAiAvailability();
 
 const resumeStore = useResumeStore();
 const { currentData } = storeToRefs(resumeStore);
@@ -74,6 +76,7 @@ const appendExample = (example) => {
               :key="action"
               type="button"
               class="cursor-pointer rounded-3xl bg-sf-primary px-3 py-1 text-sm font-medium text-sf-text transition-colors hover:bg-sf-page"
+              @click="ensureAiAvailable()"
             >
               {{ action }}
             </button>
