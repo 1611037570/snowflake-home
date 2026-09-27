@@ -1,7 +1,7 @@
 <script setup>
 // 统一条目标题组件，强调样式由日期位置动态决定
 import ResumeField from "./resumeField/index.vue";
-import { useResumePreviewContext } from "../previewContext";
+import { useResumePreviewContext } from "../shared/previewContext";
 const { emphasis = true } = defineProps({
   name: {
     default: "",

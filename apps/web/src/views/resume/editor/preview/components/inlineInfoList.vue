@@ -2,7 +2,7 @@
 import { computed, useSlots } from "vue";
 import { getInfoSeparatorMark } from "@/stores/modules/resume/config/uiConfig";
 import ResumeField from "./resumeField/index.vue";
-import { useResumePreviewContext } from "../previewContext";
+import { useResumePreviewContext } from "../shared/previewContext";
 
 const props = defineProps({
   items: {

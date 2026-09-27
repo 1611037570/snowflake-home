@@ -7,8 +7,8 @@ import ModuleContentContainer from "../../../components/moduleContentContainer.v
 import ResumeField from "../../../components/resumeField/index.vue";
 import User from "../../../modules/user/index.vue";
 import { getTime } from "./getTime";
-import { isContentEmpty } from "../../../modules/validData";
-import { useResumePreviewContext } from "../../../previewContext";
+import { isContentEmpty } from "../../../shared/validData";
+import { useResumePreviewContext } from "../../../shared/previewContext";
 import { sliceRichTextHtml } from "../adapter/richTextParser";
 import type { LayoutNode } from "../types";
 

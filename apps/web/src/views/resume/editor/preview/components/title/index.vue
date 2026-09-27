@@ -1,8 +1,8 @@
 <script setup>
 import { computed, defineAsyncComponent, provide } from "vue";
 import { CUSTOM_MODULE_ICON, DEFAULT_MODULE_NAMES } from "@/stores/modules/resume/config/defaultConfig";
-import { getPreviewTitle } from "../../i18n";
-import { useResumePreviewContext } from "../../previewContext";
+import { getPreviewTitle } from "../../shared/i18n";
+import { useResumePreviewContext } from "../../shared/previewContext";
 
 // 标题主题映射：按需异步加载，同一份简历只使用一种风格，避免全部主题常驻内存
 // 新增主题在此注册并新建对应主题组件，无需改动模板

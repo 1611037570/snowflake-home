@@ -3,7 +3,7 @@ import { computed } from "vue";
 import ResumeField from "../../../components/resumeField/index.vue";
 import UserSubtitle from "./userSubtitle.vue";
 import { useUserFieldVisibility } from "../useUserFieldVisibility";
-import { useResumePreviewContext } from "../../../previewContext";
+import { useResumePreviewContext } from "../../../shared/previewContext";
 
 // 姓名组件：字号由主题样式注入
 const {

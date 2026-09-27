@@ -1,5 +1,5 @@
 <script setup>
-import { useResumePreviewContext } from "../previewContext";
+import { useResumePreviewContext } from "../shared/previewContext";
 
 defineOptions({ inheritAttrs: false, name: "ModuleContentContainer" });
 

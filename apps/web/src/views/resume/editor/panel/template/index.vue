@@ -3,7 +3,7 @@
 defineOptions({ name: "BuilderTemplate" });
 import { useResumeStore } from "@/stores";
 import { storeToRefs } from "pinia";
-import ThumbPreview from "../../preview/thumbPreview.vue";
+import ThumbPreview from "../../preview/modes/thumb.vue";
 import { themeTemplateList } from "@/stores/modules/resume/config/uiConfig";
 import { loadResumeTemplateData } from "@/views/resume/template/data/resumeData";
 import { onMounted, ref } from "vue";

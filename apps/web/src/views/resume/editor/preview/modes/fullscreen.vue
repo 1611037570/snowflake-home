@@ -3,8 +3,8 @@
 // 数据源由 props 传入，供模板页预览、编辑器全屏查看等场景复用
 import { onBeforeUnmount, watch } from "vue";
 import { $t } from "@/locales";
-import ResumePages from "./resumePages/index.vue";
-import ScaleContainer from "./container/index.vue";
+import ResumePages from "../resumePages/index.vue";
+import ScaleContainer from "../scaleContainer/index.vue";
 
 defineOptions({ name: "FullscreenPreview" });
 

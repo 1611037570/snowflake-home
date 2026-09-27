@@ -1,7 +1,7 @@
 import { nextTick } from "vue";
-import { getExportFileName, resumeTitle } from "../../../resumeName";
+import { getExportFileName, resumeTitle } from "../../../../resumeName";
 import { useResumeStore } from "@/stores";
-import { RESUME_WIDTH } from "../constants";
+import { RESUME_WIDTH } from "../../shared/constants";
 
 type ResumeRootRef = { value: HTMLElement | null };
 

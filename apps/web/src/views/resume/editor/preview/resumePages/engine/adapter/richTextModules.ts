@@ -1,4 +1,4 @@
-import { isContentEmpty } from "../../../modules/validData";
+import { isContentEmpty } from "../../../shared/validData";
 import {
   createModuleTitleNode,
   type LayoutAdapter,

@@ -1,4 +1,4 @@
-import { RESUME_HEIGHT, RESUME_WIDTH } from "../../../constants";
+import { RESUME_HEIGHT, RESUME_WIDTH } from "../../../shared/constants";
 import type { BoxSpacing, PageLayoutConfig, PageSize } from "../pageLayoutTypes";
 import { createSingleColumnLayout } from "./createSingleColumnLayout";
 import { createTwoColumnLayout, resolveColumnRatios } from "./createTwoColumnLayout";

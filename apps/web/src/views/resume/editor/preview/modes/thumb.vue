@@ -1,8 +1,8 @@
 <script setup>
 import { useIntersectionObserver, useResizeObserver } from "@vueuse/core";
 import { ref } from "vue";
-import ResumePages from "./resumePages/index.vue";
-import { RESUME_HEIGHT, RESUME_WIDTH } from "./constants";
+import ResumePages from "../resumePages/index.vue";
+import { RESUME_HEIGHT, RESUME_WIDTH } from "../shared/constants";
 
 defineOptions({ name: "ThumbPreview" });
 
