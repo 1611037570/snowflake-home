@@ -23,6 +23,12 @@ const resumeData: any = {
           "<p><strong>1、</strong>熟练使用 Premiere Pro、After Effects 与 DaVinci Resolve，能够完成素材整理、叙事剪辑、调色和包装交付。</p><p><strong>2、</strong>熟悉品牌短片、人物访谈与社交媒体内容的制作节奏，具备镜头语言和音乐节奏把控能力。</p>",
       },
     },
+    advantage: {
+      ui: { collapsed: ["1"], archived: false },
+      data: {
+        content: "<p>具备良好的叙事理解与节奏把控能力，能够根据内容目标完成剪辑、调色和包装交付。</p><p>做事细致负责，善于沉淀制作流程并与团队高效协作。</p>",
+      },
+    },
     education: {
       ui: { collapsed: ["1"], archived: false },
       list: [
@@ -89,7 +95,7 @@ const resumeData: any = {
     meta: { version: "1.0.0" },
     drag: true,
     dragClass: ".container-drag",
-    fields: [{ key: "user" }, { key: "education" }, { key: "skill" }, { key: "work" }, { key: "project" }],
+    fields: [{ key: "user" }, { key: "education" }, { key: "skill" }, { key: "advantage" }, { key: "work" }, { key: "project" }],
   },
   ui: {
     language: "zh",

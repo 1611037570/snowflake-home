@@ -23,6 +23,12 @@ const resumeData: any = {
           "<p><strong>1、</strong>熟练使用 Lightroom、Photoshop 与 Capture One，能够独立完成前期沟通、拍摄执行和后期精修。</p><p><strong>2、</strong>具备人像、品牌广告与电商产品拍摄经验，熟悉棚拍布光、外景用光及团队协作流程。</p>",
       },
     },
+    advantage: {
+      ui: { collapsed: ["1"], archived: false },
+      data: {
+        content: "<p>具备扎实的视觉审美与现场执行能力，能够根据品牌调性完成拍摄构思、布光和成片交付。</p><p>沟通协作意识强，能够在拍摄进度与作品质量之间做好协调。</p>",
+      },
+    },
     education: {
       ui: { collapsed: ["1"], archived: false },
       list: [
@@ -89,7 +95,7 @@ const resumeData: any = {
     meta: { version: "1.0.0" },
     drag: true,
     dragClass: ".container-drag",
-    fields: [{ key: "user" }, { key: "education" }, { key: "skill" }, { key: "work" }, { key: "project" }],
+    fields: [{ key: "user" }, { key: "education" }, { key: "skill" }, { key: "advantage" }, { key: "work" }, { key: "project" }],
   },
   ui: {
     language: "zh",
