@@ -59,6 +59,11 @@ const title = computed(() => {
   return i18n.global.t(`resumeExampleTitle_${props.kind}`);
 });
 
+const writingGuide = computed(() => {
+  i18n.global.locale.value;
+  return i18n.global.t(`resumeExampleGuide_${props.kind}`);
+});
+
 const placeholder = computed(() => {
   i18n.global.locale.value;
   return i18n.global.t("resumeExampleSearchPlaceholder");
@@ -146,6 +151,10 @@ const selectExample = (example) => {
         class="flex w-[420px] max-w-[88vw] flex-col gap-1.5 rounded-3xl border border-sf-b bg-sf-primary py-2"
         @click.stop
       >
+        <div class="flex flex-col gap-3 px-3 text-xs leading-5 text-sf-text-2">
+          <div class="font-medium text-sf-text">{{ $t("resumeExampleGuideTitle") }}</div>
+          <div>{{ writingGuide }}</div>
+        </div>
         <div class="flex flex-col gap-1.5 px-2">
           <div class="px-1.5 text-xs font-medium text-sf-text">{{ title }}</div>
           <div v-if="recommendedHot" class="px-1.5 text-xs text-sf-text-3">
@@ -180,7 +189,7 @@ const selectExample = (example) => {
             {{ $t("resumeExampleCount", { count: filteredExamples.length }) }}
           </div>
         </div>
-        <SfScrollbar ref="scrollbarRef" height="220px" class="w-full" @scroll="loadNextBatch">
+        <SfScrollbar ref="scrollbarRef" height="300px" class="w-full" @scroll="loadNextBatch">
           <div v-if="loading" class="py-3 text-center text-xs text-sf-text-3">
             <span
               class="mx-auto mb-3 block h-4 w-4 animate-spin rounded-full border-2 border-sf-b border-t-sf-theme"
