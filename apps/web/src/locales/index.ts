@@ -3,6 +3,12 @@ import { useTitle } from "@vueuse/core";
 import type { I18n, I18nOptions } from "vue-i18n";
 import { createI18n } from "vue-i18n"; // 从 vue-i18n 导入创建实例的方法
 
+import coreEn from "./lang/en/core.json";
+import coreZh from "./lang/zh/core.json";
+import resumeEn from "./lang/en/resume.json";
+import resumeZh from "./lang/zh/resume.json";
+import resumeEditorEn from "./lang/en/resume-editor.json";
+import resumeEditorZh from "./lang/zh/resume-editor.json";
 import type { LangItem, Translation } from "./types";
 
 export const LANG_LIST: LangItem[] = [
@@ -38,8 +44,16 @@ const getDefaultLocale = () => {
 };
 
 const DEFAULT_LANG_KEY = getDefaultLocale();
-// 构建语言包映射
+// 默认路由树语言包静态打包进产物：核心包与默认路由及其子路由均不按需请求
+const BUNDLED_LANG: Record<string, Record<string, LocaleMessage>> = {
+  zh: { core: coreZh.core, resume: resumeZh, "resume-editor": resumeEditorZh },
+  en: { core: coreEn.core, resume: resumeEn, "resume-editor": resumeEditorEn },
+};
+// 构建语言包映射，核心语言包随实例初始化即内置
 const messages: any = {};
+Object.keys(BUNDLED_LANG).forEach((langKey) => {
+  messages[langKey] = { core: BUNDLED_LANG[langKey].core || {} };
+});
 
 /**
  * i18n 配置选项
@@ -56,16 +70,13 @@ const i18nOptions: I18nOptions = {
 const i18n: I18n = createI18n(i18nOptions);
 
 interface LocaleRoute {
-  meta?: {
-    localeFile?: unknown;
-    pageName?: unknown;
-  };
-  name?: unknown;
+  path?: unknown;
 }
 
+// 由路由路径推导语言文件名：1 级取路径段，多级用 "-" 连接
 export function getPageLocaleFile(route: LocaleRoute): string {
-  const pageName = route.meta?.localeFile || route.meta?.pageName || route.name;
-  return typeof pageName === "string" ? pageName : "";
+  const path = typeof route.path === "string" ? route.path : "";
+  return path.split("/").filter(Boolean).join("-");
 }
 
 type LocaleMessage = Record<string, any>;
@@ -125,12 +136,15 @@ async function dynamicLoadPageTitle(pageName: string) {
 }
 export const loadPageLang = async (name: string, langKey?: string) => {
   langKey = (langKey || String((i18n.global.locale as any).value ?? i18n.global.locale)) as string;
-  // 加载核心语言包
-  const coreMessage = (await dynamicLoadPageLang("core", langKey)) || {};
-  const pageMessage = (await dynamicLoadPageLang(name, langKey)) || {};
+  const bundledMessage = BUNDLED_LANG[langKey] || {};
+  // 默认路由树语言包已静态打包，命中则跳过请求，其余页面按需加载
+  const pageMessage =
+    name in bundledMessage
+      ? bundledMessage[name]
+      : (await dynamicLoadPageLang(name, langKey)) || {};
   // 每次只保留核心语言和当前页面语言
   i18n.global.setLocaleMessage(langKey, {
-    core: coreMessage.core || {},
+    core: bundledMessage.core || {},
     ...pageMessage,
   });
   // 语言包准备完成后再切换语言，避免业务层先读取到未加载的页面文案
