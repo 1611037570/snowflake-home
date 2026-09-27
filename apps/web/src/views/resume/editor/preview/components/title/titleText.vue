@@ -22,24 +22,25 @@ const iconSize = inject(
 const {
   theme: { titleFontStyle, titleIconMode, themeColor, themeColorContrast },
 } = useResumePreviewContext();
+// 图标底色与形状由同一处计算，便于统一维护。
+const iconContainerStyle = computed(() => {
+  if (titleIconMode.value !== "square" && titleIconMode.value !== "circle") return undefined;
+  return {
+    backgroundColor: themeColor.value,
+    color: themeColorContrast.value,
+    padding: "2px",
+    borderRadius: titleIconMode.value === "circle" ? "9999px" : "4px",
+  };
+});
 </script>
 
 <template>
   <!-- 图标独立于文字排版，不参与标题换行；背景模式使用主题色填充 -->
-  <div class="flex shrink-0 items-baseline">
+  <div class="flex shrink-0 items-center">
     <span
       v-if="icon"
-      class="mr-1 inline-flex items-center justify-center rounded"
-      :style="
-        titleIconMode === 'square' || titleIconMode === 'circle'
-          ? {
-              backgroundColor: themeColor,
-              color: themeColorContrast,
-              padding: '2px',
-              borderRadius: titleIconMode === 'circle' ? '9999px' : '0',
-            }
-          : undefined
-      "
+      class="mr-3 inline-flex items-center justify-center rounded"
+      :style="iconContainerStyle"
     >
       <SfIcon :icon="icon" :size="iconSize" />
     </span>
