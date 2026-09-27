@@ -27,7 +27,7 @@ const removeHonor = () => {
 </script>
 
 <template>
-  <div class="flex w-full items-center gap-3">
+  <div class="flex w-full items-center gap-1">
     <!-- 拖拽排序手柄 -->
     <SfIcon
       icon="icon-park-outline:drag"
