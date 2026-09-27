@@ -33,9 +33,6 @@ const {
 } = useResumePreviewContext();
 const isOutlineModule = (moduleKey: string) =>
   themeTemplate.value === "outline" && moduleKey !== "user";
-const outlineFrameStyle = computed(() => ({
-  "--resume-module-frame-color": themeColor.value,
-}));
 // 模块间距只作用于不同模块，同一模块内的条目间距由内容样式控制
 const getGapTop = (fragment: FragmentPlan, index: number) => {
   if (index === 0 || fragment.fragment === "middle" || fragment.fragment === "last") return 0;
@@ -95,14 +92,19 @@ const handleMove = (moduleKey: string, direction: string) => {
         :class="{ 'resume-debug-gap': showDebug }"
         :style="{ height: `${group.gapTop}px` }"
       />
+      <!-- 模块悬停交互统一绑定到模块外壳。 -->
       <div
-        class="group/module relative flex min-w-0 flex-col rounded-3xl"
-        :class="[
-          moduleClassMap?.[group.moduleKey],
-          { 'resume-module-frame': isOutlineModule(group.moduleKey) },
-        ]"
-        :style="isOutlineModule(group.moduleKey) ? outlineFrameStyle : undefined"
+        class="resume-module-wrapper group group/module relative box-border flex min-w-0 flex-col rounded-3xl"
+        :data-module="group.moduleKey"
+        @mouseenter="emit('mouseenter', group.moduleKey)"
+        :class="moduleClassMap?.[group.moduleKey]"
       >
+        <div
+          v-if="isOutlineModule(group.moduleKey)"
+          aria-hidden="true"
+          class="pointer-events-none absolute inset-0 box-border rounded-none border"
+          :style="{ borderColor: themeColor }"
+        />
         <!-- 模块级操作按钮按模块渲染一次，避免多条目模块出现多个图标 -->
         <ModuleActions
           v-if="isEdit"
@@ -120,7 +122,6 @@ const handleMove = (moduleKey: string, direction: string) => {
             :leading-on-page="
               pageIndex > 0 && groupIndex === 0 && itemIndex === 0
             "
-            @mouseenter="emit('mouseenter', $event)"
             @click="emit('click', $event)"
           />
         </template>
@@ -142,16 +143,5 @@ const handleMove = (moduleKey: string, direction: string) => {
 /* 模块间距色带直接绘制在占位元素上 */
 .resume-debug-gap {
   @apply bg-sf-warning;
-}
-
-/* 线框风格：用伪元素绘制模块外边框，不参与分页测量高度 */
-.resume-module-frame::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  box-sizing: border-box;
-  border: 1px solid var(--resume-module-frame-color, #000000);
-  border-radius: 0;
-  pointer-events: none;
 }
 </style>
