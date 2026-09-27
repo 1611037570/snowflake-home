@@ -1,6 +1,6 @@
 <script setup>
 import { ref } from "vue";
-import Icon from "../icon.vue";
+import Icon from "../../icon.vue";
 
 const modelValue = defineModel();
 // 标题编辑弹窗与临时输入值

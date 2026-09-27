@@ -6,7 +6,7 @@ import { EXPANDED, MORE_CATEGORIES } from "@/stores/modules/resume/config/formCo
 import { addUserCustomField } from "@/stores/modules/resume/hooks/useUserCustomField";
 import { getUUID } from "@/utils";
 import eventBus from "@/utils/modules/eventBus";
-import { scrollEditorTo } from "../../../scrollEditorTo";
+import { scrollEditorTo } from "../../../../scrollEditorTo";
 import { storeToRefs } from "pinia";
 import { translateResumeEditorText } from "@/stores/modules/resume/hooks/useResumeEditorLocale";
 

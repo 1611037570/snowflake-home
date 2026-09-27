@@ -7,25 +7,25 @@ import { storeToRefs } from "pinia";
 import { defineAsyncComponent } from "vue";
 import { RESUME_OPTIONS } from "@/stores/modules/resume/config/resumeOptions";
 import { useRuntimeData } from "../../hooks/useRuntimeData";
-import AddModule from "./components/addModule.vue";
-import ArchivedModules from "./components/archivedModules.vue";
-import HeightWeight from "./components/heightWeight.vue";
-import Image from "./components/image.vue";
-import More from "./components/more.vue";
-import Measurements from "./components/measurements.vue";
-import PositionPicker from "./components/positionPicker.vue";
-import SalaryRange from "./components/salaryRange.vue";
-import ProjectLink from "./components/projectLink.vue";
-import Sizes from "./components/sizes.vue";
-import SubtitleBox from "./components/subtitleBox.vue";
-import Tag from "./components/tag.vue";
-import Video from "./components/video.vue";
+import AddModule from "./components/module/add.vue";
+import ArchivedModules from "./components/module/archived.vue";
+import HeightWeight from "./components/field/heightWeight.vue";
+import Image from "./components/field/image.vue";
+import More from "./components/field/more.vue";
+import Measurements from "./components/field/measurements.vue";
+import PositionPicker from "./components/field/positionPicker.vue";
+import SalaryRange from "./components/field/salaryRange.vue";
+import ProjectLink from "./components/field/projectLink.vue";
+import Sizes from "./components/field/sizes.vue";
+import SubtitleBox from "./components/field/subtitleBox.vue";
+import Tag from "./components/field/tag.vue";
+import Video from "./components/field/video.vue";
 import ResumeContentEditor from "./components/contentEditor/index.vue";
-import CollapseModule from "./components/collapseModule.vue";
-import CollapseItem from "./components/collapseItem.vue";
-import RowField from "./components/rowField.vue";
-import RowAccount from "./components/rowAccount.vue";
-import RowHonor from "./components/rowHonor.vue";
+import CollapseModule from "./components/collapse/module.vue";
+import CollapseItem from "./components/collapse/item.vue";
+import RowField from "./components/row/field.vue";
+import RowAccount from "./components/row/account.vue";
+import RowHonor from "./components/row/honor.vue";
 import { localizeResumeOptions } from "@/stores/modules/resume/hooks/useResumeEditorLocale";
 import i18n from "@/locales";
 
@@ -51,12 +51,12 @@ onMounted(() => {
 
 // 图片裁剪与城市级联仅在对应字段出现时加载，避免占用编辑器首屏资源
 const AsyncImageUpload = defineAsyncComponent({
-  loader: () => import("./components/imageUpload/index.vue"),
+  loader: () => import("./components/field/imageUpload.vue"),
   loadingComponent: SfSkeleton,
   delay: 0,
 });
 const AsyncCityPicker = defineAsyncComponent({
-  loader: () => import("./components/cityPicker/index.vue"),
+  loader: () => import("./components/field/cityPicker.vue"),
   loadingComponent: SfSkeleton,
   delay: 0,
 });

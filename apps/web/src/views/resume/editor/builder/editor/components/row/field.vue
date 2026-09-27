@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import Icon from "../icon.vue";
+import Icon from "../../icon.vue";
 import { useFormContext } from "@/components/business/dynamicForm/api";
 import { useResumeStore } from "@/stores";
 import {
@@ -17,7 +17,7 @@ import {
 } from "@/stores/modules/resume/hooks/useUserSubtitle";
 import { storeToRefs } from "pinia";
 import i18n, { $t } from "@/locales";
-import { getLocalizedIconCategories } from "../../../icons/iconCategories";
+import { getLocalizedIconCategories } from "../../../../icons/iconCategories";
 // 包裹组的模型绑定只用于状态透传，不落成根元素属性
 defineOptions({ inheritAttrs: false });
 // 字段包裹组件：定制水平布局的标签与操作区，字段内容通过插槽嵌套

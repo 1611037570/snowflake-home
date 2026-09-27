@@ -1,10 +1,10 @@
 <script setup>
 import { useResumeStore } from "@/stores";
 import { useFormContext } from "@/components/business/dynamicForm/api";
-import { jumpPreview } from "../../../useModuleNav";
-import { scrollEditorTo } from "../../../scrollEditorTo";
+import { jumpPreview } from "../../../../useModuleNav";
+import { scrollEditorTo } from "../../../../scrollEditorTo";
 import eventBus from "@/utils/modules/eventBus";
-import Icon from "../icon.vue";
+import Icon from "../../icon.vue";
 import EditableTitle from "./editableTitle.vue";
 import { $t } from "@/locales";
 const { proxy } = getCurrentInstance();
