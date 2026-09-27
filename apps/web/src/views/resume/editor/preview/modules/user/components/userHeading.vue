@@ -4,7 +4,7 @@ import UserAvatar from "./userAvatar.vue";
 import UserContact from "./userContact.vue";
 // import UserLogo from "./userLogo.vue";
 import UserName from "./userName.vue";
-import { useResumePreviewContext } from "../../../previewContext";
+import { useResumePreviewContext } from "../../../shared/previewContext";
 
 defineProps({
   // 是否显示姓名下主题色短横线（仅信息居中时展示）

@@ -1,4 +1,4 @@
-import { getValidData, getValidDataEntries } from "../../../modules/validData";
+import { getValidData, getValidDataEntries } from "../../../shared/validData";
 import type { LayoutNode } from "../types";
 import type { LayoutAdapter, LayoutAdapterContext, LayoutAdapterRegistry } from "./index";
 import { createExperienceModuleAdapter } from "./experienceModules";

@@ -15,7 +15,7 @@ import LayoutMeasureTree from "./engine/measure/layoutMeasureTree.vue";
 import LayoutColumn from "./engine/render/layoutColumn.vue";
 import { useResumePages } from "./useResumePages";
 import { useResumeTheme } from "./useResumeTheme";
-import { provideResumePreviewContext } from "../previewContext";
+import { provideResumePreviewContext } from "../shared/previewContext";
 import { useResumeStore } from "@/stores";
 import { useModuleInteractions } from "./useModuleInteractions";
 import { isEmptyResume } from "../../toolbar/modules/progress/useResumeStats";

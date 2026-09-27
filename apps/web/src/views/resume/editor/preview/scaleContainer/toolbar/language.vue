@@ -2,7 +2,7 @@
 import { computed } from "vue";
 import { storeToRefs } from "pinia";
 import { useResumeStore } from "@/stores";
-import { getPreviewTitle, previewLangList } from "../i18n";
+import { getPreviewTitle, previewLangList } from "../../shared/i18n";
 
 const resumeStore = useResumeStore();
 const { currentUI, currentData } = storeToRefs(resumeStore);

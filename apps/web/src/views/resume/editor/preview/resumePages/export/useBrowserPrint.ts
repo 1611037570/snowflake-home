@@ -1,6 +1,6 @@
 import { nextTick } from "vue";
 import { useResumeStore } from "@/stores";
-import { getExportFileName, resumeTitle } from "../../../resumeName";
+import { getExportFileName, resumeTitle } from "../../../../resumeName";
 
 type ResumeRootRef = { value: HTMLElement | null };
 

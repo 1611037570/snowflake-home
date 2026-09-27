@@ -8,7 +8,7 @@ import { storeToRefs } from "pinia";
 import { toRaw } from "vue";
 import { useResumeStore } from "@/stores";
 import { createResumePdf } from "@/apis/request/modules/snowflake";
-import { getExportFileName, resumeTitle } from "../../../resumeName";
+import { getExportFileName, resumeTitle } from "../../../../resumeName";
 
 const cloneJson = (value: any) => JSON.parse(JSON.stringify(toRaw(value)));
 

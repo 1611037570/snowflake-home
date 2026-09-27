@@ -1,7 +1,7 @@
 <script setup>
 import { computed, useAttrs } from "vue";
 import DOMPurify from "dompurify";
-import { useResumePreviewContext } from "../../previewContext";
+import { useResumePreviewContext } from "../../shared/previewContext";
 
 // 透传属性已在组件内部逐块合并，关闭自动继承，避免多根节点无法继承导致 class 被丢弃并告警
 defineOptions({ inheritAttrs: false });

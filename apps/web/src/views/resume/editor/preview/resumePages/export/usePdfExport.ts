@@ -7,8 +7,8 @@
  */
 import { nextTick } from "vue";
 import { storeToRefs } from "pinia";
-import { PDF_PAGE_HEIGHT, PDF_PAGE_WIDTH, RESUME_HEIGHT, RESUME_WIDTH } from "../constants";
-import { getExportFileName, resumeTitle } from "../../../resumeName";
+import { PDF_PAGE_HEIGHT, PDF_PAGE_WIDTH, RESUME_HEIGHT, RESUME_WIDTH } from "../../shared/constants";
+import { getExportFileName, resumeTitle } from "../../../../resumeName";
 import { useResumeStore } from "@/stores";
 import { printResume } from "./useBrowserPrint";
 

@@ -4,14 +4,14 @@ import { computed, ref } from "vue";
 import { storeToRefs } from "pinia";
 import i18n, { $t } from "@/locales";
 import { useResumeStore } from "@/stores";
-import { RESUME_HEIGHT, RESUME_WIDTH } from "../constants";
-import Font from "./font.vue";
-import Settings from "./settings.vue";
-import TemplateSettings from "./templateSettings.vue";
-import PrintMode from "./printMode.vue";
-import Language from "./language.vue";
-import OnePage from "./onePage.vue";
-import SortByTime from "./sortByTime.vue";
+import { RESUME_HEIGHT, RESUME_WIDTH } from "../shared/constants";
+import Font from "./toolbar/font.vue";
+import Settings from "./toolbar/settings.vue";
+import TemplateSettings from "./toolbar/templateSettings.vue";
+import PrintMode from "./toolbar/printMode.vue";
+import Language from "./toolbar/language.vue";
+import OnePage from "./toolbar/onePage.vue";
+import SortByTime from "./toolbar/sortByTime.vue";
 
 defineOptions({ name: "ScaleContainer" });
 

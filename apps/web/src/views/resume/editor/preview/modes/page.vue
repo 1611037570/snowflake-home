@@ -2,10 +2,10 @@
 import { useResumeStore } from "@/stores";
 import { storeToRefs } from "pinia";
 import { computed, ref } from "vue";
-import ResumePages from "./resumePages/index.vue";
-import ExportSuccessModal from "./components/exportSuccessModal.vue";
-import { useResumeExport } from "./resumePages/useResumeExport";
-import { useSmartOnePage } from "./resumePages/useSmartOnePage";
+import ResumePages from "../resumePages/index.vue";
+import ExportSuccessModal from "../components/exportSuccessModal.vue";
+import { useResumeExport } from "../resumePages/export/useResumeExport";
+import { useSmartOnePage } from "../resumePages/useSmartOnePage";
 
 defineOptions({ name: "ResumePage" });
 

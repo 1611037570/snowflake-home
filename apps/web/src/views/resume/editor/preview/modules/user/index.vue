@@ -10,7 +10,7 @@ import Minimal from "./themes/minimal.vue";
 import Modern from "./themes/modern.vue";
 import Steady from "./themes/steady.vue";
 import Vivid from "./themes/vivid.vue";
-import { useResumePreviewContext } from "../../previewContext";
+import { useResumePreviewContext } from "../../shared/previewContext";
 
 // 主题组件映射：同步加载常用个人信息模块，切换风格时直接复用已加载组件
 // 新增主题在此注册并新建对应主题组件，无需改动模板

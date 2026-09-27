@@ -1,7 +1,7 @@
 <script setup>
 import { computed } from "vue";
 import FieldContent from "./content.vue";
-import { isContentEmpty } from "../../modules/validData";
+import { isContentEmpty } from "../../shared/validData";
 
 // 简历字段文本渲染器：预览只读取原始字段值
 const model = defineModel();

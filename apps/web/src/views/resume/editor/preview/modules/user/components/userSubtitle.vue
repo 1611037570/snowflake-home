@@ -7,7 +7,7 @@ import { useUserFieldVisibility } from "../useUserFieldVisibility";
 import {
   getInfoSeparatorMark,
 } from "@/stores/modules/resume/config/uiConfig";
-import { useResumePreviewContext } from "../../../previewContext";
+import { useResumePreviewContext } from "../../../shared/previewContext";
 
 // 副标题：渲染编辑器中标记的字段值，按标记序号在姓名下方并排展示
 const {

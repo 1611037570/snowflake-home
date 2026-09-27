@@ -2,9 +2,9 @@
 // 简历页面外壳：页面容器样式 + 页码页脚，多页渲染与缩略图单页共用
 // 仅排版展示，不感知分页/测量逻辑；根元素回传供缩略图测量与导出使用
 import { computed, useTemplateRef, watch } from "vue";
-import { getPreviewText } from "../i18n";
-import { PAGE_NUMBER_HEIGHT, RESUME_CONTAINER_HEIGHT, RESUME_CONTAINER_WIDTH } from "../constants";
-import { useResumePreviewContext } from "../previewContext";
+import { getPreviewText } from "../shared/i18n";
+import { PAGE_NUMBER_HEIGHT, RESUME_CONTAINER_HEIGHT, RESUME_CONTAINER_WIDTH } from "../shared/constants";
+import { useResumePreviewContext } from "../shared/previewContext";
 import { useResumeStore } from "@/stores";
 
 const props = defineProps({

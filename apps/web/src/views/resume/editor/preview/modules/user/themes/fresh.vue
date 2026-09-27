@@ -1,6 +1,6 @@
 <script setup>
 import UserHeading from "../components/userHeading.vue";
-import { useResumePreviewContext } from "../../../previewContext";
+import { useResumePreviewContext } from "../../../shared/previewContext";
 
 // 浅底色：统一由主题色推导
 const {

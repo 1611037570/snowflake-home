@@ -1,14 +1,14 @@
 <script setup>
 // 简历页面渲染组件
-import ResumePage from "./page.vue";
+import ResumePage from "./modes/page.vue";
 // 缩放容器组件
-import ScaleContainer from "./container/index.vue";
+import ScaleContainer from "./scaleContainer/index.vue";
 import { useResumeStore } from "@/stores";
 import { storeToRefs } from "pinia";
 import { computed, ref, watch } from "vue";
 import { useRuntimeData } from "../hooks/useRuntimeData";
 // 全屏预览组件
-const FullscreenPreview = markRaw(defineAsyncComponent(() => import("./fullscreenPreview.vue")));
+const FullscreenPreview = markRaw(defineAsyncComponent(() => import("./modes/fullscreen.vue")));
 const resumeStore = useResumeStore();
 const { currentData, currentConfig, currentUI, runtimeConfig, runtimeFields, previewSyncing } =
   storeToRefs(resumeStore);

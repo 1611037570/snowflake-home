@@ -1,5 +1,5 @@
 <script setup>
-import { useResumePreviewContext } from "../previewContext";
+import { useResumePreviewContext } from "../shared/previewContext";
 
 // 条目标签：跟随首行排布，锁死自身行高避免被主题行高撑高
 defineProps({

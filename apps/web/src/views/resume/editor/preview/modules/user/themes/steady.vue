@@ -1,6 +1,6 @@
 <script setup>
 import UserHeading from "../components/userHeading.vue";
-import { useResumePreviewContext } from "../../../previewContext";
+import { useResumePreviewContext } from "../../../shared/previewContext";
 
 const {
   theme: { themeColor },
