@@ -20,7 +20,7 @@ import Sizes from "./components/sizes.vue";
 import SubtitleBox from "./components/subtitleBox.vue";
 import Tag from "./components/tag.vue";
 import Video from "./components/video.vue";
-import ResumeContentEditor from "./components/resumeContentEditor.vue";
+import ResumeContentEditor from "./components/contentEditor/index.vue";
 import CollapseModule from "./components/collapseModule.vue";
 import CollapseItem from "./components/collapseItem.vue";
 import RowField from "./components/rowField.vue";
