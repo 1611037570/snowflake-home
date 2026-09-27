@@ -19,7 +19,7 @@ const {
     v-for="tag in tags"
     :key="tag"
     :style="[fontValue(-6), { backgroundColor: themeColorSoft, color: themeColor }]"
-    class="flex-c rounded-3xl px-2 py-1"
+    class="flex-c shrink-0 whitespace-nowrap rounded-3xl px-2 py-1"
   >
     {{ tag }}
   </div>

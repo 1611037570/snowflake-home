@@ -85,9 +85,7 @@ const hasItemMeta = computed(() => {
   const value = item.value;
   return Boolean(value.tags?.length || value.link?.name || value.link?.url);
 });
-const bodyBlockIndex = computed(
-  () => (hasItemHeader.value ? 2 : 0) + (hasItemMeta.value ? 1 : 0),
-);
+const bodyBlockIndex = computed(() => (hasItemHeader.value ? 2 : 0) + (hasItemMeta.value ? 1 : 0));
 const isBlockVisible = (index: number) =>
   index >= props.blockRange.start && index < props.blockRange.end;
 const hasContentBlock = computed(() => props.blockRange.end > 0);
@@ -112,7 +110,9 @@ const safeItemLinkUrl = computed(() => safeUrl(itemLink.value.url));
 const fragmentContentStyle = computed(() => {
   const base = { ...moduleContentStyle.value };
   // 分片的圆角与相邻边框按上下拼接分配：两端都在本片时保留完整圆角
-  const radius = String((moduleContentStyle.value as { borderRadius?: string }).borderRadius || "0");
+  const radius = String(
+    (moduleContentStyle.value as { borderRadius?: string }).borderRadius || "0",
+  );
   // 内容盒首块已在前面分片渲染过时，续段才去掉上内边距与上边框；只放间距的分片不渲染内容盒
   const boxTopRendered = props.blockRange.start > 0 || (props.contentRange?.start ?? 0) > 0;
   const boxBottomFinal = props.decoration !== "top" && props.decoration !== "middle";
@@ -175,62 +175,57 @@ const itemContentSpacingStyle = computed(() => {
       class="layout-experience-item"
       data-layout-block-range
     >
-    <!-- 块区间按实际存在的头部、标签链接和正文顺序，与测量层 DOM 块序保持一致 -->
-    <div
-      v-if="hasItemHeader && showItemHeader && isBlockVisible(0)"
-      class="flex flex-wrap items-center justify-between gap-3"
-    >
-      <div class="min-w-0 flex-1">
-        <ItemTitle :name="item.name" :emphasis="datePosition !== 'left'" />
-      </div>
-      <!-- 日期位置由 order 控制：置左时提到名称之前 -->
+      <!-- 块区间按实际存在的头部、标签链接和正文顺序，与测量层 DOM 块序保持一致 -->
       <div
-        class="flex max-w-full min-w-0 flex-wrap items-center"
-        :class="datePosition === 'left' ? 'order-first' : ''"
+        v-if="hasItemHeader && showItemHeader && isBlockVisible(0)"
+        class="flex flex-wrap items-center justify-between gap-3"
       >
-        <span
-          :class="{ 'font-bold': datePosition === 'left' }"
-          :style="datePosition === 'left' ? fontValue(1) : undefined"
+        <div class="min-w-0 flex-1">
+          <ItemTitle :name="item.name" :emphasis="datePosition !== 'left'" />
+        </div>
+        <!-- 日期位置由 order 控制：置左时提到名称之前 -->
+        <div
+          class="flex max-w-full min-w-0 flex-wrap items-center"
+          :class="datePosition === 'left' ? 'order-first' : ''"
         >
-          {{ getTime(item.startTime, item.endTime, dateStyle) }}
-        </span>
+          <span
+            :class="{ 'font-bold': datePosition === 'left' }"
+            :style="datePosition === 'left' ? fontValue(1) : undefined"
+          >
+            {{ getTime(item.startTime, item.endTime, dateStyle) }}
+          </span>
+        </div>
       </div>
-    </div>
-    <div
-      v-if="hasItemHeader && showItemHeader && isBlockVisible(1)"
-      class="flex flex-wrap items-center justify-between gap-3"
-      :style="innerSpacingStyle"
-    >
-      <div class="max-w-full min-w-0 flex-1">
-        <InlineInfoList :items="[item.post, item.department]" />
-      </div>
-      <ResumeField :model-value="item.city" />
-    </div>
-    <div
-      v-if="
-        hasItemHeader &&
-        showItemHeader &&
-        hasItemMeta &&
-        isBlockVisible(2)
-      "
-      class="flex flex-wrap items-center justify-between gap-3"
-      :style="innerSpacingStyle"
-    >
-      <div class="flex flex-wrap items-center gap-3">
-        <ItemTags :tags="item.tags" />
-      </div>
-      <a
-        v-if="safeItemLinkUrl"
-        :href="safeItemLinkUrl"
-        target="_blank"
-        rel="noopener noreferrer"
-        class="inline max-w-full min-w-0 break-all hover:underline"
-        :class="{ underline: linkUnderline }"
+      <div
+        v-if="hasItemHeader && showItemHeader && isBlockVisible(1)"
+        class="flex flex-wrap items-center justify-between gap-3"
+        :style="innerSpacingStyle"
       >
-        <ResumeField :model-value="itemLink.name || itemLink.url" />
-      </a>
-    </div>
-    <!-- 正文作为一个块：内部段落由字符区间切分，保证块序与测量层一致 -->
+        <div class="max-w-full min-w-0 flex-1">
+          <InlineInfoList :items="[item.post, item.department]" />
+        </div>
+        <ResumeField :model-value="item.city" />
+      </div>
+      <div
+        v-if="hasItemHeader && showItemHeader && hasItemMeta && isBlockVisible(2)"
+        class="flex flex-wrap items-center justify-between gap-3"
+        :style="innerSpacingStyle"
+      >
+        <div class="flex flex-1 flex-wrap items-center gap-3">
+          <ItemTags :tags="item.tags" />
+        </div>
+        <a
+          v-if="safeItemLinkUrl"
+          :href="safeItemLinkUrl"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="inline max-w-full min-w-0 break-all hover:underline"
+          :class="{ underline: linkUnderline }"
+        >
+          <ResumeField :model-value="itemLink.name || itemLink.url" />
+        </a>
+      </div>
+      <!-- 正文作为一个块：内部段落由字符区间切分，保证块序与测量层一致 -->
       <div
         v-if="!isContentEmpty(item.content) && isBlockVisible(bodyBlockIndex)"
         :style="itemContentSpacingStyle"
@@ -296,7 +291,10 @@ const itemContentSpacingStyle = computed(() => {
           <div class="min-w-0 flex-1" :style="fontValue()">
             <ItemTitle v-if="nodePayload.item?.name" :name="nodePayload.item.name" />
           </div>
-          <div v-if="safeUrl(nodePayload.item?.url)" class="max-w-[45%] min-w-0 shrink-0 text-right">
+          <div
+            v-if="safeUrl(nodePayload.item?.url)"
+            class="max-w-[45%] min-w-0 shrink-0 text-right"
+          >
             <a
               :href="safeUrl(nodePayload.item.url)"
               target="_blank"
@@ -304,14 +302,19 @@ const itemContentSpacingStyle = computed(() => {
               class="inline max-w-full min-w-0 break-all hover:underline"
               :class="{ underline: linkUnderline }"
             >
-              <ResumeField :model-value="nodePayload.item.url" class="inline max-w-full min-w-0 break-all" />
+              <ResumeField
+                :model-value="nodePayload.item.url"
+                class="inline max-w-full min-w-0 break-all"
+              />
             </a>
           </div>
         </div>
         <div
           v-if="nodePayload.item?.desc && isBlockVisible(1)"
           data-layout-split-lines
-          :style="decoration === 'middle' || decoration === 'bottom' ? undefined : innerSpacingStyle"
+          :style="
+            decoration === 'middle' || decoration === 'bottom' ? undefined : innerSpacingStyle
+          "
         >
           <ResumeField :model-value="slicedItemDesc" />
         </div>
@@ -332,13 +335,12 @@ const itemContentSpacingStyle = computed(() => {
             rel="noopener noreferrer"
             class="block text-center hover:underline"
             :class="{ underline: linkUnderline }"
-            >
+          >
             {{ nodePayload.item.name || nodePayload.item.url }}
           </a>
-          <span
-            v-else-if="nodePayload.item?.name"
-            class="block text-center"
-          >{{ nodePayload.item.name }}</span>
+          <span v-else-if="nodePayload.item?.name" class="block text-center">{{
+            nodePayload.item.name
+          }}</span>
           <span v-if="nodePayload.item?.desc">{{ nodePayload.item.desc }}</span>
         </div>
       </template>

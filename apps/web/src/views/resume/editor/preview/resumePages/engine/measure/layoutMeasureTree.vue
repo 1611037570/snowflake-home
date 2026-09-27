@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import LayoutMeasureHost from "./layoutMeasureHost.vue";
 import LayoutMeasureNode from "./layoutMeasureNode.vue";
+import { PAGE_NUMBER_HEIGHT } from "../../../shared/constants";
 import type { LayoutNode } from "../types";
 
 defineProps<{
@@ -10,6 +11,8 @@ defineProps<{
   groups: Array<{ id: string; width: number; nodes: LayoutNode[] }>;
   rootStyle?: Record<string, string>;
   rootClass?: string;
+  showPageNumber?: boolean;
+  footerText?: string;
   onMeasureEl?: (element: HTMLElement | null) => void;
 }>();
 </script>
@@ -23,6 +26,13 @@ defineProps<{
       :style="{ width: `${group.width}px` }"
     >
       <LayoutMeasureNode v-for="node in group.nodes" :key="node.id" :node="node" />
+    </div>
+    <div
+      v-if="showPageNumber"
+      class="flex flex-1 items-end justify-center py-3 text-xs opacity-50"
+      :style="{ height: `${PAGE_NUMBER_HEIGHT}px` }"
+    >
+      {{ footerText }}
     </div>
   </LayoutMeasureHost>
 </template>
