@@ -1,6 +1,6 @@
 <script setup>
 import TitleText from "../titleText.vue";
-import { useResumePreviewContext } from "../../../shared/previewContext";
+import { useResumePreviewContext } from "../../../../shared/previewContext";
 
 defineProps({
   title: {
@@ -14,12 +14,12 @@ const {
 </script>
 
 <template>
-  <!-- 稳重风格：主题色实心小方块搭配标题文字，规整有力 -->
-  <div v-if="title" class="flex items-center">
-    <div class="mr-3 h-3 w-3 shrink-0" :style="{ background: themeColor }"></div>
+  <!-- 现代风格：标题居中 + 主题色短横线 -->
+  <div v-if="title" class="flex flex-col items-center">
     <h2 class="max-w-full min-w-0 font-bold tracking-wide break-words">
       <TitleText :title="title" />
     </h2>
+    <div class="mt-1 h-1 w-8 rounded-full" :style="{ background: themeColor }"></div>
   </div>
 </template>
 

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from "vue";
-import type { LayoutNode } from "../types";
-import type { ColumnPlan, FragmentPlan } from "../paginate/pagePlan";
+import type { LayoutNode } from "../engine/types";
+import type { ColumnPlan, FragmentPlan } from "../engine/paginate/pagePlan";
 import Module from "./module.vue";
 import ModuleActions from "./moduleActions.vue";
 import ModuleContent from "./moduleContent.vue";

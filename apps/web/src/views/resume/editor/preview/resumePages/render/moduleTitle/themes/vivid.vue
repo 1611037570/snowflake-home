@@ -1,6 +1,6 @@
 <script setup>
 import TitleText from "../titleText.vue";
-import { useResumePreviewContext } from "../../../shared/previewContext";
+import { useResumePreviewContext } from "../../../../shared/previewContext";
 
 defineProps({
   title: {

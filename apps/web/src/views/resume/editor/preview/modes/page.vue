@@ -4,7 +4,7 @@ import { storeToRefs } from "pinia";
 import { computed, onMounted, onUnmounted, ref, watch } from "vue";
 import { useDebounceFn } from "@vueuse/core";
 import ResumePages from "../resumePages/index.vue";
-import ExportSuccessModal from "../components/exportSuccessModal.vue";
+import ExportSuccessModal from "../resumePages/export/exportSuccessModal.vue";
 import { useResumeExport } from "../resumePages/export/useResumeExport";
 import { useSmartOnePage } from "./useSmartOnePage";
 import { useModuleInteractions } from "./useModuleInteractions";

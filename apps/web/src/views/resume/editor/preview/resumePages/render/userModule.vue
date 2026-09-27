@@ -1,6 +1,6 @@
 <script setup>
 import { computed } from "vue";
-import { useResumePreviewContext } from "../../../shared/previewContext";
+import { useResumePreviewContext } from "../../shared/previewContext";
 
 const props = defineProps({
   moduleKey: {
