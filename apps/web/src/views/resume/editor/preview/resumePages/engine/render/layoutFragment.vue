@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from "vue";
-import Container from "../../../components/container.vue";
-import { getContainerFragmentStyle, hasContainerStyle } from "../../../components/containerStyle";
+import Item from "../../../components/item.vue";
+import { getItemFragmentStyle, isItemNode } from "../../../components/itemStyle";
 import Title from "../../../components/title/index.vue";
 import type { LayoutNode } from "../types";
 import type { FragmentPlan } from "../paginate/pagePlan";
@@ -17,20 +17,19 @@ const props = defineProps<{
 }>();
 
 const { ui } = useResumePreviewContext();
-const containerConfig = computed(() => ui.value.container || {});
-// 只在原先具有内容容器样式的节点上合并交互外壳与通用容器。
-const useContainer = computed(() => hasContainerStyle(props.node));
-const containerFragmentStyle = computed(() =>
-  getContainerFragmentStyle(
+const itemConfig = computed(() => ui.value.item || {});
+// 除 user 与分页间距外，每个内容节点都作为独立条目渲染。
+const useItem = computed(() => isItemNode(props.node));
+const itemFragmentStyle = computed(() =>
+  getItemFragmentStyle(
     props.fragment.blockRange ?? { start: 0, end: Number.MAX_SAFE_INTEGER },
     props.fragment.contentRange,
     props.fragment.decoration,
-    containerConfig.value.radius ?? "0",
+    itemConfig.value.radius ?? "0",
   ),
 );
 
 const emit = defineEmits<{
-  mouseenter: [moduleKey: string];
   click: [payload: { moduleKey: string; itemIndex?: number }];
 }>();
 
@@ -44,50 +43,42 @@ const handleContentClick = () => {
 </script>
 
 <template>
-  <div
-    class="resume-module-wrapper group group/module relative rounded-xl"
-    :data-module="fragment.sourceModuleKey"
-    @mouseenter="emit('mouseenter', fragment.sourceModuleKey)"
+  <Title v-if="fragment.titlePayload" :module-key="fragment.sourceModuleKey" />
+  <Item
+    v-if="fragment.fragment !== 'title' && useItem"
+    :item="itemConfig"
+    :style="itemFragmentStyle"
+    class="resume-submodule-content relative rounded-3xl hover:bg-sf-theme-2!"
+    data-layout-block-range
+    @click.stop="handleContentClick"
   >
-    <Title v-if="fragment.titlePayload" :module-key="fragment.sourceModuleKey" />
-    <Container
-      v-if="fragment.fragment !== 'title' && node.type !== 'spacer' && useContainer"
-      :container="containerConfig"
-      :style="containerFragmentStyle"
-      class="resume-submodule-content relative rounded-3xl hover:bg-sf-theme-2!"
-      data-layout-block-range
-      @click.stop="handleContentClick"
-    >
-      <LayoutNodeContent
-        :node="node"
-        :payload="fragment.payload"
-        :content-range="fragment.contentRange"
-        :block-range="fragment.blockRange"
-        :decoration="fragment.decoration"
-        :show-debug="showDebug"
-        :leading-on-page="leadingOnPage"
-      />
-    </Container>
-    <div
-      v-else-if="fragment.fragment !== 'title'"
-      @click.stop="handleContentClick"
-      :class="
-        node.type === 'spacer'
-          ? ''
-          : 'resume-submodule-content relative rounded-3xl hover:bg-sf-theme-2!'
-      "
-    >
-      <LayoutNodeContent
-        :node="node"
-        :payload="fragment.payload"
-        :content-range="fragment.contentRange"
-        :block-range="fragment.blockRange"
-        :decoration="fragment.decoration"
-        :show-debug="showDebug"
-        :leading-on-page="leadingOnPage"
-      />
-    </div>
+    <LayoutNodeContent
+      :node="node"
+      :payload="fragment.payload"
+      :content-range="fragment.contentRange"
+      :block-range="fragment.blockRange"
+      :decoration="fragment.decoration"
+      :show-debug="showDebug"
+      :leading-on-page="leadingOnPage"
+    />
+  </Item>
+  <div
+    v-else-if="fragment.fragment !== 'title'"
+    @click.stop="handleContentClick"
+    :class="
+      node.type === 'spacer'
+        ? ''
+        : 'resume-submodule-content relative rounded-3xl hover:bg-sf-theme-2!'
+    "
+  >
+    <LayoutNodeContent
+      :node="node"
+      :payload="fragment.payload"
+      :content-range="fragment.contentRange"
+      :block-range="fragment.blockRange"
+      :decoration="fragment.decoration"
+      :show-debug="showDebug"
+      :leading-on-page="leadingOnPage"
+    />
   </div>
 </template>
-
-<style scoped></style>

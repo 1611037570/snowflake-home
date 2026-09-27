@@ -1,13 +1,11 @@
 import type { LayoutNode } from "../resumePages/engine/types";
 
-// 保持容器样式只作用于原本使用内容容器的节点类型。
-export const hasContainerStyle = (node: LayoutNode) =>
-  node.type === "richText" ||
-  (node.type === "group" && node.sourceModuleKey !== "user") ||
-  node.type === "media";
+// user 模块保持独立渲染，其余有内容的排版节点作为单条条目处理。
+export const isItemNode = (node: LayoutNode) =>
+  node.type !== "spacer" && !(node.type === "group" && node.sourceModuleKey === "user");
 
 // 渲染与测量共用分片边框处理，避免分页前后的容器尺寸不一致。
-export const getContainerFragmentStyle = (
+export const getItemFragmentStyle = (
   blockRange: { start: number; end: number },
   contentRange: { start: number; end: number } | undefined,
   decoration: "full" | "top" | "middle" | "bottom",

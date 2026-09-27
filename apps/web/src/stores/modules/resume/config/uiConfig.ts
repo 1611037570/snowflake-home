@@ -60,7 +60,7 @@ const createThemeTemplate = (
       titleIconMode: "none",
       linkUnderline: false,
       infoSeparator: "space",
-      container: {
+      item: {
         background: "transparent",
         borderColor: "transparent",
         radius: "0",
@@ -119,7 +119,7 @@ export const themeTemplateList = [
     titleFontSize: 24,
     userInfoMode: "icon",
     titleIconMode: "icon",
-    container: {
+    item: {
       background: "#EA580C1A",
       borderColor: "#EA580C66",
       radius: "12px",
@@ -145,7 +145,7 @@ export const themeTemplateList = [
     titleFontSize: 18,
     moduleSpacing: 48,
     dateStyle: "cn",
-    container: {
+    item: {
       background: "transparent",
       borderColor: "transparent",
       radius: "0",
@@ -392,8 +392,8 @@ export const DEFAULT_UI = {
   linkUnderline: defaultLinkUnderline,
   // 并列信息分隔符：岗位、部门、专业等字段统一使用
   infoSeparator: defaultInfoSeparator,
-  // 预览内容通用容器样式
-  container: {
+  // 预览条目外观样式
+  item: {
     background: "transparent",
     borderColor: "transparent",
     radius: "0",
