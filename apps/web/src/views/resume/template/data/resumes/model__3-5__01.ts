@@ -28,6 +28,12 @@ const resumeData: any = {
           "<p><strong>1、</strong>具备平面拍摄、商业广告与品牌活动经验，能根据拍摄主题完成造型与镜头表达。</p><p><strong>2、</strong>熟悉棚拍、外景及短视频拍摄流程，能够高效配合摄影、化妆与造型团队完成创作。</p><p><strong>3、</strong>具备良好的镜头表现力、沟通能力与时间管理能力，可适应不同风格的拍摄需求。</p>",
       },
     },
+    advantage: {
+      ui: { collapsed: ["1"], archived: false },
+      data: {
+        content: "<p>具备良好的镜头表现力与职业素养，能够准确理解拍摄主题并稳定完成不同风格的拍摄任务。</p><p>重视现场沟通与团队配合，时间观念强，能够适应多场景拍摄安排。</p>",
+      },
+    },
     education: {
       ui: {
         collapsed: ["1"],
@@ -106,6 +112,7 @@ const resumeData: any = {
       { key: "user" },
       { key: "education" },
       { key: "skill" },
+      { key: "advantage" },
       { key: "work" },
       { key: "project" },
     ],

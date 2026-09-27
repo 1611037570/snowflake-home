@@ -123,7 +123,13 @@ const defaultData: any = {
         hidden: true,
       },
       data: {
-        content: "<p><br></p>",
+        content: "<p>熟悉前端开发与简历编辑器全链路研发，能够完成业务功能开发、接口联调和持续迭代。</p><p>掌握常用前端框架与协作工具，注重代码质量和用户体验。</p>",
+      },
+    },
+    advantage: {
+      ui: { collapsed: ["1"], archived: false },
+      data: {
+        content: "<p>具备独立推进产品研发与交付的能力，能够协调需求梳理、技术实现和上线维护等环节。</p><p>重视用户体验与团队协作，做事认真负责，能够持续复盘并改进工作流程。</p>",
       },
     },
     education: {
@@ -143,7 +149,7 @@ const defaultData: any = {
             name: "广西科技大学",
             education: "本科",
             post: "计算机科学与技术",
-            content: "<p><br></p>",
+            content: "<p>计算机科学与技术专业，系统学习计算机与软件开发相关课程。</p>",
             mode: "全日制",
             tags: ["GPA 3.9/4.0", "非985", "非211"],
             college: "",
@@ -334,6 +340,9 @@ const defaultData: any = {
       },
       {
         key: "skill",
+      },
+      {
+        key: "advantage",
       },
       {
         key: "work",
