@@ -8,7 +8,7 @@ import { getFieldLabel } from "@/components/business/dynamicForm/api";
 import { expandConfigFields } from "@/stores/modules/resume/hooks/useConfigTemplate";
 import ResumePageShell from "./resumePageShell.vue";
 import LayoutMeasureTree from "./engine/measure/layoutMeasureTree.vue";
-import LayoutColumn from "./engine/render/layoutColumn.vue";
+import Column from "./engine/render/column.vue";
 import { useResumePages } from "./useResumePages";
 import { useResumeTheme } from "./useResumeTheme";
 import { provideResumePreviewContext } from "../shared/previewContext";
@@ -391,7 +391,7 @@ defineExpose({ rootEl: rootRef, measureEl: imageExportRef, pages, pagePlan });
                   class="min-w-0"
                   :style="getColumnStyle(column.columnId)"
                 >
-                  <LayoutColumn
+                  <Column
                     :column="column"
                     :page-index="page.pageIndex"
                     :nodes="nodeMap"

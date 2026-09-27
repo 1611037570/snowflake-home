@@ -1,11 +1,11 @@
 import type { LayoutNode } from "../types";
 
 // user 模块保持独立渲染，其余有内容的排版节点作为单条条目处理。
-export const isLayoutItemNode = (node: LayoutNode) =>
+export const isItemNode = (node: LayoutNode) =>
   node.type !== "spacer" && !(node.type === "group" && node.sourceModuleKey === "user");
 
 // 渲染与测量共用分片边框处理，避免分页前后的容器尺寸不一致。
-export const getLayoutItemFragmentStyle = (
+export const getItemFragmentStyle = (
   blockRange: { start: number; end: number },
   contentRange: { start: number; end: number } | undefined,
   decoration: "full" | "top" | "middle" | "bottom",
