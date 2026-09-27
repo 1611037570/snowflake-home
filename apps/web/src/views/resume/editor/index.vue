@@ -88,7 +88,7 @@ import IssueFeedback from "../components/issueFeedback.vue";
 import Share from "../components/share.vue";
 import Preview from "./preview/index.vue";
 import Toolbar from "./toolbar/index.vue";
-import { PROJECT_ICON_LIST } from "./icons";
+import { PROJECT_ICON_LIST } from "./data/localIcons";
 
 const router = useRouter();
 const route = useRoute();
