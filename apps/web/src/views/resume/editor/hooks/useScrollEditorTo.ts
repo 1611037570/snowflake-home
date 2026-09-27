@@ -2,7 +2,7 @@
  * 仅在目标未完整显示时滚动到可视区域
  * 按最近的可滚动容器计算目标位置，目标统一取卡片外圈，与选中边框范围一致
  */
-export const scrollEditorTo = (target?: HTMLElement | null) => {
+export const useScrollEditorTo = (target?: HTMLElement | null) => {
   if (!target) return;
   const targetRect = target.getBoundingClientRect();
   const wrap = target.closest<HTMLElement>(".el-scrollbar__wrap");

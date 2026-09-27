@@ -6,7 +6,7 @@ import InlineInfoList from "../../../components/inlineInfoList.vue";
 import ModuleContentContainer from "../../../components/moduleContentContainer.vue";
 import ResumeField from "../../../components/resumeField/index.vue";
 import User from "../../../modules/user/index.vue";
-import { getTime } from "../../../../utils";
+import { getTime } from "./getTime";
 import { isContentEmpty } from "../../../modules/validData";
 import { useResumePreviewContext } from "../../../previewContext";
 import { sliceRichTextHtml } from "../adapter/richTextParser";

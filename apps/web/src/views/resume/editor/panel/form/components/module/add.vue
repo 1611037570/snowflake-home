@@ -6,7 +6,7 @@ import {
   bindCollapsedDefault,
   ensureRuntimeFieldIds,
 } from "@/stores/modules/resume/hooks/useConfigTemplate";
-import { jumpAll } from "../../../../useModuleNav";
+import { jumpAll } from "../../../../hooks/useModuleNav";
 import { storeToRefs } from "pinia";
 import { computed } from "vue";
 import { getUUID } from "@/utils";

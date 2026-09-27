@@ -1,5 +1,5 @@
 import { nextTick } from "vue";
-import { getExportFileName, resumeTitle } from "../../resumeName";
+import { getExportFileName, resumeTitle } from "../../../resumeName";
 import { useResumeStore } from "@/stores";
 import { RESUME_WIDTH } from "../constants";
 

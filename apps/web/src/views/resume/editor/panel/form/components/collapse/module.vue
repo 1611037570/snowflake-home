@@ -1,8 +1,8 @@
 <script setup>
 import { useResumeStore } from "@/stores";
 import { useFormContext } from "@/components/business/dynamicForm/api";
-import { jumpPreview } from "../../../../useModuleNav";
-import { scrollEditorTo } from "../../../../scrollEditorTo";
+import { jumpPreview } from "../../../../hooks/useModuleNav";
+import { useScrollEditorTo } from "../../../../hooks/useScrollEditorTo";
 import eventBus from "@/utils/modules/eventBus";
 import Icon from "../icon.vue";
 import EditableTitle from "./editableTitle.vue";
@@ -73,7 +73,7 @@ function locateAddedItem(index) {
   if (index == null) return;
   nextTick(() => {
     const moduleKey = currentForm.value?.key;
-    scrollEditorTo(
+    useScrollEditorTo(
       document.querySelector(`[data-module-key="${moduleKey}"] [data-item-index="${index}"]`),
     );
     // 选中落到新增的那条记录，而不是整个模块

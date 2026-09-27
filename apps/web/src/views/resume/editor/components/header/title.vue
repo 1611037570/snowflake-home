@@ -2,7 +2,7 @@
 import { useResumeStore } from "@/stores";
 import { storeToRefs } from "pinia";
 import { ref } from "vue";
-import { resumeTitle } from "../../resumeName";
+import { resumeTitle } from "../../../resumeName";
 const resumeStore = useResumeStore();
 const { currentUsage } = storeToRefs(resumeStore);
 

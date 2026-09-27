@@ -24,7 +24,7 @@ import {
   jumpPreview,
   locateEditor,
   previewSelectedModule,
-} from "../../useModuleNav";
+} from "../../hooks/useModuleNav";
 import eventBus from "@/utils/modules/eventBus";
 import { $t } from "@/locales";
 

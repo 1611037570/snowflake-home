@@ -2,7 +2,7 @@
 import { useAiStore, useResumeStore, type Chat } from "@/stores";
 import { storeToRefs } from "pinia";
 import { computed, ref, watch } from "vue";
-import { getResumeTitle } from "../../editor/resumeName";
+import { getResumeTitle } from "../../resumeName";
 
 const aiStore = useAiStore();
 const resumeStore = useResumeStore();
