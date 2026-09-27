@@ -4,11 +4,7 @@
 // 本组件只做渲染编排（数据注入/主题注入/测量分页），导出、智能一页等编辑功能由上层 page.vue 注册
 import { computed, onMounted, onUnmounted, ref, watch } from "vue";
 import { useDebounceFn } from "@vueuse/core";
-import {
-  createDataPathContext,
-  getFieldLabel,
-  isFieldHidden,
-} from "@/components/business/dynamicForm/api";
+import { getFieldLabel } from "@/components/business/dynamicForm/api";
 import { expandConfigFields } from "@/stores/modules/resume/hooks/useConfigTemplate";
 import ResumePageShell from "./resumePageShell.vue";
 import LayoutMeasureTree from "./engine/measure/layoutMeasureTree.vue";
@@ -81,20 +77,19 @@ const allModules = computed(() => {
     props.expandedFields !== undefined
       ? props.expandedFields
       : expandConfigFields(props.item.config?.fields || [], props.item.data);
-  return fields.filter((field) => !isFieldHidden(props.item.data, field));
+  // 模块隐藏直接读数据节点，不经动态表单的 checks 协议
+  return fields.filter((field) => props.item.data?.[field.key]?.ui?.hidden !== true);
 });
 const userHiddenFields = computed(() => {
   const hiddenFields = new Set();
+  // 个人字段隐藏状态直接读数据节点，不经动态表单的 checks 协议
+  const userUi = props.item.data?.user?.ui;
   const userField = allModules.value.find((field) => field.key === "user");
-  // 个人字段继承 user 分组上下文解析相对显隐路径
-  const userContext = userField?.context?.length
-    ? createDataPathContext(userField.context)
-    : undefined;
   const collectFields = (fields = []) => {
     fields.forEach((field) => {
       if (field.type === "group") collectFields(field.fields);
       // 字段标识统一由字段或包裹组件声明
-      if (field.key && field.checks?.hidden && isFieldHidden(props.item.data, field, userContext)) {
+      if (field.key && userUi?.[field.key]?.hidden === true) {
         hiddenFields.add(field.key);
       }
     });
@@ -141,7 +136,17 @@ provideResumePreviewContext({
   userFieldOrder,
   userFieldLabels,
 });
-const { measureDone, pages, pagePlan, layout, nodeMap, moduleKeys, contentWidth, columnWidths, measureGroups } = useResumePages({
+const {
+  measureDone,
+  pages,
+  pagePlan,
+  layout,
+  nodeMap,
+  moduleKeys,
+  contentWidth,
+  columnWidths,
+  measureGroups,
+} = useResumePages({
   measureRef: layoutMeasureRef,
   data: dataRef,
   ui,
@@ -152,7 +157,10 @@ const { measureDone, pages, pagePlan, layout, nodeMap, moduleKeys, contentWidth,
 });
 const layoutColumnGap = computed(() => layout.value.columnGap || 0);
 const columnConfigMap = computed(
-  () => new Map(layout.value.regions.flatMap((region) => region.columns.map((column) => [column.id, column]))),
+  () =>
+    new Map(
+      layout.value.regions.flatMap((region) => region.columns.map((column) => [column.id, column])),
+    ),
 );
 // 栏宽由引擎解析后下发，渲染与测量使用同一份数值，避免两处各算一遍
 const getColumnStyle = (columnId) => {
@@ -328,7 +336,9 @@ defineExpose({ rootEl: rootRef, measureEl: rootRef, pages, pagePlan });
         class="flex min-h-30 flex-col items-center justify-center gap-3 rounded-3xl bg-white p-6 text-center text-sm text-red-600"
       >
         <span class="font-bold">页面布局配置有误</span>
-        <span v-for="warning in pagePlan.warnings" :key="warning.message">{{ warning.message }}</span>
+        <span v-for="warning in pagePlan.warnings" :key="warning.message">{{
+          warning.message
+        }}</span>
       </div>
       <!-- 实际渲染的分页内容，页面只消费 PagePlan 中的分片。 -->
       <div v-else ref="rootRef" class="relative flex flex-col gap-3">
@@ -353,7 +363,7 @@ defineExpose({ rootEl: rootRef, measureEl: rootRef, pages, pagePlan });
             <template v-for="region in page.regions" :key="region.regionId">
               <div
                 v-if="region.columns.some((column) => column.fragments.length > 0)"
-                class="flex min-w-0 w-full"
+                class="flex w-full min-w-0"
                 :style="{ gap: `${layoutColumnGap}px` }"
               >
                 <div

@@ -6,7 +6,6 @@ import eventBus from "@/utils/modules/eventBus";
 import {
   getFieldLabel,
   getModelBindings,
-  isFieldHidden,
   isFieldRemoved,
   unwrapField,
   walkFormFields,
@@ -178,7 +177,7 @@ const moduleList = computed(() => {
             field.model?.find((item: any) => item?.prop === "title")?.defaultValue ||
             field.key,
           icon,
-          hidden: isFieldHidden(data, field),
+          hidden: data?.[field.key]?.ui?.hidden === true,
           archived: isFieldRemoved(data, field),
           field, // 原始字段配置，用于恢复隐藏模块
         };
