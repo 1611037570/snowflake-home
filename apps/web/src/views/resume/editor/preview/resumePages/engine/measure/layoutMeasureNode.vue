@@ -1,9 +1,32 @@
 <script setup lang="ts">
+import { computed } from "vue";
+import Container from "../../../components/container.vue";
+import { getContainerFragmentStyle, hasContainerStyle } from "../../../components/containerStyle";
 import Title from "../../../components/title/index.vue";
+import { useResumePreviewContext } from "../../../shared/previewContext";
 import LayoutNodeContent from "../render/layoutNodeContent.vue";
 import type { LayoutNode } from "../types";
 
-defineProps<{ node: LayoutNode }>();
+const props = defineProps<{ node: LayoutNode }>();
+const { ui } = useResumePreviewContext();
+const containerConfig = computed(() => ui.value.container || {});
+// 测量树复用同一容器样式，确保测量尺寸与实际预览一致。
+const useContainer = computed(() => hasContainerStyle(props.node));
+const fullContainerStyle = computed(() =>
+  getContainerFragmentStyle(
+    { start: 0, end: Number.MAX_SAFE_INTEGER },
+    undefined,
+    "full",
+    containerConfig.value.radius ?? "0",
+  ),
+);
+const getBreakpointContainerStyle = (offset: number) =>
+  getContainerFragmentStyle(
+    { start: 0, end: Number.MAX_SAFE_INTEGER },
+    { start: 0, end: offset },
+    "top",
+    containerConfig.value.radius ?? "0",
+  );
 </script>
 
 <template>
@@ -12,7 +35,15 @@ defineProps<{ node: LayoutNode }>();
       <Title :module-key="node.title.sourceModuleKey" />
     </div>
     <div class="layout-measure-node" :data-layout-node-id="node.id">
-      <LayoutNodeContent :node="node" />
+      <Container
+        v-if="useContainer"
+        :container="containerConfig"
+        :style="fullContainerStyle"
+        data-layout-block-range
+      >
+        <LayoutNodeContent :node="node" />
+      </Container>
+      <LayoutNodeContent v-else :node="node" />
       <!-- 断点探针按首段内容样式渲染，量出的高度与真实首段一致（含容器外边距与上内边距） -->
       <div
         v-for="point in node.breakPoints"
@@ -21,7 +52,20 @@ defineProps<{ node: LayoutNode }>();
         :data-layout-breakpoint-offset="point.offset"
         :style="{ width: '100%' }"
       >
+        <Container
+          v-if="useContainer"
+          :container="containerConfig"
+          :style="getBreakpointContainerStyle(point.offset)"
+          data-layout-block-range
+        >
+          <LayoutNodeContent
+            :node="node"
+            :decoration="'top'"
+            :content-range="{ start: 0, end: point.offset }"
+          />
+        </Container>
         <LayoutNodeContent
+          v-else
           :node="node"
           :decoration="'top'"
           :content-range="{ start: 0, end: point.offset }"
