@@ -13,10 +13,11 @@ import {
   defaultParagraphSpacing,
   uiParamRanges,
 } from "@/stores/modules/resume/config/uiConfig";
+import { createDefaultLayoutColumns } from "../../resumePages/engine/layout/layoutTemplates";
 
 const resumeStore = useResumeStore();
 const { system, currentUI } = storeToRefs(resumeStore);
-const { setPageLayout } = resumeStore;
+const { setLayoutColumns } = resumeStore;
 
 // 页尾显示设置与布局参数集中在同一面板。
 const showPageNumber = computed({
@@ -81,53 +82,18 @@ const resetLayout = () => {
   layoutParams.forEach((item) => {
     setPathValue(currentUI.value, item.key, item.defaultValue);
   });
-  setPageLayout(null);
-};
-
-// 显式布局下同步更新页边距、栏宽与模块间距
-const syncPageLayoutParam = (key, value) => {
-  const pageLayout = currentUI.value?.layout?.custom;
-  if (!pageLayout?.regions) return;
-  const nextValue = Number(value);
-  const nextLayout = {
-    ...pageLayout,
-    regions: pageLayout.regions.map((region) => ({
-      ...region,
-      columns: region.columns.map((column, index) => {
-        if (key === "spacing.module") return { ...column, gap: nextValue };
-        if (key === "layout.leftColumnWidth" && region.columns.length === 2) {
-          return {
-            ...column,
-            width: { mode: "ratio", value: index === 0 ? nextValue : 100 - nextValue },
-          };
-        }
-        return column;
-      }),
-    })),
-  };
-  if (key === "page.padding.vertical") {
-    nextLayout.pagePadding = {
-      ...pageLayout.pagePadding,
-      top: nextValue,
-      bottom: nextValue,
-    };
-  }
-  if (key === "page.padding.horizontal") {
-    nextLayout.pagePadding = {
-      ...pageLayout.pagePadding,
-      left: nextValue,
-      right: nextValue,
-    };
-  }
-  if (key === "spacing.module") nextLayout.regionGap = nextValue;
-  setPageLayout(nextLayout);
+  const templateId = currentUI.value.layout.type;
+  const moduleKeys = resumeStore.runtimeFields.map((field) => field.key).filter(Boolean);
+  const hasColumns = templateId === "twoColumn" || templateId === "topUserTwoColumn";
+  setLayoutColumns(
+    hasColumns ? createDefaultLayoutColumns(templateId, moduleKeys) : null,
+  );
 };
 
 // 写入参数：数值型统一使用数值类型
 const setParam = (key, value) => {
   if (!currentUI.value) return;
   setPathValue(currentUI.value, key, typeof value === "number" ? Number(value) : value);
-  syncPageLayoutParam(key, value);
 };
 </script>
 

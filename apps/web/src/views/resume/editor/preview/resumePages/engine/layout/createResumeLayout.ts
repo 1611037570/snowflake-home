@@ -4,21 +4,15 @@ import {
   type PageLayoutTemplateId,
 } from "./layoutTemplates";
 
-/** 布局型主题模板：只有这几个编号会参与模板推导 */
-const LAYOUT_TEMPLATE_IDS: PageLayoutTemplateId[] = ["topUserTwoColumn", "twoColumn"];
+/** 布局模板编号。 */
+const LAYOUT_TEMPLATE_IDS: PageLayoutTemplateId[] = ["single", "topUserTwoColumn", "twoColumn"];
 
 /**
  * 解析当前生效的布局模板编号。
- * 显式布局优先；否则按 layout.template 选择布局模板。
+ * 按 layout.type 和双栏模块 key 顺序生成布局。
  */
-const resolvePageLayoutTemplate = (ui: Record<string, any>): PageLayoutTemplateId | null => {
-  if (ui.layout?.custom && Array.isArray(ui.layout.custom.regions)) return null;
-  const templateId = ui.layout?.template;
-  if (LAYOUT_TEMPLATE_IDS.includes(templateId)) {
-    return templateId as PageLayoutTemplateId;
-  }
-  return "single";
-};
+const resolvePageLayoutTemplate = (ui: Record<string, any>): PageLayoutTemplateId =>
+  LAYOUT_TEMPLATE_IDS.includes(ui.layout?.type) ? ui.layout.type : "single";
 
 /** 创建当前简历使用的页面布局，单栏与多栏统一走布局模板入口。 */
 export const createResumeLayout = ({
@@ -29,7 +23,7 @@ export const createResumeLayout = ({
   gap,
   leftColumnWidth,
 }: {
-  /** 简历主题配置，layout.template 决定布局模板，layout.custom 是显式布局入口。 */
+  /** 简历配置，layout.type 选择布局，layout.columns 保存双栏模块顺序。 */
   ui: Record<string, any>;
   /** 当前存在排版节点的模块 key。 */
   moduleKeys: string[];
@@ -43,15 +37,13 @@ export const createResumeLayout = ({
   leftColumnWidth?: number;
 }): PageLayoutConfig => {
   const templateId = resolvePageLayoutTemplate(ui);
-  if (templateId) {
-    return createDefaultPageLayoutTemplate({
-      templateId,
-      moduleKeys,
-      paddingVertical,
-      paddingHorizontal,
-      gap,
-      leftWidthPercent: leftColumnWidth,
-    });
-  }
-  return ui.layout.custom as PageLayoutConfig;
+  return createDefaultPageLayoutTemplate({
+    templateId,
+    moduleKeys,
+    paddingVertical,
+    paddingHorizontal,
+    gap,
+    leftWidthPercent: leftColumnWidth,
+    columns: ui.layout?.columns,
+  });
 };

@@ -16,6 +16,7 @@ import {
   previewSelectedModule,
 } from "../../hooks/useModuleNav";
 import eventBus from "@/utils/modules/eventBus";
+import { resolveLayoutColumns } from "../resumePages/engine/layout/layoutTemplates";
 
 defineOptions({ name: "ResumePage" });
 
@@ -45,7 +46,6 @@ const isEdit = computed(() => true);
 const previewRootRef = computed(() => pagesRef.value?.rootEl ?? null);
 const previewMeasureRef = computed(() => pagesRef.value?.measureEl ?? null);
 const previewPagePlan = computed(() => pagesRef.value?.pagePlan ?? { pages: [] });
-const previewLayout = computed(() => pagesRef.value?.layout ?? null);
 const previewModuleKeys = computed(() => pagesRef.value?.moduleKeys ?? []);
 const previewMeasured = computed(() => pagesRef.value?.previewMeasured ?? false);
 const measureDone = computed(() => pagesRef.value?.measureDone ?? false);
@@ -128,21 +128,21 @@ onMounted(() => eventBus.on("resume-locate-preview-module", handleLocatePreviewM
 onUnmounted(() => eventBus.off("resume-locate-preview-module", handleLocatePreviewModule));
 
 const moveModuleAcrossColumn = (moduleKey, columnId, direction) => {
-  const current = previewLayout.value;
-  if (!current?.regions) return;
-  const regions = current.regions.map((region) => ({
-    ...region,
-    columns: region.columns.map((column) => ({ ...column, moduleKeys: [...column.moduleKeys] })),
-  }));
-  const region = regions.find((item) => item.columns.some((column) => column.id === columnId));
-  if (!region) return;
-  const index = region.columns.findIndex((column) => column.id === columnId);
-  const source = region.columns[index];
-  const target = region.columns[direction === "left" ? index - 1 : index + 1];
-  if (!source || !target) return;
-  source.moduleKeys = source.moduleKeys.filter((key) => key !== moduleKey);
-  if (!target.moduleKeys.includes(moduleKey)) target.moduleKeys.push(moduleKey);
-  resumeStore.setPageLayout({ ...current, regions });
+  const columns = resolveLayoutColumns(
+    currentUI.value.layout.type,
+    previewModuleKeys.value,
+    currentUI.value.layout.columns,
+  );
+  const sourceSide = columnId === "left" ? "left" : "right";
+  const targetSide = direction === "left" ? "left" : "right";
+  if (sourceSide === targetSide) return;
+  const source = columns[sourceSide];
+  const target = columns[targetSide];
+  const index = source.indexOf(moduleKey);
+  if (index < 0) return;
+  source.splice(index, 1);
+  target.push(moduleKey);
+  resumeStore.setLayoutColumns(columns);
 };
 const handleModuleMove = ({ moduleKey, direction, columnId }) => {
   if (direction === "left" || direction === "right") {
@@ -153,9 +153,16 @@ const handleModuleMove = ({ moduleKey, direction, columnId }) => {
   const order = columnMoveContext.value.orderByColumn.get(columnId) ?? [];
   const index = order.indexOf(moduleKey);
   if (index < 0) return;
-  const target = direction === "up" ? order[index - 1] : order[index + 1];
-  if (!target) return;
-  resumeStore.swapModuleOrder(moduleKey, target);
+  const target = direction === "up" ? index - 1 : index + 1;
+  if (target < 0 || target >= order.length) return;
+  const columns = resolveLayoutColumns(
+    currentUI.value.layout.type,
+    previewModuleKeys.value,
+    currentUI.value.layout.columns,
+  );
+  const side = columnId === "left" ? "left" : "right";
+  [columns[side][index], columns[side][target]] = [columns[side][target], columns[side][index]];
+  resumeStore.setLayoutColumns(columns);
 };
 useResumeExport({
   isEdit,
