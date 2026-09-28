@@ -76,10 +76,12 @@ const goBuy = () => {
       </div>
       <div class="whitespace-normal">
         <span>
-          同款服务器，中国香港 100G+高防，2核2G20M 三网直连(CN2+CMI+CUG) ≈35ms，仅需33元/月。
-        </span>
+          同款云服务器 免备案， <span class="text-sf-theme">2</span>核<span class="text-sf-theme"
+            >2</span
+          >G<span class="text-sf-theme">20</span>M 三网直连(CN2+CMI+CUG)
+          ≈35ms，首月5折，仅需16.5元/月。</span
+        >
         <span class="cursor-pointer font-medium text-sf-theme" @click="goBuy"> 点击这里购买 </span>
-        <span> 送5折券 </span>
       </div>
     </div>
   </SfModal>
