@@ -7,7 +7,7 @@ const shareCardRef = ref();
 
 // 分享地址使用简历页面，并携带当前简历标识，不暴露编辑器路径
 const resumeUrl = computed(() => {
-  return new URL("http://qzresume.com", window.location.origin).href;
+  return "http://qzresume.cn";
 });
 
 // 复制当前简历的公开地址
@@ -62,7 +62,8 @@ const goBuy = () => {
       >
         <div class="flex flex-col justify-between">
           <div class="text-xl font-bold text-sf-theme">轻舟简历</div>
-          <div class="">愿你能去到想去的地方</div>
+          <div class="">愿此简历，</div>
+          <div>能带你去往想去的地方。</div>
           <!-- <div>永久地址</div> -->
           <div>{{ resumeUrl }}</div>
         </div>

@@ -52,7 +52,7 @@ const activeNavIndex = computed(() => navList.findIndex((item) => route.path ===
       <div class="mx-auto flex h-full w-full max-w-7xl items-center gap-3 px-3 sm:gap-5 sm:px-4">
         <ProjectTitle url="/resume" />
 
-        <nav class="flex min-w-0 flex-1 items-center gap-3 overflow-x-auto sm:flex-none sm:gap-5">
+        <nav class="flex min-w-0 flex-1 items-center gap-3 sm:flex-none sm:gap-5">
           <SfSpan
             v-for="(item, index) in navList"
             :key="item.path"
