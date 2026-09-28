@@ -1,4 +1,4 @@
-import { getPageLocaleFile, loadPageLang } from "@/locales";
+import { loadPageLang } from "@/locales";
 import { startRouteLoading } from "@/utils/modules/routeLoading";
 // 版本检测已注释，暂不引入 useSystemStore
 // import { useSystemStore } from "@/stores";
@@ -11,9 +11,8 @@ import { startRouteLoading } from "@/utils/modules/routeLoading";
  */
 export async function beforeEachGuard(to: any, from: any, next: any) {
   startRouteLoading();
-  const pageName = getPageLocaleFile(to);
   // 页面语言包加载完成后再放行，保证页面业务配置首次渲染即可读取当前语言
-  await loadPageLang(pageName);
+  await loadPageLang(to);
 
   // 每次进入页面前检查系统版本状态
   // 暂时注释掉版本检测，避免版本检查阻塞路由跳转

@@ -20,19 +20,17 @@
 </template>
 
 <script setup>
-import { getPageLocaleFile, LANG_LIST, loadPageLang } from "@/locales";
+import { LANG_LIST, loadPageLang } from "@/locales";
 import { useRouter } from "vue-router";
 
 const color = inject("color", "text-sf-base");
 defineOptions({ name: "SfLocale" });
 
 const router = useRouter();
-const currentPageName = computed(() => getPageLocaleFile(router.currentRoute.value));
-
 import { language } from "@/utils";
 const currentLocale = computed(() => language.value);
 const handleClick = async (item) => {
-  await loadPageLang(currentPageName.value, item.key);
+  await loadPageLang(router.currentRoute.value, item.key);
 };
 </script>
 
