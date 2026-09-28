@@ -54,16 +54,15 @@
         </SfTabPane>
         <SfTabPane value="ui">
           <SfCollapse v-model="uiActiveNames">
-            <SfCollapseItem name="ui">
-              <template #title>界面配置 (currentUI)</template>
-              <div class="max-h-[50vh] overflow-y-auto">
-                <SfMdPreview
-                  :modelValue="fieldMd(currentUI)"
-                  editorId="debug-ui"
-                  :codeFoldable="false"
-                  class="bg-transparent! p-0!"
-                />
-              </div>
+            <!-- 界面配置按顶层 key 独立折叠，与数据 Tab 保持一致 -->
+            <SfCollapseItem v-for="(value, key) in currentUI ?? {}" :key="key" :name="key">
+              <template #title>{{ key }}</template>
+              <SfMdPreview
+                :modelValue="fieldMd(value)"
+                :editorId="`debug-ui-${key}`"
+                :codeFoldable="false"
+                class="bg-transparent! p-0!"
+              />
             </SfCollapseItem>
           </SfCollapse>
         </SfTabPane>
@@ -162,9 +161,9 @@ import confirm from "@/components/business/confirm";
 import Icon from "../components/icon.vue";
 
 const drawerVisible = ref(false);
-// 数据 Tab 按顶层 key 各自折叠；界面配置数据量小，整块折叠即可
+// 数据和界面 Tab 均按顶层 key 各自折叠
 const dataActiveNames = ref([]);
-const uiActiveNames = ref(["ui"]);
+const uiActiveNames = ref([]);
 
 // 顶部 Tab：性能 / 数据 / 界面 / 配置 / 消息对话
 const activeTab = ref("performance");
