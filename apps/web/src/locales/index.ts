@@ -71,12 +71,21 @@ const i18n: I18n = createI18n(i18nOptions);
 
 interface LocaleRoute {
   path?: unknown;
+  meta?: Record<string, any>;
 }
 
 // 由路由路径推导语言文件名：1 级取路径段，多级用 "-" 连接
 export function getPageLocaleFile(route: LocaleRoute): string {
   const path = typeof route.path === "string" ? route.path : "";
   return path.split("/").filter(Boolean).join("-");
+}
+
+// 页面语言包由当前页面及路由声明的公共语言包共同组成
+function getPageLocaleFiles(route: LocaleRoute): string[] {
+  if (Array.isArray(route.meta?.localeFiles)) {
+    return [...new Set(route.meta.localeFiles.filter(Boolean))];
+  }
+  return [getPageLocaleFile(route)];
 }
 
 type LocaleMessage = Record<string, any>;
@@ -118,7 +127,8 @@ async function dynamicLoadPageLang(name: string, langKey: string): Promise<Local
 function loadDefaultTitle() {
   useTitle(import.meta.env.VITE_APP_TITLE);
 }
-async function dynamicLoadPageTitle(pageName: string) {
+async function dynamicLoadPageTitle(route: LocaleRoute) {
+  const pageName = route.meta?.pageName || getPageLocaleFile(route);
   const pageConfig: any = ALL_PAGE.value.find((item) => item.url === `/${pageName}`);
   if (!pageConfig) {
     loadDefaultTitle();
@@ -134,14 +144,18 @@ async function dynamicLoadPageTitle(pageName: string) {
   title += desc && !desc.startsWith("router.") ? ` - ${desc}` : "";
   useTitle(title);
 }
-export const loadPageLang = async (name: string, langKey?: string) => {
+export const loadPageLang = async (route: LocaleRoute, langKey?: string) => {
   langKey = (langKey || String((i18n.global.locale as any).value ?? i18n.global.locale)) as string;
   const bundledMessage = BUNDLED_LANG[langKey] || {};
-  // 默认路由树语言包已静态打包，命中则跳过请求，其余页面按需加载
-  const pageMessage =
-    name in bundledMessage
-      ? bundledMessage[name]
-      : (await dynamicLoadPageLang(name, langKey)) || {};
+  const pageFiles = getPageLocaleFiles(route);
+  const pageMessages = await Promise.all(
+    pageFiles.map(async (name) =>
+      name in bundledMessage
+        ? bundledMessage[name]
+        : (await dynamicLoadPageLang(name, langKey)) || {},
+    ),
+  );
+  const pageMessage = Object.assign({}, ...pageMessages);
   // 每次只保留核心语言和当前页面语言
   i18n.global.setLocaleMessage(langKey, {
     core: bundledMessage.core || {},
@@ -151,7 +165,7 @@ export const loadPageLang = async (name: string, langKey?: string) => {
   (i18n.global.locale as any).value = langKey;
   localStorage.setItem("snowflakeLanguage", langKey);
   // 加载标题
-  await dynamicLoadPageTitle(name);
+  await dynamicLoadPageTitle(route);
 };
 
 // 导出翻译函数

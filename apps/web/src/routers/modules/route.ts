@@ -34,7 +34,7 @@ const resumeChildren: RouteRecordRaw[] = [
     path: "editor",
     name: "editor",
     component: () => import("@/views/resume/editor/index.vue"),
-    meta: { hideResumeLayout: true },
+    meta: { hideResumeLayout: true, localeFiles: ["resume", "resume-editor"] },
   },
   {
     path: "print",
@@ -61,7 +61,7 @@ function generateRoute(item: any): RouteRecordRaw {
     ...(!isResume ? { name } : {}),
     path: `/${name}`,
     component: component ? component : () => import("@views/status/error.vue"),
-    ...(isResume ? { meta: { pageName: name } } : {}),
+    ...(isResume ? { meta: { pageName: name, localeFiles: [name] } } : {}),
   };
   return {
     ...defaultRoute,
