@@ -6,7 +6,7 @@ import RevealGrid from "@/views/resume/components/revealGrid.vue";
 import TemplateCategory from "./components/templateCategory.vue";
 import { resumeTemplateList } from "./data/list";
 import { loadResumeTemplates } from "./data/resumeData";
-import { expandConfigFields } from "@/stores/modules/resume/hooks/useConfigTemplate";
+import { expandConfigModules } from "@/stores/modules/resume/hooks/useConfigTemplate";
 import { createDefaultLayoutColumns } from "../editor/preview/resumePages/engine/layout/layoutTemplates";
 import { $t } from "@/locales";
 
@@ -91,8 +91,8 @@ const setCurrentCategory = (value) => {
 const useTemplate = (card) => {
   if (!previewBase.value) return;
   const ui = deepClone(card.item.ui);
-  const moduleKeys = expandConfigFields(
-    previewBase.value.config?.fields || [],
+  const moduleKeys = expandConfigModules(
+    previewBase.value.config?.modules || [],
     previewBase.value.data,
   ).map((field) => field.key).filter(Boolean);
   ui.layout.columns =

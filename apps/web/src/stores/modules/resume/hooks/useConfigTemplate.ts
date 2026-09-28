@@ -1,4 +1,4 @@
-import { allConfig, DEFAULT_USER_FORM } from "../config/formConfig";
+import { allConfig, DEFAULT_CONFIG, DEFAULT_USER_FORM } from "../config/formConfig";
 import { createUserCustomField, isUserCustomFieldKey } from "./useUserCustomField";
 import { applyUserSubtitleOrder } from "./useUserSubtitle";
 import { localizeResumeConfig } from "./useResumeEditorLocale";
@@ -22,9 +22,9 @@ export function getModuleTemplate(key: string) {
   return (allConfig as Record<string, any>)[key];
 }
 
-// 持久化字段列表展开为可渲染的完整 schema
-export function expandConfigFields(fields: any[], data: any) {
-  const expanded = fields.map((item: any) => {
+// 简历模块顺序展开为可渲染的完整表单定义
+export function expandConfigModules(modules: any[], data: any) {
+  const expanded = modules.map((item: any) => {
     const template = getModuleTemplate(item.key);
     if (!template) return item;
     const field = structuredClone(template);
@@ -100,8 +100,8 @@ function hasSortableFields(field: any) {
   );
 }
 
-// 可渲染配置压缩为持久化字段列表：只保留模块 key 与顺序
-export function compactConfigFields(fields: any[], parentKey?: string) {
+// 可渲染配置压缩为简历结构：只保留模块 key、字段顺序和自定义名称
+export function compactConfigModules(fields: any[], parentKey?: string) {
   return fields.map((field: any) => {
     const compactField: any = { key: field.key };
     if (
@@ -112,7 +112,7 @@ export function compactConfigFields(fields: any[], parentKey?: string) {
       compactField.label = field.props.label;
     }
     if (Array.isArray(field.fields) && hasSortableFields(field)) {
-      compactField.fields = compactConfigFields(field.fields, field.key);
+      compactField.fields = compactConfigModules(field.fields, field.key);
     }
     return compactField;
   });
@@ -154,11 +154,11 @@ export function bindCollapsedDefault(fields: any[], getDefault: () => string[]) 
   });
 }
 
-// 按持久化 key 配置构建编辑器会话使用的完整表单配置
+// 按简历模块结构构建编辑器使用的完整动态表单配置
 export function buildRuntimeConfig(config: any, data: any) {
-  const fields = expandConfigFields(config?.fields || [], data);
+  const fields = expandConfigModules(config?.modules || [], data);
   const runtimeConfig = {
-    ...config,
+    ...structuredClone(DEFAULT_CONFIG),
     id: config?.id || "df-form",
     fields,
   };

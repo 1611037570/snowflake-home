@@ -9,7 +9,7 @@ const resumeData: any = {
     work: { ui: { collapsed: ["1"], archived: false }, list: [{ ui: {}, data: { name: "*** Technology Co., Ltd.", post: "Front-end Engineer", startTime: "2022.08", endTime: "Present", content: "<p>Built reusable front-end modules and delivered web features for enterprise products.</p>" } }] },
     project: { ui: { collapsed: ["1"], archived: false }, list: [{ ui: {}, data: { name: "Analytics Dashboard", post: "Front-end Engineer", startTime: "2024.03", endTime: "2025.01", content: "<p>Developed data visualizations and workflow pages for business operations.</p>" } }] },
   },
-  config: { meta: { version: "1.0.0" }, drag: true, dragClass: ".container-drag", fields: [{ key: "user" }, { key: "education" }, { key: "skill" }, { key: "advantage" }, { key: "work" }, { key: "project" }] },
+  config: { modules: [{ key: "user" }, { key: "education" }, { key: "skill" }, { key: "advantage" }, { key: "work" }, { key: "project" }] },
   ui: {
     page: { padding: { vertical: 24, horizontal: 24 }, spacing: { paragraph: 12, module: 12 }, footer: "" },
     font: { family: "text-puhui", size: 16, titleSize: 22, lineHeight: 1.2 },

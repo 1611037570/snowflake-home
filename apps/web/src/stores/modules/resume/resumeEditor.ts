@@ -15,7 +15,7 @@ import {
 import {
   bindCollapsedDefault,
   buildRuntimeConfig,
-  compactConfigFields,
+  compactConfigModules,
 } from "./hooks/useConfigTemplate";
 import { isEqual } from "lodash-es";
 import { executeResumeOperations, type ResumeWriteOp } from "./resumeOperations";
@@ -62,17 +62,17 @@ export const createResumeEditor = ({
     refreshRuntime,
     { immediate: true },
   );
-  // 持久化字段列表写入：内容一致时跳过，避免无谓变更（入参须为已投影的字段列表）
-  const setConfigFields = (item: any, fields: any[]) => {
+  // 持久化模块结构写入：内容一致时跳过，避免无谓变更
+  const setConfigModules = (item: any, modules: any[]) => {
     if (!item) return;
     const config = item.config && typeof item.config === "object" ? item.config : {};
-    if (isEqual(config.fields || [], fields)) return;
-    config.fields = structuredClone(fields);
+    if (isEqual(config.modules || [], modules)) return;
+    config.modules = structuredClone(modules);
   };
-  // 模块与内部字段排序只改运行时 fields，变化后按投影回写持久化顺序
+  // 模块与内部字段排序只改运行时 fields，变化后压缩回简历模块顺序
   watch(
-    () => compactConfigFields(runtimeConfig.value?.fields || []),
-    (projectedFields) => setConfigFields(currentItem.value, projectedFields),
+    () => compactConfigModules(runtimeConfig.value?.fields || []),
+    (modules) => setConfigModules(currentItem.value, modules),
   );
   // 整体恢复配置：AI 撤回等场景使用，结构变化时同步重建运行时配置
   const restoreConfig = (config: any) => {
@@ -264,7 +264,7 @@ export const createResumeEditor = ({
     runtimeConfig,
     runtimeFields,
     refreshRuntime,
-    setConfigFields,
+    setConfigModules,
     restoreConfig,
     currentUI,
     currentUsage,
@@ -286,6 +286,5 @@ export const createResumeEditor = ({
     swapModuleOrder,
     updateRecordField,
     applyResumeOperations,
-    compactConfigFields,
   };
 };

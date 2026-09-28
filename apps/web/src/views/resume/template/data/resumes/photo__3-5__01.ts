@@ -92,10 +92,7 @@ const resumeData: any = {
     },
   },
   config: {
-    meta: { version: "1.0.0" },
-    drag: true,
-    dragClass: ".container-drag",
-    fields: [{ key: "user" }, { key: "education" }, { key: "skill" }, { key: "advantage" }, { key: "work" }, { key: "project" }],
+    modules: [{ key: "user" }, { key: "education" }, { key: "skill" }, { key: "advantage" }, { key: "work" }, { key: "project" }],
   },
   ui: {
     page: { padding: { vertical: 24, horizontal: 24 }, spacing: { paragraph: 12, module: 12 }, footer: "" },

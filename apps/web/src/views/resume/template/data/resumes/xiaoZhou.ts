@@ -234,12 +234,7 @@ const defaultData: any = {
     },
   },
   config: {
-    meta: {
-      version: "1.0.0",
-    },
-    drag: true,
-    dragClass: ".container-drag",
-    fields: [
+    modules: [
       {
         key: "user",
         fields: [
@@ -332,11 +327,9 @@ const defaultData: any = {
       },
       {
         key: "account",
-        fields: [{}],
       },
       {
         key: "education",
-        fields: [{}],
       },
       {
         key: "skill",
@@ -346,11 +339,9 @@ const defaultData: any = {
       },
       {
         key: "work",
-        fields: [{}],
       },
       {
         key: "project",
-        fields: [{}],
       },
     ],
   },

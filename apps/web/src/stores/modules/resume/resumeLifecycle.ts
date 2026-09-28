@@ -22,8 +22,7 @@ type ResumeLifecycleOptions = {
   defaultResumeItem: any;
   getResumeStorage: (id: string, initialValue?: any, writeDefaults?: boolean) => any;
   removeResumeStorage: (id: string) => Promise<void>;
-  setConfigFields: (item: any, fields: any[]) => void;
-  compactConfigFields: (fields: any[]) => any[];
+  setConfigModules: (item: any, modules: any[]) => void;
   deepClone: (value: any) => any;
   clearCurrentAssistantChat: (resumeId: string) => void;
   removeAssistantChats: (resumeId: string) => Promise<void>;
@@ -46,8 +45,7 @@ export const createResumeLifecycle = (options: ResumeLifecycleOptions) => {
     defaultResumeItem,
     getResumeStorage,
     removeResumeStorage,
-    setConfigFields,
-    compactConfigFields,
+    setConfigModules,
     deepClone,
     clearCurrentAssistantChat,
     removeAssistantChats,
@@ -64,7 +62,7 @@ export const createResumeLifecycle = (options: ResumeLifecycleOptions) => {
       return false;
     }
     const resume = config ? mergeResumeItem(config) : structuredClone(defaultResumeItem);
-    setConfigFields(resume, compactConfigFields(resume.config.fields));
+    setConfigModules(resume, resume.config.modules);
     resume.id = getUUID().slice(0, 6);
     const storage = getResumeStorage(resume.id, resume, true);
     resumeRecords.value.push(storage.data.value);
