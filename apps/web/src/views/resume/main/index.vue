@@ -223,8 +223,6 @@
       <SfFooter />
     </main>
   </SfScrollbar>
-  <IssueFeedback />
-  <Share />
 </template>
 
 <script setup>
@@ -234,8 +232,6 @@ import { $t } from "@/locales";
 import { resumeTemplateList } from "../template/data/list";
 import { useRouter } from "vue-router";
 import { computed, onMounted, ref } from "vue";
-import IssueFeedback from "../components/issueFeedback.vue";
-import Share from "../components/share.vue";
 
 const router = useRouter();
 const revealSections = ref([]);

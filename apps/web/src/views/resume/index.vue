@@ -3,6 +3,8 @@ import { useResumeStatisticsStore, useResumeStore } from "@/stores";
 import LoadingComponent from "@views/status/loading.vue";
 import { useRoute, useRouter } from "vue-router";
 import ProjectTitle from "./components/projectTitle.vue";
+import IssueFeedback from "./components/issueFeedback.vue";
+import Share from "./components/share.vue";
 
 const route = useRoute();
 const router = useRouter();
@@ -78,6 +80,8 @@ const activeNavIndex = computed(() => navList.findIndex((item) => route.path ===
       <!-- <SfFooter /> -->
     </div>
   </main>
+  <IssueFeedback v-if="resumeReady && route.name !== 'resume-print'" />
+  <Share v-if="resumeReady && route.name !== 'resume-print'" />
 </template>
 
 <style lang="scss" scoped></style>
