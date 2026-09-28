@@ -12,8 +12,8 @@ export interface LayoutColumns {
   right: string[];
 }
 
-/** 双栏模板左侧固定展示的模块顺序。 */
-const LEFT_MODULE_KEYS = ["account", "education", "skill", "advantage"];
+/** 双栏模板左侧默认展示的模块顺序，教育经历默认进入右栏。 */
+const LEFT_MODULE_KEYS = ["account", "skill", "advantage"];
 
 interface CreatePageLayoutTemplateOptions {
   /** 当前简历实际存在的模块 key。 */

@@ -40,8 +40,8 @@ describe("layoutTemplates", () => {
     expect(layout.regions.map((region) => region.id)).toEqual(["header", "main"]);
     expect(layout.regions[0]?.columns[0]?.moduleKeys).toEqual(["user"]);
     expect(layout.regions[1]?.columns.map((column) => column.moduleKeys)).toEqual([
-      ["account", "education", "skill"],
-      ["work", "project", "custom_research"],
+      ["account", "skill"],
+      ["education", "work", "project", "custom_research"],
     ]);
     expect(validateLayoutConfig(layout, moduleKeys).missingModuleKeys).toEqual([]);
   });
@@ -57,8 +57,8 @@ describe("layoutTemplates", () => {
 
     expect(layout.regions).toHaveLength(1);
     expect(layout.regions[0]?.columns.map((column) => column.moduleKeys)).toEqual([
-      ["user", "account", "education", "skill"],
-      ["work", "project", "custom_research"],
+      ["user", "account", "skill"],
+      ["education", "work", "project", "custom_research"],
     ]);
     expect(validateLayoutConfig(layout, moduleKeys).missingModuleKeys).toEqual([]);
   });
