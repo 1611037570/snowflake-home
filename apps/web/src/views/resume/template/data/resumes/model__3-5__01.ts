@@ -103,12 +103,7 @@ const resumeData: any = {
     },
   },
   config: {
-    meta: {
-      version: "1.0.0",
-    },
-    drag: true,
-    dragClass: ".container-drag",
-    fields: [
+    modules: [
       { key: "user" },
       { key: "education" },
       { key: "skill" },

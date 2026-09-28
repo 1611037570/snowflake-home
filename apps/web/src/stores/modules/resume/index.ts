@@ -82,7 +82,7 @@ export const useResumeStore = defineStore(
       currentConfig,
       runtimeConfig,
       runtimeFields,
-      setConfigFields,
+      setConfigModules,
       restoreConfig,
       currentUI,
       currentUsage,
@@ -104,7 +104,6 @@ export const useResumeStore = defineStore(
       swapModuleOrder,
       updateRecordField,
       applyResumeOperations,
-      compactConfigFields,
     } = editor;
     const runtime = createResumeRuntime({ clearSelectedModules });
     const {
@@ -169,8 +168,7 @@ export const useResumeStore = defineStore(
       defaultResumeItem: DEFAULT_RESUME_ITEM,
       getResumeStorage,
       removeResumeStorage,
-      setConfigFields,
-      compactConfigFields,
+      setConfigModules,
       deepClone,
       clearCurrentAssistantChat: (resumeId) =>
         useAiStore().clearCurrentResumeAssistantChat(resumeId),

@@ -4,7 +4,7 @@
 // 本组件只编排数据、主题、测量、分页和页面输出；编辑器行为由调用方处理。
 import { computed, ref } from "vue";
 import { getFieldLabel } from "@/components/business/dynamicForm/api";
-import { expandConfigFields } from "@/stores/modules/resume/hooks/useConfigTemplate";
+import { expandConfigModules } from "@/stores/modules/resume/hooks/useConfigTemplate";
 import ResumePageShell from "./resumePageShell.vue";
 import LayoutMeasureTree from "./render/measure/layoutMeasureTree.vue";
 import Column from "./render/column.vue";
@@ -108,7 +108,7 @@ const allModules = computed(() => {
   const fields =
     props.expandedFields !== undefined
       ? props.expandedFields
-      : expandConfigFields(props.item.config?.fields || [], props.item.data);
+      : expandConfigModules(props.item.config?.modules || [], props.item.data);
   // 模块隐藏直接读数据节点，不经动态表单的 checks 协议
   return fields.filter((field) => props.item.data?.[field.key]?.ui?.hidden !== true);
 });

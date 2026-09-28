@@ -4,7 +4,6 @@ import { storeToRefs } from "pinia";
 import { useDebounceFn } from "@vueuse/core";
 import dayjs from "dayjs";
 import { useResumeStore } from "@/stores";
-import { compactConfigFields } from "@/stores/modules/resume/hooks/useConfigTemplate";
 import { $t } from "@/locales";
 import {
   disableLocalBackup,
@@ -104,10 +103,10 @@ const doBackup = async () => {
   backupStatus.value = "pending";
   // 备份文件名：轻舟简历备份-简历ID（固定文件名，重复备份直接覆盖同一文件）
   const filename = `轻舟简历备份-${item.id}.json`;
-  // 备份时配置只保留模块 key，减小文件体积
+  // 备份沿用简历中的精简模块结构
   const backupItem = {
     ...item,
-    config: { ...item.config, fields: compactConfigFields(item.config?.fields || []) },
+    config: { ...item.config, modules: structuredClone(item.config?.modules || []) },
   };
   const success = await writeLocalBackup(filename, JSON.stringify(backupItem, null, 2));
   // 备份耗时极短，补足最短展示时长，避免"正在备份"一闪而过

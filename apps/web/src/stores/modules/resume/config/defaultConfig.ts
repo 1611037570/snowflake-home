@@ -1,5 +1,4 @@
 import { getUUID } from "@/utils";
-import { DEFAULT_CONFIG } from "./formConfig";
 import { DEFAULT_UI } from "./uiConfig";
 
 // 默认模块 key 对应的名称与图标（取自 formConfig，后期自行维护）
@@ -32,10 +31,9 @@ export const DEFAULT_RESUME_ITEM = {
   id: getUUID().slice(0, 6),
   // 简历数据
   data: structuredClone({}),
-  // 表单配置：只存模块 key，进入时由模板展开
+  // 简历结构：只存模块和可排序字段顺序，运行时由全局表单定义展开
   config: {
-    ...structuredClone(DEFAULT_CONFIG),
-    fields: [{ key: "user" }],
+    modules: [{ key: "user" }],
   },
   // UI配置
   ui: structuredClone(DEFAULT_UI),

@@ -191,12 +191,7 @@ const resumeData: any = {
     },
   },
   config: {
-    meta: {
-      version: "1.0.0",
-    },
-    drag: true,
-    dragClass: ".container-drag",
-    fields: [
+    modules: [
       {
         key: "user",
         fields: [
@@ -293,7 +288,6 @@ const resumeData: any = {
       },
       {
         key: "education",
-        fields: [{}],
       },
       {
         key: "skill",
@@ -303,11 +297,9 @@ const resumeData: any = {
       },
       {
         key: "work",
-        fields: [{}],
       },
       {
         key: "project",
-        fields: [{}],
       },
     ],
   },

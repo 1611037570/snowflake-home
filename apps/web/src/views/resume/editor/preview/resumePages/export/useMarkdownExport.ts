@@ -123,7 +123,7 @@ export const exportMarkdown = (onSuccess?: () => void) => {
   const item = currentItem.value;
   const data = item?.data || {};
   // 字段配置统一以模块 key 标识
-  const configuredKeys = (runtimeConfig.value?.fields || item?.config?.fields || [])
+  const configuredKeys = (runtimeConfig.value?.fields || item?.config?.modules || [])
     .map((field: any) => field?.key)
     .filter(Boolean);
   const moduleKeys = [...new Set([...configuredKeys, ...Object.keys(data)])];

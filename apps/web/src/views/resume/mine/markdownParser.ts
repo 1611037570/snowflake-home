@@ -106,8 +106,8 @@ const normalizeResumeData = (parsed: Record<string, any>) => {
     }
   });
   if (!data.user) data.user = { data: {} };
-  const fields = MODULE_ORDER.filter((key) => data[key]).map((key) => ({ key }));
-  return { data, config: { fields } };
+  const modules = MODULE_ORDER.filter((key) => data[key]).map((key) => ({ key }));
+  return { data, config: { modules } };
 };
 
 const SYSTEM_PROMPT = [

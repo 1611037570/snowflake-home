@@ -9,7 +9,7 @@ const resumeData: any = {
     work: { ui: { collapsed: ["1"], archived: false }, list: [{ ui: {}, data: { name: "北京****科技有限公司", post: "算法研究实习生", startTime: "2024.07", endTime: "2024.10", content: "<p>协助整理训练数据与实验记录，复现基础模型并参与结果分析，支持团队完成阶段性技术报告。</p>" } }] },
     project: { ui: { collapsed: ["1"], archived: false }, list: [{ ui: {}, data: { name: "图神经网络课程研究", post: "课题成员", startTime: "2024.03", endTime: "2024.12", content: "<p>负责数据预处理、模型复现与实验结果分析，完成课程研究报告。</p>" } }] },
   },
-  config: { meta: { version: "1.0.0" }, drag: true, dragClass: ".container-drag", fields: [{ key: "user" }, { key: "education" }, { key: "skill" }, { key: "advantage" }, { key: "work" }, { key: "project" }] },
+  config: { modules: [{ key: "user" }, { key: "education" }, { key: "skill" }, { key: "advantage" }, { key: "work" }, { key: "project" }] },
   ui: {
     page: { padding: { vertical: 24, horizontal: 24 }, spacing: { paragraph: 12, module: 12 }, footer: "" },
     font: { family: "text-puhui", size: 16, titleSize: 22, lineHeight: 1.2 },
