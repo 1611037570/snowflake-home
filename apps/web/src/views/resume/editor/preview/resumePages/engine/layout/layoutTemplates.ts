@@ -6,12 +6,20 @@ import { createTwoColumnLayout, resolveColumnRatios } from "./createTwoColumnLay
 /** 模板中可用的页面布局编号：单栏与双栏走同一套模板入口 */
 export type PageLayoutTemplateId = "single" | "topUserTwoColumn" | "twoColumn";
 
+/** 双栏布局只保存栏内模块 key 顺序。 */
+export interface LayoutColumns {
+  left: string[];
+  right: string[];
+}
+
 /** 双栏模板左侧固定展示的模块顺序。 */
 const LEFT_MODULE_KEYS = ["account", "education", "skill", "advantage"];
 
 interface CreatePageLayoutTemplateOptions {
   /** 当前简历实际存在的模块 key。 */
   moduleKeys: string[];
+  /** 双栏栏内模块顺序；未提供时按模板规则生成。 */
+  columns?: LayoutColumns | null;
   /** 页面尺寸。 */
   pageSize: PageSize;
   /** 页面内边距。 */
@@ -37,6 +45,44 @@ const splitFixedColumnModules = (moduleKeys: string[]) => {
   return { leftModuleKeys, rightModuleKeys };
 };
 
+/** 按布局模板生成默认左右栏模块顺序。 */
+export const createDefaultLayoutColumns = (
+  templateId: PageLayoutTemplateId,
+  moduleKeys: string[],
+): LayoutColumns => {
+  const { leftModuleKeys, rightModuleKeys } = splitFixedColumnModules(moduleKeys);
+  if (templateId === "twoColumn" && moduleKeys.includes("user")) {
+    leftModuleKeys.unshift("user");
+  }
+  return { left: leftModuleKeys, right: rightModuleKeys };
+};
+
+/** 保留已保存的栏内顺序，并按模板补齐新增模块、移除不存在的模块。 */
+export const resolveLayoutColumns = (
+  templateId: PageLayoutTemplateId,
+  moduleKeys: string[],
+  columns?: LayoutColumns | null,
+): LayoutColumns => {
+  const defaults = createDefaultLayoutColumns(templateId, moduleKeys);
+  if (!columns) return defaults;
+  const available = new Set(moduleKeys);
+  const pinnedModules = templateId === "topUserTwoColumn" ? new Set(["user"]) : new Set<string>();
+  const left = [...new Set(columns.left)].filter(
+    (key) => available.has(key) && !pinnedModules.has(key),
+  );
+  const right = [...new Set(columns.right)].filter(
+    (key) => available.has(key) && !pinnedModules.has(key) && !left.includes(key),
+  );
+  const assigned = new Set([...left, ...right]);
+  defaults.left.forEach((key) => {
+    if (!assigned.has(key)) left.push(key);
+  });
+  defaults.right.forEach((key) => {
+    if (!assigned.has(key)) right.push(key);
+  });
+  return { left, right };
+};
+
 /** 创建单栏布局：所有模块按简历顺序进入同一栏。 */
 const createSingleColumnLayoutTemplate = ({
   moduleKeys,
@@ -55,6 +101,7 @@ const createSingleColumnLayoutTemplate = ({
 /** 创建个人信息顶部通栏、其他模块双栏的布局。 */
 const createTopUserTwoColumnLayout = ({
   moduleKeys,
+  columns,
   pageSize,
   pagePadding,
   gap,
@@ -62,7 +109,11 @@ const createTopUserTwoColumnLayout = ({
   columnGap,
   leftWidthPercent,
 }: CreatePageLayoutTemplateOptions): PageLayoutConfig => {
-  const { leftModuleKeys, rightModuleKeys } = splitFixedColumnModules(moduleKeys);
+  const { left: leftModuleKeys, right: rightModuleKeys } = resolveLayoutColumns(
+    "topUserTwoColumn",
+    moduleKeys,
+    columns,
+  );
   if (!moduleKeys.includes("user")) {
     return createTwoColumnLayout({
       pageSize,
@@ -122,6 +173,7 @@ const createTopUserTwoColumnLayout = ({
 /** 根据模板编号创建页面布局。 */
 export const createPageLayoutTemplate = ({
   templateId,
+  columns,
   ...options
 }: CreatePageLayoutTemplateOptions & {
   /** 页面布局模板编号。 */
@@ -131,13 +183,14 @@ export const createPageLayoutTemplate = ({
     return createSingleColumnLayoutTemplate(options);
   }
   if (templateId === "topUserTwoColumn") {
-    return createTopUserTwoColumnLayout(options);
+    return createTopUserTwoColumnLayout({ ...options, columns });
   }
 
-  const { leftModuleKeys, rightModuleKeys } = splitFixedColumnModules(options.moduleKeys);
-  if (options.moduleKeys.includes("user")) {
-    leftModuleKeys.unshift("user");
-  }
+  const { left: leftModuleKeys, right: rightModuleKeys } = resolveLayoutColumns(
+    "twoColumn",
+    options.moduleKeys,
+    columns,
+  );
 
   return createTwoColumnLayout({
     ...options,
@@ -156,6 +209,7 @@ export const createDefaultPageLayoutTemplate = ({
   regionGap = gap,
   columnGap = 24,
   leftWidthPercent,
+  columns,
 }: {
   /** 页面布局模板编号。 */
   templateId: PageLayoutTemplateId;
@@ -173,6 +227,8 @@ export const createDefaultPageLayoutTemplate = ({
   columnGap?: number;
   /** 左栏宽度占比（百分比）。 */
   leftWidthPercent?: number;
+  /** 双栏栏内模块顺序。 */
+  columns?: LayoutColumns | null;
 }) =>
   createPageLayoutTemplate({
     templateId,
@@ -188,4 +244,5 @@ export const createDefaultPageLayoutTemplate = ({
     regionGap,
     columnGap,
     leftWidthPercent,
+    columns,
   });

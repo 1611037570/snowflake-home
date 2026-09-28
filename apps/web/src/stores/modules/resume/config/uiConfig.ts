@@ -90,8 +90,8 @@ const createThemeTemplate = (
       item: "auto",
     },
     layout: {
-      template: null,
-      custom: null,
+      type: "single",
+      columns: null,
       leftColumnWidth: 40,
     },
     user: {
@@ -183,12 +183,12 @@ export const themeTemplateList = [
     "个人信息顶部通栏，其余模块固定分到左右两栏。",
     {
       theme: { color: "#0F766E" },
-      layout: { template: "topUserTwoColumn" },
+      layout: { type: "topUserTwoColumn" },
     },
   ),
   createThemeTemplate("双栏", "twoColumn", "所有模块固定分到左右两栏，适合内容较多的简历。", {
     theme: { color: "#7C3AED" },
-    layout: { template: "twoColumn" },
+    layout: { type: "twoColumn" },
   }),
 ];
 // 个人信息展示模式列表
@@ -404,8 +404,8 @@ export const DEFAULT_UI = {
     item: "auto",
   },
   layout: {
-    template: null,
-    custom: null,
+    type: "single",
+    columns: null,
     leftColumnWidth: defaultLeftColumnWidth,
   },
   user: {

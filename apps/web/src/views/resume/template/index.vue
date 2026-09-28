@@ -6,6 +6,8 @@ import RevealGrid from "@/views/resume/components/revealGrid.vue";
 import TemplateCategory from "./components/templateCategory.vue";
 import { resumeTemplateList } from "./data/list";
 import { loadResumeTemplates } from "./data/resumeData";
+import { expandConfigFields } from "@/stores/modules/resume/hooks/useConfigTemplate";
+import { createDefaultLayoutColumns } from "../editor/preview/resumePages/engine/layout/layoutTemplates";
 import { $t } from "@/locales";
 
 // 模板页专用全屏预览组件：异步加载，避免首屏打包体积过大
@@ -88,10 +90,17 @@ const setCurrentCategory = (value) => {
 // 套用模板：携带风格，深拷贝数据后新增简历并进入编辑
 const useTemplate = (card) => {
   if (!previewBase.value) return;
+  const ui = deepClone(card.item.ui);
+  const moduleKeys = expandConfigFields(
+    previewBase.value.config?.fields || [],
+    previewBase.value.data,
+  ).map((field) => field.key).filter(Boolean);
+  ui.layout.columns =
+    ui.layout.type === "single" ? null : createDefaultLayoutColumns(ui.layout.type, moduleKeys);
   resumeStore.addResume({
     data: deepClone(previewBase.value.data),
     config: deepClone(previewBase.value.config),
-    ui: deepClone(card.item.ui),
+    ui,
   });
 };
 const useContentTemplate = (card) => {

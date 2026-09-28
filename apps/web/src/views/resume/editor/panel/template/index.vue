@@ -9,6 +9,7 @@ import { loadResumeTemplateData } from "@/views/resume/template/data/resumeData"
 import { onMounted, ref } from "vue";
 import i18n, { $t } from "@/locales";
 import { translateResumeEditorText } from "@/stores/modules/resume/hooks/useResumeEditorLocale";
+import { createDefaultLayoutColumns } from "../../preview/resumePages/engine/layout/layoutTemplates";
 const resumeStore = useResumeStore();
 const { currentUI } = storeToRefs(resumeStore);
 const previewBase = ref(null);
@@ -40,9 +41,13 @@ const isActive = (id) => (currentUI.value?.theme?.template ?? "default") === id;
 
 // 应用风格：修改当前简历主题，预览层响应式渲染
 const applyTemplate = (template) => {
-  // 切换模板时清除手动布局，避免旧栏位配置覆盖新模板
-  currentUI.value.layout.custom = null;
-  Object.assign(currentUI.value, structuredClone(template.item.ui));
+  const nextUi = structuredClone(template.item.ui);
+  const moduleKeys = resumeStore.runtimeFields.map((field) => field.key).filter(Boolean);
+  nextUi.layout.columns =
+    nextUi.layout.type === "single"
+      ? null
+      : createDefaultLayoutColumns(nextUi.layout.type, moduleKeys);
+  Object.assign(currentUI.value, nextUi);
 };
 </script>
 
