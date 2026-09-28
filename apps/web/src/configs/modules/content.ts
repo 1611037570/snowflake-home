@@ -99,7 +99,7 @@ export const sentences = [
  */
 export const quotations = [
   { value: "愿此行，终抵群星。" },
-  { value: "愿此简历，可以把你带到更远的地方。" },
+  { value: "愿此简历，能带你去往想去的地方。" },
   { value: "山高自有客行路，水深自有渡船人。" },
   { value: "双鸟暂时离分，必有重复之日。" },
   { value: "违心就是悔恨的开始。" },
