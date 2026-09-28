@@ -238,10 +238,9 @@ const resumeData: any = {
     ],
   },
   ui: {
-    page: { padding: { vertical: 24, horizontal: 24 }, footer: "" },
+    page: { padding: { vertical: 24, horizontal: 24 }, spacing: { paragraph: 12, module: 12 }, footer: "" },
     font: { family: "text-puhui", size: 16, titleSize: 22, lineHeight: 1.2 },
     content: { language: "zh", textAlign: "auto", infoSeparator: "dot", linkUnderline: false, dateStyle: "dot", datePosition: "right" },
-    spacing: { paragraph: 12, module: 12 },
     theme: { template: "modern", color: "#2563EB", titleIconMode: "none", userModule: "auto", module: "auto", item: "auto" },
     layout: { template: null, custom: null, leftColumnWidth: 40 },
     user: { infoMode: "text", infoLayout: "flex", avatarPosition: "right", infoPosition: "left" },

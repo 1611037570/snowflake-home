@@ -42,7 +42,7 @@ const layoutParams = [
     defaultValue: defaultPaddingHorizontal,
     unit: "px",
   },
-  { labelKey: "layoutModuleSpacing", key: "spacing.module", defaultValue: defaultModuleSpacing, unit: "px" },
+  { labelKey: "layoutModuleSpacing", key: "page.spacing.module", defaultValue: defaultModuleSpacing, unit: "px" },
   // 左栏宽度占比：仅双栏布局生效，左栏保持为较窄的一栏
   {
     labelKey: "layoutLeftColumnWidth",
@@ -52,7 +52,7 @@ const layoutParams = [
   },
   {
     labelKey: "layoutParagraphSpacing",
-    key: "spacing.paragraph",
+    key: "page.spacing.paragraph",
     defaultValue: defaultParagraphSpacing,
     unit: "px",
   },

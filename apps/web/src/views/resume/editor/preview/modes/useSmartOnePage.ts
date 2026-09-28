@@ -54,10 +54,10 @@ export interface OnePageAdjustableItem {
 
 /** 默认可用参数（范围取自 uiConfig.uiParamRanges，与编辑器滑杆一致）：间距让路多、字号让路少 */
 export const defaultOnePageAdjustable: OnePageAdjustableItem[] = [
-  { key: "moduleSpacing", ...uiParamRanges["spacing.module"], weight: 1 },
+  { key: "moduleSpacing", ...uiParamRanges["page.spacing.module"], weight: 1 },
   { key: "paddingVertical", ...uiParamRanges["page.padding.vertical"], weight: 1 },
   { key: "paddingHorizontal", ...uiParamRanges["page.padding.horizontal"], weight: 1, remeasure: true },
-  { key: "paragraphSpacing", ...uiParamRanges["spacing.paragraph"], weight: 1, remeasure: true },
+  { key: "paragraphSpacing", ...uiParamRanges["page.spacing.paragraph"], weight: 1, remeasure: true },
   { key: "lineHeight", ...uiParamRanges["font.lineHeight"], weight: 0.7, remeasure: true },
   { key: "fontSize", ...uiParamRanges["font.size"], weight: 0.4, remeasure: true },
   // 标题字号跟随正文字号缩放，保持原有比例，不单独驱动
@@ -113,10 +113,10 @@ export const useSmartOnePage = ({
 }: UseSmartOnePageOptions) => {
   const resumeStore = useResumeStore();
   const uiPaths: Record<OnePageAdjustKey, string> = {
-    moduleSpacing: "spacing.module",
+    moduleSpacing: "page.spacing.module",
     paddingVertical: "page.padding.vertical",
     paddingHorizontal: "page.padding.horizontal",
-    paragraphSpacing: "spacing.paragraph",
+    paragraphSpacing: "page.spacing.paragraph",
     lineHeight: "font.lineHeight",
     titleFontSize: "font.titleSize",
     fontSize: "font.size",
@@ -126,9 +126,12 @@ export const useSmartOnePage = ({
   const withParams = (source: Record<string, any>, params: Record<OnePageAdjustKey, number>) => {
     const result = {
       ...source,
-      page: { ...source.page, padding: { ...source.page.padding } },
+      page: {
+        ...source.page,
+        padding: { ...source.page.padding },
+        spacing: { ...source.page.spacing },
+      },
       font: { ...source.font },
-      spacing: { ...source.spacing },
     };
     for (const [key, value] of Object.entries(params) as [OnePageAdjustKey, number][]) {
       const [group, parent, field] = uiPaths[key].split(".");

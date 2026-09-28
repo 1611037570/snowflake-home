@@ -87,7 +87,7 @@ export const useResumeTheme = (ui: ComputedRef<ResumeUi>): ResumeTheme => {
   );
   const fontSize = computed(() => toNumber(ui.value.font?.size, defaultFontSize));
   const lineHeight = computed(() => toNumber(ui.value.font?.lineHeight, defaultLineHeight));
-  const paragraphSpacing = computed(() => Number(ui.value.spacing?.paragraph));
+  const paragraphSpacing = computed(() => Number(ui.value.page?.spacing?.paragraph));
   const fontReadyVersion = ref(0);
   let fontRequestId = 0;
 

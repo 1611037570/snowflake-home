@@ -8,7 +8,7 @@ import { useResumePreviewContext } from "../shared/previewContext";
 import { useResumeStore } from "@/stores";
 
 const props = defineProps({
-  // 简历 ui（font.family / spacing.module）
+  // 简历 ui（font.family / page.spacing.module）
   ui: {
     type: Object,
     default: () => ({}),
@@ -85,11 +85,11 @@ watch(
       { paddingBottom: '0px' },
     ]"
   >
-    <!-- 模块之间的间距由 ui.spacing.module 控制，与分页计算保持一致 -->
+    <!-- 模块之间的间距由 ui.page.spacing.module 控制，与分页计算保持一致 -->
     <!-- 调试模式下用 outline 标注正文可用区：outline 不参与布局，不会挤压内容，内容溢出时也会显示出来 -->
     <div
       class="flex flex-1 flex-col"
-      :style="[{ gap: `${ui.spacing?.module}px` }, showDebug ? debugOutlineStyle : undefined]"
+      :style="[{ gap: `${ui.page?.spacing?.module}px` }, showDebug ? debugOutlineStyle : undefined]"
     >
       <slot />
     </div>
