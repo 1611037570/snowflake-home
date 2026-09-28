@@ -3,7 +3,7 @@ import { computed, nextTick, ref } from "vue";
 import { useCopy } from "@/hooks";
 
 const visible = ref(false);
-const qrCodeRef = ref();
+const shareCardRef = ref();
 
 // 分享地址使用简历页面，并携带当前简历标识，不暴露编辑器路径
 const resumeUrl = computed(() => {
@@ -12,18 +12,35 @@ const resumeUrl = computed(() => {
 
 // 复制当前简历的公开地址
 const copyLink = () => {
-  useCopy(resumeUrl.value);
+  useCopy("轻舟简历永久地址：" + resumeUrl.value);
 };
 
-// 将二维码组件生成的图片保存到本地
+// 将分享卡片渲染为图片并保存到本地
 const saveQrCode = async () => {
   await nextTick();
-  const dataUrl = qrCodeRef.value?.getDataUrl?.();
-  if (!dataUrl) return;
+  await document.fonts?.ready;
+  const card = shareCardRef.value;
+  if (!card) return;
+
+  const { snapdom } = await import("@zumer/snapdom");
+  const canvas = await snapdom.toCanvas(card, {
+    scale: 2,
+    embedFonts: true,
+  });
+  const blob = await new Promise((resolve) => canvas.toBlob(resolve, "image/png"));
+  if (!blob) return;
+
+  const url = URL.createObjectURL(blob);
   const link = document.createElement("a");
-  link.href = dataUrl;
-  link.download = "简历分享二维码.png";
+  link.href = url;
+  link.download = "轻舟简历回家地址.png";
   link.click();
+  URL.revokeObjectURL(url);
+};
+
+// 跳转购买页面
+const goBuy = () => {
+  window.open("https://www.rainyun.com/MTI2MTg0MA==_", "_blank");
 };
 </script>
 
@@ -38,14 +55,31 @@ const saveQrCode = async () => {
   </div>
 
   <SfModal v-model="visible" title="分享轻舟简历">
-    <div class="flex w-[360px] max-w-[80vw] flex-col items-center gap-3">
-      <div class="h-56 w-56 rounded-3xl bg-white p-3">
-        <SfQrcode ref="qrCodeRef" :value="resumeUrl" :size="220" />
+    <div class="flex w-[360px] flex-col items-center gap-3">
+      <div
+        ref="shareCardRef"
+        class="flex gap-3 rounded-3xl border border-sf-theme bg-sf-primary p-3"
+      >
+        <div class="flex flex-col justify-between">
+          <div class="text-xl font-bold text-sf-theme">轻舟简历</div>
+          <div class="">愿你能去到想去的地方</div>
+          <!-- <div>永久地址</div> -->
+          <div>{{ resumeUrl }}</div>
+        </div>
+        <div class="h-30 w-30 rounded-3xl bg-white">
+          <SfQrcode :value="resumeUrl" :size="220" />
+        </div>
       </div>
-      <p class="max-w-full text-center text-sm break-all text-sf-text-2">{{ resumeUrl }}</p>
       <div class="flex w-full gap-3">
-        <SfButton class="flex-1" type="bg" @click="saveQrCode">保存图片</SfButton>
-        <SfButton class="flex-1" @click="copyLink">复制链接</SfButton>
+        <SfButton class="flex-1" @click="saveQrCode">保存图片</SfButton>
+        <SfButton class="flex-1" type="bg" @click="copyLink">复制链接</SfButton>
+      </div>
+      <div class="whitespace-normal">
+        <span>
+          同款服务器，中国香港 100G+高防，2核2G20M 三网直连(CN2+CMI+CUG) ≈35ms，仅需33元/月。
+        </span>
+        <span class="cursor-pointer font-medium text-sf-theme" @click="goBuy"> 点击这里购买 </span>
+        <span> 送5折券 </span>
       </div>
     </div>
   </SfModal>
