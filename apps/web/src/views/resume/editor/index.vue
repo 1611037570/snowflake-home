@@ -64,9 +64,6 @@
     </div>
     <!-- 非推荐浏览器时显示建议提示 -->
     <DetectTip />
-    <!-- 问题反馈与分享入口：固定在编辑器视口右下角 -->
-    <IssueFeedback v-if="!focusMode && !isMobile" />
-    <Share v-if="!focusMode && !isMobile" />
   </div>
 </template>
 
@@ -84,8 +81,6 @@ import Header from "./components/header/index.vue";
 import ExportMask from "./components/exportMask.vue";
 import DetectTip from "./components/detectTip.vue";
 import MobileWorkspaceNav from "./components/mobileWorkspaceNav.vue";
-import IssueFeedback from "../components/issueFeedback.vue";
-import Share from "../components/share.vue";
 import Preview from "./preview/index.vue";
 import Toolbar from "./toolbar/index.vue";
 import { PROJECT_ICON_LIST } from "./data/localIcons";
