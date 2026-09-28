@@ -70,7 +70,7 @@ export const useResumeLayout = ({
       moduleKeys: activeModuleKeys.value,
       paddingVertical: Number(ui.value.page?.padding?.vertical) || 0,
       paddingHorizontal: Number(ui.value.page?.padding?.horizontal) || 0,
-      gap: Number(ui.value.spacing?.module) || 0,
+      gap: Number(ui.value.page?.spacing?.module) || 0,
       leftColumnWidth: Number(ui.value.layout?.leftColumnWidth) || defaultLeftColumnWidth,
     }),
   );
@@ -120,8 +120,11 @@ export const useResumeLayout = ({
   );
   const watchSource = computed(() => ({
     page: ui.value.page,
+    pageSpacing: {
+      module: ui.value.page?.spacing?.module,
+      paragraph: ui.value.page?.spacing?.paragraph,
+    },
     font: ui.value.font,
-    spacing: ui.value.spacing,
     theme: ui.value.theme,
     layout: ui.value.layout,
     fontReadyVersion: fontReadyVersion.value,

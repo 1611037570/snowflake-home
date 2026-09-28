@@ -61,6 +61,7 @@ const createThemeTemplate = (
   const baseUi = {
     page: {
       padding: { vertical: 24, horizontal: 24 },
+      spacing: { paragraph: 12, module: 12 },
       footer: "",
     },
     font: {
@@ -76,10 +77,6 @@ const createThemeTemplate = (
       linkUnderline: false,
       dateStyle: "dot",
       datePosition: "right",
-    },
-    spacing: {
-      paragraph: 12,
-      module: 12,
     },
     theme: {
       template: id,
@@ -104,10 +101,14 @@ const createThemeTemplate = (
   const presetUi = {
     ...baseUi,
     ...ui,
-    page: { ...baseUi.page, ...ui.page },
+    page: {
+      ...baseUi.page,
+      ...ui.page,
+      padding: { ...baseUi.page.padding, ...ui.page?.padding },
+      spacing: { ...baseUi.page.spacing, ...ui.page?.spacing },
+    },
     font: { ...baseUi.font, ...ui.font },
     content: { ...baseUi.content, ...ui.content },
-    spacing: { ...baseUi.spacing, ...ui.spacing },
     theme: { ...baseUi.theme, ...ui.theme },
     layout: { ...baseUi.layout, ...ui.layout },
     user: { ...baseUi.user, ...ui.user },
@@ -134,13 +135,15 @@ export const themeTemplateList = [
   createThemeTemplate("商务", "business", "适合职场与商务场景的正式简历样式。", {
     theme: { color: "#1E3A5F" },
     font: { size: 15, titleSize: 21 },
-    spacing: { module: 18 },
+    page: { spacing: { module: 18 } },
     content: { dateStyle: "cn" },
   }),
   createThemeTemplate("简约", "minimal", "减少视觉干扰，突出内容本身的简历样式。", {
     theme: { color: "#111827" },
-    page: { padding: { vertical: 30, horizontal: 30 } },
-    spacing: { paragraph: 6, module: 9 },
+    page: {
+      padding: { vertical: 30, horizontal: 30 },
+      spacing: { paragraph: 6, module: 9 },
+    },
   }),
   createThemeTemplate("经典", "classic", "适合传统行业与正式投递的经典简历样式。", {
     theme: { color: "#7C3AED", titleIconMode: "icon" },
@@ -168,13 +171,13 @@ export const themeTemplateList = [
   createThemeTemplate("稳重", "steady", "适合经验型岗位与正式求职的稳重简历样式。", {
     theme: { color: "#475569" },
     font: { size: 15, lineHeight: 1.3 },
-    spacing: { module: 18 },
+    page: { spacing: { module: 18 } },
     content: { dateStyle: "cn" },
   }),
   createThemeTemplate("线框", "outline", "以纯黑细线勾勒模块外边框的线框简历样式。", {
     theme: { color: "#000000" },
     font: { titleSize: 18 },
-    spacing: { module: 48 },
+    page: { spacing: { module: 48 } },
     content: { dateStyle: "cn" },
   }),
   createThemeTemplate(
@@ -368,13 +371,18 @@ export const uiParamRanges = {
   // 行高
   "font.lineHeight": { min: 1, max: 2, step: 0.1 },
   // 段落间距
-  "spacing.paragraph": { min: 0, max: 36, step: 3 },
+  "page.spacing.paragraph": { min: 0, max: 36, step: 3 },
   // 模块间距
-  "spacing.module": { min: 2, max: 48, step: 1 },
+  "page.spacing.module": { min: 2, max: 48, step: 1 },
 };
 export const DEFAULT_UI = {
   page: {
     padding: { vertical: defaultPaddingVertical, horizontal: defaultPaddingHorizontal },
+    // 页面内留白参数统一由页面配置管理。
+    spacing: {
+      paragraph: defaultParagraphSpacing,
+      module: defaultModuleSpacing,
+    },
     footer: defaultFooter,
   },
   font: {
@@ -390,10 +398,6 @@ export const DEFAULT_UI = {
     linkUnderline: defaultLinkUnderline,
     dateStyle: defaultDateStyle,
     datePosition: defaultDatePosition,
-  },
-  spacing: {
-    paragraph: defaultParagraphSpacing,
-    module: defaultModuleSpacing,
   },
   theme: {
     color: defaultThemeColor,
