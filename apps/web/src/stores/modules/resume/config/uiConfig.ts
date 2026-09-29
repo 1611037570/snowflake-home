@@ -15,12 +15,20 @@ export const fontFamilyList = [
     value: "text-puhui",
   },
   {
-    name: "汉仪易烊千玺体",
-    value: "text-yyqx",
+    name: "思源宋体",
+    value: "text-source-han-serif",
   },
   {
-    name: "跟随系统",
-    value: "null",
+    name: "思源黑体",
+    value: "text-source-han-sans",
+  },
+  {
+    name: "霞鹜新晰黑",
+    value: "text-lxgw-neo-xihei",
+  },
+  {
+    name: "霞鹜文楷 Lite",
+    value: "text-lxgw-wenkai-lite",
   },
 ];
 
