@@ -98,6 +98,55 @@ const createSingleColumnLayoutTemplate = ({
     regionGap: 0,
   });
 
+/** 个人信息独占顶部区域，正文保持单栏顺序。 */
+const createTopUserSingleColumnLayout = ({
+  moduleKeys,
+  pageSize,
+  pagePadding,
+  gap,
+  regionGap,
+}: CreatePageLayoutTemplateOptions): PageLayoutConfig => {
+  if (!moduleKeys.includes("user")) {
+    return createSingleColumnLayoutTemplate({
+      moduleKeys,
+      pageSize,
+      pagePadding,
+      gap,
+      regionGap,
+      columnGap: 0,
+    });
+  }
+  return {
+    pageSize,
+    pagePadding,
+    regionGap,
+    columnGap: 0,
+    regions: [
+      {
+        id: "header",
+        order: 0,
+        height: { mode: "auto" },
+        columns: [
+          { id: "header-column", width: { mode: "ratio", value: 1 }, gap: 0, moduleKeys: ["user"] },
+        ],
+      },
+      {
+        id: "main",
+        order: 1,
+        height: { mode: "remaining" },
+        columns: [
+          {
+            id: "main-column",
+            width: { mode: "ratio", value: 1 },
+            gap,
+            moduleKeys: moduleKeys.filter((key) => key !== "user"),
+          },
+        ],
+      },
+    ],
+  };
+};
+
 /** 创建个人信息顶部通栏、其他模块双栏的布局。 */
 const createTopUserTwoColumnLayout = ({
   moduleKeys,
@@ -181,6 +230,9 @@ export const createPageLayoutTemplate = ({
 }): PageLayoutConfig => {
   if (templateId === "singleColumn") {
     return createSingleColumnLayoutTemplate(options);
+  }
+  if (templateId === "topUserSingleColumn") {
+    return createTopUserSingleColumnLayout(options);
   }
   if (templateId === "topUserTwoColumn") {
     return createTopUserTwoColumnLayout({ ...options, columns });
