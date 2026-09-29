@@ -57,8 +57,15 @@ const goTimelineFill = (key) => {
   visible.value = false;
 };
 
-// 时间线问题类型标签（仅保留间隙过大）
-const getTypeLabel = () => $t("issueGap");
+// 时间线问题类型标签与问题等级保持一致。
+const getTypeLabel = (issue) =>
+  $t(
+    {
+      gap: "issueGap",
+      range: "issueRange",
+      future: "issueFuture",
+    }[issue.type] || "issueGap",
+  );
 
 // 按进度区间返回进度条颜色
 const getProgressColor = (progress) => {
@@ -132,10 +139,25 @@ const getProgressColor = (progress) => {
             </div>
             <div
               v-if="item.issues.length"
-              class="mt-2 flex flex-col gap-1 rounded-xl bg-sf-warning-2 p-2 text-sm text-sf-warning"
+              class="mt-2 flex flex-col gap-1 rounded-xl bg-sf-bg-2 p-2 text-sm"
             >
-              <div class="font-medium">{{ $t("formatIssues") }}</div>
-              <div v-for="(issue, index) in item.issues" :key="index">
+              <div class="font-medium">{{ $t("atsChecks") }}</div>
+              <div
+                v-for="(issue, index) in item.issues"
+                :key="index"
+                class="flex items-start gap-3"
+                :class="issue.severity === 'error' ? 'text-sf-error' : 'text-sf-warning'"
+              >
+                <span
+                  class="shrink-0 rounded-full px-3 text-xs"
+                  :class="
+                    issue.severity === 'error'
+                      ? 'bg-sf-error-2 text-sf-error'
+                      : 'bg-sf-warning-2 text-sf-warning'
+                  "
+                >
+                  {{ $t(issue.severity === "error" ? "issueError" : "issueWarning") }}
+                </span>
                 {{ issue.label }}：{{ issue.message }}
               </div>
             </div>
@@ -152,7 +174,7 @@ const getProgressColor = (progress) => {
                 <span
                   class="shrink-0 rounded-full bg-sf-warning-2 px-2 py-0.5 text-xs text-sf-warning"
                 >
-                  {{ getTypeLabel() }}
+                  {{ getTypeLabel(issue) }}
                 </span>
                 <span class="text-sf-text">{{ issue.text }}</span>
               </div>

@@ -2,7 +2,7 @@ import { xiaozhou } from "../avatar";
 
 const resumeData: any = {
   data: {
-    user: { ui: { archived: false }, data: { position: "英国商科硕士申请", name: "宋雨", birthday: "2002-11", phone: "15888888888", email: "16****70@qq.com", workTime: "2025.07.01", sex: "女", avatar: xiaozhou } },
+    user: { ui: { archived: false }, data: { position: "英国商科硕士申请", name: "宋雨", birthday: "2002.11", phone: "15888888888", email: "16****70@qq.com", workTime: "2025.07", sex: "女", avatar: xiaozhou } },
     skill: { ui: { collapsed: ["1"], archived: false }, data: { content: "<p><strong>1、</strong>具备金融分析、商业研究与英文材料撰写能力，熟练使用 Excel 与 PowerPoint。</p><p><strong>2、</strong>雅思 7.0，能够使用英语完成课堂展示、研究报告与跨文化沟通。</p>" } },
     advantage: { ui: { collapsed: ["1"], archived: false }, data: { content: "<p>具备良好的信息搜集、逻辑分析与文字表达能力，能够围绕业务问题整理资料并形成清晰结论。</p><p>对金融市场保持关注，做事细致守时，能够适应多任务协作与阶段性项目安排。</p>" } },
     education: { ui: { collapsed: ["1"], archived: false }, list: [{ ui: {}, data: { name: "上海财经大学", education: "本科", post: "金融学", startTime: "2021.09", endTime: "2025.06", content: "<p>GPA 3.7/4.0，雅思 7.0。</p>", mode: "全日制" } }] },

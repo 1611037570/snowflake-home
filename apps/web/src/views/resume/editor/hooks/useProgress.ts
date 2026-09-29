@@ -21,11 +21,27 @@ const getValueByPath = (obj: any, path: (string | number)[]): any => {
   return cur;
 };
 
+// 可添加字段只有数据路径已创建后才进入完成度和 ATS 统计。
+const hasDataPath = (obj: any, path: (string | number)[]): boolean => {
+  let cur = obj;
+  for (const key of path) {
+    if (cur == null || !Object.prototype.hasOwnProperty.call(cur, key)) return false;
+    cur = cur[key];
+  }
+  return true;
+};
+
 const isEmpty = (val: any): boolean =>
   val == null ||
   (typeof val === "string" && val.trim() === "") ||
   (Array.isArray(val) && val.length === 0) ||
   (typeof val === "object" && !Array.isArray(val) && Object.keys(val).length === 0);
+
+// 复合可选字段的子项全空时不参与格式检查。
+const isDeepEmpty = (val: any): boolean =>
+  isEmpty(val) ||
+  (Array.isArray(val) && val.every(isDeepEmpty)) ||
+  (typeof val === "object" && !Array.isArray(val) && Object.values(val).every(isDeepEmpty));
 
 const isContentEmpty = (val: any): boolean => {
   if (typeof val !== "string") return true;
@@ -45,13 +61,80 @@ const isRequiredField = (field: any): boolean =>
   field?.rules?.some((rule: any) => rule?.required === true) === true;
 
 const getRuleIssues = (rules: any[], value: unknown, label: string) => {
-  if (isEmpty(value)) return [];
+  if (isDeepEmpty(value)) return [];
   return rules.flatMap((rule) => {
-    if (!(rule?.pattern instanceof RegExp)) return [];
-    rule.pattern.lastIndex = 0;
-    return rule.pattern.test(String(value))
-      ? []
-      : [{ label, message: rule.message || $t("invalidFormat") }];
+    if (rule?.pattern instanceof RegExp) {
+      if (typeof value !== "string" && typeof value !== "number") return [];
+      rule.pattern.lastIndex = 0;
+      return rule.pattern.test(String(value))
+        ? []
+        : [{ label, message: rule.message || $t("invalidFormat"), severity: "error" }];
+    }
+
+    const atsRule = rule?.ats;
+    if (!atsRule?.type) return [];
+    const addIssue = (message: string, issueLabel = label) => [
+      { label: issueLabel, message, severity: atsRule.severity || "warning" },
+    ];
+    if (atsRule.type === "wechat") {
+      return /^[a-zA-Z][-_a-zA-Z0-9]{5,19}$/.test(String(value))
+        ? []
+        : addIssue($t("atsWechatFormat"));
+    }
+    if (["url", "projectLink", "socialLink"].includes(atsRule.type)) {
+      const urlValue =
+        typeof value === "string"
+          ? value
+          : value && typeof value === "object"
+            ? value.url
+            : "";
+      if (!urlValue) {
+        const hasLinkName = value && typeof value === "object" && !isDeepEmpty(value.name);
+        return hasLinkName ? addIssue($t("atsLinkRequired")) : [];
+      }
+      const input = String(urlValue).trim();
+      try {
+        const normalized = /^[a-z][a-z\d+.-]*:\/\//i.test(input) ? input : `https://${input}`;
+        const parsed = new URL(normalized);
+        return ["http:", "https:"].includes(parsed.protocol) && parsed.hostname.includes(".")
+          ? []
+          : addIssue($t("atsUrlFormat"));
+      } catch {
+        return addIssue($t("atsUrlFormat"));
+      }
+    }
+    if (atsRule.type === "numberFields") {
+      return (atsRule.fields ?? []).flatMap((field: any) => {
+        const fieldValue = value?.[field.key];
+        if (isDeepEmpty(fieldValue)) return [];
+        const normalized = String(fieldValue).trim().replace(/\s*(cm|kg|厘米|公斤)$/i, "");
+        const number = Number(normalized);
+        return Number.isFinite(number) && number >= field.min && number <= field.max
+          ? []
+          : addIssue($t("atsNumberRange", { min: field.min, max: field.max }), $t(field.label));
+      });
+    }
+    if (atsRule.type === "salaryRange") {
+      const match = String(value).match(/^(\d+(?:\.\d+)?)k-(?:(\d+(?:\.\d+)?)k)?$/i);
+      const above = String(value).match(/^(\d+(?:\.\d+)?)k以上$/i);
+      if (above) return Number(above[1]) > 0 ? [] : addIssue($t("atsSalaryRange"));
+      if (!match || Number(match[1]) <= 0) return addIssue($t("atsSalaryRange"));
+      if (match[2] && Number(match[2]) <= Number(match[1])) return addIssue($t("atsSalaryOrder"));
+      return [];
+    }
+    if (atsRule.type === "contentQuality") {
+      if (isContentEmpty(String(value))) return [];
+      const content = String(value)
+        .replace(/<[^>]*>/g, " ")
+        .replace(/&nbsp;|&#160;/gi, " ")
+        .replace(/\s+/g, " ")
+        .trim();
+      if (/待补充|待完善|请填写|TODO|TBD|XXX/i.test(content)) {
+        return addIssue($t("atsPlaceholderContent"));
+      }
+      return Array.from(content).length < 20 ? addIssue($t("atsContentTooShort")) : [];
+    }
+    return [];
   });
 };
 
@@ -76,18 +159,41 @@ function analyzeModule(moduleConfig: any, rootData: any) {
   }
 
   const missing: string[] = [];
-  const issues: Array<{ label: string; message: string }> = [];
+  const issues: Array<{ label: string; message: string; severity?: "error" | "warning" }> = [];
   let done = 0;
   let total = 0;
   // 模块字段统一从分组上下文解析相对路径
   const moduleContext = moduleConfig.context?.length
     ? createDataPathContext(moduleConfig.context)
     : undefined;
+  const moduleFields: Array<{ field: any; inheritedRules: any[]; inheritedLabel?: string }> = [];
+  const collectModuleFields = (
+    fields: any[],
+    inheritedRules: any[] = [],
+    inheritedLabel?: string,
+  ) => {
+    for (const candidate of fields) {
+      if (candidate.type === "group") {
+        collectModuleFields(
+          candidate.fields ?? [],
+          [...inheritedRules, ...(candidate.rules ?? [])],
+          candidate.props?.label || inheritedLabel,
+        );
+      } else {
+        moduleFields.push({ field: candidate, inheritedRules, inheritedLabel });
+      }
+    }
+  };
+  // 展开个人信息等包裹组，让其中的动态字段也参与 ATS 检查。
+  collectModuleFields(moduleConfig.fields);
 
-  for (const field of moduleConfig.fields) {
+  for (const { field, inheritedRules, inheritedLabel } of moduleFields) {
     if (field.type === "array" && field.itemSchema) {
       const itemSchema = field.itemSchema;
-      const parentRequired = isRequiredField(itemSchema) || isRequiredField(field);
+      const parentRequired =
+        inheritedRules.some((rule) => rule?.required === true) ||
+        isRequiredField(itemSchema) ||
+        isRequiredField(field);
       const itemDefs: Array<{ field: any; target: any; required: boolean }> = [];
       const collectItemFields = (fields: any[], inheritedRequired: boolean) => {
         for (const candidate of fields) {
@@ -143,6 +249,13 @@ function analyzeModule(moduleConfig: any, rootData: any) {
       }
 
       list.forEach((_: any, idx: number) => {
+        issues.push(
+          ...getRuleIssues(
+            itemSchema.rules ?? [],
+            { name: list[idx]?.data?.name, url: list[idx]?.data?.url },
+            `${getFieldLabel(itemSchema) || $t("socialAccounts")} · ${$t("recordIndex", { index: idx + 1 })}`,
+          ),
+        );
         for (const def of itemDefs) {
           const { src, prop } = getFieldMeta(def.target);
           if (!src.length) continue;
@@ -155,7 +268,13 @@ function analyzeModule(moduleConfig: any, rootData: any) {
             ...(def.field.rules ?? []),
             ...(def.target === def.field ? [] : (def.target.rules ?? [])),
           ];
-          issues.push(...getRuleIssues(rules, value, getLabel(def.field, prop)));
+          issues.push(
+            ...getRuleIssues(
+              rules,
+              value,
+              `${getLabel(def.field, prop)} · ${$t("recordIndex", { index: idx + 1 })}`,
+            ),
+          );
           if (!def.required) continue;
 
           // 修改：使用 src 最后一个元素判断是否为 content
@@ -179,10 +298,21 @@ function analyzeModule(moduleConfig: any, rootData: any) {
     const { src, prop } = getFieldMeta(target);
     if (!src.length) continue;
 
-    const value = getValueByPath(rootData, resolveDataPath(src, moduleContext));
-    const rules = [...(field.rules ?? []), ...(target === field ? [] : (target.rules ?? []))];
-    issues.push(...getRuleIssues(rules, value, getLabel(field, prop)));
-    if (!isRequiredField(target) && !isRequiredField(field)) continue;
+    const resolvedPath = resolveDataPath(src, moduleContext);
+    if ((field.addable || target.addable) && !hasDataPath(rootData, resolvedPath)) continue;
+    const value = getValueByPath(rootData, resolvedPath);
+    const rules = [
+      ...inheritedRules,
+      ...(field.rules ?? []),
+      ...(target === field ? [] : (target.rules ?? [])),
+    ];
+    const fieldLabel = getFieldLabel(field) || inheritedLabel || prop || $t("field");
+    issues.push(...getRuleIssues(rules, value, fieldLabel));
+    const required =
+      inheritedRules.some((rule) => rule?.required === true) ||
+      isRequiredField(target) ||
+      isRequiredField(field);
+    if (!required) continue;
 
     // 修改：使用 src 最后一个元素判断是否为 content
     const filled = src[src.length - 1] === "content" ? !isContentEmpty(value) : !isEmpty(value);
@@ -193,13 +323,16 @@ function analyzeModule(moduleConfig: any, rootData: any) {
     } else {
       const label = ["wangEditor", "resumeContentEditor"].includes(target.component)
         ? "内容"
-        : getLabel(field, prop);
+        : fieldLabel;
       if (!missing.includes(label)) missing.push(label);
     }
   }
 
   const score = total ? Math.round((done / total) * 10) : 0;
-  return { missing, issues, score };
+  const uniqueIssues = [
+    ...new Map(issues.map((issue) => [`${issue.label}:${issue.message}`, issue])).values(),
+  ];
+  return { missing, issues: uniqueIssues, score };
 }
 
 // ==================== 时间线一致性检查 ====================
@@ -208,7 +341,7 @@ const GAP_THRESHOLD_MONTHS = 6;
 
 const parseMonth = (str: any) => {
   if (typeof str !== "string") return null;
-  const match = str.match(/^(\d{4})\.(\d{1,2})$/);
+  const match = str.match(/^(\d{4})\.(0[1-9]|1[0-2])$/);
   if (!match) return null;
   return Number(match[1]) * 12 + Number(match[2]);
 };
@@ -270,8 +403,21 @@ function checkTimeline(modules: Array<{ key: string; config: any }>, rootData: a
 
     if (!entries.length) continue;
 
-    const sorted = [...entries].sort((a: any, b: any) => a.start - b.start);
+    const sorted = entries.filter((entry: any) => entry.end >= entry.start).sort((a: any, b: any) => a.start - b.start);
     const issues: any[] = [];
+
+    for (const entry of entries) {
+      const entryLabel = `${entry.name || $t("unnamed")} · ${$t("recordIndex", { index: entry.index + 1 })}`;
+      if (entry.start > entry.end) {
+        issues.push({ type: "range", text: $t("timelineRangeMessage", { entry: entryLabel }) });
+      }
+      if (
+        ["work", "project"].includes(key) &&
+        (entry.start > currentMonth() || entry.end > currentMonth())
+      ) {
+        issues.push({ type: "future", text: $t("timelineFutureMessage", { entry: entryLabel }) });
+      }
+    }
 
     for (let i = 0; i < sorted.length - 1; i++) {
       const gap = sorted[i + 1].start - sorted[i].end;

@@ -51,10 +51,10 @@ const defaultData: any = {
       data: {
         position: "独立开发者",
         name: "小舟",
-        birthday: "2000-07",
+        birthday: "2000.07",
         phone: "158****2637",
         email: "161****570@qq.com",
-        workTime: "2022.08.01",
+        workTime: "2022.08",
         sex: "女",
         avatar: xiaozhou,
         mbti: "",
@@ -364,7 +364,7 @@ const resumeData: any = {
       ...defaultData.data.user,
       data: {
         ...defaultData.data.user.data,
-        birthday: dayjs().subtract(18, "year").format("YYYY-MM"),
+        birthday: dayjs().subtract(18, "year").format("YYYY.MM"),
       },
     },
   },

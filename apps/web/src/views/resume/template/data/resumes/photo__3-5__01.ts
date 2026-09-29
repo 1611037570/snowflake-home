@@ -8,10 +8,10 @@ const resumeData: any = {
       data: {
         position: "商业摄影师",
         name: "陈川",
-        birthday: "1998-04",
+        birthday: "1998.04",
         phone: "15888888888",
         email: "16****70@qq.com",
-        workTime: "2020.07.01",
+        workTime: "2020.07",
         sex: "男",
         avatar: xiaoyang,
       },

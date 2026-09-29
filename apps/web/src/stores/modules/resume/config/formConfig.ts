@@ -21,6 +21,11 @@ const DEFAULT_DRAG_CLASS = ".item-drag";
 const DEFAULT_COL_CLASS = "rounded-3xl border border-sf-bg-3 bg-sf-primary";
 // 必填与日期格式规则统一供完成度统计和 ATS 检查读取。
 const requiredFieldRule = () => ({ required: true, message: "请填写此项", trigger: "blur" });
+// ATS 规则仅生成分析提醒，不阻止用户保存字段内容。
+const atsRule = (type: string, options: Record<string, any> = {}) => ({
+  ats: { type, severity: "warning", ...options },
+});
+const contentQualityRule = () => atsRule("contentQuality");
 const MONTH_FORMAT_RULE = {
   pattern: /^\d{4}\.(0[1-9]|1[0-2])$/,
   message: "日期格式应为 YYYY.MM",
@@ -466,6 +471,7 @@ export const DEFAULT_USER_FORM = [
               placeholder: "请输入微信",
               clearable: true,
             },
+            rules: [atsRule("wechat")],
           }),
           // GitHub
           createMoreField({
@@ -479,6 +485,7 @@ export const DEFAULT_USER_FORM = [
               placeholder: "请输入 GitHub 地址",
               clearable: true,
             },
+            rules: [atsRule("url")],
           }),
           createMoreField({
             key: "linkedin",
@@ -491,6 +498,7 @@ export const DEFAULT_USER_FORM = [
               placeholder: "请输入 LinkedIn 地址",
               clearable: true,
             },
+            rules: [atsRule("url")],
           }),
           // 个人网站链接
           createMoreField({
@@ -505,6 +513,7 @@ export const DEFAULT_USER_FORM = [
               placeholder: "请输入个人网站地址",
               clearable: true,
             },
+            rules: [atsRule("url")],
           }),
           // 求职状态
           createMoreField({
@@ -612,6 +621,7 @@ export const DEFAULT_USER_FORM = [
             component: "salaryRange",
             iconKey: "personal-salary",
             addable: true,
+            rules: [atsRule("salaryRange")],
           }),
           createMoreField({
             key: "heightWeight",
@@ -620,6 +630,14 @@ export const DEFAULT_USER_FORM = [
             component: "heightWeight",
             iconKey: "personal-height-weight",
             addable: true,
+            rules: [
+              atsRule("numberFields", {
+                fields: [
+                  { key: "height", label: "height", min: 100, max: 250 },
+                  { key: "weight", label: "weight", min: 25, max: 300 },
+                ],
+              }),
+            ],
           }),
           createMoreField({
             key: "measurements",
@@ -628,6 +646,15 @@ export const DEFAULT_USER_FORM = [
             component: "measurements",
             iconKey: "personal-height-weight",
             addable: true,
+            rules: [
+              atsRule("numberFields", {
+                fields: [
+                  { key: "bust", label: "bust", min: 30, max: 250 },
+                  { key: "waist", label: "waist", min: 30, max: 250 },
+                  { key: "hip", label: "hip", min: 30, max: 250 },
+                ],
+              }),
+            ],
           }),
           createMoreField({
             key: "sizes",
@@ -683,7 +710,7 @@ export const DEFAULT_ACCOUNT_FORM = {
         ],
         type: "object",
         component: "rowAccount",
-        rules: [requiredFieldRule()],
+        rules: [requiredFieldRule(), atsRule("socialLink")],
       },
     },
   ],
@@ -748,6 +775,7 @@ export const DEFAULT_EDUCATION_FORM = {
             type: "object",
             label: "项目链接",
             component: "projectLink",
+            rules: [atsRule("projectLink")],
             span: 24,
             model: {
               source: ["data", "link"],
@@ -923,6 +951,7 @@ export const DEFAULT_EDUCATION_FORM = {
             type: "object",
             label: "经历",
             component: "resumeContentEditor",
+            rules: [contentQualityRule()],
             span: 24,
             props: {
               kind: "education",
@@ -956,7 +985,7 @@ export const DEFAULT_SKILL_FORM = {
     {
       type: "object",
       component: "resumeContentEditor",
-      rules: [requiredFieldRule()],
+      rules: [requiredFieldRule(), contentQualityRule()],
       props: {
         kind: "skill",
       },
@@ -983,7 +1012,7 @@ export const DEFAULT_ADVANTAGE_FORM = {
     {
       type: "object",
       component: "resumeContentEditor",
-      rules: [requiredFieldRule()],
+      rules: [requiredFieldRule(), contentQualityRule()],
       props: {
         kind: "advantage",
       },
@@ -1054,6 +1083,7 @@ export const DEFAULT_WORK_FORM = {
             type: "object",
             label: "项目链接",
             component: "projectLink",
+            rules: [atsRule("projectLink")],
             span: 24,
             model: {
               source: ["data", "link"],
@@ -1170,7 +1200,7 @@ export const DEFAULT_WORK_FORM = {
           {
             type: "object",
             label: "经历",
-            rules: [requiredFieldRule()],
+            rules: [requiredFieldRule(), contentQualityRule()],
             component: "resumeContentEditor",
             span: 24,
             props: {
@@ -1249,6 +1279,7 @@ export const DEFAULT_PROJECT_FORM = {
             type: "object",
             label: "项目链接",
             component: "projectLink",
+            rules: [atsRule("projectLink")],
             span: 24,
             model: {
               source: ["data", "link"],
@@ -1366,7 +1397,7 @@ export const DEFAULT_PROJECT_FORM = {
             type: "object",
             label: "经历",
             component: "resumeContentEditor",
-            rules: [requiredFieldRule()],
+            rules: [requiredFieldRule(), contentQualityRule()],
             span: 24,
             props: {
               kind: "project",
@@ -1631,6 +1662,7 @@ export const DEFAULT_CUSTOM_FORM = {
             type: "object",
             label: "项目链接",
             component: "projectLink",
+            rules: [atsRule("projectLink")],
             span: 24,
             model: {
               source: ["data", "link"],
@@ -1744,7 +1776,7 @@ export const DEFAULT_CUSTOM_FORM = {
           {
             type: "object",
             label: "经历",
-            rules: [requiredFieldRule()],
+            rules: [requiredFieldRule(), contentQualityRule()],
             component: "wangEditor",
             span: 24,
             model: {

@@ -2,7 +2,7 @@ import { xiaoyang } from "../avatar";
 
 const resumeData: any = {
   data: {
-    user: { ui: { archived: false }, data: { position: "计算机科学与技术硕士申请", name: "周航", birthday: "2002-03", phone: "15888888888", email: "16****70@qq.com", workTime: "2025.07.01", sex: "男", avatar: xiaoyang } },
+    user: { ui: { archived: false }, data: { position: "计算机科学与技术硕士申请", name: "周航", birthday: "2002.03", phone: "15888888888", email: "16****70@qq.com", workTime: "2025.07", sex: "男", avatar: xiaoyang } },
     skill: { ui: { collapsed: ["1"], archived: false }, data: { content: "<p><strong>1、</strong>掌握 Python、机器学习基础与数据处理方法，具备科研复现和实验分析能力。</p><p><strong>2、</strong>参与算法竞赛与课题研究，能够独立阅读论文并完成技术报告撰写。</p>" } },
     advantage: { ui: { collapsed: ["1"], archived: false }, data: { content: "<p>具备扎实的计算机专业基础与持续学习能力，能够快速理解研究问题并将其拆解为可执行的实验任务。</p><p>做事认真细致，善于查阅论文、整理数据并清晰呈现研究过程与结论。</p>" } },
     education: { ui: { collapsed: ["1"], archived: false }, list: [{ ui: {}, data: { name: "北京邮电大学", education: "本科", post: "计算机科学与技术", startTime: "2021.09", endTime: "2025.06", content: "<p>GPA 3.8/4.0，专业排名前 10%。</p>", mode: "全日制" } }] },
