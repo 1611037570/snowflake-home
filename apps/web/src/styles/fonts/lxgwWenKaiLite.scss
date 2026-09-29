@@ -1,9 +1,5 @@
-@font-face {
-  font-family: "LXGWWenKaiLite";
-  src: url("../../assets/fonts/LXGWWenKaiLite-Regular.ttf") format("truetype");
-  font-display: swap;
-}
+@import url("https://cdn.jsdelivr.net/npm/lxgw-wenkai-lite-webfont@1.7.0/lxgwwenkailite-regular.css");
 
 .text-lxgw-wenkai-lite {
-  font-family: "LXGWWenKaiLite";
+  font-family: "LXGW WenKai Lite";
 }

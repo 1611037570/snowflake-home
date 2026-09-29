@@ -28,7 +28,17 @@ registerFonts([
   },
   {
     key: "text-lxgw-wenkai-lite",
-    family: "LXGWWenKaiLite",
+    family: "LXGW WenKai Lite",
     load: () => import("../../styles/fonts/lxgwWenKaiLite.scss"),
+  },
+  {
+    key: "text-inter",
+    family: "Inter",
+    load: () => import("../../styles/fonts/inter.scss"),
+  },
+  {
+    key: "text-eb-garamond",
+    family: "EB Garamond",
+    load: () => import("../../styles/fonts/ebGaramond.scss"),
   },
 ]);
