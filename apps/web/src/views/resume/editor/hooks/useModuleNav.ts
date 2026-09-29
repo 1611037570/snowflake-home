@@ -142,18 +142,40 @@ const { currentData, runtimeFields } = storeToRefs(resumeStore);
 const { searchIndex } = useResumeSearch();
 const PREVIEW_HIGHLIGHT_DELAY = 10;
 const EDITOR_HIGHLIGHT_DELAY = 0;
-// 定位滚动期间的保护时长：滚动结束前的鼠标进入不应清除定位边框
-const PREVIEW_HIGHLIGHT_LOCK = 500;
+// 鼠标进入事件可能由滚动触发，等滚动停止后再允许清除定位高亮
+const PREVIEW_SCROLL_SETTLE_DELAY = 150;
+const PREVIEW_SCROLL_FALLBACK_DELAY = 2000;
 let previewHighlightTimer: number | null = null;
-let previewHighlightLock = 0;
+let previewHighlightLock = false;
+let previewScrollTarget: EventTarget | null = null;
+let previewScrollSettleTimer: number | null = null;
 let editorHighlightTimer: number | null = null;
 // 左侧搜索定位使用独立状态，不写入预览选择按钮使用的 selectedModule
 export const previewSelectedModule = ref<string | null>(null);
 
+const releasePreviewHighlightLock = () => {
+  if (previewScrollTarget) {
+    previewScrollTarget.removeEventListener("scroll", settlePreviewScroll);
+    previewScrollTarget.removeEventListener("scrollend", settlePreviewScroll);
+    previewScrollTarget = null;
+  }
+  if (previewScrollSettleTimer !== null) window.clearTimeout(previewScrollSettleTimer);
+  previewScrollSettleTimer = null;
+  previewHighlightLock = false;
+};
+
+const settlePreviewScroll = () => {
+  if (previewScrollSettleTimer !== null) window.clearTimeout(previewScrollSettleTimer);
+  previewScrollSettleTimer = window.setTimeout(
+    releasePreviewHighlightLock,
+    PREVIEW_SCROLL_SETTLE_DELAY,
+  );
+};
+
 // 鼠标进入定位模块后清除预览边框
 export const clearPreviewSelection = (key: string) => {
   // 滚动定位尚未结束时忽略鼠标进入，避免边框刚出现就被清除
-  if (Date.now() < previewHighlightLock) return;
+  if (previewHighlightLock) return;
   if (previewSelectedModule.value === key) previewSelectedModule.value = null;
 };
 
@@ -188,9 +210,10 @@ const moduleList = computed(() => {
 // 跳转预览区：滚动定位并激活当前模块边框
 export const jumpPreview = (key: string) => {
   if (previewHighlightTimer !== null) window.clearTimeout(previewHighlightTimer);
+  releasePreviewHighlightLock();
   previewSelectedModule.value = null;
   // 滚动动画期间锁住鼠标进入的清除行为
-  previewHighlightLock = Date.now() + PREVIEW_HIGHLIGHT_LOCK;
+  previewHighlightLock = true;
   // 延迟添加边框，避开查找滚动触发的鼠标进入事件
   previewHighlightTimer = window.setTimeout(() => {
     previewSelectedModule.value = key;
@@ -200,7 +223,18 @@ export const jumpPreview = (key: string) => {
     const target = document.querySelector<HTMLElement>(
       `.resume-page-item .resume-module-wrapper[data-module="${key}"]`,
     );
-    useScrollEditorTo(target);
+    const scrollTarget = useScrollEditorTo(target);
+    if (!scrollTarget) {
+      releasePreviewHighlightLock();
+      return;
+    }
+    previewScrollTarget = scrollTarget;
+    previewScrollTarget.addEventListener("scroll", settlePreviewScroll, { passive: true });
+    previewScrollTarget.addEventListener("scrollend", settlePreviewScroll, { passive: true });
+    previewScrollSettleTimer = window.setTimeout(
+      releasePreviewHighlightLock,
+      PREVIEW_SCROLL_FALLBACK_DELAY,
+    );
   });
 };
 
