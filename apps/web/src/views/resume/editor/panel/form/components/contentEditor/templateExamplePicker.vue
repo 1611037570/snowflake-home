@@ -173,7 +173,6 @@ const selectExample = (example) => {
               class="w-full rounded-xl border border-sf-b bg-sf-bg-2 text-sm"
               :placeholder="$t('resumeExampleExperience')"
               :list="experienceOptions"
-              :teleported="false"
               @click.stop
             />
             <SfSelect
@@ -181,7 +180,6 @@ const selectExample = (example) => {
               class="w-full rounded-xl border border-sf-b bg-sf-bg-2 text-sm"
               :placeholder="$t('resumeExampleIndustry')"
               :list="industryOptions"
-              :teleported="false"
               @click.stop
             />
           </div>
