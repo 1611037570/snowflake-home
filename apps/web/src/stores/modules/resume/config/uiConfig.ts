@@ -144,7 +144,6 @@ export const infoSeparatorList = [
   { name: "圆点", value: "dot", mark: "·" },
   { name: "竖线", value: "line", mark: "|" },
   { name: "斜线", value: "slash", mark: "/" },
-  { name: "逗号", value: "comma", mark: "，" },
 ];
 // 未配置或未知值均回退为留白，供预览中的组合字段统一拼接。
 export const getInfoSeparatorMark = (value: string) =>
