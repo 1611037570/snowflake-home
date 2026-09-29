@@ -13,11 +13,13 @@ import {
   defaultInfoSeparator,
   defaultInfoPosition,
   defaultLinkUnderline,
+  defaultPageBackground,
   defaultTitleIconMode,
   defaultUserInfoLayout,
   defaultUserInfoMode,
   infoPositionList,
   infoSeparatorList,
+  pageBackgroundColors,
   titleIconModeList,
   userInfoLayoutList,
   userInfoModeList,
@@ -109,6 +111,14 @@ const infoSeparator = computed({
   },
 });
 
+// 简历页面背景色
+const pageBackground = computed({
+  get: () => currentUI.value?.page?.background || defaultPageBackground,
+  set: (value) => {
+    currentUI.value.page.background = value;
+  },
+});
+
 const getValue = (key) => key.split(".").reduce((value, field) => value?.[field], currentUI.value);
 
 const setParam = (key, value) => {
@@ -136,6 +146,25 @@ const setParam = (key, value) => {
       <div class="flex w-[240px] flex-col gap-3 rounded-3xl border border-sf-b bg-sf-primary p-3">
         <div class="text-xs font-bold text-sf-text">{{ $t("themeColors") }}</div>
         <ThemeColorPicker v-model="themeColor" :teleported="false" />
+
+        <div class="text-xs font-bold text-sf-text">{{ $t("resumeBackground") }}</div>
+        <div class="grid grid-cols-3 gap-3">
+          <SfButton
+            v-for="option in pageBackgroundColors"
+            :key="option.value"
+            class="flex flex-col items-center gap-3"
+            size="small"
+            border
+            @click="pageBackground = option.value"
+            :type="pageBackground === option.value ? 'theme' : 'bg'"
+          >
+            <span
+              class="h-6 w-6 rounded-full border border-sf-b"
+              :style="{ backgroundColor: option.value }"
+            />
+            <span>{{ $t(option.name) }}</span>
+          </SfButton>
+        </div>
 
         <div class="text-xs font-bold text-sf-text">{{ $t("detailAdjustments") }}</div>
         <!-- 模块标题图标模式 -->

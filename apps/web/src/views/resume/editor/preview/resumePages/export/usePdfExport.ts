@@ -26,7 +26,7 @@ export const printPDF = async (
 ) => {
   // 保存当前选中的模块并清空，避免导出 PDF 时带上选中高亮
   const resumeStore = useResumeStore();
-  const { selectedModule } = storeToRefs(resumeStore);
+  const { selectedModule, currentUI } = storeToRefs(resumeStore);
   const signal = resumeStore.beginPrinting();
   if (!signal) return;
   // 记录导出所属简历，避免旧导出任务恢复新简历的选中状态
@@ -86,7 +86,7 @@ export const printPDF = async (
       // 渲染页面为 Canvas
       const canvas = await snapdom.toCanvas(clone, {
         scale,
-        backgroundColor: "#ffffff",
+        backgroundColor: currentUI.value?.page?.background || "#ffffff",
         embedFonts: true,
         width: RESUME_WIDTH,
         height: RESUME_HEIGHT,

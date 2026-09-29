@@ -34,6 +34,7 @@ const renderLongImage = async (
   signal: AbortSignal,
   scale: number,
   isCurrentResume: () => boolean,
+  backgroundColor: string,
 ) => {
   await nextTick();
   await document.fonts?.ready;
@@ -72,7 +73,7 @@ const renderLongImage = async (
   try {
     const canvas = await snapdom.toCanvas(clone, {
       scale,
-      backgroundColor: "#ffffff",
+      backgroundColor,
       embedFonts: true,
     });
     if (signal.aborted || !isCurrentResume()) return null;
@@ -93,7 +94,7 @@ const exportLongImage = async (
   format: "png" | "pdf" = "png",
 ) => {
   const resumeStore = useResumeStore();
-  const { selectedModule } = storeToRefs(resumeStore);
+  const { selectedModule, currentUI } = storeToRefs(resumeStore);
   const signal = resumeStore.beginPrinting();
   if (!signal) return;
   // 记录导出所属简历，避免旧导出任务写入新简历
@@ -105,7 +106,13 @@ const exportLongImage = async (
   resumeStore.clearSelectedModules();
 
   try {
-    const canvas = await renderLongImage(rootRef, signal, scale, isCurrentResume);
+    const canvas = await renderLongImage(
+      rootRef,
+      signal,
+      scale,
+      isCurrentResume,
+      currentUI.value?.page?.background || "#ffffff",
+    );
     if (signal.aborted || !isCurrentResume()) return;
 
     if (!canvas) return;

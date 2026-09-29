@@ -92,6 +92,8 @@ const measureTreeStyle = computed(() => ({
   ...paddingStyle.value,
   ...fontStyle.value,
   ...lineHeightStyle.value,
+  backgroundColor: ui.value.page?.background || "#ffffff",
+  color: ui.value.page?.background?.toLowerCase() === "#000000" ? "#ffffff" : "#000000",
   minHeight: `${RESUME_HEIGHT}px`,
 }));
 // 测量树页尾沿用旧版单页长图文案格式。
