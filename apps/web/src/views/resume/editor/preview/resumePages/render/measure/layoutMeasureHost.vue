@@ -55,7 +55,7 @@ watch(
 </script>
 
 <template>
-  <div ref="measureRef" :class="['flex h-auto flex-col bg-white text-black', className]" :style="[measureStyle, rootStyle]">
+  <div ref="measureRef" :class="['flex h-auto flex-col', className]" :style="[measureStyle, rootStyle]">
     <slot />
   </div>
 </template>

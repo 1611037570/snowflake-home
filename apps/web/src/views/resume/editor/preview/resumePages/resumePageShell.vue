@@ -6,6 +6,7 @@ import { getPreviewText } from "../shared/i18n";
 import { PAGE_NUMBER_HEIGHT, RESUME_CONTAINER_HEIGHT, RESUME_CONTAINER_WIDTH } from "../shared/constants";
 import { useResumePreviewContext } from "../shared/previewContext";
 import { useResumeStore } from "@/stores";
+import { defaultPageBackground } from "@/stores/modules/resume/config/uiConfig";
 
 const props = defineProps({
   // 简历 ui（font.family / page.spacing.module）
@@ -41,6 +42,10 @@ const rootEl = useTemplateRef("rootRef");
 // 调试开关：开启后标注正文可用区，方便排查分页与边距
 const { system } = storeToRefs(useResumeStore());
 const showDebug = computed(() => !!system.value.showDebug);
+const pageBackground = computed(() => props.ui.page?.background || defaultPageBackground);
+const pageTextColor = computed(() =>
+  pageBackground.value.toLowerCase() === "#000000" ? "#ffffff" : "#000000",
+);
 // 预览整体带 scale 缩放，线宽会被一起缩小，按足够醒目的宽度标注
 const debugOutlineStyle = { outline: "4px dashed var(--sf-error)", outlineOffset: "-1px" };
 // 底部空间由页尾与下边距共用：页尾更高时不再叠加下边距，下边距更大时只补足超出的部分
@@ -74,12 +79,18 @@ watch(
 <template>
   <div
     ref="rootRef"
-    class="resume-page-item relative flex flex-col rounded-3xl bg-white text-black"
+    class="resume-page-item relative flex flex-col rounded-3xl"
     :class="[ui.font?.family]"
     :style="[
       styles.paddingStyle,
       styles.fontStyle,
       styles.lineHeightStyle,
+      {
+        backgroundColor: pageBackground,
+        color: pageTextColor,
+        printColorAdjust: 'exact',
+        WebkitPrintColorAdjust: 'exact',
+      },
       RESUME_CONTAINER_WIDTH,
       RESUME_CONTAINER_HEIGHT,
       { paddingBottom: '0px' },

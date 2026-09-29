@@ -48,6 +48,15 @@ const themeItemStyles: Record<string, typeof defaultThemeItemStyle> = {
   },
 };
 
+// 默认简历页面背景色
+export const defaultPageBackground = "#ffffff";
+// 简历页面背景色选项：默认白、极致黑与象牙米白
+export const pageBackgroundColors = [
+  { name: "backgroundWhite", value: defaultPageBackground },
+  { name: "backgroundBlack", value: "#000000" },
+  { name: "backgroundIvory", value: "#F5F0E6" },
+];
+
 export const getThemeItemStyle = (templateId: string) =>
   themeItemStyles[templateId] || defaultThemeItemStyle;
 
@@ -60,6 +69,7 @@ const createThemeTemplate = (
 ) => {
   const baseUi = {
     page: {
+      background: defaultPageBackground,
       padding: { vertical: 24, horizontal: 24 },
       spacing: { paragraph: 12, module: 12 },
       footer: "",
@@ -377,6 +387,7 @@ export const uiParamRanges = {
 };
 export const DEFAULT_UI = {
   page: {
+    background: defaultPageBackground,
     padding: { vertical: defaultPaddingVertical, horizontal: defaultPaddingHorizontal },
     // 页面内留白参数统一由页面配置管理。
     spacing: {
