@@ -1,24 +1,17 @@
 <script setup>
 import { computed, defineAsyncComponent, provide } from "vue";
 import { CUSTOM_MODULE_ICON, DEFAULT_MODULE_NAMES } from "@/stores/modules/resume/config/defaultConfig";
+import { getResumeThemeTemplate } from "@/views/resume/template/themePresets";
 import { getPreviewTitle } from "../../../shared/i18n";
 import { useResumePreviewContext } from "../../../shared/previewContext";
 
-// 标题主题映射：按需异步加载，同一份简历只使用一种风格，避免全部主题常驻内存
-// 新增主题在此注册并新建对应主题组件，无需改动模板
-const themeComponents = {
-  default: defineAsyncComponent(() => import("./themes/default.vue")),
-  modern: defineAsyncComponent(() => import("./themes/modern.vue")),
-  business: defineAsyncComponent(() => import("./themes/business.vue")),
-  minimal: defineAsyncComponent(() => import("./themes/minimal.vue")),
-  classic: defineAsyncComponent(() => import("./themes/classic.vue")),
-  academic: defineAsyncComponent(() => import("./themes/academic.vue")),
-  fresh: defineAsyncComponent(() => import("./themes/fresh.vue")),
-  vivid: defineAsyncComponent(() => import("./themes/vivid.vue")),
-  creative: defineAsyncComponent(() => import("./themes/creative.vue")),
-  steady: defineAsyncComponent(() => import("./themes/steady.vue")),
-  outline: defineAsyncComponent(() => import("./themes/outline.vue")),
-};
+// 标题组件按文件名自动加载，具体主题风格由统一主题注册表指定。
+const themeComponents = Object.fromEntries(
+  Object.entries(import.meta.glob("./themes/*.vue")).map(([path, loader]) => [
+    path.slice("./themes/".length, -".vue".length),
+    defineAsyncComponent(loader),
+  ]),
+);
 const props = defineProps({
   title: {
     type: String,
@@ -45,8 +38,11 @@ const displayTitle = computed(() => {
 });
 // 风格模板：未提供时按默认样式处理
 const themeTemplate = computed(() => themeTemplateRef.value || "default");
-// 当前主题组件：未匹配时回退默认主题
-const current = computed(() => themeComponents[themeTemplate.value] || themeComponents.default);
+// 当前标题样式由主题注册表指定，未匹配时回退默认主题。
+const current = computed(() => {
+  const titleTheme = getResumeThemeTemplate(themeTemplate.value).appearance.moduleTitle;
+  return themeComponents[titleTheme] || themeComponents.default;
+});
 
 // 模块图标：取模块默认图标表，自定义模块用统一图标，未知模块不展示
 const moduleIcon = computed(() => {

@@ -4,7 +4,10 @@ defineOptions({ name: "BuilderTemplate" });
 import { useResumeStore } from "@/stores";
 import { storeToRefs } from "pinia";
 import ThumbPreview from "../../preview/modes/thumb.vue";
-import { themeTemplateList } from "@/stores/modules/resume/config/uiConfig";
+import {
+  getResumeThemeTemplate,
+  themeTemplateList,
+} from "@/views/resume/template/themePresets";
 import { loadResumeTemplateData } from "@/views/resume/template/data/resumeData";
 import { onMounted, ref } from "vue";
 import i18n, { $t } from "@/locales";
@@ -31,7 +34,7 @@ const templates = computed(() => {
     item: {
       data: previewBase.value?.data || {},
       config: previewBase.value?.config || {},
-      ui: t.item.ui,
+      ui: getResumeThemeTemplate(t.id).item.ui,
     },
   }));
 });
