@@ -9,6 +9,7 @@ import { getTime } from "./getTime";
 import { isContentEmpty } from "../../shared/validData";
 import { useResumePreviewContext } from "../../shared/previewContext";
 import { sliceRichTextHtml } from "../engine/adapter/richTextParser";
+import { isTimelineNode } from "./itemStyle";
 import type { LayoutNode } from "../engine/types";
 
 const safeUrlProtocols = new Set(["http:", "https:", "mailto:"]);
@@ -39,6 +40,7 @@ const {
     textAlign,
     themeColor,
     themeColorSoft,
+    themeTemplate,
   },
 } = useResumePreviewContext();
 
@@ -65,6 +67,8 @@ const slicedItemDesc = computed(() => {
 const isExperience = computed(
   () => props.node.type === "group" && props.node.sourceModuleKey !== "user",
 );
+// 日期移入固定宽度的左侧栏，右侧正文仍按原块顺序供分页测量。
+const isTimeline = computed(() => isTimelineNode(props.node, themeTemplate.value));
 const hasItemHeader = computed(() => {
   const value = item.value;
   return Boolean(
@@ -150,16 +154,16 @@ const itemContentSpacingStyle = computed(() => {
         class="flex flex-wrap items-center justify-between gap-3"
       >
         <div class="min-w-0 flex-1">
-          <ItemTitle :name="item.name" :emphasis="datePosition !== 'left'" />
+          <ItemTitle :name="item.name" :emphasis="isTimeline || datePosition !== 'left'" />
         </div>
-        <!-- 日期位置由 order 控制：置左时提到名称之前 -->
+        <!-- 普通主题按日期位置排序，时间轴主题放进条目左侧固定栏。 -->
         <div
           class="flex max-w-full min-w-0 flex-wrap items-center"
-          :class="datePosition === 'left' ? 'order-first' : ''"
+          :class="isTimeline ? 'resume-timeline-date' : datePosition === 'left' ? 'order-first' : ''"
         >
           <span
-            :class="{ 'font-bold': datePosition === 'left' }"
-            :style="datePosition === 'left' ? fontValue(1) : undefined"
+            :class="{ 'font-bold': datePosition === 'left' && !isTimeline }"
+            :style="datePosition === 'left' && !isTimeline ? fontValue(1) : undefined"
           >
             {{ getTime(item.startTime, item.endTime, dateStyle) }}
           </span>
@@ -323,6 +327,15 @@ const itemContentSpacingStyle = computed(() => {
 /* 段落间距色带直接绘制在独立占位行上 */
 .resume-debug-paragraph-gap {
   @apply bg-sf-theme;
+}
+
+/* 日期绝对定位在条目的预留栏内，不参与右侧内容的高度计算。 */
+.resume-timeline-date {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: calc(var(--timeline-rail-width) - 24px);
+  opacity: 0.7;
 }
 
 /* 正文富文本里写的链接，悬停时同样显示下划线 */
