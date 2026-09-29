@@ -37,28 +37,6 @@ function goGitHub() {
 }
 
 const toolbarItems = computed(() => [
-  { key: "system", component: System },
-  { key: "ai", component: Ai },
-  { key: "debug", component: Debug },
-  { key: "separator-main", type: "separator" },
-  { key: "module-navigator", component: ModuleNavigator },
-  { key: "copy-resume", component: CopyResume },
-  // 专注模式仅在非移动端提供。
-  ...(!isMobile.value
-    ? [
-        {
-          key: "focus-mode",
-          component: Icon,
-          attrs: {
-            icon: "lucide:focus",
-            size: "5",
-            content: $t("focusMode"),
-            onOnClick: enterFocusMode,
-          },
-        },
-      ]
-    : []),
-  { key: "separator-secondary", type: "separator" },
   {
     key: "home",
     component: Icon,
@@ -79,6 +57,29 @@ const toolbarItems = computed(() => [
       onOnClick: goGitHub,
     },
   },
+  { key: "separator-main", type: "separator" },
+  { key: "module-navigator", component: ModuleNavigator },
+  { key: "copy-resume", component: CopyResume },
+  // 专注模式仅在非移动端提供。
+  ...(!isMobile.value
+    ? [
+        {
+          key: "focus-mode",
+          component: Icon,
+          attrs: {
+            icon: "lucide:focus",
+            size: "5",
+            content: $t("focusMode"),
+            onOnClick: enterFocusMode,
+          },
+        },
+      ]
+    : []),
+  { key: "separator-secondary", type: "separator" },
+  { key: "debug", component: Debug },
+
+  { key: "ai", component: Ai },
+  { key: "system", component: System },
   // ATS 参考入口固定在工具项末尾，显示于工具栏底部。
   ...(system.value.showProgress ? [{ key: "progress", component: Progress }] : []),
 ]);
