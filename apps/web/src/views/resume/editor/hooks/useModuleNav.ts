@@ -257,15 +257,9 @@ const scheduleEditorHighlight = (key: string, hit?: Pick<ResumeSearchHit, "itemI
   }, EDITOR_HIGHLIGHT_DELAY);
 };
 
-// 跳转编辑区：展开折叠 + 选中闪烁 + 滚动定位
+// 跳转编辑区并保留模块当前的折叠状态
 export const jumpEditor = (key: string) => {
-  const item = moduleList.value.find((m) => m.key === key);
-  if (item && isFieldRemoved(currentData.value, item.field)) {
-    notifyArchived();
-    return;
-  }
-  activateModule(key);
-  nextTick(() => scrollEditorTarget(key));
+  locateEditor(key);
 };
 
 // 定位到搜索命中行：展开模块与命中记录，滚动到最精确的锚点
