@@ -1,5 +1,5 @@
 <script setup>
-import { computed, onMounted, ref, watch } from "vue";
+import { computed, onMounted, ref, toRaw, watch } from "vue";
 import { storeToRefs } from "pinia";
 import { useDebounceFn } from "@vueuse/core";
 import dayjs from "dayjs";
@@ -104,9 +104,10 @@ const doBackup = async () => {
   // 备份文件名：轻舟简历备份-简历ID（固定文件名，重复备份直接覆盖同一文件）
   const filename = `轻舟简历备份-${item.id}.json`;
   // 备份沿用简历中的精简模块结构
+  // structuredClone 前先解除 Vue 响应式代理
   const backupItem = {
     ...item,
-    config: { ...item.config, modules: structuredClone(item.config?.modules || []) },
+    config: { ...item.config, modules: structuredClone(toRaw(item.config?.modules || [])) },
   };
   const success = await writeLocalBackup(filename, JSON.stringify(backupItem, null, 2));
   // 备份耗时极短，补足最短展示时长，避免"正在备份"一闪而过
