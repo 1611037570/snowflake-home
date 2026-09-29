@@ -103,67 +103,68 @@ const handleConfirm = () => {
 </script>
 
 <template>
-  <SfDropdown
-    ref="dropdownRef"
-    class="w-full"
-    trigger="click"
-    placement="top-start"
-    :show-arrow="false"
-    popper-class="resume-add-module-dropdown"
-  >
-    <button
-      type="button"
-      class="flex w-full items-center justify-between gap-3 rounded-xl border border-dashed border-sf-b bg-sf-primary py-3 text-sm font-semibold text-sf-theme transition-colors hover:border-sf-theme"
+  <div class="flex-c h-full w-full">
+    <SfDropdown
+      ref="dropdownRef"
+      class="w-fit"
+      trigger="click"
+      placement="top-start"
+      :show-arrow="false"
+      popper-class="resume-add-module-dropdown"
     >
-      <span class="flex items-center gap-3">
+      <button
+        type="button"
+        class="flex-c mt-1.5 w-fit min-w-0 cursor-pointer flex-col gap-1 rounded-xl border border-sf-b bg-sf-primary p-1 text-[9px] text-sf-text transition-colors select-none hover:border-sf-theme hover:text-sf-theme"
+      >
         <SfIcon icon="ic:round-add" size="4" />
-        <span class="w-9 text-center leading-4">{{ $t("addModule") }}</span>
-      </span>
-      <SfIcon icon="mingcute:down-line" size="3" />
-    </button>
-    <template #dropdown>
-      <div class="flex w-60 flex-col gap-3 rounded-2xl border border-sf-b bg-sf-primary p-3 shadow-lg">
-        <div v-if="basicModules.length" class="flex flex-col gap-3">
-          <span class="text-xs text-sf-text-3">{{ $t("basicModules") }}</span>
-          <div class="flex flex-wrap gap-3">
-            <button
-              v-for="item in basicModules"
-              :key="item.name"
-              type="button"
-              class="flex h-7 cursor-pointer items-center justify-center gap-1 rounded-3xl border border-sf-b bg-sf-primary px-2 text-xs text-sf-text-2 transition-colors hover:border-sf-theme hover:text-sf-theme"
-              @click="handleAdd(item)"
-            >
-              <SfIcon icon="ic:round-add" size="4" />
-              <span>{{ item.name }}</span>
-            </button>
+        <span class="w-9 text-center leading-4 break-all">{{ $t("addModule") }}</span>
+      </button>
+      <template #dropdown>
+        <div
+          class="flex w-60 flex-col gap-3 rounded-2xl border border-sf-b bg-sf-primary p-3 shadow-lg"
+        >
+          <div v-if="basicModules.length" class="flex flex-col gap-3">
+            <span class="text-xs text-sf-text-3">{{ $t("basicModules") }}</span>
+            <div class="flex flex-wrap gap-3">
+              <button
+                v-for="item in basicModules"
+                :key="item.name"
+                type="button"
+                class="flex h-7 cursor-pointer items-center justify-center gap-1 rounded-3xl border border-sf-b bg-sf-primary px-2 text-xs text-sf-text-2 transition-colors hover:border-sf-theme hover:text-sf-theme"
+                @click="handleAdd(item)"
+              >
+                <SfIcon icon="ic:round-add" size="4" />
+                <span>{{ item.name }}</span>
+              </button>
+            </div>
+          </div>
+          <div class="flex flex-col gap-3">
+            <span class="text-xs text-sf-text-3">{{ $t("otherModules") }}</span>
+            <div class="flex flex-wrap gap-3">
+              <button
+                v-for="item in otherModules"
+                :key="item.name"
+                type="button"
+                class="flex h-7 cursor-pointer items-center justify-center gap-1 rounded-3xl border border-sf-b bg-sf-primary px-2 text-xs text-sf-text-2 transition-colors hover:border-sf-theme hover:text-sf-theme"
+                @click="handleAdd(item)"
+              >
+                <SfIcon icon="ic:round-add" size="4" />
+                <span>{{ item.name }}</span>
+              </button>
+              <button
+                type="button"
+                class="flex h-7 w-fit cursor-pointer items-center justify-center gap-1 rounded-3xl border border-dashed border-sf-b bg-sf-primary px-2 text-xs text-sf-text-2 transition-colors hover:border-sf-theme hover:text-sf-theme"
+                @click="handleAdd({ value: 'custom' })"
+              >
+                <SfIcon icon="ic:round-add" size="4" />
+                <span>{{ $t("customModule") }}</span>
+              </button>
+            </div>
           </div>
         </div>
-        <div class="flex flex-col gap-3">
-          <span class="text-xs text-sf-text-3">{{ $t("otherModules") }}</span>
-          <div class="flex flex-wrap gap-3">
-            <button
-              v-for="item in otherModules"
-              :key="item.name"
-              type="button"
-              class="flex h-7 cursor-pointer items-center justify-center gap-1 rounded-3xl border border-sf-b bg-sf-primary px-2 text-xs text-sf-text-2 transition-colors hover:border-sf-theme hover:text-sf-theme"
-              @click="handleAdd(item)"
-            >
-              <SfIcon icon="ic:round-add" size="4" />
-              <span>{{ item.name }}</span>
-            </button>
-            <button
-              type="button"
-              class="flex h-7 w-fit cursor-pointer items-center justify-center gap-1 rounded-3xl border border-dashed border-sf-b bg-sf-primary px-2 text-xs text-sf-text-2 transition-colors hover:border-sf-theme hover:text-sf-theme"
-              @click="handleAdd({ value: 'custom' })"
-            >
-              <SfIcon icon="ic:round-add" size="4" />
-              <span>{{ $t("customModule") }}</span>
-            </button>
-          </div>
-        </div>
-      </div>
-    </template>
-  </SfDropdown>
+      </template>
+    </SfDropdown>
+  </div>
 </template>
 
 <style scoped></style>
