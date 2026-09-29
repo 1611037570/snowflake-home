@@ -1,21 +1,23 @@
 <script setup>
-import { FRAME_VIEW_PADDING } from "../styles/frame";
+import { computed } from "vue";
+import { useResumePreviewContext } from "@/views/resume/editor/preview/shared/previewContext";
+
+const { theme: { viewStyle } } = useResumePreviewContext();
+// 正文容器直接使用主题解析后的外观，内边距由分页层读取同一份配置。
+const containerStyle = computed(() => ({
+  backgroundColor: viewStyle.value.background,
+  borderRadius: `${viewStyle.value.radius}px`,
+  padding: `${viewStyle.value.padding}px`,
+  color: viewStyle.value.color,
+}));
 </script>
 
 <template>
-  <!-- 白色正文区域向内留白，宽高由分页测量同步扣除。 -->
+  <!-- 正文区域始终由同一容器承载，默认样式不改变页面外观。 -->
   <div
-    class="resume-view-container relative flex min-w-0"
-    :style="{ padding: `${FRAME_VIEW_PADDING}px` }"
+    class="resume-view-container relative box-border flex min-w-0"
+    :style="containerStyle"
   >
     <slot />
   </div>
 </template>
-
-<style scoped>
-.resume-view-container {
-  border-radius: 18px;
-  background: #ffffff;
-  color: #222222;
-}
-</style>

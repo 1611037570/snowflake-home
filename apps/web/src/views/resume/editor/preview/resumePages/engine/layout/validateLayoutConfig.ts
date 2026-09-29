@@ -74,6 +74,14 @@ export const validateLayoutConfig = (
     if (region.height.mode === "fixed" && !isNonNegativeNumber(region.height.value)) {
       invalidLayoutFields.push(`regions[${regionIndex}].height.value`);
     }
+    // 区域内容盒的边距须为非负数，避免测量宽高与实际渲染偏离。
+    if (region.contentPadding) {
+      (["top", "right", "bottom", "left"] as const).forEach((side) => {
+        if (!isNonNegativeNumber(region.contentPadding?.[side])) {
+          invalidLayoutFields.push(`regions[${regionIndex}].contentPadding.${side}`);
+        }
+      });
+    }
     region.columns.forEach((column, columnIndex) => {
       if (!column.id.trim()) {
         invalidLayoutFields.push(`regions[${regionIndex}].columns[${columnIndex}].id`);

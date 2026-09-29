@@ -20,6 +20,7 @@ export const createResumeLayout = ({
   paddingHorizontal,
   gap,
   leftColumnWidth,
+  viewPadding,
 }: {
   /** 简历配置，layout.type 选择布局，layout.columns 保存双栏模块顺序。 */
   ui: Record<string, any>;
@@ -33,9 +34,11 @@ export const createResumeLayout = ({
   gap: number;
   /** 双栏布局的左栏宽度占比（百分比）。 */
   leftColumnWidth?: number;
+  /** 正文容器的单侧内边距，单位为像素。 */
+  viewPadding: number;
 }): PageLayoutConfig => {
   const templateId = resolvePageLayoutTemplate(ui);
-  return createDefaultPageLayoutTemplate({
+  const layout = createDefaultPageLayoutTemplate({
     templateId,
     moduleKeys,
     paddingVertical,
@@ -44,4 +47,17 @@ export const createResumeLayout = ({
     leftWidthPercent: leftColumnWidth,
     columns: ui.layout?.columns,
   });
+  const padding = Math.max(0, viewPadding);
+  // 正文容器的占位写入区域配置，供栏宽与分页共同读取。
+  return {
+    ...layout,
+    regions: layout.regions.map((region) =>
+      region.id === "main"
+        ? {
+            ...region,
+            contentPadding: { top: padding, right: padding, bottom: padding, left: padding },
+          }
+        : region,
+    ),
+  };
 };

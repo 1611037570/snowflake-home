@@ -24,7 +24,8 @@ import {
   defaultUserInfoLayout,
   defaultUserInfoMode,
 } from "@/stores/modules/resume/config/uiConfig";
-import { getThemeItemStyle } from "@/views/resume/theme";
+import { getThemeItemStyle, getThemeViewStyle } from "@/views/resume/theme";
+import type { ThemeViewStyle } from "@/views/resume/theme/styles/themeStyles";
 
 /** 简历主题配置（item.ui） */
 type ResumeUi = Record<string, any>;
@@ -59,6 +60,8 @@ export interface ResumeTheme {
   moduleTemplate: ComputedRef<string>;
   titleTemplate: ComputedRef<string>;
   itemStyle: ComputedRef<Record<string, string | number>>;
+  /** 正文容器的背景、内边距、圆角和文字颜色。 */
+  viewStyle: ComputedRef<ThemeViewStyle>;
   userInfoMode: ComputedRef<string>;
   userInfoLayout: ComputedRef<string>;
   avatarPosition: ComputedRef<string>;
@@ -175,6 +178,12 @@ export const useResumeTheme = (ui: ComputedRef<ResumeUi>): ResumeTheme => {
       ui.value.theme?.item === "auto" ? themeTemplate.value : ui.value.theme?.item,
     ),
   );
+  // 正文容器样式 ID 为 auto 时跟随整体主题。
+  const viewStyle = computed(() =>
+    getThemeViewStyle(
+      (ui.value.theme?.view ?? "auto") === "auto" ? themeTemplate.value : ui.value.theme?.view,
+    ),
+  );
   // 个人信息展示模式（图标/文字/隐藏），缺失时回退默认值
   const userInfoMode = computed(() => ui.value.user?.infoMode ?? defaultUserInfoMode);
   // 个人信息布局（网格/弹性），缺失时回退默认值
@@ -215,6 +224,7 @@ export const useResumeTheme = (ui: ComputedRef<ResumeUi>): ResumeTheme => {
     moduleTemplate,
     titleTemplate,
     itemStyle,
+    viewStyle,
     userInfoMode,
     userInfoLayout,
     avatarPosition,

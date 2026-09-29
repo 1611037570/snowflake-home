@@ -89,8 +89,11 @@ const previewLang = computed(() => ui.value.content?.language || "zh");
 const showPageNumber = computed(() => props.showPageNumber);
 const themeStyles = useResumeTheme(ui);
 const { paddingStyle, fontStyle, lineHeightStyle, fontReadyVersion } = themeStyles;
-// 红色边框主题仅包裹正文区域，后续无个人信息的页面继续绘制同一底板。
-const isFrameTheme = computed(() => themeStyles.themeTemplate.value === "frame");
+// 容器外观和分页几何共用同一份主题样式。
+const viewPadding = computed(() => themeStyles.viewStyle.value.padding);
+const hasViewSurface = computed(
+  () => viewPadding.value > 0 || themeStyles.viewStyle.value.background !== "transparent",
+);
 const measureTreeStyle = computed(() => ({
   ...paddingStyle.value,
   ...fontStyle.value,
@@ -190,6 +193,7 @@ const {
   showPageNumber,
   isThumb,
   fontReadyVersion,
+  viewPadding,
   allModules,
 });
 const layoutColumnGap = computed(() => layout.value.columnGap || 0);
@@ -305,17 +309,16 @@ defineExpose({
         >
           <div
             class="flex min-w-0 flex-col"
-            :class="{ 'flex-1': isFrameTheme }"
+            :class="{ 'flex-1': hasViewSurface }"
             :style="{ gap: `${layout.regionGap}px` }"
           >
             <template v-for="region in page.regions" :key="region.regionId">
               <component
-                :is="isFrameTheme && region.regionId === 'main' ? ViewContainer : 'div'"
+                :is="region.regionId === 'main' ? ViewContainer : 'div'"
                 v-if="region.columns.some((column) => column.fragments.length > 0)"
                 class="flex w-full min-w-0"
                 :class="{
-                  'flex-1': isFrameTheme && region.regionId === 'main',
-                  'text-white': isFrameTheme && region.regionId === 'header',
+                  'flex-1': hasViewSurface && region.regionId === 'main',
                 }"
                 :style="{ gap: `${layoutColumnGap}px` }"
               >

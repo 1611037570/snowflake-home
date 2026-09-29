@@ -2,6 +2,7 @@ export {
   getResumeThemeTemplate,
   getThemeItemStyle,
   getThemeModuleStyle,
+  getThemeViewStyle,
   resumeThemeRegistry,
   themeTemplateList,
 } from "./styles";
