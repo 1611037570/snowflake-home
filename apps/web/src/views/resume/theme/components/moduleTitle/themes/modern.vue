@@ -1,6 +1,6 @@
 <script setup>
 import TitleText from "../titleText.vue";
-import { useResumePreviewContext } from "../../../../shared/previewContext";
+import { useResumePreviewContext } from "@/views/resume/editor/preview/shared/previewContext";
 
 defineProps({
   title: {
@@ -8,21 +8,18 @@ defineProps({
     default: "",
   },
 });
-// 线条色：统一由主题色推导，线框模板默认取纯黑
 const {
   theme: { themeColor },
 } = useResumePreviewContext();
 </script>
 
 <template>
-  <!-- 线框风格：标题位于模块外框顶部，下方一条通栏细线分隔内容 -->
-  <div
-    class="border-b px-3 pt-3 pb-3"
-    :style="{ borderBottomWidth: '1px', borderColor: themeColor }"
-  >
+  <!-- 现代风格：标题居中 + 主题色短横线 -->
+  <div class="flex flex-col items-center">
     <h2 class="max-w-full min-w-0 font-bold tracking-wide break-words">
       <TitleText :title="title" />
     </h2>
+    <div class="mt-1 h-1 w-8 rounded-full" :style="{ background: themeColor }"></div>
   </div>
 </template>
 

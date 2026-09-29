@@ -7,11 +7,11 @@ import { getUserSubtitleKeys } from "@/stores/modules/resume/hooks/useUserSubtit
 import {
   getInfoSeparatorMark,
 } from "@/stores/modules/resume/config/uiConfig";
-import { getPreviewText } from "../../../shared/i18n";
+import { getPreviewText } from "@/views/resume/editor/preview/shared/i18n";
 import UserContactItem from "./userContactItem.vue";
 import { useUserFieldVisibility } from "../useUserFieldVisibility";
-import InlineInfoList from "../../../components/inlineInfoList.vue";
-import { useResumePreviewContext } from "../../../shared/previewContext";
+import InlineInfoList from "@/views/resume/editor/preview/components/inlineInfoList.vue";
+import { useResumePreviewContext } from "@/views/resume/editor/preview/shared/previewContext";
 
 // 个人信息组件：基础信息与联系方式统一排序展示，标签支持图标、文字和隐藏模式，对齐方式由使用方通过 class 控制
 const {

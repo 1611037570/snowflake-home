@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { computed } from "vue";
-import Item from "../item.vue";
+import Item from "@/views/resume/theme/components/itemContainer.vue";
 import { getItemFragmentStyle, isItemNode } from "../itemStyle";
-import Title from "../moduleTitle/index.vue";
+import Title from "@/views/resume/theme/components/moduleTitle/index.vue";
 import { useResumePreviewContext } from "../../../shared/previewContext";
 import LayoutNodeContent from "../layoutNodeContent.vue";
-import UserModule from "../userModule.vue";
+import UserModule from "@/views/resume/theme/components/userContainer.vue";
 import type { LayoutNode } from "../../engine/types";
 
 const props = defineProps<{ node: LayoutNode }>();

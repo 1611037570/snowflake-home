@@ -1,6 +1,6 @@
 <script setup>
 import TitleText from "../titleText.vue";
-import { useResumePreviewContext } from "../../../../shared/previewContext";
+import { useResumePreviewContext } from "@/views/resume/editor/preview/shared/previewContext";
 
 defineProps({
   title: {
@@ -9,13 +9,16 @@ defineProps({
   },
 });
 const {
-  theme: { themeColor, themeColorContrast, themeColorLine },
+  theme: { themeColor },
 } = useResumePreviewContext();
 </script>
 
 <template>
-  <div class="flex items-baseline" :style="{ background: themeColorLine }">
-    <div class="mr-3 w-1 self-stretch" :style="{ background: themeColor }"></div>
+  <!-- 经典风格：标题下方使用通栏主题色细线，正文区以分节线呼应 -->
+  <div
+    class="border-b pb-[3px]"
+    :style="{ borderBottomWidth: '2px', borderColor: themeColor }"
+  >
     <h2 class="max-w-full min-w-0 font-bold tracking-wide break-words">
       <TitleText :title="title" />
     </h2>

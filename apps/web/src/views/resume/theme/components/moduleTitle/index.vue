@@ -4,8 +4,8 @@ import {
   CUSTOM_MODULE_ICON,
   DEFAULT_MODULE_NAMES,
 } from "@/stores/modules/resume/config/defaultConfig";
-import { getPreviewTitle } from "../../../shared/i18n";
-import { useResumePreviewContext } from "../../../shared/previewContext";
+import { getPreviewTitle } from "@/views/resume/editor/preview/shared/i18n";
+import { useResumePreviewContext } from "@/views/resume/editor/preview/shared/previewContext";
 
 // 标题组件按文件名自动加载，具体主题风格由统一主题注册表指定。
 const themeComponents = Object.fromEntries(

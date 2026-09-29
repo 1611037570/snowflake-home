@@ -4,7 +4,7 @@ import ItemTags from "../../components/itemTags.vue";
 import ItemTitle from "../../components/itemTitle.vue";
 import InlineInfoList from "../../components/inlineInfoList.vue";
 import ResumeField from "../../components/resumeField/index.vue";
-import UserContent from "../../modules/user/index.vue";
+import UserContent from "@/views/resume/theme/components/userModule/index.vue";
 import { getTime } from "./getTime";
 import { isContentEmpty } from "../../shared/validData";
 import { useResumePreviewContext } from "../../shared/previewContext";

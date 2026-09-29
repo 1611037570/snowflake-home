@@ -1,5 +1,5 @@
 <script setup>
-import ResumeField from "../../../components/resumeField/index.vue";
+import ResumeField from "@/views/resume/editor/preview/components/resumeField/index.vue";
 
 // 联系方式单项：统一处理图标 / 文字标签和字段值展示
 defineProps({

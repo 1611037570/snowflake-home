@@ -1,6 +1,6 @@
 <script setup>
 import { useResumeStore } from "@/stores";
-import { getResumeThemeTemplate, themeTemplateList } from "./themePresets";
+import { getResumeThemeTemplate, themeTemplateList } from "@/views/resume/theme";
 import ResumeCardContainer from "@/views/resume/mine/components/resumeCardContainer.vue";
 import RevealGrid from "@/views/resume/components/revealGrid.vue";
 import TemplateCategory from "./components/templateCategory.vue";

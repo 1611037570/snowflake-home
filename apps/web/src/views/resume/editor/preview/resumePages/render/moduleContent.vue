@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from "vue";
-import Title from "./moduleTitle/index.vue";
-import Item from "./item.vue";
+import Title from "@/views/resume/theme/components/moduleTitle/index.vue";
+import Item from "@/views/resume/theme/components/itemContainer.vue";
 import { getItemFragmentStyle, isItemNode } from "./itemStyle";
 import LayoutNodeContent from "./layoutNodeContent.vue";
 import { useResumePreviewContext } from "../../shared/previewContext";
