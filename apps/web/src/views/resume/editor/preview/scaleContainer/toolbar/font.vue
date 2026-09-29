@@ -72,7 +72,7 @@ const setParam = (key, value) => {
       class="flex cursor-pointer items-center gap-1 rounded-full px-1.5 py-1 text-sm text-sf-text-2 hover:bg-sf-theme-2 hover:text-sf-theme-text"
     >
       <SfIcon icon="lucide:type" size="5" />
-      <span>{{ $t("layout") }}</span>
+      <span>{{ $t("textStyle") }}</span>
     </span>
     <template #dropdown>
       <div
