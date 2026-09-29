@@ -38,15 +38,6 @@ const animatedProgress = useTransition(
   },
 );
 
-// 简历总字数数字过渡动画
-const animatedWords = useTransition(
-  computed(() => resumeStats.value.total.total),
-  {
-    duration: 500,
-    transition: TransitionPresets.easeOutCubic,
-  },
-);
-
 // 弹窗外提示文案：时间线存在问题时提醒
 const tooltipText = computed(() =>
   timelineData.value.issueCount
@@ -79,95 +70,104 @@ const getProgressColor = (progress) => {
 </script>
 
 <template>
-  <div
-    v-if="system.showProgress"
-    class="absolute -top-12 -right-10 z-50 -translate-y-1/2 transform"
-  >
-    <SfTooltip :content="tooltipText" placement="left">
-      <div
-        class="relative flex w-[90px] cursor-pointer items-start rounded-3xl bg-linear-to-r from-blue-500 to-purple-500 p-3 text-white transition-all duration-300"
-        @click="visible = true"
-      >
-        <div class="flex flex-col items-center justify-center">
-          <!-- 有时间线问题时：感叹号替换进度数字，与顶部备份样式一致 -->
-          <SfIcon
-            v-if="timelineData.issueCount"
-            icon="ph:warning-fill"
-            size="6"
-            class="text-sf-warning"
+  <SfTooltip v-if="system.showProgress" :content="tooltipText" placement="left">
+    <button
+      type="button"
+      class="flex h-9 w-12 shrink-0 cursor-pointer items-center justify-center text-sf-text-2 transition-colors hover:text-sf-theme"
+      @click="visible = true"
+    >
+      <div class="relative h-9 w-9">
+        <svg class="h-9 w-9 -rotate-90" viewBox="0 0 48 48" aria-hidden="true">
+          <circle
+            cx="24"
+            cy="24"
+            r="19"
+            fill="none"
+            stroke="currentColor"
+            class="text-sf-bg-2"
+            stroke-width="5"
           />
-          <div v-else class="flex items-center text-[14px] font-bold">
-            <span>{{ Math.round(animatedProgress) }}</span
-            ><span class="text-[10px]">%</span>
-          </div>
-          <!-- <div class="text-[11px] opacity-90">完成度</div> -->
-          <!-- 简历总字数 -->
-          <div class="text-[10px] opacity-80">
-            {{ Math.round(animatedWords) }}{{ $t("words") }}
-          </div>
-        </div>
+          <circle
+            cx="24"
+            cy="24"
+            r="19"
+            fill="none"
+            stroke="currentColor"
+            class="text-sf-success"
+            stroke-width="5"
+            stroke-linecap="round"
+            stroke-dasharray="119.38"
+            :stroke-dashoffset="119.38 - (119.38 * Math.round(animatedProgress)) / 100"
+          />
+        </svg>
+        <span class="absolute inset-0 grid place-content-center text-xs font-bold text-sf-text">
+          {{ Math.round(animatedProgress) }}
+        </span>
       </div>
-    </SfTooltip>
-  </div>
+    </button>
+  </SfTooltip>
 
   <SfModal v-model="visible" :title="$t('progressDetail')">
     <div class="flex w-[400px] flex-col gap-1.5">
-      <!-- 各模块进度列表 -->
-      <template v-for="item in progressData.list" :key="item.key">
-        <div class="rounded-3xl border border-sf-b p-3">
-          <div class="flex items-center justify-between">
-            <div class="text-lg">
-              {{ item.name }}
-              <span class="text-sm text-sf-text-2">
-                {{ $t("writingWords", { count: resumeStats[item.key]?.total ?? 0 }) }}
-              </span>
+      <p class="mb-2 text-sm text-sf-text-2">{{ $t("atsScoreDisclaimer") }}</p>
+      <!-- 列表过长时在滚动区域内查看。 -->
+      <SfScrollbar max-height="400px">
+        <template v-for="item in progressData.list" :key="item.key">
+          <div class="rounded-3xl border border-sf-b p-3">
+            <div class="flex items-center justify-between">
+              <div class="text-lg">
+                {{ item.name }}
+                <span class="text-sm text-sf-text-2">
+                  {{ $t("writingWords", { count: resumeStats[item.key]?.total ?? 0 }) }}
+                </span>
+              </div>
+              <div class="text-lg font-bold">{{ item.progress }}%</div>
             </div>
-            <div class="text-lg font-bold">{{ item.progress }}%</div>
-          </div>
-          <div class="mt-2 h-2 w-full rounded-full bg-sf-bg-2">
+            <div class="mt-2 h-2 w-full rounded-full bg-sf-bg-2">
+              <div
+                class="h-2 rounded-full transition-all duration-300"
+                :class="getProgressColor(item.progress)"
+                :style="{ width: item.progress + '%' }"
+              ></div>
+            </div>
+            <!-- 模块时间线问题：存在时内联展示 -->
             <div
-              class="h-2 rounded-full transition-all duration-300"
-              :class="getProgressColor(item.progress)"
-              :style="{ width: item.progress + '%' }"
-            ></div>
-          </div>
-          <!-- 模块时间线问题：存在时内联展示 -->
-          <div
-            v-if="timelineByModule[item.key]"
-            class="mt-2 flex flex-col gap-1 rounded-xl bg-sf-bg-2 p-2"
-          >
-            <div
-              v-for="(issue, index) in timelineByModule[item.key]"
-              :key="index"
-              class="flex items-start gap-2 text-sm"
+              v-if="timelineByModule[item.key]"
+              class="mt-2 flex flex-col gap-1 rounded-xl bg-sf-bg-2 p-2"
             >
-              <span
-                class="shrink-0 rounded-full bg-sf-warning-2 px-2 py-0.5 text-xs text-sf-warning"
-              >
-                {{ getTypeLabel() }}
-              </span>
-              <span class="text-sf-text">{{ issue.text }}</span>
-            </div>
-            <div class="cursor-pointer text-sm text-sf-theme" @click="goTimelineFill(item.key)">
-              {{ $t("modify") }}
-            </div>
-          </div>
-          <template v-if="item.progress < 100">
-            <div class="mt-2 flex flex-wrap gap-1 text-xs text-sf-text-2">
-              <span
-                v-for="(field, index) in item.missing"
+              <div
+                v-for="(issue, index) in timelineByModule[item.key]"
                 :key="index"
-                class="rounded-full bg-sf-bg-2 px-2 py-0.5"
+                class="flex items-start gap-2 text-sm"
               >
-                {{ $t("missingPrefix") }}{{ field }}
-              </span>
+                <span
+                  class="shrink-0 rounded-full bg-sf-warning-2 px-2 py-0.5 text-xs text-sf-warning"
+                >
+                  {{ getTypeLabel() }}
+                </span>
+                <span class="text-sf-text">{{ issue.text }}</span>
+              </div>
+              <div class="cursor-pointer text-sm text-sf-theme" @click="goTimelineFill(item.key)">
+                {{ $t("modify") }}
+              </div>
             </div>
-            <div class="mt-2 cursor-pointer text-sm text-sf-theme" @click="goFill(item)">
-              {{ $t("fillIn") }}
-            </div>
-          </template>
-        </div>
-      </template>
+            <template v-if="item.progress < 100">
+              <div class="mt-2 flex flex-wrap gap-1 text-xs text-sf-text-2">
+                <span
+                  v-for="(field, index) in item.missing"
+                  :key="index"
+                  class="rounded-full bg-sf-bg-2 px-2 py-0.5"
+                >
+                  {{ $t("missingPrefix") }}{{ field }}
+                </span>
+              </div>
+              <div class="mt-2 cursor-pointer text-sm text-sf-theme" @click="goFill(item)">
+                {{ $t("fillIn") }}
+              </div>
+            </template>
+          </div>
+        </template>
+      </SfScrollbar>
     </div>
   </SfModal>
 </template>
