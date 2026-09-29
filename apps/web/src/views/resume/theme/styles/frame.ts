@@ -1,6 +1,3 @@
-// 白色正文容器的内边距，分页测量和实际渲染共用。
-export const FRAME_VIEW_PADDING = 12;
-
 export default {
   name: "红色边框", // 主题显示名称
   id: "frame", // 主题编号

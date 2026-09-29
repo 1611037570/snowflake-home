@@ -51,6 +51,8 @@ export interface RegionConfig {
   order: number;
   /** 区域高度的计算方式 */
   height: RegionHeight;
+  /** 区域内容四周的内边距 */
+  contentPadding?: BoxSpacing;
   /** 区域中的栏配置 */
   columns: ColumnConfig[];
 }

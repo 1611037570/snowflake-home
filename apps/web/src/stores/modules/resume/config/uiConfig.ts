@@ -262,6 +262,7 @@ export const DEFAULT_UI = {
     module: "auto",
     title: "auto",
     item: "auto",
+    view: "auto", // 正文容器样式跟随当前主题编号
   },
   layout: {
     type: "singleColumn",
