@@ -264,7 +264,7 @@ export const DEFAULT_UI = {
     item: "auto",
   },
   layout: {
-    type: "single",
+    type: "singleColumn",
     columns: null,
     leftColumnWidth: defaultLeftColumnWidth,
   },

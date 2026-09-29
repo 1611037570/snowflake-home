@@ -47,7 +47,7 @@ const applyTemplate = (template) => {
   const nextUi = structuredClone(template.item.ui);
   const moduleKeys = resumeStore.runtimeFields.map((field) => field.key).filter(Boolean);
   nextUi.layout.columns =
-    nextUi.layout.type === "single"
+    nextUi.layout.type === "singleColumn"
       ? null
       : createDefaultLayoutColumns(nextUi.layout.type, moduleKeys);
   Object.assign(currentUI.value, nextUi);

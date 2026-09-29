@@ -10,3 +10,8 @@ export type {
   ResumeThemeTemplate,
   ThemeTemplateConfig,
 } from "./styles/createThemeTemplate";
+export {
+  isPageLayoutTemplateId,
+  pageLayoutRegistry,
+  type PageLayoutTemplateId,
+} from "./layouts";

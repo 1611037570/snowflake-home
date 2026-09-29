@@ -2,9 +2,9 @@ import { RESUME_HEIGHT, RESUME_WIDTH } from "../../../shared/constants";
 import type { BoxSpacing, PageLayoutConfig, PageSize } from "../pageLayoutTypes";
 import { createSingleColumnLayout } from "./createSingleColumnLayout";
 import { createTwoColumnLayout, resolveColumnRatios } from "./createTwoColumnLayout";
+import type { PageLayoutTemplateId } from "@/views/resume/theme/layouts";
 
-/** 模板中可用的页面布局编号：单栏与双栏走同一套模板入口 */
-export type PageLayoutTemplateId = "single" | "topUserTwoColumn" | "twoColumn";
+export type { PageLayoutTemplateId } from "@/views/resume/theme/layouts";
 
 /** 双栏布局只保存栏内模块 key 顺序。 */
 export interface LayoutColumns {
@@ -179,7 +179,7 @@ export const createPageLayoutTemplate = ({
   /** 页面布局模板编号。 */
   templateId: PageLayoutTemplateId;
 }): PageLayoutConfig => {
-  if (templateId === "single") {
+  if (templateId === "singleColumn") {
     return createSingleColumnLayoutTemplate(options);
   }
   if (templateId === "topUserTwoColumn") {
