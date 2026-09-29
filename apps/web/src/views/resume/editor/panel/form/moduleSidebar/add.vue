@@ -6,15 +6,16 @@ import {
   bindCollapsedDefault,
   ensureRuntimeFieldIds,
 } from "@/stores/modules/resume/hooks/useConfigTemplate";
-import { jumpAll } from "../../../../hooks/useModuleNav";
+import { jumpAll } from "../../../hooks/useModuleNav";
 import { storeToRefs } from "pinia";
-import { computed } from "vue";
+import { computed, ref } from "vue";
 import { getUUID } from "@/utils";
 import i18n from "@/locales";
 import { translateResumeEditorText } from "@/stores/modules/resume/hooks/useResumeEditorLocale";
 const resumeStore = useResumeStore();
 const { runtimeConfig, currentData } = storeToRefs(resumeStore);
 defineOptions({ name: "AddModule" });
+const dropdownRef = ref(null);
 
 const BASIC_MODULE_KEYS = ["skill", "education", "project", "work"];
 
@@ -47,6 +48,7 @@ const otherModules = computed(() =>
   availableModules.value.filter((item) => !BASIC_MODULE_KEYS.includes(item.value)),
 );
 const handleAdd = (module) => {
+  dropdownRef.value?.handleClose?.();
   const type = module.value;
   // 自定义模块需要特殊处理
   if (type === "custom") {
@@ -101,54 +103,67 @@ const handleConfirm = () => {
 </script>
 
 <template>
-  <header class="mt-2 mb-3 flex items-center text-lg font-bold">
-    <SfIcon icon="ic:round-add" size="4" class="mr-1" />
-    <div>{{ $t("addModule") }}</div>
-  </header>
-
-  <div class="flex w-full flex-col gap-3">
-    <div v-if="basicModules.length" class="flex flex-col gap-3">
-      <span class="text-xs text-sf-text-3">{{ $t("basicModules") }}</span>
-      <div class="flex flex-wrap gap-3">
-        <button
-          v-for="item in basicModules"
-          :key="item.name"
-          type="button"
-          class="flex h-7 cursor-pointer items-center justify-center gap-1 rounded-3xl border border-sf-b bg-sf-primary px-2 text-xs text-sf-text-2 transition-colors hover:border-sf-theme hover:text-sf-theme"
-          @click="handleAdd(item)"
-        >
-          <SfIcon icon="ic:round-add" size="4" />
-          <span>{{ item.name }}</span>
-        </button>
-      </div>
-    </div>
-    <div class="flex flex-col gap-3">
-      <div class="flex flex-col gap-3">
-        <span class="text-xs text-sf-text-3">{{ $t("otherModules") }}</span>
-        <div class="flex flex-wrap gap-3">
-          <button
-            v-for="item in otherModules"
-            :key="item.name"
-            type="button"
-            class="flex h-7 cursor-pointer items-center justify-center gap-1 rounded-3xl border border-sf-b bg-sf-primary px-2 text-xs text-sf-text-2 transition-colors hover:border-sf-theme hover:text-sf-theme"
-            @click="handleAdd(item)"
-          >
-            <SfIcon icon="ic:round-add" size="4" />
-            <span>{{ item.name }}</span>
-          </button>
-          <!-- 自定义模块不受预设模块可用数量影响，始终允许添加 -->
-          <button
-            type="button"
-            class="flex h-7 w-fit cursor-pointer items-center justify-center gap-1 rounded-3xl border border-dashed border-sf-b bg-sf-primary px-2 text-xs text-sf-text-2 transition-colors hover:border-sf-theme hover:text-sf-theme"
-            @click="handleAdd({ value: 'custom' })"
-          >
-            <SfIcon icon="ic:round-add" size="4" />
-            <span>{{ $t("customModule") }}</span>
-          </button>
+  <SfDropdown
+    ref="dropdownRef"
+    class="w-full"
+    trigger="click"
+    placement="top-start"
+    :show-arrow="false"
+    popper-class="resume-add-module-dropdown"
+  >
+    <button
+      type="button"
+      class="flex w-full items-center justify-between gap-3 rounded-xl border border-dashed border-sf-b bg-sf-primary py-3 text-sm font-semibold text-sf-theme transition-colors hover:border-sf-theme"
+    >
+      <span class="flex items-center gap-3">
+        <SfIcon icon="ic:round-add" size="4" />
+        <span class="w-9 text-center leading-4">{{ $t("addModule") }}</span>
+      </span>
+      <SfIcon icon="mingcute:down-line" size="3" />
+    </button>
+    <template #dropdown>
+      <div class="flex w-60 flex-col gap-3 rounded-2xl border border-sf-b bg-sf-primary p-3 shadow-lg">
+        <div v-if="basicModules.length" class="flex flex-col gap-3">
+          <span class="text-xs text-sf-text-3">{{ $t("basicModules") }}</span>
+          <div class="flex flex-wrap gap-3">
+            <button
+              v-for="item in basicModules"
+              :key="item.name"
+              type="button"
+              class="flex h-7 cursor-pointer items-center justify-center gap-1 rounded-3xl border border-sf-b bg-sf-primary px-2 text-xs text-sf-text-2 transition-colors hover:border-sf-theme hover:text-sf-theme"
+              @click="handleAdd(item)"
+            >
+              <SfIcon icon="ic:round-add" size="4" />
+              <span>{{ item.name }}</span>
+            </button>
+          </div>
+        </div>
+        <div class="flex flex-col gap-3">
+          <span class="text-xs text-sf-text-3">{{ $t("otherModules") }}</span>
+          <div class="flex flex-wrap gap-3">
+            <button
+              v-for="item in otherModules"
+              :key="item.name"
+              type="button"
+              class="flex h-7 cursor-pointer items-center justify-center gap-1 rounded-3xl border border-sf-b bg-sf-primary px-2 text-xs text-sf-text-2 transition-colors hover:border-sf-theme hover:text-sf-theme"
+              @click="handleAdd(item)"
+            >
+              <SfIcon icon="ic:round-add" size="4" />
+              <span>{{ item.name }}</span>
+            </button>
+            <button
+              type="button"
+              class="flex h-7 w-fit cursor-pointer items-center justify-center gap-1 rounded-3xl border border-dashed border-sf-b bg-sf-primary px-2 text-xs text-sf-text-2 transition-colors hover:border-sf-theme hover:text-sf-theme"
+              @click="handleAdd({ value: 'custom' })"
+            >
+              <SfIcon icon="ic:round-add" size="4" />
+              <span>{{ $t("customModule") }}</span>
+            </button>
+          </div>
         </div>
       </div>
-    </div>
-  </div>
+    </template>
+  </SfDropdown>
 </template>
 
 <style scoped></style>

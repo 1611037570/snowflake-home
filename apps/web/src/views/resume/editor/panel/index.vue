@@ -63,8 +63,8 @@ const activeMenu = computed(() => menuList.value[activeIndex.value] || menuList.
 <template>
   <SfResizable
     v-model:size="editorWidth"
-    :min="360"
-    :max="500"
+    :min="460"
+    :max="600"
     position="right"
     class="mobile-resume-builder relative flex h-full flex-col py-3"
   >

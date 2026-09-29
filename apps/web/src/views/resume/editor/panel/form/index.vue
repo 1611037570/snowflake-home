@@ -7,8 +7,8 @@ import { storeToRefs } from "pinia";
 import { defineAsyncComponent } from "vue";
 import { RESUME_OPTIONS } from "@/stores/modules/resume/config/resumeOptions";
 import { useRuntimeData } from "../../hooks/useRuntimeData";
-import AddModule from "./components/module/add.vue";
 import ArchivedModules from "./components/module/archived.vue";
+import ModuleSidebar from "./moduleSidebar/index.vue";
 import HeightWeight from "./components/field/heightWeight.vue";
 import Image from "./components/field/image.vue";
 import More from "./components/field/more.vue";
@@ -143,8 +143,9 @@ onBeforeUnmount(() => {
 
 <template>
   <div class="relative h-full">
-    <SfScrollbar class="resume-editor-form relative h-full">
-      <div class="flex w-full flex-col">
+    <div class="grid h-full min-h-0 w-full grid-cols-[minmax(0,1fr)_minmax(0,3fr)]">
+      <ModuleSidebar />
+      <SfScrollbar class="resume-editor-form relative h-full min-h-0">
         <SfSkeleton v-if="!showDynamicForm || !runtimeConfig" />
         <AsyncDynamicForm
           v-else
@@ -155,9 +156,8 @@ onBeforeUnmount(() => {
           @vue:mounted="finishConfigSync"
         />
         <ArchivedModules />
-        <AddModule />
-      </div>
-    </SfScrollbar>
+      </SfScrollbar>
+    </div>
   </div>
 </template>
 
