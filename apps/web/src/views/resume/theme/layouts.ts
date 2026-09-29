@@ -11,6 +11,10 @@ export const pageLayoutRegistry = [
     id: "topUserTwoColumn", // 布局编号
     name: "个人信息顶部通栏，其余模块左右布局", // 布局显示名称
   },
+  {
+    id: "topUserSingleColumn", // 布局编号
+    name: "个人信息顶部通栏，其余模块单栏布局", // 布局显示名称
+  },
 ] as const;
 
 export type PageLayoutTemplateId = (typeof pageLayoutRegistry)[number]["id"];

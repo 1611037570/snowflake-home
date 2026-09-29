@@ -1,6 +1,7 @@
 import { computed, type ComputedRef, type Ref } from "vue";
 import { getContentHeight, RESUME_WIDTH } from "../../shared/constants";
 import { defaultLeftColumnWidth } from "@/stores/modules/resume/config/uiConfig";
+import { FRAME_VIEW_PADDING } from "@/views/resume/theme/styles/frame";
 import { buildLayoutNodes } from "./adapter/buildLayoutNodes";
 import { createResumeLayout } from "./layout/createResumeLayout";
 import { resolveColumnWidths } from "./layout/resolveColumnWidths";
@@ -106,8 +107,23 @@ export const useResumeLayout = ({
   const contentWidth = computed(
     () => RESUME_WIDTH - (Number(ui.value.page?.padding?.horizontal) || 0) * 2,
   );
+  const frameViewInset = computed(() =>
+    ui.value.theme?.template === "frame" ? FRAME_VIEW_PADDING * 2 : 0,
+  );
   // 栏宽解析只做一次：测量宿主与真实渲染共用同一份栏宽，避免两处各算一遍
-  const columnWidths = computed(() => resolveColumnWidths(layout.value, contentWidth.value));
+  const columnWidths = computed(() => {
+    const widths = resolveColumnWidths(layout.value, contentWidth.value);
+    const mainRegion = layout.value.regions.find((region) => region.id === "main");
+    if (frameViewInset.value && mainRegion) {
+      // 正文栏按白色容器内侧宽度测量，顶部个人信息仍使用整栏宽度。
+      const innerWidths = resolveColumnWidths(
+        { ...layout.value, regions: [mainRegion] },
+        Math.max(0, contentWidth.value - frameViewInset.value),
+      );
+      innerWidths.forEach((width, columnId) => widths.set(columnId, width));
+    }
+    return widths;
+  });
   // 测量宿主按栏位分组渲染：每个节点在自己的栏宽下测量，节点与栏位一一对应，测量结果仍是扁平表
   const measureGroups = computed(() =>
     layout.value.regions.flatMap((region) =>
@@ -160,6 +176,8 @@ export const useResumeLayout = ({
         0,
         availableHeight.value - firstPageConsumedHeight,
       );
+      // 白色正文容器上下内边距占用真实页面高度，分页正文同步扣除。
+      const regionInset = region.id === "main" ? frameViewInset.value : 0;
       const regionFlows = region.columns.map((column) => {
         const columnNodes = nodes.value.filter((node) =>
           column.moduleKeys.includes(node.sourceModuleKey),
@@ -167,9 +185,12 @@ export const useResumeLayout = ({
         const flowPages = paginateFlow({
           nodes: columnNodes,
           measurements: measurements.value,
-          availableHeight: firstPageAvailableHeight,
+          availableHeight: Math.max(0, firstPageAvailableHeight - regionInset),
           availableHeightByPage: (pageIndex) =>
-            pageIndex === 0 ? firstPageAvailableHeight : availableHeight.value,
+            Math.max(
+              0,
+              (pageIndex === 0 ? firstPageAvailableHeight : availableHeight.value) - regionInset,
+            ),
           gap: column.gap,
         });
         flowPagesByColumn.set(column.id, flowPages);

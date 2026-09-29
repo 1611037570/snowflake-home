@@ -8,8 +8,9 @@ import { expandConfigModules } from "@/stores/modules/resume/hooks/useConfigTemp
 import ResumePageShell from "./resumePageShell.vue";
 import LayoutMeasureTree from "./render/measure/layoutMeasureTree.vue";
 import Column from "./render/column.vue";
+import ViewContainer from "@/views/resume/theme/components/viewContainer.vue";
 import { useResumePages } from "./useResumePages";
-import { useResumeTheme } from "./useResumeTheme";
+import { useResumeTheme } from "@/views/resume/theme/useResumeTheme";
 import { provideResumePreviewContext } from "../shared/previewContext";
 import { isEmptyResume } from "../../toolbar/modules/progress/useResumeStats";
 import { getPreviewText } from "../shared/i18n";
@@ -88,6 +89,8 @@ const previewLang = computed(() => ui.value.content?.language || "zh");
 const showPageNumber = computed(() => props.showPageNumber);
 const themeStyles = useResumeTheme(ui);
 const { paddingStyle, fontStyle, lineHeightStyle, fontReadyVersion } = themeStyles;
+// 红色边框主题仅包裹正文区域，后续无个人信息的页面继续绘制同一底板。
+const isFrameTheme = computed(() => themeStyles.themeTemplate.value === "frame");
 const measureTreeStyle = computed(() => ({
   ...paddingStyle.value,
   ...fontStyle.value,
@@ -300,11 +303,20 @@ defineExpose({
             },
           ]"
         >
-          <div class="flex min-w-0 flex-col" :style="{ gap: `${layout.regionGap}px` }">
+          <div
+            class="flex min-w-0 flex-col"
+            :class="{ 'flex-1': isFrameTheme }"
+            :style="{ gap: `${layout.regionGap}px` }"
+          >
             <template v-for="region in page.regions" :key="region.regionId">
-              <div
+              <component
+                :is="isFrameTheme && region.regionId === 'main' ? ViewContainer : 'div'"
                 v-if="region.columns.some((column) => column.fragments.length > 0)"
                 class="flex w-full min-w-0"
+                :class="{
+                  'flex-1': isFrameTheme && region.regionId === 'main',
+                  'text-white': isFrameTheme && region.regionId === 'header',
+                }"
                 :style="{ gap: `${layoutColumnGap}px` }"
               >
                 <div
@@ -331,7 +343,7 @@ defineExpose({
                     @move="(payload) => handleModuleMove(payload, column.columnId)"
                   />
                 </div>
-              </div>
+              </component>
             </template>
           </div>
         </ResumePageShell>

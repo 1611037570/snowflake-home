@@ -155,6 +155,11 @@ const handleModuleMove = ({ moduleKey, direction, columnId }) => {
   if (index < 0) return;
   const target = direction === "up" ? index - 1 : index + 1;
   if (target < 0 || target >= order.length) return;
+  // 顶部通栏单栏按简历模块顺序移动，不写入双栏专用配置。
+  if (currentUI.value.layout.type === "topUserSingleColumn") {
+    resumeStore.swapModuleOrder(moduleKey, order[target]);
+    return;
+  }
   const columns = resolveLayoutColumns(
     currentUI.value.layout.type,
     previewModuleKeys.value,

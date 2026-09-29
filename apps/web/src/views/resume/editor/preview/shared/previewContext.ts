@@ -1,5 +1,5 @@
 import { inject, provide, type ComputedRef, type InjectionKey } from "vue";
-import type { ResumeTheme } from "../resumePages/useResumeTheme";
+import type { ResumeTheme } from "@/views/resume/theme/useResumeTheme";
 
 /** 预览模块共享的运行时上下文，集中管理数据、主题与个人字段配置。 */
 export interface ResumePreviewContext {

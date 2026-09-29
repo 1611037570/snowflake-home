@@ -95,8 +95,11 @@ const useTemplate = (card) => {
     previewBase.value.config?.modules || [],
     previewBase.value.data,
   ).map((field) => field.key).filter(Boolean);
+  // 仅双栏布局生成栏内模块顺序，顶部通栏单栏沿用简历模块顺序。
   ui.layout.columns =
-    ui.layout.type === "singleColumn" ? null : createDefaultLayoutColumns(ui.layout.type, moduleKeys);
+    ui.layout.type === "twoColumn" || ui.layout.type === "topUserTwoColumn"
+      ? createDefaultLayoutColumns(ui.layout.type, moduleKeys)
+      : null;
   resumeStore.addResume({
     data: deepClone(previewBase.value.data),
     config: deepClone(previewBase.value.config),

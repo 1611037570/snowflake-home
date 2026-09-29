@@ -46,10 +46,11 @@ const isActive = (id) => (currentUI.value?.theme?.template ?? "default") === id;
 const applyTemplate = (template) => {
   const nextUi = structuredClone(template.item.ui);
   const moduleKeys = resumeStore.runtimeFields.map((field) => field.key).filter(Boolean);
+  // 顶部通栏单栏与普通单栏一样，不保存双栏模块配置。
   nextUi.layout.columns =
-    nextUi.layout.type === "singleColumn"
-      ? null
-      : createDefaultLayoutColumns(nextUi.layout.type, moduleKeys);
+    nextUi.layout.type === "twoColumn" || nextUi.layout.type === "topUserTwoColumn"
+      ? createDefaultLayoutColumns(nextUi.layout.type, moduleKeys)
+      : null;
   Object.assign(currentUI.value, nextUi);
 };
 </script>
