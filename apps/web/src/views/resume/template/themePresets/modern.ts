@@ -6,5 +6,4 @@ export default {
     theme: { color: "#2563EB", titleIconMode: "icon" },
     user: { avatarPosition: "center", infoPosition: "center" },
   },
-  appearance: { moduleTitle: "modern" },
 };

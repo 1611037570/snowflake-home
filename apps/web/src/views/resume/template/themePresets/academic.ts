@@ -7,5 +7,4 @@ export default {
     font: { size: 15, lineHeight: 1.4 },
     content: { textAlign: "justify", dateStyle: "cn" },
   },
-  appearance: { moduleTitle: "academic" },
 };

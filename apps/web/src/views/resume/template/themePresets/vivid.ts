@@ -7,13 +7,4 @@ export default {
     font: { size: 17, titleSize: 24 },
     user: { infoMode: "icon" },
   },
-  appearance: {
-    moduleTitle: "vivid",
-    item: {
-      background: "#EA580C1A",
-      borderColor: "#EA580C66",
-      radius: "12px",
-      padding: 12,
-    },
-  },
 };

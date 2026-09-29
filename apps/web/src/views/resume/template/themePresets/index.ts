@@ -44,4 +44,4 @@ export const resumeThemeRegistry = Object.fromEntries(
 export const getResumeThemeTemplate = (id?: string) =>
   resolveThemeTemplate(resumeThemeRegistry[id || "default"] || resumeThemeRegistry.default);
 
-export const getThemeItemStyle = (id: string) => getResumeThemeTemplate(id).appearance.item;
+export { getThemeItemStyle, getThemeModuleStyle } from "./themeStyles";
