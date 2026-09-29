@@ -276,6 +276,8 @@
   "ai": "AI",
   "template": "模板",
   "renameResume": "重命名简历",
+  "editTitle": "编辑标题",
+  "moduleTitleHint": "优先使用默认标题，如需修改请保留原语义，避免影响 ATS 识别。",
   "titlePlaceholder": "请输入标题",
   "autoGenerate": "一键自动",
   "cancel": "取消",
