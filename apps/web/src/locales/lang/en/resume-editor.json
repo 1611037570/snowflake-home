@@ -436,6 +436,7 @@
   "timeFormat": "Time Format",
   "infoSeparator": "Information Separator",
   "layout": "Layout",
+  "textStyle": "Text",
   "pageLayout": "Page Layout",
   "restoreLayoutDefault": "Restore Layout Defaults",
   "showPageNumber": "Show Page Numbers",

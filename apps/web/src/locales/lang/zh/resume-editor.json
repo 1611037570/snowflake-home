@@ -436,6 +436,7 @@
   "timeFormat": "时间格式",
   "infoSeparator": "信息分隔",
   "layout": "布局",
+  "textStyle": "文字",
   "pageLayout": "页面布局",
   "restoreLayoutDefault": "恢复布局默认",
   "showPageNumber": "显示页码",
