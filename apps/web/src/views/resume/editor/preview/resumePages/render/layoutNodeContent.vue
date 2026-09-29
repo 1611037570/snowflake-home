@@ -171,7 +171,13 @@ const itemContentSpacingStyle = computed(() => {
         :style="innerSpacingStyle"
       >
         <div class="max-w-full min-w-0 flex-1">
-          <InlineInfoList :items="[item.post, item.department]" />
+          <InlineInfoList
+            :items="
+              node.sourceModuleKey === 'education'
+                ? [item.college, item.post]
+                : [item.post, item.department]
+            "
+          />
         </div>
         <ResumeField :model-value="item.city" />
       </div>
