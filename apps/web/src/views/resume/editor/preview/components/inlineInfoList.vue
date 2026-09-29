@@ -34,7 +34,6 @@ const infoItems = computed(() =>
     >
       <span
         v-if="index"
-        class="text-sf-text-3"
         :class="separatorMark ? 'mx-3' : 'inline-block w-3'"
         aria-hidden="true"
       >
