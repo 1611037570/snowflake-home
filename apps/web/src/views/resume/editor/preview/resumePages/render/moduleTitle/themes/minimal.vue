@@ -11,7 +11,7 @@ defineProps({
 
 <template>
   <!-- 简约风格：纯标题文字，无装饰 -->
-  <h2 v-if="title" class="max-w-full min-w-0 font-bold tracking-wide break-words">
+  <h2 class="max-w-full min-w-0 font-bold tracking-wide break-words">
     <TitleText :title="title" />
   </h2>
 </template>

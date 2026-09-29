@@ -15,7 +15,7 @@ const {
 
 <template>
   <!-- 现代风格：标题居中 + 主题色短横线 -->
-  <div v-if="title" class="flex flex-col items-center">
+  <div class="flex flex-col items-center">
     <h2 class="max-w-full min-w-0 font-bold tracking-wide break-words">
       <TitleText :title="title" />
     </h2>
