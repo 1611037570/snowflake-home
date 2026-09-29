@@ -10,6 +10,7 @@ import minimal from "./minimal";
 import modern from "./modern";
 import outline from "./outline";
 import steady from "./steady";
+import timeline from "./timeline";
 import topUserTwoColumn from "./topUserTwoColumn";
 import twoColumn from "./twoColumn";
 import vivid from "./vivid";
@@ -36,6 +37,7 @@ export const themeTemplateList = createThemeTemplates([
   twoColumn,
   colorBar,
   frame,
+  timeline,
 ]);
 
 // 主题选择列表与预览渲染共用这份注册表。

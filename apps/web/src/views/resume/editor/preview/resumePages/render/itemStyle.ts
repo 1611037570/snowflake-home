@@ -4,6 +4,10 @@ import type { LayoutNode } from "../engine/types";
 export const isItemNode = (node: LayoutNode) =>
   node.type !== "spacer" && !(node.type === "group" && node.sourceModuleKey === "user");
 
+// 时间轴只作用于经历类分组，其他模块继续使用普通条目宽度。
+export const isTimelineNode = (node: LayoutNode, themeId: string) =>
+  themeId === "timeline" && node.type === "group" && node.sourceModuleKey !== "user";
+
 // 渲染与测量共用分片边框处理，避免分页前后的容器尺寸不一致。
 export const getItemFragmentStyle = (
   blockRange: { start: number; end: number },

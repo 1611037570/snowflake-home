@@ -2,7 +2,7 @@
 import { computed } from "vue";
 import Title from "@/views/resume/theme/components/moduleTitle/index.vue";
 import Item from "@/views/resume/theme/components/itemContainer.vue";
-import { getItemFragmentStyle, isItemNode } from "./itemStyle";
+import { getItemFragmentStyle, isItemNode, isTimelineNode } from "./itemStyle";
 import LayoutNodeContent from "./layoutNodeContent.vue";
 import { useResumePreviewContext } from "../../shared/previewContext";
 import type { LayoutNode } from "../engine/types";
@@ -46,6 +46,7 @@ const isLeadingOnPage = (itemIndex: number) =>
       <Item
         v-if="entry.fragment.fragment !== 'title' && isItemNode(getNode(entry.fragment)!)"
         :item="itemConfig"
+        :timeline="isTimelineNode(getNode(entry.fragment)!, theme.themeTemplate.value)"
         :style="getItemStyle(entry.fragment)"
         class="resume-submodule-content relative rounded-3xl hover:bg-sf-theme-2!"
         data-layout-block-range

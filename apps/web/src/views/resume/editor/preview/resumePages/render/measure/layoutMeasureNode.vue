@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import Item from "@/views/resume/theme/components/itemContainer.vue";
-import { getItemFragmentStyle, isItemNode } from "../itemStyle";
+import { getItemFragmentStyle, isItemNode, isTimelineNode } from "../itemStyle";
 import Title from "@/views/resume/theme/components/moduleTitle/index.vue";
 import { useResumePreviewContext } from "../../../shared/previewContext";
 import LayoutNodeContent from "../layoutNodeContent.vue";
@@ -16,6 +16,8 @@ const useItem = computed(() => isItemNode(props.node));
 const isUserModule = computed(
   () => props.node.type === "group" && props.node.sourceModuleKey === "user",
 );
+// 测量树与预览条目使用相同的日期栏宽度。
+const isTimeline = computed(() => isTimelineNode(props.node, theme.themeTemplate.value));
 const fullItemStyle = computed(() =>
   getItemFragmentStyle(
     { start: 0, end: Number.MAX_SAFE_INTEGER },
@@ -42,6 +44,7 @@ const getBreakpointItemStyle = (offset: number) =>
       <Item
         v-if="useItem"
         :item="itemConfig"
+        :timeline="isTimeline"
         :style="fullItemStyle"
         data-layout-block-range
       >
@@ -62,6 +65,7 @@ const getBreakpointItemStyle = (offset: number) =>
         <Item
           v-if="useItem"
           :item="itemConfig"
+          :timeline="isTimeline"
           :style="getBreakpointItemStyle(point.offset)"
           data-layout-block-range
         >

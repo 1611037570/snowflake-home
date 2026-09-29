@@ -195,6 +195,8 @@
   "resumeTemplateStyle_twoColumn_description": "Arrange every section in two columns for content-rich resumes.",
   "resumeTemplateStyle_frame_name": "Red Frame",
   "resumeTemplateStyle_frame_description": "A red page background around a white content panel.",
+  "resumeTemplateStyle_timeline_name": "Timeline",
+  "resumeTemplateStyle_timeline_description": "A full-width profile above dated experience entries on a timeline.",
   "resumeTemplateContent_xiaoZhou.ts_name": "General Resume",
   "resumeTemplateContent_xiaoZhou.ts_description": "A complete template for a wide range of job searches.",
   "resumeTemplateContent_xiaoZhou.ts_tag_1": "General",
