@@ -1,5 +1,5 @@
 import { computed } from "vue";
-import { useResumePreviewContext } from "../../shared/previewContext";
+import { useResumePreviewContext } from "@/views/resume/editor/preview/shared/previewContext";
 
 const EMPTY_HIDDEN_FIELDS = computed(() => new Set<string>());
 

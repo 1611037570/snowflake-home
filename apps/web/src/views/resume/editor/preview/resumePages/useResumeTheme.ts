@@ -24,7 +24,7 @@ import {
   defaultUserInfoLayout,
   defaultUserInfoMode,
 } from "@/stores/modules/resume/config/uiConfig";
-import { getThemeItemStyle } from "@/views/resume/template/themePresets";
+import { getThemeItemStyle } from "@/views/resume/theme";
 
 /** 简历主题配置（item.ui） */
 type ResumeUi = Record<string, any>;

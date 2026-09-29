@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from "vue";
-import { getThemeModuleStyle } from "@/views/resume/template/themePresets";
-import { useResumePreviewContext } from "../../shared/previewContext";
+import { getThemeModuleStyle } from "@/views/resume/theme";
+import { useResumePreviewContext } from "@/views/resume/editor/preview/shared/previewContext";
 
 const props = defineProps<{
   moduleKey: string;

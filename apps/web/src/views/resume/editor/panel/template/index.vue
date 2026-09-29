@@ -7,7 +7,7 @@ import ThumbPreview from "../../preview/modes/thumb.vue";
 import {
   getResumeThemeTemplate,
   themeTemplateList,
-} from "@/views/resume/template/themePresets";
+} from "@/views/resume/theme";
 import { loadResumeTemplateData } from "@/views/resume/template/data/resumeData";
 import { onMounted, ref } from "vue";
 import i18n, { $t } from "@/locales";
