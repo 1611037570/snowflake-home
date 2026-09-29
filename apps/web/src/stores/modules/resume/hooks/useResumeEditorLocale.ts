@@ -253,6 +253,8 @@ const TEXT_KEYS_SOURCE = `
   思源黑体: "sourceHanSansFont",
   霞鹜新晰黑: "lxgwNeoXiHeiFont",
   "霞鹜文楷 Lite": "lxgwWenKaiLiteFont",
+  Inter: "interFont",
+  "EB Garamond": "ebGaramondFont",
   跟随系统: "followSystem",
   默认: "defaultTheme",
   "清晰通用的基础简历样式。": "defaultThemeDescription",

@@ -370,6 +370,8 @@
   "sourceHanSansFont": "Source Han Sans",
   "lxgwNeoXiHeiFont": "LXGW Neo XiHei",
   "lxgwWenKaiLiteFont": "LXGW WenKai Lite",
+  "interFont": "Inter (English only)",
+  "ebGaramondFont": "EB Garamond (English only)",
   "followSystem": "Follow System",
   "defaultTheme": "Default",
   "defaultThemeDescription": "A clear, versatile resume style for everyday use.",

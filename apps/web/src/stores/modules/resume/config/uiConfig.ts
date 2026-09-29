@@ -30,6 +30,14 @@ export const fontFamilyList = [
     name: "霞鹜文楷 Lite",
     value: "text-lxgw-wenkai-lite",
   },
+  {
+    name: "Inter",
+    value: "text-inter",
+  },
+  {
+    name: "EB Garamond",
+    value: "text-eb-garamond",
+  },
 ];
 
 // 主题内部维护条目样式，简历数据只记录自动跟随或指定的主题来源。

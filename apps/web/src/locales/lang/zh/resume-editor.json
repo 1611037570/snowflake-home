@@ -370,6 +370,8 @@
   "sourceHanSansFont": "思源黑体",
   "lxgwNeoXiHeiFont": "霞鹜新晰黑",
   "lxgwWenKaiLiteFont": "霞鹜文楷 Lite",
+  "interFont": "Inter（仅英文字体）",
+  "ebGaramondFont": "EB Garamond（仅英文字体）",
   "followSystem": "跟随系统",
   "defaultTheme": "默认",
   "defaultThemeDescription": "清晰通用的基础简历样式。",
