@@ -19,6 +19,7 @@ import {
   DF_MODULE_SELECT,
   DF_REMOVE,
   DF_ROOT_DATA,
+  DF_USE_RULES,
   INSTANCE_COMPONENTS,
 } from "./code/injectionKeys";
 
@@ -27,10 +28,13 @@ type DynamicFormProps = {
   components?: Record<string, any>;
   // 外部选项字典：raw 绑定从这里取值
   options?: Record<string, any>;
+  /** 是否将字段规则用于表单项校验提示 */
+  useRules?: boolean;
 };
 const props = withDefaults(defineProps<DynamicFormProps>(), {
   components: () => ({}),
   options: () => ({}),
+  useRules: true,
 });
 
 const instance = getCurrentInstance();
@@ -45,6 +49,8 @@ const dataProxy = new DataProxy(data, emit, props.options);
 provide(INSTANCE_COMPONENTS, props.components);
 // 注入根数据
 provide(DF_ROOT_DATA, dataProxy);
+// 动态表单可保留规则供外部检查，同时关闭表单项错误提示。
+provide(DF_USE_RULES, () => props.useRules);
 // 模块选中能力：外部调用 selectModule(key, index) 触发选中，选中后边框持续闪烁，鼠标经过恢复
 const selectedKey = ref<string | null>(null);
 // 记录级选中下标：与模块标识组合，用于选中数组模块中的某条记录

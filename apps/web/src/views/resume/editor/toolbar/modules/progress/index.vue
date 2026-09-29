@@ -130,6 +130,15 @@ const getProgressColor = (progress) => {
                 :style="{ width: item.progress + '%' }"
               ></div>
             </div>
+            <div
+              v-if="item.issues.length"
+              class="mt-2 flex flex-col gap-1 rounded-xl bg-sf-warning-2 p-2 text-sm text-sf-warning"
+            >
+              <div class="font-medium">{{ $t("formatIssues") }}</div>
+              <div v-for="(issue, index) in item.issues" :key="index">
+                {{ issue.label }}：{{ issue.message }}
+              </div>
+            </div>
             <!-- 模块时间线问题：存在时内联展示 -->
             <div
               v-if="timelineByModule[item.key]"

@@ -153,6 +153,7 @@ onBeforeUnmount(() => {
           v-model:data="currentData"
           :components="dynamicComponents"
           :options="localizedResumeOptions"
+          :use-rules="false"
           @vue:mounted="finishConfigSync"
         />
         <ArchivedModules />
