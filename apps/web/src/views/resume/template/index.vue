@@ -1,6 +1,6 @@
 <script setup>
 import { useResumeStore } from "@/stores";
-import { themeTemplateList } from "@/stores/modules/resume/config/uiConfig";
+import { getResumeThemeTemplate, themeTemplateList } from "./themePresets";
 import ResumeCardContainer from "@/views/resume/mine/components/resumeCardContainer.vue";
 import RevealGrid from "@/views/resume/components/revealGrid.vue";
 import TemplateCategory from "./components/templateCategory.vue";
@@ -47,7 +47,7 @@ const templates = computed(() =>
     item: {
       data: previewBase.value?.data || {},
       config: previewBase.value?.config || {},
-      ui: style.item.ui,
+      ui: getResumeThemeTemplate(style.id).item.ui,
     },
   })),
 );

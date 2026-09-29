@@ -227,7 +227,7 @@
 
 <script setup>
 import { TransitionPresets, useIntersectionObserver, useTransition } from "@vueuse/core";
-import { themeTemplateList } from "@/stores/modules/resume/config/uiConfig";
+import { themeTemplateList } from "@/views/resume/template/themePresets";
 import { $t } from "@/locales";
 import { resumeTemplateList } from "../template/data/list";
 import { useRouter } from "vue-router";

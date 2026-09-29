@@ -23,8 +23,11 @@ import {
   defaultTitleIconMode,
   defaultUserInfoLayout,
   defaultUserInfoMode,
-  getThemeItemStyle,
 } from "@/stores/modules/resume/config/uiConfig";
+import {
+  getResumeThemeTemplate,
+  getThemeItemStyle,
+} from "@/views/resume/template/themePresets";
 
 /** 简历主题配置（item.ui） */
 type ResumeUi = Record<string, any>;
@@ -159,9 +162,14 @@ export const useResumeTheme = (ui: ComputedRef<ResumeUi>): ResumeTheme => {
   const userModuleTemplate = computed(() =>
     ui.value.theme?.userModule === "auto" ? themeTemplate.value : ui.value.theme?.userModule || "default",
   );
-  const moduleTemplate = computed(() =>
-    ui.value.theme?.module === "auto" ? themeTemplate.value : ui.value.theme?.module || "default",
-  );
+  // 模块装饰样式从对应主题预设读取。
+  const moduleTemplate = computed(() => {
+    const moduleTheme =
+      ui.value.theme?.module === "auto"
+        ? themeTemplate.value
+        : ui.value.theme?.module || "default";
+    return getResumeThemeTemplate(moduleTheme).appearance.moduleFrame;
+  });
   const itemStyle = computed(() =>
     getThemeItemStyle(ui.value.theme?.item === "auto" ? themeTemplate.value : ui.value.theme?.item || "default"),
   );
