@@ -24,10 +24,7 @@ import {
   defaultUserInfoLayout,
   defaultUserInfoMode,
 } from "@/stores/modules/resume/config/uiConfig";
-import {
-  getResumeThemeTemplate,
-  getThemeItemStyle,
-} from "@/views/resume/template/themePresets";
+import { getThemeItemStyle } from "@/views/resume/template/themePresets";
 
 /** 简历主题配置（item.ui） */
 type ResumeUi = Record<string, any>;
@@ -60,6 +57,7 @@ export interface ResumeTheme {
   themeTemplate: ComputedRef<any>;
   userModuleTemplate: ComputedRef<string>;
   moduleTemplate: ComputedRef<string>;
+  titleTemplate: ComputedRef<string>;
   itemStyle: ComputedRef<Record<string, string | number>>;
   userInfoMode: ComputedRef<string>;
   userInfoLayout: ComputedRef<string>;
@@ -162,16 +160,20 @@ export const useResumeTheme = (ui: ComputedRef<ResumeUi>): ResumeTheme => {
   const userModuleTemplate = computed(() =>
     ui.value.theme?.userModule === "auto" ? themeTemplate.value : ui.value.theme?.userModule || "default",
   );
-  // 模块装饰样式从对应主题预设读取。
+  // 样式 ID 为 auto 时跟随整体主题。
   const moduleTemplate = computed(() => {
-    const moduleTheme =
-      ui.value.theme?.module === "auto"
-        ? themeTemplate.value
-        : ui.value.theme?.module || "default";
-    return getResumeThemeTemplate(moduleTheme).appearance.moduleFrame;
+    const moduleTheme = ui.value.theme?.module;
+    return moduleTheme === "auto" ? themeTemplate.value : moduleTheme;
+  });
+  // 标题组件 ID 为 auto 时跟随整体主题。
+  const titleTemplate = computed(() => {
+    const titleTheme = ui.value.theme?.title;
+    return titleTheme === "auto" ? themeTemplate.value : titleTheme;
   });
   const itemStyle = computed(() =>
-    getThemeItemStyle(ui.value.theme?.item === "auto" ? themeTemplate.value : ui.value.theme?.item || "default"),
+    getThemeItemStyle(
+      ui.value.theme?.item === "auto" ? themeTemplate.value : ui.value.theme?.item,
+    ),
   );
   // 个人信息展示模式（图标/文字/隐藏），缺失时回退默认值
   const userInfoMode = computed(() => ui.value.user?.infoMode ?? defaultUserInfoMode);
@@ -211,6 +213,7 @@ export const useResumeTheme = (ui: ComputedRef<ResumeUi>): ResumeTheme => {
     themeTemplate,
     userModuleTemplate,
     moduleTemplate,
+    titleTemplate,
     itemStyle,
     userInfoMode,
     userInfoLayout,

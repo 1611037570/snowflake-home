@@ -260,6 +260,7 @@ export const DEFAULT_UI = {
     titleIconMode: defaultTitleIconMode,
     userModule: "auto",
     module: "auto",
+    title: "auto",
     item: "auto",
   },
   layout: {

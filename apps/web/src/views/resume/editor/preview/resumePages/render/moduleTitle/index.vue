@@ -4,7 +4,6 @@ import {
   CUSTOM_MODULE_ICON,
   DEFAULT_MODULE_NAMES,
 } from "@/stores/modules/resume/config/defaultConfig";
-import { getResumeThemeTemplate } from "@/views/resume/template/themePresets";
 import { getPreviewTitle } from "../../../shared/i18n";
 import { useResumePreviewContext } from "../../../shared/previewContext";
 
@@ -30,7 +29,7 @@ const props = defineProps({
 const {
   data: previewData,
   lang: previewLang,
-  theme: { titleFontStyle, themeTemplate: themeTemplateRef, titleIconMode },
+  theme: { titleFontStyle, titleTemplate, titleIconMode },
 } = useResumePreviewContext();
 
 const displayTitle = computed(() => {
@@ -39,13 +38,8 @@ const displayTitle = computed(() => {
   const moduleTitle = moduleData?.ui?.title;
   return props.title || moduleTitle || getPreviewTitle(props.moduleKey, previewLang.value);
 });
-// 风格模板：未提供时按默认样式处理
-const themeTemplate = computed(() => themeTemplateRef.value || "default");
-// 当前标题样式由主题注册表指定，未匹配时回退默认主题。
-const current = computed(() => {
-  const titleTheme = getResumeThemeTemplate(themeTemplate.value).appearance.moduleTitle;
-  return themeComponents[titleTheme] || themeComponents.default;
-});
+// 标题组件按解析后的 ID 加载，未匹配时回退默认组件。
+const current = computed(() => themeComponents[titleTemplate.value] || themeComponents.default);
 
 // 模块图标：取模块默认图标表，自定义模块用统一图标，未知模块不展示
 const moduleIcon = computed(() => {

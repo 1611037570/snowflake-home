@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed } from "vue";
+import { getThemeModuleStyle } from "@/views/resume/template/themePresets";
 import { useResumePreviewContext } from "../../shared/previewContext";
 
 const props = defineProps<{
@@ -14,7 +15,7 @@ const {
   theme: { moduleTemplate, themeColor },
 } = useResumePreviewContext();
 const isOutlineModule = computed(
-  () => moduleTemplate.value === "outline" && props.moduleKey !== "user",
+  () => getThemeModuleStyle(moduleTemplate.value).frame === "outline" && props.moduleKey !== "user",
 );
 </script>
 

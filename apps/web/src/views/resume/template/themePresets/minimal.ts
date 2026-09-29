@@ -9,5 +9,4 @@ export default {
       spacing: { paragraph: 6, module: 9 },
     },
   },
-  appearance: { moduleTitle: "minimal" },
 };

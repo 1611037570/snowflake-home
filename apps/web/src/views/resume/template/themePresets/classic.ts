@@ -7,5 +7,4 @@ export default {
     font: { family: "text-yyqx" },
     content: { dateStyle: "cn" },
   },
-  appearance: { moduleTitle: "classic" },
 };

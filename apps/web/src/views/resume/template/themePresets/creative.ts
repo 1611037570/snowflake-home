@@ -6,5 +6,4 @@ export default {
     theme: { color: "#DB2777", titleIconMode: "icon" },
     user: { avatarPosition: "center", infoPosition: "center", infoMode: "icon" },
   },
-  appearance: { moduleTitle: "creative" },
 };

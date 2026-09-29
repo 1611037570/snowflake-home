@@ -8,9 +8,4 @@ export default {
     page: { spacing: { module: 48 } },
     content: { dateStyle: "cn" },
   },
-  appearance: {
-    moduleTitle: "outline",
-    moduleFrame: "outline" as const,
-    item: { padding: 12 },
-  },
 };

@@ -8,5 +8,4 @@ export default {
     page: { spacing: { module: 18 } },
     content: { dateStyle: "cn" },
   },
-  appearance: { moduleTitle: "colorBar" },
 };
