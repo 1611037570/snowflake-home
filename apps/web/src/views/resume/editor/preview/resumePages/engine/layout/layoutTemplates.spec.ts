@@ -15,7 +15,7 @@ const moduleKeys = [
 describe("layoutTemplates", () => {
   it("单栏模板把所有模块放进同一栏", () => {
     const layout = createDefaultPageLayoutTemplate({
-      templateId: "single",
+      templateId: "singleColumn",
       moduleKeys,
       paddingVertical: 24,
       paddingHorizontal: 24,

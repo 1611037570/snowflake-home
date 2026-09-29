@@ -96,7 +96,7 @@ const useTemplate = (card) => {
     previewBase.value.data,
   ).map((field) => field.key).filter(Boolean);
   ui.layout.columns =
-    ui.layout.type === "single" ? null : createDefaultLayoutColumns(ui.layout.type, moduleKeys);
+    ui.layout.type === "singleColumn" ? null : createDefaultLayoutColumns(ui.layout.type, moduleKeys);
   resumeStore.addResume({
     data: deepClone(previewBase.value.data),
     config: deepClone(previewBase.value.config),

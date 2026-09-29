@@ -3,16 +3,14 @@ import {
   createDefaultPageLayoutTemplate,
   type PageLayoutTemplateId,
 } from "./layoutTemplates";
-
-/** 布局模板编号。 */
-const LAYOUT_TEMPLATE_IDS: PageLayoutTemplateId[] = ["single", "topUserTwoColumn", "twoColumn"];
+import { isPageLayoutTemplateId } from "@/views/resume/theme/layouts";
 
 /**
  * 解析当前生效的布局模板编号。
  * 按 layout.type 和双栏模块 key 顺序生成布局。
  */
 const resolvePageLayoutTemplate = (ui: Record<string, any>): PageLayoutTemplateId =>
-  LAYOUT_TEMPLATE_IDS.includes(ui.layout?.type) ? ui.layout.type : "single";
+  isPageLayoutTemplateId(ui.layout?.type) ? ui.layout.type : "singleColumn";
 
 /** 创建当前简历使用的页面布局，单栏与多栏统一走布局模板入口。 */
 export const createResumeLayout = ({
