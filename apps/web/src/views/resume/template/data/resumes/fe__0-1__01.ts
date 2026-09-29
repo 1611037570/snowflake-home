@@ -2,7 +2,7 @@ import { xiaoyang } from "../avatar";
 
 const resumeData: any = {
   data: {
-    user: { ui: { archived: false }, data: { position: "Software Engineer", name: "Ethan Chen", birthday: "2000-09", phone: "15888888888", email: "16****70@qq.com", workTime: "2022.08.01", sex: "Male", avatar: xiaoyang } },
+    user: { ui: { archived: false }, data: { position: "Software Engineer", name: "Ethan Chen", birthday: "2000.09", phone: "15888888888", email: "16****70@qq.com", workTime: "2022.08", sex: "Male", avatar: xiaoyang } },
     skill: { ui: { collapsed: ["1"], archived: false }, data: { content: "<p><strong>1.</strong> Proficient in TypeScript, Vue and modern front-end engineering workflows.</p><p><strong>2.</strong> Experienced in building data-driven web applications and collaborating across product and engineering teams.</p>" } },
     advantage: { ui: { collapsed: ["1"], archived: false }, data: { content: "<p>Strong problem-solving and communication skills, with a practical approach to understanding requirements and delivering maintainable solutions.</p><p>Adaptable and detail-oriented, with a collaborative mindset and a commitment to continuous learning.</p>" } },
     education: { ui: { collapsed: ["1"], archived: false }, list: [{ ui: {}, data: { name: "University of Manchester", education: "Bachelor's Degree", post: "Computer Science", startTime: "2018.09", endTime: "2022.06", content: "<p>Coursework: Data Structures, Web Development and Software Engineering.</p>", mode: "Full-time" } }] },

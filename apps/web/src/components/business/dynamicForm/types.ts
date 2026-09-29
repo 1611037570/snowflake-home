@@ -14,6 +14,24 @@ export interface ModelBinding {
   raw?: boolean;
 }
 
+/** ATS 分析规则：与表单拦截校验分离，允许按字段类型扩展检查方式。 */
+export interface ATSRuleDefinition {
+  type: string;
+  severity?: "error" | "warning";
+  fields?: Array<{ key: string; label: string; min: number; max: number }>;
+  [key: string]: any;
+}
+
+/** 字段规则兼容表单校验项，并承载 ATS 专用的分析定义。 */
+export interface DynamicFormRule {
+  required?: boolean;
+  pattern?: RegExp;
+  message?: string;
+  trigger?: string | string[];
+  ats?: ATSRuleDefinition;
+  [key: string]: any;
+}
+
 /** 条件校验规则：path 为数据路径，其余为可扩展的满足条件 */
 export interface FieldCheckRule {
   /** 数据路径，沿用 model.source 路径语义 */
@@ -67,7 +85,7 @@ interface BaseFormField {
   /** 表单项 UI 配置 */
   ui?: FieldUIConfig;
   /** 字段校验规则，供表单提示、进度统计和 ATS 检查读取 */
-  rules?: any[];
+  rules?: DynamicFormRule[];
   /** 模块标识（同时是数据路径首段） */
   key?: string;
   /** 模块名 */

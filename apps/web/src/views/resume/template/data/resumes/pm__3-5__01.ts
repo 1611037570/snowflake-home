@@ -8,7 +8,7 @@ const resumeData: any = {
       data: {
         name: "李然",
         position: "高级产品经理",
-        birthday: "1996-06",
+        birthday: "1996.06",
         sex: "男",
         marital: "未婚",
         nation: "汉族",

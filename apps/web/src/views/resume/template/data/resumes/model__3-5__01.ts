@@ -10,10 +10,10 @@ const resumeData: any = {
       data: {
         position: "平面模特",
         name: "林妍",
-        birthday: "2000-07",
+        birthday: "2000.07",
         phone: "15888888888",
         email: "16****70@qq.com",
-        workTime: "2022.08.01",
+        workTime: "2022.08",
         sex: "女",
         avatar: xiaozhou,
       },
