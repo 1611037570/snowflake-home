@@ -17,7 +17,6 @@ const {
 <template>
   <!-- 线框风格：标题位于模块外框顶部，下方一条通栏细线分隔内容 -->
   <div
-    v-if="title"
     class="border-b px-3 pt-3 pb-3"
     :style="{ borderBottomWidth: '1px', borderColor: themeColor }"
   >

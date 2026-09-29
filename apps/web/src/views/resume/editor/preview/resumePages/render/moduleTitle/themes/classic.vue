@@ -16,7 +16,6 @@ const {
 <template>
   <!-- 经典风格：标题下方使用通栏主题色细线，正文区以分节线呼应 -->
   <div
-    v-if="title"
     class="border-b pb-[3px]"
     :style="{ borderBottomWidth: '2px', borderColor: themeColor }"
   >
