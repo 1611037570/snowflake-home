@@ -3,6 +3,7 @@
     v-model="value"
     v-bind="$attrs"
     :ref="changeRef"
+    :append-to="dropdownContent"
     class="flex-1 rounded-3xl! text-sf-base"
     :class="bg"
   >
@@ -22,11 +23,12 @@
 <script setup lang="ts">
 import { ElSelect } from "element-plus";
 import type { ComponentInstance, PropType } from "vue";
-import { getCurrentInstance, useSlots } from "vue";
+import { getCurrentInstance, inject, useSlots } from "vue";
 
 defineOptions({ name: "SfSelect" });
 
 const bg = inject("bg");
+const dropdownContent = inject<HTMLElement | undefined>("sfDropdownContent", undefined);
 const slots = useSlots();
 
 defineProps({

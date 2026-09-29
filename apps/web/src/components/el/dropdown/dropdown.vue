@@ -12,7 +12,7 @@
 <script setup lang="ts">
 import { ElDropdown } from "element-plus";
 import type { ComponentInstance } from "vue";
-import { provide, ref } from "vue";
+import { computed, provide, ref } from "vue";
 
 import { useThemeStore } from "@/stores";
 import { storeToRefs } from "pinia";
@@ -31,6 +31,14 @@ const dropdownRef = ref<ComponentInstance<typeof ElDropdown>>();
 const handleClose = () => dropdownRef.value?.handleClose?.();
 // 向下拉内容提供统一关闭方法，列表点击时自动收起当前下拉。
 provide("sfDropdownClose", handleClose);
+// 内部选择器弹层挂到下拉弹层根节点，避开菜单滚动层并保留内部点击判定。
+provide(
+  "sfDropdownContent",
+  computed(() => {
+    const dropdown = dropdownRef.value as any;
+    return dropdown?.popperRef?.contentRef?.contentRef?.popperContentRef;
+  }),
+);
 defineExpose({ handleClose });
 </script>
 
