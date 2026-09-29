@@ -28,9 +28,9 @@
               <Preview class="motion-preview" :class="{ 'ai-generating': isGenerating }" />
             </Transition>
           </div>
-          <!-- 最右侧系统配置栏：工具栏与 QA 入口整体垂直居中；移动端由工具栏自身收起为抽屉 -->
+          <!-- 非专注模式显示最右侧系统配置栏；移动端由工具栏自身收起为抽屉 -->
           <Transition :name="isMobile ? '' : 'resume-motion'" appear>
-            <Toolbar />
+            <Toolbar v-if="!focusMode" />
           </Transition>
           <AiMask :visible="isGenerating" />
         </div>
