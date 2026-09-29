@@ -69,7 +69,9 @@ function handleCancel() {
             class="w-full rounded-lg border border-sf-b bg-sf-bg"
           />
         </div>
-        <SfButton @click="handleAutoTitle">{{ $t("autoGenerate") }}</SfButton>
+        <SfButton :type="pendingTitleMode === 'auto' ? 'theme' : 'bg'" @click="handleAutoTitle">
+          {{ $t("autoGenerate") }}
+        </SfButton>
       </div>
       <div class="flex justify-end gap-3">
         <SfButton type="bg" @click="handleCancel">{{ $t("cancel") }}</SfButton>
