@@ -11,4 +11,24 @@ registerFonts([
     family: "yyqx",
     load: () => import("../../styles/fonts/yyqx.scss"),
   },
+  {
+    key: "text-source-han-serif",
+    family: "SourceHanSerifCN",
+    load: () => import("../../styles/fonts/sourceHanSerif.scss"),
+  },
+  {
+    key: "text-source-han-sans",
+    family: "SourceHanSansCN",
+    load: () => import("../../styles/fonts/sourceHanSans.scss"),
+  },
+  {
+    key: "text-lxgw-neo-xihei",
+    family: "LXGWNeoXiHei",
+    load: () => import("../../styles/fonts/lxgwNeoXiHei.scss"),
+  },
+  {
+    key: "text-lxgw-wenkai-lite",
+    family: "LXGWWenKaiLite",
+    load: () => import("../../styles/fonts/lxgwWenKaiLite.scss"),
+  },
 ]);
