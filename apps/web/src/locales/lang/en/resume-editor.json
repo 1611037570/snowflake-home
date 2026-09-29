@@ -395,6 +395,8 @@
   "steadyThemeDescription": "A composed resume style for experienced and formal job searches.",
   "outlineTheme": "Outline",
   "outlineThemeDescription": "A monochrome style that separates sections with thin black rules.",
+  "colorBarTheme": "Color Bar",
+  "colorBarThemeDescription": "A title style with a colored vertical accent and a light tinted background.",
   "topUserTwoColumnTheme": "Top Banner / Two Columns",
   "topUserTwoColumnThemeDescription": "Personal information spans the top while other modules use two fixed columns.",
   "twoColumnTheme": "Two Columns",
