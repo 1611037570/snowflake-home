@@ -40,6 +40,21 @@ const isContentEmpty = (val: any): boolean => {
 
 const getLabel = (field: any, prop: string): string => getFieldLabel(field) || prop || $t("field");
 
+// 完成度只把字段校验规则中明确标记必填的项计入。
+const isRequiredField = (field: any): boolean =>
+  field?.rules?.some((rule: any) => rule?.required === true) === true;
+
+const getRuleIssues = (rules: any[], value: unknown, label: string) => {
+  if (isEmpty(value)) return [];
+  return rules.flatMap((rule) => {
+    if (!(rule?.pattern instanceof RegExp)) return [];
+    rule.pattern.lastIndex = 0;
+    return rule.pattern.test(String(value))
+      ? []
+      : [{ label, message: rule.message || $t("invalidFormat") }];
+  });
+};
+
 // 模块名称优先读取 ui.title，缺失时回退标题模型默认值
 const getModuleTitle = (config: any, rootData: Record<string, any>, key: string): string =>
   rootData?.[key]?.ui?.title ||
@@ -57,10 +72,11 @@ const getFieldMeta = (field: any) => {
 
 function analyzeModule(moduleConfig: any, rootData: any) {
   if (!moduleConfig?.fields?.length) {
-    return { missing: [], score: 0 };
+    return { missing: [], issues: [], score: 0 };
   }
 
   const missing: string[] = [];
+  const issues: Array<{ label: string; message: string }> = [];
   let done = 0;
   let total = 0;
   // 模块字段统一从分组上下文解析相对路径
@@ -71,10 +87,40 @@ function analyzeModule(moduleConfig: any, rootData: any) {
   for (const field of moduleConfig.fields) {
     if (field.type === "array" && field.itemSchema) {
       const itemSchema = field.itemSchema;
-      const itemDefs = itemSchema.fields?.length ? itemSchema.fields : itemSchema.model;
-      if (!itemDefs?.length) continue;
-
-      const parentRequired = itemSchema.required === true || field.required === true;
+      const parentRequired = isRequiredField(itemSchema) || isRequiredField(field);
+      const itemDefs: Array<{ field: any; target: any; required: boolean }> = [];
+      const collectItemFields = (fields: any[], inheritedRequired: boolean) => {
+        for (const candidate of fields) {
+          const required = inheritedRequired || isRequiredField(candidate);
+          if (candidate.type === "group") {
+            collectItemFields(candidate.fields ?? [], required);
+            continue;
+          }
+          const target = unwrapField(candidate) ?? candidate;
+          itemDefs.push({
+            field: candidate,
+            target,
+            required: required || isRequiredField(target),
+          });
+        }
+      };
+      if (itemSchema.fields?.length) {
+        collectItemFields(itemSchema.fields, parentRequired);
+      } else {
+        const bindings = Array.isArray(itemSchema.model)
+          ? itemSchema.model
+          : itemSchema.model
+            ? [itemSchema.model]
+            : [];
+        for (const binding of bindings) {
+          itemDefs.push({
+            field: binding,
+            target: binding,
+            required: parentRequired || isRequiredField(binding),
+          });
+        }
+      }
+      if (!itemDefs.length) continue;
 
       const listPath = getArrayDataPath(field, moduleContext) || [];
       const list = getValueByPath(rootData, listPath);
@@ -82,12 +128,11 @@ function analyzeModule(moduleConfig: any, rootData: any) {
       if (!Array.isArray(list) || list.length === 0) {
         let hasRequired = false;
         for (const def of itemDefs) {
-          const isRequired = def.required === true || parentRequired;
-          if (!isRequired) continue;
+          if (!def.required) continue;
           hasRequired = true;
           total += 1;
-          const { prop } = getFieldMeta(def);
-          const label = getLabel(def, prop);
+          const { prop } = getFieldMeta(def.target);
+          const label = getLabel(def.field, prop);
           if (!missing.includes(label)) missing.push(label);
         }
         if (hasRequired) {
@@ -99,14 +144,19 @@ function analyzeModule(moduleConfig: any, rootData: any) {
 
       list.forEach((_: any, idx: number) => {
         for (const def of itemDefs) {
-          const isRequired = def.required === true || parentRequired;
-          if (!isRequired) continue;
-          const { src, prop } = getFieldMeta(def);
+          const { src, prop } = getFieldMeta(def.target);
           if (!src.length) continue;
 
           // 数组子项字段基于当前记录上下文解析为完整数据路径
           const path = resolveDataPath(src, { basePath: listPath, index: idx });
           const value = getValueByPath(rootData, path);
+
+          const rules = [
+            ...(def.field.rules ?? []),
+            ...(def.target === def.field ? [] : (def.target.rules ?? [])),
+          ];
+          issues.push(...getRuleIssues(rules, value, getLabel(def.field, prop)));
+          if (!def.required) continue;
 
           // 修改：使用 src 最后一个元素判断是否为 content
           const filled =
@@ -116,7 +166,7 @@ function analyzeModule(moduleConfig: any, rootData: any) {
           if (filled) {
             done += 1;
           } else {
-            const label = getLabel(def, prop);
+            const label = getLabel(def.field, prop);
             if (!missing.includes(label)) missing.push(label);
           }
         }
@@ -126,11 +176,13 @@ function analyzeModule(moduleConfig: any, rootData: any) {
 
     // 字段被包裹组件包裹时，必填与数据路径以内层字段为准
     const target = unwrapField(field) ?? field;
-    if (target?.required !== true) continue;
     const { src, prop } = getFieldMeta(target);
     if (!src.length) continue;
 
     const value = getValueByPath(rootData, resolveDataPath(src, moduleContext));
+    const rules = [...(field.rules ?? []), ...(target === field ? [] : (target.rules ?? []))];
+    issues.push(...getRuleIssues(rules, value, getLabel(field, prop)));
+    if (!isRequiredField(target) && !isRequiredField(field)) continue;
 
     // 修改：使用 src 最后一个元素判断是否为 content
     const filled = src[src.length - 1] === "content" ? !isContentEmpty(value) : !isEmpty(value);
@@ -147,7 +199,7 @@ function analyzeModule(moduleConfig: any, rootData: any) {
   }
 
   const score = total ? Math.round((done / total) * 10) : 0;
-  return { missing, score };
+  return { missing, issues, score };
 }
 
 // ==================== 时间线一致性检查 ====================
@@ -270,12 +322,13 @@ export function useProgress(
     progress: number;
     allProgress: 100;
     missing: string[];
+    issues: Array<{ label: string; message: string }>;
   }> = [];
   let totalScore = 0;
   const timelineModules: Array<{ key: string; config: any }> = [];
 
   for (const [key, config] of moduleMap) {
-    const { missing, score } = analyzeModule(config, rootData);
+    const { missing, issues, score } = analyzeModule(config, rootData);
     const progress = score * 10;
     progressItems.push({
       key,
@@ -283,6 +336,7 @@ export function useProgress(
       progress,
       allProgress: 100,
       missing,
+      issues,
     });
     totalScore += progress;
 

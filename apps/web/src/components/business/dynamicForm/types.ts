@@ -10,8 +10,6 @@ export interface ModelBinding {
   source: string[];
   prop: string;
   defaultValue?: any;
-  /** 必填标记：供 AI 判断与完成进度统计 */
-  required?: boolean;
   /** 仅从外部字典读取，不代理、不写入简历数据 */
   raw?: boolean;
 }
@@ -68,7 +66,7 @@ interface BaseFormField {
   tip?: string;
   /** 表单项 UI 配置 */
   ui?: FieldUIConfig;
-  /** 表单项校验规则（透传给 el-form rules） */
+  /** 字段校验规则，供表单提示、进度统计和 ATS 检查读取 */
   rules?: any[];
   /** 模块标识（同时是数据路径首段） */
   key?: string;
@@ -78,7 +76,6 @@ interface BaseFormField {
   addable?: boolean;
   /** 表单控制配置（与 model/props 同级）：由动态表单处理 removed、hidden */
   checks?: FieldChecks;
-  required?: boolean;
   /** 是否可拖拽 */
   drag?: boolean;
   /** 模块是否固定：固定模块不参与容器拖拽排序 */

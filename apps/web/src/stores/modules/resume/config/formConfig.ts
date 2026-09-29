@@ -19,6 +19,18 @@ const DEFAULT_META = {
 };
 const DEFAULT_DRAG_CLASS = ".item-drag";
 const DEFAULT_COL_CLASS = "rounded-3xl border border-sf-bg-3 bg-sf-primary";
+// 必填与日期格式规则统一供完成度统计和 ATS 检查读取。
+const requiredFieldRule = () => ({ required: true, message: "请填写此项", trigger: "blur" });
+const MONTH_FORMAT_RULE = {
+  pattern: /^\d{4}\.(0[1-9]|1[0-2])$/,
+  message: "日期格式应为 YYYY.MM",
+  trigger: "blur",
+};
+const MONTH_PRESENT_FORMAT_RULE = {
+  pattern: /^(\d{4}\.(0[1-9]|1[0-2])|至今)$/,
+  message: "日期格式应为 YYYY.MM 或 至今",
+  trigger: "blur",
+};
 
 // 模块界面状态绑定：标题、折叠、隐藏在各模块间结构一致
 const createModuleState = (title: string): ModelBinding[] => [
@@ -200,7 +212,6 @@ export const DEFAULT_USER_FORM = [
         key: "name",
         component: "input",
         span: 24,
-        required: true,
         model: [
           {
             source: ["data", "name"],
@@ -263,6 +274,7 @@ export const DEFAULT_USER_FORM = [
             category: "常用",
             component: "datePicker",
             iconKey: "personal-birthday",
+            rules: [MONTH_FORMAT_RULE],
             tip: "推荐必填",
             addable: true,
             // 展示形态：简历上展示年龄或日期
@@ -390,6 +402,7 @@ export const DEFAULT_USER_FORM = [
             category: "求职意向",
             component: "datePicker",
             iconKey: "work-time",
+            rules: [MONTH_FORMAT_RULE],
             tip: "推荐必填",
             addable: true,
             props: {
@@ -670,7 +683,7 @@ export const DEFAULT_ACCOUNT_FORM = {
         ],
         type: "object",
         component: "rowAccount",
-        required: true,
+        rules: [requiredFieldRule()],
       },
     },
   ],
@@ -720,7 +733,7 @@ export const DEFAULT_EDUCATION_FORM = {
             type: "object",
             label: "学校名称",
             component: "input",
-            required: true,
+            rules: [requiredFieldRule()],
             span: 24,
             model: {
               source: ["data", "name"],
@@ -785,7 +798,7 @@ export const DEFAULT_EDUCATION_FORM = {
             label: "学历",
             component: "select",
             span: 6,
-            required: true,
+            rules: [requiredFieldRule()],
             model: [
               {
                 source: ["data", "education"],
@@ -808,7 +821,7 @@ export const DEFAULT_EDUCATION_FORM = {
             type: "object",
             label: "学制",
             component: "select",
-            required: true,
+            rules: [requiredFieldRule()],
             span: 6,
             model: [
               {
@@ -831,7 +844,7 @@ export const DEFAULT_EDUCATION_FORM = {
           {
             type: "object",
             label: "开始时间",
-            required: true,
+            rules: [requiredFieldRule(), MONTH_FORMAT_RULE],
             component: "datePicker",
             span: 12,
             model: {
@@ -848,7 +861,7 @@ export const DEFAULT_EDUCATION_FORM = {
           {
             type: "object",
             label: "结束时间",
-            required: true,
+            rules: [requiredFieldRule(), MONTH_PRESENT_FORMAT_RULE],
             component: "datePickerPresent",
             span: 12,
             model: {
@@ -867,7 +880,7 @@ export const DEFAULT_EDUCATION_FORM = {
             type: "object",
             label: "专业",
             component: "positionPicker",
-            required: true,
+            rules: [requiredFieldRule()],
             span: 12,
             model: [
               {
@@ -943,7 +956,7 @@ export const DEFAULT_SKILL_FORM = {
     {
       type: "object",
       component: "resumeContentEditor",
-      required: true,
+      rules: [requiredFieldRule()],
       props: {
         kind: "skill",
       },
@@ -970,7 +983,7 @@ export const DEFAULT_ADVANTAGE_FORM = {
     {
       type: "object",
       component: "resumeContentEditor",
-      required: true,
+      rules: [requiredFieldRule()],
       props: {
         kind: "advantage",
       },
@@ -1026,7 +1039,7 @@ export const DEFAULT_WORK_FORM = {
             type: "object",
             label: "公司名称",
             component: "input",
-            required: true,
+            rules: [requiredFieldRule()],
             span: 24,
             model: {
               source: ["data", "name"],
@@ -1080,7 +1093,7 @@ export const DEFAULT_WORK_FORM = {
           {
             type: "object",
             label: "开始时间",
-            required: true,
+            rules: [requiredFieldRule(), MONTH_FORMAT_RULE],
             component: "datePicker",
             span: 12,
             model: {
@@ -1097,7 +1110,7 @@ export const DEFAULT_WORK_FORM = {
           {
             type: "object",
             label: "结束时间",
-            required: true,
+            rules: [requiredFieldRule(), MONTH_PRESENT_FORMAT_RULE],
             component: "datePickerPresent",
             span: 12,
             model: {
@@ -1116,7 +1129,7 @@ export const DEFAULT_WORK_FORM = {
             type: "object",
             label: "岗位",
             component: "positionPicker",
-            required: true,
+            rules: [requiredFieldRule()],
             span: 12,
             model: [
               {
@@ -1157,7 +1170,7 @@ export const DEFAULT_WORK_FORM = {
           {
             type: "object",
             label: "经历",
-            required: true,
+            rules: [requiredFieldRule()],
             component: "resumeContentEditor",
             span: 24,
             props: {
@@ -1221,7 +1234,7 @@ export const DEFAULT_PROJECT_FORM = {
             type: "object",
             label: "项目名称",
             component: "input",
-            required: true,
+            rules: [requiredFieldRule()],
             span: 24,
             model: {
               source: ["data", "name"],
@@ -1275,7 +1288,7 @@ export const DEFAULT_PROJECT_FORM = {
           {
             type: "object",
             label: "开始时间",
-            required: true,
+            rules: [requiredFieldRule(), MONTH_FORMAT_RULE],
             component: "datePicker",
             span: 12,
             model: {
@@ -1292,7 +1305,7 @@ export const DEFAULT_PROJECT_FORM = {
           {
             type: "object",
             label: "结束时间",
-            required: true,
+            rules: [requiredFieldRule(), MONTH_PRESENT_FORMAT_RULE],
             component: "datePickerPresent",
             span: 12,
             model: {
@@ -1311,7 +1324,7 @@ export const DEFAULT_PROJECT_FORM = {
             type: "object",
             label: "岗位",
             component: "positionPicker",
-            required: true,
+            rules: [requiredFieldRule()],
             span: 12,
             model: [
               {
@@ -1353,7 +1366,7 @@ export const DEFAULT_PROJECT_FORM = {
             type: "object",
             label: "经历",
             component: "resumeContentEditor",
-            required: true,
+            rules: [requiredFieldRule()],
             span: 24,
             props: {
               kind: "project",
@@ -1429,14 +1442,14 @@ export const DEFAULT_VIDEO_FORM = {
             ],
             type: "object",
             component: "video",
-            required: true,
+            rules: [requiredFieldRule()],
           },
         ],
         type: "group",
         component: "collapseItem",
         slot: "default",
         span: 24,
-        required: true,
+        rules: [requiredFieldRule()],
       },
     },
   ],
@@ -1504,14 +1517,14 @@ export const DEFAULT_IMAGE_FORM = {
             ],
             type: "object",
             component: "image",
-            required: true,
+            rules: [requiredFieldRule()],
           },
         ],
         type: "group",
         component: "collapseItem",
         slot: "default",
         span: 24,
-        required: true,
+        rules: [requiredFieldRule()],
       },
     },
   ],
@@ -1552,7 +1565,7 @@ export const DEFAULT_HONOR_FORM = {
         ],
         type: "object",
         component: "rowHonor",
-        required: true,
+        rules: [requiredFieldRule()],
       },
     },
   ],
@@ -1601,7 +1614,7 @@ export const DEFAULT_CUSTOM_FORM = {
         fields: [
           {
             type: "object",
-            required: true,
+            rules: [requiredFieldRule()],
             label: "名称",
             component: "input",
             span: 24,
@@ -1654,7 +1667,7 @@ export const DEFAULT_CUSTOM_FORM = {
           },
           {
             type: "object",
-            required: true,
+            rules: [requiredFieldRule()],
             label: "职位",
             component: "positionPicker",
             span: 12,
@@ -1675,7 +1688,7 @@ export const DEFAULT_CUSTOM_FORM = {
           },
           {
             type: "object",
-            required: true,
+            rules: [requiredFieldRule(), MONTH_FORMAT_RULE],
             label: "开始时间",
             component: "datePicker",
             span: 12,
@@ -1692,7 +1705,7 @@ export const DEFAULT_CUSTOM_FORM = {
           },
           {
             type: "object",
-            required: true,
+            rules: [requiredFieldRule(), MONTH_PRESENT_FORMAT_RULE],
             label: "结束时间",
             component: "datePickerPresent",
             span: 12,
@@ -1731,7 +1744,7 @@ export const DEFAULT_CUSTOM_FORM = {
           {
             type: "object",
             label: "经历",
-            required: true,
+            rules: [requiredFieldRule()],
             component: "wangEditor",
             span: 24,
             model: {

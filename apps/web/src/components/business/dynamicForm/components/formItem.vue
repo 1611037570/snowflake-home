@@ -8,7 +8,7 @@
       class="w-full"
       :label="currentForm.label"
       :prop="getProp(currentForm)"
-      :rules="currentForm.rules"
+      :rules="useRules() ? currentForm.rules : undefined"
     >
       <!-- 无标签的字段不提供标签插槽，避免渲染出空白标签行 -->
       <template v-if="currentForm.label" #label>
@@ -55,7 +55,7 @@
 import { computed, inject } from "vue";
 import { getFieldDataPath } from "../code/fieldData";
 import { isFieldHidden } from "../code/fieldVisible";
-import { DF_ROOT_DATA } from "../code/injectionKeys";
+import { DF_ROOT_DATA, DF_USE_RULES } from "../code/injectionKeys";
 import type { DataPathContext } from "../code/pathContext";
 
 const { pathContext, currentForm, selected, draggable, dragClass } = defineProps<{
@@ -69,6 +69,7 @@ const emit = defineEmits<{
   remove: [];
 }>();
 const rootData: any = inject(DF_ROOT_DATA);
+const useRules = inject(DF_USE_RULES, () => true);
 const hiddenBinding = computed(() => currentForm?.ui?.hidden);
 // 表单项直接读取自身的隐藏绑定，避免把 UI 状态传给实际输入组件
 const hidden = computed(() => {

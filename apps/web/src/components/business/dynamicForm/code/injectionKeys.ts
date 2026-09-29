@@ -11,6 +11,8 @@ import type { DataPathContext } from "./pathContext";
 export const INSTANCE_COMPONENTS: InjectionKey<Record<string, any>> = Symbol("instanceComponents");
 /** 根数据代理 */
 export const DF_ROOT_DATA: InjectionKey<DataProxy<any>> = Symbol("df/root/data");
+/** 是否向表单项显示字段校验规则 */
+export const DF_USE_RULES: InjectionKey<() => boolean> = Symbol("df/useRules");
 /** 当前容器表单配置（统一为 ref） */
 export const DF_CURRENT_FORM: InjectionKey<any> = Symbol("df/current/form");
 /** 当前对象节点的数据路径上下文 */

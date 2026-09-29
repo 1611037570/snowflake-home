@@ -2,7 +2,7 @@ import type { ResumeFieldSchema, ResumeModuleKind, ResumeModuleSchema } from "..
 import { RESUME_SCHEMA } from "../resumeSchemaRegistry";
 
 const DESCRIPTION =
-  "本技能提供由当前简历表单结构自动生成的数据契约。当 AI 需要了解模块、字段、必填项、可添加字段、枚举值与时间或富文本格式时必须加载；不得臆造未声明字段。";
+  "本技能提供由当前简历表单结构自动生成的数据契约。当 AI 需要了解模块、字段、可添加字段、枚举值与时间或富文本格式时必须加载；不得臆造未声明字段。";
 
 const KIND_LABELS: Record<ResumeModuleKind, string> = {
   object: "对象",
@@ -36,7 +36,7 @@ const renderModule = (module: ResumeModuleSchema, index: number) => {
   const rows = module.fields
     .map(
       (field) =>
-        `| \`${field.key}\` | ${field.label} | ${field.valueType} | ${field.required ? "是" : "否"} | ${getFieldNotes(field)} |`,
+        `| \`${field.key}\` | ${field.label} | ${field.valueType} | ${getFieldNotes(field)} |`,
     )
     .join("\n");
   const customNote =
@@ -45,8 +45,8 @@ const renderModule = (module: ResumeModuleSchema, index: number) => {
       : "";
   return `## ${index + 1}. ${module.title}（\`${getModuleDataLabel(module)}\`）
 
-${customNote}| 字段 | 中文标签 | 类型 | 必填 | 格式/备注 |
-| :--- | :--- | :--- | :--- | :--- |
+${customNote}| 字段 | 中文标签 | 类型 | 格式/备注 |
+| :--- | :--- | :--- | :--- |
 ${rows}`;
 };
 

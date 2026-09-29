@@ -39,7 +39,7 @@ describe("resumeSchema", () => {
     });
   });
 
-  it("从数组容器解析记录相对字段和继承必填规则", () => {
+  it("从数组容器解析记录相对字段和格式", () => {
     const work: FormField = {
       type: "group",
       key: "work",
@@ -50,7 +50,6 @@ describe("resumeSchema", () => {
           source: ["list"],
           itemSchema: {
             type: "group",
-            required: true,
             fields: [
               {
                 type: "object",
@@ -79,14 +78,12 @@ describe("resumeSchema", () => {
       key: "startTime",
       path: ["data", "startTime"],
       valueType: "string",
-      required: true,
       format: "month",
     });
     expect(schema[0]?.fields[1]).toMatchObject({
       key: "endTime",
       path: ["data", "endTime"],
       valueType: "string",
-      required: true,
       format: "month",
     });
   });

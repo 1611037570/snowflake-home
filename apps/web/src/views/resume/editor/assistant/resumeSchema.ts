@@ -15,7 +15,6 @@ export type ResumeFieldSchema = {
   path: string[];
   component?: string;
   valueType: ResumeFieldValueType;
-  required: boolean;
   addable: boolean;
   format?: ResumeFieldFormat;
   options?: unknown[];
@@ -40,11 +39,6 @@ const RESERVED_FIELDS = new Set(["collapsed", "hidden", "archived"]);
 
 const normalizeModule = (schema: FormField | FormField[]) =>
   (Array.isArray(schema) ? schema[0] : schema) as FormField | undefined;
-
-const isRequired = (field: FormField, inherited: boolean) =>
-  inherited ||
-  field.required === true ||
-  field.rules?.some((rule: any) => rule?.required === true) === true;
 
 const getFormat = (field: FormField): ResumeFieldFormat | undefined => {
   if (
@@ -92,13 +86,12 @@ const collectFields = (
   const result: ResumeFieldSchema[] = [];
   const positions = new Map<string, number>();
 
-  const visit = (current: FormField | FormField[] | undefined, inheritedRequired = false) => {
+  const visit = (current: FormField | FormField[] | undefined) => {
     const fields = Array.isArray(current) ? current : current ? [current] : [];
     fields.forEach((field) => {
       // 字段包裹组：名称在包裹组上，其余配置以内层字段为准
       const target = unwrapField(field) ?? field;
       const wrapped = target !== field;
-      const required = isRequired(target, inheritedRequired);
       const format = getFormat(target);
       const optionValues = getOptionValues(target, options);
       getModelBindings(target).forEach((binding) => {
@@ -111,7 +104,6 @@ const collectFields = (
           path: [...binding.source],
           component: target.component,
           valueType: getValueType(target, binding, format),
-          required,
           addable: target.addable === true,
           format,
           options: optionValues,
@@ -128,15 +120,14 @@ const collectFields = (
           ...previous,
           ...next,
           label: getFieldLabel(field) || previous.label,
-          required: previous.required || next.required,
           addable: previous.addable || next.addable,
           options: next.options ?? previous.options,
         };
       });
       // 已用被包裹字段展开时不再递归，避免重复登记
       if (wrapped) return;
-      visit(field.fields, required);
-      visit(field.itemSchema, required);
+      visit(field.fields);
+      visit(field.itemSchema);
     });
   };
 
