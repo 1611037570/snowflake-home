@@ -29,6 +29,7 @@ function saveTitle() {
   <SfModal v-model="showEditModal" :title="$t('editTitle')">
     <form class="flex w-80 flex-col gap-3" @submit.prevent="saveTitle">
       <SfInput v-model="editedTitle" :placeholder="$t('titlePlaceholder')" />
+      <p class="text-sm text-sf-text-3">{{ $t("moduleTitleHint") }}</p>
       <footer class="flex justify-end gap-3">
         <SfButton type="bg" @click="showEditModal = false">{{ $t("cancel") }}</SfButton>
         <SfButton :disabled="!editedTitle.trim()" @click="saveTitle">{{ $t("save") }}</SfButton>
