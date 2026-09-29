@@ -63,7 +63,7 @@ provide("titleIconSize", titleIconSize);
 </script>
 
 <template>
-  <component :is="current" :title="displayTitle" :style="[titleFontStyle]" />
+  <component :is="current" :title="displayTitle" v-if="displayTitle" :style="[titleFontStyle]" />
 </template>
 
 <style lang="scss" scoped></style>
