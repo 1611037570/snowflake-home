@@ -145,7 +145,7 @@ const setParam = (key, value) => {
       <span>{{ $t("design") }}</span>
     </span>
     <template #dropdown>
-      <div class="flex w-[240px] flex-col gap-3 rounded-3xl border border-sf-b bg-sf-primary p-3">
+      <div class="flex w-80 flex-col gap-3 rounded-3xl border border-sf-b bg-sf-primary p-3">
         <div class="text-xs font-bold text-sf-text">{{ $t("themeColors") }}</div>
         <ThemeColorPicker v-model="themeColor" :teleported="false" />
 
