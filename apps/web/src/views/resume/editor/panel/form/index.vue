@@ -143,7 +143,7 @@ onBeforeUnmount(() => {
 
 <template>
   <div class="relative h-full">
-    <div class="grid h-full min-h-0 w-full grid-cols-[minmax(0,1fr)_minmax(0,3fr)]">
+    <div class="flex h-full min-h-0 w-full">
       <ModuleSidebar />
       <SfScrollbar class="resume-editor-form relative h-full min-h-0">
         <SfSkeleton v-if="!showDynamicForm || !runtimeConfig" />

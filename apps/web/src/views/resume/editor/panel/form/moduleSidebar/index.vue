@@ -4,7 +4,10 @@ import { storeToRefs } from "pinia";
 import { useDraggable } from "vue-draggable-plus";
 import { useResumeStore } from "@/stores";
 import { isFieldRemoved, moveFieldByKey } from "@/components/business/dynamicForm/api";
-import { CUSTOM_MODULE_ICON, DEFAULT_MODULE_NAMES } from "@/stores/modules/resume/config/defaultConfig";
+import {
+  CUSTOM_MODULE_ICON,
+  DEFAULT_MODULE_NAMES,
+} from "@/stores/modules/resume/config/defaultConfig";
 import { jumpEditor } from "../../../hooks/useModuleNav";
 import AddModule from "./add.vue";
 
@@ -87,12 +90,12 @@ onUnmounted(() => {
           class="flex-c w-fit min-w-0 cursor-pointer flex-col gap-1 rounded-xl border border-sf-b bg-sf-primary p-1 text-[9px] text-sf-text transition-colors select-none hover:border-sf-theme hover:text-sf-theme"
           @click="jumpEditor(item.key)"
         >
-          <SfIcon v-if="item.fixed" :icon="item.icon" size="4" class="text-sf-theme" />
+          <SfIcon v-if="item.fixed" :icon="item.icon" size="4" />
           <SfIcon
             v-if="!item.fixed"
             icon="icon-park-outline:drag"
             size="4"
-            class="module-sidebar-drag cursor-move! text-sf-text-3"
+            class="module-sidebar-drag cursor-move! text-sf-text-2"
             @click.stop
           />
           <span class="w-9 text-center leading-4 break-all">{{ item.name }}</span>
