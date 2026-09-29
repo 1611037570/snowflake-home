@@ -4,6 +4,7 @@ import { storeToRefs } from "pinia";
 import { useDraggable } from "vue-draggable-plus";
 import { useResumeStore } from "@/stores";
 import { isFieldRemoved, moveFieldByKey } from "@/components/business/dynamicForm/api";
+import { CUSTOM_MODULE_ICON, DEFAULT_MODULE_NAMES } from "@/stores/modules/resume/config/defaultConfig";
 import { jumpEditor } from "../../../hooks/useModuleNav";
 import AddModule from "./add.vue";
 
@@ -24,6 +25,7 @@ const moduleItems = computed(() =>
       key: field.key,
       name: resumeStore.getModel(field.key)?.name || field.key,
       fixed: field.fixed,
+      icon: DEFAULT_MODULE_NAMES.find((item) => item.key === field.key)?.icon || CUSTOM_MODULE_ICON,
     })),
 );
 
@@ -77,7 +79,7 @@ onUnmounted(() => {
       {{ $t("moduleManager") }}
     </div> -->
     <SfScrollbar class="module-list-scroll min-h-0 min-w-0 flex-1">
-      <div ref="listRef" class="flex min-h-full flex-col gap-3 py-3">
+      <div ref="listRef" class="flex min-h-full flex-col gap-1.5">
         <div
           v-for="item in draggableItems"
           :key="item.key"
@@ -85,6 +87,7 @@ onUnmounted(() => {
           class="flex-c w-fit min-w-0 cursor-pointer flex-col gap-1 rounded-xl border border-sf-b bg-sf-primary p-1 text-[9px] text-sf-text transition-colors select-none hover:border-sf-theme hover:text-sf-theme"
           @click="jumpEditor(item.key)"
         >
+          <SfIcon v-if="item.fixed" :icon="item.icon" size="4" class="text-sf-theme" />
           <SfIcon
             v-if="!item.fixed"
             icon="icon-park-outline:drag"
@@ -96,7 +99,7 @@ onUnmounted(() => {
         </div>
       </div>
     </SfScrollbar>
-    <div class="shrink-0 border-t border-sf-b py-3">
+    <div class="border-t border-sf-b">
       <AddModule />
     </div>
   </aside>
@@ -105,7 +108,7 @@ onUnmounted(() => {
 <style lang="scss" scoped>
 .module-list-scroll {
   :deep(.el-scrollbar__view) {
-    padding: 0 6px !important;
+    padding: 0 8px !important;
   }
 }
 
