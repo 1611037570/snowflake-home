@@ -87,6 +87,20 @@ export const buildLayoutNodes = ({
     const adapter = registry.resolve(moduleKey);
     if (!adapter) return [];
     const nodes = adapter({ moduleKey, data, ui, config });
+    if (nodes.length === 0 && moduleKey !== "user") {
+      // 空模块保留标题节点，避免模块无内容时标题从预览中消失。
+      return [
+        {
+          id: `${moduleKey}.title-only`,
+          sourceModuleKey: moduleKey,
+          type: "spacer",
+          breakPolicy: {},
+          hideWhenPageLeading: true,
+          payload: { height: 0 },
+          title: createModuleTitleNode(moduleKey),
+        },
+      ];
+    }
     const spacing = Number((ui as any)?.page?.spacing?.paragraph);
     return attachModuleTitle(
       moduleKey,
