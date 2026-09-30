@@ -3,7 +3,7 @@ import { ElMessage } from "element-plus";
 import router from "@/routers";
 import { useAiStore } from "@/stores/modules/ai";
 import { defineStore } from "pinia";
-import { computed, ref, shallowRef, toRaw, watch } from "vue";
+import { computed, ref, toRaw, watch } from "vue";
 import { DEFAULT_RESUME_ITEM, DEFAULT_EDITOR, DEFAULT_SYSTEM } from "./config/defaultConfig";
 import { COLLAPSED, EXPANDED } from "./config/formConfig";
 import { DEFAULT_UI } from "./config/uiConfig";
@@ -247,12 +247,6 @@ export const useResumeStore = defineStore(
       return trashList.value;
     };
 
-    // 内容快照：编辑停顿后基于实时数据生成的只读副本，供预览测量树等派生逻辑读取
-    const contentSnapshot = shallowRef<any>(null);
-    const refreshContentSnapshot = () => {
-      const item = currentItem.value;
-      contentSnapshot.value = item?.data ? deepClone(item.data) : null;
-    };
     // 内容变更脉冲：整份简历任一嵌套字段变化后自增，供派生逻辑在编辑停顿后统一刷新
     const contentVersion = ref(0);
     // 是否处于编辑中：内容变化后置真，停顿 EDIT_IDLE_DELAY 后置否
@@ -275,12 +269,6 @@ export const useResumeStore = defineStore(
       },
       { deep: true },
     );
-    // 切换简历后立即重建内容快照，避免进入编辑器时预览测量树读到空数据
-    watch(currentIndex, refreshContentSnapshot, { immediate: true });
-    // 编辑停顿后重建内容快照：预览测量树在此时统一刷新
-    watch(isEditing, (editing) => {
-      if (!editing) refreshContentSnapshot();
-    });
     // 切换简历时：取消防抖等待中的历史、清空历史栈并重置基准快照
     watch(currentIndex, () => {
       resetHistoryBase();
@@ -359,7 +347,6 @@ export const useResumeStore = defineStore(
       runtimeData,
       contentVersion,
       isEditing,
-      contentSnapshot,
       resetSettings,
     };
   },
