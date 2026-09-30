@@ -1,4 +1,5 @@
 import DOMPurify from "dompurify";
+import { RICH_TEXT_SANITIZE_CONFIG } from "../../../shared/richTextSanitize";
 import type { BreakPoint } from "../types";
 
 /** 富文本块的基础信息 */
@@ -112,12 +113,8 @@ export const sliceRichTextHtml = (html: string, start = 0, end?: number): string
   return result.innerHTML;
 };
 
-/** 预览富文本允许的标签和属性 */
-const sanitizeConfig = {
-  ALLOWED_TAGS: ["p", "br", "strong", "b", "em", "i", "u", "ul", "ol", "li", "a", "span"],
-  ALLOWED_ATTR: ["href", "target", "rel"],
-  ALLOWED_URI_REGEXP: /^(?:(?:https?|mailto):)/i,
-};
+/** 预览富文本允许的标签和属性，与渲染拆分共用同一份白名单 */
+const sanitizeConfig = RICH_TEXT_SANITIZE_CONFIG;
 
 /** 字符级兜底断点最多保留的采样数量，避免超长正文生成过大的测量树。 */
 const MAX_CHAR_BREAK_POINTS = 64;
