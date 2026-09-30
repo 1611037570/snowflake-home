@@ -106,15 +106,15 @@ const findBestBreakPoint = (
   startHeight: number,
   droppedTopSpacing: number,
   availableHeight: number,
+  dropBlockMargin: boolean,
 ) => {
   let bestBreakPoint: (typeof measurement.breakPoints)[number] | undefined;
   let bestHeight = 0;
   for (const point of measurement.breakPoints) {
-    // 页首口径由测量结果给出，这里只按分片位置选择口径；缺省时退回流内口径
+    // 页面首位的续段不绘制该块上外边距，计价同步扣除
+    const blockMargin = dropBlockMargin ? (point.leadingMargin ?? 0) : 0;
     const height =
-      (point.heightAtPageStart ?? point.height) -
-      startHeight -
-      (startHeight > 0 ? droppedTopSpacing : 0);
+      point.height - startHeight - (startHeight > 0 ? droppedTopSpacing : 0) - blockMargin;
     if (height <= 0 || height > availableHeight + PAGE_HEIGHT_TOLERANCE) continue;
     // 同一行内的多个断点高度相同，取最靠后的偏移让首片段尽量填满整行
     const isBetter =
@@ -132,14 +132,14 @@ const findNextBreakPoint = (
   measurement: MeasuredNode,
   startHeight: number,
   droppedTopSpacing: number,
+  dropBlockMargin: boolean,
 ) => {
   let nextBreakPoint: (typeof measurement.breakPoints)[number] | undefined;
   let nextHeight = Number.POSITIVE_INFINITY;
   for (const point of measurement.breakPoints) {
+    const blockMargin = dropBlockMargin ? (point.leadingMargin ?? 0) : 0;
     const height =
-      (point.heightAtPageStart ?? point.height) -
-      startHeight -
-      (startHeight > 0 ? droppedTopSpacing : 0);
+      point.height - startHeight - (startHeight > 0 ? droppedTopSpacing : 0) - blockMargin;
     if (height > 0 && height < nextHeight) {
       nextBreakPoint = point;
       nextHeight = height;
@@ -259,11 +259,12 @@ export const paginateFlow = ({
           currentPage.pageIndex > 0 &&
           currentPage.items.length === 0;
         const hiddenSpacerHeight = hideLeadingSpacer ? fullHeight : 0;
-        // 续段的装饰是 middle/last，渲染层不绘制它所在块的上外边距；页首口径已由测量层扣除
-        const nextBlockMargin = !isFirst
+        // 续段的装饰是 middle/last，渲染层不绘制它所在块的上外边距（无论是否在页首），计价同步扣除
+        const dropBlockMargin = !isFirst;
+        const nextBlockMargin = dropBlockMargin
           ? (measurement.breakPoints.find(
               (point) => point.blockEnd !== undefined && point.height > consumedHeight,
-            )?.heightAtPageStart ?? 0)
+            )?.leadingMargin ?? 0)
           : 0;
         const wholeFragmentHeight =
           title + remainingHeight - hiddenSpacerHeight - nextBlockMargin;
@@ -324,9 +325,15 @@ export const paginateFlow = ({
             consumedHeight,
             activeDroppedTopSpacing,
             availableForContent,
+            dropBlockMargin,
           ) ||
           (currentPage.items.length === 0
-            ? findNextBreakPoint(measurement, consumedHeight, activeDroppedTopSpacing)
+            ? findNextBreakPoint(
+                measurement,
+                consumedHeight,
+                activeDroppedTopSpacing,
+                dropBlockMargin,
+              )
             : undefined);
 
         if (!breakPoint) {
@@ -341,11 +348,11 @@ export const paginateFlow = ({
         }
 
         const fragmentKind: FlowFragmentKind = isFirst ? "first" : "middle";
-        // 切割路径直接消费测量层给出的页首口径，不再自行扣除块上外边距
         const fragmentHeight =
           title +
-          Math.max(0, (breakPoint.heightAtPageStart ?? breakPoint.height) - consumedHeight) -
-          activeDroppedTopSpacing;
+          Math.max(0, breakPoint.height - consumedHeight) -
+          activeDroppedTopSpacing -
+          (dropBlockMargin ? (breakPoint.leadingMargin ?? 0) : 0);
         // 块断点只覆盖块（不含正文区间），字符断点覆盖剩余全部块 + 正文区间
         const isBlockPoint = typeof breakPoint.blockEnd === "number";
         const nextBlocks = isBlockPoint ? Number(breakPoint.blockEnd) : blockCount;
