@@ -519,6 +519,34 @@ describe("paginateFlow", () => {
     expect(pages[0]?.items[0]).toMatchObject({ fragment: "single", height: 50 });
   });
 
+  it("空页始终放不下内容时不会无限换页", () => {
+    // 断点高度都不超过已消费高度、整片又放不下时，每次只能换页而无法消费内容；
+    // 该用例在缺少换页上限时会一直换页直到内存耗尽
+    const item = createNode("item", {
+      breakPolicy: {
+      },
+    });
+    const pages = paginateFlow({
+      nodes: [item],
+      measurements: new Map([
+        [
+          "item",
+          createMeasurement("item", 70, {
+            breakPoints: [
+              { offset: 0, type: "block", height: 40, heightAtPageStart: 40, blockEnd: 1 },
+              { offset: 0, type: "block", height: 60, heightAtPageStart: 60, blockEnd: 2 },
+            ],
+          }),
+        ],
+      ]),
+      availableHeight: 50,
+      gap: 0,
+    });
+
+    // 换页次数受上限约束：分页必须结束，且页数保持在换页上限附近而不是无限换页
+    expect(pages.length).toBeLessThanOrEqual(4);
+    expect(pages.length).toBeGreaterThan(0);
+  });
   it("整片按页首口径计价，不再计入块上外边距", () => {
     const item = createNode("item", {
       breakPolicy: {

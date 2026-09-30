@@ -93,6 +93,13 @@ const getContentEnd = (measurement: MeasuredNode): number =>
  */
 const PAGE_HEIGHT_TOLERANCE = 0;
 
+/**
+ * 同一节点连续换页且始终放不下内容的次数上限。
+ * 内容放不下时换页是正常推进，但换页必须最终带来消费；超过上限说明测量结果无法承载该节点，
+ * 继续换页只会产生空页，这里直接结束节点，作为循环收敛的硬保证。
+ */
+const MAX_PAGE_TURNS_WITHOUT_PROGRESS = 3;
+
 /** 查找当前剩余高度可以容纳的最大语义断点；高度相同时取偏移更靠后的断点，避免分片落在行中间 */
 const findBestBreakPoint = (
   measurement: MeasuredNode,
@@ -222,157 +229,168 @@ export const paginateFlow = ({
     let titlePlaced = false;
     // 续段渲染会去掉内容容器上内边距，分页高度按同一口径扣减，避免高估续段占用
     const droppedTopSpacing = measurement.droppedTopSpacing ?? 0;
-
+    // 两层推进：外层换页，内层填满当前页；本轮是否消费内容由消费量是否前进表示
+    let pageTurnsWithoutProgress = 0;
     while (consumedHeight < fullHeight || (fullHeight === 0 && consumedHeight === 0)) {
-      const isFirst = consumedHeight === 0;
-      const remainingHeight = Math.max(0, fullHeight - consumedHeight);
-      // 顶部留白只在续段位于页首、且内容盒首块已由前面分片渲染过时才真正被移除：
-      // 只放间距的分片不渲染内容盒，此时续段仍是完整的盒顶，不能扣除
-      const activeDroppedTopSpacing =
-        !isFirst && currentPage.items.length === 0 && (consumedBlocks > 0 || consumedOffset > 0)
-          ? droppedTopSpacing
+      const pageStartHeight = consumedHeight;
+      const startItemCount = currentPage.items.length;
+      const startPageIndex = currentPage.pageIndex;
+      // 内层反复尝试放置，直到本轮消费了内容；换页与节点结束都在这里退出，由外层决定是否继续
+      while (
+        consumedHeight === pageStartHeight &&
+        currentPage.pageIndex === startPageIndex &&
+        currentPage.items.length >= startItemCount
+      ) {
+        const isFirst = consumedHeight === 0;
+        const remainingHeight = Math.max(0, fullHeight - consumedHeight);
+        // 顶部留白只在续段位于页首、且内容盒首块已由前面分片渲染过时才真正被移除：
+        // 只放间距的分片不渲染内容盒，此时续段仍是完整的盒顶，不能扣除
+        const activeDroppedTopSpacing =
+          !isFirst && currentPage.items.length === 0 && (consumedBlocks > 0 || consumedOffset > 0)
+            ? droppedTopSpacing
+            : 0;
+        // 标题也是独立行，和间距占位一样没有绑定：能放本页就放，放不下顺延下一页
+        const withTitle = isFirst && !titlePlaced;
+        const title = withTitle ? titleHeight : 0;
+        // 独立间距行位于后续页面首位时不占空间，与渲染层隐藏规则一致。
+        const hideLeadingSpacer =
+          isFirst &&
+          node.hideWhenPageLeading &&
+          currentPage.pageIndex > 0 &&
+          currentPage.items.length === 0;
+        const hiddenSpacerHeight = hideLeadingSpacer ? fullHeight : 0;
+        // 续段的装饰是 middle/last，渲染层不绘制它所在块的上外边距；页首口径已由测量层扣除
+        const nextBlockMargin = !isFirst
+          ? (measurement.breakPoints.find(
+              (point) => point.blockEnd !== undefined && point.height > consumedHeight,
+            )?.heightAtPageStart ?? 0)
           : 0;
-      // 标题也是独立行，和间距占位一样没有绑定：能放本页就放，放不下顺延下一页
-      const withTitle = isFirst && !titlePlaced;
-      const title = withTitle ? titleHeight : 0;
-      // 独立间距行位于后续页面首位时不占空间，与渲染层隐藏规则一致。
-      const hideLeadingSpacer =
-        isFirst &&
-        node.hideWhenPageLeading &&
-        currentPage.pageIndex > 0 &&
-        currentPage.items.length === 0;
-      const hiddenSpacerHeight = hideLeadingSpacer ? fullHeight : 0;
-      // 续段的装饰是 middle/last，渲染层不绘制它所在块的上外边距；页首口径已由测量层扣除
-      const nextBlockMargin = !isFirst
-        ? (measurement.breakPoints.find(
-            (point) => point.blockEnd !== undefined && point.height > consumedHeight,
-          )?.heightAtPageStart ?? 0)
-        : 0;
-      const wholeFragmentHeight =
-        title + remainingHeight - hiddenSpacerHeight - nextBlockMargin;
-      const wholeFragmentKind: FlowFragmentKind = isFirst ? "single" : "last";
-      const wholeFragment: FlowPageItem = {
-        fragmentId: `${node.id}:${wholeFragmentKind}:${consumedOffset}:${contentEnd}`,
-        nodeId: node.id,
-        sourceModuleKey: node.sourceModuleKey,
-        titleNodeId: withTitle ? node.title?.id : undefined,
-        fragment: wholeFragmentKind,
-        height: Math.max(0, wholeFragmentHeight - activeDroppedTopSpacing),
-        payload: node.payload,
-        titlePayload: withTitle ? node.title?.payload : undefined,
-        contentRange: contentEnd ? { start: consumedOffset, end: contentEnd } : undefined,
-        blockRange: blockCount ? { start: consumedBlocks, end: blockCount } : undefined,
-      };
-
-      const wholeFragmentGap = getGapBeforeItem(node.sourceModuleKey, !isFirst);
-      const wholeFragmentFits =
-        currentPage.items.length === 0
-          ? wholeFragment.height <= getCurrentAvailableHeight() + PAGE_HEIGHT_TOLERANCE
-          : currentPage.usedHeight + wholeFragmentGap + wholeFragment.height <=
-            getCurrentAvailableHeight() + PAGE_HEIGHT_TOLERANCE;
-      if (wholeFragmentFits && tryAddItem(wholeFragment, !isFirst)) break;
-
-      /** 标题放得下就留在当前页，正文顺延到下一页 */
-      const placeTitle = () => {
-        if (!withTitle || !node.title || currentPage.items.length === 0) return false;
-        if (
-          currentPage.usedHeight + getGapBeforeItem(node.sourceModuleKey, false) + titleHeight >
-          getCurrentAvailableHeight()
-        ) {
-          return false;
-        }
-        const titleItem: FlowPageItem = {
-          fragmentId: `${node.id}:title:${node.title.id}`,
+        const wholeFragmentHeight =
+          title + remainingHeight - hiddenSpacerHeight - nextBlockMargin;
+        const wholeFragmentKind: FlowFragmentKind = isFirst ? "single" : "last";
+        const wholeFragment: FlowPageItem = {
+          fragmentId: `${node.id}:${wholeFragmentKind}:${consumedOffset}:${contentEnd}`,
           nodeId: node.id,
           sourceModuleKey: node.sourceModuleKey,
-          titleNodeId: node.title.id,
-          fragment: "title",
-          height: titleHeight,
+          titleNodeId: withTitle ? node.title?.id : undefined,
+          fragment: wholeFragmentKind,
+          height: Math.max(0, wholeFragmentHeight - activeDroppedTopSpacing),
           payload: node.payload,
-          titlePayload: node.title.payload,
+          titlePayload: withTitle ? node.title?.payload : undefined,
+          contentRange: contentEnd ? { start: consumedOffset, end: contentEnd } : undefined,
+          blockRange: blockCount ? { start: consumedBlocks, end: blockCount } : undefined,
         };
-        if (!tryAddItem(titleItem, false)) return false;
-        titlePlaced = true;
-        return true;
-      };
 
-      const nodeGap = getGapBeforeItem(node.sourceModuleKey, !isFirst);
-      const availableForContent = Math.max(
-        0,
-        getCurrentAvailableHeight() - currentPage.usedHeight - nodeGap - title,
-      );
-      const breakPoint =
-        findBestBreakPoint(
-          measurement,
-          consumedHeight,
-          activeDroppedTopSpacing,
-          availableForContent,
-        ) ||
-        (currentPage.items.length === 0
-          ? findNextBreakPoint(measurement, consumedHeight, activeDroppedTopSpacing)
-          : undefined);
+        const wholeFragmentGap = getGapBeforeItem(node.sourceModuleKey, !isFirst);
+        const wholeFragmentFits =
+          currentPage.items.length === 0
+            ? wholeFragment.height <= getCurrentAvailableHeight() + PAGE_HEIGHT_TOLERANCE
+            : currentPage.usedHeight + wholeFragmentGap + wholeFragment.height <=
+              getCurrentAvailableHeight() + PAGE_HEIGHT_TOLERANCE;
+        if (wholeFragmentFits && tryAddItem(wholeFragment, !isFirst)) break;
 
-      if (!breakPoint) {
-        if (currentPage.items.length > 0) {
-          if (placeTitle()) continue;
-          pushPage(node.sourceModuleKey);
+        /** 标题放得下就留在当前页，正文顺延到下一页 */
+        const placeTitle = () => {
+          if (!withTitle || !node.title || currentPage.items.length === 0) return false;
+          if (
+            currentPage.usedHeight + getGapBeforeItem(node.sourceModuleKey, false) + titleHeight >
+            getCurrentAvailableHeight()
+          ) {
+            return false;
+          }
+          const titleItem: FlowPageItem = {
+            fragmentId: `${node.id}:title:${node.title.id}`,
+            nodeId: node.id,
+            sourceModuleKey: node.sourceModuleKey,
+            titleNodeId: node.title.id,
+            fragment: "title",
+            height: titleHeight,
+            payload: node.payload,
+            titlePayload: node.title.payload,
+          };
+          if (!tryAddItem(titleItem, false)) return false;
+          titlePlaced = true;
+          return true;
+        };
+
+        const nodeGap = getGapBeforeItem(node.sourceModuleKey, !isFirst);
+        const availableForContent = Math.max(
+          0,
+          getCurrentAvailableHeight() - currentPage.usedHeight - nodeGap - title,
+        );
+        const breakPoint =
+          findBestBreakPoint(
+            measurement,
+            consumedHeight,
+            activeDroppedTopSpacing,
+            availableForContent,
+          ) ||
+          (currentPage.items.length === 0
+            ? findNextBreakPoint(measurement, consumedHeight, activeDroppedTopSpacing)
+            : undefined);
+
+        if (!breakPoint) {
+          if (currentPage.items.length > 0) {
+            if (placeTitle()) continue;
+            pushPage(node.sourceModuleKey);
+            continue;
+          }
+          // 没有可继续拆分的断点时，空页允许放入当前分片，避免分页循环无法结束。
+          tryAddItem(wholeFragment, !isFirst);
+          break;
+        }
+
+        const fragmentKind: FlowFragmentKind = isFirst ? "first" : "middle";
+        // 切割路径直接消费测量层给出的页首口径，不再自行扣除块上外边距
+        const fragmentHeight =
+          title +
+          Math.max(0, (breakPoint.heightAtPageStart ?? breakPoint.height) - consumedHeight) -
+          activeDroppedTopSpacing;
+        // 块断点只覆盖块（不含正文区间），字符断点覆盖剩余全部块 + 正文区间
+        const isBlockPoint = typeof breakPoint.blockEnd === "number";
+        const nextBlocks = isBlockPoint ? Number(breakPoint.blockEnd) : blockCount;
+        const consumedBlockEnd =
+          isBlockPoint || breakPoint.offset >= contentEnd
+            ? nextBlocks
+            : Math.max(consumedBlocks, blockCount - 1);
+        const fragment: FlowPageItem = {
+          fragmentId: `${node.id}:${fragmentKind}:${consumedOffset}:${breakPoint.offset}`,
+          nodeId: node.id,
+          sourceModuleKey: node.sourceModuleKey,
+          titleNodeId: isFirst && !titlePlaced ? node.title?.id : undefined,
+          fragment: fragmentKind,
+          height: fragmentHeight,
+          payload: node.payload,
+          titlePayload: isFirst && !titlePlaced ? node.title?.payload : undefined,
+          contentRange: isBlockPoint ? undefined : { start: consumedOffset, end: breakPoint.offset },
+          blockRange: blockCount ? { start: consumedBlocks, end: nextBlocks } : undefined,
+        };
+
+        if (!tryAddItem(fragment, !isFirst)) {
+          pushPage();
           continue;
         }
-        // 没有可继续拆分的断点时，空页允许放入当前分片，避免分页循环无法结束。
-        tryAddItem(wholeFragment, !isFirst);
-        break;
+
+        // 记下推进前的消费量：断点高度不高于已消费高度说明本片没有消费任何内容
+        const fragmentHeightBefore = consumedHeight;
+        consumedHeight = breakPoint.height;
+        consumedBlocks = consumedBlockEnd;
+        if (!isBlockPoint) consumedOffset = breakPoint.offset;
+        // 零推进护栏：测量层会过滤零高度块，但块总数仍按块结束序号统计，两者不一致时，
+        // 这次分片不会推进消费量，再循环一次会选出同一个断点并反复换页，这里直接结束当前节点
+        if (consumedHeight <= fragmentHeightBefore) break;
+        // 块与正文都已切到末尾时结束，避免产生高度不为零但内容为空的尾分片
+        if (consumedOffset >= contentEnd && consumedBlocks >= blockCount) break;
       }
-
-      const fragmentKind: FlowFragmentKind = isFirst ? "first" : "middle";
-      // 切割路径直接消费测量层给出的页首口径，不再自行扣除块上外边距
-      const fragmentHeight =
-        title +
-        Math.max(0, (breakPoint.heightAtPageStart ?? breakPoint.height) - consumedHeight) -
-        activeDroppedTopSpacing;
-      // 块断点只覆盖块（不含正文区间），字符断点覆盖剩余全部块 + 正文区间
-      const isBlockPoint = typeof breakPoint.blockEnd === "number";
-      const nextBlocks = isBlockPoint ? Number(breakPoint.blockEnd) : blockCount;
-      const consumedBlockEnd =
-        isBlockPoint || breakPoint.offset >= contentEnd
-          ? nextBlocks
-          : Math.max(consumedBlocks, blockCount - 1);
-      const fragment: FlowPageItem = {
-        fragmentId: `${node.id}:${fragmentKind}:${consumedOffset}:${breakPoint.offset}`,
-        nodeId: node.id,
-        sourceModuleKey: node.sourceModuleKey,
-        titleNodeId: isFirst && !titlePlaced ? node.title?.id : undefined,
-        fragment: fragmentKind,
-        height: fragmentHeight,
-        payload: node.payload,
-        titlePayload: isFirst && !titlePlaced ? node.title?.payload : undefined,
-        contentRange: isBlockPoint ? undefined : { start: consumedOffset, end: breakPoint.offset },
-        blockRange: blockCount ? { start: consumedBlocks, end: nextBlocks } : undefined,
-      };
-
-      if (!tryAddItem(fragment, !isFirst)) {
-        pushPage();
+      // 本轮消费了内容就继续填当前页；只是换页也允许重试一次
+      if (consumedHeight > pageStartHeight) {
+        pageTurnsWithoutProgress = 0;
         continue;
       }
-
-      // 记下推进前的游标：三个游标都没前进说明本片没有消费任何内容
-      const previousOffset = consumedOffset;
-      const previousBlocks = consumedBlocks;
-      const previousHeight = consumedHeight;
-      consumedHeight = breakPoint.height;
-      consumedBlocks = consumedBlockEnd;
-      if (!isBlockPoint) consumedOffset = breakPoint.offset;
-      // 零推进护栏：断点高度不高于已消费高度且块区间未变时，本轮分片没有消费任何内容。
-      // 测量层会过滤零高度块，但块总数仍按块结束序号统计，两者不一致时这次分片不会推进游标，
-      // 再循环一次会选出同一个断点并反复换页，这里直接结束当前节点，避免分页循环不退出
-      if (
-        consumedHeight <= previousHeight &&
-        consumedOffset <= previousOffset &&
-        consumedBlocks <= previousBlocks
-      ) {
-        break;
-      }
-      // 块与正文都已切到末尾时结束，避免产生高度不为零但内容为空的尾分片
-      if (consumedOffset >= contentEnd && consumedBlocks >= blockCount) break;
+      if (currentPage.pageIndex === startPageIndex) break;
+      // 允许换页重试，但不允许一直换页却始终放不下内容
+      pageTurnsWithoutProgress += 1;
+      if (pageTurnsWithoutProgress >= MAX_PAGE_TURNS_WITHOUT_PROGRESS) break;
     }
   }
 
