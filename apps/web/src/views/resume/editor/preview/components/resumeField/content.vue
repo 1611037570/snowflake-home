@@ -2,6 +2,7 @@
 import { computed, useAttrs } from "vue";
 import DOMPurify from "dompurify";
 import { useResumePreviewContext } from "../../shared/previewContext";
+import { RICH_TEXT_SANITIZE_CONFIG } from "../../shared/richTextSanitize";
 
 // 透传属性已在组件内部逐块合并，关闭自动继承，避免多根节点无法继承导致 class 被丢弃并告警
 defineOptions({ inheritAttrs: false });
@@ -32,12 +33,8 @@ const textAlignStyle = computed(() =>
   textAlign?.value === "justify" ? { textAlign: "justify" } : {},
 );
 
-// 仅保留简历预览所需标签和安全链接协议
-const sanitizeConfig = {
-  ALLOWED_TAGS: ["p", "br", "strong", "b", "em", "i", "u", "ul", "ol", "li", "a", "span"],
-  ALLOWED_ATTR: ["href", "target", "rel"],
-  ALLOWED_URI_REGEXP: /^(?:(?:https?|mailto):)/i,
-};
+// 清洗白名单与分页解析共用一份，避免两处各自维护导致强度分叉
+const sanitizeConfig = RICH_TEXT_SANITIZE_CONFIG;
 
 // 将 HTML 按块拆分，便于分页逻辑细粒度处理
 const splitHtml = (html) => {
