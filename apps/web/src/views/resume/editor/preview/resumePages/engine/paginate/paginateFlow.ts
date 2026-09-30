@@ -245,120 +245,139 @@ export const paginateFlow = ({
         currentPage.pageIndex === startPageIndex &&
         currentPage.items.length >= startItemCount
       ) {
-        const isFirst = consumedHeight === 0;
+        const isFirstFragment = consumedHeight === 0;
         const remainingHeight = Math.max(0, fullHeight - consumedHeight);
         // 页面首位且已渲染过内容盒的续段会去掉顶部内边距，口径集中在这里解析
         const activeDroppedTopSpacing = resolveDroppedTopSpacing({
           measurement,
-          isFirstFragment: isFirst,
+          isFirstFragment,
           atPageStart: currentPage.items.length === 0,
           hasRenderedContent: consumedBlocks > 0 || consumedOffset > 0,
         });
         // 独立间距行位于后续页面首位时不占空间，与渲染层隐藏规则一致。
         const hideLeadingSpacer =
-          isFirst &&
+          isFirstFragment &&
           node.hideWhenPageLeading &&
           currentPage.pageIndex > 0 &&
           currentPage.items.length === 0;
         const hiddenSpacerHeight = hideLeadingSpacer ? fullHeight : 0;
-        // 续段的装饰是 middle/last，渲染层不绘制它所在块的上外边距（无论是否在页首），计价同步扣除
-        const dropBlockMargin = !isFirst;
-        const nextBlockMargin = dropBlockMargin
-          ? resolveNextBlockMargin(measurement, consumedHeight)
-          : 0;
-        const wholeFragmentHeight = remainingHeight - hiddenSpacerHeight - nextBlockMargin;
-        const wholeFragmentKind: FlowFragmentKind = isFirst ? "single" : "last";
+        const nodeGap = getGapBeforeItem(node.sourceModuleKey, !isFirstFragment);
+        const availableForContent = Math.max(
+          0,
+          getCurrentAvailableHeight() - currentPage.usedHeight - nodeGap,
+        );
+
+        // 整片候选：覆盖当前游标之后的全部内容，高度按渲染层同一口径预扣间距与块外边距
+        const wholeHeight = Math.max(
+          0,
+          remainingHeight -
+            hiddenSpacerHeight -
+            (isFirstFragment ? 0 : resolveNextBlockMargin(measurement, consumedHeight)) -
+            activeDroppedTopSpacing,
+        );
+        const wholeFragmentKind: FlowFragmentKind = isFirstFragment ? "single" : "last";
         const wholeFragment: FlowPageItem = {
           fragmentId: `${node.id}:${wholeFragmentKind}:${consumedOffset}:${contentEnd}`,
           nodeId: node.id,
           sourceModuleKey: node.sourceModuleKey,
           fragment: wholeFragmentKind,
-          height: Math.max(0, wholeFragmentHeight - activeDroppedTopSpacing),
+          height: wholeHeight,
           payload: node.payload,
           contentRange: contentEnd ? { start: consumedOffset, end: contentEnd } : undefined,
           blockRange: blockCount ? { start: consumedBlocks, end: blockCount } : undefined,
         };
-
-        const wholeFragmentGap = getGapBeforeItem(node.sourceModuleKey, !isFirst);
-        const wholeFragmentFits =
+        const wholeFits =
           currentPage.items.length === 0
-            ? wholeFragment.height <= getCurrentAvailableHeight() + PAGE_HEIGHT_TOLERANCE
-            : currentPage.usedHeight + wholeFragmentGap + wholeFragment.height <=
+            ? wholeHeight <= getCurrentAvailableHeight() + PAGE_HEIGHT_TOLERANCE
+            : currentPage.usedHeight + nodeGap + wholeHeight <=
               getCurrentAvailableHeight() + PAGE_HEIGHT_TOLERANCE;
-        if (wholeFragmentFits && tryAddItem(wholeFragment, !isFirst)) break;
 
-        const nodeGap = getGapBeforeItem(node.sourceModuleKey, !isFirst);
-        const availableForContent = Math.max(
-          0,
-          getCurrentAvailableHeight() - currentPage.usedHeight - nodeGap,
-        );
+        // 切割候选：只铺到某个断点为止，高度与覆盖范围都由断点决定
         const breakPoint =
           findBestBreakPoint(
             measurement,
             consumedHeight,
             activeDroppedTopSpacing,
             availableForContent,
-            dropBlockMargin,
+            !isFirstFragment,
           ) ||
           (currentPage.items.length === 0
             ? findNextBreakPoint(
                 measurement,
                 consumedHeight,
                 activeDroppedTopSpacing,
-                dropBlockMargin,
+                !isFirstFragment,
               )
             : undefined);
+        const cut = breakPoint
+          ? {
+              breakPoint,
+              height: Math.max(
+                0,
+                resolveCutHeight({
+                  point: breakPoint,
+                  startHeight: consumedHeight,
+                  isFirstFragment,
+                  droppedTopSpacing: activeDroppedTopSpacing,
+                }),
+              ),
+              coverage: resolveFragmentCut({
+                breakPoint,
+                blockCount,
+                contentEnd,
+                consumedBlockCount: consumedBlocks,
+                consumedOffset,
+              }),
+            }
+          : undefined;
 
-        if (!breakPoint) {
+        // 选择要放置的候选：整片放得下就整片，否则用能放下的最大断点
+        const candidate:
+          | { item: FlowPageItem }
+          | {
+              item: FlowPageItem;
+              breakPoint: NonNullable<typeof breakPoint>;
+              coverage: NonNullable<typeof cut>["coverage"];
+            }
+          | undefined = wholeFits
+          ? { item: wholeFragment }
+          : cut
+            ? {
+                item: {
+                  ...wholeFragment,
+                  fragment: isFirstFragment ? "first" : "middle",
+                  fragmentId: `${node.id}:${isFirstFragment ? "first" : "middle"}:${consumedOffset}:${cut.breakPoint.offset}`,
+                  height: cut.height,
+                  contentRange: cut.coverage.contentRange,
+                  blockRange: cut.coverage.blockRange,
+                },
+                breakPoint: cut.breakPoint,
+                coverage: cut.coverage,
+              }
+            : undefined;
+
+        if (!candidate) {
           if (currentPage.items.length > 0) {
+            // 当前页已有内容且整片与断点都放不下：换页后重试同一游标
             pushPage(node.sourceModuleKey);
             continue;
           }
-          // 没有可继续拆分的断点时，空页允许放入当前分片，避免分页循环无法结束。
-          tryAddItem(wholeFragment, !isFirst);
+          // 空页必须接纳整片：否则没有断点可切时会反复换页无法结束
+          tryAddItem(wholeFragment, !isFirstFragment);
           break;
         }
 
-        const fragmentKind: FlowFragmentKind = isFirst ? "first" : "middle";
-        const fragmentHeight = Math.max(
-          0,
-          resolveCutHeight({
-            point: breakPoint,
-            startHeight: consumedHeight,
-            isFirstFragment: isFirst,
-            droppedTopSpacing: activeDroppedTopSpacing,
-          }),
-        );
-        // 切割点覆盖范围由纯规则解析：块断点只覆盖块，文本断点覆盖剩余全部块与正文
-        const cut = resolveFragmentCut({
-          breakPoint,
-          blockCount,
-          contentEnd,
-          consumedBlockCount: consumedBlocks,
-          consumedOffset,
-        });
-        const { isBlockPoint, consumedBlockEnd } = cut;
-        const fragment: FlowPageItem = {
-          fragmentId: `${node.id}:${fragmentKind}:${consumedOffset}:${breakPoint.offset}`,
-          nodeId: node.id,
-          sourceModuleKey: node.sourceModuleKey,
-          fragment: fragmentKind,
-          height: fragmentHeight,
-          payload: node.payload,
-          contentRange: cut.contentRange,
-          blockRange: cut.blockRange,
-        };
-
-        if (!tryAddItem(fragment, !isFirst)) {
+        if (!tryAddItem(candidate.item, !isFirstFragment)) {
           pushPage();
           continue;
         }
+        if (!("coverage" in candidate)) break;
 
         // 记下推进前的消费量：断点高度不高于已消费高度说明本片没有消费任何内容
         const fragmentHeightBefore = consumedHeight;
-        consumedHeight = breakPoint.height;
-        consumedBlocks = consumedBlockEnd;
-        if (!isBlockPoint) consumedOffset = breakPoint.offset;
+        consumedHeight = candidate.breakPoint.height;
+        consumedBlocks = candidate.coverage.consumedBlockEnd;
+        if (!candidate.coverage.isBlockPoint) consumedOffset = candidate.breakPoint.offset;
         // 零推进护栏：测量层会过滤零高度块，但块总数仍按块结束序号统计，两者不一致时，
         // 这次分片不会推进消费量，再循环一次会选出同一个断点并反复换页，这里直接结束当前节点
         if (consumedHeight <= fragmentHeightBefore) break;
