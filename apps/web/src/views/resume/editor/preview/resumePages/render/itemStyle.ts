@@ -6,6 +6,9 @@ export const isItemNode = (node: LayoutNode) =>
   node.type !== "title" &&
   !(node.type === "group" && node.sourceModuleKey === "user");
 
+// 模块标题是排版元素，不参与条目交互：不区分悬停背景，也不响应点击定位。
+export const isTitleNode = (node: LayoutNode) => node.type === "title";
+
 // 时间轴只作用于经历类分组，其他模块继续使用普通条目宽度。
 export const isTimelineNode = (node: LayoutNode, themeId: string) =>
   themeId === "timeline" && node.type === "group" && node.sourceModuleKey !== "user";
