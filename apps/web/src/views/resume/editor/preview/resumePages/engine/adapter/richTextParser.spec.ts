@@ -2,6 +2,14 @@ import { describe, expect, it } from "vitest";
 import { parseRichText, sliceRichTextHtml } from "./richTextParser";
 
 describe("parseRichText", () => {
+  it("同一份内容返回同一个解析结果，供上游判断节点是否变化", () => {
+    const content = "<p>产品能力</p><p>工具</p>";
+    const first = parseRichText(content);
+
+    expect(parseRichText(content)).toBe(first);
+    expect(parseRichText(`${content} <p>补充</p>`)).not.toBe(first);
+  });
+
   it("长单段富文本会生成字符级兜底断点", () => {
     const result = parseRichText(`<p>${"长文本".repeat(600)}</p>`);
 

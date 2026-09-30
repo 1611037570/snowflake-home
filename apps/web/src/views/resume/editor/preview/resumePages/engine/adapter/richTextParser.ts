@@ -253,9 +253,18 @@ const appendCharacterBreakPoints = (
 /**
  * 清洗并解析富文本，供排版节点适配器使用。
  * 偏移口径（文字与 <br> 各占一位、顶层纯空白文本不计）被预览切片与分页断点共用，改动必须两边同步。
+ * 同一份内容返回同一个结果对象：上游据此判断节点是否真的变化，避免每次输入都让整棵测量树重渲染。
  */
+const parsedRichTextCache = new Map<string, ParsedRichText>();
+/** 解析结果缓存上限：超出后整体清空，避免长时间编辑累积占用 */
+const PARSED_RICH_TEXT_CACHE_MAX = 200;
+
 export const parseRichText = (content: string): ParsedRichText => {
-  const html = DOMPurify.sanitize(content || "", sanitizeConfig);
+  const key = content || "";
+  const cached = parsedRichTextCache.get(key);
+  if (cached) return cached;
+
+  const html = DOMPurify.sanitize(key, sanitizeConfig);
   const { blocks, breakPoints, breakPointOffsets, textLength } = parseBlocks(html);
 
   if (textLength > 0 && !breakPointOffsets.has(textLength)) {
@@ -264,10 +273,13 @@ export const parseRichText = (content: string): ParsedRichText => {
   }
   appendCharacterBreakPoints(breakPoints, breakPointOffsets, textLength);
 
-  return {
+  const parsed: ParsedRichText = {
     html,
     blocks,
     breakPoints,
     textLength,
   };
+  if (parsedRichTextCache.size >= PARSED_RICH_TEXT_CACHE_MAX) parsedRichTextCache.clear();
+  parsedRichTextCache.set(key, parsed);
+  return parsed;
 };
