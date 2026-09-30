@@ -361,9 +361,23 @@ export const paginateFlow = ({
         continue;
       }
 
+      // 记下推进前的游标：三个游标都没前进说明本片没有消费任何内容
+      const previousOffset = consumedOffset;
+      const previousBlocks = consumedBlocks;
+      const previousHeight = consumedHeight;
       consumedHeight = breakPoint.height;
       consumedBlocks = consumedBlockEnd;
       if (!isBlockPoint) consumedOffset = breakPoint.offset;
+      // 零推进护栏：断点高度不高于已消费高度且块区间未变时，本轮分片没有消费任何内容。
+      // 测量层会过滤零高度块，但块总数仍按块结束序号统计，两者不一致时这次分片不会推进游标，
+      // 再循环一次会选出同一个断点并反复换页，这里直接结束当前节点，避免分页循环不退出
+      if (
+        consumedHeight <= previousHeight &&
+        consumedOffset <= previousOffset &&
+        consumedBlocks <= previousBlocks
+      ) {
+        break;
+      }
       // 块与正文都已切到末尾时结束，避免产生高度不为零但内容为空的尾分片
       if (consumedOffset >= contentEnd && consumedBlocks >= blockCount) break;
     }
