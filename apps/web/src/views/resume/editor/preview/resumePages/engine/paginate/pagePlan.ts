@@ -1,3 +1,4 @@
+import { getRegionContentHeight } from "../layout/flowHeights";
 import type { PageLayoutConfig, RegionConfig } from "../pageLayoutTypes";
 import type { FlowFragmentKind, FlowPage, FlowPageItem } from "./paginateFlow";
 
@@ -102,11 +103,9 @@ const toFragmentPlan = (item: FlowPageItem): FragmentPlan => ({
   decoration: getDecoration(item.fragment),
 });
 
-/** 根据区域配置推导当前区域可使用的高度。 */
-const getRegionHeight = (region: RegionConfig, fallback: number) => {
-  if (region.height.mode === "fixed") return Math.max(0, region.height.value);
-  return Math.max(0, fallback);
-};
+/** 区域在一页里可用的高度：与区域分页流使用同一份推导，避免两处口径分叉 */
+const getRegionHeight = (region: RegionConfig, fallback: number) =>
+  getRegionContentHeight(region, fallback);
 
 /** 页面计划构建参数。 */
 export interface BuildPagePlanOptions {
