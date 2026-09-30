@@ -57,6 +57,9 @@ const renderLongImage = async (
   clone.style.transform = "none";
   clone.style.zoom = "1";
   clone.style.margin = "0";
+  // 测量宿主用 visibility: hidden 隐藏，克隆必须显式恢复可见，否则导出只有背景色
+  clone.style.visibility = "visible";
+  clone.style.pointerEvents = "auto";
   // 单页模式测量源是可见页面（带编辑器边框/圆角），导出时清除，保证与多页导出表现一致
   clone.style.border = "none";
   clone.style.borderRadius = "0";
