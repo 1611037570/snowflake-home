@@ -131,6 +131,7 @@ export const useResumeLayout = ({
     },
     font: ui.value.font,
     theme: ui.value.theme,
+    themeTemplate: ui.value.theme?.template, // 标题风格切换会改变标题高度
     layout: ui.value.layout,
     viewPadding: viewPadding.value, // 容器内边距变化会改变隐藏测量宽度
     fontReadyVersion: fontReadyVersion.value,
