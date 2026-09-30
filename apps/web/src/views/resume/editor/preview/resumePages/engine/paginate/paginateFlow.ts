@@ -1,4 +1,10 @@
 import { resolveFragmentCut } from "./cutPoints";
+import {
+  resolveBlockMargin,
+  resolveCutHeight,
+  resolveDroppedTopSpacing,
+  resolveNextBlockMargin,
+} from "./fragmentGeometry";
 import { resolvePageHeight } from "./flowHeights";
 import type { FlowHeightPlan } from "./flowHeights";
 import type { MeasuredNode } from "../measure/types";
@@ -108,10 +114,13 @@ const findBestBreakPoint = (
   let bestHeight = 0;
   for (const point of measurement.breakPoints) {
     if (!coversContent(point)) continue;
-    // 页面首位的续段不绘制该块上外边距，计价同步扣除
-    const blockMargin = dropBlockMargin ? (point.leadingMargin ?? 0) : 0;
-    const height =
-      point.height - startHeight - (startHeight > 0 ? droppedTopSpacing : 0) - blockMargin;
+    const height = resolveCutHeight({
+      point,
+      startHeight,
+      // 首片与续段的留白口径不同：续段不绘制所在块的上外边距
+      isFirstFragment: !dropBlockMargin,
+      droppedTopSpacing,
+    });
     if (height <= 0 || height > availableHeight + PAGE_HEIGHT_TOLERANCE) continue;
     // 同一行内的多个断点高度相同，取最靠后的偏移让首片段尽量填满整行
     const isBetter =
@@ -135,9 +144,12 @@ const findNextBreakPoint = (
   let nextHeight = Number.POSITIVE_INFINITY;
   for (const point of measurement.breakPoints) {
     if (!coversContent(point)) continue;
-    const blockMargin = dropBlockMargin ? (point.leadingMargin ?? 0) : 0;
-    const height =
-      point.height - startHeight - (startHeight > 0 ? droppedTopSpacing : 0) - blockMargin;
+    const height = resolveCutHeight({
+      point,
+      startHeight,
+      isFirstFragment: !dropBlockMargin,
+      droppedTopSpacing,
+    });
     if (height > 0 && height < nextHeight) {
       nextBreakPoint = point;
       nextHeight = height;
@@ -235,12 +247,13 @@ export const paginateFlow = ({
       ) {
         const isFirst = consumedHeight === 0;
         const remainingHeight = Math.max(0, fullHeight - consumedHeight);
-        // 顶部留白只在续段位于页首、且内容盒首块已由前面分片渲染过时才真正被移除：
-        // 只放间距的分片不渲染内容盒，此时续段仍是完整的盒顶，不能扣除
-        const activeDroppedTopSpacing =
-          !isFirst && currentPage.items.length === 0 && (consumedBlocks > 0 || consumedOffset > 0)
-            ? droppedTopSpacing
-            : 0;
+        // 页面首位且已渲染过内容盒的续段会去掉顶部内边距，口径集中在这里解析
+        const activeDroppedTopSpacing = resolveDroppedTopSpacing({
+          measurement,
+          isFirstFragment: isFirst,
+          atPageStart: currentPage.items.length === 0,
+          hasRenderedContent: consumedBlocks > 0 || consumedOffset > 0,
+        });
         // 独立间距行位于后续页面首位时不占空间，与渲染层隐藏规则一致。
         const hideLeadingSpacer =
           isFirst &&
@@ -251,9 +264,7 @@ export const paginateFlow = ({
         // 续段的装饰是 middle/last，渲染层不绘制它所在块的上外边距（无论是否在页首），计价同步扣除
         const dropBlockMargin = !isFirst;
         const nextBlockMargin = dropBlockMargin
-          ? (measurement.breakPoints.find(
-              (point) => point.blockEnd !== undefined && point.height > consumedHeight,
-            )?.leadingMargin ?? 0)
+          ? resolveNextBlockMargin(measurement, consumedHeight)
           : 0;
         const wholeFragmentHeight = remainingHeight - hiddenSpacerHeight - nextBlockMargin;
         const wholeFragmentKind: FlowFragmentKind = isFirst ? "single" : "last";
@@ -309,10 +320,15 @@ export const paginateFlow = ({
         }
 
         const fragmentKind: FlowFragmentKind = isFirst ? "first" : "middle";
-        const fragmentHeight =
-          Math.max(0, breakPoint.height - consumedHeight) -
-          activeDroppedTopSpacing -
-          (dropBlockMargin ? (breakPoint.leadingMargin ?? 0) : 0);
+        const fragmentHeight = Math.max(
+          0,
+          resolveCutHeight({
+            point: breakPoint,
+            startHeight: consumedHeight,
+            isFirstFragment: isFirst,
+            droppedTopSpacing: activeDroppedTopSpacing,
+          }),
+        );
         // 切割点覆盖范围由纯规则解析：块断点只覆盖块，文本断点覆盖剩余全部块与正文
         const cut = resolveFragmentCut({
           breakPoint,

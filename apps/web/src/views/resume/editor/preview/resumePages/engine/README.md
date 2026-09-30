@@ -12,6 +12,7 @@ engine/adapter/buildLayoutNodes.ts（模块 → 通用排版节点）
   → engine/measure/measureLayoutNodes.ts（真实 DOM 测量，唯一的尺寸来源）
   → engine/layout/flowHeights.ts（区域内容高度与内容内边距，唯一的区域高度口径）
   → engine/layout/regionFlows.ts（区域高度结算，按栏下发每页可用高度）
+  → engine/paginate/fragmentGeometry.ts（分片几何口径：块上外边距与顶部内边距的扣除规则）
   → engine/paginate/cutPoints.ts（切割点覆盖范围规则：块断点与文本断点各覆盖什么）
   → engine/paginate/paginateFlow.ts（单栏贪心装箱，唯一的算法核心）
   → engine/paginate/pagePlan.ts（合并为预览、打印、导出共用的页面计划）
@@ -21,7 +22,7 @@ engine/adapter/buildLayoutNodes.ts（模块 → 通用排版节点）
 
 | 量 | 含义 | 来源 |
 | --- | --- | --- |
-| 布局像素 | 未经 `transform: scale()` 的真实排版像素 | `measureLayoutNodes` 已按测量宿主自身换算回未缩放值 |
+| 布局像素 | 未经 `transform: scale()` 的真实排版像素 | 测量树挂在 body 上，处于缩放区之外，`getBoundingClientRect` 即布局像素 |
 | 页面尺寸 | `794 × 1123` | `editor/preview/shared/constants.ts` |
 | 页尾高度 | `PAGE_NUMBER_HEIGHT = 36` | 同上 |
 | 整页可用高度 | `RESUME_HEIGHT − paddingVertical − max(paddingVertical, 页尾高度)` | `getContentHeight`，分页与「一页纸」共用同一公式 |
@@ -78,15 +79,17 @@ engine/adapter/buildLayoutNodes.ts（模块 → 通用排版节点）
 `paginateFlow` **只接收流内口径的高度**，两类留白都由它在计价时扣除：
 
 ```text
-候选断点高度 = 该断点高度 − 已消费高度 − 块上外边距（续段时扣除）
-分片高度     = 该断点高度 − 已消费高度 − 块上外边距（续段时扣除） − 内容盒上内边距（满足页首条件时扣除）
+候选断点高度 = resolveCutHeight(切割点, 已消费高度, 是否首片, 顶部内边距)
+分片高度     = resolveCutHeight(同一个切割点与同一组入参)
 整片高度     = 剩余高度 − 下一个未消费块的上外边距（续段时扣除）
 ```
+
+**这两行必须是同一个函数调用**：候选断点按计算出的高度比较、取最大者，分片高度取自同一结果。若只改变其中一处（例如只换分片高度的口径），排序结果会随之改变，可能选中与游标不一致的断点，导致分页把过多内容放进一页、页尾被挤出页面。
 
 两条已经确定的边界：
 
 1. **块上外边距与内容盒上内边距的扣除条件不同**：块上外边距在续段时无条件扣除（`middle` / `last` 装饰在页首与页中都不绘制）；内容盒上内边距只在「续段 + 内容盒已经开始」时扣除。
-2. **扣除必须同时作用于候选断点排序与分片高度**：候选断点按扣除后的高度比较、取最大者。若只改变其中一处（例如只换分片高度的口径），排序结果会随之改变，可能选中与游标不一致的断点，导致分页把过多内容放进一页、页尾被挤出页面。
+2. **扣除条件集中在 `fragmentGeometry.ts`**：`resolveCutHeight`、`resolveDroppedTopSpacing`、`resolveNextBlockMargin` 是这三条留白规则的唯一定义处，分页层只调用、不再自行做算术；改动留白规则只改这一个模块，并由 `fragmentGeometry.spec.ts` 锁定。
 
 推导所需的两个量都来自测量层（`droppedTopSpacing` 与 `leadingMargin`），因此**任何改变渲染层留白规则的改动，都必须在测量层同步反映这两个量**，否则分页与渲染会静默错位。
 
