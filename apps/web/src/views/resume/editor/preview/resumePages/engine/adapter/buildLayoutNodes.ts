@@ -24,24 +24,24 @@ const PARAGRAPH_SPACING_MODULE_KEYS = new Set([
 const usesParagraphSpacing = (moduleKey: string): boolean =>
   PARAGRAPH_SPACING_MODULE_KEYS.has(moduleKey) || moduleKey.startsWith("custom_");
 
-/** 将段间距转换成独立分页行，交由通用分页逻辑按高度放置。 */
-const addParagraphSpacingRows = (nodes: LayoutNode[], height: number): LayoutNode[] =>
-  nodes.flatMap((node) => {
-    if (!usesParagraphSpacing(node.sourceModuleKey) || height <= 0) return [node];
-    const { title, ...contentNode } = node;
-    return [
-      {
-        id: `${node.id}.paragraph-spacing`,
-        sourceModuleKey: node.sourceModuleKey,
-        type: "spacer",
-        breakPolicy: {},
-        hideWhenPageLeading: true,
-        payload: { height },
-        title,
-      },
-      contentNode,
-    ];
-  });
+/**
+ * 在模块内容前插入段间距节点。
+ * 间距与标题一样是独立节点：能放进当前页就留在这页，放不下与后面的内容一起顺延，
+ * 成为新页第一项时由 hideWhenPageLeading 隐藏占位，因此分页层不需要为它单独判断。
+ */
+const addParagraphSpacingRows = (nodes: LayoutNode[], height: number): LayoutNode[] => {
+  const first = nodes[0];
+  if (!first || height <= 0 || !usesParagraphSpacing(first.sourceModuleKey)) return nodes;
+  const spacer: LayoutNode = {
+    id: `${first.id}.paragraph-spacing`,
+    sourceModuleKey: first.sourceModuleKey,
+    type: "spacer",
+    breakPolicy: {},
+    hideWhenPageLeading: true,
+    payload: { height },
+  };
+  return [spacer, ...nodes];
+};
 
 /** 创建内置简历模块适配器注册表。 */
 export const createResumeLayoutAdapterRegistry = (): LayoutAdapterRegistry => {

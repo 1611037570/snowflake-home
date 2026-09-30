@@ -393,7 +393,7 @@ describe("paginateFlow", () => {
     });
   });
 
-  it("顶部间距块可以单独留在上一页，块区间 [0, 0) 不渲染内容块", () => {
+  it("间距块不单独成片，放不下时与内容一起顺延下一页", () => {
     const item = createNode("item", {
       breakPolicy: {
       },
@@ -417,13 +417,15 @@ describe("paginateFlow", () => {
       gap: 0,
     });
 
-    // 上一页只剩 20：内容块（40）放不下，间距块（10）放得下，于是间距单独成片
+    // 上一页只剩 20：间距是普通内容，不单独成片，整条与间距一起顺延到下一页后完整放下
     expect(pages).toHaveLength(2);
-    expect(pages[0]?.items[1]).toMatchObject({
-      blockRange: { start: 0, end: 0 },
-      height: 10,
+    expect(pages[0]?.items).toHaveLength(1);
+    expect(pages[0]?.usedHeight).toBe(40);
+    expect(pages[1]?.items[0]).toMatchObject({
+      fragment: "single",
+      height: 60,
+      blockRange: { start: 0, end: 1 },
     });
-    expect(pages[1]?.items[0]).toMatchObject({ blockRange: { start: 0, end: 1 } });
   });
 
   it("内容盒首块已在前片渲染时，续段才扣除顶部留白", () => {
@@ -437,8 +439,8 @@ describe("paginateFlow", () => {
       { offset: 20, type: "paragraph" as const, height: 120 },
     ];
 
-    // 只放下间距块：内容盒首块还没渲染，续段按完整盒顶计算，不扣顶部留白（60 - 10 - 0）
-    const onlyGap = paginateFlow({
+    // 上一页只放了前一个节点，内容盒首块没有渲染过：整条按完整盒顶计算，不扣顶部留白
+    const boxNotStarted = paginateFlow({
       nodes: [createNode("previous"), item],
       measurements: new Map([
         ["previous", createMeasurement("previous", 50)],
@@ -457,9 +459,9 @@ describe("paginateFlow", () => {
       availableHeight: 60,
       gap: 0,
     });
-    expect(onlyGap[1]?.items[0]?.height).toBe(50);
+    expect(boxNotStarted[1]?.items[0]?.height).toBe(60);
 
-    // 放下间距 + 内容块：内容盒已开始，续段扣除顶部留白
+    // 内容盒首块已在前片渲染：续段扣除顶部留白
     const boxStarted = paginateFlow({
       nodes: [createNode("previous"), item],
       measurements: new Map([
@@ -491,31 +493,53 @@ describe("paginateFlow", () => {
     expect(pages[1]?.items.map((item) => item.nodeId)).toEqual(["second"]);
   });
 
-  it("页面第一个内容不绘制间距占位，按去掉间距后的高度分页", () => {
-    const item = createNode("item", {
-      breakPolicy: {
-      },
+  it("段落间距落在页首时不占高度，内容按去掉间距后的高度分页", () => {
+    // 间距与内容是两个独立节点：间距放不下的页，内容按自身高度分页
+    const previous = createNode("previous", { sourceModuleKey: "alpha" });
+    const spacer = createNode("item.paragraph-spacing", {
+      type: "spacer",
+      hideWhenPageLeading: true,
+      payload: { height: 10 },
     });
+    const content = createNode("item", { type: "block" });
     const pages = paginateFlow({
-      nodes: [item],
+      nodes: [previous, spacer, content],
       measurements: new Map([
-        [
-          "item",
-          createMeasurement("item", 60, {
-            breakPoints: [
-              { offset: 0, type: "block", height: 10, blockEnd: 0 },
-              { offset: 0, type: "block", height: 60, blockEnd: 1 },
-            ],
-          }),
-        ],
+        ["previous", createMeasurement("previous", 40)],
+        // 间距节点渲染成普通 div，测量结果里没有块区间与断点
+        ["item.paragraph-spacing", createMeasurement("item.paragraph-spacing", 10)],
+        ["item", createMeasurement("item", 50)],
       ]),
       availableHeight: 50,
       gap: 0,
     });
 
-    // 整条按 60-10=50 计算正好放下，不会因为间距被挤到下一页
-    expect(pages).toHaveLength(1);
-    expect(pages[0]?.items[0]).toMatchObject({ fragment: "single", height: 50 });
+    // 间距正好填满当前页剩余空间，于是留在这一页，内容顺延下一页
+    expect(pages).toHaveLength(2);
+    expect(pages[0]?.items.map((item) => item.nodeId)).toEqual([
+      "previous",
+      "item.paragraph-spacing",
+    ]);
+    expect(pages[1]?.items.map((item) => item.nodeId)).toEqual(["item"]);
+    expect(pages[1]?.usedHeight).toBe(50);
+
+    // 间距自己放不下时与内容一起顺延：它成为新页第一项，不占高度，内容按自身高度完整放下
+    const shifted = paginateFlow({
+      nodes: [previous, spacer, content],
+      measurements: new Map([
+        ["previous", createMeasurement("previous", 45)],
+        ["item.paragraph-spacing", createMeasurement("item.paragraph-spacing", 10)],
+        ["item", createMeasurement("item", 50)],
+      ]),
+      availableHeight: 50,
+      gap: 0,
+    });
+    expect(shifted).toHaveLength(2);
+    expect(shifted[1]?.items.map((item) => item.nodeId)).toEqual([
+      "item.paragraph-spacing",
+      "item",
+    ]);
+    expect(shifted[1]?.usedHeight).toBe(50);
   });
 
   it("空页始终放不下内容时不会无限换页", () => {
