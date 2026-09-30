@@ -5,27 +5,6 @@ import type { MeasuredNode } from "./types";
 const NODE_SELECTOR = "[data-layout-node-id]";
 
 /**
- * 计算测量宿主的布局缩放比例。
- * 预览区用 transform: scale() 缩放整页，该变换不改变布局尺寸但会缩放 getBoundingClientRect 的结果，
- * 因此按测量宿主自身换算回未缩放的布局像素，分页高度才能与真实页面像素一致。
- */
-const getLayoutScale = (root: HTMLElement): number => {
-  const layoutWidth = root.offsetWidth;
-  if (!layoutWidth) return 1;
-  const scale = root.getBoundingClientRect().width / layoutWidth;
-  return Number.isFinite(scale) && scale > 0 ? scale : 1;
-};
-
-/** 读取一个 DOM 节点的实际高度和宽度（已换算回未缩放的布局像素）。 */
-const readRect = (element: HTMLElement, scale: number) => {
-  const rect = element.getBoundingClientRect();
-  return {
-    width: rect.width / scale,
-    height: rect.height / scale,
-  };
-};
-
-/**
  * 采集纯文本容器每一行的结束偏移（相对容器文本起点）与行底边。
  * 用于让描述类文本按行拆分：放不下的行移到下一页，而不是整块被推走
  */
@@ -65,14 +44,13 @@ export const measureLayoutNodes = (
   nodes: LayoutNode[],
 ): Map<string, MeasuredNode> => {
   const result = new Map<string, MeasuredNode>();
-  const scale = getLayoutScale(root);
   const elements = Array.from(root.querySelectorAll<HTMLElement>(NODE_SELECTOR));
   const elementById = new Map(elements.map((element) => [element.dataset.layoutNodeId || "", element]));
 
   nodes.forEach((node) => {
     const element = elementById.get(node.id);
     if (!element) return;
-    const rect = readRect(element, scale);
+    const rect = element.getBoundingClientRect();
     const breakPointTypes = new Map(
       node.breakPoints?.map((point) => [point.offset, point.type]) || [],
     );
@@ -81,7 +59,7 @@ export const measureLayoutNodes = (
     )
       .map((point) => {
         const offset = Number(point.dataset.layoutBreakpointOffset);
-        const height = point.getBoundingClientRect().height / scale;
+        const height = point.getBoundingClientRect().height;
         return { offset, type: breakPointTypes.get(offset) || "textRange", height };
       })
       .filter((point) => Number.isFinite(point.offset) && point.height > 0);
@@ -97,7 +75,7 @@ export const measureLayoutNodes = (
           .map((child, index) => ({
             offset: 0,
             type: "block" as const,
-            height: (child.getBoundingClientRect().bottom - nodeTop) / scale,
+            height: child.getBoundingClientRect().bottom - nodeTop,
             blockEnd: index + 1,
             // 续段落在页首时渲染层会去掉该块的上外边距，这里上报供分页同步扣除
             leadingMargin: Number.parseFloat(getComputedStyle(child).marginTop) || 0,
@@ -119,7 +97,7 @@ export const measureLayoutNodes = (
         collectLineEndOffsets(text).map((line) => ({
           offset: line.offset,
           type: "textRange" as const,
-          height: (line.bottom - nodeTop) / scale,
+          height: line.bottom - nodeTop,
         })),
       )
       .filter((point) => Number.isFinite(point.offset) && point.height > 0);
