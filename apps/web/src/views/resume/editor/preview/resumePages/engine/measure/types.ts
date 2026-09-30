@@ -26,6 +26,11 @@ export interface MeasuredNode {
   minHeight: number;
   /** 当前节点可用的拆分断点 */
   breakPoints: BreakPointMeasure[];
+  /**
+   * 当前节点正文的真实字符长度，供分页推导内容末尾。
+   * 不能改用断点序列的最后一项：块断点的偏移恒为零，排在文本断点之后会把内容末尾低估成零
+   */
+  contentLength?: number;
   /** 续段渲染时被去掉的顶部留白高度 */
   droppedTopSpacing?: number;
 }

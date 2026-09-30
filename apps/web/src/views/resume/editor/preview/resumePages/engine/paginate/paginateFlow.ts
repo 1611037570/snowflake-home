@@ -77,9 +77,15 @@ const getMeasurement = (
   return measurement;
 };
 
-/** 读取节点内容的最后一个可用偏移量 */
+/**
+ * 读取节点内容的末尾偏移。
+ * 优先使用测量层给出的正文真实长度；缺失时取断点偏移的最大值兜底。
+ * 不能取断点序列的最后一项：块断点偏移恒为零，排在文本断点之后会把末尾低估成零，
+ * 续段的起始偏移随之回退到零，同一段正文会被两页重复渲染。
+ */
 const getContentEnd = (measurement: MeasuredNode): number =>
-  measurement.breakPoints[measurement.breakPoints.length - 1]?.offset ?? 0;
+  measurement.contentLength ??
+  measurement.breakPoints.reduce((max, point) => Math.max(max, point.offset), 0);
 
 /**
  * 页内高度容差：测量高度与渲染高度之间允许的亚像素舍入差。
