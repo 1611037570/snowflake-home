@@ -2,7 +2,6 @@
 import { computed } from "vue";
 import Item from "@/views/resume/theme/components/itemContainer.vue";
 import { getItemFragmentStyle, isItemNode, isTimelineNode } from "../itemStyle";
-import Title from "@/views/resume/theme/components/moduleTitle/index.vue";
 import { useResumePreviewContext } from "../../../shared/previewContext";
 import LayoutNodeContent from "../layoutNodeContent.vue";
 import UserModule from "@/views/resume/theme/components/userContainer.vue";
@@ -37,9 +36,6 @@ const getBreakpointItemStyle = (offset: number) =>
 
 <template>
   <div class="layout-measure-record">
-    <div v-if="node.title" class="layout-measure-title" :data-layout-node-id="node.title.id">
-      <Title :module-key="node.title.sourceModuleKey" />
-    </div>
     <div class="layout-measure-node" :data-layout-node-id="node.id">
       <Item
         v-if="useItem"

@@ -4,11 +4,13 @@ import ItemTags from "../../components/itemTags.vue";
 import ItemTitle from "../../components/itemTitle.vue";
 import InlineInfoList from "../../components/inlineInfoList.vue";
 import ResumeField from "../../components/resumeField/index.vue";
+import ModuleTitle from "@/views/resume/theme/components/moduleTitle/index.vue";
 import UserContent from "@/views/resume/theme/components/userModule/index.vue";
 import { getTime } from "./getTime";
 import { isContentEmpty } from "../../shared/validData";
 import { useResumePreviewContext } from "../../shared/previewContext";
 import { sliceRichTextHtml } from "../engine/adapter/richTextParser";
+import { isModuleTitleNode } from "../engine/adapter";
 import { isTimelineNode } from "./itemStyle";
 import type { LayoutNode } from "../engine/types";
 
@@ -120,7 +122,11 @@ const itemContentSpacingStyle = computed(() => {
 </script>
 
 <template>
-  <template v-if="node.type === 'spacer'">
+  <template v-if="isModuleTitleNode(node)">
+    <!-- 模块标题自成一行：渲染与测量共用同一结构，高度由独立节点自己决定 -->
+    <ModuleTitle :module-key="(node.payload as { moduleKey: string }).moduleKey" />
+  </template>
+  <template v-else-if="node.type === 'spacer'">
     <div
       v-if="!leadingOnPage"
       class="shrink-0"

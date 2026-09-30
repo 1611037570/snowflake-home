@@ -8,6 +8,7 @@ export type LayoutNodeType =
   | "richText"
   | "repeat"
   | "media"
+  | "title"
   | "spacer";
 
 /**
@@ -51,8 +52,6 @@ export interface LayoutNode {
   hideWhenPageLeading?: boolean;
   /** 节点实际内容，由具体节点类型自行约定结构 */
   payload: unknown;
-  /** 当前节点的标题，只在第一次分片中渲染 */
-  title?: LayoutNode;
   /** 富文本节点使用的可拆分断点 */
   breakPoints?: BreakPoint[];
 }

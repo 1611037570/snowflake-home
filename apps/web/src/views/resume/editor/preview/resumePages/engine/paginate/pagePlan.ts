@@ -27,8 +27,6 @@ export interface FragmentPlan {
   fragment: FlowFragmentKind;
   /** 当前分片内容。 */
   payload: unknown;
-  /** 首次分片对应的标题内容。 */
-  titlePayload?: unknown;
   /** 当前分片实际使用的高度。 */
   height: number;
   /** 当前分片对应的内容范围。 */
@@ -96,7 +94,6 @@ const toFragmentPlan = (item: FlowPageItem): FragmentPlan => ({
   sourceModuleKey: item.sourceModuleKey,
   fragment: item.fragment,
   payload: item.payload,
-  titlePayload: item.titlePayload,
   height: item.height,
   contentRange: item.contentRange,
   blockRange: item.blockRange,

@@ -51,9 +51,8 @@ engine/adapter/buildLayoutNodes.ts（模块 → 通用排版节点）
 
 | 字段 | 含义 | 产生方 |
 | --- | --- | --- |
-| `LayoutNode.type` | 节点类型（group / block / richText / repeat / media / spacer） | 模块适配器 |
+| `LayoutNode.type` | 节点类型（group / block / richText / repeat / media / title / spacer） | 模块适配器 |
 | `LayoutNode.hideWhenPageLeading` | 落在后续页面首位时整块隐藏自身占位 | 段间距行 |
-| `LayoutNode.title` | 模块标题节点，只在节点首次分片时渲染 | `attachModuleTitle` |
 | `LayoutNode.breakPoints` | 声明式断点，仅用于渲染断点探针 | 富文本解析、经历条目 |
 | `MeasuredNode.fullHeight` | 节点完整高度，块区间按**整块**计量，不会切进块内部 | 测量层 |
 | `MeasuredNode.droppedTopSpacing` | 续段渲染时被移除的内容盒上内边距 | 测量层读 `paddingTop` |
@@ -121,7 +120,7 @@ engine/adapter/buildLayoutNodes.ts（模块 → 通用排版节点）
 
 ## 当前场景适配点
 
-以下六处是分页层为了对齐渲染层留白规则所做的补偿，已由单测覆盖，改动前必须先补回归用例：
+以下五处是分页层为了对齐渲染层留白规则所做的补偿，已由单测覆盖，改动前必须先补回归用例：
 
 | 适配点 | 规则 | 覆盖用例 |
 | --- | --- | --- |
@@ -129,8 +128,9 @@ engine/adapter/buildLayoutNodes.ts（模块 → 通用排版节点）
 | 续段块上外边距 | 续段（`middle` / `last` 装饰）无条件扣除该块上外边距；扣除同时作用于候选断点排序与分片高度 | `当前页放得下媒体条目的首个内容块时不整条顺延`、`顶部间距块可以单独留在上一页，块区间 [0, 0) 不渲染内容块` |
 | 独立间距行 | 落页首时整块隐藏，高度按零计价 | `页面第一个内容不绘制间距占位，按去掉间距后的高度分页`（当前失败，见已知缺口） |
 | 模块间距 | 下一个模块换页时，剩余空间仍放得下就留在页尾 `trailingGap` | `下一个模块换页时，模块间距落在上一页页尾` |
-| 标题独立行 | 标题能放当前页就单独留下，正文顺延 | `正文放不下时标题与条目头留在当前页，正文顺延下一页` |
 | 块与正文双轨 | 块断点只覆盖块，文本断点覆盖剩余全部块 + 正文区间；覆盖范围由 `resolveFragmentCut` 解析 | `经历正文跨页后续页继续渲染正文块，不重复头部块`、`resolveFragmentCut` 的规则用例 |
+
+标题不在适配点之列：它是 `type: "title"` 的**独立节点**，由适配器排在模块最前，分页层与普通块一视同仁，不再有"标题能否单独留页"的判断。模块标题与所属模块内容 `sourceModuleKey` 相同，因此两者之间不会插入模块间距。
 
 ## 改动的顺序约束
 
