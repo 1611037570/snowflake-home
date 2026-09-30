@@ -12,6 +12,7 @@ engine/adapter/buildLayoutNodes.ts（模块 → 通用排版节点）
   → engine/measure/measureLayoutNodes.ts（真实 DOM 测量，唯一的尺寸来源）
   → engine/layout/flowHeights.ts（区域内容高度与内容内边距，唯一的区域高度口径）
   → engine/layout/regionFlows.ts（区域高度结算，按栏下发每页可用高度）
+  → engine/paginate/cutPoints.ts（切割点覆盖范围规则：块断点与文本断点各覆盖什么）
   → engine/paginate/paginateFlow.ts（单栏贪心装箱，唯一的算法核心）
   → engine/paginate/pagePlan.ts（合并为预览、打印、导出共用的页面计划）
 ```
@@ -129,7 +130,7 @@ engine/adapter/buildLayoutNodes.ts（模块 → 通用排版节点）
 | 独立间距行 | 落页首时整块隐藏，高度按零计价 | `页面第一个内容不绘制间距占位，按去掉间距后的高度分页`（当前失败，见已知缺口） |
 | 模块间距 | 下一个模块换页时，剩余空间仍放得下就留在页尾 `trailingGap` | `下一个模块换页时，模块间距落在上一页页尾` |
 | 标题独立行 | 标题能放当前页就单独留下，正文顺延 | `正文放不下时标题与条目头留在当前页，正文顺延下一页` |
-| 块与正文双轨 | 块断点只覆盖块，文本断点覆盖剩余全部块 + 正文区间 | `经历正文跨页后续页继续渲染正文块，不重复头部块` |
+| 块与正文双轨 | 块断点只覆盖块，文本断点覆盖剩余全部块 + 正文区间；覆盖范围由 `resolveFragmentCut` 解析 | `经历正文跨页后续页继续渲染正文块，不重复头部块`、`resolveFragmentCut` 的规则用例 |
 
 ## 改动的顺序约束
 
