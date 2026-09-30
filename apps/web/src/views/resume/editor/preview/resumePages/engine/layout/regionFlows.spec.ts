@@ -24,7 +24,7 @@ const createFlowPage = (usedHeight: number, itemCount: number) => ({
   items: Array.from({ length: itemCount }, (_, index) => ({ index })),
 });
 
-/** 记录每次 buildFlow 收到的每栏可用高度计划 */
+/** 记录每次 buildFlow 收到的每栏高度计划 */
 const createHeightSpy = (
   build: (
     columnId: string,
@@ -74,11 +74,11 @@ describe("buildRegionFlows", () => {
     );
 
     // 空区域按 0 占用结算，正文区域首页可用高度不被扣减
-    expect(plans[1]?.availableHeight).toBe(400);
+    expect(plans[1]?.heights.firstPageHeight).toBe(400);
   });
 
   it("自适应区域的首页高度与内容内边距、区域间距一起从后续区域扣减", () => {
-    const { plans, buildFlow } = createHeightSpy((columnId, plan) =>
+    const { plans, buildFlow } = createHeightSpy((columnId) =>
       columnId === "header-column"
         ? [createFlowPage(60, 1), createFlowPage(20, 1)]
         : [createFlowPage(0, 0)],
@@ -97,9 +97,9 @@ describe("buildRegionFlows", () => {
     );
 
     // 首页占用 60（区域首页高度）+ 24（内容内边距）+ 10（区域间距）= 94，正文区域首页可用 306
-    expect(plans[1]?.availableHeight).toBe(306);
+    expect(plans[1]?.heights.firstPageHeight).toBe(306);
     // 自适应区域的后续页面只扣自身内容内边距：400 - 24 = 376
-    expect(plans[0]?.availableHeightByPage(1)).toBe(376);
+    expect(plans[0]?.heights.laterPageHeight).toBe(376);
   });
 
   it("固定高度区域按配置高度占用首页，正文区域不再分到首页高度", () => {
@@ -114,7 +114,7 @@ describe("buildRegionFlows", () => {
     );
 
     // 首屏高度已被固定区域占满，正文区域首页可用高度为 0 且不会为负
-    expect(plans[1]?.availableHeight).toBe(0);
+    expect(plans[1]?.heights.firstPageHeight).toBe(0);
   });
 
   it("剩余高度区域之后的区域首页可用高度为零", () => {
@@ -129,8 +129,8 @@ describe("buildRegionFlows", () => {
     );
 
     // 剩余高度区域独占首屏：它自己的首页可用高度是整页，后续区域被扣到 0
-    expect(plans[0]?.availableHeight).toBe(400);
-    expect(plans[1]?.availableHeight).toBe(0);
+    expect(plans[0]?.heights.firstPageHeight).toBe(400);
+    expect(plans[1]?.heights.firstPageHeight).toBe(0);
   });
 
   it("每个栏独立生成分页流并按栏编号登记", () => {

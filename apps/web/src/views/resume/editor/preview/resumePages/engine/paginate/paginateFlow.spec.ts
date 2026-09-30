@@ -37,7 +37,7 @@ describe("paginateFlow", () => {
     const pages = paginateFlow({
       nodes,
       measurements,
-      availableHeight: 100,
+      heights: { firstPageHeight: 100, laterPageHeight: 100 },
       gap: 10,
     });
 
@@ -71,7 +71,7 @@ describe("paginateFlow", () => {
     const pages = paginateFlow({
       nodes: [createNode("first"), title, item],
       measurements,
-      availableHeight: 150,
+      heights: { firstPageHeight: 150, laterPageHeight: 150 },
       gap: 0,
     });
 
@@ -109,7 +109,7 @@ describe("paginateFlow", () => {
     const pages = paginateFlow({
       nodes: [title, content],
       measurements,
-      availableHeight: 70,
+      heights: { firstPageHeight: 70, laterPageHeight: 70 },
       gap: 0,
     });
 
@@ -131,7 +131,7 @@ describe("paginateFlow", () => {
       paginateFlow({
         nodes: [createNode("missing")],
         measurements: new Map(),
-        availableHeight: 100,
+        heights: { firstPageHeight: 100, laterPageHeight: 100 },
         gap: 0,
       }),
     ).toThrow("缺少排版节点测量结果：missing");
@@ -166,7 +166,7 @@ describe("paginateFlow", () => {
           },
         ],
       ]),
-      availableHeight: 60,
+      heights: { firstPageHeight: 60, laterPageHeight: 60 },
       gap: 0,
     });
 
@@ -197,7 +197,7 @@ describe("paginateFlow", () => {
           }),
         ],
       ]),
-      availableHeight: 65,
+      heights: { firstPageHeight: 65, laterPageHeight: 65 },
       gap: 0,
     });
 
@@ -234,7 +234,7 @@ describe("paginateFlow", () => {
           }),
         ],
       ]),
-      availableHeight: 100,
+      heights: { firstPageHeight: 100, laterPageHeight: 100 },
       gap: 0,
     });
 
@@ -265,8 +265,7 @@ describe("paginateFlow", () => {
           }),
         ],
       ]),
-      availableHeight: 50,
-      availableHeightByPage: (pageIndex) => (pageIndex === 0 ? 50 : 45),
+      heights: { firstPageHeight: 50, laterPageHeight: 45 },
       gap: 0,
     });
 
@@ -298,7 +297,7 @@ describe("paginateFlow", () => {
           }),
         ],
       ]),
-      availableHeight: 50,
+      heights: { firstPageHeight: 50, laterPageHeight: 50 },
       gap: 0,
     });
 
@@ -331,7 +330,7 @@ describe("paginateFlow", () => {
         ["video.title", createMeasurement("video.title", 10)],
         ["video.media-0", createMeasurement("video.media-0", 40)],
       ]),
-      availableHeight: 100,
+      heights: { firstPageHeight: 100, laterPageHeight: 100 },
       gap: 10,
     });
 
@@ -372,8 +371,7 @@ describe("paginateFlow", () => {
           }),
         ],
       ]),
-      availableHeight: 60,
-      availableHeightByPage: (pageIndex) => (pageIndex === 0 ? 60 : 50),
+      heights: { firstPageHeight: 60, laterPageHeight: 50 },
       gap: 10,
     });
 
@@ -413,7 +411,7 @@ describe("paginateFlow", () => {
           }),
         ],
       ]),
-      availableHeight: 60,
+      heights: { firstPageHeight: 60, laterPageHeight: 60 },
       gap: 0,
     });
 
@@ -456,7 +454,7 @@ describe("paginateFlow", () => {
           }),
         ],
       ]),
-      availableHeight: 60,
+      heights: { firstPageHeight: 60, laterPageHeight: 60 },
       gap: 0,
     });
     expect(boxNotStarted[1]?.items[0]?.height).toBe(60);
@@ -468,7 +466,7 @@ describe("paginateFlow", () => {
         ["previous", createMeasurement("previous", 30)],
         ["item", createMeasurement("item", 120, { breakPoints, droppedTopSpacing: 10 })],
       ]),
-      availableHeight: 95,
+      heights: { firstPageHeight: 95, laterPageHeight: 95 },
       gap: 0,
     });
     expect(boxStarted[1]?.items[0]?.height).toBe(50);
@@ -483,7 +481,7 @@ describe("paginateFlow", () => {
         ["first", createMeasurement("first", 40)],
         ["second", createMeasurement("second", 60)],
       ]),
-      availableHeight: 70,
+      heights: { firstPageHeight: 70, laterPageHeight: 70 },
       gap: 12,
     });
 
@@ -510,7 +508,7 @@ describe("paginateFlow", () => {
         ["item.paragraph-spacing", createMeasurement("item.paragraph-spacing", 10)],
         ["item", createMeasurement("item", 50)],
       ]),
-      availableHeight: 50,
+      heights: { firstPageHeight: 50, laterPageHeight: 50 },
       gap: 0,
     });
 
@@ -531,7 +529,7 @@ describe("paginateFlow", () => {
         ["item.paragraph-spacing", createMeasurement("item.paragraph-spacing", 10)],
         ["item", createMeasurement("item", 50)],
       ]),
-      availableHeight: 50,
+      heights: { firstPageHeight: 50, laterPageHeight: 50 },
       gap: 0,
     });
     expect(shifted).toHaveLength(2);
@@ -562,7 +560,7 @@ describe("paginateFlow", () => {
           }),
         ],
       ]),
-      availableHeight: 50,
+      heights: { firstPageHeight: 50, laterPageHeight: 50 },
       gap: 0,
     });
 
