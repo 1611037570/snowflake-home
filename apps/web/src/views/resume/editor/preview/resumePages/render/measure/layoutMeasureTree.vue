@@ -13,23 +13,35 @@ defineProps<{
   rootClass?: string;
   /** 正文容器外观：与真实页面同一份样式，长图导出才不会丢掉底板 */
   viewStyle?: { background: string; radius: number; color: string };
+  /** 页面四周留白：作为正文容器的外边距内缩，与真实页面位置一致且不改变测量宽度 */
+  pagePadding?: { top: number; right: number; bottom: number; left: number };
   showPageNumber?: boolean;
   footerText?: string;
   onMeasureEl?: (element: HTMLElement | null) => void;
 }>();
 
-/** 正文容器样式：内边距由页面几何预留，这里只负责底板、圆角与文字色 */
-const resolveViewStyle = (viewStyle?: { background: string; radius: number; color: string }) => ({
+/** 正文容器样式：内边距由页面几何预留，这里只负责底板、圆角、文字色与外边距内缩 */
+const resolveViewStyle = (
+  viewStyle?: { background: string; radius: number; color: string },
+  pagePadding?: { top: number; right: number; bottom: number; left: number },
+) => ({
   backgroundColor: viewStyle?.background ?? "transparent",
   borderRadius: `${viewStyle?.radius ?? 0}px`,
   color: viewStyle?.color ?? "inherit",
+  marginTop: `${pagePadding?.top ?? 0}px`,
+  marginRight: `${pagePadding?.right ?? 0}px`,
+  marginBottom: `${pagePadding?.bottom ?? 0}px`,
+  marginLeft: `${pagePadding?.left ?? 0}px`,
 });
 </script>
 
 <template>
   <LayoutMeasureHost :width="width" :root-style="rootStyle" :class-name="rootClass" :on-measure-el="onMeasureEl">
-    <!-- 与真实页面共用同一个正文容器外观：容器不设内边距，页面几何已经预留了正文容器内边距 -->
-    <div class="resume-view-container box-border w-full" :style="resolveViewStyle(viewStyle)">
+    <!-- 与真实页面共用同一个正文容器外观：外边距与页面留白一致，容器本身不再叠加内边距 -->
+    <div
+      class="resume-view-container box-border w-auto flex-1"
+      :style="resolveViewStyle(viewStyle, pagePadding)"
+    >
       <div
         v-for="group in groups"
         :key="group.id"

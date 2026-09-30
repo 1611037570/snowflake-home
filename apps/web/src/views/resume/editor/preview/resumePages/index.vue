@@ -89,6 +89,13 @@ const previewLang = computed(() => ui.value.content?.language || "zh");
 const showPageNumber = computed(() => props.showPageNumber);
 const themeStyles = useResumeTheme(ui);
 const { paddingStyle, fontStyle, lineHeightStyle, fontReadyVersion } = themeStyles;
+// 页面四周留白：测量树里的正文容器用它内缩，位置与真实页面一致
+const pagePadding = computed(() => ({
+  top: Number(ui.value.page?.padding?.vertical) || 0,
+  right: Number(ui.value.page?.padding?.horizontal) || 0,
+  bottom: Number(ui.value.page?.padding?.vertical) || 0,
+  left: Number(ui.value.page?.padding?.horizontal) || 0,
+}));
 // 容器外观和分页几何共用同一份主题样式。
 const viewPadding = computed(() => themeStyles.viewStyle.value.padding);
 const hasViewSurface = computed(
@@ -275,6 +282,7 @@ defineExpose({
         :root-class="ui.font?.family"
         :root-style="measureTreeStyle"
         :view-style="themeStyles.viewStyle.value"
+        :page-padding="pagePadding"
         :show-page-number="showPageNumber"
         :footer-text="measureFooterText"
         :on-measure-el="setLayoutMeasureEl"
