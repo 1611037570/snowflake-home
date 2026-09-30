@@ -10,7 +10,8 @@ engine/adapter/buildLayoutNodes.ts（模块 → 通用排版节点）
   → engine/types.ts（节点与断点）
   → engine/layout/layoutTemplates.ts（页面区域与栏）
   → engine/measure/measureLayoutNodes.ts（真实 DOM 测量，唯一的尺寸来源）
-  → engine/layout/regionFlows.ts（区域高度结算，纯函数）
+  → engine/layout/flowHeights.ts（区域内容高度与内容内边距，唯一的区域高度口径）
+  → engine/layout/regionFlows.ts（区域高度结算，按栏下发每页可用高度）
   → engine/paginate/paginateFlow.ts（单栏贪心装箱，唯一的算法核心）
   → engine/paginate/pagePlan.ts（合并为预览、打印、导出共用的页面计划）
 ```
@@ -26,7 +27,7 @@ engine/adapter/buildLayoutNodes.ts（模块 → 通用排版节点）
 | 区域内容内边距 | 正文容器单侧内边距（`contentPadding`），同时扣高度与扣宽度 | `createResumeLayout` 与 `resolveColumnWidths` |
 | 栏宽 | 比例栏按「内容宽 − 区域左右内边距 − 栏间距」再按比例分配 | `resolveColumnWidths`，与渲染层 flex 口径一致 |
 
-区域高度结算（`regionFlows.ts`）按区域顺序累加首个页面已被占用的高度：
+区域高度结算（`flowHeights.ts` 提供口径，`regionFlows.ts` 按区域顺序结算）累加首个页面已被占用的高度：
 
 ```text
 首页可用高度(区域) = 整页可用高度 − 前面区域已占用高度 − 本区域上下内容内边距
@@ -36,6 +37,8 @@ engine/adapter/buildLayoutNodes.ts（模块 → 通用排版节点）
 区域已占用高度(剩余) = 整页可用高度
 区域之间再叠加 regionGap（最后一个区域不叠加）
 ```
+
+区域内容高度与内容内边距只在 `flowHeights.ts` 里定义一次，区域流结算与页面计划（`pagePlan.ts` 的溢出判定）都从这里读取，避免同一条公式在两层各写一遍而分叉。
 
 注意三条已经确定的边界行为：
 
