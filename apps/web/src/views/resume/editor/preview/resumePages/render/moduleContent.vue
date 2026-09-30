@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import Item from "@/views/resume/theme/components/itemContainer.vue";
-import { getItemFragmentStyle, isItemNode, isTimelineNode } from "./itemStyle";
+import { getItemFragmentStyle, isItemNode, isTimelineNode, isTitleNode } from "./itemStyle";
 import LayoutNodeContent from "./layoutNodeContent.vue";
 import { useResumePreviewContext } from "../../shared/previewContext";
 import type { LayoutNode } from "../engine/types";
@@ -60,6 +60,18 @@ const isLeadingOnPage = (itemIndex: number) =>
           :leading-on-page="isLeadingOnPage(itemIndex)"
         />
       </Item>
+      <div v-else-if="isTitleNode(getNode(entry.fragment)!)">
+        <!-- 模块标题是排版元素：不带悬停背景，也不参与点击定位 -->
+        <LayoutNodeContent
+          :node="getNode(entry.fragment)!"
+          :payload="entry.fragment.payload"
+          :content-range="entry.fragment.contentRange"
+          :block-range="entry.fragment.blockRange"
+          :decoration="entry.fragment.decoration"
+          :show-debug="showDebug"
+          :leading-on-page="isLeadingOnPage(itemIndex)"
+        />
+      </div>
       <div
         v-else
         @click.stop="handleContentClick(getNode(entry.fragment)!)"
