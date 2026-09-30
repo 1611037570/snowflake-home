@@ -1,3 +1,4 @@
+import { resolveFragmentCut } from "./cutPoints";
 import type { MeasuredNode } from "../measure/types";
 import type { LayoutNode } from "../types";
 
@@ -353,13 +354,15 @@ export const paginateFlow = ({
           Math.max(0, breakPoint.height - consumedHeight) -
           activeDroppedTopSpacing -
           (dropBlockMargin ? (breakPoint.leadingMargin ?? 0) : 0);
-        // 块断点只覆盖块（不含正文区间），字符断点覆盖剩余全部块 + 正文区间
-        const isBlockPoint = typeof breakPoint.blockEnd === "number";
-        const nextBlocks = isBlockPoint ? Number(breakPoint.blockEnd) : blockCount;
-        const consumedBlockEnd =
-          isBlockPoint || breakPoint.offset >= contentEnd
-            ? nextBlocks
-            : Math.max(consumedBlocks, blockCount - 1);
+        // 切割点覆盖范围由纯规则解析：块断点只覆盖块，文本断点覆盖剩余全部块与正文
+        const cut = resolveFragmentCut({
+          breakPoint,
+          blockCount,
+          contentEnd,
+          consumedBlockCount: consumedBlocks,
+          consumedOffset,
+        });
+        const { isBlockPoint, consumedBlockEnd } = cut;
         const fragment: FlowPageItem = {
           fragmentId: `${node.id}:${fragmentKind}:${consumedOffset}:${breakPoint.offset}`,
           nodeId: node.id,
@@ -369,8 +372,8 @@ export const paginateFlow = ({
           height: fragmentHeight,
           payload: node.payload,
           titlePayload: isFirst && !titlePlaced ? node.title?.payload : undefined,
-          contentRange: isBlockPoint ? undefined : { start: consumedOffset, end: breakPoint.offset },
-          blockRange: blockCount ? { start: consumedBlocks, end: nextBlocks } : undefined,
+          contentRange: cut.contentRange,
+          blockRange: cut.blockRange,
         };
 
         if (!tryAddItem(fragment, !isFirst)) {
