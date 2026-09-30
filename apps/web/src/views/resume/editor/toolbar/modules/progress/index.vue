@@ -9,14 +9,21 @@ import { useResumeStats } from "./useResumeStats";
 import { $t } from "@/locales";
 
 const resumeStore = useResumeStore();
-const { system, currentData, runtimeFields } = storeToRefs(resumeStore);
+const { system, currentData, runtimeFields, isEditing } = storeToRefs(resumeStore);
 
 // 弹窗显隐控制
 const visible = ref(false);
 
+// 编辑期间的占位输入：常量引用恒定，保证下列 computed 在此期间不被判为依赖失效
+const FROZEN_FIELDS = [];
+const FROZEN_DATA = {};
+// 进度与统计只在编辑停顿后计算：编辑期间以占位输入命中缓存，输入停止后统一重算一次
+const idleFields = computed(() => (isEditing.value ? FROZEN_FIELDS : runtimeFields.value || []));
+const idleData = computed(() => (isEditing.value ? FROZEN_DATA : currentData.value));
+
 // 计算简历完成度进度及各模块进度（含时间线一致性检查结果）
-const progressData = computed(() => useProgress(runtimeFields.value || [], currentData.value));
-const resumeStats = useResumeStats(currentData.value);
+const progressData = computed(() => useProgress(idleFields.value, idleData.value));
+const resumeStats = useResumeStats(idleData.value);
 // 时间线一致性检查结果（随进度一起返回）
 const timelineData = computed(() => progressData.value.timeline);
 
