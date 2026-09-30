@@ -141,7 +141,9 @@ export const useResumeLayout = ({
     nodes,
     watchSource,
   });
-  const pagePlan = computed<PagePlan>(() => {
+  /** 最近一次成功生成的页面计划：测量期间继续沿用它，避免页面树被卸载重挂 */
+  let lastValidPlan: PagePlan | null = null;
+  const nextPagePlan = computed<PagePlan | null>(() => {
     if (!validation.value.valid || nodes.value.length === 0) {
       return {
         status: validation.value.valid ? "ready" : "invalid",
@@ -150,14 +152,7 @@ export const useResumeLayout = ({
         warnings: validationWarnings.value,
       };
     }
-    if (!measureDone.value) {
-      return {
-        status: "ready",
-        version: fontReadyVersion.value,
-        pages: [],
-        warnings: [],
-      };
-    }
+    if (!measureDone.value) return null;
     const orderedRegions = [...layout.value.regions].sort((left, right) => left.order - right.order);
     // 区域高度循环由纯函数结算，测量结果与分页算法只通过回调接入
     const { columnFlows: flowPagesByColumn } = buildRegionFlows<ReturnType<typeof paginateFlow>>(
@@ -184,6 +179,22 @@ export const useResumeLayout = ({
       flowPagesByColumn,
       version: fontReadyVersion.value,
     });
+  });
+  const pagePlan = computed<PagePlan>(() => {
+    const next = nextPagePlan.value;
+    if (next) {
+      lastValidPlan = next;
+      return next;
+    }
+    // 测量期间沿用上一次的有效计划：置空会让整棵页面树卸载再重挂，容器高度塌到零，输入时界面持续闪动
+    return (
+      lastValidPlan ?? {
+        status: "ready",
+        version: fontReadyVersion.value,
+        pages: [],
+        warnings: [],
+      }
+    );
   });
   const nodeMap = computed(() => new Map(nodes.value.map((node) => [node.id, node])));
   return {
