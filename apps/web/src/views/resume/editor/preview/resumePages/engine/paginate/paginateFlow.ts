@@ -89,11 +89,11 @@ const PAGE_HEIGHT_TOLERANCE = 0;
 const MAX_PAGE_TURNS_WITHOUT_PROGRESS = 3;
 
 /**
- * 判断断点能否作为切割点。
- * 块结束序号为 0 的块断点只覆盖间距、不覆盖任何块：间距是普通内容，不该被单独切成一片，
- * 切在它上面同时会让整片放行时重复扣除这段间距。这类零覆盖断点跳过，交给后面的断点决定切分。
+ * 切割点必须覆盖内容才能产生分片。
+ * 块结束序号为 0 的块断点只覆盖间距、不覆盖任何块：在它上面切分只会得到没有内容的片段，
+ * 而整片路径又会把这段间距重复计入高度，因此这类断点不作为切割点。
  */
-const canCutAt = (point: MeasuredNode["breakPoints"][number]): boolean =>
+const coversContent = (point: MeasuredNode["breakPoints"][number]): boolean =>
   point.blockEnd === undefined || point.blockEnd > 0;
 
 /** 查找当前剩余高度可以容纳的最大语义断点；高度相同时取偏移更靠后的断点，避免分片落在行中间 */
@@ -107,7 +107,7 @@ const findBestBreakPoint = (
   let bestBreakPoint: (typeof measurement.breakPoints)[number] | undefined;
   let bestHeight = 0;
   for (const point of measurement.breakPoints) {
-    if (!canCutAt(point)) continue;
+    if (!coversContent(point)) continue;
     // 页面首位的续段不绘制该块上外边距，计价同步扣除
     const blockMargin = dropBlockMargin ? (point.leadingMargin ?? 0) : 0;
     const height =
@@ -134,7 +134,7 @@ const findNextBreakPoint = (
   let nextBreakPoint: (typeof measurement.breakPoints)[number] | undefined;
   let nextHeight = Number.POSITIVE_INFINITY;
   for (const point of measurement.breakPoints) {
-    if (!canCutAt(point)) continue;
+    if (!coversContent(point)) continue;
     const blockMargin = dropBlockMargin ? (point.leadingMargin ?? 0) : 0;
     const height =
       point.height - startHeight - (startHeight > 0 ? droppedTopSpacing : 0) - blockMargin;
