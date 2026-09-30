@@ -2,8 +2,8 @@ import { resolveFragmentCut } from "./cutPoints";
 import type { MeasuredNode } from "../measure/types";
 import type { LayoutNode } from "../types";
 
-/** 分片在当前节点中的连续位置；title 表示标题单独留在当前页的分片 */
-export type FlowFragmentKind = "single" | "first" | "middle" | "last" | "title";
+/** 分片在当前节点中的连续位置 */
+export type FlowFragmentKind = "single" | "first" | "middle" | "last";
 
 /** 单栏页面中的节点分片 */
 export interface FlowPageItem {
@@ -13,16 +13,12 @@ export interface FlowPageItem {
   nodeId: string;
   /** 来源模块 key */
   sourceModuleKey: string;
-  /** 首次出现时一并渲染的标题节点编号 */
-  titleNodeId?: string;
   /** 当前分片在节点中的位置 */
   fragment: FlowFragmentKind;
   /** 当前分片占用的高度 */
   height: number;
   /** 当前分片对应的节点内容 */
   payload: unknown;
-  /** 首次分片对应的标题内容 */
-  titlePayload?: unknown;
   /** 当前分片对应的内容范围 */
   contentRange?: {
     start: number;
@@ -73,15 +69,6 @@ const getMeasurement = (
     throw new Error(`缺少排版节点测量结果：${node.id}`);
   }
   return measurement;
-};
-
-/** 读取节点标题高度；标题只参与节点第一次出现时的高度计算 */
-const getTitleHeight = (
-  node: LayoutNode,
-  measurements: ReadonlyMap<string, MeasuredNode>,
-): number => {
-  if (!node.title) return 0;
-  return Math.max(0, getMeasurement(node.title, measurements).fullHeight);
 };
 
 /** 读取节点内容的最后一个可用偏移量 */
@@ -215,7 +202,6 @@ export const paginateFlow = ({
 
   for (const node of nodes) {
     const measurement = getMeasurement(node, measurements);
-    const titleHeight = getTitleHeight(node, measurements);
     const fullHeight = Math.max(0, measurement.fullHeight);
     const contentEnd = getContentEnd(measurement);
     /** 节点渲染块总数：块区间以此为界，块序由渲染结构决定 */
@@ -226,8 +212,6 @@ export const paginateFlow = ({
     let consumedHeight = 0;
     let consumedOffset = 0;
     let consumedBlocks = 0;
-    // 标题已经单独留在当前页后，正文分片不再重复携带标题
-    let titlePlaced = false;
     // 续段渲染会去掉内容容器上内边距，分页高度按同一口径扣减，避免高估续段占用
     const droppedTopSpacing = measurement.droppedTopSpacing ?? 0;
     // 两层推进：外层换页，内层填满当前页；本轮是否消费内容由消费量是否前进表示
@@ -250,9 +234,6 @@ export const paginateFlow = ({
           !isFirst && currentPage.items.length === 0 && (consumedBlocks > 0 || consumedOffset > 0)
             ? droppedTopSpacing
             : 0;
-        // 标题也是独立行，和间距占位一样没有绑定：能放本页就放，放不下顺延下一页
-        const withTitle = isFirst && !titlePlaced;
-        const title = withTitle ? titleHeight : 0;
         // 独立间距行位于后续页面首位时不占空间，与渲染层隐藏规则一致。
         const hideLeadingSpacer =
           isFirst &&
@@ -267,18 +248,15 @@ export const paginateFlow = ({
               (point) => point.blockEnd !== undefined && point.height > consumedHeight,
             )?.leadingMargin ?? 0)
           : 0;
-        const wholeFragmentHeight =
-          title + remainingHeight - hiddenSpacerHeight - nextBlockMargin;
+        const wholeFragmentHeight = remainingHeight - hiddenSpacerHeight - nextBlockMargin;
         const wholeFragmentKind: FlowFragmentKind = isFirst ? "single" : "last";
         const wholeFragment: FlowPageItem = {
           fragmentId: `${node.id}:${wholeFragmentKind}:${consumedOffset}:${contentEnd}`,
           nodeId: node.id,
           sourceModuleKey: node.sourceModuleKey,
-          titleNodeId: withTitle ? node.title?.id : undefined,
           fragment: wholeFragmentKind,
           height: Math.max(0, wholeFragmentHeight - activeDroppedTopSpacing),
           payload: node.payload,
-          titlePayload: withTitle ? node.title?.payload : undefined,
           contentRange: contentEnd ? { start: consumedOffset, end: contentEnd } : undefined,
           blockRange: blockCount ? { start: consumedBlocks, end: blockCount } : undefined,
         };
@@ -291,34 +269,10 @@ export const paginateFlow = ({
               getCurrentAvailableHeight() + PAGE_HEIGHT_TOLERANCE;
         if (wholeFragmentFits && tryAddItem(wholeFragment, !isFirst)) break;
 
-        /** 标题放得下就留在当前页，正文顺延到下一页 */
-        const placeTitle = () => {
-          if (!withTitle || !node.title || currentPage.items.length === 0) return false;
-          if (
-            currentPage.usedHeight + getGapBeforeItem(node.sourceModuleKey, false) + titleHeight >
-            getCurrentAvailableHeight()
-          ) {
-            return false;
-          }
-          const titleItem: FlowPageItem = {
-            fragmentId: `${node.id}:title:${node.title.id}`,
-            nodeId: node.id,
-            sourceModuleKey: node.sourceModuleKey,
-            titleNodeId: node.title.id,
-            fragment: "title",
-            height: titleHeight,
-            payload: node.payload,
-            titlePayload: node.title.payload,
-          };
-          if (!tryAddItem(titleItem, false)) return false;
-          titlePlaced = true;
-          return true;
-        };
-
         const nodeGap = getGapBeforeItem(node.sourceModuleKey, !isFirst);
         const availableForContent = Math.max(
           0,
-          getCurrentAvailableHeight() - currentPage.usedHeight - nodeGap - title,
+          getCurrentAvailableHeight() - currentPage.usedHeight - nodeGap,
         );
         const breakPoint =
           findBestBreakPoint(
@@ -339,7 +293,6 @@ export const paginateFlow = ({
 
         if (!breakPoint) {
           if (currentPage.items.length > 0) {
-            if (placeTitle()) continue;
             pushPage(node.sourceModuleKey);
             continue;
           }
@@ -350,7 +303,6 @@ export const paginateFlow = ({
 
         const fragmentKind: FlowFragmentKind = isFirst ? "first" : "middle";
         const fragmentHeight =
-          title +
           Math.max(0, breakPoint.height - consumedHeight) -
           activeDroppedTopSpacing -
           (dropBlockMargin ? (breakPoint.leadingMargin ?? 0) : 0);
@@ -367,11 +319,9 @@ export const paginateFlow = ({
           fragmentId: `${node.id}:${fragmentKind}:${consumedOffset}:${breakPoint.offset}`,
           nodeId: node.id,
           sourceModuleKey: node.sourceModuleKey,
-          titleNodeId: isFirst && !titlePlaced ? node.title?.id : undefined,
           fragment: fragmentKind,
           height: fragmentHeight,
           payload: node.payload,
-          titlePayload: isFirst && !titlePlaced ? node.title?.payload : undefined,
           contentRange: cut.contentRange,
           blockRange: cut.blockRange,
         };

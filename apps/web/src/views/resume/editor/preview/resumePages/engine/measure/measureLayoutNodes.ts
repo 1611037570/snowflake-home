@@ -134,19 +134,5 @@ export const measureLayoutNodes = (
     });
   });
 
-  nodes.forEach((node) => {
-    if (!node.title) return;
-    const titleElement = elementById.get(node.title.id);
-    if (!titleElement) return;
-    const rect = readRect(titleElement, scale);
-    result.set(node.title.id, {
-      nodeId: node.title.id,
-      width: rect.width,
-      fullHeight: rect.height,
-      minHeight: rect.height,
-      breakPoints: [],
-    });
-  });
-
   return result;
 };

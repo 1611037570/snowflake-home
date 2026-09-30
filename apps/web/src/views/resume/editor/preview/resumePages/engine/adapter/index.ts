@@ -15,14 +15,18 @@ export interface LayoutAdapterContext {
 /** 将一个业务模块转换为通用排版节点 */
 export type LayoutAdapter = (context: LayoutAdapterContext) => LayoutNode[];
 
-/** 创建模块标题节点：标题只随模块首个分片渲染，分页需要计入它的高度 */
+/** 创建模块标题节点：标题独立成行参与分页，能放下就留在当前页，放不下与后续内容一起顺延 */
 export const createModuleTitleNode = (moduleKey: string): LayoutNode => ({
   id: `${moduleKey}.title`,
   sourceModuleKey: moduleKey,
-  type: "block",
+  type: "title",
   breakPolicy: {},
   payload: { moduleKey },
 });
+
+/** 判断节点是否为模块标题节点 */
+export const isModuleTitleNode = (node: LayoutNode): boolean =>
+  node.type === "title" && typeof (node.payload as { moduleKey?: unknown } | null)?.moduleKey === "string";
 
 /** 排版适配器注册表 */
 export interface LayoutAdapterRegistry {

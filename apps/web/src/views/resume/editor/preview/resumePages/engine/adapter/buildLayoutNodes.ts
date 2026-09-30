@@ -52,23 +52,13 @@ export const createResumeLayoutAdapterRegistry = (): LayoutAdapterRegistry => {
   return registry;
 };
 
-/** 标题只在模块首个分片渲染，挂到首个节点上让分页计入标题高度；个人信息模块没有标题 */
-const attachModuleTitle = (moduleKey: string, nodes: LayoutNode[]): LayoutNode[] => {
-  const first = nodes[0];
-  if (!first || moduleKey === "user" || first.title) return nodes;
-  return [
-    {
-      ...first,
-      title: createModuleTitleNode(moduleKey),
-      breakPolicy: { ...first.breakPolicy },
-    },
-    ...nodes.slice(1),
-  ];
-};
+/** 把模块标题作为独立节点插到模块最前：标题与模块内容之间不插入模块间距，由同一模块 key 保证 */
+const insertModuleTitle = (moduleKey: string, nodes: LayoutNode[]): LayoutNode[] =>
+  moduleKey === "user" ? nodes : [createModuleTitleNode(moduleKey), ...nodes];
 
 /**
  * 按页面配置顺序生成排版节点。
- * 适配器只处理业务数据到语义节点的转换，不决定节点进入哪一栏。
+ * 适配器只处理业务数据到语义节点的转换，不决定节点进入哪一栏；模块标题作为独立节点排在模块最前。
  */
 export const buildLayoutNodes = ({
   moduleKeys,
@@ -87,9 +77,11 @@ export const buildLayoutNodes = ({
     const adapter = registry.resolve(moduleKey);
     if (!adapter) return [];
     const nodes = adapter({ moduleKey, data, ui, config });
+    const spacing = Number((ui as any)?.page?.spacing?.paragraph);
     if (nodes.length === 0 && moduleKey !== "user") {
-      // 空模块保留标题节点，避免模块无内容时标题从预览中消失。
+      // 空模块保留零高占位与标题，避免模块无内容时标题从预览中消失。
       return [
+        createModuleTitleNode(moduleKey),
         {
           id: `${moduleKey}.title-only`,
           sourceModuleKey: moduleKey,
@@ -97,12 +89,10 @@ export const buildLayoutNodes = ({
           breakPolicy: {},
           hideWhenPageLeading: true,
           payload: { height: 0 },
-          title: createModuleTitleNode(moduleKey),
         },
       ];
     }
-    const spacing = Number((ui as any)?.page?.spacing?.paragraph);
-    return attachModuleTitle(
+    return insertModuleTitle(
       moduleKey,
       addParagraphSpacingRows(nodes, Number.isFinite(spacing) ? Math.max(0, spacing) : 0),
     );

@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { computed } from "vue";
-import Title from "@/views/resume/theme/components/moduleTitle/index.vue";
 import Item from "@/views/resume/theme/components/itemContainer.vue";
 import { getItemFragmentStyle, isItemNode, isTimelineNode } from "./itemStyle";
 import LayoutNodeContent from "./layoutNodeContent.vue";
@@ -39,12 +38,11 @@ const isLeadingOnPage = (itemIndex: number) =>
 </script>
 
 <template>
-  <!-- 普通模块与个人信息模块共用同一份标题和条目内容。 -->
+  <!-- 普通模块与个人信息模块共用同一份条目内容；模块标题由独立节点渲染。 -->
   <template v-for="(entry, itemIndex) in items" :key="entry.fragment.fragmentId">
     <template v-if="getNode(entry.fragment)">
-      <Title v-if="entry.fragment.titlePayload" :module-key="moduleKey" />
       <Item
-        v-if="entry.fragment.fragment !== 'title' && isItemNode(getNode(entry.fragment)!)"
+        v-if="isItemNode(getNode(entry.fragment)!)"
         :item="itemConfig"
         :timeline="isTimelineNode(getNode(entry.fragment)!, theme.themeTemplate.value)"
         :style="getItemStyle(entry.fragment)"
@@ -63,7 +61,7 @@ const isLeadingOnPage = (itemIndex: number) =>
         />
       </Item>
       <div
-        v-else-if="entry.fragment.fragment !== 'title'"
+        v-else
         @click.stop="handleContentClick(getNode(entry.fragment)!)"
         :class="
           getNode(entry.fragment)!.type === 'spacer'
