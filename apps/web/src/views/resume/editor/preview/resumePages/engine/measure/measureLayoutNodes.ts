@@ -82,7 +82,13 @@ export const measureLayoutNodes = (
       .map((point) => {
         const offset = Number(point.dataset.layoutBreakpointOffset);
         const height = point.getBoundingClientRect().height / scale;
-        return { offset, type: breakPointTypes.get(offset) || "textRange", height };
+        return {
+          offset,
+          type: breakPointTypes.get(offset) || "textRange",
+          height,
+          // 探针本身就是页首口径渲染，没有块外边距需要再扣除
+          heightAtPageStart: height,
+        };
       })
       .filter((point) => Number.isFinite(point.offset) && point.height > 0);
 
@@ -94,14 +100,19 @@ export const measureLayoutNodes = (
     const nodeTop = element.getBoundingClientRect().top;
     const blockBreakPoints = blockHost
       ? Array.from(blockHost.children)
-          .map((child, index) => ({
-            offset: 0,
-            type: "block" as const,
-            height: (child.getBoundingClientRect().bottom - nodeTop) / scale,
-            blockEnd: index + 1,
-            // 续段落在页首时渲染层会去掉该块的上外边距，这里上报供分页同步扣除
-            leadingMargin: Number.parseFloat(getComputedStyle(child).marginTop) || 0,
-          }))
+          .map((child, index) => {
+            const height = (child.getBoundingClientRect().bottom - nodeTop) / scale;
+            // 续段落在页首时渲染层会去掉该块的上外边距，这里直接给出页首口径的高度
+            const leadingMargin = Number.parseFloat(getComputedStyle(child).marginTop) || 0;
+            return {
+              offset: 0,
+              type: "block" as const,
+              height,
+              heightAtPageStart: Math.max(0, height - leadingMargin),
+              blockEnd: index + 1,
+              leadingMargin,
+            };
+          })
           .filter((point) => Number.isFinite(point.height) && point.height > 0)
       : [];
 
@@ -116,11 +127,16 @@ export const measureLayoutNodes = (
     )
       .filter((text) => !text.closest(".layout-measure-breakpoint"))
       .flatMap((text) =>
-        collectLineEndOffsets(text).map((line) => ({
-          offset: line.offset,
-          type: "textRange" as const,
-          height: (line.bottom - nodeTop) / scale,
-        })),
+        collectLineEndOffsets(text).map((line) => {
+          const height = (line.bottom - nodeTop) / scale;
+          return {
+            offset: line.offset,
+            type: "textRange" as const,
+            height,
+            // 行级断点位于纯文本容器内，页首渲染不额外移除外边距
+            heightAtPageStart: height,
+          };
+        }),
       )
       .filter((point) => Number.isFinite(point.offset) && point.height > 0);
 
