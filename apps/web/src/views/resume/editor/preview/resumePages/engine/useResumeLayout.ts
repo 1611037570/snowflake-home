@@ -165,15 +165,14 @@ export const useResumeLayout = ({
       {
         availableHeight: availableHeight.value,
         regionGap: layout.value.regionGap,
-        buildFlow: (column, { availableHeight: firstPageHeight, availableHeightByPage }) => {
+        buildFlow: (column, { heights }) => {
           const columnNodes = nodes.value.filter((node) =>
             column.moduleKeys.includes(node.sourceModuleKey),
           );
           return paginateFlow({
             nodes: columnNodes,
             measurements: measurements.value,
-            availableHeight: firstPageHeight,
-            availableHeightByPage,
+            heights,
             gap: column.gap,
           });
         },

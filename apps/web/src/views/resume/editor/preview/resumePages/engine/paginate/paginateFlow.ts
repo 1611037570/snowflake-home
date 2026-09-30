@@ -1,4 +1,6 @@
 import { resolveFragmentCut } from "./cutPoints";
+import { resolvePageHeight } from "./flowHeights";
+import type { FlowHeightPlan } from "./flowHeights";
 import type { MeasuredNode } from "../measure/types";
 import type { LayoutNode } from "../types";
 
@@ -51,10 +53,8 @@ export interface PaginateFlowOptions {
   nodes: LayoutNode[];
   /** 节点测量结果，分页引擎不直接读取 DOM */
   measurements: ReadonlyMap<string, MeasuredNode>;
-  /** 当前栏可用高度 */
-  availableHeight: number;
-  /** 按页提供可用高度，未提供时所有页面使用 availableHeight。 */
-  availableHeightByPage?: (pageIndex: number) => number;
+  /** 每页可用高度：首页会被前面区域占用扣减，后续页面相同 */
+  heights: FlowHeightPlan;
   /** 不同节点之间的间距 */
   gap: number;
 }
@@ -152,21 +152,18 @@ const findNextBreakPoint = (
 export const paginateFlow = ({
   nodes,
   measurements,
-  availableHeight,
-  availableHeightByPage,
+  heights,
   gap,
 }: PaginateFlowOptions): FlowPage[] => {
-  const safeAvailableHeight = Math.max(0, availableHeight);
   const safeGap = Number.isFinite(gap) ? Math.max(0, gap) : 0;
   const pages: FlowPage[] = [];
   let currentPage: FlowPage = {
     pageIndex: 0,
     usedHeight: 0,
-    availableHeight: Math.max(0, availableHeightByPage?.(0) ?? safeAvailableHeight),
+    availableHeight: resolvePageHeight(heights, 0),
     items: [],
   };
-  const getCurrentAvailableHeight = () =>
-    Math.max(0, availableHeightByPage?.(currentPage.pageIndex) ?? safeAvailableHeight);
+  const getCurrentAvailableHeight = () => resolvePageHeight(heights, currentPage.pageIndex);
   const getGapBeforeItem = (sourceModuleKey: string, isContinuation: boolean) => {
     const previousItem = currentPage.items[currentPage.items.length - 1];
     return previousItem && !isContinuation && previousItem.sourceModuleKey !== sourceModuleKey
@@ -189,7 +186,7 @@ export const paginateFlow = ({
     currentPage = {
       pageIndex: nextPageIndex,
       usedHeight: 0,
-      availableHeight: Math.max(0, availableHeightByPage?.(nextPageIndex) ?? safeAvailableHeight),
+      availableHeight: resolvePageHeight(heights, nextPageIndex),
       items: [],
     };
   };

@@ -1,14 +1,13 @@
 import { getRegionContentHeight, getRegionPaddingHeight } from "./flowHeights";
+import type { FlowHeightPlan } from "../paginate/flowHeights";
 import type { RegionConfig } from "../pageLayoutTypes";
 
 /** 区域内某个栏在生成分页流之前可以拿到的每页可用高度 */
 export interface ColumnFlowPlan {
   /** 栏编号 */
   columnId: string;
-  /** 当前栏的首页可用高度 */
-  availableHeight: number;
-  /** 按页提供可用高度：首页扣掉前面区域占用的高度，后续页面只扣本区域内容内边距 */
-  availableHeightByPage: (pageIndex: number) => number;
+  /** 每页可用高度：首页扣掉前面区域占用的高度，后续页面只扣本区域内容内边距 */
+  heights: FlowHeightPlan;
 }
 
 /** 按栏生成分页流的回调：区域循环只负责给出每页可用高度 */
@@ -56,19 +55,16 @@ export const buildRegionFlows = <TPage extends FlowPageLike>(
   orderedRegions.forEach((region, regionIndex) => {
     const regionPaddingHeight = getRegionPaddingHeight(region);
     // 首页可用高度扣掉前面区域已经占用的部分，后续页面使用区域自身的完整可用高度
-    const firstPageAvailableHeight = Math.max(
-      0,
-      availableHeight - firstPageConsumedHeight - regionPaddingHeight,
-    );
-    const nextPageAvailableHeight = Math.max(0, availableHeight - regionPaddingHeight);
+    const heights: FlowHeightPlan = {
+      firstPageHeight: Math.max(
+        0,
+        availableHeight - firstPageConsumedHeight - regionPaddingHeight,
+      ),
+      laterPageHeight: Math.max(0, availableHeight - regionPaddingHeight),
+    };
 
     const regionFlows = region.columns.map((column) =>
-      buildFlow<TPage>(column, {
-        columnId: column.id,
-        availableHeight: firstPageAvailableHeight,
-        availableHeightByPage: (pageIndex) =>
-          pageIndex === 0 ? firstPageAvailableHeight : nextPageAvailableHeight,
-      }),
+      buildFlow<TPage>(column, { columnId: column.id, heights }),
     );
     region.columns.forEach((column, index) => {
       columnFlows.set(column.id, regionFlows[index] ?? []);
