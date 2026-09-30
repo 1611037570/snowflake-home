@@ -276,17 +276,21 @@ defineExpose({
     </div>
     <!-- 隐藏测量树始终保留，确保内容变化后能重新测量并生成新的页面计划。 -->
     <template v-else>
-      <LayoutMeasureTree
-        :groups="measureGroups"
-        :width="RESUME_WIDTH"
-        :root-class="ui.font?.family"
-        :root-style="measureTreeStyle"
-        :view-style="themeStyles.viewStyle.value"
-        :page-padding="pagePadding"
-        :show-page-number="showPageNumber"
-        :footer-text="measureFooterText"
-        :on-measure-el="setLayoutMeasureEl"
-      />
+      <!-- 测量树挂到 body：预览区整体带 transform: scale()，它会给 fixed 建立包含块，
+           放在里面会导致测量结果被缩放，必须移出缩放区，尺寸才是固定布局像素 -->
+      <Teleport to="body">
+        <LayoutMeasureTree
+          :groups="measureGroups"
+          :width="RESUME_WIDTH"
+          :root-class="ui.font?.family"
+          :root-style="measureTreeStyle"
+          :view-style="themeStyles.viewStyle.value"
+          :page-padding="pagePadding"
+          :show-page-number="showPageNumber"
+          :footer-text="measureFooterText"
+          :on-measure-el="setLayoutMeasureEl"
+        />
+      </Teleport>
       <div
         v-if="pagePlan.status === 'invalid'"
         class="flex min-h-30 flex-col items-center justify-center gap-3 rounded-3xl bg-white p-6 text-center text-sm text-red-600"
