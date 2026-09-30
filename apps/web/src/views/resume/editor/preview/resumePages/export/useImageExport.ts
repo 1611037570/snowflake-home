@@ -28,6 +28,9 @@ const getRootElement = (rootRef?: ImageExportRoot): HTMLElement | null => {
   return isHTMLElement(value) ? value : null;
 };
 
+// 断点探针只是测量脚手架：绝对定位且不可见，不参与导出画面，移除后能大幅减少渲染量
+const MEASURE_PROBE_SELECTOR = ".layout-measure-breakpoint";
+
 // 将长图 DOM 渲染为画布，PNG 和长图 PDF 共用这份渲染结果。
 const renderLongImage = async (
   rootRef: ImageExportRoot | undefined,
@@ -64,6 +67,8 @@ const renderLongImage = async (
   clone.style.border = "none";
   clone.style.borderRadius = "0";
   if (rootWidth > 0) clone.style.width = `${rootWidth}px`;
+  // 探针数量与断点数量同阶，保留会让渲染量增加数倍
+  clone.querySelectorAll(MEASURE_PROBE_SELECTOR).forEach((probe) => probe.remove());
 
   const tempContainer = document.createElement("div");
   tempContainer.style.position = "absolute";
