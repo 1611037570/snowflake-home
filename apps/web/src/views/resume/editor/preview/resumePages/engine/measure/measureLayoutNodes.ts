@@ -108,6 +108,8 @@ export const measureLayoutNodes = (
       fullHeight: rect.height,
       minHeight: Math.max(rect.height, node.breakPolicy.minHeight || 0),
       breakPoints: [...blockBreakPoints, ...breakPoints, ...lineBreakPoints],
+      // 正文真实长度取自文本容器测量：末行的结束偏移即全部字符数，与断点数组顺序无关
+      contentLength: lineBreakPoints.reduce((max, point) => Math.max(max, point.offset), 0),
       droppedTopSpacing,
     });
   });
