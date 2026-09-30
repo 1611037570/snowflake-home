@@ -95,7 +95,6 @@ const hasViewSurface = computed(
   () => viewPadding.value > 0 || themeStyles.viewStyle.value.background !== "transparent",
 );
 const measureTreeStyle = computed(() => ({
-  ...paddingStyle.value,
   ...fontStyle.value,
   ...lineHeightStyle.value,
   backgroundColor: ui.value.page?.background || "#ffffff",
@@ -275,6 +274,7 @@ defineExpose({
         :width="RESUME_WIDTH"
         :root-class="ui.font?.family"
         :root-style="measureTreeStyle"
+        :view-style="themeStyles.viewStyle.value"
         :show-page-number="showPageNumber"
         :footer-text="measureFooterText"
         :on-measure-el="setLayoutMeasureEl"
