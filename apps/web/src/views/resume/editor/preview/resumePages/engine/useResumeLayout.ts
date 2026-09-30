@@ -3,6 +3,7 @@ import { getContentHeight, RESUME_WIDTH } from "../../shared/constants";
 import { defaultLeftColumnWidth } from "@/stores/modules/resume/config/uiConfig";
 import { buildLayoutNodes } from "./adapter/buildLayoutNodes";
 import { createResumeLayout } from "./layout/createResumeLayout";
+import { buildRegionFlows } from "./layout/regionFlows";
 import { resolveColumnWidths } from "./layout/resolveColumnWidths";
 import { validateLayoutConfig } from "./layout/validateLayoutConfig";
 import { useLayoutMeasurements } from "./measure/useLayoutMeasurements";
@@ -157,58 +158,26 @@ export const useResumeLayout = ({
       };
     }
     const orderedRegions = [...layout.value.regions].sort((left, right) => left.order - right.order);
-    const flowPagesByColumn = new Map<string, ReturnType<typeof paginateFlow>>();
-    let firstPageConsumedHeight = 0;
-
-    orderedRegions.forEach((region, regionIndex) => {
-      // 区域上下内边距占用页面高度，各页内容高度统一从区域配置扣除。
-      const regionPaddingHeight =
-        (region.contentPadding?.top ?? 0) + (region.contentPadding?.bottom ?? 0);
-      const firstPageAvailableHeight = Math.max(
-        0,
-        availableHeight.value - firstPageConsumedHeight - regionPaddingHeight,
-      );
-      const regionFlows = region.columns.map((column) => {
-        const columnNodes = nodes.value.filter((node) =>
-          column.moduleKeys.includes(node.sourceModuleKey),
-        );
-        const flowPages = paginateFlow({
-          nodes: columnNodes,
-          measurements: measurements.value,
-          availableHeight: firstPageAvailableHeight,
-          availableHeightByPage: (pageIndex) =>
-            Math.max(
-              0,
-              pageIndex === 0
-                ? firstPageAvailableHeight
-                : availableHeight.value - regionPaddingHeight,
-            ),
-          gap: column.gap,
-        });
-        flowPagesByColumn.set(column.id, flowPages);
-        return flowPages;
-      });
-
-      const firstPageRegionHeight = Math.max(
-        ...regionFlows.map((flowPages) => flowPages[0]?.usedHeight || 0),
-        0,
-      );
-      if (region.height.mode === "auto") {
-        const hasFirstPageContent = regionFlows.some(
-          (flowPages) => (flowPages[0]?.items.length ?? 0) > 0,
-        );
-        firstPageConsumedHeight +=
-          firstPageRegionHeight + (hasFirstPageContent ? regionPaddingHeight : 0);
-      } else if (region.height.mode === "fixed") {
-        firstPageConsumedHeight += region.height.value;
-      } else {
-        firstPageConsumedHeight = availableHeight.value;
-      }
-
-      if (regionIndex < orderedRegions.length - 1) {
-        firstPageConsumedHeight += Math.max(0, layout.value.regionGap);
-      }
-    });
+    // 区域高度循环由纯函数结算，测量结果与分页算法只通过回调接入
+    const { columnFlows: flowPagesByColumn } = buildRegionFlows<ReturnType<typeof paginateFlow>>(
+      orderedRegions,
+      {
+        availableHeight: availableHeight.value,
+        regionGap: layout.value.regionGap,
+        buildFlow: (column, { availableHeight: firstPageHeight, availableHeightByPage }) => {
+          const columnNodes = nodes.value.filter((node) =>
+            column.moduleKeys.includes(node.sourceModuleKey),
+          );
+          return paginateFlow({
+            nodes: columnNodes,
+            measurements: measurements.value,
+            availableHeight: firstPageHeight,
+            availableHeightByPage,
+            gap: column.gap,
+          });
+        },
+      },
+    );
     return buildPagePlan({
       layout: layout.value,
       availableHeight: availableHeight.value,
