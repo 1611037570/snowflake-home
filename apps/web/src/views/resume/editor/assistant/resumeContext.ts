@@ -1,5 +1,6 @@
 import { useResumeStore } from "@/stores";
 import { storeToRefs } from "pinia";
+import { omitMediaFromData } from "@/stores/modules/resume/config/mediaFields";
 
 // 简历数据上下文：统一提供工具读取与请求前的头像裁剪，避免逻辑散落各处
 export const useResumeContext = () => {
@@ -56,16 +57,8 @@ export const useResumeContext = () => {
       const title = module.ui?.title || resumeStore.getModel(key)?.name || key;
       const shouldDesensitize = !desensitizeMode.value.disabled;
       const strict = shouldDesensitize && desensitizeMode.value.level === "strict";
-      // 读取 user 模块时排除头像，避免请求体过大
-      if (key === "user") delete clone.avatar;
-      // 普通脱敏标记直接身份字段，严格脱敏额外标记公司和学校名称
-      if (key === "user" && shouldDesensitize) {
-        NORMAL_USER_SENSITIVE_KEYS.forEach((field) => {
-          if (field in clone) clone[field] = DESENSITIZED_TEXT;
-        });
-      }
-      // 读取图片作品模块时排除作品图片，避免请求体过大
-      if (key === "image" && Array.isArray(clone)) clone.forEach((item: any) => delete item?.img);
+      // 读取时排除媒体大字段，避免请求体过大；剔除规则由媒体字段共享声明给出
+      omitMediaFromData(data);
       const removeOrganizationName = strict && ["work", "education"].includes(key);
       const sanitized = shouldDesensitize
         ? sanitizeNestedData(clone, userName, removeOrganizationName)

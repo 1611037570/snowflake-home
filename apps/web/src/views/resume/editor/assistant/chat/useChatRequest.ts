@@ -10,6 +10,13 @@ import { storeToRefs } from "pinia";
 import type { AssistantConfig } from "../types";
 // 导入默认提示词，每次请求提级到用户消息前避免遗忘规则
 import { defaultPrompt } from "../skills/prompt_default";
+// 媒体字段共享声明：AI 请求体剔除与还原都按同一份路径表处理
+import {
+  collectMediaBindings,
+  getValueAtPath,
+  omitMediaFromData,
+  setValueAtPath,
+} from "@/stores/modules/resume/config/mediaFields";
 
 // 定义 useChatRequest 的配置选项接口
 interface UseChatRequestOptions {
@@ -33,22 +40,11 @@ export const useChatRequest = ({
   const { thinkMode } = storeToRefs(aiStore);
   const { generating, beforeRequest, afterRequest, resolveTools, reflectPrompt, onToolError } =
     config;
-  // 深拷贝简历数据时跳过 base64 大字段（user.avatar、image[].img），避免每请求全量序列化
-  const cloneDataSkippingMedia = (value: any, parentKey?: string): any => {
-    if (Array.isArray(value)) {
-      return value.map((item: any) => cloneDataSkippingMedia(item, parentKey));
-    }
-    if (value && typeof value === "object") {
-      const result: Record<string, any> = {};
-      Object.entries(value).forEach(([key, item]) => {
-        if (parentKey === "user" && key === "avatar") return;
-        if (parentKey === "image" && key === "img") return;
-        const nextParent = key === "user" || key === "image" ? key : parentKey;
-        result[key] = cloneDataSkippingMedia(item, nextParent);
-      });
-      return result;
-    }
-    return value;
+  // 深拷贝简历数据时跳过 base64 大字段，避免每请求全量序列化
+  const cloneDataSkippingMedia = (data: any): any => {
+    const clone = structuredClone(data ?? {});
+    // 媒体字段统一按共享声明在整棵树上剔除，避免此处与其它模块的规则不一致
+    return omitMediaFromData(clone);
   };
   // 请求前备份简历数据，撤回修改时恢复（仅当前会话内存使用）
   const captureBackup = () => {
@@ -65,19 +61,13 @@ export const useChatRequest = ({
     if (!item || !backup || item.id !== backup.resumeId) return;
     // 恢复时保留当前未被 AI 修改的大字段（头像、作品图）
     const currentData = item.data || {};
-    const avatar = currentData?.user?.data?.avatar;
-    const imageItems = Array.isArray(currentData?.image?.list) ? currentData.image.list : [];
     item.data = backup.data ?? {};
-    if (backup.data?.user?.data && avatar !== undefined) {
-      item.data.user.data.avatar = avatar;
-    }
-    if (Array.isArray(item.data?.image?.list)) {
-      item.data.image.list.forEach((record: any, index: number) => {
-        if (record?.data && imageItems[index]?.data) {
-          record.data.img = imageItems[index].data.img;
-        }
-      });
-    }
+    // 媒体字段位置由共享声明给出，按路径把当前值写回被剔除后的备份数据
+    collectMediaBindings(currentData).forEach((binding) => {
+      const media = getValueAtPath(currentData, binding.path);
+      if (!media || typeof media !== "object") return;
+      setValueAtPath(item.data, [...binding.path, binding.field], media[binding.field] ?? "");
+    });
     // 配置恢复统一走 store 动作：结构变化时同步重建运行时配置
     resumeStore.restoreConfig(backup.config);
   };
