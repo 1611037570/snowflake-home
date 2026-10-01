@@ -32,6 +32,7 @@ export const isRegionSlotId = (value: unknown): value is RegionSlotId =>
  * 引擎改为直接下发槽位编号后，这张表会退化成恒等映射并被删除。
  */
 export const regionSlotByRegionId: Record<string, RegionSlotId> = {
+  slogan: "slogan", // 顶部标语区域
   header: "user", // 顶部通栏区域承载个人信息
   main: "main", // 正文区域
 };
