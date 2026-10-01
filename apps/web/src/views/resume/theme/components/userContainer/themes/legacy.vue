@@ -72,50 +72,6 @@ const {
   min-width: 0;
 }
 
-.resume-user[data-theme="business"] {
-  overflow: hidden;
-  border-radius: 12px;
-  padding: 8px 12px 8px 16px;
-}
-
-.resume-user[data-theme="business"] .resume-user__surface {
-  position: absolute;
-  inset: 0;
-  display: block;
-  border-radius: inherit;
-  pointer-events: none;
-}
-
-.resume-user[data-theme="business"] .resume-user__accent {
-  position: absolute;
-  inset-block: 0;
-  left: 0;
-  display: block;
-  width: 6px;
-}
-
-.resume-user[data-theme="creative"] {
-  overflow: hidden;
-  border-radius: 12px;
-  padding: 12px 16px 12px 12px;
-}
-
-.resume-user[data-theme="creative"] .resume-user__surface {
-  position: absolute;
-  inset: 0;
-  display: block;
-  border-radius: inherit;
-  pointer-events: none;
-}
-
-.resume-user[data-theme="creative"] .resume-user__accent {
-  position: absolute;
-  inset-block: 0;
-  right: 0;
-  display: block;
-  width: 6px;
-}
-
 .resume-user[data-theme="fresh"] {
   border-radius: 16px;
   padding: 12px;

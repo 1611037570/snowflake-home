@@ -1,6 +1,8 @@
 import type { Component } from "vue";
 import AcademicAppearance from "./themes/academic.vue";
+import BusinessAppearance from "./themes/business.vue";
 import ClassicAppearance from "./themes/classic.vue";
+import CreativeAppearance from "./themes/creative.vue";
 import DefaultAppearance from "./themes/default.vue";
 import LegacyAppearance from "./themes/legacy.vue";
 import MinimalAppearance from "./themes/minimal.vue";
@@ -11,6 +13,8 @@ export const userAppearanceRegistry: Record<string, Component> = {
   minimal: MinimalAppearance, // 内容水平居中
   classic: ClassicAppearance, // 底部留出一段间距
   academic: AcademicAppearance, // 内容居中并叠加双分隔线
+  business: BusinessAppearance, // 浅色底托圆角块 + 左侧主题色竖条
+  creative: CreativeAppearance, // 浅色底托圆角块 + 右侧主题色竖条
   legacy: LegacyAppearance, // 尚未拆分的外观，按 data-theme 分支保留既有主题表现
 };
 
@@ -19,8 +23,8 @@ export const userAppearanceByTheme: Record<string, string> = {
   minimal: "minimal",
   classic: "classic",
   academic: "academic",
-  business: "legacy",
-  creative: "legacy",
+  business: "business",
+  creative: "creative",
   fresh: "legacy",
   vivid: "legacy",
   steady: "legacy",
