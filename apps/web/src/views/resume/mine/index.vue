@@ -4,7 +4,7 @@ import dayjs from "dayjs";
 import { storeToRefs } from "pinia";
 import { useRouter } from "vue-router";
 import { useProgress } from "../editor/hooks/useProgress";
-import { getExportFileName, getResumeTitle } from "../resumeName";
+import { useResumeName } from "../hooks/useResumeName";
 import { expandConfigModules } from "@/stores/modules/resume/hooks/useConfigTemplate";
 import ResumeCardContainer from "./components/resumeCardContainer.vue";
 import RevealGrid from "../components/revealGrid.vue";
@@ -22,6 +22,7 @@ const router = useRouter();
 const resumeStore = useResumeStore();
 const { resumeList: list, currentIndex } = storeToRefs(resumeStore);
 const { maxCount, maxTrashCount } = resumeStore;
+const { getExportFileName, getResumeTitle } = useResumeName();
 const { proxy } = getCurrentInstance();
 
 // 每次进入简历页：清理回收站中超过保留天数的简历

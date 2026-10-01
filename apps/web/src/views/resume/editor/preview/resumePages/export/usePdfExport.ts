@@ -8,7 +8,7 @@
 import { nextTick } from "vue";
 import { storeToRefs } from "pinia";
 import { PDF_PAGE_HEIGHT, PDF_PAGE_WIDTH, RESUME_HEIGHT, RESUME_WIDTH } from "../../shared/constants";
-import { getExportFileName, resumeTitle } from "../../../../resumeName";
+import { useResumeName } from "../../../../hooks/useResumeName";
 import { useResumeStore } from "@/stores";
 import { printResume } from "./useBrowserPrint";
 
@@ -26,6 +26,7 @@ export const printPDF = async (
 ) => {
   // 保存当前选中的模块并清空，避免导出 PDF 时带上选中高亮
   const resumeStore = useResumeStore();
+  const { getExportFileName, resumeTitle } = useResumeName();
   const { selectedModule, currentUI } = storeToRefs(resumeStore);
   const signal = resumeStore.beginPrinting();
   if (!signal) return;

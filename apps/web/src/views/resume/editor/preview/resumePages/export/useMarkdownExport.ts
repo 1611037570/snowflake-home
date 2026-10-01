@@ -6,7 +6,7 @@ import {
 } from "@/components/business/dynamicForm/api";
 import { useResumeStore } from "@/stores";
 import { allConfig } from "@/stores/modules/resume/config/formConfig";
-import { getExportFileName, resumeTitle } from "../../../../resumeName";
+import { useResumeName } from "../../../../hooks/useResumeName";
 
 type FieldDefinition = { key: string; label: string };
 
@@ -120,6 +120,7 @@ const appendRecord = (
 
 // 按当前模块顺序生成可读的 Markdown 简历
 export const exportMarkdown = (onSuccess?: () => void) => {
+  const { getExportFileName, resumeTitle } = useResumeName();
   const item = currentItem.value;
   const data = item?.data || {};
   // 字段配置统一以模块 key 标识
