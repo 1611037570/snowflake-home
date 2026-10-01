@@ -37,6 +37,9 @@ const INJECT_SCRIPT = INJECT_FILE_ARG
 /** 打字阶段重复轮数：默认 3 轮取中位数，可用 --repeat=1 只看单轮 */
 const REPEAT_ARG = process.argv.find((arg) => arg.startsWith("--repeat="));
 const REPEAT = Math.max(1, Number(REPEAT_ARG ? REPEAT_ARG.slice("--repeat=".length) : 3));
+/** 打字目标选择器：默认取面板里第一个编辑区，可用 --focus= 指定字段做 A/B */
+const FOCUS_ARG = process.argv.find((arg) => arg.startsWith("--focus="));
+const FOCUS_SELECTOR = FOCUS_ARG ? FOCUS_ARG.slice("--focus=".length) : "";
 const EDGE = "C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe";
 const DEBUG_PORT = 9351;
 const PROFILE_DIR = path.join(os.tmpdir(), `dsh-edge-perf-${Date.now()}`);
@@ -385,7 +388,9 @@ const main = async () => {
       report.inject = await evaluate(INJECT_SCRIPT);
     }
     const focusInfo = await evaluate(`(() => {
-      const input = document.querySelector('.resume-editor-form [contenteditable="true"], .resume-editor-form textarea, .resume-editor-form input');
+      const selector = ${JSON.stringify(FOCUS_SELECTOR)} ||
+        '.resume-editor-form [contenteditable="true"], .resume-editor-form textarea, .resume-editor-form input';
+      const input = document.querySelector(selector);
       if (!input) return null;
       input.focus();
       window.__typedTarget = input;
