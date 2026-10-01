@@ -29,7 +29,7 @@ describe("layoutTemplates", () => {
       gap: 12,
     });
 
-    expect(layout.regions.map((region) => region.id)).toEqual(["header", "main"]);
+    expect(layout.regions.map((region) => region.id)).toEqual(["user", "main"]);
     expect(layout.regions[0]?.columns[0]?.moduleKeys).toEqual(["user"]);
     expect(layout.regions[1]?.columns.map((column) => column.moduleKeys)).toEqual([
       ["account", "skill"],
@@ -64,7 +64,7 @@ describe("layoutTemplates", () => {
       gap: 12,
     });
 
-    expect(layout.regions.map((region) => region.id)).toEqual(["header", "main"]);
+    expect(layout.regions.map((region) => region.id)).toEqual(["user", "main"]);
     expect(layout.regionGap).toBe(12);
   });
 
@@ -80,7 +80,7 @@ describe("layoutTemplates", () => {
 
     expect(layout.regions.map((region) => [region.id, region.order])).toEqual([
       ["slogan", 0],
-      ["header", 1],
+      ["user", 1],
       ["main", 2],
     ]);
     expect(layout.regions[0]?.columns[0]?.moduleKeys).toEqual(["slogan"]);

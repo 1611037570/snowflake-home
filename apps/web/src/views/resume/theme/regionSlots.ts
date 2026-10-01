@@ -28,15 +28,8 @@ export const isRegionSlotId = (value: unknown): value is RegionSlotId =>
   typeof value === "string" && regionSlotRegistry.some((slot) => slot.id === value);
 
 /**
- * 引擎区域编号到槽位的映射：当前布局模板用 header 承载个人信息、main 承载正文。
- * 引擎改为直接下发槽位编号后，这张表会退化成恒等映射并被删除。
+ * 解析区域槽位编号。
+ * 布局模板直接下发槽位编号（slogan / user / main），未登记的编号由调用方按无外观区域处理。
  */
-export const regionSlotByRegionId: Record<string, RegionSlotId> = {
-  slogan: "slogan", // 顶部标语区域
-  header: "user", // 顶部通栏区域承载个人信息
-  main: "main", // 正文区域
-};
-
-/** 解析引擎区域编号对应的槽位，未登记的编号返回空，由调用方按未登记区域处理。 */
 export const resolveRegionSlot = (regionId: unknown): RegionSlotId | null =>
-  typeof regionId === "string" ? regionSlotByRegionId[regionId] || null : null;
+  isRegionSlotId(regionId) ? regionId : null;

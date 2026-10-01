@@ -184,12 +184,12 @@ describe("简历页几何基线", () => {
       spacing: { regionGap: 12, columnGap: 24 },
       regions: [
         {
-          id: "header",
+          id: "user",
           height: { mode: "auto" },
           padding: { top: 0, right: 0, bottom: 0, left: 0 },
           columns: [
             {
-              id: "header-column",
+              id: "user-column",
               width: { mode: "ratio", value: 1 },
               gap: 0,
               moduleKeys: ["user"],
@@ -217,12 +217,12 @@ describe("简历页几何基线", () => {
         },
       ],
       columnWidths: [
-        ["header-column", 746],
+        ["user-column", 746],
         ["left", 361],
         ["right", 361],
       ],
       columnFlowHeights: [
-        ["header-column", [[1063, 300]]],
+        ["user-column", [[1063, 300]]],
         ["left", [[751, 300]]],
         ["right", [[751, 300]]],
       ],
@@ -243,12 +243,12 @@ describe("简历页几何基线", () => {
       spacing: { regionGap: 12, columnGap: 0 },
       regions: [
         {
-          id: "header",
+          id: "user",
           height: { mode: "auto" },
           padding: { top: 0, right: 0, bottom: 0, left: 0 },
           columns: [
             {
-              id: "header-column",
+              id: "user-column",
               width: { mode: "ratio", value: 1 },
               gap: 0,
               moduleKeys: ["user"],
@@ -270,11 +270,11 @@ describe("简历页几何基线", () => {
         },
       ],
       columnWidths: [
-        ["header-column", 746],
+        ["user-column", 746],
         ["main-column", 746],
       ],
       columnFlowHeights: [
-        ["header-column", [[1063, 300]]],
+        ["user-column", [[1063, 300]]],
         ["main-column", [[751, 300]]],
       ],
     });
@@ -294,12 +294,12 @@ describe("简历页几何基线", () => {
       spacing: { regionGap: 12, columnGap: 0 },
       regions: [
         {
-          id: "header",
+          id: "user",
           height: { mode: "auto" },
           padding: { top: 0, right: 0, bottom: 0, left: 0 },
           columns: [
             {
-              id: "header-column",
+              id: "user-column",
               width: { mode: "ratio", value: 1 },
               gap: 0,
               moduleKeys: ["user"],
@@ -321,11 +321,11 @@ describe("简历页几何基线", () => {
         },
       ],
       columnWidths: [
-        ["header-column", 746],
+        ["user-column", 746],
         ["main-column", 722],
       ],
       columnFlowHeights: [
-        ["header-column", [[1063, 300]]],
+        ["user-column", [[1063, 300]]],
         ["main-column", [[727, 300]]],
       ],
     });
@@ -411,12 +411,12 @@ describe("简历页几何基线", () => {
           ],
         },
         {
-          id: "header",
+          id: "user",
           height: { mode: "auto" },
           padding: { top: 0, right: 0, bottom: 0, left: 0 },
           columns: [
             {
-              id: "header-column",
+              id: "user-column",
               width: { mode: "ratio", value: 1 },
               gap: 0,
               moduleKeys: ["user"],
@@ -439,12 +439,12 @@ describe("简历页几何基线", () => {
       ],
       columnWidths: [
         ["slogan-column", 746],
-        ["header-column", 746],
+        ["user-column", 746],
         ["main-column", 746],
       ],
       columnFlowHeights: [
         ["slogan-column", [[1051, 300]]],
-        ["header-column", [[739, 300]]],
+        ["user-column", [[739, 300]]],
         ["main-column", [[427, 300]]],
       ],
     });
@@ -477,7 +477,7 @@ describe("简历页几何基线", () => {
 
     expect(snapshot.regions[1]?.padding).toEqual({ top: 12, right: 0, bottom: 12, left: 0 });
     expect(snapshot.columnWidths).toEqual([
-      ["header-column", 746],
+      ["user-column", 746],
       ["main-column", 746],
     ]);
     // 可用高度只扣上下留白：1063 − 通栏 300 − 区域间距 12 − 正文上下留白 24
