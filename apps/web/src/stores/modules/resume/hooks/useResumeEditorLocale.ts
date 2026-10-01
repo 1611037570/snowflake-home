@@ -280,6 +280,7 @@ const TEXT_KEYS_SOURCE = `
   "以纯黑细线勾勒模块外边框的线框简历样式。": "outlineThemeDescription",
   色条: "colorBarTheme",
   色块横线: "resumeTemplateStyle_labelLine_name",
+  斜角竖线: "resumeTemplateStyle_angledLine_name",
   "以左侧主题色竖条搭配浅色底纹突出模块标题的样式。": "colorBarThemeDescription",
   通栏双栏: "topUserTwoColumnTheme",
   "个人信息顶部通栏，其余模块固定分到左右两栏。": "topUserTwoColumnThemeDescription",

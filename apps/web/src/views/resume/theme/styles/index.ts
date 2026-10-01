@@ -1,4 +1,5 @@
 import academic from "./academic";
+import angledLine from "./angledLine";
 import business from "./business";
 import classic from "./classic";
 import colorBar from "./colorBar";
@@ -40,6 +41,7 @@ export const themeTemplateList = createThemeTemplates([
   frame,
   timeline,
   labelLine,
+  angledLine,
 ]);
 
 // 主题选择列表与预览渲染共用这份注册表。
