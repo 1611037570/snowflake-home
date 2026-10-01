@@ -1,5 +1,5 @@
 import { RESUME_HEIGHT, RESUME_WIDTH } from "../../../shared/constants";
-import type { BoxSpacing, PageLayoutConfig, PageSize } from "../pageLayoutTypes";
+import type { BoxSpacing, PageLayoutConfig, PageSize, RegionConfig } from "../pageLayoutTypes";
 import { createSingleColumnLayout } from "./createSingleColumnLayout";
 import { createTwoColumnLayout, resolveColumnRatios } from "./createTwoColumnLayout";
 import type { PageLayoutTemplateId } from "@/views/resume/theme/layouts";
@@ -38,9 +38,7 @@ interface CreatePageLayoutTemplateOptions {
 const splitFixedColumnModules = (moduleKeys: string[]) => {
   const orderedKeys = [...new Set(moduleKeys)].filter((moduleKey) => moduleKey !== "user");
   const leftModuleKeys = orderedKeys.filter((moduleKey) => LEFT_MODULE_KEYS.includes(moduleKey));
-  const rightModuleKeys = orderedKeys.filter(
-    (moduleKey) => !LEFT_MODULE_KEYS.includes(moduleKey),
-  );
+  const rightModuleKeys = orderedKeys.filter((moduleKey) => !LEFT_MODULE_KEYS.includes(moduleKey));
 
   return { leftModuleKeys, rightModuleKeys };
 };
@@ -219,6 +217,44 @@ const createTopUserTwoColumnLayout = ({
   };
 };
 
+/** 顶部标语独占页面最前区域，只出现在首页 */
+const createSloganRegion = (): RegionConfig => ({
+  id: "slogan",
+  order: 0,
+  height: { mode: "auto" },
+  columns: [
+    {
+      id: "slogan-column",
+      width: { mode: "ratio", value: 1 },
+      gap: 0,
+      moduleKeys: ["slogan"],
+    },
+  ],
+});
+
+/**
+ * 把顶部标语区域插到所有区域之前。
+ * 只有存在标语模块时才创建该区域，历史简历因此不会多出区域间距与空白；
+ * 同时把标语从模板原有栏位中摘掉，保证每个模块只被分配一次。区域顺序在此重新编号。
+ */
+const withSloganRegion = (layout: PageLayoutConfig, moduleKeys: string[]): PageLayoutConfig => {
+  if (!moduleKeys.includes("slogan")) return layout;
+  const regions: RegionConfig[] = [
+    createSloganRegion(),
+    ...layout.regions.map((region) => ({
+      ...region,
+      columns: region.columns.map((column) => ({
+        ...column,
+        moduleKeys: column.moduleKeys.filter((moduleKey) => moduleKey !== "slogan"),
+      })),
+    })),
+  ];
+  return {
+    ...layout,
+    regions: regions.map((region, index) => ({ ...region, order: index })),
+  };
+};
+
 /** 根据模板编号创建页面布局。 */
 export const createPageLayoutTemplate = ({
   templateId,
@@ -229,13 +265,16 @@ export const createPageLayoutTemplate = ({
   templateId: PageLayoutTemplateId;
 }): PageLayoutConfig => {
   if (templateId === "singleColumn") {
-    return createSingleColumnLayoutTemplate(options);
+    return withSloganRegion(createSingleColumnLayoutTemplate(options), options.moduleKeys);
   }
   if (templateId === "topUserSingleColumn") {
-    return createTopUserSingleColumnLayout(options);
+    return withSloganRegion(createTopUserSingleColumnLayout(options), options.moduleKeys);
   }
   if (templateId === "topUserTwoColumn") {
-    return createTopUserTwoColumnLayout({ ...options, columns });
+    return withSloganRegion(
+      createTopUserTwoColumnLayout({ ...options, columns }),
+      options.moduleKeys,
+    );
   }
 
   const { left: leftModuleKeys, right: rightModuleKeys } = resolveLayoutColumns(
@@ -244,11 +283,14 @@ export const createPageLayoutTemplate = ({
     columns,
   );
 
-  return createTwoColumnLayout({
-    ...options,
-    leftModuleKeys,
-    rightModuleKeys,
-  });
+  return withSloganRegion(
+    createTwoColumnLayout({
+      ...options,
+      leftModuleKeys,
+      rightModuleKeys,
+    }),
+    options.moduleKeys,
+  );
 };
 
 /** 使用当前主题参数创建布局模板。 */

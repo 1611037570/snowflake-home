@@ -37,12 +37,14 @@ interface CaseDefinition {
   ui: Record<string, unknown>;
   /** 正文容器的单侧内边距 */
   viewPadding: number;
+  /** 当前简历实际存在的模块 key，缺省使用标准模块清单 */
+  moduleKeys?: string[];
 }
 
 const createCase = (definition: CaseDefinition) => {
   const layout = createResumeLayout({
     ui: definition.ui,
-    moduleKeys: MODULE_KEYS,
+    moduleKeys: definition.moduleKeys || MODULE_KEYS,
     paddingVertical: PADDING_VERTICAL,
     paddingHorizontal: PADDING_HORIZONTAL,
     gap: MODULE_GAP,
@@ -325,6 +327,125 @@ describe("简历页几何基线", () => {
       columnFlowHeights: [
         ["header-column", [[1063, 300]]],
         ["main-column", [[727, 300]]],
+      ],
+    });
+  });
+
+  it("顶部标语存在时独占最前区域，正文顺延一个区域高度", () => {
+    const snapshot = createCase({
+      name: "顶部标语单栏",
+      ui: { layout: { type: "singleColumn" } },
+      viewPadding: 0,
+      moduleKeys: ["slogan", ...MODULE_KEYS],
+    });
+
+    expect(snapshot).toEqual({
+      availableHeight: 1063,
+      contentWidth: 746,
+      pagePadding: { top: 24, right: 24, bottom: 24, left: 24 },
+      spacing: { regionGap: 0, columnGap: 0 },
+      regions: [
+        {
+          id: "slogan",
+          height: { mode: "auto" },
+          contentPadding: null,
+          columns: [
+            {
+              id: "slogan-column",
+              width: { mode: "ratio", value: 1 },
+              gap: 0,
+              moduleKeys: ["slogan"],
+            },
+          ],
+        },
+        {
+          id: "main",
+          height: { mode: "remaining" },
+          contentPadding: { top: 0, right: 0, bottom: 0, left: 0 },
+          columns: [
+            {
+              id: "main-column",
+              width: { mode: "ratio", value: 1 },
+              gap: 12,
+              moduleKeys: MODULE_KEYS,
+            },
+          ],
+        },
+      ],
+      columnWidths: [
+        ["slogan-column", 746],
+        ["main-column", 746],
+      ],
+      columnFlowHeights: [
+        ["slogan-column", [[1063, 300]]],
+        ["main-column", [[763, 300]]],
+      ],
+    });
+  });
+
+  it("顶部标语与个人信息同时通栏时正文扣掉两个区域与区域间距", () => {
+    const snapshot = createCase({
+      name: "顶部标语加个人信息通栏",
+      ui: { layout: { type: "topUserSingleColumn" } },
+      viewPadding: 0,
+      moduleKeys: ["slogan", ...MODULE_KEYS],
+    });
+
+    expect(snapshot).toEqual({
+      availableHeight: 1063,
+      contentWidth: 746,
+      pagePadding: { top: 24, right: 24, bottom: 24, left: 24 },
+      spacing: { regionGap: 12, columnGap: 0 },
+      regions: [
+        {
+          id: "slogan",
+          height: { mode: "auto" },
+          contentPadding: null,
+          columns: [
+            {
+              id: "slogan-column",
+              width: { mode: "ratio", value: 1 },
+              gap: 0,
+              moduleKeys: ["slogan"],
+            },
+          ],
+        },
+        {
+          id: "header",
+          height: { mode: "auto" },
+          contentPadding: null,
+          columns: [
+            {
+              id: "header-column",
+              width: { mode: "ratio", value: 1 },
+              gap: 0,
+              moduleKeys: ["user"],
+            },
+          ],
+        },
+        {
+          id: "main",
+          height: { mode: "remaining" },
+          contentPadding: { top: 0, right: 0, bottom: 0, left: 0 },
+          columns: [
+            {
+              id: "main-column",
+              width: { mode: "ratio", value: 1 },
+              gap: 12,
+              moduleKeys: ["account", "education", "skill", "work", "project"],
+            },
+          ],
+        },
+      ],
+      columnWidths: [
+        ["slogan-column", 746],
+        ["header-column", 746],
+        ["main-column", 746],
+      ],
+      columnFlowHeights: [
+        ["slogan-column", [[1063, 300]]],
+        ["header-column", [[751, 300]]],
+        ["main-column", [[439, 300]]],
       ],
     });
   });
