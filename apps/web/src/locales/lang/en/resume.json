@@ -198,6 +198,8 @@
   "resumeTemplateStyle_frame_description": "A red page background around a white content panel.",
   "resumeTemplateStyle_timeline_name": "Timeline",
   "resumeTemplateStyle_timeline_description": "A full-width profile above dated experience entries on a timeline.",
+  "resumeTemplateStyle_labelLine_name": "Label and Line",
+  "resumeTemplateStyle_labelLine_description": "Dark rectangular section headings with a thin line extending along the bottom.",
   "resumeTemplateContent_xiaoZhou.ts_name": "General Resume",
   "resumeTemplateContent_xiaoZhou.ts_description": "A complete template for a wide range of job searches.",
   "resumeTemplateContent_xiaoZhou.ts_tag_1": "General",
