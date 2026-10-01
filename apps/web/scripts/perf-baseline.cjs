@@ -26,6 +26,17 @@ const URL_ARG = process.argv.find((arg) => arg.startsWith("--url="));
 const SPA_NAV = process.argv.includes("--spa");
 /** 目标站点是否使用 hash 路由：生产构建的路由形如 /#/resume/template */
 const HASH_ROUTES = process.argv.includes("--hash");
+/** 打字前注入的脚本：用于 A/B 对照（例如隐藏预览，判断渲染开销归属） */
+const INJECT_ARG = process.argv.find((arg) => arg.startsWith("--inject="));
+const INJECT_FILE_ARG = process.argv.find((arg) => arg.startsWith("--inject-file="));
+const INJECT_SCRIPT = INJECT_FILE_ARG
+  ? fs.readFileSync(path.resolve(INJECT_FILE_ARG.slice("--inject-file=".length)), "utf8")
+  : INJECT_ARG
+    ? INJECT_ARG.slice("--inject=".length)
+    : "";
+/** 打字阶段重复轮数：默认 3 轮取中位数，可用 --repeat=1 只看单轮 */
+const REPEAT_ARG = process.argv.find((arg) => arg.startsWith("--repeat="));
+const REPEAT = Math.max(1, Number(REPEAT_ARG ? REPEAT_ARG.slice("--repeat=".length) : 3));
 const EDGE = "C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe";
 const DEBUG_PORT = 9351;
 const PROFILE_DIR = path.join(os.tmpdir(), `dsh-edge-perf-${Date.now()}`);
@@ -94,6 +105,15 @@ const metricsToMap = (result) =>
   Object.fromEntries((result.metrics || []).map((item) => [item.name, item.value]));
 
 const delta = (before, after, key) => +((after[key] || 0) - (before[key] || 0)).toFixed(2);
+
+/** 取中位数：单次运行波动大时用它作为对照口径 */
+const medianOf = (values) => {
+  if (!values.length) return 0;
+  const sorted = [...values].sort((a, b) => a - b);
+  const middle = Math.floor(sorted.length / 2);
+  const value = sorted.length % 2 ? sorted[middle] : (sorted[middle - 1] + sorted[middle]) / 2;
+  return +value.toFixed(2);
+};
 
 /** 汇总 CPU 采样：按「函数 + 位置」累加自身耗时，并给出热点函数的调用栈 */
 const summarizeProfile = (profile) => {
@@ -338,19 +358,32 @@ const main = async () => {
     const editorNodes = await settle();
     await evaluate(`(() => {
       window.__measureMutations = 0;
+      window.__panelMutations = 0;
       const host = document.querySelector('.layout-measure-node')?.closest('.flex.h-auto.flex-col') ||
         document.querySelector('.layout-measure-node')?.closest('div[style*="-100000px"]') ||
         document.querySelector('.layout-measure-node')?.parentElement?.parentElement?.parentElement;
       window.__measureHost = host || null;
-      if (!host) return false;
-      const observer = new MutationObserver((records) => {
-        window.__measureMutations += records.length;
-      });
-      observer.observe(host, { childList: true, subtree: true, attributes: true, characterData: true });
-      window.__measureObserver = observer;
-      return true;
+      // 面板与测量树分别计数：用于判断打字期间 DOM 变更主要落在哪一侧
+      const panel = document.querySelector('.resume-editor-form');
+      window.__panelHost = panel || null;
+      if (host) {
+        const observer = new MutationObserver((records) => {
+          window.__measureMutations += records.length;
+        });
+        observer.observe(host, { childList: true, subtree: true, attributes: true, characterData: true });
+      }
+      if (panel) {
+        const panelObserver = new MutationObserver((records) => {
+          window.__panelMutations += records.length;
+        });
+        panelObserver.observe(panel, { childList: true, subtree: true, attributes: true, characterData: true });
+      }
+      return Boolean(host || panel);
     })()`);
     const typingBefore = metricsToMap(await send("Performance.getMetrics"));
+    if (INJECT_SCRIPT) {
+      report.inject = await evaluate(INJECT_SCRIPT);
+    }
     const focusInfo = await evaluate(`(() => {
       const input = document.querySelector('.resume-editor-form [contenteditable="true"], .resume-editor-form textarea, .resume-editor-form input');
       if (!input) return null;
@@ -383,13 +416,41 @@ const main = async () => {
       await send("Profiler.setSamplingInterval", { interval: 200 });
       await send("Profiler.start");
     }
-    for (let i = 0; i < 24; i += 1) {
-      await send("Input.dispatchKeyEvent", { type: "keyDown", text: KEY, key: KEY });
-      await send("Input.dispatchKeyEvent", { type: "char", text: KEY, key: KEY });
-      await send("Input.dispatchKeyEvent", { type: "keyUp", key: KEY });
-      await sleep(50);
+    // 多轮重复：单次 taskMs 波动可达 ±30%，取中位数才能支撑优化前后的比较
+    const typingRuns = [];
+    for (let round = 0; round < REPEAT; round += 1) {
+      await evaluate(`(() => {
+        window.__measureMutations = 0;
+        window.__panelMutations = 0;
+        const input = window.__typedTarget;
+        if (input) input.focus();
+      })()`);
+      const roundBefore = metricsToMap(await send("Performance.getMetrics"));
+      for (let i = 0; i < 24; i += 1) {
+        await send("Input.dispatchKeyEvent", { type: "keyDown", text: KEY, key: KEY });
+        await send("Input.dispatchKeyEvent", { type: "char", text: KEY, key: KEY });
+        await send("Input.dispatchKeyEvent", { type: "keyUp", key: KEY });
+        await sleep(50);
+      }
+      await sleep(1500);
+      const roundAfter = metricsToMap(await send("Performance.getMetrics"));
+      const roundProbe = await evaluate(`(() => ({
+        measureMutations: window.__measureMutations,
+        panelMutations: window.__panelMutations,
+      }))()`);
+      typingRuns.push({
+        taskMs: delta(roundBefore, roundAfter, "TaskDuration") * 1000,
+        layoutMs: delta(roundBefore, roundAfter, "LayoutDuration") * 1000,
+        layoutCount: delta(roundBefore, roundAfter, "LayoutCount"),
+        recalcStyleMs: delta(roundBefore, roundAfter, "RecalcStyleDuration") * 1000,
+        scriptMs: delta(roundBefore, roundAfter, "ScriptDuration") * 1000,
+        measureMutations: roundProbe.measureMutations,
+        panelMutations: roundProbe.panelMutations,
+      });
+      console.log(
+        `第 ${round + 1} 轮：taskMs=${typingRuns[round].taskMs} 测量树变更=${typingRuns[round].measureMutations} 面板变更=${typingRuns[round].panelMutations}`,
+      );
     }
-    await sleep(1500);
     let cpuProfile = null;
     if (WITH_PROFILE) {
       const result = await send("Profiler.stop");
@@ -405,12 +466,15 @@ const main = async () => {
       const target = window.__typedTarget;
       return {
         measureMutations: window.__measureMutations,
+        panelMutations: window.__panelMutations,
+        panelHostFound: Boolean(window.__panelHost),
         hasHost: !!window.__measureHost,
         nodes: document.querySelectorAll('*').length,
         measureNodes: document.querySelectorAll('.layout-measure-node').length,
         afterLength: target ? (target.isContentEditable ? target.innerText : target.value || '').length : null,
       };
     })()`);
+    report.typingRuns = typingRuns;
     report.editor = {
       editorNodes,
       focus: focusInfo,
@@ -421,15 +485,19 @@ const main = async () => {
           ? typingProbe.afterLength - focusInfo.beforeLength
           : null,
       measureHostFound: typingProbe.hasHost,
-      measureMutations: typingProbe.measureMutations,
+      measureMutations: medianOf(typingRuns.map((run) => run.measureMutations)),
+      panelHostFound: typingProbe.panelHostFound,
+      panelMutations: medianOf(typingRuns.map((run) => run.panelMutations)),
       nodes: typingProbe.nodes,
       measureNodes: typingProbe.measureNodes,
-      layoutCount: delta(typingBefore, typingAfter, "LayoutCount"),
+      // 以下为多轮中位数，避免单次运行波动误导结论
+      runs: typingRuns.length,
+      layoutCount: medianOf(typingRuns.map((run) => run.layoutCount)),
       recalcStyleCount: delta(typingBefore, typingAfter, "RecalcStyleCount"),
-      layoutMs: delta(typingBefore, typingAfter, "LayoutDuration") * 1000,
-      recalcStyleMs: delta(typingBefore, typingAfter, "RecalcStyleDuration") * 1000,
-      scriptMs: delta(typingBefore, typingAfter, "ScriptDuration") * 1000,
-      taskMs: delta(typingBefore, typingAfter, "TaskDuration") * 1000,
+      layoutMs: medianOf(typingRuns.map((run) => run.layoutMs)),
+      recalcStyleMs: medianOf(typingRuns.map((run) => run.recalcStyleMs)),
+      scriptMs: medianOf(typingRuns.map((run) => run.scriptMs)),
+      taskMs: medianOf(typingRuns.map((run) => run.taskMs)),
       jsListeners: delta(typingBefore, typingAfter, "JSEventListeners"),
     };
 
