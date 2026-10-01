@@ -212,6 +212,18 @@ const removeImage = () => {
             <p>{{ $t("photoUsageAdvice") }}</p>
           </div>
         </SfCollapseItem>
+        <SfCollapseItem name="avatar-print">
+          <template #title>
+            <div class="flex items-center gap-3 text-sm text-sf-text-2">
+              <SfIcon icon="mdi:printer-outline" size="4" />
+              <span>{{ $t("photoPrintQuestion") }}</span>
+            </div>
+          </template>
+          <div class="flex flex-col gap-3 text-xs leading-6 text-sf-text-2">
+            <p>{{ $t("photoPrintColorAdvice") }}</p>
+            <p>{{ $t("photoPrintGrayAdvice") }}</p>
+          </div>
+        </SfCollapseItem>
         <SfCollapseItem name="avatar-tips">
           <template #title>
             <div class="flex items-center gap-3 text-sm text-sf-text-2">
