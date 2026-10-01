@@ -11,6 +11,7 @@ import Column from "./render/column.vue";
 import ViewContainer from "@/views/resume/theme/components/viewContainer.vue";
 import { useResumePages } from "./useResumePages";
 import { useResumeTheme } from "@/views/resume/theme/useResumeTheme";
+import { getPageBackgroundImage } from "@/views/resume/theme/styles/pageBackground";
 import { provideResumePreviewContext } from "../shared/previewContext";
 import { isEmptyResume } from "../../toolbar/modules/progress/useResumeStats";
 import { getPreviewText } from "../shared/i18n";
@@ -105,6 +106,8 @@ const measureTreeStyle = computed(() => ({
   ...fontStyle.value,
   ...lineHeightStyle.value,
   backgroundColor: ui.value.page?.background || "#ffffff",
+  // 单页长图导出与分页预览使用相同背景纹理。
+  backgroundImage: getPageBackgroundImage(ui.value.page?.backgroundPattern),
   color: ui.value.page?.background?.toLowerCase() === "#000000" ? "#ffffff" : "#000000",
   minHeight: `${RESUME_HEIGHT}px`,
 }));

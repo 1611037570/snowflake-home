@@ -201,6 +201,8 @@
   "resumeTemplateStyle_labelLine_name": "色块横线",
   "resumeTemplateStyle_angledLine_name": "斜角竖线",
   "resumeTemplateStyle_layeredCurve_name": "层叠弧线",
+  "resumeTemplateStyle_markerGrid_name": "荧光网格",
+  "resumeTemplateStyle_markerGrid_description": "浅灰虚线网格铺满页面，荧光笔刷底纹突出模块标题。",
   "resumeTemplateStyle_layeredCurve_description": "三层渐浅弧形标题搭配底部延伸细线，柔和醒目。",
   "resumeTemplateStyle_angledLine_description": "青绿色斜切标题与模块左侧细线相接，清晰划分内容。",
   "resumeTemplateStyle_labelLine_description": "深色矩形标题搭配底部延伸横线，简洁正式。",
