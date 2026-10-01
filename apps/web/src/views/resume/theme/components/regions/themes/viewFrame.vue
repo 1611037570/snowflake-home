@@ -3,15 +3,16 @@ import { computed } from "vue";
 import { useResumePreviewContext } from "@/views/resume/editor/preview/shared/previewContext";
 import { resolveCurrentMainRegionPadding } from "@/views/resume/theme/regionPadding";
 
-// 默认正文外观：底板透明、无圆角，只把区域留白落在自己的盒子里。
-// 引擎按同一份留白扣栏宽与可用高度，两侧读同一个解析函数。
+// 白色底板正文外观（红框主题）：白色底 + 圆角 + 深色文字。
+// 留白与默认正文外观同源，引擎扣除值与这里渲染的值必然一致。
 const { ui } = useResumePreviewContext();
 
 const containerStyle = computed(() => {
   const padding = resolveCurrentMainRegionPadding(ui.value);
   return {
-    backgroundColor: "transparent",
-    color: "inherit",
+    backgroundColor: "#ffffff", // 白色底板
+    borderRadius: "18px", // 底板圆角
+    color: "#222222", // 底板上的文字颜色
     paddingTop: `${padding.top}px`,
     paddingRight: `${padding.right}px`,
     paddingBottom: `${padding.bottom}px`,
@@ -21,7 +22,6 @@ const containerStyle = computed(() => {
 </script>
 
 <template>
-  <!-- 正文区域始终由同一容器承载，默认样式不改变页面外观。 -->
   <div class="resume-view-container relative box-border flex min-w-0" :style="containerStyle">
     <slot />
   </div>

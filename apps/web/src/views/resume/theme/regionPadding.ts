@@ -1,4 +1,5 @@
 import { DEFAULT_UI } from "@/stores/modules/resume/config/uiConfig";
+import { getLegacyMainRegionPadding } from "@/views/resume/theme/styles/themeStyles";
 import { isRegionSlotId, type RegionSlotId } from "@/views/resume/theme/regionSlots";
 
 /** 区域四周留白，单位为像素 */
@@ -53,11 +54,31 @@ export const resolveRegionPadding = (
   );
 
 /**
+ * 解析正文外观编号。
+ * `ui.theme.view` 为 auto 或缺失时跟随主题编号，未登记的外观由注册表回退 default。
+ */
+export const resolveViewTemplate = (ui: Record<string, any> | undefined): string => {
+  const configured = ui?.theme?.view;
+  if (!configured || configured === "auto") return ui?.theme?.template || "default";
+  return configured;
+};
+
+/**
+ * 解析正文区域当前生效的留白。
+ * 主题显式声明优先，未声明时按正文外观编号取历史回退值，
+ * 引擎与正文容器外观都必须调用这个函数，避免两侧各算一份。
+ */
+export const resolveCurrentMainRegionPadding = (
+  ui: Record<string, any> | undefined,
+): RegionPadding =>
+  resolveMainRegionPadding(ui, getLegacyMainRegionPadding(resolveViewTemplate(ui)));
+
+/**
  * 解析正文区域留白。
- * 主题未声明正文区域留白时沿用正文容器内边距（`viewStyle.padding`），
- * 声明后即可覆盖容器内边距；引擎与正文容器外观读同一份结果。
+ * 主题未声明正文区域留白时沿用正文容器历史留白，
+ * 声明后即可覆盖容器留白；引擎与正文容器外观读同一份结果。
  * @param ui 简历主题配置
- * @param containerPadding 正文容器的单侧内边距，单位为像素
+ * @param containerPadding 未声明时的单侧留白，单位为像素
  */
 export const resolveMainRegionPadding = (
   ui: Record<string, any> | undefined,

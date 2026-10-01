@@ -1,6 +1,6 @@
 export {
+  getLegacyMainRegionPadding,
   getResumeThemeTemplate,
-  getThemeViewStyle,
   resumeThemeRegistry,
   themeTemplateList,
 } from "./styles";

@@ -1,6 +1,7 @@
 <script setup>
 import { computed } from "vue";
 import { resolveRegionSlot } from "@/views/resume/theme/regionSlots";
+import { resolveViewTemplate } from "@/views/resume/theme/regionPadding";
 import { resolveRegionAppearance } from "./registry";
 import { useResumePreviewContext } from "@/views/resume/editor/preview/shared/previewContext";
 
@@ -12,9 +13,17 @@ const props = defineProps({
   },
 });
 const { ui } = useResumePreviewContext();
-// 区域外观由主题按槽位指定，编号缺失或非法时回退到槽位缺省外观
+// 区域外观由主题按槽位指定，编号缺失或非法时回退到槽位缺省外观。
+// 老简历的正文外观写在 ui.theme.view 里，没有区域声明，这里补回正文槽位的编号。
+const regionConfig = computed(() => {
+  const configured = ui.value?.theme?.region;
+  if (!configured?.main && resolveRegionSlot(props.regionId) === "main") {
+    return { ...configured, main: resolveViewTemplate(ui.value) };
+  }
+  return configured;
+});
 const appearance = computed(() =>
-  resolveRegionAppearance(ui.value?.theme?.region, resolveRegionSlot(props.regionId)),
+  resolveRegionAppearance(regionConfig.value, resolveRegionSlot(props.regionId)),
 );
 </script>
 
