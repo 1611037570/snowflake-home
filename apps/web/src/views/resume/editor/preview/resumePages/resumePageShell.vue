@@ -15,7 +15,7 @@ import {
   defaultPageBorderColor,
   defaultPageRadius,
 } from "@/stores/modules/resume/config/uiConfig";
-import { getPageBackgroundImage } from "@/views/resume/theme/styles/pageBackground";
+import PagePattern from "@/views/resume/theme/components/pagePatterns/index.vue";
 
 const props = defineProps({
   // 简历 ui（font.family / page.spacing.module）
@@ -95,7 +95,7 @@ watch(
 <template>
   <div
     ref="rootRef"
-    class="resume-page-item relative flex flex-col"
+    class="resume-page-item relative isolate flex flex-col"
     :class="[ui.font?.family]"
     :style="[
       styles.paddingStyle,
@@ -104,8 +104,6 @@ watch(
       pageSurfaceStyle,
       {
         backgroundColor: pageBackground,
-        // 背景纹理铺满页面，与正文和页脚共用页面外壳。
-        backgroundImage: getPageBackgroundImage(ui.page?.backgroundPattern),
         color: pageTextColor,
         printColorAdjust: 'exact',
         WebkitPrintColorAdjust: 'exact',
@@ -115,6 +113,8 @@ watch(
       { paddingBottom: '0px' },
     ]"
   >
+    <!-- 背景纹理由页面纹理组件绘制，与长图导出共用同一份实现 -->
+    <PagePattern />
     <!-- 模块之间的间距由 ui.page.spacing.module 控制，与分页计算保持一致 -->
     <!-- 调试模式下用 outline 标注正文可用区：outline 不参与布局，不会挤压内容，内容溢出时也会显示出来 -->
     <div

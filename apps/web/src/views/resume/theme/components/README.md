@@ -2,13 +2,14 @@
 
 简历预览里所有「按主题换外观」的部位都走同一套约定：**按编号取组件，未登记的主题走 `default` 组件**，不再用样式表 + `data-theme` 分支。
 
-| 部位                           | 目录               | 外观编号来源            |
-| ------------------------------ | ------------------ | ----------------------- |
-| 模块标题                       | `moduleTitle/`     | `ui.theme.title`        |
-| 模块外框                       | `moduleContainer/` | `ui.theme.module`       |
-| 条目容器                       | `itemContainer/`   | `ui.theme.item`         |
-| 个人信息模块                   | `userContainer/`   | `ui.theme.userModule`   |
-| 区域（标语 / 个人信息 / 正文） | `regions/`         | `ui.theme.region[槽位]` |
+| 部位                           | 目录               | 外观编号来源                |
+| ------------------------------ | ------------------ | --------------------------- |
+| 模块标题                       | `moduleTitle/`     | `ui.theme.title`            |
+| 模块外框                       | `moduleContainer/` | `ui.theme.module`           |
+| 条目容器                       | `itemContainer/`   | `ui.theme.item`             |
+| 个人信息模块                   | `userContainer/`   | `ui.theme.userModule`       |
+| 区域（标语 / 个人信息 / 正文） | `regions/`         | `ui.theme.region[槽位]`     |
+| 页面背景纹理                   | `pagePatterns/`    | `ui.page.backgroundPattern` |
 
 ## 注册表约定
 
