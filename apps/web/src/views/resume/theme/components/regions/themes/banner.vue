@@ -4,6 +4,7 @@ import { useResumePreviewContext } from "@/views/resume/editor/preview/shared/pr
 import {
   defaultPaddingHorizontal,
   defaultPaddingVertical,
+  defaultPageRadius,
 } from "@/stores/modules/resume/config/uiConfig";
 import { resolveRegionPadding } from "@/views/resume/theme/regionPadding";
 
@@ -19,6 +20,8 @@ const bandStyle = computed(() => {
   const paddingHorizontal = Number(ui.value?.page?.padding?.horizontal) || defaultPaddingHorizontal;
   const paddingVertical = Number(ui.value?.page?.padding?.vertical) || defaultPaddingVertical;
   const regionPadding = resolveRegionPadding(ui.value, "slogan");
+  // 与纸张圆角保持一致，避免色带方角盖住页面圆角
+  const pageRadius = Math.max(0, Number(ui.value?.page?.radius ?? defaultPageRadius));
   return {
     // 覆盖区域容器下发的整宽样式，负外边距才能把色带撑到页面边缘
     width: "auto",
@@ -31,9 +34,8 @@ const bandStyle = computed(() => {
     paddingRight: `${paddingHorizontal + regionPadding.right}px`,
     backgroundColor: themeColor.value,
     color: themeColorContrast.value,
-    // 与页面外壳圆角保持一致，避免色带方角盖住页面圆角
-    borderTopLeftRadius: "24px",
-    borderTopRightRadius: "24px",
+    borderTopLeftRadius: `${pageRadius}px`,
+    borderTopRightRadius: `${pageRadius}px`,
   };
 });
 </script>
