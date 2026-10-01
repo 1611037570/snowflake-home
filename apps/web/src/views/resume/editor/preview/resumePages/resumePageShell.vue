@@ -7,6 +7,7 @@ import { PAGE_NUMBER_HEIGHT, RESUME_CONTAINER_HEIGHT, RESUME_CONTAINER_WIDTH } f
 import { useResumePreviewContext } from "../shared/previewContext";
 import { useResumeStore } from "@/stores";
 import { defaultPageBackground } from "@/stores/modules/resume/config/uiConfig";
+import { getPageBackgroundImage } from "@/views/resume/theme/styles/pageBackground";
 
 const props = defineProps({
   // 简历 ui（font.family / page.spacing.module）
@@ -87,6 +88,8 @@ watch(
       styles.lineHeightStyle,
       {
         backgroundColor: pageBackground,
+        // 背景纹理铺满页面，与正文和页脚共用页面外壳。
+        backgroundImage: getPageBackgroundImage(ui.page?.backgroundPattern),
         color: pageTextColor,
         printColorAdjust: 'exact',
         WebkitPrintColorAdjust: 'exact',
