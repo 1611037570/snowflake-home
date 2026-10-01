@@ -61,15 +61,46 @@ CPU 采样自身耗时 Top：`traverse` **178.9ms**、`get` 85.9ms、GC 78.8ms�
 
 结论：打字开销约一半在 JS（每组合计约 24ms），其中 `traverse` 一项约占 7.5ms / 组；另一半在样式重算、布局与绘制（约 11ms / 组）。
 
-## 优化方向（按收益排序）
+## 生产构建复测（关键结论：dev 数据不能直接当优化依据）
 
-1. **收窄 `traverse` 的来源**：`stores/modules/resume/index.ts` 用 `watch(() => currentItem.value, …, { deep: true })` 监听整份简历（data + config + ui）来广播内容变更脉冲，每次按键都要深度遍历整个响应式对象。目标是改成显式的「内容已变更」脉冲（在表单写入的唯一入口打标），必须逐条覆盖所有写入路径（表单引擎、布局设置、工具栏、撤销重做、导入）后再切换。
-2. **降低测量树的 DOM 变更量**：`patchDOMProp` / `setStyle` / `appendChild` 合计约 7ms / 组，来自测量树每次重新绑定节点样式；先摸清每类变更来源再决定是否拆分渲染范围。
-3. **减少布局与绘制次数**：`Layout` 143 次 / 84ms，`Layerize` + `Paint` + `PrePaint` 约 134ms，来自预览页整树重渲染；可考虑复用未变化的页面片段。
+```bash
+pnpm --filter @snowflake/web build
+pnpm --filter @snowflake/web preview
+pnpm --filter @snowflake/web perf:baseline -- --profile --trace --url=http://localhost:4173 --hash
+```
+
+生产构建用 hash 路由，`--hash` 才能直接打开路由；`--spa` 用于资源为相对路径的场景。
+
+同一台机器、同一次流程（24 组按键 / 48 字符）：
+
+| 指标                             | dev server    | 生产构建     |
+| -------------------------------- | ------------- | ------------ |
+| 主线程 TaskDuration              | 1660ms        | 1570ms       |
+| `traverse`（Vue 深监听遍历）     | 178.9ms       | 未进入热点榜 |
+| `createHTML`（HTML 解析/序列化） | 未进入热点榜  | 306.8ms      |
+| `vue-draggable` 相关             | 未进入热点榜  | 199.5ms      |
+| Layout / UpdateLayoutTree        | 84.1 / 39.1ms | 100 / 40ms   |
+| 模板页 TaskDuration              | 4970ms        | 4600ms       |
+
+结论：dev 下最热的 `traverse` 是 Vite dev + Vue DevTools 带来的开发期开销，生产环境并不存在；生产环境打字的真实大头是富文本的 HTML 解析（`createHTML`）与表单拖拽库（`vue-draggable`）的响应式开销。**优化必须以生产构建的复测为准。**
+
+## 优化方向（按生产复测收益排序）
+
+1. **富文本 HTML 解析**：`createHTML` 306.8ms / 24 组按键。`parseRichText`（按内容缓存）与 `sliceRichTextHtml`（按入参缓存，本轮已加）都在引擎适配层，剩余开销来自富文本编辑器自身与预览的 `v-html` 更新，需要继续定位具体调用点。
+2. **表单拖拽库响应式开销**：`vue-draggable` 的 `vt` / `get` / `ownKeys` 合计约 199.5ms，来自面板里每个列表行都挂了拖拽实例；可先确认折叠状态下是否仍挂载拖拽，再决定按需挂载。
+3. **降低测量树的 DOM 变更量**：`patchDOMProp` / `setStyle` / `appendChild` 合计约 7ms / 组（dev 数据），来自测量树每次重新绑定节点样式。
+4. **减少布局与绘制次数**：生产环境 `Layout` 100ms / 191 次，`Layerize` + `Paint` + `PrePaint` 约 130ms，来自预览页整树重渲染；可考虑复用未变化的页面片段。
+5. **模板页整页渲染**：生产环境 4600ms TaskDuration、22151 个 DOM 节点、693 个测量节点；卡片整页挂载（含隐藏测量树），可考虑进入视口后再挂载。
 
 ## 优化记录
 
 每完成一项优化，在此追加一行：改动、复测数值、结论。
+
+| 轮次     | 改动                           | 模板页 Task   | 打字 Task     | 关键热点变化                                                  | 结论                                       |
+| -------- | ------------------------------ | ------------- | ------------- | ------------------------------------------------------------- | ------------------------------------------ |
+| 基线     | —                              | 4970ms（dev） | 1140ms（dev） | dev 热点 `traverse` 178.9ms                                   | 见上                                       |
+| 生产基线 | —                              | 4600ms        | 1570ms        | 生产热点 `createHTML` 306.8ms、`vue-draggable` 199.5ms        | dev 热点不具代表性，改以生产复测为准       |
+| 切片缓存 | `sliceRichTextHtml` 按入参缓存 | —             | 1570 → 1370ms | `createHTML` 306.8 → 267.1ms，`vue-draggable` 199.5 → 189.4ms | 纯记忆化，画廊指纹无变化、引擎用例 85 通过 |
 
 | 轮次 | 改动 | 模板页 Task | 打字 Task | 测量树变更 | 结论 |
 | ---- | ---- | ----------- | --------- | ---------- | ---- |
