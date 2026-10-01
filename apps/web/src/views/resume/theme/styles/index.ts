@@ -8,6 +8,7 @@ import defaultTheme from "./default";
 import fresh from "./fresh";
 import frame from "./frame";
 import labelLine from "./labelLine";
+import layeredCurve from "./layeredCurve";
 import minimal from "./minimal";
 import modern from "./modern";
 import outline from "./outline";
@@ -42,6 +43,7 @@ export const themeTemplateList = createThemeTemplates([
   timeline,
   labelLine,
   angledLine,
+  layeredCurve,
 ]);
 
 // 主题选择列表与预览渲染共用这份注册表。
