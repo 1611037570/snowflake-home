@@ -202,6 +202,8 @@
   "resumeTemplateStyle_angledLine_name": "Angled Label",
   "resumeTemplateStyle_layeredCurve_name": "Layered Curves",
   "resumeTemplateStyle_markerGrid_name": "Highlighter Grid",
+  "resumeTemplateStyle_doubleArrow_name": "Double Arrow Line",
+  "resumeTemplateStyle_doubleArrow_description": "Layered triangles with serif section headings and a thin line extending from the center.",
   "resumeTemplateStyle_markerGrid_description": "A subtle dashed page grid with fluorescent brush highlights beneath section headings.",
   "resumeTemplateStyle_layeredCurve_description": "Three softly fading curved layers connect section headings to a thin bottom line.",
   "resumeTemplateStyle_angledLine_description": "Teal angled headings connect to a thin vertical line along each section.",
