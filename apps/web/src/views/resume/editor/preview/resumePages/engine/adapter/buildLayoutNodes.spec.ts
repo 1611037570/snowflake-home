@@ -2,6 +2,44 @@ import { describe, expect, it } from "vitest";
 import { buildLayoutNodes } from "./buildLayoutNodes";
 
 describe("buildLayoutNodes media modules", () => {
+  it.each(["work", "project", "education", "account", "honor", "image", "video", "custom_demo"])(
+    "%s 模块每个条目前均保留独立段间距",
+    (moduleKey) => {
+      const nodes = buildLayoutNodes({
+        // 模块列表：验证各类列表模块共用的段间距逻辑
+        moduleKeys: [moduleKey],
+        // 模块数据：连续三个有效条目
+        data: {
+          [moduleKey]: {
+            // 条目列表：名称用于生成有效内容节点
+            list: ["首条", "次条", "末条"].map((name) => ({
+              // 业务数据：条目显示名称
+              data: { name /* 条目名称 */ },
+            })),
+          },
+        },
+        // 排版配置：段间距为十二像素
+        ui: { page: { spacing: { paragraph: 12 /* 段间距 */ } } },
+      });
+
+      // 每个条目前都应有间距节点，第二条及后续条目不能遗漏。
+      expect(nodes.map((node) => node.type)).toEqual([
+        "title", "spacer", nodes[2]!.type, "spacer", nodes[2]!.type, "spacer", nodes[2]!.type,
+      ]);
+      const spacers = nodes.filter((node) => node.type === "spacer");
+      expect(spacers.map((node) => node.id)).toEqual(
+        nodes.filter((node) => node.type !== "title" && node.type !== "spacer")
+          .map((node) => `${node.id}.paragraph-spacing`),
+      );
+      expect(spacers.every((node) => node.hideWhenPageLeading)).toBe(true);
+      expect(spacers.map((node) => node.payload)).toEqual([
+        { height: 12 /* 间距高度 */ },
+        { height: 12 /* 间距高度 */ },
+        { height: 12 /* 间距高度 */ },
+      ]);
+    },
+  );
+
   it("creates image and video nodes through the registered module adapters", () => {
     const nodes = buildLayoutNodes({
       moduleKeys: ["image", "video"],
