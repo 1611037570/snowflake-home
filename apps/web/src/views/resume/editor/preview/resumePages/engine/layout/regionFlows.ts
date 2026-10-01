@@ -56,10 +56,7 @@ export const buildRegionFlows = <TPage extends FlowPageLike>(
     const regionPaddingHeight = getRegionPaddingHeight(region);
     // 首页可用高度扣掉前面区域已经占用的部分，后续页面使用区域自身的完整可用高度
     const heights: FlowHeightPlan = {
-      firstPageHeight: Math.max(
-        0,
-        availableHeight - firstPageConsumedHeight - regionPaddingHeight,
-      ),
+      firstPageHeight: Math.max(0, availableHeight - firstPageConsumedHeight - regionPaddingHeight),
       laterPageHeight: Math.max(0, availableHeight - regionPaddingHeight),
     };
 

@@ -16,10 +16,7 @@ export const resolveColumnWidths = (
     // 栏宽按区域内容盒计算，容器内边距只在这里扣除一次。
     const available = Math.max(
       0,
-      contentWidth -
-        (region.contentPadding?.left ?? 0) -
-        (region.contentPadding?.right ?? 0) -
-        totalGap,
+      contentWidth - (region.padding?.left ?? 0) - (region.padding?.right ?? 0) - totalGap,
     );
     const ratioSum = columns.reduce(
       (sum, column) => sum + (column.width.mode === "ratio" ? Math.max(0, column.width.value) : 0),

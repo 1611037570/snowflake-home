@@ -5,9 +5,11 @@ import {
   defaultPaddingHorizontal,
   defaultPaddingVertical,
 } from "@/stores/modules/resume/config/uiConfig";
+import { resolveRegionPadding } from "@/views/resume/theme/regionPadding";
 
 // 顶部标语通栏外观：只绘制色带，不改变内容几何。
-// 外扩量与内缩量取同一份页面留白，内容盒尺寸与分页测量口径都保持不变。
+// 页面留白用等量负外边距外扩、等量内边距收回；区域留白则只作为内边距，
+// 与引擎扣除的那份声明同源，因此色带可以铺满页面而内容盒宽度保持引擎口径。
 const {
   ui,
   theme: { themeColor, themeColorContrast },
@@ -16,15 +18,17 @@ const {
 const bandStyle = computed(() => {
   const paddingHorizontal = Number(ui.value?.page?.padding?.horizontal) || defaultPaddingHorizontal;
   const paddingVertical = Number(ui.value?.page?.padding?.vertical) || defaultPaddingVertical;
+  const regionPadding = resolveRegionPadding(ui.value, "slogan");
   return {
     // 覆盖区域容器下发的整宽样式，负外边距才能把色带撑到页面边缘
     width: "auto",
     marginTop: `-${paddingVertical}px`,
     marginLeft: `-${paddingHorizontal}px`,
     marginRight: `-${paddingHorizontal}px`,
-    paddingTop: `${paddingVertical}px`,
-    paddingLeft: `${paddingHorizontal}px`,
-    paddingRight: `${paddingHorizontal}px`,
+    paddingTop: `${paddingVertical + regionPadding.top}px`,
+    paddingBottom: `${regionPadding.bottom}px`,
+    paddingLeft: `${paddingHorizontal + regionPadding.left}px`,
+    paddingRight: `${paddingHorizontal + regionPadding.right}px`,
     backgroundColor: themeColor.value,
     color: themeColorContrast.value,
     // 与页面外壳圆角保持一致，避免色带方角盖住页面圆角

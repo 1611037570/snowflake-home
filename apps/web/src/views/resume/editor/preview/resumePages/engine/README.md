@@ -20,14 +20,14 @@ engine/adapter/buildLayoutNodes.ts（模块 → 通用排版节点）
 
 ## 尺寸口径
 
-| 量 | 含义 | 来源 |
-| --- | --- | --- |
-| 布局像素 | 未经 `transform: scale()` 的真实排版像素 | 测量树挂在 body 上，处于缩放区之外，`getBoundingClientRect` 即布局像素 |
-| 页面尺寸 | `794 × 1123` | `editor/preview/shared/constants.ts` |
-| 页尾高度 | `PAGE_NUMBER_HEIGHT = 36` | 同上 |
-| 整页可用高度 | `RESUME_HEIGHT − paddingVertical − max(paddingVertical, 页尾高度)` | `getContentHeight`，分页与「一页纸」共用同一公式 |
-| 区域内容内边距 | 正文容器单侧内边距（`contentPadding`），同时扣高度与扣宽度 | `createResumeLayout` 与 `resolveColumnWidths` |
-| 栏宽 | 比例栏按「内容宽 − 区域左右内边距 − 栏间距」再按比例分配 | `resolveColumnWidths`，与渲染层 flex 口径一致 |
+| 量           | 含义                                                               | 来源                                                                   |
+| ------------ | ------------------------------------------------------------------ | ---------------------------------------------------------------------- |
+| 布局像素     | 未经 `transform: scale()` 的真实排版像素                           | 测量树挂在 body 上，处于缩放区之外，`getBoundingClientRect` 即布局像素 |
+| 页面尺寸     | `794 × 1123`                                                       | `editor/preview/shared/constants.ts`                                   |
+| 页尾高度     | `PAGE_NUMBER_HEIGHT = 36`                                          | 同上                                                                   |
+| 整页可用高度 | `RESUME_HEIGHT − paddingVertical − max(paddingVertical, 页尾高度)` | `getContentHeight`，分页与「一页纸」共用同一公式                       |
+| 区域留白     | 区域四周的内部留白（`RegionConfig.padding`），同时扣高度与扣宽度   | `createResumeLayout` 写入，`resolveColumnWidths` 与 `flowHeights` 读取 |
+| 栏宽         | 比例栏按「内容宽 − 区域左右内边距 − 栏间距」再按比例分配           | `resolveColumnWidths`，与渲染层 flex 口径一致                          |
 
 区域高度结算（`flowHeights.ts` 提供口径，`regionFlows.ts` 按区域顺序结算）累加首个页面已被占用的高度：
 
@@ -50,16 +50,16 @@ engine/adapter/buildLayoutNodes.ts（模块 → 通用排版节点）
 
 ## 节点与断点
 
-| 字段 | 含义 | 产生方 |
-| --- | --- | --- |
-| `LayoutNode.type` | 节点类型（group / block / richText / repeat / media / title / spacer） | 模块适配器 |
-| `LayoutNode.hideWhenPageLeading` | 落在后续页面首位时整块隐藏自身占位 | 段间距行 |
-| `LayoutNode.breakPoints` | 声明式断点，仅用于渲染断点探针 | 富文本解析、经历条目 |
-| `MeasuredNode.fullHeight` | 节点完整高度，块区间按**整块**计量，不会切进块内部 | 测量层 |
-| `MeasuredNode.droppedTopSpacing` | 续段渲染时被移除的内容盒上内边距 | 测量层读 `paddingTop` |
-| `MeasuredNode.breakPoints[].height` | 从节点起点到该断点的流内口径高度 | 测量层 |
-| `MeasuredNode.breakPoints[].blockEnd` | 块断点覆盖的块数量，区间为 `[0, blockEnd)` | 测量层读块结构 |
-| `MeasuredNode.breakPoints[].leadingMargin` | 块上外边距，页首渲染会移除它，分页计价据此扣除 | 测量层读 `marginTop` |
+| 字段                                       | 含义                                                                   | 产生方                |
+| ------------------------------------------ | ---------------------------------------------------------------------- | --------------------- |
+| `LayoutNode.type`                          | 节点类型（group / block / richText / repeat / media / title / spacer） | 模块适配器            |
+| `LayoutNode.hideWhenPageLeading`           | 落在后续页面首位时整块隐藏自身占位                                     | 段间距行              |
+| `LayoutNode.breakPoints`                   | 声明式断点，仅用于渲染断点探针                                         | 富文本解析、经历条目  |
+| `MeasuredNode.fullHeight`                  | 节点完整高度，块区间按**整块**计量，不会切进块内部                     | 测量层                |
+| `MeasuredNode.droppedTopSpacing`           | 续段渲染时被移除的内容盒上内边距                                       | 测量层读 `paddingTop` |
+| `MeasuredNode.breakPoints[].height`        | 从节点起点到该断点的流内口径高度                                       | 测量层                |
+| `MeasuredNode.breakPoints[].blockEnd`      | 块断点覆盖的块数量，区间为 `[0, blockEnd)`                             | 测量层读块结构        |
+| `MeasuredNode.breakPoints[].leadingMargin` | 块上外边距，页首渲染会移除它，分页计价据此扣除                         | 测量层读 `marginTop`  |
 
 断点来自三条来源，合并顺序固定为「块断点 → 声明断点探针 → 行级文本断点」：
 
@@ -143,13 +143,13 @@ engine/adapter/buildLayoutNodes.ts（模块 → 通用排版节点）
 
 以下五处是分页层为了对齐渲染层留白规则所做的补偿，已由单测覆盖，改动前必须先补回归用例：
 
-| 适配点 | 规则 | 覆盖用例 |
-| --- | --- | --- |
-| 续段顶部内边距 | 只在「续段落页首 + 内容盒已经开始」时扣除 | `续页扣除被移除的顶部内边距后继续填满当前页`、`内容盒首块已在前片渲染时，续段才扣除顶部留白` |
+| 适配点         | 规则                                                                                       | 覆盖用例                                                                                                   |
+| -------------- | ------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------- |
+| 续段顶部内边距 | 只在「续段落页首 + 内容盒已经开始」时扣除                                                  | `续页扣除被移除的顶部内边距后继续填满当前页`、`内容盒首块已在前片渲染时，续段才扣除顶部留白`               |
 | 续段块上外边距 | 续段（`middle` / `last` 装饰）无条件扣除该块上外边距；扣除同时作用于候选断点排序与分片高度 | `当前页放得下媒体条目的首个内容块时不整条顺延`、`顶部间距块可以单独留在上一页，块区间 [0, 0) 不渲染内容块` |
-| 独立间距行 | 落页首时整块隐藏，高度按零计价 | `间距节点落页首隐藏占位，与内容一起顺延` |
-| 模块间距 | 下一个模块换页时，剩余空间仍放得下就留在页尾 `trailingGap` | `换页时模块间距留在上一页页尾` |
-| 块与正文双轨 | 块断点只覆盖块，文本断点覆盖剩余全部块 + 正文区间；覆盖范围由 `resolveFragmentCut` 解析 | `经历正文跨页后续页继续渲染正文块，不重复头部块`、`resolveFragmentCut` 的规则用例 |
+| 独立间距行     | 落页首时整块隐藏，高度按零计价                                                             | `间距节点落页首隐藏占位，与内容一起顺延`                                                                   |
+| 模块间距       | 下一个模块换页时，剩余空间仍放得下就留在页尾 `trailingGap`                                 | `换页时模块间距留在上一页页尾`                                                                             |
+| 块与正文双轨   | 块断点只覆盖块，文本断点覆盖剩余全部块 + 正文区间；覆盖范围由 `resolveFragmentCut` 解析    | `经历正文跨页后续页继续渲染正文块，不重复头部块`、`resolveFragmentCut` 的规则用例                          |
 
 标题不在适配点之列：它是 `type: "title"` 的**独立节点**，由适配器排在模块最前，分页层与普通块一视同仁，不再有"标题能否单独留页"的判断。模块标题与所属模块内容 `sourceModuleKey` 相同，因此两者之间不会插入模块间距。
 

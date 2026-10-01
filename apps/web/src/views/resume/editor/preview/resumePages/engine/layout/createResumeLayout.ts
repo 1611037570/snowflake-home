@@ -1,9 +1,7 @@
 import type { PageLayoutConfig } from "../pageLayoutTypes";
-import {
-  createDefaultPageLayoutTemplate,
-  type PageLayoutTemplateId,
-} from "./layoutTemplates";
+import { createDefaultPageLayoutTemplate, type PageLayoutTemplateId } from "./layoutTemplates";
 import { isPageLayoutTemplateId } from "@/views/resume/theme/layouts";
+import { resolveRegionPadding } from "@/views/resume/theme/regionPadding";
 
 /**
  * 解析当前生效的布局模板编号。
@@ -48,16 +46,20 @@ export const createResumeLayout = ({
     columns: ui.layout?.columns,
   });
   const padding = Math.max(0, viewPadding);
-  // 正文容器的占位写入区域配置，供栏宽与分页共同读取。
+  // 正文容器的占位写入区域配置，供栏宽与分页共同读取；
+  // 顶部标语与个人信息区域的留白由主题声明，同样折算进引擎口径。
   return {
     ...layout,
     regions: layout.regions.map((region) =>
       region.id === "main"
         ? {
             ...region,
-            contentPadding: { top: padding, right: padding, bottom: padding, left: padding },
+            padding: { top: padding, right: padding, bottom: padding, left: padding },
           }
-        : region,
+        : {
+            ...region,
+            padding: resolveRegionPadding(ui, region.id),
+          },
     ),
   };
 };

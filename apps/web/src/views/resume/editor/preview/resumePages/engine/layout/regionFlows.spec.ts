@@ -53,7 +53,7 @@ describe("flowHeights", () => {
   it("区域内容内边距按上下两侧合计", () => {
     const region = createRegion({
       id: "main",
-      contentPadding: { top: 12, right: 8, bottom: 18, left: 8 },
+      padding: { top: 12, right: 8, bottom: 18, left: 8 },
     });
 
     expect(getRegionPaddingHeight(region)).toBe(30);
@@ -89,7 +89,7 @@ describe("buildRegionFlows", () => {
         createRegion({
           id: "header",
           height: { mode: "auto" },
-          contentPadding: { top: 12, right: 12, bottom: 12, left: 12 },
+          padding: { top: 12, right: 12, bottom: 12, left: 12 },
         }),
         createRegion({ id: "main", height: { mode: "remaining" } }),
       ],

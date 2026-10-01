@@ -14,8 +14,8 @@ const isFieldHidden = (key) => hidden.value?.[key]?.hidden === true;
 </script>
 
 <template>
-  <!-- 底部留白计入模块高度，色带下沿据此留出呼吸空间，分页口径同步生效 -->
-  <div class="flex max-w-full min-w-0 flex-col items-center gap-3 pb-3 text-center">
+  <!-- 色带下沿留白改由区域留白声明承担，内容组件不再自带留白 -->
+  <div class="flex max-w-full min-w-0 flex-col items-center gap-3 text-center">
     <div
       v-if="slogan.title && !isFieldHidden('title')"
       class="font-bold tracking-wide"

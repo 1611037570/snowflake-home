@@ -186,6 +186,10 @@ export const defaultLineHeight = 1.2;
 export const defaultParagraphSpacing = 12;
 // 默认模块间距
 export const defaultModuleSpacing = 12;
+// 顶部标语区域默认上留白
+export const defaultSloganPaddingTop = 0;
+// 顶部标语区域默认下留白：色带下沿与内容之间的呼吸空间
+export const defaultSloganPaddingBottom = 12;
 // 默认左栏宽度占比（双栏布局），左栏保持为较窄的一栏
 export const defaultLeftColumnWidth = 40;
 // 默认主题样式
@@ -239,6 +243,22 @@ export const DEFAULT_UI = {
       module: defaultModuleSpacing,
     },
     footer: defaultFooter,
+  },
+  // 区域内部留白：页面留白管纸张内缩，区域留白管区域自身内容与区域边缘的距离
+  region: {
+    slogan: {
+      // 顶部标语区域留白：下侧留出色带下沿的呼吸空间
+      padding: {
+        top: defaultSloganPaddingTop,
+        right: 0,
+        bottom: defaultSloganPaddingBottom,
+        left: 0,
+      },
+    },
+    user: {
+      // 个人信息区域留白：通栏色带由外观自行外扩，默认不再额外内缩
+      padding: { top: 0, right: 0, bottom: 0, left: 0 },
+    },
   },
   font: {
     family: defaultFontFamily,

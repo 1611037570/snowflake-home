@@ -1,8 +1,4 @@
-import type {
-  BoxSpacing,
-  PageLayoutConfig,
-  PageSize,
-} from "../pageLayoutTypes";
+import type { BoxSpacing, PageLayoutConfig, PageSize } from "../pageLayoutTypes";
 
 /** 创建单栏布局所需的参数 */
 export interface CreateSingleColumnLayoutOptions {
