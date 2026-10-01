@@ -4,7 +4,7 @@ import type { LayoutNode } from "../engine/types";
 import type { ColumnPlan, FragmentPlan } from "../engine/paginate/pagePlan";
 import ModuleActions from "./moduleActions.vue";
 import ModuleContent from "./moduleContent.vue";
-import Module from "@/views/resume/theme/components/moduleContainer.vue";
+import Module from "@/views/resume/theme/components/moduleContainer/index.vue";
 import UserModule from "@/views/resume/theme/components/userContainer/index.vue";
 
 const props = defineProps<{
