@@ -206,6 +206,8 @@
   "resumeTemplateStyle_chevronRibbon_name": "箭头长条",
   "resumeTemplateStyle_slantedLayer_name": "斜切叠片",
   "resumeTemplateStyle_foldedLabel_name": "折角色块",
+  "resumeTemplateStyle_stripedRibbon_name": "斜纹飘带",
+  "resumeTemplateStyle_stripedRibbon_description": "斜切飘带标题搭配两道平行斜纹，左下深色折角增添层次。",
   "resumeTemplateStyle_foldedLabel_description": "白字矩形色块搭配左下角灰色折片，简洁醒目。",
   "resumeTemplateStyle_slantedLayer_description": "斜切色块标题叠加浅色背片，底部细线延伸贯穿模块。",
   "resumeTemplateStyle_chevronRibbon_description": "紫色箭头标题叠加浅色箭尖，淡色长条延伸至页面右侧。",

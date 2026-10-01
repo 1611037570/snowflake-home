@@ -18,6 +18,7 @@ import modern from "./modern";
 import outline from "./outline";
 import slantedLayer from "./slantedLayer";
 import steady from "./steady";
+import stripedRibbon from "./stripedRibbon";
 import timeline from "./timeline";
 import topUserTwoColumn from "./topUserTwoColumn";
 import twoColumn from "./twoColumn";
@@ -54,6 +55,7 @@ export const themeTemplateList = createThemeTemplates([
   chevronRibbon,
   slantedLayer,
   foldedLabel,
+  stripedRibbon,
 ]);
 
 // 主题选择列表与预览渲染共用这份注册表。
