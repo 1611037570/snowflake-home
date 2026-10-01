@@ -6,6 +6,8 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
+# 屏蔽 dsh 目录下的所有文件
+.dsh-*
 
 # 依赖和构建产物
 node_modules
