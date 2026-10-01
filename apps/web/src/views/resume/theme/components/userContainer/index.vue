@@ -22,7 +22,7 @@ const {
 } = useResumePreviewContext();
 // 未提供主题时沿用默认个人信息样式。
 const themeTemplate = computed(() => themeTemplateRef.value || "default");
-// 外观由主题编号解析，未登记的主题沿用旧版统一外观。
+// 外观由主题编号解析，未登记的主题回退默认外观组件。
 const appearance = computed(() => resolveUserAppearance(themeTemplate.value));
 </script>
 
