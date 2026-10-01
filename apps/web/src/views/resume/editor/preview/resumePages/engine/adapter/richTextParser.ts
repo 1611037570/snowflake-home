@@ -95,22 +95,38 @@ const parseSliceNodes = (html: string) => {
   return entry;
 };
 
+/** 切片结果缓存：同一份 HTML 的同一段偏移只序列化一次 */
+const sliceHtmlCache = new Map<string, string>();
+/** 切片结果缓存上限，超出后整体清空，避免长时间编辑累积占用 */
+const SLICE_HTML_CACHE_MAX = 500;
+
 /** 按包含显式换行的内容偏移截取安全富文本，并保留对应标签结构。 */
 export const sliceRichTextHtml = (html: string, start = 0, end?: number): string => {
-  const { container, positions, total } = parseSliceNodes(html || "");
+  const source = html || "";
+  // 预览与测量树会对同一节点的同一段偏移重复请求切片，按入参缓存可以省掉重复的 DOM 序列化
+  const cacheKey = `${source}\u0000${start}\u0000${end === undefined ? "" : end}`;
+  const cachedHtml = sliceHtmlCache.get(cacheKey);
+  if (cachedHtml !== undefined) return cachedHtml;
+
+  const { positions, total } = parseSliceNodes(source);
   const safeStart = Math.max(0, Math.min(start, total));
   const safeEnd = Math.max(safeStart, Math.min(end ?? total, total));
-  if (safeStart >= safeEnd) return "";
+  const sliced = (() => {
+    if (safeStart >= safeEnd) return "";
+    const range = document.createRange();
+    const first = positions[safeStart];
+    const last = positions[safeEnd - 1];
+    if (!first || !last) return "";
+    range.setStart(first.startNode, first.startOffset);
+    range.setEnd(last.endNode, last.endOffset);
+    const result = document.createElement("div");
+    result.appendChild(range.cloneContents());
+    return result.innerHTML;
+  })();
 
-  const range = document.createRange();
-  const first = positions[safeStart];
-  const last = positions[safeEnd - 1];
-  if (!first || !last) return "";
-  range.setStart(first.startNode, first.startOffset);
-  range.setEnd(last.endNode, last.endOffset);
-  const result = document.createElement("div");
-  result.appendChild(range.cloneContents());
-  return result.innerHTML;
+  if (sliceHtmlCache.size >= SLICE_HTML_CACHE_MAX) sliceHtmlCache.clear();
+  sliceHtmlCache.set(cacheKey, sliced);
+  return sliced;
 };
 
 /** 预览富文本允许的标签和属性，与渲染拆分共用同一份白名单 */
@@ -132,9 +148,7 @@ const getLogicalLength = (node: Node): number => {
 
 /** 将元素属性转换为普通对象 */
 const getAttributes = (element: Element): Record<string, string> =>
-  Object.fromEntries(
-    Array.from(element.attributes).map(({ name, value }) => [name, value]),
-  );
+  Object.fromEntries(Array.from(element.attributes).map(({ name, value }) => [name, value]));
 
 /** 生成一个不重复的语义断点 */
 const appendBreakPoint = (points: BreakPoint[], offsets: Set<number>, point: BreakPoint) => {
@@ -237,10 +251,7 @@ const appendCharacterBreakPoints = (
 ) => {
   if (textLength <= 1) return;
 
-  const step = Math.max(
-    MIN_CHAR_BREAK_POINT_STEP,
-    Math.ceil(textLength / MAX_CHAR_BREAK_POINTS),
-  );
+  const step = Math.max(MIN_CHAR_BREAK_POINT_STEP, Math.ceil(textLength / MAX_CHAR_BREAK_POINTS));
   for (let offset = step; offset < textLength; offset += step) {
     appendBreakPoint(points, offsets, { offset, type: "char" });
   }
