@@ -24,7 +24,7 @@ import {
   defaultUserInfoLayout,
   defaultUserInfoMode,
 } from "@/stores/modules/resume/config/uiConfig";
-import { getThemeItemStyle, getThemeViewStyle } from "@/views/resume/theme";
+import { getThemeViewStyle } from "@/views/resume/theme";
 import type { ThemeViewStyle } from "@/views/resume/theme/styles/themeStyles";
 
 /** 简历主题配置（item.ui） */
@@ -59,7 +59,8 @@ export interface ResumeTheme {
   userModuleTemplate: ComputedRef<string>;
   moduleTemplate: ComputedRef<string>;
   titleTemplate: ComputedRef<string>;
-  itemStyle: ComputedRef<Record<string, string | number>>;
+  /** 条目外观编号：决定条目容器使用哪个外观组件 */
+  itemTemplate: ComputedRef<string>;
   /** 正文容器的背景、内边距、圆角和文字颜色。 */
   viewStyle: ComputedRef<ThemeViewStyle>;
   userInfoMode: ComputedRef<string>;
@@ -161,7 +162,9 @@ export const useResumeTheme = (ui: ComputedRef<ResumeUi>): ResumeTheme => {
   );
   const themeTemplate = computed(() => ui.value.theme?.template);
   const userModuleTemplate = computed(() =>
-    ui.value.theme?.userModule === "auto" ? themeTemplate.value : ui.value.theme?.userModule || "default",
+    ui.value.theme?.userModule === "auto"
+      ? themeTemplate.value
+      : ui.value.theme?.userModule || "default",
   );
   // 样式 ID 为 auto 时跟随整体主题。
   const moduleTemplate = computed(() => {
@@ -173,10 +176,9 @@ export const useResumeTheme = (ui: ComputedRef<ResumeUi>): ResumeTheme => {
     const titleTheme = ui.value.theme?.title;
     return titleTheme === "auto" ? themeTemplate.value : titleTheme;
   });
-  const itemStyle = computed(() =>
-    getThemeItemStyle(
-      ui.value.theme?.item === "auto" ? themeTemplate.value : ui.value.theme?.item,
-    ),
+  // 条目外观 ID 为 auto 时跟随整体主题，未登记的主题由组件注册表回退 default。
+  const itemTemplate = computed(() =>
+    ui.value.theme?.item === "auto" ? themeTemplate.value : ui.value.theme?.item || "default",
   );
   // 正文容器样式 ID 为 auto 时跟随整体主题。
   const viewStyle = computed(() =>
@@ -223,7 +225,7 @@ export const useResumeTheme = (ui: ComputedRef<ResumeUi>): ResumeTheme => {
     userModuleTemplate,
     moduleTemplate,
     titleTemplate,
-    itemStyle,
+    itemTemplate,
     viewStyle,
     userInfoMode,
     userInfoLayout,

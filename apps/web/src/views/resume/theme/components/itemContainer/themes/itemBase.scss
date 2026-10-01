@@ -1,0 +1,16 @@
+/* 条目外观共用样式：时间轴条目预留固定日期栏，并让竖线随正文高度自然拉伸 */
+.resume-item--timeline {
+  position: relative;
+  --timeline-rail-width: 144px;
+}
+
+.resume-item--timeline::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: calc(var(--timeline-rail-width) - 18px);
+  border-left: 1px solid currentColor;
+  opacity: 0.2;
+  pointer-events: none;
+}

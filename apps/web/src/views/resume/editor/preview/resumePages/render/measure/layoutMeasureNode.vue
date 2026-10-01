@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from "vue";
-import Item from "@/views/resume/theme/components/itemContainer.vue";
-import { getItemFragmentStyle, isItemNode, isTimelineNode } from "../itemStyle";
+import Item from "@/views/resume/theme/components/itemContainer/index.vue";
+import { isItemNode, isTimelineNode } from "../itemStyle";
 import { useResumePreviewContext } from "../../../shared/previewContext";
 import LayoutNodeContent from "../layoutNodeContent.vue";
 import UserModule from "@/views/resume/theme/components/userContainer/index.vue";
@@ -9,29 +9,15 @@ import type { LayoutNode } from "../../engine/types";
 
 const props = defineProps<{ node: LayoutNode }>();
 const { theme } = useResumePreviewContext();
-const itemConfig = computed(() => theme.itemStyle.value || {});
-// 测量树复用同一条目样式，确保测量尺寸与实际预览一致。
+// 测量树复用同一条目外观组件，圆角与留白由外观自己声明，确保测量尺寸与实际预览一致。
 const useItem = computed(() => isItemNode(props.node));
 const isUserModule = computed(
   () => props.node.type === "group" && props.node.sourceModuleKey === "user",
 );
 // 测量树与预览条目使用相同的日期栏宽度。
 const isTimeline = computed(() => isTimelineNode(props.node, theme.themeTemplate.value));
-const fullItemStyle = computed(() =>
-  getItemFragmentStyle(
-    { start: 0, end: Number.MAX_SAFE_INTEGER },
-    undefined,
-    "full",
-    itemConfig.value.radius ?? "0",
-  ),
-);
-const getBreakpointItemStyle = (offset: number) =>
-  getItemFragmentStyle(
-    { start: 0, end: Number.MAX_SAFE_INTEGER },
-    { start: 0, end: offset },
-    "top",
-    itemConfig.value.radius ?? "0",
-  );
+/** 完整节点覆盖全部块，不裁剪任何圆角与留白 */
+const FULL_BLOCK_RANGE = { start: 0, end: Number.MAX_SAFE_INTEGER };
 </script>
 
 <template>
@@ -39,9 +25,9 @@ const getBreakpointItemStyle = (offset: number) =>
     <div class="layout-measure-node" :data-layout-node-id="node.id">
       <Item
         v-if="useItem"
-        :item="itemConfig"
+        :block-range="FULL_BLOCK_RANGE"
+        :decoration="'full'"
         :timeline="isTimeline"
-        :style="fullItemStyle"
         data-layout-block-range
       >
         <LayoutNodeContent :node="node" />
@@ -60,9 +46,10 @@ const getBreakpointItemStyle = (offset: number) =>
       >
         <Item
           v-if="useItem"
-          :item="itemConfig"
+          :block-range="FULL_BLOCK_RANGE"
+          :content-range="{ start: 0, end: point.offset }"
+          :decoration="'top'"
           :timeline="isTimeline"
-          :style="getBreakpointItemStyle(point.offset)"
           data-layout-block-range
         >
           <LayoutNodeContent

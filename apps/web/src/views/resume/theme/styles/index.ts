@@ -70,4 +70,4 @@ export const resumeThemeRegistry = Object.fromEntries(
 export const getResumeThemeTemplate = (id?: string) =>
   resolveThemeTemplate(resumeThemeRegistry[id || "default"] || resumeThemeRegistry.default);
 
-export { getThemeItemStyle, getThemeModuleStyle, getThemeViewStyle } from "./themeStyles";
+export { getThemeViewStyle } from "./themeStyles";
