@@ -8,7 +8,7 @@ import { expandConfigModules } from "@/stores/modules/resume/hooks/useConfigTemp
 import ResumePageShell from "./resumePageShell.vue";
 import LayoutMeasureTree from "./render/measure/layoutMeasureTree.vue";
 import Column from "./render/column.vue";
-import ViewContainer from "@/views/resume/theme/components/viewContainer.vue";
+import RegionContainer from "@/views/resume/theme/components/regions/index.vue";
 import { useResumePages } from "./useResumePages";
 import { useResumeTheme } from "@/views/resume/theme/useResumeTheme";
 import { getPageBackgroundImage } from "@/views/resume/theme/styles/pageBackground";
@@ -328,9 +328,9 @@ defineExpose({
             :style="{ gap: `${layout.regionGap}px` }"
           >
             <template v-for="region in page.regions" :key="region.regionId">
-              <component
-                :is="region.regionId === 'main' ? ViewContainer : 'div'"
+              <RegionContainer
                 v-if="region.columns.some((column) => column.fragments.length > 0)"
+                :region-id="region.regionId"
                 class="flex w-full min-w-0"
                 :class="{
                   'flex-1': hasViewSurface && region.regionId === 'main',
@@ -361,7 +361,7 @@ defineExpose({
                     @move="(payload) => handleModuleMove(payload, column.columnId)"
                   />
                 </div>
-              </component>
+              </RegionContainer>
             </template>
           </div>
         </ResumePageShell>
