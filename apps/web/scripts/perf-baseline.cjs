@@ -20,10 +20,19 @@ const OUT =
 const WITH_TRACE = process.argv.includes("--trace");
 /** 是否采集打字阶段的 CPU 采样：pnpm --filter @snowflake/web perf:baseline -- --profile */
 const WITH_PROFILE = process.argv.includes("--profile");
+/** 目标站点：默认本地 dev server，可用 --url=http://localhost:4173 指向生产构建预览 */
+const URL_ARG = process.argv.find((arg) => arg.startsWith("--url="));
+/** 是否先加载首页再客户端跳转：生产构建资源用相对路径，直接打开嵌套路由会 404 */
+const SPA_NAV = process.argv.includes("--spa");
+/** 目标站点是否使用 hash 路由：生产构建的路由形如 /#/resume/template */
+const HASH_ROUTES = process.argv.includes("--hash");
 const EDGE = "C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe";
 const DEBUG_PORT = 9351;
 const PROFILE_DIR = path.join(os.tmpdir(), `dsh-edge-perf-${Date.now()}`);
-const BASE_URL = "http://localhost:5174";
+const BASE_URL = URL_ARG ? URL_ARG.slice("--url=".length) : "http://localhost:5174";
+
+/** 组装路由地址：hash 路由需要把路径拼到 # 之后 */
+const routeUrl = (path) => (HASH_ROUTES ? `${BASE_URL}/#${path}` : `${BASE_URL}${path}`);
 
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -249,7 +258,18 @@ const main = async () => {
     // ---------- A 模板页冷启动 ----------
     await send("Performance.getMetrics").then((m) => (report.coldStartBefore = metricsToMap(m)));
     const coldStartAt = Date.now();
-    await send("Page.navigate", { url: `${BASE_URL}/resume/template` });
+    if (SPA_NAV) {
+      // 生产构建资源是相对路径：先加载首页，再交给前端路由跳转
+      await send("Page.navigate", { url: `${BASE_URL}/` });
+      await sleep(6000);
+      await evaluate(`(() => {
+        window.history.pushState({}, '', '/resume/template');
+        window.dispatchEvent(new PopStateEvent('popstate'));
+      })()`);
+      await sleep(3000);
+    } else {
+      await send("Page.navigate", { url: routeUrl("/resume/template") });
+    }
     const bootMs = await waitUntil("document.querySelectorAll('.resume-page-item').length > 0");
     await sleep(2000);
     await clickByText("简历模板");
