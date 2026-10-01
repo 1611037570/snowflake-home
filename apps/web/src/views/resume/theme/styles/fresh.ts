@@ -1,6 +1,7 @@
 export default {
   name: "清新",
   id: "fresh",
+  design: ["single-column", "polished"],
   description: "适合教育、设计与初入职场场景的简历样式。",
   ui: {
     theme: { color: "#16A34A", titleIconMode: "icon" },

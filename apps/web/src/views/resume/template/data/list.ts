@@ -7,6 +7,8 @@ export type ResumeTemplateCategoryGroup = {
   key: string;
   name: string;
   icon: string;
+  /** 该分类选项对应的模板数据字段：与 key 不同时用于把选项值映射到真正的数据字段 */
+  filterField?: string;
   options: ResumeTemplateOption[];
 };
 
@@ -134,7 +136,14 @@ export const resumeTemplateCategoryGroups: ResumeTemplateCategoryGroup[] = [
   { key: "industry", name: "行业", icon: "lucide:building-2", options: resumeTemplateIndustryOptions },
   { key: "position", name: "职位", icon: "lucide:briefcase-business", options: resumeTemplatePositionOptions },
   { key: "design", name: "设计", icon: "lucide:palette", options: resumeTemplateDesignOptions },
-  { key: "style", name: "简历模板", icon: "lucide:layout-template", options: [] },
+  // 样式主题卡片同样按设计分类筛选：复用同一套设计选项，选项值落回 design 字段
+  {
+    key: "style",
+    name: "简历模板",
+    icon: "lucide:layout-template",
+    filterField: "design",
+    options: resumeTemplateDesignOptions,
+  },
 ];
 
 // 列表只保存模板索引和筛选信息，正文按文件名懒加载。
