@@ -293,6 +293,12 @@ const TEXT_KEYS_SOURCE = `
   斜切叠片: "resumeTemplateStyle_slantedLayer_name",
   折角色块: "resumeTemplateStyle_foldedLabel_name",
   斜纹飘带: "resumeTemplateStyle_stripedRibbon_name",
+  标语通栏: "resumeTemplateStyle_sloganBand_name",
+  "顶部标语色带搭配飘带底沿，适合突出个人主张的通用简历。":
+    "resumeTemplateStyle_sloganBand_description",
+  通栏个人信息: "resumeTemplateStyle_userBand_name",
+  "个人信息整块铺满页面宽度的主题色底纹，正文保持页面留白。":
+    "resumeTemplateStyle_userBand_description",
   "以左侧主题色竖条搭配浅色底纹突出模块标题的样式。": "colorBarThemeDescription",
   通栏双栏: "topUserTwoColumnTheme",
   "个人信息顶部通栏，其余模块固定分到左右两栏。": "topUserTwoColumnThemeDescription",

@@ -1,43 +1,20 @@
 <script setup>
 import { computed } from "vue";
 import { useResumePreviewContext } from "@/views/resume/editor/preview/shared/previewContext";
-import {
-  defaultPaddingHorizontal,
-  defaultPaddingVertical,
-  defaultPageRadius,
-} from "@/stores/modules/resume/config/uiConfig";
-import { resolveRegionPadding } from "@/views/resume/theme/regionPadding";
+import { resolveBandStyle } from "../bandStyle";
 
 // 顶部标语通栏外观：只绘制色带，不改变内容几何。
-// 页面留白用等量负外边距外扩、等量内边距收回；区域留白则只作为内边距，
-// 与引擎扣除的那份声明同源，因此色带可以铺满页面而内容盒宽度保持引擎口径。
+// 外扩与留白的算法集中在 bandStyle.ts，与其他通栏色带外观共用同一份口径。
 const {
   ui,
   theme: { themeColor, themeColorContrast },
 } = useResumePreviewContext();
 
-const bandStyle = computed(() => {
-  const paddingHorizontal = Number(ui.value?.page?.padding?.horizontal) || defaultPaddingHorizontal;
-  const paddingVertical = Number(ui.value?.page?.padding?.vertical) || defaultPaddingVertical;
-  const regionPadding = resolveRegionPadding(ui.value, "slogan");
-  // 与纸张圆角保持一致，避免色带方角盖住页面圆角
-  const pageRadius = Math.max(0, Number(ui.value?.page?.radius ?? defaultPageRadius));
-  return {
-    // 覆盖区域容器下发的整宽样式，负外边距才能把色带撑到页面边缘
-    width: "auto",
-    marginTop: `-${paddingVertical}px`,
-    marginLeft: `-${paddingHorizontal}px`,
-    marginRight: `-${paddingHorizontal}px`,
-    paddingTop: `${paddingVertical + regionPadding.top}px`,
-    paddingBottom: `${regionPadding.bottom}px`,
-    paddingLeft: `${paddingHorizontal + regionPadding.left}px`,
-    paddingRight: `${paddingHorizontal + regionPadding.right}px`,
-    backgroundColor: themeColor.value,
-    color: themeColorContrast.value,
-    borderTopLeftRadius: `${pageRadius}px`,
-    borderTopRightRadius: `${pageRadius}px`,
-  };
-});
+const bandStyle = computed(() => ({
+  ...resolveBandStyle(ui.value, "slogan", { roundTop: true }),
+  backgroundColor: themeColor.value,
+  color: themeColorContrast.value,
+}));
 </script>
 
 <template>

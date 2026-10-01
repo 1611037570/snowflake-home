@@ -1,7 +1,9 @@
 import type { Component } from "vue";
 import type { RegionSlotId } from "@/views/resume/theme/regionSlots";
 import BannerAppearance from "./themes/banner.vue";
+import BannerRibbonAppearance from "./themes/bannerRibbon.vue";
 import PlainAppearance from "./themes/plain.vue";
+import UserBandAppearance from "./themes/userBand.vue";
 import ViewAppearance from "./themes/view.vue";
 
 /** 区域外观注册表：外观编号 → 组件。只做静态映射，保证测量时几何立即就绪。 */
@@ -9,6 +11,8 @@ export const regionAppearanceRegistry: Record<string, Component> = {
   plain: PlainAppearance, // 不绘制底色与留白
   view: ViewAppearance, // 正文容器外观：背景、圆角与内边距读取 viewStyle
   banner: BannerAppearance, // 顶部标语通栏色带：外扩到页面边缘并保留页面留白
+  bannerRibbon: BannerRibbonAppearance, // 顶部标语通栏色带 + 底沿对比色细线
+  userBand: UserBandAppearance, // 个人信息通栏底纹：整块铺满页面宽度
 };
 
 /** 各槽位的缺省外观编号：顶部标语绘制通栏色带，个人信息不绘制，main 沿用正文容器外观。 */

@@ -5,7 +5,7 @@ import ResumeCardContainer from "@/views/resume/mine/components/resumeCardContai
 import RevealGrid from "@/views/resume/components/revealGrid.vue";
 import TemplateCategory from "./components/templateCategory.vue";
 import { resumeTemplateList } from "./data/list";
-import { loadResumeTemplates } from "./data/resumeData";
+import { loadResumeTemplateData, loadResumeTemplates } from "./data/resumeData";
 import { expandConfigModules } from "@/stores/modules/resume/hooks/useConfigTemplate";
 import { createDefaultLayoutColumns } from "../editor/preview/resumePages/engine/layout/layoutTemplates";
 import { $t } from "@/locales";
@@ -17,11 +17,24 @@ import { computed, onMounted, ref } from "vue";
 const resumeStore = useResumeStore();
 const resumeTemplates = ref([]);
 const templateLoading = ref(true);
+// 主题自带的样例范本：按文件名去重后一次性加载，样式卡片与套用模板共用
+const themeSamples = ref({});
+const themeSampleFiles = [
+  ...new Set(themeTemplateList.map((style) => style.sample?.fileName).filter(Boolean)),
+];
 
 // 模板页进入时按索引懒加载范本正文，供卡片缩略图和预览共用。
 onMounted(async () => {
   try {
     resumeTemplates.value = await loadResumeTemplates(resumeTemplateList);
+    themeSamples.value = Object.fromEntries(
+      await Promise.all(
+        themeSampleFiles.map(async (fileName) => [
+          fileName,
+          await loadResumeTemplateData(fileName),
+        ]),
+      ),
+    );
   } catch {
     ElMessage.error($t("resumeTemplateLoadError"));
   } finally {
@@ -34,6 +47,15 @@ const deepClone = (value) => JSON.parse(JSON.stringify(value));
 const previewBase = computed(
   () => resumeTemplates.value.find((template) => template.fileName === "xiaoZhou.ts")?.item,
 );
+// 样式卡片的内容：主题自带样例范本时用它，否则沿用通用范本
+const resolveStyleItem = (style) => {
+  const sample = style.sample?.fileName ? themeSamples.value[style.sample.fileName] : null;
+  return {
+    data: sample?.data || previewBase.value?.data || {},
+    config: sample?.config || previewBase.value?.config || {},
+    ui: getResumeThemeTemplate(style.id).item.ui,
+  };
+};
 // 全部模板：小舟提供示例内容，样式模板提供完整 UI。
 const templates = computed(() =>
   themeTemplateList.map((style, index) => ({
@@ -46,11 +68,7 @@ const templates = computed(() =>
     tags: [],
     type: "style",
     revealIndex: index,
-    item: {
-      data: previewBase.value?.data || {},
-      config: previewBase.value?.config || {},
-      ui: getResumeThemeTemplate(style.id).item.ui,
-    },
+    item: resolveStyleItem(style),
   })),
 );
 
@@ -101,20 +119,21 @@ const setCurrentCategory = (value) => {
 
 // 套用模板：携带风格，深拷贝数据后新增简历并进入编辑
 const useTemplate = (card) => {
-  if (!previewBase.value) return;
+  // 内容与模块清单以卡片为准：主题自带样例范本时用样例，否则沿用通用范本
+  const source = card.item?.config?.modules ? card.item : previewBase.value;
+  if (!source) return;
   const ui = deepClone(card.item.ui);
-  const moduleKeys = expandConfigModules(
-    previewBase.value.config?.modules || [],
-    previewBase.value.data,
-  ).map((field) => field.key).filter(Boolean);
+  const moduleKeys = expandConfigModules(source.config?.modules || [], source.data)
+    .map((field) => field.key)
+    .filter(Boolean);
   // 仅双栏布局生成栏内模块顺序，顶部通栏单栏沿用简历模块顺序。
   ui.layout.columns =
     ui.layout.type === "twoColumn" || ui.layout.type === "topUserTwoColumn"
       ? createDefaultLayoutColumns(ui.layout.type, moduleKeys)
       : null;
   resumeStore.addResume({
-    data: deepClone(previewBase.value.data),
-    config: deepClone(previewBase.value.config),
+    data: deepClone(source.data),
+    config: deepClone(source.config),
     ui,
   });
 };
@@ -154,13 +173,16 @@ const gridClass = ref("default");
 <template>
   <div class="relative mx-auto flex h-full w-full max-w-7xl flex-col gap-3">
     <SfScrollbar class="flex-1">
-    <div class="flex h-full flex-col px-3 py-2 sm:px-6">
+      <div class="flex h-full flex-col px-3 py-2 sm:px-6">
         <TemplateCategory
           @change="setTemplateFilters"
           @category-change="setCurrentCategory"
           @size-change="setPreviewSize"
         />
-        <div v-if="templateLoading" class="flex h-36 items-center justify-center text-sm text-sf-text-2">
+        <div
+          v-if="templateLoading"
+          class="flex h-36 items-center justify-center text-sm text-sf-text-2"
+        >
           {{ $t("resumeTemplateLoading") }}
         </div>
         <RevealGrid
@@ -172,11 +194,7 @@ const gridClass = ref("default");
           key-field="fileName"
         >
           <template #default="{ item: card }">
-            <ResumeCardContainer
-              :item="card.item"
-              :size="gridClass"
-              @click="useTemplateCard(card)"
-            >
+            <ResumeCardContainer :item="card.item" :size="gridClass" @click="useTemplateCard(card)">
               <div class="flex flex-col">
                 <div class="truncate text-base font-black text-black">
                   {{ card.name }}
@@ -184,7 +202,10 @@ const gridClass = ref("default");
                 <div class="mt-3 line-clamp-2 text-sm text-sf-text-2">
                   {{ card.description }}
                 </div>
-                <div v-if="card.tags.length" class="mt-3 flex flex-wrap gap-3 text-sm text-sf-text-2">
+                <div
+                  v-if="card.tags.length"
+                  class="mt-3 flex flex-wrap gap-3 text-sm text-sf-text-2"
+                >
                   <span v-for="tag in card.tags" :key="tag">{{ tag }}</span>
                 </div>
                 <div class="mt-3 flex items-center justify-between gap-2">
@@ -212,7 +233,9 @@ const gridClass = ref("default");
       :visible="isFullscreen"
       :item="fullscreenCard?.item || {}"
       single-page
-      :eyebrow-text="$t(fullscreenType === 'content' ? 'resumeTemplateContent' : 'resumeTemplateStyle')"
+      :eyebrow-text="
+        $t(fullscreenType === 'content' ? 'resumeTemplateContent' : 'resumeTemplateStyle')
+      "
       :title="fullscreenCard?.name || $t('resumeTemplateTitle')"
       :description="fullscreenCard?.description || ''"
       :tags="fullscreenCard?.tags || []"
