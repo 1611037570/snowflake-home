@@ -20,7 +20,6 @@ export type ResumeTemplate = {
   industry: string[];
   position: string[];
   workExperience: string[];
-  design: string[];
   tags: string[];
 };
 
@@ -155,7 +154,6 @@ export const resumeTemplateList: ResumeTemplate[] = [
     industry: ["all"],
     position: ["all"],
     workExperience: [],
-    design: ["single-column"],
     tags: ["通用简历"],
   },
   {
@@ -166,7 +164,6 @@ export const resumeTemplateList: ResumeTemplate[] = [
     industry: ["internet"],
     position: ["web-frontend"],
     workExperience: ["3-5"],
-    design: ["single-column"],
     tags: ["前端开发", "项目经历"],
   },
   {
@@ -177,7 +174,6 @@ export const resumeTemplateList: ResumeTemplate[] = [
     industry: ["culture-media", "advertising"],
     position: ["model"],
     workExperience: ["3-5"],
-    design: ["single-column"],
     tags: ["商业拍摄", "作品展示"],
   },
   {
@@ -188,7 +184,6 @@ export const resumeTemplateList: ResumeTemplate[] = [
     industry: ["culture-media", "advertising"],
     position: ["photographer"],
     workExperience: ["3-5"],
-    design: ["single-column", "minimal"],
     tags: ["商业摄影", "视觉拍摄", "作品集"],
   },
   {
@@ -199,7 +194,6 @@ export const resumeTemplateList: ResumeTemplate[] = [
     industry: ["culture-media", "advertising"],
     position: ["video-editor"],
     workExperience: ["3-5"],
-    design: ["single-column", "polished"],
     tags: ["视频剪辑", "影视后期", "作品集"],
   },
   {
@@ -210,7 +204,6 @@ export const resumeTemplateList: ResumeTemplate[] = [
     industry: ["internet"],
     position: ["product-manager"],
     workExperience: ["3-5"],
-    design: ["single-column", "minimal"],
     tags: ["全字段", "产品经理", "信息分隔"],
   },
   {
@@ -221,7 +214,6 @@ export const resumeTemplateList: ResumeTemplate[] = [
     industry: ["internet"],
     position: ["web-frontend"],
     workExperience: ["student"],
-    design: ["single-column"],
     tags: ["校园招聘", "课程项目"],
   },
   {
@@ -232,7 +224,6 @@ export const resumeTemplateList: ResumeTemplate[] = [
     industry: ["all"],
     position: ["operation"],
     workExperience: ["0-1"],
-    design: ["single-column"],
     tags: ["实习经历", "运营成果"],
   },
   {
@@ -243,7 +234,6 @@ export const resumeTemplateList: ResumeTemplate[] = [
     industry: ["all"],
     position: ["all"],
     workExperience: ["student"],
-    design: ["single-column"],
     tags: ["国内升学", "科研经历"],
   },
   {
@@ -254,7 +244,6 @@ export const resumeTemplateList: ResumeTemplate[] = [
     industry: ["all"],
     position: ["all"],
     workExperience: ["student"],
-    design: ["single-column"],
     tags: ["留学申请", "语言能力"],
   },
   {
@@ -265,7 +254,6 @@ export const resumeTemplateList: ResumeTemplate[] = [
     industry: ["internet"],
     position: ["web-frontend"],
     workExperience: ["0-1"],
-    design: ["single-column"],
     tags: ["English", "Project Results"],
   },
 ];
