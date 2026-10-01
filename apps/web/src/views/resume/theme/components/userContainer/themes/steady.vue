@@ -2,10 +2,10 @@
 import { useResumePreviewContext } from "@/views/resume/editor/preview/shared/previewContext";
 
 defineProps({
-  // 解析后的个人信息外观编号：保留在 data-theme 上，供外观样式按主题分支
+  // 解析后的主题编号：写入 data-theme，便于在 DOM 上识别当前主题
   themeId: {
     type: String,
-    default: "default",
+    default: "steady",
   },
   // 模块 key：写入 data-module，供编辑器点击定位
   moduleKey: {
@@ -25,7 +25,7 @@ const {
 </script>
 
 <template>
-  <!-- 旧版个人信息外观：绘制层与主题分支原样保留，拆分外观时逐个主题搬走 -->
+  <!-- 稳重个人信息外观：左侧主题色细竖条，不绘制底色 -->
   <div
     class="resume-module-wrapper resume-user group group/module box-border min-w-0"
     :class="moduleClass"
@@ -60,10 +60,7 @@ const {
 .resume-user {
   position: relative;
   width: 100%;
-}
-
-.resume-user__surface {
-  display: none;
+  padding-left: 15px;
 }
 
 .resume-user__content {
@@ -72,48 +69,16 @@ const {
   min-width: 0;
 }
 
-.resume-user[data-theme="fresh"] {
-  border-radius: 16px;
-  padding: 12px;
+.resume-user__surface,
+.resume-user__line {
+  display: none;
 }
 
-.resume-user[data-theme="fresh"] .resume-user__surface {
-  position: absolute;
-  inset: 0;
-  display: block;
-  border-radius: inherit;
-  pointer-events: none;
-}
-
-.resume-user[data-theme="vivid"] {
-  border: 1px solid transparent;
-  border-radius: 12px;
-  padding: 12px;
-}
-
-.resume-user[data-theme="vivid"] .resume-user__surface {
-  position: absolute;
-  inset: 0;
-  display: block;
-  border: 1px solid;
-  border-radius: inherit;
-  pointer-events: none;
-}
-
-.resume-user[data-theme="steady"] {
-  padding-left: 15px;
-}
-
-.resume-user[data-theme="steady"] .resume-user__accent {
+.resume-user__accent {
   position: absolute;
   inset-block: 0;
   left: 0;
   display: block;
   width: 3px;
-}
-
-.resume-user__accent,
-.resume-user__line {
-  display: none;
 }
 </style>
