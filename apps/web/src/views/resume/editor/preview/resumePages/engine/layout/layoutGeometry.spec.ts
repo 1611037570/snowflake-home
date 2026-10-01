@@ -79,7 +79,7 @@ const createCase = (definition: CaseDefinition) => {
     regions: layout.regions.map((region) => ({
       id: region.id,
       height: region.height,
-      contentPadding: region.contentPadding ?? null,
+      padding: region.padding ?? null,
       columns: region.columns.map((column) => ({
         id: column.id,
         width: column.width,
@@ -110,7 +110,7 @@ describe("简历页几何基线", () => {
         {
           id: "main",
           height: { mode: "remaining" },
-          contentPadding: { top: 0, right: 0, bottom: 0, left: 0 },
+          padding: { top: 0, right: 0, bottom: 0, left: 0 },
           columns: [
             {
               id: "main-column",
@@ -142,7 +142,7 @@ describe("简历页几何基线", () => {
         {
           id: "main",
           height: { mode: "remaining" },
-          contentPadding: { top: 0, right: 0, bottom: 0, left: 0 },
+          padding: { top: 0, right: 0, bottom: 0, left: 0 },
           columns: [
             {
               id: "left",
@@ -186,7 +186,7 @@ describe("简历页几何基线", () => {
         {
           id: "header",
           height: { mode: "auto" },
-          contentPadding: null,
+          padding: { top: 0, right: 0, bottom: 0, left: 0 },
           columns: [
             {
               id: "header-column",
@@ -199,7 +199,7 @@ describe("简历页几何基线", () => {
         {
           id: "main",
           height: { mode: "remaining" },
-          contentPadding: { top: 0, right: 0, bottom: 0, left: 0 },
+          padding: { top: 0, right: 0, bottom: 0, left: 0 },
           columns: [
             {
               id: "left",
@@ -245,7 +245,7 @@ describe("简历页几何基线", () => {
         {
           id: "header",
           height: { mode: "auto" },
-          contentPadding: null,
+          padding: { top: 0, right: 0, bottom: 0, left: 0 },
           columns: [
             {
               id: "header-column",
@@ -258,7 +258,7 @@ describe("简历页几何基线", () => {
         {
           id: "main",
           height: { mode: "remaining" },
-          contentPadding: { top: 0, right: 0, bottom: 0, left: 0 },
+          padding: { top: 0, right: 0, bottom: 0, left: 0 },
           columns: [
             {
               id: "main-column",
@@ -296,7 +296,7 @@ describe("简历页几何基线", () => {
         {
           id: "header",
           height: { mode: "auto" },
-          contentPadding: null,
+          padding: { top: 0, right: 0, bottom: 0, left: 0 },
           columns: [
             {
               id: "header-column",
@@ -309,7 +309,7 @@ describe("简历页几何基线", () => {
         {
           id: "main",
           height: { mode: "remaining" },
-          contentPadding: { top: 12, right: 12, bottom: 12, left: 12 },
+          padding: { top: 12, right: 12, bottom: 12, left: 12 },
           columns: [
             {
               id: "main-column",
@@ -348,7 +348,7 @@ describe("简历页几何基线", () => {
         {
           id: "slogan",
           height: { mode: "auto" },
-          contentPadding: null,
+          padding: { top: 0, right: 0, bottom: 12, left: 0 },
           columns: [
             {
               id: "slogan-column",
@@ -361,7 +361,7 @@ describe("简历页几何基线", () => {
         {
           id: "main",
           height: { mode: "remaining" },
-          contentPadding: { top: 0, right: 0, bottom: 0, left: 0 },
+          padding: { top: 0, right: 0, bottom: 0, left: 0 },
           columns: [
             {
               id: "main-column",
@@ -377,8 +377,8 @@ describe("简历页几何基线", () => {
         ["main-column", 746],
       ],
       columnFlowHeights: [
-        ["slogan-column", [[1063, 300]]],
-        ["main-column", [[763, 300]]],
+        ["slogan-column", [[1051, 300]]],
+        ["main-column", [[751, 300]]],
       ],
     });
   });
@@ -400,7 +400,7 @@ describe("简历页几何基线", () => {
         {
           id: "slogan",
           height: { mode: "auto" },
-          contentPadding: null,
+          padding: { top: 0, right: 0, bottom: 12, left: 0 },
           columns: [
             {
               id: "slogan-column",
@@ -413,7 +413,7 @@ describe("简历页几何基线", () => {
         {
           id: "header",
           height: { mode: "auto" },
-          contentPadding: null,
+          padding: { top: 0, right: 0, bottom: 0, left: 0 },
           columns: [
             {
               id: "header-column",
@@ -426,7 +426,7 @@ describe("简历页几何基线", () => {
         {
           id: "main",
           height: { mode: "remaining" },
-          contentPadding: { top: 0, right: 0, bottom: 0, left: 0 },
+          padding: { top: 0, right: 0, bottom: 0, left: 0 },
           columns: [
             {
               id: "main-column",
@@ -443,9 +443,9 @@ describe("简历页几何基线", () => {
         ["main-column", 746],
       ],
       columnFlowHeights: [
-        ["slogan-column", [[1063, 300]]],
-        ["header-column", [[751, 300]]],
-        ["main-column", [[439, 300]]],
+        ["slogan-column", [[1051, 300]]],
+        ["header-column", [[739, 300]]],
+        ["main-column", [[427, 300]]],
       ],
     });
   });

@@ -42,9 +42,7 @@ export const validateLayoutConfig = (
 
   const missingModuleKeys = actualModuleKeys.filter((key) => !configuredModuleKeySet.has(key));
   const duplicateModuleKeys = unique(
-    configuredModuleKeys.filter(
-      (key, index) => configuredModuleKeys.indexOf(key) !== index,
-    ),
+    configuredModuleKeys.filter((key, index) => configuredModuleKeys.indexOf(key) !== index),
   );
   const unknownModuleKeys = unique(
     configuredModuleKeys.filter((key) => !actualModuleKeySet.has(key)),
@@ -75,10 +73,10 @@ export const validateLayoutConfig = (
       invalidLayoutFields.push(`regions[${regionIndex}].height.value`);
     }
     // 区域内容盒的边距须为非负数，避免测量宽高与实际渲染偏离。
-    if (region.contentPadding) {
+    if (region.padding) {
       (["top", "right", "bottom", "left"] as const).forEach((side) => {
-        if (!isNonNegativeNumber(region.contentPadding?.[side])) {
-          invalidLayoutFields.push(`regions[${regionIndex}].contentPadding.${side}`);
+        if (!isNonNegativeNumber(region.padding?.[side])) {
+          invalidLayoutFields.push(`regions[${regionIndex}].padding.${side}`);
         }
       });
     }

@@ -25,9 +25,7 @@ export type RegionHeight =
   | { mode: "fixed"; value: number };
 
 /** 页面栏宽度的计算方式 */
-export type ColumnWidth =
-  | { mode: "fixed"; value: number }
-  | { mode: "ratio"; value: number };
+export type ColumnWidth = { mode: "fixed"; value: number } | { mode: "ratio"; value: number };
 
 /** 页面布局配置，描述内容应该如何安排到页面区域和栏位中 */
 export interface PageLayoutConfig {
@@ -51,8 +49,8 @@ export interface RegionConfig {
   order: number;
   /** 区域高度的计算方式 */
   height: RegionHeight;
-  /** 区域内容四周的内边距 */
-  contentPadding?: BoxSpacing;
+  /** 区域四周的内部留白：同时扣除栏宽与每页可用高度，是区域几何的唯一来源 */
+  padding?: BoxSpacing;
   /** 区域中的栏配置 */
   columns: ColumnConfig[];
 }
