@@ -83,7 +83,7 @@ Page      纸张      宽高、背景、边框、圆角、页尾
 
 区域留白由 `theme/regionPadding.ts` 的 `resolveRegionPadding` 统一解析：引擎用它扣除栏宽与可用高度，区域外观组件用同一份结果决定自身内边距，两侧不得各写一份默认值。
 
-引擎下发的区域编号是 `slogan` / `header` / `main`，到槽位的映射写在 `theme/regionSlots.ts` 的 `regionSlotByRegionId`；引擎改为直接下发槽位编号后该映射退化成恒等映射并被删除。
+引擎布局模板直接下发槽位编号（`slogan` / `user` / `main`），`theme/regionSlots.ts` 的 `resolveRegionSlot` 只做合法性校验，未登记的编号按无外观区域处理；槽位编号同时是 `ui.region[槽位]` 与 `ui.theme.region[槽位]` 的键。
 
 ## 与「一页纸」压缩的关系
 

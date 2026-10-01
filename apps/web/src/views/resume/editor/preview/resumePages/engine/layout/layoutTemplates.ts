@@ -121,11 +121,11 @@ const createTopUserSingleColumnLayout = ({
     columnGap: 0,
     regions: [
       {
-        id: "header",
+        id: "user",
         order: 0,
         height: { mode: "auto" },
         columns: [
-          { id: "header-column", width: { mode: "ratio", value: 1 }, gap: 0, moduleKeys: ["user"] },
+          { id: "user-column", width: { mode: "ratio", value: 1 }, gap: 0, moduleKeys: ["user"] },
         ],
       },
       {
@@ -182,12 +182,12 @@ const createTopUserTwoColumnLayout = ({
     columnGap,
     regions: [
       {
-        id: "header",
+        id: "user",
         order: 0,
         height: { mode: "auto" },
         columns: [
           {
-            id: "header-column",
+            id: "user-column",
             width: { mode: "ratio", value: 1 },
             gap: 0,
             moduleKeys: ["user"],
