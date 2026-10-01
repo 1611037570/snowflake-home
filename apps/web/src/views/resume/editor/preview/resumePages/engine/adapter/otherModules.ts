@@ -31,6 +31,28 @@ const createUserModuleAdapter = (context: LayoutAdapterContext): LayoutNode[] =>
   ];
 };
 
+/** 创建顶部标语模块适配器 */
+const createSloganModuleAdapter = (context: LayoutAdapterContext): LayoutNode[] => {
+  const moduleData = context.data.slogan;
+  const sloganData = getValidData((moduleData as { data?: unknown })?.data);
+  if (!sloganData || typeof sloganData !== "object" || Array.isArray(sloganData)) return [];
+
+  const hasSloganField = Object.values(sloganData as Record<string, unknown>).some(
+    (value) => value !== undefined && value !== null && value !== "",
+  );
+  if (!hasSloganField) return [];
+
+  return [
+    {
+      id: "slogan",
+      sourceModuleKey: "slogan",
+      type: "group",
+      breakPolicy: {},
+      payload: { moduleKey: "slogan" },
+    },
+  ];
+};
+
 /** 创建账号、荣誉等普通列表模块适配器 */
 const createListModuleAdapter =
   (moduleKey: string): LayoutAdapter =>
@@ -82,6 +104,7 @@ const createCustomModuleFallback = (context: LayoutAdapterContext): LayoutNode[]
 /** 注册剩余内置模块和自定义模块适配器 */
 export const registerOtherModuleAdapters = (registry: LayoutAdapterRegistry) => {
   registry.register("user", createUserModuleAdapter);
+  registry.register("slogan", createSloganModuleAdapter);
   LIST_MODULE_KEYS.forEach((moduleKey) => {
     registry.register(moduleKey, createListModuleAdapter(moduleKey));
   });

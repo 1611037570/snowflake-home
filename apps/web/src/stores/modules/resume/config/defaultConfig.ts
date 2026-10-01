@@ -4,6 +4,7 @@ import { DEFAULT_UI } from "./uiConfig";
 // 默认模块 key 对应的名称与图标（取自 formConfig，后期自行维护）
 export const DEFAULT_MODULE_NAMES: { key: string; name: string; icon: string }[] = [
   { key: "user", name: "个人信息", icon: "mdi:account" },
+  { key: "slogan", name: "顶部标语", icon: "lucide:type" },
   { key: "account", name: "社交账号", icon: "mdi:account-box-outline" },
   { key: "education", name: "教育经历", icon: "mdi:school-outline" },
   { key: "skill", name: "专业技能", icon: "mdi:hammer-wrench" },
