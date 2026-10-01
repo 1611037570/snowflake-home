@@ -284,6 +284,8 @@ const TEXT_KEYS_SOURCE = `
   层叠弧线: "resumeTemplateStyle_layeredCurve_name",
   荧光网格: "resumeTemplateStyle_markerGrid_name",
   双箭横线: "resumeTemplateStyle_doubleArrow_name",
+  箭头长条: "resumeTemplateStyle_chevronRibbon_name",
+  斜切叠片: "resumeTemplateStyle_slantedLayer_name",
   "以左侧主题色竖条搭配浅色底纹突出模块标题的样式。": "colorBarThemeDescription",
   通栏双栏: "topUserTwoColumnTheme",
   "个人信息顶部通栏，其余模块固定分到左右两栏。": "topUserTwoColumnThemeDescription",
