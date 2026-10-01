@@ -5,7 +5,7 @@ import type { ColumnPlan, FragmentPlan } from "../engine/paginate/pagePlan";
 import ModuleActions from "./moduleActions.vue";
 import ModuleContent from "./moduleContent.vue";
 import Module from "@/views/resume/theme/components/moduleContainer.vue";
-import UserModule from "@/views/resume/theme/components/userContainer.vue";
+import UserModule from "@/views/resume/theme/components/userContainer/index.vue";
 
 const props = defineProps<{
   column: ColumnPlan;
