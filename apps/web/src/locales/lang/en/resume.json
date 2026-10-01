@@ -205,6 +205,8 @@
   "resumeTemplateStyle_doubleArrow_name": "Double Arrow Line",
   "resumeTemplateStyle_chevronRibbon_name": "Chevron Ribbon",
   "resumeTemplateStyle_slantedLayer_name": "Slanted Layers",
+  "resumeTemplateStyle_foldedLabel_name": "Folded Label",
+  "resumeTemplateStyle_foldedLabel_description": "Rectangular labels with white text and a small gray fold beneath the left corner.",
   "resumeTemplateStyle_slantedLayer_description": "Slanted section labels with a pale offset layer and a thin line extending along the bottom.",
   "resumeTemplateStyle_chevronRibbon_description": "Purple chevron headings with a lighter arrow layer and a pale ribbon extending to the right.",
   "resumeTemplateStyle_doubleArrow_description": "Layered triangles with serif section headings and a thin line extending from the center.",
