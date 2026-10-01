@@ -95,9 +95,10 @@ const metricsToMap = (result) =>
 
 const delta = (before, after, key) => +((after[key] || 0) - (before[key] || 0)).toFixed(2);
 
-/** 汇总 CPU 采样：按「函数 + 位置」累加自身耗时，用于定位真正的热点 */
+/** 汇总 CPU 采样：按「函数 + 位置」累加自身耗时，并给出热点函数的调用栈 */
 const summarizeProfile = (profile) => {
   const callFrames = new Map();
+  const parentOf = new Map();
   (profile.nodes || []).forEach((node) => {
     const frame = node.callFrame || {};
     const url = String(frame.url || "").replace(/^https?:\/\/[^/]+/, "");
@@ -105,8 +106,10 @@ const summarizeProfile = (profile) => {
       node.id,
       `${frame.functionName || "(匿名)"} @ ${url}:${(frame.lineNumber ?? 0) + 1}`,
     );
+    (node.children || []).forEach((childId) => parentOf.set(childId, node.id));
   });
   const selfTime = new Map();
+  const selfTimeById = new Map();
   const samples = profile.samples || [];
   const deltas = profile.timeDeltas || [];
   samples.forEach((nodeId, index) => {
@@ -114,11 +117,30 @@ const summarizeProfile = (profile) => {
     if (!key) return;
     // timeDeltas 单位为微秒
     selfTime.set(key, (selfTime.get(key) || 0) + (deltas[index] || 0));
+    selfTimeById.set(nodeId, (selfTimeById.get(nodeId) || 0) + (deltas[index] || 0));
   });
-  return [...selfTime.entries()]
-    .map(([函数, 微秒]) => ({ 函数, 自身ms: +(微秒 / 1000).toFixed(1) }))
-    .sort((a, b) => b.自身ms - a.自身ms)
-    .slice(0, 15);
+  /** 从热点节点向上回溯调用栈，最多保留四层，用于判断是谁触发的 */
+  const stackOf = (nodeId) => {
+    const stack = [];
+    let current = nodeId;
+    for (let depth = 0; depth < 5 && current; depth += 1) {
+      const name = callFrames.get(current);
+      if (name) stack.push(name.split(" @ ")[0]);
+      current = parentOf.get(current);
+    }
+    return stack.join(" ← ");
+  };
+  const stacks = [...selfTimeById.entries()]
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 6)
+    .map(([nodeId, 微秒]) => ({ 自身ms: +(微秒 / 1000).toFixed(1), 调用栈: stackOf(nodeId) }));
+  return {
+    hotspots: [...selfTime.entries()]
+      .map(([函数, 微秒]) => ({ 函数, 自身ms: +(微秒 / 1000).toFixed(1) }))
+      .sort((a, b) => b.自身ms - a.自身ms)
+      .slice(0, 15),
+    stacks,
+  };
 };
 const TRACE_PHASES = [
   // origin: trace 子阶段清单
@@ -423,9 +445,12 @@ const main = async () => {
 
     if (cpuProfile) {
       const hotspots = summarizeProfile(cpuProfile);
-      report.profile = hotspots;
+      report.profile = hotspots.hotspots;
+      report.profileStacks = hotspots.stacks;
       console.log("\n=== 打字阶段 CPU 热点（自身耗时 Top 15）===");
-      console.table(hotspots);
+      console.table(hotspots.hotspots);
+      console.log("\n=== 热点调用栈 ===");
+      hotspots.stacks.forEach((item) => console.log(`  ${item.自身ms}ms  ${item.调用栈}`));
     }
 
     console.log(JSON.stringify(report, null, 2));
