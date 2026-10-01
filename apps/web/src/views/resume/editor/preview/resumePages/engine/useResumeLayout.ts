@@ -102,10 +102,12 @@ export const useResumeLayout = ({
       message: `页面栏编号重复：${columnId}`,
     })),
     ...(validation.value.invalidLayoutFields.length > 0
-      ? [{
-          code: "invalidLayout" as const,
-          message: `布局配置数值错误：${validation.value.invalidLayoutFields.join("、")}`,
-        }]
+      ? [
+          {
+            code: "invalidLayout" as const,
+            message: `布局配置数值错误：${validation.value.invalidLayoutFields.join("、")}`,
+          },
+        ]
       : []),
   ]);
   const contentWidth = computed(
@@ -114,10 +116,12 @@ export const useResumeLayout = ({
   // 栏宽解析只做一次：测量宿主与真实渲染共用同一份栏宽，避免两处各算一遍
   const columnWidths = computed(() => resolveColumnWidths(layout.value, contentWidth.value));
   // 测量宿主按栏位分组渲染：每个节点在自己的栏宽下测量，节点与栏位一一对应，测量结果仍是扁平表
+  // 分组带上区域编号，测量树才能用同一份区域外观渲染（长图导出即取自该树）
   const measureGroups = computed(() =>
     layout.value.regions.flatMap((region) =>
       region.columns.map((column) => ({
         id: column.id,
+        regionId: region.id,
         width: columnWidths.value.get(column.id) ?? contentWidth.value,
         nodes: nodes.value.filter((node) => column.moduleKeys.includes(node.sourceModuleKey)),
       })),
@@ -153,7 +157,9 @@ export const useResumeLayout = ({
       };
     }
     if (!measureDone.value) return null;
-    const orderedRegions = [...layout.value.regions].sort((left, right) => left.order - right.order);
+    const orderedRegions = [...layout.value.regions].sort(
+      (left, right) => left.order - right.order,
+    );
     // 区域高度循环由纯函数结算，测量结果与分页算法只通过回调接入
     const { columnFlows: flowPagesByColumn } = buildRegionFlows<ReturnType<typeof paginateFlow>>(
       orderedRegions,
