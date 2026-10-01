@@ -37,6 +37,7 @@
 
 <script setup lang="ts">
 import { useDraggable } from "vue-draggable-plus";
+import { useDragOnDemand } from "../code/useDragOnDemand.ts";
 import { checkForm } from "../code/checkForm.ts";
 import { hasFieldData, removeFieldData, removeFieldNode } from "../code/fieldData";
 import { getFormItemStyles } from "../code/formItemStyle";
@@ -156,21 +157,15 @@ function removeObject(field: any) {
 function removeField(field: any) {
   removeFieldData(rootData.data, field, getFieldPathContext(field));
 }
-onMounted(async () => {
-  await nextTick();
-
-  if (!items.value?.drag) {
-    return;
-  }
-
-  const element = row.value?.$el ?? row.value;
-  if (!(element instanceof HTMLElement)) return;
-
-  // 根元素就绪后再启动拖拽
-  draggable.start(element);
-});
-onUnmounted(() => {
-  draggable.destroy();
+// 拖拽实例改为按下把手时才创建：编辑期不再保留 Sortable 的列表观察器
+useDragOnDemand({
+  draggable,
+  getElement: () => {
+    const element = row.value?.$el ?? row.value;
+    return element instanceof HTMLElement ? element : null;
+  },
+  getHandle: () => items.value?.dragClass || "",
+  isEnabled: () => items.value?.drag === true,
 });
 </script>
 
