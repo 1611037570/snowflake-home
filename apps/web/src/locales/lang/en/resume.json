@@ -200,6 +200,8 @@
   "resumeTemplateStyle_timeline_description": "A full-width profile above dated experience entries on a timeline.",
   "resumeTemplateStyle_labelLine_name": "Label and Line",
   "resumeTemplateStyle_angledLine_name": "Angled Label",
+  "resumeTemplateStyle_layeredCurve_name": "Layered Curves",
+  "resumeTemplateStyle_layeredCurve_description": "Three softly fading curved layers connect section headings to a thin bottom line.",
   "resumeTemplateStyle_angledLine_description": "Teal angled headings connect to a thin vertical line along each section.",
   "resumeTemplateStyle_labelLine_description": "Dark rectangular section headings with a thin line extending along the bottom.",
   "resumeTemplateContent_xiaoZhou.ts_name": "General Resume",
