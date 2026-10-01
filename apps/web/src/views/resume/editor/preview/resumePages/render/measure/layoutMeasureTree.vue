@@ -3,6 +3,7 @@ import { computed } from "vue";
 import LayoutMeasureHost from "./layoutMeasureHost.vue";
 import LayoutMeasureNode from "./layoutMeasureNode.vue";
 import RegionContainer from "@/views/resume/theme/components/regions/index.vue";
+import PagePattern from "@/views/resume/theme/components/pagePatterns/index.vue";
 import { getContentHeight, PAGE_NUMBER_HEIGHT } from "../../../shared/constants";
 import type { LayoutNode } from "../../engine/types";
 
@@ -70,6 +71,8 @@ const regions = computed(() => {
     :class-name="rootClass"
     :on-measure-el="onMeasureEl"
   >
+    <!-- 背景纹理由页面纹理组件绘制，与分页预览共用同一份实现 -->
+    <PagePattern />
     <!-- 外层只负责页面内缩：区域纵向排列并各自铺满，栏位并排由区域容器负责 -->
     <div class="box-border flex w-auto flex-1 flex-col" :style="insetStyle">
       <RegionContainer

@@ -15,7 +15,6 @@ import {
 } from "@/views/resume/theme/components/regions/registry";
 import { useResumePages } from "./useResumePages";
 import { useResumeTheme } from "@/views/resume/theme/useResumeTheme";
-import { getPageBackgroundImage } from "@/views/resume/theme/styles/pageBackground";
 import { getLegacyMainRegionPadding } from "@/views/resume/theme/styles/themeStyles";
 import { provideResumePreviewContext } from "../shared/previewContext";
 import { isEmptyResume } from "../../toolbar/modules/progress/useResumeStats";
@@ -119,10 +118,10 @@ const measureTreeStyle = computed(() => ({
   ...fontStyle.value,
   ...lineHeightStyle.value,
   backgroundColor: ui.value.page?.background || "#ffffff",
-  // 单页长图导出与分页预览使用相同背景纹理。
-  backgroundImage: getPageBackgroundImage(ui.value.page?.backgroundPattern),
   color: ui.value.page?.background?.toLowerCase() === "#000000" ? "#ffffff" : "#000000",
   minHeight: `${RESUME_HEIGHT}px`,
+  // 纹理层用负层级绘制：宿主需要建立独立层叠上下文，纹理才压在底色之上、正文之下
+  isolation: "isolate",
 }));
 // 测量树页尾沿用旧版单页长图文案格式。
 const measureFooterText = computed(() => {
