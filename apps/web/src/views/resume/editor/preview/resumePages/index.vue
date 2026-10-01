@@ -9,9 +9,14 @@ import ResumePageShell from "./resumePageShell.vue";
 import LayoutMeasureTree from "./render/measure/layoutMeasureTree.vue";
 import Column from "./render/column.vue";
 import RegionContainer from "@/views/resume/theme/components/regions/index.vue";
+import {
+  regionSurfaceAppearances,
+  resolveRegionAppearanceId,
+} from "@/views/resume/theme/components/regions/registry";
 import { useResumePages } from "./useResumePages";
 import { useResumeTheme } from "@/views/resume/theme/useResumeTheme";
 import { getPageBackgroundImage } from "@/views/resume/theme/styles/pageBackground";
+import { getLegacyMainRegionPadding } from "@/views/resume/theme/styles/themeStyles";
 import { provideResumePreviewContext } from "../shared/previewContext";
 import { isEmptyResume } from "../../toolbar/modules/progress/useResumeStats";
 import { getPreviewText } from "../shared/i18n";
@@ -99,10 +104,16 @@ const pagePadding = computed(() => ({
 }));
 // 纸张边框宽度：页面盒子内圈描边，测量树同样内缩，长度口径与引擎一致
 const pageBorderWidth = computed(() => Math.max(0, Number(ui.value.page?.border?.width) || 0));
-// 容器外观和分页几何共用同一份主题样式。
-const viewPadding = computed(() => themeStyles.viewStyle.value.padding);
+// 引擎扣除的正文留白与正文外观渲染的留白必须同源：都按正文外观编号取历史回退值，
+// 主题显式声明了区域留白时由引擎与外观各自合并声明值。
+const viewPadding = computed(() => getLegacyMainRegionPadding(themeStyles.viewTemplate.value));
+// 正文区域是否绘制底板：外观本身绘制底板，或区域留白大于 0 时，区域需要拉满页面高度
 const hasViewSurface = computed(
-  () => viewPadding.value > 0 || themeStyles.viewStyle.value.background !== "transparent",
+  () =>
+    viewPadding.value > 0 ||
+    regionSurfaceAppearances.has(
+      resolveRegionAppearanceId({ main: themeStyles.viewTemplate.value }, "main"),
+    ),
 );
 const measureTreeStyle = computed(() => ({
   ...fontStyle.value,
@@ -289,11 +300,11 @@ defineExpose({
           :width="RESUME_WIDTH"
           :root-class="ui.font?.family"
           :root-style="measureTreeStyle"
-          :view-style="themeStyles.viewStyle.value"
           :page-padding="pagePadding"
           :page-border-width="pageBorderWidth"
           :show-page-number="showPageNumber"
           :footer-text="measureFooterText"
+          :has-view-surface="hasViewSurface"
           :on-measure-el="setLayoutMeasureEl"
         />
       </Teleport>

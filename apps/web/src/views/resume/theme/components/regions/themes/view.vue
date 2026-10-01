@@ -1,23 +1,21 @@
 <script setup>
 import { computed } from "vue";
 import { useResumePreviewContext } from "@/views/resume/editor/preview/shared/previewContext";
-import { resolveMainRegionPadding } from "@/views/resume/theme/regionPadding";
+import { resolveCurrentMainRegionPadding } from "@/views/resume/theme/regionPadding";
 
-const {
-  ui,
-  theme: { viewStyle },
-} = useResumePreviewContext();
-// 正文容器直接使用主题解析后的外观；内边距与分页层读同一份区域留白声明
+// 默认正文外观：底板透明、无圆角，只把区域留白落在自己的盒子里。
+// 引擎按同一份留白扣栏宽与可用高度，两侧读同一个解析函数。
+const { ui } = useResumePreviewContext();
+
 const containerStyle = computed(() => {
-  const padding = resolveMainRegionPadding(ui.value, viewStyle.value.padding);
+  const padding = resolveCurrentMainRegionPadding(ui.value);
   return {
-    backgroundColor: viewStyle.value.background,
-    borderRadius: `${viewStyle.value.radius}px`,
+    backgroundColor: "transparent",
+    color: "inherit",
     paddingTop: `${padding.top}px`,
     paddingRight: `${padding.right}px`,
     paddingBottom: `${padding.bottom}px`,
     paddingLeft: `${padding.left}px`,
-    color: viewStyle.value.color,
   };
 });
 </script>
