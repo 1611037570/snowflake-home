@@ -5,6 +5,11 @@ type Translate = (key: string) => string;
 // 表单模板中的中文只作为默认源文案，运行时映射到页面语言包中的稳定 key。
 const TEXT_KEYS_SOURCE = `
   个人信息: "personalInfo",
+  顶部标语: "sloganModule",
+  标题: "sloganTitle",
+  标语: "sloganSubtitle",
+  请输入标题，例如：个人简历: "sloganTitlePlaceholder",
+  请输入一句话标语: "sloganSubtitlePlaceholder",
   社交账号: "socialAccounts",
   教育经历: "educationExperience",
   专业技能: "professionalSkills",
@@ -360,7 +365,8 @@ export function translateResumeEditorText(value: unknown, translate: Translate =
 
 function localizeField(field: any, translate: Translate) {
   if (!field || typeof field !== "object") return;
-  if (typeof field.label === "string") field.label = translateResumeEditorText(field.label, translate);
+  if (typeof field.label === "string")
+    field.label = translateResumeEditorText(field.label, translate);
   if (Array.isArray(field.rules)) {
     field.rules.forEach((rule: any) => {
       if (typeof rule?.message === "string") {

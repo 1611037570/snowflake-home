@@ -1,5 +1,10 @@
 {
   "personalInfo": "个人信息",
+  "sloganModule": "顶部标语",
+  "sloganTitle": "标题",
+  "sloganSubtitle": "标语",
+  "sloganTitlePlaceholder": "请输入标题，例如：个人简历",
+  "sloganSubtitlePlaceholder": "请输入一句话标语",
   "socialAccounts": "社交账号",
   "educationExperience": "教育经历",
   "professionalSkills": "专业技能",

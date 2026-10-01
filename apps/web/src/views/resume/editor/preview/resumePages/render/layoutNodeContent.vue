@@ -5,6 +5,7 @@ import ItemTitle from "../../components/itemTitle.vue";
 import InlineInfoList from "../../components/inlineInfoList.vue";
 import ResumeField from "../../components/resumeField/index.vue";
 import ModuleTitle from "@/views/resume/theme/components/moduleTitle/index.vue";
+import SloganContent from "@/views/resume/theme/components/sloganModule/index.vue";
 import UserContent from "@/views/resume/theme/components/userModule/index.vue";
 import { getTime } from "./getTime";
 import { isContentEmpty } from "../../shared/validData";
@@ -148,6 +149,10 @@ const itemContentSpacingStyle = computed(() => {
     </div>
   </template>
 
+  <template v-else-if="node.type === 'group' && node.sourceModuleKey === 'slogan'">
+    <SloganContent />
+  </template>
+
   <template v-else-if="node.type === 'group' && node.sourceModuleKey === 'user'">
     <UserContent />
   </template>
@@ -165,7 +170,9 @@ const itemContentSpacingStyle = computed(() => {
         <!-- 普通主题按日期位置排序，时间轴主题放进条目左侧固定栏。 -->
         <div
           class="flex max-w-full min-w-0 flex-wrap items-center"
-          :class="isTimeline ? 'resume-timeline-date' : datePosition === 'left' ? 'order-first' : ''"
+          :class="
+            isTimeline ? 'resume-timeline-date' : datePosition === 'left' ? 'order-first' : ''
+          "
         >
           <span
             :class="{ 'font-bold': datePosition === 'left' && !isTimeline }"
@@ -262,68 +269,63 @@ const itemContentSpacingStyle = computed(() => {
   </template>
 
   <template v-else-if="node.type === 'media' && hasContentBlock">
-      <template v-if="nodePayload.mediaType === 'video'">
-        <!-- 视频作品保留原始网址文本，避免显示为作品名称。 -->
-        <div
-          v-if="isBlockVisible(0)"
-          class="flex h-auto max-w-full min-w-0 flex-wrap items-center justify-between gap-3"
-        >
-          <div class="min-w-0 flex-1" :style="fontValue()">
-            <ItemTitle v-if="nodePayload.item?.name" :name="nodePayload.item.name" />
-          </div>
-          <div
-            v-if="safeUrl(nodePayload.item?.url)"
-            class="max-w-[45%] min-w-0 shrink-0 text-right"
-          >
-            <a
-              :href="safeUrl(nodePayload.item.url)"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="inline max-w-full min-w-0 break-all hover:underline"
-              :class="{ underline: linkUnderline }"
-            >
-              <ResumeField
-                :model-value="nodePayload.item.url"
-                class="inline max-w-full min-w-0 break-all"
-              />
-            </a>
-          </div>
+    <template v-if="nodePayload.mediaType === 'video'">
+      <!-- 视频作品保留原始网址文本，避免显示为作品名称。 -->
+      <div
+        v-if="isBlockVisible(0)"
+        class="flex h-auto max-w-full min-w-0 flex-wrap items-center justify-between gap-3"
+      >
+        <div class="min-w-0 flex-1" :style="fontValue()">
+          <ItemTitle v-if="nodePayload.item?.name" :name="nodePayload.item.name" />
         </div>
-        <div
-          v-if="nodePayload.item?.desc && isBlockVisible(1)"
-          data-layout-split-lines
-          :style="
-            decoration === 'middle' || decoration === 'bottom' ? undefined : innerSpacingStyle
-          "
-        >
-          <ResumeField :model-value="slicedItemDesc" />
-        </div>
-      </template>
-      <template v-else>
-        <!-- 图片条目内容盒整体作为一个块，与顶部间距分离后间距可以单独留在上一页 -->
-        <div class="flex flex-col gap-3" :style="mediaWidthStyle">
-          <img
-            v-if="nodePayload.item?.img"
-            :src="nodePayload.item.img"
-            :alt="nodePayload.item.name || ''"
-            class="max-w-full"
-          />
+        <div v-if="safeUrl(nodePayload.item?.url)" class="max-w-[45%] min-w-0 shrink-0 text-right">
           <a
-            v-if="safeUrl(nodePayload.item?.url)"
             :href="safeUrl(nodePayload.item.url)"
             target="_blank"
             rel="noopener noreferrer"
-            class="block text-center hover:underline"
+            class="inline max-w-full min-w-0 break-all hover:underline"
             :class="{ underline: linkUnderline }"
           >
-            {{ nodePayload.item.name || nodePayload.item.url }}
+            <ResumeField
+              :model-value="nodePayload.item.url"
+              class="inline max-w-full min-w-0 break-all"
+            />
           </a>
-          <span v-else-if="nodePayload.item?.name" class="block text-center">{{
-            nodePayload.item.name
-          }}</span>
-          <span v-if="nodePayload.item?.desc">{{ nodePayload.item.desc }}</span>
         </div>
-      </template>
+      </div>
+      <div
+        v-if="nodePayload.item?.desc && isBlockVisible(1)"
+        data-layout-split-lines
+        :style="decoration === 'middle' || decoration === 'bottom' ? undefined : innerSpacingStyle"
+      >
+        <ResumeField :model-value="slicedItemDesc" />
+      </div>
+    </template>
+    <template v-else>
+      <!-- 图片条目内容盒整体作为一个块，与顶部间距分离后间距可以单独留在上一页 -->
+      <div class="flex flex-col gap-3" :style="mediaWidthStyle">
+        <img
+          v-if="nodePayload.item?.img"
+          :src="nodePayload.item.img"
+          :alt="nodePayload.item.name || ''"
+          class="max-w-full"
+        />
+        <a
+          v-if="safeUrl(nodePayload.item?.url)"
+          :href="safeUrl(nodePayload.item.url)"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="block text-center hover:underline"
+          :class="{ underline: linkUnderline }"
+        >
+          {{ nodePayload.item.name || nodePayload.item.url }}
+        </a>
+        <span v-else-if="nodePayload.item?.name" class="block text-center">{{
+          nodePayload.item.name
+        }}</span>
+        <span v-if="nodePayload.item?.desc">{{ nodePayload.item.desc }}</span>
+      </div>
+    </template>
   </template>
 </template>
 

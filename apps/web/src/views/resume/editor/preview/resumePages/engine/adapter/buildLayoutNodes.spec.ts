@@ -24,11 +24,18 @@ describe("buildLayoutNodes media modules", () => {
 
       // 每个条目前都应有间距节点，第二条及后续条目不能遗漏。
       expect(nodes.map((node) => node.type)).toEqual([
-        "title", "spacer", nodes[2]!.type, "spacer", nodes[2]!.type, "spacer", nodes[2]!.type,
+        "title",
+        "spacer",
+        nodes[2]!.type,
+        "spacer",
+        nodes[2]!.type,
+        "spacer",
+        nodes[2]!.type,
       ]);
       const spacers = nodes.filter((node) => node.type === "spacer");
       expect(spacers.map((node) => node.id)).toEqual(
-        nodes.filter((node) => node.type !== "title" && node.type !== "spacer")
+        nodes
+          .filter((node) => node.type !== "title" && node.type !== "spacer")
           .map((node) => `${node.id}.paragraph-spacing`),
       );
       expect(spacers.every((node) => node.hideWhenPageLeading)).toBe(true);
@@ -66,5 +73,29 @@ describe("buildLayoutNodes media modules", () => {
         .filter((node) => node.type === "title")
         .map((node) => (node.payload as { moduleKey: string }).moduleKey),
     ).toEqual(["image", "video"]);
+  });
+});
+
+describe("buildLayoutNodes slogan module", () => {
+  it("顶部标语生成单个分组节点，且不带模块标题", () => {
+    const nodes = buildLayoutNodes({
+      // 模块列表：只声明顶部标语
+      moduleKeys: ["slogan"],
+      // 模块数据：标题与标语均有内容
+      data: { slogan: { data: { title: "个人简历", subtitle: "在追求中发现可能" } } },
+    });
+
+    expect(nodes.map((node) => [node.id, node.type, node.sourceModuleKey])).toEqual([
+      ["slogan", "group", "slogan"],
+    ]);
+  });
+
+  it("顶部标语没有内容时不生成节点，也不保留零高标题占位", () => {
+    const nodes = buildLayoutNodes({
+      moduleKeys: ["slogan"],
+      data: { slogan: { data: { title: "", subtitle: "" } } },
+    });
+
+    expect(nodes).toEqual([]);
   });
 });

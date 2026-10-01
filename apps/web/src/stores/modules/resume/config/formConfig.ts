@@ -1023,6 +1023,53 @@ export const DEFAULT_ADVANTAGE_FORM = {
     },
   ],
 } satisfies FormField;
+// 顶部标语
+export const DEFAULT_SLOGAN_FORM = {
+  type: "group",
+  component: "collapseModule",
+  key: "slogan",
+  context: ["slogan"],
+  props: {
+    add: false,
+  },
+  model: createModuleState("顶部标语"),
+  checks: MODULE_CHECKS,
+  slot: "default",
+  fields: [
+    createUserField("title", "标题", {
+      type: "object",
+      key: "title",
+      component: "input",
+      span: 24,
+      model: [
+        {
+          source: ["data", "title"],
+          prop: "modelValue",
+        },
+      ],
+      props: {
+        placeholder: "请输入标题，例如：个人简历",
+        clearable: true,
+      },
+    }),
+    createUserField("subtitle", "标语", {
+      type: "object",
+      key: "subtitle",
+      component: "input",
+      span: 24,
+      model: [
+        {
+          source: ["data", "subtitle"],
+          prop: "modelValue",
+        },
+      ],
+      props: {
+        placeholder: "请输入一句话标语",
+        clearable: true,
+      },
+    }),
+  ],
+} satisfies FormField;
 // 工作经历
 export const DEFAULT_WORK_FORM = {
   type: "group",
@@ -1802,6 +1849,7 @@ export const allConfig = {
   skill: DEFAULT_SKILL_FORM,
   user: DEFAULT_USER_FORM,
   advantage: DEFAULT_ADVANTAGE_FORM,
+  slogan: DEFAULT_SLOGAN_FORM,
   education: DEFAULT_EDUCATION_FORM,
   video: DEFAULT_VIDEO_FORM,
   image: DEFAULT_IMAGE_FORM,

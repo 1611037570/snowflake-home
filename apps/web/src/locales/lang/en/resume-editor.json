@@ -1,5 +1,10 @@
 {
   "personalInfo": "Personal Information",
+  "sloganModule": "Top Slogan",
+  "sloganTitle": "Title",
+  "sloganSubtitle": "Slogan",
+  "sloganTitlePlaceholder": "Enter a title, e.g. Resume",
+  "sloganSubtitlePlaceholder": "Enter a one-line slogan",
   "socialAccounts": "Social Accounts",
   "educationExperience": "Education",
   "professionalSkills": "Professional Skills",

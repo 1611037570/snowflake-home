@@ -61,9 +61,12 @@ export const createResumeLayoutAdapterRegistry = (): LayoutAdapterRegistry => {
   return registry;
 };
 
+/** 不渲染模块标题的模块：个人信息与顶部标语由外观自带标题排版 */
+const NO_MODULE_TITLE_KEYS = new Set(["user", "slogan"]);
+
 /** 把模块标题作为独立节点插到模块最前：标题与模块内容之间不插入模块间距，由同一模块 key 保证 */
 const insertModuleTitle = (moduleKey: string, nodes: LayoutNode[]): LayoutNode[] =>
-  moduleKey === "user" ? nodes : [createModuleTitleNode(moduleKey), ...nodes];
+  NO_MODULE_TITLE_KEYS.has(moduleKey) ? nodes : [createModuleTitleNode(moduleKey), ...nodes];
 
 /** 上一轮生成的节点与签名，用于复用内容未变的节点对象 */
 let lastNodesById = new Map<string, LayoutNode>();
@@ -122,7 +125,7 @@ export const buildLayoutNodes = ({
     if (!adapter) return [];
     const nodes = adapter({ moduleKey, data, ui, config });
     const spacing = Number((ui as any)?.page?.spacing?.paragraph);
-    if (nodes.length === 0 && moduleKey !== "user") {
+    if (nodes.length === 0 && !NO_MODULE_TITLE_KEYS.has(moduleKey)) {
       // 空模块保留零高占位与标题，避免模块无内容时标题从预览中消失。
       return [
         createModuleTitleNode(moduleKey),
