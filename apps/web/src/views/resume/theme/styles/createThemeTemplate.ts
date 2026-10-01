@@ -46,6 +46,8 @@ export const resolveThemeTemplate = (definition: ResumeThemeDefinition): ResumeT
       ...ui.page,
       padding: { ...DEFAULT_UI.page.padding, ...ui.page?.padding },
       spacing: { ...DEFAULT_UI.page.spacing, ...ui.page?.spacing },
+      // 纸张边框按字段合并：主题只声明颜色时宽度仍沿用默认值
+      border: { ...DEFAULT_UI.page.border, ...ui.page?.border },
     },
     font: { ...DEFAULT_UI.font, ...ui.font },
     content: { ...DEFAULT_UI.content, ...ui.content },

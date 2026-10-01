@@ -175,6 +175,12 @@ export const defaultFooter = "";
 export const defaultPaddingVertical = 24;
 // 默认左右页边距
 export const defaultPaddingHorizontal = 24;
+// 默认页面边框宽度（0 表示不描边）
+export const defaultPageBorderWidth = 0;
+// 默认页面边框颜色
+export const defaultPageBorderColor = "#e9edf0";
+// 默认页面圆角，与页面外壳原有圆角保持一致
+export const defaultPageRadius = 24;
 // 默认字体类型
 export const defaultFontFamily = "text-puhui";
 // 默认字体大小
@@ -237,6 +243,10 @@ export const DEFAULT_UI = {
   page: {
     background: defaultPageBackground,
     padding: { vertical: defaultPaddingVertical, horizontal: defaultPaddingHorizontal },
+    // 页面纸张边框：宽度参与页面内容宽高，画在页面盒子内圈
+    border: { width: defaultPageBorderWidth, color: defaultPageBorderColor },
+    // 页面纸张圆角，单位为像素
+    radius: defaultPageRadius,
     // 页面内留白参数统一由页面配置管理。
     spacing: {
       paragraph: defaultParagraphSpacing,

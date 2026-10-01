@@ -16,6 +16,8 @@ defineProps<{
   viewStyle?: { background: string; radius: number; color: string };
   /** 页面四周留白：作为正文容器的外边距内缩，与真实页面位置一致且不改变测量宽度 */
   pagePadding?: { top: number; right: number; bottom: number; left: number };
+  /** 纸张边框宽度：真实页面把边框画在页面盒子内圈，测量宿主同样内缩这么多 */
+  pageBorderWidth?: number;
   showPageNumber?: boolean;
   footerText?: string;
   onMeasureEl?: (element: HTMLElement | null) => void;
@@ -23,16 +25,17 @@ defineProps<{
 
 /** 正文容器样式：内边距由页面几何预留，这里只负责底板、圆角、文字色与外边距内缩 */
 const resolveViewStyle = (
-  viewStyle?: { background: string; radius: number; color: string },
-  pagePadding?: { top: number; right: number; bottom: number; left: number },
+  viewStyle: { background: string; radius: number; color: string } | undefined,
+  pagePadding: { top: number; right: number; bottom: number; left: number } | undefined,
+  pageBorderWidth = 0,
 ) => ({
   backgroundColor: viewStyle?.background ?? "transparent",
   borderRadius: `${viewStyle?.radius ?? 0}px`,
   color: viewStyle?.color ?? "inherit",
-  marginTop: `${pagePadding?.top ?? 0}px`,
-  marginRight: `${pagePadding?.right ?? 0}px`,
-  marginBottom: `${pagePadding?.bottom ?? 0}px`,
-  marginLeft: `${pagePadding?.left ?? 0}px`,
+  marginTop: `${(pagePadding?.top ?? 0) + pageBorderWidth}px`,
+  marginRight: `${(pagePadding?.right ?? 0) + pageBorderWidth}px`,
+  marginBottom: `${(pagePadding?.bottom ?? 0) + pageBorderWidth}px`,
+  marginLeft: `${(pagePadding?.left ?? 0) + pageBorderWidth}px`,
 });
 </script>
 
@@ -43,10 +46,10 @@ const resolveViewStyle = (
     :class-name="rootClass"
     :on-measure-el="onMeasureEl"
   >
-    <!-- 与真实页面共用同一个正文容器外观：外边距与页面留白一致，容器本身不再叠加内边距 -->
+    <!-- 与真实页面共用同一个正文容器外观：外边距与页面留白加纸张边框一致，容器本身不再叠加内边距 -->
     <div
       class="resume-view-container box-border w-auto flex-1"
-      :style="resolveViewStyle(viewStyle, pagePadding)"
+      :style="resolveViewStyle(viewStyle, pagePadding, pageBorderWidth)"
     >
       <!-- 正文栏位由上面的正文容器承载；其他区域（顶部标语等）在这里套上同一份区域外观，
            长图导出取自这棵树，装饰层才会与分页预览一致。栏宽由引擎下发，外套不改变测量宽度 -->
