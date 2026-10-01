@@ -198,6 +198,8 @@
   "resumeTemplateStyle_frame_description": "红色页面背景与白色正文容器。",
   "resumeTemplateStyle_timeline_name": "时间轴",
   "resumeTemplateStyle_timeline_description": "顶部个人信息通栏，经历日期沿左侧时间轴排列。",
+  "resumeTemplateStyle_labelLine_name": "色块横线",
+  "resumeTemplateStyle_labelLine_description": "深色矩形标题搭配底部延伸横线，简洁正式。",
   "resumeTemplateContent_xiaoZhou.ts_name": "通用简历",
   "resumeTemplateContent_xiaoZhou.ts_description": "适合通用求职场景的完整简历模板",
   "resumeTemplateContent_xiaoZhou.ts_tag_1": "通用简历",
