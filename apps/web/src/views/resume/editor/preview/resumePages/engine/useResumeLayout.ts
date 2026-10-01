@@ -65,8 +65,14 @@ export const useResumeLayout = ({
   const activeModuleKeys = computed(() => [
     ...new Set(nodes.value.map((node) => node.sourceModuleKey)),
   ]);
+  // 纸张边框宽度：参与页面内容宽高，渲染层与测量宿主都用同一份取值
+  const pageBorderWidth = computed(() => Math.max(0, Number(ui.value.page?.border?.width) || 0));
   const availableHeight = computed(() =>
-    getContentHeight(Number(ui.value.page?.padding?.vertical) || 0, showPageNumber.value),
+    getContentHeight(
+      Number(ui.value.page?.padding?.vertical) || 0,
+      showPageNumber.value,
+      pageBorderWidth.value,
+    ),
   );
   const layout = computed<PageLayoutConfig>(() =>
     createResumeLayout({
@@ -110,8 +116,12 @@ export const useResumeLayout = ({
         ]
       : []),
   ]);
+  // 页面内容宽度：整页宽扣掉纸张边框与左右页边距
   const contentWidth = computed(
-    () => RESUME_WIDTH - (Number(ui.value.page?.padding?.horizontal) || 0) * 2,
+    () =>
+      RESUME_WIDTH -
+      pageBorderWidth.value * 2 -
+      (Number(ui.value.page?.padding?.horizontal) || 0) * 2,
   );
   // 栏宽解析只做一次：测量宿主与真实渲染共用同一份栏宽，避免两处各算一遍
   const columnWidths = computed(() => resolveColumnWidths(layout.value, contentWidth.value));

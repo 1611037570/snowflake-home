@@ -97,6 +97,8 @@ const pagePadding = computed(() => ({
   bottom: Number(ui.value.page?.padding?.vertical) || 0,
   left: Number(ui.value.page?.padding?.horizontal) || 0,
 }));
+// 纸张边框宽度：页面盒子内圈描边，测量树同样内缩，长度口径与引擎一致
+const pageBorderWidth = computed(() => Math.max(0, Number(ui.value.page?.border?.width) || 0));
 // 容器外观和分页几何共用同一份主题样式。
 const viewPadding = computed(() => themeStyles.viewStyle.value.padding);
 const hasViewSurface = computed(
@@ -289,6 +291,7 @@ defineExpose({
           :root-style="measureTreeStyle"
           :view-style="themeStyles.viewStyle.value"
           :page-padding="pagePadding"
+          :page-border-width="pageBorderWidth"
           :show-page-number="showPageNumber"
           :footer-text="measureFooterText"
           :on-measure-el="setLayoutMeasureEl"

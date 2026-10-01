@@ -17,10 +17,6 @@ const PADDING_VERTICAL = 24;
 const PADDING_HORIZONTAL = 24;
 const MODULE_GAP = 12;
 const SHOW_PAGE_NUMBER = true;
-/** 整页可用高度：整页高减去上下页边距与页尾占用 */
-const AVAILABLE_HEIGHT = getContentHeight(PADDING_VERTICAL, SHOW_PAGE_NUMBER);
-/** 页面内容宽度：整页宽减去左右页边距 */
-const CONTENT_WIDTH = RESUME_WIDTH - PADDING_HORIZONTAL * 2;
 
 /** 区域高度结算的观测量：每栏每页的可用高度与已用高度 */
 interface TestFlowPage {
@@ -42,6 +38,10 @@ interface CaseDefinition {
 }
 
 const createCase = (definition: CaseDefinition) => {
+  // 纸张边框参与页面内容宽高：取值方式与 useResumeLayout 一致
+  const borderWidth = Math.max(0, Number((definition.ui.page as any)?.border?.width) || 0);
+  const contentWidth = RESUME_WIDTH - borderWidth * 2 - PADDING_HORIZONTAL * 2;
+  const availableHeight = getContentHeight(PADDING_VERTICAL, SHOW_PAGE_NUMBER, borderWidth);
   const layout = createResumeLayout({
     ui: definition.ui,
     moduleKeys: definition.moduleKeys || MODULE_KEYS,
@@ -50,7 +50,7 @@ const createCase = (definition: CaseDefinition) => {
     gap: MODULE_GAP,
     viewPadding: definition.viewPadding,
   });
-  const columnWidths = resolveColumnWidths(layout, CONTENT_WIDTH);
+  const columnWidths = resolveColumnWidths(layout, contentWidth);
   // 区域分页流回调在引擎里声明为泛型函数类型，基线只需固定一种页面结构，这里显式收窄
   const buildFlow = ((column: ColumnConfig, plan: ColumnFlowPlan): TestFlowPage[] => [
     {
@@ -61,16 +61,16 @@ const createCase = (definition: CaseDefinition) => {
     },
   ]) as unknown as RegionFlowBuilder;
   const { columnFlows } = buildRegionFlows<TestFlowPage>(layout.regions, {
-    availableHeight: AVAILABLE_HEIGHT,
+    availableHeight,
     regionGap: layout.regionGap,
     buildFlow,
   });
 
   return {
     /** 整页可用高度 */
-    availableHeight: AVAILABLE_HEIGHT,
+    availableHeight,
     /** 页面内容宽度 */
-    contentWidth: CONTENT_WIDTH,
+    contentWidth,
     /** 页面四周留白 */
     pagePadding: layout.pagePadding,
     /** 区域之间与栏之间的间距 */
@@ -448,6 +448,20 @@ describe("简历页几何基线", () => {
         ["main-column", [[427, 300]]],
       ],
     });
+  });
+
+  it("纸张边框扣掉页面内容宽高", () => {
+    const snapshot = createCase({
+      name: "纸张边框",
+      // 六像素边框：左右共扣十二像素宽，上下共扣十二像素高
+      ui: { layout: { type: "singleColumn" }, page: { border: { width: 6 } } },
+      viewPadding: 0,
+    });
+
+    expect(snapshot.contentWidth).toBe(734);
+    expect(snapshot.availableHeight).toBe(1051);
+    expect(snapshot.columnWidths).toEqual([["main-column", 734]]);
+    expect(snapshot.columnFlowHeights).toEqual([["main-column", [[1051, 300]]]]);
   });
 
   it("主题声明正文区域留白时按方向覆盖正文容器内边距", () => {

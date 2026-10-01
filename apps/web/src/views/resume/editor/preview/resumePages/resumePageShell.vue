@@ -3,10 +3,18 @@
 // 仅排版展示，不感知分页/测量逻辑；根元素回传供缩略图测量与导出使用
 import { computed, useTemplateRef, watch } from "vue";
 import { getPreviewText } from "../shared/i18n";
-import { PAGE_NUMBER_HEIGHT, RESUME_CONTAINER_HEIGHT, RESUME_CONTAINER_WIDTH } from "../shared/constants";
+import {
+  PAGE_NUMBER_HEIGHT,
+  RESUME_CONTAINER_HEIGHT,
+  RESUME_CONTAINER_WIDTH,
+} from "../shared/constants";
 import { useResumePreviewContext } from "../shared/previewContext";
 import { useResumeStore } from "@/stores";
-import { defaultPageBackground } from "@/stores/modules/resume/config/uiConfig";
+import {
+  defaultPageBackground,
+  defaultPageBorderColor,
+  defaultPageRadius,
+} from "@/stores/modules/resume/config/uiConfig";
 import { getPageBackgroundImage } from "@/views/resume/theme/styles/pageBackground";
 
 const props = defineProps({
@@ -49,6 +57,13 @@ const pageTextColor = computed(() =>
 );
 // 预览整体带 scale 缩放，线宽会被一起缩小，按足够醒目的宽度标注
 const debugOutlineStyle = { outline: "4px dashed var(--sf-error)", outlineOffset: "-1px" };
+// 纸张外观：圆角与边框都来自主题配置，边框画在页面盒子内圈并参与内容宽高
+const pageSurfaceStyle = computed(() => ({
+  borderRadius: `${Number(props.ui.page?.radius ?? defaultPageRadius)}px`,
+  borderWidth: `${Math.max(0, Number(props.ui.page?.border?.width) || 0)}px`,
+  borderStyle: "solid",
+  borderColor: props.ui.page?.border?.color || defaultPageBorderColor,
+}));
 // 底部空间由页尾与下边距共用：页尾更高时不再叠加下边距，下边距更大时只补足超出的部分
 const bottomSpacerHeight = computed(() => {
   const paddingBottom = parseFloat(props.styles.paddingStyle.paddingBottom) || 0;
@@ -80,12 +95,13 @@ watch(
 <template>
   <div
     ref="rootRef"
-    class="resume-page-item relative flex flex-col rounded-3xl"
+    class="resume-page-item relative flex flex-col"
     :class="[ui.font?.family]"
     :style="[
       styles.paddingStyle,
       styles.fontStyle,
       styles.lineHeightStyle,
+      pageSurfaceStyle,
       {
         backgroundColor: pageBackground,
         // 背景纹理铺满页面，与正文和页脚共用页面外壳。
