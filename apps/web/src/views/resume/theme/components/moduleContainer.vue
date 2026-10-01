@@ -12,10 +12,15 @@ const emit = defineEmits<{
 }>();
 
 const {
-  theme: { moduleTemplate, themeColor },
+  theme: { moduleTemplate, themeColor, themeColorLine },
 } = useResumePreviewContext();
 const isOutlineModule = computed(
   () => getThemeModuleStyle(moduleTemplate.value).frame === "outline" && props.moduleKey !== "user",
+);
+// 左侧细线由模块外壳绘制，跨页时跟随每页模块分片延伸。
+const isLeftLineModule = computed(
+  () =>
+    getThemeModuleStyle(moduleTemplate.value).frame === "leftLine" && props.moduleKey !== "user",
 );
 </script>
 
@@ -33,6 +38,12 @@ const isOutlineModule = computed(
       :style="{ borderColor: themeColor }"
     />
     <slot name="actions" />
+    <div
+      v-if="isLeftLineModule"
+      aria-hidden="true"
+      class="pointer-events-none absolute inset-y-0 left-0 border-l"
+      :style="{ borderColor: themeColorLine }"
+    />
     <slot />
   </div>
 </template>

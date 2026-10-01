@@ -28,7 +28,12 @@ const itemStyle = computed(() => {
     backgroundColor: props.item.background ?? "transparent",
     borderRadius: props.item.radius ?? "0",
     padding: typeof padding === "number" ? `${padding}px` : String(padding),
-    paddingLeft: props.timeline ? "var(--timeline-rail-width)" : undefined,
+    // 斜角竖线主题保留独立左侧留白，时间轴仍优先使用日期栏宽度。
+    paddingLeft: props.timeline
+      ? "var(--timeline-rail-width)"
+      : props.item.paddingLeft === undefined
+        ? undefined
+        : `${props.item.paddingLeft}px`,
   };
 });
 // 分页片段的边框边缘跟随外壳分片规则收起。
