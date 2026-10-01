@@ -1,6 +1,7 @@
 import { xiaoyang } from "../avatar";
 
-// 全字段产品经理简历，用于完整展示全部模块与并列信息分隔效果。
+// 全字段范本：覆盖全部模块与全部业务字段，作为字段完整性基准。
+// 新增业务字段后必须在此补齐对应取值，否则无法用它核对新字段的展示效果。
 const resumeData: any = {
   data: {
     user: {
@@ -14,16 +15,20 @@ const resumeData: any = {
         nation: "汉族",
         zodiac: "双子座",
         mbti: "ENTJ",
+        educationLevel: "本科",
         workTime: "2019.07",
         phone: "15888888888",
         email: "16****70@qq.com",
         wechat: "liran_pm",
         github: "https://github.com/liran-pm",
         linkedin: "https://www.linkedin.com/in/liran-pm",
+        website: "https://portfolio.example.com/li-ran",
         status: "在职看机会",
+        arrivalTime: "一个月内到岗",
         political: "中共党员",
         city: "上海",
         nativePlace: "江苏南京",
+        sourcePlace: "江苏南京",
         currentCity: "上海",
         salary: "30-40K",
         heightWeight: { height: "178", weight: "70" },

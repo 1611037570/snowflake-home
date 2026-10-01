@@ -197,14 +197,15 @@ export const resumeTemplateList: ResumeTemplate[] = [
     tags: ["视频剪辑", "影视后期", "作品集"],
   },
   {
-    fileName: "pm__3-5__01.ts",
-    name: "全字段产品经理简历",
-    description: "覆盖个人信息、全部经历和作品模块的产品经理简历范本",
+    // 全字段范本：字段完整性基准，新增业务字段必须同步补充
+    fileName: "allFields.ts",
+    name: "全字段简历",
+    description: "覆盖全部模块与全部业务字段的范本，用于字段完整性核对",
     scene: ["social-recruitment"],
     industry: ["internet"],
     position: ["product-manager"],
     workExperience: ["3-5"],
-    tags: ["全字段", "产品经理", "信息分隔"],
+    tags: ["全字段", "信息分隔", "字段基准"],
   },
   {
     fileName: "fe__0__01.ts",
