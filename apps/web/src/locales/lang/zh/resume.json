@@ -192,6 +192,8 @@
   "resumeTemplateStyle_topUserTwoColumn_description": "个人信息顶部通栏，其余模块固定分到左右两栏。",
   "resumeTemplateStyle_twoColumn_name": "双栏",
   "resumeTemplateStyle_twoColumn_description": "所有模块固定分到左右两栏，适合内容较多的简历。",
+  "resumeTemplateStyle_colorBar_name": "色条",
+  "resumeTemplateStyle_colorBar_description": "以左侧主题色竖条搭配浅色底纹突出模块标题的样式。",
   "resumeTemplateStyle_frame_name": "红色边框",
   "resumeTemplateStyle_frame_description": "红色页面背景与白色正文容器。",
   "resumeTemplateStyle_timeline_name": "时间轴",

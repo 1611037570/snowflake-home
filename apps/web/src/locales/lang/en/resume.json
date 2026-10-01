@@ -192,6 +192,8 @@
   "resumeTemplateStyle_topUserTwoColumn_description": "Place personal details across the top, with other sections in two columns.",
   "resumeTemplateStyle_twoColumn_name": "Two Columns",
   "resumeTemplateStyle_twoColumn_description": "Arrange every section in two columns for content-rich resumes.",
+  "resumeTemplateStyle_colorBar_name": "Color Bar",
+  "resumeTemplateStyle_colorBar_description": "A colored vertical bar with a soft tint behind each section title.",
   "resumeTemplateStyle_frame_name": "Red Frame",
   "resumeTemplateStyle_frame_description": "A red page background around a white content panel.",
   "resumeTemplateStyle_timeline_name": "Timeline",
