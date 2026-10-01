@@ -1,6 +1,7 @@
 import academic from "./academic";
 import angledLine from "./angledLine";
 import business from "./business";
+import chevronRibbon from "./chevronRibbon";
 import classic from "./classic";
 import colorBar from "./colorBar";
 import creative from "./creative";
@@ -14,6 +15,7 @@ import markerGrid from "./markerGrid";
 import minimal from "./minimal";
 import modern from "./modern";
 import outline from "./outline";
+import slantedLayer from "./slantedLayer";
 import steady from "./steady";
 import timeline from "./timeline";
 import topUserTwoColumn from "./topUserTwoColumn";
@@ -48,6 +50,8 @@ export const themeTemplateList = createThemeTemplates([
   layeredCurve,
   markerGrid,
   doubleArrow,
+  chevronRibbon,
+  slantedLayer,
 ]);
 
 // 主题选择列表与预览渲染共用这份注册表。
