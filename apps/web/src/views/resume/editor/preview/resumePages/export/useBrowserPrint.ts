@@ -1,6 +1,6 @@
 import { nextTick } from "vue";
 import { useResumeStore } from "@/stores";
-import { getExportFileName, resumeTitle } from "../../../../resumeName";
+import { useResumeName } from "../../../../hooks/useResumeName";
 
 type ResumeRootRef = { value: HTMLElement | null };
 
@@ -77,6 +77,7 @@ export const printResume = async (
 ) => {
   void scale;
   const resumeStore = useResumeStore();
+  const { getExportFileName, resumeTitle } = useResumeName();
   const signal = resumeStore.beginPrinting();
   if (!signal) return;
   // 记录导出所属简历，避免旧打印任务继续操作新简历

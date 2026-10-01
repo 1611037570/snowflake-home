@@ -1,5 +1,5 @@
 <script setup>
-import { getExportFileName, resumeTitle } from "../../../../resumeName.ts";
+import { useResumeName } from "../../../../hooks/useResumeName";
 import eventBus from "@/utils/modules/eventBus";
 import { useSystemStore, useResumeStore } from "@/stores";
 import { storeToRefs } from "pinia";
@@ -14,6 +14,7 @@ const resumeStore = useResumeStore();
 const systemStore = useSystemStore();
 const { currentItem, isPrinting } = storeToRefs(resumeStore);
 const { isConnected } = storeToRefs(systemStore);
+const { getExportFileName, resumeTitle } = useResumeName();
 const pdfExportType = ref("local");
 const longImageExportType = ref("png");
 

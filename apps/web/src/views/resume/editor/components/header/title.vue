@@ -2,9 +2,10 @@
 import { useResumeStore } from "@/stores";
 import { storeToRefs } from "pinia";
 import { ref } from "vue";
-import { resumeTitle } from "../../../resumeName";
+import { useResumeName } from "../../../hooks/useResumeName";
 const resumeStore = useResumeStore();
 const { currentUsage } = storeToRefs(resumeStore);
+const { resumeTitle } = useResumeName();
 
 const title = resumeTitle;
 // 编辑标题弹窗

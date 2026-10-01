@@ -1,5 +1,5 @@
 import { nextTick } from "vue";
-import { getExportFileName, resumeTitle } from "../../../../resumeName";
+import { useResumeName } from "../../../../hooks/useResumeName";
 import { useResumeStore } from "@/stores";
 import { RESUME_WIDTH } from "../../shared/constants";
 
@@ -73,6 +73,7 @@ const escapeHtml = (value: string) =>
 // 导出可直接打开并编辑的单文件 HTML
 export const exportHtml = async (rootRef: ResumeRootRef, onSuccess?: () => void) => {
   const resumeStore = useResumeStore();
+  const { getExportFileName, resumeTitle } = useResumeName();
   const signal = resumeStore.beginPrinting();
   if (!signal) return;
   // 记录导出所属简历，避免旧导出任务下载新简历内容

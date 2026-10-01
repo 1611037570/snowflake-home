@@ -6,7 +6,7 @@
  */
 import { nextTick } from "vue";
 import { storeToRefs } from "pinia";
-import { getExportFileName, resumeTitle } from "../../../../resumeName";
+import { useResumeName } from "../../../../hooks/useResumeName";
 import { useResumeStore } from "@/stores";
 import { PDF_PAGE_WIDTH } from "../../shared/constants";
 
@@ -102,6 +102,7 @@ const exportLongImage = async (
   format: "png" | "pdf" = "png",
 ) => {
   const resumeStore = useResumeStore();
+  const { getExportFileName, resumeTitle } = useResumeName();
   const { selectedModule, currentUI } = storeToRefs(resumeStore);
   const signal = resumeStore.beginPrinting();
   if (!signal) return;

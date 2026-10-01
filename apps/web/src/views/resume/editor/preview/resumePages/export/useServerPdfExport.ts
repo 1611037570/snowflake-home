@@ -8,7 +8,7 @@ import { storeToRefs } from "pinia";
 import { toRaw } from "vue";
 import { useResumeStore } from "@/stores";
 import { createResumePdf } from "@/apis/request/modules/snowflake";
-import { getExportFileName, resumeTitle } from "../../../../resumeName";
+import { useResumeName } from "../../../../hooks/useResumeName";
 
 const cloneJson = (value: any) => JSON.parse(JSON.stringify(toRaw(value)));
 
@@ -21,6 +21,7 @@ export const printServerPDF = async (
   void scale;
 
   const resumeStore = useResumeStore();
+  const { getExportFileName, resumeTitle } = useResumeName();
   const { selectedModule, currentItem, system } = storeToRefs(resumeStore);
   const signal = resumeStore.beginPrinting();
   if (!signal || !currentItem.value) return;

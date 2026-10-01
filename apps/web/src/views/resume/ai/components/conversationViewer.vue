@@ -2,10 +2,11 @@
 import { useAiStore, useResumeStore, type Chat } from "@/stores";
 import { storeToRefs } from "pinia";
 import { computed, ref, watch } from "vue";
-import { getResumeTitle } from "../../resumeName";
+import { useResumeName } from "../../hooks/useResumeName";
 
 const aiStore = useAiStore();
 const resumeStore = useResumeStore();
+const { getResumeTitle } = useResumeName();
 const { resumeList, list } = storeToRefs(resumeStore);
 const activeChatId = ref("");
 const activeChat = ref<Chat | null>(null);
