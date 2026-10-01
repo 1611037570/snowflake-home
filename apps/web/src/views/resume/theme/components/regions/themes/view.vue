@@ -1,17 +1,25 @@
 <script setup>
 import { computed } from "vue";
 import { useResumePreviewContext } from "@/views/resume/editor/preview/shared/previewContext";
+import { resolveMainRegionPadding } from "@/views/resume/theme/regionPadding";
 
 const {
+  ui,
   theme: { viewStyle },
 } = useResumePreviewContext();
-// 正文容器直接使用主题解析后的外观，内边距由分页层读取同一份配置。
-const containerStyle = computed(() => ({
-  backgroundColor: viewStyle.value.background,
-  borderRadius: `${viewStyle.value.radius}px`,
-  padding: `${viewStyle.value.padding}px`,
-  color: viewStyle.value.color,
-}));
+// 正文容器直接使用主题解析后的外观；内边距与分页层读同一份区域留白声明
+const containerStyle = computed(() => {
+  const padding = resolveMainRegionPadding(ui.value, viewStyle.value.padding);
+  return {
+    backgroundColor: viewStyle.value.background,
+    borderRadius: `${viewStyle.value.radius}px`,
+    paddingTop: `${padding.top}px`,
+    paddingRight: `${padding.right}px`,
+    paddingBottom: `${padding.bottom}px`,
+    paddingLeft: `${padding.left}px`,
+    color: viewStyle.value.color,
+  };
+});
 </script>
 
 <template>
@@ -20,3 +28,5 @@ const containerStyle = computed(() => ({
     <slot />
   </div>
 </template>
+
+<style lang="scss" scoped></style>

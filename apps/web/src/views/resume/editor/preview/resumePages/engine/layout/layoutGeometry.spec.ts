@@ -449,4 +449,24 @@ describe("简历页几何基线", () => {
       ],
     });
   });
+
+  it("主题声明正文区域留白时按方向覆盖正文容器内边距", () => {
+    const snapshot = createCase({
+      name: "主题声明正文区域留白",
+      ui: {
+        layout: { type: "topUserSingleColumn" },
+        // 只声明左右留白：上下留白仍沿用正文容器内边距
+        region: { main: { padding: { left: 0, right: 0 } } },
+      },
+      viewPadding: 12,
+    });
+
+    expect(snapshot.regions[1]?.padding).toEqual({ top: 12, right: 0, bottom: 12, left: 0 });
+    expect(snapshot.columnWidths).toEqual([
+      ["header-column", 746],
+      ["main-column", 746],
+    ]);
+    // 可用高度只扣上下留白：1063 − 通栏 300 − 区域间距 12 − 正文上下留白 24
+    expect(snapshot.columnFlowHeights[1]).toEqual(["main-column", [[727, 300]]]);
+  });
 });
