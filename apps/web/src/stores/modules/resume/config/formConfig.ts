@@ -1036,9 +1036,12 @@ export const DEFAULT_SLOGAN_FORM = {
   checks: MODULE_CHECKS,
   slot: "default",
   fields: [
-    createUserField("title", "标题", {
+    // 标语字段直接声明数据绑定：字段 key 不能与模块状态 key（ui.title / ui.hidden）重名，
+    // 否则字段的隐藏状态会写到模块标题上，编辑器面板读写时报错。
+    {
       type: "object",
       key: "title",
+      label: "标题",
       component: "input",
       span: 24,
       model: [
@@ -1051,10 +1054,11 @@ export const DEFAULT_SLOGAN_FORM = {
         placeholder: "请输入标题，例如：个人简历",
         clearable: true,
       },
-    }),
-    createUserField("subtitle", "标语", {
+    },
+    {
       type: "object",
       key: "subtitle",
+      label: "标语",
       component: "input",
       span: 24,
       model: [
@@ -1067,7 +1071,7 @@ export const DEFAULT_SLOGAN_FORM = {
         placeholder: "请输入一句话标语",
         clearable: true,
       },
-    }),
+    },
   ],
 } satisfies FormField;
 // 工作经历
