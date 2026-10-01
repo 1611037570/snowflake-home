@@ -25,22 +25,31 @@ const usesParagraphSpacing = (moduleKey: string): boolean =>
   PARAGRAPH_SPACING_MODULE_KEYS.has(moduleKey) || moduleKey.startsWith("custom_");
 
 /**
- * 在模块内容前插入段间距节点。
+ * 在模块每个内容条目前插入段间距节点。
  * 间距与标题一样是独立节点：能放进当前页就留在这页，放不下与后面的内容一起顺延，
  * 成为新页第一项时由 hideWhenPageLeading 隐藏占位，因此分页层不需要为它单独判断。
  */
 const addParagraphSpacingRows = (nodes: LayoutNode[], height: number): LayoutNode[] => {
   const first = nodes[0];
   if (!first || height <= 0 || !usesParagraphSpacing(first.sourceModuleKey)) return nodes;
-  const spacer: LayoutNode = {
-    id: `${first.id}.paragraph-spacing`,
-    sourceModuleKey: first.sourceModuleKey,
-    type: "spacer",
-    breakPolicy: {},
-    hideWhenPageLeading: true,
-    payload: { height },
-  };
-  return [spacer, ...nodes];
+  // 每个条目独立保留段间距，避免同一模块的后续条目紧贴前一条目。
+  return nodes.flatMap((node) => {
+    const spacer: LayoutNode = {
+      /** 间距节点唯一编号 */
+      id: `${node.id}.paragraph-spacing`,
+      /** 间距所属模块 */
+      sourceModuleKey: node.sourceModuleKey,
+      /** 独立间距节点类型 */
+      type: "spacer",
+      /** 沿用普通节点分页规则 */
+      breakPolicy: {},
+      /** 后续页面首位隐藏间距 */
+      hideWhenPageLeading: true,
+      /** 间距渲染载荷 */
+      payload: { height /* 间距高度 */ },
+    };
+    return [spacer, node];
+  });
 };
 
 /** 创建内置简历模块适配器注册表。 */
