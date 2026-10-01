@@ -14,7 +14,12 @@ const path = require("path");
 const os = require("os");
 const { spawn } = require("child_process");
 
-const OUT = process.argv[2] ? path.resolve(process.argv[2]) : null;
+const OUT =
+  process.argv[2] && !process.argv[2].startsWith("--") ? path.resolve(process.argv[2]) : null;
+/** 是否采集主线程子阶段 trace：pnpm --filter @snowflake/web perf:baseline -- --trace */
+const WITH_TRACE = process.argv.includes("--trace");
+/** 是否采集打字阶段的 CPU 采样：pnpm --filter @snowflake/web perf:baseline -- --profile */
+const WITH_PROFILE = process.argv.includes("--profile");
 const EDGE = "C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe";
 const DEBUG_PORT = 9351;
 const PROFILE_DIR = path.join(os.tmpdir(), `dsh-edge-perf-${Date.now()}`);
@@ -80,6 +85,71 @@ const metricsToMap = (result) =>
   Object.fromEntries((result.metrics || []).map((item) => [item.name, item.value]));
 
 const delta = (before, after, key) => +((after[key] || 0) - (before[key] || 0)).toFixed(2);
+
+/** 汇总 CPU 采样：按「函数 + 位置」累加自身耗时，用于定位真正的热点 */
+const summarizeProfile = (profile) => {
+  const callFrames = new Map();
+  (profile.nodes || []).forEach((node) => {
+    const frame = node.callFrame || {};
+    const url = String(frame.url || "").replace(/^https?:\/\/[^/]+/, "");
+    callFrames.set(
+      node.id,
+      `${frame.functionName || "(匿名)"} @ ${url}:${(frame.lineNumber ?? 0) + 1}`,
+    );
+  });
+  const selfTime = new Map();
+  const samples = profile.samples || [];
+  const deltas = profile.timeDeltas || [];
+  samples.forEach((nodeId, index) => {
+    const key = callFrames.get(nodeId);
+    if (!key) return;
+    // timeDeltas 单位为微秒
+    selfTime.set(key, (selfTime.get(key) || 0) + (deltas[index] || 0));
+  });
+  return [...selfTime.entries()]
+    .map(([函数, 微秒]) => ({ 函数, 自身ms: +(微秒 / 1000).toFixed(1) }))
+    .sort((a, b) => b.自身ms - a.自身ms)
+    .slice(0, 15);
+};
+const TRACE_PHASES = [
+  // origin: trace 子阶段清单
+  "RunTask", // 主线程任务总时长
+  "Layout", // 布局
+  "UpdateLayoutTree", // 样式重算
+  "Paint", // 绘制
+  "PrePaint", // 绘制前处理
+  "Layerize", // 分层
+  "FunctionCall", // 浏览器内部函数调用
+  "EvaluateScript", // 脚本求值
+  "TimerFire", // 定时器回调
+  "ParseHTML", // HTML 解析
+];
+
+/** 汇总 trace：按事件名累加 X 阶段耗时，并挑出长任务 */
+const summarizeTrace = (events) => {
+  const totals = new Map();
+  const counts = new Map();
+  const tasks = [];
+  events.forEach((event) => {
+    if (event.ph !== "X" || typeof event.dur !== "number") return;
+    totals.set(event.name, (totals.get(event.name) || 0) + event.dur);
+    counts.set(event.name, (counts.get(event.name) || 0) + 1);
+    if (event.name === "RunTask") tasks.push(event.dur);
+  });
+  const ms = (name) => +((totals.get(name) || 0) / 1000).toFixed(1);
+  tasks.sort((a, b) => b - a);
+  return {
+    phases: TRACE_PHASES.filter((name) => totals.has(name)).map((name) => ({
+      事件: name,
+      次数: counts.get(name),
+      合计ms: ms(name),
+    })),
+    runTaskMs: ms("RunTask"),
+    runTaskCount: counts.get("RunTask") || 0,
+    tasksOver50ms: tasks.filter((value) => value > 50000).length,
+    longestTasksMs: tasks.slice(0, 5).map((value) => +(value / 1000).toFixed(1)),
+  };
+};
 
 const main = async () => {
   const edge = spawn(
@@ -252,6 +322,25 @@ const main = async () => {
       };
     })()`);
     const KEY = "测";
+    // --trace：采集打字阶段的主线程子阶段耗时，用于判断该优化脚本还是渲染
+    const traceEvents = [];
+    if (WITH_TRACE) {
+      cdp.on(
+        "Tracing.dataCollected",
+        (payload) => payload?.value && traceEvents.push(...payload.value),
+      );
+      await send("Tracing.start", {
+        categories:
+          "devtools.timeline,blink.user_timing,v8.execute,disabled-by-default-devtools.timeline",
+        transferMode: "ReportEvents",
+      });
+    }
+    // --profile：采集打字阶段的 CPU 采样，用于定位热点函数
+    if (WITH_PROFILE) {
+      await send("Profiler.enable");
+      await send("Profiler.setSamplingInterval", { interval: 200 });
+      await send("Profiler.start");
+    }
     for (let i = 0; i < 24; i += 1) {
       await send("Input.dispatchKeyEvent", { type: "keyDown", text: KEY, key: KEY });
       await send("Input.dispatchKeyEvent", { type: "char", text: KEY, key: KEY });
@@ -259,6 +348,16 @@ const main = async () => {
       await sleep(50);
     }
     await sleep(1500);
+    let cpuProfile = null;
+    if (WITH_PROFILE) {
+      const result = await send("Profiler.stop");
+      cpuProfile = result.profile || null;
+    }
+    if (WITH_TRACE) {
+      const done = new Promise((resolve) => cdp.on("Tracing.tracingComplete", resolve));
+      await send("Tracing.end");
+      await done;
+    }
     const typingAfter = metricsToMap(await send("Performance.getMetrics"));
     const typingProbe = await evaluate(`(() => {
       const target = window.__typedTarget;
@@ -291,6 +390,23 @@ const main = async () => {
       taskMs: delta(typingBefore, typingAfter, "TaskDuration") * 1000,
       jsListeners: delta(typingBefore, typingAfter, "JSEventListeners"),
     };
+
+    if (WITH_TRACE && traceEvents.length) {
+      const summary = summarizeTrace(traceEvents);
+      report.trace = summary;
+      console.log("\n=== 打字阶段主线程子阶段（trace）===");
+      console.table(summary.phases);
+      console.log(
+        `RunTask ${summary.runTaskCount} 次 / ${summary.runTaskMs} ms；>50ms 任务 ${summary.tasksOver50ms} 个；最长 ${summary.longestTasksMs.join(", ")} ms`,
+      );
+    }
+
+    if (cpuProfile) {
+      const hotspots = summarizeProfile(cpuProfile);
+      report.profile = hotspots;
+      console.log("\n=== 打字阶段 CPU 热点（自身耗时 Top 15）===");
+      console.table(hotspots);
+    }
 
     console.log(JSON.stringify(report, null, 2));
     if (OUT) fs.writeFileSync(OUT, JSON.stringify(report, null, 2));
