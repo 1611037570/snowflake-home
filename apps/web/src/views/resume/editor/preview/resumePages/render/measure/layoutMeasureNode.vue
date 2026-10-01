@@ -4,7 +4,7 @@ import Item from "@/views/resume/theme/components/itemContainer.vue";
 import { getItemFragmentStyle, isItemNode, isTimelineNode } from "../itemStyle";
 import { useResumePreviewContext } from "../../../shared/previewContext";
 import LayoutNodeContent from "../layoutNodeContent.vue";
-import UserModule from "@/views/resume/theme/components/userContainer.vue";
+import UserModule from "@/views/resume/theme/components/userContainer/index.vue";
 import type { LayoutNode } from "../../engine/types";
 
 const props = defineProps<{ node: LayoutNode }>();

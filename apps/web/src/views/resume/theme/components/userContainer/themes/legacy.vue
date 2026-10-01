@@ -1,41 +1,37 @@
 <script setup>
-import { computed } from "vue";
 import { useResumePreviewContext } from "@/views/resume/editor/preview/shared/previewContext";
 
-const props = defineProps({
+defineProps({
+  // 解析后的个人信息外观编号：保留在 data-theme 上，供外观样式按主题分支
+  themeId: {
+    type: String,
+    default: "default",
+  },
+  // 模块 key：写入 data-module，供编辑器点击定位
   moduleKey: {
     type: String,
     default: "user",
   },
+  // 模块附加类名，由编辑器按模块状态下发
   moduleClass: {
     type: String,
     default: "",
   },
 });
-const emit = defineEmits(["mouseenter"]);
 
 const {
-  theme: {
-    userModuleTemplate: themeTemplateRef,
-    fontValue,
-    lineHeightValue,
-    themeColor,
-    themeColorSoft,
-    themeColorLine,
-  },
+  theme: { fontValue, lineHeightValue, themeColor, themeColorSoft, themeColorLine },
 } = useResumePreviewContext();
-// 未提供主题时沿用默认个人信息样式。
-const themeTemplate = computed(() => themeTemplateRef.value || "default");
 </script>
 
 <template>
+  <!-- 旧版个人信息外观：绘制层与主题分支原样保留，拆分外观时逐个主题搬走 -->
   <div
     class="resume-module-wrapper resume-user group group/module box-border min-w-0"
     :class="moduleClass"
     :data-module="moduleKey"
-    :data-theme="themeTemplate"
+    :data-theme="themeId"
     :style="[lineHeightValue(), fontValue()]"
-    @mouseenter="emit('mouseenter', moduleKey)"
   >
     <div
       aria-hidden="true"
@@ -46,11 +42,7 @@ const themeTemplate = computed(() => themeTemplateRef.value || "default");
     <div class="resume-user__content">
       <slot />
     </div>
-    <div
-      aria-hidden="true"
-      class="resume-user__accent"
-      :style="{ backgroundColor: themeColor }"
-    />
+    <div aria-hidden="true" class="resume-user__accent" :style="{ backgroundColor: themeColor }" />
     <div
       aria-hidden="true"
       class="resume-user__line resume-user__line--soft"
