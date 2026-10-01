@@ -72,17 +72,6 @@ const {
   min-width: 0;
 }
 
-.resume-user[data-theme="classic"],
-.resume-user[data-theme="academic"] {
-  padding-bottom: 12px;
-}
-
-.resume-user[data-theme="minimal"],
-.resume-user[data-theme="academic"] {
-  display: flex;
-  justify-content: center;
-}
-
 .resume-user[data-theme="business"] {
   overflow: hidden;
   border-radius: 12px;
@@ -170,19 +159,5 @@ const {
 .resume-user__accent,
 .resume-user__line {
   display: none;
-}
-
-.resume-user[data-theme="academic"] .resume-user__line {
-  display: block;
-  width: 100%;
-  height: 1px;
-}
-
-.resume-user[data-theme="academic"] .resume-user__line--soft {
-  margin-top: 12px;
-}
-
-.resume-user[data-theme="academic"] .resume-user__line--theme {
-  margin-top: 4px;
 }
 </style>
