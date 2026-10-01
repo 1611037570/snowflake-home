@@ -1,5 +1,6 @@
 import type { Component } from "vue";
 import type { RegionSlotId } from "@/views/resume/theme/regionSlots";
+import BannerAppearance from "./themes/banner.vue";
 import PlainAppearance from "./themes/plain.vue";
 import ViewAppearance from "./themes/view.vue";
 
@@ -7,11 +8,12 @@ import ViewAppearance from "./themes/view.vue";
 export const regionAppearanceRegistry: Record<string, Component> = {
   plain: PlainAppearance, // 不绘制底色与留白
   view: ViewAppearance, // 正文容器外观：背景、圆角与内边距读取 viewStyle
+  banner: BannerAppearance, // 顶部标语通栏色带：外扩到页面边缘并保留页面留白
 };
 
-/** 各槽位的缺省外观编号：slogan 与 user 不绘制，main 沿用正文容器外观。 */
+/** 各槽位的缺省外观编号：顶部标语绘制通栏色带，个人信息不绘制，main 沿用正文容器外观。 */
 export const defaultRegionAppearance: Record<RegionSlotId, string> = {
-  slogan: "plain",
+  slogan: "banner",
   user: "plain",
   main: "view",
 };
