@@ -1,7 +1,5 @@
 export {
   getResumeThemeTemplate,
-  getThemeItemStyle,
-  getThemeModuleStyle,
   getThemeViewStyle,
   resumeThemeRegistry,
   themeTemplateList,
@@ -11,8 +9,4 @@ export type {
   ResumeThemeTemplate,
   ThemeTemplateConfig,
 } from "./styles/createThemeTemplate";
-export {
-  isPageLayoutTemplateId,
-  pageLayoutRegistry,
-  type PageLayoutTemplateId,
-} from "./layouts";
+export { isPageLayoutTemplateId, pageLayoutRegistry, type PageLayoutTemplateId } from "./layouts";

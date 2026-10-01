@@ -1,7 +1,6 @@
 <script setup lang="ts">
-import { computed } from "vue";
-import Item from "@/views/resume/theme/components/itemContainer.vue";
-import { getItemFragmentStyle, isItemNode, isTimelineNode, isTitleNode } from "./itemStyle";
+import Item from "@/views/resume/theme/components/itemContainer/index.vue";
+import { isItemNode, isTimelineNode, isTitleNode } from "./itemStyle";
 import LayoutNodeContent from "./layoutNodeContent.vue";
 import { useResumePreviewContext } from "../../shared/previewContext";
 import type { LayoutNode } from "../engine/types";
@@ -20,15 +19,7 @@ const emit = defineEmits<{
 }>();
 
 const { theme } = useResumePreviewContext();
-const itemConfig = computed(() => theme.itemStyle.value || {});
 const getNode = (fragment: FragmentPlan) => props.nodes.get(fragment.sourceNodeId);
-const getItemStyle = (fragment: FragmentPlan) =>
-  getItemFragmentStyle(
-    fragment.blockRange ?? { start: 0, end: Number.MAX_SAFE_INTEGER },
-    fragment.contentRange,
-    fragment.decoration,
-    itemConfig.value.radius ?? "0",
-  );
 const handleContentClick = (node: LayoutNode) => {
   if (node.type === "spacer") return;
   emit("click", { moduleKey: props.moduleKey, itemIndex: node.sourceItemIndex });
@@ -43,9 +34,10 @@ const isLeadingOnPage = (itemIndex: number) =>
     <template v-if="getNode(entry.fragment)">
       <Item
         v-if="isItemNode(getNode(entry.fragment)!)"
-        :item="itemConfig"
+        :block-range="entry.fragment.blockRange"
+        :content-range="entry.fragment.contentRange"
+        :decoration="entry.fragment.decoration"
         :timeline="isTimelineNode(getNode(entry.fragment)!, theme.themeTemplate.value)"
-        :style="getItemStyle(entry.fragment)"
         class="resume-submodule-content relative rounded-3xl hover:bg-sf-theme-2!"
         data-layout-block-range
         @click.stop="handleContentClick(getNode(entry.fragment)!)"
