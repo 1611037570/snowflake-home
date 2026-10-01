@@ -135,8 +135,7 @@ export const resumeTemplateCategoryGroups: ResumeTemplateCategoryGroup[] = [
   { key: "scene", name: "热门模板", icon: "lucide:flame", options: resumeTemplateSceneOptions },
   { key: "industry", name: "行业", icon: "lucide:building-2", options: resumeTemplateIndustryOptions },
   { key: "position", name: "职位", icon: "lucide:briefcase-business", options: resumeTemplatePositionOptions },
-  { key: "design", name: "设计", icon: "lucide:palette", options: resumeTemplateDesignOptions },
-  // 样式主题卡片同样按设计分类筛选：复用同一套设计选项，选项值落回 design 字段
+  // 样式主题卡片按设计分类筛选：该分类的选项就是设计选项，选项值落回 design 字段
   {
     key: "style",
     name: "简历模板",
