@@ -15,6 +15,12 @@ export interface ThemeTemplateConfig {
   name: string;
   id: string;
   description: string;
+  /**
+   * 主题分类标签，取值与内容模板的 design 完全同一套：
+   * single-column 单栏、two-column 双栏、minimal 简约、timeline 时间轴、polished 精美。
+   * 模板页按该字段筛选，样式卡片与内容卡片共用同一个筛选字段名。
+   */
+  design: string[];
   ui?: Record<string, any>;
 }
 

@@ -27,7 +27,10 @@ const toggleCategoryOption = (groupKey, optionKey) => {
     ...selectedCategoryOptions.value,
     [groupKey]: isCategoryOptionSelected(groupKey, optionKey) ? undefined : optionKey,
   };
-  emit("change", selectedCategoryOptions.value);
+  // 筛选键取该分类对应的数据字段：样式主题分类的选项值要落到 design 字段而不是分类 key
+  const field = currentCategoryGroup.value.filterField || groupKey;
+  const selectedOption = selectedCategoryOptions.value[groupKey];
+  emit("change", selectedOption ? { [field]: selectedOption } : {});
 };
 </script>
 

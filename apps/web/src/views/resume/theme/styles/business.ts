@@ -1,6 +1,7 @@
 export default {
   name: "商务",
   id: "business",
+  design: ["single-column", "polished"],
   description: "适合职场与商务场景的正式简历样式。",
   ui: {
     theme: { color: "#1E3A5F" },

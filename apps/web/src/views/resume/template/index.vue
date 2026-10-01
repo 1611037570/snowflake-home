@@ -41,6 +41,8 @@ const templates = computed(() =>
     id: style.id,
     name: $t(`resumeTemplateStyle_${style.id}_name`),
     description: $t(`resumeTemplateStyle_${style.id}_description`),
+    // 主题分类标签：与内容模板的 design 同一字段名、同一套取值，供设计分类筛选
+    design: style.design,
     tags: [],
     type: "style",
     revealIndex: index,
@@ -73,8 +75,18 @@ const filteredResumeTemplates = computed(() =>
       type: "content",
     })),
 );
+// 分类筛选对两种模板同时生效：样式模板同样按 design 字段参与设计分类筛选
+const filteredStyleTemplates = computed(() =>
+  templates.value.filter((template) =>
+    Object.entries(templateFilters.value).every(([key, value]) => {
+      if (!value) return true;
+      const values = template[key];
+      return !Array.isArray(values) || values.includes("all") || values.includes(value);
+    }),
+  ),
+);
 const displayedTemplates = computed(() =>
-  currentCategory.value === "style" ? templates.value : filteredResumeTemplates.value,
+  currentCategory.value === "style" ? filteredStyleTemplates.value : filteredResumeTemplates.value,
 );
 // 分类或筛选变化时重建揭示列表，避免新旧卡片在 TransitionGroup 中同时出现。
 const templateGridKey = computed(

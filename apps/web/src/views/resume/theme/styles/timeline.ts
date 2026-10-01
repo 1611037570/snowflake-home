@@ -1,6 +1,7 @@
 export default {
   name: "时间轴", // 主题显示名称
   id: "timeline", // 主题编号
+  design: ["single-column", "timeline"],
   description: "顶部个人信息通栏，经历日期沿左侧时间轴排列。", // 主题说明
   ui: { // 主题相对默认配置的差异
     theme: { // 主题元素配置

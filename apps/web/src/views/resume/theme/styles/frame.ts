@@ -1,6 +1,7 @@
 export default {
   name: "红色边框", // 主题显示名称
   id: "frame", // 主题编号
+  design: ["single-column", "polished"],
   description: "红色页面背景与白色正文容器。", // 主题说明
   ui: { // 主题相对默认配置的差异
     theme: { // 主题元素配置

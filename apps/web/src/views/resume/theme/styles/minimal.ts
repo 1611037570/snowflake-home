@@ -1,6 +1,7 @@
 export default {
   name: "简约",
   id: "minimal",
+  design: ["single-column", "minimal"],
   description: "减少视觉干扰，突出内容本身的简历样式。",
   ui: {
     theme: { color: "#111827" },
