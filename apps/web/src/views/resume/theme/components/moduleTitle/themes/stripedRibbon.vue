@@ -17,9 +17,16 @@ const {
 </script>
 
 <template>
-  <!-- 平行斜纹与标题斜边使用相同倾角，预留尾部和折角空间避免遮挡正文。 -->
-  <div class="flex items-start pr-[1.2em] pb-[0.45em]" :style="{ color: themeColor }">
-    <h2 class="relative max-w-full min-w-0 py-[6px] pr-[2.1em] pl-6 font-bold tracking-wide">
+  <!-- 飘带向左伸出一个折角宽度，折角回接正文边缘，底部细线沿标题底边延伸。 -->
+  <div
+    class="relative -ml-[0.9em] flex items-start pr-[1.2em] pb-[0.45em]"
+    :style="{ color: themeColor }"
+  >
+    <span
+      aria-hidden="true"
+      class="absolute inset-x-0 bottom-[0.45em] h-px bg-current opacity-60"
+    />
+    <h2 class="relative max-w-full min-w-0 py-[4px] pr-[2.1em] pl-3 font-bold tracking-wide">
       <span
         aria-hidden="true"
         class="absolute inset-0 bg-current [clip-path:polygon(0_0,calc(100%_-_1.56em)_0,100%_100%,0_100%)]"
