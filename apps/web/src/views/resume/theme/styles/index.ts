@@ -5,6 +5,7 @@ import classic from "./classic";
 import colorBar from "./colorBar";
 import creative from "./creative";
 import defaultTheme from "./default";
+import doubleArrow from "./doubleArrow";
 import fresh from "./fresh";
 import frame from "./frame";
 import labelLine from "./labelLine";
@@ -46,6 +47,7 @@ export const themeTemplateList = createThemeTemplates([
   angledLine,
   layeredCurve,
   markerGrid,
+  doubleArrow,
 ]);
 
 // 主题选择列表与预览渲染共用这份注册表。
