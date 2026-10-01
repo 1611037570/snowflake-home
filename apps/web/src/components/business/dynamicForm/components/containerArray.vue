@@ -36,9 +36,10 @@
 
 <script setup lang="ts">
 import { getUUID } from "@/utils";
-import { computed, inject, onMounted, onUnmounted, ref, toRaw } from "vue";
+import { computed, inject, onUnmounted, ref, toRaw } from "vue";
 import { useDraggable } from "vue-draggable-plus";
 import { getArrayRecords, removeArrayRecord } from "../code/arrayData.ts";
+import { useDragOnDemand } from "../code/useDragOnDemand.ts";
 import { getFormItemStyles } from "../code/formItemStyle";
 import type { DataPathContext } from "../code/pathContext";
 import { getArrayDataPath } from "../code/schemaAccess";
@@ -97,20 +98,19 @@ const draggable = useDraggable(null, records, {
     isDragging.value = false;
   },
 });
-onMounted(async () => {
-  await nextTick();
-
-  if (!currentForm.value?.drag) {
-    return;
-  }
-
-  const element = row.value?.$el ?? row.value;
-  if (!(element instanceof HTMLElement)) return;
-
-  draggable.start(element);
-});
 onUnmounted(() => {
   draggable.destroy();
+});
+
+// 拖拽实例改为按下把手时才创建：编辑期不再保留 Sortable 的列表观察器
+useDragOnDemand({
+  draggable,
+  getElement: () => {
+    const element = row.value?.$el ?? row.value;
+    return element instanceof HTMLElement ? element : null;
+  },
+  getHandle: () => currentForm.value?.dragClass || "",
+  isEnabled: () => currentForm.value?.drag === true,
 });
 
 const length = computed(() => records.value.length);
