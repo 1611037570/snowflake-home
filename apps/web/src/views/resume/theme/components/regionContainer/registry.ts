@@ -11,6 +11,7 @@ import BurgundyMain from "./themes/main/burgundySidebar.vue";
 import SandSidebarMain from "./themes/main/sandSidebar.vue";
 import NavyGuideUser from "./themes/user/navyGuide.vue";
 import NavyGuideMain from "./themes/main/navyGuide.vue";
+import SquareTimelineMain from "./themes/main/squareTimeline.vue";
 
 interface RegionAppearanceComponent {
   regionPadding?: RegionPadding | ((ui?: Record<string, any>) => RegionPadding); // 组件声明的区域留白，供分页计算尺寸
@@ -35,6 +36,7 @@ export const regionAppearanceRegistry: Record<RegionSlotId, Record<string, Compo
     burgundySidebar: BurgundyMain, // 绛红双栏主题侧栏底色
     sandSidebar: SandSidebarMain, // 米色侧栏底色与教育条目分隔线
     navyGuide: NavyGuideMain, // 单栏正文的纵向引导线
+    squareTimeline: SquareTimelineMain, // 左侧标题与日期共用贯穿时间轴
   },
 };
 

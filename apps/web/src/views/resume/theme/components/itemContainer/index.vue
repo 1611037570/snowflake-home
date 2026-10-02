@@ -32,7 +32,10 @@ const {
 // 条目外观按主题编号解析，未登记的主题走 default 组件
 const appearance = computed(() => resolveItemAppearance(themeTemplate.value));
 // 时间轴外观只对分组条目启用日期栏，调用方仅提供节点类型。
-const timeline = computed(() => themeTemplate.value === "timeline" && props.nodeType === "group");
+// 方节点主题复用既有日期侧栏，布局与分页无需增加主题分支。
+const timeline = computed(() =>
+  ["timeline", "squareTimeline"].includes(themeTemplate.value) && props.nodeType === "group",
+);
 </script>
 
 <template>

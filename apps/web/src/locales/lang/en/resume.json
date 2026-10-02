@@ -201,6 +201,8 @@
   "resumeTemplateStyle_frame_name": "Red Frame",
   "resumeTemplateStyle_frame_description": "A red page background around a white content panel.",
   "resumeTemplateStyle_timeline_name": "Timeline",
+  "resumeTemplateStyle_squareTimeline_name": "Square Timeline",
+  "resumeTemplateStyle_squareTimeline_description": "Left-aligned section labels and dates connected by a timeline with square markers.",
   "resumeTemplateStyle_timeline_description": "A full-width profile above dated experience entries on a timeline.",
   "resumeTemplateStyle_labelLine_name": "Label and Line",
   "resumeTemplateStyle_angledLine_name": "Angled Label",

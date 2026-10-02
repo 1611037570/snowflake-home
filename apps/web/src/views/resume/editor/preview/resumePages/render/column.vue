@@ -74,7 +74,8 @@ const fragmentGroups = computed(() => {
 </script>
 
 <template>
-  <div class="flex min-w-0 flex-1 flex-col">
+  <!-- 栏内容标识供主题按实际内容高度绘制贯穿装饰。 -->
+  <div class="resume-column flex min-w-0 flex-1 flex-col">
     <template v-for="(group, groupIndex) in fragmentGroups" :key="group.key">
       <div
         v-if="group.gapTop > 0"
