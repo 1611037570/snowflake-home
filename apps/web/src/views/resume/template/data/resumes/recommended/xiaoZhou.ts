@@ -1,5 +1,5 @@
 import dayjs from "dayjs";
-import { xiaozhou } from "../avatar";
+import { xiaozhou } from "../../avatar";
 
 // 小舟默认数据
 const defaultData: any = {

@@ -1,4 +1,4 @@
-import { xiaoyang } from "../avatar";
+import { xiaoyang } from "../../avatar";
 
 // 小羊数据
 const resumeData: any = {

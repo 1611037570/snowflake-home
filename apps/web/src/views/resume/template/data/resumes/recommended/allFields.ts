@@ -1,4 +1,4 @@
-import { xiaoyang } from "../avatar";
+import { xiaoyang } from "../../avatar";
 
 // 全字段范本：覆盖全部模块与全部业务字段，作为字段完整性基准。
 // 新增业务字段后必须在此补齐对应取值，否则无法用它核对新字段的展示效果。
