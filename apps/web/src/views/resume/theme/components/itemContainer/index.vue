@@ -44,7 +44,8 @@ const timeline = computed(() => themeTemplate.value === "timeline" && props.node
     :decoration="decoration"
     :timeline="timeline"
   >
-    <slot />
+    <!-- 日期栏由条目外观决定，渲染与测量共用同一结果。 -->
+    <slot :date-rail="timeline" />
   </component>
 </template>
 

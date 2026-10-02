@@ -39,9 +39,11 @@ const isLeadingOnPage = (itemIndex: number) =>
         class="resume-submodule-content relative rounded-3xl hover:bg-sf-theme-2!"
         data-layout-block-range
         @click.stop="handleContentClick(getNode(entry.fragment)!)"
+        v-slot="{ dateRail }"
       >
         <LayoutNodeContent
           :node="getNode(entry.fragment)!"
+          :date-rail="dateRail"
           :payload="entry.fragment.payload"
           :content-range="entry.fragment.contentRange"
           :block-range="entry.fragment.blockRange"
