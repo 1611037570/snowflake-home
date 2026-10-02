@@ -24,6 +24,7 @@ import sandSidebar from "./sandSidebar";
 import redWhiteSidebar from "./redWhiteSidebar";
 import slantedLayer from "./slantedLayer";
 import sloganBand from "./sloganBand";
+import songElegance from "./songElegance";
 import steady from "./steady";
 import tealRail from "./tealRail";
 import tealCard from "./tealCard";
@@ -78,6 +79,7 @@ export const themeTemplateList = createThemeTemplates([
   foldedLabel,
   stripedRibbon,
   sloganBand,
+  songElegance,
   userBand,
   curvedHeader,
 ]);

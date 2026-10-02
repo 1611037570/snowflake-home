@@ -201,6 +201,8 @@
   "resumeTemplateStyle_redWhiteSidebar_description": "A deep red sidebar with white content and red underlined section headings.",
   "resumeTemplateStyle_inkMagazine_name": "Ink Magazine",
   "resumeTemplateStyle_inkMagazine_description": "A bold nameplate and short title accents, with a light gray supporting column beside white experience sections.",
+  "resumeTemplateStyle_songElegance_name": "Song Serif Elegance",
+  "resumeTemplateStyle_songElegance_description": "Song-style serif type on cream paper with a hairline page frame and double-rule section titles.",
   "resumeTemplateStyle_burgundySidebar_description": "A burgundy header and light sidebar highlight the profile and experience.",
   "resumeTemplateStyle_colorBar_name": "Color Bar",
   "resumeTemplateStyle_colorBar_description": "A colored vertical bar with a soft tint behind each section title.",
