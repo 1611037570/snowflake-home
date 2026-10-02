@@ -2,6 +2,8 @@ import type { PageLayoutConfig } from "../pageLayoutTypes";
 import { createDefaultPageLayoutTemplate, type PageLayoutTemplateId } from "./layoutTemplates";
 import { isPageLayoutTemplateId } from "@/views/resume/theme/layouts";
 import { resolveRegionPadding } from "@/views/resume/theme/regionPadding";
+import { resolveRegionGapBefore } from "@/views/resume/theme/components/regionContainer/registry";
+import { resolveRegionSlot } from "@/views/resume/theme/regionSlots";
 
 /**
  * 解析当前生效的布局模板编号。
@@ -47,9 +49,14 @@ export const createResumeLayout = ({
   // 各区域留白统一读取对应外观组件的尺寸，供栏宽与分页共同使用。
   return {
     ...layout,
-    regions: layout.regions.map((region) => ({
-      ...region,
-      padding: resolveRegionPadding(ui, region.id),
-    })),
+    regions: layout.regions.map((region) => {
+      const slot = resolveRegionSlot(region.id);
+      return {
+        ...region,
+        padding: resolveRegionPadding(ui, region.id),
+        // 前置间距跟随区域组件声明，分页与页面渲染共用同一值。
+        ...(slot ? { gapBefore: resolveRegionGapBefore(ui.theme?.template, slot) } : {}),
+      };
+    }),
   };
 };

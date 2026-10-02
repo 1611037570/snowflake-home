@@ -51,6 +51,8 @@ export interface RegionConfig {
   height: RegionHeight;
   /** 区域四周的内部留白：同时扣除栏宽与每页可用高度，是区域几何的唯一来源 */
   padding?: BoxSpacing;
+  /** 区域与前一区域之间的指定间距，未声明时使用页面默认间距 */
+  gapBefore?: number;
   /** 区域中的栏配置 */
   columns: ColumnConfig[];
 }

@@ -33,6 +33,7 @@ import topUserTwoColumn from "./topUserTwoColumn";
 import twoColumn from "./twoColumn";
 import userBand from "./userBand";
 import vivid from "./vivid";
+import violetBiography from "./violetBiography";
 import {
   createThemeTemplates,
   resolveThemeTemplate,
@@ -44,6 +45,7 @@ export const themeTemplateList = createThemeTemplates([
   defaultTheme,
   modern,
   navyGuide,
+  violetBiography,
   business,
   burgundySidebar,
   sandSidebar,

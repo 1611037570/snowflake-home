@@ -252,8 +252,7 @@ const visiblePages = computed(() => (isThumb.value ? pages.value.slice(0, 1) : p
 const handlePageClick = (event) => {
   const moduleEl = event.target.closest?.(".resume-module-wrapper");
   const moduleKey = moduleEl?.dataset.module;
-  // 派生信息点击后定位到其来源的个人信息模块。
-  if (moduleKey) emit("module-click", { moduleKey: moduleKey === "userFacts" ? "user" : moduleKey });
+  if (moduleKey) emit("module-click", { moduleKey });
 };
 
 const handleSubmoduleClick = ({ moduleKey, itemIndex }) => {

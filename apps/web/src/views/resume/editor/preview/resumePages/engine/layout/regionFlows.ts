@@ -49,6 +49,8 @@ export const resolveRegionGap = (
   gap: number,
 ): number => {
   if (!previous || !next) return 0;
+  // 区域外观可声明自身与前一区域自然相接。
+  if (next.gapBefore !== undefined) return Math.max(0, next.gapBefore);
   // 标语后个人信息已有内部上留白，不再叠加区域间距。
   if (previous.id === "slogan" && next.id === "user" && (next.padding?.top ?? 0) > 0) return 0;
   return Math.max(0, gap);

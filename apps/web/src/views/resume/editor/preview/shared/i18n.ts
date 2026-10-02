@@ -17,7 +17,6 @@ export const previewLangList = [
 export const PREVIEW_TITLES: Record<PreviewLang, Record<string, string>> = {
   zh: {
     contact: "联系方式", // 青线双栏个人信息区的分组标题
-    userFacts: "求职信息", // 紫色履历左栏的派生信息标题
     account: "社交账号",
     education: "教育经历",
     skill: "专业技能",
@@ -30,7 +29,6 @@ export const PREVIEW_TITLES: Record<PreviewLang, Record<string, string>> = {
   },
   en: {
     contact: "Contact", // 青线双栏个人信息区的分组标题
-    userFacts: "Job Preferences", // 紫色履历左栏的派生信息标题
     account: "Social Accounts",
     education: "Education",
     skill: "Skills",
@@ -43,7 +41,6 @@ export const PREVIEW_TITLES: Record<PreviewLang, Record<string, string>> = {
   },
   ja: {
     contact: "連絡先", // 青线双栏个人信息区的分组标题
-    userFacts: "希望条件", // 紫色履历左栏的派生信息标题
     account: "ソーシャルアカウント",
     education: "学歴",
     skill: "スキル",
@@ -56,7 +53,6 @@ export const PREVIEW_TITLES: Record<PreviewLang, Record<string, string>> = {
   },
   ko: {
     contact: "연락처", // 青线双栏个人信息区的分组标题
-    userFacts: "구직 정보", // 紫色履历左栏的派生信息标题
     account: "소셜 계정",
     education: "학력",
     skill: "전문 기술",
@@ -69,7 +65,6 @@ export const PREVIEW_TITLES: Record<PreviewLang, Record<string, string>> = {
   },
   fr: {
     contact: "Contact", // 青线双栏个人信息区的分组标题
-    userFacts: "Objectif professionnel", // 紫色履历左栏的派生信息标题
     account: "Comptes sociaux",
     education: "Formation",
     skill: "Compétences",
@@ -82,7 +77,6 @@ export const PREVIEW_TITLES: Record<PreviewLang, Record<string, string>> = {
   },
   de: {
     contact: "Kontakt", // 青线双栏个人信息区的分组标题
-    userFacts: "Berufswunsch", // 紫色履历左栏的派生信息标题
     account: "Soziale Konten",
     education: "Ausbildung",
     skill: "Fähigkeiten",
@@ -95,7 +89,6 @@ export const PREVIEW_TITLES: Record<PreviewLang, Record<string, string>> = {
   },
   es: {
     contact: "Contacto", // 青线双栏个人信息区的分组标题
-    userFacts: "Objetivo profesional", // 紫色履历左栏的派生信息标题
     account: "Cuentas sociales",
     education: "Educación",
     skill: "Habilidades",
@@ -108,7 +101,6 @@ export const PREVIEW_TITLES: Record<PreviewLang, Record<string, string>> = {
   },
   ru: {
     contact: "Контакты", // 青线双栏个人信息区的分组标题
-    userFacts: "Карьерные цели", // 紫色履历左栏的派生信息标题
     account: "Соцсети",
     education: "Образование",
     skill: "Навыки",
