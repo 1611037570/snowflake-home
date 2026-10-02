@@ -12,20 +12,34 @@ export default { regionPadding /* 个人信息底纹组件自身的区域留白 
 <script setup>
 import { computed } from "vue";
 import { useResumePreviewContext } from "@/views/resume/editor/preview/shared/previewContext";
-import { resolveBandStyle } from "../../bandStyle";
+import { defaultPageRadius, defaultPaddingHorizontal, defaultPaddingVertical } from "@/stores/modules/resume/config/uiConfig";
 
 // 个人信息通栏外观：让个人信息整块铺满页面宽度并铺上主题色底纹。
-// 外扩与留白走 bandStyle.ts 的同一份算法，色带高度与分页口径不额外变化。
+// 通栏外扩和内部留白由个人信息底纹组件维护。
 const {
   ui,
   theme: { themeColor, themeColorContrast },
 } = useResumePreviewContext();
 
-const bandStyle = computed(() => ({
-  ...resolveBandStyle(ui.value, "user", { roundTop: true }),
-  backgroundColor: themeColor.value,
-  color: themeColorContrast.value,
-}));
+const bandStyle = computed(() => {
+  const horizontal = Number(ui.value?.page?.padding?.horizontal ?? defaultPaddingHorizontal);
+  const vertical = Number(ui.value?.page?.padding?.vertical ?? defaultPaddingVertical);
+  const radius = Number(ui.value?.page?.radius ?? defaultPageRadius);
+  return {
+    width: "auto",
+    marginTop: `-${vertical}px`,
+    marginLeft: `-${horizontal}px`,
+    marginRight: `-${horizontal}px`,
+    paddingTop: `${vertical}px`,
+    paddingBottom: `${regionPadding.bottom}px`,
+    paddingLeft: `${horizontal}px`,
+    paddingRight: `${horizontal}px`,
+    borderTopLeftRadius: `${radius}px`,
+    borderTopRightRadius: `${radius}px`,
+    backgroundColor: themeColor.value,
+    color: themeColorContrast.value,
+  };
+});
 </script>
 
 <template>

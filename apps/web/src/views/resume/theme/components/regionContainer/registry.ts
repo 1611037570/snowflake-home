@@ -1,10 +1,7 @@
 import type { Component } from "vue";
 import type { RegionSlotId } from "@/views/resume/theme/regionSlots";
 import type { RegionPadding } from "@/views/resume/theme/regionPadding";
-import DefaultSlogan from "./themes/slogan/default.vue";
-import SloganBand from "./themes/slogan/sloganBand.vue";
-import BurgundySlogan from "./themes/slogan/burgundySidebar.vue";
-import DefaultUser from "./themes/user/default.vue";
+import PlainRegion from "./themes/plain.vue";
 import UserBand from "./themes/user/userBand.vue";
 import CurvedHeader from "./themes/user/curvedHeader.vue";
 import SloganBandUser from "./themes/user/sloganBand.vue";
@@ -20,12 +17,10 @@ interface RegionAppearanceComponent {
 /** 每个区域直接使用主题编号查找组件，未登记时回退该区域的默认组件。 */
 export const regionAppearanceRegistry: Record<RegionSlotId, Record<string, Component>> = {
   slogan: {
-    default: DefaultSlogan, // 普通标语区域色带
-    sloganBand: SloganBand, // 标语通栏主题色带
-    burgundySidebar: BurgundySlogan, // 绛红双栏主题装饰带
+    default: PlainRegion, // 标语区域只承载完整的标语组件
   },
   user: {
-    default: DefaultUser, // 普通个人信息区域
+    default: PlainRegion, // 普通个人信息区域
     userBand: UserBand, // 个人信息通栏主题底纹
     curvedHeader: CurvedHeader, // 弧形页眉主题背景
     sloganBand: SloganBandUser, // 标语通栏主题的个人信息内部留白

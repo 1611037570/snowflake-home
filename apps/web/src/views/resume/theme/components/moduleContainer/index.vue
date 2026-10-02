@@ -18,10 +18,10 @@ const props = defineProps({
 const emit = defineEmits(["mouseenter"]);
 
 const {
-  theme: { moduleTemplate },
+  theme: { themeTemplate },
 } = useResumePreviewContext();
 // 外框外观按主题编号解析，未登记的主题走 default 组件
-const appearance = computed(() => resolveModuleAppearance(moduleTemplate.value));
+const appearance = computed(() => resolveModuleAppearance(themeTemplate.value));
 </script>
 
 <template>

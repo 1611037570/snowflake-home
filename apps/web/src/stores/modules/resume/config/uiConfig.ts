@@ -268,10 +268,6 @@ export const DEFAULT_UI = {
     color: defaultThemeColor,
     template: defaultThemeTemplate,
     titleIconMode: defaultTitleIconMode,
-    userModule: "auto",
-    module: "auto",
-    title: "auto",
-    item: "auto",
   },
   layout: {
     type: "singleColumn",

@@ -98,7 +98,7 @@ const resumeData: any = {
     page: { padding: { vertical: 24, horizontal: 24 }, spacing: { paragraph: 12, module: 12 }, footer: "" },
     font: { family: "text-puhui", size: 16, titleSize: 22, lineHeight: 1.2 },
     content: { language: "zh", textAlign: "auto", infoSeparator: "space", linkUnderline: false, dateStyle: "dot", datePosition: "right" },
-    theme: { template: "modern", color: "#2563EB", titleIconMode: "none", userModule: "auto", module: "auto", item: "auto" },
+    theme: { template: "modern", color: "#2563EB", titleIconMode: "none" },
     layout: { template: null, custom: null, leftColumnWidth: 40 },
     user: { infoMode: "text", infoLayout: "flex", avatarPosition: "right", infoPosition: "left" },
   },

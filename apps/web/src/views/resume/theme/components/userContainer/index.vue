@@ -18,7 +18,7 @@ const props = defineProps({
 const emit = defineEmits(["mouseenter"]);
 
 const {
-  theme: { userModuleTemplate: themeTemplateRef },
+  theme: { themeTemplate: themeTemplateRef },
 } = useResumePreviewContext();
 // 未提供主题时沿用默认个人信息样式。
 const themeTemplate = computed(() => themeTemplateRef.value || "default");

@@ -19,18 +19,20 @@ const props = defineProps({
     type: String,
     default: "full",
   },
-  // 时间轴条目预留固定日期栏
-  timeline: {
-    type: Boolean,
-    default: false,
+  // 排版节点类型：供条目外观判断是否为经历分组
+  nodeType: {
+    type: String,
+    default: "",
   },
 });
 
 const {
-  theme: { itemTemplate },
+  theme: { themeTemplate },
 } = useResumePreviewContext();
 // 条目外观按主题编号解析，未登记的主题走 default 组件
-const appearance = computed(() => resolveItemAppearance(itemTemplate.value));
+const appearance = computed(() => resolveItemAppearance(themeTemplate.value));
+// 时间轴外观只对分组条目启用日期栏，调用方仅提供节点类型。
+const timeline = computed(() => themeTemplate.value === "timeline" && props.nodeType === "group");
 </script>
 
 <template>
