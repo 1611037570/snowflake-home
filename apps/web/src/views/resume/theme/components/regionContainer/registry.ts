@@ -8,6 +8,7 @@ import MainDefaultAppearance from "./themes/mainDefault.vue";
 import SloganBandAppearance from "./themes/sloganBand.vue";
 import SloganBandRibbonAppearance from "./themes/sloganBandRibbon.vue";
 import UserBandAppearance from "./themes/userBand.vue";
+import UserAfterSloganAppearance from "./themes/userAfterSlogan.vue";
 import BurgundyBandAppearance from "./themes/burgundyBand.vue";
 import BurgundySidebarAppearance from "./themes/burgundySidebar.vue";
 
@@ -26,6 +27,7 @@ export const regionAppearanceRegistry: Record<string, Component> = {
   sloganBand: SloganBandAppearance, // 标语通栏色带
   sloganBandRibbon: SloganBandRibbonAppearance, // 标语通栏色带 + 底沿对比色细线
   userBand: UserBandAppearance, // 个人信息通栏底纹：整块铺满页面宽度
+  userAfterSlogan: UserAfterSloganAppearance, // 标语后个人信息使用页面上边距作为内部留白
   curvedHeader: CurvedHeaderAppearance, // 个人信息通栏弧形页眉背景
   frame: FrameAppearance, // 正文白色底板 + 圆角（frame 主题）
   burgundyBand: BurgundyBandAppearance, // 首页绛红装饰带
@@ -49,7 +51,7 @@ export const regionSurfaceAppearances = new Set<string>(
 /** 主题编号决定各区域使用的组件；未登记的主题沿用对应槽位的默认组件。 */
 const themeRegionAppearances: Record<RegionSlotId, Record<string, string>> = {
   slogan: { sloganBand: "sloganBandRibbon", burgundySidebar: "burgundyBand" }, // 标语主题使用对应色带组件
-  user: { userBand: "userBand", curvedHeader: "curvedHeader" }, // 个人信息通栏主题使用各自组件
+  user: { userBand: "userBand", curvedHeader: "curvedHeader", sloganBand: "userAfterSlogan" }, // 个人信息通栏主题使用各自组件
   main: { frame: "frame", burgundySidebar: "burgundySidebar" }, // 正文底板由主题选择组件
 };
 

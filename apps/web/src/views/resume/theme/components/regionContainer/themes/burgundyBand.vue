@@ -6,7 +6,9 @@ import {
   defaultPaddingHorizontal,
   defaultPaddingVertical,
 } from "@/stores/modules/resume/config/uiConfig";
-import { BURGUNDY_BAND_HEIGHT } from "../burgundyBandSize";
+
+// 绛红色带的固定视觉高度由组件自身维护。
+const bandHeight = 60;
 
 const {
   ui,
@@ -19,7 +21,7 @@ const bandStyle = computed(() => {
   const radius = Math.max(0, Number(ui.value?.page?.radius ?? defaultPageRadius) || 0);
   return {
     width: "auto", // 色带覆盖整张纸的宽度
-    height: `${BURGUNDY_BAND_HEIGHT}px`, // 色带固定高度
+    height: `${bandHeight}px`, // 色带固定高度
     marginTop: `-${vertical}px`, // 抵消纸张顶部留白
     marginLeft: `-${horizontal}px`, // 抵消纸张左侧留白
     marginRight: `-${horizontal}px`, // 抵消纸张右侧留白
@@ -27,6 +29,8 @@ const bandStyle = computed(() => {
     paddingRight: `${horizontal}px`, // 保持标语槽位原有内容宽度
     borderTopLeftRadius: `${radius}px`, // 左上纸张圆角
     borderTopRightRadius: `${radius}px`, // 右上纸张圆角
+    "--burgundy-band-height": `${bandHeight}px`, // 标语占位读取的色带视觉高度
+    "--burgundy-band-page-top": `${vertical}px`, // 标语占位扣除的纸张上边距
     backgroundColor: themeColor.value, // 首页装饰带底色
     backgroundImage: `linear-gradient(180deg, color-mix(in srgb, ${themeColor.value} 82%, black), ${themeColor.value})`, // 上深下浅的绛红色带
   };
