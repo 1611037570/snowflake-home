@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { computed } from "vue";
 import Item from "@/views/resume/theme/components/itemContainer/index.vue";
 import { isItemNode, isTitleNode } from "./itemStyle";
 import LayoutNodeContent from "./layoutNodeContent.vue";
@@ -20,10 +21,17 @@ const emit = defineEmits<{
 const getNode = (fragment: FragmentPlan) => props.nodes.get(fragment.sourceNodeId);
 const handleContentClick = (node: LayoutNode) => {
   if (node.type === "spacer") return;
-  emit("click", { moduleKey: props.moduleKey, itemIndex: node.sourceItemIndex });
+  // 标语属于版头区域，不响应点击，不触发编辑区定位。
+  if (props.moduleKey === "slogan") return;
+  // 派生求职信息复用个人信息编辑入口，不寻找不存在的独立表单。
+  emit("click", { moduleKey: props.moduleKey === "userFacts" ? "user" : props.moduleKey, itemIndex: node.sourceItemIndex });
 };
 const isLeadingOnPage = (itemIndex: number) =>
   props.pageIndex > 0 && props.groupIndex === 0 && itemIndex === 0;
+// 个人信息与标语属于版头区域，不参与条目悬停反馈；其余模块悬停只显示背景色，不带圆角
+const hoverBackgroundClass = computed(() =>
+  props.moduleKey === "user" || props.moduleKey === "slogan" ? "" : "hover:bg-sf-theme-2!",
+);
 </script>
 
 <template>
@@ -36,7 +44,8 @@ const isLeadingOnPage = (itemIndex: number) =>
         :content-range="entry.fragment.contentRange"
         :decoration="entry.fragment.decoration"
         :node-type="getNode(entry.fragment)!.type"
-        class="resume-submodule-content relative rounded-3xl hover:bg-sf-theme-2!"
+        class="resume-submodule-content relative"
+        :class="hoverBackgroundClass"
         data-layout-block-range
         @click.stop="handleContentClick(getNode(entry.fragment)!)"
         v-slot="{ dateRail }"
@@ -70,7 +79,7 @@ const isLeadingOnPage = (itemIndex: number) =>
         :class="
           getNode(entry.fragment)!.type === 'spacer'
             ? ''
-            : 'resume-submodule-content relative rounded-3xl hover:bg-sf-theme-2!'
+            : ['resume-submodule-content relative', hoverBackgroundClass]
         "
       >
         <LayoutNodeContent
