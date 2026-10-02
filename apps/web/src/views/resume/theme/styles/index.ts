@@ -16,6 +16,7 @@ import labelLine from "./labelLine";
 import layeredCurve from "./layeredCurve";
 import markerGrid from "./markerGrid";
 import minimal from "./minimal";
+import inkMagazine from "./inkMagazine";
 import modern from "./modern";
 import navyGuide from "./navyGuide";
 import outline from "./outline";
@@ -48,6 +49,7 @@ export const themeTemplateList = createThemeTemplates([
   sandSidebar,
   redWhiteSidebar,
   minimal,
+  inkMagazine,
   classic,
   academic,
   fresh,

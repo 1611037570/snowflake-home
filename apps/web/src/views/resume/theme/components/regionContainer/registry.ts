@@ -6,6 +6,7 @@ import UserBand from "./themes/user/userBand.vue";
 import CurvedHeader from "./themes/user/curvedHeader.vue";
 import SloganBandUser from "./themes/user/sloganBand.vue";
 import DefaultMain from "./themes/main/default.vue";
+import InkMagazineMain from "./themes/main/inkMagazine.vue";
 import Frame from "./themes/main/frame.vue";
 import BurgundyMain from "./themes/main/burgundySidebar.vue";
 import SandSidebarMain from "./themes/main/sandSidebar.vue";
@@ -34,6 +35,7 @@ export const regionAppearanceRegistry: Record<RegionSlotId, Record<string, Compo
   },
   main: {
     default: DefaultMain, // 普通正文区域底板
+    inkMagazine: InkMagazineMain, // 杂志双栏正文的浅灰辅助栏
     frame: Frame, // 红色边框主题正文底板
     burgundySidebar: BurgundyMain, // 绛红双栏主题侧栏底色
     sandSidebar: SandSidebarMain, // 米色侧栏底色与教育条目分隔线

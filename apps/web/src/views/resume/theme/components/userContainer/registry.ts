@@ -8,6 +8,7 @@ import NavyGuideAppearance from "./themes/navyGuide.vue";
 import DefaultAppearance from "./themes/default.vue";
 import FreshAppearance from "./themes/fresh.vue";
 import MinimalAppearance from "./themes/minimal.vue";
+import InkMagazineAppearance from "./themes/inkMagazine.vue";
 import SteadyAppearance from "./themes/steady.vue";
 import SandSidebarAppearance from "./themes/sandSidebar.vue";
 import RedWhiteSidebarAppearance from "./themes/redWhiteSidebar.vue";
@@ -17,6 +18,7 @@ import VividAppearance from "./themes/vivid.vue";
 export const userAppearanceRegistry = createAppearanceRegistry({
   default: DefaultAppearance, // 不绘制任何装饰，未单独设计的主题都落到这里
   minimal: MinimalAppearance, // 内容水平居中
+  inkMagazine: InkMagazineAppearance, // 杂志式大字号姓名与黑白页眉
   classic: ClassicAppearance, // 底部留出一段间距
   academic: AcademicAppearance, // 内容居中并叠加双分隔线
   business: BusinessAppearance, // 浅色底托圆角块 + 左侧主题色竖条
