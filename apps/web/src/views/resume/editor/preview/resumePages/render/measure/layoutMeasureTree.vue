@@ -4,7 +4,7 @@ import LayoutMeasureHost from "./layoutMeasureHost.vue";
 import LayoutMeasureNode from "./layoutMeasureNode.vue";
 import RegionContainer from "@/views/resume/theme/components/regionContainer/index.vue";
 import PagePattern from "@/views/resume/theme/components/pageContainer/index.vue";
-import { getContentHeight, PAGE_NUMBER_HEIGHT } from "../../../shared/constants";
+import { PAGE_NUMBER_HEIGHT } from "../../../shared/constants";
 import type { LayoutNode } from "../../engine/types";
 
 const props = defineProps<{
@@ -20,8 +20,6 @@ const props = defineProps<{
   pagePadding?: { top: number; right: number; bottom: number; left: number };
   /** 纸张边框宽度：真实页面把边框画在页面盒子内圈，测量宿主同样内缩这么多 */
   pageBorderWidth?: number;
-  /** 正文区域是否绘制底板：绘制时正文区域需要拉满页面高度 */
-  hasViewSurface?: boolean;
   showPageNumber?: boolean;
   footerText?: string;
   onMeasureEl?: (element: HTMLElement | null) => void;
@@ -38,20 +36,8 @@ const insetStyle = computed(() => {
   };
 });
 
-// 正文区域底板的最小高度：长图导出时底板要铺满整页，与真实页面的正文高度同源
-const mainRegionMinHeight = computed(() =>
-  getContentHeight(
-    props.pagePadding?.top ?? 0,
-    props.showPageNumber === true,
-    props.pageBorderWidth,
-  ),
-);
-
-// 区域外观只给绘制底板的正文区域设置最小高度，其余区域按内容高度排版
+// 正文剩余空间由统一容器承接，测量树只保留页面外侧留白。
 const regionStyle = (regionId: string) => ({
-  ...(regionId === "main" && props.hasViewSurface
-    ? { minHeight: `${mainRegionMinHeight.value}px` }
-    : {}),
   ...(props.topRegionId && regionId !== props.topRegionId
     ? {
         width: "auto",

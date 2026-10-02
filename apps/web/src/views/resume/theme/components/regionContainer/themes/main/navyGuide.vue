@@ -18,10 +18,10 @@ const {
 </script>
 
 <template>
-  <!-- 正文区域按内容高度结束，纵线不延伸到页面底部空白。 -->
+  <!-- 正文容器接住剩余空间，纵线在同一容器内绘制。 -->
   <div
     class="resume-view-container relative box-border flex min-w-0"
-    :style="{ paddingLeft: `${regionPadding.left}px`, '--navy-guide-rail-offset': `${regionPadding.left}px` }"
+    :style="{ '--navy-guide-rail-offset': `${regionPadding.left}px` }"
   >
     <span
       aria-hidden="true"

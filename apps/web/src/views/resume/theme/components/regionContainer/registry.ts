@@ -13,7 +13,6 @@ import NavyGuideMain from "./themes/main/navyGuide.vue";
 
 interface RegionAppearanceComponent {
   regionPadding?: RegionPadding | ((ui?: Record<string, any>) => RegionPadding); // 组件声明的区域留白，供分页计算尺寸
-  fillsPage?: boolean; // 组件是否铺满页面剩余高度
   fillsPageTop?: boolean; // 组件是否从首页纸张顶边开始占据整宽
 }
 
@@ -36,13 +35,6 @@ export const regionAppearanceRegistry: Record<RegionSlotId, Record<string, Compo
     navyGuide: NavyGuideMain, // 单栏正文的纵向引导线
   },
 };
-
-/** 从正文组件自身声明读取需要铺满页面的主题编号。 */
-export const regionSurfaceAppearances = new Set<string>(
-  Object.entries(regionAppearanceRegistry.main)
-    .filter(([, component]) => (component as unknown as RegionAppearanceComponent).fillsPage)
-    .map(([id]) => id),
-);
 
 const emptyRegionPadding = {
   top: 0, // 无额外上留白
