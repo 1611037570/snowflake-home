@@ -116,7 +116,11 @@ const resumeData: any = {
     page: { padding: { vertical: 24, horizontal: 24 }, spacing: { paragraph: 12, module: 12 }, footer: "" },
     font: { family: "text-puhui", size: 16, titleSize: 22, lineHeight: 1.2 },
     content: { language: "zh", textAlign: "auto", infoSeparator: "space", linkUnderline: false, dateStyle: "dot", datePosition: "right" },
-    theme: { template: "default", color: "#ff4d4f", titleIconMode: "none" },
+    theme: {
+      template: "vivid", // 模特范本使用的主题编号
+      color: "#EA580C", // 主题强调色
+      titleIconMode: "icon", // 标题图标显示方式
+    },
     layout: { template: null, custom: null, leftColumnWidth: 40 },
     user: { infoMode: "text", infoLayout: "flex", avatarPosition: "right", infoPosition: "left" },
   },
