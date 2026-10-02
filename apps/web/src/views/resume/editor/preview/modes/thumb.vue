@@ -24,7 +24,8 @@ const scale = ref(1);
 useResizeObserver(wrapRef, ([entry]) => {
   const { width, height } = entry.contentRect;
   if (width <= 0 || height <= 0) return;
-  scale.value = Math.max(width / RESUME_WIDTH, height / RESUME_HEIGHT);
+  // 按较短的一侧缩放，确保整页简历都落在缩略图容器内。
+  scale.value = Math.min(width / RESUME_WIDTH, height / RESUME_HEIGHT);
 });
 
 // 根节点与挂载标记：进入视口后才渲染缩略图，避免同屏多实例一次性渲染整份简历

@@ -57,7 +57,8 @@ const applyTemplate = (template) => {
 
 <template>
   <SfScrollbar class="h-full">
-    <div class="grid w-full grid-cols-2 gap-3">
+    <!-- 模板卡片按可用宽度自动换列，保持缩略图的固定尺寸。 -->
+    <div class="grid w-full grid-cols-[repeat(auto-fit,minmax(156px,1fr))] gap-3">
       <div
         v-for="template in templates"
         :key="template.id"
