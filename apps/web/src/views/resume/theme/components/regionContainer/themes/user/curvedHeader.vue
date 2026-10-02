@@ -35,6 +35,8 @@ const bandStyle = computed(() => {
     borderTopRightRadius: `${radius}px`,
   };
 });
+// 弧线经过页面上留白后头像的半高处，头像直径由本主题设为 108 像素。
+const arcHeight = computed(() => `${regionPadding(ui.value).top + 54}px`);
 </script>
 
 <template>
@@ -42,10 +44,10 @@ const bandStyle = computed(() => {
   <div class="relative flex w-full min-w-0" :style="bandStyle">
     <svg
       aria-hidden="true"
-      class="pointer-events-none absolute inset-x-0 top-0 h-[126px] w-full [border-radius:inherit]"
+      class="pointer-events-none absolute inset-x-0 top-0 w-full [border-radius:inherit]"
       viewBox="0 0 1000 156"
       preserveAspectRatio="none"
-      :style="{ fill: themeColor }"
+      :style="{ fill: themeColor, height: arcHeight }"
     >
       <path d="M0 0H1000V116Q500 196 0 116Z" />
     </svg>
