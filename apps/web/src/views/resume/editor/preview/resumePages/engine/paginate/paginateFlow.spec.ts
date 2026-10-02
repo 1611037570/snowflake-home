@@ -7,8 +7,6 @@ const createNode = (id: string, overrides: Partial<LayoutNode> = {}): LayoutNode
   id,
   sourceModuleKey: "test",
   type: "block",
-  breakPolicy: {
-  },
   payload: { id },
   ...overrides,
 });
@@ -21,7 +19,6 @@ const createMeasurement = (
   nodeId,
   width: 300,
   fullHeight,
-  minHeight: 0,
   breakPoints: [],
   ...overrides,
 });
@@ -48,11 +45,7 @@ describe("paginateFlow", () => {
 
   it("内容超出可用高度时标题与条目头留在当前页，正文顺延下一页", () => {
     const title = createNode("module.title", { type: "title", payload: { moduleKey: "module" } });
-    const item = createNode("item", {
-      type: "group",
-      breakPolicy: {
-      },
-    });
+    const item = createNode("item", { type: "group" });
     const measurements = new Map([
       ["first", createMeasurement("first", 30)],
       ["module.title", createMeasurement("module.title", 30)],
@@ -88,11 +81,7 @@ describe("paginateFlow", () => {
 
   it("标题作为独立节点只出现一次，内容续段不重复标题", () => {
     const title = createNode("module.title", { type: "title", payload: { moduleKey: "module" } });
-    const content = createNode("content", {
-      type: "richText",
-      breakPolicy: {
-      },
-    });
+    const content = createNode("content", { type: "richText" });
     const measurements = new Map([
       ["module.title", createMeasurement("module.title", 20)],
       [
@@ -138,10 +127,7 @@ describe("paginateFlow", () => {
   });
 
   it("长段落存在字符级断点时不会整段溢出空页", () => {
-    const node = createNode("long-text", {
-      breakPolicy: {
-      },
-    });
+    const node = createNode("long-text");
     const pages = paginateFlow({
       nodes: [node],
       measurements: new Map([
@@ -151,7 +137,6 @@ describe("paginateFlow", () => {
             nodeId: node.id,
             width: 300,
             fullHeight: 180,
-            minHeight: 20,
             breakPoints: [
               { offset: 4, type: "char", height: 20 },
               { offset: 8, type: "char", height: 40 },
@@ -177,8 +162,6 @@ describe("paginateFlow", () => {
   it("经历正文跨页后续页继续渲染正文块，不重复头部块", () => {
     const node = createNode("education-item", {
       type: "group",
-      breakPolicy: {
-      },
     });
     const pages = paginateFlow({
       nodes: [node],
@@ -214,11 +197,7 @@ describe("paginateFlow", () => {
 
   it("续段不重复计算断点前的段落间距，当前页不预留额外空间", () => {
     const previous = createNode("previous");
-    const content = createNode("content", {
-      type: "richText",
-      breakPolicy: {
-      },
-    });
+    const content = createNode("content", { type: "richText" });
     const pages = paginateFlow({
       nodes: [previous, content],
       measurements: new Map([
@@ -244,11 +223,7 @@ describe("paginateFlow", () => {
   });
 
   it("续页扣除被移除的顶部内边距后继续填满当前页", () => {
-    const content = createNode("content", {
-      type: "richText",
-      breakPolicy: {
-      },
-    });
+    const content = createNode("content", { type: "richText" });
     const breakPoints = Array.from({ length: 10 }, (_, index) => ({
       offset: (index + 1) * 10,
       type: "char" as const,
@@ -278,11 +253,7 @@ describe("paginateFlow", () => {
   });
 
   it("断点顺序不固定时选择当前页能容纳的最大断点", () => {
-    const content = createNode("content", {
-      type: "richText",
-      breakPolicy: {
-      },
-    });
+    const content = createNode("content", { type: "richText" });
     const pages = paginateFlow({
       nodes: [content],
       measurements: new Map([
@@ -316,8 +287,6 @@ describe("paginateFlow", () => {
     const content = createNode("video.media-0", {
       sourceModuleKey: "video",
       type: "media",
-      breakPolicy: {
-      },
     });
     const pages = paginateFlow({
       nodes: [
@@ -353,8 +322,6 @@ describe("paginateFlow", () => {
     const content = createNode("video.media-0", {
       sourceModuleKey: "video",
       type: "media",
-      breakPolicy: {
-      },
     });
     const pages = paginateFlow({
       nodes: [title, content],
@@ -392,10 +359,7 @@ describe("paginateFlow", () => {
   });
 
   it("间距块不单独成片，放不下时与内容一起顺延下一页", () => {
-    const item = createNode("item", {
-      breakPolicy: {
-      },
-    });
+    const item = createNode("item");
     const pages = paginateFlow({
       nodes: [createNode("previous"), item],
       measurements: new Map([
@@ -428,8 +392,6 @@ describe("paginateFlow", () => {
 
   it("内容盒首块已在前片渲染时，续段才扣除顶部留白", () => {
     const item = createNode("item", {
-      breakPolicy: {
-      },
     });
     const breakPoints = [
       { offset: 0, type: "block" as const, height: 10, blockEnd: 0 },
@@ -543,10 +505,7 @@ describe("paginateFlow", () => {
   it("空页始终放不下内容时不会无限换页", () => {
     // 断点高度都不超过已消费高度、整片又放不下时，每次只能换页而无法消费内容；
     // 该用例在缺少换页上限时会一直换页直到内存耗尽
-    const item = createNode("item", {
-      breakPolicy: {
-      },
-    });
+    const item = createNode("item");
     const pages = paginateFlow({
       nodes: [item],
       measurements: new Map([

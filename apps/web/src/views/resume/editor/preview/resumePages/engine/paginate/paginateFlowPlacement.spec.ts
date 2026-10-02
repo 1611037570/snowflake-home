@@ -13,7 +13,6 @@ const createNode = (id: string, overrides: Partial<LayoutNode> = {}): LayoutNode
   id,
   sourceModuleKey: "test",
   type: "block",
-  breakPolicy: {},
   payload: { id },
   ...overrides,
 });
@@ -27,7 +26,6 @@ const createMeasurement = (
   nodeId: id,
   width: 300,
   fullHeight,
-  minHeight: 0,
   breakPoints,
   droppedTopSpacing,
 });
