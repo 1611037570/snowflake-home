@@ -8,7 +8,10 @@ const regionPadding = (ui) => ({
   bottom: 0, // 页尾留白由栏内单独处理
   left: 0, // 左侧不增加区域留白
 });
-export default { regionPadding /* 双栏正文内容留白 */ };
+export default {
+  regionPadding, // 双栏正文内容留白
+  fillsPage: true, // 侧栏底色铺满纸张剩余高度
+};
 </script>
 
 <script setup>

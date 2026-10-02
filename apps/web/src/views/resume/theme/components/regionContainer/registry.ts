@@ -8,6 +8,8 @@ import SloganBandUser from "./themes/user/sloganBand.vue";
 import DefaultMain from "./themes/main/default.vue";
 import Frame from "./themes/main/frame.vue";
 import BurgundyMain from "./themes/main/burgundySidebar.vue";
+import NavyGuideUser from "./themes/user/navyGuide.vue";
+import NavyGuideMain from "./themes/main/navyGuide.vue";
 
 interface RegionAppearanceComponent {
   regionPadding?: RegionPadding | ((ui?: Record<string, any>) => RegionPadding); // 组件声明的区域留白，供分页计算尺寸
@@ -25,11 +27,13 @@ export const regionAppearanceRegistry: Record<RegionSlotId, Record<string, Compo
     userBand: UserBand, // 个人信息通栏主题底纹
     curvedHeader: CurvedHeader, // 弧形页眉主题背景
     sloganBand: SloganBandUser, // 标语通栏主题的个人信息内部留白
+    navyGuide: NavyGuideUser, // 深色顶栏下方的个人信息留白
   },
   main: {
     default: DefaultMain, // 普通正文区域底板
     frame: Frame, // 红色边框主题正文底板
     burgundySidebar: BurgundyMain, // 绛红双栏主题侧栏底色
+    navyGuide: NavyGuideMain, // 单栏正文的纵向引导线
   },
 };
 

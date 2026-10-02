@@ -300,6 +300,9 @@ const TEXT_KEYS_SOURCE = `
   弧形页眉: "resumeTemplateStyle_curvedHeader_name",
   "通栏弧形页眉搭配居中圆形头像，姓名与联系方式居中排列。":
     "resumeTemplateStyle_curvedHeader_description",
+  蓝线简历: "resumeTemplateStyle_navyGuide_name",
+  "深色页眉搭配蓝色纵向引导线，突出个人信息和经历层次。":
+    "resumeTemplateStyle_navyGuide_description",
   "个人信息整块铺满页面宽度的主题色底纹，正文保持页面留白。":
     "resumeTemplateStyle_userBand_description",
   "以左侧主题色竖条搭配浅色底纹突出模块标题的样式。": "colorBarThemeDescription",
