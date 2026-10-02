@@ -16,6 +16,7 @@ import {
   defaultPageRadius,
 } from "@/stores/modules/resume/config/uiConfig";
 import PagePattern from "@/views/resume/theme/components/pageContainer/index.vue";
+import { layoutStretchesColumns } from "@/views/resume/theme/layouts";
 
 const props = defineProps({
   // 简历 ui（font.family / page.spacing.module）
@@ -57,9 +58,7 @@ const rootEl = useTemplateRef("rootRef");
 const { system } = storeToRefs(useResumeStore());
 const showDebug = computed(() => !!system.value.showDebug);
 // 双栏内容区域铺满纸张高度，页脚覆盖在栏内预留的底部空间上。
-const fullHeightColumns = computed(() =>
-  props.ui.layout?.type === "twoColumn" || props.ui.layout?.type === "topUserTwoColumn",
-);
+const fullHeightColumns = computed(() => layoutStretchesColumns(props.ui.layout?.type));
 const bottomSpace = computed(() =>
   Math.max(parseFloat(props.styles.paddingStyle.paddingBottom) || 0, props.showPageNumber ? PAGE_NUMBER_HEIGHT : 0),
 );
