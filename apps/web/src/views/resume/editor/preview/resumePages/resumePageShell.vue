@@ -43,8 +43,8 @@ const props = defineProps({
     type: Number,
     default: 1,
   },
-  // 当前页面顶部是否有独立标语区域，标语从纸张顶端开始排版
-  hasSlogan: {
+  // 当前页面顶部是否有独立通栏区域，该区域从纸张顶端开始排版
+  hasTopRegion: {
     type: Boolean,
     default: false,
   },
@@ -123,7 +123,7 @@ watch(
       },
       RESUME_CONTAINER_WIDTH,
       RESUME_CONTAINER_HEIGHT,
-      hasSlogan ? { paddingTop: '0px', paddingLeft: '0px', paddingRight: '0px' } : undefined,
+      hasTopRegion ? { paddingTop: '0px', paddingLeft: '0px', paddingRight: '0px' } : undefined,
       { paddingBottom: '0px' },
     ]"
   >

@@ -12,6 +12,7 @@ import BurgundyMain from "./themes/main/burgundySidebar.vue";
 interface RegionAppearanceComponent {
   regionPadding?: RegionPadding | ((ui?: Record<string, any>) => RegionPadding); // 组件声明的区域留白，供分页计算尺寸
   fillsPage?: boolean; // 组件是否铺满页面剩余高度
+  fillsPageTop?: boolean; // 组件是否从首页纸张顶边开始占据整宽
 }
 
 /** 每个区域直接使用主题编号查找组件，未登记时回退该区域的默认组件。 */
@@ -66,6 +67,10 @@ export const resolveRegionAppearancePadding = (
     ? appearance.regionPadding(ui)
     : appearance.regionPadding || emptyRegionPadding;
 };
+
+/** 由区域外观组件声明首页是否占据纸张顶部。 */
+export const resolveRegionFillsPageTop = (themeId: unknown, slot: RegionSlotId): boolean =>
+  Boolean((resolveRegionAppearance(themeId, slot) as unknown as RegionAppearanceComponent).fillsPageTop);
 
 /** 按区域和主题编号取得组件。 */
 export const resolveRegionAppearance = (

@@ -206,7 +206,7 @@ const {
   layout,
   nodeMap,
   moduleKeys,
-  hasSloganRegion,
+  fullBleedTopRegionId,
   contentWidth,
   columnWidths,
   measureGroups,
@@ -233,8 +233,8 @@ const getColumnStyle = (columnId) => {
   return { flex: `0 0 ${width}px`, width: `${width}px` };
 };
 const getColumnGap = (columnId) => columnConfigMap.value.get(columnId)?.gap || 0;
-// 首页顶部区域统一读取排版节点生成的标语状态。
-const pageHasSlogan = (page) => page.pageIndex === 0 && hasSloganRegion.value;
+// 首页顶端通栏区域由布局和区域组件共同声明。
+const pageTopRegionId = (page) => page.pageIndex === 0 ? fullBleedTopRegionId.value : null;
 const getRegionTopGap = (page, regionId) => {
   const visibleRegions = page.regions.filter((region) =>
     region.columns.some((column) => column.fragments.length > 0),
@@ -250,7 +250,7 @@ const getRegionTopGap = (page, regionId) => {
 const getRegionStyle = (page, regionId) => ({
   gap: `${layoutColumnGap.value}px`,
   marginTop: `${getRegionTopGap(page, regionId)}px`,
-  ...(pageHasSlogan(page) && regionId !== "slogan"
+  ...(pageTopRegionId(page) && regionId !== pageTopRegionId(page)
     ? {
         width: "auto",
         marginLeft: `${pagePadding.value.left}px`,
@@ -323,7 +323,7 @@ defineExpose({
       <Teleport to="body">
         <LayoutMeasureTree
           :groups="measureGroups"
-          :has-slogan="hasSloganRegion"
+          :top-region-id="fullBleedTopRegionId"
           :width="RESUME_WIDTH"
           :root-class="ui.font?.family"
           :root-style="measureTreeStyle"
@@ -355,7 +355,7 @@ defineExpose({
           :show-page-number="showPageNumber"
           :page-index="page.pageIndex"
           :page-count="visiblePages.length"
-          :has-slogan="pageHasSlogan(page)"
+          :has-top-region="Boolean(pageTopRegionId(page))"
           @click="handlePageClick"
           :class="[
             {
