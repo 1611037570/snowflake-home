@@ -20,7 +20,6 @@ export const createModuleTitleNode = (moduleKey: string): LayoutNode => ({
   id: `${moduleKey}.title`,
   sourceModuleKey: moduleKey,
   type: "title",
-  breakPolicy: {},
   payload: { moduleKey },
 });
 

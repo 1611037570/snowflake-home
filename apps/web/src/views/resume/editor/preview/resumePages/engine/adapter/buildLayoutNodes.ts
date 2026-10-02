@@ -42,8 +42,6 @@ const addParagraphSpacingRows = (nodes: LayoutNode[], height: number): LayoutNod
       sourceModuleKey: node.sourceModuleKey,
       /** 独立间距节点类型 */
       type: "spacer",
-      /** 沿用普通节点分页规则 */
-      breakPolicy: {},
       /** 后续页面首位隐藏间距 */
       hideWhenPageLeading: true,
       /** 间距渲染载荷 */
@@ -82,7 +80,6 @@ const createNodeSignature = (node: LayoutNode): string =>
     node.type,
     node.sourceModuleKey,
     Boolean(node.hideWhenPageLeading),
-    node.breakPolicy?.minHeight ?? 0,
     node.payload,
     node.breakPoints ?? [],
   ]);
@@ -139,7 +136,6 @@ export const buildLayoutNodes = ({
           id: `${moduleKey}.title-only`,
           sourceModuleKey: moduleKey,
           type: "spacer",
-          breakPolicy: {},
           hideWhenPageLeading: true,
           payload: { height: 0 },
         },

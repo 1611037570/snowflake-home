@@ -26,7 +26,6 @@ const createUserModuleAdapter = (context: LayoutAdapterContext): LayoutNode[] =>
       id: "user",
       sourceModuleKey: "user",
       type: "group",
-      breakPolicy: {},
       payload: { moduleKey: "user" },
     },
   ];
@@ -50,7 +49,6 @@ const createSloganModuleAdapter = (context: LayoutAdapterContext): LayoutNode[] 
       id: "slogan",
       sourceModuleKey: "slogan",
       type: "group",
-      breakPolicy: {},
       payload: { moduleKey: "slogan" },
     },
   ];
@@ -69,7 +67,6 @@ const createListModuleAdapter =
       sourceModuleKey: moduleKey,
       sourceItemIndex: index,
       type: "block" as const,
-      breakPolicy: {},
       payload: {
         part: "item",
         item,
@@ -90,7 +87,6 @@ const createMediaModuleAdapter =
       sourceModuleKey: moduleKey,
       sourceItemIndex: index,
       type: "media" as const,
-      breakPolicy: {},
       payload: {
         mediaType: moduleKey,
         item,

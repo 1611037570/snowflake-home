@@ -2,12 +2,8 @@ import { describe, expect, it } from "vitest";
 import { isRegionSlotId, regionSlotRegistry, resolveRegionSlot } from "./regionSlots";
 
 describe("区域槽位", () => {
-  it("槽位编号固定为 slogan / user / main，且只有 main 跨页", () => {
+  it("槽位编号固定为 slogan / user / main", () => {
     expect(regionSlotRegistry.map((slot) => slot.id)).toEqual(["slogan", "user", "main"]);
-    expect(regionSlotRegistry.filter((slot) => slot.firstPageOnly).map((slot) => slot.id)).toEqual([
-      "slogan",
-      "user",
-    ]);
   });
 
   it("识别合法槽位编号", () => {

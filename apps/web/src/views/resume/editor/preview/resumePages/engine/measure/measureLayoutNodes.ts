@@ -106,7 +106,6 @@ export const measureLayoutNodes = (
       nodeId: node.id,
       width: rect.width,
       fullHeight: rect.height,
-      minHeight: Math.max(rect.height, node.breakPolicy.minHeight || 0),
       breakPoints: [...blockBreakPoints, ...breakPoints, ...lineBreakPoints],
       // 富文本从自身断点取正文末尾，按行拆分的纯文本则从实测行尾取，避免续页提前结束。
       contentLength: Math.max(

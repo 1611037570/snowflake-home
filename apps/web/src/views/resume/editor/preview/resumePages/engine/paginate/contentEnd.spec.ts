@@ -13,7 +13,6 @@ const createNode = (id: string): LayoutNode => ({
   id,
   sourceModuleKey: "test",
   type: "group",
-  breakPolicy: {},
   payload: { id },
 });
 
@@ -30,7 +29,6 @@ describe("内容末尾推导", () => {
       nodeId: "item",
       width: 300,
       fullHeight: 120,
-      minHeight: 0,
       contentLength: 20,
       breakPoints: [
         { offset: 20, type: "textRange", height: 120 },
@@ -70,7 +68,6 @@ describe("内容末尾推导", () => {
       nodeId: "item",
       width: 300,
       fullHeight: 120,
-      minHeight: 0,
       contentLength: 20,
       breakPoints: [
         { offset: 20, type: "textRange", height: 120 },
@@ -98,7 +95,6 @@ describe("内容末尾推导", () => {
       nodeId: "item",
       width: 300,
       fullHeight: 120,
-      minHeight: 0,
       breakPoints: [
         { offset: 20, type: "textRange", height: 120 },
         { offset: 0, type: "block", height: 40, blockEnd: 1 },

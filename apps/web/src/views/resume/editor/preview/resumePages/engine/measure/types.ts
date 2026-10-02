@@ -22,8 +22,6 @@ export interface MeasuredNode {
   width: number;
   /** 当前节点完整内容的实际高度 */
   fullHeight: number;
-  /** 当前节点允许的最小高度 */
-  minHeight: number;
   /** 当前节点可用的拆分断点 */
   breakPoints: BreakPointMeasure[];
   /**

@@ -30,7 +30,6 @@ export const createExperienceModuleAdapter = (moduleKey: string): LayoutAdapter 
       sourceModuleKey: moduleKey,
       sourceItemIndex: index,
       type: "group",
-      breakPolicy: {},
       payload: {
         part: "item",
         item,

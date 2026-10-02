@@ -29,7 +29,6 @@ const createMeasurement = (
   nodeId: "node",
   width: 300,
   fullHeight: 200,
-  minHeight: 0,
   breakPoints,
   droppedTopSpacing,
 });
