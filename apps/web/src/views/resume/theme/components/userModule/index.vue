@@ -1,30 +1,14 @@
 <script setup>
 import { computed } from "vue";
-import UserHeading from "./components/userHeading.vue";
-import ModernUser from "./components/modernUser.vue";
-import VioletBiographyUser from "./components/violetBiographyUser.vue";
-import TwoColumnUser from "./components/twoColumnUser.vue";
-import TealRailUser from "./components/tealRailUser.vue";
 import { useResumePreviewContext } from "@/views/resume/editor/preview/shared/previewContext";
+import { resolveUserContent } from "./registry";
 
+// 个人信息内容按注册表解析：主题维度优先、版式维度兜底，组件内不再维护映射表。
 const {
   ui,
-  theme: { themeTemplate: themeTemplateRef },
+  theme: { themeTemplate },
 } = useResumePreviewContext();
-const layoutComponents = {
-  twoColumn: TwoColumnUser, // 左右双栏的个人信息内容组件
-};
-const themeComponents = {
-  modern: ModernUser, // 现代主题的个人信息内容组件
-  violetBiography: VioletBiographyUser, // 紫色履历主题的个人信息页眉内容
-};
-const themedLayoutComponents = {
-  tealRail: TealRailUser, // 青线双栏的分组个人信息组件
-};
-// 主题专属布局优先，其余主题仍沿用双栏或默认个人信息组件。
-const current = computed(() =>
-  themedLayoutComponents[themeTemplateRef.value] || layoutComponents[ui.value?.layout?.type] || themeComponents[themeTemplateRef.value] || UserHeading,
-);
+const current = computed(() => resolveUserContent(themeTemplate.value, ui.value?.layout?.type));
 </script>
 
 <template>
