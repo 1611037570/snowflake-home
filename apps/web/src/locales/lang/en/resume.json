@@ -193,6 +193,8 @@
   "resumeTemplateStyle_twoColumn_name": "Two Columns",
   "resumeTemplateStyle_twoColumn_description": "Arrange every section in two columns for content-rich resumes.",
   "resumeTemplateStyle_burgundySidebar_name": "Burgundy Sidebar",
+  "resumeTemplateStyle_tealRail_name": "Teal Rail",
+  "resumeTemplateStyle_tealRail_description": "A teal rail and section markers connect the profile sidebar with experience sections.",
   "resumeTemplateStyle_sandSidebar_name": "Sand Sidebar",
   "resumeTemplateStyle_sandSidebar_description": "A warm neutral sidebar and gold headings with short underlines organize your profile and experience.",
   "resumeTemplateStyle_burgundySidebar_description": "A burgundy header and light sidebar highlight the profile and experience.",

@@ -120,9 +120,18 @@ export const buildLayoutNodes = ({
 }): LayoutNode[] => {
   // 主题编号对应内置标语组件时自动生成标语节点，无需简历配置额外提供模块。
   const themeSlogan = hasThemeSlogan((ui as any)?.theme?.template);
-  const effectiveModuleKeys = themeSlogan && !moduleKeys.includes("slogan")
+  const sloganModuleKeys = themeSlogan && !moduleKeys.includes("slogan")
     ? ["slogan", ...moduleKeys]
     : moduleKeys;
+  // 栏位声明中的求职信息从现有个人资料派生，不要求简历另存一份模块数据。
+  const configuredColumns = (ui as any)?.layout?.columns;
+  const hasUserFacts = [...(configuredColumns?.left || []), ...(configuredColumns?.right || [])].includes("userFacts");
+  const configuredOrder = [...(configuredColumns?.left || []), ...(configuredColumns?.right || [])]
+    .filter((key) => key === "userFacts" || sloganModuleKeys.includes(key));
+  // 派生模块存在时按主题栏内顺序生成节点，左栏标题与内容才按声明顺序出现。
+  const effectiveModuleKeys = hasUserFacts && !sloganModuleKeys.includes("userFacts")
+    ? [...new Set([...sloganModuleKeys.filter((key) => key === "slogan" || key === "user"), ...configuredOrder, ...sloganModuleKeys])]
+    : sloganModuleKeys;
   const nextNodes = effectiveModuleKeys.flatMap((moduleKey) => {
     const adapter = registry.resolve(moduleKey);
     if (!adapter) return [];

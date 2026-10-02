@@ -23,6 +23,7 @@ import sandSidebar from "./sandSidebar";
 import slantedLayer from "./slantedLayer";
 import sloganBand from "./sloganBand";
 import steady from "./steady";
+import tealRail from "./tealRail";
 import stripedRibbon from "./stripedRibbon";
 import timeline from "./timeline";
 import squareTimeline from "./squareTimeline";
@@ -51,6 +52,7 @@ export const themeTemplateList = createThemeTemplates([
   vivid,
   creative,
   steady,
+  tealRail,
   outline,
   topUserTwoColumn,
   twoColumn,
