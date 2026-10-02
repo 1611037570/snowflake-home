@@ -3,7 +3,8 @@ import { computed } from "vue";
 import { useItemBox } from "../useItemBox";
 import { useResumePreviewContext } from "@/views/resume/editor/preview/shared/previewContext";
 
-// 斜角竖线条目外观：竖线在正文栏贯穿到底，条目内容按同一留白与竖线对齐。
+// 色条条目外观：浅色底托与左端主题色短条，延续页眉色块与标题色条的语言。
+// 留白、圆角与分片收边统一由 useItemBox 给出，渲染与测量因此共用同一份尺寸。
 const props = defineProps({
   // 分片覆盖的块区间：续段不画上圆角、不补上内边距
   blockRange: {
@@ -28,29 +29,27 @@ const props = defineProps({
 });
 
 /** 条目圆角：由外观自己声明，分片内外侧由共享规则裁剪 */
-const ITEM_RADIUS = "0";
-/** 条目上下与右侧留白：让条目留出呼吸间距 */
+const ITEM_RADIUS = "6px";
+/** 条目上下与右侧留白：与模块间距共同形成呼吸空间 */
 const ITEM_PADDING = "12px";
-/** 条目左侧留白：竖线距正文栏左边缘的距离，正文因此与竖线对齐 */
-const ITEM_PADDING_LEFT = "24px";
+/** 条目左内边距：与标题色条右侧的文字起始位置对齐 */
+const ITEM_PADDING_LEFT = "16px";
 
 const {
-  theme: { themeColorLine, fontValue, lineHeightValue },
+  theme: { themeColor, themeColorSoft, themeColorLine, fontValue, lineHeightValue },
 } = useResumePreviewContext();
 
-// 盒模型、分片收边与日期栏统一由共享钩子计算，渲染与测量结果一致。
+// 盒模型、分片收边与日期栏统一由共享钩子计算。
 const { fragmentStyle, boxStyle, borderStyle } = useItemBox(props, {
   radius: ITEM_RADIUS,
   padding: ITEM_PADDING,
   paddingLeft: ITEM_PADDING_LEFT,
-  backgroundColor: "transparent",
-  borderColor: "transparent",
+  backgroundColor: themeColorSoft.value,
+  borderColor: themeColorLine.value,
 });
 
 const itemStyle = computed(() => ({
-  "--angled-item-line": themeColorLine.value, // 与正文竖线衔接的短横线颜色
-  "--angled-item-notch": ITEM_PADDING_LEFT, // 短横线长度与条目左留白共用同一个值
-  "--angled-item-offset": ITEM_PADDING, // 短横线的起始位置与条目上留白共用同一个值
+  "--color-bar-item-accent": themeColor.value, // 条目左端短条的主题色
   ...fontValue.value(),
   ...lineHeightValue.value(),
 }));
@@ -58,12 +57,11 @@ const itemStyle = computed(() => ({
 
 <template>
   <div
-    class="resume-item angled-line-item box-border relative"
-    :class="{ 'resume-item--timeline': timeline }"
+    class="resume-item color-bar-item relative box-border"
     :style="[boxStyle, fragmentStyle, itemStyle]"
   >
     <slot />
-    <!-- 分片边框沿用共享收边规则，不额外绘制底色。 -->
+    <!-- 分片边框沿用共享收边规则，颜色只取主题色派生值。 -->
     <div
       aria-hidden="true"
       class="pointer-events-none absolute inset-0 box-border border"
@@ -72,16 +70,19 @@ const itemStyle = computed(() => ({
   </div>
 </template>
 
-<style scoped>
-/* 条目左端短横线：从正文竖线延伸进来，与标题竖线语言衔接，不参与测量。 */
-.angled-line-item::before {
+<style lang="scss" scoped>
+@use "./itemBase.scss";
+
+/* 左端短条与贯穿色条同色，随分片圆角收边，不参与测量。 */
+.color-bar-item::before {
   content: "";
   position: absolute;
-  top: calc(var(--angled-item-offset) + 0.5lh);
+  top: 0;
+  bottom: 0;
   left: 0;
-  width: var(--angled-item-notch);
-  height: 1.5px;
-  background-color: var(--angled-item-line);
+  width: 3px;
+  border-radius: inherit;
+  background-color: var(--color-bar-item-accent);
   pointer-events: none;
 }
 </style>
