@@ -20,6 +20,7 @@ import modern from "./modern";
 import navyGuide from "./navyGuide";
 import outline from "./outline";
 import sandSidebar from "./sandSidebar";
+import redWhiteSidebar from "./redWhiteSidebar";
 import slantedLayer from "./slantedLayer";
 import sloganBand from "./sloganBand";
 import steady from "./steady";
@@ -45,6 +46,7 @@ export const themeTemplateList = createThemeTemplates([
   business,
   burgundySidebar,
   sandSidebar,
+  redWhiteSidebar,
   minimal,
   classic,
   academic,
