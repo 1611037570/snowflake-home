@@ -226,6 +226,7 @@ export const useResumeLayout = ({
     measureDone,
     pagePlan,
     moduleKeys: activeModuleKeys,
+    hasSloganRegion,
     contentWidth,
     columnWidths,
     measureGroups,

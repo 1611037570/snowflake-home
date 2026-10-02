@@ -12,6 +12,8 @@ const props = defineProps<{
   width: number;
   /** 按栏位分组的节点：每个分组按自己的栏宽渲染，保证测量宽度与真实排版一致 */
   groups: Array<{ id: string; width: number; nodes: LayoutNode[]; regionId?: string }>;
+  /** 首页是否有独立标语区域；与分页和实际页面共用同一来源 */
+  hasSlogan?: boolean;
   rootStyle?: Record<string, string>;
   rootClass?: string;
   /** 页面四周留白：作为测量内容的外边距内缩，与真实页面位置一致且不改变测量宽度 */
@@ -25,15 +27,14 @@ const props = defineProps<{
   onMeasureEl?: (element: HTMLElement | null) => void;
 }>();
 
-const hasSlogan = computed(() => props.groups.some((group) => group.regionId === "slogan"));
 // 标语从纸张顶端测量，后续区域各自保留左右留白。
 const insetStyle = computed(() => {
   const inset = (value?: number) => `${(value ?? 0) + (props.pageBorderWidth ?? 0)}px`;
   return {
-    marginTop: inset(hasSlogan.value ? 0 : props.pagePadding?.top),
-    marginRight: inset(hasSlogan.value ? 0 : props.pagePadding?.right),
+    marginTop: inset(props.hasSlogan ? 0 : props.pagePadding?.top),
+    marginRight: inset(props.hasSlogan ? 0 : props.pagePadding?.right),
     marginBottom: inset(props.pagePadding?.bottom),
-    marginLeft: inset(hasSlogan.value ? 0 : props.pagePadding?.left),
+    marginLeft: inset(props.hasSlogan ? 0 : props.pagePadding?.left),
   };
 });
 
@@ -51,7 +52,7 @@ const regionStyle = (regionId: string) => ({
   ...(regionId === "main" && props.hasViewSurface
     ? { minHeight: `${mainRegionMinHeight.value}px` }
     : {}),
-  ...(hasSlogan.value && regionId !== "slogan"
+  ...(props.hasSlogan && regionId !== "slogan"
     ? {
         width: "auto",
         marginLeft: `${props.pagePadding?.left ?? 0}px`,

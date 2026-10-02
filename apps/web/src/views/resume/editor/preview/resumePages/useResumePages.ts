@@ -51,6 +51,7 @@ export const useResumePages = ({
     nodes: layout.nodes,
     nodeMap: layout.nodeMap,
     moduleKeys: layout.moduleKeys,
+    hasSloganRegion: layout.hasSloganRegion,
     contentWidth: layout.contentWidth,
     columnWidths: layout.columnWidths,
     measureGroups: layout.measureGroups,
