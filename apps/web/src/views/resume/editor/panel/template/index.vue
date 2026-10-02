@@ -6,6 +6,7 @@ import { storeToRefs } from "pinia";
 import ThumbPreview from "../../preview/modes/thumb.vue";
 import { getResumeThemeTemplate, themeTemplateList } from "@/views/resume/theme";
 import { loadResumeTemplateData } from "@/views/resume/template/data/resumeData";
+import { resumeTemplateDesignOptions } from "@/views/resume/template/data/list";
 import { onMounted, ref } from "vue";
 import i18n, { $t } from "@/locales";
 import { translateResumeEditorText } from "@/stores/modules/resume/hooks/useResumeEditorLocale";
@@ -13,6 +14,12 @@ import { resolveLayoutColumns } from "../../preview/resumePages/engine/layout/la
 const resumeStore = useResumeStore();
 const { currentUI } = storeToRefs(resumeStore);
 const previewBase = ref(null);
+const selectedDesign = ref(""); // 当前设计分类，空值表示显示全部主题
+
+// 与模板库共用设计分类参数，再次点击当前分类恢复全部主题。
+const toggleDesign = (key) => {
+  selectedDesign.value = selectedDesign.value === key ? "" : key;
+};
 
 // 进入样式选择时再加载一份范本作为预览内容。
 onMounted(async () => {
@@ -25,7 +32,9 @@ onMounted(async () => {
 
 const templates = computed(() => {
   i18n.global.locale.value;
-  return themeTemplateList.map((t) => ({
+  return themeTemplateList.filter((t) =>
+    !selectedDesign.value || t.design.includes("all") || t.design.includes(selectedDesign.value),
+  ).map((t) => ({
     name: translateResumeEditorText(t.name),
     id: t.id,
     item: {
@@ -56,6 +65,19 @@ const applyTemplate = (template) => {
 
 <template>
   <SfScrollbar class="h-full">
+    <!-- 编辑器分类沿用模板库选项与文案，以主题的 design 字段筛选。 -->
+    <div class="mb-3 flex flex-wrap gap-3">
+      <SfButton
+        v-for="option in resumeTemplateDesignOptions"
+        :key="option.key"
+        :plain="selectedDesign !== option.key"
+        round
+        :aria-pressed="selectedDesign === option.key"
+        @click="toggleDesign(option.key)"
+      >
+        {{ $t(`resumeTemplateOption_style_${option.key}`) }}
+      </SfButton>
+    </div>
     <!-- 模板卡片按可用宽度自动换列，保持缩略图的固定尺寸。 -->
     <div class="grid w-full grid-cols-[repeat(auto-fit,minmax(156px,1fr))] gap-3">
       <div
@@ -83,6 +105,9 @@ const applyTemplate = (template) => {
           <span class="text-sm font-bold text-sf-text">{{ template.name }}</span>
         </div>
       </div>
+    </div>
+    <div v-if="!templates.length" class="flex h-36 items-center justify-center text-sm text-sf-text-2">
+      {{ $t("resumeTemplateEmpty") }}
     </div>
   </SfScrollbar>
 </template>
