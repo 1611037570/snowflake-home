@@ -66,12 +66,14 @@ export const useResumeLayout = ({
   ]);
   // 纸张边框宽度：参与页面内容宽高，渲染层与测量宿主都用同一份取值
   const pageBorderWidth = computed(() => Math.max(0, Number(ui.value.page?.border?.width) || 0));
+  const pageTop = computed(() => Number(ui.value.page?.padding?.vertical) || 0);
+  const hasSloganRegion = computed(() => activeModuleKeys.value.includes("slogan"));
+  const laterPageAvailableHeight = computed(() =>
+    getContentHeight(pageTop.value, showPageNumber.value, pageBorderWidth.value),
+  );
+  // 首页有标语时从纸张顶边计入标语，后续页继续保留页面上边距。
   const availableHeight = computed(() =>
-    getContentHeight(
-      Number(ui.value.page?.padding?.vertical) || 0,
-      showPageNumber.value,
-      pageBorderWidth.value,
-    ),
+    laterPageAvailableHeight.value + (hasSloganRegion.value ? pageTop.value : 0),
   );
   const layout = computed<PageLayoutConfig>(() =>
     createResumeLayout({
@@ -122,7 +124,10 @@ export const useResumeLayout = ({
       (Number(ui.value.page?.padding?.horizontal) || 0) * 2,
   );
   // 栏宽解析只做一次：测量宿主与真实渲染共用同一份栏宽，避免两处各算一遍
-  const columnWidths = computed(() => resolveColumnWidths(layout.value, contentWidth.value));
+  // 标语栏使用纸张内圈全宽，其他栏沿用页面左右留白后的内容宽度。
+  const columnWidths = computed(() =>
+    resolveColumnWidths(layout.value, contentWidth.value, RESUME_WIDTH - pageBorderWidth.value * 2),
+  );
   // 测量宿主按栏位分组渲染：每个节点在自己的栏宽下测量，节点与栏位一一对应，测量结果仍是扁平表
   // 分组带上区域编号，测量树才能用同一份区域外观渲染（长图导出即取自该树）
   const measureGroups = computed(() =>
@@ -173,6 +178,7 @@ export const useResumeLayout = ({
       orderedRegions,
       {
         availableHeight: availableHeight.value,
+        laterPageAvailableHeight: laterPageAvailableHeight.value,
         regionGap: layout.value.regionGap,
         buildFlow: (column, { heights }) => {
           const columnNodes = nodes.value.filter((node) =>

@@ -7,6 +7,7 @@ import type { PageLayoutConfig } from "../pageLayoutTypes";
 export const resolveColumnWidths = (
   layout: PageLayoutConfig,
   contentWidth: number,
+  fullWidth = contentWidth,
 ): Map<string, number> => {
   const widths = new Map<string, number>();
 
@@ -16,7 +17,10 @@ export const resolveColumnWidths = (
     // 栏宽按区域内容盒计算，容器内边距只在这里扣除一次。
     const available = Math.max(
       0,
-      contentWidth - (region.padding?.left ?? 0) - (region.padding?.right ?? 0) - totalGap,
+      (region.id === "slogan" ? fullWidth : contentWidth) -
+        (region.padding?.left ?? 0) -
+        (region.padding?.right ?? 0) -
+        totalGap,
     );
     const ratioSum = columns.reduce(
       (sum, column) => sum + (column.width.mode === "ratio" ? Math.max(0, column.width.value) : 0),

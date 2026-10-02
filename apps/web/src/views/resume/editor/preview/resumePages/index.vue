@@ -231,6 +231,38 @@ const getColumnStyle = (columnId) => {
   return { flex: `0 0 ${width}px`, width: `${width}px` };
 };
 const getColumnGap = (columnId) => columnConfigMap.value.get(columnId)?.gap || 0;
+const pageHasSlogan = (page) =>
+  page.pageIndex === 0 &&
+  page.regions.some(
+    (region) =>
+      region.regionId === "slogan" &&
+      region.columns.some((column) => column.fragments.length > 0),
+  );
+const getRegionTopGap = (page, regionId) => {
+  const visibleRegions = page.regions.filter((region) =>
+    region.columns.some((column) => column.fragments.length > 0),
+  );
+  const index = visibleRegions.findIndex((region) => region.regionId === regionId);
+  if (index <= 0) return 0;
+  const previousId = visibleRegions[index - 1].regionId;
+  const userTopPadding = layout.value.regions.find((region) => region.id === "user")?.padding?.top || 0;
+  // 标语后个人信息由自身留白控制距离，其他区域继续使用原有间距。
+  return previousId === "slogan" && regionId === "user" && userTopPadding > 0
+    ? 0
+    : layout.value.regionGap;
+};
+// 首页标语占据纸张全宽，后续区域在自身外侧保留左右页边距。
+const getRegionStyle = (page, regionId) => ({
+  gap: `${layoutColumnGap.value}px`,
+  marginTop: `${getRegionTopGap(page, regionId)}px`,
+  ...(pageHasSlogan(page) && regionId !== "slogan"
+    ? {
+        width: "auto",
+        marginLeft: `${pagePadding.value.left}px`,
+        marginRight: `${pagePadding.value.right}px`,
+      }
+    : {}),
+});
 
 // 预览就绪：空简历直接展示提示页，其余以新引擎完成测量为准。
 const previewMeasured = computed(() => isEmpty.value || measureDone.value);
@@ -327,6 +359,7 @@ defineExpose({
           :show-page-number="showPageNumber"
           :page-index="page.pageIndex"
           :page-count="visiblePages.length"
+          :has-slogan="pageHasSlogan(page)"
           @click="handlePageClick"
           :class="[
             {
@@ -336,14 +369,14 @@ defineExpose({
           ]"
         >
           <!-- 正文区域铺满页面剩余高度，两栏因此都能拿到完整高度 -->
-          <div class="flex min-w-0 flex-1 flex-col" :style="{ gap: `${layout.regionGap}px` }">
+          <div class="flex min-w-0 flex-1 flex-col">
             <template v-for="region in page.regions" :key="region.regionId">
               <RegionContainer
                 v-if="region.columns.some((column) => column.fragments.length > 0)"
                 :region-id="region.regionId"
                 class="flex w-full min-w-0"
                 :class="{ 'flex-1': region.regionId === 'main' }"
-                :style="{ gap: `${layoutColumnGap}px` }"
+                :style="getRegionStyle(page, region.regionId)"
               >
                 <!-- 栏自身作为定位基准，主题的背景层用绝对定位铺满栏内 -->
                 <div

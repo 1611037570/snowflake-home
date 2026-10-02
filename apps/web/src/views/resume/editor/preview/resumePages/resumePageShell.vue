@@ -43,6 +43,11 @@ const props = defineProps({
     type: Number,
     default: 1,
   },
+  // 当前页面顶部是否有独立标语区域，标语从纸张顶端开始排版
+  hasSlogan: {
+    type: Boolean,
+    default: false,
+  },
   // 根元素回传回调（缩略图测量 / 图片导出需要）
   onEl: Function,
 });
@@ -118,6 +123,7 @@ watch(
       },
       RESUME_CONTAINER_WIDTH,
       RESUME_CONTAINER_HEIGHT,
+      hasSlogan ? { paddingTop: '0px', paddingLeft: '0px', paddingRight: '0px' } : undefined,
       { paddingBottom: '0px' },
     ]"
   >
