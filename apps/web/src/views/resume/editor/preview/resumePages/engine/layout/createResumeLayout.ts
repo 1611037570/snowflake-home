@@ -1,7 +1,7 @@
 import type { PageLayoutConfig } from "../pageLayoutTypes";
 import { createDefaultPageLayoutTemplate, type PageLayoutTemplateId } from "./layoutTemplates";
 import { isPageLayoutTemplateId } from "@/views/resume/theme/layouts";
-import { resolveMainRegionPadding, resolveRegionPadding } from "@/views/resume/theme/regionPadding";
+import { resolveRegionPadding } from "@/views/resume/theme/regionPadding";
 
 /**
  * 解析当前生效的布局模板编号。
@@ -18,7 +18,6 @@ export const createResumeLayout = ({
   paddingHorizontal,
   gap,
   leftColumnWidth,
-  viewPadding,
 }: {
   /** 简历配置，layout.type 选择布局，layout.columns 保存双栏模块顺序。 */
   ui: Record<string, any>;
@@ -32,8 +31,6 @@ export const createResumeLayout = ({
   gap: number;
   /** 双栏布局的左栏宽度占比（百分比）。 */
   leftColumnWidth?: number;
-  /** 正文容器的单侧内边距，单位为像素。 */
-  viewPadding: number;
 }): PageLayoutConfig => {
   const templateId = resolvePageLayoutTemplate(ui);
   const layout = createDefaultPageLayoutTemplate({
@@ -45,21 +42,12 @@ export const createResumeLayout = ({
     leftWidthPercent: leftColumnWidth,
     columns: ui.layout?.columns,
   });
-  const padding = Math.max(0, viewPadding);
-  // 正文容器的占位与各区域留白统一折算成引擎口径，供栏宽与分页共同读取：
-  // 正文区域未声明留白时沿用容器内边距，其余区域读主题声明。
+  // 各区域留白统一按主题声明折算成引擎口径，供栏宽与分页共同读取
   return {
     ...layout,
-    regions: layout.regions.map((region) =>
-      region.id === "main"
-        ? {
-            ...region,
-            padding: resolveMainRegionPadding(ui, padding),
-          }
-        : {
-            ...region,
-            padding: resolveRegionPadding(ui, region.id),
-          },
-    ),
+    regions: layout.regions.map((region) => ({
+      ...region,
+      padding: resolveRegionPadding(ui, region.id),
+    })),
   };
 };

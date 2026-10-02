@@ -269,6 +269,10 @@ export const DEFAULT_UI = {
       // 个人信息区域留白：通栏色带由外观自行外扩，默认不再额外内缩
       padding: { top: 0, right: 0, bottom: 0, left: 0 },
     },
+    main: {
+      // 正文区域留白：默认不内缩，白色底板类主题在主题里声明
+      padding: { top: 0, right: 0, bottom: 0, left: 0 },
+    },
   },
   font: {
     family: defaultFontFamily,

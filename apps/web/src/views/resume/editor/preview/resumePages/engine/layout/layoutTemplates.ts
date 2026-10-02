@@ -234,7 +234,7 @@ const createSloganRegion = (): RegionConfig => ({
 
 /**
  * 把顶部标语区域插到所有区域之前。
- * 只有存在标语模块时才创建该区域，历史简历因此不会多出区域间距与空白；
+ * 只有存在标语模块时才创建该区域，避免多出区域间距与空白；
  * 同时把标语从模板原有栏位中摘掉，保证每个模块只被分配一次。区域顺序在此重新编号。
  */
 const withSloganRegion = (layout: PageLayoutConfig, moduleKeys: string[]): PageLayoutConfig => {

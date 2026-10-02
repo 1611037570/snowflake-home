@@ -86,7 +86,7 @@ Page      纸张      宽高、背景、边框、圆角、页尾
 | `page.border / radius`                                      | 已落地：边框计入页面内容宽高（外壳、测量宿主、引擎三处同源），圆角由色带跟随 |
 | 两阶段几何（slogan / user 先量、main 接管剩余）             | 未落地，当前由区域高度结算顺带实现，尚未收敛为固定两阶段                     |
 
-未落地的能力一律沿用现有口径：页面留白仍由 `ui.page.padding` 承担，正文容器内边距仍由 `viewStyle.padding` 折算成 main 区域的 `padding`。
+未落地的能力一律沿用现有口径：页面留白仍由 `ui.page.padding` 承担，正文区域留白由 `ui.region.main.padding` 声明。
 
 区域留白由 `theme/regionPadding.ts` 的 `resolveRegionPadding` 统一解析：引擎用它扣除栏宽与可用高度，区域外观组件用同一份结果决定自身内边距，两侧不得各写一份默认值。
 

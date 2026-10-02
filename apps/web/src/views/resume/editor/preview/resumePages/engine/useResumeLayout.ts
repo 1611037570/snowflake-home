@@ -1,5 +1,6 @@
 import { computed, type ComputedRef, type Ref } from "vue";
 import { getContentHeight, RESUME_WIDTH } from "../../shared/constants";
+import { resolveRegionPadding } from "@/views/resume/theme/regionPadding";
 import { defaultLeftColumnWidth } from "@/stores/modules/resume/config/uiConfig";
 import { buildLayoutNodes } from "./adapter/buildLayoutNodes";
 import { createResumeLayout } from "./layout/createResumeLayout";
@@ -28,7 +29,6 @@ export interface UseResumeLayoutOptions {
   /** 字体加载版本。 */
   fontReadyVersion: Ref<number>;
   /** 正文容器的单侧内边距，单位为像素。 */
-  viewPadding: ComputedRef<number>;
   /** 是否为缩略图模式。 */
   isThumb: ComputedRef<boolean> | Ref<boolean>;
 }
@@ -44,7 +44,6 @@ export const useResumeLayout = ({
   ui,
   showPageNumber,
   fontReadyVersion,
-  viewPadding,
   isThumb,
 }: UseResumeLayoutOptions) => {
   const moduleKeys = computed(() => allModules.value.map((module) => module.key).filter(Boolean));
@@ -82,7 +81,6 @@ export const useResumeLayout = ({
       paddingHorizontal: Number(ui.value.page?.padding?.horizontal) || 0,
       gap: Number(ui.value.page?.spacing?.module) || 0,
       leftColumnWidth: Number(ui.value.layout?.leftColumnWidth) || defaultLeftColumnWidth,
-      viewPadding: viewPadding.value,
     }),
   );
   const validation = computed(() => validateLayoutConfig(layout.value, activeModuleKeys.value));
@@ -147,7 +145,7 @@ export const useResumeLayout = ({
     theme: ui.value.theme,
     themeTemplate: ui.value.theme?.template, // 标题风格切换会改变标题高度
     layout: ui.value.layout,
-    viewPadding: viewPadding.value, // 容器内边距变化会改变隐藏测量宽度
+    regionMainPadding: resolveRegionPadding(ui.value, "main"), // 正文区域留白变化会改变隐藏测量宽度
     fontReadyVersion: fontReadyVersion.value,
   }));
   const { measurements, measureDone } = useLayoutMeasurements({

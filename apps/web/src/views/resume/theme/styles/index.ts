@@ -69,5 +69,3 @@ export const resumeThemeRegistry = Object.fromEntries(
 
 export const getResumeThemeTemplate = (id?: string) =>
   resolveThemeTemplate(resumeThemeRegistry[id || "default"] || resumeThemeRegistry.default);
-
-export { getLegacyMainRegionPadding } from "./themeStyles";

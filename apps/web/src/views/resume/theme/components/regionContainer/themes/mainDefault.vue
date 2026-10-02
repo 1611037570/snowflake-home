@@ -1,14 +1,14 @@
 <script setup>
 import { computed } from "vue";
 import { useResumePreviewContext } from "@/views/resume/editor/preview/shared/previewContext";
-import { resolveCurrentMainRegionPadding } from "@/views/resume/theme/regionPadding";
+import { resolveRegionPadding } from "@/views/resume/theme/regionPadding";
 
 // 默认正文外观：底板透明、无圆角，只把区域留白落在自己的盒子里。
 // 引擎按同一份留白扣栏宽与可用高度，两侧读同一个解析函数。
 const { ui } = useResumePreviewContext();
 
 const containerStyle = computed(() => {
-  const padding = resolveCurrentMainRegionPadding(ui.value);
+  const padding = resolveRegionPadding(ui.value, "main");
   return {
     backgroundColor: "transparent",
     color: "inherit",
