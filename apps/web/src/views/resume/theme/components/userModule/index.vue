@@ -3,6 +3,7 @@ import { computed } from "vue";
 import UserHeading from "./components/userHeading.vue";
 import ModernUser from "./components/modernUser.vue";
 import TwoColumnUser from "./components/twoColumnUser.vue";
+import TealRailUser from "./components/tealRailUser.vue";
 import { useResumePreviewContext } from "@/views/resume/editor/preview/shared/previewContext";
 
 const {
@@ -15,9 +16,12 @@ const layoutComponents = {
 const themeComponents = {
   modern: ModernUser, // 现代主题的个人信息内容组件
 };
-// 先按布局选择专用组件，再按主题编号选择外观组件。
+const themedLayoutComponents = {
+  tealRail: TealRailUser, // 青线双栏的分组个人信息组件
+};
+// 主题专属布局优先，其余主题仍沿用双栏或默认个人信息组件。
 const current = computed(() =>
-  layoutComponents[ui.value?.layout?.type] || themeComponents[themeTemplateRef.value] || UserHeading,
+  themedLayoutComponents[themeTemplateRef.value] || layoutComponents[ui.value?.layout?.type] || themeComponents[themeTemplateRef.value] || UserHeading,
 );
 </script>
 

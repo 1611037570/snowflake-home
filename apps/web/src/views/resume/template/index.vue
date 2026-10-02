@@ -7,7 +7,7 @@ import TemplateCategory from "./components/templateCategory.vue";
 import { resumeTemplateList } from "./data/list";
 import { loadResumeTemplates } from "./data/resumeData";
 import { expandConfigModules } from "@/stores/modules/resume/hooks/useConfigTemplate";
-import { createDefaultLayoutColumns } from "../editor/preview/resumePages/engine/layout/layoutTemplates";
+import { resolveLayoutColumns } from "../editor/preview/resumePages/engine/layout/layoutTemplates";
 import { $t } from "@/locales";
 
 // 模板页专用全屏预览组件：异步加载，避免首屏打包体积过大
@@ -112,10 +112,14 @@ const useTemplate = (card) => {
   const moduleKeys = expandConfigModules(source.config?.modules || [], source.data)
     .map((field) => field.key)
     .filter(Boolean);
+  // 主题栏位声明的派生求职信息也参与栏位解析。
+  if ([...(ui.layout.columns?.left || []), ...(ui.layout.columns?.right || [])].includes("userFacts")) {
+    moduleKeys.push("userFacts");
+  }
   // 仅双栏布局生成栏内模块顺序，顶部通栏单栏沿用简历模块顺序。
   ui.layout.columns =
     ui.layout.type === "twoColumn" || ui.layout.type === "topUserTwoColumn"
-      ? createDefaultLayoutColumns(ui.layout.type, moduleKeys)
+      ? resolveLayoutColumns(ui.layout.type, moduleKeys, ui.layout.columns)
       : null;
   resumeStore.addResume({
     data: deepClone(source.data),
