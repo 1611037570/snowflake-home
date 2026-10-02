@@ -14,7 +14,7 @@ import {
   resolveRegionAppearanceId,
 } from "@/views/resume/theme/components/regionContainer/registry";
 import { resolveRegionPadding } from "@/views/resume/theme/regionPadding";
-import { hasThemeSlogan } from "@/views/resume/theme/components/regionContainer/registry";
+import { hasThemeSlogan } from "@/views/resume/theme/components/sloganModule/registry";
 import { useResumePages } from "./useResumePages";
 import { useResumeTheme } from "@/views/resume/theme/useResumeTheme";
 import { provideResumePreviewContext } from "../shared/previewContext";

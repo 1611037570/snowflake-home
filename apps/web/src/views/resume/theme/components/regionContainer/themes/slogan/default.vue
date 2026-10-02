@@ -12,7 +12,7 @@ export default { regionPadding /* 标语组件自身的区域留白 */ };
 <script setup>
 import { computed } from "vue";
 import { useResumePreviewContext } from "@/views/resume/editor/preview/shared/previewContext";
-import { resolveBandStyle } from "../bandStyle";
+import { resolveBandStyle } from "../../bandStyle";
 
 // 顶部标语通栏外观：只绘制色带，不改变内容几何。
 // 外扩与留白的算法集中在 bandStyle.ts，与其他通栏色带外观共用同一份口径。

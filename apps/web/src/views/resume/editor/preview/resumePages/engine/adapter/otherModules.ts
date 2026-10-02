@@ -2,7 +2,7 @@ import { getValidData, getValidDataEntries } from "../../../shared/validData";
 import type { LayoutNode } from "../types";
 import type { LayoutAdapter, LayoutAdapterContext, LayoutAdapterRegistry } from "./index";
 import { createExperienceModuleAdapter } from "./experienceModules";
-import { hasThemeSlogan } from "@/views/resume/theme/components/regionContainer/registry";
+import { hasThemeSlogan } from "@/views/resume/theme/components/sloganModule/registry";
 
 /** 需要使用通用条目块结构的模块 key */
 const LIST_MODULE_KEYS = ["account", "honor"] as const;
