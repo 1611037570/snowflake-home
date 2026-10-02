@@ -89,8 +89,9 @@ const fragmentGroups = computed(() => {
         @mouseenter="emit('mouseenter', $event)"
       >
         <template #actions>
+          <!-- 标语属于版头区域，不提供任何模块操作按钮 -->
           <ModuleActions
-            v-if="isEdit"
+            v-if="isEdit && group.moduleKey !== 'userFacts' && group.moduleKey !== 'slogan'"
             :selected="selectedModuleKeys?.includes(group.moduleKey)"
             :directions="getMoveDirections(group.moduleKey)"
             @move="emit('move', { moduleKey: group.moduleKey, direction: $event })"

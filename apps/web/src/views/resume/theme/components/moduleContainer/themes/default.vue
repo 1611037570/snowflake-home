@@ -22,7 +22,7 @@ const {
 <template>
   <!-- 默认模块外框：不绘制任何装饰，只承载模块内容与编辑操作槽 -->
   <div
-    class="resume-module-wrapper group group/module relative box-border flex min-w-0 flex-col rounded-3xl"
+    class="resume-module-wrapper group group/module relative box-border flex min-w-0 flex-col"
     :data-module="moduleKey"
     :class="moduleClass"
   >

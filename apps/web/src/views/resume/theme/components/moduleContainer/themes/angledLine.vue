@@ -22,7 +22,7 @@ const {
 <template>
   <!-- 左侧贯穿细线的模块外框：细线随模块分片在每页延伸 -->
   <div
-    class="resume-module-wrapper group group/module relative box-border flex min-w-0 flex-col rounded-3xl"
+    class="resume-module-wrapper group group/module relative box-border flex min-w-0 flex-col"
     :data-module="moduleKey"
     :class="moduleClass"
   >

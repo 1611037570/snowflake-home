@@ -22,7 +22,7 @@ const {
 <template>
   <!-- 线框模块外框：主题色描边覆盖整块模块 -->
   <div
-    class="resume-module-wrapper group group/module relative box-border flex min-w-0 flex-col rounded-3xl"
+    class="resume-module-wrapper group group/module relative box-border flex min-w-0 flex-col"
     :data-module="moduleKey"
     :class="moduleClass"
   >

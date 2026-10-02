@@ -5,6 +5,9 @@
  */
 import { computed, type ComputedRef, type Ref } from "vue";
 
+/** 标语属于版头区域，不参与模块悬浮轮廓反馈 */
+const NO_HOVER_OUTLINE_KEYS = new Set(["slogan"]);
+
 /** useModuleInteractions 入参 */
 interface UseModuleInteractionsOptions {
   isEdit: ComputedRef<boolean>;
@@ -31,9 +34,11 @@ export const useModuleInteractions = ({
     for (const moduleKey of moduleKeys.value) {
       map[moduleKey] = activeModuleKey.value === moduleKey
         ? "outline-2 outline-offset-3 outline-dashed outline-sf-theme"
-        : selectedKeys.value.has(moduleKey)
-          ? "outline-2 outline-offset-3 outline-dashed outline-transparent hover:outline-sf-theme"
-          : "outline-2 outline-offset-3 outline-dashed outline-transparent hover:outline-sf-theme-2";
+        : NO_HOVER_OUTLINE_KEYS.has(moduleKey)
+          ? "outline-2 outline-offset-3 outline-dashed outline-transparent"
+          : selectedKeys.value.has(moduleKey)
+            ? "outline-2 outline-offset-3 outline-dashed outline-transparent hover:outline-sf-theme"
+            : "outline-2 outline-offset-3 outline-dashed outline-transparent hover:outline-sf-theme-2";
     }
     return map;
   });
