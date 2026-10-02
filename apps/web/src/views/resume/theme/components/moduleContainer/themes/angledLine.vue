@@ -32,6 +32,8 @@ const {
       class="pointer-events-none absolute inset-y-0 left-0 border-l"
       :style="{ borderColor: themeColorLine }"
     />
+    <!-- 标题槽与正文槽保持原有排列顺序。 -->
+    <slot name="title" />
     <slot />
   </div>
 </template>

@@ -99,7 +99,20 @@ const fragmentGroups = computed(() => {
             @toggle-select="emit('select', group.moduleKey)"
           />
         </template>
+        <!-- 同一模块的标题独立交给外壳，正文条目仍共用原始分片列表。 -->
+        <template #title>
+          <ModuleContent
+            node-role="title"
+            :module-key="group.moduleKey"
+            :items="group.items"
+            :nodes="nodes"
+            :page-index="pageIndex"
+            :group-index="groupIndex"
+            :show-debug="showDebug"
+          />
+        </template>
         <ModuleContent
+          node-role="content"
           :module-key="group.moduleKey"
           :items="group.items"
           :nodes="nodes"
