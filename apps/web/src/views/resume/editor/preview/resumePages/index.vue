@@ -205,6 +205,7 @@ const {
   layout,
   nodeMap,
   moduleKeys,
+  hasSloganRegion,
   contentWidth,
   columnWidths,
   measureGroups,
@@ -231,13 +232,8 @@ const getColumnStyle = (columnId) => {
   return { flex: `0 0 ${width}px`, width: `${width}px` };
 };
 const getColumnGap = (columnId) => columnConfigMap.value.get(columnId)?.gap || 0;
-const pageHasSlogan = (page) =>
-  page.pageIndex === 0 &&
-  page.regions.some(
-    (region) =>
-      region.regionId === "slogan" &&
-      region.columns.some((column) => column.fragments.length > 0),
-  );
+// 首页顶部区域统一读取排版节点生成的标语状态。
+const pageHasSlogan = (page) => page.pageIndex === 0 && hasSloganRegion.value;
 const getRegionTopGap = (page, regionId) => {
   const visibleRegions = page.regions.filter((region) =>
     region.columns.some((column) => column.fragments.length > 0),
@@ -328,6 +324,7 @@ defineExpose({
       <Teleport to="body">
         <LayoutMeasureTree
           :groups="measureGroups"
+          :has-slogan="hasSloganRegion"
           :width="RESUME_WIDTH"
           :root-class="ui.font?.family"
           :root-style="measureTreeStyle"
