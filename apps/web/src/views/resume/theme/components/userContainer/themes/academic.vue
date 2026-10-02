@@ -61,6 +61,8 @@ const {
   position: relative;
   width: 100%;
   display: flex;
+  /* 个人信息与两条分隔线纵向排列，避免三个子元素横向压缩。 */
+  flex-direction: column;
   justify-content: center;
   padding-bottom: 12px;
 }
