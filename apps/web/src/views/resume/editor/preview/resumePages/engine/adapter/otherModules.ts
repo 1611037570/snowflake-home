@@ -2,6 +2,7 @@ import { getValidData, getValidDataEntries } from "../../../shared/validData";
 import type { LayoutNode } from "../types";
 import type { LayoutAdapter, LayoutAdapterContext, LayoutAdapterRegistry } from "./index";
 import { createExperienceModuleAdapter } from "./experienceModules";
+import { hasThemeSlogan } from "@/views/resume/theme/components/regionContainer/registry";
 
 /** 需要使用通用条目块结构的模块 key */
 const LIST_MODULE_KEYS = ["account", "honor"] as const;
@@ -36,13 +37,13 @@ const createSloganModuleAdapter = (context: LayoutAdapterContext): LayoutNode[] 
   const moduleData = context.data.slogan;
   const sloganData = getValidData((moduleData as { data?: unknown })?.data);
   // 主题自带的标语不依赖用户数据；普通内容模板仍按已有标语字段判断。
-  const hasThemeSlogan = Boolean((context.ui as any)?.theme?.region?.slogan);
+  const builtInSlogan = hasThemeSlogan((context.ui as any)?.theme?.template);
   const hasSloganField =
     sloganData && typeof sloganData === "object" && !Array.isArray(sloganData) &&
     Object.values(sloganData as Record<string, unknown>).some(
       (value) => value !== undefined && value !== null && value !== "",
     );
-  if (!hasThemeSlogan && !hasSloganField) return [];
+  if (!builtInSlogan && !hasSloganField) return [];
 
   return [
     {

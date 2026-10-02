@@ -1,5 +1,6 @@
 import type { Component } from "vue";
 import type { RegionSlotId } from "@/views/resume/theme/regionSlots";
+import type { RegionPadding } from "@/views/resume/theme/regionPadding";
 import DefaultAppearance from "./themes/default.vue";
 import CurvedHeaderAppearance from "./themes/curvedHeader.vue";
 import FrameAppearance from "./themes/frame.vue";
@@ -8,8 +9,13 @@ import SloganBandAppearance from "./themes/sloganBand.vue";
 import SloganBandRibbonAppearance from "./themes/sloganBandRibbon.vue";
 import UserBandAppearance from "./themes/userBand.vue";
 
+interface RegionAppearanceComponent {
+  regionPadding?: RegionPadding; // 组件自身的区域留白，供分页计算尺寸
+  fillsPage?: boolean; // 区域是否铺满页面剩余高度
+}
+
 /**
- * 区域外观注册表：编号 → 组件，编号与写入 `ui.theme.region` 的取值同名。
+ * 区域外观注册表：编号 → 组件，主题只通过编号选择组件。
  * 只做静态映射，保证测量时几何立即就绪；未登记时按槽位缺省外观回退。
  */
 export const regionAppearanceRegistry: Record<string, Component> = {
@@ -29,35 +35,50 @@ export const defaultRegionAppearance: Record<RegionSlotId, string> = {
   main: "mainDefault", // 正文缺省使用透明底板
 };
 
-/** 绘制底板的区域外观编号：正文需要铺满整页时才拉满高度，避免透明外观被无谓拉伸 */
-export const regionSurfaceAppearances = new Set<string>(["frame"]);
+/** 从组件自身声明取得需要铺满页面的外观编号。 */
+export const regionSurfaceAppearances = new Set<string>(
+  Object.entries(regionAppearanceRegistry)
+    .filter(([, component]) => (component as unknown as RegionAppearanceComponent).fillsPage)
+    .map(([id]) => id),
+);
 
-/**
- * 每个槽位允许使用的区域外观编号。
- * 用途是防止把别的槽位的外观声明到本槽位（例如把个人信息底纹声明到正文，会出现底纹铺满整页），
- * 同时也约束「共用缺省外观」与「槽位专属外观」的边界：新增外观要登记到对应槽位。
- */
-export const slotRegionAppearances: Record<RegionSlotId, string[]> = {
-  slogan: ["default", "sloganBand", "sloganBandRibbon"],
-  user: ["default", "userBand", "curvedHeader"],
-  main: ["default", "mainDefault", "frame"],
+/** 主题编号决定各区域使用的组件；未登记的主题沿用对应槽位的默认组件。 */
+const themeRegionAppearances: Record<RegionSlotId, Record<string, string>> = {
+  slogan: { sloganBand: "sloganBandRibbon" }, // 标语主题使用飘带组件
+  user: { userBand: "userBand", curvedHeader: "curvedHeader" }, // 个人信息通栏主题使用各自组件
+  main: { frame: "frame" }, // 红框主题使用白色正文组件
 };
 
-/** 解析区域实际使用的区域外观编号：未登记或不属于该槽位时回退槽位缺省外观 */
+const emptyRegionPadding = {
+  top: 0, // 无额外上留白
+  right: 0, // 无额外右留白
+  bottom: 0, // 无额外下留白
+  left: 0, // 无额外左留白
+};
+
+/** 主题是否自带标语内容。 */
+export const hasThemeSlogan = (themeId: unknown) =>
+  typeof themeId === "string" && themeId in themeRegionAppearances.slogan;
+
+/** 按主题编号解析区域外观；未知主题回退槽位默认组件。 */
 export const resolveRegionAppearanceId = (
-  regionConfig: Record<string, unknown> | undefined,
+  themeId: unknown,
   slot: RegionSlotId | null,
 ): string => {
   if (!slot) return "default";
-  const configured = regionConfig?.[slot];
-  if (typeof configured === "string" && slotRegionAppearances[slot].includes(configured)) {
-    return configured;
-  }
-  return defaultRegionAppearance[slot];
+  return typeof themeId === "string"
+    ? themeRegionAppearances[slot][themeId] || defaultRegionAppearance[slot]
+    : defaultRegionAppearance[slot];
 };
 
-/** 解析区域实际使用的区域外观组件：未登记的槽位、主题未配置或配置了未知编号都按缺省外观回退。 */
+/** 读取所选外观组件自身声明的留白。 */
+export const resolveRegionAppearancePadding = (themeId: unknown, slot: RegionSlotId | null) => {
+  const appearance = resolveRegionAppearance(themeId, slot) as unknown as RegionAppearanceComponent;
+  return appearance.regionPadding || emptyRegionPadding;
+};
+
+/** 解析区域实际使用的区域外观组件。 */
 export const resolveRegionAppearance = (
-  regionConfig: Record<string, unknown> | undefined,
+  themeId: unknown,
   slot: RegionSlotId | null,
-) => regionAppearanceRegistry[resolveRegionAppearanceId(regionConfig, slot)];
+) => regionAppearanceRegistry[resolveRegionAppearanceId(themeId, slot)];

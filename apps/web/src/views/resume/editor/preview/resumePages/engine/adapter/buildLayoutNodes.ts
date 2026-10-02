@@ -7,6 +7,7 @@ import {
 import { registerExperienceModuleAdapters } from "./experienceModules";
 import { registerOtherModuleAdapters } from "./otherModules";
 import { registerRichTextModuleAdapters } from "./richTextModules";
+import { hasThemeSlogan } from "@/views/resume/theme/components/regionContainer/registry";
 
 const PARAGRAPH_SPACING_MODULE_KEYS = new Set([
   "skill",
@@ -120,8 +121,8 @@ export const buildLayoutNodes = ({
   config?: unknown;
   registry?: LayoutAdapterRegistry;
 }): LayoutNode[] => {
-  // 主题声明顶部标语外观时自动生成标语节点，无需简历配置额外提供模块。
-  const themeSlogan = Boolean((ui as any)?.theme?.region?.slogan);
+  // 主题编号对应内置标语组件时自动生成标语节点，无需简历配置额外提供模块。
+  const themeSlogan = hasThemeSlogan((ui as any)?.theme?.template);
   const effectiveModuleKeys = themeSlogan && !moduleKeys.includes("slogan")
     ? ["slogan", ...moduleKeys]
     : moduleKeys;

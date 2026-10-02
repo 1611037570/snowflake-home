@@ -108,11 +108,9 @@ const getRegionHeight = (region: RegionConfig, fallback: number) =>
 export interface BuildPagePlanOptions {
   /** 页面布局配置。 */
   layout: PageLayoutConfig;
-  /** 单栏兼容输入；配置多栏时应使用 flowPagesByColumn。 */
-  flowPages?: FlowPage[];
   /** 每个栏独立生成的分页流。 */
-  flowPagesByColumn?: ReadonlyMap<string, FlowPage[]>;
-  /** 单栏兼容高度。 */
+  flowPagesByColumn: ReadonlyMap<string, FlowPage[]>;
+  /** 区域默认可用高度。 */
   availableHeight: number;
   /** 每个栏的可用高度。 */
   availableHeightByColumn?: ReadonlyMap<string, number>;
@@ -131,7 +129,6 @@ const emptyFlowPage = (pageIndex: number): FlowPage => ({
 /** 将每个栏的独立分页流合并为统一的 PagePlan。 */
 export const buildPagePlan = ({
   layout,
-  flowPages = [],
   flowPagesByColumn,
   availableHeight,
   availableHeightByColumn,
@@ -162,8 +159,8 @@ export const buildPagePlan = ({
     };
   }
 
-  const getFlowPages = (columnId: string) =>
-    flowPagesByColumn?.get(columnId) || (flowPages.length > 0 ? flowPages : [emptyFlowPage(0)]);
+  // 每栏只读取当前布局生成的分页流。
+  const getFlowPages = (columnId: string) => flowPagesByColumn.get(columnId) || [emptyFlowPage(0)];
   const allColumnPages = orderedRegions.flatMap((region) =>
     region.columns.map((column) => getFlowPages(column.id)),
   );

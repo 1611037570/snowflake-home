@@ -6,14 +6,6 @@ import UserContact from "./userContact.vue";
 import UserName from "./userName.vue";
 import { useResumePreviewContext } from "@/views/resume/editor/preview/shared/previewContext";
 
-defineProps({
-  // 是否显示姓名下主题色短横线（仅信息居中时展示）
-  showDivider: {
-    type: Boolean,
-    default: false,
-  },
-});
-
 // 信息位置对应的信息区水平对齐类名
 const INFO_ALIGN_CLASS = {
   left: "items-start",
@@ -23,7 +15,7 @@ const INFO_ALIGN_CLASS = {
 
 // 头像与信息位置统一读取预览共享上下文。
 const {
-  theme: { avatarPosition: avatarPositionRef, infoPosition: infoPositionRef, themeColor },
+  theme: { avatarPosition: avatarPositionRef, infoPosition: infoPositionRef },
 } = useResumePreviewContext();
 const position = computed(() => avatarPositionRef.value || "left");
 const infoPosition = computed(() => infoPositionRef.value || "left");
@@ -46,11 +38,7 @@ const infoAlignClass = computed(() => INFO_ALIGN_CLASS[infoPosition.value] || "i
     <UserAvatar />
     <div class="flex w-full max-w-full min-w-0 flex-col gap-3" :class="infoAlignClass">
       <UserName />
-      <div
-        v-if="showDivider && infoPosition === 'center'"
-        class="my-1 h-1 w-10 rounded-full"
-        :style="{ background: themeColor }"
-      ></div>
+      <slot name="divider" />
       <UserContact class="w-full" :align="infoPosition" />
     </div>
   </div>

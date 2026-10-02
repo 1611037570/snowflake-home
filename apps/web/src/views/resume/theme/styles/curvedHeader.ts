@@ -13,11 +13,6 @@ export default {
     theme: {
       /** 页眉背景主题色 */
       color: "#087F8C",
-      /** 各区域的外观设置 */
-      region: {
-        /** 个人信息区域使用通栏弧形背景 */
-        user: "curvedHeader",
-      },
     },
     /** 个人信息排版设置 */
     user: {

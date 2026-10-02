@@ -42,7 +42,7 @@ export const createResumeLayout = ({
     leftWidthPercent: leftColumnWidth,
     columns: ui.layout?.columns,
   });
-  // 各区域留白统一按主题声明折算成引擎口径，供栏宽与分页共同读取
+  // 各区域留白统一读取对应外观组件的尺寸，供栏宽与分页共同使用。
   return {
     ...layout,
     regions: layout.regions.map((region) => ({

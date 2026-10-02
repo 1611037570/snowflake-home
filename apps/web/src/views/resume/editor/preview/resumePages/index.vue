@@ -14,6 +14,7 @@ import {
   resolveRegionAppearanceId,
 } from "@/views/resume/theme/components/regionContainer/registry";
 import { resolveRegionPadding } from "@/views/resume/theme/regionPadding";
+import { hasThemeSlogan } from "@/views/resume/theme/components/regionContainer/registry";
 import { useResumePages } from "./useResumePages";
 import { useResumeTheme } from "@/views/resume/theme/useResumeTheme";
 import { provideResumePreviewContext } from "../shared/previewContext";
@@ -87,7 +88,7 @@ const dataRef = computed(() => props.item.data);
 const ui = computed(() => props.item.ui || {});
 // 轻量判空：命中第一处正文文本即结束，避免为判空执行全量字数统计
 // 主题自带的顶部标语可独立构成预览内容，不依赖简历数据。
-const isEmpty = computed(() => isEmptyResume(dataRef.value) && !ui.value?.theme?.region?.slogan);
+const isEmpty = computed(() => isEmptyResume(dataRef.value) && !hasThemeSlogan(ui.value?.theme?.template));
 
 // ---------- 主题样式注入（数据源为 item.ui）----------
 // 简历展示语言：供预览标题语言包使用
@@ -106,7 +107,7 @@ const pagePadding = computed(() => ({
 const pageBorderWidth = computed(() => Math.max(0, Number(ui.value.page?.border?.width) || 0));
 // 正文区域是否绘制底板：区域留白大于 0，或外观本身绘制底板时，区域需要拉满页面高度
 const mainRegionAppearanceId = computed(() =>
-  resolveRegionAppearanceId(ui.value?.theme?.region, "main"),
+  resolveRegionAppearanceId(ui.value?.theme?.template, "main"),
 );
 const mainRegionPadding = computed(() => resolveRegionPadding(ui.value, "main"));
 const hasViewSurface = computed(

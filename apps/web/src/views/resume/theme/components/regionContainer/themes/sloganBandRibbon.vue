@@ -1,3 +1,14 @@
+<script>
+// 飘带底部留白归外观组件维护，分页读取同一份尺寸。
+const regionPadding = {
+  top: 0, // 标语顶部额外留白
+  right: 0, // 标语右侧额外留白
+  bottom: 24, // 飘带底部留白
+  left: 0, // 标语左侧额外留白
+};
+export default { regionPadding /* 飘带组件自身的区域留白 */ };
+</script>
+
 <script setup>
 import { computed } from "vue";
 import { useResumePreviewContext } from "@/views/resume/editor/preview/shared/previewContext";
