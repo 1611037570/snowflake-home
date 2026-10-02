@@ -1,12 +1,17 @@
 <script>
+import { defaultPaddingVertical as regionDefaultPaddingVertical } from "@/stores/modules/resume/config/uiConfig";
+
 // 个人信息底纹下留白归外观组件维护，分页读取同一份尺寸。
-const regionPadding = {
-  top: 0, // 个人信息顶部额外留白
+const regionPadding = (ui) => ({
+  top: Number(ui?.page?.padding?.vertical ?? regionDefaultPaddingVertical) || 0, // 个人信息顶部内部留白
   right: 0, // 个人信息右侧额外留白
   bottom: 12, // 底纹底部留白
   left: 0, // 个人信息左侧额外留白
+});
+export default {
+  regionPadding, // 个人信息底纹组件自身的区域留白
+  fillsPageTop: true, // 个人信息底纹从首页纸张顶边铺满整宽
 };
-export default { regionPadding /* 个人信息底纹组件自身的区域留白 */ };
 </script>
 
 <script setup>
@@ -15,7 +20,7 @@ import { useResumePreviewContext } from "@/views/resume/editor/preview/shared/pr
 import { defaultPageRadius, defaultPaddingHorizontal, defaultPaddingVertical } from "@/stores/modules/resume/config/uiConfig";
 
 // 个人信息通栏外观：让个人信息整块铺满页面宽度并铺上主题色底纹。
-// 通栏外扩和内部留白由个人信息底纹组件维护。
+// 页面提供通栏位置，组件只维护底纹和内部留白。
 const {
   ui,
   theme: { themeColor, themeColorContrast },
@@ -26,12 +31,8 @@ const bandStyle = computed(() => {
   const vertical = Number(ui.value?.page?.padding?.vertical ?? defaultPaddingVertical);
   const radius = Number(ui.value?.page?.radius ?? defaultPageRadius);
   return {
-    width: "auto",
-    marginTop: `-${vertical}px`,
-    marginLeft: `-${horizontal}px`,
-    marginRight: `-${horizontal}px`,
     paddingTop: `${vertical}px`,
-    paddingBottom: `${regionPadding.bottom}px`,
+    paddingBottom: "12px",
     paddingLeft: `${horizontal}px`,
     paddingRight: `${horizontal}px`,
     borderTopLeftRadius: `${radius}px`,

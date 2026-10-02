@@ -1,3 +1,18 @@
+<script>
+import { defaultPaddingVertical as regionDefaultPaddingVertical } from "@/stores/modules/resume/config/uiConfig";
+
+const regionPadding = (ui) => ({
+  top: Number(ui?.page?.padding?.vertical ?? regionDefaultPaddingVertical) || 0, // 页眉内容顶部内部留白
+  right: 0, // 右侧内容留白由栏宽控制
+  bottom: 0, // 页眉底部不增加区域留白
+  left: 0, // 左侧内容留白由栏宽控制
+});
+export default {
+  regionPadding, // 分页与页眉组件共用的顶部留白
+  fillsPageTop: true, // 弧形个人信息页眉从首页纸张顶边铺满整宽
+};
+</script>
+
 <script setup>
 import { computed } from "vue";
 import { useResumePreviewContext } from "@/views/resume/editor/preview/shared/previewContext";
@@ -7,16 +22,12 @@ const {
   ui,
   theme: { themeColor },
 } = useResumePreviewContext();
-// 弧形页眉自行计算通栏外扩，内容宽度与页面留白保持一致。
+// 页面提供通栏位置，弧形页眉只维护自身内容留白。
 const bandStyle = computed(() => {
   const horizontal = Number(ui.value?.page?.padding?.horizontal ?? defaultPaddingHorizontal);
   const vertical = Number(ui.value?.page?.padding?.vertical ?? defaultPaddingVertical);
   const radius = Number(ui.value?.page?.radius ?? defaultPageRadius);
   return {
-    width: "auto",
-    marginTop: `-${vertical}px`,
-    marginLeft: `-${horizontal}px`,
-    marginRight: `-${horizontal}px`,
     paddingTop: `${vertical}px`,
     paddingLeft: `${horizontal}px`,
     paddingRight: `${horizontal}px`,

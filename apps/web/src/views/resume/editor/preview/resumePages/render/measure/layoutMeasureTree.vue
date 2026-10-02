@@ -12,8 +12,8 @@ const props = defineProps<{
   width: number;
   /** 按栏位分组的节点：每个分组按自己的栏宽渲染，保证测量宽度与真实排版一致 */
   groups: Array<{ id: string; width: number; nodes: LayoutNode[]; regionId?: string }>;
-  /** 首页是否有独立标语区域；与分页和实际页面共用同一来源 */
-  hasSlogan?: boolean;
+  /** 首页从纸张顶边开始的区域编号；与分页和实际页面共用同一来源 */
+  topRegionId?: string | null;
   rootStyle?: Record<string, string>;
   rootClass?: string;
   /** 页面四周留白：作为测量内容的外边距内缩，与真实页面位置一致且不改变测量宽度 */
@@ -31,10 +31,10 @@ const props = defineProps<{
 const insetStyle = computed(() => {
   const inset = (value?: number) => `${(value ?? 0) + (props.pageBorderWidth ?? 0)}px`;
   return {
-    marginTop: inset(props.hasSlogan ? 0 : props.pagePadding?.top),
-    marginRight: inset(props.hasSlogan ? 0 : props.pagePadding?.right),
+    marginTop: inset(props.topRegionId ? 0 : props.pagePadding?.top),
+    marginRight: inset(props.topRegionId ? 0 : props.pagePadding?.right),
     marginBottom: inset(props.pagePadding?.bottom),
-    marginLeft: inset(props.hasSlogan ? 0 : props.pagePadding?.left),
+    marginLeft: inset(props.topRegionId ? 0 : props.pagePadding?.left),
   };
 });
 
@@ -52,7 +52,7 @@ const regionStyle = (regionId: string) => ({
   ...(regionId === "main" && props.hasViewSurface
     ? { minHeight: `${mainRegionMinHeight.value}px` }
     : {}),
-  ...(props.hasSlogan && regionId !== "slogan"
+  ...(props.topRegionId && regionId !== props.topRegionId
     ? {
         width: "auto",
         marginLeft: `${props.pagePadding?.left ?? 0}px`,
