@@ -11,7 +11,7 @@ export default {
     font: { size: 15, lineHeight: 1.3 }, // 字号与行高
     page: {
       padding: { vertical: 24, horizontal: 24 }, // 页面上下与左右留白
-      spacing: { module: 18 }, // 模块间距，同时决定色带与下文之间的白边
+      spacing: { module: 18 }, // 模块之间的间距；标语与个人信息之间由个人信息自身留白
     },
     layout: { type: "topUserSingleColumn" }, // 标语与个人信息各自独占通栏区域
   },

@@ -25,14 +25,15 @@ const props = defineProps<{
   onMeasureEl?: (element: HTMLElement | null) => void;
 }>();
 
-// 页面内缩：页面留白加纸张边框，与真实页面位置一致且不影响测量宽度
+const hasSlogan = computed(() => props.groups.some((group) => group.regionId === "slogan"));
+// 标语从纸张顶端测量，后续区域各自保留左右留白。
 const insetStyle = computed(() => {
   const inset = (value?: number) => `${(value ?? 0) + (props.pageBorderWidth ?? 0)}px`;
   return {
-    marginTop: inset(props.pagePadding?.top),
-    marginRight: inset(props.pagePadding?.right),
+    marginTop: inset(hasSlogan.value ? 0 : props.pagePadding?.top),
+    marginRight: inset(hasSlogan.value ? 0 : props.pagePadding?.right),
     marginBottom: inset(props.pagePadding?.bottom),
-    marginLeft: inset(props.pagePadding?.left),
+    marginLeft: inset(hasSlogan.value ? 0 : props.pagePadding?.left),
   };
 });
 
@@ -46,10 +47,18 @@ const mainRegionMinHeight = computed(() =>
 );
 
 // 区域外观只给绘制底板的正文区域设置最小高度，其余区域按内容高度排版
-const regionStyle = (regionId: string) =>
-  regionId === "main" && props.hasViewSurface
+const regionStyle = (regionId: string) => ({
+  ...(regionId === "main" && props.hasViewSurface
     ? { minHeight: `${mainRegionMinHeight.value}px` }
-    : undefined;
+    : {}),
+  ...(hasSlogan.value && regionId !== "slogan"
+    ? {
+        width: "auto",
+        marginLeft: `${props.pagePadding?.left ?? 0}px`,
+        marginRight: `${props.pagePadding?.right ?? 0}px`,
+      }
+    : {}),
+});
 
 // 按区域归并栏位：同一区域的多个栏位共用一份区域外观，区域留白只作用一次
 const regions = computed(() => {
