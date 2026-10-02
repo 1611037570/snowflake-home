@@ -23,17 +23,24 @@ const INFO_ALIGN_CLASS = {
 
 // 头像与信息位置统一读取预览共享上下文。
 const {
+  ui,
   theme: { avatarPosition: avatarPositionRef, infoPosition: infoPositionRef, themeColor },
 } = useResumePreviewContext();
 const position = computed(() => avatarPositionRef.value || "left");
 const infoPosition = computed(() => infoPositionRef.value || "left");
 const infoAlignClass = computed(() => INFO_ALIGN_CLASS[infoPosition.value] || "items-start");
+// 普通双栏的个人信息栏较窄，头像独占顶部一行，信息区保持原有对齐设置。
+const isTwoColumn = computed(() => ui.value?.layout?.type === "twoColumn");
 </script>
 
 <template>
   <!-- 左：头像在左，校徽固定在右侧，信息区撑满剩余宽度避免导出换行错位 -->
-  <div v-if="position === 'left'" class="flex w-full flex-wrap items-center">
-    <UserAvatar class="mr-3" />
+  <div
+    v-if="position === 'left'"
+    class="flex w-full"
+    :class="isTwoColumn ? 'flex-col gap-3' : 'flex-wrap items-center'"
+  >
+    <UserAvatar :class="isTwoColumn ? 'self-start' : 'mr-3'" />
     <div class="flex max-w-full min-w-0 flex-1 flex-col gap-3" :class="infoAlignClass">
       <UserName />
       <UserContact class="w-full" :align="infoPosition" />
@@ -55,13 +62,17 @@ const infoAlignClass = computed(() => INFO_ALIGN_CLASS[infoPosition.value] || "i
     </div>
   </div>
   <!-- 右：校徽固定在左侧，信息区居中占据剩余空间，头像在右侧 -->
-  <div v-else class="flex w-full flex-wrap items-center">
+  <div
+    v-else
+    class="flex w-full"
+    :class="isTwoColumn ? 'flex-col gap-3' : 'flex-wrap items-center'"
+  >
     <!-- <UserLogo class="mr-3" /> -->
     <div class="flex max-w-full min-w-0 flex-1 flex-col gap-3" :class="infoAlignClass">
       <UserName />
       <UserContact class="w-full" :align="infoPosition" />
     </div>
-    <UserAvatar class="ml-3" />
+    <UserAvatar :class="isTwoColumn ? 'order-first self-end' : 'ml-3'" />
   </div>
 </template>
 
