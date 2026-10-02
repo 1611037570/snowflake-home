@@ -9,6 +9,7 @@ import DefaultMain from "./themes/main/default.vue";
 import Frame from "./themes/main/frame.vue";
 import BurgundyMain from "./themes/main/burgundySidebar.vue";
 import SandSidebarMain from "./themes/main/sandSidebar.vue";
+import RedWhiteSidebarMain from "./themes/main/redWhiteSidebar.vue";
 import NavyGuideUser from "./themes/user/navyGuide.vue";
 import NavyGuideMain from "./themes/main/navyGuide.vue";
 import SquareTimelineMain from "./themes/main/squareTimeline.vue";
@@ -36,6 +37,7 @@ export const regionAppearanceRegistry: Record<RegionSlotId, Record<string, Compo
     frame: Frame, // 红色边框主题正文底板
     burgundySidebar: BurgundyMain, // 绛红双栏主题侧栏底色
     sandSidebar: SandSidebarMain, // 米色侧栏底色与教育条目分隔线
+    redWhiteSidebar: RedWhiteSidebarMain, // 深红侧栏与右栏淡菱形背景
     navyGuide: NavyGuideMain, // 单栏正文的纵向引导线
     squareTimeline: SquareTimelineMain, // 左侧标题与日期共用贯穿时间轴
     tealRail: TealRailMain, // 双栏右侧贯穿线

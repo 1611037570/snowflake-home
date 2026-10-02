@@ -197,6 +197,8 @@
   "resumeTemplateStyle_tealRail_description": "左侧个人资料与右侧经历以青色竖线和节点连接。",
   "resumeTemplateStyle_sandSidebar_name": "米色侧栏",
   "resumeTemplateStyle_sandSidebar_description": "米色侧栏搭配金棕色短线标题，简洁展示个人信息与经历。",
+  "resumeTemplateStyle_redWhiteSidebar_name": "红白双栏",
+  "resumeTemplateStyle_redWhiteSidebar_description": "深红侧栏搭配白色正文与红色横线标题。",
   "resumeTemplateStyle_burgundySidebar_description": "绛红装饰带搭配浅色侧栏，突出个人信息与工作经历。",
   "resumeTemplateStyle_colorBar_name": "色条",
   "resumeTemplateStyle_colorBar_description": "以左侧主题色竖条搭配浅色底纹突出模块标题的样式。",
