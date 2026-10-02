@@ -9,14 +9,18 @@ const {
   ui,
   theme: { themeTemplate: themeTemplateRef },
 } = useResumePreviewContext();
-// 普通双栏使用独立的个人信息组件，其他布局沿用单栏组件。
-const isTwoColumn = computed(() => ui.value?.layout?.type === "twoColumn");
-// 现代主题的个人信息装饰由自己的组件维护。
-const isModern = computed(() => themeTemplateRef.value === "modern");
+const layoutComponents = {
+  twoColumn: TwoColumnUser, // 左右双栏的个人信息内容组件
+};
+const themeComponents = {
+  modern: ModernUser, // 现代主题的个人信息内容组件
+};
+// 先按布局选择专用组件，再按主题编号选择外观组件。
+const current = computed(() =>
+  layoutComponents[ui.value?.layout?.type] || themeComponents[themeTemplateRef.value] || UserHeading,
+);
 </script>
 
 <template>
-  <TwoColumnUser v-if="isTwoColumn" />
-  <ModernUser v-else-if="isModern" />
-  <UserHeading v-else />
+  <component :is="current" />
 </template>
