@@ -31,8 +31,6 @@ interface CaseDefinition {
   name: string;
   /** 简历配置中与布局相关的部分 */
   ui: Record<string, unknown>;
-  /** 正文容器的单侧内边距 */
-  viewPadding: number;
   /** 当前简历实际存在的模块 key，缺省使用标准模块清单 */
   moduleKeys?: string[];
 }
@@ -48,7 +46,6 @@ const createCase = (definition: CaseDefinition) => {
     paddingVertical: PADDING_VERTICAL,
     paddingHorizontal: PADDING_HORIZONTAL,
     gap: MODULE_GAP,
-    viewPadding: definition.viewPadding,
   });
   const columnWidths = resolveColumnWidths(layout, contentWidth);
   // 区域分页流回调在引擎里声明为泛型函数类型，基线只需固定一种页面结构，这里显式收窄
@@ -99,7 +96,7 @@ const createCase = (definition: CaseDefinition) => {
 
 describe("简历页几何基线", () => {
   it("单栏把所有模块放进同一栏，不占用区域高度", () => {
-    const snapshot = createCase({ name: "单栏", ui: {}, viewPadding: 0 });
+    const snapshot = createCase({ name: "单栏", ui: {} });
 
     expect(snapshot).toEqual({
       availableHeight: 1063,
@@ -130,7 +127,6 @@ describe("简历页几何基线", () => {
     const snapshot = createCase({
       name: "双栏",
       ui: { layout: { type: "twoColumn" } },
-      viewPadding: 0,
     });
 
     expect(snapshot).toEqual({
@@ -174,7 +170,6 @@ describe("简历页几何基线", () => {
     const snapshot = createCase({
       name: "顶部通栏双栏",
       ui: { layout: { type: "topUserTwoColumn" } },
-      viewPadding: 0,
     });
 
     expect(snapshot).toEqual({
@@ -233,7 +228,6 @@ describe("简历页几何基线", () => {
     const snapshot = createCase({
       name: "顶部通栏单栏",
       ui: { layout: { type: "topUserSingleColumn" } },
-      viewPadding: 0,
     });
 
     expect(snapshot).toEqual({
@@ -282,9 +276,11 @@ describe("简历页几何基线", () => {
 
   it("正文容器内边距同时扣栏宽与可用高度", () => {
     const snapshot = createCase({
-      name: "正文容器带内边距",
-      ui: { layout: { type: "topUserSingleColumn" } },
-      viewPadding: 12,
+      name: "主题声明正文区域留白",
+      ui: {
+        layout: { type: "topUserSingleColumn" },
+        region: { main: { padding: { top: 12, right: 12, bottom: 12, left: 12 } } },
+      },
     });
 
     expect(snapshot).toEqual({
@@ -335,7 +331,6 @@ describe("简历页几何基线", () => {
     const snapshot = createCase({
       name: "顶部标语单栏",
       ui: { layout: { type: "singleColumn" } },
-      viewPadding: 0,
       moduleKeys: ["slogan", ...MODULE_KEYS],
     });
 
@@ -387,7 +382,6 @@ describe("简历页几何基线", () => {
     const snapshot = createCase({
       name: "顶部标语加个人信息通栏",
       ui: { layout: { type: "topUserSingleColumn" } },
-      viewPadding: 0,
       moduleKeys: ["slogan", ...MODULE_KEYS],
     });
 
@@ -455,7 +449,6 @@ describe("简历页几何基线", () => {
       name: "纸张边框",
       // 六像素边框：左右共扣十二像素宽，上下共扣十二像素高
       ui: { layout: { type: "singleColumn" }, page: { border: { width: 6 } } },
-      viewPadding: 0,
     });
 
     expect(snapshot.contentWidth).toBe(734);
@@ -464,23 +457,22 @@ describe("简历页几何基线", () => {
     expect(snapshot.columnFlowHeights).toEqual([["main-column", [[1051, 300]]]]);
   });
 
-  it("主题声明正文区域留白时按方向覆盖正文容器内边距", () => {
+  it("主题只声明部分方向时其余方向取槽位默认留白", () => {
     const snapshot = createCase({
-      name: "主题声明正文区域留白",
+      name: "主题部分声明正文区域留白",
       ui: {
         layout: { type: "topUserSingleColumn" },
-        // 只声明左右留白：上下留白仍沿用正文容器内边距
+        // 只声明左右留白：上下留白取正文槽位默认值
         region: { main: { padding: { left: 0, right: 0 } } },
       },
-      viewPadding: 12,
     });
 
-    expect(snapshot.regions[1]?.padding).toEqual({ top: 12, right: 0, bottom: 12, left: 0 });
+    expect(snapshot.regions[1]?.padding).toEqual({ top: 0, right: 0, bottom: 0, left: 0 });
     expect(snapshot.columnWidths).toEqual([
       ["user-column", 746],
       ["main-column", 746],
     ]);
-    // 可用高度只扣上下留白：1063 − 通栏 300 − 区域间距 12 − 正文上下留白 24
-    expect(snapshot.columnFlowHeights[1]).toEqual(["main-column", [[727, 300]]]);
+    // 可用高度只扣上下留白：1063 − 通栏 300 − 区域间距 12 − 正文上下留白 0
+    expect(snapshot.columnFlowHeights[1]).toEqual(["main-column", [[751, 300]]]);
   });
 });

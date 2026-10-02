@@ -1,9 +1,4 @@
-export {
-  getLegacyMainRegionPadding,
-  getResumeThemeTemplate,
-  resumeThemeRegistry,
-  themeTemplateList,
-} from "./styles";
+export { getResumeThemeTemplate, resumeThemeRegistry, themeTemplateList } from "./styles";
 export type {
   ResumeThemeDefinition,
   ResumeThemeTemplate,

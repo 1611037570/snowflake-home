@@ -24,7 +24,6 @@ import {
   defaultUserInfoLayout,
   defaultUserInfoMode,
 } from "@/stores/modules/resume/config/uiConfig";
-import { resolveViewTemplate } from "@/views/resume/theme/regionPadding";
 
 /** 简历主题配置（item.ui） */
 type ResumeUi = Record<string, any>;
@@ -60,8 +59,6 @@ export interface ResumeTheme {
   titleTemplate: ComputedRef<string>;
   /** 条目外观编号：决定条目容器使用哪个外观组件 */
   itemTemplate: ComputedRef<string>;
-  /** 正文外观编号：决定正文容器使用哪个外观组件 */
-  viewTemplate: ComputedRef<string>;
   userInfoMode: ComputedRef<string>;
   userInfoLayout: ComputedRef<string>;
   avatarPosition: ComputedRef<string>;
@@ -179,8 +176,6 @@ export const useResumeTheme = (ui: ComputedRef<ResumeUi>): ResumeTheme => {
   const itemTemplate = computed(() =>
     ui.value.theme?.item === "auto" ? themeTemplate.value : ui.value.theme?.item || "default",
   );
-  // 正文外观 ID 为 auto 或缺失时跟随整体主题，未登记的外观由组件注册表回退 default。
-  const viewTemplate = computed(() => resolveViewTemplate(ui.value));
   // 个人信息展示模式（图标/文字/隐藏），缺失时回退默认值
   const userInfoMode = computed(() => ui.value.user?.infoMode ?? defaultUserInfoMode);
   // 个人信息布局（网格/弹性），缺失时回退默认值
@@ -221,7 +216,6 @@ export const useResumeTheme = (ui: ComputedRef<ResumeUi>): ResumeTheme => {
     moduleTemplate,
     titleTemplate,
     itemTemplate,
-    viewTemplate,
     userInfoMode,
     userInfoLayout,
     avatarPosition,

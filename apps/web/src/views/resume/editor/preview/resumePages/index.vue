@@ -11,11 +11,11 @@ import Column from "./render/column.vue";
 import RegionContainer from "@/views/resume/theme/components/regionContainer/index.vue";
 import {
   regionSurfaceAppearances,
-  resolveMainRegionAppearanceId,
+  resolveRegionAppearanceId,
 } from "@/views/resume/theme/components/regionContainer/registry";
+import { resolveRegionPadding } from "@/views/resume/theme/regionPadding";
 import { useResumePages } from "./useResumePages";
 import { useResumeTheme } from "@/views/resume/theme/useResumeTheme";
-import { getLegacyMainRegionPadding } from "@/views/resume/theme/styles/themeStyles";
 import { provideResumePreviewContext } from "../shared/previewContext";
 import { isEmptyResume } from "../../toolbar/modules/progress/useResumeStats";
 import { getPreviewText } from "../shared/i18n";
@@ -103,13 +103,15 @@ const pagePadding = computed(() => ({
 }));
 // 纸张边框宽度：页面盒子内圈描边，测量树同样内缩，长度口径与引擎一致
 const pageBorderWidth = computed(() => Math.max(0, Number(ui.value.page?.border?.width) || 0));
-// 引擎扣除的正文留白与正文外观渲染的留白必须同源：都按正文区域实际使用的外观取历史回退值，
-// 主题显式声明了区域留白时由引擎与外观各自合并声明值。
-const mainRegionAppearanceId = computed(() => resolveMainRegionAppearanceId(ui.value));
-const viewPadding = computed(() => getLegacyMainRegionPadding(mainRegionAppearanceId.value));
-// 正文区域是否绘制底板：外观本身绘制底板，或区域留白大于 0 时，区域需要拉满页面高度
+// 正文区域是否绘制底板：区域留白大于 0，或外观本身绘制底板时，区域需要拉满页面高度
+const mainRegionAppearanceId = computed(() =>
+  resolveRegionAppearanceId(ui.value?.theme?.region, "main"),
+);
+const mainRegionPadding = computed(() => resolveRegionPadding(ui.value, "main"));
 const hasViewSurface = computed(
-  () => viewPadding.value > 0 || regionSurfaceAppearances.has(mainRegionAppearanceId.value),
+  () =>
+    Object.values(mainRegionPadding.value).some((value) => value > 0) ||
+    regionSurfaceAppearances.has(mainRegionAppearanceId.value),
 );
 const measureTreeStyle = computed(() => ({
   ...fontStyle.value,
@@ -211,7 +213,6 @@ const {
   showPageNumber,
   isThumb,
   fontReadyVersion,
-  viewPadding,
   allModules,
 });
 const layoutColumnGap = computed(() => layout.value.columnGap || 0);

@@ -37,7 +37,7 @@ const resolveWatchSignature = (source: Record<string, any>): string => {
     theme.template,
     layout.type,
     layout.leftColumnWidth,
-    source?.viewPadding,
+    JSON.stringify(source?.regionMainPadding || null),
     source?.fontReadyVersion,
   ].join("|");
 };

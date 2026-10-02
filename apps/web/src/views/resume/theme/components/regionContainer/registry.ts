@@ -1,6 +1,5 @@
 import type { Component } from "vue";
 import type { RegionSlotId } from "@/views/resume/theme/regionSlots";
-import { resolveViewTemplate } from "@/views/resume/theme/regionPadding";
 import DefaultAppearance from "./themes/default.vue";
 import FrameAppearance from "./themes/frame.vue";
 import MainDefaultAppearance from "./themes/mainDefault.vue";
@@ -30,28 +29,6 @@ export const defaultRegionAppearance: Record<RegionSlotId, string> = {
 
 /** 绘制底板的区域外观编号：正文需要铺满整页时才拉满高度，避免透明外观被无谓拉伸 */
 export const regionSurfaceAppearances = new Set<string>(["frame"]);
-
-/**
- * 正文区域的历史外观编号。
- * 早期简历把正文外观写在 `ui.theme.view` 里，取值是当时的外观名；
- * 只在这个映射里做历史兼容，避免把主题编号当成区域外观（两者可能同名）。
- */
-const legacyMainAppearances: Record<string, string> = {
-  frame: "frame", // 历史编号与现名一致：白色底板
-  viewFrame: "frame", // 短暂存在过的白色底板编号
-  view: "mainDefault", // 历史编号：透明底板
-};
-
-/**
- * 解析正文区域实际使用的区域外观编号。
- * 主题显式声明 `ui.theme.region.main` 时以声明为准；老简历回退历史正文外观；其余用正文缺省外观。
- * 预览的区域容器与「正文是否需要铺满整页」的判断都读这里，保证两处口径一致。
- */
-export const resolveMainRegionAppearanceId = (ui: Record<string, any> | undefined): string => {
-  const configured = ui?.theme?.region?.main;
-  if (typeof configured === "string" && regionAppearanceRegistry[configured]) return configured;
-  return legacyMainAppearances[resolveViewTemplate(ui)] || defaultRegionAppearance.main;
-};
 
 /** 解析区域实际使用的区域外观编号：未登记时回退槽位缺省外观 */
 export const resolveRegionAppearanceId = (

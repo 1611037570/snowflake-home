@@ -33,7 +33,6 @@ export const resolveItemAppearance = (themeId: unknown) =>
 ```
 
 - **键就是编号，缺省是 `default`**：主题只要不特别声明，就自动走 `default`，新增主题不需要额外登记。
-- 别名表只用于**历史兼容**（例如老简历里正文外观还叫 `view`），新增功能不得往别名表里加东西。
 
 ## 外观组件约定
 

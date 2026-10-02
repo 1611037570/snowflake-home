@@ -13,7 +13,7 @@ userContainer/themes/*.vue     外观组件：自带根元素、绘制层与内�
 1. **根元素归外观组件**：分发器不做任何包裹，模块的 `resume-module-wrapper` / `data-module` / `data-theme` / 行高字号样式都由外观组件落在自己的根元素上，避免多包一层改变布局。
 2. **交互事件靠透传**：分发器发出的 `mouseenter` 会作为原生监听挂到外观组件根元素上，外观组件不得声明同名 `emits`。
 3. **装饰元素保持一致**：每个外观都渲染 `__surface` / `__accent` / `__line--soft` / `__line--theme` 四个装饰元素，由外观自己的样式决定显示与形态，主题作者改写外观时无需新增结构。
-4. **主题编号兼容**：`ui.theme.userModule` 为 `auto` 时跟随整体主题，取值可能是任意主题编号。未在 `userAppearanceByTheme` 登记的主题一律使用 `default` 外观，历史简历不会因拆分而改变外观。
+4. **主题编号取值**：`ui.theme.userModule` 为 `auto` 时跟随整体主题，取值可能是任意主题编号。未登记的主题一律使用 `default` 外观。
 5. **新增外观**：新增 `themes/<id>.vue` 并在注册表登记，再把主题编号映射过去；调整外观时用样式主题画廊的结构指纹核对无变化。
 
 ## 当前状态
