@@ -2,6 +2,7 @@ import { nextTick } from "vue";
 import { useResumeName } from "../../../../hooks/useResumeName";
 import { useResumeStore } from "@/stores";
 import { RESUME_WIDTH } from "../../shared/constants";
+import { stripEditorPageFrame } from "./pageFrame";
 
 type ResumeRootRef = { value: HTMLElement | null };
 
@@ -93,9 +94,9 @@ export const exportHtml = async (rootRef: ResumeRootRef, onSuccess?: () => void)
 
     const clones = pages.map((page) => {
       const clone = page.cloneNode(true) as HTMLElement;
+      // 编辑器页边线属于预览装饰，导出前移除；纸张边框与圆角由主题声明，保持不动
+      stripEditorPageFrame(clone);
       clone.style.boxShadow = "none";
-      clone.style.borderRadius = "0";
-      clone.style.border = "none";
       clone.style.margin = "0";
       clone.style.transform = "none";
       clone.style.zoom = "1";
