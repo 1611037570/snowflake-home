@@ -8,6 +8,7 @@ import type { FragmentPlan } from "../engine/paginate/pagePlan";
 
 const props = defineProps<{
   moduleKey: string;
+  nodeRole?: "all" | "title" | "content"; // 当前槽渲染全部节点、仅标题或仅正文
   items: Array<{ fragment: FragmentPlan; columnIndex: number }>;
   nodes: Map<string, LayoutNode>;
   pageIndex: number;
@@ -19,6 +20,13 @@ const emit = defineEmits<{
 }>();
 
 const getNode = (fragment: FragmentPlan) => props.nodes.get(fragment.sourceNodeId);
+// 槽位只分离标题与正文，保留分片原始索引和分页信息。
+const acceptsNode = (fragment: FragmentPlan) => {
+  const node = getNode(fragment);
+  if (!node) return false;
+  return !props.nodeRole || props.nodeRole === "all" ||
+    (props.nodeRole === "title" ? isTitleNode(node) : !isTitleNode(node));
+};
 const handleContentClick = (node: LayoutNode) => {
   if (node.type === "spacer") return;
   // 标语属于版头区域，不响应点击，不触发编辑区定位。
@@ -36,7 +44,7 @@ const hoverBackgroundClass = computed(() =>
 <template>
   <!-- 普通模块与个人信息模块共用同一份条目内容；模块标题由独立节点渲染。 -->
   <template v-for="(entry, itemIndex) in items" :key="entry.fragment.fragmentId">
-    <template v-if="getNode(entry.fragment)">
+    <template v-if="acceptsNode(entry.fragment)">
       <Item
         v-if="isItemNode(getNode(entry.fragment)!)"
         :block-range="entry.fragment.blockRange"

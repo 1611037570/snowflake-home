@@ -32,6 +32,8 @@ const {
       :style="{ borderColor: themeColor }"
     />
     <slot name="actions" />
+    <!-- 标题槽与正文槽保持原有排列顺序。 -->
+    <slot name="title" />
     <slot />
   </div>
 </template>

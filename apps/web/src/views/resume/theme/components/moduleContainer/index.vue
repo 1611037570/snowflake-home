@@ -35,6 +35,9 @@ const appearance = computed(() => resolveModuleAppearance(themeTemplate.value));
     <template #actions>
       <slot name="actions" />
     </template>
+    <template #title>
+      <slot name="title" />
+    </template>
     <slot />
   </component>
 </template>
