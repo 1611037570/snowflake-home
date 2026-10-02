@@ -45,6 +45,7 @@ import RedWhiteSidebarMain from "./themes/main/redWhiteSidebar.vue";
 import NavyGuideUser from "./themes/user/navyGuide.vue";
 import NavyGuideMain from "./themes/main/navyGuide.vue";
 import SquareTimelineMain from "./themes/main/squareTimeline.vue";
+import RingTimelineMain from "./themes/main/ringTimeline.vue";
 import VioletBiographyUser from "./themes/user/violetBiography.vue";
 import VioletBiographyMain from "./themes/main/violetBiography.vue";
 import TealRailMain from "./themes/main/tealRail.vue";
@@ -110,6 +111,7 @@ export const regionAppearanceRegistry: Record<RegionSlotId, Record<string, Compo
     redWhiteSidebar: RedWhiteSidebarMain, // 深红侧栏与右栏淡菱形背景
     navyGuide: NavyGuideMain, // 单栏正文的纵向引导线
     squareTimeline: SquareTimelineMain, // 左侧标题与日期共用贯穿时间轴
+    ringTimeline: RingTimelineMain, // 圆环时间轴的栏宽、轴线与节点变量
     violetBiography: VioletBiographyMain, // 圆角渐变正文与双栏分割线
     tealRail: TealRailMain, // 双栏右侧贯穿线
   },

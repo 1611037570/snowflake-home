@@ -213,6 +213,8 @@
   "resumeTemplateStyle_violetBiography_name": "紫色履历",
   "resumeTemplateStyle_violetBiography_description": "紫色个人信息页眉与双栏正文，完整展示个人资料和工作经历。",
   "resumeTemplateStyle_tealCard_name": "青色卡片",
+  "resumeTemplateStyle_ringTimeline_name": "圆环时间轴",
+  "resumeTemplateStyle_ringTimeline_description": "顶部个人信息通栏，左侧贯穿时间轴用空心圆环标记每段经历的日期。",
   "resumeTemplateStyle_tealCard_description": "青色顶带与圆形图标标题，每个模块的正文共用白色圆角卡片。",
   "resumeTemplateStyle_squareTimeline_description": "左侧模块标题与日期，方形节点连接正文时间轴。",
   "resumeTemplateStyle_timeline_description": "顶部个人信息通栏，经历日期沿左侧时间轴排列。",
