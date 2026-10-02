@@ -25,4 +25,4 @@ export const resolveRegionPadding = (
   ui: Record<string, any> | undefined,
   slot: RegionSlotId | string,
 ): RegionPadding =>
-  resolveRegionAppearancePadding(ui?.theme?.template, isRegionSlotId(slot) ? slot : "user");
+  resolveRegionAppearancePadding(ui?.theme?.template, isRegionSlotId(slot) ? slot : "user", ui);

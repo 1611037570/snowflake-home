@@ -51,6 +51,13 @@ const rootEl = useTemplateRef("rootRef");
 // 调试开关：开启后标注正文可用区，方便排查分页与边距
 const { system } = storeToRefs(useResumeStore());
 const showDebug = computed(() => !!system.value.showDebug);
+// 双栏内容区域铺满纸张高度，页脚覆盖在栏内预留的底部空间上。
+const fullHeightColumns = computed(() =>
+  props.ui.layout?.type === "twoColumn" || props.ui.layout?.type === "topUserTwoColumn",
+);
+const bottomSpace = computed(() =>
+  Math.max(parseFloat(props.styles.paddingStyle.paddingBottom) || 0, props.showPageNumber ? PAGE_NUMBER_HEIGHT : 0),
+);
 const pageBackground = computed(() => props.ui.page?.background || defaultPageBackground);
 const pageTextColor = computed(() =>
   pageBackground.value.toLowerCase() === "#000000" ? "#ffffff" : "#000000",
@@ -63,6 +70,7 @@ const pageSurfaceStyle = computed(() => ({
   borderWidth: `${Math.max(0, Number(props.ui.page?.border?.width) || 0)}px`,
   borderStyle: "solid",
   borderColor: props.ui.page?.border?.color || defaultPageBorderColor,
+  "--resume-bottom-space": `${bottomSpace.value}px`, // 双栏内部为页脚和页面下留白预留的高度
 }));
 // 底部空间由页尾与下边距共用：页尾更高时不再叠加下边距，下边距更大时只补足超出的部分
 const bottomSpacerHeight = computed(() => {
@@ -124,11 +132,12 @@ watch(
       <slot />
     </div>
     <!-- 底部空间与页尾共用：只补足下边距超出页尾高度的部分 -->
-    <div class="shrink-0" :style="{ height: bottomSpacerHeight }" />
+    <div v-if="!fullHeightColumns" class="shrink-0" :style="{ height: bottomSpacerHeight }" />
     <!-- 页码区固定不伸缩：内容超高时只触发分页，不压缩页脚，保证页码位置恒定 -->
     <div
       v-if="showPageNumber"
       class="flex-c shrink-0 py-3 text-xs opacity-50"
+      :class="{ 'absolute inset-x-0 bottom-0': fullHeightColumns }"
       :style="{ height: `${PAGE_NUMBER_HEIGHT}px` }"
     >
       {{ footerText }}
