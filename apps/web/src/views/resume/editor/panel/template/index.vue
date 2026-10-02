@@ -4,10 +4,7 @@ defineOptions({ name: "BuilderTemplate" });
 import { useResumeStore } from "@/stores";
 import { storeToRefs } from "pinia";
 import ThumbPreview from "../../preview/modes/thumb.vue";
-import {
-  getResumeThemeTemplate,
-  themeTemplateList,
-} from "@/views/resume/theme";
+import { getResumeThemeTemplate, themeTemplateList } from "@/views/resume/theme";
 import { loadResumeTemplateData } from "@/views/resume/template/data/resumeData";
 import { onMounted, ref } from "vue";
 import i18n, { $t } from "@/locales";
@@ -65,15 +62,12 @@ const applyTemplate = (template) => {
         class="group cursor-pointer!"
         @click="applyTemplate(template)"
       >
-        <!-- 模板简历缩略图：缩略区在卡片内 padding 中，宽高比与 A4 一致，随列宽自适应，页面完整显示填满 -->
+        <!-- 模板缩略图外框与简历页面保持相同宽高比，完整显示页面内容。 -->
         <div
-          class="relative mx-auto h-[213px] w-[156px] overflow-hidden rounded-3xl border-3 border-sf-transparent bg-sf-bg"
+          class="relative mx-auto h-[218px] w-[156px] overflow-hidden rounded-3xl border-3 border-sf-transparent bg-sf-bg"
           :class="{ ' border-sf-theme!': isActive(template.id) }"
         >
-          <ThumbPreview
-            :item="template.item"
-            @select="applyTemplate(template)"
-          />
+          <ThumbPreview :item="template.item" @select="applyTemplate(template)" />
           <div class="absolute top-1/2 left-1/2 z-50 -translate-x-1/2 -translate-y-1/2">
             <SfIcon
               v-if="isActive(template.id)"
