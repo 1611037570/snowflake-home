@@ -3,6 +3,8 @@ import { computed } from "vue";
 import ResumeField from "@/views/resume/editor/preview/components/resumeField/index.vue";
 import { useResumePreviewContext } from "@/views/resume/editor/preview/shared/previewContext";
 import { hasThemeSlogan } from "@/views/resume/theme/components/regionContainer/registry";
+import { defaultPaddingVertical } from "@/stores/modules/resume/config/uiConfig";
+import { BURGUNDY_BAND_HEIGHT } from "@/views/resume/theme/components/regionContainer/burgundyBandSize";
 
 // 顶部标语内容：标题与标语各占一行，排版与配色由区域外观决定
 const {
@@ -19,11 +21,17 @@ const slogan = computed(() =>
       }
     : previewData.value?.slogan?.data || {},
 );
+// 纯装饰主题只占用固定色带未被纸张上边距覆盖的高度。
+const isDecorativeBand = computed(() => ui.value?.theme?.template === "burgundySidebar");
+const decorativeBandStyle = computed(() => ({
+  height: `${Math.max(0, BURGUNDY_BAND_HEIGHT - Math.max(0, Number(ui.value?.page?.padding?.vertical ?? defaultPaddingVertical) || 0))}px`, // 色带在正文流中占用的高度
+}));
 </script>
 
 <template>
+  <div v-if="isDecorativeBand" aria-hidden="true" class="w-full" :style="decorativeBandStyle" />
   <!-- 色带下沿留白由所选区域组件维护，内容组件不自带留白。 -->
-  <div class="flex max-w-full min-w-0 flex-col items-center gap-3 text-center">
+  <div v-else class="flex max-w-full min-w-0 flex-col items-center gap-3 text-center">
     <div
       v-if="slogan.title"
       class="font-bold tracking-wide"

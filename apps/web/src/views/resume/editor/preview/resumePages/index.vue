@@ -335,25 +335,21 @@ defineExpose({
             },
           ]"
         >
-          <div
-            class="flex min-w-0 flex-col"
-            :class="{ 'flex-1': hasViewSurface }"
-            :style="{ gap: `${layout.regionGap}px` }"
-          >
+          <!-- 正文区域铺满页面剩余高度，两栏因此都能拿到完整高度 -->
+          <div class="flex min-w-0 flex-1 flex-col" :style="{ gap: `${layout.regionGap}px` }">
             <template v-for="region in page.regions" :key="region.regionId">
               <RegionContainer
                 v-if="region.columns.some((column) => column.fragments.length > 0)"
                 :region-id="region.regionId"
                 class="flex w-full min-w-0"
-                :class="{
-                  'flex-1': hasViewSurface && region.regionId === 'main',
-                }"
+                :class="{ 'flex-1': region.regionId === 'main' }"
                 :style="{ gap: `${layoutColumnGap}px` }"
               >
+                <!-- 栏自身作为定位基准，主题的背景层用绝对定位铺满栏内 -->
                 <div
                   v-for="(column, columnIndex) in region.columns"
                   :key="column.columnId"
-                  class="min-w-0"
+                  class="relative min-w-0"
                   :style="getColumnStyle(column.columnId)"
                 >
                   <Column

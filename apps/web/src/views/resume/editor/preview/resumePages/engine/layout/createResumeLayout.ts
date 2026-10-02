@@ -39,6 +39,8 @@ export const createResumeLayout = ({
     paddingVertical,
     paddingHorizontal,
     gap,
+    // 普通双栏的区域直接相接，顶部色带与左右栏之间不插入模块间距。
+    regionGap: templateId === "twoColumn" ? 0 : gap,
     leftWidthPercent: leftColumnWidth,
     columns: ui.layout?.columns,
   });
