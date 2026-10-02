@@ -30,6 +30,8 @@ const props = defineProps({
 
 /** 条目圆角：由外观自己声明，分片内外侧由共享规则裁剪 */
 const ITEM_RADIUS = "12px";
+/** 非时间轴时的左内边距：与其余三边一致，避免正文贴住卡片左边框 */
+const PADDING_LEFT = "12px";
 
 const {
   theme: { themeColorSoft, themeColorLine },
@@ -42,8 +44,8 @@ const boxStyle = computed(() => ({
   paddingTop: "12px",
   paddingRight: "12px",
   paddingBottom: "12px",
-  // 左侧内边距沿用既有渲染值：非时间轴时为 0，时间轴让位给日期栏
-  paddingLeft: props.timeline ? "var(--timeline-rail-width)" : "0px",
+  // 左侧内边距与其余三边一致，时间轴条目让位给日期栏
+  paddingLeft: props.timeline ? "var(--timeline-rail-width)" : PADDING_LEFT,
   backgroundColor: themeColorSoft.value,
 }));
 const borderStyle = computed(() => ({
