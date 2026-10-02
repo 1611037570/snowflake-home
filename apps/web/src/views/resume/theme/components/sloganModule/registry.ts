@@ -2,11 +2,13 @@ import type { Component } from "vue";
 import DefaultSlogan from "./themes/default.vue";
 import SloganBand from "./themes/sloganBand.vue";
 import BurgundySidebar from "./themes/burgundySidebar.vue";
+import NavyGuide from "./themes/navyGuide.vue";
 
 // 自带标语内容的主题直接按主题编号登记对应组件。
 const themeSloganComponents: Record<string, Component> = {
   sloganBand: SloganBand, // 标语通栏的固定文案
   burgundySidebar: BurgundySidebar, // 绛红装饰带的分页占位
+  navyGuide: NavyGuide, // 深色顶栏与固定简历标识
 };
 
 /** 判断主题是否自带标语区域。 */

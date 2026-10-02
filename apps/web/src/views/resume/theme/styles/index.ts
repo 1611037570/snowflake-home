@@ -17,6 +17,7 @@ import layeredCurve from "./layeredCurve";
 import markerGrid from "./markerGrid";
 import minimal from "./minimal";
 import modern from "./modern";
+import navyGuide from "./navyGuide";
 import outline from "./outline";
 import slantedLayer from "./slantedLayer";
 import sloganBand from "./sloganBand";
@@ -37,6 +38,7 @@ import {
 export const themeTemplateList = createThemeTemplates([
   defaultTheme,
   modern,
+  navyGuide,
   business,
   burgundySidebar,
   minimal,

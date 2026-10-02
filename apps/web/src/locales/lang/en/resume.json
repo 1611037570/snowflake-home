@@ -215,6 +215,8 @@
   "resumeTemplateStyle_userBand_name": "Full-width Profile",
   "resumeTemplateStyle_curvedHeader_name": "Curved Header",
   "resumeTemplateStyle_curvedHeader_description": "A full-width curved header with a centered circular portrait, name, and contact details.",
+  "resumeTemplateStyle_navyGuide_name": "Navy Guide",
+  "resumeTemplateStyle_navyGuide_description": "A dark header and blue vertical guide organize the profile and experience sections.",
   "resumeTemplateStyle_userBand_description": "A full-width tinted band behind the profile block while the body keeps page margins.",
   "resumeTemplateStyle_foldedLabel_description": "Rectangular labels with white text and a small gray fold beneath the left corner.",
   "resumeTemplateStyle_slantedLayer_description": "Slanted section labels with a pale offset layer and a thin line extending along the bottom.",

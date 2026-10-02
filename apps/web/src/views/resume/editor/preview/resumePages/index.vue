@@ -13,7 +13,7 @@ import {
   regionSurfaceAppearances,
   resolveRegionAppearanceId,
 } from "@/views/resume/theme/components/regionContainer/registry";
-import { resolveRegionPadding } from "@/views/resume/theme/regionPadding";
+import { layoutStretchesColumns } from "@/views/resume/theme/layouts";
 import { hasThemeSlogan } from "@/views/resume/theme/components/sloganModule/registry";
 import { useResumePages } from "./useResumePages";
 import { resolveRegionGap } from "./engine/layout/regionFlows";
@@ -110,11 +110,11 @@ const pageBorderWidth = computed(() => Math.max(0, Number(ui.value.page?.border?
 const mainRegionAppearanceId = computed(() =>
   resolveRegionAppearanceId(ui.value?.theme?.template, "main"),
 );
-const mainRegionPadding = computed(() => resolveRegionPadding(ui.value, "main"));
-const hasViewSurface = computed(
-  () =>
-    Object.values(mainRegionPadding.value).some((value) => value > 0) ||
-    regionSurfaceAppearances.has(mainRegionAppearanceId.value),
+// 只有组件声明铺满页面的正文底板需要在测量树中保持整页高度。
+const hasViewSurface = computed(() => regionSurfaceAppearances.has(mainRegionAppearanceId.value));
+// 双栏布局仍需让栏位延伸至页底；普通单栏的装饰跟随内容高度结束。
+const mainRegionFillsPage = computed(
+  () => hasViewSurface.value || layoutStretchesColumns(ui.value?.layout?.type),
 );
 const measureTreeStyle = computed(() => ({
   ...fontStyle.value,
@@ -371,7 +371,7 @@ defineExpose({
                 v-if="region.columns.some((column) => column.fragments.length > 0)"
                 :region-id="region.regionId"
                 class="flex w-full min-w-0"
-                :class="{ 'flex-1': region.regionId === 'main' }"
+                :class="{ 'flex-1': region.regionId === 'main' && mainRegionFillsPage }"
                 :style="getRegionStyle(page, region.regionId)"
               >
                 <!-- 栏自身作为定位基准，主题的背景层用绝对定位铺满栏内 -->
