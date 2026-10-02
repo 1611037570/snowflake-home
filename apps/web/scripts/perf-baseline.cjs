@@ -8,6 +8,11 @@
  *
  * 前置条件：本地 dev server 跑在 5174（pnpm dev:web），Windows 上的 Edge 位于脚本里的默认路径。
  * 用法：pnpm --filter @snowflake/web perf:baseline [输出json路径]
+ *
+ * 两条已知结论，别再从零试一遍：
+ *   1. dev server 的数字不能作为优化依据：Vite dev + Vue DevTools 会放大脚本开销（例如深监听遍历），
+ *      生产复测要 pnpm build 后用 preview，并加 --url=http://localhost:4173 --hash。
+ *   2. 单轮 taskMs 波动可达 ±30%，必须 --repeat=3 取中位数；落在波动区间内的差异不要当成收益。
  */
 const fs = require("fs");
 const path = require("path");
