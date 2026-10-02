@@ -7,7 +7,7 @@ import { useResumePreviewContext } from "@/views/resume/editor/preview/shared/pr
 
 const {
   ui,
-  theme: { userModuleTemplate: themeTemplateRef },
+  theme: { themeTemplate: themeTemplateRef },
 } = useResumePreviewContext();
 // 普通双栏使用独立的个人信息组件，其他布局沿用单栏组件。
 const isTwoColumn = computed(() => ui.value?.layout?.type === "twoColumn");

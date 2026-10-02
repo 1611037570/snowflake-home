@@ -53,12 +53,7 @@ export interface ResumeTheme {
   themeColorSoft: ComputedRef<string>;
   themeColorLine: ComputedRef<string>;
   themeColorContrast: ComputedRef<string>;
-  themeTemplate: ComputedRef<any>;
-  userModuleTemplate: ComputedRef<string>;
-  moduleTemplate: ComputedRef<string>;
-  titleTemplate: ComputedRef<string>;
-  /** 条目外观编号：决定条目容器使用哪个外观组件 */
-  itemTemplate: ComputedRef<string>;
+  themeTemplate: ComputedRef<string>; // 当前主题编号，供各外观组件查找自身实现
   userInfoMode: ComputedRef<string>;
   userInfoLayout: ComputedRef<string>;
   avatarPosition: ComputedRef<string>;
@@ -156,26 +151,8 @@ export const useResumeTheme = (ui: ComputedRef<ResumeUi>): ResumeTheme => {
   const themeColorContrast = computed(() =>
     isLightColor(themeColor.value) ? "#1f2937" : "#ffffff",
   );
-  const themeTemplate = computed(() => ui.value.theme?.template);
-  const userModuleTemplate = computed(() =>
-    ui.value.theme?.userModule === "auto"
-      ? themeTemplate.value
-      : ui.value.theme?.userModule || "default",
-  );
-  // 样式 ID 为 auto 时跟随整体主题。
-  const moduleTemplate = computed(() => {
-    const moduleTheme = ui.value.theme?.module;
-    return moduleTheme === "auto" ? themeTemplate.value : moduleTheme;
-  });
-  // 标题组件 ID 为 auto 时跟随整体主题。
-  const titleTemplate = computed(() => {
-    const titleTheme = ui.value.theme?.title;
-    return titleTheme === "auto" ? themeTemplate.value : titleTheme;
-  });
-  // 条目外观 ID 为 auto 时跟随整体主题，未登记的主题由组件注册表回退 default。
-  const itemTemplate = computed(() =>
-    ui.value.theme?.item === "auto" ? themeTemplate.value : ui.value.theme?.item || "default",
-  );
+  // 各外观组件只读取统一的主题编号。
+  const themeTemplate = computed<string>(() => ui.value.theme?.template || "default");
   // 个人信息展示模式（图标/文字/隐藏），缺失时回退默认值
   const userInfoMode = computed(() => ui.value.user?.infoMode ?? defaultUserInfoMode);
   // 个人信息布局（网格/弹性），缺失时回退默认值
@@ -212,10 +189,6 @@ export const useResumeTheme = (ui: ComputedRef<ResumeUi>): ResumeTheme => {
     themeColorLine,
     themeColorContrast,
     themeTemplate,
-    userModuleTemplate,
-    moduleTemplate,
-    titleTemplate,
-    itemTemplate,
     userInfoMode,
     userInfoLayout,
     avatarPosition,

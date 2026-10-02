@@ -1,21 +1,17 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import Item from "@/views/resume/theme/components/itemContainer/index.vue";
-import { isItemNode, isTimelineNode } from "../itemStyle";
-import { useResumePreviewContext } from "../../../shared/previewContext";
+import { isItemNode } from "../itemStyle";
 import LayoutNodeContent from "../layoutNodeContent.vue";
 import UserModule from "@/views/resume/theme/components/userContainer/index.vue";
 import type { LayoutNode } from "../../engine/types";
 
 const props = defineProps<{ node: LayoutNode }>();
-const { theme } = useResumePreviewContext();
 // 测量树复用同一条目外观组件，圆角与留白由外观自己声明，确保测量尺寸与实际预览一致。
 const useItem = computed(() => isItemNode(props.node));
 const isUserModule = computed(
   () => props.node.type === "group" && props.node.sourceModuleKey === "user",
 );
-// 测量树与预览条目使用相同的日期栏宽度。
-const isTimeline = computed(() => isTimelineNode(props.node, theme.themeTemplate.value));
 /** 完整节点覆盖全部块，不裁剪任何圆角与留白 */
 const FULL_BLOCK_RANGE = { start: 0, end: Number.MAX_SAFE_INTEGER };
 </script>
@@ -27,7 +23,7 @@ const FULL_BLOCK_RANGE = { start: 0, end: Number.MAX_SAFE_INTEGER };
         v-if="useItem"
         :block-range="FULL_BLOCK_RANGE"
         :decoration="'full'"
-        :timeline="isTimeline"
+        :node-type="node.type"
         data-layout-block-range
       >
         <LayoutNodeContent :node="node" />
@@ -49,7 +45,7 @@ const FULL_BLOCK_RANGE = { start: 0, end: Number.MAX_SAFE_INTEGER };
           :block-range="FULL_BLOCK_RANGE"
           :content-range="{ start: 0, end: point.offset }"
           :decoration="'top'"
-          :timeline="isTimeline"
+          :node-type="node.type"
           data-layout-block-range
         >
           <LayoutNodeContent

@@ -1,14 +1,29 @@
 <script setup>
 import { computed } from "vue";
 import { useResumePreviewContext } from "@/views/resume/editor/preview/shared/previewContext";
-import { resolveBandStyle } from "../../bandStyle";
+import { defaultPageRadius, defaultPaddingHorizontal, defaultPaddingVertical } from "@/stores/modules/resume/config/uiConfig";
 
 const {
   ui,
   theme: { themeColor },
 } = useResumePreviewContext();
-// 通栏外扩复用区域留白算法，使预览、测量与导出保持相同几何。
-const bandStyle = computed(() => resolveBandStyle(ui.value, "user", { roundTop: true }));
+// 弧形页眉自行计算通栏外扩，内容宽度与页面留白保持一致。
+const bandStyle = computed(() => {
+  const horizontal = Number(ui.value?.page?.padding?.horizontal ?? defaultPaddingHorizontal);
+  const vertical = Number(ui.value?.page?.padding?.vertical ?? defaultPaddingVertical);
+  const radius = Number(ui.value?.page?.radius ?? defaultPageRadius);
+  return {
+    width: "auto",
+    marginTop: `-${vertical}px`,
+    marginLeft: `-${horizontal}px`,
+    marginRight: `-${horizontal}px`,
+    paddingTop: `${vertical}px`,
+    paddingLeft: `${horizontal}px`,
+    paddingRight: `${horizontal}px`,
+    borderTopLeftRadius: `${radius}px`,
+    borderTopRightRadius: `${radius}px`,
+  };
+});
 </script>
 
 <template>

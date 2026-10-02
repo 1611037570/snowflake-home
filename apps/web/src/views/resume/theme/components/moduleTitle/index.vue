@@ -29,7 +29,7 @@ const props = defineProps({
 const {
   data: previewData,
   lang: previewLang,
-  theme: { titleFontStyle, titleTemplate, titleIconMode },
+  theme: { titleFontStyle, themeTemplate, titleIconMode },
 } = useResumePreviewContext();
 
 const displayTitle = computed(() => {
@@ -39,7 +39,7 @@ const displayTitle = computed(() => {
   return props.title || moduleTitle || getPreviewTitle(props.moduleKey, previewLang.value);
 });
 // 标题组件按解析后的 ID 加载，未匹配时回退默认组件。
-const current = computed(() => themeComponents[titleTemplate.value] || themeComponents.default);
+const current = computed(() => themeComponents[themeTemplate.value] || themeComponents.default);
 
 // 模块图标：取模块默认图标表，自定义模块用统一图标，未知模块不展示
 const moduleIcon = computed(() => {

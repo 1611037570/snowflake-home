@@ -1,8 +1,7 @@
 <script setup lang="ts">
 import Item from "@/views/resume/theme/components/itemContainer/index.vue";
-import { isItemNode, isTimelineNode, isTitleNode } from "./itemStyle";
+import { isItemNode, isTitleNode } from "./itemStyle";
 import LayoutNodeContent from "./layoutNodeContent.vue";
-import { useResumePreviewContext } from "../../shared/previewContext";
 import type { LayoutNode } from "../engine/types";
 import type { FragmentPlan } from "../engine/paginate/pagePlan";
 
@@ -18,7 +17,6 @@ const emit = defineEmits<{
   click: [payload: { moduleKey: string; itemIndex?: number }];
 }>();
 
-const { theme } = useResumePreviewContext();
 const getNode = (fragment: FragmentPlan) => props.nodes.get(fragment.sourceNodeId);
 const handleContentClick = (node: LayoutNode) => {
   if (node.type === "spacer") return;
@@ -37,7 +35,7 @@ const isLeadingOnPage = (itemIndex: number) =>
         :block-range="entry.fragment.blockRange"
         :content-range="entry.fragment.contentRange"
         :decoration="entry.fragment.decoration"
-        :timeline="isTimelineNode(getNode(entry.fragment)!, theme.themeTemplate.value)"
+        :node-type="getNode(entry.fragment)!.type"
         class="resume-submodule-content relative rounded-3xl hover:bg-sf-theme-2!"
         data-layout-block-range
         @click.stop="handleContentClick(getNode(entry.fragment)!)"
