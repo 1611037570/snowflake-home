@@ -9,6 +9,7 @@ import DefaultAppearance from "./themes/default.vue";
 import FreshAppearance from "./themes/fresh.vue";
 import MinimalAppearance from "./themes/minimal.vue";
 import SteadyAppearance from "./themes/steady.vue";
+import SandSidebarAppearance from "./themes/sandSidebar.vue";
 import VividAppearance from "./themes/vivid.vue";
 
 /** 个人信息模块外观注册表：外观编号与主题编号同名，未登记的主题走 default */
@@ -22,6 +23,7 @@ export const userAppearanceRegistry = createAppearanceRegistry({
   fresh: FreshAppearance, // 大圆角浅色底托
   vivid: VividAppearance, // 浅色底托 + 主题色描边
   steady: SteadyAppearance, // 左侧主题色细竖条
+  sandSidebar: SandSidebarAppearance, // 米色侧栏主题的方形头像和金棕色姓名
   curvedHeader: CurvedHeaderAppearance, // 圆形头像跨弧线，个人信息位于背景下方
   navyGuide: NavyGuideAppearance, // 方形头像及蓝色偏移衬边
 });
