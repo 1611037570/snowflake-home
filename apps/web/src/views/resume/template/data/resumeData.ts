@@ -7,13 +7,19 @@ export type ResumeTemplateItem = {
 };
 
 // 正文使用懒加载映射，首页读取列表时不加载简历数据。
-const resumeModules = import.meta.glob("./resumes/*.ts", { import: "default" }) as Record<
+const resumeModules = Object.fromEntries(
+  Object.entries(import.meta.glob("./resumes/**/*.ts", { import: "default" })).map(([path, load]) => [
+    path.slice(path.lastIndexOf("/") + 1),
+    load,
+  ]),
+) as Record<
   string,
   () => Promise<ResumeTemplateItem>
 >;
 
 export const loadResumeTemplateData = (fileName: string) => {
-  const load = resumeModules[`./resumes/${fileName}`];
+  // 文件名仍是模板标识，范本可按用途移动到子目录。
+  const load = resumeModules[fileName];
   if (!load) throw new Error(`未找到简历范本：${fileName}`);
   return load();
 };
