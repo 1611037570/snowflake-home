@@ -267,14 +267,4 @@ export const resumeTemplateList: ResumeTemplate[] = [
     workExperience: ["0-1"],
     tags: ["English", "Project Results"],
   },
-  {
-    fileName: "sloganBanner.ts",
-    name: "标语通栏简历",
-    description: "顶部标语色带搭配完整经历内容，适合突出个人主张的通用简历",
-    scene: ["social-recruitment"],
-    industry: ["all"],
-    position: ["all"],
-    workExperience: ["3-5"],
-    tags: ["顶部标语", "通用简历"],
-  },
 ];

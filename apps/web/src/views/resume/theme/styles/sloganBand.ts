@@ -3,8 +3,6 @@ export default {
   id: "sloganBand", // 主题编号
   design: ["single-column", "polished"], // 模板页的分类筛选标签
   description: "顶部标语色带搭配飘带底沿，适合突出个人主张的通用简历。", // 主题说明
-  // 主题自带样例范本：样式卡片与「使用模板」都使用这条带标语模块的范本
-  sample: { fileName: "sloganBanner.ts" },
   ui: {
     // 主题相对默认配置的差异
     theme: {
