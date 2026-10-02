@@ -16,6 +16,7 @@ import {
 import { resolveRegionPadding } from "@/views/resume/theme/regionPadding";
 import { hasThemeSlogan } from "@/views/resume/theme/components/sloganModule/registry";
 import { useResumePages } from "./useResumePages";
+import { resolveRegionGap } from "./engine/layout/regionFlows";
 import { useResumeTheme } from "@/views/resume/theme/useResumeTheme";
 import { provideResumePreviewContext } from "../shared/previewContext";
 import { isEmptyResume } from "../../toolbar/modules/progress/useResumeStats";
@@ -241,11 +242,9 @@ const getRegionTopGap = (page, regionId) => {
   const index = visibleRegions.findIndex((region) => region.regionId === regionId);
   if (index <= 0) return 0;
   const previousId = visibleRegions[index - 1].regionId;
-  const userTopPadding = layout.value.regions.find((region) => region.id === "user")?.padding?.top || 0;
-  // 标语后个人信息由自身留白控制距离，其他区域继续使用原有间距。
-  return previousId === "slogan" && regionId === "user" && userTopPadding > 0
-    ? 0
-    : layout.value.regionGap;
+  const previousRegion = layout.value.regions.find((region) => region.id === previousId);
+  const currentRegion = layout.value.regions.find((region) => region.id === regionId);
+  return resolveRegionGap(previousRegion, currentRegion, layout.value.regionGap);
 };
 // 首页标语占据纸张全宽，后续区域在自身外侧保留左右页边距。
 const getRegionStyle = (page, regionId) => ({

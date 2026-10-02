@@ -42,6 +42,18 @@ interface FlowPageLike {
   items: unknown[];
 }
 
+/** 相邻区域的间距由布局层统一判定，预览和分页共用。 */
+export const resolveRegionGap = (
+  previous: RegionConfig | undefined,
+  next: RegionConfig | undefined,
+  gap: number,
+): number => {
+  if (!previous || !next) return 0;
+  // 标语后个人信息已有内部上留白，不再叠加区域间距。
+  if (previous.id === "slogan" && next.id === "user" && (next.padding?.top ?? 0) > 0) return 0;
+  return Math.max(0, gap);
+};
+
 /**
  * 计算每个区域、每个栏的分页流。
  * 区域按传入顺序结算，首个页面已被前面区域占用的高度在这里统一累计；
@@ -83,11 +95,7 @@ export const buildRegionFlows = <TPage extends FlowPageLike>(
       firstPageConsumedHeight += getRegionContentHeight(region, availableHeight);
     }
 
-    const nextRegion = orderedRegions[regionIndex + 1];
-    // 标语后个人信息已有内部上留白，不再叠加区域间距。
-    if (nextRegion && !(region.id === "slogan" && nextRegion.id === "user" && (nextRegion.padding?.top ?? 0) > 0)) {
-      firstPageConsumedHeight += Math.max(0, regionGap);
-    }
+    firstPageConsumedHeight += resolveRegionGap(region, orderedRegions[regionIndex + 1], regionGap);
   });
 
   return { columnFlows };
