@@ -201,6 +201,8 @@
   "resumeTemplateStyle_frame_name": "红色边框",
   "resumeTemplateStyle_frame_description": "红色页面背景与白色正文容器。",
   "resumeTemplateStyle_timeline_name": "时间轴",
+  "resumeTemplateStyle_squareTimeline_name": "方节点时间轴",
+  "resumeTemplateStyle_squareTimeline_description": "左侧模块标题与日期，方形节点连接正文时间轴。",
   "resumeTemplateStyle_timeline_description": "顶部个人信息通栏，经历日期沿左侧时间轴排列。",
   "resumeTemplateStyle_labelLine_name": "色块横线",
   "resumeTemplateStyle_angledLine_name": "斜角竖线",

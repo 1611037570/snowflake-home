@@ -25,6 +25,7 @@ import sloganBand from "./sloganBand";
 import steady from "./steady";
 import stripedRibbon from "./stripedRibbon";
 import timeline from "./timeline";
+import squareTimeline from "./squareTimeline";
 import topUserTwoColumn from "./topUserTwoColumn";
 import twoColumn from "./twoColumn";
 import userBand from "./userBand";
@@ -56,6 +57,7 @@ export const themeTemplateList = createThemeTemplates([
   colorBar,
   frame,
   timeline,
+  squareTimeline,
   labelLine,
   angledLine,
   layeredCurve,
