@@ -52,8 +52,6 @@ const isActive = (id) => (currentUI.value?.theme?.template ?? "default") === id;
 const applyTemplate = (template) => {
   const nextUi = structuredClone(template.item.ui);
   const moduleKeys = resumeStore.runtimeFields.map((field) => field.key).filter(Boolean);
-  // 主题声明的派生展示模块与真实模块一起进入栏位解析。
-  if (nextUi.layout.columns?.left?.includes("userFacts")) moduleKeys.push("userFacts");
   // 顶部通栏单栏与普通单栏一样，不保存双栏模块配置。
   nextUi.layout.columns =
     nextUi.layout.type === "twoColumn" || nextUi.layout.type === "topUserTwoColumn"

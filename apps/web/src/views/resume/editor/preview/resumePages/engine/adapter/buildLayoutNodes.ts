@@ -123,16 +123,8 @@ export const buildLayoutNodes = ({
   const sloganModuleKeys = themeSlogan && !moduleKeys.includes("slogan")
     ? ["slogan", ...moduleKeys]
     : moduleKeys;
-  // 栏位声明中的求职信息从现有个人资料派生，不要求简历另存一份模块数据。
-  const configuredColumns = (ui as any)?.layout?.columns;
-  const hasUserFacts = [...(configuredColumns?.left || []), ...(configuredColumns?.right || [])].includes("userFacts");
-  const configuredOrder = [...(configuredColumns?.left || []), ...(configuredColumns?.right || [])]
-    .filter((key) => key === "userFacts" || sloganModuleKeys.includes(key));
-  // 派生模块存在时按主题栏内顺序生成节点，左栏标题与内容才按声明顺序出现。
-  const effectiveModuleKeys = hasUserFacts && !sloganModuleKeys.includes("userFacts")
-    ? [...new Set([...sloganModuleKeys.filter((key) => key === "slogan" || key === "user"), ...configuredOrder, ...sloganModuleKeys])]
-    : sloganModuleKeys;
-  const nextNodes = effectiveModuleKeys.flatMap((moduleKey) => {
+  // 节点仅由真实模块清单生成，主题只负责外观与栏位分配。
+  const nextNodes = sloganModuleKeys.flatMap((moduleKey) => {
     const adapter = registry.resolve(moduleKey);
     if (!adapter) return [];
     const nodes = adapter({ moduleKey, data, ui, config });

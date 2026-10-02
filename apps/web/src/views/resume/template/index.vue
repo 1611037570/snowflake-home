@@ -113,10 +113,6 @@ const useTemplate = (card) => {
   const moduleKeys = expandConfigModules(source.config?.modules || [], source.data)
     .map((field) => field.key)
     .filter(Boolean);
-  // 主题栏位声明的派生求职信息也参与栏位解析。
-  if ([...(ui.layout.columns?.left || []), ...(ui.layout.columns?.right || [])].includes("userFacts")) {
-    moduleKeys.push("userFacts");
-  }
   // 仅双栏布局生成栏内模块顺序，顶部通栏单栏沿用简历模块顺序。
   ui.layout.columns =
     ui.layout.type === "twoColumn" || ui.layout.type === "topUserTwoColumn"

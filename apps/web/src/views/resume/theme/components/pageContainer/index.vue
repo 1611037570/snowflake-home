@@ -3,9 +3,9 @@ import { computed } from "vue";
 import { useResumePreviewContext } from "@/views/resume/editor/preview/shared/previewContext";
 import { resolvePageAppearance } from "./registry";
 
-// 页面外观由 ui.page.backgroundPattern 指定，未配置时走 default 组件（不绘制图案）
+// 页面纹理优先按用户设置选择；未设置时按主题编号选择页面背景外观。
 const { ui } = useResumePreviewContext();
-const appearance = computed(() => resolvePageAppearance(ui.value?.page?.backgroundPattern));
+const appearance = computed(() => resolvePageAppearance(ui.value?.page?.backgroundPattern || ui.value?.theme?.template));
 </script>
 
 <template>

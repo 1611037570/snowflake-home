@@ -14,11 +14,14 @@ import RedWhiteSidebarMain from "./themes/main/redWhiteSidebar.vue";
 import NavyGuideUser from "./themes/user/navyGuide.vue";
 import NavyGuideMain from "./themes/main/navyGuide.vue";
 import SquareTimelineMain from "./themes/main/squareTimeline.vue";
+import VioletBiographyUser from "./themes/user/violetBiography.vue";
+import VioletBiographyMain from "./themes/main/violetBiography.vue";
 import TealRailMain from "./themes/main/tealRail.vue";
 
 interface RegionAppearanceComponent {
   regionPadding?: RegionPadding | ((ui?: Record<string, any>) => RegionPadding); // 组件声明的区域留白，供分页计算尺寸
   fillsPageTop?: boolean; // 组件是否从首页纸张顶边开始占据整宽
+  gapBefore?: number; // 区域与前一区域之间的间距覆盖值
 }
 
 /** 每个区域直接使用主题编号查找组件，未登记时回退该区域的默认组件。 */
@@ -32,6 +35,7 @@ export const regionAppearanceRegistry: Record<RegionSlotId, Record<string, Compo
     curvedHeader: CurvedHeader, // 弧形页眉主题背景
     sloganBand: SloganBandUser, // 标语通栏主题的个人信息内部留白
     navyGuide: NavyGuideUser, // 深色顶栏下方的个人信息留白
+    violetBiography: VioletBiographyUser, // 紫色通栏个人信息页眉
   },
   main: {
     default: DefaultMain, // 普通正文区域底板
@@ -42,6 +46,7 @@ export const regionAppearanceRegistry: Record<RegionSlotId, Record<string, Compo
     redWhiteSidebar: RedWhiteSidebarMain, // 深红侧栏与右栏淡菱形背景
     navyGuide: NavyGuideMain, // 单栏正文的纵向引导线
     squareTimeline: SquareTimelineMain, // 左侧标题与日期共用贯穿时间轴
+    violetBiography: VioletBiographyMain, // 圆角渐变正文与双栏分割线
     tealRail: TealRailMain, // 双栏右侧贯穿线
   },
 };
@@ -77,6 +82,10 @@ export const resolveRegionAppearancePadding = (
 /** 由区域外观组件声明首页是否占据纸张顶部。 */
 export const resolveRegionFillsPageTop = (themeId: unknown, slot: RegionSlotId): boolean =>
   Boolean((resolveRegionAppearance(themeId, slot) as unknown as RegionAppearanceComponent).fillsPageTop);
+
+/** 读取区域组件声明的前置间距。 */
+export const resolveRegionGapBefore = (themeId: unknown, slot: RegionSlotId): number | undefined =>
+  (resolveRegionAppearance(themeId, slot) as unknown as RegionAppearanceComponent).gapBefore;
 
 /** 按区域和主题编号取得组件。 */
 export const resolveRegionAppearance = (

@@ -23,8 +23,7 @@ const handleContentClick = (node: LayoutNode) => {
   if (node.type === "spacer") return;
   // 标语属于版头区域，不响应点击，不触发编辑区定位。
   if (props.moduleKey === "slogan") return;
-  // 派生求职信息复用个人信息编辑入口，不寻找不存在的独立表单。
-  emit("click", { moduleKey: props.moduleKey === "userFacts" ? "user" : props.moduleKey, itemIndex: node.sourceItemIndex });
+  emit("click", { moduleKey: props.moduleKey, itemIndex: node.sourceItemIndex });
 };
 const isLeadingOnPage = (itemIndex: number) =>
   props.pageIndex > 0 && props.groupIndex === 0 && itemIndex === 0;

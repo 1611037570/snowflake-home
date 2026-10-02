@@ -208,6 +208,8 @@
   "resumeTemplateStyle_frame_description": "A red page background around a white content panel.",
   "resumeTemplateStyle_timeline_name": "Timeline",
   "resumeTemplateStyle_squareTimeline_name": "Square Timeline",
+  "resumeTemplateStyle_violetBiography_name": "Violet Biography",
+  "resumeTemplateStyle_violetBiography_description": "A violet profile header and two-column body display personal details and work experience.",
   "resumeTemplateStyle_tealCard_name": "Teal Cards",
   "resumeTemplateStyle_tealCard_description": "A teal top band and circular heading icons above white cards grouping each section’s entries.",
   "resumeTemplateStyle_squareTimeline_description": "Left-aligned section labels and dates connected by a timeline with square markers.",

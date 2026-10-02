@@ -3,8 +3,6 @@ import type { LayoutNode } from "../types";
 import type { LayoutAdapter, LayoutAdapterContext, LayoutAdapterRegistry } from "./index";
 import { createExperienceModuleAdapter } from "./experienceModules";
 import { hasThemeSlogan } from "@/views/resume/theme/components/sloganModule/registry";
-import { getPreviewText } from "../../../shared/i18n";
-import dayjs from "dayjs";
 
 /** 需要使用通用条目块结构的模块 key */
 const LIST_MODULE_KEYS = ["account", "honor"] as const;
@@ -31,28 +29,6 @@ const createUserModuleAdapter = (context: LayoutAdapterContext): LayoutNode[] =>
       payload: { moduleKey: "user" },
     },
   ];
-};
-
-/** 从个人资料派生左栏求职信息，逐行生成普通节点以沿用现有分页。 */
-const createUserFactsAdapter = (context: LayoutAdapterContext): LayoutNode[] => {
-  const userModule = context.data.user as { data?: Record<string, unknown>; ui?: Record<string, any> } | undefined;
-  const user = userModule?.data || {};
-  const lang = String((context.ui as any)?.content?.language || "zh");
-  const visible = (key: string) => userModule?.ui?.[key]?.hidden !== true && user[key];
-  const facts: Array<{ key: string; value: string }> = [];
-  if (visible("status")) facts.push({ key: "status", value: String(user.status) });
-  if (visible("workTime") && dayjs(String(user.workTime)).isValid()) {
-    const years = Math.max(0, Math.floor((dayjs().diff(dayjs(String(user.workTime)), "month") + 7) / 12));
-    if (years > 0) facts.push({ key: "workTime", value: `${getPreviewText("expYearsLabel", lang)}${getPreviewText("expYears", lang, { years })}` });
-  }
-  if (visible("position")) facts.push({ key: "position", value: `${getPreviewText("positionLabel", lang)}${user.position}` });
-  if (visible("salary")) facts.push({ key: "salary", value: `${getPreviewText("salaryLabel", lang)}${user.salary}` });
-  return facts.map((fact) => ({
-    id: `userFacts.${fact.key}`, // 求职信息行的稳定编号
-    sourceModuleKey: "userFacts", // 派生模块编号
-    type: "block", // 按普通文本行参与分页
-    payload: { value: fact.value }, // 当前字段的显示文案
-  }));
 };
 
 /** 创建顶部标语模块适配器 */
@@ -127,7 +103,6 @@ const createCustomModuleFallback = (context: LayoutAdapterContext): LayoutNode[]
 /** 注册剩余内置模块和自定义模块适配器 */
 export const registerOtherModuleAdapters = (registry: LayoutAdapterRegistry) => {
   registry.register("user", createUserModuleAdapter);
-  registry.register("userFacts", createUserFactsAdapter);
   registry.register("slogan", createSloganModuleAdapter);
   LIST_MODULE_KEYS.forEach((moduleKey) => {
     registry.register(moduleKey, createListModuleAdapter(moduleKey));

@@ -2,6 +2,7 @@
 import { computed } from "vue";
 import UserHeading from "./components/userHeading.vue";
 import ModernUser from "./components/modernUser.vue";
+import VioletBiographyUser from "./components/violetBiographyUser.vue";
 import TwoColumnUser from "./components/twoColumnUser.vue";
 import TealRailUser from "./components/tealRailUser.vue";
 import { useResumePreviewContext } from "@/views/resume/editor/preview/shared/previewContext";
@@ -15,6 +16,7 @@ const layoutComponents = {
 };
 const themeComponents = {
   modern: ModernUser, // 现代主题的个人信息内容组件
+  violetBiography: VioletBiographyUser, // 紫色履历主题的个人信息页眉内容
 };
 const themedLayoutComponents = {
   tealRail: TealRailUser, // 青线双栏的分组个人信息组件
