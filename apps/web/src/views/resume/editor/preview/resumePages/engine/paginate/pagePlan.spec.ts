@@ -41,6 +41,7 @@ describe("buildPagePlan", () => {
     const plan = buildPagePlan({
       layout: { ...layout, regions: [{ ...layout.regions[0]!, columns: [] }] },
       availableHeight: 100,
+      flowPagesByColumn: new Map(),
     });
 
     expect(plan.status).toBe("invalid");

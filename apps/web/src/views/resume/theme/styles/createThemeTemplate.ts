@@ -54,24 +54,6 @@ export const resolveThemeTemplate = (definition: ResumeThemeDefinition): ResumeT
     theme: { ...DEFAULT_UI.theme, template: id, ...ui.theme },
     layout: { ...DEFAULT_UI.layout, ...ui.layout },
     user: { ...DEFAULT_UI.user, ...ui.user },
-    // 区域留白按槽位逐层合并：主题只覆盖某个槽位的区域，其余槽位沿用默认值
-    region: {
-      ...DEFAULT_UI.region,
-      ...ui.region,
-      ...Object.fromEntries(
-        Object.entries(ui.region || {}).map(([slot, value]) => [
-          slot,
-          {
-            ...(DEFAULT_UI.region as Record<string, any>)[slot],
-            ...(value as Record<string, any>),
-            padding: {
-              ...(DEFAULT_UI.region as Record<string, any>)[slot]?.padding,
-              ...(value as Record<string, any>)?.padding,
-            },
-          },
-        ]),
-      ),
-    },
   };
 
   return {

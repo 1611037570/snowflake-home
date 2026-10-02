@@ -13,7 +13,8 @@ const props = defineProps({
 });
 const { ui } = useResumePreviewContext();
 const slot = computed(() => resolveRegionSlot(props.regionId));
-const appearance = computed(() => resolveRegionAppearance(ui.value?.theme?.region, slot.value));
+// 区域外观只按主题编号选择，具体样式由对应组件维护。
+const appearance = computed(() => resolveRegionAppearance(ui.value?.theme?.template, slot.value));
 </script>
 
 <template>

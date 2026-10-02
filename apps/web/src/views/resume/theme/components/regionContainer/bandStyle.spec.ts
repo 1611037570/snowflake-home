@@ -8,9 +8,7 @@ describe("通栏色带样式", () => {
       padding: { vertical: 24, horizontal: 24 }, // 页面四周留白
       radius: 24, // 纸张圆角
     },
-    region: {
-      slogan: { padding: { bottom: 24 } }, // 标语区域下留白
-    },
+    theme: { template: "sloganBand" }, // 标语主题编号：选中自带底部留白的飘带组件
   };
 
   it("用等量负外边距外扩到页面边缘，再用等量内边距把内容收回", () => {
@@ -21,14 +19,14 @@ describe("通栏色带样式", () => {
     expect(style.paddingRight).toBe("24px");
   });
 
-  it("区域留白只加在内边距上：下沿留白来自声明，上沿留白等于页面留白", () => {
+  it("区域留白只加在内边距上：下沿留白来自组件，上沿留白等于页面留白", () => {
     const style = resolveBandStyle(ui, "slogan");
     expect(style.marginTop).toBe("-24px");
     expect(style.paddingTop).toBe("24px");
     expect(style.paddingBottom).toBe("24px");
   });
 
-  it("未声明区域留白时按槽位默认值，不出现负留白", () => {
+  it("未登记专属个人信息外观时按槽位默认组件留白", () => {
     const style = resolveBandStyle(ui, "user");
     expect(style.paddingTop).toBe("24px");
     expect(style.paddingBottom).toBe("0px");
