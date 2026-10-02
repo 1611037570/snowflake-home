@@ -9,11 +9,6 @@ import ResumePageShell from "./resumePageShell.vue";
 import LayoutMeasureTree from "./render/measure/layoutMeasureTree.vue";
 import Column from "./render/column.vue";
 import RegionContainer from "@/views/resume/theme/components/regionContainer/index.vue";
-import {
-  regionSurfaceAppearances,
-  resolveRegionAppearanceId,
-} from "@/views/resume/theme/components/regionContainer/registry";
-import { layoutStretchesColumns } from "@/views/resume/theme/layouts";
 import { hasThemeSlogan } from "@/views/resume/theme/components/sloganModule/registry";
 import { useResumePages } from "./useResumePages";
 import { resolveRegionGap } from "./engine/layout/regionFlows";
@@ -106,16 +101,6 @@ const pagePadding = computed(() => ({
 }));
 // 纸张边框宽度：页面盒子内圈描边，测量树同样内缩，长度口径与引擎一致
 const pageBorderWidth = computed(() => Math.max(0, Number(ui.value.page?.border?.width) || 0));
-// 正文区域是否绘制底板：区域留白大于 0，或外观本身绘制底板时，区域需要拉满页面高度
-const mainRegionAppearanceId = computed(() =>
-  resolveRegionAppearanceId(ui.value?.theme?.template, "main"),
-);
-// 只有组件声明铺满页面的正文底板需要在测量树中保持整页高度。
-const hasViewSurface = computed(() => regionSurfaceAppearances.has(mainRegionAppearanceId.value));
-// 双栏布局仍需让栏位延伸至页底；普通单栏的装饰跟随内容高度结束。
-const mainRegionFillsPage = computed(
-  () => hasViewSurface.value || layoutStretchesColumns(ui.value?.layout?.type),
-);
 const measureTreeStyle = computed(() => ({
   ...fontStyle.value,
   ...lineHeightStyle.value,
@@ -331,7 +316,6 @@ defineExpose({
           :page-border-width="pageBorderWidth"
           :show-page-number="showPageNumber"
           :footer-text="measureFooterText"
-          :has-view-surface="hasViewSurface"
           :on-measure-el="setLayoutMeasureEl"
         />
       </Teleport>
@@ -365,13 +349,12 @@ defineExpose({
           ]"
         >
           <!-- 正文区域铺满页面剩余高度，两栏因此都能拿到完整高度 -->
-          <div class="flex min-w-0 flex-1 flex-col">
+          <div class="flex min-h-0 min-w-0 flex-1 flex-col">
             <template v-for="region in page.regions" :key="region.regionId">
               <RegionContainer
                 v-if="region.columns.some((column) => column.fragments.length > 0)"
                 :region-id="region.regionId"
                 class="flex w-full min-w-0"
-                :class="{ 'flex-1': region.regionId === 'main' && mainRegionFillsPage }"
                 :style="getRegionStyle(page, region.regionId)"
               >
                 <!-- 栏自身作为定位基准，主题的背景层用绝对定位铺满栏内 -->

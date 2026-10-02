@@ -10,7 +10,6 @@ const regionPadding = (ui) => ({
 });
 export default {
   regionPadding, // 双栏正文内容留白
-  fillsPage: true, // 侧栏底色铺满纸张剩余高度
 };
 </script>
 
@@ -23,7 +22,7 @@ const {
   ui,
   theme: { themeColorSoft },
 } = useResumePreviewContext();
-// 两栏高度由页面布局负责，组件只给栏内留出页尾空间并绘制左栏底色。
+// 正文容器统一应用留白，侧栏背景向外延伸覆盖这部分空间。
 const sidebarStyle = computed(() => ({
   "--sidebar-content-top": `${regionPadding(ui.value).top}px`, // 左右栏内容顶部留白
   "--sidebar-bleed": `${Math.max(0, Number(ui.value?.page?.padding?.horizontal ?? defaultPaddingHorizontal) || 0)}px`, // 底色向左延伸到纸张边缘
@@ -44,8 +43,6 @@ const sidebarStyle = computed(() => ({
   position: relative;
   align-self: stretch;
   box-sizing: border-box;
-  padding-top: var(--sidebar-content-top);
-  padding-bottom: var(--resume-bottom-space, 0px);
 }
 
 .burgundy-sidebar :deep(> :first-child) {
@@ -56,9 +53,9 @@ const sidebarStyle = computed(() => ({
   content: "";
   position: absolute;
   z-index: -1;
-  top: 0;
+  top: calc(-1 * var(--sidebar-content-top));
   right: 0;
-  bottom: 0;
+  bottom: calc(-1 * var(--resume-bottom-space, 0px));
   left: calc(-1 * var(--sidebar-bleed));
   background-color: var(--sidebar-surface);
   border-bottom-left-radius: var(--sidebar-radius);

@@ -130,8 +130,9 @@ watch(
     <PagePattern />
     <!-- 模块之间的间距由 ui.page.spacing.module 控制，与分页计算保持一致 -->
     <!-- 调试模式下用 outline 标注正文可用区：outline 不参与布局，不会挤压内容，内容溢出时也会显示出来 -->
+    <!-- 内容区允许收缩到剩余高度，正文不会通过最小高度推开页脚。 -->
     <div
-      class="flex flex-1 flex-col"
+      class="flex min-h-0 flex-1 flex-col"
       :style="[{ gap: `${ui.page?.spacing?.module}px` }, showDebug ? debugOutlineStyle : undefined]"
     >
       <slot />
