@@ -13,7 +13,7 @@ export default { regionPadding /* 固定色带不占用额外区域留白 */ };
 import { computed } from "vue";
 import { useResumePreviewContext } from "@/views/resume/editor/preview/shared/previewContext";
 import { defaultPaddingVertical } from "@/stores/modules/resume/config/uiConfig";
-import { resolveBandStyle } from "../bandStyle";
+import { resolveBandStyle } from "../../bandStyle";
 
 // 顶部标语飘带自行维护固定视觉高度，页面上边距只决定它在内容区内的占位。
 const bandHeight = 108;

@@ -12,7 +12,7 @@ export default { regionPadding /* 个人信息底纹组件自身的区域留白 
 <script setup>
 import { computed } from "vue";
 import { useResumePreviewContext } from "@/views/resume/editor/preview/shared/previewContext";
-import { resolveBandStyle } from "../bandStyle";
+import { resolveBandStyle } from "../../bandStyle";
 
 // 个人信息通栏外观：让个人信息整块铺满页面宽度并铺上主题色底纹。
 // 外扩与留白走 bandStyle.ts 的同一份算法，色带高度与分页口径不额外变化。

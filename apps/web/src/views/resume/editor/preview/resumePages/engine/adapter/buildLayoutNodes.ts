@@ -7,7 +7,7 @@ import {
 import { registerExperienceModuleAdapters } from "./experienceModules";
 import { registerOtherModuleAdapters } from "./otherModules";
 import { registerRichTextModuleAdapters } from "./richTextModules";
-import { hasThemeSlogan } from "@/views/resume/theme/components/regionContainer/registry";
+import { hasThemeSlogan } from "@/views/resume/theme/components/sloganModule/registry";
 
 const PARAGRAPH_SPACING_MODULE_KEYS = new Set([
   "skill",

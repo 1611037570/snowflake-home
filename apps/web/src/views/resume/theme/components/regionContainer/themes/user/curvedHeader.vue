@@ -1,7 +1,7 @@
 <script setup>
 import { computed } from "vue";
 import { useResumePreviewContext } from "@/views/resume/editor/preview/shared/previewContext";
-import { resolveBandStyle } from "../bandStyle";
+import { resolveBandStyle } from "../../bandStyle";
 
 const {
   ui,
