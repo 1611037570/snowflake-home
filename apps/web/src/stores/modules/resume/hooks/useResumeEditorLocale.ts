@@ -297,6 +297,9 @@ const TEXT_KEYS_SOURCE = `
   "顶部标语色带搭配飘带底沿，适合突出个人主张的通用简历。":
     "resumeTemplateStyle_sloganBand_description",
   通栏个人信息: "resumeTemplateStyle_userBand_name",
+  弧形页眉: "resumeTemplateStyle_curvedHeader_name",
+  "通栏弧形页眉搭配居中圆形头像，姓名与联系方式居中排列。":
+    "resumeTemplateStyle_curvedHeader_description",
   "个人信息整块铺满页面宽度的主题色底纹，正文保持页面留白。":
     "resumeTemplateStyle_userBand_description",
   "以左侧主题色竖条搭配浅色底纹突出模块标题的样式。": "colorBarThemeDescription",

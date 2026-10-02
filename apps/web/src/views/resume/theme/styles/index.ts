@@ -5,6 +5,7 @@ import chevronRibbon from "./chevronRibbon";
 import classic from "./classic";
 import colorBar from "./colorBar";
 import creative from "./creative";
+import curvedHeader from "./curvedHeader";
 import defaultTheme from "./default";
 import doubleArrow from "./doubleArrow";
 import foldedLabel from "./foldedLabel";
@@ -60,6 +61,7 @@ export const themeTemplateList = createThemeTemplates([
   stripedRibbon,
   sloganBand,
   userBand,
+  curvedHeader,
 ]);
 
 // 主题选择列表与预览渲染共用这份注册表。

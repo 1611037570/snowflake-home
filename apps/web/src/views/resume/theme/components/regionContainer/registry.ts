@@ -1,6 +1,7 @@
 import type { Component } from "vue";
 import type { RegionSlotId } from "@/views/resume/theme/regionSlots";
 import DefaultAppearance from "./themes/default.vue";
+import CurvedHeaderAppearance from "./themes/curvedHeader.vue";
 import FrameAppearance from "./themes/frame.vue";
 import MainDefaultAppearance from "./themes/mainDefault.vue";
 import SloganBandAppearance from "./themes/sloganBand.vue";
@@ -17,6 +18,7 @@ export const regionAppearanceRegistry: Record<string, Component> = {
   sloganBand: SloganBandAppearance, // 标语通栏色带
   sloganBandRibbon: SloganBandRibbonAppearance, // 标语通栏色带 + 底沿对比色细线
   userBand: UserBandAppearance, // 个人信息通栏底纹：整块铺满页面宽度
+  curvedHeader: CurvedHeaderAppearance, // 个人信息通栏弧形页眉背景
   frame: FrameAppearance, // 正文白色底板 + 圆角（frame 主题）
 };
 
@@ -37,7 +39,7 @@ export const regionSurfaceAppearances = new Set<string>(["frame"]);
  */
 export const slotRegionAppearances: Record<RegionSlotId, string[]> = {
   slogan: ["default", "sloganBand", "sloganBandRibbon"],
-  user: ["default", "userBand"],
+  user: ["default", "userBand", "curvedHeader"],
   main: ["default", "mainDefault", "frame"],
 };
 
