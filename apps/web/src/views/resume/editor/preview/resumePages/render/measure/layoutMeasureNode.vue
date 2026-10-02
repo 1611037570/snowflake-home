@@ -25,8 +25,9 @@ const FULL_BLOCK_RANGE = { start: 0, end: Number.MAX_SAFE_INTEGER };
         :decoration="'full'"
         :node-type="node.type"
         data-layout-block-range
+        v-slot="{ dateRail }"
       >
-        <LayoutNodeContent :node="node" />
+        <LayoutNodeContent :node="node" :date-rail="dateRail" />
       </Item>
       <UserModule v-else-if="isUserModule">
         <LayoutNodeContent :node="node" />
@@ -47,9 +48,11 @@ const FULL_BLOCK_RANGE = { start: 0, end: Number.MAX_SAFE_INTEGER };
           :decoration="'top'"
           :node-type="node.type"
           data-layout-block-range
+          v-slot="{ dateRail }"
         >
           <LayoutNodeContent
             :node="node"
+            :date-rail="dateRail"
             :decoration="'top'"
             :content-range="{ start: 0, end: point.offset }"
           />

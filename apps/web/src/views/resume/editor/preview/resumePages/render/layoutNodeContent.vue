@@ -12,12 +12,13 @@ import { isContentEmpty } from "../../shared/validData";
 import { useResumePreviewContext } from "../../shared/previewContext";
 import { sliceRichTextHtml } from "../engine/adapter/richTextParser";
 import { isModuleTitleNode } from "../engine/adapter";
-import { isTimelineNode } from "./itemStyle";
 import type { LayoutNode } from "../engine/types";
 
 const safeUrlProtocols = new Set(["http:", "https:", "mailto:"]);
 
 interface Props {
+  /** 条目外观指定日期是否占用左侧栏 */
+  dateRail?: boolean;
   node: LayoutNode;
   payload?: unknown;
   contentRange?: { start: number; end: number };
@@ -43,7 +44,6 @@ const {
     textAlign,
     themeColor,
     themeColorSoft,
-    themeTemplate,
   },
 } = useResumePreviewContext();
 
@@ -71,7 +71,7 @@ const isExperience = computed(
   () => props.node.type === "group" && props.node.sourceModuleKey !== "user",
 );
 // 日期移入固定宽度的左侧栏，右侧正文仍按原块顺序供分页测量。
-const isTimeline = computed(() => isTimelineNode(props.node, themeTemplate.value));
+const isTimeline = computed(() => props.dateRail === true && props.node.type === "group");
 const hasItemHeader = computed(() => {
   const value = item.value;
   return Boolean(
