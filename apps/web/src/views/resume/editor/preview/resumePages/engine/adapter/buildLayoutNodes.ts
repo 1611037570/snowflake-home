@@ -120,7 +120,12 @@ export const buildLayoutNodes = ({
   config?: unknown;
   registry?: LayoutAdapterRegistry;
 }): LayoutNode[] => {
-  const nextNodes = moduleKeys.flatMap((moduleKey) => {
+  // 主题声明顶部标语外观时自动生成标语节点，无需简历配置额外提供模块。
+  const themeSlogan = Boolean((ui as any)?.theme?.region?.slogan);
+  const effectiveModuleKeys = themeSlogan && !moduleKeys.includes("slogan")
+    ? ["slogan", ...moduleKeys]
+    : moduleKeys;
+  const nextNodes = effectiveModuleKeys.flatMap((moduleKey) => {
     const adapter = registry.resolve(moduleKey);
     if (!adapter) return [];
     const nodes = adapter({ moduleKey, data, ui, config });

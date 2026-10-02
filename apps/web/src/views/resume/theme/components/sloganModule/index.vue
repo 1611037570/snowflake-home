@@ -6,9 +6,18 @@ import { useResumePreviewContext } from "@/views/resume/editor/preview/shared/pr
 // 顶部标语内容：标题与标语各占一行，排版与配色由区域外观决定
 const {
   data: previewData,
+  ui,
   theme: { fontValue, lineHeightValue },
 } = useResumePreviewContext();
-const slogan = computed(() => previewData.value?.slogan?.data || {});
+// 带标语的主题使用组件内置文案，普通内容模板仍展示自身的标语数据。
+const slogan = computed(() =>
+  ui.value?.theme?.region?.slogan
+    ? {
+        title: "个人简历", // 主题内置的标语标题
+        subtitle: "在追求中发现可能，在创造中实现价值", // 主题内置的标语副标题
+      }
+    : previewData.value?.slogan?.data || {},
+);
 </script>
 
 <template>

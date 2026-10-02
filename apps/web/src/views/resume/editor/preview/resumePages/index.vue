@@ -84,11 +84,12 @@ const layoutMeasureRef = ref(null);
 
 // ---------- 数据注入（始终基于 props 传入的数据，多实例互不干扰）----------
 const dataRef = computed(() => props.item.data);
+const ui = computed(() => props.item.ui || {});
 // 轻量判空：命中第一处正文文本即结束，避免为判空执行全量字数统计
-const isEmpty = computed(() => isEmptyResume(dataRef.value));
+// 主题自带的顶部标语可独立构成预览内容，不依赖简历数据。
+const isEmpty = computed(() => isEmptyResume(dataRef.value) && !ui.value?.theme?.region?.slogan);
 
 // ---------- 主题样式注入（数据源为 item.ui）----------
-const ui = computed(() => props.item.ui || {});
 // 简历展示语言：供预览标题语言包使用
 const previewLang = computed(() => ui.value.content?.language || "zh");
 const showPageNumber = computed(() => props.showPageNumber);

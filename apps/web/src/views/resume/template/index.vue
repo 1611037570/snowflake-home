@@ -5,7 +5,7 @@ import ResumeCardContainer from "@/views/resume/mine/components/resumeCardContai
 import RevealGrid from "@/views/resume/components/revealGrid.vue";
 import TemplateCategory from "./components/templateCategory.vue";
 import { resumeTemplateList } from "./data/list";
-import { loadResumeTemplateData, loadResumeTemplates } from "./data/resumeData";
+import { loadResumeTemplates } from "./data/resumeData";
 import { expandConfigModules } from "@/stores/modules/resume/hooks/useConfigTemplate";
 import { createDefaultLayoutColumns } from "../editor/preview/resumePages/engine/layout/layoutTemplates";
 import { $t } from "@/locales";
@@ -17,24 +17,11 @@ import { computed, onMounted, ref } from "vue";
 const resumeStore = useResumeStore();
 const resumeTemplates = ref([]);
 const templateLoading = ref(true);
-// 主题自带的样例范本：按文件名去重后一次性加载，样式卡片与套用模板共用
-const themeSamples = ref({});
-const themeSampleFiles = [
-  ...new Set(themeTemplateList.map((style) => style.sample?.fileName).filter(Boolean)),
-];
 
 // 模板页进入时按索引懒加载范本正文，供卡片缩略图和预览共用。
 onMounted(async () => {
   try {
     resumeTemplates.value = await loadResumeTemplates(resumeTemplateList);
-    themeSamples.value = Object.fromEntries(
-      await Promise.all(
-        themeSampleFiles.map(async (fileName) => [
-          fileName,
-          await loadResumeTemplateData(fileName),
-        ]),
-      ),
-    );
   } catch {
     ElMessage.error($t("resumeTemplateLoadError"));
   } finally {
@@ -47,12 +34,11 @@ const deepClone = (value) => JSON.parse(JSON.stringify(value));
 const previewBase = computed(
   () => resumeTemplates.value.find((template) => template.fileName === "xiaoZhou.ts")?.item,
 );
-// 样式卡片的内容：主题自带样例范本时用它，否则沿用通用范本
+// 样式卡片统一沿用通用范本，标语内容由主题组件提供。
 const resolveStyleItem = (style) => {
-  const sample = style.sample?.fileName ? themeSamples.value[style.sample.fileName] : null;
   return {
-    data: sample?.data || previewBase.value?.data || {},
-    config: sample?.config || previewBase.value?.config || {},
+    data: previewBase.value?.data || {},
+    config: previewBase.value?.config || {},
     ui: getResumeThemeTemplate(style.id).item.ui,
   };
 };
@@ -119,7 +105,7 @@ const setCurrentCategory = (value) => {
 
 // 套用模板：携带风格，深拷贝数据后新增简历并进入编辑
 const useTemplate = (card) => {
-  // 内容与模块清单以卡片为准：主题自带样例范本时用样例，否则沿用通用范本
+  // 内容与模块清单以卡片为准，主题组件自行提供标语内容。
   const source = card.item?.config?.modules ? card.item : previewBase.value;
   if (!source) return;
   const ui = deepClone(card.item.ui);

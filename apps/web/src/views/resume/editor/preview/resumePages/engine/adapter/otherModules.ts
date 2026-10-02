@@ -35,12 +35,14 @@ const createUserModuleAdapter = (context: LayoutAdapterContext): LayoutNode[] =>
 const createSloganModuleAdapter = (context: LayoutAdapterContext): LayoutNode[] => {
   const moduleData = context.data.slogan;
   const sloganData = getValidData((moduleData as { data?: unknown })?.data);
-  if (!sloganData || typeof sloganData !== "object" || Array.isArray(sloganData)) return [];
-
-  const hasSloganField = Object.values(sloganData as Record<string, unknown>).some(
-    (value) => value !== undefined && value !== null && value !== "",
-  );
-  if (!hasSloganField) return [];
+  // 主题自带的标语不依赖用户数据；普通内容模板仍按已有标语字段判断。
+  const hasThemeSlogan = Boolean((context.ui as any)?.theme?.region?.slogan);
+  const hasSloganField =
+    sloganData && typeof sloganData === "object" && !Array.isArray(sloganData) &&
+    Object.values(sloganData as Record<string, unknown>).some(
+      (value) => value !== undefined && value !== null && value !== "",
+    );
+  if (!hasThemeSlogan && !hasSloganField) return [];
 
   return [
     {
