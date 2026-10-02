@@ -38,16 +38,16 @@ const bandStyle = computed(() => {
 </script>
 
 <template>
-  <!-- 弧形背景跟随个人信息容器高度，内容仍参与正常排版。 -->
+  <!-- 弧形仅作背景，圆角沿用页面设置，个人信息仍参与正常排版。 -->
   <div class="relative flex w-full min-w-0" :style="bandStyle">
     <svg
       aria-hidden="true"
-      class="pointer-events-none absolute inset-0 h-full w-full [border-radius:inherit]"
+      class="pointer-events-none absolute inset-x-0 top-0 h-[126px] w-full [border-radius:inherit]"
       viewBox="0 0 1000 156"
       preserveAspectRatio="none"
       :style="{ fill: themeColor }"
     >
-      <path d="M0 0H1000V116Q500 156 0 116Z" />
+      <path d="M0 0H1000V116Q500 196 0 116Z" />
     </svg>
     <slot />
   </div>
