@@ -17,6 +17,7 @@ import SquareTimelineMain from "./themes/main/squareTimeline.vue";
 import VioletBiographyUser from "./themes/user/violetBiography.vue";
 import VioletBiographyMain from "./themes/main/violetBiography.vue";
 import TealRailMain from "./themes/main/tealRail.vue";
+import TealCardUser from "./themes/user/tealCard.vue";
 
 interface RegionAppearanceComponent {
   regionPadding?: RegionPadding | ((ui?: Record<string, any>) => RegionPadding); // 组件声明的区域留白，供分页计算尺寸
@@ -31,6 +32,7 @@ export const regionAppearanceRegistry: Record<RegionSlotId, Record<string, Compo
   },
   user: {
     default: PlainRegion, // 普通个人信息区域
+    tealCard: TealCardUser, // 顶带下方的个人信息留白
     userBand: UserBand, // 个人信息通栏主题底纹
     curvedHeader: CurvedHeader, // 弧形页眉主题背景
     sloganBand: SloganBandUser, // 标语通栏主题的个人信息内部留白

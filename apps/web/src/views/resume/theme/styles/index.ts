@@ -26,6 +26,7 @@ import slantedLayer from "./slantedLayer";
 import sloganBand from "./sloganBand";
 import steady from "./steady";
 import tealRail from "./tealRail";
+import tealCard from "./tealCard";
 import stripedRibbon from "./stripedRibbon";
 import timeline from "./timeline";
 import squareTimeline from "./squareTimeline";
@@ -59,6 +60,7 @@ export const themeTemplateList = createThemeTemplates([
   creative,
   steady,
   tealRail,
+  tealCard,
   outline,
   topUserTwoColumn,
   twoColumn,
