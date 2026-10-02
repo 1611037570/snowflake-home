@@ -4,7 +4,7 @@ defineOptions({ name: "BuilderEditor" });
 import { useResumeStore } from "@/stores";
 import SfSkeleton from "@/components/el/skeleton";
 import { storeToRefs } from "pinia";
-import { defineAsyncComponent } from "vue";
+import { defineAsyncComponent, nextTick } from "vue";
 import { RESUME_OPTIONS } from "@/stores/modules/resume/config/resumeOptions";
 import { useRuntimeData } from "../../hooks/useRuntimeData";
 import ArchivedModules from "./components/module/archived.vue";
@@ -28,6 +28,7 @@ import RowAccount from "./components/row/account.vue";
 import RowHonor from "./components/row/honor.vue";
 import { localizeResumeOptions } from "@/stores/modules/resume/hooks/useResumeEditorLocale";
 import i18n from "@/locales";
+import { flushPendingEditorLocation } from "../../hooks/useModuleNav";
 
 const loadDynamicForm = () => import("@/components/business/dynamicForm/index");
 // 动态表单加载期间立即显示骨架，避免编辑区只剩增加模块
@@ -130,8 +131,16 @@ watch(
   },
   { immediate: true },
 );
-// KeepAlive 缓存期间可能不触发渲染，重新激活时补齐收口
-onActivated(finishConfigSync);
+// 编辑标签重新激活后，等待表单进入页面再执行预览点击的定位。
+onActivated(() => {
+  finishConfigSync();
+  nextTick(flushPendingEditorLocation);
+});
+
+const handleDynamicFormMounted = () => {
+  finishConfigSync();
+  nextTick(flushPendingEditorLocation);
+};
 
 onBeforeUnmount(() => {
   if (dynamicFormTimer !== null) window.clearTimeout(dynamicFormTimer);
@@ -154,7 +163,7 @@ onBeforeUnmount(() => {
           :components="dynamicComponents"
           :options="localizedResumeOptions"
           :use-rules="false"
-          @vue:mounted="finishConfigSync"
+          @vue:mounted="handleDynamicFormMounted"
         />
         <ArchivedModules />
       </SfScrollbar>

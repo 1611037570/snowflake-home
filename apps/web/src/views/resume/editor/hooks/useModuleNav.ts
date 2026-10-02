@@ -150,6 +150,8 @@ let previewHighlightLock = false;
 let previewScrollTarget: EventTarget | null = null;
 let previewScrollSettleTimer: number | null = null;
 let editorHighlightTimer: number | null = null;
+// 编辑标签未激活时暂存预览点击的定位动作，待表单挂载后执行。
+let pendingEditorLocation: (() => boolean) | null = null;
 // 左侧搜索定位使用独立状态，不写入预览选择按钮使用的 selectedModule
 export const previewSelectedModule = ref<string | null>(null);
 
@@ -273,10 +275,17 @@ const scrollEditorTarget = (
     hit?.itemIndex != null
       ? `[data-module-key="${key}"] [data-item-index="${hit.itemIndex}"]`
       : `[data-module-key="${hit?.fieldKey ?? key}"]`;
-  useScrollEditorTo(
+  const target =
     document.querySelector<HTMLElement>(selector) ??
-      document.querySelector<HTMLElement>(`[data-module-key="${key}"]`),
-  );
+    document.querySelector<HTMLElement>(`[data-module-key="${key}"]`);
+  if (!target) return false;
+  useScrollEditorTo(target);
+  return true;
+};
+
+// 编辑表单可见后完成暂存的定位，找不到模块时继续等待表单渲染。
+export const flushPendingEditorLocation = () => {
+  if (pendingEditorLocation?.()) pendingEditorLocation = null;
 };
 
 // 延时 0 添加选中状态，避开同一轮定位滚动触发的鼠标进入事件
@@ -324,11 +333,14 @@ export const locateEditor = (key: string, hit?: Pick<ResumeSearchHit, "itemIndex
   // 模块折叠时子记录可能仍在 DOM 中，定位应回到主模块
   const collapsed = currentData.value?.[key]?.ui?.collapsed;
   const targetHit = Array.isArray(collapsed) && !collapsed.includes("1") ? undefined : hit;
+  pendingEditorLocation = () => {
+    if (!scrollEditorTarget(key, targetHit)) return false;
+    scheduleEditorHighlight(key, targetHit);
+    return true;
+  };
   // 切换到编辑标签，避免停留设计/模板标签时编辑区不可见
   eventBus.emit("switch-builder-tab", 0);
-  // 触发编辑区模块选中闪烁
-  scheduleEditorHighlight(key, targetHit);
-  nextTick(() => scrollEditorTarget(key, targetHit));
+  nextTick(flushPendingEditorLocation);
 };
 
 // 跳转编辑区（含隐藏恢复）：供进度条等复用
