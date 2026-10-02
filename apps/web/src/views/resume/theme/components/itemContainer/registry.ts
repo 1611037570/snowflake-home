@@ -16,6 +16,7 @@ import MarkerGridAppearance from "./themes/markerGrid.vue";
 import MinimalAppearance from "./themes/minimal.vue";
 import ModernAppearance from "./themes/modern.vue";
 import OutlineAppearance from "./themes/outline.vue";
+import RingTimelineAppearance from "./themes/ringTimeline.vue";
 import SandSidebarAppearance from "./themes/sandSidebar.vue";
 import SlantedLayerAppearance from "./themes/slantedLayer.vue";
 import SteadyAppearance from "./themes/steady.vue";
@@ -50,6 +51,7 @@ export const itemAppearanceRegistry = createAppearanceRegistry({
   vivid: VividAppearance, // 浅色底托 + 主题色描边 + 圆角
   sandSidebar: SandSidebarAppearance, // 金棕色经历名称与条目末尾留白
   outline: OutlineAppearance, // 只保留内边距，外框由模块绘制
+  ringTimeline: RingTimelineAppearance, // 圆环时间轴：日期栏 + 空心圆环节点
   angledLine: AngledLineAppearance, // 条目向模块竖线内侧留白
   labelLine: LabelLineAppearance, // 左端竖色块接短横线，日期与标题色块对齐
   markerGrid: MarkerGridAppearance, // 条目内平铺点阵底纹与首段刻度线

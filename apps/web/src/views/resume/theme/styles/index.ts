@@ -22,6 +22,7 @@ import navyGuide from "./navyGuide";
 import outline from "./outline";
 import sandSidebar from "./sandSidebar";
 import redWhiteSidebar from "./redWhiteSidebar";
+import ringTimeline from "./ringTimeline";
 import slantedLayer from "./slantedLayer";
 import sloganBand from "./sloganBand";
 import songElegance from "./songElegance";
@@ -69,6 +70,7 @@ export const themeTemplateList = createThemeTemplates([
   frame,
   timeline,
   squareTimeline,
+  ringTimeline,
   labelLine,
   angledLine,
   layeredCurve,
