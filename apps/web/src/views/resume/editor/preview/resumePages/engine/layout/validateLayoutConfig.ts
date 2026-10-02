@@ -59,7 +59,6 @@ export const validateLayoutConfig = (
 
   if (!isPositiveNumber(layout.pageSize.width)) invalidLayoutFields.push("pageSize.width");
   if (!isPositiveNumber(layout.pageSize.height)) invalidLayoutFields.push("pageSize.height");
-  if (!isNonNegativeNumber(layout.regionGap)) invalidLayoutFields.push("regionGap");
   if (!isNonNegativeNumber(layout.columnGap)) invalidLayoutFields.push("columnGap");
   (["top", "right", "bottom", "left"] as const).forEach((side) => {
     if (!isNonNegativeNumber(layout.pagePadding[side])) {

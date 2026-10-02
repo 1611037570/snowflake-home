@@ -26,8 +26,6 @@ interface CreatePageLayoutTemplateOptions {
   pagePadding: BoxSpacing;
   /** 模块之间的垂直间距。 */
   gap: number;
-  /** 页面区域之间的垂直间距。 */
-  regionGap: number;
   /** 页面栏之间的水平间距。 */
   columnGap: number;
   /** 左栏宽度占比（百分比），缺省时两栏等宽。 */
@@ -93,7 +91,7 @@ const createSingleColumnLayoutTemplate = ({
     pageSize,
     pagePadding,
     gap,
-    regionGap: 0,
+    columnGap: 0,
   });
 
 /** 个人信息独占顶部区域，正文保持单栏顺序。 */
@@ -102,7 +100,6 @@ const createTopUserSingleColumnLayout = ({
   pageSize,
   pagePadding,
   gap,
-  regionGap,
 }: CreatePageLayoutTemplateOptions): PageLayoutConfig => {
   if (!moduleKeys.includes("user")) {
     return createSingleColumnLayoutTemplate({
@@ -110,14 +107,12 @@ const createTopUserSingleColumnLayout = ({
       pageSize,
       pagePadding,
       gap,
-      regionGap,
       columnGap: 0,
     });
   }
   return {
     pageSize,
     pagePadding,
-    regionGap,
     columnGap: 0,
     regions: [
       {
@@ -152,7 +147,6 @@ const createTopUserTwoColumnLayout = ({
   pageSize,
   pagePadding,
   gap,
-  regionGap,
   columnGap,
   leftWidthPercent,
 }: CreatePageLayoutTemplateOptions): PageLayoutConfig => {
@@ -169,7 +163,6 @@ const createTopUserTwoColumnLayout = ({
       rightModuleKeys,
       columnGap,
       gap,
-      regionGap,
       leftWidthPercent,
     });
   }
@@ -178,7 +171,6 @@ const createTopUserTwoColumnLayout = ({
   return {
     pageSize,
     pagePadding,
-    regionGap,
     columnGap,
     regions: [
       {
@@ -300,7 +292,6 @@ export const createDefaultPageLayoutTemplate = ({
   paddingVertical,
   paddingHorizontal,
   gap,
-  regionGap = gap,
   columnGap = 24,
   leftWidthPercent,
   columns,
@@ -315,8 +306,6 @@ export const createDefaultPageLayoutTemplate = ({
   paddingHorizontal: number;
   /** 模块之间的垂直间距。 */
   gap: number;
-  /** 页面区域之间的垂直间距。 */
-  regionGap?: number;
   /** 页面栏之间的水平间距。 */
   columnGap?: number;
   /** 左栏宽度占比（百分比）。 */
@@ -335,7 +324,6 @@ export const createDefaultPageLayoutTemplate = ({
       left: paddingHorizontal,
     },
     gap,
-    regionGap,
     columnGap,
     leftWidthPercent,
     columns,

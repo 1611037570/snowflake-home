@@ -41,12 +41,10 @@ export const createResumeLayout = ({
     paddingVertical,
     paddingHorizontal,
     gap,
-    // 普通双栏的区域直接相接，顶部色带与左右栏之间不插入模块间距。
-    regionGap: templateId === "twoColumn" ? 0 : gap,
     leftWidthPercent: leftColumnWidth,
     columns: ui.layout?.columns,
   });
-  // 各区域留白统一读取对应外观组件的尺寸，供栏宽与分页共同使用。
+  // 各区域留白统一读取对应外观组件的尺寸，供栏宽与分页共同使用；区域之间的间距也全部来自这份留白。
   return {
     ...layout,
     regions: layout.regions.map((region) => {
@@ -54,7 +52,7 @@ export const createResumeLayout = ({
       return {
         ...region,
         padding: resolveRegionPadding(ui, region.id),
-        // 前置间距跟随区域组件声明，分页与页面渲染共用同一值。
+        // 额外间距跟随区域组件声明，未声明表示与前一区域自然相接
         ...(slot ? { gapBefore: resolveRegionGapBefore(ui.theme?.template, slot) } : {}),
       };
     }),

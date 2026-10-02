@@ -229,7 +229,7 @@ const getRegionTopGap = (page, regionId) => {
   const previousId = visibleRegions[index - 1].regionId;
   const previousRegion = layout.value.regions.find((region) => region.id === previousId);
   const currentRegion = layout.value.regions.find((region) => region.id === regionId);
-  return resolveRegionGap(previousRegion, currentRegion, layout.value.regionGap);
+  return resolveRegionGap(previousRegion, currentRegion);
 };
 // 首页标语占据纸张全宽，后续区域在自身外侧保留左右页边距。
 const getRegionStyle = (page, regionId) => ({
