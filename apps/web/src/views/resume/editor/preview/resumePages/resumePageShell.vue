@@ -15,7 +15,7 @@ import {
   defaultPageBorderColor,
   defaultPageRadius,
 } from "@/stores/modules/resume/config/uiConfig";
-import PagePattern from "@/views/resume/theme/components/pagePatterns/index.vue";
+import PagePattern from "@/views/resume/theme/components/pageContainer/index.vue";
 
 const props = defineProps({
   // 简历 ui（font.family / page.spacing.module）
