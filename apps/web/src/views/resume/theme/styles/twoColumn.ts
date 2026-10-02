@@ -6,5 +6,6 @@ export default {
   ui: {
     theme: { color: "#7C3AED" },
     layout: { type: "twoColumn" },
+    user: { avatarPosition: "left" }, // 双栏头像默认居左，后续仍可通过头像位置设置调整
   },
 };

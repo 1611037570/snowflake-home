@@ -25,6 +25,11 @@ const props = defineProps({
     type: String,
     default: "left",
   },
+  // 双栏个人信息固定使用单列网格，不受通用信息布局配置影响。
+  singleColumnGrid: {
+    type: Boolean,
+    default: false,
+  },
 });
 const user = computed(() => previewData.value?.user?.data || {});
 // 字段级 UI 配置（图标等），与编辑器同读个人信息模块 ui 层级
@@ -64,18 +69,19 @@ const workYearsNumber = computed(() => {
   return years > 0 ? years : 0;
 });
 // 根据信息位置切换布局，并保持对应的水平对齐方式
+const useFlexLayout = computed(() => !props.singleColumnGrid && userInfoLayout?.value === "flex");
 const layoutClass = computed(() => {
   const align = props.align || "left";
   const centered = align === "center";
   const alignEnd = align === "right";
-  if (userInfoLayout?.value === "flex") {
+  if (useFlexLayout.value) {
     return [
       "flex flex-wrap",
       centered ? "justify-center" : alignEnd ? "justify-end" : "justify-start",
     ];
   }
   return [
-    "grid grid-cols-2 gap-3",
+    props.singleColumnGrid ? "grid grid-cols-1 gap-3" : "grid grid-cols-2 gap-3",
     centered && "justify-items-center",
     alignEnd && "justify-items-end",
   ];
@@ -374,7 +380,7 @@ const contactItems = computed(() => {
 
 <template>
   <InlineInfoList
-    v-if="contactItems.length && userInfoLayout === 'flex'"
+    v-if="contactItems.length && useFlexLayout"
     :items="contactItems"
     :class="layoutClass"
   >
