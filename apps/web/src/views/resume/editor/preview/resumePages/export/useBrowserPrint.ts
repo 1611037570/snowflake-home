@@ -1,6 +1,7 @@
 import { nextTick } from "vue";
 import { useResumeStore } from "@/stores";
 import { useResumeName } from "../../../../hooks/useResumeName";
+import { stripEditorPageFrame } from "./pageFrame";
 
 type ResumeRootRef = { value: HTMLElement | null };
 
@@ -122,6 +123,8 @@ export const printResume = async (
     clonedRoot.style.transform = "none";
     clonedRoot.style.zoom = "1";
     clonedRoot.classList.add("resume-iframe-print-root");
+    // 编辑器页边线属于预览装饰，打印前移除；纸张边框与圆角由主题声明，保留
+    stripEditorPageFrame(clonedRoot);
 
     const styleText = getStyleText();
     const baseHref = document.baseURI.replace(/"/g, "&quot;");

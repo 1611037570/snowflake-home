@@ -343,8 +343,8 @@ defineExpose({
           @click="handlePageClick"
           :class="[
             {
-              // 用 outline 绘制编辑器页边线：不占内容盒，保证测量宽度与真实渲染一致
-              'outline outline-1 -outline-offset-1 outline-sf-b': mode === 'editor',
+              // 编辑器页边线是预览专有装饰：导出通道按该类名移除，主题声明的纸张边框不受影响
+              'resume-page-editor-frame': mode === 'editor',
             },
           ]"
         >
@@ -391,4 +391,10 @@ defineExpose({
   </div>
 </template>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+/* 编辑器页边线：用 outline 绘制，不占内容盒，保证测量宽度与真实渲染一致 */
+.resume-page-editor-frame {
+  outline: 1px solid var(--sf-border);
+  outline-offset: -1px;
+}
+</style>

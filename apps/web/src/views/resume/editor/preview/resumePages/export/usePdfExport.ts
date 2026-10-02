@@ -11,6 +11,7 @@ import { PDF_PAGE_HEIGHT, PDF_PAGE_WIDTH, RESUME_HEIGHT, RESUME_WIDTH } from "..
 import { useResumeName } from "../../../../hooks/useResumeName";
 import { useResumeStore } from "@/stores";
 import { printResume } from "./useBrowserPrint";
+import { stripEditorPageFrame } from "./pageFrame";
 
 /**
  * 将简历预览导出为 PDF 文件
@@ -73,10 +74,10 @@ export const printPDF = async (
       if (signal.aborted || !isCurrentResume()) return;
       const pageEl = pages[i];
 
-      // 克隆页面并清除可能干扰渲染的样式 (如阴影、圆角)
+      // 克隆页面：只移除预览装饰与缩放类样式，纸张边框和圆角属于主题外观，保持不动
       const clone = pageEl.cloneNode(true) as HTMLElement;
+      stripEditorPageFrame(clone);
       clone.style.boxShadow = "none";
-      clone.style.borderRadius = "0";
       clone.style.margin = "0";
       clone.style.transform = "none";
       clone.style.zoom = "1";
