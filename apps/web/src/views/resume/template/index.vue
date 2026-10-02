@@ -66,7 +66,8 @@ const filteredResumeTemplates = computed(() =>
       Object.entries(templateFilters.value).every(([key, value]) => {
         if (!value) return true;
         const values = template[key];
-        return !Array.isArray(values) || values.includes("all") || values.includes(value);
+        // 按选项取值精确匹配：不限行业/不限职位的范本只在选中「不限行业」「不限职位」时出现
+        return !Array.isArray(values) || values.includes(value);
       }),
     )
     .map((template) => ({
