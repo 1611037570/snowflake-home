@@ -30,14 +30,27 @@ export const defaultRegionAppearance: Record<RegionSlotId, string> = {
 /** 绘制底板的区域外观编号：正文需要铺满整页时才拉满高度，避免透明外观被无谓拉伸 */
 export const regionSurfaceAppearances = new Set<string>(["frame"]);
 
-/** 解析区域实际使用的区域外观编号：未登记时回退槽位缺省外观 */
+/**
+ * 每个槽位允许使用的区域外观编号。
+ * 用途是防止把别的槽位的外观声明到本槽位（例如把个人信息底纹声明到正文，会出现底纹铺满整页），
+ * 同时也约束「共用缺省外观」与「槽位专属外观」的边界：新增外观要登记到对应槽位。
+ */
+export const slotRegionAppearances: Record<RegionSlotId, string[]> = {
+  slogan: ["default", "sloganBand", "sloganBandRibbon"],
+  user: ["default", "userBand"],
+  main: ["default", "mainDefault", "frame"],
+};
+
+/** 解析区域实际使用的区域外观编号：未登记或不属于该槽位时回退槽位缺省外观 */
 export const resolveRegionAppearanceId = (
   regionConfig: Record<string, unknown> | undefined,
   slot: RegionSlotId | null,
 ): string => {
   if (!slot) return "default";
   const configured = regionConfig?.[slot];
-  if (typeof configured === "string" && regionAppearanceRegistry[configured]) return configured;
+  if (typeof configured === "string" && slotRegionAppearances[slot].includes(configured)) {
+    return configured;
+  }
   return defaultRegionAppearance[slot];
 };
 
