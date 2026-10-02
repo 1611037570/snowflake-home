@@ -12,6 +12,7 @@ import InkMagazineAppearance from "./themes/inkMagazine.vue";
 import SteadyAppearance from "./themes/steady.vue";
 import SandSidebarAppearance from "./themes/sandSidebar.vue";
 import RedWhiteSidebarAppearance from "./themes/redWhiteSidebar.vue";
+import SongEleganceAppearance from "./themes/songElegance.vue";
 import VividAppearance from "./themes/vivid.vue";
 
 /** 个人信息模块外观注册表：外观编号与主题编号同名，未登记的主题走 default */
@@ -30,6 +31,7 @@ export const userAppearanceRegistry = createAppearanceRegistry({
   redWhiteSidebar: RedWhiteSidebarAppearance, // 红白双栏主题的矩形头像与姓名外观
   curvedHeader: CurvedHeaderAppearance, // 圆形头像跨弧线，个人信息位于背景下方
   navyGuide: NavyGuideAppearance, // 方形头像及蓝色偏移衬边
+  songElegance: SongEleganceAppearance, // 宋体大字距姓名与页眉双线
 });
 
 /** 解析个人信息模块实际使用的外观组件：主题未登记时回退默认外观 */
