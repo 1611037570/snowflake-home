@@ -187,7 +187,6 @@ export const useResumeLayout = ({
       {
         availableHeight: availableHeight.value,
         laterPageAvailableHeight: laterPageAvailableHeight.value,
-        regionGap: layout.value.regionGap,
         buildFlow: (column, { heights }) => {
           const columnNodes = nodes.value.filter((node) =>
             column.moduleKeys.includes(node.sourceModuleKey),

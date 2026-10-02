@@ -33,8 +33,6 @@ export interface PageLayoutConfig {
   pageSize: PageSize;
   /** 页面四周的内边距 */
   pagePadding: BoxSpacing;
-  /** 页面区域之间的垂直间距 */
-  regionGap: number;
   /** 页面同一区域中各栏之间的水平间距 */
   columnGap: number;
   /** 页面区域配置 */
@@ -51,7 +49,7 @@ export interface RegionConfig {
   height: RegionHeight;
   /** 区域四周的内部留白：同时扣除栏宽与每页可用高度，是区域几何的唯一来源 */
   padding?: BoxSpacing;
-  /** 区域与前一区域之间的指定间距，未声明时使用页面默认间距 */
+  /** 区域与前一区域之间的额外间距，未声明时两个区域自然相接 */
   gapBefore?: number;
   /** 区域中的栏配置 */
   columns: ColumnConfig[];

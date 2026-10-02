@@ -70,14 +70,14 @@ describe("buildRegionFlows", () => {
         createRegion({ id: "header", height: { mode: "auto" } }),
         createRegion({ id: "main", height: { mode: "remaining" } }),
       ],
-      { availableHeight: 400, regionGap: 0, buildFlow },
+      { availableHeight: 400, buildFlow },
     );
 
     // 空区域按 0 占用结算，正文区域首页可用高度不被扣减
     expect(plans[1]?.heights.firstPageHeight).toBe(400);
   });
 
-  it("自适应区域的首页高度与内容内边距、区域间距一起从后续区域扣减", () => {
+  it("自适应区域的首页高度与自身内容内边距、前置间距一起从后续区域扣减", () => {
     const { plans, buildFlow } = createHeightSpy((columnId) =>
       columnId === "header-column"
         ? [createFlowPage(60, 1), createFlowPage(20, 1)]
@@ -91,12 +91,13 @@ describe("buildRegionFlows", () => {
           height: { mode: "auto" },
           padding: { top: 12, right: 12, bottom: 12, left: 12 },
         }),
-        createRegion({ id: "main", height: { mode: "remaining" } }),
+        // 区域间距只由外观组件声明的 gapBefore 决定，布局层不再插入默认间距
+        createRegion({ id: "main", height: { mode: "remaining" }, gapBefore: 10 }),
       ],
-      { availableHeight: 400, regionGap: 10, buildFlow },
+      { availableHeight: 400, buildFlow },
     );
 
-    // 首页占用 60（区域首页高度）+ 24（内容内边距）+ 10（区域间距）= 94，正文区域首页可用 306
+    // 首页占用 60（区域首页高度）+ 24（内容内边距）+ 10（区域声明的前置间距）= 94，正文区域首页可用 306
     expect(plans[1]?.heights.firstPageHeight).toBe(306);
     // 自适应区域的后续页面只扣自身内容内边距：400 - 24 = 376
     expect(plans[0]?.heights.laterPageHeight).toBe(376);

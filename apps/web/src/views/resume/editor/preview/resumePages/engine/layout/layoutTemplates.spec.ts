@@ -65,7 +65,6 @@ describe("layoutTemplates", () => {
     });
 
     expect(layout.regions.map((region) => region.id)).toEqual(["user", "main"]);
-    expect(layout.regionGap).toBe(12);
   });
 
   it("存在标语模块时把标语区域插到最前并重新编号区域顺序", () => {

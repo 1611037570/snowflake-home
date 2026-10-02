@@ -22,8 +22,6 @@ export interface BuildRegionFlowsOptions {
   availableHeight: number;
   /** 后续页可用高度；顶部有独立标语时，后续页仍保留页面上边距 */
   laterPageAvailableHeight?: number;
-  /** 区域之间的垂直间距 */
-  regionGap: number;
   /** 按栏生成分页流 */
   buildFlow: RegionFlowBuilder;
 }
@@ -42,18 +40,16 @@ interface FlowPageLike {
   items: unknown[];
 }
 
-/** 相邻区域的间距由布局层统一判定，预览和分页共用。 */
+/**
+ * 相邻区域之间的额外间距：布局层只占位，不主动插入间距。
+ * 区域之间的疏密全部由各区域自身留白表达；外观组件显式声明 gapBefore 时使用该值。
+ */
 export const resolveRegionGap = (
   previous: RegionConfig | undefined,
   next: RegionConfig | undefined,
-  gap: number,
 ): number => {
   if (!previous || !next) return 0;
-  // 区域外观可声明自身与前一区域自然相接。
-  if (next.gapBefore !== undefined) return Math.max(0, next.gapBefore);
-  // 标语后个人信息已有内部上留白，不再叠加区域间距。
-  if (previous.id === "slogan" && next.id === "user" && (next.padding?.top ?? 0) > 0) return 0;
-  return Math.max(0, gap);
+  return Math.max(0, next.gapBefore ?? 0);
 };
 
 /**
@@ -63,7 +59,7 @@ export const resolveRegionGap = (
  */
 export const buildRegionFlows = <TPage extends FlowPageLike>(
   orderedRegions: RegionConfig[],
-  { availableHeight, laterPageAvailableHeight = availableHeight, regionGap, buildFlow }: BuildRegionFlowsOptions,
+  { availableHeight, laterPageAvailableHeight = availableHeight, buildFlow }: BuildRegionFlowsOptions,
 ): RegionFlows<TPage> => {
   const columnFlows = new Map<string, TPage[]>();
   let firstPageConsumedHeight = 0;
@@ -97,7 +93,7 @@ export const buildRegionFlows = <TPage extends FlowPageLike>(
       firstPageConsumedHeight += getRegionContentHeight(region, availableHeight);
     }
 
-    firstPageConsumedHeight += resolveRegionGap(region, orderedRegions[regionIndex + 1], regionGap);
+    firstPageConsumedHeight += resolveRegionGap(region, orderedRegions[regionIndex + 1]);
   });
 
   return { columnFlows };

@@ -14,8 +14,6 @@ export interface CreateTwoColumnLayoutOptions {
   columnGap: number;
   /** 栏内节点之间的垂直间距。 */
   gap: number;
-  /** 区域之间的垂直间距。 */
-  regionGap: number;
   /** 左栏宽度占比（百分比，缺省时两栏等宽）。 */
   leftWidthPercent?: number;
   /** 区域编号。 */
@@ -40,7 +38,6 @@ export const createTwoColumnLayout = ({
   rightModuleKeys,
   columnGap,
   gap,
-  regionGap,
   leftWidthPercent,
   regionId = "main",
 }: CreateTwoColumnLayoutOptions): PageLayoutConfig => {
@@ -48,7 +45,6 @@ export const createTwoColumnLayout = ({
   return {
     pageSize,
     pagePadding,
-    regionGap,
     columnGap,
     regions: [
       {
