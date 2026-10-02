@@ -31,14 +31,14 @@ const {
   theme: { fontValue, lineHeightValue },
 } = useResumePreviewContext();
 const { isUserFieldHidden } = useUserFieldVisibility();
-// 隐藏或未上传头像时仍将姓名放在弧形背景下方。
+// 有头像时使用页眉自身的上留白，无头像时仍将姓名放在弧形背景下方。
 const hasAvatar = computed(() => !isUserFieldHidden("avatar") && !!data.value?.user?.data?.avatar);
 </script>
 
 <template>
   <div
     class="resume-module-wrapper resume-user group group/module relative box-border w-full min-w-0"
-    :class="[moduleClass, hasAvatar ? 'pt-[42px]' : 'pt-[114px]']"
+    :class="[moduleClass, hasAvatar ? 'pt-0' : 'pt-[114px]']"
     :data-module="moduleKey"
     :data-theme="themeId"
     :style="[lineHeightValue(), fontValue()]"
