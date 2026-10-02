@@ -11,7 +11,7 @@ import Column from "./render/column.vue";
 import RegionContainer from "@/views/resume/theme/components/regions/index.vue";
 import {
   regionSurfaceAppearances,
-  resolveRegionAppearanceId,
+  resolveMainRegionAppearanceId,
 } from "@/views/resume/theme/components/regions/registry";
 import { useResumePages } from "./useResumePages";
 import { useResumeTheme } from "@/views/resume/theme/useResumeTheme";
@@ -103,16 +103,13 @@ const pagePadding = computed(() => ({
 }));
 // 纸张边框宽度：页面盒子内圈描边，测量树同样内缩，长度口径与引擎一致
 const pageBorderWidth = computed(() => Math.max(0, Number(ui.value.page?.border?.width) || 0));
-// 引擎扣除的正文留白与正文外观渲染的留白必须同源：都按正文外观编号取历史回退值，
+// 引擎扣除的正文留白与正文外观渲染的留白必须同源：都按正文区域实际使用的外观取历史回退值，
 // 主题显式声明了区域留白时由引擎与外观各自合并声明值。
-const viewPadding = computed(() => getLegacyMainRegionPadding(themeStyles.viewTemplate.value));
+const mainRegionAppearanceId = computed(() => resolveMainRegionAppearanceId(ui.value));
+const viewPadding = computed(() => getLegacyMainRegionPadding(mainRegionAppearanceId.value));
 // 正文区域是否绘制底板：外观本身绘制底板，或区域留白大于 0 时，区域需要拉满页面高度
 const hasViewSurface = computed(
-  () =>
-    viewPadding.value > 0 ||
-    regionSurfaceAppearances.has(
-      resolveRegionAppearanceId({ main: themeStyles.viewTemplate.value }, "main"),
-    ),
+  () => viewPadding.value > 0 || regionSurfaceAppearances.has(mainRegionAppearanceId.value),
 );
 const measureTreeStyle = computed(() => ({
   ...fontStyle.value,
