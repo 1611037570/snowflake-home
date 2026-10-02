@@ -5,7 +5,9 @@ import { useResumePreviewContext } from "@/views/resume/editor/preview/shared/pr
 defineProps({
   title: { type: String, default: "" }, // 模块显示标题
 });
-const { theme: { themeColor } } = useResumePreviewContext();
+const {
+  theme: { themeColor },
+} = useResumePreviewContext();
 </script>
 
 <template>

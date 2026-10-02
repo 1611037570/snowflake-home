@@ -4,9 +4,7 @@ import { computed } from "vue";
 import { resolveIcon } from "@/views/resume/editor/data/iconCategories";
 import { isUserCustomFieldKey } from "@/stores/modules/resume/hooks/useUserCustomField";
 import { getUserSubtitleKeys } from "@/stores/modules/resume/hooks/useUserSubtitle";
-import {
-  getInfoSeparatorMark,
-} from "@/stores/modules/resume/config/uiConfig";
+import { getInfoSeparatorMark } from "@/stores/modules/resume/config/uiConfig";
 import { getPreviewText } from "@/views/resume/editor/preview/shared/i18n";
 import UserContactItem from "./userContactItem.vue";
 import { useUserFieldVisibility } from "../useUserFieldVisibility";
@@ -361,14 +359,16 @@ const contactItems = computed(() => {
     });
   }
   const order = new Map(userFieldOrder.value.map((key, index) => [key, index]));
-  return [...metaItems.value, ...items, ...secondaryItems.value, ...customItems.value]
-    // 副标题字段及其派生项不再出现在信息行
-    .filter((item) => !subtitleKeys.value.includes(item.key || item.fieldKey || item.sortKey))
-    .sort(
-      (a, b) =>
-        (order.get(a.sortKey || a.key) ?? Number.MAX_SAFE_INTEGER) -
-        (order.get(b.sortKey || b.key) ?? Number.MAX_SAFE_INTEGER),
-    );
+  return (
+    [...metaItems.value, ...items, ...secondaryItems.value, ...customItems.value]
+      // 副标题字段及其派生项不再出现在信息行
+      .filter((item) => !subtitleKeys.value.includes(item.key || item.fieldKey || item.sortKey))
+      .sort(
+        (a, b) =>
+          (order.get(a.sortKey || a.key) ?? Number.MAX_SAFE_INTEGER) -
+          (order.get(b.sortKey || b.key) ?? Number.MAX_SAFE_INTEGER),
+      )
+  );
 });
 </script>
 

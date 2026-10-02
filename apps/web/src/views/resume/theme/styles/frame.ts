@@ -10,7 +10,7 @@ export default {
       color: "#B5093B", // 标题等元素使用的主题色
       region: {
         // 区域外观配置
-        main: "viewFrame", // 正文区域使用白色底板外观
+        main: "frame", // 正文区域使用白色底板外观
       },
     },
     region: {

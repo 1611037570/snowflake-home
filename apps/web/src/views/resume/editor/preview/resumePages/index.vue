@@ -8,11 +8,11 @@ import { expandConfigModules } from "@/stores/modules/resume/hooks/useConfigTemp
 import ResumePageShell from "./resumePageShell.vue";
 import LayoutMeasureTree from "./render/measure/layoutMeasureTree.vue";
 import Column from "./render/column.vue";
-import RegionContainer from "@/views/resume/theme/components/regions/index.vue";
+import RegionContainer from "@/views/resume/theme/components/regionContainer/index.vue";
 import {
   regionSurfaceAppearances,
   resolveMainRegionAppearanceId,
-} from "@/views/resume/theme/components/regions/registry";
+} from "@/views/resume/theme/components/regionContainer/registry";
 import { useResumePages } from "./useResumePages";
 import { useResumeTheme } from "@/views/resume/theme/useResumeTheme";
 import { getLegacyMainRegionPadding } from "@/views/resume/theme/styles/themeStyles";

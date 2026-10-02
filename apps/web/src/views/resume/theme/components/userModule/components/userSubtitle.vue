@@ -4,9 +4,7 @@ import { computed } from "vue";
 import InlineInfoList from "@/views/resume/editor/preview/components/inlineInfoList.vue";
 import { getUserSubtitleKeys } from "@/stores/modules/resume/hooks/useUserSubtitle";
 import { useUserFieldVisibility } from "../useUserFieldVisibility";
-import {
-  getInfoSeparatorMark,
-} from "@/stores/modules/resume/config/uiConfig";
+import { getInfoSeparatorMark } from "@/stores/modules/resume/config/uiConfig";
 import { useResumePreviewContext } from "@/views/resume/editor/preview/shared/previewContext";
 
 // 副标题：渲染编辑器中标记的字段值，按标记序号在姓名下方并排展示

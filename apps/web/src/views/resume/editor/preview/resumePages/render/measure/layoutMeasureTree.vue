@@ -2,8 +2,8 @@
 import { computed } from "vue";
 import LayoutMeasureHost from "./layoutMeasureHost.vue";
 import LayoutMeasureNode from "./layoutMeasureNode.vue";
-import RegionContainer from "@/views/resume/theme/components/regions/index.vue";
-import PagePattern from "@/views/resume/theme/components/pagePatterns/index.vue";
+import RegionContainer from "@/views/resume/theme/components/regionContainer/index.vue";
+import PagePattern from "@/views/resume/theme/components/pageContainer/index.vue";
 import { getContentHeight, PAGE_NUMBER_HEIGHT } from "../../../shared/constants";
 import type { LayoutNode } from "../../engine/types";
 
