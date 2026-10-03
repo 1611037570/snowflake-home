@@ -1,5 +1,5 @@
-import { getRegionContentHeight, getRegionPaddingHeight } from "./flowHeights";
-import type { FlowHeightPlan } from "../paginate/flowHeights";
+import { getRegionContentHeight, getRegionPaddingHeight } from "./regionHeights";
+import type { FlowHeightPlan } from "../paginate/pageHeights";
 import type { RegionConfig } from "../pageLayoutTypes";
 
 /** 区域内某个栏在生成分页流之前可以拿到的每页可用高度 */

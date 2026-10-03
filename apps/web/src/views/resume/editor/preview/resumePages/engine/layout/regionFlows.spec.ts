@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { buildRegionFlows, type ColumnFlowPlan } from "./regionFlows";
-import { getRegionContentHeight, getRegionPaddingHeight } from "./flowHeights";
+import { getRegionContentHeight, getRegionPaddingHeight } from "./regionHeights";
 import type { RegionConfig } from "../pageLayoutTypes";
 
 /** 构造一个区域配置，只保留区域高度循环关心的字段 */
@@ -39,7 +39,7 @@ const createHeightSpy = (
   return { plans, buildFlow };
 };
 
-describe("flowHeights", () => {
+describe("regionHeights", () => {
   it("固定高度区域按配置高度取内容高度，其余模式取整页可用高度", () => {
     const fixed = createRegion({ id: "header", height: { mode: "fixed", value: 500 } });
     const remaining = createRegion({ id: "main", height: { mode: "remaining" } });

@@ -10,7 +10,7 @@ engine/adapter/buildLayoutNodes.ts（模块 → 通用排版节点）
   → engine/types.ts（节点与断点）
   → engine/layout/layoutTemplates.ts（页面区域与栏）
   → engine/measure/measureLayoutNodes.ts（真实 DOM 测量，唯一的尺寸来源）
-  → engine/layout/flowHeights.ts（区域内容高度与内容内边距，唯一的区域高度口径）
+  → engine/layout/regionHeights.ts（区域内容高度与内容内边距，唯一的区域高度口径）
   → engine/layout/regionFlows.ts（区域高度结算，按栏下发每页可用高度）
   → engine/paginate/fragmentGeometry.ts（分片几何口径：块上外边距与顶部内边距的扣除规则）
   → engine/paginate/cutPoints.ts（切割点覆盖范围规则：块断点与文本断点各覆盖什么）
@@ -26,10 +26,10 @@ engine/adapter/buildLayoutNodes.ts（模块 → 通用排版节点）
 | 页面尺寸     | `794 × 1123`                                                       | `editor/preview/shared/constants.ts`                                   |
 | 页尾高度     | `PAGE_NUMBER_HEIGHT = 36`                                          | 同上                                                                   |
 | 整页可用高度 | `RESUME_HEIGHT − paddingVertical − max(paddingVertical, 页尾高度)` | `getContentHeight`，分页与「一页纸」共用同一公式                       |
-| 区域留白     | 区域四周的内部留白（`RegionConfig.padding`），同时扣高度与扣宽度   | `createResumeLayout` 写入，`resolveColumnWidths` 与 `flowHeights` 读取 |
+| 区域留白     | 区域四周的内部留白（`RegionConfig.padding`），同时扣高度与扣宽度   | `createResumeLayout` 写入，`resolveColumnWidths` 与 `regionHeights` 读取 |
 | 栏宽         | 比例栏按「内容宽 − 区域左右内边距 − 栏间距」再按比例分配           | `resolveColumnWidths`，与渲染层 flex 口径一致                          |
 
-区域高度结算（`flowHeights.ts` 提供口径，`regionFlows.ts` 按区域顺序结算）累加首个页面已被占用的高度：
+区域高度结算（`regionHeights.ts` 提供口径，`regionFlows.ts` 按区域顺序结算）累加首个页面已被占用的高度：
 
 ```text
 首页可用高度(区域) = 整页可用高度 − 前面区域已占用高度 − 本区域上下内容内边距
@@ -40,7 +40,7 @@ engine/adapter/buildLayoutNodes.ts（模块 → 通用排版节点）
 区域之间不插入默认间距：疏密只由各区域自身留白表达，外观组件声明 gapBefore 时才额外叠加
 ```
 
-区域内容高度与内容内边距只在 `flowHeights.ts` 里定义一次，区域流结算与页面计划（`pagePlan.ts` 的溢出判定）都从这里读取，避免同一条公式在两层各写一遍而分叉。
+区域内容高度与内容内边距只在 `regionHeights.ts` 里定义一次，区域流结算与页面计划（`pagePlan.ts` 的溢出判定）都从这里读取，避免同一条公式在两层各写一遍而分叉。分页流的首页与后续页高度计划由 `paginate/pageHeights.ts` 独立维护。
 
 ## 区域外观能力声明
 
