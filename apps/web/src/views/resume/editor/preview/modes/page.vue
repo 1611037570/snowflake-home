@@ -8,7 +8,6 @@ import ExportSuccessModal from "../resumePages/export/exportSuccessModal.vue";
 import { useResumeExport } from "../resumePages/export/useResumeExport";
 import { useSmartOnePage } from "./useSmartOnePage";
 import { useModuleInteractions } from "./useModuleInteractions";
-import { isEmptyResume } from "../../toolbar/modules/progress/useResumeStats";
 import {
   clearPreviewSelection,
   jumpPreview,
@@ -92,7 +91,8 @@ const columnMoveContext = computed(() => {
 });
 
 // 页面测量状态由编辑器模式同步到简历 store。
-const previewReady = computed(() => isEmptyResume(currentData.value) || previewMeasured.value);
+// ResumePages 已同时处理空简历与主题内置标语，编辑器只读取它给出的最终就绪状态。
+const previewReady = computed(() => previewMeasured.value);
 const settlePreviewSync = useDebounceFn(() => {
   if (previewReady.value) resumeStore.setPreviewSyncing(false);
 }, 200);
