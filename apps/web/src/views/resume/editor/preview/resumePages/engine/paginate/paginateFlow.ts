@@ -189,7 +189,7 @@ export const paginateFlow = ({
   };
 
   /** 换页前把模块间距留在上一页页尾：下一个模块换页时这段间距不应凭空消失 */
-  const pushPage = (nextModuleKey?: string) => {
+  const pushPage = (nextModuleKey?: string, keepEmptyPage = false) => {
     if (currentPage.items.length > 0) {
       const lastItem = currentPage.items[currentPage.items.length - 1];
       const isModuleBoundary = Boolean(nextModuleKey) && lastItem.sourceModuleKey !== nextModuleKey;
@@ -197,6 +197,9 @@ export const paginateFlow = ({
         currentPage.trailingGap = safeGap;
         currentPage.usedHeight += safeGap;
       }
+      pages.push(currentPage);
+    } else if (keepEmptyPage) {
+      // 首页被前置区域占满时保留空栏页，正文才能与其他区域继续使用同一物理页码。
       pages.push(currentPage);
     }
     const nextPageIndex = pages.length;
@@ -206,6 +209,19 @@ export const paginateFlow = ({
       availableHeight: resolvePageHeight(heights, nextPageIndex),
       items: [],
     };
+  };
+
+  /** 首页剩余槽位不足时让内容从后续完整高度页面开始，避免把小槽位误判为溢出页。 */
+  const moveFromShortEmptyPage = (itemHeight: number): boolean => {
+    if (currentPage.items.length > 0) return false;
+    const currentHeight = getCurrentAvailableHeight();
+    const nextHeight = resolvePageHeight(heights, currentPage.pageIndex + 1);
+    if (
+      itemHeight <= currentHeight + PAGE_HEIGHT_TOLERANCE ||
+      nextHeight <= currentHeight + PAGE_HEIGHT_TOLERANCE
+    ) return false;
+    pushPage(undefined, true);
+    return true;
   };
 
   /** 尝试把一个分片放入当前页，当前页已有内容且放不下时返回 false */
@@ -377,6 +393,7 @@ export const paginateFlow = ({
             pushPage(node.sourceModuleKey);
             continue;
           }
+          if (moveFromShortEmptyPage(wholeFragment.height)) continue;
           // 空页接纳完整剩余内容并交给 PagePlan 标记溢出，保证内容不会被收敛护栏丢弃。
           tryAddItem(wholeFragment, !isFirstFragment);
           consumedHeight = fullHeight;
@@ -385,6 +402,7 @@ export const paginateFlow = ({
           break;
         }
 
+        if (moveFromShortEmptyPage(candidate.item.height)) continue;
         if (!tryAddItem(candidate.item, !isFirstFragment)) {
           pushPage();
           continue;
