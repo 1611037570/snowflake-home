@@ -17,6 +17,7 @@ import {
 } from "@/stores/modules/resume/config/uiConfig";
 import PagePattern from "@/views/resume/theme/components/pageContainer/index.vue";
 import { layoutStretchesColumns } from "@/views/resume/theme/layouts";
+import { getContrastTextColor } from "@/views/resume/theme/useResumeTheme";
 
 const props = defineProps({
   // 简历 ui（font.family / page.spacing.module）
@@ -63,9 +64,7 @@ const bottomSpace = computed(() =>
   Math.max(parseFloat(props.styles.paddingStyle.paddingBottom) || 0, props.showPageNumber ? PAGE_NUMBER_HEIGHT : 0),
 );
 const pageBackground = computed(() => props.ui.page?.background || defaultPageBackground);
-const pageTextColor = computed(() =>
-  pageBackground.value.toLowerCase() === "#000000" ? "#ffffff" : "#000000",
-);
+const pageTextColor = computed(() => getContrastTextColor(pageBackground.value));
 // 预览整体带 scale 缩放，线宽会被一起缩小，按足够醒目的宽度标注
 const debugOutlineStyle = { outline: "4px dashed var(--sf-error)", outlineOffset: "-1px" };
 // 纸张外观：圆角与边框都来自主题配置，边框画在页面盒子内圈并参与内容宽高

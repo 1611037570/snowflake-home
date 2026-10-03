@@ -28,14 +28,15 @@ import {
 /** 简历主题配置（item.ui） */
 type ResumeUi = Record<string, any>;
 
-/** 颜色亮度是否偏亮：决定主题色块上的文字取深色还是白色 */
-const isLightColor = (color: string) => {
+/** 按背景色亮度返回可读的深色或浅色文字。 */
+export const getContrastTextColor = (color: string) => {
   const hex = String(color ?? "").replace("#", "");
-  if (hex.length < 6) return false;
-  const r = parseInt(hex.slice(0, 2), 16);
-  const g = parseInt(hex.slice(2, 4), 16);
-  const b = parseInt(hex.slice(4, 6), 16);
-  return (r * 299 + g * 587 + b * 114) / 1000 > 140;
+  const normalized = hex.length === 3 ? hex.split("").map((value) => `${value}${value}`).join("") : hex;
+  if (!/^[0-9a-f]{6}$/i.test(normalized)) return "#1f2937";
+  const r = parseInt(normalized.slice(0, 2), 16);
+  const g = parseInt(normalized.slice(2, 4), 16);
+  const b = parseInt(normalized.slice(4, 6), 16);
+  return (r * 299 + g * 587 + b * 114) / 1000 > 140 ? "#1f2937" : "#ffffff";
 };
 
 /** 返回的主题样式值集合 */
@@ -148,9 +149,7 @@ export const useResumeTheme = (ui: ComputedRef<ResumeUi>): ResumeTheme => {
   // 线条色：分隔线、描边，主题色 40% 透明度
   const themeColorLine = computed(() => `${themeColor.value}66`);
   // 对比文字色：主题色块上的文字按亮度自动取深色或白色
-  const themeColorContrast = computed(() =>
-    isLightColor(themeColor.value) ? "#1f2937" : "#ffffff",
-  );
+  const themeColorContrast = computed(() => getContrastTextColor(themeColor.value));
   // 各外观组件只读取统一的主题编号。
   const themeTemplate = computed<string>(() => ui.value.theme?.template || "default");
   // 个人信息展示模式（图标/文字/隐藏），缺失时回退默认值

@@ -12,7 +12,7 @@ import RegionContainer from "@/views/resume/theme/components/regionContainer/ind
 import { hasThemeSlogan } from "@/views/resume/theme/components/sloganModule/registry";
 import { useResumePages } from "./useResumePages";
 import { resolveRegionGap } from "./engine/layout/regionFlows";
-import { useResumeTheme } from "@/views/resume/theme/useResumeTheme";
+import { getContrastTextColor, useResumeTheme } from "@/views/resume/theme/useResumeTheme";
 import { provideResumePreviewContext } from "../shared/previewContext";
 import { isEmptyResume } from "../../toolbar/modules/progress/useResumeStats";
 import { getPreviewText } from "../shared/i18n";
@@ -105,7 +105,7 @@ const measureTreeStyle = computed(() => ({
   ...fontStyle.value,
   ...lineHeightStyle.value,
   backgroundColor: ui.value.page?.background || "#ffffff",
-  color: ui.value.page?.background?.toLowerCase() === "#000000" ? "#ffffff" : "#000000",
+  color: getContrastTextColor(ui.value.page?.background || "#ffffff"),
   minHeight: `${RESUME_HEIGHT}px`,
   // 纹理层用负层级绘制：宿主需要建立独立层叠上下文，纹理才压在底色之上、正文之下
   isolation: "isolate",
