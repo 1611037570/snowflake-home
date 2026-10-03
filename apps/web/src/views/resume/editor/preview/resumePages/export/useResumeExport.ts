@@ -37,12 +37,17 @@ export const useResumeExport = ({
   previewReady,
   onExportSuccess,
 }: UseResumeExportOptions) => {
-  // 可视化导出只消费最新且有效的分页结果，避免把旧页面或溢出页面写入文件。
-  const canExportLayout = () => {
+  // 所有可视化导出都等待最新测量完成，避免读取更新前的页面或长图树。
+  const canExportMeasure = () => {
     if (!previewReady.value) {
       ElMessage.warning("简历预览正在更新，请稍后再导出");
       return false;
     }
+    return true;
+  };
+  // 分页导出额外要求页面计划有效；长图导出使用无限高度测量树，不受分页溢出限制。
+  const canExportPages = () => {
+    if (!canExportMeasure()) return false;
     if (pagePlan.value.status === "ready") return true;
     ElMessage.error(
       pagePlan.value.status === "overflow"
@@ -53,7 +58,7 @@ export const useResumeExport = ({
   };
   // 长图 PDF 与 PNG 共用长图渲染结果，保持单页长图输出。
   const printPDF = (scale: unknown = 2) => {
-    if (!canExportLayout()) return;
+    if (!canExportMeasure()) return;
     return printLongImagePdf(
       measureRef,
       onExportSuccess,
@@ -62,21 +67,21 @@ export const useResumeExport = ({
   };
   // 浏览器打印单独作为导出选项，保留系统打印能力。
   const printBrowserPDF = (scale: unknown = 2) => {
-    if (!canExportLayout()) return;
+    if (!canExportPages()) return;
     return printResume(rootRef, onExportSuccess, scale === 8 ? 8 : scale === 4 ? 4 : scale === 2 ? 2 : 1);
   };
   const printServerPDF = (scale: unknown = 2) => {
-    if (!canExportLayout()) return;
+    if (!canExportPages()) return;
     return exportServerPdf(rootRef, onExportSuccess, scale === 8 ? 8 : scale === 4 ? 4 : scale === 2 ? 2 : 1);
   };
   const printImage = (scale: unknown = 2) => {
-    if (!canExportLayout()) return;
+    if (!canExportMeasure()) return;
     return exportImage(measureRef, onExportSuccess, scale === 8 ? 8 : scale === 4 ? 4 : scale === 2 ? 2 : 1);
   };
   const printMarkdown = () => exportMarkdown(onExportSuccess);
   // 导出可编辑的单文件 HTML
   const printHtml = () => {
-    if (!canExportLayout()) return;
+    if (!canExportPages()) return;
     return exportHtml(rootRef, onExportSuccess);
   };
   // 仅编辑模式注册全局导出事件

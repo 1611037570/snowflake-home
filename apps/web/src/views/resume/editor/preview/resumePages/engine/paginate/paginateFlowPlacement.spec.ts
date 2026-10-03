@@ -250,4 +250,24 @@ describe("paginateFlow 放置路径基线", () => {
 
     expect(summarize(pages).map((page) => page.used)).toEqual([50, 70, 80]);
   });
+
+  it("首页剩余高度不足时保留空栏并从后续完整页面开始", () => {
+    const pages = paginateFlow({
+      nodes: [createNode("item")],
+      measurements: new Map([["item", createMeasurement("item", 80)]]),
+      heights: { firstPageHeight: 30, laterPageHeight: 100 },
+      gap: 0,
+    });
+
+    expect(summarize(pages)).toEqual([
+      { used: 0, trailingGap: null, items: [] },
+      {
+        used: 80,
+        trailingGap: null,
+        items: [
+          { nodeId: "item", fragment: "single", height: 80, blockRange: null, contentRange: null },
+        ],
+      },
+    ]);
+  });
 });
