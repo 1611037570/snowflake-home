@@ -304,8 +304,8 @@ defineExpose({
             <SfIcon icon="lucide:file-text" size="7" class="text-sf-theme" />
           </div>
           <div class="flex flex-col gap-3">
-            <span class="text-lg font-black">{{ $t("emptyResumeTitle") }}</span>
-            <span class="text-sm opacity-70">{{ $t("emptyResumeTip") }}</span>
+            <span class="text-lg font-black text-black">{{ $t("emptyResumeTitle") }}</span>
+            <span class="text-sm text-sf-text-2">{{ $t("emptyResumeTip") }}</span>
           </div>
         </div>
       </ResumePageShell>
