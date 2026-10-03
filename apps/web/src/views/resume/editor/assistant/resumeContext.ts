@@ -6,7 +6,6 @@ import { omitMediaFromData } from "@/stores/modules/resume/config/mediaFields";
 export const useResumeContext = () => {
   const resumeStore = useResumeStore();
   const { selectedModule, desensitizeMode } = storeToRefs(resumeStore);
-  const NORMAL_USER_SENSITIVE_KEYS = ["name", "phone", "email"];
   const PHONE_PATTERN = /1[3-9]\d{9}/g;
   const EMAIL_PATTERN = /[\w.%+-]+@[\w.-]+\.[A-Za-z]{2,}/g;
   const DESENSITIZED_TEXT = "[数据已脱敏]";

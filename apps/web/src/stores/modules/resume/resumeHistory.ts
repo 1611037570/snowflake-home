@@ -5,7 +5,6 @@ import {
   getValueAtPath,
   isMediaMark,
   mediaMark,
-  setValueAtPath,
 } from "./config/mediaFields";
 
 type ResumeHistoryOptions = {

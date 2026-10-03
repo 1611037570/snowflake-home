@@ -56,7 +56,6 @@ const plainClassObj = {
   theme: "bg-sf-theme-3 text-sf-theme hover:bg-sf-theme hover:text-white",
 };
 const classObj = {
-  error: "",
   success: "bg-sf-success text-white hover:bg-sf-success-2",
   error: "bg-sf-error text-white hover:bg-sf-error-2",
   theme: "bg-sf-theme text-sf-theme-text hover:bg-sf-theme-2",
