@@ -1,6 +1,5 @@
 import type { Component } from "vue";
 import type { RegionSlotId } from "@/views/resume/theme/regionSlots";
-import type { RegionPadding } from "@/views/resume/theme/regionPadding";
 import PlainRegion from "./themes/plain.vue";
 import AcademicMain from "./themes/main/academic.vue";
 import AcademicUser from "./themes/user/academic.vue";
@@ -50,9 +49,12 @@ import VioletBiographyUser from "./themes/user/violetBiography.vue";
 import VioletBiographyMain from "./themes/main/violetBiography.vue";
 import TealRailMain from "./themes/main/tealRail.vue";
 import TealCardUser from "./themes/user/tealCard.vue";
+import InkMagazineUser from "./themes/user/inkMagazine.vue";
+import RingTimelineUser from "./themes/user/ringTimeline.vue";
+import SquareTimelineUser from "./themes/user/squareTimeline.vue";
+import TimelineUser from "./themes/user/timeline.vue";
 
 interface RegionAppearanceComponent {
-  regionPadding?: RegionPadding | ((ui?: Record<string, any>) => RegionPadding); // 组件声明的区域留白，供分页计算尺寸
   fillsPageTop?: boolean; // 组件是否从首页纸张顶边开始占据整宽
   gapBefore?: number; // 区域与前一区域之间的间距覆盖值
 }
@@ -82,6 +84,10 @@ export const regionAppearanceRegistry: Record<RegionSlotId, Record<string, Compo
     sloganBand: SloganBandUser, // 标语通栏主题的个人信息内部留白
     navyGuide: NavyGuideUser, // 深色顶栏下方的个人信息留白
     violetBiography: VioletBiographyUser, // 紫色通栏个人信息页眉
+    inkMagazine: InkMagazineUser, // 杂志页眉与正文之间的留白
+    ringTimeline: RingTimelineUser, // 圆环时间轴页眉下留白
+    squareTimeline: SquareTimelineUser, // 方节点时间轴页眉下留白
+    timeline: TimelineUser, // 时间轴页眉下留白
   },
   main: {
     default: DefaultMain, // 普通正文区域底板
@@ -117,13 +123,6 @@ export const regionAppearanceRegistry: Record<RegionSlotId, Record<string, Compo
   },
 };
 
-const emptyRegionPadding = {
-  top: 0, // 无额外上留白
-  right: 0, // 无额外右留白
-  bottom: 0, // 无额外下留白
-  left: 0, // 无额外左留白
-};
-
 /** 主题编号只在当前区域内查找，不跨区域复用外观名称。 */
 export const resolveRegionAppearanceId = (
   themeId: unknown,
@@ -132,18 +131,6 @@ export const resolveRegionAppearanceId = (
   slot && typeof themeId === "string" && Object.prototype.hasOwnProperty.call(regionAppearanceRegistry[slot], themeId)
     ? themeId
     : "default";
-
-/** 读取所选区域组件声明的留白。 */
-export const resolveRegionAppearancePadding = (
-  themeId: unknown,
-  slot: RegionSlotId | null,
-  ui?: Record<string, any>,
-) => {
-  const appearance = resolveRegionAppearance(themeId, slot) as unknown as RegionAppearanceComponent;
-  return typeof appearance.regionPadding === "function"
-    ? appearance.regionPadding(ui)
-    : appearance.regionPadding || emptyRegionPadding;
-};
 
 /** 由区域外观组件声明首页是否占据纸张顶部。 */
 export const resolveRegionFillsPageTop = (themeId: unknown, slot: RegionSlotId): boolean =>

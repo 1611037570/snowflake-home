@@ -36,4 +36,10 @@ describe("区域留白解析", () => {
     expect(resolveRegionPadding(ui, "user")).toEqual({ top: 24, right: 0, bottom: 12, left: 0 });
     expect(resolveRegionPadding(ui, "main")).toEqual({ top: 0, right: 0, bottom: 0, left: 0 });
   });
+
+  it("顶部个人信息主题由个人信息区域声明与正文之间的留白", () => {
+    const ui = { theme: { template: "squareTimeline" } };
+
+    expect(resolveRegionPadding(ui, "user")).toEqual({ top: 0, right: 0, bottom: 24, left: 0 });
+  });
 });

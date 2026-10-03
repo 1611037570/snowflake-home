@@ -1,7 +1,8 @@
 <script setup>
 import { computed } from "vue";
 import { resolveRegionSlot } from "@/views/resume/theme/regionSlots";
-import { resolveRegionAppearance, resolveRegionAppearancePadding } from "./registry";
+import { resolveRegionAppearance } from "./registry";
+import { resolveRegionPadding } from "@/views/resume/theme/regionPadding";
 import { layoutStretchesColumns } from "@/views/resume/theme/layouts";
 import { useResumePreviewContext } from "@/views/resume/editor/preview/shared/previewContext";
 
@@ -19,7 +20,7 @@ const appearance = computed(() => resolveRegionAppearance(ui.value?.theme?.templ
 // 正文外观与剩余空间共用同一个根容器，留白与分页读取相同的组件声明。
 const mainStyle = computed(() => {
   if (slot.value !== "main") return undefined;
-  const padding = resolveRegionAppearancePadding(ui.value?.theme?.template, "main", ui.value);
+  const padding = resolveRegionPadding(ui.value, "main");
   const bottomSpace = layoutStretchesColumns(ui.value?.layout?.type)
     ? "var(--resume-bottom-space, 0px)"
     : "0px";
