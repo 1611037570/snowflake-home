@@ -13,7 +13,7 @@ import {
   defaultParagraphSpacing,
   uiParamRanges,
 } from "@/stores/modules/resume/config/uiConfig";
-import { createDefaultLayoutColumns } from "../../resumePages/engine/layout/layoutTemplates";
+import { createDefaultLayoutColumns } from "@/views/resume/theme/layouts";
 
 const resumeStore = useResumeStore();
 const { system, currentUI } = storeToRefs(resumeStore);

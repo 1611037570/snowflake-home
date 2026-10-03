@@ -10,7 +10,7 @@ import { resumeTemplateDesignOptions } from "@/views/resume/template/data/list";
 import { onMounted, ref } from "vue";
 import i18n, { $t } from "@/locales";
 import { translateResumeEditorText } from "@/stores/modules/resume/hooks/useResumeEditorLocale";
-import { resolveLayoutColumns } from "../../preview/resumePages/engine/layout/layoutTemplates";
+import { resolveLayoutColumns } from "@/views/resume/theme/layouts";
 const resumeStore = useResumeStore();
 const { currentUI } = storeToRefs(resumeStore);
 const previewBase = ref(null);
