@@ -4,8 +4,8 @@ import {
   resolveDroppedTopSpacing,
   resolveNextBlockMargin,
 } from "./fragmentGeometry";
-import { resolvePageHeight } from "./flowHeights";
-import type { FlowHeightPlan } from "./flowHeights";
+import { resolvePageHeight } from "./pageHeights";
+import type { FlowHeightPlan } from "./pageHeights";
 import type { MeasuredNode } from "../measure/types";
 import type { LayoutNode } from "../types";
 

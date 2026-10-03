@@ -1,4 +1,4 @@
-import { getRegionContentHeight } from "../layout/flowHeights";
+import { getRegionContentHeight } from "../layout/regionHeights";
 import type { PageLayoutConfig, RegionConfig } from "../pageLayoutTypes";
 import type { FlowFragmentKind, FlowPage, FlowPageItem } from "./paginateFlow";
 
