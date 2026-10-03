@@ -20,6 +20,7 @@ describe("resumeSchemaRegistry", () => {
     expect(education).toMatchObject({ kind: "array", dataPath: ["list"] });
     expect(education?.fields.map((field) => field.key)).toEqual([
       "name",
+      "link",
       "tags",
       "college",
       "education",
