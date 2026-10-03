@@ -173,6 +173,8 @@ useResumeExport({
   isEdit,
   rootRef: previewRootRef,
   measureRef: previewMeasureRef,
+  pagePlan: previewPagePlan,
+  previewReady,
   onExportSuccess,
 });
 useSmartOnePage({

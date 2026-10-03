@@ -240,11 +240,15 @@ export const paginateFlow = ({
     let pageTurnsWithoutProgress = 0;
     while (consumedHeight < fullHeight || (fullHeight === 0 && consumedHeight === 0)) {
       const pageStartHeight = consumedHeight;
+      const pageStartOffset = consumedOffset;
+      const pageStartBlocks = consumedBlocks;
       const startItemCount = currentPage.items.length;
       const startPageIndex = currentPage.pageIndex;
       // 内层反复尝试放置，直到本轮消费了内容；换页与节点结束都在这里退出，由外层决定是否继续
       while (
         consumedHeight === pageStartHeight &&
+        consumedOffset === pageStartOffset &&
+        consumedBlocks === pageStartBlocks &&
         currentPage.pageIndex === startPageIndex &&
         currentPage.items.length >= startItemCount
       ) {
@@ -333,6 +337,14 @@ export const paginateFlow = ({
               }),
             }
           : undefined;
+        // 无法推进高度、正文或块游标的断点不能作为候选，否则会重复输出空分片并丢弃剩余内容。
+        const usableCut = cut && (
+          cut.breakPoint.height > consumedHeight ||
+          cut.coverage.consumedBlockEnd > consumedBlocks ||
+          (!cut.coverage.isBlockPoint && cut.breakPoint.offset > consumedOffset)
+        )
+          ? cut
+          : undefined;
 
         // 选择要放置的候选：整片放得下就整片，否则用能放下的最大断点
         const candidate:
@@ -344,18 +356,18 @@ export const paginateFlow = ({
             }
           | undefined = wholeFits
           ? { item: wholeFragment }
-          : cut
+          : usableCut
             ? {
                 item: {
                   ...wholeFragment,
                   fragment: isFirstFragment ? "first" : "middle",
-                  fragmentId: `${node.id}:${isFirstFragment ? "first" : "middle"}:${consumedOffset}:${cut.breakPoint.offset}`,
-                  height: cut.height,
-                  contentRange: cut.coverage.contentRange,
-                  blockRange: cut.coverage.blockRange,
+                  fragmentId: `${node.id}:${isFirstFragment ? "first" : "middle"}:${consumedOffset}:${usableCut.breakPoint.offset}`,
+                  height: usableCut.height,
+                  contentRange: usableCut.coverage.contentRange,
+                  blockRange: usableCut.coverage.blockRange,
                 },
-                breakPoint: cut.breakPoint,
-                coverage: cut.coverage,
+                breakPoint: usableCut.breakPoint,
+                coverage: usableCut.coverage,
               }
             : undefined;
 
@@ -365,8 +377,11 @@ export const paginateFlow = ({
             pushPage(node.sourceModuleKey);
             continue;
           }
-          // 空页必须接纳整片：否则没有断点可切时会反复换页无法结束
+          // 空页接纳完整剩余内容并交给 PagePlan 标记溢出，保证内容不会被收敛护栏丢弃。
           tryAddItem(wholeFragment, !isFirstFragment);
+          consumedHeight = fullHeight;
+          consumedOffset = contentEnd;
+          consumedBlocks = blockCount;
           break;
         }
 
@@ -374,21 +389,35 @@ export const paginateFlow = ({
           pushPage();
           continue;
         }
-        if (!("coverage" in candidate)) break;
+        if (!("coverage" in candidate)) {
+          consumedHeight = fullHeight;
+          consumedOffset = contentEnd;
+          consumedBlocks = blockCount;
+          break;
+        }
 
         // 记下推进前的消费量：断点高度不高于已消费高度说明本片没有消费任何内容
         const fragmentHeightBefore = consumedHeight;
+        const fragmentOffsetBefore = consumedOffset;
+        const fragmentBlocksBefore = consumedBlocks;
         consumedHeight = candidate.breakPoint.height;
         consumedBlocks = candidate.coverage.consumedBlockEnd;
         if (!candidate.coverage.isBlockPoint) consumedOffset = candidate.breakPoint.offset;
-        // 零推进护栏：测量层会过滤零高度块，但块总数仍按块结束序号统计，两者不一致时，
-        // 这次分片不会推进消费量，再循环一次会选出同一个断点并反复换页，这里直接结束当前节点
-        if (consumedHeight <= fragmentHeightBefore) break;
+        // 高度、正文与块游标任一推进都表示该分片有效，避免零高度块被误判为没有消费内容。
+        if (
+          consumedHeight <= fragmentHeightBefore &&
+          consumedOffset <= fragmentOffsetBefore &&
+          consumedBlocks <= fragmentBlocksBefore
+        ) break;
         // 块与正文都已切到末尾时结束，避免产生高度不为零但内容为空的尾分片
         if (consumedOffset >= contentEnd && consumedBlocks >= blockCount) break;
       }
       // 本轮消费了内容就继续填当前页；只是换页也允许重试一次
-      if (consumedHeight > pageStartHeight) {
+      if (
+        consumedHeight > pageStartHeight ||
+        consumedOffset > pageStartOffset ||
+        consumedBlocks > pageStartBlocks
+      ) {
         pageTurnsWithoutProgress = 0;
         continue;
       }

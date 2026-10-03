@@ -48,6 +48,12 @@ export const isPageLayoutTemplateId = (value: unknown): value is PageLayoutTempl
 export const layoutStretchesColumns = (layoutId: unknown): boolean =>
   pageLayoutRegistry.find((layout) => layout.id === layoutId)?.stretchesColumns === true;
 
+/** 按布局编号判断是否使用左右栏模块分配。 */
+export const layoutUsesColumns = (layoutId: unknown): layoutId is PageLayoutTemplateId =>
+  pageLayoutRegistry.some(
+    (layout) => layout.id === layoutId && "defaultLeftModuleKeys" in layout,
+  );
+
 /** 按布局定义生成默认左右栏模块顺序。 */
 export const createDefaultLayoutColumns = (
   layoutId: PageLayoutTemplateId,

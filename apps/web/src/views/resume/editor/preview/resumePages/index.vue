@@ -174,6 +174,14 @@ const userFieldLabels = computed(() => {
   collectFields(userField?.fields);
   return labels;
 });
+// 个人信息字段的隐藏、顺序和名称不写入排版节点，单独形成测量签名通知隐藏测量树刷新。
+const renderSignature = computed(() =>
+  JSON.stringify([
+    [...userHiddenFields.value].sort(),
+    userFieldOrder.value,
+    [...userFieldLabels.value.entries()],
+  ]),
+);
 // 预览模块统一从上下文读取运行时数据。
 provideResumePreviewContext({
   data: dataRef,
@@ -202,6 +210,7 @@ const {
   showPageNumber,
   isThumb,
   fontReadyVersion,
+  renderSignature,
   allModules,
 });
 const layoutColumnGap = computed(() => layout.value.columnGap || 0);
@@ -295,8 +304,8 @@ defineExpose({
             <SfIcon icon="lucide:file-text" size="7" class="text-sf-theme" />
           </div>
           <div class="flex flex-col gap-3">
-            <span class="text-lg font-black text-black">{{ $t("emptyResumeTitle") }}</span>
-            <span class="text-sm text-sf-text-2">{{ $t("emptyResumeTip") }}</span>
+            <span class="text-lg font-black">{{ $t("emptyResumeTitle") }}</span>
+            <span class="text-sm opacity-70">{{ $t("emptyResumeTip") }}</span>
           </div>
         </div>
       </ResumePageShell>
@@ -328,65 +337,73 @@ defineExpose({
           warning.message
         }}</span>
       </div>
-      <!-- 实际渲染的分页内容，页面只消费 PagePlan 中的分片。 -->
-      <div v-else ref="rootRef" class="relative flex flex-col gap-3">
-        <ResumePageShell
-          v-for="page in visiblePages"
-          class="cursor-pointer"
-          :key="page.pageIndex"
-          :ui="ui"
-          :styles="{ paddingStyle, fontStyle, lineHeightStyle }"
-          :show-page-number="showPageNumber"
-          :page-index="page.pageIndex"
-          :page-count="visiblePages.length"
-          :has-top-region="Boolean(pageTopRegionId(page))"
-          @click="handlePageClick"
-          :class="[
-            {
-              // 编辑器页边线是预览专有装饰：导出通道按该类名移除，主题声明的纸张边框不受影响
-              'resume-page-editor-frame': mode === 'editor',
-            },
-          ]"
+      <template v-else>
+        <div
+          v-if="pagePlan.status === 'overflow'"
+          class="mb-3 flex min-h-12 items-center justify-center rounded-3xl bg-white p-3 text-center text-sm text-red-600"
         >
-          <!-- 正文区域铺满页面剩余高度，两栏因此都能拿到完整高度 -->
-          <div class="flex min-h-0 min-w-0 flex-1 flex-col">
-            <template v-for="region in page.regions" :key="region.regionId">
-              <RegionContainer
-                v-if="region.columns.some((column) => column.fragments.length > 0)"
-                :region-id="region.regionId"
-                class="flex w-full min-w-0"
-                :style="getRegionStyle(page, region.regionId)"
-              >
-                <!-- 栏自身作为定位基准，主题的背景层用绝对定位铺满栏内 -->
-                <div
-                  v-for="(column, columnIndex) in region.columns"
-                  :key="column.columnId"
-                  class="relative min-w-0"
-                  :style="getColumnStyle(column.columnId)"
+          当前内容超出页面可用区域，请调整内容或排版后再导出
+        </div>
+        <!-- 实际渲染的分页内容，页面只消费 PagePlan 中的分片。 -->
+        <div ref="rootRef" class="relative flex flex-col gap-3">
+          <ResumePageShell
+            v-for="page in visiblePages"
+            class="cursor-pointer"
+            :key="page.pageIndex"
+            :ui="ui"
+            :styles="{ paddingStyle, fontStyle, lineHeightStyle }"
+            :show-page-number="showPageNumber"
+            :page-index="page.pageIndex"
+            :page-count="pages.length"
+            :has-top-region="Boolean(pageTopRegionId(page))"
+            @click="handlePageClick"
+            :class="[
+              {
+                // 编辑器页边线是预览专有装饰：导出通道按该类名移除，主题声明的纸张边框不受影响
+                'resume-page-editor-frame': mode === 'editor',
+              },
+            ]"
+          >
+            <!-- 正文区域铺满页面剩余高度，两栏因此都能拿到完整高度 -->
+            <div class="flex min-h-0 min-w-0 flex-1 flex-col">
+              <template v-for="region in page.regions" :key="region.regionId">
+                <RegionContainer
+                  v-if="region.columns.some((column) => column.fragments.length > 0)"
+                  :region-id="region.regionId"
+                  class="flex w-full min-w-0"
+                  :style="getRegionStyle(page, region.regionId)"
                 >
-                  <Column
-                    :column="column"
-                    :page-index="page.pageIndex"
-                    :nodes="nodeMap"
-                    :is-edit="isEdit"
-                    :show-debug="showLayoutDebug"
-                    :module-class-map="props.moduleClassMap"
-                    :selected-module-keys="props.selectedModuleKeys"
-                    :gap="getColumnGap(column.columnId)"
-                    :move-directions="props.moveDirectionsByColumn[column.columnId]"
-                    :can-move-left="columnIndex > 0"
-                    :can-move-right="columnIndex < region.columns.length - 1"
-                    @mouseenter="handleModuleMouseEnter"
-                    @click="handleSubmoduleClick"
-                    @select="emit('module-select', $event)"
-                    @move="(payload) => handleModuleMove(payload, column.columnId)"
-                  />
-                </div>
-              </RegionContainer>
-            </template>
-          </div>
-        </ResumePageShell>
-      </div>
+                  <!-- 栏自身作为定位基准，主题的背景层用绝对定位铺满栏内 -->
+                  <div
+                    v-for="(column, columnIndex) in region.columns"
+                    :key="column.columnId"
+                    class="relative min-w-0"
+                    :style="getColumnStyle(column.columnId)"
+                  >
+                    <Column
+                      :column="column"
+                      :page-index="page.pageIndex"
+                      :nodes="nodeMap"
+                      :is-edit="isEdit"
+                      :show-debug="showLayoutDebug"
+                      :module-class-map="props.moduleClassMap"
+                      :selected-module-keys="props.selectedModuleKeys"
+                      :gap="getColumnGap(column.columnId)"
+                      :move-directions="props.moveDirectionsByColumn[column.columnId]"
+                      :can-move-left="columnIndex > 0"
+                      :can-move-right="columnIndex < region.columns.length - 1"
+                      @mouseenter="handleModuleMouseEnter"
+                      @click="handleSubmoduleClick"
+                      @select="emit('module-select', $event)"
+                      @move="(payload) => handleModuleMove(payload, column.columnId)"
+                    />
+                  </div>
+                </RegionContainer>
+              </template>
+            </div>
+          </ResumePageShell>
+        </div>
+      </template>
     </template>
   </div>
 </template>

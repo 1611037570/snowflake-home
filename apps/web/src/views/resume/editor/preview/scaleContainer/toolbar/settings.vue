@@ -13,7 +13,7 @@ import {
   defaultParagraphSpacing,
   uiParamRanges,
 } from "@/stores/modules/resume/config/uiConfig";
-import { createDefaultLayoutColumns } from "@/views/resume/theme/layouts";
+import { createDefaultLayoutColumns, layoutUsesColumns } from "@/views/resume/theme/layouts";
 
 const resumeStore = useResumeStore();
 const { system, currentUI } = storeToRefs(resumeStore);
@@ -84,9 +84,8 @@ const resetLayout = () => {
   });
   const templateId = currentUI.value.layout.type;
   const moduleKeys = resumeStore.runtimeFields.map((field) => field.key).filter(Boolean);
-  const hasColumns = templateId === "twoColumn" || templateId === "topUserTwoColumn";
   setLayoutColumns(
-    hasColumns ? createDefaultLayoutColumns(templateId, moduleKeys) : null,
+    layoutUsesColumns(templateId) ? createDefaultLayoutColumns(templateId, moduleKeys) : null,
   );
 };
 
