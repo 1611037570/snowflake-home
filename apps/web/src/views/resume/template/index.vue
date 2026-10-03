@@ -7,7 +7,7 @@ import TemplateCategory from "./components/templateCategory.vue";
 import { resumeTemplateList } from "./data/list";
 import { loadResumeTemplates } from "./data/resumeData";
 import { expandConfigModules } from "@/stores/modules/resume/hooks/useConfigTemplate";
-import { resolveLayoutColumns } from "../editor/preview/resumePages/engine/layout/layoutTemplates";
+import { resolveLayoutColumns } from "../theme/layouts";
 import { $t } from "@/locales";
 
 // 模板页专用全屏预览组件：异步加载，避免首屏打包体积过大

@@ -2,18 +2,13 @@ import { RESUME_HEIGHT, RESUME_WIDTH } from "../../../shared/constants";
 import type { BoxSpacing, PageLayoutConfig, PageSize, RegionConfig } from "../pageLayoutTypes";
 import { createSingleColumnLayout } from "./createSingleColumnLayout";
 import { createTwoColumnLayout, resolveColumnRatios } from "./createTwoColumnLayout";
-import type { PageLayoutTemplateId } from "@/views/resume/theme/layouts";
+import {
+  resolveLayoutColumns,
+  type LayoutColumns,
+  type PageLayoutTemplateId,
+} from "@/views/resume/theme/layouts";
 
 export type { PageLayoutTemplateId } from "@/views/resume/theme/layouts";
-
-/** 双栏布局只保存栏内模块 key 顺序。 */
-export interface LayoutColumns {
-  left: string[];
-  right: string[];
-}
-
-/** 双栏模板左侧默认展示的模块顺序，教育经历默认进入右栏。 */
-const LEFT_MODULE_KEYS = ["account", "skill", "advantage"];
 
 interface CreatePageLayoutTemplateOptions {
   /** 当前简历实际存在的模块 key。 */
@@ -31,53 +26,6 @@ interface CreatePageLayoutTemplateOptions {
   /** 左栏宽度占比（百分比），缺省时两栏等宽。 */
   leftWidthPercent?: number;
 }
-
-/** 按左侧清单分栏：清单内的模块进左栏，其余模块（含未声明的自定义模块）按原顺序全部进右栏 */
-const splitFixedColumnModules = (moduleKeys: string[]) => {
-  const orderedKeys = [...new Set(moduleKeys)].filter((moduleKey) => moduleKey !== "user");
-  const leftModuleKeys = orderedKeys.filter((moduleKey) => LEFT_MODULE_KEYS.includes(moduleKey));
-  const rightModuleKeys = orderedKeys.filter((moduleKey) => !LEFT_MODULE_KEYS.includes(moduleKey));
-
-  return { leftModuleKeys, rightModuleKeys };
-};
-
-/** 按布局模板生成默认左右栏模块顺序。 */
-export const createDefaultLayoutColumns = (
-  templateId: PageLayoutTemplateId,
-  moduleKeys: string[],
-): LayoutColumns => {
-  const { leftModuleKeys, rightModuleKeys } = splitFixedColumnModules(moduleKeys);
-  if (templateId === "twoColumn" && moduleKeys.includes("user")) {
-    leftModuleKeys.unshift("user");
-  }
-  return { left: leftModuleKeys, right: rightModuleKeys };
-};
-
-/** 保留已保存的栏内顺序，并按模板补齐新增模块、移除不存在的模块。 */
-export const resolveLayoutColumns = (
-  templateId: PageLayoutTemplateId,
-  moduleKeys: string[],
-  columns?: LayoutColumns | null,
-): LayoutColumns => {
-  const defaults = createDefaultLayoutColumns(templateId, moduleKeys);
-  if (!columns) return defaults;
-  const available = new Set(moduleKeys);
-  const pinnedModules = templateId === "topUserTwoColumn" ? new Set(["user"]) : new Set<string>();
-  const left = [...new Set(columns.left)].filter(
-    (key) => available.has(key) && !pinnedModules.has(key),
-  );
-  const right = [...new Set(columns.right)].filter(
-    (key) => available.has(key) && !pinnedModules.has(key) && !left.includes(key),
-  );
-  const assigned = new Set([...left, ...right]);
-  defaults.left.forEach((key) => {
-    if (!assigned.has(key)) left.push(key);
-  });
-  defaults.right.forEach((key) => {
-    if (!assigned.has(key)) right.push(key);
-  });
-  return { left, right };
-};
 
 /** 创建单栏布局：所有模块按简历顺序进入同一栏。 */
 const createSingleColumnLayoutTemplate = ({

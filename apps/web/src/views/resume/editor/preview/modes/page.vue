@@ -16,7 +16,7 @@ import {
   previewSelectedModule,
 } from "../../hooks/useModuleNav";
 import eventBus from "@/utils/modules/eventBus";
-import { resolveLayoutColumns } from "../resumePages/engine/layout/layoutTemplates";
+import { resolveLayoutColumns } from "@/views/resume/theme/layouts";
 
 defineOptions({ name: "ResumePage" });
 
