@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { computed, ref } from "vue";
+import { computed } from "vue";
 import { createResumeHistory } from "./resumeHistory";
 
 // 头像与作品图的 base64 体积远大于正文，用例里用短字符串代替即可区分版本

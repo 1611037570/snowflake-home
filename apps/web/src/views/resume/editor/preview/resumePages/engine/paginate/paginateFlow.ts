@@ -1,6 +1,5 @@
 import { resolveFragmentCut } from "./cutPoints";
 import {
-  resolveBlockMargin,
   resolveCutHeight,
   resolveDroppedTopSpacing,
   resolveNextBlockMargin,
@@ -237,8 +236,6 @@ export const paginateFlow = ({
     let consumedHeight = 0;
     let consumedOffset = 0;
     let consumedBlocks = 0;
-    // 续段渲染会去掉内容容器上内边距，分页高度按同一口径扣减，避免高估续段占用
-    const droppedTopSpacing = measurement.droppedTopSpacing ?? 0;
     // 两层推进：外层换页，内层填满当前页；本轮是否消费内容由消费量是否前进表示
     let pageTurnsWithoutProgress = 0;
     while (consumedHeight < fullHeight || (fullHeight === 0 && consumedHeight === 0)) {

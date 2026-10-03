@@ -37,15 +37,14 @@ const insetStyle = computed(() => {
 });
 
 // 正文剩余空间由统一容器承接，测量树只保留页面外侧留白。
-const regionStyle = (regionId: string) => ({
-  ...(props.topRegionId && regionId !== props.topRegionId
+const regionStyle = (regionId: string) =>
+  props.topRegionId && regionId !== props.topRegionId
     ? {
         width: "auto",
         marginLeft: `${props.pagePadding?.left ?? 0}px`,
         marginRight: `${props.pagePadding?.right ?? 0}px`,
       }
-    : {}),
-});
+    : {};
 
 // 按区域归并栏位：同一区域的多个栏位共用一份区域外观，区域留白只作用一次
 const regions = computed(() => {

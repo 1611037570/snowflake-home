@@ -7,7 +7,7 @@ import { computed, ref, toRaw, watch } from "vue";
 import { DEFAULT_RESUME_ITEM, DEFAULT_EDITOR, DEFAULT_SYSTEM } from "./config/defaultConfig";
 import { COLLAPSED, EXPANDED } from "./config/formConfig";
 import { DEFAULT_UI } from "./config/uiConfig";
-import { debounce, isEqual, merge } from "lodash-es";
+import { debounce, merge } from "lodash-es";
 import { createResumeStorage } from "./resumeStorage";
 import { createResumeLifecycle } from "./resumeLifecycle";
 import { createResumeEditor } from "./resumeEditor";
@@ -92,17 +92,11 @@ export const useResumeStore = defineStore(
       unselectModule,
       clearSelectedModules,
       setSelectedModules,
-      addDataRecord,
-      removeDataRecord,
-      moveDataRecord,
-      updateModuleField,
-      updateModuleTitle,
       setModuleHidden,
       setModuleArchived,
       removeModule,
       setLayoutColumns,
       swapModuleOrder,
-      updateRecordField,
       applyResumeOperations,
     } = editor;
     const runtime = createResumeRuntime({ clearSelectedModules });
