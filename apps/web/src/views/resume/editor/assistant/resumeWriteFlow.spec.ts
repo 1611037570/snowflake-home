@@ -77,7 +77,7 @@ describe("resume write flow", () => {
         module: "work",
         record: {
           name: "乙公司",
-          post: "高级工程师",
+          post: "前端开发",
           startTime: "2025.02",
           endTime: "2026.08",
           content: "<p>负责架构设计</p>",
@@ -96,7 +96,7 @@ describe("resume write flow", () => {
     expect(data.user.data.email).toBe("test@example.com");
     expect(data.work.list[1].data).toMatchObject({
       name: "乙公司",
-      post: "高级工程师",
+      post: "前端开发",
       startTime: "2025.02",
       endTime: "2026.08",
       content: "<p>负责架构设计</p>",

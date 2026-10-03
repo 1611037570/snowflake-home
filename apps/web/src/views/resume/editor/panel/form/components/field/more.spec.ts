@@ -24,6 +24,9 @@ const mountMore = (collapsed: string[], addField = vi.fn()) =>
     global: {
       // 组件内部读取应用状态，需提供独立的 pinia 实例
       plugins: [createPinia()],
+      mocks: {
+        $t: (key: string) => key,
+      },
       provide: {
         [DF_CONTEXT]: () => ({
           currentForm: ref({
