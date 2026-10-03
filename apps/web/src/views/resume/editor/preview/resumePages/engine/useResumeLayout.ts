@@ -29,7 +29,8 @@ export interface UseResumeLayoutOptions {
   showPageNumber: ComputedRef<boolean>;
   /** 字体加载版本。 */
   fontReadyVersion: Ref<number>;
-  /** 正文容器的单侧内边距，单位为像素。 */
+  /** 节点之外仍会影响渲染尺寸的个人信息字段签名。 */
+  renderSignature: ComputedRef<string>;
   /** 是否为缩略图模式。 */
   isThumb: ComputedRef<boolean> | Ref<boolean>;
 }
@@ -45,6 +46,7 @@ export const useResumeLayout = ({
   ui,
   showPageNumber,
   fontReadyVersion,
+  renderSignature,
   isThumb,
 }: UseResumeLayoutOptions) => {
   const moduleKeys = computed(() => allModules.value.map((module) => module.key).filter(Boolean));
@@ -156,9 +158,12 @@ export const useResumeLayout = ({
     },
     font: ui.value.font,
     theme: ui.value.theme,
-    themeTemplate: ui.value.theme?.template, // 标题风格切换会改变标题高度
+    content: ui.value.content,
+    user: ui.value.user,
     layout: ui.value.layout,
+    regionUserPadding: resolveRegionPadding(ui.value, "user"), // 个人信息区域留白变化会改变首页可用高度
     regionMainPadding: resolveRegionPadding(ui.value, "main"), // 正文区域留白变化会改变隐藏测量宽度
+    renderSignature: renderSignature.value,
     fontReadyVersion: fontReadyVersion.value,
   }));
   const { measurements, measureDone } = useLayoutMeasurements({

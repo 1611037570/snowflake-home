@@ -17,7 +17,8 @@ interface UseResumePagesOptions {
   showPageNumber: ComputedRef<boolean>;
   /** 字体加载版本。 */
   fontReadyVersion: Ref<number>;
-  /** 正文容器的单侧内边距，供测量和分页计算使用。 */
+  /** 节点之外仍会影响渲染尺寸的个人信息字段签名。 */
+  renderSignature: ComputedRef<string>;
   /** 展开后的模块字段配置。 */
   allModules: ComputedRef<any[]>;
   /** 是否为缩略图模式。 */
@@ -30,6 +31,7 @@ export const useResumePages = ({
   ui,
   showPageNumber,
   fontReadyVersion,
+  renderSignature,
   allModules,
   isThumb,
 }: UseResumePagesOptions) => {
@@ -40,6 +42,7 @@ export const useResumePages = ({
     ui,
     showPageNumber,
     fontReadyVersion,
+    renderSignature,
     isThumb,
   });
 
