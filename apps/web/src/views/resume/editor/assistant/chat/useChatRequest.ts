@@ -229,7 +229,7 @@ export const useChatRequest = ({
         (m) => !(m.role === "system" && m.content === defaultSkill.instructions),
       );
       // 找到最后一个用户消息位置
-      const lastUserIndex = messages.findLastIndex((m) => m.role === "user");
+      const lastUserIndex = messages.map((message) => message.role).lastIndexOf("user");
       if (lastUserIndex !== -1) {
         // 插入到用户消息之前，完成提级
         messages.splice(lastUserIndex, 0, {

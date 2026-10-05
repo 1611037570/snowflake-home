@@ -3,6 +3,7 @@ import {
   useAiStore,
   useResumeStore,
   type Chat,
+  type Message,
   type ResumeAssistantChatRecord,
 } from "@/stores";
 import { useClipboard, useScroll } from "@vueuse/core";
@@ -13,6 +14,7 @@ import { debounce } from "lodash-es";
 import { useChatRequest } from "./useChatRequest";
 import { ALL_MODULE_KEY, ALL_MODULE_NAME } from "@/stores/modules/resume/config/defaultConfig";
 import { flows, suggestions } from "../flows";
+import type { Flow, FlowStep, SuggestCard } from "../types";
 import { supportsInterviewEarlyEnd } from "../interview/flows";
 import { supportsQuickAnswer, useInterviewQuickAnswer } from "../interview/quickAnswer";
 import { useResumeAssistant } from "../useResumeAssistant";
@@ -23,6 +25,36 @@ import UserMessage from "./userMessage.vue";
 import EmptyState from "./emptyState/index.vue";
 import ChatHeader from "./header/index.vue";
 import ChatList from "./chatList.vue";
+
+// 聊天组件只依赖滚动与输入公开方法，避免空引用被推断为不可访问类型
+type ChatContainerInstance = {
+  // 实际滚动容器
+  wrapRef: HTMLElement;
+  // 设置滚动位置
+  setScrollTop: (top: number) => void;
+};
+type ChatInputInstance = {
+  // 聚焦输入框
+  focus: () => void;
+  // 回填输入内容
+  setValue: (value: string) => void;
+};
+type ActiveFlowState = {
+  // 当前流程定义
+  flow: Flow;
+  // 流程稳定标识
+  flowKey: string;
+  // 本轮已经固化的引导步骤
+  steps: FlowStep[];
+  // 当前步骤位置
+  stepIndex: number;
+  // 已收集的业务答案
+  answers: string[];
+  // 是否支持提前结束
+  allowEarlyEnd: boolean;
+  // 是否支持独立快速回答
+  allowQuickAnswer: boolean;
+};
 
 const aiStore = useAiStore();
 const resumeStore = useResumeStore();
@@ -131,14 +163,17 @@ const latestInterviewQuestion = computed(
 // 消息导航仅展示用户消息
 const navMessages = computed(() => displayMessages.value.filter((msg) => msg.role === "user"));
 // 切换消息折叠状态
-function updateCollapsedStatus(index, type) {
-  displayMessages.value[index][`${type}Collapsed`] =
-    !displayMessages.value[index][`${type}Collapsed`];
+function updateCollapsedStatus(index: number, type: "content" | "thought") {
+  // 消息被删除或切换后不再操作旧下标
+  const message = displayMessages.value[index];
+  if (!message) return;
+  const field = type === "content" ? "contentCollapsed" : "thoughtCollapsed";
+  message[field] = !message[field];
 }
 /**
  * 向当前对话追加一条消息
  */
-function addMessage(msg) {
+function addMessage(msg: Partial<Message>) {
   if (!chat.value) return;
   chat.value.messages.push({
     ...createDefaultMessage(),
@@ -168,7 +203,7 @@ watch(
   { deep: true },
 );
 // 聊天容器的引用，用于滚动
-const chatContainer = ref(null);
+const chatContainer = ref<ChatContainerInstance | null>(null);
 
 // 是否跟随生成内容自动滚动：初始视为位于底部，用户上滑离开后关闭，回到底部后恢复
 const followOutput = ref(true);
@@ -187,7 +222,7 @@ const showScrollBottom = computed(() => {
   return true;
 });
 // ChatInput 组件的引用，用于聚焦
-const chatInputRef = ref(null);
+const chatInputRef = ref<ChatInputInstance | null>(null);
 
 /**
  * 滚动到底部
@@ -221,23 +256,23 @@ onBeforeUnmount(() => {
 });
 
 // 左侧消息导航：滚动定位到指定消息
-function scrollToMessage(index) {
+function scrollToMessage(index: number) {
   const wrap = chatContainer.value?.wrapRef;
   if (!wrap) return;
   const target = wrap.querySelector(`[data-msg-index="${index}"]`);
   if (!target) return;
   const top =
     target.getBoundingClientRect().top - wrap.getBoundingClientRect().top + wrap.scrollTop;
-  chatContainer.value.setScrollTop(Math.max(0, top - 12));
+  chatContainer.value?.setScrollTop(Math.max(0, top - 12));
 }
 // 消息导航选择后定位到聊天列表中的原消息
-function handleNavSelect(msg) {
+function handleNavSelect(msg: Message) {
   const index = displayMessages.value.indexOf(msg);
   if (index > -1) scrollToMessage(index);
 }
 
 // 未变化的历史消息跳过父列表更新，生成中的消息仍按内容与状态变化刷新
-const getMessageMemo = (msg, index) => [
+const getMessageMemo = (msg: Message, index: number) => [
   msg.id || index,
   msg.content,
   msg.thought,
@@ -302,7 +337,7 @@ watch(
 /**
  * 处理发送消息
  */
-const handleSend = (content) => {
+const handleSend = (content: string) => {
   // 确保输入内容不为空
   if (!content?.trim()) return;
   // 确保当前没有正在发送的消息
@@ -342,7 +377,7 @@ const handleSend = (content) => {
 /**
  * 点击推荐问题，触发输入框发送
  */
-const handleSendFollowQuestion = (question) => {
+const handleSendFollowQuestion = (question: string) => {
   // 引导流程中：将选项作为答案推进流程
   if (activeFlow.value) {
     handleFlowOption(question);
@@ -352,7 +387,7 @@ const handleSendFollowQuestion = (question) => {
 };
 
 // 将推荐问题填入输入框，不触发发送
-const handleFillFollowQuestion = (question) => {
+const handleFillFollowQuestion = (question: string) => {
   chatInputRef.value?.setValue(question);
   chatInputRef.value?.focus();
 };
@@ -360,7 +395,7 @@ const handleFillFollowQuestion = (question) => {
 /**
  * 删除消息，count 不传时删除该消息及其后的所有消息；返回是否删除成功
  */
-function removeMessage(msg, count) {
+function removeMessage(msg: Message, count?: number) {
   const messages = chat.value?.messages;
   if (!messages) return false;
   const index = messages.indexOf(msg);
@@ -373,7 +408,7 @@ function removeMessage(msg, count) {
 /**
  * 撤回用户消息：删除该消息及其后的所有消息，并将内容回填到输入框
  */
-const handleRecall = (msg) => {
+const handleRecall = (msg: Message) => {
   if (generating.value || quickAnswerLoading.value || isChatLoading.value) return;
   // 撤回引导消息后取消尚未完成的流程，避免继续使用旧答案
   activeFlow.value = null;
@@ -388,7 +423,7 @@ const handleRecall = (msg) => {
 /**
  * 重试生成：删除失败消息后重新发起请求
  */
-const handleRetry = (msg) => {
+const handleRetry = (msg: Message) => {
   if (generating.value || quickAnswerLoading.value || isChatLoading.value) return;
   // 只重试当前轮，已写入内容先撤回，避免重复新增或重复删除
   if (msg !== displayMessages.value.at(-1)) return;
@@ -402,7 +437,7 @@ const handleRetry = (msg) => {
   handleAIResponse();
 };
 // 重新生成：回滚本轮修改并删除回复，复用上一轮请求重新发起
-function handleRegenerate(index) {
+function handleRegenerate(index: number) {
   const msg = displayMessages.value[index];
   if (!msg || generating.value || quickAnswerLoading.value || isChatLoading.value) return;
   // 历史写入没有内存备份时不能重新执行，避免累积重复修改
@@ -415,7 +450,7 @@ function handleRegenerate(index) {
   handleAIResponse();
 }
 // 撤回修改：恢复请求前备份，回复文字保留、操作按钮消失
-function handleWithdrawModify(index) {
+function handleWithdrawModify(index: number) {
   const msg = displayMessages.value[index];
   if (!msg || generating.value || quickAnswerLoading.value || isChatLoading.value) return;
   // 仅恢复成功时提示撤回完成
@@ -425,7 +460,7 @@ function handleWithdrawModify(index) {
 provide("retry", handleRetry);
 
 // 引导式流程状态：记录当前流程、步骤与已收集的选项
-const activeFlow = ref(null);
+const activeFlow = ref<ActiveFlowState | null>(null);
 // 会话切换清除未完成引导，历史面试按最后一条真实用户消息恢复操作入口
 const restoreInterviewState = () => {
   const flowKey = [...currentMessages.value].reverse()
@@ -444,7 +479,7 @@ watch(() => chat.value?.id, () => {
 /**
  * 点击建议卡片：启动引导式对话流程
  */
-const handleSuggest = (payload) => {
+const handleSuggest = (payload: Pick<SuggestCard, "flow">) => {
   if (generating.value || quickAnswerLoading.value || isChatLoading.value) return;
   const flow = flows[payload?.flow];
   if (!flow) return;
@@ -537,7 +572,7 @@ const runFlowStep = () => {
 /**
  * 推进流程答案：记录答案并推进步骤，收集完成后发起真实请求
  */
-const handleFlowAnswer = (answer) => {
+const handleFlowAnswer = (answer: string) => {
   const state = activeFlow.value;
   if (!state || generating.value || quickAnswerLoading.value || isChatLoading.value) return;
   const step = state.steps[state.stepIndex];
@@ -607,14 +642,14 @@ const handleFlowAnswer = (answer) => {
 /**
  * 处理流程中的选项点击：记录答案并推进流程
  */
-const handleFlowOption = (option) => {
+const handleFlowOption = (option: string) => {
   handleFlowAnswer(option);
 };
 
 /**
  * 处理流程中的自由输入：把输入框内容作为答案推进流程
  */
-const handleFlowInput = (content) => {
+const handleFlowInput = (content: string) => {
   handleFlowAnswer(content);
 };
 
