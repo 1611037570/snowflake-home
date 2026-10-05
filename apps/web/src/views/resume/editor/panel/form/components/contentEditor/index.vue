@@ -5,7 +5,8 @@ import { useResumeStore } from "@/stores";
 import { storeToRefs } from "pinia";
 import TemplateExamplePicker from "./templateExamplePicker.vue";
 import { loadResumeExamples } from "@/views/resume/template/data/resumeExamples";
-import { useResumeAiAvailability } from "@/views/resume/hooks/useResumeAiAvailability";
+import { useFormContext } from "@/components/business/dynamicForm/api";
+import { useResumeContentAi } from "./useResumeContentAi";
 
 defineOptions({ name: "ResumeContentEditor" });
 
@@ -16,7 +17,21 @@ const content = defineModel("modelValue", {
 const props = defineProps({
   kind: { type: String, default: "work" },
 });
-const { ensureAiAvailable } = useResumeAiAvailability();
+const { getFieldDataKey } = useFormContext();
+// 使用表单公开路径定位当前字段，重复正文不会影响记录定位
+const { loading: aiLoading, runAiContent } = useResumeContentAi(content, () => getFieldDataKey({
+  // 普通输入字段
+  type: "object",
+  // 当前富文本编辑组件
+  component: "resumeContentEditor",
+  // 当前容器内的正文数据绑定
+  model: {
+    // 正文字段路径
+    source: ["data", "content"],
+    // 编辑组件的双向绑定属性
+    prop: "modelValue",
+  },
+}));
 
 const resumeStore = useResumeStore();
 const { currentData } = storeToRefs(resumeStore);
@@ -72,11 +87,12 @@ const appendExample = (example) => {
           <span class="shrink-0 font-semibold">✦AI+</span>
           <div class="flex flex-wrap items-center gap-3">
             <button
-              v-for="action in [$t('resumeContentGenerate'), $t('resumeContentPolish'), $t('resumeContentSimplify')]"
+              v-for="(action, index) in [$t('resumeContentGenerate'), $t('resumeContentPolish'), $t('resumeContentSimplify')]"
               :key="action"
               type="button"
               class="cursor-pointer rounded-3xl bg-sf-primary px-3 py-1 text-sm font-medium text-sf-text transition-colors hover:bg-sf-page"
-              @click="ensureAiAvailable()"
+              :disabled="aiLoading"
+              @click="runAiContent(['generate', 'polish', 'simplify'][index])"
             >
               {{ action }}
             </button>

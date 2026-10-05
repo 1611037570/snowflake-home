@@ -119,7 +119,10 @@ export const useResumeContext = () => {
   const beforeRequest = (context?: Record<string, unknown>, taskId = "default") => {
     // 一键优化在用户授权后固定读取整份简历，避免生成期间受模块选择变化影响
     forceFullResume = context?.resumeScope === "all";
-    requestModuleKeys = selectedModule.value.map((item) => item.key);
+    // 字段快捷操作显式指定本轮模块，其余请求沿用用户选择
+    requestModuleKeys = Array.isArray(context?.resumeModuleKeys)
+      ? context.resumeModuleKeys.filter((key): key is string => typeof key === "string")
+      : selectedModule.value.map((item) => item.key);
     requestDesensitizeMode = { ...desensitizeMode.value };
     activeForceFullTask = taskId;
   };
