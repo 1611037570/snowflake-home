@@ -51,7 +51,7 @@ export const resumeOneKeyOptimize = () => ({
 }
 \`\`\`
 
-- dimensions 中可评分项的 score 为 0-100 的整数，不适用或缺少判断基础的维度使用 null；totalScore 取所有非 null 得分的算术平均值并四舍五入，禁止用零分代替不适用。checks 的 level 只能取 error 或 warning。
+- dimensions 中可评分项的 score 为 0-100 的整数，不适用或缺少判断基础的维度使用 null；totalScore 取所有非 null 得分的算术平均值并四舍五入，禁止用零分代替不适用；全部维度均无判断基础时 totalScore 使用 null。checks 的 level 只能取 error 或 warning。
 - dimensions 固定使用以下六项，不可增减、改名或调整顺序：信息完整度、阅读效率、职业契合度、职业成就、发展潜力、职业稳定性。
 - dimensions 的分数必须遵循 resume_score 的统一评分标尺；checks 仅记录优化后仍存在的具体问题，不得重复已经成功解决的问题。
 - 示例中的分数与内容仅用于展示数据结构，必须根据本次简历重新判断，禁止照抄或作为默认分数。
