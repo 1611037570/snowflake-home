@@ -1,4 +1,5 @@
 import type {
+  DynamicFormRule,
   FieldChecks,
   FormConfig,
   FormField,
@@ -22,7 +23,8 @@ const DEFAULT_COL_CLASS = "rounded-3xl border border-sf-bg-3 bg-sf-primary";
 // 必填与日期格式规则统一供完成度统计和 ATS 检查读取。
 const requiredFieldRule = () => ({ required: true, message: "请填写此项", trigger: "blur" });
 // ATS 规则仅生成分析提醒，不阻止用户保存字段内容。
-const atsRule = (type: string, options: Record<string, any> = {}) => ({
+const atsRule = (type: string, options: Record<string, any> = {}): DynamicFormRule => ({
+  // 明确规则契约，提示等级保持合法枚举而非推断为任意字符串
   ats: { type, severity: "warning", ...options },
 });
 const contentQualityRule = () => atsRule("contentQuality");

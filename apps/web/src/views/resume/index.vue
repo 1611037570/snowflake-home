@@ -10,18 +10,28 @@ const route = useRoute();
 const router = useRouter();
 const resumeStore = useResumeStore();
 const resumeReady = ref(false);
+// 当前路由读取失败时提供重试，避免停留在无限加载状态
+const resumeLoadError = ref(false);
 
 let resumeLoadSequence = 0;
 const loadRouteResumes = async () => {
   const sequence = ++resumeLoadSequence;
   resumeReady.value = false;
-  await resumeStore.init();
-  if (route.path === "/resume/editor" || route.path === "/resume/print") {
-    await resumeStore.loadResume(String(route.query.id || ""));
-  } else if (route.path === "/resume/mine") {
-    await resumeStore.loadActiveResumes();
+  resumeLoadError.value = false;
+  try {
+    await resumeStore.init();
+    if (route.path === "/resume/editor" || route.path === "/resume/print") {
+      await resumeStore.loadResume(String(route.query.id || ""));
+    } else if (route.path === "/resume/mine") {
+      await resumeStore.loadActiveResumes();
+    }
+  } catch (error) {
+    // 旧路由的失败不覆盖当前路由状态，也不把未加载内容交给编辑器
+    if (sequence === resumeLoadSequence) resumeLoadError.value = true;
+    console.error("简历读取失败：", error);
+  } finally {
+    if (sequence === resumeLoadSequence) resumeReady.value = true;
   }
-  if (sequence === resumeLoadSequence) resumeReady.value = true;
 };
 watch(() => [route.path, route.query.id], loadRouteResumes, { immediate: true });
 
@@ -43,7 +53,12 @@ const activeNavIndex = computed(() => navList.findIndex((item) => route.path ===
 </script>
 
 <template>
-  <LoadingComponent v-if="!resumeReady" class="h-svh w-full" />
+  <section v-if="resumeLoadError" class="flex-c h-svh w-full flex-col gap-3 bg-sf-page text-sf-text">
+    <p>简历读取失败，请稍后重试</p>
+    <SfButton @click="loadRouteResumes">重新读取</SfButton>
+    <SfButton plain @click="router.push('/resume')">返回简历首页</SfButton>
+  </section>
+  <LoadingComponent v-else-if="!resumeReady" class="h-svh w-full" />
   <router-view v-else-if="route.meta.hideResumeLayout" class="h-screen w-full" />
   <main v-else class="relative flex h-screen min-w-full flex-col bg-sf-page">
     <header

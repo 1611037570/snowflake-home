@@ -82,7 +82,7 @@ const uiDefaults: Record<OnePageAdjustKey, number> = {
 const COMPRESS_LEVELS = 20;
 
 /** 等待重新测量的兜底时长：参数不影响测量时不会产生新数据，避免流程挂住 */
-const MEASURE_TIMEOUT = 300;
+const MEASURE_TIMEOUT = 5000;
 
 /** 按步长对齐（只向下压，避免出现滑杆无法表示的值） */
 const floorByStep = (value: number, step: number) => {
@@ -96,6 +96,8 @@ interface UseSmartOnePageOptions {
   ui: ComputedRef<Record<string, any>>;
   /** 预览层统一页面计划，判定是否已压到一页并等待重新排版 */
   pagePlan: ComputedRef<PagePlan>;
+  /** 当前预览已完成最新内容与参数的测量 */
+  previewReady: ComputedRef<boolean>;
   /** 压缩结果写入的目标 ui（编辑态简历 store 的 currentUI） */
   currentUI: Ref<Record<string, any>>;
   /** 编辑态才注册工具栏事件，其余模式（缩略图/全屏预览）不注册 */
@@ -107,6 +109,7 @@ interface UseSmartOnePageOptions {
 export const useSmartOnePage = ({
   ui,
   pagePlan,
+  previewReady,
   currentUI,
   isEdit,
   adjustable = defaultOnePageAdjustable,
@@ -124,17 +127,18 @@ export const useSmartOnePage = ({
   const getPathValue = (source: Record<string, any>, path: string) =>
     path.split(".").reduce((value, key) => value?.[key], source);
   const withParams = (source: Record<string, any>, params: Record<OnePageAdjustKey, number>) => {
-    const result = {
+    const result: Record<string, any> = {
       ...source,
       page: {
         ...source.page,
-        padding: { ...source.page.padding },
-        spacing: { ...source.page.spacing },
+        padding: { ...source.page?.padding },
+        spacing: { ...source.page?.spacing },
       },
       font: { ...source.font },
     };
     for (const [key, value] of Object.entries(params) as [OnePageAdjustKey, number][]) {
       const [group, parent, field] = uiPaths[key].split(".");
+      if (!group || !parent) continue;
       if (field) result[group][parent][field] = value;
       else result[group][parent] = value;
     }
@@ -146,14 +150,14 @@ export const useSmartOnePage = ({
     const result = {} as Record<OnePageAdjustKey, number>;
     for (const { key } of adjustable) {
       const value = getPathValue(source, uiPaths[key]);
-      result[key] = typeof value === "number" ? value : uiDefaults[key];
+      result[key] = typeof value === "number" && Number.isFinite(value) ? value : uiDefaults[key];
     }
     return result;
   };
 
   // 等待下一次测量落地：参数影响行高/宽度时会替换测量结果
   const waitForMeasure = (signal: AbortSignal, isCurrentResume: () => boolean) =>
-    new Promise<void>((resolve) => {
+    new Promise<void>((resolve, reject) => {
       let timer = 0;
       let settled = false;
       let stopWatch = () => {};
@@ -166,17 +170,28 @@ export const useSmartOnePage = ({
         resolve();
       };
       stopWatch = watch(
-        pagePlan,
-        finish,
+        [pagePlan, previewReady],
+        () => {
+          // 必须等最新测量完成，不能把沿用的旧页面计划作为压缩成功依据
+          if (previewReady.value) finish();
+        },
         { flush: "post" },
       );
-      timer = window.setTimeout(finish, MEASURE_TIMEOUT);
+      timer = window.setTimeout(() => {
+        // 超时拒绝本次判断并回退参数，避免误用过期页数
+        reject(new Error("简历测量超时，请稍后重试"));
+        finish();
+      }, MEASURE_TIMEOUT);
       if (signal.aborted || !isCurrentResume()) finish();
       else signal.addEventListener("abort", finish, { once: true });
     });
 
   // 压缩：二分搜索最小可行强度并局部精修，工具栏通过事件触发
   const onFitOnePage = async () => {
+    if (!previewReady.value || pagePlan.value.status === "invalid" || !pagePlan.value.pages.length) {
+      ElMessage.warning("简历预览尚未就绪，请调整后重试");
+      return;
+    }
     const signal = resumeStore.beginFittingOnePage();
     if (!signal) return;
     // 记录压缩所属简历，避免旧任务覆盖新简历参数
@@ -237,7 +252,9 @@ export const useSmartOnePage = ({
       if (!isCurrentTask()) return null;
       await nextTick();
       if (!isCurrentTask()) return null;
-      return pagePlan.value.pages.length;
+      return pagePlan.value.status === "ready" && previewReady.value
+        ? pagePlan.value.pages.length
+        : null;
     };
 
     // 回退到压缩前的参数，避免失败或取消后留在半压缩状态
@@ -247,7 +264,7 @@ export const useSmartOnePage = ({
 
     try {
       if (!isCurrentTask()) return;
-      if (pagePlan.value.pages.length === 1) {
+      if (pagePlan.value.status === "ready" && pagePlan.value.pages.length === 1) {
         ElMessage.success("简历已压缩为一页");
         return;
       }
@@ -307,7 +324,15 @@ export const useSmartOnePage = ({
         rollback();
         return;
       }
+      // 最后一次参数恢复也要核对有效页面，不能只沿用先前探测结果
+      if (!previewReady.value || pagePlan.value.status !== "ready" || pagePlan.value.pages.length !== 1) {
+        throw new Error("当前参数未形成有效的一页简历");
+      }
       ElMessage.success("简历已压缩为一页");
+    } catch (error) {
+      // 测量或参数应用失败时恢复原值，生成状态仍由最终收口负责
+      rollback();
+      if (isCurrentTask()) ElMessage.error(error instanceof Error ? error.message : "简历压缩失败");
     } finally {
       resumeStore.finishFittingOnePage(signal);
     }

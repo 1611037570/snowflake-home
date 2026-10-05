@@ -180,6 +180,7 @@ useResumeExport({
 useSmartOnePage({
   ui: currentUI,
   pagePlan: previewPagePlan,
+  previewReady,
   currentUI,
   isEdit,
 });
