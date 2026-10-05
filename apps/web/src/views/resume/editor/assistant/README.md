@@ -24,7 +24,7 @@ index.vue（薄入口）
 - `skills/*`：产出统一 Skill 内容；数据规范直接消费领域结构，不维护静态字段表。
 - `resumeEdits.ts`：定义语义化写操作，并基于领域结构统一校验字段与格式。
 - `stores/modules/resume/resumeOperations.ts`：定义写操作协议与执行顺序，Store 对外只暴露批量入口。
-- `resumeContext.ts`：集中简历数据读取、头像裁剪。
+- `resumeContext.ts`：集中简历数据读取、脱敏与读取副本媒体裁剪，不修改原简历媒体。
 - `tools/*`：定义简历工具，写工具只校验并提交完整语义操作列表。
 - `flows.ts`：只提供引导流程与建议卡片数据。
 - `chat/*`：只做消息 UI 与请求执行，业务内容由 props/config 注入；不得反向 import 上层业务。

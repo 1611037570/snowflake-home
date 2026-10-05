@@ -2,7 +2,7 @@ import { useResumeStore } from "@/stores";
 import { storeToRefs } from "pinia";
 import { omitMediaFromData } from "@/stores/modules/resume/config/mediaFields";
 
-// 简历数据上下文：统一提供工具读取与请求前的头像裁剪，避免逻辑散落各处
+// 简历数据上下文：统一提供读取范围、媒体裁剪与隐私脱敏
 export const useResumeContext = () => {
   const resumeStore = useResumeStore();
   const { selectedModule, desensitizeMode } = storeToRefs(resumeStore);
@@ -49,15 +49,15 @@ export const useResumeContext = () => {
     keys.forEach((key) => {
       const module = data[key];
       if (!module || typeof module !== "object" || !("data" in module || "list" in module)) return;
+      // 媒体字段只从模块副本移除，保留原简历中的头像与作品图片
+      const moduleClone = omitMediaFromData({ [key]: JSON.parse(JSON.stringify(module)) })[key];
       // 数组记录只向 AI 暴露业务 data，不携带编辑器 ui 状态
-      const clone = Array.isArray(module.list)
-        ? module.list.map((record: any) => JSON.parse(JSON.stringify(record.data)))
-        : JSON.parse(JSON.stringify(module.data));
+      const clone = Array.isArray(moduleClone.list)
+        ? moduleClone.list.map((record: any) => record.data)
+        : moduleClone.data;
       const title = module.ui?.title || resumeStore.getModel(key)?.name || key;
       const shouldDesensitize = !desensitizeMode.value.disabled;
       const strict = shouldDesensitize && desensitizeMode.value.level === "strict";
-      // 读取时排除媒体大字段，避免请求体过大；剔除规则由媒体字段共享声明给出
-      omitMediaFromData(data);
       const removeOrganizationName = strict && ["work", "education"].includes(key);
       const sanitized = shouldDesensitize
         ? sanitizeNestedData(clone, userName, removeOrganizationName)
@@ -67,35 +67,18 @@ export const useResumeContext = () => {
     return result;
   };
 
-  // 整份或 user 模块请求时，临时清除头像避免请求体过大，请求结束后按任务还原
-  const trimStates = new Map<string, { item: any; saved: string | undefined }>();
+  // 请求生命周期只控制读取范围，不临时修改原简历数据
   let activeForceFullTask = "";
   const beforeRequest = (context?: Record<string, unknown>, taskId = "default") => {
     // 一键优化在用户授权后固定读取整份简历，避免生成期间受模块选择变化影响
     forceFullResume = context?.resumeScope === "all";
     activeForceFullTask = taskId;
-    const data = resumeStore.currentData;
-    const need =
-      forceFullResume ||
-      !selectedModule.value.length ||
-      selectedModule.value.some((item: any) => item.key === "user");
-    if (!need || !data?.user?.data) return;
-    trimStates.set(taskId, {
-      item: resumeStore.currentItem,
-      saved: data.user.data.avatar,
-    });
-    delete data.user.data.avatar;
   };
   const afterRequest = (taskId = "default") => {
     if (taskId === activeForceFullTask) {
       forceFullResume = false;
       activeForceFullTask = "";
     }
-    const trimState = trimStates.get(taskId);
-    if (!trimState) return;
-    trimStates.delete(taskId);
-    const data = trimState.item?.data;
-    if (data?.user?.data) data.user.data.avatar = trimState.saved;
   };
 
   return { getResumeData, beforeRequest, afterRequest };
