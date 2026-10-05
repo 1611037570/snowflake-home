@@ -9,6 +9,8 @@ type ResumeStorageOptions = {
 
 export const createResumeStorage = ({ defaultUI }: ResumeStorageOptions) => {
   const storageMap = new Map<string, any>();
+  // 读取失败保留目录记录，不能把临时存储错误当作简历不存在
+  const readErrors = new Map<string, unknown>();
   const pendingItems = new Map<string, any>();
   const storageKey = (id: string) => `snowflake-resume:${id}`;
   const persistResumeItem = (item: any) => {
@@ -27,11 +29,25 @@ export const createResumeStorage = ({ defaultUI }: ResumeStorageOptions) => {
   };
   const getResumeStorage = (id: string, initialValue: any = null, writeDefaults = false) => {
     const existing = storageMap.get(id);
-    if (existing) return existing;
+    if (existing && !readErrors.has(id)) return existing;
+    // 临时读取失败后允许重新加载，不永久缓存失败结果
+    readErrors.delete(id);
     // 关闭内置深监听自动写入，改由统一的内容变更监听防抖写入，避免每次按键都触发整份简历的存储写入
     const storage = useIDBKeyval(storageKey(id), initialValue, {
       writeDefaults,
       deep: false,
+      // 记录首次读取错误，加载完成后向调用方报告
+      onError: (error: unknown) => {
+        if (!storageMap.get(id)?.isFinished.value) readErrors.set(id, error);
+        console.error("简历存储失败：", error);
+      },
+      // 嵌套字段可能包含响应式代理，落库前转为可结构化克隆的纯数据
+      serializer: {
+        // 读取已保存的简历数据
+        read: (value: any) => value,
+        // 序列化完整简历，避免嵌套代理导致存储失败
+        write: (value: any) => JSON.parse(JSON.stringify(value)),
+      },
     });
     storageMap.set(id, storage);
     return storage;
@@ -49,7 +65,8 @@ export const createResumeStorage = ({ defaultUI }: ResumeStorageOptions) => {
   const fillResumeUiDefaults = (item: any) => {
     if (!item.ui || typeof item.ui !== "object") item.ui = structuredClone(defaultUI);
     Object.entries(defaultUI).forEach(([key, value]) => {
-      if (item.ui[key] === undefined) item.ui[key] = value;
+      // 补齐的嵌套配置独立克隆，避免多份简历共享默认对象
+      if (item.ui[key] === undefined) item.ui[key] = structuredClone(value);
     });
     return item;
   };
@@ -58,6 +75,7 @@ export const createResumeStorage = ({ defaultUI }: ResumeStorageOptions) => {
       ids.map(async (id) => {
         const storage = getResumeStorage(id);
         await waitForResumeStorage(storage);
+        if (readErrors.has(id)) throw readErrors.get(id);
         const item = storage.data.value;
         return item?.id === id ? fillResumeUiDefaults(item) : null;
       }),
@@ -71,6 +89,7 @@ export const createResumeStorage = ({ defaultUI }: ResumeStorageOptions) => {
     await del(storageKey(id));
     if (!storage) return;
     storageMap.delete(id);
+    readErrors.delete(id);
   };
 
   return { getResumeStorage, loadResumeItems, removeResumeStorage, schedulePersistResume };
