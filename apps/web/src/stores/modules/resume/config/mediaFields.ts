@@ -38,14 +38,15 @@ const MEDIA_MARK_PREFIX = "@media:";
 
 // 把媒体内容摘要成短标识：同一字段更换图片后占位随之改变，媒体池据此区分不同版本
 const hashMediaContent = (value: string): string => {
-  let high = 0x811c;
-  let low = 0x9dc5;
+  let high = 0x811c9dc5;
+  let low = 0x9e3779b9;
   for (let index = 0; index < value.length; index += 1) {
     const charCode = value.charCodeAt(index);
-    high = (high ^ charCode) * 0x0100 >>> 0;
-    low = (low ^ charCode) * 0x0100 >>> 0;
+    // 使用奇数乘数保留前文信息，避免相同末尾的图片生成相同媒体标识
+    high = Math.imul(high ^ charCode, 0x01000193) >>> 0;
+    low = Math.imul(low ^ charCode, 0x85ebca6b) >>> 0;
   }
-  return (high >>> 0).toString(16) + (low >>> 0).toString(16);
+  return high.toString(16).padStart(8, "0") + low.toString(16).padStart(8, "0");
 };
 
 // 构造媒体占位标识：路径定界字段位置，内容摘要区分同一字段的不同版本

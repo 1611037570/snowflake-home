@@ -146,8 +146,8 @@ export const createResumeHistory = ({ currentItem, refreshRuntime }: ResumeHisto
     // 已切换简历则丢弃本次历史（避免旧简历内容记入新简历）
     if (!item || !capture?.snapshot || item.id !== resumeId) return;
     if (capture.compare === versions.value[versions.value.length - 1]?.compare) return;
-    commitVersion(capture);
     redoVersions.value = [];
+    commitVersion(capture);
   };
   // 媒体入池随有效版本一起防抖提交：合并连续输入，未产生新版本时不写入媒体池
   const pushHistory = debounce(pushCapture, 100);
@@ -255,6 +255,8 @@ export const createResumeHistory = ({ currentItem, refreshRuntime }: ResumeHisto
     commitMedia(next);
     redoVersions.value.pop();
     registerCurrent(item);
+    // 重做目标先登记为当前版本，保证连续重做与后续撤销都保留完整版本和媒体
+    commitVersion(next);
     applySnapshot(next.snapshot);
   };
 
