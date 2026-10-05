@@ -9,21 +9,15 @@ import { useResumeStats } from "./useResumeStats";
 import { $t } from "@/locales";
 
 const resumeStore = useResumeStore();
-const { system, currentData, runtimeFields, isEditing } = storeToRefs(resumeStore);
+const { system, currentData, runtimeFields } = storeToRefs(resumeStore);
 
 // 弹窗显隐控制
 const visible = ref(false);
 
-// 编辑期间的占位输入：常量引用恒定，保证下列 computed 在此期间不被判为依赖失效
-const FROZEN_FIELDS = [];
-const FROZEN_DATA = {};
-// 进度与统计只在编辑停顿后计算：编辑期间以占位输入命中缓存，输入停止后统一重算一次
-const idleFields = computed(() => (isEditing.value ? FROZEN_FIELDS : runtimeFields.value || []));
-const idleData = computed(() => (isEditing.value ? FROZEN_DATA : currentData.value));
-
 // 计算简历完成度进度及各模块进度（含时间线一致性检查结果）
-const progressData = computed(() => useProgress(idleFields.value, idleData.value));
-const resumeStats = useResumeStats(idleData.value);
+const progressData = computed(() => useProgress(runtimeFields.value || [], currentData.value));
+// 保留数据引用，切换简历及撤销替换数据后重新统计当前内容
+const resumeStats = useResumeStats(computed(() => currentData.value || {}));
 // 时间线一致性检查结果（随进度一起返回）
 const timelineData = computed(() => progressData.value.timeline);
 
@@ -64,15 +58,15 @@ const goTimelineFill = (key) => {
   visible.value = false;
 };
 
-// 时间线问题类型标签与问题等级保持一致。
-const getTypeLabel = (issue) =>
-  $t(
-    {
-      gap: "issueGap",
-      range: "issueRange",
-      future: "issueFuture",
-    }[issue.type] || "issueGap",
-  );
+// 时间线仍会返回日期冲突与未来日期，按真实问题类型展示标签
+const getTypeLabel = (issue) => $t({
+  // 经历之间的时间空档
+  gap: "issueGap",
+  // 开始与结束时间冲突
+  range: "issueRange",
+  // 超出当前日期
+  future: "issueFuture",
+}[issue.type] || "issueGap");
 
 // 按进度区间返回进度条颜色
 const getProgressColor = (progress) => {
@@ -146,25 +140,10 @@ const getProgressColor = (progress) => {
             </div>
             <div
               v-if="item.issues.length"
-              class="mt-2 flex flex-col gap-1 rounded-xl bg-sf-bg-2 p-2 text-sm"
+              class="mt-3 flex flex-col gap-3 rounded-xl bg-sf-warning-2 p-3 text-sm text-sf-warning"
             >
-              <div class="font-medium">{{ $t("atsChecks") }}</div>
-              <div
-                v-for="(issue, index) in item.issues"
-                :key="index"
-                class="flex items-start gap-3"
-                :class="issue.severity === 'error' ? 'text-sf-error' : 'text-sf-warning'"
-              >
-                <span
-                  class="shrink-0 rounded-full px-3 text-xs"
-                  :class="
-                    issue.severity === 'error'
-                      ? 'bg-sf-error-2 text-sf-error'
-                      : 'bg-sf-warning-2 text-sf-warning'
-                  "
-                >
-                  {{ $t(issue.severity === "error" ? "issueError" : "issueWarning") }}
-                </span>
+              <div class="font-medium">{{ $t("formatIssues") }}</div>
+              <div v-for="(issue, index) in item.issues" :key="index">
                 {{ issue.label }}：{{ issue.message }}
               </div>
             </div>
