@@ -1,5 +1,5 @@
 // 导入LLM接口
-import { getXiaoZhouLLM, isAbortError } from "@/apis";
+import { AbortError, getXiaoZhouLLM, isAbortError } from "@/apis";
 import { useAiStore, useResumeStore } from "@/stores";
 // 导入聊天和消息类型
 import type { Chat, Message } from "@/stores/modules/ai";
@@ -10,14 +10,6 @@ import { storeToRefs } from "pinia";
 import type { AssistantConfig } from "../types";
 // 导入默认提示词，每次请求提级到用户消息前避免遗忘规则
 import { defaultPrompt } from "../skills/prompt_default";
-// 媒体字段共享声明：AI 请求体剔除与还原都按同一份路径表处理
-import {
-  collectMediaBindings,
-  getValueAtPath,
-  omitMediaFromData,
-  setValueAtPath,
-} from "@/stores/modules/resume/config/mediaFields";
-
 // 定义 useChatRequest 的配置选项接口
 interface UseChatRequestOptions {
   chat: Ref<Chat>; // 当前聊天会话
@@ -40,36 +32,29 @@ export const useChatRequest = ({
   const { thinkMode } = storeToRefs(aiStore);
   const { generating, beforeRequest, afterRequest, resolveTools, reflectPrompt, onToolError } =
     config;
-  // 深拷贝简历数据时跳过 base64 大字段，避免每请求全量序列化
-  const cloneDataSkippingMedia = (data: any): any => {
-    const clone = structuredClone(data ?? {});
-    // 媒体字段统一按共享声明在整棵树上剔除，避免此处与其它模块的规则不一致
-    return omitMediaFromData(clone);
-  };
-  // 请求前备份简历数据，撤回修改时恢复（仅当前会话内存使用）
+  // 简历来自响应式 Store，使用可序列化副本备份并保留媒体以支持删除、排序撤回
   const captureBackup = () => {
     const item = resumeStore.currentItem;
     if (!item) return null;
     return {
+      // 备份所属简历，禁止跨简历恢复
       resumeId: item.id,
-      data: cloneDataSkippingMedia(item.data ?? {}),
+      // 请求前完整业务数据，含原始记录对应的媒体
+      data: JSON.parse(JSON.stringify(item.data ?? {})),
+      // 请求前模块配置
       config: JSON.parse(JSON.stringify(item.config ?? {})),
+      // 请求前展示语言，翻译撤回时一并恢复
+      language: item.ui?.content?.language,
     };
   };
   const restoreBackup = (backup: any) => {
     const item = resumeStore.currentItem;
-    if (!item || !backup || item.id !== backup.resumeId) return;
-    // 恢复时保留当前未被 AI 修改的大字段（头像、作品图）
-    const currentData = item.data || {};
-    item.data = backup.data ?? {};
-    // 媒体字段位置由共享声明给出，按路径把当前值写回被剔除后的备份数据
-    collectMediaBindings(currentData).forEach((binding) => {
-      const media = getValueAtPath(currentData, binding.path);
-      if (!media || typeof media !== "object") return;
-      setValueAtPath(item.data, [...binding.path, binding.field], media[binding.field] ?? "");
-    });
-    // 配置恢复统一走 store 动作：结构变化时同步重建运行时配置
+    if (!item || !backup || item.id !== backup.resumeId) return false;
+    // 恢复原始记录与其媒体，避免删除或排序后按新下标错配图片
+    item.data = JSON.parse(JSON.stringify(backup.data ?? {}));
     resumeStore.restoreConfig(backup.config);
+    if (item.ui?.content) item.ui.content.language = backup.language;
+    return true;
   };
   // 每条 AI 回复对应的请求前简历备份，用于“撤回修改”
   const requestBackups = new WeakMap<object, unknown>();
@@ -223,7 +208,7 @@ export const useChatRequest = ({
     };
 
     try {
-      // 请求前调用方准备（如临时裁剪头像等大字段）
+      // 请求前由调用方准备本轮读取范围
       // 请求读取范围跟随最后一条用户消息持久化，重试与重新生成时保持一致
       const requestMessage = [...currentMessages.value]
         .reverse()
@@ -269,7 +254,17 @@ export const useChatRequest = ({
       state.onReasoning();
 
       // 首次请求时才加载技能与简历工具清单
-      const tools = await resolveTools();
+      const resolvedTools = await resolveTools();
+      // 加载期间取消或切换会话时不再启动请求，工具执行前再次核对所属任务
+      if (!isCurrentRequest()) return;
+      const tools = resolvedTools.map((tool) => ({
+        ...tool,
+        // 失效请求不得读取或修改当前简历
+        execute: (args: any) => {
+          if (!isCurrentRequest()) throw new AbortError();
+          return tool.execute(args);
+        },
+      }));
       // 所有请求统一走 React 编排，技能规范已随对话系统消息提供
       const llm = getXiaoZhouLLM();
       // 未配置模型时抛出明确提示，由统一错误处理呈现
@@ -304,12 +299,6 @@ export const useChatRequest = ({
         onAct: (toolCall) => {
           if (!isCurrentRequest() || !lastMsg) return;
           lastToolName = toolCall.function.name;
-          // 执行过简历数据修改技能的消息开放“撤回修改”
-          if (toolCall.function.name === "propose_resume_edits") {
-            writeMessages.add(lastMsg);
-            // 在消息对象上做持久标记，避免组件重绘后内存 WeakSet 丢失导致按钮不显示
-            (lastMsg as any).hasWriteChanges = true;
-          }
           const displayName = TOOL_NAMES[toolCall.function.name] || toolCall.function.name;
           // 工具开始只记录执行动作，不写入参数与数据
           stepContent = "";
@@ -318,8 +307,17 @@ export const useChatRequest = ({
           lastMsg.stepLabel = `正在执行：${displayName}`;
           scrollToBottom();
         },
-        onObserve: (_observation, round) => {
+        onObserve: (observation, round) => {
           if (!isCurrentRequest() || !lastMsg) return;
+          // 只有工具确认实际写入后才开放撤回，校验失败不算修改
+          if (lastToolName === "propose_resume_edits") {
+            try {
+              const result = JSON.parse(observation.content);
+              if (result.applied && result.changed?.length) writeMessages.add(lastMsg);
+            } catch {
+              // 无法确认执行结果时不显示撤回入口
+            }
+          }
           const displayName = TOOL_NAMES[lastToolName] || lastToolName;
           // 工具完成时标注当前 ReAct 轮次，观察数据不写入思考区
           lastMsg.thought += `\n第 ${round} 轮观测完成：${displayName}`;
@@ -427,15 +425,16 @@ export const useChatRequest = ({
     if (!msg) return false;
     const backup = requestBackups.get(msg);
     if (backup === undefined) return false;
+    if (!writeMessages.has(msg) || !restoreBackup(backup)) return false;
     requestBackups.delete(msg);
-    restoreBackup?.(backup);
+    writeMessages.delete(msg);
     return true;
   }
 
   // 该条 AI 回复是否真实产生过简历写入
-  // 同时检查内存 WeakSet 和消息对象上的持久标记
+  // 备份仅存在于当前组件内存，历史会话不得显示无法执行的撤回入口
   function hasWriteChanges(msg?: Message | null) {
-    return !!msg && (writeMessages.has(msg) || !!(msg as any).hasWriteChanges);
+    return !!msg && requestBackups.has(msg) && writeMessages.has(msg);
   }
 
   return { handleAIResponse, stopGenerating, withdrawAI, hasWriteChanges };

@@ -399,8 +399,8 @@ function handleRegenerate(index) {
 function handleWithdrawModify(index) {
   const msg = displayMessages.value[index];
   if (!msg) return;
-  withdrawAI(msg);
-  ElMessage.success("已撤回 AI 修改");
+  // 仅恢复成功时提示撤回完成
+  if (withdrawAI(msg)) ElMessage.success("已撤回 AI 修改");
 }
 // 通过 provide 注入重试回调，供 aiMessage 直接调用
 provide("retry", handleRetry);
