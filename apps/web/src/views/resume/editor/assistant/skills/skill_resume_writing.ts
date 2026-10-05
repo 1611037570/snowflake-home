@@ -23,12 +23,12 @@ export const resumeWriting = () => ({
   - 模块展示标题：{ op: "updateModuleTitle", module, title }，module 始终使用 read_resume_data 返回的稳定 key，禁止把展示标题当作 key
   - 记录字段：{ op: "updateRecord", module, index, field, value }，index 为记录下标，从 0 开始
 - 新增记录（仅数组型模块）：{ op: "addRecord", module, record }
-  record 填写该模块 data 记录对应的字段；用户未提供的字段用【待补充：xxx】占位或留空待补。
+  record 填写该模块 data 记录对应的字段；未知普通文本可用【待补充：xxx】占位，未知日期或枚举留空，不得写入不符合类型的占位。
 - 删除记录：{ op: "deleteRecord", module, index }
 - 调整顺序：{ op: "moveRecord", module, from, to }
 
 # 操作要求
-1. 每次写操作都基于 read_resume_data 返回的真实数据定位：module 必须在返回范围内；update/delete/move 的 index、from、to 必须对应已有记录。
+1. 每次写操作都基于 read_resume_data 返回的真实数据定位：module 必须在返回范围内；update/delete/move 的 index、from、to 必须对应当前记录；同批操作按声明顺序执行，新增、删除或排序后，后续下标须按变化后的记录计算。
 2. 一次调用可包含多条 operations，系统会合并为一次写入，避免分多次零散提交。
 3. 若 propose_resume_edits 返回 errors 或部分操作失败，先依据 changed、failed 与 errors 判断实际结果，再调用 read_resume_data 读取最新数据；只重新构造未成功的操作并按最新记录下标提交，禁止重放已成功操作或沿用删除、排序前的旧下标。
 4. 起草新增内容时优先使用真实事实；缺失部分用【待补充：xxx】占位并在正文提醒补充核对，占位不算虚构，禁止把占位伪装成真实具体值。
