@@ -21,6 +21,10 @@ const MEDIA_FIELD_DECLS: MediaFieldDecl[] = [
   { moduleKey: "image", shape: "array", field: "img" },
 ];
 
+// 简历 AI 的媒体只读判断与裁剪使用同一份声明
+export const isResumeMediaField = (moduleKey: string, field: string): boolean =>
+  MEDIA_FIELD_DECLS.some((decl) => decl.moduleKey === moduleKey && decl.field === field);
+
 // 单个媒体绑定：记录字段标识与所在数据对象的绝对路径
 type MediaBinding = {
   /** 承载 base64 的字段名 */

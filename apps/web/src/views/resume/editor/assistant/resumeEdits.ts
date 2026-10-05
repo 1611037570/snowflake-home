@@ -1,3 +1,4 @@
+import { isResumeMediaField } from "@/stores/modules/resume/config/mediaFields";
 import type { ResumeFieldSchema } from "./resumeSchema";
 import { findResumeModuleSchema } from "./resumeSchemaRegistry";
 import type { ResumeWriteOp } from "@/stores/modules/resume/resumeOperations";
@@ -143,6 +144,11 @@ export const validateResumeEdits = (
       }
       const errorCount = errors.length;
       Object.entries(op.record).forEach(([field, value]) => {
+        // 媒体字段不属于 AI 文本写入范围
+        if (isResumeMediaField(op.module, field)) {
+          errors.push(`${order}：媒体字段 ${field} 不允许由 AI 写入`);
+          return;
+        }
         const rule = moduleRules.get(field);
         if (!rule) {
           errors.push(`${order}：模块 ${op.module} 不存在字段 ${field}`);
@@ -204,6 +210,11 @@ export const validateResumeEdits = (
       errors.push(`${order}：必须提供 value`);
       return;
     }
+    // 媒体在读取副本中被排除，禁止通过字段契约补写伪图片
+    if (op.op === "updateRecord" && isResumeMediaField(op.module, op.field)) {
+      errors.push(`${order}：媒体字段 ${op.field} 不允许由 AI 写入`);
+      return;
+    }
     const rule = moduleRules.get(op.field);
     if (!rule) {
       errors.push(`${order}：模块 ${op.module} 不存在字段 ${op.field}`);
@@ -243,6 +254,11 @@ export const validateResumeEdits = (
       (!Object.prototype.hasOwnProperty.call(data, op.field) && rule?.addable !== true)
     ) {
       errors.push(`${order}：模块 ${op.module} 不存在模块级字段 ${op.field}`);
+      return;
+    }
+    // 已存在的对象媒体字段同样保持只读
+    if (isResumeMediaField(op.module, op.field)) {
+      errors.push(`${order}：媒体字段 ${op.field} 不允许由 AI 写入`);
       return;
     }
     validateFieldValue(op.module, op.field, op.value, rule, errors);
