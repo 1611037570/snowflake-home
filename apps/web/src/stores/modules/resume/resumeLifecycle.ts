@@ -62,6 +62,10 @@ export const createResumeLifecycle = (options: ResumeLifecycleOptions) => {
       return false;
     }
     const resume = config ? mergeResumeItem(config) : structuredClone(defaultResumeItem);
+    // 新建时间按本次创建计算，导入的备份时间仍保持原值
+    const now = Date.now();
+    if (config?.usage?.createTime === undefined) resume.usage.createTime = now;
+    if (config?.usage?.lastUseTime === undefined) resume.usage.lastUseTime = now;
     setConfigModules(resume, resume.config.modules);
     resume.id = getUUID().slice(0, 6);
     const storage = getResumeStorage(resume.id, resume, true);
@@ -106,7 +110,10 @@ export const createResumeLifecycle = (options: ResumeLifecycleOptions) => {
     const entry = list.value.find((value) => value.id === item?.id);
     const resume = resumeRecords.value.find((value) => value.id === item?.id);
     if (!entry || !resume) return;
+    // 恢复较早的记录会改变活动列表下标，保持当前编辑对象不变
+    const selectedId = resumeList.value[currentIndex.value]?.id;
     list.value[list.value.indexOf(entry)] = setResumeDeletedAt(entry, null);
+    if (selectedId) currentIndex.value = resumeList.value.findIndex((value) => value.id === selectedId);
   };
   const permanentlyDeleteResume = async (trashIndex: number) => {
     if (trashIndex < 0 || trashIndex >= trashList.value.length) return;

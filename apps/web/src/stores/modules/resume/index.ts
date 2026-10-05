@@ -214,7 +214,10 @@ export const useResumeStore = defineStore(
           }
           const records = new Map(resumeRecords.value.map((record) => [record.id, record]));
           records.set(id, item);
-          resumeRecords.value = list.value.map((entry) => records.get(entry.id)).filter(Boolean);
+          // 懒加载只追加缺失记录，保持已加载简历的下标，避免当前编辑对象被目录排序替换
+          resumeRecords.value = [...records.values()].filter((record) =>
+            list.value.some((entry) => entry.id === record.id),
+          );
           return item;
         })
         .finally(() => resumeLoadPromises.delete(id));
