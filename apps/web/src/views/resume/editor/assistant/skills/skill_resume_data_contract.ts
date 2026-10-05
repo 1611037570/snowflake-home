@@ -1,3 +1,4 @@
+import { isResumeMediaField } from "@/stores/modules/resume/config/mediaFields";
 import type { ResumeFieldSchema, ResumeModuleKind, ResumeModuleSchema } from "../resumeSchema";
 import { RESUME_SCHEMA } from "../resumeSchemaRegistry";
 
@@ -13,8 +14,11 @@ const KIND_LABELS: Record<ResumeModuleKind, string> = {
 const formatOptions = (options: unknown[]) =>
   options.map((value) => JSON.stringify(value)).join(" / ");
 
-const getFieldNotes = (field: ResumeFieldSchema) => {
+const getFieldNotes = (field: ResumeFieldSchema, moduleKey: string) => {
   const notes: string[] = [];
+  if (isResumeMediaField(moduleKey, field.key)) notes.push("媒体字段，不向 AI 提供内容，禁止写入");
+  if (field.component === "measurements") notes.push("对象：bust（胸围）、waist（腰围）、hip（臀围）为数值文本");
+  if (field.component === "sizes") notes.push("对象：top（上装尺码）、bottom（下装尺码）、shoes（鞋码）为文本");
   if (field.addable) notes.push("可添加字段，缺失时允许通过 updateModule 激活");
   if (field.format === "month") notes.push("格式 YYYY.MM");
   if (field.key === "endTime") notes.push("持续中时填 至今");
@@ -36,7 +40,7 @@ const renderModule = (module: ResumeModuleSchema, index: number) => {
   const rows = module.fields
     .map(
       (field) =>
-        `| \`${field.key}\` | ${field.label} | ${field.valueType} | ${getFieldNotes(field)} |`,
+        `| \`${field.key}\` | ${field.label} | ${field.valueType} | ${getFieldNotes(field, module.key)} |`,
     )
     .join("\n");
   const customNote =

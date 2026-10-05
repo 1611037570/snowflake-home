@@ -56,7 +56,8 @@ const getValueType = (
   binding: ModelBinding,
   format?: ResumeFieldFormat,
 ): ResumeFieldValueType => {
-  if (format === "heightWeight") return "object";
+  // 复合输入组件即使未声明默认值，也必须按真实对象结构生成契约
+  if (format === "heightWeight" || ["measurements", "sizes"].includes(field.component ?? "")) return "object";
   if (field.component === "inputNumber") return "number";
   const defaultValue = binding.defaultValue;
   if (Array.isArray(defaultValue)) return "array";

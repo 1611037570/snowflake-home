@@ -12,6 +12,7 @@ export const resumeTranslate = () => ({
 - 只翻译 read_resume_data 本次返回的范围；用户明确要求整份翻译但当前只返回局部模块时，先提示切换到整个简历或取得整份读取授权，不得把局部翻译声称为整份翻译。
 - 翻译结果需要写入简历时，必须调用 resume_writing 获取编写流程，再逐项翻译各模块字段内容，保持模块结构与记录顺序对应。
 - read_resume_data 返回的模块 title 也属于简历展示内容，翻译写入时通过 updateModuleTitle 保持标题语言一致，module 参数仍使用原始稳定 key。
+- 只翻译自然语言正文和标题；日期、至今、数字、枚举原始值、网址、媒体字段及复合对象的结构化取值保持不变，未填写字段不生成写操作，含脱敏标记字段保持只读。
 - 只做翻译，不增删内容、不改写原意；专业术语、职位与项目名称使用规范的目标语言表达。
 - 翻译写入是本任务的主要结果：必须将全部翻译结果整理为一次完整的 propose_resume_edits 调用，并确认返回 applied 为 true、errors 为空；未满足时翻译尚未完成，不得输出成功结论。
 - update_resume_language 只是写入成功后的界面语言同步，必须是本流程最后一个工具调用；它不翻译任何简历字段，单独调用 update_resume_language 必须判定为任务失败，禁止用它代替 propose_resume_edits。

@@ -63,6 +63,8 @@ export const createProposeResumeEditsTool = (ctx: ResumeToolContext): ReactTool 
     required: ["operations"],
   },
   execute: (args: any) => {
+    // 清除本轮先前写入凭据，结构校验或执行失败均不得继续切换语言
+    ctx.resetSuccessfulWrite?.();
     const operations: ResumeWriteOp[] = Array.isArray(args?.operations) ? args.operations : [];
     // 空操作或缺失参数不能被当成合法写入结果
     const errors = operations.length

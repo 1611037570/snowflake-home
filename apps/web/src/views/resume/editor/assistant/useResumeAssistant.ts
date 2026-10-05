@@ -42,6 +42,8 @@ export const useResumeAssistant = () => {
           if (result.applied && !result.failed.length) hasSuccessfulWrite = true;
           return result;
         },
+        // 本轮每次写入尝试独立确认，后续失败时禁止复用早先凭据
+        resetSuccessfulWrite: () => { hasSuccessfulWrite = false; },
         hasSuccessfulWrite: () => hasSuccessfulWrite,
         updateLanguage: updateCurrentLang,
       }),
