@@ -10,9 +10,12 @@ const getResumeCreateModuleOptions = (): string[] => {
   const resumeStore = useResumeStore();
   const data = resumeStore.currentData;
   if (!data) return [];
+  // 起草目标必须在当前读取选区内，避免选择后工具无法访问目标模块
+  const selectedKeys = new Set(resumeStore.selectedModule.map((item) => item.key));
   const builtinOrder = new Map(DEFAULT_MODULE_NAMES.map((item, index) => [item.key, index]));
   return Object.keys(data)
     .filter((key) => key !== "user" && key !== "account" && Array.isArray(data[key]?.list))
+    .filter((key) => !selectedKeys.size || selectedKeys.has(key))
     .sort((a, b) => {
       const orderA = builtinOrder.get(a) ?? Number.MAX_SAFE_INTEGER;
       const orderB = builtinOrder.get(b) ?? Number.MAX_SAFE_INTEGER;
