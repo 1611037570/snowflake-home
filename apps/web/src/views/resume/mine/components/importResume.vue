@@ -8,12 +8,12 @@ const visible = ref(false);
 const parsing = ref(false);
 const resumeStore = useResumeStore();
 
-const { click: clickJson } = useFileDialog({
+const { click: clickJson, remove: removeJson, errorList: jsonErrors } = useFileDialog({
   accept: ".json,application/json",
   multiple: false,
   maxCount: 1,
 });
-const { click: clickMarkdown } = useFileDialog({
+const { click: clickMarkdown, remove: removeMarkdown, errorList: markdownErrors } = useFileDialog({
   accept: ".md,.markdown,text/markdown",
   multiple: false,
   maxCount: 1,
@@ -21,7 +21,7 @@ const { click: clickMarkdown } = useFileDialog({
 
 // 打开导入弹窗：提前判断简历数量是否已达上限
 const handleOpenImport = () => {
-  if (resumeStore.resumeList.length >= resumeStore.maxCount) {
+  if (resumeStore.list.filter((item) => item.deletedAt === null).length >= resumeStore.maxCount) {
     ElMessage.warning(`简历数量已达上限（${resumeStore.maxCount}个），请先删除后再导入`);
     return;
   }
@@ -31,14 +31,20 @@ const handleOpenImport = () => {
 const importJsonConfig = async () => {
   visible.value = false;
   try {
+    // 每次重新选择，不能沿用上一次的文件计数与事件监听
+    removeJson();
     // click 返回合法文件列表，用户取消选择时会 reject
     const successList = await clickJson();
     const file = successList?.[0]?.file;
     if (file) {
       await parseJsonConfig(file);
+    } else if (jsonErrors.value.length) {
+      ElMessage.error(jsonErrors.value[0].msg);
     }
   } catch {
     // 用户取消选择，忽略即可
+  } finally {
+    removeJson();
   }
 };
 
@@ -47,6 +53,23 @@ const parseJsonConfig = async (file) => {
   if (!file) return;
   try {
     const item = JSON.parse(await file.text());
+    // 完整备份必须具有简历数据和模块结构，拒绝普通 JSON 被误导入为空简历
+    const isObject = (value) => value !== null && typeof value === "object" && !Array.isArray(value);
+    const validModules = (modules) => Array.isArray(modules) && modules.every((module) =>
+      isObject(module) && typeof module.key === "string" && module.key.trim() &&
+      (module.fields === undefined || validModules(module.fields)),
+    );
+    if (!isObject(item) || !isObject(item.data) || !isObject(item.config) ||
+      !validModules(item.config.modules) ||
+      !Object.values(item.data).every((module) => isObject(module) &&
+        (module.data === undefined || isObject(module.data)) &&
+        (module.list === undefined || (Array.isArray(module.list) && module.list.every((record) =>
+          isObject(record) && (record.data === undefined || isObject(record.data)),
+        )))) ||
+      (item.ui !== undefined && !isObject(item.ui)) ||
+      (item.usage !== undefined && !isObject(item.usage))) {
+      throw new Error("无效的简历备份结构");
+    }
     // 以解析出的完整简历创建新简历，jump=false 避免跳转编辑器
     const ok = resumeStore.addResume(item, false);
     if (ok) ElMessage.success("简历导入成功");
@@ -58,10 +81,21 @@ const parseJsonConfig = async (file) => {
 
 // 读取 Markdown 内容并调用智能解析模型，解析成功后创建新简历。
 const importMarkdownConfig = async () => {
+  if (parsing.value) return;
+  let file;
   try {
+    // 文件选择与解析分别处理，取消选择不显示解析失败
+    removeMarkdown();
     const successList = await clickMarkdown();
-    const file = successList?.[0]?.file;
-    if (!file) return;
+    file = successList?.[0]?.file;
+    if (!file && markdownErrors.value.length) ElMessage.error(markdownErrors.value[0].msg);
+  } catch {
+    return;
+  } finally {
+    removeMarkdown();
+  }
+  if (!file) return;
+  try {
     parsing.value = true;
     const item = await parseMarkdownResume(await file.text());
     const ok = resumeStore.addResume(item, false);

@@ -9,6 +9,7 @@ import {
   walkFormFields,
 } from "@/components/business/dynamicForm/api";
 import { $t } from "@/locales";
+import { isContentEmpty } from "../preview/shared/validData";
 
 // ==================== 工具函数 ====================
 
@@ -42,17 +43,6 @@ const isDeepEmpty = (val: any): boolean =>
   isEmpty(val) ||
   (Array.isArray(val) && val.every(isDeepEmpty)) ||
   (typeof val === "object" && !Array.isArray(val) && Object.values(val).every(isDeepEmpty));
-
-const isContentEmpty = (val: any): boolean => {
-  if (typeof val !== "string") return true;
-  // 去掉全部标签与占位空格后无文本即为空，判定口径与预览侧保持一致
-  return (
-    val
-      .replace(/<[^>]*>/g, "")
-      .replace(/&nbsp;/gi, " ")
-      .trim() === ""
-  );
-};
 
 const getLabel = (field: any, prop: string): string => getFieldLabel(field) || prop || $t("field");
 

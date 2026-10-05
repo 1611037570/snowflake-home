@@ -1,7 +1,7 @@
 <script setup>
 import Cropper from "cropperjs";
 import "cropperjs/dist/cropper.css";
-import { ref, watch } from "vue";
+import { onBeforeUnmount, ref, watch } from "vue";
 import { useImageUpload } from "@/hooks";
 import { routerNavigation } from "@/utils";
 
@@ -66,6 +66,11 @@ const pickFromModal = () => {
 // ===== 裁切弹窗状态 =====
 const cropImgRef = ref(null);
 let cropper = null;
+// 字段卸载时释放裁剪器，避免旧弹窗的监听与图片节点继续占用内存
+onBeforeUnmount(() => {
+  cropper?.destroy();
+  cropper = null;
+});
 
 // 弹窗关闭时同步销毁裁切器（含右上角关闭等场景）
 watch(cropVisible, (visible) => {
