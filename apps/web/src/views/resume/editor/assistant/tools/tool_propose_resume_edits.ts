@@ -64,8 +64,10 @@ export const createProposeResumeEditsTool = (ctx: ResumeToolContext): ReactTool 
   },
   execute: (args: any) => {
     const operations: ResumeWriteOp[] = Array.isArray(args?.operations) ? args.operations : [];
-    // 先做结构与格式校验，校验失败不产生任何写操作副作用
-    const errors = validateResumeEdits(operations, ctx.getResumeData() as any);
+    // 空操作或缺失参数不能被当成合法写入结果
+    const errors = operations.length
+      ? validateResumeEdits(operations, ctx.getResumeData() as any)
+      : ["operations 必须是非空的写操作数组"];
     if (errors.length) {
       console.log("[ReAct] propose_resume_edits 校验未通过:", errors);
       return { applied: false, changed: [], added: [], errors };
