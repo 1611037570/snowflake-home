@@ -82,6 +82,8 @@ export const useResumeAssistant = () => {
   const createChat = () => {
     const resident = residentSkills.map((createSkill) => createSkill());
     const [first, ...rest] = resident;
+    // 常驻技能清单为空时明确中断，不生成缺少系统规则的对话
+    if (!first) throw new Error("简历助手缺少常驻技能");
     const newChat = createDefaultChat({
       ...createDefaultMessage(),
       role: "system",
