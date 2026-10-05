@@ -106,6 +106,7 @@ async function selectChat(id: string) {
   quickAnswerEnabled.value = false;
   quickAnswerVisible.value = false;
   chatListVisible.value = false;
+  restoreInterviewState();
 }
 
 // currentMessages：从 chat.messages 派生
@@ -303,19 +304,22 @@ watch(
  */
 const handleSend = (content) => {
   // 确保输入内容不为空
-  if (!content) return;
+  if (!content?.trim()) return;
   // 确保当前没有正在发送的消息
   if (generating.value || quickAnswerLoading.value || isChatLoading.value) return;
   // 引导流程的自由输入步骤：把输入内容作为答案推进流程
   const flowStep = activeFlow.value?.steps?.[activeFlow.value.stepIndex];
   if (flowStep) {
-    // 无可用选项的步骤同样允许自由输入，避免流程卡死
-    const options = typeof flowStep.options === "function" ? flowStep.options() : flowStep.options;
-    if (flowStep.input || !options.length) {
-      handleFlowInput(content);
-      return;
-    }
+    // 引导期间所有输入都作为本步骤答案，不能绕过授权或选择步骤启动请求
+    handleFlowAnswer(content.trim());
+    return;
   }
+  // 面试续轮继承原流程的读取范围，结束消息保留范围但关闭专用入口
+  const previousContext = [...currentMessages.value].reverse()
+    .find((message) => message.role === "user" && !message.skipContext)?.requestContext;
+  const requestContext = previousContext?.interviewFlow
+    ? { ...previousContext, interviewFlow: content.trim() === "提前结束" ? "" : previousContext.interviewFlow }
+    : undefined;
   // 用户结束长时评估后关闭专用操作入口，后续仅保留普通对话输入
   if (earlyEndEnabled.value && content.trim() === "提前结束") {
     earlyEndEnabled.value = false;
@@ -327,6 +331,8 @@ const handleSend = (content) => {
     role: "user",
     content,
     typing: false,
+    // 面试续轮的完整经历范围与流程标识
+    requestContext,
   });
   scrollToBottom();
   // 触发真实请求
@@ -368,6 +374,9 @@ function removeMessage(msg, count) {
  * 撤回用户消息：删除该消息及其后的所有消息，并将内容回填到输入框
  */
 const handleRecall = (msg) => {
+  if (generating.value || quickAnswerLoading.value || isChatLoading.value) return;
+  // 撤回引导消息后取消尚未完成的流程，避免继续使用旧答案
+  activeFlow.value = null;
   // 删除该消息及其后的所有消息
   if (removeMessage(msg)) {
     chat.value.updateTime = Date.now();
@@ -380,7 +389,13 @@ const handleRecall = (msg) => {
  * 重试生成：删除失败消息后重新发起请求
  */
 const handleRetry = (msg) => {
-  // 仅删除失败的这条消息
+  if (generating.value || quickAnswerLoading.value || isChatLoading.value) return;
+  // 只重试当前轮，已写入内容先撤回，避免重复新增或重复删除
+  if (msg !== displayMessages.value.at(-1)) return;
+  if (msg.hasWriteChanges && !withdrawAI(msg)) {
+    ElMessage.warning("本轮修改备份已失效，请核对简历后重新发送请求");
+    return;
+  }
   removeMessage(msg, 1);
   generating.value = true;
   scrollToBottom();
@@ -389,8 +404,12 @@ const handleRetry = (msg) => {
 // 重新生成：回滚本轮修改并删除回复，复用上一轮请求重新发起
 function handleRegenerate(index) {
   const msg = displayMessages.value[index];
-  if (!msg || generating.value) return;
-  withdrawAI(msg);
+  if (!msg || generating.value || quickAnswerLoading.value || isChatLoading.value) return;
+  // 历史写入没有内存备份时不能重新执行，避免累积重复修改
+  if (msg.hasWriteChanges && !withdrawAI(msg)) {
+    ElMessage.warning("本轮修改备份已失效，请核对简历后重新发送请求");
+    return;
+  }
   removeMessage(msg);
   scrollToBottom();
   handleAIResponse();
@@ -398,7 +417,7 @@ function handleRegenerate(index) {
 // 撤回修改：恢复请求前备份，回复文字保留、操作按钮消失
 function handleWithdrawModify(index) {
   const msg = displayMessages.value[index];
-  if (!msg) return;
+  if (!msg || generating.value || quickAnswerLoading.value || isChatLoading.value) return;
   // 仅恢复成功时提示撤回完成
   if (withdrawAI(msg)) ElMessage.success("已撤回 AI 修改");
 }
@@ -407,11 +426,26 @@ provide("retry", handleRetry);
 
 // 引导式流程状态：记录当前流程、步骤与已收集的选项
 const activeFlow = ref(null);
+// 会话切换清除未完成引导，历史面试按最后一条真实用户消息恢复操作入口
+const restoreInterviewState = () => {
+  const flowKey = [...currentMessages.value].reverse()
+    .find((message) => message.role === "user" && !message.skipContext)?.requestContext?.interviewFlow;
+  const key = typeof flowKey === "string" ? flowKey : "";
+  voiceInputEnabled.value = key === "specializedInterview";
+  earlyEndEnabled.value = supportsInterviewEarlyEnd(key);
+  quickAnswerEnabled.value = supportsQuickAnswer(key);
+};
+watch(() => chat.value?.id, () => {
+  activeFlow.value = null;
+  quickAnswerVisible.value = false;
+  restoreInterviewState();
+});
 
 /**
  * 点击建议卡片：启动引导式对话流程
  */
 const handleSuggest = (payload) => {
+  if (generating.value || quickAnswerLoading.value || isChatLoading.value) return;
   const flow = flows[payload?.flow];
   if (!flow) return;
   const allowQuickAnswer = supportsQuickAnswer(payload.flow);
@@ -437,7 +471,8 @@ const handleSuggest = (payload) => {
       role: "user",
       content: userContent,
       typing: false,
-      requestContext,
+      // 逐题面试记录流程标识，续轮与历史恢复共用
+      requestContext: allowQuickAnswer ? { ...requestContext, interviewFlow: payload.flow } : requestContext,
     });
     // 无引导步骤的长时流程在真实请求开始后开放提前结束
     earlyEndEnabled.value = allowEarlyEnd;
@@ -449,11 +484,19 @@ const handleSuggest = (payload) => {
     return;
   }
   activeFlow.value = {
+    // 当前流程定义
     flow,
+    // 流程稳定标识，供续轮与历史会话恢复
+    flowKey: payload.flow,
+    // 本轮已经固化的引导步骤
     steps,
+    // 当前步骤位置
     stepIndex: 0,
+    // 已收集的业务答案
     answers: [],
+    // 是否支持提前结束
     allowEarlyEnd,
+    // 是否支持独立快速回答
     allowQuickAnswer,
   };
   // 引导对话仅作界面展示，不加入请求上下文
@@ -496,8 +539,15 @@ const runFlowStep = () => {
  */
 const handleFlowAnswer = (answer) => {
   const state = activeFlow.value;
-  if (!state) return;
+  if (!state || generating.value || quickAnswerLoading.value || isChatLoading.value) return;
   const step = state.steps[state.stepIndex];
+  if (!step || !answer?.trim()) return;
+  // 选择步骤只接受本轮有效选项，拒绝旧按钮或自由输入跳过授权
+  const options = typeof step.options === "function" ? step.options() : step.options;
+  if (!step.input && options.length && !options.includes(answer)) {
+    ElMessage.warning("请先选择当前步骤中的选项");
+    return;
+  }
   // 授权被拒绝时只结束引导流程，不向模型发送请求
   if (step?.cancelAnswers?.includes(answer)) {
     addMessage({ role: "user", content: answer, typing: false, skipContext: true });
@@ -546,7 +596,8 @@ const handleFlowAnswer = (answer) => {
     role: "user",
     content: userContent,
     typing: false,
-    requestContext,
+    // 逐题面试续轮保留整份读取范围与流程标识
+    requestContext: state.allowQuickAnswer ? { ...requestContext, interviewFlow: state.flowKey } : requestContext,
   });
   generating.value = true;
   scrollToBottom();
@@ -577,12 +628,18 @@ const handleEarlyEnd = () => {
 const generateQuickAnswer = async (previousAnswer = "") => {
   quickAnswerLoading.value = true;
   quickAnswerError.value = "";
+  const requestResumeId = resumeId.value;
+  const requestChatId = chat.value?.id;
+  const isCurrent = () => resumeId.value === requestResumeId && chat.value?.id === requestChatId;
   try {
-    quickAnswerContent.value = await requestQuickAnswer(
+    const answer = await requestQuickAnswer(
       latestInterviewQuestion.value,
       previousAnswer,
     );
+    // 简历或会话切换后丢弃旧回答，避免展示上一份简历的内容
+    if (isCurrent()) quickAnswerContent.value = answer;
   } catch (error: any) {
+    if (!isCurrent()) return;
     quickAnswerError.value = error?.message || "回答生成失败";
   } finally {
     quickAnswerLoading.value = false;

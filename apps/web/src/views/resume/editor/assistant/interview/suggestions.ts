@@ -14,7 +14,7 @@ export const interviewSuggestions: SuggestCard[] = [
     flow: "interviewPrediction",
     category: "interview",
     intro: {
-      duration: "3-5 分钟快速生成 · 命中率 80%+",
+      duration: "约 3-5 分钟生成 · 基于简历与岗位要求",
       description:
         "基于岗位 JD 和个人简历，AI 智能分析并预测高频面试题，提供参考答案与回答技巧，得到专业反馈报告。",
       features: [
@@ -54,9 +54,9 @@ export const interviewSuggestions: SuggestCard[] = [
       badge: "综合评估",
       duration: "约 45 分钟 · 双重评估维度",
       description:
-        "覆盖行政能力测试 + HR 软技能面试，全面评估综合素质与软实力表现，大幅提升入职率。",
+        "覆盖行政能力测试 + HR 软技能面试，评估本次作答中体现的综合素质与软实力，提供准备建议。",
       features: [
-        "行测题库与限时模拟测试",
+        "行测模拟题与建议作答时限",
         "HR 面试软技能深度评估",
         "沟通表达与情商能力评测反馈",
       ],

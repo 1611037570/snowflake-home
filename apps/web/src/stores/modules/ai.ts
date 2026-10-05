@@ -52,6 +52,8 @@ export type Message = {
   requestStatus: string;
   // 上下文标记：为 true 时仅作界面展示，不随请求发送给模型
   skipContext?: boolean;
+  // 本轮工具确认实际写入，用于重试保护；撤回仍依赖会话内存备份
+  hasWriteChanges?: boolean;
   // 由业务宿主解释的请求上下文，重试与重新生成时保持一致
   requestContext?: Record<string, unknown>;
 };
@@ -230,6 +232,7 @@ export const useAiStore = defineStore(
       const directory = useResumeStore().list.find((resume) => resume.id === chat.resumeId);
       if (!directory || directory.deletedAt !== null) return null;
       const record = chat as ResumeAssistantChatRecord;
+      const loadId = resumeAssistantChatLoadId;
       await set(
         resumeAssistantChatKey(chat.id),
         JSON.parse(JSON.stringify(record)) as ResumeAssistantChatRecord,
@@ -244,7 +247,10 @@ export const useAiStore = defineStore(
         await del(resumeAssistantChatKey(chat.id));
         return null;
       }
-      resumeAssistantChat.value = record;
+      // 保存旧草稿完成时不得覆盖后来切换的简历或话题
+      if (loadId === resumeAssistantChatLoadId && useResumeStore().currentItem?.id === chat.resumeId) {
+        resumeAssistantChat.value = record;
+      }
       return chat;
     }
     // 持久化已创建的会话正文及目录摘要

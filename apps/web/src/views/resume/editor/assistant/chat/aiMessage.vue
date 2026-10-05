@@ -203,7 +203,7 @@ const animatedTokens = useTransition(
     />
     <!-- 操作区域 -->
     <nav
-      v-if="msg.content && !msg.typing && resumeShow"
+      v-if="msg.content && !msg.typing && (resumeShow || canWithdraw)"
       class="mt-1 flex items-center gap-1 transition-opacity duration-300"
     >
       <SfTooltip content="复制">

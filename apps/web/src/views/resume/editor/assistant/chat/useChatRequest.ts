@@ -313,7 +313,10 @@ export const useChatRequest = ({
           if (lastToolName === "propose_resume_edits") {
             try {
               const result = JSON.parse(observation.content);
-              if (result.applied && result.changed?.length) writeMessages.add(lastMsg);
+              if (result.applied && result.changed?.length) {
+                writeMessages.add(lastMsg);
+                lastMsg.hasWriteChanges = true;
+              }
             } catch {
               // 无法确认执行结果时不显示撤回入口
             }
@@ -396,7 +399,13 @@ export const useChatRequest = ({
     }
     // 将所有消息的打字状态置为false
     currentMessages.value.forEach((message) => {
-      if (message.typing) message.typing = false;
+      if (message.typing) {
+        message.typing = false;
+        // 中止后保留实际写入的撤回入口，空回复可重新发起
+        message.requestStatus = message.hasWriteChanges ? "success" : "error";
+        message.stepLabel = "";
+        message.content ||= "已停止生成";
+      }
     });
     generating.value = false;
   };
@@ -428,13 +437,14 @@ export const useChatRequest = ({
     if (!writeMessages.has(msg) || !restoreBackup(backup)) return false;
     requestBackups.delete(msg);
     writeMessages.delete(msg);
+    msg.hasWriteChanges = false;
     return true;
   }
 
   // 该条 AI 回复是否真实产生过简历写入
   // 备份仅存在于当前组件内存，历史会话不得显示无法执行的撤回入口
   function hasWriteChanges(msg?: Message | null) {
-    return !!msg && requestBackups.has(msg) && writeMessages.has(msg);
+    return !!msg?.hasWriteChanges && requestBackups.has(msg) && writeMessages.has(msg);
   }
 
   return { handleAIResponse, stopGenerating, withdrawAI, hasWriteChanges };
