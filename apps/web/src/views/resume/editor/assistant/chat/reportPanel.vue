@@ -42,6 +42,8 @@ const radarOptions = computed(() => {
 // 总分评级
 const level = computed(() => {
   const s = props.report.totalScore;
+  // 没有可靠维度时显示未评分，不按零分评级
+  if (s == null) return "暂不可评分";
   if (s >= 90) return "优秀";
   if (s >= 80) return "良好";
   if (s >= 70) return "中等";
@@ -58,9 +60,9 @@ const level = computed(() => {
     </div>
     <!-- 综合评分与雷达图 -->
     <div class="mt-3 flex items-center gap-3">
-      <SfEcharts :options="radarOptions" class="h-52 w-2/3!" />
+      <SfEcharts v-if="report.dimensions.some((d) => typeof d.score === 'number')" :options="radarOptions" class="h-52 w-2/3!" />
       <div class="flex w-1/3 flex-col items-center justify-center gap-3">
-        <span class="text-[40px] font-black leading-none text-sf-theme">{{ report.totalScore }}</span>
+        <span class="text-[40px] font-black leading-none text-sf-theme">{{ report.totalScore ?? "—" }}</span>
         <span class="text-[13px] text-sf-text-2">综合评分 · {{ level }}</span>
       </div>
     </div>

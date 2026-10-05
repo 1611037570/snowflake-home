@@ -1,84 +1,114 @@
 // 一键优化报告数据结构与解析工具：协调编排技能输出与前端面板渲染
 export interface ReportDimension {
+  // 固定评分维度名称
   name: string;
+  // 百分制整数分，不适用或无依据时为空
   score: number | null;
 }
 
 export interface ReportCheck {
+  // 问题严重程度
   level: "error" | "warning";
+  // 有简历证据的问题说明
   message: string;
 }
 
 export interface ReportChange {
+  // 实际发生修改的模块展示名称
   module: string;
+  // 实际成功改动的简要说明
   summary: string;
 }
 
 // 一键优化产出的结构化报告，字段与 skill_resume_one_key_optimize 的输出约定保持一致
 export interface ResumeReport {
-  totalScore: number;
+  // 有效维度得分均值，无可评分维度时为空
+  totalScore: number | null;
+  // 六个固定维度及其评分
   dimensions: ReportDimension[];
+  // 优化后仍存在的问题
   checks: ReportCheck[];
+  // 本轮实际完成的改动
   changes: ReportChange[];
+  // 需要用户补充的事实
   todo: string[];
+  // 有依据的优化亮点
   highlights: string[];
+  // 尚未解决问题的行动建议
   suggestions: string[];
 }
 
-// 报告特征：有效报告必须含数字总分与维度数组
-const isReport = (v: unknown): v is ResumeReport =>
-  !!v &&
-  typeof v === "object" &&
-  typeof (v as ResumeReport).totalScore === "number" &&
-  Array.isArray((v as ResumeReport).dimensions);
-
-// 报告可能以 resume-report 或 json 代码块输出，均尝试匹配
-const REPORT_BLOCK_RES = [
-  /```resume-report\s*\n([\s\S]*?)\n```/,
-  /```json\s*\n([\s\S]*?)\n```/,
+// 评分顺序与技能约定一致，拒绝缺失、重复或臆造维度
+const DIMENSION_NAMES = [
+  "信息完整度", "阅读效率", "职业契合度", "职业成就", "发展潜力", "职业稳定性",
 ];
-// 剥离时需移除的报告代码块
-const REPORT_BLOCK_STRIP_RES = [
-  /```resume-report\s*\n[\s\S]*?\n```\s*/g,
-  /```json\s*\n[\s\S]*?\n```\s*/g,
-];
+const isScore = (value: unknown): value is number =>
+  typeof value === "number" && Number.isInteger(value) && value >= 0 && value <= 100;
+const isObject = (value: unknown): value is Record<string, unknown> =>
+  !!value && typeof value === "object" && !Array.isArray(value);
+const isStringList = (value: unknown): value is string[] =>
+  Array.isArray(value) && value.every((item) => typeof item === "string");
 
-// 从回复正文中提取并解析报告；兼容代码块与裸 JSON 输出，无有效报告时返回 null
-export const parseResumeReport = (content: string): ResumeReport | null => {
-  if (!content) return null;
-  for (const re of REPORT_BLOCK_RES) {
-    const match = content.match(re);
-    if (!match) continue;
-    try {
-      const report = JSON.parse(match[1]!);
-      return isReport(report) ? report : null;
-    } catch {
-      return null;
-    }
-  }
-  // 裸 JSON 兜底
+// 校验完整报告并按有效维度重算总分，缺失的可选清单兼容为空数组
+const normalizeReport = (value: unknown): ResumeReport | null => {
+  if (!isObject(value) || !(value.totalScore === null || isScore(value.totalScore))) return null;
+  const dimensions = value.dimensions;
+  if (!Array.isArray(dimensions) || dimensions.length !== DIMENSION_NAMES.length) return null;
+  if (!dimensions.every((item, index) => isObject(item) &&
+    item.name === DIMENSION_NAMES[index] && (item.score === null || isScore(item.score)))) return null;
+  const checks = value.checks ?? [];
+  const changes = value.changes ?? [];
+  const todo = value.todo ?? [];
+  const highlights = value.highlights ?? [];
+  const suggestions = value.suggestions ?? [];
+  if (!Array.isArray(checks) || !checks.every((item) => isObject(item) &&
+    ["error", "warning"].includes(String(item.level)) && typeof item.message === "string")) return null;
+  if (!Array.isArray(changes) || !changes.every((item) => isObject(item) &&
+    typeof item.module === "string" && typeof item.summary === "string")) return null;
+  if (![todo, highlights, suggestions].every(isStringList)) return null;
+  const scores = dimensions.map((item) => item.score).filter(isScore);
+  return {
+    // 根据校验后的有效分数计算，避免模型总分与维度不一致
+    totalScore: scores.length ? Math.round(scores.reduce((sum, score) => sum + score, 0) / scores.length) : null,
+    // 校验后保留固定顺序的维度
+    dimensions: dimensions as ReportDimension[],
+    // 校验后的问题清单
+    checks: checks as ReportCheck[],
+    // 校验后的实际改动清单
+    changes: changes as ReportChange[],
+    // 兼容旧报告缺失的待补充清单
+    todo: todo as string[],
+    // 兼容旧报告缺失的优化亮点
+    highlights: highlights as string[],
+    // 兼容旧报告缺失的行动建议
+    suggestions: suggestions as string[],
+  };
+};
+
+// 仅识别实际符合报告契约的专用或兼容代码块
+const REPORT_BLOCK_RE = /```(?:resume-report|json)\s*\n([\s\S]*?)\n```/g;
+const parseReportJson = (content: string): ResumeReport | null => {
   try {
-    const report = JSON.parse(content);
-    return isReport(report) ? report : null;
+    return normalizeReport(JSON.parse(content));
   } catch {
     return null;
   }
 };
 
-// 从回复正文中移除报告代码块；整个正文为裸 JSON 报告时返回空
+// 从回复正文中提取有效报告；无效块不阻断后续报告，普通 JSON 不识别为报告
+export const parseResumeReport = (content: string): ResumeReport | null => {
+  if (!content) return null;
+  for (const match of content.matchAll(REPORT_BLOCK_RE)) {
+    const report = parseReportJson(match[1]!);
+    if (report) return report;
+  }
+  return parseReportJson(content);
+};
+
+// 仅移除有效报告，保留普通 JSON、无效报告与未完成的流式内容
 export const stripResumeReportBlock = (content: string): string => {
   if (!content) return content;
-  let result = content;
-  REPORT_BLOCK_STRIP_RES.forEach((re) => {
-    result = result.replace(re, "");
-  });
-  const trimmed = result.trim();
-  if (trimmed) {
-    try {
-      if (isReport(JSON.parse(trimmed))) return "";
-    } catch {
-      // 非 JSON 正文，保留
-    }
-  }
-  return trimmed;
+  if (parseReportJson(content)) return "";
+  return content.replace(REPORT_BLOCK_RE, (block, body: string) =>
+    parseReportJson(body) ? "" : block).trim();
 };
