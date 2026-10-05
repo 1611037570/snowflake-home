@@ -8,10 +8,12 @@ import { useResumeStore } from "@/stores";
 import { allConfig } from "@/stores/modules/resume/config/formConfig";
 import { useResumeName } from "../../../../hooks/useResumeName";
 
-type FieldDefinition = { key: string; label: string };
-
-const resumeStore = useResumeStore();
-const { currentItem, runtimeConfig } = storeToRefs(resumeStore);
+type FieldDefinition = {
+  // 字段业务标识
+  key: string;
+  // 导出显示名称
+  label: string;
+};
 
 const FIELD_LABELS: Record<string, string> = {
   content: "内容",
@@ -46,7 +48,7 @@ const collectFieldDefinitions = (fields: any[], definitions: FieldDefinition[]) 
   walkFormFields(fields, (field) => {
     // 字段包裹组按被包裹字段定位数据，名称取包裹组声明
     const path = getFieldDataPath(field);
-    const key = path?.[path.length - 1];
+    const key = path?.length ? String(path[path.length - 1]) : "";
     if (!key || ["collapsed", "hidden", "archived", "icon"].includes(key)) return;
     if (definitions.some((item) => item.key === key)) return;
     definitions.push({
@@ -56,9 +58,9 @@ const collectFieldDefinitions = (fields: any[], definitions: FieldDefinition[]) 
   });
 };
 
-const getSchema = (moduleKey: string) => {
+const getSchema = (moduleKey: string, runtimeConfig: any) => {
   // 运行时配置已按模板展开为完整 schema，未命中时回退模板注册表
-  const runtimeField = runtimeConfig.value?.fields?.find((field: any) => field.key === moduleKey);
+  const runtimeField = runtimeConfig?.fields?.find((field: any) => field.key === moduleKey);
   if (runtimeField) return runtimeField;
   if (moduleKey.startsWith("custom_")) return allConfig.custom;
   return (allConfig as Record<string, any>)[moduleKey];
@@ -81,7 +83,10 @@ const getModuleTitle = (moduleKey: string, moduleData: any, schema: any) => {
 
 // 数组模块按 list 取记录，对象模块把 data 视为单条记录
 const getRecords = (moduleData: any) => {
-  if (Array.isArray(moduleData?.list)) return moduleData.list.map((record: any) => record.data);
+  // Markdown 与预览一致，隐藏记录不进入导出
+  if (Array.isArray(moduleData?.list)) return moduleData.list
+    .filter((record: any) => record?.ui?.hidden !== true && record?.data)
+    .map((record: any) => record.data);
   return moduleData?.data && typeof moduleData.data === "object" ? [moduleData.data] : [];
 };
 
@@ -89,8 +94,11 @@ const appendRecord = (
   lines: string[],
   record: Record<string, unknown>,
   definitions: FieldDefinition[],
+  hiddenFields: Record<string, any> = {},
 ) => {
   const entries = definitions
+    // 个人字段的隐藏开关同样适用于文本导出
+    .filter((definition) => hiddenFields[definition.key]?.hidden !== true)
     .map((definition) => ({
       ...definition,
       value: formatText(record[definition.key]),
@@ -120,7 +128,9 @@ const appendRecord = (
 
 // 按当前模块顺序生成可读的 Markdown 简历
 export const exportMarkdown = (onSuccess?: () => void) => {
-  const { getExportFileName, resumeTitle } = useResumeName();
+  // 调用时取得当前仓库，避免模块导入阶段依赖已激活的状态容器
+  const { currentItem, runtimeConfig } = storeToRefs(useResumeStore());
+  const { getExportFileName, getResumeTitle, resumeTitle } = useResumeName();
   const item = currentItem.value;
   const data = item?.data || {};
   // 字段配置统一以模块 key 标识
@@ -128,19 +138,32 @@ export const exportMarkdown = (onSuccess?: () => void) => {
     .map((field: any) => field?.key)
     .filter(Boolean);
   const moduleKeys = [...new Set([...configuredKeys, ...Object.keys(data)])];
-  const lines = [`# ${resumeTitle.value}`, ""];
+  // 自动标题也使用可见字段，避免隐藏姓名或岗位后仍从正文标题泄漏
+  const titleData = { ...data };
+  for (const key of ["user", "education"]) {
+    const source = titleData[key];
+    if (!source) continue;
+    const module = { ...source, data: { ...source.data } };
+    titleData[key] = module;
+    if (module.ui?.hidden || module.ui?.archived) { delete titleData[key]; continue; }
+    if (module.data) Object.keys(module.data).forEach((field) => {
+      if (module.ui?.[field]?.hidden) delete module.data[field];
+    });
+    if (module.list) module.list = module.list.filter((record: any) => record?.ui?.hidden !== true);
+  }
+  const lines = [`# ${getResumeTitle({ ...item, data: titleData })}`, ""];
 
   moduleKeys.forEach((moduleKey) => {
     const moduleData = data[moduleKey];
     if (!moduleData || moduleData.ui?.hidden || moduleData.ui?.archived) return;
-    const schema = getSchema(moduleKey);
+    const schema = getSchema(moduleKey, runtimeConfig.value);
     const definitions: FieldDefinition[] = [];
     collectFieldDefinitions(getSchemaFields(schema), definitions);
     const records = getRecords(moduleData);
     if (!records.length) return;
 
     lines.push(`## ${getModuleTitle(moduleKey, moduleData, schema)}`, "");
-    records.forEach((record) => appendRecord(lines, record, definitions));
+    records.forEach((record: Record<string, unknown>) => appendRecord(lines, record, definitions, moduleData.ui));
   });
 
   const markdown = `${lines

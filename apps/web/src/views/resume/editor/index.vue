@@ -158,8 +158,6 @@ onKeyStroke("Escape", () => {
   if (focusMode.value) setFocusMode(false);
 });
 
-onMounted(() => {});
-
 onUnmounted(() => {
   // 离开编辑器时取消未完成的打印任务
   cancelPrinting();
