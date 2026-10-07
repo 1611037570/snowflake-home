@@ -8,7 +8,6 @@ import CreativeMain from "./themes/main/creative.vue";
 import CreativeUser from "./themes/user/creative.vue";
 import DoubleArrowMain from "./themes/main/doubleArrow.vue";
 import DoubleArrowUser from "./themes/user/doubleArrow.vue";
-import FrameUser from "./themes/user/frame.vue";
 import LayeredCurveMain from "./themes/main/layeredCurve.vue";
 import MarkerGridMain from "./themes/main/markerGrid.vue";
 import MarkerGridUser from "./themes/user/markerGrid.vue";
@@ -58,7 +57,7 @@ export const regionAppearanceRegistry: Record<RegionSlotId, Record<string, Compo
     academic: AcademicUser, // 学术：个人信息底托与分区标记
     fresh: PlainRegion, // 清新恢复旧版个人信息区域，不绘制新增页眉基线
     creative: CreativeUser, // 创意：左侧斜切色块与页眉留白
-    frame: FrameUser, // 红框：页眉色块与收口细线
+    frame: PlainRegion, // 红色边框恢复旧版个人信息，不绘制新增页眉色块与细线
     colorBar: PlainRegion, // 色条恢复旧版个人信息区域，不绘制新增页眉色块
     twoColumn: TwoColumnUser, // 双栏：页眉顶部留白与分栏提示线
     topUserTwoColumn: TopUserTwoColumnUser, // 通栏双栏：页眉细分隔线
