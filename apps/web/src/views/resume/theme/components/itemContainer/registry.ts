@@ -42,7 +42,7 @@ export const itemAppearanceRegistry = createAppearanceRegistry({
   labelLine: LabelLineAppearance, // 左端竖色块接短横线，日期与标题色块对齐
   markerGrid: MarkerGridAppearance, // 条目内平铺点阵底纹与首段刻度线
   timeline: TimelineAppearance, // 左侧固定日期栏的时间轴条目
-  squareTimeline: TimelineAppearance, // 方节点时间轴复用同一份日期栏条目
+  squareTimeline: DefaultAppearance, // 方节点时间轴使用默认条目，名称与日期不加定制底色和节点
 });
 
 /** 解析条目外观组件：主题未登记时返回 default */
