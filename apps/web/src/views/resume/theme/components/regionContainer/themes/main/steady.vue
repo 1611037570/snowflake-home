@@ -17,17 +17,17 @@ const {
   ui,
   theme: { themeColor, themeColorLine },
 } = useResumePreviewContext();
-// 留白写在根元素的 padding 上，区域外观只额外提供贯穿竖线的公共变量
+// 区域统一控制正文模块的轴线与间距，个人信息不参与轴线绘制。
 const mainStyle = computed(() => ({
   "--timeline-rail-width": "144px", // 左侧日期栏宽度：标题、条目与轴线共用同一份
   "--steady-axis": themeColorLine.value, // 贯穿竖线颜色
   "--steady-node": themeColor.value, // 标题节点与条目节点颜色
-  "--steady-module-gap": `${Number(ui.value?.page?.spacing?.module) || 0}px`, // 模块间距：标题用它把轴线补齐到上一模块
+  "--steady-module-gap": `${Number(ui.value?.page?.spacing?.module) || 0}px`, // 连接相邻正文模块的留白
 }));
 </script>
 
 <template>
-  <!-- 正文区域：留白交给区域容器，这里只声明留白并下发竖线变量 -->
+  <!-- 轴线仅覆盖正文模块容器及相邻正文模块间距，不进入个人信息区域。 -->
   <div
     class="resume-view-container steady-main relative box-border flex min-w-0 pt-5 pb-6"
     :style="mainStyle"
@@ -37,8 +37,20 @@ const mainStyle = computed(() => ({
 </template>
 
 <style scoped>
-/* 页面第一个模块的标题不再向上补齐间距，避免轴线上方多出一截线头 */
-.steady-main :deep(.resume-column > .resume-module-wrapper:first-of-type .steady-title::before) {
+/* 正文模块统一绘制标题、条目和段间距的轴线，明确排除个人信息。 */
+.steady-main :deep(.resume-column > .resume-module-wrapper:not([data-module="user"]))::before {
+  content: "";
+  position: absolute;
   top: 0;
+  bottom: 0;
+  left: calc(var(--timeline-rail-width) - 24px);
+  width: 1px;
+  background-color: var(--steady-axis);
+  pointer-events: none;
+}
+
+/* 仅从第二个正文模块起连接模块间距，首个正文模块不向个人信息延伸。 */
+.steady-main :deep(.resume-column > .resume-module-wrapper:not([data-module="user"]) ~ .resume-module-wrapper:not([data-module="user"]))::before {
+  top: calc(-1 * var(--steady-module-gap, 0px));
 }
 </style>

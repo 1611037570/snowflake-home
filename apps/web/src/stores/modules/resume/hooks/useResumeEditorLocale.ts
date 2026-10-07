@@ -275,8 +275,6 @@ const TEXT_KEYS_SOURCE = `
   "适合教育、设计与初入职场场景的简历样式。": "freshThemeDescription",
   活力: "vividTheme",
   "适合运营、市场与创意岗位的活力简历样式。": "vividThemeDescription",
-  创意: "creativeTheme",
-  "突出个人表达与作品展示的创意简历样式。": "creativeThemeDescription",
   稳重: "steadyTheme",
   "适合经验型岗位与正式求职的稳重简历样式。": "steadyThemeDescription",
   线框: "outlineTheme",

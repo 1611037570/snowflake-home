@@ -99,7 +99,7 @@ const resumeData: any = {
     font: { family: "text-puhui", size: 16, titleSize: 22, lineHeight: 1.2 },
     content: { language: "zh", textAlign: "auto", infoSeparator: "space", linkUnderline: false, dateStyle: "dot", datePosition: "right" },
     theme: {
-      template: "creative", // 视频剪辑范本使用的主题编号
+      template: "vivid", // 视频剪辑范本改用活力主题
       color: "#DB2777", // 主题强调色
       titleIconMode: "icon", // 标题图标显示方式
     },

@@ -1,7 +1,6 @@
 import { createAppearanceRegistry } from "../appearanceRegistry";
 import AcademicAppearance from "./themes/academic.vue";
 import BusinessAppearance from "./themes/business.vue";
-import CreativeAppearance from "./themes/creative.vue";
 import CurvedHeaderAppearance from "./themes/curvedHeader.vue";
 import NavyGuideAppearance from "./themes/navyGuide.vue";
 import DefaultAppearance from "./themes/default.vue";
@@ -21,7 +20,6 @@ export const userAppearanceRegistry = createAppearanceRegistry({
   inkMagazine: InkMagazineAppearance, // 杂志式大字号姓名与黑白页眉
   academic: AcademicAppearance, // 内容居中并叠加双分隔线
   business: BusinessAppearance, // 浅色底托圆角块 + 左侧主题色竖条
-  creative: CreativeAppearance, // 浅色底托圆角块 + 右侧主题色竖条
   fresh: FreshAppearance, // 大圆角浅色底托
   vivid: VividAppearance, // 浅色底托 + 主题色描边
   steady: SteadyAppearance, // 左侧主题色细竖条

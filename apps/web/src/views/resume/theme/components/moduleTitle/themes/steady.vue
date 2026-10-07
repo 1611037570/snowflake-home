@@ -15,7 +15,7 @@ const {
 </script>
 
 <template>
-  <!-- 稳重标题：让出左侧日期栏，标题落在贯穿轴线上，与条目节点连成一条 -->
+  <!-- 稳重标题只绘制模块节点，贯穿轴线由正文栏容器统一绘制。 -->
   <div
     class="steady-title relative flex items-center py-3"
     :style="{ paddingLeft: 'var(--timeline-rail-width)' }"
@@ -28,18 +28,6 @@ const {
 </template>
 
 <style scoped>
-/* 轴线向上补齐模块间距，使各模块的轴线连成一条；页面首个模块由区域外观截断 */
-.steady-title::before {
-  content: "";
-  position: absolute;
-  top: calc(-1 * var(--steady-module-gap, 0px));
-  bottom: 0;
-  left: calc(var(--timeline-rail-width) - 24px);
-  width: 1px;
-  background-color: var(--steady-axis);
-  pointer-events: none;
-}
-
 /* 标题节点：模块起点用主题色小方块标记，落在轴线正中 */
 .steady-title::after {
   content: "";

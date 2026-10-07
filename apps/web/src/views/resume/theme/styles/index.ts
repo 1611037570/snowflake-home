@@ -4,7 +4,6 @@ import business from "./business";
 import burgundySidebar from "./burgundySidebar";
 import chevronRibbon from "./chevronRibbon";
 import colorBar from "./colorBar";
-import creative from "./creative";
 import curvedHeader from "./curvedHeader";
 import defaultTheme from "./default";
 import doubleArrow from "./doubleArrow";
@@ -56,7 +55,6 @@ export const themeTemplateList = createThemeTemplates([
   academic,
   fresh,
   vivid,
-  creative,
   steady,
   tealRail,
   tealCard,
