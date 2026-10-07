@@ -349,7 +349,7 @@ const defaultData: any = {
     page: { padding: { vertical: 22, horizontal: 22 }, spacing: { paragraph: 6, module: 21 }, footer: "" },
     font: { family: "text-puhui", size: 18, titleSize: 24, lineHeight: 1.1 },
     content: { language: "zh", textAlign: "auto", infoSeparator: "space", linkUnderline: false, dateStyle: "dot", datePosition: "right" },
-    theme: { template: "classic", color: "#ef93b5", titleIconMode: "icon" },
+    theme: { template: "minimal", color: "#ef93b5", titleIconMode: "icon" }, // 范本改用简约主题
     layout: { template: null, custom: null, leftColumnWidth: 40 },
     user: { infoMode: "text", infoLayout: "flex", avatarPosition: "center", infoPosition: "center" },
   },
