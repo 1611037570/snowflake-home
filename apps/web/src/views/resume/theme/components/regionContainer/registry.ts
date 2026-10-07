@@ -15,8 +15,6 @@ import DoubleArrowMain from "./themes/main/doubleArrow.vue";
 import DoubleArrowUser from "./themes/user/doubleArrow.vue";
 import FoldedLabelMain from "./themes/main/foldedLabel.vue";
 import FrameUser from "./themes/user/frame.vue";
-import FreshMain from "./themes/main/fresh.vue";
-import FreshUser from "./themes/user/fresh.vue";
 import LayeredCurveMain from "./themes/main/layeredCurve.vue";
 import MarkerGridMain from "./themes/main/markerGrid.vue";
 import MarkerGridUser from "./themes/user/markerGrid.vue";
@@ -68,7 +66,7 @@ export const regionAppearanceRegistry: Record<RegionSlotId, Record<string, Compo
     minimal: MinimalUser, // 简约：页眉上下等距留白
     classic: ClassicUser, // 经典：页眉上下留白，与正文双线呼应
     academic: AcademicUser, // 学术：个人信息底托与分区标记
-    fresh: FreshUser, // 清新：页眉留白与底部主题色基线
+    fresh: PlainRegion, // 清新恢复旧版个人信息区域，不绘制新增页眉基线
     creative: CreativeUser, // 创意：左侧斜切色块与页眉留白
     frame: FrameUser, // 红框：页眉色块与收口细线
     colorBar: ColorBarUser, // 色条：首屏色块页眉，向下衔接正文色条
@@ -93,7 +91,7 @@ export const regionAppearanceRegistry: Record<RegionSlotId, Record<string, Compo
     minimal: MinimalMain, // 简约：正文首行留白与右对齐日期列基准
     classic: ClassicMain, // 经典：正文上下双细线
     academic: AcademicMain, // 学术：页眉分界线与双栏分区底色
-    fresh: FreshMain, // 清新：柔和圆角浅底托
+    fresh: DefaultMain, // 清新恢复旧版正文区域，不绘制新增圆角浅底托
     creative: CreativeMain, // 创意：单栏斜切柱体与双栏栏底色
     steady: SteadyMain, // 稳重：贯穿竖线与左侧日期列
     frame: Frame, // 红色边框主题正文底板

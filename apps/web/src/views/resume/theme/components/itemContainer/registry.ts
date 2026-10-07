@@ -9,7 +9,6 @@ import DefaultAppearance from "./themes/default.vue";
 import DoubleArrowAppearance from "./themes/doubleArrow.vue";
 import FoldedLabelAppearance from "./themes/foldedLabel.vue";
 import FrameAppearance from "./themes/frame.vue";
-import FreshAppearance from "./themes/fresh.vue";
 import LabelLineAppearance from "./themes/labelLine.vue";
 import LayeredCurveAppearance from "./themes/layeredCurve.vue";
 import MarkerGridAppearance from "./themes/markerGrid.vue";
@@ -31,7 +30,7 @@ export const itemAppearanceRegistry = createAppearanceRegistry({
   minimal: DefaultAppearance, // 简约条目不定制内边距、下划线或日期列装饰
   classic: ClassicAppearance, // 直角无底色，标题加粗、日期左置
   academic: AcademicAppearance, // 引用式左缩进条目：浅色面板 + 左侧引线
-  fresh: FreshAppearance, // 大圆角浅底条目
+  fresh: DefaultAppearance, // 清新恢复旧版条目，不绘制新增浅色底托
   creative: CreativeAppearance, // 左侧斜切强调竖线与浅底色条目
   steady: SteadyAppearance, // 左侧固定日期列与贯穿竖线的条目
   frame: FrameAppearance, // 白底正文内的条目细分隔线与内边距
