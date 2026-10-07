@@ -146,7 +146,10 @@ export const useResumeLayout = ({
         id: column.id,
         regionId: region.id,
         width: columnWidths.value.get(column.id) ?? contentWidth.value,
-        nodes: nodes.value.filter((node) => column.moduleKeys.includes(node.sourceModuleKey)),
+        // 测量节点按栏内模块顺序排列，保持模块内部节点顺序。
+        nodes: column.moduleKeys.flatMap((moduleKey) =>
+          nodes.value.filter((node) => node.sourceModuleKey === moduleKey),
+        ),
       })),
     ),
   );
@@ -193,8 +196,9 @@ export const useResumeLayout = ({
         availableHeight: availableHeight.value,
         laterPageAvailableHeight: laterPageAvailableHeight.value,
         buildFlow: (column, { heights }) => {
-          const columnNodes = nodes.value.filter((node) =>
-            column.moduleKeys.includes(node.sourceModuleKey),
+          // 分页沿用栏内模块顺序，使双栏上下移动实际改变页面内容。
+          const columnNodes = column.moduleKeys.flatMap((moduleKey) =>
+            nodes.value.filter((node) => node.sourceModuleKey === moduleKey),
           );
           return paginateFlow({
             nodes: columnNodes,

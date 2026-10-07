@@ -15,7 +15,7 @@ import {
   previewSelectedModule,
 } from "../../hooks/useModuleNav";
 import eventBus from "@/utils/modules/eventBus";
-import { resolveLayoutColumns } from "@/views/resume/theme/layouts";
+import { layoutUsesColumns, resolveLayoutColumns } from "@/views/resume/theme/layouts";
 
 defineOptions({ name: "ResumePage" });
 
@@ -155,8 +155,8 @@ const handleModuleMove = ({ moduleKey, direction, columnId }) => {
   if (index < 0) return;
   const target = direction === "up" ? index - 1 : index + 1;
   if (target < 0 || target >= order.length) return;
-  // 顶部通栏单栏按简历模块顺序移动，不写入双栏专用配置。
-  if (currentUI.value.layout.type === "topUserSingleColumn") {
+  // 单栏布局按简历模块顺序移动，使上下操作同步到预览。
+  if (!layoutUsesColumns(currentUI.value.layout.type)) {
     resumeStore.swapModuleOrder(moduleKey, order[target]);
     return;
   }
@@ -166,7 +166,14 @@ const handleModuleMove = ({ moduleKey, direction, columnId }) => {
     currentUI.value.layout.columns,
   );
   const side = columnId === "left" ? "left" : "right";
-  [columns[side][index], columns[side][target]] = [columns[side][target], columns[side][index]];
+  // 按模块标识定位栏内位置，避免未渲染模块导致预览下标错位。
+  const sourceIndex = columns[side].indexOf(moduleKey);
+  const targetIndex = columns[side].indexOf(order[target]);
+  if (sourceIndex < 0 || targetIndex < 0) return;
+  [columns[side][sourceIndex], columns[side][targetIndex]] = [
+    columns[side][targetIndex],
+    columns[side][sourceIndex],
+  ];
   resumeStore.setLayoutColumns(columns);
 };
 useResumeExport({
