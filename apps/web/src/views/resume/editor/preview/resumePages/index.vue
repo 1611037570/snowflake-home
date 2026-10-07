@@ -362,6 +362,8 @@ defineExpose({
               {
                 // 编辑器页边线是预览专有装饰：导出通道按该类名移除，主题声明的纸张边框不受影响
                 'resume-page-editor-frame': mode === 'editor',
+                // 紫色履历预览只保留顶部和两侧轮廓线。
+                'resume-page-editor-frame--open-bottom': mode === 'editor' && ui.theme?.template === 'violetBiography',
               },
             ]"
           >
@@ -414,5 +416,11 @@ defineExpose({
 .resume-page-editor-frame {
   outline: 1px solid var(--sf-border);
   outline-offset: -1px;
+}
+
+/* 紫色履历取消底部轮廓线，内阴影只绘制顶部和两侧，不影响页面尺寸。 */
+.resume-page-editor-frame.resume-page-editor-frame--open-bottom {
+  outline: none;
+  box-shadow: inset 1px 0 var(--sf-border), inset -1px 0 var(--sf-border), inset 0 1px var(--sf-border);
 }
 </style>
