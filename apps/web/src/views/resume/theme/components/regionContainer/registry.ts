@@ -4,8 +4,6 @@ import PlainRegion from "./themes/plain.vue";
 import AcademicMain from "./themes/main/academic.vue";
 import AcademicUser from "./themes/user/academic.vue";
 import AngledLineMain from "./themes/main/angledLine.vue";
-import CreativeMain from "./themes/main/creative.vue";
-import CreativeUser from "./themes/user/creative.vue";
 import MarkerGridMain from "./themes/main/markerGrid.vue";
 import MarkerGridUser from "./themes/user/markerGrid.vue";
 import MinimalMain from "./themes/main/minimal.vue";
@@ -53,7 +51,6 @@ export const regionAppearanceRegistry: Record<RegionSlotId, Record<string, Compo
     minimal: MinimalUser, // 简约：页眉上下等距留白
     academic: AcademicUser, // 学术：个人信息底托与分区标记
     fresh: PlainRegion, // 清新恢复旧版个人信息区域，不绘制新增页眉基线
-    creative: CreativeUser, // 创意：左侧斜切色块与页眉留白
     frame: PlainRegion, // 红色边框恢复旧版个人信息，不绘制新增页眉色块与细线
     colorBar: PlainRegion, // 色条恢复旧版个人信息区域，不绘制新增页眉色块
     twoColumn: TwoColumnUser, // 双栏：页眉顶部留白与分栏提示线
@@ -76,7 +73,6 @@ export const regionAppearanceRegistry: Record<RegionSlotId, Record<string, Compo
     minimal: MinimalMain, // 简约：正文首行留白与右对齐日期列基准
     academic: AcademicMain, // 学术：页眉分界线与双栏分区底色
     fresh: DefaultMain, // 清新恢复旧版正文区域，不绘制新增圆角浅底托
-    creative: CreativeMain, // 创意：单栏斜切柱体与双栏栏底色
     steady: SteadyMain, // 稳重：贯穿竖线与左侧日期列
     frame: Frame, // 红色边框主题正文底板
     timeline: TimelineMain, // 时间轴：正文区贯穿轴线与节点

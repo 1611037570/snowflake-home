@@ -9,7 +9,7 @@ import { computed } from "vue";
 import { useResumePreviewContext } from "@/views/resume/editor/preview/shared/previewContext";
 import { useItemBox } from "../useItemBox";
 
-// 稳重条目外观：复用统一盒模型，日期留在左侧列，贯穿竖线由条目整高画出
+// 稳重条目只绘制节点与日期，贯穿竖线交给正文栏容器统一绘制。
 const props = defineProps({
   // 分片覆盖的块区间：续段不画上圆角、不补上内边距
   blockRange: {
@@ -41,7 +41,7 @@ const RAIL_WIDTH = "144px";
 const AXIS_BACK = "24px";
 
 const {
-  theme: { themeColor, themeColorLine },
+  theme: { themeColor },
 } = useResumePreviewContext();
 // 留白、圆角与跨页分片收边全部交给共享盒模型，日期栏宽度由外观自己声明
 const { fragmentStyle, boxStyle, borderStyle } = useItemBox(props, {
@@ -51,7 +51,6 @@ const { fragmentStyle, boxStyle, borderStyle } = useItemBox(props, {
 });
 const itemStyle = {
   "--timeline-rail-width": RAIL_WIDTH, // 日期栏宽度：日期、轴线和正文起始线共用
-  "--steady-axis": themeColorLine.value, // 贯穿竖线颜色
   "--steady-node": themeColor.value, // 条目节点颜色
   "--steady-axis-back": AXIS_BACK, // 竖线相对正文起始线的退让距离
 };
@@ -62,7 +61,7 @@ const isItemStart = computed(
 </script>
 
 <template>
-  <!-- 条目让出左侧日期栏，整条轴线随条目高度延伸，相邻条目自然连成一条 -->
+  <!-- 条目让出左侧日期栏，只保留首段节点标记。 -->
   <div
     class="resume-item resume-item--timeline steady-item relative box-border"
     :class="{ 'steady-item--start': isItemStart }"
@@ -78,20 +77,6 @@ const isItemStart = computed(
 </template>
 
 <style scoped>
-/* 覆盖默认条目的半透明轴线：贯穿线改用主题线的稳定配色 */
-.steady-item::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: calc(var(--timeline-rail-width) - var(--steady-axis-back));
-  width: 1px;
-  border-left: none;
-  background-color: var(--steady-axis);
-  opacity: 1;
-  pointer-events: none;
-}
-
 /* 条目首段在轴线上落一个实心节点：上移量为条目内边距加半个行高，与日期首行居中 */
 .steady-item--start::after {
   content: "";

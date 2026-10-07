@@ -1,7 +1,6 @@
 import { createAppearanceRegistry } from "../appearanceRegistry";
 import AcademicAppearance from "./themes/academic.vue";
 import AngledLineAppearance from "./themes/angledLine.vue";
-import CreativeAppearance from "./themes/creative.vue";
 import DefaultAppearance from "./themes/default.vue";
 import MarkerGridAppearance from "./themes/markerGrid.vue";
 import OutlineAppearance from "./themes/outline.vue";
@@ -19,7 +18,6 @@ export const itemAppearanceRegistry = createAppearanceRegistry({
   minimal: DefaultAppearance, // 简约条目不定制内边距、下划线或日期列装饰
   academic: AcademicAppearance, // 引用式左缩进条目：浅色面板 + 左侧引线
   fresh: DefaultAppearance, // 清新恢复旧版条目，不绘制新增浅色底托
-  creative: CreativeAppearance, // 左侧斜切强调竖线与浅底色条目
   steady: SteadyAppearance, // 左侧固定日期列与贯穿竖线的条目
   frame: DefaultAppearance, // 红色边框恢复旧版条目，不绘制新增分隔线与内边距
   colorBar: DefaultAppearance, // 色条恢复旧版条目，不绘制新增底托与短条
