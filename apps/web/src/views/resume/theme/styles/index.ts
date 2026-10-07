@@ -8,7 +8,6 @@ import creative from "./creative";
 import curvedHeader from "./curvedHeader";
 import defaultTheme from "./default";
 import doubleArrow from "./doubleArrow";
-import foldedLabel from "./foldedLabel";
 import fresh from "./fresh";
 import frame from "./frame";
 import labelLine from "./labelLine";
@@ -76,7 +75,6 @@ export const themeTemplateList = createThemeTemplates([
   doubleArrow,
   chevronRibbon,
   slantedLayer,
-  foldedLabel,
   stripedRibbon,
   sloganBand,
   songElegance,

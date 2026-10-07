@@ -10,7 +10,6 @@ import CreativeMain from "./themes/main/creative.vue";
 import CreativeUser from "./themes/user/creative.vue";
 import DoubleArrowMain from "./themes/main/doubleArrow.vue";
 import DoubleArrowUser from "./themes/user/doubleArrow.vue";
-import FoldedLabelMain from "./themes/main/foldedLabel.vue";
 import FrameUser from "./themes/user/frame.vue";
 import LayeredCurveMain from "./themes/main/layeredCurve.vue";
 import MarkerGridMain from "./themes/main/markerGrid.vue";
@@ -96,7 +95,6 @@ export const regionAppearanceRegistry: Record<RegionSlotId, Record<string, Compo
     angledLine: AngledLineMain, // 斜角竖线：正文栏贯穿竖线与斜角节点
     layeredCurve: LayeredCurveMain, // 层叠弧线：正文右上三层错位弧线
     doubleArrow: DoubleArrowMain, // 双箭横线：右缘贯穿引导线与双箭头收口
-    foldedLabel: FoldedLabelMain, // 折角色块：正文左上折角
     markerGrid: MarkerGridMain, // 荧光网格：正文点阵底纹
     inkMagazine: InkMagazineMain, // 杂志双栏正文的浅灰辅助栏
     burgundySidebar: BurgundyMain, // 绛红双栏主题侧栏底色
