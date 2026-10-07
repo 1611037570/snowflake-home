@@ -22,8 +22,6 @@ import MinimalMain from "./themes/main/minimal.vue";
 import MinimalUser from "./themes/user/minimal.vue";
 import SlantedLayerMain from "./themes/main/slantedLayer.vue";
 import SteadyMain from "./themes/main/steady.vue";
-import StripedRibbonMain from "./themes/main/stripedRibbon.vue";
-import StripedRibbonUser from "./themes/user/stripedRibbon.vue";
 import TimelineMain from "./themes/main/timeline.vue";
 import TopUserTwoColumnMain from "./themes/main/topUserTwoColumn.vue";
 import TopUserTwoColumnUser from "./themes/user/topUserTwoColumn.vue";
@@ -72,7 +70,7 @@ export const regionAppearanceRegistry: Record<RegionSlotId, Record<string, Compo
     colorBar: ColorBarUser, // 色条：首屏色块页眉，向下衔接正文色条
     twoColumn: TwoColumnUser, // 双栏：页眉顶部留白与分栏提示线
     topUserTwoColumn: TopUserTwoColumnUser, // 通栏双栏：页眉细分隔线
-    stripedRibbon: StripedRibbonUser, // 斜纹飘带：页眉平行斜纹与下缘斜纹底
+    stripedRibbon: PlainRegion, // 斜纹飘带恢复旧版个人信息，不绘制新增页眉装饰
     doubleArrow: DoubleArrowUser, // 双箭横线：页眉箭头引导符与水平留白
     markerGrid: MarkerGridUser, // 荧光网格：页眉底部量尺基线与刻度
     tealCard: TealCardUser, // 顶带下方的个人信息留白
@@ -100,7 +98,7 @@ export const regionAppearanceRegistry: Record<RegionSlotId, Record<string, Compo
     twoColumn: TwoColumnMain, // 双栏：左栏浅底与栏间细线
     topUserTwoColumn: TopUserTwoColumnMain, // 通栏双栏：栏间线与正文留白
     chevronRibbon: ChevronRibbonMain, // 箭头长条：正文右缘细飘带与顶端短箭头
-    stripedRibbon: StripedRibbonMain, // 斜纹飘带：右缘斜纹条与双栏底色
+    stripedRibbon: DefaultMain, // 斜纹飘带恢复旧版正文，不绘制新增斜纹与双栏底色
     slantedLayer: SlantedLayerMain, // 斜切叠片：左下斜切底片与斜边细线
     angledLine: AngledLineMain, // 斜角竖线：正文栏贯穿竖线与斜角节点
     layeredCurve: LayeredCurveMain, // 层叠弧线：正文右上三层错位弧线
