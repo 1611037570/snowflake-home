@@ -64,7 +64,10 @@ const bottomSpace = computed(() =>
   Math.max(parseFloat(props.styles.paddingStyle.paddingBottom) || 0, props.showPageNumber ? PAGE_NUMBER_HEIGHT : 0),
 );
 const pageBackground = computed(() => props.ui.page?.background || defaultPageBackground);
-const pageTextColor = computed(() => getContrastTextColor(pageBackground.value));
+// 紫色履历正文使用浅色底板，文字固定为黑色，避免按紫色纸张底色误判为白色。
+const pageTextColor = computed(() => props.ui.theme?.template === "violetBiography"
+  ? "#000000"
+  : getContrastTextColor(pageBackground.value));
 // 预览整体带 scale 缩放，线宽会被一起缩小，按足够醒目的宽度标注
 const debugOutlineStyle = { outline: "4px dashed var(--sf-error)", outlineOffset: "-1px" };
 // 纸张外观：圆角与边框都来自主题配置，边框画在页面盒子内圈并参与内容宽高
