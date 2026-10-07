@@ -8,7 +8,6 @@ import MarkerGridMain from "./themes/main/markerGrid.vue";
 import MarkerGridUser from "./themes/user/markerGrid.vue";
 import MinimalMain from "./themes/main/minimal.vue";
 import MinimalUser from "./themes/user/minimal.vue";
-import SteadyMain from "./themes/main/steady.vue";
 import TopUserTwoColumnMain from "./themes/main/topUserTwoColumn.vue";
 import TopUserTwoColumnUser from "./themes/user/topUserTwoColumn.vue";
 import TwoColumnMain from "./themes/main/twoColumn.vue";
@@ -70,7 +69,6 @@ export const regionAppearanceRegistry: Record<RegionSlotId, Record<string, Compo
     minimal: MinimalMain, // 简约：正文首行留白与右对齐日期列基准
     academic: AcademicMain, // 学术：页眉分界线与双栏分区底色
     fresh: DefaultMain, // 清新恢复旧版正文区域，不绘制新增圆角浅底托
-    steady: SteadyMain, // 稳重：贯穿竖线与左侧日期列
     frame: Frame, // 红色边框主题正文底板
     colorBar: DefaultMain, // 色条恢复旧版正文，不绘制新增贯穿色条与留白
     twoColumn: TwoColumnMain, // 双栏：左栏浅底与栏间细线

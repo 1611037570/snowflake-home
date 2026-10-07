@@ -7,7 +7,6 @@ import DefaultAppearance from "./themes/default.vue";
 import FreshAppearance from "./themes/fresh.vue";
 import MinimalAppearance from "./themes/minimal.vue";
 import InkMagazineAppearance from "./themes/inkMagazine.vue";
-import SteadyAppearance from "./themes/steady.vue";
 import SandSidebarAppearance from "./themes/sandSidebar.vue";
 import RedWhiteSidebarAppearance from "./themes/redWhiteSidebar.vue";
 import SongEleganceAppearance from "./themes/songElegance.vue";
@@ -22,7 +21,6 @@ export const userAppearanceRegistry = createAppearanceRegistry({
   business: BusinessAppearance, // 浅色底托圆角块 + 左侧主题色竖条
   fresh: FreshAppearance, // 大圆角浅色底托
   vivid: VividAppearance, // 浅色底托 + 主题色描边
-  steady: SteadyAppearance, // 左侧主题色细竖条
   colorBar: DefaultAppearance, // 色条恢复旧版个人信息，不绘制新增色块与头像装饰
   sandSidebar: SandSidebarAppearance, // 米色侧栏主题的方形头像和金棕色姓名
   redWhiteSidebar: RedWhiteSidebarAppearance, // 红白双栏主题的矩形头像与姓名外观

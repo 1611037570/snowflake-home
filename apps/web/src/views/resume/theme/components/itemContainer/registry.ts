@@ -6,7 +6,6 @@ import MarkerGridAppearance from "./themes/markerGrid.vue";
 import OutlineAppearance from "./themes/outline.vue";
 import RingTimelineAppearance from "./themes/ringTimeline.vue";
 import SandSidebarAppearance from "./themes/sandSidebar.vue";
-import SteadyAppearance from "./themes/steady.vue";
 import TealCardAppearance from "./themes/tealCard.vue";
 import TopUserTwoColumnAppearance from "./themes/topUserTwoColumn.vue";
 import VividAppearance from "./themes/vivid.vue";
@@ -17,7 +16,6 @@ export const itemAppearanceRegistry = createAppearanceRegistry({
   minimal: DefaultAppearance, // 简约条目不定制内边距、下划线或日期列装饰
   academic: AcademicAppearance, // 引用式左缩进条目：浅色面板 + 左侧引线
   fresh: DefaultAppearance, // 清新恢复旧版条目，不绘制新增浅色底托
-  steady: SteadyAppearance, // 左侧固定日期列与贯穿竖线的条目
   frame: DefaultAppearance, // 红色边框恢复旧版条目，不绘制新增分隔线与内边距
   colorBar: DefaultAppearance, // 色条恢复旧版条目，不绘制新增底托与短条
   twoColumn: DefaultAppearance, // 双栏条目只承载内容，不绘制底色与边框或额外留白
