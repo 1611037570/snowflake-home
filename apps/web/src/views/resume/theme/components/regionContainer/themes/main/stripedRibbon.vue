@@ -95,12 +95,14 @@ const regionStyle = computed(() => ({
   clip-path: polygon(100% 0, 0 0, 100% 100%);
 }
 
-/* 双栏底色：栏位铺满页高时向左下延伸到纸张边缘，圆角沿用纸张左下角。 */
+/* 双栏底色：向上覆盖纸张上边距并向左下延伸到纸张边缘，圆角沿用纸张左下角。 */
 .striped-ribbon-main__surface {
-  top: -12px;
+  top: min(-12px, calc(-1 * var(--resume-page-top-space, 0px)));
   right: calc(-1 * var(--striped-region-bleed));
   bottom: calc(-1 * var(--striped-region-bottom-bleed) - 12px);
   left: calc(-1 * var(--striped-region-bleed));
+  border-top-left-radius: var(--resume-page-top-radius, 0px);
+  border-top-right-radius: var(--resume-page-top-radius, 0px);
   border-bottom-left-radius: var(--striped-region-radius);
   background-color: color-mix(in srgb, var(--striped-region-accent) 6%, transparent);
   pointer-events: none;
