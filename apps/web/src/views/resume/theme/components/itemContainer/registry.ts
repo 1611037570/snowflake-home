@@ -17,7 +17,6 @@ import RingTimelineAppearance from "./themes/ringTimeline.vue";
 import SandSidebarAppearance from "./themes/sandSidebar.vue";
 import SlantedLayerAppearance from "./themes/slantedLayer.vue";
 import SteadyAppearance from "./themes/steady.vue";
-import StripedRibbonAppearance from "./themes/stripedRibbon.vue";
 import TealCardAppearance from "./themes/tealCard.vue";
 import TimelineAppearance from "./themes/timeline.vue";
 import TopUserTwoColumnAppearance from "./themes/topUserTwoColumn.vue";
@@ -38,7 +37,7 @@ export const itemAppearanceRegistry = createAppearanceRegistry({
   twoColumn: TwoColumnAppearance, // 双栏条目：紧凑留白与浅底圆角卡片
   topUserTwoColumn: TopUserTwoColumnAppearance, // 通栏双栏条目：直角浅底托与主题色细描边
   chevronRibbon: ChevronRibbonAppearance, // 箭头长条：左端小箭头与右缘细飘带
-  stripedRibbon: StripedRibbonAppearance, // 斜纹飘带：条目标题细斜纹与栏内淡斜纹
+  stripedRibbon: DefaultAppearance, // 斜纹飘带恢复旧版条目，不绘制新增斜纹装饰
   slantedLayer: SlantedLayerAppearance, // 斜切叠片：条目斜切底片与斜边细线
   layeredCurve: LayeredCurveAppearance, // 层叠底片：浅底圆角与右下错位底片
   doubleArrow: DoubleArrowAppearance, // 双箭条目：左端双箭头标识与右缘箭头列

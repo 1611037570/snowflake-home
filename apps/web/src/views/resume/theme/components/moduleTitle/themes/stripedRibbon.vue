@@ -22,14 +22,11 @@ const {
     class="relative -ml-[0.9em] flex items-start pr-[1.2em] pb-[0.45em]"
     :style="{ color: themeColor }"
   >
-    <span
-      aria-hidden="true"
-      class="absolute inset-x-0 bottom-[0.45em] h-px bg-current opacity-60"
-    />
-    <h2 class="relative max-w-full min-w-0 py-[4px] pr-[2.1em] pl-3 font-bold tracking-wide">
+    <h2 class="relative w-fit max-w-full min-w-0 py-[4px] pr-[2.1em] pl-3 font-bold tracking-wide">
+      <!-- 标题底板左缘与内收后的折角左缘对齐。 -->
       <span
         aria-hidden="true"
-        class="absolute inset-0 bg-current [clip-path:polygon(0_0,calc(100%_-_1.56em)_0,100%_100%,0_100%)]"
+        class="absolute inset-y-0 right-0 left-[0.1em] bg-current [clip-path:polygon(0_0,calc(100%_-_1.56em)_0,100%_100%,0_100%)]"
       />
       <svg
         aria-hidden="true"
@@ -40,9 +37,10 @@ const {
         <path d="M0 0H8L68 100H60Z" />
         <path d="M16 0H38L98 100H76Z" />
       </svg>
+      <!-- 折角左右各内收并降低高度，避免倒三角伸出过多。 -->
       <svg
         aria-hidden="true"
-        class="absolute top-full left-0 h-[0.45em] w-[0.9em] fill-current brightness-75"
+        class="absolute top-full left-[0.1em] h-[0.35em] w-[0.7em] fill-current brightness-75"
         viewBox="0 0 30 15"
         preserveAspectRatio="none"
       >
@@ -50,5 +48,7 @@ const {
       </svg>
       <TitleText :title="title" class="relative" :style="{ color: themeColorContrast }" />
     </h2>
+    <!-- 下划线只延伸到标题右侧并贴齐底边，不隔开底板与下方折角。 -->
+    <span aria-hidden="true" class="block h-px min-w-0 flex-1 self-end bg-current opacity-60" />
   </div>
 </template>
