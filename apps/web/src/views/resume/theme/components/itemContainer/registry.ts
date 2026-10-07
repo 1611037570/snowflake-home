@@ -13,7 +13,6 @@ import FreshAppearance from "./themes/fresh.vue";
 import LabelLineAppearance from "./themes/labelLine.vue";
 import LayeredCurveAppearance from "./themes/layeredCurve.vue";
 import MarkerGridAppearance from "./themes/markerGrid.vue";
-import MinimalAppearance from "./themes/minimal.vue";
 import OutlineAppearance from "./themes/outline.vue";
 import RingTimelineAppearance from "./themes/ringTimeline.vue";
 import SandSidebarAppearance from "./themes/sandSidebar.vue";
@@ -29,7 +28,7 @@ import VividAppearance from "./themes/vivid.vue";
 /** 条目外观注册表：外观编号与主题编号同名，未登记的主题走 default */
 export const itemAppearanceRegistry = createAppearanceRegistry({
   default: DefaultAppearance, // 不绘制底色与边框
-  minimal: MinimalAppearance, // 仅留白分层，日期收成右对齐列
+  minimal: DefaultAppearance, // 简约条目不定制内边距、下划线或日期列装饰
   classic: ClassicAppearance, // 直角无底色，标题加粗、日期左置
   academic: AcademicAppearance, // 引用式左缩进条目：浅色面板 + 左侧引线
   fresh: FreshAppearance, // 大圆角浅底条目
