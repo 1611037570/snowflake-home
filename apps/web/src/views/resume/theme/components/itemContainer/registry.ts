@@ -1,7 +1,6 @@
 import { createAppearanceRegistry } from "../appearanceRegistry";
 import AcademicAppearance from "./themes/academic.vue";
 import AngledLineAppearance from "./themes/angledLine.vue";
-import ColorBarAppearance from "./themes/colorBar.vue";
 import CreativeAppearance from "./themes/creative.vue";
 import DefaultAppearance from "./themes/default.vue";
 import DoubleArrowAppearance from "./themes/doubleArrow.vue";
@@ -28,7 +27,7 @@ export const itemAppearanceRegistry = createAppearanceRegistry({
   creative: CreativeAppearance, // 左侧斜切强调竖线与浅底色条目
   steady: SteadyAppearance, // 左侧固定日期列与贯穿竖线的条目
   frame: FrameAppearance, // 白底正文内的条目细分隔线与内边距
-  colorBar: ColorBarAppearance, // 浅色底托与左端主题色短条
+  colorBar: DefaultAppearance, // 色条恢复旧版条目，不绘制新增底托与短条
   twoColumn: TwoColumnAppearance, // 双栏条目：紧凑留白与浅底圆角卡片
   topUserTwoColumn: TopUserTwoColumnAppearance, // 通栏双栏条目：直角浅底托与主题色细描边
   stripedRibbon: DefaultAppearance, // 斜纹飘带恢复旧版条目，不绘制新增斜纹装饰

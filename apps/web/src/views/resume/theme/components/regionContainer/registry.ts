@@ -4,8 +4,6 @@ import PlainRegion from "./themes/plain.vue";
 import AcademicMain from "./themes/main/academic.vue";
 import AcademicUser from "./themes/user/academic.vue";
 import AngledLineMain from "./themes/main/angledLine.vue";
-import ColorBarMain from "./themes/main/colorBar.vue";
-import ColorBarUser from "./themes/user/colorBar.vue";
 import CreativeMain from "./themes/main/creative.vue";
 import CreativeUser from "./themes/user/creative.vue";
 import DoubleArrowMain from "./themes/main/doubleArrow.vue";
@@ -61,7 +59,7 @@ export const regionAppearanceRegistry: Record<RegionSlotId, Record<string, Compo
     fresh: PlainRegion, // 清新恢复旧版个人信息区域，不绘制新增页眉基线
     creative: CreativeUser, // 创意：左侧斜切色块与页眉留白
     frame: FrameUser, // 红框：页眉色块与收口细线
-    colorBar: ColorBarUser, // 色条：首屏色块页眉，向下衔接正文色条
+    colorBar: PlainRegion, // 色条恢复旧版个人信息区域，不绘制新增页眉色块
     twoColumn: TwoColumnUser, // 双栏：页眉顶部留白与分栏提示线
     topUserTwoColumn: TopUserTwoColumnUser, // 通栏双栏：页眉细分隔线
     stripedRibbon: PlainRegion, // 斜纹飘带恢复旧版个人信息，不绘制新增页眉装饰
@@ -87,7 +85,7 @@ export const regionAppearanceRegistry: Record<RegionSlotId, Record<string, Compo
     steady: SteadyMain, // 稳重：贯穿竖线与左侧日期列
     frame: Frame, // 红色边框主题正文底板
     timeline: TimelineMain, // 时间轴：正文区贯穿轴线与节点
-    colorBar: ColorBarMain, // 色条：左侧贯穿色条
+    colorBar: DefaultMain, // 色条恢复旧版正文，不绘制新增贯穿色条与留白
     twoColumn: TwoColumnMain, // 双栏：左栏浅底与栏间细线
     topUserTwoColumn: TopUserTwoColumnMain, // 通栏双栏：栏间线与正文留白
     stripedRibbon: DefaultMain, // 斜纹飘带恢复旧版正文，不绘制新增斜纹与双栏底色
