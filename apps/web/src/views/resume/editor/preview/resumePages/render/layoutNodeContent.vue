@@ -7,6 +7,7 @@ import ResumeField from "../../components/resumeField/index.vue";
 import ModuleTitle from "@/views/resume/theme/components/moduleTitle/index.vue";
 import SloganContent from "@/views/resume/theme/components/sloganModule/index.vue";
 import UserContent from "@/views/resume/theme/components/userModule/index.vue";
+import ImageWork from "./imageWork.vue";
 import { getTime } from "./getTime";
 import { isContentEmpty } from "../../shared/validData";
 import { useResumePreviewContext } from "../../shared/previewContext";
@@ -49,12 +50,6 @@ const {
 
 const nodePayload = computed(() => (props.payload ?? props.node.payload) as any);
 const item = computed(() => nodePayload.value?.item || {});
-// 图片作品按条目尺寸占比渲染，和模块原实现的宽度口径保持一致
-const mediaWidthStyle = computed(() => {
-  const payload = nodePayload.value;
-  if (payload?.mediaType !== "image") return undefined;
-  return { width: `${payload.item?.size ?? 50}%` };
-});
 const richTextHtml = computed(() => {
   // 富文本节点的载荷即解析结果，经历条目则读取条目正文的解析结果
   const parsed = nodePayload.value?.content ?? nodePayload.value;
@@ -302,29 +297,8 @@ const itemContentSpacingStyle = computed(() => {
       </div>
     </template>
     <template v-else>
-      <!-- 图片条目内容盒整体作为一个块，与顶部间距分离后间距可以单独留在上一页 -->
-      <div class="flex flex-col gap-3" :style="mediaWidthStyle">
-        <img
-          v-if="nodePayload.item?.img"
-          :src="nodePayload.item.img"
-          :alt="nodePayload.item.name || ''"
-          class="max-w-full"
-        />
-        <a
-          v-if="safeUrl(nodePayload.item?.url)"
-          :href="safeUrl(nodePayload.item.url)"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="block text-center hover:underline"
-          :class="{ underline: linkUnderline }"
-        >
-          {{ nodePayload.item.name || nodePayload.item.url }}
-        </a>
-        <span v-else-if="nodePayload.item?.name" class="block text-center">{{
-          nodePayload.item.name
-        }}</span>
-        <span v-if="nodePayload.item?.desc">{{ nodePayload.item.desc }}</span>
-      </div>
+      <!-- 图片与说明共用有高度上限的条目，测量和实际页面使用同一组件。 -->
+      <ImageWork :item="nodePayload.item" :url="safeUrl(nodePayload.item?.url)" />
     </template>
   </template>
 </template>
