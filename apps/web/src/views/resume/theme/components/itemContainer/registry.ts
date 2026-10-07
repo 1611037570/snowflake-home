@@ -8,7 +8,6 @@ import RingTimelineAppearance from "./themes/ringTimeline.vue";
 import SandSidebarAppearance from "./themes/sandSidebar.vue";
 import SteadyAppearance from "./themes/steady.vue";
 import TealCardAppearance from "./themes/tealCard.vue";
-import TimelineAppearance from "./themes/timeline.vue";
 import TopUserTwoColumnAppearance from "./themes/topUserTwoColumn.vue";
 import VividAppearance from "./themes/vivid.vue";
 
@@ -34,7 +33,6 @@ export const itemAppearanceRegistry = createAppearanceRegistry({
   angledLine: AngledLineAppearance, // 条目向模块竖线内侧留白
   labelLine: DefaultAppearance, // 色块横线恢复旧版条目，不绘制新增竖色块与短横线
   markerGrid: MarkerGridAppearance, // 条目内平铺点阵底纹与首段刻度线
-  timeline: TimelineAppearance, // 左侧固定日期栏的时间轴条目
   squareTimeline: DefaultAppearance, // 方节点时间轴使用默认条目，名称与日期不加定制底色和节点
 });
 
