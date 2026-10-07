@@ -1,7 +1,6 @@
 import { createAppearanceRegistry } from "../appearanceRegistry";
 import AcademicAppearance from "./themes/academic.vue";
 import AngledLineAppearance from "./themes/angledLine.vue";
-import ChevronRibbonAppearance from "./themes/chevronRibbon.vue";
 import ColorBarAppearance from "./themes/colorBar.vue";
 import CreativeAppearance from "./themes/creative.vue";
 import DefaultAppearance from "./themes/default.vue";
@@ -33,7 +32,6 @@ export const itemAppearanceRegistry = createAppearanceRegistry({
   colorBar: ColorBarAppearance, // 浅色底托与左端主题色短条
   twoColumn: TwoColumnAppearance, // 双栏条目：紧凑留白与浅底圆角卡片
   topUserTwoColumn: TopUserTwoColumnAppearance, // 通栏双栏条目：直角浅底托与主题色细描边
-  chevronRibbon: ChevronRibbonAppearance, // 箭头长条：左端小箭头与右缘细飘带
   stripedRibbon: DefaultAppearance, // 斜纹飘带恢复旧版条目，不绘制新增斜纹装饰
   slantedLayer: DefaultAppearance, // 斜切叠片恢复旧版条目，不绘制新增底片与斜边细线
   layeredCurve: LayeredCurveAppearance, // 层叠底片：浅底圆角与右下错位底片

@@ -4,7 +4,6 @@ import PlainRegion from "./themes/plain.vue";
 import AcademicMain from "./themes/main/academic.vue";
 import AcademicUser from "./themes/user/academic.vue";
 import AngledLineMain from "./themes/main/angledLine.vue";
-import ChevronRibbonMain from "./themes/main/chevronRibbon.vue";
 import ColorBarMain from "./themes/main/colorBar.vue";
 import ColorBarUser from "./themes/user/colorBar.vue";
 import CreativeMain from "./themes/main/creative.vue";
@@ -92,7 +91,6 @@ export const regionAppearanceRegistry: Record<RegionSlotId, Record<string, Compo
     colorBar: ColorBarMain, // 色条：左侧贯穿色条
     twoColumn: TwoColumnMain, // 双栏：左栏浅底与栏间细线
     topUserTwoColumn: TopUserTwoColumnMain, // 通栏双栏：栏间线与正文留白
-    chevronRibbon: ChevronRibbonMain, // 箭头长条：正文右缘细飘带与顶端短箭头
     stripedRibbon: DefaultMain, // 斜纹飘带恢复旧版正文，不绘制新增斜纹与双栏底色
     slantedLayer: DefaultMain, // 斜切叠片恢复旧版正文，不绘制新增底片与斜边细线
     angledLine: AngledLineMain, // 斜角竖线：正文栏贯穿竖线与斜角节点
