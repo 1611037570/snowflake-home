@@ -154,7 +154,7 @@ const itemContentSpacingStyle = computed(() => {
   </template>
 
   <template v-else-if="node.type === 'group' && node.sourceModuleKey === 'user'">
-    <UserContent />
+    <UserContent :block-range="blockRange" />
   </template>
 
   <template v-else-if="isExperience">

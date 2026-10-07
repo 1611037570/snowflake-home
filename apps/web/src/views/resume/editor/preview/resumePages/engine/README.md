@@ -71,11 +71,11 @@ engine/adapter/buildLayoutNodes.ts（模块 → 通用排版节点）
 | `MeasuredNode.droppedTopSpacing`           | 续段渲染时被移除的内容盒上内边距                                       | 测量层读 `paddingTop` |
 | `MeasuredNode.breakPoints[].height`        | 从节点起点到该断点的流内口径高度                                       | 测量层                |
 | `MeasuredNode.breakPoints[].blockEnd`      | 块断点覆盖的块数量，区间为 `[0, blockEnd)`                             | 测量层读块结构        |
-| `MeasuredNode.breakPoints[].leadingMargin` | 块上外边距，页首渲染会移除它，分页计价据此扣除                         | 测量层读 `marginTop`  |
+| `MeasuredNode.breakPoints[].leadingMargin` | 块前间距，续段首块渲染会移除它，分页计价据此扣除                       | 测量层读 `marginTop` 或网格块间距 |
 
 断点来自三条来源，合并顺序固定为「块断点 → 声明断点探针 → 行级文本断点」：
 
-1. **块断点**：节点内声明了 `data-layout-block-range` 的容器的每个直接子元素，`blockEnd` 为块序号，高度按子元素底边到节点顶边计算。
+1. **块断点**：节点内声明了 `data-layout-block-range` 的容器的每个直接子元素，`blockEnd` 为块序号，高度按子元素底边到节点顶边计算。嵌套单列网格通过 `data-layout-block-index`（稳定块序号）声明字段边界，测量层读取真实底边和相邻块间距；隐藏头像或姓名时保留原块序号。双栏个人信息按该块区间跨页，续页不重复头像与姓名。
 2. **声明断点**：节点 `breakPoints` 在测量树中渲染的探针元素，高度为探针自身高度。
 3. **行级文本断点**：声明了 `data-layout-split-lines` 的纯文本容器逐行上报偏移，用于描述类文本按行拆分。
 

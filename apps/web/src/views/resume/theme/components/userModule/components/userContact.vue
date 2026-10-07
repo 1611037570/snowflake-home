@@ -30,6 +30,11 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  // 双栏个人信息的分页块区间，前两个块由头像与姓名占用。
+  blockRange: {
+    type: Object,
+    default: () => ({ start: 0 /* 起始块序号 */, end: Number.MAX_SAFE_INTEGER /* 结束块序号 */ }),
+  },
 });
 const user = computed(() => previewData.value?.user?.data || {});
 // 字段级 UI 配置（图标等），与编辑器同读个人信息模块 ui 层级
@@ -376,6 +381,10 @@ const contactItems = computed(() => {
       )
   );
 });
+// 单列资料按字段切分，其他个人信息版式保持完整展示。
+const visibleContactItems = computed(() => props.singleColumnGrid
+  ? contactItems.value.slice(Math.max(0, props.blockRange.start - 2), Math.max(0, props.blockRange.end - 2))
+  : contactItems.value);
 </script>
 
 <template>
@@ -396,10 +405,11 @@ const contactItems = computed(() => {
       />
     </template>
   </InlineInfoList>
-  <div v-else-if="contactItems.length" class="max-w-full min-w-0 items-center" :class="layoutClass">
+  <div v-else-if="visibleContactItems.length" class="max-w-full min-w-0 items-center" :class="layoutClass">
     <UserContactItem
-      v-for="item in contactItems"
+      v-for="(item, index) in visibleContactItems"
       :key="item.key || item.text"
+      :data-layout-block-index="singleColumnGrid ? Math.max(2, blockRange.start) + index : undefined"
       :icon="item.icon"
       :label="item.label"
       :model-value="item.key ? user[item.key] : null"

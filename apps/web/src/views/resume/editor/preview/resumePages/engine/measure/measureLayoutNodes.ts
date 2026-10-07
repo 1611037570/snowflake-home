@@ -83,6 +83,21 @@ export const measureLayoutNodes = (
           .filter((point) => Number.isFinite(point.height) && point.height > 0)
       : [];
 
+    // 嵌套网格以显式块序号声明字段边界，隐藏字段不改变续页裁剪的序号。
+    const indexedBlocks = Array.from(element.querySelectorAll<HTMLElement>("[data-layout-block-index]"))
+      .filter((block) => !block.closest(".layout-measure-breakpoint"));
+    const indexedBreakPoints = indexedBlocks.map((block, index) => {
+      const blockRect = block.getBoundingClientRect();
+      const previousBottom = index > 0 ? indexedBlocks[index - 1].getBoundingClientRect().bottom : blockRect.top;
+      return {
+        offset: 0, // 块断点不消费正文字符
+        type: "block" as const, // 显式内容块断点
+        height: blockRect.bottom - nodeTop, // 块底边相对节点起点的累计高度
+        blockEnd: Number(block.dataset.layoutBlockIndex) + 1, // 当前块之后的稳定裁剪序号
+        leadingMargin: Math.max(0, blockRect.top - previousBottom), // 续页首块需要移除的网格间距
+      };
+    }).filter((point) => Number.isFinite(point.blockEnd) && point.height > 0);
+
     // 续段会去掉内容盒上内边距，测量分页高度时一并扣除
     const style = getComputedStyle(blockHost ?? element);
     const droppedTopSpacing = Number.parseFloat(style.paddingTop) || 0;
@@ -106,7 +121,7 @@ export const measureLayoutNodes = (
       nodeId: node.id,
       width: rect.width,
       fullHeight: rect.height,
-      breakPoints: [...blockBreakPoints, ...breakPoints, ...lineBreakPoints],
+      breakPoints: [...blockBreakPoints, ...indexedBreakPoints, ...breakPoints, ...lineBreakPoints],
       // 富文本从自身断点取正文末尾，按行拆分的纯文本则从实测行尾取，避免续页提前结束。
       contentLength: Math.max(
         lineBreakPoints.reduce((max, point) => Math.max(max, point.offset), 0),
