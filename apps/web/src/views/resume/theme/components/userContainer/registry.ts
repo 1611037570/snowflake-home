@@ -1,7 +1,6 @@
 import { createAppearanceRegistry } from "../appearanceRegistry";
 import AcademicAppearance from "./themes/academic.vue";
 import BusinessAppearance from "./themes/business.vue";
-import ColorBarAppearance from "./themes/colorBar.vue";
 import CreativeAppearance from "./themes/creative.vue";
 import CurvedHeaderAppearance from "./themes/curvedHeader.vue";
 import NavyGuideAppearance from "./themes/navyGuide.vue";
@@ -26,7 +25,7 @@ export const userAppearanceRegistry = createAppearanceRegistry({
   fresh: FreshAppearance, // 大圆角浅色底托
   vivid: VividAppearance, // 浅色底托 + 主题色描边
   steady: SteadyAppearance, // 左侧主题色细竖条
-  colorBar: ColorBarAppearance, // 首屏色块页眉，与正文左侧色条同一基准
+  colorBar: DefaultAppearance, // 色条恢复旧版个人信息，不绘制新增色块与头像装饰
   sandSidebar: SandSidebarAppearance, // 米色侧栏主题的方形头像和金棕色姓名
   redWhiteSidebar: RedWhiteSidebarAppearance, // 红白双栏主题的矩形头像与姓名外观
   curvedHeader: CurvedHeaderAppearance, // 圆形头像跨弧线，个人信息位于背景下方
