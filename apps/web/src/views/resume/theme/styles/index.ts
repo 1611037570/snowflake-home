@@ -23,7 +23,6 @@ import ringTimeline from "./ringTimeline";
 import slantedLayer from "./slantedLayer";
 import sloganBand from "./sloganBand";
 import songElegance from "./songElegance";
-import steady from "./steady";
 import tealRail from "./tealRail";
 import tealCard from "./tealCard";
 import stripedRibbon from "./stripedRibbon";
@@ -54,7 +53,6 @@ export const themeTemplateList = createThemeTemplates([
   academic,
   fresh,
   vivid,
-  steady,
   tealRail,
   tealCard,
   outline,

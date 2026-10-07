@@ -15,7 +15,7 @@ const resumeData: any = {
     font: { family: "text-puhui", size: 16, titleSize: 22, lineHeight: 1.2 },
     content: { language: "zh", textAlign: "auto", infoSeparator: "space", linkUnderline: false, dateStyle: "dot", datePosition: "right" },
     theme: {
-      template: "steady", // 留学范本使用的主题编号
+      template: "academic", // 留学范本改用学术主题
       color: "#475569", // 主题强调色
       titleIconMode: "none", // 标题图标显示方式
     },
