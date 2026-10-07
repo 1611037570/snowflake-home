@@ -6,7 +6,6 @@ import AcademicUser from "./themes/user/academic.vue";
 import AngledLineMain from "./themes/main/angledLine.vue";
 import CreativeMain from "./themes/main/creative.vue";
 import CreativeUser from "./themes/user/creative.vue";
-import LayeredCurveMain from "./themes/main/layeredCurve.vue";
 import MarkerGridMain from "./themes/main/markerGrid.vue";
 import MarkerGridUser from "./themes/user/markerGrid.vue";
 import MinimalMain from "./themes/main/minimal.vue";
@@ -87,7 +86,7 @@ export const regionAppearanceRegistry: Record<RegionSlotId, Record<string, Compo
     stripedRibbon: DefaultMain, // 斜纹飘带恢复旧版正文，不绘制新增斜纹与双栏底色
     slantedLayer: DefaultMain, // 斜切叠片恢复旧版正文，不绘制新增底片与斜边细线
     angledLine: AngledLineMain, // 斜角竖线：正文栏贯穿竖线与斜角节点
-    layeredCurve: LayeredCurveMain, // 层叠弧线：正文右上三层错位弧线
+    layeredCurve: DefaultMain, // 层叠弧线恢复旧版正文，不绘制新增右上弧线装饰
     markerGrid: MarkerGridMain, // 荧光网格：正文点阵底纹
     inkMagazine: InkMagazineMain, // 杂志双栏正文的浅灰辅助栏
     burgundySidebar: BurgundyMain, // 绛红双栏主题侧栏底色
