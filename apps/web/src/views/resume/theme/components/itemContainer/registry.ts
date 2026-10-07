@@ -2,7 +2,6 @@ import { createAppearanceRegistry } from "../appearanceRegistry";
 import AcademicAppearance from "./themes/academic.vue";
 import AngledLineAppearance from "./themes/angledLine.vue";
 import ChevronRibbonAppearance from "./themes/chevronRibbon.vue";
-import ClassicAppearance from "./themes/classic.vue";
 import ColorBarAppearance from "./themes/colorBar.vue";
 import CreativeAppearance from "./themes/creative.vue";
 import DefaultAppearance from "./themes/default.vue";
@@ -27,7 +26,6 @@ import VividAppearance from "./themes/vivid.vue";
 export const itemAppearanceRegistry = createAppearanceRegistry({
   default: DefaultAppearance, // 不绘制底色与边框
   minimal: DefaultAppearance, // 简约条目不定制内边距、下划线或日期列装饰
-  classic: ClassicAppearance, // 直角无底色，标题加粗、日期左置
   academic: AcademicAppearance, // 引用式左缩进条目：浅色面板 + 左侧引线
   fresh: DefaultAppearance, // 清新恢复旧版条目，不绘制新增浅色底托
   creative: CreativeAppearance, // 左侧斜切强调竖线与浅底色条目

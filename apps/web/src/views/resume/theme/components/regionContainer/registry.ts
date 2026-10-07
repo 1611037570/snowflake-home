@@ -5,8 +5,6 @@ import AcademicMain from "./themes/main/academic.vue";
 import AcademicUser from "./themes/user/academic.vue";
 import AngledLineMain from "./themes/main/angledLine.vue";
 import ChevronRibbonMain from "./themes/main/chevronRibbon.vue";
-import ClassicMain from "./themes/main/classic.vue";
-import ClassicUser from "./themes/user/classic.vue";
 import ColorBarMain from "./themes/main/colorBar.vue";
 import ColorBarUser from "./themes/user/colorBar.vue";
 import CreativeMain from "./themes/main/creative.vue";
@@ -62,7 +60,6 @@ export const regionAppearanceRegistry: Record<RegionSlotId, Record<string, Compo
   user: {
     default: PlainRegion, // 普通个人信息区域
     minimal: MinimalUser, // 简约：页眉上下等距留白
-    classic: ClassicUser, // 经典：页眉上下留白，与正文双线呼应
     academic: AcademicUser, // 学术：个人信息底托与分区标记
     fresh: PlainRegion, // 清新恢复旧版个人信息区域，不绘制新增页眉基线
     creative: CreativeUser, // 创意：左侧斜切色块与页眉留白
@@ -87,7 +84,6 @@ export const regionAppearanceRegistry: Record<RegionSlotId, Record<string, Compo
   main: {
     default: DefaultMain, // 普通正文区域底板
     minimal: MinimalMain, // 简约：正文首行留白与右对齐日期列基准
-    classic: ClassicMain, // 经典：正文上下双细线
     academic: AcademicMain, // 学术：页眉分界线与双栏分区底色
     fresh: DefaultMain, // 清新恢复旧版正文区域，不绘制新增圆角浅底托
     creative: CreativeMain, // 创意：单栏斜切柱体与双栏栏底色

@@ -3,7 +3,6 @@ import angledLine from "./angledLine";
 import business from "./business";
 import burgundySidebar from "./burgundySidebar";
 import chevronRibbon from "./chevronRibbon";
-import classic from "./classic";
 import colorBar from "./colorBar";
 import creative from "./creative";
 import curvedHeader from "./curvedHeader";
@@ -55,7 +54,6 @@ export const themeTemplateList = createThemeTemplates([
   redWhiteSidebar,
   minimal,
   inkMagazine,
-  classic,
   academic,
   fresh,
   vivid,

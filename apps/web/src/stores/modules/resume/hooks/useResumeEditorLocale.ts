@@ -269,8 +269,6 @@ const TEXT_KEYS_SOURCE = `
   "适合职场与商务场景的正式简历样式。": "businessThemeDescription",
   简约: "minimalTheme",
   "减少视觉干扰，突出内容本身的简历样式。": "minimalThemeDescription",
-  经典: "classicTheme",
-  "适合传统行业与正式投递的经典简历样式。": "classicThemeDescription",
   学术: "academicTheme",
   "强调研究经历与文字内容的学术简历样式。": "academicThemeDescription",
   清新: "freshTheme",
