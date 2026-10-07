@@ -62,21 +62,9 @@ const nodeStyle = { "--ring-item-padding": ITEM_PADDING };
 </template>
 
 <style scoped>
-/* 轴线按条目整高绘制：相邻条目、标题补齐的线段在模块间距处自然衔接 */
-.ring-timeline-item::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: calc(var(--timeline-rail-width) - 18px);
-  width: 1px;
-  background-color: var(--ring-line);
-  pointer-events: none;
-}
-
-/* 模块首段的轴线向上补齐模块间距：模块没有标题时轴线依然连续 */
-.ring-timeline-item--start::before {
-  top: calc(-1 * var(--ring-module-gap));
+/* 日期条目继承区域栏宽，圆环与模块竖线保持在同一位置。 */
+.ring-timeline-item.resume-item--timeline {
+  --timeline-rail-width: inherit;
 }
 
 /* 空心圆环：与日期首行居中对齐，内圈用纸张底色压住轴线 */
