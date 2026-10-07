@@ -4,7 +4,6 @@ import AngledLineAppearance from "./themes/angledLine.vue";
 import CreativeAppearance from "./themes/creative.vue";
 import DefaultAppearance from "./themes/default.vue";
 import DoubleArrowAppearance from "./themes/doubleArrow.vue";
-import FrameAppearance from "./themes/frame.vue";
 import LabelLineAppearance from "./themes/labelLine.vue";
 import LayeredCurveAppearance from "./themes/layeredCurve.vue";
 import MarkerGridAppearance from "./themes/markerGrid.vue";
@@ -26,7 +25,7 @@ export const itemAppearanceRegistry = createAppearanceRegistry({
   fresh: DefaultAppearance, // 清新恢复旧版条目，不绘制新增浅色底托
   creative: CreativeAppearance, // 左侧斜切强调竖线与浅底色条目
   steady: SteadyAppearance, // 左侧固定日期列与贯穿竖线的条目
-  frame: FrameAppearance, // 白底正文内的条目细分隔线与内边距
+  frame: DefaultAppearance, // 红色边框恢复旧版条目，不绘制新增分隔线与内边距
   colorBar: DefaultAppearance, // 色条恢复旧版条目，不绘制新增底托与短条
   twoColumn: TwoColumnAppearance, // 双栏条目：紧凑留白与浅底圆角卡片
   topUserTwoColumn: TopUserTwoColumnAppearance, // 通栏双栏条目：直角浅底托与主题色细描边
