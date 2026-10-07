@@ -15,14 +15,16 @@ const {
 </script>
 
 <template>
-  <!-- 双线夹标题：上方一条贯穿细线，下方一条短粗线，字距放宽获得宋体排版的呼吸感 -->
+  <!-- 双线夹标题：上方细线贯穿，下方粗线随标题文字宽度延伸。 -->
   <h2
-    class="song-elegance-title relative box-border min-w-0 pt-3 pb-3 font-bold tracking-[0.16em]"
+    class="song-elegance-title relative box-border min-w-0 pt-3 font-bold tracking-[0.16em]"
     :style="{ color: themeColor, '--song-title-rule': themeColorLine }"
   >
     <span aria-hidden="true" class="song-elegance-title__rule" />
-    <TitleText :title="title" />
-    <span aria-hidden="true" class="song-elegance-title__accent" />
+    <div class="relative w-fit max-w-full pb-3">
+      <TitleText :title="title" />
+      <span aria-hidden="true" class="song-elegance-title__accent" />
+    </div>
   </h2>
 </template>
 
@@ -37,12 +39,12 @@ const {
   background: var(--song-title-rule);
 }
 
-/* 短粗线贴在标题左下方，与上方长细线形成一长一短的对比 */
+/* 粗线以标题文字容器为基准，长度随标题变化。 */
 .song-elegance-title__accent {
   position: absolute;
   bottom: 0;
   left: 0;
-  width: 28px;
+  right: 0;
   height: 2px;
   background: currentColor;
 }
