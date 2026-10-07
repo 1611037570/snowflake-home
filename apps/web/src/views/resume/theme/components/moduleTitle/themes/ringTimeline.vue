@@ -19,18 +19,6 @@ defineProps({
 </template>
 
 <style scoped>
-/* 轴线补齐上一模块到本标题之间的间距，使各模块的轴线连成一条 */
-.ring-timeline-title::before {
-  content: "";
-  position: absolute;
-  top: calc(-1 * var(--ring-module-gap));
-  bottom: 0;
-  left: calc(var(--timeline-rail-width) - 18px);
-  width: 1px;
-  background-color: var(--ring-line);
-  pointer-events: none;
-}
-
 /* 标题节点：模块起点用实心圆点标记，落在轴线正中 */
 .ring-timeline-title::after {
   content: "";
