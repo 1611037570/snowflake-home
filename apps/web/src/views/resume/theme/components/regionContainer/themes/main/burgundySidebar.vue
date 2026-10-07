@@ -53,11 +53,13 @@ const sidebarStyle = computed(() => ({
   content: "";
   position: absolute;
   z-index: -1;
-  top: calc(-1 * var(--sidebar-content-top));
+  /* 续页同时覆盖正文顶部留白与纸张上边距，避免侧栏顶端露白。 */
+  top: calc(-1 * (var(--sidebar-content-top) + var(--resume-page-top-space, 0px)));
   right: 0;
   bottom: calc(-1 * var(--resume-bottom-space, 0px));
   left: calc(-1 * var(--sidebar-bleed));
   background-color: var(--sidebar-surface);
+  border-top-left-radius: var(--resume-page-top-radius, 0px);
   border-bottom-left-radius: var(--sidebar-radius);
 }
 

@@ -53,15 +53,16 @@ const twoColumnStyle = computed(() => ({
   isolation: isolate;
 }
 
-/* 左栏浅底：向上覆盖正文顶部留白，向左铺到纸张边缘，向下延伸到页脚预留空间。 */
+/* 左栏浅底：向上覆盖正文留白与纸张上边距，向左铺到纸张边缘，向下延伸到页脚预留空间。 */
 .two-column-main--enabled :deep(> :first-child)::before {
   content: "";
   position: absolute;
   z-index: -1;
-  top: calc(-1 * var(--two-column-top, 36px));
+  top: calc(-1 * (var(--two-column-top, 36px) + var(--resume-page-top-space, 0px)));
   right: calc(-1 * var(--two-column-half-gap, 12px));
   bottom: calc(-1 * var(--resume-bottom-space, 0px));
   left: calc(-1 * var(--two-column-side, 0px));
+  border-top-left-radius: var(--resume-page-top-radius, 0px);
   background-color: var(--two-column-surface);
   pointer-events: none;
 }
@@ -70,7 +71,7 @@ const twoColumnStyle = computed(() => ({
 .two-column-main--enabled > :deep(:first-child:not(:last-child))::after {
   content: "";
   position: absolute;
-  top: calc(-1 * var(--two-column-top, 36px));
+  top: calc(-1 * (var(--two-column-top, 36px) + var(--resume-page-top-space, 0px)));
   right: calc(-1 * var(--two-column-half-gap, 12px));
   bottom: calc(-1 * var(--resume-bottom-space, 0px));
   width: 1px;

@@ -77,6 +77,8 @@ const pageSurfaceStyle = computed(() => ({
   borderStyle: "solid",
   borderColor: props.ui.page?.border?.color || defaultPageBorderColor,
   "--resume-bottom-space": `${bottomSpace.value}px`, // 双栏内部为页脚和页面下留白预留的高度
+  "--resume-page-top-space": props.pageIndex > 0 && !props.hasTopRegion ? props.styles.paddingStyle.paddingTop : "0px", // 续页外侧上留白，供栏底色延伸至纸张顶边
+  "--resume-page-top-radius": props.pageIndex > 0 && !props.hasTopRegion ? `${Number(props.ui.page?.radius ?? defaultPageRadius)}px` : "0px", // 续页栏底色沿用纸张顶部圆角
 }));
 // 底部空间由页尾与下边距共用：页尾更高时不再叠加下边距，下边距更大时只补足超出的部分
 const bottomSpacerHeight = computed(() => {
