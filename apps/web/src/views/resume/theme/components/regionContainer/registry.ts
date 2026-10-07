@@ -9,7 +9,6 @@ import MarkerGridUser from "./themes/user/markerGrid.vue";
 import MinimalMain from "./themes/main/minimal.vue";
 import MinimalUser from "./themes/user/minimal.vue";
 import SteadyMain from "./themes/main/steady.vue";
-import TimelineMain from "./themes/main/timeline.vue";
 import TopUserTwoColumnMain from "./themes/main/topUserTwoColumn.vue";
 import TopUserTwoColumnUser from "./themes/user/topUserTwoColumn.vue";
 import TwoColumnMain from "./themes/main/twoColumn.vue";
@@ -34,7 +33,6 @@ import TealCardUser from "./themes/user/tealCard.vue";
 import InkMagazineUser from "./themes/user/inkMagazine.vue";
 import RingTimelineUser from "./themes/user/ringTimeline.vue";
 import SquareTimelineUser from "./themes/user/squareTimeline.vue";
-import TimelineUser from "./themes/user/timeline.vue";
 
 interface RegionAppearanceComponent {
   fillsPageTop?: boolean; // 组件是否从首页纸张顶边开始占据整宽
@@ -66,7 +64,6 @@ export const regionAppearanceRegistry: Record<RegionSlotId, Record<string, Compo
     inkMagazine: InkMagazineUser, // 杂志页眉与正文之间的留白
     ringTimeline: RingTimelineUser, // 圆环时间轴页眉下留白
     squareTimeline: SquareTimelineUser, // 方节点时间轴页眉下留白
-    timeline: TimelineUser, // 时间轴页眉下留白
   },
   main: {
     default: DefaultMain, // 普通正文区域底板
@@ -75,7 +72,6 @@ export const regionAppearanceRegistry: Record<RegionSlotId, Record<string, Compo
     fresh: DefaultMain, // 清新恢复旧版正文区域，不绘制新增圆角浅底托
     steady: SteadyMain, // 稳重：贯穿竖线与左侧日期列
     frame: Frame, // 红色边框主题正文底板
-    timeline: TimelineMain, // 时间轴：正文区贯穿轴线与节点
     colorBar: DefaultMain, // 色条恢复旧版正文，不绘制新增贯穿色条与留白
     twoColumn: TwoColumnMain, // 双栏：左栏浅底与栏间细线
     topUserTwoColumn: TopUserTwoColumnMain, // 通栏双栏：栏间线与正文留白

@@ -27,7 +27,6 @@ import steady from "./steady";
 import tealRail from "./tealRail";
 import tealCard from "./tealCard";
 import stripedRibbon from "./stripedRibbon";
-import timeline from "./timeline";
 import squareTimeline from "./squareTimeline";
 import topUserTwoColumn from "./topUserTwoColumn";
 import twoColumn from "./twoColumn";
@@ -63,7 +62,6 @@ export const themeTemplateList = createThemeTemplates([
   twoColumn,
   colorBar,
   frame,
-  timeline,
   squareTimeline,
   ringTimeline,
   labelLine,

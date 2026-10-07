@@ -145,8 +145,8 @@ const resumeData: any = {
       { key: "account" },
     ],
   },
-  // 界面配置沿用主题预设：与模板页该主题的样式卡片共用同一份配置，保证布局与配色一致。
-  ui: structuredClone(getResumeThemeTemplate("timeline").item.ui),
+  // 范本改用方节点时间轴主题预设，与对应样式卡片保持一致。
+  ui: structuredClone(getResumeThemeTemplate("squareTimeline").item.ui),
 };
 
 export default resumeData;
