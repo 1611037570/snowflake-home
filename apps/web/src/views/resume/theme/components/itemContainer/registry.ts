@@ -3,7 +3,6 @@ import AcademicAppearance from "./themes/academic.vue";
 import AngledLineAppearance from "./themes/angledLine.vue";
 import CreativeAppearance from "./themes/creative.vue";
 import DefaultAppearance from "./themes/default.vue";
-import LabelLineAppearance from "./themes/labelLine.vue";
 import LayeredCurveAppearance from "./themes/layeredCurve.vue";
 import MarkerGridAppearance from "./themes/markerGrid.vue";
 import OutlineAppearance from "./themes/outline.vue";
@@ -36,7 +35,7 @@ export const itemAppearanceRegistry = createAppearanceRegistry({
   outline: OutlineAppearance, // 只保留内边距，外框由模块绘制
   ringTimeline: RingTimelineAppearance, // 圆环时间轴：日期栏 + 空心圆环节点
   angledLine: AngledLineAppearance, // 条目向模块竖线内侧留白
-  labelLine: LabelLineAppearance, // 左端竖色块接短横线，日期与标题色块对齐
+  labelLine: DefaultAppearance, // 色块横线恢复旧版条目，不绘制新增竖色块与短横线
   markerGrid: MarkerGridAppearance, // 条目内平铺点阵底纹与首段刻度线
   timeline: TimelineAppearance, // 左侧固定日期栏的时间轴条目
   squareTimeline: DefaultAppearance, // 方节点时间轴使用默认条目，名称与日期不加定制底色和节点
