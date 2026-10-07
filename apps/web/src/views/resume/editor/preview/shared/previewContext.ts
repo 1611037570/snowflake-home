@@ -7,6 +7,8 @@ export interface ResumePreviewContext {
   lang: ComputedRef<string>;
   ui: ComputedRef<Record<string, any>>;
   theme: ResumeTheme;
+  /** 是否展示页码，用于计算图片作品的整页可用高度。 */
+  showPageNumber: ComputedRef<boolean>;
   userHiddenFields: ComputedRef<Set<string>>;
   userFieldOrder: ComputedRef<string[]>;
   userFieldLabels: ComputedRef<Map<string, string>>;

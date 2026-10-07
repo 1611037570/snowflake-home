@@ -188,6 +188,7 @@ provideResumePreviewContext({
   lang: previewLang,
   ui,
   theme: themeStyles,
+  showPageNumber,
   userHiddenFields,
   userFieldOrder,
   userFieldLabels,
