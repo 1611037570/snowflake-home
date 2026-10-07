@@ -14,7 +14,6 @@ import MarkerGridAppearance from "./themes/markerGrid.vue";
 import OutlineAppearance from "./themes/outline.vue";
 import RingTimelineAppearance from "./themes/ringTimeline.vue";
 import SandSidebarAppearance from "./themes/sandSidebar.vue";
-import SlantedLayerAppearance from "./themes/slantedLayer.vue";
 import SteadyAppearance from "./themes/steady.vue";
 import TealCardAppearance from "./themes/tealCard.vue";
 import TimelineAppearance from "./themes/timeline.vue";
@@ -36,7 +35,7 @@ export const itemAppearanceRegistry = createAppearanceRegistry({
   topUserTwoColumn: TopUserTwoColumnAppearance, // 通栏双栏条目：直角浅底托与主题色细描边
   chevronRibbon: ChevronRibbonAppearance, // 箭头长条：左端小箭头与右缘细飘带
   stripedRibbon: DefaultAppearance, // 斜纹飘带恢复旧版条目，不绘制新增斜纹装饰
-  slantedLayer: SlantedLayerAppearance, // 斜切叠片：条目斜切底片与斜边细线
+  slantedLayer: DefaultAppearance, // 斜切叠片恢复旧版条目，不绘制新增底片与斜边细线
   layeredCurve: LayeredCurveAppearance, // 层叠底片：浅底圆角与右下错位底片
   doubleArrow: DoubleArrowAppearance, // 双箭条目：左端双箭头标识与右缘箭头列
   foldedLabel: FoldedLabelAppearance, // 折角标签：主题色块与右上角折角

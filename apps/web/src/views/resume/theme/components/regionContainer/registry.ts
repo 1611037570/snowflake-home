@@ -18,7 +18,6 @@ import MarkerGridMain from "./themes/main/markerGrid.vue";
 import MarkerGridUser from "./themes/user/markerGrid.vue";
 import MinimalMain from "./themes/main/minimal.vue";
 import MinimalUser from "./themes/user/minimal.vue";
-import SlantedLayerMain from "./themes/main/slantedLayer.vue";
 import SteadyMain from "./themes/main/steady.vue";
 import TimelineMain from "./themes/main/timeline.vue";
 import TopUserTwoColumnMain from "./themes/main/topUserTwoColumn.vue";
@@ -95,7 +94,7 @@ export const regionAppearanceRegistry: Record<RegionSlotId, Record<string, Compo
     topUserTwoColumn: TopUserTwoColumnMain, // 通栏双栏：栏间线与正文留白
     chevronRibbon: ChevronRibbonMain, // 箭头长条：正文右缘细飘带与顶端短箭头
     stripedRibbon: DefaultMain, // 斜纹飘带恢复旧版正文，不绘制新增斜纹与双栏底色
-    slantedLayer: SlantedLayerMain, // 斜切叠片：左下斜切底片与斜边细线
+    slantedLayer: DefaultMain, // 斜切叠片恢复旧版正文，不绘制新增底片与斜边细线
     angledLine: AngledLineMain, // 斜角竖线：正文栏贯穿竖线与斜角节点
     layeredCurve: LayeredCurveMain, // 层叠弧线：正文右上三层错位弧线
     doubleArrow: DoubleArrowMain, // 双箭横线：右缘贯穿引导线与双箭头收口
