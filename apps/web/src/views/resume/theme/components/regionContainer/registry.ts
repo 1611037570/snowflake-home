@@ -22,7 +22,6 @@ import MarkerGridMain from "./themes/main/markerGrid.vue";
 import MarkerGridUser from "./themes/user/markerGrid.vue";
 import MinimalMain from "./themes/main/minimal.vue";
 import MinimalUser from "./themes/user/minimal.vue";
-import ModernMain from "./themes/main/modern.vue";
 import SlantedLayerMain from "./themes/main/slantedLayer.vue";
 import SteadyMain from "./themes/main/steady.vue";
 import StripedRibbonMain from "./themes/main/stripedRibbon.vue";
@@ -92,7 +91,6 @@ export const regionAppearanceRegistry: Record<RegionSlotId, Record<string, Compo
   main: {
     default: DefaultMain, // 普通正文区域底板
     minimal: MinimalMain, // 简约：正文首行留白与右对齐日期列基准
-    modern: ModernMain, // 现代：左侧贯穿细条与模块分隔线
     classic: ClassicMain, // 经典：正文上下双细线
     academic: AcademicMain, // 学术：页眉分界线与双栏分区底色
     fresh: FreshMain, // 清新：柔和圆角浅底托
