@@ -5,7 +5,6 @@ import ColorBarAppearance from "./themes/colorBar.vue";
 import CreativeAppearance from "./themes/creative.vue";
 import DefaultAppearance from "./themes/default.vue";
 import DoubleArrowAppearance from "./themes/doubleArrow.vue";
-import FoldedLabelAppearance from "./themes/foldedLabel.vue";
 import FrameAppearance from "./themes/frame.vue";
 import LabelLineAppearance from "./themes/labelLine.vue";
 import LayeredCurveAppearance from "./themes/layeredCurve.vue";
@@ -36,7 +35,6 @@ export const itemAppearanceRegistry = createAppearanceRegistry({
   slantedLayer: DefaultAppearance, // 斜切叠片恢复旧版条目，不绘制新增底片与斜边细线
   layeredCurve: LayeredCurveAppearance, // 层叠底片：浅底圆角与右下错位底片
   doubleArrow: DoubleArrowAppearance, // 双箭条目：左端双箭头标识与右缘箭头列
-  foldedLabel: FoldedLabelAppearance, // 折角标签：主题色块与右上角折角
   tealCard: TealCardAppearance, // 整组卡片内的条目留白
   vivid: VividAppearance, // 浅色底托 + 主题色描边 + 圆角
   sandSidebar: SandSidebarAppearance, // 金棕色经历名称与条目末尾留白

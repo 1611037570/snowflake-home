@@ -289,7 +289,6 @@ const TEXT_KEYS_SOURCE = `
   双箭横线: "resumeTemplateStyle_doubleArrow_name",
   箭头长条: "resumeTemplateStyle_chevronRibbon_name",
   斜切叠片: "resumeTemplateStyle_slantedLayer_name",
-  折角色块: "resumeTemplateStyle_foldedLabel_name",
   斜纹飘带: "resumeTemplateStyle_stripedRibbon_name",
   标语通栏: "resumeTemplateStyle_sloganBand_name",
   "顶部标语色带搭配飘带底沿，适合突出个人主张的通用简历。":

@@ -144,8 +144,8 @@ const resumeData: any = {
       { key: "account" },
     ],
   },
-  // 界面配置沿用主题预设：与模板页该主题的样式卡片共用同一份配置，保证布局与配色一致。
-  ui: structuredClone(getResumeThemeTemplate("foldedLabel").item.ui),
+  // 范本改用斜纹飘带主题预设，与对应样式卡片保持一致。
+  ui: structuredClone(getResumeThemeTemplate("stripedRibbon").item.ui),
 };
 
 export default resumeData;
