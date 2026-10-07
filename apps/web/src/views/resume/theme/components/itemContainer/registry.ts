@@ -13,7 +13,6 @@ import SteadyAppearance from "./themes/steady.vue";
 import TealCardAppearance from "./themes/tealCard.vue";
 import TimelineAppearance from "./themes/timeline.vue";
 import TopUserTwoColumnAppearance from "./themes/topUserTwoColumn.vue";
-import TwoColumnAppearance from "./themes/twoColumn.vue";
 import VividAppearance from "./themes/vivid.vue";
 
 /** 条目外观注册表：外观编号与主题编号同名，未登记的主题走 default */
@@ -26,7 +25,7 @@ export const itemAppearanceRegistry = createAppearanceRegistry({
   steady: SteadyAppearance, // 左侧固定日期列与贯穿竖线的条目
   frame: DefaultAppearance, // 红色边框恢复旧版条目，不绘制新增分隔线与内边距
   colorBar: DefaultAppearance, // 色条恢复旧版条目，不绘制新增底托与短条
-  twoColumn: TwoColumnAppearance, // 双栏条目：紧凑留白与浅底圆角卡片
+  twoColumn: DefaultAppearance, // 双栏条目只承载内容，不绘制底色与边框或额外留白
   topUserTwoColumn: TopUserTwoColumnAppearance, // 通栏双栏条目：直角浅底托与主题色细描边
   stripedRibbon: DefaultAppearance, // 斜纹飘带恢复旧版条目，不绘制新增斜纹装饰
   slantedLayer: DefaultAppearance, // 斜切叠片恢复旧版条目，不绘制新增底片与斜边细线
