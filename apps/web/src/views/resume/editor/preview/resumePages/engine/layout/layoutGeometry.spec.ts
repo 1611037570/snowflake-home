@@ -107,7 +107,7 @@ describe("简历页几何基线", () => {
         {
           id: "main",
           height: { mode: "remaining" },
-          padding: { top: 0, right: 0, bottom: 0, left: 0 },
+          padding: { top: 12, right: 0, bottom: 0, left: 0 },
           columns: [
             {
               id: "main-column",
@@ -119,7 +119,7 @@ describe("简历页几何基线", () => {
         },
       ],
       columnWidths: [["main-column", 746]],
-      columnFlowHeights: [["main-column", [[1063, 300]]]],
+      columnFlowHeights: [["main-column", [[1051, 300]]]],
     });
   });
 
@@ -138,7 +138,7 @@ describe("简历页几何基线", () => {
         {
           id: "main",
           height: { mode: "remaining" },
-          padding: { top: 0, right: 0, bottom: 0, left: 0 },
+          padding: { top: 12, right: 0, bottom: 0, left: 0 },
           columns: [
             {
               id: "left",
@@ -160,8 +160,8 @@ describe("简历页几何基线", () => {
         ["right", 361],
       ],
       columnFlowHeights: [
-        ["left", [[1063, 300]]],
-        ["right", [[1063, 300]]],
+        ["left", [[1051, 300]]],
+        ["right", [[1051, 300]]],
       ],
     });
   });
@@ -194,7 +194,7 @@ describe("简历页几何基线", () => {
         {
           id: "main",
           height: { mode: "remaining" },
-          padding: { top: 0, right: 0, bottom: 0, left: 0 },
+          padding: { top: 12, right: 0, bottom: 0, left: 0 },
           columns: [
             {
               id: "left",
@@ -218,8 +218,8 @@ describe("简历页几何基线", () => {
       ],
       columnFlowHeights: [
         ["user-column", [[1063, 300]]],
-        ["left", [[763, 300]]],
-        ["right", [[763, 300]]],
+        ["left", [[751, 300]]],
+        ["right", [[751, 300]]],
       ],
     });
   });
@@ -252,7 +252,7 @@ describe("简历页几何基线", () => {
         {
           id: "main",
           height: { mode: "remaining" },
-          padding: { top: 0, right: 0, bottom: 0, left: 0 },
+          padding: { top: 12, right: 0, bottom: 0, left: 0 },
           columns: [
             {
               id: "main-column",
@@ -269,7 +269,7 @@ describe("简历页几何基线", () => {
       ],
       columnFlowHeights: [
         ["user-column", [[1063, 300]]],
-        ["main-column", [[763, 300]]],
+        ["main-column", [[751, 300]]],
       ],
     });
   });
@@ -278,8 +278,9 @@ describe("简历页几何基线", () => {
     const snapshot = createCase({
       name: "主题声明正文区域留白",
       ui: {
+        // 红框主题的正文外观声明四周 12 像素留白，分页与栏宽同时扣除
+        theme: { template: "frame" },
         layout: { type: "topUserSingleColumn" },
-        region: { main: { padding: { top: 12, right: 12, bottom: 12, left: 12 } } },
       },
     });
 
@@ -305,7 +306,7 @@ describe("简历页几何基线", () => {
         {
           id: "main",
           height: { mode: "remaining" },
-          padding: { top: 0, right: 0, bottom: 0, left: 0 },
+          padding: { top: 12, right: 12, bottom: 12, left: 12 },
           columns: [
             {
               id: "main-column",
@@ -318,11 +319,11 @@ describe("简历页几何基线", () => {
       ],
       columnWidths: [
         ["user-column", 746],
-        ["main-column", 746],
+        ["main-column", 722],
       ],
       columnFlowHeights: [
         ["user-column", [[1063, 300]]],
-        ["main-column", [[763, 300]]],
+        ["main-column", [[739, 300]]],
       ],
     });
   });
@@ -356,7 +357,7 @@ describe("简历页几何基线", () => {
         {
           id: "main",
           height: { mode: "remaining" },
-          padding: { top: 0, right: 0, bottom: 0, left: 0 },
+          padding: { top: 12, right: 0, bottom: 0, left: 0 },
           columns: [
             {
               id: "main-column",
@@ -373,7 +374,7 @@ describe("简历页几何基线", () => {
       ],
       columnFlowHeights: [
         ["slogan-column", [[1063, 300]]],
-        ["main-column", [[763, 300]]],
+        ["main-column", [[751, 300]]],
       ],
     });
   });
@@ -420,7 +421,7 @@ describe("简历页几何基线", () => {
         {
           id: "main",
           height: { mode: "remaining" },
-          padding: { top: 0, right: 0, bottom: 0, left: 0 },
+          padding: { top: 12, right: 0, bottom: 0, left: 0 },
           columns: [
             {
               id: "main-column",
@@ -439,7 +440,7 @@ describe("简历页几何基线", () => {
       columnFlowHeights: [
         ["slogan-column", [[1063, 300]]],
         ["user-column", [[763, 300]]],
-        ["main-column", [[463, 300]]],
+        ["main-column", [[451, 300]]],
       ],
     });
   });
@@ -454,25 +455,25 @@ describe("简历页几何基线", () => {
     expect(snapshot.contentWidth).toBe(734);
     expect(snapshot.availableHeight).toBe(1051);
     expect(snapshot.columnWidths).toEqual([["main-column", 734]]);
-    expect(snapshot.columnFlowHeights).toEqual([["main-column", [[1051, 300]]]]);
+    expect(snapshot.columnFlowHeights).toEqual([["main-column", [[1039, 300]]]]);
   });
 
-  it("主题只声明部分方向时其余方向取槽位默认留白", () => {
+  it("主题只声明左侧留白时只扣栏宽不扣可用高度", () => {
     const snapshot = createCase({
       name: "主题部分声明正文区域留白",
       ui: {
+        // 斜角竖线主题的正文外观只声明左侧 24 像素：其余方向按声明的 0 处理
+        theme: { template: "angledLine" },
         layout: { type: "topUserSingleColumn" },
-        // 只声明左右留白：上下留白取正文槽位默认值
-        region: { main: { padding: { left: 0, right: 0 } } },
       },
     });
 
-    expect(snapshot.regions[1]?.padding).toEqual({ top: 0, right: 0, bottom: 0, left: 0 });
+    expect(snapshot.regions[1]?.padding).toEqual({ top: 0, right: 0, bottom: 0, left: 24 });
     expect(snapshot.columnWidths).toEqual([
       ["user-column", 746],
-      ["main-column", 746],
+      ["main-column", 722],
     ]);
-    // 可用高度只扣上下留白：1063 − 通栏 300 − 区域间距 12 − 正文上下留白 0
+    // 可用高度只扣上下留白：1063 − 通栏 300 − 区域间距 0 − 正文上下留白 0
     expect(snapshot.columnFlowHeights[1]).toEqual(["main-column", [[763, 300]]]);
   });
 });
