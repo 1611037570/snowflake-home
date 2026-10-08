@@ -62,8 +62,6 @@ export const DEFAULT_SYSTEM = {
   previewClickLocate: true,
   // 是否展示调试控制台
   showDebug: false,
-  // 是否展示工具栏工具名称
-  showToolName: false,
   // 是否启用浏览器建议提示
   showBrowserTip: true,
 };

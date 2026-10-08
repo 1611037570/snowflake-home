@@ -39,12 +39,6 @@ function resetSettings() {
           type="switch"
         />
         <SfSetItem
-          :title="$t('toolbarToolName')"
-          :info="$t('toolbarToolNameInfo')"
-          v-model="system.showToolName"
-          type="switch"
-        />
-        <SfSetItem
           :title="$t('newRecordExpanded')"
           :info="$t('newRecordExpandedInfo')"
           v-model="system.defaultItemExpanded"
