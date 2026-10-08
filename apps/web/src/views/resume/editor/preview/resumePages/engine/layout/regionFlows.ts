@@ -1,4 +1,4 @@
-import { getRegionContentHeight, getRegionFirstPagePaddingHeight, getRegionPaddingHeight } from "./regionHeights";
+import { getRegionContentHeight, getRegionPaddingHeight } from "./regionHeights";
 import type { FlowHeightPlan } from "../paginate/pageHeights";
 import type { RegionConfig } from "../pageLayoutTypes";
 
@@ -66,11 +66,9 @@ export const buildRegionFlows = <TPage extends FlowPageLike>(
 
   orderedRegions.forEach((region, regionIndex) => {
     const regionPaddingHeight = getRegionPaddingHeight(region);
-    // 首页比后续页多出仅在首页生效的模块间距，两页口径分别结算
-    const firstPagePaddingHeight = getRegionFirstPagePaddingHeight(region);
     // 首页可用高度扣掉前面区域已经占用的部分，后续页面使用区域自身的完整可用高度
     const heights: FlowHeightPlan = {
-      firstPageHeight: Math.max(0, availableHeight - firstPageConsumedHeight - firstPagePaddingHeight),
+      firstPageHeight: Math.max(0, availableHeight - firstPageConsumedHeight - regionPaddingHeight),
       laterPageHeight: Math.max(0, laterPageAvailableHeight - regionPaddingHeight),
     };
 
@@ -90,7 +88,7 @@ export const buildRegionFlows = <TPage extends FlowPageLike>(
         ...regionFlows.map((flowPages) => flowPages[0]?.usedHeight || 0),
         0,
       );
-      firstPageConsumedHeight += usedHeight + (hasFirstPageContent ? firstPagePaddingHeight : 0);
+      firstPageConsumedHeight += usedHeight + (hasFirstPageContent ? regionPaddingHeight : 0);
     } else {
       firstPageConsumedHeight += getRegionContentHeight(region, availableHeight);
     }

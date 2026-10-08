@@ -19,12 +19,11 @@ import { useResumePreviewContext } from "@/views/resume/editor/preview/shared/pr
 // 学术正文外观：居中双线页眉之下按分区排布，条目在自身外观里做引用式缩进。
 const {
   ui,
-  theme: { themeColor, themeColorLine, themeColorSoft },
+  theme: { themeColor, themeColorSoft },
 } = useResumePreviewContext();
 // 栏底色只在双栏布局绘制：单栏下没有左右分区，不必区分栏位
 const isTwoColumn = computed(() => layoutStretchesColumns(ui.value?.layout?.type));
 const regionStyle = computed(() => ({
-  "--academic-region-line": themeColorLine.value, // 页眉分界线的浅色描边
   "--academic-region-accent": themeColor.value, // 分区标题基准线的主题色
   "--academic-region-band": themeColorSoft.value, // 双栏底色，主题色一成的浅色面
   "--academic-column-bleed": `${Math.max(0, Number(ui.value?.page?.padding?.horizontal ?? defaultPaddingHorizontal) || 0)}px`, // 右栏底色延伸到纸张右边缘的距离
@@ -38,12 +37,6 @@ const regionStyle = computed(() => ({
     :class="{ 'academic-main--two-column': isTwoColumn }"
     :style="regionStyle"
   >
-    <!-- 页眉分界线：绝对定位绘制，不占据排版空间也就不会改变正文测量高度 -->
-    <span
-      aria-hidden="true"
-      class="pointer-events-none absolute top-0 right-0 left-0 h-px"
-      :style="{ backgroundColor: 'var(--academic-region-line)' }"
-    />
     <!-- 分区标题基准线：线宽等于条目引用缩进加引线留白，与正文起始线对齐 -->
     <span
       aria-hidden="true"

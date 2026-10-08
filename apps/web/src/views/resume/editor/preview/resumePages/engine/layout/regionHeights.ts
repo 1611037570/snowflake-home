@@ -10,8 +10,3 @@ export const getRegionContentHeight = (region: RegionConfig, fallback: number): 
 /** 区域上下内容内边距占用页面高度的总量 */
 export const getRegionPaddingHeight = (region: Pick<RegionConfig, "padding">): number =>
   (region.padding?.top ?? 0) + (region.padding?.bottom ?? 0);
-
-/** 区域首页上下内容内边距总量：比后续页多出仅在首页生效的模块间距 */
-export const getRegionFirstPagePaddingHeight = (
-  region: Pick<RegionConfig, "padding" | "firstPagePaddingTop">,
-): number => getRegionPaddingHeight(region) + Math.max(0, region.firstPagePaddingTop ?? 0);

@@ -244,15 +244,9 @@ const getRegionTopGap = (page, regionId) => {
   const currentRegion = layout.value.regions.find((region) => region.id === regionId);
   return resolveRegionGap(previousRegion, currentRegion);
 };
-// 模块间距只发生在两个模块之间：个人信息与正文第一个模块之间的一次间距仅落在首页
-const getFirstPagePaddingTop = (page, regionId) =>
-  page.pageIndex === 0
-    ? (layout.value.regions.find((region) => region.id === regionId)?.firstPagePaddingTop ?? 0)
-    : 0;
 // 首页标语占据纸张全宽，后续区域在自身外侧保留左右页边距。
 const getRegionStyle = (page, regionId) => ({
   gap: `${layoutColumnGap.value}px`,
-  marginTop: `${getRegionTopGap(page, regionId)}px`,
   ...(pageTopRegionId(page) && regionId !== pageTopRegionId(page)
     ? {
         width: "auto",
@@ -378,10 +372,15 @@ defineExpose({
             <!-- 正文区域铺满页面剩余高度，两栏因此都能拿到完整高度 -->
             <div class="flex min-h-0 min-w-0 flex-1 flex-col">
               <template v-for="region in page.regions" :key="region.regionId">
+                <!-- 模块间距渲染成两个区域之间的独立间隙：两侧区域都不含这段高度 -->
+                <div
+                  v-if="getRegionTopGap(page, region.regionId) > 0"
+                  class="shrink-0"
+                  :style="{ height: `${getRegionTopGap(page, region.regionId)}px` }"
+                />
                 <RegionContainer
                   v-if="region.columns.some((column) => column.fragments.length > 0)"
                   :region-id="region.regionId"
-                  :first-page-padding-top="getFirstPagePaddingTop(page, region.regionId)"
                   class="flex w-full min-w-0"
                   :style="getRegionStyle(page, region.regionId)"
                 >

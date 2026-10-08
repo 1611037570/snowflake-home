@@ -533,10 +533,8 @@ describe("简历页几何基线", () => {
     ).toEqual([
       ["slogan", 0, 0],
       ["user", 0, PADDING_VERTICAL],
-      ["main", 0, 0],
+      ["main", MODULE_GAP, 0],
     ]);
-    // 个人信息与正文第一个模块之间按模块间距在同栏内施加一次，且只在首页
-    expect(layout.regions[2]?.firstPagePaddingTop).toBe(MODULE_GAP);
   });
 
   it("个人信息区域贴顶时页面上边距计入它的上留白", () => {
@@ -554,8 +552,7 @@ describe("简历页几何基线", () => {
       layout.regions.map((region) => [region.id, region.gapBefore ?? 0, region.padding?.top ?? 0]),
     ).toEqual([
       ["user", 0, PADDING_VERTICAL],
-      ["main", 0, 0],
+      ["main", MODULE_GAP, 0],
     ]);
-    expect(layout.regions[1]?.firstPagePaddingTop).toBe(MODULE_GAP);
   });
 });

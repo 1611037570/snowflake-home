@@ -17,13 +17,14 @@ import { useResumePreviewContext } from "@/views/resume/editor/preview/shared/pr
 // 学术个人信息外观：为居中的双线页眉铺一块浅色底托，正文分区从底托之下开始。
 const {
   ui,
-  theme: { themeColor, themeColorSoft },
+  theme: { themeColor, themeColorLine, themeColorSoft },
 } = useResumePreviewContext();
 // 底托宽度只在双栏布局铺满整栏，单栏下没有左右分区
 const isTwoColumn = computed(() => layoutStretchesColumns(ui.value?.layout?.type));
 const regionStyle = computed(() => ({
   "--academic-user-band": themeColorSoft.value, // 底托浅色面，主题色一成
   "--academic-user-accent": themeColor.value, // 左侧分区短竖条的主题色
+  "--academic-user-line": themeColorLine.value, // 页眉分界线，压在底托下沿
   "--academic-user-surface": ui.value?.page?.background || "transparent", // 底托之下的纸张底色
 }));
 </script>
@@ -45,6 +46,12 @@ const regionStyle = computed(() => ({
       aria-hidden="true"
       class="pointer-events-none absolute top-3 left-0 h-[18px] w-[2px]"
       :style="{ backgroundColor: 'var(--academic-user-accent)' }"
+    />
+    <!-- 页眉分界线：落在底托下沿，与正文之间的模块间距由布局在区域之外施加 -->
+    <span
+      aria-hidden="true"
+      class="pointer-events-none absolute right-0 bottom-0 left-0 h-px"
+      :style="{ backgroundColor: 'var(--academic-user-line)' }"
     />
     <slot />
   </div>

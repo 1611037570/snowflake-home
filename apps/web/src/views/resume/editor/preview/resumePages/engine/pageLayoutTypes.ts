@@ -51,8 +51,6 @@ export interface RegionConfig {
   height: RegionHeight;
   /** 区域四周的内部留白：同时扣除栏宽与每页可用高度，是区域几何的唯一来源 */
   padding?: BoxSpacing;
-  /** 仅在首页生效的额外上留白：用于个人信息与正文第一个模块之间的模块间距 */
-  firstPagePaddingTop?: number;
   /** 区域与前一区域之间的额外间距，未声明时两个区域自然相接 */
   gapBefore?: number;
   /** 区域中的栏配置 */
