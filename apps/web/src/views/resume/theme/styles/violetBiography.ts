@@ -3,6 +3,11 @@ export default {
   id: "violetBiography", // 主题编号，供外观组件按编号选择
   design: ["two-column", "polished"], // 模板列表的分类标签
   description: "紫色个人信息页眉与双栏正文，完整展示个人资料和工作经历。", // 主题说明
+  // 页面级外观：纸张是紫色而正文底板是浅色，预览由公共页面读取这两条声明
+  pageAppearance: {
+    textColor: "#000000", // 正文文字固定黑色，避免按紫色纸张底色误判为白色
+    openBottomBorder: true, // 正文容器自带圆角，预览只保留顶部与两侧轮廓线
+  },
   ui: {
     theme: {
       color: "#BD55D9", // 标题菱形与栏间分割线颜色

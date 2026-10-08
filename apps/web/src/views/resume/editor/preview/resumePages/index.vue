@@ -13,6 +13,7 @@ import { hasThemeSlogan } from "@/views/resume/theme/components/sloganModule/reg
 import { useResumePages } from "./useResumePages";
 import { resolveRegionGap } from "./engine/layout/regionFlows";
 import { getContrastTextColor, useResumeTheme } from "@/views/resume/theme/useResumeTheme";
+import { resolveThemePageAppearance } from "@/views/resume/theme";
 import { provideResumePreviewContext } from "../shared/previewContext";
 import { isEmptyResume } from "../../toolbar/modules/progress/useResumeStats";
 import { getPreviewText } from "../shared/i18n";
@@ -82,6 +83,8 @@ const layoutMeasureRef = ref(null);
 // ---------- 数据注入（始终基于 props 传入的数据，多实例互不干扰）----------
 const dataRef = computed(() => props.item.data);
 const ui = computed(() => props.item.ui || {});
+// 页面级外观由主题声明，公共页面只读取声明，不再判断主题编号
+const themePageAppearance = computed(() => resolveThemePageAppearance(ui.value?.theme?.template));
 // 轻量判空：命中第一处正文文本即结束，避免为判空执行全量字数统计
 // 主题自带的顶部标语可独立构成预览内容，不依赖简历数据。
 const isEmpty = computed(() => isEmptyResume(dataRef.value) && !hasThemeSlogan(ui.value?.theme?.template));
@@ -362,8 +365,8 @@ defineExpose({
               {
                 // 编辑器页边线是预览专有装饰：导出通道按该类名移除，主题声明的纸张边框不受影响
                 'resume-page-editor-frame': mode === 'editor',
-                // 紫色履历预览只保留顶部和两侧轮廓线。
-                'resume-page-editor-frame--open-bottom': mode === 'editor' && ui.theme?.template === 'violetBiography',
+                // 主题声明正文自带圆角时，预览只保留顶部和两侧轮廓线。
+                'resume-page-editor-frame--open-bottom': mode === 'editor' && themePageAppearance.openBottomBorder === true,
               },
             ]"
           >

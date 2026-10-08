@@ -11,6 +11,16 @@ export interface ResumeThemeTemplate {
   };
 }
 
+/** 主题声明的页面级外观：公共页面按主题编号读取，不再按主题名称判断 */
+export interface ThemePageAppearance {
+  /** 页面文字颜色覆盖值，未声明时按纸张底色自动取对比色 */
+  textColor?: string;
+  /** 首页顶部是否由内容底色铺到纸张顶边并沿用顶部圆角 */
+  bleedsPageTop?: boolean;
+  /** 编辑器预览是否去掉页面底边线，用于正文自带圆角的主题 */
+  openBottomBorder?: boolean;
+}
+
 export interface ThemeTemplateConfig {
   name: string;
   id: string;
@@ -21,6 +31,8 @@ export interface ThemeTemplateConfig {
    * 模板页按该字段筛选，样式卡片与内容卡片共用同一个筛选字段名。
    */
   design: string[];
+  /** 主题页面级外观声明，公共页面读取该声明而不是判断主题编号 */
+  pageAppearance?: ThemePageAppearance;
   ui?: Record<string, any>;
 }
 
