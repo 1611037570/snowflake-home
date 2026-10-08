@@ -95,7 +95,7 @@ const createCase = (definition: CaseDefinition) => {
 };
 
 describe("简历页几何基线", () => {
-  it("单栏把所有模块放进同一栏，不占用区域高度", () => {
+  it("单栏把个人信息独立成区，正文占用剩余高度", () => {
     const snapshot = createCase({ name: "单栏", ui: {} });
 
     expect(snapshot).toEqual({
@@ -105,6 +105,19 @@ describe("简历页几何基线", () => {
       spacing: { columnGap: 0 },
       regions: [
         {
+          id: "user",
+          height: { mode: "auto" },
+          padding: { top: 0, right: 0, bottom: 0, left: 0 },
+          columns: [
+            {
+              id: "user-column",
+              width: { mode: "ratio", value: 1 },
+              gap: 0,
+              moduleKeys: ["user"],
+            },
+          ],
+        },
+        {
           id: "main",
           height: { mode: "remaining" },
           padding: { top: 12, right: 0, bottom: 0, left: 0 },
@@ -113,13 +126,19 @@ describe("简历页几何基线", () => {
               id: "main-column",
               width: { mode: "ratio", value: 1 },
               gap: 12,
-              moduleKeys: MODULE_KEYS,
+              moduleKeys: ["account", "education", "skill", "work", "project"],
             },
           ],
         },
       ],
-      columnWidths: [["main-column", 746]],
-      columnFlowHeights: [["main-column", [[1051, 300]]]],
+      columnWidths: [
+        ["user-column", 746],
+        ["main-column", 746],
+      ],
+      columnFlowHeights: [
+        ["user-column", [[1063, 300]]],
+        ["main-column", [[751, 300]]],
+      ],
     });
   });
 
@@ -328,7 +347,7 @@ describe("简历页几何基线", () => {
     });
   });
 
-  it("顶部标语存在时独占最前区域，正文顺延一个区域高度", () => {
+  it("单栏存在标语时依次排标语、个人信息、正文三个区域", () => {
     const snapshot = createCase({
       name: "顶部标语单栏",
       ui: { layout: { type: "singleColumn" } },
@@ -355,6 +374,19 @@ describe("简历页几何基线", () => {
           ],
         },
         {
+          id: "user",
+          height: { mode: "auto" },
+          padding: { top: 0, right: 0, bottom: 0, left: 0 },
+          columns: [
+            {
+              id: "user-column",
+              width: { mode: "ratio", value: 1 },
+              gap: 0,
+              moduleKeys: ["user"],
+            },
+          ],
+        },
+        {
           id: "main",
           height: { mode: "remaining" },
           padding: { top: 12, right: 0, bottom: 0, left: 0 },
@@ -363,18 +395,20 @@ describe("简历页几何基线", () => {
               id: "main-column",
               width: { mode: "ratio", value: 1 },
               gap: 12,
-              moduleKeys: MODULE_KEYS,
+              moduleKeys: ["account", "education", "skill", "work", "project"],
             },
           ],
         },
       ],
       columnWidths: [
         ["slogan-column", 746],
+        ["user-column", 746],
         ["main-column", 746],
       ],
       columnFlowHeights: [
         ["slogan-column", [[1063, 300]]],
-        ["main-column", [[751, 300]]],
+        ["user-column", [[763, 300]]],
+        ["main-column", [[451, 300]]],
       ],
     });
   });
@@ -454,8 +488,14 @@ describe("简历页几何基线", () => {
 
     expect(snapshot.contentWidth).toBe(734);
     expect(snapshot.availableHeight).toBe(1051);
-    expect(snapshot.columnWidths).toEqual([["main-column", 734]]);
-    expect(snapshot.columnFlowHeights).toEqual([["main-column", [[1039, 300]]]]);
+    expect(snapshot.columnWidths).toEqual([
+      ["user-column", 734],
+      ["main-column", 734],
+    ]);
+    expect(snapshot.columnFlowHeights).toEqual([
+      ["user-column", [[1051, 300]]],
+      ["main-column", [[739, 300]]],
+    ]);
   });
 
   it("主题只声明左侧留白时只扣栏宽不扣可用高度", () => {

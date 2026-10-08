@@ -205,10 +205,8 @@ export const createPageLayoutTemplate = ({
   /** 页面布局模板编号。 */
   templateId: PageLayoutTemplateId;
 }): PageLayoutConfig => {
-  if (templateId === "singleColumn") {
-    return withSloganRegion(createSingleColumnLayoutTemplate(options), options.moduleKeys);
-  }
-  if (templateId === "topUserSingleColumn") {
+  // 个人信息默认独立成区：单栏的两种布局共用同一区域结构，只有左右布局把它分进栏位时才是栏内模块
+  if (templateId === "singleColumn" || templateId === "topUserSingleColumn") {
     return withSloganRegion(createTopUserSingleColumnLayout(options), options.moduleKeys);
   }
   if (templateId === "topUserTwoColumn") {

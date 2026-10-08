@@ -5,7 +5,7 @@ import { createDefaultPageLayoutTemplate } from "./layoutTemplates";
 const moduleKeys = ["user", "account", "education", "skill", "work", "project", "custom_research"];
 
 describe("layoutTemplates", () => {
-  it("单栏模板把所有模块放进同一栏", () => {
+  it("单栏模板把个人信息独立成区，其余模块放进正文栏", () => {
     const layout = createDefaultPageLayoutTemplate({
       templateId: "singleColumn",
       moduleKeys,
@@ -14,10 +14,43 @@ describe("layoutTemplates", () => {
       gap: 12,
     });
 
-    expect(layout.regions).toHaveLength(1);
-    expect(layout.regions[0]?.columns).toHaveLength(1);
-    expect(layout.regions[0]?.columns[0]?.moduleKeys).toEqual(moduleKeys);
+    expect(layout.regions.map((region) => region.id)).toEqual(["user", "main"]);
+    expect(layout.regions[0]?.columns[0]?.moduleKeys).toEqual(["user"]);
+    expect(layout.regions[1]?.columns).toHaveLength(1);
+    expect(layout.regions[1]?.columns[0]?.moduleKeys).toEqual([
+      "account",
+      "education",
+      "skill",
+      "work",
+      "project",
+      "custom_research",
+    ]);
     expect(validateLayoutConfig(layout, moduleKeys).missingModuleKeys).toEqual([]);
+  });
+
+  it("单栏与顶部通栏单栏共用同一份个人信息区域结构", () => {
+    const createRegions = (templateId: "singleColumn" | "topUserSingleColumn") =>
+      createDefaultPageLayoutTemplate({
+        templateId,
+        moduleKeys,
+        paddingVertical: 24,
+        paddingHorizontal: 24,
+        gap: 12,
+      }).regions;
+
+    expect(createRegions("singleColumn")).toEqual(createRegions("topUserSingleColumn"));
+  });
+
+  it("没有个人信息模块时单栏只建正文区域", () => {
+    const layout = createDefaultPageLayoutTemplate({
+      templateId: "singleColumn",
+      moduleKeys: moduleKeys.filter((key) => key !== "user"),
+      paddingVertical: 24,
+      paddingHorizontal: 24,
+      gap: 12,
+    });
+
+    expect(layout.regions.map((region) => region.id)).toEqual(["main"]);
   });
 
   it("将 user 单独放在顶部通栏，其余模块分到两栏", () => {
