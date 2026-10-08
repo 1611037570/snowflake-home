@@ -1,5 +1,5 @@
 <script>
-// 页眉留白同时供真实预览与分页高度计算读取，模板 pt-9 pb-6 与这里保持同一数值。
+// 页眉留白同时供真实预览与分页高度计算读取，区域容器据此施加等值内边距。
 const regionPadding = {
   top: 36, // 个人信息距区域顶部的留白
   right: 0, // 水平留白沿用页面设置
@@ -27,9 +27,9 @@ const headerStyle = computed(() => ({
 </script>
 
 <template>
-  <!-- 页眉由容器自身补出与 regionPadding 等值的 pt-9 pb-6，细线用绝对定位绘制，不占高度。 -->
+  <!-- 页眉留白由区域容器按 regionPadding 施加，细线用绝对定位绘制，不占高度。 -->
   <div
-    class="top-user-header relative w-full min-w-0 pt-9 pb-6"
+    class="top-user-header relative w-full min-w-0"
     :class="{ 'top-user-header--rule': isTopUserTwoColumn }"
     :style="headerStyle"
   >

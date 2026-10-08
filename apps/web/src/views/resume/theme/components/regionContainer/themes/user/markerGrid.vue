@@ -1,5 +1,5 @@
 <script>
-// 页眉留白由组件声明，容器不加内边距，因此模板根元素使用等值的内联留白。
+// 页眉留白只在组件里声明一次，分页与区域容器共用该数值。
 const regionPadding = {
   top: 36, // 页眉顶部留白，与标题笔刷上沿对齐
   right: 0, // 水平留白沿用页面设置
@@ -18,11 +18,6 @@ import { useResumePreviewContext } from "@/views/resume/editor/preview/shared/pr
 
 // 基线刻度按页面八等分单元分布，与页面竖网和正文点阵同源。
 const GRID_UNIT = RESUME_WIDTH / 8;
-/** 页眉上下留白：与 regionPadding 保持同一份数值 */
-const HEADER_PADDING = {
-  paddingTop: "36px", // 与 regionPadding.top 等值
-  paddingBottom: "24px", // 与 regionPadding.bottom 等值
-};
 
 const {
   theme: { themeColor },
@@ -30,7 +25,6 @@ const {
 
 // 基线只画在两处：一条整宽细线做量尺，刻度短线与网格单元同距。
 const headerStyle = computed(() => ({
-  ...HEADER_PADDING,
   "--marker-user-line": `color-mix(in srgb, ${themeColor.value} 34%, transparent)`, // 基线细线颜色
   "--marker-user-tick": `color-mix(in srgb, ${themeColor.value} 55%, transparent)`, // 刻度短线颜色
   "--marker-user-unit": `${GRID_UNIT}px`, // 刻度间距，与页面网格单元等宽

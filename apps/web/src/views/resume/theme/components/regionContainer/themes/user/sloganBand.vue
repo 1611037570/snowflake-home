@@ -11,18 +11,8 @@ const regionPadding = (ui) => ({
 export default { regionPadding /* 分页与区域组件共用的内部留白 */ };
 </script>
 
-<script setup>
-import { computed } from "vue";
-import { useResumePreviewContext } from "@/views/resume/editor/preview/shared/previewContext";
-
-const { ui } = useResumePreviewContext();
-const contentStyle = computed(() => ({
-  paddingTop: `${regionPadding(ui.value).top}px`, // 渲染与分页使用同一上留白
-}));
-</script>
-
 <template>
-  <div class="relative box-border flex w-full min-w-0" :style="contentStyle">
+  <div class="relative box-border flex w-full min-w-0">
     <slot />
   </div>
 </template>
