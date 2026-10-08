@@ -14,7 +14,7 @@ export default {
     },
     layout: {
       type: "twoColumn", // 个人信息位于左栏的双栏布局
-      leftColumnWidth: 28, // 左栏所占宽度比例
+      leftColumnWidth: 40, // 左栏所占宽度比例
       columns: {
         left: ["user", "honor", "account", "skill"], // 左栏资料模块顺序
         right: ["work", "advantage"], // 右栏经历模块顺序

@@ -10,7 +10,7 @@ export default {
     },
     layout: { // 双栏布局设置
       type: "twoColumn", // 个人信息放在左栏的双栏布局
-      leftColumnWidth: 27, // 左栏占可用栏宽的百分比
+      leftColumnWidth: 40, // 左栏占可用栏宽的百分比
       columns: { // 默认模块栏位
         left: ["user", "skill", "honor", "account"], // 左栏展示个人信息、技能、证书和账号
         right: ["advantage", "work", "project", "education"], // 右栏展示个人优势与经历

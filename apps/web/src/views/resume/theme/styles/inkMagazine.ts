@@ -10,7 +10,7 @@ export default {
     },
     layout: { // 正文布局设置
       type: "topUserTwoColumn", // 个人信息顶部通栏，正文左右双栏
-      leftColumnWidth: 32, // 左栏占正文可用栏宽的百分比
+      leftColumnWidth: 40, // 左栏占正文可用栏宽的百分比
       columns: { // 模块默认栏位
         left: ["advantage", "skill", "honor", "account"], // 左栏放个人总结、技能、证书和账号
         right: ["work", "project", "education"], // 右栏放工作、项目和教育经历
