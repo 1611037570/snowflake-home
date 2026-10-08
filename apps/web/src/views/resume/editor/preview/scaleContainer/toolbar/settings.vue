@@ -33,8 +33,16 @@ const footer = computed({
   },
 });
 
+// 左栏宽度占比：仅双栏布局展示，位置固定在参数列表最上方
+const leftColumnWidthParam = {
+  labelKey: "layoutLeftColumnWidth",
+  key: "layout.leftColumnWidth",
+  defaultValue: defaultLeftColumnWidth,
+  unit: "%",
+};
 // 页面布局数值参数：标签、绑定字段、默认值与单位集中维护，模板统一渲染
 const layoutParams = [
+  leftColumnWidthParam,
   { labelKey: "layoutTopBottomMargin", key: "page.padding.vertical", defaultValue: defaultPaddingVertical, unit: "px" },
   {
     labelKey: "layoutLeftRightMargin",
@@ -43,13 +51,6 @@ const layoutParams = [
     unit: "px",
   },
   { labelKey: "layoutModuleSpacing", key: "page.spacing.module", defaultValue: defaultModuleSpacing, unit: "px" },
-  // 左栏宽度占比：仅双栏布局生效，左栏保持为较窄的一栏
-  {
-    labelKey: "layoutLeftColumnWidth",
-    key: "layout.leftColumnWidth",
-    defaultValue: defaultLeftColumnWidth,
-    unit: "%",
-  },
   {
     labelKey: "layoutParagraphSpacing",
     key: "page.spacing.paragraph",
@@ -59,6 +60,13 @@ const layoutParams = [
   // 行间距为字号倍数，单位与其它像素值不同
   { labelKey: "layoutLineHeight", key: "font.lineHeight", defaultValue: defaultLineHeight, unit: "lineHeightUnit" },
 ];
+
+// 单栏布局不分配左右栏，隐藏左栏宽度参数
+const visibleLayoutParams = computed(() =>
+  layoutUsesColumns(currentUI.value?.layout?.type)
+    ? layoutParams
+    : layoutParams.filter((item) => item !== leftColumnWidthParam),
+);
 
 const getPathValue = (source, path) => path.split(".").reduce((value, key) => value?.[key], source);
 const setPathValue = (source, path, value) => {
@@ -119,7 +127,7 @@ const setParam = (key, value) => {
             {{ $t("restoreLayoutDefault") }}
           </button>
         </div>
-        <div v-for="item in layoutParams" :key="item.key" class="flex flex-col gap-1">
+        <div v-for="item in visibleLayoutParams" :key="item.key" class="flex flex-col gap-1">
           <div class="flex items-center justify-between text-sm text-sf-text-2">
             <span class="flex items-center gap-1">
               <span>{{ $t(item.labelKey) }}</span>

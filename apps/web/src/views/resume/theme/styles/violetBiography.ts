@@ -20,7 +20,7 @@ export default {
     },
     layout: {
       type: "topUserTwoColumn", // 个人信息通栏、正文双栏
-      leftColumnWidth: 28, // 左侧资料栏占比
+      leftColumnWidth: 40, // 左侧资料栏占比
       columns: {
         left: ["education", "account"], // 左栏模块顺序
         right: ["work", "advantage"], // 右栏模块顺序

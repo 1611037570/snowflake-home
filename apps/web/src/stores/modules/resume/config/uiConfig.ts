@@ -223,7 +223,7 @@ export const uiParamRanges = {
   // 左右页边距
   "page.padding.horizontal": { min: 12, max: 96, step: 1 },
   // 左栏宽度占比（双栏布局）
-  "layout.leftColumnWidth": { min: 20, max: 40, step: 1 },
+  "layout.leftColumnWidth": { min: 20, max: 50, step: 1 },
   // 字体大小
   "font.size": { min: 12, max: 48, step: 2 },
   // 模块标题字号
