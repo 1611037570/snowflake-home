@@ -120,7 +120,7 @@ describe("简历页几何基线", () => {
         {
           id: "main",
           height: { mode: "remaining" },
-          padding: { top: 12, right: 0, bottom: 0, left: 0 },
+          padding: { top: 0, right: 0, bottom: 0, left: 0 },
           columns: [
             {
               id: "main-column",
@@ -157,7 +157,7 @@ describe("简历页几何基线", () => {
         {
           id: "main",
           height: { mode: "remaining" },
-          padding: { top: 12, right: 0, bottom: 0, left: 0 },
+          padding: { top: 0, right: 0, bottom: 0, left: 0 },
           columns: [
             {
               id: "left",
@@ -179,8 +179,8 @@ describe("简历页几何基线", () => {
         ["right", 361],
       ],
       columnFlowHeights: [
-        ["left", [[1051, 300]]],
-        ["right", [[1051, 300]]],
+        ["left", [[1063, 300]]],
+        ["right", [[1063, 300]]],
       ],
     });
   });
@@ -213,7 +213,7 @@ describe("简历页几何基线", () => {
         {
           id: "main",
           height: { mode: "remaining" },
-          padding: { top: 12, right: 0, bottom: 0, left: 0 },
+          padding: { top: 0, right: 0, bottom: 0, left: 0 },
           columns: [
             {
               id: "left",
@@ -271,7 +271,7 @@ describe("简历页几何基线", () => {
         {
           id: "main",
           height: { mode: "remaining" },
-          padding: { top: 12, right: 0, bottom: 0, left: 0 },
+          padding: { top: 0, right: 0, bottom: 0, left: 0 },
           columns: [
             {
               id: "main-column",
@@ -342,7 +342,7 @@ describe("简历页几何基线", () => {
       ],
       columnFlowHeights: [
         ["user-column", [[1063, 300]]],
-        ["main-column", [[739, 300]]],
+        ["main-column", [[727, 300]]],
       ],
     });
   });
@@ -389,7 +389,7 @@ describe("简历页几何基线", () => {
         {
           id: "main",
           height: { mode: "remaining" },
-          padding: { top: 12, right: 0, bottom: 0, left: 0 },
+          padding: { top: 0, right: 0, bottom: 0, left: 0 },
           columns: [
             {
               id: "main-column",
@@ -455,7 +455,7 @@ describe("简历页几何基线", () => {
         {
           id: "main",
           height: { mode: "remaining" },
-          padding: { top: 12, right: 0, bottom: 0, left: 0 },
+          padding: { top: 0, right: 0, bottom: 0, left: 0 },
           columns: [
             {
               id: "main-column",
@@ -513,8 +513,8 @@ describe("简历页几何基线", () => {
       ["user-column", 746],
       ["main-column", 722],
     ]);
-    // 可用高度只扣上下留白：1063 − 通栏 300 − 区域间距 0 − 正文上下留白 0
-    expect(snapshot.columnFlowHeights[1]).toEqual(["main-column", [[763, 300]]]);
+    // 可用高度只扣上下留白与首屏模块间距：1063 − 通栏 300 − 正文上下留白 0 − 模块间距 12
+    expect(snapshot.columnFlowHeights[1]).toEqual(["main-column", [[751, 300]]]);
   });
 
   it("存在标语区域时页面上边距计入个人信息区域上留白", () => {
@@ -533,8 +533,10 @@ describe("简历页几何基线", () => {
     ).toEqual([
       ["slogan", 0, 0],
       ["user", 0, PADDING_VERTICAL],
-      ["main", 0, 12],
+      ["main", 0, 0],
     ]);
+    // 个人信息与正文第一个模块之间按模块间距在同栏内施加一次，且只在首页
+    expect(layout.regions[2]?.firstPagePaddingTop).toBe(MODULE_GAP);
   });
 
   it("个人信息区域贴顶时页面上边距计入它的上留白", () => {
@@ -552,7 +554,8 @@ describe("简历页几何基线", () => {
       layout.regions.map((region) => [region.id, region.gapBefore ?? 0, region.padding?.top ?? 0]),
     ).toEqual([
       ["user", 0, PADDING_VERTICAL],
-      ["main", 0, 12],
+      ["main", 0, 0],
     ]);
+    expect(layout.regions[1]?.firstPagePaddingTop).toBe(MODULE_GAP);
   });
 });

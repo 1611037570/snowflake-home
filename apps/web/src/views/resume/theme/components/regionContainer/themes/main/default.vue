@@ -1,13 +1,11 @@
 <script>
-import { defaultModuleSpacing } from "@/stores/modules/resume/config/uiConfig";
-
-// 默认正文补回首个模块前的留白，分页与预览共用模块间距设置。
-const regionPadding = (ui) => ({
-  top: Math.max(0, Number(ui?.page?.spacing?.module ?? defaultModuleSpacing) || 0), // 首个模块前的顶部留白
+// 默认正文只在区域内部留白，模块间距统一由引擎按模块之间施加。
+const regionPadding = {
+  top: 0, // 正文区域顶部不加留白，首个模块前的间距由布局结算
   right: 0, // 水平留白沿用页面设置
   bottom: 0, // 底部留白沿用页面设置
   left: 0, // 水平留白沿用页面设置
-});
+};
 export default { regionPadding }; // 正文留白供分页与渲染共同读取
 </script>
 

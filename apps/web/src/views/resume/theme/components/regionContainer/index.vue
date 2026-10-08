@@ -12,6 +12,11 @@ const props = defineProps({
     type: String,
     required: true,
   },
+  // 引擎下发的首屏额外上留白：个人信息与正文第一个模块之间的模块间距
+  firstPagePaddingTop: {
+    type: Number,
+    default: 0,
+  },
 });
 const { ui } = useResumePreviewContext();
 const slot = computed(() => resolveRegionSlot(props.regionId));
@@ -26,7 +31,7 @@ const regionStyle = computed(() => {
       ? "var(--resume-bottom-space, 0px)"
       : "0px";
   return {
-    paddingTop: `${padding.top}px`, // 区域顶部留白
+    paddingTop: `${padding.top + Math.max(0, props.firstPagePaddingTop)}px`, // 区域顶部留白与首屏模块间距
     // 左右留白为 0 表示该方向不接管：通栏页眉由组件自行补出页面左右边距
     ...(padding.right ? { paddingRight: `${padding.right}px` } : {}),
     paddingBottom: `calc(${padding.bottom}px + ${bottomSpace})`, // 区域底部留白与栏内页尾空间

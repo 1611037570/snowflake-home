@@ -244,6 +244,11 @@ const getRegionTopGap = (page, regionId) => {
   const currentRegion = layout.value.regions.find((region) => region.id === regionId);
   return resolveRegionGap(previousRegion, currentRegion);
 };
+// 模块间距只发生在两个模块之间：个人信息与正文第一个模块之间的一次间距仅落在首页
+const getFirstPagePaddingTop = (page, regionId) =>
+  page.pageIndex === 0
+    ? (layout.value.regions.find((region) => region.id === regionId)?.firstPagePaddingTop ?? 0)
+    : 0;
 // 首页标语占据纸张全宽，后续区域在自身外侧保留左右页边距。
 const getRegionStyle = (page, regionId) => ({
   gap: `${layoutColumnGap.value}px`,
@@ -376,6 +381,7 @@ defineExpose({
                 <RegionContainer
                   v-if="region.columns.some((column) => column.fragments.length > 0)"
                   :region-id="region.regionId"
+                  :first-page-padding-top="getFirstPagePaddingTop(page, region.regionId)"
                   class="flex w-full min-w-0"
                   :style="getRegionStyle(page, region.regionId)"
                 >
