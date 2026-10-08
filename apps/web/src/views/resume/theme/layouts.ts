@@ -41,6 +41,9 @@ export const pageLayoutRegistry = [
 
 export type PageLayoutTemplateId = (typeof pageLayoutRegistry)[number]["id"];
 
+/** 双栏布局的默认栏间距：引擎分栏与主题装饰共用同一数值 */
+export const defaultColumnGap = 24;
+
 export const isPageLayoutTemplateId = (value: unknown): value is PageLayoutTemplateId =>
   typeof value === "string" && pageLayoutRegistry.some((layout) => layout.id === value);
 

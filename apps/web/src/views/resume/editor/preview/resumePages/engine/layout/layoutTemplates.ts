@@ -3,6 +3,7 @@ import type { BoxSpacing, PageLayoutConfig, PageSize, RegionConfig } from "../pa
 import { createSingleColumnLayout } from "./createSingleColumnLayout";
 import { createTwoColumnLayout, resolveColumnRatios } from "./createTwoColumnLayout";
 import {
+  defaultColumnGap,
   resolveLayoutColumns,
   type LayoutColumns,
   type PageLayoutTemplateId,
@@ -240,7 +241,7 @@ export const createDefaultPageLayoutTemplate = ({
   paddingVertical,
   paddingHorizontal,
   gap,
-  columnGap = 24,
+  columnGap = defaultColumnGap,
   leftWidthPercent,
   columns,
 }: {
