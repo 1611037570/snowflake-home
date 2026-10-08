@@ -6,6 +6,7 @@ export default { usesDateRail };
 
 <script setup>
 import { computed } from "vue";
+import { layoutStretchesColumns } from "@/views/resume/theme/layouts";
 import { useItemBox } from "../useItemBox";
 import { useResumePreviewContext } from "@/views/resume/editor/preview/shared/previewContext";
 
@@ -50,9 +51,7 @@ const {
 } = useResumePreviewContext();
 
 // 双栏版式的栏内内容紧贴栏边：单栏以外的版式不绘制左端色块，避免越过分栏线。
-const isTwoColumn = computed(
-  () => ui.value?.layout?.type === "twoColumn" || ui.value?.layout?.type === "topUserTwoColumn",
-);
+const isTwoColumn = computed(() => layoutStretchesColumns(ui.value?.layout?.type));
 
 // 盒模型、分片收边与日期栏统一由共享钩子计算，渲染与测量结果一致。
 const { fragmentStyle, boxStyle, borderStyle } = useItemBox(props, {

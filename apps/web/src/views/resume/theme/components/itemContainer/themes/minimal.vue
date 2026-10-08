@@ -1,5 +1,6 @@
 <script setup>
 import { computed } from "vue";
+import { layoutStretchesColumns } from "@/views/resume/theme/layouts";
 import { useItemBox } from "../useItemBox";
 import { useResumePreviewContext } from "@/views/resume/editor/preview/shared/previewContext";
 
@@ -50,10 +51,7 @@ const { fragmentStyle, boxStyle, borderStyle } = useItemBox(props, {
 // 极细底线只出现在条目的最后一个分片：续段不会在页首重复画线
 const complete = computed(() => props.decoration !== "top" && props.decoration !== "middle");
 // 双栏版式下不绘制日期列装饰，单栏才按日期位置对齐日期
-const isSingleColumn = computed(() => {
-  const type = ui.value?.layout?.type;
-  return type !== "twoColumn" && type !== "topUserTwoColumn";
-});
+const isSingleColumn = computed(() => !layoutStretchesColumns(ui.value?.layout?.type));
 // 日期靠右时把日期文字收成固定列，日期靠左时保持原样，不做覆盖
 const isDateColumn = computed(() => isSingleColumn.value && datePosition.value !== "left");
 // 留白与线条色通过 CSS 变量下发给样式表，避免两处各写一份数值与色值
