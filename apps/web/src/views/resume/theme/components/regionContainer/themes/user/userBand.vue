@@ -17,7 +17,7 @@ export default {
 <script setup>
 import { computed } from "vue";
 import { useResumePreviewContext } from "@/views/resume/editor/preview/shared/previewContext";
-import { defaultPageRadius, defaultPaddingHorizontal, defaultPaddingVertical } from "@/stores/modules/resume/config/uiConfig";
+import { defaultPageRadius, defaultPaddingHorizontal } from "@/stores/modules/resume/config/uiConfig";
 
 // 个人信息通栏外观：让个人信息整块铺满页面宽度并铺上主题色底纹。
 // 页面提供通栏位置，组件只维护底纹和内部留白。
@@ -28,11 +28,8 @@ const {
 
 const bandStyle = computed(() => {
   const horizontal = Number(ui.value?.page?.padding?.horizontal ?? defaultPaddingHorizontal);
-  const vertical = Number(ui.value?.page?.padding?.vertical ?? defaultPaddingVertical);
   const radius = Number(ui.value?.page?.radius ?? defaultPageRadius);
   return {
-    paddingTop: `${vertical}px`,
-    paddingBottom: "12px",
     paddingLeft: `${horizontal}px`,
     paddingRight: `${horizontal}px`,
     borderTopLeftRadius: `${radius}px`,

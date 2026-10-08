@@ -1,5 +1,5 @@
 <script>
-// 页眉容器不参与引擎加内边距，留白由组件自己声明，并与模板的 pt-9 pb-6 等值。
+// 页眉留白只在组件里声明一次，区域容器按该声明施加内边距。
 const regionPadding = {
   top: 36, // 个人信息距区域顶部的留白
   right: 0, // 水平留白沿用页面设置
@@ -27,9 +27,9 @@ const headerStyle = computed(() => ({
 </script>
 
 <template>
-  <!-- 页眉留白由 pt-9 pb-6 表达，且与 regionPadding 同值，提示线用绝对定位绘制。 -->
+  <!-- 页眉留白由区域容器按 regionPadding 施加，提示线用绝对定位绘制在留白之内。 -->
   <div
-    class="two-column-user relative box-border w-full min-w-0 pt-9 pb-6"
+    class="two-column-user relative box-border w-full min-w-0"
     :class="{ 'two-column-user--two-column': isTwoColumn }"
     :style="headerStyle"
   >

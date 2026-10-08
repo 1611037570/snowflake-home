@@ -17,28 +17,30 @@ const { ui } = useResumePreviewContext();
 const slot = computed(() => resolveRegionSlot(props.regionId));
 // 区域外观只按主题编号选择，具体样式由对应组件维护。
 const appearance = computed(() => resolveRegionAppearance(ui.value?.theme?.template, slot.value));
-// 正文外观与剩余空间共用同一个根容器，留白与分页读取相同的组件声明。
-const mainStyle = computed(() => {
-  if (slot.value !== "main") return undefined;
-  const padding = resolveRegionPadding(ui.value, "main");
-  const bottomSpace = layoutStretchesColumns(ui.value?.layout?.type)
-    ? "var(--resume-bottom-space, 0px)"
-    : "0px";
+// 区域外观与剩余空间共用同一个根容器，所有槽位的留白都与分页读取同一份声明。
+const regionStyle = computed(() => {
+  const padding = resolveRegionPadding(ui.value, slot.value);
+  // 正文处于双栏布局时，底部追加栏内为页脚预留的空间
+  const bottomSpace =
+    slot.value === "main" && layoutStretchesColumns(ui.value?.layout?.type)
+      ? "var(--resume-bottom-space, 0px)"
+      : "0px";
   return {
-    paddingTop: `${padding.top}px`, // 正文顶部留白
-    paddingRight: `${padding.right}px`, // 正文右侧留白
-    paddingBottom: `calc(${padding.bottom}px + ${bottomSpace})`, // 正文底部留白与栏内页尾空间
-    paddingLeft: `${padding.left}px`, // 正文左侧留白
+    paddingTop: `${padding.top}px`, // 区域顶部留白
+    // 左右留白为 0 表示该方向不接管：通栏页眉由组件自行补出页面左右边距
+    ...(padding.right ? { paddingRight: `${padding.right}px` } : {}),
+    paddingBottom: `calc(${padding.bottom}px + ${bottomSpace})`, // 区域底部留白与栏内页尾空间
+    ...(padding.left ? { paddingLeft: `${padding.left}px` } : {}),
   };
 });
 </script>
 
 <template>
-  <!-- 正文直接在外观组件根元素上应用布局，不额外包裹背景层或内容层。 -->
+  <!-- 区域留白由容器按声明施加在外观组件根元素上，主题不再重复书写同值样式。 -->
   <component
     :is="appearance"
     :class="{ 'resume-view-container relative box-border flex w-full min-h-0 min-w-0 flex-1': slot === 'main' }"
-    :style="mainStyle"
+    :style="regionStyle"
   >
     <slot />
   </component>

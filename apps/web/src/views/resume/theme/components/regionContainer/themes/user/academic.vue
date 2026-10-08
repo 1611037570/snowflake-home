@@ -1,5 +1,5 @@
 <script>
-// 个人信息区域留白由组件声明，模板类名与其换算结果保持一致，分页与渲染读取同一份尺寸。
+// 个人信息区域留白由组件声明，分页与渲染读取同一份尺寸，容器据此施加内边距。
 const regionPadding = {
   top: 12, // 纸张顶边与个人信息之间的呼吸空间
   right: 0, // 水平留白沿用页面设置
@@ -31,7 +31,7 @@ const regionStyle = computed(() => ({
 
 <template>
   <div
-    class="academic-user relative w-full min-w-0 box-border pt-3 pb-6"
+    class="academic-user relative w-full min-w-0 box-border"
     :class="{ 'academic-user--two-column': isTwoColumn }"
     :style="regionStyle"
   >

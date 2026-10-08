@@ -11,5 +11,5 @@ export default {
 </script>
 
 <template>
-  <div class="relative w-full min-w-0 pt-9 pb-6"><slot /></div>
+  <div class="relative w-full min-w-0"><slot /></div>
 </template>

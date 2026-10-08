@@ -1,7 +1,7 @@
 <script>
 import { defaultPaddingHorizontal, defaultPageRadius } from "@/stores/modules/resume/config/uiConfig";
 
-// 正文区域留白由组件声明，模板类名与其换算结果保持一致，分页与渲染读取同一份尺寸。
+// 正文区域留白由组件声明，分页与渲染读取同一份尺寸，容器据此施加内边距。
 const regionPadding = {
   top: 9, // 页眉分界线与板块内容之间的呼吸空间
   right: 0, // 左右留白沿用页面设置
@@ -35,7 +35,7 @@ const regionStyle = computed(() => ({
 
 <template>
   <div
-    class="academic-main relative box-border flex w-full min-w-0 flex-1 flex-col pt-[9px]"
+    class="academic-main relative box-border flex w-full min-w-0 flex-1 flex-col"
     :class="{ 'academic-main--two-column': isTwoColumn }"
     :style="regionStyle"
   >

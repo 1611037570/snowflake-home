@@ -10,7 +10,7 @@ export default { regionPadding };
 </script>
 
 <template>
-  <div class="relative flex w-full min-w-0 py-9">
+  <div class="relative flex w-full min-w-0">
     <slot />
   </div>
 </template>
