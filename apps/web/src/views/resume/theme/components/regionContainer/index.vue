@@ -12,25 +12,31 @@ const props = defineProps({
     type: String,
     required: true,
   },
+  // 引擎结算后的区域留白：含页面上边距等布局注入量，缺省时读主题声明
+  regionPadding: {
+    type: Object,
+    default: undefined,
+  },
 });
 const { ui } = useResumePreviewContext();
 const slot = computed(() => resolveRegionSlot(props.regionId));
 // 区域外观只按主题编号选择，具体样式由对应组件维护。
 const appearance = computed(() => resolveRegionAppearance(ui.value?.theme?.template, slot.value));
-// 区域外观与剩余空间共用同一个根容器，所有槽位的留白都与分页读取同一份声明。
+// 区域外观与剩余空间共用同一个根容器：分页与渲染读同一份留白，布局注入量不会被漏掉
+const padding = computed(() => props.regionPadding ?? resolveRegionPadding(ui.value, slot.value));
 const regionStyle = computed(() => {
-  const padding = resolveRegionPadding(ui.value, slot.value);
+  const regionPadding = padding.value;
   // 正文处于双栏布局时，底部追加栏内为页脚预留的空间
   const bottomSpace =
     slot.value === "main" && layoutStretchesColumns(ui.value?.layout?.type)
       ? "var(--resume-bottom-space, 0px)"
       : "0px";
   return {
-    paddingTop: `${padding.top}px`, // 区域顶部留白
+    paddingTop: `${regionPadding.top}px`, // 区域顶部留白
     // 左右留白为 0 表示该方向不接管：通栏页眉由组件自行补出页面左右边距
-    ...(padding.right ? { paddingRight: `${padding.right}px` } : {}),
-    paddingBottom: `calc(${padding.bottom}px + ${bottomSpace})`, // 区域底部留白与栏内页尾空间
-    ...(padding.left ? { paddingLeft: `${padding.left}px` } : {}),
+    ...(regionPadding.right ? { paddingRight: `${regionPadding.right}px` } : {}),
+    paddingBottom: `calc(${regionPadding.bottom}px + ${bottomSpace})`, // 区域底部留白与栏内页尾空间
+    ...(regionPadding.left ? { paddingLeft: `${regionPadding.left}px` } : {}),
   };
 });
 </script>

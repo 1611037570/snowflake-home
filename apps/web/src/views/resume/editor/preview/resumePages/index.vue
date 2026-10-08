@@ -244,6 +244,9 @@ const getRegionTopGap = (page, regionId) => {
   const currentRegion = layout.value.regions.find((region) => region.id === regionId);
   return resolveRegionGap(previousRegion, currentRegion);
 };
+// 区域留白以引擎结算结果为准：布局注入的页面上边距等必须一起渲染，否则视觉与分页口径会分叉
+const getRegionPadding = (regionId) =>
+  layout.value.regions.find((region) => region.id === regionId)?.padding;
 // 首页标语占据纸张全宽，后续区域在自身外侧保留左右页边距。
 const getRegionStyle = (page, regionId) => ({
   gap: `${layoutColumnGap.value}px`,
@@ -382,6 +385,7 @@ defineExpose({
                 <RegionContainer
                   v-if="region.columns.some((column) => column.fragments.length > 0)"
                   :region-id="region.regionId"
+                  :region-padding="getRegionPadding(region.regionId)"
                   class="flex w-full min-w-0"
                   :style="getRegionStyle(page, region.regionId)"
                 >
