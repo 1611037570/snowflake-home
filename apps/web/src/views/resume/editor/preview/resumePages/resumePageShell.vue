@@ -17,6 +17,7 @@ import {
 } from "@/stores/modules/resume/config/uiConfig";
 import PagePattern from "@/views/resume/theme/components/pageContainer/index.vue";
 import { layoutStretchesColumns } from "@/views/resume/theme/layouts";
+import { resolveThemePageAppearance } from "@/views/resume/theme";
 import { getContrastTextColor } from "@/views/resume/theme/useResumeTheme";
 
 const props = defineProps({
@@ -64,10 +65,16 @@ const bottomSpace = computed(() =>
   Math.max(parseFloat(props.styles.paddingStyle.paddingBottom) || 0, props.showPageNumber ? PAGE_NUMBER_HEIGHT : 0),
 );
 const pageBackground = computed(() => props.ui.page?.background || defaultPageBackground);
-// 紫色履历正文使用浅色底板，文字固定为黑色，避免按紫色纸张底色误判为白色。
-const pageTextColor = computed(() => props.ui.theme?.template === "violetBiography"
-  ? "#000000"
-  : getContrastTextColor(pageBackground.value));
+// 页面级外观由主题声明，公共页面只读取声明，不再判断主题编号
+const themePageAppearance = computed(() => resolveThemePageAppearance(props.ui.theme?.template));
+// 紫色履历的正文底板是浅色，主题声明文字固定为黑色，避免按紫色纸张底色误判为白色。
+const pageTextColor = computed(() =>
+  themePageAppearance.value.textColor || getContrastTextColor(pageBackground.value),
+);
+// 顶部铺边：续页一律让栏底色盖住纸张顶部留白，首页只对声明了铺边的主题生效
+const bleedsPageTop = computed(
+  () => (props.pageIndex > 0 || themePageAppearance.value.bleedsPageTop === true) && !props.hasTopRegion,
+);
 // 预览整体带 scale 缩放，线宽会被一起缩小，按足够醒目的宽度标注
 const debugOutlineStyle = { outline: "4px dashed var(--sf-error)", outlineOffset: "-1px" };
 // 纸张外观：圆角与边框都来自主题配置，边框画在页面盒子内圈并参与内容宽高
@@ -77,8 +84,8 @@ const pageSurfaceStyle = computed(() => ({
   borderStyle: "solid",
   borderColor: props.ui.page?.border?.color || defaultPageBorderColor,
   "--resume-bottom-space": `${bottomSpace.value}px`, // 双栏内部为页脚和页面下留白预留的高度
-  "--resume-page-top-space": (props.pageIndex > 0 || props.ui.theme?.template === "twoColumn") && !props.hasTopRegion ? props.styles.paddingStyle.paddingTop : "0px", // 双栏主题首屏与续页的栏底色覆盖纸张顶部留白
-  "--resume-page-top-radius": (props.pageIndex > 0 || props.ui.theme?.template === "twoColumn") && !props.hasTopRegion ? `${Number(props.ui.page?.radius ?? defaultPageRadius)}px` : "0px", // 栏底色铺到顶边时沿用纸张顶部圆角
+  "--resume-page-top-space": bleedsPageTop.value ? props.styles.paddingStyle.paddingTop : "0px", // 栏底色覆盖纸张顶部留白
+  "--resume-page-top-radius": bleedsPageTop.value ? `${Number(props.ui.page?.radius ?? defaultPageRadius)}px` : "0px", // 栏底色铺到顶边时沿用纸张顶部圆角
 }));
 // 底部空间由页尾与下边距共用：页尾更高时不再叠加下边距，下边距更大时只补足超出的部分
 const bottomSpacerHeight = computed(() => {

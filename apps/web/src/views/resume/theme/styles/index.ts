@@ -36,6 +36,7 @@ import {
   createThemeTemplates,
   resolveThemeTemplate,
   type ResumeThemeDefinition,
+  type ThemePageAppearance,
 } from "./createThemeTemplate";
 
 // 主题定义集中成数组，并由此生成唯一注册表。
@@ -83,3 +84,7 @@ export const resumeThemeRegistry = Object.fromEntries(
 
 export const getResumeThemeTemplate = (id?: string) =>
   resolveThemeTemplate(resumeThemeRegistry[id || "default"] || resumeThemeRegistry.default);
+
+/** 按主题编号读取页面级外观声明：公共页面据此渲染，不判断主题名称 */
+export const resolveThemePageAppearance = (id?: string): ThemePageAppearance =>
+  (resumeThemeRegistry[id || "default"] || resumeThemeRegistry.default)?.pageAppearance || {};
