@@ -376,7 +376,7 @@ describe("简历页几何基线", () => {
         {
           id: "user",
           height: { mode: "auto" },
-          padding: { top: 0, right: 0, bottom: 0, left: 0 },
+          padding: { top: PADDING_VERTICAL, right: 0, bottom: 0, left: 0 },
           columns: [
             {
               id: "user-column",
@@ -407,8 +407,8 @@ describe("简历页几何基线", () => {
       ],
       columnFlowHeights: [
         ["slogan-column", [[1063, 300]]],
-        ["user-column", [[763, 300]]],
-        ["main-column", [[451, 300]]],
+        ["user-column", [[739, 300]]],
+        ["main-column", [[427, 300]]],
       ],
     });
   });
@@ -442,7 +442,7 @@ describe("简历页几何基线", () => {
         {
           id: "user",
           height: { mode: "auto" },
-          padding: { top: 0, right: 0, bottom: 0, left: 0 },
+          padding: { top: PADDING_VERTICAL, right: 0, bottom: 0, left: 0 },
           columns: [
             {
               id: "user-column",
@@ -473,8 +473,8 @@ describe("简历页几何基线", () => {
       ],
       columnFlowHeights: [
         ["slogan-column", [[1063, 300]]],
-        ["user-column", [[763, 300]]],
-        ["main-column", [[451, 300]]],
+        ["user-column", [[739, 300]]],
+        ["main-column", [[427, 300]]],
       ],
     });
   });
@@ -515,5 +515,44 @@ describe("简历页几何基线", () => {
     ]);
     // 可用高度只扣上下留白：1063 − 通栏 300 − 区域间距 0 − 正文上下留白 0
     expect(snapshot.columnFlowHeights[1]).toEqual(["main-column", [[763, 300]]]);
+  });
+
+  it("存在标语区域时页面上边距计入个人信息区域上留白", () => {
+    const layout = createResumeLayout({
+      ui: { layout: { type: "singleColumn" } },
+      moduleKeys: ["slogan", ...MODULE_KEYS],
+      paddingVertical: PADDING_VERTICAL,
+      paddingHorizontal: PADDING_HORIZONTAL,
+      gap: MODULE_GAP,
+    });
+
+    expect(layout.fullBleedRegionId).toBe("slogan");
+    // 标语贴顶不吃上边距，上边距计入个人信息区域的上留白，不产生区域外边距
+    expect(
+      layout.regions.map((region) => [region.id, region.gapBefore ?? 0, region.padding?.top ?? 0]),
+    ).toEqual([
+      ["slogan", 0, 0],
+      ["user", 0, PADDING_VERTICAL],
+      ["main", 0, 12],
+    ]);
+  });
+
+  it("个人信息区域贴顶时页面上边距计入它的上留白", () => {
+    const layout = createResumeLayout({
+      ui: { theme: { template: "userBand" }, layout: { type: "topUserSingleColumn" } },
+      moduleKeys: MODULE_KEYS,
+      paddingVertical: PADDING_VERTICAL,
+      paddingHorizontal: PADDING_HORIZONTAL,
+      gap: MODULE_GAP,
+    });
+
+    expect(layout.fullBleedRegionId).toBe("user");
+    // 底纹区域自己铺到纸张顶边，上边距因此计入它的内部上留白
+    expect(
+      layout.regions.map((region) => [region.id, region.gapBefore ?? 0, region.padding?.top ?? 0]),
+    ).toEqual([
+      ["user", 0, PADDING_VERTICAL],
+      ["main", 0, 12],
+    ]);
   });
 });

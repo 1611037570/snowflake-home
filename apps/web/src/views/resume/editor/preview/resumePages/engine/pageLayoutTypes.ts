@@ -35,6 +35,8 @@ export interface PageLayoutConfig {
   pagePadding: BoxSpacing;
   /** 页面同一区域中各栏之间的水平间距 */
   columnGap: number;
+  /** 首页从纸张顶边开始占据整宽的区域编号，未命中时为 null */
+  fullBleedRegionId?: string | null;
   /** 页面区域配置 */
   regions: RegionConfig[];
 }

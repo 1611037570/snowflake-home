@@ -2,7 +2,10 @@ import type { PageLayoutConfig } from "../pageLayoutTypes";
 import { createDefaultPageLayoutTemplate, type PageLayoutTemplateId } from "./layoutTemplates";
 import { isPageLayoutTemplateId } from "@/views/resume/theme/layouts";
 import { resolveRegionPadding } from "@/views/resume/theme/regionPadding";
-import { resolveRegionGapBefore } from "@/views/resume/theme/components/regionContainer/registry";
+import {
+  resolveRegionFillsPageTop,
+  resolveRegionGapBefore,
+} from "@/views/resume/theme/components/regionContainer/registry";
 import { resolveRegionSlot } from "@/views/resume/theme/regionSlots";
 
 /**
@@ -44,14 +47,31 @@ export const createResumeLayout = ({
     leftWidthPercent: leftColumnWidth,
     columns: ui.layout?.columns,
   });
+  // 顶部通栏区域：标语区域恒从纸张顶边开始，个人信息区域是否铺顶由组件声明
+  const fullBleedRegionId = layout.regions.some((region) => region.id === "slogan")
+    ? "slogan"
+    : layout.regions[0]?.id === "user" && resolveRegionFillsPageTop(ui.theme?.template, "user")
+      ? "user"
+      : null;
+  // 页面上边距统一计入承载个人信息的区域上留白，不产生区域之间的外边距
+  const topMarginRegionId = fullBleedRegionId
+    ? layout.regions.some((region) => region.id === "user")
+      ? "user"
+      : "main"
+    : null;
   // 各区域留白统一读取对应外观组件的尺寸，供栏宽与分页共同使用；区域之间的间距也全部来自这份留白。
   return {
     ...layout,
+    fullBleedRegionId,
     regions: layout.regions.map((region) => {
       const slot = resolveRegionSlot(region.id);
+      const padding = resolveRegionPadding(ui, region.id);
       return {
         ...region,
-        padding: resolveRegionPadding(ui, region.id),
+        padding:
+          region.id === topMarginRegionId
+            ? { ...padding, top: padding.top + paddingVertical }
+            : padding,
         // 额外间距跟随区域组件声明，未声明表示与前一区域自然相接
         ...(slot ? { gapBefore: resolveRegionGapBefore(ui.theme?.template, slot) } : {}),
       };
