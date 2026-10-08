@@ -3,7 +3,7 @@ import { get, set } from "idb-keyval";
 import { ref, toRaw } from "vue";
 
 const TRACE_STORAGE_KEY = "llm-trace-list";
-const TRACE_LIMIT = 50;
+const TRACE_LIMIT = 10;
 const INPUT_LIMIT = 12000;
 const OUTPUT_LIMIT = 20000;
 
