@@ -4,6 +4,7 @@ import { useResizeObserver } from "@vueuse/core";
 import { useResumePreviewContext } from "../../shared/previewContext";
 import { getContentHeight } from "../../shared/constants";
 import { resolveRegionPadding } from "@/views/resume/theme/regionPadding";
+import { getRegionPaddingHeight } from "../engine/layout/regionHeights";
 
 const props = defineProps({
   // 图片作品的名称、描述、图片和显示尺寸数据。
@@ -20,12 +21,15 @@ const hasCaption = computed(() => Boolean(props.url || props.item.name || props.
 const imageSizeRatio = computed(() => Math.min(100, Math.max(0, Number(props.item.size ?? 50) || 0)) / 100);
 // 以完整后续页为上限，当前页放不下时由分页引擎顺延，避免缩成页尾的小图。
 const pageHeight = computed(() => {
-  const padding = resolveRegionPadding(ui.value, "main");
+  // 正文区域上下留白沿用引擎的同一份口径，不在这里另写一遍求和
+  const regionPaddingHeight = getRegionPaddingHeight({
+    padding: resolveRegionPadding(ui.value, "main"),
+  });
   return Math.max(0, getContentHeight(
     Number(ui.value.page?.padding?.vertical) || 0,
     showPageNumber.value,
     Number(ui.value.page?.border?.width) || 0,
-  ) - padding.top - padding.bottom);
+  ) - regionPaddingHeight);
 });
 // 先扣除名称、描述、间距和条目外观留白，再给图片分配剩余高度。
 const updateImageHeight = () => {

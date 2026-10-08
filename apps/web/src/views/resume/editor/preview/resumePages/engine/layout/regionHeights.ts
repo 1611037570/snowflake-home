@@ -8,5 +8,5 @@ export const getRegionContentHeight = (region: RegionConfig, fallback: number): 
   region.height.mode === "fixed" ? Math.max(0, region.height.value) : Math.max(0, fallback);
 
 /** 区域上下内容内边距占用页面高度的总量 */
-export const getRegionPaddingHeight = (region: RegionConfig): number =>
+export const getRegionPaddingHeight = (region: Pick<RegionConfig, "padding">): number =>
   (region.padding?.top ?? 0) + (region.padding?.bottom ?? 0);
