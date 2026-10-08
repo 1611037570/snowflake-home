@@ -102,6 +102,8 @@ function setAgentModel(agent: (typeof agentCards)[number]["key"], modelId: strin
             :list="modelOptions"
             class="model-select w-full"
             placeholder="未选择模型"
+            clearable
+            :disabled="!modelOptions.length"
             @update:model-value="setAgentModel(agent.key, $event)"
           />
         </div>

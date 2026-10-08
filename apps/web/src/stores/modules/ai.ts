@@ -365,6 +365,10 @@ export const useAiStore = defineStore(
       if (idx > -1) {
         modelList.value.splice(idx, 1);
       }
+      // 同步解绑引用了该模型的角色，避免删除后仍保持选中态
+      (Object.keys(agentModels.value) as AiAgentKey[]).forEach((agent) => {
+        if (agentModels.value[agent] === modelId) agentModels.value[agent] = "";
+      });
     }
 
     // 获取角色绑定的模型
