@@ -11,6 +11,7 @@ export default { regionPadding };
 
 <script setup>
 import { computed } from "vue";
+import { layoutStretchesColumns } from "@/views/resume/theme/layouts";
 import { useResumePreviewContext } from "@/views/resume/editor/preview/shared/previewContext";
 
 // 学术个人信息外观：为居中的双线页眉铺一块浅色底托，正文分区从底托之下开始。
@@ -19,9 +20,7 @@ const {
   theme: { themeColor, themeColorSoft },
 } = useResumePreviewContext();
 // 底托宽度只在双栏布局铺满整栏，单栏下没有左右分区
-const isTwoColumn = computed(() =>
-  ["twoColumn", "topUserTwoColumn"].includes(ui.value?.layout?.type),
-);
+const isTwoColumn = computed(() => layoutStretchesColumns(ui.value?.layout?.type));
 const regionStyle = computed(() => ({
   "--academic-user-band": themeColorSoft.value, // 底托浅色面，主题色一成
   "--academic-user-accent": themeColor.value, // 左侧分区短竖条的主题色

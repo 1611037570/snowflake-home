@@ -10,7 +10,7 @@ import { resumeTemplateDesignOptions } from "@/views/resume/template/data/list";
 import { onMounted, ref } from "vue";
 import i18n, { $t } from "@/locales";
 import { translateResumeEditorText } from "@/stores/modules/resume/hooks/useResumeEditorLocale";
-import { resolveLayoutColumns } from "@/views/resume/theme/layouts";
+import { resolveLayoutColumns, layoutUsesColumns } from "@/views/resume/theme/layouts";
 const resumeStore = useResumeStore();
 const { currentUI } = storeToRefs(resumeStore);
 const previewBase = ref(null);
@@ -53,10 +53,9 @@ const applyTemplate = (template) => {
   const nextUi = structuredClone(template.item.ui);
   const moduleKeys = resumeStore.runtimeFields.map((field) => field.key).filter(Boolean);
   // 顶部通栏单栏与普通单栏一样，不保存双栏模块配置。
-  nextUi.layout.columns =
-    nextUi.layout.type === "twoColumn" || nextUi.layout.type === "topUserTwoColumn"
-      ? resolveLayoutColumns(nextUi.layout.type, moduleKeys, nextUi.layout.columns)
-      : null;
+  nextUi.layout.columns = layoutUsesColumns(nextUi.layout.type)
+    ? resolveLayoutColumns(nextUi.layout.type, moduleKeys, nextUi.layout.columns)
+    : null;
   Object.assign(currentUI.value, nextUi);
 };
 </script>

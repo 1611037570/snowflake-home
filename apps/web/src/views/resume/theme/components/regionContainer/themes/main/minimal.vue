@@ -10,6 +10,7 @@ export default { regionPadding };
 </script>
 
 <script setup>
+import { layoutStretchesColumns } from "@/views/resume/theme/layouts";
 import { useResumePreviewContext } from "@/views/resume/editor/preview/shared/previewContext";
 
 const {
@@ -21,8 +22,7 @@ const mainStyle = {
   "--minimal-divider": themeColorLine.value, // 栏间 1px 细线的颜色
 };
 // 单栏下不绘制栏间线，避免装饰落到错误位置
-const isTwoColumn = () =>
-  ui.value?.layout?.type === "twoColumn" || ui.value?.layout?.type === "topUserTwoColumn";
+const isTwoColumn = () => layoutStretchesColumns(ui.value?.layout?.type);
 </script>
 
 <template>

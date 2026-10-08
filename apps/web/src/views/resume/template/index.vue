@@ -7,7 +7,7 @@ import TemplateCategory from "./components/templateCategory.vue";
 import { resumeTemplateList } from "./data/list";
 import { loadResumeTemplates } from "./data/resumeData";
 import { expandConfigModules } from "@/stores/modules/resume/hooks/useConfigTemplate";
-import { resolveLayoutColumns } from "../theme/layouts";
+import { resolveLayoutColumns, layoutUsesColumns } from "../theme/layouts";
 import { $t } from "@/locales";
 
 // 模板页专用全屏预览组件：异步加载，避免首屏打包体积过大
@@ -114,10 +114,9 @@ const useTemplate = (card) => {
     .map((field) => field.key)
     .filter(Boolean);
   // 仅双栏布局生成栏内模块顺序，顶部通栏单栏沿用简历模块顺序。
-  ui.layout.columns =
-    ui.layout.type === "twoColumn" || ui.layout.type === "topUserTwoColumn"
-      ? resolveLayoutColumns(ui.layout.type, moduleKeys, ui.layout.columns)
-      : null;
+  ui.layout.columns = layoutUsesColumns(ui.layout.type)
+    ? resolveLayoutColumns(ui.layout.type, moduleKeys, ui.layout.columns)
+    : null;
   resumeStore.addResume({
     data: deepClone(source.data),
     config: deepClone(source.config),

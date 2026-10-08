@@ -13,6 +13,7 @@ export default { regionPadding };
 
 <script setup>
 import { computed } from "vue";
+import { layoutStretchesColumns } from "@/views/resume/theme/layouts";
 import { useResumePreviewContext } from "@/views/resume/editor/preview/shared/previewContext";
 
 // 学术正文外观：居中双线页眉之下按分区排布，条目在自身外观里做引用式缩进。
@@ -21,9 +22,7 @@ const {
   theme: { themeColor, themeColorLine, themeColorSoft },
 } = useResumePreviewContext();
 // 栏底色只在双栏布局绘制：单栏下没有左右分区，不必区分栏位
-const isTwoColumn = computed(() =>
-  ["twoColumn", "topUserTwoColumn"].includes(ui.value?.layout?.type),
-);
+const isTwoColumn = computed(() => layoutStretchesColumns(ui.value?.layout?.type));
 const regionStyle = computed(() => ({
   "--academic-region-line": themeColorLine.value, // 页眉分界线的浅色描边
   "--academic-region-accent": themeColor.value, // 分区标题基准线的主题色
