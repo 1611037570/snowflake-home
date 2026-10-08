@@ -1,3 +1,10 @@
+<script>
+// 正文与顶部个人信息之间的距离只在正文声明一次，仅作用于首页。
+export default {
+  gapBefore: 24, // 个人信息与时间轴正文之间的留白
+};
+</script>
+
 <script setup>
 import { computed } from "vue";
 import { useResumePreviewContext } from "@/views/resume/editor/preview/shared/previewContext";

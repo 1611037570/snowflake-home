@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { getDefaultRegionPadding, resolveRegionPadding } from "./regionPadding";
+import { resolveRegionGapBefore } from "./components/regionContainer/registry";
 import { defaultModuleSpacing } from "@/stores/modules/resume/config/uiConfig";
 
 // 默认正文外观把首个模块前的留白声明为模块间距，因此正文槽位默认上留白不是零
@@ -47,9 +48,11 @@ describe("区域留白解析", () => {
     expect(resolveRegionPadding(ui, "main")).toEqual(defaultMainPadding);
   });
 
-  it("顶部个人信息主题由个人信息区域声明与正文之间的留白", () => {
+  it("顶部个人信息主题把与正文之间的距离交给正文区域声明", () => {
     const ui = { theme: { template: "squareTimeline" } };
 
-    expect(resolveRegionPadding(ui, "user")).toEqual({ top: 0, right: 0, bottom: 24, left: 0 });
+    expect(resolveRegionPadding(ui, "user")).toEqual({ top: 0, right: 0, bottom: 0, left: 0 });
+    // 距离改由正文区域的 gapBefore 声明，只作用于首页
+    expect(resolveRegionGapBefore(ui.theme.template, "main")).toBe(24);
   });
 });
