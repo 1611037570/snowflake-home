@@ -3,7 +3,7 @@ import { defaultPaddingHorizontal, defaultPageRadius } from "@/stores/modules/re
 
 // 正文区域留白由组件声明，分页与渲染读取同一份尺寸，容器据此施加内边距。
 const regionPadding = {
-  top: 9, // 页眉分界线与板块内容之间的呼吸空间
+  top: 0, // 页眉分界线与首个模块之间的间距由布局结算
   right: 0, // 左右留白沿用页面设置
   bottom: 0, // 底部留白沿用页面设置与页脚预留空间
   left: 0, // 左右留白沿用页面设置

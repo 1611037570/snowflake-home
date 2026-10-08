@@ -59,6 +59,10 @@ export const createResumeLayout = ({
       ? "user"
       : "main"
     : null;
+  // 个人信息与正文第一个模块之间同样是模块之间的距离，按模块上下间距在同栏内施加一次
+  const userRegionIndex = layout.regions.findIndex((region) => region.id === "user");
+  const moduleGapRegionId =
+    userRegionIndex >= 0 ? (layout.regions[userRegionIndex + 1]?.id ?? null) : null;
   // 各区域留白统一读取对应外观组件的尺寸，供栏宽与分页共同使用；区域之间的间距也全部来自这份留白。
   return {
     ...layout,
@@ -72,6 +76,8 @@ export const createResumeLayout = ({
           region.id === topMarginRegionId
             ? { ...padding, top: padding.top + paddingVertical }
             : padding,
+        // 模块间距只发生在两个模块之间，因此只作用于首页
+        ...(region.id === moduleGapRegionId ? { firstPagePaddingTop: gap } : {}),
         // 额外间距跟随区域组件声明，未声明表示与前一区域自然相接
         ...(slot ? { gapBefore: resolveRegionGapBefore(ui.theme?.template, slot) } : {}),
       };
