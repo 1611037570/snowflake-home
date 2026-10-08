@@ -13,6 +13,7 @@ import { storeToRefs } from "pinia";
 import { debounce } from "lodash-es";
 import { useChatRequest } from "./useChatRequest";
 import { ALL_MODULE_KEY, ALL_MODULE_NAME } from "@/stores/modules/resume/config/defaultConfig";
+import { useResumeAiAvailability } from "@/views/resume/hooks/useResumeAiAvailability";
 import { flows, suggestions } from "../flows";
 import type { Flow, FlowStep, SuggestCard } from "../types";
 import { supportsInterviewEarlyEnd } from "../interview/flows";
@@ -59,6 +60,8 @@ type ActiveFlowState = {
 const aiStore = useAiStore();
 const resumeStore = useResumeStore();
 const { createDefaultMessage } = aiStore;
+// 发起请求前检查小舟模型是否已绑定，未绑定时引导用户前往配置
+const { ensureAiAvailable } = useResumeAiAvailability();
 // 组装简历域技能、工具与对话创建方法
 const { config: assistantConfig, createChat: createAssistantChat } = useResumeAssistant();
 // 面试回答使用独立的一次性请求，不进入主对话的技能与工具循环
@@ -342,6 +345,8 @@ const handleSend = (content: string) => {
   if (!content?.trim()) return;
   // 确保当前没有正在发送的消息
   if (generating.value || quickAnswerLoading.value || isChatLoading.value) return;
+  // 发起聊天前先判断是否已绑定 AI 模型，未绑定则不进入请求
+  if (!ensureAiAvailable()) return;
   // 引导流程的自由输入步骤：把输入内容作为答案推进流程
   const flowStep = activeFlow.value?.steps?.[activeFlow.value.stepIndex];
   if (flowStep) {
@@ -481,6 +486,8 @@ watch(() => chat.value?.id, () => {
  */
 const handleSuggest = (payload: Pick<SuggestCard, "flow">) => {
   if (generating.value || quickAnswerLoading.value || isChatLoading.value) return;
+  // 选择工作流一键操作前先判断是否已绑定 AI 模型，未绑定则不启动流程
+  if (!ensureAiAvailable()) return;
   const flow = flows[payload?.flow];
   if (!flow) return;
   const allowQuickAnswer = supportsQuickAnswer(payload.flow);
