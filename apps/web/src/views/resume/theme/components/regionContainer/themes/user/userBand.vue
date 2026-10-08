@@ -1,13 +1,11 @@
 <script>
-import { defaultPaddingVertical as regionDefaultPaddingVertical } from "@/stores/modules/resume/config/uiConfig";
-
 // 个人信息底纹下留白归外观组件维护，分页读取同一份尺寸。
-const regionPadding = (ui) => ({
-  top: Number(ui?.page?.padding?.vertical ?? regionDefaultPaddingVertical) || 0, // 个人信息顶部内部留白
+const regionPadding = {
+  top: 0, // 页面上边距由引擎注入到区域上留白，底色仍铺到纸张顶边
   right: 0, // 个人信息右侧额外留白
   bottom: 12, // 底纹底部留白
   left: 0, // 个人信息左侧额外留白
-});
+};
 export default {
   regionPadding, // 个人信息底纹组件自身的区域留白
   fillsPageTop: true, // 个人信息底纹从首页纸张顶边铺满整宽

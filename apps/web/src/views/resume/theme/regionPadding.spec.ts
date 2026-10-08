@@ -43,8 +43,8 @@ describe("区域留白解析", () => {
 
   it("个人信息组件留白不会改变正文区域", () => {
     const ui = { theme: { template: "userBand" } };
-    // userBand 的留白由组件按 ui 计算（顶部 24），这里锁定它不会外溢到正文区域
-    expect(resolveRegionPadding(ui, "user")).toEqual({ top: 24, right: 0, bottom: 12, left: 0 });
+    // 页面上边距由引擎注入，组件只声明底纹内部留白，这里锁定它不会外溢到正文区域
+    expect(resolveRegionPadding(ui, "user")).toEqual({ top: 0, right: 0, bottom: 12, left: 0 });
     expect(resolveRegionPadding(ui, "main")).toEqual(defaultMainPadding);
   });
 

@@ -1,12 +1,11 @@
 <script>
-import { defaultPaddingVertical as regionDefaultPaddingVertical } from "@/stores/modules/resume/config/uiConfig";
-
-const regionPadding = (ui) => ({
-  top: Number(ui?.page?.padding?.vertical ?? regionDefaultPaddingVertical) || 0, // 页眉内容顶部内部留白
+// 页面上边距由引擎注入到区域上留白，弧形背景仍铺到纸张顶边。
+const regionPadding = {
+  top: 0, // 页面上边距由引擎注入
   right: 0, // 右侧内容留白由栏宽控制
   bottom: 0, // 页眉底部不增加区域留白
   left: 0, // 左侧内容留白由栏宽控制
-});
+};
 export default {
   regionPadding, // 分页与页眉组件共用的顶部留白
   fillsPageTop: true, // 弧形个人信息页眉从首页纸张顶边铺满整宽

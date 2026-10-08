@@ -1,7 +1,6 @@
 import { computed, type ComputedRef, type Ref } from "vue";
 import { getContentHeight, RESUME_WIDTH } from "../../shared/constants";
 import { resolveRegionPadding } from "@/views/resume/theme/regionPadding";
-import { resolveRegionFillsPageTop } from "@/views/resume/theme/components/regionContainer/registry";
 import { defaultLeftColumnWidth } from "@/stores/modules/resume/config/uiConfig";
 import { buildLayoutNodes } from "./adapter/buildLayoutNodes";
 import { createResumeLayout } from "./layout/createResumeLayout";
@@ -70,7 +69,6 @@ export const useResumeLayout = ({
   // 纸张边框宽度：参与页面内容宽高，渲染层与测量宿主都用同一份取值
   const pageBorderWidth = computed(() => Math.max(0, Number(ui.value.page?.border?.width) || 0));
   const pageTop = computed(() => Number(ui.value.page?.padding?.vertical) || 0);
-  const hasSloganRegion = computed(() => activeModuleKeys.value.includes("slogan"));
   const laterPageAvailableHeight = computed(() =>
     getContentHeight(pageTop.value, showPageNumber.value, pageBorderWidth.value),
   );
@@ -84,14 +82,8 @@ export const useResumeLayout = ({
       leftColumnWidth: Number(ui.value.layout?.leftColumnWidth) || defaultLeftColumnWidth,
     }),
   );
-  // 顶部区域由布局位置和组件声明共同决定，后续页仍使用普通上边距。
-  const fullBleedTopRegionId = computed(() => {
-    if (hasSloganRegion.value) return "slogan";
-    return layout.value.regions[0]?.id === "user" &&
-      resolveRegionFillsPageTop(ui.value.theme?.template, "user")
-      ? "user"
-      : null;
-  });
+  // 顶部通栏区域由布局统一判定，首屏可用高度据此补回被它覆盖的页面上边距
+  const fullBleedTopRegionId = computed(() => layout.value.fullBleedRegionId ?? null);
   const availableHeight = computed(() =>
     laterPageAvailableHeight.value + (fullBleedTopRegionId.value ? pageTop.value : 0),
   );
