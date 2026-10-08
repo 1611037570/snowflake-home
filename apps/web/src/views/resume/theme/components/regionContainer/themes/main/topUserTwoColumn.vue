@@ -11,6 +11,7 @@ export default { regionPadding };
 
 <script setup>
 import { computed } from "vue";
+import { defaultColumnGap } from "@/views/resume/theme/layouts";
 import { useResumePreviewContext } from "@/views/resume/editor/preview/shared/previewContext";
 
 const {
@@ -19,10 +20,10 @@ const {
 } = useResumePreviewContext();
 // 栏间线只服务个人信息顶部通栏的双栏版式，单栏布局下没有第二栏，装饰一并关闭。
 const isTopUserTwoColumn = computed(() => ui.value?.layout?.type === "topUserTwoColumn");
-// 栏间线颜色与偏移由变量下发，偏移取栏间距 24px 的一半，让线条落在栏间中线。
+// 栏间线颜色与偏移由变量下发，偏移取栏间距的一半，让线条落在栏间中线。
 const mainStyle = computed(() => ({
   "--top-user-divider": themeColorLine.value, // 双栏栏间线颜色
-  "--top-user-column-gap": "24px", // 引擎下发的栏间距，栏间线取其中线
+  "--top-user-column-gap": `${defaultColumnGap}px`, // 引擎分栏与栏间线共用同一份栏间距
   "--top-user-divider-top": `${regionPadding.top}px`, // 栏间线对齐栏内内容的起始位置
 }));
 </script>
