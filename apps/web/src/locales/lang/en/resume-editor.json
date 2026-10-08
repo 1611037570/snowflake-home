@@ -319,8 +319,6 @@
   "displaySettings": "Display Settings",
   "debugConsole": "Debug Console",
   "debugConsoleInfo": "Show the debug entry in the toolbar",
-  "toolbarToolName": "Toolbar Tool Names",
-  "toolbarToolNameInfo": "Show names beside toolbar buttons",
   "newRecordExpanded": "Expand New Records by Default",
   "newRecordExpandedInfo": "Expand newly added records by default",
   "previewLocate": "Locate from Preview",

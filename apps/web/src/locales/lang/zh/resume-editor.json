@@ -319,8 +319,6 @@
   "displaySettings": "显示设置",
   "debugConsole": "调试控制台",
   "debugConsoleInfo": "工具栏显示调试入口",
-  "toolbarToolName": "工具栏工具名称",
-  "toolbarToolNameInfo": "工具按钮旁显示名称",
   "newRecordExpanded": "新记录默认展开",
   "newRecordExpandedInfo": "新添加的记录默认展开",
   "previewLocate": "点击预览定位",
