@@ -4,6 +4,7 @@ import WangEditor from "@/components/business/wangEditor";
 import { useResumeStore } from "@/stores";
 import { storeToRefs } from "pinia";
 import TemplateExamplePicker from "./templateExamplePicker.vue";
+import AiResultPanel from "./aiResultPanel.vue";
 import { loadResumeExamples } from "@/views/resume/template/data/resumeExamples";
 import { useFormContext } from "@/components/business/dynamicForm/api";
 import { useResumeContentAi } from "./useResumeContentAi";
@@ -19,19 +20,35 @@ const props = defineProps({
 });
 const { getFieldDataKey } = useFormContext();
 // 使用表单公开路径定位当前字段，重复正文不会影响记录定位
-const { loading: aiLoading, runAiContent } = useResumeContentAi(content, () => getFieldDataKey({
-  // 普通输入字段
-  type: "object",
-  // 当前富文本编辑组件
-  component: "resumeContentEditor",
-  // 当前容器内的正文数据绑定
-  model: {
-    // 正文字段路径
-    source: ["data", "content"],
-    // 编辑组件的双向绑定属性
-    prop: "modelValue",
-  },
-}));
+const {
+  loading: aiLoading,
+  previewHtml: aiPreviewHtml,
+  errorText: aiError,
+  activeAction: aiAction,
+  runAiContent,
+  applyResult: applyAiResult,
+  discardResult: discardAiResult,
+} = useResumeContentAi(
+  content,
+  () =>
+    getFieldDataKey({
+      // 普通输入字段
+      type: "object",
+      // 当前富文本编辑组件
+      component: "resumeContentEditor",
+      // 当前容器内的正文数据绑定
+      model: {
+        // 正文字段路径
+        source: ["data", "content"],
+        // 编辑组件的双向绑定属性
+        prop: "modelValue",
+      },
+    }),
+  // 字段类型：决定正文写法与篇幅
+  () => props.kind,
+);
+// 生成中、已有预览或出现错误时展示结果卡片
+const aiVisible = computed(() => aiLoading.value || !!aiPreviewHtml.value || !!aiError.value);
 
 const resumeStore = useResumeStore();
 const { currentData } = storeToRefs(resumeStore);
@@ -82,7 +99,8 @@ const appendExample = (example) => {
       </template>
       <template #bottom>
         <div
-          class="flex flex-wrap items-center gap-3 rounded-b-2xl bg-sf-theme px-3 py-1 text-sf-theme-text"
+          class="flex flex-wrap items-center gap-3 bg-sf-theme px-3 py-1 text-sf-theme-text"
+          :class="aiVisible ? '' : 'rounded-b-2xl'"
         >
           <span class="shrink-0 font-semibold">✦AI+</span>
           <div class="flex flex-wrap items-center gap-3">
@@ -98,6 +116,18 @@ const appendExample = (example) => {
             </button>
           </div>
         </div>
+        <!-- 生成结果先在此确认，采用后才写入编辑器 -->
+        <AiResultPanel
+          v-if="aiVisible"
+          class="rounded-b-2xl"
+          :action="aiAction"
+          :loading="aiLoading"
+          :preview-html="aiPreviewHtml"
+          :error-text="aiError"
+          @apply="applyAiResult"
+          @regenerate="runAiContent(aiAction)"
+          @discard="discardAiResult"
+        />
       </template>
     </WangEditor>
   </div>
