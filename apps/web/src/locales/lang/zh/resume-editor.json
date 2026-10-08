@@ -317,8 +317,6 @@
   "resetSettingsConfirm": "重置设置确认",
   "resetAllSettings": "确认重置所有设置为默认值吗？",
   "displaySettings": "显示设置",
-  "resumeProgress": "简历完成进度",
-  "resumeProgressInfo": "右侧显示简历完成进度",
   "debugConsole": "调试控制台",
   "debugConsoleInfo": "工具栏显示调试入口",
   "toolbarToolName": "工具栏工具名称",
