@@ -20,7 +20,7 @@ defineOptions({ name: "ResumeToolbar" });
 
 const router = useRouter();
 const resumeStore = useResumeStore();
-const { system, currentItem } = storeToRefs(resumeStore);
+const { currentItem } = storeToRefs(resumeStore);
 const systemStore = useSystemStore();
 const { isMobile } = storeToRefs(systemStore);
 
@@ -81,7 +81,7 @@ const toolbarItems = computed(() => [
   { key: "ai", component: Ai },
   { key: "system", component: System },
   // ATS 参考入口固定在工具项末尾，显示于工具栏底部。
-  ...(system.value.showProgress ? [{ key: "progress", component: Progress }] : []),
+  { key: "progress", component: Progress },
 ]);
 </script>
 

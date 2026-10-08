@@ -9,7 +9,7 @@ import { useResumeStats } from "./useResumeStats";
 import { $t } from "@/locales";
 
 const resumeStore = useResumeStore();
-const { system, currentData, runtimeFields } = storeToRefs(resumeStore);
+const { currentData, runtimeFields } = storeToRefs(resumeStore);
 
 // 弹窗显隐控制
 const visible = ref(false);
@@ -78,7 +78,7 @@ const getProgressColor = (progress) => {
 </script>
 
 <template>
-  <SfTooltip v-if="system.showProgress" :content="tooltipText" placement="left">
+  <SfTooltip :content="tooltipText" placement="left">
     <button
       type="button"
       class="flex h-9 w-12 shrink-0 cursor-pointer items-center justify-center text-sf-text-2 transition-colors hover:text-sf-theme"

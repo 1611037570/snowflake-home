@@ -33,12 +33,6 @@ function resetSettings() {
       <SfSetTitle :title="$t('displaySettings')" />
       <SfSetBox>
         <SfSetItem
-          :title="$t('resumeProgress')"
-          :info="$t('resumeProgressInfo')"
-          v-model="system.showProgress"
-          type="switch"
-        />
-        <SfSetItem
           :title="$t('debugConsole')"
           :info="$t('debugConsoleInfo')"
           v-model="system.showDebug"
