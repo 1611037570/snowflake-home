@@ -45,9 +45,9 @@ const isBorder = computed(() => (props.border ? "border border-sf-b" : ""));
 // 按钮圆角
 const isRound = computed(() => (props.round ? "rounded-3xl" : "rounded-xl"));
 const sizeClassObj = {
-  small: "p-1 text-[13px]",
-  default: "p-2 text-sm",
-  large: "p-3 text-[15px]",
+  small: "py-1 px-2 text-[13px]",
+  default: "py-1 px-3 text-sm",
+  large: "py-2 px-4 text-[15px]",
 };
 const sizeClass = computed(() => sizeClassObj[props.size] || sizeClassObj.default);
 const plainClassObj = {
