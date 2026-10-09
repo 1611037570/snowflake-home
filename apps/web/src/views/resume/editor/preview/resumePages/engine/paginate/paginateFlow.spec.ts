@@ -24,6 +24,38 @@ const createMeasurement = (
 });
 
 describe("paginateFlow", () => {
+  it("后续页前置零高度分片不阻止段间距隐藏，也不额外挤出下一页", () => {
+    const nodes = [
+      createNode("first"),
+      createNode("gap1", { type: "spacer", hideWhenPageLeading: true }),
+      createNode("empty", { type: "title" }),
+      createNode("gap2", { type: "spacer", hideWhenPageLeading: true }),
+      createNode("content"),
+    ];
+    const measurements = new Map([
+      ["first", createMeasurement("first", 100)],
+      ["gap1", createMeasurement("gap1", 20)],
+      ["empty", createMeasurement("empty", 0)],
+      ["gap2", createMeasurement("gap2", 20)],
+      ["content", createMeasurement("content", 100)],
+    ]);
+    const pages = paginateFlow({
+      nodes,
+      measurements,
+      heights: { firstPageHeight: 100, laterPageHeight: 100 },
+      gap: 0,
+    });
+
+    expect(pages).toHaveLength(2);
+    expect(pages[1]?.usedHeight).toBe(100);
+    expect(pages[1]?.items.map((item) => [item.nodeId, item.height, item.leadingOnPage])).toEqual([
+      ["gap1", 0, true],
+      ["empty", 0, true],
+      ["gap2", 0, true],
+      ["content", 100, true],
+    ]);
+  });
+
   it("按节点高度和间距生成单栏分页", () => {
     const nodes = [createNode("first"), createNode("second")];
     const measurements = new Map([
