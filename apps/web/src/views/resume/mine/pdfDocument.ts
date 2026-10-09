@@ -1,4 +1,4 @@
-export const MAX_PDF_FILE_BYTES = 20 * 1024 * 1024;
+export const MAX_PDF_FILE_BYTES = 50 * 1024 * 1024;
 export const MAX_PDF_PAGES = 10;
 export const MAX_PDF_REQUEST_BYTES = 16 * 1024 * 1024;
 
@@ -8,7 +8,7 @@ export const extractPdfImages = async (
   signal: AbortSignal,
   onProgress: (page: number, total: number) => void,
 ) => {
-  if (file.size > MAX_PDF_FILE_BYTES) throw new Error("PDF 文件不能超过 20MB");
+  if (file.size > MAX_PDF_FILE_BYTES) throw new Error("PDF 文件不能超过 50MB");
   signal.throwIfAborted();
   const bytes = new Uint8Array(await file.arrayBuffer());
   if (!new TextDecoder().decode(bytes.subarray(0, 1024)).includes("%PDF-")) {
@@ -46,20 +46,33 @@ export const extractPdfImages = async (
       onProgress(pageNumber, pdf.numPages);
       const page = await pdf.getPage(pageNumber);
       const base = page.getViewport({ scale: 1 });
-      const viewport = page.getViewport({ scale: Math.min(2, 1600 / base.width, 3000 / base.height) });
+      // 固定 A4 画布，原页面等比缩放并居中，避免裁切或拉伸。
+      const viewport = page.getViewport({ scale: Math.min(794 / base.width, 1123 / base.height) });
       const canvas = document.createElement("canvas");
       try {
-        canvas.width = Math.max(1, Math.floor(viewport.width));
-        canvas.height = Math.max(1, Math.floor(viewport.height));
+        canvas.width = 794;
+        canvas.height = 1123;
         const context = canvas.getContext("2d", { alpha: false });
         if (!context) throw new Error("浏览器无法渲染 PDF");
-        const render = page.render({ canvas, canvasContext: context, viewport });
+        const render = page.render({
+          // 固定尺寸的输出画布
+          canvas,
+          // 页面绘制上下文
+          canvasContext: context,
+          // 等比缩放后的页面视口
+          viewport,
+          // 页面在画布中居中显示
+          transform: [1, 0, 0, 1, (canvas.width - viewport.width) / 2, (canvas.height - viewport.height) / 2],
+          // 留白区域使用白色背景
+          background: "#ffffff",
+        });
         const cancelRender = () => render.cancel();
         signal.addEventListener("abort", cancelRender, { once: true });
         try { await render.promise; }
         finally { signal.removeEventListener("abort", cancelRender); }
         signal.throwIfAborted();
-        const image = canvas.toDataURL("image/jpeg", 0.82);
+        // 固定使用 WebP 与高质量编码，不动态降低尺寸或质量。
+        const image = canvas.toDataURL("image/webp", 0.95);
         imageBytes += image.length;
         if (imageBytes > MAX_PDF_REQUEST_BYTES) throw new Error("PDF 图片内容过大，请减少页数后重试");
         images.push(image);
