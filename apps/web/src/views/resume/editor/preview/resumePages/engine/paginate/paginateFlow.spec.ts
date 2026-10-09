@@ -24,6 +24,29 @@ const createMeasurement = (
 });
 
 describe("paginateFlow", () => {
+  it.each(["richText", "group"] as const)("%s 的末尾断点已覆盖内容时不生成空白续页", (type) => {
+    const node = createNode("content", { type });
+    const pages = paginateFlow({
+      nodes: [node],
+      measurements: new Map([
+        ["content", createMeasurement("content", 250, {
+          contentLength: 10,
+          breakPoints: [
+            { offset: 10, type: "paragraph", height: 100 },
+            ...(type === "group" ? [{ offset: 0, type: "block" as const, height: 100, blockEnd: 1 }] : []),
+          ],
+        })],
+      ]),
+      heights: { firstPageHeight: 120, laterPageHeight: 120 },
+      gap: 0,
+    });
+
+    // 剩余测量高度不包含未消费正文，不能单独形成下一页。
+    expect(pages).toHaveLength(1);
+    expect(pages[0]?.items).toHaveLength(1);
+    expect(pages[0]?.items[0]?.contentRange).toEqual({ start: 0, end: 10 });
+  });
+
   it("按节点高度和间距生成单栏分页", () => {
     const nodes = [createNode("first"), createNode("second")];
     const measurements = new Map([
