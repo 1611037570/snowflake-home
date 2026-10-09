@@ -8,13 +8,10 @@ import {
   datePositionList,
   dateStyleList,
   defaultAvatarPosition,
-  defaultDatePosition,
-  defaultDateStyle,
   defaultInfoSeparator,
   defaultInfoPosition,
   defaultLinkUnderline,
   defaultPageBackground,
-  defaultTitleIconMode,
   defaultUserInfoLayout,
   defaultUserInfoMode,
   infoPositionList,
@@ -24,11 +21,15 @@ import {
   userInfoLayoutList,
   userInfoModeList,
 } from "@/stores/modules/resume/config/uiConfig";
+import { getResumeThemeTemplate } from "@/views/resume/theme";
 import ThemeColorPicker from "@/components/business/themeColorPicker/themeColorPicker.vue";
 import { localizeResumeEditorOptionList } from "@/stores/modules/resume/hooks/useResumeEditorLocale";
 
 const resumeStore = useResumeStore();
 const { currentUI } = storeToRefs(resumeStore);
+// 视觉参数重置统一回到当前主题预设。
+const themePresetUi = computed(() => getResumeThemeTemplate(currentUI.value?.theme?.template).item.ui);
+const getThemeDefault = (key) => key.split(".").reduce((value, field) => value?.[field], themePresetUi.value);
 // 低频视觉微调默认收起，常用外观选项保持直接可见。
 const moreSettingsExpanded = ref([]);
 
@@ -187,7 +188,7 @@ const setParam = (key, value) => {
                       icon="material-symbols:restart-alt"
                       size="4"
                       class="cursor-pointer text-sf-text-2 transition-colors hover:text-sf-theme"
-                      @click="titleIconMode = defaultTitleIconMode"
+                      @click="titleIconMode = themePresetUi.theme.titleIconMode"
                     />
                   </div>
                   <SfSelect v-model="titleIconMode" :list="localizedTitleIconModeList" />
@@ -206,7 +207,7 @@ const setParam = (key, value) => {
                       icon="material-symbols:restart-alt"
                       size="4"
                       class="cursor-pointer text-sf-text-2 transition-colors hover:text-sf-theme"
-                      @click="setParam(item.key, item.defaultValue)"
+                      @click="setParam(item.key, getThemeDefault(item.key))"
                     />
                   </div>
                   <div class="flex gap-3">
@@ -231,7 +232,7 @@ const setParam = (key, value) => {
                       icon="material-symbols:restart-alt"
                       size="4"
                       class="cursor-pointer text-sf-text-2 transition-colors hover:text-sf-theme"
-                      @click="datePosition = defaultDatePosition"
+                      @click="datePosition = themePresetUi.content.datePosition"
                     />
                   </div>
                   <div class="flex gap-3">
@@ -255,7 +256,7 @@ const setParam = (key, value) => {
                       icon="material-symbols:restart-alt"
                       size="4"
                       class="cursor-pointer text-sf-text-2 transition-colors hover:text-sf-theme"
-                      @click="dateStyle = defaultDateStyle"
+                      @click="dateStyle = themePresetUi.content.dateStyle"
                     />
                   </div>
                   <div class="flex gap-3">
@@ -279,7 +280,7 @@ const setParam = (key, value) => {
                       icon="material-symbols:restart-alt"
                       size="4"
                       class="cursor-pointer text-sf-text-2 transition-colors hover:text-sf-theme"
-                      @click="infoSeparator = defaultInfoSeparator"
+                      @click="infoSeparator = themePresetUi.content.infoSeparator"
                     />
                   </div>
                   <div class="grid grid-cols-3 gap-3">

@@ -1,4 +1,5 @@
 <script setup>
+import { compactResumeItem } from "@/views/resume/theme/resumeUi";
 import { useResumeStore } from "@/stores";
 import dayjs from "dayjs";
 import { storeToRefs } from "pinia";
@@ -58,7 +59,7 @@ const getResumePosition = (item) => {
 
 // 导出指定简历的完整 JSON 配置，支持后续无损导入恢复。
 const exportJson = (item) => {
-  const json = JSON.stringify(item ?? {}, null, 2);
+  const json = JSON.stringify(compactResumeItem(item) ?? {}, null, 2);
   const blob = new Blob([json], { type: "application/json" });
   const url = URL.createObjectURL(blob);
   const link = document.createElement("a");

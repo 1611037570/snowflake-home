@@ -1,4 +1,5 @@
 <script setup>
+import { compactResumeItem } from "@/views/resume/theme/resumeUi";
 import { useResumeName } from "../../../../hooks/useResumeName";
 import eventBus from "@/utils/modules/eventBus";
 import { useSystemStore, useResumeStore } from "@/stores";
@@ -35,7 +36,7 @@ const changePdfExportType = (value) => {
 
 // 导出当前完整简历为 JSON 文件（data/config/ui），支持无损导入恢复
 const exportConfig = () => {
-  const json = JSON.stringify(currentItem.value ?? {}, null, 2);
+  const json = JSON.stringify(compactResumeItem(currentItem.value) ?? {}, null, 2);
   const blob = new Blob([json], { type: "application/json" });
   const url = URL.createObjectURL(blob);
   const link = document.createElement("a");

@@ -3,11 +3,9 @@ import { del } from "idb-keyval";
 import { debounce } from "lodash-es";
 import { watch } from "vue";
 
-type ResumeStorageOptions = {
-  defaultUI: Record<string, any>;
-};
+import { compactResumeItem, resolveResumeUi } from "@/views/resume/theme/resumeUi";
 
-export const createResumeStorage = ({ defaultUI }: ResumeStorageOptions) => {
+export const createResumeStorage = () => {
   const storageMap = new Map<string, any>();
   // 读取失败保留目录记录，不能把临时存储错误当作简历不存在
   const readErrors = new Map<string, unknown>();
@@ -43,10 +41,10 @@ export const createResumeStorage = ({ defaultUI }: ResumeStorageOptions) => {
       },
       // 嵌套字段可能包含响应式代理，落库前转为可结构化克隆的纯数据
       serializer: {
-        // 读取已保存的简历数据
-        read: (value: any) => value,
-        // 序列化完整简历，避免嵌套代理导致存储失败
-        write: (value: any) => JSON.parse(JSON.stringify(value)),
+        // 读取主题编号与覆盖项，完整参数仅在运行时展开
+        read: (value: any) => value ? { ...value, ui: resolveResumeUi(value.ui) } : value,
+        // 压缩主题配置并解除嵌套代理，避免重复落库和存储失败
+        write: (value: any) => JSON.parse(JSON.stringify(compactResumeItem(value))),
       },
     });
     storageMap.set(id, storage);
@@ -62,14 +60,6 @@ export const createResumeStorage = ({ defaultUI }: ResumeStorageOptions) => {
       });
     });
   };
-  const fillResumeUiDefaults = (item: any) => {
-    if (!item.ui || typeof item.ui !== "object") item.ui = structuredClone(defaultUI);
-    Object.entries(defaultUI).forEach(([key, value]) => {
-      // 补齐的嵌套配置独立克隆，避免多份简历共享默认对象
-      if (item.ui[key] === undefined) item.ui[key] = structuredClone(value);
-    });
-    return item;
-  };
   const loadResumeItems = async (ids: string[]) => {
     const items = await Promise.all(
       ids.map(async (id) => {
@@ -77,7 +67,7 @@ export const createResumeStorage = ({ defaultUI }: ResumeStorageOptions) => {
         await waitForResumeStorage(storage);
         if (readErrors.has(id)) throw readErrors.get(id);
         const item = storage.data.value;
-        return item?.id === id ? fillResumeUiDefaults(item) : null;
+        return item?.id === id ? item : null;
       }),
     );
     return items.filter(Boolean);

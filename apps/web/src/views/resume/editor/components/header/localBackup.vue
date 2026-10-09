@@ -1,4 +1,5 @@
 <script setup>
+import { compactResumeItem } from "@/views/resume/theme/resumeUi";
 import { computed, onMounted, ref, toRaw, watch } from "vue";
 import { storeToRefs } from "pinia";
 import { useDebounceFn } from "@vueuse/core";
@@ -109,7 +110,7 @@ const doBackup = async () => {
     ...item,
     config: { ...item.config, modules: structuredClone(toRaw(item.config?.modules || [])) },
   };
-  const success = await writeLocalBackup(filename, JSON.stringify(backupItem, null, 2));
+  const success = await writeLocalBackup(filename, JSON.stringify(compactResumeItem(backupItem), null, 2));
   // 备份耗时极短，补足最短展示时长，避免"正在备份"一闪而过
   const elapsed = Date.now() - startTime;
   if (elapsed < BACKUP_PENDING_MIN_DURATION) {

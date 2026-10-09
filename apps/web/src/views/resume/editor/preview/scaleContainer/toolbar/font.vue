@@ -4,8 +4,6 @@ import { storeToRefs } from "pinia";
 import i18n, { $t } from "@/locales";
 import { useResumeStore } from "@/stores";
 import {
-  defaultTextAlign,
-  defaultFontFamily,
   defaultFontSize,
   defaultTitleFontSize,
   fontFamilyList,
@@ -14,9 +12,13 @@ import {
 } from "@/stores/modules/resume/config/uiConfig";
 import { localizeResumeEditorOptionList } from "@/stores/modules/resume/hooks/useResumeEditorLocale";
 import { loadFont } from "@/utils";
+import { getResumeThemeTemplate } from "@/views/resume/theme";
 
 const resumeStore = useResumeStore();
 const { currentUI } = storeToRefs(resumeStore);
+// 重置参数使用当前主题预设，保存时自动移除对应覆盖项。
+const themePresetUi = computed(() => getResumeThemeTemplate(currentUI.value?.theme?.template).item.ui);
+const getThemeDefault = (key) => key.split(".").reduce((value, field) => value?.[field], themePresetUi.value);
 
 // 字体类数值参数：标签、绑定字段与默认值集中维护，模板统一渲染
 const fontParams = computed(() => {
@@ -120,7 +122,7 @@ const setParam = (key, value) => {
               icon="material-symbols:restart-alt"
               size="4"
               class="cursor-pointer text-sf-text-2 transition-colors hover:text-sf-theme"
-              @click="fontFamily = defaultFontFamily"
+              @click="fontFamily = themePresetUi.font.family"
             />
           </div>
           <SfSelect v-model="fontFamily" :list="localizedFontFamilyList" />
@@ -155,7 +157,7 @@ const setParam = (key, value) => {
                 icon="material-symbols:restart-alt"
                 size="4"
                 class="cursor-pointer text-sf-text-2 transition-colors hover:text-sf-theme"
-                @click="setParam(item.key, item.defaultValue)"
+                @click="setParam(item.key, getThemeDefault(item.key))"
               />
             </span>
             <span>{{ getNumberValue(item.key, item.defaultValue) }}px</span>
@@ -177,7 +179,7 @@ const setParam = (key, value) => {
               icon="material-symbols:restart-alt"
               size="4"
               class="cursor-pointer text-sf-text-2 transition-colors hover:text-sf-theme"
-              @click="textAlign = defaultTextAlign"
+              @click="textAlign = themePresetUi.content.textAlign"
             />
           </div>
           <div class="flex gap-3">
