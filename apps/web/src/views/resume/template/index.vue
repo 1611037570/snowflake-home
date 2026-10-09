@@ -4,36 +4,54 @@ import { getResumeThemeTemplate, themeTemplateList, resolveThemeDecisions } from
 import ThumbPreview from "@/views/resume/editor/preview/modes/thumb.vue";
 import RevealGrid from "@/views/resume/components/revealGrid.vue";
 import TemplateCategory from "./components/templateCategory.vue";
+import TemplatePagination from "./components/templatePagination.vue";
 import { resumeTemplateList } from "./data/list";
-import { loadResumeTemplates } from "./data/resumeData";
+import { loadResumeTemplateData } from "./data/resumeData";
 import { expandConfigModules } from "@/stores/modules/resume/hooks/useConfigTemplate";
 import { resolveLayoutColumns, layoutUsesColumns } from "../theme/layouts";
 import { $t } from "@/locales";
 
 // 模板页专用全屏预览组件：异步加载，避免首屏打包体积过大
 const TemplatePreview = markRaw(defineAsyncComponent(() => import("./templatePreview.vue")));
-import { computed, onMounted, ref } from "vue";
+import { computed, ref, watch } from "vue";
+
+// 每页卡片数量：只加载并渲染当前页，避免整份范本列表一次性进入页面
+const TEMPLATE_PAGE_SIZE = 20;
+// 样式卡片统一使用的通用范本：不参与分页，进入模板页即加载，保证切到任一分类都有内容
+const PREVIEW_BASE_FILE = "xiaoZhou.ts";
 
 const resumeStore = useResumeStore();
-const resumeTemplates = ref([]);
+// 已加载的范本正文缓存：文件名到简历项的映射，切回旧页不再重新加载
+const templateItems = ref({});
 const templateLoading = ref(true);
+const templatePage = ref(1);
 
-// 模板页进入时按索引懒加载范本正文，供卡片缩略图和预览共用。
-onMounted(async () => {
+// 按文件名补齐正文缓存：已加载的跳过，未加载的并发读取后写入缓存。
+// 范本正文只用于展示，标记非响应式以免整份简历被深层代理包装。
+let loadVersion = 0;
+const ensureTemplateItems = async (fileNames) => {
+  const missing = [...new Set(fileNames)].filter((fileName) => !templateItems.value[fileName]);
+  if (!missing.length) return;
+  const version = ++loadVersion;
+  templateLoading.value = true;
   try {
-    resumeTemplates.value = await loadResumeTemplates(resumeTemplateList);
+    const loaded = await Promise.all(missing.map((fileName) => loadResumeTemplateData(fileName)));
+    // 期间又切换了分类或页码时丢弃本次结果，由最新一次加载收口加载态
+    if (version !== loadVersion) return;
+    templateItems.value = {
+      ...templateItems.value,
+      ...Object.fromEntries(missing.map((fileName, index) => [fileName, markRaw(loaded[index])])),
+    };
   } catch {
     ElMessage.error($t("resumeTemplateLoadError"));
   } finally {
-    templateLoading.value = false;
+    if (version === loadVersion) templateLoading.value = false;
   }
-});
+};
 
 // 深拷贝：套用模板时隔离示例数据，避免与模板预览共享引用导致互相串改
 const deepClone = (value) => JSON.parse(JSON.stringify(value));
-const previewBase = computed(
-  () => resumeTemplates.value.find((template) => template.fileName === "xiaoZhou.ts")?.item,
-);
+const previewBase = computed(() => templateItems.value[PREVIEW_BASE_FILE]);
 // 样式卡片统一沿用通用范本，标语内容由主题组件提供。
 const resolveStyleItem = (style) => {
   return {
@@ -61,25 +79,16 @@ const templates = computed(() =>
 const templateFilters = ref({});
 // 一级分类：example 展示简历范本，template 展示简历模板
 const currentTopCategory = ref("example");
-const filteredResumeTemplates = computed(() =>
-  resumeTemplates.value
-    .filter((template) =>
-      Object.entries(templateFilters.value).every(([key, value]) => {
-        if (!value) return true;
-        const values = template[key];
-        // 按选项取值精确匹配：不限行业/不限职位的范本只在选中「不限行业」「不限职位」时出现
-        return !Array.isArray(values) || values.includes(value);
-      }),
-    )
-    .map((template) => ({
-      ...template,
-      name: $t(`resumeTemplateContent_${template.fileName}_name`),
-      description: $t(`resumeTemplateContent_${template.fileName}_description`),
-      tags: template.tags.map((_, index) =>
-        $t(`resumeTemplateContent_${template.fileName}_tag_${index + 1}`),
-      ),
-      type: "content",
-    })),
+// 范本索引先按筛选条件过滤，正文留到确定当前页之后再加载
+const filteredResumeIndexes = computed(() =>
+  resumeTemplateList.filter((template) =>
+    Object.entries(templateFilters.value).every(([key, value]) => {
+      if (!value) return true;
+      const values = template[key];
+      // 按选项取值精确匹配：不限行业/不限职位的范本只在选中「不限行业」「不限职位」时出现
+      return !Array.isArray(values) || values.includes(value);
+    }),
+  ),
 );
 // 简历模板按 design 字段筛选：与范本的场景、行业、职位筛选互不干扰
 const filteredStyleTemplates = computed(() =>
@@ -91,20 +100,67 @@ const filteredStyleTemplates = computed(() =>
     }),
   ),
 );
-const displayedTemplates = computed(() =>
+// 当前一级分类的总条数与总页数，不足一页时按一页处理
+const currentTotal = computed(() =>
   currentTopCategory.value === "template"
-    ? filteredStyleTemplates.value
-    : filteredResumeTemplates.value,
+    ? filteredStyleTemplates.value.length
+    : filteredResumeIndexes.value.length,
 );
-// 分类或筛选变化时重建揭示列表，避免新旧卡片在 TransitionGroup 中同时出现。
+const pageCount = computed(() => Math.max(1, Math.ceil(currentTotal.value / TEMPLATE_PAGE_SIZE)));
+const pageStart = computed(() => (templatePage.value - 1) * TEMPLATE_PAGE_SIZE);
+// 筛选后条数变少时回退到最后一页，避免停在空白页
+watch(pageCount, (count) => {
+  if (templatePage.value > count) templatePage.value = count;
+});
+const pagedResumeIndexes = computed(() =>
+  filteredResumeIndexes.value.slice(pageStart.value, pageStart.value + TEMPLATE_PAGE_SIZE),
+);
+// 当前页的范本卡片：正文尚未加载完成的条目先不进列表，避免出现空卡片
+const pagedResumeTemplates = computed(() =>
+  pagedResumeIndexes.value
+    .filter((template) => templateItems.value[template.fileName])
+    .map((template) => ({
+      ...template,
+      item: templateItems.value[template.fileName],
+      name: $t(`resumeTemplateContent_${template.fileName}_name`),
+      description: $t(`resumeTemplateContent_${template.fileName}_description`),
+      tags: template.tags.map((_, index) =>
+        $t(`resumeTemplateContent_${template.fileName}_tag_${index + 1}`),
+      ),
+      type: "content",
+    })),
+);
+const pagedStyleTemplates = computed(() =>
+  filteredStyleTemplates.value.slice(pageStart.value, pageStart.value + TEMPLATE_PAGE_SIZE),
+);
+const displayedTemplates = computed(() =>
+  currentTopCategory.value === "template" ? pagedStyleTemplates.value : pagedResumeTemplates.value,
+);
+// 当前页需要的正文：简历模板共用通用范本，只保证它已加载即可，不必加载当页范本
+const pageFileNames = computed(() =>
+  currentTopCategory.value === "template"
+    ? [PREVIEW_BASE_FILE]
+    : [...pagedResumeIndexes.value.map((template) => template.fileName), PREVIEW_BASE_FILE],
+);
+watch(pageFileNames, (fileNames) => ensureTemplateItems(fileNames), { immediate: true });
+// 分类、筛选或翻页变化时重建揭示列表，避免新旧卡片在 TransitionGroup 中同时出现。
 const templateGridKey = computed(
-  () => `${currentTopCategory.value}-${JSON.stringify(templateFilters.value)}`,
+  () =>
+    `${currentTopCategory.value}-${templatePage.value}-${JSON.stringify(templateFilters.value)}`,
 );
+const scrollbarRef = ref(null);
+const setTemplatePage = (page) => {
+  templatePage.value = page;
+  // 翻页后回到列表顶部，避免停留在上一页的滚动位置
+  scrollbarRef.value?.setScrollTop(0);
+};
 const setTemplateFilters = (value) => {
   templateFilters.value = value;
+  templatePage.value = 1;
 };
 const setCurrentTopCategory = (value) => {
   currentTopCategory.value = value;
+  templatePage.value = 1;
 };
 
 // 套用模板：携带风格，深拷贝数据后新增简历并进入编辑
@@ -168,7 +224,7 @@ const getThumbItem = (item) => ({ data: item?.data, config: item?.config, ui: it
 
 <template>
   <div class="relative mx-auto flex h-full w-full max-w-7xl flex-col gap-3">
-    <SfScrollbar class="flex-1">
+    <SfScrollbar ref="scrollbarRef" class="flex-1">
       <div class="flex h-full flex-col px-3 py-2 sm:px-6">
         <TemplateCategory
           @change="setTemplateFilters"
@@ -181,12 +237,13 @@ const getThumbItem = (item) => ({ data: item?.data, config: item?.config, ui: it
         >
           {{ $t("resumeTemplateLoading") }}
         </div>
+        <!-- 模板页关闭逐项揭示：卡片一次性铺满，避免列表高度持续增长带动滚动 -->
         <RevealGrid
           v-else
           :key="templateGridKey"
           :items="displayedTemplates"
           :size="gridClass"
-          :interval="120"
+          :reveal="false"
           key-field="fileName"
         >
           <template #default="{ item: card }">
@@ -230,6 +287,11 @@ const getThumbItem = (item) => ({ data: item?.data, config: item?.config, ui: it
             </div>
           </template>
         </RevealGrid>
+        <TemplatePagination
+          :page="templatePage"
+          :page-count="pageCount"
+          @change="setTemplatePage"
+        />
         <div class="flex flex-1 flex-col items-center justify-end">
           <SfFooter />
         </div>
