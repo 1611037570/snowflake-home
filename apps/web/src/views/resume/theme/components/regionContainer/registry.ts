@@ -16,7 +16,6 @@ import UserBand from "./themes/user/userBand.vue";
 import CurvedHeader from "./themes/user/curvedHeader.vue";
 import SloganBandUser from "./themes/user/sloganBand.vue";
 import DefaultMain from "./themes/main/default.vue";
-import InkMagazineMain from "./themes/main/inkMagazine.vue";
 import Frame from "./themes/main/frame.vue";
 import BurgundyMain from "./themes/main/burgundySidebar.vue";
 import SandSidebarMain from "./themes/main/sandSidebar.vue";
@@ -29,7 +28,6 @@ import VioletBiographyUser from "./themes/user/violetBiography.vue";
 import VioletBiographyMain from "./themes/main/violetBiography.vue";
 import TealRailMain from "./themes/main/tealRail.vue";
 import TealCardUser from "./themes/user/tealCard.vue";
-import InkMagazineUser from "./themes/user/inkMagazine.vue";
 import RingTimelineUser from "./themes/user/ringTimeline.vue";
 import SquareTimelineUser from "./themes/user/squareTimeline.vue";
 
@@ -47,7 +45,6 @@ export const regionAppearanceRegistry: Record<RegionSlotId, Record<string, Compo
     default: PlainRegion, // 普通个人信息区域
     minimal: MinimalUser, // 简约：页眉上下等距留白
     academic: AcademicUser, // 学术：个人信息底托与分区标记
-    fresh: PlainRegion, // 清新恢复旧版个人信息区域，不绘制新增页眉基线
     frame: PlainRegion, // 红色边框恢复旧版个人信息，不绘制新增页眉色块与细线
     colorBar: PlainRegion, // 色条恢复旧版个人信息区域，不绘制新增页眉色块
     twoColumn: TwoColumnUser, // 双栏：页眉顶部留白与分栏提示线
@@ -60,7 +57,6 @@ export const regionAppearanceRegistry: Record<RegionSlotId, Record<string, Compo
     sloganBand: SloganBandUser, // 标语通栏主题的个人信息内部留白
     navyGuide: NavyGuideUser, // 深色顶栏下方的个人信息留白
     violetBiography: VioletBiographyUser, // 紫色通栏个人信息页眉
-    inkMagazine: InkMagazineUser, // 杂志页眉与正文之间的留白
     ringTimeline: RingTimelineUser, // 圆环时间轴页眉下留白
     squareTimeline: SquareTimelineUser, // 方节点时间轴页眉下留白
   },
@@ -68,7 +64,6 @@ export const regionAppearanceRegistry: Record<RegionSlotId, Record<string, Compo
     default: DefaultMain, // 普通正文区域底板
     minimal: MinimalMain, // 简约：正文首行留白与右对齐日期列基准
     academic: AcademicMain, // 学术：页眉分界线与双栏分区底色
-    fresh: DefaultMain, // 清新恢复旧版正文区域，不绘制新增圆角浅底托
     frame: Frame, // 红色边框主题正文底板
     colorBar: DefaultMain, // 色条恢复旧版正文，不绘制新增贯穿色条与留白
     twoColumn: TwoColumnMain, // 双栏：左栏浅底与栏间细线
@@ -78,7 +73,6 @@ export const regionAppearanceRegistry: Record<RegionSlotId, Record<string, Compo
     angledLine: AngledLineMain, // 斜角竖线：正文栏贯穿竖线与斜角节点
     layeredCurve: DefaultMain, // 层叠弧线恢复旧版正文，不绘制新增右上弧线装饰
     markerGrid: MarkerGridMain, // 荧光网格：正文点阵底纹
-    inkMagazine: InkMagazineMain, // 杂志双栏正文的浅灰辅助栏
     burgundySidebar: BurgundyMain, // 绛红双栏主题侧栏底色
     sandSidebar: SandSidebarMain, // 米色侧栏底色与教育条目分隔线
     redWhiteSidebar: RedWhiteSidebarMain, // 深红侧栏与右栏淡菱形背景

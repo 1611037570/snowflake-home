@@ -4,9 +4,7 @@ import BusinessAppearance from "./themes/business.vue";
 import CurvedHeaderAppearance from "./themes/curvedHeader.vue";
 import NavyGuideAppearance from "./themes/navyGuide.vue";
 import DefaultAppearance from "./themes/default.vue";
-import FreshAppearance from "./themes/fresh.vue";
 import MinimalAppearance from "./themes/minimal.vue";
-import InkMagazineAppearance from "./themes/inkMagazine.vue";
 import SandSidebarAppearance from "./themes/sandSidebar.vue";
 import RedWhiteSidebarAppearance from "./themes/redWhiteSidebar.vue";
 import SongEleganceAppearance from "./themes/songElegance.vue";
@@ -16,10 +14,8 @@ import VividAppearance from "./themes/vivid.vue";
 export const userAppearanceRegistry = createAppearanceRegistry({
   default: DefaultAppearance, // 不绘制任何装饰，未单独设计的主题都落到这里
   minimal: MinimalAppearance, // 内容水平居中
-  inkMagazine: InkMagazineAppearance, // 杂志式大字号姓名与黑白页眉
   academic: AcademicAppearance, // 内容居中并叠加双分隔线
   business: BusinessAppearance, // 浅色底托圆角块 + 左侧主题色竖条
-  fresh: FreshAppearance, // 大圆角浅色底托
   vivid: VividAppearance, // 浅色底托 + 主题色描边
   colorBar: DefaultAppearance, // 色条恢复旧版个人信息，不绘制新增色块与头像装饰
   sandSidebar: SandSidebarAppearance, // 米色侧栏主题的方形头像和金棕色姓名
