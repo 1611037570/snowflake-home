@@ -1,5 +1,6 @@
 <script setup>
 import { useRouter } from "vue-router";
+import { SITE_URL } from "./config";
 
 const router = useRouter();
 
@@ -17,15 +18,17 @@ const handleBack = () => {
 <template>
   <!-- 悬停提示：引导用户收藏本站 -->
   <SfTooltip content="按「Ctrl+D」收藏本站或拖动LOGO到书签栏" placement="bottom">
-    <div
+    <!-- 使用 a 标签承载站点永久地址，浏览器才能把 LOGO 拖拽到书签栏收藏 -->
+    <a
+      :href="SITE_URL"
       class="flex cursor-pointer items-center gap-1.5 rounded-full px-3 py-1 text-sf-theme transition-all hover:bg-sf-theme-3"
-      @click="handleBack"
+      @click.prevent="handleBack"
     >
       <SfLogo size="5.5" class="animate-pulse" name="resume" />
 
       <span class="hidden text-base font-bold tracking-wide md:flex">{{
         $t("core.router.resume")
       }}</span>
-    </div>
+    </a>
   </SfTooltip>
 </template>

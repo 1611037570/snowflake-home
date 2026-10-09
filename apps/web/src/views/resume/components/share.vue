@@ -1,13 +1,14 @@
 <script setup>
 import { computed, nextTick, ref } from "vue";
 import { useCopy } from "@/hooks";
+import { SITE_URL } from "./config";
 
 const visible = ref(false);
 const shareCardRef = ref();
 
 // 分享地址使用简历页面，并携带当前简历标识，不暴露编辑器路径
 const resumeUrl = computed(() => {
-  return "http://qzresume.cn";
+  return SITE_URL;
 });
 
 // 复制当前简历的公开地址
@@ -40,7 +41,7 @@ const saveQrCode = async () => {
 
 // 跳转购买页面
 const goBuy = () => {
-  window.open("https://www.rainyun.com/MTI2MTg0MA==_", "_blank");
+  window.open("https://www.rainyun.com/qz_", "_blank");
 };
 </script>
 
@@ -75,6 +76,7 @@ const goBuy = () => {
         <SfButton class="flex-1" @click="saveQrCode">保存图片</SfButton>
         <SfButton class="flex-1" type="bg" @click="copyLink">复制链接</SfButton>
       </div>
+      <div>按「Ctrl+D」收藏本站或拖动LOGO到书签栏</div>
       <div class="whitespace-normal">
         <span>
           同款云服务器 免备案， <span class="text-sf-theme">2</span>核<span class="text-sf-theme"
