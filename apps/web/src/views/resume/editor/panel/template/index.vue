@@ -76,7 +76,7 @@ const applyTemplate = (template) => {
         :aria-pressed="selectedDesign === option.key"
         @click="toggleDesign(option.key)"
       >
-        {{ $t(`resumeTemplateOption_style_${option.key}`) }}
+        {{ $t(`resumeTemplateOption_design_${option.key}`) }}
       </SfButton>
     </div>
     <!-- 模板卡片按可用宽度自动换列，保持缩略图的固定尺寸。 -->

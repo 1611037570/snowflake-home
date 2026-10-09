@@ -1,7 +1,7 @@
 <script setup>
 import { useResumeStore } from "@/stores";
 import { getResumeThemeTemplate, themeTemplateList, resolveThemeDecisions } from "@/views/resume/theme";
-import ResumeCardContainer from "@/views/resume/mine/components/resumeCardContainer.vue";
+import ThumbPreview from "@/views/resume/editor/preview/modes/thumb.vue";
 import RevealGrid from "@/views/resume/components/revealGrid.vue";
 import TemplateCategory from "./components/templateCategory.vue";
 import { resumeTemplateList } from "./data/list";
@@ -59,7 +59,8 @@ const templates = computed(() =>
 );
 
 const templateFilters = ref({});
-const currentCategory = ref("scene");
+// 一级分类：example 展示简历范本，template 展示简历模板
+const currentTopCategory = ref("example");
 const filteredResumeTemplates = computed(() =>
   resumeTemplates.value
     .filter((template) =>
@@ -80,7 +81,7 @@ const filteredResumeTemplates = computed(() =>
       type: "content",
     })),
 );
-// 分类筛选对两种模板同时生效：样式模板同样按 design 字段参与设计分类筛选
+// 简历模板按 design 字段筛选：与范本的场景、行业、职位筛选互不干扰
 const filteredStyleTemplates = computed(() =>
   templates.value.filter((template) =>
     Object.entries(templateFilters.value).every(([key, value]) => {
@@ -91,17 +92,19 @@ const filteredStyleTemplates = computed(() =>
   ),
 );
 const displayedTemplates = computed(() =>
-  currentCategory.value === "style" ? filteredStyleTemplates.value : filteredResumeTemplates.value,
+  currentTopCategory.value === "template"
+    ? filteredStyleTemplates.value
+    : filteredResumeTemplates.value,
 );
 // 分类或筛选变化时重建揭示列表，避免新旧卡片在 TransitionGroup 中同时出现。
 const templateGridKey = computed(
-  () => `${currentCategory.value}-${JSON.stringify(templateFilters.value)}`,
+  () => `${currentTopCategory.value}-${JSON.stringify(templateFilters.value)}`,
 );
 const setTemplateFilters = (value) => {
   templateFilters.value = value;
 };
-const setCurrentCategory = (value) => {
-  currentCategory.value = value;
+const setCurrentTopCategory = (value) => {
+  currentTopCategory.value = value;
 };
 
 // 套用模板：携带风格，深拷贝数据后新增简历并进入编辑
@@ -155,6 +158,12 @@ const setPreviewSize = (size) => {
   gridClass.value = size;
 };
 const gridClass = ref("default");
+// 卡片尺寸随预览尺寸切换：大图模式放大卡片，缩略图按容器自适应缩放
+const cardSizeClass = computed(() =>
+  gridClass.value === "small" ? "h-[544px] w-[382px]" : "h-[344px]! w-[242px]",
+);
+// 缩略图只消费简历内容与配置，不把卡片上的筛选信息传进渲染链路
+const getThumbItem = (item) => ({ data: item?.data, config: item?.config, ui: item?.ui });
 </script>
 
 <template>
@@ -163,7 +172,7 @@ const gridClass = ref("default");
       <div class="flex h-full flex-col px-3 py-2 sm:px-6">
         <TemplateCategory
           @change="setTemplateFilters"
-          @category-change="setCurrentCategory"
+          @category-change="setCurrentTopCategory"
           @size-change="setPreviewSize"
         />
         <div
@@ -181,28 +190,39 @@ const gridClass = ref("default");
           key-field="fileName"
         >
           <template #default="{ item: card }">
-            <ResumeCardContainer :item="card.item" :size="gridClass" @click="useTemplateCard(card)">
-              <div class="flex flex-col">
-                <div class="truncate text-base font-black text-black">
-                  {{ card.name }}
-                </div>
-                <div class="mt-3 line-clamp-2 text-sm text-sf-text-2">
-                  {{ card.description }}
-                </div>
-                <div
-                  v-if="card.tags.length"
-                  class="mt-3 flex flex-wrap gap-3 text-sm text-sf-text-2"
-                >
-                  <span v-for="tag in card.tags" :key="tag">{{ tag }}</span>
-                </div>
-                <div class="mt-3 flex items-center justify-between gap-2">
-                  <SfButton class="flex-1" @click.stop="openFullscreen(card, card.type)">
-                    {{ $t("resumeTemplatePreview") }}
-                  </SfButton>
-                  <SfButton class="flex-1">{{ $t("resumeTemplateUse") }}</SfButton>
+            <!-- 卡片外壳由模板页自己维护，缩略图仍复用懒加载预览组件 -->
+            <div
+              :class="cardSizeClass"
+              class="group relative flex cursor-pointer flex-col overflow-hidden rounded-3xl border border-sf-b bg-sf-primary transition-all duration-200 hover:scale-102 hover:border-sf-theme"
+              @click="useTemplateCard(card)"
+            >
+              <ThumbPreview :item="getThumbItem(card.item)" />
+              <!-- 信息层覆盖缩略图下半部分，按钮点击不冒泡到卡片的套用动作 -->
+              <div
+                class="absolute inset-x-0 top-[50%] bottom-0 z-10 flex flex-col justify-end bg-linear-to-t from-white via-white/90 to-transparent px-3 pb-3"
+              >
+                <div class="flex flex-col">
+                  <div class="truncate text-base font-black text-black">
+                    {{ card.name }}
+                  </div>
+                  <div class="mt-3 line-clamp-2 text-sm text-sf-text-2">
+                    {{ card.description }}
+                  </div>
+                  <div
+                    v-if="card.tags.length"
+                    class="mt-3 flex flex-wrap gap-3 text-sm text-sf-text-2"
+                  >
+                    <span v-for="tag in card.tags" :key="tag">{{ tag }}</span>
+                  </div>
+                  <div class="mt-3 flex items-center justify-between gap-2">
+                    <SfButton class="flex-1" @click.stop="openFullscreen(card, card.type)">
+                      {{ $t("resumeTemplatePreview") }}
+                    </SfButton>
+                    <SfButton class="flex-1">{{ $t("resumeTemplateUse") }}</SfButton>
+                  </div>
                 </div>
               </div>
-            </ResumeCardContainer>
+            </div>
           </template>
           <template #empty>
             <div class="flex h-36 items-center justify-center text-sm text-sf-text-2">

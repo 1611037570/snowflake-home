@@ -3,13 +3,19 @@ export type ResumeTemplateOption = {
   value: string;
 };
 
-export type ResumeTemplateCategoryGroup = {
+export type ResumeTemplateCategory = {
+  /** 二级分类标识：与模板数据上的筛选字段同名，选中值直接按该字段匹配 */
   key: string;
-  name: string;
-  icon: string;
-  /** 该分类选项对应的模板数据字段：与 key 不同时用于把选项值映射到真正的数据字段 */
-  filterField?: string;
   options: ResumeTemplateOption[];
+};
+
+export type ResumeTemplateTopCategory = {
+  /** 一级分类标识：example 为简历范本，template 为简历模板 */
+  key: string;
+  /** 一级分类按钮图标 */
+  icon: string;
+  /** 该一级分类下的二级筛选维度 */
+  categories: ResumeTemplateCategory[];
 };
 
 export type ResumeTemplate = {
@@ -130,27 +136,22 @@ export const resumeTemplateDesignOptions: ResumeTemplateOption[] = [
   { key: "polished", value: "精美" },
 ];
 
-export const resumeTemplateCategoryGroups: ResumeTemplateCategoryGroup[] = [
-  { key: "scene", name: "热门模板", icon: "lucide:flame", options: resumeTemplateSceneOptions },
+// 一级分类只有简历范本与简历模板两类，各自的二级筛选维度互不通用于另一类。
+export const resumeTemplateTopCategories: ResumeTemplateTopCategory[] = [
   {
-    key: "industry",
-    name: "行业",
-    icon: "lucide:building-2",
-    options: resumeTemplateIndustryOptions,
+    key: "example",
+    icon: "lucide:file-text",
+    categories: [
+      { key: "scene", options: resumeTemplateSceneOptions },
+      { key: "industry", options: resumeTemplateIndustryOptions },
+      { key: "position", options: resumeTemplatePositionOptions },
+    ],
   },
   {
-    key: "position",
-    name: "职位",
-    icon: "lucide:briefcase-business",
-    options: resumeTemplatePositionOptions,
-  },
-  // 样式主题卡片按设计分类筛选：该分类的选项就是设计选项，选项值落回 design 字段
-  {
-    key: "style",
-    name: "简历模板",
+    key: "template",
     icon: "lucide:layout-template",
-    filterField: "design",
-    options: resumeTemplateDesignOptions,
+    // 简历模板按设计风格筛选：选项值即主题模板 design 字段的取值
+    categories: [{ key: "design", options: resumeTemplateDesignOptions }],
   },
 ];
 
