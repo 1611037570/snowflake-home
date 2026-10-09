@@ -6,6 +6,7 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger'
 import { AppModule } from './app.module'
 import { json } from 'express' // 引入express
 import { baseConfig } from './config/base.config'
+import { resumeConfig } from './modules/resume/resume.config'
 import mysql from 'mysql2/promise'
 
 // 数据库不可用时只关闭数据库模块，不阻塞核心服务启动。
@@ -16,6 +17,19 @@ async function checkDatabaseConnection() {
     user: baseConfig.mysql.username,
     password: baseConfig.mysql.password,
     database: baseConfig.mysql.database,
+    connectTimeout: 1500,
+  })
+  await connection.end()
+}
+
+// 简历库不可用时只关闭简历统计模块，不阻塞核心服务启动。
+async function checkResumeDatabaseConnection() {
+  const connection = await mysql.createConnection({
+    host: resumeConfig.mysql.host,
+    port: resumeConfig.mysql.port,
+    user: resumeConfig.mysql.username,
+    password: resumeConfig.mysql.password,
+    database: resumeConfig.mysql.database,
     connectTimeout: 1500,
   })
   await connection.end()
@@ -33,8 +47,20 @@ async function bootstrap() {
     console.warn('数据库不可用，已跳过数据库模块，核心服务继续启动', message)
   }
 
+  let resumeDatabaseEnabled = true
+  try {
+    await checkResumeDatabaseConnection()
+  } catch (error) {
+    resumeDatabaseEnabled = false
+    const message = error instanceof Error ? error.message : String(error)
+    console.warn('简历数据库不可用，已跳过简历统计模块，核心服务继续启动', message)
+  }
+
   // 创建Nest应用实例
-  const app = await NestFactory.create(AppModule.register(databaseEnabled), new ExpressAdapter())
+  const app = await NestFactory.create(
+    AppModule.register(databaseEnabled, resumeDatabaseEnabled),
+    new ExpressAdapter(),
+  )
   // 启用全局参数验证
   app.useGlobalPipes(new ValidationPipe())
   // 允许处理JSON请求体上限
