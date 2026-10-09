@@ -73,6 +73,7 @@
     "mathjs": "^15.1.0",
     "md-editor-v3": "^6.3.1",
     "mitt": "^3.0.1",
+    "pdfjs-dist": "5.4.624",
     "pica": "^9.0.1",
     "pinia": "3.0.3",
     "pinia-plugin-persistedstate": "^4.5.0",
