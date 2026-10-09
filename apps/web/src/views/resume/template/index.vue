@@ -1,6 +1,6 @@
 <script setup>
 import { useResumeStore } from "@/stores";
-import { getResumeThemeTemplate, themeTemplateList } from "@/views/resume/theme";
+import { getResumeThemeTemplate, themeTemplateList, resolveThemeDecisions } from "@/views/resume/theme";
 import ResumeCardContainer from "@/views/resume/mine/components/resumeCardContainer.vue";
 import RevealGrid from "@/views/resume/components/revealGrid.vue";
 import TemplateCategory from "./components/templateCategory.vue";
@@ -113,9 +113,10 @@ const useTemplate = (card) => {
   const moduleKeys = expandConfigModules(source.config?.modules || [], source.data)
     .map((field) => field.key)
     .filter(Boolean);
-  // 仅双栏布局生成栏内模块顺序，顶部通栏单栏沿用简历模块顺序。
-  ui.layout.columns = layoutUsesColumns(ui.layout.type)
-    ? resolveLayoutColumns(ui.layout.type, moduleKeys, ui.layout.columns)
+  // 版式由主题定义决定，不写入简历 ui；仅双栏布局生成栏内模块顺序。
+  const { layoutType } = resolveThemeDecisions(ui.theme?.template);
+  ui.layout.columns = layoutUsesColumns(layoutType)
+    ? resolveLayoutColumns(layoutType, moduleKeys, ui.layout.columns)
     : null;
   resumeStore.addResume({
     data: deepClone(source.data),

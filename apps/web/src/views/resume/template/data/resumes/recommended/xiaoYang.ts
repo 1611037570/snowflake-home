@@ -308,7 +308,7 @@ const resumeData: any = {
     font: { family: "text-puhui", size: 16, titleSize: 22, lineHeight: 1.2 },
     content: { language: "zh", textAlign: "auto", infoSeparator: "space", linkUnderline: false, dateStyle: "dot", datePosition: "right" },
     theme: { template: "default", color: "#ff4d4f", titleIconMode: "none" },
-    layout: { template: null, custom: null, leftColumnWidth: 40 },
+    layout: { leftColumnWidth: 40 },
     user: { infoMode: "text", infoLayout: "flex", avatarPosition: "right", infoPosition: "left" },
   },
 };

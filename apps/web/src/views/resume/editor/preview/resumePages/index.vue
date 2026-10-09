@@ -13,7 +13,7 @@ import { hasThemeSlogan } from "@/views/resume/theme/components/sloganModule/reg
 import { useResumePages } from "./useResumePages";
 import { resolveRegionGap } from "./engine/layout/regionFlows";
 import { getContrastTextColor, useResumeTheme } from "@/views/resume/theme/useResumeTheme";
-import { resolveThemePageAppearance } from "@/views/resume/theme";
+import { resolveThemePageAppearance, withThemeDecisions } from "@/views/resume/theme";
 import { provideResumePreviewContext } from "../shared/previewContext";
 import { isEmptyResume } from "../../toolbar/modules/progress/useResumeStats";
 import { getPreviewText } from "../shared/i18n";
@@ -82,7 +82,8 @@ const layoutMeasureRef = ref(null);
 
 // ---------- 数据注入（始终基于 props 传入的数据，多实例互不干扰）----------
 const dataRef = computed(() => props.item.data);
-const ui = computed(() => props.item.ui || {});
+// 主题决策字段（版式、纸张圆角与边框、页面纹理）由主题定义注入，落库的 ui 里不再存这些值
+const ui = computed(() => withThemeDecisions(props.item.ui));
 // 页面级外观由主题声明，公共页面只读取声明，不再判断主题编号
 const themePageAppearance = computed(() => resolveThemePageAppearance(ui.value?.theme?.template));
 // 轻量判空：命中第一处正文文本即结束，避免为判空执行全量字数统计
