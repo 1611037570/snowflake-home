@@ -167,6 +167,37 @@ onBeforeUnmount(() => {
 <template>
   <footer class="relative flex w-full flex-col items-center px-3 pt-3">
     <div class="relative z-10 w-full max-w-4xl">
+      <!-- 读取范围、脱敏和面试操作统一放在输入框上方右侧。 -->
+      <div class="mb-1 flex flex-wrap items-center justify-end gap-1">
+        <ModuleSelect />
+        <DesensitizeMode />
+        <!-- 面试问题使用独立单次请求生成回答，不写入原对话 -->
+        <SfButton
+          v-if="props.quickAnswerEnabled"
+          class="shrink-0 whitespace-nowrap"
+          title="为最近一道面试题生成回答方案"
+          type="theme"
+          size="small"
+          plain
+          :disabled="props.isGenerating || props.quickAnswerLoading"
+          @click="emit('quick-answer')"
+        >
+          {{ props.quickAnswerLoading ? "生成中" : "帮我答" }}
+        </SfButton>
+        <!-- 长时评估允许随时结束，并交由面试技能生成保守的阶段性报告 -->
+        <SfButton
+          v-if="props.earlyEndEnabled"
+          class="shrink-0 whitespace-nowrap"
+          title="提前结束并生成阶段性报告"
+          type="error"
+          size="small"
+          plain
+          :disabled="props.isGenerating"
+          @click="emit('early-end')"
+        >
+          提前结束
+        </SfButton>
+      </div>
       <!-- 主输入容器：增强阴影与圆角细节 -->
       <div
         class="group hover:border-sf-b-hover relative flex flex-col rounded-3xl border border-sf-b bg-sf-bg p-1 transition-all duration-500"
@@ -184,78 +215,52 @@ onBeforeUnmount(() => {
           @keydown.enter="handleKeydown"
         />
 
-        <!-- 底部工具栏 -->
-        <div class="flex items-center justify-between px-1 pb-1">
-          <!-- 左侧 -->
-          <div class="flex min-w-0 flex-1 items-center gap-1">
-            <div class="flex flex-col gap-1">
-              <ModuleSelect />
-              <DesensitizeMode />
-            </div>
-          </div>
-          <!-- 右侧-->
-          <div class="flex items-center gap-1">
-            <ModelSelect />
-            <!-- 面试操作上下排列，使用与左侧选项一致的轻量文字样式。 -->
-            <div v-if="props.quickAnswerEnabled || props.earlyEndEnabled" class="flex shrink-0 flex-col items-center justify-center gap-3">
-            <!-- 面试问题使用独立单次请求生成回答，不写入原对话 -->
-            <button
-              v-if="props.quickAnswerEnabled"
-              class="flex h-6 shrink-0 cursor-pointer items-center justify-center rounded-xl px-3 text-xs font-bold leading-none whitespace-nowrap text-sf-theme transition-colors enabled:hover:bg-sf-theme-3 disabled:cursor-not-allowed disabled:opacity-50"
-              title="为最近一道面试题生成回答方案"
-              type="button"
-              :disabled="props.isGenerating || props.quickAnswerLoading"
-              @click="emit('quick-answer')"
-            >
-              {{ props.quickAnswerLoading ? "生成中" : "帮我答" }}
-            </button>
-            <!-- 长时评估允许随时结束，并交由面试技能生成保守的阶段性报告 -->
-            <button
-              v-if="props.earlyEndEnabled"
-              class="flex h-6 shrink-0 cursor-pointer items-center justify-center rounded-xl px-3 text-xs font-bold leading-none whitespace-nowrap text-sf-error transition-colors enabled:hover:bg-sf-error-2 disabled:cursor-not-allowed disabled:opacity-50"
-              title="提前结束并生成阶段性报告"
-              type="button"
-              :disabled="props.isGenerating"
-              @click="emit('early-end')"
-            >
-              提前结束
-            </button>
-            </div>
-            <!-- 专项面试语音入口：识别结果先进入输入框，确认后再发送 -->
-            <button
-              v-if="props.voiceEnabled"
-              data-test="voice-input"
-              class="flex h-[30px] w-8 items-center justify-center rounded-xl transition-all duration-500"
-              :class="
-                isListening
-                  ? 'bg-sf-error-2 text-sf-error'
-                  : 'bg-sf-bg-3 text-sf-text hover:bg-sf-bg-2'
-              "
-              :title="isVoiceSupported ? (isListening ? '停止语音输入' : '开始语音输入') : '当前浏览器不支持语音输入'"
-              type="button"
-              @click="toggleVoiceInput"
-            >
-              <SfIcon :icon="isListening ? 'ph:stop-circle-fill' : 'ph:microphone-duotone'" size="4" />
-            </button>
-            <!--动态动作按钮 (发送/停止) -->
-            <button
-              class="flex h-[30px] w-8 items-center justify-center rounded-xl transition-all duration-500 ease-out"
-              :class="actionButtonConfig.class"
-              :title="actionButtonConfig.title"
-              :disabled="actionButtonConfig.disabled"
-              @click="actionButtonConfig.handler"
-            >
-              <SfIcon
-                :icon="actionButtonConfig.icon"
-                size="4"
-                class="transition-all duration-500"
-                :class="{
-                  'group-focus-within:scale-110 ': canSend,
-                  'cursor-not-allowed!': !canSend,
-                }"
-              />
-            </button>
-          </div>
+        <!-- 底部保留模型选择与语音、发送操作。 -->
+        <div class="flex items-center justify-end gap-1 px-3 pb-1">
+          <ModelSelect />
+          <!-- 专项面试语音入口：识别结果先进入输入框，确认后再发送 -->
+          <button
+            v-if="props.voiceEnabled"
+            data-test="voice-input"
+            class="flex h-[30px] w-8 items-center justify-center rounded-xl transition-all duration-500"
+            :class="
+              isListening
+                ? 'bg-sf-error-2 text-sf-error'
+                : 'bg-sf-bg-3 text-sf-text hover:bg-sf-bg-2'
+            "
+            :title="
+              isVoiceSupported
+                ? isListening
+                  ? '停止语音输入'
+                  : '开始语音输入'
+                : '当前浏览器不支持语音输入'
+            "
+            type="button"
+            @click="toggleVoiceInput"
+          >
+            <SfIcon
+              :icon="isListening ? 'ph:stop-circle-fill' : 'ph:microphone-duotone'"
+              size="4"
+            />
+          </button>
+          <!--动态动作按钮 (发送/停止) -->
+          <button
+            class="flex h-[30px] w-8 items-center justify-center rounded-xl transition-all duration-500 ease-out"
+            :class="actionButtonConfig.class"
+            :title="actionButtonConfig.title"
+            :disabled="actionButtonConfig.disabled"
+            @click="actionButtonConfig.handler"
+          >
+            <SfIcon
+              :icon="actionButtonConfig.icon"
+              size="4"
+              class="transition-all duration-500"
+              :class="{
+                'group-focus-within:scale-110 ': canSend,
+                'cursor-not-allowed!': !canSend,
+              }"
+            />
+          </button>
         </div>
       </div>
 

@@ -31,13 +31,16 @@ const handleSelect = (item) => {
 <template>
   <!-- 脱敏等级选择 -->
   <SfDropdown ref="dropdownRef" trigger="click" placement="top-start" :show-arrow="false">
-    <div
-      class="flex-c cursor-pointer gap-0.5 rounded-3xl px-2 py-1.5 text-[12px] font-semibold transition-all duration-300 select-none hover:bg-sf-bg-2"
-      :class="desensitizeMode.disabled ? 'text-sf-text-3  hover:text-sf-text' : 'text-sf-theme'"
+    <!-- 脱敏选择使用统一的小号按钮，开启时显示主题色。 -->
+    <SfButton
+      :type="desensitizeMode.disabled ? 'bg' : 'theme'"
+      :plain="!desensitizeMode.disabled"
+      size="small"
+      class="gap-1 whitespace-nowrap"
     >
       {{ activeName }}
       <SfIcon icon="mingcute:down-line" size="4" />
-    </div>
+    </SfButton>
     <template #dropdown>
       <SfList
         class="w-60"
