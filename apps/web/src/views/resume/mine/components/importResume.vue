@@ -6,10 +6,12 @@ import { MAX_PDF_FILE_BYTES } from "../pdfDocument";
 import ImportResumePreview from "./importResumePreview.vue";
 import { useAiStore, useResumeStore } from "@/stores";
 import { computed, onBeforeUnmount, ref, watch } from "vue";
+import { useRouter } from "vue-router";
 
 const visible = ref(false);
 const resumeStore = useResumeStore();
 const aiStore = useAiStore();
+const router = useRouter();
 const parsing = ref(false);
 const parseProgress = ref("");
 const pendingResume = ref(null);
@@ -52,6 +54,13 @@ const cancelImport = () => {
 watch(visible, (open) => { if (!open) cancelImport(); }, { flush: "sync" });
 onBeforeUnmount(cancelImport);
 
+// 列表页没有编辑器模型弹窗，直接前往已有的模型配置页面。
+const configureParseModel = () => {
+  visible.value = false;
+  aiStore.modelManagerTab = "added";
+  router.push("/resume/ai");
+};
+
 // PDF 与 Markdown 共用选择、解析、字段核验、预览确认和取消流程。
 const importDocumentConfig = async (format) => {
   if (parsing.value || choosingDocument || pendingResume.value) return;
@@ -62,7 +71,7 @@ const importDocumentConfig = async (format) => {
   const model = aiStore.modelList.find((item) => item.id === aiStore.getAgentModelId("resumeParser"));
   if (!model?.key || !model.url || !model.model) {
     ElMessage.warning(isPdf ? "请先绑定支持图片识别的简历解析模型" : "请先绑定简历解析模型");
-    aiStore.openModelManager("added");
+    configureParseModel();
     return;
   }
   let file;
@@ -179,6 +188,45 @@ const parseJsonConfig = async (file) => {
   }
 };
 
+// 导入入口沿用导出弹窗的格式配色与卡片层次。
+const importItems = [
+  {
+    // 格式标题
+    name: "PDF 智能解析",
+    // 文件图标
+    icon: "mdi:file-pdf-box",
+    // 图标背景与文字配色
+    iconClass: "bg-sf-error-2 text-sf-error",
+    // 格式说明
+    desc: "支持文字与扫描简历，最多 10 页、50MB；识别后预览确认。",
+    // 文件选择入口
+    fn: () => importDocumentConfig("pdf"),
+  },
+  {
+    // 格式标题
+    name: "Markdown 智能解析",
+    // 文件图标
+    icon: "mdi:language-markdown",
+    // 图标背景与文字配色
+    iconClass: "import-markdown-icon",
+    // 格式说明
+    desc: "识别 Markdown 内容并转换为简历，核对字段后确认导入。",
+    // 文件选择入口
+    fn: () => importDocumentConfig("markdown"),
+  },
+  {
+    // 格式标题
+    name: "JSON 完整备份",
+    // 文件图标
+    icon: "mdi:file-code-outline",
+    // 图标背景与文字配色
+    iconClass: "bg-sf-theme-3 text-sf-theme",
+    // 格式说明
+    desc: "导入完整简历备份，恢复内容与排版配置，继续编辑。",
+    // 文件选择入口
+    fn: importJsonConfig,
+  },
+];
 </script>
 
 <template>
@@ -186,46 +234,60 @@ const parseJsonConfig = async (file) => {
     <SfIcon icon="fa6-solid:file-import" size="4" class="mr-2" />
     导入简历
   </SfButton>
-  <SfModal v-model="visible" title="导入简历">
-    <div v-if="parsing" class="flex w-full max-w-[400px] flex-col items-center gap-3 p-6">
+  <SfModal v-model="visible" title="导入简历" :width="parsing || pendingResume ? '600px' : '720px'" title-class="justify-start! text-xl!">
+    <div v-if="parsing" class="flex w-full flex-col items-center gap-3 p-3">
       <SfIcon icon="line-md:loading-twotone-loop" size="8" class="text-sf-theme" />
       <div class="text-base">{{ parseProgress }}</div>
       <SfButton type="bg" @click="cancelImport">取消解析</SfButton>
     </div>
     <ImportResumePreview v-else-if="pendingResume" :resume="pendingResume" @confirm="confirmImport" @cancel="cancelImport" />
-    <div v-else class="flex w-full max-w-[400px] flex-col gap-3">
-      <p class="text-sm text-sf-text-3">解析模型：{{ parseModelLabel }}</p>
-      <button type="button" class="text-left text-sm text-sf-theme" @click="aiStore.openModelManager('added')">配置解析模型</button>
-      <button
-        type="button"
-        class="rounded-3xl border border-sf-b p-3 text-left transition-colors hover:bg-sf-theme-2"
-        @click="importDocumentConfig('pdf')"
-      >
-        <div class="text-xl">PDF 智能解析</div>
-        <div class="text-sm">支持文字与扫描简历，最多 10 页、50MB</div>
-        <div class="mt-3 text-sm text-sf-text-3">文档在本地处理，页面图片直接发送到所选模型；需要支持图片识别的模型。</div>
-      </button>
-      <div
-        class="cursor-pointer rounded-3xl border border-sf-b p-3 transition-colors hover:bg-sf-theme-2"
-        @click="importJsonConfig"
-      >
-        <div class="text-xl">JSON完整备份</div>
-        <div class="text-sm">选择并解析完整简历备份文件</div>
-      </div>
-      <div
-        class="cursor-pointer rounded-3xl border border-sf-b p-3 transition-colors hover:bg-sf-theme-2"
-        @click="importDocumentConfig('markdown')"
-      >
-        <div class="flex items-center gap-3">
-          <SfIcon icon="ph:file-md-duotone" size="6" class="text-sf-theme" />
-          <div>
-            <div class="text-xl">Markdown 智能解析</div>
-            <div class="text-sm">识别 Markdown 内容并转换为简历</div>
+    <!-- 菜单使用自然内容高度，避免窄屏滚动时底部被裁切。 -->
+    <SfScrollbar v-else class="import-scrollbar h-auto! flex-none!" max-height="70vh">
+      <div>
+        <p class="border-b border-sf-b pb-3 text-sm text-sf-text-3">选择已有简历或备份文件，开始创建你的新简历</p>
+        <div class="grid grid-cols-1 gap-3 py-3 sm:grid-cols-2">
+          <button
+            v-for="item in importItems"
+            :key="item.name"
+            type="button"
+            class="group flex min-h-30 min-w-0 items-center gap-3 rounded-3xl border border-sf-b bg-sf-bg p-3 text-left transition-colors duration-200 hover:border-sf-theme"
+            :class="{ 'sm:col-span-2': item.icon === 'mdi:file-code-outline' }"
+            @click="item.fn"
+          >
+            <span class="flex h-15 w-12 shrink-0 -rotate-6 items-center justify-center rounded-2xl border border-sf-b shadow-sm transition-transform duration-200 group-hover:rotate-0" :class="item.iconClass">
+              <SfIcon :icon="item.icon" size="8" />
+            </span>
+            <span class="min-w-0 flex-1">
+              <span class="block text-base font-semibold text-sf-text">{{ item.name }}</span>
+              <span class="mt-3 block text-[13px] leading-6 text-sf-text-3">{{ item.desc }}</span>
+            </span>
+            <SfIcon icon="mingcute:right-line" size="4" class="shrink-0 text-sf-text-3 transition-transform group-hover:translate-x-1 group-hover:text-sf-theme" />
+          </button>
+        </div>
+        <div class="flex flex-col gap-3 rounded-2xl border border-sf-b bg-sf-bg p-3">
+          <div class="flex flex-wrap items-center justify-between gap-3">
+            <p class="min-w-0 break-words text-sm text-sf-text-2">解析模型：{{ parseModelLabel }}</p>
+            <SfButton type="bg" size="small" border @click="configureParseModel">配置解析模型</SfButton>
           </div>
+          <p class="text-sm leading-6 text-sf-text-3">PDF 需要支持图片识别的模型。</p>
         </div>
       </div>
-    </div>
+    </SfScrollbar>
   </SfModal>
 </template>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+/* 弹窗已提供内边距，滚动内容按实际高度排列。 */
+.import-scrollbar :deep(.el-scrollbar__view) {
+  height: auto !important;
+  display: block;
+  padding: 0 !important;
+}
+
+/* 与导出菜单保持一致的柔和紫色文件图标。 */
+.import-markdown-icon {
+  --import-markdown-color: color-mix(in oklch, var(--sf-theme), var(--sf-error));
+  color: var(--import-markdown-color);
+  background-color: color-mix(in oklab, var(--import-markdown-color) 15%, transparent);
+}
+</style>

@@ -67,6 +67,8 @@ const list = computed(() => [
   {
     name: "PDF",
     icon: "mdi:file-pdf-box",
+    // 文件图标的主题配色
+    iconClass: "bg-sf-error-2 text-sf-error",
     desc: $t("pdfDescription"),
     options: pdfExportOptions.value,
     modelValue: pdfExportType.value,
@@ -81,6 +83,8 @@ const list = computed(() => [
   {
     name: $t("longImage"),
     icon: "material-symbols:image-outline",
+    // 文件图标的主题配色
+    iconClass: "bg-sf-success-2 text-sf-success",
     desc: $t("longImageDescription"),
     options: longImageExportOptions,
     modelValue: longImageExportType.value,
@@ -91,12 +95,16 @@ const list = computed(() => [
   {
     name: "Markdown",
     icon: "mdi:language-markdown",
+    // 文件图标的主题配色
+    iconClass: "export-markdown-icon",
     desc: $t("markdownDescription"),
     fn: () => emitExport("resume-print-markdown"),
   },
   {
     name: "HTML",
     icon: "mdi:language-html5",
+    // 文件图标的主题配色
+    iconClass: "bg-sf-warning-2 text-sf-warning",
     desc: $t("htmlDescription"),
     fn: () => emitExport("resume-print-html"),
   },
@@ -104,6 +112,8 @@ const list = computed(() => [
 const a = {
   name: "JSON",
   icon: "mdi:file-code-outline",
+  // 文件图标的主题配色
+  iconClass: "bg-sf-theme-3 text-sf-theme",
   desc: $t("jsonDescription"),
   fn: () => {
     // 导出配置后关闭弹窗
@@ -123,21 +133,39 @@ const a = {
     <SfIcon icon="mingcute:down-line" size="4" />
   </div>
 
-  <SfModal v-model="visible" :title="$t('exportResume')">
-    <div class="flex w-[600px] max-w-[90vw] flex-col gap-6">
+  <SfModal
+    v-model="visible"
+    :title="$t('exportResume')"
+    width="720px"
+    title-class="justify-start! text-xl! mt-3 px-3"
+  >
+    <!-- 格式卡片统一排布，较小视窗使用系统滚动条。 -->
+    <SfScrollbar class="export-scrollbar h-auto! flex-none!" max-height="70vh">
       <div>
-        <div class="text-lg font-bold">{{ $t("exportFormat") }}</div>
-        <div class="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2">
+        <div class="border-b border-sf-b pb-3 text-sm text-sf-text-3">
+          {{ $t("exportFormatDescription") }}
+        </div>
+        <div class="grid grid-cols-1 gap-3 py-3 sm:grid-cols-2">
           <ExportItem v-for="item in list" :key="item.name" :item="item" @click="item.fn" />
+          <ExportItem :item="a" class="sm:col-span-2" @click="a.fn" />
+        </div>
+        <div
+          class="flex items-center gap-3 rounded-2xl border border-sf-b bg-sf-bg p-3 text-sm leading-6 text-sf-text-2"
+        >
+          <SfIcon icon="mdi:file-document-outline" size="5" class="shrink-0 text-sf-theme" />
+          <span>{{ $t("exportFormatTip") }}</span>
         </div>
       </div>
-
-      <div>
-        <div class="text-lg font-bold">{{ $t("resumeConfig") }}</div>
-        <ExportItem :item="a" @click="a.fn" />
-      </div>
-    </div>
+    </SfScrollbar>
   </SfModal>
 </template>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+/* 内容按实际高度撑开，避免固定高度与弹性布局导致底部裁切。 */
+.export-scrollbar :deep(.el-scrollbar__view) {
+  height: auto !important;
+  display: block;
+  /* 外层弹窗已提供内边距，不重复添加留白。 */
+  padding: 0 !important;
+}
+</style>

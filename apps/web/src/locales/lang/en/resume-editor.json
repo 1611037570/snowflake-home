@@ -332,6 +332,8 @@
   "reset": "Reset",
   "exportResume": "Export Resume",
   "exportFormat": "Export Format",
+  "exportFormatDescription": "Choose a format for applications, sharing, or backup",
+  "exportFormatTip": "Use PDF for applications, a long image for sharing, and JSON for backup and restore.",
   "resumeConfig": "Resume Configuration",
   "local": "Local",
   "cloud": "Cloud",
