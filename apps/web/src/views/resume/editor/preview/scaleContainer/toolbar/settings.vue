@@ -14,6 +14,7 @@ import {
   uiParamRanges,
 } from "@/stores/modules/resume/config/uiConfig";
 import { createDefaultLayoutColumns, layoutUsesColumns } from "@/views/resume/theme/layouts";
+import { getResumeThemeTemplate, resolveThemeDecisions } from "@/views/resume/theme";
 
 const resumeStore = useResumeStore();
 const { system, currentUI } = storeToRefs(resumeStore);
@@ -61,9 +62,13 @@ const layoutParams = [
   { labelKey: "layoutLineHeight", key: "font.lineHeight", defaultValue: defaultLineHeight, unit: "lineHeightUnit" },
 ];
 
+// 版式由主题定义决定；主题预设保存着当前主题的数值参数，恢复默认时以它为准而不是全局默认值
+const layoutType = computed(() => resolveThemeDecisions(currentUI.value?.theme?.template).layoutType);
+const themePresetUi = computed(() => getResumeThemeTemplate(currentUI.value?.theme?.template).item.ui);
+
 // 单栏布局不分配左右栏，隐藏左栏宽度参数
 const visibleLayoutParams = computed(() =>
-  layoutUsesColumns(currentUI.value?.layout?.type)
+  layoutUsesColumns(layoutType.value)
     ? layoutParams
     : layoutParams.filter((item) => item !== leftColumnWidthParam),
 );
@@ -76,11 +81,18 @@ const setPathValue = (source, path, value) => {
   parent[field] = value;
 };
 
+// 参数的主题默认值：主题预设里没有该字段时回退全局默认值
+const getParamDefault = (key) => {
+  const presetValue = getPathValue(themePresetUi.value, key);
+  if (presetValue !== undefined && presetValue !== null) return presetValue;
+  return layoutParams.find((item) => item.key === key)?.defaultValue;
+};
+
 // 读取数值型参数：统一转为数值，避免字符串参与滑块内部计算；字段缺失时回退该参数的默认值
 const getNumberValue = (key) => {
   const value = Number(getPathValue(currentUI.value, key));
   if (Number.isFinite(value)) return value;
-  const fallback = Number(layoutParams.find((item) => item.key === key)?.defaultValue);
+  const fallback = Number(getParamDefault(key));
   return Number.isFinite(fallback) ? fallback : 0;
 };
 
@@ -88,12 +100,13 @@ const getNumberValue = (key) => {
 const resetLayout = () => {
   if (!currentUI.value) return;
   layoutParams.forEach((item) => {
-    setPathValue(currentUI.value, item.key, item.defaultValue);
+    setPathValue(currentUI.value, item.key, getParamDefault(item.key));
   });
-  const templateId = currentUI.value.layout.type;
   const moduleKeys = resumeStore.runtimeFields.map((field) => field.key).filter(Boolean);
   setLayoutColumns(
-    layoutUsesColumns(templateId) ? createDefaultLayoutColumns(templateId, moduleKeys) : null,
+    layoutUsesColumns(layoutType.value)
+      ? createDefaultLayoutColumns(layoutType.value, moduleKeys)
+      : null,
   );
 };
 
@@ -135,7 +148,7 @@ const setParam = (key, value) => {
                 icon="material-symbols:restart-alt"
                 size="4"
                 class="cursor-pointer text-sf-text-2 transition-colors hover:text-sf-theme"
-                @click="setParam(item.key, item.defaultValue)"
+                @click="setParam(item.key, getParamDefault(item.key))"
               />
             </span>
             <span>{{ getNumberValue(item.key) }}{{ item.unit === "lineHeightUnit" ? $t(item.unit) : item.unit }}</span>

@@ -19,7 +19,7 @@ const resumeData: any = {
       color: "#000000", // 主题强调色
       titleIconMode: "none", // 标题图标显示方式
     },
-    layout: { template: null, custom: null, leftColumnWidth: 40 },
+    layout: { leftColumnWidth: 40 },
     user: { infoMode: "text", infoLayout: "flex", avatarPosition: "right", infoPosition: "left" },
   },
 };

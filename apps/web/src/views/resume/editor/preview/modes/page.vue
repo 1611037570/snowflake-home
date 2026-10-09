@@ -16,6 +16,7 @@ import {
 } from "../../hooks/useModuleNav";
 import eventBus from "@/utils/modules/eventBus";
 import { layoutUsesColumns, resolveLayoutColumns } from "@/views/resume/theme/layouts";
+import { resolveThemeDecisions } from "@/views/resume/theme";
 
 defineOptions({ name: "ResumePage" });
 
@@ -127,9 +128,11 @@ const handleLocatePreviewModule = (moduleKey) => jumpPreview(moduleKey);
 onMounted(() => eventBus.on("resume-locate-preview-module", handleLocatePreviewModule));
 onUnmounted(() => eventBus.off("resume-locate-preview-module", handleLocatePreviewModule));
 
+// 版式由主题定义决定，简历 ui 里不再保存 layout.type
+const layoutType = computed(() => resolveThemeDecisions(currentUI.value?.theme?.template).layoutType);
 const moveModuleAcrossColumn = (moduleKey, columnId, direction) => {
   const columns = resolveLayoutColumns(
-    currentUI.value.layout.type,
+    layoutType.value,
     previewModuleKeys.value,
     currentUI.value.layout.columns,
   );
@@ -156,12 +159,12 @@ const handleModuleMove = ({ moduleKey, direction, columnId }) => {
   const target = direction === "up" ? index - 1 : index + 1;
   if (target < 0 || target >= order.length) return;
   // 单栏布局按简历模块顺序移动，使上下操作同步到预览。
-  if (!layoutUsesColumns(currentUI.value.layout.type)) {
+  if (!layoutUsesColumns(layoutType.value)) {
     resumeStore.swapModuleOrder(moduleKey, order[target]);
     return;
   }
   const columns = resolveLayoutColumns(
-    currentUI.value.layout.type,
+    layoutType.value,
     previewModuleKeys.value,
     currentUI.value.layout.columns,
   );

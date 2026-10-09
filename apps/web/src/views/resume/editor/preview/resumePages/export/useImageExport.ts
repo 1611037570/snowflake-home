@@ -9,6 +9,7 @@ import { storeToRefs } from "pinia";
 import { useResumeName } from "../../../../hooks/useResumeName";
 import { useResumeStore } from "@/stores";
 import { PDF_PAGE_WIDTH } from "../../shared/constants";
+import { resolveThemeDecisions } from "@/views/resume/theme";
 import { stripEditorPageFrame } from "./pageFrame";
 
 type ImageExportRoot = HTMLElement | { value: unknown };
@@ -142,13 +143,14 @@ const exportLongImage = async (
   resumeStore.clearSelectedModules();
 
   try {
-    // 纸张外观由主题 ui 声明：底色用作画布背景，边框与圆角补画到长图上
+    // 纸张外观由主题定义决定：底色来自简历 ui，边框与圆角按主题编号解析
     const page = currentUI.value?.page || {};
+    const { pageRadius, pageBorder } = resolveThemeDecisions(currentUI.value?.theme?.template);
     const paper: PaperSurface = {
       background: page.background || "#ffffff",
-      radius: Math.max(0, Number(page.radius) || 0),
-      borderWidth: Math.max(0, Number(page.border?.width) || 0),
-      borderColor: page.border?.color || "",
+      radius: pageRadius,
+      borderWidth: pageBorder.width,
+      borderColor: pageBorder.color,
     };
     const canvas = await renderLongImage(rootRef, signal, scale, isCurrentResume, paper);
     if (signal.aborted || !isCurrentResume()) return;

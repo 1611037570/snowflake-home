@@ -47,24 +47,27 @@ export const createThemeTemplates = (definitions: ThemeTemplateConfig[]): Resume
     ui: definition.ui || {},
   }));
 
-// 在主题被预览或应用时生成完整配置。
+// 在主题被预览或应用时生成简历 ui 预设。
+// 主题决策字段（layout.type、page.radius、page.border、page.backgroundPattern）不入预设：
+// 它们由主题定义唯一决定，运行时经 withThemeDecisions 注入，避免与简历快照各存一份而脱钩。
 export const resolveThemeTemplate = (definition: ResumeThemeDefinition): ResumeThemeTemplate => {
   const { id, ui } = definition;
   const presetUi = {
     ...DEFAULT_UI,
     ...ui,
     page: {
-      ...DEFAULT_UI.page,
-      ...ui.page,
+      background: ui.page?.background ?? DEFAULT_UI.page.background,
+      footer: ui.page?.footer ?? DEFAULT_UI.page.footer,
       padding: { ...DEFAULT_UI.page.padding, ...ui.page?.padding },
       spacing: { ...DEFAULT_UI.page.spacing, ...ui.page?.spacing },
-      // 纸张边框按字段合并：主题只声明颜色时宽度仍沿用默认值
-      border: { ...DEFAULT_UI.page.border, ...ui.page?.border },
     },
     font: { ...DEFAULT_UI.font, ...ui.font },
     content: { ...DEFAULT_UI.content, ...ui.content },
     theme: { ...DEFAULT_UI.theme, template: id, ...ui.theme },
-    layout: { ...DEFAULT_UI.layout, ...ui.layout },
+    layout: {
+      columns: ui.layout?.columns ?? DEFAULT_UI.layout.columns,
+      leftColumnWidth: ui.layout?.leftColumnWidth ?? DEFAULT_UI.layout.leftColumnWidth,
+    },
     user: { ...DEFAULT_UI.user, ...ui.user },
   };
 
