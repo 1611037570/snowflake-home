@@ -3,6 +3,9 @@ export default {
   id: "frame", // 主题编号
   design: ["single-column", "polished"],
   description: "红色页面背景与白色正文容器。", // 主题说明
+  decisions: { // 主题固定外观，不进入用户界面配置
+    layoutType: "topUserSingleColumn", // 个人信息通栏、正文单栏的布局编号
+  },
   ui: {
     // 主题相对默认配置的差异
     theme: {
@@ -17,10 +20,6 @@ export default {
         vertical: 42, // 页面上下留白
         horizontal: 42, // 页面左右留白
       },
-    },
-    layout: {
-      // 页面区域布局
-      type: "topUserSingleColumn", // 个人信息通栏、正文单栏的布局编号
     },
   },
 };

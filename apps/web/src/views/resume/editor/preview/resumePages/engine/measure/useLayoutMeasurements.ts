@@ -28,7 +28,7 @@ const resolveWatchSignature = (source: Record<string, any>): string => {
   return [
     page.padding?.vertical,
     page.padding?.horizontal,
-    page.border?.width,
+    source?.themeDecisions?.pageBorder?.width,
     spacing.module,
     spacing.paragraph,
     font.family,
@@ -37,7 +37,7 @@ const resolveWatchSignature = (source: Record<string, any>): string => {
     font.titleSize,
     theme.template,
     theme.titleIconMode,
-    layout.type,
+    source?.themeDecisions?.layoutType,
     layout.leftColumnWidth,
     JSON.stringify(layout.columns || null),
     source?.content?.language,

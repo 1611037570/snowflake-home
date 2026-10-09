@@ -12,7 +12,7 @@ const props = defineProps({
   // 已校验的作品链接，为空时仅展示名称。
   url: { type: String, default: "" },
 });
-const { ui, showPageNumber, theme: { linkUnderline } } = useResumePreviewContext();
+const { themeDecisions, ui, showPageNumber, theme: { linkUnderline } } = useResumePreviewContext();
 const rootRef = ref(null);
 const captionRef = ref(null);
 const imageMaxHeight = ref(0);
@@ -28,7 +28,7 @@ const pageHeight = computed(() => {
   return Math.max(0, getContentHeight(
     Number(ui.value.page?.padding?.vertical) || 0,
     showPageNumber.value,
-    Number(ui.value.page?.border?.width) || 0,
+    Number(themeDecisions.value.pageBorder.width) || 0,
   ) - regionPaddingHeight);
 });
 // 先扣除名称、描述、间距和条目外观留白，再给图片分配剩余高度。

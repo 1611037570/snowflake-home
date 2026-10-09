@@ -15,11 +15,11 @@ import { defaultColumnGap } from "@/views/resume/theme/layouts";
 import { useResumePreviewContext } from "@/views/resume/editor/preview/shared/previewContext";
 
 const {
-  ui,
+  themeDecisions,
   theme: { themeColorLine },
 } = useResumePreviewContext();
 // 栏间线只服务个人信息顶部通栏的双栏版式，单栏布局下没有第二栏，装饰一并关闭。
-const isTopUserTwoColumn = computed(() => ui.value?.layout?.type === "topUserTwoColumn");
+const isTopUserTwoColumn = computed(() => themeDecisions.value.layoutType === "topUserTwoColumn");
 // 栏间线颜色与偏移由变量下发，偏移取栏间距的一半，让线条落在栏间中线。
 const mainStyle = computed(() => ({
   "--top-user-divider": themeColorLine.value, // 双栏栏间线颜色

@@ -1,3 +1,4 @@
+import type { ThemeDecisions } from "../themeDecisions";
 import { DEFAULT_UI } from "@/stores/modules/resume/config/uiConfig";
 
 export interface ResumeThemeTemplate {
@@ -33,6 +34,8 @@ export interface ThemeTemplateConfig {
   design: string[];
   /** 主题页面级外观声明，公共页面读取该声明而不是判断主题编号 */
   pageAppearance?: ThemePageAppearance;
+  /** 主题固定版式与纸张外观，不属于用户可编辑参数 */
+  decisions?: Partial<ThemeDecisions>;
   ui?: Record<string, any>;
 }
 
@@ -49,7 +52,7 @@ export const createThemeTemplates = (definitions: ThemeTemplateConfig[]): Resume
 
 // 在主题被预览或应用时生成简历 ui 预设。
 // 主题决策字段（layout.type、page.radius、page.border、page.backgroundPattern）不入预设：
-// 它们由主题定义唯一决定，运行时经 withThemeDecisions 注入，避免与简历快照各存一份而脱钩。
+// 它们由主题 decisions 单独声明，运行时也不合入用户界面配置。
 export const resolveThemeTemplate = (definition: ResumeThemeDefinition): ResumeThemeTemplate => {
   const { id, ui } = definition;
   const presetUi = {

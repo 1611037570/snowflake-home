@@ -29,7 +29,7 @@ const userLayoutContentRegistry = createAppearanceRegistry({
 /**
  * 解析个人信息内容组件：主题专属内容优先，其次按版式选择，最后回落默认内容。
  * @param themeId 当前主题编号
- * @param layoutType 当前版式编号（ui.layout.type）
+ * @param layoutType 当前主题决定的版式编号
  */
 export const resolveUserContent = (themeId: unknown, layoutType: unknown) => {
   const themeContent =

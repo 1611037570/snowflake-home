@@ -3,6 +3,7 @@
  *
  * 预览只消费 PagePlan，不再生成分页裁剪样式。
  */
+import type { ThemeDecisions } from "@/views/resume/theme/themeDecisions";
 import { computed, type ComputedRef, type Ref } from "vue";
 import { useResumeLayout } from "./engine/useResumeLayout";
 
@@ -13,6 +14,8 @@ interface UseResumePagesOptions {
   data: ComputedRef<Record<string, unknown>>;
   /** 简历主题配置。 */
   ui: ComputedRef<Record<string, any>>;
+  /** 当前主题固定版式与纸张外观。 */
+  themeDecisions: ComputedRef<ThemeDecisions>;
   /** 是否展示页码。 */
   showPageNumber: ComputedRef<boolean>;
   /** 字体加载版本。 */
@@ -29,6 +32,7 @@ export const useResumePages = ({
   measureRef,
   data,
   ui,
+  themeDecisions,
   showPageNumber,
   fontReadyVersion,
   renderSignature,
@@ -40,6 +44,7 @@ export const useResumePages = ({
     data,
     allModules,
     ui,
+    themeDecisions, // 主题固定外观独立传入分页引擎
     showPageNumber,
     fontReadyVersion,
     renderSignature,

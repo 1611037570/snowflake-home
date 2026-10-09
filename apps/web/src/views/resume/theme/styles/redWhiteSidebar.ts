@@ -3,13 +3,15 @@ export default {
   id: "redWhiteSidebar", // 主题编号，用于查找对应外观组件
   design: ["two-column", "minimal"], // 模板分类：双栏、简约
   description: "深红侧栏搭配白色正文与红色横线标题。", // 主题说明
+  decisions: { // 主题固定外观，不进入用户界面配置
+    layoutType: "twoColumn", // 个人信息放在左栏的双栏布局
+  },
   ui: { // 主题相对默认设置的差异
     theme: { // 主题配色与标题设置
       color: "#B00035", // 左栏背景及右栏标题使用的深红色
       titleIconMode: "none", // 标题默认不显示图标
     },
     layout: { // 双栏布局设置
-      type: "twoColumn", // 个人信息放在左栏的双栏布局
       leftColumnWidth: 40, // 左栏占可用栏宽的百分比
       columns: { // 默认模块栏位
         left: ["user", "skill", "honor", "account"], // 左栏展示个人信息、技能、证书和账号

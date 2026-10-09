@@ -1,7 +1,6 @@
 <script setup>
 import { computed } from "vue";
 import ResumeField from "@/views/resume/editor/preview/components/resumeField/index.vue";
-import { defaultPageRadius } from "@/stores/modules/resume/config/uiConfig";
 import { useResumePreviewContext } from "@/views/resume/editor/preview/shared/previewContext";
 
 // 标语通栏由文字自然撑高，背景和底线直接绘制在容器上。
@@ -10,11 +9,11 @@ const slogan = {
   subtitle: "在追求中发现可能，在创造中实现价值", // 色带副标题
 };
 const {
-  ui,
+  themeDecisions,
   theme: { fontValue, lineHeightValue, themeColor, themeColorContrast, themeColorLine },
 } = useResumePreviewContext();
 const bandStyle = computed(() => {
-  const radius = Math.max(0, Number(ui.value?.page?.radius ?? defaultPageRadius) || 0);
+  const radius = Math.max(0, Number(themeDecisions.value.pageRadius) || 0);
   // 标语从纸张顶边自然排版，高度由文字和最小高度共同决定。
   return {
     minHeight: "108px", // 保持原有色带的最小视觉高度

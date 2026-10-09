@@ -15,16 +15,17 @@ export default {
 <script setup>
 import { computed } from "vue";
 import { useResumePreviewContext } from "@/views/resume/editor/preview/shared/previewContext";
-import { defaultPageRadius, defaultPaddingHorizontal } from "@/stores/modules/resume/config/uiConfig";
+import { defaultPaddingHorizontal } from "@/stores/modules/resume/config/uiConfig";
 
 const {
+  themeDecisions,
   ui,
   theme: { themeColor },
 } = useResumePreviewContext();
 // 页面提供通栏位置，弧形页眉只维护水平内缩与顶部圆角。
 const bandStyle = computed(() => {
   const horizontal = Number(ui.value?.page?.padding?.horizontal ?? defaultPaddingHorizontal);
-  const radius = Number(ui.value?.page?.radius ?? defaultPageRadius);
+  const radius = Number(themeDecisions.value.pageRadius);
   return {
     paddingLeft: `${horizontal}px`,
     paddingRight: `${horizontal}px`,

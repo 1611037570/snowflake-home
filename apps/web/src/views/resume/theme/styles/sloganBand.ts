@@ -3,6 +3,9 @@ export default {
   id: "sloganBand", // 主题编号
   design: ["single-column", "polished"], // 模板页的分类筛选标签
   description: "顶部标语色带搭配飘带底沿，适合突出个人主张的通用简历。", // 主题说明
+  decisions: { // 主题固定外观，不进入用户界面配置
+    layoutType: "topUserSingleColumn", // 标语与个人信息各自独占通栏区域
+  },
   ui: {
     // 主题相对默认配置的差异
     theme: {
@@ -13,6 +16,5 @@ export default {
       padding: { vertical: 24, horizontal: 24 }, // 页面上下与左右留白
       spacing: { module: 18 }, // 模块之间的间距；标语与个人信息之间由个人信息自身留白
     },
-    layout: { type: "topUserSingleColumn" }, // 标语与个人信息各自独占通栏区域
   },
 };

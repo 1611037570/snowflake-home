@@ -15,10 +15,11 @@ export default {
 
 <script setup>
 import { computed } from "vue";
-import { defaultPaddingHorizontal, defaultPaddingVertical, defaultPageRadius } from "@/stores/modules/resume/config/uiConfig";
+import { defaultPaddingHorizontal, defaultPaddingVertical } from "@/stores/modules/resume/config/uiConfig";
 import { useResumePreviewContext } from "@/views/resume/editor/preview/shared/previewContext";
 
 const {
+  themeDecisions,
   ui,
   theme: { themeColorSoft },
 } = useResumePreviewContext();
@@ -26,7 +27,7 @@ const {
 const sidebarStyle = computed(() => ({
   "--sidebar-content-top": `${Math.max(0, Number(ui.value?.page?.padding?.vertical ?? defaultPaddingVertical) || 0)}px`, // 引擎注入的页面上边距，底色向上盖住它
   "--sidebar-bleed": `${Math.max(0, Number(ui.value?.page?.padding?.horizontal ?? defaultPaddingHorizontal) || 0)}px`, // 底色向左延伸到纸张边缘
-  "--sidebar-radius": `${Math.max(0, Number(ui.value?.page?.radius ?? defaultPageRadius) || 0)}px`, // 底色左下圆角
+  "--sidebar-radius": `${Math.max(0, Number(themeDecisions.value.pageRadius) || 0)}px`, // 底色左下圆角
   "--sidebar-surface": themeColorSoft.value, // 左栏浅色底纹
 }));
 </script>

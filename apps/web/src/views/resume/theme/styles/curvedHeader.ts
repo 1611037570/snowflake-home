@@ -8,6 +8,9 @@ export default {
   /** 主题样式说明 */
   description: "通栏弧形页眉搭配居中圆形头像，姓名与联系方式居中排列。",
   /** 主题外观设置 */
+  decisions: { // 主题固定外观，不进入用户界面配置
+    layoutType: "topUserSingleColumn", // 主题固定页面版式
+  },
   ui: {
     /** 主题装饰设置 */
     theme: {
@@ -24,11 +27,6 @@ export default {
       infoMode: "icon",
       /** 联系信息按行排列并自动换行 */
       infoLayout: "flex",
-    },
-    /** 页面布局设置 */
-    layout: {
-      /** 个人信息独占顶部通栏区域 */
-      type: "topUserSingleColumn",
     },
   },
 };

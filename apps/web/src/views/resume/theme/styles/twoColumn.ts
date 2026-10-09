@@ -7,9 +7,11 @@ export default {
   pageAppearance: {
     bleedsPageTop: true, // 首页顶部由栏底色铺到纸张顶边
   },
+  decisions: { // 主题固定外观，不进入用户界面配置
+    layoutType: "twoColumn", // 主题固定页面版式
+  },
   ui: {
     theme: { color: "#7C3AED" },
-    layout: { type: "twoColumn" },
     user: { avatarPosition: "left" }, // 双栏头像默认居左，后续仍可通过头像位置设置调整
   },
 };

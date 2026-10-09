@@ -11,15 +11,16 @@ export default { regionPadding };
 
 <script setup>
 import { computed } from "vue";
-import { defaultPaddingHorizontal, defaultPageRadius } from "@/stores/modules/resume/config/uiConfig";
+import { defaultPaddingHorizontal } from "@/stores/modules/resume/config/uiConfig";
 import { useResumePreviewContext } from "@/views/resume/editor/preview/shared/previewContext";
 
 const {
+  themeDecisions,
   ui,
   theme: { themeColorSoft, themeColorLine },
 } = useResumePreviewContext();
 // 左栏浅底与栏间细线只服务左右双栏布局，单栏布局下没有任何装饰需要绘制。
-const isTwoColumn = computed(() => ui.value?.layout?.type === "twoColumn");
+const isTwoColumn = computed(() => themeDecisions.value.layoutType === "twoColumn");
 // 装饰的尺寸与颜色统一由变量下发，样式里不写死色值与像素。
 const twoColumnStyle = computed(() => ({
   "--two-column-surface": themeColorSoft.value, // 左栏浅底
@@ -27,7 +28,7 @@ const twoColumnStyle = computed(() => ({
   "--two-column-top": `${regionPadding.top}px`, // 装饰向上覆盖正文顶部留白
   "--two-column-side": `${Math.max(0, Number(ui.value?.page?.padding?.horizontal ?? defaultPaddingHorizontal) || 0)}px`, // 左栏底色铺到纸张左边缘
   "--two-column-half-gap": "12px", // 栏间距 24px 的一半，装饰落在栏间正中
-  "--two-column-bottom-radius": `${Math.max(0, Number(ui.value?.page?.radius ?? defaultPageRadius) || 0)}px`, // 左栏底色沿用纸张左下圆角，避免露出方形色块
+  "--two-column-bottom-radius": `${Math.max(0, Number(themeDecisions.value.pageRadius) || 0)}px`, // 左栏底色沿用纸张左下圆角，避免露出方形色块
 }));
 </script>
 

@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { DEFAULT_THEME_DECISIONS, type ThemeDecisions } from "@/views/resume/theme/themeDecisions";
 import { createResumeLayout } from "./createResumeLayout";
 import { resolveColumnWidths } from "./resolveColumnWidths";
 import { buildRegionFlows, type ColumnFlowPlan, type RegionFlowBuilder } from "./regionFlows";
@@ -31,17 +32,20 @@ interface CaseDefinition {
   name: string;
   /** 简历配置中与布局相关的部分 */
   ui: Record<string, unknown>;
+  /** 用例独立传入的主题固定外观 */
+  themeDecisions?: Partial<ThemeDecisions>;
   /** 当前简历实际存在的模块 key，缺省使用标准模块清单 */
   moduleKeys?: string[];
 }
 
 const createCase = (definition: CaseDefinition) => {
   // 纸张边框参与页面内容宽高：取值方式与 useResumeLayout 一致
-  const borderWidth = Math.max(0, Number((definition.ui.page as any)?.border?.width) || 0);
+  const borderWidth = Math.max(0, Number(definition.themeDecisions?.pageBorder?.width) || 0);
   const contentWidth = RESUME_WIDTH - borderWidth * 2 - PADDING_HORIZONTAL * 2;
   const availableHeight = getContentHeight(PADDING_VERTICAL, SHOW_PAGE_NUMBER, borderWidth);
   const layout = createResumeLayout({
     ui: definition.ui,
+    themeDecisions: { ...DEFAULT_THEME_DECISIONS, ...definition.themeDecisions }, // 独立主题外观
     moduleKeys: definition.moduleKeys || MODULE_KEYS,
     paddingVertical: PADDING_VERTICAL,
     paddingHorizontal: PADDING_HORIZONTAL,
@@ -95,6 +99,22 @@ const createCase = (definition: CaseDefinition) => {
 };
 
 describe("简历页几何基线", () => {
+  it("用户配置不能覆盖主题固定版式", () => {
+    const layout = createResumeLayout({
+      ui: { layout: { type: "singleColumn" } }, // 非法用户版式不会参与主题决策
+      themeDecisions: { // 独立主题固定外观
+        ...DEFAULT_THEME_DECISIONS,
+        layoutType: "twoColumn", // 主题决定双栏布局
+      },
+      moduleKeys: MODULE_KEYS, // 当前模块清单
+      paddingVertical: PADDING_VERTICAL, // 页面上下边距
+      paddingHorizontal: PADDING_HORIZONTAL, // 页面左右边距
+      gap: MODULE_GAP, // 模块间距
+    });
+    expect(layout.regions.flatMap((region) => region.columns.map((column) => column.id)))
+      .toEqual(["left", "right"]);
+  });
+
   it("单栏把个人信息独立成区，正文占用剩余高度", () => {
     const snapshot = createCase({ name: "单栏", ui: {} });
 
@@ -145,7 +165,11 @@ describe("简历页几何基线", () => {
   it("双栏按栏间距均分内容宽度", () => {
     const snapshot = createCase({
       name: "双栏",
-      ui: { layout: { type: "twoColumn" } },
+      ui: { },
+      themeDecisions: { // 用例主题固定外观
+        ...DEFAULT_THEME_DECISIONS,
+        layoutType: "twoColumn", // 主题固定页面版式
+      },
     });
 
     expect(snapshot).toEqual({
@@ -188,7 +212,11 @@ describe("简历页几何基线", () => {
   it("个人信息顶部通栏时正文扣掉通栏区域与区域间距", () => {
     const snapshot = createCase({
       name: "顶部通栏双栏",
-      ui: { layout: { type: "topUserTwoColumn" } },
+      ui: { },
+      themeDecisions: { // 用例主题固定外观
+        ...DEFAULT_THEME_DECISIONS,
+        layoutType: "topUserTwoColumn", // 主题固定页面版式
+      },
     });
 
     expect(snapshot).toEqual({
@@ -246,7 +274,11 @@ describe("简历页几何基线", () => {
   it("顶部通栏单栏时正文单栏接管剩余高度", () => {
     const snapshot = createCase({
       name: "顶部通栏单栏",
-      ui: { layout: { type: "topUserSingleColumn" } },
+      ui: { },
+      themeDecisions: { // 用例主题固定外观
+        ...DEFAULT_THEME_DECISIONS,
+        layoutType: "topUserSingleColumn", // 主题固定页面版式
+      },
     });
 
     expect(snapshot).toEqual({
@@ -298,8 +330,10 @@ describe("简历页几何基线", () => {
       name: "主题声明正文区域留白",
       ui: {
         // 红框主题的正文外观声明四周 12 像素留白，分页与栏宽同时扣除
-        theme: { template: "frame" },
-        layout: { type: "topUserSingleColumn" },
+        theme: { template: "frame" } },
+      themeDecisions: { // 用例主题固定外观
+        ...DEFAULT_THEME_DECISIONS,
+        layoutType: "topUserSingleColumn", // 主题固定页面版式
       },
     });
 
@@ -350,7 +384,11 @@ describe("简历页几何基线", () => {
   it("单栏存在标语时依次排标语、个人信息、正文三个区域", () => {
     const snapshot = createCase({
       name: "顶部标语单栏",
-      ui: { layout: { type: "singleColumn" } },
+      ui: { },
+      themeDecisions: { // 用例主题固定外观
+        ...DEFAULT_THEME_DECISIONS,
+        layoutType: "singleColumn", // 主题固定页面版式
+      },
       moduleKeys: ["slogan", ...MODULE_KEYS],
     });
 
@@ -416,7 +454,11 @@ describe("简历页几何基线", () => {
   it("顶部标语与个人信息同时通栏时正文扣掉两个区域与区域间距", () => {
     const snapshot = createCase({
       name: "顶部标语加个人信息通栏",
-      ui: { layout: { type: "topUserSingleColumn" } },
+      ui: { },
+      themeDecisions: { // 用例主题固定外观
+        ...DEFAULT_THEME_DECISIONS,
+        layoutType: "topUserSingleColumn", // 主题固定页面版式
+      },
       moduleKeys: ["slogan", ...MODULE_KEYS],
     });
 
@@ -483,7 +525,12 @@ describe("简历页几何基线", () => {
     const snapshot = createCase({
       name: "纸张边框",
       // 六像素边框：左右共扣十二像素宽，上下共扣十二像素高
-      ui: { layout: { type: "singleColumn" }, page: { border: { width: 6 } } },
+      ui: { },
+      themeDecisions: { // 用例主题固定外观
+        ...DEFAULT_THEME_DECISIONS,
+        layoutType: "singleColumn", // 主题固定页面版式
+        pageBorder: { width: 6 /* 边框宽度 */, color: "#e9edf0" /* 边框颜色 */ },
+      },
     });
 
     expect(snapshot.contentWidth).toBe(734);
@@ -503,8 +550,10 @@ describe("简历页几何基线", () => {
       name: "主题部分声明正文区域留白",
       ui: {
         // 斜角竖线主题的正文外观只声明左侧 24 像素：其余方向按声明的 0 处理
-        theme: { template: "angledLine" },
-        layout: { type: "topUserSingleColumn" },
+        theme: { template: "angledLine" } },
+      themeDecisions: { // 用例主题固定外观
+        ...DEFAULT_THEME_DECISIONS,
+        layoutType: "topUserSingleColumn", // 主题固定页面版式
       },
     });
 
@@ -519,7 +568,11 @@ describe("简历页几何基线", () => {
 
   it("存在标语区域时页面上边距计入个人信息区域上留白", () => {
     const layout = createResumeLayout({
-      ui: { layout: { type: "singleColumn" } },
+      ui: { },
+      themeDecisions: { // 用例主题固定外观
+        ...DEFAULT_THEME_DECISIONS,
+        layoutType: "singleColumn", // 主题固定页面版式
+      },
       moduleKeys: ["slogan", ...MODULE_KEYS],
       paddingVertical: PADDING_VERTICAL,
       paddingHorizontal: PADDING_HORIZONTAL,
@@ -539,7 +592,11 @@ describe("简历页几何基线", () => {
 
   it("个人信息区域贴顶时页面上边距计入它的上留白", () => {
     const layout = createResumeLayout({
-      ui: { theme: { template: "userBand" }, layout: { type: "topUserSingleColumn" } },
+      ui: { theme: { template: "userBand" } },
+      themeDecisions: { // 用例主题固定外观
+        ...DEFAULT_THEME_DECISIONS,
+        layoutType: "topUserSingleColumn", // 主题固定页面版式
+      },
       moduleKeys: MODULE_KEYS,
       paddingVertical: PADDING_VERTICAL,
       paddingHorizontal: PADDING_HORIZONTAL,

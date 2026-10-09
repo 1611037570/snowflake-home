@@ -2,18 +2,17 @@
 import { computed } from "vue";
 import ResumeField from "@/views/resume/editor/preview/components/resumeField/index.vue";
 import { useResumePreviewContext } from "@/views/resume/editor/preview/shared/previewContext";
-import { defaultPageRadius } from "@/stores/modules/resume/config/uiConfig";
 
 // 普通标语组件同时维护数据文案与通栏背景。
 const {
   data: previewData,
-  ui,
+  themeDecisions,
   theme: { fontValue, lineHeightValue, themeColor, themeColorContrast },
 } = useResumePreviewContext();
 const slogan = computed(() => previewData.value?.slogan?.data || {});
 const bandStyle = computed(() => {
   // 标语区域直接占据纸张顶部，文字留白由组件自身维护。
-  const radius = Number(ui.value?.page?.radius ?? defaultPageRadius);
+  const radius = Number(themeDecisions.value.pageRadius);
   return {
     paddingTop: "24px",
     paddingBottom: "12px",

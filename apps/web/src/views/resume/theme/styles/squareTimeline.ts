@@ -3,6 +3,10 @@ export default {
   id: "squareTimeline", // 主题编号，各外观组件按此编号查找
   design: ["single-column", "timeline"], // 模板列表分类标签
   description: "左侧模块标题与日期，方形节点连接正文时间轴。", // 主题说明
+  decisions: { // 主题固定外观，不进入用户界面配置
+    pageRadius: 0, // 纸张使用平直页角
+    layoutType: "topUserSingleColumn", // 顶部个人信息通栏，正文保持单栏
+  },
   ui: { // 相对默认界面的配置差异
     theme: { // 主题颜色与标题图标设置
       color: "#6864EF", // 标题、方形节点和时间轴使用的主题色
@@ -13,7 +17,6 @@ export default {
       lineHeight: 1.5, // 正文行高，保持经历内容易读
     },
     page: { // 纸张外观与留白
-      radius: 0, // 纸张使用平直页角
       padding: { // 页面四周留白
         vertical: 36, // 页面上下留白
         horizontal: 48, // 页面左右留白
@@ -24,9 +27,6 @@ export default {
       infoPosition: "left", // 姓名与个人资料左对齐
       infoMode: "icon", // 个人资料使用图标标签
       infoLayout: "flex", // 资料按可用宽度自然换行
-    },
-    layout: { // 页面区域布局
-      type: "topUserSingleColumn", // 顶部个人信息通栏，正文保持单栏
     },
   },
 };
