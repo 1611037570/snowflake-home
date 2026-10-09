@@ -1,3 +1,4 @@
+import { resolveResumeUi } from "./resumeUi";
 import { DEFAULT_UI } from "@/stores/modules/resume/config/uiConfig";
 import { isPageLayoutTemplateId, type PageLayoutTemplateId } from "./layouts";
 import { resumeThemeRegistry } from "./styles";
@@ -51,7 +52,8 @@ export const resolveThemeDecisions = (themeId?: string): ThemeDecisions => {
  * 预览、分页引擎与导出共用这一份运行时 ui，落库的 ui 里不含这些字段，主题调整能立刻生效。
  */
 export const withThemeDecisions = (ui: Record<string, any> | undefined): Record<string, any> => {
-  const source = ui && typeof ui === "object" ? ui : {};
+  // 先展开可编辑参数，主题固定外观只由下方主题决策注入。
+  const source = resolveResumeUi(ui);
   const decisions = resolveThemeDecisions(source.theme?.template);
   return {
     ...source,

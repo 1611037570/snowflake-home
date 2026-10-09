@@ -58,7 +58,7 @@ const applyTemplate = (template) => {
   nextUi.layout.columns = layoutUsesColumns(layoutType)
     ? resolveLayoutColumns(layoutType, moduleKeys, nextUi.layout.columns)
     : null;
-  Object.assign(currentUI.value, nextUi);
+  currentUI.value = nextUi;
 };
 </script>
 

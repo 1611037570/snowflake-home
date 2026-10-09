@@ -1,5 +1,5 @@
 import { getUUID } from "@/utils";
-import { DEFAULT_UI } from "./uiConfig";
+import { defaultThemeTemplate } from "./uiConfig";
 
 // 默认模块 key 对应的名称与图标（取自 formConfig，后期自行维护）
 export const DEFAULT_MODULE_NAMES: { key: string; name: string; icon: string }[] = [
@@ -37,7 +37,11 @@ export const DEFAULT_RESUME_ITEM = {
     modules: [{ key: "user" }],
   },
   // UI配置
-  ui: structuredClone(DEFAULT_UI),
+  ui: {
+    theme: { // 初始主题选择，默认参数在运行时展开
+      template: defaultThemeTemplate, // 初始主题编号
+    },
+  },
   // 使用信息
   usage: {
     // 标题模式：自动生成或自定义

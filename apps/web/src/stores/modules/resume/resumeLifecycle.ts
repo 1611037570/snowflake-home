@@ -1,5 +1,6 @@
 import { getUUID } from "@/utils";
 import { merge } from "lodash-es";
+import { compactResumeUi, resolveResumeUi } from "@/views/resume/theme/resumeUi";
 import {
   createResumeListItem,
   removeAiChatSummaries,
@@ -62,6 +63,8 @@ export const createResumeLifecycle = (options: ResumeLifecycleOptions) => {
       return false;
     }
     const resume = config ? mergeResumeItem(config) : structuredClone(defaultResumeItem);
+    // 新建与导入只按当前主题展开，不从简历默认对象继承其他主题参数。
+    resume.ui = resolveResumeUi(compactResumeUi(config?.ui));
     // 新建时间按本次创建计算，导入的备份时间仍保持原值
     const now = Date.now();
     if (config?.usage?.createTime === undefined) resume.usage.createTime = now;

@@ -6,7 +6,6 @@ import { defineStore } from "pinia";
 import { computed, ref, toRaw, watch } from "vue";
 import { DEFAULT_RESUME_ITEM, DEFAULT_EDITOR, DEFAULT_SYSTEM } from "./config/defaultConfig";
 import { COLLAPSED, EXPANDED } from "./config/formConfig";
-import { DEFAULT_UI } from "./config/uiConfig";
 import { debounce, merge } from "lodash-es";
 import { createResumeStorage } from "./resumeStorage";
 import { createResumeLifecycle } from "./resumeLifecycle";
@@ -42,7 +41,7 @@ export const useResumeStore = defineStore(
         .filter(Boolean),
     );
     const { getResumeStorage, loadResumeItems, removeResumeStorage, schedulePersistResume } =
-      createResumeStorage({ defaultUI: DEFAULT_UI });
+      createResumeStorage();
     let initPromise: Promise<void> | null = null;
     const resumeLoadPromises = new Map<string, Promise<any>>();
     // 简历最大数量

@@ -4,6 +4,7 @@ export {
   resumeThemeRegistry,
   themeTemplateList,
 } from "./styles";
+export { compactResumeUi, compactResumeItem, resolveResumeUi } from "./resumeUi";
 export { resolveThemeDecisions, withThemeDecisions, type ThemeDecisions } from "./themeDecisions";
 export type {
   ResumeThemeDefinition,

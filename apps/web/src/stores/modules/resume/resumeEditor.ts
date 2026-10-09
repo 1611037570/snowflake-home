@@ -20,6 +20,7 @@ import {
 import { isEqual } from "lodash-es";
 import { executeResumeOperations, type ResumeWriteOp } from "./resumeOperations";
 import i18n from "@/locales";
+import { compactResumeUi, resolveResumeUi } from "@/views/resume/theme/resumeUi";
 
 type ResumeEditorOptions = {
   currentItem: ComputedRef<any>;
@@ -91,7 +92,8 @@ export const createResumeEditor = ({
     },
     set(newUI: any) {
       const item = currentItem.value;
-      if (item) item.ui = newUI;
+      // 整体替换时统一清除主题固定字段，补齐当前主题运行时参数。
+      if (item) item.ui = resolveResumeUi(compactResumeUi(newUI));
     },
   });
   const currentUsage = computed(() => {
