@@ -43,16 +43,6 @@ const {
       <slot />
     </div>
     <div aria-hidden="true" class="resume-user__accent" :style="{ backgroundColor: themeColor }" />
-    <div
-      aria-hidden="true"
-      class="resume-user__line resume-user__line--soft"
-      :style="{ backgroundColor: themeColorLine }"
-    />
-    <div
-      aria-hidden="true"
-      class="resume-user__line resume-user__line--theme"
-      :style="{ backgroundColor: themeColor }"
-    />
   </div>
 </template>
 
@@ -87,7 +77,4 @@ const {
   width: 6px;
 }
 
-.resume-user__line {
-  display: none;
-}
 </style>

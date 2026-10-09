@@ -641,5 +641,9 @@
   "aiUnavailableTitle": "AI unavailable",
   "aiUnavailableMessage": "No Xiao Zhou model is bound. Configure a model before using resume AI features.",
   "aiConfigure": "Configure",
-  "aiCancel": "Cancel"
+  "aiCancel": "Cancel",
+  "themeFixedContactLayout": "This theme uses a fixed single-column contact layout. This setting cannot be changed.",
+  "themeFixedAvatarPosition": "This theme fixes the avatar on the left of the header. This setting cannot be changed.",
+  "themeFixedPageBackground": "This theme uses a fixed gradient background. The paper color cannot be changed.",
+  "themeFixedDatePosition": "This theme fixes dates in the timeline rail. Their position cannot be changed."
 }

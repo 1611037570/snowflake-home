@@ -1,3 +1,11 @@
+<script>
+// 整页渐变覆盖纸张底色，背景设置保留展示但禁止调整。
+const unsupportedSettings = {
+  "page.background": "themeFixedPageBackground", // 页面背景由主题渐变固定绘制
+};
+export default { unsupportedSettings };
+</script>
+
 <script setup>
 import { useResumePreviewContext } from "@/views/resume/editor/preview/shared/previewContext";
 

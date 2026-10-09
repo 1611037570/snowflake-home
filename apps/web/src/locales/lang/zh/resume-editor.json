@@ -641,5 +641,9 @@
   "aiUnavailableTitle": "AI 暂不可用",
   "aiUnavailableMessage": "当前未绑定小舟模型，请先配置模型后再使用简历 AI 功能。",
   "aiConfigure": "去配置",
-  "aiCancel": "取消"
+  "aiCancel": "取消",
+  "themeFixedContactLayout": "当前主题固定使用单列资料布局，不支持调整。",
+  "themeFixedAvatarPosition": "当前主题的头像固定在页眉左侧，不支持调整。",
+  "themeFixedPageBackground": "当前主题使用固定渐变背景，不支持调整纸张底色。",
+  "themeFixedDatePosition": "当前主题的日期固定在时间轴栏，不支持调整位置。"
 }
