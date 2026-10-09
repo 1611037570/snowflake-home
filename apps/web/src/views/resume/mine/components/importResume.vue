@@ -1,12 +1,26 @@
 <script setup>
 import { useFileDialog } from "@/hooks";
 import { parseMarkdownResume } from "../markdownParser";
-import { useResumeStore } from "@/stores";
-import { ref } from "vue";
+import { parsePdfResume } from "../pdfParser";
+import { MAX_PDF_FILE_BYTES } from "../pdfDocument";
+import ImportResumePreview from "./importResumePreview.vue";
+import { useAiStore, useResumeStore } from "@/stores";
+import { computed, onBeforeUnmount, ref, watch } from "vue";
 
 const visible = ref(false);
 const parsing = ref(false);
 const resumeStore = useResumeStore();
+const aiStore = useAiStore();
+const pdfParsing = ref(false);
+const pdfProgress = ref("");
+const pendingPdfResume = ref(null);
+let pdfController = null;
+let choosingPdf = false;
+let pdfVersion = 0;
+const parseModelLabel = computed(() => {
+  const model = aiStore.modelList.find((item) => item.id === aiStore.getAgentModelId("resumeParser"));
+  return model ? model.name || model.model : "未配置";
+});
 
 const { click: clickJson, remove: removeJson, errorList: jsonErrors } = useFileDialog({
   accept: ".json,application/json",
@@ -18,6 +32,83 @@ const { click: clickMarkdown, remove: removeMarkdown, errorList: markdownErrors 
   multiple: false,
   maxCount: 1,
 });
+const { click: clickPdf, remove: removePdf, errorList: pdfErrors } = useFileDialog({
+  // 仅选择单份 PDF，大小和页数在解析器中校验
+  accept: ".pdf,application/pdf",
+  // 与解析器的二十兆限制保持一致
+  maxSize: MAX_PDF_FILE_BYTES,
+  multiple: false,
+  maxCount: 1,
+});
+
+// 关闭、取消或卸载都使旧解析任务失效，不接收迟到的模型结果。
+const cancelPdfImport = () => {
+  // 同时使尚未返回的文件选择失效。
+  pdfVersion++;
+  pdfController?.abort();
+  pdfController = null;
+  pdfParsing.value = false;
+  pendingPdfResume.value = null;
+};
+watch(visible, (open) => { if (!open) cancelPdfImport(); }, { flush: "sync" });
+onBeforeUnmount(cancelPdfImport);
+
+// 文档仅在浏览器中处理，再直接发送到用户配置的视觉模型接口。
+const importPdfConfig = async () => {
+  if (parsing.value || pdfParsing.value || choosingPdf) return;
+  const model = aiStore.modelList.find((item) => item.id === aiStore.getAgentModelId("resumeParser"));
+  if (!model?.key || !model.url || !model.model) {
+    ElMessage.warning("请先绑定支持图片识别的简历解析模型");
+    aiStore.openModelManager("added");
+    return;
+  }
+  let file;
+  const version = pdfVersion;
+  choosingPdf = true;
+  try {
+    removePdf();
+    const files = await clickPdf();
+    file = files?.[0]?.file;
+    if (!file && pdfErrors.value.length) ElMessage.error(pdfErrors.value[0].msg);
+  } catch {
+    return;
+  } finally {
+    choosingPdf = false;
+    removePdf();
+  }
+  if (!file || !visible.value || version !== pdfVersion) return;
+  const controller = new AbortController();
+  pdfController = controller;
+  pdfParsing.value = true;
+  pdfProgress.value = "正在读取 PDF";
+  try {
+    const item = await parsePdfResume(file, controller.signal, (message) => {
+      if (pdfController === controller) pdfProgress.value = message;
+    });
+    if (controller.signal.aborted || pdfController !== controller) return;
+    pendingPdfResume.value = item;
+  } catch (error) {
+    if (!controller.signal.aborted && pdfController === controller) {
+      ElMessage.error(error instanceof Error ? error.message : "PDF 解析失败，请检查文件或模型配置");
+    }
+  } finally {
+    if (pdfController === controller) {
+      pdfController = null;
+      pdfParsing.value = false;
+    }
+  }
+};
+
+// 校验后的结果仅在确认时创建，仓库再次检查简历容量。
+const confirmPdfImport = () => {
+  const item = pendingPdfResume.value;
+  if (!item) return;
+  if (resumeStore.addResume(item, false)) {
+    pendingPdfResume.value = null;
+    visible.value = false;
+    ElMessage.success("简历导入成功");
+  }
+};
 
 // 打开导入弹窗：提前判断简历数量是否已达上限
 const handleOpenImport = () => {
@@ -117,11 +208,28 @@ const importMarkdownConfig = async () => {
     导入简历
   </SfButton>
   <SfModal v-model="visible" title="导入简历">
-    <div v-if="parsing" class="flex w-full max-w-[400px] flex-col items-center gap-3 p-6">
+    <div v-if="pdfParsing" class="flex w-full max-w-[400px] flex-col items-center gap-3 p-6">
+      <SfIcon icon="line-md:loading-twotone-loop" size="8" class="text-sf-theme" />
+      <div class="text-base">{{ pdfProgress }}</div>
+      <SfButton type="bg" @click="cancelPdfImport">取消解析</SfButton>
+    </div>
+    <ImportResumePreview v-else-if="pendingPdfResume" :resume="pendingPdfResume" @confirm="confirmPdfImport" @cancel="cancelPdfImport" />
+    <div v-else-if="parsing" class="flex w-full max-w-[400px] flex-col items-center gap-3 p-6">
       <SfIcon icon="line-md:loading-twotone-loop" size="8" class="text-sf-theme" />
       <div class="text-base">正在智能解析简历，请稍候</div>
     </div>
     <div v-else class="flex w-full max-w-[400px] flex-col gap-3">
+      <p class="text-sm text-sf-text-3">解析模型：{{ parseModelLabel }}</p>
+      <button type="button" class="text-left text-sm text-sf-theme" @click="aiStore.openModelManager('added')">配置解析模型</button>
+      <button
+        type="button"
+        class="rounded-3xl border border-sf-b p-3 text-left transition-colors hover:bg-sf-theme-2"
+        @click="importPdfConfig"
+      >
+        <div class="text-xl">PDF 智能解析</div>
+        <div class="text-sm">支持文字与扫描简历，最多 10 页、20MB</div>
+        <div class="mt-3 text-sm text-sf-text-3">文档在本地处理，页面图片直接发送到所选模型；需要支持图片识别的模型。</div>
+      </button>
       <div
         class="cursor-pointer rounded-3xl border border-sf-b p-3 transition-colors hover:bg-sf-theme-2"
         @click="importJsonConfig"
