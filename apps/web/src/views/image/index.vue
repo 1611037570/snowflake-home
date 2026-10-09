@@ -115,7 +115,7 @@ import { getFormat, toMime } from "@/utils";
 // 导入 FormatAdjust.vue 子组件 - 格式调整组件
 import FormatAdjust from "./components/formatAdjust.vue";
 // 导入 ImageSelector.vue 子组件 - 图片选择器组件
-import ImageSelector from "./components/imageSelector.vue";
+import ImageSelector from "./components/ImageSelector.vue";
 // 导入 Preview.vue 子组件 - 图片预览组件
 import Preview from "./components/preview.vue";
 // 导入 Adjust.vue 子组件 - 尺寸调整组件
@@ -123,7 +123,7 @@ import Adjust from "./components/adjust.vue";
 // 导入 Worktop.vue 子组件 - 工作顶部组件
 import Worktop from "./components/worktop.vue";
 // 导入 Intro.vue 子组件 - 介绍说明组件
-import Intro from "./components/intro.vue";
+import Intro from "./components/Intro.vue";
 // 导入 Presets.vue 子组件 - 推荐设置组件
 import Presets from "./components/presets.vue";
 // 导入 emptyImageData 函数 - 空图片数据对象模板
