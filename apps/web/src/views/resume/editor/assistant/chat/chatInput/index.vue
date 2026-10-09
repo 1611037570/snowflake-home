@@ -196,10 +196,12 @@ onBeforeUnmount(() => {
           <!-- 右侧-->
           <div class="flex items-center gap-1">
             <ModelSelect />
+            <!-- 面试操作上下排列，使用与左侧选项一致的轻量文字样式。 -->
+            <div v-if="props.quickAnswerEnabled || props.earlyEndEnabled" class="flex shrink-0 flex-col items-center justify-center gap-3">
             <!-- 面试问题使用独立单次请求生成回答，不写入原对话 -->
             <button
               v-if="props.quickAnswerEnabled"
-              class="flex h-[30px] items-center justify-center rounded-xl bg-sf-theme-3 px-3 text-xs text-sf-theme transition-all duration-500 hover:bg-sf-theme-2 disabled:cursor-not-allowed disabled:opacity-50"
+              class="flex h-6 shrink-0 cursor-pointer items-center justify-center rounded-xl px-3 text-xs font-bold leading-none whitespace-nowrap text-sf-theme transition-colors enabled:hover:bg-sf-theme-3 disabled:cursor-not-allowed disabled:opacity-50"
               title="为最近一道面试题生成回答方案"
               type="button"
               :disabled="props.isGenerating || props.quickAnswerLoading"
@@ -210,7 +212,7 @@ onBeforeUnmount(() => {
             <!-- 长时评估允许随时结束，并交由面试技能生成保守的阶段性报告 -->
             <button
               v-if="props.earlyEndEnabled"
-              class="flex h-[30px] items-center justify-center rounded-xl bg-sf-bg-3 px-3 text-xs text-sf-text transition-all duration-500 hover:bg-sf-bg-2 disabled:cursor-not-allowed disabled:opacity-50"
+              class="flex h-6 shrink-0 cursor-pointer items-center justify-center rounded-xl px-3 text-xs font-bold leading-none whitespace-nowrap text-sf-error transition-colors enabled:hover:bg-sf-error-2 disabled:cursor-not-allowed disabled:opacity-50"
               title="提前结束并生成阶段性报告"
               type="button"
               :disabled="props.isGenerating"
@@ -218,6 +220,7 @@ onBeforeUnmount(() => {
             >
               提前结束
             </button>
+            </div>
             <!-- 专项面试语音入口：识别结果先进入输入框，确认后再发送 -->
             <button
               v-if="props.voiceEnabled"
