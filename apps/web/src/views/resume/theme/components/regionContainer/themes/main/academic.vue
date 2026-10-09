@@ -20,12 +20,11 @@ import { useResumePreviewContext } from "@/views/resume/editor/preview/shared/pr
 const {
   themeDecisions,
   ui,
-  theme: { themeColor, themeColorSoft },
+  theme: { themeColorSoft },
 } = useResumePreviewContext();
 // 栏底色只在双栏布局绘制：单栏下没有左右分区，不必区分栏位
 const isTwoColumn = computed(() => layoutStretchesColumns(themeDecisions.value.layoutType));
 const regionStyle = computed(() => ({
-  "--academic-region-accent": themeColor.value, // 分区标题基准线的主题色
   "--academic-region-band": themeColorSoft.value, // 双栏底色，主题色一成的浅色面
   "--academic-column-bleed": `${Math.max(0, Number(ui.value?.page?.padding?.horizontal ?? defaultPaddingHorizontal) || 0)}px`, // 右栏底色延伸到纸张右边缘的距离
   "--academic-page-radius": `${Math.max(0, Number(themeDecisions.value.pageRadius) || 0)}px`, // 栏底色沿用纸张圆角
@@ -38,12 +37,7 @@ const regionStyle = computed(() => ({
     :class="{ 'academic-main--two-column': isTwoColumn }"
     :style="regionStyle"
   >
-    <!-- 分区标题基准线：线宽等于条目引用缩进加引线留白，与正文起始线对齐 -->
-    <span
-      aria-hidden="true"
-      class="pointer-events-none absolute top-0 left-0 h-[2px] w-[36px]"
-      :style="{ backgroundColor: 'var(--academic-region-accent)' }"
-    />
+    <!-- 移除正文顶部短横线，保留模块标题自身的分隔装饰。 -->
     <slot />
   </div>
 </template>
