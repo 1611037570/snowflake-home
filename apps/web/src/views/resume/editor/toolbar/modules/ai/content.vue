@@ -18,20 +18,20 @@ const agentCards: Array<{
   {
     key: "xiaoZhou",
     name: "小舟",
-    description: "简历优化 · ATS 关键词匹配",
+    description: "日常交流与通用问答，协助处理各类问题",
     icon: "mdi:robot-outline",
-  },
-  {
-    key: "xiaoYang",
-    name: "小羊",
-    description: "简历助手 · 智能对话",
-    icon: "mdi:robot-excited-outline",
   },
   {
     key: "resumeParser",
     name: "简历解析",
-    description: "识别内容 · 提取字段",
+    description: "识别简历文档，提取并整理字段内容",
     icon: "mdi:file-document-outline",
+  },
+  {
+    key: "xiaoYang",
+    name: "小羊",
+    description: "面试辅导与模拟练习，帮助准备面试表达",
+    icon: "mdi:robot-excited-outline",
   },
 ];
 
@@ -90,13 +90,19 @@ function setAgentModel(agent: (typeof agentCards)[number]["key"], modelId: strin
           <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-sf-bg-3">
             <SfIcon :icon="agent.icon" size="6" class="cursor-default text-sf-text-2" />
           </div>
-          <div class="min-w-0">
-            <div class="truncate text-base font-bold text-sf-text">{{ agent.name }}</div>
-            <div class="mt-3 truncate text-xs text-sf-text-3">{{ agent.description }}</div>
+          <div class="min-w-0 flex-1">
+            <!-- 绑定状态紧邻名称展示，不额外占用卡片底部。 -->
+            <div class="flex flex-wrap items-center justify-between gap-x-3">
+              <div class="text-base font-bold leading-6 text-sf-text">{{ agent.name }}</div>
+              <button v-if="!modelList.length" type="button" class="cursor-pointer text-xs text-sf-warning hover:underline" title="先添加模型" @click="jumpToAdd">未绑定</button>
+              <span v-else class="shrink-0 text-xs" :class="getAgentModel(agent.key) ? 'text-sf-success' : 'text-sf-warning'">{{ getAgentModel(agent.key) ? "已绑定" : "未绑定" }}</span>
+            </div>
+            <!-- 用途说明允许换行，超过两行再截断。 -->
+            <div class="line-clamp-2 text-xs leading-5 text-sf-text-3">{{ agent.description }}</div>
           </div>
         </div>
 
-        <div class="flex h-12 items-center rounded-3xl border border-sf-b px-3">
+        <div class="flex items-center">
           <SfSelect
             :model-value="getAgentModel(agent.key)"
             :list="modelOptions"
@@ -108,16 +114,6 @@ function setAgentModel(agent: (typeof agentCards)[number]["key"], modelId: strin
           />
         </div>
 
-        <div class="flex min-h-3 items-center gap-3 text-xs">
-          <template v-if="!modelList.length">
-            <SfIcon icon="lucide:sparkles" size="4" class="cursor-default text-sf-theme" />
-            <button type="button" class="text-sf-theme hover:underline" @click="jumpToAdd">
-              先添加模型
-            </button>
-          </template>
-          <span v-else-if="getAgentModel(agent.key)" class="text-sf-text-3">已绑定模型</span>
-          <span v-else class="text-sf-text-3">请选择一个模型</span>
-        </div>
       </div>
     </div>
     <SfTab :list="tabList" v-model="modelManagerTab" v-model:index="activeIndex" />
