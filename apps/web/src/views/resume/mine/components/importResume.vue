@@ -153,9 +153,11 @@ const parseJsonConfig = async (file) => {
     const item = JSON.parse(await file.text());
     // 完整备份必须具有简历数据和模块结构，拒绝普通 JSON 被误导入为空简历
     const isObject = (value) => value !== null && typeof value === "object" && !Array.isArray(value);
-    const validModules = (modules) => Array.isArray(modules) && modules.every((module) =>
-      isObject(module) && typeof module.key === "string" && module.key.trim() &&
-      (module.fields === undefined || validModules(module.fields)),
+    // 当前备份可能包含无编号容器压缩出的空字段；仅字段列表允许空占位，模块仍须有编号。
+    const validModules = (modules, isFieldList = false) => Array.isArray(modules) && modules.every((module) =>
+      isObject(module) && ((isFieldList && Object.keys(module).length === 0) ||
+        (typeof module.key === "string" && module.key.trim() &&
+          (module.fields === undefined || validModules(module.fields, true)))),
     );
     if (!isObject(item) || !isObject(item.data) || !isObject(item.config) ||
       !validModules(item.config.modules) ||

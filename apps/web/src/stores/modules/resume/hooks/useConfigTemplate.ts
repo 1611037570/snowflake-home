@@ -102,7 +102,8 @@ function hasSortableFields(field: any) {
 
 // 可渲染配置压缩为简历结构：只保留模块 key、字段顺序和自定义名称
 export function compactConfigModules(fields: any[], parentKey?: string) {
-  return fields.map((field: any) => {
+  // 无编号的表单容器不表达排序，避免备份里出现无法恢复的空字段占位。
+  return fields.filter((field: any) => typeof field?.key === "string" && field.key.trim()).map((field: any) => {
     const compactField: any = { key: field.key };
     if (
       (parentKey === "more" || parentKey === "subtitle") &&
@@ -112,7 +113,8 @@ export function compactConfigModules(fields: any[], parentKey?: string) {
       compactField.label = field.props.label;
     }
     if (Array.isArray(field.fields) && hasSortableFields(field)) {
-      compactField.fields = compactConfigModules(field.fields, field.key);
+      const children = compactConfigModules(field.fields, field.key);
+      if (children.length) compactField.fields = children;
     }
     return compactField;
   });
