@@ -1,9 +1,9 @@
 <script>
 // 页眉留白同时供真实预览与分页高度计算读取，区域容器据此施加等值内边距。
 const regionPadding = {
-  top: 36, // 个人信息距区域顶部的留白
+  top: 0, // 上边距统一使用页面设置，不叠加主题留白
   right: 0, // 水平留白沿用页面设置
-  bottom: 24, // 个人信息与细分隔线之间 12px、细线与正文之间 12px，合计 24px
+  bottom: 0, // 个人信息与正文之间只使用模块间距
   left: 0, // 水平留白沿用页面设置
 };
 export default { regionPadding };
@@ -19,10 +19,10 @@ const {
 } = useResumePreviewContext();
 // 通栏细分隔线只服务个人信息顶部通栏的双栏版式，单栏布局下不绘制。
 const isTopUserTwoColumn = computed(() => themeDecisions.value.layoutType === "topUserTwoColumn");
-// 线条颜色与纵向偏移由变量下发，偏移落在底部留白的下半个区间。
+// 线条颜色与纵向偏移由变量下发，分隔线贴合区域底边。
 const headerStyle = computed(() => ({
   "--top-user-header-line": themeColorLine.value, // 页眉细分隔线颜色
-  "--top-user-header-line-offset": "12px", // 细线距页眉内容底边的距离
+  "--top-user-header-line-offset": "0px", // 细线贴合区域底边，避免移入个人信息内容
 }));
 </script>
 
@@ -38,7 +38,7 @@ const headerStyle = computed(() => ({
 </template>
 
 <style scoped>
-/* 通栏细分隔线横向铺满页眉宽度，落在页眉内容与双栏正文之间的留白里。 */
+/* 通栏细分隔线横向铺满页眉宽度，贴合页眉区域底边。 */
 .top-user-header--rule::after {
   content: "";
   position: absolute;
