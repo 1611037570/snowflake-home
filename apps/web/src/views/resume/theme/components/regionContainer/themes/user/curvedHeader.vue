@@ -15,7 +15,7 @@ export default {
 <script setup>
 import { computed } from "vue";
 import { useResumePreviewContext } from "@/views/resume/editor/preview/shared/previewContext";
-import { defaultPaddingHorizontal } from "@/stores/modules/resume/config/uiConfig";
+import { defaultPaddingHorizontal, defaultPaddingVertical } from "@/stores/modules/resume/config/uiConfig";
 
 const {
   themeDecisions,
@@ -33,8 +33,8 @@ const bandStyle = computed(() => {
     borderTopRightRadius: `${radius}px`,
   };
 });
-// 弧线经过页面上留白后头像的半高处，头像直径由本主题设为 108 像素。
-const arcHeight = computed(() => `${regionPadding(ui.value).top + 54}px`);
+// 弧线按页面上边距加头像半高计算，避免将区域留白对象作为函数调用。
+const arcHeight = computed(() => `${Number(ui.value?.page?.padding?.vertical ?? defaultPaddingVertical) + 54}px`);
 </script>
 
 <template>
