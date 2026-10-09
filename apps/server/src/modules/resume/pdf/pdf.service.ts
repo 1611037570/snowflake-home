@@ -1,9 +1,9 @@
 import { BadRequestException, Injectable, OnModuleDestroy } from '@nestjs/common'
 import { chromium, type Browser } from 'playwright'
-import { baseConfig } from '../../config/base.config'
+import { baseConfig } from '../../../config/base.config'
 
 @Injectable()
-export class ResumePdfService implements OnModuleDestroy {
+export class PdfService implements OnModuleDestroy {
   private browserPromise?: Promise<Browser>
 
   async createPdf(item: unknown, system?: unknown): Promise<Buffer> {
