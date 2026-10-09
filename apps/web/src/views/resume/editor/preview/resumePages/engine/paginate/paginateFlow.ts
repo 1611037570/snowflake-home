@@ -427,11 +427,8 @@ export const paginateFlow = ({
           consumedOffset <= fragmentOffsetBefore &&
           consumedBlocks <= fragmentBlocksBefore
         ) break;
-        // 末尾断点已覆盖全部内容时同步结束外层高度循环，避免剩余盒子高度生成空白续页。
-        if (consumedOffset >= contentEnd && consumedBlocks >= blockCount) {
-          consumedHeight = fullHeight;
-          break;
-        }
+        // 块与正文都已切到末尾时结束，避免产生高度不为零但内容为空的尾分片
+        if (consumedOffset >= contentEnd && consumedBlocks >= blockCount) break;
       }
       // 本轮消费了内容就继续填当前页；只是换页也允许重试一次
       if (
