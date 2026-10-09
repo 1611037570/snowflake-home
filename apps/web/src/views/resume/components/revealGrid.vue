@@ -12,6 +12,8 @@ const props = defineProps({
   interval: { type: Number, default: 120 },
   // 列表项唯一键字段名，用于 TransitionGroup 稳定 key
   keyField: { type: String, default: "id" },
+  // 是否逐项揭示：关闭后一次性展示全部项，避免列表高度在揭示期间持续增长
+  reveal: { type: Boolean, default: true },
   size: { type: String, default: "default" },
 });
 
@@ -27,6 +29,13 @@ let mounted = false;
 
 // 列表增删后重新同步揭示进度，避免新增卡片被首次加载时的数量上限隐藏。
 const syncReveal = () => {
+  // 关闭揭示时直接铺满列表，不再逐项递增
+  if (!props.reveal) {
+    if (timer) clearInterval(timer);
+    timer = null;
+    visibleCount.value = props.items.length;
+    return;
+  }
   visibleCount.value = Math.min(visibleCount.value, props.items.length);
   if (visibleCount.value >= props.items.length) {
     if (timer) clearInterval(timer);
