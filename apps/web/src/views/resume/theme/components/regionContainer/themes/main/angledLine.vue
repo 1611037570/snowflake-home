@@ -15,11 +15,11 @@ import { layoutStretchesColumns } from "@/views/resume/theme/layouts";
 import { useResumePreviewContext } from "@/views/resume/editor/preview/shared/previewContext";
 
 const {
-  ui,
+  themeDecisions,
   theme: { themeColor, themeColorLine },
 } = useResumePreviewContext();
 // 双栏布局下栏位铺满纸张高度，竖线需要为页脚预留空间才能贯穿到底。
-const stretchColumns = computed(() => layoutStretchesColumns(ui.value?.layout?.type));
+const stretchColumns = computed(() => layoutStretchesColumns(themeDecisions.value.layoutType));
 // 竖线色随主题色推导，条目左留白与区域左留白取同一个值即可保持对齐。
 const railStyle = computed(() => ({
   "--angled-rail-color": themeColorLine.value, // 竖线使用的主题线条色

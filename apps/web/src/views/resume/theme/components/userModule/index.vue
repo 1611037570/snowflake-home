@@ -13,10 +13,10 @@ const props = defineProps({
 
 // 个人信息内容按注册表解析：主题维度优先、版式维度兜底，组件内不再维护映射表。
 const {
-  ui,
+  themeDecisions,
   theme: { themeTemplate },
 } = useResumePreviewContext();
-const current = computed(() => resolveUserContent(themeTemplate.value, ui.value?.layout?.type));
+const current = computed(() => resolveUserContent(themeTemplate.value, themeDecisions.value.layoutType));
 </script>
 
 <template>

@@ -3,13 +3,15 @@ export default {
   id: "inkMagazine", // 主题编号，用于查找外观组件
   design: ["two-column", "minimal"], // 模板分类：双栏、简约
   description: "大字号姓名与短线标题，浅灰辅助栏搭配白色经历栏。", // 主题说明
+  decisions: { // 主题固定外观，不进入用户界面配置
+    layoutType: "topUserTwoColumn", // 个人信息顶部通栏，正文左右双栏
+  },
   ui: { // 主题相对默认配置的差异
     theme: { // 主题色与标题设置
       color: "#202020", // 页眉、标题及分隔线使用的墨色
       titleIconMode: "none", // 模块标题默认不显示图标
     },
     layout: { // 正文布局设置
-      type: "topUserTwoColumn", // 个人信息顶部通栏，正文左右双栏
       leftColumnWidth: 40, // 左栏占正文可用栏宽的百分比
       columns: { // 模块默认栏位
         left: ["advantage", "skill", "honor", "account"], // 左栏放个人总结、技能、证书和账号

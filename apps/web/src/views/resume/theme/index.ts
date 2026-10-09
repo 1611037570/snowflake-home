@@ -6,7 +6,7 @@ export {
 } from "./styles";
 export { resolveThemeSettingRestrictions } from "./settingCapabilities";
 export { compactResumeUi, compactResumeItem, resolveResumeUi } from "./resumeUi";
-export { resolveThemeDecisions, withThemeDecisions, type ThemeDecisions } from "./themeDecisions";
+export { resolveThemeDecisions, DEFAULT_THEME_DECISIONS, type ThemeDecisions } from "./themeDecisions";
 export type {
   ResumeThemeDefinition,
   ResumeThemeTemplate,

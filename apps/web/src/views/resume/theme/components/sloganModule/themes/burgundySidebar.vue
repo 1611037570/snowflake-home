@@ -1,15 +1,14 @@
 <script setup>
 import { computed } from "vue";
-import { defaultPageRadius } from "@/stores/modules/resume/config/uiConfig";
 import { useResumePreviewContext } from "@/views/resume/editor/preview/shared/previewContext";
 
 // 绛红标语组件直接占据纸张顶部，并自行绘制装饰带。
 const {
-  ui,
+  themeDecisions,
   theme: { themeColor },
 } = useResumePreviewContext();
 const bandStyle = computed(() => {
-  const radius = Math.max(0, Number(ui.value?.page?.radius ?? defaultPageRadius) || 0);
+  const radius = Math.max(0, Number(themeDecisions.value.pageRadius) || 0);
   return {
     height: "60px", // 装饰带自身的占位高度
     borderTopLeftRadius: `${radius}px`, // 左上纸张圆角

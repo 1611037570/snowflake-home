@@ -4,8 +4,8 @@ import { useResumePreviewContext } from "@/views/resume/editor/preview/shared/pr
 import { resolvePageAppearance } from "./registry";
 
 // 页面纹理由当前主题决定，未声明时按主题编号选择页面背景外观。
-const { ui } = useResumePreviewContext();
-const appearance = computed(() => resolvePageAppearance(ui.value?.page?.backgroundPattern || ui.value?.theme?.template));
+const { themeDecisions, ui } = useResumePreviewContext();
+const appearance = computed(() => resolvePageAppearance(themeDecisions.value.pageBackgroundPattern || ui.value?.theme?.template));
 </script>
 
 <template>

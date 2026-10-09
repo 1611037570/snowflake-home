@@ -18,7 +18,7 @@ const props = defineProps({
     default: undefined,
   },
 });
-const { ui } = useResumePreviewContext();
+const { themeDecisions, ui } = useResumePreviewContext();
 const slot = computed(() => resolveRegionSlot(props.regionId));
 // 区域外观只按主题编号选择，具体样式由对应组件维护。
 const appearance = computed(() => resolveRegionAppearance(ui.value?.theme?.template, slot.value));
@@ -28,7 +28,7 @@ const regionStyle = computed(() => {
   const regionPadding = padding.value;
   // 正文处于双栏布局时，底部追加栏内为页脚预留的空间
   const bottomSpace =
-    slot.value === "main" && layoutStretchesColumns(ui.value?.layout?.type)
+    slot.value === "main" && layoutStretchesColumns(themeDecisions.value.layoutType)
       ? "var(--resume-bottom-space, 0px)"
       : "0px";
   return {

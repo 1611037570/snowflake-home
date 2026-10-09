@@ -8,6 +8,10 @@ export default {
     textColor: "#000000", // 正文文字固定黑色，避免按紫色纸张底色误判为白色
     openBottomBorder: true, // 正文容器自带圆角，预览只保留顶部与两侧轮廓线
   },
+  decisions: { // 主题固定外观，不进入用户界面配置
+    pageRadius: 0, // 页面边角由正文容器单独绘制
+    layoutType: "topUserTwoColumn", // 个人信息通栏、正文双栏
+  },
   ui: {
     theme: {
       color: "#BD55D9", // 标题菱形与栏间分割线颜色
@@ -15,11 +19,9 @@ export default {
     },
     page: {
       background: "#A950DF", // 纸张底色承接正文圆角与页面边距露出的区域
-      radius: 0, // 页面边角由正文容器单独绘制
       padding: { vertical: 0, horizontal: 0 }, // 通栏页眉与正文占满纸张宽度
     },
     layout: {
-      type: "topUserTwoColumn", // 个人信息通栏、正文双栏
       leftColumnWidth: 40, // 左侧资料栏占比
       columns: {
         left: ["education", "account"], // 左栏模块顺序

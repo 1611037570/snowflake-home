@@ -3,13 +3,15 @@ export default {
   id: "sandSidebar", // 主题编号
   design: ["two-column", "minimal"], // 模板分类：双栏、简约
   description: "米色侧栏搭配金棕色短线标题，简洁展示个人信息与经历。", // 主题说明
+  decisions: { // 主题固定外观，不进入用户界面配置
+    layoutType: "twoColumn", // 个人信息位于左栏的双栏布局
+  },
   ui: { // 主题相对默认设置的差异
     theme: { // 主题色与标题外观设置
       color: "#A58D65", // 姓名、标题及装饰线使用的金棕色
       titleIconMode: "none", // 标题仅展示文字和短下划线
     },
     layout: { // 左右栏布局设置
-      type: "twoColumn", // 个人信息位于左栏的双栏布局
       leftColumnWidth: 40, // 左栏占可用栏宽的百分比
       columns: { // 左右栏的默认模块顺序
         left: ["user", "skill", "honor", "account"], // 左栏展示个人信息、技能、证书和社交账号

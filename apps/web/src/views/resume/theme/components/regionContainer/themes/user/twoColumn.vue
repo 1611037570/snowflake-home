@@ -14,11 +14,11 @@ import { computed } from "vue";
 import { useResumePreviewContext } from "@/views/resume/editor/preview/shared/previewContext";
 
 const {
-  ui,
+  themeDecisions,
   theme: { themeColorLine },
 } = useResumePreviewContext();
 // 分栏提示线是双栏版式的装饰，单栏布局下没有分栏，一律不绘制。
-const isTwoColumn = computed(() => ui.value?.layout?.type === "twoColumn");
+const isTwoColumn = computed(() => themeDecisions.value.layoutType === "twoColumn");
 // 提示线与正文栏间细线共用同一套线条色，页眉与正文的设计语言保持一致。
 const headerStyle = computed(() => ({
   "--user-two-column-line": themeColorLine.value, // 页眉下方的 1px 分栏提示线

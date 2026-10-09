@@ -1,3 +1,4 @@
+import type { ThemeDecisions } from "@/views/resume/theme/themeDecisions";
 import { computed, type ComputedRef, type Ref } from "vue";
 import { getContentHeight, RESUME_WIDTH } from "../../shared/constants";
 import { resolveRegionPadding } from "@/views/resume/theme/regionPadding";
@@ -24,6 +25,8 @@ export interface UseResumeLayoutOptions {
   allModules: ComputedRef<any[]>;
   /** 简历主题配置。 */
   ui: ComputedRef<Record<string, any>>;
+  /** 当前主题固定版式与纸张外观。 */
+  themeDecisions: ComputedRef<ThemeDecisions>;
   /** 是否展示页码。 */
   showPageNumber: ComputedRef<boolean>;
   /** 字体加载版本。 */
@@ -43,6 +46,7 @@ export const useResumeLayout = ({
   data,
   allModules,
   ui,
+  themeDecisions,
   showPageNumber,
   fontReadyVersion,
   renderSignature,
@@ -67,7 +71,7 @@ export const useResumeLayout = ({
     ...new Set(nodes.value.map((node) => node.sourceModuleKey)),
   ]);
   // 纸张边框宽度：参与页面内容宽高，渲染层与测量宿主都用同一份取值
-  const pageBorderWidth = computed(() => Math.max(0, Number(ui.value.page?.border?.width) || 0));
+  const pageBorderWidth = computed(() => Math.max(0, Number(themeDecisions.value.pageBorder.width) || 0));
   const pageTop = computed(() => Number(ui.value.page?.padding?.vertical) || 0);
   const laterPageAvailableHeight = computed(() =>
     getContentHeight(pageTop.value, showPageNumber.value, pageBorderWidth.value),
@@ -75,6 +79,7 @@ export const useResumeLayout = ({
   const layout = computed<PageLayoutConfig>(() =>
     createResumeLayout({
       ui: ui.value,
+      themeDecisions: themeDecisions.value, // 主题决定页面版式
       moduleKeys: activeModuleKeys.value,
       paddingVertical: Number(ui.value.page?.padding?.vertical) || 0,
       paddingHorizontal: Number(ui.value.page?.padding?.horizontal) || 0,
@@ -147,6 +152,7 @@ export const useResumeLayout = ({
   );
   const watchSource = computed(() => ({
     page: ui.value.page,
+    themeDecisions: themeDecisions.value, // 边框与版式变化触发重新测量
     pageSpacing: {
       module: ui.value.page?.spacing?.module,
       paragraph: ui.value.page?.spacing?.paragraph,

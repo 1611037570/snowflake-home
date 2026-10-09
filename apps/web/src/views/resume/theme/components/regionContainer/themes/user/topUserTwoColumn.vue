@@ -14,11 +14,11 @@ import { computed } from "vue";
 import { useResumePreviewContext } from "@/views/resume/editor/preview/shared/previewContext";
 
 const {
-  ui,
+  themeDecisions,
   theme: { themeColorLine },
 } = useResumePreviewContext();
 // 通栏细分隔线只服务个人信息顶部通栏的双栏版式，单栏布局下不绘制。
-const isTopUserTwoColumn = computed(() => ui.value?.layout?.type === "topUserTwoColumn");
+const isTopUserTwoColumn = computed(() => themeDecisions.value.layoutType === "topUserTwoColumn");
 // 线条颜色与纵向偏移由变量下发，偏移落在底部留白的下半个区间。
 const headerStyle = computed(() => ({
   "--top-user-header-line": themeColorLine.value, // 页眉细分隔线颜色

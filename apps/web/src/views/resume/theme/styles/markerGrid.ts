@@ -8,12 +8,10 @@ export default {
   /** 主题样式说明 */
   description: "浅灰虚线网格铺满页面，荧光笔刷底纹突出模块标题。",
   /** 页面与标题的外观配置 */
+  decisions: { // 主题固定外观，不进入用户界面配置
+    pageBackgroundPattern: "dashedGrid", // 主题固定页面纹理
+  },
   ui: {
-    /** 页面背景设置 */
-    page: {
-      /** 整页平铺的背景纹理类型 */
-      backgroundPattern: "dashedGrid",
-    },
     /** 标题底纹主题设置 */
     theme: {
       /** 标题笔刷底纹使用荧光绿 */

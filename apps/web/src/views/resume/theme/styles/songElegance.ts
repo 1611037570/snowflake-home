@@ -3,6 +3,14 @@ export default {
   id: "songElegance", // 主题编号，供各外观组件按编号选择
   design: ["single-column", "minimal"], // 模板列表分类标签：单栏、简约
   description: "宋体字配米色纸张与细线装裱页边，双线标题收束模块。", // 主题说明
+  decisions: { // 主题固定外观，不进入用户界面配置
+    pageRadius: 0, // 平直页角，接近印刷品
+    pageBorder: { // 主题固定纸张边框
+      width: 1, // 边框宽度
+      color: "#D9CDB8", // 边框颜色
+    },
+    layoutType: "singleColumn", // 单栏版式，突出纵向留白
+  },
   ui: { // 主题相对默认配置的差异
     theme: { // 主题色与标题装饰
       color: "#8A6A4F", // 茶褐色：姓名、标题与装饰线
@@ -10,8 +18,6 @@ export default {
     },
     page: { // 纸张与页面留白
       background: "#FBF8F1", // 米色纸张，接近宣纸
-      radius: 0, // 平直页角，接近印刷品
-      border: { width: 1, color: "#D9CDB8" }, // 细线装裱页边
       padding: { vertical: 42, horizontal: 48 }, // 大留白页边距
       spacing: { module: 30, paragraph: 12 }, // 模块间距与段落间距
     },
@@ -25,9 +31,6 @@ export default {
       dateStyle: "cn", // 日期使用「2026年9月」形式
       datePosition: "right", // 日期显示在条目右侧
       infoSeparator: "line", // 并列信息用竖线分隔
-    },
-    layout: { // 页面布局
-      type: "singleColumn", // 单栏版式，突出纵向留白
     },
     user: { // 顶部个人信息排列
       infoMode: "text", // 联系方式显示字段文字

@@ -1,11 +1,9 @@
-import { resolveResumeUi } from "./resumeUi";
-import { DEFAULT_UI } from "@/stores/modules/resume/config/uiConfig";
 import { isPageLayoutTemplateId, type PageLayoutTemplateId } from "./layouts";
 import { resumeThemeRegistry } from "./styles";
 
 /**
  * 主题决策字段：由主题定义决定、编辑器不提供修改入口，因此只按主题编号解析，
- * 不写入简历 ui，避免同一份外观在「主题定义」与「简历快照」里各存一份而脱钩。
+ * 不进入简历 ui 或其运行时展开对象，固定外观与用户可编辑参数始终分开。
  */
 export interface ThemeDecisions {
   /** 页面版式编号 */
@@ -13,10 +11,25 @@ export interface ThemeDecisions {
   /** 纸张圆角，单位像素 */
   pageRadius: number;
   /** 纸张边框宽度与颜色 */
-  pageBorder: { width: number; color: string };
+  pageBorder: {
+    /** 边框宽度，单位像素 */
+    width: number;
+    /** 边框颜色 */
+    color: string;
+  };
   /** 页面背景纹理编号，未声明表示不使用纹理 */
   pageBackgroundPattern?: string;
 }
+
+// 固定外观默认值仅在主题层维护，不进入用户界面配置。
+export const DEFAULT_THEME_DECISIONS: ThemeDecisions = {
+  layoutType: "singleColumn", // 默认页面版式
+  pageRadius: 24, // 默认纸张圆角，单位像素
+  pageBorder: { // 默认纸张边框
+    width: 0, // 默认不描边
+    color: "#e9edf0", // 默认边框颜色
+  },
+};
 
 // 主题定义是静态数据，同一主题只解析一次
 const decisionCache = new Map<string, ThemeDecisions>();
@@ -26,45 +39,21 @@ export const resolveThemeDecisions = (themeId?: string): ThemeDecisions => {
   const id = typeof themeId === "string" && resumeThemeRegistry[themeId] ? themeId : "default";
   const cached = decisionCache.get(id);
   if (cached) return cached;
-  const themeUi = resumeThemeRegistry[id]?.ui ?? {};
-  const layoutType = themeUi.layout?.type;
+  const themeDecisions = resumeThemeRegistry[id]?.decisions ?? {};
+  const layoutType = themeDecisions.layoutType;
   const decisions: ThemeDecisions = {
     layoutType: isPageLayoutTemplateId(layoutType)
       ? layoutType
-      : isPageLayoutTemplateId(DEFAULT_UI.layout.type)
-        ? DEFAULT_UI.layout.type
-        : "singleColumn",
-    pageRadius: Math.max(0, Number(themeUi.page?.radius ?? DEFAULT_UI.page.radius) || 0),
+      : DEFAULT_THEME_DECISIONS.layoutType,
+    pageRadius: Math.max(0, Number(themeDecisions.pageRadius ?? DEFAULT_THEME_DECISIONS.pageRadius) || 0),
     pageBorder: {
-      width: Math.max(0, Number(themeUi.page?.border?.width ?? DEFAULT_UI.page.border.width) || 0),
-      color: themeUi.page?.border?.color ?? DEFAULT_UI.page.border.color,
+      width: Math.max(0, Number(themeDecisions.pageBorder?.width ?? DEFAULT_THEME_DECISIONS.pageBorder.width) || 0),
+      color: themeDecisions.pageBorder?.color ?? DEFAULT_THEME_DECISIONS.pageBorder.color,
     },
-    ...(themeUi.page?.backgroundPattern
-      ? { pageBackgroundPattern: themeUi.page.backgroundPattern as string }
+    ...(themeDecisions.pageBackgroundPattern
+      ? { pageBackgroundPattern: themeDecisions.pageBackgroundPattern }
       : {}),
   };
   decisionCache.set(id, decisions);
   return decisions;
-};
-
-/**
- * 把主题决策字段注入运行时 ui。
- * 预览、分页引擎与导出共用这一份运行时 ui，落库的 ui 里不含这些字段，主题调整能立刻生效。
- */
-export const withThemeDecisions = (ui: Record<string, any> | undefined): Record<string, any> => {
-  // 先展开可编辑参数，主题固定外观只由下方主题决策注入。
-  const source = resolveResumeUi(ui);
-  const decisions = resolveThemeDecisions(source.theme?.template);
-  return {
-    ...source,
-    layout: { ...source.layout, type: decisions.layoutType },
-    page: {
-      ...source.page,
-      radius: decisions.pageRadius,
-      border: decisions.pageBorder,
-      ...(decisions.pageBackgroundPattern
-        ? { backgroundPattern: decisions.pageBackgroundPattern }
-        : {}),
-    },
-  };
 };

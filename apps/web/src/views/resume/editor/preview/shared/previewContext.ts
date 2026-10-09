@@ -1,4 +1,5 @@
 import { inject, provide, type ComputedRef, type InjectionKey } from "vue";
+import type { ThemeDecisions } from "@/views/resume/theme/themeDecisions";
 import type { ResumeTheme } from "@/views/resume/theme/useResumeTheme";
 
 /** 预览模块共享的运行时上下文，集中管理数据、主题与个人字段配置。 */
@@ -7,6 +8,8 @@ export interface ResumePreviewContext {
   lang: ComputedRef<string>;
   ui: ComputedRef<Record<string, any>>;
   theme: ResumeTheme;
+  /** 当前主题固定版式与纸张外观，独立于用户界面配置。 */
+  themeDecisions: ComputedRef<ThemeDecisions>;
   /** 是否展示页码，用于计算图片作品的整页可用高度。 */
   showPageNumber: ComputedRef<boolean>;
   userHiddenFields: ComputedRef<Set<string>>;

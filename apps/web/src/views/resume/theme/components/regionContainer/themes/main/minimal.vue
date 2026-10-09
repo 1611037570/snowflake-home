@@ -14,7 +14,7 @@ import { layoutStretchesColumns } from "@/views/resume/theme/layouts";
 import { useResumePreviewContext } from "@/views/resume/editor/preview/shared/previewContext";
 
 const {
-  ui,
+  themeDecisions,
   theme: { themeColorLine },
 } = useResumePreviewContext();
 // 栏间细线用主题色的透明派生色，不引入任何色块与底色
@@ -22,7 +22,7 @@ const mainStyle = {
   "--minimal-divider": themeColorLine.value, // 栏间 1px 细线的颜色
 };
 // 单栏下不绘制栏间线，避免装饰落到错误位置
-const isTwoColumn = () => layoutStretchesColumns(ui.value?.layout?.type);
+const isTwoColumn = () => layoutStretchesColumns(themeDecisions.value.layoutType);
 </script>
 
 <template>

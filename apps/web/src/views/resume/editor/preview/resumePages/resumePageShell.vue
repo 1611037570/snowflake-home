@@ -12,8 +12,6 @@ import { useResumePreviewContext } from "../shared/previewContext";
 import { useResumeStore } from "@/stores";
 import {
   defaultPageBackground,
-  defaultPageBorderColor,
-  defaultPageRadius,
 } from "@/stores/modules/resume/config/uiConfig";
 import PagePattern from "@/views/resume/theme/components/pageContainer/index.vue";
 import { layoutStretchesColumns } from "@/views/resume/theme/layouts";
@@ -55,12 +53,14 @@ const props = defineProps({
   onEl: Function,
 });
 
+// 页面固定外观独立读取当前主题决策。
+const { themeDecisions } = useResumePreviewContext();
 const rootEl = useTemplateRef("rootRef");
 // 调试开关：开启后标注正文可用区，方便排查分页与边距
 const { system } = storeToRefs(useResumeStore());
 const showDebug = computed(() => !!system.value.showDebug);
 // 双栏内容区域铺满纸张高度，页脚覆盖在栏内预留的底部空间上。
-const fullHeightColumns = computed(() => layoutStretchesColumns(props.ui.layout?.type));
+const fullHeightColumns = computed(() => layoutStretchesColumns(themeDecisions.value.layoutType));
 const bottomSpace = computed(() =>
   Math.max(parseFloat(props.styles.paddingStyle.paddingBottom) || 0, props.showPageNumber ? PAGE_NUMBER_HEIGHT : 0),
 );
@@ -79,13 +79,13 @@ const bleedsPageTop = computed(
 const debugOutlineStyle = { outline: "4px dashed var(--sf-error)", outlineOffset: "-1px" };
 // 纸张外观：圆角与边框都来自主题配置，边框画在页面盒子内圈并参与内容宽高
 const pageSurfaceStyle = computed(() => ({
-  borderRadius: `${Number(props.ui.page?.radius ?? defaultPageRadius)}px`,
-  borderWidth: `${Math.max(0, Number(props.ui.page?.border?.width) || 0)}px`,
+  borderRadius: `${Number(themeDecisions.value.pageRadius)}px`,
+  borderWidth: `${Math.max(0, Number(themeDecisions.value.pageBorder.width) || 0)}px`,
   borderStyle: "solid",
-  borderColor: props.ui.page?.border?.color || defaultPageBorderColor,
+  borderColor: themeDecisions.value.pageBorder.color,
   "--resume-bottom-space": `${bottomSpace.value}px`, // 双栏内部为页脚和页面下留白预留的高度
   "--resume-page-top-space": bleedsPageTop.value ? props.styles.paddingStyle.paddingTop : "0px", // 栏底色覆盖纸张顶部留白
-  "--resume-page-top-radius": bleedsPageTop.value ? `${Number(props.ui.page?.radius ?? defaultPageRadius)}px` : "0px", // 栏底色铺到顶边时沿用纸张顶部圆角
+  "--resume-page-top-radius": bleedsPageTop.value ? `${Number(themeDecisions.value.pageRadius)}px` : "0px", // 栏底色铺到顶边时沿用纸张顶部圆角
 }));
 // 底部空间由页尾与下边距共用：页尾更高时不再叠加下边距，下边距更大时只补足超出的部分
 const bottomSpacerHeight = computed(() => {
