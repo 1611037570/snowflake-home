@@ -12,7 +12,7 @@ const emit = defineEmits(["click"]);
 
 <template>
   <div
-    class="group flex min-h-30 min-w-0 cursor-pointer flex-col justify-center gap-3 rounded-3xl border border-sf-b bg-sf-bg p-3 transition-colors duration-200 hover:border-sf-theme"
+    class="group flex min-w-0 cursor-pointer flex-col justify-center gap-3 rounded-3xl border border-sf-b bg-sf-bg p-3 transition-colors duration-200 hover:border-sf-theme"
     role="button"
     tabindex="0"
     :aria-label="item.name"

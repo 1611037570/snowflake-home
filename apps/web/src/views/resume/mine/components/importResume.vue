@@ -250,7 +250,7 @@ const importItems = [
             v-for="item in importItems"
             :key="item.name"
             type="button"
-            class="group flex min-h-30 min-w-0 items-center gap-3 rounded-3xl border border-sf-b bg-sf-bg p-3 text-left transition-colors duration-200 hover:border-sf-theme"
+            class="group flex min-w-0 items-center gap-3 rounded-3xl border border-sf-b bg-sf-bg p-3 text-left transition-colors duration-200 hover:border-sf-theme"
             :class="{ 'sm:col-span-2': item.icon === 'mdi:file-code-outline' }"
             @click="item.fn"
           >
