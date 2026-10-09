@@ -332,6 +332,8 @@
   "reset": "重置",
   "exportResume": "导出简历",
   "exportFormat": "导出格式",
+  "exportFormatDescription": "选择适合你的简历格式，用于投递、分享或备份",
+  "exportFormatTip": "正式投递建议使用 PDF；分享可选择长图，备份恢复请选择 JSON。",
   "resumeConfig": "简历配置",
   "local": "本地",
   "cloud": "云端",
