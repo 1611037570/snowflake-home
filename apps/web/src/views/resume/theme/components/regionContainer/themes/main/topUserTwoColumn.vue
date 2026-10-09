@@ -3,7 +3,7 @@
 const regionPadding = {
   top: 0, // 页眉细分隔线与首个模块之间的间距由布局结算
   right: 0, // 水平留白沿用页面设置
-  bottom: 12, // 正文与页尾预留空间之间的留白
+  bottom: 0, // 下边距统一使用页面设置，不叠加主题留白
   left: 0, // 水平留白沿用页面设置
 };
 export default { regionPadding };
@@ -51,7 +51,7 @@ const mainStyle = computed(() => ({
 .top-user-main--two-column :deep(> :nth-child(2))::before {
   content: "";
   position: absolute;
-  top: calc(-1 * var(--top-user-divider-top, 12px));
+  top: calc(-1 * var(--top-user-divider-top, 0px));
   bottom: calc(-1 * var(--resume-bottom-space, 0px));
   left: calc(-0.5 * var(--top-user-column-gap, 24px));
   width: 1px;

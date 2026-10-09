@@ -1,7 +1,7 @@
 <script>
 // 正文留白只在这里声明：引擎按同一份数值加内边距，分页测量与真实渲染共用一个口径。
 const regionPadding = {
-  top: 36, // 双栏内容距正文区顶部的留白
+  top: 0, // 上边距统一使用页面设置，不叠加主题留白
   right: 0, // 水平留白沿用页面设置
   bottom: 0, // 页尾留白由栏内页脚预留空间单独承担
   left: 0, // 水平留白沿用页面设置
@@ -60,7 +60,7 @@ const twoColumnStyle = computed(() => ({
   content: "";
   position: absolute;
   z-index: -1;
-  top: calc(-1 * (var(--two-column-top, 36px) + var(--resume-page-top-space, 0px)));
+  top: calc(-1 * (var(--two-column-top, 0px) + var(--resume-page-top-space, 0px)));
   right: calc(-1 * var(--two-column-half-gap, 12px));
   bottom: calc(-1 * var(--resume-bottom-space, 0px));
   left: calc(-1 * var(--two-column-side, 0px));
@@ -74,7 +74,7 @@ const twoColumnStyle = computed(() => ({
 .two-column-main--enabled > :deep(:first-child:not(:last-child))::after {
   content: "";
   position: absolute;
-  top: calc(-1 * (var(--two-column-top, 36px) + var(--resume-page-top-space, 0px)));
+  top: calc(-1 * (var(--two-column-top, 0px) + var(--resume-page-top-space, 0px)));
   right: calc(-1 * var(--two-column-half-gap, 12px));
   bottom: calc(-1 * var(--resume-bottom-space, 0px));
   width: 1px;

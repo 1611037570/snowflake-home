@@ -1,9 +1,9 @@
 <script>
 // 页眉留白只在组件里声明一次，区域容器按该声明施加内边距。
 const regionPadding = {
-  top: 36, // 个人信息距区域顶部的留白
+  top: 0, // 上边距统一使用页面设置，不叠加主题留白
   right: 0, // 水平留白沿用页面设置
-  bottom: 24, // 个人信息与正文之间的留白，分栏提示线就落在这段留白里
+  bottom: 0, // 个人信息与正文之间只使用模块间距
   left: 0, // 水平留白沿用页面设置
 };
 export default { regionPadding };
@@ -22,12 +22,12 @@ const isTwoColumn = computed(() => themeDecisions.value.layoutType === "twoColum
 // 提示线与正文栏间细线共用同一套线条色，页眉与正文的设计语言保持一致。
 const headerStyle = computed(() => ({
   "--user-two-column-line": themeColorLine.value, // 页眉下方的 1px 分栏提示线
-  "--user-two-column-offset": "12px", // 提示线落在底部 24px 留白之内
+  "--user-two-column-offset": "0px", // 提示线贴合区域底边，避免移入正文内容
 }));
 </script>
 
 <template>
-  <!-- 页眉留白由区域容器按 regionPadding 施加，提示线用绝对定位绘制在留白之内。 -->
+  <!-- 页眉沿用页面边距与模块间距，提示线用绝对定位绘制在区域底边。 -->
   <div
     class="two-column-user relative box-border w-full min-w-0"
     :class="{ 'two-column-user--two-column': isTwoColumn }"
@@ -38,7 +38,7 @@ const headerStyle = computed(() => ({
 </template>
 
 <style scoped>
-/* 提示线锚定底部留白之内，不参与排版，也不额外制造高度。 */
+/* 提示线锚定区域底边，不参与排版，也不额外制造高度。 */
 .two-column-user--two-column::after {
   content: "";
   position: absolute;
