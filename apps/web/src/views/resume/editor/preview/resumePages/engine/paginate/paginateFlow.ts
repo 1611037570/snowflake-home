@@ -24,6 +24,8 @@ export interface FlowPageItem {
   fragment: FlowFragmentKind;
   /** 当前分片占用的高度 */
   height: number;
+  /** 是否位于后续页的实际内容起点，忽略前置零高度分片 */
+  leadingOnPage?: boolean;
   /** 当前分片对应的节点内容 */
   payload: unknown;
   /** 当前分片对应的内容范围 */
@@ -182,6 +184,8 @@ export const paginateFlow = ({
   };
   const getCurrentAvailableHeight = () => resolvePageHeight(heights, currentPage.pageIndex);
   const getGapBeforeItem = (sourceModuleKey: string, isContinuation: boolean) => {
+    // 零高度分片不产生页首模块间距。
+    if (currentPage.usedHeight === 0) return 0;
     const previousItem = currentPage.items[currentPage.items.length - 1];
     return previousItem && !isContinuation && previousItem.sourceModuleKey !== sourceModuleKey
       ? safeGap
@@ -235,6 +239,8 @@ export const paginateFlow = ({
       return false;
     }
 
+    // 页首信息由分页层统一下发，渲染层不再按分片索引猜测。
+    item.leadingOnPage = currentPage.pageIndex > 0 && currentPage.usedHeight === 0;
     currentPage.items.push(item);
     currentPage.usedHeight += itemGap + item.height;
     return true;
@@ -274,7 +280,7 @@ export const paginateFlow = ({
         const activeDroppedTopSpacing = resolveDroppedTopSpacing({
           measurement,
           isFirstFragment,
-          atPageStart: currentPage.items.length === 0,
+          atPageStart: currentPage.usedHeight === 0,
           hasRenderedContent: consumedBlocks > 0 || consumedOffset > 0,
         });
         // 独立间距行位于后续页面首位时不占空间，与渲染层隐藏规则一致。
@@ -282,7 +288,7 @@ export const paginateFlow = ({
           isFirstFragment &&
           node.hideWhenPageLeading &&
           currentPage.pageIndex > 0 &&
-          currentPage.items.length === 0;
+          currentPage.usedHeight === 0;
         const hiddenSpacerHeight = hideLeadingSpacer ? fullHeight : 0;
         const nodeGap = getGapBeforeItem(node.sourceModuleKey, !isFirstFragment);
         const availableForContent = Math.max(

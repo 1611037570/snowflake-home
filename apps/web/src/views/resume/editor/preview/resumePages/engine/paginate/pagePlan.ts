@@ -29,6 +29,8 @@ export interface FragmentPlan {
   payload: unknown;
   /** 当前分片实际使用的高度。 */
   height: number;
+  /** 后续页的实际内容起点，忽略前置零高度分片 */
+  leadingOnPage?: boolean;
   /** 当前分片对应的内容范围。 */
   contentRange?: { start: number; end: number };
   /** 分片覆盖的块区间，缺省表示全部块。 */
@@ -95,6 +97,7 @@ const toFragmentPlan = (item: FlowPageItem): FragmentPlan => ({
   fragment: item.fragment,
   payload: item.payload,
   height: item.height,
+  leadingOnPage: item.leadingOnPage,
   contentRange: item.contentRange,
   blockRange: item.blockRange,
   decoration: getDecoration(item.fragment),

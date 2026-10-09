@@ -33,8 +33,9 @@ const handleContentClick = (node: LayoutNode) => {
   if (props.moduleKey === "slogan") return;
   emit("click", { moduleKey: props.moduleKey, itemIndex: node.sourceItemIndex });
 };
+// 页首口径与分页计高共用同一标记，零高度分片不会阻止间距隐藏。
 const isLeadingOnPage = (itemIndex: number) =>
-  props.pageIndex > 0 && props.groupIndex === 0 && itemIndex === 0;
+  Boolean(props.items[itemIndex]?.fragment.leadingOnPage);
 // 个人信息与标语属于版头区域，不参与条目悬停反馈；其余模块悬停只显示背景色，不带圆角
 const hoverBackgroundClass = computed(() =>
   props.moduleKey === "user" || props.moduleKey === "slogan" ? "" : "hover:bg-sf-theme-2!",

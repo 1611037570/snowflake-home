@@ -100,6 +100,8 @@ engine/adapter/buildLayoutNodes.ts（模块 → 通用排版节点）
 
 `paginateFlow` **只接收流内口径的高度**，两类留白都由它在计价时扣除：
 
+后续页是否处于内容起点按该栏实际已占用高度判断，前置零高度分片不打断页首。分页层将此结果通过分片的 `leadingOnPage`（实际页首标记）传到页面计划和渲染层；段间距隐藏共用这一标记，不再以分片索引判断。
+
 ```text
 候选断点高度 = resolveCutHeight(切割点, 已消费高度, 是否首片, 顶部内边距)
 分片高度     = resolveCutHeight(同一个切割点与同一组入参)
