@@ -202,7 +202,7 @@ const parseJsonConfig = async (file) => {
         @click="importDocumentConfig('pdf')"
       >
         <div class="text-xl">PDF 智能解析</div>
-        <div class="text-sm">支持文字与扫描简历，最多 10 页、20MB</div>
+        <div class="text-sm">支持文字与扫描简历，最多 10 页、50MB</div>
         <div class="mt-3 text-sm text-sf-text-3">文档在本地处理，页面图片直接发送到所选模型；需要支持图片识别的模型。</div>
       </button>
       <div
