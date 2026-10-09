@@ -20,12 +20,12 @@ defineProps({
 });
 
 const {
-  theme: { fontValue, lineHeightValue, themeColor, themeColorLine },
+  theme: { fontValue, lineHeightValue },
 } = useResumePreviewContext();
 </script>
 
 <template>
-  <!-- 学术个人信息外观：内容居中，底部叠加一粗一细两条分隔线 -->
+  <!-- 学术个人信息外观：保留资料内容，移除底部两条分隔线。 -->
   <div
     class="resume-module-wrapper resume-user group group/module box-border min-w-0"
     :class="moduleClass"
@@ -37,16 +37,6 @@ const {
     <div class="resume-user__content">
       <slot />
     </div>
-    <div
-      aria-hidden="true"
-      class="resume-user__line resume-user__line--soft"
-      :style="{ backgroundColor: themeColorLine }"
-    />
-    <div
-      aria-hidden="true"
-      class="resume-user__line resume-user__line--theme"
-      :style="{ backgroundColor: themeColor }"
-    />
   </div>
 </template>
 
@@ -55,10 +45,10 @@ const {
   position: relative;
   width: 100%;
   display: flex;
-  /* 个人信息与两条分隔线纵向排列，避免三个子元素横向压缩。 */
+  /* 个人信息内容保持纵向排列。 */
   flex-direction: column;
   justify-content: center;
-  padding-bottom: 12px;
+  /* 底部不叠加留白，间距由区域布局统一控制。 */
 }
 
 .resume-user__content {
@@ -68,17 +58,4 @@ const {
 }
 
 
-.resume-user__line {
-  display: block;
-  width: 100%;
-  height: 1px;
-}
-
-.resume-user__line--soft {
-  margin-top: 12px;
-}
-
-.resume-user__line--theme {
-  margin-top: 4px;
-}
 </style>

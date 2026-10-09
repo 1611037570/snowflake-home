@@ -1,9 +1,9 @@
 <script>
 // 个人信息区域留白由组件声明，分页与渲染读取同一份尺寸，容器据此施加内边距。
 const regionPadding = {
-  top: 12, // 纸张顶边与个人信息之间的呼吸空间
+  top: 0, // 不额外增加顶部留白，沿用页面边距
   right: 0, // 水平留白沿用页面设置
-  bottom: 24, // 个人信息与正文区域之间的分区留白
+  bottom: 0, // 不额外增加底部留白，沿用模块间距
   left: 0, // 水平留白沿用页面设置
 };
 export default { regionPadding };
@@ -18,14 +18,13 @@ import { useResumePreviewContext } from "@/views/resume/editor/preview/shared/pr
 const {
   themeDecisions,
   ui,
-  theme: { themeColor, themeColorLine, themeColorSoft },
+  theme: { themeColor, themeColorSoft },
 } = useResumePreviewContext();
 // 底托宽度只在双栏布局铺满整栏，单栏下没有左右分区
 const isTwoColumn = computed(() => layoutStretchesColumns(themeDecisions.value.layoutType));
 const regionStyle = computed(() => ({
   "--academic-user-band": themeColorSoft.value, // 底托浅色面，主题色一成
   "--academic-user-accent": themeColor.value, // 左侧分区短竖条的主题色
-  "--academic-user-line": themeColorLine.value, // 页眉分界线，压在底托下沿
   "--academic-user-surface": ui.value?.page?.background || "transparent", // 底托之下的纸张底色
 }));
 </script>
@@ -36,24 +35,21 @@ const regionStyle = computed(() => ({
     :class="{ 'academic-user--two-column': isTwoColumn }"
     :style="regionStyle"
   >
-    <!-- 底托：绝对定位绘制，留白仍全部由 padding 表达 -->
+    <!-- 底托仅在双栏绘制，单栏个人信息恢复无背景的双线页眉。 -->
     <span
       aria-hidden="true"
+      v-if="isTwoColumn"
       class="pointer-events-none absolute top-0 bottom-0 left-0 w-[30px]"
       :style="{ backgroundColor: 'var(--academic-user-band)' }"
     />
     <!-- 分区标记：短竖条与页眉双线共用左侧基准 -->
     <span
       aria-hidden="true"
+      v-if="isTwoColumn"
       class="pointer-events-none absolute top-3 left-0 h-[18px] w-[2px]"
       :style="{ backgroundColor: 'var(--academic-user-accent)' }"
     />
-    <!-- 页眉分界线：落在底托下沿，与正文之间的模块间距由布局在区域之外施加 -->
-    <span
-      aria-hidden="true"
-      class="pointer-events-none absolute right-0 bottom-0 left-0 h-px"
-      :style="{ backgroundColor: 'var(--academic-user-line)' }"
-    />
+    <!-- 移除个人信息区域底线，避免在正文标题上方重复绘制横线。 -->
     <slot />
   </div>
 </template>
