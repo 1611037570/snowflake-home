@@ -69,6 +69,8 @@ const getValueType = (
 };
 
 const getOptionValues = (field: FormField, options: ResumeOptionDictionary) => {
+  // 岗位选择器支持自定义名称，推荐字典不能作为封闭枚举限制导入。
+  if (field.component === "positionPicker") return;
   const rawBinding = getModelBindings(field).find((binding) => binding.raw);
   const optionKey = rawBinding?.source?.[rawBinding.source.length - 1];
   const list = optionKey ? options[optionKey] : undefined;

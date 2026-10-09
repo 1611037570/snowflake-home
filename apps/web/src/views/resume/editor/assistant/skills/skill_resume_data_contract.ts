@@ -19,6 +19,8 @@ const getFieldNotes = (field: ResumeFieldSchema, moduleKey: string) => {
   if (isResumeMediaField(moduleKey, field.key)) notes.push("媒体字段，不向 AI 提供内容，禁止写入");
   if (field.component === "measurements") notes.push("对象：bust（胸围）、waist（腰围）、hip（臀围）为数值文本");
   if (field.component === "sizes") notes.push("对象：top（上装尺码）、bottom（下装尺码）、shoes（鞋码）为文本");
+  // 与岗位控件的自定义输入行为一致，提取时保留真实岗位名称。
+  if (field.component === "positionPicker") notes.push("允许自定义岗位名称，保留原文，不限于推荐岗位列表");
   if (field.addable) notes.push("可添加字段，缺失时允许通过 updateModule 激活");
   if (field.format === "month") notes.push("格式 YYYY.MM");
   if (field.key === "endTime") notes.push("持续中时填 至今");
