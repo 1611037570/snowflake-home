@@ -15,7 +15,6 @@ export const itemAppearanceRegistry = createAppearanceRegistry({
   default: DefaultAppearance, // 不绘制底色与边框
   minimal: DefaultAppearance, // 简约条目不定制内边距、下划线或日期列装饰
   academic: AcademicAppearance, // 引用式左缩进条目：浅色面板 + 左侧引线
-  fresh: DefaultAppearance, // 清新恢复旧版条目，不绘制新增浅色底托
   frame: DefaultAppearance, // 红色边框恢复旧版条目，不绘制新增分隔线与内边距
   colorBar: DefaultAppearance, // 色条恢复旧版条目，不绘制新增底托与短条
   twoColumn: DefaultAppearance, // 双栏条目只承载内容，不绘制底色与边框或额外留白

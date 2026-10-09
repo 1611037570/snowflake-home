@@ -271,8 +271,6 @@ const TEXT_KEYS_SOURCE = `
   "减少视觉干扰，突出内容本身的简历样式。": "minimalThemeDescription",
   学术: "academicTheme",
   "强调研究经历与文字内容的学术简历样式。": "academicThemeDescription",
-  清新: "freshTheme",
-  "适合教育、设计与初入职场场景的简历样式。": "freshThemeDescription",
   活力: "vividTheme",
   "适合运营、市场与创意岗位的活力简历样式。": "vividThemeDescription",
   线框: "outlineTheme",
