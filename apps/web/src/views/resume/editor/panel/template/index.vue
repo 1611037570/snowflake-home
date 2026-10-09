@@ -52,6 +52,8 @@ const isActive = (id) => (currentUI.value?.theme?.template ?? "default") === id;
 // 应用风格：修改当前简历主题，预览层响应式渲染
 const applyTemplate = (template) => {
   const nextUi = structuredClone(template.item.ui);
+  // 切换外观保留简历展示语言，避免英文简历的模块标题恢复中文。
+  nextUi.content.language = currentUI.value.content.language;
   const moduleKeys = resumeStore.runtimeFields.map((field) => field.key).filter(Boolean);
   // 版式由主题定义决定，不写入简历 ui；顶部通栏单栏与普通单栏一样，不保存双栏模块配置。
   const { layoutType } = resolveThemeDecisions(nextUi.theme?.template);

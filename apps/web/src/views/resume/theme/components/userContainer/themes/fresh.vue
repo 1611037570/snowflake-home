@@ -20,7 +20,7 @@ defineProps({
 });
 
 const {
-  theme: { fontValue, lineHeightValue, themeColor, themeColorSoft, themeColorLine },
+  theme: { fontValue, lineHeightValue, themeColorSoft, themeColorLine },
 } = useResumePreviewContext();
 </script>
 
@@ -42,17 +42,6 @@ const {
     <div class="resume-user__content">
       <slot />
     </div>
-    <div aria-hidden="true" class="resume-user__accent" :style="{ backgroundColor: themeColor }" />
-    <div
-      aria-hidden="true"
-      class="resume-user__line resume-user__line--soft"
-      :style="{ backgroundColor: themeColorLine }"
-    />
-    <div
-      aria-hidden="true"
-      class="resume-user__line resume-user__line--theme"
-      :style="{ backgroundColor: themeColor }"
-    />
   </div>
 </template>
 
@@ -78,8 +67,4 @@ const {
   pointer-events: none;
 }
 
-.resume-user__accent,
-.resume-user__line {
-  display: none;
-}
 </style>

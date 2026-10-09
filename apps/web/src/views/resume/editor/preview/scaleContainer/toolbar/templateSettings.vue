@@ -21,7 +21,7 @@ import {
   userInfoLayoutList,
   userInfoModeList,
 } from "@/stores/modules/resume/config/uiConfig";
-import { getResumeThemeTemplate } from "@/views/resume/theme";
+import { getResumeThemeTemplate, resolveThemeSettingRestrictions } from "@/views/resume/theme";
 import ThemeColorPicker from "@/components/business/themeColorPicker/themeColorPicker.vue";
 import { localizeResumeEditorOptionList } from "@/stores/modules/resume/hooks/useResumeEditorLocale";
 
@@ -30,6 +30,9 @@ const { currentUI } = storeToRefs(resumeStore);
 // 视觉参数重置统一回到当前主题预设。
 const themePresetUi = computed(() => getResumeThemeTemplate(currentUI.value?.theme?.template).item.ui);
 const getThemeDefault = (key) => key.split(".").reduce((value, field) => value?.[field], themePresetUi.value);
+// 不支持的设置保持可见，由外观声明给出原因并阻止写入。
+const settingRestrictions = computed(() => resolveThemeSettingRestrictions(currentUI.value?.theme?.template));
+const getSettingRestriction = (key) => settingRestrictions.value[key] ? $t(settingRestrictions.value[key]) : "";
 // 低频视觉微调默认收起，常用外观选项保持直接可见。
 const moreSettingsExpanded = ref([]);
 
@@ -96,7 +99,7 @@ const linkUnderline = computed({
 const datePosition = computed({
   get: () => currentUI.value?.content?.datePosition,
   set: (value) => {
-    currentUI.value.content.datePosition = value;
+    if (!getSettingRestriction("content.datePosition")) currentUI.value.content.datePosition = value;
   },
 });
 
@@ -118,14 +121,14 @@ const infoSeparator = computed({
 const pageBackground = computed({
   get: () => currentUI.value?.page?.background || defaultPageBackground,
   set: (value) => {
-    currentUI.value.page.background = value;
+    if (!getSettingRestriction("page.background")) currentUI.value.page.background = value;
   },
 });
 
 const getValue = (key) => key.split(".").reduce((value, field) => value?.[field], currentUI.value);
 
 const setParam = (key, value) => {
-  if (!currentUI.value) return;
+  if (!currentUI.value || getSettingRestriction(key)) return;
   const [group, field] = key.split(".");
   currentUI.value[group][field] = value;
 };
@@ -151,6 +154,9 @@ const setParam = (key, value) => {
         <ThemeColorPicker v-model="themeColor" :teleported="false" />
 
         <div class="text-xs font-bold text-sf-text">{{ $t("resumeBackground") }}</div>
+        <p v-if="getSettingRestriction('page.background')" class="text-xs text-sf-text-2">
+          {{ getSettingRestriction("page.background") }}
+        </p>
         <div class="grid grid-cols-3 gap-3">
           <SfButton
             v-for="option in pageBackgroundColors"
@@ -158,6 +164,7 @@ const setParam = (key, value) => {
             class="flex flex-col items-center gap-3"
             size="small"
             border
+            :disabled="Boolean(getSettingRestriction('page.background'))"
             @click="pageBackground = option.value"
             :type="pageBackground === option.value ? 'theme' : 'bg'"
           >
@@ -201,12 +208,17 @@ const setParam = (key, value) => {
 
                 <div class="text-xs font-bold text-sf-text">{{ $t("personalInfo") }}</div>
                 <div v-for="item in userInfoParams" :key="item.key" class="flex flex-col gap-1">
+                  <p v-if="getSettingRestriction(item.key)" class="text-xs text-sf-text-2">
+                    {{ getSettingRestriction(item.key) }}
+                  </p>
                   <div class="flex items-center gap-1 text-sm text-sf-text-2">
                     <span>{{ item.label }}</span>
                     <SfIcon
                       icon="material-symbols:restart-alt"
                       size="4"
                       class="cursor-pointer text-sf-text-2 transition-colors hover:text-sf-theme"
+                      :aria-disabled="Boolean(getSettingRestriction(item.key))"
+                      :class="{ 'cursor-not-allowed! text-sf-text-disabled!': getSettingRestriction(item.key) }"
                       @click="setParam(item.key, getThemeDefault(item.key))"
                     />
                   </div>
@@ -217,6 +229,7 @@ const setParam = (key, value) => {
                       class="flex-1"
                       size="small"
                       border
+                      :disabled="Boolean(getSettingRestriction(item.key))"
                       @click="setParam(item.key, option.value)"
                       :type="getValue(item.key) === option.value ? 'theme' : 'bg'"
                       >{{ option.name }}</SfButton
@@ -225,6 +238,9 @@ const setParam = (key, value) => {
                 </div>
 
                 <div class="text-xs font-bold text-sf-text">{{ $t("experienceLayout") }}</div>
+                <p v-if="getSettingRestriction('content.datePosition')" class="text-xs text-sf-text-2">
+                  {{ getSettingRestriction("content.datePosition") }}
+                </p>
                 <div class="flex flex-col gap-1">
                   <div class="flex items-center gap-1 text-sm text-sf-text-2">
                     <span>{{ $t("timePosition") }}</span>
@@ -232,6 +248,8 @@ const setParam = (key, value) => {
                       icon="material-symbols:restart-alt"
                       size="4"
                       class="cursor-pointer text-sf-text-2 transition-colors hover:text-sf-theme"
+                      :aria-disabled="Boolean(getSettingRestriction('content.datePosition'))"
+                      :class="{ 'cursor-not-allowed! text-sf-text-disabled!': getSettingRestriction('content.datePosition') }"
                       @click="datePosition = themePresetUi.content.datePosition"
                     />
                   </div>
@@ -242,6 +260,7 @@ const setParam = (key, value) => {
                       class="flex-1"
                       size="small"
                       border
+                      :disabled="Boolean(getSettingRestriction('content.datePosition'))"
                       @click="datePosition = option.value"
                       :type="datePosition === option.value ? 'theme' : 'bg'"
                       >{{ option.name }}</SfButton

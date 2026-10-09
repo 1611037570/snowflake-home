@@ -426,11 +426,9 @@ defineExpose({
 </template>
 
 <style lang="scss" scoped>
-@reference "@/styles/tailwind.css";
-
 /* 区域之间的模块间距占位：调试模式下与栏内间距同一种标注，便于核对首页间距 */
 .resume-debug-gap {
-  @apply bg-sf-warning;
+  background-color: var(--sf-warning);
 }
 
 /* 编辑器页边线：用 outline 绘制，不占内容盒，保证测量宽度与真实渲染一致 */
