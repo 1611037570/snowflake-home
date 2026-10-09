@@ -1,7 +1,7 @@
 <script setup>
 // 逐个揭示网格：响应式列数(由 Tailwind 断点决定) + 逐项淡入入场
 // 调用方仅通过 #default 插槽决定每项渲染内容（含新建入口等常驻项也走此插槽参与动画），#empty 提供空状态
-import { computed, onMounted, onUnmounted, ref, useSlots } from "vue";
+import { computed, onMounted, onUnmounted, ref, useSlots, watch } from "vue";
 
 defineOptions({ name: "RevealGrid" });
 
@@ -23,8 +23,17 @@ const visibleCount = ref(0);
 const visibleItems = computed(() => props.items.slice(0, visibleCount.value));
 
 let timer = null;
+let mounted = false;
 
-onMounted(() => {
+// 列表增删后重新同步揭示进度，避免新增卡片被首次加载时的数量上限隐藏。
+const syncReveal = () => {
+  visibleCount.value = Math.min(visibleCount.value, props.items.length);
+  if (visibleCount.value >= props.items.length) {
+    if (timer) clearInterval(timer);
+    timer = null;
+    return;
+  }
+  if (!mounted || timer) return;
   timer = setInterval(() => {
     visibleCount.value += 1;
     if (visibleCount.value >= props.items.length) {
@@ -32,9 +41,17 @@ onMounted(() => {
       timer = null;
     }
   }, props.interval);
+};
+
+watch(() => props.items.length, syncReveal, { flush: "post" });
+
+onMounted(() => {
+  mounted = true;
+  syncReveal();
 });
 
 onUnmounted(() => {
+  mounted = false;
   if (timer) clearInterval(timer);
 });
 

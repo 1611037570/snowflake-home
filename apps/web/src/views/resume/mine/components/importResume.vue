@@ -8,15 +8,14 @@ import { useAiStore, useResumeStore } from "@/stores";
 import { computed, onBeforeUnmount, ref, watch } from "vue";
 
 const visible = ref(false);
-const parsing = ref(false);
 const resumeStore = useResumeStore();
 const aiStore = useAiStore();
-const pdfParsing = ref(false);
-const pdfProgress = ref("");
-const pendingPdfResume = ref(null);
-let pdfController = null;
-let choosingPdf = false;
-let pdfVersion = 0;
+const parsing = ref(false);
+const parseProgress = ref("");
+const pendingResume = ref(null);
+let parseController = null;
+let choosingDocument = false;
+let importVersion = 0;
 const parseModelLabel = computed(() => {
   const model = aiStore.modelList.find((item) => item.id === aiStore.getAgentModelId("resumeParser"));
   return model ? model.name || model.model : "未配置";
@@ -42,69 +41,77 @@ const { click: clickPdf, remove: removePdf, errorList: pdfErrors } = useFileDial
 });
 
 // 关闭、取消或卸载都使旧解析任务失效，不接收迟到的模型结果。
-const cancelPdfImport = () => {
+const cancelImport = () => {
   // 同时使尚未返回的文件选择失效。
-  pdfVersion++;
-  pdfController?.abort();
-  pdfController = null;
-  pdfParsing.value = false;
-  pendingPdfResume.value = null;
+  importVersion++;
+  parseController?.abort();
+  parseController = null;
+  parsing.value = false;
+  pendingResume.value = null;
 };
-watch(visible, (open) => { if (!open) cancelPdfImport(); }, { flush: "sync" });
-onBeforeUnmount(cancelPdfImport);
+watch(visible, (open) => { if (!open) cancelImport(); }, { flush: "sync" });
+onBeforeUnmount(cancelImport);
 
-// 文档仅在浏览器中处理，再直接发送到用户配置的视觉模型接口。
-const importPdfConfig = async () => {
-  if (parsing.value || pdfParsing.value || choosingPdf) return;
+// PDF 与 Markdown 共用选择、解析、字段核验、预览确认和取消流程。
+const importDocumentConfig = async (format) => {
+  if (parsing.value || choosingDocument || pendingResume.value) return;
+  const isPdf = format === "pdf";
+  const click = isPdf ? clickPdf : clickMarkdown;
+  const remove = isPdf ? removePdf : removeMarkdown;
+  const errors = isPdf ? pdfErrors : markdownErrors;
   const model = aiStore.modelList.find((item) => item.id === aiStore.getAgentModelId("resumeParser"));
   if (!model?.key || !model.url || !model.model) {
-    ElMessage.warning("请先绑定支持图片识别的简历解析模型");
+    ElMessage.warning(isPdf ? "请先绑定支持图片识别的简历解析模型" : "请先绑定简历解析模型");
     aiStore.openModelManager("added");
     return;
   }
   let file;
-  const version = pdfVersion;
-  choosingPdf = true;
+  const version = importVersion;
+  choosingDocument = true;
   try {
-    removePdf();
-    const files = await clickPdf();
+    remove();
+    const files = await click();
     file = files?.[0]?.file;
-    if (!file && pdfErrors.value.length) ElMessage.error(pdfErrors.value[0].msg);
+    if (!file && errors.value.length) ElMessage.error(errors.value[0].msg);
   } catch {
     return;
   } finally {
-    choosingPdf = false;
-    removePdf();
+    choosingDocument = false;
+    remove();
   }
-  if (!file || !visible.value || version !== pdfVersion) return;
+  if (!file || !visible.value || version !== importVersion) return;
   const controller = new AbortController();
-  pdfController = controller;
-  pdfParsing.value = true;
-  pdfProgress.value = "正在读取 PDF";
+  parseController = controller;
+  parsing.value = true;
+  parseProgress.value = isPdf ? "正在读取 PDF" : "正在读取 Markdown";
   try {
-    const item = await parsePdfResume(file, controller.signal, (message) => {
-      if (pdfController === controller) pdfProgress.value = message;
-    });
-    if (controller.signal.aborted || pdfController !== controller) return;
-    pendingPdfResume.value = item;
+    const onProgress = (message) => {
+      if (parseController === controller) parseProgress.value = message;
+    };
+    const item = isPdf
+      ? await parsePdfResume(file, controller.signal, onProgress)
+      : await parseMarkdownResume(await file.text(), controller.signal, onProgress);
+    if (controller.signal.aborted || parseController !== controller) return;
+    pendingResume.value = item;
   } catch (error) {
-    if (!controller.signal.aborted && pdfController === controller) {
-      ElMessage.error(error instanceof Error ? error.message : "PDF 解析失败，请检查文件或模型配置");
+    if (!controller.signal.aborted && parseController === controller) {
+      ElMessage.error(error instanceof Error ? error.message : "简历解析失败，请检查文件或模型配置");
     }
   } finally {
-    if (pdfController === controller) {
-      pdfController = null;
-      pdfParsing.value = false;
+    if (parseController === controller) {
+      parseController = null;
+      parsing.value = false;
     }
   }
 };
 
-// 校验后的结果仅在确认时创建，仓库再次检查简历容量。
-const confirmPdfImport = () => {
-  const item = pendingPdfResume.value;
+// 转换后的结果仅在确认时创建，提示信息不进入简历存储。
+const confirmImport = () => {
+  const item = pendingResume.value;
   if (!item) return;
-  if (resumeStore.addResume(item, false)) {
-    pendingPdfResume.value = null;
+  const { warnings, ...resume } = item;
+  if (resumeStore.addResume(resume, false)) {
+    pendingResume.value = null;
     visible.value = false;
     ElMessage.success("简历导入成功");
   }
@@ -170,36 +177,6 @@ const parseJsonConfig = async (file) => {
   }
 };
 
-// 读取 Markdown 内容并调用智能解析模型，解析成功后创建新简历。
-const importMarkdownConfig = async () => {
-  if (parsing.value) return;
-  let file;
-  try {
-    // 文件选择与解析分别处理，取消选择不显示解析失败
-    removeMarkdown();
-    const successList = await clickMarkdown();
-    file = successList?.[0]?.file;
-    if (!file && markdownErrors.value.length) ElMessage.error(markdownErrors.value[0].msg);
-  } catch {
-    return;
-  } finally {
-    removeMarkdown();
-  }
-  if (!file) return;
-  try {
-    parsing.value = true;
-    const item = await parseMarkdownResume(await file.text());
-    const ok = resumeStore.addResume(item, false);
-    if (ok) ElMessage.success("简历导入成功");
-  } catch (error) {
-    console.error("解析 Markdown 简历失败:", error);
-    const message = error instanceof Error ? error.message : "";
-    ElMessage.error(message || "简历智能解析失败，请检查文件内容或模型配置");
-  } finally {
-    parsing.value = false;
-    visible.value = false;
-  }
-};
 </script>
 
 <template>
@@ -208,23 +185,19 @@ const importMarkdownConfig = async () => {
     导入简历
   </SfButton>
   <SfModal v-model="visible" title="导入简历">
-    <div v-if="pdfParsing" class="flex w-full max-w-[400px] flex-col items-center gap-3 p-6">
+    <div v-if="parsing" class="flex w-full max-w-[400px] flex-col items-center gap-3 p-6">
       <SfIcon icon="line-md:loading-twotone-loop" size="8" class="text-sf-theme" />
-      <div class="text-base">{{ pdfProgress }}</div>
-      <SfButton type="bg" @click="cancelPdfImport">取消解析</SfButton>
+      <div class="text-base">{{ parseProgress }}</div>
+      <SfButton type="bg" @click="cancelImport">取消解析</SfButton>
     </div>
-    <ImportResumePreview v-else-if="pendingPdfResume" :resume="pendingPdfResume" @confirm="confirmPdfImport" @cancel="cancelPdfImport" />
-    <div v-else-if="parsing" class="flex w-full max-w-[400px] flex-col items-center gap-3 p-6">
-      <SfIcon icon="line-md:loading-twotone-loop" size="8" class="text-sf-theme" />
-      <div class="text-base">正在智能解析简历，请稍候</div>
-    </div>
+    <ImportResumePreview v-else-if="pendingResume" :resume="pendingResume" @confirm="confirmImport" @cancel="cancelImport" />
     <div v-else class="flex w-full max-w-[400px] flex-col gap-3">
       <p class="text-sm text-sf-text-3">解析模型：{{ parseModelLabel }}</p>
       <button type="button" class="text-left text-sm text-sf-theme" @click="aiStore.openModelManager('added')">配置解析模型</button>
       <button
         type="button"
         class="rounded-3xl border border-sf-b p-3 text-left transition-colors hover:bg-sf-theme-2"
-        @click="importPdfConfig"
+        @click="importDocumentConfig('pdf')"
       >
         <div class="text-xl">PDF 智能解析</div>
         <div class="text-sm">支持文字与扫描简历，最多 10 页、20MB</div>
@@ -239,12 +212,12 @@ const importMarkdownConfig = async () => {
       </div>
       <div
         class="cursor-pointer rounded-3xl border border-sf-b p-3 transition-colors hover:bg-sf-theme-2"
-        @click="importMarkdownConfig"
+        @click="importDocumentConfig('markdown')"
       >
         <div class="flex items-center gap-3">
           <SfIcon icon="ph:file-md-duotone" size="6" class="text-sf-theme" />
           <div>
-            <div class="text-xl">智能解析简历</div>
+            <div class="text-xl">Markdown 智能解析</div>
             <div class="text-sm">识别 Markdown 内容并转换为简历</div>
           </div>
         </div>

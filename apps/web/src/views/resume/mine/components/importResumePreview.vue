@@ -4,7 +4,7 @@ import { RESUME_SCHEMA } from "../../editor/assistant/resumeSchemaRegistry";
 import type { normalizeResumeData } from "../resumeImportNormalizer";
 
 const props = defineProps<{
-  // 已清洗并通过字段校验的待导入简历
+  // 已转换为编辑器结构的待导入简历及补充提示
   resume: ReturnType<typeof normalizeResumeData>;
 }>();
 const emit = defineEmits<{
@@ -48,7 +48,12 @@ const modules = computed(() => props.resume.config.modules.map(({ key }) => {
   <div class="flex w-full max-w-[600px] flex-col gap-3">
     <p class="text-sm text-sf-text-3">请核对识别结果，确认后创建新简历。</p>
     <p v-if="!resume.data.user?.data?.name" class="text-sm text-sf-text-3">未识别到姓名，导入后可在编辑器中补充。</p>
-    <div class="max-h-[60vh] overflow-y-auto space-y-3">
+    <!-- 使用统一滚动条，并将高度限制交给滚动容器。 -->
+    <SfScrollbar max-height="60vh" view-class="space-y-3">
+      <section v-if="resume.warnings?.length" class="rounded-3xl border border-sf-b p-3">
+        <h3 class="mb-3 font-bold">以下内容需要导入后补充，不影响其他内容导入</h3>
+        <p v-for="(warning, index) in resume.warnings" :key="index" class="mb-3 whitespace-pre-wrap break-words text-sm text-sf-text-3">{{ warning }}</p>
+      </section>
       <section v-for="module in modules" :key="module.key" class="rounded-3xl border border-sf-b p-3">
         <h3 class="mb-3 font-bold">{{ module.title }}</h3>
         <dl v-for="(record, index) in module.records" :key="index" class="mb-3 space-y-3">
@@ -58,7 +63,7 @@ const modules = computed(() => props.resume.config.modules.map(({ key }) => {
           </div>
         </dl>
       </section>
-    </div>
+    </SfScrollbar>
     <div class="flex justify-end gap-3">
       <SfButton type="bg" @click="emit('cancel')">放弃导入</SfButton>
       <SfButton @click="emit('confirm')">确认导入</SfButton>

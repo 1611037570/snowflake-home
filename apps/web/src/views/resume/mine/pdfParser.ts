@@ -1,6 +1,6 @@
 import { getResumeParseLLM } from "@/apis";
 import { resumeDataContract } from "../editor/assistant/skills/skill_resume_data_contract";
-import { extractResponseText, normalizeResumeData, parseJsonText } from "./resumeImportNormalizer";
+import { readResumeImportResult } from "./resumeImportNormalizer";
 import { extractPdfImages, MAX_PDF_REQUEST_BYTES } from "./pdfDocument";
 import { createLlmTrace, finishLlmTrace } from "@/apis/llm/monitor";
 
@@ -23,6 +23,7 @@ export const parsePdfResume = async (
     "明确的月份转换为 YYYY.MM；开始时间使用 startTime（开始月份），结束时间使用 endTime（结束月份），仍在持续时结束时间填 至今。不确定的信息留空，缺少月份时不要猜测。",
     "富文本使用 <p> 包裹正文；只使用契约声明的模块和字段。",
     resumeDataContract().instructions,
+    "导入以忠实保留原文为先：契约中的枚举值作为填写参考，原文不在列表时保留原值；日期或正文无法规范化时保留原内容，由本地转换器处理，不要丢弃整条经历。",
   ].join("\n");
   // 图片内容块按绑定模型的协议组装，接口地址沿用用户配置。
   const options = llm.protocol === "responses"
@@ -88,13 +89,7 @@ export const parsePdfResume = async (
   try {
     const response = await sendFn();
     signal.throwIfAborted();
-    if (response?.choices?.[0]?.finish_reason === "length" || response?.status === "incomplete") {
-      throw new Error("模型输出被截断，请减少页数或调整模型输出上限");
-    }
-    const text = extractResponseText(response);
-    if (!text) throw new Error("模型没有返回简历内容，请确认解析模型支持图片识别");
-    onProgress("正在校验简历字段");
-    return normalizeResumeData(parseJsonText(text));
+    return readResumeImportResult(response, onProgress);
   } finally {
     signal.removeEventListener("abort", abortFn);
   }
