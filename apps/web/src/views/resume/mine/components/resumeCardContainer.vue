@@ -17,10 +17,11 @@ const getThumbItem = (item) => ({
   ui: item.ui,
 });
 const boxSize = computed(() => {
+  // 只定义宽度，高度由 A4 比例（794:1123）自动派生，调整宽度即可整体缩放
   if (props.size == "default") {
-    return "h-[344px]! w-[242px]";
+    return "w-[240px] aspect-[794/1123]";
   } else if (props.size == "small") {
-    return "h-[544px] w-[382px]";
+    return "w-[380px] aspect-[794/1123]";
   }
   return "";
 });
@@ -29,7 +30,7 @@ const boxSize = computed(() => {
 <template>
   <div
     :class="boxSize"
-    class="group relative flex cursor-pointer flex-col overflow-hidden rounded-3xl border border-sf-b bg-sf-primary transition-all duration-200 hover:scale-102 hover:border-sf-theme"
+    class="group relative flex cursor-pointer flex-col overflow-hidden rounded-[4px] border border-sf-b bg-sf-primary transition-all duration-200 hover:scale-102 hover:border-sf-theme"
     @click="emit('click')"
   >
     <!-- 卡片右上角操作入口由调用方按需注入。 -->

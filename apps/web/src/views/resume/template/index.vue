@@ -1,6 +1,10 @@
 <script setup>
 import { useResumeStore } from "@/stores";
-import { getResumeThemeTemplate, themeTemplateList, resolveThemeDecisions } from "@/views/resume/theme";
+import {
+  getResumeThemeTemplate,
+  themeTemplateList,
+  resolveThemeDecisions,
+} from "@/views/resume/theme";
 import ThumbPreview from "@/views/resume/editor/preview/modes/thumb.vue";
 import RevealGrid from "@/views/resume/components/revealGrid.vue";
 import TemplateCategory from "./components/templateCategory.vue";
@@ -214,9 +218,9 @@ const setPreviewSize = (size) => {
   gridClass.value = size;
 };
 const gridClass = ref("default");
-// 卡片尺寸随预览尺寸切换：大图模式放大卡片，缩略图按容器自适应缩放
+// 卡片只定义宽度，高度由 A4 比例（794:1123）自动派生：宽度是唯一旋钮
 const cardSizeClass = computed(() =>
-  gridClass.value === "small" ? "h-[544px] w-[382px]" : "h-[344px]! w-[242px]",
+  gridClass.value === "small" ? "w-[380px] aspect-[794/1123]" : "w-[240px] aspect-[794/1123]",
 );
 // 缩略图只消费简历内容与配置，不把卡片上的筛选信息传进渲染链路
 const getThumbItem = (item) => ({ data: item?.data, config: item?.config, ui: item?.ui });
@@ -250,7 +254,7 @@ const getThumbItem = (item) => ({ data: item?.data, config: item?.config, ui: it
             <!-- 卡片外壳由模板页自己维护，缩略图仍复用懒加载预览组件 -->
             <div
               :class="cardSizeClass"
-              class="group relative flex cursor-pointer flex-col overflow-hidden rounded-3xl border border-sf-b bg-sf-primary transition-all duration-200 hover:scale-102 hover:border-sf-theme"
+              class="group relative flex cursor-pointer flex-col overflow-hidden rounded-[4px] border border-sf-b bg-sf-primary transition-all duration-200 hover:scale-102 hover:border-sf-theme"
               @click="useTemplateCard(card)"
             >
               <ThumbPreview :item="getThumbItem(card.item)" />
