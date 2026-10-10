@@ -1,4 +1,5 @@
 import type { Component } from "vue";
+import type { ColumnPadding } from "@/views/resume/editor/preview/resumePages/engine/pageLayoutTypes";
 import type { RegionPadding } from "../regionPadding";
 import type { ThemeSettingRestrictions } from "../settingCapabilities";
 
@@ -6,7 +7,7 @@ import type { ThemeSettingRestrictions } from "../settingCapabilities";
 export type AppearanceComponent = Component & {
   regionPadding?: RegionPadding | ((ui?: Record<string, any>) => RegionPadding); // 区域内部装饰空间
   fillsPageTop?: boolean; // 首页区域是否覆盖纸张顶边
-  gapBefore?: number; // 区域前置间距覆盖值
+  columnPadding?: ColumnPadding[]; // 按栏顺序声明装饰内边距，仅应用于栏数一致的布局
   usesDateRail?: boolean; // 条目是否使用左侧日期栏
   unsupportedSettings?: ThemeSettingRestrictions; // 不支持的用户设置及原因
 };

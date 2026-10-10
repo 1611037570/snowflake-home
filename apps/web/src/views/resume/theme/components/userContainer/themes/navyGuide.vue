@@ -26,12 +26,11 @@ const {
 </template>
 
 <style scoped>
-/* 方形头像的蓝色偏移衬边不占排版尺寸。 */
+/* 方形头像的蓝色偏移衬边不占排版尺寸，资料间距沿用公共个人信息组件。 */
 .resume-user :deep(img) {
   width: 114px;
   height: 114px;
   border-radius: 0;
-  margin-right: 36px;
   box-shadow: 6px 6px 0 var(--navy-guide-accent);
 }
 </style>

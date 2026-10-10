@@ -8,7 +8,13 @@ const regionPadding = {
   bottom: 0, // 底部留白沿用页面设置与页脚预留空间
   left: 0, // 左右留白沿用页面设置
 };
-export default { regionPadding };
+export default {
+  regionPadding, // 区域装饰内边距
+  columnPadding: [
+    { left: 30, right: 0 }, // 左栏底纹内的内容留白
+    { left: 30, right: 0 }, // 右栏底纹内的内容留白
+  ], // 双栏装饰尺寸统一交给布局结算
+};
 </script>
 
 <script setup>
@@ -43,14 +49,13 @@ const regionStyle = computed(() => ({
 
 <style lang="scss" scoped>
 /* 左栏底色截至页脚预留之外：底部只延伸到页脚上方留白，不覆盖页脚 */
-.academic-main--two-column :deep(.resume-column) {
+.academic-main--two-column :deep(> *) {
   box-sizing: border-box;
   position: relative;
   isolation: isolate;
-  padding-left: 30px;
 }
 
-.academic-main--two-column :deep(.resume-column)::before {
+.academic-main--two-column :deep(> *)::before {
   content: "";
   position: absolute;
   z-index: -1;
@@ -63,7 +68,7 @@ const regionStyle = computed(() => ({
 }
 
 /* 右栏底色压住栏间距并向右延伸到纸张边缘，底边同样停在页脚上方 */
-.academic-main--two-column :deep(.resume-column + .resume-column)::before {
+.academic-main--two-column :deep(> * + *)::before {
   right: calc(-1 * var(--academic-column-bleed, 0px));
   left: -12px;
   background-color: color-mix(in srgb, var(--academic-region-band) 55%, transparent);

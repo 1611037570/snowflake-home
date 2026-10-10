@@ -1,14 +1,13 @@
 <script>
-// 页眉留白由组件声明，分页按相同尺寸测量。
+// 个人信息沿用页面边距，不额外增加主题留白或接管纸张顶边。
 const regionPadding = {
-  top: 42, // 页眉顶部留白
-  right: 48, // 页眉右侧留白
-  bottom: 0, // 页眉底部与正文容器贴合
-  left: 48, // 页眉左侧留白
+  top: 0, // 页面上边距由布局统一结算，不额外叠加页眉留白
+  right: 0, // 右侧只使用页面边距
+  bottom: 0, // 与正文之间只使用公共模块间距
+  left: 0, // 左侧只使用页面边距
 };
 export default {
   regionPadding, // 个人信息区域内部留白
-  fillsPageTop: true, // 首页页眉从纸张顶边开始
 };
 </script>
 

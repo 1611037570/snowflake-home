@@ -1,5 +1,14 @@
-import { describe, expect, it } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { getDefaultRegionPadding, resolveRegionPadding } from "./regionPadding";
+
+// 解析规则使用固定外观能力，不把真实主题样式写成测试基线。
+const fixture = vi.hoisted(() => ({
+  slots: {} as Record<string, { regionPadding?: { top: number; right: number; bottom: number; left: number } }>, // 各槽位外观能力
+}));
+vi.mock("./components/regionContainer/registry", () => ({
+  resolveRegionAppearance: (id: unknown, slot: string) => id === "fixture" ? fixture.slots[slot] || {} : {}, // 固定外观与默认回退
+}));
+beforeEach(() => { fixture.slots = {}; });
 
 // 区域外观只声明区域内部的装饰留白；模块间距与页面上边距统一由布局结算
 const emptyPadding = {
@@ -23,8 +32,9 @@ describe("区域留白解析", () => {
     expect(resolveRegionPadding(undefined, "slogan")).toEqual(emptyPadding);
   });
 
-  it("红框主题读取正文组件自身的四周留白", () => {
-    const padding = resolveRegionPadding({ theme: { template: "frame" } }, "main");
+  it("读取正文外观声明的四周装饰留白", () => {
+    fixture.slots.main = { regionPadding: { top: 12, right: 12, bottom: 12, left: 12 } };
+    const padding = resolveRegionPadding({ theme: { template: "fixture" } }, "main");
     expect(padding).toEqual({ top: 12, right: 12, bottom: 12, left: 12 });
   });
 
@@ -35,14 +45,15 @@ describe("区域留白解析", () => {
   });
 
   it("个人信息组件留白不会改变正文区域", () => {
-    const ui = { theme: { template: "userBand" } };
+    fixture.slots.user = { regionPadding: { top: 0, right: 0, bottom: 12, left: 0 } };
+    const ui = { theme: { template: "fixture" } };
     // 页面上边距由引擎注入，组件只声明底纹内部留白，这里锁定它不会外溢到正文区域
     expect(resolveRegionPadding(ui, "user")).toEqual({ top: 0, right: 0, bottom: 12, left: 0 });
     expect(resolveRegionPadding(ui, "main")).toEqual(emptyPadding);
   });
 
-  it("顶部个人信息主题不再声明与正文之间的距离", () => {
-    const ui = { theme: { template: "squareTimeline" } };
+  it("公共模块间距不会变成区域装饰内边距", () => {
+    const ui = { theme: { template: "fixture" }, page: { spacing: { module: 24 } } };
 
     // 与正文第一个模块之间的距离改由布局按模块间距统一施加
     expect(resolveRegionPadding(ui, "user")).toEqual(emptyPadding);

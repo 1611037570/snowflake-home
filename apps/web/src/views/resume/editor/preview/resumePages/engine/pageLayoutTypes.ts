@@ -57,12 +57,20 @@ export interface RegionConfig {
   columns: ColumnConfig[];
 }
 
+/** 栏内左右装饰空间，不改变栏外部占用宽度 */
+export interface ColumnPadding {
+  left: number; // 栏内容距左侧装饰边缘的距离
+  right: number; // 栏内容距右侧装饰边缘的距离
+}
+
 /** 区域中的一个内容栏 */
 export interface ColumnConfig {
   /** 栏唯一编号 */
   id: string;
   /** 栏宽度的计算方式 */
   width: ColumnWidth;
+  /** 栏内部装饰留白，测量与预览统一施加在栏盒子上 */
+  padding?: ColumnPadding;
   /** 当前栏内节点之间的间距 */
   gap: number;
   /** 明确指定进入当前栏的模块 key，不允许自动分配 */

@@ -20,7 +20,6 @@ export default {
     },
     page: {
       background: "#A950DF", // 纸张底色承接正文圆角与页面边距露出的区域
-      padding: { vertical: 0, horizontal: 0 }, // 通栏页眉与正文占满纸张宽度
     },
     layout: {
       leftColumnWidth: 40, // 左侧资料栏占比

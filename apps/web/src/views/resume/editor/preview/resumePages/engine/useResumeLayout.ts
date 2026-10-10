@@ -143,6 +143,7 @@ export const useResumeLayout = ({
         id: column.id,
         regionId: region.id,
         width: columnWidths.value.get(column.id) ?? contentWidth.value,
+        padding: column.padding, // 测量栏与预览栏共用装饰内边距
         // 测量节点按栏内模块顺序排列，保持模块内部节点顺序。
         nodes: column.moduleKeys.flatMap((moduleKey) =>
           nodes.value.filter((node) => node.sourceModuleKey === moduleKey),
