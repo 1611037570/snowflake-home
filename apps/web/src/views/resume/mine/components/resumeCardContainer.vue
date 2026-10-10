@@ -43,8 +43,9 @@ const boxSize = computed(() => {
     <!-- 有 item 数据时渲染标准简历卡片 -->
     <template v-if="item && size">
       <ThumbPreview :item="getThumbItem(item)" @select="emit('click')" />
+      <!-- 底部信息条：纯色背景且高度随内容，不再用半透明渐变遮挡简历缩略图 -->
       <div
-        class="absolute inset-x-0 top-[50%] bottom-0 z-10 flex flex-col justify-end bg-linear-to-t from-white via-white/90 to-transparent px-3 pb-3"
+        class="absolute inset-x-0 bottom-0 z-10 flex flex-col border-t border-sf-b bg-sf-primary px-3 py-3"
       >
         <slot />
       </div>

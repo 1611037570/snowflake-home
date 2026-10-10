@@ -13,6 +13,9 @@ import { resumeTemplateList } from "./data/list";
 import { loadResumeTemplateData } from "./data/resumeData";
 import { expandConfigModules } from "@/stores/modules/resume/hooks/useConfigTemplate";
 import { resolveLayoutColumns, layoutUsesColumns } from "@/domain/resume/theme/layouts";
+import { darkThemeColors, lightThemeColors } from "@/configs/modules/theme";
+import { useThemeStore } from "@/stores/modules/theme";
+import { storeToRefs } from "pinia";
 import { $t } from "@/locales";
 
 // 模板页专用全屏预览组件：异步加载，避免首屏打包体积过大
@@ -224,6 +227,16 @@ const cardSizeClass = computed(() =>
 );
 // 缩略图只消费简历内容与配置，不把卡片上的筛选信息传进渲染链路
 const getThumbItem = (item) => ({ data: item?.data, config: item?.config, ui: item?.ui });
+// 标签彩虹配色：亮色模式取浅色主题色、暗色模式取饱和主题色，标签按顺序循环取用
+const { isDark } = storeToRefs(useThemeStore());
+const tagColorList = computed(() =>
+  (isDark.value ? darkThemeColors : lightThemeColors).map((color) => color.value),
+);
+const getTagStyle = (index) => ({
+  background: tagColorList.value[index % tagColorList.value.length],
+});
+// 浅色底配深色文字、饱和底配白字，两种模式下都保持可读
+const tagTextClass = computed(() => (isDark.value ? "text-sf-theme-text" : "text-sf-text"));
 </script>
 
 <template>
@@ -258,28 +271,43 @@ const getThumbItem = (item) => ({ data: item?.data, config: item?.config, ui: it
               @click="useTemplateCard(card)"
             >
               <ThumbPreview :item="getThumbItem(card.item)" />
-              <!-- 信息层覆盖缩略图下半部分，按钮点击不冒泡到卡片的套用动作 -->
+              <!-- 信息条贴在卡片底部：纯色背景且高度随内容，不再用半透明渐变遮挡缩略图 -->
               <div
-                class="absolute inset-x-0 top-[50%] bottom-0 z-10 flex flex-col justify-end bg-linear-to-t from-white via-white/90 to-transparent px-3 pb-3"
+                class="absolute inset-x-0 bottom-0 z-10 flex flex-col border-t border-sf-b bg-sf-primary px-3 py-3"
               >
-                <div class="flex flex-col">
-                  <div class="truncate text-base font-black text-black">
+                <div class="flex flex-col gap-1">
+                  <div class="truncate text-base font-black text-sf-text">
                     {{ card.name }}
                   </div>
-                  <div class="mt-3 line-clamp-2 text-sm text-sf-text-2">
+                  <div class="line-clamp-2 text-sm text-sf-text-2">
                     {{ card.description }}
                   </div>
+                  <!-- 标签与操作按钮默认收起，鼠标经过卡片时展开：信息条平时只占标题与描述的高度 -->
                   <div
-                    v-if="card.tags.length"
-                    class="mt-3 flex flex-wrap gap-3 text-sm text-sf-text-2"
+                    class="grid grid-rows-[0fr] transition-all duration-200 group-hover:grid-rows-[1fr]"
                   >
-                    <span v-for="tag in card.tags" :key="tag">{{ tag }}</span>
-                  </div>
-                  <div class="mt-3 flex items-center justify-between gap-2">
-                    <SfButton class="flex-1" @click.stop="openFullscreen(card, card.type)">
-                      {{ $t("resumeTemplatePreview") }}
-                    </SfButton>
-                    <SfButton class="flex-1">{{ $t("resumeTemplateUse") }}</SfButton>
+                    <div
+                      class="invisible flex flex-col gap-1 overflow-hidden opacity-0 transition-all duration-200 group-hover:visible group-hover:opacity-100"
+                    >
+                      <!-- 标签按顺序取用配置里的彩虹色，垂直间距沿用信息条的紧凑取值 -->
+                      <div v-if="card.tags.length" class="flex flex-wrap gap-x-3 gap-y-1 text-sm">
+                        <span
+                          v-for="(tag, index) in card.tags"
+                          :key="tag"
+                          class="rounded-full px-3 py-1"
+                          :class="tagTextClass"
+                          :style="getTagStyle(index)"
+                        >
+                          {{ tag }}
+                        </span>
+                      </div>
+                      <div class="flex items-center justify-between gap-2">
+                        <SfButton class="flex-1" @click.stop="openFullscreen(card, card.type)">
+                          {{ $t("resumeTemplatePreview") }}
+                        </SfButton>
+                        <SfButton class="flex-1">{{ $t("resumeTemplateUse") }}</SfButton>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
