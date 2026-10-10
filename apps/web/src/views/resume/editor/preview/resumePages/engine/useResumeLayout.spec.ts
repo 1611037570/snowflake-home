@@ -7,7 +7,7 @@ import type { MeasuredNode } from "./measure/types";
 
 // 固定节点与测量尺寸，验证真实布局到跨页计划的排序链路。
 vi.mock("./adapter/buildLayoutNodes", () => ({
-  buildLayoutNodes: ({ moduleKeys }: { moduleKeys: string[] /* 原始模块顺序 */ }) =>
+  createLayoutNodeBuilder: () => ({ moduleKeys }: { moduleKeys: string[] /* 原始模块顺序 */ }) =>
     moduleKeys.flatMap((key) => ["title", "block"].map((type): LayoutNode => ({
       id: `${key}-${type}`, // 节点唯一标识
       sourceModuleKey: key, // 节点所属模块

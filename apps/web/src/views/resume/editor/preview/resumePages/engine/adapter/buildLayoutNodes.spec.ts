@@ -1,10 +1,35 @@
 import { describe, expect, it } from "vitest";
-import { buildLayoutNodes } from "./buildLayoutNodes";
+import { buildLayoutNodes, createLayoutNodeBuilder } from "./buildLayoutNodes";
 import { resumeThemeRegistry } from "@/views/resume/theme/styles";
 import { createLayoutAdapterRegistry } from "./index";
 import type { LayoutNode } from "../types";
 
 describe("通用模块装配", () => {
+  it("多个实例交替构建时各自复用节点，内容改变与删除仍及时更新", () => {
+    const registry = createLayoutAdapterRegistry();
+    registry.register("entry", ({ data }) => [{
+      id: "entry.content", // 相同节点编号用于验证实例隔离
+      sourceModuleKey: "entry", // 通用模块来源
+      type: "block", // 普通内容块
+      payload: { value: data.text /* 当前实例文字 */ }, // 独立业务载荷
+    }]);
+    const buildFirst = createLayoutNodeBuilder(registry);
+    const buildSecond = createLayoutNodeBuilder(registry);
+    const firstInput = { moduleKeys: ["entry"], data: { text: "甲" /* 第一实例正文 */ } }; // 第一实例输入
+    const secondInput = { moduleKeys: ["entry"], data: { text: "乙" /* 第二实例正文 */ } }; // 第二实例输入
+    const first = buildFirst(firstInput);
+    const second = buildSecond(secondInput);
+    expect(buildFirst(firstInput)[1]).toBe(first[1]);
+    expect(buildSecond(secondInput)[1]).toBe(second[1]);
+    expect(first[1]).not.toBe(second[1]);
+    firstInput.data.text = "更新";
+    const updated = buildFirst(firstInput);
+    expect(updated[1]).not.toBe(first[1]);
+    expect(updated[1]?.payload).toEqual({ value: "更新" /* 修改后正文 */ });
+    expect(buildSecond(secondInput)[1]).toBe(second[1]);
+    expect(buildFirst({ ...firstInput, moduleKeys: [] })).toEqual([]);
+    expect(buildFirst(firstInput)[1]).not.toBe(updated[1]);
+  });
   it("新注册模块直接获得标题与段间距，不需要维护模块名单", () => {
     const registry = createLayoutAdapterRegistry();
     registry.register("new_module", () => [{
@@ -39,9 +64,10 @@ describe("通用模块装配", () => {
       payload: { item: { name: "内容" /* 条目名称 */ } }, // 不变的业务内容
     }]);
     const options = { moduleKeys: ["entry"], data: {}, registry }; // 同一业务输入与注册表
-    const first = buildLayoutNodes(options).find((node) => node.id === "entry.content")!;
+    const buildNodes = createLayoutNodeBuilder(registry);
+    const first = buildNodes(options).find((node) => node.id === "entry.content")!;
     kind = "honor";
-    const second = buildLayoutNodes(options).find((node) => node.id === "entry.content")!;
+    const second = buildNodes(options).find((node) => node.id === "entry.content")!;
     expect(second).not.toBe(first);
     expect(second.contentKind).toBe("honor");
   });
