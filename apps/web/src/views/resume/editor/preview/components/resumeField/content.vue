@@ -1,8 +1,7 @@
-<script setup>
-import { computed, useAttrs } from "vue";
-import DOMPurify from "dompurify";
+<script setup lang="ts">
+import { computed, useAttrs, type PropType } from "vue";
 import { useResumePreviewContext } from "../../shared/previewContext";
-import { RICH_TEXT_SANITIZE_CONFIG } from "../../shared/richTextSanitize";
+import { parseRichText, type RichTextBlock } from "../../resumePages/engine/adapter/richTextParser";
 
 // 透传属性已在组件内部逐块合并，关闭自动继承，避免多根节点无法继承导致 class 被丢弃并告警
 defineOptions({ inheritAttrs: false });
@@ -15,6 +14,11 @@ const props = defineProps({
   content: {
     type: String,
     default: "",
+  },
+  // 引擎已清洗并解析的正文块，避免分页渲染重复处理
+  blocks: {
+    type: Array as PropType<RichTextBlock[]>,
+    default: undefined,
   },
   // 是否按富文本渲染
   html: {
@@ -33,56 +37,12 @@ const textAlignStyle = computed(() =>
   textAlign?.value === "justify" ? { textAlign: "justify" } : {},
 );
 
-// 清洗白名单与分页解析共用一份，避免两处各自维护导致强度分叉
-const sanitizeConfig = RICH_TEXT_SANITIZE_CONFIG;
-
-// 将 HTML 按块拆分，便于分页逻辑细粒度处理
-const splitHtml = (html) => {
-  if (!html) return [];
-  const template = document.createElement("template");
-  template.innerHTML = html;
-  return Array.from(template.content.childNodes)
-    .map((node) => {
-      if (node.nodeType === 3 && node.textContent.trim()) {
-        return { tag: "span", attrs: {}, html: node.textContent };
-      }
-      if (node.nodeType !== 1) return null;
-      return {
-        tag: node.tagName.toLowerCase(),
-        attrs: Object.fromEntries(
-          Array.from(node.attributes).map(({ name, value }) => [name, value]),
-        ),
-        html: node.innerHTML,
-      };
-    })
-    .filter((block) => block && block.html.trim());
-};
-
-// 合并透传属性与块原始属性，class/监听一并落到每个块上
-const mergeAttrs = (blockAttrs) => ({ ...blockAttrs, ...attrs });
-
-// 按原始内容缓存清洗拆分结果，避免同一内容重复执行 sanitize 与 HTML 解析
-const parseCache = new Map();
-const CACHE_MAX = 100;
-const parseContent = (content) => {
-  const cached = parseCache.get(content);
-  if (cached) return cached;
-  const result = {
-    blocks: splitHtml(DOMPurify.sanitize(content, sanitizeConfig)),
-    // 字数延迟到实际展示统计时再计算
-    textLength: null,
-  };
-  parseCache.set(content, result);
-  // 防止缓存无界增长，超出上限时淘汰最旧条目
-  if (parseCache.size > CACHE_MAX) {
-    parseCache.delete(parseCache.keys().next().value);
-  }
-  return result;
-};
-
-// 清洗拆分结果统一入口：仅 html 内容才解析，纯文本不触发
-const parsed = computed(() => (props.html ? parseContent(props.content) : null));
-const blocks = computed(() => parsed.value?.blocks || []);
+// 原始正文统一解析；引擎切片直接消费已有块结构。
+const blocks = computed(() => props.blocks ?? (props.html
+  ? parseRichText(props.content).blocks.filter((block) => block.html.trim())
+  : []));
+// 合并透传属性与块原始属性，class/监听一并落到每个块上。
+const mergeAttrs = (blockAttrs: Record<string, string>) => ({ ...blockAttrs, ...attrs });
 </script>
 
 <template>

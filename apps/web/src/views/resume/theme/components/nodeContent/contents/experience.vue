@@ -6,6 +6,7 @@ import ItemDate from "@/views/resume/editor/preview/components/itemDate.vue";
 import ItemTitle from "@/views/resume/editor/preview/components/itemTitle.vue";
 import ItemTags from "@/views/resume/editor/preview/components/itemTags.vue";
 import InlineInfoList from "@/views/resume/editor/preview/components/inlineInfoList.vue";
+import FieldContent from "@/views/resume/editor/preview/components/resumeField/content.vue";
 import ResumeField from "@/views/resume/editor/preview/components/resumeField/index.vue";
 import { useResumePreviewContext } from "@/views/resume/editor/preview/shared/previewContext";
 import { getTime } from "@/views/resume/editor/preview/resumePages/render/getTime";
@@ -16,7 +17,7 @@ import { useNodeContent, type NodeContentProps } from "@/views/resume/editor/pre
 const props = withDefaults(defineProps<NodeContentProps>(), {
   blockRange: () => ({ start: 0 /* 起始块 */, end: Number.MAX_SAFE_INTEGER /* 结束块 */ }),
 });
-const { nodePayload, item, richTextHtml, hasContentBlock, isBlockVisible, showItemHeader } = useNodeContent(props);
+const { nodePayload, item, richTextBlocks, contentSpacingStyle, hasContentBlock, isBlockVisible, showItemHeader } = useNodeContent(props);
 const { theme: { innerSpacingStyle, dateStyle, datePosition, linkUnderline } } = useResumePreviewContext();
 // 日期栏位置由公共条目外框下发，内容组件只消费结果。
 const isTimeline = computed(() => props.dateRail === true);
@@ -53,10 +54,7 @@ const getItemLink = (value: ContentItem) => {
 };
 const itemLink = computed(() => getItemLink(item.value));
 const safeItemLinkUrl = computed(() => safeContentUrl(itemLink.value.url));
-const itemContentSpacingStyle = computed(() => {
-  if (props.decoration === "middle" || props.decoration === "bottom") return { marginTop: "0px" };
-  return hasItemHeader.value ? innerSpacingStyle.value : { marginTop: "0px" };
-});
+
 
 </script>
 
@@ -108,9 +106,9 @@ const itemContentSpacingStyle = computed(() => {
     <div
       v-if="!isContentEmpty(item.content) && isBlockVisible(blocks.indexOf('body'))"
       data-layout-text-block
-      :style="itemContentSpacingStyle"
+      :style="contentSpacingStyle(hasItemHeader)"
     >
-      <ResumeField :model-value="richTextHtml" html />
+      <FieldContent :blocks="richTextBlocks" html />
     </div>
   </template>
 </template>

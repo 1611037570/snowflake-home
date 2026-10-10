@@ -1,6 +1,7 @@
 import { computed } from "vue";
 import type { LayoutNode } from "../engine/types";
-import { sliceRichTextHtml } from "../engine/adapter/richTextParser";
+import { sliceRichText, type ParsedRichText } from "../engine/adapter/richTextParser";
+import { useResumePreviewContext } from "../../shared/previewContext";
 import { isContentBlockVisible } from "../engine/contentBlocks";
 import type { ContentPayload, ContentItem } from "./contentPayload";
 
@@ -24,10 +25,12 @@ export const useNodeContent = (props: NodeContentProps) => {
     return { ...payload, item: payload?.item ?? {} };
   });
   const item = computed<ContentItem>(() => nodePayload.value?.item || {});
-  const richTextHtml = computed(() => {
-    const parsed = nodePayload.value?.content ?? nodePayload.value;
-    return parsed?.html ? sliceRichTextHtml(parsed.html, props.contentRange?.start || 0, props.contentRange?.end) : "";
+  const richText = computed(() => {
+    const parsed = nodePayload.value?.content ?? nodePayload.value as unknown as ParsedRichText;
+    return parsed?.html ? sliceRichText(parsed, props.contentRange?.start || 0, props.contentRange?.end) : undefined;
   });
+  const richTextHtml = computed(() => richText.value?.html ?? "");
+  const richTextBlocks = computed(() => richText.value?.blocks ?? []);
   const slicedItemDesc = computed(() => {
     const desc = String(item.value.desc || "");
     return props.contentRange ? desc.slice(props.contentRange.start, props.contentRange.end) : desc;
@@ -35,10 +38,17 @@ export const useNodeContent = (props: NodeContentProps) => {
   const isBlockVisible = (index: number) => isContentBlockVisible(index, props.blockRange);
   const hasContentBlock = computed(() => (props.blockRange?.end ?? Number.MAX_SAFE_INTEGER) > 0);
   const showItemHeader = computed(() => !props.contentRange || props.contentRange.start === 0);
+  const { theme: { innerSpacingStyle } } = useResumePreviewContext();
+  // 经历与学术条目共用续段间距，业务组件只提供首段是否有头部。
+  const contentSpacingStyle = (hasHeader = showItemHeader.value) =>
+    props.decoration === "middle" || props.decoration === "bottom" || !hasHeader
+      ? { marginTop: "0px" } : innerSpacingStyle.value;
   return {
     nodePayload, // 当前分片的实际载荷
     item, // 条目业务字段
     richTextHtml, // 按当前字符区间裁剪后的正文
+    richTextBlocks, // 同一切片生成的安全块，不再由字段组件重复解析
+    contentSpacingStyle, // 头部与正文的公共分片间距规则
     slicedItemDesc, // 按当前字符区间裁剪后的描述
     isBlockVisible, // 稳定块是否落在当前分片区间
     hasContentBlock, // 当前分片是否包含内容块
@@ -49,10 +59,10 @@ export const useNodeContent = (props: NodeContentProps) => {
 const safeUrlProtocols = new Set(["http:", "https:", "mailto:"]);
 
 /** 链接内容与主题外观共用安全协议过滤，覆盖组件不得绕过此入口。 */
-export const safeContentUrl = (value: unknown): string => {
+export const safeContentUrl = (value: unknown, protocols: ReadonlySet<string> = safeUrlProtocols): string => {
   try {
     const url = new URL(String(value || "").trim());
-    return safeUrlProtocols.has(url.protocol.toLowerCase()) ? url.href : "";
+    return protocols.has(url.protocol.toLowerCase()) ? url.href : "";
   } catch {
     return "";
   }

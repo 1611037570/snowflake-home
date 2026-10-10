@@ -30,6 +30,12 @@ export interface ParsedRichText {
   textLength: number;
 }
 
+/** 已清洗的正文切片，渲染直接复用块结构。 */
+export interface RichTextSlice {
+  html: string; // 切片完整安全内容
+  blocks: RichTextBlock[]; // 切片顶层块及安全属性
+}
+
 /** 富文本切片偏移对应的 DOM 区间，一个 br 也占一个可分页位置。 */
 interface SlicePosition {
   startNode: Node;
@@ -64,12 +70,13 @@ const sliceCache = new Map<
 const SLICE_CACHE_MAX = 200;
 
 /** 解析切片所需的文本节点，命中缓存时直接复用 */
-const parseSliceNodes = (html: string) => {
+const parseSliceNodes = (parsed: ParsedRichText) => {
+  const html = parsed.html;
   const cached = getCached(sliceCache, html);
   if (cached) return cached;
 
   const container = document.createElement("div");
-  container.innerHTML = DOMPurify.sanitize(html || "", sanitizeConfig);
+  container.innerHTML = html; // 只接收解析结果，不重复清洗或接受原始正文
   const positions: SlicePosition[] = [];
   const appendPositions = (node: Node) => {
     if (node.nodeType === Node.TEXT_NODE) {
@@ -112,19 +119,19 @@ const parseSliceNodes = (html: string) => {
 };
 
 /** 切片结果缓存：同一份 HTML 的同一段偏移只序列化一次 */
-const sliceHtmlCache = new Map<string, string>();
+const sliceHtmlCache = new Map<string, RichTextSlice>();
 /** 切片结果缓存上限，超出后逐项淘汰最久未使用的结果 */
 const SLICE_HTML_CACHE_MAX = 500;
 
 /** 按包含显式换行的内容偏移截取安全富文本，并保留对应标签结构。 */
-export const sliceRichTextHtml = (html: string, start = 0, end?: number): string => {
-  const source = html || "";
+export const sliceRichText = (parsed: ParsedRichText, start = 0, end?: number): RichTextSlice => {
+  const source = parsed.html;
   // 预览与测量树会对同一节点的同一段偏移重复请求切片，按入参缓存可以省掉重复的 DOM 序列化
   const cacheKey = `${source}\u0000${start}\u0000${end === undefined ? "" : end}`;
   const cachedHtml = getCached(sliceHtmlCache, cacheKey);
   if (cachedHtml !== undefined) return cachedHtml;
 
-  const { container, positions, total } = parseSliceNodes(source);
+  const { container, positions, total } = parseSliceNodes(parsed);
   const safeStart = Math.max(0, Math.min(start, total));
   const safeEnd = Math.max(safeStart, Math.min(end ?? total, total));
   const sliced = (() => {
@@ -150,8 +157,9 @@ export const sliceRichTextHtml = (html: string, start = 0, end?: number): string
     return result.innerHTML;
   })();
 
-  setCached(sliceHtmlCache, cacheKey, sliced, SLICE_HTML_CACHE_MAX);
-  return sliced;
+  const result = { html: sliced /* 安全切片内容 */, blocks: parseBlocks(sliced).blocks /* 复用解析后的块结构 */ };
+  setCached(sliceHtmlCache, cacheKey, result, SLICE_HTML_CACHE_MAX);
+  return result;
 };
 
 /** 预览富文本允许的标签和属性，与渲染拆分共用同一份白名单 */
@@ -246,7 +254,7 @@ const parseBlocks = (html: string) => {
     blocks.push({
       tag,
       attrs: element ? getAttributes(element) : {},
-      html: element?.innerHTML || text,
+      html: element ? element.innerHTML : text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"), // 纯文本块转义后才能作为安全内容渲染
       text,
       startOffset,
       endOffset,

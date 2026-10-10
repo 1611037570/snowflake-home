@@ -8,7 +8,6 @@ import ModuleFrame from "./moduleFrame.vue";
 
 const props = defineProps<{
   column: ColumnPlan;
-  pageIndex: number;
   nodes: Map<string, LayoutNode>;
   isEdit?: boolean;
   showDebug?: boolean;
@@ -52,20 +51,19 @@ const fragmentGroups = computed(() => {
     key: string;
     moduleKey: string;
     gapTop: number;
-    items: Array<{ fragment: FragmentPlan; columnIndex: number }>;
+    items: FragmentPlan[]; // 同一模块的连续分片
   }> = [];
   props.column.fragments.forEach((fragment, columnIndex) => {
     const lastGroup = groups[groups.length - 1];
-    const item = { fragment, columnIndex };
     if (lastGroup && lastGroup.moduleKey === fragment.sourceModuleKey) {
-      lastGroup.items.push(item);
+      lastGroup.items.push(fragment);
       return;
     }
     groups.push({
       key: fragment.fragmentId,
       moduleKey: fragment.sourceModuleKey,
       gapTop: getGapTop(fragment, columnIndex),
-      items: [item],
+      items: [fragment],
     });
   });
   return groups;
@@ -75,7 +73,7 @@ const fragmentGroups = computed(() => {
 <template>
   <!-- 栏内容标识供主题按实际内容高度绘制贯穿装饰。 -->
   <div data-resume-column-content class="resume-column flex min-w-0 flex-1 flex-col">
-    <template v-for="(group, groupIndex) in fragmentGroups" :key="group.key">
+    <template v-for="group in fragmentGroups" :key="group.key">
       <div
         v-if="group.gapTop > 0"
         class="shrink-0"
@@ -104,8 +102,6 @@ const fragmentGroups = computed(() => {
             :module-key="group.moduleKey"
             :items="group.items"
             :nodes="nodes"
-            :page-index="pageIndex"
-            :group-index="groupIndex"
             :show-debug="showDebug"
           />
         </template>
@@ -114,8 +110,6 @@ const fragmentGroups = computed(() => {
           :module-key="group.moduleKey"
           :items="group.items"
           :nodes="nodes"
-          :page-index="pageIndex"
-          :group-index="groupIndex"
           :show-debug="showDebug"
           @click="emit('click', $event)"
         />
