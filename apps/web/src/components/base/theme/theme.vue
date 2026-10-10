@@ -1,7 +1,7 @@
 <template>
-  <div class="text-sf-text" @click="toggleTheme">
-    <!-- 统一使用下拉封装，避免直接触发下拉组件的递归更新。 -->
-    <SfDropdown trigger="hover">
+  <div class="text-sf-text">
+    <!-- 点击入口只展开选项，选择具体模式后才修改主题。 -->
+    <SfDropdown trigger="click">
       <SfIcon
         :icon="theme === 'dark' ? 'twemoji:sun' : 'ri:moon-clear-fill'"
         size="8"
@@ -33,9 +33,6 @@ defineOptions({ name: "SfTheme" });
 const themeStore = useThemeStore();
 const { setTheme } = themeStore;
 const { theme, themeMode } = storeToRefs(themeStore);
-const toggleTheme = () => {
-  setTheme(theme.value);
-};
 // 主题选项
 const list = computed(() => {
   return [
