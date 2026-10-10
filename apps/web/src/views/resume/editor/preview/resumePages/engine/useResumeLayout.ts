@@ -1,7 +1,6 @@
 import type { ThemeDecisions } from "@/views/resume/theme/themeDecisions";
 import { computed, type ComputedRef, type Ref } from "vue";
 import { getContentHeight, RESUME_WIDTH } from "../../shared/constants";
-import { resolveRegionPadding } from "@/views/resume/theme/regionPadding";
 import { defaultLeftColumnWidth } from "@/stores/modules/resume/config/uiConfig";
 import { buildLayoutNodes } from "./adapter/buildLayoutNodes";
 import { createResumeLayout } from "./layout/createResumeLayout";
@@ -58,7 +57,9 @@ export const useResumeLayout = ({
       moduleKeys: moduleKeys.value,
       data: data.value,
       ui: ui.value,
-    });
+    }).map((node) => node.contentKind === "user"
+      ? { ...node, splitMode: themeDecisions.value.userContent?.split ?? "whole" } // 组件分片能力显式进入测量契约
+      : node);
     // 缩略图只需首屏观感，跳过字符级断点，避免每张卡片挂载一棵过大的测量树
     if (!isThumb.value) return built;
     return built.map((node) =>
@@ -90,7 +91,7 @@ export const useResumeLayout = ({
   // 顶部通栏区域由布局统一判定，首屏可用高度据此补回被它覆盖的页面上边距
   const fullBleedTopRegionId = computed(() => layout.value.fullBleedRegionId ?? null);
   const availableHeight = computed(() =>
-    laterPageAvailableHeight.value + (fullBleedTopRegionId.value ? pageTop.value : 0),
+    Math.max(0, laterPageAvailableHeight.value + (fullBleedTopRegionId.value ? pageTop.value : 0) - decorationHeight.value),
   );
   const validation = computed(() => validateLayoutConfig(layout.value, activeModuleKeys.value));
   const validationWarnings = computed(() => [
@@ -154,21 +155,15 @@ export const useResumeLayout = ({
   const watchSource = computed(() => ({
     page: ui.value.page,
     themeDecisions: themeDecisions.value, // 边框与版式变化触发重新测量
-    pageSpacing: {
-      module: ui.value.page?.spacing?.module,
-      paragraph: ui.value.page?.spacing?.paragraph,
-    },
     font: ui.value.font,
     theme: ui.value.theme,
     content: ui.value.content,
     user: ui.value.user,
     layout: ui.value.layout,
-    regionUserPadding: resolveRegionPadding(ui.value, "user"), // 个人信息区域留白变化会改变首页可用高度
-    regionMainPadding: resolveRegionPadding(ui.value, "main"), // 正文区域留白变化会改变隐藏测量宽度
     renderSignature: renderSignature.value,
     fontReadyVersion: fontReadyVersion.value,
   }));
-  const { measurements, measureDone } = useLayoutMeasurements({
+  const { measurements, measureDone, decorationHeight } = useLayoutMeasurements({
     measureRef,
     nodes,
     watchSource,

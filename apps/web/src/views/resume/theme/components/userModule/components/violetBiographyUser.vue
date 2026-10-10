@@ -1,11 +1,3 @@
-<script>
-// 设置限制与当前外观一起声明，界面保留选项并说明无法调整的原因。
-const unsupportedSettings = {
-  "user.avatarPosition": "themeFixedAvatarPosition", // 页眉头像固定在左侧
-};
-export default { unsupportedSettings };
-</script>
-
 <script setup>
 import { computed } from "vue";
 import UserName from "./userName.vue";

@@ -1,6 +1,5 @@
 <script setup>
-import { computed } from "vue";
-import { getItemFragmentStyle } from "@/views/resume/editor/preview/resumePages/render/itemStyle";
+import { useItemBox } from "../useItemBox";
 
 // 线框条目外观：外框由模块外壳绘制，条目只保留内边距。
 const props = defineProps({
@@ -31,23 +30,12 @@ const ITEM_RADIUS = "0";
 /** 非时间轴时的左内边距：与其余三边一致，避免正文贴住模块左边框 */
 const PADDING_LEFT = "12px";
 
-const fragmentStyle = computed(() =>
-  getItemFragmentStyle(props.blockRange, props.contentRange, props.decoration, ITEM_RADIUS),
-);
-const boxStyle = computed(() => ({
-  paddingTop: "12px",
-  paddingRight: "12px",
-  paddingBottom: "12px",
-  // 左侧内边距与其余三边一致，时间轴条目让位给日期栏
-  paddingLeft: props.timeline ? "var(--timeline-rail-width)" : PADDING_LEFT,
-  backgroundColor: "transparent",
-}));
-const borderStyle = computed(() => ({
-  borderColor: "transparent",
-  borderRadius: "inherit",
-  borderTopWidth: fragmentStyle.value.borderTopWidth,
-  borderBottomWidth: fragmentStyle.value.borderBottomWidth,
-}));
+// 卡片内部留白与续段收边由公共盒模型处理。
+const { fragmentStyle, boxStyle, borderStyle } = useItemBox(props, {
+  radius: ITEM_RADIUS, // 条目圆角
+  padding: "12px", // 四周装饰内边距
+  paddingLeft: PADDING_LEFT, // 非日期栏正文左侧留白
+});
 </script>
 
 <template>

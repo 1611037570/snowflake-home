@@ -30,9 +30,11 @@ export const createExperienceModuleAdapter = (moduleKey: string): LayoutAdapter 
       sourceModuleKey: moduleKey,
       sourceItemIndex: index,
       type: "group",
+      contentKind: "experience", // 经历内容共用语义组件
       payload: {
         part: "item",
         item,
+        inlineInfo: moduleKey === "education" ? [item.college, item.post] : [item.post, item.department], // 业务字段在适配器归一化，组件不按模块分支
         content: parsed,
       },
       // 正文起点也作为断点：放不下正文时允许“标题 + 条目头”留在当前页，正文顺延到下一页

@@ -161,6 +161,7 @@ const createTopUserTwoColumnLayout = ({
 /** 顶部标语独占页面最前区域，只出现在首页 */
 const createSloganRegion = (): RegionConfig => ({
   id: "slogan",
+  widthMode: "page", // 纸张全宽属于区域几何，栏宽解析不再识别业务名称
   order: 0,
   height: { mode: "auto" },
   columns: [

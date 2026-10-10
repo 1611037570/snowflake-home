@@ -1,11 +1,13 @@
 import { isPageLayoutTemplateId, type PageLayoutTemplateId } from "./layouts";
 import { resumeThemeRegistry } from "./styles";
+import type { ThemeCapabilities } from "./themeContract";
+import { validateThemeCapabilities } from "./themeContract";
 
 /**
  * 主题决策字段：由主题定义决定、编辑器不提供修改入口，因此只按主题编号解析，
  * 不进入简历 ui 或其运行时展开对象，固定外观与用户可编辑参数始终分开。
  */
-export interface ThemeDecisions {
+export interface ThemeDecisions extends ThemeCapabilities {
   /** 页面版式编号 */
   layoutType: PageLayoutTemplateId;
   /** 纸张边框宽度与颜色 */
@@ -37,8 +39,11 @@ export const resolveThemeDecisions = (themeId?: string): ThemeDecisions => {
   const cached = decisionCache.get(id);
   if (cached) return cached;
   const themeDecisions = resumeThemeRegistry[id]?.decisions ?? {};
+  const errors = validateThemeCapabilities(themeDecisions);
+  if (errors.length) throw new Error(`主题固定声明无效：${id} ${errors.join("、")}`);
   const layoutType = themeDecisions.layoutType;
   const decisions: ThemeDecisions = {
+    ...themeDecisions,
     layoutType: isPageLayoutTemplateId(layoutType)
       ? layoutType
       : DEFAULT_THEME_DECISIONS.layoutType,
@@ -50,6 +55,17 @@ export const resolveThemeDecisions = (themeId?: string): ThemeDecisions => {
       ? { pageBackgroundPattern: themeDecisions.pageBackgroundPattern }
       : {}),
   };
+  // 内容能力在接入层解析一次，布局与渲染不再查询组件元数据。
+  if (!decisions.userContent && decisions.layoutType === "twoColumn") {
+    // 公共双栏资料组件固定单列，限制与组件选择在同一入口解析。
+    decisions.restrictions = {
+      "user.infoLayout": "themeFixedContactLayout", // 公共双栏资料固定单列排布
+      ...decisions.restrictions, // 保留主题显式设置限制
+    };
+  }
+  decisions.userContent ??= decisions.layoutType === "twoColumn"
+    ? { renderer: "twoColumnUser" /* 公共双栏个人信息 */, split: "blocks" /* 按稳定块分片 */ }
+    : { renderer: "userHeading" /* 公共个人信息页眉 */, split: "whole" /* 整块展示 */ };
   decisionCache.set(id, decisions);
   return decisions;
 };

@@ -1,22 +1,9 @@
-<script>
-// 正文留白只在这里声明：引擎按同一份数值加内边距，分页测量与真实渲染共用一个口径。
-const regionPadding = {
-  top: 0, // 上边距统一使用页面设置，不叠加主题留白
-  right: 0, // 水平留白沿用页面设置
-  bottom: 0, // 页尾留白由栏内页脚预留空间单独承担
-  left: 0, // 水平留白沿用页面设置
-};
-export default { regionPadding };
-</script>
-
 <script setup>
 import { computed } from "vue";
-import { defaultPaddingHorizontal } from "@/stores/modules/resume/config/uiConfig";
 import { useResumePreviewContext } from "@/views/resume/editor/preview/shared/previewContext";
 
 const {
   themeDecisions,
-  ui,
   theme: { themeColorSoft, themeColorLine },
 } = useResumePreviewContext();
 // 左栏浅底与栏间细线只服务左右双栏布局，单栏布局下没有任何装饰需要绘制。
@@ -25,9 +12,9 @@ const isTwoColumn = computed(() => themeDecisions.value.layoutType === "twoColum
 const twoColumnStyle = computed(() => ({
   "--two-column-surface": themeColorSoft.value, // 左栏浅底
   "--two-column-divider": themeColorLine.value, // 栏间 1px 细线
-  "--two-column-top": `${regionPadding.top}px`, // 装饰向上覆盖正文顶部留白
-  "--two-column-side": `${Math.max(0, Number(ui.value?.page?.padding?.horizontal ?? defaultPaddingHorizontal) || 0)}px`, // 左栏底色铺到纸张左边缘
-  "--two-column-half-gap": "12px", // 栏间距 24px 的一半，装饰落在栏间正中
+  "--two-column-top": "var(--resume-region-inset-top)", // 装饰向上覆盖正文顶部留白
+  "--two-column-side": "var(--resume-page-inset-horizontal)", // 左栏底色铺到纸张左边缘
+  "--two-column-half-gap": "var(--resume-column-gap-half)", // 装饰沿公共栏间距的中线绘制
 }));
 </script>
 

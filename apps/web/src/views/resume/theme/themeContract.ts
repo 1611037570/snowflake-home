@@ -1,0 +1,65 @@
+import type { RegionSlotId } from "./regionSlots";
+
+/** 主题装饰内部空间，单位像素，不包含页面边距和模块间距。 */
+export interface ThemeInset {
+  top: number; // 上侧装饰内边距
+  right: number; // 右侧装饰内边距
+  bottom: number; // 下侧装饰内边距
+  left: number; // 左侧装饰内边距
+}
+
+export interface ThemeColumnInset {
+  left: number; // 栏内容距左侧装饰的距离
+  right: number; // 栏内容距右侧装饰的距离
+}
+
+export interface ThemeRegionContract {
+  inset?: ThemeInset; // 区域装饰内部空间
+  columns?: Partial<Record<"left" | "right", ThemeColumnInset>>; // 按语义栏位声明内部空间
+  fillsPageTop?: boolean; // 区域背景是否覆盖纸张顶边，内容仍遵守页面边距
+}
+
+export type ThemeRestrictions = Partial<Record<
+  "user.avatarPosition" | "user.infoLayout" | "page.background" | "content.datePosition", // 可被主题固定的用户设置
+  string // 设置限制的文案编号
+>>;
+
+export interface ThemeContentContract {
+  renderer: string; // 个人信息内容组件编号
+  split: "whole" | "blocks"; // 整块放置或按稳定内容块分片
+}
+
+/** 固定能力集中声明，外观组件不得重新决定公共尺寸。 */
+export interface ThemeCapabilities {
+  regions?: Partial<Record<RegionSlotId, ThemeRegionContract>>; // 区域与栏装饰尺寸
+  userContent?: ThemeContentContract; // 个人信息内容及分片能力
+  usesDateRail?: boolean; // 经历条目是否使用固定日期栏
+  restrictions?: ThemeRestrictions; // 用户设置限制
+  topDecoration?: string; // 首页顶部独立装饰组件编号，高度由真实测量得到
+}
+
+export const EMPTY_THEME_INSET: ThemeInset = {
+  top: 0, // 无上侧装饰留白
+  right: 0, // 无右侧装饰留白
+  bottom: 0, // 无下侧装饰留白
+  left: 0, // 无左侧装饰留白
+};
+
+/** 固定声明先校验后接入，不通过默认值静默掩盖非法几何。 */
+export const validateThemeCapabilities = (capabilities: ThemeCapabilities): string[] => {
+  const errors: string[] = [];
+  const check = (value: unknown, field: string) => {
+    if (typeof value !== "number" || !Number.isFinite(value) || value < 0) errors.push(field);
+  };
+  for (const [slot, region] of Object.entries(capabilities.regions ?? {})) {
+    if (!["slogan", "user", "main"].includes(slot)) errors.push(`regions.${slot}`);
+    if (region.inset) for (const side of ["top", "right", "bottom", "left"] as const) check(region.inset[side], `regions.${slot}.inset.${side}`);
+    for (const [column, inset] of Object.entries(region.columns ?? {})) {
+      if (!["left", "right"].includes(column)) errors.push(`regions.${slot}.columns.${column}`);
+      check(inset.left, `regions.${slot}.columns.${column}.left`);
+      check(inset.right, `regions.${slot}.columns.${column}.right`);
+    }
+  }
+  if (capabilities.userContent && !["whole", "blocks"].includes(capabilities.userContent.split)) errors.push("userContent.split");
+  return errors;
+};

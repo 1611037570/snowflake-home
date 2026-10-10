@@ -1,12 +1,12 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { getDefaultRegionPadding, resolveRegionPadding } from "./regionPadding";
+import { resolveRegionPadding } from "./regionPadding";
 
 // 解析规则使用固定外观能力，不把真实主题样式写成测试基线。
 const fixture = vi.hoisted(() => ({
   slots: {} as Record<string, { regionPadding?: { top: number; right: number; bottom: number; left: number } }>, // 各槽位外观能力
 }));
-vi.mock("./components/regionContainer/registry", () => ({
-  resolveRegionAppearance: (id: unknown, slot: string) => id === "fixture" ? fixture.slots[slot] || {} : {}, // 固定外观与默认回退
+vi.mock("./themeDecisions", () => ({
+  resolveThemeDecisions: (id: unknown) => ({ regions: id === "fixture" ? Object.fromEntries(Object.entries(fixture.slots).map(([slot, value]) => [slot, { inset: value.regionPadding }])) : {} }), // 固定声明与默认回退
 }));
 beforeEach(() => { fixture.slots = {}; });
 
@@ -19,12 +19,11 @@ const emptyPadding = {
 };
 
 describe("区域留白解析", () => {
-  // 注意：标语与个人信息槽位默认组件共用 PlainRegion，正文槽位默认组件也不内缩。
-  // 想要某个槽位自带呼吸空间，必须为它提供专属默认组件，不能改 PlainRegion。
+  // 主题未声明装饰尺寸时，各槽位统一不额外内缩。
   it("槽位默认值：三个槽位默认都不内缩", () => {
-    expect(getDefaultRegionPadding("slogan")).toEqual(emptyPadding);
-    expect(getDefaultRegionPadding("user")).toEqual(emptyPadding);
-    expect(getDefaultRegionPadding("main")).toEqual(emptyPadding);
+    expect(resolveRegionPadding(undefined, "slogan")).toEqual(emptyPadding);
+    expect(resolveRegionPadding(undefined, "user")).toEqual(emptyPadding);
+    expect(resolveRegionPadding(undefined, "main")).toEqual(emptyPadding);
   });
 
   it("未选定专属外观时取槽位默认组件的留白", () => {

@@ -4,6 +4,25 @@ import { paginateFlow } from "../paginate/paginateFlow";
 import type { LayoutNode } from "../types";
 
 describe("嵌套块分页测量", () => {
+  it("整块内容契约忽略内部断点，稳定块契约才允许分片", () => {
+    const root = document.createElement("div");
+    root.innerHTML = '<div data-layout-node-id="profile"><div data-layout-block-index="0"></div><div data-layout-block-index="1"></div></div>';
+    const element = root.firstElementChild as HTMLElement;
+    vi.spyOn(element, "getBoundingClientRect").mockReturnValue(new DOMRect(0, 0, 300, 120));
+    Array.from(element.children).forEach((block, index) => {
+      vi.spyOn(block, "getBoundingClientRect").mockReturnValue(new DOMRect(0, index * 60, 300, 60));
+    });
+    const node: LayoutNode = {
+      id: "profile", // 个人信息节点编号
+      sourceModuleKey: "user", // 来源模块
+      type: "group", // 组合内容
+      payload: null, // 不依赖业务载荷
+      splitMode: "whole", // 整块展示
+    };
+    expect(measureLayoutNodes(root, [node]).get(node.id)!.breakPoints).toEqual([]);
+    expect(measureLayoutNodes(root, [{ ...node, splitMode: "blocks" }]).get(node.id)!.breakPoints).toHaveLength(2);
+  });
+
   it("装饰边框不计入块序，末尾留白与最后内容共同分页", () => {
     const root = document.createElement("div");
     root.innerHTML = '<div data-layout-node-id="item"><div data-layout-block-range>' +

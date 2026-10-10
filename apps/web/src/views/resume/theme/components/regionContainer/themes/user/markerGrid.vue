@@ -1,16 +1,3 @@
-<script>
-// 页眉留白只在组件里声明一次，分页与区域容器共用该数值。
-const regionPadding = {
-  top: 0, // 顶部距离统一使用用户页面上边距
-  right: 0, // 水平留白沿用页面设置
-  bottom: 0, // 与正文之间的距离仅由模块间距控制
-  left: 0, // 水平留白沿用页面设置
-};
-export default {
-  regionPadding, // 分页与组件共用的页眉留白
-};
-</script>
-
 <script setup>
 import { computed } from "vue";
 import { RESUME_WIDTH } from "@/views/resume/editor/preview/shared/constants";

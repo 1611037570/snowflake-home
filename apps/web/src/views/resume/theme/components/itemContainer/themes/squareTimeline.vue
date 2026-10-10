@@ -1,8 +1,3 @@
-<script>
-// 日期栏能力随条目外观声明，测量、预览和设置限制使用同一口径。
-export default { usesDateRail: true }; // 是否使用左侧日期栏
-</script>
-
 <script setup>
 import { useItemBox } from "../useItemBox";
 

@@ -35,7 +35,7 @@ export interface ThemeTemplateConfig {
   design: ("single-column" | "two-column" | "minimal" | "timeline" | "polished")[];
   /** 主题页面级外观声明，公共页面读取该声明而不是判断主题编号 */
   pageAppearance?: ThemePageAppearance;
-  /** 主题固定版式与纸张外观，不属于用户可编辑参数 */
+  /** 主题固定版式、装饰尺寸及内容能力，不属于用户可编辑参数 */
   decisions?: Partial<ThemeDecisions>;
   ui?: ThemeUiPreset; // 用户可调参数的主题默认值
 }

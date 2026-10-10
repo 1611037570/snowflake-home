@@ -6,6 +6,16 @@ export default {
   design: ["single-column", "polished"],
   description: "红色页面背景与白色正文容器。", // 主题说明
   decisions: { // 主题固定外观，不进入用户界面配置
+    regions: { // 区域装饰尺寸
+      main: { // 正文区域
+        inset: { // 区域四周装饰内边距
+          top: 12, // 上侧装饰内边距
+          right: 12, // 右侧装饰内边距
+          bottom: 12, // 下侧装饰内边距
+          left: 12, // 左侧装饰内边距
+        },
+      },
+    },
     layoutType: "topUserSingleColumn", // 个人信息通栏、正文单栏的布局编号
   },
   ui: {

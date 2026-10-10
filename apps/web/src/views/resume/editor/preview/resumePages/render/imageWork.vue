@@ -3,7 +3,6 @@ import { computed, ref, watch, nextTick } from "vue";
 import { useResizeObserver } from "@vueuse/core";
 import { useResumePreviewContext } from "../../shared/previewContext";
 import { getContentHeight } from "../../shared/constants";
-import { resolveRegionPadding } from "@/views/resume/theme/regionPadding";
 import { getRegionPaddingHeight } from "../engine/layout/regionHeights";
 
 const props = defineProps({
@@ -12,7 +11,7 @@ const props = defineProps({
   // 已校验的作品链接，为空时仅展示名称。
   url: { type: String, default: "" },
 });
-const { themeDecisions, ui, showPageNumber, theme: { linkUnderline } } = useResumePreviewContext();
+const { layout, themeDecisions, ui, showPageNumber, theme: { linkUnderline } } = useResumePreviewContext();
 const rootRef = ref(null);
 const captionRef = ref(null);
 const imageMaxHeight = ref(0);
@@ -23,7 +22,7 @@ const imageSizeRatio = computed(() => Math.min(100, Math.max(0, Number(props.ite
 const pageHeight = computed(() => {
   // 正文区域上下留白沿用引擎的同一份口径，不在这里另写一遍求和
   const regionPaddingHeight = getRegionPaddingHeight({
-    padding: resolveRegionPadding(ui.value, "main"),
+    padding: layout.value.regions.find((region) => region.id === "main")?.padding, // 读取结算后的留白，包含页面上边距注入
   });
   return Math.max(0, getContentHeight(
     Number(ui.value.page?.padding?.vertical) || 0,

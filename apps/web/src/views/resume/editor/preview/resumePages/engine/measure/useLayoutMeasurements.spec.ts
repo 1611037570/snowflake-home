@@ -18,6 +18,64 @@ vi.mock("@vueuse/core", () => ({
 }));
 
 describe("节点尺寸变化重新分页", () => {
+  it("栏内装饰尺寸与内容能力变化会作废旧测量", async () => {
+    const root = document.createElement("div");
+    const decisions = ref({
+      regions: { main: { columns: { left: { left: 0 /* 左侧装饰空间 */, right: 0 /* 右侧装饰空间 */ } } } }, // 栏几何声明
+      userContent: { renderer: "userHeading" /* 个人信息组件 */, split: "whole" /* 整块展示 */ }, // 内容能力
+      topDecoration: "", // 当前独立装饰编号
+    });
+    const scope = effectScope();
+    const engine = scope.run(() => useLayoutMeasurements({
+      measureRef: ref(root), // 不改变宿主尺寸
+      nodes: computed(() => []), // 不改变节点清单
+      watchSource: computed(() => ({ themeDecisions: decisions.value })), // 只改变固定能力
+    }))!;
+    try {
+      await engine.measure();
+      expect(engine.measureDone.value).toBe(true);
+      decisions.value.regions.main.columns.left.left = 30;
+      expect(engine.measureDone.value).toBe(false);
+      await engine.measure();
+      decisions.value.userContent.renderer = "twoColumnUser";
+      expect(engine.measureDone.value).toBe(false);
+      await engine.measure();
+      decisions.value.topDecoration = "band";
+      expect(engine.measureDone.value).toBe(false);
+    } finally {
+      engine.stop();
+      scope.stop();
+    }
+  });
+
+  it("独立装饰按真实高度测量，异步增高后更新首页占位", async () => {
+    const root = document.createElement("div");
+    root.innerHTML = '<div data-layout-decoration></div>';
+    const decoration = root.firstElementChild as HTMLElement;
+    let height = 108;
+    vi.spyOn(decoration, "getBoundingClientRect").mockImplementation(() => new DOMRect(0, 0, 794, height));
+    const scope = effectScope();
+    const engine = scope.run(() => useLayoutMeasurements({
+      measureRef: ref(root), // 装饰测量宿主
+      nodes: computed(() => []), // 装饰不属于业务节点
+      watchSource: computed(() => ({})), // 保持页面配置不变
+    }))!;
+    try {
+      await engine.measure();
+      expect(engine.decorationHeight.value).toBe(108);
+      expect(unref(resize.targets)).toContain(decoration);
+      height = 156;
+      resize.notify!();
+      await nextTick();
+      await engine.measure();
+      expect(engine.decorationHeight.value).toBe(156);
+      expect(engine.measurements.value.size).toBe(0);
+    } finally {
+      engine.stop();
+      scope.stop();
+    }
+  });
+
   it("宿主高度不变时异步内容增高仍触发测量和换页", async () => {
     const root = document.createElement("div");
     root.style.minHeight = "1123px";

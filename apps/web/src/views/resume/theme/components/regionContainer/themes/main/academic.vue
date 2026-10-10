@@ -1,22 +1,3 @@
-<script>
-import { defaultPaddingHorizontal } from "@/stores/modules/resume/config/uiConfig";
-
-// 正文区域留白由组件声明，分页与渲染读取同一份尺寸，容器据此施加内边距。
-const regionPadding = {
-  top: 0, // 页眉分界线与首个模块之间的间距由布局结算
-  right: 0, // 左右留白沿用页面设置
-  bottom: 0, // 底部留白沿用页面设置与页脚预留空间
-  left: 0, // 左右留白沿用页面设置
-};
-export default {
-  regionPadding, // 区域装饰内边距
-  columnPadding: [
-    { left: 30, right: 0 }, // 左栏底纹内的内容留白
-    { left: 30, right: 0 }, // 右栏底纹内的内容留白
-  ], // 双栏装饰尺寸统一交给布局结算
-};
-</script>
-
 <script setup>
 import { computed } from "vue";
 import { layoutStretchesColumns } from "@/views/resume/theme/layouts";
@@ -25,14 +6,13 @@ import { useResumePreviewContext } from "@/views/resume/editor/preview/shared/pr
 // 学术正文外观：居中双线页眉之下按分区排布，条目在自身外观里做引用式缩进。
 const {
   themeDecisions,
-  ui,
   theme: { themeColorSoft },
 } = useResumePreviewContext();
 // 栏底色只在双栏布局绘制：单栏下没有左右分区，不必区分栏位
 const isTwoColumn = computed(() => layoutStretchesColumns(themeDecisions.value.layoutType));
 const regionStyle = computed(() => ({
   "--academic-region-band": themeColorSoft.value, // 双栏底色，主题色一成的浅色面
-  "--academic-column-bleed": `${Math.max(0, Number(ui.value?.page?.padding?.horizontal ?? defaultPaddingHorizontal) || 0)}px`, // 右栏底色延伸到纸张右边缘的距离
+  "--academic-column-bleed": "var(--resume-page-inset-horizontal)", // 右栏底色延伸到纸张右边缘的距离
 }));
 </script>
 
@@ -60,7 +40,7 @@ const regionStyle = computed(() => ({
   position: absolute;
   z-index: -1;
   top: 0;
-  right: -12px;
+  right: calc(-1 * var(--resume-column-gap-half));
   bottom: calc(-1 * var(--resume-bottom-space, 0px));
   left: 0;
   background-color: var(--academic-region-band);
@@ -70,7 +50,7 @@ const regionStyle = computed(() => ({
 /* 右栏底色压住栏间距并向右延伸到纸张边缘，底边同样停在页脚上方 */
 .academic-main--two-column :deep(> * + *)::before {
   right: calc(-1 * var(--academic-column-bleed, 0px));
-  left: -12px;
+  left: calc(-1 * var(--resume-column-gap-half));
   background-color: color-mix(in srgb, var(--academic-region-band) 55%, transparent);
 }
 </style>

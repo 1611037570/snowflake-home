@@ -14,6 +14,7 @@ import {
   defaultPageBackground,
 } from "@/stores/modules/resume/config/uiConfig";
 import PagePattern from "@/views/resume/theme/components/pageContainer/index.vue";
+import PageFooter from "@/views/resume/theme/components/pageFooter/index.vue";
 import { layoutStretchesColumns } from "@/views/resume/theme/layouts";
 import { resolveThemePageAppearance } from "@/views/resume/theme";
 import { getContrastTextColor } from "@/views/resume/theme/useResumeTheme";
@@ -156,7 +157,7 @@ watch(
       :class="{ 'absolute inset-x-0 bottom-0': fullHeightColumns }"
       :style="{ height: `${PAGE_NUMBER_HEIGHT}px` }"
     >
-      {{ footerText }}
+      <PageFooter :text="footerText" />
     </div>
   </div>
 </template>

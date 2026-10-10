@@ -1,11 +1,3 @@
-<script>
-// 设置限制与当前外观一起声明，界面保留选项并说明无法调整的原因。
-const unsupportedSettings = {
-  "user.infoLayout": "themeFixedContactLayout", // 个人资料固定使用单列网格
-};
-export default { unsupportedSettings };
-</script>
-
 <script setup>
 import { computed } from "vue";
 import UserAvatar from "./userAvatar.vue";

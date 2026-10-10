@@ -6,6 +6,7 @@ export default {
   design: ["single-column", "polished"], // 模板页的分类筛选标签
   description: "顶部标语色带搭配飘带底沿，适合突出个人主张的通用简历。", // 主题说明
   decisions: { // 主题固定外观，不进入用户界面配置
+    topDecoration: "sloganBand", // 首页顶部独立品牌标语装饰
     layoutType: "topUserSingleColumn", // 标语与个人信息各自独占通栏区域
   },
   ui: {

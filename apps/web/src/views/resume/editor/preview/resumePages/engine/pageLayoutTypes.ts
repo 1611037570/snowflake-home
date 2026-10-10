@@ -35,7 +35,7 @@ export interface PageLayoutConfig {
   pagePadding: BoxSpacing;
   /** 页面同一区域中各栏之间的水平间距 */
   columnGap: number;
-  /** 首页从纸张顶边开始占据整宽的区域编号，未命中时为 null */
+  /** 首页通栏占位编号，独立装饰使用 decoration，业务区域使用自身编号，未命中时为 null */
   fullBleedRegionId?: string | null;
   /** 页面区域配置 */
   regions: RegionConfig[];
@@ -49,6 +49,8 @@ export interface RegionConfig {
   order: number;
   /** 区域高度的计算方式 */
   height: RegionHeight;
+  /** 区域使用纸张全宽或页面边距以内的内容宽度，缺省使用内容宽度 */
+  widthMode?: "page" | "content";
   /** 区域四周的内部留白：同时扣除栏宽与每页可用高度，是区域几何的唯一来源 */
   padding?: BoxSpacing;
   /** 区域与前一区域之间的额外间距，未声明时两个区域自然相接 */

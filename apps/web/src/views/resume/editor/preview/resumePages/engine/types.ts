@@ -38,6 +38,10 @@ export interface LayoutNode {
   sourceItemIndex?: number;
   /** 节点类型 */
   type: LayoutNodeType;
+  /** 内容语义编号，由适配器声明，渲染器据此选组件，分页算法不读取 */
+  contentKind?: string;
+  /** 内容组件支持的拆分方式，整块组件不得生成或消费内部断点 */
+  splitMode?: "whole" | "blocks";
   /** 节点落在后续页面首位时隐藏自身占位 */
   hideWhenPageLeading?: boolean;
   /** 节点实际内容，由具体节点类型自行约定结构 */

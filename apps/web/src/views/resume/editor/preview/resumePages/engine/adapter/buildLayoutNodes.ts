@@ -8,25 +8,6 @@ import { registerAcademicModuleAdapters } from "./academicModules";
 import { registerExperienceModuleAdapters } from "./experienceModules";
 import { registerOtherModuleAdapters } from "./otherModules";
 import { registerRichTextModuleAdapters } from "./richTextModules";
-import { hasThemeSlogan } from "@/views/resume/theme/components/sloganModule/registry";
-
-const PARAGRAPH_SPACING_MODULE_KEYS = new Set([
-  "skill",
-  "advantage",
-  "work",
-  "project",
-  "publication",
-  "ip",
-  "education",
-  "account",
-  "honor",
-  "image",
-  "video",
-]);
-
-/** 判断模块是否需要在内容前添加独立段间距行。 */
-const usesParagraphSpacing = (moduleKey: string): boolean =>
-  PARAGRAPH_SPACING_MODULE_KEYS.has(moduleKey) || moduleKey.startsWith("custom_");
 
 /**
  * 在模块每个内容条目前插入段间距节点。
@@ -35,7 +16,7 @@ const usesParagraphSpacing = (moduleKey: string): boolean =>
  */
 const addParagraphSpacingRows = (nodes: LayoutNode[], height: number): LayoutNode[] => {
   const first = nodes[0];
-  if (!first || height <= 0 || !usesParagraphSpacing(first.sourceModuleKey)) return nodes;
+  if (!first || height <= 0) return nodes;
   // 每个条目独立保留段间距，避免同一模块的后续条目紧贴前一条目。
   return nodes.flatMap((node) => {
     const spacer: LayoutNode = {
@@ -64,13 +45,6 @@ export const createResumeLayoutAdapterRegistry = (): LayoutAdapterRegistry => {
   return registry;
 };
 
-/** 不渲染模块标题的模块：个人信息与顶部标语由外观自带标题排版 */
-const NO_MODULE_TITLE_KEYS = new Set(["user", "slogan"]);
-
-/** 把模块标题作为独立节点插到模块最前：标题与模块内容之间不插入模块间距，由同一模块 key 保证 */
-const insertModuleTitle = (moduleKey: string, nodes: LayoutNode[]): LayoutNode[] =>
-  NO_MODULE_TITLE_KEYS.has(moduleKey) ? nodes : [createModuleTitleNode(moduleKey), ...nodes];
-
 /** 上一轮生成的节点与签名，用于复用内容未变的节点对象 */
 let lastNodesById = new Map<string, LayoutNode>();
 let lastSignatures = new Map<string, string>();
@@ -82,6 +56,7 @@ let lastSignatures = new Map<string, string>();
 const createNodeSignature = (node: LayoutNode): string =>
   JSON.stringify([
     node.type,
+    node.contentKind, // 内容组件语义参与节点复用签名
     node.sourceModuleKey,
     Boolean(node.hideWhenPageLeading),
     node.payload,
@@ -122,18 +97,14 @@ export const buildLayoutNodes = ({
   config?: unknown;
   registry?: LayoutAdapterRegistry;
 }): LayoutNode[] => {
-  // 主题编号对应内置标语组件时自动生成标语节点，无需简历配置额外提供模块。
-  const themeSlogan = hasThemeSlogan((ui as any)?.theme?.template);
-  const sloganModuleKeys = themeSlogan && !moduleKeys.includes("slogan")
-    ? ["slogan", ...moduleKeys]
-    : moduleKeys;
   // 节点仅由真实模块清单生成，主题只负责外观与栏位分配。
-  const nextNodes = sloganModuleKeys.flatMap((moduleKey) => {
+  const nextNodes = moduleKeys.flatMap((moduleKey): LayoutNode[] => {
     const adapter = registry.resolve(moduleKey);
     if (!adapter) return [];
     const nodes = adapter({ moduleKey, data, ui, config });
+    const policy = registry.resolvePolicy(moduleKey); // 模块装配能力只在注册处维护
     const spacing = Number((ui as any)?.page?.spacing?.paragraph);
-    if (nodes.length === 0 && !NO_MODULE_TITLE_KEYS.has(moduleKey)) {
+    if (nodes.length === 0 && policy.title) {
       // 空模块保留零高占位与标题，避免模块无内容时标题从预览中消失。
       return [
         createModuleTitleNode(moduleKey),
@@ -146,10 +117,10 @@ export const buildLayoutNodes = ({
         },
       ];
     }
-    return insertModuleTitle(
-      moduleKey,
-      addParagraphSpacingRows(nodes, Number.isFinite(spacing) ? Math.max(0, spacing) : 0),
-    );
+    const contentNodes = policy.paragraphSpacing
+      ? addParagraphSpacingRows(nodes, Number.isFinite(spacing) ? Math.max(0, spacing) : 0)
+      : nodes;
+    return policy.title ? [createModuleTitleNode(moduleKey), ...contentNodes] : contentNodes;
   });
 
   const reused = reuseUnchangedNodes(nextNodes, lastNodesById, lastSignatures);

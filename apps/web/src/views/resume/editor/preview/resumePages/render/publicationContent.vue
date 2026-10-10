@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import ItemTags from "../../components/itemTags.vue";
+import ItemDate from "../../components/itemDate.vue";
 import ItemTitle from "../../components/itemTitle.vue";
 import InlineInfoList from "../../components/inlineInfoList.vue";
 import ResumeField from "../../components/resumeField/index.vue";
@@ -25,7 +26,7 @@ const props = defineProps({
 
 const {
   data: previewData,
-  theme: { innerSpacingStyle, dateStyle, datePosition, linkUnderline, fontValue, infoSeparator },
+  theme: { innerSpacingStyle, dateStyle, datePosition, linkUnderline, infoSeparator },
 } = useResumePreviewContext();
 
 // 可跳转的链接协议白名单
@@ -61,6 +62,9 @@ const hasVenueRow = computed(() =>
 );
 // 索引标签是否可见
 const hasTagRow = computed(() => Array.isArray(props.item.indexTags) && props.item.indexTags.length > 0);
+// 可选行按实际存在的顺序编号，避免缺少作者或载体时分片漏行。
+const venueBlockIndex = computed(() => 1 + (authorItems.value.length ? 1 : 0));
+const tagBlockIndex = computed(() => venueBlockIndex.value + (hasVenueRow.value ? 1 : 0));
 // 正文块序号：头部块按实际存在的行顺延，与测量层的块序保持一致
 const bodyBlockIndex = computed(
   () =>
@@ -96,17 +100,7 @@ const contentSpacingStyle = computed(() => {
     <div class="min-w-0 flex-1">
       <ItemTitle :name="item.title" :emphasis="isTimeline || datePosition !== 'left'" />
     </div>
-    <div
-      class="flex max-w-full min-w-0 flex-wrap items-center"
-      :class="isTimeline ? 'resume-timeline-date' : datePosition === 'left' ? 'order-first' : ''"
-    >
-      <span
-        :class="{ 'font-bold': datePosition === 'left' && !isTimeline }"
-        :style="datePosition === 'left' && !isTimeline ? fontValue(1) : undefined"
-      >
-        {{ publishTime }}
-      </span>
-    </div>
+    <ItemDate :value="publishTime" :date-rail="isTimeline" />
   </div>
 
   <!-- 块二：作者署名与本人位次、发表状态 -->
@@ -123,7 +117,7 @@ const contentSpacingStyle = computed(() => {
 
   <!-- 块三：发表载体与论文链接，载体名按学术惯例斜体 -->
   <div
-    v-if="hasVenueRow && showItemHeader && isBlockVisible(2)"
+    v-if="hasVenueRow && showItemHeader && isBlockVisible(venueBlockIndex)"
     class="flex flex-wrap items-center justify-between gap-3"
     :style="innerSpacingStyle"
   >
@@ -155,7 +149,7 @@ const contentSpacingStyle = computed(() => {
 
   <!-- 块四：索引与分区标签 -->
   <div
-    v-if="hasTagRow && showItemHeader && isBlockVisible(3)"
+    v-if="hasTagRow && showItemHeader && isBlockVisible(tagBlockIndex)"
     class="flex flex-wrap items-center gap-3"
     :style="innerSpacingStyle"
   >
@@ -167,14 +161,3 @@ const contentSpacingStyle = computed(() => {
     <ResumeField :model-value="contentHtml" html />
   </div>
 </template>
-
-<style scoped>
-/* 日期绝对定位在条目的预留栏内，不参与右侧内容的高度计算。 */
-.resume-timeline-date {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: calc(var(--timeline-rail-width) - 24px);
-  opacity: 0.7;
-}
-</style>

@@ -27,10 +27,6 @@ export const resolveRegionAppearanceId = (
     ? themeId
     : "default";
 
-/** 由区域外观组件声明首页是否占据纸张顶部。 */
-export const resolveRegionFillsPageTop = (themeId: unknown, slot: RegionSlotId): boolean =>
-  Boolean(resolveRegionAppearance(themeId, slot).fillsPageTop);
-
 /** 按区域和主题编号取得组件。 */
 export const resolveRegionAppearance = (
   themeId: unknown,

@@ -6,6 +6,7 @@ export default {
   design: ["single-column", "polished"], // 模板列表分类标签
   description: "青色顶带与圆形图标标题，每个模块的正文共用白色圆角卡片。", // 主题说明
   decisions: { // 主题固定外观，不进入用户界面配置
+    topDecoration: "tealCard", // 首页顶部独立青色色带
     layoutType: "topUserSingleColumn", // 顶部个人信息通栏，正文单栏
   },
   ui: { // 主题覆盖的界面配置

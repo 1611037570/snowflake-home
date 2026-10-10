@@ -1,7 +1,7 @@
 <script setup>
 import { computed } from "vue";
 import { useResumePreviewContext } from "@/views/resume/editor/preview/shared/previewContext";
-import { resolveItemAppearance, resolveItemAppearanceUsesDateRail } from "./registry";
+import { resolveItemAppearance } from "./registry";
 
 const props = defineProps({
   // 分片覆盖的块区间：续段不画上圆角、不补上内边距
@@ -27,13 +27,14 @@ const props = defineProps({
 });
 
 const {
+  themeDecisions,
   theme: { themeTemplate },
 } = useResumePreviewContext();
 // 条目外观按主题编号解析，未登记的主题走 default 组件
 const appearance = computed(() => resolveItemAppearance(themeTemplate.value));
-// 日期栏由条目外观自己声明，只对分组条目启用，分发器不再维护主题名单。
+// 日期栏直接消费当前主题声明，只对分组条目启用。
 const timeline = computed(
-  () => resolveItemAppearanceUsesDateRail(themeTemplate.value) && props.nodeType === "group",
+  () => Boolean(themeDecisions.value.usesDateRail) && props.nodeType === "group",
 );
 </script>
 

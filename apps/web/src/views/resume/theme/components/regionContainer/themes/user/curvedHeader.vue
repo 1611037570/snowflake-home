@@ -1,41 +1,16 @@
-<script>
-// 页面上边距由引擎注入到区域上留白，弧形背景仍铺到纸张顶边。
-const regionPadding = {
-  top: 0, // 页面上边距由引擎注入
-  right: 0, // 右侧内容留白由栏宽控制
-  bottom: 0, // 页眉底部不增加区域留白
-  left: 0, // 左侧内容留白由栏宽控制
-};
-export default {
-  regionPadding, // 分页与页眉组件共用的顶部留白
-  fillsPageTop: true, // 弧形个人信息页眉从首页纸张顶边铺满整宽
-};
-</script>
-
 <script setup>
-import { computed } from "vue";
 import { useResumePreviewContext } from "@/views/resume/editor/preview/shared/previewContext";
-import { defaultPaddingHorizontal, defaultPaddingVertical } from "@/stores/modules/resume/config/uiConfig";
 
 const {
-  ui,
   theme: { themeColor },
 } = useResumePreviewContext();
-// 页面提供通栏位置，弧形页眉只维护水平内缩。
-const bandStyle = computed(() => {
-  const horizontal = Number(ui.value?.page?.padding?.horizontal ?? defaultPaddingHorizontal);
-  return {
-    paddingLeft: `${horizontal}px`,
-    paddingRight: `${horizontal}px`,
-  };
-});
-// 弧线按页面上边距加头像半高计算，避免将区域留白对象作为函数调用。
-const arcHeight = computed(() => `${Number(ui.value?.page?.padding?.vertical ?? defaultPaddingVertical) + 54}px`);
+// 弧线沿公共区域上留白绘制，只额外保留头像半高的装饰尺寸。
+const arcHeight = "calc(var(--resume-region-inset-top) + 54px)";
 </script>
 
 <template>
   <!-- 弧形仅作背景，个人信息仍参与正常排版。 -->
-  <div class="relative flex w-full min-w-0" :style="bandStyle">
+  <div class="relative flex w-full min-w-0">
     <svg
       aria-hidden="true"
       class="pointer-events-none absolute inset-x-0 top-0 w-full"

@@ -1,9 +1,3 @@
-<script>
-// 圆环时间轴条目需要左侧日期栏：能力由外观组件自己声明，分发器不再维护主题名单。
-const usesDateRail = true;
-export default { usesDateRail };
-</script>
-
 <script setup>
 import { computed } from "vue";
 import { useItemBox } from "../useItemBox";

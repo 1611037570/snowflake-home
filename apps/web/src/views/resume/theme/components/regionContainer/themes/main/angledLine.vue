@@ -1,14 +1,3 @@
-<script>
-// 竖线锚定正文栏左边缘，区域不再额外占用一列空白。
-const regionPadding = {
-  top: 0, // 正文顶部留白沿用页面设置
-  right: 0, // 正文右侧留白沿用页面设置
-  bottom: 0, // 正文底部留白沿用页面设置
-  left: 0, // 正文左侧距离仅使用用户页面边距
-};
-export default { regionPadding };
-</script>
-
 <script setup>
 import { computed } from "vue";
 import { layoutStretchesColumns } from "@/views/resume/theme/layouts";
