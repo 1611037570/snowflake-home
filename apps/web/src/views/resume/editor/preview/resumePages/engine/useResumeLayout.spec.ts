@@ -54,7 +54,6 @@ describe("双栏模块顺序同步", () => {
       ui: computed(() => ui.value), // 响应式布局配置
       themeDecisions: computed<ThemeDecisions>(() => ({
         layoutType: type as ThemeDecisions["layoutType"], // 主题固定版式
-        pageRadius: 24, // 主题纸张圆角
         pageBorder: { width: 0 /* 边框宽度 */, color: "#e9edf0" /* 边框颜色 */ },
       })), // 独立主题外观
       showPageNumber: computed(() => false), // 不显示页码

@@ -6,7 +6,6 @@ export default {
   design: ["single-column", "polished"], // 模板列表的分类标签
   description: "深色页眉搭配蓝色纵向引导线，突出个人信息和经历层次。", // 主题说明
   decisions: { // 主题固定外观，不进入用户界面配置
-    pageRadius: 0, // 纸张使用平直页角
     layoutType: "topUserSingleColumn", // 个人信息顶部通栏，正文单栏
   },
   ui: {

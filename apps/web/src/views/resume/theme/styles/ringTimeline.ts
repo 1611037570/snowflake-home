@@ -6,7 +6,6 @@ export default {
   design: ["single-column", "timeline"], // 模板列表分类标签：单栏、时间轴
   description: "顶部个人信息通栏，左侧贯穿时间轴用空心圆环标记每段经历的日期。", // 主题说明
   decisions: { // 主题固定外观，不进入用户界面配置
-    pageRadius: 0, // 平直页角，突出纵向轴线
     layoutType: "topUserSingleColumn", // 个人信息顶部通栏、正文单栏
   },
   ui: { // 主题相对默认配置的差异

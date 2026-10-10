@@ -19,7 +19,6 @@ import { defaultPaddingHorizontal, defaultPaddingVertical } from "@/stores/modul
 import { useResumePreviewContext } from "@/views/resume/editor/preview/shared/previewContext";
 
 const {
-  themeDecisions,
   ui,
   theme: { themeColorSoft },
 } = useResumePreviewContext();
@@ -27,7 +26,6 @@ const {
 const sidebarStyle = computed(() => ({
   "--sidebar-content-top": `${Math.max(0, Number(ui.value?.page?.padding?.vertical ?? defaultPaddingVertical) || 0)}px`, // 引擎注入的页面上边距，底色向上盖住它
   "--sidebar-bleed": `${Math.max(0, Number(ui.value?.page?.padding?.horizontal ?? defaultPaddingHorizontal) || 0)}px`, // 底色向左延伸到纸张边缘
-  "--sidebar-radius": `${Math.max(0, Number(themeDecisions.value.pageRadius) || 0)}px`, // 底色左下圆角
   "--sidebar-surface": themeColorSoft.value, // 左栏浅色底纹
 }));
 </script>
@@ -60,8 +58,6 @@ const sidebarStyle = computed(() => ({
   bottom: calc(-1 * var(--resume-bottom-space, 0px));
   left: calc(-1 * var(--sidebar-bleed));
   background-color: var(--sidebar-surface);
-  border-top-left-radius: var(--resume-page-top-radius, 0px);
-  border-bottom-left-radius: var(--sidebar-radius);
 }
 
 /* 左栏标题保持纯文字，右栏标题显示点状装饰。 */

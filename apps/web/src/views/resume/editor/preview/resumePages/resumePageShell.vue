@@ -77,15 +77,14 @@ const bleedsPageTop = computed(
 );
 // 预览整体带 scale 缩放，线宽会被一起缩小，按足够醒目的宽度标注
 const debugOutlineStyle = { outline: "4px dashed var(--sf-error)", outlineOffset: "-1px" };
-// 纸张外观：圆角与边框都来自主题配置，边框画在页面盒子内圈并参与内容宽高
+// 纸张统一使用直角，主题边框画在页面盒子内圈并参与内容宽高
 const pageSurfaceStyle = computed(() => ({
-  borderRadius: `${Number(themeDecisions.value.pageRadius)}px`,
+  borderRadius: "0px", // 预览纸张固定为直角
   borderWidth: `${Math.max(0, Number(themeDecisions.value.pageBorder.width) || 0)}px`,
   borderStyle: "solid",
   borderColor: themeDecisions.value.pageBorder.color,
   "--resume-bottom-space": `${bottomSpace.value}px`, // 双栏内部为页脚和页面下留白预留的高度
   "--resume-page-top-space": bleedsPageTop.value ? props.styles.paddingStyle.paddingTop : "0px", // 栏底色覆盖纸张顶部留白
-  "--resume-page-top-radius": bleedsPageTop.value ? `${Number(themeDecisions.value.pageRadius)}px` : "0px", // 栏底色铺到顶边时沿用纸张顶部圆角
 }));
 // 底部空间由页尾与下边距共用：页尾更高时不再叠加下边距，下边距更大时只补足超出的部分
 const bottomSpacerHeight = computed(() => {

@@ -27,7 +27,6 @@ const isTwoColumn = computed(() => layoutStretchesColumns(themeDecisions.value.l
 const regionStyle = computed(() => ({
   "--academic-region-band": themeColorSoft.value, // 双栏底色，主题色一成的浅色面
   "--academic-column-bleed": `${Math.max(0, Number(ui.value?.page?.padding?.horizontal ?? defaultPaddingHorizontal) || 0)}px`, // 右栏底色延伸到纸张右边缘的距离
-  "--academic-page-radius": `${Math.max(0, Number(themeDecisions.value.pageRadius) || 0)}px`, // 栏底色沿用纸张圆角
 }));
 </script>
 
@@ -63,11 +62,10 @@ const regionStyle = computed(() => ({
   pointer-events: none;
 }
 
-/* 右栏底色压住栏间距并向右延伸到纸张边缘，底边同样停在页脚上方并沿用纸张右下圆角 */
+/* 右栏底色压住栏间距并向右延伸到纸张边缘，底边同样停在页脚上方 */
 .academic-main--two-column :deep(.resume-column + .resume-column)::before {
   right: calc(-1 * var(--academic-column-bleed, 0px));
   left: -12px;
-  border-bottom-right-radius: var(--academic-page-radius);
   background-color: color-mix(in srgb, var(--academic-region-band) 55%, transparent);
 }
 </style>

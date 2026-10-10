@@ -8,8 +8,6 @@ import { resumeThemeRegistry } from "./styles";
 export interface ThemeDecisions {
   /** 页面版式编号 */
   layoutType: PageLayoutTemplateId;
-  /** 纸张圆角，单位像素 */
-  pageRadius: number;
   /** 纸张边框宽度与颜色 */
   pageBorder: {
     /** 边框宽度，单位像素 */
@@ -24,7 +22,6 @@ export interface ThemeDecisions {
 // 固定外观默认值仅在主题层维护，不进入用户界面配置。
 export const DEFAULT_THEME_DECISIONS: ThemeDecisions = {
   layoutType: "singleColumn", // 默认页面版式
-  pageRadius: 24, // 默认纸张圆角，单位像素
   pageBorder: { // 默认纸张边框
     width: 0, // 默认不描边
     color: "#e9edf0", // 默认边框颜色
@@ -45,7 +42,6 @@ export const resolveThemeDecisions = (themeId?: string): ThemeDecisions => {
     layoutType: isPageLayoutTemplateId(layoutType)
       ? layoutType
       : DEFAULT_THEME_DECISIONS.layoutType,
-    pageRadius: Math.max(0, Number(themeDecisions.pageRadius ?? DEFAULT_THEME_DECISIONS.pageRadius) || 0),
     pageBorder: {
       width: Math.max(0, Number(themeDecisions.pageBorder?.width ?? DEFAULT_THEME_DECISIONS.pageBorder.width) || 0),
       color: themeDecisions.pageBorder?.color ?? DEFAULT_THEME_DECISIONS.pageBorder.color,

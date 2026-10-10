@@ -4,15 +4,11 @@ import { useResumePreviewContext } from "@/views/resume/editor/preview/shared/pr
 
 // 绛红标语组件直接占据纸张顶部，并自行绘制装饰带。
 const {
-  themeDecisions,
   theme: { themeColor },
 } = useResumePreviewContext();
 const bandStyle = computed(() => {
-  const radius = Math.max(0, Number(themeDecisions.value.pageRadius) || 0);
   return {
     height: "60px", // 装饰带自身的占位高度
-    borderTopLeftRadius: `${radius}px`, // 左上纸张圆角
-    borderTopRightRadius: `${radius}px`, // 右上纸张圆角
     backgroundColor: themeColor.value, // 装饰带底色
     backgroundImage: `linear-gradient(180deg, color-mix(in srgb, ${themeColor.value} 82%, black), ${themeColor.value})`, // 上深下浅的绛红色带
   };

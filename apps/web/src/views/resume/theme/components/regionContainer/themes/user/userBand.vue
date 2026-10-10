@@ -20,19 +20,15 @@ import { defaultPaddingHorizontal } from "@/stores/modules/resume/config/uiConfi
 // 个人信息通栏外观：让个人信息整块铺满页面宽度并铺上主题色底纹。
 // 页面提供通栏位置，组件只维护底纹和内部留白。
 const {
-  themeDecisions,
   ui,
   theme: { themeColor, themeColorContrast },
 } = useResumePreviewContext();
 
 const bandStyle = computed(() => {
   const horizontal = Number(ui.value?.page?.padding?.horizontal ?? defaultPaddingHorizontal);
-  const radius = Number(themeDecisions.value.pageRadius);
   return {
     paddingLeft: `${horizontal}px`,
     paddingRight: `${horizontal}px`,
-    borderTopLeftRadius: `${radius}px`,
-    borderTopRightRadius: `${radius}px`,
     backgroundColor: themeColor.value,
     color: themeColorContrast.value,
   };
