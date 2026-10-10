@@ -39,9 +39,9 @@
           <div
             class="animate-rise animate-rise--delay-three mt-9 flex flex-col justify-center gap-3 sm:flex-row lg:justify-start"
           >
-            <button
+            <router-link
+              to="/resume/template"
               class="group inline-flex cursor-pointer items-center justify-center gap-3 rounded-full bg-sf-theme px-6 py-3 font-semibold text-sf-theme-text transition-transform duration-300 hover:-translate-y-1"
-              @click="go"
             >
               {{ $t("resumeHomeCreateFree") }}
               <SfIcon
@@ -49,7 +49,7 @@
                 size="4"
                 class="transition-transform duration-300 group-hover:translate-x-1"
               />
-            </button>
+            </router-link>
             <a
               class="inline-flex items-center justify-center gap-3 rounded-full border border-sf-b bg-sf-primary px-6 py-3 font-semibold transition-colors duration-300 hover:bg-sf-bg"
               href="#journey"
@@ -220,13 +220,13 @@
             <p class="mt-3 leading-7 text-sf-text-2">
               {{ $t("resumeHomeClosingDescription") }}
             </p>
-            <button
+            <router-link
+              to="/resume/template"
               class="mt-9 inline-flex cursor-pointer items-center gap-3 rounded-full bg-sf-theme px-6 py-3 font-semibold text-sf-theme-text transition-transform duration-300 hover:-translate-y-1"
-              @click="go"
             >
               {{ $t("resumeHomeStartFree") }}
               <SfIcon icon="mingcute:arrow-right-line" size="4" />
-            </button>
+            </router-link>
           </div>
         </div>
       </section>
@@ -240,10 +240,8 @@ import { TransitionPresets, useIntersectionObserver, useTransition } from "@vueu
 import { themeTemplateList } from "@/views/resume/theme";
 import { $t } from "@/locales";
 import { resumeTemplateList } from "../template/data/list";
-import { useRouter } from "vue-router";
 import { computed, onMounted, ref } from "vue";
 
-const router = useRouter();
 const revealSections = ref([]);
 
 // 首页分别呈现内容范本与排版样式，避免将两者相乘成不真实的模板数量。
@@ -380,11 +378,6 @@ const featureGroups = computed(() => [
     ],
   },
 ]);
-
-// 跳转至模板选择页开始创建简历
-function go() {
-  router.push("/resume/template");
-}
 </script>
 
 <style scoped>
