@@ -154,7 +154,11 @@ export default ({ mode }: { mode: string }) => {
           data: {
             defaultLang: settings.defaultLanguage, // 默认语言
             // 初始 HTML 与客户端按同一入口路由选择产品信息。
-            siteMetadata: resolveSiteMetadata(settings.defaultRoute, settings.defaultLanguage, settings.defaultRoute),
+            siteMetadata: resolveSiteMetadata(
+              settings.defaultRoute,
+              settings.defaultLanguage,
+              settings.defaultRoute,
+            ),
           },
         },
       }),
@@ -198,6 +202,15 @@ export default ({ mode }: { mode: string }) => {
               restart: ["vite.config.ts"], // 监听这些文件的变化，触发服务器重启
             }),
           ]),
+      // 资源压缩配置：产出 gzip 静态压缩文件，配合服务端 gzip_static 使用
+      viteCompression({
+        verbose: false, // 输出压缩日志
+        disable: isProd ? false : true, // 生产环境启用
+        threshold: 8192, // 文件大小阈值
+        algorithm: "gzip", // 压缩算法
+        ext: ".gz", // 压缩文件后缀
+        deleteOriginFile: false, // 是否删除源文件
+      }),
     ],
     // 路径解析配置
     resolve: {
@@ -239,22 +252,6 @@ export default ({ mode }: { mode: string }) => {
             gzipSize: true, // 显示gzip压缩后的大小
             brotliSize: true, // 显示brotli压缩后的大小
           }) as any,
-          // 资源压缩配置：同时产出 gzip 与 brotli，兼容不同服务端的压缩协商
-          viteCompression({
-            verbose: false, // 输出压缩日志
-            disable: isProd ? false : true, // 生产环境启用
-            threshold: 10240, // 文件大小阈值
-            algorithm: "gzip", // 压缩算法
-            ext: ".gz", // 压缩文件后缀
-            deleteOriginFile: false, // 是否删除源文件
-          }),
-          viteCompression({
-            verbose: false, // 输出压缩日志
-            disable: isProd ? false : true, // 生产环境启用
-            threshold: 10240, // 文件大小阈值
-            algorithm: "brotliCompress", // 压缩算法
-            deleteOriginFile: false, // 是否删除源文件
-          }),
         ],
         output: {
           manualChunks: (id) => {
@@ -284,7 +281,9 @@ export default ({ mode }: { mode: string }) => {
             }
             // Vue 运行时生态：框架核心、路由、状态、语言包与组合式工具库，
             // 它们在入口静态依赖内，独立成包只是为了跨版本复用缓存，不会额外引入动态库
-            if (/\/node_modules\/(?:vue|vue-router|vue-i18n|pinia|@vueuse|@vue\/[a-z-]+)\//.test(id)) {
+            if (
+              /\/node_modules\/(?:vue|vue-router|vue-i18n|pinia|@vueuse|@vue\/[a-z-]+)\//.test(id)
+            ) {
               return "vendor-vue";
             }
             // 通用工具库：入口已静态依赖，成包后便于长期缓存
