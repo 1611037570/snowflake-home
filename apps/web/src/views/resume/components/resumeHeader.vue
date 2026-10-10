@@ -1,12 +1,11 @@
 <script setup>
 import { computed, ref, watch } from "vue";
 import { useMediaQuery } from "@vueuse/core";
-import { useRoute, useRouter } from "vue-router";
+import { useRoute } from "vue-router";
 import ProjectTitle from "./projectTitle.vue";
 import GithubStars from "./githubStars.vue";
 
 const route = useRoute();
-const router = useRouter();
 const drawerVisible = ref(false);
 const isMobile = useMediaQuery("(max-width: 767px)");
 
@@ -36,12 +35,6 @@ const navList = [
 // 当前高亮导航，以当前路由路径为准。
 const activeNavIndex = computed(() => navList.findIndex((item) => route.path === item.path));
 
-// 选择导航后关闭抽屉，包括再次点击当前页面。
-const navigate = (path) => {
-  drawerVisible.value = false;
-  router.push(path);
-};
-
 // 路由切换或恢复桌面宽度时收起移动导航。
 watch([() => route.path, isMobile], () => {
   drawerVisible.value = false;
@@ -69,16 +62,17 @@ watch([() => route.path, isMobile], () => {
       <ProjectTitle class="hidden md:flex" url="/resume" />
 
       <nav class="hidden min-w-0 items-center gap-3 md:flex">
-        <SfSpan
+        <!-- 使用 router-link 渲染为真实 a 标签，便于搜索引擎抓取站内链接 -->
+        <router-link
           v-for="(item, index) in navList"
           :key="item.path"
-          class="h-9 shrink-0 cursor-pointer text-[16px]"
-          :active="index === activeNavIndex"
-          :underline-height="1"
-          @click="navigate(item.path)"
+          :to="item.path"
+          class="shrink-0"
         >
-          {{ $t(item.key) }}
-        </SfSpan>
+          <SfSpan class="h-9 cursor-pointer text-[16px]" :active="index === activeNavIndex" :underline-height="1">
+            {{ $t(item.key) }}
+          </SfSpan>
+        </router-link>
       </nav>
 
       <div class="ml-auto flex shrink-0 items-center gap-3">
@@ -100,17 +94,18 @@ watch([() => route.path, isMobile], () => {
     destroy-on-close
   >
     <nav class="flex flex-col gap-3 text-sf-text">
-      <button
+      <!-- 使用 router-link 渲染为真实 a 标签，便于搜索引擎抓取站内链接 -->
+      <router-link
         v-for="(item, index) in navList"
         :key="item.path"
-        type="button"
+        :to="item.path"
         class="cursor-pointer rounded-xl px-3 py-3 text-left font-bold hover:bg-sf-bg-hover"
         :class="index === activeNavIndex ? 'bg-sf-theme-3 text-sf-theme' : ''"
         :aria-current="index === activeNavIndex ? 'page' : undefined"
-        @click="navigate(item.path)"
+        @click="drawerVisible = false"
       >
         {{ $t(item.key) }}
-      </button>
+      </router-link>
     </nav>
   </el-drawer>
 </template>
