@@ -1,6 +1,6 @@
 import { Injectable, OnModuleDestroy, OnModuleInit } from '@nestjs/common'
 import Redis from 'ioredis'
-import { baseConfig } from '../../config/base.config'
+import { config } from '../../configs'
 
 @Injectable()
 export class RedisService implements OnModuleInit, OnModuleDestroy {
@@ -8,10 +8,10 @@ export class RedisService implements OnModuleInit, OnModuleDestroy {
 
   onModuleInit() {
     this.client = new Redis({
-      host: baseConfig.redis.host,
-      port: baseConfig.redis.port,
-      password: baseConfig.redis.password,
-      db: baseConfig.redis.db,
+      host: config.redis.host,
+      port: config.redis.port,
+      password: config.redis.password,
+      db: config.redis.db,
     })
   }
 

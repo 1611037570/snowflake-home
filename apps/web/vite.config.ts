@@ -1,3 +1,4 @@
+import { readEnvironment } from "./src/configs/env";
 // 路径处理模块
 import { fileURLToPath, URL } from "node:url";
 // Node文件系统模块
@@ -91,19 +92,19 @@ export default ({ mode }: { mode: string }) => {
   const env = loadEnv(mode, process.cwd());
   const isProd = mode === "production";
   // 从环境变量中提取配置项
-  const { VITE_PORT, VITE_BASE_URL, VITE_DEFAULT_LANGUAGE, VITE_DEFAULT_ROUTE } = env;
+  const settings = readEnvironment(env);
   return defineConfig({
     // 将 .awebp（动画 webp）视为静态资源
     assetsInclude: ["**/*.awebp"],
     // 基础路径配置
-    base: VITE_BASE_URL,
+    base: settings.baseUrl,
     // 后台文件封装使用模块输出，支持封装库的按需依赖。
     worker: {
       format: "es", // 后台脚本模块格式
     },
     // 开发服务器配置
     server: {
-      port: Number(VITE_PORT), // 端口号
+      port: settings.port, // 端口号
       host: true, // 允许外部访问
       open: true, // 自动打开浏览器
       hmr: true, // 启用服务端渲染
@@ -122,9 +123,9 @@ export default ({ mode }: { mode: string }) => {
         // 注入 HTML 变量（HTML 中通过 <%= 变量名 %> 使用）
         inject: {
           data: {
-            defaultLang: VITE_DEFAULT_LANGUAGE, // 默认语言
+            defaultLang: settings.defaultLanguage, // 默认语言
             // 初始 HTML 与客户端按同一入口路由选择产品信息。
-            siteMetadata: resolveSiteMetadata(VITE_DEFAULT_ROUTE, VITE_DEFAULT_LANGUAGE || "zh", VITE_DEFAULT_ROUTE),
+            siteMetadata: resolveSiteMetadata(settings.defaultRoute, settings.defaultLanguage, settings.defaultRoute),
           },
         },
       }),

@@ -1,3 +1,4 @@
+import { env } from "../env";
 // 服务商展示名映射（用于无别名且无模型名时的兜底展示）
 export const PROVIDER_NAMES: Record<string, string> = {
   snowflake: "雪花服务",
@@ -10,7 +11,7 @@ export const PROVIDER_NAMES: Record<string, string> = {
 export const snowflake = {
   baseUrl: "https://api.deepseek.com/chat/completions",
   provider: "openai",
-  apiKey: "sk-f00b980cb4544e1a97b9af782f4a708d",
+  apiKey: env.aiApiKey, // 从本地环境读取密钥，保留当前前端直连方式
   model: "deepseek-v4-flash",
   protocol: "chatCompletions" as const,
 };

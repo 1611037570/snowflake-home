@@ -1,3 +1,4 @@
+import { config } from "@/configs";
 import dayjs from "dayjs";
 import { defineStore } from "pinia";
 import { computed, ref } from "vue";
@@ -42,7 +43,7 @@ export const useSystemStore = defineStore(
     const getVersion = async (): Promise<string> => {
       try {
         const timestamp = new Date().getTime();
-        const res = await fetch(`${import.meta.env.BASE_URL}version.json?t=${timestamp}`);
+        const res = await fetch(`${config.app.assetBaseUrl}version.json?t=${timestamp}`);
         const data = await res.json();
         return data.version;
       } catch (error) {
@@ -57,7 +58,7 @@ export const useSystemStore = defineStore(
      */
     const checkVersionUpdate = async () => {
       // 非生产环境跳过版本检测，dev 无需请求 version.json
-      if (!import.meta.env.PROD) return;
+      if (!config.app.prod) return;
       try {
         // 使用新的getVersion方法获取版本号
         const newVersion = await getVersion();

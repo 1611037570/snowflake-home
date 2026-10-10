@@ -1,5 +1,4 @@
 import { DynamicModule, Module } from '@nestjs/common'
-import { ConfigModule } from '@nestjs/config'
 import { TypeOrmModule } from '@nestjs/typeorm'
 import { AppController } from './app.controller'
 import { AppService } from './app.service'
@@ -10,16 +9,14 @@ import { UserModule } from './modules/user/user.module'
 import { FeedbackModule } from './modules/feedback/feedback.module'
 import { RedisModule } from './shared/redis/redis.module'
 import { RsaModule } from './shared/rsa/rsa.module'
-import { baseConfig } from './config/base.config'
+import { config } from './configs'
 import { PdfModule } from './modules/resume/pdf/pdf.module'
 import { StatsModule } from './modules/resume/stats/stats.module'
-import { resumeConfig } from './modules/resume/resume.config'
 import { Action } from './modules/resume/entities/action.entity'
 import { Visitor } from './modules/resume/entities/visitor.entity'
 
 @Module({
   imports: [
-    ConfigModule.forRoot({ isGlobal: true }), // 全局配置
     // RedisModule,
     // RsaModule,
     DemoModule,
@@ -40,7 +37,7 @@ export class AppModule {
         ...(databaseEnabled
           ? [
               TypeOrmModule.forRoot({
-                ...baseConfig.mysql,
+                ...config.database.main,
                 autoLoadEntities: true,
               }),
               FeedbackModule,
@@ -51,7 +48,7 @@ export class AppModule {
               // 简历库是独立数据源，显式列出实体避免把基础库实体也建进去
               TypeOrmModule.forRoot({
                 name: 'resume',
-                ...resumeConfig.mysql,
+                ...config.database.resume,
                 entities: [Visitor, Action],
               }),
               StatsModule,

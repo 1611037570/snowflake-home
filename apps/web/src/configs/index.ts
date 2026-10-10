@@ -1,3 +1,5 @@
+// 应用配置与已有导出使用同一个入口，不搬迁原有资源。
+export { config } from "./runtime";
 export * from "./modules/ai";
 export * from "./modules/base";
 export * from "./modules/user";

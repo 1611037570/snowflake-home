@@ -4,14 +4,14 @@ import { TypeOrmModule } from '@nestjs/typeorm'
 import { UserController } from './user.controller'
 import { UserService } from './user.service'
 import { User } from './user.entity'
-import { baseConfig } from '../../config/base.config'
+import { config } from '../../configs'
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([User]),
     JwtModule.register({
-      secret: baseConfig.jwt.secret,
-      signOptions: { expiresIn: baseConfig.jwt.expiresIn as any },
+      secret: config.jwt.secret,
+      signOptions: { expiresIn: config.jwt.expiresIn as any },
     }),
   ],
   controllers: [UserController],

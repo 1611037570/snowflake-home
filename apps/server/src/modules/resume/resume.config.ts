@@ -1,3 +1,4 @@
+import { env } from "../../configs/env"
 // 简历模块配置：本文件已入库，需与 base.config.ts 一样随代码提交，避免其他环境编译时找不到模块。
 export const resumeConfig = {
   // 简历库数据库配置（与基础库相互独立）
@@ -11,7 +12,7 @@ export const resumeConfig = {
     // 数据库用户名
     username: 'root',
     // 数据库密码
-    password: 'root',
+    password: env.resumePassword,
     // 数据库名称
     database: 'snowflake_resume',
     // 自动同步实体到数据库表结构（开发环境开启，生产环境建议关闭）
