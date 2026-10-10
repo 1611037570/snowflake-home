@@ -3,7 +3,7 @@
 const regionPadding = {
   top: 0, // 首个模块前不加留白，间距由布局结算
   right: 0, // 水平留白沿用页面配置
-  bottom: 12, // 正文与页尾预留空间之间的留白
+  bottom: 0, // 页尾空间由页面布局统一预留
   left: 0, // 水平留白沿用页面配置
 };
 export default { regionPadding };
