@@ -1,10 +1,29 @@
-import { describe, expect, it } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { DEFAULT_THEME_DECISIONS, type ThemeDecisions } from "@/views/resume/theme/themeDecisions";
 import { createResumeLayout } from "./createResumeLayout";
 import { resolveColumnWidths } from "./resolveColumnWidths";
 import { buildRegionFlows, type ColumnFlowPlan, type RegionFlowBuilder } from "./regionFlows";
 import { getContentHeight, RESUME_WIDTH } from "../../../shared/constants";
 import type { ColumnConfig } from "../pageLayoutTypes";
+
+// 几何用例只输入外观能力，不依赖任何真实主题的当前样式。
+const appearance = vi.hoisted(() => ({
+  padding: {} as Record<string, { top: number; right: number; bottom: number; left: number }>, // 各区域固定留白
+  fillsPageTop: false, // 个人信息区域是否贴纸张顶边
+  columnPadding: undefined as Array<{ left: number; right: number }> | undefined, // 按栏顺序输入的装饰留白
+}));
+vi.mock("@/views/resume/theme/components/regionContainer/registry", () => ({
+  resolveRegionAppearance: (_id: unknown, slot: string) => ({
+    regionPadding: appearance.padding[slot], // 用例输入的区域装饰留白
+    columnPadding: slot === "main" ? appearance.columnPadding : undefined, // 正文栏装饰留白
+  }),
+  resolveRegionFillsPageTop: () => appearance.fillsPageTop, // 用例输入的贴顶能力
+}));
+beforeEach(() => {
+  appearance.padding = {};
+  appearance.fillsPageTop = false;
+  appearance.columnPadding = undefined;
+});
 
 /**
  * 简历页几何基线
@@ -99,6 +118,43 @@ const createCase = (definition: CaseDefinition) => {
 };
 
 describe("简历页几何基线", () => {
+  it("栏装饰内边距按相同栏数分发，不改变区域间距或单栏结构", () => {
+    appearance.columnPadding = [{ left: 30, right: 0 }, { left: 48, right: 12 }];
+    const options = {
+      ui: {}, // 几何由固定能力提供
+      themeDecisions: { ...DEFAULT_THEME_DECISIONS, layoutType: "topUserTwoColumn" as const }, // 通用顶部双栏结构
+      moduleKeys: MODULE_KEYS, // 实际内容模块
+      paddingVertical: PADDING_VERTICAL, // 页面上下边距
+      paddingHorizontal: PADDING_HORIZONTAL, // 页面左右边距
+      gap: MODULE_GAP, // 公共模块间距
+    };
+    const layout = createResumeLayout(options);
+    expect(layout.regions[1]?.columns.map((column) => column.padding)).toEqual(appearance.columnPadding);
+    expect(layout.regions[1]?.gapBefore).toBe(MODULE_GAP);
+    const widths = [...resolveColumnWidths(layout, 746).values()];
+    // 两栏外部宽度仍均分，内容分别扣各自的装饰留白。
+    expect(widths.slice(-2).map((width, index) => width - appearance.columnPadding![index]!.left - appearance.columnPadding![index]!.right)).toEqual([331, 301]);
+    const single = createResumeLayout({ ...options, themeDecisions: { ...DEFAULT_THEME_DECISIONS, layoutType: "topUserSingleColumn" } });
+    expect(single.regions[1]?.columns[0]?.padding).toBeUndefined();
+  });
+
+  it("全部区域外观遵守统一尺寸契约，不覆盖公共区域间距", async () => {
+    const { regionAppearanceRegistry } = await vi.importActual<typeof import("@/views/resume/theme/components/regionContainer/registry")>("@/views/resume/theme/components/regionContainer/registry");
+    for (const components of Object.values(regionAppearanceRegistry)) {
+      for (const component of Object.values(components)) {
+        expect(component).not.toHaveProperty("gapBefore");
+        const padding = typeof component.regionPadding === "function" ? component.regionPadding({}) : component.regionPadding;
+        for (const value of Object.values(padding || {})) {
+          expect(Number.isFinite(value) && value >= 0).toBe(true);
+        }
+        for (const inset of component.columnPadding || []) {
+          expect(Number.isFinite(inset.left) && inset.left >= 0).toBe(true);
+          expect(Number.isFinite(inset.right) && inset.right >= 0).toBe(true);
+        }
+      }
+    }
+  });
+
   it("用户配置不能覆盖主题固定版式", () => {
     const layout = createResumeLayout({
       ui: { layout: { type: "singleColumn" } }, // 非法用户版式不会参与主题决策
@@ -326,11 +382,10 @@ describe("简历页几何基线", () => {
   });
 
   it("正文容器内边距同时扣栏宽与可用高度", () => {
+    appearance.padding.main = { top: 12, right: 12, bottom: 12, left: 12 };
     const snapshot = createCase({
       name: "主题声明正文区域留白",
-      ui: {
-        // 红框主题的正文外观声明四周 12 像素留白，分页与栏宽同时扣除
-        theme: { template: "frame" } },
+      ui: {}, // 区域能力由固定参数提供，不绑定真实主题
       themeDecisions: { // 用例主题固定外观
         ...DEFAULT_THEME_DECISIONS,
         layoutType: "topUserSingleColumn", // 主题固定页面版式
@@ -545,22 +600,21 @@ describe("简历页几何基线", () => {
     ]);
   });
 
-  it("斜角竖线主题不额外扣除正文栏宽", () => {
+  it("单侧装饰留白只扣栏宽，不扣可用高度", () => {
+    appearance.padding.main = { top: 0, right: 0, bottom: 0, left: 24 };
     const snapshot = createCase({
-      name: "斜角竖线正文沿用页面左右边距",
-      ui: {
-        // 区域不再为竖线额外预留空列，个人信息与正文使用相同栏宽。
-        theme: { template: "angledLine" } },
+      name: "单侧区域装饰留白",
+      ui: {}, // 通用单侧留白场景，不绑定真实主题
       themeDecisions: { // 用例主题固定外观
         ...DEFAULT_THEME_DECISIONS,
         layoutType: "topUserSingleColumn", // 主题固定页面版式
       },
     });
 
-    expect(snapshot.regions[1]?.padding).toEqual({ top: 0, right: 0, bottom: 0, left: 0 });
+    expect(snapshot.regions[1]?.padding).toEqual({ top: 0, right: 0, bottom: 0, left: 24 });
     expect(snapshot.columnWidths).toEqual([
       ["user-column", 746],
-      ["main-column", 746],
+      ["main-column", 722],
     ]);
     // 可用高度只扣上下留白与首屏模块间距：1063 − 通栏 300 − 正文上下留白 0 − 模块间距 12
     expect(snapshot.columnFlowHeights[1]).toEqual(["main-column", [[751, 300]]]);
@@ -591,8 +645,9 @@ describe("简历页几何基线", () => {
   });
 
   it("个人信息区域贴顶时页面上边距计入它的上留白", () => {
+    appearance.fillsPageTop = true;
     const layout = createResumeLayout({
-      ui: { theme: { template: "userBand" } },
+      ui: {}, // 贴顶能力由用例输入，不绑定真实主题
       themeDecisions: { // 用例主题固定外观
         ...DEFAULT_THEME_DECISIONS,
         layoutType: "topUserSingleColumn", // 主题固定页面版式

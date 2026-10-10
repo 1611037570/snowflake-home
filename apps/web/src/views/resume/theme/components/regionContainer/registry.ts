@@ -31,10 +31,6 @@ export const resolveRegionAppearanceId = (
 export const resolveRegionFillsPageTop = (themeId: unknown, slot: RegionSlotId): boolean =>
   Boolean(resolveRegionAppearance(themeId, slot).fillsPageTop);
 
-/** 读取区域组件声明的前置间距。 */
-export const resolveRegionGapBefore = (themeId: unknown, slot: RegionSlotId): number | undefined =>
-  resolveRegionAppearance(themeId, slot).gapBefore;
-
 /** 按区域和主题编号取得组件。 */
 export const resolveRegionAppearance = (
   themeId: unknown,

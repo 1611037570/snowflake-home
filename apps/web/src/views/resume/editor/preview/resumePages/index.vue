@@ -236,7 +236,15 @@ const columnConfigMap = computed(
 const getColumnStyle = (columnId) => {
   const width = columnWidths.value.get(columnId);
   if (width === undefined) return { flex: "1 1 0%" };
-  return { flex: `0 0 ${width}px`, width: `${width}px` };
+  const padding = columnConfigMap.value.get(columnId)?.padding;
+  // 栏宽包含装饰内边距，内容宽度由同一个边框盒约束，测量与预览各施加一次。
+  return {
+    flex: `0 0 ${width}px`, // 栏外部占用宽度
+    width: `${width}px`, // 栏外部宽度
+    boxSizing: "border-box", // 内边距包含在栏宽内
+    paddingLeft: `${padding?.left ?? 0}px`, // 左侧装饰内边距
+    paddingRight: `${padding?.right ?? 0}px`, // 右侧装饰内边距
+  };
 };
 const getColumnGap = (columnId) => columnConfigMap.value.get(columnId)?.gap || 0;
 // 首页顶端通栏区域由布局和区域组件共同声明。

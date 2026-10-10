@@ -4,7 +4,7 @@ import type { ThemeDecisions } from "@/views/resume/theme/themeDecisions";
 import { resolveRegionPadding } from "@/views/resume/theme/regionPadding";
 import {
   resolveRegionFillsPageTop,
-  resolveRegionGapBefore,
+  resolveRegionAppearance,
 } from "@/views/resume/theme/components/regionContainer/registry";
 import { resolveRegionSlot } from "@/views/resume/theme/regionSlots";
 
@@ -67,12 +67,16 @@ export const createResumeLayout = ({
     regions: layout.regions.map((region) => {
       const slot = resolveRegionSlot(region.id);
       const padding = resolveRegionPadding(ui, region.id);
-      // 主题显式声明 gapBefore 时以它为准（例如底板要与页眉自然衔接），否则模块之间按模块上下间距隔开
-      const regionGapBefore =
-        resolveRegionGapBefore(ui.theme?.template, slot) ??
-        (region.id === moduleGapRegionId ? gap : 0);
+      // 区域之间只使用公共模块间距；装饰内边距独立声明，不能覆盖它。
+      const regionGapBefore = region.id === moduleGapRegionId ? gap : 0;
+      const columnPadding = resolveRegionAppearance(ui.theme?.template, slot).columnPadding;
       return {
         ...region,
+        // 按相同栏数匹配装饰尺寸，不按主题名称判断，也不影响单栏布局。
+        columns: region.columns.map((column, index) => ({
+          ...column,
+          ...(columnPadding?.length === region.columns.length ? { padding: columnPadding[index] } : {}),
+        })),
         padding:
           region.id === topMarginRegionId
             ? { ...padding, top: padding.top + paddingVertical }

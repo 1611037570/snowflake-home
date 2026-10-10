@@ -1,7 +1,5 @@
 <script setup>
-import { computed } from "vue";
 import { useResumePreviewContext } from "@/views/resume/editor/preview/shared/previewContext";
-import { useUserFieldVisibility } from "../../userModule/useUserFieldVisibility";
 
 defineProps({
   /** 当前主题编号，供预览识别外观 */
@@ -27,23 +25,20 @@ defineProps({
   },
 });
 const {
-  data,
   theme: { fontValue, lineHeightValue },
 } = useResumePreviewContext();
-const { isUserFieldHidden } = useUserFieldVisibility();
-// 有头像时使用页眉自身的上留白，无头像时仍将姓名放在弧形背景下方。
-const hasAvatar = computed(() => !isUserFieldHidden("avatar") && !!data.value?.user?.data?.avatar);
 </script>
 
 <template>
   <div
     class="resume-module-wrapper resume-user group group/module relative box-border w-full min-w-0"
-    :class="[moduleClass, hasAvatar ? 'pt-0' : 'pt-[114px]']"
+    :class="moduleClass"
     :data-module="moduleKey"
     :data-theme="themeId"
     :style="[lineHeightValue(), fontValue()]"
   >
     <slot name="actions" />
+    <!-- 头像是否显示不改变页面上边距，内容沿用公共个人信息排布。 -->
     <div class="curved-header__content relative w-full min-w-0">
       <slot />
     </div>

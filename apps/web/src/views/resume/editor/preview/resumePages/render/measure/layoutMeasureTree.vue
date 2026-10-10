@@ -7,12 +7,19 @@ import PagePattern from "@/views/resume/theme/components/pageContainer/index.vue
 import { PAGE_NUMBER_HEIGHT } from "../../../shared/constants";
 import type { LayoutNode } from "../../engine/types";
 import type { RegionPadding } from "@/views/resume/theme/regionPadding";
+import type { ColumnPadding } from "../../engine/pageLayoutTypes";
 
 const props = defineProps<{
   /** 测量宿主宽度，等于页面内容宽度 */
   width: number;
   /** 按栏位分组的节点：每个分组按自己的栏宽渲染，保证测量宽度与真实排版一致 */
-  groups: Array<{ id: string; width: number; nodes: LayoutNode[]; regionId?: string }>;
+  groups: Array<{
+    id: string; // 栏编号
+    width: number; // 栏外部宽度
+    nodes: LayoutNode[]; // 待测量内容节点
+    regionId?: string; // 所属区域编号
+    padding?: ColumnPadding; // 与预览共用的栏装饰内边距
+  }>;
   /** 首页从纸张顶边开始的区域编号；与分页和实际页面共用同一来源 */
   topRegionId?: string | null;
   /** 布局结算后的各区域留白，包含用户页面上边距 */
@@ -84,8 +91,8 @@ const regions = computed(() => {
         <div
           v-for="group in region.groups"
           :key="group.id"
-          class="flex shrink-0 flex-col"
-          :style="{ width: `${group.width}px` }"
+          class="box-border flex shrink-0 flex-col"
+          :style="{ width: `${group.width}px`, paddingLeft: `${group.padding?.left ?? 0}px`, paddingRight: `${group.padding?.right ?? 0}px` }"
         >
           <LayoutMeasureNode v-for="node in group.nodes" :key="node.id" :node="node" />
         </div>

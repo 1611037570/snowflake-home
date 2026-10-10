@@ -6,7 +6,13 @@ const regionPadding = {
   bottom: 0, // 底部留白沿用页面设置
   left: 0, // 左侧留白沿用页面设置
 };
-export default { regionPadding };
+export default {
+  regionPadding, // 区域装饰内边距
+  columnPadding: [
+    { left: 0, right: 0 }, // 左栏不添加装饰留白
+    { left: 48, right: 0 }, // 右栏竖线到内容的固定距离
+  ], // 双栏装饰尺寸统一交给布局结算
+};
 </script>
 
 <script setup>
@@ -29,7 +35,6 @@ const {
   box-sizing: border-box;
   align-self: stretch;
   position: relative;
-  padding-left: 48px;
   --teal-rail-title-offset: 48px;
 }
 
