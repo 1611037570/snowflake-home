@@ -3,6 +3,7 @@ import { $t } from "@/locales";
 type Translate = (key: string) => string;
 
 // 表单模板中的中文只作为默认源文案，运行时映射到页面语言包中的稳定 key。
+// 模板串内只允许出现映射条目：同名源文案只登记一条，经济学与法学既是学科门类也是专业名，与专业共用同一个键。
 const TEXT_KEYS_SOURCE = `
   个人信息: "personalInfo",
   顶部标语: "sloganModule",
@@ -132,10 +133,8 @@ const TEXT_KEYS_SOURCE = `
   请选择或输入专业: "majorPlaceholder",
   工学: "majorEngineering",
   理学: "majorScience",
-  经济学: "majorEconomics",
   管理学: "majorManagement",
   文学: "majorLiterature",
-  法学: "majorLaw",
   教育学: "majorEducation",
   医学: "majorMedicine",
   艺术学: "majorArts",
@@ -320,7 +319,6 @@ const TEXT_KEYS_SOURCE = `
   仅图标: "titleIconPlain",
   方形背景: "titleIconSquare",
   圆形背景: "titleIconCircle",
-  设计: "design",
   主题配色: "themeColors",
   细节调整: "detailAdjustments",
   标题图标样式: "titleIconMode",
@@ -420,13 +418,20 @@ const TEXT_KEYS_SOURCE = `
   海外授权: "ipTagOverseas",
 `;
 
+// 映射格式：一条「源文案: 文案键」，源文案含空格时用引号包裹，文案键始终用引号包裹。
+// 按整体配对解析而非逐行切分：格式化会把超长条目折成两行，逐行解析会把这类条目拆散丢弃。
+const TEXT_KEY_PATTERN = /(?:"([^"\n]+)"|([^"\n:]+?))\s*:\s*"([^"\n]+)"/g;
+// 无法配对的残留说明模板串里存在写坏的条目，此处直接报错，避免映射被静默丢掉。
+const TEXT_KEYS_RESIDUE = TEXT_KEYS_SOURCE.replace(TEXT_KEY_PATTERN, "").replace(/[,\s]/g, "");
+if (TEXT_KEYS_RESIDUE) {
+  throw new Error(`TEXT_KEYS_SOURCE 存在无法解析的条目：${TEXT_KEYS_RESIDUE}`);
+}
+
 const TEXT_KEYS = Object.fromEntries(
-  TEXT_KEYS_SOURCE.trim()
-    .split("\n")
-    .map((line) => {
-      const [source = "", key = ""] = line.trim().replace(/,$/, "").split(/:\s+/);
-      return [source.replace(/^"|"$/g, ""), key.replace(/^"|"$/g, "")];
-    }),
+  [...TEXT_KEYS_SOURCE.matchAll(TEXT_KEY_PATTERN)].map(([, quoted, bare, key]) => [
+    (quoted ?? bare).trim(),
+    key,
+  ]),
 );
 
 export function translateResumeEditorText(value: unknown, translate: Translate = $t): unknown {
