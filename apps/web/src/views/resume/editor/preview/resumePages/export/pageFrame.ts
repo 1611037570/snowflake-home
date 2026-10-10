@@ -12,13 +12,15 @@
 export const EDITOR_PAGE_FRAME_CLASS = "resume-page-editor-frame";
 
 /**
- * 移除根元素及其后代上的编辑器页边线。
+ * 移除根元素及其后代上的编辑器页边线与正文辅助线。
  * 页边线只由该类提供，摘掉类即完成清除；传入分页容器时覆盖容器内所有页面，传入单个页面克隆体时只处理该页面。
  * @param element 导出使用的根元素或页面克隆体
  */
 export const stripEditorPageFrame = <T extends HTMLElement>(element: T): T => {
-  [element, ...element.querySelectorAll<HTMLElement>(`.${EDITOR_PAGE_FRAME_CLASS}`)].forEach((frame) =>
-    frame.classList.remove(EDITOR_PAGE_FRAME_CLASS),
+  // 正文辅助线与间距调试同属编辑区提示，所有导出共用清理规则。
+  const debugOutlineClass = "resume-debug-content-outline";
+  [element, ...element.querySelectorAll<HTMLElement>(`.${EDITOR_PAGE_FRAME_CLASS}, .${debugOutlineClass}`)].forEach((frame) =>
+    frame.classList.remove(EDITOR_PAGE_FRAME_CLASS, debugOutlineClass),
   );
   return element;
 };
