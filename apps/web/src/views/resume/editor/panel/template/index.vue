@@ -89,7 +89,7 @@ const applyTemplate = (template) => {
       >
         <!-- 模板缩略图外框与简历页面保持相同宽高比，完整显示页面内容。 -->
         <div
-          class="relative mx-auto h-[218px] w-[156px] overflow-hidden rounded-3xl border-3 border-sf-transparent bg-sf-bg"
+          class="relative mx-auto h-[218px] w-[156px] overflow-hidden rounded-[4px] border-3 border-sf-transparent bg-sf-bg"
           :class="{ ' border-sf-theme!': isActive(template.id) }"
         >
           <ThumbPreview :item="template.item" @select="applyTemplate(template)" />
