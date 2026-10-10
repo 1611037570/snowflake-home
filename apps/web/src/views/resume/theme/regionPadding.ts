@@ -13,10 +13,6 @@ export interface RegionPadding {
   left: number;
 }
 
-interface RegionPaddingCapability {
-  regionPadding?: RegionPadding | ((ui?: Record<string, any>) => RegionPadding); // 区域组件声明的内部留白
-}
-
 const emptyRegionPadding: RegionPadding = {
   top: 0, // 无额外上留白
   right: 0, // 无额外右留白
@@ -29,7 +25,7 @@ const resolveAppearancePadding = (
   ui: Record<string, any> | undefined,
   slot: RegionSlotId,
 ): RegionPadding => {
-  const appearance = resolveRegionAppearance(ui?.theme?.template, slot) as unknown as RegionPaddingCapability;
+  const appearance = resolveRegionAppearance(ui?.theme?.template, slot);
   return typeof appearance.regionPadding === "function"
     ? appearance.regionPadding(ui)
     : appearance.regionPadding || emptyRegionPadding;

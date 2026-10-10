@@ -1,18 +1,12 @@
-import { createAppearanceRegistry } from "../appearanceRegistry";
-import DashedGridPattern from "./themes/dashedGrid.vue";
+import type { Component } from "vue";
+import { createFileAppearanceRegistry } from "../appearanceRegistry";
 import DefaultPattern from "./themes/default.vue";
-import VioletBiographyPattern from "./themes/violetBiography.vue";
 
-/**
- * 页面外观注册表：优先使用页面纹理编号，未指定时按主题编号查找。
- * 页面级背景由对应组件绘制，未登记时走 default。
- */
-export const pageAppearanceRegistry = createAppearanceRegistry({
-  default: DefaultPattern, // 不绘制图案
-  dashedGrid: DashedGridPattern, // 虚线网格纹理
-  violetBiography: VioletBiographyPattern, // 紫色履历的整页渐变底色
-  songElegance: DefaultPattern, // 宋韵雅致只保留纸张底色，不绘制背景横线
-});
+// 文件名即外观编号，未声明专属组件时复用默认外观。
+export const pageAppearanceRegistry = createFileAppearanceRegistry(
+  import.meta.glob<Component>("./themes/*.vue", { eager: true, import: "default" }),
+  DefaultPattern,
+);
 
 /** 解析页面外观组件 */
 export const resolvePageAppearance = (appearanceId: unknown) =>
