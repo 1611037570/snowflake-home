@@ -1,16 +1,16 @@
 <template>
-  <div class="w-dwh relative z-10 flex flex-col items-center bg-sf-primary p-36" id="project">
+  <div class="minimal-projects w-dwh relative z-10 flex flex-col items-center bg-sf-bg px-6 py-24 lg:px-12" id="project">
     <div
       v-for="(section, idx) in sections"
       :key="idx"
-      :class="['w-full max-w-[1200px]', { 'mb-10': idx !== sections.length - 1 }]"
+      :class="['minimal-project-group w-full max-w-[1080px]', { 'mb-12': idx !== sections.length - 1 }]"
     >
-      <div class="mb-3 flex items-center">
-        <div class="from-sf-border/50 mr-6 h-[1px] flex-1 bg-gradient-to-l to-transparent"></div>
+      <div class="mb-9 flex items-center justify-start">
+        <div class="hidden"></div>
         <SmallTitle :title="section.title" />
-        <div class="from-sf-border/50 ml-6 h-[1px] flex-1 bg-gradient-to-r to-transparent"></div>
+        <div class="ml-6 h-px flex-1 bg-sf-b"></div>
       </div>
-      <div class="grid grid-cols-2 gap-6">
+      <div class="grid grid-cols-1 gap-x-12 gap-y-3 md:grid-cols-2">
         <ProjectCard v-for="(item, index) in section.list" :key="index" :data="item" />
       </div>
     </div>
@@ -49,3 +49,12 @@ const sections = computed(() => [
   },
 ]);
 </script>
+
+<style scoped>
+/* 用留白、细线和文字层次统一后续区域。 */
+
+.minimal-projects { border-top: 1px solid var(--sf-border); scroll-margin-top: 80px; }
+.minimal-project-group :deep(h3) { margin: 0; font-size: 20px; font-weight: 500; letter-spacing: .06em; color: var(--sf-base); }
+.minimal-project-group :deep(h3 .sf-icon) { margin-right: 12px; color: var(--sf-text-2); }
+
+</style>

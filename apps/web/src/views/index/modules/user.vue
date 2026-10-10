@@ -16,39 +16,39 @@ const shootYears = computed(() => {
 </script>
 
 <template>
-  <div class="w-dwh flex-c relative z-10 overflow-hidden bg-sf-bg py-36 text-sf-text" id="about">
+  <div class="minimal-about w-dwh relative z-10 overflow-hidden bg-sf-bg px-6 py-24 text-sf-text lg:px-12" id="about">
     <!-- 背景装饰 -->
     <div
-      class="breath absolute -top-20 -right-20 rounded-full bg-sf-theme/30 blur-[100px] will-change-transform"
+      class="hidden"
       :class="[$s(80, 'w'), $s(80, 'h')]"
     ></div>
     <div
-      class="breath breath-delayed absolute -bottom-10 -left-10 rounded-full bg-sf-primary/20 blur-[80px] will-change-transform"
+      class="hidden"
       :class="[$s(60, 'w'), $s(60, 'h')]"
     ></div>
 
     <!-- 主卡片 -->
     <div
-      class="relative flex flex-col items-center justify-center rounded-3xl border border-sf-b bg-sf-bg shadow-2xl backdrop-blur-xl transition-all"
-      :class="[$s(10, 'p'), $s(6, 'gap')]"
+      class="minimal-profile relative mx-auto grid w-full max-w-[1080px] items-center gap-9"
+
     >
       <!-- 个人信息 -->
-      <div class="flex flex-col items-center text-center">
-        <div class="mb-2 font-medium text-sf-text-2" :class="$s(5)">Hi~ 我是</div>
-        <div class="font-black text-sf-theme" :class="$s(14)">
+      <div class="minimal-info flex flex-col items-start text-left">
+        <div class="mb-3 font-normal tracking-widest text-sf-text-2" :class="$s(5)">Hi~ 我是</div>
+        <div class="minimal-name font-semibold tracking-tight text-sf-base" :class="$s(14)">
           {{ userInfo.name }}
         </div>
 
         <!-- 标签信息 -->
-        <div class="mt-6 flex items-center justify-center gap-4 text-sf-text-2">
+        <div class="mt-6 flex flex-wrap items-center gap-3 text-sf-text-2">
           <div
-            class="flex items-center gap-1.5 rounded-full bg-sf-bg/50 px-3 py-1 text-sm shadow-sm backdrop-blur-sm transition-transform hover:scale-105"
+            class="flex items-center gap-3 text-sm"
           >
             <span>📍</span>
             <span>{{ userInfo.location }}</span>
           </div>
           <div
-            class="flex items-center gap-1.5 rounded-full bg-sf-bg/50 px-3 py-1 text-sm shadow-sm backdrop-blur-sm transition-transform hover:scale-105"
+            class="flex items-center gap-3 text-sm"
           >
             <span>💻</span>
             <span>{{ userInfo.job }}</span>
@@ -57,7 +57,7 @@ const shootYears = computed(() => {
       </div>
 
       <!-- 社交账号 -->
-      <div class="mt-2 flex flex-wrap justify-center gap-4">
+      <div class="minimal-social flex flex-wrap gap-6">
         <!-- <QrIcon v-for="item in SHOOT_ACCOUNT" :key="item.name" :item="item" />
         <div class="mx-2 h-8 w-px self-center bg-sf-border/50"></div> -->
         <QrIcon v-for="item in DEV_ACCOUNT" :key="item.name" :item="item" />
@@ -65,10 +65,10 @@ const shootYears = computed(() => {
 
       <!-- 悬浮经验卡片 - 开发 -->
       <div
-        class="h absolute top-8 -right-16 rotate-12 transform cursor-default rounded-xl border border-sf-b/50 bg-sf-bg/80 p-4 shadow-lg backdrop-blur-md transition-all duration-300 hover:scale-110 hover:rotate-0 hover:border-sf-theme"
+        class="minimal-experience minimal-dev border-l border-sf-b pl-9"
       >
         <div class="flex flex-col items-center">
-          <div class="font-bold text-sf-theme" :class="$s(8)">
+          <div class="minimal-number font-light text-sf-base" :class="$s(8)">
             {{ devYears }}<span class="ml-1 text-sm text-sf-text-2">年</span>
           </div>
           <div class="text-xs font-medium text-sf-text-2">开发经验</div>
@@ -77,10 +77,10 @@ const shootYears = computed(() => {
 
       <!-- 悬浮经验卡片 - 摄影 -->
       <div
-        class="absolute bottom-8 -left-12 -rotate-12 transform cursor-default rounded-xl border border-sf-b/50 bg-sf-bg/80 p-4 shadow-lg backdrop-blur-md transition-all duration-300 hover:scale-110 hover:rotate-0 hover:border-sf-theme hover:shadow-sf-theme/20"
+        class="minimal-experience minimal-photo border-l border-sf-b pl-9"
       >
         <div class="flex flex-col items-center">
-          <div class="font-bold text-sf-theme" :class="$s(8)">
+          <div class="minimal-number font-light text-sf-base" :class="$s(8)">
             {{ shootYears }}<span class="ml-1 text-sm text-sf-text-2">年</span>
           </div>
           <div class="text-xs font-medium text-sf-text-2">摄影经验</div>
@@ -108,4 +108,29 @@ const shootYears = computed(() => {
     opacity: 0.6;
   }
 }
+</style>
+
+<style scoped>
+/* 用留白、细线和文字层次统一后续区域。 */
+
+.minimal-about { border-top: 1px solid var(--sf-border); scroll-margin-top: 80px; }
+.minimal-profile { grid-template-columns: minmax(0, 1fr) 150px 150px; }
+.minimal-info { grid-column: 1; grid-row: 1; }
+.minimal-name { font-size: 56px; line-height: 1.3; }
+.minimal-social { grid-column: 1; grid-row: 2; }
+.minimal-dev { grid-column: 2; grid-row: 1 / 3; }
+.minimal-photo { grid-column: 3; grid-row: 1 / 3; }
+.minimal-experience > div { align-items: flex-start; gap: 12px; }
+.minimal-number { font-size: 54px; line-height: 1; font-variant-numeric: tabular-nums; }
+.minimal-experience .text-xs { color: var(--sf-text-2); }
+@media (max-width: 767px) {
+  .minimal-profile { grid-template-columns: 1fr 1fr; }
+  .minimal-info, .minimal-social { grid-column: 1 / -1; }
+  .minimal-dev { grid-column: 1; grid-row: 3; }
+  .minimal-photo { grid-column: 2; grid-row: 3; }
+  .minimal-experience { border-left: 0; border-top: 1px solid var(--sf-border); padding: 24px 0 0; }
+  .minimal-name { font-size: 42px; }
+  .minimal-number { font-size: 42px; }
+}
+
 </style>
