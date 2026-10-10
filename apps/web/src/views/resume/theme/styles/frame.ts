@@ -1,6 +1,8 @@
+import type { ThemeTemplateConfig } from "./createThemeTemplate";
+
 export default {
   name: "红色边框", // 主题显示名称
-  id: "frame", // 主题编号
+  id: "frame" as const, // 主题编号
   design: ["single-column", "polished"],
   description: "红色页面背景与白色正文容器。", // 主题说明
   decisions: { // 主题固定外观，不进入用户界面配置
@@ -22,4 +24,4 @@ export default {
       },
     },
   },
-};
+} satisfies ThemeTemplateConfig;

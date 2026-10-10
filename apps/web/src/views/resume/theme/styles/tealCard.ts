@@ -1,6 +1,8 @@
+import type { ThemeTemplateConfig } from "./createThemeTemplate";
+
 export default {
   name: "青色卡片", // 主题显示名称
-  id: "tealCard", // 外观组件统一使用的主题编号
+  id: "tealCard" as const, // 外观组件统一使用的主题编号
   design: ["single-column", "polished"], // 模板列表分类标签
   description: "青色顶带与圆形图标标题，每个模块的正文共用白色圆角卡片。", // 主题说明
   decisions: { // 主题固定外观，不进入用户界面配置
@@ -23,4 +25,4 @@ export default {
       infoLayout: "flex", // 资料随可用宽度换行
     },
   },
-};
+} satisfies ThemeTemplateConfig;

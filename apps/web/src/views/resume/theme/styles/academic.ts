@@ -1,6 +1,8 @@
+import type { ThemeTemplateConfig } from "./createThemeTemplate";
+
 export default {
   name: "学术",
-  id: "academic",
+  id: "academic" as const, // 主题编号
   design: ["single-column", "polished"],
   description: "强调研究经历与文字内容的学术简历样式。",
   ui: {
@@ -8,4 +10,4 @@ export default {
     font: { size: 15, lineHeight: 1.4 },
     content: { textAlign: "justify", dateStyle: "cn" },
   },
-};
+} satisfies ThemeTemplateConfig;

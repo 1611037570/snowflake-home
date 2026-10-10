@@ -1,6 +1,8 @@
+import type { ThemeTemplateConfig } from "./createThemeTemplate";
+
 export default {
   name: "圆环时间轴", // 主题显示名称
-  id: "ringTimeline", // 主题编号，各外观组件按此编号查找
+  id: "ringTimeline" as const, // 主题编号，各外观组件按此编号查找
   design: ["single-column", "timeline"], // 模板列表分类标签：单栏、时间轴
   description: "顶部个人信息通栏，左侧贯穿时间轴用空心圆环标记每段经历的日期。", // 主题说明
   decisions: { // 主题固定外观，不进入用户界面配置
@@ -31,4 +33,4 @@ export default {
       infoLayout: "flex", // 资料随可用宽度换行
     },
   },
-};
+} satisfies ThemeTemplateConfig;

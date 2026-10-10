@@ -1,6 +1,8 @@
+import type { ThemeTemplateConfig } from "./createThemeTemplate";
+
 export default {
   name: "绛红双栏", // 主题显示名称
-  id: "burgundySidebar", // 主题编号
+  id: "burgundySidebar" as const, // 主题编号
   design: ["two-column", "polished"], // 模板页分类标签
   description: "绛红装饰带搭配浅色侧栏，突出个人信息与工作经历。", // 主题说明
   decisions: { // 主题固定外观，不进入用户界面配置
@@ -19,4 +21,4 @@ export default {
     },
     user: { avatarPosition: "left" }, // 个人信息设置：头像默认靠左展示
   },
-};
+} satisfies ThemeTemplateConfig;

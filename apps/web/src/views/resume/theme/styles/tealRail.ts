@@ -1,6 +1,8 @@
+import type { ThemeTemplateConfig } from "./createThemeTemplate";
+
 export default {
   name: "青线双栏", // 主题显示名称
-  id: "tealRail", // 主题编号，供外观组件按编号选择
+  id: "tealRail" as const, // 主题编号，供外观组件按编号选择
   design: ["two-column", "timeline"], // 模板列表的分类标签
   description: "左侧个人资料与右侧经历以青色竖线和节点连接。", // 主题说明
   decisions: { // 主题固定外观，不进入用户界面配置
@@ -26,4 +28,4 @@ export default {
       avatarPosition: "left", // 头像默认靠左
     },
   },
-};
+} satisfies ThemeTemplateConfig;

@@ -1,6 +1,8 @@
+import type { ThemeTemplateConfig } from "./createThemeTemplate";
+
 export default {
   name: "米色侧栏", // 主题显示名称
-  id: "sandSidebar", // 主题编号
+  id: "sandSidebar" as const, // 主题编号
   design: ["two-column", "minimal"], // 模板分类：双栏、简约
   description: "米色侧栏搭配金棕色短线标题，简洁展示个人信息与经历。", // 主题说明
   decisions: { // 主题固定外观，不进入用户界面配置
@@ -43,4 +45,4 @@ export default {
       datePosition: "right", // 经历日期显示在右侧
     },
   },
-};
+} satisfies ThemeTemplateConfig;
