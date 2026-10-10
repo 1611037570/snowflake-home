@@ -11,7 +11,7 @@ import Column from "./render/column.vue";
 import ColumnBox from "./render/columnBox.vue";
 import RegionContainer from "@/views/resume/theme/components/regionContainer/index.vue";
 import PageDecoration from "@/views/resume/theme/components/pageDecoration/index.vue";
-import { useResumePages } from "./useResumePages";
+import { useResumeLayout } from "./engine/useResumeLayout";
 import { resolveRegionGap } from "./engine/layout/regionFlows";
 import { getContrastTextColor, useResumeTheme } from "@/views/resume/theme/useResumeTheme";
 import { resolveThemePageAppearance, resolveResumeUi, resolveThemeDecisions } from "@/views/resume/theme";
@@ -190,7 +190,6 @@ const renderSignature = computed(() =>
 );
 const {
   measureDone,
-  pages,
   pagePlan,
   layout,
   nodeMap,
@@ -199,7 +198,7 @@ const {
   contentWidth,
   columnWidths,
   measureGroups,
-} = useResumePages({
+} = useResumeLayout({
   measureRef: layoutMeasureRef,
   data: dataRef,
   ui,
@@ -210,6 +209,7 @@ const {
   renderSignature,
   allModules,
 });
+const pages = computed(() => pagePlan.value.pages); // 页面列表直接读取引擎计划，移除重复接线层
 // 预览模块统一从上下文读取运行时数据。
 provideResumePreviewContext({
   data: dataRef,
@@ -395,7 +395,6 @@ defineExpose({
                   >
                     <Column
                       :column="column"
-                      :page-index="page.pageIndex"
                       :nodes="nodeMap"
                       :is-edit="isEdit"
                       :show-debug="showLayoutDebug"
