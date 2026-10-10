@@ -25,9 +25,9 @@ const {
 </script>
 
 <template>
-  <!-- 宋式页眉：姓名放大居中，页眉底部用长细线加短粗线收束，内边距计入分页测量 -->
+  <!-- 宋式页眉：顶部距离由页面上边距控制，底部留白承载双线装饰并计入分页测量 -->
   <div
-    class="song-elegance-user resume-module-wrapper resume-user group group/module relative box-border w-full min-w-0 pt-6 pb-6"
+    class="song-elegance-user resume-module-wrapper resume-user group group/module relative box-border w-full min-w-0 pb-6"
     :class="moduleClass"
     :data-module="moduleKey"
     :data-theme="themeId"
