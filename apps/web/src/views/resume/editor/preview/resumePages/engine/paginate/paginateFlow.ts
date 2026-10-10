@@ -321,8 +321,8 @@ export const paginateFlow = ({
             : currentPage.usedHeight + nodeGap + wholeHeight <=
               getCurrentAvailableHeight() + PAGE_HEIGHT_TOLERANCE;
 
-        // 切割候选：只铺到某个断点为止，高度与覆盖范围都由断点决定
-        const breakPoint =
+        // 整片已能放置时跳过切割搜索，避免遍历最终不会使用的断点。
+        const breakPoint = wholeFits ? undefined : (
           findBestBreakPoint(
             measurement,
             consumedHeight,
@@ -337,7 +337,7 @@ export const paginateFlow = ({
                 activeDroppedTopSpacing,
                 !isFirstFragment,
               )
-            : undefined);
+            : undefined));
         const cut = breakPoint
           ? {
               breakPoint,

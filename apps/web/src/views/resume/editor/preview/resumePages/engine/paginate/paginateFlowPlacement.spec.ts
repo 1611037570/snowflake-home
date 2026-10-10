@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { paginateFlow, type FlowPage } from "./paginateFlow";
 import type { MeasuredNode } from "../measure/types";
 import type { LayoutNode } from "../types";
@@ -45,6 +45,22 @@ const summarize = (pages: FlowPage[]) =>
   }));
 
 describe("paginateFlow 放置路径基线", () => {
+  it("整片放得下时不读取切割断点高度", () => {
+    const heightRead = vi.fn(() => 60);
+    const point = {
+      offset: 10, // 正文末尾偏移
+      type: "paragraph" as const, // 段落断点
+      get height() { return heightRead(); }, // 切割点累计高度
+    };
+    const pages = paginateFlow({
+      nodes: [createNode("item")], // 整片可放置的节点
+      measurements: new Map([["item", createMeasurement("item", 60, [point])]]), // 包含可选断点
+      heights: { firstPageHeight: 100 /* 首页预算 */, laterPageHeight: 100 /* 续页预算 */ },
+      gap: 0, // 不产生模块间距
+    });
+    expect(pages[0]!.items[0]).toMatchObject({ fragment: "single", height: 60, contentRange: { start: 0, end: 10 } });
+    expect(heightRead).not.toHaveBeenCalled();
+  });
   it("整片放得下时整片放下，后续节点继续填当前页", () => {
     const pages = paginateFlow({
       nodes: [createNode("item"), createNode("second")],

@@ -4,6 +4,32 @@ import { paginateFlow } from "../paginate/paginateFlow";
 import type { LayoutNode } from "../types";
 
 describe("嵌套块分页测量", () => {
+  it("同次测量只扫描一次模块并复用节点尺寸，下次测量重新采集", () => {
+    const root = document.createElement("div");
+    root.innerHTML = '<section data-layout-module="generic"><div data-layout-node-id="first"></div><div data-layout-node-id="second"></div></section>';
+    const module = root.firstElementChild!;
+    const scan = vi.spyOn(module, "querySelectorAll");
+    const moduleRect = vi.spyOn(module, "getBoundingClientRect").mockReturnValue(new DOMRect(0, 0, 300, 120));
+    const reads = Array.from(module.children).map((element, index) =>
+      vi.spyOn(element, "getBoundingClientRect").mockReturnValue(new DOMRect(0, index * 60, 300, 60)),
+    );
+    const nodes = ["first", "second"].map((id): LayoutNode => ({
+      id, // 节点编号
+      sourceModuleKey: "generic", // 通用模块编号
+      type: "block", // 不带正文断点的内容块
+      payload: null, // 不依赖业务载荷
+    }));
+    expect(measureLayoutNodes(root, nodes).get("second")?.fullHeight).toBe(60);
+    expect(scan).toHaveBeenCalledTimes(1);
+    expect(moduleRect).toHaveBeenCalledTimes(1);
+    reads.forEach((read) => expect(read).toHaveBeenCalledTimes(1));
+    // 内容变化后重新读取，不能把上次尺寸当作永久缓存。
+    reads[1]!.mockReturnValue(new DOMRect(0, 60, 300, 80));
+    moduleRect.mockReturnValue(new DOMRect(0, 0, 300, 140));
+    expect(measureLayoutNodes(root, nodes).get("second")?.fullHeight).toBe(80);
+    expect(scan).toHaveBeenCalledTimes(2);
+    reads.forEach((read) => expect(read).toHaveBeenCalledTimes(2));
+  });
   it("整块单节点计入模块外框尺寸，普通分组拒绝额外占位", () => {
     const root = document.createElement("div");
     root.innerHTML = '<section data-layout-module="generic"><div data-layout-node-id="whole"></div></section>';
