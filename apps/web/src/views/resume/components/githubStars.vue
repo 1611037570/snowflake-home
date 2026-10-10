@@ -13,6 +13,13 @@ provide(SF_ICON_LIST_KEY, {
 const { t, locale } = useI18n();
 const { stars, stale, loading, failed, refresh } = useGithubStars();
 const formattedStars = computed(() => stars.value?.toLocaleString(locale.value));
+// 角标使用短数字，大数量的完整值仍保留在悬停提示中。
+const badgeStars = computed(() =>
+  stars.value?.toLocaleString(locale.value, {
+    notation: "compact", // 大数量使用紧凑单位
+    maximumFractionDigits: 1, // 最多保留一位小数
+  }),
+);
 const statusText = computed(() => {
   if (loading.value) return t("resumeGithubStarsLoading");
   if (failed.value || stale.value) return t("resumeGithubStarsUnavailable");
@@ -28,15 +35,23 @@ onMounted(refresh);
     :href="GITHUB_REPOSITORY_URL"
     target="_blank"
     rel="noopener noreferrer"
-    class="border-sf-border hover:bg-sf-bg-hover inline-flex h-9 shrink-0 items-center gap-3 rounded-full border px-3 text-sm font-medium text-sf-text transition-colors focus-visible:outline-2 focus-visible:outline-sf-theme"
-    :title="statusText"
+    class="group hover:bg-sf-bg-hover relative inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-xl text-sf-text transition-colors hover:text-sf-theme focus-visible:outline-2 focus-visible:outline-sf-theme"
+    :title="stars === null ? statusText : `${statusText} (${formattedStars} Star)`"
     :aria-label="stars === null ? statusText : `${statusText} (${formattedStars})`"
     :aria-busy="loading"
   >
-    <SfIcon icon="simple-icons:github" size="5" class="text-sf-text!" />
-    <span class="hidden xl:inline">{{ $t("resumeGithubStarsLabel") }}</span>
-    <span v-if="stars !== null" class="tabular-nums" :class="{ 'text-sf-text-3': stale }">
-      {{ formattedStars }}
+    <!-- 与主题、语言入口对齐，仅用小角标承载数量。 -->
+    <SfIcon
+      icon="simple-icons:github"
+      size="8"
+      class="text-inherit! transition-transform duration-200 motion-safe:group-hover:scale-110"
+    />
+    <span
+      v-if="stars !== null"
+      class="absolute top-0 right-0 inline-flex h-4.5 min-w-4.5 translate-x-1/3 -translate-y-1/3 items-center justify-center rounded-full border-2 border-sf-primary bg-sf-theme text-[10px] leading-none font-semibold text-sf-theme-text tabular-nums"
+      :class="{ 'opacity-60': stale }"
+    >
+      {{ badgeStars }}
     </span>
     <span v-if="loading || stale || failed" class="sr-only">{{ statusText }}</span>
   </a>
