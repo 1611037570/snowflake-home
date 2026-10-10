@@ -3,31 +3,11 @@ import { nextTick } from "vue";
 import { useResumeStore } from "@/stores";
 import { useResumeName } from "../../../../hooks/useResumeName";
 import { stripEditorPageFrame } from "./pageFrame";
+import { waitForExportResources } from "./exportResources";
 
 type ResumeRootRef = { value: HTMLElement | null };
 
 const getResumeRoot = (rootRef: ResumeRootRef) => rootRef.value;
-
-// 等待打印文档中的图片加载完成，Base64 图片保持原有地址不做转换。
-const waitForImages = async (printDocument: Document, signal: AbortSignal) => {
-  await Promise.all(
-    Array.from(printDocument.images).map(async (image) => {
-      if (image.complete) return;
-      await new Promise<void>((resolve) => {
-        const finish = () => {
-          image.removeEventListener("load", finish);
-          image.removeEventListener("error", finish);
-          signal.removeEventListener("abort", finish);
-          resolve();
-        };
-        image.addEventListener("load", finish, { once: true });
-        image.addEventListener("error", finish, { once: true });
-        signal.addEventListener("abort", finish, { once: true });
-        if (signal.aborted) finish();
-      });
-    }),
-  );
-};
 
 // 等待字体、图片和两帧布局完成后再调用浏览器打印。
 const waitForPrintReady = async (
@@ -35,8 +15,7 @@ const waitForPrintReady = async (
   printDocument: Document,
   signal: AbortSignal,
 ) => {
-  await printDocument.fonts?.ready;
-  await waitForImages(printDocument, signal);
+  await waitForExportResources(printDocument.getElementById("print-content")!, signal);
   await new Promise<void>((resolve) => {
     let frame = 0;
     const finish = () => {
@@ -74,7 +53,7 @@ export const printResume = async (
   const resumeId = resumeStore.currentItem?.id;
   const isCurrentResume = () => resumeStore.currentItem?.id === resumeId;
 
-  const root = getResumeRoot(rootRef);
+  let root = getResumeRoot(rootRef);
   if (!root) {
     resumeStore.finishPrinting(signal);
     console.error("未找到可打印的简历页面");
@@ -108,6 +87,12 @@ export const printResume = async (
   );
 
   try {
+    // 在线图标完成后再克隆，避免打印文档留下无法自行加载的图标占位。
+    await waitForExportResources(root, signal);
+    if (signal.aborted || !isCurrentResume()) return;
+    // 资源加载可能触发预览重建，复制前重新取得当前页面。
+    root = getResumeRoot(rootRef);
+    if (!root) throw new Error("未找到可打印的简历页面");
     const clonedRoot = root.cloneNode(true) as HTMLElement;
     clonedRoot.style.transform = "none";
     clonedRoot.style.zoom = "1";
@@ -189,6 +174,6 @@ export const printResume = async (
     printWindow.print();
   } catch (error) {
     restorePrintState();
-    console.error("创建 iframe 浏览器打印失败:", error);
+    if (!signal.aborted) console.error("创建 iframe 浏览器打印失败:", error);
   }
 };
