@@ -38,7 +38,7 @@ const {
 .violet-biography-main :deep(> :first-child)::after {
   content: "";
   position: absolute;
-  top: 36px;
+  top: 0; /* 从正文内容顶部开始，底板内边距已由公共容器施加。 */
   right: -12px;
   bottom: 0;
   width: 1px;
