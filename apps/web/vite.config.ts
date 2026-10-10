@@ -33,6 +33,7 @@ import { dynamicComponentResolver } from "./src/components";
 import ElementPlus from "unplugin-element-plus/vite";
 // Tiny Vue 组件解析器
 import { TinyVueSingleResolver } from "@opentiny/unplugin-tiny-vue";
+import { DEFAULT_ENTRY_ROUTE, resolveSiteMetadata } from "./site.config";
 
 /**
  * 版本注入插件
@@ -90,7 +91,7 @@ export default ({ mode }: { mode: string }) => {
   const env = loadEnv(mode, process.cwd());
   const isProd = mode === "production";
   // 从环境变量中提取配置项
-  const { VITE_PORT, VITE_BASE_URL, VITE_DEFAULT_LANGUAGE } = env;
+  const { VITE_PORT, VITE_BASE_URL, VITE_DEFAULT_LANGUAGE, VITE_DEFAULT_ROUTE } = env;
   return defineConfig({
     // 将 .awebp（动画 webp）视为静态资源
     assetsInclude: ["**/*.awebp"],
@@ -118,6 +119,8 @@ export default ({ mode }: { mode: string }) => {
         inject: {
           data: {
             defaultLang: VITE_DEFAULT_LANGUAGE, // 默认语言
+            // 初始 HTML 与客户端按同一入口路由选择产品信息。
+            siteMetadata: resolveSiteMetadata(VITE_DEFAULT_ROUTE || DEFAULT_ENTRY_ROUTE, VITE_DEFAULT_LANGUAGE || "zh"),
           },
         },
       }),

@@ -1,5 +1,3 @@
-import { ALL_PAGE } from "@/configs";
-import { useTitle } from "@vueuse/core";
 import type { I18n, I18nOptions } from "vue-i18n";
 import { createI18n } from "vue-i18n"; // 从 vue-i18n 导入创建实例的方法
 
@@ -124,26 +122,6 @@ async function dynamicLoadPageLang(name: string, langKey: string): Promise<Local
   return loading;
 }
 
-function loadDefaultTitle() {
-  useTitle(import.meta.env.VITE_APP_TITLE);
-}
-async function dynamicLoadPageTitle(route: LocaleRoute) {
-  const pageName = route.meta?.pageName || getPageLocaleFile(route);
-  const pageConfig: any = ALL_PAGE.value.find((item) => item.url === `/${pageName}`);
-  if (!pageConfig) {
-    loadDefaultTitle();
-    return;
-  }
-  const name = pageConfig.name;
-  let title = name && !name.startsWith("router.") ? name : "";
-  if (!title) {
-    loadDefaultTitle();
-    return;
-  }
-  const desc = pageConfig.desc;
-  title += desc && !desc.startsWith("router.") ? ` - ${desc}` : "";
-  useTitle(title);
-}
 export const loadPageLang = async (route: LocaleRoute, langKey?: string) => {
   langKey = (langKey || String((i18n.global.locale as any).value ?? i18n.global.locale)) as string;
   const bundledMessage = BUNDLED_LANG[langKey] || {};
@@ -164,8 +142,6 @@ export const loadPageLang = async (route: LocaleRoute, langKey?: string) => {
   // 语言包准备完成后再切换语言，避免业务层先读取到未加载的页面文案
   (i18n.global.locale as any).value = langKey;
   localStorage.setItem("snowflakeLanguage", langKey);
-  // 加载标题
-  await dynamicLoadPageTitle(route);
 };
 
 // 导出翻译函数
