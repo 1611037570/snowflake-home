@@ -98,6 +98,7 @@ const blocks = computed(() => parsed.value?.blocks || []);
     ></component>
   </template>
   <template v-else>
-    <span :style="[lineHeightValue()]" v-bind="$attrs">{{ content }}</span>
+    <!-- 标记纯文本字段，供导出按预览行数保留换行行为。 -->
+    <span data-resume-plain-text :style="[lineHeightValue()]" v-bind="$attrs">{{ content }}</span>
   </template>
 </template>
