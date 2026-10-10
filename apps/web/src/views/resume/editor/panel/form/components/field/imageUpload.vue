@@ -1,6 +1,6 @@
 <script setup>
-import Cropper from "cropperjs";
-import "cropperjs/dist/cropper.css";
+import { loadCropper } from "./cropperLoader";
+import { ElMessage } from "element-plus";
 import { onBeforeUnmount, ref, watch } from "vue";
 import { useImageUpload } from "@/hooks";
 import { routerNavigation } from "@/utils";
@@ -66,24 +66,44 @@ const pickFromModal = () => {
 // ===== 裁切弹窗状态 =====
 const cropImgRef = ref(null);
 let cropper = null;
+const cropperReady = ref(false);
+let cropVersion = 0;
 // 字段卸载时释放裁剪器，避免旧弹窗的监听与图片节点继续占用内存
 onBeforeUnmount(() => {
+  cropVersion++;
   cropper?.destroy();
   cropper = null;
 });
 
 // 弹窗关闭时同步销毁裁切器（含右上角关闭等场景）
 watch(cropVisible, (visible) => {
-  if (!visible && cropper) {
-    cropper.destroy();
+  // 弹窗打开即开始加载，与图片解码并行；创建时统一处理加载失败。
+  if (visible) void loadCropper().catch(() => {});
+  if (!visible) {
+    // 关闭时使仍在下载中的裁剪任务失效。
+    cropVersion++;
+    cropperReady.value = false;
+    cropper?.destroy();
     cropper = null;
   }
 });
 
 // 图片加载完成后初始化裁切器，裁切框锁定为组件宽高比
-const initCropper = () => {
+const initCropper = async () => {
+  const version = ++cropVersion;
+  const imageElement = cropImgRef.value;
+  cropperReady.value = false;
+  let Cropper;
+  try {
+    Cropper = await loadCropper();
+  } catch (error) {
+    if (version === cropVersion && cropVisible.value) ElMessage.error("裁剪组件加载失败，请重新选择图片");
+    return;
+  }
+  // 图片替换、关闭或卸载后不创建过期裁剪器。
+  if (version !== cropVersion || !cropVisible.value || cropImgRef.value !== imageElement || !imageElement) return;
   if (cropper) cropper.destroy();
-  cropper = new Cropper(cropImgRef.value, {
+  cropper = new Cropper(imageElement, {
     // 固定按组件宽高比裁切，不支持更改
     aspectRatio: props.width / props.height,
     // 最大化利用空间，裁剪区域不超出图片
@@ -98,6 +118,7 @@ const initCropper = () => {
     // 开启背景棋盘格，图片未覆盖区域显示透明格纹
     background: true,
   });
+  cropperReady.value = true;
 };
 
 // 重置裁切框位置与大小
@@ -264,9 +285,9 @@ const removeImage = () => {
       </div>
       <!-- 底部操作栏 -->
       <footer class="mt-4 flex justify-end gap-3">
-        <el-button @click="resetCrop">{{ $t("resetCrop") }}</el-button>
+        <el-button :disabled="!cropperReady" @click="resetCrop">{{ $t("resetCrop") }}</el-button>
         <el-button @click="handleCancelCrop">{{ $t("cancel") }}</el-button>
-        <el-button type="primary" @click="handleConfirmCrop">{{ $t("confirmAction") }}</el-button>
+        <el-button type="primary" :disabled="!cropperReady" @click="handleConfirmCrop">{{ $t("confirmAction") }}</el-button>
       </footer>
     </SfModal>
   </div>
