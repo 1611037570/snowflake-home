@@ -268,47 +268,45 @@ const tagTextClass = computed(() => (isDark.value ? "text-sf-theme-text" : "text
             <div
               :class="cardSizeClass"
               class="group relative flex cursor-pointer flex-col overflow-hidden rounded-[4px] border border-sf-b bg-sf-primary transition-all duration-200 hover:scale-102 hover:border-sf-theme"
-              @click="useTemplateCard(card)"
+              @click="openFullscreen(card, card.type)"
             >
-              <ThumbPreview :item="getThumbItem(card.item)" />
-              <!-- 信息条贴在卡片底部：纯色背景且高度随内容，不再用半透明渐变遮挡缩略图 -->
-              <div
-                class="absolute inset-x-0 bottom-0 z-10 flex flex-col border-t border-sf-b bg-sf-primary px-3 py-3"
-              >
-                <div class="flex flex-col gap-1">
-                  <div class="truncate text-base font-black text-sf-text">
-                    {{ card.name }}
-                  </div>
-                  <div class="line-clamp-2 text-sm text-sf-text-2">
-                    {{ card.description }}
-                  </div>
-                  <!-- 标签与操作按钮默认收起，鼠标经过卡片时展开：信息条平时只占标题与描述的高度 -->
-                  <div
-                    class="grid grid-rows-[0fr] transition-all duration-200 group-hover:grid-rows-[1fr]"
+              <!-- 缩略图铺满整卡，信息层浮在它的下半部分之上 -->
+              <div class="absolute inset-0">
+                <ThumbPreview :item="getThumbItem(card.item)" />
+              </div>
+              <!-- 信息层之外的剩余空间：hover 遮罩与按钮在这里垂直居中，不会被信息层压住 -->
+              <div class="relative min-h-0 flex-1">
+                <!-- 悬浮遮罩：淡白蒙层不加模糊，简历内容仍可见，承载预览与使用按钮 -->
+                <div
+                  class="invisible absolute inset-0 flex items-center justify-center gap-3 bg-sf-transparent-3 opacity-0 transition-all duration-200 group-hover:visible group-hover:opacity-100"
+                >
+                  <SfButton @click.stop="openFullscreen(card, card.type)">
+                    {{ $t("resumeTemplatePreview") }}
+                  </SfButton>
+                  <SfButton @click.stop="useTemplateCard(card)">
+                    {{ $t("resumeTemplateUse") }}
+                  </SfButton>
+                </div>
+              </div>
+              <!-- 信息层悬浮在卡片底部：纯色背景、高度随内容，标签默认显示 -->
+              <div class="relative flex flex-col gap-1 border-t border-sf-b bg-sf-primary px-3 py-3">
+                <div class="truncate text-base font-black text-sf-text">
+                  {{ card.name }}
+                </div>
+                <div class="line-clamp-2 text-sm text-sf-text-2">
+                  {{ card.description }}
+                </div>
+                <!-- 标签按顺序取用配置里的彩虹色，尺寸收紧到与信息层同一档 -->
+                <div v-if="card.tags.length" class="flex flex-wrap gap-x-3 gap-y-1">
+                  <span
+                    v-for="(tag, index) in card.tags"
+                    :key="tag"
+                    class="rounded-md px-3 py-1 text-xs"
+                    :class="tagTextClass"
+                    :style="getTagStyle(index)"
                   >
-                    <div
-                      class="invisible flex flex-col gap-1 overflow-hidden opacity-0 transition-all duration-200 group-hover:visible group-hover:opacity-100"
-                    >
-                      <!-- 标签按顺序取用配置里的彩虹色，垂直间距沿用信息条的紧凑取值 -->
-                      <div v-if="card.tags.length" class="flex flex-wrap gap-x-3 gap-y-1 text-sm">
-                        <span
-                          v-for="(tag, index) in card.tags"
-                          :key="tag"
-                          class="rounded-full px-3 py-1"
-                          :class="tagTextClass"
-                          :style="getTagStyle(index)"
-                        >
-                          {{ tag }}
-                        </span>
-                      </div>
-                      <div class="flex items-center justify-between gap-2">
-                        <SfButton class="flex-1" @click.stop="openFullscreen(card, card.type)">
-                          {{ $t("resumeTemplatePreview") }}
-                        </SfButton>
-                        <SfButton class="flex-1">{{ $t("resumeTemplateUse") }}</SfButton>
-                      </div>
-                    </div>
-                  </div>
+                    {{ tag }}
+                  </span>
                 </div>
               </div>
             </div>
