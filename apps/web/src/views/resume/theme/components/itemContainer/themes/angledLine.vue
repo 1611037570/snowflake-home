@@ -35,7 +35,7 @@ const ITEM_PADDING = "12px";
 const ITEM_PADDING_LEFT = "24px";
 
 const {
-  theme: { themeColorLine, fontValue, lineHeightValue },
+  theme: { fontValue, lineHeightValue },
 } = useResumePreviewContext();
 
 // 盒模型、分片收边与日期栏统一由共享钩子计算，渲染与测量结果一致。
@@ -47,10 +47,8 @@ const { fragmentStyle, boxStyle, borderStyle } = useItemBox(props, {
   borderColor: "transparent",
 });
 
+// 条目仅设置文字样式，贯穿竖线由正文区域绘制。
 const itemStyle = computed(() => ({
-  "--angled-item-line": themeColorLine.value, // 与正文竖线衔接的短横线颜色
-  "--angled-item-notch": ITEM_PADDING_LEFT, // 短横线长度与条目左留白共用同一个值
-  "--angled-item-offset": ITEM_PADDING, // 短横线的起始位置与条目上留白共用同一个值
   ...fontValue.value(),
   ...lineHeightValue.value(),
 }));
@@ -71,17 +69,3 @@ const itemStyle = computed(() => ({
     />
   </div>
 </template>
-
-<style scoped>
-/* 条目左端短横线：从正文竖线延伸进来，与标题竖线语言衔接，不参与测量。 */
-.angled-line-item::before {
-  content: "";
-  position: absolute;
-  top: calc(var(--angled-item-offset) + 0.5lh);
-  left: 0;
-  width: var(--angled-item-notch);
-  height: 1.5px;
-  background-color: var(--angled-item-line);
-  pointer-events: none;
-}
-</style>
