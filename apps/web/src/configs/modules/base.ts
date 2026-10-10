@@ -3,7 +3,9 @@
  * 系统启动时默认使用的语言
  */
 export const DEFAULT_LANGUAGE = import.meta.env.VITE_DEFAULT_LANGUAGE;
-export const BASE_ROUTE = "/resume";
+// 初始入口同时决定默认路由与构建页面信息。
+import { DEFAULT_ENTRY_ROUTE } from "../../../site.config";
+export const BASE_ROUTE = import.meta.env.VITE_DEFAULT_ROUTE || DEFAULT_ENTRY_ROUTE;
 /**
  * 默认路由地址
  * 系统启动时默认跳转的路由

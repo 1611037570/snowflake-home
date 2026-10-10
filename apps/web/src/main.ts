@@ -1,5 +1,5 @@
 // 导入 Vue 应用创建函数
-import { createApp } from "vue";
+import { createApp, watch } from "vue";
 // 导入 Pinia 状态管理
 import pinia from "./stores";
 // 导入 i18n 配置
@@ -8,6 +8,7 @@ import i18n from "./locales";
 import App from "./App.vue";
 // 导入路由配置
 import router from "./routers";
+import { updatePageMetadata } from "./utils/modules/pageMetadata";
 // 导入全局样式
 import "./styles/index.scss";
 // 导入 Tailwind CSS 样式
@@ -25,6 +26,14 @@ app.use(i18n);
 app.use(pinia);
 // 注册路由
 app.use(router);
+// 仅在当前路由与语言确定后更新页面信息，避免未完成导航覆盖当前页面。
+router.isReady().then(() => {
+  watch(
+    [() => router.currentRoute.value, () => String((i18n.global.locale as any).value ?? i18n.global.locale)] as const,
+    ([route, language]) => updatePageMetadata(route, language),
+    { immediate: true, flush: "post" },
+  );
+});
 // 加载主题
 loadTheme();
 // 加载默认事件
