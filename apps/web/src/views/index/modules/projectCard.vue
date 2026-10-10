@@ -1,12 +1,12 @@
 <template>
-  <div class="cursor-pointer rounded-xl bg-sf-bg p-2 transition hover:bg-sf-bg-2" @click="open">
-    <div class="mb-1 flex items-center font-medium text-sf-base">
-      <SfLogo v-if="data.icon" :name="data.icon" :size="5" class="mr-2 shrink-0" />
+  <div class="minimal-project-card cursor-pointer border-b border-sf-b py-9 transition-colors" @click="open">
+    <div class="mb-3 flex items-center text-lg font-medium tracking-tight text-sf-base">
+      <SfLogo v-if="data.icon" :name="data.icon" :size="5" class="mr-3 shrink-0" />
       <div class="truncate">
         {{ data.name }}
       </div>
     </div>
-    <div class="text-sm text-sf-text-2" v-if="data.desc">{{ data.desc }}</div>
+    <div class="text-sm leading-relaxed text-sf-text-2" v-if="data.desc">{{ data.desc }}</div>
   </div>
 </template>
 
@@ -25,3 +25,12 @@ const open = () => {
   }
 };
 </script>
+
+<style scoped>
+/* 用留白、细线和文字层次统一后续区域。 */
+
+.minimal-project-card { min-height: 138px; }
+.minimal-project-card:hover { border-color: var(--sf-theme); }
+.minimal-project-card:hover > div:first-child { color: var(--sf-theme); }
+
+</style>
