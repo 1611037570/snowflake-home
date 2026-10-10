@@ -108,7 +108,7 @@ export const sliceRichTextHtml = (html: string, start = 0, end?: number): string
   const cachedHtml = sliceHtmlCache.get(cacheKey);
   if (cachedHtml !== undefined) return cachedHtml;
 
-  const { positions, total } = parseSliceNodes(source);
+  const { container, positions, total } = parseSliceNodes(source);
   const safeStart = Math.max(0, Math.min(start, total));
   const safeEnd = Math.max(safeStart, Math.min(end ?? total, total));
   const sliced = (() => {
@@ -119,8 +119,18 @@ export const sliceRichTextHtml = (html: string, start = 0, end?: number): string
     if (!first || !last) return "";
     range.setStart(first.startNode, first.startOffset);
     range.setEnd(last.endNode, last.endOffset);
+    // 区间克隆不包含共同祖先，补回已清洗的外层标签，保留段内切片的颜色与格式。
+    let content: Node = range.cloneContents();
+    let ancestor = range.commonAncestorContainer;
+    if (ancestor.nodeType !== Node.ELEMENT_NODE) ancestor = ancestor.parentNode!;
+    while (ancestor !== container) {
+      const wrapper = ancestor.cloneNode(false);
+      wrapper.appendChild(content);
+      content = wrapper;
+      ancestor = ancestor.parentNode!;
+    }
     const result = document.createElement("div");
-    result.appendChild(range.cloneContents());
+    result.appendChild(content);
     return result.innerHTML;
   })();
 

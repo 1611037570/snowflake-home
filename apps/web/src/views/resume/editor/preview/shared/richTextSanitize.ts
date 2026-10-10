@@ -2,6 +2,7 @@
 // 分页解析与渲染拆分共用同一份白名单：两处各写一份时，改一处漏一处会让清洗强度悄悄分叉
 export const RICH_TEXT_SANITIZE_CONFIG = {
   ALLOWED_TAGS: ["p", "br", "strong", "b", "em", "i", "u", "ul", "ol", "li", "a", "span"],
-  ALLOWED_ATTR: ["href", "target", "rel"],
+  // 保留编辑器生成的文字颜色与文字背景色内联样式。
+  ALLOWED_ATTR: ["href", "target", "rel", "style"],
   ALLOWED_URI_REGEXP: /^(?:(?:https?|mailto):)/i,
 };

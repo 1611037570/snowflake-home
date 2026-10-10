@@ -76,6 +76,9 @@ const toolbarConfig = {
     "bold",
     "italic",
     "underline",
+    // 恢复文字颜色与文字背景色工具，供正文局部强调使用。
+    "color",
+    "bgColor",
     "bulletedList",
     "numberedList",
     "insertLink",
