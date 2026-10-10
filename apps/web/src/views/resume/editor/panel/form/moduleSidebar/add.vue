@@ -19,14 +19,19 @@ const dropdownRef = ref(null);
 
 const BASIC_MODULE_KEYS = ["skill", "education", "project", "work"];
 
-// 预设模块列表：复用 DEFAULT_MODULE_NAMES 统一维护 key 与名称，user 为固定模块不可添加
+// 不可手动添加的模块：user 为固定模块，slogan 由主题槽位决定是否渲染
+const EXCLUDED_MODULE_KEYS = ["user", "slogan"];
+
+// 预设模块列表：复用 DEFAULT_MODULE_NAMES 统一维护 key 与名称
 const presets = computed(() => {
   // 模块名称只做界面翻译，模块 key 仍作为稳定业务标识
   i18n.global.locale.value;
-  return DEFAULT_MODULE_NAMES.filter((item) => item.key !== "user").map((item) => ({
-    name: translateResumeEditorText(item.name),
-    value: item.key,
-  }));
+  return DEFAULT_MODULE_NAMES.filter((item) => !EXCLUDED_MODULE_KEYS.includes(item.key)).map(
+    (item) => ({
+      name: translateResumeEditorText(item.name),
+      value: item.key,
+    }),
+  );
 });
 
 // 过滤后的预设模块：只显示尚未添加到当前表单中的模块
