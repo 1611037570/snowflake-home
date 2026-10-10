@@ -180,8 +180,9 @@ onUnmounted(() => {
 .motion-builder {
   --motion-enter-transform: translateX(-100%);
   --motion-leave-transform: translateX(-100%);
-  --motion-enter-duration: 0.42s;
-  --motion-enter-delay: 0.06s;
+  /* 编辑区尽早进入可见位置，减少首次进入的视觉等待。 */
+  --motion-enter-duration: 0.18s;
+  --motion-enter-delay: 0s;
 }
 
 .motion-preview {

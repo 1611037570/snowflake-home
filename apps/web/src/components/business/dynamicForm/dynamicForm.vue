@@ -1,8 +1,7 @@
 <template>
   <el-form ref="dynamicForm" :model="data" label-width="auto" class="flex w-full flex-col">
-    <Suspense @pending="beginRender" @resolve="finishRender">
-      <FormRenderer v-model:items="form" />
-    </Suspense>
+    <!-- 字段各自等待异步内容，普通字段不等待整张表单。 -->
+    <FormRenderer v-model:items="form" />
   </el-form>
 </template>
 <script setup lang="ts">
@@ -56,9 +55,6 @@ watch([form, data], () => {
   readiness.restart();
   emit?.("initialized", data.value);
 }, { immediate: true, flush: "sync" });
-let renderDone = () => {};
-const beginRender = () => { renderDone(); renderDone = readiness.context.begin(); };
-const finishRender = () => renderDone();
 onMounted(readiness.mount);
 onBeforeUnmount(readiness.stop);
 const dataProxy = new DataProxy(data, emit, props.options);

@@ -16,21 +16,23 @@
       @mouseenter="handleModuleMouseEnter(item.field)"
       @remove="removeField(item.field)"
     >
-      <!-- 校验失败：展示友好的错误提示 -->
-      <FormError v-if="item.error" :error-msg="item.error" :raw="item.field" />
-      <ContainerSlot
-        v-else-if="item.field.type === 'group'"
-        :currentForm="item.field"
-        :pathContext="getFieldPathContext(item.field)"
-        @removeObject="removeObject(item.field)"
-      />
-      <component
-        v-else
-        :is="item.field.type === 'object' ? ContainerObject : ContainerArray"
-        :currentForm="item.field"
-        :pathContext="getFieldPathContext(item.field)"
-        @removeObject="removeObject(item.field)"
-      />
+      <FieldContent>
+        <!-- 校验失败：展示友好的错误提示 -->
+        <FormError v-if="item.error" :error-msg="item.error" :raw="item.field" />
+        <ContainerSlot
+          v-else-if="item.field.type === 'group'"
+          :currentForm="item.field"
+          :pathContext="getFieldPathContext(item.field)"
+          @removeObject="removeObject(item.field)"
+        />
+        <component
+          v-else
+          :is="item.field.type === 'object' ? ContainerObject : ContainerArray"
+          :currentForm="item.field"
+          :pathContext="getFieldPathContext(item.field)"
+          @removeObject="removeObject(item.field)"
+        />
+      </FieldContent>
     </FormItem>
   </el-row>
 </template>
@@ -50,6 +52,7 @@ import ContainerArray from "./containerArray.vue";
 import ContainerObject from "./containerObject.vue";
 import FormError from "./formError.vue";
 import FormItem from "./formItem.vue";
+import FieldContent from "./fieldContent.vue";
 
 defineOptions({ name: "FormRenderer" });
 const { pathContext, wrapped = false } = defineProps<{
