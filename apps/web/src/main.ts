@@ -1,7 +1,7 @@
 // 导入 Vue 应用创建函数
 import { createApp, watch } from "vue";
-// 导入 Pinia 状态管理
-import pinia from "./stores";
+// 导入 Pinia 状态管理（仅实例，不引入业务 store，避免首屏连带加载全部 store）
+import pinia from "./stores/pinia";
 // 导入 i18n 配置
 import i18n from "./locales";
 // 导入根组件

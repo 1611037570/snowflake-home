@@ -86,6 +86,33 @@ function copyrightPlugin(): Plugin {
   };
 }
 
+/**
+ * 首屏样式异步化插件
+ * Vite 会在 HTML 中注入入口样式表，大体积 CSS 会阻塞首屏渲染，爬虫也需等待其下载完成。
+ * 这里在产物生成后改为预加载，加载完成时再提升为样式表，并用 noscript 保留同步兜底。
+ */
+function asyncStylePlugin(): Plugin {
+  return {
+    name: "async-entry-style",
+    // 关键：必须排在 vite:build-html 之后执行，否则产物 HTML 尚未注入样式表，改写会静默失效
+    enforce: "post",
+    generateBundle(_options, bundle) {
+      // 未生成 HTML 产物时直接跳过，避免误改其他资源
+      const htmlAsset = Object.values(bundle).find((item) => item.fileName === "index.html");
+      if (!htmlAsset || htmlAsset.type !== "asset") return;
+      // HEAD 中的样式表一律转为异步加载，异步 chunk 的样式由动态 import 自行携带
+      htmlAsset.source = String(htmlAsset.source).replace(
+        /<link([^>]*?)rel="stylesheet"([^>]*?)\/?>/g,
+        (_match, before: string, after: string) => {
+          const attributes = `${before} ${after}`.trim();
+          // 加载完成后由内联脚本提升为样式表，保证 CSS 就绪即生效而不阻塞首屏
+          return `<link ${attributes} rel="preload" as="style" onload="this.rel='stylesheet'"><noscript><link ${attributes} rel="stylesheet"></noscript>`;
+        },
+      );
+    },
+  };
+}
+
 // Vite配置导出
 export default ({ mode }: { mode: string }) => {
   // 从环境文件加载环境变量
@@ -113,6 +140,8 @@ export default ({ mode }: { mode: string }) => {
       // 版本注入插件（自动生成时间戳版本号）
       versionPlugin(),
       copyrightPlugin(),
+      // 首屏样式异步加载（避免大体积 CSS 阻塞渲染）
+      asyncStylePlugin(),
       // Vue 3 插件配置
       vue(),
       // Tailwind CSS插件配置
@@ -191,6 +220,8 @@ export default ({ mode }: { mode: string }) => {
       emptyOutDir: true, // 输出目录在项目根之外，需显式清空
       assetsDir: "assets", // 静态资源目录
       chunkSizeWarningLimit: 1000, // 警告阈值
+      // 关闭产物体积统计输出，缩短构建耗时
+      reportCompressedSize: false,
       // minify: 'terser', // 代码压缩
       // Rollup配置
       rollupOptions: {
@@ -208,7 +239,15 @@ export default ({ mode }: { mode: string }) => {
             gzipSize: true, // 显示gzip压缩后的大小
             brotliSize: true, // 显示brotli压缩后的大小
           }) as any,
-          // 资源压缩配置
+          // 资源压缩配置：同时产出 gzip 与 brotli，兼容不同服务端的压缩协商
+          viteCompression({
+            verbose: false, // 输出压缩日志
+            disable: isProd ? false : true, // 生产环境启用
+            threshold: 10240, // 文件大小阈值
+            algorithm: "gzip", // 压缩算法
+            ext: ".gz", // 压缩文件后缀
+            deleteOriginFile: false, // 是否删除源文件
+          }),
           viteCompression({
             verbose: false, // 输出压缩日志
             disable: isProd ? false : true, // 生产环境启用
@@ -219,33 +258,43 @@ export default ({ mode }: { mode: string }) => {
         ],
         output: {
           manualChunks: (id) => {
-            if (id.includes("node_modules")) {
-              if (id.includes("/echarts/")) {
-                return "echarts";
+            // 业务源码：除扩展脚本外交回 Rollup，按入口与动态 import 自动分包
+            if (!id.includes("node_modules")) {
+              // 这里打包content-script.ts为content-script.js
+              if (id.includes("content-script")) {
+                return "content-script";
               }
-              if (id.includes("wangeditor")) {
-                return "wangeditor";
-              }
-              if (id.includes("/qrcode/")) {
-                return "qrcode";
-              }
-              if (id.includes("vue-draggable-plus")) {
-                return "vue-draggable";
-              }
-              if (id.includes("/html2canvas/")) {
-                return "html2canvas";
-              }
-              if (id.includes("/snapdom/")) {
-                return "snapdom";
-              }
-              if (id.includes("/pica/")) {
-                return "pica";
-              }
+              return;
             }
-            // 这里打包content-script.ts为content-script.js
-            if (id.includes("content-script")) {
-              return "content-script";
+            // 重型页面库：仅特定功能使用，独立成包便于按需拉取与长期缓存
+            if (id.includes("/echarts/")) {
+              return "echarts";
             }
+            if (id.includes("wangeditor")) {
+              return "wangeditor";
+            }
+            if (id.includes("/html2canvas/")) {
+              return "html2canvas";
+            }
+            if (id.includes("/snapdom/")) {
+              return "snapdom";
+            }
+            if (id.includes("/pica/")) {
+              return "pica";
+            }
+            // Vue 运行时生态：框架核心、路由、状态、语言包与组合式工具库，
+            // 它们在入口静态依赖内，独立成包只是为了跨版本复用缓存，不会额外引入动态库
+            if (/\/node_modules\/(?:vue|vue-router|vue-i18n|pinia|@vueuse|@vue\/[a-z-]+)\//.test(id)) {
+              return "vendor-vue";
+            }
+            // 通用工具库：入口已静态依赖，成包后便于长期缓存
+            if (/\/node_modules\/(?:lodash-es|dayjs|mitt|idb-keyval)\//.test(id)) {
+              return "vendor-utils";
+            }
+            // 其余第三方依赖交回 Rollup 按真实引用关系分配到入口或动态 chunk。
+            // 注：vue-draggable 与 qrcode 此前在此单独成包，会被提升为入口静态依赖，
+            // 反而随首屏一起 preload；统一兜底为 vendor 也有同样问题，故不再对其分组。
+            return;
           },
         },
       },
