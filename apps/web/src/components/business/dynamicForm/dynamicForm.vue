@@ -1,10 +1,14 @@
 <template>
   <el-form ref="dynamicForm" :model="data" label-width="auto" class="flex w-full flex-col">
-    <FormRenderer v-model:items="form" />
+    <Suspense @pending="beginRender" @resolve="finishRender">
+      <FormRenderer v-model:items="form" />
+    </Suspense>
   </el-form>
 </template>
 <script setup lang="ts">
-import { getCurrentInstance, inject, provide, unref } from "vue";
+import { getCurrentInstance, inject, provide, unref, watch } from "vue";
+import { initializeFormData } from "./code/schemaData";
+import { createFormReadyContext, FORM_READY } from "./code/formReady";
 import eventBus from "@/utils/modules/eventBus";
 import FormRenderer from "./components/formRenderer.vue";
 import DataProxy from "./code/dataProxy";
@@ -43,6 +47,20 @@ const emit = instance?.emit;
 const form = defineModel<any>("form");
 // 定义数据模型
 const data = defineModel<any>("data");
+// 数据初始化先于子字段渲染；仅整体切换配置或数据时补齐，不监听后续输入。
+const readiness = createFormReadyContext(() => emit?.("ready", data.value));
+provide(FORM_READY, readiness.context);
+watch([form, data], () => {
+  if (!form.value || !data.value) return;
+  initializeFormData(data.value, form.value.fields ?? []);
+  readiness.restart();
+  emit?.("initialized", data.value);
+}, { immediate: true, flush: "sync" });
+let renderDone = () => {};
+const beginRender = () => { renderDone(); renderDone = readiness.context.begin(); };
+const finishRender = () => renderDone();
+onMounted(readiness.mount);
+onBeforeUnmount(readiness.stop);
 const dataProxy = new DataProxy(data, emit, props.options);
 
 // 注入实例组件库

@@ -32,6 +32,9 @@
 
 <script setup>
 import { defineAsyncComponent, onBeforeUnmount, onMounted, ref, shallowRef } from "vue";
+import { useFormReadyTask } from "../dynamicForm/api";
+// 富文本实际创建后才完成任务，异步代码下载完成不等于可编辑。
+const finishReady = useFormReadyTask();
 const sfBorder = inject("sfBorder", "");
 
 // 延迟加载 wangeditor 库及样式：组件实际渲染时才引入，避免编辑资源提前进包
@@ -100,6 +103,7 @@ onBeforeUnmount(() => {
 
 const handleCreated = (editor) => {
   editorRef.value = editor; // 记录 editor 实例，重要！
+  finishReady();
   updateCurrentLength(editor);
 };
 
