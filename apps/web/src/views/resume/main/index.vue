@@ -18,12 +18,14 @@
           <dl
             class="animate-rise animate-rise--delay-three grid max-w-md grid-cols-1 pt-8 text-left sm:grid-cols-2"
           >
+            <!-- 单列逐项分隔，双列仅保留首行底部分隔线。 -->
             <div
               v-for="(stat, index) in headlineStats"
               :key="stat.label"
               :class="[
                 index % 2 === 0 ? 'sm:border-r' : '',
-                index < 2 ? 'border-b' : '',
+                index < headlineStats.length - 1 ? 'border-b' : '',
+                index >= 2 ? 'sm:border-b-0' : '',
               ]"
               class="flex flex-col items-center justify-center border-sf-b py-3 text-center sm:px-3 sm:first:pl-0"
             >
