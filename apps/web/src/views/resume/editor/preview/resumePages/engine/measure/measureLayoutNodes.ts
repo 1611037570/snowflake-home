@@ -54,12 +54,14 @@ export const measureLayoutNodes = (
     const breakPointTypes = new Map(
       node.breakPoints?.map((point) => [point.offset, point.type]) || [],
     );
+    // 正文末尾须包含底部留白，避免已消费全部内容后再生成空续片。
+    const declaredContentLength = node.breakPoints?.reduce((max, point) => Math.max(max, point.offset), 0) ?? 0;
     const breakPoints = Array.from(
       element.querySelectorAll<HTMLElement>("[data-layout-breakpoint-offset]"),
     )
       .map((point) => {
         const offset = Number(point.dataset.layoutBreakpointOffset);
-        const height = point.getBoundingClientRect().height;
+        const height = declaredContentLength > 0 && offset === declaredContentLength ? rect.height : point.getBoundingClientRect().height;
         return { offset, type: breakPointTypes.get(offset) || "textRange", height };
       })
       .filter((point) => Number.isFinite(point.offset) && point.height > 0);
@@ -70,12 +72,14 @@ export const measureLayoutNodes = (
     // 分页据此把"能放下的块"放进当前页，块区间交给渲染层裁剪
     const blockHost = element.querySelector<HTMLElement>("[data-layout-block-range]");
     const nodeTop = element.getBoundingClientRect().top;
+    // 绝对定位的装饰不参与内容块序号，最后内容块同时承担节点底部留白。
+    const contentBlocks = blockHost ? Array.from(blockHost.children).filter((child) => !["absolute", "fixed"].includes(getComputedStyle(child).position)) : [];
     const blockBreakPoints = blockHost
-      ? Array.from(blockHost.children)
+      ? contentBlocks
           .map((child, index) => ({
             offset: 0,
             type: "block" as const,
-            height: child.getBoundingClientRect().bottom - nodeTop,
+            height: index === contentBlocks.length - 1 ? rect.height : child.getBoundingClientRect().bottom - nodeTop,
             blockEnd: index + 1,
             // 续段落在页首时渲染层会去掉该块的上外边距，这里上报供分页同步扣除
             leadingMargin: Number.parseFloat(getComputedStyle(child).marginTop) || 0,
