@@ -36,6 +36,8 @@ test
 .VSCodeCounter
 # Codex 生成物
 .codex
+# WorkBuddy 工作区数据
+.workbuddy
 
 # TypeScript
 *.tsbuildinfo
