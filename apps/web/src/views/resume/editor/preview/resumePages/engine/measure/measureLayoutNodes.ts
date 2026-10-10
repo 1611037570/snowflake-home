@@ -49,16 +49,27 @@ export const measureLayoutNodes = (
   const elements = Array.from(root.querySelectorAll<HTMLElement>(NODE_SELECTOR));
   const elementById = new Map(elements.map((element) => [element.dataset.layoutNodeId || "", element]));
   const nodeById = new Map(nodes.map(node => [node.id, node])); // 读取通用整块能力，不识别业务名称
-  const ownsModuleBox = (module: HTMLElement, moduleNodes: HTMLElement[]) => moduleNodes.length === 1 &&
-    nodeById.get(moduleNodes[0]!.dataset.layoutNodeId || "")?.splitMode === "whole";
+  // 缓存仅存活于本次测量，校验与断点读取共用尺寸，不跨内容变化复用。
+  const rects = new Map<Element, DOMRect>();
+  const readRect = (element: Element): DOMRect => {
+    const cached = rects.get(element);
+    if (cached) return cached;
+    const rect = element.getBoundingClientRect();
+    rects.set(element, rect);
+    return rect;
+  };
+  const moduleBoxes = new Map<HTMLElement, DOMRect>(); // 单个整块节点承担的模块外框尺寸
 
   // 实际模块结构参与测量，额外占位必须下沉为通用节点而不能藏在分组外框。
   for (const module of root.querySelectorAll<HTMLElement>("[data-layout-module]")) {
-    const rect = module.getBoundingClientRect();
+    const rect = readRect(module);
     const moduleNodes = Array.from(module.querySelectorAll<HTMLElement>(NODE_SELECTOR));
     // 单个不可分节点直接承担整个外框预算，无分组跨页的重复留白问题。
-    if (ownsModuleBox(module, moduleNodes)) continue;
-    if (!isNeutralModuleGeometry({ width: rect.width, height: rect.height, nodes: moduleNodes.map(node => node.getBoundingClientRect()) })) {
+    if (moduleNodes.length === 1 && nodeById.get(moduleNodes[0]!.dataset.layoutNodeId || "")?.splitMode === "whole") {
+      moduleBoxes.set(moduleNodes[0]!, rect);
+      continue;
+    }
+    if (!isNeutralModuleGeometry({ width: rect.width, height: rect.height, nodes: moduleNodes.map(readRect) })) {
       throw new Error(`模块 ${module.dataset.layoutModule} 的外框改变了节点预算，请将占位放入区域或条目`);
     }
   }
@@ -66,9 +77,7 @@ export const measureLayoutNodes = (
   nodes.forEach((node) => {
     const element = elementById.get(node.id);
     if (!element) return;
-    const module = element.closest<HTMLElement>("[data-layout-module]");
-    const rect = module && ownsModuleBox(module, Array.from(module.querySelectorAll<HTMLElement>(NODE_SELECTOR)))
-      ? module.getBoundingClientRect() : element.getBoundingClientRect();
+    const rect = moduleBoxes.get(element) ?? readRect(element);
     const breakPointTypes = new Map(
       node.breakPoints?.map((point) => [point.offset, point.type]) || [],
     );
@@ -79,7 +88,7 @@ export const measureLayoutNodes = (
     )
       .map((point) => {
         const offset = Number(point.dataset.layoutBreakpointOffset);
-        const height = declaredContentLength > 0 && offset === declaredContentLength ? rect.height : point.getBoundingClientRect().height;
+        const height = declaredContentLength > 0 && offset === declaredContentLength ? rect.height : readRect(point).height;
         return { offset, type: breakPointTypes.get(offset) || "textRange", height };
       })
       .filter((point) => Number.isFinite(point.offset) && point.height > 0);
@@ -89,7 +98,7 @@ export const measureLayoutNodes = (
     // 块断点：只读取渲染层声明了块区间的容器（由 BlockRange 渲染结构声明，与模块定义无关），
     // 分页据此把"能放下的块"放进当前页，块区间交给渲染层裁剪
     const blockHost = element.querySelector<HTMLElement>("[data-layout-block-range]");
-    const nodeTop = element.getBoundingClientRect().top;
+    const nodeTop = readRect(element).top;
     // 绝对定位的装饰不参与内容块序号，最后内容块同时承担节点底部留白。
     const contentBlocks = blockHost ? Array.from(blockHost.children).filter((child) => !["absolute", "fixed"].includes(getComputedStyle(child).position)) : [];
     const blockBreakPoints = blockHost
@@ -97,7 +106,7 @@ export const measureLayoutNodes = (
           .map((child, index) => ({
             offset: 0,
             type: "block" as const,
-            height: index === contentBlocks.length - 1 ? rect.height : child.getBoundingClientRect().bottom - nodeTop,
+            height: index === contentBlocks.length - 1 ? rect.height : readRect(child).bottom - nodeTop,
             blockEnd: index + 1,
             // 续段落在页首时渲染层会去掉该块的上外边距，这里上报供分页同步扣除
             leadingMargin: Number.parseFloat(getComputedStyle(child).marginTop) || 0,
@@ -126,8 +135,8 @@ export const measureLayoutNodes = (
     }
     if (declaredContentLength > 0 && blockIndices.length && textBlockIndex === undefined) throw new Error(`节点 ${node.id} 缺少正文块标记`);
     const indexedBreakPoints = indexedBlocks.map((block, index) => {
-      const blockRect = block.getBoundingClientRect();
-      const previousBottom = index > 0 ? indexedBlocks[index - 1].getBoundingClientRect().bottom : blockRect.top;
+      const blockRect = readRect(block);
+      const previousBottom = index > 0 ? readRect(indexedBlocks[index - 1]!).bottom : blockRect.top;
       return {
         offset: 0, // 块断点不消费正文字符
         type: "block" as const, // 显式内容块断点

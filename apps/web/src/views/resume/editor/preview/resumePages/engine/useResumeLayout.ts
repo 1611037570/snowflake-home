@@ -136,6 +136,22 @@ export const useResumeLayout = ({
   const columnWidths = computed(() =>
     resolveColumnWidths(layout.value, contentWidth.value, RESUME_WIDTH - pageBorderWidth.value * 2),
   );
+  // 节点只按模块索引一次，栏内有序列表由测量与分页共同复用。
+  const nodesByModule = computed(() => {
+    const index = new Map<string, LayoutNode[]>();
+    for (const node of nodes.value) {
+      const list = index.get(node.sourceModuleKey);
+      if (list) list.push(node);
+      else index.set(node.sourceModuleKey, [node]);
+    }
+    return index;
+  });
+  const nodesByColumn = computed(() => new Map(
+    layout.value.regions.flatMap((region) => region.columns.map((column) => [
+      column.id,
+      column.moduleKeys.flatMap((moduleKey) => nodesByModule.value.get(moduleKey) ?? []),
+    ] as const)),
+  ));
   // 测量宿主按栏位分组渲染：每个节点在自己的栏宽下测量，节点与栏位一一对应，测量结果仍是扁平表
   // 分组带上区域编号，测量树才能用同一份区域外观渲染（长图导出即取自该树）
   const measureGroups = computed(() =>
@@ -146,9 +162,7 @@ export const useResumeLayout = ({
         width: columnWidths.value.get(column.id) ?? contentWidth.value,
         padding: column.padding, // 测量栏与预览栏共用装饰内边距
         // 测量节点按栏内模块顺序排列，保持模块内部节点顺序。
-        nodes: column.moduleKeys.flatMap((moduleKey) =>
-          nodes.value.filter((node) => node.sourceModuleKey === moduleKey),
-        ),
+        nodes: nodesByColumn.value.get(column.id) ?? [],
       })),
     ),
   );
@@ -197,11 +211,8 @@ export const useResumeLayout = ({
         laterPageAvailableHeight: laterPageAvailableHeight.value,
         buildFlow: (column, { heights }) => {
           // 分页沿用栏内模块顺序，使双栏上下移动实际改变页面内容。
-          const columnNodes = column.moduleKeys.flatMap((moduleKey) =>
-            nodes.value.filter((node) => node.sourceModuleKey === moduleKey),
-          );
           return paginateFlow({
-            nodes: columnNodes,
+            nodes: nodesByColumn.value.get(column.id) ?? [],
             measurements: measurements.value,
             heights,
             gap: column.gap,
