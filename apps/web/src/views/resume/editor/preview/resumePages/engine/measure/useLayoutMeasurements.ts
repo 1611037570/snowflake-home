@@ -69,6 +69,8 @@ export const useLayoutMeasurements = ({
 }: UseLayoutMeasurementsOptions) => {
   const measurements = shallowRef<ReadonlyMap<string, MeasuredNode>>(new Map());
   const measureDone = ref(false);
+  // 节点独立观察尺寸，宿主最小高度不变时也能捕获异步组件与图片增高。
+  const resizeTargets = shallowRef<HTMLElement[]>([]);
   let measuring = false;
   /** 最近一次需要重新测量的时间戳，合并同帧内的多次请求 */
   let dirtyAt = 0;
@@ -83,11 +85,18 @@ export const useLayoutMeasurements = ({
     await nextTick();
     const root = unrefElement(measureRef);
     if (!root) {
+      resizeTargets.value = [];
       measurements.value = new Map();
       measureDone.value = false;
       measuring = false;
       return;
     }
+    // 仅在节点元素发生更替时重绑观察器，避免每次测量触发初始尺寸通知。
+    const nextTargets = [root, ...root.querySelectorAll<HTMLElement>("[data-layout-node-id]")];
+    if (
+      nextTargets.length !== resizeTargets.value.length ||
+      nextTargets.some((element, index) => element !== resizeTargets.value[index])
+    ) resizeTargets.value = nextTargets;
     const nextMeasurements = measureLayoutNodes(root, nodes.value);
     measurements.value = nextMeasurements;
     measuredAt = measuringAt;
@@ -123,7 +132,7 @@ export const useLayoutMeasurements = ({
   );
 
   // 尺寸变化由浏览器报告，与图谱变更一并合并到同一帧测量
-  const { stop: stopResize } = useResizeObserver(measureRef, () => requestMeasure());
+  const { stop: stopResize } = useResizeObserver(resizeTargets, () => requestMeasure());
 
   return {
     measurements,
