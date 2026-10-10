@@ -74,16 +74,11 @@
             </span>
           </div>
           <div
-            class="resume-home__preview relative overflow-hidden rounded-[30px] border border-sf-b bg-sf-primary p-3 shadow-2xl"
+            class="resume-home__preview relative overflow-hidden rounded-[30px] border border-sf-b bg-sf-primary shadow-2xl"
           >
-            <div class="flex items-center gap-3 rounded-2xl bg-sf-bg px-3 py-3">
-              <span class="h-3 w-3 rounded-full bg-sf-error"></span>
-              <span class="h-3 w-3 rounded-full bg-sf-warning"></span>
-              <span class="h-3 w-3 rounded-full bg-sf-success"></span>
-              <span class="ml-3 h-3 w-24 rounded-full bg-sf-bg-3"></span>
-            </div>
+            <!-- 占位区域铺满预览框，移除顶部装饰栏与额外内边距。 -->
             <div
-              class="resume-home__shot group relative mt-3 aspect-[16/10] overflow-hidden rounded-2xl border border-dashed border-sf-b bg-sf-bg"
+              class="resume-home__shot group relative aspect-[16/10] overflow-hidden bg-sf-bg"
             >
               <!-- 将此区域替换为首页产品截图即可 -->
               <div
