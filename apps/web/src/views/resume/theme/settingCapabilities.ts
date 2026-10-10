@@ -14,18 +14,13 @@ export type ThemeSettingRestrictions = Partial<
   >
 >;
 
-interface SettingCapability {
-  /** 外观组件不支持调整的设置及原因文案标识。 */
-  unsupportedSettings?: ThemeSettingRestrictions;
-}
-
 // 按实际使用的外观组件读取限制，设置面板不维护独立的主题名单。
 export const resolveThemeSettingRestrictions = (themeId?: string): ThemeSettingRestrictions => {
   const decisions = resolveThemeDecisions(themeId);
-  const user = resolveUserContent(themeId, decisions.layoutType) as SettingCapability;
+  const user = resolveUserContent(themeId, decisions.layoutType);
   const page = resolvePageAppearance(
     decisions.pageBackgroundPattern || themeId,
-  ) as SettingCapability;
+  );
   return {
     ...user.unsupportedSettings,
     ...page.unsupportedSettings,
