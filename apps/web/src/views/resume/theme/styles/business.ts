@@ -1,6 +1,8 @@
+import type { ThemeTemplateConfig } from "./createThemeTemplate";
+
 export default {
   name: "商务",
-  id: "business",
+  id: "business" as const, // 主题编号
   design: ["single-column", "polished"],
   description: "适合职场与商务场景的正式简历样式。",
   ui: {
@@ -9,4 +11,4 @@ export default {
     page: { spacing: { module: 18 } },
     content: { dateStyle: "cn" },
   },
-};
+} satisfies ThemeTemplateConfig;

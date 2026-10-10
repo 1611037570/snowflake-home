@@ -1,6 +1,8 @@
+import type { ThemeTemplateConfig } from "./createThemeTemplate";
+
 export default {
   name: "通栏个人信息", // 主题显示名称
-  id: "userBand", // 主题编号
+  id: "userBand" as const, // 主题编号
   design: ["single-column", "polished"], // 模板页的分类筛选标签
   description: "个人信息整块铺满页面宽度的主题色底纹，正文保持页面留白。", // 主题说明
   decisions: { // 主题固定外观，不进入用户界面配置
@@ -17,4 +19,4 @@ export default {
       spacing: { module: 18 }, // 模块间距，同时决定底纹与下文之间的白边
     },
   },
-};
+} satisfies ThemeTemplateConfig;

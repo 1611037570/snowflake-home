@@ -1,6 +1,8 @@
+import type { ThemeTemplateConfig } from "./createThemeTemplate";
+
 export default {
   name: "红白双栏", // 主题显示名称
-  id: "redWhiteSidebar", // 主题编号，用于查找对应外观组件
+  id: "redWhiteSidebar" as const, // 主题编号，用于查找对应外观组件
   design: ["two-column", "minimal"], // 模板分类：双栏、简约
   description: "深红侧栏搭配白色正文与红色横线标题。", // 主题说明
   decisions: { // 主题固定外观，不进入用户界面配置
@@ -30,4 +32,4 @@ export default {
       datePosition: "right", // 日期放在条目右侧
     },
   },
-};
+} satisfies ThemeTemplateConfig;

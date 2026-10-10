@@ -1,8 +1,10 @@
+import type { ThemeTemplateConfig } from "./createThemeTemplate";
+
 export default {
   /** 主题展示名称 */
   name: "荧光网格",
   /** 主题与标题组件的匹配标识 */
-  id: "markerGrid",
+  id: "markerGrid" as const, // 主题编号
   /** 主题筛选分类 */
   design: ["single-column", "polished"],
   /** 主题样式说明 */
@@ -20,4 +22,4 @@ export default {
       titleIconMode: "none",
     },
   },
-};
+} satisfies ThemeTemplateConfig;

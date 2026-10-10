@@ -1,6 +1,8 @@
+import type { ThemeTemplateConfig } from "./createThemeTemplate";
+
 export default {
   name: "标语通栏", // 主题显示名称
-  id: "sloganBand", // 主题编号
+  id: "sloganBand" as const, // 主题编号
   design: ["single-column", "polished"], // 模板页的分类筛选标签
   description: "顶部标语色带搭配飘带底沿，适合突出个人主张的通用简历。", // 主题说明
   decisions: { // 主题固定外观，不进入用户界面配置
@@ -17,4 +19,4 @@ export default {
       spacing: { module: 18 }, // 模块之间的间距；标语与个人信息之间由个人信息自身留白
     },
   },
-};
+} satisfies ThemeTemplateConfig;

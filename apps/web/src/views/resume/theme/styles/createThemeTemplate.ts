@@ -1,14 +1,15 @@
 import type { ThemeDecisions } from "../themeDecisions";
+import type { ResumeUi, ThemeUiPreset } from "../uiTypes";
 import { DEFAULT_UI } from "@/stores/modules/resume/config/uiConfig";
 
 export interface ResumeThemeTemplate {
-  name: string;
-  id: string;
-  description: string;
-  item: {
-    data: Record<string, unknown>;
-    config: Record<string, unknown>;
-    ui: Record<string, any>;
+  name: string; // 主题显示名称
+  id: string; // 主题编号
+  description: string; // 主题说明
+  item: { // 应用主题时使用的简历初始配置
+    data: Record<string, unknown>; // 简历内容占位
+    config: Record<string, unknown>; // 模块配置占位
+    ui: ResumeUi; // 完整用户界面预设
   };
 }
 
@@ -23,28 +24,28 @@ export interface ThemePageAppearance {
 }
 
 export interface ThemeTemplateConfig {
-  name: string;
-  id: string;
-  description: string;
+  name: string; // 主题显示名称
+  id: string; // 主题编号
+  description: string; // 主题说明
   /**
    * 主题分类标签，取值与内容模板的 design 完全同一套：
    * single-column 单栏、two-column 双栏、minimal 简约、timeline 时间轴、polished 精美。
    * 模板页按该字段筛选，样式卡片与内容卡片共用同一个筛选字段名。
    */
-  design: string[];
+  design: ("single-column" | "two-column" | "minimal" | "timeline" | "polished")[];
   /** 主题页面级外观声明，公共页面读取该声明而不是判断主题编号 */
   pageAppearance?: ThemePageAppearance;
   /** 主题固定版式与纸张外观，不属于用户可编辑参数 */
   decisions?: Partial<ThemeDecisions>;
-  ui?: Record<string, any>;
+  ui?: ThemeUiPreset; // 用户可调参数的主题默认值
 }
 
 export interface ResumeThemeDefinition extends ThemeTemplateConfig {
-  ui: Record<string, any>;
+  ui: ThemeUiPreset; // 用户可调参数的主题默认值
 }
 
 // 在注册表统一补齐空覆盖项，主题文件只保留声明内容。
-export const createThemeTemplates = (definitions: ThemeTemplateConfig[]): ResumeThemeDefinition[] =>
+export const createThemeTemplates = <T extends ThemeTemplateConfig>(definitions: T[]): (T & ResumeThemeDefinition)[] =>
   definitions.map((definition) => ({
     ...definition,
     ui: definition.ui || {},
@@ -55,7 +56,7 @@ export const createThemeTemplates = (definitions: ThemeTemplateConfig[]): Resume
 // 它们由主题 decisions 单独声明，运行时也不合入用户界面配置。
 export const resolveThemeTemplate = (definition: ResumeThemeDefinition): ResumeThemeTemplate => {
   const { id, ui } = definition;
-  const presetUi = {
+  const presetUi: ResumeUi = {
     ...DEFAULT_UI,
     ...ui,
     page: {
@@ -66,7 +67,7 @@ export const resolveThemeTemplate = (definition: ResumeThemeDefinition): ResumeT
     },
     font: { ...DEFAULT_UI.font, ...ui.font },
     content: { ...DEFAULT_UI.content, ...ui.content },
-    theme: { ...DEFAULT_UI.theme, template: id, ...ui.theme },
+    theme: { ...DEFAULT_UI.theme, ...ui.theme, template: id },
     layout: {
       columns: ui.layout?.columns ?? DEFAULT_UI.layout.columns,
       leftColumnWidth: ui.layout?.leftColumnWidth ?? DEFAULT_UI.layout.leftColumnWidth,

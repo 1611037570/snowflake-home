@@ -1,6 +1,8 @@
+import type { ThemeTemplateConfig } from "./createThemeTemplate";
+
 export default {
   name: "蓝线简历", // 主题显示名称
-  id: "navyGuide", // 主题编号，供各外观组件按编号选择
+  id: "navyGuide" as const, // 主题编号，供各外观组件按编号选择
   design: ["single-column", "polished"], // 模板列表的分类标签
   description: "深色页眉搭配蓝色纵向引导线，突出个人信息和经历层次。", // 主题说明
   decisions: { // 主题固定外观，不进入用户界面配置
@@ -22,4 +24,4 @@ export default {
       infoLayout: "flex", // 个人资料按可用宽度自然换行
     },
   },
-};
+} satisfies ThemeTemplateConfig;

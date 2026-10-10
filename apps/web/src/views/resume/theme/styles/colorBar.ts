@@ -1,6 +1,8 @@
+import type { ThemeTemplateConfig } from "./createThemeTemplate";
+
 export default {
   name: "色条",
-  id: "colorBar",
+  id: "colorBar" as const, // 主题编号
   design: ["single-column", "polished"],
   description: "以左侧主题色竖条搭配浅色底纹突出模块标题的样式。",
   ui: {
@@ -9,4 +11,4 @@ export default {
     page: { spacing: { module: 18 } },
     content: { dateStyle: "cn" },
   },
-};
+} satisfies ThemeTemplateConfig;

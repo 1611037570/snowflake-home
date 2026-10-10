@@ -1,6 +1,8 @@
+import type { ThemeTemplateConfig } from "./createThemeTemplate";
+
 export default {
   name: "方节点时间轴", // 主题显示名称
-  id: "squareTimeline", // 主题编号，各外观组件按此编号查找
+  id: "squareTimeline" as const, // 主题编号，各外观组件按此编号查找
   design: ["single-column", "timeline"], // 模板列表分类标签
   description: "左侧模块标题与日期，方形节点连接正文时间轴。", // 主题说明
   decisions: { // 主题固定外观，不进入用户界面配置
@@ -29,4 +31,4 @@ export default {
       infoLayout: "flex", // 资料按可用宽度自然换行
     },
   },
-};
+} satisfies ThemeTemplateConfig;

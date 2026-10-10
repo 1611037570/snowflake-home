@@ -1,8 +1,10 @@
+import type { ThemeTemplateConfig } from "./createThemeTemplate";
+
 export default {
   /** 主题展示名称 */
   name: "弧形页眉",
   /** 主题与外观组件的匹配标识 */
-  id: "curvedHeader",
+  id: "curvedHeader" as const, // 主题编号
   /** 主题筛选分类 */
   design: ["single-column", "polished"],
   /** 主题样式说明 */
@@ -29,4 +31,4 @@ export default {
       infoLayout: "flex",
     },
   },
-};
+} satisfies ThemeTemplateConfig;
