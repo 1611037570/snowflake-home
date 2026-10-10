@@ -3,6 +3,7 @@
     class="flex-c relative cursor-pointer overflow-hidden transition-all duration-300"
     :class="[iconClass]"
     :style="[boxIconStyle]"
+    :data-sf-icon-state="resourceState"
   >
     <component
       v-if="localIcon"
@@ -64,6 +65,8 @@ const boxIconStyle = computed(() => {
 
 const emit = defineEmits(["success", "fail"]);
 const iconClass = ref("");
+// 导出按当前简历中的图标状态等待，避免复制尚未加载的占位内容。
+const resourceState = ref<"loading" | "ready" | "error">("loading");
 // 优先使用父级注入图标，其次使用基础组件内置图标
 const localIconList = inject(SF_ICON_LIST_KEY, null);
 const localIcon = computed(() => {
@@ -86,19 +89,23 @@ function init() {
   const item = ICON_LIST[props.icon];
   iconClass.value = item?.color || "";
   if (localIcon.value) {
+    resourceState.value = "ready";
     emit("success");
     return;
   }
   if (!item) {
+    resourceState.value = "error";
     emit("fail");
     return;
   }
 
   loadIcon(item.icon)
     .then(() => {
+      resourceState.value = "ready";
       emit("success");
     })
     .catch(() => {
+      resourceState.value = "error";
       emit("fail");
     });
 }

@@ -97,6 +97,10 @@ export default ({ mode }: { mode: string }) => {
     assetsInclude: ["**/*.awebp"],
     // 基础路径配置
     base: VITE_BASE_URL,
+    // 后台文件封装使用模块输出，支持封装库的按需依赖。
+    worker: {
+      format: "es", // 后台脚本模块格式
+    },
     // 开发服务器配置
     server: {
       port: Number(VITE_PORT), // 端口号

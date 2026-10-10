@@ -8,9 +8,11 @@ import { nextTick } from "vue";
 import { storeToRefs } from "pinia";
 import { useResumeName } from "../../../../hooks/useResumeName";
 import { useResumeStore } from "@/stores";
-import { PDF_PAGE_WIDTH } from "../../shared/constants";
 import { resolveThemeDecisions } from "@/views/resume/theme";
 import { stripEditorPageFrame } from "./pageFrame";
+import { collectResumeStyles } from "./exportStyles";
+import { waitForExportResources, waitForExportTask } from "./exportResources";
+import { createLongImagePdfJob } from "./longImagePdf";
 
 type ImageExportRoot = HTMLElement | { value: unknown };
 
@@ -55,6 +57,16 @@ const getRootElement = (rootRef?: ImageExportRoot): HTMLElement | null => {
 // 断点探针只是测量脚手架：绝对定位且不可见，不参与导出画面，移除后能大幅减少渲染量
 const MEASURE_PROBE_SELECTOR = ".layout-measure-breakpoint";
 
+// 克隆时跳过整个探针子树，避免先复制大量重复正文再删除。
+const cloneExportContent = (node: Node): Node => {
+  const clone = node.cloneNode(false);
+  for (const child of node.childNodes) {
+    if (child instanceof Element && child.matches(MEASURE_PROBE_SELECTOR)) continue;
+    clone.appendChild(cloneExportContent(child));
+  }
+  return clone;
+};
+
 // 将长图 DOM 渲染为画布，PNG 和长图 PDF 共用这份渲染结果。
 const renderLongImage = async (
   rootRef: ImageExportRoot | undefined,
@@ -64,14 +76,18 @@ const renderLongImage = async (
   paper: PaperSurface,
 ) => {
   await nextTick();
-  await document.fonts?.ready;
+  let rootEl = getRootElement(rootRef);
+  if (!rootEl) throw new Error("未找到可导出的简历 DOM");
+  // 仅等待当前简历的资源，图标完成后重新读取可能被测量更新的宿主。
+  const [{ snapdom }] = await waitForExportTask(Promise.all([
+    import("@zumer/snapdom"),
+    waitForExportResources(rootEl, signal),
+  ]), signal);
   if (signal.aborted || !isCurrentResume()) return null;
-
-  const rootEl = getRootElement(rootRef);
+  rootEl = getRootElement(rootRef);
   if (!rootEl) throw new Error("未找到可导出的简历 DOM");
 
-  const { snapdom } = await import("@zumer/snapdom");
-  const clone = rootEl.cloneNode(true) as HTMLDivElement;
+  const clone = cloneExportContent(rootEl) as HTMLDivElement;
   // 预览区使用 transform: scale()，导出要取未缩放的布局宽度。
   const rootWidth = rootEl.offsetWidth;
 
@@ -92,8 +108,6 @@ const renderLongImage = async (
   // 长图源只有纸张底色，补画真实纸张外观；覆盖层不占布局，排版结果与页面完全一致
   if (paper.borderWidth > 0) clone.appendChild(createPaperFrame(paper));
   if (rootWidth > 0) clone.style.width = `${rootWidth}px`;
-  // 探针数量与断点数量同阶，保留会让渲染量增加数倍
-  clone.querySelectorAll(MEASURE_PROBE_SELECTOR).forEach((probe) => probe.remove());
 
   const tempContainer = document.createElement("div");
   tempContainer.style.position = "absolute";
@@ -102,15 +116,40 @@ const renderLongImage = async (
   if (rootWidth > 0) tempContainer.style.width = `${rootWidth}px`;
   tempContainer.appendChild(clone);
   document.body.appendChild(tempContainer);
+  const exportFrame = document.createElement("iframe");
+  // 保留当前视口尺寸，避免隔离文档的媒体查询改变主题排版。
+  exportFrame.style.cssText = `position:absolute;left:-9999px;top:-9999px;width:${window.innerWidth}px;height:${window.innerHeight}px;border:0;pointer-events:none;`;
+  exportFrame.setAttribute("aria-hidden", "true");
 
   try {
     // 单行字段在导出字体回退时保持单行，多行字段继续使用原有换行规则。
-    clone.querySelectorAll<HTMLElement>("[data-resume-plain-text]").forEach((field) => {
+    // 先批量读取行数再修改样式，避免每个字段都触发一次重新布局。
+    const singleLineFields = Array.from(clone.querySelectorAll<HTMLElement>("[data-resume-plain-text]")).filter((field) => {
       const range = document.createRange();
       range.selectNodeContents(field);
       const lines = Array.from(range.getClientRects()).filter((rect) => rect.width > 0 && rect.height > 0);
-      if (lines.length === 1) field.style.whiteSpace = "nowrap";
+      return lines.length === 1;
     });
+    singleLineFields.forEach((field) => { field.style.whiteSpace = "nowrap"; });
+    // 只复制简历依赖的样式，避免渲染库逐节点扫描整份编辑器文档。
+    const styleText = collectResumeStyles(clone, clone);
+    document.body.appendChild(exportFrame);
+    const exportDocument = exportFrame.contentDocument;
+    if (!exportDocument) throw new Error("创建简历导出文档失败");
+    exportDocument.documentElement.className = document.documentElement.className;
+    exportDocument.documentElement.style.cssText = document.documentElement.style.cssText;
+    exportDocument.body.className = document.body.className;
+    exportDocument.body.style.cssText = document.body.style.cssText;
+    const base = exportDocument.createElement("base");
+    base.href = document.baseURI;
+    const style = exportDocument.createElement("style");
+    style.textContent = styleText;
+    exportDocument.head.append(base, style);
+    exportDocument.body.appendChild(clone);
+    // 新文档先完成布局以触发所需字体加载，再读取稳定的字体尺寸。
+    void clone.offsetHeight;
+    await waitForExportResources(clone, signal);
+    if (signal.aborted || !isCurrentResume()) return null;
     const canvas = await snapdom.toCanvas(clone, {
       scale,
       backgroundColor: paper.background,
@@ -124,6 +163,7 @@ const renderLongImage = async (
     }
     return canvas;
   } finally {
+    exportFrame.remove();
     if (tempContainer.parentNode) tempContainer.parentNode.removeChild(tempContainer);
   }
 };
@@ -147,6 +187,7 @@ const exportLongImage = async (
   // 导出期间锁定编辑器并移除模块选中状态
   const cachedSelectedModule = [...selectedModule.value];
   resumeStore.clearSelectedModules();
+  let pdfJob: ReturnType<typeof createLongImagePdfJob> | null = null; // 仅所选格式需要时创建后台任务
 
   try {
     // 纸张底色来自简历 ui，边框按主题编号解析，外轮廓统一使用直角。
@@ -157,52 +198,42 @@ const exportLongImage = async (
       borderWidth: pageBorder.width,
       borderColor: pageBorder.color,
     };
+    // 后台资源加载与画布生成并行，封装计算不占用编辑器主线程。
+    if (format === "pdf") pdfJob = createLongImagePdfJob(signal);
     const canvas = await renderLongImage(rootRef, signal, scale, isCurrentResume, paper);
     if (signal.aborted || !isCurrentResume()) return;
 
     if (!canvas) return;
 
-    if (format === "pdf") {
-      const { default: jsPDF } = await import("jspdf");
-      const pageHeight = (canvas.height / canvas.width) * PDF_PAGE_WIDTH;
-      const pdf = new jsPDF({
-        orientation: "portrait",
-        unit: "mm",
-        format: [PDF_PAGE_WIDTH, pageHeight],
-      });
-      pdf.addImage(
-        canvas.toDataURL("image/png"),
-        "PNG",
-        0,
-        0,
-        PDF_PAGE_WIDTH,
-        pageHeight,
-        undefined,
-        "FAST",
-      );
-      if (signal.aborted || !isCurrentResume()) return;
-      pdf.save(getExportFileName(resumeTitle.value, "pdf"));
-    } else {
-      const blob = await new Promise<Blob | null>((resolve) => {
-        canvas.toBlob(resolve, "image/png");
-      });
-      if (signal.aborted || !isCurrentResume()) return;
-      if (!blob) throw new Error("简历图片生成失败");
+    // 两种格式共用异步图片编码，避免长图转为大体积字符串阻塞界面。
+    let blob = await waitForExportTask(new Promise<Blob | null>((resolve) => {
+      canvas.toBlob(resolve, "image/png");
+    }), signal);
+    if (signal.aborted || !isCurrentResume()) return;
+    if (!blob) throw new Error("简历图片生成失败");
 
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement("a");
-      link.href = url;
-      // 统一命名：轻舟简历-简历标题-年-月-日
-      link.download = getExportFileName(resumeTitle.value, "png");
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
-      URL.revokeObjectURL(url);
+    if (format === "pdf") {
+      // 转移二进制数据，后台返回文件后由主线程统一下载。
+      const imageBytes = await waitForExportTask(blob.arrayBuffer(), signal);
+      if (signal.aborted || !isCurrentResume()) return;
+      pdfJob!.write(imageBytes, canvas.width, canvas.height);
+      blob = await pdfJob!.result;
+      if (signal.aborted || !isCurrentResume()) return;
     }
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    // 两种长图格式统一下载，保持原有命名规则。
+    link.download = getExportFileName(resumeTitle.value, format);
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    URL.revokeObjectURL(url);
     if (isCurrentResume()) onSuccess?.();
   } catch (error) {
-    console.error(format === "pdf" ? "生成长图PDF失败:" : "生成简历图片失败:", error);
+    if (!signal.aborted) console.error(format === "pdf" ? "生成长图PDF失败:" : "生成简历图片失败:", error);
   } finally {
+    pdfJob?.dispose();
     if (isCurrentResume()) resumeStore.setSelectedModules(cachedSelectedModule);
     resumeStore.finishPrinting(signal);
   }
