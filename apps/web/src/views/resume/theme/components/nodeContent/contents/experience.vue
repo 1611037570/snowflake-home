@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed } from "vue";
+import { createContentBlocks } from "@/views/resume/editor/preview/resumePages/engine/contentBlocks";
 import ItemDate from "@/views/resume/editor/preview/components/itemDate.vue";
 import ItemTitle from "@/views/resume/editor/preview/components/itemTitle.vue";
 import ItemTags from "@/views/resume/editor/preview/components/itemTags.vue";
@@ -36,7 +37,12 @@ const hasItemMeta = computed(() => {
   const value = item.value;
   return Boolean(value.tags?.length || value.link?.name || value.link?.url);
 });
-const bodyBlockIndex = computed(() => (hasItemHeader.value ? 2 : 0) + (hasItemMeta.value ? 1 : 0));
+// 可见块统一登记顺序，测量与裁剪不再分别维护行号。
+const blocks = computed(() => createContentBlocks([
+  ...(hasItemHeader.value ? ["title", "info"] : []),
+  ...(hasItemMeta.value ? ["meta"] : []),
+  ...(!isContentEmpty(item.value.content) ? ["body"] : []),
+]));
 const getItemLink = (value: any) => {
   const link = value?.link;
   if (typeof link === "string") return { name: "", url: link.trim() };
@@ -58,7 +64,7 @@ const itemContentSpacingStyle = computed(() => {
   <template v-if="hasContentBlock">
     <!-- 块区间按实际存在的头部、标签链接和正文顺序，与测量层 DOM 块序保持一致 -->
     <div
-      v-if="hasItemHeader && showItemHeader && isBlockVisible(0)"
+      v-if="hasItemHeader && showItemHeader && isBlockVisible(blocks.indexOf('title'))"
       class="flex flex-wrap items-center justify-between gap-3"
     >
       <div class="min-w-0 flex-1">
@@ -68,7 +74,7 @@ const itemContentSpacingStyle = computed(() => {
       <ItemDate :value="getTime(item.startTime, item.endTime, dateStyle)" :date-rail="isTimeline" />
     </div>
     <div
-      v-if="hasItemHeader && showItemHeader && isBlockVisible(1)"
+      v-if="hasItemHeader && showItemHeader && isBlockVisible(blocks.indexOf('info'))"
       class="flex flex-wrap items-center justify-between gap-3"
       :style="innerSpacingStyle"
     >
@@ -80,7 +86,7 @@ const itemContentSpacingStyle = computed(() => {
       <ResumeField :model-value="item.city" />
     </div>
     <div
-      v-if="hasItemHeader && showItemHeader && hasItemMeta && isBlockVisible(2)"
+      v-if="hasItemHeader && showItemHeader && hasItemMeta && isBlockVisible(blocks.indexOf('meta'))"
       class="flex flex-wrap items-center justify-between gap-3"
       :style="innerSpacingStyle"
     >
@@ -100,7 +106,7 @@ const itemContentSpacingStyle = computed(() => {
     </div>
     <!-- 正文作为一个块：内部段落由字符区间切分，保证块序与测量层一致 -->
     <div
-      v-if="!isContentEmpty(item.content) && isBlockVisible(bodyBlockIndex)"
+      v-if="!isContentEmpty(item.content) && isBlockVisible(blocks.indexOf('body'))"
       :style="itemContentSpacingStyle"
     >
       <ResumeField :model-value="richTextHtml" html />

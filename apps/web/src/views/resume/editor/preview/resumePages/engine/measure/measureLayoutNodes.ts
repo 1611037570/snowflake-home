@@ -1,5 +1,6 @@
 import type { LayoutNode } from "../types";
 import type { MeasuredNode } from "./types";
+import { validateContentBlockIndices } from "../contentBlocks";
 
 /** 测量宿主中每个节点的 DOM 结构标识。 */
 const NODE_SELECTOR = "[data-layout-node-id]";
@@ -90,6 +91,11 @@ export const measureLayoutNodes = (
     // 嵌套网格以显式块序号声明字段边界，隐藏字段不改变续页裁剪的序号。
     const indexedBlocks = Array.from(element.querySelectorAll<HTMLElement>("[data-layout-block-index]"))
       .filter((block) => !block.closest(".layout-measure-breakpoint"));
+    // 隐藏字段允许空号，重复、逆序及非法编号不能进入分页。
+    const blockIndices = indexedBlocks.length
+      ? indexedBlocks.map((block) => block.dataset.layoutBlockIndex?.trim() ? Number(block.dataset.layoutBlockIndex) : NaN)
+      : contentBlocks.map((_, index) => index);
+    if (!validateContentBlockIndices(blockIndices)) throw new Error(`节点 ${node.id} 的内容块编号无效`);
     const indexedBreakPoints = indexedBlocks.map((block, index) => {
       const blockRect = block.getBoundingClientRect();
       const previousBottom = index > 0 ? indexedBlocks[index - 1].getBoundingClientRect().bottom : blockRect.top;
@@ -125,6 +131,7 @@ export const measureLayoutNodes = (
       nodeId: node.id,
       width: rect.width,
       fullHeight: rect.height,
+      blockIndices: node.splitMode === "whole" ? [] : blockIndices, // 实际存在的稳定块编号，允许隐藏字段留下空号
       breakPoints: node.splitMode === "whole" ? [] : [...blockBreakPoints, ...indexedBreakPoints, ...breakPoints, ...lineBreakPoints],
       // 富文本从自身断点取正文末尾，按行拆分的纯文本则从实测行尾取，避免续页提前结束。
       contentLength: Math.max(

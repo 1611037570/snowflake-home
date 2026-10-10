@@ -4,6 +4,12 @@ import { paginateFlow } from "../paginate/paginateFlow";
 import type { LayoutNode } from "../types";
 
 describe("嵌套块分页测量", () => {
+  it("显式块编号重复时在测量入口报告问题节点", () => {
+    const root = document.createElement("div");
+    root.innerHTML = '<div data-layout-node-id="bad"><div data-layout-block-index="1"></div><div data-layout-block-index="1"></div></div>';
+    const node: LayoutNode = { id: "bad" /* 节点编号 */, sourceModuleKey: "generic" /* 通用模块 */, type: "group" /* 组合节点 */, payload: null /* 测试载荷 */ };
+    expect(() => measureLayoutNodes(root, [node])).toThrow("节点 bad 的内容块编号无效");
+  });
   it("整块内容契约忽略内部断点，稳定块契约才允许分片", () => {
     const root = document.createElement("div");
     root.innerHTML = '<div data-layout-node-id="profile"><div data-layout-block-index="0"></div><div data-layout-block-index="1"></div></div>';

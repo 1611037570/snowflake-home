@@ -1,6 +1,9 @@
 import { getRegionContentHeight } from "../layout/regionHeights";
 import type { PageLayoutConfig, RegionConfig } from "../pageLayoutTypes";
 import type { FlowFragmentKind, FlowPage, FlowPageItem } from "./paginateFlow";
+import type { LayoutNode } from "../types";
+import type { MeasuredNode } from "../measure/types";
+import { validateFragmentCoverage } from "./validateFragmentCoverage";
 
 /** 分页计划的状态。 */
 export type PagePlanStatus = "ready" | "invalid" | "overflow";
@@ -8,7 +11,7 @@ export type PagePlanStatus = "ready" | "invalid" | "overflow";
 /** 分页布局过程中的问题。 */
 export interface LayoutWarning {
   /** 问题类型。 */
-  code: "missingRegion" | "missingColumn" | "overflow" | "invalidLayout";
+  code: "missingRegion" | "missingColumn" | "overflow" | "invalidLayout" | "contentMissing" | "contentOverlap" | "contentOutOfBounds";
   /** 面向开发者的详细说明。 */
   message: string;
   /** 产生问题的节点编号。 */
@@ -121,6 +124,10 @@ export interface BuildPagePlanOptions {
   version?: number;
   /** 上游已经发现的问题。 */
   warnings?: LayoutWarning[];
+  /** 原始节点，提供后与测量结果共同检查分片完整性。 */
+  nodes?: readonly LayoutNode[];
+  /** 当前节点的测量结果，覆盖检查沿用分页的同一份输入。 */
+  measurements?: ReadonlyMap<string, MeasuredNode>;
 }
 
 const emptyFlowPage = (pageIndex: number): FlowPage => ({
@@ -137,6 +144,8 @@ export const buildPagePlan = ({
   availableHeightByColumn,
   version = 0,
   warnings = [],
+  nodes,
+  measurements,
 }: BuildPagePlanOptions): PagePlan => {
   const orderedRegions = [...layout.regions].sort((a, b) => a.order - b.order);
   if (orderedRegions.length === 0) {
@@ -185,7 +194,11 @@ export const buildPagePlan = ({
       );
     }),
   );
-  const allWarnings = [...warnings, ...overflowWarnings];
+  // 每栏流合并后统一检查，不按主题或业务模块编写专属验收规则。
+  const coverageWarnings = nodes && measurements
+    ? validateFragmentCoverage(nodes, measurements, allColumnPages.flatMap((columnPages) => columnPages.flatMap((page) => page.items)))
+    : [];
+  const allWarnings = [...warnings, ...overflowWarnings, ...coverageWarnings];
 
   const pages = Array.from({ length: pageCount }, (_, pageIndex) => ({
     pageIndex,
@@ -213,7 +226,8 @@ export const buildPagePlan = ({
   }));
 
   return {
-    status: allWarnings.some((warning) => warning.code === "overflow") ? "overflow" : "ready",
+    status: allWarnings.some((warning) => ["contentMissing", "contentOverlap", "contentOutOfBounds", "invalidLayout"].includes(warning.code))
+      ? "invalid" : allWarnings.some((warning) => warning.code === "overflow") ? "overflow" : "ready",
     version,
     pages,
     warnings: allWarnings,

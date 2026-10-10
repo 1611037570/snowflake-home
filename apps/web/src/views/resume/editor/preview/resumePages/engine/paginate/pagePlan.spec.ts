@@ -21,6 +21,17 @@ const layout: PageLayoutConfig = {
 };
 
 describe("buildPagePlan", () => {
+  it("上游发现内容遗漏时计划无效，不作为正常页面输出", () => {
+    const plan = buildPagePlan({
+      layout, // 通用布局
+      availableHeight: 100, // 栏可用高度
+      flowPagesByColumn: new Map(), // 未输出任何片段
+      nodes: [{ id: "missing", sourceModuleKey: "work", type: "block", payload: null }], // 应当输出的节点
+      measurements: new Map([["missing", { nodeId: "missing", width: 100, fullHeight: 20, breakPoints: [] }]]), // 原始测量
+    });
+    expect(plan.status).toBe("invalid");
+    expect(plan.warnings).toEqual(expect.arrayContaining([expect.objectContaining({ code: "contentMissing", nodeId: "missing" })]));
+  });
   it("按栏独立流合并相同页码", () => {
     const plan = buildPagePlan({
       layout,

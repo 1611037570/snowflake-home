@@ -208,6 +208,8 @@ export const useResumeLayout = ({
       availableHeight: availableHeight.value,
       flowPagesByColumn,
       version: fontReadyVersion.value,
+      nodes: nodes.value, // 按原始内容检查输出完整性
+      measurements: measurements.value, // 与分页共用同一次测量
     });
   });
   const pagePlan = computed<PagePlan>(() => {

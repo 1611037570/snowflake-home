@@ -1,5 +1,6 @@
 <script setup>
 import { computed } from "vue";
+import { isContentBlockVisible } from "@/views/resume/editor/preview/resumePages/engine/contentBlocks";
 import UserAvatar from "./userAvatar.vue";
 import UserName from "./userName.vue";
 import UserContact from "./userContact.vue";
@@ -13,7 +14,7 @@ const props = defineProps({
   },
 });
 // 续页只展示未消费的资料，避免重复头像和姓名。
-const isBlockVisible = (index) => index >= props.blockRange.start && index < props.blockRange.end;
+const isBlockVisible = (index) => isContentBlockVisible(index, props.blockRange);
 
 const {
   theme: { avatarPosition },

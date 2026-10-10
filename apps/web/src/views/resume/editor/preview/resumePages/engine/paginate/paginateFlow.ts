@@ -84,7 +84,7 @@ const getMeasurement = (
  * 不能取断点序列的最后一项：块断点偏移恒为零，排在文本断点之后会把末尾低估成零，
  * 续段的起始偏移随之回退到零，同一段正文会被两页重复渲染。
  */
-const getContentEnd = (measurement: MeasuredNode): number =>
+export const getContentEnd = (measurement: MeasuredNode): number =>
   measurement.contentLength ??
   measurement.breakPoints.reduce((max, point) => Math.max(max, point.offset), 0);
 
@@ -426,7 +426,7 @@ export const paginateFlow = ({
         const fragmentBlocksBefore = consumedBlocks;
         consumedHeight = candidate.breakPoint.height;
         consumedBlocks = candidate.coverage.consumedBlockEnd;
-        if (!candidate.coverage.isBlockPoint) consumedOffset = candidate.breakPoint.offset;
+        if (!candidate.coverage.isBlockPoint) consumedOffset = candidate.coverage.contentRange?.end ?? candidate.breakPoint.offset;
         // 高度、正文与块游标任一推进都表示该分片有效，避免零高度块被误判为没有消费内容。
         if (
           consumedHeight <= fragmentHeightBefore &&

@@ -48,10 +48,13 @@ export const resolveFragmentCut = ({
   consumedBlockCount,
   consumedOffset,
 }: ResolveFragmentCutOptions): FragmentCut => {
-  const isBlockPoint = typeof breakPoint.blockEnd === "number";
-  const coveredBlockCount = isBlockPoint ? Number(breakPoint.blockEnd) : blockCount;
+  // 最后的正文块承载全部剩余字符，文本切过后不能再次按完整正文渲染。
+  const coversRemainingText = consumedOffset > 0 && contentEnd > 0 && breakPoint.blockEnd === blockCount;
+  const isBlockPoint = typeof breakPoint.blockEnd === "number" && !coversRemainingText;
+  const endOffset = coversRemainingText ? contentEnd : breakPoint.offset;
+  const coveredBlockCount = typeof breakPoint.blockEnd === "number" ? Number(breakPoint.blockEnd) : blockCount;
   const consumedBlockEnd =
-    isBlockPoint || breakPoint.offset >= contentEnd
+    isBlockPoint || endOffset >= contentEnd
       ? coveredBlockCount
       : Math.max(consumedBlockCount, blockCount - 1);
 
@@ -62,6 +65,6 @@ export const resolveFragmentCut = ({
     blockRange: blockCount ? { start: consumedBlockCount, end: coveredBlockCount } : undefined,
     contentRange: isBlockPoint
       ? undefined
-      : { start: consumedOffset, end: breakPoint.offset },
+      : { start: consumedOffset, end: endOffset },
   };
 };

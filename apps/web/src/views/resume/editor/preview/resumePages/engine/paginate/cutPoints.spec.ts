@@ -17,6 +17,18 @@ const createTextPoint = (offset: number, height: number): BreakPointMeasure => (
 });
 
 describe("resolveFragmentCut", () => {
+  it("字符切过后末尾块仅覆盖剩余正文，不重复已消费字符", () => {
+    const cut = resolveFragmentCut({
+      breakPoint: createBlockPoint(4, 120), // 最后正文块断点
+      blockCount: 4, // 块结束编号
+      contentEnd: 10, // 完整正文长度
+      consumedBlockCount: 3, // 前部块已经消费
+      consumedOffset: 5, // 正文前半段已经消费
+    });
+    expect(cut.isBlockPoint).toBe(false);
+    expect(cut.contentRange).toEqual({ start: 5 /* 剩余字符起点 */, end: 10 /* 正文末尾 */ });
+    expect(cut.consumedBlockEnd).toBe(4);
+  });
   it("块断点只覆盖块，不产生正文区间", () => {
     const cut = resolveFragmentCut({
       breakPoint: createBlockPoint(2, 40),
