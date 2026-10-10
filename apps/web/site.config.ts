@@ -1,6 +1,3 @@
-/** 初始入口路由，构建与客户端共用同一默认值。 */
-export const DEFAULT_ENTRY_ROUTE = "/resume";
-
 /** 独立产品的页面信息。 */
 interface SiteMetadata {
   /** 浏览器标签标题。 */
@@ -63,7 +60,8 @@ export const SITE_CONFIGS: SiteConfig[] = [
 export const resolveSiteMetadata = (
   path: string,
   language: string,
-  entryRoute = DEFAULT_ENTRY_ROUTE,
+  /** 初始入口路由，由调用方从环境变量传入 */
+  entryRoute: string,
 ): SiteMetadata => {
   const matches = (route: string, value: string) =>
     value === route || value.startsWith(`${route}/`) || value.startsWith(`${route}?`) || value.startsWith(`${route}#`);
