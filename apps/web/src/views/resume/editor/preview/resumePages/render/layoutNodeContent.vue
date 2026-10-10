@@ -8,6 +8,8 @@ import ModuleTitle from "@/views/resume/theme/components/moduleTitle/index.vue";
 import SloganContent from "@/views/resume/theme/components/sloganModule/index.vue";
 import UserContent from "@/views/resume/theme/components/userModule/index.vue";
 import ImageWork from "./imageWork.vue";
+import IpContent from "./ipContent.vue";
+import PublicationContent from "./publicationContent.vue";
 import { getTime } from "./getTime";
 import { isContentEmpty } from "../../shared/validData";
 import { useResumePreviewContext } from "../../shared/previewContext";
@@ -150,6 +152,29 @@ const itemContentSpacingStyle = computed(() => {
 
   <template v-else-if="node.type === 'group' && node.sourceModuleKey === 'user'">
     <UserContent :block-range="blockRange" />
+  </template>
+
+  <!-- 学术成果模块使用独立渲染：条目字段与经历类模块不同，不复用经历条目结构 -->
+  <template v-else-if="node.type === 'group' && node.sourceModuleKey === 'publication'">
+    <PublicationContent
+      :item="item"
+      :block-range="blockRange"
+      :decoration="decoration"
+      :content-html="richTextHtml"
+      :show-item-header="showItemHeader"
+      :date-rail="dateRail"
+    />
+  </template>
+
+  <template v-else-if="node.type === 'group' && node.sourceModuleKey === 'ip'">
+    <IpContent
+      :item="item"
+      :block-range="blockRange"
+      :decoration="decoration"
+      :content-html="richTextHtml"
+      :show-item-header="showItemHeader"
+      :date-rail="dateRail"
+    />
   </template>
 
   <template v-else-if="isExperience">

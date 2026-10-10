@@ -1654,6 +1654,483 @@ export const DEFAULT_HONOR_FORM = {
     },
   ],
 } satisfies FormField;
+// 学术论文：论文的价值维度是发表载体、作者位次与索引分区，与经历类模块的职责岗位结构不同，独立声明字段
+export const DEFAULT_PUBLICATION_FORM = {
+  type: "group",
+  component: "collapseModule",
+  key: "publication",
+  context: ["publication"],
+  props: {
+    add: true,
+  },
+  model: createModuleState("学术论文"),
+  checks: MODULE_CHECKS,
+  slot: "default",
+  fields: [
+    {
+      type: "array",
+      source: ["list"],
+      drag: true,
+      dragClass: DEFAULT_DRAG_CLASS,
+      itemClass: DEFAULT_COL_CLASS + " px-3!",
+      itemSchema: {
+        type: "group",
+        component: "collapseItem",
+        slot: "default",
+        span: 24,
+        model: [
+          {
+            source: ["ui", "collapsed"],
+            prop: "collapsed",
+            defaultValue: EXPANDED,
+          },
+          {
+            source: ["ui", "hidden"],
+            prop: "hidden",
+            defaultValue: false,
+          },
+          // 折叠项标题取论文标题
+          {
+            source: ["data", "title"],
+            prop: "name",
+          },
+        ],
+        fields: [
+          // 论文标题
+          {
+            type: "object",
+            label: "论文标题",
+            component: "input",
+            rules: [requiredFieldRule()],
+            span: 24,
+            model: {
+              source: ["data", "title"],
+              prop: "modelValue",
+            },
+            props: {
+              placeholder: "请输入论文标题",
+              clearable: true,
+            },
+          },
+          // 作者列表：按署名顺序填写，渲染时自动加粗本人姓名
+          {
+            type: "object",
+            label: "作者",
+            component: "input",
+            rules: [requiredFieldRule()],
+            span: 24,
+            model: {
+              source: ["data", "authors"],
+              prop: "modelValue",
+            },
+            props: {
+              placeholder: "按署名顺序填写，用逗号分隔",
+              clearable: true,
+            },
+          },
+          // 本人位次：一作、共一与通讯作者在求职场景下权重不同，需单独记录
+          {
+            type: "object",
+            label: "本人位次",
+            component: "select",
+            rules: [requiredFieldRule()],
+            span: 12,
+            model: [
+              {
+                source: ["data", "authorOrder"],
+                prop: "modelValue",
+              },
+              {
+                source: ["__options", "publicationAuthorOrder"],
+                prop: "list",
+                raw: true,
+              },
+            ],
+            props: {
+              placeholder: "请选择本人位次",
+              clearable: true,
+            },
+          },
+          // 发表状态：在审与已发表对招聘方的含义不同，需明确区分
+          {
+            type: "object",
+            label: "发表状态",
+            component: "select",
+            rules: [requiredFieldRule()],
+            span: 12,
+            model: [
+              {
+                source: ["data", "status"],
+                prop: "modelValue",
+              },
+              {
+                source: ["__options", "publicationStatus"],
+                prop: "list",
+                raw: true,
+              },
+            ],
+            props: {
+              placeholder: "请选择发表状态",
+              clearable: true,
+            },
+          },
+          // 期刊或会议名称：渲染为斜体，符合学术引用惯例
+          {
+            type: "object",
+            label: "期刊 / 会议",
+            component: "input",
+            rules: [requiredFieldRule()],
+            span: 24,
+            model: {
+              source: ["data", "venue"],
+              prop: "modelValue",
+            },
+            props: {
+              placeholder: "请输入期刊或会议全称",
+              clearable: true,
+            },
+          },
+          // 卷期页码
+          {
+            type: "object",
+            label: "卷期页码",
+            component: "input",
+            span: 12,
+            model: {
+              source: ["data", "volumeInfo"],
+              prop: "modelValue",
+            },
+            props: {
+              placeholder: "如 36(6):2411-2425",
+              clearable: true,
+            },
+          },
+          // 发表时间：论文为单时间点，取年月即可
+          {
+            type: "object",
+            label: "发表时间",
+            component: "datePicker",
+            rules: [requiredFieldRule(), MONTH_FORMAT_RULE],
+            span: 12,
+            model: {
+              source: ["data", "date"],
+              prop: "modelValue",
+            },
+            props: {
+              type: "month",
+              format: "YYYY.MM",
+              valueFormat: "YYYY.MM",
+              placeholder: "请选择发表时间",
+            },
+          },
+          // DOI 或论文链接：可核验的出处比描述更有说服力
+          {
+            type: "object",
+            label: "DOI / 论文链接",
+            component: "input",
+            span: 24,
+            model: {
+              source: ["data", "doi"],
+              prop: "modelValue",
+            },
+            props: {
+              placeholder: "如 10.1109/TKDE.2024.1234567 或论文主页地址",
+              clearable: true,
+            },
+          },
+          // 索引标签：预设常见索引与分区，同时支持回车自定义
+          {
+            type: "object",
+            component: "tag",
+            span: 24,
+            model: {
+              source: ["data", "indexTags"],
+              prop: "modelValue",
+              defaultValue: [],
+            },
+            props: {
+              list: ["SCI 一区", "SCI 二区", "EI 收录", "CCF-A", "CCF-B", "北大核心", "代表作"],
+            },
+          },
+          // 研究内容：个人贡献与该成果的价值
+          {
+            type: "object",
+            label: "研究内容",
+            component: "resumeContentEditor",
+            span: 24,
+            props: {
+              kind: "publication",
+            },
+            model: [
+              {
+                source: ["data", "content"],
+                prop: "modelValue",
+              },
+            ],
+          },
+        ],
+      },
+    },
+  ],
+} satisfies FormField;
+// 知识产权：专利与软著同属法律确权类成果，共用确权编号、状态与受理机构结构
+export const DEFAULT_IP_FORM = {
+  type: "group",
+  component: "collapseModule",
+  key: "ip",
+  context: ["ip"],
+  props: {
+    add: true,
+  },
+  model: createModuleState("知识产权"),
+  checks: MODULE_CHECKS,
+  slot: "default",
+  fields: [
+    {
+      type: "array",
+      source: ["list"],
+      drag: true,
+      dragClass: DEFAULT_DRAG_CLASS,
+      itemClass: DEFAULT_COL_CLASS + " px-3!",
+      itemSchema: {
+        type: "group",
+        component: "collapseItem",
+        slot: "default",
+        span: 24,
+        model: [
+          {
+            source: ["ui", "collapsed"],
+            prop: "collapsed",
+            defaultValue: EXPANDED,
+          },
+          {
+            source: ["ui", "hidden"],
+            prop: "hidden",
+            defaultValue: false,
+          },
+          // 折叠项标题取成果名称
+          {
+            source: ["data", "title"],
+            prop: "name",
+          },
+        ],
+        fields: [
+          // 成果类型：专利与软著的编号口径与状态不同，据此区分
+          {
+            type: "object",
+            label: "成果类型",
+            component: "select",
+            rules: [requiredFieldRule()],
+            span: 12,
+            model: [
+              {
+                source: ["data", "type"],
+                prop: "modelValue",
+              },
+              {
+                source: ["__options", "ipType"],
+                prop: "list",
+                raw: true,
+              },
+            ],
+            props: {
+              placeholder: "请选择成果类型",
+              clearable: true,
+            },
+          },
+          // 确权状态：受理、审查与授权对招聘方的含义不同
+          {
+            type: "object",
+            label: "确权状态",
+            component: "select",
+            rules: [requiredFieldRule()],
+            span: 12,
+            model: [
+              {
+                source: ["data", "status"],
+                prop: "modelValue",
+              },
+              {
+                source: ["__options", "ipStatus"],
+                prop: "list",
+                raw: true,
+              },
+            ],
+            props: {
+              placeholder: "请选择确权状态",
+              clearable: true,
+            },
+          },
+          // 成果名称
+          {
+            type: "object",
+            label: "成果名称",
+            component: "input",
+            rules: [requiredFieldRule()],
+            span: 24,
+            model: {
+              source: ["data", "title"],
+              prop: "modelValue",
+            },
+            props: {
+              placeholder: "请输入专利名称或软件全称",
+              clearable: true,
+            },
+          },
+          // 版本号：专利与软件著作权共用同一套字段，不随成果类型增删
+          {
+            type: "object",
+            label: "版本号",
+            component: "input",
+            span: 24,
+            model: {
+              source: ["data", "version"],
+              prop: "modelValue",
+            },
+            props: {
+              placeholder: "如 V1.0",
+              clearable: true,
+            },
+          },
+          // 发明人或著作权人
+          {
+            type: "object",
+            label: "发明人 / 著作权人",
+            component: "input",
+            rules: [requiredFieldRule()],
+            span: 12,
+            model: {
+              source: ["data", "holders"],
+              prop: "modelValue",
+            },
+            props: {
+              placeholder: "按署名顺序填写，用逗号分隔",
+              clearable: true,
+            },
+          },
+          // 发明人位次：第一发明人与其他位次在求职场景下权重不同，需单独记录
+          {
+            type: "object",
+            label: "发明人位次",
+            component: "select",
+            span: 12,
+            model: [
+              {
+                source: ["data", "authorOrder"],
+                prop: "modelValue",
+              },
+              {
+                source: ["__options", "ipAuthorOrder"],
+                prop: "list",
+                raw: true,
+              },
+            ],
+            props: {
+              placeholder: "请选择发明人位次",
+              clearable: true,
+            },
+          },
+          // 专利号或软著登记号
+          {
+            type: "object",
+            label: "专利号 / 登记号",
+            component: "input",
+            span: 24,
+            model: {
+              source: ["data", "number"],
+              prop: "modelValue",
+            },
+            props: {
+              placeholder: "如 CN202410123456.7 或 2024SR1234567",
+              clearable: true,
+            },
+          },
+          // 受理机构或登记机构
+          {
+            type: "object",
+            label: "受理 / 登记机构",
+            component: "input",
+            span: 24,
+            model: {
+              source: ["data", "authority"],
+              prop: "modelValue",
+            },
+            props: {
+              placeholder: "如 国家知识产权局、中国版权保护中心",
+              clearable: true,
+            },
+          },
+          // 申请日或登记日
+          {
+            type: "object",
+            label: "申请 / 登记日",
+            component: "datePicker",
+            rules: [MONTH_FORMAT_RULE],
+            span: 12,
+            model: {
+              source: ["data", "applyDate"],
+              prop: "modelValue",
+            },
+            props: {
+              type: "month",
+              format: "YYYY.MM",
+              valueFormat: "YYYY.MM",
+              placeholder: "请选择申请或登记日",
+            },
+          },
+          // 授权日或首次公开日
+          {
+            type: "object",
+            label: "授权 / 公开日",
+            component: "datePicker",
+            rules: [MONTH_FORMAT_RULE],
+            span: 12,
+            model: {
+              source: ["data", "grantDate"],
+              prop: "modelValue",
+            },
+            props: {
+              type: "month",
+              format: "YYYY.MM",
+              valueFormat: "YYYY.MM",
+              placeholder: "请选择授权或公开日",
+            },
+          },
+          // 成果标签：预设常见成果标签，同时支持回车自定义
+          {
+            type: "object",
+            component: "tag",
+            span: 24,
+            model: {
+              source: ["data", "tags"],
+              prop: "modelValue",
+              defaultValue: [],
+            },
+            props: {
+              list: ["核心专利", "已转化落地", "PCT 国际申请", "海外授权"],
+            },
+          },
+          // 成果简介
+          {
+            type: "object",
+            label: "成果简介",
+            component: "resumeContentEditor",
+            span: 24,
+            props: {
+              kind: "ip",
+            },
+            model: [
+              {
+                source: ["data", "content"],
+                prop: "modelValue",
+              },
+            ],
+          },
+        ],
+      },
+    },
+  ],
+} satisfies FormField;
 // 自定义经历
 export const DEFAULT_CUSTOM_FORM = {
   type: "group",
@@ -1862,6 +2339,8 @@ export const allConfig = {
   account: DEFAULT_ACCOUNT_FORM,
   work: DEFAULT_WORK_FORM,
   project: DEFAULT_PROJECT_FORM,
+  publication: DEFAULT_PUBLICATION_FORM,
+  ip: DEFAULT_IP_FORM,
   honor: DEFAULT_HONOR_FORM,
   custom: DEFAULT_CUSTOM_FORM,
 } satisfies Record<string, FormField | FormField[]>;
