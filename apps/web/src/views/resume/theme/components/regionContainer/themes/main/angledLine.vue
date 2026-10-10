@@ -16,19 +16,18 @@ import { useResumePreviewContext } from "@/views/resume/editor/preview/shared/pr
 
 const {
   themeDecisions,
-  theme: { themeColor, themeColorLine },
+  theme: { themeColorLine },
 } = useResumePreviewContext();
 // 双栏布局下栏位铺满纸张高度，竖线需要为页脚预留空间才能贯穿到底。
 const stretchColumns = computed(() => layoutStretchesColumns(themeDecisions.value.layoutType));
 // 竖线色随主题色推导，条目左留白与区域左留白取同一个值即可保持对齐。
 const railStyle = computed(() => ({
   "--angled-rail-color": themeColorLine.value, // 竖线使用的主题线条色
-  "--angled-rail-node": themeColor.value, // 顶端斜角节点的主题色
 }));
 </script>
 
 <template>
-  <!-- 竖线锚定正文栏，贯穿标题、条目与模块间距，最上端以斜角节点收头。 -->
+  <!-- 竖线锚定正文栏，贯穿标题、条目与模块间距，移除顶端三角装饰。 -->
   <div
     class="angled-line-region relative"
     :class="{ 'angled-line-region--stretch': stretchColumns }"
@@ -53,19 +52,6 @@ const railStyle = computed(() => ({
   width: 1px;
   background-color: var(--angled-rail-color);
   opacity: 0.6;
-  pointer-events: none;
-}
-
-/* 顶端斜角节点：用主题色的斜切色块呼应标题斜角，只做点缀不占留白。 */
-.angled-line-region :deep(.resume-column)::after {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 7px;
-  height: 7px;
-  background-color: var(--angled-rail-node);
-  clip-path: polygon(0 0, 100% 0, 0 100%);
   pointer-events: none;
 }
 
