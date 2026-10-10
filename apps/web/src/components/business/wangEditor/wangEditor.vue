@@ -31,21 +31,12 @@
 </template>
 
 <script setup>
-import { defineAsyncComponent, onBeforeUnmount, onMounted, ref, shallowRef } from "vue";
+import { onBeforeUnmount, onMounted, ref, shallowRef } from "vue";
+import { Editor, Toolbar } from "./editorLoader";
 import { useFormReadyTask } from "../dynamicForm/api";
 // 富文本实际创建后才完成任务，异步代码下载完成不等于可编辑。
 const finishReady = useFormReadyTask();
 const sfBorder = inject("sfBorder", "");
-
-// 延迟加载 wangeditor 库及样式：组件实际渲染时才引入，避免编辑资源提前进包
-const Editor = defineAsyncComponent(() =>
-  import("@wangeditor-next/editor/dist/css/style.css").then(() =>
-    import("@wangeditor-next/editor-for-vue").then((m) => m.Editor),
-  ),
-);
-const Toolbar = defineAsyncComponent(() =>
-  import("@wangeditor-next/editor-for-vue").then((m) => m.Toolbar),
-);
 
 const props = defineProps({
   height: {
