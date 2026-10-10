@@ -2,6 +2,28 @@ import { describe, expect, it } from "vitest";
 import { parseRichText, sliceRichTextHtml } from "./richTextParser";
 
 describe("parseRichText", () => {
+  it.each([
+    '<p><span style="color: blue; background-color: yellow">甲乙丙丁</span></p>',
+    '<p style="color: blue; background-color: yellow"><a href="https://example.com"><strong><u>甲乙丙丁</u></strong></a></p>',
+    '<ol><li><span style="color: blue; background-color: yellow">甲乙丙丁</span></li></ol>',
+  ])("段内跨页切片保留文字颜色、背景色和祖先标签：%s", (source) => {
+    const parsed = parseRichText(source);
+    const fragments = [[0, 2], [2, 4]].map(([start, end]) => {
+      const container = document.createElement("div");
+      container.innerHTML = sliceRichTextHtml(parsed.html, start, end);
+      return container;
+    });
+    expect(fragments.map((fragment) => fragment.textContent)).toEqual(["甲乙", "丙丁"]);
+    // 同一文字节点内切分也要保留祖先格式，不能只克隆裸文本。
+    for (const fragment of fragments) {
+      const styled = fragment.querySelector<HTMLElement>("[style]");
+      expect(styled?.style.color).toBe("blue");
+      expect(styled?.style.backgroundColor).toBe("yellow");
+      for (const tag of ["p", "a", "strong", "u", "ol", "li"]) {
+        expect(Boolean(fragment.querySelector(tag))).toBe(parsed.html.includes(`<${tag}`));
+      }
+    }
+  });
   it("同一份内容返回同一个解析结果，供上游判断节点是否变化", () => {
     const content = "<p>产品能力</p><p>工具</p>";
     const first = parseRichText(content);
