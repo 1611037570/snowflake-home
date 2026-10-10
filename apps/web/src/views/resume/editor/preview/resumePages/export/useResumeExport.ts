@@ -70,9 +70,9 @@ export const useResumeExport = ({
     if (!canExportPages()) return;
     return printResume(rootRef, onExportSuccess, scale === 8 ? 8 : scale === 4 ? 4 : scale === 2 ? 2 : 1);
   };
-  const printServerPDF = (scale: unknown = 2) => {
+  const printServerPDF = () => {
     if (!canExportPages()) return;
-    return exportServerPdf(rootRef, onExportSuccess, scale === 8 ? 8 : scale === 4 ? 4 : scale === 2 ? 2 : 1);
+    return exportServerPdf(onExportSuccess);
   };
   const printImage = (scale: unknown = 2) => {
     if (!canExportMeasure()) return;

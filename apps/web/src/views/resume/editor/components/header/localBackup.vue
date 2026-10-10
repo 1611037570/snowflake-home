@@ -1,5 +1,5 @@
 <script setup>
-import { compactResumeItem } from "@/views/resume/theme/resumeUi";
+import { compactResumeItem } from "@/domain/resume/theme/resumeUi";
 import { computed, onMounted, ref, toRaw, watch } from "vue";
 import { storeToRefs } from "pinia";
 import { useDebounceFn } from "@vueuse/core";

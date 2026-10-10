@@ -1,7 +1,7 @@
 import { computed, ref } from "vue";
 import { describe, expect, it, vi } from "vitest";
 import { useResumeLayout } from "./useResumeLayout";
-import type { ThemeDecisions } from "@/views/resume/theme/themeDecisions";
+import type { ThemeDecisions } from "@/domain/resume/theme/themeDecisions";
 import type { LayoutNode } from "./types";
 import type { MeasuredNode } from "./measure/types";
 

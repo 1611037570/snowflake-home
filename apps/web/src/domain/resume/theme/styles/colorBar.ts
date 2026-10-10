@@ -1,0 +1,14 @@
+import type { ThemeTemplateConfig } from "@/domain/resume/theme/styles/createThemeTemplate";
+
+export default {
+  name: "色条",
+  id: "colorBar" as const, // 主题编号
+  design: ["single-column", "polished"],
+  description: "以左侧主题色竖条搭配浅色底纹突出模块标题的样式。",
+  ui: {
+    theme: { color: "#475569" },
+    font: { size: 15, lineHeight: 1.3 },
+    page: { spacing: { module: 18 } },
+    content: { dateStyle: "cn" },
+  },
+} satisfies ThemeTemplateConfig;

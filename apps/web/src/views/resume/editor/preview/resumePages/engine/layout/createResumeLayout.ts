@@ -1,8 +1,8 @@
 import type { PageLayoutConfig } from "../pageLayoutTypes";
 import { createDefaultPageLayoutTemplate } from "./layoutTemplates";
-import type { ThemeDecisions } from "@/views/resume/theme/themeDecisions";
-import { EMPTY_THEME_INSET } from "@/views/resume/theme/themeContract";
-import { resolveRegionSlot } from "@/views/resume/theme/regionSlots";
+import type { ThemeDecisions } from "@/domain/resume/theme/themeDecisions";
+import { EMPTY_THEME_INSET } from "@/domain/resume/theme/themeContract";
+import { resolveRegionSlot } from "@/domain/resume/theme/regionSlots";
 
 /** 创建当前简历使用的页面布局，单栏与多栏统一走布局模板入口。 */
 export const createResumeLayout = ({

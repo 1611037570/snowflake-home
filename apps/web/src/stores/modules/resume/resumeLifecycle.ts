@@ -1,6 +1,6 @@
 import { getUUID } from "@/utils";
 import { merge } from "lodash-es";
-import { compactResumeUi, resolveResumeUi } from "@/views/resume/theme/resumeUi";
+import { compactResumeUi, resolveResumeUi } from "@/domain/resume/theme/resumeUi";
 import {
   createResumeListItem,
   removeAiChatSummaries,

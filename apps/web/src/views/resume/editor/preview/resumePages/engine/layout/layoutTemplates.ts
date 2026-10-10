@@ -7,9 +7,9 @@ import {
   resolveLayoutColumns,
   type LayoutColumns,
   type PageLayoutTemplateId,
-} from "@/views/resume/theme/layouts";
+} from "@/domain/resume/theme/layouts";
 
-export type { PageLayoutTemplateId } from "@/views/resume/theme/layouts";
+export type { PageLayoutTemplateId } from "@/domain/resume/theme/layouts";
 
 interface CreatePageLayoutTemplateOptions {
   /** 当前简历实际存在的模块 key。 */

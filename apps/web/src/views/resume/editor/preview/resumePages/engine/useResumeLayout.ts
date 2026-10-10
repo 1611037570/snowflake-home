@@ -1,7 +1,7 @@
-import type { ThemeDecisions } from "@/views/resume/theme/themeDecisions";
+import type { ThemeDecisions } from "@/domain/resume/theme/themeDecisions";
 import { computed, type ComputedRef, type Ref } from "vue";
 import { getContentHeight, RESUME_WIDTH } from "../../shared/constants";
-import { defaultLeftColumnWidth } from "@/stores/modules/resume/config/uiConfig";
+import { defaultLeftColumnWidth } from "@/domain/resume/theme/uiConfig";
 import { createLayoutNodeBuilder } from "./adapter/buildLayoutNodes";
 import { createResumeLayout } from "./layout/createResumeLayout";
 import { buildRegionFlows } from "./layout/regionFlows";

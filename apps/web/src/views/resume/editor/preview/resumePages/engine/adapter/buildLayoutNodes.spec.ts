@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { buildLayoutNodes, createLayoutNodeBuilder } from "./buildLayoutNodes";
-import { resumeThemeRegistry } from "@/views/resume/theme/styles";
+import { resumeThemeRegistry } from "@/domain/resume/theme/styles";
 import { createLayoutAdapterRegistry } from "./index";
 import type { LayoutNode } from "../types";
 

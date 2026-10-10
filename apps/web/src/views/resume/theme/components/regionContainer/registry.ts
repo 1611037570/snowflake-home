@@ -1,5 +1,5 @@
 import type { Component } from "vue";
-import type { RegionSlotId } from "@/views/resume/theme/regionSlots";
+import type { RegionSlotId } from "@/domain/resume/theme/regionSlots";
 import { createFileAppearanceRegistry } from "../appearanceRegistry";
 import type { AppearanceComponent } from "../appearanceRegistry";
 import PlainRegion from "./themes/plain.vue";

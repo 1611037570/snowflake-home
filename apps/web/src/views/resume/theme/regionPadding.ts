@@ -1,6 +1,6 @@
-import { isRegionSlotId, type RegionSlotId } from "./regionSlots";
-import { resolveThemeDecisions } from "./themeDecisions";
-import { EMPTY_THEME_INSET, type ThemeInset } from "./themeContract";
+import { isRegionSlotId, type RegionSlotId } from "@/domain/resume/theme/regionSlots";
+import { resolveThemeDecisions } from "@/domain/resume/theme/themeDecisions";
+import { EMPTY_THEME_INSET, type ThemeInset } from "@/domain/resume/theme/themeContract";
 
 export type RegionPadding = ThemeInset;
 

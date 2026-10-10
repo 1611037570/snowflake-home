@@ -4,7 +4,7 @@ import { computed } from "vue";
 import { resolveIcon } from "@/views/resume/editor/data/iconCategories";
 import { isUserCustomFieldKey } from "@/stores/modules/resume/hooks/useUserCustomField";
 import { getUserSubtitleKeys } from "@/stores/modules/resume/hooks/useUserSubtitle";
-import { getInfoSeparatorMark } from "@/stores/modules/resume/config/uiConfig";
+import { getInfoSeparatorMark } from "@/domain/resume/theme/uiConfig";
 import { getPreviewText } from "@/views/resume/editor/preview/shared/i18n";
 import UserContactItem from "./userContactItem.vue";
 import { useUserFieldVisibility } from "../useUserFieldVisibility";

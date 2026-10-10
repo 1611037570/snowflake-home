@@ -6,7 +6,7 @@ import ItemDate from "@/views/resume/editor/preview/components/itemDate.vue";
 import ItemTitle from "@/views/resume/editor/preview/components/itemTitle.vue";
 import InlineInfoList from "@/views/resume/editor/preview/components/inlineInfoList.vue";
 import ResumeField from "@/views/resume/editor/preview/components/resumeField/index.vue";
-import { getInfoSeparatorMark } from "@/stores/modules/resume/config/uiConfig";
+import { getInfoSeparatorMark } from "@/domain/resume/theme/uiConfig";
 import { getTime } from "@/views/resume/editor/preview/resumePages/render/getTime";
 import { useResumePreviewContext } from "@/views/resume/editor/preview/shared/previewContext";
 

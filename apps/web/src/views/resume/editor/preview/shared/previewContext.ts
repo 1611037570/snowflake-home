@@ -1,13 +1,15 @@
 import { inject, provide, type ComputedRef, type InjectionKey } from "vue";
-import type { ThemeDecisions } from "@/views/resume/theme/themeDecisions";
+import type { ThemeDecisions } from "@/domain/resume/theme/themeDecisions";
 import type { ResumeTheme } from "@/views/resume/theme/useResumeTheme";
 import type { PageLayoutConfig } from "../resumePages/engine/pageLayoutTypes";
+
+import type { ResumeUi } from "@/domain/resume/theme/uiTypes";
 
 /** 预览模块共享的运行时上下文，集中管理数据、主题与个人字段配置。 */
 export interface ResumePreviewContext {
   data: ComputedRef<Record<string, any>>; // 当前简历业务数据
   lang: ComputedRef<string>; // 简历内容展示语言
-  ui: ComputedRef<Record<string, any>>; // 当前用户可编辑参数
+  ui: ComputedRef<ResumeUi>; // 当前用户可编辑参数
   theme: ResumeTheme; // 响应式配色与排版样式
   layout: ComputedRef<PageLayoutConfig>; // 公共引擎结算的区域与栏几何，主题只能读取
   /** 当前主题固定版式与纸张外观，独立于用户界面配置。 */

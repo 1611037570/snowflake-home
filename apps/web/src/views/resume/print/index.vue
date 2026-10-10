@@ -1,5 +1,5 @@
 <script setup>
-import { nextTick, onBeforeUnmount, onMounted, ref } from "vue";
+import { nextTick, onBeforeUnmount, onMounted, ref, watch } from "vue";
 import { storeToRefs } from "pinia";
 import { useRoute } from "vue-router";
 import { useResumeStore } from "@/stores";
@@ -13,6 +13,10 @@ const resumeStore = useResumeStore();
 const { system } = storeToRefs(resumeStore);
 const item = ref(payload.item || null);
 const isReady = ref(false);
+const previewRef = ref(null); // 当前打印实例公开的测量与分页状态
+const renderError = ref(""); // 无效计划与超时的打印说明
+let cancelRenderWait = () => {}; // 结束旧打印等待并释放定时器
+let renderVersion = 0; // 隔离重复载荷与已卸载的等待任务
 
 const BROWSER_PRINT_READY = "snowflake-resume-browser-print-ready";
 const BROWSER_PRINT_DATA = "snowflake-resume-browser-print-data";
@@ -22,34 +26,73 @@ if (payload.system && typeof payload.system === "object") {
   system.value = payload.system;
 }
 
-const waitForImages = async () => {
-  const images = Array.from(document.images);
-  await Promise.all(
-    images.map(async (image) => {
-      if (image.complete) return;
-      await new Promise((resolve) => {
-        image.addEventListener("load", resolve, { once: true });
-        image.addEventListener("error", resolve, { once: true });
-      });
-    }),
-  );
-};
-
+// 与编辑器导出共用最新测量及有效分页状态，不用元素存在代替排版完成。
 const waitForRender = async () => {
-  const deadline = Date.now() + 60000;
-  while (!document.querySelector(".resume-page-item") && Date.now() < deadline) {
-    await nextTick();
-    await new Promise((resolve) => window.setTimeout(resolve, 50));
-  }
-
-  await document.fonts?.ready;
-  await waitForImages();
+  cancelRenderWait();
+  const version = ++renderVersion;
+  isReady.value = false;
+  renderError.value = "";
   await nextTick();
-  await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
-
-  if (document.querySelector(".resume-page-item")) {
-    isReady.value = true;
-  }
+  if (version !== renderVersion) return;
+  await new Promise((resolve) => {
+    let stop = () => {};
+    const assetsAbort = new AbortController(); // 释放图片等待的事件监听
+    let assetsReady = false; // 字体与图片加载完成后才检查最新测量
+    let finished = false; // 等待结束后不再由旧回调开放打印
+    const finish = () => { finished = true; assetsAbort.abort(); stop(); window.clearTimeout(timer); resolve(); };
+    cancelRenderWait = finish;
+    const check = () => {
+      if (version !== renderVersion) { finish(); return; }
+      const preview = previewRef.value;
+      const plan = preview?.pagePlan;
+      if ((!assetsReady || !preview?.previewMeasured) && plan?.status !== "invalid") return;
+      if (plan?.status !== "ready") {
+        renderError.value = plan?.status === "overflow" ? "简历内容超出页面可用区域" : "简历页面布局配置有误";
+        finish();
+        return;
+      }
+      // 等待本轮页面 DOM 提交后再开放打印。
+      void nextTick().then(() => {
+        if (!finished && version === renderVersion && preview.previewMeasured && preview.pagePlan?.status === "ready") {
+          isReady.value = true;
+          finish();
+        }
+      });
+    };
+    const timer = window.setTimeout(() => {
+      if (version === renderVersion) renderError.value = "简历排版等待超时";
+      finish();
+    }, 60000);
+    stop = watch(() => [renderVersion, previewRef.value?.previewMeasured, previewRef.value?.pagePlan], check, { flush: "post" });
+    check();
+    // 超时与销毁也覆盖资源等待，资源加载引起的增高仍由公共测量处理。
+    void (async () => {
+      await document.fonts?.ready;
+      if (finished) return;
+      await Promise.all(Array.from(document.images).map((image) => {
+        if (image.complete) return;
+        return new Promise((resolveImage) => {
+          const done = () => {
+            image.removeEventListener("load", done);
+            image.removeEventListener("error", done);
+            assetsAbort.signal.removeEventListener("abort", done);
+            resolveImage();
+          };
+          image.addEventListener("load", done, { once: true });
+          image.addEventListener("error", done, { once: true });
+          assetsAbort.signal.addEventListener("abort", done, { once: true });
+          if (assetsAbort.signal.aborted) done();
+        });
+      }));
+      await nextTick();
+      if (finished) return;
+      assetsReady = true;
+      check();
+    })().catch(() => {
+      if (!finished) { renderError.value = "简历打印资源加载失败"; finish(); }
+    });
+  });
+  return version === renderVersion && isReady.value;
 };
 
 // 接收浏览器打印窗口的数据，复用当前打印页的真实 DOM 排版。
@@ -70,8 +113,8 @@ const handleBrowserPrintMessage = async (event) => {
     system.value = nextPayload.system;
   }
   isReady.value = false;
-  await waitForRender();
-  if (!item.value || !isReady.value) return;
+  const ready = await waitForRender();
+  if (!item.value || !ready) return;
 
   window.onafterprint = () => {
     window.opener?.postMessage(
@@ -96,6 +139,8 @@ onMounted(() => {
 });
 
 onBeforeUnmount(() => {
+  renderVersion += 1; // 使等待中的旧打印任务失效
+  cancelRenderWait();
   window.removeEventListener("message", handleBrowserPrintMessage);
 });
 </script>
@@ -108,11 +153,13 @@ onBeforeUnmount(() => {
   >
     <ResumePages
       v-if="item"
+      ref="previewRef"
       :item="item"
       :show-page-number="system.showPageNumber"
       mode="preview"
     />
     <div v-else data-pdf-error>缺少简历数据</div>
+    <div v-if="renderError" data-pdf-error>{{ renderError }}</div>
   </main>
 </template>
 

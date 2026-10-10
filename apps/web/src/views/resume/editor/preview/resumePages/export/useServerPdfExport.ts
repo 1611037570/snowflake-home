@@ -13,13 +13,8 @@ import { useResumeName } from "../../../../hooks/useResumeName";
 const cloneJson = (value: any) => JSON.parse(JSON.stringify(toRaw(value)));
 
 export const printServerPDF = async (
-  rootRef?: { value: HTMLElement | null },
   onSuccess?: () => void,
-  scale = 2,
 ) => {
-  void rootRef;
-  void scale;
-
   const resumeStore = useResumeStore();
   const { getExportFileName, resumeTitle } = useResumeName();
   const { selectedModule, currentItem, system } = storeToRefs(resumeStore);

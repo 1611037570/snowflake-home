@@ -1,5 +1,5 @@
 <script setup>
-import { compactResumeItem } from "@/views/resume/theme/resumeUi";
+import { compactResumeItem } from "@/domain/resume/theme/resumeUi";
 import { useResumeName } from "../../../../hooks/useResumeName";
 import eventBus from "@/utils/modules/eventBus";
 import { useSystemStore, useResumeStore } from "@/stores";

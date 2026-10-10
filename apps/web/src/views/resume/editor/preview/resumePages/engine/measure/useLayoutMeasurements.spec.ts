@@ -18,6 +18,25 @@ vi.mock("@vueuse/core", () => ({
 }));
 
 describe("节点尺寸变化重新分页", () => {
+  it("作用域销毁会取消等待中的测量，不能继续回写结果", async () => {
+    const scope = effectScope();
+    const root = document.createElement("div");
+    root.innerHTML = '<div data-layout-node-id="plain">正文</div>';
+    const node: LayoutNode = { id: "plain" /* 节点编号 */, sourceModuleKey: "generic" /* 来源模块 */, type: "group" /* 组合节点 */, payload: null /* 无业务载荷 */ };
+    const engine = scope.run(() => useLayoutMeasurements({
+      measureRef: ref(root), // 销毁时宿主仍存在，不能以空引用代替清理
+      nodes: computed(() => [node]), // 待测节点
+      watchSource: computed(() => ({})), // 固定排版配置
+    }))!;
+    const pending = engine.measure();
+    scope.stop();
+    await pending;
+    await engine.measure();
+    expect(engine.measureDone.value).toBe(false);
+    expect(engine.measurements.value.size).toBe(0);
+    expect(resize.targets.value).toEqual([]);
+  });
+
   it("协议校验失败会释放测量锁，修正结构后恢复", async () => {
     const root = document.createElement("div");
     root.innerHTML = '<div data-layout-node-id="bad"><div data-layout-block-index="1"></div><div data-layout-block-index="1"></div></div>';

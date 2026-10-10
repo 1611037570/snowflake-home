@@ -5,7 +5,7 @@ import { resolveRegionPadding } from "./regionPadding";
 const fixture = vi.hoisted(() => ({
   slots: {} as Record<string, { regionPadding?: { top: number; right: number; bottom: number; left: number } }>, // 各槽位外观能力
 }));
-vi.mock("./themeDecisions", () => ({
+vi.mock("@/domain/resume/theme/themeDecisions", () => ({
   resolveThemeDecisions: (id: unknown) => ({ regions: id === "fixture" ? Object.fromEntries(Object.entries(fixture.slots).map(([slot, value]) => [slot, { inset: value.regionPadding }])) : {} }), // 固定声明与默认回退
 }));
 beforeEach(() => { fixture.slots = {}; });

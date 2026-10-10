@@ -1,5 +1,5 @@
-import { resolveThemeDecisions } from "./themeDecisions";
-import type { ThemeRestrictions } from "./themeContract";
+import { resolveThemeDecisions } from "@/domain/resume/theme/themeDecisions";
+import type { ThemeRestrictions } from "@/domain/resume/theme/themeContract";
 
 export type ThemeSettingRestrictions = ThemeRestrictions;
 

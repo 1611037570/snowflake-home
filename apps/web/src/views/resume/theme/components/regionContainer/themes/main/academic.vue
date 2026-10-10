@@ -1,6 +1,6 @@
 <script setup>
 import { computed } from "vue";
-import { layoutStretchesColumns } from "@/views/resume/theme/layouts";
+import { layoutStretchesColumns } from "@/domain/resume/theme/layouts";
 import { useResumePreviewContext } from "@/views/resume/editor/preview/shared/previewContext";
 
 // 学术正文外观：居中双线页眉之下按分区排布，条目在自身外观里做引用式缩进。

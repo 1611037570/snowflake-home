@@ -1,6 +1,6 @@
 <script setup>
 import { computed } from "vue";
-import { layoutStretchesColumns } from "@/views/resume/theme/layouts";
+import { layoutStretchesColumns } from "@/domain/resume/theme/layouts";
 import { useResumePreviewContext } from "@/views/resume/editor/preview/shared/previewContext";
 
 // 学术个人信息外观：为居中的双线页眉铺一块浅色底托，正文分区从底托之下开始。
