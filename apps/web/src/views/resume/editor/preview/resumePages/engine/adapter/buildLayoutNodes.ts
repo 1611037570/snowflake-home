@@ -4,6 +4,7 @@ import {
   createModuleTitleNode,
   type LayoutAdapterRegistry,
 } from "./index";
+import { registerAcademicModuleAdapters } from "./academicModules";
 import { registerExperienceModuleAdapters } from "./experienceModules";
 import { registerOtherModuleAdapters } from "./otherModules";
 import { registerRichTextModuleAdapters } from "./richTextModules";
@@ -14,6 +15,8 @@ const PARAGRAPH_SPACING_MODULE_KEYS = new Set([
   "advantage",
   "work",
   "project",
+  "publication",
+  "ip",
   "education",
   "account",
   "honor",
@@ -56,6 +59,7 @@ export const createResumeLayoutAdapterRegistry = (): LayoutAdapterRegistry => {
   const registry = createLayoutAdapterRegistry();
   registerRichTextModuleAdapters(registry);
   registerExperienceModuleAdapters(registry);
+  registerAcademicModuleAdapters(registry);
   registerOtherModuleAdapters(registry);
   return registry;
 };

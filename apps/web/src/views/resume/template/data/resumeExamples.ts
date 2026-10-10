@@ -1,7 +1,14 @@
 import { loadResumeTemplates } from "./resumeData";
 import { resumeTemplateList, resumeTemplatePositionOptions } from "./list";
 
-export type ResumeExampleKind = "education" | "work" | "project" | "advantage" | "skill";
+export type ResumeExampleKind =
+  | "education"
+  | "work"
+  | "project"
+  | "advantage"
+  | "skill"
+  | "publication"
+  | "ip";
 
 export type ResumeExample = {
   id: string;
@@ -28,12 +35,17 @@ const getRecords = (template: any, kind: ResumeExampleKind) => {
 const getTitle = (template: any, kind: ResumeExampleKind, record: any) => {
   if (kind === "advantage" || kind === "skill") return template.name;
   if (kind === "project") return record.name || record.post || template.name;
+  // 学术成果的名称字段为 title，需在通用的岗位/姓名取值之前判定
+  if (kind === "publication" || kind === "ip") return record.title || template.name;
   return record.post || record.name || template.name;
 };
 
 const getSubtitle = (kind: ResumeExampleKind, record: any) => {
   if (kind === "education") return String(record.education ?? "").trim();
   if (kind === "project") return String(record.post ?? "").trim();
+  // 论文的副标题取发表载体，知识产权的副标题取成果类型
+  if (kind === "publication") return String(record.venue ?? "").trim();
+  if (kind === "ip") return String(record.type ?? "").trim();
   return "";
 };
 

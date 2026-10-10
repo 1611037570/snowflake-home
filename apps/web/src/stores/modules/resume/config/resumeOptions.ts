@@ -156,6 +156,43 @@ export const RESUME_VALUE_OPTIONS = {
     { name: "全日制", value: "全日制" },
     { name: "非全日制", value: "非全日制" },
   ],
+  // 论文发表状态
+  publicationStatus: [
+    { name: "已发表", value: "已发表" },
+    { name: "已录用", value: "已录用" },
+    { name: "在审", value: "在审" },
+    { name: "预印本", value: "预印本" },
+  ],
+  // 论文本人位次
+  publicationAuthorOrder: [
+    { name: "第一作者", value: "第一作者" },
+    { name: "共同一作", value: "共同一作" },
+    { name: "通讯作者", value: "通讯作者" },
+    { name: "第二作者", value: "第二作者" },
+    { name: "第三作者", value: "第三作者" },
+    { name: "其他位次", value: "其他位次" },
+  ],
+  // 知识产权成果类型：仅作为展示标签，不参与字段显隐控制
+  ipType: [
+    { name: "专利", value: "专利" },
+    { name: "软件著作权", value: "软件著作权" },
+  ],
+  // 知识产权确权状态
+  ipStatus: [
+    { name: "已受理", value: "已受理" },
+    { name: "实质审查中", value: "实质审查中" },
+    { name: "已授权", value: "已授权" },
+    { name: "已登记", value: "已登记" },
+    { name: "已驳回", value: "已驳回" },
+  ],
+  // 知识产权发明人位次：与论文位次口径一致，便于招聘方横向对比成果分量
+  ipAuthorOrder: [
+    { name: "第一发明人", value: "第一发明人" },
+    { name: "共同第一发明人", value: "共同第一发明人" },
+    { name: "第二发明人", value: "第二发明人" },
+    { name: "第三发明人", value: "第三发明人" },
+    { name: "其他位次", value: "其他位次" },
+  ],
 };
 
 // 省市级联字典：静态数据一次性构建；直辖市自身即为城市，可直接选中，不再展开子级
