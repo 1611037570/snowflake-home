@@ -3,7 +3,7 @@
 const regionPadding = {
   top: 0, // 顶部距离统一使用用户页面上边距
   right: 0, // 水平留白沿用页面设置
-  bottom: 24, // 页眉与正文区域之间的留白
+  bottom: 0, // 与正文之间的距离仅由模块间距控制
   left: 0, // 水平留白沿用页面设置
 };
 export default {
