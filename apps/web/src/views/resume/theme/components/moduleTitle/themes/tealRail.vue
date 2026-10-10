@@ -16,9 +16,9 @@ const {
     <span
       aria-hidden="true"
       class="teal-rail-title__dot pointer-events-none absolute h-[9px] w-[9px] rounded-full"
-      :style="{ left: 'calc(-1 * var(--teal-rail-title-offset) - 5px)', backgroundColor: themeColor }"
+      :style="{ left: 'calc(-1 * var(--teal-rail-title-offset) - 5px)', backgroundColor: themeColor, display: 'var(--resume-title-decoration-display, block)' }"
     />
     <h2 class="min-w-0 shrink-0 font-bold tracking-wide break-words"><TitleText :title="title" /></h2>
-    <span aria-hidden="true" class="teal-rail-title__line h-px min-w-0 flex-1 bg-gray-200" />
+    <span aria-hidden="true" class="teal-rail-title__line h-px min-w-0 flex-1 bg-gray-200" :style="{ display: 'var(--resume-title-decoration-display, block)' }" />
   </div>
 </template>

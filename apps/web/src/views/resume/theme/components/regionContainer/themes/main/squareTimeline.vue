@@ -24,11 +24,11 @@ const timelineStyle = computed(() => ({
 
 <style scoped>
 /* 竖线跟随栏内实际内容高度，连接标题和模块间距，不延伸到页尾空白。 */
-.square-timeline :deep(.resume-column) {
+.square-timeline :deep([data-resume-column-content]) {
   position: relative;
 }
 
-.square-timeline :deep(.resume-column)::before {
+.square-timeline :deep([data-resume-column-content])::before {
   content: "";
   position: absolute;
   top: 0;
@@ -40,7 +40,7 @@ const timelineStyle = computed(() => ({
 }
 
 /* 首段从标题节点开始画线，跨页续段从正文顶部继续画线。 */
-.square-timeline :deep(.resume-column:has(> .resume-module-wrapper:first-of-type .square-timeline-title))::before {
+.square-timeline :deep([data-resume-column-content]:has(> [data-layout-module]:first-of-type [data-resume-module-title]))::before {
   top: 12px;
 }
 

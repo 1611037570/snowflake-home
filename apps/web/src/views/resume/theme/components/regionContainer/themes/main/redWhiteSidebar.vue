@@ -21,16 +21,17 @@ const sidebarStyle = computed(() => ({
 
 <style scoped>
 /* 每栏独立承载背景与文字配色，不改变栏内可用尺寸。 */
-.red-white-sidebar :deep(> *) {
+.red-white-sidebar :deep(> [data-resume-column]) {
   isolation: isolate;
 }
 
-.red-white-sidebar :deep(> :first-child) {
+.red-white-sidebar :deep(> [data-resume-column="left"]) {
+  --resume-title-border-width: 0px; /* 标题组件消费栏描边宽度。 */
   color: var(--red-sidebar-contrast);
   --red-sidebar-title: var(--red-sidebar-contrast);
 }
 
-.red-white-sidebar :deep(> :first-child)::before {
+.red-white-sidebar :deep(> [data-resume-column="left"])::before {
   content: "";
   position: absolute;
   z-index: -1;
@@ -42,12 +43,7 @@ const sidebarStyle = computed(() => ({
   pointer-events: none;
 }
 
-/* 左栏标题保持纯文字，右栏保留通栏红色细线。 */
-.red-white-sidebar :deep(> :first-child .red-white-title) {
-  border-bottom: none;
-}
-
-.red-white-sidebar :deep(> :last-child)::before {
+.red-white-sidebar :deep(> [data-resume-column="right"])::before {
   content: "";
   position: absolute;
   z-index: -1;

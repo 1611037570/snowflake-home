@@ -31,18 +31,18 @@ const twoColumnStyle = computed(() => ({
 
 <style scoped>
 /* 两栏都以自身为定位基准，左栏底色与栏间线随栏宽和栏高自动变化。 */
-.two-column-main :deep(> *) {
+.two-column-main :deep(> [data-resume-column]) {
   position: relative;
   box-sizing: border-box;
   align-self: stretch;
 }
 
-.two-column-main--enabled :deep(> :first-child) {
+.two-column-main--enabled :deep(> [data-resume-column="left"]) {
   isolation: isolate;
 }
 
 /* 左栏浅底：向上覆盖正文留白与纸张上边距，向左铺到纸张边缘，向下延伸到页脚预留空间。 */
-.two-column-main--enabled :deep(> :first-child)::before {
+.two-column-main--enabled :deep(> [data-resume-column="left"])::before {
   content: "";
   position: absolute;
   z-index: -1;
@@ -55,7 +55,7 @@ const twoColumnStyle = computed(() => ({
 }
 
 /* 栏间 1px 细线落在栏间距正中，与左栏浅底同高，本身不占用任何排版空间。 */
-.two-column-main--enabled > :deep(:first-child:not(:last-child))::after {
+.two-column-main--enabled :deep(> [data-resume-column="left"])::after {
   content: "";
   position: absolute;
   top: calc(-1 * (var(--two-column-top, 0px) + var(--resume-page-top-space, 0px)));

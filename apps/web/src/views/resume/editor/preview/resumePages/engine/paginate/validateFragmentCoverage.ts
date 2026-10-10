@@ -50,10 +50,10 @@ export const validateFragmentCoverage = (
       }
       // 文本断点可反复覆盖最后的正文块，正文重复由字符轨道检查。
       for (const index of indices) {
-        if (contentEnd > 0 && index === blockCount - 1) continue;
+        if (contentEnd > 0 && index === measurement.textBlockIndex) continue;
         if (!range || (index >= range.start && index < range.end)) blockOwners.set(index, (blockOwners.get(index) ?? 0) + 1);
       }
-      const text = item.contentRange ?? (contentEnd > 0 && (!blockCount || !range || (range.start < blockCount && range.end === blockCount))
+      const text = item.contentRange ?? (contentEnd > 0 && (!blockCount || !range || (measurement.textBlockIndex !== undefined && range.start <= measurement.textBlockIndex && range.end > measurement.textBlockIndex))
         ? { start: 0 /* 未裁剪正文起点 */, end: contentEnd /* 完整正文终点 */ } : undefined);
       if (!text) continue;
       if (!Number.isSafeInteger(text.start) || !Number.isSafeInteger(text.end) || text.start < 0 || text.end < text.start || text.end > contentEnd) {
@@ -66,7 +66,7 @@ export const validateFragmentCoverage = (
     }
     if (cursor < contentEnd) report(node.id, "contentMissing", "正文末尾没有完整输出");
     for (const index of indices) {
-      if (contentEnd > 0 && index === blockCount - 1) continue;
+      if (contentEnd > 0 && index === measurement.textBlockIndex) continue;
       const count = blockOwners.get(index) ?? 0;
       if (!count) report(node.id, "contentMissing", `内容块 ${index} 没有输出`);
       if (count > 1) report(node.id, "contentOverlap", `内容块 ${index} 重复输出`);

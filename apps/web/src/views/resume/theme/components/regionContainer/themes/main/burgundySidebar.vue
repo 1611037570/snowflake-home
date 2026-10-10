@@ -25,17 +25,18 @@ const sidebarStyle = computed(() => ({
 </template>
 
 <style scoped>
-.burgundy-sidebar :deep(> *) {
+.burgundy-sidebar :deep(> [data-resume-column]) {
   position: relative;
   align-self: stretch;
   box-sizing: border-box;
 }
 
-.burgundy-sidebar :deep(> :first-child) {
+.burgundy-sidebar :deep(> [data-resume-column="left"]) {
+  --resume-title-decoration-display: none; /* 标题组件消费栏装饰开关。 */
   isolation: isolate;
 }
 
-.burgundy-sidebar :deep(> :first-child)::before {
+.burgundy-sidebar :deep(> [data-resume-column="left"])::before {
   content: "";
   position: absolute;
   z-index: -1;
@@ -47,8 +48,4 @@ const sidebarStyle = computed(() => ({
   background-color: var(--sidebar-surface);
 }
 
-/* 左栏标题保持纯文字，右栏标题显示点状装饰。 */
-.burgundy-sidebar :deep(> :first-child .burgundy-title__dots) {
-  display: none;
-}
 </style>

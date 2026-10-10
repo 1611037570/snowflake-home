@@ -60,7 +60,8 @@ provide("titleIconSize", titleIconSize);
 </script>
 
 <template>
-  <component :is="current" :title="displayTitle" v-if="displayTitle" :style="[titleFontStyle]" />
+  <!-- 公开模块标题标记，栏内装饰不依赖具体主题的标题类名。 -->
+  <component :is="current" :title="displayTitle" v-if="displayTitle" data-resume-module-title :style="[titleFontStyle]" />
 </template>
 
 <style lang="scss" scoped></style>

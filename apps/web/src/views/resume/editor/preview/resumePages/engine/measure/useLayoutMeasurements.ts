@@ -74,6 +74,7 @@ export const useLayoutMeasurements = ({
   const decorationHeight = ref(0); // 首页独立装饰的真实占位高度
   // 节点独立观察尺寸，宿主最小高度不变时也能捕获异步组件与图片增高。
   const resizeTargets = shallowRef<HTMLElement[]>([]);
+  const measurementError = ref(""); // 主题几何或内容协议校验失败的说明
   let measuring = false;
   /** 最近一次需要重新测量的时间戳，合并同帧内的多次请求 */
   let dirtyAt = 0;
@@ -96,12 +97,25 @@ export const useLayoutMeasurements = ({
       return;
     }
     // 仅在节点元素发生更替时重绑观察器，避免每次测量触发初始尺寸通知。
-    const nextTargets = [root, ...root.querySelectorAll<HTMLElement>("[data-layout-node-id], [data-layout-decoration]")];
+    const nextTargets = [root, ...root.querySelectorAll<HTMLElement>("[data-layout-module], [data-layout-node-id], [data-layout-decoration]")];
     if (
       nextTargets.length !== resizeTargets.value.length ||
       nextTargets.some((element, index) => element !== resizeTargets.value[index])
     ) resizeTargets.value = nextTargets;
-    const nextMeasurements = measureLayoutNodes(root, nodes.value);
+    let nextMeasurements: Map<string, MeasuredNode>;
+    try {
+      nextMeasurements = measureLayoutNodes(root, nodes.value);
+      measurementError.value = "";
+    } catch (error) {
+      // 失败计划不能沿用旧测量；释放调度锁，修正配置后仍可重新测量。
+      measurementError.value = error instanceof Error ? error.message : String(error);
+      measurements.value = new Map();
+      measureDone.value = false;
+      measuredAt = measuringAt;
+      measuring = false;
+      if (dirtyAt !== measuringAt) scheduleMeasure();
+      return;
+    }
     measurements.value = nextMeasurements;
     decorationHeight.value = root.querySelector<HTMLElement>("[data-layout-decoration]")?.getBoundingClientRect().height ?? 0;
     measuredAt = measuringAt;
@@ -127,6 +141,7 @@ export const useLayoutMeasurements = ({
   const requestMeasure = () => {
     dirtyAt = performance.now();
     measureDone.value = false;
+    measurementError.value = "";
     scheduleMeasure();
   };
 
@@ -141,6 +156,7 @@ export const useLayoutMeasurements = ({
 
   return {
     measurements,
+    measurementError, // 统一传给页面计划展示协议错误
     measureDone,
     decorationHeight, // 布局按实测高度扣除首页空间
     measure,

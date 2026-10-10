@@ -38,7 +38,7 @@ const { theme: { fontValue, linkUnderline, innerSpacingStyle } } = useResumePrev
   </div>
   <div
     v-if="nodePayload.item?.desc && isBlockVisible(1)"
-    data-layout-split-lines
+    data-layout-split-lines data-layout-text-block
     :style="decoration === 'middle' || decoration === 'bottom' ? undefined : innerSpacingStyle"
   >
     <ResumeField :model-value="slicedItemDesc" />

@@ -12,7 +12,7 @@ const { theme: { textAlign } } = useResumePreviewContext();
 <template>
   <div
     v-if="richTextHtml && hasContentBlock"
-    class="layout-rich-text"
+    class="layout-rich-text" data-layout-text-block
     :class="`layout-rich-text--${decoration || 'full'}`"
   >
     <div

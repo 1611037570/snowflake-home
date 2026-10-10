@@ -4,8 +4,7 @@ import type { LayoutNode } from "../engine/types";
 import type { ColumnPlan, FragmentPlan } from "../engine/paginate/pagePlan";
 import ModuleActions from "./moduleActions.vue";
 import ModuleContent from "./moduleContent.vue";
-import Module from "@/views/resume/theme/components/moduleContainer/index.vue";
-import UserModule from "@/views/resume/theme/components/userContainer/index.vue";
+import ModuleFrame from "./moduleFrame.vue";
 
 const props = defineProps<{
   column: ColumnPlan;
@@ -75,7 +74,7 @@ const fragmentGroups = computed(() => {
 
 <template>
   <!-- 栏内容标识供主题按实际内容高度绘制贯穿装饰。 -->
-  <div class="resume-column flex min-w-0 flex-1 flex-col">
+  <div data-resume-column-content class="resume-column flex min-w-0 flex-1 flex-col">
     <template v-for="(group, groupIndex) in fragmentGroups" :key="group.key">
       <div
         v-if="group.gapTop > 0"
@@ -83,8 +82,7 @@ const fragmentGroups = computed(() => {
         :class="{ 'resume-debug-gap': showDebug }"
         :style="{ height: `${group.gapTop}px` }"
       />
-      <component
-        :is="group.moduleKey === 'user' ? UserModule : Module"
+      <ModuleFrame
         :module-key="group.moduleKey"
         :module-class="moduleClassMap?.[group.moduleKey]"
         @mouseenter="emit('mouseenter', $event)"
@@ -121,7 +119,7 @@ const fragmentGroups = computed(() => {
           :show-debug="showDebug"
           @click="emit('click', $event)"
         />
-      </component>
+      </ModuleFrame>
     </template>
     <!-- 下一个模块换页时，本页剩余空间仍装得下的模块间距落在页尾单独占一行 -->
     <div

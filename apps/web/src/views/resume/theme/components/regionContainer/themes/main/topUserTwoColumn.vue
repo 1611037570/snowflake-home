@@ -28,14 +28,14 @@ const mainStyle = computed(() => ({
 
 <style scoped>
 /* 两栏各自作为定位基准，栏间线因此随栏宽与栏高伸缩；底边延伸到页尾预留空间之外。 */
-.top-user-main--two-column :deep(> *) {
+.top-user-main--two-column :deep(> [data-resume-column]) {
   position: relative;
   box-sizing: border-box;
   align-self: stretch;
 }
 
 /* 栏间 1px 细线锚定右栏左边缘并回退半个栏间距，与标题细分隔线共用同一套线语言。 */
-.top-user-main--two-column :deep(> :nth-child(2))::before {
+.top-user-main--two-column :deep(> [data-resume-column="right"])::before {
   content: "";
   position: absolute;
   top: calc(-1 * var(--top-user-divider-top, 0px));

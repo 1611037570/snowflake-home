@@ -163,7 +163,7 @@ export const useResumeLayout = ({
     renderSignature: renderSignature.value,
     fontReadyVersion: fontReadyVersion.value,
   }));
-  const { measurements, measureDone, decorationHeight } = useLayoutMeasurements({
+  const { measurements, measureDone, decorationHeight, measurementError } = useLayoutMeasurements({
     measureRef,
     nodes,
     watchSource,
@@ -171,6 +171,12 @@ export const useResumeLayout = ({
   /** 最近一次成功生成的页面计划：测量期间继续沿用它，避免页面树被卸载重挂 */
   let lastValidPlan: PagePlan | null = null;
   const nextPagePlan = computed<PagePlan | null>(() => {
+    if (measurementError?.value) return {
+      status: "invalid", // 协议失败不作为空白正常页面展示
+      version: fontReadyVersion.value, // 当前字体版本
+      pages: [], // 不输出错误内容
+      warnings: [{ code: "invalidLayout", message: measurementError.value }], // 显示问题模块或节点
+    };
     if (!validation.value.valid || nodes.value.length === 0) {
       return {
         status: validation.value.valid ? "ready" : "invalid",

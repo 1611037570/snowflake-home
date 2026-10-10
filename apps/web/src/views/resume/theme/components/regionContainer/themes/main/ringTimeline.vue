@@ -29,7 +29,7 @@ const timelineStyle = computed(() => {
 
 <style scoped>
 /* 竖线覆盖正文模块完整高度，避免逐条绘制在段间距处断开。 */
-.ring-timeline-main :deep(.resume-column > .resume-module-wrapper:not([data-module="user"]))::before {
+.ring-timeline-main :deep([data-resume-column-content] > [data-layout-module]:not([data-module="user"]))::before {
   content: "";
   position: absolute;
   top: 0;
@@ -41,7 +41,7 @@ const timelineStyle = computed(() => {
 }
 
 /* 后续正文模块向上补齐间距，首个模块不向个人信息区域延伸。 */
-.ring-timeline-main :deep(.resume-column > .resume-module-wrapper:not([data-module="user"]) ~ .resume-module-wrapper:not([data-module="user"]))::before {
+.ring-timeline-main :deep([data-resume-column-content] > [data-layout-module]:not([data-module="user"]) ~ [data-layout-module]:not([data-module="user"]))::before {
   top: calc(-1 * var(--ring-module-gap));
 }
 </style>

@@ -19,11 +19,11 @@ const sidebarStyle = computed(() => ({
 
 <style scoped>
 /* 底色以左栏为定位基准，覆盖半个栏间距并延伸到纸张四周。 */
-.sand-sidebar :deep(> :first-child) {
+.sand-sidebar :deep(> [data-resume-column="left"]) {
   isolation: isolate;
 }
 
-.sand-sidebar :deep(> :first-child)::before {
+.sand-sidebar :deep(> [data-resume-column="left"])::before {
   content: "";
   position: absolute;
   z-index: -1;
@@ -35,15 +35,4 @@ const sidebarStyle = computed(() => ({
   pointer-events: none;
 }
 
-/* 教育分隔线只绘制在完成的条目末尾，不改变条目测量高度。 */
-.sand-sidebar :deep([data-module="education"] .sand-item[data-item-complete="true"])::after {
-  content: "";
-  position: absolute;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  height: 1px;
-  background: color-mix(in srgb, var(--sand-accent) 16%, white);
-  pointer-events: none;
-}
 </style>
