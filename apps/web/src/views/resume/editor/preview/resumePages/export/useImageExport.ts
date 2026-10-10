@@ -104,6 +104,13 @@ const renderLongImage = async (
   document.body.appendChild(tempContainer);
 
   try {
+    // 单行字段在导出字体回退时保持单行，多行字段继续使用原有换行规则。
+    clone.querySelectorAll<HTMLElement>("[data-resume-plain-text]").forEach((field) => {
+      const range = document.createRange();
+      range.selectNodeContents(field);
+      const lines = Array.from(range.getClientRects()).filter((rect) => rect.width > 0 && rect.height > 0);
+      if (lines.length === 1) field.style.whiteSpace = "nowrap";
+    });
     const canvas = await snapdom.toCanvas(clone, {
       scale,
       backgroundColor: paper.background,
