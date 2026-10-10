@@ -3,6 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm'
 import { AppController } from './app.controller'
 import { AppService } from './app.service'
 import { DemoModule } from './modules/demo/demo.module'
+import { IntegrationsModule } from './modules/integrations/integrations.module'
 import { LLMModule } from './modules/llm/llm.module'
 import { UtilsModule } from './modules/utils/utils.module'
 import { UserModule } from './modules/user/user.module'
@@ -21,6 +22,7 @@ import { Visitor } from './modules/resume/entities/visitor.entity'
     // RsaModule,
     DemoModule,
     LLMModule,
+    IntegrationsModule,
     UtilsModule,
     PdfModule,
     // UserModule

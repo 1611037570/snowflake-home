@@ -35,6 +35,34 @@ export const createFeedback = async (data: CreateFeedbackParams) => {
   return response;
 };
 
+export const getIP = async () => {
+  // 访问者地址由服务端从连接层读取，不再依赖第三方按来源返回
+  return request.get({
+    url: "/integrations/ip",
+  });
+};
+
+export const getWeather = async (city: string) => {
+  return request.get({
+    url: "/integrations/weather",
+    params: { city },
+  });
+};
+
+export const getHotList = async (category: string) => {
+  return request.get({
+    url: "/integrations/hot-list",
+    params: { category },
+  });
+};
+
+export const getBaiduSearch = async (msg: string) => {
+  return request.get({
+    url: "/integrations/search",
+    params: { q: msg },
+  });
+};
+
 export const createResumePdf = async (item: any, system?: any, signal?: AbortSignal) => {
   // 将打印取消信号传递给服务端导出请求
   const response = await axios.post<Blob>(
