@@ -6,8 +6,6 @@ import coreEn from "./lang/en/core.json";
 import coreZh from "./lang/zh/core.json";
 import resumeEn from "./lang/en/resume.json";
 import resumeZh from "./lang/zh/resume.json";
-import resumeEditorEn from "./lang/en/resume-editor.json";
-import resumeEditorZh from "./lang/zh/resume-editor.json";
 import type { LangItem, Translation } from "./types";
 
 export const LANG_LIST: LangItem[] = [
@@ -43,10 +41,11 @@ const getDefaultLocale = () => {
 };
 
 const DEFAULT_LANG_KEY = getDefaultLocale();
-// 默认路由树语言包静态打包进产物：核心包与默认路由及其子路由均不按需请求
+// 仅核心包与默认路由（简历）语言包静态打包，避免首屏下发无关语言包。
+// 其余页面语言包（含编辑器）由路由守卫触发 loadPageLang 按需求请求，载入后才放行路由。
 const BUNDLED_LANG: Record<string, Record<string, LocaleMessage>> = {
-  zh: { core: coreZh.core, resume: resumeZh, "resume-editor": resumeEditorZh },
-  en: { core: coreEn.core, resume: resumeEn, "resume-editor": resumeEditorEn },
+  zh: { core: coreZh.core, resume: resumeZh },
+  en: { core: coreEn.core, resume: resumeEn },
 };
 // 构建语言包映射，核心语言包随实例初始化即内置
 const messages: any = {};

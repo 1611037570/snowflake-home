@@ -1,14 +1,7 @@
-// 导入 Pinia 状态管理
-import { createPinia } from "pinia";
-// 导入 Pinia 持久化插件
-import piniaPluginPersistedstate from "pinia-plugin-persistedstate";
-
-// 创建 Pinia 实例
-const pinia = createPinia();
-// 注册持久化插件
-pinia.use(piniaPluginPersistedstate);
-// 导出 Pinia 实例
-export default pinia;
+// Pinia 实例已独立为 ./pinia：应用入口只引用实例本身，
+// 避免启动阶段把下方所有业务 store 一起打进首屏包
+export { default } from "./pinia";
+// 业务 store 按需引入，页面请直接引用具体模块路径（如 @/stores/modules/system）
 
 // 系统相关store
 export * from "./modules/system";
