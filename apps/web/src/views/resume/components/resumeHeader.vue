@@ -3,6 +3,7 @@ import { computed, ref, watch } from "vue";
 import { useMediaQuery } from "@vueuse/core";
 import { useRoute, useRouter } from "vue-router";
 import ProjectTitle from "./projectTitle.vue";
+import GithubStars from "./githubStars.vue";
 
 const route = useRoute();
 const router = useRouter();
@@ -81,6 +82,7 @@ watch([() => route.path, isMobile], () => {
       </nav>
 
       <div class="ml-auto flex shrink-0 items-center gap-3">
+        <GithubStars />
         <SfTheme />
         <SfLocale />
         <SfDonation />

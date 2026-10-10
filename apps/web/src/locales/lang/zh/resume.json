@@ -1,4 +1,7 @@
 {
+  "resumeGithubStarsLabel": "支持开源",
+  "resumeGithubStarsLoading": "正在更新 GitHub Star 数",
+  "resumeGithubStarsUnavailable": "GitHub Star 数暂未更新，有数字时显示上次获取结果",
   "resumeNavHome": "首页",
   "resumeNavTemplates": "简历模板",
   "resumeNavMyResumes": "我的简历",

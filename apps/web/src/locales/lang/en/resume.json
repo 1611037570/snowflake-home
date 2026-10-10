@@ -1,4 +1,7 @@
 {
+  "resumeGithubStarsLabel": "Star on GitHub",
+  "resumeGithubStarsLoading": "Updating GitHub stars",
+  "resumeGithubStarsUnavailable": "GitHub stars could not be updated; any displayed count is the last successful result",
   "resumeNavHome": "Home",
   "resumeNavTemplates": "Resume Templates",
   "resumeNavMyResumes": "My Resumes",
