@@ -3,14 +3,11 @@
  * 系统启动时默认使用的语言
  */
 export const DEFAULT_LANGUAGE = import.meta.env.VITE_DEFAULT_LANGUAGE;
-// 初始入口同时决定默认路由与构建页面信息。
-import { DEFAULT_ENTRY_ROUTE } from "../../../site.config";
-export const BASE_ROUTE = import.meta.env.VITE_DEFAULT_ROUTE || DEFAULT_ENTRY_ROUTE;
 /**
  * 默认路由地址
- * 系统启动时默认跳转的路由
+ * 系统启动时默认跳转的路由：优先运行时选择的入口，其次构建期环境变量配置
  */
-export const DEFAULT_ROUTE = localStorage.getItem("snowflakeRoute") || BASE_ROUTE;
+export const DEFAULT_ROUTE = localStorage.getItem("snowflakeRoute") || import.meta.env.VITE_DEFAULT_ROUTE;
 /**
  * 外部链接打开方式
  * 系统中所有外部链接的默认打开方式

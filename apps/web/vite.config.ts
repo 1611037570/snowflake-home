@@ -33,7 +33,7 @@ import { dynamicComponentResolver } from "./src/components";
 import ElementPlus from "unplugin-element-plus/vite";
 // Tiny Vue 组件解析器
 import { TinyVueSingleResolver } from "@opentiny/unplugin-tiny-vue";
-import { DEFAULT_ENTRY_ROUTE, resolveSiteMetadata } from "./site.config";
+import { resolveSiteMetadata } from "./site.config";
 
 /**
  * 版本注入插件
@@ -120,7 +120,7 @@ export default ({ mode }: { mode: string }) => {
           data: {
             defaultLang: VITE_DEFAULT_LANGUAGE, // 默认语言
             // 初始 HTML 与客户端按同一入口路由选择产品信息。
-            siteMetadata: resolveSiteMetadata(VITE_DEFAULT_ROUTE || DEFAULT_ENTRY_ROUTE, VITE_DEFAULT_LANGUAGE || "zh"),
+            siteMetadata: resolveSiteMetadata(VITE_DEFAULT_ROUTE, VITE_DEFAULT_LANGUAGE || "zh", VITE_DEFAULT_ROUTE),
           },
         },
       }),
