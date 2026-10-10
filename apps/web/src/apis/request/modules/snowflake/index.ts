@@ -1,7 +1,8 @@
+import { config } from "@/configs";
 import XyRequest from "../../request";
 import axios from "axios";
 const request = new XyRequest({
-  baseURL: import.meta.env.VITE_SNOWFLAKE_API_URL,
+  baseURL: config.api.baseUrl,
 });
 
 // 雪花服务Ping
@@ -37,7 +38,7 @@ export const createFeedback = async (data: CreateFeedbackParams) => {
 export const createResumePdf = async (item: any, system?: any, signal?: AbortSignal) => {
   // 将打印取消信号传递给服务端导出请求
   const response = await axios.post<Blob>(
-    `${import.meta.env.VITE_SNOWFLAKE_API_URL}/resume/pdf`,
+    `${config.api.baseUrl}/resume/pdf`,
     { item, system },
     {
       responseType: "blob",

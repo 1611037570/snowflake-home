@@ -1,8 +1,9 @@
+import { config } from "@/configs";
 import { URL_OPEN_TYPE, USER_ROUTE } from "@/configs";
 
 // 获取基础路径
 export function getBaseUrl() {
-  const routerMode = import.meta.env.VITE_ROUTER_MODE;
+  const routerMode = config.app.routerMode;
   const flag = routerMode === "hash" ? "#" : "";
   return window.location.origin + flag;
 }

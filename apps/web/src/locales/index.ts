@@ -1,3 +1,4 @@
+import { config } from "@/configs";
 import type { I18n, I18nOptions } from "vue-i18n";
 import { createI18n } from "vue-i18n"; // 从 vue-i18n 导入创建实例的方法
 
@@ -37,7 +38,7 @@ const getDefaultLocale = () => {
   }
 
   // 兜底返回默认语言
-  const defaultLang = import.meta.env.VITE_DEFAULT_LANGUAGE;
+  const defaultLang = config.app.defaultLanguage;
   return getLangKey(defaultLang);
 };
 
@@ -109,7 +110,7 @@ async function dynamicLoadPageLang(name: string, langKey: string): Promise<Local
     })
     .catch((error) => {
       localeMessageCache.set(cacheKey, null);
-      if (import.meta.env.DEV) {
+      if (config.app.dev) {
         console.warn(`[i18n] 加载语言包失败: ${langKey}/${name}.json`, error);
       }
       return null;

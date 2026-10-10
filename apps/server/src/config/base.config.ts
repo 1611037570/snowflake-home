@@ -1,3 +1,4 @@
+import { env } from "../configs/env"
 export const baseConfig = {
   // 应用配置
   app: {
@@ -14,8 +15,8 @@ export const baseConfig = {
   },
   // PDF渲染页面配置
   pdf: {
-    renderUrl: process.env.PDF_RENDER_URL || 'http://localhost:5173/resume/print',
-    timeout: Number(process.env.PDF_RENDER_TIMEOUT || 60000),
+    renderUrl: env.pdfRenderUrl, // 打印页面地址
+    timeout: env.pdfTimeout, // 页面渲染超时，单位毫秒
   },
   // 数据库配置
   mysql: {
@@ -28,7 +29,7 @@ export const baseConfig = {
     // 数据库用户名
     username: 'root',
     // 数据库密码
-    password: 'root',
+    password: env.mainPassword,
     // 数据库名称
     database: 'snowflake_home',
     // 自动同步实体到数据库表结构（开发环境开启，生产环境建议关闭）
@@ -38,7 +39,7 @@ export const baseConfig = {
   redis: {
     host: 'localhost',
     port: 6379,
-    password: '',
+    password: env.redisPassword, // 从环境读取缓存密码
     db: 0,
   },
   // MongoDB 配置
@@ -47,12 +48,12 @@ export const baseConfig = {
     port: 27017,
     database: 'snowflake_home',
     username: '',
-    password: '',
+    password: env.mongoPassword, // 从环境读取文档数据库密码
   },
   // JWT 配置
   jwt: {
     // JWT 密钥
-    secret: 'snowflake-home-secret-key',
+    secret: env.jwtSecret,
     // 过期时间
     expiresIn: '24h',
   },

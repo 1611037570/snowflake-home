@@ -1,3 +1,4 @@
+import { config } from "@/configs";
 import { ALL_PAGE } from "@/configs/modules/page";
 import { resolveSiteMetadata, SITE_CONFIGS } from "../../../site.config";
 
@@ -11,7 +12,7 @@ interface MetadataRoute {
 
 // 路由与语言共同驱动页面信息，统一覆盖旧页面的描述、关键词与图标。
 export const updatePageMetadata = (route: MetadataRoute, language: string) => {
-  const metadata = resolveSiteMetadata(route.path, language, import.meta.env.VITE_DEFAULT_ROUTE);
+  const metadata = resolveSiteMetadata(route.path, language, config.app.defaultRoute);
   const pageName = typeof route.meta.pageName === "string"
     ? route.meta.pageName
     : route.path.split("/").filter(Boolean).join("-");

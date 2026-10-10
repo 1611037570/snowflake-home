@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common'
-import { ConfigService } from '@nestjs/config'
+import { config } from '../../configs'
 
 export interface DeepSeekBalance {
   is_available: boolean
@@ -13,17 +13,15 @@ export interface DeepSeekBalance {
 
 @Injectable()
 export class LLMService {
-  constructor(private configService: ConfigService) {}
 
   /**
    * 获取上游 AI 服务的原始响应
    */
   async getUpstreamResponse(data: any) {
-    const apiKey = this.configService.get<string>('OPENAI_API_KEY')
-    const baseURL = this.configService.get<string>('OPENAI_BASE_URL')
+    const apiKey = config.ai.apiKey
+    const baseURL = config.ai.baseUrl
     // 模型名称由服务端配置控制，前端传入值不会生效
-    const model =
-      this.configService.get<string>('OPENAI_MODEL') || 'deepseek-v4-flash-ga-260731'
+    const model = config.ai.model
     const url = `${baseURL}`
     console.log('url:', url)
     console.log('data:', data)
@@ -64,7 +62,7 @@ export class LLMService {
    * 查询 DeepSeek 余额
    */
   async getBalance() {
-    const apiKey = this.configService.get<string>('OPENAI_API_KEY')
+    const apiKey = config.ai.apiKey
     const url = 'https://api.deepseek.com/user/balance'
     const response = await fetch(url, {
       method: 'GET',

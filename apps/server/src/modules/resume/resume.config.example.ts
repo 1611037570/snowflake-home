@@ -11,7 +11,7 @@ export const resumeConfig = {
     // 数据库用户名
     username: 'root',
     // 数据库密码
-    password: 'root',
+    password: '',
     // 数据库名称
     database: 'snowflake_resume',
     // 自动同步实体到数据库表结构（开发环境开启，生产环境建议关闭）

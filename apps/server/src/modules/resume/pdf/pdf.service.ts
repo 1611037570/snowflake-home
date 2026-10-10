@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable, OnModuleDestroy } from '@nestjs/common'
 import { chromium, type Browser } from 'playwright'
-import { baseConfig } from '../../../config/base.config'
+import { config } from '../../../configs'
 
 @Injectable()
 export class PdfService implements OnModuleDestroy {
@@ -31,13 +31,13 @@ export class PdfService implements OnModuleDestroy {
       )
 
       await page.emulateMedia({ media: 'print' })
-      await page.goto(baseConfig.pdf.renderUrl, {
+      await page.goto(config.pdf.renderUrl, {
         waitUntil: 'domcontentloaded',
-        timeout: baseConfig.pdf.timeout,
+        timeout: config.pdf.timeout,
       })
       await page.waitForSelector('[data-pdf-ready="true"]', {
         state: 'attached',
-        timeout: baseConfig.pdf.timeout,
+        timeout: config.pdf.timeout,
       })
 
       const pdf = await page.pdf({
