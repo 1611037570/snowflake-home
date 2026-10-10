@@ -100,18 +100,19 @@ const dynamicComponents = {
   cityPicker: AsyncCityPicker,
 };
 provide("sfBorder", "border border-sf-b hover:border-sf-theme");
-// 配置同步：进入或切换简历时由本组件触发，完成状态由表单渲染事件收口
+// 配置同步由初始化事件收口，加载耗时另外等待可见控件就绪。
 const { currentItem } = storeToRefs(resumeStore);
-// 待完成的同步目标简历：由表单渲染完成事件收口，切换简历时丢弃过期回调
+// 待完成的同步目标简历：由初始化事件收口，切换简历时丢弃过期回调。
 let syncItem = null;
-// 同步收口：表单渲染结束后调用，此时引擎的初始默认值写入已完成，才开启历史记录
-const finishConfigSync = () => {
-  if (!syncItem || currentItem.value !== syncItem) return;
+// 初始化后的监听先完成，再建立历史基线，避免补默认值进入用户历史。
+const finishConfigSync = async (data) => {
+  const item = currentItem.value;
+  if (!item || item.data !== data) return;
+  await nextTick();
+  if (currentItem.value !== item || syncItem !== item) return;
   syncItem = null;
   resumeStore.enableHistory();
   resumeStore.setConfigSyncing(false);
-  // 编辑区表单渲染完成：记录加载完成时间
-  markEditorEnd();
 };
 watch(
   () => currentItem.value,
@@ -126,19 +127,20 @@ watch(
     resumeStore.setConfigSyncing(true);
     // 同步期间暂停历史记录，避免初始化与同步产生的自动变更写入历史
     resumeStore.disableHistory();
-    // 同步完成交由表单渲染事件判定，避免固定时序下初始写入被记为历史
+    // 同步完成交由挂载前初始化事件判定，避免默认值写入被记为历史。
     syncItem = item;
   },
   { immediate: true },
 );
 // 编辑标签重新激活后，等待表单进入页面再执行预览点击的定位。
 onActivated(() => {
-  finishConfigSync();
   nextTick(flushPendingEditorLocation);
 });
 
-const handleDynamicFormMounted = () => {
-  finishConfigSync();
+const handleDynamicFormReady = (data) => {
+  if (currentItem.value?.data !== data) return;
+  // 当前可见异步字段与富文本均已就绪，才记录编辑区加载完成。
+  markEditorEnd();
   nextTick(flushPendingEditorLocation);
 };
 
@@ -163,7 +165,8 @@ onBeforeUnmount(() => {
           :components="dynamicComponents"
           :options="localizedResumeOptions"
           :use-rules="false"
-          @vue:mounted="handleDynamicFormMounted"
+          @initialized="finishConfigSync"
+          @ready="handleDynamicFormReady"
         />
         <ArchivedModules />
       </SfScrollbar>

@@ -12,6 +12,7 @@ export type { FieldPosition } from "./code/orderData";
 // 组件树内上下文：业务组件的读取入口，DF_CONTEXT 供测试与自定义容器注入
 export { useFormContext } from "./useFormContext";
 export { DF_CONTEXT } from "./code/injectionKeys";
+export { useFormReadyTask } from "./code/formReady";
 
 // 公共能力：code 下其余内容为引擎内部实现，不对外
 export { isFieldHidden, isFieldRemoved, setFieldCheckValue } from "./code/fieldVisible";

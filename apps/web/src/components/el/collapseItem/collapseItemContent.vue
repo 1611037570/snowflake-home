@@ -1,6 +1,6 @@
 <template>
   <template v-if="renderContent">
-    <Suspense>
+    <Suspense @pending="beginRender" @resolve="finishRender">
       <template #default>
         <slot />
       </template>
@@ -16,7 +16,15 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from "vue";
+import { inject, onBeforeUnmount, ref, watch } from "vue";
+import { FORM_READY } from "@/components/business/dynamicForm/code/formReady";
+
+// 嵌套折叠异步内容向当前表单登记，未展开内容不阻塞就绪。
+const readiness = inject(FORM_READY, undefined);
+let renderDone = () => {};
+const beginRender = () => { renderDone(); renderDone = readiness?.begin() ?? (() => {}); };
+const finishRender = () => renderDone();
+onBeforeUnmount(finishRender);
 
 const props = defineProps<{
   active: boolean;
