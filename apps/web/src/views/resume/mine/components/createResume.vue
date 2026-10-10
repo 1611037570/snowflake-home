@@ -177,7 +177,7 @@ const goTemplate = () => {
           class="h-[276px]! w-full!"
           @click="useTemplate(template)"
         >
-          <div class="truncate text-sm font-black text-black">{{ template.name }}</div>
+          <div class="truncate text-sm font-black text-sf-text">{{ template.name }}</div>
           <div class="mt-3 line-clamp-2 text-sm text-sf-text-2">{{ template.description }}</div>
           <div class="mt-3 flex flex-wrap gap-3 text-xs text-sf-text-2">
             <span v-for="tag in template.tags" :key="tag">{{ tag }}</span>
