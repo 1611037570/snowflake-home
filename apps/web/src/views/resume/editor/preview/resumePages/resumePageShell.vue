@@ -9,7 +9,6 @@ import {
   RESUME_CONTAINER_WIDTH,
 } from "../shared/constants";
 import { useResumePreviewContext } from "../shared/previewContext";
-import { useResumeStore } from "@/stores";
 import {
   defaultPageBackground,
 } from "@/domain/resume/theme/uiConfig";
@@ -35,6 +34,11 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  // 是否展示正文辅助线，由编辑区统一的调试条件控制
+  showDebug: {
+    type: Boolean,
+    default: false,
+  },
   // 当前页码（页脚文案）
   pageIndex: {
     type: Number,
@@ -57,9 +61,6 @@ const props = defineProps({
 // 页面固定外观独立读取当前主题决策。
 const { themeDecisions } = useResumePreviewContext();
 const rootEl = useTemplateRef("rootRef");
-// 调试开关：开启后标注正文可用区，方便排查分页与边距
-const { system } = storeToRefs(useResumeStore());
-const showDebug = computed(() => !!system.value.showDebug);
 // 双栏内容区域铺满纸张高度，页脚覆盖在栏内预留的底部空间上。
 const fullHeightColumns = computed(() => layoutStretchesColumns(themeDecisions.value.layoutType));
 const bottomSpace = computed(() =>
@@ -76,8 +77,6 @@ const pageTextColor = computed(() =>
 const bleedsPageTop = computed(
   () => (props.pageIndex > 0 || themePageAppearance.value.bleedsPageTop === true) && !props.hasTopRegion,
 );
-// 预览整体带 scale 缩放，线宽会被一起缩小，按足够醒目的宽度标注
-const debugOutlineStyle = { outline: "4px dashed var(--sf-error)", outlineOffset: "-1px" };
 // 纸张统一使用直角，主题边框画在页面盒子内圈并参与内容宽高
 const pageSurfaceStyle = computed(() => ({
   borderRadius: "0px", // 预览纸张固定为直角
@@ -144,7 +143,8 @@ watch(
     <!-- 内容区允许收缩到剩余高度，正文不会通过最小高度推开页脚。 -->
     <div
       class="flex min-h-0 flex-1 flex-col"
-      :style="[{ gap: `${ui.page?.spacing?.module}px` }, showDebug ? debugOutlineStyle : undefined]"
+      :class="{ 'resume-debug-content-outline': showDebug }"
+      :style="{ gap: `${ui.page?.spacing?.module}px` }"
     >
       <slot />
     </div>
@@ -162,4 +162,10 @@ watch(
   </div>
 </template>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+/* 辅助线使用独立类，导出统一移除，不影响主题外观与内容尺寸。 */
+.resume-debug-content-outline {
+  outline: 4px dashed var(--sf-error);
+  outline-offset: -1px;
+}
+</style>
