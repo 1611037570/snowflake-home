@@ -50,7 +50,8 @@
 
 <script setup>
 import { useSystemStore } from "@/stores/modules/system";
-import { onKeyStroke, useScrollLock } from "@vueuse/core";
+import { useScrollLock } from "@vueuse/core";
+import { useOverlayKeys } from "@/hooks/modules/useOverlayKeys";
 import { storeToRefs } from "pinia";
 import { computed, onUnmounted, ref, useTemplateRef, watch } from "vue";
 
@@ -84,35 +85,30 @@ const isLocked = useScrollLock(document.body);
 let maskRect = null;
 
 // ==================== 键盘事件 ====================
-/** ESC 键监听器的停止函数，用于按需注册/移除 */
-let stopKeyStroke = null;
+// ESC 关闭交给弹层仲裁：叠加确认框时只关闭最上层，本弹窗保持打开。
+useOverlayKeys({ escape: () => (modeValue.value = false) }, () => modeValue.value);
 
 /**
- * 动态注册/移除 ESC 监听，只在弹窗显示时生效
- * - 弹窗打开 → 注册监听，并在 DOM 更新后缓存遮罩层边界
- * - 弹窗关闭 → 移除监听，清除缓存，节省性能
+ * 弹窗打开与关闭的联动处理
+ * - 弹窗打开 → 在 DOM 更新后缓存遮罩层边界
+ * - 弹窗关闭 → 清除缓存，节省性能
  */
 watch(
   modeValue,
   async (val) => {
     isLocked.value = val;
     if (val) {
-      stopKeyStroke = onKeyStroke("Escape", () => (modeValue.value = false));
       await nextTick();
       maskRect = mask.value?.getBoundingClientRect() || null;
     } else {
       maskRect = null;
-      stopKeyStroke?.();
-      stopKeyStroke = null;
     }
   },
   { immediate: true },
 );
 
-/** 组件卸载时确保移除监听，避免内存泄漏 */
+/** 组件卸载时解除滚动锁定，按键监听由弹层仲裁自行回收 */
 onUnmounted(() => {
-  stopKeyStroke?.();
-  stopKeyStroke = null;
   isLocked.value = false;
 });
 
