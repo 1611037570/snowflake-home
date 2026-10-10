@@ -13,6 +13,7 @@ import { printImage as exportImage, printLongImagePdf } from "./useImageExport";
 import { exportMarkdown } from "./useMarkdownExport";
 import { exportHtml } from "./useHtmlExport";
 import type { PagePlan } from "../engine/paginate/pagePlan";
+import { getExportLayoutStatus, type ExportLayoutMode } from "./exportLayout";
 /** useResumeExport 入参 */
 interface UseResumeExportOptions {
   /** 编辑态才注册导出事件，其余模式（缩略图/全屏预览）不注册 */
@@ -37,25 +38,23 @@ export const useResumeExport = ({
   previewReady,
   onExportSuccess,
 }: UseResumeExportOptions) => {
-  // 所有可视化导出都等待最新测量完成，避免读取更新前的页面或长图树。
-  const canExportMeasure = () => {
-    if (!previewReady.value) {
+  // 编辑器与云端打印共用判定规则，仅按输出布局区别分页与连续长图。
+  const canExport = (mode: ExportLayoutMode) => {
+    const status = getExportLayoutStatus(previewReady.value, pagePlan.value.status, mode);
+    if (status === "pending") {
       ElMessage.warning("简历预览正在更新，请稍后再导出");
       return false;
     }
-    return true;
-  };
-  // 分页导出额外要求页面计划有效；长图导出使用无限高度测量树，不受分页溢出限制。
-  const canExportPages = () => {
-    if (!canExportMeasure()) return false;
-    if (pagePlan.value.status === "ready") return true;
+    if (status === "ready") return true;
     ElMessage.error(
-      pagePlan.value.status === "overflow"
+      status === "overflow"
         ? "简历内容超出页面可用区域，请调整后再导出"
         : "简历页面布局配置有误，请调整后再导出",
     );
     return false;
   };
+  const canExportMeasure = () => canExport("continuous");
+  const canExportPages = () => canExport("pages");
   // 长图 PDF 与 PNG 共用长图渲染结果，保持单页长图输出。
   const printPDF = (scale: unknown = 2) => {
     if (!canExportMeasure()) return;
