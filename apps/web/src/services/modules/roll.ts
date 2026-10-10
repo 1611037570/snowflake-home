@@ -28,11 +28,12 @@ export async function getIPData(refresh: boolean = false) {
  */
 export async function getWeatherData(city: string, refresh: boolean = false) {
   const request = async () => {
-    const data = await getIPData();
-    if (!data) {
+    // 归属地改由服务端按访问者 IP 提供，天气需要调用方显式给出城市。
+    const name = (city || "").trim();
+    if (!name) {
       return null;
     }
-    return await getWeather(data.city);
+    return await getWeather(name);
   };
   const data = baseService({
     key: `weather`,
