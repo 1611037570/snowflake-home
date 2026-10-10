@@ -150,10 +150,15 @@ const a = {
           <ExportItem :item="a" class="sm:col-span-2" @click="a.fn" />
         </div>
         <div
-          class="flex items-center gap-3 rounded-2xl border border-sf-b bg-sf-bg p-3 text-sm leading-6 text-sf-text-2"
+          class="flex items-start gap-3 rounded-2xl border border-sf-b bg-sf-bg p-3 text-sm leading-6 text-sf-text-2"
         >
           <SfIcon icon="mdi:file-document-outline" size="5" class="shrink-0 text-sf-theme" />
-          <span>{{ $t("exportFormatTip") }}</span>
+          <!-- 导出建议分段说明格式选择、云端数据处理和移动端排版差异。 -->
+          <div class="min-w-0 space-y-3">
+            <p>{{ $t("exportFormatTip") }}</p>
+            <p>{{ $t("exportCloudPrivacyTip") }}</p>
+            <p>{{ $t("exportMobileTip") }}</p>
+          </div>
         </div>
       </div>
     </SfScrollbar>
