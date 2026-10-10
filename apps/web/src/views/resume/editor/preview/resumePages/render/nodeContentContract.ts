@@ -2,6 +2,7 @@ import { computed } from "vue";
 import type { LayoutNode } from "../engine/types";
 import { sliceRichTextHtml } from "../engine/adapter/richTextParser";
 import { isContentBlockVisible } from "../engine/contentBlocks";
+import type { ContentPayload, ContentItem } from "./contentPayload";
 
 /** 所有正文组件共享的输入，主题覆盖组件必须遵守同一分片协议。 */
 export interface NodeContentProps {
@@ -17,8 +18,12 @@ export interface NodeContentProps {
 
 /** 分片内容只在此处裁剪，主题组件复用结果而不再实现另一套分页。 */
 export const useNodeContent = (props: NodeContentProps) => {
-  const nodePayload = computed(() => (props.payload ?? props.node.payload) as any);
-  const item = computed(() => nodePayload.value?.item || {});
+  // 在公共入口补齐空条目，覆盖组件无需重复判断载荷是否携带业务条目。
+  const nodePayload = computed(() => {
+    const payload = (props.payload ?? props.node.payload) as ContentPayload;
+    return { ...payload, item: payload?.item ?? {} };
+  });
+  const item = computed<ContentItem>(() => nodePayload.value?.item || {});
   const richTextHtml = computed(() => {
     const parsed = nodePayload.value?.content ?? nodePayload.value;
     return parsed?.html ? sliceRichTextHtml(parsed.html, props.contentRange?.start || 0, props.contentRange?.end) : "";

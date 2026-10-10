@@ -17,7 +17,8 @@ const {
 </script>
 
 <template>
-  <div :class="{ 'font-bold': emphasis }" :style="[fontValue(emphasis ? 1 : 0)]">
+  <!-- 主题通过公开标题标记定位，不猜测内部嵌套和字体类名。 -->
+  <div data-resume-item-title :data-emphasis="emphasis" :class="{ 'font-bold': emphasis }" :style="[fontValue(emphasis ? 1 : 0)]">
     <ResumeField :model-value="name" />
   </div>
 </template>

@@ -1,6 +1,7 @@
 import type { LayoutNode } from "../types";
 import type { MeasuredNode } from "./types";
 import { validateContentBlockIndices } from "../contentBlocks";
+import { isNeutralModuleGeometry } from "./moduleGeometry";
 
 /** 测量宿主中每个节点的 DOM 结构标识。 */
 const NODE_SELECTOR = "[data-layout-node-id]";
@@ -47,11 +48,27 @@ export const measureLayoutNodes = (
   const result = new Map<string, MeasuredNode>();
   const elements = Array.from(root.querySelectorAll<HTMLElement>(NODE_SELECTOR));
   const elementById = new Map(elements.map((element) => [element.dataset.layoutNodeId || "", element]));
+  const nodeById = new Map(nodes.map(node => [node.id, node])); // 读取通用整块能力，不识别业务名称
+  const ownsModuleBox = (module: HTMLElement, moduleNodes: HTMLElement[]) => moduleNodes.length === 1 &&
+    nodeById.get(moduleNodes[0]!.dataset.layoutNodeId || "")?.splitMode === "whole";
+
+  // 实际模块结构参与测量，额外占位必须下沉为通用节点而不能藏在分组外框。
+  for (const module of root.querySelectorAll<HTMLElement>("[data-layout-module]")) {
+    const rect = module.getBoundingClientRect();
+    const moduleNodes = Array.from(module.querySelectorAll<HTMLElement>(NODE_SELECTOR));
+    // 单个不可分节点直接承担整个外框预算，无分组跨页的重复留白问题。
+    if (ownsModuleBox(module, moduleNodes)) continue;
+    if (!isNeutralModuleGeometry({ width: rect.width, height: rect.height, nodes: moduleNodes.map(node => node.getBoundingClientRect()) })) {
+      throw new Error(`模块 ${module.dataset.layoutModule} 的外框改变了节点预算，请将占位放入区域或条目`);
+    }
+  }
 
   nodes.forEach((node) => {
     const element = elementById.get(node.id);
     if (!element) return;
-    const rect = element.getBoundingClientRect();
+    const module = element.closest<HTMLElement>("[data-layout-module]");
+    const rect = module && ownsModuleBox(module, Array.from(module.querySelectorAll<HTMLElement>(NODE_SELECTOR)))
+      ? module.getBoundingClientRect() : element.getBoundingClientRect();
     const breakPointTypes = new Map(
       node.breakPoints?.map((point) => [point.offset, point.type]) || [],
     );
@@ -96,6 +113,18 @@ export const measureLayoutNodes = (
       ? indexedBlocks.map((block) => block.dataset.layoutBlockIndex?.trim() ? Number(block.dataset.layoutBlockIndex) : NaN)
       : contentBlocks.map((_, index) => index);
     if (!validateContentBlockIndices(blockIndices)) throw new Error(`节点 ${node.id} 的内容块编号无效`);
+    // 正文身份由组件显式标记，当前双轨分片要求正文位于最后一个内容块。
+    const textBlocks = Array.from(element.querySelectorAll<HTMLElement>("[data-layout-text-block]"))
+      .filter(block => !block.closest(".layout-measure-breakpoint"));
+    if (textBlocks.length > 1) throw new Error(`节点 ${node.id} 只能声明一个正文块`);
+    const textBlock = textBlocks[0];
+    const textBlockIndex = textBlock ? indexedBlocks.length
+      ? Number(textBlock.closest<HTMLElement>("[data-layout-block-index]")?.dataset.layoutBlockIndex)
+      : contentBlocks.findIndex(block => block === textBlock || block.contains(textBlock)) : undefined;
+    if (textBlock && (textBlockIndex === undefined || textBlockIndex < 0 || textBlockIndex !== blockIndices[blockIndices.length - 1])) {
+      throw new Error(`节点 ${node.id} 的正文必须声明为最后一个内容块`);
+    }
+    if (declaredContentLength > 0 && blockIndices.length && textBlockIndex === undefined) throw new Error(`节点 ${node.id} 缺少正文块标记`);
     const indexedBreakPoints = indexedBlocks.map((block, index) => {
       const blockRect = block.getBoundingClientRect();
       const previousBottom = index > 0 ? indexedBlocks[index - 1].getBoundingClientRect().bottom : blockRect.top;
@@ -132,6 +161,7 @@ export const measureLayoutNodes = (
       width: rect.width,
       fullHeight: rect.height,
       blockIndices: node.splitMode === "whole" ? [] : blockIndices, // 实际存在的稳定块编号，允许隐藏字段留下空号
+      textBlockIndex: node.splitMode === "whole" ? undefined : textBlockIndex, // 正文身份只来自组件标记
       breakPoints: node.splitMode === "whole" ? [] : [...blockBreakPoints, ...indexedBreakPoints, ...breakPoints, ...lineBreakPoints],
       // 富文本从自身断点取正文末尾，按行拆分的纯文本则从实测行尾取，避免续页提前结束。
       contentLength: Math.max(

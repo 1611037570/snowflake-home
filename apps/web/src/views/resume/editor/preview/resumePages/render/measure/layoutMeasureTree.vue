@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import LayoutMeasureHost from "./layoutMeasureHost.vue";
-import LayoutMeasureNode from "./layoutMeasureNode.vue";
+import LayoutMeasureModule from "./layoutMeasureModule.vue";
 import ColumnBox from "../columnBox.vue";
 import RegionContainer from "@/views/resume/theme/components/regionContainer/index.vue";
 import PagePattern from "@/views/resume/theme/components/pageContainer/index.vue";
@@ -91,10 +91,11 @@ const regions = computed(() => {
         <ColumnBox
           v-for="group in region.groups"
           :key="group.id"
+          :column-id="group.id"
           :width="group.width"
           :padding="group.padding"
         >
-          <LayoutMeasureNode v-for="node in group.nodes" :key="node.id" :node="node" />
+          <LayoutMeasureModule :nodes="group.nodes" />
         </ColumnBox>
       </RegionContainer>
     </div>

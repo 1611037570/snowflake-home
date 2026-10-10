@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed } from "vue";
+import type { ContentItem } from "@/views/resume/editor/preview/resumePages/render/contentPayload";
 import { createContentBlocks } from "@/views/resume/editor/preview/resumePages/engine/contentBlocks";
 import ItemDate from "@/views/resume/editor/preview/components/itemDate.vue";
 import ItemTitle from "@/views/resume/editor/preview/components/itemTitle.vue";
@@ -29,13 +30,12 @@ const hasItemHeader = computed(() => {
       value.endTime ||
       value.city ||
       value.tags?.length ||
-      value.link?.name ||
-      value.link?.url,
+      (typeof value.link === "string" ? value.link : value.link?.name || value.link?.url),
   );
 });
 const hasItemMeta = computed(() => {
   const value = item.value;
-  return Boolean(value.tags?.length || value.link?.name || value.link?.url);
+  return Boolean(value.tags?.length || (typeof value.link === "string" ? value.link : value.link?.name || value.link?.url));
 });
 // 可见块统一登记顺序，测量与裁剪不再分别维护行号。
 const blocks = computed(() => createContentBlocks([
@@ -43,7 +43,7 @@ const blocks = computed(() => createContentBlocks([
   ...(hasItemMeta.value ? ["meta"] : []),
   ...(!isContentEmpty(item.value.content) ? ["body"] : []),
 ]));
-const getItemLink = (value: any) => {
+const getItemLink = (value: ContentItem) => {
   const link = value?.link;
   if (typeof link === "string") return { name: "", url: link.trim() };
   return {
@@ -107,6 +107,7 @@ const itemContentSpacingStyle = computed(() => {
     <!-- 正文作为一个块：内部段落由字符区间切分，保证块序与测量层一致 -->
     <div
       v-if="!isContentEmpty(item.content) && isBlockVisible(blocks.indexOf('body'))"
+      data-layout-text-block
       :style="itemContentSpacingStyle"
     >
       <ResumeField :model-value="richTextHtml" html />

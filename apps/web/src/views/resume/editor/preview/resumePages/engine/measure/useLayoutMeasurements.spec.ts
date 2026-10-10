@@ -18,6 +18,22 @@ vi.mock("@vueuse/core", () => ({
 }));
 
 describe("节点尺寸变化重新分页", () => {
+  it("协议校验失败会释放测量锁，修正结构后恢复", async () => {
+    const root = document.createElement("div");
+    root.innerHTML = '<div data-layout-node-id="bad"><div data-layout-block-index="1"></div><div data-layout-block-index="1"></div></div>';
+    const node: LayoutNode = { id: "bad" /* 节点编号 */, sourceModuleKey: "generic" /* 来源模块 */, type: "group" /* 组合节点 */, payload: null /* 无业务载荷 */ };
+    const scope = effectScope();
+    const engine = scope.run(() => useLayoutMeasurements({ measureRef: ref(root) /* 测量宿主 */, nodes: computed(() => [node]) /* 节点列表 */, watchSource: computed(() => ({})) /* 固定配置 */ }))!;
+    try {
+      await engine.measure();
+      expect(engine.measurementError.value).toContain("内容块编号无效");
+      expect(engine.measureDone.value).toBe(false);
+      root.querySelectorAll<HTMLElement>("[data-layout-block-index]")[1]!.dataset.layoutBlockIndex = "2";
+      await engine.measure();
+      expect(engine.measurementError.value).toBe("");
+      expect(engine.measureDone.value).toBe(true);
+    } finally { engine.stop(); scope.stop(); }
+  });
   it("栏内装饰尺寸与内容能力变化会作废旧测量", async () => {
     const root = document.createElement("div");
     const decisions = ref({

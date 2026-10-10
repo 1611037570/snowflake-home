@@ -27,14 +27,14 @@ const isTwoColumn = () => layoutStretchesColumns(themeDecisions.value.layoutType
 
 <style scoped>
 /* 两栏各自作为定位基准，栏间线随栏宽与栏高自动伸缩 */
-.minimal-main--two-column :deep(> *) {
+.minimal-main--two-column :deep(> [data-resume-column]) {
   position: relative;
   box-sizing: border-box;
   align-self: stretch;
 }
 
 /* 栏间 1px 细线落在栏间距正中，绝对定位使其不占用任何排版空间 */
-.minimal-main--two-column :deep(> :first-child)::after {
+.minimal-main--two-column :deep(> [data-resume-column="left"])::after {
   content: "";
   position: absolute;
   top: 0;

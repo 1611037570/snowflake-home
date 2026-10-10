@@ -25,8 +25,8 @@ export interface ItemBoxOptions {
   backgroundColor?: MaybeRefOrGetter<string>;
   /** 条目描边色 */
   borderColor?: MaybeRefOrGetter<string>;
-  /** 强制启用日期栏：时间轴条目外观不依赖外部传入的 timeline 值 */
-  timeline?: boolean;
+  /** 无日期条目仍预留对齐空间，不决定日期是否显示 */
+  reserveDateRail?: boolean;
 }
 
 /**
@@ -43,8 +43,8 @@ export const useItemBox = (props: ItemBoxProps, options: ItemBoxOptions) => {
     backgroundColor = "transparent",
     borderColor = "transparent",
   } = options;
-  // 日期栏开关：外观显式声明时优先，否则沿用分片下发的值
-  const usesDateRail = computed(() => options.timeline ?? props.timeline);
+  // 日期显示只由公共能力决定，外观可为无日期条目保留同宽对齐空间。
+  const usesDateRail = computed(() => props.timeline || options.reserveDateRail === true);
   const fragmentStyle = computed(() =>
     getItemFragmentStyle(props.blockRange, props.contentRange, props.decoration, radius),
   );

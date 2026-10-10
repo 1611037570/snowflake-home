@@ -28,11 +28,11 @@ const railStyle = computed(() => ({
 
 <style scoped>
 /* 竖线按正文栏实际高度绘制：不留 bottom 空白，页脚区域不被覆盖。 */
-.angled-line-region :deep(.resume-column) {
+.angled-line-region :deep([data-resume-column-content]) {
   position: relative;
 }
 
-.angled-line-region :deep(.resume-column)::before {
+.angled-line-region :deep([data-resume-column-content])::before {
   content: "";
   position: absolute;
   top: 0;
@@ -45,7 +45,7 @@ const railStyle = computed(() => ({
 }
 
 /* 双栏栏位铺满纸张时竖线随之下探，底部避开页脚预留空间。 */
-.angled-line-region--stretch :deep(.resume-column)::before {
+.angled-line-region--stretch :deep([data-resume-column-content])::before {
   bottom: var(--resume-bottom-space, 0px);
 }
 </style>

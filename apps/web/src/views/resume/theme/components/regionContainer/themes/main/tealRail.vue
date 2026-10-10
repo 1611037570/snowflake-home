@@ -14,14 +14,14 @@ const {
 </template>
 
 <style scoped>
-.teal-rail :deep(> :nth-child(2)) {
+.teal-rail :deep(> [data-resume-column="right"]) {
   box-sizing: border-box;
   align-self: stretch;
   position: relative;
   --teal-rail-title-offset: 48px;
 }
 
-.teal-rail :deep(> :nth-child(2))::before {
+.teal-rail :deep(> [data-resume-column="right"])::before {
   content: "";
   position: absolute;
   top: 15px;
@@ -31,9 +31,7 @@ const {
   background-color: var(--teal-rail-color);
 }
 
-/* 左栏标题保持纯文字，右栏标题负责节点和横线。 */
-.teal-rail :deep(> :first-child .teal-rail-title__dot),
-.teal-rail :deep(> :first-child .teal-rail-title__line) {
-  display: none;
+.teal-rail :deep(> [data-resume-column="left"]) {
+  --resume-title-decoration-display: none; /* 标题组件消费栏装饰开关。 */
 }
 </style>

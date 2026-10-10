@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, type PropType } from "vue";
+import type { ContentItem } from "./contentPayload";
 import { createContentBlocks, isContentBlockVisible, type ContentBlockRange } from "@/views/resume/editor/preview/resumePages/engine/contentBlocks";
 import ItemTags from "../../components/itemTags.vue";
 import ItemDate from "../../components/itemDate.vue";
@@ -12,7 +13,7 @@ import { useResumePreviewContext } from "../../shared/previewContext";
 
 const props = defineProps({
   // 论文条目业务数据
-  item: { type: Object, default: () => ({}) },
+  item: { type: Object as PropType<ContentItem>, default: () => ({}) },
   // 分片覆盖的块区间：只渲染落在区间内的块
   blockRange: { type: Object as PropType<ContentBlockRange>, default: () => ({ start: 0 /* 起始块 */, end: Number.MAX_SAFE_INTEGER /* 结束块 */ }) },
   // 分片装饰类型：续段不重复正文上间距
@@ -155,7 +156,7 @@ const contentSpacingStyle = computed(() => {
   </div>
 
   <!-- 块五：研究内容作为单个块，内部段落由字符区间切分，保证块序与测量层一致 -->
-  <div v-if="contentHtml && isBlockVisible(blocks.indexOf('body'))" :style="contentSpacingStyle">
+  <div v-if="contentHtml && isBlockVisible(blocks.indexOf('body'))" data-layout-text-block :style="contentSpacingStyle">
     <ResumeField :model-value="contentHtml" html />
   </div>
 </template>

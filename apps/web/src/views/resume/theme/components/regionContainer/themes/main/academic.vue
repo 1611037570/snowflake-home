@@ -29,13 +29,13 @@ const regionStyle = computed(() => ({
 
 <style lang="scss" scoped>
 /* 左栏底色截至页脚预留之外：底部只延伸到页脚上方留白，不覆盖页脚 */
-.academic-main--two-column :deep(> *) {
+.academic-main--two-column :deep(> [data-resume-column]) {
   box-sizing: border-box;
   position: relative;
   isolation: isolate;
 }
 
-.academic-main--two-column :deep(> *)::before {
+.academic-main--two-column :deep(> [data-resume-column])::before {
   content: "";
   position: absolute;
   z-index: -1;
@@ -48,7 +48,7 @@ const regionStyle = computed(() => ({
 }
 
 /* 右栏底色压住栏间距并向右延伸到纸张边缘，底边同样停在页脚上方 */
-.academic-main--two-column :deep(> * + *)::before {
+.academic-main--two-column :deep(> [data-resume-column="right"])::before {
   right: calc(-1 * var(--academic-column-bleed, 0px));
   left: calc(-1 * var(--resume-column-gap-half));
   background-color: color-mix(in srgb, var(--academic-region-band) 55%, transparent);

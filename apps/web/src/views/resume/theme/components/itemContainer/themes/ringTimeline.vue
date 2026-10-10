@@ -33,7 +33,7 @@ const ITEM_PADDING = "12px";
 const { fragmentStyle, boxStyle } = useItemBox(props, {
   radius: "0",
   padding: ITEM_PADDING,
-  timeline: true,
+  reserveDateRail: true, // 无日期条目只保留对齐空间
 });
 // 首个分片才画圆环：续段由分片区间判断，跨页不会重复出现节点
 const isItemStart = computed(

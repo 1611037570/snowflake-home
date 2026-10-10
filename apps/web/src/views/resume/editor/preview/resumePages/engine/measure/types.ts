@@ -24,6 +24,7 @@ export interface MeasuredNode {
   fullHeight: number;
   /** 实际存在的稳定内容块编号，隐藏字段允许留下空号。 */
   blockIndices?: number[];
+  textBlockIndex?: number; // 显式正文块编号；字符分片仅允许该块重复出现
   /** 当前节点可用的拆分断点 */
   breakPoints: BreakPointMeasure[];
   /**

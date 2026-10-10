@@ -16,7 +16,7 @@ const {
     <h2 class="min-w-0 font-bold tracking-wide break-words">
       <TitleText :title="title" />
     </h2>
-    <div aria-hidden="true" class="burgundy-title__dots flex shrink-0 items-center gap-3" :style="{ color: themeColor }">
+    <div aria-hidden="true" class="burgundy-title__dots flex shrink-0 items-center gap-3" :style="{ color: themeColor, display: 'var(--resume-title-decoration-display, flex)' }">
       <span v-for="dot in 5" :key="dot" class="h-1 w-1 rotate-45 bg-current" />
     </div>
   </div>

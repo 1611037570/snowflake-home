@@ -389,6 +389,7 @@ defineExpose({
                   <ColumnBox
                     v-for="(column, columnIndex) in region.columns"
                     :key="column.columnId"
+                    :column-id="column.columnId"
                     :width="columnWidths.get(column.columnId)"
                     :padding="columnConfigMap.get(column.columnId)?.padding"
                   >

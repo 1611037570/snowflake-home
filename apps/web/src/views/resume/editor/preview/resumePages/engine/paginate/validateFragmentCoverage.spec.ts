@@ -16,6 +16,7 @@ const measured: MeasuredNode = {
   fullHeight: 120, // 完整高度
   contentLength: 10, // 正文字符长度
   blockIndices: [0, 3], // 隐藏字段后的稳定块编号
+  textBlockIndex: 3, // 显式声明正文块
   breakPoints: [
     { offset: 0, type: "block", height: 20, blockEnd: 1 }, // 第一块结束位置
     { offset: 5, type: "textRange", height: 70 }, // 正文中间断点
@@ -35,6 +36,11 @@ const item = (start: number, end: number, blockStart = 0): FlowPageItem => ({
 const check = (items: FlowPageItem[]) => validateFragmentCoverage([node], new Map([[node.id, measured]]), items);
 
 describe("通用分片完整性", () => {
+  it("未声明为正文的末尾块不能借字符分片重复输出", () => {
+    const ordinary = { ...measured, textBlockIndex: undefined };
+    const warnings = validateFragmentCoverage([node], new Map([[node.id, ordinary]]), [item(0, 5), item(5, 10, 3)]);
+    expect(warnings.some(warning => warning.code === "contentOverlap")).toBe(true);
+  });
   it("正文块在续页重复出现而字符连续时合法，隐藏空号不算缺失", () => {
     expect(check([item(0, 5), item(5, 10, 3)])).toEqual([]);
   });

@@ -4,6 +4,23 @@ import { paginateFlow } from "../paginate/paginateFlow";
 import type { LayoutNode } from "../types";
 
 describe("嵌套块分页测量", () => {
+  it("整块单节点计入模块外框尺寸，普通分组拒绝额外占位", () => {
+    const root = document.createElement("div");
+    root.innerHTML = '<section data-layout-module="generic"><div data-layout-node-id="whole"></div></section>';
+    const module = root.firstElementChild!;
+    const element = module.firstElementChild!;
+    vi.spyOn(module, "getBoundingClientRect").mockReturnValue(new DOMRect(0, 0, 300, 120));
+    vi.spyOn(element, "getBoundingClientRect").mockReturnValue(new DOMRect(12, 12, 276, 96));
+    const node: LayoutNode = { id: "whole" /* 节点编号 */, sourceModuleKey: "generic" /* 通用模块 */, type: "group" /* 组合节点 */, payload: null /* 无业务载荷 */, splitMode: "whole" /* 整块能力 */ };
+    expect(measureLayoutNodes(root, [node]).get(node.id)?.fullHeight).toBe(120);
+    expect(() => measureLayoutNodes(root, [{ ...node, splitMode: "blocks" }])).toThrow("外框改变了节点预算");
+  });
+  it("正文块显式声明且必须位于最后，不能把末尾标签误当正文", () => {
+    const root = document.createElement("div");
+    root.innerHTML = '<div data-layout-node-id="text"><div data-layout-block-range><div data-layout-text-block>正文</div><div>标签</div></div></div>';
+    const node: LayoutNode = { id: "text" /* 节点编号 */, sourceModuleKey: "generic" /* 通用模块 */, type: "group" /* 组合节点 */, payload: null /* 无业务载荷 */ };
+    expect(() => measureLayoutNodes(root, [node])).toThrow("正文必须声明为最后一个内容块");
+  });
   it("显式块编号重复时在测量入口报告问题节点", () => {
     const root = document.createElement("div");
     root.innerHTML = '<div data-layout-node-id="bad"><div data-layout-block-index="1"></div><div data-layout-block-index="1"></div></div>';
@@ -32,7 +49,7 @@ describe("嵌套块分页测量", () => {
   it("装饰边框不计入块序，末尾留白与最后内容共同分页", () => {
     const root = document.createElement("div");
     root.innerHTML = '<div data-layout-node-id="item"><div data-layout-block-range>' +
-      '<div>头部</div><div>岗位</div><div>标签</div><div>正文</div>' +
+      '<div>头部</div><div>岗位</div><div>标签</div><div data-layout-text-block>正文</div>' +
       '<div aria-hidden="true" style="position:absolute"></div></div>' +
       '<div data-layout-breakpoint-offset="2"></div></div>';
     const element = root.firstElementChild as HTMLElement;

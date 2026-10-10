@@ -12,7 +12,7 @@ const { theme: { themeColor } } = useResumePreviewContext();
   <!-- 左栏配色由正文外观继承，右栏默认显示主题色文字与横线。 -->
   <h2
     class="red-white-title min-w-0 border-b pb-3 font-bold break-words"
-    :style="{ color: `var(--red-sidebar-title, ${themeColor})`, borderColor: 'currentColor' }"
+    :style="{ color: `var(--red-sidebar-title, ${themeColor})`, borderColor: 'currentColor', borderBottomWidth: 'var(--resume-title-border-width, 1px)' }"
   >
     <TitleText :title="title" />
   </h2>
