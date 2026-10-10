@@ -44,32 +44,4 @@ const timelineStyle = computed(() => ({
   top: 12px;
 }
 
-/* 复用现有日期侧栏，具体宽度与标题节点共用同一份值。 */
-.square-timeline :deep(.resume-item--timeline) {
-  --timeline-rail-width: var(--square-timeline-rail-width);
-}
-
-/* 仅有日期头部的首段保留三行日期高度，跨页续段按正文自身高度排版。 */
-.square-timeline :deep(.resume-item--timeline:has(.resume-timeline-date)) {
-  min-height: 3lh;
-}
-
-.square-timeline :deep(.resume-item--timeline)::before {
-  display: none;
-}
-
-/* 覆盖默认条目的零留白，没有日期的内容也对齐右侧正文。 */
-.square-timeline :deep(.resume-item:not(.resume-item--timeline)) {
-  padding-left: var(--square-timeline-rail-width) !important;
-}
-
-.square-timeline :deep(.resume-timeline-date) {
-  justify-content: center;
-  opacity: 1;
-}
-
-.square-timeline :deep(.resume-timeline-date > span) {
-  width: min-content;
-  text-align: center;
-}
 </style>
