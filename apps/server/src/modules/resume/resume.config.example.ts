@@ -1,5 +1,4 @@
-// 简历模块配置示例：复制本文件为同目录下的 resume.config.ts，再填入真实连接信息。
-// resume.config.ts 已被 .gitignore 忽略，不会提交到仓库，真实连接信息不会外泄。
+// 简历模块配置示例：仅作字段说明参考，实际生效配置见同目录下已入库的 resume.config.ts。
 export const resumeConfig = {
   // 简历库数据库配置（与基础库相互独立）
   mysql: {

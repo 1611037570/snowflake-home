@@ -54,6 +54,3 @@ pids
 
 # Diagnostic reports (https://nodejs.org/api/report.html)
 report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
-
-# 简历模块配置：含真实数据库连接信息，不入库（改用 resume.config.example.ts 作为模板）
-/src/modules/resume/resume.config.ts
