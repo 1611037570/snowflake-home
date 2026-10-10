@@ -5,7 +5,7 @@ export default {
   id: "twoColumn" as const, // 主题编号
   design: ["two-column"],
   description: "所有模块固定分到左右两栏，适合内容较多的简历。",
-  // 页面级外观：栏底色铺满页高，首页也要盖住纸张顶部留白并沿用顶部圆角
+  // 页面级外观：栏底色铺满页高，首页也要盖住纸张顶部留白
   pageAppearance: {
     bleedsPageTop: true, // 首页顶部由栏底色铺到纸张顶边
   },

@@ -14,12 +14,10 @@ import { stripEditorPageFrame } from "./pageFrame";
 
 type ImageExportRoot = HTMLElement | { value: unknown };
 
-/** 纸张外观：长图源（测量宿主）只复刻纸张底色，边框与圆角需要在克隆体上补画 */
+/** 纸张外观：长图源（测量宿主）只复刻纸张底色，边框需要在克隆体上补画 */
 interface PaperSurface {
   /** 纸张底色，同时作为画布背景色 */
   background: string;
-  /** 纸张圆角，单位像素 */
-  radius: number;
   /** 纸张边框宽度，0 表示不描边 */
   borderWidth: number;
   /** 纸张边框颜色 */
@@ -27,14 +25,13 @@ interface PaperSurface {
 }
 
 /** 按主题声明的纸张外观创建覆盖层：绝对定位不参与布局，不会改变已验证的排版结果 */
-const createPaperFrame = ({ radius, borderWidth, borderColor }: PaperSurface) => {
+const createPaperFrame = ({ borderWidth, borderColor }: PaperSurface) => {
   const frame = document.createElement("div");
   frame.setAttribute("aria-hidden", "true");
   frame.style.position = "absolute";
   frame.style.inset = "0";
   frame.style.boxSizing = "border-box";
   frame.style.pointerEvents = "none";
-  frame.style.borderRadius = `${radius}px`;
   if (borderWidth > 0) frame.style.border = `${borderWidth}px solid ${borderColor}`;
   return frame;
 };
@@ -90,10 +87,10 @@ const renderLongImage = async (
   // 测量宿主用 visibility: hidden 隐藏，克隆必须显式恢复可见，否则导出只有背景色
   clone.style.visibility = "visible";
   clone.style.pointerEvents = "auto";
-  // 编辑器页边线属于预览装饰，导出前移除；纸张边框与圆角是主题外观，改用覆盖层补画
+  // 编辑器页边线属于预览装饰，导出前移除；纸张边框是主题外观，改用覆盖层补画
   stripEditorPageFrame(clone);
   // 长图源只有纸张底色，补画真实纸张外观；覆盖层不占布局，排版结果与页面完全一致
-  if (paper.borderWidth > 0 || paper.radius > 0) clone.appendChild(createPaperFrame(paper));
+  if (paper.borderWidth > 0) clone.appendChild(createPaperFrame(paper));
   if (rootWidth > 0) clone.style.width = `${rootWidth}px`;
   // 探针数量与断点数量同阶，保留会让渲染量增加数倍
   clone.querySelectorAll(MEASURE_PROBE_SELECTOR).forEach((probe) => probe.remove());
@@ -143,12 +140,11 @@ const exportLongImage = async (
   resumeStore.clearSelectedModules();
 
   try {
-    // 纸张外观由主题定义决定：底色来自简历 ui，边框与圆角按主题编号解析
+    // 纸张底色来自简历 ui，边框按主题编号解析，外轮廓统一使用直角。
     const page = currentUI.value?.page || {};
-    const { pageRadius, pageBorder } = resolveThemeDecisions(currentUI.value?.theme?.template);
+    const { pageBorder } = resolveThemeDecisions(currentUI.value?.theme?.template);
     const paper: PaperSurface = {
       background: page.background || "#ffffff",
-      radius: pageRadius,
       borderWidth: pageBorder.width,
       borderColor: pageBorder.color,
     };

@@ -6,7 +6,6 @@ export default {
   design: ["single-column", "timeline"], // 模板列表分类标签
   description: "左侧模块标题与日期，方形节点连接正文时间轴。", // 主题说明
   decisions: { // 主题固定外观，不进入用户界面配置
-    pageRadius: 0, // 纸张使用平直页角
     layoutType: "topUserSingleColumn", // 顶部个人信息通栏，正文保持单栏
   },
   ui: { // 相对默认界面的配置差异

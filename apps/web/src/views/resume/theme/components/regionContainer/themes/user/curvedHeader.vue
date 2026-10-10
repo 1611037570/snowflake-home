@@ -18,19 +18,15 @@ import { useResumePreviewContext } from "@/views/resume/editor/preview/shared/pr
 import { defaultPaddingHorizontal, defaultPaddingVertical } from "@/stores/modules/resume/config/uiConfig";
 
 const {
-  themeDecisions,
   ui,
   theme: { themeColor },
 } = useResumePreviewContext();
-// 页面提供通栏位置，弧形页眉只维护水平内缩与顶部圆角。
+// 页面提供通栏位置，弧形页眉只维护水平内缩。
 const bandStyle = computed(() => {
   const horizontal = Number(ui.value?.page?.padding?.horizontal ?? defaultPaddingHorizontal);
-  const radius = Number(themeDecisions.value.pageRadius);
   return {
     paddingLeft: `${horizontal}px`,
     paddingRight: `${horizontal}px`,
-    borderTopLeftRadius: `${radius}px`,
-    borderTopRightRadius: `${radius}px`,
   };
 });
 // 弧线按页面上边距加头像半高计算，避免将区域留白对象作为函数调用。
@@ -38,11 +34,11 @@ const arcHeight = computed(() => `${Number(ui.value?.page?.padding?.vertical ?? 
 </script>
 
 <template>
-  <!-- 弧形仅作背景，圆角沿用页面设置，个人信息仍参与正常排版。 -->
+  <!-- 弧形仅作背景，个人信息仍参与正常排版。 -->
   <div class="relative flex w-full min-w-0" :style="bandStyle">
     <svg
       aria-hidden="true"
-      class="pointer-events-none absolute inset-x-0 top-0 w-full [border-radius:inherit]"
+      class="pointer-events-none absolute inset-x-0 top-0 w-full"
       viewBox="0 0 1000 156"
       preserveAspectRatio="none"
       :style="{ fill: themeColor, height: arcHeight }"

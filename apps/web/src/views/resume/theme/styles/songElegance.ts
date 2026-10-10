@@ -6,7 +6,6 @@ export default {
   design: ["single-column", "minimal"], // 模板列表分类标签：单栏、简约
   description: "宋体字配米色纸张与细线装裱页边，双线标题收束模块。", // 主题说明
   decisions: { // 主题固定外观，不进入用户界面配置
-    pageRadius: 0, // 平直页角，接近印刷品
     pageBorder: { // 主题固定纸张边框
       width: 1, // 边框宽度
       color: "#D9CDB8", // 边框颜色

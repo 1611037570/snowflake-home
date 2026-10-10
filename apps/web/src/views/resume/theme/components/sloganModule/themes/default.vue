@@ -6,20 +6,16 @@ import { useResumePreviewContext } from "@/views/resume/editor/preview/shared/pr
 // 普通标语组件同时维护数据文案与通栏背景。
 const {
   data: previewData,
-  themeDecisions,
   theme: { fontValue, lineHeightValue, themeColor, themeColorContrast },
 } = useResumePreviewContext();
 const slogan = computed(() => previewData.value?.slogan?.data || {});
 const bandStyle = computed(() => {
   // 标语区域直接占据纸张顶部，文字留白由组件自身维护。
-  const radius = Number(themeDecisions.value.pageRadius);
   return {
     paddingTop: "24px",
     paddingBottom: "12px",
     paddingLeft: "24px",
     paddingRight: "24px",
-    borderTopLeftRadius: `${radius}px`,
-    borderTopRightRadius: `${radius}px`,
     backgroundColor: themeColor.value,
     color: themeColorContrast.value,
   };

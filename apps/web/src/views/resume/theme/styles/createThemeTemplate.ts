@@ -17,7 +17,7 @@ export interface ResumeThemeTemplate {
 export interface ThemePageAppearance {
   /** 页面文字颜色覆盖值，未声明时按纸张底色自动取对比色 */
   textColor?: string;
-  /** 首页顶部是否由内容底色铺到纸张顶边并沿用顶部圆角 */
+  /** 首页顶部是否由内容底色铺到纸张顶边 */
   bleedsPageTop?: boolean;
   /** 编辑器预览是否去掉页面底边线，用于正文自带圆角的主题 */
   openBottomBorder?: boolean;
@@ -52,7 +52,7 @@ export const createThemeTemplates = <T extends ThemeTemplateConfig>(definitions:
   }));
 
 // 在主题被预览或应用时生成简历 ui 预设。
-// 主题决策字段（layout.type、page.radius、page.border、page.backgroundPattern）不入预设：
+// 主题决策字段（layout.type、page.border、page.backgroundPattern）不入预设：
 // 它们由主题 decisions 单独声明，运行时也不合入用户界面配置。
 export const resolveThemeTemplate = (definition: ResumeThemeDefinition): ResumeThemeTemplate => {
   const { id, ui } = definition;

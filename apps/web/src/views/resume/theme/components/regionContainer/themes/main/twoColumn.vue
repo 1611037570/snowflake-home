@@ -28,7 +28,6 @@ const twoColumnStyle = computed(() => ({
   "--two-column-top": `${regionPadding.top}px`, // 装饰向上覆盖正文顶部留白
   "--two-column-side": `${Math.max(0, Number(ui.value?.page?.padding?.horizontal ?? defaultPaddingHorizontal) || 0)}px`, // 左栏底色铺到纸张左边缘
   "--two-column-half-gap": "12px", // 栏间距 24px 的一半，装饰落在栏间正中
-  "--two-column-bottom-radius": `${Math.max(0, Number(themeDecisions.value.pageRadius) || 0)}px`, // 左栏底色沿用纸张左下圆角，避免露出方形色块
 }));
 </script>
 
@@ -64,8 +63,6 @@ const twoColumnStyle = computed(() => ({
   right: calc(-1 * var(--two-column-half-gap, 12px));
   bottom: calc(-1 * var(--resume-bottom-space, 0px));
   left: calc(-1 * var(--two-column-side, 0px));
-  border-top-left-radius: var(--resume-page-top-radius, 0px);
-  border-bottom-left-radius: var(--two-column-bottom-radius, 0px);
   background-color: var(--two-column-surface);
   pointer-events: none;
 }

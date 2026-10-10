@@ -11,7 +11,6 @@ export default {
     openBottomBorder: true, // 正文容器自带圆角，预览只保留顶部与两侧轮廓线
   },
   decisions: { // 主题固定外观，不进入用户界面配置
-    pageRadius: 0, // 页面边角由正文容器单独绘制
     layoutType: "topUserTwoColumn", // 个人信息通栏、正文双栏
   },
   ui: {
