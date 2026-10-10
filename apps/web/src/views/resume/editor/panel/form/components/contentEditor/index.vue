@@ -1,15 +1,62 @@
 <script setup>
-import { computed, ref } from "vue";
+import { computed, nextTick, onMounted, ref } from "vue";
+import { useIntersectionObserver } from "@vueuse/core";
+import SfSkeleton from "@/components/el/skeleton";
 import WangEditor from "@/components/business/wangEditor";
 import { useResumeStore } from "@/stores";
 import { storeToRefs } from "pinia";
 import TemplateExamplePicker from "./templateExamplePicker.vue";
 import AiResultPanel from "./aiResultPanel.vue";
 import { loadResumeExamples } from "@/views/resume/template/data/resumeExamples";
-import { useFormContext } from "@/components/business/dynamicForm/api";
+import { useFormContext, useFormReadyTask } from "@/components/business/dynamicForm/api";
 import { useResumeContentAi } from "./useResumeContentAi";
 
 defineOptions({ name: "ResumeContentEditor" });
+
+const editorHost = ref(null);
+const scrollRoot = ref(null);
+const editorMounted = ref(false);
+const editorReady = ref(false);
+// 首次可见性判定完成后，屏幕外正文不再阻塞表单就绪。
+const finishVisibility = useFormReadyTask();
+let afterNavigation;
+const activateEditor = async () => {
+  editorMounted.value = true;
+  stop();
+  // 先让富文本登记自身的创建任务，再结束可见性等待。
+  await nextTick();
+  finishVisibility();
+};
+const { isSupported, resume, stop } = useIntersectionObserver(
+  editorHost,
+  ([entry]) => {
+    if (!entry) return;
+    if (entry.isIntersecting) void activateEditor();
+    else finishVisibility();
+  },
+  {
+    root: scrollRoot, // 使用左侧表单滚动容器判断可见范围。
+    rootMargin: "180px 0px", // 提前创建邻近正文，减少滚动到达时的等待。
+    immediate: false, // 挂载后找到真实滚动容器再开始观察。
+  },
+);
+onMounted(() => {
+  scrollRoot.value = editorHost.value?.closest(".el-scrollbar__wrap") ?? null;
+  if (isSupported.value) resume();
+  else void activateEditor();
+});
+// 导航可主动创建目标正文，实际就绪后再校正滚动位置。
+const activateFromNavigation = (event) => {
+  afterNavigation = typeof event.detail === "function" ? event.detail : undefined;
+  void activateEditor();
+  if (editorReady.value) nextTick(finishNavigation);
+};
+const finishNavigation = () => {
+  editorReady.value = true;
+  const callback = afterNavigation;
+  afterNavigation = undefined;
+  if (callback) nextTick(callback);
+};
 
 const content = defineModel("modelValue", {
   type: String,
@@ -84,8 +131,9 @@ const appendExample = (example) => {
 </script>
 
 <template>
-  <div class="w-full">
-    <WangEditor v-model="content">
+  <div ref="editorHost" class="w-full" data-resume-content @resume-content-activate="activateFromNavigation">
+    <SfSkeleton v-if="!editorMounted" class="min-h-54" />
+    <WangEditor v-else v-model="content" @ready="finishNavigation">
       <template #toolbar>
         <TemplateExamplePicker
           :examples="examples"
