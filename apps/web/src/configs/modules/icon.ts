@@ -234,4 +234,6 @@ export const ICON_LIST: Record<string, IconItem> = {
   "mdi:account-group-outline": { icon: "mdi:account-group-outline", name: "民族" },
   "lucide:tag": { icon: "lucide:tag", name: "标签" },
   "lucide:heading-2": { icon: "lucide:heading-2", name: "副标题" },
+  // 用于首页「免注册登录」卖点标识
+  "lucide:user-round-check": { icon: "lucide:user-round-check", name: "免注册登录" },
 };

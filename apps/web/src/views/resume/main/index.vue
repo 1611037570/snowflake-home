@@ -60,7 +60,7 @@
 
         <div class="animate-float relative mx-auto w-full max-w-2xl lg:mr-0">
           <div
-            class="resume-home__status absolute top-9 -left-3 z-10 hidden items-center gap-3 rounded-2xl border border-sf-b bg-sf-primary p-3 shadow-lg sm:flex"
+            class="resume-home__status absolute top-9 -left-3 z-10 flex items-center gap-3 rounded-2xl border border-sf-b bg-sf-primary p-3 shadow-lg"
           >
             <span
               class="flex h-9 w-9 items-center justify-center rounded-xl bg-sf-theme-3 text-sf-theme"
@@ -106,8 +106,9 @@
               >
             </div>
           </div>
+          <!-- 移动端同样展示卖点卡片，底部两枚改左右错位，避免窄屏互相遮挡 -->
           <div
-            class="resume-home__note absolute -right-3 -bottom-6 hidden rounded-2xl border border-sf-b bg-sf-primary p-3 shadow-lg sm:block"
+            class="resume-home__note absolute -right-3 -bottom-6 rounded-2xl border border-sf-b bg-sf-primary p-3 shadow-lg"
           >
             <div class="flex items-center gap-3">
               <span
@@ -116,6 +117,18 @@
                 <SfIcon icon="lucide:check" size="4" />
               </span>
               <span class="text-sm font-medium">{{ $t("resumeHomeExportFree") }}</span>
+            </div>
+          </div>
+          <div
+            class="resume-home__note absolute bottom-18 -left-3 rounded-2xl border border-sf-b bg-sf-primary p-3 shadow-lg sm:-bottom-6"
+          >
+            <div class="flex items-center gap-3">
+              <span
+                class="flex h-9 w-9 items-center justify-center rounded-xl bg-sf-info-2 text-sf-info"
+              >
+                <SfIcon icon="lucide:user-round-check" size="4" />
+              </span>
+              <span class="text-sm font-medium">{{ $t("resumeHomeNoSignup") }}</span>
             </div>
           </div>
         </div>
