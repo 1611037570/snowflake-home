@@ -108,6 +108,8 @@ const renderLongImage = async (
       scale,
       backgroundColor: paper.background,
       embedFonts: true,
+      // 按真实 DOM 校正导出布局，避免文本重新排版后提前换行。
+      reconcile: true,
     });
     if (signal.aborted || !isCurrentResume()) return null;
     if (!canvas || canvas.width === 0 || canvas.height === 0) {
