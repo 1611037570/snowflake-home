@@ -3,6 +3,7 @@
 import { useResizeObserver } from "@vueuse/core";
 import { computed, onBeforeUnmount, ref, watch } from "vue";
 import { storeToRefs } from "pinia";
+import { useOverlayKeys } from "@/hooks/modules/useOverlayKeys";
 import { useResumeStore } from "@/stores";
 import ResumePages from "@/views/resume/editor/preview/resumePages/index.vue";
 
@@ -88,21 +89,18 @@ useResizeObserver(contentRef, ([entry]) => {
   contentSize.value = { width, height };
 });
 
-const handleKeydown = (event) => {
-  if (event.key === "Escape" && props.visible) emit("close");
-};
+// ESC 关闭走弹层仲裁：弹窗或确认框盖在本层之上时，按键只作用于最上层。
+useOverlayKeys({ escape: () => emit("close") }, () => props.visible);
 
 // 全屏打开时锁定页面滚动，关闭后恢复原页面状态。
 watch(
   () => props.visible,
   (visible) => {
     if (visible) {
-      window.addEventListener("keydown", handleKeydown);
       previousBodyOverflow.value = document.body.style.overflow;
       document.body.style.overflow = "hidden";
       return;
     }
-    window.removeEventListener("keydown", handleKeydown);
     if (previousBodyOverflow.value !== null) {
       document.body.style.overflow = previousBodyOverflow.value;
       previousBodyOverflow.value = null;
@@ -112,7 +110,6 @@ watch(
 );
 
 onBeforeUnmount(() => {
-  window.removeEventListener("keydown", handleKeydown);
   if (previousBodyOverflow.value !== null) {
     document.body.style.overflow = previousBodyOverflow.value;
     previousBodyOverflow.value = null;

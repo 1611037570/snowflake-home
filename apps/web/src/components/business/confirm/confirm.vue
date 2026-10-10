@@ -37,7 +37,7 @@
 
 <script setup lang="ts">
 import { computed, nextTick, onMounted, ref } from "vue";
-import { onKeyStroke } from "@vueuse/core";
+import { useOverlayKeys } from "@/hooks/modules/useOverlayKeys";
 import SfMask from "@/components/base/mask";
 import { DEFAULT_CONFIRM_OPTIONS } from "./data";
 
@@ -86,15 +86,22 @@ const handleCancel = () => {
   setTimeout(() => props.onCancel?.(), parseFloat(animationTime.value) * 1000);
 };
 
-// ESC 取消、Enter 确认（阻止焦点在弹窗外时回车触发背景元素）
-onKeyStroke("Escape", (e) => {
-  e.preventDefault();
-  handleCancel();
-});
-onKeyStroke("Enter", (e) => {
-  e.preventDefault();
-  handleConfirm();
-});
+// ESC 取消、Enter 确认（阻止焦点在弹窗外时回车触发背景元素）；
+// 经弹层仲裁仅在本层位于最上层时响应，避免一次按键连下层弹窗一起关掉。
+useOverlayKeys(
+  {
+    escape: (e) => {
+      e.preventDefault();
+      handleCancel();
+    },
+    enter: (e) => {
+      e.preventDefault();
+      handleConfirm();
+    },
+  },
+  // 进入关闭动画即让出最上层，按键可继续作用于下层弹窗。
+  () => isVisible.value,
+);
 
 defineExpose({ close: handleCancel });
 </script>
