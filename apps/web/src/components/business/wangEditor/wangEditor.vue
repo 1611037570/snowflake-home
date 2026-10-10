@@ -36,7 +36,6 @@ import { Editor, Toolbar } from "./editorLoader";
 import { useFormReadyTask } from "../dynamicForm/api";
 // 富文本实际创建后才完成任务，异步代码下载完成不等于可编辑。
 const finishReady = useFormReadyTask();
-const emit = defineEmits(["ready"]);
 const sfBorder = inject("sfBorder", "");
 
 const props = defineProps({
@@ -96,8 +95,6 @@ onBeforeUnmount(() => {
 const handleCreated = (editor) => {
   editorRef.value = editor; // 记录 editor 实例，重要！
   finishReady();
-  // 正文创建事件供按需挂载后的导航定位使用。
-  emit("ready");
   updateCurrentLength(editor);
 };
 
