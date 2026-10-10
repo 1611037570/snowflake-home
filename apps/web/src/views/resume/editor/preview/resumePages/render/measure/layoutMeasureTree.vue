@@ -6,6 +6,7 @@ import RegionContainer from "@/views/resume/theme/components/regionContainer/ind
 import PagePattern from "@/views/resume/theme/components/pageContainer/index.vue";
 import { PAGE_NUMBER_HEIGHT } from "../../../shared/constants";
 import type { LayoutNode } from "../../engine/types";
+import type { RegionPadding } from "@/views/resume/theme/regionPadding";
 
 const props = defineProps<{
   /** 测量宿主宽度，等于页面内容宽度 */
@@ -14,6 +15,8 @@ const props = defineProps<{
   groups: Array<{ id: string; width: number; nodes: LayoutNode[]; regionId?: string }>;
   /** 首页从纸张顶边开始的区域编号；与分页和实际页面共用同一来源 */
   topRegionId?: string | null;
+  /** 布局结算后的各区域留白，包含用户页面上边距 */
+  regionPaddings?: Record<string, RegionPadding>;
   rootStyle?: Record<string, string>;
   rootClass?: string;
   /** 页面四周留白：作为测量内容的外边距内缩，与真实页面位置一致且不改变测量宽度 */
@@ -74,6 +77,7 @@ const regions = computed(() => {
         v-for="region in regions"
         :key="region.regionId"
         :region-id="region.regionId"
+        :region-padding="regionPaddings?.[region.regionId]"
         class="flex w-full min-w-0"
         :style="regionStyle(region.regionId)"
       >

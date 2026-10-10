@@ -222,6 +222,10 @@ const {
   allModules,
 });
 const layoutColumnGap = computed(() => layout.value.columnGap || 0);
+// 测量树使用布局结算后的留白，包含通栏页眉下方的用户页面上边距。
+const regionPaddingMap = computed(() => Object.fromEntries(
+  layout.value.regions.map((region) => [region.id, region.padding]),
+));
 const columnConfigMap = computed(
   () =>
     new Map(
@@ -327,6 +331,7 @@ defineExpose({
       <Teleport to="body">
         <LayoutMeasureTree
           :groups="measureGroups"
+          :region-paddings="regionPaddingMap"
           :top-region-id="fullBleedTopRegionId"
           :width="RESUME_WIDTH"
           :root-class="ui.font?.family"
