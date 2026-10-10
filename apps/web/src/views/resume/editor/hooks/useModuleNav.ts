@@ -279,11 +279,6 @@ const scrollEditorTarget = (
     document.querySelector<HTMLElement>(selector) ??
     document.querySelector<HTMLElement>(`[data-module-key="${key}"]`);
   if (!target) return false;
-  // 定位目标内的首个正文即可，避免一次导航创建整个模块的全部编辑器。
-  const content = target.matches("[data-resume-content]") ? target : target.querySelector("[data-resume-content]");
-  content?.dispatchEvent(new CustomEvent("resume-content-activate", {
-    detail: () => { if (target.isConnected) useScrollEditorTo(target); }, // 创建完成后重新校正目标位置。
-  }));
   useScrollEditorTo(target);
   return true;
 };
