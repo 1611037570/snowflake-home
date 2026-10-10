@@ -1,9 +1,11 @@
 <script setup>
 import { useFileDialog } from "@/hooks";
+import confirm from "@/components/business/confirm";
 import { parseMarkdownResume } from "../markdownParser";
 import { parsePdfResume } from "../pdfParser";
 import { MAX_PDF_FILE_BYTES } from "../pdfDocument";
 import ImportResumePreview from "./importResumePreview.vue";
+import { useResumeAiAvailability } from "@/views/resume/hooks/useResumeAiAvailability";
 import { useAiStore, useResumeStore } from "@/stores";
 import { computed, onBeforeUnmount, ref, watch } from "vue";
 import { useRouter } from "vue-router";
@@ -18,10 +20,15 @@ const pendingResume = ref(null);
 let parseController = null;
 let choosingDocument = false;
 let importVersion = 0;
-const parseModelLabel = computed(() => {
-  const model = aiStore.modelList.find((item) => item.id === aiStore.getAgentModelId("resumeParser"));
+const { ensureAiAvailable } = useResumeAiAvailability();
+
+// 解析模型按格式区分：PDF 用简历解析角色（需图片识别），Markdown 用小舟。
+const agentModelLabel = (agent) => {
+  const model = aiStore.modelList.find((item) => item.id === aiStore.getAgentModelId(agent));
   return model ? model.name || model.model : "未配置";
-});
+};
+const pdfModelLabel = computed(() => agentModelLabel("resumeParser"));
+const markdownModelLabel = computed(() => agentModelLabel("xiaoZhou"));
 
 const { click: clickJson, remove: removeJson, errorList: jsonErrors } = useFileDialog({
   accept: ".json,application/json",
@@ -68,11 +75,25 @@ const importDocumentConfig = async (format) => {
   const click = isPdf ? clickPdf : clickMarkdown;
   const remove = isPdf ? removePdf : removeMarkdown;
   const errors = isPdf ? pdfErrors : markdownErrors;
-  const model = aiStore.modelList.find((item) => item.id === aiStore.getAgentModelId("resumeParser"));
-  if (!model?.key || !model.url || !model.model) {
-    ElMessage.warning(isPdf ? "请先绑定支持图片识别的简历解析模型" : "请先绑定简历解析模型");
-    configureParseModel();
-    return;
+  // Markdown 由小舟解析，走统一的 AI 可用性检查；确认框与跳转沿用列表页入口。
+  if (!isPdf) {
+    if (!ensureAiAvailable(configureParseModel)) return;
+  } else {
+    const model = aiStore.modelList.find((item) => item.id === aiStore.getAgentModelId("resumeParser"));
+    if (!model?.key || !model.url || !model.model) {
+      // 缺少模型时保留导入弹窗，由确认框提示，用户选择后再决定是否前往配置页。
+      try {
+        await confirm("PDF 解析需要支持图片识别的模型，请先绑定简历解析模型。", "未配置解析模型", {
+          confirmText: "去配置",
+          cancelText: "取消",
+        });
+      } catch {
+        // 用户取消配置：留在导入弹窗，不做跳转。
+        return;
+      }
+      configureParseModel();
+      return;
+    }
   }
   let file;
   const version = importVersion;
@@ -266,7 +287,10 @@ const importItems = [
         </div>
         <div class="flex flex-col gap-3 rounded-2xl border border-sf-b bg-sf-bg p-3">
           <div class="flex flex-wrap items-center justify-between gap-3">
-            <p class="min-w-0 break-words text-sm text-sf-text-2">解析模型：{{ parseModelLabel }}</p>
+            <div class="min-w-0 text-sm text-sf-text-2">
+              <p class="break-words">PDF 解析模型：{{ pdfModelLabel }}</p>
+              <p class="break-words">Markdown 解析模型（小舟）：{{ markdownModelLabel }}</p>
+            </div>
             <SfButton type="bg" size="small" border @click="configureParseModel">配置解析模型</SfButton>
           </div>
           <p class="text-sm leading-6 text-sf-text-3">PDF 需要支持图片识别的模型。</p>

@@ -1,4 +1,4 @@
-import { getResumeParseLLM } from "@/apis";
+import { getXiaoZhouLLM } from "@/apis";
 import { resumeDataContract } from "../editor/assistant/skills/skill_resume_data_contract";
 import { readResumeImportResult } from "./resumeImportNormalizer";
 
@@ -12,7 +12,7 @@ const SYSTEM_PROMPT = [
   "导入以忠实保留原文为先：契约中的枚举值作为填写参考，原文不在列表时保留原值；日期或正文无法规范化时保留原内容，由本地转换器处理，不要丢弃整条经历。",
 ].join("\n");
 
-// 调用简历解析模型并返回可直接交给简历仓库创建的数据。
+// 调用小舟模型并返回可直接交给简历仓库创建的数据。
 export const parseMarkdownResume = async (
   markdown: string,
   signal: AbortSignal = new AbortController().signal,
@@ -20,8 +20,8 @@ export const parseMarkdownResume = async (
 ) => {
   signal.throwIfAborted();
   if (!markdown.trim()) throw new Error("Markdown 文件内容为空");
-  const llm = getResumeParseLLM();
-  if (!llm?.apiKey || !llm.url || !llm.model) throw new Error("请先配置并选择简历解析模型");
+  const llm = getXiaoZhouLLM();
+  if (!llm?.apiKey || !llm.url || !llm.model) throw new Error("请先配置并选择小舟模型");
   const messages = [
     { role: "system", content: SYSTEM_PROMPT },
     {
