@@ -38,6 +38,23 @@ interface SlicePosition {
   endOffset: number;
 }
 
+/** 命中后移至末尾，容量淘汰只影响最久未使用的内容。 */
+const getCached = <T>(cache: Map<string, T>, key: string): T | undefined => {
+  const value = cache.get(key);
+  if (value !== undefined) {
+    cache.delete(key);
+    cache.set(key, value);
+  }
+  return value;
+};
+
+/** 保留近期结果，不因新增一项而清空全部解析与切片缓存。 */
+const setCached = <T>(cache: Map<string, T>, key: string, value: T, capacity: number) => {
+  cache.delete(key);
+  cache.set(key, value);
+  if (cache.size > capacity) cache.delete(cache.keys().next().value!);
+};
+
 /** 切片解析缓存：同一份 HTML 只解析一次，分片与断点探针复用同一批位置映射 */
 const sliceCache = new Map<
   string,
@@ -48,7 +65,7 @@ const SLICE_CACHE_MAX = 200;
 
 /** 解析切片所需的文本节点，命中缓存时直接复用 */
 const parseSliceNodes = (html: string) => {
-  const cached = sliceCache.get(html);
+  const cached = getCached(sliceCache, html);
   if (cached) return cached;
 
   const container = document.createElement("div");
@@ -90,14 +107,13 @@ const parseSliceNodes = (html: string) => {
   });
   const total = positions.length;
   const entry = { container, positions, total };
-  if (sliceCache.size >= SLICE_CACHE_MAX) sliceCache.clear();
-  sliceCache.set(html, entry);
+  setCached(sliceCache, html, entry, SLICE_CACHE_MAX);
   return entry;
 };
 
 /** 切片结果缓存：同一份 HTML 的同一段偏移只序列化一次 */
 const sliceHtmlCache = new Map<string, string>();
-/** 切片结果缓存上限，超出后整体清空，避免长时间编辑累积占用 */
+/** 切片结果缓存上限，超出后逐项淘汰最久未使用的结果 */
 const SLICE_HTML_CACHE_MAX = 500;
 
 /** 按包含显式换行的内容偏移截取安全富文本，并保留对应标签结构。 */
@@ -105,7 +121,7 @@ export const sliceRichTextHtml = (html: string, start = 0, end?: number): string
   const source = html || "";
   // 预览与测量树会对同一节点的同一段偏移重复请求切片，按入参缓存可以省掉重复的 DOM 序列化
   const cacheKey = `${source}\u0000${start}\u0000${end === undefined ? "" : end}`;
-  const cachedHtml = sliceHtmlCache.get(cacheKey);
+  const cachedHtml = getCached(sliceHtmlCache, cacheKey);
   if (cachedHtml !== undefined) return cachedHtml;
 
   const { container, positions, total } = parseSliceNodes(source);
@@ -134,8 +150,7 @@ export const sliceRichTextHtml = (html: string, start = 0, end?: number): string
     return result.innerHTML;
   })();
 
-  if (sliceHtmlCache.size >= SLICE_HTML_CACHE_MAX) sliceHtmlCache.clear();
-  sliceHtmlCache.set(cacheKey, sliced);
+  setCached(sliceHtmlCache, cacheKey, sliced, SLICE_HTML_CACHE_MAX);
   return sliced;
 };
 
@@ -274,12 +289,12 @@ const appendCharacterBreakPoints = (
  * 同一份内容返回同一个结果对象：上游据此判断节点是否真的变化，避免每次输入都让整棵测量树重渲染。
  */
 const parsedRichTextCache = new Map<string, ParsedRichText>();
-/** 解析结果缓存上限：超出后整体清空，避免长时间编辑累积占用 */
+/** 解析结果缓存上限：超出后逐项淘汰最久未使用的内容 */
 const PARSED_RICH_TEXT_CACHE_MAX = 200;
 
 export const parseRichText = (content: string): ParsedRichText => {
   const key = content || "";
-  const cached = parsedRichTextCache.get(key);
+  const cached = getCached(parsedRichTextCache, key);
   if (cached) return cached;
 
   const html = DOMPurify.sanitize(key, sanitizeConfig);
@@ -297,7 +312,6 @@ export const parseRichText = (content: string): ParsedRichText => {
     breakPoints,
     textLength,
   };
-  if (parsedRichTextCache.size >= PARSED_RICH_TEXT_CACHE_MAX) parsedRichTextCache.clear();
-  parsedRichTextCache.set(key, parsed);
+  setCached(parsedRichTextCache, key, parsed, PARSED_RICH_TEXT_CACHE_MAX);
   return parsed;
 };

@@ -2,7 +2,7 @@ import type { ThemeDecisions } from "@/views/resume/theme/themeDecisions";
 import { computed, type ComputedRef, type Ref } from "vue";
 import { getContentHeight, RESUME_WIDTH } from "../../shared/constants";
 import { defaultLeftColumnWidth } from "@/stores/modules/resume/config/uiConfig";
-import { buildLayoutNodes } from "./adapter/buildLayoutNodes";
+import { createLayoutNodeBuilder } from "./adapter/buildLayoutNodes";
 import { createResumeLayout } from "./layout/createResumeLayout";
 import { buildRegionFlows } from "./layout/regionFlows";
 import { resolveColumnWidths } from "./layout/resolveColumnWidths";
@@ -51,9 +51,10 @@ export const useResumeLayout = ({
   renderSignature,
   isThumb,
 }: UseResumeLayoutOptions) => {
+  const buildNodes = createLayoutNodeBuilder(); // 节点复用与注册表归当前预览实例管理
   const moduleKeys = computed(() => allModules.value.map((module) => module.key).filter(Boolean));
   const nodes = computed<LayoutNode[]>(() => {
-    const built = buildLayoutNodes({
+    const built = buildNodes({
       moduleKeys: moduleKeys.value,
       data: data.value,
       ui: ui.value,

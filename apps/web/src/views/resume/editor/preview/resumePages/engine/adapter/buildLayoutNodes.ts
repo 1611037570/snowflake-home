@@ -45,9 +45,14 @@ export const createResumeLayoutAdapterRegistry = (): LayoutAdapterRegistry => {
   return registry;
 };
 
-/** 上一轮生成的节点与签名，用于复用内容未变的节点对象 */
-let lastNodesById = new Map<string, LayoutNode>();
-let lastSignatures = new Map<string, string>();
+/** 节点构建输入，注册表可由调用方提供。 */
+export interface BuildLayoutNodesOptions {
+  moduleKeys: string[]; // 当前模块顺序
+  data: Record<string, unknown>; // 简历业务数据
+  ui?: Record<string, unknown>; // 当前排版配置
+  config?: unknown; // 模块适配配置
+  registry?: LayoutAdapterRegistry; // 当前适配器注册表
+}
 
 /**
  * 节点内容签名：只覆盖渲染读取的字段。
@@ -82,7 +87,7 @@ const reuseUnchangedNodes = (
 /**
  * 按页面配置顺序生成排版节点。
  * 适配器只处理业务数据到语义节点的转换，不决定节点进入哪一栏；模块标题作为独立节点排在模块最前。
- * 输出保持节点对象标识：内容未变的节点复用上一轮对象，让渲染层按引用跳过比对。
+ * 单次构建不持有跨调用状态，节点复用由当前实例的构建器负责。
  */
 export const buildLayoutNodes = ({
   moduleKeys,
@@ -90,13 +95,7 @@ export const buildLayoutNodes = ({
   ui,
   config,
   registry = createResumeLayoutAdapterRegistry(),
-}: {
-  moduleKeys: string[];
-  data: Record<string, unknown>;
-  ui?: Record<string, unknown>;
-  config?: unknown;
-  registry?: LayoutAdapterRegistry;
-}): LayoutNode[] => {
+}: BuildLayoutNodesOptions): LayoutNode[] => {
   // 节点仅由真实模块清单生成，主题只负责外观与栏位分配。
   const nextNodes = moduleKeys.flatMap((moduleKey): LayoutNode[] => {
     const adapter = registry.resolve(moduleKey);
@@ -123,8 +122,17 @@ export const buildLayoutNodes = ({
     return policy.title ? [createModuleTitleNode(moduleKey), ...contentNodes] : contentNodes;
   });
 
-  const reused = reuseUnchangedNodes(nextNodes, lastNodesById, lastSignatures);
-  lastNodesById = new Map(reused.nodes.map((node) => [node.id, node]));
-  lastSignatures = reused.signatures;
-  return reused.nodes;
+  return nextNodes;
+};
+
+/** 每个排版实例独立复用节点，并只初始化一次适配器注册表。 */
+export const createLayoutNodeBuilder = (registry = createResumeLayoutAdapterRegistry()) => {
+  let lastNodesById = new Map<string, LayoutNode>();
+  let lastSignatures = new Map<string, string>();
+  return (options: Omit<BuildLayoutNodesOptions, "registry">): LayoutNode[] => {
+    const reused = reuseUnchangedNodes(buildLayoutNodes({ ...options, registry }), lastNodesById, lastSignatures);
+    lastNodesById = new Map(reused.nodes.map((node) => [node.id, node]));
+    lastSignatures = reused.signatures;
+    return reused.nodes;
+  };
 };

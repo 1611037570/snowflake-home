@@ -1,7 +1,47 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
+import DOMPurify from "dompurify";
 import { parseRichText, sliceRichTextHtml } from "./richTextParser";
 
 describe("parseRichText", () => {
+  it("解析缓存超限只淘汰最久未用内容，近期访问结果保持引用", () => {
+    const sources = Array.from({ length: 201 }, (_, index) => `<p>解析淘汰${index}</p>`);
+    const parsed = sources.slice(0, 200).map(parseRichText);
+    expect(parseRichText(sources[0]!)).toBe(parsed[0]);
+    parseRichText(sources[200]!);
+    expect(parseRichText(sources[0]!)).toBe(parsed[0]);
+    expect(parseRichText(sources[1]!)).not.toBe(parsed[1]);
+  });
+
+  it("切片缓存超限保留近期切片，位置映射缓存也逐项淘汰", () => {
+    const source = `<p>${"切片淘汰".repeat(150)}</p>`;
+    for (let index = 0; index < 500; index += 1) sliceRichTextHtml(source, index, index + 1);
+    sliceRichTextHtml(source, 0, 1);
+    sliceRichTextHtml(source, 500, 501);
+    const clone = vi.spyOn(Range.prototype, "cloneContents");
+    try {
+      sliceRichTextHtml(source, 0, 1);
+      expect(clone).not.toHaveBeenCalled();
+      sliceRichTextHtml(source, 1, 2);
+      expect(clone).toHaveBeenCalledTimes(1);
+    } finally {
+      clone.mockRestore();
+    }
+
+    const sources = Array.from({ length: 201 }, (_, index) => `<p>位置淘汰${index}</p>`);
+    sources.slice(0, 200).forEach((html) => sliceRichTextHtml(html, 0, 1));
+    // 使用新切片区间绕过结果缓存，验证解析位置映射的访问顺序。
+    sliceRichTextHtml(sources[0]!, 0, 2);
+    sliceRichTextHtml(sources[200]!, 0, 1);
+    const sanitize = vi.spyOn(DOMPurify, "sanitize");
+    try {
+      sliceRichTextHtml(sources[0]!, 0, 3);
+      expect(sanitize).not.toHaveBeenCalled();
+      sliceRichTextHtml(sources[1]!, 0, 2);
+      expect(sanitize).toHaveBeenCalledTimes(1);
+    } finally {
+      sanitize.mockRestore();
+    }
+  });
   it.each([
     '<p><span style="color: blue; background-color: yellow">甲乙丙丁</span></p>',
     '<p style="color: blue; background-color: yellow"><a href="https://example.com"><strong><u>甲乙丙丁</u></strong></a></p>',
