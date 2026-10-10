@@ -545,11 +545,11 @@ describe("简历页几何基线", () => {
     ]);
   });
 
-  it("主题只声明左侧留白时只扣栏宽不扣可用高度", () => {
+  it("斜角竖线主题不额外扣除正文栏宽", () => {
     const snapshot = createCase({
-      name: "主题部分声明正文区域留白",
+      name: "斜角竖线正文沿用页面左右边距",
       ui: {
-        // 斜角竖线主题的正文外观只声明左侧 24 像素：其余方向按声明的 0 处理
+        // 区域不再为竖线额外预留空列，个人信息与正文使用相同栏宽。
         theme: { template: "angledLine" } },
       themeDecisions: { // 用例主题固定外观
         ...DEFAULT_THEME_DECISIONS,
@@ -557,10 +557,10 @@ describe("简历页几何基线", () => {
       },
     });
 
-    expect(snapshot.regions[1]?.padding).toEqual({ top: 0, right: 0, bottom: 0, left: 24 });
+    expect(snapshot.regions[1]?.padding).toEqual({ top: 0, right: 0, bottom: 0, left: 0 });
     expect(snapshot.columnWidths).toEqual([
       ["user-column", 746],
-      ["main-column", 722],
+      ["main-column", 746],
     ]);
     // 可用高度只扣上下留白与首屏模块间距：1063 − 通栏 300 − 正文上下留白 0 − 模块间距 12
     expect(snapshot.columnFlowHeights[1]).toEqual(["main-column", [[751, 300]]]);
