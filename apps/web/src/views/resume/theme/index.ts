@@ -3,14 +3,14 @@ export {
   resolveThemePageAppearance,
   resumeThemeRegistry,
   themeTemplateList,
-} from "./styles";
+} from "@/domain/resume/theme/styles";
 export { resolveThemeSettingRestrictions } from "./settingCapabilities";
-export { compactResumeUi, compactResumeItem, resolveResumeUi } from "./resumeUi";
-export { resolveThemeDecisions, DEFAULT_THEME_DECISIONS, type ThemeDecisions } from "./themeDecisions";
+export { compactResumeUi, compactResumeItem, resolveResumeUi } from "@/domain/resume/theme/resumeUi";
+export { resolveThemeDecisions, DEFAULT_THEME_DECISIONS, type ThemeDecisions } from "@/domain/resume/theme/themeDecisions";
 export type {
   ResumeThemeDefinition,
   ResumeThemeTemplate,
   ThemePageAppearance,
   ThemeTemplateConfig,
-} from "./styles/createThemeTemplate";
-export { isPageLayoutTemplateId, pageLayoutRegistry, type PageLayoutTemplateId } from "./layouts";
+} from "@/domain/resume/theme/styles/createThemeTemplate";
+export { isPageLayoutTemplateId, pageLayoutRegistry, type PageLayoutTemplateId } from "@/domain/resume/theme/layouts";

@@ -1,6 +1,6 @@
 <script setup>
 import { computed } from "vue";
-import { layoutStretchesColumns } from "@/views/resume/theme/layouts";
+import { layoutStretchesColumns } from "@/domain/resume/theme/layouts";
 import { useResumePreviewContext } from "@/views/resume/editor/preview/shared/previewContext";
 
 const {

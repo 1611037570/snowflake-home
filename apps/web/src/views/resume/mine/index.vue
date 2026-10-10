@@ -1,5 +1,5 @@
 <script setup>
-import { compactResumeItem } from "@/views/resume/theme/resumeUi";
+import { compactResumeItem } from "@/domain/resume/theme/resumeUi";
 import { useResumeStore } from "@/stores";
 import dayjs from "dayjs";
 import { storeToRefs } from "pinia";

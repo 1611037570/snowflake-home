@@ -1,4 +1,4 @@
-import { nextTick, shallowRef, ref, watch, type ComputedRef, type Ref } from "vue";
+import { nextTick, onScopeDispose, shallowRef, ref, watch, type ComputedRef, type Ref } from "vue";
 import { unrefElement, useResizeObserver } from "@vueuse/core";
 import type { LayoutNode } from "../types";
 import { measureLayoutNodes } from "./measureLayoutNodes";
@@ -76,17 +76,20 @@ export const useLayoutMeasurements = ({
   const resizeTargets = shallowRef<HTMLElement[]>([]);
   const measurementError = ref(""); // 主题几何或内容协议校验失败的说明
   let measuring = false;
-  /** 最近一次需要重新测量的时间戳，合并同帧内的多次请求 */
+  /** 最近一次需要重新测量的版本，合并同帧内的多次请求 */
   let dirtyAt = 0;
-  /** 最近一次完成测量时对应的时间戳，与 dirtyAt 相同表示无需重复测量 */
+  /** 最近一次完成测量时对应的版本，与 dirtyAt 相同表示无需重复测量 */
   let measuredAt = 0;
   let frameHandle = 0;
+  let stopped = false; // 作用域结束后不再读取宿主或回写测量
+  let frameUsesTimeout = false; // 记录调度方式，使用对应取消入口
 
   const measure = async () => {
-    if (measuring) return;
+    if (stopped || measuring) return;
     const measuringAt = dirtyAt;
     measuring = true;
     await nextTick();
+    if (stopped) { measuring = false; return; }
     const root = unrefElement(measureRef);
     if (!root) {
       resizeTargets.value = [];
@@ -126,20 +129,21 @@ export const useLayoutMeasurements = ({
   };
 
   const scheduleMeasure = () => {
-    if (frameHandle) return;
+    if (stopped || frameHandle) return;
     const run = () => {
       frameHandle = 0;
       if (measuredAt === dirtyAt) return;
       void measure();
     };
     // 优先合并到下一帧，缺少 requestAnimationFrame 时退回宏任务
-    if (typeof requestAnimationFrame === "function") frameHandle = requestAnimationFrame(run);
-    else frameHandle = window.setTimeout(run, 0);
+    frameUsesTimeout = typeof requestAnimationFrame !== "function";
+    frameHandle = frameUsesTimeout ? window.setTimeout(run, 0) : requestAnimationFrame(run);
   };
 
   /** 标记测量结果过期：同步作废，实际测量合并到下一帧 */
   const requestMeasure = () => {
-    dirtyAt = performance.now();
+    if (stopped) return;
+    dirtyAt += 1; // 单调版本避免同一时刻的变更被误判为已测量
     measureDone.value = false;
     measurementError.value = "";
     scheduleMeasure();
@@ -154,19 +158,27 @@ export const useLayoutMeasurements = ({
   // 尺寸变化由浏览器报告，与图谱变更一并合并到同一帧测量
   const { stop: stopResize } = useResizeObserver(resizeTargets, () => requestMeasure());
 
+  // 清理由管线绑定作用域，调用方无需手动配对。
+  const stop = () => {
+    if (stopped) return;
+    stopped = true;
+    stopWatch();
+    stopResize();
+    if (frameHandle) {
+      if (frameUsesTimeout) window.clearTimeout(frameHandle);
+      else cancelAnimationFrame(frameHandle);
+      frameHandle = 0;
+    }
+    resizeTargets.value = [];
+  };
+  onScopeDispose(stop);
+
   return {
     measurements,
     measurementError, // 统一传给页面计划展示协议错误
     measureDone,
     decorationHeight, // 布局按实测高度扣除首页空间
     measure,
-    stop: () => {
-      stopWatch();
-      stopResize();
-      if (frameHandle) {
-        cancelAnimationFrame(frameHandle);
-        frameHandle = 0;
-      }
-    },
+    stop, // 显式停止与作用域销毁使用同一入口
   };
 };

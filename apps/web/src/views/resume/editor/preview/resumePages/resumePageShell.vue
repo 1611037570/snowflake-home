@@ -12,10 +12,10 @@ import { useResumePreviewContext } from "../shared/previewContext";
 import { useResumeStore } from "@/stores";
 import {
   defaultPageBackground,
-} from "@/stores/modules/resume/config/uiConfig";
+} from "@/domain/resume/theme/uiConfig";
 import PagePattern from "@/views/resume/theme/components/pageContainer/index.vue";
 import PageFooter from "@/views/resume/theme/components/pageFooter/index.vue";
-import { layoutStretchesColumns } from "@/views/resume/theme/layouts";
+import { layoutStretchesColumns } from "@/domain/resume/theme/layouts";
 import { resolveThemePageAppearance } from "@/views/resume/theme";
 import { getContrastTextColor } from "@/views/resume/theme/useResumeTheme";
 

@@ -9,7 +9,7 @@ import {
   fontFamilyList,
   textAlignList,
   uiParamRanges,
-} from "@/stores/modules/resume/config/uiConfig";
+} from "@/domain/resume/theme/uiConfig";
 import { localizeResumeEditorOptionList } from "@/stores/modules/resume/hooks/useResumeEditorLocale";
 import { loadFont } from "@/utils";
 import { getResumeThemeTemplate } from "@/views/resume/theme";

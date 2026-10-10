@@ -20,7 +20,7 @@ import {
   titleIconModeList,
   userInfoLayoutList,
   userInfoModeList,
-} from "@/stores/modules/resume/config/uiConfig";
+} from "@/domain/resume/theme/uiConfig";
 import { getResumeThemeTemplate, resolveThemeSettingRestrictions } from "@/views/resume/theme";
 import ThemeColorPicker from "@/components/business/themeColorPicker/themeColorPicker.vue";
 import { localizeResumeEditorOptionList } from "@/stores/modules/resume/hooks/useResumeEditorLocale";

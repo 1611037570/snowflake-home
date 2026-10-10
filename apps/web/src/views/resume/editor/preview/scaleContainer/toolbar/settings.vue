@@ -3,7 +3,7 @@ import { computed } from "vue";
 import { storeToRefs } from "pinia";
 import { $t } from "@/locales";
 import { useResumeStore } from "@/stores";
-import { defaultFooter } from "@/stores/modules/resume/config/uiConfig";
+import { defaultFooter } from "@/domain/resume/theme/uiConfig";
 import {
   defaultLeftColumnWidth,
   defaultLineHeight,
@@ -12,8 +12,8 @@ import {
   defaultPaddingVertical,
   defaultParagraphSpacing,
   uiParamRanges,
-} from "@/stores/modules/resume/config/uiConfig";
-import { createDefaultLayoutColumns, layoutUsesColumns } from "@/views/resume/theme/layouts";
+} from "@/domain/resume/theme/uiConfig";
+import { createDefaultLayoutColumns, layoutUsesColumns } from "@/domain/resume/theme/layouts";
 import { getResumeThemeTemplate, resolveThemeDecisions } from "@/views/resume/theme";
 
 const resumeStore = useResumeStore();

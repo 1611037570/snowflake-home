@@ -12,7 +12,7 @@ import TemplatePagination from "./components/templatePagination.vue";
 import { resumeTemplateList } from "./data/list";
 import { loadResumeTemplateData } from "./data/resumeData";
 import { expandConfigModules } from "@/stores/modules/resume/hooks/useConfigTemplate";
-import { resolveLayoutColumns, layoutUsesColumns } from "../theme/layouts";
+import { resolveLayoutColumns, layoutUsesColumns } from "@/domain/resume/theme/layouts";
 import { $t } from "@/locales";
 
 // 模板页专用全屏预览组件：异步加载，避免首屏打包体积过大

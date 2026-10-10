@@ -1,5 +1,5 @@
 <script>
-import { defaultPaddingVertical } from "@/stores/modules/resume/config/uiConfig";
+import { defaultPaddingVertical } from "@/domain/resume/theme/uiConfig";
 </script>
 
 <script setup>

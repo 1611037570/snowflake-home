@@ -1,5 +1,5 @@
 import type { Component } from "vue";
-import { resumeThemeRegistry } from "../../styles";
+import { resumeThemeRegistry } from "@/domain/resume/theme/styles";
 
 // 默认语义组件按文件登记，主题覆盖同名槽位，不在公共渲染器追加主题分支。
 export const nodeContentComponents = Object.fromEntries(Object.entries(import.meta.glob<Component>(

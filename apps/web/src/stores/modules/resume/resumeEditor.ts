@@ -20,7 +20,7 @@ import {
 import { isEqual } from "lodash-es";
 import { executeResumeOperations, type ResumeWriteOp } from "./resumeOperations";
 import i18n from "@/locales";
-import { compactResumeUi, resolveResumeUi } from "@/views/resume/theme/resumeUi";
+import { compactResumeUi, resolveResumeUi } from "@/domain/resume/theme/resumeUi";
 
 type ResumeEditorOptions = {
   currentItem: ComputedRef<any>;

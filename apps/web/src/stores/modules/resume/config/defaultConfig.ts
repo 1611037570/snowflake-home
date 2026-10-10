@@ -1,5 +1,5 @@
 import { getUUID } from "@/utils";
-import { defaultThemeTemplate } from "./uiConfig";
+import { defaultThemeTemplate } from "@/domain/resume/theme/uiConfig";
 
 // 默认模块 key 对应的名称与图标（取自 formConfig，后期自行维护）
 export const DEFAULT_MODULE_NAMES: { key: string; name: string; icon: string }[] = [

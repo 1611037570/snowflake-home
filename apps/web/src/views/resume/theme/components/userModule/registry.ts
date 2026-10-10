@@ -1,5 +1,5 @@
 import type { Component } from "vue";
-import type { ThemeContentContract } from "../../themeContract";
+import type { ThemeContentContract } from "@/domain/resume/theme/themeContract";
 
 // 内容组件按文件编号登记，复杂组件必须显式声明自己的分片能力。
 const contentComponents = Object.fromEntries(Object.entries(import.meta.glob<Component>(

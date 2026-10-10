@@ -3,7 +3,8 @@ import { ElMessage } from "element-plus";
 import router from "@/routers";
 import { useAiStore } from "@/stores/modules/ai";
 import { defineStore } from "pinia";
-import { computed, ref, toRaw, watch } from "vue";
+import { useEventListener } from "@vueuse/core";
+import { computed, nextTick, ref, toRaw, watch } from "vue";
 import { DEFAULT_RESUME_ITEM, DEFAULT_EDITOR, DEFAULT_SYSTEM } from "./config/defaultConfig";
 import { COLLAPSED, EXPANDED } from "./config/formConfig";
 import { debounce, merge } from "lodash-es";
@@ -40,7 +41,7 @@ export const useResumeStore = defineStore(
         })
         .filter(Boolean),
     );
-    const { getResumeStorage, loadResumeItems, removeResumeStorage, schedulePersistResume } =
+    const { getResumeStorage, loadResumeItems, removeResumeStorage, schedulePersistResume, flushPersistResume, saveStates } =
       createResumeStorage();
     let initPromise: Promise<void> | null = null;
     const resumeLoadPromises = new Map<string, Promise<any>>();
@@ -265,6 +266,13 @@ export const useResumeStore = defineStore(
       },
       { deep: true },
     );
+    // 显式保存先等待本轮内容监听入队，再等待数据库事务。
+    const savePendingResumes = async () => { await nextTick(); await flushPersistResume(); };
+    const flushOnHidden = () => {
+      if (document.visibilityState === "hidden") void savePendingResumes().catch(() => {});
+    };
+    useEventListener(document, "visibilitychange", flushOnHidden);
+    useEventListener(window, "pagehide", () => { void savePendingResumes().catch(() => {}); });
     // 切换简历时：取消防抖等待中的历史、清空历史栈并重置基准快照
     watch(currentIndex, () => {
       resetHistoryBase();
@@ -272,6 +280,8 @@ export const useResumeStore = defineStore(
 
     return {
       list,
+      saveStates, // 各简历实际保存阶段与失败说明
+      savePendingResumes, // 可等待并向调用方报告失败的保存入口
       resumeList,
       trashList,
       maxCount,

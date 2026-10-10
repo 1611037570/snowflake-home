@@ -1,9 +1,9 @@
-<script setup>
-import { computed } from "vue";
-import { resolveRegionSlot } from "@/views/resume/theme/regionSlots";
+<script setup lang="ts">
+import { computed, type PropType } from "vue";
+import { EMPTY_THEME_INSET, type ThemeInset } from "@/domain/resume/theme/themeContract";
+import { resolveRegionSlot } from "@/domain/resume/theme/regionSlots";
 import { resolveRegionAppearance } from "./registry";
-import { resolveRegionPadding } from "@/views/resume/theme/regionPadding";
-import { layoutStretchesColumns } from "@/views/resume/theme/layouts";
+import { layoutStretchesColumns } from "@/domain/resume/theme/layouts";
 import { useResumePreviewContext } from "@/views/resume/editor/preview/shared/previewContext";
 
 const props = defineProps({
@@ -12,9 +12,9 @@ const props = defineProps({
     type: String,
     required: true,
   },
-  // 引擎结算后的区域留白：含页面上边距等布局注入量，缺省时读主题声明
+  // 引擎结算后的区域留白：包含页面上边距，未声明表示零留白
   regionPadding: {
-    type: Object,
+    type: Object as PropType<ThemeInset>,
     default: undefined,
   },
   columnGap: { type: Number, default: 0 }, // 公共布局结算的栏间距
@@ -27,7 +27,7 @@ const slot = computed(() => resolveRegionSlot(props.regionId));
 // 区域外观只按主题编号选择，具体样式由对应组件维护。
 const appearance = computed(() => resolveRegionAppearance(ui.value?.theme?.template, slot.value));
 // 区域外观与剩余空间共用同一个根容器：分页与渲染读同一份留白，布局注入量不会被漏掉
-const padding = computed(() => props.regionPadding ?? resolveRegionPadding(ui.value, slot.value));
+const padding = computed(() => props.regionPadding ?? EMPTY_THEME_INSET);
 const regionStyle = computed(() => {
   const regionPadding = padding.value;
   // 页面水平内缩由公共盒子处理一次，测量和预览不再分别拼接外边距。

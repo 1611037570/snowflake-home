@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { DEFAULT_THEME_DECISIONS, type ThemeDecisions } from "@/views/resume/theme/themeDecisions";
+import { DEFAULT_THEME_DECISIONS, type ThemeDecisions } from "@/domain/resume/theme/themeDecisions";
 import { createResumeLayout } from "./createResumeLayout";
 import { resolveColumnWidths } from "./resolveColumnWidths";
 import { buildRegionFlows, type ColumnFlowPlan, type RegionFlowBuilder } from "./regionFlows";
@@ -132,8 +132,8 @@ describe("简历页几何基线", () => {
   });
 
   it("全部主题固定声明遵守统一尺寸契约", async () => {
-    const { resumeThemeRegistry } = await import("@/views/resume/theme/styles");
-    const { validateThemeCapabilities } = await import("@/views/resume/theme/themeContract");
+    const { resumeThemeRegistry } = await import("@/domain/resume/theme/styles");
+    const { validateThemeCapabilities } = await import("@/domain/resume/theme/themeContract");
     for (const theme of Object.values(resumeThemeRegistry)) {
       expect(validateThemeCapabilities(theme.decisions ?? {})).toEqual([]);
     }

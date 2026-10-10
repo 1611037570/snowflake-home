@@ -1,3 +1,5 @@
+import { ElMessage } from "element-plus";
+import { collectResumeStyles } from "./exportStyles";
 import { nextTick } from "vue";
 import { useResumeName } from "../../../../hooks/useResumeName";
 import { useResumeStore } from "@/stores";
@@ -14,39 +16,42 @@ const getResumePages = (rootRef: ResumeRootRef) => {
     : Array.from(root.querySelectorAll<HTMLElement>(".resume-page-item"));
 };
 
-// 将资源转换为 data URL，保证导出的 HTML 离线打开时仍能显示
-const toDataUrl = async (url: string, baseUrl: string, signal: AbortSignal) => {
-  if (!url || url.startsWith("data:") || url.startsWith("#")) return url;
-  try {
-    const response = await fetch(new URL(url, baseUrl).href, { signal });
-    if (!response.ok) return url;
-    const blob = await response.blob();
-    return await new Promise<string>((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = () => resolve(String(reader.result));
-      reader.onerror = () => reject(reader.error);
-      reader.readAsDataURL(blob);
-    });
-  } catch {
-    return url;
-  }
+// 一次导出内按绝对地址复用资源请求，取消与失败向调用方报告。
+const createResourceResolver = (signal: AbortSignal) => {
+  const tasks = new Map<string, Promise<string>>(); // 每个资源地址对应唯一读取任务
+  return (url: string): Promise<string> => {
+    if (!url || url.startsWith("data:") || url.startsWith("#")) return Promise.resolve(url);
+    const absolute = new URL(url, document.baseURI).href;
+    let task = tasks.get(absolute);
+    if (!task) {
+      task = fetch(absolute, { signal }).then(async (response) => {
+        if (!response.ok) throw new Error("简历导出资源读取失败");
+        const blob = await response.blob();
+        signal.throwIfAborted();
+        return new Promise<string>((resolve, reject) => {
+          const reader = new FileReader();
+          const abort = () => { reader.abort(); reject(signal.reason); };
+          const cleanup = () => signal.removeEventListener("abort", abort);
+          reader.onload = () => { cleanup(); resolve(String(reader.result)); };
+          reader.onerror = () => { cleanup(); reject(reader.error); };
+          reader.onabort = cleanup;
+          signal.addEventListener("abort", abort, { once: true });
+          reader.readAsDataURL(blob);
+          if (signal.aborted) abort();
+        });
+      });
+      tasks.set(absolute, task);
+    }
+    return task;
+  };
 };
 
-// 内嵌页面样式及其引用的字体、背景资源
-const getEmbeddedStyles = async (signal: AbortSignal) => {
-  const styleTexts = Array.from(document.styleSheets).flatMap((styleSheet) => {
-    try {
-      return Array.from(styleSheet.cssRules).map((rule) => rule.cssText);
-    } catch {
-      return [];
-    }
-  });
-  const styleText = styleTexts.join("\n");
-  const resourceUrls = [...styleText.matchAll(/url\(\s*(['"]?)([^'")]+)\1\s*\)/g)]
-    .map((match) => match[2])
-    .filter((url): url is string => Boolean(url));
+// 仅内嵌简历实际使用的样式及去重后的资源，资源缺失时不宣称离线完成。
+const getEmbeddedStyles = async (styleText: string, resolveResource: (url: string) => Promise<string>) => {
+  const resourceUrls = new Set([...styleText.matchAll(/url\(\s*(['"]?)([^'")]+)\1\s*\)/g)]
+    .map((match) => match[2]).filter((url): url is string => Boolean(url)));
   const replacements = await Promise.all(
-    resourceUrls.map(async (url) => [url, await toDataUrl(url, document.baseURI, signal)] as const),
+    [...resourceUrls].map(async (url) => [url, await resolveResource(url)] as const),
   );
   const replacementMap = new Map(replacements);
   return styleText.replace(/url\(\s*(['"]?)([^'")]+)\1\s*\)/g, (match, quote, url) => {
@@ -55,17 +60,14 @@ const getEmbeddedStyles = async (signal: AbortSignal) => {
   });
 };
 
-// 将页面中的图片内嵌，避免导出文件依赖原站点地址
-const inlineImages = async (root: HTMLElement, signal: AbortSignal) => {
-  await Promise.all(
-    Array.from(root.querySelectorAll<HTMLImageElement>("img")).map(async (image) => {
-      const source = image.getAttribute("src");
-      if (!source) return;
-      const dataUrl = await toDataUrl(source, document.baseURI, signal);
-      image.setAttribute("src", dataUrl);
-      image.removeAttribute("srcset");
-    }),
-  );
+// 图片与样式资源共用读取缓存，同图跨页只读取一次。
+const inlineImages = async (root: HTMLElement, resolveResource: (url: string) => Promise<string>) => {
+  await Promise.all(Array.from(root.querySelectorAll<HTMLImageElement>("img")).map(async (image) => {
+    const source = image.getAttribute("src");
+    if (!source) return;
+    image.setAttribute("src", await resolveResource(source));
+    image.removeAttribute("srcset");
+  }));
 };
 
 const escapeHtml = (value: string) =>
@@ -94,7 +96,7 @@ export const exportHtml = async (rootRef: ResumeRootRef, onSuccess?: () => void)
 
     const clones = pages.map((page) => {
       const clone = page.cloneNode(true) as HTMLElement;
-      // 编辑器页边线属于预览装饰，导出前移除；纸张边框与圆角由主题声明，保持不动
+      // 编辑器页边线属于预览装饰，导出前移除；纸张边框由主题声明，保持不动
       stripEditorPageFrame(clone);
       clone.style.boxShadow = "none";
       clone.style.margin = "0";
@@ -102,19 +104,21 @@ export const exportHtml = async (rootRef: ResumeRootRef, onSuccess?: () => void)
       clone.style.zoom = "1";
       clone.setAttribute("contenteditable", "true");
       clone.setAttribute("spellcheck", "false");
+      clone.querySelectorAll("[data-resume-editor-action]").forEach((action) => action.remove());
       clone.querySelectorAll<HTMLElement>(".resume-module-wrapper").forEach((module) => {
         module.classList.remove("outline-2", "outline-offset-3", "outline-dashed", "outline-sf-theme");
-        module.querySelectorAll(":scope > .absolute").forEach((action) => action.remove());
       });
       return clone;
     });
 
     const exportRoot = document.createElement("div");
     exportRoot.append(...clones);
-    await inlineImages(exportRoot, signal);
+    const resolveResource = createResourceResolver(signal);
+    const styleText = collectResumeStyles(exportRoot, rootRef.value!);
+    await inlineImages(exportRoot, resolveResource);
     if (signal.aborted || !isCurrentResume()) return;
 
-    const styles = await getEmbeddedStyles(signal);
+    const styles = await getEmbeddedStyles(styleText, resolveResource);
     if (signal.aborted || !isCurrentResume()) return;
     const pageMarkup = clones.map((page) => page.outerHTML).join("\n");
     const html = `<!doctype html>
@@ -156,7 +160,10 @@ ${pageMarkup}
     URL.revokeObjectURL(url);
     if (isCurrentResume()) onSuccess?.();
   } catch (error) {
-    console.error("生成 HTML 失败:", error);
+    if (!signal.aborted && isCurrentResume()) {
+      console.error("生成 HTML 失败:", error);
+      ElMessage.error("网页导出失败，请检查字体或图片资源后重试");
+    }
   } finally {
     resumeStore.finishPrinting(signal);
   }

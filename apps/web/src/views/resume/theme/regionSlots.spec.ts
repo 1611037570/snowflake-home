@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { isRegionSlotId, regionSlotRegistry, resolveRegionSlot } from "./regionSlots";
+import { isRegionSlotId, regionSlotRegistry, resolveRegionSlot } from "@/domain/resume/theme/regionSlots";
 
 describe("区域槽位", () => {
   it("槽位编号固定为 slogan / user / main", () => {

@@ -1,3 +1,4 @@
+import { collectResumeStyles } from "./exportStyles";
 import { nextTick } from "vue";
 import { useResumeStore } from "@/stores";
 import { useResumeName } from "../../../../hooks/useResumeName";
@@ -6,18 +7,6 @@ import { stripEditorPageFrame } from "./pageFrame";
 type ResumeRootRef = { value: HTMLElement | null };
 
 const getResumeRoot = (rootRef: ResumeRootRef) => rootRef.value;
-
-// 复制当前页面样式，保持模板和主题在打印文档中继续生效。
-const getStyleText = () =>
-  Array.from(document.styleSheets)
-    .flatMap((styleSheet) => {
-      try {
-        return Array.from(styleSheet.cssRules).map((rule) => rule.cssText);
-      } catch {
-        return [];
-      }
-    })
-    .join("\n");
 
 // 等待打印文档中的图片加载完成，Base64 图片保持原有地址不做转换。
 const waitForImages = async (printDocument: Document, signal: AbortSignal) => {
@@ -123,10 +112,11 @@ export const printResume = async (
     clonedRoot.style.transform = "none";
     clonedRoot.style.zoom = "1";
     clonedRoot.classList.add("resume-iframe-print-root");
-    // 编辑器页边线属于预览装饰，打印前移除；纸张边框与圆角由主题声明，保留
+    // 编辑器页边线属于预览装饰，打印前移除；纸张边框由主题声明，保留
     stripEditorPageFrame(clonedRoot);
+    clonedRoot.querySelectorAll("[data-resume-editor-action]").forEach((action) => action.remove());
 
-    const styleText = getStyleText();
+    const styleText = collectResumeStyles(clonedRoot, root);
     const baseHref = document.baseURI.replace(/"/g, "&quot;");
     document.body.appendChild(printFrame);
     const printDocument = printFrame.contentDocument;

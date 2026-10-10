@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { validateThemeDecisions } from "@/views/resume/theme/themeContract";
-import type { ThemeDecisions } from "@/views/resume/theme/themeDecisions";
+import { validateThemeDecisions } from "@/domain/resume/theme/themeContract";
+import type { ThemeDecisions } from "@/domain/resume/theme/themeDecisions";
 
 describe("主题固定声明校验", () => {
   it("未声明使用默认值，显式错误定位字段", () => {

@@ -73,7 +73,8 @@ import { SF_ICON_LIST_KEY } from "@/components/base/icon";
 import { onKeyStroke } from "@vueuse/core";
 import { storeToRefs } from "pinia";
 import { provide, ref, watch } from "vue";
-import { useRoute, useRouter } from "vue-router";
+import { ElMessage } from "element-plus";
+import { onBeforeRouteLeave, useRoute, useRouter } from "vue-router";
 import { useRuntimeData } from "./hooks/useRuntimeData";
 import Builder from "./panel/index.vue";
 import AiMask from "./components/aiMask.vue";
@@ -156,6 +157,12 @@ provide("previewData", currentData);
 // 专注模式下按 ESC 退出
 onKeyStroke("Escape", () => {
   if (focusMode.value) setFocusMode(false);
+});
+
+// 路由离开前确认内容已落库，写入失败保留当前编辑页面。
+onBeforeRouteLeave(async () => {
+  try { await resumeStore.savePendingResumes(); }
+  catch { ElMessage.error("简历保存失败，请重试后再离开"); return false; }
 });
 
 onUnmounted(() => {

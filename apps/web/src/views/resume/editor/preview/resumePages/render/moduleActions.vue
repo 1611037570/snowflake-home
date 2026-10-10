@@ -24,7 +24,7 @@ const moveButtonClass =
 </script>
 
 <template>
-  <div class="absolute -top-3 -right-3 z-10 flex items-center gap-1">
+  <div data-resume-editor-action class="absolute -top-3 -right-3 z-10 flex items-center gap-1">
     <SfTooltip v-if="directions.up" :content="$t('moveUp')">
       <div :class="moveButtonClass" @click.stop="emit('move', 'up')">
         <SfIcon icon="lucide:arrow-up" size="3.5" />
