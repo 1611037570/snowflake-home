@@ -1,6 +1,7 @@
 import { computed } from "vue";
 import type { LayoutNode } from "../engine/types";
 import { sliceRichTextHtml } from "../engine/adapter/richTextParser";
+import { isContentBlockVisible } from "../engine/contentBlocks";
 
 /** 所有正文组件共享的输入，主题覆盖组件必须遵守同一分片协议。 */
 export interface NodeContentProps {
@@ -26,7 +27,7 @@ export const useNodeContent = (props: NodeContentProps) => {
     const desc = String(item.value.desc || "");
     return props.contentRange ? desc.slice(props.contentRange.start, props.contentRange.end) : desc;
   });
-  const isBlockVisible = (index: number) => index >= (props.blockRange?.start ?? 0) && index < (props.blockRange?.end ?? Number.MAX_SAFE_INTEGER);
+  const isBlockVisible = (index: number) => isContentBlockVisible(index, props.blockRange);
   const hasContentBlock = computed(() => (props.blockRange?.end ?? Number.MAX_SAFE_INTEGER) > 0);
   const showItemHeader = computed(() => !props.contentRange || props.contentRange.start === 0);
   return {

@@ -22,6 +22,8 @@ export interface MeasuredNode {
   width: number;
   /** 当前节点完整内容的实际高度 */
   fullHeight: number;
+  /** 实际存在的稳定内容块编号，隐藏字段允许留下空号。 */
+  blockIndices?: number[];
   /** 当前节点可用的拆分断点 */
   breakPoints: BreakPointMeasure[];
   /**

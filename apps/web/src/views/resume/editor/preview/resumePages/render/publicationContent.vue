@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { computed } from "vue";
+import { computed, type PropType } from "vue";
+import { createContentBlocks, isContentBlockVisible, type ContentBlockRange } from "@/views/resume/editor/preview/resumePages/engine/contentBlocks";
 import ItemTags from "../../components/itemTags.vue";
 import ItemDate from "../../components/itemDate.vue";
 import ItemTitle from "../../components/itemTitle.vue";
@@ -13,7 +14,7 @@ const props = defineProps({
   // 论文条目业务数据
   item: { type: Object, default: () => ({}) },
   // 分片覆盖的块区间：只渲染落在区间内的块
-  blockRange: { type: Object, default: () => ({ start: 0, end: Number.MAX_SAFE_INTEGER }) },
+  blockRange: { type: Object as PropType<ContentBlockRange>, default: () => ({ start: 0 /* 起始块 */, end: Number.MAX_SAFE_INTEGER /* 结束块 */ }) },
   // 分片装饰类型：续段不重复正文上间距
   decoration: { type: String, default: "full" },
   // 已按分片区间切好的正文富文本
@@ -34,7 +35,7 @@ const safeUrlProtocols = new Set(["http:", "https:"]);
 const separatorMark = computed(() => getInfoSeparatorMark(infoSeparator.value));
 // 块区间判定：块序号与测量层共用同一份结构
 const isBlockVisible = (index: number) =>
-  index >= props.blockRange.start && index < props.blockRange.end;
+  isContentBlockVisible(index, props.blockRange);
 // 时间轴主题下日期进入左侧固定栏，普通主题按日期位置决定前后顺序
 const isTimeline = computed(() => props.dateRail === true);
 // 发表时间：论文为单时间点，取发表日期
@@ -62,17 +63,14 @@ const hasVenueRow = computed(() =>
 );
 // 索引标签是否可见
 const hasTagRow = computed(() => Array.isArray(props.item.indexTags) && props.item.indexTags.length > 0);
-// 可选行按实际存在的顺序编号，避免缺少作者或载体时分片漏行。
-const venueBlockIndex = computed(() => 1 + (authorItems.value.length ? 1 : 0));
-const tagBlockIndex = computed(() => venueBlockIndex.value + (hasVenueRow.value ? 1 : 0));
-// 正文块序号：头部块按实际存在的行顺延，与测量层的块序保持一致
-const bodyBlockIndex = computed(
-  () =>
-    1 +
-    (authorItems.value.length ? 1 : 0) +
-    (hasVenueRow.value ? 1 : 0) +
-    (hasTagRow.value ? 1 : 0),
-);
+// 可见块统一登记顺序，缺少可选行时自动重新编号。
+const blocks = computed(() => createContentBlocks([
+  "title",
+  ...(authorItems.value.length ? ["authors"] : []),
+  ...(hasVenueRow.value ? ["venue"] : []),
+  ...(hasTagRow.value ? ["tags"] : []),
+  ...(props.contentHtml ? ["body"] : []),
+]));
 // 论文链接仅在合法协议下渲染为可跳转链接
 const safeDoiUrl = computed(() => {
   const text = String(props.item.doi || "").trim();
@@ -94,7 +92,7 @@ const contentSpacingStyle = computed(() => {
 <template>
   <!-- 块一：论文标题与发表时间 -->
   <div
-    v-if="showItemHeader && isBlockVisible(0)"
+    v-if="showItemHeader && isBlockVisible(blocks.indexOf('title'))"
     class="flex flex-wrap items-center justify-between gap-3"
   >
     <div class="min-w-0 flex-1">
@@ -105,7 +103,7 @@ const contentSpacingStyle = computed(() => {
 
   <!-- 块二：作者署名与本人位次、发表状态 -->
   <div
-    v-if="authorItems.length && showItemHeader && isBlockVisible(1)"
+    v-if="authorItems.length && showItemHeader && isBlockVisible(blocks.indexOf('authors'))"
     class="flex flex-wrap items-center justify-between gap-3"
     :style="innerSpacingStyle"
   >
@@ -117,7 +115,7 @@ const contentSpacingStyle = computed(() => {
 
   <!-- 块三：发表载体与论文链接，载体名按学术惯例斜体 -->
   <div
-    v-if="hasVenueRow && showItemHeader && isBlockVisible(venueBlockIndex)"
+    v-if="hasVenueRow && showItemHeader && isBlockVisible(blocks.indexOf('venue'))"
     class="flex flex-wrap items-center justify-between gap-3"
     :style="innerSpacingStyle"
   >
@@ -149,7 +147,7 @@ const contentSpacingStyle = computed(() => {
 
   <!-- 块四：索引与分区标签 -->
   <div
-    v-if="hasTagRow && showItemHeader && isBlockVisible(tagBlockIndex)"
+    v-if="hasTagRow && showItemHeader && isBlockVisible(blocks.indexOf('tags'))"
     class="flex flex-wrap items-center gap-3"
     :style="innerSpacingStyle"
   >
@@ -157,7 +155,7 @@ const contentSpacingStyle = computed(() => {
   </div>
 
   <!-- 块五：研究内容作为单个块，内部段落由字符区间切分，保证块序与测量层一致 -->
-  <div v-if="contentHtml && isBlockVisible(bodyBlockIndex)" :style="contentSpacingStyle">
+  <div v-if="contentHtml && isBlockVisible(blocks.indexOf('body'))" :style="contentSpacingStyle">
     <ResumeField :model-value="contentHtml" html />
   </div>
 </template>

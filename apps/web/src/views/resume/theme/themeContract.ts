@@ -1,4 +1,6 @@
 import type { RegionSlotId } from "./regionSlots";
+import { isPageLayoutTemplateId } from "./layouts";
+import type { ThemeDecisions } from "./themeDecisions";
 
 /** 主题装饰内部空间，单位像素，不包含页面边距和模块间距。 */
 export interface ThemeInset {
@@ -48,18 +50,44 @@ export const EMPTY_THEME_INSET: ThemeInset = {
 /** 固定声明先校验后接入，不通过默认值静默掩盖非法几何。 */
 export const validateThemeCapabilities = (capabilities: ThemeCapabilities): string[] => {
   const errors: string[] = [];
+  const isObject = (value: unknown): boolean => typeof value === "object" && value !== null && !Array.isArray(value);
   const check = (value: unknown, field: string) => {
     if (typeof value !== "number" || !Number.isFinite(value) || value < 0) errors.push(field);
   };
-  for (const [slot, region] of Object.entries(capabilities.regions ?? {})) {
+  if (capabilities.regions !== undefined && !isObject(capabilities.regions)) errors.push("regions");
+  for (const [slot, region] of Object.entries(isObject(capabilities.regions) ? capabilities.regions! : {})) {
     if (!["slogan", "user", "main"].includes(slot)) errors.push(`regions.${slot}`);
-    if (region.inset) for (const side of ["top", "right", "bottom", "left"] as const) check(region.inset[side], `regions.${slot}.inset.${side}`);
-    for (const [column, inset] of Object.entries(region.columns ?? {})) {
+    if (!isObject(region)) { errors.push(`regions.${slot}`); continue; }
+    if (region.fillsPageTop !== undefined && typeof region.fillsPageTop !== "boolean") errors.push(`regions.${slot}.fillsPageTop`);
+    if (region.inset !== undefined && !isObject(region.inset)) errors.push(`regions.${slot}.inset`);
+    if (isObject(region.inset)) for (const side of ["top", "right", "bottom", "left"] as const) check(region.inset![side], `regions.${slot}.inset.${side}`);
+    if (region.columns !== undefined && !isObject(region.columns)) errors.push(`regions.${slot}.columns`);
+    for (const [column, inset] of Object.entries(isObject(region.columns) ? region.columns! : {})) {
       if (!["left", "right"].includes(column)) errors.push(`regions.${slot}.columns.${column}`);
+      if (!isObject(inset)) { errors.push(`regions.${slot}.columns.${column}`); continue; }
       check(inset.left, `regions.${slot}.columns.${column}.left`);
       check(inset.right, `regions.${slot}.columns.${column}.right`);
     }
   }
+  if (capabilities.userContent !== undefined && !isObject(capabilities.userContent)) errors.push("userContent");
   if (capabilities.userContent && !["whole", "blocks"].includes(capabilities.userContent.split)) errors.push("userContent.split");
+  if (capabilities.userContent && (typeof capabilities.userContent.renderer !== "string" || !capabilities.userContent.renderer.trim())) errors.push("userContent.renderer");
+  if (capabilities.usesDateRail !== undefined && typeof capabilities.usesDateRail !== "boolean") errors.push("usesDateRail");
+  if (capabilities.topDecoration !== undefined && (typeof capabilities.topDecoration !== "string" || !capabilities.topDecoration.trim())) errors.push("topDecoration");
+  if (capabilities.restrictions !== undefined && !isObject(capabilities.restrictions)) errors.push("restrictions");
+  for (const [key, reason] of Object.entries(isObject(capabilities.restrictions) ? capabilities.restrictions! : {})) {
+    if (!["user.avatarPosition", "user.infoLayout", "page.background", "content.datePosition"].includes(key) || typeof reason !== "string" || !reason.trim()) errors.push(`restrictions.${key}`);
+  }
+  return errors;
+};
+
+/** 未声明的固定能力使用默认值，显式错误必须报告字段而不能静默纠正。 */
+export const validateThemeDecisions = (decisions: Partial<ThemeDecisions>): string[] => {
+  const errors = validateThemeCapabilities(decisions);
+  if (decisions.pageBorder !== undefined && (typeof decisions.pageBorder !== "object" || decisions.pageBorder === null || Array.isArray(decisions.pageBorder))) errors.push("pageBorder");
+  if (decisions.layoutType !== undefined && !isPageLayoutTemplateId(decisions.layoutType)) errors.push("layoutType");
+  if (decisions.pageBorder?.width !== undefined && (typeof decisions.pageBorder.width !== "number" || !Number.isFinite(decisions.pageBorder.width) || decisions.pageBorder.width < 0)) errors.push("pageBorder.width");
+  if (decisions.pageBorder?.color !== undefined && (typeof decisions.pageBorder.color !== "string" || !decisions.pageBorder.color.trim())) errors.push("pageBorder.color");
+  if (decisions.pageBackgroundPattern !== undefined && (typeof decisions.pageBackgroundPattern !== "string" || !decisions.pageBackgroundPattern.trim())) errors.push("pageBackgroundPattern");
   return errors;
 };

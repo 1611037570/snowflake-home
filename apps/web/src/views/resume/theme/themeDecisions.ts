@@ -1,7 +1,10 @@
-import { isPageLayoutTemplateId, type PageLayoutTemplateId } from "./layouts";
+import type { PageLayoutTemplateId } from "./layouts";
 import { resumeThemeRegistry } from "./styles";
 import type { ThemeCapabilities } from "./themeContract";
-import { validateThemeCapabilities } from "./themeContract";
+import { validateThemeDecisions } from "./themeContract";
+import { resolveUserContent } from "./components/userModule/registry";
+import { resolvePageDecoration } from "./components/pageDecoration/registry";
+import { pageAppearanceRegistry } from "./components/pageContainer/registry";
 
 /**
  * 主题决策字段：由主题定义决定、编辑器不提供修改入口，因此只按主题编号解析，
@@ -39,16 +42,22 @@ export const resolveThemeDecisions = (themeId?: string): ThemeDecisions => {
   const cached = decisionCache.get(id);
   if (cached) return cached;
   const themeDecisions = resumeThemeRegistry[id]?.decisions ?? {};
-  const errors = validateThemeCapabilities(themeDecisions);
+  const errors = validateThemeDecisions(themeDecisions);
+  // 显式组件编号与绘制入口共用注册表，漏登记在主题解析时直接报告。
+  if (themeDecisions.userContent && !errors.includes("userContent.renderer")) {
+    try { resolveUserContent(themeDecisions.userContent); } catch { errors.push("userContent.renderer"); }
+  }
+  if (themeDecisions.topDecoration && !errors.includes("topDecoration")) {
+    try { resolvePageDecoration(themeDecisions.topDecoration); } catch { errors.push("topDecoration"); }
+  }
+  if (themeDecisions.pageBackgroundPattern && !pageAppearanceRegistry.components[themeDecisions.pageBackgroundPattern]) errors.push("pageBackgroundPattern");
   if (errors.length) throw new Error(`主题固定声明无效：${id} ${errors.join("、")}`);
   const layoutType = themeDecisions.layoutType;
   const decisions: ThemeDecisions = {
     ...themeDecisions,
-    layoutType: isPageLayoutTemplateId(layoutType)
-      ? layoutType
-      : DEFAULT_THEME_DECISIONS.layoutType,
+    layoutType: layoutType ?? DEFAULT_THEME_DECISIONS.layoutType,
     pageBorder: {
-      width: Math.max(0, Number(themeDecisions.pageBorder?.width ?? DEFAULT_THEME_DECISIONS.pageBorder.width) || 0),
+      width: themeDecisions.pageBorder?.width ?? DEFAULT_THEME_DECISIONS.pageBorder.width,
       color: themeDecisions.pageBorder?.color ?? DEFAULT_THEME_DECISIONS.pageBorder.color,
     },
     ...(themeDecisions.pageBackgroundPattern
