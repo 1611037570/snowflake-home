@@ -17,7 +17,7 @@ export const resolveColumnWidths = (
     // 栏宽按区域内容盒计算，容器内边距只在这里扣除一次。
     const available = Math.max(
       0,
-      (region.id === "slogan" ? fullWidth : contentWidth) -
+      (region.widthMode === "page" ? fullWidth : contentWidth) -
         (region.padding?.left ?? 0) -
         (region.padding?.right ?? 0) -
         totalGap,

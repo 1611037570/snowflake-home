@@ -1,20 +1,3 @@
-<script>
-// 正文留白由组件声明，分页和真实预览读取相同尺寸。
-const regionPadding = {
-  top: 0, // 顶部留白沿用页面设置，不叠加固定间距
-  right: 0, // 右侧留白沿用页面设置
-  bottom: 0, // 底部留白沿用页面设置
-  left: 0, // 左侧留白沿用页面设置
-};
-export default {
-  regionPadding, // 区域装饰内边距
-  columnPadding: [
-    { left: 0, right: 0 }, // 左栏不添加装饰留白
-    { left: 48, right: 0 }, // 右栏竖线到内容的固定距离
-  ], // 双栏装饰尺寸统一交给布局结算
-};
-</script>
-
 <script setup>
 import { useResumePreviewContext } from "@/views/resume/editor/preview/shared/previewContext";
 

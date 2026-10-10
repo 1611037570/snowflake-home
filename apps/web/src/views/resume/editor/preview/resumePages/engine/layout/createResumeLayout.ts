@@ -1,11 +1,7 @@
 import type { PageLayoutConfig } from "../pageLayoutTypes";
 import { createDefaultPageLayoutTemplate } from "./layoutTemplates";
 import type { ThemeDecisions } from "@/views/resume/theme/themeDecisions";
-import { resolveRegionPadding } from "@/views/resume/theme/regionPadding";
-import {
-  resolveRegionFillsPageTop,
-  resolveRegionAppearance,
-} from "@/views/resume/theme/components/regionContainer/registry";
+import { EMPTY_THEME_INSET } from "@/views/resume/theme/themeContract";
 import { resolveRegionSlot } from "@/views/resume/theme/regionSlots";
 
 /** 创建当前简历使用的页面布局，单栏与多栏统一走布局模板入口。 */
@@ -44,10 +40,12 @@ export const createResumeLayout = ({
     leftWidthPercent: leftColumnWidth,
     columns: ui.layout?.columns,
   });
-  // 顶部通栏区域：标语区域恒从纸张顶边开始，个人信息区域是否铺顶由组件声明
-  const fullBleedRegionId = layout.regions.some((region) => region.id === "slogan")
-    ? "slogan"
-    : layout.regions[0]?.id === "user" && resolveRegionFillsPageTop(ui.theme?.template, "user")
+  // 顶部独立装饰与标语从纸张顶边排版，个人信息铺顶能力读取主题声明。
+  const fullBleedRegionId = themeDecisions.topDecoration
+    ? "decoration"
+    : layout.regions.some((region) => region.widthMode === "page")
+    ? layout.regions.find((region) => region.widthMode === "page")!.id
+    : layout.regions[0]?.id === "user" && themeDecisions.regions?.user?.fillsPageTop
       ? "user"
       : null;
   // 页面上边距统一计入承载个人信息的区域上留白，不产生区域之间的外边距
@@ -60,22 +58,24 @@ export const createResumeLayout = ({
   const userRegionIndex = layout.regions.findIndex((region) => region.id === "user");
   const moduleGapRegionId =
     userRegionIndex >= 0 ? (layout.regions[userRegionIndex + 1]?.id ?? null) : null;
-  // 各区域留白统一读取对应外观组件的尺寸，供栏宽与分页共同使用；区域之间的间距也全部来自这份留白。
+  // 装饰尺寸统一读取主题契约，区域之间的距离仅由公共模块间距结算。
   return {
     ...layout,
     fullBleedRegionId,
     regions: layout.regions.map((region) => {
       const slot = resolveRegionSlot(region.id);
-      const padding = resolveRegionPadding(ui, region.id);
+      const contract = slot ? themeDecisions.regions?.[slot] : undefined;
+      const padding = contract?.inset ?? EMPTY_THEME_INSET;
       // 区域之间只使用公共模块间距；装饰内边距独立声明，不能覆盖它。
       const regionGapBefore = region.id === moduleGapRegionId ? gap : 0;
-      const columnPadding = resolveRegionAppearance(ui.theme?.template, slot).columnPadding;
       return {
         ...region,
-        // 按相同栏数匹配装饰尺寸，不按主题名称判断，也不影响单栏布局。
+        // 栏位由公共双栏结构确定，主题通过语义编号声明内部装饰空间。
         columns: region.columns.map((column, index) => ({
           ...column,
-          ...(columnPadding?.length === region.columns.length ? { padding: columnPadding[index] } : {}),
+          ...(region.columns.length === 2 && contract?.columns
+            ? { padding: contract.columns[index === 0 ? "left" : "right"] }
+            : {}),
         })),
         padding:
           region.id === topMarginRegionId

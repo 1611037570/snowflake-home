@@ -1,4 +1,4 @@
-import { computed } from "vue";
+import { computed, toValue, type MaybeRefOrGetter } from "vue";
 import { getItemFragmentStyle } from "@/views/resume/editor/preview/resumePages/render/itemStyle";
 
 /** 条目分片与盒模型入参：由条目外观组件原样透传父级下发的分片信息 */
@@ -22,9 +22,9 @@ export interface ItemBoxOptions {
   /** 条目四周内边距，缺省为 0 */
   padding?: string;
   /** 条目底色 */
-  backgroundColor?: string;
+  backgroundColor?: MaybeRefOrGetter<string>;
   /** 条目描边色 */
-  borderColor?: string;
+  borderColor?: MaybeRefOrGetter<string>;
   /** 强制启用日期栏：时间轴条目外观不依赖外部传入的 timeline 值 */
   timeline?: boolean;
 }
@@ -53,11 +53,11 @@ export const useItemBox = (props: ItemBoxProps, options: ItemBoxOptions) => {
     paddingRight: padding,
     paddingBottom: padding,
     paddingLeft: usesDateRail.value ? "var(--timeline-rail-width)" : paddingLeft,
-    backgroundColor,
+    backgroundColor: toValue(backgroundColor),
   }));
   // 分片片段的边框边缘跟随外壳分片规则收起
   const borderStyle = computed(() => ({
-    borderColor,
+    borderColor: toValue(borderColor),
     borderRadius: "inherit",
     borderTopWidth: fragmentStyle.value.borderTopWidth,
     borderBottomWidth: fragmentStyle.value.borderBottomWidth,

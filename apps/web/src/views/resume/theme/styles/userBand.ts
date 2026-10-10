@@ -6,6 +6,17 @@ export default {
   design: ["single-column", "polished"], // 模板页的分类筛选标签
   description: "个人信息整块铺满页面宽度的主题色底纹，正文保持页面留白。", // 主题说明
   decisions: { // 主题固定外观，不进入用户界面配置
+    regions: { // 区域装饰尺寸
+      user: { // 个人信息区域
+        inset: { // 区域四周装饰内边距
+          top: 0, // 上侧装饰内边距
+          right: 0, // 右侧装饰内边距
+          bottom: 12, // 下侧装饰内边距
+          left: 0, // 左侧装饰内边距
+        },
+        fillsPageTop: true, // 背景覆盖纸张顶边
+      },
+    },
     layoutType: "topUserSingleColumn", // 个人信息独占顶部通栏区域
   },
   ui: {

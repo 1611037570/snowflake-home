@@ -1,14 +1,3 @@
-<script>
-// 正文留白由组件声明，分页与真实预览读取同一份尺寸；模块间距由引擎在模块之间施加。
-const regionPadding = {
-  top: 0, // 首个模块前不加留白，间距由布局结算
-  right: 0, // 水平留白沿用页面配置
-  bottom: 0, // 页尾空间由页面布局统一预留
-  left: 0, // 水平留白沿用页面配置
-};
-export default { regionPadding };
-</script>
-
 <script setup>
 import { layoutStretchesColumns } from "@/views/resume/theme/layouts";
 import { useResumePreviewContext } from "@/views/resume/editor/preview/shared/previewContext";
@@ -49,7 +38,7 @@ const isTwoColumn = () => layoutStretchesColumns(themeDecisions.value.layoutType
   content: "";
   position: absolute;
   top: 0;
-  right: -12px;
+  right: calc(-1 * var(--resume-column-gap-half));
   bottom: calc(-1 * var(--resume-bottom-space, 0px));
   width: 1px;
   background-color: color-mix(in srgb, var(--minimal-divider) 50%, transparent);

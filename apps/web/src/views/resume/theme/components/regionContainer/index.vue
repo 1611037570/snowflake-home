@@ -17,6 +17,10 @@ const props = defineProps({
     type: Object,
     default: undefined,
   },
+  columnGap: { type: Number, default: 0 }, // 公共布局结算的栏间距
+  fullBleed: { type: Boolean, default: false }, // 当前区域是否实际占据纸张全宽
+  topRegionPresent: { type: Boolean, default: false }, // 当前页是否由顶部通栏占位接管页面边距
+  widthMode: { type: String, default: "content" }, // 区域使用纸张全宽或页面内容宽度
 });
 const { themeDecisions, ui } = useResumePreviewContext();
 const slot = computed(() => resolveRegionSlot(props.regionId));
@@ -26,17 +30,31 @@ const appearance = computed(() => resolveRegionAppearance(ui.value?.theme?.templ
 const padding = computed(() => props.regionPadding ?? resolveRegionPadding(ui.value, slot.value));
 const regionStyle = computed(() => {
   const regionPadding = padding.value;
+  // 页面水平内缩由公共盒子处理一次，测量和预览不再分别拼接外边距。
+  const horizontal = Number(ui.value.page?.padding?.horizontal) || 0;
+  const insetPage = props.topRegionPresent && !props.fullBleed && props.widthMode !== "page";
+  // 通栏只延伸背景，内容左右内缩仍由公共页面设置控制。
+  const pageInset = slot.value === "user" && props.fullBleed
+    ? horizontal : 0;
   // 正文处于双栏布局时，底部追加栏内为页脚预留的空间
   const bottomSpace =
     slot.value === "main" && layoutStretchesColumns(themeDecisions.value.layoutType)
       ? "var(--resume-bottom-space, 0px)"
       : "0px";
   return {
+    width: insetPage ? "auto" : undefined, // 页边距以内的区域占用剩余宽度
+    marginLeft: insetPage ? `${horizontal}px` : undefined, // 公共页面左侧内缩
+    marginRight: insetPage ? `${horizontal}px` : undefined, // 公共页面右侧内缩
     paddingTop: `${regionPadding.top}px`, // 区域顶部留白
-    // 左右留白为 0 表示该方向不接管：通栏页眉由组件自行补出页面左右边距
-    ...(regionPadding.right ? { paddingRight: `${regionPadding.right}px` } : {}),
+    paddingRight: `${regionPadding.right + pageInset}px`, // 装饰内边距与通栏页面内缩
     paddingBottom: `calc(${regionPadding.bottom}px + ${bottomSpace})`, // 区域底部留白与栏内页尾空间
-    ...(regionPadding.left ? { paddingLeft: `${regionPadding.left}px` } : {}),
+    paddingLeft: `${regionPadding.left + pageInset}px`, // 装饰内边距与通栏页面内缩
+    "--resume-region-inset-top": `${regionPadding.top}px`, // 区域内部顶部定位基准
+    "--resume-region-inset-left": `${regionPadding.left}px`, // 区域内部左侧定位基准
+    "--resume-column-gap-half": `${props.columnGap / 2}px`, // 栏间装饰的中心定位基准
+    "--resume-page-inset-horizontal": `${Number(ui.value.page?.padding?.horizontal) || 0}px`, // 装饰延伸到纸张侧边的距离
+    "--resume-page-inset-vertical": `${Number(ui.value.page?.padding?.vertical) || 0}px`, // 装饰延伸到纸张顶边的距离
+    gap: `${props.columnGap}px`, // 测量与预览共用的栏间距
   };
 });
 </script>

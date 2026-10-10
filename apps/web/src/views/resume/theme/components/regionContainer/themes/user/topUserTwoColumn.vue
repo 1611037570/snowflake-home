@@ -1,14 +1,3 @@
-<script>
-// 页眉留白同时供真实预览与分页高度计算读取，区域容器据此施加等值内边距。
-const regionPadding = {
-  top: 0, // 上边距统一使用页面设置，不叠加主题留白
-  right: 0, // 水平留白沿用页面设置
-  bottom: 0, // 个人信息与正文之间只使用模块间距
-  left: 0, // 水平留白沿用页面设置
-};
-export default { regionPadding };
-</script>
-
 <script setup>
 import { computed } from "vue";
 import { useResumePreviewContext } from "@/views/resume/editor/preview/shared/previewContext";

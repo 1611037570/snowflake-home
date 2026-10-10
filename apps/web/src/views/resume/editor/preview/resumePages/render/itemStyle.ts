@@ -4,7 +4,7 @@ import type { LayoutNode } from "../engine/types";
 export const isItemNode = (node: LayoutNode) =>
   node.type !== "spacer" &&
   node.type !== "title" &&
-  !(node.type === "group" && node.sourceModuleKey === "user");
+  node.contentKind !== "user";
 
 // 模块标题是排版元素，不参与条目交互：不区分悬停背景，也不响应点击定位。
 export const isTitleNode = (node: LayoutNode) => node.type === "title";

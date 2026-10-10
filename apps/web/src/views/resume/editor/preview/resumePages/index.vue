@@ -8,8 +8,9 @@ import { expandConfigModules } from "@/stores/modules/resume/hooks/useConfigTemp
 import ResumePageShell from "./resumePageShell.vue";
 import LayoutMeasureTree from "./render/measure/layoutMeasureTree.vue";
 import Column from "./render/column.vue";
+import ColumnBox from "./render/columnBox.vue";
 import RegionContainer from "@/views/resume/theme/components/regionContainer/index.vue";
-import { hasThemeSlogan } from "@/views/resume/theme/components/sloganModule/registry";
+import PageDecoration from "@/views/resume/theme/components/pageDecoration/index.vue";
 import { useResumePages } from "./useResumePages";
 import { resolveRegionGap } from "./engine/layout/regionFlows";
 import { getContrastTextColor, useResumeTheme } from "@/views/resume/theme/useResumeTheme";
@@ -88,8 +89,8 @@ const themeDecisions = computed(() => resolveThemeDecisions(ui.value?.theme?.tem
 // 页面级外观由主题声明，公共页面只读取声明，不再判断主题编号
 const themePageAppearance = computed(() => resolveThemePageAppearance(ui.value?.theme?.template));
 // 轻量判空：命中第一处正文文本即结束，避免为判空执行全量字数统计
-// 主题自带的顶部标语可独立构成预览内容，不依赖简历数据。
-const isEmpty = computed(() => isEmptyResume(dataRef.value) && !hasThemeSlogan(ui.value?.theme?.template));
+// 顶部独立装饰不构成业务内容，空简历仅根据真实数据判断。
+const isEmpty = computed(() => isEmptyResume(dataRef.value));
 
 // ---------- 主题样式注入（数据源为 item.ui）----------
 // 简历展示语言：供预览标题语言包使用
@@ -187,18 +188,6 @@ const renderSignature = computed(() =>
     [...userFieldLabels.value.entries()],
   ]),
 );
-// 预览模块统一从上下文读取运行时数据。
-provideResumePreviewContext({
-  data: dataRef,
-  lang: previewLang,
-  ui,
-  theme: themeStyles,
-  themeDecisions, // 当前主题固定版式与纸张外观
-  showPageNumber,
-  userHiddenFields,
-  userFieldOrder,
-  userFieldLabels,
-});
 const {
   measureDone,
   pages,
@@ -221,33 +210,30 @@ const {
   renderSignature,
   allModules,
 });
+// 预览模块统一从上下文读取运行时数据。
+provideResumePreviewContext({
+  data: dataRef,
+  lang: previewLang,
+  ui,
+  theme: themeStyles,
+  themeDecisions, // 当前主题固定版式与纸张外观
+  layout, // 图片等正文组件复用公共引擎结算后的几何
+  showPageNumber,
+  userHiddenFields,
+  userFieldOrder,
+  userFieldLabels,
+});
 const layoutColumnGap = computed(() => layout.value.columnGap || 0);
 // 测量树使用布局结算后的留白，包含通栏页眉下方的用户页面上边距。
-const regionPaddingMap = computed(() => Object.fromEntries(
-  layout.value.regions.map((region) => [region.id, region.padding]),
-));
+const regionConfigMap = computed(() => new Map(layout.value.regions.map((region) => [region.id, region])));
 const columnConfigMap = computed(
   () =>
     new Map(
       layout.value.regions.flatMap((region) => region.columns.map((column) => [column.id, column])),
     ),
 );
-// 栏宽由引擎解析后下发，渲染与测量使用同一份数值，避免两处各算一遍
-const getColumnStyle = (columnId) => {
-  const width = columnWidths.value.get(columnId);
-  if (width === undefined) return { flex: "1 1 0%" };
-  const padding = columnConfigMap.value.get(columnId)?.padding;
-  // 栏宽包含装饰内边距，内容宽度由同一个边框盒约束，测量与预览各施加一次。
-  return {
-    flex: `0 0 ${width}px`, // 栏外部占用宽度
-    width: `${width}px`, // 栏外部宽度
-    boxSizing: "border-box", // 内边距包含在栏宽内
-    paddingLeft: `${padding?.left ?? 0}px`, // 左侧装饰内边距
-    paddingRight: `${padding?.right ?? 0}px`, // 右侧装饰内边距
-  };
-};
 const getColumnGap = (columnId) => columnConfigMap.value.get(columnId)?.gap || 0;
-// 首页顶端通栏区域由布局和区域组件共同声明。
+// 首页顶端通栏占位由公共布局读取主题能力后结算。
 const pageTopRegionId = (page) => page.pageIndex === 0 ? fullBleedTopRegionId.value : null;
 const getRegionTopGap = (page, regionId) => {
   const visibleRegions = page.regions.filter((region) =>
@@ -263,18 +249,6 @@ const getRegionTopGap = (page, regionId) => {
 // 区域留白以引擎结算结果为准：布局注入的页面上边距等必须一起渲染，否则视觉与分页口径会分叉
 const getRegionPadding = (regionId) =>
   layout.value.regions.find((region) => region.id === regionId)?.padding;
-// 首页标语占据纸张全宽，后续区域在自身外侧保留左右页边距。
-const getRegionStyle = (page, regionId) => ({
-  gap: `${layoutColumnGap.value}px`,
-  ...(pageTopRegionId(page) && regionId !== pageTopRegionId(page)
-    ? {
-        width: "auto",
-        marginLeft: `${pagePadding.value.left}px`,
-        marginRight: `${pagePadding.value.right}px`,
-      }
-    : {}),
-});
-
 // 预览就绪：空简历直接展示提示页，其余以新引擎完成测量为准。
 const previewMeasured = computed(() => isEmpty.value || measureDone.value);
 const visiblePages = computed(() => (isThumb.value ? pages.value.slice(0, 1) : pages.value));
@@ -339,7 +313,8 @@ defineExpose({
       <Teleport to="body">
         <LayoutMeasureTree
           :groups="measureGroups"
-          :region-paddings="regionPaddingMap"
+          :region-configs="layout.regions"
+          :column-gap="layoutColumnGap"
           :top-region-id="fullBleedTopRegionId"
           :width="RESUME_WIDTH"
           :root-class="ui.font?.family"
@@ -391,6 +366,7 @@ defineExpose({
           >
             <!-- 正文区域铺满页面剩余高度，两栏因此都能拿到完整高度 -->
             <div class="flex min-h-0 min-w-0 flex-1 flex-col">
+              <PageDecoration v-if="page.pageIndex === 0" />
               <template v-for="region in page.regions" :key="region.regionId">
                 <!-- 模块间距渲染成两个区域之间的独立间隙：两侧区域都不含这段高度 -->
                 <div
@@ -403,15 +379,18 @@ defineExpose({
                   v-if="region.columns.some((column) => column.fragments.length > 0)"
                   :region-id="region.regionId"
                   :region-padding="getRegionPadding(region.regionId)"
+                  :column-gap="layoutColumnGap"
+                  :full-bleed="region.regionId === pageTopRegionId(page)"
                   class="flex w-full min-w-0"
-                  :style="getRegionStyle(page, region.regionId)"
+                  :top-region-present="Boolean(pageTopRegionId(page))"
+                  :width-mode="regionConfigMap.get(region.regionId)?.widthMode"
                 >
                   <!-- 栏自身作为定位基准，主题的背景层用绝对定位铺满栏内 -->
-                  <div
+                  <ColumnBox
                     v-for="(column, columnIndex) in region.columns"
                     :key="column.columnId"
-                    class="relative min-w-0"
-                    :style="getColumnStyle(column.columnId)"
+                    :width="columnWidths.get(column.columnId)"
+                    :padding="columnConfigMap.get(column.columnId)?.padding"
                   >
                     <Column
                       :column="column"
@@ -430,7 +409,7 @@ defineExpose({
                       @select="emit('module-select', $event)"
                       @move="(payload) => handleModuleMove(payload, column.columnId)"
                     />
-                  </div>
+                  </ColumnBox>
                 </RegionContainer>
               </template>
             </div>

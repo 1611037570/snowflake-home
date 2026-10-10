@@ -11,6 +11,11 @@ export default {
   description: "通栏弧形页眉搭配居中圆形头像，姓名与联系方式居中排列。",
   /** 主题外观设置 */
   decisions: { // 主题固定外观，不进入用户界面配置
+    regions: { // 区域装饰尺寸
+      user: { // 个人信息区域
+        fillsPageTop: true, // 背景覆盖纸张顶边
+      },
+    },
     layoutType: "topUserSingleColumn", // 主题固定页面版式
   },
   ui: {

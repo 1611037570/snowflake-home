@@ -1,8 +1,7 @@
 <script setup lang="ts">
 import { computed } from "vue";
-import Item from "@/views/resume/theme/components/itemContainer/index.vue";
-import { isItemNode, isTitleNode } from "./itemStyle";
-import LayoutNodeContent from "./layoutNodeContent.vue";
+import { isTitleNode } from "./itemStyle";
+import NodeFragment from "./nodeFragment.vue";
 import type { LayoutNode } from "../engine/types";
 import type { FragmentPlan } from "../engine/paginate/pagePlan";
 
@@ -43,63 +42,19 @@ const hoverBackgroundClass = computed(() =>
 </script>
 
 <template>
-  <!-- 普通模块与个人信息模块共用同一份条目内容；模块标题由独立节点渲染。 -->
+  <!-- 测量与预览共用节点外框和正文分发，模块这里只编排分片与交互。 -->
   <template v-for="(entry, itemIndex) in items" :key="entry.fragment.fragmentId">
-    <template v-if="acceptsNode(entry.fragment)">
-      <Item
-        v-if="isItemNode(getNode(entry.fragment)!)"
-        :block-range="entry.fragment.blockRange"
-        :content-range="entry.fragment.contentRange"
-        :decoration="entry.fragment.decoration"
-        :node-type="getNode(entry.fragment)!.type"
-        class="resume-submodule-content relative"
-        :class="hoverBackgroundClass"
-        data-layout-block-range
-        @click.stop="handleContentClick(getNode(entry.fragment)!)"
-        v-slot="{ dateRail }"
-      >
-        <LayoutNodeContent
-          :node="getNode(entry.fragment)!"
-          :date-rail="dateRail"
-          :payload="entry.fragment.payload"
-          :content-range="entry.fragment.contentRange"
-          :block-range="entry.fragment.blockRange"
-          :decoration="entry.fragment.decoration"
-          :show-debug="showDebug"
-          :leading-on-page="isLeadingOnPage(itemIndex)"
-        />
-      </Item>
-      <div v-else-if="isTitleNode(getNode(entry.fragment)!)">
-        <!-- 模块标题是排版元素：不带悬停背景，也不参与点击定位 -->
-        <LayoutNodeContent
-          :node="getNode(entry.fragment)!"
-          :payload="entry.fragment.payload"
-          :content-range="entry.fragment.contentRange"
-          :block-range="entry.fragment.blockRange"
-          :decoration="entry.fragment.decoration"
-          :show-debug="showDebug"
-          :leading-on-page="isLeadingOnPage(itemIndex)"
-        />
-      </div>
-      <div
-        v-else
-        @click.stop="handleContentClick(getNode(entry.fragment)!)"
-        :class="
-          getNode(entry.fragment)!.type === 'spacer'
-            ? ''
-            : ['resume-submodule-content relative', hoverBackgroundClass]
-        "
-      >
-        <LayoutNodeContent
-          :node="getNode(entry.fragment)!"
-          :payload="entry.fragment.payload"
-          :content-range="entry.fragment.contentRange"
-          :block-range="entry.fragment.blockRange"
-          :decoration="entry.fragment.decoration"
-          :show-debug="showDebug"
-          :leading-on-page="isLeadingOnPage(itemIndex)"
-        />
-      </div>
-    </template>
+    <NodeFragment
+      v-if="acceptsNode(entry.fragment)"
+      :node="getNode(entry.fragment)!"
+      :payload="entry.fragment.payload"
+      :content-range="entry.fragment.contentRange"
+      :block-range="entry.fragment.blockRange"
+      :decoration="entry.fragment.decoration"
+      :show-debug="showDebug"
+      :leading-on-page="isLeadingOnPage(itemIndex)"
+      :class="isTitleNode(getNode(entry.fragment)!) || getNode(entry.fragment)!.type === 'spacer' ? undefined : ['resume-submodule-content relative', hoverBackgroundClass]"
+      @click.stop="handleContentClick(getNode(entry.fragment)!)"
+    />
   </template>
 </template>

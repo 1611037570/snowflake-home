@@ -1,4 +1,5 @@
 import type { PageLayoutConfig } from "../pageLayoutTypes";
+import { resolveColumnWidths } from "./resolveColumnWidths";
 
 /** 页面布局配置校验结果 */
 export interface LayoutConfigValidation {
@@ -56,6 +57,8 @@ export const validateLayoutConfig = (
     columnIds.filter((id, index) => columnIds.indexOf(id) !== index),
   );
   const invalidLayoutFields: string[] = [];
+  // 内边距必须落在真实栏宽内，不能仅检查原始数字是否非负。
+  const widths = resolveColumnWidths(layout, layout.pageSize.width - layout.pagePadding.left - layout.pagePadding.right, layout.pageSize.width);
 
   if (!isPositiveNumber(layout.pageSize.width)) invalidLayoutFields.push("pageSize.width");
   if (!isPositiveNumber(layout.pageSize.height)) invalidLayoutFields.push("pageSize.height");
@@ -66,6 +69,9 @@ export const validateLayoutConfig = (
     }
   });
   layout.regions.forEach((region, regionIndex) => {
+    if (region.widthMode !== undefined && !["page", "content"].includes(region.widthMode)) {
+      invalidLayoutFields.push(`regions[${regionIndex}].widthMode`);
+    }
     if (!region.id.trim()) invalidLayoutFields.push(`regions[${regionIndex}].id`);
     if (!Number.isFinite(region.order)) invalidLayoutFields.push(`regions[${regionIndex}].order`);
     if (region.height.mode === "fixed" && !isNonNegativeNumber(region.height.value)) {
@@ -80,6 +86,14 @@ export const validateLayoutConfig = (
       });
     }
     region.columns.forEach((column, columnIndex) => {
+      if (column.padding) {
+        for (const side of ["left", "right"] as const) {
+          if (!isNonNegativeNumber(column.padding[side])) invalidLayoutFields.push(`regions[${regionIndex}].columns[${columnIndex}].padding.${side}`);
+        }
+      }
+      if ((widths.get(column.id) ?? 0) - (column.padding?.left ?? 0) - (column.padding?.right ?? 0) <= 0) {
+        invalidLayoutFields.push(`regions[${regionIndex}].columns[${columnIndex}].contentWidth`);
+      }
       if (!column.id.trim()) {
         invalidLayoutFields.push(`regions[${regionIndex}].columns[${columnIndex}].id`);
       }

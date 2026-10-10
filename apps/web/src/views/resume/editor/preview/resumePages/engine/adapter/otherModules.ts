@@ -2,7 +2,6 @@ import { getValidData, getValidDataEntries } from "../../../shared/validData";
 import type { LayoutNode } from "../types";
 import type { LayoutAdapter, LayoutAdapterContext, LayoutAdapterRegistry } from "./index";
 import { createExperienceModuleAdapter } from "./experienceModules";
-import { hasThemeSlogan } from "@/views/resume/theme/components/sloganModule/registry";
 
 /** 需要使用通用条目块结构的模块 key */
 const LIST_MODULE_KEYS = ["account", "honor"] as const;
@@ -26,6 +25,7 @@ const createUserModuleAdapter = (context: LayoutAdapterContext): LayoutNode[] =>
       id: "user",
       sourceModuleKey: "user",
       type: "group",
+      contentKind: "user", // 个人信息内容语义
       payload: { moduleKey: "user" },
     },
   ];
@@ -35,20 +35,19 @@ const createUserModuleAdapter = (context: LayoutAdapterContext): LayoutNode[] =>
 const createSloganModuleAdapter = (context: LayoutAdapterContext): LayoutNode[] => {
   const moduleData = context.data.slogan;
   const sloganData = getValidData((moduleData as { data?: unknown })?.data);
-  // 主题自带的标语不依赖用户数据；普通内容模板仍按已有标语字段判断。
-  const builtInSlogan = hasThemeSlogan((context.ui as any)?.theme?.template);
   const hasSloganField =
     sloganData && typeof sloganData === "object" && !Array.isArray(sloganData) &&
     Object.values(sloganData as Record<string, unknown>).some(
       (value) => value !== undefined && value !== null && value !== "",
     );
-  if (!builtInSlogan && !hasSloganField) return [];
+  if (!hasSloganField) return [];
 
   return [
     {
       id: "slogan",
       sourceModuleKey: "slogan",
       type: "group",
+      contentKind: "slogan", // 用户标语内容语义
       payload: { moduleKey: "slogan" },
     },
   ];
@@ -67,6 +66,7 @@ const createListModuleAdapter =
       sourceModuleKey: moduleKey,
       sourceItemIndex: index,
       type: "block" as const,
+      contentKind: moduleKey, // 账号与荣誉使用对应语义组件
       payload: {
         part: "item",
         item,
@@ -87,6 +87,7 @@ const createMediaModuleAdapter =
       sourceModuleKey: moduleKey,
       sourceItemIndex: index,
       type: "media" as const,
+      contentKind: moduleKey, // 图片与视频使用对应语义组件
       payload: {
         mediaType: moduleKey,
         item,
@@ -102,8 +103,14 @@ const createCustomModuleFallback = (context: LayoutAdapterContext): LayoutNode[]
 
 /** 注册剩余内置模块和自定义模块适配器 */
 export const registerOtherModuleAdapters = (registry: LayoutAdapterRegistry) => {
-  registry.register("user", createUserModuleAdapter);
-  registry.register("slogan", createSloganModuleAdapter);
+  registry.register("user", createUserModuleAdapter, {
+    title: false, // 个人信息组件自行展示姓名
+    paragraphSpacing: false, // 页眉不插入条目段间距
+  });
+  registry.register("slogan", createSloganModuleAdapter, {
+    title: false, // 用户标语没有独立模块标题
+    paragraphSpacing: false, // 标语区域不插入条目段间距
+  });
   LIST_MODULE_KEYS.forEach((moduleKey) => {
     registry.register(moduleKey, createListModuleAdapter(moduleKey));
   });

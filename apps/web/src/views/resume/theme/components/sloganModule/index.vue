@@ -1,11 +1,8 @@
 <script setup>
-import { computed } from "vue";
-import { useResumePreviewContext } from "@/views/resume/editor/preview/shared/previewContext";
 import { resolveSloganComponent } from "./registry";
 
-// 入口只按主题编号选择组件，内容与尺寸由主题组件维护。
-const { ui } = useResumePreviewContext();
-const current = computed(() => resolveSloganComponent(ui.value?.theme?.template));
+// 用户标语与主题占位装饰分离，内容只来自简历字段。
+const current = resolveSloganComponent();
 </script>
 
 <template>

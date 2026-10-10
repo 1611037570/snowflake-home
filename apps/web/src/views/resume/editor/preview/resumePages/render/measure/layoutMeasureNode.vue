@@ -1,39 +1,15 @@
 <script setup lang="ts">
-import { computed } from "vue";
-import Item from "@/views/resume/theme/components/itemContainer/index.vue";
-import { isItemNode } from "../itemStyle";
-import LayoutNodeContent from "../layoutNodeContent.vue";
-import UserModule from "@/views/resume/theme/components/userContainer/index.vue";
+import NodeFragment from "../nodeFragment.vue";
 import type { LayoutNode } from "../../engine/types";
 
-const props = defineProps<{ node: LayoutNode }>();
-// 测量树复用同一条目外观组件，圆角与留白由外观自己声明，确保测量尺寸与实际预览一致。
-const useItem = computed(() => isItemNode(props.node));
-const isUserModule = computed(
-  () => props.node.type === "group" && props.node.sourceModuleKey === "user",
-);
-/** 完整节点覆盖全部块，不裁剪任何圆角与留白 */
-const FULL_BLOCK_RANGE = { start: 0, end: Number.MAX_SAFE_INTEGER };
+const props = defineProps<{ node: LayoutNode /* 待测量排版节点 */ }>();
 </script>
 
 <template>
   <div class="layout-measure-record">
     <div class="layout-measure-node" :data-layout-node-id="node.id">
-      <Item
-        v-if="useItem"
-        :block-range="FULL_BLOCK_RANGE"
-        :decoration="'full'"
-        :node-type="node.type"
-        data-layout-block-range
-        v-slot="{ dateRail }"
-      >
-        <LayoutNodeContent :node="node" :date-rail="dateRail" />
-      </Item>
-      <UserModule v-else-if="isUserModule">
-        <LayoutNodeContent :node="node" />
-      </UserModule>
-      <LayoutNodeContent v-else :node="node" />
-      <!-- 断点探针按首段内容样式渲染，量出的高度与真实首段一致（含容器外边距与上内边距） -->
+      <NodeFragment :node="node" measurement />
+      <!-- 断点探针与完整节点共用相同外框和正文组件，只有字符区间不同。 -->
       <div
         v-for="point in node.breakPoints"
         :key="point.offset"
@@ -41,33 +17,10 @@ const FULL_BLOCK_RANGE = { start: 0, end: Number.MAX_SAFE_INTEGER };
         :data-layout-breakpoint-offset="point.offset"
         :style="{ width: '100%' }"
       >
-        <Item
-          v-if="useItem"
-          :block-range="FULL_BLOCK_RANGE"
-          :content-range="{ start: 0, end: point.offset }"
-          :decoration="'top'"
-          :node-type="node.type"
-          data-layout-block-range
-          v-slot="{ dateRail }"
-        >
-          <LayoutNodeContent
-            :node="node"
-            :date-rail="dateRail"
-            :decoration="'top'"
-            :content-range="{ start: 0, end: point.offset }"
-          />
-        </Item>
-        <UserModule v-else-if="isUserModule">
-          <LayoutNodeContent
-            :node="node"
-            :decoration="'top'"
-            :content-range="{ start: 0, end: point.offset }"
-          />
-        </UserModule>
-        <LayoutNodeContent
-          v-else
+        <NodeFragment
           :node="node"
-          :decoration="'top'"
+          measurement
+          decoration="top"
           :content-range="{ start: 0, end: point.offset }"
         />
       </div>

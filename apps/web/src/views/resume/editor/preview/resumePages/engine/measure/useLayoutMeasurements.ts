@@ -50,8 +50,10 @@ const resolveWatchSignature = (source: Record<string, any>): string => {
     source?.user?.infoLayout,
     source?.user?.avatarPosition,
     source?.user?.infoPosition,
-    JSON.stringify(source?.regionUserPadding || null),
-    JSON.stringify(source?.regionMainPadding || null),
+    JSON.stringify(source?.themeDecisions?.regions || null), // 所有区域与栏几何共用完整声明，不遗漏其他槽位
+    JSON.stringify(source?.themeDecisions?.userContent || null), // 内容组件与分片能力变更重新测量
+    source?.themeDecisions?.topDecoration, // 独立装饰切换重新测量
+    source?.themeDecisions?.usesDateRail, // 日期栏会改变正文宽度
     source?.renderSignature,
     source?.fontReadyVersion,
   ].join("|");
@@ -69,6 +71,7 @@ export const useLayoutMeasurements = ({
 }: UseLayoutMeasurementsOptions) => {
   const measurements = shallowRef<ReadonlyMap<string, MeasuredNode>>(new Map());
   const measureDone = ref(false);
+  const decorationHeight = ref(0); // 首页独立装饰的真实占位高度
   // 节点独立观察尺寸，宿主最小高度不变时也能捕获异步组件与图片增高。
   const resizeTargets = shallowRef<HTMLElement[]>([]);
   let measuring = false;
@@ -88,17 +91,19 @@ export const useLayoutMeasurements = ({
       resizeTargets.value = [];
       measurements.value = new Map();
       measureDone.value = false;
+      decorationHeight.value = 0;
       measuring = false;
       return;
     }
     // 仅在节点元素发生更替时重绑观察器，避免每次测量触发初始尺寸通知。
-    const nextTargets = [root, ...root.querySelectorAll<HTMLElement>("[data-layout-node-id]")];
+    const nextTargets = [root, ...root.querySelectorAll<HTMLElement>("[data-layout-node-id], [data-layout-decoration]")];
     if (
       nextTargets.length !== resizeTargets.value.length ||
       nextTargets.some((element, index) => element !== resizeTargets.value[index])
     ) resizeTargets.value = nextTargets;
     const nextMeasurements = measureLayoutNodes(root, nodes.value);
     measurements.value = nextMeasurements;
+    decorationHeight.value = root.querySelector<HTMLElement>("[data-layout-decoration]")?.getBoundingClientRect().height ?? 0;
     measuredAt = measuringAt;
     measureDone.value = nodes.value.every((node) => nextMeasurements.has(node.id));
     measuring = false;
@@ -137,6 +142,7 @@ export const useLayoutMeasurements = ({
   return {
     measurements,
     measureDone,
+    decorationHeight, // 布局按实测高度扣除首页空间
     measure,
     stop: () => {
       stopWatch();

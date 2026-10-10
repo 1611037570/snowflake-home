@@ -1,5 +1,51 @@
 import { describe, expect, it } from "vitest";
 import { buildLayoutNodes } from "./buildLayoutNodes";
+import { resumeThemeRegistry } from "@/views/resume/theme/styles";
+import { createLayoutAdapterRegistry } from "./index";
+import type { LayoutNode } from "../types";
+
+describe("通用模块装配", () => {
+  it("新注册模块直接获得标题与段间距，不需要维护模块名单", () => {
+    const registry = createLayoutAdapterRegistry();
+    registry.register("new_module", () => [{
+      id: "new_module.content", // 稳定节点编号
+      sourceModuleKey: "new_module", // 新业务模块编号
+      type: "block", // 通用内容块
+      contentKind: "block", // 公共文本内容组件
+      payload: { value: "内容" /* 文本内容 */ }, // 内容载荷
+    }]);
+    const options = {
+      moduleKeys: ["new_module"], // 不在内置名单中的模块
+      data: {}, // 适配器提供本用例载荷
+      ui: { page: { spacing: { paragraph: 12 /* 段间距 */ } } }, // 公共排版配置
+      registry, // 自定义适配器注册表
+    };
+    expect(buildLayoutNodes(options).map((node) => node.type)).toEqual(["title", "spacer", "block"]);
+    registry.register("new_module", registry.resolve("new_module")!, {
+      title: false, // 显式不生成标题
+      paragraphSpacing: false, // 显式不生成段间距
+    });
+    expect(buildLayoutNodes(options).map((node) => node.type)).toEqual(["block"]);
+  });
+
+  it("内容语义变更不会复用旧组件对应的节点", () => {
+    const registry = createLayoutAdapterRegistry();
+    let kind = "account";
+    registry.register("entry", (): LayoutNode[] => [{
+      id: "entry.content", // 不变的节点编号
+      sourceModuleKey: "entry", // 不变的业务来源
+      type: "block", // 不变的算法节点类型
+      contentKind: kind, // 可变的内容组件语义
+      payload: { item: { name: "内容" /* 条目名称 */ } }, // 不变的业务内容
+    }]);
+    const options = { moduleKeys: ["entry"], data: {}, registry }; // 同一业务输入与注册表
+    const first = buildLayoutNodes(options).find((node) => node.id === "entry.content")!;
+    kind = "honor";
+    const second = buildLayoutNodes(options).find((node) => node.id === "entry.content")!;
+    expect(second).not.toBe(first);
+    expect(second.contentKind).toBe("honor");
+  });
+});
 
 describe("buildLayoutNodes media modules", () => {
   it.each(["work", "project", "education", "account", "honor", "image", "video", "custom_demo"])(
@@ -77,6 +123,23 @@ describe("buildLayoutNodes media modules", () => {
 });
 
 describe("buildLayoutNodes slogan module", () => {
+  it("独立装饰能力不生成业务节点，空标语不会被装饰补出", () => {
+    for (const theme of Object.values(resumeThemeRegistry)) {
+      if (!theme.decisions?.topDecoration) continue;
+      const ui = { theme: { template: theme.id /* 当前主题编号 */ } }; // 仅保存主题选择
+      expect(buildLayoutNodes({
+        moduleKeys: [], // 空业务模块清单
+        data: {}, // 空简历数据
+        ui, // 独立装饰不影响业务节点
+      })).toEqual([]);
+      expect(buildLayoutNodes({
+        moduleKeys: ["slogan"], // 显式业务标语模块
+        data: { slogan: { data: { title: "" /* 空标题 */, subtitle: "" /* 空副标题 */ } } }, // 没有真实标语
+        ui, // 装饰与标语保持分离
+      })).toEqual([]);
+    }
+  });
+
   it("顶部标语生成单个分组节点，且不带模块标题", () => {
     const nodes = buildLayoutNodes({
       // 模块列表：只声明顶部标语

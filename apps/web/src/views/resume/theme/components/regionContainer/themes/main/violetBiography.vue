@@ -1,16 +1,3 @@
-<script>
-// 白色圆弧底板保留固定装饰内边距，测量和渲染共同读取；页面边距与模块间距另由公共布局结算。
-const regionPadding = {
-  top: 24, // 正文距离底板上沿的固定内边距
-  right: 24, // 正文距离底板右沿的固定内边距
-  bottom: 24, // 正文距离底板下沿的固定内边距
-  left: 24, // 正文距离底板左沿的固定内边距
-};
-export default {
-  regionPadding, // 正文区域内部留白
-};
-</script>
-
 <script setup>
 import { useResumePreviewContext } from "@/views/resume/editor/preview/shared/previewContext";
 
@@ -39,7 +26,7 @@ const {
   content: "";
   position: absolute;
   top: 0; /* 从正文内容顶部开始，底板内边距已由公共容器施加。 */
-  right: -12px;
+  right: calc(-1 * var(--resume-column-gap-half));
   bottom: 0;
   width: 1px;
   background-color: var(--violet-divider);

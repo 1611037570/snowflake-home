@@ -18,6 +18,7 @@ vi.mock("./adapter/buildLayoutNodes", () => ({
 vi.mock("./measure/useLayoutMeasurements", () => ({
   useLayoutMeasurements: ({ nodes }: { nodes: { value: LayoutNode[] } /* 待测量节点 */ }) => ({
     measureDone: ref(true), // 测量已完成
+    decorationHeight: ref(0), // 本用例没有顶部独立装饰
     measurements: computed(() => new Map(nodes.value.map((node) => [node.id, {
       nodeId: node.id, // 被测量节点标识
       width: 300, // 固定栏宽
@@ -25,11 +26,6 @@ vi.mock("./measure/useLayoutMeasurements", () => ({
       breakPoints: [], // 使用不可拆分节点
     } satisfies MeasuredNode]))), // 节点测量结果
   }),
-}));
-vi.mock("@/views/resume/theme/components/regionContainer/registry", () => ({
-  resolveRegionFillsPageTop: () => false, // 不启用顶部通栏装饰
-  resolveRegionGapBefore: () => 0, // 不增加区域间距
-  resolveRegionAppearance: () => ({}), // 使用默认区域留白
 }));
 vi.mock("@/stores/modules/resume/config/uiConfig", () => ({
   defaultLeftColumnWidth: 40, // 双栏默认左栏宽度比例

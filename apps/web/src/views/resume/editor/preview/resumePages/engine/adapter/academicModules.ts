@@ -28,6 +28,7 @@ export const createAcademicModuleAdapter = (moduleKey: string): LayoutAdapter =>
       sourceModuleKey: moduleKey,
       sourceItemIndex: index,
       type: "group" as const,
+      contentKind: moduleKey, // 论文与知识产权使用各自语义组件
       payload: {
         part: "item",
         item,

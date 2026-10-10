@@ -1,16 +1,3 @@
-<script>
-// 正文留白由组件声明，分页与预览读取同一份尺寸；引擎容器已按 regionPadding 加内边距，组件不再写留白类。
-const regionPadding = {
-  top: 0, // 正文与页眉区域之间的间距由布局结算
-  right: 0, // 水平留白沿用页面设置，保证点阵与页面网格对齐
-  bottom: 0, // 底部留白沿用页面设置
-  left: 0, // 水平留白沿用页面设置，保证点阵与页面网格对齐
-};
-export default {
-  regionPadding, // 分页与组件共用的正文留白
-};
-</script>
-
 <script setup>
 import { computed } from "vue";
 import { RESUME_WIDTH } from "@/views/resume/editor/preview/shared/constants";

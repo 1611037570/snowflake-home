@@ -1,31 +1,14 @@
 import { resolveThemeDecisions } from "./themeDecisions";
-import { resolveUserContent } from "./components/userModule/registry";
-import { resolvePageAppearance } from "./components/pageContainer/registry";
-import { resolveItemAppearanceUsesDateRail } from "./components/itemContainer/registry";
+import type { ThemeRestrictions } from "./themeContract";
 
-/** 主题固定设置及对应的限制说明文案标识。 */
-export type ThemeSettingRestrictions = Partial<
-  Record<
-    | "user.avatarPosition" // 头像位置
-    | "user.infoLayout" // 个人资料布局
-    | "page.background" // 纸张背景色
-    | "content.datePosition", // 经历日期位置
-    string
-  >
->;
+export type ThemeSettingRestrictions = ThemeRestrictions;
 
-// 按实际使用的外观组件读取限制，设置面板不维护独立的主题名单。
+/** 设置限制只读取固定声明，不检查外观组件或维护主题名称名单。 */
 export const resolveThemeSettingRestrictions = (themeId?: string): ThemeSettingRestrictions => {
   const decisions = resolveThemeDecisions(themeId);
-  const user = resolveUserContent(themeId, decisions.layoutType);
-  const page = resolvePageAppearance(
-    decisions.pageBackgroundPattern || themeId,
-  );
   return {
-    ...user.unsupportedSettings,
-    ...page.unsupportedSettings,
-    ...(resolveItemAppearanceUsesDateRail(themeId)
-      ? { "content.datePosition": "themeFixedDatePosition" } // 时间轴固定日期栏位置
-      : {}),
+    ...decisions.restrictions, // 主题固定设置及限制原因
+    ...(decisions.usesDateRail
+      ? { "content.datePosition": "themeFixedDatePosition" } : {}), // 日期栏固定日期位置
   };
 };

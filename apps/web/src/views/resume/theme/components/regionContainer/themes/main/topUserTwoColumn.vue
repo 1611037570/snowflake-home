@@ -1,17 +1,5 @@
-<script>
-// 正文留白只在这里声明：区域容器会按 regionPadding 自动加内边距，模板不得再写留白类。
-const regionPadding = {
-  top: 0, // 页眉细分隔线与首个模块之间的间距由布局结算
-  right: 0, // 水平留白沿用页面设置
-  bottom: 0, // 下边距统一使用页面设置，不叠加主题留白
-  left: 0, // 水平留白沿用页面设置
-};
-export default { regionPadding };
-</script>
-
 <script setup>
 import { computed } from "vue";
-import { defaultColumnGap } from "@/views/resume/theme/layouts";
 import { useResumePreviewContext } from "@/views/resume/editor/preview/shared/previewContext";
 
 const {
@@ -23,8 +11,7 @@ const isTopUserTwoColumn = computed(() => themeDecisions.value.layoutType === "t
 // 栏间线颜色与偏移由变量下发，偏移取栏间距的一半，让线条落在栏间中线。
 const mainStyle = computed(() => ({
   "--top-user-divider": themeColorLine.value, // 双栏栏间线颜色
-  "--top-user-column-gap": `${defaultColumnGap}px`, // 引擎分栏与栏间线共用同一份栏间距
-  "--top-user-divider-top": `${regionPadding.top}px`, // 栏间线对齐栏内内容的起始位置
+  "--top-user-divider-top": "var(--resume-region-inset-top)", // 栏间线对齐栏内内容的起始位置
 }));
 </script>
 
@@ -53,7 +40,7 @@ const mainStyle = computed(() => ({
   position: absolute;
   top: calc(-1 * var(--top-user-divider-top, 0px));
   bottom: calc(-1 * var(--resume-bottom-space, 0px));
-  left: calc(-0.5 * var(--top-user-column-gap, 24px));
+  left: calc(-1 * var(--resume-column-gap-half));
   width: 1px;
   background-color: var(--top-user-divider);
   pointer-events: none;

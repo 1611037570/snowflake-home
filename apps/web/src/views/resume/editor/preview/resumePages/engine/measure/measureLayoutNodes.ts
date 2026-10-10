@@ -125,7 +125,7 @@ export const measureLayoutNodes = (
       nodeId: node.id,
       width: rect.width,
       fullHeight: rect.height,
-      breakPoints: [...blockBreakPoints, ...indexedBreakPoints, ...breakPoints, ...lineBreakPoints],
+      breakPoints: node.splitMode === "whole" ? [] : [...blockBreakPoints, ...indexedBreakPoints, ...breakPoints, ...lineBreakPoints],
       // 富文本从自身断点取正文末尾，按行拆分的纯文本则从实测行尾取，避免续页提前结束。
       contentLength: Math.max(
         lineBreakPoints.reduce((max, point) => Math.max(max, point.offset), 0),

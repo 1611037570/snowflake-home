@@ -1,14 +1,3 @@
-<script>
-// 个人信息区域留白由组件声明，分页与渲染读取同一份尺寸，容器据此施加内边距。
-const regionPadding = {
-  top: 0, // 不额外增加顶部留白，沿用页面边距
-  right: 0, // 水平留白沿用页面设置
-  bottom: 0, // 不额外增加底部留白，沿用模块间距
-  left: 0, // 水平留白沿用页面设置
-};
-export default { regionPadding };
-</script>
-
 <script setup>
 import { computed } from "vue";
 import { layoutStretchesColumns } from "@/views/resume/theme/layouts";

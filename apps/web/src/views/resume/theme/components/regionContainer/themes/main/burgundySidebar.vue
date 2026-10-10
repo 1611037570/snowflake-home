@@ -1,31 +1,18 @@
 <script>
 import { defaultPaddingVertical } from "@/stores/modules/resume/config/uiConfig";
-
-// 页面上边距由分页引擎统一注入，组件只负责让底色盖住这段空间。
-const regionPadding = {
-  top: 0, // 顶部留白由引擎按页面上边距注入
-  right: 0, // 右侧不增加区域留白
-  bottom: 0, // 页尾留白由栏内单独处理
-  left: 0, // 左侧不增加区域留白
-};
-export default {
-  regionPadding, // 双栏正文内容留白
-};
 </script>
 
 <script setup>
 import { computed } from "vue";
-import { defaultPaddingHorizontal, defaultPaddingVertical } from "@/stores/modules/resume/config/uiConfig";
 import { useResumePreviewContext } from "@/views/resume/editor/preview/shared/previewContext";
 
 const {
-  ui,
   theme: { themeColorSoft },
 } = useResumePreviewContext();
 // 正文容器统一应用留白，侧栏背景向外延伸覆盖这段空间。
 const sidebarStyle = computed(() => ({
-  "--sidebar-content-top": `${Math.max(0, Number(ui.value?.page?.padding?.vertical ?? defaultPaddingVertical) || 0)}px`, // 引擎注入的页面上边距，底色向上盖住它
-  "--sidebar-bleed": `${Math.max(0, Number(ui.value?.page?.padding?.horizontal ?? defaultPaddingHorizontal) || 0)}px`, // 底色向左延伸到纸张边缘
+  "--sidebar-content-top": "var(--resume-page-inset-vertical)", // 引擎注入的页面上边距，底色向上盖住它
+  "--sidebar-bleed": "var(--resume-page-inset-horizontal)", // 底色向左延伸到纸张边缘
   "--sidebar-surface": themeColorSoft.value, // 左栏浅色底纹
 }));
 </script>

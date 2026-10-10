@@ -1,6 +1,5 @@
 <script setup>
-import { computed } from "vue";
-import { getItemFragmentStyle } from "@/views/resume/editor/preview/resumePages/render/itemStyle";
+import { useItemBox } from "../useItemBox";
 import { useResumePreviewContext } from "@/views/resume/editor/preview/shared/previewContext";
 
 // 活力条目外观：浅色底托 + 主题色描边 + 圆角。
@@ -37,23 +36,14 @@ const {
   theme: { themeColorSoft, themeColorLine },
 } = useResumePreviewContext();
 
-const fragmentStyle = computed(() =>
-  getItemFragmentStyle(props.blockRange, props.contentRange, props.decoration, ITEM_RADIUS),
-);
-const boxStyle = computed(() => ({
-  paddingTop: "12px",
-  paddingRight: "12px",
-  paddingBottom: "12px",
-  // 左侧内边距与其余三边一致，时间轴条目让位给日期栏
-  paddingLeft: props.timeline ? "var(--timeline-rail-width)" : PADDING_LEFT,
-  backgroundColor: themeColorSoft.value,
-}));
-const borderStyle = computed(() => ({
-  borderColor: themeColorLine.value,
-  borderRadius: "inherit",
-  borderTopWidth: fragmentStyle.value.borderTopWidth,
-  borderBottomWidth: fragmentStyle.value.borderBottomWidth,
-}));
+// 内边距与分片收边共用公共盒模型，配色继续响应主题变化。
+const { fragmentStyle, boxStyle, borderStyle } = useItemBox(props, {
+  radius: ITEM_RADIUS, // 条目圆角
+  padding: "12px", // 四周装饰内边距
+  paddingLeft: PADDING_LEFT, // 非日期栏正文左侧留白
+  backgroundColor: themeColorSoft, // 响应式主题浅色底板
+  borderColor: themeColorLine, // 响应式主题描边
+});
 </script>
 
 <template>
