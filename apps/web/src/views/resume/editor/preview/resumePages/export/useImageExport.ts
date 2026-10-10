@@ -9,7 +9,7 @@ import { storeToRefs } from "pinia";
 import { useResumeName } from "../../../../hooks/useResumeName";
 import { useResumeStore } from "@/stores";
 import { resolveThemeDecisions } from "@/views/resume/theme";
-import { stripEditorPageFrame } from "./pageFrame";
+import { cloneExportContent } from "./exportContent";
 import { collectResumeStyles } from "./exportStyles";
 import { waitForExportResources, waitForExportTask } from "./exportResources";
 import { createLongImagePdfJob } from "./longImagePdf";
@@ -54,19 +54,6 @@ const getRootElement = (rootRef?: ImageExportRoot): HTMLElement | null => {
   return isHTMLElement(value) ? value : null;
 };
 
-// 断点探针只是测量脚手架：绝对定位且不可见，不参与导出画面，移除后能大幅减少渲染量
-const MEASURE_PROBE_SELECTOR = ".layout-measure-breakpoint";
-
-// 克隆时跳过整个探针子树，避免先复制大量重复正文再删除。
-const cloneExportContent = (node: Node): Node => {
-  const clone = node.cloneNode(false);
-  for (const child of node.childNodes) {
-    if (child instanceof Element && child.matches(MEASURE_PROBE_SELECTOR)) continue;
-    clone.appendChild(cloneExportContent(child));
-  }
-  return clone;
-};
-
 // 将长图 DOM 渲染为画布，PNG 和长图 PDF 共用这份渲染结果。
 const renderLongImage = async (
   rootRef: ImageExportRoot | undefined,
@@ -103,8 +90,6 @@ const renderLongImage = async (
   // 测量宿主用 visibility: hidden 隐藏，克隆必须显式恢复可见，否则导出只有背景色
   clone.style.visibility = "visible";
   clone.style.pointerEvents = "auto";
-  // 编辑器页边线属于预览装饰，导出前移除；纸张边框是主题外观，改用覆盖层补画
-  stripEditorPageFrame(clone);
   // 长图源只有纸张底色，补画真实纸张外观；覆盖层不占布局，排版结果与页面完全一致
   if (paper.borderWidth > 0) clone.appendChild(createPaperFrame(paper));
   if (rootWidth > 0) clone.style.width = `${rootWidth}px`;

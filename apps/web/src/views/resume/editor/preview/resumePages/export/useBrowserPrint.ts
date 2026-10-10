@@ -2,7 +2,7 @@ import { collectResumeStyles } from "./exportStyles";
 import { nextTick } from "vue";
 import { useResumeStore } from "@/stores";
 import { useResumeName } from "../../../../hooks/useResumeName";
-import { stripEditorPageFrame } from "./pageFrame";
+import { cloneExportContent } from "./exportContent";
 import { waitForExportResources } from "./exportResources";
 
 type ResumeRootRef = { value: HTMLElement | null };
@@ -93,13 +93,10 @@ export const printResume = async (
     // 资源加载可能触发预览重建，复制前重新取得当前页面。
     root = getResumeRoot(rootRef);
     if (!root) throw new Error("未找到可打印的简历页面");
-    const clonedRoot = root.cloneNode(true) as HTMLElement;
+    const clonedRoot = cloneExportContent(root);
     clonedRoot.style.transform = "none";
     clonedRoot.style.zoom = "1";
     clonedRoot.classList.add("resume-iframe-print-root");
-    // 编辑器页边线属于预览装饰，打印前移除；纸张边框由主题声明，保留
-    stripEditorPageFrame(clonedRoot);
-    clonedRoot.querySelectorAll("[data-resume-editor-action]").forEach((action) => action.remove());
 
     const styleText = collectResumeStyles(clonedRoot, root);
     const baseHref = document.baseURI.replace(/"/g, "&quot;");

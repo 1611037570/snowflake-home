@@ -4,6 +4,8 @@ import { storeToRefs } from "pinia";
 import { useRoute } from "vue-router";
 import { useResumeStore } from "@/stores";
 import ResumePages from "@/views/resume/editor/preview/resumePages/index.vue";
+import { waitForExportResources } from "@/views/resume/editor/preview/resumePages/export/exportResources";
+import { getExportLayoutStatus } from "@/views/resume/editor/preview/resumePages/export/exportLayout";
 
 const payload = window.__SNOWFLAKE_RESUME_PRINT_DATA__ || {};
 const route = useRoute();
@@ -14,6 +16,7 @@ const { system } = storeToRefs(resumeStore);
 const item = ref(payload.item || null);
 const isReady = ref(false);
 const previewRef = ref(null); // 当前打印实例公开的测量与分页状态
+const printRootRef = ref(null); // 稳定的打印宿主，资源等待覆盖当前简历与测量树
 const renderError = ref(""); // 无效计划与超时的打印说明
 let cancelRenderWait = () => {}; // 结束旧打印等待并释放定时器
 let renderVersion = 0; // 隔离重复载荷与已卸载的等待任务
@@ -36,8 +39,8 @@ const waitForRender = async () => {
   if (version !== renderVersion) return;
   await new Promise((resolve) => {
     let stop = () => {};
-    const assetsAbort = new AbortController(); // 释放图片等待的事件监听
-    let assetsReady = false; // 字体与图片加载完成后才检查最新测量
+    const assetsAbort = new AbortController(); // 释放公共资源等待的事件监听
+    let assetsReady = false; // 字体、图片与图标完成后才检查最新测量
     let finished = false; // 等待结束后不再由旧回调开放打印
     const finish = () => { finished = true; assetsAbort.abort(); stop(); window.clearTimeout(timer); resolve(); };
     cancelRenderWait = finish;
@@ -45,15 +48,16 @@ const waitForRender = async () => {
       if (version !== renderVersion) { finish(); return; }
       const preview = previewRef.value;
       const plan = preview?.pagePlan;
-      if ((!assetsReady || !preview?.previewMeasured) && plan?.status !== "invalid") return;
-      if (plan?.status !== "ready") {
-        renderError.value = plan?.status === "overflow" ? "简历内容超出页面可用区域" : "简历页面布局配置有误";
+      const status = getExportLayoutStatus(assetsReady && Boolean(preview?.previewMeasured), plan?.status, "pages");
+      if (status === "pending") return;
+      if (status !== "ready") {
+        renderError.value = status === "overflow" ? "简历内容超出页面可用区域" : "简历页面布局配置有误";
         finish();
         return;
       }
       // 等待本轮页面 DOM 提交后再开放打印。
       void nextTick().then(() => {
-        if (!finished && version === renderVersion && preview.previewMeasured && preview.pagePlan?.status === "ready") {
+        if (!finished && version === renderVersion && getExportLayoutStatus(assetsReady && Boolean(previewRef.value?.previewMeasured), previewRef.value?.pagePlan?.status, "pages") === "ready") {
           isReady.value = true;
           finish();
         }
@@ -67,24 +71,8 @@ const waitForRender = async () => {
     check();
     // 超时与销毁也覆盖资源等待，资源加载引起的增高仍由公共测量处理。
     void (async () => {
-      await document.fonts?.ready;
-      if (finished) return;
-      await Promise.all(Array.from(document.images).map((image) => {
-        if (image.complete) return;
-        return new Promise((resolveImage) => {
-          const done = () => {
-            image.removeEventListener("load", done);
-            image.removeEventListener("error", done);
-            assetsAbort.signal.removeEventListener("abort", done);
-            resolveImage();
-          };
-          image.addEventListener("load", done, { once: true });
-          image.addEventListener("error", done, { once: true });
-          assetsAbort.signal.addEventListener("abort", done, { once: true });
-          if (assetsAbort.signal.aborted) done();
-        });
-      }));
-      await nextTick();
+      // 与本地打印、长图共用资源规则，不等待打印页之外的字体与图片。
+      await waitForExportResources(printRootRef.value, assetsAbort.signal);
       if (finished) return;
       assetsReady = true;
       check();
@@ -147,6 +135,7 @@ onBeforeUnmount(() => {
 
 <template>
   <main
+    ref="printRootRef"
     class="resume-print-page"
     data-pdf-render-root
     :data-pdf-ready="isReady ? 'true' : 'false'"
