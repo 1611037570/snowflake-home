@@ -37,7 +37,11 @@ const {
       {
         '--song-rule': themeColorLine,
         '--song-accent': themeColor,
-        '--song-name-size': fontValue(14).fontSize,
+        '--resume-user-name-size': fontValue(14).fontSize, // 姓名字号由内容组件读取
+        '--resume-user-name-line-height': 1.35, // 姓名行高
+        '--resume-user-name-spacing': '0.2em', // 姓名字距
+        '--resume-user-subtitle-spacing': '0.24em', // 副标题字距
+        '--resume-user-name-color': themeColor, // 姓名与副标题颜色
       },
     ]"
   >
@@ -48,20 +52,6 @@ const {
 </template>
 
 <style scoped>
-/* 姓名取主题色并按宋体大字距排布，字号与行高在字段默认值上单独收紧 */
-.song-elegance-user :deep(.tracking-wide > div) {
-  font-size: var(--song-name-size) !important;
-  line-height: 1.35 !important;
-  letter-spacing: 0.2em;
-  color: var(--song-accent);
-}
-
-/* 副标题（职位、年龄等）收在姓名下方，用主题色与更宽的字距与姓名呼应 */
-.song-elegance-user :deep(.tracking-wide > span) {
-  letter-spacing: 0.24em;
-  color: var(--song-accent);
-}
-
 /* 头像加一圈细线，与页边装裱呼应 */
 .song-elegance-user :deep(img) {
   border-radius: 2px;

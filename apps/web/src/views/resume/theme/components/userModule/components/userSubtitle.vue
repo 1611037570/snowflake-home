@@ -68,13 +68,18 @@ const textOf = (key) => {
   return String(value);
 };
 const items = computed(() => subtitleKeys.value.map((key) => textOf(key)).filter(Boolean));
+// 副标题样式由自身消费主题变量，避免外壳依赖内部标签。
+const subtitleStyle = {
+  letterSpacing: "var(--resume-user-subtitle-spacing, inherit)", // 副标题字距
+  color: "var(--resume-user-name-color, inherit)", // 副标题颜色
+};
 </script>
 
 <template>
   <InlineInfoList
     v-if="items.length"
     :items="items"
-    :style="[fontValue(), lineHeightValue()]"
+    :style="[fontValue(), lineHeightValue(), subtitleStyle]"
     class="mt-3 font-normal"
   />
 </template>
