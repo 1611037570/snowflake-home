@@ -290,6 +290,7 @@ const getThumbItem = (item) => ({ data: item?.data, config: item?.config, ui: it
         <TemplatePagination
           :page="templatePage"
           :page-count="pageCount"
+          :total="currentTotal"
           @change="setTemplatePage"
         />
         <div class="flex flex-1 flex-col items-center justify-end">

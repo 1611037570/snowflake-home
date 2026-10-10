@@ -1,6 +1,13 @@
 <script setup>
-import { resumeTemplateTopCategories } from "../data/list";
+import { resumeTemplateList, resumeTemplateTopCategories } from "../data/list";
+import { themeTemplateList } from "@/views/resume/theme";
 import { computed, ref } from "vue";
+
+// 一级分类容量：回答「这一栏有多少」，取全量条数，不随筛选变化
+const topCategoryCounts = {
+  example: resumeTemplateList.length,
+  template: themeTemplateList.length,
+};
 
 const emit = defineEmits(["change", "category-change", "size-change"]);
 
@@ -65,6 +72,7 @@ const toggleOption = (key) => {
           @click="selectTopCategory(top.key)"
         >
           {{ $t(`resumeTemplateTopCategory_${top.key}`) }}
+          <span class="ml-1 opacity-70">{{ topCategoryCounts[top.key] }}</span>
         </SfButton>
       </nav>
       <div class="flex flex-wrap items-center gap-3">

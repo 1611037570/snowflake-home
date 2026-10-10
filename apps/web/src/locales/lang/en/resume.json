@@ -162,6 +162,7 @@
   "resumeTemplatePreview": "Preview",
   "resumeTemplateUse": "Use Template",
   "resumeTemplateEmpty": "No matching templates",
+  "resumeTemplateTotalCount": "{count} templates",
   "resumeTemplatePrevPage": "Previous",
   "resumeTemplateNextPage": "Next",
   "resumeTemplatePageInfo": "Page {current} of {total}",

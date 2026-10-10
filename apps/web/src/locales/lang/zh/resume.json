@@ -162,6 +162,7 @@
   "resumeTemplatePreview": "预览",
   "resumeTemplateUse": "使用模板",
   "resumeTemplateEmpty": "暂无匹配模板",
+  "resumeTemplateTotalCount": "共 {count} 个",
   "resumeTemplatePrevPage": "上一页",
   "resumeTemplateNextPage": "下一页",
   "resumeTemplatePageInfo": "第 {current} / {total} 页",
