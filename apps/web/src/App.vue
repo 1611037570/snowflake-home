@@ -3,6 +3,8 @@
 import LoadingComponent from "@views/status/loading.vue";
 // 聊天弹窗
 import { snowflakePing } from "@/apis";
+import { reportResumeVisit } from "@/hooks";
+import router from "@/routers";
 import { useSystemStore } from "@/stores/modules/system";
 
 const systemStore = useSystemStore();
@@ -18,6 +20,10 @@ const checkConnection = async () => {
 };
 
 checkConnection();
+// 应用启动登记访客，失败不影响页面；打印页由服务端渲染唤起，不计入访客统计
+router.isReady().then(() => {
+  if (router.currentRoute.value.name !== "resume-print") reportResumeVisit();
+});
 </script>
 <template>
   <!-- 应用根元素 -->

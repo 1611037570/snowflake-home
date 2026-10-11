@@ -1,6 +1,7 @@
 <script setup>
 import { compactResumeItem } from "@/domain/resume/theme/resumeUi";
 import { useResumeStore } from "@/stores";
+import { trackResumeAction } from "@/hooks";
 import dayjs from "dayjs";
 import { storeToRefs } from "pinia";
 import { useRouter } from "vue-router";
@@ -67,6 +68,8 @@ const exportJson = (item) => {
   link.download = getExportFileName(getResumeTitle(item), "json");
   link.click();
   URL.revokeObjectURL(url);
+  // 导出完成后上报一次埋点
+  trackResumeAction({ eventType: "export", fileType: "json", source: "local" });
 };
 
 // 草稿预览：记录当前打开的简历项，visible 由其是否存在派生。

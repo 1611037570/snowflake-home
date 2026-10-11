@@ -129,6 +129,8 @@
             </div>
           </div>
         </div>
+
+        <SiteStats />
       </section>
 
       <section
@@ -241,6 +243,7 @@ import { themeTemplateList } from "@/views/resume/theme";
 import { $t } from "@/locales";
 import { resumeTemplateList } from "../template/data/list";
 import { computed, onMounted, ref } from "vue";
+import SiteStats from "./siteStats.vue";
 
 const revealSections = ref([]);
 
