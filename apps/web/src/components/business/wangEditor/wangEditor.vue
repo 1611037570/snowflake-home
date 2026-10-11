@@ -9,8 +9,12 @@
         <slot name="toolbar" :editor="editorRef" />
       </div>
       <Toolbar v-else-if="editorRef" :editor="editorRef" :defaultConfig="toolbarConfig" :mode="mode" />
-      <!-- 使用项目统一滚动条承载编辑器内容 -->
-      <SfScrollbar :max-height="height" :class="$slots.bottom ? 'rounded-b-none' : 'rounded-b-2xl'">
+      <!-- 正文顶部统一显示分隔线，区分工具栏与编辑内容。 -->
+      <SfScrollbar
+        :max-height="height"
+        class="border-t border-sf-b"
+        :class="$slots.bottom ? 'rounded-b-none' : 'rounded-b-2xl'"
+      >
         <Editor
           :class="$slots.bottom ? 'rounded-b-none' : 'rounded-b-2xl'"
           :style="{ height: 'auto', minHeight: '80px' }"

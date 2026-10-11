@@ -1130,6 +1130,7 @@ export const DEFAULT_WORK_FORM = {
           },
         ],
         fields: [
+          // 基础信息优先展示，岗位与部门、起止时间分别成对排列。
           {
             type: "object",
             label: "公司名称",
@@ -1147,28 +1148,23 @@ export const DEFAULT_WORK_FORM = {
           },
           {
             type: "object",
-            label: "项目链接",
-            component: "projectLink",
-            rules: [atsRule("projectLink")],
-            span: 24,
-            model: {
-              source: ["data", "link"],
-              prop: "modelValue",
-              defaultValue: {},
-            },
-          },
-          // 工作标签：可选标签由字段配置注入
-          {
-            type: "object",
-            component: "tag",
-            span: 24,
-            model: {
-              source: ["data", "tags"],
-              prop: "modelValue",
-              defaultValue: [],
-            },
+            label: "岗位",
+            component: "positionPicker",
+            rules: [requiredFieldRule()],
+            span: 12,
+            model: [
+              {
+                source: ["data", "post"],
+                prop: "modelValue",
+              },
+              {
+                source: ["__options", "position"],
+                prop: "list",
+                raw: true,
+              },
+            ],
             props: {
-              list: ["核心成员", "团队管理", "独立负责", "跨部门协作", "从0到1"],
+              placeholder: "请选择或输入岗位",
             },
           },
           // 所在部门
@@ -1221,33 +1217,12 @@ export const DEFAULT_WORK_FORM = {
               presentText: "至今",
             },
           },
-          {
-            type: "object",
-            label: "岗位",
-            component: "positionPicker",
-            rules: [requiredFieldRule()],
-            span: 12,
-            model: [
-              {
-                source: ["data", "post"],
-                prop: "modelValue",
-              },
-              {
-                source: ["__options", "position"],
-                prop: "list",
-                raw: true,
-              },
-            ],
-            props: {
-              placeholder: "请选择或输入岗位",
-            },
-          },
           // 所在城市：省市字典由业务域注入
           {
             type: "object",
             label: "所在城市",
             component: "cityPicker",
-            span: 12,
+            span: 24,
             model: [
               {
                 source: ["data", "city"],
@@ -1261,6 +1236,32 @@ export const DEFAULT_WORK_FORM = {
             ],
             props: {
               placeholder: "请选择所在城市",
+            },
+          },
+          {
+            type: "object",
+            label: "项目链接",
+            component: "projectLink",
+            rules: [atsRule("projectLink")],
+            span: 24,
+            model: {
+              source: ["data", "link"],
+              prop: "modelValue",
+              defaultValue: {},
+            },
+          },
+          // 工作标签：可选标签由字段配置注入
+          {
+            type: "object",
+            component: "tag",
+            span: 24,
+            model: {
+              source: ["data", "tags"],
+              prop: "modelValue",
+              defaultValue: [],
+            },
+            props: {
+              list: ["核心成员", "团队管理", "独立负责", "跨部门协作", "从0到1"],
             },
           },
           {

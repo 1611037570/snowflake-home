@@ -77,10 +77,7 @@ function copyItem(event) {
         </div>
       </template>
       <template #default>
-        <!-- 展开正文统一上下留白，与记录标题保持左右对齐。 -->
-        <div class="py-3">
-          <slot />
-        </div>
+        <slot />
       </template>
     </SfCollapseItem>
   </SfCollapse>
@@ -96,7 +93,7 @@ function copyItem(event) {
 .resume-record-box > :deep(.el-collapse-item__header.is-active) {
   @apply bg-sf-bg;
 }
-/* 折叠箭头与操作图标保持同级颜色，正文留白由内部容器统一提供。 */
+/* 折叠箭头与操作图标保持同级颜色，取消正文默认底部留白。 */
 .resume-record-box > :deep(.el-collapse-item__header .el-collapse-item__arrow) {
   @apply text-sf-text-2;
 }
