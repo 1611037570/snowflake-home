@@ -77,8 +77,8 @@ const createUserField = (
     type: "group",
     component: "rowField",
     slot: "default",
-    // 固定字段与可添加字段统一底部分隔线及内部留白。
-    colClass: DEFAULT_COL_CLASS + " py-1 px-3!",
+    // 固定字段与可添加字段统一底部分隔线及上下左右留白。
+    colClass: DEFAULT_COL_CLASS + " py-3 px-3!",
     // 包裹组沿用字段标识，供字段顺序持久化与定位
     key,
     // 标签与操作区由包裹组件渲染，字段自身不再声明
@@ -200,8 +200,8 @@ export const DEFAULT_USER_FORM = [
         label: "头像",
         component: "imageUpload",
         span: 24,
-        // 头像与其他个人信息字段统一底部分隔线及内部留白。
-        colClass: DEFAULT_COL_CLASS + " py-1 px-3!",
+        // 头像与其他个人信息字段统一底部分隔线及上下左右留白。
+        colClass: DEFAULT_COL_CLASS + " py-3 px-3!",
         ui: {
           // 头像隐藏开关：控制头像在简历预览中显示或隐藏
           hidden: {
@@ -253,7 +253,7 @@ export const DEFAULT_USER_FORM = [
         hideWhenEmpty: true,
         drag: true,
         dragClass: DEFAULT_DRAG_CLASS,
-        itemClass: DEFAULT_COL_CLASS + " bg-transparent! py-1 px-3!", // 副标题字段沿用分区底色，保留分隔线及左右留白。
+        itemClass: DEFAULT_COL_CLASS + " bg-transparent! py-3 px-3!", // 副标题字段沿用分区底色，保留分隔线及上下左右留白。
         // 分区内部同步取消字段间距，保持分隔线连续。
         rowClass: "gap-y-0!",
         span: 24,
@@ -264,7 +264,7 @@ export const DEFAULT_USER_FORM = [
         type: "group",
         drag: true,
         dragClass: DEFAULT_DRAG_CLASS,
-        itemClass: DEFAULT_COL_CLASS + " py-1 px-3!", // 更多字段统一底部分隔线及左右留白。
+        itemClass: DEFAULT_COL_CLASS + " py-3 px-3!", // 更多字段统一底部分隔线及上下左右留白。
         key: "more",
         component: "more",
         slot: "default",
