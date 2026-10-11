@@ -1,9 +1,6 @@
 <template>
-  <SfScrollbar class="h-full bg-sf-page">
+  <SfScrollbar class="resume-home__shell h-full bg-sf-page">
     <main class="resume-home relative w-full shrink-0 overflow-hidden bg-sf-page text-sf-text">
-      <div class="resume-home__aurora resume-home__aurora--one"></div>
-      <div class="resume-home__aurora resume-home__aurora--two"></div>
-
       <section
         class="resume-home__hero relative mx-auto grid min-h-screen max-w-[1440px] items-center gap-x-12 gap-y-9 px-6 pt-24 pb-9 lg:grid-cols-2 lg:px-12"
       >
@@ -63,7 +60,6 @@
 
         <!-- 右侧：真实简历预览，替换原占位截图区 -->
         <div class="relative mx-auto w-full max-w-[380px]">
-          <span class="resume-home__glow pointer-events-none absolute -inset-6"></span>
           <!-- 首屏简历展示与翻页切换 -->
           <HeroSwitcher :items="heroSwitcherItems" @change="handleHeroChange">
             <!-- 鼠标经过简历时浮出的创建入口，点击用当前范本直接创建简历；层级需高于叠放卡片才能显示与点击 -->
@@ -72,7 +68,7 @@
             >
               <button
                 type="button"
-                class="inline-flex cursor-pointer items-center gap-1 rounded-full bg-[#1f1f1f] px-2 py-1 text-[12px] text-white"
+                class="inline-flex cursor-pointer items-center gap-1 rounded-full bg-sf-theme px-2 py-1 text-[12px] text-white"
                 @click="createFromHeroPreview"
               >
                 <SfIcon icon="lucide:wand-sparkles" size="4" />
@@ -317,11 +313,7 @@ const featureGroups = computed(() => [
     id: "ai",
     eyebrow: $t("resumeHomeAiEyebrow"),
     description: $t("resumeHomeAiDescription"),
-    items: [
-      $t("resumeHomeAiFeature1"),
-      $t("resumeHomeAiFeature2"),
-      $t("resumeHomeAiFeature3"),
-    ],
+    items: [$t("resumeHomeAiFeature1"), $t("resumeHomeAiFeature2"), $t("resumeHomeAiFeature3")],
   },
   {
     icon: "mdi:chart-pie",
@@ -338,38 +330,8 @@ const featureGroups = computed(() => [
 </script>
 
 <style scoped>
-.resume-home__aurora {
-  position: absolute;
-  width: 30rem;
-  height: 30rem;
-  border-radius: 9999px;
-  background: var(--sf-theme-3);
-  filter: blur(90px);
-  opacity: 0.72;
-  pointer-events: none;
-  animation: aurora-drift 12s ease-in-out infinite alternate;
-}
-
-.resume-home__aurora--one {
-  top: 3rem;
-  right: -12rem;
-}
-
-.resume-home__aurora--two {
-  top: 42rem;
-  left: -15rem;
-  opacity: 0.42;
-  animation-delay: -6s;
-}
-
 .resume-home__highlight {
   color: var(--sf-theme);
-}
-
-/* 预览框背后的主题色柔光，让简历卡片从页面中浮起 */
-.resume-home__glow {
-  background: radial-gradient(closest-side, var(--sf-theme-3), transparent);
-  filter: blur(24px);
 }
 
 .resume-home__closing {
@@ -510,15 +472,6 @@ const featureGroups = computed(() => [
   to {
     opacity: 1;
     transform: translateY(0);
-  }
-}
-
-@keyframes aurora-drift {
-  0% {
-    transform: translate3d(0, 0, 0) scale(1);
-  }
-  100% {
-    transform: translate3d(3rem, 2.25rem, 0) scale(1.12);
   }
 }
 </style>
