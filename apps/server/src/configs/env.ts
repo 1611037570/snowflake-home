@@ -42,7 +42,12 @@ export function envList(name: string, fallback = ''): string[] {
 
 export const env = Object.freeze({
   mainPassword: envString('DB_MAIN_PASSWORD'), // 主数据库密码
-  resumePassword: envString('DB_RESUME_PASSWORD'), // 简历数据库密码
+  // 简历库连接参数，真实值只写入不入库的 .env.local
+  resumeDbHost: envStringRequired('DB_RESUME_HOST'), // 简历数据库主机
+  resumeDbPort: envNumber('DB_RESUME_PORT', 3306), // 简历数据库端口
+  resumeDbUsername: envStringRequired('DB_RESUME_USERNAME'), // 简历数据库用户名
+  resumeDbPassword: envStringRequired('DB_RESUME_PASSWORD'), // 简历数据库密码
+  resumeDbDatabase: envStringRequired('DB_RESUME_DATABASE'), // 简历数据库名称
   redisPassword: envString('REDIS_PASSWORD'), // 缓存密码
   mongoPassword: envString('MONGODB_PASSWORD'), // 文档数据库密码
   jwtSecret: envString('JWT_SECRET'), // 登录凭证签名密钥
