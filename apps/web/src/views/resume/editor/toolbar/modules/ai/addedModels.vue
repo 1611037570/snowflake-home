@@ -94,27 +94,24 @@ function removeModel(item: any) {
         <span v-if="balanceMap[item.id]" class="text-xs text-sf-text-3">
           {{ balanceMap[item.id] }}
         </span>
-        <el-button
+        <div
           v-if="item.balanceSupported"
-          link
-          type="primary"
-          size="small"
+          class="hover:text-sf-theme"
           :loading="balanceLoading[item.id]"
           @mousedown.stop
           @click.stop="queryBalance(item)"
         >
           查询余额
-        </el-button>
+        </div>
+        <span
+          title="删除该模型"
+          class="shrink-0 cursor-pointer text-sf-text-3 hover:text-red-500"
+          @mousedown.stop
+          @click.stop="removeModel(item)"
+        >
+          <SfIcon icon="lucide:trash-2" size="3.5" />
+        </span>
       </div>
-
-      <span
-        title="删除该模型"
-        class="shrink-0 cursor-pointer text-sf-text-3 hover:text-red-500"
-        @mousedown.stop
-        @click.stop="removeModel(item)"
-      >
-        <SfIcon icon="lucide:trash-2" size="3.5" />
-      </span>
     </template>
   </SfList>
 </template>
