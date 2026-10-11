@@ -6,6 +6,7 @@ export function readEnvironment(source: Record<string, string | boolean | undefi
   return Object.freeze({
     port, // 开发服务端口
     baseUrl: text('VITE_BASE_URL', '/'), // 网站部署基础路径
+    siteUrl: text('VITE_SITE_URL'), // 站点对外绝对地址，用于拼接 og 卡片与站点地图；需与后端 PUBLIC_SITE_URL 保持一致
     defaultRoute: text('VITE_DEFAULT_ROUTE', '/resume'), // 默认产品入口
     defaultLanguage: text('VITE_DEFAULT_LANGUAGE', 'zh'), // 默认语言
     routerMode: text('VITE_ROUTER_MODE', 'history'), // 路由模式

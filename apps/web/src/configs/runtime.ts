@@ -9,6 +9,7 @@ export const config = Object.freeze({
     defaultRoute: DEFAULT_ROUTE, // 保留现有用户入口优先规则
     routerMode: env.routerMode, // 路由模式
     baseUrl: env.baseUrl, // 网站部署基础路径
+    siteUrl: env.siteUrl, // 站点对外绝对地址，分享链接与 canonical 统一引用
     urlOpenType: URL_OPEN_TYPE, // 外链打开方式
     defaultColor: DEFAULT_COLOR, // 默认文字颜色
     defaultBackground: DEFAULT_BACKGROUND, // 默认背景颜色

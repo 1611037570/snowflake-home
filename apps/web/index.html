@@ -9,7 +9,46 @@
     />
     <meta name="description" content="<%= siteMetadata.description %>" />
     <meta name="keywords" content="<%= siteMetadata.keywords %>" />
+    <!-- 社交分享卡片：所有路由共用同一份 HTML，此处只能给出产品默认值，按路由的卡片需要预渲染支持 -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="轻舟简历" />
+    <meta property="og:title" content="<%= siteMetadata.title %>" />
+    <meta property="og:description" content="<%= siteMetadata.description %>" />
+    <meta property="og:url" content="<%= siteUrl %>/resume" />
+    <meta property="og:image" content="<%= siteUrl %>/og-image.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="<%= siteMetadata.title %>" />
+    <meta name="twitter:description" content="<%= siteMetadata.description %>" />
+    <meta name="twitter:image" content="<%= siteUrl %>/og-image.png" />
     <title><%= siteMetadata.title %></title>
+    <!-- 结构化数据：描述产品本身，在任意路由下都成立，因此静态输出 -->
+    <!-- Organization 同时声明中英两个品牌名并作为产品的 publisher，用于告知搜索引擎二者是同一实体 -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "Organization",
+            "@id": "<%= siteUrl %>/#organization",
+            "name": "轻舟简历",
+            "alternateName": "Skiff Resume",
+            "url": "<%= siteUrl %>/resume"
+          },
+          {
+            "@type": "SoftwareApplication",
+            "name": "轻舟简历",
+            "alternateName": "Skiff Resume",
+            "url": "<%= siteUrl %>/resume",
+            "description": <%- JSON.stringify(siteMetadata.description) %>,
+            "applicationCategory": "BusinessApplication",
+            "operatingSystem": "Web",
+            "inLanguage": "zh-CN",
+            "publisher": { "@id": "<%= siteUrl %>/#organization" },
+            "offers": { "@type": "Offer", "price": "0", "priceCurrency": "CNY" }
+          }
+        ]
+      }
+    </script>
   </head>
   <body>
     <div id="app"></div>
