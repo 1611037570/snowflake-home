@@ -186,8 +186,8 @@ const handleClearTrash = () => {
         </SfButton>
       </div>
     </div>
-    <SfScrollbar class="flex-1">
-      <div class="flex h-full flex-col py-1">
+    <SfScrollbar class="flex-1" flush>
+      <div class="flex h-full flex-col px-3 py-1">
         <!-- 简历草稿列表 -->
         <RevealGrid v-if="activeTab === 'draft'" :items="displayList" key-field="id">
           <template #default="{ item: card }">

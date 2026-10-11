@@ -250,7 +250,7 @@ const tagTextClass = computed(() => (isDark.value ? "text-sf-theme-text" : "text
 
 <template>
   <div class="relative mx-auto flex h-full w-full max-w-7xl flex-col gap-3">
-    <SfScrollbar ref="scrollbarRef" class="flex-1">
+    <SfScrollbar ref="scrollbarRef" class="flex-1" flush>
       <div class="flex h-full flex-col px-3 py-2 sm:px-6">
         <TemplateCategory
           @change="setTemplateFilters"
