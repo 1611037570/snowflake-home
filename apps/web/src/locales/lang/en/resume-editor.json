@@ -1,6 +1,7 @@
 {
   "personalInfo": "Personal Information",
   "collapseAllModules": "Collapse All",
+  "copyRecord": "Copy",
   "sloganModule": "Top Slogan",
   "sloganTitle": "Title",
   "sloganSubtitle": "Slogan",
@@ -235,7 +236,6 @@
   "launched": "Launched",
   "openSourceProject": "Open-source Project",
   "recommendRequired": "Recommended",
-  "videoDescription": "This module converts a video URL into a QR code for display on the resume",
   "male": "Male",
   "female": "Female",
   "employed": "Employed",

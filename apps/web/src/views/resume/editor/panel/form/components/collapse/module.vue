@@ -120,7 +120,7 @@ function handleAdd() {
       </template>
       <template #default>
         <div v-if="tip" class="mb-2">{{ tip }}</div>
-        <div class="px-3 pt-3">
+        <div class="">
           <slot />
           <div
             class="mt-3 flex w-fit cursor-pointer items-center gap-1 rounded-3xl border border-transparent bg-sf-theme-3 px-3 py-1 text-sf-theme hover:border-sf-theme"

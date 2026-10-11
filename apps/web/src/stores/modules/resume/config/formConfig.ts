@@ -178,8 +178,8 @@ export const DEFAULT_USER_FORM = [
     context: ["user"],
     drag: false,
     dragClass: DEFAULT_DRAG_CLASS,
-    // 个人信息字段保持统一垂直间距
-    rowClass: "gap-y-3",
+    // 个人信息全部字段统一纵向间距、左右及顶部留白，避免子项外边距溢出。
+    rowClass: "gap-y-3 px-3 pt-3",
     // 固定模块：不参与模块拖拽排序
     fixed: true,
     props: {
@@ -249,6 +249,7 @@ export const DEFAULT_USER_FORM = [
         drag: true,
         dragClass: DEFAULT_DRAG_CLASS,
         itemClass: DEFAULT_COL_CLASS + " py-1 px-1!",
+        // 内层仅保留纵向间距，左右留白由个人信息外层统一提供。
         rowClass: "gap-y-3",
         span: 24,
         fields: [],
@@ -263,7 +264,7 @@ export const DEFAULT_USER_FORM = [
         component: "more",
         slot: "default",
         span: 24,
-        // 可添加字段之间保持统一垂直间距
+        // 内层仅保留纵向间距，左右留白由个人信息外层统一提供。
         rowClass: "gap-y-3",
         model: [
           {
@@ -671,6 +672,7 @@ export const DEFAULT_USER_FORM = [
     ],
   },
 ] satisfies FormField[];
+const AAA = " border-b border-sf-b bg-sf-primary ";
 
 // 社交账号
 export const DEFAULT_ACCOUNT_FORM = {
@@ -691,7 +693,9 @@ export const DEFAULT_ACCOUNT_FORM = {
       source: ["list"],
       drag: true,
       dragClass: DEFAULT_DRAG_CLASS,
-      itemClass: DEFAULT_COL_CLASS + " py-1 px-1!",
+      // 数组容器取消子记录纵向间距，保持分隔线连续。
+      rowClass: "gap-y-0!",
+      itemClass: AAA + " py-1 px-3!", // 记录保留内部留白并显示底部分隔线。
       itemSchema: {
         model: [
           {
@@ -735,7 +739,9 @@ export const DEFAULT_EDUCATION_FORM = {
       source: ["list"],
       drag: true,
       dragClass: DEFAULT_DRAG_CLASS,
-      itemClass: DEFAULT_COL_CLASS + " px-3!",
+      // 数组容器取消子记录纵向间距，保持分隔线连续。
+      rowClass: "gap-y-0!",
+      itemClass: AAA + " px-3!",
       itemSchema: {
         type: "group",
         component: "collapseItem",
@@ -1094,7 +1100,9 @@ export const DEFAULT_WORK_FORM = {
       source: ["list"],
       drag: true,
       dragClass: DEFAULT_DRAG_CLASS,
-      itemClass: DEFAULT_COL_CLASS + " px-3!",
+      // 数组容器取消子记录纵向间距，保持分隔线连续。
+      rowClass: "gap-y-0!",
+      itemClass: AAA + " px-3!",
       itemSchema: {
         type: "group",
         component: "collapseItem",
@@ -1289,7 +1297,9 @@ export const DEFAULT_PROJECT_FORM = {
       source: ["list"],
       drag: true,
       dragClass: DEFAULT_DRAG_CLASS,
-      itemClass: DEFAULT_COL_CLASS + " px-3!",
+      // 数组容器取消子记录纵向间距，保持分隔线连续。
+      rowClass: "gap-y-0!",
+      itemClass: AAA + " px-3!",
       itemSchema: {
         type: "group",
         component: "collapseItem",
@@ -1475,7 +1485,6 @@ export const DEFAULT_VIDEO_FORM = {
   component: "collapseModule",
   props: {
     add: true,
-    tip: "该模块会将视频地址转换为二维码，方便在简历中展示",
   },
   model: createModuleState("视频作品"),
   checks: MODULE_CHECKS,
@@ -1486,7 +1495,9 @@ export const DEFAULT_VIDEO_FORM = {
       source: ["list"],
       drag: true,
       dragClass: DEFAULT_DRAG_CLASS,
-      itemClass: DEFAULT_COL_CLASS + " px-3!",
+      // 数组容器取消子记录纵向间距，保持分隔线连续。
+      rowClass: "gap-y-0!",
+      itemClass: AAA + " px-3!",
       itemSchema: {
         // 折叠标题数据源：展示当前视频名称
         model: [
@@ -1556,7 +1567,9 @@ export const DEFAULT_IMAGE_FORM = {
       source: ["list"],
       drag: true,
       dragClass: DEFAULT_DRAG_CLASS,
-      itemClass: DEFAULT_COL_CLASS + " px-3!",
+      // 数组容器取消子记录纵向间距，保持分隔线连续。
+      rowClass: "gap-y-0!",
+      itemClass: AAA + " px-3!",
       itemSchema: {
         // 折叠标题数据源：展示当前图片作品名称
         model: [
@@ -1631,7 +1644,9 @@ export const DEFAULT_HONOR_FORM = {
       source: ["list"],
       drag: true,
       dragClass: DEFAULT_DRAG_CLASS,
-      itemClass: DEFAULT_COL_CLASS + " py-1 px-1!",
+      // 数组容器取消子记录纵向间距，保持分隔线连续。
+      rowClass: "gap-y-0!",
+      itemClass: AAA + " py-1 px-1!",
 
       itemSchema: {
         // 名称数据源：绑定当前荣誉证书名称
@@ -1672,7 +1687,9 @@ export const DEFAULT_PUBLICATION_FORM = {
       source: ["list"],
       drag: true,
       dragClass: DEFAULT_DRAG_CLASS,
-      itemClass: DEFAULT_COL_CLASS + " px-3!",
+      // 数组容器取消子记录纵向间距，保持分隔线连续。
+      rowClass: "gap-y-0!",
+      itemClass: AAA + " px-3!",
       itemSchema: {
         type: "group",
         component: "collapseItem",
@@ -1891,7 +1908,9 @@ export const DEFAULT_IP_FORM = {
       source: ["list"],
       drag: true,
       dragClass: DEFAULT_DRAG_CLASS,
-      itemClass: DEFAULT_COL_CLASS + " px-3!",
+      // 数组容器取消子记录纵向间距，保持分隔线连续。
+      rowClass: "gap-y-0!",
+      itemClass: AAA + " px-3!",
       itemSchema: {
         type: "group",
         component: "collapseItem",
@@ -2149,7 +2168,9 @@ export const DEFAULT_CUSTOM_FORM = {
       source: ["list"],
       drag: true,
       dragClass: DEFAULT_DRAG_CLASS,
-      itemClass: DEFAULT_COL_CLASS + " px-3!",
+      // 数组容器取消子记录纵向间距，保持分隔线连续。
+      rowClass: "gap-y-0!",
+      itemClass: AAA + " px-3!",
       itemSchema: {
         type: "group",
         component: "collapseItem",
