@@ -86,7 +86,7 @@ function handleAdd() {
 </script>
 
 <template>
-  <SfCollapse v-model="collapsed" :border="false" class="rounded-3xl! bg-sf-primary!">
+  <SfCollapse v-model="collapsed" :border="false" class="rounded-xl!">
     <SfCollapseItem name="1" lazy class="resume-module-box">
       <template #title>
         <div class="group flex h-full w-full items-center justify-between">
@@ -107,10 +107,7 @@ function handleAdd() {
               <Icon @click.stop="archiveModule" icon="lucide:archive" size="4" />
             </SfTooltip>
             <SfTooltip :content="hidden ? $t('show') : $t('hide')">
-              <Icon
-                @click.stop="toggleHidden"
-                :icon="hidden ? 'lucide:eye' : 'lucide:eye-off'"
-              />
+              <Icon @click.stop="toggleHidden" :icon="hidden ? 'lucide:eye' : 'lucide:eye-off'" />
             </SfTooltip>
             <Icon
               v-if="currentForm.key !== 'user'"
@@ -144,12 +141,11 @@ function handleAdd() {
 
 /* 模块外框包裹头部与内容，统一圆角边界 */
 .resume-module-box {
-  @apply overflow-hidden rounded-3xl border border-sf-b;
+  @apply overflow-hidden rounded-xl border border-sf-b;
 }
-
-/* 直接匹配模块头部，让浅色背景覆盖全局透明背景 */
+/* 模块头部背景跟随明暗主题，并覆盖全局透明背景 */
 .resume-module-box > :deep(.el-collapse-item__header) {
-  @apply rounded-3xl bg-sf-theme-3! px-3;
+  @apply rounded-xl bg-sf-module-header! px-3;
 }
 
 /* 展开时去掉头部下圆角，与内容区域衔接 */
