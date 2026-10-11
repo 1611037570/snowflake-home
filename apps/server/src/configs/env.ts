@@ -13,6 +13,10 @@ const directory = existsSync(resolve(process.cwd(), 'apps/server/package.json'))
 const envPath = resolve(directory, `.env.${mode}`)
 if (existsSync(envPath)) loadEnvFile(envPath)
 
+// 浏览器内核目录与安装脚本 scripts/installChrome.mjs 保持一致，
+// 在 Playwright 模块加载前设定，避免运行用户与安装用户 HOME 不同导致找不到内核
+process.env.PLAYWRIGHT_BROWSERS_PATH ||= resolve(directory, '../../.cache/ms-playwright')
+
 export function envString(name: string, fallback = ''): string {
   return process.env[name] || fallback
 }
