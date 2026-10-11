@@ -27,7 +27,7 @@
       </div>
     </div>
     <!-- 切换控制：左右箭头翻页，圆点直达对应简历 -->
-    <div class="relative mt-6 flex items-center justify-center gap-3">
+    <div class="relative mt-3 flex items-center justify-center gap-3">
       <button
         type="button"
         class="flex h-9 w-9 cursor-pointer items-center justify-center rounded-full border border-sf-b bg-sf-primary text-sf-text-3 transition-colors duration-300 hover:border-sf-theme hover:text-sf-theme"
@@ -323,6 +323,8 @@ onMounted(async () => {
   /* 叠放卡偏移量：窄屏用更小的偏移，避免倾斜卡片超出屏幕 */
   --hero-stack-shift-x: -24px;
   --hero-stack-shift-y: -12px;
+  /* 第二张简历（后卡）的额外下移量：让它从前卡下方多露出一些 */
+  --hero-stack-back-offset-y: 15px;
 }
 
 @media (min-width: 640px) {
@@ -348,7 +350,7 @@ onMounted(async () => {
 
 /* 后卡：左上倾斜叠放，露出下一份简历 */
 .p-back {
-  transform: translate(var(--hero-stack-shift-x), var(--hero-stack-shift-y)) rotate(-10deg) scale(0.85);
+  transform: translate(var(--hero-stack-shift-x), calc(var(--hero-stack-shift-y) + var(--hero-stack-back-offset-y))) rotate(-10deg) scale(0.85);
   opacity: 1;
   z-index: 1;
 }
@@ -393,7 +395,7 @@ onMounted(async () => {
 
 /* 被跳过的相邻卡片在原位淡出 */
 .p-fade-out {
-  transform: translate(var(--hero-stack-shift-x), var(--hero-stack-shift-y)) rotate(-10deg) scale(0.85);
+  transform: translate(var(--hero-stack-shift-x), calc(var(--hero-stack-shift-y) + var(--hero-stack-back-offset-y))) rotate(-10deg) scale(0.85);
   opacity: 0;
   z-index: 0;
 }

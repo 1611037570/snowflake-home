@@ -76,6 +76,8 @@
               </button>
             </div>
           </HeroSwitcher>
+          <!-- 在线写作氛围：置于简历切换区下方，进入首屏时抽取一次在线人数 -->
+          <OnlineWriters class="animate-rise animate-rise--delay-two mt-3 text-center" />
         </div>
       </section>
 
@@ -178,6 +180,7 @@ import { $t } from "@/locales";
 import { getStatsOverview } from "@/apis";
 import { resumeTemplateList } from "../template/data/list";
 import HeroSwitcher from "./heroSwitcher.vue";
+import OnlineWriters from "../components/onlineWriters.vue";
 import { computed, onMounted, ref } from "vue";
 
 const resumeStore = useResumeStore();

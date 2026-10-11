@@ -4,6 +4,7 @@ import Title from "./title.vue";
 import LocalBackup from "./localBackup.vue";
 import ExportResume from "./exportResume/index.vue";
 import ProjectTitle from "../../../components/projectTitle.vue";
+import OnlineWriters from "../../../components/onlineWriters.vue";
 </script>
 
 <template>
@@ -19,6 +20,9 @@ import ProjectTitle from "../../../components/projectTitle.vue";
         <LocalBackup />
       </div>
     </div>
+
+    <!-- 在线写作氛围：进入编辑器时抽取一次在线人数，窄屏隐藏避免挤压标题 -->
+    <OnlineWriters class="mx-3 hidden shrink-0 lg:block" />
 
     <!-- 右侧工具栏 -->
     <div class="flex shrink-0 items-center gap-2 md:gap-5">
