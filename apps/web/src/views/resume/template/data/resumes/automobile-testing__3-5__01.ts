@@ -25,7 +25,7 @@ const resumeData: any = {
           ui: {},
           data: {
             name: "上海****智能科技有限公司",
-            department: "智能驾驶测试部",
+            department: "智能座舱测试部",
             post: "测试工程师",
             city: "上海",
             startTime: "2023.03",
@@ -58,7 +58,7 @@ const resumeData: any = {
           ui: {},
           data: {
             name: "智能座舱域控制器 HIL 自动化测试平台",
-            department: "智能驾驶测试部",
+            department: "智能座舱测试部",
             post: "测试负责人",
             city: "上海",
             startTime: "2024.03",

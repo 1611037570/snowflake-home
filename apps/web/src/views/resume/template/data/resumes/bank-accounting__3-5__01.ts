@@ -13,7 +13,7 @@ const resumeData: any = {
         phone: "15888888888",
         email: "16****70@qq.com",
         workTime: "2019.07",
-        sex: "男",
+        sex: "女",
         city: "上海",
         avatar: xiaoyang,
       },
@@ -39,14 +39,14 @@ const resumeData: any = {
           ui: {},
           data: {
             name: "上海****银行股份有限公司",
-            department: "公司金融部",
-            post: "对公客户经理",
+            department: "计划财务部",
+            post: "财务核算专员",
             city: "上海",
             startTime: "2019.07",
             endTime: "2022.06",
-            tags: ["对公业务", "合规展业"],
+            tags: ["账务核算", "监管报送"],
             content:
-              "<p>负责对公客户的授信申报、贷后管理与综合金融服务，覆盖尽职调查、财务分析与风险评级环节，管户年均存贷规模超 2.8 亿元，资产质量保持零不良。</p><p>推动企业网银与现金管理产品落地，协助客户完成资金归集与供应链对账，带动中间业务收入同比增长 15%，并按要求完成 KYC 与 AML 定期排查。</p>",
+              "<p>负责分行日常账务核算与会计凭证复核，完成总账与明细账核对、内部往来对账及月度结账，按期编制资产负债表、利润表等财务报表，账务处理保持零差错。</p><p>承担监管统计与数据报送工作，按期完成存贷款、表内外资产等报表填报与数据校验，配合内外部审计提供资料并跟踪整改，任职期间无监管处罚与重大审计调整。</p>",
           },
         },
       ],
@@ -107,7 +107,7 @@ const resumeData: any = {
       ui: { collapsed: ["1"], archived: false },
       data: {
         content:
-          "<p><strong>财务专业：</strong>熟悉全盘账务处理、合并报表、全面预算、成本管控与税务申报，掌握银行信贷业务中的授信申报、贷后管理与风险评级流程，具备 KYC、AML 与监管报送实操经验。</p><p><strong>工具与技术：</strong>熟练使用 SAP FICO、用友 NC 与金蝶 EAS 财务模块，以及 Excel 数据透视与 Power Query；能使用 SQL、Python 完成财务数据清洗与自动化取数，并用 Tableau 搭建经营分析看板。</p>",
+          "<p><strong>财务专业：</strong>熟悉全盘账务处理、合并报表、全面预算、成本管控与税务申报，并熟悉银行计划财务与账务核算流程，掌握总账处理、财务报表编制、监管统计报送与内控合规要求。</p><p><strong>工具与技术：</strong>熟练使用 SAP FICO、用友 NC 与金蝶 EAS 财务模块，以及 Excel 数据透视与 Power Query；能使用 SQL、Python 完成财务数据清洗与自动化取数，并用 Tableau 搭建经营分析看板。</p>",
       },
     },
     advantage: {
@@ -126,7 +126,7 @@ const resumeData: any = {
     },
     account: {
       ui: { collapsed: ["1"], archived: false },
-      list: [{ ui: {}, data: { name: "GitHub", url: "https://example.com/xxx" } }],
+      list: [{ ui: {}, data: { name: "领英主页", url: "https://example.com/bank-accounting" } }],
     },
   },
   config: {

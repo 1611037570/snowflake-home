@@ -13,7 +13,7 @@ const resumeData: any = {
         phone: "15888888888",
         email: "16****70@qq.com",
         workTime: "2020.07",
-        sex: "男",
+        sex: "女",
         city: "上海",
         avatar: xiaoyang,
       },

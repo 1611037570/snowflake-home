@@ -11,7 +11,7 @@ const resumeData: any = {
         {
           ui: {},
           data: {
-            name: "上海****智能科技有限公司",
+            name: "上海****医疗科技有限公司",
             department: "医疗数据平台部",
             post: "大数据开发工程师",
             city: "上海",
@@ -77,7 +77,7 @@ const resumeData: any = {
         {
           ui: {},
           data: {
-            name: "某某医科大学",
+            name: "上海****医科大学",
             college: "医学信息工程学院",
             education: "本科",
             mode: "全日制",

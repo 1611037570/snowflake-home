@@ -24,7 +24,7 @@ const resumeData: any = {
         {
           ui: {},
           data: {
-            name: "上海****智能科技有限公司",
+            name: "上海****人寿保险有限公司",
             department: "个险销售一部",
             post: "保险销售顾问",
             city: "上海",
