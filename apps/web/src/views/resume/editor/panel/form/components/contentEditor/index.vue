@@ -99,7 +99,7 @@ const appendExample = (example) => {
       </template>
       <template #bottom>
         <div
-          class="flex flex-wrap items-center gap-3 bg-sf-theme px-3 py-1 text-sf-theme-text"
+          class="flex flex-wrap items-center gap-3 bg-sf-module-header px-3 py-1 text-sf-text"
           :class="aiVisible ? '' : 'rounded-b-2xl'"
         >
           <span class="shrink-0 font-semibold">✦AI+</span>

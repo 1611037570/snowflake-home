@@ -19,7 +19,7 @@ const DEFAULT_META = {
   version: "1.0.0",
 };
 const DEFAULT_DRAG_CLASS = ".item-drag";
-const DEFAULT_COL_CLASS = "rounded-3xl border border-sf-bg-3 bg-sf-primary";
+const DEFAULT_COL_CLASS = "rounded-3xl border border-sf-b bg-sf-primary";
 // 必填与日期格式规则统一供完成度统计和 ATS 检查读取。
 const requiredFieldRule = () => ({ required: true, message: "请填写此项", trigger: "blur" });
 // ATS 规则仅生成分析提醒，不阻止用户保存字段内容。

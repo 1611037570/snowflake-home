@@ -41,6 +41,8 @@
   --color-sf-bg-2: var(--sf-background-2);
   /* 背景色-3 */
   --color-sf-bg-3: var(--sf-background-3);
+  /* 模块头部背景色 */
+  --color-sf-module-header: var(--sf-module-header);
   /* 常规透明色 */
   --color-sf-transparent: var(--sf-transparent);
   /* 常规透明色-2 */
@@ -86,6 +88,8 @@
   --sf-background: #f3f3f7;
   --sf-background-2: #e5e5ea;
   --sf-background-3: #d1d1d6;
+  /* 亮色模式的模块头部背景 */
+  --sf-module-header: #e2ebf5;
   --sf-transparent: color-mix(in oklab, oklch(97% 0.014 254.604) 80%, transparent);
   --sf-transparent-2: color-mix(in oklab, oklch(97% 0.014 254.604) 60%, transparent);
   --sf-transparent-3: color-mix(in oklab, oklch(97% 0.014 254.604) 40%, transparent);
@@ -102,6 +106,8 @@
   --sf-background: #121214;
   --sf-background-2: #3a3a3c;
   --sf-background-3: #48484a;
+  /* 暗色模式的模块头部背景 */
+  --sf-module-header: #272e30;
   /* 夜间版本 - 基于深色背景 */
   --sf-transparent: color-mix(in oklab, oklch(50% 0.014 254.604) 80%, transparent);
   --sf-transparent-2: color-mix(in oklab, oklch(20% 0.014 254.604) 60%, transparent);
