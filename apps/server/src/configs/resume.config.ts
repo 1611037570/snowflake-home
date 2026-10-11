@@ -16,7 +16,7 @@ export const resumeConfig = {
     password: env.resumeDbPassword,
     // 数据库名称
     database: env.resumeDbDatabase,
-    // 自动同步实体到数据库表结构（开发环境开启，生产环境建议关闭）
-    synchronize: true,
+    // 自动同步实体到数据库表结构（关闭：启动时不再改动表结构，避免线上数据被重置）
+    synchronize: false,
   },
 }
