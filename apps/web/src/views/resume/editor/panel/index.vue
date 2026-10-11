@@ -76,7 +76,7 @@ const activeMenu = computed(() => menuList.value[activeIndex.value] || menuList.
       class="mb-3 rounded-none md:rounded-r-3xl!"
     />
     <div
-      class="relative flex min-h-0 w-full flex-1 flex-col rounded-none border-y border-r border-sf-b bg-sf-primary py-3 text-sf-base md:rounded-r-3xl"
+      class="relative flex min-h-0 w-full flex-1 flex-col rounded-none border-y border-r border-sf-b bg-sf-primary text-sf-base md:rounded-r-3xl"
     >
       <div class="flex min-h-0 w-full flex-1 flex-col">
         <Transition :name="`tab-slide-${direction}`" mode="out-in">
