@@ -180,7 +180,7 @@ const PHASE_CLASS = {
   },
   next: {
     prev: "p-front-under",
-    current: "p-out-left",
+    current: "p-throw-right",
     next: "p-front",
     stale: "p-fade-out",
     future: "p-back",
@@ -261,11 +261,10 @@ async function turn(stepSize, target) {
   turning.value = true;
   const token = (turnToken += 1);
   enteringKeys.value = [];
-  const incomingRole = step > 0 ? "next" : "prev";
-  // 直达跳转的入场卡不在叠放位上，先把它瞬移到入场位置再开始位移
-  const incomingReady = layers.value.some(
-    (layer) => layer.role === incomingRole && layer.fileName === targetFile,
-  );
+  // 向后翻页的入场卡就在叠放位上，向前翻页统一先摆到左侧入场位
+  const incomingReady =
+    step > 0 &&
+    layers.value.some((layer) => layer.role === "next" && layer.fileName === targetFile);
   // 向后翻页时新叠放卡与翻页同时滑入，翻页结束后无需再等一段收尾动画
   enteringKeys.value = step > 0 ? [props.items[(targetIndex + 1) % size].fileName] : [];
   pendingStep.value = step;
@@ -359,8 +358,14 @@ onMounted(async () => {
   transform: translate(0, 0) rotate(0deg) scale(1);
 }
 
-/* 前卡向后翻的离场位，与向前翻的入场位 */
-.p-out-left,
+/* 向后翻页：前卡向右抛出，与向前翻的入场位方向相反 */
+.p-throw-right {
+  transform: translate(62%, -4%) rotate(7deg) scale(0.92);
+  opacity: 0;
+  z-index: 3;
+}
+
+/* 向前翻页的入场位：上一份简历从左侧滑入主位 */
 .p-enter-left {
   transform: translate(-58%, -3%) rotate(-5deg) scale(0.9);
   opacity: 0;
@@ -381,14 +386,14 @@ onMounted(async () => {
   z-index: 1;
 }
 
-/* 新补入叠放位的卡片：挂载即播放滑入动画，紧接翻页动画落下 */
+/* 新补入叠放位的卡片：挂载即从箭卡背后浮出并落位 */
 .hero-switcher__card.is-entering {
   animation: hero-stack-enter 0.3s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 @keyframes hero-stack-enter {
   from {
-    transform: translate(26%, -3%) rotate(4deg) scale(0.9);
+    transform: translate(-4%, -2%) rotate(-2deg) scale(0.96);
     opacity: 0;
   }
 }
