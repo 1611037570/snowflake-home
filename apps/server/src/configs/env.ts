@@ -52,9 +52,8 @@ export const env = Object.freeze({
   aiApiKey: envString('OPENAI_API_KEY'), // 人工智能上游密钥
   aiBaseUrl: envString('OPENAI_BASE_URL'), // 人工智能上游完整地址
   aiModel: envStringRequired('OPENAI_MODEL'), // 人工智能上游模型
-  // 打印页面地址，优先取显式配置，留空则由站点根地址拼接固定路由 /resume/print
-  pdfRenderUrl:
-    envString('PDF_RENDER_URL') || `${envStringRequired('PUBLIC_SITE_URL')}/resume/print`,
+  // 打印页面地址，由站点根地址拼接固定路由 /resume/print
+  pdfRenderUrl: `${envStringRequired('PUBLIC_SITE_URL')}/resume/print`,
   pdfTimeout: envNumber('PDF_RENDER_TIMEOUT', 60000), // 打印页面渲染超时，单位毫秒
   weatherBaseUrl: envString('WEATHER_BASE_URL'), // 天气上游基地址
   weatherAppId: envString('WEATHER_APP_ID'), // 天气上游应用标识
