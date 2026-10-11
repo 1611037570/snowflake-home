@@ -6,14 +6,16 @@ import ConversationViewer from "./components/conversationViewer.vue";
 // 左侧菜单控制右侧内容。
 const activePanel = ref("settings");
 const panelList = [
-  { name: "消息", value: "messages", icon: "ph:chats-duotone" },
+  // { name: "消息", value: "messages", icon: "ph:chats-duotone" },
   { name: "AI设置", value: "settings", icon: "lucide:settings-2" },
 ];
 </script>
 
 <template>
-  <div class="flex h-full w-full flex-col md:flex-row">
-    <aside class="flex shrink-0 flex-row gap-3 overflow-x-auto border-b border-sf-b bg-sf-primary p-3 md:w-48 md:flex-col md:border-r md:border-b-0">
+  <div class="flex h-full w-full flex-col bg-sf-primary md:flex-row">
+    <aside
+      class="flex shrink-0 flex-row gap-3 overflow-x-auto border-b border-sf-b bg-sf-primary p-3 md:w-48 md:flex-col md:border-r md:border-b-0"
+    >
       <button
         v-for="panel in panelList"
         :key="panel.value"
@@ -30,7 +32,7 @@ const panelList = [
         {{ panel.name }}
       </button>
     </aside>
-    <section class="min-h-0 min-w-0 flex-1 p-3 sm:p-6">
+    <section class="min-h-0 min-w-0 flex-1 p-3">
       <ConversationViewer v-if="activePanel === 'messages'" class="h-full" />
       <AiProviderSettingsContent v-if="activePanel === 'settings'" class="h-full" />
     </section>

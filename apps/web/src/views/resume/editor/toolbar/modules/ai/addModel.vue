@@ -185,6 +185,7 @@ function handleAddBuiltin() {
   // 添加成功后切到「已添加模型」Tab，让用户看到新模型
   emit("addSuccess");
 }
+provide("bg", "bg-sf-bg");
 </script>
 
 <template>

@@ -18,7 +18,6 @@ function openDrawer() {
   <div class="cursor-pointer text-sf-text hover:text-sf-theme" @click="openDrawer">
     <Icon content="服务商设置" icon="lucide:sparkles" />
   </div>
-
   <!-- 设置弹窗 -->
   <SfModal v-model="modelManagerVisible" title="服务商设置" width="720px">
     <ProviderSettingsContent class="h-[460px]" />
