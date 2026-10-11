@@ -185,8 +185,8 @@ const PHASE_CLASS = {
     stale: "p-fade-out",
     future: "p-back",
   },
-  "prev-setup": { prev: "p-enter-left", current: "p-front", next: "p-back" },
-  prev: { prev: "p-front", current: "p-back", next: "p-out-right" },
+  "prev-setup": { prev: "p-enter-right", current: "p-front", next: "p-back" },
+  prev: { prev: "p-front", current: "p-back", next: "p-sink" },
 };
 
 // 当前阶段下卡片的层位类名
@@ -358,28 +358,21 @@ onMounted(async () => {
   transform: translate(0, 0) rotate(0deg) scale(1);
 }
 
-/* 向后翻页：前卡向右抛出，与向前翻的入场位方向相反 */
+/* 下一份的退场位：前卡向右抛出 */
 .p-throw-right {
   transform: translate(62%, -4%) rotate(7deg) scale(0.92);
   opacity: 0;
   z-index: 3;
 }
 
-/* 向前翻页的入场位：上一份简历从左侧滑入主位 */
-.p-enter-left {
-  transform: translate(-58%, -3%) rotate(-5deg) scale(0.9);
-  opacity: 0;
-  z-index: 3;
-}
-
-/* 前卡向前翻时后卡的退场位 */
-.p-out-right {
-  transform: translate(18%, -3%) rotate(4deg) scale(0.9);
+/* 上一份的退场位：露出的后卡向左下沉回牌堆并淡出，不再横穿主卡 */
+.p-sink {
+  transform: translate(calc(var(--hero-stack-shift-x) * 1.8), calc(var(--hero-stack-shift-y) * 1.8)) rotate(-18deg) scale(0.68);
   opacity: 0;
   z-index: 0;
 }
 
-/* 直达跳转的入场位：新卡片从右侧滑入主位 */
+/* 翻页入场位：上一份与直达跳转的新卡片都从右侧滑回主位 */
 .p-enter-right {
   transform: translate(26%, -3%) rotate(4deg) scale(0.9);
   opacity: 0;
