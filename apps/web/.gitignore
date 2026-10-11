@@ -14,6 +14,10 @@ dist
 dist-ssr
 coverage
 *.local
+# 环境变量：仅提交 .env.example 空模板，实际数据文件不入库
+.env
+.env.development
+.env.production
 test
 .pnpm-store
 # 测试产物

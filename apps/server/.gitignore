@@ -35,8 +35,10 @@ lerna-debug.log*
 !.vscode/launch.json
 !.vscode/extensions.json
 
-# dotenv environment variable files
+# dotenv environment variable files：仅提交 .env.example 空模板，实际数据文件不入库
 .env
+.env.development
+.env.production
 .env.development.local
 .env.test.local
 .env.production.local
