@@ -98,67 +98,51 @@
             </h2>
           </div>
         </div>
-        <div class="resume-home__journey-grid mt-12 grid gap-3 md:grid-cols-4">
+        <!-- 四个模块合并为左右交替的纵向时间轴：主线居中，卡片一左一右 -->
+        <div class="resume-home__journey-grid mt-12 grid gap-6">
           <article
-            v-for="(step, index) in journeySteps"
-            :key="step.title"
-            class="resume-home__journey-card group relative rounded-[24px] border border-sf-b bg-sf-primary p-6 transition-transform duration-300 hover:-translate-y-2"
+            v-for="(group, index) in featureGroups"
+            :id="group.id"
+            :key="group.id"
+            class="resume-home__journey-card relative flex gap-6 md:block"
           >
-            <div class="flex items-center gap-3">
-              <span class="text-sm font-black text-sf-theme">0{{ index + 1 }}</span>
-              <div class="text-xl font-bold">{{ step.title }}</div>
+            <!-- 时间轴节点：移动端排在卡片左侧，桌面端压在居中主线上 -->
+            <span
+              class="flex h-12 w-12 shrink-0 items-center justify-center rounded-full border border-sf-b bg-sf-primary text-sm font-black text-sf-theme md:absolute md:top-0 md:left-1/2 md:-translate-x-1/2"
+            >
+              0{{ index + 1 }}
+            </span>
+            <!-- 卡片占半幅：靠轴一侧留出 3rem 给节点 -->
+            <div class="flex-1 md:w-1/2" :class="index % 2 ? 'md:ml-auto md:pl-12' : 'md:pr-12'">
+              <div
+                class="rounded-[21px] border border-sf-b bg-sf-primary p-3 transition-transform duration-300 hover:-translate-y-1"
+              >
+                <div class="flex items-center gap-3">
+                  <span
+                    class="flex h-9 w-9 items-center justify-center rounded-xl bg-sf-theme-2 text-sf-theme"
+                  >
+                    <SfIcon :icon="group.icon" size="5" />
+                  </span>
+                  <h3 class="text-xl font-black tracking-[-0.02em]">{{ group.eyebrow }}</h3>
+                </div>
+                <p class="mt-3 leading-7 text-sf-text-2">{{ group.description }}</p>
+                <ul class="mt-3 grid gap-3">
+                  <li
+                    v-for="item in group.items"
+                    :key="item"
+                    class="flex items-start gap-3 text-sm leading-6 text-sf-text-2"
+                  >
+                    <span
+                      class="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-sf-success-2 text-sf-success"
+                    >
+                      <SfIcon icon="lucide:check" size="3" />
+                    </span>
+                    {{ item }}
+                  </li>
+                </ul>
+              </div>
             </div>
-            <p class="mt-3 leading-7 text-sf-text-2">{{ step.description }}</p>
           </article>
-        </div>
-      </section>
-
-      <section
-        v-for="(group, index) in featureGroups"
-        :id="group.id"
-        :key="group.title"
-        :ref="registerRevealSection"
-        class="resume-home__reveal relative mx-auto grid max-w-[1440px] items-center gap-12 px-6 py-18 lg:grid-cols-2 lg:px-12"
-      >
-        <article :class="index % 2 ? 'lg:order-2' : ''" class="max-w-xl">
-          <p class="text-sm font-semibold tracking-[0.18em] text-sf-theme">{{ group.eyebrow }}</p>
-          <h2 class="mt-3 text-3xl font-black tracking-[-0.04em] sm:text-4xl">{{ group.title }}</h2>
-          <p class="mt-6 leading-8 text-sf-text-2">{{ group.description }}</p>
-          <ul class="mt-9 grid gap-3 sm:grid-cols-2">
-            <li
-              v-for="item in group.items"
-              :key="item"
-              class="flex items-start gap-3 text-sm leading-6 text-sf-text-2"
-            >
-              <span
-                class="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-sf-success-2 text-sf-success"
-              >
-                <SfIcon icon="lucide:check" size="3" />
-              </span>
-              {{ item }}
-            </li>
-          </ul>
-        </article>
-        <div :class="index % 2 ? 'lg:order-1' : ''" class="relative">
-          <div
-            class="resume-home__feature-shot resume-home__shot relative aspect-[16/10] overflow-hidden rounded-[30px] border border-dashed border-sf-b bg-sf-bg"
-          >
-            <!-- 将此区域替换为对应模块的产品截图即可 -->
-            <div
-              class="absolute inset-0 flex flex-col items-center justify-center gap-3 p-6 text-center"
-            >
-              <span
-                class="flex h-15 w-15 items-center justify-center rounded-2xl bg-sf-primary text-sf-theme shadow-sm"
-              >
-                <SfIcon :icon="group.icon" size="8" />
-              </span>
-              <span>
-                <strong class="block text-base">{{ group.shotTitle }}</strong>
-                <small class="mt-3 block text-sm text-sf-text-3">{{ group.shotDescription }}</small>
-              </span>
-            </div>
-            <span class="resume-home__grid absolute inset-0"></span>
-          </div>
         </div>
       </section>
 
@@ -297,91 +281,57 @@ useIntersectionObserver(
   revealSections,
   (entries) => {
     entries.forEach((entry) => {
-      entry.target.classList.toggle("is-visible", entry.isIntersecting);
+      // 只做进入时的显示：高于视口的区块在滚动中交叉比例会回落，撤回类名会让内容提前整体隐藏
+      if (entry.isIntersecting) entry.target.classList.add("is-visible");
     });
   },
-  { threshold: 0.3 },
+  // 阈值取 0.1：区块高于视口时交叉比例达不到 0.3，会永远不显示
+  { threshold: 0.1 },
 );
-
-const journeySteps = computed(() => [
-  {
-    title: $t("resumeHomeStepCreateTitle"),
-    description: $t("resumeHomeStepCreateDescription"),
-  },
-  {
-    title: $t("resumeHomeStepEditorTitle"),
-    description: $t("resumeHomeStepEditorDescription"),
-  },
-  {
-    title: $t("resumeHomeStepAiTitle"),
-    description: $t("resumeHomeStepAiDescription"),
-  },
-  {
-    title: $t("resumeHomeStepStatisticsTitle"),
-    description: $t("resumeHomeStepStatisticsDescription"),
-  },
-]);
 
 const featureGroups = computed(() => [
   {
     icon: "ph:file-md-duotone",
     id: "create",
     eyebrow: $t("resumeHomeCreateEyebrow"),
-    title: $t("resumeHomeCreateTitle"),
     description: $t("resumeHomeCreateDescription"),
-    shotTitle: $t("resumeHomeCreateShotTitle"),
-    shotDescription: $t("resumeHomeCreateShotDescription"),
     items: [
       $t("resumeHomeCreateFeature1"),
       $t("resumeHomeCreateFeature2"),
       $t("resumeHomeCreateFeature3"),
-      $t("resumeHomeCreateFeature4"),
     ],
   },
   {
     icon: "mdi:widgets",
     id: "editor",
     eyebrow: $t("resumeHomeEditorEyebrow"),
-    title: $t("resumeHomeEditorTitle"),
     description: $t("resumeHomeEditorDescription"),
-    shotTitle: $t("resumeHomeEditorShotTitle"),
-    shotDescription: $t("resumeHomeEditorShotDescription"),
     items: [
       $t("resumeHomeEditorFeature1"),
       $t("resumeHomeEditorFeature2"),
       $t("resumeHomeEditorFeature3"),
-      $t("resumeHomeEditorFeature4"),
-      $t("resumeHomeEditorFeature5"),
     ],
   },
   {
     icon: "ph:brain-duotone",
     id: "ai",
     eyebrow: $t("resumeHomeAiEyebrow"),
-    title: $t("resumeHomeAiTitle"),
     description: $t("resumeHomeAiDescription"),
-    shotTitle: $t("resumeHomeAiShotTitle"),
-    shotDescription: $t("resumeHomeAiShotDescription"),
     items: [
       $t("resumeHomeAiFeature1"),
       $t("resumeHomeAiFeature2"),
       $t("resumeHomeAiFeature3"),
-      $t("resumeHomeAiFeature4"),
     ],
   },
   {
     icon: "mdi:chart-pie",
     id: "statistics",
     eyebrow: $t("resumeHomeStatisticsEyebrow"),
-    title: $t("resumeHomeStatisticsTitle"),
     description: $t("resumeHomeStatisticsDescription"),
-    shotTitle: $t("resumeHomeStatisticsShotTitle"),
-    shotDescription: $t("resumeHomeStatisticsShotDescription"),
     items: [
       $t("resumeHomeStatisticsFeature1"),
       $t("resumeHomeStatisticsFeature2"),
       $t("resumeHomeStatisticsFeature3"),
-      $t("resumeHomeStatisticsFeature4"),
     ],
   },
 ]);
@@ -420,21 +370,6 @@ const featureGroups = computed(() => [
 .resume-home__glow {
   background: radial-gradient(closest-side, var(--sf-theme-3), transparent);
   filter: blur(24px);
-}
-
-.resume-home__grid {
-  background-image:
-    linear-gradient(var(--sf-border) 1px, transparent 1px),
-    linear-gradient(90deg, var(--sf-border) 1px, transparent 1px);
-  background-size: 2rem 2rem;
-  mask-image: linear-gradient(
-    to bottom,
-    transparent,
-    var(--sf-base) 35%,
-    var(--sf-base) 70%,
-    transparent
-  );
-  pointer-events: none;
 }
 
 .resume-home__closing {
@@ -513,6 +448,42 @@ const featureGroups = computed(() => [
 
 .resume-home__journey-card:nth-child(4) {
   transition-delay: 0.27s;
+}
+
+/* 时间轴主线：每行自绘一段，从节点下沿连到下一行，最后一行不再延伸 */
+.resume-home__journey-card::before {
+  position: absolute;
+  top: 3rem;
+  bottom: -1.5rem;
+  left: 1.5rem;
+  width: 1px;
+  transform: translateX(-50%);
+  background: var(--sf-border);
+  content: "";
+}
+
+/* 相邻两行的咬合距离：每行都上移同样的值，节点才会沿轴均匀推进。
+   取值必须满足「咬合 ≤ 卡片高度 ÷ 2 + 行间距」，超出后同一侧的前后两张卡会叠在一起。 */
+.resume-home__journey-grid {
+  --journey-overlap: 6rem;
+}
+
+/* 桌面端主线移到整行的正中：卡片在哪一侧都不影响轴的位置 */
+@media (min-width: 768px) {
+  .resume-home__journey-card::before {
+    left: 50%;
+    /* 主线缩短咬合距离，正好收在下一行节点的上沿 */
+    bottom: calc(var(--journey-overlap) - 1.5rem);
+  }
+
+  /* 首行之外的每一行都上移相同距离，行间距与节点间距保持一致 */
+  .resume-home__journey-card:nth-child(n + 2) {
+    margin-top: calc(-1 * var(--journey-overlap));
+  }
+}
+
+.resume-home__journey-card:last-child::before {
+  content: none;
 }
 
 .animate-rise {
