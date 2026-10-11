@@ -2,17 +2,28 @@ import { existsSync } from 'node:fs'
 import { resolve } from 'node:path'
 import { loadEnvFile } from 'node:process'
 
-// 在配置创建与数据库探测之前加载环境，部署参数优先于本地文件。
+// 运行环境标识，未显式指定时按本地开发处理
+const mode = process.env.NODE_ENV || 'development'
+
+// 在配置创建与数据库探测之前加载环境，先加载者优先，故敏感项排在最前。
+// 优先级：系统/pm2 环境变量 > .env.local（敏感，不入库） > .env.{运行环境}（分环境，入库）
 const directory = existsSync(resolve(process.cwd(), 'apps/server/package.json'))
   ? resolve(process.cwd(), 'apps/server')
   : process.cwd()
-for (const filename of ['.env.local', '.env']) {
+for (const filename of ['.env.local', `.env.${mode}`]) {
   const path = resolve(directory, filename)
   if (existsSync(path)) loadEnvFile(path)
 }
 
 export function envString(name: string, fallback = ''): string {
   return process.env[name] || fallback
+}
+
+// 必填配置缺失时立即报错，避免静默回落到本地地址导致线上行为异常
+export function envStringRequired(name: string): string {
+  const value = envString(name)
+  if (!value) throw new Error(`缺少必需配置 ${name}，请在 apps/server/.env 中补充`)
+  return value
 }
 
 export function envNumber(name: string, fallback: number): number {
@@ -37,8 +48,10 @@ export const env = Object.freeze({
   jwtSecret: envString('JWT_SECRET'), // 登录凭证签名密钥
   aiApiKey: envString('OPENAI_API_KEY'), // 人工智能上游密钥
   aiBaseUrl: envString('OPENAI_BASE_URL'), // 人工智能上游完整地址
-  aiModel: envString('OPENAI_MODEL', 'deepseek-v4-flash-ga-260731'), // 人工智能上游模型
-  pdfRenderUrl: envString('PDF_RENDER_URL', 'http://localhost:5173/resume/print'), // 打印页面地址
+  aiModel: envStringRequired('OPENAI_MODEL'), // 人工智能上游模型
+  // 打印页面地址，优先取显式配置，留空则由站点根地址拼接固定路由 /resume/print
+  pdfRenderUrl:
+    envString('PDF_RENDER_URL') || `${envStringRequired('PUBLIC_SITE_URL')}/resume/print`,
   pdfTimeout: envNumber('PDF_RENDER_TIMEOUT', 60000), // 打印页面渲染超时，单位毫秒
   weatherBaseUrl: envString('WEATHER_BASE_URL'), // 天气上游基地址
   weatherAppId: envString('WEATHER_APP_ID'), // 天气上游应用标识
@@ -49,4 +62,4 @@ export const env = Object.freeze({
   githubRepository: envString('GITHUB_REPOSITORY', '1611037570/snowflake-home'), // 开源仓库全名，用于查询星标
   githubStarsCacheTtl: envNumber('GITHUB_STARS_CACHE_TTL', 1800000), // 仓库星标缓存有效期，单位毫秒
   integrationsTimeout: envNumber('INTEGRATIONS_TIMEOUT', 5000), // 第三方上游超时，单位毫秒
-});
+})
