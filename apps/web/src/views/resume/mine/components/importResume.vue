@@ -1,5 +1,5 @@
 <script setup>
-import { useFileDialog } from "@/hooks";
+import { useFileDialog, trackResumeAction } from "@/hooks";
 import confirm from "@/components/business/confirm";
 import { parseMarkdownResume } from "../markdownParser";
 import { parsePdfResume } from "../pdfParser";
@@ -17,6 +17,8 @@ const router = useRouter();
 const parsing = ref(false);
 const parseProgress = ref("");
 const pendingResume = ref(null);
+// 待导入文件的来源格式，用于导入成功后上报动作
+const pendingDocFormat = ref("");
 let parseController = null;
 let choosingDocument = false;
 let importVersion = 0;
@@ -57,6 +59,7 @@ const cancelImport = () => {
   parseController = null;
   parsing.value = false;
   pendingResume.value = null;
+  pendingDocFormat.value = "";
 };
 watch(visible, (open) => { if (!open) cancelImport(); }, { flush: "sync" });
 onBeforeUnmount(cancelImport);
@@ -123,6 +126,8 @@ const importDocumentConfig = async (format) => {
       : await parseMarkdownResume(await file.text(), controller.signal, onProgress);
     if (controller.signal.aborted || parseController !== controller) return;
     pendingResume.value = item;
+    // 记录来源格式，PDF 与 Markdown 解析共用同一确认入口
+    pendingDocFormat.value = format;
   } catch (error) {
     if (!controller.signal.aborted && parseController === controller) {
       ElMessage.error(error instanceof Error ? error.message : "简历解析失败，请检查文件或模型配置");
@@ -141,6 +146,11 @@ const confirmImport = () => {
   if (!item) return;
   const { warnings, ...resume } = item;
   if (resumeStore.addResume(resume, false)) {
+    // 导入成功后按来源格式上报一次导入动作
+    trackResumeAction({
+      eventType: "import",
+      fileType: pendingDocFormat.value === "pdf" ? "pdf" : "markdown",
+    });
     pendingResume.value = null;
     visible.value = false;
     ElMessage.success("简历导入成功");
@@ -202,7 +212,11 @@ const parseJsonConfig = async (file) => {
     }
     // 以解析出的完整简历创建新简历，jump=false 避免跳转编辑器
     const ok = resumeStore.addResume(item, false);
-    if (ok) ElMessage.success("简历导入成功");
+    if (ok) {
+      // 导入成功后上报一次 JSON 导入动作
+      trackResumeAction({ eventType: "import", fileType: "json" });
+      ElMessage.success("简历导入成功");
+    }
   } catch (error) {
     console.error("解析简历文件失败:", error);
     ElMessage.error("简历文件解析失败，请检查文件格式");

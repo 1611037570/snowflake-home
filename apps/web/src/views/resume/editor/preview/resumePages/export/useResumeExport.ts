@@ -14,6 +14,8 @@ import { exportMarkdown } from "./useMarkdownExport";
 import { exportHtml } from "./useHtmlExport";
 import type { PagePlan } from "../engine/paginate/pagePlan";
 import { getExportLayoutStatus, type ExportLayoutMode } from "./exportLayout";
+import { trackResumeAction } from "@/hooks";
+import type { ResumeExportSource, ResumeFileType } from "@/apis";
 /** useResumeExport 入参 */
 interface UseResumeExportOptions {
   /** 编辑态才注册导出事件，其余模式（缩略图/全屏预览）不注册 */
@@ -55,33 +57,38 @@ export const useResumeExport = ({
   };
   const canExportMeasure = () => canExport("continuous");
   const canExportPages = () => canExport("pages");
+  // 导出成功后才上报埋点，fileType 为导出格式、source 为产出方式
+  const reportExport = (fileType: ResumeFileType, source: ResumeExportSource) => () => {
+    trackResumeAction({ eventType: "export", fileType, source });
+    onExportSuccess?.();
+  };
   // 长图 PDF 与 PNG 共用长图渲染结果，保持单页长图输出。
   const printPDF = (scale: unknown = 2) => {
     if (!canExportMeasure()) return;
     return printLongImagePdf(
       measureRef,
-      onExportSuccess,
+      reportExport("pdf", "image"),
       scale === 8 ? 8 : scale === 4 ? 4 : scale === 2 ? 2 : 1,
     );
   };
   // 浏览器打印单独作为导出选项，保留系统打印能力。
   const printBrowserPDF = (scale: unknown = 2) => {
     if (!canExportPages()) return;
-    return printResume(rootRef, onExportSuccess, scale === 8 ? 8 : scale === 4 ? 4 : scale === 2 ? 2 : 1);
+    return printResume(rootRef, reportExport("pdf", "local"), scale === 8 ? 8 : scale === 4 ? 4 : scale === 2 ? 2 : 1);
   };
   const printServerPDF = () => {
     if (!canExportPages()) return;
-    return exportServerPdf(onExportSuccess);
+    return exportServerPdf(reportExport("pdf", "server"));
   };
   const printImage = (scale: unknown = 2) => {
     if (!canExportMeasure()) return;
-    return exportImage(measureRef, onExportSuccess, scale === 8 ? 8 : scale === 4 ? 4 : scale === 2 ? 2 : 1);
+    return exportImage(measureRef, reportExport("png", "image"), scale === 8 ? 8 : scale === 4 ? 4 : scale === 2 ? 2 : 1);
   };
-  const printMarkdown = () => exportMarkdown(onExportSuccess);
+  const printMarkdown = () => exportMarkdown(reportExport("markdown", "local"));
   // 导出可编辑的单文件 HTML
   const printHtml = () => {
     if (!canExportPages()) return;
-    return exportHtml(rootRef, onExportSuccess);
+    return exportHtml(rootRef, reportExport("html", "local"));
   };
   // 仅编辑模式注册全局导出事件
   onMounted(() => {

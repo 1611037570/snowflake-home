@@ -1,5 +1,6 @@
 <script setup>
 import { useResumeStore } from "@/stores";
+import { trackResumeAction } from "@/hooks";
 import {
   getResumeThemeTemplate,
   themeTemplateList,
@@ -184,14 +185,22 @@ const useTemplate = (card) => {
   ui.layout.columns = layoutUsesColumns(layoutType)
     ? resolveLayoutColumns(layoutType, moduleKeys, ui.layout.columns)
     : null;
-  resumeStore.addResume({
-    data: deepClone(source.data),
-    config: deepClone(source.config),
-    ui,
-  });
+  // 新建成功后上报一次简历创建动作
+  if (
+    resumeStore.addResume({
+      data: deepClone(source.data),
+      config: deepClone(source.config),
+      ui,
+    })
+  ) {
+    trackResumeAction({ eventType: "create", fileType: "none" });
+  }
 };
 const useContentTemplate = (card) => {
-  resumeStore.addResume(deepClone(card.item));
+  // 新建成功后上报一次简历创建动作
+  if (resumeStore.addResume(deepClone(card.item))) {
+    trackResumeAction({ eventType: "create", fileType: "none" });
+  }
 };
 const useTemplateCard = (card) => {
   if (card.type === "style") useTemplate(card);
@@ -289,7 +298,9 @@ const tagTextClass = computed(() => (isDark.value ? "text-sf-theme-text" : "text
                 </div>
               </div>
               <!-- 信息层悬浮在卡片底部：纯色背景、高度随内容，标签默认显示 -->
-              <div class="relative flex flex-col gap-1 border-t border-sf-b bg-sf-primary px-3 py-3">
+              <div
+                class="relative flex flex-col gap-1 border-t border-sf-b bg-sf-primary px-3 py-3"
+              >
                 <div class="truncate text-base font-black text-sf-text">
                   {{ card.name }}
                 </div>

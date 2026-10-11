@@ -1,5 +1,6 @@
 <script setup>
 import { useResumeStore } from "@/stores";
+import { trackResumeAction } from "@/hooks";
 import { resumeTemplateList } from "@/views/resume/template/data/list";
 import { loadResumeTemplates } from "@/views/resume/template/data/resumeData";
 import { useRouter } from "vue-router";
@@ -61,7 +62,8 @@ const open = () => {
 
 const selectOption = async (key) => {
   if (key === "blank") {
-    resumeStore.addResume();
+    // 新建成功后上报一次简历创建动作
+    if (resumeStore.addResume()) trackResumeAction({ eventType: "create", fileType: "none" });
     close();
     return;
   }
@@ -81,7 +83,7 @@ const selectOption = async (key) => {
 
 const createQuickResume = () => {
   const { name, phone, position } = form.value;
-  resumeStore.addResume({
+  const created = resumeStore.addResume({
     data: {
       user: {
         data: {
@@ -92,11 +94,16 @@ const createQuickResume = () => {
       },
     },
   });
+  // 新建成功后上报一次简历创建动作
+  if (created) trackResumeAction({ eventType: "create", fileType: "none" });
   close();
 };
 
 const useTemplate = (template) => {
-  resumeStore.addResume(structuredClone(template.item));
+  // 新建成功后上报一次简历创建动作
+  if (resumeStore.addResume(structuredClone(template.item))) {
+    trackResumeAction({ eventType: "create", fileType: "none" });
+  }
   close();
 };
 

@@ -1,6 +1,8 @@
 import { config } from "@/configs";
 import XyRequest from "../../request";
 import axios from "axios";
+// 简历使用统计相关接口
+export * from "./stats";
 const request = new XyRequest({
   baseURL: config.api.baseUrl,
 });
