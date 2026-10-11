@@ -99,13 +99,17 @@ const appendExample = (example) => {
       </template>
       <template #bottom>
         <div
-          class="flex flex-wrap items-center gap-3 bg-sf-module-header px-3 py-1 text-sf-text"
-          :class="aiVisible ? '' : 'rounded-b-2xl'"
+          class="flex flex-wrap items-center gap-3 border-t border-sf-b bg-sf-module-header px-3 py-1 text-sf-text"
+          :class="aiVisible ? '' : 'rounded-b-3xl'"
         >
           <span class="shrink-0 font-semibold">✦AI+</span>
           <div class="flex flex-wrap items-center gap-3">
             <button
-              v-for="(action, index) in [$t('resumeContentGenerate'), $t('resumeContentPolish'), $t('resumeContentSimplify')]"
+              v-for="(action, index) in [
+                $t('resumeContentGenerate'),
+                $t('resumeContentPolish'),
+                $t('resumeContentSimplify'),
+              ]"
               :key="action"
               type="button"
               class="cursor-pointer rounded-3xl bg-sf-primary px-3 py-1 text-sm font-medium text-sf-text transition-colors hover:bg-sf-page"
