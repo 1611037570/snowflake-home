@@ -122,14 +122,16 @@ function handleAdd() {
         <div v-if="tip" class="mb-2">{{ tip }}</div>
         <div class="">
           <slot />
-          <div
-            class="mt-3 flex w-fit cursor-pointer items-center gap-1 rounded-3xl border border-transparent bg-sf-theme-3 px-3 py-1 text-sf-theme hover:border-sf-theme"
+          <!-- 添加入口使用紧凑文字操作，默认显示一级主题色。 -->
+          <button
+            type="button"
+            class="m-3 flex w-fit cursor-pointer items-center gap-3 text-xs text-sf-theme transition-colors hover:text-sf-theme"
             @click="handleAdd"
             v-if="add"
           >
             <SfIcon icon="ic:round-add" size="4" />
             <span>{{ $t("addRecord", { name: title }) }}</span>
-          </div>
+          </button>
         </div>
       </template>
     </SfCollapseItem>
@@ -142,6 +144,10 @@ function handleAdd() {
 /* 模块外框包裹头部与内容，统一圆角边界 */
 .resume-module-box {
   @apply overflow-hidden rounded-xl border border-sf-b;
+}
+/* 所有模块外层统一取消折叠内容区默认的底部留白 */
+.resume-module-box > :deep(.el-collapse-item__wrap > .el-collapse-item__content) {
+  padding-bottom: 0 !important;
 }
 /* 模块头部背景跟随明暗主题，并覆盖全局透明背景 */
 .resume-module-box > :deep(.el-collapse-item__header) {

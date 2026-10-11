@@ -178,11 +178,6 @@ onBeforeUnmount(() => {
 
 <style lang="scss" scoped>
 .resume-editor-form {
-  // 仅取消专业技能与个人优势折叠内容区的底部留白。
-  :deep(:is([data-module-key="skill"], [data-module-key="advantage"]) .el-collapse-item__content) {
-    padding-bottom: 0 !important;
-  }
-
   :deep(.el-input__wrapper),
   :deep(.el-select__wrapper),
   :deep(.el-textarea__inner),

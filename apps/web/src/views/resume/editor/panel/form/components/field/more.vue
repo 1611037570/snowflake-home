@@ -84,13 +84,14 @@ function handleCreateCustomField() {
 </script>
 
 <template>
-  <div class="w-full">
+  <!-- 模块取消默认底部留白后，更多字段区域自行保留底部间距。 -->
+  <div class="w-full pb-3">
     <!-- 已添加字段始终显示在选择入口上方 -->
     <slot />
-    <!-- 更多配置开关 -->
+    <!-- 更多配置开关增加左侧留白，与字段内容对齐。 -->
     <button
       type="button"
-      class="flex cursor-pointer items-center gap-3 pt-3 text-sm text-sf-theme transition-colors"
+      class="ml-3 flex cursor-pointer items-center gap-3 pt-3 text-sm text-sf-theme transition-colors"
       @click="toggle"
     >
       <span>{{ expanded ? $t("collapseMore") : $t("expandMore") }}</span>

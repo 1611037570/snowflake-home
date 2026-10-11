@@ -31,12 +31,15 @@ watch(fieldKeys, () => {
 </script>
 
 <template>
-  <div v-if="renderable" class="w-full rounded-3xl border border-sf-b p-3">
-    <!-- 分区标题：说明字段的展示位置与排序方式 -->
-    <div class="mb-3 flex items-center gap-3 text-sm text-sf-text-2">
-      <span>{{ $t("subtitle") }}</span>
-      <span>{{ $t("subtitleTip") }}</span>
-    </div>
+  <!-- 标题与所属字段共用浅灰底色，明确副标题分区范围。 -->
+  <div v-if="renderable" class="w-full bg-sf-bg">
+    <!-- 标题与说明分列，沿用中性色与细分隔线。 -->
+    <header
+      class="flex flex-wrap items-center justify-between gap-3 border-b border-sf-b px-3 py-3"
+    >
+      <span class="text-sm font-medium text-sf-text">{{ $t("subtitle") }}</span>
+      <span class="text-xs text-sf-text-3">{{ $t("subtitleTip") }}</span>
+    </header>
     <slot />
   </div>
 </template>
