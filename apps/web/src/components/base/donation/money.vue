@@ -25,17 +25,17 @@ const list = computed(() => {
 
   <!-- 支付方式容器 -->
   <div class="mt-3 mb-3 grid w-full grid-cols-2 gap-2">
-    <div
-      v-for="item in list"
-      :key="item.name"
-      class="group flex-c flex-col items-center rounded-3xl border border-sf-b p-5 transition-all duration-300"
-    >
-      <SfImg
-        :src="item.value"
-        :alt="item.name"
-        fit="contain"
-        class="h-64 w-48 cursor-pointer transition-all duration-200 group-hover:scale-[1.05]"
-      />
+    <div v-for="item in list" :key="item.name" class="flex-c flex-col">
+      <div
+        class="group flex-c flex-col items-center rounded-3xl border border-sf-b bg-white p-3 transition-all duration-300"
+      >
+        <SfImg
+          :src="item.value"
+          :alt="item.name"
+          fit="contain"
+          class="h-48 w-48 cursor-pointer transition-all duration-200 group-hover:scale-[1.05]"
+        />
+      </div>
       <span class="mt-3 font-semibold text-sf-text">{{ item.name }}</span>
     </div>
   </div>
