@@ -145,11 +145,11 @@ function handleAdd() {
 }
 /* 模块头部背景跟随明暗主题，并覆盖全局透明背景 */
 .resume-module-box > :deep(.el-collapse-item__header) {
-  @apply rounded-xl bg-sf-module-header! px-3;
+  @apply rounded-xl bg-sf-bg! px-3;
 }
 
-/* 展开时去掉头部下圆角，与内容区域衔接 */
+/* 展开时去掉头部下圆角，并在底边添加分隔线 */
 .resume-module-box > :deep(.el-collapse-item__header.is-active) {
-  @apply rounded-b-none;
+  @apply rounded-b-none border-b!  border-sf-b!;
 }
 </style>
