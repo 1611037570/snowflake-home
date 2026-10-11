@@ -41,15 +41,15 @@ export const SITE_CONFIGS: SiteConfig[] = [
     route: "/resume", // 简历产品入口
     locales: { // 简历产品各语言的页面信息
       zh: { // 中文页面信息
-        title: "轻舟简历 - 一叶轻舟 渡你过万重山", // 标签标题
-        description: "轻舟简历，支持简历编辑、主题模板、智能优化与导出。", // 页面描述
-        keywords: "轻舟简历,简历编辑器,简历模板,智能简历,简历导出", // 检索关键词
+        title: "轻舟简历 - 免费在线简历制作，免注册导出PDF模板", // 标签标题
+        description: "轻舟简历是一款免费的在线简历制作工具，内置多套专业模板，支持在线编辑、AI 智能优化、Markdown 与 PDF 一键导出，无需注册登录，浏览器打开即用。", // 页面描述
+        keywords: "轻舟简历,免费简历,免费简历模板,在线简历制作,简历生成器,AI简历,简历编辑器,简历模板下载,导出PDF简历", // 检索关键词
         favicon: "/favicon.ico", // 网站图标
       },
       en: { // 英文页面信息
-        title: "Skiff Resume", // 标签标题
-        description: "Create, style, improve and export your resume with Skiff Resume.", // 页面描述
-        keywords: "Skiff Resume,resume editor,resume templates,resume export", // 检索关键词
+        title: "Skiff Resume - Free Online Resume Builder and Templates", // 标签标题
+        description: "Skiff Resume is a free online resume builder with ready-made templates. Edit online, improve with AI, and export to Markdown or PDF without signing up.", // 页面描述
+        keywords: "Skiff Resume,free resume builder,free resume templates,online resume maker,resume generator,AI resume,resume editor,export resume PDF", // 检索关键词
         favicon: "/favicon.ico", // 网站图标
       },
     },

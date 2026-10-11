@@ -16,6 +16,10 @@
             >，<br />
             {{ $t("resumeHomeHeroEnd") }}
           </h1>
+          <!-- 功能副标题：承载免费、免注册等功能检索词，紧邻标题提升抓取权重 -->
+          <p class="animate-rise animate-rise--delay-two mt-6 text-base font-medium text-sf-text-2">
+            {{ $t("resumeHomeHeroSubtitle") }}
+          </p>
           <!-- 首屏指标：数字在上、标签在下，内容水平垂直居中 -->
           <dl
             class="animate-rise animate-rise--delay-three mt-9 grid grid-cols-2 gap-x-3 gap-y-6 sm:grid-cols-5"
@@ -76,33 +80,6 @@
               </button>
             </div>
           </HeroSwitcher>
-          <!-- 卖点标签统一置于简历下方 -->
-          <div class="relative mt-6 flex flex-wrap justify-center gap-3">
-            <div class="flex items-center gap-3 rounded-xl border border-sf-b bg-sf-primary p-3">
-              <span
-                class="flex h-6 w-6 items-center justify-center rounded-lg bg-sf-theme-2 text-sf-theme"
-              >
-                <SfIcon icon="lucide:sparkles" size="3" />
-              </span>
-              <span class="text-xs font-medium">{{ $t("resumeHomeTemplatesFree") }}</span>
-            </div>
-            <div class="flex items-center gap-3 rounded-xl border border-sf-b bg-sf-primary p-3">
-              <span
-                class="flex h-6 w-6 items-center justify-center rounded-lg bg-sf-info-2 text-sf-info"
-              >
-                <SfIcon icon="lucide:user-round-check" size="3" />
-              </span>
-              <span class="text-xs font-medium">{{ $t("resumeHomeNoSignup") }}</span>
-            </div>
-            <div class="flex items-center gap-3 rounded-xl border border-sf-b bg-sf-primary p-3">
-              <span
-                class="flex h-6 w-6 items-center justify-center rounded-lg bg-sf-success-2 text-sf-success"
-              >
-                <SfIcon icon="lucide:check" size="3" />
-              </span>
-              <span class="text-xs font-medium">{{ $t("resumeHomeExportFree") }}</span>
-            </div>
-          </div>
         </div>
       </section>
 
