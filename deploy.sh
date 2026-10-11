@@ -17,6 +17,6 @@ rm -rf /var/www/snowflake/web/*
 cp -r dist/web/* /var/www/snowflake/web/
 
 echo "=== 重启后端服务 ==="
-pm2 restart snowflake-server
+pm2 restart snowflake_server
 
 echo "=== 部署完成 ==="

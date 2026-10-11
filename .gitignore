@@ -11,6 +11,8 @@ lerna-debug.log*
 
 # 依赖和构建产物
 node_modules
+# Playwright 浏览器内核缓存
+.cache
 .DS_Store
 dist
 dist-ssr
