@@ -19,7 +19,8 @@ const DEFAULT_META = {
   version: "1.0.0",
 };
 const DEFAULT_DRAG_CLASS = ".item-drag";
-const DEFAULT_COL_CLASS = "rounded-3xl border border-sf-b bg-sf-primary";
+// 个人信息字段与其他记录统一，仅保留底部分隔线。
+const DEFAULT_COL_CLASS = "border-b border-sf-b bg-sf-primary";
 // 必填与日期格式规则统一供完成度统计和 ATS 检查读取。
 const requiredFieldRule = () => ({ required: true, message: "请填写此项", trigger: "blur" });
 // ATS 规则仅生成分析提醒，不阻止用户保存字段内容。
@@ -76,6 +77,8 @@ const createUserField = (
     type: "group",
     component: "rowField",
     slot: "default",
+    // 固定字段与可添加字段统一底部分隔线及内部留白。
+    colClass: DEFAULT_COL_CLASS + " py-1 px-3!",
     // 包裹组沿用字段标识，供字段顺序持久化与定位
     key,
     // 标签与操作区由包裹组件渲染，字段自身不再声明
@@ -178,8 +181,8 @@ export const DEFAULT_USER_FORM = [
     context: ["user"],
     drag: false,
     dragClass: DEFAULT_DRAG_CLASS,
-    // 个人信息全部字段统一纵向间距、左右及顶部留白，避免子项外边距溢出。
-    rowClass: "gap-y-3 px-3 pt-3",
+    // 个人信息直属子项取消纵向间距，顶部留白统一由外层提供。
+    rowClass: "gap-y-0!",
     // 固定模块：不参与模块拖拽排序
     fixed: true,
     props: {
@@ -197,6 +200,8 @@ export const DEFAULT_USER_FORM = [
         label: "头像",
         component: "imageUpload",
         span: 24,
+        // 头像与其他个人信息字段统一底部分隔线及内部留白。
+        colClass: DEFAULT_COL_CLASS + " py-1 px-3!",
         ui: {
           // 头像隐藏开关：控制头像在简历预览中显示或隐藏
           hidden: {
@@ -248,9 +253,9 @@ export const DEFAULT_USER_FORM = [
         hideWhenEmpty: true,
         drag: true,
         dragClass: DEFAULT_DRAG_CLASS,
-        itemClass: DEFAULT_COL_CLASS + " py-1 px-1!",
-        // 内层仅保留纵向间距，左右留白由个人信息外层统一提供。
-        rowClass: "gap-y-3",
+        itemClass: DEFAULT_COL_CLASS + " bg-transparent! py-1 px-3!", // 副标题字段沿用分区底色，保留分隔线及左右留白。
+        // 分区内部同步取消字段间距，保持分隔线连续。
+        rowClass: "gap-y-0!",
         span: 24,
         fields: [],
       },
@@ -259,13 +264,13 @@ export const DEFAULT_USER_FORM = [
         type: "group",
         drag: true,
         dragClass: DEFAULT_DRAG_CLASS,
-        itemClass: DEFAULT_COL_CLASS + " py-1 px-1!",
+        itemClass: DEFAULT_COL_CLASS + " py-1 px-3!", // 更多字段统一底部分隔线及左右留白。
         key: "more",
         component: "more",
         slot: "default",
         span: 24,
-        // 内层仅保留纵向间距，左右留白由个人信息外层统一提供。
-        rowClass: "gap-y-3",
+        // 分区内部同步取消字段间距，保持分隔线连续。
+        rowClass: "gap-y-0!",
         model: [
           {
             source: ["ui", "moreCollapsed"],
@@ -1646,7 +1651,7 @@ export const DEFAULT_HONOR_FORM = {
       dragClass: DEFAULT_DRAG_CLASS,
       // 数组容器取消子记录纵向间距，保持分隔线连续。
       rowClass: "gap-y-0!",
-      itemClass: AAA + " py-1 px-1!",
+      itemClass: AAA + " py-1 px-3!", // 荣誉记录左右留白与其他模块保持一致。
 
       itemSchema: {
         // 名称数据源：绑定当前荣誉证书名称
