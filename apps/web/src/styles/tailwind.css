@@ -89,7 +89,7 @@
   --sf-background-2: #e5e5ea;
   --sf-background-3: #d1d1d6;
   /* 亮色模式的模块头部背景 */
-  --sf-module-header: #e2ebf5;
+  --sf-module-header: #f0f0f0;
   --sf-transparent: color-mix(in oklab, oklch(97% 0.014 254.604) 80%, transparent);
   --sf-transparent-2: color-mix(in oklab, oklch(97% 0.014 254.604) 60%, transparent);
   --sf-transparent-3: color-mix(in oklab, oklch(97% 0.014 254.604) 40%, transparent);
