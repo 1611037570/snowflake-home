@@ -13,7 +13,7 @@ interface UseModuleInteractionsOptions {
   isEdit: ComputedRef<boolean>;
   /** 当前页面计划中的模块 key，用于生成每个渲染模块的高亮映射 */
   moduleKeys: Ref<string[]>;
-  /** 预览选择按钮激活的模块列表，仅用于悬浮边框颜色 */
+  /** 预览选择按钮激活的模块列表，选中时持续显示主题边框 */
   selectedModule: Ref<any[]>;
   /** 编辑区定位后激活的预览模块 key */
   activeModuleKey: Ref<string | null>;
@@ -25,7 +25,7 @@ export const useModuleInteractions = ({
   selectedModule,
   activeModuleKey,
 }: UseModuleInteractionsOptions) => {
-  // 选择按钮状态只决定悬浮边框颜色，不决定模块是否持续显示边框
+  // 选中模块持续显示主题边框，取消选择后恢复悬浮反馈。
   const selectedKeys = computed(() => new Set(selectedModule.value.map((item) => item.key)));
   // 搜索定位状态独立控制主题边框，鼠标进入模块后清除
   const moduleClassMap = computed(() => {
@@ -37,7 +37,7 @@ export const useModuleInteractions = ({
         : NO_HOVER_OUTLINE_KEYS.has(moduleKey)
           ? "outline-2 outline-offset-3 outline-dashed outline-transparent"
           : selectedKeys.value.has(moduleKey)
-            ? "outline-2 outline-offset-3 outline-dashed outline-transparent hover:outline-sf-theme"
+            ? "outline-2 outline-offset-3 outline-dashed outline-sf-theme"
             : "outline-2 outline-offset-3 outline-dashed outline-transparent hover:outline-sf-theme-2";
     }
     return map;
