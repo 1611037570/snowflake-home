@@ -9,7 +9,7 @@ const resumeData: any = {
       data: {
         position: "嵌入式",
         name: "苏明远",
-        birthday: "1996.05",
+        birthday: "1999.05",
         phone: "15888888888",
         email: "16****70@qq.com",
         workTime: "2021.07",

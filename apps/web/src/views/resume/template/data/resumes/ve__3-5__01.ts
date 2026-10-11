@@ -20,7 +20,7 @@ const resumeData: any = {
       ui: { collapsed: ["1"], archived: false },
       data: {
         content:
-          "<p><strong>1、</strong>熟练使用 Premiere Pro、After Effects 与 DaVinci Resolve，能够完成素材整理、叙事剪辑、调色和包装交付。</p><p><strong>2、</strong>熟悉品牌短片、人物访谈与社交媒体内容的制作节奏，具备镜头语言和音乐节奏把控能力。</p>",
+          "<p><strong>1、</strong>熟练使用 Premiere Pro、After Effects 与 DaVinci Resolve，能独立完成素材整理、叙事剪辑、调色与包装交付，熟悉 4K 横屏及 9:16 竖屏等多规格成片输出。</p><p><strong>2、</strong>熟悉品牌 TVC、产品广告、人物访谈与社交媒体短视频的制作节奏，具备镜头语言和音乐节奏把控能力，单条成片交付周期可控制在 3 个工作日内。</p>",
       },
     },
     advantage: {
@@ -57,7 +57,7 @@ const resumeData: any = {
             startTime: "2020.07",
             endTime: "至今",
             content:
-              "<p>负责品牌短视频、活动回顾与人物访谈的剪辑制作，覆盖前期脚本沟通、粗剪、精剪、包装及交付。</p><p>沉淀常用片头、字幕和转场模板，提高团队日常内容生产效率。</p>",
+              "<p>负责品牌短视频、活动回顾与人物访谈的剪辑制作，覆盖前期脚本沟通、粗剪、精剪、调色、包装及多规格成片交付，年均完成 120 余条内容。</p><p>沉淀常用片头、字幕和转场模板，团队日常内容生产效率提升约 30%。</p>",
           },
         },
       ],
@@ -74,7 +74,7 @@ const resumeData: any = {
             endTime: "2025.04",
             link: { name: "作品集", url: "https://portfolio.example.com/zhou-yu" },
             content:
-              "<p>完成 6 期人物访谈的叙事结构设计、剪辑、调色与字幕包装，单期平均时长 8 分钟。</p>",
+              "<p>完成 6 期人物访谈的叙事结构设计、剪辑、调色与字幕包装，单期平均时长 8 分钟，系列全平台累计播放量超 300 万。</p>",
           },
         },
         {
@@ -85,7 +85,7 @@ const resumeData: any = {
             startTime: "2024.08",
             endTime: "2024.10",
             content:
-              "<p>围绕新品卖点剪辑多规格短视频素材，适配品牌官网、信息流与社交平台投放。</p>",
+              "<p>围绕新品卖点剪辑 15 秒、30 秒与 60 秒多规格短视频素材，适配品牌官网、信息流广告与社交平台投放。</p>",
           },
         },
       ],

@@ -20,7 +20,7 @@ const resumeData: any = {
       ui: { collapsed: ["1"], archived: false },
       data: {
         content:
-          "<p><strong>1、</strong>熟练使用 Lightroom、Photoshop 与 Capture One，能够独立完成前期沟通、拍摄执行和后期精修。</p><p><strong>2、</strong>具备人像、品牌广告与电商产品拍摄经验，熟悉棚拍布光、外景用光及团队协作流程。</p>",
+          "<p><strong>1、</strong>熟练使用 Lightroom、Photoshop 与 Capture One，掌握联机拍摄与商业精修流程，能独立完成前期沟通、拍摄执行和后期交付。</p><p><strong>2、</strong>擅长人像、品牌广告与电商产品拍摄，熟悉 Profoto 影棚灯组布光、外景自然光运用及佳能 EOS R5 等全画幅器材实拍。</p>",
       },
     },
     advantage: {
@@ -57,7 +57,7 @@ const resumeData: any = {
             startTime: "2020.07",
             endTime: "至今",
             content:
-              "<p>负责服饰、餐饮与生活方式品牌的视觉拍摄，完成拍摄方案、现场执行、选片及后期交付。</p><p>与客户、策划及设计团队协作，保障素材风格与品牌调性一致。</p>",
+              "<p>负责服饰、餐饮与生活方式品牌的视觉拍摄，独立完成拍摄方案、棚拍布光与现场执行，年均交付 60 余组商业拍摄。</p><p>使用佳能 EOS R5 联机拍摄并配合 Capture One 完成选片精修，保障成片风格与品牌调性一致，返修率控制在 5% 以内。</p>",
           },
         },
       ],
@@ -74,7 +74,7 @@ const resumeData: any = {
             endTime: "2025.05",
             link: { name: "作品集", url: "https://portfolio.example.com/chen-chuan" },
             content:
-              "<p>完成门店环境、产品静物与人物场景拍摄，为新品上市及社交媒体传播提供视觉素材。</p>",
+              "<p>完成 12 家门店环境、产品静物与人物场景拍摄，交付 200 余张成片与 6 支短视频素材，用于新品上市及社交媒体传播。</p>",
           },
         },
         {
@@ -85,7 +85,7 @@ const resumeData: any = {
             startTime: "2024.04",
             endTime: "2024.06",
             content:
-              "<p>负责外景勘察、自然光布置与模特动态抓拍，交付电商详情页和品牌宣传图。</p>",
+              "<p>负责外景勘察与自然光布置，使用逆光与长焦手法完成模特动态抓拍，交付电商详情页及品牌宣传图共 150 余张。</p>",
           },
         },
       ],

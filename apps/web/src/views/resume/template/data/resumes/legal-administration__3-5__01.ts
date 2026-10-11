@@ -38,7 +38,7 @@ const resumeData: any = {
         {
           ui: {},
           data: {
-            name: "杭州****企业管理咨询有限公司",
+            name: "杭州****律师事务所",
             department: "行政人事部",
             post: "行政助理",
             city: "杭州",

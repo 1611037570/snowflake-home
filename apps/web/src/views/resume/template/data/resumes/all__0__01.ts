@@ -7,7 +7,7 @@ const resumeData: any = {
     advantage: { ui: { collapsed: ["1"], archived: false }, data: { content: "<p>具备扎实的计算机专业基础与持续学习能力，能够快速理解研究问题并将其拆解为可执行的实验任务。</p><p>做事认真细致，善于查阅论文、整理数据并清晰呈现研究过程与结论。</p>" } },
     education: { ui: { collapsed: ["1"], archived: false }, list: [{ ui: {}, data: { name: "北京邮电大学", education: "本科", post: "计算机科学与技术", startTime: "2021.09", endTime: "2025.06", content: "<p>GPA 3.8/4.0，专业排名前 10%。</p>", mode: "全日制" } }] },
     work: { ui: { collapsed: ["1"], archived: false }, list: [{ ui: {}, data: { name: "北京****科技有限公司", post: "算法研究实习生", startTime: "2024.07", endTime: "2024.10", content: "<p>协助整理训练数据与实验记录，复现基础模型并参与结果分析，支持团队完成阶段性技术报告。</p>" } }] },
-    project: { ui: { collapsed: ["1"], archived: false }, list: [{ ui: {}, data: { name: "图神经网络课程研究", post: "课题成员", startTime: "2024.03", endTime: "2024.12", content: "<p>负责数据预处理、模型复现与实验结果分析，完成课程研究报告。</p>" } }] },
+    project: { ui: { collapsed: ["1"], archived: false }, list: [{ ui: {}, data: { name: "图神经网络课程研究", post: "课题成员", startTime: "2024.03", endTime: "2024.12", content: "<p>负责数据预处理、模型复现与实验结果分析，在公开数据集上复现 GCN 模型并完成消融实验，撰写课程研究报告。</p>" } }] },
   },
   config: { modules: [{ key: "user" }, { key: "education" }, { key: "skill" }, { key: "advantage" }, { key: "work" }, { key: "project" }] },
   ui: {
