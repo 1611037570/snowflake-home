@@ -76,6 +76,7 @@ function getAgentModel(agent: (typeof agentCards)[number]["key"]) {
 function setAgentModel(agent: (typeof agentCards)[number]["key"], modelId: string) {
   aiStore.setAgentModel(agent, modelId);
 }
+provide("bg", "bg-sf-primary");
 </script>
 
 <template>
@@ -93,9 +94,22 @@ function setAgentModel(agent: (typeof agentCards)[number]["key"], modelId: strin
           <div class="min-w-0 flex-1">
             <!-- 绑定状态紧邻名称展示，不额外占用卡片底部。 -->
             <div class="flex flex-wrap items-center justify-between gap-x-3">
-              <div class="text-base font-bold leading-6 text-sf-text">{{ agent.name }}</div>
-              <button v-if="!modelList.length" type="button" class="cursor-pointer text-xs text-sf-warning hover:underline" title="先添加模型" @click="jumpToAdd">未绑定</button>
-              <span v-else class="shrink-0 text-xs" :class="getAgentModel(agent.key) ? 'text-sf-success' : 'text-sf-warning'">{{ getAgentModel(agent.key) ? "已绑定" : "未绑定" }}</span>
+              <div class="text-base leading-6 font-bold text-sf-text">{{ agent.name }}</div>
+              <button
+                v-if="!modelList.length"
+                type="button"
+                class="cursor-pointer text-xs text-sf-warning hover:underline"
+                title="先添加模型"
+                @click="jumpToAdd"
+              >
+                未绑定
+              </button>
+              <span
+                v-else
+                class="shrink-0 text-xs"
+                :class="getAgentModel(agent.key) ? 'text-sf-success' : 'text-sf-warning'"
+                >{{ getAgentModel(agent.key) ? "已绑定" : "未绑定" }}</span
+              >
             </div>
             <!-- 用途说明允许换行，超过两行再截断。 -->
             <div class="line-clamp-2 text-xs leading-5 text-sf-text-3">{{ agent.description }}</div>
@@ -113,7 +127,6 @@ function setAgentModel(agent: (typeof agentCards)[number]["key"], modelId: strin
             @update:model-value="setAgentModel(agent.key, $event)"
           />
         </div>
-
       </div>
     </div>
     <SfTab :list="tabList" v-model="modelManagerTab" v-model:index="activeIndex" />
