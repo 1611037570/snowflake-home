@@ -37,13 +37,14 @@ const addTag = () => {
   <div
     class="flex min-h-12 w-full flex-wrap items-center gap-3 rounded-3xl border border-sf-b px-3 py-3 transition-colors hover:border-sf-theme"
   >
+    <!-- 选中标签使用一级主题文字与边框、二级主题背景。 -->
     <div
       v-for="tag in options"
       :key="tag"
       class="flex-c h-6 cursor-pointer rounded-3xl border px-3 text-xs transition-colors"
       :class="
         isActive(tag)
-          ? 'border-none border-sf-theme bg-sf-theme text-sf-theme-text hover:bg-sf-theme-2'
+          ? 'border-sf-theme bg-sf-theme-3 text-sf-theme'
           : 'border-sf-b text-sf-text-2 hover:border-sf-theme hover:text-sf-theme'
       "
       @click="toggle(tag)"
