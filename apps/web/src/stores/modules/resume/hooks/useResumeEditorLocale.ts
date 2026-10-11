@@ -197,7 +197,6 @@ const TEXT_KEYS_SOURCE = `
   已上线: "launched",
   开源项目: "openSourceProject",
   推荐必填: "recommendRequired",
-  "该模块会将视频地址转换为二维码，方便在简历中展示": "videoDescription",
   男: "male",
   女: "female",
   在职: "employed",

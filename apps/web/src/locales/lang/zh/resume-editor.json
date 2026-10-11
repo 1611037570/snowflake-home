@@ -1,6 +1,7 @@
 {
   "personalInfo": "个人信息",
   "collapseAllModules": "全部折叠",
+  "copyRecord": "复制",
   "sloganModule": "顶部标语",
   "sloganTitle": "标题",
   "sloganSubtitle": "标语",
@@ -235,7 +236,6 @@
   "launched": "已上线",
   "openSourceProject": "开源项目",
   "recommendRequired": "推荐必填",
-  "videoDescription": "该模块会将视频地址转换为二维码，方便在简历中展示",
   "male": "男",
   "female": "女",
   "employed": "在职",

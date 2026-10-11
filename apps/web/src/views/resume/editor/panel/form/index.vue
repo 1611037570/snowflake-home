@@ -178,6 +178,11 @@ onBeforeUnmount(() => {
 
 <style lang="scss" scoped>
 .resume-editor-form {
+  // 仅取消专业技能与个人优势折叠内容区的底部留白。
+  :deep(:is([data-module-key="skill"], [data-module-key="advantage"]) .el-collapse-item__content) {
+    padding-bottom: 0 !important;
+  }
+
   :deep(.el-input__wrapper),
   :deep(.el-select__wrapper),
   :deep(.el-textarea__inner),
@@ -191,6 +196,23 @@ onBeforeUnmount(() => {
   :deep(.el-textarea__inner:hover),
   :deep(.sf-wang-editor:hover) {
     border-color: var(--sf-theme);
+  }
+
+  // 专业技能与个人优势由模块外框承载，内部编辑器去掉重复边框和圆角。
+  :deep(:is([data-module-key="skill"], [data-module-key="advantage"]) .sf-wang-editor) {
+    border: none !important;
+    border-radius: 0 !important;
+  }
+
+  // 工具栏与底部操作区同步保持直角，避免内部仍出现圆角卡片。
+  :deep(:is([data-module-key="skill"], [data-module-key="advantage"]) .sf-wang-editor .w-e-bar),
+  :deep(
+    :is([data-module-key="skill"], [data-module-key="advantage"]) .sf-wang-editor .rounded-b-3xl
+  ),
+  :deep(
+    :is([data-module-key="skill"], [data-module-key="advantage"]) .sf-wang-editor .rounded-b-2xl
+  ) {
+    border-radius: 0 !important;
   }
 }
 </style>
