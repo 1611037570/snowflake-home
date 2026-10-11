@@ -76,8 +76,8 @@ const isChatLoading = ref(false);
 let chatLoadToken = 0;
 // 当前简历只展示自身的助手对话
 const resumeId = computed(() => resumeStore.currentItem?.id || "");
-const resumeAssistantChats = computed(() =>
-  resumeStore.list.find((item) => item.id === resumeId.value)?.ai || [],
+const resumeAssistantChats = computed(
+  () => resumeStore.list.find((item) => item.id === resumeId.value)?.ai || [],
 );
 // 当前操作模块列表：有选中模块时展示真实模块，无选中时补“整个简历”兜底项
 const selectedModules = computed(() =>
@@ -111,10 +111,7 @@ const quickAnswerLoading = ref(false);
 const quickAnswerVisible = ref(false);
 const quickAnswerContent = ref("");
 const quickAnswerError = ref("");
-const {
-  copy: copyQuickAnswer,
-  isSupported: quickAnswerCopySupported,
-} = useClipboard();
+const { copy: copyQuickAnswer, isSupported: quickAnswerCopySupported } = useClipboard();
 
 function createNewChat() {
   if (generating.value || quickAnswerLoading.value) return;
@@ -161,7 +158,8 @@ const latestInterviewQuestion = computed(
           !message.skipContext &&
           message.requestStatus === "success" &&
           !!message.content?.trim(),
-      )?.content.trim() || "",
+      )
+      ?.content.trim() || "",
 );
 // 消息导航仅展示用户消息
 const navMessages = computed(() => displayMessages.value.filter((msg) => msg.role === "user"));
@@ -322,7 +320,7 @@ watch(
   async (id, previousId) => {
     const token = ++chatLoadToken;
     if (previousId && id !== previousId) stopGenerating();
-    const draft = id ? aiStore.createNewResumeAssistantChat() ?? null : null;
+    const draft = id ? (aiStore.createNewResumeAssistantChat() ?? null) : null;
     draftChat.value = draft;
     if (!id) {
       isChatLoading.value = false;
@@ -355,10 +353,14 @@ const handleSend = (content: string) => {
     return;
   }
   // 面试续轮继承原流程的读取范围，结束消息保留范围但关闭专用入口
-  const previousContext = [...currentMessages.value].reverse()
+  const previousContext = [...currentMessages.value]
+    .reverse()
     .find((message) => message.role === "user" && !message.skipContext)?.requestContext;
   const requestContext = previousContext?.interviewFlow
-    ? { ...previousContext, interviewFlow: content.trim() === "提前结束" ? "" : previousContext.interviewFlow }
+    ? {
+        ...previousContext,
+        interviewFlow: content.trim() === "提前结束" ? "" : previousContext.interviewFlow,
+      }
     : undefined;
   // 用户结束长时评估后关闭专用操作入口，后续仅保留普通对话输入
   if (earlyEndEnabled.value && content.trim() === "提前结束") {
@@ -468,18 +470,23 @@ provide("retry", handleRetry);
 const activeFlow = ref<ActiveFlowState | null>(null);
 // 会话切换清除未完成引导，历史面试按最后一条真实用户消息恢复操作入口
 const restoreInterviewState = () => {
-  const flowKey = [...currentMessages.value].reverse()
-    .find((message) => message.role === "user" && !message.skipContext)?.requestContext?.interviewFlow;
+  const flowKey = [...currentMessages.value]
+    .reverse()
+    .find((message) => message.role === "user" && !message.skipContext)
+    ?.requestContext?.interviewFlow;
   const key = typeof flowKey === "string" ? flowKey : "";
   voiceInputEnabled.value = key === "specializedInterview";
   earlyEndEnabled.value = supportsInterviewEarlyEnd(key);
   quickAnswerEnabled.value = supportsQuickAnswer(key);
 };
-watch(() => chat.value?.id, () => {
-  activeFlow.value = null;
-  quickAnswerVisible.value = false;
-  restoreInterviewState();
-});
+watch(
+  () => chat.value?.id,
+  () => {
+    activeFlow.value = null;
+    quickAnswerVisible.value = false;
+    restoreInterviewState();
+  },
+);
 
 /**
  * 点击建议卡片：启动引导式对话流程
@@ -514,7 +521,9 @@ const handleSuggest = (payload: Pick<SuggestCard, "flow">) => {
       content: userContent,
       typing: false,
       // 逐题面试记录流程标识，续轮与历史恢复共用
-      requestContext: allowQuickAnswer ? { ...requestContext, interviewFlow: payload.flow } : requestContext,
+      requestContext: allowQuickAnswer
+        ? { ...requestContext, interviewFlow: payload.flow }
+        : requestContext,
     });
     // 无引导步骤的长时流程在真实请求开始后开放提前结束
     earlyEndEnabled.value = allowEarlyEnd;
@@ -639,7 +648,9 @@ const handleFlowAnswer = (answer: string) => {
     content: userContent,
     typing: false,
     // 逐题面试续轮保留整份读取范围与流程标识
-    requestContext: state.allowQuickAnswer ? { ...requestContext, interviewFlow: state.flowKey } : requestContext,
+    requestContext: state.allowQuickAnswer
+      ? { ...requestContext, interviewFlow: state.flowKey }
+      : requestContext,
   });
   generating.value = true;
   scrollToBottom();
@@ -674,10 +685,7 @@ const generateQuickAnswer = async (previousAnswer = "") => {
   const requestChatId = chat.value?.id;
   const isCurrent = () => resumeId.value === requestResumeId && chat.value?.id === requestChatId;
   try {
-    const answer = await requestQuickAnswer(
-      latestInterviewQuestion.value,
-      previousAnswer,
-    );
+    const answer = await requestQuickAnswer(latestInterviewQuestion.value, previousAnswer);
     // 简历或会话切换后丢弃旧回答，避免展示上一份简历的内容
     if (isCurrent()) quickAnswerContent.value = answer;
   } catch (error: any) {
@@ -719,7 +727,7 @@ const handleCopyQuickAnswer = async () => {
 </script>
 
 <template>
-  <div class="relative flex h-full w-full flex-col overflow-hidden rounded-r-3xl select-text">
+  <div class="relative flex h-full w-full flex-col overflow-hidden rounded-r-3xl py-3 select-text">
     <ChatHeader
       :messages="navMessages"
       :is-generating="isGenerating"
@@ -764,7 +772,7 @@ const handleCopyQuickAnswer = async () => {
       leave-active-class="transition duration-200 ease-in"
       leave-from-class="translate-y-0 opacity-100"
       leave-to-class="translate-y-4 opacity-0"
-      >
+    >
       <div v-if="showScrollBottom" class="absolute bottom-42 left-1/2 z-9 -translate-x-1/2">
         <SfIcon
           icon="mingcute:arrow-down-line"
@@ -805,16 +813,11 @@ const handleCopyQuickAnswer = async () => {
         >
           {{ quickAnswerError }}
         </p>
-        <p v-else class="whitespace-pre-wrap text-sm leading-relaxed text-sf-text">
+        <p v-else class="text-sm leading-relaxed whitespace-pre-wrap text-sf-text">
           {{ quickAnswerContent }}
         </p>
         <div v-if="!quickAnswerLoading" class="flex justify-end gap-3 pt-3">
-          <SfButton
-            v-if="quickAnswerContent"
-            type="bg"
-            size="large"
-            @click="handleCopyQuickAnswer"
-          >
+          <SfButton v-if="quickAnswerContent" type="bg" size="large" @click="handleCopyQuickAnswer">
             复制
           </SfButton>
           <SfButton type="bg" size="large" @click="handleReplaceQuickAnswer">换一个</SfButton>
