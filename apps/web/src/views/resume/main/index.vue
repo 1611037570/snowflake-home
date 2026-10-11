@@ -1,5 +1,5 @@
 <template>
-  <SfScrollbar class="resume-home__shell h-full bg-sf-page">
+  <SfScrollbar class="h-full bg-sf-page" flush>
     <main class="resume-home relative w-full shrink-0 overflow-hidden bg-sf-page text-sf-text">
       <section
         class="resume-home__hero relative mx-auto grid min-h-screen max-w-[1440px] items-center gap-x-12 gap-y-9 px-6 pt-24 pb-9 lg:grid-cols-2 lg:px-12"

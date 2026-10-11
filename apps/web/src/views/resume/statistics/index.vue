@@ -16,8 +16,8 @@ const { applications, followUps, isLanded } = storeToRefs(statisticsStore);
     <div class="mt-2 flex w-full min-w-0 items-center justify-between px-3 sm:px-6">
       <h2 class="text-[20px] font-black text-sf-theme">{{ $t("resumeStatisticsTitle") }}</h2>
     </div>
-    <SfScrollbar class="flex-1">
-      <div class="flex h-full flex-col gap-3 py-1">
+    <SfScrollbar class="flex-1" flush>
+      <div class="flex h-full flex-col gap-3 px-3 py-1">
         <LandedPage v-if="isLanded" />
         <template v-else>
           <StatCards v-if="applications.length || followUps.length" />
