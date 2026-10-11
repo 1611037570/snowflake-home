@@ -3,6 +3,13 @@ import { ref } from "vue";
 import Icon from "../icon.vue";
 
 const modelValue = defineModel();
+defineProps({
+  // 是否为标题名称显示删除线
+  strikeThrough: {
+    type: Boolean,
+    default: false,
+  },
+});
 // 标题编辑弹窗与临时输入值
 const showEditModal = ref(false);
 const editedTitle = ref("");
@@ -23,7 +30,7 @@ function saveTitle() {
 </script>
 <template>
   <div class="flex min-w-0 flex-1 items-center gap-1">
-    <span class="min-w-0 truncate">{{ modelValue }}</span>
+    <span class="min-w-0 truncate" :class="{ 'line-through': strikeThrough }">{{ modelValue }}</span>
     <Icon @click="openEditModal" icon="lucide:pencil" />
   </div>
   <SfModal v-model="showEditModal" :title="$t('editTitle')">

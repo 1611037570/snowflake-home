@@ -58,14 +58,9 @@ function handlePreviewJump() {
 }
 
 function archiveModule() {
-  proxy
-    .$confirm(
-      $t("archiveMessage"),
-      $t("archiveConfirm"),
-    )
-    .then(() => {
-      resumeStore.setModuleArchived(currentForm.value.key, true);
-    });
+  proxy.$confirm($t("archiveMessage"), $t("archiveConfirm")).then(() => {
+    resumeStore.setModuleArchived(currentForm.value.key, true);
+  });
 }
 
 // 新增记录追加到列表末尾，同步定位编辑区与预览区
@@ -91,8 +86,8 @@ function handleAdd() {
 </script>
 
 <template>
-  <SfCollapse v-model="collapsed" class="bg-sf-primary!">
-    <SfCollapseItem name="1" lazy>
+  <SfCollapse v-model="collapsed" :border="false" class="rounded-3xl! bg-sf-primary!">
+    <SfCollapseItem name="1" lazy class="resume-module-box">
       <template #title>
         <div class="group flex h-full w-full items-center justify-between">
           <div class="flex flex-1 items-center truncate text-lg font-bold">
@@ -101,7 +96,8 @@ function handleAdd() {
               icon="icon-park-outline:drag"
               class="container-drag cursor-move!"
             />
-            <EditableTitle v-model="title" />
+            <!-- 隐藏模块时为标题添加删除线标识 -->
+            <EditableTitle v-model="title" :strike-through="hidden" />
           </div>
           <div class="flex items-center">
             <SfTooltip :content="$t('locatePreview')" v-if="!hidden">
@@ -114,7 +110,6 @@ function handleAdd() {
               <Icon
                 @click.stop="toggleHidden"
                 :icon="hidden ? 'lucide:eye' : 'lucide:eye-off'"
-                :class="hidden ? 'text-sf-theme' : ''"
               />
             </SfTooltip>
             <Icon
@@ -128,18 +123,37 @@ function handleAdd() {
       </template>
       <template #default>
         <div v-if="tip" class="mb-2">{{ tip }}</div>
-        <slot />
-        <div
-          class="mt-1 flex w-fit cursor-pointer items-center gap-1 rounded-3xl border border-transparent bg-sf-theme-3 px-3 py-1 text-sf-theme hover:border-sf-theme"
-          @click="handleAdd"
-          v-if="add"
-        >
-          <SfIcon icon="ic:round-add" size="4" />
-          <span>{{ $t("addRecord", { name: title }) }}</span>
+        <div class="px-3 pt-3">
+          <slot />
+          <div
+            class="mt-3 flex w-fit cursor-pointer items-center gap-1 rounded-3xl border border-transparent bg-sf-theme-3 px-3 py-1 text-sf-theme hover:border-sf-theme"
+            @click="handleAdd"
+            v-if="add"
+          >
+            <SfIcon icon="ic:round-add" size="4" />
+            <span>{{ $t("addRecord", { name: title }) }}</span>
+          </div>
         </div>
       </template>
     </SfCollapseItem>
   </SfCollapse>
 </template>
 
-<style lang="scss" scoped></style>
+<style scoped>
+@reference "@/styles/tailwind.css";
+
+/* 模块外框包裹头部与内容，统一圆角边界 */
+.resume-module-box {
+  @apply overflow-hidden rounded-3xl border border-sf-b;
+}
+
+/* 直接匹配模块头部，让浅色背景覆盖全局透明背景 */
+.resume-module-box > :deep(.el-collapse-item__header) {
+  @apply rounded-3xl bg-sf-theme-3! px-3;
+}
+
+/* 展开时去掉头部下圆角，与内容区域衔接 */
+.resume-module-box > :deep(.el-collapse-item__header.is-active) {
+  @apply rounded-b-none;
+}
+</style>
