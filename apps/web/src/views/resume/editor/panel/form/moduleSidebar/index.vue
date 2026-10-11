@@ -32,6 +32,14 @@ const moduleItems = computed(() =>
     })),
 );
 
+// 一次收起导航栏中的全部模块，沿用现有模块展开状态。
+function collapseAll() {
+  for (const item of moduleItems.value) {
+    const module = currentData.value?.[item.key];
+    if (module?.ui) module.ui.collapsed = [];
+  }
+}
+
 watch(
   moduleItems,
   (items) => {
@@ -102,7 +110,17 @@ onUnmounted(() => {
         </div>
       </div>
     </SfScrollbar>
-    <div class="border-t border-sf-b">
+    <div class="flex flex-col items-center border-t border-sf-b">
+      <!-- 折叠入口固定在添加模块上方，沿用模块卡片外观。 -->
+      <button
+        type="button"
+        class="flex-c mt-[6px] w-fit min-w-0 cursor-pointer flex-col gap-1 rounded-xl border border-sf-b bg-sf-primary p-1 text-[9px] text-sf-text transition-colors select-none hover:border-sf-theme hover:text-sf-theme"
+        :disabled="!currentData || !runtimeConfig"
+        @click="collapseAll"
+      >
+        <SfIcon icon="fa-solid:caret-up" size="4" />
+        <span class="w-9 text-center leading-4 break-all">{{ $t("collapseAllModules") }}</span>
+      </button>
       <AddModule />
     </div>
   </aside>
