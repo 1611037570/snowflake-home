@@ -16,7 +16,7 @@ export const baseConfig = {
   // PDF渲染页面配置
   pdf: {
     renderUrl: env.pdfRenderUrl, // 打印页面地址
-    timeout: env.pdfTimeout, // 页面渲染超时，单位毫秒
+    timeout: env.pdfTimeout, // 单次渲染总超时，单位毫秒
   },
   // 数据库配置
   mysql: {
