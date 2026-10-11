@@ -5,7 +5,8 @@
       class="hero-switcher__stack relative px-6 sm:px-0"
       :class="{ 'is-animating': animating, 'is-tilted': tilted }"
     >
-      <div class="relative aspect-[794/1123]">
+      <!-- 悬停区域：父级插槽内的悬浮创建入口依赖这里的 group 触发 group-hover -->
+      <div class="group relative aspect-[794/1123]">
         <div
           v-for="layer in layers"
           :key="layer.fileName"
