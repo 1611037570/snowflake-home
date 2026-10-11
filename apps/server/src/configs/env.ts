@@ -5,15 +5,13 @@ import { loadEnvFile } from 'node:process'
 // 运行环境标识，未显式指定时按本地开发处理
 const mode = process.env.NODE_ENV || 'development'
 
-// 在配置创建与数据库探测之前加载环境，先加载者优先，故敏感项排在最前。
-// 优先级：系统/pm2 环境变量 > .env.local（敏感，不入库） > .env.{运行环境}（分环境，入库）
+// 在配置创建与数据库探测之前按运行环境加载分环境文件，系统/pm2 环境变量优先于文件。
+// 优先级：系统/pm2 环境变量 > .env.{运行环境}（分环境，不入库，仅本地与部署机存在）
 const directory = existsSync(resolve(process.cwd(), 'apps/server/package.json'))
   ? resolve(process.cwd(), 'apps/server')
   : process.cwd()
-for (const filename of ['.env.local', `.env.${mode}`]) {
-  const path = resolve(directory, filename)
-  if (existsSync(path)) loadEnvFile(path)
-}
+const envPath = resolve(directory, `.env.${mode}`)
+if (existsSync(envPath)) loadEnvFile(envPath)
 
 export function envString(name: string, fallback = ''): string {
   return process.env[name] || fallback
@@ -22,7 +20,7 @@ export function envString(name: string, fallback = ''): string {
 // 必填配置缺失时立即报错，避免静默回落到本地地址导致线上行为异常
 export function envStringRequired(name: string): string {
   const value = envString(name)
-  if (!value) throw new Error(`缺少必需配置 ${name}，请在 apps/server/.env 中补充`)
+  if (!value) throw new Error(`缺少必需配置 ${name}，请在 apps/server/.env.${mode} 中补充`)
   return value
 }
 
@@ -42,7 +40,7 @@ export function envList(name: string, fallback = ''): string[] {
 
 export const env = Object.freeze({
   mainPassword: envString('DB_MAIN_PASSWORD'), // 主数据库密码
-  // 简历库连接参数，真实值只写入不入库的 .env.local
+  // 简历库连接参数，真实值只写入不入库的分环境文件 .env.{运行环境}
   resumeDbHost: envStringRequired('DB_RESUME_HOST'), // 简历数据库主机
   resumeDbPort: envNumber('DB_RESUME_PORT', 3306), // 简历数据库端口
   resumeDbUsername: envStringRequired('DB_RESUME_USERNAME'), // 简历数据库用户名

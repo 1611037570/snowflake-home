@@ -1,6 +1,6 @@
 import { env } from './env'
 
-// 简历库配置：连接参数全部取自环境变量，真实值只落在不入库的 apps/server/.env.local
+// 简历库配置：连接参数全部取自环境变量，真实值只落在不入库的 apps/server/.env.{运行环境}
 export const resumeConfig = {
   // 简历库数据库配置（与基础库相互独立）
   mysql: {
