@@ -35,6 +35,8 @@ import ElementPlus from "unplugin-element-plus/vite";
 // Tiny Vue 组件解析器
 import { TinyVueSingleResolver } from "@opentiny/unplugin-tiny-vue";
 import { resolveSiteMetadata } from "./site.config";
+// 站点地图与 robots 的构建期生成插件
+import { seoFilesPlugin } from "./scripts/seoFiles";
 
 /**
  * 版本注入插件
@@ -146,6 +148,8 @@ export default ({ mode }: { mode: string }) => {
       vue(),
       // Tailwind CSS插件配置
       tailwindcss(),
+      // 站点地图与 robots 生成，路由清单来自 site.config.ts
+      seoFilesPlugin(settings.siteUrl),
       // HTML插件配置
       createHtmlPlugin({
         minify: isProd, // 开启HTML压缩
@@ -153,6 +157,7 @@ export default ({ mode }: { mode: string }) => {
         inject: {
           data: {
             defaultLang: settings.defaultLanguage, // 默认语言
+            siteUrl: settings.siteUrl, // 站点绝对地址，用于 og 卡片与结构化数据
             // 初始 HTML 与客户端按同一入口路由选择产品信息。
             siteMetadata: resolveSiteMetadata(
               settings.defaultRoute,
