@@ -100,7 +100,9 @@ export class IntegrationsService {
     if (this.starsCache && now - this.starsCache.updatedAt < starsCacheTtl) {
       return this.starsCache
     }
-    const url = `https://api.github.com/repos/${encodeURIComponent(repository)}`
+    // 仓库全名含 owner/repo 分隔斜杠，按段编码避免编码掉分隔符导致上游 404
+    const [owner, repo] = repository.split('/')
+    const url = `https://api.github.com/repos/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}`
     const data = await this.requestJson(url, { Accept: 'application/vnd.github+json' })
     // 零颗 Star 也是有效结果，拒绝异常数字后再进入缓存
     if (!Number.isSafeInteger(data?.stargazers_count) || data.stargazers_count < 0) {
