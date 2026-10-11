@@ -153,6 +153,7 @@ export const ICON_LIST: Record<string, IconItem> = {
   "mdi:arrow-up": { icon: "mdi:arrow-up" },
   "mdi:chart-pie": { icon: "mdi:chart-pie" },
   "mdi:check-circle": { icon: "mdi:check-circle" },
+  "mdi:chevron-left": { icon: "mdi:chevron-left" },
   "mdi:chevron-right": { icon: "mdi:chevron-right" },
   "mdi:clock-outline": { icon: "mdi:clock-outline" },
   "mdi:content-copy": { icon: "mdi:content-copy" },
