@@ -5,35 +5,32 @@
       <div class="resume-home__aurora resume-home__aurora--two"></div>
 
       <section
-        :ref="registerRevealSection"
-        class="resume-home__reveal resume-home__hero relative mx-auto grid min-h-screen max-w-[1440px] items-center gap-12 px-6 pt-24 pb-12 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] lg:px-12"
+        class="resume-home__hero relative mx-auto grid min-h-screen max-w-[1440px] items-center gap-x-12 gap-y-9 px-6 pt-24 pb-9 lg:grid-cols-2 lg:px-12"
       >
-        <article class="relative z-10 mx-auto max-w-2xl text-center lg:mx-0 lg:text-left">
+        <article class="relative z-10 mx-auto max-w-xl text-center lg:mx-0 lg:text-left">
           <h1
-            class="animate-rise animate-rise--delay-one text-5xl leading-[1.15] font-black tracking-[-0.06em] sm:text-6xl lg:text-7xl"
+            class="animate-rise animate-rise--delay-one text-4xl leading-[1.15] font-black tracking-[-0.04em] sm:text-5xl lg:text-6xl"
           >
-            {{ $t("resumeHomeHeroStart") }}<span class="resume-home__highlight">{{ $t("resumeHomeHeroHighlight") }}</span>，<br />
+            {{ $t("resumeHomeHeroStart")
+            }}<span class="resume-home__highlight">{{ $t("resumeHomeHeroHighlight") }}</span
+            >，<br />
             {{ $t("resumeHomeHeroEnd") }}
           </h1>
+          <!-- 首屏指标：数字在上、标签在下，内容水平垂直居中 -->
           <dl
-            class="animate-rise animate-rise--delay-three grid max-w-md grid-cols-1 pt-8 text-left sm:grid-cols-2"
+            class="animate-rise animate-rise--delay-three mt-9 grid grid-cols-2 gap-x-3 gap-y-6 sm:grid-cols-5"
           >
-            <!-- 单列逐项分隔，双列仅保留首行底部分隔线。 -->
             <div
               v-for="(stat, index) in headlineStats"
               :key="stat.label"
-              :class="[
-                index % 2 === 0 ? 'sm:border-r' : '',
-                index < headlineStats.length - 1 ? 'border-b' : '',
-                index >= 2 ? 'sm:border-b-0' : '',
-              ]"
-              class="flex flex-col items-center justify-center border-sf-b py-3 text-center sm:px-3 sm:first:pl-0"
+              class="flex flex-col items-center justify-center text-center"
             >
-              <dt class="text-xl font-black sm:text-2xl">
-                <span class="text-sf-theme">{{ Math.round(animatedHeadlineStats[index]) }}</span>
-                {{ stat.label }}
+              <dt class="flex flex-col items-center gap-1">
+                <span class="text-3xl font-black text-sf-theme">{{
+                  Math.round(animatedHeadlineStats[index])
+                }}</span>
+                <span class="text-sm font-bold text-sf-text">{{ stat.label }}</span>
               </dt>
-              <dd class="mt-3 text-xs text-sf-text-3 sm:text-sm">{{ stat.description }}</dd>
             </div>
           </dl>
           <div
@@ -60,77 +57,61 @@
           </div>
         </article>
 
-        <div class="animate-float relative mx-auto w-full max-w-2xl lg:mr-0">
-          <div
-            class="resume-home__status absolute top-9 -left-3 z-10 flex items-center gap-3 rounded-2xl border border-sf-b bg-sf-primary p-3 shadow-lg"
-          >
-            <span
-              class="flex h-9 w-9 items-center justify-center rounded-xl bg-sf-theme-3 text-sf-theme"
-            >
-              <SfIcon icon="lucide:sparkles" size="4" />
-            </span>
-            <span>
-              <strong class="block text-sm">{{ $t("resumeHomeTemplatesFree") }}</strong>
-            </span>
-          </div>
-          <div
-            class="resume-home__preview relative overflow-hidden rounded-[30px] border border-sf-b bg-sf-primary shadow-2xl"
-          >
-            <!-- 占位区域铺满预览框，移除顶部装饰栏与额外内边距。 -->
+        <!-- 右侧：真实简历预览，替换原占位截图区 -->
+        <div class="relative mx-auto w-full max-w-[380px]">
+          <span class="resume-home__glow pointer-events-none absolute -inset-6"></span>
+          <!-- 卡片叠放层：让背景卡 inset-0 以主卡为基准，不含下方徽章 -->
+          <div class="relative">
+            <!-- 背后倾斜叠放的第二份简历（小羊），默认水平，首屏加载后过渡到倾斜角度 -->
             <div
-              class="resume-home__shot group relative aspect-[16/10] overflow-hidden bg-sf-bg"
+              :class="{ 'is-tilted': heroTilted }"
+              class="resume-home__stack-card absolute inset-0 -translate-x-22 -translate-y-6 scale-85 overflow-hidden border border-sf-b bg-sf-bg"
+              aria-hidden="true"
             >
-              <!-- 将此区域替换为首页产品截图即可 -->
-              <div
-                class="absolute inset-0 flex flex-col items-center justify-center gap-3 p-6 text-center"
-              >
-                <span
-                  class="flex h-15 w-15 items-center justify-center rounded-2xl bg-sf-primary text-sf-theme shadow-sm"
-                >
-                  <SfIcon icon="material-symbols:image-outline" size="8" />
-                </span>
-                <span>
-                    <strong class="block text-base">{{ $t("resumeHomeScreenshotPlaceholder") }}</strong>
-                    <small class="mt-3 block text-sm text-sf-text-3"
-                    >{{ $t("resumeHomeScreenshotHint") }}</small
-                  >
-                </span>
+              <ThumbPreview v-if="heroBackPreview" :item="heroBackPreview" />
+            </div>
+            <div class="relative overflow-hidden rounded-none border border-sf-b bg-sf-primary">
+              <!-- A4 竖版简历预览：按容器宽度整体缩放，只渲染首页 -->
+              <div class="relative aspect-[794/1123] overflow-hidden bg-sf-bg">
+                <ThumbPreview v-if="heroPreview" :item="heroPreview" />
+                <div v-else class="flex-c absolute inset-0">
+                  <SfIcon
+                    icon="line-md:loading-twotone-loop"
+                    size="6"
+                    class="animate-spin text-sf-theme"
+                  />
+                </div>
               </div>
-              <span class="resume-home__grid absolute inset-0"></span>
-              <span
-                class="absolute right-6 bottom-6 rounded-full bg-sf-primary px-3 py-3 text-xs font-medium shadow-sm"
-                >{{ $t("resumeHomeLivePreview") }}</span
-              >
             </div>
           </div>
-          <!-- 移动端同样展示卖点卡片，底部两枚改左右错位，避免窄屏互相遮挡 -->
-          <div
-            class="resume-home__note absolute -right-3 -bottom-6 rounded-2xl border border-sf-b bg-sf-primary p-3 shadow-lg"
-          >
-            <div class="flex items-center gap-3">
+          <!-- 卖点标签统一置于简历下方 -->
+          <div class="relative mt-6 flex flex-wrap justify-center gap-3">
+            <div class="flex items-center gap-3 rounded-xl border border-sf-b bg-sf-primary p-3">
               <span
-                class="flex h-9 w-9 items-center justify-center rounded-xl bg-sf-success-2 text-sf-success"
+                class="flex h-6 w-6 items-center justify-center rounded-lg bg-sf-theme-2 text-sf-theme"
               >
-                <SfIcon icon="lucide:check" size="4" />
+                <SfIcon icon="lucide:sparkles" size="3" />
               </span>
-              <span class="text-sm font-medium">{{ $t("resumeHomeExportFree") }}</span>
+              <span class="text-xs font-medium">{{ $t("resumeHomeTemplatesFree") }}</span>
             </div>
-          </div>
-          <div
-            class="resume-home__note absolute bottom-18 -left-3 rounded-2xl border border-sf-b bg-sf-primary p-3 shadow-lg sm:-bottom-6"
-          >
-            <div class="flex items-center gap-3">
+            <div class="flex items-center gap-3 rounded-xl border border-sf-b bg-sf-primary p-3">
               <span
-                class="flex h-9 w-9 items-center justify-center rounded-xl bg-sf-info-2 text-sf-info"
+                class="flex h-6 w-6 items-center justify-center rounded-lg bg-sf-info-2 text-sf-info"
               >
-                <SfIcon icon="lucide:user-round-check" size="4" />
+                <SfIcon icon="lucide:user-round-check" size="3" />
               </span>
-              <span class="text-sm font-medium">{{ $t("resumeHomeNoSignup") }}</span>
+              <span class="text-xs font-medium">{{ $t("resumeHomeNoSignup") }}</span>
+            </div>
+            <div class="flex items-center gap-3 rounded-xl border border-sf-b bg-sf-primary p-3">
+              <span
+                class="flex h-6 w-6 items-center justify-center rounded-lg bg-sf-success-2 text-sf-success"
+              >
+                <SfIcon icon="lucide:check" size="3" />
+              </span>
+              <span class="text-xs font-medium">{{ $t("resumeHomeExportFree") }}</span>
             </div>
           </div>
         </div>
-
-        <SiteStats />
       </section>
 
       <section
@@ -140,7 +121,9 @@
       >
         <div class="flex flex-col justify-between gap-6 md:flex-row md:items-end">
           <div class="max-w-2xl">
-            <p class="text-sm font-semibold tracking-[0.18em] text-sf-theme">{{ $t("resumeHomeJourneyEyebrow") }}</p>
+            <p class="text-sm font-semibold tracking-[0.18em] text-sf-theme">
+              {{ $t("resumeHomeJourneyEyebrow") }}
+            </p>
             <h2 class="mt-3 text-3xl font-black tracking-[-0.04em] sm:text-4xl">
               {{ $t("resumeHomeJourneyTitle") }}
             </h2>
@@ -241,44 +224,92 @@
 import { TransitionPresets, useIntersectionObserver, useTransition } from "@vueuse/core";
 import { themeTemplateList } from "@/views/resume/theme";
 import { $t } from "@/locales";
+import { getStatsOverview } from "@/apis";
 import { resumeTemplateList } from "../template/data/list";
-import { computed, onMounted, ref } from "vue";
-import SiteStats from "./siteStats.vue";
+import { loadResumeTemplateData } from "../template/data/resumeData";
+import { computed, defineAsyncComponent, markRaw, onMounted, ref } from "vue";
+
+// 首屏简历预览异步加载，避免把简历渲染引擎并入首页入口包
+const ThumbPreview = defineAsyncComponent(
+  () => import("@/views/resume/editor/preview/modes/thumb.vue"),
+);
+// 首屏预览使用的范本文件：通用简历范本
+const HERO_PREVIEW_FILE = "xiaoZhou.ts";
+// 首屏背后叠放的第二份简历范本：小羊
+const HERO_BACK_PREVIEW_FILE = "xiaoYang.ts";
 
 const revealSections = ref([]);
 
+// 站点统计概览：累计访客与简历生成量，加载失败保持为空
+const overview = ref(null);
+
 // 首页分别呈现内容范本与排版样式，避免将两者相乘成不真实的模板数量。
-const headlineStats = computed(() => [
-  {
-    count: resumeTemplateList.length,
-    label: $t("resumeHomeResumeCount"),
-    description: $t("resumeHomeResumeCountDescription"),
-  },
-  {
-    count: themeTemplateList.length,
-    label: $t("resumeHomeStyleCount"),
-    description: $t("resumeHomeStyleCountDescription"),
-  },
-  {
-    count: 5,
-    label: $t("resumeHomeExportCount"),
-    description: $t("resumeHomeExportCountDescription"),
-  },
-  {
-    count: 2,
-    label: $t("resumeHomeEditingCount"),
-    description: $t("resumeHomeEditingCountDescription"),
-  },
-]);
+const headlineStats = computed(() => {
+  // 简历生成量 = 新建与导入动作合计
+  const actions = overview.value?.actions;
+  const resumeActions = actions ? (actions.create ?? 0) + (actions.import ?? 0) : 0;
+  return [
+    {
+      count: resumeTemplateList.length,
+      label: $t("resumeHomeResumeCount"),
+    },
+    {
+      count: themeTemplateList.length,
+      label: $t("resumeHomeStyleCount"),
+    },
+    {
+      count: 5,
+      label: $t("resumeHomeExportCount"),
+    },
+    {
+      count: overview.value?.visitors?.totalUsers ?? 0,
+      label: $t("resumeSiteStatsTotalVisitors"),
+    },
+    {
+      count: resumeActions,
+      label: $t("resumeSiteStatsResumeActions"),
+    },
+  ];
+});
 
 // 首页统计数字从零开始平滑滚动。
-const headlineStatCounts = ref([0, 0, 0, 0]);
+const headlineStatCounts = ref([0, 0, 0, 0, 0]);
 const animatedHeadlineStats = useTransition(headlineStatCounts, {
   duration: 1500,
   transition: TransitionPresets.easeOutCubic,
 });
 
-onMounted(() => {
+// 首屏真实简历预览数据：加载失败保持为空，预览区显示加载态
+const heroPreview = ref(null);
+
+// 背后叠放的第二份简历数据：小羊
+const heroBackPreview = ref(null);
+
+// 背景简历入场倾斜：挂载后下一帧再启用，保证从 0° 过渡到倾斜角度
+const heroTilted = ref(false);
+
+onMounted(async () => {
+  // 双 rAF 确保首帧先按 0° 渲染，再触发倾斜过渡
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      heroTilted.value = true;
+    });
+  });
+  try {
+    overview.value = await getStatsOverview();
+  } catch {
+    overview.value = null;
+  }
+  try {
+    heroPreview.value = markRaw(await loadResumeTemplateData(HERO_PREVIEW_FILE));
+  } catch {
+    heroPreview.value = null;
+  }
+  try {
+    heroBackPreview.value = markRaw(await loadResumeTemplateData(HERO_BACK_PREVIEW_FILE));
+  } catch {
+    heroBackPreview.value = null;
+  }
   headlineStatCounts.value = headlineStats.value.map((stat) => stat.count);
 });
 
@@ -412,8 +443,20 @@ const featureGroups = computed(() => [
   color: var(--sf-theme);
 }
 
-.resume-home__preview {
-  transform: perspective(1200px) rotateY(-5deg) rotateX(2deg);
+/* 预览框背后的主题色柔光，让简历卡片从页面中浮起 */
+.resume-home__glow {
+  background: radial-gradient(closest-side, var(--sf-theme-3), transparent);
+  filter: blur(24px);
+}
+
+/* 背景简历：默认水平，首屏加载后过渡到倾斜角度 */
+.resume-home__stack-card {
+  rotate: 0deg;
+  transition: rotate 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.resume-home__stack-card.is-tilted {
+  rotate: -10deg;
 }
 
 .resume-home__grid {
@@ -509,10 +552,6 @@ const featureGroups = computed(() => [
   transition-delay: 0.27s;
 }
 
-.resume-home__hero {
-  transition-delay: 0.08s;
-}
-
 .animate-rise {
   animation: rise 0.7s ease-out both;
 }
@@ -529,10 +568,6 @@ const featureGroups = computed(() => [
   animation-delay: 0.24s;
 }
 
-.animate-float {
-  animation: float 5s ease-in-out infinite;
-}
-
 @keyframes rise {
   from {
     opacity: 0;
@@ -544,28 +579,12 @@ const featureGroups = computed(() => [
   }
 }
 
-@keyframes float {
-  0%,
-  100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-0.75rem);
-  }
-}
-
 @keyframes aurora-drift {
   0% {
     transform: translate3d(0, 0, 0) scale(1);
   }
   100% {
     transform: translate3d(3rem, 2.25rem, 0) scale(1.12);
-  }
-}
-
-@media (max-width: 639px) {
-  .resume-home__preview {
-    transform: none;
   }
 }
 </style>
