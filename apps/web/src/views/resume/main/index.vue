@@ -62,9 +62,9 @@
           <span class="resume-home__glow pointer-events-none absolute -inset-6"></span>
           <!-- 首屏简历展示与翻页切换 -->
           <HeroSwitcher :items="heroSwitcherItems" @change="handleHeroChange">
-            <!-- 鼠标经过简历时浮出的创建入口，点击用当前范本直接创建简历 -->
+            <!-- 鼠标经过简历时浮出的创建入口，点击用当前范本直接创建简历；层级需高于叠放卡片才能显示与点击 -->
             <div
-              class="pointer-events-none absolute inset-x-0 bottom-1/4 flex justify-center opacity-0 transition-opacity duration-300 group-hover:pointer-events-auto group-hover:opacity-100"
+              class="pointer-events-none absolute inset-x-0 bottom-1/4 z-10 flex justify-center opacity-0 transition-opacity duration-300 group-hover:pointer-events-auto group-hover:opacity-100"
             >
               <button
                 type="button"
