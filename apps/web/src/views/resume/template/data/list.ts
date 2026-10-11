@@ -169,7 +169,7 @@ export const resumeTemplateList: ResumeTemplate[] = [
   },
   {
     fileName: "xiaoYang.ts",
-    name: "小羊",
+    name: "前端项目经历简历",
     description: "适合前端开发岗位投递的项目经历简历模板",
     scene: ["social-recruitment"],
     industry: ["internet"],
@@ -180,13 +180,33 @@ export const resumeTemplateList: ResumeTemplate[] = [
   {
     // 全字段范本：字段完整性基准，新增业务字段必须同步补充
     fileName: "allFields.ts",
-    name: "全字段简历",
+    name: "产品经理简历",
     description: "覆盖全部模块与全部业务字段的范本，用于字段完整性核对",
     scene: ["social-recruitment"],
     industry: ["internet"],
     position: ["product-manager"],
     workExperience: ["3-5"],
     tags: ["全字段", "信息分隔", "字段基准"],
+  },
+  {
+    fileName: "yangTeacher.ts",
+    name: "商业摄影师简历",
+    description: "适合商业摄影与人像拍摄岗位的三年经验简历范本",
+    scene: ["social-recruitment"],
+    industry: ["culture-media", "advertising"],
+    position: ["photographer"],
+    workExperience: ["3-5"],
+    tags: ["商业摄影", "人像拍摄"],
+  },
+  {
+    fileName: "futureYang.ts",
+    name: "资深前端简历",
+    description: "适合资深前端工程师的十年以上大厂履历简历范本",
+    scene: ["social-recruitment"],
+    industry: ["internet"],
+    position: ["web-frontend"],
+    workExperience: ["10+"],
+    tags: ["资深前端", "大厂履历", "高端项目"],
   },
   {
     fileName: "model__3-5__01.ts",

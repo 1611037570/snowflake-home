@@ -7,7 +7,7 @@ const resumeData: any = {
     user: {
       ui: { archived: false },
       data: {
-        name: "李然",
+        name: "PM 羊",
         position: "高级产品经理",
         birthday: "1996.06",
         sex: "男",

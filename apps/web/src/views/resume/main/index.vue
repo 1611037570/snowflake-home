@@ -191,9 +191,9 @@ const deepClone = (value) => JSON.parse(JSON.stringify(value));
 const HERO_PREVIEW_FILES = [
   "xiaoZhou.ts",
   "xiaoYang.ts",
-  "js__3-5__01.ts",
-  "fe__0__01.ts",
-  "op__0-1__01.ts",
+  "allFields.ts",
+  "yangTeacher.ts",
+  "futureYang.ts",
 ];
 // 首屏切换条目：fileName 为范本标识，name 为范本名称，用作圆点的悬停提示与无障碍标签
 const heroSwitcherItems = HERO_PREVIEW_FILES.map((fileName) => ({
