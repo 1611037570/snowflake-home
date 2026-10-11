@@ -1,4 +1,4 @@
-import { env } from '../configs/env'
+import { env } from './env'
 
 // 简历库配置：连接参数全部取自环境变量，真实值只落在不入库的 apps/server/.env.local
 export const resumeConfig = {

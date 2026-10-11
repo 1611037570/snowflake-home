@@ -1,5 +1,5 @@
-import { baseConfig } from '../config/base.config'
-import { resumeConfig } from '../config/resume.config'
+import { baseConfig } from './base.config'
+import { resumeConfig } from './resume.config'
 import { env } from './env'
 
 // 业务统一读取本入口，保留原有配置文件和模块行为。

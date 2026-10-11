@@ -1,4 +1,4 @@
-import { env } from "../configs/env"
+import { env } from './env'
 export const baseConfig = {
   // 应用配置
   app: {
