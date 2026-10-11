@@ -33,17 +33,22 @@ onMounted(async () => {
 
 const templates = computed(() => {
   i18n.global.locale.value;
-  return themeTemplateList.filter((t) =>
-    !selectedDesign.value || t.design.includes("all") || t.design.includes(selectedDesign.value),
-  ).map((t) => ({
-    name: translateResumeEditorText(t.name),
-    id: t.id,
-    item: {
-      data: previewBase.value?.data || {},
-      config: previewBase.value?.config || {},
-      ui: getResumeThemeTemplate(t.id).item.ui,
-    },
-  }));
+  return themeTemplateList
+    .filter(
+      (t) =>
+        !selectedDesign.value ||
+        t.design.includes("all") ||
+        t.design.includes(selectedDesign.value),
+    )
+    .map((t) => ({
+      name: translateResumeEditorText(t.name),
+      id: t.id,
+      item: {
+        data: previewBase.value?.data || {},
+        config: previewBase.value?.config || {},
+        ui: getResumeThemeTemplate(t.id).item.ui,
+      },
+    }));
 });
 
 // 是否为当前选中的风格模板
@@ -65,7 +70,7 @@ const applyTemplate = (template) => {
 </script>
 
 <template>
-  <SfScrollbar class="h-full">
+  <SfScrollbar class="h-full py-3">
     <!-- 编辑器分类沿用模板库选项与文案，以主题的 design 字段筛选。 -->
     <div class="mb-3 flex flex-wrap gap-3">
       <SfButton
@@ -107,7 +112,10 @@ const applyTemplate = (template) => {
         </div>
       </div>
     </div>
-    <div v-if="!templates.length" class="flex h-36 items-center justify-center text-sm text-sf-text-2">
+    <div
+      v-if="!templates.length"
+      class="flex h-36 items-center justify-center text-sm text-sf-text-2"
+    >
       {{ $t("resumeTemplateEmpty") }}
     </div>
   </SfScrollbar>
