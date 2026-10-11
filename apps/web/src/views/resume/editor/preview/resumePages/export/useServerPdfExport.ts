@@ -12,6 +12,23 @@ import { useResumeName } from "../../../../hooks/useResumeName";
 
 const cloneJson = (value: any) => JSON.parse(JSON.stringify(toRaw(value)));
 
+/**
+ * 读取服务端给出的失败原因。
+ * 导出接口按 blob 接收响应，出错时响应体同样是 Blob，需要先解出来才能拿到提示。
+ */
+const readServerErrorMessage = async (error: any): Promise<string> => {
+  const data = error?.response?.data;
+  if (!(data instanceof Blob)) return "";
+  try {
+    const parsed = JSON.parse(await data.text());
+    // Nest 的 message 既可能是字符串，也可能是字符串数组
+    return Array.isArray(parsed?.message) ? parsed.message.join("；") : (parsed?.message ?? "");
+  } catch {
+    // 响应体不是 JSON，交给通用提示
+    return "";
+  }
+};
+
 export const printServerPDF = async (
   onSuccess?: () => void,
 ) => {
@@ -45,7 +62,13 @@ export const printServerPDF = async (
   } catch (error) {
     if (!signal.aborted && isCurrentResume()) {
       console.error("生成服务器PDF失败:", error);
-      ElMessage.error("服务器PDF生成失败，请确认服务端已启动后重试。");
+      // 排队已满（503）、渲染超时（408）等原因由服务端给出，读不到才回落到通用提示
+      const serverMessage = await readServerErrorMessage(error);
+      const fallback =
+        error?.code === "ECONNABORTED" || error?.code === "ETIMEDOUT"
+          ? "导出等待时间过长，请稍后重试。"
+          : "服务器PDF生成失败，请确认服务端已启动后重试。";
+      ElMessage.error(serverMessage || fallback);
     }
   } finally {
     if (isCurrentResume()) resumeStore.setSelectedModules(cachedSelectedModule);
