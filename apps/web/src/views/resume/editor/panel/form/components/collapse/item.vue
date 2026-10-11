@@ -48,34 +48,59 @@ function copyItem(event) {
 
 <template>
   <SfCollapse v-model="collapsed" :border="false">
-    <SfCollapseItem name="1" lazy>
+    <SfCollapseItem name="1" lazy class="resume-record-box">
       <template #title>
         <div class="group flex h-full w-full items-center justify-between text-sf-text">
-          <div class="flex min-w-0 flex-1 items-center text-[15px] font-bold">
-            <Icon icon="icon-park-outline:drag" class="item-drag shrink-0 cursor-move!" />
-            <span class="truncate">{{ displayTitle }}</span>
+          <!-- 子记录标题适度加重，操作图标保留清晰度并区分层级。 -->
+          <div class="flex min-w-0 flex-1 items-center text-[15px] font-semibold">
+            <Icon
+              icon="icon-park-outline:drag"
+              class="item-drag shrink-0 cursor-move! text-sf-text-2 hover:text-sf-text"
+            />
+            <!-- 隐藏状态通过名称删除线表达，操作图标保持统一颜色。 -->
+            <span class="truncate" :class="{ 'line-through': hidden }">{{ displayTitle }}</span>
           </div>
-          <div class="flex shrink-0 items-center">
+          <div class="flex shrink-0 items-center text-sf-text-2">
             <SfTooltip :content="$t('copyRecord')">
-              <Icon @click.stop="copyItem" icon="ph:copy-duotone" />
+              <Icon @click.stop="copyItem" icon="ph:copy-duotone" class="hover:text-sf-text" />
             </SfTooltip>
             <SfTooltip :content="hidden ? $t('show') : $t('hide')">
               <Icon
                 :icon="hidden ? 'lucide:eye' : 'lucide:eye-off'"
                 @click.stop="hidden = !hidden"
-                :class="hidden ? 'text-sf-theme' : ''"
+                class="hover:text-sf-text"
               />
             </SfTooltip>
 
-            <Icon @click.stop="del" icon="ic:round-delete" />
+            <Icon @click.stop="del" icon="ic:round-delete" class="hover:text-sf-error" />
           </div>
         </div>
       </template>
       <template #default>
-        <slot />
+        <!-- 展开正文统一上下留白，与记录标题保持左右对齐。 -->
+        <div class="py-3">
+          <slot />
+        </div>
       </template>
     </SfCollapseItem>
   </SfCollapse>
 </template>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+@reference "@/styles/tailwind.css";
+
+/* 标题底色覆盖整条记录，展开时明确正文的所属范围。 */
+.resume-record-box > :deep(.el-collapse-item__header) {
+  @apply -mx-3 px-3;
+}
+.resume-record-box > :deep(.el-collapse-item__header.is-active) {
+  @apply bg-sf-bg;
+}
+/* 折叠箭头与操作图标保持同级颜色，正文留白由内部容器统一提供。 */
+.resume-record-box > :deep(.el-collapse-item__header .el-collapse-item__arrow) {
+  @apply text-sf-text-2;
+}
+.resume-record-box > :deep(.el-collapse-item__wrap > .el-collapse-item__content) {
+  padding-bottom: 0;
+}
+</style>
