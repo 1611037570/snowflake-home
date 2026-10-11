@@ -60,30 +60,22 @@
         <!-- 右侧：真实简历预览，替换原占位截图区 -->
         <div class="relative mx-auto w-full max-w-[380px]">
           <span class="resume-home__glow pointer-events-none absolute -inset-6"></span>
-          <!-- 卡片叠放层：让背景卡 inset-0 以主卡为基准，不含下方徽章 -->
-          <div class="relative">
-            <!-- 背后倾斜叠放的第二份简历（小羊），默认水平，首屏加载后过渡到倾斜角度 -->
+          <!-- 首屏简历展示与翻页切换 -->
+          <HeroSwitcher :items="heroSwitcherItems" @change="handleHeroChange">
+            <!-- 鼠标经过简历时浮出的创建入口，点击用当前范本直接创建简历 -->
             <div
-              :class="{ 'is-tilted': heroTilted }"
-              class="resume-home__stack-card absolute inset-0 -translate-x-22 -translate-y-6 scale-85 overflow-hidden border border-sf-b bg-sf-bg"
-              aria-hidden="true"
+              class="pointer-events-none absolute inset-x-0 bottom-1/4 flex justify-center opacity-0 transition-opacity duration-300 group-hover:pointer-events-auto group-hover:opacity-100"
             >
-              <ThumbPreview v-if="heroBackPreview" :item="heroBackPreview" />
+              <button
+                type="button"
+                class="inline-flex cursor-pointer items-center gap-1 rounded-full bg-[#1f1f1f] px-2 py-1 text-[12px] text-white"
+                @click="createFromHeroPreview"
+              >
+                <SfIcon icon="lucide:wand-sparkles" size="4" />
+                {{ $t("resumeHomeUseTemplate") }}
+              </button>
             </div>
-            <div class="relative overflow-hidden rounded-none border border-sf-b bg-sf-primary">
-              <!-- A4 竖版简历预览：按容器宽度整体缩放，只渲染首页 -->
-              <div class="relative aspect-[794/1123] overflow-hidden bg-sf-bg">
-                <ThumbPreview v-if="heroPreview" :item="heroPreview" />
-                <div v-else class="flex-c absolute inset-0">
-                  <SfIcon
-                    icon="line-md:loading-twotone-loop"
-                    size="6"
-                    class="animate-spin text-sf-theme"
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
+          </HeroSwitcher>
           <!-- 卖点标签统一置于简历下方 -->
           <div class="relative mt-6 flex flex-wrap justify-center gap-3">
             <div class="flex items-center gap-3 rounded-xl border border-sf-b bg-sf-primary p-3">
@@ -222,21 +214,32 @@
 
 <script setup>
 import { TransitionPresets, useIntersectionObserver, useTransition } from "@vueuse/core";
+import { useResumeStore } from "@/stores";
+import { trackResumeAction } from "@/hooks";
 import { themeTemplateList } from "@/views/resume/theme";
 import { $t } from "@/locales";
 import { getStatsOverview } from "@/apis";
 import { resumeTemplateList } from "../template/data/list";
-import { loadResumeTemplateData } from "../template/data/resumeData";
-import { computed, defineAsyncComponent, markRaw, onMounted, ref } from "vue";
+import HeroSwitcher from "./heroSwitcher.vue";
+import { computed, onMounted, ref } from "vue";
 
-// 首屏简历预览异步加载，避免把简历渲染引擎并入首页入口包
-const ThumbPreview = defineAsyncComponent(
-  () => import("@/views/resume/editor/preview/modes/thumb.vue"),
-);
-// 首屏预览使用的范本文件：通用简历范本
-const HERO_PREVIEW_FILE = "xiaoZhou.ts";
-// 首屏背后叠放的第二份简历范本：小羊
-const HERO_BACK_PREVIEW_FILE = "xiaoYang.ts";
+const resumeStore = useResumeStore();
+// 深拷贝：套用范本时隔离示例数据，避免与预览共享引用导致互相串改
+const deepClone = (value) => JSON.parse(JSON.stringify(value));
+
+// 首屏简历切换列表：精选常用范本，供首屏预览循环切换
+const HERO_PREVIEW_FILES = [
+  "xiaoZhou.ts",
+  "xiaoYang.ts",
+  "js__3-5__01.ts",
+  "fe__0__01.ts",
+  "op__0-1__01.ts",
+];
+// 首屏切换条目：fileName 为范本标识，name 为范本名称，用作圆点的悬停提示与无障碍标签
+const heroSwitcherItems = HERO_PREVIEW_FILES.map((fileName) => ({
+  fileName,
+  name: resumeTemplateList.find((template) => template.fileName === fileName)?.name ?? fileName,
+}));
 
 const revealSections = ref([]);
 
@@ -279,36 +282,29 @@ const animatedHeadlineStats = useTransition(headlineStatCounts, {
   transition: TransitionPresets.easeOutCubic,
 });
 
-// 首屏真实简历预览数据：加载失败保持为空，预览区显示加载态
+// 首屏当前简历数据：由切换组件通知，未加载时为空
 const heroPreview = ref(null);
 
-// 背后叠放的第二份简历数据：小羊
-const heroBackPreview = ref(null);
+// 记录切换组件当前展示的简历范本数据
+function handleHeroChange(payload) {
+  heroPreview.value = payload.data;
+}
 
-// 背景简历入场倾斜：挂载后下一帧再启用，保证从 0° 过渡到倾斜角度
-const heroTilted = ref(false);
+// 用当前预览的简历范本直接创建简历并进入编辑器
+function createFromHeroPreview() {
+  const item = heroPreview.value;
+  if (!item) return;
+  // 新建成功后上报一次简历创建动作
+  if (resumeStore.addResume(deepClone(item))) {
+    trackResumeAction({ eventType: "create", fileType: "none" });
+  }
+}
 
 onMounted(async () => {
-  // 双 rAF 确保首帧先按 0° 渲染，再触发倾斜过渡
-  requestAnimationFrame(() => {
-    requestAnimationFrame(() => {
-      heroTilted.value = true;
-    });
-  });
   try {
     overview.value = await getStatsOverview();
   } catch {
     overview.value = null;
-  }
-  try {
-    heroPreview.value = markRaw(await loadResumeTemplateData(HERO_PREVIEW_FILE));
-  } catch {
-    heroPreview.value = null;
-  }
-  try {
-    heroBackPreview.value = markRaw(await loadResumeTemplateData(HERO_BACK_PREVIEW_FILE));
-  } catch {
-    heroBackPreview.value = null;
   }
   headlineStatCounts.value = headlineStats.value.map((stat) => stat.count);
 });
@@ -447,16 +443,6 @@ const featureGroups = computed(() => [
 .resume-home__glow {
   background: radial-gradient(closest-side, var(--sf-theme-3), transparent);
   filter: blur(24px);
-}
-
-/* 背景简历：默认水平，首屏加载后过渡到倾斜角度 */
-.resume-home__stack-card {
-  rotate: 0deg;
-  transition: rotate 0.9s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.resume-home__stack-card.is-tilted {
-  rotate: -10deg;
 }
 
 .resume-home__grid {
