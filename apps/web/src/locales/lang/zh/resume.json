@@ -220,6 +220,8 @@
   "resumeTemplateStyle_navyGuide_description": "深色页眉搭配蓝色纵向引导线，突出个人信息和经历层次。",
   "resumeTemplateStyle_lightSail_name": "海蓝页眉",
   "resumeTemplateStyle_lightSail_description": "海蓝色英文页眉搭配圆条标题，个人信息保持通用布局。",
+  "resumeTemplateStyle_terraCards_name": "暖陶卡片",
+  "resumeTemplateStyle_terraCards_description": "暖米色个人信息卡与双栏正文卡片，陶色标题和细线组织内容。",
   "resumeTemplateStyle_sailMasthead_name": "帆影序章",
   "resumeTemplateStyle_sailMasthead_description": "斜切深蓝页眉与帆影图形突出英文品牌，双线标题收束正文。",
   "resumeTemplateStyle_userBand_description": "个人信息整块铺满页面宽度的主题色底纹，正文保持页面留白。",

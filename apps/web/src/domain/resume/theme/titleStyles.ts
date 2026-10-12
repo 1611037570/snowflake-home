@@ -49,6 +49,7 @@ export const titleStyleList = [
   { id: "slantedBands", scope: "standalone", name: "斜纹色带", description: "标题落在斜切色块上，右侧接三道渐浅斜纹。" },
   { id: "doubleRuleTitle", scope: "standalone", name: "双线夹标题", description: "标题上下各一条线，上线通栏、下线随文字宽度。", titleSize: 17 },
   { id: "solidLabelTrail", scope: "standalone", name: "色块引线", description: "标题落在实色块上，右侧细线接一个圆点。" },
+  { id: "terraCardRule", scope: "theme", name: "卡片引线", description: "暖色卡片内的标题向右延伸细线。", titleSize: 16 }, // 暖陶卡片配套标题
 ] satisfies TitleStyleDefinition[];
 
 /** 标题样式编号 */

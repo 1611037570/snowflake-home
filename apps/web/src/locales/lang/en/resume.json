@@ -220,6 +220,8 @@
   "resumeTemplateStyle_navyGuide_description": "A dark header and blue vertical guide organize the profile and experience sections.",
   "resumeTemplateStyle_lightSail_name": "Ocean Blue Header",
   "resumeTemplateStyle_lightSail_description": "An ocean-blue English header with ruled section titles and the standard profile layout.",
+  "resumeTemplateStyle_terraCards_name": "Terracotta Cards",
+  "resumeTemplateStyle_terraCards_description": "Warm profile and two-column content cards with terracotta headings and fine rules.",
   "resumeTemplateStyle_sailMasthead_name": "Sail Masthead",
   "resumeTemplateStyle_sailMasthead_description": "A diagonal navy masthead and sail illustration frame the English brand above double-ruled sections.",
   "resumeTemplateStyle_userBand_description": "A full-width tinted band behind the profile block while the body keeps page margins.",
