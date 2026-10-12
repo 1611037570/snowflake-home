@@ -9,6 +9,7 @@ import Font from "./toolbar/font.vue";
 import Settings from "./toolbar/settings.vue";
 import TemplateSettings from "./toolbar/templateSettings.vue";
 import PrintMode from "./toolbar/printMode.vue";
+import StyleHint from "./toolbar/styleHint.vue";
 import Language from "./toolbar/language.vue";
 import OnePage from "./toolbar/onePage.vue";
 
@@ -126,6 +127,11 @@ const setAutoScale = () => {
 
 const setOnePageScale = () => {
   scaleMode.value = "onePage";
+};
+
+// 标准 A4：使用页面原始尺寸展示，供样式疑问入口确认后切换
+const setStandardA4 = () => {
+  scaleMode.value = "a4";
 };
 
 // 滚动超过指定距离时显示回到顶部按钮
@@ -274,9 +280,14 @@ useResizeObserver(contentRef, ([entry]) => {
           </div>
         </div>
       </SfScrollbar>
-      <!-- 打印模式入口固定在预览区顶部，横向对齐到简历纸张左边缘，置于去色容器外避免图标一并变灰。 -->
-      <div v-if="showToolbar" class="absolute top-3 z-10" :style="{ left: `${resumeLeft}px` }">
+      <!-- 打印模式与样式疑问入口固定在预览区顶部，横向对齐到简历纸张左边缘，置于去色容器外避免图标一并变灰。 -->
+      <div
+        v-if="showToolbar"
+        class="absolute top-3 z-10 flex flex-col items-start gap-3"
+        :style="{ left: `${resumeLeft}px` }"
+      >
         <PrintMode />
+        <StyleHint @standard-a4="setStandardA4" />
       </div>
     </div>
     <SfTooltip
