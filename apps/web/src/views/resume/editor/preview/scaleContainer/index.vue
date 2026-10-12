@@ -55,6 +55,12 @@ const SCALE_LIST = computed(() => {
     name: $t("adaptiveMax"),
     active: scaleMode.value === "auto",
   },
+  // 标准 A4 使用页面原始尺寸，不随容器宽高自动缩小。
+  {
+    value: "a4", // 标准 A4 缩放模式标识。
+    name: $t("standardA4"), // 下拉选项显示名称。
+    active: scaleMode.value === "a4", // 当前模式选中状态。
+  },
   { divider: true },
   ...[0.5, 0.6, 0.7, 0.8, 0.9, 1].map((value) => {
     const name = percent(value);
@@ -78,6 +84,8 @@ const onePageScale = computed(() => {
 });
 
 const scale = computed(() => {
+  // 页面原始尺寸为 A4 对应的七百九十四乘一千一百二十三像素。
+  if (scaleMode.value === "a4") return 1;
   if (scaleMode.value === "auto") return maxScale.value;
   if (scaleMode.value === "onePage") return onePageScale.value;
   return manualScale.value;
@@ -91,7 +99,9 @@ const scaleLabel = computed(() =>
     ? $t("adaptive")
     : scaleMode.value === "onePage"
       ? $t("onePage")
-      : percent(transitionScale.value),
+      : scaleMode.value === "a4"
+        ? $t("standardA4")
+        : percent(transitionScale.value),
 );
 const minScale = computed(() => Math.min(MIN_SCALE, maxScale.value));
 const manualScaleText = computed(() => percent(manualScale.value));
@@ -125,6 +135,11 @@ const handleBackTop = () => {
 };
 
 const handleScaleSelect = (item) => {
+  // 原尺寸显示不受自适应最大缩放比例限制。
+  if (item.value === "a4") {
+    scaleMode.value = "a4";
+    return;
+  }
   if (item.value === "auto") {
     setAutoScale();
     return;
@@ -179,7 +194,8 @@ useResizeObserver(contentRef, ([entry]) => {
       <SortByTime />
       <SfDropdown trigger="hover" placement="bottom-start" :show-arrow="false">
         <div
-          class="flex h-7 w-13 cursor-default items-center justify-center rounded-full text-xs font-medium text-sf-theme"
+          class="flex h-7 cursor-default items-center justify-center rounded-full text-xs font-medium text-sf-theme"
+          :class="scaleMode === 'a4' ? 'w-21' : 'w-13'"
         >
           {{ scaleLabel }}
         </div>
@@ -223,9 +239,14 @@ useResizeObserver(contentRef, ([entry]) => {
       view-class="relative min-h-full w-full pt-3 "
       @scroll="handleScroll"
     >
-      <!-- 缩放展示：外层承担缩放后的布局尺寸并水平居中，内层用 transform: scale() 缩放 -->
+      <!-- 缩放展示：标准 A4 超出容器宽度时靠左，确保横向滚动可查看完整页面。 -->
       <div
-        class="absolute top-0 left-1/2 -translate-x-1/2"
+        class="absolute top-0"
+        :class="
+          scaleMode === 'a4' && contentSize.width > availableSize.width
+            ? 'left-0'
+            : 'left-1/2 -translate-x-1/2'
+        "
         :style="{
           width: `${contentSize.width * scale}px`,
           height: `${contentSize.height * scale}px`,
