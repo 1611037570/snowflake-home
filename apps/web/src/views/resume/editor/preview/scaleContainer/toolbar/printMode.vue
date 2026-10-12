@@ -15,14 +15,18 @@ const togglePrintMode = () => {
 <template>
   <SfTooltip :content="system.printMode ? $t('printColorMode') : $t('printGrayMode')">
     <SfIcon
-      :icon="system.printMode ? 'lucide:contrast' : 'lucide:palette'"
-      size="5"
-      boxSize="7"
+      :icon="
+        system.printMode
+          ? 'qlementine-icons:light-bulb-off-16'
+          : 'qlementine-icons:light-bulb-on-16'
+      "
+      size="6"
+      boxSize="8"
       class="rounded-full"
       :class="
         system.printMode
-          ? 'text-sf-theme hover:bg-sf-theme-2'
-          : 'text-sf-text-2 hover:bg-sf-theme-2 hover:text-sf-theme-text'
+          ? 'text-sf-text-2 hover:bg-sf-warning-2 hover:text-sf-warning'
+          : 'text-sf-warning hover:bg-sf-warning-2'
       "
       @click="togglePrintMode"
     />

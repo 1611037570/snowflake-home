@@ -89,6 +89,12 @@ const scale = computed(() => {
   if (scaleMode.value === "onePage") return onePageScale.value;
   return manualScale.value;
 });
+// 简历纸张左边缘相对滚动区的偏移，供固定入口贴到纸张左上角
+const resumeLeft = computed(() => {
+  const { width } = availableSize.value;
+  if (scaleMode.value === "a4" && contentSize.value.width > width) return 0;
+  return Math.max((width - contentSize.value.width * scale.value) / 2, 0);
+});
 const transitionScale = useTransition(scale, {
   duration: 200,
   transition: TransitionPresets.easeOutCubic,
@@ -187,7 +193,6 @@ useResizeObserver(contentRef, ([entry]) => {
       <TemplateSettings />
       <Font />
       <Settings />
-      <PrintMode />
       <Language />
       <OnePage />
       <SfDropdown trigger="hover" placement="bottom-start" :show-arrow="false">
@@ -229,44 +234,51 @@ useResizeObserver(contentRef, ([entry]) => {
         />
       </SfTooltip>
     </div>
-    <!-- 滚动区紧贴顶部工具栏，顶部留白放入滚动内容，避免固定空隙截断预览。 -->
-    <SfScrollbar
-      ref="containerRef"
-      :data-resume-preview-scroll="showToolbar ? '' : undefined"
-      class="relative min-h-0 flex-1"
-      :style="{
-        marginRight: 'var(--resume-toolbar-width, 0px)',
-        width: 'calc(100% - var(--resume-toolbar-width, 0px))',
-      }"
-      view-class="relative min-h-full w-full"
-      @scroll="handleScroll"
-    >
-      <!-- 顶部留白随内容滚动；标准 A4 超出容器宽度时靠左。 -->
-      <div
-        class="absolute top-3"
-        :class="
-          scaleMode === 'a4' && contentSize.width > availableSize.width
-            ? 'left-0'
-            : 'left-1/2 -translate-x-1/2'
-        "
+    <!-- 预览滚动区外层：为滚动条约束可用高度。 -->
+    <div class="relative min-h-0 flex-1">
+      <!-- 滚动区紧贴顶部工具栏，顶部留白放入滚动内容，避免固定空隙截断预览。 -->
+      <SfScrollbar
+        ref="containerRef"
+        :data-resume-preview-scroll="showToolbar ? '' : undefined"
+        class="relative min-h-0 flex-1"
         :style="{
-          width: `${contentSize.width * scale}px`,
-          height: `${contentSize.height * scale}px`,
+          marginRight: 'var(--resume-toolbar-width, 0px)',
+          width: 'calc(100% - var(--resume-toolbar-width, 0px))',
         }"
+        view-class="relative min-h-full w-full"
+        @scroll="handleScroll"
       >
+        <!-- 顶部留白随内容滚动；标准 A4 超出容器宽度时靠左。 -->
         <div
-          ref="contentRef"
-          class="w-fit pb-3!"
-          :class="{ grayscale: system.printMode }"
+          class="absolute top-3"
+          :class="
+            scaleMode === 'a4' && contentSize.width > availableSize.width
+              ? 'left-0'
+              : 'left-1/2 -translate-x-1/2'
+          "
           :style="{
-            transform: `scale(${scale})`,
-            transformOrigin: 'top left',
+            width: `${contentSize.width * scale}px`,
+            height: `${contentSize.height * scale}px`,
           }"
         >
-          <slot></slot>
+          <div
+            ref="contentRef"
+            class="w-fit pb-3!"
+            :class="{ grayscale: system.printMode }"
+            :style="{
+              transform: `scale(${scale})`,
+              transformOrigin: 'top left',
+            }"
+          >
+            <slot></slot>
+          </div>
         </div>
+      </SfScrollbar>
+      <!-- 打印模式入口固定在预览区顶部，横向对齐到简历纸张左边缘，置于去色容器外避免图标一并变灰。 -->
+      <div v-if="showToolbar" class="absolute top-3 z-10" :style="{ left: `${resumeLeft}px` }">
+        <PrintMode />
       </div>
-    </SfScrollbar>
+    </div>
     <SfTooltip
       v-if="showBackTop"
       :content="$t('backToTop')"
