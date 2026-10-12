@@ -1,5 +1,5 @@
 <script setup>
-// 模块管理：右侧工具栏入口复用统一的模块管理内容
+// 模块搜索：右侧工具栏提供模块及内容的搜索定位入口。
 import Icon from "../components/icon.vue";
 import ModuleManagerContent from "../../components/moduleManager/content.vue";
 import { $t } from "@/locales";
@@ -7,7 +7,7 @@ import { $t } from "@/locales";
 
 <template>
   <SfDropdown trigger="click" placement="left-start" :show-arrow="false">
-    <Icon icon="mdi:widgets" size="5" :content="$t('moduleManager')" />
+    <Icon icon="lucide:search" size="5" :content="$t('moduleManager')" />
     <template #dropdown>
       <ModuleManagerContent />
     </template>

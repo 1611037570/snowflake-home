@@ -1,8 +1,6 @@
 <script setup>
-import { computed, getCurrentInstance, nextTick, onMounted, onUnmounted, ref, watch } from "vue";
+import { computed, getCurrentInstance, nextTick } from "vue";
 import { storeToRefs } from "pinia";
-import { useDraggable } from "vue-draggable-plus";
-import { moveFieldByKey } from "@/components/business/dynamicForm/api";
 import { useResumeStore } from "@/stores";
 import { useModuleNav } from "../../hooks/useModuleNav";
 import { $t } from "@/locales";
@@ -12,21 +10,9 @@ defineOptions({ name: "ModuleManagerContent" });
 const { proxy } = getCurrentInstance();
 const resumeStore = useResumeStore();
 const { runtimeConfig } = storeToRefs(resumeStore);
-const { keyword, searchResults, moduleList, jumpAll, jumpToHit, jumpPreview } = useModuleNav();
-const listRef = ref(null);
+// 搜索结果直接用于展示与定位，不再维护拖拽排序状态。
+const { keyword, searchResults, jumpAll, jumpToHit, jumpPreview } = useModuleNav();
 const moduleFields = computed(() => runtimeConfig.value?.fields || []);
-// 拖拽排序作用于可导航模块，结束后按 key 回填完整字段列表
-const visibleModules = ref([]);
-// 拖拽前的可见模块 key 顺序：用于按下标还原起止模块
-let draggedKeys = [];
-watch(
-  moduleList,
-  (list) => {
-    visibleModules.value = [...list];
-  },
-  { immediate: true },
-);
-let draggable = null;
 
 // 查找模块时先恢复归档状态，再同步定位编辑区与预览区
 const handleFind = async (module) => {
@@ -67,36 +53,6 @@ const handleDelete = (module) => {
   });
 };
 
-onMounted(async () => {
-  await nextTick();
-  // 搜索时隐藏拖拽手柄，避免过滤列表与完整模块顺序不一致
-  draggable = useDraggable(listRef, visibleModules, {
-    animation: 150,
-    ghostClass: "module-manager-ghost",
-    handle: ".module-manager-drag",
-    onMove: (event) => !event.related?.dataset?.fixed,
-    onStart: () => {
-      draggedKeys = visibleModules.value.map((item) => item.field.key);
-    },
-    // 前移落到目标模块之后、后移落到目标模块之前，与拖拽结果一致
-    onEnd: (event) => {
-      const fromKey = draggedKeys[event.oldIndex];
-      const toKey = draggedKeys[event.newIndex];
-      if (!fromKey || !toKey) return;
-      moveFieldByKey(
-        moduleFields.value,
-        fromKey,
-        toKey,
-        event.oldIndex < event.newIndex ? "after" : "before",
-      );
-    },
-  });
-});
-
-onUnmounted(() => {
-  draggable?.destroy();
-  draggable = null;
-});
 </script>
 
 <template>
@@ -104,7 +60,7 @@ onUnmounted(() => {
     <header class="px-3">
       <div class="mb-3 flex items-center justify-between">
         <div class="flex items-center gap-3 font-bold text-sf-text">
-          <SfIcon icon="mdi:widgets" size="4" />
+          <SfIcon icon="lucide:search" size="4" />
           <span>{{ $t("moduleManager") }}</span>
         </div>
         <span class="text-xs text-sf-text-2">{{ $t("moduleCount", { count: moduleFields.length }) }}</span>
@@ -112,22 +68,13 @@ onUnmounted(() => {
       <SfInput v-model="keyword" :placeholder="$t('searchModuleOrContent')" clearable />
     </header>
     <SfScrollbar class="mt-3" max-height="388px">
-      <div ref="listRef" class="flex flex-col gap-3">
+      <div class="flex flex-col gap-3">
         <template v-for="module in searchResults" :key="module.key">
-          <div
-            class="flex flex-col gap-3"
-            :data-fixed="module.field.fixed ? 'true' : undefined"
-          >
+          <div class="flex flex-col gap-3">
             <div
               class="group flex h-10 items-center gap-3 rounded-3xl bg-sf-bg px-3"
               :class="module.hidden || module.archived ? 'opacity-60' : ''"
             >
-              <SfIcon
-                v-if="!module.field.fixed && !keyword"
-                icon="icon-park-outline:drag"
-                size="4"
-                class="module-manager-drag cursor-move! text-sf-text-3"
-              />
               <div class="flex min-w-0 flex-1 items-center gap-3">
                 <span class="truncate text-sm text-sf-text">{{ module.name }}</span>
                 <span v-if="module.hidden" class="text-xs text-sf-text-2">{{ $t("hidden") }}</span>
@@ -193,8 +140,4 @@ onUnmounted(() => {
   </div>
 </template>
 
-<style scoped>
-.module-manager-ghost {
-  opacity: 0.5;
-}
-</style>
+<style scoped></style>

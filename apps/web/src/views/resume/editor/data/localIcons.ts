@@ -31,6 +31,7 @@ import LucideChevronRightIcon from "@iconify-vue/lucide/chevron-right";
 import LucideCircleSlashIcon from "@iconify-vue/lucide/circle-slash";
 import LucideContrastIcon from "@iconify-vue/lucide/contrast";
 import LucideCopyIcon from "@iconify-vue/lucide/copy";
+import LucideSearchIcon from "@iconify-vue/lucide/search";
 import LucideEllipsisVerticalIcon from "@iconify-vue/lucide/ellipsis-vertical";
 import LucideEyeIcon from "@iconify-vue/lucide/eye";
 import LucideEyeOffIcon from "@iconify-vue/lucide/eye-off";
@@ -203,6 +204,7 @@ export const PROJECT_ICON_LIST: Record<string, Component> = {
   "lucide:circle-slash": LucideCircleSlashIcon,
   "lucide:contrast": LucideContrastIcon,
   "lucide:copy": LucideCopyIcon,
+  "lucide:search": LucideSearchIcon, // 模块搜索入口与面板标题图标。
   "lucide:ellipsis-vertical": LucideEllipsisVerticalIcon,
   "lucide:eye": LucideEyeIcon,
   "lucide:eye-off": LucideEyeOffIcon,

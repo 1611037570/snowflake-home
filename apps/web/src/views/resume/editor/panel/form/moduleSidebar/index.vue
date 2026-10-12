@@ -41,6 +41,22 @@ function collapseAll() {
   }
 }
 
+// 恢复未归档模块、子记录及个人信息字段的显示，只修改已有隐藏状态。
+function showAll() {
+  const clearHidden = (ui) => {
+    if (!ui || typeof ui !== "object") return;
+    if (ui.hidden === true) ui.hidden = false;
+    for (const state of Object.values(ui)) clearHidden(state);
+  };
+  for (const item of moduleItems.value) {
+    const module = currentData.value?.[item.key];
+    clearHidden(module?.ui);
+    if (Array.isArray(module?.list)) {
+      for (const record of module.list) clearHidden(record?.ui);
+    }
+  }
+}
+
 watch(
   moduleItems,
   (items) => {
@@ -115,6 +131,16 @@ onUnmounted(() => {
     <!-- 底部入口由容器统一提供上下间距和左右留白。 -->
     <div class="flex shrink-0 flex-col items-center gap-[6px] border-t border-sf-b px-[6px] pt-[6px]">
       <SortByTime />
+      <!-- 全部显示入口沿用底部模块操作样式。 -->
+      <button
+        type="button"
+        class="flex-c w-fit min-w-0 cursor-pointer flex-col gap-1 rounded-xl border border-sf-b bg-sf-primary p-1 text-[9px] text-sf-text transition-colors select-none hover:border-sf-theme hover:text-sf-theme"
+        :disabled="!currentData || !runtimeConfig"
+        @click="showAll"
+      >
+        <SfIcon icon="lucide:eye" size="4" />
+        <span class="w-9 text-center leading-4 break-all">{{ $t("showAllContent") }}</span>
+      </button>
       <!-- 折叠入口固定在添加模块上方，沿用模块卡片外观。 -->
       <button
         type="button"
