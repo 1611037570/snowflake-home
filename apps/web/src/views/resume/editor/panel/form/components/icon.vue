@@ -15,8 +15,10 @@ function handleClick(e) {
 </script>
 
 <template>
+  <!-- 编辑区删除图标仅在悬停时显示危险色，默认保留原有颜色。 -->
   <SfIcon
     :icon="icon"
+    :class="{ 'hover:text-sf-error': icon === 'ic:round-delete' }"
     size="4"
     boxSize="6"
     @click.stop.prevent="handleClick"

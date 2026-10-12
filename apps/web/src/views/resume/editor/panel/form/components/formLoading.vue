@@ -6,8 +6,9 @@ import SfSkeleton from "@/components/el/skeleton";
   <!-- 用明确提示和高对比骨架展示编辑区加载状态。 -->
   <div class="resume-form-loading flex flex-col gap-3 p-3" role="status" aria-busy="true">
     <div class="flex items-center gap-3 text-sm text-sf-text-2">
+      <!-- 加载图标持续旋转，明确表示编辑器仍在加载。 -->
       <span
-        class="h-6 w-6 shrink-0 animate-spin rounded-full border-2 border-sf-theme-2 border-t-sf-theme motion-reduce:animate-none"
+        class="h-6 w-6 shrink-0 animate-spin rounded-full border-2 border-sf-theme-2 border-t-sf-theme"
         aria-hidden="true"
       />
       <span>{{ $t("resumeEditorLoading") }}</span>
