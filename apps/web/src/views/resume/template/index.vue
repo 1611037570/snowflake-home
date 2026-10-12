@@ -83,11 +83,11 @@ const templates = computed(() =>
 const templateFilters = ref({});
 // 一级分类：example 展示简历范本，template 展示简历模板
 const currentTopCategory = ref("example");
-// 两类模板共用筛选规则；设计标签中的 all 仅对样式主题生效。
+// 两类模板共用筛选规则；布局和等级分别匹配样式主题的 design 标签。
 const matchesTemplateFilters = (template, allowAllDesign = false) =>
   Object.entries(templateFilters.value).every(([key, value]) => {
     if (!value) return true;
-    const values = template[key];
+    const values = key === "layout" || key === "tier" ? template.design : template[key];
     return !Array.isArray(values) || (allowAllDesign && values.includes("all")) || values.includes(value);
   });
 // 范本索引先按筛选条件过滤，正文留到确定当前页之后再加载
@@ -306,6 +306,15 @@ const tagTextClass = computed(() => (isDark.value ? "text-sf-theme-text" : "text
           @change="setTemplatePage"
         />
         <div class="flex flex-1 flex-col items-center justify-end">
+          <!-- 只有最后一页且存在结果时提示列表已结束，其他页继续使用分页按钮。 -->
+          <div
+            v-if="!templateLoading && currentTotal > 0 && templatePage === pageCount"
+            class="flex items-center justify-center gap-3 py-6 text-sm text-sf-text-3"
+          >
+            <span aria-hidden="true" class="h-px w-12 bg-sf-border" />
+            <span>{{ $t("resumeTemplateNoMore") }}</span>
+            <span aria-hidden="true" class="h-px w-12 bg-sf-border" />
+          </div>
           <SfFooter />
         </div>
       </div>
