@@ -2,9 +2,10 @@ import type { ThemeTemplateConfig } from "@/domain/resume/theme/styles/createThe
 import { titleStyleRegistry, type TitleStyleId } from "@/domain/resume/theme/titleStyles";
 
 interface PlainTitleThemeSpec {
-  id: string; // 独立极简主题编号
+  id: string; // 独立标题主题编号
   titleStyleId: TitleStyleId; // 主题采用的标题样式编号
   color: string; // 主题色
+  tier?: "plain" | "minimal"; // 模板分类，缺省为极简
   padding: { // 页面边距，单位像素
     vertical: number; // 上下边距
     horizontal: number; // 左右边距
@@ -15,7 +16,7 @@ interface PlainTitleThemeSpec {
   };
 }
 
-// 已有独立极简主题继续使用原主题编号；这里只补齐尚无独立主题的标题样式。
+// 已有独立标题主题继续使用原主题编号；这里只补齐尚无独立主题的标题样式。
 const plainTitleThemeSpecs = [
   { id: "plainRailMark", titleStyleId: "railMark", color: "#7C8CF4", padding: { vertical: 28, horizontal: 28 } },
   { id: "plainDiamondPrefix", titleStyleId: "diamondPrefix", color: "#BD55D9", padding: { vertical: 26, horizontal: 30 } },
@@ -36,15 +37,35 @@ const plainTitleThemeSpecs = [
   { id: "plainSlantedBands", titleStyleId: "slantedBands", color: "#C2410C", padding: { vertical: 27, horizontal: 27 } },
   { id: "plainDoubleRuleTitle", titleStyleId: "doubleRuleTitle", color: "#000000", padding: { vertical: 33, horizontal: 30 } },
   { id: "plainSolidLabelTrail", titleStyleId: "solidLabelTrail", color: "#0D9488", padding: { vertical: 27, horizontal: 27 } },
+  {
+    id: "plainNoteGridTab", // 手帐标题签的独立主题编号
+    titleStyleId: "noteGridTab", // 复用手帐标题签组件
+    color: "#95664D", // 暖棕主题色
+    tier: "minimal", // 在简约分类展示
+    padding: { // 页面边距
+      vertical: 30, // 页面上下边距
+      horizontal: 30, // 页面左右边距
+    },
+  },
+  {
+    id: "plainFileIndexHeading", // 档案序号细线的独立主题编号
+    titleStyleId: "plainFileIndexHeading", // 使用自带序号的独立标题组件
+    color: "#3F5568", // 档案蓝主题色
+    tier: "minimal", // 在简约分类展示
+    padding: { // 页面边距
+      vertical: 30, // 页面上下边距
+      horizontal: 30, // 页面左右边距
+    },
+  },
 ] as const satisfies readonly PlainTitleThemeSpec[];
 
 // 每个编号生成一份真实主题声明；标题组件仍由 titleStyleId 独立选择。
 export const plainTitleThemes = plainTitleThemeSpecs.map((spec) => ({
-  id: spec.id, // 极简主题编号
+  id: spec.id, // 独立标题主题编号
   name: titleStyleRegistry[spec.titleStyleId]!.name, // 主题名称沿用对应标题样式的名称
   description: titleStyleRegistry[spec.titleStyleId]!.description, // 主题说明
   localeId: spec.titleStyleId, // 复用标题样式的翻译文案编号
-  design: ["single-column", "plain"] as ThemeTemplateConfig["design"], // 单栏极简分类
+  design: ["single-column", "tier" in spec ? spec.tier : "plain"] as ThemeTemplateConfig["design"], // 单栏模板分类
   ui: { // 独立主题的完整预设由公共主题解析器补齐
     theme: { // 主题配色与标题绘制
       color: spec.color, // 主题色
