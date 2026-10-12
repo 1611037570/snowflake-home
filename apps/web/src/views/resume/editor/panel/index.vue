@@ -3,6 +3,7 @@ import { useResumeStore } from "@/stores";
 import {
   computed,
   defineAsyncComponent,
+  inject,
   markRaw,
   onBeforeUnmount,
   onMounted,
@@ -19,10 +20,13 @@ const AsyncTemplate = markRaw(defineAsyncComponent(() => import("./template/inde
 const AsyncAi = markRaw(defineAsyncComponent(() => import("../assistant/chat/index.vue")));
 // 当前选中的菜单索引
 const activeIndex = ref(0);
+// 同步明确的标签标识，区分普通编辑、智能助手和模板场景。
+const activeEditorTab = inject("resumeEditorTab", ref("edit"));
 // 切换方向：索引增大为 right（新内容从右侧滑入），减小为 left
 const direction = ref("right");
 watch(activeIndex, (val, old) => {
   direction.value = val > old ? "right" : "left";
+  activeEditorTab.value = ["edit", "ai", "template"][val] ?? "edit";
 });
 provide("bg", "bg-sf-bg");
 
@@ -77,8 +81,8 @@ const activeMenu = computed(() => menuList.value[activeIndex.value] || menuList.
     <div class="relative flex min-h-0 w-full flex-1 flex-col text-sf-base">
       <div class="flex min-h-0 w-full flex-1 flex-col">
         <Transition :name="`tab-slide-${direction}`" mode="out-in">
-          <!-- 仅缓存编辑与模板组件：编辑器默认加载并缓存，模板首次打开才异步加载，之后缓存 -->
-          <KeepAlive>
+          <!-- 模板页离开后卸载并释放缩略图实例，其他标签保留原有缓存。 -->
+          <KeepAlive exclude="BuilderTemplate">
             <component :is="activeMenu.component" class="h-full w-full" />
           </KeepAlive>
         </Transition>

@@ -22,5 +22,14 @@ export const stripEditorPageFrame = <T extends HTMLElement>(element: T): T => {
   [element, ...element.querySelectorAll<HTMLElement>(`.${EDITOR_PAGE_FRAME_CLASS}, .${debugOutlineClass}`)].forEach((frame) =>
     frame.classList.remove(EDITOR_PAGE_FRAME_CLASS, debugOutlineClass),
   );
+  // 仅清理明确标记的模块交互轮廓，保留主题自身的边框与装饰。
+  [element, ...element.querySelectorAll<HTMLElement>(".resume-module-interaction")].forEach((module) => {
+    // 未标记的节点属于实际简历外观，不处理其样式。
+    if (!module.classList.contains("resume-module-interaction")) return;
+    const classes = [...module.classList].filter((name) =>
+      name === "resume-module-interaction" || name.startsWith("outline-") || name.startsWith("hover:outline-"),
+    );
+    module.classList.remove(...classes);
+  });
   return element;
 };

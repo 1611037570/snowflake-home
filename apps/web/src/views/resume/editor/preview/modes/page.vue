@@ -1,7 +1,7 @@
 <script setup>
 import { useResumeStore } from "@/stores";
 import { storeToRefs } from "pinia";
-import { computed, onMounted, onUnmounted, ref, watch } from "vue";
+import { computed, inject, onMounted, onUnmounted, provide, ref, watch } from "vue";
 import { useDebounceFn } from "@vueuse/core";
 import ResumePages from "../resumePages/index.vue";
 import ExportSuccessModal from "../resumePages/export/exportSuccessModal.vue";
@@ -23,7 +23,12 @@ defineOptions({ name: "ResumePage" });
 const resumeStore = useResumeStore();
 const { currentData, currentConfig, currentUI, runtimeConfig, runtimeFields, selectedModule, system } =
   storeToRefs(resumeStore);
-const { editingModuleKey } = storeToRefs(resumeStore);
+const { editingModuleKey, isPrinting } = storeToRefs(resumeStore);
+// 标签状态由工作区提供，交互显示规则统一交给模块交互计算维护。
+const activeEditorTab = inject("resumeEditorTab", ref("edit"));
+// 智能助手标签允许选择模块，普通编辑标签允许显示编辑定位反馈。
+const aiPanelActive = computed(() => activeEditorTab.value === "ai");
+const editorPanelActive = computed(() => activeEditorTab.value === "edit");
 
 const exportSuccessModalRef = ref(null);
 
@@ -51,14 +56,24 @@ const previewModuleKeys = computed(() => pagesRef.value?.moduleKeys ?? []);
 const previewMeasured = computed(() => pagesRef.value?.previewMeasured ?? false);
 const measureDone = computed(() => pagesRef.value?.measureDone ?? false);
 const moduleKeys = computed(() => previewModuleKeys.value);
-const selectedModuleKeys = computed(() => selectedModule.value.map((module) => module.key));
-const { moduleClassMap } = useModuleInteractions({
+const {
+  moduleClassMap,
+  showEditorInteractions,
+  canSelectModules,
+  selectedModuleKeys,
+  visibleEditingModuleKey,
+} = useModuleInteractions({
   isEdit,
   moduleKeys,
   selectedModule,
   activeModuleKey: previewSelectedModule,
   editingModuleKey, // 当前编辑模块只参与提示与边框计算。
+  aiPanelActive,
+  editorPanelActive,
+  isPrinting,
 });
+// 选择按钮与边框共用同一条件，避免各组件分别判断标签和导出状态。
+provide("resumeCanSelectModules", canSelectModules);
 
 // 栏内移动方向由已生成的分页顺序计算，交互结果由编辑器模式写回配置。
 const columnMoveContext = computed(() => {
@@ -207,7 +222,8 @@ useSmartOnePage({
     :show-debug="system.showDebug"
     :module-class-map="moduleClassMap"
     :selected-module-keys="selectedModuleKeys"
-    :editing-module-key="editingModuleKey"
+    :editing-module-key="visibleEditingModuleKey"
+    :show-editor-interactions="showEditorInteractions"
     :move-directions-by-column="columnMoveContext.directions"
     @module-click="handleModuleClick"
     @module-item-click="handleModuleItemClick"

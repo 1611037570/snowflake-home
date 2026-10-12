@@ -64,6 +64,11 @@ const props = defineProps({
     type: Array,
     default: () => [],
   },
+  // 预览操作与编辑提示的统一开关，导出时关闭，不改变排版模式。
+  showEditorInteractions: {
+    type: Boolean, // 开关类型。
+    default: true, // 编辑预览默认提供交互，由调用方按导出状态控制。
+  },
   // 当前编辑模块标识，非编辑预览默认不显示提示。
   editingModuleKey: {
     type: String, // 模块标识类型。
@@ -78,7 +83,7 @@ const props = defineProps({
 // 缩略图模式：仅渲染第一页，测量完成后冻结行数据
 const isThumb = computed(() => props.mode === "thumb");
 // 编辑态标记：直接以 mode 判断编辑场景，仅编辑态开放模块选择交互
-const isEdit = computed(() => props.mode === "editor");
+const isEdit = computed(() => props.mode === "editor" && props.showEditorInteractions);
 // 调试色只用于编辑预览，避免影响缩略图和导出内容
 const showLayoutDebug = computed(() => isEdit.value && props.showDebug);
 

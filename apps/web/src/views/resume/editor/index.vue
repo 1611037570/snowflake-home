@@ -100,6 +100,9 @@ const route = useRoute();
 const systemStore = useSystemStore();
 const { isMobile } = storeToRefs(systemStore);
 const mobilePanel = ref("preview");
+// 当前左侧标签仅供工作区控制预览交互，不写入简历内容。
+const activeEditorTab = ref("edit");
+provide("resumeEditorTab", activeEditorTab);
 const toolbarRef = ref(null);
 const toolbarWidth = ref(0);
 // 按工具栏实际宽度为桌面滚动区预留空间，移动端由模板明确取消留白。
