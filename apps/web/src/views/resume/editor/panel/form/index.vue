@@ -3,6 +3,7 @@
 defineOptions({ name: "BuilderEditor" });
 import { useResumeStore } from "@/stores";
 import SfSkeleton from "@/components/el/skeleton";
+import FormLoading from "./components/formLoading.vue";
 import { storeToRefs } from "pinia";
 import { defineAsyncComponent, nextTick } from "vue";
 import { RESUME_OPTIONS } from "@/stores/modules/resume/config/resumeOptions";
@@ -34,7 +35,7 @@ const loadDynamicForm = () => import("@/components/business/dynamicForm/index");
 // 动态表单加载期间立即显示骨架，避免编辑区只剩增加模块
 const AsyncDynamicForm = defineAsyncComponent({
   loader: loadDynamicForm,
-  loadingComponent: SfSkeleton,
+  loadingComponent: FormLoading,
   delay: 0,
   suspensible: false,
 });
@@ -157,7 +158,7 @@ onBeforeUnmount(() => {
     <div class="flex h-full min-h-0 w-full">
       <ModuleSidebar />
       <SfScrollbar class="resume-editor-form relative h-full min-h-0">
-        <SfSkeleton v-if="!showDynamicForm || !runtimeConfig" />
+        <FormLoading v-if="!showDynamicForm || !runtimeConfig" />
         <!-- 顶层模块列表增加间距 -->
         <AsyncDynamicForm
           v-else
