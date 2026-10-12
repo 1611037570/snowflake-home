@@ -3,7 +3,7 @@ import type { ThemeTemplateConfig } from "@/domain/resume/theme/styles/createThe
 export default {
   name: "蓝线简历", // 主题显示名称
   id: "navyGuide" as const, // 主题编号，供各外观组件按编号选择
-  design: ["single-column", "polished"], // 模板列表的分类标签
+  design: ["single-column", "minimal"], // 单栏与简约分类
   description: "深色页眉搭配蓝色纵向引导线，突出个人信息和经历层次。", // 主题说明
   decisions: { // 主题固定外观，不进入用户界面配置
     regions: { // 区域装饰尺寸

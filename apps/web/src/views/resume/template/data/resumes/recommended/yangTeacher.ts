@@ -149,7 +149,7 @@ const resumeData: any = {
     page: { padding: { vertical: 24, horizontal: 24 }, spacing: { paragraph: 12, module: 12 }, footer: "" },
     font: { family: "text-puhui", size: 16, titleSize: 22, lineHeight: 1.2 },
     content: { language: "zh", textAlign: "auto", infoSeparator: "space", linkUnderline: false, dateStyle: "dot", datePosition: "right" },
-    theme: { template: "vivid", color: "#16A34A", titleIconMode: "icon" }, // 摄影范本沿用活力主题
+    theme: { template: "plainRoundedLabel", color: "#16A34A", titleIconMode: "icon" }, // 摄影范本沿用圆角色块标题
     layout: { leftColumnWidth: 40 },
     user: { infoMode: "text", infoLayout: "flex", avatarPosition: "right", infoPosition: "left" },
   },

@@ -28,6 +28,7 @@ import { plainTitleThemes } from "@/domain/resume/theme/styles/plainTitleThemes"
 import sandSidebar from "@/domain/resume/theme/styles/sandSidebar";
 import redWhiteSidebar from "@/domain/resume/theme/styles/redWhiteSidebar";
 import ringTimeline from "@/domain/resume/theme/styles/ringTimeline";
+import sailMasthead from "@/domain/resume/theme/styles/sailMasthead";
 import slantedLayer from "@/domain/resume/theme/styles/slantedLayer";
 import sloganBand from "@/domain/resume/theme/styles/sloganBand";
 import songElegance from "@/domain/resume/theme/styles/songElegance";
@@ -40,7 +41,6 @@ import squareTimeline from "@/domain/resume/theme/styles/squareTimeline";
 import topUserTwoColumn from "@/domain/resume/theme/styles/topUserTwoColumn";
 import twoColumn from "@/domain/resume/theme/styles/twoColumn";
 import userBand from "@/domain/resume/theme/styles/userBand";
-import vivid from "@/domain/resume/theme/styles/vivid";
 import violetBiography from "@/domain/resume/theme/styles/violetBiography";
 import {
   createThemeTemplates,
@@ -64,7 +64,6 @@ export const themeTemplateList = createThemeTemplates([
   inkSidebar,
   minimal,
   academic,
-  vivid,
   tealRail,
   tealRibbon,
   tealRibbonCircles,
@@ -77,6 +76,7 @@ export const themeTemplateList = createThemeTemplates([
   frame,
   squareTimeline,
   ringTimeline,
+  sailMasthead,
   labelLine,
   numberedSections,
   badgeLine,
