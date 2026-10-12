@@ -19,8 +19,8 @@ const DEFAULT_META = {
   version: "1.0.0",
 };
 const DEFAULT_DRAG_CLASS = ".item-drag";
-// 个人信息字段与其他记录统一，仅保留底部分隔线。
-const DEFAULT_COL_CLASS = "border-b border-sf-b bg-sf-primary";
+// 个人信息内部字段恢复独立的圆角边框卡片。
+const DEFAULT_COL_CLASS = "rounded-3xl border border-sf-b bg-sf-primary";
 // 必填与日期格式规则统一供完成度统计和 ATS 检查读取。
 const requiredFieldRule = () => ({ required: true, message: "请填写此项", trigger: "blur" });
 // ATS 规则仅生成分析提醒，不阻止用户保存字段内容。
@@ -77,8 +77,8 @@ const createUserField = (
     type: "group",
     component: "rowField",
     slot: "default",
-    // 固定字段与可添加字段统一底部分隔线及上下左右留白。
-    colClass: DEFAULT_COL_CLASS + " py-3 px-3!",
+    // 固定字段与可添加字段统一圆角边框及上下左右留白。
+    colClass: DEFAULT_COL_CLASS + " py-1 px-3!",
     // 包裹组沿用字段标识，供字段顺序持久化与定位
     key,
     // 标签与操作区由包裹组件渲染，字段自身不再声明
@@ -181,8 +181,8 @@ export const DEFAULT_USER_FORM = [
     context: ["user"],
     drag: false,
     dragClass: DEFAULT_DRAG_CLASS,
-    // 个人信息直属子项取消纵向间距，顶部留白统一由外层提供。
-    rowClass: "gap-y-0!",
+    // 卡片之间保留纵向间距，外层提供左右及顶部留白以避免贴边。
+    rowClass: "gap-y-3 px-3 pt-3",
     // 固定模块：不参与模块拖拽排序
     fixed: true,
     props: {
@@ -200,8 +200,8 @@ export const DEFAULT_USER_FORM = [
         label: "头像",
         component: "imageUpload",
         span: 24,
-        // 头像与其他个人信息字段统一底部分隔线及上下左右留白。
-        colClass: DEFAULT_COL_CLASS + " py-3 px-3!",
+        // 头像与其他个人信息字段统一圆角边框及上下左右留白。
+        colClass: DEFAULT_COL_CLASS + " py-1 px-3!",
         ui: {
           // 头像隐藏开关：控制头像在简历预览中显示或隐藏
           hidden: {
@@ -253,9 +253,9 @@ export const DEFAULT_USER_FORM = [
         hideWhenEmpty: true,
         drag: true,
         dragClass: DEFAULT_DRAG_CLASS,
-        itemClass: DEFAULT_COL_CLASS + " bg-transparent! py-3 px-3!", // 副标题字段沿用分区底色，保留分隔线及上下左右留白。
-        // 分区内部同步取消字段间距，保持分隔线连续。
-        rowClass: "gap-y-0!",
+        itemClass: DEFAULT_COL_CLASS + " bg-transparent! py-1 px-3!", // 副标题字段沿用分区底色，恢复圆角边框并保留内部留白。
+        // 副标题内部卡片保留纵向间距，避免边框紧贴。
+        rowClass: "gap-y-3",
         span: 24,
         fields: [],
       },
@@ -264,13 +264,13 @@ export const DEFAULT_USER_FORM = [
         type: "group",
         drag: true,
         dragClass: DEFAULT_DRAG_CLASS,
-        itemClass: DEFAULT_COL_CLASS + " py-3 px-3!", // 更多字段统一底部分隔线及上下左右留白。
+        itemClass: DEFAULT_COL_CLASS + " py-1 px-3!", // 更多字段统一圆角边框及上下左右留白。
         key: "more",
         component: "more",
         slot: "default",
         span: 24,
-        // 分区内部同步取消字段间距，保持分隔线连续。
-        rowClass: "gap-y-0!",
+        // 更多字段内部卡片保留纵向间距，避免边框紧贴。
+        rowClass: "gap-y-3",
         model: [
           {
             source: ["ui", "moreCollapsed"],
@@ -677,7 +677,8 @@ export const DEFAULT_USER_FORM = [
     ],
   },
 ] satisfies FormField[];
-const AAA = " border-b border-sf-b bg-sf-primary ";
+// 数组记录恢复独立圆角卡片及完整边框。
+const AAA = "rounded-3xl border border-sf-b bg-sf-primary";
 
 // 社交账号
 export const DEFAULT_ACCOUNT_FORM = {
@@ -698,9 +699,9 @@ export const DEFAULT_ACCOUNT_FORM = {
       source: ["list"],
       drag: true,
       dragClass: DEFAULT_DRAG_CLASS,
-      // 数组容器取消子记录纵向间距，保持分隔线连续。
-      rowClass: "gap-y-0!",
-      itemClass: AAA + " py-1 px-3!", // 记录保留内部留白并显示底部分隔线。
+      // 数组卡片恢复纵向间距，容器提供左右及顶部留白。
+      rowClass: "gap-y-3 px-3 pt-3",
+      itemClass: AAA + " py-1 px-3!", // 记录保留内部留白并显示圆角边框。
       itemSchema: {
         model: [
           {
@@ -744,8 +745,8 @@ export const DEFAULT_EDUCATION_FORM = {
       source: ["list"],
       drag: true,
       dragClass: DEFAULT_DRAG_CLASS,
-      // 数组容器取消子记录纵向间距，保持分隔线连续。
-      rowClass: "gap-y-0!",
+      // 数组卡片恢复纵向间距，容器提供左右及顶部留白。
+      rowClass: "gap-y-3 px-3 pt-3",
       itemClass: AAA + " px-3!",
       itemSchema: {
         type: "group",
@@ -1105,8 +1106,8 @@ export const DEFAULT_WORK_FORM = {
       source: ["list"],
       drag: true,
       dragClass: DEFAULT_DRAG_CLASS,
-      // 数组容器取消子记录纵向间距，保持分隔线连续。
-      rowClass: "gap-y-0!",
+      // 数组卡片恢复纵向间距，容器提供左右及顶部留白。
+      rowClass: "gap-y-3 px-3 pt-3",
       itemClass: AAA + " px-3!",
       itemSchema: {
         type: "group",
@@ -1310,8 +1311,8 @@ export const DEFAULT_PROJECT_FORM = {
       source: ["list"],
       drag: true,
       dragClass: DEFAULT_DRAG_CLASS,
-      // 数组容器取消子记录纵向间距，保持分隔线连续。
-      rowClass: "gap-y-0!",
+      // 数组卡片恢复纵向间距，容器提供左右及顶部留白。
+      rowClass: "gap-y-3 px-3 pt-3",
       itemClass: AAA + " px-3!",
       itemSchema: {
         type: "group",
@@ -1508,8 +1509,8 @@ export const DEFAULT_VIDEO_FORM = {
       source: ["list"],
       drag: true,
       dragClass: DEFAULT_DRAG_CLASS,
-      // 数组容器取消子记录纵向间距，保持分隔线连续。
-      rowClass: "gap-y-0!",
+      // 数组卡片恢复纵向间距，容器提供左右及顶部留白。
+      rowClass: "gap-y-3 px-3 pt-3",
       itemClass: AAA + " px-3!",
       itemSchema: {
         // 折叠标题数据源：展示当前视频名称
@@ -1580,8 +1581,8 @@ export const DEFAULT_IMAGE_FORM = {
       source: ["list"],
       drag: true,
       dragClass: DEFAULT_DRAG_CLASS,
-      // 数组容器取消子记录纵向间距，保持分隔线连续。
-      rowClass: "gap-y-0!",
+      // 数组卡片恢复纵向间距，容器提供左右及顶部留白。
+      rowClass: "gap-y-3 px-3 pt-3",
       itemClass: AAA + " px-3!",
       itemSchema: {
         // 折叠标题数据源：展示当前图片作品名称
@@ -1657,8 +1658,8 @@ export const DEFAULT_HONOR_FORM = {
       source: ["list"],
       drag: true,
       dragClass: DEFAULT_DRAG_CLASS,
-      // 数组容器取消子记录纵向间距，保持分隔线连续。
-      rowClass: "gap-y-0!",
+      // 数组卡片恢复纵向间距，容器提供左右及顶部留白。
+      rowClass: "gap-y-3 px-3 pt-3",
       itemClass: AAA + " py-1 px-3!", // 荣誉记录左右留白与其他模块保持一致。
 
       itemSchema: {
@@ -1700,8 +1701,8 @@ export const DEFAULT_PUBLICATION_FORM = {
       source: ["list"],
       drag: true,
       dragClass: DEFAULT_DRAG_CLASS,
-      // 数组容器取消子记录纵向间距，保持分隔线连续。
-      rowClass: "gap-y-0!",
+      // 数组卡片恢复纵向间距，容器提供左右及顶部留白。
+      rowClass: "gap-y-3 px-3 pt-3",
       itemClass: AAA + " px-3!",
       itemSchema: {
         type: "group",
@@ -1921,8 +1922,8 @@ export const DEFAULT_IP_FORM = {
       source: ["list"],
       drag: true,
       dragClass: DEFAULT_DRAG_CLASS,
-      // 数组容器取消子记录纵向间距，保持分隔线连续。
-      rowClass: "gap-y-0!",
+      // 数组卡片恢复纵向间距，容器提供左右及顶部留白。
+      rowClass: "gap-y-3 px-3 pt-3",
       itemClass: AAA + " px-3!",
       itemSchema: {
         type: "group",
@@ -2181,8 +2182,8 @@ export const DEFAULT_CUSTOM_FORM = {
       source: ["list"],
       drag: true,
       dragClass: DEFAULT_DRAG_CLASS,
-      // 数组容器取消子记录纵向间距，保持分隔线连续。
-      rowClass: "gap-y-0!",
+      // 数组卡片恢复纵向间距，容器提供左右及顶部留白。
+      rowClass: "gap-y-3 px-3 pt-3",
       itemClass: AAA + " px-3!",
       itemSchema: {
         type: "group",
