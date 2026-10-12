@@ -21,6 +21,7 @@
           v-show="!isMobile || mobilePanel === 'preview'"
           class="mobile-panel relative flex min-w-0 flex-1 overflow-hidden"
           :class="{ 'motion-mobile-right': isMobile }"
+          :style="{ '--resume-toolbar-width': !isMobile && !focusMode ? `${toolbarWidth}px` : '0px' }"
         >
           <!-- 中间预览栏 -->
           <div class="relative flex min-w-0 flex-1">
@@ -28,10 +29,16 @@
               <Preview class="motion-preview" :class="{ 'ai-generating': isGenerating }" />
             </Transition>
           </div>
-          <!-- 非专注模式显示最右侧系统配置栏；移动端由工具栏自身收起为抽屉 -->
-          <Transition :name="isMobile ? '' : 'resume-motion'" appear>
-            <Toolbar v-if="!focusMode" />
-          </Transition>
+          <!-- 桌面工具栏定位悬浮，不再占据预览布局宽度；移动端保留原有抽屉。 -->
+          <div
+            v-if="!focusMode"
+            ref="toolbarRef"
+            :class="isMobile ? 'contents' : 'absolute inset-y-0 right-0 z-20 flex'"
+          >
+            <Transition :name="isMobile ? '' : 'resume-motion'" appear>
+              <Toolbar />
+            </Transition>
+          </div>
           <AiMask :visible="isGenerating" />
         </div>
       </Transition>
@@ -70,7 +77,7 @@
 <script setup>
 import { useResumeStore, useSystemStore } from "@/stores";
 import { SF_ICON_LIST_KEY } from "@/components/base/icon";
-import { onKeyStroke } from "@vueuse/core";
+import { onKeyStroke, useResizeObserver } from "@vueuse/core";
 import { storeToRefs } from "pinia";
 import { provide, ref, watch } from "vue";
 import { ElMessage } from "element-plus";
@@ -91,6 +98,12 @@ const route = useRoute();
 const systemStore = useSystemStore();
 const { isMobile } = storeToRefs(systemStore);
 const mobilePanel = ref("preview");
+const toolbarRef = ref(null);
+const toolbarWidth = ref(0);
+// 按工具栏实际宽度为桌面滚动区预留空间，移动端由模板明确取消留白。
+useResizeObserver(toolbarRef, ([entry]) => {
+  toolbarWidth.value = entry.contentRect.width;
+});
 
 const resumeStore = useResumeStore();
 // 编辑器统一注入本地图标，子组件无需逐层传递

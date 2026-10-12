@@ -85,7 +85,7 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <aside class="flex h-full min-h-0 min-w-0 flex-col border-r border-sf-b bg-sf-bg py-3">
+  <aside class="flex h-full min-h-0 min-w-0 flex-col border-r border-sf-b bg-sf-primary py-3">
     <!-- <div class="mx-3 shrink-0 border-b border-sf-b py-3 text-sm font-bold text-sf-text-2">
       {{ $t("moduleManager") }}
     </div> -->

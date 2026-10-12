@@ -9,7 +9,7 @@ import OnlineWriters from "../../../components/onlineWriters.vue";
 
 <template>
   <header
-    class="flex h-12 shrink-0 items-center justify-between rounded-b-3xl border-b border-sf-b bg-sf-primary pr-3 pl-2 md:pr-6 md:pl-3"
+    class="flex h-12 shrink-0 items-center justify-between border-b border-sf-b bg-sf-primary pr-3 pl-2 md:pr-6 md:pl-3"
   >
     <!-- 左侧占位 -->
     <div class="flex min-w-0 flex-1 items-center">

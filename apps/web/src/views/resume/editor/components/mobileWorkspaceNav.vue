@@ -8,7 +8,11 @@ const props = defineProps({
 const emit = defineEmits(["select"]);
 const panelOptions = [
   { value: "edit", label: "edit", icon: "lucide:file-text" },
-  { value: "preview", label: "resumePreview", icon: "lucide:eye" },
+  {
+    value: "preview", // 预览面板标识。
+    label: "resumePanelPreview", // 底部按钮使用简短的预览文案。
+    icon: "lucide:eye", // 预览按钮图标。
+  },
 ];
 </script>
 

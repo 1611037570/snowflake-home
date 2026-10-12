@@ -43,37 +43,37 @@ const percent = (value) => `${Math.round(value * 100)}%`;
 const SCALE_LIST = computed(() => {
   i18n.global.locale.value;
   return [
-  // 一页模式默认展示，并同时根据当前可用宽高计算页面缩放比例
-  {
-    value: "onePage",
-    name: $t("adaptiveOnePage"),
-    active: scaleMode.value === "onePage",
-  },
-  // 自适应选项
-  {
-    value: "auto",
-    name: $t("adaptiveMax"),
-    active: scaleMode.value === "auto",
-  },
-  // 标准 A4 使用页面原始尺寸，不随容器宽高自动缩小。
-  {
-    value: "a4", // 标准 A4 缩放模式标识。
-    name: $t("standardA4"), // 下拉选项显示名称。
-    active: scaleMode.value === "a4", // 当前模式选中状态。
-  },
-  { divider: true },
-  ...[0.5, 0.6, 0.7, 0.8, 0.9, 1].map((value) => {
-    const name = percent(value);
-    const isSelected = scaleMode.value === "manual" && manualScaleText.value === name;
-    return {
-      value,
-      name,
-      // 超出最大缩放比例的项禁用
-      disabled: value > maxScale.value,
-      // 选中项高亮并显示勾选
-      active: isSelected,
-    };
-  }),
+    // 一页模式默认展示，并同时根据当前可用宽高计算页面缩放比例
+    {
+      value: "onePage",
+      name: $t("adaptiveOnePage"),
+      active: scaleMode.value === "onePage",
+    },
+    // 自适应选项
+    {
+      value: "auto",
+      name: $t("adaptiveMax"),
+      active: scaleMode.value === "auto",
+    },
+    // 标准 A4 使用页面原始尺寸，不随容器宽高自动缩小。
+    {
+      value: "a4", // 标准 A4 缩放模式标识。
+      name: $t("standardA4"), // 下拉选项显示名称。
+      active: scaleMode.value === "a4", // 当前模式选中状态。
+    },
+    { divider: true },
+    ...[0.5, 0.6, 0.7, 0.8, 0.9, 1].map((value) => {
+      const name = percent(value);
+      const isSelected = scaleMode.value === "manual" && manualScaleText.value === name;
+      return {
+        value,
+        name,
+        // 超出最大缩放比例的项禁用
+        disabled: value > maxScale.value,
+        // 选中项高亮并显示勾选
+        active: isSelected,
+      };
+    }),
   ];
 });
 
@@ -182,7 +182,7 @@ useResizeObserver(contentRef, ([entry]) => {
 <template>
   <div class="group relative flex h-full flex-col self-stretch overflow-hidden">
     <div
-      class="mx-auto mb-3 flex items-center gap-1 self-stretch rounded-full border border-sf-b bg-sf-primary p-1.5 select-none"
+      class="mb-3 flex items-center gap-1 self-stretch border-b border-sf-b bg-sf-primary p-1.5 select-none"
       v-show="showToolbar"
     >
       <TemplateSettings />
@@ -231,10 +231,14 @@ useResizeObserver(contentRef, ([entry]) => {
         />
       </SfTooltip>
     </div>
-    <!-- 测量容器：relative + overflow-y-auto 允许垂直滚动 -->
+    <!-- 滚动区预留定位工具栏的实际宽度，移动端与专注模式由外层置零。 -->
     <SfScrollbar
       ref="containerRef"
-      class="relative h-full w-full"
+      class="relative h-full"
+      :style="{
+        marginRight: 'var(--resume-toolbar-width, 0px)',
+        width: 'calc(100% - var(--resume-toolbar-width, 0px))',
+      }"
       height="100%"
       view-class="relative min-h-full w-full pt-3 "
       @scroll="handleScroll"
@@ -265,7 +269,11 @@ useResizeObserver(contentRef, ([entry]) => {
         </div>
       </div>
     </SfScrollbar>
-    <SfTooltip v-if="showBackTop" :content="$t('backToTop')" class="absolute right-12 bottom-12 z-10">
+    <SfTooltip
+      v-if="showBackTop"
+      :content="$t('backToTop')"
+      class="absolute right-12 bottom-12 z-10"
+    >
       <SfIcon
         @click="handleBackTop"
         icon="mingcute:up-line"

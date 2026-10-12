@@ -86,7 +86,7 @@ function handleAdd() {
 </script>
 
 <template>
-  <SfCollapse v-model="collapsed" :border="false" class="rounded-xl!">
+  <SfCollapse v-model="collapsed" :border="false" class="rounded-xl! bg-sf-primary!">
     <SfCollapseItem name="1" lazy class="resume-module-box">
       <template #title>
         <div class="group flex h-full w-full items-center justify-between">
@@ -152,7 +152,7 @@ function handleAdd() {
 }
 /* 模块头部背景跟随明暗主题，并覆盖全局透明背景 */
 .resume-module-box > :deep(.el-collapse-item__header) {
-  @apply rounded-xl bg-sf-bg! px-3;
+  @apply rounded-xl  px-3;
 }
 
 /* 展开时去掉头部下圆角，并在底边添加分隔线 */
