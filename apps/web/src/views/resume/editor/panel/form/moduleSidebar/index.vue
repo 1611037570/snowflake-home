@@ -8,7 +8,7 @@ import {
   CUSTOM_MODULE_ICON,
   DEFAULT_MODULE_NAMES,
 } from "@/stores/modules/resume/config/defaultConfig";
-import { jumpEditor } from "../../../hooks/useModuleNav";
+import { jumpEditor, jumpPreview } from "../../../hooks/useModuleNav";
 import AddModule from "./add.vue";
 import SortByTime from "./sortByTime.vue";
 import ModuleSearch from "./moduleSearch/index.vue";
@@ -21,10 +21,11 @@ const listRef = ref(null);
 const draggableItems = ref([]);
 let draggedKeys = [];
 let draggable = null;
-// 导航保留原有编辑区定位，同时同步当前编辑模块提示。
+// 点击模块树同步定位编辑区与预览区，字段编辑提示仍不触发滚动。
 function handleModuleJump(key) {
   resumeStore.editingModuleKey = key;
   jumpEditor(key);
+  jumpPreview(key);
 }
 
 // 左侧只展示当前未归档的模块名称
