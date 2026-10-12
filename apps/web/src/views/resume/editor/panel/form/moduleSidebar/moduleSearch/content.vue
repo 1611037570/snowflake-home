@@ -1,13 +1,12 @@
 <script setup>
-import { computed, getCurrentInstance, nextTick } from "vue";
+import { computed, nextTick } from "vue";
 import { storeToRefs } from "pinia";
 import { useResumeStore } from "@/stores";
-import { useModuleNav } from "../../hooks/useModuleNav";
+import { useModuleNav } from "../../../../hooks/useModuleNav";
 import { $t } from "@/locales";
 
-defineOptions({ name: "ModuleManagerContent" });
+defineOptions({ name: "ModuleSearchContent" });
 
-const { proxy } = getCurrentInstance();
 const resumeStore = useResumeStore();
 const { runtimeConfig } = storeToRefs(resumeStore);
 // 搜索结果直接用于展示与定位，不再维护拖拽排序状态。
@@ -34,23 +33,6 @@ const hitTitle = (hit) => {
   const record =
     hit.recordTitle || (hit.itemIndex != null ? $t("recordNumber", { number: hit.itemIndex + 1 }) : "");
   return record ? `${record} · ${hit.label}` : hit.label;
-};
-
-// 切换模块在简历预览中的显示状态
-const handleHidden = (module) => {
-  resumeStore.setModuleHidden(module.key, !module.hidden);
-};
-
-// 切换模块归档状态，归档后同步取消 AI 模块选中
-const handleArchived = (module) => {
-  resumeStore.setModuleArchived(module.key, !module.archived);
-};
-
-// 删除模块时同步移除模块数据与运行时配置
-const handleDelete = (module) => {
-  proxy.$confirm($t("deleteModuleConfirm", { name: module.name }), $t("deleteConfirm")).then(() => {
-    resumeStore.removeModule(module.key);
-  });
 };
 
 </script>
@@ -80,6 +62,7 @@ const handleDelete = (module) => {
                 <span v-if="module.hidden" class="text-xs text-sf-text-2">{{ $t("hidden") }}</span>
                 <span v-if="module.archived" class="text-xs text-sf-text-2">{{ $t("archived") }}</span>
               </div>
+              <!-- 搜索结果仅保留定位操作，模块管理操作由编辑区提供。 -->
               <div class="flex shrink-0 items-center gap-3 text-sf-text-2">
                 <SfTooltip :content="$t('syncSearch')">
                   <SfIcon
@@ -87,30 +70,6 @@ const handleDelete = (module) => {
                     size="4"
                     class="cursor-pointer hover:text-sf-theme"
                     @click.stop="handleFind(module)"
-                  />
-                </SfTooltip>
-                <SfTooltip :content="module.hidden ? $t('show') : $t('hide')">
-                  <SfIcon
-                    :icon="module.hidden ? 'lucide:eye' : 'lucide:eye-off'"
-                    size="4"
-                    class="cursor-pointer hover:text-sf-theme"
-                    @click.stop="handleHidden(module)"
-                  />
-                </SfTooltip>
-                <SfTooltip :content="module.archived ? $t('restoreArchive') : $t('archive')">
-                  <SfIcon
-                    :icon="module.archived ? 'lucide:archive-restore' : 'lucide:archive'"
-                    size="4"
-                    class="cursor-pointer hover:text-sf-theme"
-                    @click.stop="handleArchived(module)"
-                  />
-                </SfTooltip>
-                <SfTooltip v-if="!module.field.fixed" :content="$t('delete')">
-                  <SfIcon
-                    icon="ic:round-delete"
-                    size="4"
-                    class="cursor-pointer hover:text-sf-theme"
-                    @click.stop="handleDelete(module)"
                   />
                 </SfTooltip>
               </div>
