@@ -9,8 +9,9 @@
         <slot name="toolbar" :editor="editorRef" />
       </div>
       <Toolbar v-else-if="editorRef" :editor="editorRef" :defaultConfig="toolbarConfig" :mode="mode" />
-      <!-- 正文顶部统一显示分隔线，区分工具栏与编辑内容。 -->
+      <!-- 正文顶部显示分隔线，关闭滚动条默认左右留白以避免重复内边距。 -->
       <SfScrollbar
+        flush
         :max-height="height"
         class="border-t border-sf-b"
         :class="$slots.bottom ? 'rounded-b-none' : 'rounded-b-2xl'"
@@ -159,13 +160,17 @@ const handleChange = (editor) => {
 :deep(.w-e-scroll) {
   height: 100% !important;
 }
-// 保证空内容时仍保留完整的可编辑区域
+// 正文仅保留顶部留白，取消底部及默认左右留白。
 :deep(.w-e-text-container [data-slate-editor]) {
   min-height: 100px;
+  padding-top: 12px;
+  padding-bottom: 0;
+  padding-inline: 0;
 }
-//
+// 占位文字与取消留白后的正文起点对齐。
 :deep(.w-e-text-placeholder) {
-  top: -5px !important;
+  top: 12px !important;
+  left: 0;
 }
 // 修改段落样式
 :deep(.w-e-text-container p) {
