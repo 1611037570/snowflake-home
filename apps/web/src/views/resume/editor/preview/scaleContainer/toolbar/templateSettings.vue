@@ -321,18 +321,7 @@ const setParam = (key, value) => {
                       @click="dateStyle = themePresetUi.content.dateStyle"
                     />
                   </div>
-                  <div class="flex gap-3">
-                    <SfButton
-                      v-for="option in localizedDateStyleList"
-                      :key="option.value"
-                      class="flex-1"
-                      size="small"
-                      border
-                      @click="dateStyle = option.value"
-                      :type="dateStyle === option.value ? 'theme' : 'bg'"
-                      >{{ option.name }}</SfButton
-                    >
-                  </div>
+                  <SfSelect v-model="dateStyle" :list="localizedDateStyleList" />
                 </div>
 
                 <div class="flex flex-col gap-1">

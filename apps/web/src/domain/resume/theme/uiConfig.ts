@@ -127,11 +127,23 @@ export const textAlignList = [
     value: "justify",
   },
 ];
-// 日期样式列表（经历日期展示格式）
+// 日期样式列表（经历日期展示格式）：示例年份统一用 2026，选项名只体现分隔符与年月顺序
 export const dateStyleList = [
+  {
+    name: "2026-9",
+    value: "dash",
+  },
   {
     name: "2026.9",
     value: "dot",
+  },
+  {
+    name: "2026/9",
+    value: "slash",
+  },
+  {
+    name: "9/2026",
+    value: "monthFirst",
   },
   {
     name: "2026年9月",
