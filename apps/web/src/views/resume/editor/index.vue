@@ -29,9 +29,9 @@
               <Preview class="motion-preview" :class="{ 'ai-generating': isGenerating }" />
             </Transition>
           </div>
-          <!-- 桌面工具栏定位悬浮，不再占据预览布局宽度；移动端保留原有抽屉。 -->
+          <!-- 桌面工具栏仅在预览栏内悬浮，移动端入口由工作区统一承载。 -->
           <div
-            v-if="!focusMode"
+            v-if="!focusMode && !isMobile"
             ref="toolbarRef"
             :class="isMobile ? 'contents' : 'absolute inset-y-0 right-0 z-20 flex'"
           >
@@ -42,6 +42,8 @@
           <AiMask :visible="isGenerating" />
         </div>
       </Transition>
+      <!-- 移动端工具栏独立于面板显隐，编辑区与预览区均可打开。 -->
+      <Toolbar v-if="isMobile && !focusMode" />
       <!-- 导出加载浮层：teleport 到 body 全屏展示 -->
       <Teleport to="body">
         <ExportMask v-if="isPrinting" @cancel="cancelPrinting" />
