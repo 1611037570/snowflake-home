@@ -131,6 +131,23 @@ describe("简历页几何基线", () => {
     expect(single.regions[1]?.columns[0]?.padding).toBeUndefined();
   });
 
+  it("正文区域声明贴合时只关闭区域间距，保留栏内模块间距", () => {
+    const layout = createResumeLayout({
+      ui: {}, // 使用主题固定版式
+      themeDecisions: { // 正文区域贴合个人信息
+        ...DEFAULT_THEME_DECISIONS,
+        layoutType: "topUserTwoColumn", // 个人信息通栏、正文双栏
+        regions: { main: { joinsPrevious: true } }, // 关闭两个区域之间的间距
+      },
+      moduleKeys: MODULE_KEYS, // 实际内容模块
+      paddingVertical: PADDING_VERTICAL, // 页面上下边距
+      paddingHorizontal: PADDING_HORIZONTAL, // 页面左右边距
+      gap: MODULE_GAP, // 栏内模块间距仍按用户配置
+    });
+    expect(layout.regions[1]?.gapBefore).toBe(0);
+    expect(layout.regions[1]?.columns.map((column) => column.gap)).toEqual([MODULE_GAP, MODULE_GAP]);
+  });
+
   it("全部主题固定声明遵守统一尺寸契约", async () => {
     const { resumeThemeRegistry } = await import("@/domain/resume/theme/styles");
     const { validateThemeCapabilities } = await import("@/domain/resume/theme/themeContract");

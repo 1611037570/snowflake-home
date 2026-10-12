@@ -28,6 +28,7 @@ export interface ThemeTemplateConfig {
   name: string; // 主题显示名称
   id: string; // 主题编号
   description: string; // 主题说明
+  localeId?: string; // 模板卡片复用的翻译文案编号，缺省使用主题编号
   /**
    * 主题分类标签，取值与内容模板的 design 完全同一套：
    * single-column 单栏、two-column 双栏、minimal 简约、plain 极简、timeline 时间轴、polished 精美。

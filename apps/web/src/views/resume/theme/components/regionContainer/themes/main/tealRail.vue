@@ -18,7 +18,7 @@ const {
   box-sizing: border-box;
   align-self: stretch;
   position: relative;
-  --teal-rail-title-offset: 48px;
+  --teal-rail-title-offset: 12px; /* 标题节点对齐右栏左侧轴线。 */
 }
 
 .teal-rail :deep(> [data-resume-column="right"])::before {

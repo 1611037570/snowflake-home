@@ -131,10 +131,10 @@ export const resumeTemplateWorkExperienceOptions: ResumeTemplateOption[] = [
 export const resumeTemplateDesignOptions: ResumeTemplateOption[] = [
   { key: "single-column", value: "单栏" },
   { key: "two-column", value: "双栏" },
-  { key: "minimal", value: "简约" },
-  { key: "plain", value: "极简" },
   { key: "timeline", value: "时间轴" },
+  { key: "minimal", value: "简约" },
   { key: "polished", value: "精美" },
+  { key: "plain", value: "极简" },
 ];
 
 // 一级分类只有简历范本与简历模板两类，各自的二级筛选维度互不通用于另一类。

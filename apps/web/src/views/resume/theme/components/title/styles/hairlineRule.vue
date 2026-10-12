@@ -8,9 +8,9 @@ defineProps({
     default: "",
   },
 });
-// 标题底线取主题色的透明派生色，避免出现实色色块
+// 标题底线保持一像素且使用主题色，避免缩放预览时再次淡化而消失。
 const {
-  theme: { themeColorLine },
+  theme: { themeColor },
 } = useResumePreviewContext();
 </script>
 
@@ -18,7 +18,7 @@ const {
   <!-- 极细底线：纯标题文字，只有一条极细底线与字距 -->
   <h2
     class="minimal-title relative max-w-full min-w-0 pb-3 font-bold tracking-[0.08em] break-words"
-    :style="{ '--minimal-title-line': themeColorLine }"
+    :style="{ '--minimal-title-line': themeColor }"
   >
     <TitleText :title="title" />
   </h2>
@@ -33,7 +33,7 @@ const {
   bottom: 0;
   left: 0;
   height: 1px;
-  background-color: color-mix(in srgb, var(--minimal-title-line) 50%, transparent);
+  background-color: var(--minimal-title-line);
   pointer-events: none;
 }
 </style>

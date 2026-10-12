@@ -4,13 +4,11 @@ defineOptions({ name: "BuilderTemplate" });
 import { useResumeStore } from "@/stores";
 import { storeToRefs } from "pinia";
 import ThumbPreview from "../../preview/modes/thumb.vue";
-import { getResumeThemeTemplate, resumeStyleTemplateList } from "@/views/resume/theme";
+import { createResumeStyleUi, resumeStyleTemplateList } from "@/views/resume/theme";
 import { loadResumeTemplateData } from "@/views/resume/template/data/resumeData";
 import { resumeTemplateDesignOptions } from "@/views/resume/template/data/list";
 import { onMounted, ref } from "vue";
 import i18n, { $t } from "@/locales";
-import { resolveLayoutColumns, layoutUsesColumns } from "@/domain/resume/theme/layouts";
-import { resolveThemeDecisions } from "@/views/resume/theme";
 const resumeStore = useResumeStore();
 const { currentUI } = storeToRefs(resumeStore);
 const previewBase = ref(null);
@@ -30,7 +28,7 @@ onMounted(async () => {
   }
 });
 
-// 模板清单与模板库共用同一份数据源：主题模板与标题样式模板并列成卡片。
+// 模板清单与模板库共用真实主题列表。
 const templates = computed(() => {
   // 读取当前语言以便语言切换时重新生成模板名称。
   if (!i18n.global.locale.value) return [];
@@ -41,7 +39,7 @@ const templates = computed(() => {
       return style.design.includes("all") || style.design.includes(selectedDesign.value);
     })
     .map((style) => ({
-      name: $t(`resumeTemplateStyle_${style.id}_name`),
+      name: $t(`resumeTemplateStyle_${style.localeId}_name`),
       id: style.id,
       item: {
         data: previewBase.value?.data || {},
@@ -51,31 +49,14 @@ const templates = computed(() => {
     }));
 });
 
-// 是否为当前选中的样式模板：主题模板比主题编号，标题样式模板比标题样式编号
-const isActive = (id) => {
-  const ui = currentUI.value;
-  if (resumeStyleTemplateList.find((style) => style.id === id)?.design.includes("plain")) {
-    // 跟随主题时使用主题预设的标题样式，避免极简卡片失去选中状态。
-    const selected = ui?.theme?.titleTemplate;
-    return (selected && selected !== "auto"
-      ? selected
-      : getResumeThemeTemplate(ui?.theme?.template).item.ui.theme.titleTemplate) === id;
-  }
-  return (ui?.theme?.template ?? "default") === id;
-};
+// 选中状态只由主题编号决定，复用相同标题样式的主题互不影响。
+const isActive = (id) => (currentUI.value?.theme?.template ?? "default") === id;
 
 // 应用风格：修改当前简历主题，预览层响应式渲染
 const applyTemplate = (template) => {
-  const nextUi = structuredClone(template.item.ui);
-  // 切换外观保留简历展示语言，避免英文简历的模块标题恢复中文。
-  nextUi.content.language = currentUI.value.content.language;
   const moduleKeys = resumeStore.runtimeFields.map((field) => field.key).filter(Boolean);
-  // 版式由主题定义决定，不写入简历 ui；顶部通栏单栏与普通单栏一样，不保存双栏模块配置。
-  const { layoutType } = resolveThemeDecisions(nextUi.theme?.template);
-  nextUi.layout.columns = layoutUsesColumns(layoutType)
-    ? resolveLayoutColumns(layoutType, moduleKeys, nextUi.layout.columns)
-    : null;
-  currentUI.value = nextUi;
+  // 切换外观保留简历展示语言，其余参数使用独立主题的完整预设。
+  currentUI.value = createResumeStyleUi(template.item.ui, moduleKeys, currentUI.value.content.language);
 };
 </script>
 
