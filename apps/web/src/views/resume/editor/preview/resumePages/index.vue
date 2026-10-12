@@ -64,6 +64,11 @@ const props = defineProps({
     type: Array,
     default: () => [],
   },
+  // 当前编辑模块标识，非编辑预览默认不显示提示。
+  editingModuleKey: {
+    type: String, // 模块标识类型。
+    default: null, // 无当前编辑模块时隐藏提示。
+  },
   moveDirectionsByColumn: {
     type: Object,
     default: () => ({}),
@@ -402,6 +407,7 @@ defineExpose({
                       :show-debug="showLayoutDebug"
                       :module-class-map="props.moduleClassMap"
                       :selected-module-keys="props.selectedModuleKeys"
+                      :editing-module-key="props.editingModuleKey"
                       :gap="getColumnGap(column.columnId)"
                       :move-directions="props.moveDirectionsByColumn[column.columnId]"
                       :can-move-left="columnIndex > 0"

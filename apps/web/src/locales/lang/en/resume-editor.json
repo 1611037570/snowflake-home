@@ -561,6 +561,7 @@
   "moveRight": "Move to Right Column",
   "cancelSelection": "Deselect",
   "selectModule": "Select Module",
+  "editingModule": "Editing",
   "exportSuccess": "Export Successful",
   "continueEditing": "Continue Editing",
   "continueExport": "Continue Export",

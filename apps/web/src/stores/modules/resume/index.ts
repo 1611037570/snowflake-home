@@ -102,6 +102,7 @@ export const useResumeStore = defineStore(
     const runtime = createResumeRuntime({ clearSelectedModules });
     const {
       focusMode,
+      editingModuleKey,
       isPrinting,
       beginPrinting,
       cancelPrinting,
@@ -288,6 +289,7 @@ export const useResumeStore = defineStore(
       currentIndex,
       editorWidth,
       focusMode,
+      editingModuleKey, // 当前编辑模块标识，仅用于会话内预览提示。
       desensitizeMode,
       isGenerating,
       setGenerating,
