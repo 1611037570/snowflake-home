@@ -156,12 +156,12 @@ onBeforeUnmount(() => {
   <div class="relative h-full">
     <div class="flex h-full min-h-0 w-full">
       <ModuleSidebar />
-      <SfScrollbar class="resume-editor-form relative h-full min-h-0 py-3">
+      <SfScrollbar class="resume-editor-form relative h-full min-h-0">
         <SfSkeleton v-if="!showDynamicForm || !runtimeConfig" />
         <!-- 顶层模块列表增加间距 -->
         <AsyncDynamicForm
           v-else
-          class="[&>.el-row]:gap-3"
+          class="py-3 [&>.el-row]:gap-3"
           v-model:form="runtimeConfig"
           v-model:data="currentData"
           :components="dynamicComponents"

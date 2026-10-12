@@ -64,20 +64,17 @@ const activeMenu = computed(() => menuList.value[activeIndex.value] || menuList.
   <SfResizable
     v-model:size="editorWidth"
     :min="460"
-    :max="600"
+    :max="800"
     position="right"
-    class="mobile-resume-builder relative flex h-full flex-col py-3"
+    class="mobile-resume-builder relative flex h-full flex-col border-r border-sf-b"
   >
     <SfTab
       :list="menuList"
       v-model:index="activeIndex"
       v-model:disabled="isGenerating"
-      boxClass="border-y border-r border-sf-b bg-sf-primary rounded-none md:rounded-r-3xl!"
-      class="mb-3 rounded-none md:rounded-r-3xl!"
+      boxClass="border-b border-sf-b bg-sf-primary rounded-none "
     />
-    <div
-      class="relative flex min-h-0 w-full flex-1 flex-col rounded-none border-y border-r border-sf-b bg-sf-primary text-sf-base md:rounded-r-3xl"
-    >
+    <div class="relative flex min-h-0 w-full flex-1 flex-col text-sf-base">
       <div class="flex min-h-0 w-full flex-1 flex-col">
         <Transition :name="`tab-slide-${direction}`" mode="out-in">
           <!-- 仅缓存编辑与模板组件：编辑器默认加载并缓存，模板首次打开才异步加载，之后缓存 -->

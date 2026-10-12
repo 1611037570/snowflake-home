@@ -39,9 +39,7 @@ const openFullscreen = () => {
 </script>
 
 <template>
-  <div
-    class="scrollbar-hide relative flex h-full flex-1 flex-col items-center overflow-y-auto pt-3"
-  >
+  <div class="scrollbar-hide relative flex h-full flex-1 flex-col items-center overflow-y-auto">
     <ScaleContainer @fullscreen="openFullscreen">
       <ResumePage />
     </ScaleContainer>
