@@ -3,7 +3,7 @@ import type { ThemeTemplateConfig } from "@/domain/resume/theme/styles/createThe
 export default {
   name: "色条",
   id: "colorBar" as const, // 主题编号
-  design: ["single-column", "polished"],
+  design: ["single-column", "plain"], // 移至极简分类
   description: "以左侧主题色竖条搭配浅色底纹突出模块标题的样式。",
   ui: {
     theme: { color: "#475569" },

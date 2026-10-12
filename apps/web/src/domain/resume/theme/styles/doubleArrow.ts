@@ -6,7 +6,7 @@ export default {
   /** 主题与标题组件的匹配标识 */
   id: "doubleArrow" as const, // 主题编号
   /** 主题筛选分类 */
-  design: ["single-column", "polished"],
+  design: ["single-column", "plain"], // 移至极简分类
   /** 主题样式说明 */
   description: "深浅双三角搭配宋体标题与居中延伸横线，醒目利落。",
   /** 标题外观设置 */

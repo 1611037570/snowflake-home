@@ -1,27 +1,20 @@
 <script setup>
-import TitleText from "../titleText.vue";
-import { useResumePreviewContext } from "@/views/resume/editor/preview/shared/previewContext";
-
 defineProps({
   title: {
     type: String,
     default: "",
   },
 });
-const {
-  theme: { themeColor },
-} = useResumePreviewContext();
 </script>
 
 <template>
-  <!-- 商务风格：左侧主题色直角竖条 + 底部主题色粗线 -->
-  <div class="border-b-2 pb-3" :style="{ borderColor: themeColor }">
-    <div class="flex items-baseline">
-      <div class="mr-3 w-1 self-stretch" :style="{ background: themeColor }"></div>
-      <h2 class="max-w-full min-w-0 font-bold tracking-wide break-words">
-        <TitleText :title="title" />
-      </h2>
-    </div>
+  <!-- 商务标题使用浅灰底条与深色标签。 -->
+  <div class="flex bg-[#f2f2f2]">
+    <h2
+      class="max-w-full min-w-0 bg-[#333333] px-[18px] py-[6px] font-bold tracking-wide break-words text-white"
+    >
+      {{ title }}
+    </h2>
   </div>
 </template>
 

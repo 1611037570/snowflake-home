@@ -219,10 +219,15 @@ const {
   renderSignature,
   allModules,
 });
+// 序号主题只统计可见正文模块，个人信息与标语不参与编号。
+const bodyModuleKeys = computed(() =>
+  moduleKeys.value.filter((key) => key !== "user" && key !== "slogan"),
+);
 const pages = computed(() => pagePlan.value.pages); // 页面列表直接读取引擎计划，移除重复接线层
 // 预览模块统一从上下文读取运行时数据。
 provideResumePreviewContext({
   data: dataRef,
+  bodyModuleKeys, // 主题标题读取正文模块顺序
   lang: previewLang,
   ui,
   theme: themeStyles,

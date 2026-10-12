@@ -8,6 +8,7 @@ import type { ResumeUi } from "@/domain/resume/theme/uiTypes";
 /** 预览模块共享的运行时上下文，集中管理数据、主题与个人字段配置。 */
 export interface ResumePreviewContext {
   data: ComputedRef<Record<string, any>>; // 当前简历业务数据
+  bodyModuleKeys: ComputedRef<string[]>; // 当前可见正文模块的排列顺序
   lang: ComputedRef<string>; // 简历内容展示语言
   ui: ComputedRef<ResumeUi>; // 当前用户可编辑参数
   theme: ResumeTheme; // 响应式配色与排版样式

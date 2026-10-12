@@ -3,7 +3,7 @@ import type { ThemeTemplateConfig } from "@/domain/resume/theme/styles/createThe
 export default {
   name: "现代",
   id: "modern" as const, // 主题编号
-  design: ["single-column", "polished"],
+  design: ["single-column", "polished", "plain"], // 现代主题也归入极简分类
   description: "适合互联网与技术岗位的现代简历样式。",
   decisions: { // 主题固定尺寸与内容契约
     userContent: { // 个人信息内容契约

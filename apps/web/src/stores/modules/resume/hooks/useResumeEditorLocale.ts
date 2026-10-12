@@ -276,6 +276,8 @@ const TEXT_KEYS_SOURCE = `
   "以纯黑细线勾勒模块外边框的线框简历样式。": "outlineThemeDescription",
   色条: "colorBarTheme",
   色块横线: "resumeTemplateStyle_labelLine_name",
+  序号极简: "resumeTemplateStyle_numberedSections_name",
+  徽章横线: "resumeTemplateStyle_badgeLine_name",
   斜角竖线: "resumeTemplateStyle_angledLine_name",
   层叠弧线: "resumeTemplateStyle_layeredCurve_name",
   荧光网格: "resumeTemplateStyle_markerGrid_name",
