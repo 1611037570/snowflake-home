@@ -8,7 +8,6 @@ import Ai from "./modules/ai/index.vue";
 import System from "./modules/system/index.vue";
 import CopyResume from "./modules/copyResume.vue";
 import Progress from "./modules/progress/index.vue";
-import ModuleNavigator from "./modules/moduleNavigator.vue";
 import QaAnswer from "./modules/qaAnswer.vue";
 import LiuyaoWenxin from "./modules/liuyaoWenxin.vue";
 import { $t } from "@/locales";
@@ -58,7 +57,6 @@ const toolbarItems = computed(() => [
     },
   },
   { key: "separator-main", type: "separator" },
-  { key: "module-navigator", component: ModuleNavigator },
   { key: "copy-resume", component: CopyResume },
   // 专注模式仅在非移动端提供。
   ...(!isMobile.value

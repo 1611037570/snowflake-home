@@ -11,6 +11,7 @@ import {
 import { jumpEditor } from "../../../hooks/useModuleNav";
 import AddModule from "./add.vue";
 import SortByTime from "./sortByTime.vue";
+import ModuleSearch from "./moduleSearch/index.vue";
 
 defineOptions({ name: "ModuleSidebar" });
 
@@ -130,6 +131,7 @@ onUnmounted(() => {
     </SfScrollbar>
     <!-- 底部入口由容器统一提供上下间距和左右留白。 -->
     <div class="flex shrink-0 flex-col items-center gap-[6px] border-t border-sf-b px-[6px] pt-[6px]">
+      <ModuleSearch />
       <SortByTime />
       <!-- 全部显示入口沿用底部模块操作样式。 -->
       <button
