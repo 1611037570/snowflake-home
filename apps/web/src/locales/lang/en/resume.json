@@ -220,6 +220,8 @@
   "resumeTemplateStyle_curvedHeader_description": "A full-width curved header with a centered circular portrait, name, and contact details.",
   "resumeTemplateStyle_navyGuide_name": "Navy Guide",
   "resumeTemplateStyle_navyGuide_description": "A dark header and blue vertical guide organize the profile and experience sections.",
+  "resumeTemplateStyle_lightSail_name": "Ocean Blue Header",
+  "resumeTemplateStyle_lightSail_description": "An ocean-blue English header with ruled section titles and the standard profile layout.",
   "resumeTemplateStyle_userBand_description": "A full-width tinted band behind the profile block while the body keeps page margins.",
   "resumeTemplateStyle_slantedLayer_description": "The title sits on a slanted block with a pale offset layer at its right.",
   "resumeTemplateStyle_chevronRibbon_description": "The title sits on a three-layer arrow-shaped block.",

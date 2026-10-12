@@ -16,6 +16,7 @@ import frame from "@/domain/resume/theme/styles/frame";
 import inkSidebar from "@/domain/resume/theme/styles/inkSidebar";
 import labelLine from "@/domain/resume/theme/styles/labelLine";
 import layeredCurve from "@/domain/resume/theme/styles/layeredCurve";
+import lightSail from "@/domain/resume/theme/styles/lightSail";
 import markerGrid from "@/domain/resume/theme/styles/markerGrid";
 import minimal from "@/domain/resume/theme/styles/minimal";
 import modern from "@/domain/resume/theme/styles/modern";
@@ -81,6 +82,7 @@ export const themeTemplateList = createThemeTemplates([
   badgeLine,
   angledLine,
   layeredCurve,
+  lightSail,
   markerGrid,
   doubleArrow,
   chevronRibbon,
