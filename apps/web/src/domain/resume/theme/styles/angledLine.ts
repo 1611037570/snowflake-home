@@ -6,7 +6,7 @@ export default {
   /** 主题与标题组件的匹配标识 */
   id: "angledLine" as const, // 主题编号
   /** 主题筛选分类 */
-  design: ["single-column", "polished"],
+  design: ["single-column", "plain"], // 移至极简分类
   /** 主题样式说明 */
   description: "青绿色斜切标题与模块左侧细线相接，清晰划分内容。",
   /** 主题外观配置 */

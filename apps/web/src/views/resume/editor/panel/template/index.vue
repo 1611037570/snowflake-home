@@ -15,7 +15,7 @@ import { resolveThemeDecisions } from "@/views/resume/theme";
 const resumeStore = useResumeStore();
 const { currentUI } = storeToRefs(resumeStore);
 const previewBase = ref(null);
-const selectedDesign = ref(""); // 当前设计分类，空值表示显示全部主题
+const selectedDesign = ref(""); // 当前设计分类，空值时暂不展示极简和简约主题
 
 // 与模板库共用设计分类参数，再次点击当前分类恢复全部主题。
 const toggleDesign = (key) => {
@@ -34,12 +34,12 @@ onMounted(async () => {
 const templates = computed(() => {
   i18n.global.locale.value;
   return themeTemplateList
-    .filter(
-      (t) =>
-        !selectedDesign.value ||
-        t.design.includes("all") ||
-        t.design.includes(selectedDesign.value),
-    )
+    .filter((t) => {
+      // 未选择分类时临时隐藏极简和简约主题，选中分类后仍按原有标签筛选。
+      if (!selectedDesign.value)
+        return !t.design.includes("plain") && !t.design.includes("minimal");
+      return t.design.includes("all") || t.design.includes(selectedDesign.value);
+    })
     .map((t) => ({
       name: translateResumeEditorText(t.name),
       id: t.id,

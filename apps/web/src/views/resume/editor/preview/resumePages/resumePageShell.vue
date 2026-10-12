@@ -115,8 +115,10 @@ watch(
 </script>
 
 <template>
+  <!-- 页码标记用于限制主题装饰只在首页显示。 -->
   <div
     ref="rootRef"
+    :data-page-index="pageIndex"
     class="resume-page-item relative isolate flex flex-col"
     :class="[ui.font?.family]"
     :style="[

@@ -132,6 +132,7 @@ export const resumeTemplateDesignOptions: ResumeTemplateOption[] = [
   { key: "single-column", value: "单栏" },
   { key: "two-column", value: "双栏" },
   { key: "minimal", value: "简约" },
+  { key: "plain", value: "极简" },
   { key: "timeline", value: "时间轴" },
   { key: "polished", value: "精美" },
 ];

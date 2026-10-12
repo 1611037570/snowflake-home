@@ -2,7 +2,10 @@ import academic from "@/domain/resume/theme/styles/academic";
 import { cloneDeep } from "lodash-es";
 import type { ResumeUi } from "@/domain/resume/theme/uiTypes";
 import angledLine from "@/domain/resume/theme/styles/angledLine";
+import badgeLine from "@/domain/resume/theme/styles/badgeLine";
 import business from "@/domain/resume/theme/styles/business";
+import businessSimple from "@/domain/resume/theme/styles/businessSimple";
+import blueDoubleBar from "@/domain/resume/theme/styles/blueDoubleBar";
 import burgundySidebar from "@/domain/resume/theme/styles/burgundySidebar";
 import chevronRibbon from "@/domain/resume/theme/styles/chevronRibbon";
 import colorBar from "@/domain/resume/theme/styles/colorBar";
@@ -16,7 +19,9 @@ import markerGrid from "@/domain/resume/theme/styles/markerGrid";
 import minimal from "@/domain/resume/theme/styles/minimal";
 import modern from "@/domain/resume/theme/styles/modern";
 import navyGuide from "@/domain/resume/theme/styles/navyGuide";
+import numberedSections from "@/domain/resume/theme/styles/numberedSections";
 import outline from "@/domain/resume/theme/styles/outline";
+import plainColorBar from "@/domain/resume/theme/styles/plainColorBar";
 import sandSidebar from "@/domain/resume/theme/styles/sandSidebar";
 import redWhiteSidebar from "@/domain/resume/theme/styles/redWhiteSidebar";
 import ringTimeline from "@/domain/resume/theme/styles/ringTimeline";
@@ -24,6 +29,7 @@ import slantedLayer from "@/domain/resume/theme/styles/slantedLayer";
 import sloganBand from "@/domain/resume/theme/styles/sloganBand";
 import songElegance from "@/domain/resume/theme/styles/songElegance";
 import tealRail from "@/domain/resume/theme/styles/tealRail";
+import tealRibbon from "@/domain/resume/theme/styles/tealRibbon";
 import tealCard from "@/domain/resume/theme/styles/tealCard";
 import stripedRibbon from "@/domain/resume/theme/styles/stripedRibbon";
 import squareTimeline from "@/domain/resume/theme/styles/squareTimeline";
@@ -46,6 +52,8 @@ export const themeTemplateList = createThemeTemplates([
   navyGuide,
   violetBiography,
   business,
+  businessSimple,
+  blueDoubleBar,
   burgundySidebar,
   sandSidebar,
   redWhiteSidebar,
@@ -53,15 +61,19 @@ export const themeTemplateList = createThemeTemplates([
   academic,
   vivid,
   tealRail,
+  tealRibbon,
   tealCard,
   outline,
   topUserTwoColumn,
   twoColumn,
   colorBar,
+  plainColorBar,
   frame,
   squareTimeline,
   ringTimeline,
   labelLine,
+  numberedSections,
+  badgeLine,
   angledLine,
   layeredCurve,
   markerGrid,

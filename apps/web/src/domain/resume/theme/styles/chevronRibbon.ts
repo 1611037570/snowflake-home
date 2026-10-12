@@ -6,7 +6,7 @@ export default {
   /** 主题与标题组件的匹配标识 */
   id: "chevronRibbon" as const, // 主题编号
   /** 主题筛选分类 */
-  design: ["single-column", "polished"],
+  design: ["single-column", "plain"], // 移至极简分类
   /** 主题样式说明 */
   description: "紫色箭头标题叠加浅色箭尖，淡色长条延伸至页面右侧。",
   /** 标题外观设置 */
