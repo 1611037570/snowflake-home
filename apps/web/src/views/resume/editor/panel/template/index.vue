@@ -70,7 +70,7 @@ const applyTemplate = (template) => {
 </script>
 
 <template>
-  <SfScrollbar class="h-full py-3">
+  <SfScrollbar class="h-full bg-sf-primary py-3">
     <!-- 编辑器分类沿用模板库选项与文案，以主题的 design 字段筛选。 -->
     <div class="mb-3 flex flex-wrap gap-3">
       <SfButton

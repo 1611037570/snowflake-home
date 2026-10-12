@@ -727,7 +727,7 @@ const handleCopyQuickAnswer = async () => {
 </script>
 
 <template>
-  <div class="relative flex h-full w-full flex-col overflow-hidden rounded-r-3xl py-3 select-text">
+  <div class="relative flex h-full w-full flex-col overflow-hidden bg-sf-primary py-3 select-text">
     <ChatHeader
       :messages="navMessages"
       :is-generating="isGenerating"
