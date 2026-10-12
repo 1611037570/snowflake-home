@@ -23,6 +23,7 @@ defineOptions({ name: "ResumePage" });
 const resumeStore = useResumeStore();
 const { currentData, currentConfig, currentUI, runtimeConfig, runtimeFields, selectedModule, system } =
   storeToRefs(resumeStore);
+const { editingModuleKey } = storeToRefs(resumeStore);
 
 const exportSuccessModalRef = ref(null);
 
@@ -56,6 +57,7 @@ const { moduleClassMap } = useModuleInteractions({
   moduleKeys,
   selectedModule,
   activeModuleKey: previewSelectedModule,
+  editingModuleKey, // 当前编辑模块只参与提示与边框计算。
 });
 
 // 栏内移动方向由已生成的分页顺序计算，交互结果由编辑器模式写回配置。
@@ -205,6 +207,7 @@ useSmartOnePage({
     :show-debug="system.showDebug"
     :module-class-map="moduleClassMap"
     :selected-module-keys="selectedModuleKeys"
+    :editing-module-key="editingModuleKey"
     :move-directions-by-column="columnMoveContext.directions"
     @module-click="handleModuleClick"
     @module-item-click="handleModuleItemClick"

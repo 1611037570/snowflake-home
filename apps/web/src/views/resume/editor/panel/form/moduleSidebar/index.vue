@@ -21,6 +21,11 @@ const listRef = ref(null);
 const draggableItems = ref([]);
 let draggedKeys = [];
 let draggable = null;
+// 导航保留原有编辑区定位，同时同步当前编辑模块提示。
+function handleModuleJump(key) {
+  resumeStore.editingModuleKey = key;
+  jumpEditor(key);
+}
 
 // 左侧只展示当前未归档的模块名称
 const moduleItems = computed(() =>
@@ -115,7 +120,7 @@ onUnmounted(() => {
           :key="item.key"
           :data-fixed="item.fixed ? 'true' : undefined"
           class="flex-c w-fit min-w-0 cursor-pointer flex-col gap-1 rounded-xl border border-sf-b bg-sf-primary p-1 text-[9px] text-sf-text transition-colors select-none hover:border-sf-theme hover:text-sf-theme"
-          @click="jumpEditor(item.key)"
+          @click="handleModuleJump(item.key)"
         >
           <SfIcon v-if="item.fixed" :icon="item.icon" size="4" />
           <SfIcon

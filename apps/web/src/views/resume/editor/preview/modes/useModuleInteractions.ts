@@ -17,6 +17,8 @@ interface UseModuleInteractionsOptions {
   selectedModule: Ref<any[]>;
   /** 编辑区定位后激活的预览模块 key */
   activeModuleKey: Ref<string | null>;
+  /** 当前编辑模块标识，持续显示编辑边框且不触发滚动 */
+  editingModuleKey?: Ref<string | null>;
 }
 
 export const useModuleInteractions = ({
@@ -24,6 +26,7 @@ export const useModuleInteractions = ({
   moduleKeys,
   selectedModule,
   activeModuleKey,
+  editingModuleKey,
 }: UseModuleInteractionsOptions) => {
   // 选中模块持续显示主题边框，取消选择后恢复悬浮反馈。
   const selectedKeys = computed(() => new Set(selectedModule.value.map((item) => item.key)));
@@ -32,7 +35,7 @@ export const useModuleInteractions = ({
     if (!isEdit.value) return {};
     const map: Record<string, string> = {};
     for (const moduleKey of moduleKeys.value) {
-      map[moduleKey] = activeModuleKey.value === moduleKey
+      map[moduleKey] = editingModuleKey?.value === moduleKey || activeModuleKey.value === moduleKey
         ? "outline-2 outline-offset-3 outline-dashed outline-sf-theme"
         : NO_HOVER_OUTLINE_KEYS.has(moduleKey)
           ? "outline-2 outline-offset-3 outline-dashed outline-transparent"

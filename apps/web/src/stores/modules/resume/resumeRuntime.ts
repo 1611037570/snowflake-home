@@ -7,6 +7,8 @@ type ResumeRuntimeOptions = {
 export const createResumeRuntime = ({ clearSelectedModules }: ResumeRuntimeOptions) => {
   // 专注写作模式不随简历持久化
   const focusMode = ref(false);
+  // 当前编辑模块仅用于预览提示，不随简历持久化。
+  const editingModuleKey = ref<string | null>(null);
   const isPrinting = ref(false);
   let printController: AbortController | null = null;
   const beginPrinting = () => {
@@ -67,6 +69,7 @@ export const createResumeRuntime = ({ clearSelectedModules }: ResumeRuntimeOptio
     isGenerating.value = value;
   };
   const initResumeStatus = () => {
+    editingModuleKey.value = null;
     cancelPrinting();
     cancelFittingOnePage();
     isGenerating.value = false;
@@ -75,6 +78,7 @@ export const createResumeRuntime = ({ clearSelectedModules }: ResumeRuntimeOptio
 
   return {
     focusMode,
+    editingModuleKey, // 当前编辑模块标识。
     isPrinting,
     beginPrinting,
     cancelPrinting,

@@ -13,6 +13,8 @@ const props = defineProps<{
   showDebug?: boolean;
   moduleClassMap?: Record<string, string>;
   selectedModuleKeys?: string[];
+  /** 当前编辑模块标识，仅用于编辑态提示 */
+  editingModuleKey?: string | null;
   gap: number;
   /** 各模块可用的移动方向，由预览层按整栏跨页顺序计算 */
   moveDirections?: Record<string, { up: boolean; down: boolean }>;
@@ -86,6 +88,13 @@ const fragmentGroups = computed(() => {
         @mouseenter="emit('mouseenter', $event)"
       >
         <template #actions>
+          <!-- 编辑提示对齐轮廓外沿并置于框线上方，导出时随编辑操作移除。 -->
+          <span
+            v-if="isEdit && editingModuleKey === group.moduleKey"
+            data-resume-editor-action
+            class="pointer-events-none absolute -top-[3px] -left-[5px] z-10 -translate-y-full rounded-t-xl bg-sf-theme px-3 text-xs leading-6 text-sf-theme-text"
+            >{{ $t("editingModule") }}</span
+          >
           <!-- 标语属于版头区域，不提供任何模块操作按钮 -->
           <ModuleActions
             v-if="isEdit && group.moduleKey !== 'slogan'"

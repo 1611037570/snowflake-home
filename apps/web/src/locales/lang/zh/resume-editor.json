@@ -561,6 +561,7 @@
   "moveRight": "移到右栏",
   "cancelSelection": "取消选择",
   "selectModule": "选择模块",
+  "editingModule": "正在编辑",
   "exportSuccess": "导出成功",
   "continueEditing": "没写完，继续编辑",
   "continueExport": "继续导出",

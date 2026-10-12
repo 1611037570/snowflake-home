@@ -30,6 +30,7 @@ import RowHonor from "./components/row/honor.vue";
 import { localizeResumeOptions } from "@/stores/modules/resume/hooks/useResumeEditorLocale";
 import i18n from "@/locales";
 import { flushPendingEditorLocation } from "../../hooks/useModuleNav";
+import { isFieldRemoved } from "@/components/business/dynamicForm/api";
 
 const loadDynamicForm = () => import("@/components/business/dynamicForm/index");
 // 动态表单加载期间立即显示骨架，避免编辑区只剩增加模块
@@ -65,6 +66,30 @@ const AsyncCityPicker = defineAsyncComponent({
 
 const resumeStore = useResumeStore();
 const { currentData, runtimeConfig } = storeToRefs(resumeStore);
+// 捕获点击及键盘焦点，逐层寻找所属顶层模块，不触发预览滚动。
+const markEditingModule = (event) => {
+  let node = event.target instanceof Element ? event.target.closest("[data-module-key]") : null;
+  while (node && event.currentTarget.contains(node)) {
+    const key = node.dataset.moduleKey;
+    if (runtimeConfig.value?.fields?.some((field) => field.key === key)) {
+      resumeStore.editingModuleKey = key;
+      return;
+    }
+    node = node.parentElement?.closest("[data-module-key]");
+  }
+};
+// 删除或归档当前模块后清除提示，隐藏不改变原有显示状态。
+watch(
+  () => {
+    const key = resumeStore.editingModuleKey;
+    return key && runtimeConfig.value?.fields?.some(
+      (field) => field.key === key && !isFieldRemoved(currentData.value, field),
+    );
+  },
+  (exists) => {
+    if (!exists) resumeStore.editingModuleKey = null;
+  },
+);
 const localizedResumeOptions = computed(() => {
   // 读取当前语言建立依赖，选项显示文案随语言切换更新，保存值保持不变
   i18n.global.locale.value;
@@ -118,6 +143,8 @@ const finishConfigSync = async (data) => {
 watch(
   () => currentItem.value,
   (item) => {
+    // 切换简历时丢弃上一份简历的编辑提示。
+    resumeStore.editingModuleKey = null;
     // 无选中简历：无需等待渲染，直接结束同步
     if (!item) {
       syncItem = null;
@@ -137,6 +164,10 @@ watch(
 onActivated(() => {
   nextTick(flushPendingEditorLocation);
 });
+// 离开编辑标签后不再显示正在编辑提示。
+onDeactivated(() => {
+  resumeStore.editingModuleKey = null;
+});
 
 const handleDynamicFormReady = (data) => {
   if (currentItem.value?.data !== data) return;
@@ -146,6 +177,7 @@ const handleDynamicFormReady = (data) => {
 };
 
 onBeforeUnmount(() => {
+  resumeStore.editingModuleKey = null;
   if (dynamicFormTimer !== null) window.clearTimeout(dynamicFormTimer);
   // 失效待完成的同步，避免卸载后开启历史记录
   syncItem = null;
@@ -154,7 +186,7 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <div class="relative h-full">
+  <div class="relative h-full" @pointerdown.capture="markEditingModule" @focusin.capture="markEditingModule">
     <div class="flex h-full min-h-0 w-full">
       <ModuleSidebar />
       <SfScrollbar class="resume-editor-form relative h-full min-h-0">
