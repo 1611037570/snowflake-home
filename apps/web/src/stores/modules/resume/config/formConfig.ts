@@ -253,7 +253,7 @@ export const DEFAULT_USER_FORM = [
         hideWhenEmpty: true,
         drag: true,
         dragClass: DEFAULT_DRAG_CLASS,
-        itemClass: DEFAULT_COL_CLASS + " bg-transparent! py-1 px-3!", // 副标题字段沿用分区底色，恢复圆角边框并保留内部留白。
+        itemClass: DEFAULT_COL_CLASS + " py-1 px-3!", // 副标题字段恢复圆角边框及统一卡片底色，保留内部留白。
         // 副标题内部卡片保留纵向间距，避免边框紧贴。
         rowClass: "gap-y-3",
         span: 24,
