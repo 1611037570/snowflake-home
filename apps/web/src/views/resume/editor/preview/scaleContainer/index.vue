@@ -232,6 +232,7 @@ useResizeObserver(contentRef, ([entry]) => {
     <!-- 滚动区紧贴顶部工具栏，顶部留白放入滚动内容，避免固定空隙截断预览。 -->
     <SfScrollbar
       ref="containerRef"
+      :data-resume-preview-scroll="showToolbar ? '' : undefined"
       class="relative min-h-0 flex-1"
       :style="{
         marginRight: 'var(--resume-toolbar-width, 0px)',

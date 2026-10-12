@@ -222,7 +222,11 @@ export const jumpPreview = (key: string) => {
     previewHighlightTimer = null;
   }, PREVIEW_HIGHLIGHT_DELAY);
   nextTick(() => {
-    const target = document.querySelector<HTMLElement>(
+    // 仅在编辑器右侧预览中查找，避免命中模板缩略图的同名模块。
+    const previewWrap = document.querySelector<HTMLElement>(
+      "[data-resume-preview-scroll] .el-scrollbar__wrap",
+    );
+    const target = previewWrap?.querySelector<HTMLElement>(
       `.resume-page-item .resume-module-wrapper[data-module="${key}"]`,
     );
     const scrollTarget = useScrollEditorTo(target);
