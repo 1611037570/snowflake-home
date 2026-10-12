@@ -6,17 +6,21 @@ import { storeToRefs } from "pinia";
 import ThumbPreview from "../../preview/modes/thumb.vue";
 import { createResumeStyleUi, resumeStyleTemplateList } from "@/views/resume/theme";
 import { loadResumeTemplateData } from "@/views/resume/template/data/resumeData";
-import { resumeTemplateDesignOptions } from "@/views/resume/template/data/list";
+import { resumeTemplateLayoutOptions, resumeTemplateTierOptions } from "@/views/resume/template/data/list";
 import { onMounted, ref } from "vue";
 import i18n, { $t } from "@/locales";
 const resumeStore = useResumeStore();
 const { currentUI } = storeToRefs(resumeStore);
 const previewBase = ref(null);
-const selectedDesign = ref(""); // 当前设计分类，空值时暂不展示极简和简约主题
+const selectedLayout = ref(""); // 当前选中的布局标签
+const selectedTier = ref(""); // 当前选中的设计等级，空值沿用默认模板可见范围
 
-// 与模板库共用设计分类参数，再次点击当前分类恢复全部模板。
-const toggleDesign = (key) => {
-  selectedDesign.value = selectedDesign.value === key ? "" : key;
+// 布局和等级分别切换，可同时约束模板列表。
+const toggleLayout = (key) => {
+  selectedLayout.value = selectedLayout.value === key ? "" : key;
+};
+const toggleTier = (key) => {
+  selectedTier.value = selectedTier.value === key ? "" : key;
 };
 
 // 进入样式选择时再加载一份范本作为预览内容。
@@ -34,9 +38,10 @@ const templates = computed(() => {
   if (!i18n.global.locale.value) return [];
   return resumeStyleTemplateList
     .filter((style) => {
-      // 未选择分类时隐藏极简模板，选中极简分类后再按标签筛选。
-      if (!selectedDesign.value) return !style.design.includes("plain");
-      return style.design.includes("all") || style.design.includes(selectedDesign.value);
+      // 两行同时选中时取交集，空选状态保持原有极简隐藏规则。
+      if (!selectedLayout.value && !selectedTier.value) return !style.design.includes("plain");
+      return (style.design.includes("all") || !selectedLayout.value || style.design.includes(selectedLayout.value))
+        && (style.design.includes("all") || !selectedTier.value || style.design.includes(selectedTier.value));
     })
     .map((style) => ({
       name: $t(`resumeTemplateStyle_${style.localeId}_name`),
@@ -62,18 +67,38 @@ const applyTemplate = (template) => {
 
 <template>
   <SfScrollbar class="h-full bg-sf-primary py-3">
-    <!-- 编辑器分类沿用模板库选项与文案，以样式模板的 design 字段筛选。 -->
-    <div class="mb-3 flex flex-wrap gap-3">
-      <SfButton
-        v-for="option in resumeTemplateDesignOptions"
-        :key="option.key"
-        :plain="selectedDesign !== option.key"
-        round
-        :aria-pressed="selectedDesign === option.key"
-        @click="toggleDesign(option.key)"
-      >
-        {{ $t(`resumeTemplateOption_design_${option.key}`) }}
-      </SfButton>
+    <!-- 布局与等级各占一行，两行筛选条件可以叠加。 -->
+    <div class="mb-3 flex flex-col gap-3">
+      <div class="flex items-center gap-3">
+        <span class="w-[36px] shrink-0 text-sm text-sf-text-2">{{ $t("resumeTemplateCategory_layout") }}</span>
+        <div class="flex min-w-0 flex-nowrap gap-3 overflow-x-auto whitespace-nowrap">
+          <SfButton
+            v-for="option in resumeTemplateLayoutOptions"
+            :key="option.key"
+            :plain="selectedLayout !== option.key"
+            round
+            :aria-pressed="selectedLayout === option.key"
+            @click="toggleLayout(option.key)"
+          >
+            {{ $t(`resumeTemplateOption_design_${option.key}`) }}
+          </SfButton>
+        </div>
+      </div>
+      <div class="flex items-center gap-3">
+        <span class="w-[36px] shrink-0 text-sm text-sf-text-2">{{ $t("resumeTemplateCategory_tier") }}</span>
+        <div class="flex min-w-0 flex-nowrap gap-3 overflow-x-auto whitespace-nowrap">
+          <SfButton
+            v-for="option in resumeTemplateTierOptions"
+            :key="option.key"
+            :plain="selectedTier !== option.key"
+            round
+            :aria-pressed="selectedTier === option.key"
+            @click="toggleTier(option.key)"
+          >
+            {{ $t(`resumeTemplateOption_design_${option.key}`) }}
+          </SfButton>
+        </div>
+      </div>
     </div>
     <!-- 模板卡片按可用宽度自动换列，保持缩略图的固定尺寸。 -->
     <div class="grid w-full grid-cols-[repeat(auto-fit,minmax(156px,1fr))] gap-3">
@@ -108,6 +133,12 @@ const applyTemplate = (template) => {
       class="flex h-36 items-center justify-center text-sm text-sf-text-2"
     >
       {{ $t("resumeTemplateEmpty") }}
+    </div>
+    <!-- 非空列表滚动到末尾时显示结束提示。 -->
+    <div v-else class="flex items-center justify-center gap-3 py-6 text-sm text-sf-text-3">
+      <span aria-hidden="true" class="h-px w-12 bg-sf-border" />
+      <span>{{ $t("resumeTemplateNoMore") }}</span>
+      <span aria-hidden="true" class="h-px w-12 bg-sf-border" />
     </div>
   </SfScrollbar>
 </template>

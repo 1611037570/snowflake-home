@@ -24,6 +24,7 @@ import navyGuide from "@/domain/resume/theme/styles/navyGuide";
 import numberedSections from "@/domain/resume/theme/styles/numberedSections";
 import outline from "@/domain/resume/theme/styles/outline";
 import plainColorBar from "@/domain/resume/theme/styles/plainColorBar";
+import pineArchive from "@/domain/resume/theme/styles/pineArchive";
 import { plainTitleThemes } from "@/domain/resume/theme/styles/plainTitleThemes";
 import sandSidebar from "@/domain/resume/theme/styles/sandSidebar";
 import redWhiteSidebar from "@/domain/resume/theme/styles/redWhiteSidebar";
@@ -63,6 +64,7 @@ export const themeTemplateList = createThemeTemplates([
   sandSidebar,
   redWhiteSidebar,
   inkSidebar,
+  pineArchive,
   minimal,
   academic,
   tealRail,

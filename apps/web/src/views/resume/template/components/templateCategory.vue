@@ -38,6 +38,8 @@ const currentTopCategory = ref(resumeTemplateTopCategories[0].key);
 const currentCategoryKey = ref(resumeTemplateTopCategories[0].categories[0].key);
 // 当前二级分类选中的选项，切换分类时清空
 const selectedOptionKey = ref("");
+const selectedLayoutKey = ref(""); // 简历模板选中的布局标签
+const selectedTierKey = ref(""); // 简历模板选中的等级标签
 const previewSize = ref("default");
 const currentTop = computed(
   () =>
@@ -57,6 +59,8 @@ const selectTopCategory = (key) => {
   currentTopCategory.value = key;
   currentCategoryKey.value = top.categories[0].key;
   selectedOptionKey.value = "";
+  selectedLayoutKey.value = "";
+  selectedTierKey.value = "";
   emit("category-change", key);
   emit("change", {});
 };
@@ -77,6 +81,15 @@ const toggleOption = (key) => {
     "change",
     selectedOptionKey.value ? { [currentCategory.value.key]: selectedOptionKey.value } : {},
   );
+};
+// 简历模板的布局与等级互不清空，同时选中时按两个标签共同筛选。
+const toggleTemplateOption = (categoryKey, key) => {
+  const selected = categoryKey === "layout" ? selectedLayoutKey : selectedTierKey;
+  selected.value = selected.value === key ? "" : key;
+  emit("change", {
+    ...(selectedLayoutKey.value ? { layout: selectedLayoutKey.value } : {}), // 当前布局筛选值
+    ...(selectedTierKey.value ? { tier: selectedTierKey.value } : {}), // 当前等级筛选值
+  });
 };
 </script>
 
@@ -135,7 +148,7 @@ const toggleOption = (key) => {
     <!-- 二级维度用下划线页签：下划线只出现在这一层，专门标识当前选中的维度；
          该维度只有一个时不再重复展示，直接展示它的选项 -->
     <div
-      v-if="currentCategories.length > 1"
+      v-if="currentTopCategory !== 'template' && currentCategories.length > 1"
       class="mt-3 flex flex-wrap items-center gap-6 border-b border-sf-b"
     >
       <button
@@ -154,7 +167,7 @@ const toggleOption = (key) => {
       </button>
     </div>
     <!-- 选项只用文字：下划线留给二级维度页签，这里选中只变主题色并加粗 -->
-    <div class="mt-3 flex flex-wrap gap-6">
+    <div v-if="currentTopCategory !== 'template'" class="mt-3 flex flex-wrap gap-6">
       <button
         v-for="option in currentOptions"
         :key="option.key"
@@ -169,6 +182,30 @@ const toggleOption = (key) => {
       >
         {{ $t(`resumeTemplateOption_${currentCategory.key}_${option.key}`) }}
       </button>
+    </div>
+    <!-- 简历模板按布局和等级固定两行展示，两行可组合筛选。 -->
+    <div v-else class="mt-3 flex flex-col gap-3">
+      <div v-for="category in currentCategories" :key="category.key" class="flex items-center gap-3">
+        <span class="w-[72px] shrink-0 text-sm font-bold text-sf-text-2">
+          {{ $t(`resumeTemplateCategory_${category.key}`) }}
+        </span>
+        <div class="flex min-w-0 flex-nowrap gap-6 overflow-x-auto whitespace-nowrap">
+          <button
+            v-for="option in category.options"
+            :key="option.key"
+            type="button"
+            class="cursor-pointer text-sm transition-colors"
+            :class="
+              (category.key === 'layout' ? selectedLayoutKey : selectedTierKey) === option.key
+                ? 'font-bold text-sf-theme'
+                : 'text-sf-text-2 hover:text-sf-theme'
+            "
+            @click="toggleTemplateOption(category.key, option.key)"
+          >
+            {{ $t(`resumeTemplateOption_design_${option.key}`) }}
+          </button>
+        </div>
+      </div>
     </div>
   </section>
 </template>

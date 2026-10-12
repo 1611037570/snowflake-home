@@ -128,13 +128,17 @@ export const resumeTemplateWorkExperienceOptions: ResumeTemplateOption[] = [
   { key: "10+", value: "10年以上" },
 ];
 
-export const resumeTemplateDesignOptions: ResumeTemplateOption[] = [
-  { key: "single-column", value: "单栏" },
-  { key: "two-column", value: "双栏" },
-  { key: "timeline", value: "时间轴" },
-  { key: "minimal", value: "简约" },
-  { key: "polished", value: "精美" },
-  { key: "plain", value: "极简" },
+// 布局与等级分行展示，选项值仍使用主题 design 标签。
+export const resumeTemplateLayoutOptions: ResumeTemplateOption[] = [
+  { key: "single-column" /* 单栏标签编号 */, value: "单栏" /* 单栏显示名称 */ },
+  { key: "two-column" /* 双栏标签编号 */, value: "双栏" /* 双栏显示名称 */ },
+  { key: "timeline" /* 时间轴标签编号 */, value: "时间轴" /* 时间轴显示名称 */ },
+];
+export const resumeTemplateTierOptions: ResumeTemplateOption[] = [
+  { key: "premium" /* 臻品标签编号 */, value: "臻品" /* 臻品显示名称 */ },
+  { key: "polished" /* 精致标签编号 */, value: "精致" /* 精致显示名称 */ },
+  { key: "minimal" /* 简约标签编号 */, value: "简约" /* 简约显示名称 */ },
+  { key: "plain" /* 极简标签编号 */, value: "极简" /* 极简显示名称 */ },
 ];
 
 // 一级分类只有简历范本与简历模板两类，各自的二级筛选维度互不通用于另一类。
@@ -151,8 +155,11 @@ export const resumeTemplateTopCategories: ResumeTemplateTopCategory[] = [
   {
     key: "template",
     icon: "lucide:layout-template",
-    // 简历模板按设计风格筛选：选项值即主题模板 design 字段的取值
-    categories: [{ key: "design", options: resumeTemplateDesignOptions }],
+    // 布局与等级独立筛选，选项值均对应主题 design 标签。
+    categories: [
+      { key: "layout" /* 布局筛选编号 */, options: resumeTemplateLayoutOptions /* 布局选项 */ },
+      { key: "tier" /* 等级筛选编号 */, options: resumeTemplateTierOptions /* 等级选项 */ },
+    ],
   },
 ];
 

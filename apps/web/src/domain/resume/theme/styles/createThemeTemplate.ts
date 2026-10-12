@@ -31,10 +31,10 @@ export interface ThemeTemplateConfig {
   localeId?: string; // 模板卡片复用的翻译文案编号，缺省使用主题编号
   /**
    * 主题分类标签，取值与内容模板的 design 完全同一套：
-   * single-column 单栏、two-column 双栏、minimal 简约、plain 极简、timeline 时间轴、polished 精美。
+   * single-column 单栏、two-column 双栏、timeline 时间轴、premium 臻品、polished 精致、minimal 简约、plain 极简。
    * 模板页按该字段筛选，样式卡片与内容卡片共用同一个筛选字段名。
    */
-  design: ("single-column" | "two-column" | "minimal" | "plain" | "timeline" | "polished")[];
+  design: ("single-column" | "two-column" | "timeline" | "premium" | "polished" | "minimal" | "plain")[];
   /** 主题页面级外观声明，公共页面读取该声明而不是判断主题编号 */
   pageAppearance?: ThemePageAppearance;
   /** 主题固定版式、装饰尺寸及内容能力，不属于用户可编辑参数 */
