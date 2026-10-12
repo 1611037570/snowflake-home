@@ -30,6 +30,16 @@ Launched on September 3, 2020, reconstructed and open-sourced on November 22, 20
 
   Preview: http://nannan.work/#/image
 
+## Star History
+
+<a href="https://www.star-history.com/?repos=1611037570%2Fsnowflake-home&type=timeline&logscale=&legend=top-left">
+ <picture>
+   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/chart?repos=1611037570/snowflake-home&type=timeline&theme=dark&logscale&legend=top-left" />
+   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/chart?repos=1611037570/snowflake-home&type=timeline&logscale&legend=top-left" />
+   <img alt="Star History Chart" src="https://api.star-history.com/chart?repos=1611037570/snowflake-home&type=timeline&logscale&legend=top-left" />
+ </picture>
+</a>
+
 ## 🚀 Install & Run
 
 The project is managed based on **pnpm monorepo**, with sub-packages located under the `apps` directory:

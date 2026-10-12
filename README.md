@@ -30,6 +30,16 @@
 
   预览：http://nannan.work/#/image
 
+## Star History
+
+<a href="https://www.star-history.com/?repos=1611037570%2Fsnowflake-home&type=timeline&logscale=&legend=top-left">
+ <picture>
+   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/chart?repos=1611037570/snowflake-home&type=timeline&theme=dark&logscale&legend=top-left" />
+   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/chart?repos=1611037570/snowflake-home&type=timeline&logscale&legend=top-left" />
+   <img alt="Star History Chart" src="https://api.star-history.com/chart?repos=1611037570/snowflake-home&type=timeline&logscale&legend=top-left" />
+ </picture>
+</a>
+
 ## 🚀 安装运行
 
 项目基于 **pnpm monorepo** 管理，子包位于 `apps` 目录下：
