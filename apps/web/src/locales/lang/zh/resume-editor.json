@@ -495,6 +495,7 @@
   "switchResumeLanguage": "切换简历语言",
   "smartOnePage": "智能一页纸",
   "smartSortByTime": "按时间智能排序（最新优先）",
+  "smartSort": "智能排序",
   "sortByTimeSuccess": "已按时间从近到远排序",
   "sortByTimeNoChange": "经历无需调整顺序",
   "sortByTimePartial": "部分经历排序失败",

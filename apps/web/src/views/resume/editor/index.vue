@@ -1,5 +1,5 @@
 <template>
-  <div class="flex h-svh w-full flex-col overflow-hidden bg-sf-page" v-if="currentIndex != -1">
+  <div class="resume-editor-workspace flex h-svh w-full flex-col overflow-hidden bg-sf-page" v-if="currentIndex != -1">
     <Transition name="resume-motion" appear>
       <Header v-if="!focusMode" class="motion-header" />
     </Transition>
@@ -190,6 +190,19 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
+/* 中间分隔线预先合成顶部背景上的边框颜色，避免透明边框叠在黑底上变暗。 */
+.resume-editor-workspace {
+  /* 分隔线颜色：浅色模式按顶部背景与边框的实际比例合成不透明颜色。 */
+  --resume-separator-color: color-mix(in srgb, var(--sf-primary) 90%, var(--sf-base) 10%);
+}
+:global(.dark) .resume-editor-workspace {
+  /* 分隔线颜色：深色模式保持与顶部四分之一透明度的白色边框一致。 */
+  --resume-separator-color: color-mix(in srgb, var(--sf-primary) 75%, var(--sf-base) 25%);
+}
+.resume-editor-workspace :deep(.mobile-resume-builder) {
+  border-right-color: var(--resume-separator-color);
+}
+
 /* 各区域仅提供动画参数，进入、离开统一由同一套过渡规则处理 */
 .motion-header {
   --motion-enter-transform: translateY(-100%);
