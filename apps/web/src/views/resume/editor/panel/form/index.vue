@@ -230,6 +230,8 @@ onBeforeUnmount(() => {
   :deep(:is([data-module-key="skill"], [data-module-key="advantage"]) .sf-wang-editor) {
     border: none !important;
     border-radius: 0 !important;
+    // 编辑区背景跟随模块外框的主要色，不再沿用面板统一的背景色
+    background-color: var(--sf-primary) !important;
   }
 
   // 工具栏与底部操作区同步保持直角，避免内部仍出现圆角卡片。
