@@ -175,7 +175,7 @@
 import { TransitionPresets, useIntersectionObserver, useTransition } from "@vueuse/core";
 import { useResumeStore } from "@/stores";
 import { trackResumeAction } from "@/hooks";
-import { themeTemplateList } from "@/views/resume/theme";
+import { resumeStyleTemplateList } from "@/views/resume/theme";
 import { $t } from "@/locales";
 import { getStatsOverview } from "@/apis";
 import { resumeTemplateList } from "../template/data/list";
@@ -217,7 +217,7 @@ const headlineStats = computed(() => {
       label: $t("resumeHomeResumeCount"),
     },
     {
-      count: themeTemplateList.length,
+      count: resumeStyleTemplateList.length,
       label: $t("resumeHomeStyleCount"),
     },
     {

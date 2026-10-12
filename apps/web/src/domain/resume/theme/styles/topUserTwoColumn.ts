@@ -9,6 +9,9 @@ export default {
     layoutType: "topUserTwoColumn", // 主题固定页面版式
   },
   ui: {
-    theme: { color: "#0F766E" },
+    theme: {
+      color: "#0F766E",
+      titleTemplate: "titleUnderline", // 模块标题样式：通栏底线
+    },
   },
 } satisfies ThemeTemplateConfig;

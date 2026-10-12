@@ -9,9 +9,9 @@ export default {
     layoutType: "twoColumn", // 个人信息放在左栏的双栏布局
   },
   ui: { // 主题相对默认设置的差异
-    theme: { // 主题配色与标题设置
+    theme: { // 主题配色设置
       color: "#B00035", // 左栏背景及右栏标题使用的深红色
-      titleIconMode: "none", // 标题默认不显示图标
+      titleTemplate: "matchedUnderline", // 模块标题样式：同色底线
     },
     layout: { // 双栏布局设置
       leftColumnWidth: 40, // 左栏占可用栏宽的百分比

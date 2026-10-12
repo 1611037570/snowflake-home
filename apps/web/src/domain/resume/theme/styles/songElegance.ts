@@ -13,9 +13,9 @@ export default {
     layoutType: "singleColumn", // 单栏版式，突出纵向留白
   },
   ui: { // 主题相对默认配置的差异
-    theme: { // 主题色与标题装饰
+    theme: { // 主题色
       color: "#8A6A4F", // 茶褐色：姓名、标题与装饰线
-      titleIconMode: "none", // 模块标题默认只保留文字与双线
+      titleTemplate: "doubleRuleTitle", // 模块标题样式：双线夹标题
     },
     page: { // 纸张与页面留白
       background: "#FBF8F1", // 米色纸张，接近宣纸
@@ -25,7 +25,6 @@ export default {
     font: { // 文字尺寸与字体
       family: "text-source-han-serif", // 思源宋体，中文衬线
       size: 14, // 正文字号
-      titleSize: 17, // 模块标题字号
       lineHeight: 1.75, // 正文行高倍数
     },
     content: { // 经历条目排版

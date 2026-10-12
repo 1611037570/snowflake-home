@@ -10,9 +10,9 @@ export default {
     layoutType: "twoColumn", // 布局类型：个人信息与侧栏模块位于左栏
   },
   ui: { // 主题相对默认配置的差异
-    theme: { // 主题色与标题图标设置
+    theme: { // 主题色设置
       color: "#9C2342", // 标语色带与标题装饰使用的主题色
-      titleIconMode: "none", // 标题只展示文字与主题装饰
+      titleTemplate: "diamondTrail", // 模块标题样式：菱形尾饰
     },
     layout: {
       columns: {

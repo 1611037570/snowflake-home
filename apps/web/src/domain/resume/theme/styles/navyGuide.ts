@@ -22,7 +22,7 @@ export default {
   ui: {
     theme: {
       color: "#7C8CF4", // 色带端块、头像衬边和正文标记使用的主题色
-      titleIconMode: "none", // 标题使用主题自身的竖条标记
+      titleTemplate: "railMark", // 模块标题样式：引导竖块
     },
     page: {
       padding: { vertical: 24, horizontal: 48 }, // 页面上下与左右留白

@@ -65,7 +65,7 @@ const decisions = {
 | `pageDecoration/themes` | 独立首页装饰，不伪造业务标语 |
 | `regionContainer/themes/user`、`regionContainer/themes/main` | 个人信息与正文区域的底板、轴线和底纹；尺寸由公共容器施加 |
 | `userContainer/themes`、`moduleContainer/themes` | 个人信息与业务模块外框 |
-| `moduleTitle/themes` | 模块标题绘图 |
+| `title/styles` | 模块标题绘图，按标题样式编号登记，组件加载器随本目录；标题样式清单、主题默认标题样式与标题参数默认值集中在 `domain/resume/theme/titleStyles.ts` |
 | `itemContainer/themes` | 条目外框及分片装饰 |
 | `userModule/components` | 通过固定声明选择个人信息内容组件 |
 | `nodeContent/themes/<主题编号>/<内容语义>.vue` | 覆盖指定正文语义，未覆盖时使用默认语义组件 |

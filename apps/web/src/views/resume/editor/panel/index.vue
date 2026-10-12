@@ -18,10 +18,11 @@ import BuilderEditorComponent from "./form/index.vue";
 const BuilderEditor = markRaw(BuilderEditorComponent);
 const AsyncTemplate = markRaw(defineAsyncComponent(() => import("./template/index.vue")));
 const AsyncAi = markRaw(defineAsyncComponent(() => import("../assistant/chat/index.vue")));
-// 当前选中的菜单索引
-const activeIndex = ref(0);
+// 默认打开模板标签。
+const activeIndex = ref(2);
 // 同步明确的标签标识，区分普通编辑、智能助手和模板场景。
 const activeEditorTab = inject("resumeEditorTab", ref("edit"));
+activeEditorTab.value = "template";
 // 切换方向：索引增大为 right（新内容从右侧滑入），减小为 left
 const direction = ref("right");
 watch(activeIndex, (val, old) => {

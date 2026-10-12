@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import ModuleTitle from "@/views/resume/theme/components/moduleTitle/index.vue";
+import ModuleTitle from "@/views/resume/theme/components/title/index.vue";
 import { type NodeContentProps } from "@/views/resume/editor/preview/resumePages/render/nodeContentContract";
 
 const props = withDefaults(defineProps<NodeContentProps>(), {

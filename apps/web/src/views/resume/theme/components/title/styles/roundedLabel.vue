@@ -15,7 +15,7 @@ const {
 </script>
 
 <template>
-  <!-- 活力风格：标题置于主题色实心圆角色块上，视觉醒目 -->
+  <!-- 圆角色块：标题置于主题色实心圆角色块上 -->
   <div>
     <h2
       class="inline-block max-w-full min-w-0 rounded-lg px-4 py-1 font-bold tracking-wide break-words"

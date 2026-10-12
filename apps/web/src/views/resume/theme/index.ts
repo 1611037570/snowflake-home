@@ -5,6 +5,7 @@ export {
   themeTemplateList,
 } from "@/domain/resume/theme/styles";
 export { resolveThemeSettingRestrictions } from "./settingCapabilities";
+export { resumeStyleTemplateList, type ResumeStyleTemplate } from "./styleTemplates";
 export { compactResumeUi, compactResumeItem, resolveResumeUi } from "@/domain/resume/theme/resumeUi";
 export { resolveThemeDecisions, DEFAULT_THEME_DECISIONS, type ThemeDecisions } from "@/domain/resume/theme/themeDecisions";
 export type {

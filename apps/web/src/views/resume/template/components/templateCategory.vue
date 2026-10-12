@@ -1,6 +1,6 @@
 <script setup>
 import { resumeTemplateList, resumeTemplateTopCategories } from "../data/list";
-import { themeTemplateList } from "@/views/resume/theme";
+import { resumeStyleTemplateList } from "@/views/resume/theme";
 import { computed, ref } from "vue";
 import { storeToRefs } from "pinia";
 import { darkThemeColors, lightThemeColors } from "@/configs/modules/theme";
@@ -9,7 +9,7 @@ import { useThemeStore } from "@/stores/modules/theme";
 // 一级分类容量：回答「这一栏有多少」，取全量条数，不随筛选变化
 const topCategoryCounts = {
   example: resumeTemplateList.length,
-  template: themeTemplateList.length,
+  template: resumeStyleTemplateList.length,
 };
 
 // 一级分类卡片的图标配色：按色名去配置的彩虹色里定位，两类各一种色、不做统一

@@ -8,18 +8,18 @@ defineProps({
     default: "",
   },
 });
+// 线条色：统一由主题色推导，线框模板默认取纯黑
 const {
   theme: { themeColor },
 } = useResumePreviewContext();
 </script>
 
 <template>
-  <!-- 默认风格：左侧主题色圆条 + 下细线 -->
-  <div class="flex h-auto flex-wrap items-baseline border-b border-sf-b pb-3">
-    <div
-      class="mr-3 w-1 self-stretch rounded-full bg-sf-theme"
-      :style="{ background: themeColor }"
-    ></div>
+  <!-- 框内标题：标题位于模块外框顶部，下方一条通栏细线分隔内容 -->
+  <div
+    class="border-b px-3 pt-3 pb-3"
+    :style="{ borderBottomWidth: '1px', borderColor: themeColor }"
+  >
     <h2 class="max-w-full min-w-0 font-bold tracking-wide break-words">
       <TitleText :title="title" />
     </h2>

@@ -3,7 +3,7 @@ import type { ThemeTemplateConfig } from "@/domain/resume/theme/styles/createThe
 export default {
   name: "通栏个人信息", // 主题显示名称
   id: "userBand" as const, // 主题编号
-  design: ["single-column", "polished"], // 模板页的分类筛选标签
+  design: ["single-column", "minimal"], // 模板页归入简约分类
   description: "个人信息整块铺满页面宽度的主题色底纹，正文保持页面留白。", // 主题说明
   decisions: { // 主题固定外观，不进入用户界面配置
     regions: { // 区域装饰尺寸
@@ -23,6 +23,7 @@ export default {
     // 主题相对默认配置的差异
     theme: {
       color: "#1D4ED8", // 主题色：同时作为个人信息底纹
+      titleTemplate: "solidLabelTrail", // 模块标题样式：色块引线
     },
     font: { size: 15, lineHeight: 1.3 }, // 字号与行高
     page: {

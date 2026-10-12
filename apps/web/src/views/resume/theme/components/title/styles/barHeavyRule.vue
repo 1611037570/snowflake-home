@@ -14,7 +14,7 @@ const {
 </script>
 
 <template>
-  <!-- 保留原商务标题的竖条与底部粗线。 -->
+  <!-- 竖条粗线：竖条与底部粗线。 -->
   <div class="border-b-2 pb-3" :style="{ borderColor: themeColor }">
     <div class="flex items-baseline">
       <div class="mr-3 w-1 self-stretch" :style="{ background: themeColor }"></div>

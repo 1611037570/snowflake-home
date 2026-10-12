@@ -15,8 +15,7 @@ export default {
     theme: {
       /** 飘带标题与斜纹的主题色 */
       color: "#3286D5",
-      /** 隐藏模块图标以突出飘带装饰 */
-      titleIconMode: "none",
+      titleTemplate: "foldedRibbon", // 模块标题样式：折角飘带
     },
   },
 } satisfies ThemeTemplateConfig;

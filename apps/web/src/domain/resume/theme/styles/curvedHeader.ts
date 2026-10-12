@@ -23,6 +23,7 @@ export default {
     theme: {
       /** 页眉背景主题色 */
       color: "#087F8C",
+      titleTemplate: "barUnderline", // 模块标题样式：竖条细线
     },
     /** 个人信息排版设置 */
     user: {

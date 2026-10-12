@@ -8,10 +8,7 @@ const {
 
 <template>
   <!-- 正文容器接住剩余空间，纵线在同一容器内绘制。 -->
-  <div
-    class="resume-view-container relative box-border flex min-w-0"
-    :style="{ '--navy-guide-rail-offset': 'var(--resume-region-inset-left)' }"
-  >
+  <div class="resume-view-container relative box-border flex min-w-0">
     <span
       aria-hidden="true"
       class="pointer-events-none absolute inset-y-0 left-0 w-px opacity-30"

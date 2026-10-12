@@ -24,6 +24,8 @@ import {
   defaultUserInfoLayout,
   defaultUserInfoMode,
 } from "@/domain/resume/theme/uiConfig";
+import { getResumeThemeUiPreset } from "@/domain/resume/theme/styles";
+import { resolveTitleStyleId } from "@/views/resume/theme/components/title/styles";
 
 /** 简历主题配置（item.ui） */
 type ResumeUi = Record<string, any>;
@@ -55,6 +57,7 @@ export interface ResumeTheme {
   themeColorLine: ComputedRef<string>;
   themeColorContrast: ComputedRef<string>;
   themeTemplate: ComputedRef<string>; // 当前主题编号，供各外观组件查找自身实现
+  titleTemplate: ComputedRef<string>; // 标题样式编号，已按主题默认归一
   userInfoMode: ComputedRef<string>;
   userInfoLayout: ComputedRef<string>;
   avatarPosition: ComputedRef<string>;
@@ -152,6 +155,12 @@ export const useResumeTheme = (ui: ComputedRef<ResumeUi>): ResumeTheme => {
   const themeColorContrast = computed(() => getContrastTextColor(themeColor.value));
   // 各外观组件只读取统一的主题编号。
   const themeTemplate = computed<string>(() => ui.value.theme?.template || "default");
+  // 标题样式独立选择：auto 表示跟随主题，取当前主题预设声明的标题样式，其余按标题样式编号解析。
+  const titleTemplate = computed<string>(() => {
+    const selected = ui.value.theme?.titleTemplate;
+    if (selected && selected !== "auto") return resolveTitleStyleId(selected);
+    return resolveTitleStyleId(getResumeThemeUiPreset(themeTemplate.value).theme.titleTemplate);
+  });
   // 个人信息展示模式（图标/文字/隐藏），缺失时回退默认值
   const userInfoMode = computed(() => ui.value.user?.infoMode ?? defaultUserInfoMode);
   // 个人信息布局（网格/弹性），缺失时回退默认值
@@ -188,6 +197,7 @@ export const useResumeTheme = (ui: ComputedRef<ResumeUi>): ResumeTheme => {
     themeColorLine,
     themeColorContrast,
     themeTemplate,
+    titleTemplate,
     userInfoMode,
     userInfoLayout,
     avatarPosition,
