@@ -121,6 +121,25 @@ const resumeData: any = {
         },
       ],
     },
+    internship: { // 实习经历范本模块。
+      ui: { collapsed: ["1"] /* 模块展开状态 */, archived: false /* 模块归档状态 */ }, // 模块界面状态。
+      list: [ // 实习记录列表。
+        {
+          ui: {}, // 记录界面状态。
+          data: { // 实习业务内容。
+            name: "上海****科技有限公司", // 实习公司名称。
+            department: "产品部", // 所在部门。
+            post: "产品经理实习生", // 实习岗位。
+            city: "上海", // 实习所在城市。
+            startTime: "2018.07", // 实习开始月份。
+            endTime: "2018.12", // 实习结束月份。
+            tags: ["跨部门协作"], // 实习经历标签。
+            link: { name: "实习作品" /* 链接展示名称 */, url: "https://portfolio.example.com/li-ran/internship" /* 作品链接地址 */ }, // 实习相关作品链接。
+            content: "<p>参与用户访谈与竞品分析，整理需求并协助产品经理完成原型设计。</p><p>跟进功能验收，整理用户反馈与上线后的问题清单。</p>", // 实习职责与成果正文。
+          },
+        },
+      ],
+    },
     project: {
       ui: { collapsed: ["1"], archived: false },
       list: [
@@ -301,6 +320,7 @@ const resumeData: any = {
       { key: "skill" },
       { key: "advantage" },
       { key: "work" },
+      { key: "internship" /* 实习经历模块标识 */ },
       { key: "project" },
       { key: "publication" },
       { key: "ip" },

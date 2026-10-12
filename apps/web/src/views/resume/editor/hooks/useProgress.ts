@@ -402,7 +402,8 @@ function checkTimeline(modules: Array<{ key: string; config: any }>, rootData: a
         issues.push({ type: "range", text: $t("timelineRangeMessage", { entry: entryLabel }) });
       }
       if (
-        ["work", "project"].includes(key) &&
+        // 实习经历沿用工作经历的未来日期检查。
+        ["work", "internship", "project"].includes(key) &&
         (entry.start > currentMonth() || entry.end > currentMonth())
       ) {
         issues.push({ type: "future", text: $t("timelineFutureMessage", { entry: entryLabel }) });

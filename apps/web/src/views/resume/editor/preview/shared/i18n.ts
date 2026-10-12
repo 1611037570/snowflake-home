@@ -22,6 +22,7 @@ export const PREVIEW_TITLES: Record<PreviewLang, Record<string, string>> = {
     skill: "专业技能",
     advantage: "个人优势",
     work: "工作经历",
+    internship: "实习经历", // 实习模块标题。
     project: "项目经历",
     publication: "学术论文",
     ip: "知识产权",
@@ -36,6 +37,7 @@ export const PREVIEW_TITLES: Record<PreviewLang, Record<string, string>> = {
     skill: "Skills",
     advantage: "Strengths",
     work: "Work Experience",
+    internship: "Internship Experience", // 实习模块标题。
     project: "Projects",
     publication: "Publications",
     ip: "Intellectual Property",
@@ -50,6 +52,7 @@ export const PREVIEW_TITLES: Record<PreviewLang, Record<string, string>> = {
     skill: "スキル",
     advantage: "強み",
     work: "職歴",
+    internship: "インターンシップ経験", // 实习模块标题。
     project: "プロジェクト経験",
     publication: "学術論文",
     ip: "知的財産権",
@@ -64,6 +67,7 @@ export const PREVIEW_TITLES: Record<PreviewLang, Record<string, string>> = {
     skill: "전문 기술",
     advantage: "강점",
     work: "경력",
+    internship: "인턴 경험", // 实习模块标题。
     project: "프로젝트 경험",
     publication: "학술 논문",
     ip: "지식재산권",
@@ -78,6 +82,7 @@ export const PREVIEW_TITLES: Record<PreviewLang, Record<string, string>> = {
     skill: "Compétences",
     advantage: "Atouts",
     work: "Expérience professionnelle",
+    internship: "Stages", // 实习模块标题。
     project: "Projets",
     publication: "Publications",
     ip: "Propriété intellectuelle",
@@ -92,6 +97,7 @@ export const PREVIEW_TITLES: Record<PreviewLang, Record<string, string>> = {
     skill: "Fähigkeiten",
     advantage: "Stärken",
     work: "Berufserfahrung",
+    internship: "Praktika", // 实习模块标题。
     project: "Projekte",
     publication: "Publikationen",
     ip: "Geistiges Eigentum",
@@ -106,6 +112,7 @@ export const PREVIEW_TITLES: Record<PreviewLang, Record<string, string>> = {
     skill: "Habilidades",
     advantage: "Fortalezas",
     work: "Experiencia laboral",
+    internship: "Prácticas profesionales", // 实习模块标题。
     project: "Proyectos",
     publication: "Publicaciones",
     ip: "Propiedad intelectual",
@@ -120,6 +127,7 @@ export const PREVIEW_TITLES: Record<PreviewLang, Record<string, string>> = {
     skill: "Навыки",
     advantage: "Сильные стороны",
     work: "Опыт работы",
+    internship: "Стажировки", // 实习模块标题。
     project: "Проекты",
     publication: "Публикации",
     ip: "Интеллектуальная собственность",

@@ -74,7 +74,30 @@ describe("通用模块装配", () => {
 });
 
 describe("buildLayoutNodes media modules", () => {
-  it.each(["work", "project", "education", "account", "honor", "image", "video", "custom_demo"])(
+  it("实习经历使用经历节点并保留岗位与部门信息", () => {
+    const nodes = buildLayoutNodes({
+      moduleKeys: ["internship"], // 当前预览的实习模块。
+      data: { // 当前简历业务数据。
+        internship: { // 实习经历模块。
+          list: [{ // 实习记录列表。
+            data: { // 实习业务字段。
+              name: "实习公司", // 公司名称。
+              post: "产品实习生", // 实习岗位。
+              department: "产品部", // 所在部门。
+              content: "<p>参与需求调研。</p>", // 实习正文。
+            },
+          }],
+        },
+      },
+    });
+    const item = nodes.find((node) => node.id === "internship.item-0");
+    expect(item?.contentKind).toBe("experience");
+    expect(item?.sourceModuleKey).toBe("internship");
+    expect(item?.payload).toMatchObject({ inlineInfo: ["产品实习生", "产品部"] });
+    expect(item?.breakPoints?.length).toBeGreaterThan(0);
+  });
+
+  it.each(["work", "internship", "project", "education", "account", "honor", "image", "video", "custom_demo"])(
     "%s 模块每个条目前均保留独立段间距",
     (moduleKey) => {
       const nodes = buildLayoutNodes({

@@ -1285,6 +1285,13 @@ export const DEFAULT_WORK_FORM = {
     },
   ],
 } satisfies FormField;
+// 实习经历独立保存，复用工作经历字段及记录操作，不共享配置引用。
+export const DEFAULT_INTERNSHIP_FORM = {
+  ...structuredClone(DEFAULT_WORK_FORM), // 实习字段与工作经历使用相同表单结构。
+  key: "internship", // 实习经历模块标识。
+  context: ["internship"], // 实习经历数据绑定路径。
+  model: createModuleState("实习经历"), // 实习模块标题与界面状态绑定。
+} satisfies FormField;
 // 项目经历
 export const DEFAULT_PROJECT_FORM = {
   type: "group",
@@ -2365,6 +2372,7 @@ export const allConfig = {
   image: DEFAULT_IMAGE_FORM,
   account: DEFAULT_ACCOUNT_FORM,
   work: DEFAULT_WORK_FORM,
+  internship: DEFAULT_INTERNSHIP_FORM, // 实习经历表单配置。
   project: DEFAULT_PROJECT_FORM,
   publication: DEFAULT_PUBLICATION_FORM,
   ip: DEFAULT_IP_FORM,

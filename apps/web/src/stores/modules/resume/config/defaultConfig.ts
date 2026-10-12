@@ -10,6 +10,11 @@ export const DEFAULT_MODULE_NAMES: { key: string; name: string; icon: string }[]
   { key: "skill", name: "专业技能", icon: "mdi:hammer-wrench" },
   { key: "advantage", name: "个人优势", icon: "fa6-solid:seedling" },
   { key: "work", name: "工作经历", icon: "lucide:briefcase" },
+  {
+    key: "internship", // 实习经历模块标识。
+    name: "实习经历", // 模块默认名称。
+    icon: "lucide:briefcase", // 实习经历导航图标。
+  },
   { key: "project", name: "项目经历", icon: "mdi:code-tags" },
   { key: "publication", name: "学术论文", icon: "mdi:file-document-multiple-outline" },
   { key: "ip", name: "知识产权", icon: "mdi:certificate-outline" },
