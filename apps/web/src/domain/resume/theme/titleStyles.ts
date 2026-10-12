@@ -15,6 +15,7 @@ export const titleStyleList = [
   { id: "railMark", scope: "standalone", name: "引导竖块", description: "标题左侧一道竖向短块，与正文引导线同轴。" },
   { id: "diamondPrefix", scope: "standalone", name: "菱形前缀", description: "标题前一个主题色菱形。" },
   { id: "darkLabelBar", scope: "standalone", name: "深色标签条", description: "标题落在深灰实色标签上，右侧接浅灰底条。", titleSize: 21 },
+  { id: "slantedBaseBand", scope: "standalone", name: "斜角底带", description: "标题位于右端斜切的色块上，下方浅灰横带向右延伸。", titleSize: 22 },
   { id: "barHeavyRule", scope: "standalone", name: "竖条粗线", description: "竖条引导，标题下方一条主题色粗线。", titleSize: 21 },
   { id: "twinSquareBar", scope: "standalone", name: "双方块条", description: "两个小方块引导，标题落在同色实心条上。", titleSize: 21 },
   { id: "diamondTrail", scope: "standalone", name: "菱形尾饰", description: "标题左对齐，右侧一串菱形点收尾。" },

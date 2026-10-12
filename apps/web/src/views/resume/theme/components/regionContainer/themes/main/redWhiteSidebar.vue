@@ -9,7 +9,6 @@ const sidebarStyle = computed(() => ({
   "--red-sidebar-vertical": "var(--resume-page-inset-vertical)", // 底色向纸张上边缘延伸的距离
   "--red-sidebar-accent": themeColor.value, // 左栏背景及标题的主题色
   "--red-sidebar-contrast": themeColorContrast.value, // 左栏文字按背景亮度自动反白或转深色
-  "--red-sidebar-diamonds": `url("data:image/svg+xml,${encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="240" height="240"><path fill="${themeColor.value}" d="M120 42l24 24-24 24-24-24zM42 162l24 24-24 24-24-24z"/></svg>`)}")`, // 右栏不占排版空间的淡菱形底纹
 }));
 </script>
 
@@ -40,16 +39,6 @@ const sidebarStyle = computed(() => ({
   bottom: calc(-1 * var(--resume-bottom-space, 0px));
   left: calc(-1 * var(--red-sidebar-horizontal));
   background: var(--red-sidebar-accent);
-  pointer-events: none;
-}
-
-.red-white-sidebar :deep(> [data-resume-column="right"])::before {
-  content: "";
-  position: absolute;
-  z-index: -1;
-  inset: 0;
-  background-image: var(--red-sidebar-diamonds);
-  opacity: 0.025;
   pointer-events: none;
 }
 </style>

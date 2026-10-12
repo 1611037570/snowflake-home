@@ -12,7 +12,7 @@ import i18n, { $t } from "@/locales";
 const resumeStore = useResumeStore();
 const { currentUI } = storeToRefs(resumeStore);
 const previewBase = ref(null);
-const selectedDesign = ref(""); // 当前设计分类
+const selectedDesign = ref(""); // 当前设计分类，空值时暂不展示极简和简约主题
 
 // 与模板库共用设计分类参数，再次点击当前分类恢复全部模板。
 const toggleDesign = (key) => {
@@ -34,8 +34,8 @@ const templates = computed(() => {
   if (!i18n.global.locale.value) return [];
   return resumeStyleTemplateList
     .filter((style) => {
-      // 未选分类时展示全部模板，选中分类后按标签筛选。
-      if (!selectedDesign.value) return true;
+      // 未选择分类时隐藏极简模板，选中极简分类后再按标签筛选。
+      if (!selectedDesign.value) return !style.design.includes("plain");
       return style.design.includes("all") || style.design.includes(selectedDesign.value);
     })
     .map((style) => ({

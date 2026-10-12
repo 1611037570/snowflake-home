@@ -8,11 +8,17 @@ export default {
   decisions: { // 主题固定外观，不进入用户界面配置
     topDecoration: "sloganBand", // 首页顶部独立品牌标语装饰
     layoutType: "topUserSingleColumn", // 标语与个人信息各自独占通栏区域
+    regions: { // 区域背景的铺满能力
+      user: { // 个人信息区域
+        fillsPageTop: true, // 个人信息背景铺满纸张宽度
+      },
+    },
   },
   ui: {
     // 主题相对默认配置的差异
     theme: {
-      color: "#0F766E", // 主题色：同时作为标语色带底色
+      color: "#C92327", // 主题色：标语、个人信息背景与标题统一使用红色
+      titleTemplate: "slantedBands", // 模块标题样式：斜纹色带
     },
     font: { size: 15, lineHeight: 1.3 }, // 字号与行高
     page: {
