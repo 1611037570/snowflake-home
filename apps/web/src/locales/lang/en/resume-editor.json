@@ -474,6 +474,7 @@
   "lineHeightUnit": "x",
   "adaptiveOnePage": "Fit One Page",
   "adaptiveMax": "Fit Width",
+  "standardA4": "Standard A4",
   "adaptive": "Adaptive",
   "onePage": "One Page",
   "compressingOnePage": "Fitting to one page",
