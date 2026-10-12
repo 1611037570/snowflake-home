@@ -627,6 +627,8 @@
   "downloadRecommendedBrowser": "Download Google Chrome",
   "printColorMode": "Switch to Color Mode",
   "printGrayMode": "Switch to Grayscale Mode (Simulated Black-and-White Printing)",
+  "styleHintHover": "Think the style looks off?",
+  "styleHintContent": "If the layout looks off, confirming will switch to \"Standard A4\". What you see at small scale comes from zooming, not from the style itself.",
   "exportProgress": "Export Progress",
   "exportingResume": "Exporting Resume",
   "exportTip": "Please wait. The file will download shortly",
