@@ -1,4 +1,9 @@
 <script setup>
+import { inject, ref } from "vue";
+
+// 选择入口使用统一交互条件，包含标签激活与导出状态。
+const canSelectModules = inject("resumeCanSelectModules", ref(false));
+
 defineProps({
   selected: {
     type: Boolean,
@@ -45,13 +50,13 @@ const moveButtonClass =
         <SfIcon icon="lucide:arrow-right" size="3.5" />
       </div>
     </SfTooltip>
-    <SfTooltip :content="selected ? $t('cancelSelection') : $t('selectModule')">
+    <SfTooltip v-if="canSelectModules" :content="selected ? $t('cancelSelection') : $t('selectModule')">
       <div
         class="cursor-pointer items-center justify-center rounded-full p-1.5 text-white shadow hover:bg-sf-theme"
         :class="selected ? 'flex bg-sf-theme ' : 'hidden bg-sf-info group-hover/module:flex '"
         @click.stop="handleSelect"
       >
-        <SfIcon icon="lucide:pencil" size="3.5" />
+        <SfIcon icon="lucide:sparkles" size="3.5" />
       </div>
     </SfTooltip>
   </div>
