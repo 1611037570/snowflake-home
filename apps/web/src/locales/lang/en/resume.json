@@ -236,6 +236,8 @@
   "resumeTemplateStyle_diamondPrefix_description": "A theme-colored diamond before the title.",
   "resumeTemplateStyle_darkLabelBar_name": "Dark Label Bar",
   "resumeTemplateStyle_darkLabelBar_description": "The title sits on a dark solid label with a light gray band beside it.",
+  "resumeTemplateStyle_slantedBaseBand_name": "Slanted Base Band",
+  "resumeTemplateStyle_slantedBaseBand_description": "A slanted color label sits over a light gray band extending to the right.",
   "resumeTemplateStyle_barHeavyRule_name": "Left Bar Heavy Rule",
   "resumeTemplateStyle_barHeavyRule_description": "A theme-colored bar leads in, with a thick rule below the title.",
   "resumeTemplateStyle_twinSquareBar_name": "Twin Square Bar",

@@ -236,6 +236,8 @@
   "resumeTemplateStyle_diamondPrefix_description": "标题前一个主题色菱形。",
   "resumeTemplateStyle_darkLabelBar_name": "深色标签条",
   "resumeTemplateStyle_darkLabelBar_description": "标题落在深灰实色标签上，右侧接浅灰底条。",
+  "resumeTemplateStyle_slantedBaseBand_name": "斜角底带",
+  "resumeTemplateStyle_slantedBaseBand_description": "标题位于右端斜切的色块上，下方浅灰横带向右延伸。",
   "resumeTemplateStyle_barHeavyRule_name": "竖条粗线",
   "resumeTemplateStyle_barHeavyRule_description": "竖条引导，标题下方一条主题色粗线。",
   "resumeTemplateStyle_twinSquareBar_name": "双方块条",

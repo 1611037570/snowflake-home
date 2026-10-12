@@ -25,6 +25,7 @@ const plainTitleThemeSpecs = [
   { id: "plainMatchedUnderline", titleStyleId: "matchedUnderline", color: "#B00035", padding: { vertical: 27, horizontal: 30 } },
   { id: "plainRoundedLabel", titleStyleId: "roundedLabel", color: "#EA580C", padding: { vertical: 27, horizontal: 27 } },
   { id: "plainCapsuleRule", titleStyleId: "capsuleRule", color: "#6683A8", padding: { vertical: 27, horizontal: 27 } },
+  { id: "plainSlantedBaseBand", titleStyleId: "slantedBaseBand", color: "#595959", padding: { vertical: 27, horizontal: 27 } },
   { id: "plainTrailingRule", titleStyleId: "trailingRule", color: "#187F89", padding: { vertical: 30, horizontal: 30 } },
   { id: "plainTitleUnderline", titleStyleId: "titleUnderline", color: "#087F8C", padding: { vertical: 24, horizontal: 24 } },
   { id: "plainBarColorTitle", titleStyleId: "barColorTitle", color: "#25677D", padding: { vertical: 30, horizontal: 30 } },
