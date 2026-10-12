@@ -12,6 +12,7 @@ import colorBar from "@/domain/resume/theme/styles/colorBar";
 import curvedHeader from "@/domain/resume/theme/styles/curvedHeader";
 import defaultTheme from "@/domain/resume/theme/styles/default";
 import doubleArrow from "@/domain/resume/theme/styles/doubleArrow";
+import fileIndex from "@/domain/resume/theme/styles/fileIndex";
 import frame from "@/domain/resume/theme/styles/frame";
 import inkSidebar from "@/domain/resume/theme/styles/inkSidebar";
 import labelLine from "@/domain/resume/theme/styles/labelLine";
@@ -21,6 +22,7 @@ import markerGrid from "@/domain/resume/theme/styles/markerGrid";
 import minimal from "@/domain/resume/theme/styles/minimal";
 import modern from "@/domain/resume/theme/styles/modern";
 import navyGuide from "@/domain/resume/theme/styles/navyGuide";
+import noteGrid from "@/domain/resume/theme/styles/noteGrid";
 import numberedSections from "@/domain/resume/theme/styles/numberedSections";
 import outline from "@/domain/resume/theme/styles/outline";
 import plainColorBar from "@/domain/resume/theme/styles/plainColorBar";
@@ -78,6 +80,7 @@ export const themeTemplateList = createThemeTemplates([
   colorBar,
   plainColorBar,
   frame,
+  fileIndex,
   squareTimeline,
   ringTimeline,
   sailMasthead,
@@ -88,6 +91,7 @@ export const themeTemplateList = createThemeTemplates([
   layeredCurve,
   lightSail,
   markerGrid,
+  noteGrid,
   doubleArrow,
   chevronRibbon,
   slantedLayer,

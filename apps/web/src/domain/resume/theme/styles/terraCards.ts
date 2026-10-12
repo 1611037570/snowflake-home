@@ -3,7 +3,7 @@ import type { ThemeTemplateConfig } from "@/domain/resume/theme/styles/createThe
 export default {
   name: "暖陶卡片", // 主题显示名称
   id: "terraCards" as const, // 主题编号
-  design: ["two-column", "polished"], // 双栏与精美分类
+  design: ["two-column", "minimal"], // 双栏与简约分类
   description: "暖米色个人信息卡与双栏正文卡片，陶色标题和细线组织内容。", // 主题说明
   pageAppearance: { // 正文中性色与暖色卡片搭配
     textColor: "#4A4541", // 正文文字颜色

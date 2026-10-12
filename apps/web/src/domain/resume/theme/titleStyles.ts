@@ -50,6 +50,23 @@ export const titleStyleList = [
   { id: "doubleRuleTitle", scope: "standalone", name: "双线夹标题", description: "标题上下各一条线，上线通栏、下线随文字宽度。", titleSize: 17 },
   { id: "solidLabelTrail", scope: "standalone", name: "色块引线", description: "标题落在实色块上，右侧细线接一个圆点。" },
   { id: "terraCardRule", scope: "theme", name: "卡片引线", description: "暖色卡片内的标题向右延伸细线。", titleSize: 16 }, // 暖陶卡片配套标题
+  {
+    id: "noteGridTab", // 手帐标题样式编号
+    scope: "standalone", // 供格纸手帐与简约主题共用
+    name: "手帐标题签", // 标题样式名称
+    description: "浅色标题签搭配手帐虚线。", // 标题样式说明
+    titleIconMode: "none", // 默认隐藏模块图标
+    titleSize: 18, // 默认标题字号
+  },
+  { id: "fileIndexHeading", scope: "theme", name: "档案细线", description: "左侧序号对应的纯文字标题与细线。", titleIconMode: "none", titleSize: 18 }, // 序号档案配套标题
+  {
+    id: "plainFileIndexHeading", // 独立档案序号标题样式编号
+    scope: "standalone", // 允许独立选择并生成简约主题
+    name: "档案序号细线", // 标题样式名称
+    description: "两位模块序号、标题与右延细线组成独立标题。", // 标题样式说明
+    titleIconMode: "none", // 默认隐藏模块图标
+    titleSize: 18, // 默认标题字号
+  },
 ] satisfies TitleStyleDefinition[];
 
 /** 标题样式编号 */
