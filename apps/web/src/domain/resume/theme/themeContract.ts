@@ -19,6 +19,7 @@ export interface ThemeRegionContract {
   inset?: ThemeInset; // 区域装饰内部空间
   columns?: Partial<Record<"left" | "right", ThemeColumnInset>>; // 按语义栏位声明内部空间
   fillsPageTop?: boolean; // 区域背景是否覆盖纸张顶边，内容仍遵守页面边距
+  joinsPrevious?: boolean; // 当前区域是否紧贴前一区域，关闭区域边界的模块间距
 }
 
 export type ThemeRestrictions = Partial<Record<
@@ -59,6 +60,7 @@ export const validateThemeCapabilities = (capabilities: ThemeCapabilities): stri
     if (!["slogan", "user", "main"].includes(slot)) errors.push(`regions.${slot}`);
     if (!isObject(region)) { errors.push(`regions.${slot}`); continue; }
     if (region.fillsPageTop !== undefined && typeof region.fillsPageTop !== "boolean") errors.push(`regions.${slot}.fillsPageTop`);
+    if (region.joinsPrevious !== undefined && typeof region.joinsPrevious !== "boolean") errors.push(`regions.${slot}.joinsPrevious`);
     if (region.inset !== undefined && !isObject(region.inset)) errors.push(`regions.${slot}.inset`);
     if (isObject(region.inset)) for (const side of ["top", "right", "bottom", "left"] as const) check(region.inset![side], `regions.${slot}.inset.${side}`);
     if (region.columns !== undefined && !isObject(region.columns)) errors.push(`regions.${slot}.columns`);

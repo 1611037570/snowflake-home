@@ -7,11 +7,11 @@ const {
 </script>
 
 <template>
-  <!-- 圆形以正文区域为定位基准，背景层不改变正文排版。 -->
+  <!-- 双圆以正文区域为定位基准，不改变正文排版。 -->
   <div class="resume-view-container relative box-border flex min-w-0 bg-transparent text-inherit">
     <div
       aria-hidden="true"
-      class="teal-ribbon-main-decoration pointer-events-none absolute inset-y-0 left-0 overflow-hidden"
+      class="teal-ribbon-circles-decoration pointer-events-none absolute inset-y-0 left-0 overflow-hidden"
       :style="{ right: 'calc(-1 * var(--resume-page-inset-horizontal, 0px))' }"
     >
       <span
@@ -28,8 +28,8 @@ const {
 </template>
 
 <style scoped>
-/* 右上角圆形仅随第一页正文出现。 */
-:global(.resume-page-item:not([data-page-index="0"]) .teal-ribbon-main-decoration) {
+/* 双圆仅随第一页正文出现。 */
+:global(.resume-page-item:not([data-page-index="0"]) .teal-ribbon-circles-decoration) {
   display: none;
 }
 </style>

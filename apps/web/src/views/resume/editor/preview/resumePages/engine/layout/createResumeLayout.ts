@@ -54,11 +54,11 @@ export const createResumeLayout = ({
       ? "user"
       : "main"
     : null;
-  // 个人信息与正文第一个模块之间同样是模块之间的距离，按模块上下间距在两区域之间渲染一次间隙
+  // 个人信息与正文默认按模块间距分隔，后续由区域贴合声明决定是否保留。
   const userRegionIndex = layout.regions.findIndex((region) => region.id === "user");
   const moduleGapRegionId =
     userRegionIndex >= 0 ? (layout.regions[userRegionIndex + 1]?.id ?? null) : null;
-  // 装饰尺寸统一读取主题契约，区域之间的距离仅由公共模块间距结算。
+  // 装饰尺寸统一读取主题契约，区域间距由布局结算。
   return {
     ...layout,
     fullBleedRegionId,
@@ -66,8 +66,8 @@ export const createResumeLayout = ({
       const slot = resolveRegionSlot(region.id);
       const contract = slot ? themeDecisions.regions?.[slot] : undefined;
       const padding = contract?.inset ?? EMPTY_THEME_INSET;
-      // 区域之间只使用公共模块间距；装饰内边距独立声明，不能覆盖它。
-      const regionGapBefore = region.id === moduleGapRegionId ? gap : 0;
+      // 相邻区域默认沿用模块间距，主题可声明贴合前一区域。
+      const regionGapBefore = region.id === moduleGapRegionId && !contract?.joinsPrevious ? gap : 0;
       return {
         ...region,
         // 栏位由公共双栏结构确定，主题通过语义编号声明内部装饰空间。

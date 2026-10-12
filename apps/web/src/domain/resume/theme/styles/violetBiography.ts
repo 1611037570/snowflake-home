@@ -13,6 +13,7 @@ export default {
   decisions: { // 主题固定外观，不进入用户界面配置
     regions: { // 区域装饰尺寸
       main: { // 正文区域
+        joinsPrevious: true, // 正文底板紧贴个人信息区域
         inset: { // 区域四周装饰内边距
           top: 24, // 上侧装饰内边距
           right: 24, // 右侧装饰内边距

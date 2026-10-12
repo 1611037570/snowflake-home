@@ -2,7 +2,7 @@
 import { useResumeStore } from "@/stores";
 import { trackResumeAction } from "@/hooks";
 import {
-  resolveThemeDecisions,
+  createResumeStyleUi,
   resumeStyleTemplateList,
 } from "@/views/resume/theme";
 import ThumbPreview from "@/views/resume/editor/preview/modes/thumb.vue";
@@ -12,7 +12,6 @@ import TemplatePagination from "./components/templatePagination.vue";
 import { resumeTemplateList } from "./data/list";
 import { loadResumeTemplateData } from "./data/resumeData";
 import { expandConfigModules } from "@/stores/modules/resume/hooks/useConfigTemplate";
-import { resolveLayoutColumns, layoutUsesColumns } from "@/domain/resume/theme/layouts";
 import { darkThemeColors, lightThemeColors } from "@/configs/modules/theme";
 import { useThemeStore } from "@/stores/modules/theme";
 import { storeToRefs } from "pinia";
@@ -65,13 +64,13 @@ const resolveStyleItem = (style) => ({
   config: previewBase.value?.config || {},
   ui: style.ui,
 });
-// 全部模板：小舟提供示例内容，样式模板提供完整 UI；主题模板与标题样式模板并列成卡片。
+// 全部模板：小舟提供示例内容，每张样式卡片对应一份独立主题预设。
 const templates = computed(() =>
   resumeStyleTemplateList.map((style, index) => ({
     fileName: style.id,
     id: style.id,
-    name: $t(`resumeTemplateStyle_${style.id}_name`),
-    description: $t(`resumeTemplateStyle_${style.id}_description`),
+    name: $t(`resumeTemplateStyle_${style.localeId}_name`),
+    description: $t(`resumeTemplateStyle_${style.localeId}_description`),
     // 设计分类标签：与内容模板的 design 同一字段名、同一套取值，供设计分类筛选
     design: style.design,
     tags: [],
@@ -84,26 +83,20 @@ const templates = computed(() =>
 const templateFilters = ref({});
 // 一级分类：example 展示简历范本，template 展示简历模板
 const currentTopCategory = ref("example");
+// 两类模板共用筛选规则；设计标签中的 all 仅对样式主题生效。
+const matchesTemplateFilters = (template, allowAllDesign = false) =>
+  Object.entries(templateFilters.value).every(([key, value]) => {
+    if (!value) return true;
+    const values = template[key];
+    return !Array.isArray(values) || (allowAllDesign && values.includes("all")) || values.includes(value);
+  });
 // 范本索引先按筛选条件过滤，正文留到确定当前页之后再加载
 const filteredResumeIndexes = computed(() =>
-  resumeTemplateList.filter((template) =>
-    Object.entries(templateFilters.value).every(([key, value]) => {
-      if (!value) return true;
-      const values = template[key];
-      // 按选项取值精确匹配：不限行业/不限职位的范本只在选中「不限行业」「不限职位」时出现
-      return !Array.isArray(values) || values.includes(value);
-    }),
-  ),
+  resumeTemplateList.filter((template) => matchesTemplateFilters(template)),
 );
 // 简历模板按 design 字段筛选：与范本的场景、行业、职位筛选互不干扰
 const filteredStyleTemplates = computed(() =>
-  templates.value.filter((template) =>
-    Object.entries(templateFilters.value).every(([key, value]) => {
-      if (!value) return true;
-      const values = template[key];
-      return !Array.isArray(values) || values.includes("all") || values.includes(value);
-    }),
-  ),
+  templates.value.filter((template) => matchesTemplateFilters(template, true)),
 );
 // 当前一级分类的总条数与总页数，不足一页时按一页处理
 const currentTotal = computed(() =>
@@ -168,58 +161,39 @@ const setCurrentTopCategory = (value) => {
   templatePage.value = 1;
 };
 
-// 套用模板：携带风格，深拷贝数据后新增简历并进入编辑
-const useTemplate = (card) => {
+// 样式卡片使用预览范本的内容，并以主题预设生成独立的简历配置。
+const createStyleResumeItem = (card) => {
   // 内容与模块清单以卡片为准，主题组件自行提供标语内容。
   const source = card.item?.config?.modules ? card.item : previewBase.value;
-  if (!source) return;
-  const ui = deepClone(card.item.ui);
+  if (!source) return null;
   const moduleKeys = expandConfigModules(source.config?.modules || [], source.data)
     .map((field) => field.key)
     .filter(Boolean);
-  // 版式由主题定义决定，不写入简历 ui；仅双栏布局生成栏内模块顺序。
-  const { layoutType } = resolveThemeDecisions(ui.theme?.template);
-  ui.layout.columns = layoutUsesColumns(layoutType)
-    ? resolveLayoutColumns(layoutType, moduleKeys, ui.layout.columns)
-    : null;
-  // 新建成功后上报一次简历创建动作
-  if (
-    resumeStore.addResume({
-      data: deepClone(source.data),
-      config: deepClone(source.config),
-      ui,
-    })
-  ) {
-    trackResumeAction({ eventType: "create", fileType: "none" });
-  }
+  return {
+    data: deepClone(source.data), // 与预览隔离的简历内容
+    config: deepClone(source.config), // 与预览隔离的模块配置
+    ui: createResumeStyleUi(card.item.ui, moduleKeys), // 当前主题的完整界面配置
+  };
 };
-const useContentTemplate = (card) => {
-  // 新建成功后上报一次简历创建动作
-  if (resumeStore.addResume(deepClone(card.item))) {
-    trackResumeAction({ eventType: "create", fileType: "none" });
-  }
-};
+// 列表按钮与全屏预览按钮共用一次新建和埋点流程。
 const useTemplateCard = (card) => {
-  if (card.type === "style") useTemplate(card);
-  else useContentTemplate(card);
+  const item = card.type === "style" ? createStyleResumeItem(card) : deepClone(card.item);
+  if (item && resumeStore.addResume(item)) {
+    trackResumeAction({ eventType: "create", fileType: "none" });
+  }
 };
 
 // 全屏预览：记录当前展开的模板卡片，visible 由其是否存在派生
 const fullscreenCard = ref(null);
-const fullscreenType = ref("style");
 const isFullscreen = computed(() => !!fullscreenCard.value);
-const openFullscreen = (card, type = "style") => {
+const openFullscreen = (card) => {
   fullscreenCard.value = card;
-  fullscreenType.value = type;
 };
 const closeFullscreen = () => {
   fullscreenCard.value = null;
 };
 const useFullscreenTemplate = () => {
-  if (fullscreenCard.value) {
-    if (fullscreenType.value === "content") useContentTemplate(fullscreenCard.value);
-    else useTemplate(fullscreenCard.value);
-  }
+  if (fullscreenCard.value) useTemplateCard(fullscreenCard.value);
   closeFullscreen();
 };
 
@@ -274,7 +248,7 @@ const tagTextClass = computed(() => (isDark.value ? "text-sf-theme-text" : "text
             <div
               :class="cardSizeClass"
               class="group relative flex cursor-pointer flex-col overflow-hidden rounded-[4px] border border-sf-b bg-sf-primary transition-all duration-200 hover:scale-102 hover:border-sf-theme"
-              @click="openFullscreen(card, card.type)"
+              @click="openFullscreen(card)"
             >
               <!-- 缩略图铺满整卡，信息层浮在它的下半部分之上 -->
               <div class="absolute inset-0">
@@ -286,7 +260,7 @@ const tagTextClass = computed(() => (isDark.value ? "text-sf-theme-text" : "text
                 <div
                   class="invisible absolute inset-0 flex items-center justify-center gap-3 bg-sf-transparent-3 opacity-0 transition-all duration-200 group-hover:visible group-hover:opacity-100"
                 >
-                  <SfButton @click.stop="openFullscreen(card, card.type)">
+                  <SfButton @click.stop="openFullscreen(card)">
                     {{ $t("resumeTemplatePreview") }}
                   </SfButton>
                   <SfButton @click.stop="useTemplateCard(card)">
@@ -342,7 +316,7 @@ const tagTextClass = computed(() => (isDark.value ? "text-sf-theme-text" : "text
       :item="fullscreenCard?.item || {}"
       single-page
       :eyebrow-text="
-        $t(fullscreenType === 'content' ? 'resumeTemplateContent' : 'resumeTemplateStyle')
+        $t(fullscreenCard?.type === 'content' ? 'resumeTemplateContent' : 'resumeTemplateStyle')
       "
       :title="fullscreenCard?.name || $t('resumeTemplateTitle')"
       :description="fullscreenCard?.description || ''"

@@ -22,6 +22,7 @@ import navyGuide from "@/domain/resume/theme/styles/navyGuide";
 import numberedSections from "@/domain/resume/theme/styles/numberedSections";
 import outline from "@/domain/resume/theme/styles/outline";
 import plainColorBar from "@/domain/resume/theme/styles/plainColorBar";
+import { plainTitleThemes } from "@/domain/resume/theme/styles/plainTitleThemes";
 import sandSidebar from "@/domain/resume/theme/styles/sandSidebar";
 import redWhiteSidebar from "@/domain/resume/theme/styles/redWhiteSidebar";
 import ringTimeline from "@/domain/resume/theme/styles/ringTimeline";
@@ -30,6 +31,7 @@ import sloganBand from "@/domain/resume/theme/styles/sloganBand";
 import songElegance from "@/domain/resume/theme/styles/songElegance";
 import tealRail from "@/domain/resume/theme/styles/tealRail";
 import tealRibbon from "@/domain/resume/theme/styles/tealRibbon";
+import tealRibbonCircles from "@/domain/resume/theme/styles/tealRibbonCircles";
 import tealCard from "@/domain/resume/theme/styles/tealCard";
 import stripedRibbon from "@/domain/resume/theme/styles/stripedRibbon";
 import squareTimeline from "@/domain/resume/theme/styles/squareTimeline";
@@ -62,6 +64,7 @@ export const themeTemplateList = createThemeTemplates([
   vivid,
   tealRail,
   tealRibbon,
+  tealRibbonCircles,
   tealCard,
   outline,
   topUserTwoColumn,
@@ -85,6 +88,7 @@ export const themeTemplateList = createThemeTemplates([
   songElegance,
   userBand,
   curvedHeader,
+  ...plainTitleThemes,
 ]);
 
 /** 由主题声明推导编号，避免另行维护主题编号名单。 */
