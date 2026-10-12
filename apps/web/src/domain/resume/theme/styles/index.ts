@@ -36,6 +36,7 @@ import tealRail from "@/domain/resume/theme/styles/tealRail";
 import tealRibbon from "@/domain/resume/theme/styles/tealRibbon";
 import tealRibbonCircles from "@/domain/resume/theme/styles/tealRibbonCircles";
 import tealCard from "@/domain/resume/theme/styles/tealCard";
+import terraCards from "@/domain/resume/theme/styles/terraCards";
 import stripedRibbon from "@/domain/resume/theme/styles/stripedRibbon";
 import squareTimeline from "@/domain/resume/theme/styles/squareTimeline";
 import topUserTwoColumn from "@/domain/resume/theme/styles/topUserTwoColumn";
@@ -68,6 +69,7 @@ export const themeTemplateList = createThemeTemplates([
   tealRibbon,
   tealRibbonCircles,
   tealCard,
+  terraCards,
   outline,
   topUserTwoColumn,
   twoColumn,
