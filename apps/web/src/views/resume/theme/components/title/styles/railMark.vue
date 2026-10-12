@@ -11,12 +11,12 @@ const {
 </script>
 
 <template>
-  <!-- 标记与正文区域的细线同轴，标题本身仍参与正常排版。 -->
+  <!-- 竖块对准正文区域左侧留白，标题本身仍参与正常排版。 -->
   <div class="relative flex min-h-9 items-center">
     <span
       aria-hidden="true"
       class="pointer-events-none absolute h-9 w-[3px]"
-      :style="{ left: 'calc(0px - var(--navy-guide-rail-offset))', backgroundColor: themeColor }"
+      :style="{ left: 'calc(0px - var(--resume-region-inset-left, 0px))', backgroundColor: themeColor }"
     />
     <h2 class="min-w-0 font-bold tracking-wide break-words"><TitleText :title="title" /></h2>
   </div>

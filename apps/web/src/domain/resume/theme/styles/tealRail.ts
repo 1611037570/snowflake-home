@@ -28,7 +28,7 @@ export default {
   ui: {
     theme: {
       color: "#49BDB6", // 竖线与标题节点的主题色
-      titleIconMode: "none", // 标题装饰由主题组件绘制
+      titleTemplate: "railDotRule", // 模块标题样式：轴线圆点
     },
     page: {
       padding: { vertical: 48, horizontal: 48 }, // 页面外侧留白

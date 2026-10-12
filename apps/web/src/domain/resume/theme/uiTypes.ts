@@ -31,6 +31,7 @@ export interface ResumeUi {
   theme: { // 用户可调主题参数
     color: string; // 主题色
     template: string; // 当前主题编号
+    titleTemplate: string; // 标题样式编号，auto 表示使用主题默认标题样式
     titleIconMode: string; // 模块标题图标模式
   };
   layout: { // 用户可调栏位参数
@@ -57,5 +58,5 @@ export type ResumeUiOverrides = UiOverrides<ResumeUi>;
 
 /** 主题预设不得自行覆盖其主题编号。 */
 export type ThemeUiPreset = Omit<ResumeUiOverrides, "theme"> & {
-  theme?: Omit<NonNullable<ResumeUiOverrides["theme"]>, "template">; // 主题色与标题图标默认值
+  theme?: Omit<NonNullable<ResumeUiOverrides["theme"]>, "template">; // 主题色默认值；标题图标与标题字号由主题默认标题样式提供
 };

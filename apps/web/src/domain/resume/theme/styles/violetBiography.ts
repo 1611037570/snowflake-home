@@ -34,7 +34,7 @@ export default {
   ui: {
     theme: {
       color: "#BD55D9", // 标题菱形与栏间分割线颜色
-      titleIconMode: "none", // 标题装饰由主题组件绘制
+      titleTemplate: "diamondPrefix", // 模块标题样式：菱形前缀
     },
     page: {
       background: "#A950DF", // 纸张底色承接正文圆角与页面边距露出的区域

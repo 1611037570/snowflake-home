@@ -15,7 +15,7 @@ const {
 </script>
 
 <template>
-  <!-- 简约风格：纯标题文字，只有一条极细底线与字距 -->
+  <!-- 极细底线：纯标题文字，只有一条极细底线与字距 -->
   <h2
     class="minimal-title relative max-w-full min-w-0 pb-3 font-bold tracking-[0.08em] break-words"
     :style="{ '--minimal-title-line': themeColorLine }"

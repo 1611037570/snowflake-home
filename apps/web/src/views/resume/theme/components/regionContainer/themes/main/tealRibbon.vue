@@ -29,7 +29,7 @@ const {
 
 <style scoped>
 /* 右上角圆形仅随第一页正文出现。 */
-:global(.resume-page-item:not([data-page-index="0"])) .teal-ribbon-main-decoration {
+:global(.resume-page-item:not([data-page-index="0"]) .teal-ribbon-main-decoration) {
   display: none;
 }
 </style>

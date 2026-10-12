@@ -13,7 +13,10 @@ export default {
     layoutType: "twoColumn", // 主题固定页面版式
   },
   ui: {
-    theme: { color: "#7C3AED" },
+    theme: {
+      color: "#7C3AED",
+      titleTemplate: "barColorTitle", // 模块标题样式：圆条标题
+    },
     user: { avatarPosition: "left" }, // 双栏头像默认居左，后续仍可通过头像位置设置调整
   },
 } satisfies ThemeTemplateConfig;

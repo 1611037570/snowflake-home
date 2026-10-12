@@ -6,7 +6,7 @@ export default {
   /** 主题与标题组件的匹配标识 */
   id: "markerGrid" as const, // 主题编号
   /** 主题筛选分类 */
-  design: ["single-column", "polished"],
+  design: ["single-column", "minimal"], // 移至简约分类
   /** 主题样式说明 */
   description: "浅灰虚线网格铺满页面，荧光笔刷底纹突出模块标题。",
   /** 页面与标题的外观配置 */
@@ -18,8 +18,7 @@ export default {
     theme: {
       /** 标题笔刷底纹使用荧光绿 */
       color: "#BEFF38",
-      /** 默认隐藏标题图标 */
-      titleIconMode: "none",
+      titleTemplate: "highlightBrush", // 模块标题样式：荧光笔触
     },
   },
 } satisfies ThemeTemplateConfig;

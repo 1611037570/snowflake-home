@@ -2,9 +2,8 @@
 import { useResumeStore } from "@/stores";
 import { trackResumeAction } from "@/hooks";
 import {
-  getResumeThemeTemplate,
-  themeTemplateList,
   resolveThemeDecisions,
+  resumeStyleTemplateList,
 } from "@/views/resume/theme";
 import ThumbPreview from "@/views/resume/editor/preview/modes/thumb.vue";
 import RevealGrid from "@/views/resume/components/revealGrid.vue";
@@ -60,22 +59,20 @@ const ensureTemplateItems = async (fileNames) => {
 // 深拷贝：套用模板时隔离示例数据，避免与模板预览共享引用导致互相串改
 const deepClone = (value) => JSON.parse(JSON.stringify(value));
 const previewBase = computed(() => templateItems.value[PREVIEW_BASE_FILE]);
-// 样式卡片统一沿用通用范本，标语内容由主题组件提供。
-const resolveStyleItem = (style) => {
-  return {
-    data: previewBase.value?.data || {},
-    config: previewBase.value?.config || {},
-    ui: getResumeThemeTemplate(style.id).item.ui,
-  };
-};
-// 全部模板：小舟提供示例内容，样式模板提供完整 UI。
+// 样式卡片统一沿用通用范本，标语内容由主题组件提供；界面配置由样式模板清单提供。
+const resolveStyleItem = (style) => ({
+  data: previewBase.value?.data || {},
+  config: previewBase.value?.config || {},
+  ui: style.ui,
+});
+// 全部模板：小舟提供示例内容，样式模板提供完整 UI；主题模板与标题样式模板并列成卡片。
 const templates = computed(() =>
-  themeTemplateList.map((style, index) => ({
+  resumeStyleTemplateList.map((style, index) => ({
     fileName: style.id,
     id: style.id,
     name: $t(`resumeTemplateStyle_${style.id}_name`),
     description: $t(`resumeTemplateStyle_${style.id}_description`),
-    // 主题分类标签：与内容模板的 design 同一字段名、同一套取值，供设计分类筛选
+    // 设计分类标签：与内容模板的 design 同一字段名、同一套取值，供设计分类筛选
     design: style.design,
     tags: [],
     type: "style",

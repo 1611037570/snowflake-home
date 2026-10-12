@@ -10,9 +10,9 @@ export default {
     layoutType: "topUserSingleColumn", // 顶部个人信息通栏，正文单栏
   },
   ui: { // 主题覆盖的界面配置
-    theme: { // 主题颜色与标题图标
+    theme: { // 主题颜色设置
       color: "#187F89", // 顶带、标题与图标底色
-      titleIconMode: "circle", // 标题图标显示圆形底托
+      titleTemplate: "trailingRule", // 模块标题样式：右延细线
     },
     page: { // 页面外观与留白
       background: "#F4F8FA", // 无纹理的浅灰页面底色

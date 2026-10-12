@@ -1,12 +1,15 @@
 import type { ThemeTemplateConfig } from "@/domain/resume/theme/styles/createThemeTemplate";
 
 export default {
-  name: "简约",
+  name: "极细底线", // 主题显示名称，与标题样式同名
   id: "minimal" as const, // 主题编号
   design: ["single-column", "plain"], // 移至极简分类
-  description: "减少视觉干扰，突出内容本身的简历样式。",
+  description: "标题只有加宽字距与一条极细底线。", // 主题说明，描述标题样式
   ui: {
-    theme: { color: "#111827" },
+    theme: {
+      color: "#111827",
+      titleTemplate: "hairlineRule", // 模块标题样式：极细底线
+    },
     page: {
       padding: { vertical: 30, horizontal: 30 },
       spacing: { paragraph: 6, module: 9 },

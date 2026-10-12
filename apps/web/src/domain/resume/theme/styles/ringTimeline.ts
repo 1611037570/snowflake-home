@@ -10,9 +10,9 @@ export default {
     layoutType: "topUserSingleColumn", // 个人信息顶部通栏、正文单栏
   },
   ui: { // 主题相对默认配置的差异
-    theme: { // 主题配色与标题装饰
+    theme: { // 主题配色
       color: "#2F5D8A", // 轴线、空心圆环与标题节点使用的靛蓝
-      titleIconMode: "none", // 标题只保留节点标记，不叠加图标
+      titleTemplate: "timelineIndent", // 模块标题样式：时间轴缩进
     },
     page: { // 纸张与留白设置
       padding: { vertical: 36, horizontal: 40 }, // 页面四周留白，左侧余量给时间轴栏
@@ -20,7 +20,6 @@ export default {
     },
     font: { // 文字尺寸与行距
       size: 14, // 正文字号
-      titleSize: 17, // 模块标题字号
       lineHeight: 1.55, // 正文行高倍数
     },
     content: { // 经历条目排版

@@ -8,15 +8,14 @@ export default {
   /** 主题筛选分类 */
   design: ["single-column", "plain"], // 移至极简分类
   /** 主题样式说明 */
-  description: "斜切色块标题叠加浅色背片，底部细线延伸贯穿模块。",
+  description: "标题落在斜切色块上，右下方叠一层浅色背片。",
   /** 标题外观设置 */
   ui: {
     /** 标题主题设置 */
     theme: {
       /** 标题色块、背片与横线的主题色 */
       color: "#25677D",
-      /** 隐藏模块图标以保留色块标题轮廓 */
-      titleIconMode: "none",
+      titleTemplate: "slantedLayers", // 模块标题样式：斜切叠片
     },
   },
 } satisfies ThemeTemplateConfig;

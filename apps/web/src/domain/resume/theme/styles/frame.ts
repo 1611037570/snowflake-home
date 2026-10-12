@@ -23,6 +23,7 @@ export default {
     theme: {
       // 主题元素配置
       color: "#B5093B", // 标题等元素使用的主题色
+      titleTemplate: "roundedTabRule", // 模块标题样式：圆角标签块
     },
     page: {
       // 页面外观配置

@@ -1,4 +1,5 @@
 import type { ThemeDecisions } from "@/domain/resume/theme/themeDecisions";
+import { resolveTitleStyleDefinition } from "@/domain/resume/theme/titleStyles";
 import type { ResumeUi, ThemeUiPreset } from "@/domain/resume/theme/uiTypes";
 import { DEFAULT_UI } from "@/domain/resume/theme/uiConfig";
 
@@ -54,8 +55,11 @@ export const createThemeTemplates = <T extends ThemeTemplateConfig>(definitions:
 // 在主题被预览或应用时生成简历 ui 预设。
 // 主题决策字段（layout.type、page.border、page.backgroundPattern）不入预设：
 // 它们由主题 decisions 单独声明，运行时也不合入用户界面配置。
+// 模块标题参数（图标模式、标题字号）由主题在 ui.theme.titleTemplate 中指定的标题样式提供，主题不再各自声明。
 export const resolveThemeTemplate = (definition: ResumeThemeDefinition): ResumeThemeTemplate => {
   const { id, ui } = definition;
+  // 标题样式自带默认参数：主题只负责指向用哪套标题样式，参数随样式走
+  const titleStyle = resolveTitleStyleDefinition(ui.theme?.titleTemplate);
   const presetUi: ResumeUi = {
     ...DEFAULT_UI,
     ...ui,
@@ -65,9 +69,18 @@ export const resolveThemeTemplate = (definition: ResumeThemeDefinition): ResumeT
       padding: { ...DEFAULT_UI.page.padding, ...ui.page?.padding },
       spacing: { ...DEFAULT_UI.page.spacing, ...ui.page?.spacing },
     },
-    font: { ...DEFAULT_UI.font, ...ui.font },
+    font: {
+      ...DEFAULT_UI.font,
+      ...ui.font,
+      titleSize: ui.font?.titleSize ?? titleStyle?.titleSize ?? DEFAULT_UI.font.titleSize,
+    },
     content: { ...DEFAULT_UI.content, ...ui.content },
-    theme: { ...DEFAULT_UI.theme, ...ui.theme, template: id },
+    theme: {
+      ...DEFAULT_UI.theme,
+      ...ui.theme,
+      titleIconMode: ui.theme?.titleIconMode ?? titleStyle?.titleIconMode ?? DEFAULT_UI.theme.titleIconMode,
+      template: id,
+    },
     layout: {
       columns: ui.layout?.columns ?? DEFAULT_UI.layout.columns,
       leftColumnWidth: ui.layout?.leftColumnWidth ?? DEFAULT_UI.layout.leftColumnWidth,

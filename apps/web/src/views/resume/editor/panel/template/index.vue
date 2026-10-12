@@ -4,20 +4,19 @@ defineOptions({ name: "BuilderTemplate" });
 import { useResumeStore } from "@/stores";
 import { storeToRefs } from "pinia";
 import ThumbPreview from "../../preview/modes/thumb.vue";
-import { getResumeThemeTemplate, themeTemplateList } from "@/views/resume/theme";
+import { getResumeThemeTemplate, resumeStyleTemplateList } from "@/views/resume/theme";
 import { loadResumeTemplateData } from "@/views/resume/template/data/resumeData";
 import { resumeTemplateDesignOptions } from "@/views/resume/template/data/list";
 import { onMounted, ref } from "vue";
 import i18n, { $t } from "@/locales";
-import { translateResumeEditorText } from "@/stores/modules/resume/hooks/useResumeEditorLocale";
 import { resolveLayoutColumns, layoutUsesColumns } from "@/domain/resume/theme/layouts";
 import { resolveThemeDecisions } from "@/views/resume/theme";
 const resumeStore = useResumeStore();
 const { currentUI } = storeToRefs(resumeStore);
 const previewBase = ref(null);
-const selectedDesign = ref(""); // 当前设计分类，空值时暂不展示极简和简约主题
+const selectedDesign = ref(""); // 当前设计分类
 
-// 与模板库共用设计分类参数，再次点击当前分类恢复全部主题。
+// 与模板库共用设计分类参数，再次点击当前分类恢复全部模板。
 const toggleDesign = (key) => {
   selectedDesign.value = selectedDesign.value === key ? "" : key;
 };
@@ -31,28 +30,39 @@ onMounted(async () => {
   }
 });
 
+// 模板清单与模板库共用同一份数据源：主题模板与标题样式模板并列成卡片。
 const templates = computed(() => {
-  i18n.global.locale.value;
-  return themeTemplateList
-    .filter((t) => {
-      // 未选择分类时临时隐藏极简和简约主题，选中分类后仍按原有标签筛选。
-      if (!selectedDesign.value)
-        return !t.design.includes("plain") && !t.design.includes("minimal");
-      return t.design.includes("all") || t.design.includes(selectedDesign.value);
+  // 读取当前语言以便语言切换时重新生成模板名称。
+  if (!i18n.global.locale.value) return [];
+  return resumeStyleTemplateList
+    .filter((style) => {
+      // 未选分类时展示全部模板，选中分类后按标签筛选。
+      if (!selectedDesign.value) return true;
+      return style.design.includes("all") || style.design.includes(selectedDesign.value);
     })
-    .map((t) => ({
-      name: translateResumeEditorText(t.name),
-      id: t.id,
+    .map((style) => ({
+      name: $t(`resumeTemplateStyle_${style.id}_name`),
+      id: style.id,
       item: {
         data: previewBase.value?.data || {},
         config: previewBase.value?.config || {},
-        ui: getResumeThemeTemplate(t.id).item.ui,
+        ui: style.ui,
       },
     }));
 });
 
-// 是否为当前选中的风格模板
-const isActive = (id) => (currentUI.value?.theme?.template ?? "default") === id;
+// 是否为当前选中的样式模板：主题模板比主题编号，标题样式模板比标题样式编号
+const isActive = (id) => {
+  const ui = currentUI.value;
+  if (resumeStyleTemplateList.find((style) => style.id === id)?.design.includes("plain")) {
+    // 跟随主题时使用主题预设的标题样式，避免极简卡片失去选中状态。
+    const selected = ui?.theme?.titleTemplate;
+    return (selected && selected !== "auto"
+      ? selected
+      : getResumeThemeTemplate(ui?.theme?.template).item.ui.theme.titleTemplate) === id;
+  }
+  return (ui?.theme?.template ?? "default") === id;
+};
 
 // 应用风格：修改当前简历主题，预览层响应式渲染
 const applyTemplate = (template) => {
@@ -71,7 +81,7 @@ const applyTemplate = (template) => {
 
 <template>
   <SfScrollbar class="h-full bg-sf-primary py-3">
-    <!-- 编辑器分类沿用模板库选项与文案，以主题的 design 字段筛选。 -->
+    <!-- 编辑器分类沿用模板库选项与文案，以样式模板的 design 字段筛选。 -->
     <div class="mb-3 flex flex-wrap gap-3">
       <SfButton
         v-for="option in resumeTemplateDesignOptions"

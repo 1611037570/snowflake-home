@@ -9,9 +9,9 @@ export default {
     layoutType: "twoColumn", // 个人信息位于左栏的双栏布局
   },
   ui: { // 主题相对默认设置的差异
-    theme: { // 主题色与标题外观设置
+    theme: { // 主题色设置
       color: "#A58D65", // 姓名、标题及装饰线使用的金棕色
-      titleIconMode: "none", // 标题仅展示文字和短下划线
+      titleTemplate: "shortUnderline", // 模块标题样式：短下划线
     },
     layout: { // 左右栏布局设置
       leftColumnWidth: 40, // 左栏占可用栏宽的百分比
@@ -33,7 +33,6 @@ export default {
     },
     font: { // 文字尺寸与行距
       size: 14, // 正文字号
-      titleSize: 18, // 模块标题字号
       lineHeight: 1.65, // 正文行高倍数
     },
     user: { // 个人信息默认展示设置

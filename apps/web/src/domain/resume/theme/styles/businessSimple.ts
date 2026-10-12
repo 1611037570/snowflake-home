@@ -1,11 +1,19 @@
 import type { ThemeTemplateConfig } from "@/domain/resume/theme/styles/createThemeTemplate";
 import business from "./business";
 
-// 保留原商务标题与页面参数，个人信息使用公共默认外观。
+// 沿用商务主题的页面参数，标题外观改由竖条粗线标题样式提供。
 export default {
   ...business,
-  name: "商务极简", // 主题显示名称
+  name: "竖条粗线", // 主题显示名称，与标题样式同名
   id: "businessSimple" as const, // 主题编号
   design: ["single-column", "plain"], // 模板筛选分类
-  description: "保留经典商务标题，以简洁的个人信息呈现内容。", // 主题说明
+  description: "竖条引导，标题下方一条主题色粗线。", // 主题说明，描述标题样式
+  ui: {
+    // 用户可调参数的主题默认值
+    ...business.ui,
+    theme: {
+      ...business.ui.theme,
+      titleTemplate: "barHeavyRule", // 模块标题样式：竖条粗线
+    },
+  },
 } satisfies ThemeTemplateConfig;

@@ -257,6 +257,7 @@ export const DEFAULT_UI = {
   theme: {
     color: defaultThemeColor,
     template: defaultThemeTemplate,
+    titleTemplate: "auto", // 标题样式默认由主题决定
     titleIconMode: defaultTitleIconMode,
   },
   layout: {

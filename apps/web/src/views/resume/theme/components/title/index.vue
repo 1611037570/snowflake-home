@@ -6,11 +6,12 @@ import {
 } from "@/stores/modules/resume/config/defaultConfig";
 import { getPreviewTitle } from "@/views/resume/editor/preview/shared/i18n";
 import { useResumePreviewContext } from "@/views/resume/editor/preview/shared/previewContext";
+import { defaultTitleStyleId, titleStyleComponentLoaders } from "./styles";
 
-// 标题组件按文件名自动加载，具体主题风格由统一主题注册表指定。
-const themeComponents = Object.fromEntries(
-  Object.entries(import.meta.glob("./themes/*.vue")).map(([path, loader]) => [
-    path.slice("./themes/".length, -".vue".length),
+// 标题组件按标题样式编号加载，编号即文件名，预览上下文已把编号归一。
+const titleStyleComponents = Object.fromEntries(
+  Object.entries(titleStyleComponentLoaders).map(([path, loader]) => [
+    path.slice("./".length, -".vue".length),
     defineAsyncComponent(loader),
   ]),
 );
@@ -29,7 +30,7 @@ const props = defineProps({
 const {
   data: previewData,
   lang: previewLang,
-  theme: { titleFontStyle, themeTemplate, titleIconMode },
+  theme: { titleFontStyle, titleTemplate, titleIconMode },
 } = useResumePreviewContext();
 
 const displayTitle = computed(() => {
@@ -38,8 +39,10 @@ const displayTitle = computed(() => {
   const moduleTitle = moduleData?.ui?.title;
   return props.title || moduleTitle || getPreviewTitle(props.moduleKey, previewLang.value);
 });
-// 标题组件按解析后的 ID 加载，未匹配时回退默认组件。
-const current = computed(() => themeComponents[themeTemplate.value] || themeComponents.default);
+// 标题组件按归一后的标题样式编号加载，未匹配时回退兜底标题样式。
+const current = computed(
+  () => titleStyleComponents[titleTemplate.value] || titleStyleComponents[defaultTitleStyleId],
+);
 
 // 模块图标：取模块默认图标表，自定义模块用统一图标，未知模块不展示
 const moduleIcon = computed(() => {

@@ -10,12 +10,11 @@ export default {
     layoutType: "topUserSingleColumn", // 顶部个人信息通栏，正文保持单栏
   },
   ui: { // 相对默认界面的配置差异
-    theme: { // 主题颜色与标题图标设置
+    theme: { // 主题颜色设置
       color: "#6864EF", // 标题、方形节点和时间轴使用的主题色
-      titleIconMode: "none", // 标题仅显示文字和主题自身的节点
+      titleTemplate: "rightAlignedTitle", // 模块标题样式：右对齐标题
     },
     font: { // 文字显示设置
-      titleSize: 16, // 左侧模块标题字号
       lineHeight: 1.5, // 正文行高，保持经历内容易读
     },
     page: { // 纸张外观与留白

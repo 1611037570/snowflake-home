@@ -14,12 +14,15 @@ const {
 </script>
 
 <template>
-  <!-- 现代风格：标题居中 + 主题色短横线 -->
-  <div class="flex flex-col items-center">
+  <!-- 竖条细线：左侧主题色圆条 + 下细线 -->
+  <div class="flex h-auto flex-wrap items-baseline border-b border-sf-b pb-3">
+    <div
+      class="mr-3 w-1 self-stretch rounded-full bg-sf-theme"
+      :style="{ background: themeColor }"
+    ></div>
     <h2 class="max-w-full min-w-0 font-bold tracking-wide break-words">
       <TitleText :title="title" />
     </h2>
-    <div class="mt-1 h-1 w-8 rounded-full" :style="{ background: themeColor }"></div>
   </div>
 </template>
 

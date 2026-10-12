@@ -123,10 +123,10 @@ function handleAdd() {
         <div class="">
           <slot />
           <!-- 添加入口居中排列，悬停显示主题色虚线框，上下留白避免贴合分隔线。 -->
-          <div class="px-1 py-1" v-if="add">
+          <div class="px-3 py-3" v-if="add">
             <button
               type="button"
-              class="flex-c w-full cursor-pointer gap-3 rounded-xl border border-dashed border-transparent py-2 text-xs text-sf-text transition-colors hover:border-sf-theme hover:bg-sf-theme-3 hover:text-sf-theme"
+              class="flex-c w-full cursor-pointer gap-3 rounded-3xl border border-dashed border-sf-b py-2 text-xs text-sf-text transition-colors hover:border-sf-theme hover:bg-sf-theme-3 hover:text-sf-theme"
               @click="handleAdd"
             >
               <SfIcon icon="ic:round-add" size="4" />

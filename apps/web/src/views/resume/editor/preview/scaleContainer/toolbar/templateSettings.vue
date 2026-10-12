@@ -22,6 +22,7 @@ import {
   userInfoModeList,
 } from "@/domain/resume/theme/uiConfig";
 import { getResumeThemeTemplate, resolveThemeSettingRestrictions } from "@/views/resume/theme";
+import { standaloneTitleStyleList, titleStyleRegistry } from "@/domain/resume/theme/titleStyles";
 import ThemeColorPicker from "@/components/business/themeColorPicker/themeColorPicker.vue";
 import { localizeResumeEditorOptionList } from "@/stores/modules/resume/hooks/useResumeEditorLocale";
 
@@ -54,6 +55,22 @@ const localizedTitleIconModeList = computed(() => {
   return localizeOptions(titleIconModeList);
 });
 
+// 标题样式选择器只开放独立样式；旧简历选中的配套样式保留显示，避免下拉值失去名称。
+const localizedTitleTemplateList = computed(() => {
+  if (!i18n.global.locale.value) return [];
+  const selected = currentUI.value?.theme?.titleTemplate;
+  const selectedStyle = selected ? titleStyleRegistry[selected] : undefined;
+  const legacyStyle = selectedStyle?.scope === "theme" && selected !== themePresetUi.value.theme.titleTemplate
+    ? [selectedStyle] : [];
+  return [
+    { name: $t("titleTemplateAuto"), value: "auto" },
+    ...[...standaloneTitleStyleList, ...legacyStyle].map((style) => ({
+      name: $t(`resumeTemplateStyle_${style.id}_name`),
+      value: style.id,
+    })),
+  ];
+});
+
 const localizedDatePositionList = computed(() => {
   i18n.global.locale.value;
   return localizeOptions(datePositionList);
@@ -76,6 +93,19 @@ const themeColor = computed({
     if (currentUI.value && currentUI.value.theme.color !== value) {
       currentUI.value.theme.color = value;
     }
+  },
+});
+
+// 标题模板选择独立于整套主题。
+const titleTemplate = computed({
+  // 主题预设显式保存的配套标题按“跟随主题”展示，选回独立样式时仍按实际编号保存。
+  get: () => {
+    const selected = currentUI.value?.theme?.titleTemplate;
+    return selected && titleStyleRegistry[selected]?.scope === "theme" && selected === themePresetUi.value.theme.titleTemplate
+      ? "auto" : selected ?? "auto";
+  },
+  set: (value) => {
+    currentUI.value.theme.titleTemplate = value;
   },
 });
 
@@ -187,6 +217,19 @@ const setParam = (key, value) => {
             >
               <div class="flex flex-col gap-3 pb-3">
                 <div class="text-xs font-bold text-sf-text">{{ $t("detailAdjustments") }}</div>
+                <!-- 标题样式独立选择，默认跟随整套主题。 -->
+                <div class="flex flex-col gap-1">
+                  <div class="flex items-center gap-1 text-sm text-sf-text-2">
+                    <span>{{ $t("titleTemplate") }}</span>
+                    <SfIcon
+                      icon="material-symbols:restart-alt"
+                      size="4"
+                      class="cursor-pointer text-sf-text-2 transition-colors hover:text-sf-theme"
+                      @click="titleTemplate = 'auto'"
+                    />
+                  </div>
+                  <SfSelect v-model="titleTemplate" :list="localizedTitleTemplateList" />
+                </div>
                 <!-- 模块标题图标模式 -->
                 <div class="flex flex-col gap-1">
                   <div class="flex items-center gap-1 text-sm text-sf-text-2">
