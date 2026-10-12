@@ -16,6 +16,7 @@ const TEXT_KEYS_SOURCE = `
   专业技能: "professionalSkills",
   个人优势: "personalAdvantages",
   工作经历: "workExperience",
+  实习经历: "internshipExperience",
   项目经历: "projectExperience",
   荣誉证书: "honorsCertificates",
   视频作品: "videoWorks",

@@ -63,6 +63,8 @@ const MODULE_ALIASES: Record<string, string[]> = {
   user: ["basic", "personal", "personalInfo"],
   // 工作经历
   work: ["experience", "workExperience"],
+  // 实习经历
+  internship: ["internshipExperience"],
   // 项目经历
   project: ["projects"],
   // 教育经历
@@ -144,7 +146,8 @@ const pickRecordFields = (value: any, module: ResumeModuleSchema, warnings: stri
   module.fields.filter((field) => !isResumeMediaField(module.key, field.key)).forEach((field) => {
     const names = [field.key, field.label, ...(FIELD_ALIASES[field.key] ?? [])];
     if (field.key === "name") {
-      if (module.key === "work") names.push("company");
+      // 工作与实习经历均接受公司名称别名。
+      if (["work", "internship"].includes(module.key)) names.push("company");
       if (module.key === "education") names.push("school", "institution");
       if (module.key === "user") names.push("fullName");
     }
