@@ -120,7 +120,7 @@ const resumeData: any = {
     font: { family: "text-puhui", size: 16, titleSize: 22, lineHeight: 1.2 },
     content: { language: "zh", textAlign: "auto", infoSeparator: "space", linkUnderline: false, dateStyle: "dot", datePosition: "right" },
     theme: {
-      template: "vivid", // 模特范本使用的主题编号
+      template: "plainRoundedLabel", // 模特范本沿用圆角色块标题
       color: "#EA580C", // 主题强调色
       titleIconMode: "icon", // 标题图标显示方式
     },

@@ -270,8 +270,6 @@ const TEXT_KEYS_SOURCE = `
   "标题只有加宽字距与一条极细底线。": "minimalThemeDescription",
   居中夹线: "academicTheme",
   "标题居中，两侧各延伸一条细线。": "academicThemeDescription",
-  活力: "vividTheme",
-  "适合运营、市场与创意岗位的活力简历样式。": "vividThemeDescription",
   线框: "outlineTheme",
   "以纯黑细线勾勒模块外边框的线框简历样式。": "outlineThemeDescription",
   竖条底纹: "colorBarTheme",

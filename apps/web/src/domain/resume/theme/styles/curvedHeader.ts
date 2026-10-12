@@ -6,7 +6,7 @@ export default {
   /** 主题与外观组件的匹配标识 */
   id: "curvedHeader" as const, // 主题编号
   /** 主题筛选分类 */
-  design: ["single-column", "polished"],
+  design: ["single-column", "minimal"], // 单栏与简约分类
   /** 主题样式说明 */
   description: "通栏弧形页眉搭配居中圆形头像，姓名与联系方式居中排列。",
   /** 主题外观设置 */
