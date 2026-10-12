@@ -13,6 +13,7 @@ import curvedHeader from "@/domain/resume/theme/styles/curvedHeader";
 import defaultTheme from "@/domain/resume/theme/styles/default";
 import doubleArrow from "@/domain/resume/theme/styles/doubleArrow";
 import frame from "@/domain/resume/theme/styles/frame";
+import inkSidebar from "@/domain/resume/theme/styles/inkSidebar";
 import labelLine from "@/domain/resume/theme/styles/labelLine";
 import layeredCurve from "@/domain/resume/theme/styles/layeredCurve";
 import markerGrid from "@/domain/resume/theme/styles/markerGrid";
@@ -59,6 +60,7 @@ export const themeTemplateList = createThemeTemplates([
   burgundySidebar,
   sandSidebar,
   redWhiteSidebar,
+  inkSidebar,
   minimal,
   academic,
   vivid,
