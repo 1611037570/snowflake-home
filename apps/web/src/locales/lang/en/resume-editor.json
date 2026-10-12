@@ -495,6 +495,7 @@
   "switchResumeLanguage": "Switch Resume Language",
   "smartOnePage": "Smart One-Page Fit",
   "smartSortByTime": "Sort Experiences by Time (Newest First)",
+  "smartSort": "Smart Sort",
   "sortByTimeSuccess": "Experiences sorted from newest to oldest",
   "sortByTimeNoChange": "Experience order is already up to date",
   "sortByTimePartial": "Some experiences could not be sorted",

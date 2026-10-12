@@ -10,6 +10,7 @@ import {
 } from "@/stores/modules/resume/config/defaultConfig";
 import { jumpEditor } from "../../../hooks/useModuleNav";
 import AddModule from "./add.vue";
+import SortByTime from "./sortByTime.vue";
 
 defineOptions({ name: "ModuleSidebar" });
 
@@ -85,12 +86,13 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <aside class="flex h-full min-h-0 min-w-0 flex-col border-r border-sf-b bg-sf-primary py-3">
+  <aside class="flex h-full min-h-0 min-w-0 flex-col border-r border-sf-b bg-sf-primary py-[6px]">
     <!-- <div class="mx-3 shrink-0 border-b border-sf-b py-3 text-sm font-bold text-sf-text-2">
       {{ $t("moduleManager") }}
     </div> -->
     <SfScrollbar class="module-list-scroll min-h-0 min-w-0 flex-1">
-      <div ref="listRef" class="flex min-h-full flex-col gap-1.5">
+      <!-- 模块间距与侧栏留白统一为六像素，底部留白计入滚动范围。 -->
+      <div ref="listRef" class="flex min-h-full shrink-0 flex-col gap-[6px] pb-[6px]">
         <div
           v-for="item in draggableItems"
           :key="item.key"
@@ -110,11 +112,13 @@ onUnmounted(() => {
         </div>
       </div>
     </SfScrollbar>
-    <div class="flex flex-col items-center border-t border-sf-b">
+    <!-- 底部入口由容器统一提供上下间距和左右留白。 -->
+    <div class="flex shrink-0 flex-col items-center gap-[6px] border-t border-sf-b px-[6px] pt-[6px]">
+      <SortByTime />
       <!-- 折叠入口固定在添加模块上方，沿用模块卡片外观。 -->
       <button
         type="button"
-        class="flex-c mt-[6px] w-fit min-w-0 cursor-pointer flex-col gap-1 rounded-xl border border-sf-b bg-sf-primary p-1 text-[9px] text-sf-text transition-colors select-none hover:border-sf-theme hover:text-sf-theme"
+        class="flex-c w-fit min-w-0 cursor-pointer flex-col gap-1 rounded-xl border border-sf-b bg-sf-primary p-1 text-[9px] text-sf-text transition-colors select-none hover:border-sf-theme hover:text-sf-theme"
         :disabled="!currentData || !runtimeConfig"
         @click="collapseAll"
       >
@@ -129,7 +133,8 @@ onUnmounted(() => {
 <style lang="scss" scoped>
 .module-list-scroll {
   :deep(.el-scrollbar__view) {
-    padding: 0 8px !important;
+    /* 模块树左右留白与上下间距保持一致。 */
+    padding: 0 6px !important;
   }
 }
 

@@ -11,7 +11,6 @@ import TemplateSettings from "./toolbar/templateSettings.vue";
 import PrintMode from "./toolbar/printMode.vue";
 import Language from "./toolbar/language.vue";
 import OnePage from "./toolbar/onePage.vue";
-import SortByTime from "./toolbar/sortByTime.vue";
 
 defineOptions({ name: "ScaleContainer" });
 
@@ -182,7 +181,7 @@ useResizeObserver(contentRef, ([entry]) => {
 <template>
   <div class="group relative flex h-full flex-col self-stretch overflow-hidden">
     <div
-      class="mb-3 flex items-center gap-1 self-stretch border-b border-sf-b bg-sf-primary p-1.5 select-none"
+      class="flex shrink-0 items-center gap-1 self-stretch border-b border-sf-b bg-sf-primary p-1.5 select-none"
       v-show="showToolbar"
     >
       <TemplateSettings />
@@ -191,7 +190,6 @@ useResizeObserver(contentRef, ([entry]) => {
       <PrintMode />
       <Language />
       <OnePage />
-      <SortByTime />
       <SfDropdown trigger="hover" placement="bottom-start" :show-arrow="false">
         <div
           class="flex h-7 cursor-default items-center justify-center rounded-full text-xs font-medium text-sf-theme"
@@ -231,21 +229,20 @@ useResizeObserver(contentRef, ([entry]) => {
         />
       </SfTooltip>
     </div>
-    <!-- 滚动区预留定位工具栏的实际宽度，移动端与专注模式由外层置零。 -->
+    <!-- 滚动区紧贴顶部工具栏，顶部留白放入滚动内容，避免固定空隙截断预览。 -->
     <SfScrollbar
       ref="containerRef"
-      class="relative h-full"
+      class="relative min-h-0 flex-1"
       :style="{
         marginRight: 'var(--resume-toolbar-width, 0px)',
         width: 'calc(100% - var(--resume-toolbar-width, 0px))',
       }"
-      height="100%"
-      view-class="relative min-h-full w-full pt-3 "
+      view-class="relative min-h-full w-full"
       @scroll="handleScroll"
     >
-      <!-- 缩放展示：标准 A4 超出容器宽度时靠左，确保横向滚动可查看完整页面。 -->
+      <!-- 顶部留白随内容滚动；标准 A4 超出容器宽度时靠左。 -->
       <div
-        class="absolute top-0"
+        class="absolute top-3"
         :class="
           scaleMode === 'a4' && contentSize.width > availableSize.width
             ? 'left-0'
