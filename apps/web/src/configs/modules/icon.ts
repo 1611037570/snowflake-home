@@ -10,6 +10,14 @@ interface IconItem {
 }
 
 export const ICON_LIST: Record<string, IconItem> = {
+  "qlementine-icons:light-bulb-on-16": {
+    icon: "qlementine-icons:light-bulb-on-16", // 彩色预览状态图标。
+    name: "彩色预览", // 图标说明。
+  },
+  "qlementine-icons:light-bulb-off-16": {
+    icon: "qlementine-icons:light-bulb-off-16", // 灰色预览状态图标。
+    name: "灰色预览", // 图标说明。
+  },
   "akar-icons:home-alt1": { icon: "akar-icons:home-alt1", name: "首页" },
   "simple-icons:juejin": { icon: "simple-icons:juejin", color: "text-blue-500", name: "稀土掘金" },
   "simple-icons:github": { icon: "simple-icons:github", color: "text-black", name: "GitHub" },
