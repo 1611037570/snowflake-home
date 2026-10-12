@@ -18,6 +18,10 @@ export const ICON_LIST: Record<string, IconItem> = {
   "lucide:camera": {
     icon: "lucide:camera",
   },
+  "lucide:search": {
+    icon: "lucide:search", // 搜索图标标识。
+    name: "搜索", // 图标中文名称。
+  },
   "simple-icons:xiaohongshu": {
     icon: "simple-icons:xiaohongshu",
     color: "text-red-500",
