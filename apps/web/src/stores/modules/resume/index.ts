@@ -245,6 +245,16 @@ export const useResumeStore = defineStore(
       return trashList.value;
     };
 
+    // 按简历编号保存标题，列表中重命名非当前简历时也能正确持久化。
+    const renameResume = (id: string, titleMode: "auto" | "custom", customTitle: string) => {
+      const item = resumeRecords.value.find((record) => record.id === id);
+      if (!item) return false;
+      item.usage.titleMode = titleMode;
+      item.usage.customTitle = customTitle;
+      schedulePersistResume(item);
+      return true;
+    };
+
     // 内容变更脉冲：整份简历任一嵌套字段变化后自增，供派生逻辑在编辑停顿后统一刷新
     const contentVersion = ref(0);
     // 是否处于编辑中：内容变化后置真，停顿 EDIT_IDLE_DELAY 后置否
@@ -284,6 +294,7 @@ export const useResumeStore = defineStore(
       saveStates, // 各简历实际保存阶段与失败说明
       savePendingResumes, // 可等待并向调用方报告失败的保存入口
       resumeList,
+      renameResume, // 按编号重命名并保存简历
       trashList,
       maxCount,
       currentIndex,

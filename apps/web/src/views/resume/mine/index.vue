@@ -12,6 +12,7 @@ import ResumeCardContainer from "./components/resumeCardContainer.vue";
 import RevealGrid from "../components/revealGrid.vue";
 import ImportResume from "./components/importResume.vue";
 import SendResume from "@/views/resume/components/sendResume/index.vue";
+import RenameResumeModal from "../components/renameResumeModal.vue";
 import CreateResume from "./components/createResume.vue";
 import { ElNotification } from "element-plus";
 // 草稿预览复用模板页专用全屏预览组件，保持两处预览布局一致。
@@ -82,6 +83,14 @@ const closePreview = () => {
   previewItem.value = null;
 };
 
+// 更多菜单记录待重命名的草稿，交给编辑器共用弹窗处理。
+const renameItem = ref(null);
+const renameVisible = ref(false);
+const openRename = (item) => {
+  renameItem.value = item;
+  renameVisible.value = true;
+};
+
 // 复制指定简历：复用 store 深拷贝逻辑创建独立新简历，并提示复制结果。
 const copyResume = (item) => {
   const copiedId = resumeStore.duplicateResume(item);
@@ -96,6 +105,11 @@ const copyResume = (item) => {
 
 // 草稿卡片操作菜单。
 const getActionList = (item) => [
+  {
+    name: "重命名", // 草稿操作名称
+    icon: "lucide:pencil-line", // 重命名入口图标
+    fn: () => openRename(item), // 打开共用重命名弹窗
+  },
   {
     name: "复制",
     icon: "lucide:copy",
@@ -317,6 +331,7 @@ const handleClearTrash = () => {
       @close="closePreview"
       @action="editPreview"
     />
+    <RenameResumeModal v-model="renameVisible" :item="renameItem" />
   </div>
 </template>
 

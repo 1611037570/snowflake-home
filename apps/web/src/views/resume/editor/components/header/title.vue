@@ -3,49 +3,17 @@ import { useResumeStore } from "@/stores";
 import { storeToRefs } from "pinia";
 import { ref } from "vue";
 import { useResumeName } from "../../../hooks/useResumeName";
+import RenameResumeModal from "../../../components/renameResumeModal.vue";
 const resumeStore = useResumeStore();
-const { currentUsage } = storeToRefs(resumeStore);
+const { currentItem } = storeToRefs(resumeStore);
 const { resumeTitle } = useResumeName();
 
 const title = resumeTitle;
-// 编辑标题弹窗
+// 编辑器标题入口复用与我的简历相同的重命名弹窗。
 const editTitleVisible = ref(false);
-const tempTitle = ref(title.value);
-const pendingTitleMode = ref("auto");
 
 function openModal() {
-  tempTitle.value = title.value;
-  pendingTitleMode.value = currentUsage.value?.titleMode || "auto";
   editTitleVisible.value = true;
-}
-
-function closeModal() {
-  editTitleVisible.value = false;
-}
-
-function handleSaveTitle() {
-  const customValue = tempTitle.value.trim();
-  if (!currentUsage.value) return closeModal();
-  const useCustomTitle = pendingTitleMode.value === "custom" && !!customValue;
-  currentUsage.value.customTitle = useCustomTitle ? customValue : "";
-  currentUsage.value.titleMode = useCustomTitle ? "custom" : "auto";
-  closeModal();
-}
-
-// 输入自定义内容后切换为自定义模式，等待点击保存才写入简历
-function handleInput() {
-  pendingTitleMode.value = "custom";
-}
-
-// 一键预览自动标题，等待点击保存才切换模式
-function handleAutoTitle() {
-  tempTitle.value = resumeTitle.value;
-  pendingTitleMode.value = "auto";
-}
-
-// 取消编辑并关闭弹窗，不保存临时标题
-function handleCancel() {
-  closeModal();
 }
 </script>
 
@@ -59,27 +27,7 @@ function handleCancel() {
       {{ title }}
     </div>
   </div>
-  <SfModal v-model="editTitleVisible" :title="$t('renameResume')">
-    <div class="wf flex max-w-100 flex-col gap-3">
-      <div class="flex items-center gap-3">
-        <div class="flex-1">
-          <SfInput
-            @input="handleInput"
-            v-model="tempTitle"
-            :placeholder="$t('titlePlaceholder')"
-            class="w-full rounded-lg border border-sf-b bg-sf-bg"
-          />
-        </div>
-        <SfButton :type="pendingTitleMode === 'auto' ? 'theme' : 'bg'" @click="handleAutoTitle">
-          {{ $t("autoGenerate") }}
-        </SfButton>
-      </div>
-      <div class="flex justify-end gap-3">
-        <SfButton type="bg" @click="handleCancel">{{ $t("cancel") }}</SfButton>
-        <SfButton @click="handleSaveTitle">{{ $t("save") }}</SfButton>
-      </div>
-    </div>
-  </SfModal>
+  <RenameResumeModal v-model="editTitleVisible" :item="currentItem" />
 </template>
 
 <style lang="scss" scoped></style>
