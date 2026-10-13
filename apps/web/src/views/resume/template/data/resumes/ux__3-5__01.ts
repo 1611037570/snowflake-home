@@ -146,7 +146,7 @@ const resumeData: any = {
     ],
   },
   // 界面配置沿用主题预设：与模板页该主题的样式卡片共用同一份配置，保证布局与配色一致。
-  ui: structuredClone(getResumeThemeTemplate("plainRoundedLabel").item.ui), // 范本沿用圆角色块标题预设
+  ui: structuredClone(getResumeThemeTemplate("violetBiography").item.ui), // 范本沿用紫色履历预设
 };
 
 export default resumeData;

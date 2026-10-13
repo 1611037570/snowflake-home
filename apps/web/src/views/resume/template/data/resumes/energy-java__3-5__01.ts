@@ -146,7 +146,7 @@ const resumeData: any = {
     ],
   },
   // 界面配置沿用主题预设：与模板页该主题的样式卡片共用同一份配置，保证布局与配色一致。
-  ui: structuredClone(getResumeThemeTemplate("frame").item.ui),
+  ui: structuredClone(getResumeThemeTemplate("blueGoldRibbon").item.ui),
 };
 
 export default resumeData;

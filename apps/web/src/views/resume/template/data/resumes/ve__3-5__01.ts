@@ -1,3 +1,4 @@
+import { getResumeThemeTemplate } from "@/views/resume/theme";
 import { xiaozhou } from "../avatar";
 
 // 大众视频剪辑师简历示例数据。
@@ -94,18 +95,8 @@ const resumeData: any = {
   config: {
     modules: [{ key: "user" }, { key: "education" }, { key: "skill" }, { key: "advantage" }, { key: "work" }, { key: "project" }],
   },
-  ui: {
-    page: { padding: { vertical: 24, horizontal: 24 }, spacing: { paragraph: 12, module: 12 }, footer: "" },
-    font: { family: "text-puhui", size: 16, titleSize: 22, lineHeight: 1.2 },
-    content: { language: "zh", textAlign: "auto", infoSeparator: "space", linkUnderline: false, dateStyle: "dot", datePosition: "right" },
-    theme: {
-      template: "plainRoundedLabel", // 视频剪辑范本沿用圆角色块标题
-      color: "#DB2777", // 主题强调色
-      titleIconMode: "icon", // 标题图标显示方式
-    },
-    layout: { leftColumnWidth: 40 },
-    user: { infoMode: "text", infoLayout: "flex", avatarPosition: "right", infoPosition: "left" },
-  },
+  // 界面配置沿用主题预设：与模板页该主题的样式卡片共用同一份配置，保证布局与配色一致。
+  ui: structuredClone(getResumeThemeTemplate("tealCard").item.ui),
 };
 
 export default resumeData;
