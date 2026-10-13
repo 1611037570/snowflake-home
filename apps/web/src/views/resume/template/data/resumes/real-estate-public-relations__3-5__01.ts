@@ -144,8 +144,8 @@ const resumeData: any = {
       { key: "account" },
     ],
   },
-  // 范本改用斜纹飘带主题预设，与对应样式卡片保持一致。
-  ui: structuredClone(getResumeThemeTemplate("stripedRibbon").item.ui),
+  // 范本改用红白双栏主题预设，与对应样式卡片保持一致。
+  ui: structuredClone(getResumeThemeTemplate("redWhiteSidebar").item.ui),
 };
 
 export default resumeData;

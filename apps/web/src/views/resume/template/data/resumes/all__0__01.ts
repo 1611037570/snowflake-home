@@ -1,3 +1,4 @@
+import { getResumeThemeTemplate } from "@/views/resume/theme";
 import { xiaoyang } from "../avatar";
 
 const resumeData: any = {
@@ -10,18 +11,8 @@ const resumeData: any = {
     project: { ui: { collapsed: ["1"], archived: false }, list: [{ ui: {}, data: { name: "图神经网络课程研究", post: "课题成员", startTime: "2024.03", endTime: "2024.12", content: "<p>负责数据预处理、模型复现与实验结果分析，在公开数据集上复现 GCN 模型并完成消融实验，撰写课程研究报告。</p>" } }] },
   },
   config: { modules: [{ key: "user" }, { key: "education" }, { key: "skill" }, { key: "advantage" }, { key: "work" }, { key: "project" }] },
-  ui: {
-    page: { padding: { vertical: 24, horizontal: 24 }, spacing: { paragraph: 12, module: 12 }, footer: "" },
-    font: { family: "text-puhui", size: 16, titleSize: 22, lineHeight: 1.2 },
-    content: { language: "zh", textAlign: "auto", infoSeparator: "space", linkUnderline: false, dateStyle: "dot", datePosition: "right" },
-    theme: {
-      template: "academic", // 升学范本使用的主题编号
-      color: "#0F766E", // 主题强调色
-      titleIconMode: "none", // 标题图标显示方式
-    },
-    layout: { leftColumnWidth: 40 },
-    user: { infoMode: "text", infoLayout: "flex", avatarPosition: "right", infoPosition: "left" },
-  },
+  // 界面配置沿用主题预设：与模板页该主题的样式卡片共用同一份配置，保证布局与配色一致。
+  ui: structuredClone(getResumeThemeTemplate("songElegance").item.ui),
 };
 
 export default resumeData;

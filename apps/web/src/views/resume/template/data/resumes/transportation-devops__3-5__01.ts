@@ -145,8 +145,8 @@ const resumeData: any = {
       { key: "account" },
     ],
   },
-  // 范本改用方节点时间轴主题预设，与对应样式卡片保持一致。
-  ui: structuredClone(getResumeThemeTemplate("squareTimeline").item.ui),
+  // 范本改用墨点履历主题预设，与对应样式卡片保持一致。
+  ui: structuredClone(getResumeThemeTemplate("dotInk").item.ui),
 };
 
 export default resumeData;

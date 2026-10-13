@@ -1,3 +1,4 @@
+import { getResumeThemeTemplate } from "@/views/resume/theme";
 import { xiaozhou } from "../avatar";
 
 const resumeData: any = {
@@ -10,18 +11,8 @@ const resumeData: any = {
     project: { ui: { collapsed: ["1"], archived: false }, list: [{ ui: {}, data: { name: "乡村金融调研项目", post: "调研成员", startTime: "2023.07", endTime: "2023.09", content: "<p>完成问卷设计与 120 份样本回收，访谈 8 家乡镇金融机构，整理调研数据并撰写研究报告。</p>" } }] },
   },
   config: { modules: [{ key: "user" }, { key: "education" }, { key: "skill" }, { key: "advantage" }, { key: "work" }, { key: "project" }] },
-  ui: {
-    page: { padding: { vertical: 24, horizontal: 24 }, spacing: { paragraph: 12, module: 12 }, footer: "" },
-    font: { family: "text-puhui", size: 16, titleSize: 22, lineHeight: 1.2 },
-    content: { language: "zh", textAlign: "auto", infoSeparator: "space", linkUnderline: false, dateStyle: "dot", datePosition: "right" },
-    theme: {
-      template: "academic", // 留学范本改用学术主题
-      color: "#475569", // 主题强调色
-      titleIconMode: "none", // 标题图标显示方式
-    },
-    layout: { leftColumnWidth: 40 },
-    user: { infoMode: "text", infoLayout: "flex", avatarPosition: "right", infoPosition: "left" },
-  },
+  // 界面配置沿用主题预设：与模板页该主题的样式卡片共用同一份配置，保证布局与配色一致。
+  ui: structuredClone(getResumeThemeTemplate("blueBilingual").item.ui),
 };
 
 export default resumeData;

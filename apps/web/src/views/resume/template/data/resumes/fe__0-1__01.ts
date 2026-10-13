@@ -1,3 +1,4 @@
+import { getResumeThemeTemplate } from "@/views/resume/theme";
 import { xiaoyang } from "../avatar";
 
 const resumeData: any = {
@@ -10,17 +11,10 @@ const resumeData: any = {
     project: { ui: { collapsed: ["1"], archived: false }, list: [{ ui: {}, data: { name: "Analytics Dashboard", post: "Front-end Engineer", startTime: "2025.08", endTime: "2026.02", content: "<p>Developed data visualizations and workflow pages for business operations, covering 12 dashboard views used by over 500 internal users.</p>" } }] },
   },
   config: { modules: [{ key: "user" }, { key: "education" }, { key: "skill" }, { key: "advantage" }, { key: "work" }, { key: "project" }] },
+  // 界面配置沿用主题预设：与模板页该主题的样式卡片共用同一份配置，保证布局与配色一致。
   ui: {
-    page: { padding: { vertical: 24, horizontal: 24 }, spacing: { paragraph: 12, module: 12 }, footer: "" },
-    font: { family: "text-puhui", size: 16, titleSize: 22, lineHeight: 1.2 },
-    content: { language: "en", textAlign: "auto", infoSeparator: "space", linkUnderline: false, dateStyle: "dot", datePosition: "right" },
-    theme: {
-      template: "outline", // 英文范本使用的主题编号
-      color: "#000000", // 主题强调色
-      titleIconMode: "none", // 标题图标显示方式
-    },
-    layout: { leftColumnWidth: 40 },
-    user: { infoMode: "text", infoLayout: "flex", avatarPosition: "right", infoPosition: "left" },
+    ...structuredClone(getResumeThemeTemplate("centeredClean").item.ui),
+    content: { language: "en" }, // 英文范本保留英文正文语言配置
   },
 };
 

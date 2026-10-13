@@ -1,3 +1,4 @@
+import { getResumeThemeTemplate } from "@/views/resume/theme";
 import { xiaozhou } from "../avatar";
 
 const resumeData: any = {
@@ -10,18 +11,8 @@ const resumeData: any = {
     project: { ui: { collapsed: ["1"], archived: false }, list: [{ ui: {}, data: { name: "校园新媒体增长项目", post: "项目成员", startTime: "2023.09", endTime: "2024.01", content: "<p>参与选题策划、内容生产与账号数据分析，主导 12 篇图文选题，账号互动率由 3.2% 提升至 5.1%。</p>" } }] },
   },
   config: { modules: [{ key: "user" }, { key: "education" }, { key: "skill" }, { key: "advantage" }, { key: "work" }, { key: "project" }] },
-  ui: {
-    page: { padding: { vertical: 24, horizontal: 24 }, spacing: { paragraph: 12, module: 12 }, footer: "" },
-    font: { family: "text-puhui", size: 16, titleSize: 22, lineHeight: 1.2 },
-    content: { language: "zh", textAlign: "auto", infoSeparator: "space", linkUnderline: false, dateStyle: "dot", datePosition: "right" },
-    theme: {
-      template: "business", // 实习范本使用的主题编号
-      color: "#1E3A5F", // 主题强调色
-      titleIconMode: "none", // 标题图标显示方式
-    },
-    layout: { leftColumnWidth: 40 },
-    user: { infoMode: "text", infoLayout: "flex", avatarPosition: "right", infoPosition: "left" },
-  },
+  // 界面配置沿用主题预设：与模板页该主题的样式卡片共用同一份配置，保证布局与配色一致。
+  ui: structuredClone(getResumeThemeTemplate("noteGrid").item.ui),
 };
 
 export default resumeData;
