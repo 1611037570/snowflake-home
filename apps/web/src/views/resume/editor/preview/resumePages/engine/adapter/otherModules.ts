@@ -1,10 +1,11 @@
-import { getValidData, getValidDataEntries } from "../../../shared/validData";
+import { getValidData, getValidDataEntries, isContentEmpty } from "../../../shared/validData";
 import type { LayoutNode } from "../types";
 import type { LayoutAdapter, LayoutAdapterContext, LayoutAdapterRegistry } from "./index";
 import { createExperienceModuleAdapter } from "./experienceModules";
+import { parseRichText } from "./richTextParser";
 
-/** 需要使用通用条目块结构的模块 key */
-const LIST_MODULE_KEYS = ["account", "honor"] as const;
+/** 需要使用通用条目块结构的模块 key（荣誉已升级为可分片的描述条目） */
+const LIST_MODULE_KEYS = ["account"] as const;
 
 /** 需要使用不可拆分媒体结构的模块 key */
 const MEDIA_MODULE_KEYS = ["image", "video"] as const;
@@ -74,6 +75,38 @@ const createListModuleAdapter =
     }));
   };
 
+/** 创建带描述正文的条目模块适配器：名称行构成条目头，描述正文参与分片（荣誉、语言能力共用） */
+const createDescribedItemModuleAdapter =
+  (moduleKey: string): LayoutAdapter =>
+  (context) => {
+    const moduleData = context.data[moduleKey];
+    if (!moduleData || typeof moduleData !== "object") return [];
+    const list = getValidDataEntries((moduleData as { list?: unknown }).list);
+
+    return list.map(({ data: item, index }) => {
+      const content = typeof item.content === "string" ? item.content : "";
+      // 描述正文参与分片：断点与首段截取共用同一份解析结果
+      const parsed = isContentEmpty(content) ? undefined : parseRichText(content);
+
+      return {
+        id: `${moduleKey}.item-${index}`,
+        sourceModuleKey: moduleKey,
+        sourceItemIndex: index,
+        type: "block" as const,
+        contentKind: moduleKey,
+        payload: {
+          part: "item" as const,
+          item,
+          content: parsed,
+        },
+        // 正文起点也作为断点：放不下描述时允许名称行留在当前页，描述顺延到下一页
+        breakPoints: parsed
+          ? [{ offset: 0, type: "paragraph" as const }, ...parsed.breakPoints]
+          : undefined,
+      };
+    });
+  };
+
 /** 创建图片、视频等媒体模块适配器 */
 const createMediaModuleAdapter =
   (moduleKey: string): LayoutAdapter =>
@@ -113,6 +146,10 @@ export const registerOtherModuleAdapters = (registry: LayoutAdapterRegistry) => 
   });
   LIST_MODULE_KEYS.forEach((moduleKey) => {
     registry.register(moduleKey, createListModuleAdapter(moduleKey));
+  });
+  // 荣誉与语言能力条目带可选描述正文，注册可分片的独立适配器
+  (["honor", "language"] as const).forEach((moduleKey) => {
+    registry.register(moduleKey, createDescribedItemModuleAdapter(moduleKey));
   });
   MEDIA_MODULE_KEYS.forEach((moduleKey) => {
     registry.register(moduleKey, createMediaModuleAdapter(moduleKey));

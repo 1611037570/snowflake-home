@@ -6,20 +6,34 @@ import Icon from "../icon.vue";
 
 const { proxy } = getCurrentInstance();
 
-// 荣誉证书名称数据
+// 技能名称数据
 const name = defineModel("name", {
   type: String,
   default: "",
 });
-// 当前荣誉证书的隐藏状态
+// 熟练度档位：一到五档，预览按档位渲染分段熟练度条
+const level = defineModel("level", {
+  type: Number,
+  default: 3,
+});
+// 当前技能的隐藏状态
 const hidden = defineModel("hidden", {
   type: Boolean,
   default: false,
 });
 const { removeCurrent } = useFormContext();
 
-// 删除当前荣誉证书
-const removeHonor = () => {
+// 熟练度档位选项：数值写入技能条目 level 字段，预览按档位渲染分段条
+const proficiencyOptions = [
+  { name: $t("proficiencyBeginner"), value: 1 },
+  { name: $t("proficiencyFamiliar"), value: 2 },
+  { name: $t("proficiencySkilled"), value: 3 },
+  { name: $t("proficiencyExpert"), value: 4 },
+  { name: $t("proficiencyMaster"), value: 5 },
+];
+
+// 删除当前技能
+const removeSkill = () => {
   proxy.$confirm($t("deleteCurrentContent"), $t("deleteConfirm")).then(() => {
     removeCurrent();
   });
@@ -37,9 +51,13 @@ const removeHonor = () => {
     />
     <!-- 名称 -->
     <div class="min-w-0 flex-1">
-      <SfInput v-model="name" :placeholder="$t('honorName')" />
+      <SfInput v-model="name" :placeholder="$t('skillNamePlaceholder')" />
     </div>
-    <!-- 隐藏当前荣誉证书 -->
+    <!-- 熟练度档位 -->
+    <div class="w-28 shrink-0">
+      <SfSelect v-model="level" :list="proficiencyOptions" :placeholder="$t('proficiencyLevel')" />
+    </div>
+    <!-- 隐藏当前技能 -->
     <SfTooltip :content="hidden ? $t('show') : $t('hide')">
       <Icon
         :icon="hidden ? 'lucide:eye' : 'lucide:eye-off'"
@@ -48,7 +66,7 @@ const removeHonor = () => {
       />
     </SfTooltip>
     <!-- 删除按钮 -->
-    <Icon icon="ic:round-delete" @click="removeHonor" />
+    <Icon icon="ic:round-delete" @click="removeSkill" />
   </div>
 </template>
 

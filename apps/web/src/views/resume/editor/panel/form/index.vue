@@ -26,7 +26,7 @@ import CollapseModule from "./components/collapse/module.vue";
 import CollapseItem from "./components/collapse/item.vue";
 import RowField from "./components/row/field.vue";
 import RowAccount from "./components/row/account.vue";
-import RowHonor from "./components/row/honor.vue";
+import RowSkill from "./components/row/skill.vue";
 import { localizeResumeOptions } from "@/stores/modules/resume/hooks/useResumeEditorLocale";
 import i18n from "@/locales";
 import { flushPendingEditorLocation } from "../../hooks/useModuleNav";
@@ -103,13 +103,13 @@ markEditorStart();
 // 编辑区组件按层级划分，配置里的 component 名对应关系如下：
 // 折叠容器 collapseModule：模块标题 + 折叠/归档/隐藏/删除，内容由插槽渲染
 // 折叠容器 collapseItem：数组模块中单条记录的标题 + 折叠/隐藏/删除，内容由插槽渲染
-// 行控件 rowField / rowAccount / rowHonor：一行内的字段编辑与隐藏/删除操作
+// 行控件 rowField / rowAccount / rowSkill：一行内的字段编辑与隐藏/删除操作
 const dynamicComponents = {
   collapseModule: CollapseModule,
   collapseItem: CollapseItem,
   rowField: RowField,
   rowAccount: RowAccount,
-  rowHonor: RowHonor,
+  rowSkill: RowSkill,
   imageUpload: AsyncImageUpload,
   image: Image,
   heightWeight: HeightWeight,
