@@ -1,5 +1,5 @@
 <script setup>
-import { computed, defineAsyncComponent, nextTick, onMounted, onUnmounted, ref, watch } from "vue";
+import { computed, nextTick, onMounted, onUnmounted, ref, watch } from "vue";
 import { storeToRefs } from "pinia";
 import { useDraggable } from "vue-draggable-plus";
 import { useResumeStore } from "@/stores";
@@ -10,11 +10,7 @@ import {
 } from "@/stores/modules/resume/config/defaultConfig";
 import { jumpEditor, jumpPreview } from "../../../hooks/useModuleNav";
 import AddModule from "./add.vue";
-import SortByTime from "./sortByTime.vue";
-import ModuleSearch from "./moduleSearch/index.vue";
-
-// 导入弹窗随更多操作展开时加载。
-const ImportResume = defineAsyncComponent(() => import("@/views/resume/mine/components/importResume.vue"));
+import MoreActions from "./moreActions.vue";
 
 defineOptions({ name: "ModuleSidebar" });
 
@@ -42,30 +38,6 @@ const moduleItems = computed(() =>
       icon: DEFAULT_MODULE_NAMES.find((item) => item.key === field.key)?.icon || CUSTOM_MODULE_ICON,
     })),
 );
-
-// 一次收起导航栏中的全部模块，沿用现有模块展开状态。
-function collapseAll() {
-  for (const item of moduleItems.value) {
-    const module = currentData.value?.[item.key];
-    if (module?.ui) module.ui.collapsed = [];
-  }
-}
-
-// 恢复未归档模块、子记录及个人信息字段的显示，只修改已有隐藏状态。
-function showAll() {
-  const clearHidden = (ui) => {
-    if (!ui || typeof ui !== "object") return;
-    if (ui.hidden === true) ui.hidden = false;
-    for (const state of Object.values(ui)) clearHidden(state);
-  };
-  for (const item of moduleItems.value) {
-    const module = currentData.value?.[item.key];
-    clearHidden(module?.ui);
-    if (Array.isArray(module?.list)) {
-      for (const record of module.list) clearHidden(record?.ui);
-    }
-  }
-}
 
 watch(
   moduleItems,
@@ -138,51 +110,50 @@ onUnmounted(() => {
         </div>
       </div>
     </SfScrollbar>
-    <!-- 更多操作的展开状态由系统配置保存，添加模块始终保留独立入口。 -->
-    <div class="flex shrink-0 flex-col items-center gap-[6px] border-t border-sf-b px-[6px] pt-[6px]">
+    <!-- 展开与收起入口始终置于操作列表顶部。 -->
+    <div
+      class="flex shrink-0 flex-col items-center gap-[6px] border-t border-sf-b px-[6px] pt-[6px]"
+    >
       <button
+        v-if="system.moreOperationsExpanded"
         type="button"
-        class="flex-c w-fit min-w-0 cursor-pointer flex-col gap-1 rounded-xl border border-sf-b bg-sf-primary p-1 text-[9px] text-sf-text transition-colors select-none hover:border-sf-theme hover:text-sf-theme"
-        :aria-expanded="system.moreOperationsExpanded"
-        @click="system.moreOperationsExpanded = !system.moreOperationsExpanded"
+        class="flex-c w-fit min-w-0 shrink-0 cursor-pointer flex-col gap-1 rounded-xl border border-sf-b bg-sf-primary p-1 text-[9px] text-sf-text transition-colors select-none hover:border-sf-theme hover:text-sf-theme"
+        aria-expanded="true"
+        @click="system.moreOperationsExpanded = false"
       >
-        <SfIcon :icon="system.moreOperationsExpanded ? 'lucide:chevron-up' : 'lucide:chevron-down'" size="4" />
-        <span class="w-9 text-center leading-4 break-all">{{ system.moreOperationsExpanded ? $t("collapseMore") : $t("expandMore") }}</span>
+        <SfIcon icon="lucide:chevron-up" size="4" />
+        <span class="w-9 text-center leading-4 break-all">{{ $t("collapseMore") }}</span>
       </button>
-      <div v-if="system.moreOperationsExpanded" class="flex flex-col items-center gap-[6px]">
-        <ImportResume jump-after-import>
-          <template #trigger="{ open }">
-            <button
-              type="button"
-              class="flex-c w-fit min-w-0 cursor-pointer flex-col gap-1 rounded-xl border border-sf-b bg-sf-primary p-1 text-[9px] text-sf-text transition-colors select-none hover:border-sf-theme hover:text-sf-theme"
-              @click="open"
-            >
-              <SfIcon icon="fa6-solid:file-import" size="4" />
-              <span class="w-9 text-center leading-4 break-all">导入简历</span>
-            </button>
-          </template>
-        </ImportResume>
-        <ModuleSearch />
-        <SortByTime />
-        <button
-          type="button"
-          class="flex-c w-fit min-w-0 cursor-pointer flex-col gap-1 rounded-xl border border-sf-b bg-sf-primary p-1 text-[9px] text-sf-text transition-colors select-none hover:border-sf-theme hover:text-sf-theme"
-          :disabled="!currentData || !runtimeConfig"
-          @click="showAll"
-        >
-          <SfIcon icon="lucide:eye" size="4" />
-          <span class="w-9 text-center leading-4 break-all">{{ $t("showAllContent") }}</span>
-        </button>
-        <button
-          type="button"
-          class="flex-c w-fit min-w-0 cursor-pointer flex-col gap-1 rounded-xl border border-sf-b bg-sf-primary p-1 text-[9px] text-sf-text transition-colors select-none hover:border-sf-theme hover:text-sf-theme"
-          :disabled="!currentData || !runtimeConfig"
-          @click="collapseAll"
-        >
-          <SfIcon icon="fa-solid:caret-up" size="4" />
-          <span class="w-9 text-center leading-4 break-all">{{ $t("collapseAllModules") }}</span>
-        </button>
+      <button
+        v-else
+        type="button"
+        class="flex-c w-fit min-w-0 shrink-0 cursor-pointer flex-col gap-1 rounded-xl border border-sf-b bg-sf-primary p-1 text-[9px] text-sf-text transition-colors select-none hover:border-sf-theme hover:text-sf-theme"
+        aria-expanded="false"
+        @click="system.moreOperationsExpanded = true"
+      >
+        <SfIcon icon="lucide:chevron-down" size="4" />
+        <span class="w-9 text-center leading-4 break-all">{{ $t("expandMore") }}</span>
+      </button>
+      <div v-if="system.moreOperationsExpanded" class="max-h-[50vh] min-h-0 overflow-y-auto">
+        <MoreActions />
       </div>
+      <SfDropdown v-else trigger="click" placement="right-end" :show-arrow="false" class="w-fit">
+        <button
+          type="button"
+          class="flex-c w-fit min-w-0 cursor-pointer flex-col gap-1 rounded-xl border border-sf-b bg-sf-primary p-1 text-[9px] text-sf-text transition-colors select-none hover:border-sf-theme hover:text-sf-theme"
+          aria-haspopup="menu"
+        >
+          <SfIcon icon="lucide:ellipsis" size="4" />
+          <span class="w-9 text-center leading-4 break-all">{{ $t("moreOperations") }}</span>
+        </button>
+        <template #dropdown>
+          <div
+            class="flex max-h-[70vh] flex-col items-center gap-2 overflow-y-auto rounded-2xl border border-sf-b bg-sf-primary p-2"
+          >
+            <MoreActions />
+          </div>
+        </template>
+      </SfDropdown>
       <AddModule />
     </div>
   </aside>
