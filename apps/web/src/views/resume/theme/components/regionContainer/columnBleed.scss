@@ -1,0 +1,17 @@
+// 栏底色铺到纸张边缘的公共偏移：上下负偏移盖住页面边距，栏间一侧停在中缝，纸张外侧负偏移铺满。
+// $anchor 声明底色锚在哪一栏：right = 右栏底色（左缘停中缝）、left = 左栏底色（右缘停中缝）。
+@mixin column-bleed($anchor: right) {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  top: calc(-1 * var(--resume-page-inset-vertical, 0px)); // 向上盖住页面上边距
+  bottom: calc(-1 * var(--resume-bottom-space, 0px)); // 向下停在页脚预留空间之上
+  @if $anchor == right {
+    right: calc(-1 * var(--resume-page-inset-horizontal, 0px)); // 向右铺到纸张右边缘
+    left: 0; // 左缘停在两栏交界的中缝
+  } @else {
+    right: 0; // 右缘停在两栏交界的中缝
+    left: calc(-1 * var(--resume-page-inset-horizontal, 0px)); // 向左铺到纸张左边缘
+  }
+  pointer-events: none;
+}
