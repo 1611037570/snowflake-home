@@ -1,4 +1,5 @@
 import type { ThemeDecisions } from "@/domain/resume/theme/themeDecisions";
+import { resolveUserTemplate } from "@/domain/resume/theme/userTemplates";
 import { computed, type ComputedRef, type Ref } from "vue";
 import { getContentHeight, RESUME_WIDTH } from "../../shared/constants";
 import { defaultLeftColumnWidth } from "@/domain/resume/theme/uiConfig";
@@ -53,13 +54,17 @@ export const useResumeLayout = ({
 }: UseResumeLayoutOptions) => {
   const buildNodes = createLayoutNodeBuilder(); // 节点复用与注册表归当前预览实例管理
   const moduleKeys = computed(() => allModules.value.map((module) => module.key).filter(Boolean));
+  // 个人信息模板的契约只解析一次，节点构建直接取分片能力，避免 map 内逐节点重复解析。
+  const userSplitMode = computed(
+    () => resolveUserTemplate(ui.value.theme?.userTemplate, themeDecisions.value.layoutType).split,
+  );
   const nodes = computed<LayoutNode[]>(() => {
     const built = buildNodes({
       moduleKeys: moduleKeys.value,
       data: data.value,
       ui: ui.value,
     }).map((node) => node.contentKind === "user"
-      ? { ...node, splitMode: themeDecisions.value.userContent?.split ?? "whole" } // 组件分片能力显式进入测量契约
+      ? { ...node, splitMode: userSplitMode.value } // 组件分片能力与渲染共用解析入口
       : node);
     // 缩略图只需首屏观感，跳过字符级断点，避免每张卡片挂载一棵过大的测量树
     if (!isThumb.value) return built;

@@ -2,14 +2,11 @@ import type { PageLayoutTemplateId } from "@/domain/resume/theme/layouts";
 import { resumeThemeRegistry } from "@/domain/resume/theme/styles";
 import type { ThemeCapabilities } from "@/domain/resume/theme/themeContract";
 import { validateThemeDecisions } from "@/domain/resume/theme/themeContract";
+import { resolveUserTemplate } from "@/domain/resume/theme/userTemplates";
 // 编号取自真实文件清单，配置解析不引入渲染组件。
 const componentIds = (files: Record<string, unknown>) => new Set(
   Object.keys(files).map((file) => file.slice(file.lastIndexOf("/") + 1, -4)),
 );
-const userContentIds = componentIds(import.meta.glob([
-  "/src/views/resume/theme/components/userModule/components/userHeading.vue",
-  "/src/views/resume/theme/components/userModule/components/*User.vue",
-]));
 const pageDecorationIds = componentIds(import.meta.glob("/src/views/resume/theme/components/pageDecoration/themes/*.vue"));
 const pageAppearanceIds = componentIds(import.meta.glob("/src/views/resume/theme/components/pageContainer/themes/*.vue"));
 
@@ -50,10 +47,10 @@ export const resolveThemeDecisions = (themeId?: string): ThemeDecisions => {
   if (cached) return cached;
   const themeDecisions = resumeThemeRegistry[id]?.decisions ?? {};
   const errors = validateThemeDecisions(themeDecisions);
-  // 显式组件编号按绘制入口的文件清单校验，漏登记在主题解析时直接报告。
-  if (themeDecisions.userContent && !errors.includes("userContent.renderer")) {
-    if (!userContentIds.has(themeDecisions.userContent.renderer)) errors.push("userContent.renderer");
-  }
+  // 个人信息模板在主题预设中声明，组件与分页能力由同一清单校验。
+  const userTemplate = resumeThemeRegistry[id]?.ui.theme?.userTemplate;
+  // 这里只利用解析的登记校验副作用，契约由渲染层另行解析，返回值不消费。
+  void resolveUserTemplate(userTemplate, themeDecisions.layoutType ?? DEFAULT_THEME_DECISIONS.layoutType);
   if (themeDecisions.topDecoration && !errors.includes("topDecoration")) {
     if (!pageDecorationIds.has(themeDecisions.topDecoration)) errors.push("topDecoration");
   }
@@ -71,17 +68,6 @@ export const resolveThemeDecisions = (themeId?: string): ThemeDecisions => {
       ? { pageBackgroundPattern: themeDecisions.pageBackgroundPattern }
       : {}),
   };
-  // 内容能力在接入层解析一次，布局与渲染不再查询组件元数据。
-  if (!decisions.userContent && decisions.layoutType === "twoColumn") {
-    // 公共双栏资料组件固定单列，限制与组件选择在同一入口解析。
-    decisions.restrictions = {
-      "user.infoLayout": "themeFixedContactLayout", // 公共双栏资料固定单列排布
-      ...decisions.restrictions, // 保留主题显式设置限制
-    };
-  }
-  decisions.userContent ??= decisions.layoutType === "twoColumn"
-    ? { renderer: "twoColumnUser" /* 公共双栏个人信息 */, split: "blocks" /* 按稳定块分片 */ }
-    : { renderer: "userHeading" /* 公共个人信息页眉 */, split: "whole" /* 整块展示 */ };
   decisionCache.set(id, decisions);
   return decisions;
 };
