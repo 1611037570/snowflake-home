@@ -15,7 +15,7 @@ const resumeData: any = {
         name: {
           hidden: false,
         },
-        moreCollapsed: ["1"],
+        moreCollapsed: [],
         birthday: {
           hidden: false,
           icon: "personal-birthday",
