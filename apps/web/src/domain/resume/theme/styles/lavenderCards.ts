@@ -6,7 +6,7 @@ export default {
   design: ["two-column", "premium"], // 双栏与臻品分类
   description: "紫色到浅蓝的柔和纸张渐变，搭配白色圆角卡片与渐变方点标题。", // 主题说明
   pageAppearance: { // 页面正文颜色
-    textColor: "#45516B", // 深蓝灰保证浅色纸张上的可读性
+    textColor: "#000000", // 浅色纸张上的正文固定使用黑色
   },
   decisions: { // 主题固定版式
     layoutType: "topUserTwoColumn", // 通用个人信息置顶、正文双栏

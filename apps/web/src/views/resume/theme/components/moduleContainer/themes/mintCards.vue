@@ -11,10 +11,10 @@ const titleInsetStyle = {
 </script>
 
 <template>
-  <!-- 卡片外框只绘制底色、圆角和轻阴影，留白由标题与条目节点承担。 -->
+  <!-- 白色卡片固定黑色正文，留白由标题与条目节点承担。 -->
   <div
     class="resume-module-wrapper group group/module relative box-border flex min-w-0 flex-col"
-    :class="[moduleClass, moduleKey === 'slogan' ? '' : 'rounded-[18px] bg-white shadow-[inset_0_0_0_1px_#D8F2EB,0_12px_28px_rgba(33,137,121,0.08)]']"
+    :class="[moduleClass, moduleKey === 'slogan' ? '' : 'rounded-[18px] bg-white text-black shadow-[inset_0_0_0_1px_#D8F2EB,0_12px_28px_rgba(33,137,121,0.08)]']"
     :data-module="moduleKey"
     :style="moduleKey === 'slogan' ? undefined : titleInsetStyle"
   >
