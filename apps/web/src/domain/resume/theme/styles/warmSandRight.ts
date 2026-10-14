@@ -6,6 +6,7 @@ export default {
   design: ["two-column", "polished"], // 双栏与精致分类
   description: "暖白正文搭配浅沙色右侧资料栏，以细线和留白组织经历。", // 主题说明
   decisions: { // 主题固定版式
+    regions: { main: { columnDecoration: true } }, // 栏间装饰占据中缝，留白保留在栏内
     layoutType: "twoColumnRightUser", // 个人信息置于右侧窄栏
   },
   ui: { // 主题默认界面参数

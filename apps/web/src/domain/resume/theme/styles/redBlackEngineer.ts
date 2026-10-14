@@ -27,6 +27,7 @@ export default {
       },
       main: {
         // 正文区域。
+        columnDecoration: true, // 侧栏底板与中轴占据中缝，留白保留在栏内。
         joinsPrevious: true, // 正文紧接页眉。
         inset: {
           top: 24 /* 正文顶部留白 */,

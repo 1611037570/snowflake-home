@@ -9,6 +9,7 @@ export default {
     textColor: "#3B372F", // 正文与标题使用暖墨色
   },
   decisions: { // 主题固定外观，不进入用户界面配置
+    regions: { main: { columnDecoration: true } }, // 栏间装饰占据中缝，留白保留在栏内
     usesDateRail: true, // 经历使用固定日期栏
     layoutType: "topUserTwoColumn", // 个人信息顶部通栏、正文双栏
   },

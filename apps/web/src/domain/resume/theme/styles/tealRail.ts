@@ -6,6 +6,7 @@ export default {
   design: ["two-column", "timeline"], // 模板列表的分类标签
   description: "左侧个人资料与右侧经历以青色竖线和节点连接。", // 主题说明
   decisions: { // 主题固定外观，不进入用户界面配置
+    regions: { main: { columnDecoration: true } }, // 栏间装饰占据中缝，留白保留在栏内
     layoutType: "twoColumn", // 个人信息位于左栏的双栏布局
   },
   ui: {

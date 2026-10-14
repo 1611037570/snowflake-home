@@ -53,6 +53,8 @@ export interface RegionConfig {
   padding?: BoxSpacing;
   /** 区域与前一区域之间的额外间距，未声明时两个区域自然相接 */
   gapBefore?: number;
+  /** 栏外间距，供没有栏间线条或分栏背景的双栏区域使用 */
+  columnGap?: number;
   /** 区域中的栏配置 */
   columns: ColumnConfig[];
 }

@@ -6,6 +6,7 @@ export default {
   design: ["two-column", "plain"], // 模板分类：双栏、极简
   description: "灰蓝窄栏收纳个人信息与技能，正文在左栏展开，极简排版适合直接投递。", // 主题说明
   decisions: { // 主题固定外观，不进入用户界面配置
+    regions: { main: { columnDecoration: true } }, // 栏间装饰占据中缝，留白保留在栏内
     layoutType: "twoColumnRightUser", // 右栏窄且个人信息固定在右栏的双栏布局
   },
   ui: { // 主题相对默认设置的差异

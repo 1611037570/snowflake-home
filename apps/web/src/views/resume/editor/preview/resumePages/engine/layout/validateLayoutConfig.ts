@@ -76,6 +76,10 @@ export const validateLayoutConfig = (
     if (region.height.mode === "fixed" && !isNonNegativeNumber(region.height.value)) {
       invalidLayoutFields.push(`regions[${regionIndex}].height.value`);
     }
+    // 栏外间距参与实际栏宽结算，必须是非负有限数。
+    if (region.columnGap !== undefined && !isNonNegativeNumber(region.columnGap)) {
+      invalidLayoutFields.push(`regions[${regionIndex}].columnGap`);
+    }
     // 区域内容盒的边距须为非负数，避免测量宽高与实际渲染偏离。
     if (region.padding) {
       (["top", "right", "bottom", "left"] as const).forEach((side) => {

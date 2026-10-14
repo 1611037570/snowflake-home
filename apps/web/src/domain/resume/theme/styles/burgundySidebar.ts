@@ -6,6 +6,7 @@ export default {
   design: ["two-column", "polished"], // 模板页分类标签
   description: "绛红装饰带搭配浅色侧栏，突出个人信息与工作经历。", // 主题说明
   decisions: { // 主题固定外观，不进入用户界面配置
+    regions: { main: { columnDecoration: true } }, // 栏间装饰占据中缝，留白保留在栏内
     topDecoration: "burgundySidebar", // 首页顶部独立装饰带
     layoutType: "twoColumn", // 布局类型：个人信息与侧栏模块位于左栏
   },

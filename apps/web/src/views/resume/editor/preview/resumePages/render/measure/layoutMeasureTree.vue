@@ -81,6 +81,7 @@ const regions = computed(() => {
         :key="region.regionId"
         :region-id="region.regionId"
         :region-padding="regionConfigMap.get(region.regionId)?.padding"
+        :column-gap="regionConfigMap.get(region.regionId)?.columnGap"
         :full-bleed="region.regionId === topRegionId"
         class="flex w-full min-w-0"
         :top-region-present="Boolean(topRegionId)"

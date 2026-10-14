@@ -107,10 +107,10 @@ const createCase = (definition: CaseDefinition) => {
 };
 
 describe("简历页几何基线", () => {
-  it("双栏中缝留白镜像纸张外侧，不改变区域间距或单栏结构", () => {
+  it("栏间有装饰时中缝留白保留在栏内，不改变区域间距或单栏结构", () => {
     const options = {
       ui: {}, // 几何由固定能力提供
-      themeDecisions: { ...DEFAULT_THEME_DECISIONS, layoutType: "topUserTwoColumn" as const }, // 通用双栏结构，栏内留白不再由主题声明
+      themeDecisions: { ...DEFAULT_THEME_DECISIONS, layoutType: "topUserTwoColumn" as const, regions: { main: { columnDecoration: true } } }, // 栏间装饰由主题声明
       moduleKeys: MODULE_KEYS, // 实际内容模块
       paddingVertical: PADDING_VERTICAL, // 页面上下边距
       paddingHorizontal: PADDING_HORIZONTAL, // 页面左右边距
@@ -118,15 +118,59 @@ describe("简历页几何基线", () => {
     };
     const layout = createResumeLayout(options);
     expect(layout.regions[1]?.columns.map((column) => column.padding)).toEqual([
-      { left: 0, right: PADDING_HORIZONTAL / 2 }, // 左栏右侧补半份中缝留白
-      { left: PADDING_HORIZONTAL / 2, right: 0 }, // 右栏左侧补半份中缝留白
+      { left: 0, right: PADDING_HORIZONTAL }, // 左栏距中缝保留整份页边距
+      { left: PADDING_HORIZONTAL, right: 0 }, // 右栏距中缝保留整份页边距
     ]);
     expect(layout.regions[1]?.gapBefore).toBe(MODULE_GAP);
+    expect(layout.regions[1]?.columnGap).toBeUndefined();
     const widths = [...resolveColumnWidths(layout, 746).values()];
     // 两栏外部宽度仍均分，内容各扣中缝一侧的留白。
-    expect(widths.slice(-2).map((width, index) => width - (layout.regions[1]?.columns[index]?.padding?.left ?? 0) - (layout.regions[1]?.columns[index]?.padding?.right ?? 0))).toEqual([361, 361]);
+    expect(widths.slice(-2).map((width, index) => width - (layout.regions[1]?.columns[index]?.padding?.left ?? 0) - (layout.regions[1]?.columns[index]?.padding?.right ?? 0))).toEqual([349, 349]);
     const single = createResumeLayout({ ...options, themeDecisions: { ...DEFAULT_THEME_DECISIONS, layoutType: "topUserSingleColumn" } });
     expect(single.regions[1]?.columns[0]?.padding).toBeUndefined();
+  });
+
+  it("栏间没有装饰时从总宽度扣除栏外间距", () => {
+    const layout = createResumeLayout({
+      ui: {}, // 使用主题固定版式
+      themeDecisions: { ...DEFAULT_THEME_DECISIONS, layoutType: "topUserTwoColumn" }, // 正文双栏没有栏间装饰
+      moduleKeys: MODULE_KEYS, // 实际内容模块
+      paddingVertical: PADDING_VERTICAL, // 页面上下边距
+      paddingHorizontal: PADDING_HORIZONTAL, // 页面左右边距
+      gap: MODULE_GAP, // 模块间距
+    });
+    expect(layout.regions[1]?.columnGap).toBe(MODULE_GAP);
+    expect(layout.regions[1]?.columns.map((column) => column.padding)).toEqual([undefined, undefined]);
+    expect([...resolveColumnWidths(layout, 746).values()].slice(-2)).toEqual([367, 367]);
+  });
+
+  it("霓虹终端没有栏间装饰时使用设置的模块间距", async () => {
+    const { default: theme } = await import("@/domain/resume/theme/styles/neonCircuit");
+    const horizontal = theme.ui.page.padding.horizontal;
+    const layout = createResumeLayout({
+      ui: theme.ui, // 使用霓虹终端的实际页面设置
+      themeDecisions: { ...DEFAULT_THEME_DECISIONS, ...theme.decisions }, // 使用主题实际版式声明
+      moduleKeys: MODULE_KEYS, // 实际内容模块
+      paddingVertical: theme.ui.page.padding.vertical, // 页面上下边距
+      paddingHorizontal: horizontal, // 页面左右边距
+      gap: theme.ui.page.spacing.module, // 模块间距
+    });
+    expect(layout.regions[1]?.columnGap).toBe(theme.ui.page.spacing.module);
+    expect(layout.regions[1]?.columns.map((column) => column.padding)).toEqual([undefined, undefined]);
+  });
+
+  it("墨玉右栏内容距分栏底色边界与页面外侧使用相同边距", async () => {
+    const { default: theme } = await import("@/domain/resume/theme/styles/jadeRightSidebar");
+    const layout = createResumeLayout({
+      ui: theme.ui, // 使用墨玉右栏的实际页面留白
+      themeDecisions: { ...DEFAULT_THEME_DECISIONS, ...theme.decisions }, // 使用主题实际分栏装饰声明
+      moduleKeys: MODULE_KEYS, // 实际内容模块
+      paddingVertical: 36, // 主题页面上下边距
+      paddingHorizontal: 36, // 主题页面左右边距
+      gap: MODULE_GAP, // 模块间距
+    });
+    expect(layout.regions[0]?.columnGap).toBeUndefined();
+    expect(layout.regions[0]?.columns[1]?.padding?.left).toBe(layout.pagePadding.right);
   });
 
   it("正文区域声明贴合时只关闭区域间距，保留栏内模块间距", () => {
@@ -251,8 +295,8 @@ describe("简历页几何基线", () => {
         },
       ],
       columnWidths: [
-        ["left", 373],
-        ["right", 373],
+        ["left", 367],
+        ["right", 367],
       ],
       columnFlowHeights: [
         ["left", [[1063, 300]]],
@@ -311,8 +355,8 @@ describe("简历页几何基线", () => {
       ],
       columnWidths: [
         ["user-column", 746],
-        ["left", 373],
-        ["right", 373],
+        ["left", 367],
+        ["right", 367],
       ],
       columnFlowHeights: [
         ["user-column", [[1063, 300]]],
