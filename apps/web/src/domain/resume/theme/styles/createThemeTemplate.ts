@@ -16,8 +16,6 @@ export interface ResumeThemeTemplate {
 
 /** 主题声明的页面级外观：公共页面按主题编号读取，不再按主题名称判断 */
 export interface ThemePageAppearance {
-  /** 页面文字颜色覆盖值，未声明时按纸张底色自动取对比色 */
-  textColor?: string;
   /** 首页顶部是否由内容底色铺到纸张顶边 */
   bleedsPageTop?: boolean;
   /** 编辑器预览是否去掉页面底边线，用于正文自带圆角的主题 */
@@ -39,11 +37,11 @@ export interface ThemeTemplateConfig {
   pageAppearance?: ThemePageAppearance;
   /** 主题固定版式、装饰尺寸及内容能力，不属于用户可编辑参数 */
   decisions?: Partial<ThemeDecisions>;
-  ui?: ThemeUiPreset; // 主题组件选择及用户可调参数的默认值
+  ui?: ThemeUiPreset; // 主题组件选择、正文颜色及可调参数的默认值
 }
 
 export interface ResumeThemeDefinition extends ThemeTemplateConfig {
-  ui: ThemeUiPreset; // 主题组件选择及用户可调参数的默认值
+  ui: ThemeUiPreset; // 主题组件选择、正文颜色及可调参数的默认值
 }
 
 // 在注册表统一补齐空覆盖项，主题文件只保留声明内容。

@@ -5,9 +5,6 @@ export default {
   id: "lavenderCards" as const, // 主题编号
   design: ["two-column", "premium"], // 双栏与臻品分类
   description: "紫色到浅蓝的柔和纸张渐变，搭配白色圆角卡片与渐变方点标题。", // 主题说明
-  pageAppearance: { // 页面正文颜色
-    textColor: "#000000", // 浅色纸张上的正文固定使用黑色
-  },
   decisions: { // 主题固定版式
     layoutType: "topUserTwoColumn", // 通用个人信息置顶、正文双栏
   },
@@ -29,6 +26,7 @@ export default {
       },
     },
     font: { // 正文排版
+      color: "#000000", // 浅色纸张上的正文固定使用黑色
       size: 14, // 正文字号
       lineHeight: 1.6, // 正文行高
     },

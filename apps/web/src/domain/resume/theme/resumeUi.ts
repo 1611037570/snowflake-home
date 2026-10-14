@@ -2,7 +2,7 @@ import { cloneDeep, isEqual } from "lodash-es";
 import { getResumeThemeUiPreset } from "@/domain/resume/theme/styles";
 import type { ResumeUi, ResumeUiOverrides } from "@/domain/resume/theme/uiTypes";
 
-// 仅展开主题预设中声明的可编辑字段，主题固定外观不进入简历配置。
+// 按主题预设展开简历配置，用户覆盖项在主题初始值之上生效。
 const mergeUi = (
   preset: Record<string, any>,
   overrides: Record<string, any>,

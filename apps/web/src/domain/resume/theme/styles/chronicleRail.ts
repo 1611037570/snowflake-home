@@ -5,9 +5,6 @@ export default {
   id: "chronicleRail" as const, // 主题编号，各外观组件按此编号查找
   design: ["two-column", "timeline", "polished"], // 模板列表分类标签：双栏、时间轴、精致
   description: "暖纸通栏页眉下，烫金时间轴贯穿宽栏经历，菱形节点标记每段日期，辅模块收进浅底窄栏。", // 主题说明
-  pageAppearance: { // 页面文字外观
-    textColor: "#3B372F", // 正文与标题使用暖墨色
-  },
   decisions: { // 主题固定外观，不进入用户界面配置
     regions: { main: { columnDecoration: true } }, // 栏间装饰占据中缝，留白保留在栏内
     usesDateRail: true, // 经历使用固定日期栏
@@ -32,6 +29,7 @@ export default {
       spacing: { module: 24, paragraph: 10 }, // 模块间距与段落间距
     },
     font: { // 文字尺寸与行距
+      color: "#3B372F", // 正文与标题使用暖墨色
       size: 14, // 正文字号
       lineHeight: 1.6, // 正文行高倍数
     },

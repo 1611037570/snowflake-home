@@ -5,9 +5,6 @@ export default {
   id: "forestChalk" as const, // 主题编号
   design: ["two-column", "premium"], // 双栏与臻品分类
   description: "深绿细点纸纹、左右分列的个人信息，以及粉色三角与浅蓝波浪标题。", // 主题说明
-  pageAppearance: { // 深色纸张上的正文颜色
-    textColor: "#F0F2E9", // 正文使用柔和暖白色
-  },
   decisions: { // 主题固定版式和个人信息内容
     layoutType: "topUserTwoColumn", // 个人信息通栏、正文双栏
   },
@@ -29,6 +26,7 @@ export default {
       },
     },
     font: { // 正文排版
+      color: "#F0F2E9", // 正文使用柔和暖白色
       family: "text-lxgw-wenkai-lite", // 使用现有文楷字体
       size: 14, // 正文字号
       lineHeight: 1.65, // 正文行高

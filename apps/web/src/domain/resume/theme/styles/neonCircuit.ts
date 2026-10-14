@@ -5,9 +5,6 @@ export default {
   id: "neonCircuit" as const, // 主题编号
   design: ["two-column", "premium"], // 双栏与臻品分类
   description: "深色网格纸、青色内框和品红光带组成赛博风双栏履历。", // 主题说明
-  pageAppearance: { // 页面正文颜色
-    textColor: "#E5F2F2", // 暗色纸张上使用浅色文字
-  },
   decisions: { // 固定版式及内容组件
     layoutType: "topUserTwoColumn", // 个人信息通栏置顶，正文双栏
     pageBackgroundPattern: "neonCircuit", // 网格与内框背景
@@ -30,6 +27,7 @@ export default {
       },
     },
     font: { // 正文排版
+      color: "#E5F2F2", // 暗色纸张上使用浅色文字
       family: "Consolas, 'Courier New', monospace", // 终端风格等宽字体
       size: 14, // 正文字号
       lineHeight: 1.5, // 正文行高

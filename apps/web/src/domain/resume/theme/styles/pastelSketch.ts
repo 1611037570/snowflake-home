@@ -5,13 +5,11 @@ export default {
   id: "pastelSketch" as const, // 主题编号
   design: ["single-column", "premium"], // 单栏与臻品分类
   description: "奶油色画纸与柔彩光晕衬托个人信息，粉彩虚线引导正文标题。", // 主题说明
-  pageAppearance: { // 页面文字颜色
-    textColor: "#514A4C", // 正文使用柔和的深灰棕
-  },
   decisions: { // 主题固定版式
     layoutType: "topUserSingleColumn", // 个人信息与正文保持公共单栏布局
   },
   ui: { // 主题默认界面配置
+    font: { color: "#514A4C" }, // 正文使用柔和的深灰棕
     theme: { // 主题配色与标题
       color: "#C96F89", // 柔和玫瑰粉主题色
       titleTemplate: "pastelDashTitle", // 粉彩虚线标题样式
