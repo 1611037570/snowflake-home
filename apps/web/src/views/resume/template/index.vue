@@ -300,7 +300,7 @@ const tagTextClass = computed(() => (isDark.value ? "text-sf-theme-text" : "text
             >
               <!-- 缩略图铺满整卡，信息层浮在它的下半部分之上 -->
               <div class="absolute inset-0">
-                <ThumbPreview :item="getThumbItem(card.item)" :show-loading="card.type === 'style'" />
+                <ThumbPreview :item="getThumbItem(card.item)" show-loading />
               </div>
               <!-- 信息层之外的剩余空间：hover 遮罩与按钮在这里垂直居中，不会被信息层压住 -->
               <div class="relative min-h-0 flex-1">
