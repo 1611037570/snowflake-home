@@ -105,8 +105,9 @@ const getRuleIssues = (rules: any[], value: unknown, label: string) => {
       });
     }
     if (atsRule.type === "salaryRange") {
-      const match = String(value).match(/^(\d+(?:\.\d+)?)k-(?:(\d+(?:\.\d+)?)k)?$/i);
-      const above = String(value).match(/^(\d+(?:\.\d+)?)k以上$/i);
+      // k 后缀可缺省且大小写不敏感，与 salaryRange 组件的解析规则保持一致
+      const match = String(value).match(/^(\d+(?:\.\d+)?)k?-(?:(\d+(?:\.\d+)?)k?)?$/i);
+      const above = String(value).match(/^(\d+(?:\.\d+)?)k?以上$/i);
       if (above) return Number(above[1]) > 0 ? [] : addIssue($t("atsSalaryRange"));
       if (!match || Number(match[1]) <= 0) return addIssue($t("atsSalaryRange"));
       if (match[2] && Number(match[2]) <= Number(match[1])) return addIssue($t("atsSalaryOrder"));
