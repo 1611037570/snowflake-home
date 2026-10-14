@@ -26,7 +26,7 @@ const {
   content: "";
   position: absolute;
   top: 0; /* 从正文内容顶部开始，底板内边距已由公共容器施加。 */
-  right: calc(-1 * var(--resume-column-gap-half));
+  right: 0; /* 细线贴着左栏右缘，即中缝正中 */
   bottom: 0;
   width: 1px;
   background-color: var(--violet-divider);

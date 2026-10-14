@@ -5,10 +5,11 @@ import { useResumePreviewContext } from "@/views/resume/editor/preview/shared/pr
 const { theme: { themeColor, themeColorContrast } } = useResumePreviewContext();
 // 底色延伸到纸张边缘，左右栏内容继续使用现有页面留白。
 const sidebarStyle = computed(() => ({
-  "--red-sidebar-horizontal": "var(--resume-page-inset-horizontal)", // 底色向纸张左边缘延伸的距离
-  "--red-sidebar-vertical": "var(--resume-page-inset-vertical)", // 底色向纸张上边缘延伸的距离
   "--red-sidebar-accent": themeColor.value, // 左栏背景及标题的主题色
   "--red-sidebar-contrast": themeColorContrast.value, // 左栏文字按背景亮度自动反白或转深色
+  "--resume-user-avatar-max-width": "100%", // 头像不超过左栏宽度
+  "--resume-user-avatar-radius": "0", // 头像直角，贴合左栏色块
+  "--resume-user-name-weight": "500", // 左栏姓名字重减轻，避免深色底上过重
 }));
 </script>
 
@@ -18,7 +19,9 @@ const sidebarStyle = computed(() => ({
   </div>
 </template>
 
-<style scoped>
+<style lang="scss" scoped>
+@use "../../columnBleed" as *;
+
 /* 每栏独立承载背景与文字配色，不改变栏内可用尺寸。 */
 .red-white-sidebar :deep(> [data-resume-column]) {
   isolation: isolate;
@@ -34,11 +37,11 @@ const sidebarStyle = computed(() => ({
   content: "";
   position: absolute;
   z-index: -1;
-  top: calc(-1 * var(--red-sidebar-vertical));
-  right: calc(-1 * var(--resume-column-gap-half));
+  top: calc(-1 * var(--resume-page-inset-vertical, 0px));
   bottom: calc(-1 * var(--resume-bottom-space, 0px));
-  left: calc(-1 * var(--red-sidebar-horizontal));
-  background: var(--red-sidebar-accent);
+  right: 0;
+  left: calc(-1 * var(--resume-page-inset-horizontal, 0px));
   pointer-events: none;
+  background: var(--red-sidebar-accent);
 }
 </style>

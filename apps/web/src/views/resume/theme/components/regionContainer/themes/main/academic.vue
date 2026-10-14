@@ -40,17 +40,17 @@ const regionStyle = computed(() => ({
   position: absolute;
   z-index: -1;
   top: 0;
-  right: calc(-1 * var(--resume-column-gap-half));
+  right: 0; /* 底色停在栏间中缝，不再越过两栏交界 */
   bottom: calc(-1 * var(--resume-bottom-space, 0px));
   left: 0;
   background-color: var(--academic-region-band);
   pointer-events: none;
 }
 
-/* 右栏底色压住栏间距并向右延伸到纸张边缘，底边同样停在页脚上方 */
+/* 右栏底色从栏间中缝开始并向右延伸到纸张边缘，底边同样停在页脚上方 */
 .academic-main--two-column :deep(> [data-resume-column="right"])::before {
   right: calc(-1 * var(--academic-column-bleed, 0px));
-  left: calc(-1 * var(--resume-column-gap-half));
+  left: 0; /* 底色从两栏交界的中缝开始 */
   background-color: color-mix(in srgb, var(--academic-region-band) 55%, transparent);
 }
 </style>

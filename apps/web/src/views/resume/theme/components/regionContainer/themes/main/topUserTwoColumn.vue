@@ -8,7 +8,7 @@ const {
 } = useResumePreviewContext();
 // 栏间线只服务个人信息顶部通栏的双栏版式，单栏布局下没有第二栏，装饰一并关闭。
 const isTopUserTwoColumn = computed(() => themeDecisions.value.layoutType === "topUserTwoColumn");
-// 栏间线颜色与偏移由变量下发，偏移取栏间距的一半，让线条落在栏间中线。
+// 栏间线颜色与对齐由变量下发，线条贴着两栏交界的中缝。
 const mainStyle = computed(() => ({
   "--top-user-divider": themeColorLine.value, // 双栏栏间线颜色
   "--top-user-divider-top": "var(--resume-region-inset-top)", // 栏间线对齐栏内内容的起始位置
@@ -34,13 +34,13 @@ const mainStyle = computed(() => ({
   align-self: stretch;
 }
 
-/* 栏间 1px 细线锚定右栏左边缘并回退半个栏间距，与标题细分隔线共用同一套线语言。 */
+/* 栏间 1px 细线锚定右栏左边缘（两栏交界的中缝），与标题细分隔线共用同一套线语言。 */
 .top-user-main--two-column :deep(> [data-resume-column="right"])::before {
   content: "";
   position: absolute;
   top: calc(-1 * var(--top-user-divider-top, 0px));
   bottom: calc(-1 * var(--resume-bottom-space, 0px));
-  left: calc(-1 * var(--resume-column-gap-half));
+  left: 0; /* 细线贴着右栏左缘，即中缝正中 */
   width: 1px;
   background-color: var(--top-user-divider);
   pointer-events: none;
