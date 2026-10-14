@@ -22,15 +22,9 @@ const timelineStyle = computed(() => ({
 <style scoped>
 .compact-timeline-main :deep([data-resume-column-content]) {
   position: relative;
-  background: linear-gradient(
-    to right,
-    #edf2e9 0,
-    #edf2e9 calc(var(--timeline-rail-width) - 18px),
-    transparent calc(var(--timeline-rail-width) - 18px)
-  );
 }
 
-/* 浅绿日期带与正文之间保留稳定的分界线。 */
+/* 日期栏与正文之间保留稳定的分界线。 */
 .compact-timeline-main :deep([data-resume-column-content])::before {
   content: "";
   position: absolute;
