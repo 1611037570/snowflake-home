@@ -8,8 +8,8 @@ import {
 import ThumbPreview from "@/views/resume/editor/preview/modes/thumb.vue";
 import RevealGrid from "@/views/resume/components/revealGrid.vue";
 import ResumePreviewSkeleton from "@/views/resume/components/resumePreviewSkeleton.vue";
+import ListScroll from "@/views/resume/components/listScroll.vue";
 import TemplateCategory from "./components/templateCategory.vue";
-import { useInfiniteScroll, useResizeObserver } from "@vueuse/core";
 import { resumeTemplateList } from "./data/list";
 import { loadResumeTemplateData } from "./data/resumeData";
 import { expandConfigModules } from "@/stores/modules/resume/hooks/useConfigTemplate";
@@ -157,13 +157,8 @@ watch(visibleFileNames, (fileNames) => ensureTemplateItems(fileNames), { immedia
 const templateGridKey = computed(
   () => `${currentTopCategory.value}-${JSON.stringify(templateFilters.value)}`,
 );
-const scrollbarRef = ref(null);
-// 观察真实列表高度，卡片追加后重新检测触底。
-const listContentRef = ref(null);
 const resetTemplateList = () => {
   visibleCount.value = currentBatchSize.value;
-  // 分类或筛选改变后从首批开始，滚动位置同步回到顶部。
-  scrollbarRef.value?.setScrollTop(0);
 };
 const setTemplateFilters = (value) => {
   templateFilters.value = value;
@@ -174,49 +169,25 @@ const setCurrentTopCategory = (value) => {
   resetTemplateList();
 };
 
-// 触底时先加载下一批正文，成功后追加卡片；加载期间及列表结束后不重复请求。
-const { isLoading: loadingMore, reset: resetInfiniteScroll } = useInfiniteScroll(
-  () => scrollbarRef.value?.wrapRef,
-  async () => {
-    if (templateLoading.value || !hasMore.value) return;
-    const listKey = templateGridKey.value;
-    const nextCount = Math.min(
-      visibleCount.value + currentBatchSize.value,
-      currentTotal.value,
-    );
-    const files =
-      currentTopCategory.value === "template"
-        ? [PREVIEW_BASE_FILE]
-        : [
-            ...filteredResumeIndexes.value
-              .slice(0, nextCount)
-              .map((item) => item.fileName),
-            PREVIEW_BASE_FILE,
-          ];
-    const loaded = await ensureTemplateItems(files);
-    // 等待期间分类或筛选改变时，不将旧批次数量写入新列表。
-    if (!loaded || listKey !== templateGridKey.value) return;
-    visibleCount.value = nextCount;
-    await nextTick();
-  },
-  {
-    distance: 12, // 距离底部十二像素时追加下一批。
-    // 有剩余结果且加载正常时才允许追加。
-    canLoadMore: () =>
-      !templateLoading.value && !templateLoadFailed.value && hasMore.value,
-  },
-);
-// 缓存命中时仍显示追加批次的加载反馈，不仅依赖正文请求状态。
-const showLoadMoreLoading = computed(() => templateLoading.value || loadingMore.value);
-const checkTemplateBottom = () => {
-  // 失败时停止自动重试；追加期间由当前任务结束后统一检测。
-  if (showLoadMoreLoading.value || templateLoadFailed.value) return;
-  resetInfiniteScroll();
+// 下一批正文就绪后再追加卡片，触底判断和状态提示由共用列表组件维护。
+const loadNextTemplates = async () => {
+  if (templateLoading.value || templateLoadFailed.value || !hasMore.value) return false;
+  const listKey = templateGridKey.value;
+  const nextCount = Math.min(visibleCount.value + currentBatchSize.value, currentTotal.value);
+  const files =
+    currentTopCategory.value === "template"
+      ? [PREVIEW_BASE_FILE]
+      : [
+          ...filteredResumeIndexes.value.slice(0, nextCount).map((item) => item.fileName),
+          PREVIEW_BASE_FILE,
+        ];
+  const loaded = await ensureTemplateItems(files);
+  // 等待期间分类或筛选改变时，不将旧批次数量写入新列表。
+  if (!loaded || listKey !== templateGridKey.value) return false;
+  visibleCount.value = nextCount;
+  await nextTick();
+  return true;
 };
-// 列表自然增高时重新检测，避免只能通过再次滚动更新底部状态。
-useResizeObserver(listContentRef, checkTemplateBottom);
-// 首批、追加或筛选结束后重新检测，未填满可视区时继续补齐下一批。
-watch([templateGridKey, showLoadMoreLoading], checkTemplateBottom, { flush: "post" });
 
 // 样式卡片使用预览范本的内容，并以主题预设生成独立的简历配置。
 const createStyleResumeItem = (card) => {
@@ -278,9 +249,16 @@ const tagTextClass = computed(() => (isDark.value ? "text-sf-theme-text" : "text
 
 <template>
   <div class="relative mx-auto flex h-full w-full max-w-7xl flex-col gap-3">
-    <SfScrollbar ref="scrollbarRef" class="flex-1" flush @scroll="checkTemplateBottom">
-      <!-- 列表按内容自然增高，避免固定高度压缩卡片并使触底检测滞后。 -->
-      <div ref="listContentRef" class="flex min-h-full shrink-0 flex-col px-3 py-2 sm:px-6">
+    <ListScroll
+      class="flex-1"
+      flush
+      content-class="px-3 py-2 sm:px-6"
+      :loading="templateLoading"
+      :has-more="hasMore"
+      :count="displayedTemplates.length"
+      :load-more="loadNextTemplates"
+      :reset-key="templateGridKey"
+    >
         <TemplateCategory
           @change="setTemplateFilters"
           @category-change="setCurrentTopCategory"
@@ -369,33 +347,12 @@ const tagTextClass = computed(() => (isDark.value ? "text-sf-theme-text" : "text
             </div>
           </template>
         </RevealGrid>
-        <!-- 追加加载仅在列表底部显示提示，不卸载已经展示的卡片。 -->
-        <div
-          v-if="showLoadMoreLoading && displayedTemplates.length && previewBase"
-          class="flex items-center justify-center gap-3 py-3 text-sm text-sf-text-2"
-          role="status"
-          aria-busy="true"
-        >
-          <span
-            class="h-6 w-6 animate-spin rounded-full border-2 border-sf-theme-2 border-t-sf-theme"
-            aria-hidden="true"
-          />
-          {{ $t("resumeTemplateLoading") }}
-        </div>
+      <template #footer>
         <div class="flex flex-1 flex-col items-center justify-end">
-          <!-- 所有批次展示完毕且存在结果时提示列表结束。 -->
-          <div
-            v-if="!showLoadMoreLoading && currentTotal > 0 && !hasMore"
-            class="flex items-center justify-center gap-3 py-6 text-sm text-sf-text-3"
-          >
-            <span aria-hidden="true" class="h-px w-12 bg-sf-border" />
-            <span>{{ $t("resumeTemplateNoMore") }}</span>
-            <span aria-hidden="true" class="h-px w-12 bg-sf-border" />
-          </div>
           <SfFooter />
         </div>
-      </div>
-    </SfScrollbar>
+      </template>
+    </ListScroll>
     <!-- 模板页专用全屏预览：左侧展示简历，右侧展示模板文字信息 -->
     <TemplatePreview
       :visible="isFullscreen"

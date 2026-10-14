@@ -4,19 +4,21 @@ defineOptions({ name: "BuilderTemplate" });
 import { useResumeStore } from "@/stores";
 import { storeToRefs } from "pinia";
 import ThumbPreview from "../../preview/modes/thumb.vue";
+import ListScroll from "@/views/resume/components/listScroll.vue";
 import { createResumeStyleUi, resumeStyleTemplateList } from "@/views/resume/theme";
 import { loadResumeTemplateData } from "@/views/resume/template/data/resumeData";
 import {
   resumeTemplateLayoutOptions,
   resumeTemplateTierOptions,
 } from "@/views/resume/template/data/list";
-import { onMounted, ref } from "vue";
+import { computed, nextTick, onMounted, ref, watch } from "vue";
 import i18n, { $t } from "@/locales";
 const resumeStore = useResumeStore();
 const { currentUI } = storeToRefs(resumeStore);
 const previewBase = ref(null);
 const selectedLayout = ref(""); // 当前选中的布局标签
 const selectedTier = ref(""); // 当前选中的设计类型，空值时不限类型
+const visibleCount = ref(8);
 
 // 布局和类型分别切换，可同时约束模板列表。
 const toggleLayout = (key) => {
@@ -62,6 +64,21 @@ const templates = computed(() => {
     }));
 });
 
+// 编辑器模板分批展示，筛选变化后重新从首批开始。
+const visibleTemplates = computed(() => templates.value.slice(0, visibleCount.value));
+const hasMore = computed(() => visibleCount.value < templates.value.length);
+const filterKey = computed(() => `${selectedLayout.value}-${selectedTier.value}`);
+watch(filterKey, () => {
+  visibleCount.value = 8;
+});
+const loadNextTemplates = async () => {
+  if (!hasMore.value) return false;
+  await nextTick();
+  visibleCount.value = Math.min(visibleCount.value + 8, templates.value.length);
+  await nextTick();
+  return true;
+};
+
 // 选中状态只由主题编号决定，复用相同标题样式的主题互不影响。
 const isActive = (id) => (currentUI.value?.theme?.template ?? "default") === id;
 
@@ -78,7 +95,14 @@ const applyTemplate = (template) => {
 </script>
 
 <template>
-  <SfScrollbar class="h-full bg-sf-primary py-3">
+  <ListScroll
+    class="h-full bg-sf-primary"
+    content-class="py-3"
+    :has-more="hasMore"
+    :count="visibleTemplates.length"
+    :load-more="loadNextTemplates"
+    :reset-key="filterKey"
+  >
     <!-- 布局与类型各占一行，两行筛选条件可以叠加。 -->
     <div class="mb-3 flex flex-col gap-3">
       <div class="flex items-center gap-3">
@@ -119,7 +143,7 @@ const applyTemplate = (template) => {
     <!-- 模板卡片按可用宽度自动换列，保持缩略图的固定尺寸。 -->
     <div class="grid w-full grid-cols-[repeat(auto-fit,minmax(156px,1fr))] gap-3">
       <div
-        v-for="template in templates"
+        v-for="template in visibleTemplates"
         :key="template.id"
         class="group cursor-pointer!"
         @click="applyTemplate(template)"
@@ -150,13 +174,7 @@ const applyTemplate = (template) => {
     >
       {{ $t("resumeTemplateEmpty") }}
     </div>
-    <!-- 非空列表滚动到末尾时显示结束提示。 -->
-    <div v-else class="flex items-center justify-center gap-3 py-6 text-sm text-sf-text-3">
-      <span aria-hidden="true" class="bg-sf-border h-px w-12" />
-      <span>{{ $t("resumeTemplateNoMore") }}</span>
-      <span aria-hidden="true" class="bg-sf-border h-px w-12" />
-    </div>
-  </SfScrollbar>
+  </ListScroll>
 </template>
 
 <style lang="scss" scoped></style>

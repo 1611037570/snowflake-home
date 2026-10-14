@@ -18,11 +18,11 @@ import BuilderEditorComponent from "./form/index.vue";
 const BuilderEditor = markRaw(BuilderEditorComponent);
 const AsyncTemplate = markRaw(defineAsyncComponent(() => import("./template/index.vue")));
 const AsyncAi = markRaw(defineAsyncComponent(() => import("../assistant/chat/index.vue")));
-// 默认打开模板标签。
-const activeIndex = ref(2);
+// 进入简历编辑器时默认打开编辑标签。
+const activeIndex = ref(0);
 // 同步明确的标签标识，区分普通编辑、智能助手和模板场景。
 const activeEditorTab = inject("resumeEditorTab", ref("edit"));
-activeEditorTab.value = "template";
+activeEditorTab.value = "edit";
 // 切换方向：索引增大为 right（新内容从右侧滑入），减小为 left
 const direction = ref("right");
 watch(activeIndex, (val, old) => {
