@@ -17,7 +17,7 @@ const resumeData: any = {
         city: "上海",
         status: "在职看机会",
         arrivalTime: "两周内到岗",
-        salary: "12-18K",
+        salary: "12k-18k",
         avatar: xiaoyang,
       },
     },

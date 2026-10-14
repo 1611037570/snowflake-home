@@ -30,7 +30,7 @@ const resumeData: any = {
         nativePlace: "江苏南京",
         sourcePlace: "江苏南京",
         currentCity: "上海",
-        salary: "30-40K",
+        salary: "30k-40k",
         heightWeight: { height: "178", weight: "70" },
         measurements: { bust: "96", waist: "78", hip: "94" },
         sizes: { top: "L", bottom: "32", shoes: "42" },

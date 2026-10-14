@@ -10,9 +10,10 @@ const modelValue = defineModel("modelValue", {
 
 const parseRange = (value) => {
   if (typeof value !== "string") return { minimum: "", maximum: "" };
-  const aboveMatch = value.match(/^(.+?)k以上$/);
+  // 兼容历史数据里「30-40K」这类大小写与 k 后缀不统一的写法，避免编辑器回显为空
+  const aboveMatch = value.match(/^(.+?)k?以上$/i);
   if (aboveMatch) return { minimum: aboveMatch[1], maximum: "" };
-  const rangeMatch = value.match(/^(.+?)k-(?:(.+?)k)?$/);
+  const rangeMatch = value.match(/^(.+?)k?-(?:(.+?)k?)?$/i);
   return rangeMatch
     ? { minimum: rangeMatch[1], maximum: rangeMatch[2] ?? "" }
     : { minimum: "", maximum: "" };

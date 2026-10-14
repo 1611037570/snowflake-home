@@ -194,6 +194,14 @@ const sizesText = computed(() => {
     .map((item) => (item.key === "shoes" ? `${item.value}码` : item.value));
   return joinInfo(sizes);
 });
+// 期望薪资展示：只选了最低薪资的未完成区间按「Xk以上」展示，不再隐藏
+const salaryText = computed(() => {
+  if (isUserFieldHidden("salary")) return "";
+  const salary = user.value?.salary;
+  if (!salary) return "";
+  const incompleteMatch = String(salary).match(/^(.+?)k-$/i);
+  return incompleteMatch ? `${incompleteMatch[1]}k以上` : String(salary);
+});
 const secondaryItems = computed(() => {
   const items = [];
   if (!isUserFieldHidden("status") && user.value?.status) {
@@ -274,10 +282,12 @@ const secondaryItems = computed(() => {
       label: getPreviewText("currentCityLabel", previewLang.value),
     });
   }
-  // 最低薪资已选但最高薪资未完成时，预览暂不展示不完整区间。
-  if (!isUserFieldHidden("salary") && user.value?.salary && !/^.+k-$/.test(user.value.salary)) {
+  // 期望薪资有值即展示；只选最低薪资时由 salaryText 转成「Xk以上」
+  if (salaryText.value) {
     items.push({
-      key: "salary",
+      fieldKey: "salary",
+      sortKey: "salary",
+      text: salaryText.value,
       icon: fieldIcon("salary"),
       label: getPreviewText("salaryLabel", previewLang.value),
     });
