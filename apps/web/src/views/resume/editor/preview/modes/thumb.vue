@@ -18,7 +18,6 @@ defineProps({
     type: Object,
     required: true,
   },
-  showLoading: { type: Boolean, default: false }, // 样式模板缩略图渲染前显示加载状态
 });
 
 const wrapRef = ref(null);
@@ -66,7 +65,7 @@ const { stop: stopVisibleObserve } = useIntersectionObserver(
 <template>
   <div ref="rootRef" class="relative h-full w-full">
     <div
-      v-if="showLoading && !previewReady"
+      v-if="!previewReady"
       class="absolute inset-0 z-10 flex items-center justify-center bg-sf-primary"
       role="status"
       aria-busy="true"
