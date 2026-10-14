@@ -65,7 +65,7 @@ const defaultData: any = {
         collapsed: [],
         archived: false,
         title: "专业技能",
-        hidden: true,
+        hidden: false,
       },
       data: {
         content: "<p>熟悉前端开发与简历编辑器全链路研发，能够完成业务功能开发、接口联调和持续迭代。</p><p>掌握常用前端框架与协作工具，注重代码质量和用户体验。</p>",
@@ -265,10 +265,10 @@ const defaultData: any = {
         ],
       },
       {
-        key: "education",
+        key: "skill",
       },
       {
-        key: "skill",
+        key: "education",
       },
       {
         key: "work",
