@@ -7,6 +7,7 @@ import {
 } from "@/views/resume/theme";
 import ThumbPreview from "@/views/resume/editor/preview/modes/thumb.vue";
 import RevealGrid from "@/views/resume/components/revealGrid.vue";
+import ResumePreviewSkeleton from "@/views/resume/components/resumePreviewSkeleton.vue";
 import TemplateCategory from "./components/templateCategory.vue";
 import { useInfiniteScroll, useResizeObserver } from "@vueuse/core";
 import { resumeTemplateList } from "./data/list";
@@ -21,8 +22,10 @@ import { $t } from "@/locales";
 const TemplatePreview = markRaw(defineAsyncComponent(() => import("./templatePreview.vue")));
 import { computed, nextTick, ref, watch } from "vue";
 
-// 每批卡片数量：触底追加一批，避免整份范本列表一次性进入页面。
+// 范本每批卡片数量：触底追加一批，避免整份范本列表一次性进入页面。
 const TEMPLATE_BATCH_SIZE = 20;
+// 样式缩略图需要各自测量分页，首批及触底批次减少同时挂载的数量。
+const STYLE_BATCH_SIZE = 8;
 // 样式卡片统一使用的通用范本：进入模板页即加载，保证任一分类都有内容。
 const PREVIEW_BASE_FILE = "xiaoZhou.ts";
 
@@ -94,6 +97,9 @@ const templates = computed(() =>
 const templateFilters = ref({});
 // 一级分类：example 展示简历范本，template 展示简历模板
 const currentTopCategory = ref("example");
+const currentBatchSize = computed(() =>
+  currentTopCategory.value === "template" ? STYLE_BATCH_SIZE : TEMPLATE_BATCH_SIZE,
+);
 // 两类模板共用筛选规则；布局和类型分别匹配样式主题的 design 标签。
 const matchesTemplateFilters = (template, allowAllDesign = false) =>
   Object.entries(templateFilters.value).every(([key, value]) => {
@@ -155,7 +161,7 @@ const scrollbarRef = ref(null);
 // 观察真实列表高度，卡片追加后重新检测触底。
 const listContentRef = ref(null);
 const resetTemplateList = () => {
-  visibleCount.value = TEMPLATE_BATCH_SIZE;
+  visibleCount.value = currentBatchSize.value;
   // 分类或筛选改变后从首批开始，滚动位置同步回到顶部。
   scrollbarRef.value?.setScrollTop(0);
 };
@@ -175,7 +181,7 @@ const { isLoading: loadingMore, reset: resetInfiniteScroll } = useInfiniteScroll
     if (templateLoading.value || !hasMore.value) return;
     const listKey = templateGridKey.value;
     const nextCount = Math.min(
-      visibleCount.value + TEMPLATE_BATCH_SIZE,
+      visibleCount.value + currentBatchSize.value,
       currentTotal.value,
     );
     const files =
@@ -280,11 +286,23 @@ const tagTextClass = computed(() => (isDark.value ? "text-sf-theme-text" : "text
           @category-change="setCurrentTopCategory"
           @size-change="setPreviewSize"
         />
+        <!-- 首批范本未就绪时按真实卡片尺寸占位，避免筛选栏下方整片空白。 -->
         <div
           v-if="templateLoading && (!displayedTemplates.length || !previewBase)"
-          class="flex h-36 items-center justify-center text-sm text-sf-text-2"
+          class="grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5"
+          role="status"
+          aria-busy="true"
+          :aria-label="$t('resumeTemplateLoading')"
         >
-          {{ $t("resumeTemplateLoading") }}
+          <div v-for="index in 8" :key="index" class="flex justify-center">
+            <div :class="cardSizeClass" class="relative overflow-hidden rounded-[4px] border border-sf-b bg-sf-primary">
+              <ResumePreviewSkeleton />
+              <div class="absolute inset-x-0 bottom-0 flex flex-col gap-3 border-t border-sf-b bg-sf-primary p-3">
+                <div class="h-3 w-1/2 animate-pulse rounded bg-sf-bg" />
+                <div class="h-3 w-5/6 animate-pulse rounded bg-sf-bg" />
+              </div>
+            </div>
+          </div>
         </div>
         <!-- 模板页关闭逐项揭示：卡片一次性铺满，避免列表高度持续增长带动滚动 -->
         <RevealGrid
@@ -304,7 +322,7 @@ const tagTextClass = computed(() => (isDark.value ? "text-sf-theme-text" : "text
             >
               <!-- 缩略图铺满整卡，信息层浮在它的下半部分之上 -->
               <div class="absolute inset-0">
-                <ThumbPreview :item="getThumbItem(card.item)" />
+                <ThumbPreview :item="getThumbItem(card.item)" :show-loading="card.type === 'style'" />
               </div>
               <!-- 信息层之外的剩余空间：hover 遮罩与按钮在这里垂直居中，不会被信息层压住 -->
               <div class="relative min-h-0 flex-1">
