@@ -275,8 +275,8 @@ export const DEFAULT_USER_FORM = [
           {
             source: ["ui", "moreCollapsed"],
             prop: "collapsed",
-            // 默认展开，便于直接看到可添加字段
-            defaultValue: EXPANDED,
+            // 更多分类默认收起，常用字段由组件保持显示
+            defaultValue: COLLAPSED,
           },
         ],
         fields: [
@@ -781,18 +781,6 @@ export const DEFAULT_EDUCATION_FORM = {
             props: {
               placeholder: "如：北京大学",
               clearable: true,
-            },
-          },
-          {
-            type: "object",
-            label: "项目链接",
-            component: "projectLink",
-            rules: [atsRule("projectLink")],
-            span: 24,
-            model: {
-              source: ["data", "link"],
-              prop: "modelValue",
-              defaultValue: {},
             },
           },
           // 学校标签：可选标签由字段配置注入

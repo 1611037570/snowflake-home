@@ -41,6 +41,14 @@ const groupedFields = computed(() => {
   if (rest.length) groups.push({ category: "其他", fields: rest });
   return groups.filter((group) => group.fields.length > 0);
 });
+// 常用字段不参与更多区域折叠，便于直接补充高频个人信息。
+const commonGroups = computed(() =>
+  groupedFields.value.filter((group) => group.category === "常用"),
+);
+// 其余分类随更多区域展开状态显示。
+const moreGroups = computed(() =>
+  groupedFields.value.filter((group) => group.category !== "常用"),
+);
 
 // 切换展开/收起
 function toggle() {
@@ -88,6 +96,22 @@ function handleCreateCustomField() {
   <div class="w-full pb-3">
     <!-- 已添加字段始终显示在选择入口上方 -->
     <slot />
+    <!-- 常用字段始终显示，不随更多区域收起。 -->
+    <div v-for="group in commonGroups" :key="group.category" class="mt-3 flex flex-col gap-3">
+      <span class="text-xs text-sf-text-3">{{ translateResumeEditorText(group.category) }}</span>
+      <div class="flex flex-wrap gap-3">
+        <button
+          v-for="field in group.fields"
+          :key="getFieldDataKey(field)"
+          type="button"
+          class="flex h-7 cursor-pointer items-center justify-center gap-1 rounded-3xl border border-sf-b bg-sf-primary px-2 text-xs text-sf-text-2 transition-colors hover:border-sf-theme hover:text-sf-theme"
+          @click="handleAdd(field)"
+        >
+          <SfIcon icon="ic:round-add" size="4" />
+          <span>{{ field.props?.label }}</span>
+        </button>
+      </div>
+    </div>
     <!-- 更多配置开关增加左侧留白，与字段内容对齐。 -->
     <button
       type="button"
@@ -99,7 +123,7 @@ function handleCreateCustomField() {
     </button>
     <!-- 展开后按分类展示尚未添加的字段 -->
     <div v-if="expanded" class="mt-3 flex flex-col gap-3">
-      <div v-for="group in groupedFields" :key="group.category" class="flex flex-col gap-3">
+      <div v-for="group in moreGroups" :key="group.category" class="flex flex-col gap-3">
         <span class="text-xs text-sf-text-3">{{ translateResumeEditorText(group.category) }}</span>
         <div class="flex flex-wrap gap-3">
           <button
