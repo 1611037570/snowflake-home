@@ -111,13 +111,6 @@ const resumeData: any = {
           "<p><strong>测试工具：</strong>熟练使用 CANoe、CANalyzer、Vehicle Spy 与诊断工具链，掌握 CAPL、Python 脚本开发，熟悉 DBC/LDF 数据库解析与 ARXML 文件配置。</p><p><strong>技术栈：</strong>熟悉 CAN/CANFD、LIN、以太网 SOME/IP 等车载总线协议，掌握 UDS 诊断、网络管理与 OTA 刷写流程，了解 ISO 26262 功能安全与 ASPICE 测试流程，能搭建 HIL 台架并接入 Jenkins 持续集成。</p>",
       },
     },
-    advantage: {
-      ui: { collapsed: ["1"], archived: false },
-      data: {
-        content:
-          "<p><strong>问题定位：</strong>具备从现象到根因的排查能力，能结合总线报文、诊断日志与台架复现快速界定问题边界，推动软硬件团队协同闭环。</p><p><strong>工程沉淀：</strong>习惯将重复验证工作脚本化、平台化，重视用例可维护性与测试数据可追溯，能在项目节点压力下保障交付质量。</p>",
-      },
-    },
     honor: {
       ui: { collapsed: ["1"], archived: false },
       list: [
@@ -140,7 +133,6 @@ const resumeData: any = {
       { key: "project" },
       { key: "education" },
       { key: "skill" },
-      { key: "advantage" },
       { key: "honor" },
       { key: "account" },
     ],

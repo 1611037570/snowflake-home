@@ -111,13 +111,6 @@ const resumeData: any = {
           "<p><strong>安全测试：</strong>熟悉 Web 与移动端常见漏洞原理与利用方式，熟练使用 Burp Suite、SQLMap、Metasploit 等工具开展渗透测试，掌握代码审计与依赖成分分析方法。</p><p><strong>安全运营：</strong>熟悉 SIEM、EDR 与 SOAR 平台建设，掌握告警规则调优、攻击链研判与应急溯源流程，熟悉零信任、身份权限治理与等级保护合规要求，持有 CISP 证书。</p>",
       },
     },
-    advantage: {
-      ui: { collapsed: ["1"], archived: false },
-      data: {
-        content:
-          "<p>兼具攻防两端经验，既能站在攻击者视角发现真实可利用的问题，也能从运营视角把发现转化为可闭环的流程与规则。</p><p>习惯用量化指标衡量安全建设成效，把告警噪声、响应时长与暴露面规模作为治理抓手，安全动作不影响业务发布节奏。</p>",
-      },
-    },
     honor: {
       ui: { collapsed: ["1"], archived: false },
       list: [
@@ -140,7 +133,6 @@ const resumeData: any = {
       { key: "project" },
       { key: "education" },
       { key: "skill" },
-      { key: "advantage" },
       { key: "honor" },
       { key: "account" },
     ],

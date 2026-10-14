@@ -110,13 +110,6 @@ const resumeData: any = {
           "<p><strong>财务专业：</strong>熟悉全盘账务处理、合并报表、全面预算、成本管控与税务申报，并熟悉银行计划财务与账务核算流程，掌握总账处理、财务报表编制、监管统计报送与内控合规要求。</p><p><strong>工具与技术：</strong>熟练使用 SAP FICO、用友 NC 与金蝶 EAS 财务模块，以及 Excel 数据透视与 Power Query；能使用 SQL、Python 完成财务数据清洗与自动化取数，并用 Tableau 搭建经营分析看板。</p>",
       },
     },
-    advantage: {
-      ui: { collapsed: ["1"], archived: false },
-      data: {
-        content:
-          "<p>财务基础扎实，账务处理与报表编制保持零差错，能在合规前提下平衡业务效率与风险管控要求，熟悉银行内控与外部审计的检查要点。</p><p>擅长用数据支撑经营决策，能够跨部门推动流程与口径统一，将复杂财务问题拆解为可落地的改进动作并持续跟进闭环。</p>",
-      },
-    },
     honor: {
       ui: { collapsed: ["1"], archived: false },
       list: [
@@ -136,7 +129,6 @@ const resumeData: any = {
       { key: "project" },
       { key: "education" },
       { key: "skill" },
-      { key: "advantage" },
       { key: "honor" },
       { key: "account" },
     ],

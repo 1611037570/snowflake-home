@@ -111,13 +111,6 @@ const resumeData: any = {
           "<p><strong>嵌入式开发：</strong>熟练使用 C/C++ 完成 MCU 与 Linux 平台开发，掌握 STM32、GD32、ESP32 等芯片的驱动移植，熟悉 FreeRTOS、RT-Thread 以及 Linux 内核裁剪、设备树配置与 Yocto 构建。</p><p><strong>通信与调试：</strong>熟悉 5G NR/LTE、NB-IoT、Cat.1 与 LoRa 等无线通信协议，掌握 TCP/IP、MQTT、Modbus、CAN 及 UART/SPI/I2C 总线调试，能使用示波器、频谱仪、CMW500 综测仪与 J-Link 定位问题。</p>",
       },
     },
-    advantage: {
-      ui: { collapsed: ["1"], archived: false },
-      data: {
-        content:
-          "<p><strong>软硬件协同：</strong>具备从原理图评审、驱动调试到系统联调的完整经验，能结合射频指标与功耗测试数据定位跨软硬件问题，减少反复返工。</p><p><strong>量产交付：</strong>熟悉通信终端从样机验证、认证测试到批量生产的全过程，重视固件可维护性与版本可追溯，能在项目节点压力下保障稳定交付。</p>",
-      },
-    },
     honor: {
       ui: { collapsed: ["1"], archived: false },
       list: [
@@ -146,7 +139,6 @@ const resumeData: any = {
       { key: "project" },
       { key: "education" },
       { key: "skill" },
-      { key: "advantage" },
       { key: "honor" },
       { key: "account" },
     ],

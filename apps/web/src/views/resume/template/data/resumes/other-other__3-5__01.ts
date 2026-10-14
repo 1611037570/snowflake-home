@@ -111,13 +111,6 @@ const resumeData: any = {
           "<p><strong>运营与流程：</strong>熟悉 SOP 梳理、流程再造、会议督办与跨部门协同机制，能够独立完成制度文件、经营分析报告与项目排期管理，掌握 OKR、PDCA 与节点复盘方法。</p><p><strong>工具与数据：</strong>熟练使用飞书、钉钉与 OA 审批系统，能用 Excel 数据透视与 Power Query 完成台账和报表自动化，掌握 Visio 流程图、XMind 思维导图与 Power BI 经营看板，具备基础 SQL 取数能力。</p>",
       },
     },
-    advantage: {
-      ui: { collapsed: ["1"], archived: false },
-      data: {
-        content:
-          "<p>具备综合事务统筹经验，能在多任务并行、跨部门诉求交织的场景下判断优先级，保证关键事项按时闭环并主动同步进展。</p><p>习惯用流程与模板沉淀重复性工作，擅长把模糊需求拆解为可执行、可检查的动作，并联动业务、财务与行政团队共同落地。</p>",
-      },
-    },
     honor: {
       ui: { collapsed: ["1"], archived: false },
       list: [
@@ -140,7 +133,6 @@ const resumeData: any = {
       { key: "project" },
       { key: "education" },
       { key: "skill" },
-      { key: "advantage" },
       { key: "honor" },
       { key: "account" },
     ],

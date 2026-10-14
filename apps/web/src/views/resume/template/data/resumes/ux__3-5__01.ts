@@ -111,13 +111,6 @@ const resumeData: any = {
           "<p><strong>设计工具：</strong>熟练使用 Figma 搭建组件库与高保真原型，掌握 Sketch、Adobe 系列工具与基础动效制作，能与前端就设计令牌和响应式规则直接对接。</p><p><strong>研究与度量：</strong>掌握用户访谈、可用性测试与卡片分类等研究方法，能将体验问题转化为可度量的指标，熟悉无障碍与多端适配的基本规范。</p>",
       },
     },
-    advantage: {
-      ui: { collapsed: ["1"], archived: false },
-      data: {
-        content:
-          "<p>既做界面也做流程，习惯先厘清用户任务与业务目标再动手出图，避免只停留在视觉层面的改版。</p><p>重视设计的可落地性，主动与前端共建组件与规范，交付物能直接进入开发流程，返工率低。</p>",
-      },
-    },
     honor: {
       ui: { collapsed: ["1"], archived: false },
       list: [
@@ -140,7 +133,6 @@ const resumeData: any = {
       { key: "project" },
       { key: "education" },
       { key: "skill" },
-      { key: "advantage" },
       { key: "honor" },
       { key: "account" },
     ],

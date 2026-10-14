@@ -111,13 +111,6 @@ const resumeData: any = {
           "<p><strong>办公软件：</strong>熟练使用 Word 长文档排版与目录生成、Excel 数据透视表与函数统计、PowerPoint 汇报制作，能独立完成公文拟稿与文件比对。</p><p><strong>业务工具：</strong>熟悉 OA 协同办公系统、电子签章与合同管理系统、PDF 编辑与文档比对工具，掌握用印审批、合同归档、案卷借阅等行政台账的规范化管理。</p>",
       },
     },
-    advantage: {
-      ui: { collapsed: ["1"], archived: false },
-      data: {
-        content:
-          "<p>具备律所与咨询公司的行政支持经验，熟悉用印、合同、案卷与证照的管理规范，能在多任务并行时保持条理与准确。</p><p>沟通协调与文字表达能力较强，注重流程留痕与细节复核，能主动梳理重复性事务并沉淀可复用的模板。</p>",
-      },
-    },
     honor: {
       ui: { collapsed: ["1"], archived: false },
       list: [
@@ -140,7 +133,6 @@ const resumeData: any = {
       { key: "project" },
       { key: "education" },
       { key: "skill" },
-      { key: "advantage" },
       { key: "honor" },
       { key: "account" },
     ],

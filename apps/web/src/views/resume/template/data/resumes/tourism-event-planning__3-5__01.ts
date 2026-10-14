@@ -111,13 +111,6 @@ const resumeData: any = {
           "<p><strong>策划与执行：</strong>熟悉会展全案流程，能够独立完成主题创意、展区动线规划、议程排期、招商招展方案与现场执行手册，掌握展会预算编制与供应商管理。</p><p><strong>工具与技术栈：</strong>熟练使用 AutoCAD 绘制展位与动线平面图，使用 SketchUp、3ds Max 与 Photoshop 完成展陈效果图与视觉物料，使用 Excel 数据透视表与 CRM 会展管理系统完成招商数据复盘与客户跟进。</p>",
       },
     },
-    advantage: {
-      ui: { collapsed: ["1"], archived: false },
-      data: {
-        content:
-          "<p>深耕旅游与酒店行业会展场景，熟悉酒店集团、OTA 平台、景区与商旅客户的合作诉求，能够把目的地资源转化为可售卖的展会产品与推介内容。</p><p>具备较强的资源整合与现场应变能力，善于统筹搭建、会务、安保与媒体多方供应商，在预算与工期压力下保障活动品质与交付节点。</p>",
-      },
-    },
     honor: {
       ui: { collapsed: ["1"], archived: false },
       list: [
@@ -140,7 +133,6 @@ const resumeData: any = {
       { key: "project" },
       { key: "education" },
       { key: "skill" },
-      { key: "advantage" },
       { key: "honor" },
       { key: "account" },
     ],

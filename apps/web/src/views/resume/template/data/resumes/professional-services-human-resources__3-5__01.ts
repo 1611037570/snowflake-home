@@ -111,13 +111,6 @@ const resumeData: any = {
           "<p><strong>人力系统：</strong>熟练使用 Workday、SAP SuccessFactors、北森与 Moka 招聘系统，能够独立完成招聘漏斗与人员结构分析。</p><p><strong>方法论与工具：</strong>掌握行为面试法（STAR）、九宫格人才盘点、岗位价值评估与薪酬宽带设计，熟练使用 Excel 数据透视表与 Power BI 输出人力看板。</p>",
       },
     },
-    advantage: {
-      ui: { collapsed: ["1"], archived: false },
-      data: {
-        content:
-          "<p>熟悉专业服务行业以项目制交付为主的用人节奏，能够把业务需求翻译为招聘画像、绩效指标与人才发展方案。</p><p>擅长在多方诉求中推动共识，兼顾合规要求与员工体验，落地过程注重数据验证与复盘。</p>",
-      },
-    },
     honor: {
       ui: { collapsed: ["1"], archived: false },
       list: [
@@ -140,7 +133,6 @@ const resumeData: any = {
       { key: "project" },
       { key: "education" },
       { key: "skill" },
-      { key: "advantage" },
       { key: "honor" },
       { key: "account" },
     ],

@@ -24,12 +24,6 @@ const resumeData: any = {
           "<p><strong>1、</strong>熟练使用 Premiere Pro、After Effects 与 DaVinci Resolve，能独立完成素材整理、叙事剪辑、调色与包装交付，熟悉 4K 横屏及 9:16 竖屏等多规格成片输出。</p><p><strong>2、</strong>熟悉品牌 TVC、产品广告、人物访谈与社交媒体短视频的制作节奏，具备镜头语言和音乐节奏把控能力，单条成片交付周期可控制在 3 个工作日内。</p>",
       },
     },
-    advantage: {
-      ui: { collapsed: ["1"], archived: false },
-      data: {
-        content: "<p>具备良好的叙事理解与节奏把控能力，能够根据内容目标完成剪辑、调色和包装交付。</p><p>做事细致负责，善于沉淀制作流程并与团队高效协作。</p>",
-      },
-    },
     education: {
       ui: { collapsed: ["1"], archived: false },
       list: [
@@ -93,7 +87,7 @@ const resumeData: any = {
     },
   },
   config: {
-    modules: [{ key: "user" }, { key: "education" }, { key: "skill" }, { key: "advantage" }, { key: "work" }, { key: "project" }],
+    modules: [{ key: "user" }, { key: "education" }, { key: "skill" }, { key: "work" }, { key: "project" }],
   },
   // 界面配置沿用主题预设：与模板页该主题的样式卡片共用同一份配置，保证布局与配色一致。
   ui: structuredClone(getResumeThemeTemplate("tealCard").item.ui),

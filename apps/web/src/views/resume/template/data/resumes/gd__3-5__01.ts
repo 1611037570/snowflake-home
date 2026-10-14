@@ -111,13 +111,6 @@ const resumeData: any = {
           "<p><strong>设计软件：</strong>精通 Photoshop、Illustrator 与 InDesign，熟练使用 Figma 输出线上物料，掌握基础动效与轻视频剪辑，能独立完成从创意到完稿出片的全流程。</p><p><strong>专业能力：</strong>熟悉品牌视觉规范、包装结构、印刷工艺与材质选择，具备手绘草图与图形原创能力，能与策划、文案及供应商顺畅对接落地细节。</p>",
       },
     },
-    advantage: {
-      ui: { collapsed: ["1"], archived: false },
-      data: {
-        content:
-          "<p>近五年广告与品牌视觉经验，既做得了单张物料的精细打磨，也扛得住整合营销项目的多尺寸、多批次交付。</p><p>对落地环节有完整认知，出稿前就考虑印刷与投放环境的限制，打样与返工次数少，项目节奏可控。</p>",
-      },
-    },
     honor: {
       ui: { collapsed: ["1"], archived: false },
       list: [
@@ -140,7 +133,6 @@ const resumeData: any = {
       { key: "project" },
       { key: "education" },
       { key: "skill" },
-      { key: "advantage" },
       { key: "honor" },
       { key: "account" },
     ],

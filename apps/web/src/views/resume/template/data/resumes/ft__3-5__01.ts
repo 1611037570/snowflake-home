@@ -111,13 +111,6 @@ const resumeData: any = {
           "<p><strong>业务能力：</strong>熟悉外贸全流程操作，包括询盘报价、打样确认、合同签订、单证制作与收汇结汇，能独立处理信用证与常见清关资料。</p><p><strong>语言与工具：</strong>英语可作为工作语言，熟练撰写英文函电与商务方案，掌握阿里巴巴国际站、社媒拓客工具与基础的数据看板分析。</p>",
       },
     },
-    advantage: {
-      ui: { collapsed: ["1"], archived: false },
-      data: {
-        content:
-          "<p>具备从零开发客户到维护年度大客户的完整经验，既懂产品与报价，也懂供应链与物流的约束条件，给客户的承诺可兑现。</p><p>习惯把客户按潜力分层经营，把精力集中在能形成长期复购的合作上，业绩增长稳定而非依赖单次大单。</p>",
-      },
-    },
     honor: {
       ui: { collapsed: ["1"], archived: false },
       list: [
@@ -140,7 +133,6 @@ const resumeData: any = {
       { key: "project" },
       { key: "education" },
       { key: "skill" },
-      { key: "advantage" },
       { key: "honor" },
       { key: "account" },
     ],

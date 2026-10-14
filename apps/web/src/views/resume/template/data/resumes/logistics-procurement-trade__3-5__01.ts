@@ -111,13 +111,6 @@ const resumeData: any = {
           "<p><strong>采购与贸易：</strong>熟悉供应商开发与考核、询比价、招投标、合同与账期管理，掌握 FOB、CIF 等贸易条款及报关报检流程。</p><p><strong>工具与数据：</strong>熟练使用 SAP MM、用友 U8、金蝶 K3 与 WMS 系统，能通过 Excel 数据透视表、VLOOKUP 与 Power BI 完成采购及库存分析。</p>",
       },
     },
-    advantage: {
-      ui: { collapsed: ["1"], archived: false },
-      data: {
-        content:
-          "<p>具备仓储物流场景下的采购成本意识，能够结合物料规格、库存周转与交付风险制定采购策略。</p><p>沟通协调能力强，擅长推动仓储、运输、财务与供应商多方协同并完成问题闭环。</p>",
-      },
-    },
     honor: {
       ui: { collapsed: ["1"], archived: false },
       list: [
@@ -140,7 +133,6 @@ const resumeData: any = {
       { key: "project" },
       { key: "education" },
       { key: "skill" },
-      { key: "advantage" },
       { key: "honor" },
       { key: "account" },
     ],

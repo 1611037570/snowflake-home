@@ -111,13 +111,6 @@ const resumeData: any = {
           "<p><strong>教学能力：</strong>熟悉初中数学课程体系与中考命题趋势，能够独立完成学情诊断、分层教学设计、教案与讲义编写、课堂讲授及课后跟踪，掌握启发式提问、变式训练与错题归因等方法。</p><p><strong>工具与技术栈：</strong>熟练使用 PowerPoint 与 Excel 完成课件制作、成绩统计与学情看板，使用几何画板、GeoGebra 演示动态几何与函数图像，借助在线白板与直播授课工具开展双师课堂和线上答疑，并能用测评系统完成课前诊断与课后分层作业推送。</p>",
       },
     },
-    advantage: {
-      ui: { collapsed: ["1"], archived: false },
-      data: {
-        content:
-          "<p>熟悉教育培训行业的班课教学与教研管理流程，能够把考点拆解为可讲授、可练习、可测评的教学单元，并用学情数据持续迭代课程内容。</p><p>沟通与表达能力强，善于与学生建立信任、与家长同步学习进展，也能带动教研组新教师备课磨课，保障校区教学质量稳定。</p>",
-      },
-    },
     honor: {
       ui: { collapsed: ["1"], archived: false },
       list: [
@@ -143,7 +136,6 @@ const resumeData: any = {
       { key: "project" },
       { key: "education" },
       { key: "skill" },
-      { key: "advantage" },
       { key: "honor" },
       { key: "account" },
     ],

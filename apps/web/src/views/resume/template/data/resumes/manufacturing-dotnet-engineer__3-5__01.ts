@@ -111,13 +111,6 @@ const resumeData: any = {
           "<p><strong>后端开发：</strong>熟练使用 C# 与 .NET Framework/.NET 6，掌握 ASP.NET Core Web API、EF Core、Dapper、SignalR 与异步多线程编程，能独立完成制造业务服务的接口设计与性能调优。</p><p><strong>数据与工业协议：</strong>熟悉 SQL Server、Redis、RabbitMQ、MQTT、OPC UA 与 Modbus TCP，掌握 Docker、Git、Jenkins 部署流程，了解 InfluxDB 时序存储以及 Vue 3 与 Element Plus 前端开发。</p>",
       },
     },
-    advantage: {
-      ui: { collapsed: ["1"], archived: false },
-      data: {
-        content:
-          "<p><strong>业务理解：</strong>熟悉制造业工单、报工、排产、质检与设备采集流程，能与生产、工艺、设备人员对齐现场诉求，把车间问题转化为可落地的系统方案。</p><p><strong>工程习惯：</strong>重视代码质量与可维护性，习惯通过日志、监控与压测定位性能瓶颈，能在项目节点压力下稳定交付并沉淀技术文档。</p>",
-      },
-    },
     honor: {
       ui: { collapsed: ["1"], archived: false },
       list: [
@@ -140,7 +133,6 @@ const resumeData: any = {
       { key: "project" },
       { key: "education" },
       { key: "skill" },
-      { key: "advantage" },
       { key: "honor" },
       { key: "account" },
     ],

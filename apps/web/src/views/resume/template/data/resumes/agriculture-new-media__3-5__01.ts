@@ -111,13 +111,6 @@ const resumeData: any = {
           "<p><strong>内容制作：</strong>熟练使用剪映专业版、Premiere Pro、Photoshop 与 Canva，能够独立完成农产品短视频的脚本撰写、拍摄分镜、剪辑包装与封面设计。</p><p><strong>平台与数据：</strong>熟悉抖音、小红书、视频号与淘宝直播的运营规则，掌握巨量千川、新抖、蝉妈妈与蒲公英平台的数据分析、达人筛选和投放复盘方法。</p>",
       },
     },
-    advantage: {
-      ui: { collapsed: ["1"], archived: false },
-      data: {
-        content:
-          "<p>具备食品行业的内容理解力，能够把产地环境、加工工艺与检测标准转译成用户听得懂的卖点表达。</p><p>擅长跨部门协同，与供应链、质检、电商及外部达人团队高效配合，保证内容节奏与销售档期对齐。</p>",
-      },
-    },
     honor: {
       ui: { collapsed: ["1"], archived: false },
       list: [
@@ -143,7 +136,6 @@ const resumeData: any = {
       { key: "project" },
       { key: "education" },
       { key: "skill" },
-      { key: "advantage" },
       { key: "honor" },
       { key: "account" },
     ],

@@ -111,13 +111,6 @@ const resumeData: any = {
           "<p><strong>算法能力：</strong>熟悉推荐与搜索全链路算法，包括召回、粗排、精排与重排，掌握向量检索、多目标建模与因果推断方法，具备大模型微调、蒸馏与提示工程实践经验。</p><p><strong>工程能力：</strong>熟练使用 Python 与 PyTorch、TensorFlow 训练模型，掌握 Spark、Flink 处理大规模样本与特征，熟悉向量数据库与在线推理服务部署，具备实验设计与指标归因分析能力。</p>",
       },
     },
-    advantage: {
-      ui: { collapsed: ["1"], archived: false },
-      data: {
-        content:
-          "<p>既能独立完成从特征、模型到在线服务的完整链路，也能把业务目标翻译成可优化的模型目标，避免只追求离线指标而忽略线上体验。</p><p>重视实验的严谨性，习惯用分层实验、长期 holdback 与归因分析验证收益，结论对业务方具有解释力。</p>",
-      },
-    },
     honor: {
       ui: { collapsed: ["1"], archived: false },
       list: [
@@ -140,7 +133,6 @@ const resumeData: any = {
       { key: "project" },
       { key: "education" },
       { key: "skill" },
-      { key: "advantage" },
       { key: "honor" },
       { key: "account" },
     ],

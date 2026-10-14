@@ -111,13 +111,6 @@ const resumeData: any = {
           "<p><strong>开发技术栈：</strong>熟练使用 Java 与 Spring Boot、Spring Cloud Alibaba 进行微服务开发，熟悉 MyBatis、Redis、Kafka、Netty 与 Flink，掌握 MySQL 分库分表、时序数据库 InfluxDB 与 TDengine 的建模与查询优化。</p><p><strong>工程与运维：</strong>熟悉 Docker、Kubernetes、Jenkins 与 Prometheus 监控体系，掌握 JVM 调优、SQL 执行计划分析与链路压测方法，了解 Modbus、MQTT、IEC 104 等能源与环保行业的设备通信协议。</p>",
       },
     },
-    advantage: {
-      ui: { collapsed: ["1"], archived: false },
-      data: {
-        content:
-          "<p>具备能源与环保行业的业务理解能力，熟悉电站监控、污染源在线监测、环保数据上报与碳排放核算等场景的数据口径与合规要求，能够把现场设备与监管要求翻译成清晰的技术方案。</p><p>擅长高并发采集与海量数据处理系统的设计与调优，遇到线上问题习惯用监控指标、日志与链路数据定位根因，并与产品、运维及现场工程师高效协作推进交付。</p>",
-      },
-    },
     honor: {
       ui: { collapsed: ["1"], archived: false },
       list: [
@@ -140,7 +133,6 @@ const resumeData: any = {
       { key: "project" },
       { key: "education" },
       { key: "skill" },
-      { key: "advantage" },
       { key: "honor" },
       { key: "account" },
     ],

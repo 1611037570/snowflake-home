@@ -111,13 +111,6 @@ const resumeData: any = {
           "<p><strong>商务能力：</strong>熟悉大客户销售全流程，能够独立完成客户开发、需求诊断、方案报价、商务谈判与合同签署，熟练运用 SPIN 提问、解决方案销售与价值主张设计等方法论。</p><p><strong>工具与技术栈：</strong>熟练使用 Salesforce、销售易 CRM 管理商机漏斗与销售预测，使用 Power BI、Excel 高级函数与 SQL 完成市场与客户数据分析，使用 PowerPoint、Visio 输出咨询方案与投标文件，熟悉公开招投标与政府采购平台的操作流程。</p>",
       },
     },
-    advantage: {
-      ui: { collapsed: ["1"], archived: false },
-      data: {
-        content:
-          "<p>具备咨询行业的方案型销售思维，能够快速理解客户业务痛点并将其转化为可量化的解决方案，在客户预算、交付范围与公司利润之间取得平衡。</p><p>擅长跨部门资源协调与高层客户沟通，抗压能力强，可同时推进多条商机并保证签约节奏与回款质量。</p>",
-      },
-    },
     honor: {
       ui: { collapsed: ["1"], archived: false },
       list: [
@@ -140,7 +133,6 @@ const resumeData: any = {
       { key: "project" },
       { key: "education" },
       { key: "skill" },
-      { key: "advantage" },
       { key: "honor" },
       { key: "account" },
     ],

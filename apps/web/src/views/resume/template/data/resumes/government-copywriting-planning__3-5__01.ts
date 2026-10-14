@@ -111,13 +111,6 @@ const resumeData: any = {
           "<p><strong>文案与策划：</strong>熟悉公文写作规范与政务文风要求，能够独立完成政策解读、新闻通稿、领导讲话稿、工作简报、宣传方案与活动策划案的撰写，掌握选题策划、信息核实与稿件审核流程。</p><p><strong>工具与技术栈：</strong>熟练使用 Word 与 WPS 完成公文排版与套版，使用 Excel 完成选题排期与传播数据统计，使用 Photoshop、秀米与 135 编辑器完成政务图文排版与政策图解设计，使用剪映完成宣传短视频剪辑，借助政务网站内容管理系统与舆情监测平台完成内容发布和效果跟踪。</p>",
       },
     },
-    advantage: {
-      ui: { collapsed: ["1"], archived: false },
-      data: {
-        content:
-          "<p>熟悉政府与公共事业的内容生产流程，理解政策发布口径与政务文风要求，能够在时效性、准确性与可读性之间把握平衡，把政策文件转化为群众看得懂的解读内容。</p><p>沟通协调与文字表达能力较强，善于对接业务科室梳理素材、组织多部门联合宣传，具备活动统筹与舆情应对意识，能适应时间紧、要求高的宣传任务。</p>",
-      },
-    },
     honor: {
       ui: { collapsed: ["1"], archived: false },
       list: [
@@ -146,7 +139,6 @@ const resumeData: any = {
       { key: "project" },
       { key: "education" },
       { key: "skill" },
-      { key: "advantage" },
       { key: "honor" },
       { key: "account" },
     ],
