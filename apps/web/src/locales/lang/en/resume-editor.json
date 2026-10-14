@@ -325,6 +325,8 @@
   "debugConsoleInfo": "Show the debug entry in the toolbar",
   "newRecordExpanded": "Expand New Records by Default",
   "newRecordExpandedInfo": "Expand newly added records by default",
+  "moreOperationsExpanded": "Expand Sidebar Actions by Default",
+  "moreOperationsExpandedInfo": "Show or hide the additional actions at the bottom of the left sidebar",
   "previewLocate": "Locate from Preview",
   "previewLocateInfo": "Click a preview module to locate it in the editor",
   "detectionSettings": "Detection Settings",

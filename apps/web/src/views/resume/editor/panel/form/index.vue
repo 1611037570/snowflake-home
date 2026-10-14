@@ -65,6 +65,7 @@ const AsyncCityPicker = defineAsyncComponent({
 
 const resumeStore = useResumeStore();
 const { currentData, runtimeConfig } = storeToRefs(resumeStore);
+let keyboardFocusPending = false;
 // 捕获点击及键盘焦点，逐层寻找所属顶层模块，不触发预览滚动。
 const markEditingModule = (event) => {
   let node = event.target instanceof Element ? event.target.closest("[data-module-key]") : null;
@@ -76,6 +77,18 @@ const markEditingModule = (event) => {
     }
     node = node.parentElement?.closest("[data-module-key]");
   }
+};
+// 只有用户按 Tab 切换焦点时才允许焦点事件激活模块，忽略组件初始化产生的自动聚焦。
+const prepareKeyboardModuleFocus = (event) => {
+  if (event.key !== "Tab") return;
+  keyboardFocusPending = true;
+  window.setTimeout(() => {
+    keyboardFocusPending = false;
+  }, 0);
+};
+const markKeyboardEditingModule = (event) => {
+  if (!keyboardFocusPending) return;
+  markEditingModule(event);
 };
 // 删除或归档当前模块后清除提示，隐藏不改变原有显示状态。
 watch(
@@ -184,7 +197,12 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <div class="relative h-full" @pointerdown.capture="markEditingModule" @focusin.capture="markEditingModule">
+  <div
+    class="relative h-full"
+    @pointerdown.capture="markEditingModule"
+    @keydown.capture="prepareKeyboardModuleFocus"
+    @focusin.capture="markKeyboardEditingModule"
+  >
     <div class="flex h-full min-h-0 w-full">
       <ModuleSidebar />
       <SfScrollbar class="resume-editor-form relative h-full min-h-0">

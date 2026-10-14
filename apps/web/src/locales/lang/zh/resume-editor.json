@@ -325,6 +325,8 @@
   "debugConsoleInfo": "工具栏显示调试入口",
   "newRecordExpanded": "新记录默认展开",
   "newRecordExpandedInfo": "新添加的记录默认展开",
+  "moreOperationsExpanded": "侧栏更多操作默认展开",
+  "moreOperationsExpandedInfo": "展开或收起左侧栏底部的更多操作",
   "previewLocate": "点击预览定位",
   "previewLocateInfo": "点击预览模块，定位到左侧编辑区",
   "detectionSettings": "检测设置",

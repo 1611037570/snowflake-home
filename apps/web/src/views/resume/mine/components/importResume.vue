@@ -10,6 +10,9 @@ import { useAiStore, useResumeStore } from "@/stores";
 import { computed, onBeforeUnmount, ref, watch } from "vue";
 import { useRouter } from "vue-router";
 
+const props = defineProps({
+  jumpAfterImport: { type: Boolean, default: false }, // 在编辑器导入成功后打开新简历
+});
 const visible = ref(false);
 const resumeStore = useResumeStore();
 const aiStore = useAiStore();
@@ -145,7 +148,7 @@ const confirmImport = () => {
   const item = pendingResume.value;
   if (!item) return;
   const { warnings, ...resume } = item;
-  if (resumeStore.addResume(resume, false)) {
+  if (resumeStore.addResume(resume, props.jumpAfterImport)) {
     // 导入成功后按来源格式上报一次导入动作
     trackResumeAction({
       eventType: "import",
@@ -186,7 +189,7 @@ const importJsonConfig = async () => {
   }
 };
 
-// 读取并解析完整简历 JSON，导入为新简历（仅创建不跳转，成功后提示）
+// 读取并解析完整简历 JSON，导入为新简历并按入口决定是否跳转。
 const parseJsonConfig = async (file) => {
   if (!file) return;
   try {
@@ -210,8 +213,9 @@ const parseJsonConfig = async (file) => {
       (item.usage !== undefined && !isObject(item.usage))) {
       throw new Error("无效的简历备份结构");
     }
-    // 以解析出的完整简历创建新简历，jump=false 避免跳转编辑器
-    const ok = resumeStore.addResume(item, false);
+    // 以解析出的完整简历创建新简历，编辑器入口导入后跳到新简历。
+    // 编辑器入口导入后进入新简历，列表页入口继续停留在列表。
+    const ok = resumeStore.addResume(item, props.jumpAfterImport);
     if (ok) {
       // 导入成功后上报一次 JSON 导入动作
       trackResumeAction({ eventType: "import", fileType: "json" });
@@ -265,10 +269,13 @@ const importItems = [
 </script>
 
 <template>
-  <SfButton @click="handleOpenImport">
-    <SfIcon icon="fa6-solid:file-import" size="4" class="mr-2" />
-    导入简历
-  </SfButton>
+  <!-- 编辑器侧栏可复用导入流程，并提供符合侧栏尺寸的入口。 -->
+  <slot name="trigger" :open="handleOpenImport">
+    <SfButton @click="handleOpenImport">
+      <SfIcon icon="fa6-solid:file-import" size="4" class="mr-2" />
+      导入简历
+    </SfButton>
+  </slot>
   <SfModal v-model="visible" title="导入简历" :width="parsing || pendingResume ? '600px' : '720px'" title-class="justify-start! text-xl!">
     <div v-if="parsing" class="flex w-full flex-col items-center gap-3 p-3">
       <SfIcon icon="line-md:loading-twotone-loop" size="8" class="text-sf-theme" />

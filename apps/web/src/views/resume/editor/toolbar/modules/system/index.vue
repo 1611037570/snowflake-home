@@ -45,6 +45,12 @@ function resetSettings() {
           type="switch"
         />
         <SfSetItem
+          :title="$t('moreOperationsExpanded')"
+          :info="$t('moreOperationsExpandedInfo')"
+          v-model="system.moreOperationsExpanded"
+          type="switch"
+        />
+        <SfSetItem
           :title="$t('previewLocate')"
           :info="$t('previewLocateInfo')"
           v-model="system.previewClickLocate"
