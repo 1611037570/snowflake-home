@@ -13,7 +13,7 @@ import RegionContainer from "@/views/resume/theme/components/regionContainer/ind
 import PageDecoration from "@/views/resume/theme/components/pageDecoration/index.vue";
 import { useResumeLayout } from "./engine/useResumeLayout";
 import { resolveRegionGap } from "./engine/layout/regionFlows";
-import { getContrastTextColor, useResumeTheme } from "@/views/resume/theme/useResumeTheme";
+import { useResumeTheme } from "@/views/resume/theme/useResumeTheme";
 import { resolveThemePageAppearance, resolveResumeUi, resolveThemeDecisions } from "@/views/resume/theme";
 import { provideResumePreviewContext } from "../shared/previewContext";
 import { isEmptyResume } from "../../toolbar/modules/progress/useResumeStats";
@@ -121,7 +121,7 @@ const measureTreeStyle = computed(() => ({
   ...fontStyle.value,
   ...lineHeightStyle.value,
   backgroundColor: ui.value.page?.background || "#ffffff",
-  color: getContrastTextColor(ui.value.page?.background || "#ffffff"),
+  color: ui.value.font?.color || "#000", // 测量树与正式页面共用当前正文颜色
   minHeight: `${RESUME_HEIGHT}px`,
   // 纹理层用负层级绘制：宿主需要建立独立层叠上下文，纹理才压在底色之上、正文之下
   isolation: "isolate",

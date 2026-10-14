@@ -5,9 +5,6 @@ export default {
   id: "popCollage" as const, // 主题编号
   design: ["single-column", "premium"], // 单栏与臻品分类
   description: "黑色斜切姓名页眉、撞色标题条与描边错位投影卡片。", // 主题说明
-  pageAppearance: { // 页面文字外观
-    textColor: "#262626", // 暖白纸张上的正文文字颜色
-  },
   decisions: { // 固定版式与个人信息内容能力
     layoutType: "topUserSingleColumn", // 顶部个人信息与单栏正文
   },
@@ -29,6 +26,7 @@ export default {
       },
     },
     font: { // 正文文字设置
+      color: "#262626", // 暖白纸张上的正文文字颜色
       size: 15, // 正文字号
       lineHeight: 1.45, // 正文行高倍数
     },

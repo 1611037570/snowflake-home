@@ -16,7 +16,6 @@ import PagePattern from "@/views/resume/theme/components/pageContainer/index.vue
 import PageFooter from "@/views/resume/theme/components/pageFooter/index.vue";
 import { layoutStretchesColumns } from "@/domain/resume/theme/layouts";
 import { resolveThemePageAppearance } from "@/views/resume/theme";
-import { getContrastTextColor } from "@/views/resume/theme/useResumeTheme";
 
 const props = defineProps({
   // 简历 ui（font.family / page.spacing.module）
@@ -67,12 +66,10 @@ const bottomSpace = computed(() =>
   Math.max(parseFloat(props.styles.paddingStyle.paddingBottom) || 0, props.showPageNumber ? PAGE_NUMBER_HEIGHT : 0),
 );
 const pageBackground = computed(() => props.ui.page?.background || defaultPageBackground);
+// 正文颜色统一读取当前界面配置，未声明时保持默认黑色。
+const pageTextColor = computed(() => props.ui.font?.color || "#000");
 // 页面级外观由主题声明，公共页面只读取声明，不再判断主题编号
 const themePageAppearance = computed(() => resolveThemePageAppearance(props.ui.theme?.template));
-// 紫色履历的正文底板是浅色，主题声明文字固定为黑色，避免按紫色纸张底色误判为白色。
-const pageTextColor = computed(() =>
-  themePageAppearance.value.textColor || getContrastTextColor(pageBackground.value),
-);
 // 顶部铺边：续页一律让栏底色盖住纸张顶部留白，首页只对声明了铺边的主题生效
 const bleedsPageTop = computed(
   () => (props.pageIndex > 0 || themePageAppearance.value.bleedsPageTop === true) && !props.hasTopRegion,

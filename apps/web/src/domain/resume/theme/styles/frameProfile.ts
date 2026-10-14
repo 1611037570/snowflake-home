@@ -5,9 +5,6 @@ export default {
   id: "frameProfile" as const, // 主题编号
   design: ["single-column", "minimal"], // 单栏与简约分类
   description: "黑色直角框围住页眉资料，姓名放大、联系方式带图标逐行排列。", // 主题说明
-  pageAppearance: { // 页面文字外观
-    textColor: "#111111", // 白色纸张上的正文文字颜色
-  },
   decisions: { // 固定版式与个人信息内容能力
     layoutType: "topUserSingleColumn", // 顶部个人信息与单栏正文
   },
@@ -30,6 +27,7 @@ export default {
       },
     },
     font: { // 正文文字设置
+      color: "#111111", // 白色纸张上的正文文字颜色
       size: 15, // 正文字号
       lineHeight: 1.45, // 正文行高倍数
     },

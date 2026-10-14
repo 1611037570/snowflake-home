@@ -5,9 +5,6 @@ export default {
   id: "vinePaper" as const, // 主题编号
   design: ["two-column", "polished"], // 双栏与精致分类
   description: "暖白纸张、两侧藤线和浅金圆点，个人信息置顶、正文双栏的清雅履历。", // 主题说明
-  pageAppearance: { // 页面文字外观
-    textColor: "#3D4A3F", // 正文使用深绿灰色
-  },
   decisions: { // 固定布局和个人信息展示
     layoutType: "topUserTwoColumn", // 个人信息通栏置顶、正文双栏
     pageBackgroundPattern: "vinePaper", // 纸张两侧的藤线装饰
@@ -30,6 +27,7 @@ export default {
       },
     },
     font: { // 正文排版
+      color: "#3D4A3F", // 正文使用深绿灰色
       size: 14, // 正文字号
       lineHeight: 1.6, // 正文行高
     },

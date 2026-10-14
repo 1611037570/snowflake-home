@@ -5,9 +5,6 @@ export default {
   id: "jadeRightSidebar" as const, // 主题编号，各外观组件按此编号查找
   design: ["two-column", "polished"], // 模板列表分类标签：双栏、精致
   description: "云白纸张上一整列墨玉绿资料卡，烫金标签与宋体姓名反白呈现，经历在左栏舒展排布。", // 主题说明
-  pageAppearance: { // 页面文字外观
-    textColor: "#33403A", // 左栏正文使用冷墨绿灰
-  },
   decisions: { // 主题固定外观，不进入用户界面配置
     regions: { main: { columnDecoration: true } }, // 栏间装饰占据中缝，留白保留在栏内
     layoutType: "twoColumnRightUser", // 个人信息固定在右窄栏
@@ -31,6 +28,7 @@ export default {
       spacing: { module: 28, paragraph: 10 }, // 模块间距与段落间距
     },
     font: { // 文字尺寸与行距
+      color: "#33403A", // 左栏正文使用冷墨绿灰
       size: 14, // 正文字号
       lineHeight: 1.62, // 正文行高倍数
     },

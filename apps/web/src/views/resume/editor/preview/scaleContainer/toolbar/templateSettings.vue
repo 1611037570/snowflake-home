@@ -3,7 +3,11 @@ import { computed } from "vue";
 import { storeToRefs } from "pinia";
 import { $t } from "@/locales";
 import { useResumeStore } from "@/stores";
-import { defaultPageBackground, pageBackgroundColors } from "@/domain/resume/theme/uiConfig";
+import {
+  defaultPageBackground,
+  fontColorOptions,
+  pageBackgroundColors,
+} from "@/domain/resume/theme/uiConfig";
 import { resolveThemeSettingRestrictions } from "@/views/resume/theme";
 import ThemeColorPicker from "@/components/business/themeColorPicker/themeColorPicker.vue";
 
@@ -22,6 +26,25 @@ const themeColor = computed({
     }
   },
 });
+
+// 正文颜色使用固定灰度预设，模板值作为初始值，用户选择后写入当前简历配置。
+const fontColor = computed({
+  get: () => currentUI.value?.font?.color || "#000",
+  set: (value) => {
+    if (currentUI.value && currentUI.value.font.color !== value) {
+      currentUI.value.font.color = value;
+    }
+  },
+});
+
+// 三位与六位十六进制颜色按同一颜色比较，模板使用 #000000 时也能命中默认黑色。
+const normalizeHexColor = (value) => {
+  const color = String(value || "").toLowerCase();
+  return /^#[0-9a-f]{3}$/.test(color)
+    ? `#${color.slice(1).split("").map((item) => `${item}${item}`).join("")}`
+    : color;
+};
+const isFontColorActive = (value) => normalizeHexColor(fontColor.value) === normalizeHexColor(value);
 
 // 简历页面背景色
 const pageBackground = computed({
@@ -50,6 +73,23 @@ const pageBackground = computed({
       <div class="flex w-80 flex-col gap-3 rounded-3xl border border-sf-b bg-sf-primary p-3">
         <div class="text-xs font-bold text-sf-text">{{ $t("themeColors") }}</div>
         <ThemeColorPicker v-model="themeColor" :teleported="false" />
+
+        <div class="text-xs font-bold text-sf-text">{{ $t("fontColor") }}</div>
+        <div class="flex items-center gap-3">
+          <button
+            v-for="option in fontColorOptions"
+            :key="option.value"
+            type="button"
+            class="flex h-9 w-9 cursor-pointer items-center justify-center rounded-full border transition-transform hover:scale-110"
+            :class="isFontColorActive(option.value) ? 'border-2 border-sf-theme' : 'border-sf-b'"
+            :title="$t(option.name)"
+            :aria-label="$t(option.name)"
+            :aria-pressed="isFontColorActive(option.value)"
+            @click="fontColor = option.value"
+          >
+            <span class="h-6 w-6 rounded-full" :style="{ backgroundColor: option.value }" />
+          </button>
+        </div>
 
         <div class="text-xs font-bold text-sf-text">{{ $t("resumeBackground") }}</div>
         <p v-if="getSettingRestriction('page.background')" class="text-xs text-sf-text-2">

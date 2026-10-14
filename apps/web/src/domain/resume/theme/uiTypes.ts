@@ -14,8 +14,9 @@ export interface ResumeUi {
     };
     footer: string; // 自定义页尾文字
   };
-  font: { // 字体与字号
+  font: { // 字体、颜色与字号
     family: string; // 字体编号
+    color: string; // 正文文字颜色，模板提供初始值且用户可从预设灰度中选择
     size: number; // 正文字号
     titleSize: number; // 模块标题字号
     lineHeight: number; // 行高倍数

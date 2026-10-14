@@ -5,13 +5,11 @@ export default {
   id: "terraCards" as const, // 主题编号
   design: ["two-column", "premium"], // 双栏与臻品分类
   description: "暖米色个人信息卡与双栏正文卡片，陶色标题和细线组织内容。", // 主题说明
-  pageAppearance: { // 正文中性色与暖色卡片搭配
-    textColor: "#4A4541", // 正文文字颜色
-  },
   decisions: { // 主题固定版式与个人信息内容
     layoutType: "topUserTwoColumn", // 个人信息通栏、正文双栏，栏间只使用公共间距
   },
   ui: { // 主题默认界面配置
+    font: { color: "#4A4541" }, // 正文文字颜色
     theme: { // 主题配色与标题样式
       userTemplate: "terraCardsUser", // 个人信息组件编号
       color: "#BC6A48", // 陶色强调色

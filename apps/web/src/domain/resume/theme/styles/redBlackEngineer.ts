@@ -7,7 +7,6 @@ export default {
   description: "红黑分区页眉、宽幅经历正文与浅灰技能侧栏。", // 模板说明。
   pageAppearance: {
     // 纸张外观。
-    textColor: "#111111", // 正文默认文字颜色。
     bleedsPageTop: true, // 页眉背景铺到纸张顶边。
   },
   decisions: {
@@ -47,6 +46,7 @@ export default {
       titleIconMode: "none" /* 不显示额外模块图标 */,
     }, // 主题配色及标题。
     font: {
+      color: "#111111", // 正文默认文字颜色。
       size: 12 /* 正文字号 */,
       titleSize: 15 /* 模块标题字号 */,
       lineHeight: 1.6 /* 正文行高 */,

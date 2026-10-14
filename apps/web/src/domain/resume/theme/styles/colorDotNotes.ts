@@ -5,9 +5,6 @@ export default {
   id: "colorDotNotes" as const, // 主题编号
   design: ["two-column", "premium"], // 双栏与臻品分类
   description: "姓名便签、求职方向与资料通栏置顶，点阵纸纹和蓝绿分栏标题组成活泼的双栏简历。", // 主题说明
-  pageAppearance: { // 页面正文外观
-    textColor: "#243149", // 深蓝灰正文颜色
-  },
   decisions: { // 固定版式与装饰能力
     layoutType: "topUserTwoColumn", // 个人信息通栏置顶，正文左右双栏
   },
@@ -30,6 +27,7 @@ export default {
       },
     },
     font: { // 正文排版
+      color: "#243149", // 深蓝灰正文颜色
       size: 14, // 正文字号
       lineHeight: 1.55, // 正文行高
     },

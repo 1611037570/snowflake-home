@@ -5,9 +5,6 @@ export default {
   id: "inkWhiteSpace" as const, // 主题编号
   design: ["two-column", "premium"], // 双栏与臻品分类
   description: "暖白纸张、右上细圆弧与大幅留白，衬线文字和细底线组织双栏内容。", // 主题说明
-  pageAppearance: { // 页面正文颜色
-    textColor: "#354441", // 暖白纸上的深灰绿色
-  },
   decisions: { // 主题固定版式
     layoutType: "topUserTwoColumn", // 个人信息通栏、正文双栏
   },
@@ -29,6 +26,7 @@ export default {
       },
     },
     font: { // 字体和行距
+      color: "#354441", // 暖白纸上的深灰绿色
       family: "text-source-han-serif", // 中文衬线字体
       size: 14, // 正文字号
       titleSize: 19, // 模块标题字号

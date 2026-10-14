@@ -8,6 +8,15 @@ export const themeColors = [
   { name: "极致黑", value: "#000000" },
 ];
 
+// 正文字体颜色预设：从黑色逐级过渡到浅灰，供设计面板快速选择。
+export const fontColorOptions = [
+  { name: "fontColorBlack", value: "#000" }, // 默认黑色
+  { name: "fontColorDeepGray", value: "#333" }, // 深灰色
+  { name: "fontColorDarkGray", value: "#555" }, // 较深灰色
+  { name: "fontColorGray", value: "#777" }, // 中灰色
+  { name: "fontColorLightGray", value: "#999" }, // 浅灰色
+];
+
 // 字体类型列表
 export const fontFamilyList = [
   {
@@ -254,6 +263,7 @@ export const DEFAULT_UI = {
   },
   font: {
     family: defaultFontFamily,
+    color: "#000", // 正文默认黑色，模板可设置初始值并允许用户选择预设灰度
     size: defaultFontSize,
     titleSize: defaultTitleFontSize,
     lineHeight: defaultLineHeight,

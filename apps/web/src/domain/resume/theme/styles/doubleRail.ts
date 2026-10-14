@@ -5,9 +5,6 @@ export default {
   id: "doubleRail" as const, // 主题编号，各外观组件按此编号查找
   design: ["single-column", "timeline", "polished"], // 模板列表分类标签：单栏、时间轴、精致
   description: "墨黑页眉通栏下接浅色读数列，等宽日期与模块序号沿轴线逐级刻出账簿式阶梯。", // 主题说明
-  pageAppearance: { // 页面绘图行为
-    textColor: "#23262B", // 暖白纸张上的深墨正文颜色
-  },
   decisions: { // 主题固定外观，不进入用户界面配置
     usesDateRail: true, // 经历使用固定日期栏
     layoutType: "topUserSingleColumn", // 个人信息顶部通栏、正文单栏
@@ -43,6 +40,7 @@ export default {
       spacing: { module: 26, paragraph: 12 }, // 模块间距与条目间距
     },
     font: { // 文字尺寸与行距
+      color: "#23262B", // 暖白纸张上的深墨正文颜色
       size: 14, // 正文字号
       lineHeight: 1.6, // 正文行高倍数
     },
