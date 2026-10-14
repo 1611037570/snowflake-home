@@ -1,20 +1,12 @@
 <script setup>
-import { computed, defineAsyncComponent, provide } from "vue";
+import { computed, provide } from "vue";
 import {
   CUSTOM_MODULE_ICON,
   DEFAULT_MODULE_NAMES,
 } from "@/stores/modules/resume/config/defaultConfig";
 import { getPreviewTitle } from "@/views/resume/editor/preview/shared/i18n";
 import { useResumePreviewContext } from "@/views/resume/editor/preview/shared/previewContext";
-import { defaultTitleStyleId, titleStyleComponentLoaders } from "./styles";
-
-// 标题组件按标题样式编号加载，编号即文件名，预览上下文已把编号归一。
-const titleStyleComponents = Object.fromEntries(
-  Object.entries(titleStyleComponentLoaders).map(([path, loader]) => [
-    path.slice("./".length, -".vue".length),
-    defineAsyncComponent(loader),
-  ]),
-);
+import { defaultTitleStyleId, titleStyleComponents } from "./styles";
 const props = defineProps({
   title: {
     type: String,
@@ -64,7 +56,7 @@ provide("titleIconSize", titleIconSize);
 
 <template>
   <!-- 公开模块标题标记，栏内装饰不依赖具体主题的标题类名。 -->
-  <component :is="current" :title="displayTitle" v-if="displayTitle" data-resume-module-title :style="[titleFontStyle]" />
+  <component :is="current" :title="displayTitle" :module-key="moduleKey" v-if="displayTitle" data-resume-module-title :style="[titleFontStyle]" />
 </template>
 
 <style lang="scss" scoped></style>

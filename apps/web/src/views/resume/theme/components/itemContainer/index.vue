@@ -24,6 +24,11 @@ const props = defineProps({
     type: String,
     default: "",
   },
+  // 条目原始序号：跨页时保持相同的装饰配色
+  itemIndex: {
+    type: Number,
+    default: 0,
+  },
 });
 
 const {
@@ -46,6 +51,7 @@ const timeline = computed(
     :content-range="contentRange"
     :decoration="decoration"
     :timeline="timeline"
+    :item-index="itemIndex"
   >
     <!-- 日期栏由条目外观决定，渲染与测量共用同一结果。 -->
     <slot :date-rail="timeline" />

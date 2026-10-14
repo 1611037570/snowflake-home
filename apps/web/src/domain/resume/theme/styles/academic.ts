@@ -5,22 +5,6 @@ export default {
   id: "academic" as const, // 主题编号
   design: ["single-column", "plain"], // 模板页归入极简分类
   description: "标题居中，两侧各延伸一条细线。", // 主题说明，描述标题样式
-  decisions: { // 主题固定尺寸与内容契约
-    regions: { // 区域装饰尺寸
-      main: { // 正文区域
-        columns: { // 按语义栏位声明装饰空间
-          left: { // 左栏装饰内边距
-            left: 30, // 左侧装饰内边距
-            right: 0, // 右侧装饰内边距
-          },
-          right: { // 右栏装饰内边距
-            left: 30, // 左侧装饰内边距
-            right: 0, // 右侧装饰内边距
-          },
-        },
-      },
-    },
-  },
   ui: {
     theme: {
       color: "#0F766E",

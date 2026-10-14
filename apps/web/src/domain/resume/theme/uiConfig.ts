@@ -205,7 +205,7 @@ export const defaultThemeTemplate = "default";
 // 默认个人信息展示模式
 export const defaultUserInfoMode = "text";
 // 默认个人信息布局
-export const defaultUserInfoLayout = "flex";
+export const defaultUserInfoLayout = "grid";
 // 默认头像位置
 export const defaultAvatarPosition = "right";
 // 默认信息位置
@@ -228,8 +228,8 @@ export const uiParamRanges = {
   "page.padding.vertical": { min: 12, max: 96, step: 1 },
   // 左右页边距
   "page.padding.horizontal": { min: 12, max: 96, step: 1 },
-  // 左栏宽度占比（双栏布局）
-  "layout.leftColumnWidth": { min: 20, max: 50, step: 1 },
+  // 左栏宽度占比（双栏布局）：上限 80 让右栏可窄到 20%，供右窄版式使用
+  "layout.leftColumnWidth": { min: 20, max: 80, step: 1 },
   // 字体大小
   "font.size": { min: 12, max: 48, step: 2 },
   // 模块标题字号
@@ -270,6 +270,7 @@ export const DEFAULT_UI = {
     color: defaultThemeColor,
     template: defaultThemeTemplate,
     titleTemplate: "auto", // 标题样式默认由主题决定
+    userTemplate: "auto", // 个人信息组件默认按版式选用公共组件
     titleIconMode: defaultTitleIconMode,
   },
   layout: {

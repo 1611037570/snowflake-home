@@ -8,7 +8,7 @@ import {
 import ThumbPreview from "@/views/resume/editor/preview/modes/thumb.vue";
 import RevealGrid from "@/views/resume/components/revealGrid.vue";
 import TemplateCategory from "./components/templateCategory.vue";
-import TemplatePagination from "./components/templatePagination.vue";
+import { useInfiniteScroll, useResizeObserver } from "@vueuse/core";
 import { resumeTemplateList } from "./data/list";
 import { loadResumeTemplateData } from "./data/resumeData";
 import { expandConfigModules } from "@/stores/modules/resume/hooks/useConfigTemplate";
@@ -19,37 +19,48 @@ import { $t } from "@/locales";
 
 // 模板页专用全屏预览组件：异步加载，避免首屏打包体积过大
 const TemplatePreview = markRaw(defineAsyncComponent(() => import("./templatePreview.vue")));
-import { computed, ref, watch } from "vue";
+import { computed, nextTick, ref, watch } from "vue";
 
-// 每页卡片数量：只加载并渲染当前页，避免整份范本列表一次性进入页面
-const TEMPLATE_PAGE_SIZE = 20;
-// 样式卡片统一使用的通用范本：不参与分页，进入模板页即加载，保证切到任一分类都有内容
+// 每批卡片数量：触底追加一批，避免整份范本列表一次性进入页面。
+const TEMPLATE_BATCH_SIZE = 20;
+// 样式卡片统一使用的通用范本：进入模板页即加载，保证任一分类都有内容。
 const PREVIEW_BASE_FILE = "xiaoZhou.ts";
 
 const resumeStore = useResumeStore();
-// 已加载的范本正文缓存：文件名到简历项的映射，切回旧页不再重新加载
+// 已加载的范本正文缓存：文件名到简历项的映射，切回旧分类不再重新加载。
 const templateItems = ref({});
 const templateLoading = ref(true);
-const templatePage = ref(1);
+// 加载失败后停止自动触底重试，分类或筛选变化时重新尝试。
+const templateLoadFailed = ref(false);
+const visibleCount = ref(TEMPLATE_BATCH_SIZE);
 
 // 按文件名补齐正文缓存：已加载的跳过，未加载的并发读取后写入缓存。
 // 范本正文只用于展示，标记非响应式以免整份简历被深层代理包装。
 let loadVersion = 0;
 const ensureTemplateItems = async (fileNames) => {
-  const missing = [...new Set(fileNames)].filter((fileName) => !templateItems.value[fileName]);
-  if (!missing.length) return;
   const version = ++loadVersion;
+  templateLoadFailed.value = false;
+  const missing = [...new Set(fileNames)].filter((fileName) => !templateItems.value[fileName]);
+  if (!missing.length) {
+    templateLoading.value = false;
+    return true;
+  }
   templateLoading.value = true;
   try {
     const loaded = await Promise.all(missing.map((fileName) => loadResumeTemplateData(fileName)));
-    // 期间又切换了分类或页码时丢弃本次结果，由最新一次加载收口加载态
-    if (version !== loadVersion) return;
+    // 分类或筛选变化后丢弃过期结果，避免旧批次追加到新列表。
+    if (version !== loadVersion) return false;
     templateItems.value = {
       ...templateItems.value,
       ...Object.fromEntries(missing.map((fileName, index) => [fileName, markRaw(loaded[index])])),
     };
+    return true;
   } catch {
-    ElMessage.error($t("resumeTemplateLoadError"));
+    if (version === loadVersion) {
+      templateLoadFailed.value = true;
+      ElMessage.error($t("resumeTemplateLoadError"));
+    }
+    return false;
   } finally {
     if (version === loadVersion) templateLoading.value = false;
   }
@@ -83,14 +94,14 @@ const templates = computed(() =>
 const templateFilters = ref({});
 // 一级分类：example 展示简历范本，template 展示简历模板
 const currentTopCategory = ref("example");
-// 两类模板共用筛选规则；布局和等级分别匹配样式主题的 design 标签。
+// 两类模板共用筛选规则；布局和类型分别匹配样式主题的 design 标签。
 const matchesTemplateFilters = (template, allowAllDesign = false) =>
   Object.entries(templateFilters.value).every(([key, value]) => {
     if (!value) return true;
     const values = key === "layout" || key === "tier" ? template.design : template[key];
     return !Array.isArray(values) || (allowAllDesign && values.includes("all")) || values.includes(value);
   });
-// 范本索引先按筛选条件过滤，正文留到确定当前页之后再加载
+// 范本索引先按筛选条件过滤，正文仅加载当前已展示的批次。
 const filteredResumeIndexes = computed(() =>
   resumeTemplateList.filter((template) => matchesTemplateFilters(template)),
 );
@@ -98,24 +109,19 @@ const filteredResumeIndexes = computed(() =>
 const filteredStyleTemplates = computed(() =>
   templates.value.filter((template) => matchesTemplateFilters(template, true)),
 );
-// 当前一级分类的总条数与总页数，不足一页时按一页处理
+// 当前分类的总条数，用于判断是否仍有可追加的卡片。
 const currentTotal = computed(() =>
   currentTopCategory.value === "template"
     ? filteredStyleTemplates.value.length
     : filteredResumeIndexes.value.length,
 );
-const pageCount = computed(() => Math.max(1, Math.ceil(currentTotal.value / TEMPLATE_PAGE_SIZE)));
-const pageStart = computed(() => (templatePage.value - 1) * TEMPLATE_PAGE_SIZE);
-// 筛选后条数变少时回退到最后一页，避免停在空白页
-watch(pageCount, (count) => {
-  if (templatePage.value > count) templatePage.value = count;
-});
-const pagedResumeIndexes = computed(() =>
-  filteredResumeIndexes.value.slice(pageStart.value, pageStart.value + TEMPLATE_PAGE_SIZE),
+const hasMore = computed(() => visibleCount.value < currentTotal.value);
+const visibleResumeIndexes = computed(() =>
+  filteredResumeIndexes.value.slice(0, visibleCount.value),
 );
-// 当前页的范本卡片：正文尚未加载完成的条目先不进列表，避免出现空卡片
-const pagedResumeTemplates = computed(() =>
-  pagedResumeIndexes.value
+// 已加载批次的范本卡片：正文就绪后再追加，避免出现空卡片。
+const visibleResumeTemplates = computed(() =>
+  visibleResumeIndexes.value
     .filter((template) => templateItems.value[template.fileName])
     .map((template) => ({
       ...template,
@@ -128,38 +134,83 @@ const pagedResumeTemplates = computed(() =>
       type: "content",
     })),
 );
-const pagedStyleTemplates = computed(() =>
-  filteredStyleTemplates.value.slice(pageStart.value, pageStart.value + TEMPLATE_PAGE_SIZE),
+const visibleStyleTemplates = computed(() =>
+  filteredStyleTemplates.value.slice(0, visibleCount.value),
 );
 const displayedTemplates = computed(() =>
-  currentTopCategory.value === "template" ? pagedStyleTemplates.value : pagedResumeTemplates.value,
+  currentTopCategory.value === "template" ? visibleStyleTemplates.value : visibleResumeTemplates.value,
 );
-// 当前页需要的正文：简历模板共用通用范本，只保证它已加载即可，不必加载当页范本
-const pageFileNames = computed(() =>
+// 当前批次需要的正文：样式模板共用通用范本，无需额外加载其他范本。
+const visibleFileNames = computed(() =>
   currentTopCategory.value === "template"
     ? [PREVIEW_BASE_FILE]
-    : [...pagedResumeIndexes.value.map((template) => template.fileName), PREVIEW_BASE_FILE],
+    : [...visibleResumeIndexes.value.map((template) => template.fileName), PREVIEW_BASE_FILE],
 );
-watch(pageFileNames, (fileNames) => ensureTemplateItems(fileNames), { immediate: true });
-// 分类、筛选或翻页变化时重建揭示列表，避免新旧卡片在 TransitionGroup 中同时出现。
+watch(visibleFileNames, (fileNames) => ensureTemplateItems(fileNames), { immediate: true });
+// 仅分类或筛选变化时重建列表，追加批次保留已有卡片与滚动位置。
 const templateGridKey = computed(
-  () =>
-    `${currentTopCategory.value}-${templatePage.value}-${JSON.stringify(templateFilters.value)}`,
+  () => `${currentTopCategory.value}-${JSON.stringify(templateFilters.value)}`,
 );
 const scrollbarRef = ref(null);
-const setTemplatePage = (page) => {
-  templatePage.value = page;
-  // 翻页后回到列表顶部，避免停留在上一页的滚动位置
+// 观察真实列表高度，卡片追加后重新检测触底。
+const listContentRef = ref(null);
+const resetTemplateList = () => {
+  visibleCount.value = TEMPLATE_BATCH_SIZE;
+  // 分类或筛选改变后从首批开始，滚动位置同步回到顶部。
   scrollbarRef.value?.setScrollTop(0);
 };
 const setTemplateFilters = (value) => {
   templateFilters.value = value;
-  templatePage.value = 1;
+  resetTemplateList();
 };
 const setCurrentTopCategory = (value) => {
   currentTopCategory.value = value;
-  templatePage.value = 1;
+  resetTemplateList();
 };
+
+// 触底时先加载下一批正文，成功后追加卡片；加载期间及列表结束后不重复请求。
+const { isLoading: loadingMore, reset: resetInfiniteScroll } = useInfiniteScroll(
+  () => scrollbarRef.value?.wrapRef,
+  async () => {
+    if (templateLoading.value || !hasMore.value) return;
+    const listKey = templateGridKey.value;
+    const nextCount = Math.min(
+      visibleCount.value + TEMPLATE_BATCH_SIZE,
+      currentTotal.value,
+    );
+    const files =
+      currentTopCategory.value === "template"
+        ? [PREVIEW_BASE_FILE]
+        : [
+            ...filteredResumeIndexes.value
+              .slice(0, nextCount)
+              .map((item) => item.fileName),
+            PREVIEW_BASE_FILE,
+          ];
+    const loaded = await ensureTemplateItems(files);
+    // 等待期间分类或筛选改变时，不将旧批次数量写入新列表。
+    if (!loaded || listKey !== templateGridKey.value) return;
+    visibleCount.value = nextCount;
+    await nextTick();
+  },
+  {
+    distance: 12, // 距离底部十二像素时追加下一批。
+    // 有剩余结果且加载正常时才允许追加。
+    canLoadMore: () =>
+      !templateLoading.value && !templateLoadFailed.value && hasMore.value,
+  },
+);
+// 缓存命中时仍显示追加批次的加载反馈，不仅依赖正文请求状态。
+const showLoadMoreLoading = computed(() => templateLoading.value || loadingMore.value);
+const checkTemplateBottom = () => {
+  // 失败时停止自动重试；追加期间由当前任务结束后统一检测。
+  if (showLoadMoreLoading.value || templateLoadFailed.value) return;
+  resetInfiniteScroll();
+};
+// 列表自然增高时重新检测，避免只能通过再次滚动更新底部状态。
+useResizeObserver(listContentRef, checkTemplateBottom);
+// 首批、追加或筛选结束后重新检测，未填满可视区时继续补齐下一批。
+watch([templateGridKey, showLoadMoreLoading], checkTemplateBottom, { flush: "post" });
 
 // 样式卡片使用预览范本的内容，并以主题预设生成独立的简历配置。
 const createStyleResumeItem = (card) => {
@@ -221,15 +272,16 @@ const tagTextClass = computed(() => (isDark.value ? "text-sf-theme-text" : "text
 
 <template>
   <div class="relative mx-auto flex h-full w-full max-w-7xl flex-col gap-3">
-    <SfScrollbar ref="scrollbarRef" class="flex-1" flush>
-      <div class="flex h-full flex-col px-3 py-2 sm:px-6">
+    <SfScrollbar ref="scrollbarRef" class="flex-1" flush @scroll="checkTemplateBottom">
+      <!-- 列表按内容自然增高，避免固定高度压缩卡片并使触底检测滞后。 -->
+      <div ref="listContentRef" class="flex min-h-full shrink-0 flex-col px-3 py-2 sm:px-6">
         <TemplateCategory
           @change="setTemplateFilters"
           @category-change="setCurrentTopCategory"
           @size-change="setPreviewSize"
         />
         <div
-          v-if="templateLoading"
+          v-if="templateLoading && (!displayedTemplates.length || !previewBase)"
           class="flex h-36 items-center justify-center text-sm text-sf-text-2"
         >
           {{ $t("resumeTemplateLoading") }}
@@ -299,16 +351,23 @@ const tagTextClass = computed(() => (isDark.value ? "text-sf-theme-text" : "text
             </div>
           </template>
         </RevealGrid>
-        <TemplatePagination
-          :page="templatePage"
-          :page-count="pageCount"
-          :total="currentTotal"
-          @change="setTemplatePage"
-        />
+        <!-- 追加加载仅在列表底部显示提示，不卸载已经展示的卡片。 -->
+        <div
+          v-if="showLoadMoreLoading && displayedTemplates.length && previewBase"
+          class="flex items-center justify-center gap-3 py-3 text-sm text-sf-text-2"
+          role="status"
+          aria-busy="true"
+        >
+          <span
+            class="h-6 w-6 animate-spin rounded-full border-2 border-sf-theme-2 border-t-sf-theme"
+            aria-hidden="true"
+          />
+          {{ $t("resumeTemplateLoading") }}
+        </div>
         <div class="flex flex-1 flex-col items-center justify-end">
-          <!-- 只有最后一页且存在结果时提示列表已结束，其他页继续使用分页按钮。 -->
+          <!-- 所有批次展示完毕且存在结果时提示列表结束。 -->
           <div
-            v-if="!templateLoading && currentTotal > 0 && templatePage === pageCount"
+            v-if="!showLoadMoreLoading && currentTotal > 0 && !hasMore"
             class="flex items-center justify-center gap-3 py-6 text-sm text-sf-text-3"
           >
             <span aria-hidden="true" class="h-px w-12 bg-sf-border" />

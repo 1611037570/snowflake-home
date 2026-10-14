@@ -13,14 +13,12 @@ export const resolveColumnWidths = (
 
   layout.regions.forEach((region) => {
     const columns = region.columns;
-    const totalGap = Math.max(0, layout.columnGap) * Math.max(0, columns.length - 1);
     // 栏宽按区域内容盒计算，容器内边距只在这里扣除一次。
     const available = Math.max(
       0,
       (region.widthMode === "page" ? fullWidth : contentWidth) -
         (region.padding?.left ?? 0) -
-        (region.padding?.right ?? 0) -
-        totalGap,
+        (region.padding?.right ?? 0),
     );
     const ratioSum = columns.reduce(
       (sum, column) => sum + (column.width.mode === "ratio" ? Math.max(0, column.width.value) : 0),

@@ -3,20 +3,17 @@ import type { ThemeTemplateConfig } from "@/domain/resume/theme/styles/createThe
 export default {
   name: "暖陶卡片", // 主题显示名称
   id: "terraCards" as const, // 主题编号
-  design: ["two-column", "minimal"], // 双栏与简约分类
+  design: ["two-column", "premium"], // 双栏与臻品分类
   description: "暖米色个人信息卡与双栏正文卡片，陶色标题和细线组织内容。", // 主题说明
   pageAppearance: { // 正文中性色与暖色卡片搭配
     textColor: "#4A4541", // 正文文字颜色
   },
   decisions: { // 主题固定版式与个人信息内容
     layoutType: "topUserTwoColumn", // 个人信息通栏、正文双栏，栏间只使用公共间距
-    userContent: { // 个人信息内容契约
-      renderer: "terraCardsUser", // 卡片式个人信息组件
-      split: "whole", // 个人信息整块展示
-    },
   },
   ui: { // 主题默认界面配置
     theme: { // 主题配色与标题样式
+      userTemplate: "terraCardsUser", // 个人信息组件编号
       color: "#BC6A48", // 陶色强调色
       titleTemplate: "terraCardRule", // 卡片内右延细线标题
     },

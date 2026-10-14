@@ -39,11 +39,11 @@ export interface ThemeTemplateConfig {
   pageAppearance?: ThemePageAppearance;
   /** 主题固定版式、装饰尺寸及内容能力，不属于用户可编辑参数 */
   decisions?: Partial<ThemeDecisions>;
-  ui?: ThemeUiPreset; // 用户可调参数的主题默认值
+  ui?: ThemeUiPreset; // 主题组件选择及用户可调参数的默认值
 }
 
 export interface ResumeThemeDefinition extends ThemeTemplateConfig {
-  ui: ThemeUiPreset; // 用户可调参数的主题默认值
+  ui: ThemeUiPreset; // 主题组件选择及用户可调参数的默认值
 }
 
 // 在注册表统一补齐空覆盖项，主题文件只保留声明内容。

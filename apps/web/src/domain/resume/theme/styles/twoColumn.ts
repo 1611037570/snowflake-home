@@ -17,6 +17,6 @@ export default {
       color: "#7C3AED",
       titleTemplate: "barColorTitle", // 模块标题样式：圆条标题
     },
-    user: { avatarPosition: "left" }, // 双栏头像默认居左，后续仍可通过头像位置设置调整
+    user: { avatarPosition: "center", infoPosition: "center" }, // 双栏头像、姓名与资料默认居中，仍可通过位置设置调整
   },
 } satisfies ThemeTemplateConfig;

@@ -26,7 +26,6 @@ const props = defineProps<{
   topRegionId?: string | null;
   /** 布局结算后的区域几何，与预览读取同一份配置 */
   regionConfigs: RegionConfig[];
-  columnGap?: number; // 公共布局结算的栏间距
   rootStyle?: Record<string, string>;
   rootClass?: string;
   /** 页面四周留白：作为测量内容的外边距内缩，与真实页面位置一致且不改变测量宽度 */
@@ -82,7 +81,6 @@ const regions = computed(() => {
         :key="region.regionId"
         :region-id="region.regionId"
         :region-padding="regionConfigMap.get(region.regionId)?.padding"
-        :column-gap="columnGap"
         :full-bleed="region.regionId === topRegionId"
         class="flex w-full min-w-0"
         :top-region-present="Boolean(topRegionId)"

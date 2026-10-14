@@ -14,7 +14,7 @@ const {
   <!-- 胶囊标题与右侧细线沿同一中心线排列。 -->
   <div class="flex min-w-0 items-center gap-3">
     <h2
-      class="flex min-h-[42px] max-w-[60%] shrink-0 items-center justify-center rounded-full px-9 font-bold"
+      class="flex max-w-[60%] shrink-0 items-center justify-center rounded-full px-9 py-1.5 font-bold"
       :style="{ backgroundColor: themeColor, color: themeColorContrast }"
     >
       <TitleText :title="title" />

@@ -16,8 +16,20 @@ const { isUserFieldHidden } = useUserFieldVisibility();
     v-if="!isUserFieldHidden('avatar') && user.avatar"
     :src="user.avatar"
     :alt="avatarAlt"
-    class="h-[132px] w-[94px] shrink-0 rounded object-cover"
+    class="resume-user-avatar shrink-0"
   />
 </template>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+/* 头像几何统一读取主题变量，未声明时保持原有尺寸。 */
+.resume-user-avatar {
+  width: var(--resume-user-avatar-width, 94px);
+  height: var(--resume-user-avatar-height, 132px);
+  max-width: var(--resume-user-avatar-max-width, none);
+  border-radius: var(--resume-user-avatar-radius, 0.25rem);
+  object-fit: var(--resume-user-avatar-fit, cover);
+  object-position: var(--resume-user-avatar-position, center);
+  border: var(--resume-user-avatar-border, 0);
+  box-shadow: var(--resume-user-avatar-shadow, none);
+}
+</style>

@@ -36,6 +36,7 @@ defineProps({
 
 <template>
   <span
+    class="resume-contact-item"
     :class="
       flowMode
         ? 'inline-flex min-w-0 items-center gap-1'
@@ -43,7 +44,7 @@ defineProps({
     "
   >
     <SfIcon v-if="iconMode" :icon="icon" size="4.5" class="shrink-0" />
-    <span v-else-if="!hideLabel" class="shrink-0">{{ label }}</span>
+    <span v-else-if="!hideLabel" class="resume-contact-label shrink-0">{{ label }}</span>
     <span v-if="modelValue" class="min-w-0 font-medium">
       <ResumeField
         :tag="flowMode ? 'span' : 'div'"
@@ -55,4 +56,18 @@ defineProps({
   </span>
 </template>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+/* 图标配色由主题变量决定，未声明时保持继承图标自身配色。 */
+.resume-contact-item :deep(svg) {
+  color: var(--resume-user-icon-color, inherit);
+}
+
+/* 单项列间距与标签配色同样由主题变量下发。 */
+.resume-contact-item {
+  column-gap: var(--resume-user-contact-item-column-gap, 0.25rem); // 标签与数值之间的间距
+}
+
+.resume-contact-label {
+  color: var(--resume-user-contact-label-color, inherit); // 字段标签配色
+}
+</style>

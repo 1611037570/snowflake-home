@@ -20,7 +20,7 @@ const {
   <!-- 矩形色块与底部细线相接，标题文字沿用统一字号设置。 -->
   <div class="flex items-end border-b" :style="{ borderColor: themeColorLine }">
     <h2
-      class="max-w-full min-w-0 px-5 py-2 font-bold tracking-widest"
+      class="max-w-full min-w-0 px-4 py-1 font-bold tracking-widest"
       :style="{ backgroundColor: themeColor, color: themeColorContrast }"
     >
       <TitleText :title="title" />

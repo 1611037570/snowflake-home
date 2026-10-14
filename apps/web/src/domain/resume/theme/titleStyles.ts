@@ -12,6 +12,7 @@ export interface TitleStyleDefinition {
 export const titleStyleList = [
   { id: "barUnderline", scope: "standalone", name: "竖条细线", description: "标题左侧一道主题色竖条，下接通栏细线。" },
   { id: "centeredShortRule", scope: "standalone", name: "居中短横线", description: "标题居中，下方一小段主题色短横线。", titleIconMode: "icon" },
+  { id: "centeredFullRule", scope: "standalone", name: "居中通栏底线", description: "标题居中，下方一条主题色通栏底线。", titleIconMode: "none" },
   { id: "railMark", scope: "standalone", name: "引导竖块", description: "标题左侧一道竖向短块，与正文引导线同轴。" },
   { id: "diamondPrefix", scope: "standalone", name: "菱形前缀", description: "标题前一个主题色菱形。" },
   { id: "darkLabelBar", scope: "standalone", name: "深色标签条", description: "标题落在深灰实色标签上，右侧接浅灰底条。", titleSize: 21 },
@@ -22,9 +23,41 @@ export const titleStyleList = [
   { id: "shortUnderline", scope: "standalone", name: "短下划线", description: "标题下方一条跟随文字宽度的短下划线。", titleSize: 18 },
   { id: "matchedUnderline", scope: "standalone", name: "同色底线", description: "标题下方一条与标题同色的通栏底线。" },
   { id: "hairlineRule", scope: "standalone", name: "极细底线", description: "标题只有加宽字距与一条极细底线。" },
+  {
+    id: "inkSpacedRuleTitle", // 衬线疏朗标题编号
+    scope: "standalone", // 完整主题和独立标题主题共用
+    name: "衬线疏朗", // 标题样式名称
+    description: "疏朗的衬线文字下方接一条青灰细线。", // 标题样式说明
+    titleIconMode: "none", // 纯文字标题不显示图标
+    titleSize: 19, // 默认标题字号
+  },
   { id: "centeredSideRules", scope: "standalone", name: "居中夹线", description: "标题居中，两侧各延伸一条细线。" },
   { id: "roundedLabel", scope: "standalone", name: "圆角色块", description: "标题落在主题色圆角实色块上。", titleIconMode: "icon", titleSize: 24 },
   { id: "capsuleRule", scope: "standalone", name: "胶囊横线", description: "标题置于圆角胶囊色块中，细线从右侧水平延伸。", titleSize: 20 },
+  {
+    id: "blueBilingualTitle", // 蓝色双语标题编号
+    scope: "theme", // 仅随对应主题展示
+    name: "蓝色双语横带", // 标题样式名称
+    description: "蓝底中文标题旁接浅蓝横带上的英文标题。", // 标题样式说明
+    titleIconMode: "none", // 标题不显示图标
+    titleSize: 20, // 默认标题字号
+  },
+  {
+    id: "blueAngleHeaderTitle", // 蓝色折角标题编号
+    scope: "theme", // 仅随对应主题展示
+    name: "蓝色斜角签", // 标题样式名称
+    description: "斜角蓝色标题签底部接通栏细线。", // 标题样式说明
+    titleIconMode: "none", // 标题不显示图标
+    titleSize: 20, // 默认标题字号
+  },
+  {
+    id: "blueProfileBandTitle", // 蓝色资料横带标题编号
+    scope: "theme", // 仅随对应主题展示
+    name: "蓝色胶囊横带", // 标题样式名称
+    description: "蓝色胶囊标题覆盖浅蓝圆角横带。", // 标题样式说明
+    titleIconMode: "none", // 标题不显示图标
+    titleSize: 20, // 默认标题字号
+  },
   { id: "railDotRule", scope: "theme", name: "轴线圆点", description: "标题左侧一个圆点，右侧细线延伸到栏末。" },
   { id: "notchedBanner", scope: "standalone", name: "燕尾旗帜", description: "标题从纸张左缘延伸，右端收成燕尾缺口。" },
   { id: "trailingRule", scope: "standalone", name: "右延细线", description: "标题后一条细线延伸到容器右边。", titleIconMode: "circle" },
@@ -36,6 +69,7 @@ export const titleStyleList = [
   { id: "roundedTabRule", scope: "standalone", name: "圆角标签块", description: "标题落在上圆角实色块上，块底接通栏细线。" },
   { id: "rightAlignedTitle", scope: "theme", name: "右对齐标题", description: "标题右对齐，左侧让出日期栏位置。", titleSize: 16 },
   { id: "timelineIndent", scope: "theme", name: "时间轴缩进", description: "标题左侧让出时间轴栏宽度。", titleSize: 17 },
+  { id: "doubleRailTitle", scope: "theme", name: "墨阶序号", description: "两位强调色序号配加宽字距标题，底线自轴线通到栏右端。", titleIconMode: "none", titleSize: 16 }, // 墨阶配套标题
   { id: "solidLabelRule", scope: "standalone", name: "实色块横线", description: "实心色块承载标题，底边接通栏细线。" },
   { id: "numberedPrefix", scope: "standalone", name: "序号前缀", description: "模块标题前自动补两位序号。" },
   { id: "dotTrailRule", scope: "standalone", name: "圆点引线", description: "标题后一个圆点，细线延伸到右边距。", titleIconMode: "circle" },
@@ -51,6 +85,38 @@ export const titleStyleList = [
   { id: "solidLabelTrail", scope: "standalone", name: "色块引线", description: "标题落在实色块上，右侧细线接一个圆点。" },
   { id: "terraCardRule", scope: "theme", name: "卡片引线", description: "暖色卡片内的标题向右延伸细线。", titleSize: 16 }, // 暖陶卡片配套标题
   {
+    id: "lavenderDotTitle", // 渐变方点标题编号
+    scope: "standalone", // 完整主题和独立标题主题共用
+    name: "渐变方点", // 标题样式名称
+    description: "紫粉渐变小方点引导纯文字标题。", // 标题样式说明
+    titleIconMode: "none", // 方点代替模块图标
+    titleSize: 18, // 默认标题字号
+  },
+  {
+    id: "mintHaloTitle", // 薄荷圆点标题编号
+    scope: "standalone", // 完整主题和独立标题主题共用
+    name: "薄荷圆点", // 标题样式名称
+    description: "双层青绿圆点引导纯文字标题。", // 标题样式说明
+    titleIconMode: "none", // 圆点代替模块图标
+    titleSize: 18, // 默认标题字号
+  },
+  {
+    id: "chalkWaveTitle", // 三角波浪标题样式编号
+    scope: "standalone", // 完整主题和独立标题主题共用
+    name: "三角波浪", // 标题样式名称
+    description: "空心三角引导楷体标题，下方以浅色波浪线收束。", // 标题样式说明
+    titleIconMode: "none", // 标题标记由组件绘制
+    titleSize: 22, // 默认标题字号
+  },
+  {
+    id: "pastelDashTitle", // 粉彩虚线标题样式编号
+    scope: "standalone", // 完整主题和独立标题主题共用
+    name: "粉彩虚线", // 标题样式名称
+    description: "粉彩楷体标题配右侧柔色虚线。", // 标题样式说明
+    titleIconMode: "none", // 默认不重复显示模块图标
+    titleSize: 22, // 默认标题字号
+  },
+  {
     id: "noteGridTab", // 手帐标题样式编号
     scope: "standalone", // 供格纸手帐与简约主题共用
     name: "手帐标题签", // 标题样式名称
@@ -59,6 +125,26 @@ export const titleStyleList = [
     titleSize: 18, // 默认标题字号
   },
   { id: "fileIndexHeading", scope: "theme", name: "档案细线", description: "左侧序号对应的纯文字标题与细线。", titleIconMode: "none", titleSize: 18 }, // 序号档案配套标题
+  { id: "blueSquareLineTitle", scope: "theme", name: "蓝线方标", description: "蓝色标题右接细线与方形端点。", titleIconMode: "none", titleSize: 18 }, // 蓝线方标配套标题
+  { id: "vinePaperTitle", scope: "theme", name: "青藤圆点", description: "浅金圆点与细底线衬托双栏标题。", titleIconMode: "none", titleSize: 19 }, // 青藤信纸配套标题
+  { id: "neonCircuitTitle", scope: "theme", name: "霓虹光带", description: "品红双斜线与半透明光带组成栏内标题。", titleIconMode: "none", titleSize: 18 }, // 霓虹终端配套标题
+  { id: "centeredInsetLabel", scope: "theme", name: "框内蓝签", description: "蓝色标题签内收于模块线框左上角。", titleIconMode: "none", titleSize: 18 }, // 居中内签配套标题
+  {
+    id: "popCollageTitle", // 拼贴主题配套标题编号
+    scope: "standalone", // 完整主题和独立标题主题共用
+    name: "撞色色条", // 标题样式名称
+    description: "标题落在撞色色条上，下方叠一层黑色错位背片。", // 标题样式说明
+    titleIconMode: "icon", // 使用现有模块图标
+    titleSize: 20, // 默认标题字号
+  },
+  {
+    id: "colorDotNotesTitle", // 彩点便签配套标题编号
+    scope: "standalone", // 完整主题和独立标题主题共用
+    name: "便签色块", // 标题样式名称
+    description: "紧凑实色便签块衬托白色标题文字。", // 标题样式说明
+    titleIconMode: "none", // 标题只展示真实文字
+    titleSize: 20, // 默认标题字号
+  },
   {
     id: "plainFileIndexHeading", // 独立档案序号标题样式编号
     scope: "standalone", // 允许独立选择并生成简约主题
@@ -66,6 +152,30 @@ export const titleStyleList = [
     description: "两位模块序号、标题与右延细线组成独立标题。", // 标题样式说明
     titleIconMode: "none", // 默认隐藏模块图标
     titleSize: 18, // 默认标题字号
+  },
+  {
+    id: "diagonalStripeBar", // 斜角纹带标题样式编号
+    scope: "standalone", // 可在标题样式中独立选择
+    name: "斜角纹带", // 标题样式名称
+    description: "浅蓝斜角标题块接通栏细斜纹。", // 标题样式说明
+    titleIconMode: "none", // 默认隐藏模块图标
+    titleSize: 18, // 默认标题字号
+  },
+  {
+    id: "plainNeonCircuitTitle", // 霓虹光带独立版标题样式编号
+    scope: "standalone", // 可在标题样式中独立选择
+    name: "霓虹光带", // 标题样式名称
+    description: "深色底板衬托品红光带与青色斜杠标记。", // 标题样式说明
+    titleIconMode: "none", // 标题标记由组件绘制
+    titleSize: 18, // 默认标题字号
+  },
+  {
+    id: "slantedBilingualBar", // 斜切双语标题样式编号
+    scope: "standalone", // 可在标题样式中独立选择
+    name: "斜切双语", // 标题样式名称
+    description: "深灰斜切底带上的中英双语标题，右端收成细尾并压一块主题色斜块。", // 标题样式说明
+    titleIconMode: "none", // 默认隐藏模块图标
+    titleSize: 20, // 默认标题字号
   },
 ] satisfies TitleStyleDefinition[];
 

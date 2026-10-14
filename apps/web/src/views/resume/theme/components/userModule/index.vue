@@ -2,6 +2,7 @@
 import { computed } from "vue";
 import { useResumePreviewContext } from "@/views/resume/editor/preview/shared/previewContext";
 import { resolveUserContent } from "./registry";
+import { resolveUserTemplate } from "@/domain/resume/theme/userTemplates";
 
 const props = defineProps({
   // 个人信息分片覆盖的块区间，默认展示全部资料。
@@ -11,11 +12,12 @@ const props = defineProps({
   },
 });
 
-// 个人信息内容按注册表解析：主题维度优先、版式维度兜底，组件内不再维护映射表。
+// 个人信息模板按主题配置解析；公共组件与分页能力共用同一份清单。
 const {
   themeDecisions,
+  ui,
 } = useResumePreviewContext();
-const contract = computed(() => themeDecisions.value.userContent);
+const contract = computed(() => resolveUserTemplate(ui.value.theme?.userTemplate, themeDecisions.value.layoutType));
 const current = computed(() => resolveUserContent(contract.value));
 </script>
 

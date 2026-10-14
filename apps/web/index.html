@@ -7,6 +7,20 @@
       name="viewport"
       content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"
     />
+    <style>
+      /* 移动端锁定页面缩放：布局按视口高度铺满，页面被缩放后会出现露底与错位 */
+      html,
+      body {
+        /* 只保留滚动与平移，禁用双指、双击缩放 */
+        touch-action: pan-x pan-y;
+      }
+    </style>
+    <script>
+      // 旧版 iOS 会忽略 viewport 的 user-scalable=no，手势缩放再靠拦截 gesture 事件兜底
+      ["gesturestart", "gesturechange", "gestureend"].forEach((name) => {
+        document.addEventListener(name, (event) => event.preventDefault());
+      });
+    </script>
     <meta name="description" content="<%= siteMetadata.description %>" />
     <meta name="keywords" content="<%= siteMetadata.keywords %>" />
     <!-- 社交分享卡片：所有路由共用同一份 HTML，此处只能给出产品默认值，按路由的卡片需要预渲染支持 -->

@@ -14,7 +14,7 @@ const {
   <!-- 深色色块压在浅灰底带上，右端斜角只裁剪背景。 -->
   <div class="flex min-w-0 items-end">
     <h2
-      class="relative z-10 max-w-[70%] min-w-0 shrink-0 py-[6px] pr-[60px] pl-6 font-bold tracking-wide"
+      class="relative z-10 max-w-[70%] min-w-0 shrink-0 py-[4px] pr-[60px] pl-6 font-bold tracking-wide"
       :style="{
         backgroundColor: themeColor,
         color: themeColorContrast,
@@ -23,6 +23,6 @@ const {
     >
       <TitleText :title="title" />
     </h2>
-    <span aria-hidden="true" class="-ml-3 h-[20px] min-w-0 flex-1 bg-[#e6e6e6]" />
+    <span aria-hidden="true" class="-ml-12 h-[20px] min-w-0 flex-1 bg-[#e6e6e6]" />
   </div>
 </template>

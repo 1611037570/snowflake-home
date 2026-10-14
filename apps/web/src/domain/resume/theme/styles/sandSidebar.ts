@@ -36,8 +36,8 @@ export default {
       lineHeight: 1.65, // 正文行高倍数
     },
     user: { // 个人信息默认展示设置
-      avatarPosition: "left", // 头像默认在上方靠左，仍支持切换位置
-      infoPosition: "left", // 姓名及联系方式靠左对齐
+      avatarPosition: "center", // 头像默认在上方居中，仍支持切换位置
+      infoPosition: "center", // 姓名及联系方式默认居中
       infoMode: "icon", // 联系方式默认显示图标
     },
     content: { // 条目默认展示设置

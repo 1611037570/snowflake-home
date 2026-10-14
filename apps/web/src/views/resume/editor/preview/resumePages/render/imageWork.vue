@@ -16,7 +16,7 @@ const rootRef = ref(null);
 const captionRef = ref(null);
 const imageMaxHeight = ref(0);
 const hasCaption = computed(() => Boolean(props.url || props.item.name || props.item.desc));
-// 尺寸设置同时控制图片区域的宽高，百分之百使用扣除说明后的整页空间。
+// 尺寸设置决定显示宽度与高度上限，高度按图片自身比例展开，不预留空白。
 const imageSizeRatio = computed(() => Math.min(100, Math.max(0, Number(props.item.size ?? 50) || 0)) / 100);
 // 以完整后续页为上限，当前页放不下时由分页引擎顺延，避免缩成页尾的小图。
 const pageHeight = computed(() => {
@@ -59,7 +59,7 @@ watch([pageHeight, () => props.item, hasCaption], async () => {
       :src="item.img"
       :alt="item.name || ''"
       class="block shrink-0 object-contain"
-      :style="{ width: `${imageSizeRatio * 100}%`, height: `${imageMaxHeight * imageSizeRatio}px` }"
+      :style="{ width: `${imageSizeRatio * 100}%`, maxHeight: `${imageMaxHeight * imageSizeRatio}px` }"
       @load="updateImageHeight"
     />
     <figcaption v-if="hasCaption" ref="captionRef" class="flex w-full min-w-0 flex-col gap-3 break-words">

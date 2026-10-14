@@ -68,20 +68,28 @@ const textOf = (key) => {
   return String(value);
 };
 const items = computed(() => subtitleKeys.value.map((key) => textOf(key)).filter(Boolean));
-// 副标题样式由自身消费主题变量，避免外壳依赖内部标签。
-const subtitleStyle = {
-  letterSpacing: "var(--resume-user-subtitle-spacing, inherit)", // 副标题字距
-  color: "var(--resume-user-name-color, inherit)", // 副标题颜色
-};
+// 副标题样式由自身消费主题变量，类规则写法不会压过主题的既有声明。
 </script>
 
 <template>
   <InlineInfoList
     v-if="items.length"
     :items="items"
-    :style="[fontValue(), lineHeightValue(), subtitleStyle]"
-    class="mt-3 font-normal"
+    class="resume-user-subtitle mt-3 font-normal"
+    :style="[fontValue(), lineHeightValue()]"
   />
 </template>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+/* 副标题外观统一读取主题变量，未声明时保持公共观感。 */
+.resume-user-subtitle {
+  font-size: var(--resume-user-subtitle-size, inherit); // 副标题字号
+  font-weight: var(--resume-user-subtitle-weight, normal); // 副标题字重
+  font-family: var(--resume-user-subtitle-family, inherit); // 副标题字体族
+  letter-spacing: var(--resume-user-subtitle-spacing, inherit); // 副标题字距
+  color: var(--resume-user-subtitle-color, var(--resume-user-name-color, inherit)); // 副标题文字色，未声明时跟随姓名
+  background-color: var(--resume-user-subtitle-background, transparent); // 副标题底纹色
+  padding: var(--resume-user-subtitle-padding, 0); // 副标题底纹内留白
+  text-shadow: var(--resume-user-subtitle-shadow, none); // 副标题文字阴影
+}
+</style>

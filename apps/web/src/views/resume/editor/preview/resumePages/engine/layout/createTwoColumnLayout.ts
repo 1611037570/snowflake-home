@@ -10,8 +10,6 @@ export interface CreateTwoColumnLayoutOptions {
   leftModuleKeys: string[];
   /** 右栏明确指定的模块 key，顺序就是右栏内的排版顺序。 */
   rightModuleKeys: string[];
-  /** 左右栏之间的水平间距。 */
-  columnGap: number;
   /** 栏内节点之间的垂直间距。 */
   gap: number;
   /** 左栏宽度占比（百分比，缺省时两栏等宽）。 */
@@ -36,7 +34,6 @@ export const createTwoColumnLayout = ({
   pagePadding,
   leftModuleKeys,
   rightModuleKeys,
-  columnGap,
   gap,
   leftWidthPercent,
   regionId = "main",
@@ -45,7 +42,6 @@ export const createTwoColumnLayout = ({
   return {
     pageSize,
     pagePadding,
-    columnGap,
     regions: [
       {
         id: regionId,

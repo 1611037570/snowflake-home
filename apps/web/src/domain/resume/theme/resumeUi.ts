@@ -23,6 +23,7 @@ export const resolveResumeUi = (ui?: ResumeUiOverrides): ResumeUi => {
   const preset = getResumeThemeUiPreset(ui?.theme?.template);
   const resolved = mergeUi(preset, ui || {});
   resolved.theme.template = preset.theme.template;
+  resolved.theme.userTemplate = preset.theme.userTemplate; // 个人信息模板始终跟随当前主题预设
   return resolved as ResumeUi;
 };
 
@@ -50,6 +51,7 @@ export const compactResumeUi = (ui?: ResumeUiOverrides): ResumeUiOverrides => {
     ...compact.theme,
     template: preset.theme.template, // 当前主题编号
   };
+  delete compact.theme.userTemplate; // 固定组件选择不作为用户覆盖项保存
   return cloneDeep(compact);
 };
 

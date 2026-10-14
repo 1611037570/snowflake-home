@@ -10,8 +10,6 @@ export interface CreateSingleColumnLayoutOptions {
   pagePadding: BoxSpacing;
   /** 单栏内节点之间的间距 */
   gap: number;
-  /** 单栏布局保留的栏间距字段，固定为零即可。 */
-  columnGap?: number;
   /** 区域编号，缺省使用正文区域 */
   regionId?: string;
   /** 栏编号，缺省使用正文栏 */
@@ -27,13 +25,11 @@ export const createSingleColumnLayout = ({
   pageSize,
   pagePadding,
   gap,
-  columnGap = 0,
   regionId = "main",
   columnId = "main-column",
 }: CreateSingleColumnLayoutOptions): PageLayoutConfig => ({
   pageSize,
   pagePadding,
-  columnGap,
   regions: [
     {
       id: regionId,

@@ -6,16 +6,19 @@ import { storeToRefs } from "pinia";
 import ThumbPreview from "../../preview/modes/thumb.vue";
 import { createResumeStyleUi, resumeStyleTemplateList } from "@/views/resume/theme";
 import { loadResumeTemplateData } from "@/views/resume/template/data/resumeData";
-import { resumeTemplateLayoutOptions, resumeTemplateTierOptions } from "@/views/resume/template/data/list";
+import {
+  resumeTemplateLayoutOptions,
+  resumeTemplateTierOptions,
+} from "@/views/resume/template/data/list";
 import { onMounted, ref } from "vue";
 import i18n, { $t } from "@/locales";
 const resumeStore = useResumeStore();
 const { currentUI } = storeToRefs(resumeStore);
 const previewBase = ref(null);
 const selectedLayout = ref(""); // 当前选中的布局标签
-const selectedTier = ref(""); // 当前选中的设计等级，空值沿用默认模板可见范围
+const selectedTier = ref(""); // 当前选中的设计类型，空值时不限类型
 
-// 布局和等级分别切换，可同时约束模板列表。
+// 布局和类型分别切换，可同时约束模板列表。
 const toggleLayout = (key) => {
   selectedLayout.value = selectedLayout.value === key ? "" : key;
 };
@@ -38,10 +41,15 @@ const templates = computed(() => {
   if (!i18n.global.locale.value) return [];
   return resumeStyleTemplateList
     .filter((style) => {
-      // 两行同时选中时取交集，空选状态保持原有极简隐藏规则。
-      if (!selectedLayout.value && !selectedTier.value) return !style.design.includes("plain");
-      return (style.design.includes("all") || !selectedLayout.value || style.design.includes(selectedLayout.value))
-        && (style.design.includes("all") || !selectedTier.value || style.design.includes(selectedTier.value));
+      // 布局与类型两行同时选中时取交集，空选状态展示全部模板，不再屏蔽任何分类。
+      return (
+        (style.design.includes("all") ||
+          !selectedLayout.value ||
+          style.design.includes(selectedLayout.value)) &&
+        (style.design.includes("all") ||
+          !selectedTier.value ||
+          style.design.includes(selectedTier.value))
+      );
     })
     .map((style) => ({
       name: $t(`resumeTemplateStyle_${style.localeId}_name`),
@@ -61,17 +69,23 @@ const isActive = (id) => (currentUI.value?.theme?.template ?? "default") === id;
 const applyTemplate = (template) => {
   const moduleKeys = resumeStore.runtimeFields.map((field) => field.key).filter(Boolean);
   // 切换外观保留简历展示语言，其余参数使用独立主题的完整预设。
-  currentUI.value = createResumeStyleUi(template.item.ui, moduleKeys, currentUI.value.content.language);
+  currentUI.value = createResumeStyleUi(
+    template.item.ui,
+    moduleKeys,
+    currentUI.value.content.language,
+  );
 };
 </script>
 
 <template>
   <SfScrollbar class="h-full bg-sf-primary py-3">
-    <!-- 布局与等级各占一行，两行筛选条件可以叠加。 -->
+    <!-- 布局与类型各占一行，两行筛选条件可以叠加。 -->
     <div class="mb-3 flex flex-col gap-3">
       <div class="flex items-center gap-3">
-        <span class="w-[36px] shrink-0 text-sm text-sf-text-2">{{ $t("resumeTemplateCategory_layout") }}</span>
-        <div class="flex min-w-0 flex-nowrap gap-3 overflow-x-auto whitespace-nowrap">
+        <span class="w-[36px] shrink-0 text-sm text-sf-text-2">{{
+          $t("resumeTemplateCategory_layout")
+        }}</span>
+        <div class="flex min-w-0 flex-nowrap gap-3 whitespace-nowrap">
           <SfButton
             v-for="option in resumeTemplateLayoutOptions"
             :key="option.key"
@@ -85,8 +99,10 @@ const applyTemplate = (template) => {
         </div>
       </div>
       <div class="flex items-center gap-3">
-        <span class="w-[36px] shrink-0 text-sm text-sf-text-2">{{ $t("resumeTemplateCategory_tier") }}</span>
-        <div class="flex min-w-0 flex-nowrap gap-3 overflow-x-auto whitespace-nowrap">
+        <span class="w-[36px] shrink-0 text-sm text-sf-text-2">{{
+          $t("resumeTemplateCategory_tier")
+        }}</span>
+        <div class="flex min-w-0 flex-nowrap gap-3 whitespace-nowrap">
           <SfButton
             v-for="option in resumeTemplateTierOptions"
             :key="option.key"
@@ -136,9 +152,9 @@ const applyTemplate = (template) => {
     </div>
     <!-- 非空列表滚动到末尾时显示结束提示。 -->
     <div v-else class="flex items-center justify-center gap-3 py-6 text-sm text-sf-text-3">
-      <span aria-hidden="true" class="h-px w-12 bg-sf-border" />
+      <span aria-hidden="true" class="bg-sf-border h-px w-12" />
       <span>{{ $t("resumeTemplateNoMore") }}</span>
-      <span aria-hidden="true" class="h-px w-12 bg-sf-border" />
+      <span aria-hidden="true" class="bg-sf-border h-px w-12" />
     </div>
   </SfScrollbar>
 </template>

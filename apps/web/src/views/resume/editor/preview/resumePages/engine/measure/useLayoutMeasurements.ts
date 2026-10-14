@@ -37,6 +37,7 @@ const resolveWatchSignature = (source: Record<string, any>): string => {
     font.titleSize,
     theme.template,
     theme.titleTemplate,
+    theme.userTemplate, // 个人信息组件切换重新测量
     theme.titleIconMode,
     source?.themeDecisions?.layoutType,
     layout.leftColumnWidth,
@@ -52,7 +53,6 @@ const resolveWatchSignature = (source: Record<string, any>): string => {
     source?.user?.avatarPosition,
     source?.user?.infoPosition,
     JSON.stringify(source?.themeDecisions?.regions || null), // 所有区域与栏几何共用完整声明，不遗漏其他槽位
-    JSON.stringify(source?.themeDecisions?.userContent || null), // 内容组件与分片能力变更重新测量
     source?.themeDecisions?.topDecoration, // 独立装饰切换重新测量
     source?.themeDecisions?.usesDateRail, // 日期栏会改变正文宽度
     source?.renderSignature,

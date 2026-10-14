@@ -29,8 +29,8 @@ export default {
       padding: { vertical: 30, horizontal: 30 }, // 页面上下与左右留白
     },
     user: { // 个人信息默认排列
-      avatarPosition: "left", // 头像默认靠左
-      infoPosition: "left", // 姓名与资料靠左
+      avatarPosition: "center", // 头像默认居中
+      infoPosition: "center", // 姓名与资料默认居中
       infoMode: "icon", // 联系方式默认显示图标
     },
   },
