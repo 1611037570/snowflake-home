@@ -112,16 +112,16 @@ const resumeData: any = {
         },
       ],
     },
-    image: {
+    portfolio: { // 作品集模块数据。
       ui: { collapsed: ["1"], archived: false },
       list: [
         {
           ui: {},
-          data: { name: "美妆主视觉成片", img: xiaoyang, desc: "美妆品牌年度形象拍摄主视觉。展示棚拍布光与妆面质感表现。", size: 50 },
+          data: { name: "美妆主视觉成片" /* 作品名称 */, img: xiaoyang /* 作品图片 */, desc: "美妆品牌年度形象拍摄主视觉。展示棚拍布光与妆面质感表现。" /* 作品描述 */, size: 50 /* 图片显示大小百分比 */ },
         },
         {
           ui: {},
-          data: { name: "户外人像成片", img: xiaoyang, desc: "户外服饰品牌春夏拍摄成片。展示自然光与动态抓拍效果。", size: 50 },
+          data: { name: "户外人像成片" /* 作品名称 */, img: xiaoyang /* 作品图片 */, desc: "户外服饰品牌春夏拍摄成片。展示自然光与动态抓拍效果。" /* 作品描述 */, size: 50 /* 图片显示大小百分比 */ },
         },
       ],
     },
@@ -134,7 +134,7 @@ const resumeData: any = {
       { key: "skill" },
       { key: "work" },
       { key: "project" },
-      { key: "image" },
+      { key: "portfolio" /* 作品集模块标识 */ },
     ],
   },
   ui: {

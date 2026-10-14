@@ -8,7 +8,7 @@ import { parseRichText } from "./richTextParser";
 const LIST_MODULE_KEYS = ["account"] as const;
 
 /** 需要使用不可拆分媒体结构的模块 key */
-const MEDIA_MODULE_KEYS = ["image", "video"] as const;
+const MEDIA_MODULE_KEYS = ["portfolio"] as const;
 
 /** 创建个人信息模块适配器 */
 const createUserModuleAdapter = (context: LayoutAdapterContext): LayoutNode[] => {
@@ -107,7 +107,7 @@ const createDescribedItemModuleAdapter =
     });
   };
 
-/** 创建图片、视频等媒体模块适配器 */
+/** 创建作品集媒体模块适配器 */
 const createMediaModuleAdapter =
   (moduleKey: string): LayoutAdapter =>
   (context) => {

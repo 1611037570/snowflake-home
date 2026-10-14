@@ -299,46 +299,42 @@ const resumeData: any = {
     hobby: {
       data: { content: "<p>阅读、徒步与摄影。</p>" /* 兴趣爱好正文 */ },
     },
-    video: {
+    // portfolio：作品集，链接和图片可分别填写。
+    portfolio: {
       ui: { collapsed: ["1"], archived: false },
       list: [
         {
           ui: {},
           data: {
-            name: "产品方案讲解",
-            url: "https://www.example.com/product-demo",
-            desc: "会员生命周期运营平台的方案讲解与演示视频。介绍用户分层、自动触达和效果分析流程。",
+            name: "产品方案讲解", // 作品名称
+            url: "https://www.example.com/product-demo", // 作品链接
+            desc: "会员生命周期运营平台的方案讲解与演示视频。介绍用户分层、自动触达和效果分析流程。", // 作品描述
           },
         },
         {
           ui: {},
           data: {
-            name: "用户增长复盘",
-            url: "https://www.example.com/growth-review",
-            desc: "拆解会员增长实验的设计与结果。总结关键指标变化及后续优化方向。",
-          },
-        },
-      ],
-    },
-    image: {
-      ui: { collapsed: ["1"], archived: false },
-      list: [
-        {
-          ui: {},
-          data: {
-            name: "产品原型展示",
-            img: xiaoyang,
-            desc: "会员运营后台核心页面原型。展示运营配置与活动效果分析视图。",
-            size: 50,
+            name: "用户增长复盘", // 作品名称
+            url: "https://www.example.com/growth-review", // 作品链接
+            desc: "拆解会员增长实验的设计与结果。总结关键指标变化及后续优化方向。", // 作品描述
           },
         },
         {
           ui: {},
           data: {
-            name: "用户增长数据看板",
-            img: xiaoyang,
-            desc: "展示用户分层与转化漏斗原型。覆盖核心增长指标及运营分析视图。",
-            size: 50,
+            name: "产品原型展示", // 作品名称
+            img: xiaoyang, // 作品图片
+            desc: "会员运营后台核心页面原型。展示运营配置与活动效果分析视图。", // 作品描述
+            size: 50, // 图片显示大小百分比
+          },
+        },
+        {
+          ui: {},
+          data: {
+            name: "用户增长数据看板", // 作品名称
+            img: xiaoyang, // 作品图片
+            desc: "展示用户分层与转化漏斗原型。覆盖核心增长指标及运营分析视图。", // 作品描述
+            size: 50, // 图片显示大小百分比
           },
         },
       ],
@@ -381,8 +377,7 @@ const resumeData: any = {
       { key: "training" /* 培训经历模块 */ },
       { key: "language" /* 语言能力模块 */ },
       { key: "hobby" /* 兴趣爱好模块 */ },
-      { key: "video" },
-      { key: "image" },
+      { key: "portfolio" /* 作品集模块标识 */ },
       { key: "custom_product_research" },
     ],
   },

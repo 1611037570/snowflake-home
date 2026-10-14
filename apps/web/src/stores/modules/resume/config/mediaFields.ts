@@ -17,8 +17,8 @@ type MediaFieldDecl = {
 const MEDIA_FIELD_DECLS: MediaFieldDecl[] = [
   // 个人信息头像：base64 Data URL，存于 user.data
   { moduleKey: "user", shape: "object", field: "avatar" },
-  // 图片作品图片：base64 Data URL，存于 image.list[].data
-  { moduleKey: "image", shape: "array", field: "img" },
+  // 作品集图片：base64 Data URL，存于 portfolio.list[].data
+  { moduleKey: "portfolio", shape: "array", field: "img" },
 ];
 
 // 简历 AI 的媒体只读判断与裁剪使用同一份声明

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import ImageWork from "@/views/resume/editor/preview/resumePages/render/imageWork.vue";
+import PortfolioWork from "@/views/resume/editor/preview/resumePages/render/portfolioWork.vue";
 import { safeContentUrl as safeUrl } from "@/views/resume/editor/preview/resumePages/render/nodeContentContract";
 import { useNodeContent, type NodeContentProps } from "@/views/resume/editor/preview/resumePages/render/nodeContentContract";
 
@@ -10,5 +10,5 @@ const { nodePayload } = useNodeContent(props);
 </script>
 
 <template>
-  <ImageWork :item="nodePayload.item" :url="safeUrl(nodePayload.item?.url)" />
+  <PortfolioWork :item="nodePayload.item" :url="safeUrl(nodePayload.item?.url)" />
 </template>

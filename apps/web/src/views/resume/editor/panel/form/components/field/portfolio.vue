@@ -2,8 +2,13 @@
 import { useImageUpload } from "@/hooks";
 import { RESUME_WIDTH } from "@/views/resume/editor/preview/shared/constants";
 
-// 图片作品字段：name 名称、img 图片、desc 描述、size 显示大小百分比
+// 作品集字段：name 作品名称、url 作品链接、desc 作品描述、img 作品图片、size 图片显示大小百分比
 const name = defineModel("name", {
+  type: String,
+  default: "",
+});
+// 作品链接适用于任何作品，可与图片同时填写。
+const url = defineModel("url", {
   type: String,
   default: "",
 });
@@ -32,20 +37,23 @@ const { openPicker, loading } = useImageUpload({
 </script>
 
 <template>
-  <div class="flex w-full flex-col gap-1">
-    <!-- 名称与描述 -->
+  <div class="flex w-full flex-col gap-3">
+    <!-- 作品名称、链接和描述统一编辑。 -->
     <div class="flex items-center gap-3">
       <div class="w-[100px] min-w-0">
-        <SfFormItem :label="$t('imageName')">
-          <SfInput v-model="name" :placeholder="$t('imageName')" />
+        <SfFormItem :label="$t('portfolioName')">
+          <SfInput v-model="name" :placeholder="$t('portfolioNamePlaceholder')" />
         </SfFormItem>
       </div>
       <div class="min-w-0 flex-1">
-        <SfFormItem :label="$t('imageDescription')">
-          <SfInput v-model="desc" :placeholder="$t('imageDescription')" />
+        <SfFormItem :label="$t('portfolioLink')">
+          <SfInput v-model="url" :placeholder="$t('portfolioLinkPlaceholder')" />
         </SfFormItem>
       </div>
     </div>
+    <SfFormItem :label="$t('portfolioDescription')">
+      <SfInput v-model="desc" :placeholder="$t('portfolioDescriptionPlaceholder')" />
+    </SfFormItem>
     <!-- 图片与大小控制：左右布局，编辑器内图片固定宽度不随滑杆变化 -->
     <div class="flex items-center gap-3">
       <!-- 图片预览或上传入口：固定宽度 -->
@@ -62,14 +70,14 @@ const { openPicker, loading } = useImageUpload({
         >
           {{ $t("reuploadImage") }}
         </div>
-        <div v-else class="flex h-24 w-full flex-col items-center justify-center gap-1">
+        <div v-else class="flex h-24 w-full flex-col items-center justify-center gap-3">
           <SfIcon v-if="loading" icon="line-md:loading-twotone-loop" size="6" />
           <SfIcon v-else icon="mdi:image-plus" size="6" />
           <span class="text-xs">{{ loading ? $t("processing") : $t("uploadImage") }}</span>
         </div>
       </div>
       <!-- 显示大小：百分比滑杆控制，不用输入框 -->
-      <div class="flex min-w-0 flex-1 items-center gap-3">
+      <div v-if="img" class="flex min-w-0 flex-1 items-center gap-3">
         <SfSlider v-model="size" :min="25" :max="100" :step="1" class="flex-1" size="small" />
         <span class="w-12 shrink-0 text-right text-sm">{{ size }}%</span>
       </div>

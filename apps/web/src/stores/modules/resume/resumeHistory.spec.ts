@@ -12,9 +12,9 @@ const createItem = () => ({
   id: "resume-1",
   data: {
     user: { data: { name: "张三", avatar: AVATAR_OLD } },
-    image: { list: [{ data: { name: "作品", img: IMG_OLD } }] },
+    portfolio: { list: [{ data: { name: "作品", img: IMG_OLD } }] },
   },
-  config: { modules: [{ key: "user" }, { key: "image" }] },
+  config: { modules: [{ key: "user" }, { key: "portfolio" }] },
   ui: { page: {} },
 });
 
@@ -49,7 +49,7 @@ describe("resumeHistory 媒体撤销", () => {
 
     expect(item.data.user.data.name).toBe("张三");
     expect(item.data.user.data.avatar).toBe(AVATAR_NEW);
-    expect(item.data.image.list[0].data.img).toBe(IMG_OLD);
+    expect(item.data.portfolio.list[0].data.img).toBe(IMG_OLD);
   });
 
   it("撤销头像更换时回到上一张头像", () => {
@@ -61,11 +61,11 @@ describe("resumeHistory 媒体撤销", () => {
   });
 
   it("撤销作品图更换时回到上一张作品图", () => {
-    commitChange(() => (item.data.image.list[0].data.img = IMG_NEW));
+    commitChange(() => (item.data.portfolio.list[0].data.img = IMG_NEW));
 
     history.undo();
 
-    expect(item.data.image.list[0].data.img).toBe(IMG_OLD);
+    expect(item.data.portfolio.list[0].data.img).toBe(IMG_OLD);
   });
 
   it("重做后再次取回更换后的头像", () => {
