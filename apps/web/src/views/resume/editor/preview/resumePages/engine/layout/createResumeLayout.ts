@@ -70,11 +70,14 @@ export const createResumeLayout = ({
       const regionGapBefore = region.id === moduleGapRegionId && !contract?.joinsPrevious ? gap : 0;
       return {
         ...region,
-        // 栏位由公共双栏结构确定，主题通过语义编号声明内部装饰空间。
+        // 栏位由公共双栏结构确定，栏内留白取页面左右留白的一半。
         columns: region.columns.map((column, index) => ({
           ...column,
-          ...(region.columns.length === 2 && contract?.columns
-            ? { padding: contract.columns[index === 0 ? "left" : "right"] }
+          // 双栏中缝两侧各补半份页面留白：左栏补右、右栏补左，中缝总空与纸张左右留白一致。
+          ...(region.columns.length === 2
+            ? { padding: index === 0
+              ? { left: 0, right: paddingHorizontal / 2 }
+              : { left: paddingHorizontal / 2, right: 0 } }
             : {}),
         })),
         padding:

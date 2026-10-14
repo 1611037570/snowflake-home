@@ -17,7 +17,6 @@ const props = defineProps({
     type: Object as PropType<ThemeInset>,
     default: undefined,
   },
-  columnGap: { type: Number, default: 0 }, // 公共布局结算的栏间距
   fullBleed: { type: Boolean, default: false }, // 当前区域是否实际占据纸张全宽
   topRegionPresent: { type: Boolean, default: false }, // 当前页是否由顶部通栏占位接管页面边距
   widthMode: { type: String, default: "content" }, // 区域使用纸张全宽或页面内容宽度
@@ -51,10 +50,8 @@ const regionStyle = computed(() => {
     paddingLeft: `${regionPadding.left + pageInset}px`, // 装饰内边距与通栏页面内缩
     "--resume-region-inset-top": `${regionPadding.top}px`, // 区域内部顶部定位基准
     "--resume-region-inset-left": `${regionPadding.left}px`, // 区域内部左侧定位基准
-    "--resume-column-gap-half": `${props.columnGap / 2}px`, // 栏间装饰的中心定位基准
-    "--resume-page-inset-horizontal": `${Number(ui.value.page?.padding?.horizontal) || 0}px`, // 装饰延伸到纸张侧边的距离
+    "--resume-page-inset-horizontal": `${horizontal}px`, // 装饰延伸到纸张侧边的距离
     "--resume-page-inset-vertical": `${Number(ui.value.page?.padding?.vertical) || 0}px`, // 装饰延伸到纸张顶边的距离
-    gap: `${props.columnGap}px`, // 测量与预览共用的栏间距
   };
 });
 </script>

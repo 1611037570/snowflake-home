@@ -14,7 +14,6 @@ const twoColumnStyle = computed(() => ({
   "--two-column-divider": themeColorLine.value, // 栏间 1px 细线
   "--two-column-top": "var(--resume-region-inset-top)", // 装饰向上覆盖正文顶部留白
   "--two-column-side": "var(--resume-page-inset-horizontal)", // 左栏底色铺到纸张左边缘
-  "--two-column-half-gap": "var(--resume-column-gap-half)", // 装饰沿公共栏间距的中线绘制
 }));
 </script>
 
@@ -41,25 +40,25 @@ const twoColumnStyle = computed(() => ({
   isolation: isolate;
 }
 
-/* 左栏浅底：向上覆盖正文留白与纸张上边距，向左铺到纸张边缘，向下延伸到页脚预留空间。 */
+/* 左栏浅底：向上覆盖正文留白与纸张上边距，向左铺到纸张边缘，右缘停在两栏交界的中缝。 */
 .two-column-main--enabled :deep(> [data-resume-column="left"])::before {
   content: "";
   position: absolute;
   z-index: -1;
   top: calc(-1 * (var(--two-column-top, 0px) + var(--resume-page-top-space, 0px)));
-  right: calc(-1 * var(--two-column-half-gap, 12px));
+  right: 0; /* 底色停在栏间中缝，不再越过两栏交界 */
   bottom: calc(-1 * var(--resume-bottom-space, 0px));
   left: calc(-1 * var(--two-column-side, 0px));
   background-color: var(--two-column-surface);
   pointer-events: none;
 }
 
-/* 栏间 1px 细线落在栏间距正中，与左栏浅底同高，本身不占用任何排版空间。 */
+/* 栏间 1px 细线落在两栏交界的中缝，与左栏浅底同高，本身不占用任何排版空间。 */
 .two-column-main--enabled :deep(> [data-resume-column="left"])::after {
   content: "";
   position: absolute;
   top: calc(-1 * (var(--two-column-top, 0px) + var(--resume-page-top-space, 0px)));
-  right: calc(-1 * var(--two-column-half-gap, 12px));
+  right: 0; /* 细线贴着左栏右缘，即中缝正中 */
   bottom: calc(-1 * var(--resume-bottom-space, 0px));
   width: 1px;
   background-color: var(--two-column-divider);

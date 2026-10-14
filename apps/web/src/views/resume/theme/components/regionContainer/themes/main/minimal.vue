@@ -33,12 +33,12 @@ const isTwoColumn = () => layoutStretchesColumns(themeDecisions.value.layoutType
   align-self: stretch;
 }
 
-/* 栏间 1px 细线落在栏间距正中，绝对定位使其不占用任何排版空间 */
+/* 栏间 1px 细线落在两栏交界的中缝，绝对定位使其不占用任何排版空间 */
 .minimal-main--two-column :deep(> [data-resume-column="left"])::after {
   content: "";
   position: absolute;
   top: 0;
-  right: calc(-1 * var(--resume-column-gap-half));
+  right: 0; /* 细线贴着左栏右缘，即中缝正中 */
   bottom: calc(-1 * var(--resume-bottom-space, 0px));
   width: 1px;
   background-color: color-mix(in srgb, var(--minimal-divider) 50%, transparent);
