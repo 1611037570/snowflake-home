@@ -49,6 +49,9 @@ const resumeData: any = {
       data: {
         content: "<p><strong>产品能力：</strong>熟悉用户研究、需求分析、原型设计、数据分析与项目管理，能够独立推进 0-1 产品落地。</p><p><strong>工具：</strong>熟练使用 Figma、Axure、SQL、Excel 与数据看板工具。</p>",
       },
+      list: [
+        { data: { name: "数据分析" /* 技能名称 */, level: 4 /* 技能熟练度档位 */ } },
+      ],
     },
     advantage: {
       ui: { collapsed: ["1"], archived: false },
@@ -244,9 +247,57 @@ const resumeData: any = {
     honor: {
       ui: { collapsed: ["1"], archived: false },
       list: [
-        { ui: {}, data: { name: "年度优秀产品奖" } },
+        { ui: {}, data: {
+          name: "年度优秀产品奖" /* 荣誉名称 */,
+          link: { name: "获奖公告" /* 荣誉链接名称 */, url: "https://example.com/award" /* 荣誉链接地址 */ },
+          content: "<p>负责的产品项目获得年度优秀产品奖。</p>" /* 荣誉描述 */,
+        } },
         { ui: {}, data: { name: "用户增长专项奖" } },
       ],
+    },
+    club: {
+      list: [{ data: {
+        name: "产品创新社" /* 组织名称 */,
+        post: "项目负责人" /* 担任职务 */,
+        startTime: "2017.09" /* 开始时间 */,
+        endTime: "2018.06" /* 结束时间 */,
+        city: "上海" /* 所在城市 */,
+        tags: ["组织策划"] /* 经历标签 */,
+        content: "<p>组织产品策划活动并协调团队完成成果展示。</p>" /* 经历描述 */,
+      } }],
+    },
+    volunteer: {
+      list: [{ data: {
+        name: "社区公益项目" /* 组织名称 */,
+        post: "志愿者" /* 担任职务 */,
+        startTime: "2018.03" /* 开始时间 */,
+        endTime: "2018.06" /* 结束时间 */,
+        city: "上海" /* 所在城市 */,
+        tags: ["志愿服务"] /* 经历标签 */,
+        content: "<p>参与社区活动组织与现场服务。</p>" /* 经历描述 */,
+      } }],
+    },
+    training: {
+      list: [{ data: {
+        name: "产品管理培训班" /* 组织名称 */,
+        post: "学员" /* 担任职务 */,
+        startTime: "2022.03" /* 开始时间 */,
+        endTime: "2022.05" /* 结束时间 */,
+        city: "上海" /* 所在城市 */,
+        tags: ["结业证书"] /* 培训标签 */,
+        content: "<p>完成需求分析、产品规划与项目管理课程。</p>" /* 培训内容 */,
+      } }],
+    },
+    language: {
+      list: [{ data: {
+        name: "英语" /* 语言名称 */,
+        level: "熟练" /* 语言熟练程度 */,
+        score: "雅思 7.0" /* 语言成绩或证书 */,
+        content: "<p>可使用英语进行工作交流和资料阅读。</p>" /* 语言应用描述 */,
+      } }],
+    },
+    hobby: {
+      data: { content: "<p>阅读、徒步与摄影。</p>" /* 兴趣爱好正文 */ },
     },
     video: {
       ui: { collapsed: ["1"], archived: false },
@@ -325,6 +376,11 @@ const resumeData: any = {
       { key: "publication" },
       { key: "ip" },
       { key: "honor" },
+      { key: "club" /* 社团经历模块 */ },
+      { key: "volunteer" /* 志愿服务模块 */ },
+      { key: "training" /* 培训经历模块 */ },
+      { key: "language" /* 语言能力模块 */ },
+      { key: "hobby" /* 兴趣爱好模块 */ },
       { key: "video" },
       { key: "image" },
       { key: "custom_product_research" },

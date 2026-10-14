@@ -19,7 +19,7 @@ const DEFAULT_META = {
   version: "1.0.0",
 };
 const DEFAULT_DRAG_CLASS = ".item-drag";
-// 个人信息内部字段恢复独立的圆角边框卡片。
+// 圆角边框卡片：个人信息内部字段与各模块列表条目共用同一底座样式。
 const DEFAULT_COL_CLASS = "rounded-3xl border border-sf-b bg-sf-primary";
 // 必填与日期格式规则统一供完成度统计和 ATS 检查读取。
 const requiredFieldRule = () => ({ required: true, message: "请填写此项", trigger: "blur" });
@@ -677,8 +677,6 @@ export const DEFAULT_USER_FORM = [
     ],
   },
 ] satisfies FormField[];
-// 数组记录恢复独立圆角卡片及完整边框。
-const AAA = "rounded-3xl border border-sf-b bg-sf-primary";
 
 // 社交账号
 export const DEFAULT_ACCOUNT_FORM = {
@@ -701,7 +699,7 @@ export const DEFAULT_ACCOUNT_FORM = {
       dragClass: DEFAULT_DRAG_CLASS,
       // 数组卡片恢复纵向间距，容器提供左右及顶部留白。
       rowClass: "gap-y-3 px-3 pt-3",
-      itemClass: AAA + " py-1 px-3!", // 记录保留内部留白并显示圆角边框。
+      itemClass: DEFAULT_COL_CLASS + " py-1 px-3!", // 记录保留内部留白并显示圆角边框。
       itemSchema: {
         model: [
           {
@@ -747,7 +745,7 @@ export const DEFAULT_EDUCATION_FORM = {
       dragClass: DEFAULT_DRAG_CLASS,
       // 数组卡片恢复纵向间距，容器提供左右及顶部留白。
       rowClass: "gap-y-3 px-3 pt-3",
-      itemClass: AAA + " px-3!",
+      itemClass: DEFAULT_COL_CLASS + " px-3!",
       itemSchema: {
         type: "group",
         component: "collapseItem",
@@ -997,15 +995,81 @@ export const DEFAULT_SKILL_FORM = {
   slot: "default",
   fields: [
     {
+      // 布局开关写在模块 ui 上：熟练度列表与富文本正文共用一个数据路径
+      type: "object",
+      label: "技能布局",
+      component: "select",
+      span: 12,
+      model: [
+        {
+          source: ["ui", "layout"],
+          prop: "modelValue",
+          defaultValue: "text",
+        },
+        {
+          source: ["__options", "skillLayout"],
+          prop: "list",
+          raw: true,
+        },
+      ],
+      props: {
+        placeholder: "请选择技能布局",
+      },
+    },
+    {
+      // 熟练度布局下不渲染富文本编辑器
       type: "object",
       component: "resumeContentEditor",
       rules: [requiredFieldRule(), contentQualityRule()],
+      checks: {
+        removed: {
+          path: ["ui", "layout"],
+          equals: "proficiency",
+        },
+      },
       props: {
         kind: "skill",
       },
       model: {
         source: ["data", "content"],
         prop: "modelValue",
+      },
+    },
+    {
+      // 熟练度列表：每条技能一行，名称与档位成对编辑
+      type: "array",
+      source: ["list"],
+      drag: true,
+      dragClass: DEFAULT_DRAG_CLASS,
+      rowClass: "gap-y-3 px-3 pt-3",
+      itemClass: DEFAULT_COL_CLASS + " px-3!",
+      checks: {
+        removed: {
+          path: ["ui", "layout"],
+          equals: "text",
+        },
+      },
+      itemSchema: {
+        model: [
+          {
+            source: ["data", "name"],
+            defaultValue: "",
+            prop: "name",
+          },
+          {
+            source: ["data", "level"],
+            defaultValue: 3,
+            prop: "level", // 保存技能熟练度档位
+          },
+          {
+            source: ["ui", "hidden"],
+            defaultValue: false,
+            prop: "hidden",
+          },
+        ],
+        type: "object",
+        component: "rowSkill",
+        rules: [requiredFieldRule()],
       },
     },
   ],
@@ -1108,7 +1172,7 @@ export const DEFAULT_WORK_FORM = {
       dragClass: DEFAULT_DRAG_CLASS,
       // 数组卡片恢复纵向间距，容器提供左右及顶部留白。
       rowClass: "gap-y-3 px-3 pt-3",
-      itemClass: AAA + " px-3!",
+      itemClass: DEFAULT_COL_CLASS + " px-3!",
       itemSchema: {
         type: "group",
         component: "collapseItem",
@@ -1313,7 +1377,7 @@ export const DEFAULT_PROJECT_FORM = {
       dragClass: DEFAULT_DRAG_CLASS,
       // 数组卡片恢复纵向间距，容器提供左右及顶部留白。
       rowClass: "gap-y-3 px-3 pt-3",
-      itemClass: AAA + " px-3!",
+      itemClass: DEFAULT_COL_CLASS + " px-3!",
       itemSchema: {
         type: "group",
         component: "collapseItem",
@@ -1511,7 +1575,7 @@ export const DEFAULT_VIDEO_FORM = {
       dragClass: DEFAULT_DRAG_CLASS,
       // 数组卡片恢复纵向间距，容器提供左右及顶部留白。
       rowClass: "gap-y-3 px-3 pt-3",
-      itemClass: AAA + " px-3!",
+      itemClass: DEFAULT_COL_CLASS + " px-3!",
       itemSchema: {
         // 折叠标题数据源：展示当前视频名称
         model: [
@@ -1583,7 +1647,7 @@ export const DEFAULT_IMAGE_FORM = {
       dragClass: DEFAULT_DRAG_CLASS,
       // 数组卡片恢复纵向间距，容器提供左右及顶部留白。
       rowClass: "gap-y-3 px-3 pt-3",
-      itemClass: AAA + " px-3!",
+      itemClass: DEFAULT_COL_CLASS + " px-3!",
       itemSchema: {
         // 折叠标题数据源：展示当前图片作品名称
         model: [
@@ -1640,7 +1704,7 @@ export const DEFAULT_IMAGE_FORM = {
     },
   ],
 } satisfies FormField;
-// 荣誉证书
+// 荣誉证书：条目升级为折叠卡，名称、链接与描述逐项编辑，预览按标题行加描述块渲染
 export const DEFAULT_HONOR_FORM = {
   type: "group",
   component: "collapseModule",
@@ -1660,25 +1724,410 @@ export const DEFAULT_HONOR_FORM = {
       dragClass: DEFAULT_DRAG_CLASS,
       // 数组卡片恢复纵向间距，容器提供左右及顶部留白。
       rowClass: "gap-y-3 px-3 pt-3",
-      itemClass: AAA + " py-1 px-3!", // 荣誉记录左右留白与其他模块保持一致。
-
+      itemClass: DEFAULT_COL_CLASS + " px-3!",
       itemSchema: {
-        // 名称数据源：绑定当前荣誉证书名称
+        type: "group",
+        component: "collapseItem",
+        slot: "default",
+        span: 24,
         model: [
           {
-            source: ["data", "name"],
-            defaultValue: "",
-            prop: "name",
+            source: ["ui", "collapsed"],
+            prop: "collapsed",
+            defaultValue: EXPANDED,
           },
           {
             source: ["ui", "hidden"],
-            defaultValue: false,
             prop: "hidden",
+            defaultValue: false,
+          },
+          // 折叠项标题取荣誉名称
+          {
+            source: ["data", "name"],
+            prop: "name",
           },
         ],
-        type: "object",
-        component: "rowHonor",
-        rules: [requiredFieldRule()],
+        fields: [
+          // 荣誉名称
+          {
+            type: "object",
+            label: "荣誉名称",
+            component: "input",
+            rules: [requiredFieldRule()],
+            span: 24,
+            model: {
+              source: ["data", "name"],
+              prop: "modelValue",
+            },
+            props: {
+              placeholder: "如：国家奖学金",
+              clearable: true,
+            },
+          },
+          {
+            // 荣誉链接：与项目链接同一结构 { name, url }，检查口径保持一致
+            type: "object",
+            label: "荣誉链接",
+            component: "projectLink",
+            rules: [atsRule("projectLink")],
+            span: 24,
+            model: {
+              source: ["data", "link"],
+              prop: "modelValue",
+              defaultValue: {},
+            },
+          },
+          {
+            // 荣誉描述：富文本，支持分项与加粗等基础排版
+            type: "object",
+            label: "荣誉描述",
+            component: "resumeContentEditor",
+            span: 24,
+            props: {
+              kind: "honor",
+            },
+            model: {
+              source: ["data", "content"],
+              prop: "modelValue",
+            },
+          },
+        ],
+      },
+    },
+  ],
+} satisfies FormField;
+// 校园与公益类经历：社团、志愿服务、培训经历与工作经历同构，统一由工厂生成表单，仅名称与标签不同
+const createCampusExperienceForm = (
+  key: string, // 模块标识
+  title: string, // 模块默认名称
+  tags: string[], // 该模块的常用标签
+) =>
+  ({
+    type: "group",
+    key,
+    context: [key],
+    component: "collapseModule",
+    props: {
+      add: true,
+    },
+    model: createModuleState(title),
+    checks: MODULE_CHECKS,
+    slot: "default",
+    fields: [
+      {
+        type: "array",
+        source: ["list"],
+        drag: true,
+        dragClass: DEFAULT_DRAG_CLASS,
+        rowClass: "gap-y-3 px-3 pt-3",
+        itemClass: DEFAULT_COL_CLASS + " px-3!",
+        itemSchema: {
+          type: "group",
+          component: "collapseItem",
+          slot: "default",
+          span: 24,
+          model: [
+            {
+              source: ["ui", "collapsed"],
+              prop: "collapsed",
+              defaultValue: EXPANDED,
+            },
+            {
+              source: ["ui", "hidden"],
+              prop: "hidden",
+              defaultValue: false,
+            },
+            {
+              source: ["data", "name"],
+              prop: "name",
+            },
+          ],
+          fields: [
+            {
+              type: "object",
+              label: "组织名称",
+              component: "input",
+              rules: [requiredFieldRule()],
+              span: 24,
+              model: {
+                source: ["data", "name"],
+                prop: "modelValue",
+              },
+              props: {
+                placeholder: "请输入组织名称",
+                clearable: true,
+              },
+            },
+            {
+              type: "object",
+              label: "担任职务",
+              component: "positionPicker",
+              span: 12,
+              model: [
+                {
+                  source: ["data", "post"],
+                  prop: "modelValue",
+                },
+                {
+                  source: ["__options", "position"],
+                  prop: "list",
+                  raw: true,
+                },
+              ],
+              props: {
+                placeholder: "请选择或输入职务",
+              },
+            },
+            {
+              type: "object",
+              label: "开始时间",
+              rules: [requiredFieldRule(), MONTH_FORMAT_RULE],
+              component: "datePicker",
+              span: 12,
+              model: {
+                source: ["data", "startTime"],
+                prop: "modelValue",
+              },
+              props: {
+                type: "month",
+                format: "YYYY.MM",
+                valueFormat: "YYYY.MM",
+                placeholder: "请选择开始时间",
+              },
+            },
+            {
+              type: "object",
+              label: "结束时间",
+              rules: [requiredFieldRule(), MONTH_PRESENT_FORMAT_RULE],
+              component: "datePickerPresent",
+              span: 12,
+              model: {
+                source: ["data", "endTime"],
+                prop: "modelValue",
+              },
+              props: {
+                type: "month",
+                format: "YYYY.MM",
+                valueFormat: "YYYY.MM",
+                placeholder: "请选择结束时间",
+                presentText: "至今",
+              },
+            },
+            {
+              type: "object",
+              label: "所在城市",
+              component: "cityPicker",
+              span: 24,
+              model: [
+                {
+                  source: ["data", "city"],
+                  prop: "modelValue",
+                },
+                {
+                  source: ["__options", "city"],
+                  prop: "list",
+                  raw: true,
+                },
+              ],
+              props: {
+                placeholder: "请选择所在城市",
+              },
+            },
+            {
+              type: "object",
+              component: "tag",
+              span: 24,
+              model: {
+                source: ["data", "tags"],
+                prop: "modelValue",
+                defaultValue: [],
+              },
+              props: {
+                list: tags,
+              },
+            },
+            {
+              type: "object",
+              label: "经历",
+              component: "resumeContentEditor",
+              rules: [requiredFieldRule(), contentQualityRule()],
+              span: 24,
+              props: {
+                kind: "work",
+              },
+              model: {
+                source: ["data", "content"],
+                prop: "modelValue",
+              },
+            },
+          ],
+        },
+      },
+    ],
+  }) satisfies FormField;
+
+// 社团经历
+export const DEFAULT_CLUB_FORM = createCampusExperienceForm("club", "社团经历", [
+  "社长",
+  "部长",
+  "核心成员",
+  "组织策划",
+  "从0到1",
+]);
+// 志愿服务
+export const DEFAULT_VOLUNTEER_FORM = createCampusExperienceForm("volunteer", "志愿服务", [
+  "志愿服务",
+  "公益项目",
+  "团队协作",
+  "组织策划",
+]);
+// 培训经历
+export const DEFAULT_TRAINING_FORM = createCampusExperienceForm("training", "培训经历", [
+  "结业证书",
+  "优秀学员",
+  "技能提升",
+]);
+
+// 兴趣爱好：与个人优势同为单条富文本正文
+export const DEFAULT_HOBBY_FORM = {
+  type: "group",
+  component: "collapseModule",
+  key: "hobby",
+  context: ["hobby"],
+  props: {
+    add: true,
+  },
+  model: createModuleState("兴趣爱好"),
+  checks: MODULE_CHECKS,
+  slot: "default",
+  fields: [
+    {
+      type: "object",
+      component: "resumeContentEditor",
+      rules: [requiredFieldRule(), contentQualityRule()],
+      props: {
+        // 独立 kind，避免范例与 AI 规则套用个人优势口径
+        kind: "hobby",
+      },
+      model: {
+        source: ["data", "content"],
+        prop: "modelValue",
+      },
+    },
+  ],
+} satisfies FormField;
+// 语言能力：语言、熟练程度与成绩证书构成条目，描述可选，预览按标题行加描述块渲染
+export const DEFAULT_LANGUAGE_FORM = {
+  type: "group",
+  component: "collapseModule",
+  key: "language",
+  context: ["language"],
+  props: {
+    add: true,
+  },
+  model: createModuleState("语言能力"),
+  checks: MODULE_CHECKS,
+  slot: "default",
+  fields: [
+    {
+      type: "array",
+      source: ["list"],
+      drag: true,
+      dragClass: DEFAULT_DRAG_CLASS,
+      // 数组卡片恢复纵向间距，容器提供左右及顶部留白。
+      rowClass: "gap-y-3 px-3 pt-3",
+      itemClass: DEFAULT_COL_CLASS + " px-3!",
+      itemSchema: {
+        type: "group",
+        component: "collapseItem",
+        slot: "default",
+        span: 24,
+        model: [
+          {
+            source: ["ui", "collapsed"],
+            prop: "collapsed",
+            defaultValue: EXPANDED,
+          },
+          {
+            source: ["ui", "hidden"],
+            prop: "hidden",
+            defaultValue: false,
+          },
+          // 折叠项标题取语言名称
+          {
+            source: ["data", "name"],
+            prop: "name",
+          },
+        ],
+        fields: [
+          // 语言名称：自由输入以覆盖小语种
+          {
+            type: "object",
+            label: "语言名称",
+            component: "input",
+            rules: [requiredFieldRule()],
+            span: 24,
+            model: {
+              source: ["data", "name"],
+              prop: "modelValue",
+            },
+            props: {
+              placeholder: "如英语、日语",
+              clearable: true,
+            },
+          },
+          // 熟练程度：档位字典统一口径，与技能熟练度档位共用部分翻译
+          {
+            type: "object",
+            label: "熟练程度",
+            component: "select",
+            span: 12,
+            model: [
+              {
+                source: ["data", "level"],
+                prop: "modelValue",
+              },
+              {
+                source: ["__options", "languageProficiency"],
+                prop: "list",
+                raw: true,
+              },
+            ],
+            props: {
+              placeholder: "请选择熟练程度",
+              clearable: true,
+            },
+          },
+          // 成绩 / 证书：标准化成绩比自述更有说服力
+          {
+            type: "object",
+            label: "成绩 / 证书",
+            component: "input",
+            span: 12,
+            model: {
+              source: ["data", "score"],
+              prop: "modelValue",
+            },
+            props: {
+              placeholder: "如 CET-6 580、雅思 7.0",
+              clearable: true,
+            },
+          },
+          // 描述：可选富文本，补充实际应用场景
+          {
+            type: "object",
+            label: "描述",
+            component: "resumeContentEditor",
+            span: 24,
+            props: {
+              kind: "language",
+            },
+            model: {
+              source: ["data", "content"],
+              prop: "modelValue",
+            },
+          },
+        ],
       },
     },
   ],
@@ -1703,7 +2152,7 @@ export const DEFAULT_PUBLICATION_FORM = {
       dragClass: DEFAULT_DRAG_CLASS,
       // 数组卡片恢复纵向间距，容器提供左右及顶部留白。
       rowClass: "gap-y-3 px-3 pt-3",
-      itemClass: AAA + " px-3!",
+      itemClass: DEFAULT_COL_CLASS + " px-3!",
       itemSchema: {
         type: "group",
         component: "collapseItem",
@@ -1924,7 +2373,7 @@ export const DEFAULT_IP_FORM = {
       dragClass: DEFAULT_DRAG_CLASS,
       // 数组卡片恢复纵向间距，容器提供左右及顶部留白。
       rowClass: "gap-y-3 px-3 pt-3",
-      itemClass: AAA + " px-3!",
+      itemClass: DEFAULT_COL_CLASS + " px-3!",
       itemSchema: {
         type: "group",
         component: "collapseItem",
@@ -2184,7 +2633,7 @@ export const DEFAULT_CUSTOM_FORM = {
       dragClass: DEFAULT_DRAG_CLASS,
       // 数组卡片恢复纵向间距，容器提供左右及顶部留白。
       rowClass: "gap-y-3 px-3 pt-3",
-      itemClass: AAA + " px-3!",
+      itemClass: DEFAULT_COL_CLASS + " px-3!",
       itemSchema: {
         type: "group",
         component: "collapseItem",
@@ -2342,8 +2791,12 @@ export const DEFAULT_CUSTOM_FORM = {
             type: "object",
             label: "经历",
             rules: [requiredFieldRule(), contentQualityRule()],
-            component: "wangEditor",
+            component: "resumeContentEditor",
             span: 24,
+            props: {
+              // 自定义模块正文与其他模块共用同一编辑器，获得 AI 工具栏与内容质量口径
+              kind: "custom",
+            },
             model: {
               source: ["data", "content"],
               prop: "modelValue",
@@ -2378,5 +2831,10 @@ export const allConfig = {
   publication: DEFAULT_PUBLICATION_FORM,
   ip: DEFAULT_IP_FORM,
   honor: DEFAULT_HONOR_FORM,
+  club: DEFAULT_CLUB_FORM,
+  volunteer: DEFAULT_VOLUNTEER_FORM,
+  training: DEFAULT_TRAINING_FORM,
+  hobby: DEFAULT_HOBBY_FORM,
+  language: DEFAULT_LANGUAGE_FORM,
   custom: DEFAULT_CUSTOM_FORM,
 } satisfies Record<string, FormField | FormField[]>;

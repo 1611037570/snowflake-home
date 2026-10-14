@@ -31,6 +31,8 @@ export interface ContentItem {
   authority?: string; // 登记机构
   number?: string; // 成果编号
   type?: string; // 成果类型
+  level?: number | string; // 技能熟练度档位（1-5 数字）或语言能力熟练程度（字符串）
+  score?: string; // 语言成绩或证书，如 CET-6 580
 }
 
 export interface ContentPayload {

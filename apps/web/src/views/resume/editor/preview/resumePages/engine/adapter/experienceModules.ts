@@ -3,7 +3,7 @@ import type { LayoutAdapter, LayoutAdapterContext, LayoutAdapterRegistry } from 
 import { parseRichText } from "./richTextParser";
 
 /** 当前使用统一经历列表结构的模块 key */
-export const EXPERIENCE_MODULE_KEYS = ["work", "internship", "project", "education"] as const;
+export const EXPERIENCE_MODULE_KEYS = ["work", "internship", "project", "education", "club", "volunteer", "training"] as const;
 
 /** 读取经历模块中的有效条目 */
 const getExperienceItems = (context: LayoutAdapterContext) => {

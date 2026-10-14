@@ -8,6 +8,27 @@ export const RESUME_VALUE_OPTIONS = {
     { name: "男", value: "男" },
     { name: "女", value: "女" },
   ],
+  // 技能模块布局：熟练度列表或富文本正文
+  skillLayout: [
+    { name: "熟练度", value: "proficiency" },
+    { name: "富文本", value: "text" },
+  ],
+  // 技能熟练度档位：一到五档，写入技能条目 level 字段
+  proficiency: [
+    { name: "了解", value: 1 },
+    { name: "掌握", value: 2 },
+    { name: "熟练", value: 3 },
+    { name: "精通", value: 4 },
+    { name: "专家", value: 5 },
+  ],
+  // 语言能力熟练程度档位：写入语言条目 level 字段，熟练与精通与技能档位共用翻译键
+  languageProficiency: [
+    { name: "母语", value: "母语" },
+    { name: "精通", value: "精通" },
+    { name: "熟练", value: "熟练" },
+    { name: "良好", value: "良好" },
+    { name: "一般", value: "一般" },
+  ],
   // 当前就业状态
   status: [
     { name: "在职", value: "在职" },

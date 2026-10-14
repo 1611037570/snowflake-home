@@ -29,6 +29,11 @@ export const PREVIEW_TITLES: Record<PreviewLang, Record<string, string>> = {
     honor: "荣誉证书",
     video: "视频作品",
     image: "图片作品",
+    club: "社团经历",
+    volunteer: "志愿服务",
+    training: "培训经历",
+    hobby: "兴趣爱好",
+    language: "语言能力",
   },
   en: {
     contact: "Contact", // 青线双栏个人信息区的分组标题
@@ -44,6 +49,11 @@ export const PREVIEW_TITLES: Record<PreviewLang, Record<string, string>> = {
     honor: "Honors & Certificates",
     video: "Video Works",
     image: "Image Works",
+    club: "Club Experience",
+    volunteer: "Volunteer Service",
+    training: "Training Experience",
+    hobby: "Hobbies",
+    language: "Languages",
   },
   ja: {
     contact: "連絡先", // 青线双栏个人信息区的分组标题
@@ -59,6 +69,11 @@ export const PREVIEW_TITLES: Record<PreviewLang, Record<string, string>> = {
     honor: "受賞・資格",
     video: "動画作品",
     image: "画像作品",
+    club: "サークル経験",
+    volunteer: "ボランティア",
+    training: "研修経験",
+    hobby: "趣味",
+    language: "言語能力",
   },
   ko: {
     contact: "연락처", // 青线双栏个人信息区的分组标题
@@ -74,6 +89,11 @@ export const PREVIEW_TITLES: Record<PreviewLang, Record<string, string>> = {
     honor: "수상 및 자격증",
     video: "영상 작품",
     image: "이미지 작품",
+    club: "동아리 경험",
+    volunteer: "봉사 활동",
+    training: "연수 경험",
+    hobby: "취미",
+    language: "어학 능력",
   },
   fr: {
     contact: "Contact", // 青线双栏个人信息区的分组标题
@@ -89,6 +109,11 @@ export const PREVIEW_TITLES: Record<PreviewLang, Record<string, string>> = {
     honor: "Distinctions et certificats",
     video: "Œuvres vidéo",
     image: "Œuvres images",
+    club: "Expérience associative",
+    volunteer: "Bénévolat",
+    training: "Formations",
+    hobby: "Loisirs",
+    language: "Compétences linguistiques",
   },
   de: {
     contact: "Kontakt", // 青线双栏个人信息区的分组标题
@@ -104,6 +129,11 @@ export const PREVIEW_TITLES: Record<PreviewLang, Record<string, string>> = {
     honor: "Auszeichnungen & Zertifikate",
     video: "Videowerke",
     image: "Bildwerke",
+    club: "Vereinserfahrung",
+    volunteer: "Ehrenamt",
+    training: "Weiterbildungen",
+    hobby: "Hobbys",
+    language: "Sprachkenntnisse",
   },
   es: {
     contact: "Contacto", // 青线双栏个人信息区的分组标题
@@ -119,6 +149,11 @@ export const PREVIEW_TITLES: Record<PreviewLang, Record<string, string>> = {
     honor: "Honores y certificados",
     video: "Obras de video",
     image: "Obras de imagen",
+    club: "Experiencia en asociaciones",
+    volunteer: "Voluntariado",
+    training: "Formación",
+    hobby: "Aficiones",
+    language: "Idiomas",
   },
   ru: {
     contact: "Контакты", // 青线双栏个人信息区的分组标题
@@ -134,6 +169,11 @@ export const PREVIEW_TITLES: Record<PreviewLang, Record<string, string>> = {
     honor: "Награды и сертификаты",
     video: "Видеоработы",
     image: "Изображения",
+    club: "Опыт в объединениях",
+    volunteer: "Волонтёрство",
+    training: "Курсы и тренинги",
+    hobby: "Хобби",
+    language: "Знание языков",
   },
 };
 
