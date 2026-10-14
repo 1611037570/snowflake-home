@@ -6,10 +6,10 @@ defineProps({
 </script>
 
 <template>
-  <!-- 模块背景只绘图，标题和条目的留白由各自节点计入测量。 -->
+  <!-- 白色卡片固定黑色正文，标题和条目的留白由各自节点计入测量。 -->
   <div
     class="resume-module-wrapper group group/module relative box-border flex min-w-0 flex-col"
-    :class="[moduleClass, moduleKey === 'slogan' ? '' : 'rounded-[21px] bg-white/95']"
+    :class="[moduleClass, moduleKey === 'slogan' ? '' : 'rounded-[21px] bg-white/95 text-black']"
     :data-module="moduleKey"
     :style="moduleKey === 'slogan' ? undefined : { '--lavender-title-inset': '24px', '--lavender-title-top': '24px' }"
   >
