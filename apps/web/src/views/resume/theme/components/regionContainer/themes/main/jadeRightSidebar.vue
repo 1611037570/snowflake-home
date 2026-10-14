@@ -43,14 +43,7 @@ const sidebarStyle = computed(() => ({
 
 /* 底色以右栏为定位基准，向纸张三边铺满并停在栏间中缝。 */
 .jade-right-sidebar :deep(> [data-resume-column="right"])::before {
-  content: "";
-  position: absolute;
-  z-index: -1;
-  top: calc(-1 * var(--resume-page-inset-vertical, 0px));
-  bottom: calc(-1 * var(--resume-bottom-space, 0px));
-  right: calc(-1 * var(--resume-page-inset-horizontal, 0px));
-  left: 0;
-  pointer-events: none;
+  @include column-bleed(right);
   background-color: var(--jade-card);
 }
 </style>

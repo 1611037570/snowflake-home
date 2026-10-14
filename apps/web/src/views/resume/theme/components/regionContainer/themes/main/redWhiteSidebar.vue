@@ -34,14 +34,7 @@ const sidebarStyle = computed(() => ({
 }
 
 .red-white-sidebar :deep(> [data-resume-column="left"])::before {
-  content: "";
-  position: absolute;
-  z-index: -1;
-  top: calc(-1 * var(--resume-page-inset-vertical, 0px));
-  bottom: calc(-1 * var(--resume-bottom-space, 0px));
-  right: 0;
-  left: calc(-1 * var(--resume-page-inset-horizontal, 0px));
-  pointer-events: none;
+  @include column-bleed(left);
   background: var(--red-sidebar-accent);
 }
 </style>
