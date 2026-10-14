@@ -118,13 +118,6 @@ const resumeData: any = {
         { ui: {}, data: { name: "人才盘点项目优秀交付奖" } },
       ],
     },
-    account: {
-      ui: { collapsed: ["1"], archived: false },
-      list: [
-        { ui: {}, data: { name: "个人作品集", url: "https://example.com/xu-yan/hr-portfolio" } },
-        { ui: {}, data: { name: "行业专栏", url: "https://example.com/xu-yan/hr-notes" } },
-      ],
-    },
   },
   config: {
     modules: [
@@ -134,7 +127,6 @@ const resumeData: any = {
       { key: "education" },
       { key: "skill" },
       { key: "honor" },
-      { key: "account" },
     ],
   },
   // 界面配置沿用主题预设：与模板页该主题的样式卡片共用同一份配置，保证布局与配色一致。

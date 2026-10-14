@@ -118,16 +118,6 @@ const resumeData: any = {
         { ui: {}, data: { name: "农产品品牌传播创新奖" } },
       ],
     },
-    account: {
-      ui: { collapsed: ["1"], archived: false },
-      list: [
-        {
-          ui: {},
-          data: { name: "个人作品集", url: "https://portfolio.example.com/agri-new-media" },
-        },
-        { ui: {}, data: { name: "内容案例合集", url: "https://www.example.com/agri-cases" } },
-      ],
-    },
   },
   config: {
     modules: [
@@ -137,7 +127,6 @@ const resumeData: any = {
       { key: "education" },
       { key: "skill" },
       { key: "honor" },
-      { key: "account" },
     ],
   },
   // 界面配置沿用主题预设：与模板页该主题的样式卡片共用同一份配置，保证布局与配色一致。

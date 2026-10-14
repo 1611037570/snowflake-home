@@ -118,16 +118,6 @@ const resumeData: any = {
         { ui: {}, data: { name: "教师教学技能大赛一等奖" } },
       ],
     },
-    account: {
-      ui: { collapsed: ["1"], archived: false },
-      list: [
-        { ui: {}, data: { name: "GitHub", url: "https://example.com/teacher-github" } },
-        {
-          ui: {},
-          data: { name: "教学课件作品集", url: "https://example.com/math-teaching-portfolio" },
-        },
-      ],
-    },
   },
   config: {
     modules: [
@@ -137,7 +127,6 @@ const resumeData: any = {
       { key: "education" },
       { key: "skill" },
       { key: "honor" },
-      { key: "account" },
     ],
   },
   // 界面配置沿用主题预设：与模板页该主题的样式卡片共用同一份配置，保证布局与配色一致。

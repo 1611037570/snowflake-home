@@ -117,13 +117,6 @@ const resumeData: any = {
         { ui: {}, data: { name: "13 个月继续率优秀个人" } },
       ],
     },
-    account: {
-      ui: { collapsed: ["1"], archived: false },
-      list: [
-        { ui: {}, data: { name: "GitHub", url: "https://example.com/insurance-sales" } },
-        { ui: {}, data: { name: "个人主页", url: "https://example.com/insurance-sales-profile" } },
-      ],
-    },
   },
   config: {
     modules: [
@@ -133,7 +126,6 @@ const resumeData: any = {
       { key: "education" },
       { key: "skill" },
       { key: "honor" },
-      { key: "account" },
     ],
   },
   // 界面配置沿用主题预设：与模板页该主题的样式卡片共用同一份配置，保证布局与配色一致。

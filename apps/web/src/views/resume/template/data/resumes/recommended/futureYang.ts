@@ -23,13 +23,6 @@ const resumeData: any = {
         avatar: xiaoyang,
       },
     },
-    account: {
-      ui: { collapsed: ["1"], archived: false },
-      list: [
-        { ui: {}, data: { name: "技术博客", url: "https://portfolio.example.com/future-yang/blog" } },
-        { ui: {}, data: { name: "开源主页", url: "https://www.example.com/future-yang/open-source" } },
-      ],
-    },
     skill: {
       ui: { collapsed: ["1"], archived: false },
       data: {
@@ -152,7 +145,6 @@ const resumeData: any = {
   config: {
     modules: [
       { key: "user" },
-      { key: "account" },
       { key: "education" },
       { key: "skill" },
       { key: "work" },
