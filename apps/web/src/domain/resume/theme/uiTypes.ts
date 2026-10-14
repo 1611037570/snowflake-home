@@ -1,6 +1,6 @@
 import type { LayoutColumns } from "@/domain/resume/theme/layouts";
 
-/** 用户可编辑的简历界面配置，主题固定外观不得进入此结构。 */
+/** 简历界面配置；个人信息模板由主题预设提供，不开放用户切换。 */
 export interface ResumeUi {
   page: { // 页面颜色与留白
     background: string; // 纸张背景色
@@ -28,10 +28,11 @@ export interface ResumeUi {
     dateStyle: string; // 日期展示格式
     datePosition: string; // 条目日期位置
   };
-  theme: { // 用户可调主题参数
+  theme: { // 主题选择与展示参数
     color: string; // 主题色
     template: string; // 当前主题编号
     titleTemplate: string; // 标题样式编号，auto 表示使用主题默认标题样式
+    userTemplate: string; // 个人信息组件编号，auto 表示按页面版式使用公共组件
     titleIconMode: string; // 模块标题图标模式
   };
   layout: { // 用户可调栏位参数
@@ -53,10 +54,10 @@ export type UiOverrides<T> = {
     : T[K] extends object | null ? UiOverrides<NonNullable<T[K]>> | Extract<T[K], null> : T[K];
 };
 
-/** 只包含用户可编辑字段的覆盖项。 */
+/** 简历界面覆盖项；个人信息模板在展开与压缩时固定跟随主题。 */
 export type ResumeUiOverrides = UiOverrides<ResumeUi>;
 
 /** 主题预设不得自行覆盖其主题编号。 */
 export type ThemeUiPreset = Omit<ResumeUiOverrides, "theme"> & {
-  theme?: Omit<NonNullable<ResumeUiOverrides["theme"]>, "template">; // 主题色默认值；标题图标与标题字号由主题默认标题样式提供
+  theme?: Omit<NonNullable<ResumeUiOverrides["theme"]>, "template">; // 主题色与组件样式默认值；标题图标与字号由默认标题样式提供
 };

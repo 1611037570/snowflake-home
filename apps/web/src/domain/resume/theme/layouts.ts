@@ -10,6 +10,7 @@ interface PageLayoutDefinition {
   name: string; // 布局显示名称
   stretchesColumns: boolean; // 栏位是否延伸到纸张底部
   defaultLeftModuleKeys?: readonly string[]; // 双栏默认放入左栏的模块编号
+  defaultRightModuleKeys?: readonly string[]; // 双栏默认放入右栏的模块编号（右窄版式使用）
   pinnedModuleKeys?: readonly string[]; // 固定在独立区域、不参与双栏分配的模块编号
 }
 
@@ -24,6 +25,12 @@ export const pageLayoutRegistry = [
     name: "左右布局", // 布局显示名称
     stretchesColumns: true, // 左右栏延伸到纸张底部
     defaultLeftModuleKeys: ["user", "account", "skill", "advantage"], // 个人信息与简短模块默认进入左栏
+  },
+  {
+    id: "twoColumnRightUser", // 布局编号
+    name: "左右布局（右栏窄，个人信息在右）", // 布局显示名称
+    stretchesColumns: true, // 左右栏延伸到纸张底部
+    defaultRightModuleKeys: ["user", "account", "skill", "advantage"], // 个人信息与简短模块默认进入右窄栏
   },
   {
     id: "topUserTwoColumn", // 布局编号
@@ -41,9 +48,6 @@ export const pageLayoutRegistry = [
 
 export type PageLayoutTemplateId = (typeof pageLayoutRegistry)[number]["id"];
 
-/** 双栏布局的默认栏间距：引擎分栏与主题装饰共用同一数值 */
-export const defaultColumnGap = 24;
-
 export const isPageLayoutTemplateId = (value: unknown): value is PageLayoutTemplateId =>
   typeof value === "string" && pageLayoutRegistry.some((layout) => layout.id === value);
 
@@ -54,7 +58,9 @@ export const layoutStretchesColumns = (layoutId: unknown): boolean =>
 /** 按布局编号判断是否使用左右栏模块分配。 */
 export const layoutUsesColumns = (layoutId: unknown): layoutId is PageLayoutTemplateId =>
   pageLayoutRegistry.some(
-    (layout) => layout.id === layoutId && "defaultLeftModuleKeys" in layout,
+    (layout) =>
+      layout.id === layoutId &&
+      ("defaultLeftModuleKeys" in layout || "defaultRightModuleKeys" in layout),
   );
 
 /** 按布局定义生成默认左右栏模块顺序。 */
@@ -62,14 +68,24 @@ export const createDefaultLayoutColumns = (
   layoutId: PageLayoutTemplateId,
   moduleKeys: string[],
 ): LayoutColumns => {
-  const definition = pageLayoutRegistry.find((layout) => layout.id === layoutId);
-  const leftDefaults = new Set<string>(definition?.defaultLeftModuleKeys ?? []);
+  const definition: PageLayoutDefinition | undefined = pageLayoutRegistry.find(
+    (layout) => layout.id === layoutId,
+  );
   const pinnedModules = new Set<string>(definition?.pinnedModuleKeys ?? []);
   const orderedKeys = [...new Set(moduleKeys)].filter((moduleKey) => !pinnedModules.has(moduleKey));
-  return {
-    left: orderedKeys.filter((moduleKey) => leftDefaults.has(moduleKey)),
-    right: orderedKeys.filter((moduleKey) => !leftDefaults.has(moduleKey)),
-  };
+  // 版式声明默认栏决定这批模块落在左栏还是右栏，未声明的一律进另一栏
+  const defaultSide = definition?.defaultRightModuleKeys ? "right" : "left";
+  const defaultKeys = new Set<string>(
+    (defaultSide === "right"
+      ? definition?.defaultRightModuleKeys
+      : definition?.defaultLeftModuleKeys) ?? [],
+  );
+  const isDefaultSide = (moduleKey: string) => defaultKeys.has(moduleKey);
+  const defaultSideKeys = orderedKeys.filter(isDefaultSide);
+  const otherSideKeys = orderedKeys.filter((moduleKey) => !isDefaultSide(moduleKey));
+  return defaultSide === "right"
+    ? { left: otherSideKeys, right: defaultSideKeys }
+    : { left: defaultSideKeys, right: otherSideKeys };
 };
 
 /** 保留已保存的栏内顺序，并按布局定义补齐新增模块、移除不存在的模块。 */

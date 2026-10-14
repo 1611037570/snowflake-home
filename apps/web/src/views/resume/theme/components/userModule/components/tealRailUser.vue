@@ -17,7 +17,7 @@ const props = defineProps({
 const isBlockVisible = (index) => isContentBlockVisible(index, props.blockRange);
 
 const {
-  theme: { avatarPosition },
+  theme: { avatarPosition, infoPosition },
 } = useResumePreviewContext();
 // 头像位置继续响应预览区设置，主题只决定个人信息的分组方式。
 const avatarAlignClass = computed(() => {
@@ -32,16 +32,21 @@ const avatarAlignClass = computed(() => {
   <div class="teal-rail-user grid w-full min-w-0 grid-cols-1 gap-3">
     <UserAvatar v-if="isBlockVisible(0)" :class="avatarAlignClass" data-layout-block-index="0" />
     <UserName v-if="isBlockVisible(1)" data-layout-block-index="1" />
-    <UserContact v-if="blockRange.end > 2" class="w-full" single-column-grid :block-range="blockRange" />
+    <UserContact
+      v-if="blockRange.end > 2"
+      class="w-full"
+      :align="infoPosition"
+      single-column-grid
+      :block-range="blockRange"
+    />
   </div>
 </template>
 
 <style scoped>
-/* 方形头像属于本主题的个人信息组件，不改变其它双栏主题尺寸。 */
-.teal-rail-user :deep(img) {
-  width: 120px;
-  height: 120px;
-  object-fit: cover;
-  border-radius: 3px;
+/* 方形头像尺寸通过公共头像变量下发，不影响其它双栏主题。 */
+.teal-rail-user {
+  --resume-user-avatar-width: 120px;
+  --resume-user-avatar-height: 120px;
+  --resume-user-avatar-radius: 3px;
 }
 </style>

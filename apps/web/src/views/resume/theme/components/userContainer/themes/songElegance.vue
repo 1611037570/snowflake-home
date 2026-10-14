@@ -42,6 +42,8 @@ const {
         '--resume-user-name-spacing': '0.2em', // 姓名字距
         '--resume-user-subtitle-spacing': '0.24em', // 副标题字距
         '--resume-user-name-color': themeColor, // 姓名与副标题颜色
+        '--resume-user-avatar-radius': '2px', // 头像小圆角，与页边装裱呼应
+        '--resume-user-avatar-shadow': '0 0 0 1px var(--song-rule)', // 头像一圈细线
       },
     ]"
   >
@@ -52,12 +54,6 @@ const {
 </template>
 
 <style scoped>
-/* 头像加一圈细线，与页边装裱呼应 */
-.song-elegance-user :deep(img) {
-  border-radius: 2px;
-  box-shadow: 0 0 0 1px var(--song-rule);
-}
-
 /* 页眉底线：长细线铺满内容宽度，中间叠一段短粗线 */
 .song-elegance-user__rule {
   position: absolute;

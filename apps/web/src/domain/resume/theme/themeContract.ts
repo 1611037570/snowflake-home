@@ -10,14 +10,8 @@ export interface ThemeInset {
   left: number; // 左侧装饰内边距
 }
 
-export interface ThemeColumnInset {
-  left: number; // 栏内容距左侧装饰的距离
-  right: number; // 栏内容距右侧装饰的距离
-}
-
 export interface ThemeRegionContract {
   inset?: ThemeInset; // 区域装饰内部空间
-  columns?: Partial<Record<"left" | "right", ThemeColumnInset>>; // 按语义栏位声明内部空间
   fillsPageTop?: boolean; // 区域背景是否覆盖纸张顶边，内容仍遵守页面边距
   joinsPrevious?: boolean; // 当前区域是否紧贴前一区域，关闭区域边界的模块间距
 }
@@ -35,7 +29,6 @@ export interface ThemeContentContract {
 /** 固定能力集中声明，外观组件不得重新决定公共尺寸。 */
 export interface ThemeCapabilities {
   regions?: Partial<Record<RegionSlotId, ThemeRegionContract>>; // 区域与栏装饰尺寸
-  userContent?: ThemeContentContract; // 个人信息内容及分片能力
   usesDateRail?: boolean; // 经历条目是否使用固定日期栏
   restrictions?: ThemeRestrictions; // 用户设置限制
   topDecoration?: string; // 首页顶部独立装饰组件编号，高度由真实测量得到
@@ -63,17 +56,7 @@ export const validateThemeCapabilities = (capabilities: ThemeCapabilities): stri
     if (region.joinsPrevious !== undefined && typeof region.joinsPrevious !== "boolean") errors.push(`regions.${slot}.joinsPrevious`);
     if (region.inset !== undefined && !isObject(region.inset)) errors.push(`regions.${slot}.inset`);
     if (isObject(region.inset)) for (const side of ["top", "right", "bottom", "left"] as const) check(region.inset![side], `regions.${slot}.inset.${side}`);
-    if (region.columns !== undefined && !isObject(region.columns)) errors.push(`regions.${slot}.columns`);
-    for (const [column, inset] of Object.entries(isObject(region.columns) ? region.columns! : {})) {
-      if (!["left", "right"].includes(column)) errors.push(`regions.${slot}.columns.${column}`);
-      if (!isObject(inset)) { errors.push(`regions.${slot}.columns.${column}`); continue; }
-      check(inset.left, `regions.${slot}.columns.${column}.left`);
-      check(inset.right, `regions.${slot}.columns.${column}.right`);
-    }
   }
-  if (capabilities.userContent !== undefined && !isObject(capabilities.userContent)) errors.push("userContent");
-  if (capabilities.userContent && !["whole", "blocks"].includes(capabilities.userContent.split)) errors.push("userContent.split");
-  if (capabilities.userContent && (typeof capabilities.userContent.renderer !== "string" || !capabilities.userContent.renderer.trim())) errors.push("userContent.renderer");
   if (capabilities.usesDateRail !== undefined && typeof capabilities.usesDateRail !== "boolean") errors.push("usesDateRail");
   if (capabilities.topDecoration !== undefined && (typeof capabilities.topDecoration !== "string" || !capabilities.topDecoration.trim())) errors.push("topDecoration");
   if (capabilities.restrictions !== undefined && !isObject(capabilities.restrictions)) errors.push("restrictions");

@@ -7,7 +7,6 @@ const createLayout = (): PageLayoutConfig => ({
   pageSize: { width: 794, height: 1123 },
   pagePadding: { top: 24, right: 24, bottom: 24, left: 24 },
   regionGap: 0,
-  columnGap: 24,
   regions: [
     {
       id: "main",

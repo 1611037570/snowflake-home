@@ -11,8 +11,8 @@ const {
 </script>
 
 <template>
-  <!-- 竖块对准正文区域左侧留白，标题本身仍参与正常排版。 -->
-  <div class="relative flex min-h-9 items-center">
+  <!-- 竖块对准正文区域左侧留白，标题留出固定间距避免贴边。 -->
+  <div class="relative flex min-h-9 items-center pl-3">
     <span
       aria-hidden="true"
       class="pointer-events-none absolute h-9 w-[3px]"

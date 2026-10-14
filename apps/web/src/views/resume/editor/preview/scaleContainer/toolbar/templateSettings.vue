@@ -1,90 +1,17 @@
 <script setup>
-import { computed, ref } from "vue";
+import { computed } from "vue";
 import { storeToRefs } from "pinia";
-import i18n, { $t } from "@/locales";
+import { $t } from "@/locales";
 import { useResumeStore } from "@/stores";
-import {
-  avatarPositionList,
-  datePositionList,
-  dateStyleList,
-  defaultAvatarPosition,
-  defaultInfoSeparator,
-  defaultInfoPosition,
-  defaultLinkUnderline,
-  defaultPageBackground,
-  defaultUserInfoLayout,
-  defaultUserInfoMode,
-  infoPositionList,
-  infoSeparatorList,
-  pageBackgroundColors,
-  titleIconModeList,
-  userInfoLayoutList,
-  userInfoModeList,
-} from "@/domain/resume/theme/uiConfig";
-import { getResumeThemeTemplate, resolveThemeSettingRestrictions } from "@/views/resume/theme";
-import { standaloneTitleStyleList, titleStyleRegistry } from "@/domain/resume/theme/titleStyles";
+import { defaultPageBackground, pageBackgroundColors } from "@/domain/resume/theme/uiConfig";
+import { resolveThemeSettingRestrictions } from "@/views/resume/theme";
 import ThemeColorPicker from "@/components/business/themeColorPicker/themeColorPicker.vue";
-import { localizeResumeEditorOptionList } from "@/stores/modules/resume/hooks/useResumeEditorLocale";
 
 const resumeStore = useResumeStore();
 const { currentUI } = storeToRefs(resumeStore);
-// 视觉参数重置统一回到当前主题预设。
-const themePresetUi = computed(() => getResumeThemeTemplate(currentUI.value?.theme?.template).item.ui);
-const getThemeDefault = (key) => key.split(".").reduce((value, field) => value?.[field], themePresetUi.value);
 // 不支持的设置保持可见，由外观声明给出原因并阻止写入。
 const settingRestrictions = computed(() => resolveThemeSettingRestrictions(currentUI.value?.theme?.template));
 const getSettingRestriction = (key) => settingRestrictions.value[key] ? $t(settingRestrictions.value[key]) : "";
-// 低频视觉微调默认收起，常用外观选项保持直接可见。
-const moreSettingsExpanded = ref([]);
-
-// 个人信息属于简历视觉设计，与模板和模块样式统一管理
-const localizeOptions = (options) => localizeResumeEditorOptionList(options);
-
-const userInfoParams = computed(() => {
-  i18n.global.locale.value;
-  return [
-    { label: $t("contactDisplay"), key: "user.infoMode", defaultValue: defaultUserInfoMode, list: localizeOptions(userInfoModeList) },
-    { label: $t("contactLayout"), key: "user.infoLayout", defaultValue: defaultUserInfoLayout, list: localizeOptions(userInfoLayoutList) },
-    { label: $t("avatarPosition"), key: "user.avatarPosition", defaultValue: defaultAvatarPosition, list: localizeOptions(avatarPositionList) },
-    { label: $t("infoAlign"), key: "user.infoPosition", defaultValue: defaultInfoPosition, list: localizeOptions(infoPositionList) },
-  ];
-});
-
-const localizedTitleIconModeList = computed(() => {
-  i18n.global.locale.value;
-  return localizeOptions(titleIconModeList);
-});
-
-// 标题样式选择器只开放独立样式；旧简历选中的配套样式保留显示，避免下拉值失去名称。
-const localizedTitleTemplateList = computed(() => {
-  if (!i18n.global.locale.value) return [];
-  const selected = currentUI.value?.theme?.titleTemplate;
-  const selectedStyle = selected ? titleStyleRegistry[selected] : undefined;
-  const legacyStyle = selectedStyle?.scope === "theme" && selected !== themePresetUi.value.theme.titleTemplate
-    ? [selectedStyle] : [];
-  return [
-    { name: $t("titleTemplateAuto"), value: "auto" },
-    ...[...standaloneTitleStyleList, ...legacyStyle].map((style) => ({
-      name: $t(`resumeTemplateStyle_${style.id}_name`),
-      value: style.id,
-    })),
-  ];
-});
-
-const localizedDatePositionList = computed(() => {
-  i18n.global.locale.value;
-  return localizeOptions(datePositionList);
-});
-
-const localizedDateStyleList = computed(() => {
-  i18n.global.locale.value;
-  return localizeOptions(dateStyleList);
-});
-
-const localizedInfoSeparatorList = computed(() => {
-  i18n.global.locale.value;
-  return localizeOptions(infoSeparatorList);
-});
 
 // 通过独立计算属性绑定主题色，避免嵌套修改可写计算属性引发递归更新
 const themeColor = computed({
@@ -96,57 +23,6 @@ const themeColor = computed({
   },
 });
 
-// 标题模板选择独立于整套主题。
-const titleTemplate = computed({
-  // 主题预设显式保存的配套标题按“跟随主题”展示，选回独立样式时仍按实际编号保存。
-  get: () => {
-    const selected = currentUI.value?.theme?.titleTemplate;
-    return selected && titleStyleRegistry[selected]?.scope === "theme" && selected === themePresetUi.value.theme.titleTemplate
-      ? "auto" : selected ?? "auto";
-  },
-  set: (value) => {
-    currentUI.value.theme.titleTemplate = value;
-  },
-});
-
-// 模块标题图标模式
-const titleIconMode = computed({
-  get: () => currentUI.value?.theme?.titleIconMode,
-  set: (value) => {
-    currentUI.value.theme.titleIconMode = value;
-  },
-});
-
-// 链接下划线开关
-const linkUnderline = computed({
-  get: () => currentUI.value?.content?.linkUnderline ?? defaultLinkUnderline,
-  set: (value) => {
-    currentUI.value.content.linkUnderline = value;
-  },
-});
-
-// 经历排版属于简历视觉设计，与个人信息统一管理
-const datePosition = computed({
-  get: () => currentUI.value?.content?.datePosition,
-  set: (value) => {
-    if (!getSettingRestriction("content.datePosition")) currentUI.value.content.datePosition = value;
-  },
-});
-
-const dateStyle = computed({
-  get: () => currentUI.value?.content?.dateStyle,
-  set: (value) => {
-    currentUI.value.content.dateStyle = value;
-  },
-});
-
-const infoSeparator = computed({
-  get: () => currentUI.value?.content?.infoSeparator ?? defaultInfoSeparator,
-  set: (value) => {
-    currentUI.value.content.infoSeparator = value;
-  },
-});
-
 // 简历页面背景色
 const pageBackground = computed({
   get: () => currentUI.value?.page?.background || defaultPageBackground,
@@ -154,14 +30,6 @@ const pageBackground = computed({
     if (!getSettingRestriction("page.background")) currentUI.value.page.background = value;
   },
 });
-
-const getValue = (key) => key.split(".").reduce((value, field) => value?.[field], currentUI.value);
-
-const setParam = (key, value) => {
-  if (!currentUI.value || getSettingRestriction(key)) return;
-  const [group, field] = key.split(".");
-  currentUI.value[group][field] = value;
-};
 </script>
 
 <template>
@@ -205,151 +73,6 @@ const setParam = (key, value) => {
             <span>{{ $t(option.name) }}</span>
           </SfButton>
         </div>
-
-        <SfCollapse v-model="moreSettingsExpanded" :border="false" class="rounded-xl bg-sf-bg px-3">
-          <SfCollapseItem name="design-more" lazy>
-            <template #title>
-              <span class="text-sm text-sf-text-2">{{ $t("designMore") }}</span>
-            </template>
-            <SfScrollbar
-              max-height="min(360px, max(0px, calc(100vh - 260px)))"
-              class="design-more-scroll w-full"
-            >
-              <div class="flex flex-col gap-3 pb-3">
-                <div class="text-xs font-bold text-sf-text">{{ $t("detailAdjustments") }}</div>
-                <!-- 标题样式独立选择，默认跟随整套主题。 -->
-                <div class="flex flex-col gap-1">
-                  <div class="flex items-center gap-1 text-sm text-sf-text-2">
-                    <span>{{ $t("titleTemplate") }}</span>
-                    <SfIcon
-                      icon="material-symbols:restart-alt"
-                      size="4"
-                      class="cursor-pointer text-sf-text-2 transition-colors hover:text-sf-theme"
-                      @click="titleTemplate = 'auto'"
-                    />
-                  </div>
-                  <SfSelect v-model="titleTemplate" :list="localizedTitleTemplateList" />
-                </div>
-                <!-- 模块标题图标模式 -->
-                <div class="flex flex-col gap-1">
-                  <div class="flex items-center gap-1 text-sm text-sf-text-2">
-                    <span>{{ $t("titleIconMode") }}</span>
-                    <SfIcon
-                      icon="material-symbols:restart-alt"
-                      size="4"
-                      class="cursor-pointer text-sf-text-2 transition-colors hover:text-sf-theme"
-                      @click="titleIconMode = themePresetUi.theme.titleIconMode"
-                    />
-                  </div>
-                  <SfSelect v-model="titleIconMode" :list="localizedTitleIconModeList" />
-                </div>
-                <!-- 链接下划线开关：统一控制预览中的可点击链接样式 -->
-                <div class="flex items-center justify-between text-sm text-sf-text-2">
-                  <span>{{ $t("linkUnderline") }}</span>
-                  <ElSwitch v-model="linkUnderline" />
-                </div>
-
-                <div class="text-xs font-bold text-sf-text">{{ $t("personalInfo") }}</div>
-                <div v-for="item in userInfoParams" :key="item.key" class="flex flex-col gap-1">
-                  <p v-if="getSettingRestriction(item.key)" class="text-xs text-sf-text-2">
-                    {{ getSettingRestriction(item.key) }}
-                  </p>
-                  <div class="flex items-center gap-1 text-sm text-sf-text-2">
-                    <span>{{ item.label }}</span>
-                    <SfIcon
-                      icon="material-symbols:restart-alt"
-                      size="4"
-                      class="cursor-pointer text-sf-text-2 transition-colors hover:text-sf-theme"
-                      :aria-disabled="Boolean(getSettingRestriction(item.key))"
-                      :class="{ 'cursor-not-allowed! text-sf-text-disabled!': getSettingRestriction(item.key) }"
-                      @click="setParam(item.key, getThemeDefault(item.key))"
-                    />
-                  </div>
-                  <div class="flex gap-3">
-                    <SfButton
-                      v-for="option in item.list"
-                      :key="option.value"
-                      class="flex-1"
-                      size="small"
-                      border
-                      :disabled="Boolean(getSettingRestriction(item.key))"
-                      @click="setParam(item.key, option.value)"
-                      :type="getValue(item.key) === option.value ? 'theme' : 'bg'"
-                      >{{ option.name }}</SfButton
-                    >
-                  </div>
-                </div>
-
-                <div class="text-xs font-bold text-sf-text">{{ $t("experienceLayout") }}</div>
-                <p v-if="getSettingRestriction('content.datePosition')" class="text-xs text-sf-text-2">
-                  {{ getSettingRestriction("content.datePosition") }}
-                </p>
-                <div class="flex flex-col gap-1">
-                  <div class="flex items-center gap-1 text-sm text-sf-text-2">
-                    <span>{{ $t("timePosition") }}</span>
-                    <SfIcon
-                      icon="material-symbols:restart-alt"
-                      size="4"
-                      class="cursor-pointer text-sf-text-2 transition-colors hover:text-sf-theme"
-                      :aria-disabled="Boolean(getSettingRestriction('content.datePosition'))"
-                      :class="{ 'cursor-not-allowed! text-sf-text-disabled!': getSettingRestriction('content.datePosition') }"
-                      @click="datePosition = themePresetUi.content.datePosition"
-                    />
-                  </div>
-                  <div class="flex gap-3">
-                    <SfButton
-                      v-for="option in localizedDatePositionList"
-                      :key="option.value"
-                      class="flex-1"
-                      size="small"
-                      border
-                      :disabled="Boolean(getSettingRestriction('content.datePosition'))"
-                      @click="datePosition = option.value"
-                      :type="datePosition === option.value ? 'theme' : 'bg'"
-                      >{{ option.name }}</SfButton
-                    >
-                  </div>
-                </div>
-
-                <div class="flex flex-col gap-1">
-                  <div class="flex items-center gap-1 text-sm text-sf-text-2">
-                    <span>{{ $t("timeFormat") }}</span>
-                    <SfIcon
-                      icon="material-symbols:restart-alt"
-                      size="4"
-                      class="cursor-pointer text-sf-text-2 transition-colors hover:text-sf-theme"
-                      @click="dateStyle = themePresetUi.content.dateStyle"
-                    />
-                  </div>
-                  <SfSelect v-model="dateStyle" :list="localizedDateStyleList" />
-                </div>
-
-                <div class="flex flex-col gap-1">
-                  <div class="flex items-center gap-1 text-sm text-sf-text-2">
-                    <span>{{ $t("infoSeparator") }}</span>
-                    <SfIcon
-                      icon="material-symbols:restart-alt"
-                      size="4"
-                      class="cursor-pointer text-sf-text-2 transition-colors hover:text-sf-theme"
-                      @click="infoSeparator = themePresetUi.content.infoSeparator"
-                    />
-                  </div>
-                  <div class="grid grid-cols-3 gap-3">
-                    <SfButton
-                      v-for="option in localizedInfoSeparatorList"
-                      :key="option.value"
-                      size="small"
-                      border
-                      @click="infoSeparator = option.value"
-                      :type="infoSeparator === option.value ? 'theme' : 'bg'"
-                      >{{ option.name }}</SfButton
-                    >
-                  </div>
-                </div>
-              </div>
-            </SfScrollbar>
-          </SfCollapseItem>
-        </SfCollapse>
       </div>
     </template>
   </SfDropdown>
@@ -360,14 +83,5 @@ const setParam = (key, value) => {
 .sf-theme-color-popper .el-scrollbar,
 .sf-theme-color-popper .el-scrollbar__wrap {
   overflow: visible;
-}
-
-/* 下拉层中的更多设置使用独立滚动，避免受取色器溢出规则影响 */
-.sf-theme-color-popper .design-more-scroll.el-scrollbar {
-  overflow: hidden;
-}
-
-.sf-theme-color-popper .design-more-scroll .el-scrollbar__wrap {
-  overflow: auto;
 }
 </style>

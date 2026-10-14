@@ -13,7 +13,7 @@ const resumeData: any = {
   config: { modules: [{ key: "user" }, { key: "education" }, { key: "skill" }, { key: "advantage" }, { key: "work" }, { key: "project" }] },
   // 界面配置沿用主题预设：与模板页该主题的样式卡片共用同一份配置，保证布局与配色一致。
   ui: {
-    ...structuredClone(getResumeThemeTemplate("centeredClean").item.ui),
+    ...structuredClone(getResumeThemeTemplate("centeredInsetFrame").item.ui),
     content: { language: "en" }, // 英文范本保留英文正文语言配置
   },
 };

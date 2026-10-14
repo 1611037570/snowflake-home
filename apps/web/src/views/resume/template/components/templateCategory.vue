@@ -39,7 +39,7 @@ const currentCategoryKey = ref(resumeTemplateTopCategories[0].categories[0].key)
 // 当前二级分类选中的选项，切换分类时清空
 const selectedOptionKey = ref("");
 const selectedLayoutKey = ref(""); // 简历模板选中的布局标签
-const selectedTierKey = ref(""); // 简历模板选中的等级标签
+const selectedTierKey = ref(""); // 简历模板选中的类型标签
 const previewSize = ref("default");
 const currentTop = computed(
   () =>
@@ -82,13 +82,13 @@ const toggleOption = (key) => {
     selectedOptionKey.value ? { [currentCategory.value.key]: selectedOptionKey.value } : {},
   );
 };
-// 简历模板的布局与等级互不清空，同时选中时按两个标签共同筛选。
+// 简历模板的布局与类型互不清空，同时选中时按两个标签共同筛选。
 const toggleTemplateOption = (categoryKey, key) => {
   const selected = categoryKey === "layout" ? selectedLayoutKey : selectedTierKey;
   selected.value = selected.value === key ? "" : key;
   emit("change", {
     ...(selectedLayoutKey.value ? { layout: selectedLayoutKey.value } : {}), // 当前布局筛选值
-    ...(selectedTierKey.value ? { tier: selectedTierKey.value } : {}), // 当前等级筛选值
+    ...(selectedTierKey.value ? { tier: selectedTierKey.value } : {}), // 当前类型筛选值
   });
 };
 </script>
@@ -183,7 +183,7 @@ const toggleTemplateOption = (categoryKey, key) => {
         {{ $t(`resumeTemplateOption_${currentCategory.key}_${option.key}`) }}
       </button>
     </div>
-    <!-- 简历模板按布局和等级固定两行展示，两行可组合筛选。 -->
+    <!-- 简历模板按布局和类型固定两行展示，两行可组合筛选。 -->
     <div v-else class="mt-3 flex flex-col gap-3">
       <div v-for="category in currentCategories" :key="category.key" class="flex items-center gap-3">
         <span class="w-[72px] shrink-0 text-sm font-bold text-sf-text-2">

@@ -238,7 +238,6 @@ provideResumePreviewContext({
   userFieldOrder,
   userFieldLabels,
 });
-const layoutColumnGap = computed(() => layout.value.columnGap || 0);
 // 测量树使用布局结算后的留白，包含通栏页眉下方的用户页面上边距。
 const regionConfigMap = computed(() => new Map(layout.value.regions.map((region) => [region.id, region])));
 const columnConfigMap = computed(
@@ -330,7 +329,6 @@ defineExpose({
         <LayoutMeasureTree
           :groups="measureGroups"
           :region-configs="layout.regions"
-          :column-gap="layoutColumnGap"
           :top-region-id="fullBleedTopRegionId"
           :width="RESUME_WIDTH"
           :root-class="ui.font?.family"
@@ -396,7 +394,6 @@ defineExpose({
                   v-if="region.columns.some((column) => column.fragments.length > 0)"
                   :region-id="region.regionId"
                   :region-padding="getRegionPadding(region.regionId)"
-                  :column-gap="layoutColumnGap"
                   :full-bleed="region.regionId === pageTopRegionId(page)"
                   class="flex w-full min-w-0"
                   :top-region-present="Boolean(pageTopRegionId(page))"

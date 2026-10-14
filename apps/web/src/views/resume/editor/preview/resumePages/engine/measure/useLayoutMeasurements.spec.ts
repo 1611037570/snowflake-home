@@ -53,26 +53,26 @@ describe("节点尺寸变化重新分页", () => {
       expect(engine.measureDone.value).toBe(true);
     } finally { engine.stop(); scope.stop(); }
   });
-  it("栏内装饰尺寸与内容能力变化会作废旧测量", async () => {
+  it("区域装饰尺寸与内容能力变化会作废旧测量", async () => {
     const root = document.createElement("div");
     const decisions = ref({
-      regions: { main: { columns: { left: { left: 0 /* 左侧装饰空间 */, right: 0 /* 右侧装饰空间 */ } } } }, // 栏几何声明
-      userContent: { renderer: "userHeading" /* 个人信息组件 */, split: "whole" /* 整块展示 */ }, // 内容能力
+      regions: { main: { inset: { top: 0 /* 上侧装饰空间 */, right: 0 /* 右侧装饰空间 */, bottom: 0 /* 下侧装饰空间 */, left: 0 /* 左侧装饰空间 */ } } }, // 区域装饰尺寸声明
+      theme: { userTemplate: "userHeading" /* 个人信息组件 */ }, // 个人信息模板
       topDecoration: "", // 当前独立装饰编号
     });
     const scope = effectScope();
     const engine = scope.run(() => useLayoutMeasurements({
       measureRef: ref(root), // 不改变宿主尺寸
       nodes: computed(() => []), // 不改变节点清单
-      watchSource: computed(() => ({ themeDecisions: decisions.value })), // 只改变固定能力
+      watchSource: computed(() => ({ themeDecisions: decisions.value, theme: decisions.value.theme })), // 固定能力与个人信息模板
     }))!;
     try {
       await engine.measure();
       expect(engine.measureDone.value).toBe(true);
-      decisions.value.regions.main.columns.left.left = 30;
+      decisions.value.regions.main.inset.left = 30;
       expect(engine.measureDone.value).toBe(false);
       await engine.measure();
-      decisions.value.userContent.renderer = "twoColumnUser";
+      decisions.value.theme.userTemplate = "twoColumnUser";
       expect(engine.measureDone.value).toBe(false);
       await engine.measure();
       decisions.value.topDecoration = "band";

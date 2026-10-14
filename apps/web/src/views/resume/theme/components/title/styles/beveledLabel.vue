@@ -20,7 +20,7 @@ const {
   <!-- 标题右端斜切，左端与模块竖线对齐。 -->
   <div class="flex items-start">
     <h2
-      class="angled-title max-w-full min-w-0 px-6 py-2 pr-9 font-bold tracking-wide"
+      class="angled-title max-w-full min-w-0 px-4 py-1 pr-9 font-bold tracking-wide"
       :style="{ backgroundColor: themeColor, color: themeColorContrast }"
     >
       <TitleText :title="title" />

@@ -20,6 +20,6 @@ export default {
         right: [], // 其余已有模块由布局解析器按默认顺序补入右栏
       },
     },
-    user: { avatarPosition: "left" }, // 个人信息设置：头像默认靠左展示
+    user: { avatarPosition: "center", infoPosition: "center" }, // 侧栏头像、姓名与资料默认居中
   },
 } satisfies ThemeTemplateConfig;

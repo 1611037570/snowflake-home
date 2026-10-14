@@ -24,8 +24,8 @@ export default {
       background: "#FFFFFF", // 右栏与纸张默认背景色
     },
     user: { // 个人信息默认展示设置
-      avatarPosition: "left", // 头像默认在上方靠左，仍支持位置切换
-      infoPosition: "left", // 姓名及信息靠左对齐
+      avatarPosition: "center", // 头像默认在上方居中，仍支持位置切换
+      infoPosition: "center", // 姓名及信息默认居中
       infoMode: "text", // 个人信息使用文字标签
     },
     content: { // 经历展示设置

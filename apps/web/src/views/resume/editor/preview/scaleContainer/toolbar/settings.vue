@@ -1,24 +1,32 @@
 <script setup>
 import { computed } from "vue";
 import { storeToRefs } from "pinia";
-import { $t } from "@/locales";
+import i18n, { $t } from "@/locales";
 import { useResumeStore } from "@/stores";
 import { defaultFooter } from "@/domain/resume/theme/uiConfig";
 import {
+  avatarPositionList,
+  datePositionList,
   defaultLeftColumnWidth,
   defaultLineHeight,
   defaultModuleSpacing,
   defaultPaddingHorizontal,
   defaultPaddingVertical,
   defaultParagraphSpacing,
+  infoPositionList,
   uiParamRanges,
+  userInfoLayoutList,
 } from "@/domain/resume/theme/uiConfig";
-import { createDefaultLayoutColumns, layoutUsesColumns } from "@/domain/resume/theme/layouts";
-import { getResumeThemeTemplate, resolveThemeDecisions } from "@/views/resume/theme";
+import { layoutUsesColumns } from "@/domain/resume/theme/layouts";
+import {
+  getResumeThemeTemplate,
+  resolveThemeDecisions,
+  resolveThemeSettingRestrictions,
+} from "@/views/resume/theme";
+import { localizeResumeEditorOptionList } from "@/stores/modules/resume/hooks/useResumeEditorLocale";
 
 const resumeStore = useResumeStore();
 const { system, currentUI } = storeToRefs(resumeStore);
-const { setLayoutColumns } = resumeStore;
 
 // 页尾显示设置与布局参数集中在同一面板。
 const showPageNumber = computed({
@@ -73,6 +81,24 @@ const visibleLayoutParams = computed(() =>
     : layoutParams.filter((item) => item !== leftColumnWidthParam),
 );
 
+// 并入布局的排版选项：个人信息与经历日期的水平位置，选项名称随语言重新生成
+const layoutOptionParams = computed(() => {
+  i18n.global.locale.value;
+  return [
+    { label: $t("contactLayout"), key: "user.infoLayout", list: userInfoLayoutList },
+    { label: $t("avatarPosition"), key: "user.avatarPosition", list: avatarPositionList },
+    { label: $t("infoAlign"), key: "user.infoPosition", list: infoPositionList },
+    { label: $t("timePosition"), key: "content.datePosition", list: datePositionList },
+  ].map((item) => ({ ...item, list: localizeResumeEditorOptionList(item.list) }));
+});
+
+// 主题固定的选项保持可见，由限制说明给出原因并阻止写入
+const settingRestrictions = computed(() =>
+  resolveThemeSettingRestrictions(currentUI.value?.theme?.template),
+);
+const getSettingRestriction = (key) =>
+  settingRestrictions.value[key] ? $t(settingRestrictions.value[key]) : "";
+
 const getPathValue = (source, path) => path.split(".").reduce((value, key) => value?.[key], source);
 const setPathValue = (source, path, value) => {
   const keys = path.split(".");
@@ -96,23 +122,12 @@ const getNumberValue = (key) => {
   return Number.isFinite(fallback) ? fallback : 0;
 };
 
-// 恢复当前主题默认布局与全部数值参数
-const resetLayout = () => {
-  if (!currentUI.value) return;
-  layoutParams.forEach((item) => {
-    setPathValue(currentUI.value, item.key, getParamDefault(item.key));
-  });
-  const moduleKeys = resumeStore.runtimeFields.map((field) => field.key).filter(Boolean);
-  setLayoutColumns(
-    layoutUsesColumns(layoutType.value)
-      ? createDefaultLayoutColumns(layoutType.value, moduleKeys)
-      : null,
-  );
-};
+// 读取选项参数的当前值：与数值参数共用路径解析
+const getValue = (key) => getPathValue(currentUI.value, key);
 
-// 写入参数：数值型统一使用数值类型
+// 写入参数：数值型统一使用数值类型，主题固定的设置不接受修改
 const setParam = (key, value) => {
-  if (!currentUI.value) return;
+  if (!currentUI.value || settingRestrictions.value[key]) return;
   setPathValue(currentUI.value, key, typeof value === "number" ? Number(value) : value);
 };
 </script>
@@ -126,60 +141,83 @@ const setParam = (key, value) => {
     <span>{{ $t("layout") }}</span>
     </span>
     <template #dropdown>
-      <div
-        class="flex w-[240px] flex-col gap-3 overflow-hidden rounded-3xl border border-sf-b bg-sf-primary p-3"
+      <SfScrollbar
+        max-height="min(360px, max(0px, calc(100vh - 260px)))"
+        class="w-80 rounded-3xl border border-sf-b bg-sf-primary p-3"
       >
-        <div class="flex items-center justify-between text-xs font-bold text-sf-text">
-          <span>{{ $t("pageLayout") }}</span>
-          <button
-            type="button"
-            class="flex items-center gap-3 rounded-lg px-3 py-1 font-normal text-sf-text-2 hover:bg-sf-bg-2 hover:text-sf-theme"
-            @click="resetLayout"
-          >
-            <SfIcon icon="material-symbols:restart-alt" size="4" />
-            {{ $t("restoreLayoutDefault") }}
-          </button>
-        </div>
-        <div v-for="item in visibleLayoutParams" :key="item.key" class="flex flex-col gap-1">
-          <div class="flex items-center justify-between text-sm text-sf-text-2">
-            <span class="flex items-center gap-1">
-              <span>{{ $t(item.labelKey) }}</span>
+        <div class="flex flex-col gap-3 pb-3">
+          <div class="text-xs font-bold text-sf-text">{{ $t("pageLayout") }}</div>
+          <div v-for="item in visibleLayoutParams" :key="item.key" class="flex flex-col gap-1">
+            <div class="flex items-center justify-between text-sm text-sf-text-2">
+              <span class="flex items-center gap-1">
+                <span>{{ $t(item.labelKey) }}</span>
+                <SfIcon
+                  icon="material-symbols:restart-alt"
+                  size="4"
+                  class="cursor-pointer text-sf-text-2 transition-colors hover:text-sf-theme"
+                  @click="setParam(item.key, getParamDefault(item.key))"
+                />
+              </span>
+              <span>{{ getNumberValue(item.key) }}{{ item.unit === "lineHeightUnit" ? $t(item.unit) : item.unit }}</span>
+            </div>
+            <SfSlider
+              :model-value="getNumberValue(item.key)"
+              @update:model-value="(value) => setParam(item.key, value)"
+              :min="uiParamRanges[item.key].min"
+              :max="uiParamRanges[item.key].max"
+              :step="uiParamRanges[item.key].step"
+              size="small"
+            />
+          </div>
+          <!-- 个人信息与经历日期的排版选项：与页面数值参数共用同一入口 -->
+          <div v-for="item in layoutOptionParams" :key="item.key" class="flex flex-col gap-1">
+            <p v-if="getSettingRestriction(item.key)" class="text-xs text-sf-text-2">
+              {{ getSettingRestriction(item.key) }}
+            </p>
+            <div class="flex items-center gap-1 text-sm text-sf-text-2">
+              <span>{{ item.label }}</span>
               <SfIcon
                 icon="material-symbols:restart-alt"
                 size="4"
                 class="cursor-pointer text-sf-text-2 transition-colors hover:text-sf-theme"
+                :aria-disabled="Boolean(getSettingRestriction(item.key))"
+                :class="{ 'cursor-not-allowed! text-sf-text-disabled!': getSettingRestriction(item.key) }"
                 @click="setParam(item.key, getParamDefault(item.key))"
               />
-            </span>
-            <span>{{ getNumberValue(item.key) }}{{ item.unit === "lineHeightUnit" ? $t(item.unit) : item.unit }}</span>
+            </div>
+            <div class="flex gap-3">
+              <SfButton
+                v-for="option in item.list"
+                :key="option.value"
+                class="flex-1"
+                size="small"
+                border
+                :disabled="Boolean(getSettingRestriction(item.key))"
+                :type="getValue(item.key) === option.value ? 'theme' : 'bg'"
+                @click="setParam(item.key, option.value)"
+                >{{ option.name }}</SfButton
+              >
+            </div>
           </div>
-          <SfSlider
-            :model-value="getNumberValue(item.key)"
-            @update:model-value="(value) => setParam(item.key, value)"
-            :min="uiParamRanges[item.key].min"
-            :max="uiParamRanges[item.key].max"
-            :step="uiParamRanges[item.key].step"
-            size="small"
-          />
-        </div>
-        <div class="flex items-center justify-between text-sm text-sf-text-2">
-          <span>{{ $t("showPageNumber") }}</span>
-          <ElSwitch v-model="showPageNumber" />
-        </div>
-        <div class="flex flex-col gap-1">
-          <div class="flex items-center gap-1 text-sm text-sf-text-2">
-            <span>{{ $t("customFooter") }}</span>
-            <SfIcon
-              icon="material-symbols:restart-alt"
-              size="4"
-              class="cursor-pointer text-sf-text-2 transition-colors hover:text-sf-theme"
-              @click="footer = defaultFooter"
-            />
-            <SfTooltip :content="$t('customFooterTip')" />
+          <div class="flex items-center justify-between text-sm text-sf-text-2">
+            <span>{{ $t("showPageNumber") }}</span>
+            <ElSwitch v-model="showPageNumber" />
           </div>
-          <SfInput v-model="footer" :placeholder="$t('customFooterPlaceholder')" clearable />
+          <div class="flex flex-col gap-1">
+            <div class="flex items-center gap-1 text-sm text-sf-text-2">
+              <span>{{ $t("customFooter") }}</span>
+              <SfIcon
+                icon="material-symbols:restart-alt"
+                size="4"
+                class="cursor-pointer text-sf-text-2 transition-colors hover:text-sf-theme"
+                @click="footer = defaultFooter"
+              />
+              <SfTooltip :content="$t('customFooterTip')" />
+            </div>
+            <SfInput v-model="footer" :placeholder="$t('customFooterPlaceholder')" clearable />
+          </div>
         </div>
-      </div>
+      </SfScrollbar>
     </template>
   </SfDropdown>
 </template>

@@ -3,7 +3,7 @@ import type { ThemeTemplateConfig } from "@/domain/resume/theme/styles/createThe
 export default {
   name: "格纸手帐", // 主题显示名称
   id: "noteGrid" as const, // 主题编号，供外观组件按编号选择
-  design: ["single-column", "minimal"], // 模板列表分类标签：单栏、简约
+  design: ["single-column", "premium"], // 模板列表分类标签：单栏、臻品
   description: "浅米色方格纸搭配暖棕标题签，保留手帐质感而不干扰正文。", // 主题说明
   decisions: { // 主题固定外观，不进入用户界面配置
     pageBackgroundPattern: "noteGrid", // 主题固定页面纹理：方格纸

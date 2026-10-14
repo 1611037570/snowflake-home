@@ -22,13 +22,13 @@ const iconSize = inject(
 const {
   theme: { titleFontStyle, titleIconMode, themeColor, themeColorContrast },
 } = useResumePreviewContext();
-// 图标底色与形状由同一处计算，便于统一维护。
+// 图标底色与形状由同一处计算，底色比图标每边各多出四像素。
 const iconContainerStyle = computed(() => {
   if (titleIconMode.value !== "square" && titleIconMode.value !== "circle") return undefined;
   return {
     backgroundColor: themeColor.value,
     color: themeColorContrast.value,
-    padding: "2px",
+    padding: "4px",
     borderRadius: titleIconMode.value === "circle" ? "9999px" : "4px",
   };
 });

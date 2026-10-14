@@ -17,7 +17,7 @@ const props = defineProps({
 const isBlockVisible = (index) => isContentBlockVisible(index, props.blockRange);
 
 const {
-  theme: { avatarPosition },
+  theme: { avatarPosition, infoPosition },
 } = useResumePreviewContext();
 // 双栏头像始终置顶，水平位置跟随现有头像位置设置。
 const avatarAlignClass = computed(() => {
@@ -28,10 +28,16 @@ const avatarAlignClass = computed(() => {
 </script>
 
 <template>
-  <!-- 双栏个人信息独立排布：头像置顶且默认居左，其余内容按单列网格展示。 -->
+  <!-- 双栏个人信息独立排布：头像置顶，默认与姓名、资料一同居中。 -->
   <div class="grid w-full min-w-0 grid-cols-1 gap-3">
     <UserAvatar v-if="isBlockVisible(0)" :class="avatarAlignClass" data-layout-block-index="0" />
     <UserName v-if="isBlockVisible(1)" data-layout-block-index="1" />
-    <UserContact v-if="blockRange.end > 2" class="w-full" single-column-grid :block-range="blockRange" />
+    <UserContact
+      v-if="blockRange.end > 2"
+      class="w-full"
+      :align="infoPosition"
+      single-column-grid
+      :block-range="blockRange"
+    />
   </div>
 </template>

@@ -25,7 +25,7 @@ const props = defineProps({
     type: String,
     default: "left",
   },
-  // 双栏个人信息固定使用单列网格，不受通用信息布局配置影响。
+  // 窄栏资料逐条成块并使用单列，弹性与网格只改变排布方向，不合并内容块。
   singleColumnGrid: {
     type: Boolean,
     default: false,
@@ -79,7 +79,8 @@ const layoutClass = computed(() => {
   const align = props.align || "left";
   const centered = align === "center";
   const alignEnd = align === "right";
-  if (useFlexLayout.value) {
+  // 弹性排布在窄栏仍逐条渲染，只把单列网格换成横向流动。
+  if (userInfoLayout?.value === "flex") {
     return [
       "flex flex-wrap",
       centered ? "justify-center" : alignEnd ? "justify-end" : "justify-start",
@@ -405,7 +406,7 @@ const visibleContactItems = computed(() => props.singleColumnGrid
       />
     </template>
   </InlineInfoList>
-  <div v-else-if="visibleContactItems.length" class="max-w-full min-w-0 items-center" :class="layoutClass">
+  <div v-else-if="visibleContactItems.length" class="resume-user-contact max-w-full min-w-0 items-center" :class="layoutClass">
     <UserContactItem
       v-for="(item, index) in visibleContactItems"
       :key="item.key || item.text"
@@ -420,4 +421,10 @@ const visibleContactItems = computed(() => props.singleColumnGrid
   </div>
 </template>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+/* 资料行列间距与文本对齐由主题变量决定，未声明时保持公共排布。 */
+.resume-user-contact {
+  gap: var(--resume-user-contact-gap, 0.75rem); // 资料行距
+  text-align: var(--resume-user-contact-align, inherit); // 资料文本对齐
+}
+</style>

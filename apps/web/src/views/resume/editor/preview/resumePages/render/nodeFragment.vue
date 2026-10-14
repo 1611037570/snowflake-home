@@ -26,6 +26,7 @@ const frameProps = computed(() => usesItem.value ? {
   contentRange: props.contentRange, // 外框覆盖的字符区间
   decoration: props.decoration, // 外框分片阶段
   nodeType: props.node.type, // 外框的日期栏启用条件
+  itemIndex: props.node.sourceItemIndex ?? 0, // 条目原始序号供主题稳定交替装饰
   "data-layout-block-range": "", // 测量层读取的直接内容块边界
 } : {});
 const contentProps = computed(() => {

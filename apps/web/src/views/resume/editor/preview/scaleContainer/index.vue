@@ -7,6 +7,7 @@ import { useResumeStore } from "@/stores";
 import { RESUME_HEIGHT, RESUME_WIDTH } from "../shared/constants";
 import Font from "./toolbar/font.vue";
 import Settings from "./toolbar/settings.vue";
+import MoreSettings from "./toolbar/moreSettings.vue";
 import TemplateSettings from "./toolbar/templateSettings.vue";
 import PrintMode from "./toolbar/printMode.vue";
 import StyleHint from "./toolbar/styleHint.vue";
@@ -199,6 +200,7 @@ useResizeObserver(contentRef, ([entry]) => {
       <TemplateSettings />
       <Font />
       <Settings />
+      <MoreSettings />
       <Language />
       <OnePage />
       <SfDropdown trigger="hover" placement="bottom-start" :show-arrow="false">

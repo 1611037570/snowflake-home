@@ -26,6 +26,9 @@ const nameStyle = computed(() => ({
   lineHeight: `var(--resume-user-name-line-height, ${lineHeightValue.value().lineHeight})`, // 姓名行高
   letterSpacing: "var(--resume-user-name-spacing, inherit)", // 姓名字距
   color: "var(--resume-user-name-color, inherit)", // 姓名颜色
+  fontFamily: "var(--resume-user-name-family, inherit)", // 姓名字体族
+  fontWeight: "var(--resume-user-name-weight, inherit)", // 姓名粗细，未声明时沿用外层字重
+  textShadow: "var(--resume-user-name-shadow, none)", // 姓名文字阴影
 }));
 </script>
 
