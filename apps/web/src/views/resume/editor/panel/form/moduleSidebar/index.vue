@@ -1,5 +1,5 @@
 <script setup>
-import { computed, nextTick, onMounted, onUnmounted, ref, watch } from "vue";
+import { computed, defineAsyncComponent, nextTick, onMounted, onUnmounted, ref, watch } from "vue";
 import { storeToRefs } from "pinia";
 import { useDraggable } from "vue-draggable-plus";
 import { useResumeStore } from "@/stores";
@@ -13,10 +13,13 @@ import AddModule from "./add.vue";
 import SortByTime from "./sortByTime.vue";
 import ModuleSearch from "./moduleSearch/index.vue";
 
+// 导入弹窗随更多操作展开时加载。
+const ImportResume = defineAsyncComponent(() => import("@/views/resume/mine/components/importResume.vue"));
+
 defineOptions({ name: "ModuleSidebar" });
 
 const resumeStore = useResumeStore();
-const { currentData, runtimeConfig } = storeToRefs(resumeStore);
+const { currentData, runtimeConfig, system } = storeToRefs(resumeStore);
 const listRef = ref(null);
 const draggableItems = ref([]);
 let draggedKeys = [];
@@ -135,30 +138,51 @@ onUnmounted(() => {
         </div>
       </div>
     </SfScrollbar>
-    <!-- 底部入口由容器统一提供上下间距和左右留白。 -->
+    <!-- 更多操作的展开状态由系统配置保存，添加模块始终保留独立入口。 -->
     <div class="flex shrink-0 flex-col items-center gap-[6px] border-t border-sf-b px-[6px] pt-[6px]">
-      <ModuleSearch />
-      <SortByTime />
-      <!-- 全部显示入口沿用底部模块操作样式。 -->
       <button
         type="button"
         class="flex-c w-fit min-w-0 cursor-pointer flex-col gap-1 rounded-xl border border-sf-b bg-sf-primary p-1 text-[9px] text-sf-text transition-colors select-none hover:border-sf-theme hover:text-sf-theme"
-        :disabled="!currentData || !runtimeConfig"
-        @click="showAll"
+        :aria-expanded="system.moreOperationsExpanded"
+        @click="system.moreOperationsExpanded = !system.moreOperationsExpanded"
       >
-        <SfIcon icon="lucide:eye" size="4" />
-        <span class="w-9 text-center leading-4 break-all">{{ $t("showAllContent") }}</span>
+        <SfIcon :icon="system.moreOperationsExpanded ? 'lucide:chevron-up' : 'lucide:chevron-down'" size="4" />
+        <span class="w-9 text-center leading-4 break-all">{{ system.moreOperationsExpanded ? $t("collapseMore") : $t("expandMore") }}</span>
       </button>
-      <!-- 折叠入口固定在添加模块上方，沿用模块卡片外观。 -->
-      <button
-        type="button"
-        class="flex-c w-fit min-w-0 cursor-pointer flex-col gap-1 rounded-xl border border-sf-b bg-sf-primary p-1 text-[9px] text-sf-text transition-colors select-none hover:border-sf-theme hover:text-sf-theme"
-        :disabled="!currentData || !runtimeConfig"
-        @click="collapseAll"
-      >
-        <SfIcon icon="fa-solid:caret-up" size="4" />
-        <span class="w-9 text-center leading-4 break-all">{{ $t("collapseAllModules") }}</span>
-      </button>
+      <div v-if="system.moreOperationsExpanded" class="flex flex-col items-center gap-[6px]">
+        <ImportResume jump-after-import>
+          <template #trigger="{ open }">
+            <button
+              type="button"
+              class="flex-c w-fit min-w-0 cursor-pointer flex-col gap-1 rounded-xl border border-sf-b bg-sf-primary p-1 text-[9px] text-sf-text transition-colors select-none hover:border-sf-theme hover:text-sf-theme"
+              @click="open"
+            >
+              <SfIcon icon="fa6-solid:file-import" size="4" />
+              <span class="w-9 text-center leading-4 break-all">导入简历</span>
+            </button>
+          </template>
+        </ImportResume>
+        <ModuleSearch />
+        <SortByTime />
+        <button
+          type="button"
+          class="flex-c w-fit min-w-0 cursor-pointer flex-col gap-1 rounded-xl border border-sf-b bg-sf-primary p-1 text-[9px] text-sf-text transition-colors select-none hover:border-sf-theme hover:text-sf-theme"
+          :disabled="!currentData || !runtimeConfig"
+          @click="showAll"
+        >
+          <SfIcon icon="lucide:eye" size="4" />
+          <span class="w-9 text-center leading-4 break-all">{{ $t("showAllContent") }}</span>
+        </button>
+        <button
+          type="button"
+          class="flex-c w-fit min-w-0 cursor-pointer flex-col gap-1 rounded-xl border border-sf-b bg-sf-primary p-1 text-[9px] text-sf-text transition-colors select-none hover:border-sf-theme hover:text-sf-theme"
+          :disabled="!currentData || !runtimeConfig"
+          @click="collapseAll"
+        >
+          <SfIcon icon="fa-solid:caret-up" size="4" />
+          <span class="w-9 text-center leading-4 break-all">{{ $t("collapseAllModules") }}</span>
+        </button>
+      </div>
       <AddModule />
     </div>
   </aside>

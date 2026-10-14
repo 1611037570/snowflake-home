@@ -69,6 +69,8 @@ export const DEFAULT_RESUME_ITEM = {
 export const DEFAULT_SYSTEM = {
   // 新增记录默认展开：开启时新添加的记录默认展开，关闭默认收起
   defaultItemExpanded: true,
+  // 左侧栏更多操作默认展开，侧栏切换后持久保存当前状态
+  moreOperationsExpanded: true,
   // 是否展示页码
   showPageNumber: true,
   // 打印模式：开启后预览去色，模拟黑白打印效果

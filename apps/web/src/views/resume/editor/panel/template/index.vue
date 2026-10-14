@@ -27,6 +27,9 @@ const toggleLayout = (key) => {
 const toggleTier = (key) => {
   selectedTier.value = selectedTier.value === key ? "" : key;
 };
+// 模板类型数量与模板页使用同一主题清单统计。
+const getTemplateTypeCount = (key) =>
+  resumeStyleTemplateList.filter((template) => template.design.includes(key)).length;
 
 // 进入样式选择时再加载一份范本作为预览内容。
 onMounted(async () => {
@@ -135,7 +138,7 @@ const applyTemplate = (template) => {
             :aria-pressed="selectedTier === option.key"
             @click="toggleTier(option.key)"
           >
-            {{ $t(`resumeTemplateOption_design_${option.key}`) }}
+            {{ $t(`resumeTemplateOption_design_${option.key}`) }}（{{ getTemplateTypeCount(option.key) }}）
           </SfButton>
         </div>
       </div>

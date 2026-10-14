@@ -91,6 +91,9 @@ const toggleTemplateOption = (categoryKey, key) => {
     ...(selectedTierKey.value ? { tier: selectedTierKey.value } : {}), // 当前类型筛选值
   });
 };
+// 模板类型数量直接按主题分类标签统计，主题清单变化后自动更新。
+const getTemplateTypeCount = (key) =>
+  resumeStyleTemplateList.filter((template) => template.design.includes(key)).length;
 </script>
 
 <template>
@@ -203,6 +206,7 @@ const toggleTemplateOption = (categoryKey, key) => {
             @click="toggleTemplateOption(category.key, option.key)"
           >
             {{ $t(`resumeTemplateOption_design_${option.key}`) }}
+            <template v-if="category.key === 'tier'">（{{ getTemplateTypeCount(option.key) }}）</template>
           </button>
         </div>
       </div>
