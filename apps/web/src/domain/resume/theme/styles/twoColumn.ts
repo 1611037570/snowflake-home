@@ -10,6 +10,7 @@ export default {
     bleedsPageTop: true, // 首页顶部由栏底色铺到纸张顶边
   },
   decisions: { // 主题固定外观，不进入用户界面配置
+    regions: { main: { columnDecoration: true } }, // 栏间装饰占据中缝，留白保留在栏内
     layoutType: "twoColumn", // 主题固定页面版式
   },
   ui: {

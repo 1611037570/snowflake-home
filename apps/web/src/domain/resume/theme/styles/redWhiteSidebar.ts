@@ -6,6 +6,7 @@ export default {
   design: ["two-column", "minimal"], // 模板分类：双栏、简约
   description: "深红侧栏搭配白色正文与红色横线标题。", // 主题说明
   decisions: { // 主题固定外观，不进入用户界面配置
+    regions: { main: { columnDecoration: true } }, // 栏间装饰占据中缝，留白保留在栏内
     layoutType: "twoColumn", // 个人信息放在左栏的双栏布局
   },
   ui: { // 主题相对默认设置的差异

@@ -6,6 +6,7 @@ export default {
   design: ["two-column", "polished"], // 模板列表分类标签：双栏、精美
   description: "首页墨蓝色带搭配淡墨资料侧栏，标题落在实色块上。", // 主题说明
   decisions: { // 主题固定外观，不进入用户界面配置
+    regions: { main: { columnDecoration: true } }, // 栏间装饰占据中缝，留白保留在栏内
     topDecoration: "inkSidebar", // 首页顶部独立装饰组件编号
     pageBorder: { // 主题固定纸张边框
       width: 1, // 边框宽度，单位像素

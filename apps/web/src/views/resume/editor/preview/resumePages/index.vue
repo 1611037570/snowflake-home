@@ -394,6 +394,7 @@ defineExpose({
                   v-if="region.columns.some((column) => column.fragments.length > 0)"
                   :region-id="region.regionId"
                   :region-padding="getRegionPadding(region.regionId)"
+                  :column-gap="regionConfigMap.get(region.regionId)?.columnGap"
                   :full-bleed="region.regionId === pageTopRegionId(page)"
                   class="flex w-full min-w-0"
                   :top-region-present="Boolean(pageTopRegionId(page))"

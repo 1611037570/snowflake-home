@@ -9,6 +9,7 @@ export default {
     textColor: "#33403A", // 左栏正文使用冷墨绿灰
   },
   decisions: { // 主题固定外观，不进入用户界面配置
+    regions: { main: { columnDecoration: true } }, // 栏间装饰占据中缝，留白保留在栏内
     layoutType: "twoColumnRightUser", // 个人信息固定在右窄栏
   },
   ui: { // 主题相对默认配置的差异
