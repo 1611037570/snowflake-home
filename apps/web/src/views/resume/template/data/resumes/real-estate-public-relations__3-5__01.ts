@@ -117,13 +117,6 @@ const resumeData: any = {
         { ui: {}, data: { name: "年度优秀员工" } },
       ],
     },
-    account: {
-      ui: { collapsed: ["1"], archived: false },
-      list: [
-        { ui: {}, data: { name: "个人作品集", url: "https://portfolio.example.com/shen-lan" } },
-        { ui: {}, data: { name: "微信公众号", url: "https://example.com/wechat/brand-cases" } },
-      ],
-    },
   },
   config: {
     modules: [
@@ -133,7 +126,6 @@ const resumeData: any = {
       { key: "education" },
       { key: "skill" },
       { key: "honor" },
-      { key: "account" },
     ],
   },
   // 范本改用红白双栏主题预设，与对应样式卡片保持一致。

@@ -118,13 +118,6 @@ const resumeData: any = {
         { ui: {}, data: { name: "档案规范化管理专项表彰" } },
       ],
     },
-    account: {
-      ui: { collapsed: ["1"], archived: false },
-      list: [
-        { ui: {}, data: { name: "个人作品集", url: "https://example.com/legal-admin/portfolio" } },
-        { ui: {}, data: { name: "公文写作学习笔记", url: "https://example.com/legal-admin/notes" } },
-      ],
-    },
   },
   config: {
     modules: [
@@ -134,7 +127,6 @@ const resumeData: any = {
       { key: "education" },
       { key: "skill" },
       { key: "honor" },
-      { key: "account" },
     ],
   },
   // 界面配置沿用主题预设：与模板页该主题的样式卡片共用同一份配置，保证布局与配色一致。

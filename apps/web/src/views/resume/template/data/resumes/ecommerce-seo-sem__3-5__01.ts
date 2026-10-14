@@ -118,13 +118,6 @@ const resumeData: any = {
         { ui: {}, data: { name: "大促投放提效优秀项目奖" } },
       ],
     },
-    account: {
-      ui: { collapsed: ["1"], archived: false },
-      list: [
-        { ui: {}, data: { name: "个人博客", url: "https://example.com/seo-notes" } },
-        { ui: {}, data: { name: "GitHub", url: "https://example.com/seo-tools" } },
-      ],
-    },
   },
   config: {
     modules: [
@@ -134,7 +127,6 @@ const resumeData: any = {
       { key: "education" },
       { key: "skill" },
       { key: "honor" },
-      { key: "account" },
     ],
   },
   // 界面配置沿用主题预设：与模板页该主题的样式卡片共用同一份配置，保证布局与配色一致。

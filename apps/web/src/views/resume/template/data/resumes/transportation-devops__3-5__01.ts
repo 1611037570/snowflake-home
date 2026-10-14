@@ -118,13 +118,6 @@ const resumeData: any = {
         { ui: {}, data: { name: "票务清分系统改造优秀项目奖" } },
       ],
     },
-    account: {
-      ui: { collapsed: ["1"], archived: false },
-      list: [
-        { ui: {}, data: { name: "GitHub", url: "https://example.com/transport-devops" } },
-        { ui: {}, data: { name: "技术博客", url: "https://example.com/transport-ops-blog" } },
-      ],
-    },
   },
   config: {
     modules: [
@@ -134,7 +127,6 @@ const resumeData: any = {
       { key: "education" },
       { key: "skill" },
       { key: "honor" },
-      { key: "account" },
     ],
   },
   // 范本改用墨点履历主题预设，与对应样式卡片保持一致。

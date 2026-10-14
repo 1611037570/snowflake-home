@@ -117,10 +117,6 @@ const resumeData: any = {
         { ui: {}, data: { name: "预算管理专项奖" } },
       ],
     },
-    account: {
-      ui: { collapsed: ["1"], archived: false },
-      list: [{ ui: {}, data: { name: "领英主页", url: "https://example.com/bank-accounting" } }],
-    },
   },
   config: {
     modules: [
@@ -130,7 +126,6 @@ const resumeData: any = {
       { key: "education" },
       { key: "skill" },
       { key: "honor" },
-      { key: "account" },
     ],
   },
   // 界面配置沿用主题预设：与模板页该主题的样式卡片共用同一份配置，保证布局与配色一致。
