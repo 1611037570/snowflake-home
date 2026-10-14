@@ -11,6 +11,9 @@ import { useResumeContentAi } from "./useResumeContentAi";
 
 defineOptions({ name: "ResumeContentEditor" });
 
+// 只有工作经历、教育经历、项目经历与专业技能提供模板范例，其余正文使用不带范例入口的普通编辑器。
+const TEMPLATE_EXAMPLE_KINDS = ["work", "education", "project", "skill"];
+
 const content = defineModel("modelValue", {
   type: String,
   default: "",
@@ -57,6 +60,8 @@ const targetPosition = computed(() => currentData.value?.user?.data?.position ??
 const examples = ref([]);
 const recommendedHot = ref(false);
 const isLoading = ref(false);
+// 当前字段是否属于提供模板范例的四类正文。
+const supportsTemplateExample = computed(() => TEMPLATE_EXAMPLE_KINDS.includes(props.kind));
 // 连续输入时只采用最后一次岗位匹配结果。
 let latestRequestId = 0;
 
@@ -86,7 +91,7 @@ const appendExample = (example) => {
 <template>
   <div class="w-full">
     <WangEditor v-model="content">
-      <template #toolbar>
+      <template v-if="supportsTemplateExample" #toolbar>
         <TemplateExamplePicker
           :examples="examples"
           :kind="props.kind"
