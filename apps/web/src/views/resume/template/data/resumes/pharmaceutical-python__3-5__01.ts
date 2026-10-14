@@ -98,13 +98,6 @@ const resumeData: any = {
           "<p><strong>开发与数据栈：</strong>熟练使用 Python 开发后端服务与数据处理程序，掌握 FastAPI、Django、Celery、pandas、NumPy、SQLAlchemy、PySpark，熟悉 MySQL、PostgreSQL、MongoDB、Redis，能够使用 Airflow 编排调度任务，并用 pytest 与 GitLab CI 保障交付质量。</p><p><strong>行业工具与规范：</strong>熟悉医药数据场景，掌握 EDC、CTMS、PV 系统与 MedDRA、WHODrug 字典的数据结构，了解 CDISC SDTM 与 ADaM 标准，熟悉 GCP、药品生产质量管理规范相关要求，能够完成数据抽取、逻辑核查、编码映射与合规审计留痕。</p>",
       },
     },
-    advantage: {
-      ui: { collapsed: ["1"], archived: false },
-      data: {
-        content:
-          "<p>具备药学专业背景与工程开发能力，能够读懂方案、病例报告表与药物警戒术语，把数据质量与合规要求翻译成可落地的技术方案，减少与医学、统计团队之间的沟通损耗。</p><p>习惯用自动化替代重复性人工核对，注重代码可维护性与过程留痕，能够独立负责从需求分析、方案设计到上线验证的完整交付。</p>",
-      },
-    },
     honor: {
       ui: { collapsed: ["1"], archived: false },
       list: [
@@ -127,7 +120,6 @@ const resumeData: any = {
       { key: "project" },
       { key: "education" },
       { key: "skill" },
-      { key: "advantage" },
       { key: "honor" },
       { key: "account" },
     ],

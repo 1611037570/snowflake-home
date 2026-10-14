@@ -111,13 +111,6 @@ const resumeData: any = {
           "<p><strong>数据与工具：</strong>熟练使用生意参谋、尼尔森零售监测、凯度消费者指数与 Excel 数据透视表，能够独立完成品类分析、费效比测算与投放复盘。</p><p><strong>营销技能：</strong>熟悉小红书、抖音与天猫旗舰店的种草投放链路，掌握达人筛选、内容脚本撰写、巨量千川投放与私域会员运营方法。</p>",
       },
     },
-    advantage: {
-      ui: { collapsed: ["1"], archived: false },
-      data: {
-        content:
-          "<p>具备从消费者洞察到终端动销的完整营销视角，能够把品类机会拆解为可落地的渠道策略与内容方案。</p><p>擅长跨部门协同，与销售、电商、供应链及外部代理商高效配合，保证营销节奏按档期落地。</p>",
-      },
-    },
     honor: {
       ui: { collapsed: ["1"], archived: false },
       list: [
@@ -143,7 +136,6 @@ const resumeData: any = {
       { key: "project" },
       { key: "education" },
       { key: "skill" },
-      { key: "advantage" },
       { key: "honor" },
       { key: "account" },
     ],

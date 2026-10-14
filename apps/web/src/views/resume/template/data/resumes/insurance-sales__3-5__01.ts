@@ -110,12 +110,6 @@ const resumeData: any = {
           "<p><strong>销售工具：</strong>熟练使用企业微信客户联系、CRM 客户管理系统、保单检视与计划书制作工具，能够独立完成客户建档、拜访跟进与投保流程推进。</p><p><strong>专业能力：</strong>熟悉重疾险、医疗险、年金险与增额终身寿险的产品条款与核保规则，掌握保额缺口测算、家庭保单检视、异议处理及 Excel 与数据看板业绩复盘方法。</p>",
       },
     },
-    advantage: {
-      ui: { collapsed: ["1"], archived: false },
-      data: {
-        content: "<p>具备扎实的保险专业知识与合规意识，能够用通俗语言讲清保障责任与免责条款，帮助客户理解真实需求而不是单纯推销产品。</p><p>抗压能力与自我驱动力强，擅长通过客户经营与转介绍持续积累长期客源，与核保、理赔及服务团队协作顺畅。</p>",
-      },
-    },
     honor: {
       ui: { collapsed: ["1"], archived: false },
       list: [
@@ -138,7 +132,6 @@ const resumeData: any = {
       { key: "project" },
       { key: "education" },
       { key: "skill" },
-      { key: "advantage" },
       { key: "honor" },
       { key: "account" },
     ],

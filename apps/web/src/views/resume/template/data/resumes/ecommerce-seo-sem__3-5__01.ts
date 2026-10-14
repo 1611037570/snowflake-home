@@ -111,13 +111,6 @@ const resumeData: any = {
           "<p><strong>搜索优化：</strong>熟悉站点结构优化、关键词布局、内链体系与内容专题建设，能够独立完成整站 SEO 诊断并输出可执行的优化方案。</p><p><strong>投放与数据：</strong>熟练使用 Google Ads、Google Analytics 4、Google Search Console、Ahrefs、Semrush、百度推广与百度统计，并能通过 SQL 与 Excel 完成投放归因与效果复盘。</p>",
       },
     },
-    advantage: {
-      ui: { collapsed: ["1"], archived: false },
-      data: {
-        content:
-          "<p>具备电商行业搜索流量的全链路操盘经验，能够在自然优化与付费投放之间平衡预算与产出，持续改善投产比。</p><p>习惯用数据验证策略，主动联动运营与研发推动商品结构和落地页优化，落地执行力与跨部门沟通能力较强。</p>",
-      },
-    },
     honor: {
       ui: { collapsed: ["1"], archived: false },
       list: [
@@ -140,7 +133,6 @@ const resumeData: any = {
       { key: "project" },
       { key: "education" },
       { key: "skill" },
-      { key: "advantage" },
       { key: "honor" },
       { key: "account" },
     ],

@@ -111,13 +111,6 @@ const resumeData: any = {
           "<p><strong>系统与中间件：</strong>熟练维护 CentOS、Ubuntu 与国产麒麟服务器，掌握 Nginx、Tomcat、Redis、Kafka、MySQL 主从与集群的部署调优和备份恢复，能使用 Shell 与 Python 编写巡检、发布及数据核对脚本。</p><p><strong>云原生与可观测：</strong>熟悉 Docker、Kubernetes 与 Helm 应用编排，基于 GitLab CI、Jenkins 搭建持续集成与发布流水线，使用 Prometheus、Grafana、ELK、Zabbix 建设指标、日志与告警体系，掌握 Ansible、Terraform 完成批量配置与资源编排。</p>",
       },
     },
-    advantage: {
-      ui: { collapsed: ["1"], archived: false },
-      data: {
-        content:
-          "<p><strong>故障处置：</strong>具备票务、清分与调度类核心系统的快速定位能力，能结合监控指标、日志链路与流量特征界定故障边界，推动研发与厂商协同恢复，重视变更评审与回滚预案。</p><p><strong>运维沉淀：</strong>习惯把重复操作脚本化、流程化，重视值班交接与故障复盘，能在早晚高峰、节假日及大型活动运输保障场景下稳定交付。</p>",
-      },
-    },
     honor: {
       ui: { collapsed: ["1"], archived: false },
       list: [
@@ -140,7 +133,6 @@ const resumeData: any = {
       { key: "project" },
       { key: "education" },
       { key: "skill" },
-      { key: "advantage" },
       { key: "honor" },
       { key: "account" },
     ],

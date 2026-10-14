@@ -98,13 +98,6 @@ const resumeData: any = {
           "<p><strong>大数据开发：</strong>熟练使用 Hadoop、Hive、Spark、Flink、Kafka、HBase 与 ClickHouse，能够独立完成离线数仓分层建模与实时流式链路开发，掌握调度编排工具与任务性能调优。</p><p><strong>医疗数据与工具：</strong>熟悉 HL7、FHIR、DICOM 等医疗数据交换规范以及 ICD-10 疾病编码、LOINC 检验项目编码等标准字典，能够使用 SQL、Python、Pandas 与 Airflow 完成数据加工、质量校验与指标开发。</p>",
       },
     },
-    advantage: {
-      ui: { collapsed: ["1"], archived: false },
-      data: {
-        content:
-          "<p>兼具医疗业务理解与大数据工程能力，熟悉临床、检验与健康管理场景的数据特征，能够把业务口径准确翻译为可实现的数据模型与指标定义。</p><p>重视数据质量与患者隐私合规，习惯通过校验规则和血缘追踪定位问题，善于联动临床科室、运营与技术团队推动数据应用落地。</p>",
-      },
-    },
     honor: {
       ui: { collapsed: ["1"], archived: false },
       list: [
@@ -127,7 +120,6 @@ const resumeData: any = {
       { key: "project" },
       { key: "education" },
       { key: "skill" },
-      { key: "advantage" },
       { key: "honor" },
       { key: "account" },
     ],

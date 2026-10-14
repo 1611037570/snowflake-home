@@ -111,13 +111,6 @@ const resumeData: any = {
           "<p><strong>引擎与语言：</strong>熟练使用 C#、.NET 与 Unity3D，掌握 UGUI、DOTween、Addressables、HybridCLR 与 XLua，能够独立完成客户端模块设计与落地。</p><p><strong>游戏开发与工具链：</strong>熟悉状态同步与帧同步战斗流程、Protobuf 协议、行为树与技能配置表；可使用 Unity Profiler 定位 GC Alloc、DrawCall 与内存问题，并通过 Git、Jenkins 完成多平台打包与持续集成。</p>",
       },
     },
-    advantage: {
-      ui: { collapsed: ["1"], archived: false },
-      data: {
-        content:
-          "<p>具备完整的移动游戏客户端研发经验，能够独立完成需求拆解、模块设计与性能调优，习惯用帧率、内存等数据验证优化效果。</p><p>熟悉策划、美术与服务端的协作流程，沟通主动、交付稳定，能够适应版本节奏下的快速迭代。</p>",
-      },
-    },
     honor: {
       ui: { collapsed: ["1"], archived: false },
       list: [
@@ -140,7 +133,6 @@ const resumeData: any = {
       { key: "project" },
       { key: "education" },
       { key: "skill" },
-      { key: "advantage" },
       { key: "honor" },
       { key: "account" },
     ],

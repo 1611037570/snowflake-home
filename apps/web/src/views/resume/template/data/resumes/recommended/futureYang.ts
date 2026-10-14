@@ -37,13 +37,6 @@ const resumeData: any = {
           "<p><strong>工程体系：</strong>十年以上前端研发经验，主导中后台体系、微前端架构、跨端研发框架与组件库基建落地，熟悉 Monorepo、CI/CD 与前端监控治理。</p><p><strong>技术栈：</strong>精通 JavaScript、TypeScript、Vue3、React 与 Node.js，熟练使用 Vite、Webpack、Turborepo 与 pnpm 构建工具链。</p><p><strong>性能治理：</strong>擅长首屏加载、包体积与运行时性能优化，具备大规模线上性能问题定位与治理经验。</p><p><strong>团队建设：</strong>具备技术方案评审、代码规范建设与前端团队带教经验，能够推动跨团队技术协同。</p>",
       },
     },
-    advantage: {
-      ui: { collapsed: ["1"], archived: false },
-      data: {
-        content:
-          "<p>十年以上一线大厂前端研发经历，主导中后台体系、微前端与跨端研发框架等大型项目落地，擅长复杂系统架构设计与技术攻坚。</p><p>重视技术沉淀与团队协作，能够以量化指标驱动性能治理与研发提效，推动技术方案在业务侧产生实际价值。</p>",
-      },
-    },
     education: {
       ui: { collapsed: ["1"], archived: false },
       list: [
@@ -162,7 +155,6 @@ const resumeData: any = {
       { key: "account" },
       { key: "education" },
       { key: "skill" },
-      { key: "advantage" },
       { key: "work" },
       { key: "project" },
       { key: "honor" },

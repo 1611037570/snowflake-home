@@ -24,12 +24,6 @@ const resumeData: any = {
           "<p><strong>1、</strong>熟练使用 Lightroom、Photoshop 与 Capture One，掌握联机拍摄与商业精修流程，能独立完成前期沟通、拍摄执行和后期交付。</p><p><strong>2、</strong>擅长人像、品牌广告与电商产品拍摄，熟悉 Profoto 影棚灯组布光、外景自然光运用及佳能 EOS R5 等全画幅器材实拍。</p>",
       },
     },
-    advantage: {
-      ui: { collapsed: ["1"], archived: false },
-      data: {
-        content: "<p>具备扎实的视觉审美与现场执行能力，能够根据品牌调性完成拍摄构思、布光和成片交付。</p><p>沟通协作意识强，能够在拍摄进度与作品质量之间做好协调。</p>",
-      },
-    },
     education: {
       ui: { collapsed: ["1"], archived: false },
       list: [
@@ -93,7 +87,7 @@ const resumeData: any = {
     },
   },
   config: {
-    modules: [{ key: "user" }, { key: "education" }, { key: "skill" }, { key: "advantage" }, { key: "work" }, { key: "project" }],
+    modules: [{ key: "user" }, { key: "education" }, { key: "skill" }, { key: "work" }, { key: "project" }],
   },
   // 界面配置沿用主题预设：与模板页该主题的样式卡片共用同一份配置，保证布局与配色一致。
   ui: structuredClone(getResumeThemeTemplate("vinePaper").item.ui),

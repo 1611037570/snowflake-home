@@ -111,13 +111,6 @@ const resumeData: any = {
           "<p><strong>客户端开发：</strong>精通 Kotlin 与 Java，熟悉 Jetpack Compose、Coroutines、Flow 与 MVVM 架构，掌握组件化路由、插件化与热修复方案，熟悉 NDK 与 JNI 基础开发。</p><p><strong>性能与工程：</strong>熟练使用 Systrace、Perfetto 与 LeakCanary 定位卡顿与内存泄漏，掌握 Gradle 构建优化、APK 瘦身与混淆配置，具备崩溃治理与灰度发布落地经验。</p>",
       },
     },
-    advantage: {
-      ui: { collapsed: ["1"], archived: false },
-      data: {
-        content:
-          "<p>近五年的 Android 一线开发经验，既做过大型社区 App 的架构改造，也做过智能硬件配套应用的从零搭建，熟悉不同体量项目的取舍方式。</p><p>习惯用线上数据衡量改造成果，把崩溃率、启动耗时与配网成功率等指标直接对齐业务目标，交付结果可量化。</p>",
-      },
-    },
     honor: {
       ui: { collapsed: ["1"], archived: false },
       list: [
@@ -140,7 +133,6 @@ const resumeData: any = {
       { key: "project" },
       { key: "education" },
       { key: "skill" },
-      { key: "advantage" },
       { key: "honor" },
       { key: "account" },
     ],

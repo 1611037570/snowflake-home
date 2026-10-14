@@ -110,13 +110,6 @@ const resumeData: any = {
           "<p><strong>传播策划：</strong>熟悉地产项目从土地获取、品牌亮相、开盘到交付的全周期传播节奏，能独立完成传播策略、新闻稿与落地活动方案撰写。</p><p><strong>工具与技术栈：</strong>熟练使用微信公众平台、视频号、抖音企业号、剪映、Photoshop、Premiere Pro、飞书与 Excel，能借助行业数据平台与舆情监测系统完成传播效果复盘和竞品监测。</p>",
       },
     },
-    advantage: {
-      ui: { collapsed: ["1"], archived: false },
-      data: {
-        content:
-          "<p>具备媒体关系维护与危机公关处理经验，能在突发舆情中快速完成事实核查、口径梳理与媒体沟通，控制信息扩散范围。</p><p>擅长跨部门协作，可统筹设计、渠道、销售与物业团队，把控品牌调性在各类传播物料中的一致性。</p>",
-      },
-    },
     honor: {
       ui: { collapsed: ["1"], archived: false },
       list: [
@@ -139,7 +132,6 @@ const resumeData: any = {
       { key: "project" },
       { key: "education" },
       { key: "skill" },
-      { key: "advantage" },
       { key: "honor" },
       { key: "account" },
     ],

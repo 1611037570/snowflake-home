@@ -111,13 +111,6 @@ const resumeData: any = {
           "<p><strong>客户端开发：</strong>精通 Swift 与 Objective-C 混编开发，熟悉 SwiftUI、Combine 与 MVVM-C 架构，掌握 URLSession、Core Data 与 Widget、通知扩展等系统能力，了解 Swift Concurrency 与异步改造。</p><p><strong>工程与性能：</strong>熟练使用 Instruments 分析卡顿、内存与耗电问题，掌握 CocoaPods 与 Swift Package Manager 依赖管理、包体积瘦身与启动优化，具备灰度发布与崩溃闭环治理经验。</p>",
       },
     },
-    advantage: {
-      ui: { collapsed: ["1"], archived: false },
-      data: {
-        content:
-          "<p>具备电商与工具类两类 App 的客户端经验，既熟悉高并发营销场景的稳定性要求，也熟悉工具类产品对体积与启动速度的极致追求。</p><p>重视架构演进的渐进性，习惯用可回滚的小步改造替换推倒重来，配合数据指标验证收益，团队协作摩擦小。</p>",
-      },
-    },
     honor: {
       ui: { collapsed: ["1"], archived: false },
       list: [
@@ -140,7 +133,6 @@ const resumeData: any = {
       { key: "project" },
       { key: "education" },
       { key: "skill" },
-      { key: "advantage" },
       { key: "honor" },
       { key: "account" },
     ],

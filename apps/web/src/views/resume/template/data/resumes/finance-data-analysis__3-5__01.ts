@@ -111,13 +111,6 @@ const resumeData: any = {
           "<p><strong>数据工具：</strong>熟练使用 SQL 完成多表关联与窗口函数取数，使用 Python（pandas、NumPy、scikit-learn、statsmodels）完成数据清洗、特征工程与回归、评分卡等建模工作，使用 Excel 数据透视表与 Power BI、Tableau 输出分析看板。</p><p><strong>金融业务与数据栈：</strong>熟悉信贷风控、资产管理与经营分析场景，掌握 Hive、Spark 处理海量明细数据，了解 MySQL、ClickHouse 与调度平台 Airflow 的任务编排，能够独立设计 A/B 实验并完成显著性检验。</p>",
       },
     },
-    advantage: {
-      ui: { collapsed: ["1"], archived: false },
-      data: {
-        content:
-          "<p>熟悉银行信贷、消费金融与资管业务的指标口径和监管要求，能够把业务问题翻译成可量化的分析目标，避免只做数据描述而缺少业务结论。</p><p>具备较强的跨部门沟通能力，善于向风控、产品与运营团队解释模型逻辑与数据结论，推动分析结果落地为可执行的策略与流程。</p>",
-      },
-    },
     honor: {
       ui: { collapsed: ["1"], archived: false },
       list: [
@@ -143,7 +136,6 @@ const resumeData: any = {
       { key: "project" },
       { key: "education" },
       { key: "skill" },
-      { key: "advantage" },
       { key: "honor" },
       { key: "account" },
     ],
