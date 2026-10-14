@@ -1555,16 +1555,16 @@ export const DEFAULT_PROJECT_FORM = {
     },
   ],
 } satisfies FormField;
-// 视频作品
-export const DEFAULT_VIDEO_FORM = {
+// 作品集：图片与链接可分别填写，不区分作品类型
+export const DEFAULT_PORTFOLIO_FORM = {
   type: "group",
-  key: "video",
-  context: ["video"],
+  key: "portfolio",
+  context: ["portfolio"],
   component: "collapseModule",
   props: {
     add: true,
   },
-  model: createModuleState("视频作品"),
+  model: createModuleState("作品集"),
   checks: MODULE_CHECKS,
   slot: "default",
   fields: [
@@ -1577,7 +1577,7 @@ export const DEFAULT_VIDEO_FORM = {
       rowClass: "gap-y-3 px-3 pt-3",
       itemClass: DEFAULT_COL_CLASS + " px-3!",
       itemSchema: {
-        // 折叠标题数据源：展示当前视频名称
+        // 折叠标题数据源：展示当前作品名称
         model: [
           {
             source: ["ui", "collapsed"],
@@ -1598,100 +1598,38 @@ export const DEFAULT_VIDEO_FORM = {
           {
             model: [
               {
+                // name：作品名称。
                 source: ["data", "name"],
                 defaultValue: "",
                 prop: "name",
               },
               {
+                // url：作品链接，适用于任何类型的作品。
                 source: ["data", "url"],
                 defaultValue: "",
                 prop: "url",
               },
               {
+                // desc：作品描述。
                 source: ["data", "desc"],
                 defaultValue: "",
                 prop: "desc",
               },
-            ],
-            type: "object",
-            component: "video",
-            rules: [requiredFieldRule()],
-          },
-        ],
-        type: "group",
-        component: "collapseItem",
-        slot: "default",
-        span: 24,
-        rules: [requiredFieldRule()],
-      },
-    },
-  ],
-} satisfies FormField;
-// 图片作品
-export const DEFAULT_IMAGE_FORM = {
-  type: "group",
-  key: "image",
-  context: ["image"],
-  component: "collapseModule",
-  props: {
-    add: true,
-  },
-  model: createModuleState("图片作品"),
-  checks: MODULE_CHECKS,
-  slot: "default",
-  fields: [
-    {
-      type: "array",
-      source: ["list"],
-      drag: true,
-      dragClass: DEFAULT_DRAG_CLASS,
-      // 数组卡片恢复纵向间距，容器提供左右及顶部留白。
-      rowClass: "gap-y-3 px-3 pt-3",
-      itemClass: DEFAULT_COL_CLASS + " px-3!",
-      itemSchema: {
-        // 折叠标题数据源：展示当前图片作品名称
-        model: [
-          {
-            source: ["ui", "collapsed"],
-            prop: "collapsed",
-            defaultValue: EXPANDED,
-          },
-          {
-            source: ["ui", "hidden"],
-            prop: "hidden",
-            defaultValue: false,
-          },
-          {
-            source: ["data", "name"],
-            prop: "name",
-          },
-        ],
-        fields: [
-          {
-            model: [
               {
-                source: ["data", "name"],
-                defaultValue: "",
-                prop: "name",
-              },
-              {
+                // img：作品图片，可与作品链接同时使用。
                 source: ["data", "img"],
                 defaultValue: "",
                 prop: "img",
               },
               {
-                source: ["data", "desc"],
-                defaultValue: "",
-                prop: "desc",
-              },
-              {
+                // size：作品图片在预览中的显示大小百分比。
                 source: ["data", "size"],
                 defaultValue: 50,
                 prop: "size",
               },
             ],
             type: "object",
-            component: "image",
+            component: "portfolio",
             rules: [requiredFieldRule()],
           },
         ],
@@ -2822,8 +2760,7 @@ export const allConfig = {
   advantage: DEFAULT_ADVANTAGE_FORM,
   slogan: DEFAULT_SLOGAN_FORM,
   education: DEFAULT_EDUCATION_FORM,
-  video: DEFAULT_VIDEO_FORM,
-  image: DEFAULT_IMAGE_FORM,
+  portfolio: DEFAULT_PORTFOLIO_FORM,
   account: DEFAULT_ACCOUNT_FORM,
   work: DEFAULT_WORK_FORM,
   internship: DEFAULT_INTERNSHIP_FORM, // 实习经历表单配置。

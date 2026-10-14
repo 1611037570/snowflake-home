@@ -11,7 +11,7 @@ import { useRuntimeData } from "../../hooks/useRuntimeData";
 import ArchivedModules from "./components/module/archived.vue";
 import ModuleSidebar from "./moduleSidebar/index.vue";
 import HeightWeight from "./components/field/heightWeight.vue";
-import Image from "./components/field/image.vue";
+import Portfolio from "./components/field/portfolio.vue";
 import More from "./components/field/more.vue";
 import Measurements from "./components/field/measurements.vue";
 import PositionPicker from "./components/field/positionPicker.vue";
@@ -20,7 +20,6 @@ import ProjectLink from "./components/field/projectLink.vue";
 import Sizes from "./components/field/sizes.vue";
 import SubtitleBox from "./components/field/subtitleBox.vue";
 import Tag from "./components/field/tag.vue";
-import Video from "./components/field/video.vue";
 import ResumeContentEditor from "./components/contentEditor/index.vue";
 import CollapseModule from "./components/collapse/module.vue";
 import CollapseItem from "./components/collapse/item.vue";
@@ -111,7 +110,7 @@ const dynamicComponents = {
   rowAccount: RowAccount,
   rowSkill: RowSkill,
   imageUpload: AsyncImageUpload,
-  image: Image,
+  portfolio: Portfolio,
   heightWeight: HeightWeight,
   measurements: Measurements,
   positionPicker: PositionPicker,
@@ -122,7 +121,6 @@ const dynamicComponents = {
   more: More,
   subtitleBox: SubtitleBox,
   tag: Tag,
-  video: Video,
   cityPicker: AsyncCityPicker,
 };
 provide("sfBorder", "border border-sf-b hover:border-sf-theme");

@@ -97,7 +97,7 @@ describe("buildLayoutNodes media modules", () => {
     expect(item?.breakPoints?.length).toBeGreaterThan(0);
   });
 
-  it.each(["work", "internship", "project", "education", "account", "honor", "image", "video", "custom_demo"])(
+  it.each(["work", "internship", "project", "education", "account", "honor", "portfolio", "custom_demo"])(
     "%s 模块每个条目前均保留独立段间距",
     (moduleKey) => {
       const nodes = buildLayoutNodes({
@@ -142,33 +142,35 @@ describe("buildLayoutNodes media modules", () => {
     },
   );
 
-  it("creates image and video nodes through the registered module adapters", () => {
+  it("creates image and link works through the portfolio adapter", () => {
     const nodes = buildLayoutNodes({
-      moduleKeys: ["image", "video"],
+      moduleKeys: ["portfolio"],
       data: {
-        image: { list: [{ data: { img: "/image.png", name: "作品" } }] },
-        video: { list: [{ data: { url: "https://example.com/video", name: "视频" } }] },
+        portfolio: { list: [
+          { data: { img: "/image.png", name: "图片作品" } },
+          { data: { url: "https://example.com/work", name: "链接作品" } },
+        ] },
       },
     });
 
-    // 标题作为独立节点排在每个模块最前
+    // 作品集统一生成媒体节点，图片和链接条目使用同一种语义。
     expect(nodes.map((node) => [node.id, node.type])).toEqual([
-      ["image.title", "title"],
-      ["image.media-0", "media"],
-      ["video.title", "title"],
-      ["video.media-0", "media"],
+      ["portfolio.title", "title"],
+      ["portfolio.media-0", "media"],
+      ["portfolio.media-1", "media"],
     ]);
     expect(
       nodes
         .filter((node) => node.type === "media")
-        .map((node) => (node.payload as { mediaType: string }).mediaType),
-    ).toEqual(["image", "video"]);
+        .map((node) => (node.payload as { mediaType: string /* 作品集媒体语义 */ }).mediaType),
+    ).toEqual(["portfolio", "portfolio"]);
     expect(
       nodes
         .filter((node) => node.type === "title")
-        .map((node) => (node.payload as { moduleKey: string }).moduleKey),
-    ).toEqual(["image", "video"]);
+        .map((node) => (node.payload as { moduleKey: string /* 标题所属模块 */ }).moduleKey),
+    ).toEqual(["portfolio"]);
   });
+
 });
 
 describe("buildLayoutNodes slogan module", () => {

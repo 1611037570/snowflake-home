@@ -24,8 +24,7 @@ export const DEFAULT_MODULE_NAMES: { key: string; name: string; icon: string }[]
   { key: "publication", name: "学术论文", icon: "mdi:file-document-multiple-outline" },
   { key: "ip", name: "知识产权", icon: "mdi:certificate-outline" },
   { key: "honor", name: "荣誉证书", icon: "fa6-solid:award" },
-  { key: "video", name: "视频作品", icon: "mdi:video" },
-  { key: "image", name: "图片作品", icon: "mdi:image" },
+  { key: "portfolio", name: "作品集", icon: "mdi:widgets" },
 ];
 // “整个简历”占位项：无具体模块选中时作为默认操作对象
 export const ALL_MODULE_KEY = "all";

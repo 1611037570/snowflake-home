@@ -6,9 +6,9 @@ import { getContentHeight } from "../../shared/constants";
 import { getRegionPaddingHeight } from "../engine/layout/regionHeights";
 
 const props = defineProps({
-  // 图片作品的名称、描述、图片和显示尺寸数据。
+  // 作品集的名称、链接、描述、图片和显示尺寸数据。
   item: { type: Object, required: true },
-  // 已校验的作品链接，为空时仅展示名称。
+  // 已校验的作品链接，为空时不展示链接。
   url: { type: String, default: "" },
 });
 const { layout, themeDecisions, ui, showPageNumber, theme: { linkUnderline } } = useResumePreviewContext();
@@ -63,17 +63,18 @@ watch([pageHeight, () => props.item, hasCaption], async () => {
       @load="updateImageHeight"
     />
     <figcaption v-if="hasCaption" ref="captionRef" class="flex w-full min-w-0 flex-col gap-3 break-words">
+      <span v-if="item.name" class="block text-center">{{ item.name }}</span>
+      <!-- 作品链接独立展示，图片和链接都可单独或同时存在。 -->
       <a
         v-if="url"
         :href="url"
         target="_blank"
         rel="noopener noreferrer"
-        class="block text-center hover:underline"
+        class="block break-all text-center hover:underline"
         :class="{ underline: linkUnderline }"
       >
-        {{ item.name || item.url }}
+        {{ item.url }}
       </a>
-      <span v-else-if="item.name" class="block text-center">{{ item.name }}</span>
       <span v-if="item.desc">{{ item.desc }}</span>
     </figcaption>
   </figure>

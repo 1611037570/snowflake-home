@@ -175,14 +175,6 @@ const resumeData: any = {
         },
       ],
     },
-    image: {
-      ui: {
-        collapsed: [],
-        hidden: false,
-        archived: false,
-      },
-      list: [],
-    },
   },
   config: {
     modules: [
