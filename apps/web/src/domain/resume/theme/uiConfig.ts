@@ -201,12 +201,19 @@ export const titleIconModeList = [
     value: "circle",
   },
 ];
-// 技能熟练度样式列表：进度条按档位点亮横条，圆点按档位点亮刻度，分数直接展示数值。
+// 技能样式列表：各模板共用十分制评分，技能占比汇总各条目的数值。
 // labelKey 为语言包文案键，value 写入简历的 ui.theme.skillTemplate。
 export const skillTemplateList = [
   { labelKey: "skillStyleBar", value: "bar" }, // 进度条模板
   { labelKey: "skillStyleDot", value: "dot" }, // 圆点模板
-  { labelKey: "skillStyleScore", value: "score" }, // 分数模板
+  { labelKey: "skillStyleScore", value: "score" }, // 评分文字模板
+  {
+    labelKey: "skillStyleDistribution", // 技能占比样式名称的文案键
+    value: "distribution", // 技能占比模板编号
+  },
+  { labelKey: "skillStyleSemiRing" /* 半圆环样式名称 */, value: "semiRing" /* 半圆环模板编号 */ },
+  { labelKey: "skillStyleDonut" /* 圆环样式名称 */, value: "donut" /* 圆环模板编号 */ },
+  { labelKey: "skillStyleOpenRing" /* 开口圆环样式名称 */, value: "openRing" /* 开口圆环模板编号 */ },
 ];
 // ===========默认值=====================
 export const defaultThemeColor = "#50A2FF";
@@ -323,4 +330,5 @@ export const DEFAULT_UI = {
     layout: "text", // 默认使用正文布局
     columns: 1, // 熟练度列表默认单栏
   },
+  honor: {}, // 荣誉证书预留展示配置，当前不包含字段
 };
