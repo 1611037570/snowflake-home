@@ -130,6 +130,10 @@ const setParam = (key, value) => {
   if (!currentUI.value || settingRestrictions.value[key]) return;
   setPathValue(currentUI.value, key, typeof value === "number" ? Number(value) : value);
 };
+// 数字输入清空期间不写入无效值，继续沿用滑块的参数范围。
+const setNumberParam = (key, value) => {
+  if (Number.isFinite(value)) setParam(key, value);
+};
 </script>
 
 <template>
@@ -160,14 +164,28 @@ const setParam = (key, value) => {
               </span>
               <span>{{ getNumberValue(item.key) }}{{ item.unit === "lineHeightUnit" ? $t(item.unit) : item.unit }}</span>
             </div>
-            <SfSlider
-              :model-value="getNumberValue(item.key)"
-              @update:model-value="(value) => setParam(item.key, value)"
-              :min="uiParamRanges[item.key].min"
-              :max="uiParamRanges[item.key].max"
-              :step="uiParamRanges[item.key].step"
-              size="small"
-            />
+            <!-- 滑块与右侧数字输入共用同一参数。 -->
+            <div class="flex items-center gap-3">
+              <SfSlider
+                :model-value="getNumberValue(item.key)"
+                @update:model-value="(value) => setParam(item.key, value)"
+                :min="uiParamRanges[item.key].min"
+                :max="uiParamRanges[item.key].max"
+                :step="uiParamRanges[item.key].step"
+                size="small"
+              />
+              <div class="w-27 shrink-0">
+                <SfInputNumber
+                  :model-value="getNumberValue(item.key)"
+                  @update:model-value="(value) => setNumberParam(item.key, value)"
+                  :min="uiParamRanges[item.key].min"
+                  :max="uiParamRanges[item.key].max"
+                  :step="uiParamRanges[item.key].step"
+                  :aria-label="$t(item.labelKey)"
+                  size="small"
+                />
+              </div>
+            </div>
           </div>
           <!-- 个人信息与经历日期的排版选项：与页面数值参数共用同一入口 -->
           <div v-for="item in layoutOptionParams" :key="item.key" class="flex flex-col gap-1">

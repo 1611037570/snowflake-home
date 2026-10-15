@@ -77,7 +77,8 @@ const getNumberValue = (key, defaultValue) => {
 
 // 写入数值型参数
 const setParam = (key, value) => {
-  if (!currentUI.value) return;
+  // 数字输入清空期间不写入无效值，避免字号配置出现非数值。
+  if (!currentUI.value || !Number.isFinite(value)) return;
   const [group, field] = key.split(".");
   currentUI.value[group][field] = Number(value);
 };
@@ -162,14 +163,28 @@ const setParam = (key, value) => {
             </span>
             <span>{{ getNumberValue(item.key, item.defaultValue) }}px</span>
           </div>
-          <SfSlider
-            :model-value="getNumberValue(item.key, item.defaultValue)"
-            @update:model-value="(value) => setParam(item.key, value)"
-            :min="uiParamRanges[item.key].min"
-            :max="uiParamRanges[item.key].max"
-            :step="uiParamRanges[item.key].step"
-            size="small"
-          />
+          <!-- 滑块与右侧数字输入共用同一字号参数。 -->
+          <div class="flex items-center gap-3">
+            <SfSlider
+              :model-value="getNumberValue(item.key, item.defaultValue)"
+              @update:model-value="(value) => setParam(item.key, value)"
+              :min="uiParamRanges[item.key].min"
+              :max="uiParamRanges[item.key].max"
+              :step="uiParamRanges[item.key].step"
+              size="small"
+            />
+            <div class="w-27 shrink-0">
+              <SfInputNumber
+                :model-value="getNumberValue(item.key, item.defaultValue)"
+                @update:model-value="(value) => setParam(item.key, value)"
+                :min="uiParamRanges[item.key].min"
+                :max="uiParamRanges[item.key].max"
+                :step="uiParamRanges[item.key].step"
+                :aria-label="item.label"
+                size="small"
+              />
+            </div>
+          </div>
         </div>
 
         <div class="flex flex-col gap-1">
