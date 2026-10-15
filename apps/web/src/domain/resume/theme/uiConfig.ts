@@ -10,11 +10,22 @@ export const themeColors = [
 
 // 正文字体颜色预设：从黑色逐级过渡到浅灰，供设计面板快速选择。
 export const fontColorOptions = [
-  { name: "fontColorBlack", value: "#000" }, // 默认黑色
-  { name: "fontColorDeepGray", value: "#333" }, // 深灰色
-  { name: "fontColorDarkGray", value: "#555" }, // 较深灰色
-  { name: "fontColorGray", value: "#777" }, // 中灰色
-  { name: "fontColorLightGray", value: "#999" }, // 浅灰色
+  { name: "fontColorBlack", value: "#000000" }, // 黑色
+  { name: "fontColorDeepGray", value: "#171717" }, // 深灰
+  { name: "fontColorDarkGray", value: "#2e2e2e" }, // 暗灰
+  { name: "fontColorGray", value: "#454545" }, // 中灰
+  { name: "fontColorLightGray", value: "#5c5c5c" }, // 浅灰
+  { name: "fontColorLighterGray", value: "#727272" }, // 更浅灰
+];
+
+// 黑底字体颜色预设：与白底阶梯按明度镜像（255 - 白底值），从白色逐级过渡到浅灰。
+export const fontColorOptionsOnDark = [
+  { name: "fontColorWhite", value: "#ffffff" }, // 白色
+  { name: "fontColorLighterGray", value: "#e8e8e8" }, // 更浅灰
+  { name: "fontColorLightGray", value: "#d1d1d1" }, // 浅灰
+  { name: "fontColorGray", value: "#bababa" }, // 中灰
+  { name: "fontColorDarkGray", value: "#a3a3a3" }, // 暗灰
+  { name: "fontColorDeepGray", value: "#8d8d8d" }, // 深灰
 ];
 
 // 字体类型列表
@@ -51,10 +62,12 @@ export const fontFamilyList = [
 
 // 默认简历页面背景色
 export const defaultPageBackground = "#ffffff";
+// 黑底纸张背景值：简历背景选到极致黑时，字体颜色预设切换为对应浅色阶梯
+export const darkPageBackground = "#000000";
 // 简历页面背景色选项：默认白、极致黑与象牙米白
 export const pageBackgroundColors = [
   { name: "backgroundWhite", value: defaultPageBackground },
-  { name: "backgroundBlack", value: "#000000" },
+  { name: "backgroundBlack", value: darkPageBackground },
   { name: "backgroundIvory", value: "#F5F0E6" },
 ];
 
