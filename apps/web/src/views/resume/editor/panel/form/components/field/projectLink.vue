@@ -1,5 +1,6 @@
 <script setup>
 import { computed } from "vue";
+import UrlInput from "./urlInput.vue";
 
 // 项目链接数据：对象 { name, url }
 const modelValue = defineModel("modelValue", {
@@ -28,7 +29,7 @@ const url = computed({
       <SfInput v-model="name" :placeholder="$t('websiteExample')" />
     </SfFormItem>
     <SfFormItem :label="$t('linkAddress')" class="min-w-0 flex-1">
-      <SfInput v-model="url" placeholder="如 https://example.com" />
+      <UrlInput v-model="url" placeholder="如 example.com" />
     </SfFormItem>
   </div>
 </template>

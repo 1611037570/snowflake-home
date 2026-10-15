@@ -1,6 +1,7 @@
 <script setup>
 import { useImageUpload } from "@/hooks";
 import { RESUME_WIDTH } from "@/views/resume/editor/preview/shared/constants";
+import UrlInput from "./urlInput.vue";
 
 // 作品集字段：name 作品名称、url 作品链接、desc 作品描述、img 作品图片、size 图片显示大小百分比
 const name = defineModel("name", {
@@ -47,7 +48,7 @@ const { openPicker, loading } = useImageUpload({
       </div>
       <div class="min-w-0 flex-1">
         <SfFormItem :label="$t('portfolioLink')">
-          <SfInput v-model="url" :placeholder="$t('portfolioLinkPlaceholder')" />
+          <UrlInput v-model="url" :placeholder="$t('portfolioLinkPlaceholder')" />
         </SfFormItem>
       </div>
     </div>
