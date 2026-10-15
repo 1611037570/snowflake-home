@@ -292,7 +292,7 @@ const resumeData: any = {
     content: { language: "zh", textAlign: "auto", infoSeparator: "space", linkUnderline: false, dateStyle: "dot", datePosition: "right" },
     theme: { template: "blueAngleHeader", color: "#2563EB", titleIconMode: "none" }, // 小羊范本改用蓝色折角主题，主色跟随主题的蓝色
     layout: { leftColumnWidth: 40 },
-    user: { infoMode: "text", infoLayout: "flex", avatarPosition: "right", infoPosition: "left" },
+    user: { infoMode: "text", infoLayout: "grid" /* 个人资料按网格排列 */, avatarPosition: "right", infoPosition: "left" },
   },
 };
 

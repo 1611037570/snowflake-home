@@ -142,33 +142,35 @@ function handleAdd() {
                       aria-haspopup="menu"
                     />
                     <template #dropdown>
-                      <!-- 展示方式与列数分别成行，列数选项始终并排显示。 -->
+                      <!-- 每项设置的说明与选项保持同一行。 -->
                       <div
                         class="flex w-[360px] max-w-[90vw] flex-col gap-3 rounded-3xl border border-sf-b bg-sf-primary p-3 whitespace-nowrap"
                       >
-                        <p class="text-xs font-normal text-sf-text-2">{{ $t("skillLayout") }}</p>
-                        <ElRadioGroup
-                          v-model="layout"
-                          class="flex! flex-nowrap! items-center! justify-center! gap-3!"
-                        >
-                          <ElRadio value="text" class="mr-0! whitespace-nowrap">{{
-                            $t("skillLayoutRichText")
-                          }}</ElRadio>
-                          <ElRadio value="proficiency" class="mr-0! whitespace-nowrap">{{
-                            $t("proficiencyLevel")
-                          }}</ElRadio>
-                        </ElRadioGroup>
+                        <div class="flex items-center justify-between gap-3">
+                          <p class="shrink-0 text-xs font-normal text-sf-text-2">{{ $t("skillLayout") }}</p>
+                          <ElRadioGroup
+                            v-model="layout"
+                            class="flex! flex-nowrap! items-center! gap-3!"
+                          >
+                            <ElRadio value="text" class="mr-0! whitespace-nowrap">{{
+                              $t("skillLayoutRichText")
+                            }}</ElRadio>
+                            <ElRadio value="proficiency" class="mr-0! whitespace-nowrap">{{
+                              $t("proficiencyLevel")
+                            }}</ElRadio>
+                          </ElRadioGroup>
+                        </div>
                         <!-- 仅熟练度布局需要选择预览列数。 -->
                         <div
                           v-if="layout === 'proficiency'"
-                          class="flex flex-col gap-3 border-t border-sf-b pt-3"
+                          class="flex items-center justify-between gap-3 border-t border-sf-b pt-3"
                         >
-                          <p class="text-xs font-normal text-sf-text-2">
+                          <p class="shrink-0 text-xs font-normal text-sf-text-2">
                             {{ $t("skillColumnHint") }}
                           </p>
                           <ElRadioGroup
                             v-model="skillColumns"
-                            class="flex! flex-nowrap! items-center! justify-center! gap-3!"
+                            class="flex! flex-nowrap! items-center! gap-3!"
                           >
                             <ElRadio :value="1" class="mr-0! whitespace-nowrap">{{
                               $t("skillSingleColumn")

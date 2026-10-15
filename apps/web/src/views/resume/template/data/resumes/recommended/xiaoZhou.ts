@@ -342,7 +342,7 @@ const defaultData: any = {
     content: { language: "zh", textAlign: "auto", infoSeparator: "space", linkUnderline: false, dateStyle: "dot", datePosition: "right" },
     theme: { template: "pastelSketch", color: "#ef93b5", titleIconMode: "icon" }, // 范本改用柔彩画纸主题
     layout: { leftColumnWidth: 40 },
-    user: { infoMode: "text", infoLayout: "flex", avatarPosition: "center", infoPosition: "center" },
+    user: { infoMode: "text", infoLayout: "grid" /* 个人资料按网格排列 */, avatarPosition: "center", infoPosition: "center" },
   },
 };
 
