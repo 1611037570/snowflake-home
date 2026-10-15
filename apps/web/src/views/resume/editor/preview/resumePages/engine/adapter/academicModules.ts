@@ -3,7 +3,7 @@ import type { LayoutAdapter, LayoutAdapterContext, LayoutAdapterRegistry } from 
 import { parseRichText } from "./richTextParser";
 
 /** 学术成果模块 key：条目字段与经历类模块不同，使用独立适配器与独立渲染分支 */
-export const ACADEMIC_MODULE_KEYS = ["publication", "ip"] as const;
+export const ACADEMIC_MODULE_KEYS = ["publication"] as const;
 
 /** 读取学术成果模块中的有效条目 */
 const getAcademicItems = (context: LayoutAdapterContext) => {
@@ -28,7 +28,7 @@ export const createAcademicModuleAdapter = (moduleKey: string): LayoutAdapter =>
       sourceModuleKey: moduleKey,
       sourceItemIndex: index,
       type: "group" as const,
-      contentKind: moduleKey, // 论文与知识产权使用各自语义组件
+      contentKind: moduleKey, // 学术论文使用独立语义组件
       payload: {
         part: "item",
         item,
@@ -42,7 +42,7 @@ export const createAcademicModuleAdapter = (moduleKey: string): LayoutAdapter =>
   });
 };
 
-/** 将学术论文与知识产权模块适配器注册到注册表 */
+/** 将学术论文模块适配器注册到注册表 */
 export const registerAcademicModuleAdapters = (registry: LayoutAdapterRegistry) => {
   ACADEMIC_MODULE_KEYS.forEach((moduleKey) => {
     registry.register(moduleKey, createAcademicModuleAdapter(moduleKey));

@@ -208,42 +208,6 @@ const resumeData: any = {
         },
       ],
     },
-    ip: {
-      ui: { collapsed: ["1"], archived: false },
-      list: [
-        {
-          ui: {},
-          data: {
-            type: "软件著作权",
-            status: "已登记",
-            title: "会员运营活动配置平台",
-            version: "V1.0",
-            holders: "李然, 王敏",
-            number: "2024SR0521888",
-            authority: "中国版权保护中心",
-            applyDate: "2023.11",
-            grantDate: "2024.01",
-            tags: ["已转化落地"],
-            content: "<p>面向运营团队的活动配置与效果分析工具，支持分层触达与实验追踪。</p>",
-          },
-        },
-        {
-          ui: {},
-          data: {
-            type: "专利",
-            status: "实质审查中",
-            title: "一种基于行为序列的用户流失预警方法",
-            holders: "李然, 陈立",
-            authorOrder: "第一发明人",
-            number: "CN202410123456.7",
-            authority: "国家知识产权局",
-            applyDate: "2024.02",
-            tags: ["核心专利"],
-            content: "<p>通过行为序列特征构建预警模型，输出流失概率与干预建议。</p>",
-          },
-        },
-      ],
-    },
     honor: {
       ui: { collapsed: ["1"], archived: false },
       list: [
@@ -276,17 +240,6 @@ const resumeData: any = {
         tags: ["志愿服务"] /* 经历标签 */,
         content: "<p>参与社区活动组织与现场服务。</p>" /* 经历描述 */,
       } }],
-    },
-    language: {
-      list: [{ data: {
-        name: "英语" /* 语言名称 */,
-        level: "熟练" /* 语言熟练程度 */,
-        score: "雅思 7.0" /* 语言成绩或证书 */,
-        content: "<p>可使用英语进行工作交流和资料阅读。</p>" /* 语言应用描述 */,
-      } }],
-    },
-    hobby: {
-      data: { content: "<p>阅读、徒步与摄影。</p>" /* 兴趣爱好正文 */ },
     },
     // portfolio：作品集，链接和图片可分别填写。
     portfolio: {
@@ -359,12 +312,9 @@ const resumeData: any = {
       { key: "internship" /* 实习经历模块标识 */ },
       { key: "project" },
       { key: "publication" },
-      { key: "ip" },
       { key: "honor" },
       { key: "club" /* 社团经历模块 */ },
       { key: "volunteer" /* 志愿服务模块 */ },
-      { key: "language" /* 语言能力模块 */ },
-      { key: "hobby" /* 兴趣爱好模块 */ },
       { key: "portfolio" /* 作品集模块标识 */ },
       { key: "custom_product_research" },
     ],

@@ -16,14 +16,6 @@ export const RESUME_VALUE_OPTIONS = {
     { name: "精通", value: 4 },
     { name: "专家", value: 5 },
   ],
-  // 语言能力熟练程度档位：写入语言条目 level 字段，熟练与精通与技能档位共用翻译键
-  languageProficiency: [
-    { name: "母语", value: "母语" },
-    { name: "精通", value: "精通" },
-    { name: "熟练", value: "熟练" },
-    { name: "良好", value: "良好" },
-    { name: "一般", value: "一般" },
-  ],
   // 当前就业状态
   status: [
     { name: "在职", value: "在职" },
@@ -186,27 +178,6 @@ export const RESUME_VALUE_OPTIONS = {
     { name: "通讯作者", value: "通讯作者" },
     { name: "第二作者", value: "第二作者" },
     { name: "第三作者", value: "第三作者" },
-    { name: "其他位次", value: "其他位次" },
-  ],
-  // 知识产权成果类型：仅作为展示标签，不参与字段显隐控制
-  ipType: [
-    { name: "专利", value: "专利" },
-    { name: "软件著作权", value: "软件著作权" },
-  ],
-  // 知识产权确权状态
-  ipStatus: [
-    { name: "已受理", value: "已受理" },
-    { name: "实质审查中", value: "实质审查中" },
-    { name: "已授权", value: "已授权" },
-    { name: "已登记", value: "已登记" },
-    { name: "已驳回", value: "已驳回" },
-  ],
-  // 知识产权发明人位次：与论文位次口径一致，便于招聘方横向对比成果分量
-  ipAuthorOrder: [
-    { name: "第一发明人", value: "第一发明人" },
-    { name: "共同第一发明人", value: "共同第一发明人" },
-    { name: "第二发明人", value: "第二发明人" },
-    { name: "第三发明人", value: "第三发明人" },
     { name: "其他位次", value: "其他位次" },
   ],
 };

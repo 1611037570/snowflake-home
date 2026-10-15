@@ -27,15 +27,8 @@ export interface ContentItem {
   volumeInfo?: string; // 卷期页码
   doi?: string; // 论文链接
   indexTags?: string[]; // 索引标签
-  applyDate?: string; // 申请日期
-  grantDate?: string; // 授权日期
-  version?: string; // 软件版本
-  holders?: string; // 权利人
-  authority?: string; // 登记机构
-  number?: string; // 成果编号
-  type?: string; // 成果类型
-  level?: number | string; // 技能熟练度档位（1-5 数字）或语言能力熟练程度（字符串）
-  score?: string; // 教育经历成绩或语言成绩与证书
+  level?: number | string; // 技能熟练度档位
+  score?: string; // 教育经历成绩
 }
 
 export interface ContentPayload {

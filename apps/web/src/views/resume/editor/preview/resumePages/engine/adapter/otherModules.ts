@@ -75,7 +75,7 @@ const createListModuleAdapter =
     }));
   };
 
-/** 创建带描述正文的条目模块适配器：名称行构成条目头，描述正文参与分片（荣誉、语言能力共用） */
+/** 创建带描述正文的条目模块适配器：名称行构成条目头，描述正文参与分片（荣誉条目使用） */
 const createDescribedItemModuleAdapter =
   (moduleKey: string): LayoutAdapter =>
   (context) => {
@@ -147,10 +147,8 @@ export const registerOtherModuleAdapters = (registry: LayoutAdapterRegistry) => 
   LIST_MODULE_KEYS.forEach((moduleKey) => {
     registry.register(moduleKey, createListModuleAdapter(moduleKey));
   });
-  // 荣誉与语言能力条目带可选描述正文，注册可分片的独立适配器
-  (["honor", "language"] as const).forEach((moduleKey) => {
-    registry.register(moduleKey, createDescribedItemModuleAdapter(moduleKey));
-  });
+  // 荣誉条目带可选描述正文，注册可分片的独立适配器
+  registry.register("honor", createDescribedItemModuleAdapter("honor"));
   MEDIA_MODULE_KEYS.forEach((moduleKey) => {
     registry.register(moduleKey, createMediaModuleAdapter(moduleKey));
   });

@@ -17,8 +17,8 @@ const { runtimeConfig, currentData } = storeToRefs(resumeStore);
 defineOptions({ name: "AddModule" });
 const dropdownRef = ref(null);
 
-// 实习经历与工作、教育等经历模块一起提供添加入口；语言能力为高频模块同样前置。
-const BASIC_MODULE_KEYS = ["skill", "education", "project", "work", "internship", "club", "language"];
+// 实习经历与工作、教育等经历模块一起提供添加入口。
+const BASIC_MODULE_KEYS = ["skill", "education", "project", "work", "internship", "club"];
 
 // 不可手动添加的模块：user 为固定模块，slogan 由主题槽位决定是否渲染
 const EXCLUDED_MODULE_KEYS = ["user", "slogan"];
