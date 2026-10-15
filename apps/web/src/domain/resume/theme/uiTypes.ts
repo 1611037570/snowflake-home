@@ -34,7 +34,7 @@ export interface ResumeUi {
     color: string; // 主题色
     template: string; // 当前主题编号
     titleTemplate: string; // 标题样式编号，auto 表示使用主题默认标题样式
-    skillTemplate: string; // 技能熟练度模板编号
+    skillTemplate: string; // 技能评分展示模板编号
     userTemplate: string; // 个人信息组件编号，auto 表示按页面版式使用公共组件
     titleIconMode: string; // 模块标题图标模式
   };
@@ -49,9 +49,10 @@ export interface ResumeUi {
     infoPosition: string; // 资料水平对齐位置
   };
   skill: { // 专业技能展示方式
-    layout: string; // 正文或熟练度列表布局
-    columns: number; // 熟练度列表列数
+    layout: string; // 正文或技能评分列表布局
+    columns: number; // 技能评分列表列数
   };
+  honor: Record<string, never>; // 荣誉证书的预留展示配置，当前为空
 }
 
 /** 对象字段允许部分声明，数组始终保存完整顺序。 */

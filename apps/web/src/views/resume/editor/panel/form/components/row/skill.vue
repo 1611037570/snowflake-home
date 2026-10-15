@@ -11,26 +11,14 @@ const name = defineModel("name", {
   type: String,
   default: "",
 });
-// 熟练度档位：一到五档，预览按档位渲染分段熟练度条
-const level = defineModel("level", {
-  type: Number,
-  default: 3,
-});
+// 所有技能样式共用一个一到十分的滑块数值。
+const level = defineModel("level", { type: Number, default: 7 });
 // 当前技能的隐藏状态
 const hidden = defineModel("hidden", {
   type: Boolean,
   default: false,
 });
 const { removeCurrent } = useFormContext();
-
-// 熟练度档位选项：数值写入技能条目 level 字段，预览按档位渲染分段条
-const proficiencyOptions = [
-  { name: $t("proficiencyBeginner"), value: 1 },
-  { name: $t("proficiencyFamiliar"), value: 2 },
-  { name: $t("proficiencySkilled"), value: 3 },
-  { name: $t("proficiencyExpert"), value: 4 },
-  { name: $t("proficiencyMaster"), value: 5 },
-];
 
 // 删除当前技能
 const removeSkill = () => {
@@ -53,9 +41,9 @@ const removeSkill = () => {
     <div class="min-w-0 flex-1">
       <SfInput v-model="name" :placeholder="$t('skillNamePlaceholder')" />
     </div>
-    <!-- 熟练度档位 -->
-    <div class="w-28 shrink-0">
-      <SfSelect v-model="level" :list="proficiencyOptions" :placeholder="$t('proficiencyLevel')" />
+    <!-- 十分制滑块统一控制所有技能样式。 -->
+    <div class="w-45 shrink-0">
+      <SfSlider v-model="level" :min="1" :max="10" :step="1" size="small" />
     </div>
     <!-- 隐藏当前技能 -->
     <SfTooltip :content="hidden ? $t('show') : $t('hide')">

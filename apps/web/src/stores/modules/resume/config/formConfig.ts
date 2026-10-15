@@ -1026,8 +1026,8 @@ export const DEFAULT_SKILL_FORM = {
   key: "skill",
   context: ["skill"],
   props: {
-    add: true, // 熟练度列表允许新增技能记录。
-    addWhenLayout: "proficiency", // 仅切换到熟练度布局时显示新增入口。
+    add: true, // 技能评分列表允许新增技能记录。
+    addWhenLayout: "proficiency", // 仅切换到技能列表布局时显示新增入口。
   },
   model: createModuleState("专业技能"),
   checks: MODULE_CHECKS,
@@ -1047,7 +1047,7 @@ export const DEFAULT_SKILL_FORM = {
       },
     },
     {
-      // 熟练度列表：每条技能一行，名称与档位成对编辑
+      // 技能列表：每条技能一行，名称与十分制评分成对编辑。
       type: "array",
       source: ["list"],
       drag: true,
@@ -1063,8 +1063,8 @@ export const DEFAULT_SKILL_FORM = {
           },
           {
             source: ["data", "level"],
-            defaultValue: 3,
-            prop: "level", // 保存技能熟练度档位
+            defaultValue: 7,
+            prop: "level", // 保存所有样式共用的一到十分技能评分
           },
           {
             source: ["ui", "hidden"],

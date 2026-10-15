@@ -63,6 +63,22 @@ export const createSkillModuleAdapter = (moduleKey: string): LayoutAdapter => (
     // 模板编号随节点传入公共技能组件，预览与菜单使用同一实现。
     const skillTemplate = themeUi?.skillTemplate || "bar";
     const entries = getValidDataEntries(moduleData.list);
+    // 占比样式把全部可见技能作为一组，避免每行各自计算百分比。
+    if (skillTemplate === "distribution" && entries.length) {
+      return [{
+        id: `${moduleKey}.distribution`,
+        sourceModuleKey: moduleKey,
+        sourceItemIndex: entries[0].index,
+        type: "block" as const,
+        contentKind: moduleKey,
+        payload: {
+          part: "item" as const, // 技能占比整组内容。
+          item: entries[0].data, // 保留当前条目载荷。
+          items: entries.map(({ data }) => data), // 参与占比计算的可见技能。
+          skillTemplate, // 技能占比模板编号。
+        },
+      }];
+    }
     const rows = [];
     for (let offset = 0; offset < entries.length; offset += columns) {
       const row = entries.slice(offset, offset + columns);

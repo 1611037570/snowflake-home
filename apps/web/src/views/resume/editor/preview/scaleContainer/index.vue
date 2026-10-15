@@ -199,8 +199,7 @@ useResizeObserver(contentRef, ([entry]) => {
       <OnePage />
       <SfDropdown trigger="hover" placement="bottom-start" :show-arrow="false">
         <div
-          class="flex h-7 cursor-default items-center justify-center rounded-full text-xs font-medium text-sf-theme"
-          :class="scaleMode === 'a4' ? 'w-21' : 'w-13'"
+          class="flex h-7 w-14 cursor-default items-center justify-center rounded-full text-xs font-medium text-sf-theme"
         >
           {{ scaleLabel }}
         </div>
@@ -267,10 +266,7 @@ useResizeObserver(contentRef, ([entry]) => {
         </div>
       </SfScrollbar>
       <!-- 三个预览入口统一图标尺寸并固定在预览区左上角，置于去色容器外避免图标一并变灰。 -->
-      <div
-        v-if="showToolbar"
-        class="absolute top-3 left-3 z-10 flex flex-col items-start gap-3"
-      >
+      <div v-if="showToolbar" class="absolute top-3 left-3 z-10 flex flex-col items-start gap-3">
         <PrintMode />
         <!-- 提示显示在图标右侧，避免遮挡上方入口。 -->
         <SfTooltip :content="$t('fullscreen')" placement="right">

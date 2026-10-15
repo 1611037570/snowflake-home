@@ -6,6 +6,7 @@ import { useScrollEditorTo } from "../../../../hooks/useScrollEditorTo";
 import eventBus from "@/utils/modules/eventBus";
 import { skillTemplateList } from "@/domain/resume/theme/uiConfig";
 import SkillTemplate from "@/views/resume/theme/components/skillTemplate/index.vue";
+import DistributionTemplate from "@/views/resume/theme/components/skillTemplate/distribution.vue";
 import Icon from "../icon.vue";
 import EditableTitle from "./editableTitle.vue";
 import { $t } from "@/locales";
@@ -48,8 +49,21 @@ const skillTemplate = computed({
   get: () => resumeStore.currentUI?.theme?.skillTemplate ?? "bar",
   set: (value) => { resumeStore.currentUI.theme.skillTemplate = value; },
 });
-// 样式示例沿用固定技能名称与满档熟练度。
-const mockSkill = { name: "Vue 是最好的语言", level: 5 };
+// 技能样式示例共用同一名称与十分制评分。
+const mockSkill = {
+  name: "Vue 是最好的语言", // 示例技能名称
+  level: 7, // 示例技能评分
+};
+// 占比模板示例使用多项技能，以展示整条比例条和图例。
+const mockDistributionSkills = [
+  { name: "Vue" /* 示例技能名称 */, level: 6 /* 示例技能评分 */ },
+  { name: "TypeScript" /* 示例技能名称 */, level: 4 /* 示例技能评分 */ },
+];
+// 选择占比或圆环样式时显示技能条目编辑区。
+const selectSkillTemplate = (value) => {
+  skillTemplate.value = value;
+  if (["distribution", "semiRing", "donut", "openRing"].includes(value)) layout.value = "proficiency";
+};
 // 仅在配置指定的布局下显示列表新增入口，正文布局保持原有编辑区。
 const showAdd = computed(() => {
   if (!props.add) return false;
@@ -134,13 +148,14 @@ function handleAdd() {
                     :hide-on-click="false"
                   >
                     <!-- 复用标题操作图标，并将点击交给下拉组件。 -->
-                    <Icon
-                      click-through
-                      icon="lucide:layout-template"
-                      :title="$t('skillLayout')"
-                      :aria-label="$t('skillLayout')"
-                      aria-haspopup="menu"
-                    />
+                    <SfTooltip :content="$t('skillLayout')">
+                      <Icon
+                        click-through
+                        icon="lucide:layout-template"
+                        :aria-label="$t('skillLayout')"
+                        aria-haspopup="menu"
+                      />
+                    </SfTooltip>
                     <template #dropdown>
                       <!-- 每项设置的说明与选项保持同一行。 -->
                       <div
@@ -156,13 +171,13 @@ function handleAdd() {
                               $t("skillLayoutRichText")
                             }}</ElRadio>
                             <ElRadio value="proficiency" class="mr-0! whitespace-nowrap">{{
-                              $t("proficiencyLevel")
+                              $t("skillRating")
                             }}</ElRadio>
                           </ElRadioGroup>
                         </div>
-                        <!-- 仅熟练度布局需要选择预览列数。 -->
+                        <!-- 仅普通技能列表样式需要选择预览列数。 -->
                         <div
-                          v-if="layout === 'proficiency'"
+                          v-if="layout === 'proficiency' && skillTemplate !== 'distribution'"
                           class="flex items-center justify-between gap-3 border-t border-sf-b pt-3"
                         >
                           <p class="shrink-0 text-xs font-normal text-sf-text-2">
@@ -183,37 +198,61 @@ function handleAdd() {
                             }}</ElRadio>
                           </ElRadioGroup>
                         </div>
-                        <!-- 技能模板示例与预览调用同一个组件。 -->
-                        <div class="flex flex-col gap-3 border-t border-sf-b pt-3">
+                        <!-- 富文本布局不显示技能模板选项。 -->
+                        <div v-if="layout === 'proficiency'" class="flex flex-col gap-3 border-t border-sf-b pt-3">
                           <p class="text-xs font-normal text-sf-text-2">{{ $t("skillTemplate") }}</p>
-                          <div class="grid grid-cols-3 gap-3">
-                            <div
-                              v-for="option in skillTemplateList"
-                              :key="option.value"
-                              class="flex cursor-pointer flex-col items-center gap-3"
-                              @click="skillTemplate = option.value"
-                            >
-                              <!-- 描边卡片内只放伪数据技能行 -->
+                          <!-- 模板选项使用项目滚动组件，超出高度时只滚动样式列表。 -->
+                          <SfScrollbar max-height="360px" class="w-full" flush>
+                            <div class="grid grid-cols-2 gap-3 pr-3">
                               <div
-                                class="flex w-full flex-1 flex-col items-center justify-center gap-3 rounded-2xl border-3 border-sf-transparent bg-sf-bg p-3 text-center"
-                                :class="{ 'border-sf-theme!': skillTemplate === option.value }"
+                                v-for="option in skillTemplateList"
+                                :key="option.value"
+                                class="flex cursor-pointer flex-col items-center gap-3"
+                                @click="selectSkillTemplate(option.value)"
                               >
-                                <span class="w-full text-center text-xs whitespace-normal text-sf-text-2">{{
-                                  mockSkill.name
-                                }}</span>
-                                <SkillTemplate :template-id="option.value" :level="mockSkill.level" :color="resumeStore.currentUI?.theme?.color || '#50A2FF'" :fluid="option.value === 'bar'" />
+                                <!-- 描边卡片内只放伪数据技能行 -->
+                                <div
+                                  class="flex w-full flex-1 flex-col items-center justify-center gap-3 rounded-2xl border-3 border-sf-transparent bg-sf-bg p-3 text-center"
+                                  :class="{ 'border-sf-theme!': skillTemplate === option.value }"
+                                >
+                                  <DistributionTemplate v-if="option.value === 'distribution'" :items="mockDistributionSkills" sample />
+                                  <span v-else-if="!['semiRing', 'donut', 'openRing'].includes(option.value)" class="w-full text-center text-xs whitespace-normal text-sf-text-2">{{
+                                    mockSkill.name
+                                  }}</span>
+                                  <SkillTemplate v-if="option.value !== 'distribution'" :template-id="option.value" :level="mockSkill.level" :name="$t('skillName')" color="var(--sf-theme)" :fluid="option.value === 'bar'" />
+                                </div>
+                                <!-- 样式名放在描边卡片外，与模板选择排版一致 -->
+                                <span
+                                  class="text-center text-xs"
+                                  :class="
+                                    skillTemplate === option.value ? 'text-sf-theme' : 'text-sf-text-2'
+                                  "
+                                  >{{ $t(option.labelKey) }}</span
+                                >
                               </div>
-                              <!-- 样式名放在描边卡片外，与模板选择排版一致 -->
-                              <span
-                                class="text-center text-xs"
-                                :class="
-                                  skillTemplate === option.value ? 'text-sf-theme' : 'text-sf-text-2'
-                                "
-                                >{{ $t(option.labelKey) }}</span
-                              >
                             </div>
-                          </div>
+                          </SfScrollbar>
                         </div>
+                      </div>
+                    </template>
+                  </SfDropdown>
+                </span>
+              </template>
+              <!-- 荣誉证书先提供空配置的编辑区下拉入口。 -->
+              <template v-else-if="currentForm.key === 'honor'" #actions>
+                <span class="flex items-center" @click.stop @mousedown.stop>
+                  <SfDropdown trigger="click" placement="bottom-start" :show-arrow="false" :hide-on-click="false">
+                    <SfTooltip :content="$t('honorTemplate')">
+                      <Icon
+                        click-through
+                        icon="lucide:layout-template"
+                        :aria-label="$t('honorTemplate')"
+                        aria-haspopup="menu"
+                      />
+                    </SfTooltip>
+                    <template #dropdown>
+                      <div class="w-60 rounded-3xl border border-sf-b bg-sf-primary p-3">
+                        <p class="text-xs font-normal text-sf-text-2">{{ $t("honorTemplate") }}</p>
                       </div>
                     </template>
                   </SfDropdown>
