@@ -1,7 +1,7 @@
 import dayjs from "dayjs";
 import { xiaozhou } from "../../avatar";
 
-// 小舟默认数据
+// 预设角色「小舟」：通用求职场景的演示数据，首屏预览与模板页预览都以它为基准。
 const defaultData: any = {
   data: {
     user: {

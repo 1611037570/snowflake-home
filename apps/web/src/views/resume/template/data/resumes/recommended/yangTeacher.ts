@@ -1,6 +1,6 @@
 import { xiaoyang } from "../../avatar";
 
-// 羊老师范本：三年商业摄影经验，覆盖教育、技能、优势、工作与项目等常规模块。
+// 预设角色「羊老师」：三年商业摄影经验，覆盖教育、技能、优势、工作与项目等常规模块。
 const resumeData: any = {
   data: {
     user: {

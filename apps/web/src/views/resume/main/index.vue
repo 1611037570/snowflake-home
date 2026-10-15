@@ -187,7 +187,7 @@ const resumeStore = useResumeStore();
 // 深拷贝：套用范本时隔离示例数据，避免与预览共享引用导致互相串改
 const deepClone = (value) => JSON.parse(JSON.stringify(value));
 
-// 首屏简历切换列表：精选常用范本，供首屏预览循环切换
+// 首屏简历切换列表：预设角色，供首屏预览循环切换
 const HERO_PREVIEW_FILES = [
   "xiaoZhou.ts",
   "xiaoYang.ts",
@@ -195,7 +195,7 @@ const HERO_PREVIEW_FILES = [
   "yangTeacher.ts",
   "futureYang.ts",
 ];
-// 首屏切换条目：fileName 为范本标识，name 为范本名称，用作圆点的悬停提示与无障碍标签
+// 首屏切换条目：fileName 为预设角色标识，name 为预设角色名称，用作圆点的悬停提示与无障碍标签
 const heroSwitcherItems = HERO_PREVIEW_FILES.map((fileName) => ({
   fileName,
   name: resumeTemplateList.find((template) => template.fileName === fileName)?.name ?? fileName,

@@ -1,6 +1,6 @@
 import { xiaoyang } from "../../avatar";
 
-// 小羊数据
+// 预设角色「小羊」：前端项目经历向的演示数据，首屏预览与模板列表共用。
 const resumeData: any = {
   data: {
     user: {
