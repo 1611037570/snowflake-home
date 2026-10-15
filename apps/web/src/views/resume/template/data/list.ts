@@ -186,7 +186,7 @@ export const resumeTemplateList: ResumeTemplate[] = [
     tags: ["前端开发", "项目经历"],
   },
   {
-    // 全字段范本：字段完整性基准，新增业务字段必须同步补充
+    // 预设角色「PM 羊」：字段完整性基准，新增业务字段必须同步补充
     fileName: "allFields.ts",
     name: "产品经理简历",
     description: "覆盖全部模块与全部业务字段的范本，用于字段完整性核对",
