@@ -18,7 +18,7 @@
 
   自定义编辑器+AI两套编辑模式、实时渲染所见即所得、PDF导出等 ![维护中](https://img.shields.io/badge/状态-维护中-brightgreen)
 
-  预览：http://nannan.work/#/resume
+  预览：https://qzcv.net
 
 - ❄️ **雪花起始页** · _如雪纯净的浏览器起点_
 
