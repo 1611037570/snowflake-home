@@ -36,11 +36,11 @@ const formatPercent = (value: number) => `${Number(value.toFixed(1))}%`;
         :style="{ width: `${item.percent}%`, backgroundColor: item.color }"
       />
     </div>
-    <!-- 窄卡片中的示例图例改为单列，名称预留弹性宽度。 -->
-    <div class="grid gap-3" :class="sample ? 'grid-cols-1' : 'grid-cols-2'">
-      <div v-for="(item, index) in shares" :key="index" class="flex min-w-0 items-center gap-3">
+    <!-- 技能名称按内容宽度排列，空间不足时自然换行。 -->
+    <div class="flex flex-wrap gap-3">
+      <div v-for="(item, index) in shares" :key="index" class="inline-flex max-w-full shrink-0 items-center gap-3">
         <span class="h-3 w-3 shrink-0 rounded-full" :style="{ backgroundColor: item.color }" aria-hidden="true" />
-        <div class="min-w-0 flex-1 truncate font-medium">
+        <div class="min-w-0 truncate font-medium">
           <span v-if="sample">{{ item.name }}</span>
           <ResumeField v-else :model-value="item.name" />
         </div>
