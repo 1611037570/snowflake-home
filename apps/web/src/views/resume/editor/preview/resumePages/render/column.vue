@@ -112,6 +112,7 @@ const fragmentGroups = computed(() => {
             :items="group.items"
             :nodes="nodes"
             :show-debug="showDebug"
+            @click="emit('click', { moduleKey: group.moduleKey })"
           />
         </template>
         <ModuleContent
