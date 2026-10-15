@@ -18,11 +18,17 @@ import { localizeResumeEditorOptionList } from "@/stores/modules/resume/hooks/us
 const resumeStore = useResumeStore();
 const { currentUI } = storeToRefs(resumeStore);
 // 视觉参数重置统一回到当前主题预设。
-const themePresetUi = computed(() => getResumeThemeTemplate(currentUI.value?.theme?.template).item.ui);
-const getThemeDefault = (key) => key.split(".").reduce((value, field) => value?.[field], themePresetUi.value);
+const themePresetUi = computed(
+  () => getResumeThemeTemplate(currentUI.value?.theme?.template).item.ui,
+);
+const getThemeDefault = (key) =>
+  key.split(".").reduce((value, field) => value?.[field], themePresetUi.value);
 // 不支持的设置保持可见，由外观声明给出原因并阻止写入。
-const settingRestrictions = computed(() => resolveThemeSettingRestrictions(currentUI.value?.theme?.template));
-const getSettingRestriction = (key) => settingRestrictions.value[key] ? $t(settingRestrictions.value[key]) : "";
+const settingRestrictions = computed(() =>
+  resolveThemeSettingRestrictions(currentUI.value?.theme?.template),
+);
+const getSettingRestriction = (key) =>
+  settingRestrictions.value[key] ? $t(settingRestrictions.value[key]) : "";
 
 // 个人信息属于简历视觉设计，与模板和模块样式统一管理
 const localizeOptions = (options) => localizeResumeEditorOptionList(options);
@@ -30,7 +36,12 @@ const localizeOptions = (options) => localizeResumeEditorOptionList(options);
 const userInfoParams = computed(() => {
   i18n.global.locale.value;
   return [
-    { label: $t("contactDisplay"), key: "user.infoMode", defaultValue: defaultUserInfoMode, list: localizeOptions(userInfoModeList) },
+    {
+      label: $t("contactDisplay"),
+      key: "user.infoMode",
+      defaultValue: defaultUserInfoMode,
+      list: localizeOptions(userInfoModeList),
+    },
   ];
 });
 
@@ -90,12 +101,7 @@ const setParam = (key, value) => {
 </script>
 
 <template>
-  <SfDropdown
-    v-if="currentUI"
-    trigger="click"
-    placement="bottom-start"
-    :show-arrow="false"
-  >
+  <SfDropdown v-if="currentUI" trigger="click" placement="bottom-start" :show-arrow="false">
     <span
       class="flex cursor-pointer items-center gap-1 rounded-full px-1.5 py-1 text-sm text-sf-text-2 hover:bg-sf-theme-2 hover:text-sf-theme-text"
     >
@@ -139,7 +145,9 @@ const setParam = (key, value) => {
                 size="4"
                 class="cursor-pointer text-sf-text-2 transition-colors hover:text-sf-theme"
                 :aria-disabled="Boolean(getSettingRestriction(item.key))"
-                :class="{ 'cursor-not-allowed! text-sf-text-disabled!': getSettingRestriction(item.key) }"
+                :class="{
+                  'text-sf-text-disabled! cursor-not-allowed!': getSettingRestriction(item.key),
+                }"
                 @click="setParam(item.key, getThemeDefault(item.key))"
               />
             </div>
