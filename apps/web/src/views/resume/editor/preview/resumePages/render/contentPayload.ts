@@ -21,10 +21,9 @@ export interface ContentItem {
   size?: number; // 图片尺寸百分比
   date?: string; // 发表日期
   authors?: string; // 作者署名
-  authorOrder?: string; // 本人署名位次
+  selfAuthor?: string; // 预览中强调的本人作者姓名，空值自动识别，清除标记表示不强调
   status?: string; // 成果状态
   venue?: string; // 发表载体
-  volumeInfo?: string; // 卷期页码
   doi?: string; // 论文链接
   indexTags?: string[]; // 索引标签
   level?: number | string; // 技能熟练度档位

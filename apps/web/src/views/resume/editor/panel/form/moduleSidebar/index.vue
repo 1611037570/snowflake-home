@@ -110,7 +110,7 @@ onUnmounted(() => {
         </div>
       </div>
     </SfScrollbar>
-    <!-- 展开与收起入口始终置于操作列表顶部。 -->
+    <!-- 侧栏展开与收起入口使用独立文案，避免带上表单的“可选”。 -->
     <div
       class="flex shrink-0 flex-col items-center gap-[6px] border-t border-sf-b px-[6px] pt-[6px]"
     >
@@ -122,7 +122,7 @@ onUnmounted(() => {
         @click="system.moreOperationsExpanded = false"
       >
         <SfIcon icon="lucide:chevron-up" size="4" />
-        <span class="w-9 text-center leading-4 break-all">{{ $t("collapseMore") }}</span>
+        <span class="w-9 text-center leading-4 break-all">{{ $t("collapseSidebarMore") }}</span>
       </button>
       <button
         v-else
@@ -132,7 +132,7 @@ onUnmounted(() => {
         @click="system.moreOperationsExpanded = true"
       >
         <SfIcon icon="lucide:chevron-down" size="4" />
-        <span class="w-9 text-center leading-4 break-all">{{ $t("expandMore") }}</span>
+        <span class="w-9 text-center leading-4 break-all">{{ $t("expandSidebarMore") }}</span>
       </button>
       <div v-if="system.moreOperationsExpanded" class="max-h-[50vh] min-h-0 overflow-y-auto">
         <MoreActions />

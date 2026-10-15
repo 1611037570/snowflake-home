@@ -928,7 +928,7 @@ export const DEFAULT_EDUCATION_FORM = {
             span: 24,
             rowClass: "gap-y-3",
             // 折叠头标题由折叠分组组件渲染
-            props: { label: "更多" },
+            props: { label: "更多可选" },
             model: [
               {
                 source: ["ui", "moreCollapsed"],
@@ -1321,7 +1321,7 @@ export const DEFAULT_WORK_FORM = {
             span: 24,
             rowClass: "gap-y-3",
             // 折叠头标题由折叠分组组件渲染
-            props: { label: "更多" },
+            props: { label: "更多可选" },
             model: [
               {
                 source: ["ui", "moreCollapsed"],
@@ -1548,7 +1548,7 @@ export const DEFAULT_INTERNSHIP_FORM = {
             span: 24,
             rowClass: "gap-y-3",
             // 折叠头标题由折叠分组组件渲染
-            props: { label: "更多" },
+            props: { label: "更多可选" },
             model: [
               {
                 source: ["ui", "moreCollapsed"],
@@ -1769,7 +1769,7 @@ export const DEFAULT_PROJECT_FORM = {
             slot: "default",
             span: 24,
             rowClass: "gap-y-3",
-            props: { label: "更多" },
+            props: { label: "更多可选" },
             model: [
               {
                 source: ["ui", "moreCollapsed"],
@@ -2160,7 +2160,7 @@ export const DEFAULT_CLUB_FORM = {
             slot: "default",
             span: 24,
             rowClass: "gap-y-3",
-            props: { label: "更多" },
+            props: { label: "更多可选" },
             model: [
               {
                 source: ["ui", "moreCollapsed"], // 更多分组的折叠状态。
@@ -2346,7 +2346,7 @@ export const DEFAULT_VOLUNTEER_FORM = {
             slot: "default",
             span: 24,
             rowClass: "gap-y-3",
-            props: { label: "更多" },
+            props: { label: "更多可选" },
             model: [
               {
                 source: ["ui", "moreCollapsed"], // 更多分组的折叠状态。
@@ -2397,7 +2397,7 @@ export const DEFAULT_VOLUNTEER_FORM = {
   ],
 } satisfies FormField;
 
-// 学术论文：论文的价值维度是发表载体、作者位次与索引分区，与经历类模块的职责岗位结构不同，独立声明字段
+// 学术论文：论文的价值维度是发表载体、作者署名与索引分区，与经历类模块的职责岗位结构不同，独立声明字段
 export const DEFAULT_PUBLICATION_FORM = {
   type: "group",
   component: "collapseModule",
@@ -2457,46 +2457,41 @@ export const DEFAULT_PUBLICATION_FORM = {
               clearable: true,
             },
           },
-          // 作者列表：按署名顺序填写，渲染时自动加粗本人姓名
+          // 论文标签紧随标题填写，预览中与标题同行显示。
+          {
+            type: "object",
+            label: "标签", // 论文索引标签字段标题。
+            component: "tag",
+            span: 24,
+            model: {
+              source: ["data", "indexTags"],
+              prop: "modelValue",
+              defaultValue: [],
+            },
+            props: {
+              list: ["SCI 一区", "SCI 二区", "EI 收录", "CCF-A", "CCF-B", "北大核心", "代表作"],
+            },
+          },
+          // 作者列表：按署名顺序填写，可指定预览中强调的本人姓名。
           {
             type: "object",
             label: "作者",
-            component: "input",
+            component: "publicationAuthors",
             rules: [requiredFieldRule()],
             span: 24,
-            model: {
-              source: ["data", "authors"],
-              prop: "modelValue",
-            },
-            props: {
-              placeholder: "按署名顺序填写，用逗号分隔",
-              clearable: true,
-            },
-          },
-          // 本人位次：一作、共一与通讯作者在求职场景下权重不同，需单独记录
-          {
-            type: "object",
-            label: "本人位次",
-            component: "select",
-            rules: [requiredFieldRule()],
-            span: 12,
             model: [
               {
-                source: ["data", "authorOrder"],
-                prop: "modelValue",
+                source: ["data", "authors"], // 作者署名文本。
+                prop: "modelValue", // 作者输入框的值。
               },
               {
-                source: ["__options", "publicationAuthorOrder"],
-                prop: "list",
-                raw: true,
+                source: ["data", "selfAuthor"], // 预览中需要强调的本人姓名。
+                prop: "selfAuthor", // 本人选择结果。
+                defaultValue: "", // 空值沿用个人姓名识别，不让空白论文变成有效内容。
               },
             ],
-            props: {
-              placeholder: "请选择本人位次",
-              clearable: true,
-            },
           },
-          // 发表状态：在审与已发表对招聘方的含义不同，需明确区分
+          // 发表状态下拉仅提供已发表、已录用和在投。
           {
             type: "object",
             label: "发表状态",
@@ -2525,28 +2520,13 @@ export const DEFAULT_PUBLICATION_FORM = {
             label: "期刊 / 会议",
             component: "input",
             rules: [requiredFieldRule()],
-            span: 24,
+            span: 12,
             model: {
               source: ["data", "venue"],
               prop: "modelValue",
             },
             props: {
               placeholder: "请输入期刊或会议全称",
-              clearable: true,
-            },
-          },
-          // 卷期页码
-          {
-            type: "object",
-            label: "卷期页码",
-            component: "input",
-            span: 12,
-            model: {
-              source: ["data", "volumeInfo"],
-              prop: "modelValue",
-            },
-            props: {
-              placeholder: "如 36(6):2411-2425",
               clearable: true,
             },
           },
@@ -2573,7 +2553,7 @@ export const DEFAULT_PUBLICATION_FORM = {
             type: "object",
             label: "DOI / 论文链接",
             component: "urlInput", // 链接地址可选协议前缀，DOI 编号可原样填写。
-            span: 24,
+            span: 12,
             model: {
               source: ["data", "doi"],
               prop: "modelValue",
@@ -2584,29 +2564,14 @@ export const DEFAULT_PUBLICATION_FORM = {
               allowDoi: true, // 纯 DOI 编号不自动添加协议前缀。
             },
           },
-          // 索引标签：预设常见索引与分区，同时支持回车自定义
-          {
-            type: "object",
-            label: "标签", // 论文索引标签字段标题。
-            component: "tag",
-            span: 24,
-            model: {
-              source: ["data", "indexTags"],
-              prop: "modelValue",
-              defaultValue: [],
-            },
-            props: {
-              list: ["SCI 一区", "SCI 二区", "EI 收录", "CCF-A", "CCF-B", "北大核心", "代表作"],
-            },
-          },
-          // 研究内容：个人贡献与该成果的价值
+          // 研究内容沿用作者字段的多行文本输入框。
           {
             type: "object",
             label: "研究内容",
             component: "resumeContentEditor",
             span: 24,
             props: {
-              kind: "publication",
+              kind: "publication", // 学术论文使用与作者相同的多行文本输入框。
             },
             model: [
               {
@@ -2759,7 +2724,7 @@ export const DEFAULT_CUSTOM_FORM = {
             slot: "default",
             span: 24,
             rowClass: "gap-y-3",
-            props: { label: "更多" },
+            props: { label: "更多可选" },
             model: [
               {
                 source: ["ui", "moreCollapsed"], // 更多分组的折叠状态。
