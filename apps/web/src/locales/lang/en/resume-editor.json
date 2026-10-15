@@ -543,6 +543,8 @@
   "confirmAction": "Confirm",
   "linkName": "Link Name",
   "linkAddress": "Link Address",
+  "linkPrefix": "Link prefix",
+  "linkPrefixOriginal": "Custom",
   "websiteExample": "e.g. Official Website",
   "platform": "Platform",
   "website": "Website",

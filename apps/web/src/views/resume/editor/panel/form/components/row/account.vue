@@ -3,6 +3,7 @@ import { $t } from "@/locales";
 import { getCurrentInstance } from "vue";
 import { useFormContext } from "@/components/business/dynamicForm/api";
 import Icon from "../icon.vue";
+import UrlInput from "../field/urlInput.vue";
 
 const { proxy } = getCurrentInstance();
 
@@ -39,7 +40,7 @@ const removeAccount = () => {
     </div>
     <!-- 第二个是网址 -->
     <div class="min-w-0 flex-1">
-      <SfInput v-model="url" :placeholder="$t('website')" />
+      <UrlInput v-model="url" :placeholder="$t('website')" />
     </div>
     <!-- 隐藏当前社交账号 -->
 

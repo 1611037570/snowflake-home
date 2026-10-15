@@ -543,6 +543,8 @@
   "confirmAction": "确认",
   "linkName": "链接名称",
   "linkAddress": "链接地址",
+  "linkPrefix": "链接前缀",
+  "linkPrefixOriginal": "自定义",
   "websiteExample": "如官网",
   "platform": "平台",
   "website": "网址",

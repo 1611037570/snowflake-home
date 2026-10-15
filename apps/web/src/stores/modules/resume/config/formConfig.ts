@@ -486,7 +486,7 @@ export const DEFAULT_USER_FORM = [
             key: "github",
             label: "GitHub",
             category: "联系方式",
-            component: "input",
+            component: "urlInput", // 链接地址提供协议前缀预选。
             iconKey: "social-github",
             addable: true,
             props: {
@@ -499,7 +499,7 @@ export const DEFAULT_USER_FORM = [
             key: "linkedin",
             label: "LinkedIn",
             category: "联系方式",
-            component: "input",
+            component: "urlInput", // 链接地址提供协议前缀预选。
             iconKey: "social-linkedin",
             addable: true,
             props: {
@@ -513,7 +513,7 @@ export const DEFAULT_USER_FORM = [
             key: "website",
             label: "个人网站",
             category: "联系方式",
-            component: "input",
+            component: "urlInput", // 链接地址提供协议前缀预选。
             iconKey: "social-account",
             tip: "用于展示个人主页、作品集或专业资料",
             addable: true,
@@ -2572,7 +2572,7 @@ export const DEFAULT_PUBLICATION_FORM = {
           {
             type: "object",
             label: "DOI / 论文链接",
-            component: "input",
+            component: "urlInput", // 链接地址可选协议前缀，DOI 编号可原样填写。
             span: 24,
             model: {
               source: ["data", "doi"],
@@ -2581,6 +2581,7 @@ export const DEFAULT_PUBLICATION_FORM = {
             props: {
               placeholder: "如 10.1109/TKDE.2024.1234567 或论文主页地址",
               clearable: true,
+              allowDoi: true, // 纯 DOI 编号不自动添加协议前缀。
             },
           },
           // 索引标签：预设常见索引与分区，同时支持回车自定义
