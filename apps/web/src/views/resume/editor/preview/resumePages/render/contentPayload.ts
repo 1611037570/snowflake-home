@@ -6,6 +6,9 @@ export interface ContentItem {
   title?: string; // 学术成果标题
   department?: string; // 所属部门
   post?: string; // 职务或专业
+  college?: string; // 教育经历学院名称
+  education?: string; // 教育经历学历
+  mode?: string; // 教育经历学制
   startTime?: string; // 经历开始时间
   endTime?: string; // 经历结束时间
   city?: string; // 条目所在地
@@ -32,7 +35,7 @@ export interface ContentItem {
   number?: string; // 成果编号
   type?: string; // 成果类型
   level?: number | string; // 技能熟练度档位（1-5 数字）或语言能力熟练程度（字符串）
-  score?: string; // 语言成绩或证书，如 CET-6 580
+  score?: string; // 教育经历成绩或语言成绩与证书
 }
 
 export interface ContentPayload {

@@ -48,6 +48,7 @@ const resolveWatchSignature = (source: Record<string, any>): string => {
     source?.content?.infoSeparator,
     source?.content?.textAlign,
     source?.content?.linkUnderline,
+    source?.content?.subtitleCenter, // 副标题居中会改变条目的内容高度
     source?.user?.infoMode,
     source?.user?.infoLayout,
     source?.user?.avatarPosition,

@@ -20,16 +20,15 @@ describe("resumeSchemaRegistry", () => {
     expect(education).toMatchObject({ kind: "array", dataPath: ["list"] });
     expect(education?.fields.map((field) => field.key)).toEqual([
       "name",
-      "link",
       "tags",
-      "college",
       "education",
       "mode",
       "startTime",
       "endTime",
       "post",
-      "city",
       "content",
+      "college",
+      "city",
     ]);
     expect(education?.fields.find((field) => field.key === "endTime")).toMatchObject({
       format: "month",

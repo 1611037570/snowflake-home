@@ -229,6 +229,8 @@ export const defaultTextAlign = "auto";
 export const defaultTitleIconMode = "none";
 // 默认链接下划线开关
 export const defaultLinkUnderline = false;
+// 默认副标题不居中
+export const defaultSubtitleCenter = false;
 // 默认并列信息使用留白分隔，保持既有模板视觉。
 export const defaultInfoSeparator = "space";
 // ===========参数范围（编辑器滑杆与一页纸压缩共用，只维护这一处）=====================
@@ -275,6 +277,7 @@ export const DEFAULT_UI = {
     linkUnderline: defaultLinkUnderline,
     dateStyle: defaultDateStyle,
     datePosition: defaultDatePosition,
+    subtitleCenter: defaultSubtitleCenter,
   },
   theme: {
     color: defaultThemeColor,
