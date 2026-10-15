@@ -88,11 +88,12 @@ const isActive = (id) => (currentUI.value?.theme?.template ?? "default") === id;
 // 应用风格：修改当前简历主题，预览层响应式渲染
 const applyTemplate = (template) => {
   const moduleKeys = resumeStore.runtimeFields.map((field) => field.key).filter(Boolean);
-  // 切换外观保留简历展示语言，其余参数使用独立主题的完整预设。
+  // 切换外观保留简历展示语言；未指定专属技能模板时也保留用户当前选择。
   currentUI.value = createResumeStyleUi(
     template.item.ui,
     moduleKeys,
     currentUI.value.content.language,
+    currentUI.value.theme.skillTemplate,
   );
 };
 </script>

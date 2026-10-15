@@ -1,4 +1,4 @@
-import { getResumeThemeTemplate, themeTemplateList } from "@/domain/resume/theme/styles";
+import { getResumeThemeTemplate, resumeThemeRegistry, themeTemplateList } from "@/domain/resume/theme/styles";
 import { resolveThemeDecisions } from "@/domain/resume/theme/themeDecisions";
 import { layoutUsesColumns, resolveLayoutColumns } from "@/domain/resume/theme/layouts";
 import type { ResumeUi } from "@/domain/resume/theme/uiTypes";
@@ -20,10 +20,14 @@ export const resumeStyleTemplateList: ResumeStyleTemplate[] = themeTemplateList.
 }));
 
 // 编辑器切换与模板库新建共用主题预设展开，避免两处分别计算栏位。
-export const createResumeStyleUi = (preset: ResumeUi, moduleKeys: string[], language?: string): ResumeUi => {
+export const createResumeStyleUi = (preset: ResumeUi, moduleKeys: string[], language?: string, currentSkillTemplate?: string): ResumeUi => {
   // 模板卡片经响应式列表传入时，先取原始预设再克隆。
   const ui = structuredClone(toRaw(preset));
   if (language !== undefined) ui.content.language = language;
+  // 主题未声明专属技能模板时，保留当前简历选择的技能模板。
+  if (currentSkillTemplate && !resumeThemeRegistry[ui.theme.template]?.ui.theme?.skillTemplate) {
+    ui.theme.skillTemplate = currentSkillTemplate;
+  }
   const { layoutType } = resolveThemeDecisions(ui.theme.template);
   ui.layout.columns = layoutUsesColumns(layoutType)
     ? resolveLayoutColumns(layoutType, moduleKeys, ui.layout.columns)
