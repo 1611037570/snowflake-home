@@ -91,7 +91,7 @@ describe("buildLayoutNodes media modules", () => {
       },
     });
     const item = nodes.find((node) => node.id === "internship.item-0");
-    expect(item?.contentKind).toBe("experience");
+    expect(item?.contentKind).toBe("experienceDetails");
     expect(item?.sourceModuleKey).toBe("internship");
     expect(item?.payload).toMatchObject({ inlineInfo: ["产品实习生", "产品部"] });
     expect(item?.breakPoints?.length).toBeGreaterThan(0);
