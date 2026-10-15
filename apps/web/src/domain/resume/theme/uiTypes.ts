@@ -28,6 +28,7 @@ export interface ResumeUi {
     linkUnderline: boolean; // 链接是否显示下划线
     dateStyle: string; // 日期展示格式
     datePosition: string; // 条目日期位置
+    subtitleCenter: boolean; // 副标题是否居中展示
   };
   theme: { // 主题选择与展示参数
     color: string; // 主题色

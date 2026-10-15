@@ -23,6 +23,7 @@ import Tag from "./components/field/tag.vue";
 import ResumeContentEditor from "./components/contentEditor/index.vue";
 import CollapseModule from "./components/collapse/module.vue";
 import CollapseItem from "./components/collapse/item.vue";
+import CollapseGroup from "./components/collapse/group.vue";
 import RowField from "./components/row/field.vue";
 import RowAccount from "./components/row/account.vue";
 import RowSkill from "./components/row/skill.vue";
@@ -119,6 +120,7 @@ markEditorStart();
 const dynamicComponents = {
   collapseModule: CollapseModule,
   collapseItem: CollapseItem,
+  collapseGroup: CollapseGroup, // 字段折叠分组：只收起字段，不做模块与记录操作
   rowField: RowField,
   rowAccount: RowAccount,
   rowSkill: RowSkill,

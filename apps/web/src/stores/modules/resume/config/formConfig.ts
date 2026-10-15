@@ -773,7 +773,7 @@ export const DEFAULT_EDUCATION_FORM = {
             label: "学校名称",
             component: "input",
             rules: [requiredFieldRule()],
-            span: 24,
+            span: 12,
             model: {
               source: ["data", "name"],
               prop: "modelValue",
@@ -783,42 +783,61 @@ export const DEFAULT_EDUCATION_FORM = {
               clearable: true,
             },
           },
-          // 学校标签：可选标签由字段配置注入
+          // 专业与学校名称并排编辑。
           {
             type: "object",
-            component: "tag",
-            span: 24,
-            model: {
-              source: ["data", "tags"],
-              prop: "modelValue",
-              defaultValue: [],
-            },
+            label: "专业",
+            component: "positionPicker",
+            rules: [requiredFieldRule()],
+            span: 12,
+            model: [
+              {
+                source: ["data", "post"],
+                prop: "modelValue",
+              },
+              {
+                source: ["__options", "major"],
+                prop: "list",
+                raw: true,
+              },
+            ],
             props: {
-              list: [
-                "985",
-                "211",
-                "双一流",
-                "C9",
-                "QS Top 100",
-                "US News Top 100",
-                "THE Top 100",
-                "ARWU Top 100",
-              ],
+              placeholder: "请选择或输入专业",
             },
           },
-          // 学院名称
           {
             type: "object",
-            label: "学院名称",
-            component: "input",
+            label: "开始时间",
+            rules: [requiredFieldRule(), MONTH_FORMAT_RULE],
+            component: "datePicker",
             span: 12,
             model: {
-              source: ["data", "college"],
+              source: ["data", "startTime"],
               prop: "modelValue",
             },
             props: {
-              placeholder: "请输入学院名称",
-              clearable: true,
+              type: "month",
+              format: "YYYY.MM",
+              valueFormat: "YYYY.MM",
+              placeholder: "请选择开始时间",
+            },
+          },
+          {
+            type: "object",
+            label: "结束时间",
+            rules: [requiredFieldRule(), MONTH_PRESENT_FORMAT_RULE],
+            component: "datePickerPresent",
+            span: 12,
+            model: {
+              source: ["data", "endTime"],
+              prop: "modelValue",
+            },
+            props: {
+              type: "month",
+              format: "YYYY.MM",
+              valueFormat: "YYYY.MM",
+              placeholder: "请选择结束时间",
+              presentText: "至今",
             },
           },
           {
@@ -869,82 +888,19 @@ export const DEFAULT_EDUCATION_FORM = {
               allowCreate: true,
             },
           },
+          // 成绩与学历、学制同排，可填写绩点或其他成绩。
           {
-            type: "object",
-            label: "开始时间",
-            rules: [requiredFieldRule(), MONTH_FORMAT_RULE],
-            component: "datePicker",
-            span: 12,
+            type: "object", // 使用普通输入字段。
+            label: "成绩/GPA", // 成绩字段标题。
+            component: "input", // 使用文本输入组件。
+            span: 12, // 占半行宽度。
             model: {
-              source: ["data", "startTime"],
-              prop: "modelValue",
+              source: ["data", "score"], // 保存教育经历成绩。
+              prop: "modelValue", // 绑定输入值。
             },
             props: {
-              type: "month",
-              format: "YYYY.MM",
-              valueFormat: "YYYY.MM",
-              placeholder: "请选择开始时间",
-            },
-          },
-          {
-            type: "object",
-            label: "结束时间",
-            rules: [requiredFieldRule(), MONTH_PRESENT_FORMAT_RULE],
-            component: "datePickerPresent",
-            span: 12,
-            model: {
-              source: ["data", "endTime"],
-              prop: "modelValue",
-            },
-            props: {
-              type: "month",
-              format: "YYYY.MM",
-              valueFormat: "YYYY.MM",
-              placeholder: "请选择结束时间",
-              presentText: "至今",
-            },
-          },
-          {
-            type: "object",
-            label: "专业",
-            component: "positionPicker",
-            rules: [requiredFieldRule()],
-            span: 12,
-            model: [
-              {
-                source: ["data", "post"],
-                prop: "modelValue",
-              },
-              {
-                source: ["__options", "major"],
-                prop: "list",
-                raw: true,
-              },
-            ],
-            props: {
-              placeholder: "请选择或输入专业",
-            },
-          },
-
-          // 所在城市：省市字典由业务域注入
-          {
-            type: "object",
-            label: "所在城市",
-            component: "cityPicker",
-            span: 12,
-            model: [
-              {
-                source: ["data", "city"],
-                prop: "modelValue",
-              },
-              {
-                source: ["__options", "city"],
-                prop: "list",
-                raw: true,
-              },
-            ],
-            props: {
-              placeholder: "请选择所在城市",
+              placeholder: "如：3.8/4.0", // 提示成绩填写格式。
+              clearable: true, // 允许清空成绩。
             },
           },
           {
@@ -960,6 +916,100 @@ export const DEFAULT_EDUCATION_FORM = {
               {
                 source: ["data", "content"],
                 prop: "modelValue",
+              },
+            ],
+          },
+          // 更多分组：链接、学院、城市与标签收在折叠区内，只负责折叠，默认收起
+          {
+            type: "group",
+            key: "more",
+            component: "collapseGroup",
+            slot: "default",
+            span: 24,
+            rowClass: "gap-y-3",
+            // 折叠头标题由折叠分组组件渲染
+            props: { label: "更多" },
+            model: [
+              {
+                source: ["ui", "moreCollapsed"],
+                prop: "collapsed",
+                // 更多分组默认收起
+                defaultValue: COLLAPSED,
+              },
+            ],
+            fields: [
+              // 教育经历复用通用的链接名称与地址编辑字段。
+              {
+                type: "object", // 使用对象字段承载链接。
+                label: "链接", // 通用链接字段标题。
+                component: "projectLink", // 复用链接编辑组件。
+                rules: [atsRule("projectLink")], // 校验链接地址。
+                span: 24, // 链接编辑占整行。
+                model: {
+                  source: ["data", "link"], // 保存教育经历链接。
+                  prop: "modelValue", // 绑定链接对象。
+                  defaultValue: {}, // 新条目默认使用空链接。
+                },
+              },
+              // 学院名称
+              {
+                type: "object",
+                label: "学院名称",
+                component: "input",
+                span: 12,
+                model: {
+                  source: ["data", "college"],
+                  prop: "modelValue",
+                },
+                props: {
+                  placeholder: "请输入学院名称",
+                  clearable: true,
+                },
+              },
+              // 所在城市：省市字典由业务域注入
+              {
+                type: "object",
+                label: "所在城市",
+                component: "cityPicker",
+                span: 12,
+                model: [
+                  {
+                    source: ["data", "city"],
+                    prop: "modelValue",
+                  },
+                  {
+                    source: ["__options", "city"],
+                    prop: "list",
+                    raw: true,
+                  },
+                ],
+                props: {
+                  placeholder: "请选择所在城市",
+                },
+              },
+              // 学校标签：可选标签由字段配置注入
+              {
+                type: "object",
+                label: "标签", // 学校标签字段标题。
+                component: "tag",
+                span: 24,
+                model: {
+                  source: ["data", "tags"],
+                  prop: "modelValue",
+                  defaultValue: [],
+                },
+                props: {
+                  list: [
+                    "985",
+                    "211",
+                    "双一流",
+                    "C9",
+                    "QS Top 100",
+                    "US News Top 100",
+                    "THE Top 100",
+                    "ARWU Top 100",
+                  ],
+                },
               },
             ],
           },
@@ -1183,13 +1233,13 @@ export const DEFAULT_WORK_FORM = {
           },
         ],
         fields: [
-          // 基础信息优先展示，岗位与部门、起止时间分别成对排列。
+          // 公司名称与岗位并排展示，起止时间成对排列。
           {
             type: "object",
             label: "公司名称",
             component: "input",
             rules: [requiredFieldRule()],
-            span: 24,
+            span: 12,
             model: {
               source: ["data", "name"],
               prop: "modelValue",
@@ -1218,21 +1268,6 @@ export const DEFAULT_WORK_FORM = {
             ],
             props: {
               placeholder: "请选择或输入岗位",
-            },
-          },
-          // 所在部门
-          {
-            type: "object",
-            label: "所在部门",
-            component: "input",
-            span: 12,
-            model: {
-              source: ["data", "department"],
-              prop: "modelValue",
-            },
-            props: {
-              placeholder: "请输入所在部门",
-              clearable: true,
             },
           },
           {
@@ -1270,53 +1305,6 @@ export const DEFAULT_WORK_FORM = {
               presentText: "至今",
             },
           },
-          // 所在城市：省市字典由业务域注入
-          {
-            type: "object",
-            label: "所在城市",
-            component: "cityPicker",
-            span: 24,
-            model: [
-              {
-                source: ["data", "city"],
-                prop: "modelValue",
-              },
-              {
-                source: ["__options", "city"],
-                prop: "list",
-                raw: true,
-              },
-            ],
-            props: {
-              placeholder: "请选择所在城市",
-            },
-          },
-          {
-            type: "object",
-            label: "项目链接",
-            component: "projectLink",
-            rules: [atsRule("projectLink")],
-            span: 24,
-            model: {
-              source: ["data", "link"],
-              prop: "modelValue",
-              defaultValue: {},
-            },
-          },
-          // 工作标签：可选标签由字段配置注入
-          {
-            type: "object",
-            component: "tag",
-            span: 24,
-            model: {
-              source: ["data", "tags"],
-              prop: "modelValue",
-              defaultValue: [],
-            },
-            props: {
-              list: ["核心成员", "团队管理", "独立负责", "跨部门协作", "从0到1"],
-            },
-          },
           {
             type: "object",
             label: "经历",
@@ -1330,6 +1318,91 @@ export const DEFAULT_WORK_FORM = {
               {
                 source: ["data", "content"],
                 prop: "modelValue",
+              },
+            ],
+          },
+          // 更多分组：城市、部门、链接与标签收在折叠区内，默认收起。
+          {
+            type: "group",
+            key: "more",
+            component: "collapseGroup",
+            slot: "default",
+            span: 24,
+            rowClass: "gap-y-3",
+            // 折叠头标题由折叠分组组件渲染
+            props: { label: "更多" },
+            model: [
+              {
+                source: ["ui", "moreCollapsed"],
+                prop: "collapsed",
+                // 更多分组默认收起
+                defaultValue: COLLAPSED,
+              },
+            ],
+            fields: [
+              // 所在城市：省市字典由业务域注入。
+              {
+                type: "object",
+                label: "所在城市",
+                component: "cityPicker",
+                span: 12,
+                model: [
+                  {
+                    source: ["data", "city"],
+                    prop: "modelValue",
+                  },
+                  {
+                    source: ["__options", "city"],
+                    prop: "list",
+                    raw: true,
+                  },
+                ],
+                props: {
+                  placeholder: "请选择所在城市",
+                },
+              },
+              // 所在部门紧随城市，展示在同一行。
+              {
+                type: "object",
+                label: "所在部门",
+                component: "input",
+                span: 12,
+                model: {
+                  source: ["data", "department"],
+                  prop: "modelValue",
+                },
+                props: {
+                  placeholder: "请输入所在部门",
+                  clearable: true,
+                },
+              },
+              // 项目链接
+              {
+                type: "object",
+                label: "项目链接",
+                component: "projectLink",
+                rules: [atsRule("projectLink")],
+                span: 24,
+                model: {
+                  source: ["data", "link"],
+                  prop: "modelValue",
+                  defaultValue: {},
+                },
+              },
+              // 工作标签：可选标签由字段配置注入
+              {
+                type: "object",
+                label: "标签", // 工作标签字段标题。
+                component: "tag",
+                span: 24,
+                model: {
+                  source: ["data", "tags"],
+                  prop: "modelValue",
+                  defaultValue: [],
+                },
+                props: {
+                  list: ["核心成员", "团队管理", "独立负责", "跨部门协作", "从0到1"],
+                },
               },
             ],
           },
@@ -1394,7 +1467,7 @@ export const DEFAULT_PROJECT_FORM = {
             label: "项目名称",
             component: "input",
             rules: [requiredFieldRule()],
-            span: 24,
+            span: 12,
             model: {
               source: ["data", "name"],
               prop: "modelValue",
@@ -1404,45 +1477,26 @@ export const DEFAULT_PROJECT_FORM = {
               clearable: true,
             },
           },
+          // 项目名称与岗位并排展示。
           {
             type: "object",
-            label: "项目链接",
-            component: "projectLink",
-            rules: [atsRule("projectLink")],
-            span: 24,
-            model: {
-              source: ["data", "link"],
-              prop: "modelValue",
-              defaultValue: {},
-            },
-          },
-          // 项目标签：可选标签由字段配置注入
-          {
-            type: "object",
-            component: "tag",
-            span: 24,
-            model: {
-              source: ["data", "tags"],
-              prop: "modelValue",
-              defaultValue: [],
-            },
-            props: {
-              list: ["已上线", "开源项目", "独立负责", "团队协作", "性能优化"],
-            },
-          },
-          // 所在部门
-          {
-            type: "object",
-            label: "所在部门",
-            component: "input",
+            label: "岗位",
+            component: "positionPicker",
+            rules: [requiredFieldRule()],
             span: 12,
-            model: {
-              source: ["data", "department"],
-              prop: "modelValue",
-            },
+            model: [
+              {
+                source: ["data", "post"],
+                prop: "modelValue",
+              },
+              {
+                source: ["__options", "position"],
+                prop: "list",
+                raw: true,
+              },
+            ],
             props: {
-              placeholder: "请输入所在部门",
-              clearable: true,
+              placeholder: "请选择或输入岗位",
             },
           },
           {
@@ -1482,48 +1536,6 @@ export const DEFAULT_PROJECT_FORM = {
           },
           {
             type: "object",
-            label: "岗位",
-            component: "positionPicker",
-            rules: [requiredFieldRule()],
-            span: 12,
-            model: [
-              {
-                source: ["data", "post"],
-                prop: "modelValue",
-              },
-              {
-                source: ["__options", "position"],
-                prop: "list",
-                raw: true,
-              },
-            ],
-            props: {
-              placeholder: "请选择或输入岗位",
-            },
-          },
-          // 所在城市：省市字典由业务域注入
-          {
-            type: "object",
-            label: "所在城市",
-            component: "cityPicker",
-            span: 12,
-            model: [
-              {
-                source: ["data", "city"],
-                prop: "modelValue",
-              },
-              {
-                source: ["__options", "city"],
-                prop: "list",
-                raw: true,
-              },
-            ],
-            props: {
-              placeholder: "请选择所在城市",
-            },
-          },
-          {
-            type: "object",
             label: "经历",
             component: "resumeContentEditor",
             rules: [requiredFieldRule(), contentQualityRule()],
@@ -1535,6 +1547,87 @@ export const DEFAULT_PROJECT_FORM = {
               {
                 source: ["data", "content"],
                 prop: "modelValue",
+              },
+            ],
+          },
+          // 更多分组与工作经历保持相同的字段顺序。
+          {
+            type: "group",
+            key: "more",
+            component: "collapseGroup",
+            slot: "default",
+            span: 24,
+            rowClass: "gap-y-3",
+            props: { label: "更多" },
+            model: [
+              {
+                source: ["ui", "moreCollapsed"],
+                prop: "collapsed",
+                defaultValue: COLLAPSED,
+              },
+            ],
+            fields: [
+              // 所在城市与所在部门并排编辑。
+              {
+                type: "object",
+                label: "所在城市",
+                component: "cityPicker",
+                span: 12,
+                model: [
+                  {
+                    source: ["data", "city"],
+                    prop: "modelValue",
+                  },
+                  {
+                    source: ["__options", "city"],
+                    prop: "list",
+                    raw: true,
+                  },
+                ],
+                props: {
+                  placeholder: "请选择所在城市",
+                },
+              },
+              {
+                type: "object",
+                label: "所在部门",
+                component: "input",
+                span: 12,
+                model: {
+                  source: ["data", "department"],
+                  prop: "modelValue",
+                },
+                props: {
+                  placeholder: "请输入所在部门",
+                  clearable: true,
+                },
+              },
+              // 链接与标签沿用项目经历现有字段。
+              {
+                type: "object",
+                label: "项目链接",
+                component: "projectLink",
+                rules: [atsRule("projectLink")],
+                span: 24,
+                model: {
+                  source: ["data", "link"],
+                  prop: "modelValue",
+                  defaultValue: {},
+                },
+              },
+              {
+                type: "object",
+                label: "标签", // 项目标签字段标题。
+                component: "tag",
+                span: 24,
+                model: {
+                  source: ["data", "tags"],
+                  prop: "modelValue",
+                  defaultValue: [],
+                },
+                props: {
+                  list: ["已上线", "开源项目", "独立负责", "团队协作", "性能优化"],
+                },
               },
             ],
           },

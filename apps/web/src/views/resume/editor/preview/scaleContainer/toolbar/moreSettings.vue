@@ -7,6 +7,7 @@ import {
   dateStyleList,
   defaultInfoSeparator,
   defaultLinkUnderline,
+  defaultSubtitleCenter,
   defaultUserInfoMode,
   infoSeparatorList,
   titleIconModeList,
@@ -62,6 +63,14 @@ const linkUnderline = computed({
   get: () => currentUI.value?.content?.linkUnderline ?? defaultLinkUnderline,
   set: (value) => {
     currentUI.value.content.linkUnderline = value;
+  },
+});
+
+// 副标题居中开关
+const subtitleCenter = computed({
+  get: () => currentUI.value?.content?.subtitleCenter ?? defaultSubtitleCenter,
+  set: (value) => {
+    currentUI.value.content.subtitleCenter = value;
   },
 });
 
@@ -126,6 +135,11 @@ const setParam = (key, value) => {
           <div class="flex items-center justify-between text-sm text-sf-text-2">
             <span>{{ $t("linkUnderline") }}</span>
             <ElSwitch v-model="linkUnderline" />
+          </div>
+          <!-- 副标题居中开关：教育经历的专业在条目内居中 -->
+          <div class="flex items-center justify-between text-sm text-sf-text-2">
+            <span>{{ $t("subtitleCenter") }}</span>
+            <ElSwitch v-model="subtitleCenter" />
           </div>
 
           <div class="text-xs font-bold text-sf-text">{{ $t("personalInfo") }}</div>

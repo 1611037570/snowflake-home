@@ -15,6 +15,7 @@ import {
   defaultInfoSeparator,
   defaultLinkUnderline,
   defaultLineHeight,
+  defaultSubtitleCenter,
   defaultPaddingHorizontal,
   defaultPaddingVertical,
   defaultThemeColor,
@@ -68,6 +69,7 @@ export interface ResumeTheme {
   titleIconMode: ComputedRef<string>;
   linkUnderline: ComputedRef<boolean>;
   infoSeparator: ComputedRef<string>;
+  subtitleCenter: ComputedRef<boolean>; // 副标题是否居中展示
 }
 
 /**
@@ -181,6 +183,8 @@ export const useResumeTheme = (ui: ComputedRef<ResumeUi>): ResumeTheme => {
   const linkUnderline = computed(() => ui.value.content?.linkUnderline ?? defaultLinkUnderline);
   // 并列信息分隔符，缺失时保留默认留白样式。
   const infoSeparator = computed(() => ui.value.content?.infoSeparator ?? defaultInfoSeparator);
+  // 副标题居中开关，缺失时回退默认值
+  const subtitleCenter = computed(() => ui.value.content?.subtitleCenter ?? defaultSubtitleCenter);
 
   return {
     paddingStyle,
@@ -208,5 +212,6 @@ export const useResumeTheme = (ui: ComputedRef<ResumeUi>): ResumeTheme => {
     titleIconMode,
     linkUnderline,
     infoSeparator,
+    subtitleCenter,
   };
 };

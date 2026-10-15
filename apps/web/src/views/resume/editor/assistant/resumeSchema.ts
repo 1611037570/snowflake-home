@@ -35,7 +35,7 @@ export type ResumeSchemaSource = {
 
 export type ResumeOptionDictionary = Record<string, Array<unknown>>;
 
-const RESERVED_FIELDS = new Set(["collapsed", "hidden", "archived"]);
+const RESERVED_FIELDS = new Set(["collapsed", "hidden", "archived", "moreCollapsed"]);
 
 const normalizeModule = (schema: FormField | FormField[]) =>
   (Array.isArray(schema) ? schema[0] : schema) as FormField | undefined;
