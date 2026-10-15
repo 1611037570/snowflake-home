@@ -25,12 +25,18 @@ const skillTemplate = computed(() => nodePayload.value.skillTemplate || "bar");
 <template>
   <DistributionTemplate v-if="skillTemplate === 'distribution'" :items="items" :style="fontValue()" />
   <div v-else class="grid w-full gap-6" :class="gridClass" :style="fontValue()">
-    <!-- 技能名称与评分样式在各列中居中展示。 -->
-    <div v-for="(skill, skillIndex) in items" :key="skillIndex" class="min-w-0 text-center" :class="columns === 1 ? 'flex items-center justify-center gap-3' : 'flex flex-col items-center gap-3'">
-      <div v-if="!['semiRing', 'donut', 'openRing'].includes(skillTemplate)" class="min-w-0">
-        <ResumeField :model-value="skill.name" />
+    <!-- 有评分图形时描述位于名称和图形之间；无模板时名称与描述按文字流排列。 -->
+    <div v-for="(skill, skillIndex) in items" :key="skillIndex" class="min-w-0" :class="skillTemplate === 'none' ? 'text-left' : 'text-center'">
+      <div :class="skillTemplate === 'none' ? '' : columns === 1 ? 'flex items-center justify-center gap-3' : 'flex flex-col items-center gap-3'">
+        <span v-if="skillTemplate === 'none'" class="min-w-0 break-words">
+          <ResumeField :model-value="skill.name" tag="span" />
+          <template v-if="skill.desc">{{ " " }}<ResumeField :model-value="skill.desc" tag="span" /></template>
+        </span>
+        <ResumeField v-else-if="!['semiRing', 'donut', 'openRing'].includes(skillTemplate)" :model-value="skill.name" tag="span" />
+        <ResumeField v-if="skill.desc && !['none', 'semiRing', 'donut', 'openRing'].includes(skillTemplate)" :model-value="skill.desc" tag="span" />
+        <SkillTemplate v-if="skillTemplate !== 'none'" :template-id="skillTemplate" :level="Number(skill.level ?? 7)" :name="skill.name" :color="themeColor || '#50A2FF'" :fluid="columns !== 1" />
+        <ResumeField v-if="skill.desc && ['semiRing', 'donut', 'openRing'].includes(skillTemplate)" :model-value="skill.desc" tag="span" />
       </div>
-      <SkillTemplate :template-id="skillTemplate" :level="Number(skill.level ?? 7)" :name="skill.name" :color="themeColor || '#50A2FF'" :fluid="columns !== 1" />
     </div>
   </div>
 </template>

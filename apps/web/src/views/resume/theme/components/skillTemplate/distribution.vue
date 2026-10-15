@@ -5,6 +5,7 @@ import ResumeField from "@/views/resume/editor/preview/components/resumeField/in
 const props = defineProps<{
   items: {
     name?: string; // 技能名称
+    desc?: string; // 技能描述
     level?: number; // 该技能的一到十分评分
   }[]; // 当前显示的技能条目
   sample?: boolean; // 是否在设置菜单中展示静态示例
@@ -20,6 +21,7 @@ const shares = computed(() => {
   const total = weights.reduce((sum, value) => sum + value, 0);
   return props.items.map((item, index) => ({
     name: item.name, // 图例中的技能名称
+    desc: item.desc, // 图例中的技能描述
     color: colors[index % colors.length], // 比例条与图例共用固定颜色
     percent: total > 0 ? (weights[index] / total) * 100 : 0, // 归一化后的技能占比
   }));
@@ -40,10 +42,14 @@ const formatPercent = (value: number) => `${Number(value.toFixed(1))}%`;
     <div class="flex flex-wrap gap-3">
       <div v-for="(item, index) in shares" :key="index" class="inline-flex max-w-full shrink-0 items-center gap-3">
         <span class="h-3 w-3 shrink-0 rounded-full" :style="{ backgroundColor: item.color }" aria-hidden="true" />
-        <div class="min-w-0 truncate font-medium">
-          <span v-if="sample">{{ item.name }}</span>
-          <ResumeField v-else :model-value="item.name" />
-        </div>
+        <span class="min-w-0 break-words">
+          <span class="font-medium">
+            <span v-if="sample">{{ item.name }}</span>
+            <ResumeField v-else :model-value="item.name" tag="span" />
+          </span>
+          <!-- 描述接在名称后面，随文字自然换行。 -->
+          <template v-if="!sample && item.desc">{{ " " }}<ResumeField :model-value="item.desc" tag="span" /></template>
+        </span>
         <span class="shrink-0 text-sf-text-2">{{ formatPercent(item.percent) }}</span>
       </div>
     </div>

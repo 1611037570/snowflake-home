@@ -50,7 +50,7 @@ const resumeData: any = {
         content: "<p><strong>产品能力：</strong>熟悉用户研究、需求分析、原型设计、数据分析与项目管理，能够独立推进 0-1 产品落地。</p><p><strong>工具：</strong>熟练使用 Figma、Axure、SQL、Excel 与数据看板工具。</p>",
       },
       list: [
-        { data: { name: "数据分析" /* 技能名称 */, level: 4 /* 技能熟练度档位 */ } },
+        { data: { name: "数据分析" /* 技能名称 */, desc: "熟悉数据清洗与可视化" /* 技能描述 */, level: 4 /* 技能熟练度档位 */ } },
       ],
     },
     advantage: {
