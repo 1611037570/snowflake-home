@@ -52,6 +52,7 @@ const skillTemplate = computed({
 // 技能样式示例共用同一名称与十分制评分。
 const mockSkill = {
   name: "Vue 是最好的语言", // 示例技能名称
+  desc: "熟悉组件开发", // 示例技能描述
   level: 7, // 示例技能评分
 };
 // 占比模板示例使用多项技能，以展示整条比例条和图例。
@@ -59,10 +60,10 @@ const mockDistributionSkills = [
   { name: "Vue" /* 示例技能名称 */, level: 6 /* 示例技能评分 */ },
   { name: "TypeScript" /* 示例技能名称 */, level: 4 /* 示例技能评分 */ },
 ];
-// 选择占比或圆环样式时显示技能条目编辑区。
+// 选择无评分、占比或圆环样式时显示技能条目编辑区。
 const selectSkillTemplate = (value) => {
   skillTemplate.value = value;
-  if (["distribution", "semiRing", "donut", "openRing"].includes(value)) layout.value = "proficiency";
+  if (["none", "distribution", "semiRing", "donut", "openRing"].includes(value)) layout.value = "proficiency";
 };
 // 仅在配置指定的布局下显示列表新增入口，正文布局保持原有编辑区。
 const showAdd = computed(() => {
@@ -217,9 +218,9 @@ function handleAdd() {
                                 >
                                   <DistributionTemplate v-if="option.value === 'distribution'" :items="mockDistributionSkills" sample />
                                   <span v-else-if="!['semiRing', 'donut', 'openRing'].includes(option.value)" class="w-full text-center text-xs whitespace-normal text-sf-text-2">{{
-                                    mockSkill.name
+                                    option.value === 'none' ? `${mockSkill.name} ${mockSkill.desc}` : mockSkill.name
                                   }}</span>
-                                  <SkillTemplate v-if="option.value !== 'distribution'" :template-id="option.value" :level="mockSkill.level" :name="$t('skillName')" color="var(--sf-theme)" :fluid="option.value === 'bar'" />
+                                  <SkillTemplate v-if="!['none', 'distribution'].includes(option.value)" :template-id="option.value" :level="mockSkill.level" :name="$t('skillName')" color="var(--sf-theme)" :fluid="option.value === 'bar'" />
                                 </div>
                                 <!-- 样式名放在描边卡片外，与模板选择排版一致 -->
                                 <span

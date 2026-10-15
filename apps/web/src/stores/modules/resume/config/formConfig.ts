@@ -1047,7 +1047,7 @@ export const DEFAULT_SKILL_FORM = {
       },
     },
     {
-      // 技能列表：每条技能一行，名称与十分制评分成对编辑。
+      // 技能列表：每条技能编辑名称、描述与十分制评分。
       type: "array",
       source: ["list"],
       drag: true,
@@ -1060,6 +1060,11 @@ export const DEFAULT_SKILL_FORM = {
             source: ["data", "name"],
             defaultValue: "",
             prop: "name",
+          },
+          {
+            source: ["data", "desc"], // 技能描述。
+            defaultValue: "", // 新增技能默认没有描述。
+            prop: "desc", // 将描述传给技能编辑组件。
           },
           {
             source: ["data", "level"],

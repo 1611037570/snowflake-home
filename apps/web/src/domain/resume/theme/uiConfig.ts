@@ -204,6 +204,7 @@ export const titleIconModeList = [
 // 技能样式列表：各模板共用十分制评分，技能占比汇总各条目的数值。
 // labelKey 为语言包文案键，value 写入简历的 ui.theme.skillTemplate。
 export const skillTemplateList = [
+  { labelKey: "skillStyleNone" /* 无评分样式名称的文案键 */, value: "none" /* 仅显示名称和描述的模板编号 */ },
   { labelKey: "skillStyleBar", value: "bar" }, // 进度条模板
   { labelKey: "skillStyleDot", value: "dot" }, // 圆点模板
   { labelKey: "skillStyleScore", value: "score" }, // 评分文字模板
