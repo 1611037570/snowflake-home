@@ -352,10 +352,12 @@ export const locateEditor = (key: string, hit?: Pick<ResumeSearchHit, "itemIndex
     return;
   }
   pendingEditorLocation = () => {
-    // 高亮粒度以真实锚点为准：模块折叠时记录节点尚未挂载，
-    // 此时若仍按记录级高亮，模块级高亮会被记录下标压掉，点击预览将完全没有反馈。
+    // 模块收起时即使子记录节点曾经挂载，也应回退到大模块定位与高亮。
+    const moduleCollapsed = currentData.value?.[key]?.ui?.collapsed;
+    const moduleExpanded = !Array.isArray(moduleCollapsed) || moduleCollapsed.includes("1");
+    const recordAnchor = hit?.itemIndex != null ? findEditorRecordAnchor(key, hit.itemIndex) : null;
     const recordVisible =
-      hit?.itemIndex != null && findEditorRecordAnchor(key, hit.itemIndex) !== null;
+      moduleExpanded && recordAnchor !== null && recordAnchor.getClientRects().length > 0;
     const targetHit = recordVisible ? hit : undefined;
     if (!scrollEditorTarget(key, targetHit)) return false;
     scheduleEditorHighlight(key, targetHit);
