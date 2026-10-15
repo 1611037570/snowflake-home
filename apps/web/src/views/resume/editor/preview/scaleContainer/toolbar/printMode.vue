@@ -13,7 +13,8 @@ const togglePrintMode = () => {
 </script>
 
 <template>
-  <SfTooltip :content="system.printMode ? $t('printColorMode') : $t('printGrayMode')">
+  <!-- 提示显示在图标右侧，避免遮挡上方入口。 -->
+  <SfTooltip :content="system.printMode ? $t('printColorMode') : $t('printGrayMode')" placement="right">
     <SfIcon
       :icon="
         system.printMode

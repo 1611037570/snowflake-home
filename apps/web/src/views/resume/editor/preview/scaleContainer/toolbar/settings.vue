@@ -152,7 +152,7 @@ const setNumberParam = (key, value) => {
         <div class="flex flex-col gap-3 pb-3">
           <div class="text-xs font-bold text-sf-text">{{ $t("pageLayout") }}</div>
           <div v-for="item in visibleLayoutParams" :key="item.key" class="flex flex-col gap-1">
-            <div class="flex items-center justify-between text-sm text-sf-text-2">
+            <div class="flex items-center text-sm text-sf-text-2">
               <span class="flex items-center gap-1">
                 <span>{{ $t(item.labelKey) }}</span>
                 <SfIcon
@@ -162,9 +162,8 @@ const setNumberParam = (key, value) => {
                   @click="setParam(item.key, getParamDefault(item.key))"
                 />
               </span>
-              <span>{{ getNumberValue(item.key) }}{{ item.unit === "lineHeightUnit" ? $t(item.unit) : item.unit }}</span>
             </div>
-            <!-- 滑块与右侧数字输入共用同一参数。 -->
+            <!-- 滑块与数字输入共用参数，单位显示在最右侧。 -->
             <div class="flex items-center gap-3">
               <SfSlider
                 :model-value="getNumberValue(item.key)"
@@ -185,6 +184,7 @@ const setNumberParam = (key, value) => {
                   size="small"
                 />
               </div>
+              <span class="shrink-0 text-sm text-sf-text-2">{{ item.unit === "lineHeightUnit" ? $t(item.unit) : item.unit }}</span>
             </div>
           </div>
           <!-- 个人信息与经历日期的排版选项：与页面数值参数共用同一入口 -->
