@@ -100,8 +100,10 @@ const createQuickResume = () => {
 };
 
 const useTemplate = (template) => {
+  // 模板列表经响应式代理包装，先转成纯数据再交给创建流程。
+  const item = JSON.parse(JSON.stringify(template.item));
   // 新建成功后上报一次简历创建动作
-  if (resumeStore.addResume(structuredClone(template.item))) {
+  if (resumeStore.addResume(item)) {
     trackResumeAction({ eventType: "create", fileType: "none" });
   }
   close();
