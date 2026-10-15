@@ -24,7 +24,7 @@ export const PREVIEW_TITLES: Record<PreviewLang, Record<string, string>> = {
     work: "工作经历",
     internship: "实习经历", // 实习模块标题。
     project: "项目经历",
-    publication: "学术论文",
+    publication: "论文发表",
     honor: "荣誉证书",
     portfolio: "作品集",
     club: "社团经历",
