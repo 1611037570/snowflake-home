@@ -14,8 +14,18 @@ const { theme: { linkUnderline } } = useResumePreviewContext();
 
 <template>
   <div class="flex max-w-full min-w-0 items-center">
-    <!-- 有名称时只展示名称，名称缺失时才回退展示链接地址 -->
-    <span v-if="item.name" class="shrink-0 whitespace-nowrap">
+    <!-- 与教育经历一致：有效链接包住显示名称，悬停时为名称加下划线。 -->
+    <a
+      v-if="item.name && safeUrl(item.url)"
+      :href="safeUrl(item.url)"
+      target="_blank"
+      rel="noopener noreferrer"
+      class="account-name-link shrink-0 whitespace-nowrap hover:underline"
+      :class="{ underline: linkUnderline }"
+    >
+      <ItemTitle :name="item.name" class="inline-block" />
+    </a>
+    <span v-else-if="item.name" class="account-name-link shrink-0 whitespace-nowrap hover:underline">
       <ItemTitle :name="item.name" class="inline-block" />
     </span>
     <!-- 链接需要 flex-1 + overflow-hidden 的包裹层，窄栏内才能截断溢出 -->
@@ -37,3 +47,16 @@ const { theme: { linkUnderline } } = useResumePreviewContext();
     </div>
   </div>
 </template>
+
+<style scoped>
+/* 名称经过标题组件的块级包裹，悬停时直接给实际文字加下划线。 */
+.account-name-link:hover :deep([data-resume-plain-text]),
+.account-name-link.underline :deep([data-resume-plain-text]) {
+  text-decoration: underline;
+}
+
+/* 地址链接沿用教育经历预览的悬停规则。 */
+:deep(a:hover) {
+  text-decoration: underline;
+}
+</style>
