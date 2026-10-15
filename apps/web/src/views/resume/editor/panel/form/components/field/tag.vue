@@ -34,9 +34,7 @@ const addTag = () => {
 </script>
 
 <template>
-  <div
-    class="flex min-h-12 w-full flex-wrap items-center gap-3 rounded-3xl border border-sf-b px-3 py-3 transition-colors hover:border-sf-theme"
-  >
+  <div class="flex min-h-12 w-full flex-wrap items-center gap-3">
     <!-- 选中标签使用一级主题文字与边框、二级主题背景。 -->
     <div
       v-for="tag in options"
@@ -53,7 +51,7 @@ const addTag = () => {
     </div>
     <input
       v-model="inputValue"
-      class="min-w-32 flex-1 bg-transparent text-sm text-sf-text outline-none placeholder:text-sf-text-3"
+      class="min-w-32 flex-1 border-b border-sf-b bg-transparent text-sm text-sf-text transition-colors outline-none placeholder:text-sf-text-3 focus:border-sf-theme"
       :placeholder="$t('tagPlaceholder')"
       @keydown.enter.prevent="addTag"
     />
