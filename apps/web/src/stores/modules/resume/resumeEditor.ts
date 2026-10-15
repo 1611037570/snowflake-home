@@ -53,13 +53,18 @@ export const createResumeEditor = ({
       return;
     }
     const runtime = buildRuntimeConfig(item.config, item.data);
+    // 技能编辑字段按简历级布局显示，切换时保留另一种布局已有内容。
+    const skillField = runtime.fields.find((field: any) => field?.key === "skill");
+    if (skillField) skillField.fields = skillField.fields.filter((field: any) =>
+      item.ui?.skill?.layout === "proficiency" ? field.type === "array" : field.type !== "array",
+    );
     // 记录折叠默认值按系统设置读取，仅影响新增记录
     bindCollapsedDefault(runtime.fields, () => itemDefaultCollapsed.value);
     runtimeConfig.value = runtime;
   };
-  // 切简历或切换应用语言时按最新模板重建运行时配置
+  // 切简历、切换语言或技能布局时按最新模板重建运行时配置。
   watch(
-    [currentItem, () => (i18n.global.locale as any).value ?? i18n.global.locale],
+    [currentItem, () => (i18n.global.locale as any).value ?? i18n.global.locale, () => currentItem.value?.ui?.skill?.layout],
     refreshRuntime,
     { immediate: true },
   );

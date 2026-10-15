@@ -202,11 +202,11 @@ export const titleIconModeList = [
   },
 ];
 // 技能熟练度样式列表：进度条按档位点亮横条，圆点按档位点亮刻度，分数直接展示数值。
-// labelKey 为语言包文案键，value 写入技能模块的 ui.skillStyle 并随简历保存。
-export const skillStyleList = [
-  { labelKey: "skillStyleBar", value: "bar" }, // 进度条样式
-  { labelKey: "skillStyleDot", value: "dot" }, // 圆点样式
-  { labelKey: "skillStyleScore", value: "score" }, // 分数样式
+// labelKey 为语言包文案键，value 写入简历的 ui.theme.skillTemplate。
+export const skillTemplateList = [
+  { labelKey: "skillStyleBar", value: "bar" }, // 进度条模板
+  { labelKey: "skillStyleDot", value: "dot" }, // 圆点模板
+  { labelKey: "skillStyleScore", value: "score" }, // 分数模板
 ];
 // ===========默认值=====================
 export const defaultThemeColor = "#50A2FF";
@@ -247,8 +247,8 @@ export const defaultDatePosition = "right";
 export const defaultTextAlign = "auto";
 // 默认模块标题图标模式
 export const defaultTitleIconMode = "none";
-// 默认技能熟练度样式：进度条
-export const defaultSkillStyle = "bar";
+// 默认技能熟练度模板：进度条
+export const defaultSkillTemplate = "bar";
 // 默认链接下划线开关
 export const defaultLinkUnderline = false;
 // 默认副标题不居中
@@ -305,6 +305,7 @@ export const DEFAULT_UI = {
     color: defaultThemeColor,
     template: defaultThemeTemplate,
     titleTemplate: "auto", // 标题样式默认由主题决定
+    skillTemplate: defaultSkillTemplate, // 技能熟练度默认使用进度条模板
     userTemplate: "auto", // 个人信息组件默认按版式选用公共组件
     titleIconMode: defaultTitleIconMode,
   },
@@ -317,5 +318,9 @@ export const DEFAULT_UI = {
     infoLayout: defaultUserInfoLayout,
     avatarPosition: defaultAvatarPosition,
     infoPosition: defaultInfoPosition,
+  },
+  skill: {
+    layout: "text", // 默认使用正文布局
+    columns: 1, // 熟练度列表默认单栏
   },
 };

@@ -40,15 +40,12 @@ export const createRichTextModuleAdapter = (moduleKey: string): LayoutAdapter =>
   ];
 };
 
-/** 读取技能模块数据：正文与技能条目共存，由模块 ui.layout 决定渲染哪一种 */
+/** 读取技能模块数据：正文与技能条目共存，由简历 ui.skill.layout 决定渲染哪一种 */
 const getSkillModuleData = (context: LayoutAdapterContext) => {
   const moduleData = context.data[context.moduleKey];
   if (!moduleData || typeof moduleData !== "object") return null;
-  return moduleData as { ui?: { layout?: unknown /* 技能展示形式 */, skillColumns?: unknown /* 熟练度预览列数 */, skillStyle?: unknown /* 熟练度展示样式 */ }; data?: { content?: unknown }; list?: unknown };
+  return moduleData as { data?: { content?: unknown }; list?: unknown };
 };
-
-// 技能样式白名单，非法取值回退进度条
-const SKILL_STYLES = new Set(["bar", "dot", "score"]);
 
 /** 创建技能模块适配器：熟练度布局渲染技能条目列表，其余布局沿用富文本正文 */
 export const createSkillModuleAdapter = (moduleKey: string): LayoutAdapter => (
@@ -56,14 +53,15 @@ export const createSkillModuleAdapter = (moduleKey: string): LayoutAdapter => (
 ) => {
   const moduleData = getSkillModuleData(context);
   if (!moduleData) return [];
+  const skillUi = context.ui?.skill as { layout?: string /* 技能布局 */, columns?: number /* 熟练度列数 */ } | undefined;
+  const themeUi = context.ui?.theme as { skillTemplate?: string /* 技能模板编号 */ } | undefined;
 
   // 熟练度布局按列数组成整行节点，分页时保持同一行的技能在一起。
-  if (moduleData.ui?.layout === "proficiency") {
-    const requestedColumns = Number(moduleData.ui.skillColumns);
+  if (skillUi?.layout === "proficiency") {
+    const requestedColumns = Number(skillUi.columns);
     const columns = requestedColumns === 2 || requestedColumns === 3 ? requestedColumns : 1;
-    // 样式取值经白名单校验后下发给正文组件
-    const requestedStyle = String(moduleData.ui.skillStyle ?? "");
-    const skillStyle = SKILL_STYLES.has(requestedStyle) ? requestedStyle : "bar";
+    // 模板编号随节点传入公共技能组件，预览与菜单使用同一实现。
+    const skillTemplate = themeUi?.skillTemplate || "bar";
     const entries = getValidDataEntries(moduleData.list);
     const rows = [];
     for (let offset = 0; offset < entries.length; offset += columns) {
@@ -79,7 +77,7 @@ export const createSkillModuleAdapter = (moduleKey: string): LayoutAdapter => (
           item: row[0].data, // 单栏及主题覆盖沿用首个条目。
           items: row.map(({ data }) => data), // 同行展示的技能条目。
           columns, // 当前行使用的列数。
-          skillStyle, // 当前行使用的熟练度样式。
+          skillTemplate, // 当前行使用的技能模板编号。
         },
       });
     }

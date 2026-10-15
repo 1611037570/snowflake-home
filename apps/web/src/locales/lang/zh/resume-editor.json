@@ -566,7 +566,7 @@
   "skillTwoColumns": "两栏",
   "skillThreeColumns": "三栏",
   "skillColumnHint": "每行显示的技能数量",
-  "skillStyle": "技能样式",
+  "skillTemplate": "技能模板",
   "skillStyleBar": "进度条",
   "skillStyleDot": "圆点",
   "skillStyleScore": "分数",

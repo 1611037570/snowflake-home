@@ -7,7 +7,6 @@ import type {
   ModelBinding,
   ObjectFormField,
 } from "@/components/business/dynamicForm/api";
-import { defaultSkillStyle } from "@/domain/resume/theme/uiConfig";
 
 // 展开状态数组：对应 SfCollapseItem 的激活 name，表示折叠容器为展开态
 export const EXPANDED = ["1"];
@@ -1030,38 +1029,15 @@ export const DEFAULT_SKILL_FORM = {
     add: true, // 熟练度列表允许新增技能记录。
     addWhenLayout: "proficiency", // 仅切换到熟练度布局时显示新增入口。
   },
-  model: [
-    ...createModuleState("专业技能"),
-    {
-      source: ["ui", "layout"], // 模块保存的布局状态。
-      prop: "layout", // 绑定标题旁的布局菜单。
-      defaultValue: "text", // 默认使用正文布局。
-    },
-    {
-      source: ["ui", "skillColumns"], // 熟练度列表的预览列数。
-      prop: "skillColumns", // 绑定布局菜单中的列数选项。
-      defaultValue: 1, // 默认单栏显示。
-    },
-    {
-      source: ["ui", "skillStyle"], // 熟练度的展示样式。
-      prop: "skillStyle", // 绑定布局菜单中的样式选项。
-      defaultValue: defaultSkillStyle, // 默认进度条样式。
-    },
-  ],
+  model: createModuleState("专业技能"),
   checks: MODULE_CHECKS,
   slot: "default",
   fields: [
     {
-      // 熟练度布局下不渲染富文本编辑器
+      // 正文布局使用富文本编辑器。
       type: "object",
       component: "resumeContentEditor",
       rules: [requiredFieldRule(), contentQualityRule()],
-      checks: {
-        removed: {
-          path: ["ui", "layout"],
-          equals: "proficiency",
-        },
-      },
       props: {
         kind: "skill",
       },
@@ -1078,12 +1054,6 @@ export const DEFAULT_SKILL_FORM = {
       dragClass: DEFAULT_DRAG_CLASS,
       rowClass: "gap-y-3 px-3 pt-3",
       itemClass: DEFAULT_COL_CLASS + " px-3! py-1", // 技能卡片上下留白，避免输入框贴住边框。
-      checks: {
-        removed: {
-          path: ["ui", "layout"],
-          equals: "text",
-        },
-      },
       itemSchema: {
         model: [
           {

@@ -34,6 +34,7 @@ export interface ResumeUi {
     color: string; // 主题色
     template: string; // 当前主题编号
     titleTemplate: string; // 标题样式编号，auto 表示使用主题默认标题样式
+    skillTemplate: string; // 技能熟练度模板编号
     userTemplate: string; // 个人信息组件编号，auto 表示按页面版式使用公共组件
     titleIconMode: string; // 模块标题图标模式
   };
@@ -46,6 +47,10 @@ export interface ResumeUi {
     infoLayout: string; // 资料排列方式
     avatarPosition: string; // 头像位置
     infoPosition: string; // 资料水平对齐位置
+  };
+  skill: { // 专业技能展示方式
+    layout: string; // 正文或熟练度列表布局
+    columns: number; // 熟练度列表列数
   };
 }
 
