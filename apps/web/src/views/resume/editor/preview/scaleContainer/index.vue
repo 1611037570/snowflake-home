@@ -91,12 +91,6 @@ const scale = computed(() => {
   if (scaleMode.value === "onePage") return onePageScale.value;
   return manualScale.value;
 });
-// 简历纸张左边缘相对滚动区的偏移，供固定入口贴到纸张左上角
-const resumeLeft = computed(() => {
-  const { width } = availableSize.value;
-  if (scaleMode.value === "a4" && contentSize.value.width > width) return 0;
-  return Math.max((width - contentSize.value.width * scale.value) / 2, 0);
-});
 const transitionScale = useTransition(scale, {
   duration: 200,
   transition: TransitionPresets.easeOutCubic,
@@ -222,16 +216,6 @@ useResizeObserver(contentRef, ([entry]) => {
         </template>
       </SfDropdown>
 
-      <SfTooltip :content="$t('fullscreen')">
-        <SfIcon
-          icon="lucide:maximize"
-          size="5"
-          boxSize="7"
-          class="rounded-full text-sf-text-2 hover:bg-sf-theme-2 hover:text-sf-theme-text"
-          @click="$emit('fullscreen')"
-        />
-      </SfTooltip>
-
       <SfTooltip v-if="selectedModule.length" :content="$t('clearSelection')">
         <SfIcon
           icon="lucide:circle-slash"
@@ -282,13 +266,22 @@ useResizeObserver(contentRef, ([entry]) => {
           </div>
         </div>
       </SfScrollbar>
-      <!-- 打印模式与样式疑问入口固定在预览区顶部，横向对齐到简历纸张左边缘，置于去色容器外避免图标一并变灰。 -->
+      <!-- 三个预览入口统一图标尺寸并固定在预览区左上角，置于去色容器外避免图标一并变灰。 -->
       <div
         v-if="showToolbar"
-        class="absolute top-3 z-10 flex flex-col items-start gap-3"
-        :style="{ left: `${resumeLeft}px` }"
+        class="absolute top-3 left-3 z-10 flex flex-col items-start gap-3"
       >
         <PrintMode />
+        <!-- 提示显示在图标右侧，避免遮挡上方入口。 -->
+        <SfTooltip :content="$t('fullscreen')" placement="right">
+          <SfIcon
+            icon="lucide:maximize"
+            size="6"
+            boxSize="8"
+            class="rounded-full text-sf-text-2 hover:bg-sf-theme-2 hover:text-sf-theme-text"
+            @click="$emit('fullscreen')"
+          />
+        </SfTooltip>
         <StyleHint @standard-a4="setStandardA4" />
       </div>
     </div>

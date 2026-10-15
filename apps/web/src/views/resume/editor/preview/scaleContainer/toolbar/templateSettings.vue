@@ -5,6 +5,7 @@ import { $t } from "@/locales";
 import { useResumeStore } from "@/stores";
 import {
   defaultPageBackground,
+  defaultSubtitleCenter,
   fontColorOptions,
   pageBackgroundColors,
 } from "@/domain/resume/theme/uiConfig";
@@ -51,6 +52,14 @@ const pageBackground = computed({
   get: () => currentUI.value?.page?.background || defaultPageBackground,
   set: (value) => {
     if (!getSettingRestriction("page.background")) currentUI.value.page.background = value;
+  },
+});
+
+// 副标题居中开关：教育经历的专业在条目内居中。
+const subtitleCenter = computed({
+  get: () => currentUI.value?.content?.subtitleCenter ?? defaultSubtitleCenter,
+  set: (value) => {
+    currentUI.value.content.subtitleCenter = value;
   },
 });
 </script>
@@ -112,6 +121,11 @@ const pageBackground = computed({
             />
             <span>{{ $t(option.name) }}</span>
           </SfButton>
+        </div>
+        <!-- 副标题居中设置归入设计面板。 -->
+        <div class="flex items-center justify-between text-sm text-sf-text-2">
+          <span>{{ $t("subtitleCenter") }}</span>
+          <ElSwitch v-model="subtitleCenter" />
         </div>
       </div>
     </template>
