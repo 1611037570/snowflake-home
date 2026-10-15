@@ -18,6 +18,7 @@ import PositionPicker from "./components/field/positionPicker.vue";
 import SalaryRange from "./components/field/salaryRange.vue";
 import ProjectLink from "./components/field/projectLink.vue";
 import UrlInput from "./components/field/urlInput.vue";
+import PublicationAuthors from "./components/field/publicationAuthors.vue";
 import Sizes from "./components/field/sizes.vue";
 import SubtitleBox from "./components/field/subtitleBox.vue";
 import Tag from "./components/field/tag.vue";
@@ -134,6 +135,7 @@ const dynamicComponents = {
   salaryRange: SalaryRange,
   projectLink: ProjectLink,
   urlInput: UrlInput, // 链接地址统一提供协议前缀预选。
+  publicationAuthors: PublicationAuthors,
   sizes: Sizes,
   more: More,
   subtitleBox: SubtitleBox,

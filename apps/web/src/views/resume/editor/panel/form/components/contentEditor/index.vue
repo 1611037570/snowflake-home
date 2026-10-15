@@ -90,7 +90,15 @@ const appendExample = (example) => {
 
 <template>
   <div class="w-full">
-    <WangEditor v-model="content">
+    <!-- 论文研究内容直接使用一行起步的多行文本框保存纯文本。 -->
+    <SfInput
+      v-if="props.kind === 'publication'"
+      v-model="content"
+      type="textarea"
+      :autosize="{ minRows: 1, maxRows: 4 }"
+      class="[&_.el-textarea__inner]:text-[10px]"
+    />
+    <WangEditor v-else v-model="content">
       <template v-if="supportsTemplateExample" #toolbar>
         <TemplateExamplePicker
           :examples="examples"

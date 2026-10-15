@@ -168,17 +168,7 @@ export const RESUME_VALUE_OPTIONS = {
   publicationStatus: [
     { name: "已发表", value: "已发表" },
     { name: "已录用", value: "已录用" },
-    { name: "在审", value: "在审" },
-    { name: "预印本", value: "预印本" },
-  ],
-  // 论文本人位次
-  publicationAuthorOrder: [
-    { name: "第一作者", value: "第一作者" },
-    { name: "共同一作", value: "共同一作" },
-    { name: "通讯作者", value: "通讯作者" },
-    { name: "第二作者", value: "第二作者" },
-    { name: "第三作者", value: "第三作者" },
-    { name: "其他位次", value: "其他位次" },
+    { name: "在投" /* 下拉显示名称 */, value: "在投" /* 保存的发表状态 */ },
   ],
 };
 
