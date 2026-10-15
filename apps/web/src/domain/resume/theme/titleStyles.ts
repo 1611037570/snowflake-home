@@ -8,7 +8,7 @@ export interface TitleStyleDefinition {
   titleSize?: number; // 该标题样式默认的模块标题字号，缺省沿用全局默认
 }
 
-// 清单只登记标题样式，主题通过 titleTemplate 选择组件。
+// 清单只登记标题样式，主题通过 titleTemplate 选择组件；新增标题追加在末尾并同步提供极简独立主题。
 export const titleStyleList = [
   { id: "barUnderline", scope: "standalone", name: "竖条细线", description: "标题左侧一道主题色竖条，下接通栏细线。" },
   { id: "centeredShortRule", scope: "standalone", name: "居中短横线", description: "标题居中，下方一小段主题色短横线。", titleIconMode: "icon" },
@@ -176,6 +176,30 @@ export const titleStyleList = [
     description: "深灰斜切底带上的中英双语标题，右端收成细尾并压一块主题色斜块。", // 标题样式说明
     titleIconMode: "none", // 默认隐藏模块图标
     titleSize: 20, // 默认标题字号
+  },
+  {
+    id: "crimsonGeometryTitle", // 几何方标标题编号
+    scope: "standalone", // 完整主题与极简独立主题共用
+    name: "赤日方标", // 标题样式名称
+    description: "红色缺角方标与深蓝疏朗标题。", // 标题样式说明
+    titleIconMode: "none", // 标题不额外显示图标
+    titleSize: 17, // 默认标题字号
+  },
+  {
+    id: "wideTrackingRule", // 宽字距细线标题编号
+    scope: "standalone", // 完整主题与极简独立主题共用
+    name: "疏字细线", // 标题样式名称
+    description: "宽字距标题下方使用一条浅灰细线。", // 标题样式说明
+    titleIconMode: "none", // 标题不显示图标
+    titleSize: 16, // 默认标题字号
+  },
+  {
+    id: "leadingDashTitle", // 前置短线标题编号
+    scope: "standalone", // 完整主题与独立标题主题共用
+    name: "短线引题", // 标题样式名称
+    description: "短横线引出疏朗标题文字。", // 标题样式说明
+    titleIconMode: "none", // 标题不显示额外图标
+    titleSize: 15, // 默认标题字号
   },
 ] satisfies TitleStyleDefinition[];
 

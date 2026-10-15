@@ -1,4 +1,8 @@
 import academic from "@/domain/resume/theme/styles/academic";
+import airyEditorial from "@/domain/resume/theme/styles/airyEditorial";
+import architectMargin from "@/domain/resume/theme/styles/architectMargin";
+import quietColumns from "@/domain/resume/theme/styles/quietColumns";
+import sunlitDots from "@/domain/resume/theme/styles/sunlitDots";
 import { cloneDeep } from "lodash-es";
 // 简约档新增主题：集中放在列表最前，方便在模板库首屏认样
 import numberWatermark from "@/domain/resume/theme/styles/numberWatermark";
@@ -22,6 +26,7 @@ import chronicleRail from "@/domain/resume/theme/styles/chronicleRail";
 import colorBar from "@/domain/resume/theme/styles/colorBar";
 import colorDotNotes from "@/domain/resume/theme/styles/colorDotNotes";
 import compactTimeline from "@/domain/resume/theme/styles/compactTimeline";
+import crimsonGeometry from "@/domain/resume/theme/styles/crimsonGeometry";
 import centeredInsetFrame from "@/domain/resume/theme/styles/centeredInsetFrame";
 import curvedHeader from "@/domain/resume/theme/styles/curvedHeader";
 import defaultTheme from "@/domain/resume/theme/styles/default";
@@ -89,6 +94,11 @@ import {
 // 主题定义集中成数组，并由此生成唯一注册表。
 export const themeTemplateList = createThemeTemplates([
   // 数组顺序即模板库卡片顺序：新增主题优先展示，岁序与墨玉右栏是最新两套，简约档紧随其后。
+  architectMargin,
+  sunlitDots,
+  quietColumns,
+  airyEditorial,
+  crimsonGeometry,
   chronicleRail,
   jadeRightSidebar,
   numberWatermark,

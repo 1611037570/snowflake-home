@@ -156,6 +156,30 @@ const plainTitleThemeSpecs = [
       horizontal: 27, // 页面左右边距
     },
   },
+  {
+    id: "plainCrimsonGeometryTitle", // 赤日方标独立主题编号
+    titleStyleId: "crimsonGeometryTitle", // 复用赤日几何主题的标题组件
+    color: "#E73646", // 方形标题标记的红色
+    padding: { // 页面边距
+      vertical: 30, // 页面上下边距
+      horizontal: 30, // 页面左右边距
+    },
+  },
+  {
+    id: "plainWideTrackingRule", // 疏字细线独立主题编号
+    titleStyleId: "wideTrackingRule", // 复用宽字距细线标题组件
+    color: "#253C54", // 深灰蓝主题色
+    padding: { // 页面边距
+      vertical: 36, // 页面上下边距
+      horizontal: 42, // 页面左右边距
+    },
+  },
+  {
+    id: "plainLeadingDashTitle", // 短线引题独立主题编号
+    titleStyleId: "leadingDashTitle", // 复用前置短线标题组件
+    color: "#222222", // 深灰标题色
+    padding: { vertical: 36, horizontal: 42 }, // 页面边距
+  },
 ] as const satisfies readonly PlainTitleThemeSpec[];
 
 // 每个编号生成一份真实主题声明；标题组件仍由 titleStyleId 独立选择。
