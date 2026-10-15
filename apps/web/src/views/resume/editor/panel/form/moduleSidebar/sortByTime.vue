@@ -54,14 +54,17 @@ const sortByTime = () => {
   });
 
   if (!operations.length) {
-    ElMessage.info($t("sortByTimeNoChange"));
+    // 提示统一从右上角显示，避开顶部头部工具栏。
+    ElMessage.info({ message: $t("sortByTimeNoChange"), position: "top-right", offset: 40 });
     return;
   }
 
   const result = resumeStore.applyResumeOperations(operations);
-  ElMessage[result.failed.length ? "warning" : "success"](
-    result.failed.length ? $t("sortByTimePartial") : $t("sortByTimeSuccess"),
-  );
+  ElMessage[result.failed.length ? "warning" : "success"]({
+    message: result.failed.length ? $t("sortByTimePartial") : $t("sortByTimeSuccess"),
+    position: "top-right",
+    offset: 40,
+  });
 };
 </script>
 
