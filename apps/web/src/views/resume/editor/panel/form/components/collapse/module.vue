@@ -4,7 +4,8 @@ import { useFormContext } from "@/components/business/dynamicForm/api";
 import { jumpPreview } from "../../../../hooks/useModuleNav";
 import { useScrollEditorTo } from "../../../../hooks/useScrollEditorTo";
 import eventBus from "@/utils/modules/eventBus";
-import { skillStyleList } from "@/domain/resume/theme/uiConfig";
+import { skillTemplateList } from "@/domain/resume/theme/uiConfig";
+import SkillTemplate from "@/views/resume/theme/components/skillTemplate/index.vue";
 import Icon from "../icon.vue";
 import EditableTitle from "./editableTitle.vue";
 import { $t } from "@/locales";
@@ -32,27 +33,23 @@ const title = defineModel("title", {
   type: String,
   default: "",
 });
-// 专业技能布局写回模块界面状态，供表单和预览共用。
-const layout = defineModel("layout", {
-  type: String,
-  default: "text",
-});
-// 熟练度布局的预览列数由模块自身保存。
-const skillColumns = defineModel("skillColumns", {
-  type: Number,
-  default: 1,
-});
-// 熟练度样式写回模块界面状态，供表单和预览共用。
-const skillStyle = defineModel("skillStyle", {
-  type: String,
-  default: "bar",
-});
-// 样式预览伪数据：固定技能名称与满分数值，直观展示各样式效果。
-const mockSkill = { name: "Vue 是最好的语言", score: 10 };
-// 熟练度满分档位：预览条与预览点按满档点亮。
-const PROFICIENCY_MAX = 5;
 const { currentForm, addItem } = useFormContext();
 const resumeStore = useResumeStore();
+// 技能布局与列数保存在简历 ui.skill，模板编号与标题模板同属 ui.theme。
+const layout = computed({
+  get: () => resumeStore.currentUI?.skill?.layout ?? "text",
+  set: (value) => { resumeStore.currentUI.skill.layout = value; },
+});
+const skillColumns = computed({
+  get: () => resumeStore.currentUI?.skill?.columns ?? 1,
+  set: (value) => { resumeStore.currentUI.skill.columns = value; },
+});
+const skillTemplate = computed({
+  get: () => resumeStore.currentUI?.theme?.skillTemplate ?? "bar",
+  set: (value) => { resumeStore.currentUI.theme.skillTemplate = value; },
+});
+// 样式示例沿用固定技能名称与满档熟练度。
+const mockSkill = { name: "Vue 是最好的语言", level: 5 };
 // 仅在配置指定的布局下显示列表新增入口，正文布局保持原有编辑区。
 const showAdd = computed(() => {
   if (!props.add) return false;
@@ -152,7 +149,7 @@ function handleAdd() {
                         <p class="text-xs font-normal text-sf-text-2">{{ $t("skillLayout") }}</p>
                         <ElRadioGroup
                           v-model="layout"
-                          class="flex! flex-nowrap! items-center! gap-3!"
+                          class="flex! flex-nowrap! items-center! justify-center! gap-3!"
                         >
                           <ElRadio value="text" class="mr-0! whitespace-nowrap">{{
                             $t("skillLayoutRichText")
@@ -171,7 +168,7 @@ function handleAdd() {
                           </p>
                           <ElRadioGroup
                             v-model="skillColumns"
-                            class="flex! flex-nowrap! items-center! justify-between! gap-3!"
+                            class="flex! flex-nowrap! items-center! justify-center! gap-3!"
                           >
                             <ElRadio :value="1" class="mr-0! whitespace-nowrap">{{
                               $t("skillSingleColumn")
@@ -184,56 +181,31 @@ function handleAdd() {
                             }}</ElRadio>
                           </ElRadioGroup>
                         </div>
-                        <!-- 技能样式：用伪数据直接预览各样式效果，点击写入 ui.skillStyle。 -->
+                        <!-- 技能模板示例与预览调用同一个组件。 -->
                         <div class="flex flex-col gap-3 border-t border-sf-b pt-3">
-                          <p class="text-xs font-normal text-sf-text-2">{{ $t("skillStyle") }}</p>
+                          <p class="text-xs font-normal text-sf-text-2">{{ $t("skillTemplate") }}</p>
                           <div class="grid grid-cols-3 gap-3">
                             <div
-                              v-for="option in skillStyleList"
+                              v-for="option in skillTemplateList"
                               :key="option.value"
-                              class="flex cursor-pointer flex-col items-center gap-1"
-                              @click="skillStyle = option.value"
+                              class="flex cursor-pointer flex-col items-center gap-3"
+                              @click="skillTemplate = option.value"
                             >
                               <!-- 描边卡片内只放伪数据技能行 -->
                               <div
-                                class="flex w-full flex-1 flex-col justify-center gap-1 rounded-2xl border-3 border-sf-transparent bg-sf-bg p-3"
-                                :class="{ 'border-sf-theme!': skillStyle === option.value }"
+                                class="flex w-full flex-1 flex-col items-center justify-center gap-3 rounded-2xl border-3 border-sf-transparent bg-sf-bg p-3 text-center"
+                                :class="{ 'border-sf-theme!': skillTemplate === option.value }"
                               >
-                                <span class="w-full text-xs whitespace-normal text-sf-text-2">{{
+                                <span class="w-full text-center text-xs whitespace-normal text-sf-text-2">{{
                                   mockSkill.name
                                 }}</span>
-                                <!-- 进度条：满档点亮的横条 -->
-                                <span
-                                  v-if="option.value === 'bar'"
-                                  class="flex w-full items-center gap-1"
-                                >
-                                  <span
-                                    v-for="segment in PROFICIENCY_MAX"
-                                    :key="segment"
-                                    class="h-1.5 min-w-0 flex-1 rounded-full bg-sf-theme"
-                                  />
-                                </span>
-                                <!-- 圆点：满档点亮的刻度 -->
-                                <span
-                                  v-else-if="option.value === 'dot'"
-                                  class="flex items-center gap-1"
-                                >
-                                  <span
-                                    v-for="segment in PROFICIENCY_MAX"
-                                    :key="segment"
-                                    class="h-1.5 w-1.5 rounded-full bg-sf-theme"
-                                  />
-                                </span>
-                                <!-- 分数：直接展示满档数值 -->
-                                <span v-else class="text-xs font-bold text-sf-theme"
-                                  >{{ mockSkill.score }}分</span
-                                >
+                                <SkillTemplate :template-id="option.value" :level="mockSkill.level" :color="resumeStore.currentUI?.theme?.color || '#50A2FF'" :fluid="option.value === 'bar'" />
                               </div>
                               <!-- 样式名放在描边卡片外，与模板选择排版一致 -->
                               <span
-                                class="text-xs"
+                                class="text-center text-xs"
                                 :class="
-                                  skillStyle === option.value ? 'text-sf-theme' : 'text-sf-text-2'
+                                  skillTemplate === option.value ? 'text-sf-theme' : 'text-sf-text-2'
                                 "
                                 >{{ $t(option.labelKey) }}</span
                               >

@@ -3,83 +3,32 @@ import { computed } from "vue";
 import ResumeField from "@/views/resume/editor/preview/components/resumeField/index.vue";
 import { useResumePreviewContext } from "@/views/resume/editor/preview/shared/previewContext";
 import { useNodeContent, type NodeContentProps } from "@/views/resume/editor/preview/resumePages/render/nodeContentContract";
-import type { ContentItem } from "@/views/resume/editor/preview/resumePages/render/contentPayload";
+import SkillTemplate from "@/views/resume/theme/components/skillTemplate/index.vue";
 
 const props = withDefaults(defineProps<NodeContentProps>(), {
   blockRange: () => ({ start: 0 /* 起始块 */, end: Number.MAX_SAFE_INTEGER /* 结束块 */ }),
 });
 const { item, nodePayload } = useNodeContent(props);
-const { theme: { themeColor, themeColorSoft, fontValue } } = useResumePreviewContext();
+const { theme: { themeColor, fontValue } } = useResumePreviewContext();
 
-// 熟练度总分五档，条目 level 取 1-5，越界值按边界处理
-const PROFICIENCY_MAX = 5;
 const columns = computed(() => nodePayload.value.columns === 2 || nodePayload.value.columns === 3
   ? nodePayload.value.columns : 1);
 // 固定类名供样式构建收集，列数仅使用经过校验的三个值。
 const GRID_CLASSES: Record<number, string> = { 1: "grid-cols-1", 2: "grid-cols-2", 3: "grid-cols-3" };
 const gridClass = computed(() => GRID_CLASSES[columns.value]);
 const items = computed(() => nodePayload.value.items?.length ? nodePayload.value.items : [item.value]);
-const level = (skill: ContentItem) => {
-  const value = Number(skill.level);
-  if (!Number.isFinite(value)) return 3; // 未填档位时按「熟练」展示
-  return Math.min(PROFICIENCY_MAX, Math.max(1, Math.round(value)));
-};
-// 分段条按档位点亮，档位名展示在条尾
-const segments = (skill: ContentItem) =>
-  Array.from({ length: PROFICIENCY_MAX }, (_, index) => index + 1 <= level(skill));
-// 熟练度样式经白名单校验，未配置或非法值回退进度条
-const skillStyle = computed(() => {
-  const value = nodePayload.value.skillStyle;
-  return value === "dot" || value === "score" ? value : "bar";
-});
-// 分数样式按十分制展示，档位 1-5 映射为 2-10 分
-const score = (skill: ContentItem) => level(skill) * 2;
+// 节点只传模板编号与档位，具体熟练度外观由公共组件绘制。
+const skillTemplate = computed(() => nodePayload.value.skillTemplate || "bar");
 </script>
 
 <template>
-  <div class="grid w-full gap-3" :class="gridClass" :style="fontValue()">
-    <!-- 多栏时名称与熟练度条上下排列，避免窄列挤压内容。 -->
-    <div v-for="(skill, skillIndex) in items" :key="skillIndex" class="min-w-0" :class="columns === 1 ? 'flex items-center justify-between gap-3' : 'flex flex-col gap-3'">
-      <div class="min-w-0" :class="columns === 1 ? 'flex-1' : ''">
+  <div class="grid w-full gap-6" :class="gridClass" :style="fontValue()">
+    <!-- 技能名称与熟练度内容在各列中居中展示。 -->
+    <div v-for="(skill, skillIndex) in items" :key="skillIndex" class="min-w-0 text-center" :class="columns === 1 ? 'flex items-center justify-center gap-3' : 'flex flex-col items-center gap-3'">
+      <div class="min-w-0">
         <ResumeField :model-value="skill.name" />
       </div>
-      <!-- 进度条样式：亮段取主题色，暗段取主题浅色。 -->
-      <div
-        v-if="skillStyle === 'bar'"
-        class="flex items-center gap-1"
-        :class="columns === 1 ? 'shrink-0' : 'w-full'"
-        aria-hidden="true"
-      >
-        <span
-          v-for="(lit, index) in segments(skill)"
-          :key="index"
-          class="h-1.5 rounded-full transition-colors"
-          :class="columns === 1 ? 'w-6' : 'min-w-0 flex-1'"
-          :style="{ backgroundColor: lit ? themeColor : themeColorSoft }"
-        />
-      </div>
-      <!-- 圆点样式：按档位点亮圆点，亮暗取色同上。 -->
-      <div
-        v-else-if="skillStyle === 'dot'"
-        class="flex items-center gap-1"
-        :class="columns === 1 ? 'shrink-0' : 'w-full'"
-        aria-hidden="true"
-      >
-        <span
-          v-for="(lit, index) in segments(skill)"
-          :key="index"
-          class="h-1.5 w-1.5 rounded-full transition-colors"
-          :style="{ backgroundColor: lit ? themeColor : themeColorSoft }"
-        />
-      </div>
-      <!-- 分数样式：按十分制直接展示数值。 -->
-      <span
-        v-else
-        class="shrink-0 font-bold"
-        :class="columns === 1 ? '' : 'w-full'"
-        :style="{ color: themeColor }"
-        >{{ score(skill) }}分</span
-      >
+      <SkillTemplate :template-id="skillTemplate" :level="Number(skill.level)" :color="themeColor || ''" :fluid="columns !== 1" />
     </div>
   </div>
 </template>

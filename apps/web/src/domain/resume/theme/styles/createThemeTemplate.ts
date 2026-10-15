@@ -85,6 +85,7 @@ export const resolveThemeTemplate = (definition: ResumeThemeDefinition): ResumeT
       leftColumnWidth: ui.layout?.leftColumnWidth ?? DEFAULT_UI.layout.leftColumnWidth,
     },
     user: { ...DEFAULT_UI.user, ...ui.user },
+    skill: { ...DEFAULT_UI.skill, ...ui.skill },
   };
 
   return {
