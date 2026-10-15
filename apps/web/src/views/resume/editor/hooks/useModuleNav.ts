@@ -142,6 +142,8 @@ const { currentData, runtimeFields } = storeToRefs(resumeStore);
 const { searchIndex } = useResumeSearch();
 const PREVIEW_HIGHLIGHT_DELAY = 10;
 const EDITOR_HIGHLIGHT_DELAY = 0;
+// 定位重试帧数：模块折叠内容与表单节点可能晚于本次定位才挂载
+const EDITOR_LOCATE_RETRY_FRAMES = 4;
 // 鼠标进入事件可能由滚动触发，等滚动停止后再允许清除定位高亮
 const PREVIEW_SCROLL_SETTLE_DELAY = 150;
 const PREVIEW_SCROLL_FALLBACK_DELAY = 2000;
@@ -270,18 +272,25 @@ const activateModule = (key: string) => {
   scheduleEditorHighlight(key);
 };
 
+// 模块外圈锚点：命中字段时优先字段所在模块，缺失时回退目标模块
+const findEditorModuleAnchor = (key: string, fieldKey?: string) =>
+  document.querySelector<HTMLElement>(`[data-module-key="${fieldKey ?? key}"]`) ??
+  document.querySelector<HTMLElement>(`[data-module-key="${key}"]`);
+
+// 记录外圈锚点：模块折叠时折叠内容不渲染（懒加载），该锚点此时不存在
+const findEditorRecordAnchor = (key: string, itemIndex: number) =>
+  document.querySelector<HTMLElement>(
+    `[data-module-key="${key}"] [data-item-index="${itemIndex}"]`,
+  );
+
 // 滚动到编辑区锚点：记录命中取该条记录外圈，字段命中取字段外圈，其余回退模块外圈
 const scrollEditorTarget = (
   key: string,
   hit?: Pick<ResumeSearchHit, "itemIndex" | "fieldKey">,
 ) => {
-  const selector =
-    hit?.itemIndex != null
-      ? `[data-module-key="${key}"] [data-item-index="${hit.itemIndex}"]`
-      : `[data-module-key="${hit?.fieldKey ?? key}"]`;
   const target =
-    document.querySelector<HTMLElement>(selector) ??
-    document.querySelector<HTMLElement>(`[data-module-key="${key}"]`);
+    (hit?.itemIndex != null ? findEditorRecordAnchor(key, hit.itemIndex) : null) ??
+    findEditorModuleAnchor(key, hit?.fieldKey);
   if (!target) return false;
   useScrollEditorTo(target);
   return true;
@@ -289,7 +298,15 @@ const scrollEditorTarget = (
 
 // 编辑表单可见后完成暂存的定位，找不到模块时继续等待表单渲染。
 export const flushPendingEditorLocation = () => {
-  if (pendingEditorLocation?.()) pendingEditorLocation = null;
+  if (!pendingEditorLocation?.()) return false;
+  pendingEditorLocation = null;
+  return true;
+};
+
+// 定位锚点可能晚于本次调用才挂载（折叠展开、表单异步就绪），连续重试几帧再放弃。
+const retryEditorLocation = (remaining: number) => {
+  if (flushPendingEditorLocation() || remaining <= 0) return;
+  requestAnimationFrame(() => retryEditorLocation(remaining - 1));
 };
 
 // 延时 0 添加选中状态，避开同一轮定位滚动触发的鼠标进入事件
@@ -327,24 +344,27 @@ export const jumpToHit = (moduleKey: string, hit?: ResumeSearchHit) => {
   nextTick(() => scrollEditorTarget(moduleKey, hit));
 };
 
-// 预览区定位编辑区：仅切标签、选中闪烁与滚动定位，不展开折叠，避免点击查找改变编辑区折叠状态
+// 预览区定位编辑区：切标签、选中闪烁与滚动定位，不展开折叠，避免点击改变编辑区折叠状态
 export const locateEditor = (key: string, hit?: Pick<ResumeSearchHit, "itemIndex">) => {
   const item = moduleList.value.find((m) => m.key === key);
   if (item && isFieldRemoved(currentData.value, item.field)) {
     notifyArchived();
     return;
   }
-  // 模块折叠时子记录可能仍在 DOM 中，定位应回到主模块
-  const collapsed = currentData.value?.[key]?.ui?.collapsed;
-  const targetHit = Array.isArray(collapsed) && !collapsed.includes("1") ? undefined : hit;
   pendingEditorLocation = () => {
+    // 高亮粒度以真实锚点为准：模块折叠时记录节点尚未挂载，
+    // 此时若仍按记录级高亮，模块级高亮会被记录下标压掉，点击预览将完全没有反馈。
+    const recordVisible =
+      hit?.itemIndex != null && findEditorRecordAnchor(key, hit.itemIndex) !== null;
+    const targetHit = recordVisible ? hit : undefined;
     if (!scrollEditorTarget(key, targetHit)) return false;
     scheduleEditorHighlight(key, targetHit);
     return true;
   };
   // 切换到编辑标签，避免停留设计/模板标签时编辑区不可见
   eventBus.emit("switch-builder-tab", 0);
-  nextTick(flushPendingEditorLocation);
+  // 锚点可能晚于本次调用才挂载，重试几帧后再交给后续 flush 继续等待
+  nextTick(() => retryEditorLocation(EDITOR_LOCATE_RETRY_FRAMES));
 };
 
 // 跳转编辑区（含隐藏恢复）：供进度条等复用
