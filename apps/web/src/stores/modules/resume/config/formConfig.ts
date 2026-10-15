@@ -2406,7 +2406,7 @@ export const DEFAULT_PUBLICATION_FORM = {
   props: {
     add: true,
   },
-  model: createModuleState("学术论文"),
+  model: createModuleState("论文发表"),
   checks: MODULE_CHECKS,
   slot: "default",
   fields: [

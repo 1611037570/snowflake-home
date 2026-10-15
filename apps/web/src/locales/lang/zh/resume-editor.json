@@ -50,7 +50,7 @@
   "resumeExampleLoadMore": "继续滚动加载更多",
   "resumeExampleEmpty": "没有匹配的范例",
   "projectExperience": "项目经历",
-  "academicPublications": "学术论文",
+  "academicPublications": "论文发表",
   "honorsCertificates": "荣誉证书",
   "allResume": "整个简历",
   "basicInfo": "基本信息",
@@ -729,5 +729,5 @@
   "publicationIndexCcfB": "CCF-B",
   "publicationIndexPkuCore": "北大核心",
   "publicationIndexRepresentative": "代表作",
-  "resumeExampleTitle_publication": "学术论文范例"
+  "resumeExampleTitle_publication": "论文发表范例"
 }

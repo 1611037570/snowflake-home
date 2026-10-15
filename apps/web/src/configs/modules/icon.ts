@@ -228,7 +228,7 @@ export const ICON_LIST: Record<string, IconItem> = {
   "mdi:trophy-outline": { icon: "mdi:trophy-outline", name: "奖杯" },
   "mdi:medal-outline": { icon: "mdi:medal-outline", name: "勋章" },
   "mdi:certificate-outline": { icon: "mdi:certificate-outline", name: "证书" },
-  "mdi:file-document-multiple-outline": { icon: "mdi:file-document-multiple-outline", name: "学术论文" },
+  "mdi:file-document-multiple-outline": { icon: "mdi:file-document-multiple-outline", name: "论文发表" },
   "material-symbols:workspace-premium-outline": { icon: "material-symbols:workspace-premium-outline", name: "获奖" },
   "mdi:palette": { icon: "mdi:palette", name: "调色板" },
   "mdi:gamepad-variant": { icon: "mdi:gamepad-variant", name: "游戏手柄" },

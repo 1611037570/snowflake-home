@@ -350,7 +350,7 @@ const TEXT_KEYS_SOURCE = `
   尚未填写: "notFilled",
   标签: "tagLabel",
   自定义字段: "customField",
-  学术论文: "academicPublications",
+  论文发表: "academicPublications",
   论文标题: "publicationTitle",
   请输入论文标题: "publicationTitlePlaceholder",
   作者: "publicationAuthors",
