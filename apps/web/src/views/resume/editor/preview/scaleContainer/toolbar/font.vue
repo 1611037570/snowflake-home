@@ -17,8 +17,11 @@ import { getResumeThemeTemplate } from "@/views/resume/theme";
 const resumeStore = useResumeStore();
 const { currentUI } = storeToRefs(resumeStore);
 // 重置参数使用当前主题预设，保存时自动移除对应覆盖项。
-const themePresetUi = computed(() => getResumeThemeTemplate(currentUI.value?.theme?.template).item.ui);
-const getThemeDefault = (key) => key.split(".").reduce((value, field) => value?.[field], themePresetUi.value);
+const themePresetUi = computed(
+  () => getResumeThemeTemplate(currentUI.value?.theme?.template).item.ui,
+);
+const getThemeDefault = (key) =>
+  key.split(".").reduce((value, field) => value?.[field], themePresetUi.value);
 
 // 字体类数值参数：标签、绑定字段与默认值集中维护，模板统一渲染
 const fontParams = computed(() => {
@@ -113,7 +116,7 @@ const setParam = (key, value) => {
     </span>
     <template #dropdown>
       <div
-        class="flex w-[240px] flex-col gap-3 overflow-hidden rounded-3xl border border-sf-b bg-sf-primary p-3"
+        class="flex w-[240px] flex-col gap-1 overflow-hidden rounded-3xl border border-sf-b bg-sf-primary p-3"
       >
         <!-- 字体类型选择 -->
         <div class="flex flex-col gap-1">
@@ -135,18 +138,24 @@ const setParam = (key, value) => {
             aria-live="polite"
           >
             <SfIcon
-              :icon="fontLoadStatus === 'loading'
-                ? 'line-md:loading-twotone-loop'
-                : fontLoadStatus === 'success'
-                  ? 'lucide:check'
-                  : 'lucide:circle-alert'"
+              :icon="
+                fontLoadStatus === 'loading'
+                  ? 'line-md:loading-twotone-loop'
+                  : fontLoadStatus === 'success'
+                    ? 'lucide:check'
+                    : 'lucide:circle-alert'
+              "
               size="4"
             />
-            <span>{{ $t(fontLoadStatus === 'loading'
-              ? 'fontLoading'
-              : fontLoadStatus === 'success'
-                ? 'fontLoadSuccess'
-                : 'fontLoadFailed') }}</span>
+            <span>{{
+              $t(
+                fontLoadStatus === "loading"
+                  ? "fontLoading"
+                  : fontLoadStatus === "success"
+                    ? "fontLoadSuccess"
+                    : "fontLoadFailed",
+              )
+            }}</span>
           </div>
         </div>
 

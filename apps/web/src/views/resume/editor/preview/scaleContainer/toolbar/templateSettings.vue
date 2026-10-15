@@ -4,9 +4,11 @@ import { storeToRefs } from "pinia";
 import { $t } from "@/locales";
 import { useResumeStore } from "@/stores";
 import {
+  darkPageBackground,
   defaultPageBackground,
   defaultSubtitleCenter,
   fontColorOptions,
+  fontColorOptionsOnDark,
   pageBackgroundColors,
 } from "@/domain/resume/theme/uiConfig";
 import { resolveThemeSettingRestrictions } from "@/views/resume/theme";
@@ -47,13 +49,35 @@ const normalizeHexColor = (value) => {
 };
 const isFontColorActive = (value) => normalizeHexColor(fontColor.value) === normalizeHexColor(value);
 
+// 极致黑视为深色底，其余背景按浅色底处理
+const isDarkBackground = (value) => normalizeHexColor(value) === normalizeHexColor(darkPageBackground);
+
+// 背景明暗切换时把当前字体色映射到另一档阶梯的同层级色值，避免黑底黑字与白底白字
+const syncFontColorWithBackground = (nextBackground) => {
+  const toDarkPage = isDarkBackground(nextBackground);
+  const fromList = toDarkPage ? fontColorOptions : fontColorOptionsOnDark;
+  const toList = toDarkPage ? fontColorOptionsOnDark : fontColorOptions;
+  const matched = fromList.findIndex((option) => normalizeHexColor(option.value) === normalizeHexColor(fontColor.value));
+  // 模板自定义的字体色不在阶梯内时，取目标阶梯首档保证正文对比度
+  fontColor.value = toList[matched > -1 ? matched : 0].value;
+};
+
 // 简历页面背景色
 const pageBackground = computed({
   get: () => currentUI.value?.page?.background || defaultPageBackground,
   set: (value) => {
-    if (!getSettingRestriction("page.background")) currentUI.value.page.background = value;
+    if (getSettingRestriction("page.background")) return;
+    const previous = currentUI.value?.page?.background || defaultPageBackground;
+    currentUI.value.page.background = value;
+    // 跨明暗切换背景时同步字体颜色，同明暗内换色不动字体
+    if (isDarkBackground(value) !== isDarkBackground(previous)) syncFontColorWithBackground(value);
   },
 });
+
+// 黑底纸张切换为浅色预设，其余背景沿用深色预设，保证正文对比度。
+const activeFontColorOptions = computed(() =>
+  isDarkBackground(pageBackground.value) ? fontColorOptionsOnDark : fontColorOptions,
+);
 
 // 副标题居中开关：教育经历的专业在条目内居中。
 const subtitleCenter = computed({
@@ -86,7 +110,7 @@ const subtitleCenter = computed({
         <div class="text-xs font-bold text-sf-text">{{ $t("fontColor") }}</div>
         <div class="flex items-center gap-3">
           <button
-            v-for="option in fontColorOptions"
+            v-for="option in activeFontColorOptions"
             :key="option.value"
             type="button"
             class="flex h-9 w-9 cursor-pointer items-center justify-center rounded-full border transition-transform hover:scale-110"
