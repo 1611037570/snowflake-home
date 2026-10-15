@@ -46,9 +46,7 @@ const commonGroups = computed(() =>
   groupedFields.value.filter((group) => group.category === "常用"),
 );
 // 其余分类随更多区域展开状态显示。
-const moreGroups = computed(() =>
-  groupedFields.value.filter((group) => group.category !== "常用"),
-);
+const moreGroups = computed(() => groupedFields.value.filter((group) => group.category !== "常用"));
 
 // 切换展开/收起
 function toggle() {
@@ -115,7 +113,7 @@ function handleCreateCustomField() {
     <!-- 更多配置开关增加左侧留白，与字段内容对齐。 -->
     <button
       type="button"
-      class="ml-3 flex cursor-pointer items-center gap-3 pt-3 text-sm text-sf-theme transition-colors"
+      class="flex cursor-pointer items-center gap-3 pt-3 text-sm text-sf-theme transition-colors"
       @click="toggle"
     >
       <span>{{ expanded ? $t("collapseMore") : $t("expandMore") }}</span>
