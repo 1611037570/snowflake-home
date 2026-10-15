@@ -21,6 +21,14 @@ const resumeData: any = {
         avatar: xiaoyang,
       },
     },
+    account: {
+      ui: { collapsed: ["1"], archived: false },
+      list: [
+        { ui: {}, data: { name: "作品集", url: "https://portfolio.example.com/sheep-teacher" } },
+        { ui: {}, data: { name: "小红书", url: "https://www.example.com/sheep-teacher/xiaohongshu" } },
+        { ui: {}, data: { name: "站酷", url: "https://www.example.com/sheep-teacher/zcool" } },
+      ],
+    },
     skill: {
       ui: { collapsed: ["1"], archived: false },
       data: {
@@ -121,6 +129,7 @@ const resumeData: any = {
   config: {
     modules: [
       { key: "user" },
+      { key: "account" },
       { key: "education" },
       { key: "skill" },
       { key: "work" },
