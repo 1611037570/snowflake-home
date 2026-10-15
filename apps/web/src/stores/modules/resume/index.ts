@@ -14,6 +14,9 @@ import { createResumeEditor } from "./resumeEditor";
 import { createResumeHistory } from "./resumeHistory";
 import { createResumeRuntime } from "./resumeRuntime";
 import type { ResumeListItem } from "./resumeCatalog";
+import { createResumeListItem } from "./resumeCatalog";
+import { loadResumeTemplateData } from "@/views/resume/template/data/resumeData";
+import { compactResumeUi, resolveResumeUi } from "@/domain/resume/theme/resumeUi";
 export type DesensitizeLevel = "normal" | "strict";
 export type DesensitizeConfig = {
   disabled: boolean;
@@ -227,6 +230,17 @@ export const useResumeStore = defineStore(
     };
     const loadResume = async (id: string) => {
       await init();
+      // 固定的小羊简历地址首次访问时，从内置范本建立可编辑的本地简历。
+      if (id === "xiaoyang" && !list.value.some((item) => item.id === id)) {
+        const template = await loadResumeTemplateData("xiaoYang.ts");
+        const resume = merge(structuredClone(DEFAULT_RESUME_ITEM), template);
+        resume.id = id;
+        resume.ui = resolveResumeUi(compactResumeUi(template.ui));
+        setConfigModules(resume, resume.config.modules);
+        const storage = getResumeStorage(id, resume, true);
+        resumeRecords.value.push(storage.data.value);
+        list.value.unshift(createResumeListItem(id));
+      }
       const entry = list.value.find((item) => item.id === id && item.deletedAt === null);
       return entry ? loadResumeRecord(id) : null;
     };
