@@ -1954,6 +1954,7 @@ const createCampusExperienceForm = (
             },
             {
               type: "object",
+              label: "标签", // 校园与公益类经历的标签字段标题。
               component: "tag",
               span: 24,
               model: {
@@ -2340,6 +2341,7 @@ export const DEFAULT_PUBLICATION_FORM = {
           // 索引标签：预设常见索引与分区，同时支持回车自定义
           {
             type: "object",
+            label: "标签", // 论文索引标签字段标题。
             component: "tag",
             span: 24,
             model: {
@@ -2600,6 +2602,7 @@ export const DEFAULT_IP_FORM = {
           // 成果标签：预设常见成果标签，同时支持回车自定义
           {
             type: "object",
+            label: "标签", // 知识产权成果标签字段标题。
             component: "tag",
             span: 24,
             model: {
@@ -2705,6 +2708,7 @@ export const DEFAULT_CUSTOM_FORM = {
           },
           {
             type: "object",
+            label: "标签", // 自定义经历的标签字段标题。
             component: "tag",
             span: 24,
             model: {
