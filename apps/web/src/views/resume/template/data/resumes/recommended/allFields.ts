@@ -250,7 +250,7 @@ const resumeData: any = {
         { ui: {}, data: {
           name: "年度优秀产品奖" /* 荣誉名称 */,
           link: { name: "获奖公告" /* 荣誉链接名称 */, url: "https://example.com/award" /* 荣誉链接地址 */ },
-          content: "<p>负责的产品项目获得年度优秀产品奖。</p>" /* 荣誉描述 */,
+          content: "负责的产品项目获得年度优秀产品奖。" /* 荣誉描述 */,
         } },
         { ui: {}, data: { name: "用户增长专项奖" } },
       ],

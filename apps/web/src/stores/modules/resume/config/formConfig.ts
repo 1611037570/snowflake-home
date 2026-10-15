@@ -1026,34 +1026,25 @@ export const DEFAULT_SKILL_FORM = {
   key: "skill",
   context: ["skill"],
   props: {
-    add: false,
+    add: true, // 熟练度列表允许新增技能记录。
+    addWhenLayout: "proficiency", // 仅切换到熟练度布局时显示新增入口。
   },
-  model: createModuleState("专业技能"),
+  model: [
+    ...createModuleState("专业技能"),
+    {
+      source: ["ui", "layout"], // 模块保存的布局状态。
+      prop: "layout", // 绑定标题旁的布局菜单。
+      defaultValue: "text", // 默认使用正文布局。
+    },
+    {
+      source: ["ui", "skillColumns"], // 熟练度列表的预览列数。
+      prop: "skillColumns", // 绑定布局菜单中的列数选项。
+      defaultValue: 1, // 默认单栏显示。
+    },
+  ],
   checks: MODULE_CHECKS,
   slot: "default",
   fields: [
-    {
-      // 布局开关写在模块 ui 上：熟练度列表与富文本正文共用一个数据路径
-      type: "object",
-      label: "技能布局",
-      component: "select",
-      span: 12,
-      model: [
-        {
-          source: ["ui", "layout"],
-          prop: "modelValue",
-          defaultValue: "text",
-        },
-        {
-          source: ["__options", "skillLayout"],
-          prop: "list",
-          raw: true,
-        },
-      ],
-      props: {
-        placeholder: "请选择技能布局",
-      },
-    },
     {
       // 熟练度布局下不渲染富文本编辑器
       type: "object",
@@ -1080,7 +1071,7 @@ export const DEFAULT_SKILL_FORM = {
       drag: true,
       dragClass: DEFAULT_DRAG_CLASS,
       rowClass: "gap-y-3 px-3 pt-3",
-      itemClass: DEFAULT_COL_CLASS + " px-3!",
+      itemClass: DEFAULT_COL_CLASS + " px-3! py-1", // 技能卡片上下留白，避免输入框贴住边框。
       checks: {
         removed: {
           path: ["ui", "layout"],
@@ -1411,12 +1402,232 @@ export const DEFAULT_WORK_FORM = {
     },
   ],
 } satisfies FormField;
-// 实习经历独立保存，复用工作经历字段及记录操作，不共享配置引用。
+// 实习经历独立维护字段与记录配置。
 export const DEFAULT_INTERNSHIP_FORM = {
-  ...structuredClone(DEFAULT_WORK_FORM), // 实习字段与工作经历使用相同表单结构。
+  type: "group",
   key: "internship", // 实习经历模块标识。
   context: ["internship"], // 实习经历数据绑定路径。
-  model: createModuleState("实习经历"), // 实习模块标题与界面状态绑定。
+  component: "collapseModule",
+  props: {
+    add: true,
+  },
+  model: createModuleState("实习经历"), // 实习模块标题与状态绑定。
+  checks: MODULE_CHECKS,
+  slot: "default",
+  fields: [
+    // 实习记录列表独立声明字段与操作。
+    {
+      type: "array",
+      source: ["list"],
+      drag: true,
+      dragClass: DEFAULT_DRAG_CLASS,
+      // 数组卡片恢复纵向间距，容器提供左右及顶部留白。
+      rowClass: "gap-y-3 px-3 pt-3",
+      itemClass: DEFAULT_COL_CLASS + " px-3!",
+      // 每条实习记录使用独立的折叠卡片配置。
+      itemSchema: {
+        type: "group",
+        component: "collapseItem",
+        slot: "default",
+        span: 24,
+        model: [
+          {
+            source: ["ui", "collapsed"], // 实习记录的折叠状态。
+            prop: "collapsed",
+            defaultValue: EXPANDED,
+          },
+          {
+            source: ["ui", "hidden"], // 实习记录的隐藏状态。
+            prop: "hidden",
+            defaultValue: false,
+          },
+          {
+            source: ["data", "name"], // 实习单位名称作为记录标题。
+            prop: "name",
+          },
+        ],
+        fields: [
+          // 实习单位名称与岗位并排展示，起止时间成对排列。
+          {
+            type: "object",
+            label: "公司名称",
+            component: "input",
+            rules: [requiredFieldRule()],
+            span: 12,
+            model: {
+              source: ["data", "name"],
+              prop: "modelValue",
+            },
+            props: {
+              placeholder: "请输入公司",
+              clearable: true,
+            },
+          },
+          // 实习岗位。
+          {
+            type: "object",
+            label: "岗位",
+            component: "positionPicker",
+            rules: [requiredFieldRule()],
+            span: 12,
+            model: [
+              {
+                source: ["data", "post"],
+                prop: "modelValue",
+              },
+              {
+                source: ["__options", "position"],
+                prop: "list",
+                raw: true,
+              },
+            ],
+            props: {
+              placeholder: "请选择或输入岗位",
+            },
+          },
+          // 实习开始月份。
+          {
+            type: "object",
+            label: "开始时间",
+            rules: [requiredFieldRule(), MONTH_FORMAT_RULE],
+            component: "datePicker",
+            span: 12,
+            model: {
+              source: ["data", "startTime"],
+              prop: "modelValue",
+            },
+            props: {
+              type: "month",
+              format: "YYYY.MM",
+              valueFormat: "YYYY.MM",
+              placeholder: "请选择开始时间",
+            },
+          },
+          // 实习结束月份或至今。
+          {
+            type: "object",
+            label: "结束时间",
+            rules: [requiredFieldRule(), MONTH_PRESENT_FORMAT_RULE],
+            component: "datePickerPresent",
+            span: 12,
+            model: {
+              source: ["data", "endTime"],
+              prop: "modelValue",
+            },
+            props: {
+              type: "month",
+              format: "YYYY.MM",
+              valueFormat: "YYYY.MM",
+              placeholder: "请选择结束时间",
+              presentText: "至今",
+            },
+          },
+          // 实习职责与成果正文。
+          {
+            type: "object",
+            label: "经历",
+            rules: [requiredFieldRule(), contentQualityRule()],
+            component: "resumeContentEditor",
+            span: 24,
+            props: {
+              kind: "work", // 正文写作范例沿用工作经历类型。
+            },
+            model: [
+              {
+                source: ["data", "content"],
+                prop: "modelValue",
+              },
+            ],
+          },
+          // 实习城市、部门、链接与标签收在独立折叠区内，默认收起。
+          {
+            type: "group",
+            key: "more",
+            component: "collapseGroup",
+            slot: "default",
+            span: 24,
+            rowClass: "gap-y-3",
+            // 折叠头标题由折叠分组组件渲染
+            props: { label: "更多" },
+            model: [
+              {
+                source: ["ui", "moreCollapsed"],
+                prop: "collapsed",
+                // 更多分组默认收起
+                defaultValue: COLLAPSED,
+              },
+            ],
+            fields: [
+              // 所在城市：省市字典由业务域注入。
+              {
+                type: "object",
+                label: "所在城市",
+                component: "cityPicker",
+                span: 12,
+                model: [
+                  {
+                    source: ["data", "city"],
+                    prop: "modelValue",
+                  },
+                  {
+                    source: ["__options", "city"],
+                    prop: "list",
+                    raw: true,
+                  },
+                ],
+                props: {
+                  placeholder: "请选择所在城市",
+                },
+              },
+              // 所在部门紧随城市，展示在同一行。
+              {
+                type: "object",
+                label: "所在部门",
+                component: "input",
+                span: 12,
+                model: {
+                  source: ["data", "department"],
+                  prop: "modelValue",
+                },
+                props: {
+                  placeholder: "请输入所在部门",
+                  clearable: true,
+                },
+              },
+              // 实习相关作品链接。
+              {
+                type: "object",
+                label: "项目链接",
+                component: "projectLink",
+                rules: [atsRule("projectLink")],
+                span: 24,
+                model: {
+                  source: ["data", "link"],
+                  prop: "modelValue",
+                  defaultValue: {},
+                },
+              },
+              // 实习标签：可选标签由字段配置注入。
+              {
+                type: "object",
+                label: "标签", // 实习标签字段标题。
+                component: "tag",
+                span: 24,
+                model: {
+                  source: ["data", "tags"],
+                  prop: "modelValue",
+                  defaultValue: [],
+                },
+                props: {
+                  list: ["核心成员", "团队管理", "独立负责", "跨部门协作", "从0到1"],
+                },
+              },
+            ],
+          },
+        ],
+      },
+    },
+  ],
 } satisfies FormField;
 // 项目经历
 export const DEFAULT_PROJECT_FORM = {
@@ -1797,13 +2008,14 @@ export const DEFAULT_HONOR_FORM = {
             },
           },
           {
-            // 荣誉描述：富文本，支持分项与加粗等基础排版
+            // 荣誉描述改用普通输入框，保持原有内容字段。
             type: "object",
             label: "荣誉描述",
-            component: "resumeContentEditor",
+            component: "input",
             span: 24,
             props: {
-              kind: "honor",
+              placeholder: "请输入荣誉描述", // 提示填写简短的荣誉说明。
+              clearable: true, // 允许清空荣誉描述。
             },
             model: {
               source: ["data", "content"],

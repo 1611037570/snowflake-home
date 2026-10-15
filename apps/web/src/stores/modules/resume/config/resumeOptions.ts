@@ -8,11 +8,6 @@ export const RESUME_VALUE_OPTIONS = {
     { name: "男", value: "男" },
     { name: "女", value: "女" },
   ],
-  // 技能模块布局：熟练度列表或富文本正文
-  skillLayout: [
-    { name: "熟练度", value: "proficiency" },
-    { name: "富文本", value: "text" },
-  ],
   // 技能熟练度档位：一到五档，写入技能条目 level 字段
   proficiency: [
     { name: "了解", value: 1 },

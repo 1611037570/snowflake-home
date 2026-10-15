@@ -44,7 +44,7 @@ export const createRichTextModuleAdapter = (moduleKey: string): LayoutAdapter =>
 const getSkillModuleData = (context: LayoutAdapterContext) => {
   const moduleData = context.data[context.moduleKey];
   if (!moduleData || typeof moduleData !== "object") return null;
-  return moduleData as { ui?: { layout?: unknown }; data?: { content?: unknown }; list?: unknown };
+  return moduleData as { ui?: { layout?: unknown /* 技能展示形式 */, skillColumns?: unknown /* 熟练度预览列数 */ }; data?: { content?: unknown }; list?: unknown };
 };
 
 /** 创建技能模块适配器：熟练度布局渲染技能条目列表，其余布局沿用富文本正文 */
@@ -54,19 +54,29 @@ export const createSkillModuleAdapter = (moduleKey: string): LayoutAdapter => (
   const moduleData = getSkillModuleData(context);
   if (!moduleData) return [];
 
-  // 熟练度布局：每条技能独立成块参与分页，档位与名称由语义组件渲染
+  // 熟练度布局按列数组成整行节点，分页时保持同一行的技能在一起。
   if (moduleData.ui?.layout === "proficiency") {
-    return getValidDataEntries(moduleData.list).map(({ data: item, index }) => ({
-      id: `${moduleKey}.item-${index}`,
-      sourceModuleKey: moduleKey,
-      sourceItemIndex: index,
-      type: "block" as const,
-      contentKind: moduleKey,
-      payload: {
-        part: "item" as const,
-        item,
-      },
-    }));
+    const requestedColumns = Number(moduleData.ui.skillColumns);
+    const columns = requestedColumns === 2 || requestedColumns === 3 ? requestedColumns : 1;
+    const entries = getValidDataEntries(moduleData.list);
+    const rows = [];
+    for (let offset = 0; offset < entries.length; offset += columns) {
+      const row = entries.slice(offset, offset + columns);
+      rows.push({
+        id: `${moduleKey}.item-${row[0].index}`,
+        sourceModuleKey: moduleKey,
+        sourceItemIndex: row[0].index,
+        type: "block" as const,
+        contentKind: moduleKey,
+        payload: {
+          part: "item" as const, // 技能列表条目。
+          item: row[0].data, // 单栏及主题覆盖沿用首个条目。
+          items: row.map(({ data }) => data), // 同行展示的技能条目。
+          columns, // 当前行使用的列数。
+        },
+      });
+    }
+    return rows;
   }
 
   // 富文本布局：与 advantage 等通用正文模块一致

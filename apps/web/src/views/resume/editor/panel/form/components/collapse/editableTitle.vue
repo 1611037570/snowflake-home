@@ -32,6 +32,8 @@ function saveTitle() {
   <div class="flex min-w-0 flex-1 items-center gap-1">
     <span class="min-w-0 truncate" :class="{ 'line-through': strikeThrough }">{{ modelValue }}</span>
     <Icon @click="openEditModal" icon="lucide:pencil" />
+    <!-- 模块专属操作紧随标题编辑按钮。 -->
+    <slot name="actions" />
   </div>
   <SfModal v-model="showEditModal" :title="$t('editTitle')">
     <form class="flex w-80 flex-col gap-3" @submit.prevent="saveTitle">
