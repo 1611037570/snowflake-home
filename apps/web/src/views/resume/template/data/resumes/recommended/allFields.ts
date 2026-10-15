@@ -257,7 +257,7 @@ const resumeData: any = {
     },
     club: {
       list: [{ data: {
-        name: "产品创新社" /* 组织名称 */,
+        name: "产品创新社" /* 组织/活动 */,
         post: "项目负责人" /* 担任职务 */,
         startTime: "2017.09" /* 开始时间 */,
         endTime: "2018.06" /* 结束时间 */,
@@ -275,17 +275,6 @@ const resumeData: any = {
         city: "上海" /* 所在城市 */,
         tags: ["志愿服务"] /* 经历标签 */,
         content: "<p>参与社区活动组织与现场服务。</p>" /* 经历描述 */,
-      } }],
-    },
-    training: {
-      list: [{ data: {
-        name: "产品管理培训班" /* 组织名称 */,
-        post: "学员" /* 担任职务 */,
-        startTime: "2022.03" /* 开始时间 */,
-        endTime: "2022.05" /* 结束时间 */,
-        city: "上海" /* 所在城市 */,
-        tags: ["结业证书"] /* 培训标签 */,
-        content: "<p>完成需求分析、产品规划与项目管理课程。</p>" /* 培训内容 */,
       } }],
     },
     language: {
@@ -374,7 +363,6 @@ const resumeData: any = {
       { key: "honor" },
       { key: "club" /* 社团经历模块 */ },
       { key: "volunteer" /* 志愿服务模块 */ },
-      { key: "training" /* 培训经历模块 */ },
       { key: "language" /* 语言能力模块 */ },
       { key: "hobby" /* 兴趣爱好模块 */ },
       { key: "portfolio" /* 作品集模块标识 */ },
