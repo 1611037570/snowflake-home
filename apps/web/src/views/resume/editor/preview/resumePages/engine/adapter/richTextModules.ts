@@ -44,8 +44,11 @@ export const createRichTextModuleAdapter = (moduleKey: string): LayoutAdapter =>
 const getSkillModuleData = (context: LayoutAdapterContext) => {
   const moduleData = context.data[context.moduleKey];
   if (!moduleData || typeof moduleData !== "object") return null;
-  return moduleData as { ui?: { layout?: unknown /* 技能展示形式 */, skillColumns?: unknown /* 熟练度预览列数 */ }; data?: { content?: unknown }; list?: unknown };
+  return moduleData as { ui?: { layout?: unknown /* 技能展示形式 */, skillColumns?: unknown /* 熟练度预览列数 */, skillStyle?: unknown /* 熟练度展示样式 */ }; data?: { content?: unknown }; list?: unknown };
 };
+
+// 技能样式白名单，非法取值回退进度条
+const SKILL_STYLES = new Set(["bar", "dot", "score"]);
 
 /** 创建技能模块适配器：熟练度布局渲染技能条目列表，其余布局沿用富文本正文 */
 export const createSkillModuleAdapter = (moduleKey: string): LayoutAdapter => (
@@ -58,6 +61,9 @@ export const createSkillModuleAdapter = (moduleKey: string): LayoutAdapter => (
   if (moduleData.ui?.layout === "proficiency") {
     const requestedColumns = Number(moduleData.ui.skillColumns);
     const columns = requestedColumns === 2 || requestedColumns === 3 ? requestedColumns : 1;
+    // 样式取值经白名单校验后下发给正文组件
+    const requestedStyle = String(moduleData.ui.skillStyle ?? "");
+    const skillStyle = SKILL_STYLES.has(requestedStyle) ? requestedStyle : "bar";
     const entries = getValidDataEntries(moduleData.list);
     const rows = [];
     for (let offset = 0; offset < entries.length; offset += columns) {
@@ -73,6 +79,7 @@ export const createSkillModuleAdapter = (moduleKey: string): LayoutAdapter => (
           item: row[0].data, // 单栏及主题覆盖沿用首个条目。
           items: row.map(({ data }) => data), // 同行展示的技能条目。
           columns, // 当前行使用的列数。
+          skillStyle, // 当前行使用的熟练度样式。
         },
       });
     }

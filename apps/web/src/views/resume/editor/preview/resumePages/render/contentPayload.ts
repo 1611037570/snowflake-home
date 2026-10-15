@@ -34,6 +34,7 @@ export interface ContentPayload {
   item?: ContentItem; // 当前业务条目
   items?: ContentItem[]; // 同一行的技能条目
   columns?: number; // 技能条目的预览列数
+  skillStyle?: string; // 技能熟练度的展示样式，取值 bar/dot/score
   content?: ParsedRichText; // 已解析正文
   inlineInfo?: string[]; // 适配器提供的并列信息
   html?: string; // 直接富文本载荷

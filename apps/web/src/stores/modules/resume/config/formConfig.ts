@@ -7,6 +7,7 @@ import type {
   ModelBinding,
   ObjectFormField,
 } from "@/components/business/dynamicForm/api";
+import { defaultSkillStyle } from "@/domain/resume/theme/uiConfig";
 
 // 展开状态数组：对应 SfCollapseItem 的激活 name，表示折叠容器为展开态
 export const EXPANDED = ["1"];
@@ -1040,6 +1041,11 @@ export const DEFAULT_SKILL_FORM = {
       source: ["ui", "skillColumns"], // 熟练度列表的预览列数。
       prop: "skillColumns", // 绑定布局菜单中的列数选项。
       defaultValue: 1, // 默认单栏显示。
+    },
+    {
+      source: ["ui", "skillStyle"], // 熟练度的展示样式。
+      prop: "skillStyle", // 绑定布局菜单中的样式选项。
+      defaultValue: defaultSkillStyle, // 默认进度条样式。
     },
   ],
   checks: MODULE_CHECKS,
