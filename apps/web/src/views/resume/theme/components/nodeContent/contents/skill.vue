@@ -27,6 +27,13 @@ const level = (skill: ContentItem) => {
 // 分段条按档位点亮，档位名展示在条尾
 const segments = (skill: ContentItem) =>
   Array.from({ length: PROFICIENCY_MAX }, (_, index) => index + 1 <= level(skill));
+// 熟练度样式经白名单校验，未配置或非法值回退进度条
+const skillStyle = computed(() => {
+  const value = nodePayload.value.skillStyle;
+  return value === "dot" || value === "score" ? value : "bar";
+});
+// 分数样式按十分制展示，档位 1-5 映射为 2-10 分
+const score = (skill: ContentItem) => level(skill) * 2;
 </script>
 
 <template>
@@ -36,8 +43,13 @@ const segments = (skill: ContentItem) =>
       <div class="min-w-0" :class="columns === 1 ? 'flex-1' : ''">
         <ResumeField :model-value="skill.name" />
       </div>
-      <!-- 分段熟练度条：亮段取主题色，暗段取主题浅色。 -->
-      <div class="flex items-center gap-1" :class="columns === 1 ? 'shrink-0' : 'w-full'" aria-hidden="true">
+      <!-- 进度条样式：亮段取主题色，暗段取主题浅色。 -->
+      <div
+        v-if="skillStyle === 'bar'"
+        class="flex items-center gap-1"
+        :class="columns === 1 ? 'shrink-0' : 'w-full'"
+        aria-hidden="true"
+      >
         <span
           v-for="(lit, index) in segments(skill)"
           :key="index"
@@ -46,6 +58,28 @@ const segments = (skill: ContentItem) =>
           :style="{ backgroundColor: lit ? themeColor : themeColorSoft }"
         />
       </div>
+      <!-- 圆点样式：按档位点亮圆点，亮暗取色同上。 -->
+      <div
+        v-else-if="skillStyle === 'dot'"
+        class="flex items-center gap-1"
+        :class="columns === 1 ? 'shrink-0' : 'w-full'"
+        aria-hidden="true"
+      >
+        <span
+          v-for="(lit, index) in segments(skill)"
+          :key="index"
+          class="h-1.5 w-1.5 rounded-full transition-colors"
+          :style="{ backgroundColor: lit ? themeColor : themeColorSoft }"
+        />
+      </div>
+      <!-- 分数样式：按十分制直接展示数值。 -->
+      <span
+        v-else
+        class="shrink-0 font-bold"
+        :class="columns === 1 ? '' : 'w-full'"
+        :style="{ color: themeColor }"
+        >{{ score(skill) }}分</span
+      >
     </div>
   </div>
 </template>

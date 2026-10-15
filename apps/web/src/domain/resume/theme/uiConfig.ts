@@ -201,6 +201,13 @@ export const titleIconModeList = [
     value: "circle",
   },
 ];
+// 技能熟练度样式列表：进度条按档位点亮横条，圆点按档位点亮刻度，分数直接展示数值。
+// labelKey 为语言包文案键，value 写入技能模块的 ui.skillStyle 并随简历保存。
+export const skillStyleList = [
+  { labelKey: "skillStyleBar", value: "bar" }, // 进度条样式
+  { labelKey: "skillStyleDot", value: "dot" }, // 圆点样式
+  { labelKey: "skillStyleScore", value: "score" }, // 分数样式
+];
 // ===========默认值=====================
 export const defaultThemeColor = "#50A2FF";
 // 默认自定义页尾品牌名（留空表示使用默认品牌名）
@@ -240,6 +247,8 @@ export const defaultDatePosition = "right";
 export const defaultTextAlign = "auto";
 // 默认模块标题图标模式
 export const defaultTitleIconMode = "none";
+// 默认技能熟练度样式：进度条
+export const defaultSkillStyle = "bar";
 // 默认链接下划线开关
 export const defaultLinkUnderline = false;
 // 默认副标题不居中
