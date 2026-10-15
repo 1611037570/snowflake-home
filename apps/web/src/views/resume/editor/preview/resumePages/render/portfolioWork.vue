@@ -8,14 +8,15 @@ import { getRegionPaddingHeight } from "../engine/layout/regionHeights";
 const props = defineProps({
   // 作品集的名称、链接、描述、图片和显示尺寸数据。
   item: { type: Object, required: true },
-  // 已校验的作品链接，为空时不展示链接。
+  // 已校验的作品链接，为空时仅展示链接文本。
   url: { type: String, default: "" },
 });
 const { layout, themeDecisions, ui, showPageNumber, theme: { linkUnderline } } = useResumePreviewContext();
 const rootRef = ref(null);
 const captionRef = ref(null);
 const imageMaxHeight = ref(0);
-const hasCaption = computed(() => Boolean(props.url || props.item.name || props.item.desc));
+// 链接文本即使不是可点击网址，也保留在作品标题行展示。
+const hasCaption = computed(() => Boolean(props.item.url || props.item.name || props.item.desc));
 // 尺寸设置决定显示宽度与高度上限，高度按图片自身比例展开，不预留空白。
 const imageSizeRatio = computed(() => Math.min(100, Math.max(0, Number(props.item.size ?? 50) || 0)) / 100);
 // 以完整后续页为上限，当前页放不下时由分页引擎顺延，避免缩成页尾的小图。
@@ -63,18 +64,19 @@ watch([pageHeight, () => props.item, hasCaption], async () => {
       @load="updateImageHeight"
     />
     <figcaption v-if="hasCaption" ref="captionRef" class="flex w-full min-w-0 flex-col gap-3 break-words">
-      <span v-if="item.name" class="block text-center">{{ item.name }}</span>
-      <!-- 作品链接独立展示，图片和链接都可单独或同时存在。 -->
-      <a
-        v-if="url"
-        :href="url"
-        target="_blank"
-        rel="noopener noreferrer"
-        class="block break-all text-center hover:underline"
-        :class="{ underline: linkUnderline }"
-      >
-        {{ item.url }}
-      </a>
+      <!-- 名称靠左、链接靠右；未通过网址校验的内容只展示文本。 -->
+      <div v-if="item.name || item.url" class="flex w-full min-w-0 items-start justify-between gap-3">
+        <span v-if="item.name" class="min-w-0 flex-1 text-left">{{ item.name }}</span>
+        <a
+          v-if="item.url && url"
+          :href="url"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="ml-auto max-w-[50%] break-all text-right hover:underline"
+          :class="{ underline: linkUnderline }"
+        >{{ item.url }}</a>
+        <span v-else-if="item.url" class="ml-auto max-w-[50%] break-all text-right">{{ item.url }}</span>
+      </div>
       <span v-if="item.desc">{{ item.desc }}</span>
     </figcaption>
   </figure>

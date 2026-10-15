@@ -159,9 +159,9 @@ function handleAdd() {
                     <template #dropdown>
                       <!-- 每项设置的说明与选项保持同一行。 -->
                       <div
-                        class="flex w-[360px] max-w-[90vw] flex-col gap-3 rounded-3xl border border-sf-b bg-sf-primary p-3 whitespace-nowrap"
+                        class="flex w-[360px] max-w-[90vw] flex-col gap-3 rounded-3xl border border-sf-b bg-sf-primary whitespace-nowrap"
                       >
-                        <div class="flex items-center justify-between gap-3">
+                        <div class="flex items-center justify-between gap-3 px-3 pt-3" :class="layout === 'proficiency' ? '' : 'pb-3'">
                           <p class="shrink-0 text-xs font-normal text-sf-text-2">{{ $t("skillLayout") }}</p>
                           <ElRadioGroup
                             v-model="layout"
@@ -178,7 +178,7 @@ function handleAdd() {
                         <!-- 仅普通技能列表样式需要选择预览列数。 -->
                         <div
                           v-if="layout === 'proficiency' && skillTemplate !== 'distribution'"
-                          class="flex items-center justify-between gap-3 border-t border-sf-b pt-3"
+                          class="flex items-center justify-between gap-3 border-t border-sf-b px-3 pt-3"
                         >
                           <p class="shrink-0 text-xs font-normal text-sf-text-2">
                             {{ $t("skillColumnHint") }}
@@ -199,11 +199,11 @@ function handleAdd() {
                           </ElRadioGroup>
                         </div>
                         <!-- 富文本布局不显示技能模板选项。 -->
-                        <div v-if="layout === 'proficiency'" class="flex flex-col gap-3 border-t border-sf-b pt-3">
-                          <p class="text-xs font-normal text-sf-text-2">{{ $t("skillTemplate") }}</p>
-                          <!-- 模板选项使用项目滚动组件，超出高度时只滚动样式列表。 -->
-                          <SfScrollbar max-height="360px" class="w-full" flush>
-                            <div class="grid grid-cols-2 gap-3 pr-3">
+                        <div v-if="layout === 'proficiency'" class="flex flex-col gap-3 border-t border-sf-b pt-3 pb-3">
+                          <p class="px-3 text-xs font-normal text-sf-text-2">{{ $t("skillTemplate") }}</p>
+                          <!-- 模板选项直接使用项目滚动组件自带的左右内边距。 -->
+                          <SfScrollbar max-height="360px" class="w-full">
+                            <div class="grid grid-cols-2 gap-3">
                               <div
                                 v-for="option in skillTemplateList"
                                 :key="option.value"
