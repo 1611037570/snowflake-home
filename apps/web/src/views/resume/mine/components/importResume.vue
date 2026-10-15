@@ -108,7 +108,8 @@ const importDocumentConfig = async (format) => {
     remove();
     const files = await click();
     file = files?.[0]?.file;
-    if (!file && errors.value.length) ElMessage.error(errors.value[0].msg);
+    if (!file && errors.value.length)
+      ElMessage.error({ message: errors.value[0].msg, position: "top-right", offset: 40 });
   } catch {
     return;
   } finally {
@@ -133,7 +134,11 @@ const importDocumentConfig = async (format) => {
     pendingDocFormat.value = format;
   } catch (error) {
     if (!controller.signal.aborted && parseController === controller) {
-      ElMessage.error(error instanceof Error ? error.message : "简历解析失败，请检查文件或模型配置");
+      ElMessage.error({
+        message: error instanceof Error ? error.message : "简历解析失败，请检查文件或模型配置",
+        position: "top-right",
+        offset: 40,
+      });
     }
   } finally {
     if (parseController === controller) {
@@ -156,14 +161,18 @@ const confirmImport = () => {
     });
     pendingResume.value = null;
     visible.value = false;
-    ElMessage.success("简历导入成功");
+    ElMessage.success({ message: "简历导入成功", position: "top-right", offset: 40 });
   }
 };
 
 // 打开导入弹窗：提前判断简历数量是否已达上限
 const handleOpenImport = () => {
   if (resumeStore.list.filter((item) => item.deletedAt === null).length >= resumeStore.maxCount) {
-    ElMessage.warning(`简历数量已达上限（${resumeStore.maxCount}个），请先删除后再导入`);
+    ElMessage.warning({
+      message: `简历数量已达上限（${resumeStore.maxCount}个），请先删除后再导入`,
+      position: "top-right",
+      offset: 40,
+    });
     return;
   }
   visible.value = true;
@@ -180,7 +189,7 @@ const importJsonConfig = async () => {
     if (file) {
       await parseJsonConfig(file);
     } else if (jsonErrors.value.length) {
-      ElMessage.error(jsonErrors.value[0].msg);
+      ElMessage.error({ message: jsonErrors.value[0].msg, position: "top-right", offset: 40 });
     }
   } catch {
     // 用户取消选择，忽略即可
@@ -219,11 +228,11 @@ const parseJsonConfig = async (file) => {
     if (ok) {
       // 导入成功后上报一次 JSON 导入动作
       trackResumeAction({ eventType: "import", fileType: "json" });
-      ElMessage.success("简历导入成功");
+      ElMessage.success({ message: "简历导入成功", position: "top-right", offset: 40 });
     }
   } catch (error) {
     console.error("解析简历文件失败:", error);
-    ElMessage.error("简历文件解析失败，请检查文件格式");
+    ElMessage.error({ message: "简历文件解析失败，请检查文件格式", position: "top-right", offset: 40 });
   }
 };
 
