@@ -5,19 +5,8 @@ import { parseRichText } from "./richTextParser";
 /** 当前使用统一经历列表结构的模块 key */
 export const EXPERIENCE_MODULE_KEYS = ["work", "internship", "project", "education", "club", "volunteer"] as const;
 
-/** 工作、教育、项目与社团使用同一经历详情组件，其余经历使用通用组件。 */
-const EXPERIENCE_CONTENT_KINDS: Record<string, string> = {
-  education: "experienceDetails", // 教育经历展示学院、专业、成绩、学历与学制。
-  work: "experienceDetails", // 工作经历展示岗位与部门。
-  project: "experienceDetails", // 项目经历展示岗位与部门。
-  club: "experienceDetails", // 社团经历展示职务、城市与标签。
-};
-
-// 自定义经历沿用详情组件，其余未指定的经历继续使用通用组件。
-const getExperienceContentKind = (moduleKey: string) => {
-  if (moduleKey.startsWith("custom_")) return "experienceDetails";
-  return EXPERIENCE_CONTENT_KINDS[moduleKey] ?? "experience";
-};
+/** 经历模块统一使用详情组件：教育展示学院、专业、学历与学制，其余模块展示职务与部门。 */
+const EXPERIENCE_CONTENT_KIND = "experienceDetails";
 
 /** 读取经历模块中的有效条目 */
 const getExperienceItems = (context: LayoutAdapterContext) => {
@@ -28,7 +17,7 @@ const getExperienceItems = (context: LayoutAdapterContext) => {
   return getValidDataEntries(list) as Array<{ data: Record<string, unknown>; index: number }>;
 };
 
-/** 创建经历条目，工作、教育与项目共用详情组件展示各自字段。 */
+/** 创建经历条目，全部经历模块共用详情组件展示各自字段。 */
 export const createExperienceModuleAdapter = (moduleKey: string): LayoutAdapter => (
   context,
 ) => {
@@ -44,7 +33,7 @@ export const createExperienceModuleAdapter = (moduleKey: string): LayoutAdapter 
       sourceModuleKey: moduleKey,
       sourceItemIndex: index,
       type: "group",
-      contentKind: getExperienceContentKind(moduleKey), // 按模块选择共用的经历详情组件。
+      contentKind: EXPERIENCE_CONTENT_KIND, // 全部经历模块共用同一详情组件。
       payload: {
         part: "item",
         item,
