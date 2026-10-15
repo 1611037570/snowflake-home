@@ -166,7 +166,7 @@ const resumeData: any = {
     content: { language: "zh", textAlign: "auto", infoSeparator: "dot", linkUnderline: false, dateStyle: "dot", datePosition: "right" },
     theme: { template: "blueBilingual", color: "#2563EB", titleIconMode: "none" }, // 资深前端范本改用蓝色双语主题
     layout: { leftColumnWidth: 40 },
-    user: { infoMode: "text", infoLayout: "flex", avatarPosition: "right", infoPosition: "left" },
+    user: { infoMode: "text", infoLayout: "grid" /* 个人资料按网格排列 */, avatarPosition: "right", infoPosition: "left" },
   },
 };
 
