@@ -17,8 +17,7 @@ export const DEFAULT_MODULE_NAMES: { key: string; name: string; icon: string }[]
   },
   { key: "project", name: "项目经历", icon: "mdi:code-tags" },
   { key: "club", name: "社团经历", icon: "mdi:account-group-outline" }, // 校园组织经历，结构与工作经历一致
-  { key: "volunteer", name: "志愿服务", icon: "mdi:hand-heart-outline" }, // 公益服务经历，结构与工作经历一致
-  { key: "training", name: "培训经历", icon: "mdi:book-open-variant" }, // 培训与进修经历，结构与工作经历一致
+  { key: "volunteer", name: "志愿者经历", icon: "mdi:hand-heart-outline" }, // 公益服务经历，结构与工作经历一致
   { key: "language", name: "语言能力", icon: "mdi:translate" }, // 语言能力：熟练程度与成绩证书，条目结构与荣誉一致
   { key: "hobby", name: "兴趣爱好", icon: "mdi:palette-outline" }, // 兴趣爱好，单条富文本正文
   { key: "publication", name: "学术论文", icon: "mdi:file-document-multiple-outline" },

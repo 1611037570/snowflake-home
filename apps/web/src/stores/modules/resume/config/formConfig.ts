@@ -2027,198 +2027,375 @@ export const DEFAULT_HONOR_FORM = {
     },
   ],
 } satisfies FormField;
-// 校园与公益类经历：社团、志愿服务、培训经历与工作经历同构，统一由工厂生成表单，仅名称与标签不同
-const createCampusExperienceForm = (
-  key: string, // 模块标识
-  title: string, // 模块默认名称
-  tags: string[], // 该模块的常用标签
-) =>
-  ({
-    type: "group",
-    key,
-    context: [key],
-    component: "collapseModule",
-    props: {
-      add: true,
-    },
-    model: createModuleState(title),
-    checks: MODULE_CHECKS,
-    slot: "default",
-    fields: [
-      {
-        type: "array",
-        source: ["list"],
-        drag: true,
-        dragClass: DEFAULT_DRAG_CLASS,
-        rowClass: "gap-y-3 px-3 pt-3",
-        itemClass: DEFAULT_COL_CLASS + " px-3!",
-        itemSchema: {
-          type: "group",
-          component: "collapseItem",
-          slot: "default",
-          span: 24,
-          model: [
-            {
-              source: ["ui", "collapsed"],
-              prop: "collapsed",
-              defaultValue: EXPANDED,
-            },
-            {
-              source: ["ui", "hidden"],
-              prop: "hidden",
-              defaultValue: false,
-            },
-            {
-              source: ["data", "name"],
-              prop: "name",
-            },
-          ],
-          fields: [
-            {
-              type: "object",
-              label: "组织名称",
-              component: "input",
-              rules: [requiredFieldRule()],
-              span: 24,
-              model: {
-                source: ["data", "name"],
-                prop: "modelValue",
-              },
-              props: {
-                placeholder: "请输入组织名称",
-                clearable: true,
-              },
-            },
-            {
-              type: "object",
-              label: "担任职务",
-              component: "positionPicker",
-              span: 12,
-              model: [
-                {
-                  source: ["data", "post"],
-                  prop: "modelValue",
-                },
-                {
-                  source: ["__options", "position"],
-                  prop: "list",
-                  raw: true,
-                },
-              ],
-              props: {
-                placeholder: "请选择或输入职务",
-              },
-            },
-            {
-              type: "object",
-              label: "开始时间",
-              rules: [requiredFieldRule(), MONTH_FORMAT_RULE],
-              component: "datePicker",
-              span: 12,
-              model: {
-                source: ["data", "startTime"],
-                prop: "modelValue",
-              },
-              props: {
-                type: "month",
-                format: "YYYY.MM",
-                valueFormat: "YYYY.MM",
-                placeholder: "请选择开始时间",
-              },
-            },
-            {
-              type: "object",
-              label: "结束时间",
-              rules: [requiredFieldRule(), MONTH_PRESENT_FORMAT_RULE],
-              component: "datePickerPresent",
-              span: 12,
-              model: {
-                source: ["data", "endTime"],
-                prop: "modelValue",
-              },
-              props: {
-                type: "month",
-                format: "YYYY.MM",
-                valueFormat: "YYYY.MM",
-                placeholder: "请选择结束时间",
-                presentText: "至今",
-              },
-            },
-            {
-              type: "object",
-              label: "所在城市",
-              component: "cityPicker",
-              span: 24,
-              model: [
-                {
-                  source: ["data", "city"],
-                  prop: "modelValue",
-                },
-                {
-                  source: ["__options", "city"],
-                  prop: "list",
-                  raw: true,
-                },
-              ],
-              props: {
-                placeholder: "请选择所在城市",
-              },
-            },
-            {
-              type: "object",
-              label: "标签", // 校园与公益类经历的标签字段标题。
-              component: "tag",
-              span: 24,
-              model: {
-                source: ["data", "tags"],
-                prop: "modelValue",
-                defaultValue: [],
-              },
-              props: {
-                list: tags,
-              },
-            },
-            {
-              type: "object",
-              label: "经历",
-              component: "resumeContentEditor",
-              rules: [requiredFieldRule(), contentQualityRule()],
-              span: 24,
-              props: {
-                kind: "work",
-              },
-              model: {
-                source: ["data", "content"],
-                prop: "modelValue",
-              },
-            },
-          ],
-        },
-      },
-    ],
-  }) satisfies FormField;
 
 // 社团经历
-export const DEFAULT_CLUB_FORM = createCampusExperienceForm("club", "社团经历", [
-  "社长",
-  "部长",
-  "核心成员",
-  "组织策划",
-  "从0到1",
-]);
-// 志愿服务
-export const DEFAULT_VOLUNTEER_FORM = createCampusExperienceForm("volunteer", "志愿服务", [
-  "志愿服务",
-  "公益项目",
-  "团队协作",
-  "组织策划",
-]);
-// 培训经历
-export const DEFAULT_TRAINING_FORM = createCampusExperienceForm("training", "培训经历", [
-  "结业证书",
-  "优秀学员",
-  "技能提升",
-]);
+export const DEFAULT_CLUB_FORM = {
+  type: "group",
+  key: "club",
+  context: ["club"],
+  component: "collapseModule",
+  props: { add: true },
+  model: createModuleState("社团经历"),
+  checks: MODULE_CHECKS,
+  slot: "default",
+  fields: [
+    {
+      type: "array",
+      source: ["list"],
+      drag: true,
+      dragClass: DEFAULT_DRAG_CLASS,
+      rowClass: "gap-y-3 px-3 pt-3",
+      itemClass: DEFAULT_COL_CLASS + " px-3!",
+      itemSchema: {
+        type: "group",
+        component: "collapseItem",
+        slot: "default",
+        span: 24,
+        model: [
+          {
+            source: ["ui", "collapsed"], // 社团记录的折叠状态。
+            prop: "collapsed", // 绑定折叠组件状态。
+            defaultValue: EXPANDED, // 新记录默认展开。
+          },
+          {
+            source: ["ui", "hidden"], // 社团记录的隐藏状态。
+            prop: "hidden", // 绑定隐藏操作。
+            defaultValue: false, // 新记录默认可见。
+          },
+          {
+            source: ["data", "name"], // 组织或活动名称作为记录标题。
+            prop: "name", // 绑定折叠标题。
+          },
+        ],
+        fields: [
+          // 组织或活动名称与担任职务按教育经历首行布局并排编辑。
+          {
+            type: "object",
+            label: "组织/活动", // 社团经历的名称字段标题。
+            component: "input",
+            rules: [requiredFieldRule()],
+            span: 12,
+            model: {
+              source: ["data", "name"],
+              prop: "modelValue",
+            },
+            props: {
+              placeholder: "请输入组织/活动", // 提示填写组织或活动名称。
+              clearable: true,
+            },
+          },
+          {
+            type: "object",
+            label: "担任职务",
+            component: "positionPicker",
+            span: 12,
+            model: [
+              {
+                source: ["data", "post"],
+                prop: "modelValue",
+              },
+              {
+                source: ["__options", "position"],
+                prop: "list",
+                raw: true,
+              },
+            ],
+            props: {
+              placeholder: "请选择或输入职务",
+            },
+          },
+          // 起止时间保持同一行。
+          {
+            type: "object",
+            label: "开始时间",
+            rules: [requiredFieldRule(), MONTH_FORMAT_RULE],
+            component: "datePicker",
+            span: 12,
+            model: {
+              source: ["data", "startTime"],
+              prop: "modelValue",
+            },
+            props: {
+              type: "month",
+              format: "YYYY.MM",
+              valueFormat: "YYYY.MM",
+              placeholder: "请选择开始时间",
+            },
+          },
+          {
+            type: "object",
+            label: "结束时间",
+            rules: [requiredFieldRule(), MONTH_PRESENT_FORMAT_RULE],
+            component: "datePickerPresent",
+            span: 12,
+            model: {
+              source: ["data", "endTime"],
+              prop: "modelValue",
+            },
+            props: {
+              type: "month",
+              format: "YYYY.MM",
+              valueFormat: "YYYY.MM",
+              placeholder: "请选择结束时间",
+              presentText: "至今",
+            },
+          },
+          {
+            type: "object",
+            label: "经历",
+            component: "resumeContentEditor",
+            rules: [requiredFieldRule(), contentQualityRule()],
+            span: 24,
+            props: { kind: "work" },
+            model: {
+              source: ["data", "content"],
+              prop: "modelValue",
+            },
+          },
+          // 城市与标签按教育经历结构放入默认收起的更多分组。
+          {
+            type: "group",
+            key: "more",
+            component: "collapseGroup",
+            slot: "default",
+            span: 24,
+            rowClass: "gap-y-3",
+            props: { label: "更多" },
+            model: [
+              {
+                source: ["ui", "moreCollapsed"], // 更多分组的折叠状态。
+                prop: "collapsed", // 绑定折叠组件状态。
+                defaultValue: COLLAPSED, // 默认收起更多分组。
+              },
+            ],
+            fields: [
+              {
+                type: "object",
+                label: "所在城市",
+                component: "cityPicker",
+                span: 24,
+                model: [
+                  {
+                    source: ["data", "city"],
+                    prop: "modelValue",
+                  },
+                  {
+                    source: ["__options", "city"],
+                    prop: "list",
+                    raw: true,
+                  },
+                ],
+                props: {
+                  placeholder: "请选择所在城市",
+                },
+              },
+              {
+                type: "object",
+                label: "标签", // 社团经历的标签字段标题。
+                component: "tag",
+                span: 24,
+                model: {
+                  source: ["data", "tags"],
+                  prop: "modelValue",
+                  defaultValue: [],
+                },
+                props: {
+                  list: ["社长", "部长", "核心成员", "组织策划", "从0到1"],
+                },
+              },
+            ],
+          },
+        ],
+      },
+    },
+  ],
+} satisfies FormField;
+// 志愿者经历独立维护字段与记录配置。
+export const DEFAULT_VOLUNTEER_FORM = {
+  type: "group",
+  key: "volunteer", // 模块标识。
+  context: ["volunteer"], // 模块数据路径。
+  component: "collapseModule",
+  props: {
+    add: true,
+  },
+  model: createModuleState("志愿者经历"),
+  checks: MODULE_CHECKS,
+  slot: "default",
+  fields: [
+    {
+      type: "array",
+      source: ["list"],
+      drag: true,
+      dragClass: DEFAULT_DRAG_CLASS,
+      rowClass: "gap-y-3 px-3 pt-3",
+      itemClass: DEFAULT_COL_CLASS + " px-3!",
+      itemSchema: {
+        type: "group",
+        component: "collapseItem",
+        slot: "default",
+        span: 24,
+        model: [
+          {
+            source: ["ui", "collapsed"],
+            prop: "collapsed",
+            defaultValue: EXPANDED,
+          },
+          {
+            source: ["ui", "hidden"],
+            prop: "hidden",
+            defaultValue: false,
+          },
+          {
+            source: ["data", "name"],
+            prop: "name",
+          },
+        ],
+        fields: [
+          // 组织名称与担任职务按教育经历首行布局并排编辑。
+          {
+            type: "object",
+            label: "组织名称",
+            component: "input",
+            rules: [requiredFieldRule()],
+            span: 12,
+            model: {
+              source: ["data", "name"],
+              prop: "modelValue",
+            },
+            props: {
+              placeholder: "请输入组织名称",
+              clearable: true,
+            },
+          },
+          {
+            type: "object",
+            label: "担任职务",
+            component: "positionPicker",
+            span: 12,
+            model: [
+              {
+                source: ["data", "post"],
+                prop: "modelValue",
+              },
+              {
+                source: ["__options", "position"],
+                prop: "list",
+                raw: true,
+              },
+            ],
+            props: {
+              placeholder: "请选择或输入职务",
+            },
+          },
+          // 起止时间保持同一行。
+          {
+            type: "object",
+            label: "开始时间",
+            rules: [requiredFieldRule(), MONTH_FORMAT_RULE],
+            component: "datePicker",
+            span: 12,
+            model: {
+              source: ["data", "startTime"],
+              prop: "modelValue",
+            },
+            props: {
+              type: "month",
+              format: "YYYY.MM",
+              valueFormat: "YYYY.MM",
+              placeholder: "请选择开始时间",
+            },
+          },
+          {
+            type: "object",
+            label: "结束时间",
+            rules: [requiredFieldRule(), MONTH_PRESENT_FORMAT_RULE],
+            component: "datePickerPresent",
+            span: 12,
+            model: {
+              source: ["data", "endTime"],
+              prop: "modelValue",
+            },
+            props: {
+              type: "month",
+              format: "YYYY.MM",
+              valueFormat: "YYYY.MM",
+              placeholder: "请选择结束时间",
+              presentText: "至今",
+            },
+          },
+          {
+            type: "object",
+            label: "经历",
+            component: "resumeContentEditor",
+            rules: [requiredFieldRule(), contentQualityRule()],
+            span: 24,
+            props: {
+              kind: "work",
+            },
+            model: {
+              source: ["data", "content"],
+              prop: "modelValue",
+            },
+          },
+          // 城市与标签按教育经历结构放入默认收起的更多分组。
+          {
+            type: "group",
+            key: "more",
+            component: "collapseGroup",
+            slot: "default",
+            span: 24,
+            rowClass: "gap-y-3",
+            props: { label: "更多" },
+            model: [
+              {
+                source: ["ui", "moreCollapsed"], // 更多分组的折叠状态。
+                prop: "collapsed", // 绑定折叠组件状态。
+                defaultValue: COLLAPSED, // 默认收起更多分组。
+              },
+            ],
+            fields: [
+              {
+                type: "object",
+                label: "所在城市",
+                component: "cityPicker",
+                span: 24,
+                model: [
+                  {
+                    source: ["data", "city"],
+                    prop: "modelValue",
+                  },
+                  {
+                    source: ["__options", "city"],
+                    prop: "list",
+                    raw: true,
+                  },
+                ],
+                props: {
+                  placeholder: "请选择所在城市",
+                },
+              },
+              {
+                type: "object",
+                label: "标签", // 志愿者经历的标签字段标题。
+                component: "tag",
+                span: 24,
+                model: {
+                  source: ["data", "tags"],
+                  prop: "modelValue",
+                  defaultValue: [],
+                },
+                props: {
+                  list: ["志愿服务", "公益项目", "团队协作", "组织策划"], // 当前模块的常用标签。
+                },
+              },
+            ],
+          },
+        ],
+      },
+    },
+  ],
+} satisfies FormField;
 
 // 兴趣爱好：与个人优势同为单条富文本正文
 export const DEFAULT_HOBBY_FORM = {
@@ -2896,7 +3073,7 @@ export const DEFAULT_CUSTOM_FORM = {
             rules: [requiredFieldRule()],
             label: "名称",
             component: "input",
-            span: 24,
+            span: 12, // 名称与职位并排编辑。
             model: {
               source: ["data", "name"],
               prop: "modelValue",
@@ -2906,46 +3083,7 @@ export const DEFAULT_CUSTOM_FORM = {
               clearable: true,
             },
           },
-          {
-            type: "object",
-            label: "项目链接",
-            component: "projectLink",
-            rules: [atsRule("projectLink")],
-            span: 24,
-            model: {
-              source: ["data", "link"],
-              prop: "modelValue",
-              defaultValue: {},
-            },
-          },
-          {
-            type: "object",
-            label: "标签", // 自定义经历的标签字段标题。
-            component: "tag",
-            span: 24,
-            model: {
-              source: ["data", "tags"],
-              prop: "modelValue",
-              defaultValue: [],
-            },
-            props: {
-              list: ["核心成员", "团队管理", "独立负责", "跨部门协作", "从0到1"],
-            },
-          },
-          {
-            type: "object",
-            label: "所在部门",
-            component: "input",
-            span: 12,
-            model: {
-              source: ["data", "department"],
-              prop: "modelValue",
-            },
-            props: {
-              placeholder: "请输入所在部门",
-              clearable: true,
-            },
-          },
+          // 职位紧随名称，同教育经历的专业位置。
           {
             type: "object",
             rules: [requiredFieldRule()],
@@ -3004,26 +3142,6 @@ export const DEFAULT_CUSTOM_FORM = {
           },
           {
             type: "object",
-            label: "所在城市",
-            component: "cityPicker",
-            span: 12,
-            model: [
-              {
-                source: ["data", "city"],
-                prop: "modelValue",
-              },
-              {
-                source: ["__options", "city"],
-                prop: "list",
-                raw: true,
-              },
-            ],
-            props: {
-              placeholder: "请选择所在城市",
-            },
-          },
-          {
-            type: "object",
             label: "经历",
             rules: [requiredFieldRule(), contentQualityRule()],
             component: "resumeContentEditor",
@@ -3036,6 +3154,85 @@ export const DEFAULT_CUSTOM_FORM = {
               source: ["data", "content"],
               prop: "modelValue",
             },
+          },
+          // 自定义经历的链接、部门、城市与标签收进更多分组。
+          {
+            type: "group",
+            key: "more",
+            component: "collapseGroup",
+            slot: "default",
+            span: 24,
+            rowClass: "gap-y-3",
+            props: { label: "更多" },
+            model: [
+              {
+                source: ["ui", "moreCollapsed"], // 更多分组的折叠状态。
+                prop: "collapsed", // 绑定折叠组件状态。
+                defaultValue: COLLAPSED, // 默认收起更多分组。
+              },
+            ],
+            fields: [
+              {
+                type: "object",
+                label: "项目链接",
+                component: "projectLink",
+                rules: [atsRule("projectLink")],
+                span: 24,
+                model: {
+                  source: ["data", "link"],
+                  prop: "modelValue",
+                  defaultValue: {},
+                },
+              },
+              {
+                type: "object",
+                label: "所在部门",
+                component: "input",
+                span: 12,
+                model: {
+                  source: ["data", "department"],
+                  prop: "modelValue",
+                },
+                props: {
+                  placeholder: "请输入所在部门",
+                  clearable: true,
+                },
+              },
+              {
+                type: "object",
+                label: "所在城市",
+                component: "cityPicker",
+                span: 12,
+                model: [
+                  {
+                    source: ["data", "city"],
+                    prop: "modelValue",
+                  },
+                  {
+                    source: ["__options", "city"],
+                    prop: "list",
+                    raw: true,
+                  },
+                ],
+                props: {
+                  placeholder: "请选择所在城市",
+                },
+              },
+              {
+                type: "object",
+                label: "标签", // 自定义经历的标签字段标题。
+                component: "tag",
+                span: 24,
+                model: {
+                  source: ["data", "tags"],
+                  prop: "modelValue",
+                  defaultValue: [],
+                },
+                props: {
+                  list: ["核心成员", "团队管理", "独立负责", "跨部门协作", "从0到1"],
+                },
+              },
+            ],
           },
         ],
       },
@@ -3067,7 +3264,6 @@ export const allConfig = {
   honor: DEFAULT_HONOR_FORM,
   club: DEFAULT_CLUB_FORM,
   volunteer: DEFAULT_VOLUNTEER_FORM,
-  training: DEFAULT_TRAINING_FORM,
   hobby: DEFAULT_HOBBY_FORM,
   language: DEFAULT_LANGUAGE_FORM,
   custom: DEFAULT_CUSTOM_FORM,

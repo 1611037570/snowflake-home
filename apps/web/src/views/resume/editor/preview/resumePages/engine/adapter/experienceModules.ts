@@ -3,13 +3,20 @@ import type { LayoutAdapter, LayoutAdapterContext, LayoutAdapterRegistry } from 
 import { parseRichText } from "./richTextParser";
 
 /** 当前使用统一经历列表结构的模块 key */
-export const EXPERIENCE_MODULE_KEYS = ["work", "internship", "project", "education", "club", "volunteer", "training"] as const;
+export const EXPERIENCE_MODULE_KEYS = ["work", "internship", "project", "education", "club", "volunteer"] as const;
 
-/** 工作、教育和项目使用同一经历详情组件，其余经历使用通用组件。 */
+/** 工作、教育、项目与社团使用同一经历详情组件，其余经历使用通用组件。 */
 const EXPERIENCE_CONTENT_KINDS: Record<string, string> = {
   education: "experienceDetails", // 教育经历展示学院、专业、成绩、学历与学制。
   work: "experienceDetails", // 工作经历展示岗位与部门。
   project: "experienceDetails", // 项目经历展示岗位与部门。
+  club: "experienceDetails", // 社团经历展示职务、城市与标签。
+};
+
+// 自定义经历沿用详情组件，其余未指定的经历继续使用通用组件。
+const getExperienceContentKind = (moduleKey: string) => {
+  if (moduleKey.startsWith("custom_")) return "experienceDetails";
+  return EXPERIENCE_CONTENT_KINDS[moduleKey] ?? "experience";
 };
 
 /** 读取经历模块中的有效条目 */
@@ -37,7 +44,7 @@ export const createExperienceModuleAdapter = (moduleKey: string): LayoutAdapter 
       sourceModuleKey: moduleKey,
       sourceItemIndex: index,
       type: "group",
-      contentKind: EXPERIENCE_CONTENT_KINDS[moduleKey] ?? "experience", // 三类主要经历共用详情组件。
+      contentKind: getExperienceContentKind(moduleKey), // 按模块选择共用的经历详情组件。
       payload: {
         part: "item",
         item,
