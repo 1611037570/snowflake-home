@@ -8,7 +8,7 @@ import {
 import { parseRichText } from "./richTextParser";
 
 /** 当前使用通用富文本模块渲染的模块 key（skill 支持切换熟练度布局，适配器单独注册） */
-export const RICH_TEXT_MODULE_KEYS = ["advantage", "hobby"] as const;
+export const RICH_TEXT_MODULE_KEYS = ["advantage"] as const;
 
 /** 读取富文本模块中的正文内容 */
 const getModuleContent = (context: LayoutAdapterContext): string => {
@@ -18,7 +18,7 @@ const getModuleContent = (context: LayoutAdapterContext): string => {
   return typeof content === "string" && !isContentEmpty(content) ? content : "";
 };
 
-/** 创建 advantage、hobby 共用的富文本适配器 */
+/** 创建 advantage 模块共用的富文本适配器 */
 export const createRichTextModuleAdapter = (moduleKey: string): LayoutAdapter => (
   context,
 ) => {

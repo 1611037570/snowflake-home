@@ -25,13 +25,10 @@ export const PREVIEW_TITLES: Record<PreviewLang, Record<string, string>> = {
     internship: "实习经历", // 实习模块标题。
     project: "项目经历",
     publication: "学术论文",
-    ip: "知识产权",
     honor: "荣誉证书",
     portfolio: "作品集",
     club: "社团经历",
     volunteer: "志愿者经历",
-    hobby: "兴趣爱好",
-    language: "语言能力",
   },
   en: {
     contact: "Contact", // 青线双栏个人信息区的分组标题
@@ -43,13 +40,10 @@ export const PREVIEW_TITLES: Record<PreviewLang, Record<string, string>> = {
     internship: "Internship Experience", // 实习模块标题。
     project: "Projects",
     publication: "Publications",
-    ip: "Intellectual Property",
     honor: "Honors & Certificates",
     portfolio: "Portfolio",
     club: "Club Experience",
     volunteer: "Volunteer Experience",
-    hobby: "Hobbies",
-    language: "Languages",
   },
   ja: {
     contact: "連絡先", // 青线双栏个人信息区的分组标题
@@ -61,13 +55,10 @@ export const PREVIEW_TITLES: Record<PreviewLang, Record<string, string>> = {
     internship: "インターンシップ経験", // 实习模块标题。
     project: "プロジェクト経験",
     publication: "学術論文",
-    ip: "知的財産権",
     honor: "受賞・資格",
     portfolio: "ポートフォリオ",
     club: "サークル経験",
     volunteer: "ボランティア",
-    hobby: "趣味",
-    language: "言語能力",
   },
   ko: {
     contact: "연락처", // 青线双栏个人信息区的分组标题
@@ -79,13 +70,10 @@ export const PREVIEW_TITLES: Record<PreviewLang, Record<string, string>> = {
     internship: "인턴 경험", // 实习模块标题。
     project: "프로젝트 경험",
     publication: "학술 논문",
-    ip: "지식재산권",
     honor: "수상 및 자격증",
     portfolio: "포트폴리오",
     club: "동아리 경험",
     volunteer: "봉사 활동",
-    hobby: "취미",
-    language: "어학 능력",
   },
   fr: {
     contact: "Contact", // 青线双栏个人信息区的分组标题
@@ -97,13 +85,10 @@ export const PREVIEW_TITLES: Record<PreviewLang, Record<string, string>> = {
     internship: "Stages", // 实习模块标题。
     project: "Projets",
     publication: "Publications",
-    ip: "Propriété intellectuelle",
     honor: "Distinctions et certificats",
     portfolio: "Portfolio",
     club: "Expérience associative",
     volunteer: "Bénévolat",
-    hobby: "Loisirs",
-    language: "Compétences linguistiques",
   },
   de: {
     contact: "Kontakt", // 青线双栏个人信息区的分组标题
@@ -115,13 +100,10 @@ export const PREVIEW_TITLES: Record<PreviewLang, Record<string, string>> = {
     internship: "Praktika", // 实习模块标题。
     project: "Projekte",
     publication: "Publikationen",
-    ip: "Geistiges Eigentum",
     honor: "Auszeichnungen & Zertifikate",
     portfolio: "Portfolio",
     club: "Vereinserfahrung",
     volunteer: "Ehrenamt",
-    hobby: "Hobbys",
-    language: "Sprachkenntnisse",
   },
   es: {
     contact: "Contacto", // 青线双栏个人信息区的分组标题
@@ -133,13 +115,10 @@ export const PREVIEW_TITLES: Record<PreviewLang, Record<string, string>> = {
     internship: "Prácticas profesionales", // 实习模块标题。
     project: "Proyectos",
     publication: "Publicaciones",
-    ip: "Propiedad intelectual",
     honor: "Honores y certificados",
     portfolio: "Portafolio",
     club: "Experiencia en asociaciones",
     volunteer: "Voluntariado",
-    hobby: "Aficiones",
-    language: "Idiomas",
   },
   ru: {
     contact: "Контакты", // 青线双栏个人信息区的分组标题
@@ -151,13 +130,10 @@ export const PREVIEW_TITLES: Record<PreviewLang, Record<string, string>> = {
     internship: "Стажировки", // 实习模块标题。
     project: "Проекты",
     publication: "Публикации",
-    ip: "Интеллектуальная собственность",
     honor: "Награды и сертификаты",
     portfolio: "Портфолио",
     club: "Опыт в объединениях",
     volunteer: "Волонтёрство",
-    hobby: "Хобби",
-    language: "Знание языков",
   },
 };
 
