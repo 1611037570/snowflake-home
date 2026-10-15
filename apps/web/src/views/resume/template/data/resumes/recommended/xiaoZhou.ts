@@ -60,6 +60,61 @@ const defaultData: any = {
         mbti: "",
       },
     },
+    account: {
+      ui: {
+        collapsed: [],
+        archived: false,
+        title: "社交账号",
+        hidden: false,
+      },
+      list: [
+        {
+          ui: {
+            hidden: false,
+          },
+          data: {
+            name: "抖音",
+            url: "https://www.douyin.com/user/MS4wLjABAAAAre0YOu4w-m9z260-GU-cTZbAl0yDgtZEFeoY1YSBdG6l5l9jWyo2APQBtfU6Ln38",
+          },
+        },
+        {
+          ui: {
+            hidden: false,
+          },
+          data: {
+            name: "小红书",
+            url: "https://xhslink.cn/o/5x9OVDfiAfc",
+          },
+        },
+        {
+          ui: {
+            hidden: false,
+          },
+          data: {
+            name: "bilibili",
+            url: "https://space.bilibili.com/272381122",
+          },
+        },
+        {
+          ui: {
+            hidden: false,
+          },
+          data: {
+            name: "github",
+            url: "https://github.com/1611037570",
+          },
+        },
+        {
+          ui: {
+            hidden: false,
+          },
+          data: {
+            name: "稀土掘金",
+            url: "https://juejin.cn/user/2342386827791687/posts",
+          },
+        },
+      ],
+    },
     skill: {
       ui: {
         collapsed: [],
@@ -263,6 +318,9 @@ const defaultData: any = {
             ],
           },
         ],
+      },
+      {
+        key: "account",
       },
       {
         key: "skill",
