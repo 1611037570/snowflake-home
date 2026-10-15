@@ -14,12 +14,12 @@ const { theme: { linkUnderline } } = useResumePreviewContext();
 
 <template>
   <div class="flex max-w-full min-w-0 items-center">
+    <!-- 有名称时只展示名称，名称缺失时才回退展示链接地址 -->
     <span v-if="item.name" class="shrink-0 whitespace-nowrap">
       <ItemTitle :name="item.name" class="inline-block" />
-      <span v-if="item.url">：</span>
     </span>
     <!-- 链接需要 flex-1 + overflow-hidden 的包裹层，窄栏内才能截断溢出 -->
-    <div class="flex min-w-0 flex-1 items-center overflow-hidden">
+    <div v-else class="flex min-w-0 flex-1 items-center overflow-hidden">
       <a
         :href="safeUrl(item.url)"
         target="_blank"
