@@ -62,13 +62,8 @@ const handleAdd = (module) => {
     return;
   }
   if (type in allConfig) {
-    const config = structuredClone(allConfig[type]);
-    ensureRuntimeFieldIds([config]);
-    // 新增模块内的记录默认折叠状态跟随系统设置
-    bindCollapsedDefault([config], () => resumeStore.itemDefaultCollapsed);
-    runtimeConfig.value.fields.push(config);
-    // 新增模块落到列表末尾，同步定位编辑区与预览区
-    jumpAll(type);
+    // 预设模块由编辑器统一展开，新增入口只负责定位。
+    if (resumeStore.addModule(type)) jumpAll(type);
   }
 };
 

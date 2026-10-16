@@ -1057,6 +1057,11 @@ export const DEFAULT_SKILL_FORM = {
       itemSchema: {
         model: [
           {
+            source: ["ui", "collapsed"], // 保存单条技能的折叠状态。
+            defaultValue: EXPANDED, // 新增技能默认展开。
+            prop: "collapsed", // 绑定技能条目的折叠组件。
+          },
+          {
             source: ["data", "name"],
             defaultValue: "",
             prop: "name",
@@ -1941,6 +1946,8 @@ export const DEFAULT_HONOR_FORM = {
         component: "collapseItem",
         slot: "default",
         span: 24,
+        // 荣誉条目内容底部留白，避免最后一个输入框贴住卡片边框。
+        rowClass: "gap-y-3 pb-3",
         model: [
           {
             source: ["ui", "collapsed"],
@@ -1989,7 +1996,7 @@ export const DEFAULT_HONOR_FORM = {
             },
           },
           {
-            // 荣誉描述改用普通输入框，保持原有内容字段。
+            // 荣誉描述使用默认一行的自适应多行输入框。
             type: "object",
             label: "荣誉描述",
             component: "input",
@@ -1997,6 +2004,8 @@ export const DEFAULT_HONOR_FORM = {
             props: {
               placeholder: "请输入荣誉描述", // 提示填写简短的荣誉说明。
               clearable: true, // 允许清空荣誉描述。
+              type: "textarea", // 支持输入多行荣誉描述。
+              autosize: { minRows: 1 }, // 默认显示一行，随内容自动增高。
             },
             model: {
               source: ["data", "content"],

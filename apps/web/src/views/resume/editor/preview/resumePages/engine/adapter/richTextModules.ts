@@ -61,7 +61,7 @@ export const createSkillModuleAdapter = (moduleKey: string): LayoutAdapter => (
     const requestedColumns = Number(skillUi.columns);
     const columns = requestedColumns === 2 || requestedColumns === 3 ? requestedColumns : 1;
     // 模板编号随节点传入公共技能组件，预览与菜单使用同一实现。
-    const skillTemplate = themeUi?.skillTemplate || "bar";
+    const skillTemplate = themeUi?.skillTemplate || "none";
     const entries = getValidDataEntries(moduleData.list);
     // 占比与标签类样式把全部可见技能作为一组，保证比例统一或标签自然换行。
     if (["distribution", "tag", "notion"].includes(skillTemplate) && entries.length) {

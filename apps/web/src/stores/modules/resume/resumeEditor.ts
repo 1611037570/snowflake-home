@@ -56,7 +56,7 @@ export const createResumeEditor = ({
     // 技能编辑字段按简历级布局显示，切换时保留另一种布局已有内容。
     const skillField = runtime.fields.find((field: any) => field?.key === "skill");
     if (skillField) skillField.fields = skillField.fields.filter((field: any) =>
-      item.ui?.skill?.layout === "proficiency" ? field.type === "array" : field.type !== "array",
+      item.ui?.skill?.layout === "text" ? field.type !== "array" : field.type === "array",
     );
     // 记录折叠默认值按系统设置读取，仅影响新增记录
     bindCollapsedDefault(runtime.fields, () => itemDefaultCollapsed.value);
@@ -74,6 +74,15 @@ export const createResumeEditor = ({
     const config = item.config && typeof item.config === "object" ? item.config : {};
     if (isEqual(config.modules || [], modules)) return;
     config.modules = structuredClone(modules);
+  };
+  // 新增预设模块只写入模块顺序，统一由运行时配置展开并选择当前布局字段。
+  const addModule = (moduleKey: string): boolean => {
+    const item = currentItem.value;
+    const fields = runtimeConfig.value?.fields;
+    if (!item || !fields || fields.some((field: any) => field?.key === moduleKey)) return false;
+    setConfigModules(item, [...compactConfigModules(fields), { key: moduleKey }]);
+    refreshRuntime();
+    return true;
   };
   // 模块与内部字段排序只改运行时 fields，变化后压缩回简历模块顺序
   watch(
@@ -272,6 +281,7 @@ export const createResumeEditor = ({
     runtimeFields,
     refreshRuntime,
     setConfigModules,
+    addModule,
     restoreConfig,
     currentUI,
     currentUsage,

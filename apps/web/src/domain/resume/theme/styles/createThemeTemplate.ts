@@ -87,6 +87,7 @@ export const resolveThemeTemplate = (definition: ResumeThemeDefinition): ResumeT
     },
     user: { ...DEFAULT_UI.user, ...ui.user },
     skill: { ...DEFAULT_UI.skill, ...ui.skill },
+    honor: { ...DEFAULT_UI.honor, ...ui.honor }, // 荣誉布局沿用主题或默认展示方式。
   };
 
   return {
