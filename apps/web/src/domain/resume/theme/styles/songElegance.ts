@@ -3,7 +3,7 @@ import type { ThemeTemplateConfig } from "@/domain/resume/theme/styles/createThe
 export default {
   name: "宋韵雅致", // 主题显示名称
   id: "songElegance" as const, // 主题编号，供各外观组件按编号选择
-  design: ["single-column", "minimal"], // 模板列表分类标签：单栏、简约
+  design: ["single-column", "minimal", "recommended"], // 保留单栏与简约归属，同时进入推荐。
   description: "宋体字配米色纸张与细线装裱页边，双线标题收束模块。", // 主题说明
   decisions: { // 主题固定外观，不进入用户界面配置
     pageBorder: { // 主题固定纸张边框

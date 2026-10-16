@@ -135,6 +135,7 @@ export const resumeTemplateLayoutOptions: ResumeTemplateOption[] = [
   { key: "timeline" /* 时间轴标签编号 */, value: "时间轴" /* 时间轴显示名称 */ },
 ];
 export const resumeTemplateTierOptions: ResumeTemplateOption[] = [
+  { key: "recommended" /* 推荐标签编号 */, value: "推荐" /* 推荐显示名称 */ },
   { key: "minimal" /* 简约标签编号 */, value: "简约" /* 简约显示名称 */ },
   { key: "polished" /* 精美标签编号 */, value: "精美" /* 精美显示名称 */ },
   { key: "premium" /* 个性化标签编号 */, value: "个性化" /* 个性化显示名称 */ },

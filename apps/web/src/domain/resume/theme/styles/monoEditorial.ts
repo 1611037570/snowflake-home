@@ -3,7 +3,7 @@ import type { ThemeTemplateConfig } from "@/domain/resume/theme/styles/createThe
 export default {
   name: "黑白编辑稿", // 主题显示名称
   id: "monoEditorial" as const, // 主题与页眉外观的匹配编号
-  design: ["single-column", "minimal"], // 单栏与简约分类
+  design: ["single-column", "minimal", "recommended"], // 保留单栏与简约归属，同时进入推荐。
   description: "黑白大字页眉与宽留白，正文以序号标题呈现清晰层级。", // 主题说明
   decisions: { // 固定页面版式与区域留白
     layoutType: "topUserSingleColumn", // 个人信息置顶，正文单栏

@@ -25,6 +25,8 @@ const TEMPLATE_BATCH_SIZE = 20;
 const STYLE_BATCH_SIZE = 8;
 // 样式卡片统一使用的通用范本：进入模板页即加载，保证任一分类都有内容。
 const PREVIEW_BASE_FILE = "xiaoZhou.ts";
+// 推荐分类前四张卡片的固定顺序，其余推荐模板沿用主题清单顺序。
+const recommendedTemplateIds = ["blueAngleHeader", "blueProfileBand", "default", "minimal"];
 
 const resumeStore = useResumeStore();
 // 已加载的范本正文缓存：文件名到简历项的映射，切回旧分类不再重新加载。
@@ -111,9 +113,15 @@ const filteredResumeIndexes = computed(() =>
   resumeTemplateList.filter((template) => matchesTemplateFilters(template)),
 );
 // 简历模板按 design 字段筛选：与范本的场景、行业、职位筛选互不干扰
-const filteredStyleTemplates = computed(() =>
-  templates.value.filter((template) => matchesTemplateFilters(template, true)),
-);
+const filteredStyleTemplates = computed(() => {
+  const filtered = templates.value.filter((template) => matchesTemplateFilters(template, true));
+  if (templateFilters.value.tier !== "recommended") return filtered;
+  const rank = (id) => {
+    const index = recommendedTemplateIds.indexOf(id);
+    return index === -1 ? Number.MAX_SAFE_INTEGER : index;
+  };
+  return filtered.sort((left, right) => rank(left.id) - rank(right.id));
+});
 // 当前分类的总条数，用于判断是否仍有可追加的卡片。
 const currentTotal = computed(() =>
   currentTopCategory.value === "template"
