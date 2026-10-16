@@ -17,7 +17,7 @@ const collapsed = defineModel("collapsed", {
   <SfCollapse v-model="collapsed" :border="false">
     <SfCollapseItem name="1" lazy class="resume-group-box">
       <template #title>
-        <div class="flex h-full w-full items-center text-[15px] font-semibold text-sf-text-2">
+        <div class="flex h-full w-full items-center text-[14px]">
           <span class="truncate">{{ label }}</span>
         </div>
       </template>
