@@ -184,7 +184,7 @@ export const useResumeLayout = ({
     renderSignature: renderSignature.value,
     fontReadyVersion: fontReadyVersion.value,
   }));
-  const { measurements, measureDone, decorationHeight, measurementError } = useLayoutMeasurements({
+  const { measurements, measureDone, decorationHeight, measurementError, probeNodeIds, requestProbes } = useLayoutMeasurements({
     measureRef,
     nodes,
     watchSource,
@@ -210,6 +210,7 @@ export const useResumeLayout = ({
     const orderedRegions = [...layout.value.regions].sort(
       (left, right) => left.order - right.order,
     );
+    const probeRequests = new Set<string>(); // 本轮分页中需要补测正文断点的节点
     // 区域高度循环由纯函数结算，测量结果与分页算法只通过回调接入
     const { columnFlows: flowPagesByColumn } = buildRegionFlows<ReturnType<typeof paginateFlow>>(
       orderedRegions,
@@ -223,10 +224,18 @@ export const useResumeLayout = ({
             measurements: measurements.value,
             heights,
             gap: column.gap,
+            onNeedBreakPoints: (nodeId) => {
+              if (!probeNodeIds.value.has(nodeId)) probeRequests.add(nodeId);
+            },
           });
         },
       },
     );
+    if (probeRequests.size) {
+      // 先挂载目标探针并补测，再发布页面计划，避免显示缺少正文断点的临时分页。
+      queueMicrotask(() => requestProbes(probeRequests));
+      return null;
+    }
     return buildPagePlan({
       layout: layout.value,
       availableHeight: availableHeight.value,
@@ -266,5 +275,6 @@ export const useResumeLayout = ({
     contentWidth,
     columnWidths,
     measureGroups,
+    probeNodeIds,
   };
 };

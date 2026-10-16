@@ -24,6 +24,41 @@ const createMeasurement = (
 });
 
 describe("paginateFlow", () => {
+  it("整片放不下时请求正文断点，补测后允许条目在当前页切分", () => {
+    const nodes = [createNode("first"), createNode("detail", {
+      breakPoints: [{ offset: 4 /* 正文中段 */, type: "char" /* 字符断点 */ }, { offset: 8 /* 正文末尾 */, type: "paragraph" /* 段落断点 */ }],
+    })];
+    const measurements = new Map([
+      ["first", createMeasurement("first", 55)],
+      ["detail", createMeasurement("detail", 60, {
+        contentLength: 8, // 正文字符总长。
+        breakPoints: [{ offset: 8 /* 正文末尾 */, type: "paragraph" /* 段落断点 */, height: 60 /* 完整节点高度 */ }],
+      })],
+    ]);
+    const requested: string[] = [];
+    paginateFlow({
+      nodes, measurements,
+      heights: { firstPageHeight: 100 /* 首页可用高度 */, laterPageHeight: 100 /* 后续页可用高度 */ },
+      gap: 0, // 无模块间距。
+      onNeedBreakPoints: (nodeId) => requested.push(nodeId), // 收集需要补测的节点。
+    });
+    expect(requested).toEqual(["detail"]);
+    measurements.set("detail", createMeasurement("detail", 60, {
+      contentLength: 8, // 正文字符总长。
+      breakPoints: [
+        { offset: 4 /* 正文中段 */, type: "char" /* 字符断点 */, height: 30 /* 中段高度 */ },
+        { offset: 8 /* 正文末尾 */, type: "paragraph" /* 段落断点 */, height: 60 /* 完整节点高度 */ },
+      ],
+    }));
+    const pages = paginateFlow({
+      nodes, measurements,
+      heights: { firstPageHeight: 100 /* 首页可用高度 */, laterPageHeight: 100 /* 后续页可用高度 */ },
+      gap: 0, // 无模块间距。
+    });
+    expect(pages[0]?.items.map((item) => item.nodeId)).toEqual(["first", "detail"]);
+    expect(pages[1]?.items[0]?.contentRange).toEqual({ start: 4, end: 8 });
+  });
+
   it("后续页前置零高度分片不阻止段间距隐藏，也不额外挤出下一页", () => {
     const nodes = [
       createNode("first"),

@@ -92,10 +92,15 @@ export const measureLayoutNodes = (
     )
       .map((point) => {
         const offset = Number(point.dataset.layoutBreakpointOffset);
-        const height = declaredContentLength > 0 && offset === declaredContentLength ? rect.height : readRect(point).height;
-        return { offset, type: breakPointTypes.get(offset) || "textRange", height };
+        return { offset, type: breakPointTypes.get(offset) || "textRange", height: readRect(point).height };
       })
       .filter((point) => Number.isFinite(point.offset) && point.height > 0);
+    // 正文末尾与完整节点同高，直接补齐断点，省去一份完整内容探针。
+    if (declaredContentLength > 0 && rect.height > 0) breakPoints.push({
+      offset: declaredContentLength,
+      type: breakPointTypes.get(declaredContentLength) || "textRange",
+      height: rect.height,
+    });
 
     // 注意：断点探针内部也会渲染一份节点内容，下面的 querySelector 取到的必须是节点本体（本体恒排在探针之前）。
     // 若改用 querySelectorAll 统计节点内容，务必过滤掉 .layout-measure-breakpoint 内的副本，否则偏移会重复累计

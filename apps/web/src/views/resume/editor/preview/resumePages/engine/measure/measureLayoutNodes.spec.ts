@@ -76,8 +76,7 @@ describe("嵌套块分页测量", () => {
     const root = document.createElement("div");
     root.innerHTML = '<div data-layout-node-id="item"><div data-layout-block-range>' +
       '<div>头部</div><div>岗位</div><div>标签</div><div data-layout-text-block>正文</div>' +
-      '<div aria-hidden="true" style="position:absolute"></div></div>' +
-      '<div data-layout-breakpoint-offset="2"></div></div>';
+      '<div aria-hidden="true" style="position:absolute"></div></div></div>';
     const element = root.firstElementChild as HTMLElement;
     vi.spyOn(element, "getBoundingClientRect").mockReturnValue(new DOMRect(0, 100, 300, 120));
     const blocks = Array.from(element.querySelector("[data-layout-block-range]")!.children);
@@ -86,8 +85,6 @@ describe("嵌套块分页测量", () => {
         index === 4 ? new DOMRect(0, 100, 300, 120) : new DOMRect(0, 112 + index * 24, 300, 24),
       );
     });
-    vi.spyOn(element.querySelector("[data-layout-breakpoint-offset]")!, "getBoundingClientRect")
-      .mockReturnValue(new DOMRect(0, 100, 300, 108));
     const node: LayoutNode = {
       id: "item", // 条目节点编号
       sourceModuleKey: "test", // 所属模块编号

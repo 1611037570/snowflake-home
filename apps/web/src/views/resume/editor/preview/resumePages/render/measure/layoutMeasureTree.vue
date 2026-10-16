@@ -24,6 +24,8 @@ const props = defineProps<{
     padding?: ColumnPadding; // 与预览共用的栏装饰内边距
     gap?: number; // 与预览共用的栏内模块间距
   }>;
+  /** 分页确认需要正文断点测量的节点编号。 */
+  probeNodeIds: ReadonlySet<string>;
   /** 首页从纸张顶边开始的区域编号；与分页和实际页面共用同一来源 */
   topRegionId?: string | null;
   /** 布局结算后的区域几何，与预览读取同一份配置 */
@@ -97,7 +99,7 @@ const regions = computed(() => {
             :width="group.width"
             :padding="group.padding"
           >
-            <LayoutMeasureModule :nodes="group.nodes" :gap="group.gap ?? 0" />
+            <LayoutMeasureModule :nodes="group.nodes" :gap="group.gap ?? 0" :probe-node-ids="probeNodeIds" />
           </ColumnBox>
         </RegionContainer>
       </template>
