@@ -122,12 +122,12 @@ const bodyStyle = computed(() => ({
 
 <template>
   <template v-if="hasContentBlock">
-    <!-- 首行左侧展示名称与教育信息，副标题居中时次要信息占中位。 -->
+    <!-- 左侧信息占满剩余宽度，避免长图导出时字段因宽度取整被挤到下一行。 -->
     <div
       v-if="titleRowVisible && showItemHeader && isBlockVisible(blocks.indexOf('title'))"
-      class="flex flex-wrap items-center justify-between gap-3"
+      class="flex w-full flex-wrap items-center justify-between gap-3"
     >
-      <div class="flex min-w-0 flex-wrap items-center gap-3">
+      <div class="flex min-w-0 flex-wrap items-center gap-3" :class="{ 'flex-1': !majorInline }">
         <ItemTitle
           class="min-w-0"
           :name="item.name"
@@ -143,14 +143,15 @@ const bodyStyle = computed(() => ({
     <template v-for="row in detailRows" :key="row.key">
       <div
         v-if="showItemHeader && isBlockVisible(blocks.indexOf(row.key))"
-        class="flex flex-wrap items-center justify-between gap-3"
+        class="flex w-full flex-wrap items-center justify-between gap-3"
         :style="innerSpacingStyle"
       >
         <div v-if="row.tags" class="flex flex-1 flex-wrap items-center gap-3">
           <ItemTags :tags="item.tags" />
         </div>
-        <InlineInfoList v-if="row.secondary" :items="secondaryItems" />
-        <div v-if="row.city || row.link" class="ml-auto flex min-w-0 items-center gap-3">
+        <!-- 次要信息吸收剩余宽度，城市与链接固定靠右。 -->
+        <InlineInfoList v-if="row.secondary" :items="secondaryItems" class="flex-1" />
+        <div v-if="row.city || row.link" class="ml-auto flex min-w-0 shrink-0 items-center gap-3">
           <ResumeField v-if="row.city" :model-value="item.city" />
           <a
             v-if="row.link && safeItemLinkUrl"

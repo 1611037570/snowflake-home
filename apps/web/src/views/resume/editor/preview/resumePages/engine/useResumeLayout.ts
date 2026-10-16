@@ -167,6 +167,7 @@ export const useResumeLayout = ({
         regionId: region.id,
         width: columnWidths.value.get(column.id) ?? contentWidth.value,
         padding: column.padding, // 测量栏与预览栏共用装饰内边距
+        gap: column.gap, // 长图与预览共用栏内模块间距
         // 测量节点按栏内模块顺序排列，保持模块内部节点顺序。
         nodes: nodesByColumn.value.get(column.id) ?? [],
       })),
