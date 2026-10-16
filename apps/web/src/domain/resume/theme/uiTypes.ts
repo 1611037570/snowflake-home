@@ -57,7 +57,7 @@ export interface ResumeUi {
     columns: number; // 技能评分列表列数
   };
   honor: { // 荣誉证书展示方式
-    layout: "default" | "tag" | "notion" | "list" | "card"; // 文本描述、标签、笔记风、清单或详情卡片布局
+    layout: "default" | "tag" | "notion" | "rainbowTag" | "list" | "card"; // 文本描述、标签、笔记风、彩虹标签、清单或详情卡片布局
   };
 }
 

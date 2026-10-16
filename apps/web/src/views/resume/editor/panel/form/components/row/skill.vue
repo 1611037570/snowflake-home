@@ -18,6 +18,17 @@ const name = defineModel("name", {
 const desc = defineModel("desc", { type: String, default: "" });
 // 所有技能样式共用一个一到十分的滑块数值。
 const level = defineModel("level", { type: Number, default: 7 });
+// 十分制评分每两分对应一个熟练度档位，随滑杆实时显示。
+const proficiencyKeys = [
+  "proficiencyBeginner",
+  "proficiencyFamiliar",
+  "proficiencySkilled",
+  "proficiencyExpert",
+  "proficiencyMaster",
+];
+const proficiencyLabel = computed(() => $t("proficiencyLevelWithLabel", {
+  label: $t(proficiencyKeys[Math.ceil(level.value / 2) - 1]),
+}));
 // 当前技能的隐藏状态
 const hidden = defineModel("hidden", {
   type: Boolean,
@@ -52,17 +63,25 @@ const removeSkill = () => {
         </div>
       </template>
       <div class="flex w-full flex-col gap-3 pb-3">
-        <!-- 技能名称在展开后编辑。 -->
-        <SfInput v-model="name" :placeholder="$t('skillNamePlaceholder')" />
-        <!-- 十分制滑块统一控制所有技能样式。 -->
-        <SfSlider v-model="level" :min="1" :max="10" :step="1" size="small" />
+        <!-- 技能名称和熟练度各占十二栅格，描述独占整行。 -->
+        <div class="grid grid-cols-2 gap-3">
+          <SfFormItem :label="$t('skillName')">
+            <SfInput v-model="name" clearable :placeholder="$t('skillNamePlaceholder')" />
+          </SfFormItem>
+          <SfFormItem :label="proficiencyLabel">
+            <SfSlider v-model="level" :min="1" :max="10" :step="1" size="small" />
+          </SfFormItem>
+        </div>
         <!-- 技能描述默认一行，内容增加时自动扩展。 -->
-        <SfInput
-          v-model="desc"
-          type="textarea"
-          :autosize="{ minRows: 1 }"
-          :placeholder="$t('skillDescriptionPlaceholder')"
-        />
+        <SfFormItem :label="$t('skillDescription')">
+          <SfInput
+            v-model="desc"
+            type="textarea"
+            clearable
+            :autosize="{ minRows: 1 }"
+            :placeholder="$t('skillDescriptionPlaceholder')"
+          />
+        </SfFormItem>
       </div>
     </SfCollapseItem>
   </SfCollapse>

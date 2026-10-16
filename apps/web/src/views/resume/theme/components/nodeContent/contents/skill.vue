@@ -6,7 +6,7 @@ import { useResumePreviewContext } from "@/views/resume/editor/preview/shared/pr
 import { useNodeContent, type NodeContentProps } from "@/views/resume/editor/preview/resumePages/render/nodeContentContract";
 import SkillTemplate from "@/views/resume/theme/components/skillTemplate/index.vue";
 import DistributionTemplate from "@/views/resume/theme/components/skillTemplate/distribution.vue";
-import NotionTemplate from "@/views/resume/theme/components/skillTemplate/notion.vue";
+import ColorTags from "@/views/resume/theme/components/tagTemplate/colorTags.vue";
 
 const props = withDefaults(defineProps<NodeContentProps>(), {
   blockRange: () => ({ start: 0 /* 起始块 */, end: Number.MAX_SAFE_INTEGER /* 结束块 */ }),
@@ -27,23 +27,25 @@ const skillTemplate = computed(() => nodePayload.value.skillTemplate || "none");
 </script>
 
 <template>
-  <div v-if="skillTemplate === 'tag'" class="flex w-full flex-wrap gap-3" :style="fontValue()">
+  <div v-if="skillTemplate === 'tag'" class="flex w-full flex-wrap gap-3 font-bold" :style="fontValue()">
     <ItemTags :tags="tagNames" />
   </div>
-  <NotionTemplate v-else-if="skillTemplate === 'notion'" :items="items" :style="fontValue(-6)" />
+  <ColorTags v-else-if="skillTemplate === 'notion'" :items="items" variant="notion" :style="fontValue(-2)" />
+  <ColorTags v-else-if="skillTemplate === 'rainbowTag'" :items="items" variant="rainbowTag" :style="fontValue(-2)" />
   <DistributionTemplate v-else-if="skillTemplate === 'distribution'" :items="items" :style="fontValue()" />
   <div v-else class="grid w-full gap-6" :class="gridClass" :style="fontValue()">
-    <!-- 有评分图形时描述位于名称和图形之间；无模板时名称与描述按文字流排列。 -->
+    <!-- 有评分图形时图形在上，名称与描述依次排到图形下方；无模板时名称与描述按文字流排列。 -->
     <div v-for="(skill, skillIndex) in items" :key="skillIndex" class="min-w-0" :class="skillTemplate === 'none' ? 'text-left' : 'text-center'">
-      <div :class="skillTemplate === 'none' ? '' : columns === 1 ? 'flex items-center justify-center gap-3' : 'flex flex-col items-center gap-3'">
+      <div :class="skillTemplate === 'none' ? '' : 'flex flex-col items-center'">
+        <!-- 技能名称统一加粗，描述保持常规字重。 -->
         <span v-if="skillTemplate === 'none'" class="min-w-0 break-words">
-          <ResumeField :model-value="skill.name" tag="span" />
+          <ResumeField :model-value="skill.name" tag="span" boxClass="font-bold" />
           <template v-if="skill.desc">{{ " " }}<ResumeField :model-value="skill.desc" tag="span" /></template>
         </span>
-        <ResumeField v-else-if="!['semiRing', 'donut', 'openRing'].includes(skillTemplate)" :model-value="skill.name" tag="span" />
-        <ResumeField v-if="skill.desc && !['none', 'semiRing', 'donut', 'openRing'].includes(skillTemplate)" :model-value="skill.desc" tag="span" />
-        <SkillTemplate v-if="skillTemplate !== 'none'" :template-id="skillTemplate" :level="Number(skill.level ?? 7)" :name="skill.name" :color="themeColor || '#50A2FF'" :fluid="columns !== 1" />
-        <ResumeField v-if="skill.desc && ['semiRing', 'donut', 'openRing'].includes(skillTemplate)" :model-value="skill.desc" tag="span" />
+        <SkillTemplate v-else :template-id="skillTemplate" :level="Number(skill.level ?? 7)" :name="skill.name" :color="themeColor || '#50A2FF'" :fluid="columns !== 1" />
+        <!-- 圆环类模板把名称画在图形内部，正文不再重复渲染名称。 -->
+        <ResumeField v-if="skillTemplate !== 'none' && !['semiRing', 'donut', 'openRing'].includes(skillTemplate)" :model-value="skill.name" tag="span" boxClass="font-bold" />
+        <ResumeField v-if="skill.desc && skillTemplate !== 'none'" :model-value="skill.desc" tag="span" />
       </div>
     </div>
   </div>

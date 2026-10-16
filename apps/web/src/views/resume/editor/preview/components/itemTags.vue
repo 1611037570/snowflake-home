@@ -11,14 +11,14 @@ defineProps({
 const {
   theme: { fontValue, themeColorSoft },
 } = useResumePreviewContext();
-// 标签保留主题浅底色，文字继承简历正文色以保证浅色主题下可读。
+// 标签默认使用主题浅底色，深色主题可通过配色变量提供可读的底色与文字色。
 </script>
 
 <template>
   <div
     v-for="tag in tags"
     :key="tag"
-    :style="[fontValue(-6), { backgroundColor: themeColorSoft }]"
+    :style="[fontValue(-2), { backgroundColor: `var(--resume-tag-background, ${themeColorSoft})`, color: 'var(--resume-tag-color, inherit)' }]"
     class="flex-c shrink-0 whitespace-nowrap rounded-3xl px-2 py-1"
   >
     {{ tag }}

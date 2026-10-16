@@ -34,8 +34,8 @@ export interface ContentPayload {
   item?: ContentItem; // 当前业务条目
   items?: ContentItem[]; // 同一行的技能条目或标签、笔记风布局中的荣誉条目
   columns?: number; // 技能条目的预览列数
-  skillTemplate?: string; // 技能模板编号，取值 none/tag/notion/bar/dot/score/distribution/semiRing/donut/openRing
-  honorLayout?: "tag" | "notion" | "list" | "card"; // 荣誉证书当前使用的展示布局
+  skillTemplate?: string; // 技能模板编号，取值 none/tag/notion/rainbowTag/bar/dot/distribution/semiRing/donut/openRing
+  honorLayout?: "tag" | "notion" | "rainbowTag" | "list" | "card"; // 荣誉证书当前使用的展示布局
   content?: ParsedRichText; // 已解析正文
   inlineInfo?: string[]; // 适配器提供的并列信息
   html?: string; // 直接富文本载荷

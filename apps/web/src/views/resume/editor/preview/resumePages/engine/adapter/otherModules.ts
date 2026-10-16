@@ -82,10 +82,10 @@ const createDescribedItemModuleAdapter =
     const moduleData = context.data[moduleKey];
     if (!moduleData || typeof moduleData !== "object") return [];
     const list = getValidDataEntries((moduleData as { list?: unknown }).list);
-    const honorUi = context.ui?.honor as { layout?: "default" | "tag" | "notion" | "list" | "card" /* 荣誉证书布局 */ } | undefined;
+    const honorUi = context.ui?.honor as { layout?: "default" | "tag" | "notion" | "rainbowTag" | "list" | "card" /* 荣誉证书布局 */ } | undefined;
 
-    // 标签与笔记风将有名称的可见荣誉合为一个节点，两种样式都只传名称。
-    if (moduleKey === "honor" && (honorUi?.layout === "tag" || honorUi?.layout === "notion")) {
+    // 标签类与笔记风将可见荣誉合为一个节点，由公共组件决定是否显示描述。
+    if (moduleKey === "honor" && ["tag", "notion", "rainbowTag"].includes(honorUi?.layout ?? "")) {
       const entries = list.filter(({ data }) => typeof data.name === "string" && data.name.trim());
       if (!entries.length) return [];
       return [{
@@ -97,7 +97,10 @@ const createDescribedItemModuleAdapter =
         payload: {
           part: "item" as const, // 标签类布局按整组荣誉渲染。
           item: entries[0].data, // 保留首个条目供主题组件读取。
-          items: entries.map(({ data }) => ({ name: data.name /* 荣誉名称，供两种样式展示 */ })),
+          items: entries.map(({ data }) => ({
+            name: data.name, // 荣誉名称供三种成组布局展示。
+            desc: data.content, // 荣誉描述仅由笔记风展示。
+          })),
           honorLayout: honorUi.layout, // 当前节点使用的荣誉布局。
         },
       }];
