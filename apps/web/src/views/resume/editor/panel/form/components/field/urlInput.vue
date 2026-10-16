@@ -5,7 +5,7 @@ import { $t } from "@/locales";
 const modelValue = defineModel<string>("modelValue", { default: "" });
 const props = defineProps({
   placeholder: { type: String, default: "" }, // 链接地址输入提示。
-  clearable: { type: Boolean, default: false }, // 是否显示清空按钮。
+  clearable: { type: Boolean, default: true }, // 链接地址默认提供清空按钮。
   allowDoi: { type: Boolean, default: false }, // 是否识别无协议前缀的 DOI 编号。
 });
 // 下拉项使用非空标识，确保“自定义”显示为选项而非占位文字。

@@ -34,7 +34,7 @@ export interface ContentPayload {
   item?: ContentItem; // 当前业务条目
   items?: ContentItem[]; // 同一行的技能条目
   columns?: number; // 技能条目的预览列数
-  skillTemplate?: string; // 技能模板编号，取值 none/bar/dot/score/distribution/semiRing/donut/openRing
+  skillTemplate?: string; // 技能模板编号，取值 none/tag/notion/bar/dot/score/distribution/semiRing/donut/openRing
   content?: ParsedRichText; // 已解析正文
   inlineInfo?: string[]; // 适配器提供的并列信息
   html?: string; // 直接富文本载荷

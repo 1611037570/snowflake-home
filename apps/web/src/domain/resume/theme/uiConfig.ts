@@ -201,10 +201,12 @@ export const titleIconModeList = [
     value: "circle",
   },
 ];
-// 技能样式列表：各模板共用十分制评分，技能占比汇总各条目的数值。
+// 技能样式列表：评分样式共用十分制数值，标签类样式展示技能文字。
 // labelKey 为语言包文案键，value 写入简历的 ui.theme.skillTemplate。
 export const skillTemplateList = [
   { labelKey: "skillStyleNone" /* 无评分样式名称的文案键 */, value: "none" /* 仅显示名称和描述的模板编号 */ },
+  { labelKey: "skillStyleTag" /* 标签样式名称的文案键 */, value: "tag" /* 仅显示技能名称的标签模板编号 */ },
+  { labelKey: "skillStyleNotion" /* 笔记风样式名称的文案键 */, value: "notion" /* 显示名称和描述的彩色标签模板编号 */ },
   { labelKey: "skillStyleBar", value: "bar" }, // 进度条模板
   { labelKey: "skillStyleDot", value: "dot" }, // 圆点模板
   { labelKey: "skillStyleScore", value: "score" }, // 评分文字模板
@@ -218,8 +220,16 @@ export const skillTemplateList = [
 ];
 // ===========默认值=====================
 export const defaultThemeColor = "#50A2FF";
-// 默认自定义页尾品牌名（留空表示使用默认品牌名）
-export const defaultFooter = "";
+// 新简历默认显示的页尾品牌名，用户清空后保持空值。
+export const defaultFooter = "轻舟简历";
+// 页尾模板选项由编号选择，后续样式在清单中扩展。
+export const footerTemplateList = [
+  { labelKey: "footerTemplateTotal" /* 总页数模板名称 */, value: "total" /* 当前页与总页数模板编号 */ },
+  { labelKey: "footerTemplateNumber" /* 数字页码模板名称 */, value: "number" /* 数字页码模板编号 */ },
+  { labelKey: "footerTemplatePage" /* 文字页码模板名称 */, value: "page" /* 文字页码模板编号 */ },
+];
+// 页尾默认保留原有的当前页与总页数模板。
+export const defaultFooterTemplate = "total" as const;
 // 默认上下页边距
 export const defaultPaddingVertical = 24;
 // 默认左右页边距
@@ -292,6 +302,7 @@ export const DEFAULT_UI = {
       module: defaultModuleSpacing,
     },
     footer: defaultFooter,
+    footerTemplate: defaultFooterTemplate, // 页尾模板编号。
   },
   font: {
     family: defaultFontFamily,

@@ -337,7 +337,7 @@ const defaultData: any = {
     ],
   },
   ui: {
-    page: { padding: { vertical: 22, horizontal: 22 }, spacing: { paragraph: 6, module: 21 }, footer: "" },
+    page: { padding: { vertical: 22, horizontal: 22 }, spacing: { paragraph: 6, module: 21 }, footer: "轻舟简历" },
     font: { family: "text-puhui", size: 18, titleSize: 24, lineHeight: 1.1 },
     content: { language: "zh", textAlign: "auto", infoSeparator: "space", linkUnderline: false, dateStyle: "dot", datePosition: "right" },
     theme: { template: "pastelSketch", color: "#ef93b5", titleIconMode: "icon" }, // 范本改用柔彩画纸主题

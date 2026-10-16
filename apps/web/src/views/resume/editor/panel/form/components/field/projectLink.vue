@@ -24,9 +24,10 @@ const url = computed({
 </script>
 
 <template>
+  <!-- 链接名称与地址都允许直接清空。 -->
   <div class="flex w-full items-start gap-3">
     <SfFormItem :label="$t('linkName')" class="min-w-0 flex-1">
-      <SfInput v-model="name" :placeholder="$t('websiteExample')" />
+      <SfInput v-model="name" :placeholder="$t('websiteExample')" clearable />
     </SfFormItem>
     <SfFormItem :label="$t('linkAddress')" class="min-w-0 flex-1">
       <UrlInput v-model="url" placeholder="如 example.com" />

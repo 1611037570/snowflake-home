@@ -5,9 +5,13 @@ import { jumpPreview } from "../../../../hooks/useModuleNav";
 import { useScrollEditorTo } from "../../../../hooks/useScrollEditorTo";
 import eventBus from "@/utils/modules/eventBus";
 import { skillTemplateList } from "@/domain/resume/theme/uiConfig";
-import { CUSTOM_MODULE_ICON, DEFAULT_MODULE_NAMES } from "@/stores/modules/resume/config/defaultConfig";
+import {
+  CUSTOM_MODULE_ICON,
+  DEFAULT_MODULE_NAMES,
+} from "@/stores/modules/resume/config/defaultConfig";
 import SkillTemplate from "@/views/resume/theme/components/skillTemplate/index.vue";
 import DistributionTemplate from "@/views/resume/theme/components/skillTemplate/distribution.vue";
+import NotionTemplate from "@/views/resume/theme/components/skillTemplate/notion.vue";
 import Icon from "../icon.vue";
 import EditableTitle from "./editableTitle.vue";
 import { $t } from "@/locales";
@@ -40,15 +44,21 @@ const resumeStore = useResumeStore();
 // 技能布局与列数保存在简历 ui.skill，模板编号与标题模板同属 ui.theme。
 const layout = computed({
   get: () => resumeStore.currentUI?.skill?.layout ?? "text",
-  set: (value) => { resumeStore.currentUI.skill.layout = value; },
+  set: (value) => {
+    resumeStore.currentUI.skill.layout = value;
+  },
 });
 const skillColumns = computed({
   get: () => resumeStore.currentUI?.skill?.columns ?? 1,
-  set: (value) => { resumeStore.currentUI.skill.columns = value; },
+  set: (value) => {
+    resumeStore.currentUI.skill.columns = value;
+  },
 });
 const skillTemplate = computed({
   get: () => resumeStore.currentUI?.theme?.skillTemplate ?? "bar",
-  set: (value) => { resumeStore.currentUI.theme.skillTemplate = value; },
+  set: (value) => {
+    resumeStore.currentUI.theme.skillTemplate = value;
+  },
 });
 // 技能样式示例共用同一名称与十分制评分。
 const mockSkill = {
@@ -61,10 +71,16 @@ const mockDistributionSkills = [
   { name: "Vue" /* 示例技能名称 */, level: 6 /* 示例技能评分 */ },
   { name: "TypeScript" /* 示例技能名称 */, level: 4 /* 示例技能评分 */ },
 ];
-// 选择无评分、占比或圆环样式时显示技能条目编辑区。
+// 彩色标签示例展示不同技能的交替配色。
+const mockNotionSkills = [
+  { name: "Vue" /* 示例技能名称 */, desc: "组件开发" /* 示例技能描述 */ },
+  { name: "TypeScript" /* 示例技能名称 */, desc: "类型设计" /* 示例技能描述 */ },
+];
+// 选择无评分、标签类、占比或圆环样式时显示技能条目编辑区。
 const selectSkillTemplate = (value) => {
   skillTemplate.value = value;
-  if (["none", "distribution", "semiRing", "donut", "openRing"].includes(value)) layout.value = "proficiency";
+  if (["none", "tag", "notion", "distribution", "semiRing", "donut", "openRing"].includes(value))
+    layout.value = "proficiency";
 };
 // 仅在配置指定的布局下显示列表新增入口，正文布局保持原有编辑区。
 const showAdd = computed(() => {
@@ -171,8 +187,13 @@ function handleAdd() {
                       <div
                         class="flex w-[360px] max-w-[90vw] flex-col gap-3 rounded-3xl border border-sf-b bg-sf-primary whitespace-nowrap"
                       >
-                        <div class="flex items-center justify-between gap-3 px-3 pt-3" :class="layout === 'proficiency' ? '' : 'pb-3'">
-                          <p class="shrink-0 text-xs font-normal text-sf-text-2">{{ $t("skillLayout") }}</p>
+                        <div
+                          class="flex items-center justify-between gap-3 px-3 pt-3"
+                          :class="layout === 'proficiency' ? '' : 'pb-3'"
+                        >
+                          <p class="shrink-0 text-xs font-normal text-sf-text-2">
+                            {{ $t("skillLayout") }}
+                          </p>
                           <ElRadioGroup
                             v-model="layout"
                             class="flex! flex-nowrap! items-center! gap-3!"
@@ -209,8 +230,13 @@ function handleAdd() {
                           </ElRadioGroup>
                         </div>
                         <!-- 富文本布局不显示技能模板选项。 -->
-                        <div v-if="layout === 'proficiency'" class="flex flex-col gap-3 border-t border-sf-b pt-3 pb-3">
-                          <p class="px-3 text-xs font-normal text-sf-text-2">{{ $t("skillTemplate") }}</p>
+                        <div
+                          v-if="layout === 'proficiency'"
+                          class="flex flex-col gap-3 border-t border-sf-b pt-3 pb-3"
+                        >
+                          <p class="px-3 text-xs font-normal text-sf-text-2">
+                            {{ $t("skillTemplate") }}
+                          </p>
                           <!-- 模板选项直接使用项目滚动组件自带的左右内边距。 -->
                           <SfScrollbar max-height="360px" class="w-full">
                             <div class="grid grid-cols-2 gap-3">
@@ -225,17 +251,53 @@ function handleAdd() {
                                   class="flex w-full flex-1 flex-col items-center justify-center gap-3 rounded-2xl border-3 border-sf-transparent bg-sf-bg p-3 text-center"
                                   :class="{ 'border-sf-theme!': skillTemplate === option.value }"
                                 >
-                                  <DistributionTemplate v-if="option.value === 'distribution'" :items="mockDistributionSkills" sample />
-                                  <span v-else-if="!['semiRing', 'donut', 'openRing'].includes(option.value)" class="w-full text-center text-xs whitespace-normal text-sf-text-2">{{
-                                    option.value === 'none' ? `${mockSkill.name} ${mockSkill.desc}` : mockSkill.name
-                                  }}</span>
-                                  <SkillTemplate v-if="!['none', 'distribution'].includes(option.value)" :template-id="option.value" :level="mockSkill.level" :name="$t('skillName')" color="var(--sf-theme)" :fluid="option.value === 'bar'" />
+                                  <DistributionTemplate
+                                    v-if="option.value === 'distribution'"
+                                    :items="mockDistributionSkills"
+                                    sample
+                                  />
+                                  <NotionTemplate
+                                    v-else-if="option.value === 'notion'"
+                                    :items="mockNotionSkills"
+                                    sample
+                                  />
+                                  <!-- 标签示例只展示名称，沿用简历标签的圆角浅色样式。 -->
+                                  <span
+                                    v-else-if="option.value === 'tag'"
+                                    class="rounded-3xl bg-sf-theme-3 px-3 py-1 text-xs text-sf-theme"
+                                    >{{ mockSkill.name }}</span
+                                  >
+                                  <span
+                                    v-else-if="
+                                      !['semiRing', 'donut', 'openRing'].includes(option.value)
+                                    "
+                                    class="w-full text-center text-xs whitespace-normal text-sf-text-2"
+                                    >{{
+                                      option.value === "none"
+                                        ? `${mockSkill.name} ${mockSkill.desc}`
+                                        : mockSkill.name
+                                    }}</span
+                                  >
+                                  <SkillTemplate
+                                    v-if="
+                                      !['none', 'tag', 'notion', 'distribution'].includes(
+                                        option.value,
+                                      )
+                                    "
+                                    :template-id="option.value"
+                                    :level="mockSkill.level"
+                                    :name="$t('skillName')"
+                                    color="var(--sf-theme)"
+                                    :fluid="option.value === 'bar'"
+                                  />
                                 </div>
                                 <!-- 样式名放在描边卡片外，与模板选择排版一致 -->
                                 <span
                                   class="text-center text-xs"
                                   :class="
-                                    skillTemplate === option.value ? 'text-sf-theme' : 'text-sf-text-2'
+                                    skillTemplate === option.value
+                                      ? 'text-sf-theme'
+                                      : 'text-sf-text-2'
                                   "
                                   >{{ $t(option.labelKey) }}</span
                                 >
@@ -251,7 +313,12 @@ function handleAdd() {
               <!-- 荣誉证书先提供空配置的编辑区下拉入口。 -->
               <template v-else-if="currentForm.key === 'honor'" #actions>
                 <span class="flex items-center" @click.stop @mousedown.stop>
-                  <SfDropdown trigger="click" placement="bottom-start" :show-arrow="false" :hide-on-click="false">
+                  <SfDropdown
+                    trigger="click"
+                    placement="bottom-start"
+                    :show-arrow="false"
+                    :hide-on-click="false"
+                  >
                     <SfTooltip :content="$t('honorTemplate')">
                       <Icon
                         click-through

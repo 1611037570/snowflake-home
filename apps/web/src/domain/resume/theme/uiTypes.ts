@@ -1,5 +1,8 @@
 import type { LayoutColumns } from "@/domain/resume/theme/layouts";
 
+// 页尾模板编号，新增模板时统一扩展此类型与模板登记。
+export type FooterTemplateId = "total" | "number" | "page";
+
 /** 简历界面配置；个人信息模板由主题预设提供，不开放用户切换。 */
 export interface ResumeUi {
   page: { // 页面颜色与留白
@@ -12,7 +15,8 @@ export interface ResumeUi {
       paragraph: number; // 段落间距
       module: number; // 模块间距
     };
-    footer: string; // 自定义页尾文字
+    footer: string; // 页尾品牌文字，允许留空
+    footerTemplate: FooterTemplateId; // 页尾内容模板编号
   };
   font: { // 字体、颜色与字号
     family: string; // 字体编号

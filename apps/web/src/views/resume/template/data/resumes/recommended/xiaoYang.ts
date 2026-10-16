@@ -287,7 +287,7 @@ const resumeData: any = {
     ],
   },
   ui: {
-    page: { padding: { vertical: 24, horizontal: 24 }, spacing: { paragraph: 12, module: 12 }, footer: "" },
+    page: { padding: { vertical: 24, horizontal: 24 }, spacing: { paragraph: 12, module: 12 }, footer: "轻舟简历" },
     font: { family: "text-puhui", size: 16, titleSize: 22, lineHeight: 1.2 },
     content: { language: "zh", textAlign: "auto", infoSeparator: "space", linkUnderline: false, dateStyle: "dot", datePosition: "right" },
     theme: { template: "blueAngleHeader", color: "#2563EB", titleIconMode: "none" }, // 小羊范本改用蓝色折角主题，主色跟随主题的蓝色
