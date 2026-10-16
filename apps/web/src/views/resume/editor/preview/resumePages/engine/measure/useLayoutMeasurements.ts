@@ -74,6 +74,7 @@ export const useLayoutMeasurements = ({
   const measurements = shallowRef<ReadonlyMap<string, MeasuredNode>>(new Map());
   const measureDone = ref(false);
   const decorationHeight = ref(0); // 首页独立装饰的真实占位高度
+  const probeNodeIds = shallowRef<ReadonlySet<string>>(new Set()); // 需要正文断点探针的节点编号
   // 节点独立观察尺寸，宿主最小高度不变时也能捕获异步组件与图片增高。
   const resizeTargets = shallowRef<HTMLElement[]>([]);
   const measurementError = ref(""); // 主题几何或内容协议校验失败的说明
@@ -169,6 +170,16 @@ export const useLayoutMeasurements = ({
     scheduleMeasure();
   };
 
+  /** 分页发现整片放不下时才挂载探针，并仅重测新增探针的节点。 */
+  const requestProbes = (nodeIds: Iterable<string>) => {
+    const next = new Set(probeNodeIds.value);
+    const added: string[] = [];
+    for (const id of nodeIds) if (!next.has(id)) { next.add(id); added.push(id); }
+    if (!added.length) return;
+    probeNodeIds.value = next;
+    requestMeasure(added);
+  };
+
   const stopWatch = watch(
     [measureRef, nodes, () => resolveWatchSignature(watchSource.value)],
     ([root, nextNodes, signature], [previousRoot, previousNodes, previousSignature]) => {
@@ -226,6 +237,8 @@ export const useLayoutMeasurements = ({
     measurementError, // 统一传给页面计划展示协议错误
     measureDone,
     decorationHeight, // 布局按实测高度扣除首页空间
+    probeNodeIds, // 测量树按需挂载正文断点探针
+    requestProbes, // 分页需要切分时补测目标节点
     measure,
     stop, // 显式停止与作用域销毁使用同一入口
   };

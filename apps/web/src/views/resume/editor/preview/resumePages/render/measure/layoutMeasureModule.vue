@@ -7,6 +7,7 @@ import type { LayoutNode } from "../../engine/types";
 const props = defineProps<{
   nodes: LayoutNode[]; // 当前栏的通用节点。
   gap: number; // 相邻模块之间的布局间距。
+  probeNodeIds: ReadonlySet<string>; // 需要正文断点探针的节点编号。
 }>();
 // 连续同源节点与预览保持相同模块分组及标题槽位。
 const groups = computed(() => {
@@ -26,9 +27,9 @@ const groups = computed(() => {
       <div v-if="index > 0 && gap > 0" class="shrink-0" :style="{ height: `${gap}px` }" />
       <ModuleFrame :module-key="group.moduleKey">
         <template #title>
-          <LayoutMeasureNode v-for="node in group.nodes.filter(node => node.type === 'title')" :key="node.id" :node="node" />
+          <LayoutMeasureNode v-for="node in group.nodes.filter(node => node.type === 'title')" :key="node.id" :node="node" :enable-probes="probeNodeIds.has(node.id)" />
         </template>
-        <LayoutMeasureNode v-for="node in group.nodes.filter(node => node.type !== 'title')" :key="node.id" :node="node" />
+        <LayoutMeasureNode v-for="node in group.nodes.filter(node => node.type !== 'title')" :key="node.id" :node="node" :enable-probes="probeNodeIds.has(node.id)" />
       </ModuleFrame>
     </template>
   </div>

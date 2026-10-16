@@ -64,6 +64,8 @@ export interface PaginateFlowOptions {
   heights: FlowHeightPlan;
   /** 不同节点之间的间距 */
   gap: number;
+  /** 整个节点放不下时通知上游补齐该节点的断点测量。 */
+  onNeedBreakPoints?: (nodeId: string) => void;
 }
 
 /** 读取节点测量结果，缺少测量数据时直接报告配置错误 */
@@ -173,6 +175,7 @@ export const paginateFlow = ({
   measurements,
   heights,
   gap,
+  onNeedBreakPoints,
 }: PaginateFlowOptions): FlowPage[] => {
   const safeGap = Number.isFinite(gap) ? Math.max(0, gap) : 0;
   const pages: FlowPage[] = [];
@@ -320,6 +323,8 @@ export const paginateFlow = ({
             ? wholeHeight <= getCurrentAvailableHeight() + PAGE_HEIGHT_TOLERANCE
             : currentPage.usedHeight + nodeGap + wholeHeight <=
               getCurrentAvailableHeight() + PAGE_HEIGHT_TOLERANCE;
+        // 整片放不下时才需要正文探针；上游可先补测断点再重新执行分页。
+        if (!wholeFits && node.splitMode !== "whole" && node.breakPoints?.length) onNeedBreakPoints?.(node.id);
 
         // 整片已能放置时跳过切割搜索，避免遍历最终不会使用的断点。
         const breakPoint = wholeFits ? undefined : (

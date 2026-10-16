@@ -208,6 +208,7 @@ const {
   contentWidth,
   columnWidths,
   measureGroups,
+  probeNodeIds,
 } = useResumeLayout({
   measureRef: layoutMeasureRef,
   data: dataRef,
@@ -314,6 +315,7 @@ defineExpose({
       <Teleport to="body">
         <LayoutMeasureTree
           :groups="measureGroups"
+          :probe-node-ids="probeNodeIds"
           :region-configs="layout.regions"
           :top-region-id="fullBleedTopRegionId"
           :width="RESUME_WIDTH"
