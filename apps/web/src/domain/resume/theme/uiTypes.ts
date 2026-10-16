@@ -56,7 +56,9 @@ export interface ResumeUi {
     layout: string; // 正文或技能评分列表布局
     columns: number; // 技能评分列表列数
   };
-  honor: Record<string, never>; // 荣誉证书的预留展示配置，当前为空
+  honor: { // 荣誉证书展示方式
+    layout: "default" | "tag" | "notion" | "list" | "card"; // 文本描述、标签、笔记风、清单或详情卡片布局
+  };
 }
 
 /** 对象字段允许部分声明，数组始终保存完整顺序。 */

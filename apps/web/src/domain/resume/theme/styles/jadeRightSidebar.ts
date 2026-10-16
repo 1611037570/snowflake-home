@@ -41,5 +41,8 @@ export default {
       infoPosition: "center", // 姓名与资料居中排布
       infoMode: "text", // 联系资料显示文字标签
     },
+    honor: { // 墨玉主题使用原有的荣誉章样式
+      layout: "default", // 切换到墨玉主题时采用主题定制的荣誉布局
+    },
   },
 } satisfies ThemeTemplateConfig;

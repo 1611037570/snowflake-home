@@ -2,10 +2,13 @@
 import { $t } from "@/locales";
 import { getCurrentInstance } from "vue";
 import { useFormContext } from "@/components/business/dynamicForm/api";
+import { EXPANDED } from "@/stores/modules/resume/config/formConfig";
 import Icon from "../icon.vue";
 
 const { proxy } = getCurrentInstance();
 
+// 每条技能独立保存折叠状态。
+const collapsed = defineModel("collapsed", { type: Array, default: () => EXPANDED });
 // 技能名称数据
 const name = defineModel("name", {
   type: String,
@@ -31,37 +34,38 @@ const removeSkill = () => {
 </script>
 
 <template>
-  <div class="flex w-full flex-col gap-3">
-    <div class="flex w-full items-center gap-1">
-      <!-- 拖拽排序手柄 -->
-      <SfIcon
-        icon="icon-park-outline:drag"
-        size="4"
-        class="item-drag mr-1 cursor-move!"
-        @click.stop=""
-      />
-      <!-- 名称 -->
-      <div class="min-w-0 flex-1">
+  <SfCollapse v-model="collapsed" :border="false">
+    <SfCollapseItem name="1" lazy>
+      <template #title>
+        <!-- 标题和操作按钮始终可见，字段随条目独立折叠。 -->
+        <div class="flex w-full items-center gap-3">
+          <SfIcon icon="icon-park-outline:drag" size="4" class="item-drag cursor-move!" @click.stop="" />
+          <span class="min-w-0 flex-1 truncate font-medium">{{ name || $t('notFilled') }}</span>
+          <SfTooltip :content="hidden ? $t('show') : $t('hide')">
+            <Icon
+              :icon="hidden ? 'lucide:eye' : 'lucide:eye-off'"
+              @click.stop="hidden = !hidden"
+              :class="hidden ? 'text-sf-theme' : ''"
+            />
+          </SfTooltip>
+          <Icon icon="ic:round-delete" @click.stop="removeSkill" />
+        </div>
+      </template>
+      <div class="flex w-full flex-col gap-3 pb-3">
+        <!-- 技能名称在展开后编辑。 -->
         <SfInput v-model="name" :placeholder="$t('skillNamePlaceholder')" />
-      </div>
-      <!-- 十分制滑块统一控制所有技能样式。 -->
-      <div class="w-45 shrink-0">
+        <!-- 十分制滑块统一控制所有技能样式。 -->
         <SfSlider v-model="level" :min="1" :max="10" :step="1" size="small" />
-      </div>
-      <!-- 隐藏当前技能 -->
-      <SfTooltip :content="hidden ? $t('show') : $t('hide')">
-        <Icon
-          :icon="hidden ? 'lucide:eye' : 'lucide:eye-off'"
-          @click.stop="hidden = !hidden"
-          :class="hidden ? 'text-sf-theme' : ''"
+        <!-- 技能描述默认一行，内容增加时自动扩展。 -->
+        <SfInput
+          v-model="desc"
+          type="textarea"
+          :autosize="{ minRows: 1 }"
+          :placeholder="$t('skillDescriptionPlaceholder')"
         />
-      </SfTooltip>
-      <!-- 删除按钮 -->
-      <Icon icon="ic:round-delete" @click="removeSkill" />
-    </div>
-    <!-- 描述单独占满下一行。 -->
-    <SfInput v-model="desc" :placeholder="$t('skillDescriptionPlaceholder')" />
-  </div>
+      </div>
+    </SfCollapseItem>
+  </SfCollapse>
 </template>
 
 <style lang="scss" scoped></style>

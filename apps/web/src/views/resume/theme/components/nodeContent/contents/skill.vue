@@ -23,7 +23,7 @@ const items = computed(() => nodePayload.value.items?.length ? nodePayload.value
 // 标签模板只取技能名称，描述与评分不进入预览。
 const tagNames = computed(() => items.value.map((skill) => skill.name).filter((name) => Boolean(name)));
 // 节点只传模板编号与档位，具体熟练度外观由公共组件绘制。
-const skillTemplate = computed(() => nodePayload.value.skillTemplate || "bar");
+const skillTemplate = computed(() => nodePayload.value.skillTemplate || "none");
 </script>
 
 <template>

@@ -204,7 +204,7 @@ export const titleIconModeList = [
 // 技能样式列表：评分样式共用十分制数值，标签类样式展示技能文字。
 // labelKey 为语言包文案键，value 写入简历的 ui.theme.skillTemplate。
 export const skillTemplateList = [
-  { labelKey: "skillStyleNone" /* 无评分样式名称的文案键 */, value: "none" /* 仅显示名称和描述的模板编号 */ },
+  { labelKey: "skillStyleNone" /* 文本描述样式名称的文案键 */, value: "none" /* 仅显示名称和描述的模板编号 */ },
   { labelKey: "skillStyleTag" /* 标签样式名称的文案键 */, value: "tag" /* 仅显示技能名称的标签模板编号 */ },
   { labelKey: "skillStyleNotion" /* 笔记风样式名称的文案键 */, value: "notion" /* 显示名称和描述的彩色标签模板编号 */ },
   { labelKey: "skillStyleBar", value: "bar" }, // 进度条模板
@@ -217,6 +217,14 @@ export const skillTemplateList = [
   { labelKey: "skillStyleSemiRing" /* 半圆环样式名称 */, value: "semiRing" /* 半圆环模板编号 */ },
   { labelKey: "skillStyleDonut" /* 圆环样式名称 */, value: "donut" /* 圆环模板编号 */ },
   { labelKey: "skillStyleOpenRing" /* 开口圆环样式名称 */, value: "openRing" /* 开口圆环模板编号 */ },
+];
+// 荣誉证书模板选项：文本描述与详情卡片展示完整条目，其余样式只显示名称。
+export const honorTemplateList = [
+  { labelKey: "honorStyleTextDescription" /* 文本描述名称的文案键 */, value: "default" /* 显示名称、链接和描述的布局编号 */ },
+  { labelKey: "honorStyleTag" /* 标签名称的文案键 */, value: "tag" /* 只显示荣誉名称的布局编号 */ },
+  { labelKey: "honorStyleNotion" /* 笔记风名称的文案键 */, value: "notion" /* 只显示荣誉名称的彩色标签布局编号 */ },
+  { labelKey: "honorStyleList" /* 清单名称的文案键 */, value: "list" /* 逐条显示荣誉名称的清单布局编号 */ },
+  { labelKey: "honorStyleCard" /* 详情卡片名称的文案键 */, value: "card" /* 显示名称、链接和描述的卡片布局编号 */ },
 ];
 // ===========默认值=====================
 export const defaultThemeColor = "#50A2FF";
@@ -265,8 +273,8 @@ export const defaultDatePosition = "right";
 export const defaultTextAlign = "auto";
 // 默认模块标题图标模式
 export const defaultTitleIconMode = "none";
-// 默认技能熟练度模板：进度条
-export const defaultSkillTemplate = "bar";
+// 默认技能模板：文本描述
+export const defaultSkillTemplate = "none";
 // 默认链接下划线开关
 export const defaultLinkUnderline = false;
 // 默认副标题不居中
@@ -324,7 +332,7 @@ export const DEFAULT_UI = {
     color: defaultThemeColor,
     template: defaultThemeTemplate,
     titleTemplate: "auto", // 标题样式默认由主题决定
-    skillTemplate: defaultSkillTemplate, // 技能熟练度默认使用进度条模板
+    skillTemplate: defaultSkillTemplate, // 技能列表默认使用文本描述模板
     userTemplate: "auto", // 个人信息组件默认按版式选用公共组件
     titleIconMode: defaultTitleIconMode,
   },
@@ -339,8 +347,10 @@ export const DEFAULT_UI = {
     infoPosition: defaultInfoPosition,
   },
   skill: {
-    layout: "text", // 默认使用正文布局
+    layout: "proficiency", // 默认使用技能列表布局
     columns: 1, // 熟练度列表默认单栏
   },
-  honor: {}, // 荣誉证书预留展示配置，当前不包含字段
+  honor: {
+    layout: "default" as const, // 默认显示荣誉名称、链接和描述
+  },
 };
