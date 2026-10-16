@@ -360,7 +360,6 @@
   "exportResume": "Export Resume",
   "exportFormat": "Export Format",
   "exportFormatDescription": "Choose a format for applications, sharing, or backup",
-  "exportFormatTip": "Use PDF for applications, a long image for sharing, and JSON for backup and restore.",
   "exportCloudPrivacyTip": "Cloud export temporarily uploads your resume data only to generate the file. We do not store your resume content or exported files on the server.",
   "exportMobileTip": "On phones and tablets, we recommend cloud PDF export to reduce page break and layout differences caused by mobile browser printing.",
   "resumeConfig": "Resume Configuration",
