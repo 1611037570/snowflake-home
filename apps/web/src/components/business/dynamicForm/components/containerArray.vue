@@ -1,5 +1,7 @@
 <template>
+  <!-- 空列表不渲染带顶部留白的记录容器。 -->
   <el-row
+    v-if="length"
     class="m-0! w-full gap-3"
     :class="[{ 'drag-array-active': isDragging }, currentForm?.rowClass]"
     :gutter="0"
