@@ -47,7 +47,6 @@ const normalizeHexColor = (value) => {
     ? `#${color.slice(1).split("").map((item) => `${item}${item}`).join("")}`
     : color;
 };
-const isFontColorActive = (value) => normalizeHexColor(fontColor.value) === normalizeHexColor(value);
 
 // 极致黑视为深色底，其余背景按浅色底处理
 const isDarkBackground = (value) => normalizeHexColor(value) === normalizeHexColor(darkPageBackground);
@@ -78,6 +77,14 @@ const pageBackground = computed({
 const activeFontColorOptions = computed(() =>
   isDarkBackground(pageBackground.value) ? fontColorOptionsOnDark : fontColorOptions,
 );
+
+// 当前正文色不在阶梯内时按首档显示选中，主题自带的自定义色也能有一档选中态。
+const activeFontColor = computed(() => {
+  const options = activeFontColorOptions.value;
+  const matched = options.find((option) => normalizeHexColor(option.value) === normalizeHexColor(fontColor.value));
+  return (matched ?? options[0]).value;
+});
+const isFontColorActive = (value) => activeFontColor.value === value;
 
 // 副标题居中开关：教育经历的专业在条目内居中。
 const subtitleCenter = computed({
