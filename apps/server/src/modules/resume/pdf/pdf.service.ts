@@ -81,13 +81,37 @@ export class PdfService implements OnModuleDestroy {
         page.waitForSelector('[data-pdf-ready="true"]', { state: 'attached', timeout }),
       )
 
-      const pdf = await page.pdf({
-        format: 'A4',
-        printBackground: true,
-        preferCSSPageSize: true,
-        margin: { top: '0', right: '0', bottom: '0', left: '0' },
-      })
-      return Buffer.from(pdf)
+      try {
+        const pdf = await page.pdf({
+          format: 'A4',
+          printBackground: true,
+          preferCSSPageSize: true,
+          margin: { top: '0', right: '0', bottom: '0', left: '0' },
+        })
+        return Buffer.from(pdf)
+      } catch (error) {
+        // Chromium 的 PDF 数据流读取失败时改用内联数据，避免导出直接返回服务错误。
+        if (!(error instanceof Error) || !error.message.includes('Protocol error (IO.read): Read failed')) {
+          throw error
+        }
+        const session = await page.context().newCDPSession(page)
+        try {
+          const result = await session.send('Page.printToPDF', {
+            printBackground: true,
+            preferCSSPageSize: true,
+            paperWidth: 8.27,
+            paperHeight: 11.69,
+            marginTop: 0,
+            marginRight: 0,
+            marginBottom: 0,
+            marginLeft: 0,
+            transferMode: 'ReturnAsBase64',
+          })
+          return Buffer.from(result.data, 'base64')
+        } finally {
+          await session.detach().catch(() => undefined)
+        }
+      }
     } catch (error) {
       if (expired) throw new RequestTimeoutException('简历渲染超时，请稍后重试')
       throw error
