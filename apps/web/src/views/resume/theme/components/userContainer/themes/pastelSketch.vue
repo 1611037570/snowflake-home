@@ -26,9 +26,9 @@ const userStyle = computed(() => ({
 </script>
 
 <template>
-  <!-- 去掉卡片外框，个人信息仍由公共内容组件排版。 -->
+  <!-- 去掉卡片外框，个人信息仍由公共内容组件排版；底部留出让文字与下方细线拉开距离。 -->
   <div
-    class="resume-module-wrapper resume-user group group/module relative box-border w-full min-w-0"
+    class="resume-module-wrapper resume-user group group/module relative box-border w-full min-w-0 pb-6"
     :class="moduleClass"
     :data-module="moduleKey"
     :data-theme="themeId"
