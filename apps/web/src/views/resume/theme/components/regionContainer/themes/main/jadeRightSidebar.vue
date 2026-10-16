@@ -39,8 +39,6 @@ const sidebarStyle = computed(() => ({
   --resume-user-contact-gap: 10px; /* 窄栏资料行距收紧 */
   --resume-user-avatar-radius: 9999px; /* 头像取圆，呼应印章式图章 */
   --resume-user-avatar-border: 1px solid color-mix(in srgb, var(--jade-gold) 55%, transparent); /* 头像外圈淡金 */
-  --resume-tag-background: var(--jade-gold); /* 公共标签在墨玉底上使用清晰的金色底。 */
-  --resume-tag-color: var(--jade-card); /* 标签文字使用墨玉色以保持对比。 */
 }
 
 /* 底色以右栏为定位基准，向纸张三边铺满并停在栏间中缝。 */
