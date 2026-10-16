@@ -33,7 +33,6 @@ export const config = Object.freeze({
       baseUrl: env.searchBaseUrl, // 搜索上游基地址
     }), // 搜索查询配置
     github: Object.freeze({
-      repository: env.githubRepository, // 开源仓库全名
       starsCacheTtl: env.githubStarsCacheTtl, // 星标缓存有效期
     }), // 仓库星标配置
   }), // 第三方集成配置，上游地址与凭据不暴露给浏览器

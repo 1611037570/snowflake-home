@@ -65,7 +65,6 @@ export const env = Object.freeze({
   hotListBaseUrl: envString('HOT_LIST_BASE_URL'), // 热榜上游基地址
   hotListCategories: envList('HOT_LIST_CATEGORIES', 'douyin,zhihu,weibo,baidu,toutiao'), // 热榜支持的分类白名单
   searchBaseUrl: envString('SEARCH_BASE_URL'), // 搜索上游基地址
-  githubRepository: envString('GITHUB_REPOSITORY', '1611037570/snowflake-home'), // 开源仓库全名，用于查询星标
   githubStarsCacheTtl: envNumber('GITHUB_STARS_CACHE_TTL', 1800000), // 仓库星标缓存有效期，单位毫秒
   integrationsTimeout: envNumber('INTEGRATIONS_TIMEOUT', 5000), // 第三方上游超时，单位毫秒
 })
