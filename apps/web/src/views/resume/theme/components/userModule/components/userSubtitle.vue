@@ -69,6 +69,7 @@ const textOf = (key) => {
 };
 const items = computed(() => subtitleKeys.value.map((key) => textOf(key)).filter(Boolean));
 // 副标题样式由自身消费主题变量，类规则写法不会压过主题的既有声明。
+// 字号取正文基础字号加 2px，让副标题与姓名形成层级。
 </script>
 
 <template>
@@ -76,7 +77,7 @@ const items = computed(() => subtitleKeys.value.map((key) => textOf(key)).filter
     v-if="items.length"
     :items="items"
     class="resume-user-subtitle mt-3 font-normal"
-    :style="[fontValue(), lineHeightValue()]"
+    :style="[fontValue(2), lineHeightValue()]"
   />
 </template>
 
