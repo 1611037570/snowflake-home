@@ -197,24 +197,6 @@ useResizeObserver(contentRef, ([entry]) => {
       <Settings />
       <MoreSettings />
       <Language />
-      <!-- 桌面端四个图标入口，移动端统一收进「更多」下拉；md 断点 768px 与移动端判定同值 -->
-      <div class="hidden items-center gap-1 md:flex">
-        <OnePage />
-        <PrintMode />
-        <SfTooltip :content="$t('fullscreen')">
-          <SfIcon
-            icon="lucide:maximize"
-            size="5"
-            boxSize="7"
-            class="rounded-full text-sf-text-2 hover:bg-sf-theme-2 hover:text-sf-theme-text"
-            @click="$emit('fullscreen')"
-          />
-        </SfTooltip>
-        <StyleHint @standard-a4="setStandardA4" />
-      </div>
-      <div class="flex items-center md:hidden">
-        <More @fullscreen="$emit('fullscreen')" @standard-a4="setStandardA4" />
-      </div>
       <SfDropdown trigger="hover" placement="bottom-start" :show-arrow="false">
         <div
           class="flex h-7 w-14 cursor-default items-center justify-center rounded-full text-xs font-medium text-sf-theme"
@@ -232,6 +214,24 @@ useResizeObserver(contentRef, ([entry]) => {
           </SfList>
         </template>
       </SfDropdown>
+      <!-- 四个图标入口默认排在缩放比例之后：桌面直接显示，移动端收进「更多」下拉；md 断点 768px 与移动端判定同值 -->
+      <div class="hidden items-center gap-1 md:flex">
+        <OnePage />
+        <PrintMode />
+        <SfTooltip :content="$t('fullscreen')">
+          <SfIcon
+            icon="lucide:maximize"
+            size="5"
+            boxSize="7"
+            class="rounded-full text-sf-text-2 hover:bg-sf-theme-2 hover:text-sf-theme-text"
+            @click="$emit('fullscreen')"
+          />
+        </SfTooltip>
+        <StyleHint @standard-a4="setStandardA4" />
+      </div>
+      <div class="flex items-center md:hidden">
+        <More @fullscreen="$emit('fullscreen')" @standard-a4="setStandardA4" />
+      </div>
 
       <SfTooltip v-if="selectedModule.length" :content="$t('clearSelection')">
         <SfIcon
