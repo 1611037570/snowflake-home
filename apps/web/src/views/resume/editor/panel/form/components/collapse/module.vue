@@ -11,7 +11,7 @@ import {
 } from "@/stores/modules/resume/config/defaultConfig";
 import SkillTemplate from "@/views/resume/theme/components/skillTemplate/index.vue";
 import DistributionTemplate from "@/views/resume/theme/components/skillTemplate/distribution.vue";
-import NotionTemplate from "@/views/resume/theme/components/skillTemplate/notion.vue";
+import ColorTags from "@/views/resume/theme/components/tagTemplate/colorTags.vue";
 import Icon from "../icon.vue";
 import EditableTitle from "./editableTitle.vue";
 import { $t } from "@/locales";
@@ -79,7 +79,6 @@ const mockHonor = {
   desc: "学习表现优秀", // 示例荣誉描述
   linkName: "获奖公告", // 示例荣誉链接名称
 };
-const mockHonorNameOnly = [{ name: mockHonor.name /* 标签与笔记风只展示荣誉名称 */ }];
 // 占比模板示例使用多项技能，以展示整条比例条和图例。
 const mockDistributionSkills = [
   { name: "Vue" /* 示例技能名称 */, level: 6 /* 示例技能评分 */ },
@@ -93,7 +92,7 @@ const mockNotionSkills = [
 // 选择无评分、标签类、占比或圆环样式时显示技能条目编辑区。
 const selectSkillTemplate = (value) => {
   skillTemplate.value = value;
-  if (["none", "tag", "notion", "distribution", "semiRing", "donut", "openRing"].includes(value))
+  if (["none", "tag", "notion", "rainbowTag", "distribution", "semiRing", "donut", "openRing"].includes(value))
     layout.value = "proficiency";
 };
 // 仅在配置指定的布局下显示列表新增入口，正文布局保持原有编辑区。
@@ -270,9 +269,10 @@ function handleAdd() {
                                     :items="mockDistributionSkills"
                                     sample
                                   />
-                                  <NotionTemplate
-                                    v-else-if="option.value === 'notion'"
+                                  <ColorTags
+                                    v-else-if="option.value === 'notion' || option.value === 'rainbowTag'"
                                     :items="mockNotionSkills"
+                                    :variant="option.value === 'notion' ? 'notion' : 'rainbowTag'"
                                     sample
                                   />
                                   <!-- 标签示例只展示名称，沿用简历标签的圆角浅色样式。 -->
@@ -294,7 +294,7 @@ function handleAdd() {
                                   >
                                   <SkillTemplate
                                     v-if="
-                                      !['none', 'tag', 'notion', 'distribution'].includes(
+                                      !['none', 'tag', 'notion', 'rainbowTag', 'distribution'].includes(
                                         option.value,
                                       )
                                     "
@@ -356,9 +356,10 @@ function handleAdd() {
                               class="flex w-full flex-1 flex-col items-center justify-center gap-3 rounded-2xl border-3 border-sf-transparent bg-sf-bg p-3 text-center"
                               :class="{ 'border-sf-theme!': honorLayout === option.value }"
                             >
-                              <NotionTemplate
-                                v-if="option.value === 'notion'"
-                                :items="mockHonorNameOnly"
+                              <ColorTags
+                                v-if="option.value === 'notion' || option.value === 'rainbowTag'"
+                                :items="[mockHonor]"
+                                :variant="option.value === 'notion' ? 'notion' : 'rainbowTag'"
                                 sample
                               />
                               <template v-if="option.value === 'default'">

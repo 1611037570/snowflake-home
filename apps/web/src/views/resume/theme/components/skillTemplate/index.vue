@@ -2,7 +2,6 @@
 import { computed, type Component } from "vue";
 import BarTemplate from "./bar.vue";
 import DotTemplate from "./dot.vue";
-import ScoreTemplate from "./score.vue";
 import RingTemplate from "./ring.vue";
 
 const props = defineProps<{
@@ -17,7 +16,6 @@ const props = defineProps<{
 const skillTemplateComponents: Record<string, Component> = {
   bar: BarTemplate, // 进度条模板组件
   dot: DotTemplate, // 圆点模板组件
-  score: ScoreTemplate, // 分数模板组件
 };
 const selectedComponent = computed(() => skillTemplateComponents[props.templateId] || BarTemplate);
 const level = computed(() => Number.isFinite(props.level) ? Math.min(10, Math.max(1, props.level)) : 7);

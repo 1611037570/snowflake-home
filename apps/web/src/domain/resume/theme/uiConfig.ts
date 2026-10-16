@@ -207,9 +207,9 @@ export const skillTemplateList = [
   { labelKey: "skillStyleNone" /* 文本描述样式名称的文案键 */, value: "none" /* 仅显示名称和描述的模板编号 */ },
   { labelKey: "skillStyleTag" /* 标签样式名称的文案键 */, value: "tag" /* 仅显示技能名称的标签模板编号 */ },
   { labelKey: "skillStyleNotion" /* 笔记风样式名称的文案键 */, value: "notion" /* 显示名称和描述的彩色标签模板编号 */ },
+  { labelKey: "skillStyleRainbowTag" /* 彩虹标签名称的文案键 */, value: "rainbowTag" /* 仅显示技能名称的彩色标签模板编号 */ },
   { labelKey: "skillStyleBar", value: "bar" }, // 进度条模板
   { labelKey: "skillStyleDot", value: "dot" }, // 圆点模板
-  { labelKey: "skillStyleScore", value: "score" }, // 评分文字模板
   {
     labelKey: "skillStyleDistribution", // 技能占比样式名称的文案键
     value: "distribution", // 技能占比模板编号
@@ -218,11 +218,12 @@ export const skillTemplateList = [
   { labelKey: "skillStyleDonut" /* 圆环样式名称 */, value: "donut" /* 圆环模板编号 */ },
   { labelKey: "skillStyleOpenRing" /* 开口圆环样式名称 */, value: "openRing" /* 开口圆环模板编号 */ },
 ];
-// 荣誉证书模板选项：文本描述与详情卡片展示完整条目，其余样式只显示名称。
+// 荣誉证书模板选项：文本描述、笔记风与详情卡片展示描述，其余样式只显示名称。
 export const honorTemplateList = [
   { labelKey: "honorStyleTextDescription" /* 文本描述名称的文案键 */, value: "default" /* 显示名称、链接和描述的布局编号 */ },
   { labelKey: "honorStyleTag" /* 标签名称的文案键 */, value: "tag" /* 只显示荣誉名称的布局编号 */ },
-  { labelKey: "honorStyleNotion" /* 笔记风名称的文案键 */, value: "notion" /* 只显示荣誉名称的彩色标签布局编号 */ },
+  { labelKey: "honorStyleNotion" /* 笔记风名称的文案键 */, value: "notion" /* 显示荣誉名称与描述的彩色布局编号 */ },
+  { labelKey: "honorStyleRainbowTag" /* 彩虹标签名称的文案键 */, value: "rainbowTag" /* 只显示荣誉名称的彩色标签布局编号 */ },
   { labelKey: "honorStyleList" /* 清单名称的文案键 */, value: "list" /* 逐条显示荣誉名称的清单布局编号 */ },
   { labelKey: "honorStyleCard" /* 详情卡片名称的文案键 */, value: "card" /* 显示名称、链接和描述的卡片布局编号 */ },
 ];

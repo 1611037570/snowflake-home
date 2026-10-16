@@ -64,7 +64,7 @@ export const createSkillModuleAdapter = (moduleKey: string): LayoutAdapter => (
     const skillTemplate = themeUi?.skillTemplate || "none";
     const entries = getValidDataEntries(moduleData.list);
     // 占比与标签类样式把全部可见技能作为一组，保证比例统一或标签自然换行。
-    if (["distribution", "tag", "notion"].includes(skillTemplate) && entries.length) {
+    if (["distribution", "tag", "notion", "rainbowTag"].includes(skillTemplate) && entries.length) {
       return [{
         id: `${moduleKey}.${skillTemplate}`,
         sourceModuleKey: moduleKey,
