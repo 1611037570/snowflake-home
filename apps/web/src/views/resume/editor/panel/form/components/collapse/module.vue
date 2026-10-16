@@ -5,6 +5,7 @@ import { jumpPreview } from "../../../../hooks/useModuleNav";
 import { useScrollEditorTo } from "../../../../hooks/useScrollEditorTo";
 import eventBus from "@/utils/modules/eventBus";
 import { skillTemplateList } from "@/domain/resume/theme/uiConfig";
+import { CUSTOM_MODULE_ICON, DEFAULT_MODULE_NAMES } from "@/stores/modules/resume/config/defaultConfig";
 import SkillTemplate from "@/views/resume/theme/components/skillTemplate/index.vue";
 import DistributionTemplate from "@/views/resume/theme/components/skillTemplate/distribution.vue";
 import Icon from "../icon.vue";
@@ -71,6 +72,14 @@ const showAdd = computed(() => {
   if (!props.addWhenLayout) return true;
   return layout.value === props.addWhenLayout;
 });
+// 仅列表尚无记录时展示引导，新增首条记录后立即收起。
+const showEmptyState = computed(
+  () => showAdd.value && !resumeStore.currentData?.[currentForm.value?.key]?.list?.length,
+);
+const emptyModule = computed(() =>
+  DEFAULT_MODULE_NAMES.find((module) => module.key === currentForm.value?.key),
+);
+const emptyStateKey = computed(() => emptyModule.value?.key ?? "custom");
 // 展开状态：直接绑定激活项 name 数组（["1"] 展开 / [] 收起），随数据双向绑定
 const collapsed = defineModel("collapsed", {
   type: Array,
@@ -284,6 +293,23 @@ function handleAdd() {
         <div v-if="tip" class="mb-2">{{ tip }}</div>
         <div class="">
           <slot />
+          <!-- 空态图标与文案居中排列，不使用背景底板。 -->
+          <div
+            v-if="showEmptyState"
+            class="mx-3 mt-3 flex flex-col items-center gap-3 p-3 pb-0! text-center"
+          >
+            <SfIcon
+              :icon="emptyModule?.icon ?? CUSTOM_MODULE_ICON"
+              size="7"
+              class="text-sf-text-2"
+            />
+            <p class="text-sm font-semibold text-sf-text">
+              {{ $t(`resumeEmpty_${emptyStateKey}_title`) }}
+            </p>
+            <p class="text-xs leading-relaxed text-sf-text-2">
+              {{ $t(`resumeEmpty_${emptyStateKey}_description`) }}
+            </p>
+          </div>
           <!-- 添加入口居中排列，悬停显示主题色虚线框，上下留白避免贴合分隔线。 -->
           <div class="px-3 py-3" v-if="showAdd">
             <button
