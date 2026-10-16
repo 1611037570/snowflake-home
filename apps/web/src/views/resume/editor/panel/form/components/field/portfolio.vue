@@ -39,11 +39,11 @@ const { openPicker, loading } = useImageUpload({
 
 <template>
   <div class="flex w-full flex-col gap-3">
-    <!-- 作品名称、链接和描述统一编辑。 -->
+    <!-- 作品名称与链接地址都支持直接清空。 -->
     <div class="flex items-center gap-3">
       <div class="w-[100px] min-w-0">
         <SfFormItem :label="$t('portfolioName')">
-          <SfInput v-model="name" :placeholder="$t('portfolioNamePlaceholder')" />
+          <SfInput v-model="name" :placeholder="$t('portfolioNamePlaceholder')" clearable />
         </SfFormItem>
       </div>
       <div class="min-w-0 flex-1">

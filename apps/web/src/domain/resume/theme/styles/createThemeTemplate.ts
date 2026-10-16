@@ -65,6 +65,7 @@ export const resolveThemeTemplate = (definition: ResumeThemeDefinition): ResumeT
     page: {
       background: ui.page?.background ?? DEFAULT_UI.page.background,
       footer: ui.page?.footer ?? DEFAULT_UI.page.footer,
+      footerTemplate: ui.page?.footerTemplate ?? DEFAULT_UI.page.footerTemplate, // 页尾模板沿用用户或默认选择。
       padding: { ...DEFAULT_UI.page.padding, ...ui.page?.padding },
       spacing: { ...DEFAULT_UI.page.spacing, ...ui.page?.spacing },
     },

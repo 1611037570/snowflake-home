@@ -141,7 +141,8 @@ export const PREVIEW_TITLES: Record<PreviewLang, Record<string, string>> = {
 export const PREVIEW_TEXTS: Record<PreviewLang, Record<string, string>> = {
   zh: {
     brand: "轻舟简历",
-    footer: "轻舟简历 · 第 {page} 页 · 共 {total} 页",
+    footerTotal: "第 {page} 页 · 共 {total} 页", // 中文当前页与总页数文案。
+    footerPage: "第{page}页", // 中文页尾的带页字样式。
     age: "{age}岁",
     ageLabel: "年龄：",
     birthdayLabel: "出生日期：",
@@ -175,7 +176,8 @@ export const PREVIEW_TEXTS: Record<PreviewLang, Record<string, string>> = {
   },
   en: {
     brand: "Qingzhou Resume",
-    footer: "Qingzhou Resume · Page {page} of {total}",
+    footerTotal: "Page {page} of {total}", // 英文当前页与总页数文案。
+    footerPage: "Page {page}", // 英文页尾的带页字样式。
     age: "{age}",
     ageLabel: "Age: ",
     birthdayLabel: "Date of birth: ",
@@ -209,7 +211,8 @@ export const PREVIEW_TEXTS: Record<PreviewLang, Record<string, string>> = {
   },
   ja: {
     brand: "Qingzhou Resume",
-    footer: "Qingzhou Resume · {page} / {total} ページ",
+    footerTotal: "{page} / {total} ページ", // 日文当前页与总页数文案。
+    footerPage: "{page}ページ", // 日文页尾的带页字样式。
     age: "{age}歳",
     ageLabel: "年齢：",
     birthdayLabel: "生年月日：",
@@ -242,7 +245,8 @@ export const PREVIEW_TEXTS: Record<PreviewLang, Record<string, string>> = {
   },
   ko: {
     brand: "Qingzhou Resume",
-    footer: "Qingzhou Resume · {page} / {total} 페이지",
+    footerTotal: "{page} / {total} 페이지", // 韩文当前页与总页数文案。
+    footerPage: "{page}페이지", // 韩文页尾的带页字样式。
     age: "{age}세",
     ageLabel: "나이: ",
     birthdayLabel: "생년월일: ",
@@ -275,7 +279,8 @@ export const PREVIEW_TEXTS: Record<PreviewLang, Record<string, string>> = {
   },
   fr: {
     brand: "Qingzhou Resume",
-    footer: "Qingzhou Resume · Page {page} sur {total}",
+    footerTotal: "Page {page} sur {total}", // 法文当前页与总页数文案。
+    footerPage: "Page {page}", // 法文页尾的带页字样式。
     age: "{age} ans",
     ageLabel: "Âge : ",
     birthdayLabel: "Date de naissance : ",
@@ -308,7 +313,8 @@ export const PREVIEW_TEXTS: Record<PreviewLang, Record<string, string>> = {
   },
   de: {
     brand: "Qingzhou Resume",
-    footer: "Qingzhou Resume · Seite {page} von {total}",
+    footerTotal: "Seite {page} von {total}", // 德文当前页与总页数文案。
+    footerPage: "Seite {page}", // 德文页尾的带页字样式。
     age: "{age} Jahre",
     ageLabel: "Alter: ",
     birthdayLabel: "Geburtsdatum: ",
@@ -341,7 +347,8 @@ export const PREVIEW_TEXTS: Record<PreviewLang, Record<string, string>> = {
   },
   es: {
     brand: "Qingzhou Resume",
-    footer: "Qingzhou Resume · Página {page} de {total}",
+    footerTotal: "Página {page} de {total}", // 西班牙文当前页与总页数文案。
+    footerPage: "Página {page}", // 西班牙文页尾的带页字样式。
     age: "{age} años",
     ageLabel: "Edad: ",
     birthdayLabel: "Fecha de nacimiento: ",
@@ -374,7 +381,8 @@ export const PREVIEW_TEXTS: Record<PreviewLang, Record<string, string>> = {
   },
   ru: {
     brand: "Qingzhou Resume",
-    footer: "Qingzhou Resume · Страница {page} из {total}",
+    footerTotal: "Страница {page} из {total}", // 俄文当前页与总页数文案。
+    footerPage: "Страница {page}", // 俄文页尾的带页字样式。
     age: "{age} лет",
     ageLabel: "Возраст: ",
     birthdayLabel: "Дата рождения: ",

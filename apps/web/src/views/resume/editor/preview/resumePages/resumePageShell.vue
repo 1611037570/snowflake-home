@@ -2,7 +2,7 @@
 // 简历页面外壳：页面容器样式 + 页码页脚，多页渲染与缩略图单页共用
 // 仅排版展示，不感知分页/测量逻辑；根元素回传供缩略图测量与导出使用
 import { computed, useTemplateRef, watch } from "vue";
-import { getPreviewText } from "../shared/i18n";
+import { getResumeFooterText } from "../shared/footerTemplates";
 import {
   PAGE_NUMBER_HEIGHT,
   RESUME_CONTAINER_HEIGHT,
@@ -11,6 +11,8 @@ import {
 import { useResumePreviewContext } from "../shared/previewContext";
 import {
   defaultPageBackground,
+  defaultFooter,
+  defaultFooterTemplate,
 } from "@/domain/resume/theme/uiConfig";
 import PagePattern from "@/views/resume/theme/components/pageContainer/index.vue";
 import PageFooter from "@/views/resume/theme/components/pageFooter/index.vue";
@@ -91,16 +93,14 @@ const bottomSpacerHeight = computed(() => {
 });
 // 简历展示语言：与模块标题语言包保持一致
 const { lang: previewLang } = useResumePreviewContext();
-const footerText = computed(() => {
-  const defaultFooter = getPreviewText("footer", previewLang.value, {
-    page: props.pageIndex + 1,
-    total: props.pageCount,
-  });
-  // 仅品牌名可自定义：用自定义文案替换默认品牌名，页码后缀保持默认格式
-  const customBrand = props.ui.page?.footer?.trim();
-  if (!customBrand) return defaultFooter;
-  return defaultFooter.replace(getPreviewText("brand", previewLang.value), customBrand);
-});
+// 页尾品牌留空时只展示所选样式的页码。
+const footerText = computed(() => getResumeFooterText(
+  props.ui.page?.footer ?? defaultFooter,
+  props.ui.page?.footerTemplate ?? defaultFooterTemplate,
+  props.pageIndex + 1,
+  props.pageCount,
+  previewLang.value,
+));
 // ref 就绪或变化后回传根元素
 watch(
   rootEl,
@@ -156,7 +156,7 @@ watch(
       :class="{ 'absolute inset-x-0 bottom-0': fullHeightColumns }"
       :style="{ height: `${PAGE_NUMBER_HEIGHT}px` }"
     >
-      <PageFooter :text="footerText" />
+      <PageFooter :text="footerText" :template-id="props.ui.page?.footerTemplate ?? defaultFooterTemplate" />
     </div>
   </div>
 </template>

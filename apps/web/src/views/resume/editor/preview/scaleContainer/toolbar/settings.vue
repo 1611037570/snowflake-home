@@ -3,16 +3,18 @@ import { computed } from "vue";
 import { storeToRefs } from "pinia";
 import i18n, { $t } from "@/locales";
 import { useResumeStore } from "@/stores";
-import { defaultFooter } from "@/domain/resume/theme/uiConfig";
 import {
   avatarPositionList,
   datePositionList,
+  defaultFooter,
+  defaultFooterTemplate,
   defaultLeftColumnWidth,
   defaultLineHeight,
   defaultModuleSpacing,
   defaultPaddingHorizontal,
   defaultPaddingVertical,
   defaultParagraphSpacing,
+  footerTemplateList,
   infoPositionList,
   uiParamRanges,
   userInfoLayoutList,
@@ -36,9 +38,16 @@ const showPageNumber = computed({
   },
 });
 const footer = computed({
-  get: () => currentUI.value?.page?.footer ?? "",
+  get: () => currentUI.value?.page?.footer ?? defaultFooter,
   set: (value) => {
     currentUI.value.page.footer = value;
+  },
+});
+// 页尾模板编号由简历配置保存，选项从模板清单读取。
+const footerTemplate = computed({
+  get: () => currentUI.value?.page?.footerTemplate ?? defaultFooterTemplate,
+  set: (value) => {
+    currentUI.value.page.footerTemplate = value;
   },
 });
 
@@ -221,7 +230,13 @@ const setNumberParam = (key, value) => {
             <span>{{ $t("showPageNumber") }}</span>
             <ElSwitch v-model="showPageNumber" />
           </div>
-          <div class="flex flex-col gap-1">
+          <div v-if="showPageNumber" class="flex flex-col gap-3">
+            <span class="text-sm text-sf-text-2">{{ $t("footerTemplate") }}</span>
+            <div class="grid grid-cols-2 gap-3">
+              <SfButton v-for="option in footerTemplateList" :key="option.value" class="w-full" :class="{ 'col-span-2': option.value === 'total' }" size="small" border :type="footerTemplate === option.value ? 'theme' : 'bg'" @click="footerTemplate = option.value">{{ $t(option.labelKey) }}</SfButton>
+            </div>
+          </div>
+          <div v-if="showPageNumber" class="flex flex-col gap-1">
             <div class="flex items-center gap-1 text-sm text-sf-text-2">
               <span>{{ $t("customFooter") }}</span>
               <SfIcon

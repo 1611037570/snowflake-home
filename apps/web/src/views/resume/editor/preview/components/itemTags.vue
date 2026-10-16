@@ -9,16 +9,16 @@ defineProps({
   },
 });
 const {
-  theme: { fontValue, themeColor, themeColorSoft },
+  theme: { fontValue, themeColorSoft },
 } = useResumePreviewContext();
-// 简历主题色与其浅色派生底：标签配色跟随用户选择的主题
+// 标签保留主题浅底色，文字继承简历正文色以保证浅色主题下可读。
 </script>
 
 <template>
   <div
     v-for="tag in tags"
     :key="tag"
-    :style="[fontValue(-6), { backgroundColor: themeColorSoft, color: themeColor }]"
+    :style="[fontValue(-6), { backgroundColor: themeColorSoft }]"
     class="flex-c shrink-0 whitespace-nowrap rounded-3xl px-2 py-1"
   >
     {{ tag }}

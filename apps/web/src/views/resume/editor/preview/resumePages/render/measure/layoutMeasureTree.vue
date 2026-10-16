@@ -7,6 +7,7 @@ import RegionContainer from "@/views/resume/theme/components/regionContainer/ind
 import PagePattern from "@/views/resume/theme/components/pageContainer/index.vue";
 import PageDecoration from "@/views/resume/theme/components/pageDecoration/index.vue";
 import PageFooter from "@/views/resume/theme/components/pageFooter/index.vue";
+import type { FooterTemplateId } from "@/domain/resume/theme/uiTypes";
 import { PAGE_NUMBER_HEIGHT } from "../../../shared/constants";
 import type { LayoutNode } from "../../engine/types";
 import type { ColumnPadding, RegionConfig } from "../../engine/pageLayoutTypes";
@@ -34,6 +35,7 @@ const props = defineProps<{
   pageBorderWidth?: number;
   showPageNumber?: boolean;
   footerText?: string;
+  footerTemplate: FooterTemplateId; // 测量页尾使用的模板编号。
   onMeasureEl?: (element: HTMLElement | null) => void;
 }>();
 
@@ -103,7 +105,7 @@ const regions = computed(() => {
       class="flex flex-1 items-end justify-center py-3 text-xs opacity-50"
       :style="{ height: `${PAGE_NUMBER_HEIGHT}px` }"
     >
-      <PageFooter :text="footerText || ''" />
+      <PageFooter :text="footerText || ''" :template-id="footerTemplate" />
     </div>
   </LayoutMeasureHost>
 </template>

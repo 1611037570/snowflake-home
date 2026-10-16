@@ -17,7 +17,7 @@ import { useResumeTheme } from "@/views/resume/theme/useResumeTheme";
 import { resolveThemePageAppearance, resolveResumeUi, resolveThemeDecisions } from "@/views/resume/theme";
 import { provideResumePreviewContext } from "../shared/previewContext";
 import { isEmptyResume } from "../../toolbar/modules/progress/useResumeStats";
-import { getPreviewText } from "../shared/i18n";
+import { getResumeFooterText } from "../shared/footerTemplates";
 import { RESUME_HEIGHT, RESUME_WIDTH } from "../shared/constants";
 import { $t } from "@/locales";
 
@@ -126,13 +126,14 @@ const measureTreeStyle = computed(() => ({
   // 纹理层用负层级绘制：宿主需要建立独立层叠上下文，纹理才压在底色之上、正文之下
   isolation: "isolate",
 }));
-// 测量树页尾沿用旧版单页长图文案格式。
-const measureFooterText = computed(() => {
-  const defaultFooter = getPreviewText("footer", previewLang.value, { page: 1, total: 1 });
-  const customBrand = ui.value.page?.footer?.trim();
-  if (!customBrand) return defaultFooter;
-  return defaultFooter.replace(getPreviewText("brand", previewLang.value), customBrand);
-});
+// 测量树与实际页面共用页尾文案规则。
+const measureFooterText = computed(() => getResumeFooterText(
+  ui.value.page.footer,
+  ui.value.page.footerTemplate,
+  1,
+  1,
+  previewLang.value,
+));
 
 // ---------- 分页（节点树 + 真实测量 + PagePlan）----------
 const allModules = computed(() => {
@@ -337,6 +338,7 @@ defineExpose({
           :page-border-width="pageBorderWidth"
           :show-page-number="showPageNumber"
           :footer-text="measureFooterText"
+          :footer-template="ui.page.footerTemplate"
           :on-measure-el="setLayoutMeasureEl"
         />
       </Teleport>

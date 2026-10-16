@@ -1,10 +1,12 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import ResumeField from "@/views/resume/editor/preview/components/resumeField/index.vue";
+import ItemTags from "@/views/resume/editor/preview/components/itemTags.vue";
 import { useResumePreviewContext } from "@/views/resume/editor/preview/shared/previewContext";
 import { useNodeContent, type NodeContentProps } from "@/views/resume/editor/preview/resumePages/render/nodeContentContract";
 import SkillTemplate from "@/views/resume/theme/components/skillTemplate/index.vue";
 import DistributionTemplate from "@/views/resume/theme/components/skillTemplate/distribution.vue";
+import NotionTemplate from "@/views/resume/theme/components/skillTemplate/notion.vue";
 
 const props = withDefaults(defineProps<NodeContentProps>(), {
   blockRange: () => ({ start: 0 /* 起始块 */, end: Number.MAX_SAFE_INTEGER /* 结束块 */ }),
@@ -18,12 +20,18 @@ const columns = computed(() => nodePayload.value.columns === 2 || nodePayload.va
 const GRID_CLASSES: Record<number, string> = { 1: "grid-cols-1", 2: "grid-cols-2", 3: "grid-cols-3" };
 const gridClass = computed(() => GRID_CLASSES[columns.value]);
 const items = computed(() => nodePayload.value.items?.length ? nodePayload.value.items : [item.value]);
+// 标签模板只取技能名称，描述与评分不进入预览。
+const tagNames = computed(() => items.value.map((skill) => skill.name).filter((name) => Boolean(name)));
 // 节点只传模板编号与档位，具体熟练度外观由公共组件绘制。
 const skillTemplate = computed(() => nodePayload.value.skillTemplate || "bar");
 </script>
 
 <template>
-  <DistributionTemplate v-if="skillTemplate === 'distribution'" :items="items" :style="fontValue()" />
+  <div v-if="skillTemplate === 'tag'" class="flex w-full flex-wrap gap-3" :style="fontValue()">
+    <ItemTags :tags="tagNames" />
+  </div>
+  <NotionTemplate v-else-if="skillTemplate === 'notion'" :items="items" :style="fontValue(-6)" />
+  <DistributionTemplate v-else-if="skillTemplate === 'distribution'" :items="items" :style="fontValue()" />
   <div v-else class="grid w-full gap-6" :class="gridClass" :style="fontValue()">
     <!-- 有评分图形时描述位于名称和图形之间；无模板时名称与描述按文字流排列。 -->
     <div v-for="(skill, skillIndex) in items" :key="skillIndex" class="min-w-0" :class="skillTemplate === 'none' ? 'text-left' : 'text-center'">
