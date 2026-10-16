@@ -348,7 +348,7 @@ export const DEFAULT_UI = {
     infoPosition: defaultInfoPosition,
   },
   skill: {
-    layout: "proficiency", // 默认使用技能列表布局
+    layout: "text", // 默认使用富文本正文布局
     columns: 1, // 熟练度列表默认单栏
   },
   honor: {
