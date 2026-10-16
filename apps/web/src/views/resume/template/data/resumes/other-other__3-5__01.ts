@@ -5,7 +5,7 @@ import { xiaoyang } from "../avatar";
 const resumeData: any = {
   data: {
     user: {
-      ui: { archived: false },
+      ui: {},
       data: {
         position: "其他",
         name: "马晨菲",
@@ -19,7 +19,7 @@ const resumeData: any = {
       },
     },
     work: {
-      ui: { collapsed: ["1"], archived: false },
+      ui: { collapsed: ["1"]},
       list: [
         {
           ui: {},
@@ -52,7 +52,7 @@ const resumeData: any = {
       ],
     },
     project: {
-      ui: { collapsed: ["1"], archived: false },
+      ui: { collapsed: ["1"]},
       list: [
         {
           ui: {},
@@ -85,7 +85,7 @@ const resumeData: any = {
       ],
     },
     education: {
-      ui: { collapsed: ["1"], archived: false },
+      ui: { collapsed: ["1"]},
       list: [
         {
           ui: {},
@@ -105,14 +105,14 @@ const resumeData: any = {
       ],
     },
     skill: {
-      ui: { collapsed: ["1"], archived: false },
+      ui: { collapsed: ["1"]},
       data: {
         content:
           "<p><strong>运营与流程：</strong>熟悉 SOP 梳理、流程再造、会议督办与跨部门协同机制，能够独立完成制度文件、经营分析报告与项目排期管理，掌握 OKR、PDCA 与节点复盘方法。</p><p><strong>工具与数据：</strong>熟练使用飞书、钉钉与 OA 审批系统，能用 Excel 数据透视与 Power Query 完成台账和报表自动化，掌握 Visio 流程图、XMind 思维导图与 Power BI 经营看板，具备基础 SQL 取数能力。</p>",
       },
     },
     honor: {
-      ui: { collapsed: ["1"], archived: false },
+      ui: { collapsed: ["1"]},
       list: [
         { ui: {}, data: { name: "年度优秀员工" } },
         { ui: {}, data: { name: "流程优化专项奖" } },

@@ -4,7 +4,7 @@ import { xiaoyang } from "../../avatar";
 const resumeData: any = {
   data: {
     user: {
-      ui: { archived: false },
+      ui: {},
       data: {
         name: "羊老师",
         position: "商业摄影师",
@@ -22,7 +22,7 @@ const resumeData: any = {
       },
     },
     account: {
-      ui: { collapsed: ["1"], archived: false },
+      ui: { collapsed: ["1"]},
       list: [
         { ui: {}, data: { name: "作品集", url: "https://portfolio.example.com/sheep-teacher" } },
         { ui: {}, data: { name: "小红书", url: "https://www.example.com/sheep-teacher/xiaohongshu" } },
@@ -30,14 +30,14 @@ const resumeData: any = {
       ],
     },
     skill: {
-      ui: { collapsed: ["1"], archived: false },
+      ui: { collapsed: ["1"]},
       data: {
         content:
           "<p><strong>拍摄：</strong>熟练使用 Canon EOS R5、Sony A7R V 及 Profoto、Godox 灯光系统，能够独立完成棚拍布光与外景用光。</p><p><strong>后期：</strong>精通 Lightroom、Photoshop 与 Capture One，掌握人像精修、产品去瑕疵与商业调色流程。</p><p><strong>协作：</strong>熟悉拍摄方案撰写、分镜沟通与团队协作流程，能够配合策划与设计把控成片风格。</p>",
       },
     },
     education: {
-      ui: { collapsed: ["1"], archived: false },
+      ui: { collapsed: ["1"]},
       list: [
         {
           ui: {},
@@ -58,7 +58,7 @@ const resumeData: any = {
       ],
     },
     work: {
-      ui: { collapsed: ["1"], archived: false },
+      ui: { collapsed: ["1"]},
       list: [
         {
           ui: {},
@@ -78,7 +78,7 @@ const resumeData: any = {
       ],
     },
     project: {
-      ui: { collapsed: ["1"], archived: false },
+      ui: { collapsed: ["1"]},
       list: [
         {
           ui: {},
@@ -113,7 +113,7 @@ const resumeData: any = {
       ],
     },
     portfolio: { // 作品集模块数据。
-      ui: { collapsed: ["1"], archived: false },
+      ui: { collapsed: ["1"]},
       list: [
         {
           ui: {},

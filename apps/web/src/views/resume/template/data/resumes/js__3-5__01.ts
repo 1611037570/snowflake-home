@@ -5,7 +5,7 @@ import { xiaoyang } from "../avatar";
 const resumeData: any = {
   data: {
     user: {
-      ui: { archived: false },
+      ui: {},
       data: {
         position: "JavaScript",
         name: "许亦然",
@@ -19,7 +19,7 @@ const resumeData: any = {
       },
     },
     work: {
-      ui: { collapsed: ["1"], archived: false },
+      ui: { collapsed: ["1"]},
       list: [
         {
           ui: {},
@@ -52,7 +52,7 @@ const resumeData: any = {
       ],
     },
     project: {
-      ui: { collapsed: ["1"], archived: false },
+      ui: { collapsed: ["1"]},
       list: [
         {
           ui: {},
@@ -85,7 +85,7 @@ const resumeData: any = {
       ],
     },
     education: {
-      ui: { collapsed: ["1"], archived: false },
+      ui: { collapsed: ["1"]},
       list: [
         {
           ui: {},
@@ -105,14 +105,14 @@ const resumeData: any = {
       ],
     },
     skill: {
-      ui: { collapsed: ["1"], archived: false },
+      ui: { collapsed: ["1"]},
       data: {
         content:
           "<p><strong>前端技术栈：</strong>精通 JavaScript 与 TypeScript，熟练使用 Vue 3、React 与 Vite 构建中后台与活动类应用，熟悉 Pinia、Vue Router 与组件库封装，掌握 Webpack、Rollup 的构建配置与体积优化。</p><p><strong>服务端与工程能力：</strong>熟悉 Node.js 与 Express、NestJS 编写中间层服务，掌握 Docker、Nginx 部署与 CI 流水线配置，具备前端性能监控、异常采集与单元测试落地经验。</p>",
       },
     },
     honor: {
-      ui: { collapsed: ["1"], archived: false },
+      ui: { collapsed: ["1"]},
       list: [
         { ui: {}, data: { name: "年度技术创新奖" } },
         { ui: {}, data: { name: "前端工程质量之星" } },

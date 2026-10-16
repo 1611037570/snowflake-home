@@ -5,7 +5,6 @@ const resumeData: any = {
   data: {
     user: {
       ui: {
-        archived: false,
         title: "个人信息",
         collapsed: ["1"],
         hidden: false,
@@ -67,7 +66,6 @@ const resumeData: any = {
     skill: {
       ui: {
         collapsed: ["1"],
-        archived: false,
         title: "专业技能",
         hidden: false,
       },
@@ -79,7 +77,6 @@ const resumeData: any = {
     education: {
       ui: {
         collapsed: ["1"],
-        archived: false,
         title: "教育经历",
         hidden: false,
       },
@@ -107,7 +104,6 @@ const resumeData: any = {
     work: {
       ui: {
         collapsed: ["1"],
-        archived: false,
         title: "工作经历",
         hidden: false,
       },
@@ -134,7 +130,6 @@ const resumeData: any = {
     project: {
       ui: {
         collapsed: ["1"],
-        archived: false,
         title: "项目经历",
         hidden: false,
       },

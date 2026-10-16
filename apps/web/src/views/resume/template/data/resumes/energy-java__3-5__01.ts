@@ -5,7 +5,7 @@ import { xiaoyang } from "../avatar";
 const resumeData: any = {
   data: {
     user: {
-      ui: { archived: false },
+      ui: {},
       data: {
         position: "Java",
         name: "谢文博",
@@ -19,7 +19,7 @@ const resumeData: any = {
       },
     },
     work: {
-      ui: { collapsed: ["1"], archived: false },
+      ui: { collapsed: ["1"]},
       list: [
         {
           ui: {},
@@ -52,7 +52,7 @@ const resumeData: any = {
       ],
     },
     project: {
-      ui: { collapsed: ["1"], archived: false },
+      ui: { collapsed: ["1"]},
       list: [
         {
           ui: {},
@@ -85,7 +85,7 @@ const resumeData: any = {
       ],
     },
     education: {
-      ui: { collapsed: ["1"], archived: false },
+      ui: { collapsed: ["1"]},
       list: [
         {
           ui: {},
@@ -105,14 +105,14 @@ const resumeData: any = {
       ],
     },
     skill: {
-      ui: { collapsed: ["1"], archived: false },
+      ui: { collapsed: ["1"]},
       data: {
         content:
           "<p><strong>开发技术栈：</strong>熟练使用 Java 与 Spring Boot、Spring Cloud Alibaba 进行微服务开发，熟悉 MyBatis、Redis、Kafka、Netty 与 Flink，掌握 MySQL 分库分表、时序数据库 InfluxDB 与 TDengine 的建模与查询优化。</p><p><strong>工程与运维：</strong>熟悉 Docker、Kubernetes、Jenkins 与 Prometheus 监控体系，掌握 JVM 调优、SQL 执行计划分析与链路压测方法，了解 Modbus、MQTT、IEC 104 等能源与环保行业的设备通信协议。</p>",
       },
     },
     honor: {
-      ui: { collapsed: ["1"], archived: false },
+      ui: { collapsed: ["1"]},
       list: [
         { ui: {}, data: { name: "年度能源数字化优秀项目奖" } },
         { ui: {}, data: { name: "环保数据上报质量先进个人" } },

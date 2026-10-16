@@ -5,7 +5,7 @@ import { xiaoyang } from "../avatar";
 const resumeData: any = {
   data: {
     user: {
-      ui: { archived: false },
+      ui: {},
       data: {
         position: "算法工程师",
         name: "谭书白",
@@ -19,7 +19,7 @@ const resumeData: any = {
       },
     },
     work: {
-      ui: { collapsed: ["1"], archived: false },
+      ui: { collapsed: ["1"]},
       list: [
         {
           ui: {},
@@ -52,7 +52,7 @@ const resumeData: any = {
       ],
     },
     project: {
-      ui: { collapsed: ["1"], archived: false },
+      ui: { collapsed: ["1"]},
       list: [
         {
           ui: {},
@@ -85,7 +85,7 @@ const resumeData: any = {
       ],
     },
     education: {
-      ui: { collapsed: ["1"], archived: false },
+      ui: { collapsed: ["1"]},
       list: [
         {
           ui: {},
@@ -105,14 +105,14 @@ const resumeData: any = {
       ],
     },
     skill: {
-      ui: { collapsed: ["1"], archived: false },
+      ui: { collapsed: ["1"]},
       data: {
         content:
           "<p><strong>算法能力：</strong>熟悉推荐与搜索全链路算法，包括召回、粗排、精排与重排，掌握向量检索、多目标建模与因果推断方法，具备大模型微调、蒸馏与提示工程实践经验。</p><p><strong>工程能力：</strong>熟练使用 Python 与 PyTorch、TensorFlow 训练模型，掌握 Spark、Flink 处理大规模样本与特征，熟悉向量数据库与在线推理服务部署，具备实验设计与指标归因分析能力。</p>",
       },
     },
     honor: {
-      ui: { collapsed: ["1"], archived: false },
+      ui: { collapsed: ["1"]},
       list: [
         { ui: {}, data: { name: "年度算法突破奖" } },
         { ui: {}, data: { name: "搜索质量提升专项奖" } },

@@ -3,7 +3,7 @@ import { computed, nextTick, onMounted, onUnmounted, ref, watch } from "vue";
 import { storeToRefs } from "pinia";
 import { useDraggable } from "vue-draggable-plus";
 import { useResumeStore } from "@/stores";
-import { isFieldRemoved, moveFieldByKey } from "@/components/business/dynamicForm/api";
+import { moveFieldByKey } from "@/components/business/dynamicForm/api";
 import {
   CUSTOM_MODULE_ICON,
   DEFAULT_MODULE_NAMES,
@@ -15,7 +15,7 @@ import MoreActions from "./moreActions.vue";
 defineOptions({ name: "ModuleSidebar" });
 
 const resumeStore = useResumeStore();
-const { currentData, runtimeConfig, system } = storeToRefs(resumeStore);
+const { runtimeConfig, system } = storeToRefs(resumeStore);
 const listRef = ref(null);
 const draggableItems = ref([]);
 let draggedKeys = [];
@@ -27,16 +27,14 @@ function handleModuleJump(key) {
   jumpPreview(key);
 }
 
-// 左侧只展示当前未归档的模块名称
+// 左侧展示全部模块名称
 const moduleItems = computed(() =>
-  (runtimeConfig.value?.fields || [])
-    .filter((field) => !isFieldRemoved(currentData.value, field))
-    .map((field) => ({
-      key: field.key,
-      name: resumeStore.getModel(field.key)?.name || field.key,
-      fixed: field.fixed,
-      icon: DEFAULT_MODULE_NAMES.find((item) => item.key === field.key)?.icon || CUSTOM_MODULE_ICON,
-    })),
+  (runtimeConfig.value?.fields || []).map((field) => ({
+    key: field.key,
+    name: resumeStore.getModel(field.key)?.name || field.key,
+    fixed: field.fixed,
+    icon: DEFAULT_MODULE_NAMES.find((item) => item.key === field.key)?.icon || CUSTOM_MODULE_ICON,
+  })),
 );
 
 watch(

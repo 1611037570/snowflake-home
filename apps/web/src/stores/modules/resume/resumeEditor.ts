@@ -4,7 +4,6 @@ import {
   getFieldDataPath,
   moveArrayRecord,
   removeArrayRecord,
-  setFieldCheckValue,
   walkFormFields,
 } from "@/components/business/dynamicForm/api";
 import { computed, ref, toRaw, watch, type ComputedRef } from "vue";
@@ -220,13 +219,6 @@ export const createResumeEditor = ({
     module.ui.hidden = hidden;
     return true;
   }
-  function setModuleArchived(moduleKey: string, archived: boolean): boolean {
-    const field = findModuleField(moduleKey);
-    if (!field) return false;
-    setFieldCheckValue(currentData.value, field, "removed", archived);
-    if (archived) unselectModule(moduleKey);
-    return true;
-  }
   function removeModule(moduleKey: string): boolean {
     const fields = runtimeConfig.value?.fields;
     const index = fields?.findIndex((field: any) => field?.key === moduleKey) ?? -1;
@@ -297,7 +289,6 @@ export const createResumeEditor = ({
     updateModuleField,
     updateModuleTitle,
     setModuleHidden,
-    setModuleArchived,
     removeModule,
     setLayoutColumns,
     swapModuleOrder,

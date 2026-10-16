@@ -8,7 +8,6 @@ import { storeToRefs } from "pinia";
 import { defineAsyncComponent, nextTick } from "vue";
 import { RESUME_OPTIONS } from "@/stores/modules/resume/config/resumeOptions";
 import { useRuntimeData } from "../../hooks/useRuntimeData";
-import ArchivedModules from "./components/module/archived.vue";
 import ModuleSidebar from "./moduleSidebar/index.vue";
 import HeightWeight from "./components/field/heightWeight.vue";
 import Portfolio from "./components/field/portfolio.vue";
@@ -32,7 +31,6 @@ import RowSkill from "./components/row/skill.vue";
 import { localizeResumeOptions } from "@/stores/modules/resume/hooks/useResumeEditorLocale";
 import i18n from "@/locales";
 import { flushPendingEditorLocation } from "../../hooks/useModuleNav";
-import { isFieldRemoved } from "@/components/business/dynamicForm/api";
 
 const loadDynamicForm = () => import("@/components/business/dynamicForm/index");
 // 动态表单加载期间立即显示骨架，避免编辑区只剩增加模块
@@ -93,13 +91,11 @@ const markKeyboardEditingModule = (event) => {
   if (!keyboardFocusPending) return;
   markEditingModule(event);
 };
-// 删除或归档当前模块后清除提示，隐藏不改变原有显示状态。
+// 删除当前模块后清除提示，隐藏不改变原有显示状态。
 watch(
   () => {
     const key = resumeStore.editingModuleKey;
-    return key && runtimeConfig.value?.fields?.some(
-      (field) => field.key === key && !isFieldRemoved(currentData.value, field),
-    );
+    return key && runtimeConfig.value?.fields?.some((field) => field.key === key);
   },
   (exists) => {
     if (!exists) resumeStore.editingModuleKey = null;
@@ -116,7 +112,7 @@ markEditorStart();
 
 // 注入到动态表单的自定义组件库
 // 编辑区组件按层级划分，配置里的 component 名对应关系如下：
-// 折叠容器 collapseModule：模块标题 + 折叠/归档/隐藏/删除，内容由插槽渲染
+// 折叠容器 collapseModule：模块标题 + 折叠/隐藏/删除，内容由插槽渲染
 // 折叠容器 collapseItem：数组模块中单条记录的标题 + 折叠/隐藏/删除，内容由插槽渲染
 // 行控件 rowField / rowAccount / rowSkill：一行内的字段编辑与隐藏/删除操作
 const dynamicComponents = {
@@ -225,7 +221,6 @@ onBeforeUnmount(() => {
           @initialized="finishConfigSync"
           @ready="handleDynamicFormReady"
         />
-        <ArchivedModules />
       </SfScrollbar>
     </div>
   </div>

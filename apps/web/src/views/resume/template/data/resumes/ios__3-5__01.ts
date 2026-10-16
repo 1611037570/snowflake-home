@@ -5,7 +5,7 @@ import { xiaoyang } from "../avatar";
 const resumeData: any = {
   data: {
     user: {
-      ui: { archived: false },
+      ui: {},
       data: {
         position: "iOS",
         name: "苏梦泽",
@@ -19,7 +19,7 @@ const resumeData: any = {
       },
     },
     work: {
-      ui: { collapsed: ["1"], archived: false },
+      ui: { collapsed: ["1"]},
       list: [
         {
           ui: {},
@@ -52,7 +52,7 @@ const resumeData: any = {
       ],
     },
     project: {
-      ui: { collapsed: ["1"], archived: false },
+      ui: { collapsed: ["1"]},
       list: [
         {
           ui: {},
@@ -85,7 +85,7 @@ const resumeData: any = {
       ],
     },
     education: {
-      ui: { collapsed: ["1"], archived: false },
+      ui: { collapsed: ["1"]},
       list: [
         {
           ui: {},
@@ -105,14 +105,14 @@ const resumeData: any = {
       ],
     },
     skill: {
-      ui: { collapsed: ["1"], archived: false },
+      ui: { collapsed: ["1"]},
       data: {
         content:
           "<p><strong>客户端开发：</strong>精通 Swift 与 Objective-C 混编开发，熟悉 SwiftUI、Combine 与 MVVM-C 架构，掌握 URLSession、Core Data 与 Widget、通知扩展等系统能力，了解 Swift Concurrency 与异步改造。</p><p><strong>工程与性能：</strong>熟练使用 Instruments 分析卡顿、内存与耗电问题，掌握 CocoaPods 与 Swift Package Manager 依赖管理、包体积瘦身与启动优化，具备灰度发布与崩溃闭环治理经验。</p>",
       },
     },
     honor: {
-      ui: { collapsed: ["1"], archived: false },
+      ui: { collapsed: ["1"]},
       list: [
         { ui: {}, data: { name: "年度最佳技术改进奖" } },
         { ui: {}, data: { name: "客户端性能治理先进个人" } },

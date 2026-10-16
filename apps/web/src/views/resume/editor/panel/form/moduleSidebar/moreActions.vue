@@ -2,7 +2,6 @@
 import { computed, defineAsyncComponent } from "vue";
 import { storeToRefs } from "pinia";
 import { useResumeStore } from "@/stores";
-import { isFieldRemoved } from "@/components/business/dynamicForm/api";
 import ModuleSearch from "./moduleSearch/index.vue";
 import SortByTime from "./sortByTime.vue";
 
@@ -10,11 +9,9 @@ import SortByTime from "./sortByTime.vue";
 const ImportResume = defineAsyncComponent(() => import("@/views/resume/mine/components/importResume.vue"));
 const resumeStore = useResumeStore();
 const { currentData, runtimeConfig } = storeToRefs(resumeStore);
-const moduleItems = computed(() =>
-  (runtimeConfig.value?.fields || []).filter((field) => !isFieldRemoved(currentData.value, field)),
-);
+const moduleItems = computed(() => runtimeConfig.value?.fields || []);
 
-// 批量收起当前未归档模块，保留每条记录原有的展开状态。
+// 批量收起全部模块，保留每条记录原有的展开状态。
 function collapseAll() {
   for (const item of moduleItems.value) {
     const module = currentData.value?.[item.key];
@@ -22,7 +19,7 @@ function collapseAll() {
   }
 }
 
-// 恢复未归档模块、子记录及个人信息字段的显示，只修改已有隐藏状态。
+// 恢复模块、子记录及个人信息字段的显示，只修改已有隐藏状态。
 function showAll() {
   const clearHidden = (ui) => {
     if (!ui || typeof ui !== "object") return;

@@ -5,7 +5,7 @@ import { xiaoyang } from "../avatar";
 const resumeData: any = {
   data: {
     user: {
-      ui: { archived: false },
+      ui: {},
       data: {
         position: "文案/策划",
         name: "冯书宁",
@@ -19,7 +19,7 @@ const resumeData: any = {
       },
     },
     work: {
-      ui: { collapsed: ["1"], archived: false },
+      ui: { collapsed: ["1"]},
       list: [
         {
           ui: {},
@@ -52,7 +52,7 @@ const resumeData: any = {
       ],
     },
     project: {
-      ui: { collapsed: ["1"], archived: false },
+      ui: { collapsed: ["1"]},
       list: [
         {
           ui: {},
@@ -85,7 +85,7 @@ const resumeData: any = {
       ],
     },
     education: {
-      ui: { collapsed: ["1"], archived: false },
+      ui: { collapsed: ["1"]},
       list: [
         {
           ui: {},
@@ -105,14 +105,14 @@ const resumeData: any = {
       ],
     },
     skill: {
-      ui: { collapsed: ["1"], archived: false },
+      ui: { collapsed: ["1"]},
       data: {
         content:
           "<p><strong>文案与策划：</strong>熟悉公文写作规范与政务文风要求，能够独立完成政策解读、新闻通稿、领导讲话稿、工作简报、宣传方案与活动策划案的撰写，掌握选题策划、信息核实与稿件审核流程。</p><p><strong>工具与技术栈：</strong>熟练使用 Word 与 WPS 完成公文排版与套版，使用 Excel 完成选题排期与传播数据统计，使用 Photoshop、秀米与 135 编辑器完成政务图文排版与政策图解设计，使用剪映完成宣传短视频剪辑，借助政务网站内容管理系统与舆情监测平台完成内容发布和效果跟踪。</p>",
       },
     },
     honor: {
-      ui: { collapsed: ["1"], archived: false },
+      ui: { collapsed: ["1"]},
       list: [
         { ui: {}, data: { name: "市级优秀政务新媒体作品奖" } },
         { ui: {}, data: { name: "政务信息工作先进个人" } },

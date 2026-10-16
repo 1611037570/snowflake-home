@@ -6,12 +6,9 @@ import eventBus from "@/utils/modules/eventBus";
 import {
   getFieldLabel,
   getModelBindings,
-  isFieldRemoved,
   unwrapField,
   walkFormFields,
 } from "@/components/business/dynamicForm/api";
-import { ElNotification } from "element-plus";
-import { $t } from "@/locales";
 import { stripHtml } from "../toolbar/modules/progress/useResumeStats";
 import { useScrollEditorTo } from "./useScrollEditorTo";
 
@@ -204,7 +201,6 @@ const moduleList = computed(() => {
             field.key,
           icon,
           hidden: data?.[field.key]?.ui?.hidden === true,
-          archived: isFieldRemoved(data, field),
           field, // 原始字段配置，用于恢复隐藏模块
         };
       })
@@ -243,18 +239,6 @@ export const jumpPreview = (key: string) => {
       releasePreviewHighlightLock,
       PREVIEW_SCROLL_FALLBACK_DELAY,
     );
-  });
-};
-
-// 归档模块不在左侧编辑区展示，定位时提示用户先恢复模块
-const notifyArchived = () => {
-  ElNotification({
-    title: $t("archived"),
-    message: $t("restoreArchivedBeforeEdit"),
-    type: "warning",
-    position: "top-right",
-    offset: 40,
-    duration: 3000,
   });
 };
 
@@ -328,11 +312,6 @@ export const jumpEditor = (key: string) => {
 
 // 定位到搜索命中行：展开模块与命中记录，滚动到最精确的锚点
 export const jumpToHit = (moduleKey: string, hit?: ResumeSearchHit) => {
-  const item = moduleList.value.find((m) => m.key === moduleKey);
-  if (item && isFieldRemoved(currentData.value, item.field)) {
-    notifyArchived();
-    return;
-  }
   activateModule(moduleKey);
   // 数组模块：展开命中所在的记录，记录处于折叠状态时看不到命中内容
   const record =
@@ -346,11 +325,6 @@ export const jumpToHit = (moduleKey: string, hit?: ResumeSearchHit) => {
 
 // 预览区定位编辑区：切标签、选中闪烁与滚动定位，不展开折叠，避免点击改变编辑区折叠状态
 export const locateEditor = (key: string, hit?: Pick<ResumeSearchHit, "itemIndex">) => {
-  const item = moduleList.value.find((m) => m.key === key);
-  if (item && isFieldRemoved(currentData.value, item.field)) {
-    notifyArchived();
-    return;
-  }
   pendingEditorLocation = () => {
     // 模块收起时即使子记录节点曾经挂载，也应回退到大模块定位与高亮。
     const moduleCollapsed = currentData.value?.[key]?.ui?.collapsed;

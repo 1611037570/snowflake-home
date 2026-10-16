@@ -5,7 +5,7 @@ import { xiaoyang } from "../avatar";
 const resumeData: any = {
   data: {
     user: {
-      ui: { archived: false },
+      ui: {},
       data: {
         position: "网络安全",
         name: "秦九安",
@@ -19,7 +19,7 @@ const resumeData: any = {
       },
     },
     work: {
-      ui: { collapsed: ["1"], archived: false },
+      ui: { collapsed: ["1"]},
       list: [
         {
           ui: {},
@@ -52,7 +52,7 @@ const resumeData: any = {
       ],
     },
     project: {
-      ui: { collapsed: ["1"], archived: false },
+      ui: { collapsed: ["1"]},
       list: [
         {
           ui: {},
@@ -85,7 +85,7 @@ const resumeData: any = {
       ],
     },
     education: {
-      ui: { collapsed: ["1"], archived: false },
+      ui: { collapsed: ["1"]},
       list: [
         {
           ui: {},
@@ -105,14 +105,14 @@ const resumeData: any = {
       ],
     },
     skill: {
-      ui: { collapsed: ["1"], archived: false },
+      ui: { collapsed: ["1"]},
       data: {
         content:
           "<p><strong>安全测试：</strong>熟悉 Web 与移动端常见漏洞原理与利用方式，熟练使用 Burp Suite、SQLMap、Metasploit 等工具开展渗透测试，掌握代码审计与依赖成分分析方法。</p><p><strong>安全运营：</strong>熟悉 SIEM、EDR 与 SOAR 平台建设，掌握告警规则调优、攻击链研判与应急溯源流程，熟悉零信任、身份权限治理与等级保护合规要求，持有 CISP 证书。</p>",
       },
     },
     honor: {
-      ui: { collapsed: ["1"], archived: false },
+      ui: { collapsed: ["1"]},
       list: [
         { ui: {}, data: { name: "年度安全守护奖" } },
         { ui: {}, data: { name: "重大应急事件处置表彰" } },

@@ -5,7 +5,7 @@ import { xiaoyang } from "../avatar";
 const resumeData: any = {
   data: {
     user: {
-      ui: { archived: false },
+      ui: {},
       data: {
         position: "商业摄影师",
         name: "陈川",
@@ -18,14 +18,14 @@ const resumeData: any = {
       },
     },
     skill: {
-      ui: { collapsed: ["1"], archived: false },
+      ui: { collapsed: ["1"]},
       data: {
         content:
           "<p><strong>1、</strong>熟练使用 Lightroom、Photoshop 与 Capture One，掌握联机拍摄与商业精修流程，能独立完成前期沟通、拍摄执行和后期交付。</p><p><strong>2、</strong>擅长人像、品牌广告与电商产品拍摄，熟悉 Profoto 影棚灯组布光、外景自然光运用及佳能 EOS R5 等全画幅器材实拍。</p>",
       },
     },
     education: {
-      ui: { collapsed: ["1"], archived: false },
+      ui: { collapsed: ["1"]},
       list: [
         {
           ui: {},
@@ -42,7 +42,7 @@ const resumeData: any = {
       ],
     },
     work: {
-      ui: { collapsed: ["1"], archived: false },
+      ui: { collapsed: ["1"]},
       list: [
         {
           ui: {},
@@ -58,7 +58,7 @@ const resumeData: any = {
       ],
     },
     project: {
-      ui: { collapsed: ["1"], archived: false },
+      ui: { collapsed: ["1"]},
       list: [
         {
           ui: {},

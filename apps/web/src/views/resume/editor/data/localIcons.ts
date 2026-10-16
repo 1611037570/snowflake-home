@@ -19,8 +19,6 @@ import IcRoundZoomInIcon from "@iconify-vue/ic/round-zoom-in";
 import IconParkOutlineDragIcon from "@iconify-vue/icon-park-outline/drag";
 import IconamoonSettingsFillIcon from "@iconify-vue/iconamoon/settings-fill";
 import LineMdLoadingTwotoneLoopIcon from "@iconify-vue/line-md/loading-twotone-loop";
-import LucideArchiveIcon from "@iconify-vue/lucide/archive";
-import LucideArchiveRestoreIcon from "@iconify-vue/lucide/archive-restore";
 import LucideArrowDownIcon from "@iconify-vue/lucide/arrow-down";
 import LucideArrowLeftIcon from "@iconify-vue/lucide/arrow-left";
 import LucideArrowRightIcon from "@iconify-vue/lucide/arrow-right";
@@ -192,8 +190,6 @@ export const PROJECT_ICON_LIST: Record<string, Component> = {
   "icon-park-outline:drag": IconParkOutlineDragIcon,
   "iconamoon:settings-fill": IconamoonSettingsFillIcon,
   "line-md:loading-twotone-loop": LineMdLoadingTwotoneLoopIcon,
-  "lucide:archive": LucideArchiveIcon,
-  "lucide:archive-restore": LucideArchiveRestoreIcon,
   "lucide:arrow-down": LucideArrowDownIcon,
   "lucide:arrow-left": LucideArrowLeftIcon,
   "lucide:arrow-right": LucideArrowRightIcon,

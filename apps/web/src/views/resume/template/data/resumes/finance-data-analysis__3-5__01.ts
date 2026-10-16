@@ -5,7 +5,7 @@ import { xiaoyang } from "../avatar";
 const resumeData: any = {
   data: {
     user: {
-      ui: { archived: false },
+      ui: {},
       data: {
         position: "数据分析",
         name: "沈嘉",
@@ -19,7 +19,7 @@ const resumeData: any = {
       },
     },
     work: {
-      ui: { collapsed: ["1"], archived: false },
+      ui: { collapsed: ["1"]},
       list: [
         {
           ui: {},
@@ -52,7 +52,7 @@ const resumeData: any = {
       ],
     },
     project: {
-      ui: { collapsed: ["1"], archived: false },
+      ui: { collapsed: ["1"]},
       list: [
         {
           ui: {},
@@ -85,7 +85,7 @@ const resumeData: any = {
       ],
     },
     education: {
-      ui: { collapsed: ["1"], archived: false },
+      ui: { collapsed: ["1"]},
       list: [
         {
           ui: {},
@@ -105,14 +105,14 @@ const resumeData: any = {
       ],
     },
     skill: {
-      ui: { collapsed: ["1"], archived: false },
+      ui: { collapsed: ["1"]},
       data: {
         content:
           "<p><strong>数据工具：</strong>熟练使用 SQL 完成多表关联与窗口函数取数，使用 Python（pandas、NumPy、scikit-learn、statsmodels）完成数据清洗、特征工程与回归、评分卡等建模工作，使用 Excel 数据透视表与 Power BI、Tableau 输出分析看板。</p><p><strong>金融业务与数据栈：</strong>熟悉信贷风控、资产管理与经营分析场景，掌握 Hive、Spark 处理海量明细数据，了解 MySQL、ClickHouse 与调度平台 Airflow 的任务编排，能够独立设计 A/B 实验并完成显著性检验。</p>",
       },
     },
     honor: {
-      ui: { collapsed: ["1"], archived: false },
+      ui: { collapsed: ["1"]},
       list: [
         { ui: {}, data: { name: "年度数据分析优秀项目奖" } },
         { ui: {}, data: { name: "风控建模专项贡献奖" } },
