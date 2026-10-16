@@ -44,9 +44,11 @@ const collectLineEndOffsets = (element: HTMLElement) => {
 export const measureLayoutNodes = (
   root: HTMLElement,
   nodes: LayoutNode[],
+  nodeIds?: ReadonlySet<string>, // 局部测量时只读取受影响节点，未传入则测量全部节点。
 ): Map<string, MeasuredNode> => {
   const result = new Map<string, MeasuredNode>();
-  const elements = Array.from(root.querySelectorAll<HTMLElement>(NODE_SELECTOR));
+  const elements = Array.from(root.querySelectorAll<HTMLElement>(NODE_SELECTOR))
+    .filter((element) => !nodeIds || nodeIds.has(element.dataset.layoutNodeId || ""));
   const elementById = new Map(elements.map((element) => [element.dataset.layoutNodeId || "", element]));
   const nodeById = new Map(nodes.map(node => [node.id, node])); // 读取通用整块能力，不识别业务名称
   // 缓存仅存活于本次测量，校验与断点读取共用尺寸，不跨内容变化复用。
@@ -62,8 +64,9 @@ export const measureLayoutNodes = (
 
   // 实际模块结构参与测量，额外占位必须下沉为通用节点而不能藏在分组外框。
   for (const module of root.querySelectorAll<HTMLElement>("[data-layout-module]")) {
-    const rect = readRect(module);
     const moduleNodes = Array.from(module.querySelectorAll<HTMLElement>(NODE_SELECTOR));
+    if (nodeIds && !moduleNodes.some((node) => nodeIds.has(node.dataset.layoutNodeId || ""))) continue;
+    const rect = readRect(module);
     // 单个不可分节点直接承担整个外框预算，无分组跨页的重复留白问题。
     if (moduleNodes.length === 1 && nodeById.get(moduleNodes[0]!.dataset.layoutNodeId || "")?.splitMode === "whole") {
       moduleBoxes.set(moduleNodes[0]!, rect);
@@ -75,6 +78,7 @@ export const measureLayoutNodes = (
   }
 
   nodes.forEach((node) => {
+    if (nodeIds && !nodeIds.has(node.id)) return;
     const element = elementById.get(node.id);
     if (!element) return;
     const rect = moduleBoxes.get(element) ?? readRect(element);

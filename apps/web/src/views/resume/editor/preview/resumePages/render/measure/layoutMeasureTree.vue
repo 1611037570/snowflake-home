@@ -11,7 +11,6 @@ import type { FooterTemplateId } from "@/domain/resume/theme/uiTypes";
 import { PAGE_NUMBER_HEIGHT } from "../../../shared/constants";
 import type { LayoutNode } from "../../engine/types";
 import type { ColumnPadding, RegionConfig } from "../../engine/pageLayoutTypes";
-import { resolveRegionGap } from "../../engine/layout/regionFlows";
 
 const props = defineProps<{
   /** 测量宿主宽度，等于页面内容宽度 */
@@ -52,28 +51,20 @@ const insetStyle = computed(() => {
   };
 });
 
-// 区域几何直接读取引擎配置，水平内缩由公共区域盒子施加。
-const regionConfigMap = computed(() => new Map(props.regionConfigs.map((region) => [region.id, region])));
-
-// 按区域归并栏位：同一区域的多个栏位共用一份区域外观，区域留白只作用一次
+// 按布局区域归并栏位，区域外观和间距直接读取同一份配置。
 const regions = computed(() => {
-  const grouped: Array<{ regionId: string; groups: typeof props.groups }> = [];
+  const groupsByRegion = new Map<string, typeof props.groups>();
   props.groups.forEach((group) => {
     const regionId = group.regionId || "main";
-    const existed = grouped.find((item) => item.regionId === regionId);
-    if (existed) existed.groups.push(group);
-    else grouped.push({ regionId, groups: [group] });
+    const groups = groupsByRegion.get(regionId);
+    if (groups) groups.push(group);
+    else groupsByRegion.set(regionId, [group]);
   });
-  return grouped;
+  return props.regionConfigs.flatMap((region) => {
+    const groups = groupsByRegion.get(region.id);
+    return groups?.length ? [{ ...region, groups /* 当前区域的测量栏位。 */ }] : [];
+  });
 });
-// 长图中的区域间距与首页预览使用相同的布局结算值。
-const getRegionGap = (index: number) =>
-  index > 0
-    ? resolveRegionGap(
-        regionConfigMap.value.get(regions.value[index - 1].regionId),
-        regionConfigMap.value.get(regions.value[index].regionId),
-      )
-    : 0;
 </script>
 
 <template>
@@ -88,16 +79,16 @@ const getRegionGap = (index: number) =>
     <PageDecoration />
     <!-- 外层只负责页面内缩：区域纵向排列并各自铺满，栏位并排由区域容器负责 -->
     <div class="box-border flex w-auto flex-1 flex-col" :style="insetStyle">
-      <template v-for="(region, regionIndex) in regions" :key="region.regionId">
-        <div v-if="getRegionGap(regionIndex) > 0" class="shrink-0" :style="{ height: `${getRegionGap(regionIndex)}px` }" />
+      <template v-for="(region, regionIndex) in regions" :key="region.id">
+        <div v-if="regionIndex > 0 && region.gapBefore" class="shrink-0" :style="{ height: `${region.gapBefore}px` }" />
         <RegionContainer
-          :region-id="region.regionId"
-          :region-padding="regionConfigMap.get(region.regionId)?.padding"
-          :column-gap="regionConfigMap.get(region.regionId)?.columnGap"
-          :full-bleed="region.regionId === topRegionId"
+          :region-id="region.id"
+          :region-padding="region.padding"
+          :column-gap="region.columnGap"
+          :full-bleed="region.id === topRegionId"
           class="flex w-full min-w-0"
           :top-region-present="Boolean(topRegionId)"
-          :width-mode="regionConfigMap.get(region.regionId)?.widthMode"
+          :width-mode="region.widthMode"
         >
           <ColumnBox
             v-for="group in region.groups"

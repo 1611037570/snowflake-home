@@ -1,4 +1,5 @@
 import { getRegionContentHeight } from "../layout/regionHeights";
+import { resolveRegionGap } from "../layout/regionFlows";
 import type { PageLayoutConfig, RegionConfig } from "../pageLayoutTypes";
 import type { FlowFragmentKind, FlowPage, FlowPageItem } from "./paginateFlow";
 import type { LayoutNode } from "../types";
@@ -60,6 +61,8 @@ export interface ColumnPlan {
 export interface RegionPlan {
   /** 对应布局配置中的区域编号。 */
   regionId: string;
+  /** 当前页相邻可见区域之间的实际间距。 */
+  gapBefore: number;
   /** 当前区域已经使用的高度。 */
   usedHeight: number;
   /** 当前区域中的栏。 */
@@ -200,30 +203,38 @@ export const buildPagePlan = ({
     : [];
   const allWarnings = [...warnings, ...overflowWarnings, ...coverageWarnings];
 
-  const pages = Array.from({ length: pageCount }, (_, pageIndex) => ({
-    pageIndex,
-    regions: orderedRegions.map((region) => {
-      const columns = region.columns.map<ColumnPlan>((column) => {
-        const sourcePage = getFlowPages(column.id)[pageIndex] || emptyFlowPage(pageIndex);
-        const columnHeight = Math.max(
-          0,
-          availableHeightByColumn?.get(column.id) ?? getRegionHeight(region, availableHeight),
-        );
+  const pages = Array.from({ length: pageCount }, (_, pageIndex) => {
+    let previousVisibleRegion: RegionConfig | undefined;
+    return {
+      pageIndex,
+      regions: orderedRegions.map((region) => {
+        const columns = region.columns.map<ColumnPlan>((column) => {
+          const sourcePage = getFlowPages(column.id)[pageIndex] || emptyFlowPage(pageIndex);
+          const columnHeight = Math.max(
+            0,
+            availableHeightByColumn?.get(column.id) ?? getRegionHeight(region, availableHeight),
+          );
+          return {
+            columnId: column.id,
+            availableHeight: sourcePage.availableHeight ?? columnHeight,
+            usedHeight: sourcePage.usedHeight,
+            fragments: sourcePage.items.map(toFragmentPlan),
+            trailingGap: sourcePage.trailingGap,
+          };
+        });
+        // 区域间距只在当前页两个可见区域之间生成一次，渲染层直接消费结果。
+        const visible = columns.some((column) => column.fragments.length > 0);
+        const gapBefore = visible ? resolveRegionGap(previousVisibleRegion, region) : 0;
+        if (visible) previousVisibleRegion = region;
         return {
-          columnId: column.id,
-          availableHeight: sourcePage.availableHeight ?? columnHeight,
-          usedHeight: sourcePage.usedHeight,
-          fragments: sourcePage.items.map(toFragmentPlan),
-          trailingGap: sourcePage.trailingGap,
+          regionId: region.id,
+          gapBefore,
+          usedHeight: Math.max(...columns.map((column) => column.usedHeight), 0),
+          columns,
         };
-      });
-      return {
-        regionId: region.id,
-        usedHeight: Math.max(...columns.map((column) => column.usedHeight), 0),
-        columns,
-      };
-    }),
-  }));
+      }),
+    };
+  });
 
   return {
     status: allWarnings.some((warning) => ["contentMissing", "contentOverlap", "contentOutOfBounds", "invalidLayout"].includes(warning.code))
