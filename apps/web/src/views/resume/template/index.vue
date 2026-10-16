@@ -1,10 +1,7 @@
 <script setup>
 import { useResumeStore } from "@/stores";
 import { trackResumeAction } from "@/hooks";
-import {
-  createResumeStyleUi,
-  resumeStyleTemplateList,
-} from "@/views/resume/theme";
+import { createResumeStyleUi, resumeStyleTemplateList } from "@/views/resume/theme";
 import ThumbPreview from "@/views/resume/editor/preview/modes/thumb.vue";
 import RevealGrid from "@/views/resume/components/revealGrid.vue";
 import ResumePreviewSkeleton from "@/views/resume/components/resumePreviewSkeleton.vue";
@@ -105,7 +102,9 @@ const matchesTemplateFilters = (template, allowAllDesign = false) =>
   Object.entries(templateFilters.value).every(([key, value]) => {
     if (!value) return true;
     const values = key === "layout" || key === "tier" ? template.design : template[key];
-    return !Array.isArray(values) || (allowAllDesign && values.includes("all")) || values.includes(value);
+    return (
+      !Array.isArray(values) || (allowAllDesign && values.includes("all")) || values.includes(value)
+    );
   });
 // 范本索引先按筛选条件过滤，正文仅加载当前已展示的批次。
 const filteredResumeIndexes = computed(() =>
@@ -144,7 +143,9 @@ const visibleStyleTemplates = computed(() =>
   filteredStyleTemplates.value.slice(0, visibleCount.value),
 );
 const displayedTemplates = computed(() =>
-  currentTopCategory.value === "template" ? visibleStyleTemplates.value : visibleResumeTemplates.value,
+  currentTopCategory.value === "template"
+    ? visibleStyleTemplates.value
+    : visibleResumeTemplates.value,
 );
 // 当前批次需要的正文：样式模板共用通用范本，无需额外加载其他范本。
 const visibleFileNames = computed(() =>
@@ -230,8 +231,9 @@ const setPreviewSize = (size) => {
 };
 const gridClass = ref("default");
 // 卡片只定义宽度，高度由 A4 比例（794:1123）自动派生：宽度是唯一旋钮
+// 宽度已扣除外框描边，卡片用 content-box：缩略图可用区正好是 A4，页面不会露出空隙
 const cardSizeClass = computed(() =>
-  gridClass.value === "small" ? "w-[380px] aspect-[794/1123]" : "w-[240px] aspect-[794/1123]",
+  gridClass.value === "small" ? "w-[378px] aspect-[794/1123]" : "w-[236px] aspect-[794/1123]",
 );
 // 缩略图只消费简历内容与配置，不把卡片上的筛选信息传进渲染链路
 const getThumbItem = (item) => ({ data: item?.data, config: item?.config, ui: item?.ui });
@@ -259,94 +261,97 @@ const tagTextClass = computed(() => (isDark.value ? "text-sf-theme-text" : "text
       :load-more="loadNextTemplates"
       :reset-key="templateGridKey"
     >
-        <TemplateCategory
-          @change="setTemplateFilters"
-          @category-change="setCurrentTopCategory"
-          @size-change="setPreviewSize"
-        />
-        <!-- 首批范本未就绪时按真实卡片尺寸占位，避免筛选栏下方整片空白。 -->
-        <div
-          v-if="templateLoading && (!displayedTemplates.length || !previewBase)"
-          class="grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5"
-          role="status"
-          aria-busy="true"
-          :aria-label="$t('resumeTemplateLoading')"
-        >
-          <div v-for="index in 8" :key="index" class="flex justify-center">
-            <div :class="cardSizeClass" class="relative overflow-hidden rounded-[4px] border border-sf-b bg-sf-primary">
-              <ResumePreviewSkeleton />
-              <div class="absolute inset-x-0 bottom-0 flex flex-col gap-3 border-t border-sf-b bg-sf-primary p-3">
-                <div class="h-3 w-1/2 animate-pulse rounded bg-sf-bg" />
-                <div class="h-3 w-5/6 animate-pulse rounded bg-sf-bg" />
-              </div>
+      <TemplateCategory
+        @change="setTemplateFilters"
+        @category-change="setCurrentTopCategory"
+        @size-change="setPreviewSize"
+      />
+      <!-- 首批范本未就绪时按真实卡片尺寸占位，避免筛选栏下方整片空白。 -->
+      <div
+        v-if="templateLoading && (!displayedTemplates.length || !previewBase)"
+        class="grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5"
+        role="status"
+        aria-busy="true"
+        :aria-label="$t('resumeTemplateLoading')"
+      >
+        <div v-for="index in 8" :key="index" class="flex justify-center">
+          <div
+            :class="cardSizeClass"
+            class="relative box-content overflow-hidden rounded-[4px] border border-sf-b bg-sf-primary"
+          >
+            <ResumePreviewSkeleton />
+            <div
+              class="absolute inset-x-0 bottom-0 flex flex-col gap-3 border-t border-sf-b bg-sf-primary p-3"
+            >
+              <div class="h-3 w-1/2 animate-pulse rounded bg-sf-bg" />
+              <div class="h-3 w-5/6 animate-pulse rounded bg-sf-bg" />
             </div>
           </div>
         </div>
-        <!-- 模板页关闭逐项揭示：卡片一次性铺满，避免列表高度持续增长带动滚动 -->
-        <RevealGrid
-          v-else
-          :key="templateGridKey"
-          :items="displayedTemplates"
-          :size="gridClass"
-          :reveal="false"
-          key-field="fileName"
-        >
-          <template #default="{ item: card }">
-            <!-- 卡片外壳由模板页自己维护，缩略图仍复用懒加载预览组件 -->
-            <div
-              :class="cardSizeClass"
-              class="group relative flex cursor-pointer flex-col overflow-hidden rounded-[4px] border border-sf-b bg-sf-primary transition-all duration-200 hover:scale-102 hover:border-sf-theme"
-              @click="openFullscreen(card)"
-            >
-              <!-- 缩略图铺满整卡，信息层浮在它的下半部分之上 -->
-              <div class="absolute inset-0">
-                <ThumbPreview :item="getThumbItem(card.item)" />
-              </div>
-              <!-- 信息层之外的剩余空间：hover 遮罩与按钮在这里垂直居中，不会被信息层压住 -->
-              <div class="relative min-h-0 flex-1">
-                <!-- 悬浮遮罩：淡白蒙层不加模糊，简历内容仍可见，承载预览与使用按钮 -->
-                <div
-                  class="invisible absolute inset-0 flex items-center justify-center gap-3 bg-sf-transparent-3 opacity-0 transition-all duration-200 group-hover:visible group-hover:opacity-100"
-                >
-                  <SfButton @click.stop="openFullscreen(card)">
-                    {{ $t("resumeTemplatePreview") }}
-                  </SfButton>
-                  <SfButton @click.stop="useTemplateCard(card)">
-                    {{ $t("resumeTemplateUse") }}
-                  </SfButton>
-                </div>
-              </div>
-              <!-- 信息层悬浮在卡片底部：纯色背景、高度随内容，标签默认显示 -->
+      </div>
+      <!-- 模板页关闭逐项揭示：卡片一次性铺满，避免列表高度持续增长带动滚动 -->
+      <RevealGrid
+        v-else
+        :key="templateGridKey"
+        :items="displayedTemplates"
+        :size="gridClass"
+        :reveal="false"
+        key-field="fileName"
+      >
+        <template #default="{ item: card }">
+          <!-- 卡片外壳由模板页自己维护，缩略图仍复用懒加载预览组件 -->
+          <div
+            :class="cardSizeClass"
+            class="group relative box-content flex cursor-pointer flex-col overflow-hidden rounded-[4px] border border-sf-b bg-sf-primary transition-all duration-200 hover:scale-102 hover:border-sf-theme"
+            @click="openFullscreen(card)"
+          >
+            <!-- 缩略图铺满整卡，信息层浮在它的下半部分之上 -->
+            <div class="absolute inset-0">
+              <ThumbPreview :item="getThumbItem(card.item)" />
+            </div>
+            <!-- 信息层之外的剩余空间：hover 遮罩与按钮在这里垂直居中，不会被信息层压住 -->
+            <div class="relative min-h-0 flex-1">
+              <!-- 悬浮遮罩：淡白蒙层不加模糊，简历内容仍可见，承载预览与使用按钮 -->
               <div
-                class="relative flex flex-col gap-1 border-t border-sf-b bg-sf-primary px-3 py-3"
+                class="invisible absolute inset-0 flex items-center justify-center gap-3 bg-sf-transparent-3 opacity-0 transition-all duration-200 group-hover:visible group-hover:opacity-100"
               >
-                <div class="truncate text-base font-black text-sf-text">
-                  {{ card.name }}
-                </div>
-                <div class="line-clamp-2 text-sm text-sf-text-2">
-                  {{ card.description }}
-                </div>
-                <!-- 标签按顺序取用配置里的彩虹色，尺寸收紧到与信息层同一档 -->
-                <div v-if="card.tags.length" class="flex flex-wrap gap-x-3 gap-y-1">
-                  <span
-                    v-for="(tag, index) in card.tags"
-                    :key="tag"
-                    class="rounded-md px-3 py-1 text-xs"
-                    :class="tagTextClass"
-                    :style="getTagStyle(index)"
-                  >
-                    {{ tag }}
-                  </span>
-                </div>
+                <SfButton @click.stop="openFullscreen(card)">
+                  {{ $t("resumeTemplatePreview") }}
+                </SfButton>
+                <SfButton @click.stop="useTemplateCard(card)">
+                  {{ $t("resumeTemplateUse") }}
+                </SfButton>
               </div>
             </div>
-          </template>
-          <template #empty>
-            <div class="flex h-36 items-center justify-center text-sm text-sf-text-2">
-              {{ $t("resumeTemplateEmpty") }}
+            <!-- 信息层悬浮在卡片底部：纯色背景、高度随内容，标签默认显示 -->
+            <div class="relative flex flex-col gap-1 border-t border-sf-b bg-sf-primary px-3 py-3">
+              <div class="truncate text-base font-black text-sf-text">
+                {{ card.name }}
+              </div>
+              <div class="line-clamp-2 text-sm text-sf-text-2">
+                {{ card.description }}
+              </div>
+              <!-- 标签按顺序取用配置里的彩虹色，尺寸收紧到与信息层同一档 -->
+              <div v-if="card.tags.length" class="flex flex-wrap gap-x-3 gap-y-1">
+                <span
+                  v-for="(tag, index) in card.tags"
+                  :key="tag"
+                  class="rounded-md px-3 py-1 text-xs"
+                  :class="tagTextClass"
+                  :style="getTagStyle(index)"
+                >
+                  {{ tag }}
+                </span>
+              </div>
             </div>
-          </template>
-        </RevealGrid>
+          </div>
+        </template>
+        <template #empty>
+          <div class="flex h-36 items-center justify-center text-sm text-sf-text-2">
+            {{ $t("resumeTemplateEmpty") }}
+          </div>
+        </template>
+      </RevealGrid>
       <template #footer>
         <div class="flex flex-1 flex-col items-center justify-end">
           <SfFooter />

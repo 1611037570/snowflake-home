@@ -153,9 +153,9 @@ const applyTemplate = (template) => {
         class="group cursor-pointer!"
         @click="applyTemplate(template)"
       >
-        <!-- 模板缩略图外框与简历页面保持相同宽高比，完整显示页面内容。 -->
+        <!-- 模板缩略图外框与简历页面保持相同宽高比：宽度扣除 3px 描边，缩略图可用区正好是 A4 -->
         <div
-          class="relative mx-auto h-[218px] w-[156px] overflow-hidden rounded-[4px] border-3 border-sf-transparent bg-sf-bg"
+          class="relative mx-auto box-content w-[150px] aspect-[794/1123] overflow-hidden rounded-[4px] border-3 border-sf-transparent bg-sf-bg"
           :class="{ ' border-sf-theme!': isActive(template.id) }"
         >
           <ThumbPreview :item="template.item" @select="applyTemplate(template)" />
