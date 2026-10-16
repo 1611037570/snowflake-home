@@ -714,6 +714,8 @@
   "downloadRecommendedBrowser": "去下载谷歌浏览器",
   "printColorMode": "切换彩色模式",
   "printGrayMode": "切换灰度模式（模拟黑白打印效果）",
+  "previewColorMode": "彩色预览",
+  "previewGrayMode": "灰度预览",
   "styleHintHover": "感觉样式错了？",
   "styleHintContent": "如果感觉样式不对，确认后将切换到「标准 A4」查看：小比例预览下的差异是缩放造成的显示效果，并非样式本身出错。",
   "exportProgress": "导出进度",

@@ -13,16 +13,16 @@ const togglePrintMode = () => {
 </script>
 
 <template>
-  <!-- 提示显示在图标右侧，避免遮挡上方入口。 -->
-  <SfTooltip :content="system.printMode ? $t('printColorMode') : $t('printGrayMode')" placement="right">
+  <!-- 工具栏入口：图标尺寸与其它入口一致 -->
+  <SfTooltip :content="system.printMode ? $t('printColorMode') : $t('printGrayMode')">
     <SfIcon
       :icon="
         system.printMode
           ? 'qlementine-icons:light-bulb-off-16'
           : 'qlementine-icons:light-bulb-on-16'
       "
-      size="6"
-      boxSize="8"
+      size="5"
+      boxSize="7"
       class="rounded-full"
       :class="
         system.printMode

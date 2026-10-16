@@ -156,7 +156,7 @@ const setNumberParam = (key, value) => {
 <template>
   <SfDropdown trigger="click" placement="bottom-start" :show-arrow="false">
     <span
-      class="flex cursor-pointer items-center gap-1 rounded-full px-1.5 py-1 text-sm text-sf-text-2 hover:bg-sf-theme-2 hover:text-sf-theme-text"
+      class="flex cursor-pointer items-center gap-1 rounded-full px-1.5 py-1 text-xs text-sf-text-2 hover:bg-sf-theme-2 hover:text-sf-theme-text md:text-sm"
     >
       <SfIcon icon="lucide:layout-template" size="5" />
     <span>{{ $t("layout") }}</span>

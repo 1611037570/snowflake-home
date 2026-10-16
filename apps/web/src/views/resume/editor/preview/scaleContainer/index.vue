@@ -13,6 +13,7 @@ import PrintMode from "./toolbar/printMode.vue";
 import StyleHint from "./toolbar/styleHint.vue";
 import Language from "./toolbar/language.vue";
 import OnePage from "./toolbar/onePage.vue";
+import More from "./toolbar/more.vue";
 
 defineOptions({ name: "ScaleContainer" });
 
@@ -196,7 +197,24 @@ useResizeObserver(contentRef, ([entry]) => {
       <Settings />
       <MoreSettings />
       <Language />
-      <OnePage />
+      <!-- 桌面端四个图标入口，移动端统一收进「更多」下拉；md 断点 768px 与移动端判定同值 -->
+      <div class="hidden items-center gap-1 md:flex">
+        <OnePage />
+        <PrintMode />
+        <SfTooltip :content="$t('fullscreen')">
+          <SfIcon
+            icon="lucide:maximize"
+            size="5"
+            boxSize="7"
+            class="rounded-full text-sf-text-2 hover:bg-sf-theme-2 hover:text-sf-theme-text"
+            @click="$emit('fullscreen')"
+          />
+        </SfTooltip>
+        <StyleHint @standard-a4="setStandardA4" />
+      </div>
+      <div class="flex items-center md:hidden">
+        <More @fullscreen="$emit('fullscreen')" @standard-a4="setStandardA4" />
+      </div>
       <SfDropdown trigger="hover" placement="bottom-start" :show-arrow="false">
         <div
           class="flex h-7 w-14 cursor-default items-center justify-center rounded-full text-xs font-medium text-sf-theme"
@@ -265,21 +283,6 @@ useResizeObserver(contentRef, ([entry]) => {
           </div>
         </div>
       </SfScrollbar>
-      <!-- 三个预览入口统一图标尺寸并固定在预览区左上角，置于去色容器外避免图标一并变灰。 -->
-      <div v-if="showToolbar" class="absolute top-3 left-3 z-10 flex flex-col items-start gap-3">
-        <PrintMode />
-        <!-- 提示显示在图标右侧，避免遮挡上方入口。 -->
-        <SfTooltip :content="$t('fullscreen')" placement="right">
-          <SfIcon
-            icon="lucide:maximize"
-            size="6"
-            boxSize="8"
-            class="rounded-full text-sf-text-2 hover:bg-sf-theme-2 hover:text-sf-theme-text"
-            @click="$emit('fullscreen')"
-          />
-        </SfTooltip>
-        <StyleHint @standard-a4="setStandardA4" />
-      </div>
     </div>
     <SfTooltip
       v-if="showBackTop"

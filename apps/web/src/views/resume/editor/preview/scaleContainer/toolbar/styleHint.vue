@@ -16,12 +16,12 @@ const openStyleHint = () => {
 </script>
 
 <template>
-  <!-- 提示显示在图标右侧，避免遮挡上方入口。 -->
-  <SfTooltip :content="$t('styleHintHover')" placement="right">
+  <!-- 工具栏入口：图标尺寸与其它入口一致 -->
+  <SfTooltip :content="$t('styleHintHover')">
     <SfIcon
       icon="mingcute:question-line"
-      size="6"
-      boxSize="8"
+      size="5"
+      boxSize="7"
       class="rounded-full text-sf-text-2 hover:bg-sf-theme-2 hover:text-sf-theme-text"
       @click="openStyleHint"
     />
