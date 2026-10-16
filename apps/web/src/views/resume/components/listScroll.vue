@@ -63,9 +63,12 @@ watch(
   () => loadingMore.value || (props.loading && props.count > 0),
   async (loading) => {
     if (!loading) return;
-    const wrap = scrollbarRef.value?.wrapRef;
-    if (!wrap || wrap.scrollHeight - wrap.scrollTop - wrap.clientHeight > 200) return;
+    // 等待当前内容与提示渲染完成：列表切换会重建内容，用渲染前的尺寸判断会误判为触底
     await nextTick();
+    const wrap = scrollbarRef.value?.wrapRef;
+    // 容器仍停在顶部说明是切换列表或内容不足一屏，此时不能把视图滚走
+    if (!wrap || !wrap.scrollTop) return;
+    if (wrap.scrollHeight - wrap.scrollTop - wrap.clientHeight > 200) return;
     const indicator = loadingRef.value;
     if (!indicator) return;
     const distance = indicator.getBoundingClientRect().bottom - wrap.getBoundingClientRect().bottom;
