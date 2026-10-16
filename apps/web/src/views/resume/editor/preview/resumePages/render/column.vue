@@ -121,6 +121,7 @@ const fragmentGroups = computed(() => {
           :items="group.items"
           :nodes="nodes"
           :show-debug="showDebug"
+          :is-edit="isEdit"
           @click="emit('click', $event)"
         />
       </ModuleFrame>

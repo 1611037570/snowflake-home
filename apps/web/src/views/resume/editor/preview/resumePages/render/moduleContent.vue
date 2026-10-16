@@ -11,6 +11,7 @@ const props = defineProps<{
   items: FragmentPlan[]; // 当前模块分片，不再包装无用栏内索引
   nodes: Map<string, LayoutNode>;
   showDebug?: boolean;
+  isEdit?: boolean; // 是否编辑态预览，只读预览不显示条目悬停反馈
 }>();
 const emit = defineEmits<{
   click: [payload: { moduleKey: string; itemIndex?: number }];
@@ -30,9 +31,11 @@ const handleContentClick = (node: LayoutNode) => {
   if (props.moduleKey === "slogan") return;
   emit("click", { moduleKey: props.moduleKey, itemIndex: node.sourceItemIndex });
 };
-// 个人信息与标语属于版头区域，不参与条目悬停反馈；其余模块悬停只显示背景色，不带圆角
+// 个人信息与标语属于版头区域，不参与条目悬停反馈；其余模块仅在编辑态悬停显示背景色，只读预览不显示
 const hoverBackgroundClass = computed(() =>
-  props.moduleKey === "user" || props.moduleKey === "slogan" ? "" : "hover:bg-sf-theme-2!",
+  props.isEdit && props.moduleKey !== "user" && props.moduleKey !== "slogan"
+    ? "hover:bg-sf-theme-2!"
+    : "",
 );
 </script>
 
