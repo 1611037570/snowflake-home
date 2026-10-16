@@ -11,21 +11,14 @@ const router = useRouter();
 
 const visible = ref(false);
 const mode = ref("options");
-const form = ref({ name: "", phone: "", position: "" });
 
-// 新建入口仅展示三种创建方式，信息收集按需进入。
+// 新建入口仅展示创建方式，按需进入后续流程。
 const createOptions = [
   {
     key: "blank",
     title: "从 0 开始",
     description: "直接进入简历编辑器",
     icon: "lucide:file-text",
-  },
-  {
-    key: "quick",
-    title: "快速开始",
-    description: "先填写基础信息",
-    icon: "fa6-solid:rocket",
   },
   {
     key: "template",
@@ -41,7 +34,6 @@ const templateLoading = ref(false);
 
 const reset = () => {
   mode.value = "options";
-  form.value = { name: "", phone: "", position: "" };
 };
 
 const close = () => {
@@ -81,24 +73,6 @@ const selectOption = async (key) => {
   }
 };
 
-const createQuickResume = () => {
-  const { name, phone, position } = form.value;
-  const created = resumeStore.addResume({
-    data: {
-      user: {
-        data: {
-          name: name.trim(),
-          phone: phone.trim(),
-          position: position.trim(),
-        },
-      },
-    },
-  });
-  // 新建成功后上报一次简历创建动作
-  if (created) trackResumeAction({ eventType: "create", fileType: "none" });
-  close();
-};
-
 const useTemplate = (template) => {
   // 模板列表经响应式代理包装，先转成纯数据再交给创建流程。
   const item = JSON.parse(JSON.stringify(template.item));
@@ -132,7 +106,7 @@ const goTemplate = () => {
 
   <SfModal v-model="visible" title="新建简历">
     <div v-if="mode === 'options'" class="flex w-full max-w-[672px] flex-col gap-3 p-3 sm:p-6">
-      <div class="grid grid-cols-1 gap-3 sm:grid-cols-3">
+      <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
         <button
           v-for="item in createOptions"
           :key="item.key"
@@ -148,24 +122,6 @@ const goTemplate = () => {
         </button>
       </div>
     </div>
-
-    <form
-      v-else-if="mode === 'quick'"
-      class="flex w-full max-w-96 flex-col gap-3 p-3 sm:p-6"
-      @submit.prevent="createQuickResume"
-    >
-      <div class="flex items-center gap-3">
-        <SfButton plain @click="mode = 'options'">返回</SfButton>
-        <span class="text-base font-black text-sf-text">填写基础信息</span>
-      </div>
-      <SfInput v-model="form.name" placeholder="请输入姓名" />
-      <SfInput v-model="form.phone" placeholder="请输入电话" />
-      <SfInput v-model="form.position" placeholder="请输入求职岗位" />
-      <footer class="flex justify-end gap-3">
-        <SfButton plain @click="close">取消</SfButton>
-        <SfButton type="primary" @click="createQuickResume">进入编辑器</SfButton>
-      </footer>
-    </form>
 
     <div v-else class="flex w-full max-w-[1024px] flex-col gap-3 p-3 sm:p-6">
       <div class="flex items-center justify-between gap-3">
