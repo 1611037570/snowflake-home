@@ -14,6 +14,7 @@ import {
   defaultPaddingHorizontal,
   defaultPaddingVertical,
   defaultParagraphSpacing,
+  defaultSubtitleCenter,
   footerTemplateList,
   infoPositionList,
   uiParamRanges,
@@ -48,6 +49,13 @@ const footerTemplate = computed({
   get: () => currentUI.value?.page?.footerTemplate ?? defaultFooterTemplate,
   set: (value) => {
     currentUI.value.page.footerTemplate = value;
+  },
+});
+// 副标题居中属于排版选项，继续写入原有简历配置。
+const subtitleCenter = computed({
+  get: () => currentUI.value?.content?.subtitleCenter ?? defaultSubtitleCenter,
+  set: (value) => {
+    currentUI.value.content.subtitleCenter = value;
   },
 });
 
@@ -225,6 +233,10 @@ const setNumberParam = (key, value) => {
                 >{{ option.name }}</SfButton
               >
             </div>
+          </div>
+          <div class="flex items-center justify-between text-sm text-sf-text-2">
+            <span>{{ $t("subtitleCenter") }}</span>
+            <ElSwitch v-model="subtitleCenter" />
           </div>
           <div class="flex items-center justify-between text-sm text-sf-text-2">
             <span>{{ $t("showPageNumber") }}</span>

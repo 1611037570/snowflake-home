@@ -6,7 +6,6 @@ import { useResumeStore } from "@/stores";
 import {
   darkPageBackground,
   defaultPageBackground,
-  defaultSubtitleCenter,
   fontColorOptions,
   fontColorOptionsOnDark,
   pageBackgroundColors,
@@ -85,14 +84,6 @@ const activeFontColor = computed(() => {
   return (matched ?? options[0]).value;
 });
 const isFontColorActive = (value) => activeFontColor.value === value;
-
-// 副标题居中开关：教育经历的专业在条目内居中。
-const subtitleCenter = computed({
-  get: () => currentUI.value?.content?.subtitleCenter ?? defaultSubtitleCenter,
-  set: (value) => {
-    currentUI.value.content.subtitleCenter = value;
-  },
-});
 </script>
 
 <template>
@@ -115,20 +106,20 @@ const subtitleCenter = computed({
         <ThemeColorPicker v-model="themeColor" :teleported="false" />
 
         <div class="text-xs font-bold text-sf-text">{{ $t("fontColor") }}</div>
-        <div class="flex items-center gap-3">
+        <!-- 字体灰度色块沿用主题配色的尺寸、选中边框与悬停效果。 -->
+        <div class="flex flex-wrap items-center gap-3">
           <button
             v-for="option in activeFontColorOptions"
             :key="option.value"
             type="button"
-            class="flex h-9 w-9 cursor-pointer items-center justify-center rounded-full border transition-transform hover:scale-110"
-            :class="isFontColorActive(option.value) ? 'border-2 border-sf-theme' : 'border-sf-b'"
+            class="h-6 w-6 cursor-pointer rounded-full transition-all duration-200 hover:scale-110"
+            :class="{ 'border-2 border-sf-base': isFontColorActive(option.value) }"
+            :style="{ backgroundColor: option.value }"
             :title="$t(option.name)"
             :aria-label="$t(option.name)"
             :aria-pressed="isFontColorActive(option.value)"
             @click="fontColor = option.value"
-          >
-            <span class="h-6 w-6 rounded-full" :style="{ backgroundColor: option.value }" />
-          </button>
+          />
         </div>
 
         <div class="text-xs font-bold text-sf-text">{{ $t("resumeBackground") }}</div>
@@ -152,11 +143,6 @@ const subtitleCenter = computed({
             />
             <span>{{ $t(option.name) }}</span>
           </SfButton>
-        </div>
-        <!-- 副标题居中设置归入设计面板。 -->
-        <div class="flex items-center justify-between text-sm text-sf-text-2">
-          <span>{{ $t("subtitleCenter") }}</span>
-          <ElSwitch v-model="subtitleCenter" />
         </div>
       </div>
     </template>
