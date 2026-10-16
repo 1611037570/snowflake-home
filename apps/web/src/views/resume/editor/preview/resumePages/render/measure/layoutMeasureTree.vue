@@ -11,6 +11,7 @@ import type { FooterTemplateId } from "@/domain/resume/theme/uiTypes";
 import { PAGE_NUMBER_HEIGHT } from "../../../shared/constants";
 import type { LayoutNode } from "../../engine/types";
 import type { ColumnPadding, RegionConfig } from "../../engine/pageLayoutTypes";
+import { resolveRegionGap } from "../../engine/layout/regionFlows";
 
 const props = defineProps<{
   /** 测量宿主宽度，等于页面内容宽度 */
@@ -22,6 +23,7 @@ const props = defineProps<{
     nodes: LayoutNode[]; // 待测量内容节点
     regionId?: string; // 所属区域编号
     padding?: ColumnPadding; // 与预览共用的栏装饰内边距
+    gap?: number; // 与预览共用的栏内模块间距
   }>;
   /** 首页从纸张顶边开始的区域编号；与分页和实际页面共用同一来源 */
   topRegionId?: string | null;
@@ -64,6 +66,14 @@ const regions = computed(() => {
   });
   return grouped;
 });
+// 长图中的区域间距与首页预览使用相同的布局结算值。
+const getRegionGap = (index: number) =>
+  index > 0
+    ? resolveRegionGap(
+        regionConfigMap.value.get(regions.value[index - 1].regionId),
+        regionConfigMap.value.get(regions.value[index].regionId),
+      )
+    : 0;
 </script>
 
 <template>
@@ -78,27 +88,28 @@ const regions = computed(() => {
     <PageDecoration />
     <!-- 外层只负责页面内缩：区域纵向排列并各自铺满，栏位并排由区域容器负责 -->
     <div class="box-border flex w-auto flex-1 flex-col" :style="insetStyle">
-      <RegionContainer
-        v-for="region in regions"
-        :key="region.regionId"
-        :region-id="region.regionId"
-        :region-padding="regionConfigMap.get(region.regionId)?.padding"
-        :column-gap="regionConfigMap.get(region.regionId)?.columnGap"
-        :full-bleed="region.regionId === topRegionId"
-        class="flex w-full min-w-0"
-        :top-region-present="Boolean(topRegionId)"
-        :width-mode="regionConfigMap.get(region.regionId)?.widthMode"
-      >
-        <ColumnBox
-          v-for="group in region.groups"
-          :key="group.id"
-          :column-id="group.id"
-          :width="group.width"
-          :padding="group.padding"
+      <template v-for="(region, regionIndex) in regions" :key="region.regionId">
+        <div v-if="getRegionGap(regionIndex) > 0" class="shrink-0" :style="{ height: `${getRegionGap(regionIndex)}px` }" />
+        <RegionContainer
+          :region-id="region.regionId"
+          :region-padding="regionConfigMap.get(region.regionId)?.padding"
+          :column-gap="regionConfigMap.get(region.regionId)?.columnGap"
+          :full-bleed="region.regionId === topRegionId"
+          class="flex w-full min-w-0"
+          :top-region-present="Boolean(topRegionId)"
+          :width-mode="regionConfigMap.get(region.regionId)?.widthMode"
         >
-          <LayoutMeasureModule :nodes="group.nodes" />
-        </ColumnBox>
-      </RegionContainer>
+          <ColumnBox
+            v-for="group in region.groups"
+            :key="group.id"
+            :column-id="group.id"
+            :width="group.width"
+            :padding="group.padding"
+          >
+            <LayoutMeasureModule :nodes="group.nodes" :gap="group.gap ?? 0" />
+          </ColumnBox>
+        </RegionContainer>
+      </template>
     </div>
     <div
       v-if="showPageNumber"

@@ -4,7 +4,10 @@ import ModuleFrame from "../moduleFrame.vue";
 import LayoutMeasureNode from "./layoutMeasureNode.vue";
 import type { LayoutNode } from "../../engine/types";
 
-const props = defineProps<{ nodes: LayoutNode[] /* 当前栏的通用节点 */ }>();
+const props = defineProps<{
+  nodes: LayoutNode[]; // 当前栏的通用节点。
+  gap: number; // 相邻模块之间的布局间距。
+}>();
 // 连续同源节点与预览保持相同模块分组及标题槽位。
 const groups = computed(() => {
   const result: Array<{ key: string /* 分组编号 */, moduleKey: string /* 来源模块 */, nodes: LayoutNode[] /* 分组节点 */ }> = [];
@@ -19,11 +22,14 @@ const groups = computed(() => {
 
 <template>
   <div data-resume-column-content class="resume-column flex min-w-0 flex-1 flex-col">
-    <ModuleFrame v-for="group in groups" :key="group.key" :module-key="group.moduleKey">
-      <template #title>
-        <LayoutMeasureNode v-for="node in group.nodes.filter(node => node.type === 'title')" :key="node.id" :node="node" />
-      </template>
-      <LayoutMeasureNode v-for="node in group.nodes.filter(node => node.type !== 'title')" :key="node.id" :node="node" />
-    </ModuleFrame>
+    <template v-for="(group, index) in groups" :key="group.key">
+      <div v-if="index > 0 && gap > 0" class="shrink-0" :style="{ height: `${gap}px` }" />
+      <ModuleFrame :module-key="group.moduleKey">
+        <template #title>
+          <LayoutMeasureNode v-for="node in group.nodes.filter(node => node.type === 'title')" :key="node.id" :node="node" />
+        </template>
+        <LayoutMeasureNode v-for="node in group.nodes.filter(node => node.type !== 'title')" :key="node.id" :node="node" />
+      </ModuleFrame>
+    </template>
   </div>
 </template>
