@@ -13,13 +13,16 @@ defineProps<{
 </script>
 
 <template>
-  <!-- 彩色标签的外观与描述规则由技能、荣誉和菜单共同复用。 -->
+  <!-- 彩色标签共用浅色实底、深色文字和最小字号，避免随主题背景失去对比。 -->
   <div class="flex w-full flex-wrap gap-3" :class="sample ? 'text-xs' : ''">
     <span
       v-for="(item, index) in items"
       :key="index"
       class="max-w-full rounded-3xl px-3 py-1 text-[#2e2e2e] break-words"
-      :style="{ backgroundColor: lightThemeColors[index % lightThemeColors.length].value }"
+      :style="{
+        backgroundColor: lightThemeColors[index % lightThemeColors.length].value,
+        fontSize: 'max(12px, 1em)',
+      }"
     >
       <template v-if="sample"><span class="font-bold">{{ item.name }}</span><span v-if="variant === 'notion' && item.desc" class="text-[0.875em]">{{ ` ${item.desc}` }}</span></template>
       <template v-else>
